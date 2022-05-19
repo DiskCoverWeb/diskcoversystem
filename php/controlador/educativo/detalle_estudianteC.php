@@ -1,0 +1,942 @@
+<?php 
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+include(dirname(__DIR__,2).'/modelo/educativo/detalle_estudianteM.php'); 
+// include(dirname(__DIR__,2).'/funciones/funciones.php');
+include(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
+// require(dirname(__DIR__,2).'/lib/phpmailer/class.phpmailer.php');
+// require(dirname(__DIR__,2).'/lib/phpmailer/class.smtp.php');
+include(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
+// include(dirname(__DIR__,3)."/lib/excel/plantilla.php");
+/**
+ * 
+ */
+
+$controlador = new detalle_estudianteC();
+if(isset($_GET['cursos']))
+{
+	//$controlador = new detalle_estudianteC();
+	echo json_encode($controlador->lista_cursos());
+}
+if(isset($_GET['validar_estudiante']))
+{
+	echo json_encode($controlador->validar_estudiante($_POST['usu'],$_POST['pass'],$_POST['nuevo']));
+
+}
+if(isset($_GET['existente']))
+{
+  echo json_encode($controlador->usu_regi($_POST['usu']));
+}
+if(isset($_GET['existente_clave']))
+{
+  echo json_encode($controlador->usu_clave_regi($_POST['ci'],$_POST['cla']));
+}
+if(isset($_GET['cliente_proveedor']))
+{
+  echo json_encode($controlador->cliente_proveedor($_POST['cli']));
+}
+if(isset($_GET['fac_emi']))
+{
+  echo json_encode($controlador->fact_emitidas($_POST['codigo']));
+
+}
+if(isset($_GET['imprimir_excel']))
+{
+  $controlador->exportar_Excel($_GET['codigo']);
+
+}
+if(isset($_GET['imprimir_pdf']))
+{
+  $controlador->exportar_pdf($_GET['codigo']);
+
+}
+if(isset($_GET['provincias']))
+{
+	//echo 'hola';
+	echo json_encode(provincia_todas());
+	//print_r(provincia_todas());
+}
+if(isset($_GET['ciudad']))
+{
+	echo json_encode(todas_ciudad($_POST['idpro']));
+}
+if(isset($_GET['cargar_imagen']))
+{
+   echo json_encode($controlador->guardar_foto($_FILES,$_POST));
+}
+if(isset($_GET['nuevo']))
+{
+	$parametros = $_POST['parametro'];
+	echo json_encode($controlador->nuevo_estudiante($parametros));
+}
+
+if(isset($_GET['update_alumno']))
+{
+	$parametros = $_POST['parametro'];
+	//print_r($parametros);
+	echo json_encode($controlador->actualizar_alumno($parametros));
+}
+if(isset($_GET['update_fami']))
+{
+	$parametros = $_POST['parametro'];
+	//print_r($parametros);
+	echo  json_encode($controlador->actualizar_fami($parametros));
+}
+if(isset($_GET['update_repre']))
+{
+	$parametros = $_POST['parametro'];
+	//print_r($parametros);
+	echo json_encode($controlador->actualizar_repre($parametros));
+}
+if(isset($_GET['generar_archivos']))
+{
+	//$parametros = $_POST['parametro'];
+	//print_r($parametros);
+	echo json_encode($controlador->generar_pdf($_GET['usu'],$_GET['pass'],$_GET['nuevo_usu'],$_GET['email']));
+	
+}
+if(isset($_GET['generar_archivos2']))
+{
+	//$parametros = $_POST['parametro'];
+	//print_r($parametros);
+	echo json_encode($controlador->pdf_registro($_GET['usu'],$_GET['pass'],$_GET['nuevo_usu'],$_GET['email']));
+}
+if(isset($_GET['generar_archivos3']))
+{
+	//$parametros = $_POST['parametro'];
+	//print_r($parametros);
+	echo json_encode($controlador->pdf_matricula($_GET['usu'],$_GET['pass'],$_GET['nuevo_usu'],$_GET['email']));
+}
+if(isset($_GET['num_matricula']))
+{
+	$curso = $_POST['curso'];
+	//print_r($parametros);
+	echo json_encode($controlador->codigo_matricula($curso));
+}
+if(isset($_GET['enviar_email_']))
+{
+	echo json_encode($controlador->enviar_email_($_POST['usu'],$_POST['pass'],$_POST['nuevo_usu']));
+}
+if(isset($_GET['cargar_file']))
+{
+   echo json_encode($controlador->guardar_file($_FILES,$_POST));
+}
+if(isset($_GET['cargar_pago']))
+{
+   echo json_encode($controlador->guardar_pago($_FILES,$_POST));
+}
+if(isset($_GET['ver_fac']))
+{
+  $controlador->ver_fac_pdf($_GET['codigo'],$_GET['ser'],$_GET['ci']);
+}
+if(isset($_GET['nueva_matricula']))
+{
+  $parametros = $_POST['usuario'];
+  //print_r($parametros);
+  echo json_encode($controlador->nueva_matricula($parametros));
+}
+class detalle_estudianteC
+{
+	private $modelo;
+	private $empresa;
+	private $est_d;
+	private $empresaGeneral;
+  private $email;
+	
+	function __construct()
+	{
+		$this->modelo = new detalle_estudianteM();
+		$this->pdf = new cabecera_pdf();		
+		$this->empresa = $this->modelo->institucion_data();
+		$this->empresaGeneral = $this->modelo->Empresa_data();
+    $this->email = new enviar_emails();
+
+	}
+
+	function lista_cursos()
+	{
+		$datos =  $this->modelo->cargar_cursos();
+    return $datos;// = array_map(array($this, 'encode'), $datos);
+	}
+	function validar_estudiante($usu,$pass,$nuevo)
+	{
+
+  	$this->est_d = $this->modelo->login($usu,$pass,$nuevo);
+
+    // print_r($this->est_d);
+		$datos = $this->modelo->login($usu,$pass,$nuevo);
+
+    // print_r($datos);die();
+    if(!empty($datos)){
+	    // print_r($datos);
+      $datos1= array_map(array($this, 'encode'), $datos);
+    return $datos1;
+    }else
+    {
+      return -2;
+    }
+		
+		//print_r($datos1);
+
+	}
+  function usu_regi($ci)
+  {
+    return $this->modelo->usuario_registrado($ci);
+  }
+   function usu_clave_regi($ci,$cla)
+  {
+    return $this->modelo->usuario_registrado_clave($ci,$cla);
+  }
+  function cliente_proveedor($ci)
+  {
+    $cambiar = $this->modelo->cliente_proveedor($ci);
+    if(empty($cambiar))
+    {
+       $dato[0]['campo']='FA';
+       $dato[0]['dato']=1;   
+
+      $this->modelo->actualizar_datos($dato,'Clientes','Codigo',$ci);
+      return 'si';
+
+    }else
+    {
+     return 'no';
+    }
+  }
+
+  function fact_emitidas($codigo)
+  {
+    $tbl = $this->modelo->facturas_emitidas_tabla($codigo);
+    // print_r($tbl);
+    return $tbl;
+  }
+	function encode($arr) {
+	$new = array(); 
+    foreach($arr as $key => $value) {
+    	//echo is_array($value);
+    	if(!is_object($value))
+    	{
+    	if($key=='Archivo_Foto')
+    	{
+         	if (!file_exists('../../img/img_estudiantes/'.$value)) 
+         	{
+         		$value='';
+        		//$new[utf8_encode($key)] = utf8_encode($value);
+				$new[utf8_encode($key)] = $value;
+         	} 
+         } 
+
+         if($value == '.')
+         {
+
+         $new[utf8_encode($key)] = '';
+         }else{
+
+          //$new[utf8_encode($key)] = utf8_encode($value);
+          $new[utf8_encode($key)] = $value;
+         }
+        }else
+        {
+        	//print_r($value);
+          $new[utf8_encode($key)] = $value->format('Y-m-d');        	
+        }
+
+     }
+     return $new;
+    }
+
+  function guardar_foto($file,$post)
+   {
+
+   	$ruta="../../img/img_estudiantes/";//ruta carpeta donde queremos copiar las imágenes
+   	if (!file_exists($ruta)) {
+       mkdir($ruta, 0777, true);
+    }
+    if($file['file']['type']=="image/jpeg" || $file['file']['type']=="image/pjpeg" || $file['file']['type']=="image/gif" || $file['file']['type']=="image/png")
+      {
+   	     $uploadfile_temporal=$file['file']['tmp_name'];
+   	     $tipo = explode('/', $file['file']['type']);
+         $nombre = $post['codigo_foto'].'.'.$tipo[1];
+        
+   	     $nuevo_nom=$ruta.$nombre;
+   	     if (is_uploaded_file($uploadfile_temporal))
+   	     {
+   		     move_uploaded_file($uploadfile_temporal,$nuevo_nom);
+   		     $base = $this->modelo->img_guardar($nombre,$post['codigo']);
+   		     if($base=='1')
+   		     {
+   		     	return 'ok';
+   		     }else
+   		     {
+   		     	return '-1';
+   		     }
+
+   	     }
+   	     else
+   	     {
+   		     return '-1';
+   	     } 
+     }else
+     {
+     	return '-2';
+     }
+
+  }
+
+  function guardar_file($file,$post)
+   {
+     $formato = array('pdf','jpeg','jpg','gif','png');
+
+   //	print_r($post);
+   	$ruta="../vista/TEMP/";//ruta carpeta donde queremos copiar las imágenes
+
+   	
+    if($file['file']['type']=="application/pdf" || $file['file']['type']=="image/jpeg" || $file['file']['type']=="image/gif" || $file['file']['type']=="image/png")
+      {
+   	     $uploadfile_temporal=$file['file']['tmp_name'];
+         $tipo = explode('/',$file['file']['type']);
+   	     $nombre = $post['nom'].'_rep.'.$tipo[1];
+         //print($nombre);
+         foreach ($formato as $key => $value) {
+          if(file_exists($ruta.$post['nom'].'_rep.'.$value))
+          {
+            rename ($ruta.$post['nom'].'_rep.'.$value, $ruta.$post['nom'].'_rep_'.date("Y-m-d").'.'.$value);
+          }
+         }
+   	     $nuevo_nom=$ruta.$nombre;
+   	     if (is_uploaded_file($uploadfile_temporal))
+   	     {
+   		     move_uploaded_file($uploadfile_temporal,$nuevo_nom);
+   		    // $base = $this->modelo->img_guardar($nombre,$post['codigo']);
+   		    return 1;
+
+   	     }
+   	     else
+   	     {
+   		     return -1;
+   	     } 
+     }else
+     {
+     	return -2;
+     }
+
+  }
+
+
+  function guardar_pago($file,$post)
+   {
+     $formato = array('pdf','jpeg','jpg','gif','png');
+   // print_r($post);
+  //  $ruta="../vista/TEMP/".$_SESSION['INGRESO']['item']."_TEMP/".$_SESSION['INGRESO']['item'].'_PAGOS';//ruta carpeta donde queremos copiar las imágenes
+     $ruta="../vista/TEMP/";
+      if (!file_exists($ruta)) {
+       mkdir($ruta, 0777, true);
+    }    
+    if($file['file']['type']=="application/pdf" || $file['file']['type']=="image/jpeg" || $file['file']['type']=="image/gif" || $file['file']['type']=="image/png")
+      {
+         $uploadfile_temporal=$file['file']['tmp_name'];
+         $tipo = explode('/',$file['file']['type']);
+         $nombre = $_SESSION['INGRESO']['item'].'_'.$post['nom_1'].'_pago.'.$tipo[1];
+         //print($nombre);
+         $nuevo_nom=$ruta.$nombre;
+         foreach ($formato as $key => $value) {
+          if(file_exists($ruta.$_SESSION['INGRESO']['item'].'_'.$post['nom_1'].'_pago.'.$value))
+          {
+            rename ($ruta.$_SESSION['INGRESO']['item'].'_'.$post['nom_1'].'_pago.'.$value, $ruta.$_SESSION['INGRESO']['item'].'_'.$post['nom_1'].'_pago_'.date("Y-m-d").'.'.$value);
+          }
+         }
+         if (is_uploaded_file($uploadfile_temporal))
+         {
+           move_uploaded_file($uploadfile_temporal,$nuevo_nom);
+          // $base = $this->modelo->img_guardar($nombre,$post['codigo']);
+          return 1;
+
+         }
+         else
+         {
+           return -1;
+         } 
+     }else
+     {
+      return -2;
+     }
+
+  }
+
+
+  function codigo_matricula($curso)
+  {
+  	$numero = $this->modelo->codigo_matricula($curso);
+  	 $codigo = substr($curso,0,-1);
+  	 $resultado = str_replace(".", "", $codigo);
+  	 //str_replace(search, replace, subject)
+  	 $matri = $resultado.$numero;
+
+  	 //print_r($matri);
+  	return $matri;
+  }
+
+  function nuevo_estudiante($parametros){
+  //	echo digito_verificadorf($parametros,1).'<br>';
+     $datos =  digito_verificadorf($parametros['codigo'],'',null,null,null,'si');
+// print_r('expression');
+     // print_r($datos);die();
+     if($datos['codigo']!=2)
+     {
+    // print_r($datos);
+  	 $dato[0]['campo']='Codigo';
+     $dato[0]['dato']=$datos['codigo'];
+     $dato[1]['campo']='CI_RUC';
+     $dato[1]['dato']=$parametros['codigo'];
+     $dato[2]['campo']='FA';
+     $dato[2]['dato']=true;
+     $dato[3]['campo']='Clave';
+     $dato[3]['dato']=$parametros['clave'];
+     $dato[4]['campo']='T';
+     $dato[4]['dato']='N';
+     $dato[5]['campo']='Item';
+     $dato[5]['dato']=$_SESSION['INGRESO']['item'];
+     $dato[6]['campo']='TD';
+     $dato[6]['dato']=$datos['tipo'];
+     if(empty($this->usu_clave_regi($parametros['codigo'],$parametros['clave'])))
+     {
+     if(insert_generico("Clientes",$dato) == null)
+     {
+
+  	    $dato1[0]['campo']='Codigo';
+        $dato1[0]['dato']=$parametros;
+        if(insert_generico("Clientes_Matriculas",$dato)==null)
+        {
+        	return 'ok';
+
+        }else{
+        	return 'fail2';
+        }
+
+     }else
+     {
+     	return 'fail';
+     }
+   }else
+   {
+     if(insert_generico("Clientes_Matriculas",$dato)==null)
+        {
+          return 'ok';
+
+        }else{
+          return 'fail2';
+        }
+   }
+ }else
+ {
+  ob_end_clean();
+   return 'ci';
+ }
+
+  }
+
+
+  function actualizar_alumno($parametros)
+  {
+  	//print_r($parametros);
+  	 $sexo = '';
+  	 if($parametros['M']=='true')
+  	 {
+  	 	$sexo = 'M';
+  	 }
+  	 else
+  	 {
+  	 	$sexo = 'F';
+  	 }
+
+  	$datos[0]['campo']='Cliente';
+  	$datos[0]['dato']=strtoupper($parametros['nombre']);
+  	$datos[1]['campo']='Grupo';
+  	$datos[1]['dato']=strtoupper($parametros['select_curso']);
+  	$datos[2]['campo']='Sexo';
+  	$datos[2]['dato']=strtoupper($sexo);
+  	$datos[3]['campo']='Email';
+  	$datos[3]['dato']=$parametros['email'];
+  	$datos[4]['campo']='Prov';
+  	$datos[4]['dato']=$parametros['provincia'];
+  	$datos[5]['campo']='Ciudad';
+  	$datos[5]['dato']=strtoupper($parametros['ciudad']);
+  	$datos[6]['campo']='Fecha_N';
+    $datos[6]['dato']=$parametros['fechan'];    
+  	$datos[7]['campo']='Direccion';
+    $datos[7]['dato']=strtoupper($parametros['nom_curso']);
+  	$datos[8]['campo']='DireccionT';
+    $datos[8]['dato']=strtoupper($parametros['dir_est']);
+  	$datos[9]['campo']='Cedula';
+    $datos[9]['dato']=$parametros['cedula'];
+
+    $datos1[0]['campo']='Nacionalidad';
+    $datos1[0]['dato']=strtoupper($parametros['nacionalidad']);
+    $datos1[1]['campo']='Procedencia';
+    $datos1[1]['dato']=strtoupper($parametros['procedencia']);
+    $datos1[2]['campo']='Observaciones';
+    $datos1[2]['dato']=strtoupper($parametros['observacion']);
+    $datos1[3]['campo']='Grupo_No';
+  	$datos1[3]['dato']=$parametros['select_curso'];
+    $datos1[4]['campo']='Matricula_No';
+  	$datos1[4]['dato']=$parametros['matricula_n'];
+    $datos1[5]['campo']='Folio_No';
+  	$datos1[5]['dato']=$parametros['tomo'];    
+    $datos1[6]['campo']='Fecha_M';
+    $datos1[6]['dato']=$parametros['fecha_m'];
+    $datos1[7]['campo']='Fecha_N';
+    $datos1[7]['dato']=$parametros['fechan'];      
+  	
+    //$datos[7]['campo']='Matricula';
+  	//$datos[7]['dato']=$parametros['nombre_r'];  	
+  	$this->modelo->actualizar_datos($datos,'Clientes','Codigo',$parametros['codigo']);
+  	 return $this->modelo->actualizar_datos($datos1,'Clientes_Matriculas','Codigo',$parametros['codigo']);
+  	// return $this->modelo-> actualizar_estudiante($parametros);
+  }
+
+  function actualizar_repre($parametros)
+  {
+  	$datos[0]['campo']='Representante';
+  	$datos[0]['dato']=strtoupper($parametros['nombre_r']);
+  	$datos[1]['campo']='CI_R';
+  	$datos[1]['dato']=$parametros['ci_r'];
+  	$datos[2]['campo']='Profesion_R';
+  	$datos[2]['dato']=strtoupper($parametros['profesion_r']);
+  	$datos[3]['campo']='Lugar_Trabajo_R';
+  	$datos[3]['dato']=strtoupper($parametros['trabajo_r']);
+  	$datos[4]['campo']='Ocupacion_R';
+  	$datos[4]['dato']=strtoupper($parametros['ocupacion_r']);
+  	$datos[5]['campo']='Email_R';
+    $datos[5]['dato']=$parametros['email_r'];
+    $datos[6]['campo']='Representante_Alumno';
+  	$datos[6]['dato']=strtoupper($parametros['nombre_r']);
+    $datos[7]['campo']='Telefono_RS';
+    $datos[7]['dato']=$parametros['celular_r'];
+
+    $datos1[0]['campo']='Telefono_R';
+    $datos1[0]['dato']=$parametros['telefono_r'];
+    $datos1[1]['campo']='Email2';
+    $datos1[1]['dato']=$parametros['email_fac_r'];
+    
+
+     $this->modelo->actualizar_datos($datos1,'Clientes','Codigo',$parametros['codigo']);
+   	 return $this->modelo->actualizar_datos($datos,'Clientes_Matriculas','Codigo',$parametros['codigo']);
+    // return $this->modelo->actualizar_datos($datos1,'Clientes','Codigo',$parametros['codigo']);
+
+  }
+   function actualizar_fami($parametros)
+  {
+  	$datos[0]['campo']='Nombre_Padre';
+  	$datos[0]['dato']=strtoupper($parametros['nombre_p']);
+  	$datos[1]['campo']='Nacionalidad_P';
+  	$datos[1]['dato']=strtoupper($parametros['nacionalidad_p']);
+  	$datos[2]['campo']='Profesion_P';
+  	$datos[2]['dato']=strtoupper($parametros['profesion_p']);
+  	$datos[3]['campo']='Lugar_Trabajo_P';
+  	$datos[3]['dato']=strtoupper($parametros['trabajo_p']);
+  	$datos[4]['campo']='Telefono_Trabajo_P';
+  	$datos[4]['dato']=$parametros['telefono_p'];
+  	$datos[5]['campo']='CI_P';
+  	$datos[5]['dato']=$parametros['ci_p'];
+  	$datos[6]['campo']='Celular_P';
+  	$datos[6]['dato']=$parametros['celular_p'];
+  	$datos[7]['campo']='Nombre_Madre';
+  	$datos[7]['dato']=strtoupper($parametros['nombre_m']);
+  	$datos[8]['campo']='Nacionalidad_M';
+  	$datos[8]['dato']=strtoupper($parametros['nacionalidad_m']);
+  	$datos[9]['campo']='Profesion_M';
+  	$datos[9]['dato']=strtoupper($parametros['profesion_m']);
+  	$datos[10]['campo']='Lugar_Trabajo_M';
+  	$datos[10]['dato']=strtoupper($parametros['trabajo_m']);
+  	$datos[11]['campo']='Telefono_Trabajo_M';
+  	$datos[11]['dato']=$parametros['telefono_m'];
+  	$datos[12]['campo']='CI_M';
+  	$datos[12]['dato']=$parametros['ci_m'];
+  	$datos[13]['campo']='Celular_M';
+  	$datos[13]['dato']=$parametros['celular_m'];
+  	$datos[14]['campo']='Email_M';
+  	$datos[14]['dato']=$parametros['email_m'];
+  	$datos[15]['campo']='Email_P';
+  	$datos[15]['dato']=$parametros['email_p'];
+    $datos[16]['campo']='Ocupacion_P';
+    $datos[16]['dato']=strtoupper($parametros['ocupacion_p']);
+    $datos[17]['campo']='Ocupacion_M';
+    $datos[17]['dato']=strtoupper($parametros['ocupacion_m']);
+    return $this->modelo->actualizar_datos($datos,'Clientes_Matriculas','Codigo',$parametros['codigo']);
+
+  }
+
+  function generar_pdf($usu,$pass,$nuevo,$email)
+  {
+
+date_default_timezone_set("America/Caracas");
+//$Hora = date('h:i:s');  
+setlocale(LC_ALL,"es_ES@euro","es_ES","esp");
+$fecha=strftime("%A %d de %B del %Y");
+
+
+  	$datos = $this->modelo->login($usu,$pass,$nuevo);
+
+    // print_r($datos);die();
+    $genero = 'la';
+    $genero1 = 'a';
+    if($datos[0]['Sexo']== 'M')
+    {
+    $genero = 'el';
+    $genero1 = 'o';
+    }
+  	$tablaHtml='<table><tr><td></td></tr><tr><td><td></tr></table>';
+  	$texto = 'La '.utf8_decode($this->empresa[0]['Institucion1']).' '.utf8_decode($this->empresa[0]['Institucion2']).' De Conformidad con el Reglamento a la Ley Orgánica de Educación Intercultural, registra la matricula  de '.$genero.' estudiante:';
+  	$texto2 ='El infrascrito, representante de '.$genero.' estudiante matriculad'.$genero1.', declara que se encuentra conforme con los datos que <br>anteceden y firma sometiéndose a las disposiciones del citado reglamento.<br>Lugar y Fecha: '.utf8_encode($fecha);
+  	//print_r($datos[0]['Fecha_N']->format('Y-m-d'));
+     $nombre = $datos[0]['Cliente'];
+     $nom_ma = '&nbsp;';
+     if($datos[0]['Nombre_Madre'] != '.' && $datos[0]['Nombre_Madre'] != '' )
+     {
+      $nom_ma = $datos[0]['Nombre_Madre'];
+     }
+      $na_ma = '&nbsp;';
+     if($datos[0]['Nacionalidad_M'] != '.' && $datos[0]['Nacionalidad_M'] != '' )
+     {
+      $na_ma = $datos[0]['Nacionalidad_M'];
+     }
+      $nom_pa = '&nbsp;';
+     if($datos[0]['Nombre_Padre'] != '.' && $datos[0]['Nombre_Padre'] != '' )
+     {
+      $nom_pa = $datos[0]['Nombre_Padre'];
+     }
+      $na_pa = '&nbsp;';
+     if($datos[0]['Nacionalidad_P'] != '.' && $datos[0]['Nacionalidad_P'] != '' )
+     {
+      $na_pa = $datos[0]['Nacionalidad_P'];
+     }
+       $nom_re = '&nbsp;';
+     if($datos[0]['Representante_Alumno'] != '.' && $datos[0]['Representante_Alumno'] != '' )
+     {
+      $nom_re = $datos[0]['Representante_Alumno'];
+     }
+	$tablaHtml.='<table>
+	<tr>
+		<td width="380"><b><u>'.$datos[0]['Direccion'].'</u></b></td><td  width="380"><b>'.$datos[0]['Curso_Superior'].'</b></td>
+	</tr>
+	<tr><td width="170"><b>Lugar de nacimiento:</b></td><td width="350">'.$datos[0]['Ciudad'].'</td><td width="70"><b>Fecha</b></td><td width="170">'.$datos[0]['Fecha_N']->format('Y-m-d').'</td></tr>
+	<tr><td width="170"><b>Direccion domicilio:</b></td><td width="590">'.$datos[0]['DireccionT'].'</td></tr>
+	<tr><td width="170"><b>Telefono</b></td><td width="300">'.$datos[0]['Telefono'].'</td><td width="110"><b>Nacionalidad:</b></td><td width="180">'.$datos[0]['Nacionalidad'].'</td></tr>
+	<tr><td width="170"><b>Plantel que proviene:</b></td><td width="590">'.$datos[0]['Procedencia'].'</td></tr>
+	<tr><td width="760">&nbsp;</td></tr>
+	<tr><td width="760"><b>DATOS DEL PADRE</b></td></tr>
+	<tr><td width="110"><b>Nombre:</b></td><td width="295">'.$nom_pa.'</td><td width="90"><b>Telefono:</b></td><td width="265">'.$datos[0]['Celular_P'].'</td></tr><tr><td width="110"><b>Nacionalidad:</b></td><td width="295">'.$na_pa.'</td><td  width="90"><b>Profesion:</b></td><td width="300">'.$datos[0]['Profesion_P'].'</td></tr><tr><td  width="110"><b>&nbsp;</b></td><td width="295">&nbsp;</td><td width="90"><b>Ocupacion:</b></td><td width="300">'.$datos[0]['Ocupacion_P'].'</td></tr>
+	<tr><td width="760">&nbsp;</td></tr>
+	<tr><td width="760"><b>DATOS DE LA MADRE</b></td></tr>
+	<tr><td width="110"><b>Nombre:</b></td><td width="295">'.$nom_ma.'</td><td width="90"><b>Telefono:</b></td><td width="300">'.$datos[0]['Celular_M'].'</td></tr><tr><td width="110"><b>Nacionalidad:</b></td><td width="295">'.$na_ma.'</td><td width="90"><b>Profesion:</b></td><td width="300">'.$datos[0]['Profesion_M'].'</td></tr><tr><td width="110"><b>&nbsp;</b></td><td width="295">&nbsp;</td><td width="90"><b>Ocupacion:</b></td><td width="300">'.$datos[0]['Ocupacion_M'].'</td></tr>
+	<tr><td width="760">&nbsp;</td></tr>
+	<tr><td width="760"><b>DATOS DEL REPRESENTANTE</b></td></tr>
+	<tr><td width="110"><b>Nombre:</b></td><td width="295">'.$nom_re.'</td><td width="90"><b>Telefono:</b></td><td width="180">'.$datos[0]['Telefono_RS'].'</td></tr><tr><td height="" width="110"><b>&nbsp;</b></td><td width="295">&nbsp;</td><td width="90"><b>Profesion:</b></td><td width="300">'.$datos[0]['Profesion_R'].'</td></tr><tr><td width="110"><b>&nbsp;</b></td><td width="295">&nbsp;</td><td width="90"><b>Ocupacion:</b></td><td width="300">'.$datos[0]['Ocupacion_R'].'</td></tr>
+</table>
+<table>
+    <tr>
+		<td height="10" width="750">'.$texto2.'</td>
+		
+	</tr>
+    <tr>
+		<td height="300" width="380">&nbsp;</td>
+		<td height="300" width="380">&nbsp;</td>
+	</tr>
+	<tr>
+		<td height="" width="380" ALIGN="CENTER">---------------------------------------------</td>
+		<td height="" width="380" ALIGN="CENTER">---------------------------------------------</td>
+	</tr>
+	<tr>
+		<td height="" width="380" ALIGN="CENTER">REPRESENTANTE</td>
+		<td height="" width="380" ALIGN="CENTER">'.$this->empresa[0]['Texto_Secretario1'].'</td>
+	</tr>
+</table>';
+
+		// contenido solo tiene 2 opciones para u posicion top-tabla y button-tabla 
+		// si coloca una tabla este saldra en la mitad de texto,titulo dependiendo la posicion
+		// tipo = texto-titulo
+		//posicion = button-table  / top-table
+        $image=false;
+		$contenido[0]['tipo'] ='texto';
+		$contenido[0]['valor'] = utf8_decode($texto);
+		$contenido[0]['posicion'] ='top-tabla';
+		$contenido[1]['tipo'] ='titulo';
+		$contenido[1]['valor'] = utf8_decode($nombre);
+		$contenido[1]['posicion'] ='top-tabla';
+		
+
+
+		$this->pdf->cabecera_reporte_colegio($_SESSION['INGRESO']['item'].'_ACTA_DE_MATRICULA_'.$usu,'ACTA DE MATRICULA',utf8_decode($tablaHtml),$contenido,$image,'','',8,false,$email);
+		//$this->pdf_registro($usu,$pass,$nuevo);
+		//$this->pdf_matricula($usu,$pass,$nuevo);
+		
+  }
+
+  function pdf_registro($usu,$pass,$nuevo,$email)
+  {
+    $contenido=false;
+    setlocale(LC_ALL,"es_ES@euro","es_ES","esp");
+    $fecha=strftime("%A %d de %B del %Y");
+  	$datos = $this->modelo->login($usu,$pass,$nuevo);
+  	$tablaHtml='<table>
+	<tr><td width="350" ALIGN="RIGHT"><b>EL ALUMNO(A):</b></td><td width="350">'.strtoupper($datos[0]['Cliente']).'</td></tr>
+	<tr><td height="150" width="150"><b>CURSO</b></td><td height="150"  width="500">'.$datos[0]['Direccion'].'</td></tr>
+	<tr><td height="150" width="150"><b>CICLO</b></td><td height="150">'.$this->empresa[0]['Anio_Lectivo'].'</td></tr>
+	<tr><td height="150" width="150"><b>Nivel de estudio</b></td><td height="150">'.utf8_encode($datos[0]['Curso_Superior']).'</td></tr>
+	<tr><td height="150" width="150"><b>MATRICULA No</b></td><td height="150">'.$datos[0]['Matricula_No'].'</td></tr>
+	<tr><td height="150" width="150"><b>FOLIO No</b></td><td height="150">'.$datos[0]['Folio_No'].'</td></tr>
+	<tr><td height="150" width="300">'.utf8_encode($fecha).'</td></tr>
+</table>
+<table>
+	<tr><td height="160" width="350">&nbsp;</td><td height="160" width="350">&nbsp;</td></tr>
+	<tr><td height="20" width="350" ALIGN="CENTER">______________________________</td><td height="20" width="350" ALIGN="CENTER">______________________________</td></tr>
+	<tr><td height="20" width="350"  ALIGN="CENTER"><I>'.$this->empresa[0]['Rector'].'</I></td><td height="20" width="350"  ALIGN="CENTER"><I>'.$this->empresa[0]['Secretario1'].'<I></td></tr>
+	<tr><td height="20" width="350"  ALIGN="CENTER"><b>'.$this->empresa[0]['Texto_Rector'].'</b></td><td height="20" width="350"  ALIGN="CENTER"><B>'.$this->empresa[0]['Texto_Secretario1'].'</B></td></tr>
+	<tr><td height="150">&nbsp;</td></tr>
+	<tr><td width="700">NOTA:DOCUMENTO NO VALIDO SIN FIRMA Y SELLO DE LA INSTITUCION</td></tr>
+</table>';
+if($datos[0]['Archivo_Foto'] !='.' && $datos[0]['Archivo_Foto'] !='')
+{
+    if (!file_exists('../../img/img_estudiantes/'.$datos[0]['Archivo_Foto'])) 
+    {
+    	$url='../../img/jpg/sinimagen.jpg';
+    }else
+    {
+    	$url='../../img/img_estudiantes/'.$datos[0]['Archivo_Foto'];
+    }
+  }else
+   {
+    	$url='../../img/jpg/sinimagen.jpg';
+
+   }
+
+		$image[0]['url']=$url;
+		$image[0]['x']=150;
+		$image[0]['y']= 60;
+		$image[0]['width']=40;
+		$image[0]['height']=40;
+
+  	$this->pdf->cabecera_reporte_colegio($_SESSION['INGRESO']['item'].'_HOJA_DE_REGISTRO_'.$usu,'HOJA DE REGISTRO',utf8_decode($tablaHtml),$contenido,$image,'','',10,false,$email);
+
+
+  }
+
+  function pdf_matricula($usu,$pass,$nuevo,$email)
+  {
+  	$contenido=false;
+  	$image = false;
+  	$datos = $this->modelo->login($usu,$pass,$nuevo);
+  
+  	$tablaHtml='<table>
+	<tr>
+		<td width="750"><b><u>REGISTRO DE MATRICULA</u></b></td>
+	</tr>
+	<tr><td width="200" height=""><b>MATRICULA No</b></td><td width="550">'.$datos[0]['Matricula_No'].'</td></tr>
+	<tr><td width="200" height=""><b>Folio No</b></td><td width="550">'.$datos[0]['Folio_No'].'</td></tr>
+	<tr><td width="200" height=""><b>FECHA DE MATRICULA</b></td><td width="550">'.$datos[0]['Fecha_M']->format("Y-m-d").'</td></tr><tr><td width="200" height=""><b>NACIONALIDAD</b></td><td width="550">'.$datos[0]['Nacionalidad'].'</td></tr>';
+  if($datos[0]['Especialidad'] != '.')
+  {
+    $tablaHtml.='<tr><td width="200" height=""><b>ESPECIALIDAD</b></td><td width="550">'.$datos[0]['Especialidad'].'</td></tr>';
+  }	
+	$tablaHtml.='<tr><td width="200" height=""><b>AÑO</b></td><td width="550">'.$this->empresa[0]['Anio_Lectivo'].'</td></tr>
+	<tr><td width="200" height=""><b>SECCION</b></td><td width="550">'.$datos[0]['Seccion'].'</td></tr>
+	<tr><td width="200" height=""><b>NIVEL DE ESTUDIO</b></td><td width="550">'.$datos[0]['Curso_Superior'].'</td></tr>
+	<tr><td width="200" height=""><b>CURSO - GRADO</b></td><td width="550">'.utf8_encode($datos[0]['Grupo']).' '.$datos[0]['Direccion'].'</td></tr>
+	<tr><td height="20" width="550">&nbsp;</td></tr>
+	<tr><td width="200" height=""><b><u>DATOS PERSONALES</u></b></td><td width="" height=""></td></tr>
+	<tr><td width="200" height=""><b>NOMBRES Y APELLIDOS</b></td><td width="550">'.$datos[0]['Cliente'].'</td></tr>
+	<tr><td width="200" height=""><b>CEDULA</b></td><td width="550">'.$datos[0]['CI_RUC'].'</td></tr>
+	<tr><td width="200" height=""><b>LUGAR DE NACIMIENTO</b></td><td width="550">'.$datos[0]['Ciudad'].'</td></tr>
+	<tr><td width="200" height=""><b>FECHA DE NACIMIENTO</b></td><td width="550">'.$datos[0]['Fecha_N']->format("Y-m-d").'</td></tr>
+	<tr><td width="200" height=""><b>DOMICILIO</b></td><td width="550" >'.$datos[0]['DireccionT'].'</td></tr>
+	<tr><td width="200" height=""><b>TELEFONO</b></td><td width="550">'.$datos[0]['Telefono'].'</td></tr>
+	<tr><td height="20" width="550">&nbsp;</td></tr>
+	<tr><td><b><u>DATOS FAMILIARES</u></b></td><td width="" height=""></td></tr>
+	<tr><td width="200" height=""><b>NOMBRES DEL PADRE</b></td><td width="550">'.$datos[0]['Nombre_Padre'].'</td></tr>
+	<tr><td width="200" height=""><b>NACIONALIDAD</b></td><td width="550">'.$datos[0]['Nacionalidad_P'].'</td></tr>
+	<tr><td width="200" height=""><b>PROFESION</b></td><td width="550">'.$datos[0]['Profesion_P'].'</td></tr>
+	<tr><td width="200" height=""><b>LUGAR DE TRABAJO</b></td><td  width="550" >'.$datos[0]['Lugar_Trabajo_P'].'</td></tr>
+	<tr><td width="200" height=""><b>TELEFONO</b></td><td width="550" >'.$datos[0]['Celular_P'].'</td></tr>
+	<tr><td height="20" width="550">&nbsp;</td></tr>
+	<tr><td width="200" height=""><b>NOMBRES DEL MADRE</b></td><td width="550">'.$datos[0]['Nombre_Madre'].'</td></tr>
+	<tr><td width="200" height=""><b>NACIONALIDAD</b></td><td width="550">'.$datos[0]['Nacionalidad_M'].'</td></tr>
+	<tr><td width="200" height=""><b>PROFESION</b></td><td width="550">'.$datos[0]['Profesion_M'].'</td></tr>
+	<tr><td width="200" height=""><b>LUGAR DE TRABAJO</b></td><td  width="550">'.$datos[0]['Lugar_Trabajo_M'].'</td></tr>
+	<tr><td width="200" height=""><b>TELEFONO</b></td><td width="550">'.$datos[0]['Celular_M'].'</td></tr>
+	<tr><td height="20">&nbsp;</td></tr>
+	<tr><td width="200" height=""><b>REPRESENTANTE</b></td><td width="550">'.$datos[0]['Representante_Alumno'].'</td></tr>
+	<tr><td width="200" height=""><b>CEDULA DE IDENTIDAD</b></td><td width="550">'.$datos[0]['CI_R'].'</td></tr>
+	<tr><td width="200" height=""><b>TELEFONO</b></td><td width="550">'.$datos[0]['Telefono_RS'].'</td></tr><tr><td width="200" height=""><b>Email</b></td><td width="550">'.$datos[0]['Email2'].'</td></tr> 
+</table>
+<table>
+	<tr><td height="30" width="350">&nbsp;</td><td height="30" width="350">&nbsp;</td></tr>
+	<tr><td height="20" width="350" ALIGN="CENTER">______________________________</td><td height="20" width="350" ALIGN="CENTER">______________________________</td></tr>
+	<tr><td height="20" width="350"  ALIGN="CENTER"><I>'.$this->empresa[0]['Rector'].'</I></td><td height="20" width="350"  ALIGN="CENTER"><I>'.$this->empresa[0]['Secretario1'].'<I></td></tr>
+	<tr><td height="20" width="350"  ALIGN="CENTER"><b>'.$this->empresa[0]['Texto_Rector'].'</b></td><td height="20" width="350"  ALIGN="CENTER"><B>'.$this->empresa[0]['Texto_Secretario1'].'</B></td></tr>
+	<tr><td height="25">&nbsp;</td></tr><tr><td height="20" width="700" ALIGN="CENTER">______________________________</td></tr><tr><td height="25" width="700"  ALIGN="CENTER"><I>Representante Legal</I></td></tr>
+	<tr><td width="750">NOTA:DOCUMENTO NO VALIDO SIN FIRMA Y SELLO DE LA INSTITUCION</td></tr>
+</table>';
+if($datos[0]['Archivo_Foto'] !='.' && $datos[0]['Archivo_Foto'] !='')
+{
+if (!file_exists('../../img/img_estudiantes/'.$datos[0]['Archivo_Foto'])) 
+    {
+    	$url='../../img/jpg/sinimagen.jpg';
+    }else
+    {
+    	$url='../../img/img_estudiantes/'.$datos[0]['Archivo_Foto'];
+    }
+   }else
+   {
+    	$url='../../img/jpg/sinimagen.jpg';
+
+   }
+        $image[0]['url']=$url;
+		$image[0]['x']=150;
+		$image[0]['y']= 50;
+		$image[0]['width']=40;
+		$image[0]['height']=40;
+
+    $this->pdf->cabecera_reporte_colegio($_SESSION['INGRESO']['item'].'_HOJA_DE_MATRICULA_'.$usu,'HOJA DE MATRICULA',utf8_decode($tablaHtml),$contenido,$image,'','',10,false,$email);
+
+  }
+
+   function exportar_Excel($codigo)
+  {
+    $reporte_Excel = true;
+    $this->modelo->facturas_emitidas_excel($codigo,$reporte_Excel);
+  }
+
+  function exportar_pdf($codigo)
+  {
+    $contenido=false;
+    $image = false;
+    $email = 'false';
+    $mostrar = true;
+    $reporte_Excel=false;
+    $datos = $this->modelo->facturas_emitidas_excel($codigo,$reporte_Excel);
+  
+    $tablaHtml='<table>
+    <tr><td width="20"><b><u>T</u></b></td><td width="20"><b><u>TC</u></b></td><td width="45"><b><u>Serie</u></b></td><td width="70"><b><u>Autorizacion</u></b></td><td width="50"><b><u>Factura</u></b></td><td width="55"><b><u>Fecha</u></b></td><td width="50"><b><u>SubTotal</u></b></td><td width="50"><b><u>Con Iva</u></b></td><td width="40"><b><u>IVA</u></b></td><td width="40"><b><u>Total</u></b></td><td width="40"><b><u>Saldo</u></b></td><td width="75" ><b><u>Ruc</u></b></td><td width="20"><b><u>TB</u></b></td><td width="190"><b><u>Razon social</u></b></td></tr>
+    </table>';
+    foreach ($datos as $key => $value) {
+      $tablaHtml.='<table border="RIGHT"><tr><td width="20">'.$value['T'].'</td><td  width="20">'.$value['TC'].'</td><td  width="45">'.$value['Serie'].'</td><td width="70">'.$value['Autorizacion'].'</td><td width="50">'.$value['Factura'].'</td><td width="55">'.$value['Fecha']->format('Y-m-d').'</td><td width="50"  ALIGN="RIGHT">'.$value['SubTotal'].'</td><td width="50"  ALIGN="RIGHT">'.$value['Con_IVA'].'</td><td width="40"  ALIGN="RIGHT">'.$value['IVA'].'</td><td width="40"  ALIGN="RIGHT">'.$value['Total'].'</td><td width="40"  ALIGN="RIGHT">'.$value['Saldo'].'</td><td width="75">'.$value['RUC_CI'].'</td><td  width="20">'.$value['TB'].'</td><td width="190">'.$value['Razon_Social'].'</td></tr>
+    </table>';
+    }
+   // $tablaHtml.='';
+
+    $this->pdf->cabecera_reporte_colegio('Facturas_emitidas','Factura Emitida',utf8_decode($tablaHtml),$contenido,$image,'','',7,$mostrar,$email);
+
+  }
+
+
+  function enviar_email_($usu,$pass,$nuevo)
+  {
+  	
+  	$datos = $this->modelo->login($usu,$pass,$nuevo);  
+    $empresaGeneral = array_map(array($this, 'encode1'), $this->empresaGeneral);
+   // print_r($empresaGeneral);
+    
+  	$archivos=array($_SESSION['INGRESO']['item'].'_HOJA_DE_MATRICULA_'.$usu.'.pdf',$_SESSION['INGRESO']['item'].'_HOJA_DE_REGISTRO_'.$usu.'.pdf',$_SESSION['INGRESO']['item'].'_ACTA_DE_MATRICULA_'.$usu.'.pdf');
+    $archivosC = array($_SESSION['INGRESO']['item'].'_HOJA_DE_MATRICULA_'.$usu.'.pdf');
+     $tipos = array('jpg','png','jpeg','gif','pdf');
+    foreach ($tipos as $key => $value) {
+     if(file_exists('../vista/TEMP/'.$datos[0]['CI_RUC'].'_rep.'.$value))
+      {
+           //return 'existe';
+           array_push($archivos,$datos[0]['CI_RUC'].'_rep.'.$value);
+      }
+      if(file_exists('../vista/TEMP/'.$_SESSION['INGRESO']['item'].'_'.$datos[0]['CI_RUC'].'_pago.'.$value))
+      {
+           //return 'existe';
+          // array_push($archivos,$_SESSION['INGRESO']['item'].'_'.$datos[0]['CI_RUC'].'_pago.'.$value);
+           array_push($archivosC,$_SESSION['INGRESO']['item'].'_'.$datos[0]['CI_RUC'].'_pago.'.$value);
+      }
+    }
+
+  
+  	//$correo='ejfc19omoshiroi@gmail.com,ejfc_omoshiroi@hotmail.com';
+  	$cuerpo_correo = 'Gracias por registrarse en la institucion';
+  	$titulo_correo = 'Documentos de matricula';
+  	$correo_apooyo="info@diskcoversystem.com";
+  	$nombre = "Secretaria";
+    $nombre1 = "Colecturia";
+    $email_conexion = $empresaGeneral[0]['Email_Conexion'];
+    $email_pass =  $empresaGeneral[0]['Email_Contraseña'];
+  	$correo1= $datos[0]['Email_R'].','.$datos[0]['Email_M'].','.$datos[0]['Email_P'];
+    //print_r($correo1);
+    //print_r($email_conexion);
+    // print_r($this->empresa);die();
+
+  	$this->email->enviar_email($archivos,$correo1,$cuerpo_correo,$titulo_correo,$correo_apooyo,$nombre,$email_conexion,$email_pass);
+     
+  	  $correo2 = $this->empresa[0]['Mail_Colegio'].',ejfc_omoshiroi@hotmail.com';
+
+   // print_r($correo2);
+  	// if(
+  		$this->email->enviar_email($archivos,$correo2,$cuerpo_correo,$titulo_correo,$correo_apooyo,$nombre,$email_conexion,$email_pass);
+    // {
+
+      //datos para colecturai
+      $correo3 = $empresaGeneral[0]['Email_Contabilidad'].',ejfc_omoshiroi@hotmail.com,ejfc19omoshiroi@gmail.com';
+
+    //print_r($correo3);
+      return $this->email->enviar_email($archivosC,$correo3,$cuerpo_correo,$titulo_correo,$correo_apooyo,$nombre1,$email_conexion,$email_pass);
+
+    // }
+
+  }
+
+    function encode1($arr) {
+  $new = array(); 
+    foreach($arr as $key => $value) {
+      //echo is_array($value);
+      if(!is_object($value))
+      {
+      if($key=='Archivo_Foto')
+      {
+          if (!file_exists('../../img/img_estudiantes/'.$value)) 
+          {
+            $value='';
+            //$new[utf8_encode($key)] = utf8_encode($value);
+            $new[$key] = $value;
+          } 
+         } 
+
+         if($value == '.')
+         {
+
+         $new[$key] = '';
+         }else{
+
+          //$new[utf8_encode($key)] = utf8_encode($value);
+          $new[$key] = $value;
+         }
+        }else
+        {
+          //print_r($value);
+          $new[$key] = $value->format('Y-m-d');          
+        }
+
+     }
+     return $new;
+    }
+
+  function ver_fac_pdf($cod,$ser,$ci)
+  {
+    $this->modelo->pdf_factura($cod,$ser,$ci);
+  }
+
+  function nueva_matricula($usuario)
+  {
+     $datos[0]['campo']='Codigo';
+     $datos[0]['dato']=$usuario;
+     $datos[1]['campo']='T';
+     $datos[1]['dato']='N';
+     return  insert_generico("Clientes_Matriculas",$datos);
+
+  }
+
+
+}
+//while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
+?>

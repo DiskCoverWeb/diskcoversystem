@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<factura id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>2</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>SOONTECH S.A.S.</razonSocial>
+    <nombreComercial>SOONTECH S.A.S.</nombreComercial>
+    <ruc>1793150039001</ruc>
+    <claveAcceso>1603202201179315003900120010010000000191234567815</claveAcceso>
+    <codDoc>01</codDoc>
+    <estab>001</estab>
+    <ptoEmi>001</ptoEmi>
+    <secuencial>000000019</secuencial>
+    <dirMatriz>LUIS LOPEZ OE755 Y AV. MARISCAL SUCRE</dirMatriz>
+  </infoTributaria>
+  <infoFactura>
+    <fechaEmision>16/03/2022</fechaEmision>
+    <dirEstablecimiento>LUIS LOPEZ OE755 Y AV. MARISCAL SUCRE</dirEstablecimiento>
+    <obligadoContabilidad>SI</obligadoContabilidad>
+    <tipoIdentificacionComprador>06</tipoIdentificacionComprador>
+    <razonSocialComprador>ABAD JAVIER</razonSocialComprador>
+    <identificacionComprador>0105111538</identificacionComprador>
+    <totalSinImpuestos>23.76</totalSinImpuestos>
+    <totalDescuento>0</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0</descuentoAdicional>
+        <baseImponible>0</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>2</codigoPorcentaje>
+        <descuentoAdicional>0</descuentoAdicional>
+        <baseImponible>23.76</baseImponible>
+        <tarifa>12</tarifa>
+        <valor>3.24</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>0</propina>
+    <importeTotal>30.24</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>30.24</total>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>02.TE.06</codigoPrincipal>
+      <descripcion>FORMATEO LAPTOPS</descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.0000</cantidad>
+      <precioUnitario>27</precioUnitario>
+      <descuento>0</descuento>
+      <precioTotalSinImpuesto>27</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>2</codigoPorcentaje>
+          <tarifa>12</tarifa>
+          <baseImponible>27</baseImponible>
+          <valor>3.24</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">SD</campoAdicional>
+    <campoAdicional nombre="Email">paalguha@gmail.com</campoAdicional>
+  </infoAdicional>
+</factura>

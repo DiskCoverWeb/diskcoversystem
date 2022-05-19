@@ -1,0 +1,34 @@
+span.classy {
+  background-color: DodgerBlue;
+}
+
+
+
+  tbody tr:nth-child(even){ background:#fffff;}
+  tbody tr:nth-child(odd) { background: #e2fbff;}
+  tbody tr:nth-child(even):hover {  background: #DDB;}
+  thead.tbl_style { background: #afd6e2; }
+  tbody tr:nth-child(odd):hover {  background: #DDA;}
+  table.tbl_style { border-collapse: collapse;}
+  table, th, td{  border: solid 1px #aba0a0;  padding: 2px;  }
+  tbody { box-shadow: 10px 10px 6px rgba(0, 0, 0, 0.6);  }
+  thead { background: #afd6e2;  box-shadow: 10px 0px 6px rgba(0, 0, 0, 0.6);} 
+  /*#datos_t thead,tbody tr {    display:table;  width:100%;  table-layout:fixed; } */
+  /*thead.tbl_style { width: calc( 100% - 1.2em ) scrollbar is average 1em/16px width, remove it from thead width }*/
+
+
+
+
+  /*#tbl_style tbody tr:nth-child(even) { background:#fffff;}*/
+  /*#tbl_style tbody tr:nth-child(odd) { background: #e2fbff;}*/
+  /*#tbl_style tbody tr:nth-child(even):hover {  background: #DDB;}*/
+  /*#tbl_style thead { background: #afd6e2; }*/
+  /*#tbl_style tbody tr:nth-child(odd):hover {  background: #DDA;}*/
+  /*#tbl_style table {border-collapse: collapse;}*/
+  /*#tbl_style table, th, td {  border: solid 1px #aba0a0;  padding: 2px;  }*/
+  /*#tbl_style tbody { box-shadow: 10px 10px 6px rgba(0, 0, 0, 0.6);  }*/
+  /*#tbl_style thead { background: #afd6e2;  box-shadow: 10px 0px 6px rgba(0, 0, 0, 0.6);} */
+
+  /*#datos_t tbody { display:block; height:300px;  overflow-y:auto; width:fit-content;}
+  /*#datos_t thead,tbody tr {    display:table;  width:100%;  table-layout:fixed; } */
+  /*#tbl_style thead { width: calc( 100% - 1.2em ) scrollbar is average 1em/16px width, remove it from thead width }*/
