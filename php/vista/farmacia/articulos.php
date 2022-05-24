@@ -501,6 +501,7 @@
       $('#txt_existencias').val(datos[9]);
       $('#txt_ubicacion').val(datos[7]);
       $('#txt_precio_ref').val(datos[3]);
+      $('#txt_unidad').val(datos[6]);
       if(datos[8]==0)
       {
         $('#rbl_no').prop('checked',true);
@@ -708,26 +709,41 @@
        $('#txt_email').val('');
      }
    }
+   function cargar_datos_prov()
+   {
+     var pro = $('#ddl_proveedor option:selected').text();
+     $('#lbl_nom_comercial').text(pro);
+   }
+
+   function abrir_modal()
+   {
+     $('#Nuevo_producto"').modal('show');
+   }
 </script>
   <div class="row">
     <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-            <a  href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0].'#');?>" title="Salir de modulo" class="btn btn-default">
+            <a  href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0].'#');?>" title="Salir de modulo" class="btn btn-default" data-toggle="tooltip">
               <img src="../../img/png/salire.png">
             </a>
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-          <a href="./farmacia.php?mod=Farmacia&acc=pacientes&acc1=Visualizar%20paciente&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_pdf" title="Pacientes">
+             <button type="button" class="btn btn-default" data-toggle="tooltip" title="Nuevo articulo" onclick=" abrir_modal()">
+               <img src="../../img/png/add_articulo.png">
+            </button>          
+        </div>
+        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
+          <a href="./farmacia.php?mod=Farmacia&acc=pacientes&acc1=Visualizar%20paciente&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_pdf" title="Pacientes" data-toggle="tooltip">
             <img src="../../img/png/pacientes.png">
           </a>           
         </div>
        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-          <a href="./farmacia.php?mod=Farmacia&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_excel" title="Descargos">
+          <a href="./farmacia.php?mod=Farmacia&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_excel" title="Descargos" data-toggle="tooltip">
             <img src="../../img/png/descargos.png">
           </a>         
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-          <a href="./farmacia.php?mod=Farmacia&acc=articulos&acc1=Visualizar%20articulos&b=1&po=subcu#" title="Ingresar Articulosr"  class="btn btn-default" onclick="">
+          <a href="./farmacia.php?mod=Farmacia&acc=articulos&acc1=Visualizar%20articulos&b=1&po=subcu#" title="Ingresar Articulosr"  class="btn btn-default" onclick="" data-toggle="tooltip">
             <img src="../../img/png/articulos.png" >
           </a>
         </div>     
@@ -748,20 +764,24 @@
             <div class="col-sm-4">
               <b>Proveedor:</b>
               <div class="input-group"> 
-                  <select class="form-control input-sm" id="ddl_proveedor" name="ddl_proveedor">
+                  <select class="form-control input-sm" id="ddl_proveedor" name="ddl_proveedor" onchange="cargar_datos_prov()">
                      <option value="">Seleccione un proveedor</option>
                   </select>             
                    <span class="input-group-addon bg-green" title="Buscar" data-toggle="modal" data-target="#Nuevo_proveedor"><i class="fa fa-plus"></i></span>
               </div>
-            </div>
-            <div class="col-sm-3">
-              <b>Razon social</b>
-              <label>s</label>
-            </div>
-            <div class="col-sm-3">
-              <b>Nombre comercial</b>
-              <label>s</label>
             </div>            
+            <div class="col-sm-3">
+              <b>Nombre comercial</b><br>
+              <label id="lbl_nom_comercial"></label>
+            </div> 
+            <div class="col-sm-1">
+              <b>Serie</b>
+              <input type="text" name="txt_serie" id="txt_serie" class="form-control input-sm" onkeyup="num_caracteres('txt_serie',6)">            
+            </div>
+            <div class="col-sm-2">
+              <b>Numero de factura</b>
+              <input type="text" name="txt_num_fac" id="txt_num_fac" class="form-control input-sm">            
+            </div>           
              <div class="col-sm-2">
               <b>Fecha:</b>
               <input type="date" name="txt_fecha" id="txt_fecha" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" onblur="num_comprobante()">
@@ -785,30 +805,19 @@
                   <option>Seleccione una familia</option>
                 </select>     
            </div>
-        </div>
-        <div class="row">
-            
-            <div class="col-sm-3">
-               <b>Ubicacion</b>
-               <input type="text" name="txt_ubicacion" id="txt_ubicacion" class="form-control input-sm" readonly="">
-            </div>
-            <div class="col-sm-1">
-              <b>Serie</b>
-              <input type="text" name="txt_serie" id="txt_serie" class="form-control input-sm" onkeyup="num_caracteres('txt_serie',6)">            
-            </div>
-            <div class="col-sm-2">
-              <b>Numero de factura</b>
-              <input type="text" name="txt_num_fac" id="txt_num_fac" class="form-control input-sm">            
-            </div>
-            <div class="col-sm-2">
+           <div class="col-sm-1">
+            <b>Unidad</b>
+            <input type="" name="txt_unidad" id="txt_unidad" class="form-control form-control-sm">             
+           </div>
+           <div class="col-sm-1" style="padding: 0px;">
               <b>Lleva iva</b><br>
               <label class="online-radio"><input type="radio" name="rbl_radio" id="rbl_no" checked="" onchange="calculos()"> No</label>
               <label class="online-radio"><input type="radio" name="rbl_radio" id="rbl_si" onchange="calculos()"> Si</label>            
-            </div>                   
+            </div>   
         </div>
         <div class="row">
             <div class="col-sm-2">
-               <b>Existencias</b>
+               <b>Existente</b>
                   <input type="text" name="txt_existencias" id="txt_existencias" class="form-control input-sm" readonly="">
             </div>
             <div class="col-sm-2">
@@ -841,6 +850,10 @@
                <b>Min</b>
                   <input type="text" name="txt_min_in" id="txt_min_in" class="form-control input-sm" readonly="">
             </div>
+              <div class="col-sm-2">
+               <b>Ubicacion</b>
+               <input type="text" name="txt_ubicacion" id="txt_ubicacion" class="form-control input-sm" readonly="">
+            </div>       
           <div class="col-sm-1">
                <b>Cantidad</b>
                   <input type="text" name="txt_canti" id="txt_canti" class="form-control input-sm"  value="1" onblur="calculos()">
@@ -849,8 +862,8 @@
                <b>Precio</b>
                   <input type="text" name="txt_precio" id="txt_precio" class="form-control input-sm"  value="0" onblur="calculos()">
             </div>
-            <div class="col-sm-2">
-               <b>Precio Ref</b>
+            <div class="col-sm-1">
+               <b>Pvp Ref</b>
                   <input type="text" name="txt_precio_ref" id="txt_precio_ref" class="form-control input-sm"  value="0" readonly="">
             </div>
             <div class="col-sm-1">
@@ -875,9 +888,8 @@
             
           </div>
           <div class="col-sm-5 text-right" style="padding-left: 0px"><br>
-               <button type="button" class="btn btn-info" onclick="agregar()"><i class="fa fa-plus"></i> Agregar a ingreso</button>                
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#Nuevo_producto"><i class="fa fa-plus"></i> Nuevo articulo</button>
-                <button type="button" class="btn btn-primary" onclick="limpiar()"><i class="fa fa-paint-brush"></i> Limpiar</button>
+               <button type="button" class="btn btn-primary" onclick="agregar()"><i class="fa fa-plus"></i> Agregar a ingreso</button>
+                <button type="button" class="btn btn-default" onclick="limpiar()"><i class="fa fa-paint-brush"></i> Limpiar</button>
             </div>
         </div>
         <input type="hidden" id="A_No" name ="A_No" value="0">

@@ -436,10 +436,10 @@ function provincias()
       });
 
    }
-
-
-
-	
+  function abrir_modal()
+   {
+     $('#Nuevo_producto').modal('show');
+   }	
 </script>
  <div class="row"><br>
     <div class="col-lg-7 col-sm-10 col-md-6 col-xs-12">
@@ -447,6 +447,11 @@ function provincias()
             <a  href="./farmacia.php?mod=Farmacia#" title="Salir de modulo" class="btn btn-default">
               <img src="../../img/png/salire.png">
             </a>
+        </div>
+        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
+             <button type="button" class="btn btn-default" data-toggle="tooltip" title="Nuevo articulo" onclick="abrir_modal()">
+               <img src="../../img/png/add_articulo.png">
+            </button>          
         </div>
        <!--  <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
           <a href="./farmacia.php?mod=Farmacia&acc=pacientes&acc1=Visualizar%20paciente&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_pdf" title="Pacientes">
@@ -468,8 +473,11 @@ function provincias()
 
 <div class="row">
 	<div class="col-sm-12">
-		<div class="box">
-			<div class="row box-body">
+		<div class="panel panel-primary">
+      <div class="panel-heading text-center">
+        <b>Catalogo De Productos</b>
+      </div>
+			<div class="panel-body">
 				<div class="col-sm-3">
 					<b>Referencia</b>
 					<div class="input-group"> 
@@ -510,9 +518,9 @@ function provincias()
 					</select> -->
 				</div>				
 				<div class="col-sm-7 text-right"><br>
-					<button class="btn btn-primary btn-sm">Limpiar</button>
-					<button class="btn btn-primary btn-sm">Buscar</button>
-					<button class="btn btn-primary btn-sm" onclick="$('#Nuevo_producto').modal('show')">Nuevo Articulo</button>
+					<!-- <button class="btn btn-primary btn-sm">Limpiar</button> -->
+					<!-- <button class="btn btn-primary btn-sm">Buscar</button> -->
+					<!-- <button class="btn btn-primary btn-sm" onclick="$('#Nuevo_producto').modal('show')">Nuevo Articulo</button> -->
 				</div>	
 			</div>						
 		</div>

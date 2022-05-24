@@ -348,8 +348,11 @@ function provincias()
 
 <div class="row">
 	<div class="col-sm-12">
-		<div class="box">
-			<div class="row box-body">
+		<div class="panel panel-primary">
+      <div class="panel-heading text-center">
+        <b>Proveedor Bodega</b>
+      </div>
+			<div class="panel-body">
 				<div class="col-sm-5">
 					<b>Nombre</b>
 
@@ -397,23 +400,18 @@ function provincias()
 				</div>		 -->
 				<div class="col-sm-3 text-right">
 					<br>
-					<button class="btn btn-primary btn-sm" onclick="guardar_cliente()">Guardar</button>
-				</div>		
-			</div>
-			<!-- <div class="row">
-				<div class="col-sm-12 text-right">
-					<button class="btn btn-primary btn-sm">Guardar</button>
+					<button class="btn btn-primary btn-sm" onclick="guardar_cliente()"><i class="fa fa-save"></i> Guardar</button>
 				</div>
-			</div> -->
+        <div class="col-sm-6">
+          <b>Buscar</b>
+          <input type="text" name="txt_query" id="txt_query" class="form-control form-control-sm" onkeyup="lista_proveedores()" placeholder="Ingrese nombre">
+        </div>		
+			</div>
+      	
 		</div>
 	</div>
 </div>
-<div class="row">
-	<div class="col-sm-4">
-		<b>Buscar</b>
-		<input type="text" name="txt_query" id="txt_query" class="form-control form-control-sm" onkeyup="lista_proveedores()">
-	</div>
-</div>
+
 <div class="row">
 	<div class="col-sm-12">
 		<div class="box">

@@ -24,6 +24,7 @@
         'desde':desde,
         'hasta':$('#txt_hasta').val(),
         'busfe':f,
+        'area':$('#txt_area').val(),
         'nega':$('#rbl_negativos').prop('checked'),
       }    
      // console.log(parametros);
@@ -474,14 +475,19 @@ function reporte_pdf_nega()
             <b>Procedimiento</b>
             <input type="text" name="" class="form-control input-sm" name="txt_procedimiento" id="txt_procedimiento">
           </div>          
+        </div>
+        <div class="row">
+          <div class="col-sm-12 text-right">
+            <button type="button" class="btn btn-primary" onclick="limpiar()"><i class="fa fa-paint-brush"></i> Limpiar</button>
+            <button type="button" class="btn btn-success" onclick="nuevo_pedido()"><i class="fa fa-plus"></i> Nuevo Descargos</button>
+          </div> 
         </div>        
       </div>
     </div>
   </div>
   <div class="col-sm-12">
-      <div class="col-sm-8"> 
         <form method="post" id="filtro_bus" enctype="multipart/form-data">
-          <div class="col-sm-6">
+          <div class="col-sm-5">
              <label class="radio-inline"><input type="radio" name="rbl_buscar" id="rbl_nombre" checked="" value="N"> Nombre</label>
              <label class="radio-inline"><input type="radio" name="rbl_buscar" id="rbl_ruc" value="C"> CI / RUC</label>
              <label class="radio-inline"><input type="radio" name="rbl_buscar" id="rbl_pedido" value="P"> Pedido</label>
@@ -489,23 +495,24 @@ function reporte_pdf_nega()
             <b>NOMBRE DE PACIENTE</b>
             <input type="text" name="txt_query" id="txt_query" class="form-control form-control-sm" placeholder="Nombre paciente" onkeyup="cargar_pedidos()">
           </div>
-          <div class="col-sm-3">
+          <div class="col-sm-2">
             <br>
             <b>FECHA INICIO</b>
             <input type="date" name="txt_desde" id="txt_desde" class="form-control form-control-sm" value="<?php echo date('Y-m-d')?>" onblur="cargar_pedidos('f');cargar_pedidos_detalle('f')">
           </div>
-          <div class="col-sm-3">
+          <div class="col-sm-2">
             <br>
             <b>FECHA FIN</b>
             <input type="date" name="txt_hasta" id="txt_hasta" class="form-control form-control-sm" value="<?php echo date('Y-m-d')?>" onblur="cargar_pedidos('f');cargar_pedidos_detalle('f')">
           </div>
+          <div class="col-sm-3">
+            <br>
+            <b>Area de descargo</b>
+            <input type="text" name="txt_area" id="txt_area" class="form-control form-control-sm" value="" onkeyup="cargar_pedidos('f');cargar_pedidos_detalle('f')">
+          </div>
+
           <input type="hidden" name="txt_tipo_filtro" id="txt_tipo_filtro" value=""> 
-        </form>        
-      </div>
-      <div class="col-sm-4 text-right">
-        <button type="button" class="btn btn-primary" onclick="limpiar()"><i class="fa fa-paint-brush"></i> Limpiar</button>
-        <button type="button" class="btn btn-success" onclick="nuevo_pedido()"><i class="fa fa-plus"></i> Nuevo Descargos</button>
-      </div> 
+        </form>      
   </div>
   <div class="col-sm-12">
     <ul class="nav nav-tabs">

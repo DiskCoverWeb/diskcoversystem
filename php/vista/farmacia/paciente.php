@@ -454,9 +454,9 @@
      </div> 
      <div class="col-sm-6">
         <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick=" limpiar()"><i class="fa fa-paint-brush"></i> Limpiar</button>
-        <button type="button" class="btn btn-success" id="btn_nu" onclick="nuevo_paciente()"><i class="fa fa-plus"></i> Nuevo cliente</button>
-        <button type="button" class="btn btn-default"><i class="fa fa-print"></i> Imprimirr</button>
+        <button type="button" class="btn btn-primary" id="btn_nu" onclick="nuevo_paciente()"><i class="fa fa-user-plus"></i> Nuevo cliente</button>
+        <button type="button" class="btn btn-default" onclick=" limpiar()"><i class="fa fa-paint-brush"></i> Limpiar</button>
+        <!-- <button type="button" class="btn btn-default"><i class="fa fa-print"></i> Imprimirr</button> -->
       </div>
      </div>             
   </div>

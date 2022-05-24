@@ -19,7 +19,7 @@ class descargosM
 	   $this->conn1 = new db();
 	}
 
-	function pedido_paciente($codigo_b=false,$tipo=false,$query=false,$desde=false,$hasta =false,$busfe=false)
+	function pedido_paciente($codigo_b=false,$tipo=false,$query=false,$desde=false,$hasta =false,$busfe=false,$area =false)
 	{
 
 		$cid = $this->conn;
@@ -48,6 +48,10 @@ class descargosM
 		if($busfe)
 		{		
 			  $sql.=" AND A.Fecha BETWEEN '".$desde."' and '".$hasta."'";
+		}
+		if($area)
+		{
+			$sql.=" AND CS.Detalle like '%".$area."%'";
 		}
 
 		$sql.=" GROUP BY Orden_No ,Codigo_P,A.Fecha,C.Cliente,A.CodigoL,CS.Detalle,C.Matricula,A.Detalle ORDER BY A.Fecha DESC";
@@ -319,7 +323,7 @@ class descargosM
        return $datos;
 	}
 
-	function pedido_paciente_distintos($codigo_b=false,$tipo=false,$query=false,$desde=false,$hasta =false,$busfe=false)
+	function pedido_paciente_distintos($codigo_b=false,$tipo=false,$query=false,$desde=false,$hasta =false,$busfe=false,$area=false)
 	{
 
 		$cid = $this->conn;
@@ -328,6 +332,8 @@ class descargosM
 			LEFT JOIN Clientes C ON A.Codigo_P = C.CI_RUC 
 			LEFT JOIN Catalogo_SubCtas CS ON CS.Codigo = A.CodigoL 
 			WHERE 1=1
+			AND A.Item = '".$_SESSION['INGRESO']['item']."'
+			AND A.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 			AND A.Item = CS.Item
 			AND A.Periodo = CS.Periodo
 			AND Numero = 0
@@ -351,6 +357,10 @@ class descargosM
 		if($busfe)
 		{		
 			  $sql.=" AND A.Fecha BETWEEN '".$desde."' and '".$hasta."'";
+		}
+		if($area)
+		{
+			$sql.=" AND CS.Detalle like '%".$area."%' ";
 		}
 
 		$sql.=" GROUP BY Orden_No ,Codigo_P,C.Cliente,A.CodigoL,CS.Detalle,C.Matricula,A.Detalle ORDER BY Orden_No DESC ";

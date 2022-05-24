@@ -536,7 +536,7 @@ class articulosC
 		   $datos[1]['campo']='PRODUCTO';
 		   $datos[1]['dato']=$producto[5];
 		   $datos[2]['campo']='UNIDAD';
-		   $datos[2]['dato']=$producto[6];
+		   $datos[2]['dato']=$parametro['txt_unidad']; 
 		   $datos[3]['campo']='CANT_ES';
 		   $datos[3]['dato']=$parametro['txt_canti'];
 		   $datos[4]['campo']='CTA_INVENTARIO';
@@ -596,6 +596,10 @@ class articulosC
 
 		   $datos[24]['campo']='P_DESC';
 		   $datos[24]['dato']=$val_descto; 
+
+		   // $datos[25]['campo']='UNIDAD';
+		   // $datos[25]['dato']=$parametro['txt_unidad']; 
+
 		   // print_r($parametro);
 
 // print_r($datos);die();

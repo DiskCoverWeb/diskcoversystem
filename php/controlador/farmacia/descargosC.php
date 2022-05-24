@@ -270,7 +270,7 @@ class ingreso_descargosC
 	    }
 	   }
 		// print_r($parametros);die();
-		$datos = $this->modelo->pedido_paciente($parametros['codigo'],$parametros['tipo'],$parametros['query'],$parametros['desde'],$parametros['hasta'],$parametros['busfe']);
+		$datos = $this->modelo->pedido_paciente($parametros['codigo'],$parametros['tipo'],$parametros['query'],$parametros['desde'],$parametros['hasta'],$parametros['busfe'],$parametros['area']);
 		$tr='';
 		// print_r($nega);die();		
 		foreach ($datos as $key => $value) {			
@@ -407,7 +407,7 @@ class ingreso_descargosC
   	    $desde = str_replace('-','',$parametros['txt_desde']);
 		$hasta = str_replace('-','',$parametros['txt_hasta']);
 
-		$datos = $this->modelo->pedido_paciente_distintos(false,$parametros['rbl_buscar'],$parametros['txt_query'],$parametros['txt_desde'],$parametros['txt_hasta'],$parametros['txt_tipo_filtro']);
+		$datos = $this->modelo->pedido_paciente_distintos(false,$parametros['rbl_buscar'],$parametros['txt_query'],$parametros['txt_desde'],$parametros['txt_hasta'],$parametros['txt_tipo_filtro'],$parametros['txt_area']);
 
 
 		$titulo = 'D E S C A R G O S  R E A L I Z A D O S';
@@ -698,7 +698,7 @@ class ingreso_descargosC
 	 $Fechaini = $parametros['txt_desde'] ;//str_replace('-','',$parametros['Fechaini']);
      $Fechafin = $parametros['txt_hasta']; //str_replace('-','',$parametros['Fechafin']);
 		
-	 $datos = $this->modelo->pedido_paciente_distintos(false,$parametros['rbl_buscar'],$parametros['txt_query'],$parametros['txt_desde'],$parametros['txt_hasta'],$parametros['txt_tipo_filtro']);
+	 $datos = $this->modelo->pedido_paciente_distintos(false,$parametros['rbl_buscar'],$parametros['txt_query'],$parametros['txt_desde'],$parametros['txt_hasta'],$parametros['txt_tipo_filtro'],$parametros['txt_area']);
 
 	 $registros = array();
 	 $reg_fecha = array();
