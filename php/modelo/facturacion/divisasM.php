@@ -94,12 +94,23 @@ class divisasM
     return $stmt;
   }
 
+
+
   public function getClientes($query){
-    $sql="SELECT C.Email,C.T,C.Codigo,C.Cliente,C.Direccion,C.Grupo,C.Telefono,C.CI_RUC,C.TD FROM Clientes As C
-          WHERE Cliente LIKE '%".$query."%' 
-          GROUP BY C.Email, C.T,C.Codigo,C.Cliente,C.Direccion,C.Grupo,C.Telefono,C.CI_RUC,C.TD 
+    $sql="SELECT C.Email,C.T,C.Codigo,C.Cliente,C.Direccion,C.Grupo,C.Telefono,C.CI_RUC,C.TD 
+          FROM Clientes As C
+          WHERE 1=1 ";
+          if(!is_numeric($query))
+          {
+            $sql.=" AND Cliente LIKE '%".$query."%' ";
+          }else
+          {
+            $sql.=" AND CI_RUC LIKE '".$query."%'";
+          } 
+          $sql.="GROUP BY C.Email, C.T,C.Codigo,C.Cliente,C.Direccion,C.Grupo,C.Telefono,C.CI_RUC,C.TD 
           ORDER BY C.Cliente 
           OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY";
+          // print_r($sql);die();
     $stmt = $this->db->datos($sql);
     return $stmt;
   }

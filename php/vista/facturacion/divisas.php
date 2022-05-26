@@ -538,7 +538,7 @@ function aceptar(){
   {
    var option ="<option value=''>Seleccione provincia</option>"; 
      $.ajax({
-      url: '../controlador/detalle_estudianteC.php?provincias=true',
+      url: '../controlador/educativo/detalle_estudianteC.php?provincias=true',
       type:'post',
       dataType:'json',
      // data:{usu:usu,pass:pass},
@@ -666,9 +666,12 @@ function validador_correo()
 
 
 </script>
-<div class="container" id="container1">
+<div class="" id="container1">
   <div class="row">
     <div class="panel panel-primary">
+      <div class="panel-heading text-center">
+        <b>Compra y venta de divisas</b>
+      </div>
       <div class="panel-body">
         <div class="row">
           <div class="col-sm-2">
@@ -737,7 +740,7 @@ function validador_correo()
             <label>Cantidad <label id="tipo_p"></label> </label>
             <input type="text" name="cantidad" id="cantidad" value="0.00" class="form-control input-sm text-right" onblur="$('#tipo_cal').val('T')">
           </div>
-          <div class=" col-sm-2">
+          <div class=" col-sm-3">
               <a title="Calcular" class="btn btn-default" tabindex="22" id="btn_cal">
                 <img src="../../img/png/calculadora.png" width="25" height="30" onclick="calcular();">
               </a>

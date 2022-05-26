@@ -120,7 +120,7 @@ class divisasC
     $datos = $this->modelo->getClientes($query);
     $clientes = [];
     foreach ($datos as $key => $value) {
-      $clientes[] = array('id'=>$value['Cliente'],'text'=>utf8_encode($value['Cliente']),'data'=>array('email'=> $value['Email'],'direccion' => utf8_encode($value['Direccion']), 'telefono' => utf8_encode($value['Telefono']), 'ci_ruc' => utf8_encode($value['CI_RUC']), 'codigo' => utf8_encode($value['Codigo']), 'cliente' => utf8_encode($value['Cliente']), 'grupo' => utf8_encode($value['Grupo']), 'tdCliente' => utf8_encode($value['TD'])));
+      $clientes[] = array('id'=>$value['Cliente'],'text'=>$value['Cliente'].': '.$value['CI_RUC'],'data'=>array('email'=> $value['Email'],'direccion' =>$value['Direccion'], 'telefono' =>$value['Telefono'], 'ci_ruc' =>$value['CI_RUC'], 'codigo' =>$value['Codigo'],'cliente' => $value['Cliente'], 'grupo'=>$value['Grupo'], 'tdCliente' =>$value['TD']));
     }
     return $clientes;
   }

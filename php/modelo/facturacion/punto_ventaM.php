@@ -17,9 +17,15 @@ class punto_ventaM
   	  $sql= "SELECT TOP 100 Cliente,Codigo,CI_RUC,TD,Grupo,Email,T 
         FROM Clientes 
         WHERE Cliente <> '.' 
-        AND FA <> 0 
-        AND Cliente LIKE '%".$query."%' 
-        UNION 
+        AND FA <> 0 ";
+        if(!is_numeric($query))
+        {
+          $sql.=" AND Cliente LIKE '%".$query."%'";
+        }else
+        {
+          $sql.=" AND CI_RUC LIKE '".$query."%'";
+        } 
+        $sql.=" UNION 
         SELECT Cliente,Codigo,CI_RUC,TD,Grupo,Email,T 
         FROM Clientes 
         WHERE Codigo = '9999999999' 

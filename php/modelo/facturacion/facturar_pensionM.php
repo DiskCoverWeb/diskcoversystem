@@ -24,14 +24,18 @@ class facturar_pensionM
     {
       $sql.=" AND C.Codigo = '".$ruc."'";
     }
-		if($query != 'total' and $query!='')
+		if($query != 'total' and $query!='' and !is_numeric($query) )
 		{
 		  $sql.=" AND Cliente LIKE '%".$query."%'";
-		}
+		}else
+    {
+       $sql.=" AND C.CI_RUC LIKE '".$query."%'";
+    }
 		$sql.=" GROUP BY C.Email, C.T,C.Codigo,C.Cliente,C.Direccion,C.Grupo,C.Telefono,C.CI_RUC,C.TD,DireccionT ORDER BY C.Cliente";
     if ($query != 'total') {
       $sql .= " OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY";
     }
+    // print_r($sql);die();
     $stmt = $this->db->datos($sql);
     return $stmt;
   }

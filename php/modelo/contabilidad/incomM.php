@@ -25,9 +25,12 @@ class incomM
 		$sql="SELECT TOP 25 Cliente AS nombre, CI_RUC as id, email
 		   FROM Clientes 
 		   WHERE T <> '.' ";
-		   if($query != '')
+		   if($query != '' and !is_numeric($query))
 		   {
 		   	$sql.=" AND Cliente LIKE '%".$query."%'";
+		   }else
+		   {
+		   		$sql.=" AND CI_RUC like '".$query."%'";
 		   }
 		  $sql.=" ORDER BY Cliente";
 		  // print_r($sql);die();

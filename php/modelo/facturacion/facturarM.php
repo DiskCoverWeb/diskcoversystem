@@ -87,13 +87,12 @@ class facturarM
          FROM Clientes
          WHERE FA <> 0
          AND T = 'N' ";
-      if($query)
+      if(!is_numeric($query))
       {
-        $sql.=" AND Cliente = '".$grupo."' ";
-      }
-      if($ci)
+        $sql.=" AND Cliente LIKE '%".$query."%'";
+      }else
       {
-         $sql.=" AND Cliente = '".$grupo."' ";
+        $sql.=" AND CI_RUC like '".$query."%'";
       }
     if($grupo <> G_NINGUNO )
       {
