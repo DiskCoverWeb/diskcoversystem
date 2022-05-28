@@ -87,8 +87,12 @@ if (isset($_GET['eliminar_asientos_k'])) {
 if (isset($_GET['stock_kardex'])) {
 	echo json_encode($controlador->stock_kardex($_POST['id']));
 }
-if (isset($_GET['costo_venta'])) {
-	echo json_encode($controlador->costo_venta($_POST['id']));
+// if (isset($_GET['costo_venta'])) {
+// 	echo json_encode($controlador->costo_venta($_POST['id']));
+// }
+
+if (isset($_GET['costo_existencias'])) {
+	echo json_encode($controlador->costo_existencias($_POST['codigoInv']));
 }
 
 if (isset($_GET['codmarca'])) {
@@ -102,7 +106,8 @@ if (isset($_GET['generar_comprobante'])) {
 	echo json_encode($controlador->generar_factura($fecha));
 }
 if (isset($_GET['mayorizar'])) {
-	echo json_encode($controlador->mayorizar());
+	 $parametros = $_POST['parametros'];
+	echo json_encode($controlador->mayorizar($parametros));
 }
 
 if (isset($_GET['validar_presupuesto'])) {
@@ -576,48 +581,7 @@ function ingresar_trans_kardex_salidas($comprobante,$fechaC)
 		     {
 		     	$resp = 0;
 		     }
-		 //    if($value['Consumos']<>0)
-			// {
-		 //        $datos1[0]['campo'] ='Codigo_Inv';
-		 //        $datos1[0]['dato'] =$value['CODIGO_INV']; 
-		 //        $datos1[1]['campo'] ='Fecha';
-		 //        $datos1[1]['dato'] =$fechaC; 
-		 //        $datos1[2]['campo'] ='Numero';
-		 //        $datos1[2]['dato'] =$comprobante;  
-		 //        $datos1[3]['campo'] ='T';
-		 //        $datos1[3]['dato'] ='N'; 
-		 //        $datos1[4]['campo'] ='TP';
-		 //        $datos1[4]['dato'] ='CD'; 
-		 //        $datos1[5]['campo'] ='Codigo_P';
-		 //        $datos1[5]['dato'] =$_SESSION['INGRESO']['CodigoU']; 
-		 //        $datos1[6]['campo'] ='Cta_Inv';
-		 //        $datos1[6]['dato'] =$value['CTA_INVENTARIO']; 
-		 //        $datos1[7]['campo'] ='Contra_Cta';
-		 //        $datos1[7]['dato'] =$value['CONTRA_CTA']; 
-		 //        $datos1[8]['campo'] ='Periodo';
-		 //        $datos1[8]['dato'] =$_SESSION['INGRESO']['periodo']; 
-		 //        $datos1[9]['campo'] ='Salida';
-		 //        $datos1[9]['dato'] =$value['Consumos']; 
-		 //        $datos1[10]['campo'] ='Valor_Unitario';
-		 //        $datos1[10]['dato'] =round($value['VALOR_UNIT'],2); 
-		 //        $datos1[11]['campo'] ='Valor_Total';
-		 //        $datos1[11]['dato'] =round($value['Consumos']*$value['VALOR_UNIT'],2); 
-		 //        $datos1[12]['campo'] ='Costo';
-		 //        $datos1[12]['dato'] =round($value['VALOR_UNIT'],2); 
-		 //        $datos1[13]['campo'] ='Total';
-		 //        $datos1[13]['dato'] =round($value['Consumos']*$value['VALOR_UNIT'],2);
-		 //        $datos1[14]['campo'] ='Existencia';
-		 //        $datos1[14]['dato'] =intval($cant[2])-intval($value['Consumos'])-intval($value['CANTIDAD']);  
-		 //        $datos1[15]['campo'] ='CodigoU';
-		 //        $datos1[15]['dato'] =$_SESSION['INGRESO']['CodigoU'];
-		 //        $datos1[16]['campo'] ='Item';
-		 //        $datos1[16]['dato'] =$_SESSION['INGRESO']['item'];
-		 //        $datos1[17]['campo'] ='CodBodega';
-		 //        $datos1[17]['dato'] ='01';
-		 //        $datos1[18]['campo'] ='CodigoL';
-		 //        $datos1[18]['dato'] =$value['SUBCTA'];
-			// 	 $this->modelo->insertar_trans_kardex($datos1);
-			// }  
+		
 		}
 
 			return $resp;
@@ -629,27 +593,41 @@ function eliminar_asientos_k()
  	return $resp;
  }
 
- function stock_kardex($id)
- {
- 	 $resp[0]['min'] = 0;
- 	 $resp[0]['max'] = 0;
- 	$resp = $this->modelo->stock_kardex($id);
- 	$datos = $this->modelo->Detalle_producto($id);
- 	if(count($datos)>0)
- 	{
- 	 $resp[0]['min'] = $datos[0]['Minimo'];
- 	 $resp[0]['max'] = $datos[0]['Maximo'];
-  }
+ // function stock_kardex($id)
+ // {
+ // 	 $resp[0]['min'] = 0;
+ // 	 $resp[0]['max'] = 0;
+ // 	$resp = $this->modelo->stock_kardex($id);
+ // 	$datos = $this->modelo->Detalle_producto($id);
+ // 	if(count($datos)>0)
+ // 	{
+ // 	 $resp[0]['min'] = $datos[0]['Minimo'];
+ // 	 $resp[0]['max'] = $datos[0]['Maximo'];
+ //  }
 
- 	// print_r($datos);die();
- 	return $resp;
- }
-  function costo_venta($id)
+ // 	// print_r($datos);die();
+ // 	return $resp;
+ // }
+
+ function costo_existencias($codigo_inv)
  {
- 	$resp = $this->modelo->costo_venta($id);
- 	// print_r($resp);die();
+ 	 $FechaInventario = date('Y-m-d');
+ 	 $CodBodega = '01';
+ 	 $resp = Leer_Codigo_Inv($codigo_inv,$FechaInventario,$CodBodega,$CodMarca='');
+ 	// $resp = $this->modelo->costo_venta($id);
+ 	// // print_r($resp);die();
  	return $resp;
  }
+
+ //  function costo_venta($codigo_inv)
+ // {
+ // 	 $FechaInventario = date('Y-m-d');
+ // 	 $CodBodega = '01';
+ // 	 $resp = Leer_Codigo_Inv($codigo_inv,$FechaInventario,$CodBodega,$CodMarca='');
+ // 	// $resp = $this->modelo->costo_venta($id);
+ // 	// // print_r($resp);die();
+ // 	return $resp;
+ // }
 
  function codmarca()
  {
@@ -834,9 +812,10 @@ function eliminar_asientos_k()
 
 	}
 
-	function mayorizar()
+	function mayorizar($parametro)
 	{
-		return mayorizar_inventario_sp();
+		$fecha = $parametro['fecha'];
+		return mayorizar_inventario_sp($fecha);
 	}
 
 	function validar_presupuesto($parametro)

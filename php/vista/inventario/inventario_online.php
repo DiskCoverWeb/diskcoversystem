@@ -187,8 +187,10 @@ function verificar_cuenta()
      var cod = selec.split(','); 
      console.log(cod);
      $('#txt_codigo_').val(cod[0]);
-     stock_real(cod[0]);
-     costo_venta(cod[0]);
+
+     costo_existencias(cod[0]);
+     // stock_real(cod[0]);
+     // costo_venta(cod[0]);
      $('#txt_uni_').val(cod[1]);
      $('#TC').val(cod[3]);   
      validar_presupuesto(cod[0]);
@@ -1083,68 +1085,99 @@ function datos_asiento_SC_(fecha)
     }
    }
 
-   function stock_real(id)
+
+   function costo_existencias(codigoInv)
    {
-     $.ajax({
-      data:  {id:id},
-      url:   '../controlador/inventario/inventario_onlineC.php?stock_kardex=true',
-      type:  'post',
-      dataType: 'json',
-        success:  function (response) { 
-          console.log(response);
-          if(response[0].stock != null)
-          {
-             if(response[0].stock > response[0].min)
+       $.ajax({
+        data:  {codigoInv:codigoInv},
+        url:   '../controlador/inventario/inventario_onlineC.php?costo_existencias=true',
+        type:  'post',
+        dataType: 'json',
+          success:  function (response) { 
+            // console.log(response);
+            if(response.respueta==true)
             {
-               $('#txt_stock').css('background-color','greenyellow');
+               $('#valor_total').val(parseFloat(response.datos.Costo).toFixed(2));
+               $('#txt_stock').val(response.datos.Stock);
+               if(response.datos.Stock > response.datos.Minimo)
+                {
+                   $('#txt_stock').css('background-color','greenyellow');
+                }else
+                {
+                   $('#txt_stock').css('background-color','coral');
+                }
             }else
             {
-               $('#txt_stock').css('background-color','coral');
+               $('#valor_total').val(0);         
+               $('#txt_stock').val(0);
+             Swal.fire('Este Producto no contiene  Stock','','info').then(function(){$('#ddl_productos_').empty();});
             }
-            $('#txt_stock').val(response[0].stock);
+        }
+      });
+   }
+
+   // function stock_real(id)
+   // {
+   //   $.ajax({
+   //    data:  {id:id},
+   //    url:   '../controlador/inventario/inventario_onlineC.php?stock_kardex=true',
+   //    type:  'post',
+   //    dataType: 'json',
+   //      success:  function (response) { 
+   //        console.log(response);
+   //        if(response[0].stock != null)
+   //        {
+   //           if(response[0].stock > response[0].min)
+   //          {
+   //             $('#txt_stock').css('background-color','greenyellow');
+   //          }else
+   //          {
+   //             $('#txt_stock').css('background-color','coral');
+   //          }
+   //          $('#txt_stock').val(response[0].stock);
 
            
 
-          }else
-          {
-            $('#txt_stock').val(0);
-             Swal.fire(
-            'Este Producto no contiene  Stock',
-            '',
-            'info'
-          ).then(function(){
-            $('#ddl_productos_').empty();
-          });
-             // $('#ddl_productos_').val('').trigger('change');
-          }
-      }
-    });
-   }
-  function costo_venta(id)
-   {
-     $.ajax({
-      data:  {id:id},
-      url:   '../controlador/inventario/inventario_onlineC.php?costo_venta=true',
-      type:  'post',
-      dataType: 'json',
-        success:  function (response) { 
-          // console.log(response);
-          if(response!='')
-          {
-          if(response[0].Costo!= null && response[0].Costo !='')
-          {
-            $('#valor_total').val(response[0].Costo);
-          }else
-          {
-            $('#valor_total').val(0);            
-          }
-        }else
-        {
-          $('#valor_total').val(0);  
-        }
-      }
-    });
-   }
+   //        }else
+   //        {
+   //          $('#txt_stock').val(0);
+   //           Swal.fire(
+   //          'Este Producto no contiene  Stock',
+   //          '',
+   //          'info'
+   //        ).then(function(){
+   //          $('#ddl_productos_').empty();
+   //        });
+   //           // $('#ddl_productos_').val('').trigger('change');
+   //        }
+   //    }
+   //  });
+   // }
+  // function costo_venta(id)
+  //  {
+  //    $.ajax({
+  //     data:  {id:id},
+  //     url:   '../controlador/inventario/inventario_onlineC.php?costo_venta=true',
+  //     type:  'post',
+  //     dataType: 'json',
+  //       success:  function (response) { 
+  //         console.log(response);
+  //         if(response!='')
+  //         {
+  //         if(response[0].Costo!= null && response[0].Costo !='')
+  //         {
+  //           $('#valor_total').val(response[0].Costo);
+  //         }else
+  //         {
+  //           $('#valor_total').val(0);            
+  //         }
+  //       }else
+  //       {
+  //         $('#valor_total').val(0);  
+  //       }
+  //     }
+  //   });
+  //  }
 
  function comprueba_negativos(id){
   //var nu = parseFloat($('#txt_'+id+'_').val());
@@ -1224,8 +1257,13 @@ function proyectos()
 function mayorizar_inventario()
   {
     $('#myModal_espera').modal('show');
+    var fecha = $('#txt_fecha').val();
+    var parametros =  
+    {
+      'fecha':fecha,
+    }
      $.ajax({
-      // data:  {parametros:parametros},
+      data:  {parametros:parametros},
       url:   '../controlador/inventario/inventario_onlineC.php?mayorizar=true',
       type:  'post',
       dataType: 'json',

@@ -164,7 +164,7 @@ function Actualizar_Datos_ATS_SP($Items,$MBFechaI,$MBFechaF,$Numero) //---------
     // print_r($parametros);die();
     $sql = "EXEC sp_Actualizar_Datos_ATS @Item= ?,@Periodo=?,@FechaDesde=?,@FechaHasta=?,@Numero=?";
     $res = $conn->ejecutar_procesos_almacenados($sql,$parametros);
-    print_r($res);die();
+    // print_r($res);die();
     return $res;
 }
 
@@ -187,6 +187,7 @@ function Leer_Datos_Cliente_SP($BuscarCodigo)
 function Leer_Codigo_Inv_SP($BuscarCodigo,$FechaInventario,$CodBodega,$CodMarca,$CodigoDeInv)
 {
 
+  //devuelve datos de sp
     $conn = new db();
     $FechaKardex = $FechaInventario;
     $CodigoDeInv = G_NINGUNO;
@@ -6091,14 +6092,18 @@ function generar_comprobantes($parametros) //revision parece repetida
   //    //  return $respuesta;   
   // }
  
-  function mayorizar_inventario_sp() // optimizado
+  function mayorizar_inventario_sp($fecha=false) // optimizado
   {
     // set_time_limit(1024);
     // ini_set("memory_limit", "-1");
     // $desde = '2019/10/28';
     // $hasta = '2019/11/29';
-      $TipoKardex = '';
-      $fecha = date('Y-m-d');
+      $TipoKardex = '';      
+      $fecha_corte = date('Y-m-d');
+      if($fecha)
+      {
+        $fecha_corte = $fecha;  
+      }
       $_SESSION['INGRESO']['modulo_']='01';
       $conn = new db();
       $parametros = array(
@@ -6108,12 +6113,16 @@ function generar_comprobantes($parametros) //revision parece repetida
       array(&$_SESSION['INGRESO']['modulo_'], SQLSRV_PARAM_IN),
       array(&$_SESSION['INGRESO']['Dec_PVP'], SQLSRV_PARAM_IN),
       array(&$_SESSION['INGRESO']['Dec_Costo'], SQLSRV_PARAM_IN),
-      array(&$fecha, SQLSRV_PARAM_IN),
+      array(&$fecha_corte, SQLSRV_PARAM_IN),
       array(&$TipoKardex, SQLSRV_PARAM_INOUT),
       );     
-     $sql="EXEC DiskCover_CSB.dbo.sp_Mayorizar_Inventario @Item=?,@Periodo=?, @Usuario=?, @NumModulo=?, @DecPVP=?, @DecCosto=?,@FechaCorte=?,@TipoKardex=?";
+     $sql="EXEC sp_Mayorizar_Inventario @Item=?,@Periodo=?, @Usuario=?, @NumModulo=?, @DecPVP=?, @DecCosto=?,@FechaCorte=?,@TipoKardex=?";
      // print_r($parametros);die();
       $respuesta = $conn->ejecutar_procesos_almacenados($sql,$parametros);
+      // if($respuesta==1)
+      // {
+      //    print_r($TipoKardex);die();
+      // }
       return $respuesta;   
   }
 
