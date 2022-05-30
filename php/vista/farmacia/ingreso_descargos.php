@@ -172,7 +172,7 @@
       type:  'post',
       dataType: 'json',
       success:  function (response) { 
-        console.log(response);
+        // console.log(response);
        
            $('#txt_codigo').val(response.matricula);
            $('#txt_nombre').val(response.nombre);
@@ -260,6 +260,12 @@
    var ruc = $('#txt_ruc').val();
    var cc = $('#ddl_cc').val();
    var cos = $('#txt_precio').val();
+   var soli = $('#txt_soli').val();
+   if(soli=='')
+   {
+     Swal.fire('Agregue la persona solicitante','','info');
+     return false;
+   }
    if(cos=='' || cos ==0)
    {
      Swal.fire('No se pudo agregar por que el costo de este articulo es igual 0.','','info');
@@ -307,6 +313,7 @@
            'iva':$('#txt_iva').val(),
            'pro':$('#txt_procedimiento').val(),
            'area':$('#ddl_areas option:selected').text(),
+           'solicitante':soli,
        };
        $.ajax({
          data:  {parametros:parametros},
@@ -315,7 +322,7 @@
          dataType: 'json',
            success:  function (response) { 
 
-            console.log(response);
+            // console.log(response);
            if(response.resp==null)
            {
             $('#txt_pedido').val(response.ped);
@@ -364,7 +371,7 @@
       type:  'post',
       dataType: 'json',
       success:  function (response) {
-        console.log(response);
+        // console.log(response);
         num_ped = $('#txt_pedido').val();
         if(num_ped=='')
         {
@@ -800,7 +807,7 @@
       type:  'post',
       dataType: 'json',
       success:  function (response) { 
-        console.log(response);
+        // console.log(response);
         $('#num').text(response);
       }
     });
@@ -816,7 +823,7 @@
       type:  'post',
       dataType: 'json',
       success:  function (response) { 
-        console.log(response);
+        // console.log(response);
         $('#myModal_espera').modal('hide');
         Swal.fire('Mayorizacion completada','','success');
       
@@ -936,12 +943,12 @@
           </div>           
         </div>
         <div class="row">
-               <div class="col-sm-4"> 
-                  <div class="col-sm-3"> 
+               <div class="col-sm-2"> 
+                  <div class="col-sm-6"> 
                     <b>MIN:</b>
                     <input type="text" name="txt_min" id="txt_min" class="form-control input-sm"readonly="">
                   </div>
-                  <div class="col-sm-3"> 
+                  <div class="col-sm-6"> 
                     <b>MAX:</b>
                     <input type="text" name="txt_max" id="txt_max" class="form-control input-sm"readonly="">
                   </div>   
@@ -968,7 +975,11 @@
                 <input type="text" name="txt_importe" id="txt_importe" class="form-control input-sm" readonly="">
                 <input type="hidden" name="txt_iva" id="txt_iva" class="form-control input-sm">            
               </div> 
-              <div class="col-sm-1"><br>
+              <div class="col-sm-3"> 
+                <b>Persona solicitante:</b>
+                <input type="text" name="txt_soli" id="txt_soli" class="form-control input-sm" value="." onfocus="$('#txt_soli').select()">            
+              </div>   
+              <div class="col-sm-1" style="padding-left: 0px;"><br>
                 <button class="btn btn-primary" onclick="calcular_totales();Guardar()"><i class="fa fa-arrow-down"></i> Agregar</button>
               </div>
         </div>

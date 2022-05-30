@@ -29,7 +29,7 @@
 
 
 
-           $("#subir_imagen").on('click', function() {
+  $("#subir_imagen").on('click', function() {
           if($('#file_img').val()=="")
           {
             Swal.fire(
@@ -39,9 +39,7 @@
             return false;
           }
         var formData = new FormData(document.getElementById("form_img"));
-        var files = $('#file_img')[0].files[0];
-        formData.append('file',files);
-       // formData.append('curso',curso);
+        $('#myModal_espera').modal('show');
         $.ajax({
             url:   '../controlador/farmacia/articulosC.php?Articulos_imagen=true',
             type: 'post',
@@ -55,23 +53,20 @@
             success: function(response) {
                if(response==-1)
                {
-                 Swal.fire(
-                  '',
-                  'Algo extraño a pasado intente mas tarde.',
-                  'error')
+                 Swal.fire('Algo extraño a pasado intente mas tarde.','','error').then(function(){
+                   $('#myModal_espera').modal('hide');
+                 });
 
                }else if(response ==-2)
                {
-                  Swal.fire(
-                  '',
-                  'Asegurese que el archivo subido sea una imagen.',
-                  'error')
+                  Swal.fire('Asegurese que el archivo subido sea una imagen.','','error').then(function(){
+                   $('#myModal_espera').modal('hide');
+                 });
                }  else
                {
-                 Swal.fire(
-                  '',
-                  'Imagen Guardada.',
-                  'success')
+                 Swal.fire('Imagen Guardada.','','success').then(function(){
+                   $('#myModal_espera').modal('hide');
+                 });
                } 
             }
         });
@@ -550,7 +545,7 @@
    {
     if($('#ddl_producto').val()=='' || $('#ddl_proveedor').val()=='' || $('#ddl_familia').val()=='' || $('#txt_precio').val()=='' || $('#txt_canti').val()=='' || $('#txt_serie').val()=='' || $('#txt_num_fac').val()=='' || $('#txt_fecha_ela').val()=='' || $('#txt_fecha_exp').val()=='' || $('#txt_reg_sani').val()=='' || $('#txt_procedencia').val()=='' || $('#txt_lote').val()==''|| $('#txt_descto').val()=='' )
     {
-      Swal.fire('','Llene todo los campos.','info');   
+      Swal.fire('Llene todo los campos.','','info');   
       return false;
     }
      var datos =  $("#form_add_producto").serialize();
@@ -690,9 +685,10 @@
       });
    }
 
-   function subir($orden,$prov)
+   function subir(orden,prov)
    {
-     $('#txt_nom_img').val($orden+'_'+$prov);
+     $('#txt_nom_img').val(orden+'_'+prov);
+     $('#modal_de_foto').modal('show');
    }
 
 
@@ -717,7 +713,7 @@
 
    function abrir_modal()
    {
-     $('#Nuevo_producto"').modal('show');
+     $('#Nuevo_producto').modal('show');
    }
 </script>
   <div class="row">
@@ -904,7 +900,9 @@
   <div  class="col-sm-12" id="tbl_ingresados">
 
   </div>
+  <br><br>
 </div>
+
 
 <div class="modal fade" id="Nuevo_proveedor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static">
   <div class="modal-dialog" role="document">
@@ -981,13 +979,13 @@
           </div>
           <div class="col-sm-6"> 
                 <b>Cuenta Inv</b> <br>             
-            <div class="input-group" style="display: flex;">   
+              <div class="input-group" style="display: flex;">   
                 <select class="form-control form-control-sm"  name="ddl_cta_inv" id="ddl_cta_inv"></select>
-                    <span class="">
-                      <button type="button" class="btn btn-info btn-flat" onclick="limpiar_cta('ddl_cta_inv')"><i class="fa fa-close"></i></button>
-                    </span>
+                  <span class="">
+                    <button type="button" class="btn btn-info btn-flat" onclick="limpiar_cta('ddl_cta_inv')"><i class="fa fa-close"></i></button>
+                  </span>
               </div>
-            </div> 
+          </div> 
         </div>
         <div class="row">
           <div class="col-sm-8">
@@ -1068,11 +1066,12 @@
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
-
   </div>
+</div>
+
 
 <div id="modal_de_foto" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-sm">
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
@@ -1080,25 +1079,26 @@
         <h4 class="modal-title">Cargar imagen de factura</h4>
       </div>
       <div class="modal-body">
-        <div class="col-sm-12">
-          <p>asegurese de que su archivo sea .jpg .png .pdf</p>
-             <!-- <img src="../img/de_sistema/sin_imagen.jpg" style="width: 80%;" id="img" name="img"> -->
-          <form enctype="multipart/form-data" id="form_img" method="post">
-              <div class="custom-file">
-                  <input type="file" class="btn" id="file_img" name="file_img">
-                  <input type="hidden" name="txt_nom_img" id="txt_nom_img" value="">
-              </div>
-            <button type="button" class="btn btn-primary btn-sm" style="width: 100%" id="subir_imagen"> Subir Imagen</button>
-          </form>  
-          <br> 
-        </div>
+          <div class="row">
+             <div class="col-sm-12">
+                <p>asegurese de que su archivo sea .jpg .png .pdf</p>
+                <form enctype="multipart/form-data" id="form_img" method="post">
+                    <div class="custom-file">
+                        <input type="file" class="form-control" id="file_img" name="file_img">
+                        <input type="hidden" name="txt_nom_img" id="txt_nom_img" value="">
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" style="width: 100%" id="subir_imagen"> Subir Imagen</button>
+                </form>  
+                <br> 
+              </div>            
+          </div>       
+      </div>
       <div class="modal-footer">
         <!-- <button type="button" class="btn btn-primary" onclick="guardar_proveedor()">Guardar</button> -->
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
-</div>
 </div>
 
 <div id="modal_nueva_familia" class="modal fade" role="dialog">
@@ -1110,7 +1110,7 @@
       </div>
       <div class="modal-body">
         <div class="row">
-          <form enctype="multipart/form-data" id="form_img" method="post">
+          <form enctype="multipart/form-data" id="form_fami" method="post">
             <div class="col-sm-12">
               <b>Codigo</b>
               <input type="text" name="txt_cod_familia" id="txt_cod_familia" class="form-control form-control-sm">

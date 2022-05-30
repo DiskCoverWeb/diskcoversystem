@@ -593,22 +593,7 @@ function eliminar_asientos_k()
  	return $resp;
  }
 
- // function stock_kardex($id)
- // {
- // 	 $resp[0]['min'] = 0;
- // 	 $resp[0]['max'] = 0;
- // 	$resp = $this->modelo->stock_kardex($id);
- // 	$datos = $this->modelo->Detalle_producto($id);
- // 	if(count($datos)>0)
- // 	{
- // 	 $resp[0]['min'] = $datos[0]['Minimo'];
- // 	 $resp[0]['max'] = $datos[0]['Maximo'];
- //  }
-
- // 	// print_r($datos);die();
- // 	return $resp;
- // }
-
+ 
  function costo_existencias($codigo_inv)
  {
  	 $FechaInventario = date('Y-m-d');
@@ -618,16 +603,6 @@ function eliminar_asientos_k()
  	// // print_r($resp);die();
  	return $resp;
  }
-
- //  function costo_venta($codigo_inv)
- // {
- // 	 $FechaInventario = date('Y-m-d');
- // 	 $CodBodega = '01';
- // 	 $resp = Leer_Codigo_Inv($codigo_inv,$FechaInventario,$CodBodega,$CodMarca='');
- // 	// $resp = $this->modelo->costo_venta($id);
- // 	// // print_r($resp);die();
- // 	return $resp;
- // }
 
  function codmarca()
  {

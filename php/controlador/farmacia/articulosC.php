@@ -167,22 +167,30 @@ class articulosC
 		$productos = array();
 		foreach ($datos as $key => $value) {			
 			$Familia = $this->modelo->familia_pro(substr($value['Codigo_Inv'],0,5));
-			$costo =  $this->ing_descargos->costo_venta($value['Codigo_Inv']);
-			$costoTrans = $this->ing_descargos->costo_producto($value['Codigo_Inv']);
+			// $costo =  $this->ing_descargos->costo_venta($value['Codigo_Inv']);
+			// $costoTrans = $this->ing_descargos->costo_producto($value['Codigo_Inv']);
+
+			$FechaInventario = date('Y-m-d');
+		 	$CodBodega = '01';
+		 	$costo_existencias = Leer_Codigo_Inv($value['Codigo_Inv'],$FechaInventario,$CodBodega,$CodMarca='');
+
+
+
 			if(empty($Familia))
 			{
 				$Familia[0]['Producto'] = '-';
 				$Familia[0]['Codigo_Inv'] = '.';
 			}
-			if(empty($costo))
+			if($costo_existencias['respueta']!=1)
 			{
 				$costo[0]['Existencia'] = 0;
-			}
-			if(empty($costoTrans))
-			{
 				$costoTrans[0]['Costo'] = 0;				
+			}else
+			{
+				$costo[0]['Existencia'] = $costo_existencias['datos']['Stock'];
+				$costoTrans[0]['Costo'] = $costo_existencias['datos']['Costo'];		
 			}
-
+			
 
 			$productos[] = array('id'=>$Familia[0]['Producto'].'_'.$Familia[0]['Codigo_Inv'].'_'.$value['Codigo_Inv'].'_'.$costoTrans[0]['Costo'].'_'.$value['Cta_Inventario'].'_'.$value['Producto'].'_'.$value['Unidad'].'_'.$value['Ubicacion'].'_'.$value['IVA'].'_'.$costo[0]['Existencia'].'_'.$value['Reg_Sanitario'].'_'.$value['Maximo'].'_'.$value['Minimo'],'text'=>$value['Producto']);
 
@@ -285,10 +293,10 @@ class articulosC
 		$footer_tabla ='</tbody></table>
 		<input type="hidden" id="iva_'.$orden.'" value="'.$ivatotal.'"/>		 
 		</div>
-		<div class="col-sm-7" style=" display:'.$show.'">
-		<button type="button" class="btn btn-danger" onclick="eliminar_todo(\''.$orden.'\',\''.$prove.'\')"><i class="fa fa-trash"></i> Eliminar Todo</button>
+		<div class="col-sm-7" style=" display:'.$show.'">		
 		<button type="button" class="btn btn-primary" onclick="generar_factura(\''.$orden.'\',\''.$prove.'\')" ><i class="fa fa-archive"></i> Registrar Ingreso</button>
-		<button type="button" class="btn btn-primary" onclick="subir(\''.$orden.'\',\''.$prove.'\')"  data-toggle="modal" data-target="#modal_de_foto"><i class="fa fa-file"></i> Subir Documento</button>
+		<button type="button" class="btn btn-default" onclick="subir(\''.$orden.'\',\''.$prove.'\')"><i class="fa fa-upload"></i> Subir Documento</button>
+		<button type="button" class="btn btn-danger" onclick="eliminar_todo(\''.$orden.'\',\''.$prove.'\')"><i class="fa fa-trash"></i> Eliminar Todo</button> <br><br>
 		</div>';
 
 		 return $cabecera_tabla.$tr.$footer_tabla;
@@ -1027,15 +1035,17 @@ function eliminar_factura($parametros)
    {
    	// print_r($file);
    	// print_r($post);die();
-   	$ruta='../../vista/TEMP/';//ruta carpeta donde queremos copiar las imágenes
+   	// $ruta='../../vista/TEMP/';//ruta carpeta donde queremos copiar las imágenes
+   	$ruta =  dirname(__DIR__,3).'/img/ING_CXP/'.$_SESSION['INGRESO']['item'].'/';
+   	// print_r($ruta);die();
    	if (!file_exists($ruta)) {
        mkdir($ruta, 0777, true);
     }
-    if($file['file']['type']=="image/jpeg" || $file['file']['type']=="image/pjpeg" || $file['file']['type']=="image/gif" || $file['file']['type']=="image/png" || $file['file']['type']=="application/pdf")
+    if($file['file_img']['type']=="image/jpeg" || $file['file_img']['type']=="image/pjpeg" || $file['file_img']['type']=="image/gif" || $file['file_img']['type']=="image/png" || $file['file_img']['type']=="application/pdf")
       {
-   	     $uploadfile_temporal=$file['file']['tmp_name'];
-   	     $tipo = explode('/', $file['file']['type']);
-         $nombre = $post['txt_nom_img'].'.'.$tipo[1];
+   	     $uploadfile_temporal=$file['file_img']['tmp_name'];
+   	     $tipo = explode('/', $file['file_img']['type']);
+          $nombre = $post['txt_nom_img'].'.'.$tipo[1];
         
    	     $nuevo_nom=$ruta.$nombre;
    	     if (is_uploaded_file($uploadfile_temporal))
