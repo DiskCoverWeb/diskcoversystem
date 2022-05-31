@@ -667,10 +667,10 @@
 
     $('#myModal_espera').modal('show');    
     var orden = $('#txt_pedido').val();
-    var ruc= $('#txt_ruc').val();
+    var ruc= $('#ddl_paciente').val();
     var area= $('#ddl_areas').val();
     var his= $('#txt_codigo').val();
-     var pro = '<?php echo $pro; ?>';
+    var pro = '<?php echo $pro; ?>';
     var nombre=  $('#ddl_paciente option:selected').text();
 
     var reg=  $('#txt_num_lin').val();

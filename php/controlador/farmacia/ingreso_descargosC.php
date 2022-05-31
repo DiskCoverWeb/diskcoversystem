@@ -509,7 +509,8 @@ class ingreso_descargosC
 		$negativos = '';
 		$datos = $this->modelo->cargar_pedidos_trans($orden,$area,$fecha,false,$ruc);
 
-		// print_r($datos);die();
+		// print_r($datos);
+		// print_r($ruc);die();
 		foreach ($datos as $key => $value) 
 		{
 			$costo =  $this->modelo->costo_venta($value['Codigo_Inv']);
