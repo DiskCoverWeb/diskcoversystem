@@ -174,13 +174,15 @@ class devoluciones_insumosM
 
 	function lista_devoluciones_x_departamento($comprobante)
 	{
-	  $sql = "SELECT CODIGO_INV as 'CODIGO PRODUCTO',PRODUCTO,CANTIDAD,VALOR_UNIT AS 'VALOR UNITARIO',VALOR_TOTAL AS 'VALOR TOTAL',Fecha_Fab AS 'FECHA',SC.Detalle AS 'Area',A_No 
+	  $sql = "SELECT CODIGO_INV as 'CODIGO PRODUCTO',PRODUCTO,CANTIDAD,VALOR_UNIT AS 'VALOR UNITARIO',VALOR_TOTAL AS 'VALOR TOTAL',Fecha_Fab AS 'FECHA',SC.Detalle AS 'Area',A_No,ORDEN  
 	  FROM Asiento_K K
 	  INNER JOIN Catalogo_SubCtas SC ON K.SUBCTA = SC.Codigo   
 	  WHERE DH = '1' 
 	  AND ORDEN = '".$comprobante."'
-	  AND CodigoU =".$_SESSION['INGRESO']['CodigoU'].'
-	  GROUP BY CODIGO_INV,PRODUCTO,CANTIDAD,VALOR_UNIT,VALOR_TOTAL,Fecha_Fab,SC.Detalle,A_No';
+	  AND CodigoU =".$_SESSION['INGRESO']['CodigoU']."
+	  AND K.Item = '".$_SESSION['INGRESO']['item']."'
+	  AND SC.Item = K.Item
+	  AND SC.Periodo = '".$_SESSION['INGRESO']['periodo']."'";
 	  // print_r($sql);die();
 	  $datos = $this->conn->datos($sql);
 	  $botones[0] = array('boton'=>'Eliminar','icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>$comprobante.',CODIGO PRODUCTO,A_No');

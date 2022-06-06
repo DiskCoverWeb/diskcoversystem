@@ -829,14 +829,37 @@ return $monthNameSpanish;
   }
 
 //año bisiesto
-function provincia_todas()  // optimizado
+
+function naciones_todas()  // optimizado
 {
-	$conn = new db();
-    $sql = "SELECT * FROM Tabla_Naciones WHERE CPais = '593' AND TR ='P' ORDER BY CProvincia";
+  $conn = new db();
+    $sql = "SELECT CPais,Descripcion_Rubro
+    FROM Tabla_Naciones
+    WHERE TR = 'N'
+    AND Descripcion_Rubro <> 'OTRO'
+    ORDER BY Descripcion_Rubro,CPais ";
+    $datos = $conn->datos($sql);
+    $result = array();  
+    foreach ($datos as $key => $value) {
+      $result[] =array('Codigo'=>$value['CPais'],'Descripcion_Rubro'=>$value['Descripcion_Rubro']);
+    }
+   return $result;
+       //print_r($result);
+}
+
+
+function provincia_todas($Cpais=false)  // optimizado
+{
+  if (!$Cpais) {
+    $Cpais = '593';
+  }
+	  $conn = new db();
+    $sql = "SELECT * FROM Tabla_Naciones WHERE CPais = '".$Cpais."' AND TR ='P' ORDER BY CProvincia";
+    // print_r($sql);die();
 		$datos = $conn->datos($sql);
     $result = array();  
     foreach ($datos as $key => $value) {
-      $result[] =array('Codigo'=>$value['CProvincia'],'Descripcion_Rubro'=>utf8_encode($value['Descripcion_Rubro']));
+      $result[] =array('Codigo'=>$value['CProvincia'],'Descripcion_Rubro'=>$value['Descripcion_Rubro']);
     }
 	 return $result;
 	     //print_r($result);
@@ -849,7 +872,7 @@ function todas_ciudad($idpro) //otimizado
 		$datos = $conn->datos($sql);
     $result = array();  
     foreach ($datos as $key => $value) {
-      $result[] =array('Codigo'=>$value['Codigo'],'Descripcion_Rubro'=>utf8_encode($value['Descripcion_Rubro']));
+      $result[] =array('Codigo'=>$value['Codigo'],'Descripcion_Rubro'=>$value['Descripcion_Rubro']);
     }
    return $result;
 	     //print_r($result);

@@ -50,10 +50,21 @@ if(isset($_GET['imprimir_pdf']))
   $controlador->exportar_pdf($_GET['codigo']);
 
 }
+if(isset($_GET['naciones']))
+{
+  //echo 'hola';
+  echo json_encode(naciones_todas());
+  //print_r(provincia_todas());
+}
 if(isset($_GET['provincias']))
 {
 	//echo 'hola';
-	echo json_encode(provincia_todas());
+  $pais = '';
+  if(isset($_POST['pais']))
+  {
+    $pais = $_POST['pais'];
+  }
+	echo json_encode(provincia_todas($pais));
 	//print_r(provincia_todas());
 }
 if(isset($_GET['ciudad']))

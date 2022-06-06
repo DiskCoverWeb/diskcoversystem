@@ -7,6 +7,7 @@ if(isset($_GET['area'])){$area =$_GET['area'];}
       unset($_SESSION['NEGATIVOS']['CODIGO_INV']);?>
 <script type="text/javascript">
    $( document ).ready(function() {
+    var num_li=0;
    	autocoplet_pro();
    	 autocoplet_area();
     // autocoplet_paci();
@@ -24,7 +25,6 @@ if(isset($_GET['area'])){$area =$_GET['area'];}
     // {
     //   buscar_Subcuenta();
     // }
-    var num_li=0;
     // cargar_pedido();
     lista_devolucion();
     autocoplet_cc();
@@ -140,7 +140,11 @@ function lista_devolucion()
         $('#num').text(response);
         var num = Math.floor((Math.random() * (10-0))+0);
         console.log(num);
-        $('#txt_orden').val(response+''+num);
+        var ped = '<?php echo $cod;?>';
+        if(ped=='')
+        {
+          $('#txt_orden').val(response+''+num);
+        }
       }
     });
 
@@ -182,6 +186,7 @@ function lista_devolucion()
         success:  function (response) { 
          if(response==1)
          {
+          lista_devolucion();
           Swal.fire('Agregado a lista de devoluciones','','success');
           if($('#lineas').val()==0)
           {

@@ -168,6 +168,26 @@ include('../controlador/contabilidad/contabilidad_controller.php');
     });
   }
 
+    function formatoDate(date)
+    {
+      var formattedDate = new Date(date); 
+      var d = formattedDate.getDate(); 
+      var m = formattedDate.getMonth(); 
+      m += 1; // javascript months are 0-11
+      if(m<10)
+      {
+        m = '0'+m;
+      } 
+      if(d<10)
+      {
+        d = '0'+d;
+      } 
+      var y = formattedDate.getFullYear(); 
+      var Fecha = y + "-" + m + "-" + d;
+      console.log(Fecha);
+      return Fecha;
+    }
+
   </script>
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

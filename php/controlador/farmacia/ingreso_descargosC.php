@@ -452,6 +452,9 @@ class ingreso_descargosC
 		   $datos[21]['campo']='Codigo_Dr';
 		   $datos[21]['dato']=$parametro['solicitante'];
 
+		   $datos[22]['campo']='Costo';
+		   $datos[22]['dato']=round($parametro['valor'],2);
+
 		   if($parametro['iva']!=0)
 		   {
 		   	   // $datos[19]['campo']='IVA';
