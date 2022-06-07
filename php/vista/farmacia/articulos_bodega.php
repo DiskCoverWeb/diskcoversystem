@@ -439,12 +439,40 @@ function provincias()
   function abrir_modal()
    {
      $('#Nuevo_producto').modal('show');
-   }	
+   }
+
+function reporte_pdf()
+{
+
+   var url = '../controlador/farmacia/farmacia_internaC.php?imprimir_pdf_bode=true&';
+   var datos =  $("#form_filtros").serialize();
+    window.open(url+datos, '_blank');
+}
+
+function reporte_excel()
+{
+   
+   var url = '../controlador/farmacia/farmacia_internaC.php?imprimir_excel_bode=true&';
+   var datos =  $("#form_filtros").serialize();
+    window.open(url+datos, '_blank');
+     // $.ajax({
+     //     data:  {datos:datos},
+     //     url:   url,
+     //     type:  'post',
+     //     dataType: 'json',
+     //     success:  function (response) {  
+          
+     //      } 
+     //   });
+
+}
+
+	
 </script>
  <div class="row"><br>
-    <div class="col-lg-7 col-sm-10 col-md-6 col-xs-12">
-       <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-            <a  href="./farmacia.php?mod=Farmacia#" title="Salir de modulo" class="btn btn-default">
+    <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
+       <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
+            <a  href="./farmacia.php?mod=Farmacia#" title="Salir de modulo" data-toggle="tooltip" class="btn btn-default">
               <img src="../../img/png/salire.png">
             </a>
         </div>
@@ -453,21 +481,16 @@ function provincias()
                <img src="../../img/png/add_articulo.png">
             </button>          
         </div>
-       <!--  <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-          <a href="./farmacia.php?mod=Farmacia&acc=pacientes&acc1=Visualizar%20paciente&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_pdf" title="Pacientes">
-            <img src="../../img/png/pacientes.png">
-          </a>           
+       <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
+            <button type="button" class="btn btn-default" title="Informe PDF" data-toggle="tooltip" onclick="reporte_pdf()">
+              <img src="../../img/png/pdf.png">
+            </button>            
         </div>
-       <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-          <a href="./farmacia.php?mod=Farmacia&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_excel" title="Descargos">
-            <img src="../../img/png/descargos.png">
-          </a>         
+        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
+            <button type="button" class="btn btn-default" title="Informe Excel" data-toggle="tooltip" onclick="reporte_excel()">
+              <img src="../../img/png/table_excel.png">
+            </button>            
         </div>
-        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-          <a href="./farmacia.php?mod=Farmacia&acc=articulos&acc1=Visualizar%20articulos&b=1&po=subcu#" title="Ingresar Articulosr"  class="btn btn-default" onclick="">
-            <img src="../../img/png/articulos.png" >
-          </a>
-        </div>      -->
  </div>
 </div>
 
@@ -478,6 +501,7 @@ function provincias()
         <b>Catalogo De Productos</b>
       </div>
 			<div class="panel-body">
+        <form id="form_filtros">
 				<div class="col-sm-3">
 					<b>Referencia</b>
 					<div class="input-group"> 
@@ -499,7 +523,7 @@ function provincias()
 				<div class="col-sm-3">
 					<b>Familia</b>
         <div class="input-group"> 
-					<select class="form-control input-sm" id="ddl_familia" onchange="tabla_catalogo('ref')">
+					<select class="form-control input-sm" id="ddl_familia" name="ddl_familia" onchange="tabla_catalogo('ref')">
 						<option value="">Seleccione provincia</option>
 					</select>
            <span class="input-group-addon" onclick="$('#ddl_familia').empty();tabla_catalogo('ref')" title="Borrar seleccion"><i class="fa fa-close"></i></span>
@@ -509,6 +533,7 @@ function provincias()
 					<b>Ubicacion</b>
           <input type="" class="form-control form-control-sm" name="txt_ubicacion" id="txt_ubicacion" onkeyup="tabla_catalogo('ref')">					
 				</div>
+        </form>
 			</div>
 			<div class="row box-body">
 				<div class="col-sm-5">

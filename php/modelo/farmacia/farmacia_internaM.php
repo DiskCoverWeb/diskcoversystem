@@ -84,7 +84,7 @@ class farmacia_internaM
 	}
 
 
-	function tabla_catalogo_bodega($query,$tipo,$familia=false,$ubicacion=false)
+	function tabla_catalogo_bodega($query,$tipo,$familia=false,$ubicacion=false,$limite = true)
 	{
 		// print_r($query);
 		// print_r($tipo);die();
@@ -119,7 +119,10 @@ class farmacia_internaM
 		}
 
 		$sql.=' ORDER BY Producto';
-		$sql.=" OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY;";
+		if($limite)
+		{
+		  $sql.=" OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY;";
+		}
 
 		// print_r($sql);die();
 // 

@@ -19,7 +19,7 @@ class descargosM
 	   $this->conn1 = new db();
 	}
 
-	function pedido_paciente($codigo_b=false,$tipo=false,$query=false,$desde=false,$hasta =false,$busfe=false,$area =false)
+	function pedido_paciente($codigo_b=false,$tipo=false,$query=false,$desde=false,$hasta =false,$busfe=false,$area =false,$articulo=false)
 	{
 
 		$cid = $this->conn;
@@ -51,7 +51,11 @@ class descargosM
 		}
 		if($area)
 		{
-			$sql.=" AND CS.Detalle like '%".$area."%'";
+			$sql.=" AND CS.Detalle like '".$area."%'";
+		}
+		if($articulo)
+		{
+			$sql.=" AND Codigo_Inv = '".$articulo."'";
 		}
 
 		$sql.=" GROUP BY Orden_No ,Codigo_P,A.Fecha,C.Cliente,A.CodigoL,CS.Detalle,C.Matricula,A.Detalle ORDER BY A.Fecha DESC";
@@ -323,7 +327,7 @@ class descargosM
        return $datos;
 	}
 
-	function pedido_paciente_distintos($codigo_b=false,$tipo=false,$query=false,$desde=false,$hasta =false,$busfe=false,$area=false)
+	function pedido_paciente_distintos($codigo_b=false,$tipo=false,$query=false,$desde=false,$hasta =false,$busfe=false,$area=false,$articulo=false)
 	{
 
 		$cid = $this->conn;
@@ -361,6 +365,10 @@ class descargosM
 		if($area)
 		{
 			$sql.=" AND CS.Detalle like '%".$area."%' ";
+		}
+		if($articulo)
+		{
+			$sql.=" AND Codigo_Inv = '".$articulo."' ";
 		}
 
 		$sql.=" GROUP BY Orden_No ,Codigo_P,C.Cliente,A.CodigoL,CS.Detalle,C.Matricula,A.Detalle ORDER BY Orden_No DESC ";

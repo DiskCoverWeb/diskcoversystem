@@ -5,8 +5,28 @@
     cargar_ficha();
     autocoplet_paci();
     autocoplet_area();
+    autocoplet_desc();
     // cargar_ficha();
   });
+
+    function autocoplet_desc(){
+      $('#ddl_articulo').select2({
+        placeholder: 'Escriba Descripcion',
+        ajax: {
+          url:   '../controlador/farmacia/ingreso_descargosC.php?producto=true&tipo=desc',
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {
+            // console.log(data);
+            return {
+              results: data
+            };
+          },
+          cache: true
+        }
+      });
+   
+  }
 
   function cargar_pedidos(f='')
   {
@@ -25,6 +45,7 @@
         'hasta':$('#txt_hasta').val(),
         'busfe':f,
         'area':$('#txt_area').val(),
+        'arti':$('#ddl_articulo').val(),
         'nega':$('#rbl_negativos').prop('checked'),
       }    
      // console.log(parametros);
@@ -68,6 +89,8 @@
         'tipo':$('input:radio[name=rbl_buscar]:checked').val(),
         'desde':desde,
         'hasta':$('#txt_hasta').val(),
+        'area':$('#txt_area').val(),
+        'arti':$('#ddl_articulo').val(),
         'busfe':f,
       }    
      // console.log(parametros);
@@ -487,28 +510,49 @@ function reporte_pdf_nega()
   </div>
   <div class="col-sm-12">
         <form method="post" id="filtro_bus" enctype="multipart/form-data">
-          <div class="col-sm-5">
-             <label class="radio-inline"><input type="radio" name="rbl_buscar" id="rbl_nombre" checked="" value="N"> Nombre</label>
-             <label class="radio-inline"><input type="radio" name="rbl_buscar" id="rbl_ruc" value="C"> CI / RUC</label>
-             <label class="radio-inline"><input type="radio" name="rbl_buscar" id="rbl_pedido" value="P"> Pedido</label>
-             <br>
-            <b>NOMBRE DE PACIENTE</b>
-            <input type="text" name="txt_query" id="txt_query" class="form-control form-control-sm" placeholder="Nombre paciente" onkeyup="cargar_pedidos()">
+          <div class="row">
+            <div class="col-sm-5">
+              <b>NOMBRE DE PACIENTE</b>
+              <div class="pull-right"  name="txt_codigo" id="txt_codigo" >
+                <label class="radio-inline"><input type="radio" name="rbl_buscar" id="rbl_nombre" checked="" value="N"> Nombre</label>
+                 <label class="radio-inline"><input type="radio" name="rbl_buscar" id="rbl_ruc" value="C"> CI / RUC</label>
+                 <label class="radio-inline"><input type="radio" name="rbl_buscar" id="rbl_pedido" value="P"> Pedido</label>
+              </div>
+              <input type="text" name="txt_query" id="txt_query" class="form-control form-control-sm" placeholder="Nombre paciente" onkeyup="cargar_pedidos()">
+            </div>
+            <div class="col-sm-2">
+              <b>FECHA INICIO</b>
+              <input type="date" name="txt_desde" id="txt_desde" class="form-control form-control-sm" value="<?php echo date('Y-m-d')?>" onblur="cargar_pedidos('f');cargar_pedidos_detalle('f')">
+            </div>
+            <div class="col-sm-2">
+              <b>FECHA FIN</b>
+              <input type="date" name="txt_hasta" id="txt_hasta" class="form-control form-control-sm" value="<?php echo date('Y-m-d')?>" onblur="cargar_pedidos('f');cargar_pedidos_detalle('f')">
+            </div>
+            <div class="col-sm-3">
+              <b>Area de descargo</b>
+              <input type="text" name="txt_area" id="txt_area" class="form-control form-control-sm" value="" onkeyup="cargar_pedidos();cargar_pedidos_detalle()">
+            </div>
           </div>
-          <div class="col-sm-2">
-            <br>
-            <b>FECHA INICIO</b>
-            <input type="date" name="txt_desde" id="txt_desde" class="form-control form-control-sm" value="<?php echo date('Y-m-d')?>" onblur="cargar_pedidos('f');cargar_pedidos_detalle('f')">
-          </div>
-          <div class="col-sm-2">
-            <br>
-            <b>FECHA FIN</b>
-            <input type="date" name="txt_hasta" id="txt_hasta" class="form-control form-control-sm" value="<?php echo date('Y-m-d')?>" onblur="cargar_pedidos('f');cargar_pedidos_detalle('f')">
-          </div>
-          <div class="col-sm-3">
-            <br>
-            <b>Area de descargo</b>
-            <input type="text" name="txt_area" id="txt_area" class="form-control form-control-sm" value="" onkeyup="cargar_pedidos('f');cargar_pedidos_detalle('f')">
+          <div class="row">
+            <div class="col-sm-5">
+              
+            </div>
+            <div class="col-sm-7">
+              <b>Articulo</b>
+              <div class="input-group">
+                <select class="form-control" id="ddl_articulo" name="ddl_articulo" onchange="cargar_pedidos();cargar_pedidos_detalle()">
+                   <option value="">Seleccione producto</option>
+                </select>
+                <span>
+                  <button type="button" class="btn btn-default btn-flat" onclick="$('#ddl_articulo').val(null).trigger('change');"><i class="fa fa-close"></i></button>
+                </span>                
+              </div>
+              
+
+
+
+
+            </div>
           </div>
 
           <input type="hidden" name="txt_tipo_filtro" id="txt_tipo_filtro" value=""> 

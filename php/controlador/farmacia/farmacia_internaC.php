@@ -45,6 +45,19 @@ if(isset($_GET['imprimir_excel']))
 	echo json_encode($controlador->reporte_excel($parametros));
 }
 
+if(isset($_GET['imprimir_pdf_bode']))
+{	
+	$parametros = $_GET;
+	echo json_encode($controlador->reporte_pdf_bode($parametros));
+}
+
+if(isset($_GET['imprimir_excel_bode']))
+{	
+	$parametros = $_GET;
+	echo json_encode($controlador->reporte_excel_bode($parametros));
+}
+
+
 if(isset($_GET['imprimir_excel_detalle']))
 {	
 	$parametros = $_GET;
@@ -312,6 +325,59 @@ class farmacia_internaC
 
     }
 
+     function reporte_pdf_bode($parametros)
+    {
+
+    	// print_r($parametros);die();
+    	$query ='';
+    	$tipo = 'ref';
+		if(isset($parametros['ddl_descripcion']) && $parametros['ddl_descripcion']!='')
+		{
+			$q = explode('_',$parametros['ddl_descripcion']);
+			$query = $q[0];
+		}
+		if( isset($parametros['ddl_referencia']) &&  $parametros['ddl_referencia']!='')
+		{
+			$q = explode('_',$parametros['ddl_referencia']);
+			$query = $q[0];
+		}
+		$familia = false;
+		if( isset($parametros['ddl_familia']) &&  $parametros['ddl_familia']!='')
+		{
+			$familia = $parametros['ddl_familia'];
+		}
+		$ubicacion = false;
+		if($parametros['txt_ubicacion']!='')
+		{
+			$ubicacion = $parametros['txt_ubicacion'];
+		}
+		$datos = $this->modelo->tabla_catalogo_bodega($query,$tipo,$familia,$ubicacion,false);
+
+		// print_r($datos);die();
+	    $titulo = 'L I S T A  D E  A R T I C U L O S';
+	    $Fechaini = ''; $Fechafin='';
+			 $tablaHTML[0]['medidas']=array(25,80,30,25,25);
+             $tablaHTML[0]['alineado']=array('L','L','L','L','L');
+             $tablaHTML[0]['datos']=array('<b>Codigo','<b>Producto','<b>Familia','<b>Precio','<b>Stock');
+             $tablaHTML[0]['borde'] =1;
+             $pos = 1;
+		foreach ($datos as $key => $value) {
+			$tra = $this->modelo->costo_producto_comprobante($value['Codigo']);
+			// print_r($tra);die();
+			if(count($tra)>0)
+			{
+
+			 	 $tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+            	 $tablaHTML[$pos]['alineado']=$tablaHTML[0]['alineado'];
+            	 $tablaHTML[$pos]['datos']=array($value['Codigo'],$value['Producto'],$value['Cuenta'],$value['Valor_Total'],$tra[0]['Existencia']);
+            	 $tablaHTML[$pos]['borde'] =1;
+            	 $pos+=1;
+         	}
+		}
+		$this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$Fechaini,$Fechafin,false,true,25,'P');
+
+    }
+
     	// $proveedor = $datos[0]['Cliente'];
     	// $fecha = $datos[0]['Fecha']->format('Y-m-d');
     	// $total = 0;
@@ -526,6 +592,62 @@ class farmacia_internaC
     			break;
     	}
     }
+
+
+    function reporte_excel_bode($parametros)
+    {
+		// print_r($parametros);die();
+	    // $titulo = 'L I S T A   D E   A R T I C U L O S';
+	    $query ='';
+    	$tipo = 'ref';
+		if(isset($parametros['ddl_descripcion']) && $parametros['ddl_descripcion']!='')
+		{
+			$q = explode('_',$parametros['ddl_descripcion']);
+			$query = $q[0];
+		}
+		if( isset($parametros['ddl_referencia']) &&  $parametros['ddl_referencia']!='')
+		{
+			$q = explode('_',$parametros['ddl_referencia']);
+			$query = $q[0];
+		}
+		$familia = false;
+		if( isset($parametros['ddl_familia']) &&  $parametros['ddl_familia']!='')
+		{
+			$familia = $parametros['ddl_familia'];
+		}
+		$ubicacion = false;
+		if($parametros['txt_ubicacion']!='')
+		{
+			$ubicacion = $parametros['txt_ubicacion'];
+		}
+		$datos = $this->modelo->tabla_catalogo_bodega($query,$tipo,$familia,$ubicacion,false);
+
+		// print_r($datos);die();
+	    $titulo = 'L I S T A  D E  A R T I C U L O S';
+	    $Fechaini = ''; $Fechafin='';
+			 $tablaHTML[0]['medidas']=array(25,80,30,25,25);
+             $tablaHTML[0]['alineado']=array('L','L','L','L','L');
+             $tablaHTML[0]['datos']=array('Codigo','Producto','Familia',' Precio','Stock');
+             $tablaHTML[0]['tipo'] ='C';
+             $pos = 1;
+		foreach ($datos as $key => $value) {
+			$tra = $this->modelo->costo_producto_comprobante($value['Codigo']);
+			// print_r($tra);die();
+			if(count($tra)>0)
+			{
+
+			 	 $tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+            	 $tablaHTML[$pos]['alineado']=$tablaHTML[0]['alineado'];
+            	 $tablaHTML[$pos]['datos']=array($value['Codigo'],$value['Producto'],$value['Cuenta'],$value['Valor_Total'],$tra[0]['Existencia']);
+            	 $tablaHTML[$pos]['tipo'] ='N';
+            	 $pos+=1;
+         	}
+		}
+		 excel_generico($titulo,$tablaHTML);
+	    		// $this->pdf->cabecera_reporte_MC($titulo,$tablaHTML);
+    }
+
+
 
 
     function detalle_reporte_ingreso($parametros)
