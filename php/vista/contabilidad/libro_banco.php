@@ -229,6 +229,11 @@
             		<img src="../../img/png/salire.png">
             	</a>
             </div>
+             <div class="col-xs-2 col-md-2 col-sm-2">
+            	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
+            		<img src="../../img/png/consultar.png" >
+            	</button>
+            	</div>		
            
             <div class="col-xs-2 col-md-2 col-sm-2">
               <a href="#" id="imprimir_pdf" class="btn btn-default" data-toggle="tooltip" title="Descargar PDF">
@@ -242,11 +247,7 @@
             	     </a>                          	
                 </div>
 
-            <div class="col-xs-2 col-md-2 col-sm-2">
-            	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
-            		<img src="../../img/png/consultar.png" >
-            	</button>
-            	</div>		
+           
    		</div>
    		
    	</div>

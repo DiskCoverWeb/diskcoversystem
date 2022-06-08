@@ -230,36 +230,35 @@
    				<a href="./contabilidad.php?mod=contabilidad#" data-toggle="tooltip" title="Salir de modulo" class="btn btn-default">
             		<img src="../../img/png/salire.png">
             	</a>
-            </div>           
-            	<div class="col-xs-2 col-md-2 col-sm-2">
-            	   <button type="button" class="btn btn-default" data-toggle="dropdown" title="Descargar PDF">
-            	      <img src="../../img/png/pdf.png">
-                   </button>
-      		       	<ul class="dropdown-menu">
-      		       	 <li><a href="#" id="imprimir_pdf">Impresion normal</a></li>
-      		       	  <li><a href="#" id="imprimir_pdf_2">Por Sub Modulo / Centro de costos</a></li>
-      		       	</ul>
-      		    </div>
-            	
-            	<div class="col-xs-2 col-md-2 col-sm-2">
-            		<button type="button" class="btn btn-default" data-toggle="dropdown"  title="Descargar Excel">
-            	      <img src="../../img/png/table_excel.png">
-                   </button>
-      		       	<ul class="dropdown-menu">
-      		       	 <li><a href="#" id="imprimir_excel">Impresion normal</a></li>
-      		       	  <li><a href="#" id="imprimir_excel_2">Por Sub Modulo / Centro de costos</a></li>
-      		       	</ul>            	
+            </div>   
+             <div class="col-xs-2 col-md-2 col-sm-2">
+            	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
+            		<img src="../../img/png/consultar.png" >
+            	</button>
+             </div>		        
+        	<div class="col-xs-2 col-md-2 col-sm-2">
+        	   <button type="button" class="btn btn-default" data-toggle="dropdown" title="Descargar PDF">
+        	      <img src="../../img/png/pdf.png">
+               </button>
+  		       	<ul class="dropdown-menu">
+  		       	 <li><a href="#" id="imprimir_pdf">Impresion normal</a></li>
+  		       	  <li><a href="#" id="imprimir_pdf_2">Por Sub Modulo / Centro de costos</a></li>
+  		       	</ul>
+  		    </div>            	
+        	<div class="col-xs-2 col-md-2 col-sm-2">
+        		<button type="button" class="btn btn-default" data-toggle="dropdown"  title="Descargar Excel">
+        	      <img src="../../img/png/table_excel.png">
+               </button>
+  		       	<ul class="dropdown-menu">
+  		       	 <li><a href="#" id="imprimir_excel">Impresion normal</a></li>
+  		       	  <li><a href="#" id="imprimir_excel_2">Por Sub Modulo / Centro de costos</a></li>
+  		       	</ul>            	
             </div>
              <div class="col-xs-2 col-md-2 col-sm-2">
             	<button title="Todos los mayores"  class="btn btn-default" data-toggle="tooltip" onclick="consultar_datos(false,Individual);">
             		<img src="../../img/png/es.png" >
             	</button>
-            </div>
-            <div class="col-xs-2 col-md-2 col-sm-2">
-            	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
-            		<img src="../../img/png/consultar.png" >
-            	</button>
-            	</div>		
+            </div>           
    		</div>
    		
    	</div>

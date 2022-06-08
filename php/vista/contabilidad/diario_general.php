@@ -334,6 +334,11 @@
               <img src="../../img/png/salire.png">
             </a>
         </div>
+        <div class="col-xs-2 col-md-2 col-sm-2">
+          <button title="Consultar Catalogo de cuentas"  class="btn btn-default" data-toggle="tooltip" onclick="libro_general();">
+            <img src="../../img/png/consultar.png" >
+          </button>
+        </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
           <button type="button" class="btn btn-default"  data-toggle="tooltip" title="Descargar PDF">
             <img src="../../img/png/pdf.png">
@@ -357,11 +362,7 @@
             <img src="../../img/png/autorizar1.png">
           </button>
         </div>
-        <div class="col-xs-2 col-md-2 col-sm-2">
-          <button title="Consultar Catalogo de cuentas"  class="btn btn-default" data-toggle="tooltip" onclick="libro_general();">
-            <img src="../../img/png/consultar.png" >
-          </button>
-        </div>
+        
       </div>
       <div class="col-sm-8 col-lg-8 col-md-4 col-xs-12">
         <div class="col-xs-6 col-md-3 col-sm-3 col-lg-3">
