@@ -12,6 +12,7 @@
     function autocoplet_desc(){
       $('#ddl_articulo').select2({
         placeholder: 'Escriba Descripcion',
+        width:'90%',
         ajax: {
           url:   '../controlador/farmacia/ingreso_descargosC.php?producto=true&tipo=desc',
           dataType: 'json',
@@ -539,13 +540,16 @@ function reporte_pdf_nega()
             </div>
             <div class="col-sm-7">
               <b>Articulo</b>
-              <div class="input-group">
-                <select class="form-control" id="ddl_articulo" name="ddl_articulo" onchange="cargar_pedidos();cargar_pedidos_detalle()">
+              <div class="row">
+                <div class=" col-sm-12 input-group">
+                   <select class="form-control" id="ddl_articulo" name="ddl_articulo" onchange="cargar_pedidos();cargar_pedidos_detalle()">
                    <option value="">Seleccione producto</option>
                 </select>
                 <span>
                   <button type="button" class="btn btn-default btn-flat" onclick="$('#ddl_articulo').val(null).trigger('change');"><i class="fa fa-close"></i></button>
-                </span>                
+                </span>    
+                  
+                </div>                           
               </div>
               
 

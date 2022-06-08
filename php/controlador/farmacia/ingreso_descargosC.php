@@ -20,6 +20,16 @@ if(isset($_GET['paciente']))
 	echo json_encode($controlador->buscar_paciente($query));
 }
 
+if(isset($_GET['solicitante']))
+{
+	$query = '';
+	if(isset($_GET['q']))
+	{
+		$query = $_GET['q'];
+	}
+	echo json_encode($controlador->buscar_solicitante($query));
+}
+
 if(isset($_GET['producto']))
 {
 	$tipo = $_GET['tipo'];
@@ -133,6 +143,19 @@ class ingreso_descargosC
 		}
 		// print_r($paciente);die();
 		return $paciente;
+	}
+
+	function buscar_solicitante($query)
+	{
+		// print_r($query);die();
+		$datos = $this->modelo->buscar_solicitante($query);
+		$soli = array();
+		foreach ($datos as $key => $value) {
+			// $paciente[]= array('id'=>$value['CI_RUC'],'text'=>$value['Cliente']);
+			$soli[]= array('id'=>$value['Codigo'],'text'=>$value['Ejecutivo']);
+		}
+		// print_r($paciente);die();
+		return $soli;
 	}
 
 	function buscar_producto($query,$tipo)

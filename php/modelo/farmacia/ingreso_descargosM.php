@@ -1319,8 +1319,6 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 	   {
 	   	 return 1;
 	   }
-
-
 	}
 
 	function actualizo_trans_kardex($lista)
@@ -1332,7 +1330,24 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 		AND Codigo_Inv  in (".$lista.")"; 
 		return $this->conn1->String_Sql($sql);
-		
+	}
+
+	function buscar_solicitante($query=false)
+	{
+		$sql = "SELECT * 
+				FROM Catalogo_Rol_Pagos 
+				WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+				AND Periodo='".$_SESSION['INGRESO']['periodo']."' 
+				AND T = 'N' ";
+		if($query)
+		{
+			
+			$sql.= " AND Ejecutivo like '%".$query."%'";
+		}
+
+		// print_r($sql);die();
+
+		 return  $this->conn1->datos($sql);
 
 	}
 

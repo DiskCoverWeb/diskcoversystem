@@ -21,6 +21,7 @@
     autocoplet_cc();
     autocoplet_area();
     num_comprobante();
+    autocopletar_solicitante();
     $('#txt_procedimiento').val('<?php echo $pro; ?>');
      // buscar_cod();
     var pro = '<?php echo $pro; ?>';
@@ -61,6 +62,24 @@
         placeholder: 'Seleccione una paciente',
         ajax: {
           url:   '../controlador/farmacia/ingreso_descargosC.php?paciente=true',
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {
+            // console.log(data);
+            return {
+              results: data
+            };
+          },
+          cache: true
+        }
+      });
+  }
+
+   function autocopletar_solicitante(){
+      $('#txt_soli').select2({
+        placeholder: 'Seleccione una paciente',
+        ajax: {
+          url:   '../controlador/farmacia/ingreso_descargosC.php?solicitante=true',
           dataType: 'json',
           delay: 250,
           processResults: function (data) {
@@ -977,7 +996,10 @@
               </div> 
               <div class="col-sm-3"> 
                 <b>Persona solicitante:</b>
-                <input type="text" name="txt_soli" id="txt_soli" class="form-control input-sm" value="." onfocus="$('#txt_soli').select()">            
+                <select class="form-control" name="txt_soli" id="txt_soli">
+                  <option value="">Seleccione solicitante</option>
+                </select>
+                <!-- <input type="text" name="txt_soli" id="txt_soli" class="form-control input-sm" value="." onfocus="$('#txt_soli').select()">             -->
               </div>   
               <div class="col-sm-1" style="padding-left: 0px;"><br>
                 <button class="btn btn-primary" onclick="calcular_totales();Guardar()"><i class="fa fa-arrow-down"></i> Agregar</button>

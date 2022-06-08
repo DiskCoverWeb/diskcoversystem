@@ -710,10 +710,10 @@ class ingreso_descargosC
      $Fechafin = $parametros['txt_hasta']; //str_replace('-','',$parametros['Fechafin']);
 
      $arti[0] = '';
-		if($parametros['arti']!='')
-		{
-			$arti = explode('_', $parametros['arti']);
-		}
+	if($parametros['ddl_articulo']!='')
+	{
+		$arti = explode('_', $parametros['ddl_articulo']);
+	}
 		
 	 $datos = $this->modelo->pedido_paciente_distintos(false,$parametros['rbl_buscar'],$parametros['txt_query'],$parametros['txt_desde'],$parametros['txt_hasta'],$parametros['txt_tipo_filtro'],$parametros['txt_area'],$arti[0]);
 
@@ -721,6 +721,8 @@ class ingreso_descargosC
 	 $reg_fecha = array();
 	 $reg_lineas = array();
 	 $tablaHTML= array();
+
+	 // print_r($datos);die();
 
 	  $pos=0;
 
