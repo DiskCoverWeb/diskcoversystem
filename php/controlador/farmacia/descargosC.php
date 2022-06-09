@@ -413,7 +413,7 @@ class ingreso_descargosC
 		$hasta = str_replace('-','',$parametros['txt_hasta']);
 
 		$articulo = explode('_',$parametros['ddl_articulo']);
-		$datos = $this->modelo->pedido_paciente_distintos(false,$parametros['rbl_buscar'],$parametros['txt_query'],$parametros['txt_desde'],$parametros['txt_hasta'],$parametros['txt_tipo_filtro'],$parametros['txt_area'],$articulo[0]);
+		$datos = $this->modelo->pedido_paciente_distintos(false,$parametros['rbl_buscar'],$parametros['txt_query'],$parametros['txt_desde'],$parametros['txt_hasta'],$parametros['txt_tipo_filtro'],$parametros['ddl_areas_filtro'],$articulo[0]);
 
 
 		$titulo = 'D E S C A R G O S  R E A L I Z A D O S';
@@ -715,7 +715,7 @@ class ingreso_descargosC
 		$arti = explode('_', $parametros['ddl_articulo']);
 	}
 		
-	 $datos = $this->modelo->pedido_paciente_distintos(false,$parametros['rbl_buscar'],$parametros['txt_query'],$parametros['txt_desde'],$parametros['txt_hasta'],$parametros['txt_tipo_filtro'],$parametros['txt_area'],$arti[0]);
+	 $datos = $this->modelo->pedido_paciente_distintos(false,$parametros['rbl_buscar'],$parametros['txt_query'],$parametros['txt_desde'],$parametros['txt_hasta'],$parametros['txt_tipo_filtro'],$parametros['ddl_areas_filtro'],$arti[0]);
 
 	 $registros = array();
 	 $reg_fecha = array();

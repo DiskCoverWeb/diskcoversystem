@@ -963,6 +963,9 @@ class articulosC
 		    $datos[26]['campo'] ='Factura';
 		    $datos[26]['dato'] =$value['ORDEN'];
 
+		    $datos[27]['campo'] ='Codigo_Dr';
+		    $datos[27]['dato'] =$value['Codigo_Dr'];
+
 
 		    // print_r($this->ing_descargos->insertar_trans_kardex($datos));die();
 		     if($this->ing_descargos->insertar_trans_kardex($datos)!="")

@@ -51,7 +51,7 @@ class descargosM
 		}
 		if($area)
 		{
-			$sql.=" AND CS.Detalle like '".$area."%'";
+			$sql.=" AND CS.Codigo like '".$area."%'";
 		}
 		if($articulo)
 		{
@@ -364,7 +364,7 @@ class descargosM
 		}
 		if($area)
 		{
-			$sql.=" AND CS.Detalle like '%".$area."%' ";
+			$sql.=" AND CS.Codigo like '".$area."%' ";
 		}
 		if($articulo)
 		{

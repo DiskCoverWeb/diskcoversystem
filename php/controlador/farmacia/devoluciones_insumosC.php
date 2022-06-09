@@ -253,8 +253,6 @@ class devoluciones_insumosC
 		   $datos[17]['campo']='Codigo_B';
 		   $datos[17]['dato']=$linea[0]['Codigo_P'];
 
-		   // $datos[17]['campo']='IVA';
-		   // $datos[17]['dato']=bcdiv($parametro['txt_iva'],'1',4);
 
 		   // $datos[18]['campo']='Fecha_Fab';
 		   // $datos[18]['dato']=$parametro['txt_fecha_ela'];
@@ -274,6 +272,9 @@ class devoluciones_insumosC
 		   
 		   $datos[18]['campo']='Procedencia';
 		   $datos[18]['dato']='Devolucion';
+
+		   $datos[19]['campo']='Codigo_Dr';
+		   $datos[19]['dato']=$parametro['solicitante'];
 
 		   
 		   // $datos[23]['campo']='Serie_No';

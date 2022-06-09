@@ -88,7 +88,7 @@ class farmacia_internaM
 	{
 		// print_r($query);
 		// print_r($tipo);die();
-		$sql = "SELECT CP.ID,Codigo_Inv as 'Codigo',Producto,Valor_Total,Stock_Actual as 'Cantidad',CC.Cuenta,Valor_Unit
+		$sql = "SELECT CP.ID,Codigo_Inv as 'Codigo',Producto,Valor_Total,Stock_Actual as 'Cantidad',CC.Cuenta,Valor_Unit,Ubicacion
 		FROM Catalogo_Productos CP
 		INNER JOIN Catalogo_Cuentas CC ON CC.Codigo = CP.Cta_Inventario
 		WHERE INV = 1

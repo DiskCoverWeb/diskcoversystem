@@ -5,6 +5,7 @@
     cargar_ficha();
     autocoplet_paci();
     autocoplet_area();
+    autocoplet_area_filtro();
     autocoplet_desc();
     // cargar_ficha();
   });
@@ -12,7 +13,7 @@
     function autocoplet_desc(){
       $('#ddl_articulo').select2({
         placeholder: 'Escriba Descripcion',
-        width:'90%',
+        width:'85%',
         ajax: {
           url:   '../controlador/farmacia/ingreso_descargosC.php?producto=true&tipo=desc',
           dataType: 'json',
@@ -45,7 +46,7 @@
         'desde':desde,
         'hasta':$('#txt_hasta').val(),
         'busfe':f,
-        'area':$('#txt_area').val(),
+        'area':$('#ddl_areas_filtro').val(),
         'arti':$('#ddl_articulo').val(),
         'nega':$('#rbl_negativos').prop('checked'),
       }    
@@ -184,6 +185,26 @@
   function autocoplet_area(){
       $('#ddl_areas').select2({
         placeholder: 'Seleccione una Area de descargo',
+        ajax: {
+          url:   '../controlador/farmacia/descargosC.php?areas=true',
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {
+            console.log(data);
+            return {
+              results: data
+            };
+          },
+          cache: true
+        }
+      });
+   
+  }
+
+   function autocoplet_area_filtro(){
+      $('#ddl_areas_filtro').select2({
+        placeholder: 'Seleccione una Area de descargo',
+        width:'85%',
         ajax: {
           url:   '../controlador/farmacia/descargosC.php?areas=true',
           dataType: 'json',
@@ -529,10 +550,18 @@ function reporte_pdf_nega()
               <b>FECHA FIN</b>
               <input type="date" name="txt_hasta" id="txt_hasta" class="form-control form-control-sm" value="<?php echo date('Y-m-d')?>" onblur="cargar_pedidos('f');cargar_pedidos_detalle('f')">
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-3 input-group">
+            <b>Area de descargo</b>
+            <select class="form-control input-sm" id="ddl_areas_filtro" name="ddl_areas_filtro" onchange="cargar_pedidos();">
+              <option value="">Seleccione area de ingreso</option>
+            </select> 
+                  <button type="button" class="btn btn-default btn-flat" onclick="$('#ddl_areas_filtro').val(null).trigger('change');"><i class="fa fa-close"></i></button>      
+          </div>
+
+           <!--  <div class="col-sm-3">
               <b>Area de descargo</b>
-              <input type="text" name="txt_area" id="txt_area" class="form-control form-control-sm" value="" onkeyup="cargar_pedidos();cargar_pedidos_detalle()">
-            </div>
+              <input type="text" name="txt_area" id="txt_area" class="form-control form-control-sm" value="" onkeyup="">
+            </div> -->
           </div>
           <div class="row">
             <div class="col-sm-5">
@@ -542,12 +571,10 @@ function reporte_pdf_nega()
               <b>Articulo</b>
               <div class="row">
                 <div class=" col-sm-12 input-group">
-                   <select class="form-control" id="ddl_articulo" name="ddl_articulo" onchange="cargar_pedidos();cargar_pedidos_detalle()">
+                   <select class="form-control" id="ddl_articulo" name="ddl_articulo" onchange="cargar_pedidos();">
                    <option value="">Seleccione producto</option>
                 </select>
-                <span>
                   <button type="button" class="btn btn-default btn-flat" onclick="$('#ddl_articulo').val(null).trigger('change');"><i class="fa fa-close"></i></button>
-                </span>    
                   
                 </div>                           
               </div>

@@ -8,6 +8,7 @@ if(isset($_GET['area'])){$area =$_GET['area'];}
 <script type="text/javascript">
    $( document ).ready(function() {
     var num_li=0;
+    autocopletar_solicitante();
    	autocoplet_pro();
    	 autocoplet_area();
     // autocoplet_paci();
@@ -171,8 +172,9 @@ function lista_devolucion()
       'comprobante': com,
       'linea': $('#lineas').val(),
       'cc':cc,
+      'solicitante':$('#txt_soli').val(),
     }
-    if( $('#txt_cant').val() == 0 || $('#ddl_producto').val()=='' || $('#ddl_areas').val() =='' || com=='' || cc=='')
+    if( $('#txt_cant').val() == 0 || $('#ddl_producto').val()=='' || $('#ddl_areas').val() =='' || com=='' || cc=='' || $('#txt_soli').val()=='')
     {
       Swal.fire('Asegurese de llenar todos os campos','','info');
       return false;
@@ -348,6 +350,25 @@ function lista_devolucion()
    
   }
 
+    function autocopletar_solicitante(){
+      $('#txt_soli').select2({
+        placeholder: 'Seleccione una paciente',
+        ajax: {
+          url:   '../controlador/farmacia/ingreso_descargosC.php?solicitante=true',
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {
+            // console.log(data);
+            return {
+              results: data
+            };
+          },
+          cache: true
+        }
+      });
+   
+  }
+
     function autocoplet_cc(){
       $('#ddl_cc').select2({
         placeholder: 'Seleccione centro de costos',
@@ -409,13 +430,23 @@ function lista_devolucion()
       </div>
       <div class="panel-body" style="border: 1px solid #337ab7;">
         <div class="row">
-            <div class="col-sm-4">
+          <div class="col-sm-1">
               <button id="" class="btn btn-primary" onclick="generar_factura('<?php echo $cod;?>')"><i class="icon fa fa-cogs"></i> Procesar devolucion</button>                       
             </div>
-            <div class="col-sm-2">
+        </div>
+        <div class="row">
+            
+            <div class="col-sm-3">
               <b>No Orden</b>
                <input type="text" name="txt_orden" id="txt_orden" class="form-control input-sm" readonly>
             </div>
+             <div class="col-sm-3"> 
+                <b>Persona solicitante:</b>
+                <select class="form-control" name="txt_soli" id="txt_soli">
+                  <option value="">Seleccione solicitante</option>
+                </select>
+                <!-- <input type="text" name="txt_soli" id="txt_soli" class="form-control input-sm" value="." onfocus="$('#txt_soli').select()">             -->
+              </div>   
             <div class="col-sm-3"> 
               <b>Centro de costos:</b>
               <select class="form-control input-sm" id="ddl_cc" onchange="">

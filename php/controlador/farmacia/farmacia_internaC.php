@@ -169,6 +169,7 @@ class farmacia_internaC
 			<td>'.$value['Cuenta'].'</td>
 			<td>'.number_format($value['Valor_Unit'],2).'</td>
 			<td>'.$tra[0]['Existencia'].'</td>
+			<td>'.$value['Ubicacion'].'</td>
 			<td>
 				<button class="btn btn-primary btn-sm" onclick="cargar_datos('.$value['ID'].')"><i class="fa fa-pencil"></i></button>
 				<button class="btn btn-danger btn-sm" onclick="eliminar('.$value['ID'].')"><i class="fa fa-trash-o"></i></button>

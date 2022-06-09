@@ -469,7 +469,7 @@ function reporte_excel()
 
 	
 </script>
- <div class="row"><br>
+ <div class="row">
     <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
             <a  href="./farmacia.php?mod=Farmacia#" title="Salir de modulo" data-toggle="tooltip" class="btn btn-default">
@@ -561,6 +561,7 @@ function reporte_excel()
             <th>Familia</th>
             <th>Precio</th>
             <th>Stock</th>
+            <th>Ubicacion</th>
             <th></th>
           </thead>
           <tbody id="tbl_op2">
