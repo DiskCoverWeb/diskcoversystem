@@ -279,12 +279,12 @@
    var ruc = $('#txt_ruc').val();
    var cc = $('#ddl_cc').val();
    var cos = $('#txt_precio').val();
-   var soli = $('#txt_soli').val();
-   if(soli=='')
-   {
-     Swal.fire('Agregue la persona solicitante','','info');
-     return false;
-   }
+   var soli = '.';//$('#txt_soli').val();
+   // if(soli=='')
+   // {
+   //   Swal.fire('Agregue la persona solicitante','','info');
+   //   return false;
+   // }
    if(cos=='' || cos ==0)
    {
      Swal.fire('No se pudo agregar por que el costo de este articulo es igual 0.','','info');
@@ -995,11 +995,10 @@
                 <input type="hidden" name="txt_iva" id="txt_iva" class="form-control input-sm">            
               </div> 
               <div class="col-sm-3"> 
-                <b>Persona solicitante:</b>
+                <!-- <b>Persona solicitante:</b>
                 <select class="form-control" name="txt_soli" id="txt_soli">
                   <option value="">Seleccione solicitante</option>
-                </select>
-                <!-- <input type="text" name="txt_soli" id="txt_soli" class="form-control input-sm" value="." onfocus="$('#txt_soli').select()">             -->
+                </select> -->
               </div>   
               <div class="col-sm-1" style="padding-left: 0px;"><br>
                 <button class="btn btn-primary" onclick="calcular_totales();Guardar()"><i class="fa fa-arrow-down"></i> Agregar</button>

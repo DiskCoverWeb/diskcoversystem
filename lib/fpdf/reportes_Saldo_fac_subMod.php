@@ -177,7 +177,7 @@ class Reporte_subModulo
 			   		$tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
 		            $tablaHTML[$pos]['alineado']=$tablaHTML[0]['alineado'];
 		            $tablaHTML[$pos]['datos']=array($htmlcuenta,$value['Cliente'],$value['Telefono'],$value['Factura'],$value['TC'],$value['Codigo'],$value['Fecha_Emi']->format('Y-m-d'),$value['Fecha_Ven']->format('Y-m-d'),bcdiv($value['Total'],1,2), bcdiv($value['Abonos'],1,2), bcdiv($value['Saldo'],1,2));
-		            $tablaHTML[$pos]['borde'] = 'R';
+		            $tablaHTML[$pos]['borde'] = 'RL';
                     $pos = $pos+1;
                     $htmlcuenta = $value['Cuenta'];
 			   	}
@@ -202,7 +202,7 @@ class Reporte_subModulo
 			
 
 
-	 $this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$imagen=false,$parametro['fechaini'],$parametro['fechafin'],7,true);
+	 $this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$imagen=false,$parametro['fechaini'],$parametro['fechafin'],6,true);
 			
 	}
 

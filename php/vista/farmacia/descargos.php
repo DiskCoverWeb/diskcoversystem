@@ -568,8 +568,8 @@ function reporte_pdf_nega()
               
             </div>
             <div class="col-sm-7">
-              <b>Articulo</b>
-              <div class="row">
+              <!-- <b>Articulo</b> -->
+              <div class="row" style="display:none;">
                 <div class=" col-sm-12 input-group">
                    <select class="form-control" id="ddl_articulo" name="ddl_articulo" onchange="cargar_pedidos();">
                    <option value="">Seleccione producto</option>

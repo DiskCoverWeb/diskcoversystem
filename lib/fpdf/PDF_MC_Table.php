@@ -74,7 +74,7 @@ class PDF_MC_Table extends FPDF
 				    {
 				      $this->Line($x,$y,$x,$h+$y);
 			        }
-			        if($b1 == 'LR')
+			        if($b1 == 'LR' || $b1 == 'RL')
 			        {
 			    	  $this->Line($x+$w,$y,$w+$x,$h+$y);
 			    	  $this->Line($x,$y,$x,$h+$y);
@@ -96,7 +96,7 @@ class PDF_MC_Table extends FPDF
 				$this->Rect($x,$y,$w,$h);
 			}else if($b != '1' && $b != '0')
 			{
-				if($b=='LR')
+				if($b=='LR'  ||  $b == 'RL')
 				{
 				 $b1 = $b;
 				 $this->Line($x+$w,$y,$w+$x,$h+$y);

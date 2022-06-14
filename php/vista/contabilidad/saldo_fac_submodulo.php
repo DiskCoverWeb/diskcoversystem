@@ -61,7 +61,7 @@
 				$('#titulo2_tab').text('');
 			},
 			success:  function (response) {
-				consultar_datos();
+				// consultar_datos();
 
 				$('#titulo_tab').text(response.titulo);
 				$('#titulo2_tab').text(response.titulo+' TEMPORIZADO');
@@ -115,12 +115,12 @@
 			  //    var spiner = '<div class="text-center"><img src="../../img/gif/proce.gif" width="100" height="100"></div>'			
 				 // $('#tabla_').html(spiner);
 
-         $('#myModal_espera').modal('show');  
+         // $('#myModal_espera').modal('show');  
 			},
 				success:  function (response) {
 				totales();
 				 $('#tabla_').html(response);				 	
-				 consultar_datos_tempo();
+				// consultar_datos_tempo();
 			    
          $('#myModal_espera').modal('hide');  
 				
@@ -285,15 +285,15 @@
         	<a  href="./contabilidad.php?mod=contabilidad#" data-toggle="tooltip"  title="Salir de modulo" class="btn btn-default">
         		<img src="../../img/png/salire.png">
         	</a>
+        	<button title="Consultar SubModulo" data-toggle="tooltip"   class="btn btn-default" onclick="consultar_datos();">
+        		<img src="../../img/png/archivero1.png" >
+        	</button>
         	 <a href="#" class="btn btn-default" id='descargar_pdf' data-toggle="tooltip"  title="Descargar PDF">
         		<img src="../../img/png/pdf.png">
         	</a>
         	<a href="#"  class="btn btn-default"  data-toggle="tooltip" title="Descargar excel" id='descargar_excel'>
         		<img src="../../img/png/table_excel.png">
-        	</a>
-        	<button title="Consultar SubModulo" data-toggle="tooltip"   class="btn btn-default" onclick="consultar_datos();">
-        		<img src="../../img/png/archivero1.png" >
-        	</button>
+        	</a>        	
         	<a href="" title="Presenta Resumen de costos"  data-toggle="tooltip"  class="btn btn-default">
         		<img src="../../img/png/resumen.png">
         	</a>            	
@@ -303,12 +303,12 @@
 	  			<div class="col-xs-4">
 	         		<b>Desde:</b>
 	         		<br>
-	         	   <input type="date" style="width:125px" name="txt_desde" id="txt_desde" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);consultar_datos();">
+	         	   <input type="date" style="width:125px" name="txt_desde" id="txt_desde" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);">
 	         	</div>
 	            <div class="col-xs-4">
 	         	   <b>Hasta:</b>
 	         	<br>
-	         	   <input type="date" style="width:125px" name="txt_hasta" id="txt_hasta" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);consultar_datos();"> 
+	         	   <input type="date" style="width:125px" name="txt_hasta" id="txt_hasta" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);"> 
 	         	</div>             	
 	         	<div class="col-xs-3">
 	         	<br>

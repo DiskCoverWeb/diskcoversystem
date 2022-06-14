@@ -149,6 +149,10 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 		{
 			require_once("contabilidad/cierre_mes.php");
 		}
+		if ($_SESSION['INGRESO']['accion']=='MayoresSubCta') 
+		{
+			require_once("contabilidad/mayores_sub_cuenta.php");
+		}
 	}else
 	{
 		echo "<div class='box-body'><img src='../../img/modulo_contable.gif' width='100%'></div>";

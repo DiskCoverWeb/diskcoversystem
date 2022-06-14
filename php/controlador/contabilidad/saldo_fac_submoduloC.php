@@ -4,27 +4,24 @@ include(dirname(__DIR__,2).'/modelo/contabilidad/saldo_fac_submoduloM.php');
 /**
  * 
  */
-
+$controlador =  new Saldo_fac_sub_M();
 if(isset($_GET['cargar']))
 {
 	$ctc = $_POST['select'];
-	$controlador = new Saldo_fac_sub_M();
 	echo json_encode($controlador->cargar_datos($ctc), JSON_UNESCAPED_UNICODE);
 }
 
 if(isset($_GET['consultar']))
 {
 	$parametros = $_POST['parametros'];
-	$controlador = new Saldo_fac_sub_M();
 	$tabla = $controlador->cargar_consulta($parametros);
 	$controlador->tabla_temporizado($tabla['datos'],$parametros);
-	//print_r($tabla['datos']);
+	print_r($tabla['datos']);
 	echo json_encode($tabla['tabla']);
 }
 if(isset($_GET['consultar_totales']))
 {
 	$parametros = $_POST['parametros'];
-	$controlador = new Saldo_fac_sub_M();
 	$tabla = $controlador->cargar_consulta_totales($parametros);
 	// print_r($tabla);die();
 	echo json_encode($tabla);
@@ -32,7 +29,6 @@ if(isset($_GET['consultar_totales']))
 if(isset($_GET['consultar_tempo']))
 {
 	$parametros = $_POST['parametros'];
-	$controlador = new Saldo_fac_sub_M();	
     echo json_encode($controlador->consultar_tabla_temp($parametros['fechafin']));
 }
 
@@ -124,6 +120,8 @@ class Saldo_fac_sub_M
                  $Saldo = $Saldo + $value["Saldo"];
 			}
 			$totales_  = array('Total'=>$Total,'Saldo'=>$Saldo);
+
+			// print_r($totales_);die();
 		  return $valores = array('tabla'=>$this->modelo->consulta_c_p_tabla(
 			$parametros['tipocuenta'],
 			$parametros['ChecksubCta'],

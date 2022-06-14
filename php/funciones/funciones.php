@@ -6626,7 +6626,7 @@ if ($pos === false) {
 
  if($head_fijo)
  {
- $tbl.='#'.$id_tabla.' tbody { display:block; height:'.$tamaño_tabla.'px; width:auto; overflow:scroll;}
+ $tbl.='#'.$id_tabla.' tbody { display:block; height:'.$tamaño_tabla.'px; width:auto; overflow-y:scroll;}
   #'.$id_tabla.' thead,tbody tr {    display:table;  width:100%;  table-layout:fixed; } 
   #'.$id_tabla.' thead { width: calc( 100% - 1.2em )/* scrollbar is average 1em/16px width, remove it from thead width */}
   /*thead tr {    display:table;  width:98.5%;  table-layout:fixed;  }*/ ';
@@ -6703,7 +6703,7 @@ if($titulo)
   </ul>
 </nav>';
 }
- $tbl.='<table class="table" id="'.$id_tabla.'"><thead>';
+ $tbl.='<table class="table text-sm" id="'.$id_tabla.'"><thead>';
   //cabecera de la consulta sql//
  if($botones)
   {
@@ -8994,6 +8994,52 @@ function  Imprimir_Punto_Venta_Grafico_datos($TFA)
   
  
 }
+
+function CalculosSaldoAnt($TipoCod,$TDebe,$THaber,$TSaldo)
+{
+
+// print_r(substr($TipoCod ,1,1));die();
+  // print_r($TipoCod);die();
+  $OpcCoop = false;
+  $TotSaldoAnt = 0;
+  if($OpcCoop){
+    switch (substr($TipoCod ,0,1)) {
+      case '1':
+      case '4':
+      case '6':
+      case '8':
+         $TotSaldoAnt = number_format($TSaldo - $TDebe + $THaber, 2,'.','');
+        break;      
+      case '2':
+      case '3':
+      case '5':
+      case '6':
+      case '9':
+          $TotSaldoAnt = number_format($TSaldo - $THaber + $TDebe, 2,'.','');
+        break;
+    }
+    
+  }else{
+
+     switch (substr($TipoCod ,0,1)) {
+      case '1':
+      case '5':
+      case '7':
+      case '9':
+         $TotSaldoAnt = number_format($TSaldo - $TDebe + $THaber, 2,'.','');
+        break;      
+      case '2':
+      case '3':
+      case '4':
+      case '6':
+      case '8':
+           $TotSaldoAnt = number_format($TSaldo - $THaber + $TDebe, 2,'.','');
+        break;
+    }
+  }
+  return $TotSaldoAnt;
+}
+
 
 
 //

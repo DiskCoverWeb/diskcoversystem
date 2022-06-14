@@ -57,7 +57,8 @@ class Saldo_fac_sub_C
 	{
 		if($tipocuenta=='C' || $tipocuenta=='P')
 		{
-         $sql = "SELECT C.Cliente As Cliente,TS.Codigo as Codigo  FROM Trans_SubCtas As TS,Clientes As C
+         $sql = "SELECT C.Cliente As Cliente,TS.Codigo as Codigo  
+         FROM Trans_SubCtas As TS,Clientes As C
               WHERE TS.Item = '".$_SESSION['INGRESO']['item']."' 
               AND TS.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
               AND TS.TC = '".$tipocuenta."'
@@ -68,7 +69,8 @@ class Saldo_fac_sub_C
            else if($tipocuenta=='G' || $tipocuenta =='I' || $tipocuenta=='CC')
            {
           // 	print_r('expression');
-            $sql = "SELECT C.Detalle As Cliente,TS.Codigo as Codigo FROM Trans_SubCtas As TS,Catalogo_SubCtas As C 
+            $sql = "SELECT C.Detalle As Cliente,TS.Codigo as Codigo 
+            FROM Trans_SubCtas As TS,Catalogo_SubCtas As C 
               WHERE TS.Item = '".$_SESSION['INGRESO']['item']."' 
               AND TS.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
               AND TS.TC = '".$tipocuenta."'
@@ -161,6 +163,8 @@ class Saldo_fac_sub_C
          	       "ORDER BY CC.Cuenta,C.Cliente,TS.Factura ";
 
          }
+
+         // print_r($sql);die();
         
 
         $datos = $this->conn->datos($sql);
@@ -260,8 +264,13 @@ class Saldo_fac_sub_C
 
          }
 
+         // print_r($sql);die();
+
         // $botones[0] = array('boton'=>'Eliminar linea', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'A_No,CODIGO' );
         $datos = grilla_generica_new($sql,' Clientes As C, Catalogo_Cuentas As CC, Trans_SubCtas As TS','',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,300);
+
+        // print_r($datos);die();
+
 
         return $datos;
      
@@ -334,6 +343,7 @@ class Saldo_fac_sub_C
        // echo $sql;       
 
         
+         print_r($sql);die();
         $datos = $this->conn->datos($sql);
        if($reporte==false)
 	    {
@@ -425,6 +435,7 @@ class Saldo_fac_sub_C
               ORDER BY CC.Cuenta,C.Detalle,TS.Detalle_SubCta ";
 
 
+         print_r($sql);die();
         $datos = grilla_generica_new($sql,'Catalogo_SubCtas As C, Catalogo_Cuentas As CC, Trans_SubCtas As TS','',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,300);
         return $datos;
 
