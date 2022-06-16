@@ -14,11 +14,11 @@ if(isset($_GET['cargar']))
 if(isset($_GET['consultar']))
 {
 	$parametros = $_POST['parametros'];
+	$parametros['tabla'] = '1';
 	$tabla = $controlador->cargar_consulta($parametros);
-	$controlador->tabla_temporizado($tabla['datos'],$parametros);
-	print_r($tabla['datos']);
 	echo json_encode($tabla['tabla']);
 }
+
 if(isset($_GET['consultar_totales']))
 {
 	$parametros = $_POST['parametros'];
@@ -29,7 +29,10 @@ if(isset($_GET['consultar_totales']))
 if(isset($_GET['consultar_tempo']))
 {
 	$parametros = $_POST['parametros'];
-    echo json_encode($controlador->consultar_tabla_temp($parametros['fechafin']));
+	$tabla = $controlador->cargar_consulta($parametros);
+	$res = $controlador->tabla_temporizado($tabla['datos'],$parametros);
+	// print_r($res);die();
+  echo json_encode($controlador->consultar_tabla_temp($parametros['fechafin']));
 }
 
 class Saldo_fac_sub_M 
@@ -104,17 +107,18 @@ class Saldo_fac_sub_M
 		{
 			// print_r($parametros);die();
 			$datos_ = $this->modelo->consulta_c_p_datos(
-			$parametros['tipocuenta'],
-			$parametros['ChecksubCta'],
-			$parametros['OpcP'],
-			$parametros['CheqCta'],
-			$parametros['CheqDet'],
-			$parametros['CheqIndiv'],
-			$fechaini,
-			$fechafin,
-			$cta,
-			$parametros['CodigoCli'],
-			$parametros['DCDet']);
+					$parametros['tipocuenta'],
+					$parametros['ChecksubCta'],
+					$parametros['OpcP'],
+					$parametros['CheqCta'],
+					$parametros['CheqDet'],
+					$parametros['CheqIndiv'],
+					$fechaini,
+					$fechafin,
+					$cta,
+					$parametros['CodigoCli'],
+					$parametros['DCDet']
+				);
 			foreach ($datos_ as $key => $value) {
 				 $Total = $Total + $value["Total"];
                  $Saldo = $Saldo + $value["Saldo"];
@@ -122,54 +126,71 @@ class Saldo_fac_sub_M
 			$totales_  = array('Total'=>$Total,'Saldo'=>$Saldo);
 
 			// print_r($totales_);die();
+			if(isset($parametros['tabla']))
+			{
 		  return $valores = array('tabla'=>$this->modelo->consulta_c_p_tabla(
-			$parametros['tipocuenta'],
-			$parametros['ChecksubCta'],
-			$parametros['OpcP'],
-			$parametros['CheqCta'],
-			$parametros['CheqDet'],
-			$parametros['CheqIndiv'],
-			$fechaini,
-			$fechafin,
-			$cta,
-			$parametros['CodigoCli'],
-			$parametros['DCDet']),
-		   'datos'=> $datos_,
-		   'totales'=>$totales_);
+						$parametros['tipocuenta'],
+						$parametros['ChecksubCta'],
+						$parametros['OpcP'],
+						$parametros['CheqCta'],
+						$parametros['CheqDet'],
+						$parametros['CheqIndiv'],
+						$fechaini,
+						$fechafin,
+						$cta,
+						$parametros['CodigoCli'],
+						$parametros['DCDet']
+					),
+				   'datos'=> $datos_,
+				   'totales'=>$totales_
+				 );
+			}else
+			{
+				 return $valores = array('datos'=> $datos_,'totales'=>$totales_);
+			}
+
 		}else if($parametros['tipocuenta']=='I' || $parametros['tipocuenta']=='G')
 		{
 			$datos_=$this->modelo->consulta_ing_egre_datos(
-			$parametros['tipocuenta'],
-			$parametros['ChecksubCta'],
-			$parametros['OpcP'],
-			$parametros['CheqCta'],
-			$parametros['CheqDet'],
-			$parametros['CheqIndiv'],
-			$fechaini,
-			$fechafin,
-			$cta,
-			$parametros['CodigoCli'],
-			$parametros['DCDet']);
-			foreach ($datos_ as $key => $value) {
-				$Total = $Total + $value["Total"];
-				$saldo = 0;
-			}
-			$totales_  = array('Total'=>$Total,'Saldo'=>$Saldo);
-		   return $valores = array('tabla'=>$this->modelo->consulta_ing_egre_tabla(
-			$parametros['tipocuenta'],
-			$parametros['ChecksubCta'],
-			$parametros['OpcP'],
-			$parametros['CheqCta'],
-			$parametros['CheqDet'],
-			$parametros['CheqIndiv'],
-			$fechaini,
-			$fechafin,
-			$cta,
-			$parametros['CodigoCli'],
-			$parametros['DCDet']),
-		   'datos'=> $datos_,
-		   'totales'=>$totales_);
-
+					$parametros['tipocuenta'],
+					$parametros['ChecksubCta'],
+					$parametros['OpcP'],
+					$parametros['CheqCta'],
+					$parametros['CheqDet'],
+					$parametros['CheqIndiv'],
+					$fechaini,
+					$fechafin,
+					$cta,
+					$parametros['CodigoCli'],
+					$parametros['DCDet']
+				);
+					foreach ($datos_ as $key => $value) {
+						$Total = $Total + $value["Total"];
+						$saldo = 0;
+					}
+					$totales_  = array('Total'=>$Total,'Saldo'=>$Saldo);
+					if(isset($parametros['tabla']))
+						{		   
+							   return $valores = array('tabla'=>$this->modelo->consulta_ing_egre_tabla(
+									$parametros['tipocuenta'],
+									$parametros['ChecksubCta'],
+									$parametros['OpcP'],
+									$parametros['CheqCta'],
+									$parametros['CheqDet'],
+									$parametros['CheqIndiv'],
+									$fechaini,
+									$fechafin,
+									$cta,
+									$parametros['CodigoCli'],
+									$parametros['DCDet']
+								),
+						   'datos'=> $datos_,
+						   'totales'=>$totales_
+						 );
+						}else
+						{
+							 return $valores = array('datos'=> $datos_,'totales'=>$totales_);
+						}
 		}
 
 	}
@@ -201,7 +222,7 @@ class Saldo_fac_sub_M
 				 $Total = $Total + $value["Total"];
                  $Saldo = $Saldo + $value["Saldo"];
 			}
-			$totales_  = array('Total'=>$Total,'Saldo'=>$Saldo);
+			$totales_  =  array('Total'=>number_format($Total,2,'.',''),'Saldo'=>number_format($Saldo,2,'.',''));
 		  return $totales_ ;
 		}else if($parametros['tipocuenta']=='I' || $parametros['tipocuenta']=='G')
 		{
@@ -221,7 +242,7 @@ class Saldo_fac_sub_M
 				$Total = $Total + $value["Total"];
 				$saldo = 0;
 			}
-			$totales_  = array('Total'=>$Total,'Saldo'=>$Saldo);
+			$totales_  = array('Total'=>number_format($Total,2,'.',''),'Saldo'=>number_format($Saldo,2,'.',''));
 		   return $totales_;
 
 		}
@@ -241,74 +262,76 @@ class Saldo_fac_sub_M
                     $date1 = new DateTime($parametros['fechaini']);
                     $date2 = new DateTime($parametros['fechafin']);
                     $fechaini = str_replace("-","",$parametros['fechaini']);
-		            $fechafin = str_replace("-","",$parametros['fechafin']);		
+		           			$fechafin = str_replace("-","",$parametros['fechafin']);		
 		
   	    	        //$dias = $parametros['fechafin']-$parametros['fechaini'];
   	    	        $dias = $date1->diff($date2)->days;
   	    	        $dato[0]['campo']='Fecha_Venc';
-			        $dato[0]['dato']=$fechafin;
-			        $dato[1]['campo']='Numero';
-			        $dato[1]['dato']=$value['Factura'];
-			        $dato[2]['campo']='Comprobante';
-			        $dato[2]['dato']=$value['Cliente'];
-			        $dato[3]['campo']='T';
-			        $dato[3]['dato']='N';
-			        $dato[4]['campo']='Fecha';
-			        $dato[4]['dato']=$fechaini;
-			        $dato[5]['campo']='Dato_Aux1';
-			        $dato[5]['dato']=$value['Cuenta'];
-			        $dato[6]['campo']='Total';
-			        $dato[6]['dato']=$value['Saldo'];
-			        $dato[7]['campo']='Saldo_Actual';
-			        $dato[7]['dato']=$value['Saldo'];
-			        $dato[8]['campo']="Item";
-			        $dato[8]['dato']=$_SESSION['INGRESO']['item'];
-			        $dato[9]['campo']="CodigoU";
-			        $dato[9]['dato']=$_SESSION['INGRESO']['CodigoU'];
-			        $dato[10]['campo']="TP";
-			        $dato[10]['dato']="CCXP";
-			       // print_r($dias);
-			        if($dias > 0 && $dias < 8)
-			        {
-				        $dato[11]['campo']='Ven_1_a_7';
-			            $dato[11]['dato']=$value['Saldo'];
+					        $dato[0]['dato']=$fechafin;
+					        $dato[1]['campo']='Numero';
+					        $dato[1]['dato']=$value['Factura'];
+					        $dato[2]['campo']='Comprobante';
+					        $dato[2]['dato']=$value['Cliente'];
+					        $dato[3]['campo']='T';
+					        $dato[3]['dato']='N';
+					        $dato[4]['campo']='Fecha';
+					        $dato[4]['dato']=$fechaini;
+					        $dato[5]['campo']='Dato_Aux1';
+					        $dato[5]['dato']=$value['Cuenta'];
+					        $dato[6]['campo']='Total';
+					        $dato[6]['dato']=$value['Saldo'];
+					        $dato[7]['campo']='Saldo_Actual';
+					        $dato[7]['dato']=$value['Saldo'];
+					        $dato[8]['campo']="Item";
+					        $dato[8]['dato']=$_SESSION['INGRESO']['item'];
+					        $dato[9]['campo']="CodigoU";
+					        $dato[9]['dato']=$_SESSION['INGRESO']['CodigoU'];
+					        $dato[10]['campo']="TP";
+					        $dato[10]['dato']="CCXP";
+					       // print_r($dias);
+					        if($dias > 0 && $dias < 8)
+					        {
+						        $dato[11]['campo']='Ven_1_a_7';
+				            $dato[11]['dato']=$value['Saldo'];
 
-			        }else if($dias > 8 && $dias < 31)
-			        {
-				        $dato[11]['campo']='Ven_8_a_30';
-			            $dato[11]['dato']=$value['Saldo'];
+					        }else if($dias > 8 && $dias < 31)
+					        {
+						        $dato[11]['campo']='Ven_8_a_30';
+				            $dato[11]['dato']=$value['Saldo'];
 
-			        }else if($dias >30 && $dias < 61)
-			        {
-				        $dato[11]['campo']='Ven_31_a_60';
-			            $dato[11]['dato']=$value['Saldo'];
+					        }else if($dias >30 && $dias < 61)
+					        {
+						        $dato[11]['campo']='Ven_31_a_60';
+				            $dato[11]['dato']=$value['Saldo'];
 
-			        }else if($dias >60 && $dias < 91)
-			        {
-				        $dato[11]['campo']='Ven_61_a_90';
-			            $dato[11]['dato']=$value['Saldo'];
+					        }else if($dias >60 && $dias < 91)
+					        {
+						        $dato[11]['campo']='Ven_61_a_90';
+					          $dato[11]['dato']=$value['Saldo'];
 
-			        }else if($dias > 90 && $dias < 181)
-			        {
-				        $dato[11]['campo']='Ven_91_a_180';
-			            $dato[11]['dato']=$value['Saldo'];
+					        }else if($dias > 90 && $dias < 181)
+					        {
+						        $dato[11]['campo']='Ven_91_a_180';
+					          $dato[11]['dato']=$value['Saldo'];
 
-			        }else if($dias >180 && $dias < 361)
-			        {
-				        $dato[11]['campo']='Ven_181_a_360';
-			            $dato[11]['dato']=$value['Saldo'];
+					        }else if($dias >180 && $dias < 361)
+					        {
+						        $dato[11]['campo']='Ven_181_a_360';
+					          $dato[11]['dato']=$value['Saldo'];
 
-			        }else if($dias > 360)
-			        {
-				        $dato[11]['campo']='Ven_mas_de_360';
-			            $dato[11]['dato']=$value['Saldo'];
-			        }
+					        }else if($dias > 360)
+					        {
+						        $dato[11]['campo']='Ven_mas_de_360';
+					          $dato[11]['dato']=$value['Saldo'];
+					        }
+			        		insert_generico("Saldo_Diarios",$dato);
 
-			        insert_generico("Saldo_Diarios",$dato);
+// print_r($key.'-');
+  	    	  }
 
-  	    	    }
-  	        }else
-  	        {
+// print_r('acabo');die();
+  	      }else{
+
   	        	$saldo=0;
   	        	if($datos=='')
   	        	{
@@ -387,6 +410,8 @@ class Saldo_fac_sub_M
 
   	        }
   	      }
+
+  	      return 1;
   	    						
   	    }
   }

@@ -675,7 +675,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
           <div class="col-sm-2">
             <input type="hidden" id="Autorizacion">
             <input type="hidden" id="Cta_CxP">
-            <select class="form-control input-sm" name="DCLinea" id="DCLinea" tabindex="1" onchange="numeroFactura();">
+            <select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="1" onchange="numeroFactura();">
               
             </select>
           </div>
@@ -683,20 +683,20 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <b style="font-weight: 600;">Fecha emisión</b>
           </div>
           <div class="col-sm-2">
-            <input tabindex="2" type="date" name="fechaEmision" id="fechaEmision" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
+            <input tabindex="2" type="date" name="fechaEmision" id="fechaEmision" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
           </div>
           <div class="col-sm-2 text-right">
             <label>Fecha vencimiento</label>
           </div>
           <div class="col-sm-2">
-            <input type="date" tabindex="3" name="fechaVencimiento" id="fechaVencimiento" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
+            <input type="date" tabindex="3" name="fechaVencimiento" id="fechaVencimiento" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
           </div>
           <div class=" col-sm-2">
             <label class="red">Factura No.</label>
             <label id="numeroSerie" class="red"></label>
           </div>
            <div class=" col-sm-1" style="padding:0px">
-            <input tabindex="7" type="input" class="form-control input-sm text-right" name="factura" id="factura">
+            <input tabindex="7" type="input" class="form-control input-xs text-right" name="factura" id="factura">
           </div>
         </div>
         <div class="row">
@@ -704,13 +704,13 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <label class="text-right">Cliente/Alumno(C)</label>
           </div>
           <div class="col-sm-6">
-            <select class="form-control input-sm" id="cliente" name="cliente" tabindex="5">
+            <select class="form-control" id="cliente" name="cliente" tabindex="5">
               <option value="">Seleccione un cliente</option>
             </select>
             <input type="hidden" name="codigoCliente" id="codigoCliente">
           </div>
           <div class="col-sm-2">
-            <input type="input" class="form-control input-sm" id="grupo" name="grupo" tabindex="6">
+            <input type="input" class="form-control input-xs" id="grupo" name="grupo" tabindex="6">
           </div>        
         </div>
         <div class="row">
@@ -718,13 +718,13 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <label>Curso</label>
           </div>
           <div class="col-sm-6">
-            <input tabindex="8" type="input" class="form-control input-sm" name="direccion" id="direccion">
+            <input tabindex="8" type="input" class="form-control input-xs" name="direccion" id="direccion">
           </div>
           <div class="col-sm-2 text-right">
             <label id="saldo">Saldo pendiente</label>
           </div>
           <div class="col-sm-2">
-            <input type="input" id="saldoPendiente" class="form-control input-sm text-right blue saldo_input" name="saldoPendiente">
+            <input type="input" id="saldoPendiente" class="form-control input-xs text-right blue saldo_input" name="saldoPendiente">
           </div>
         </div>
         <div class="row">
@@ -732,16 +732,16 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <label>Razón social</label>
           </div>
           <div class="col-sm-4">
-            <input tabindex="9" type="input" class="form-control input-sm" name="persona" id="persona">
+            <input tabindex="9" type="input" class="form-control input-xs" name="persona" id="persona">
           </div>
           <div class="col-sm-1 text-right">
             <label>CI/R.U.C</label>
           </div>
           <div class="col-sm-1 text-right">
-            <input tabindex="10" type="input" class="form-control input-sm" name="tdCliente" id="tdCliente" readonly>
+            <input tabindex="10" type="input" class="form-control input-xs" name="tdCliente" id="tdCliente" readonly>
           </div>
           <div class=" col-sm-2">
-            <input tabindex="10" type="input" class="form-control input-sm" name="ci" id="ci_ruc">   
+            <input tabindex="10" type="input" class="form-control input-xs" name="ci" id="ci_ruc">   
           </div>
           <div class="col-sm-2">
             <label class="online-radio"><input tabindex="4" type="checkbox" name="rbl_radio" id="rbl_no" checked="" style="margin-right: 2px;">Con mes</label>  
@@ -752,13 +752,13 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <label>Dirección</label>
           </div>
           <div class="col-sm-5">
-            <input tabindex="11" type="input" class="form-control input-sm" name="direccion" id="direccion1">
+            <input tabindex="11" type="input" class="form-control input-xs" name="direccion" id="direccion1">
           </div>
           <div class="col-sm-1 text-right">
             <label>Telefono</label>
           </div>
           <div class=" col-sm-2">
-            <input tabindex="12" type="input" class="form-control input-sm" name="telefono" id="telefono">
+            <input tabindex="12" type="input" class="form-control input-xs" name="telefono" id="telefono">
           </div>
           <div class="col-sm-2">
             <label>Código interno</label>
@@ -770,10 +770,10 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <label>Email</label>
           </div>
           <div class="col-sm-8">
-            <input tabindex="13" type="input" class="form-control input-sm" name="email" id="email">
+            <input tabindex="13" type="input" class="form-control input-xs" name="email" id="email">
           </div>
           <div class=" col-sm-2">
-            <input type="input" class="form-control input-sm" name="codigo" id="codigo" tabindex="26">
+            <input type="input" class="form-control input-xs" name="codigo" id="codigo" tabindex="26">
           </div>
         </div>
         <div class="row">
@@ -830,17 +830,17 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
         </div>
         <div class="row">
           <div class="col-sm-2">
-            <input type="text" style="color: coral;" name="total0" id="total0" class="form-control input-sm red text-right" readonly value="0.00">
+            <input type="text" style="color: coral;" name="total0" id="total0" class="form-control input-xs red text-right" readonly value="0.00">
           </div>
           <div class="col-sm-2">
-            <input type="text" style="color: coral;" name="total12" id="total12" class="form-control input-sm red text-right" readonly value="0.00">
+            <input type="text" style="color: coral;" name="total12" id="total12" class="form-control input-xs red text-right" readonly value="0.00">
           </div>
           <div class="col-sm-2">
-            <input type="text" style="color: coral;" name="descuento" id="descuento" class="form-control input-sm red text-right" readonly value="0.00">
+            <input type="text" style="color: coral;" name="descuento" id="descuento" class="form-control input-xs red text-right" readonly value="0.00">
           </div>
           <div class="col-sm-2">
             <div class="input-group input-group-sm">
-                <input type="text" style="color: coral;"  name="descuentop" id="descuentop" class="form-control input-sm red text-right" readonly value="0.00">
+                <input type="text" style="color: coral;"  name="descuentop" id="descuentop" class="form-control input-xs red text-right" readonly value="0.00">
                     <span class="input-group-btn">
                       <!-- <button type="button" class="btn btn-info btn-flat">Go!</button> -->
                       <button tabindex="25" type="button" class="btn" data-toggle="modal" data-target="#myModal">%</button>
@@ -848,10 +848,10 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
               </div>
           </div>
           <div class="col-sm-2">
-            <input type="text" style="color: coral;"  name="iva12" id="iva12" class="form-control input-sm red text-right" readonly value="0.00">
+            <input type="text" style="color: coral;"  name="iva12" id="iva12" class="form-control input-xs red text-right" readonly value="0.00">
           </div>
           <div class="col-sm-2">
-            <input type="text" style="color: coral;"  name="total" id="total" class="form-control input-sm red text-right" readonly value="0.00" onblur="$('#cheque').focus()">
+            <input type="text" style="color: coral;"  name="total" id="total" class="form-control input-xs red text-right" readonly value="0.00" onblur="$('#cheque').focus()">
           </div>
         </div>
         <div class="row">
@@ -859,13 +859,13 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <label>Detalle del pago</label>
           </div>
           <div class="col-sm-4">
-            <input type="text" name="cheque" id="cheque" class="form-control input-sm" value="." tabindex="17">
+            <input type="text" name="cheque" id="cheque" class="form-control input-xs" value="." tabindex="17">
           </div>
           <div class="col-sm-2 text-right">
             <b>Cheque No.</b>
           </div>
           <div class="col-sm-2">
-            <input type="text" name="chequeNo" id="chequeNo" class="form-control input-sm text-right" tabindex="18"  onblur="$('#cuentaBanco').focus()">
+            <input type="text" name="chequeNo" id="chequeNo" class="form-control input-xs text-right" tabindex="18"  onblur="$('#cuentaBanco').focus()">
           </div>
         </div>
         <div class="row">
@@ -873,7 +873,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <label>Bancos/Tarjetas</label>
           </div>
           <div class="col-sm-7">
-            <select class="form-control input-sm" name="cuentaBanco" id="cuentaBanco" tabindex="15" onchange="verificarTJ();" onblur="$('#valorBanco').focus()">
+            <select class="form-control input-xs" name="cuentaBanco" id="cuentaBanco" tabindex="15" onchange="verificarTJ();" onblur="$('#valorBanco').focus()">
               <?php
                 $cuentas = $facturar->getCatalogoCuentas();
                 foreach ($cuentas as $cuenta) {
@@ -886,7 +886,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <label>USD</label>
           </div>
           <div class="col-sm-2">
-            <input tabindex="19" type="text" name="valorBanco" id="valorBanco" onkeyup="calcularSaldo();" class="form-control input-sm red text-right" value="0.00" onblur="$('#cuentaNC').focus()">
+            <input tabindex="19" type="text" name="valorBanco" id="valorBanco" onkeyup="calcularSaldo();" class="form-control input-xs red text-right" value="0.00" onblur="$('#cuentaNC').focus()">
           </div>
         </div>
         <div class="row">
@@ -894,7 +894,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <label>Anticipos</label>
           </div>
           <div class="col-sm-7">
-            <select class="form-control input-sm" name="cuentaBanco" id="cuentaBanco" tabindex="15">
+            <select class="form-control input-xs" name="cuentaBanco" id="cuentaBanco" tabindex="15">
               <?php
                 $cuentas = $facturar->getAnticipos();
                 foreach ($cuentas as $cuenta) {
@@ -907,7 +907,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <label>USD</label>
           </div>
           <div class="col-sm-2">
-            <input type="input" id="saldoFavor" class="form-control input-sm red text-right" name="saldoFavor" tabindex="24" onkeyup="calcularSaldo();" value="0.00" style="color:yellowgreen;">
+            <input type="input" id="saldoFavor" class="form-control input-xs red text-right" name="saldoFavor" tabindex="24" onkeyup="calcularSaldo();" value="0.00" style="color:yellowgreen;">
           </div>
         </div>
         <div class="row">
@@ -915,7 +915,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <label>Notas de crédito</label>
           </div>
           <div class="col-sm-7">
-            <select class="form-control input-sm" name="cuentaNC" id="cuentaNC" tabindex="16"  onblur="$('#abono').focus()">
+            <select class="form-control input-xs" name="cuentaNC" id="cuentaNC" tabindex="16"  onblur="$('#abono').focus()">
               <?php
                 $cuentas = $facturar->getNotasCredito();
                 foreach ($cuentas as $cuenta) {
@@ -928,18 +928,18 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <label>USD</label>
           </div>
           <div class="col-sm-2">
-            <input tabindex="21" type="text" name="abono" id="abono" onkeyup="calcularSaldo();" class="form-control input-sm red text-right" value="0.00"  onblur="$('#efectivo').focus()">
+            <input tabindex="21" type="text" name="abono" id="abono" onkeyup="calcularSaldo();" class="form-control input-xs red text-right" value="0.00"  onblur="$('#efectivo').focus()">
           </div>
         </div>
         <div class="row">
           <div class="col-sm-4 text-center">
-            <input type="text" name="codigoB" class="form-control input-sm" id="codigoB" style="color: white; background: brown;" value="Código del banco: " readonly />
+            <input type="text" name="codigoB" class="form-control input-xs" id="codigoB" style="color: white; background: brown;" value="Código del banco: " readonly />
           </div>
           <div class="col-sm-2 col-sm-offset-4 text-right">
             <b>Efectivo USD</b>
           </div>
           <div class="col-sm-2">
-            <input tabindex="20" type="text" name="efectivo" id="efectivo" onkeyup="calcularSaldo();" class="form-control input-sm red text-right" value="0.00"  onblur="$('#saldoTotal').focus()">
+            <input tabindex="20" type="text" name="efectivo" id="efectivo" onkeyup="calcularSaldo();" class="form-control input-xs red text-right" value="0.00"  onblur="$('#saldoTotal').focus()">
           </div>
         </div>
         <div class="row" id="divInteres">
@@ -947,12 +947,12 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <b>Interés Tarjeta USD</b>
           </div>
           <div class="col-sm-2">
-            <input tabindex="20" type="text" name="interesTarjeta" id="interesTarjeta" class="form-control input-sm red text-right" >
+            <input tabindex="20" type="text" name="interesTarjeta" id="interesTarjeta" class="form-control input-xs red text-right" >
           </div>
         </div>
         <div class="row">
           <div class="col-sm-1 text-center justify-content-center align-items-center">
-            <input style="width: 50px" type="text" id="registros" class="form-control input-sm text-center justify-content-center align-items-center" readonly>
+            <input style="width: 50px" type="text" id="registros" class="form-control input-xs text-center justify-content-center align-items-center" readonly>
           </div>
           <div class=" col-sm-4 col-sm-offset-3">
             <div class="col-sm-2 col-sm-offset-4">
@@ -970,7 +970,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <b>Saldo USD</b>
           </div>
           <div class="col-sm-2">
-            <input type="text" name="saldoTotal" id="saldoTotal" class="form-control input-sm red text-right" value="0.00" style="color:coral;" onblur="$('#guardar').focus()">
+            <input type="text" name="saldoTotal" id="saldoTotal" class="form-control input-xs red text-right" value="0.00" style="color:coral;" onblur="$('#guardar').focus()">
           </div>
         </div>
       </div>

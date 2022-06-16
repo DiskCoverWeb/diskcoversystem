@@ -343,7 +343,7 @@ class Saldo_fac_sub_C
        // echo $sql;       
 
         
-         print_r($sql);die();
+         // print_r($sql);die();
         $datos = $this->conn->datos($sql);
        if($reporte==false)
 	    {
@@ -435,7 +435,7 @@ class Saldo_fac_sub_C
               ORDER BY CC.Cuenta,C.Detalle,TS.Detalle_SubCta ";
 
 
-         print_r($sql);die();
+         // print_r($sql);die();
         $datos = grilla_generica_new($sql,'Catalogo_SubCtas As C, Catalogo_Cuentas As CC, Trans_SubCtas As TS','',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,300);
         return $datos;
 

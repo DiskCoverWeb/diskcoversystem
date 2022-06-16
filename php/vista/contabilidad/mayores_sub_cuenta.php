@@ -160,10 +160,10 @@ function sucursal_exis()
 
 
 
-       $('#descargar_excel').click(function(){
-       
-      	var url ='../../lib/fpdf/reportes_Saldo_fac_subMod.php?Mostrar_excel=true&tipocuenta='+$('#tipo_cuenta').val()+'&ChecksubCta='+$("#ChecksubCta").is(':checked')+'&OpcP='+$("#OpcP").is(':checked')+'&CheqCta='+$("#CheqCta").is(':checked')+'&CheqDet='+$("#CheqDet").is(':checked')+'&CheqIndiv='+$("#CheqIndiv").is(':checked')+'&CodigoCli='+$('#select_beneficiario').val()+'&Cta='+$('#select_cuenta').val()+'&DCDet='+$('#select_detalle').val()+'&fechaini='+$('#txt_desde').val()+'&fechafin='+$('#txt_hasta').val()+'&tipo=imprimir&tabla=temp';       	   
-      	    window.open(url, '_blank');
+       $('#descargar_excel').click(function(){       
+       var datos = $('#form_filtros').serialize();
+	     	 var	url =  '../controlador/contabilidad/mayores_sub_cuentaC.php?reporte_excel=true&'+datos;
+	  	   window.open(url, '_blank');
        });
 
        

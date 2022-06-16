@@ -210,7 +210,7 @@
 			type:  'post',
 			dataType: 'json',
 			beforeSend: function () {		
-			     var spiner = '<div class="text-center"><img src="../../img/gif/loader4.1.gif" width="100" height="100"></div>'			
+			     var spiner = '<div class="text-center"><img src="../../img/gif/loader4.1.gif" width="30%"></div>'			
 				 $('#tabla_temp').html(spiner);
 			},			
 			success:  function (response) {
@@ -231,7 +231,7 @@
 		var tab = $this.id;
 		if(tab=='titulo2_tab')
 		{
-			$('#activo').val('2');
+			$('#activo').val('2');		
 
 		}else
 		{
@@ -367,7 +367,7 @@
 	  		   <li class="active">
 	  		   	<a data-toggle="tab" href="#home" onclick="activar(this)" id="titulo_tab">SALDO DE CUENTAS POR COBRAR</a></li>
 	  		   <li>
-	  		   	<a data-toggle="tab" href="#menu1"  onclick="activar(this)" id="titulo2_tab">SALDO DE CUENTAS POR COBRAR TEMPORIZADO</a></li>
+	  		   	<a data-toggle="tab" href="#menu1"  onclick="activar(this);consultar_datos_tempo()" id="titulo2_tab">SALDO DE CUENTAS POR COBRAR TEMPORIZADO</a></li>
 	  		</ul>
 	  	    <div class="tab-content" style="background-color:#E7F5FF">
 	  	    	<div id="home" class="tab-pane fade in active">
