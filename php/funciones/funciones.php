@@ -6703,7 +6703,7 @@ if($titulo)
   </ul>
 </nav>';
 }
- $tbl.='<table class="table text-sm" id="'.$id_tabla.'"><thead>';
+ $tbl.='<table class="table-sm" id="'.$id_tabla.'"><thead>';
   //cabecera de la consulta sql//
  if($botones)
   {
@@ -6898,7 +6898,7 @@ if($titulo)
               $valor = substr($valor,0,-1);
             }
             $funcion = str_replace(' ','_', $value3['boton']);
-            $tbl.='<button type="button" class="btn btn-sm btn-'.$tipo.'" onclick="'.$funcion.'('.$valor.')" title="'.$value3['boton'].'">'.$icono.'</button>';
+            $tbl.='<button type="button" class="btn btn-xs btn-'.$tipo.'" onclick="'.$funcion.'('.$valor.')" title="'.$value3['boton'].'">'.$icono.'</button>';
           }
           $tbl.='</td>';
         }
