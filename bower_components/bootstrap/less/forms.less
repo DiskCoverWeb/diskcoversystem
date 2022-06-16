@@ -205,6 +205,10 @@ output {
     .input-group-sm & {
       line-height: @input-height-small;
     }
+     &.input-xs,
+    .input-group-sm & {
+      line-height: @input-height-small;
+    }
 
     &.input-lg,
     .input-group-lg & {
@@ -303,7 +307,8 @@ output {
   margin-bottom: 0;
 
   &.input-lg,
-  &.input-sm {
+  &.input-sm,
+  &.input-xs {
     padding-right: 0;
     padding-left: 0;
   }
@@ -319,6 +324,9 @@ output {
 // issue documented in https://github.com/twbs/bootstrap/issues/15074.
 
 .input-sm {
+  .input-size(@input-height-small; @padding-small-vertical; @padding-small-horizontal; @font-size-small; @line-height-small; @input-border-radius-small);
+}
+.input-xs {
   .input-size(@input-height-small; @padding-small-vertical; @padding-small-horizontal; @font-size-small; @line-height-small; @input-border-radius-small);
 }
 .form-group-sm {
@@ -409,6 +417,14 @@ output {
   line-height: @input-height-large;
 }
 .input-sm + .form-control-feedback,
+.input-group-sm + .form-control-feedback,
+.form-group-sm .form-control + .form-control-feedback {
+  width: @input-height-small;
+  height: @input-height-small;
+  line-height: @input-height-small;
+}
+
+.input-xs + .form-control-feedback,
 .input-group-sm + .form-control-feedback,
 .form-group-sm .form-control + .form-control-feedback {
   width: @input-height-small;
