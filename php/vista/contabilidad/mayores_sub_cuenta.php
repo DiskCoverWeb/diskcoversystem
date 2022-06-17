@@ -3,8 +3,8 @@ $(document).ready(function()
   {
   	sucursal_exis();
   	consultar_datos();
-  	DLCtas();
-  	DCCtas();
+  	// FDLCtas();
+  	FDCCtas();
   })
 function sucursal_exis()
   { 
@@ -61,7 +61,7 @@ function sucursal_exis()
 
 	  }
 
-	  function DCCtas()
+	  function FDCCtas()
 	  {
 	  	var parametros = 
 	  	{
@@ -79,14 +79,23 @@ function sucursal_exis()
 	        $.each(response, function(i, item){
 	          ddl+='<option value="'+item.Codigo+'">'+item.Nombre_Cta+'</option>';
 	        });       
+	        if(ddl!='')
+	        {
+	        	FDLCtas(response[0]['Codigo']);
+	        }else
+	        {
+	        	ddl='<option value="">No exsite</option>';
+	        	FDLCtas('');	        	
+	        }
+
 	        $('#DCCtas').html(ddl);
-	        DLCtas(response[0]['Codigo']);
 	      }
 	    });
 	  }
 
-	  function DLCtas(DCcta)
+	  function FDLCtas(DCcta)
 	  {
+	  	console.log(DCcta);
 	  	$('#DLCtas').html('');   
 	  	var parametros = 
 	  	{
@@ -103,7 +112,9 @@ function sucursal_exis()
 	        console.log(response);  	       
 	        $.each(response, function(i, item){
 	          lis+='<option value="'+item.Codigo+'">'+item.Nombre_Cta+'</option>';
-	        });         
+	        });
+
+	        if(lis==''){ lis='<option value="">No exsite</option>';}         
 	        $('#DLCtas').html(lis);          
 	        
 	      }
@@ -245,17 +256,17 @@ function sucursal_exis()
 				Sub Cuenta
 			</div> 		
     		<div class="panel-body" style="padding: 0px 6px 0px 6px;">
-    			<label><input type="radio" name="rbl_subcta" value="C"  onclick="DCCtas()" checked> CxC</label>
-    			<label><input type="radio" name="rbl_subcta" value="P" onclick="DCCtas()" > CXP</label>
-    			<label><input type="radio" name="rbl_subcta" value="PM" onclick="DCCtas()" > Prima</label>
-    			<label><input type="radio" name="rbl_subcta" value="I" onclick="DCCtas()" > Ingreso</label>
-    			<label><input type="radio" name="rbl_subcta" value="G" onclick="DCCtas()" > Gastos</label>
-    			<label><input type="radio" name="rbl_subcta" value="CC" onclick="DCCtas()" > C. de C.</label>
+    			<label><input type="radio" name="rbl_subcta" value="C"  onclick="FDCCtas()" checked> CxC</label>
+    			<label><input type="radio" name="rbl_subcta" value="P" onclick="FDCCtas()" > CXP</label>
+    			<label><input type="radio" name="rbl_subcta" value="PM" onclick="FDCCtas()" > Prima</label>
+    			<label><input type="radio" name="rbl_subcta" value="I" onclick="FDCCtas()" > Ingreso</label>
+    			<label><input type="radio" name="rbl_subcta" value="G" onclick="FDCCtas()" > Gastos</label>
+    			<label><input type="radio" name="rbl_subcta" value="CC" onclick="FDCCtas()" > C. de C.</label>
     		</div>
     	</div>		
 	</div>
 	<div class="col-sm-5">
-		<select class="form-control input-sm" id="DCCtas" name="DCCtas" onchange="DLCtas(this.value)">
+		<select class="form-control input-sm" id="DCCtas" name="DCCtas" onchange="FDLCtas(this.value)">
    		<option value="">Seleccione</option>
    	</select>      
    	<select class="form-control input-sm" id="DLCtas" name="DLCtas">

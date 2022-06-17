@@ -20,6 +20,11 @@ if(isset($_GET['buscar_edi']))
 	$respuesta = $controlador->buscar_ficha($_POST['parametros']);
 	echo json_encode($respuesta);
 }
+if(isset($_GET['buscar_edi_solicitante']))
+{
+	$respuesta = $controlador->buscar_ficha_solicitante($_POST['parametros']);
+	echo json_encode($respuesta);
+}
 if(isset($_GET['nuevo']))
 {
 	$respuesta = $controlador->insertar_paciente($_POST['parametros']);
@@ -103,6 +108,25 @@ class pacienteC
 		}
 		
 	}
+
+	function buscar_ficha_solicitante($parametros)
+	{
+
+		// print_r($parametros);die();
+		$datos = $this->modelo->cargar_paciente($parametros);
+		if(!empty($datos))
+		{
+			$ficha = array('id'=>$datos[0]['ID'],'nombre'=>$datos[0]['Cliente'],'ci'=>$datos[0]['CI_RUC'],'prov'=>$datos[0]['Prov'],'localidad'=>$datos[0]['Direccion'],'telefono'=>$datos[0]['Telefono'],'email'=>$datos[0]['Email'],'matricula'=>$datos[0]['Matricula'],'Codigo'=>$datos[0]['Codigo']);
+			// $ficha = array('id'=>$datos[0]['ID'],'nombre'=>$datos[0]['Cliente'],'ci'=>$datos[0]['CI_RUC'],'prov'=>$datos[0]['Prov'],'localidd'=>$datos[0]['Direccion'],'telefono'=>$datos[0]['Telefono'],'email'=>$datos[0]['Email'],'matricula'=>$datos[0]['Matricula']);
+			
+			return $ficha;
+		}else
+		{
+			return -1;
+		}
+		
+	}
+
 	function insertar_paciente($parametros)
 	{
 		$datos[0]['campo']='Cliente';

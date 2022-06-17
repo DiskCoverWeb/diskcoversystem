@@ -148,6 +148,7 @@
    function autocoplet_bene(){
       $('#beneficiario1').select2({
         placeholder: 'Seleccione una beneficiario',
+        width:'90%',
         ajax: {
           url:   '../controlador/contabilidad/incomC.php?beneficiario=true',
           dataType: 'json',
@@ -1284,23 +1285,23 @@
                     <div class="panel-heading">
                       <div class="row " style="padding-bottom: 5px;">
                         
-                        <div class="col-md-2 col-sm-2 col-xs-2">                          
+                        <div class="col-md-3 col-sm-2 col-xs-2">                          
                           <!-- <div class="form-group"> -->
                                <div class="input-group">
-                                 <div class="input-group-addon input-sm">
+                                 <div class="input-group-addon input-xs">
                                    <b>FECHA:</b>
                                  </div>
-                                 <input type="date" class="form-control input-sm" id="fecha1" placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="if($('#beneficiario1').val()==''){$('#beneficiario1').select2('open');}">
+                                 <input type="date" class="form-control input-xs" id="fecha1" placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="if($('#beneficiario1').val()==''){$('#beneficiario1').select2('open');}">
                                </div>
                           <!-- </div> -->
                         </div>
-                        <div class="col-md-7 col-sm-7 col-xs-7">
+                        <div class="col-md-6 col-sm-7 col-xs-7">
                           <!-- <div class="form-group"> -->
                                <div class="input-group">
-                                 <div class="input-group-addon input-sm">
+                                 <div class="input-group-addon input-xs">
                                    <b>BENEFICIARIO:</b>
                                  </div>                        
-                              <select id="beneficiario1" name='beneficiario1' class='form-control input-sm' onchange="benefeciario_selec()">
+                              <select id="beneficiario1" name='beneficiario1' class='form-control' onchange="benefeciario_selec()">
                                 <option value="">Seleccione beneficiario</option>                                
                               </select>
                               <input type="hidden" name="beneficiario2" id="beneficiario2" value='' />
@@ -1311,10 +1312,10 @@
                         <div class="col-md-3 col-sm-3 col-xs-3">
                           <!-- <div class="form-group"> -->
                                <div class="input-group">
-                                 <div class="input-group-addon input-sm">
+                                 <div class="input-group-addon input-xs">
                                    <b>R.U.C / C.I:</b>
                                  </div>
-                                 <input type="text" class=" form-control input-sm" id="ruc" name='ruc' placeholder="R.U.C / C.I" value='000000000' maxlength='30' size='25'>
+                                 <input type="text" class=" form-control input-xs" id="ruc" name='ruc' placeholder="R.U.C / C.I" value='000000000' maxlength='30' size='25'>
                                </div>
                           <!-- </div> -->
                         </div>
@@ -1323,10 +1324,10 @@
                       <div class="row ">
                          <div class="col-md-4 col-sm-4 col-xs-4">
                                <div class="input-group">
-                                 <div class="input-group-addon input-sm">
+                                 <div class="input-group-addon input-xs">
                                    <b>Email:</b>
                                  </div>
-                                 <input type="email" class="form-control input-sm" id="email" name="email" placeholder="prueba@prueba.com" 
+                                 <input type="email" class="form-control input-xs" id="email" name="email" placeholder="prueba@prueba.com" 
                             maxlength='255' size='100'/>
                                </div>
                         </div>        
@@ -1334,34 +1335,34 @@
 
                       <!--   <div class="col-md-6 col-sm-6 col-xs-6">
                           <div class="input-group">
-                            <div class="btn_f input-sm col-sm-12 text-center">
+                            <div class="btn_f input-xs col-sm-12 text-center">
                               <b>EMAIL:</b>
                             </div>
-                                <input type="email" class="form-control input-sm" id="email" name="email" placeholder="prueba@prueba.com" 
+                                <input type="email" class="form-control input-xs" id="email" name="email" placeholder="prueba@prueba.com" 
                             maxlength='255' size='100'/>
                           </div>
                         </div> -->
                         <div class="col-md-2 col-sm-3 col-xs-3">
                                <div class="input-group">
-                                 <div class="input-group-addon input-sm">
+                                 <div class="input-group-addon input-xs">
                                    <b>COTIZACION:</b>
                                  </div>
-                                 <input type="text" class="form-control input-sm" id="cotizacion" name='cotizacion' placeholder="0.00" onKeyPress='return soloNumerosDecimales(event)' style="text-align:right; width: 70px;" maxlength='20' />
+                                 <input type="text" class="form-control input-xs" id="cotizacion" name='cotizacion' placeholder="0.00" onKeyPress='return soloNumerosDecimales(event)' style="text-align:right; width: 70px;" maxlength='20' />
                                </div>
                         </div>     
 
                       <!--   <div class="col-md-2 col-sm-2 col-xs-2">
                           <div class="input-group">
-                            <div class="btn_f input-sm col-sm-12 text-center">
+                            <div class="btn_f input-xs col-sm-12 text-center">
                               <b>COTIZACIÓN:</b>
                             </div>
-                                <input type="text" class="form-control input-sm" id="cotizacion" name='cotizacion' placeholder="0.00" onKeyPress='return soloNumerosDecimales(event)' style="text-align:right;" maxlength='20' size='25' />
+                                <input type="text" class="form-control input-xs" id="cotizacion" name='cotizacion' placeholder="0.00" onKeyPress='return soloNumerosDecimales(event)' style="text-align:right;" maxlength='20' size='25' />
                           </div>
                         </div> -->
 
                         <div class="col-md-3 col-sm-3 col-xs-3">
                                <div class="input-group">
-                                 <div class="input-group-addon input-sm">
+                                 <div class="input-group-addon input-xs">
                                    <b>Tipo de conversión  :</b>
                                  </div>
                                   <label class="customradio" style="margin-bottom: 1px;"><span class="radiotextsty">(/)</span>
@@ -1391,20 +1392,20 @@
 
                          <div class="col-md-3 col-sm-3 col-xs-3">
                                <div class="input-group">
-                                 <div class="input-group-addon input-sm">
+                                 <div class="input-group-addon input-xs">
                                    <b>VALOR TOTAL:</b>
                                  </div>
-                                <input type="text" class="form-control input-sm" id="VT" name='VT' placeholder="0.00" style="text-align:right;" onKeyPress='return soloNumerosDecimales(event)' maxlength='20' size='33' readonly="">
+                                <input type="text" class="form-control input-xs" id="VT" name='VT' placeholder="0.00" style="text-align:right;" onKeyPress='return soloNumerosDecimales(event)' maxlength='20' size='33' readonly="">
                                </div>
                          </div>     
 
 
                         <!-- <div class="col-md-2 col-sm-2 col-xs-2">
                           <div class="input-group">
-                            <div class="btn_f input-sm col-sm-12 text-center">
+                            <div class="btn_f input-xs col-sm-12 text-center">
                               <b>VALOR TOTAL:</b>
                             </div>
-                                <input type="text" class="form-control input-sm" id="VT" name='VT' placeholder="0.00" style="text-align:right;" onKeyPress='return soloNumerosDecimales(event)' maxlength='20' size='33' readonly="">
+                                <input type="text" class="form-control input-xs" id="VT" name='VT' placeholder="0.00" style="text-align:right;" onKeyPress='return soloNumerosDecimales(event)' maxlength='20' size='33' readonly="">
                           </div>
                         </div> -->
                       </div>
@@ -1417,20 +1418,20 @@
                             <div class="row">
                               <div class="col-sm-9">
                                 <div class="input-group">
-                                  <div class="input-group-addon input-sm">
+                                  <div class="input-group-addon input-xs">
                                     <b>CUENTA:</b>
                                   </div>
-                                  <select class="form-control input-sm" name="conceptoe" id='conceptoe'>
+                                  <select class="form-control input-xs" name="conceptoe" id='conceptoe'>
                                    <option value="">Seleccione cuenta de efectivo</option>
                                   </select>
                                 </div>                            
                               </div>
                               <div class="col-sm-3">
                                 <div class="input-group">
-                                     <div class="input-group-addon input-sm">
+                                     <div class="input-group-addon input-xs">
                                        <b><?php echo $_SESSION['INGRESO']['S_M']; ?>:</b>
                                      </div>
-                                     <input type="text" class="form-control input-sm" id="vae" name='vae' placeholder="0.00" style="text-align:right;" onKeyPress='return soloNumerosDecimales(event)' maxlength='20' size='13'>
+                                     <input type="text" class="form-control input-xs" id="vae" name='vae' placeholder="0.00" style="text-align:right;" onKeyPress='return soloNumerosDecimales(event)' maxlength='20' size='13'>
                                    </div>                           
                               </div>                               
                             </div>                                                  
@@ -1444,30 +1445,30 @@
                             <div class="row">
                               <div class="col-md-9">
                               <div class="input-group">
-                                     <div class="input-group-addon input-sm">
+                                     <div class="input-group-addon input-xs">
                                          <b>CUENTA:</b>
                                      </div>
-                                     <select class="form-control input-sm" name="conceptob" id='conceptob'>
+                                     <select class="form-control input-xs" name="conceptob" id='conceptob'>
                                          <option value="">Seleccione cuenta de banco</option>
                                     </select>
                                   </div>                            
                             </div>
                             <div class="col-md-3"  id="ingreso_val_banco">
                               <div class="input-group">
-                                     <div class="input-group-addon input-sm">
+                                     <div class="input-group-addon input-xs">
                                          <b><?php echo $_SESSION['INGRESO']['S_M']; ?>:</b>
                                      </div>
-                                     <input type="text" class="form-control input-sm" id="vab" name='vab' placeholder="0.00" 
+                                     <input type="text" class="form-control input-xs" id="vab" name='vab' placeholder="0.00" 
                                 style="text-align:right;"  onKeyPress='return soloNumerosDecimales(event)' 
                                 maxlength='20' size='13' value='0.00'>
                                   </div>  
                             </div> 
                             <div class="col-md-3" id="no_cheque" style="display: none;">
                               <div class="input-group">
-                                     <div class="input-group-addon input-sm">
+                                     <div class="input-group-addon input-xs">
                                          <b>No. Cheq:</b>
                                      </div>
-                                     <input type="text" class="form-control input-sm" id="no_cheq" name='no_cheq' placeholder="00000001" 
+                                     <input type="text" class="form-control input-xs" id="no_cheq" name='no_cheq' placeholder="00000001" 
                                 style="text-align:right;"  onKeyPress='return soloNumerosDecimales(event)' 
                                 maxlength='20' size='13' value='00000001' onblur="agregar_depo()">
                                   </div>  
@@ -1488,18 +1489,18 @@
                           </div>
                           <div class="col-md-2">
                             <div class="input-group">
-                                <div class="btn_f input-sm col-sm-12 text-center">
+                                <div class="btn_f input-xs col-sm-12 text-center">
                                   <b>Efectivizar:</b>
                                 </div>
-                                <input type="date" class="form-control input-sm" id="efecti" name='efecti' placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>'>
+                                <input type="date" class="form-control input-xs" id="efecti" name='efecti' placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>'>
                               </div>                            
                           </div>
                           <div class="col-md-2">
                             <div class="input-group" id="deposito_no">
-                                <div class="btn_f input-sm col-sm-12 text-center">
+                                <div class="btn_f input-xs col-sm-12 text-center">
                                   <b>Deposito No:</b>
                                 </div>
-                                <input type="text" class="form-control input-sm" id="depos" name='depos' placeholder="12345" onblur="agregar_depo()">
+                                <input type="text" class="form-control input-xs" id="depos" name='depos' placeholder="12345" onblur="agregar_depo()">
                               </div>
                           </div>                          
                         </div>                      
@@ -1508,10 +1509,10 @@
                       <div class="row " style="padding-bottom: 5px;"><br> 
                         <div class="col-md-12 col-sm-12 col-xs-12">
                                <div class="input-group">
-                                 <div class="input-group-addon input-sm">
+                                 <div class="input-group-addon input-xs">
                                    <b>CONCEPTO:</b>
                                  </div>
-                                <input type="text" class="form-control input-sm" id="concepto" name="concepto" placeholder="concepto" maxlength='150'/>
+                                <input type="text" class="form-control input-xs" id="concepto" name="concepto" placeholder="concepto" maxlength='150'/>
                                </div>
                         </div>                        
                       </div>
@@ -1519,18 +1520,18 @@
                       <div class="row">
                         <div class="col-md-2 col-sm-1 col-xs-1">
                           <div class="input-group">
-                            <div class="input-sm col-md-12 btn_f text-center">
+                            <div class="input-xs col-md-12 btn_f text-center">
                               <b>CODIGO:</b>
                             </div>
-                             <input type="text" class="form-control input-sm" id="codigo" name='codigo' placeholder="codigo" maxlength='30' size='12' onblur="cargar_modal();" onkeyup="mayusculas('codigo',this.value)" />
+                             <input type="text" class="form-control input-xs" id="codigo" name='codigo' placeholder="codigo" maxlength='30' size='12' onblur="cargar_modal();" onkeyup="mayusculas('codigo',this.value)" />
                           </div>
                         </div>
                         <div class="col-md-8 col-sm-9 col-xs-9">
                                <div class="input-group" style="display: block;">
-                                 <div class="btn_f input-sm col-md-12 text-center">
+                                 <div class="btn_f input-xs col-md-12 text-center">
                                   <b>DIGITE LA CLAVE O SELECCIONE LA CUENTA:</b>
                                  </div>
-                                 <select id="cuentar" class=" form-control input-sm" onchange="abrir_modal_cuenta()" onfocus="cargar_cuenta()">
+                                 <select id="cuentar" class=" form-control input-xs" onchange="abrir_modal_cuenta()" onfocus="cargar_cuenta()">
                                   <option value="">Seleccione una cuenta</option>   
                                  </select>
                                    <!--  <input type="text" class="xs" id="cuenta" name='cuenta' placeholder="cuenta" maxlength='70' size='153'/>
@@ -1540,10 +1541,10 @@
                         </div>
                         <div class="col-md-2 col-sm-2 col-xs-2">
                                <div class="input-group">
-                                 <div class="btn_f input-sm col-md-12 text-center">
+                                 <div class="btn_f input-xs col-md-12 text-center">
                                   <b>VALOR:</b>
                                  </div>
-                                   <input type="text" class="form-control input-sm" id="va" name='va' 
+                                   <input type="text" class="form-control input-xs" id="va" name='va' 
                               placeholder="0.00" style="text-align:right;" onKeyPress='return soloNumerosDecimales(event)' onblur="ingresar_asiento()" value="0.00">
                                </div>
                         </div>
@@ -1609,14 +1610,14 @@
                           <div class="col-sm-6">
                             <div class="col-sm-4">
                               <b>Diferencia</b>
-                                <input type="text" name="txt_diferencia" id="txt_diferencia" class="form-control input-sm text-right" readonly="" value="0">
+                                <input type="text" name="txt_diferencia" id="txt_diferencia" class="form-control input-xs text-right" readonly="" value="0">
                             </div>
                             <div class="col-sm-4">
                               <b>Totales</b>
-                               <input type="text" name="txt_debe" id="txt_debe" class="form-control input-sm text-right" readonly="" value="0">
+                               <input type="text" name="txt_debe" id="txt_debe" class="form-control input-xs text-right" readonly="" value="0">
                             </div>
                             <div class="col-sm-4"><br>
-                                <input type="text" name="txt_haber" id="txt_haber" class="form-control input-sm text-right" readonly="" value="0">
+                                <input type="text" name="txt_haber" id="txt_haber" class="form-control input-xs text-right" readonly="" value="0">
                             </div>
                           </div>
                         </div>                        
@@ -1647,7 +1648,7 @@
             <b>Efectiv.</b>
           </div>
           <div class="col-sm-6">
-            <input type="date" name="txt_efectiv" id="txt_efectiv" class="form-control input-sm" value="<?php echo date('Y-m-d');?>">
+            <input type="date" name="txt_efectiv" id="txt_efectiv" class="form-control input-xs" value="<?php echo date('Y-m-d');?>">
           </div>
         </div>
         <div class="row">
@@ -1655,7 +1656,7 @@
             <b> Cheq / Dep</b>
           </div>
           <div class="col-sm-6">
-            <input type="text" name="txt_cheq_dep" id="txt_cheq_dep" class="form-control input-sm">
+            <input type="text" name="txt_cheq_dep" id="txt_cheq_dep" class="form-control input-xs">
           </div>
         </div>
         </div>
@@ -1665,7 +1666,7 @@
           </div>
           <div class="col-sm-6">
             <b>M/N = 1 | M/E=2</b>
-            <input type="text" name="txt_moneda" id="txt_moneda" class="form-control input-sm" onkeyup="restingir('txt_moneda')" value="1">
+            <input type="text" name="txt_moneda" id="txt_moneda" class="form-control input-xs" onkeyup="restingir('txt_moneda')" value="1">
           </div>
         </div>
         <div class="row">
@@ -1674,7 +1675,7 @@
           </div>
           <div class="col-sm-6">
             <b>Debe = 1 | Haber=2</b>
-            <input type="text" name="txt_tipo" id="txt_tipo" class="form-control input-sm" onkeyup="restingir('txt_tipo')" value="1" onblur="saltar()">
+            <input type="text" name="txt_tipo" id="txt_tipo" class="form-control input-xs" onkeyup="restingir('txt_tipo')" value="1" onblur="saltar()">
               <button type="button" class="btn btn-primary" onclick="subcuenta_frame();" id="btn_acep" style="background: white;border: 0px;">Aceptar</button>
           </div>
         </div>
