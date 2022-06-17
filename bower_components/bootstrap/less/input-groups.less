@@ -54,6 +54,12 @@
   .input-sm();
 }
 
+.input-group-xs > .form-control,
+.input-group-xs > .input-group-addon,
+.input-group-xs > .input-group-btn > .btn {
+  .input-xs();
+}
+
 
 // Display as table-cell
 // -------------------------
@@ -88,6 +94,11 @@
   border-radius: @input-border-radius;
 
   // Sizing
+   &.input-xs {
+    padding: @padding-small-vertical @padding-small-horizontal;
+    font-size: @font-size-small;
+    border-radius: @input-border-radius-small;
+  }
   &.input-sm {
     padding: @padding-small-vertical @padding-small-horizontal;
     font-size: @font-size-small;
