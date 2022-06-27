@@ -20,18 +20,35 @@ class reportes_descargos_procesadosM
 	}
 
 
-	function cargar_comprobantes($query=false,$desde,$hasta,$tipo='',$paginacion=false)
+	function cargar_comprobantes($query=false,$desde,$hasta,$tipo='',$paginacion=false,$area=false)
 	{
-		$sql="SELECT Numero,CP.Fecha,Concepto,Monto_Total,Cliente FROM Comprobantes CP 
+		$sql="SELECT CP.Numero,CP.Fecha,Concepto,Monto_Total,Cliente,TK.Centro_Costo as 'Area' FROM Comprobantes CP 
 		LEFT JOIN Clientes C ON CP.Codigo_B = C.Codigo
-		WHERE 1=1 AND TP='CD' AND CP.T='N' AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."' AND Codigo_B <> '.' AND Numero IN ( SELECT  DISTINCT Numero FROM Trans_Kardex WHERE 1=1 AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."'  AND Entrada = 0 )";
+		LEFT JOIN Trans_Kardex TK ON CP.Numero = TK.Numero 
+		WHERE 1=1 AND CP.TP='CD' 
+		AND CP.T='N' 
+		AND CP.Item = '".$_SESSION['INGRESO']['item']."' 
+		AND CP.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+		AND Codigo_B <> '.' 
+		AND CP.Item = TK.Item 
+		AND CP.Periodo = TK.Periodo 
+		AND CP.Numero IN ( SELECT  DISTINCT Numero FROM Trans_Kardex WHERE 1=1 AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."'  AND Entrada = 0 )";
+		if($area)
+		{
+			$sql.="	AND TK.CodigoL = '".$area."' ";
+		}
 		if($tipo =='f')
 		{
 			$sql.= " AND CP.Fecha BETWEEN '".$desde."' AND '".$hasta."'";
 		}
 		if($query)
 		{
-			$sql.=" AND C.Cliente like '%".$query."%'";
+			if(is_numeric($query))
+			{
+				$sql.=" AND CP.Numero like '".$query."%'";
+			}else{
+				$sql.=" AND C.Cliente like '".$query."%'";
+			}
 		}
 		// " AND CP.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."';";
 
@@ -51,22 +68,40 @@ class reportes_descargos_procesadosM
 
 	function cargar_comprobantes_datos($query=false,$desde='',$hasta='',$tipo='',$numero=false)
 	{
-		$sql="SELECT Numero,CP.Fecha,Concepto,Monto_Total,Cliente,Codigo_B FROM Comprobantes CP 
+		$sql="SELECT CP.Numero,CP.Fecha,Concepto,Monto_Total,Cliente,Codigo_B,TK.Centro_Costo 
+		FROM Comprobantes CP 
 		LEFT JOIN Clientes C ON CP.Codigo_B = C.Codigo
-		WHERE 1=1 AND TP='CD' AND CP.T='N' AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."' AND Codigo_B <> '.' AND Numero IN ( SELECT  DISTINCT Numero FROM Trans_Kardex WHERE 1=1 AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."'  AND Entrada = 0 )";
+		LEFT JOIN Trans_Kardex TK ON CP.Numero = TK.Numero 
+		WHERE 1=1 AND CP.TP='CD' 
+		AND CP.T='N' 
+		AND CP.Item = '".$_SESSION['INGRESO']['item']."' 
+		AND CP.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+		AND Codigo_B <> '.' 
+		AND CP.Item = TK.Item 
+		AND CP.Periodo = TK.Periodo 
+		AND CP.Numero IN ( SELECT  DISTINCT Numero FROM Trans_Kardex WHERE 1=1 AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."'  AND Entrada = 0 )";
+
 		if($tipo =='f')
 		{
 			$sql.= " AND CP.Fecha BETWEEN '".$desde."' AND '".$hasta."'";
 		}
 		if($query)
 		{
-			$sql.=" AND C.Cliente like '%".$query."%'";
+			if(is_numeric($query))
+			{
+				$sql.=" AND CP.Numero = '".$query."'";
+			}else
+			{
+				$sql.=" AND C.Cliente like '%".$query."%'";				
+			}
 		}
 		if($numero)
 		{
-			$sql.="AND Numero ='".$numero."'";
+			$sql.="AND CP.Numero ='".$numero."'";
 		}
 		// " AND CP.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."';";
+
+		// print_r($sql);die();
 
 		 return $this->conn->datos($sql);
 

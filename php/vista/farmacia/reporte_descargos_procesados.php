@@ -6,8 +6,30 @@ $cod = ''; $ci =''; if(isset($_GET['cod'])){$cod = $_GET['cod'];} if(isset($_GET
     cargar_ficha();
     autocoplet_paci();
     autocoplet_area();
+    autocoplet_area();
     // cargar_ficha();
   });
+
+  // function autocoplet_area(){
+  //     $('#ddl_areas').select2({
+  //       placeholder: 'Seleccione una Area de descargo',
+  //       width:'85%',
+  //       ajax: {
+  //         url:   '../controlador/farmacia/descargosC.php?areas=true',
+  //         dataType: 'json',
+  //         delay: 250,
+  //         processResults: function (data) {
+  //           console.log(data);
+  //           return {
+  //             results: data
+  //           };
+  //         },
+  //         cache: true
+  //       }
+  //     });
+   
+  // }
+
 
   function cargar_pedidos(f='')
   {
@@ -31,6 +53,7 @@ $cod = ''; $ci =''; if(isset($_GET['cod'])){$cod = $_GET['cod'];} if(isset($_GET
         'desde':desde,
         'hasta':$('#txt_hasta').val(),
         'busfe':f,
+        'area':$('#ddl_areas').val(),
       }    
      // console.log(parametros);
      $.ajax({
@@ -39,7 +62,7 @@ $cod = ''; $ci =''; if(isset($_GET['cod'])){$cod = $_GET['cod'];} if(isset($_GET
       type:  'post',
       dataType: 'json',
         beforeSend: function () {   
-          var spiner = '<tr><td colspan="5"><img src="../../img/gif/loader4.1.gif" width="20%"></td> </tr>';   
+          var spiner = '<img src="../../img/gif/loader4.1.gif" width="20%">';   
           $('#tbl_body').html(spiner);
          },
       success:  function (response) { 
@@ -171,10 +194,12 @@ $cod = ''; $ci =''; if(isset($_GET['cod'])){$cod = $_GET['cod'];} if(isset($_GET
 
   function autocoplet_area(){
       $('#ddl_areas').select2({
-        placeholder: 'Seleccione una Area de descargo',
+        placeholder: 'Seleccione Area',
+        width:'80%',
         ajax: {
           url:   '../controlador/farmacia/descargosC.php?areas=true',
           dataType: 'json',
+          width:'90px',
           delay: 250,
           processResults: function (data) {
             console.log(data);
@@ -322,15 +347,15 @@ function reporte_pdf()
    var url = '../controlador/farmacia/reporte_descargos_procesadosC.php?imprimir_pdf=true&';
    var datos =  $("#filtro_bus").serialize();
     window.open(url+datos, '_blank');
-     $.ajax({
-         data:  {datos:datos},
-         url:   url,
-         type:  'post',
-         dataType: 'json',
-         success:  function (response) {  
+     // $.ajax({
+     //     data:  {datos:datos},
+     //     url:   url,
+     //     type:  'post',
+     //     dataType: 'json',
+     //     success:  function (response) {  
           
-          } 
-       });
+     //      } 
+     //   });
 
 }
 
@@ -356,15 +381,15 @@ function reporte_excel()
    var url = '../controlador/farmacia/reporte_descargos_procesadosC.php?imprimir_excel=true&';
    var datos =  $("#filtro_bus").serialize();
     window.open(url+datos, '_blank');
-     $.ajax({
-         data:  {datos:datos},
-         url:   url,
-         type:  'post',
-         dataType: 'json',
-         success:  function (response) {  
+     // $.ajax({
+     //     data:  {datos:datos},
+     //     url:   url,
+     //     type:  'post',
+     //     dataType: 'json',
+     //     success:  function (response) {  
           
-          } 
-       });
+     //      } 
+     //   });
 
 }
 
@@ -415,36 +440,45 @@ function Ver_detalle(comprobante)
 </div>
 <div class="row">
  
-  <div class="col-sm-12">
-      <div class="col-sm-8"> 
+  <!-- <div class="col-sm-12"> -->
+      <!-- <div class="col-sm-9">  -->
         <form method="post" id="filtro_bus" enctype="multipart/form-data">
-          <div class="col-sm-6">
+          <div class="col-sm-4">
              <label class="radio-inline"><input type="radio" name="rbl_buscar" id="rbl_nombre" checked="" value="N"> Nombre</label>
              <br>
             <b>NOMBRE DE PACIENTE</b>
-            <input type="text" name="txt_query" id="txt_query" class="form-control" placeholder="Nombre paciente" onkeypress="cargar_pedidos()" onblur="cargar_pedidos();cargar_pedidos_detalle()">
+            <input type="text" name="txt_query" id="txt_query" class="form-control input-xs" placeholder="Nombre paciente" onkeyup="cargar_pedidos();cargar_pedidos_detalle()">
           </div>
-          <div class="col-sm-3">
+          <div class="col-sm-2">
             <br>
             <b>FECHA INICIO</b>
-            <input type="date" name="txt_desde" id="txt_desde" class="form-control" value="<?php echo date('Y-m-d')?>" onblur="cargar_pedidos('f');cargar_pedidos_detalle('f')">
+            <input type="date" name="txt_desde" id="txt_desde" class="form-control input-xs" value="<?php echo date('Y-m-d')?>" onblur="cargar_pedidos('f');cargar_pedidos_detalle('f')">
           </div>
-          <div class="col-sm-3">
+          <div class="col-sm-2">
             <br>
             <b>FECHA FIN</b>
-            <input type="date" name="txt_hasta" id="txt_hasta" class="form-control" value="<?php echo date('Y-m-d')?>" onblur="cargar_pedidos('f');cargar_pedidos_detalle('f')">
+            <input type="date" name="txt_hasta" id="txt_hasta" class="form-control input-xs" value="<?php echo date('Y-m-d')?>" onblur="cargar_pedidos('f');cargar_pedidos_detalle('f')">
           </div>
+          <div class="col-sm-4">
+            <br>
+            <b>Area de descargo</b> <br>
+            <select class="form-control input-sm" id="ddl_areas" onchange="cargar_pedidos();cargar_pedidos_detalle()">
+              <option value="">Seleccione area de ingreso</option>
+            </select> 
+             <button type="button" class="btn btn-xs btn-default btn-flat" onclick="$('#ddl_areas').val(null).trigger('change');"><i class="fa fa-close"></i></button>                 
+          </div>
+
             <input type="hidden" name="txt_tipo_filtro" id="txt_tipo_filtro" value=""> 
         </form>   
-    </div>
-    <div class="col-sm-4">
-       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="limpiar()"><i class="fa fa-paint-brush"></i> Limpiar</button>
-        <button type="button" class="btn btn-success" onclick="nuevo_pedido()"><i class="fa fa-plus"></i> Nuevo Descargos</button>
-      </div>
-    </div>   
-  </div>
+    <!-- </div> -->
+   <!--  <div class="col-sm-3 text-right"> <br>
+        <button type="button" class="btn btn-sm btn-primary" onclick="limpiar()"><i class="fa fa-paint-brush"></i> Limpiar</button>
+        <button type="button" class="btn btn-sm btn-success" onclick="nuevo_pedido()"><i class="fa fa-plus"></i> Nuevo Descargos</button>
+     
+    </div>  -->  
+  <!-- </div> -->
   <div class="col-sm-12">
+    <br>
     <ul class="nav nav-tabs">
       <li class="active"><a data-toggle="tab" href="#home">Descargos Realizados</a></li>
       <li><a data-toggle="tab" href="#menu1">Detalle de descargos</a></li>
@@ -453,7 +487,7 @@ function Ver_detalle(comprobante)
       <div id="home" class="tab-pane fade in active">
        
          <div class="row">
-            <div class="col-sm-12" id="tbl_body">
+            <div class="col-sm-12 text-center" id="tbl_body">
            
             </div>      
           </div>
@@ -493,7 +527,7 @@ function Ver_detalle(comprobante)
         <div class="row text-center">
           <div class="col-sm-12">
             <b>Numero de Historia clinica</b>
-            <input type="txt_nombre" name="txt_histo_actu" id = "txt_histo_actu" class="form-control input-sm">  
+            <input type="txt_nombre" name="txt_histo_actu" id = "txt_histo_actu" class="form-control input-xs">  
           </div> 
       </div>
       </form>

@@ -172,7 +172,7 @@ function lista_devolucion()
       'comprobante': com,
       'linea': $('#lineas').val(),
       'cc':cc,
-      'solicitante':$('#txt_soli').val(),
+      'solicitante':'.', //$('#txt_soli').val(),
     }
     if( $('#txt_cant').val() == 0 || $('#ddl_producto').val()=='' || $('#ddl_areas').val() =='' || com=='' || cc=='' || $('#txt_soli').val()=='')
     {
@@ -440,20 +440,20 @@ function lista_devolucion()
               <b>No Orden</b>
                <input type="text" name="txt_orden" id="txt_orden" class="form-control input-sm" readonly>
             </div>
-             <div class="col-sm-3"> 
+             <!-- <div class="col-sm-3"> 
                 <b>Persona solicitante:</b>
                 <select class="form-control" name="txt_soli" id="txt_soli">
                   <option value="">Seleccione solicitante</option>
                 </select>
-                <!-- <input type="text" name="txt_soli" id="txt_soli" class="form-control input-sm" value="." onfocus="$('#txt_soli').select()">             -->
-              </div>   
-            <div class="col-sm-3"> 
+                <input type="text" name="txt_soli" id="txt_soli" class="form-control input-sm" value="." onfocus="$('#txt_soli').select()">            
+              </div>    -->
+            <div class="col-sm-4"> 
               <b>Centro de costos:</b>
               <select class="form-control input-sm" id="ddl_cc" onchange="">
                 <option value="">Seleccione Centro de costos</option>
               </select>           
             </div>             
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <b>Area de devolucion:</b>
                 <select class="form-control input-sm" id="ddl_areas" name="ddl_areas">
                   <option value="">Seleccionar producto</option>

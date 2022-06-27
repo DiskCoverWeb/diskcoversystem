@@ -69,7 +69,7 @@ class reportes_descargos_procesadosC
 	function cargar_pedidos($parametros,$paginacion)
 	{
 		// print_r($parametros);die();
-		$datos = $this->modelo->cargar_comprobantes($parametros['query'],$parametros['desde'],$parametros['hasta'],$parametros['busfe'],$paginacion);
+		$datos = $this->modelo->cargar_comprobantes($parametros['query'],$parametros['desde'],$parametros['hasta'],$parametros['busfe'],$paginacion,$parametros['area']);
 		return $tabla = array('num_lin'=>0,'tabla'=>$datos);
 		// print_r($datos);die();
 		$tr='';
@@ -97,6 +97,9 @@ class reportes_descargos_procesadosC
   				</tr>';
   		 
 		}
+
+		// print_r($tr);
+		// print_r($datos); die();
 		if(count($datos)>0)
 		{
 			$tabla = array('num_lin'=>0,'tabla'=>$tr);

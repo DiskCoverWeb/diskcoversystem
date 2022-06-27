@@ -26,7 +26,7 @@
      // buscar_cod();
     var pro = '<?php echo $pro; ?>';
 
-    // cargar_pedido();
+    cargar_pedido();
     
 
   });
@@ -181,7 +181,7 @@
       var  parametros = 
       { 
         'query':'<?php echo $cod; ?>',
-        'tipo':'C1',
+        'tipo':'R1',
         'codigo':'',
       }    
       // console.log(parametros);
@@ -195,7 +195,7 @@
        
            $('#txt_codigo').val(response.matricula);
            $('#txt_nombre').val(response.nombre);
-           $('#ddl_paciente').append($('<option>',{value: response.Codigo, text:response.nombre,selected: true }));
+           $('#txt_soli').append($('<option>',{value: response.Codigo, text:response.nombre,selected: true }));
            $('#txt_ruc').val(response.ci);
            cargar_pedido();
       }
@@ -279,12 +279,13 @@
    var ruc = $('#txt_ruc').val();
    var cc = $('#ddl_cc').val();
    var cos = $('#txt_precio').val();
-   var soli = '.';//$('#txt_soli').val();
-   // if(soli=='')
-   // {
-   //   Swal.fire('Agregue la persona solicitante','','info');
-   //   return false;
-   // }
+   var are = $('#ddl_areas').val();
+   var soli = $('#txt_soli').val();
+   if(cc=='' || are =='' || soli=='')
+   {
+     Swal.fire('Ingrese todos los datos','','info');
+     return false;
+   }
    if(cos=='' || cos ==0)
    {
      Swal.fire('No se pudo agregar por que el costo de este articulo es igual 0.','','info');
@@ -327,16 +328,16 @@
            'total':$('#txt_importe').val(),
            'num_ped':$('#txt_pedido').val(),
            'ci':$('#txt_ruc').val(),
-           'CodigoP':$('#ddl_paciente').val(),
+           'CodigoP':$('#txt_soli').val(),
            'descuento':0,
            'iva':$('#txt_iva').val(),
-           'pro':$('#txt_procedimiento').val(),
+           'pro':'PEDIDO BODEGA',
            'area':$('#ddl_areas option:selected').text(),
            'solicitante':soli,
        };
        $.ajax({
          data:  {parametros:parametros},
-         url:   '../controlador/farmacia/ingreso_descargosC.php?guardar=true',
+         url:   '../controlador/farmacia/ingreso_descargosC.php?guardar_bod=true',
          type:  'post',
          dataType: 'json',
            success:  function (response) { 
@@ -373,20 +374,32 @@
 
   function cargar_pedido()
   {
-    var num_ped ='<?php echo $num_ped; ?>';
-    var area = '<?php echo $area; ?>';
-    var num_his = '<?php echo $cod; ?>';
-    var pro = '<?php echo $pro; ?>';
+    var pedido = '<?php echo $num_ped;?>'
+    if(pedido=='')
+    {
+      var num_ped =$('#txt_pedido').val();
+      var area = $('#ddl_areas').val();
+      var num_his = $('#txt_ruc').val();
+      var pro = $('#ddl_areas option:selected').text();
+    }else
+    {
+       var num_ped ='<?php echo $num_ped; ?>';
+        var area = '<?php echo $area; ?>';
+        var num_his = '<?php echo $cod; ?>';
+        var pro = '<?php echo $pro; ?>';
+    }
+
     var parametros=
     {
       'num_ped':num_ped,
       'area':area,
       'num_his':num_his,
-      'paciente':$('#ddl_paciente').val(),
+      'paciente':$('#txt_soli').val(),
     }
+    // console.log(parametros); return false;
      $.ajax({
       data:  {parametros:parametros},
-      url:   '../controlador/farmacia/ingreso_descargosC.php?pedido=true',
+      url:   '../controlador/farmacia/ingreso_descargosC.php?pedido_bod=true',
       type:  'post',
       dataType: 'json',
       success:  function (response) {
@@ -400,7 +413,7 @@
           if(ped==-1)
           {
             num_ped = $('#txt_pedido').val();
-            var url="../vista/farmacia.php?mod=Farmacia&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+num_ped+"&cod="+num_his+"#";
+            var url="../vista/farmacia.php?mod=Farmacia&acc=descargos_bodega&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+num_ped+"&cod="+num_his;
             $(location).attr('href',url);
           }else
           {
@@ -684,18 +697,18 @@
     //   return false;
     // }
 
-    $('#myModal_espera').modal('show');    
+    // $('#myModal_espera').modal('show');    
     var orden = $('#txt_pedido').val();
-    var ruc= $('#ddl_paciente').val();
+    var ruc= $('#txt_soli').val();
     var area= $('#ddl_areas').val();
     var his= $('#txt_codigo').val();
     var pro = '<?php echo $pro; ?>';
-    var nombre=  $('#ddl_paciente option:selected').text();
+    var nombre=  $('#txt_soli option:selected').text();
 
     var reg=  $('#txt_num_lin').val();
      $.ajax({
       data:  {orden:orden,ruc:ruc,area:area,nombre:nombre,fecha:fecha},
-      url:   '../controlador/farmacia/ingreso_descargosC.php?facturar=true',
+      url:   '../controlador/farmacia/ingreso_descargosC.php?facturar_bodega=true',
       type:  'post',
       dataType: 'json',
       success:  function (response) {    
@@ -953,13 +966,13 @@
                 </select>          
               </div> 
           <div class="col-sm-3"> 
-            <b>Procedimiento:</b>
+           <!--  <b>Procedimiento:</b>
             <div class="input-group input-group-sm">
                 <textarea class="form-control input-xs" style="resize: none;" name="txt_procedimiento" id="txt_procedimiento" readonly=""></textarea>          
                     <span class="input-group-btn">
                       <button type="button" class="btn btn-info btn-flat" onclick="cambiar_procedimiento()"><i class="fa fa-pencil"></i></button>
                     </span>
-              </div>
+              </div> -->
            
           </div>           
         </div>

@@ -207,13 +207,44 @@ class ingreso_descargosM
 
 		   return $datos[0]['Numero'];
 		}
+	}
 
+	function asignar_num_pedido_clinica_bod()
+	{
+		$sql="SELECT * FROM Codigos 
+		WHERE Item='".$_SESSION['INGRESO']['item']."' and 
+		Periodo='".$_SESSION['INGRESO']['periodo']."' and Concepto='PEDIDO_BODEGA'";
+		// print_r($sql);die();
+		$datos = $this->conn1->datos($sql);
+		
+		if(count($datos)==0)
+		{
+			$res = $this->CREAR_COD_PEDIDO_CLINICA_BOD();
+			return $res;
+		}else
+		{
+		   return $datos[0]['Numero'];
+		}
 	}
 
 	function ACTUALIZAR_COD_PEDIDO_CLINICA($datos)
 	{
 		$campoWhere[0]['campo']='Concepto';
 		$campoWhere[0]['valor']='PEDIDO_CLINICA';
+
+		$campoWhere[1]['campo']='Item';
+		$campoWhere[1]['valor']=$_SESSION['INGRESO']['item'];
+
+		$campoWhere[2]['campo']='Periodo';
+		$campoWhere[2]['valor']=$_SESSION['INGRESO']['periodo'];
+
+		  return update_generico($datos,'Codigos',$campoWhere);
+	}
+
+	function ACTUALIZAR_COD_PEDIDO_CLINICA_BOD($datos)
+	{
+		$campoWhere[0]['campo']='Concepto';
+		$campoWhere[0]['valor']='PEDIDO_BODEGA';
 
 		$campoWhere[1]['campo']='Item';
 		$campoWhere[1]['valor']=$_SESSION['INGRESO']['item'];
@@ -272,6 +303,27 @@ class ingreso_descargosM
 
 		$datos[2]['campo']='Concepto';
 		$datos[2]['dato']='PEDIDO_CLINICA';
+
+		$datos[3]['campo']='Numero';
+		$datos[3]['dato']=1;
+
+		$resp = insert_generico('Codigos',$datos);
+		if($resp=='')
+		{
+			return 1;
+		}
+	}
+
+	function CREAR_COD_PEDIDO_CLINICA_BOD()
+	{
+		$datos[0]['campo']='Periodo';
+		$datos[0]['dato']='.';
+
+		$datos[1]['campo']='Item';
+		$datos[1]['dato']=$_SESSION['INGRESO']['item'];
+
+		$datos[2]['campo']='Concepto';
+		$datos[2]['dato']='PEDIDO_BODEGA';
 
 		$datos[3]['campo']='Numero';
 		$datos[3]['dato']=1;

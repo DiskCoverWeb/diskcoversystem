@@ -899,18 +899,18 @@
         <div class="row">
           <div class="col-sm-3"> 
             <b>Num Historia clinica:</b>
-            <input type="text" name="txt_codigo" id="txt_codigo" class="form-control input-sm" readonly="">      
+            <input type="text" name="txt_codigo" id="txt_codigo" class="form-control input-xs" readonly="">      
           </div>
           <div class="col-sm-6">
             <b>Nombre:</b>
-            <!-- <input type="text" name="txt_nombre" id="txt_nombre" class="form-control input-sm"> -->
-            <select class="form-control input-sm" id="ddl_paciente" onchange="buscar_cod()">
+            <!-- <input type="text" name="txt_nombre" id="txt_nombre" class="form-control input-xs"> -->
+            <select class="form-control input-xs" id="ddl_paciente" onchange="buscar_cod()">
               <option value="">Seleccione paciente</option>
             </select>
           </div>
           <div class="col-sm-3">
             <b>RUC:</b>
-            <input type="text" name="txt_ruc" id="txt_ruc" class="form-control input-sm">             
+            <input type="text" name="txt_ruc" id="txt_ruc" class="form-control input-xs">             
           </div>          
         </div>
       </div>
@@ -918,21 +918,21 @@
         <div class="row">
           <div class="col-sm-4"> 
             <b>Centro de costos:</b>
-            <select class="form-control input-sm" id="ddl_cc" onchange="')">
+            <select class="form-control input-xs" id="ddl_cc" onchange="')">
               <option value="">Seleccione Centro de costos</option>
             </select>           
           </div>
           <div class="col-sm-2">    
           <b>Numero de pedido</b>
-          <input type="text" name="" id="txt_pedido" readonly="" class="form-control input-sm" value="<?php echo $num_ped;?>">     
+          <input type="text" name="" id="txt_pedido" readonly="" class="form-control input-xs" value="<?php echo $num_ped;?>">     
           </div>
           <div class="col-sm-3">
              <b>Fecha:</b>
-            <input type="date" name="txt_fecha" id="txt_fecha" class="form-control input-sm" value="<?php echo date('Y-m-d')  ?>" onblur="num_comprobante()">                 
+            <input type="date" name="txt_fecha" id="txt_fecha" class="form-control input-xs" value="<?php echo date('Y-m-d')  ?>" onblur="num_comprobante()">                 
           </div>
           <div class="col-sm-3">
             <b>Area de descargo</b>
-            <select class="form-control input-sm" id="ddl_areas">
+            <select class="form-control input-xs" id="ddl_areas">
               <option value="">Seleccione motivo de ingreso</option>
             </select>            
           </div>          
@@ -940,20 +940,20 @@
         <div class="row">
           <div class="col-sm-4"> 
             <b>Cod Producto:</b>
-            <select class="form-control input-sm" id="ddl_referencia" onchange="producto_seleccionado('R')">
+            <select class="form-control input-xs" id="ddl_referencia" onchange="producto_seleccionado('R')">
               <option value="">Escriba referencia</option>
             </select>           
           </div>
           <div class="col-sm-5"> 
                 <b>Descripcion:</b>
-                <select class="form-control input-sm" id="ddl_descripcion" onchange="producto_seleccionado('D')">
+                <select class="form-control input-xs" id="ddl_descripcion" onchange="producto_seleccionado('D')">
                   <option value="">Escriba descripcion</option>
                 </select>          
               </div> 
           <div class="col-sm-3"> 
             <b>Procedimiento:</b>
             <div class="input-group input-group-sm">
-                <textarea class="form-control input-sm" style="resize: none;" name="txt_procedimiento" id="txt_procedimiento" readonly=""></textarea>          
+                <textarea class="form-control input-xs" style="resize: none;" name="txt_procedimiento" id="txt_procedimiento" readonly=""></textarea>          
                     <span class="input-group-btn">
                       <button type="button" class="btn btn-info btn-flat" onclick="cambiar_procedimiento()"><i class="fa fa-pencil"></i></button>
                     </span>
@@ -965,34 +965,34 @@
                <div class="col-sm-2"> 
                   <div class="col-sm-6"> 
                     <b>MIN:</b>
-                    <input type="text" name="txt_min" id="txt_min" class="form-control input-sm"readonly="">
+                    <input type="text" name="txt_min" id="txt_min" class="form-control input-xs"readonly="">
                   </div>
                   <div class="col-sm-6"> 
                     <b>MAX:</b>
-                    <input type="text" name="txt_max" id="txt_max" class="form-control input-sm"readonly="">
+                    <input type="text" name="txt_max" id="txt_max" class="form-control input-xs"readonly="">
                   </div>   
                   
               </div>               
               <div class="col-sm-2"> 
                 <b>Costo:</b>
-                <input type="text" name="txt_precio" id="txt_precio" class="form-control input-sm" value="0" onblur="calcular_totales();" readonly="">            
+                <input type="text" name="txt_precio" id="txt_precio" class="form-control input-xs" value="0" onblur="calcular_totales();" readonly="">            
               </div>   
               <div class="col-sm-1"> 
                 <b>Cantidad:</b>
-                <input type="text" name="txt_cant" id="txt_cant" class="form-control input-sm" value="1" onblur="calcular_totales();">            
+                <input type="text" name="txt_cant" id="txt_cant" class="form-control input-xs" value="1" onblur="calcular_totales();">            
               </div>   
               <div class="col-sm-1"> 
                 <b>UNI:</b>
-                <input type="text" name="txt_unidad" id="txt_unidad" class="form-control input-sm" readonly="">            
+                <input type="text" name="txt_unidad" id="txt_unidad" class="form-control input-xs" readonly="">            
               </div>
               <div class="col-sm-1"> 
                 <b>Stock:</b>
-                <input type="text" name="txt_Stock" id="txt_Stock" class="form-control input-sm" readonly="">            
+                <input type="text" name="txt_Stock" id="txt_Stock" class="form-control input-xs" readonly="">            
               </div>    
               <div class="col-sm-1"> 
                 <b>Importe:</b>
-                <input type="text" name="txt_importe" id="txt_importe" class="form-control input-sm" readonly="">
-                <input type="hidden" name="txt_iva" id="txt_iva" class="form-control input-sm">            
+                <input type="text" name="txt_importe" id="txt_importe" class="form-control input-xs" readonly="">
+                <input type="hidden" name="txt_iva" id="txt_iva" class="form-control input-xs">            
               </div> 
               <div class="col-sm-3"> 
                 <!-- <b>Persona solicitante:</b>
@@ -1035,7 +1035,7 @@
          <div class="row">
           <div class="col-sm-12">
             Nombre de procedimiento
-            <input type="text" class="form-control input-sm" name="txt_new_proce" id="txt_new_proce">
+            <input type="text" class="form-control input-xs" name="txt_new_proce" id="txt_new_proce">
           </div>        
          </div> 
       </div>
