@@ -1291,7 +1291,6 @@ function DCCiudadI()
         </div> -->
  </div>
 </div>
-<br>
 <div class="row">
 <div class="col-sm-12">	
 	<!-- //valiable  -->
@@ -1365,23 +1364,23 @@ function DCCiudadI()
 		<div class="col-sm-4">
 			<b class="col-sm-4 control-label" style="padding: 0px">Orden Compra No</b>
 			<div class="col-sm-8">
-				<input type="" name="TxtCompra" id="TxtCompra" class="form-control input-sm" value="0">
+				<input type="" name="TxtCompra" id="TxtCompra" class="form-control input-xs" value="0">
 			</div>
 		</div>
 		<div class="col-sm-4">
-			<select class="form-control input-sm" id="DCMod" name="DCMod">
+			<select class="form-control input-xs" id="DCMod" name="DCMod">
 					<option value="">Seleccione</option>
 				</select>
 		</div>
 		<div class="col-sm-2">
-			<input type="text" name="LabelCodigo" id="LabelCodigo" class="form-control input-sm" readonly="" value=".">
+			<input type="text" name="LabelCodigo" id="LabelCodigo" class="form-control input-xs" readonly="" value=".">
 		</div>		
 	</div>
 	<div class="row">		
 		<div class="col-sm-4">
 			<b class="col-sm-4 control-label" style="padding: 0px">Cuenta x Cobrar</b>
 			<div class="col-sm-8" style="padding: 0px">
-				<select class="form-control input-sm" id="DCLineas" name="DCLineas" onchange="DCLinea_LostFocus()">
+				<select class="form-control input-xs" id="DCLineas" name="DCLineas" onchange="DCLinea_LostFocus()">
 					<option value="">Seleccione</option>
 				</select>
 
@@ -1394,14 +1393,14 @@ function DCCiudadI()
 					<b style="color:red" id="label2">0000000000000 NOTA DE VENTA No. 001001-</b>					
 				</div>
 				<div class="col-sm-3" style="padding-left: 0px;">
-					<input type="text" name="TextFacturaNo" id="TextFacturaNo" class="form-control input-sm" value="0">	
+					<input type="text" name="TextFacturaNo" id="TextFacturaNo" class="form-control input-xs" value="0">	
 				</div>				
 			</div>
 		</div>
 		<div class="col-sm-4">
 			<b class="col-sm-4 control-label" style="padding: 0px">Saldo pendiente</b>
 			<div class="col-sm-6">
-				<input type="text" name="LblSaldo" id="LblSaldo" class="form-control input-sm" value="0.00">
+				<input type="text" name="LblSaldo" id="LblSaldo" class="form-control input-xs" value="0.00">
 			</div>
 		</div>
 	</div>
@@ -1409,19 +1408,19 @@ function DCCiudadI()
 		<div class="col-sm-3">
 			<b class="col-sm-5 control-label" style="padding: 0px">Fecha Emision</b>
 			<div class="col-sm-7" style="padding: 0px">
-				<input type="date" name="MBoxFecha" id="MBoxFecha" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>">
+				<input type="date" name="MBoxFecha" id="MBoxFecha" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">
 			</div>
 		</div>
 		<div class="col-sm-4">
 			<b class="col-sm-6 control-label" style="padding: 0px">Fecha Vencimiento</b>
 			<div class="col-sm-6" style="padding: 0px">
-				<input type="date" name="MBoxFechaV" id="MBoxFechaV" class="form-control input-sm">
+				<input type="date" name="MBoxFechaV" id="MBoxFechaV" class="form-control input-xs">
 			</div>
 		</div>
 		<div class="col-sm-5">
 			<b class="col-sm-3 control-label" style="padding: 0px">Tipo de pago</b>
 			<div class="col-sm-8">
-				<select class="form-control input-sm" id="DCTipoPago" name="DCTipoPago">
+				<select class="form-control input-xs" id="DCTipoPago" name="DCTipoPago">
 					<option value="">Seleccione</option>
 				</select>				
 			</div>			
@@ -1430,45 +1429,45 @@ function DCCiudadI()
 	<div class="row">
 		<div class="col-sm-2">
 			<b>Grupo</b>
-			<select class="form-control input-sm" id="DCGrupo_No" name="DCGrupo_No" onchange="autocomplete_cliente()">
+			<select class="form-control input-xs" id="DCGrupo_No" name="DCGrupo_No" onchange="autocomplete_cliente()">
 				<option value="">Seleccione</option>
 			</select>
 		</div>
 		<div class="col-sm-3">
 			<b>Cliente</b>
 			<div class="input-group">
-	      <select class="form-control input-sm" id="DCCliente" name="DCCliente">
+	      <select class="form-control input-xs" id="DCCliente" name="DCCliente">
 					<option value="">Seleccione</option>
 				</select>
 	          <span class="input-group-btn">
-	            <button type="button" class="btn btn-info btn-flat btn-sm" onclick="addCliente();"><i class="fa fa-plus"></i></button>
+	            <button type="button" class="btn btn-info btn-flat btn-xs" onclick="addCliente();"><i class="fa fa-plus"></i></button>
 	          </span>
 	    </div>
 		</div>
 		<div class="col-sm-2">
 			<b id="Label13">C.I / R.U.C</b>
-			<input type="text" name="LabelRUC" id="LabelRUC" class="form-control input-sm" readonly="" value=".">
+			<input type="text" name="LabelRUC" id="LabelRUC" class="form-control input-xs" readonly="" value=".">
 		</div>
 		<div class="col-sm-2">
 			<b>Telefono</b>
-			<input type="text" name="LabelTelefono" id="LabelTelefono" class="form-control input-sm" readonly="" value=".">
+			<input type="text" name="LabelTelefono" id="LabelTelefono" class="form-control input-xs" readonly="" value=".">
 		</div>
 		<div class="col-sm-3">
 			<b>ACTUALICE SU CORREO ELECTRONICO</b>
-			<input type="text" name="TxtEmail" id="TxtEmail" class="form-control input-sm">
+			<input type="text" name="TxtEmail" id="TxtEmail" class="form-control input-xs">
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-sm-4">
 			<b>Direccion</b>
-			<input type="text" name="Label24" id="Label24" class="form-control input-sm" value="" readonly="">			
+			<input type="text" name="Label24" id="Label24" class="form-control input-xs" value="" readonly="">			
 		</div>
 		<div class="col-sm-4">
 			<b>No</b>
-			<input type="text" name="Label21" id="Label21" class="form-control input-sm" value="" readonly="">			
+			<input type="text" name="Label21" id="Label21" class="form-control input-xs" value="" readonly="">			
 		</div>
-		<div class="col-sm-4">
-			<select class="form-control input-sm" id="DCMedico" name="DCMedico">
+		<div class="col-sm-4"> <br>
+			<select class="form-control input-xs" id="DCMedico" name="DCMedico">
 					<option value="">Seleccione</option>
 				</select>		
 		</div>		
@@ -1478,7 +1477,7 @@ function DCCiudadI()
 			<div id="DCEjecutivoFrom">
 			<b class="col-sm-3 control-label" style="padding: 0px"><input type="checkbox" name=""> Ejecutivo de venta</b>
 			<div class="col-sm-9">
-				<select class="form-control input-sm" name="DCEjecutivo" id="DCEjecutivo">
+				<select class="form-control input-xs" name="DCEjecutivo" id="DCEjecutivo">
 					<option value="">Seleccione</option>
 				</select>
 			</div>
@@ -1488,14 +1487,14 @@ function DCCiudadI()
 			<div id="TextComisionForm" style="display:none;">
 			<b class="col-sm-4 control-label" style="padding: 0px">comision%</b>
 			<div class="col-sm-8">
-				<input type="text" name="TextComision" id="TextComision" value="0" class="form-control input-sm">
+				<input type="text" name="TextComision" id="TextComision" value="0" class="form-control input-xs">
 			</div>
 			</div>			
 		</div>
 		<div class="col-sm-4">
 			<b class="col-sm-2 control-label" style="padding: 0px">Bodega</b>
 			<div class="col-sm-9">
-				<select class="form-control input-sm" name="DCBodega" id="DCBodega">
+				<select class="form-control input-xs" name="DCBodega" id="DCBodega">
 					<option value="">Seleccione</option>
 				</select>
 			</div>
@@ -1504,51 +1503,51 @@ function DCCiudadI()
 	<div class="row">
 		<div class="col-sm-6">
 			<b>Observacion</b>
-			<input type="text" name="TextObs" id="TextObs" class="form-control input-sm">
+			<input type="text" name="TextObs" id="TextObs" class="form-control input-xs">
 		</div>
 		<div class="col-sm-6">
 			<b>Nota</b>
-			<input type="text" name="TextNota" id="TextNota" class="form-control input-sm">
+			<input type="text" name="TextNota" id="TextNota" class="form-control input-xs">
 		</div>
 	</div>	
 	<div class="row">
 		<div class="col-sm-2">
 			<b>Marca</b>
-			<select class="form-control input-sm" id="DCMarca" name="DCMarca">
+			<select class="form-control input-xs" id="DCMarca" name="DCMarca">
 				<option value="">Seleccione</option>
 			</select>
 		</div>
 		<div class="col-sm-4">
 			<b id="LabelStockArt">Producto</b>
-			<select class="form-control input-sm" name="DCArticulos" id="DCArticulos" onchange="DCArticulo_LostFocus()">
+			<select class="form-control input-xs" name="DCArticulos" id="DCArticulos" onchange="DCArticulo_LostFocus()">
 				<option value="">Seleccione</option>
 			</select>
 		</div>
 		<div class="col-sm-1">
 			<b>Stock</b>
-			<input type="text" name="LabelStock" id="LabelStock" class="form-control input-sm" readonly="">
+			<input type="text" name="LabelStock" id="LabelStock" class="form-control input-xs" readonly="">
 		</div>
 		<div class="col-sm-1">
 			<b>Ord./lote</b>
-			<input type="text" name="TextComEjec" id="TextComEjec" class="form-control input-sm">
+			<input type="text" name="TextComEjec" id="TextComEjec" class="form-control input-xs">
 		</div>
 		<div class="col-sm-1">
 			<b>Desc%</b>
-			<select class="form-control input-sm" id="CDesc1" name="CDesc1">
+			<select class="form-control input-xs" id="CDesc1" name="CDesc1">
 				<option value="">Seleccione</option>
 			</select>
 		</div>
 		<div class="col-sm-1">
 			<b>Cantidad</b>
-			<input type="text" name="TextCant" id="TextCant" class="form-control input-sm" onblur="TextCant_Change()" value="0">
+			<input type="text" name="TextCant" id="TextCant" class="form-control input-xs" onblur="TextCant_Change()" value="0">
 		</div>
 		<div class="col-sm-1">
 			<b>P.V.P</b>
-			<input type="text" name="TextVUnit" id="TextVUnit" class="form-control input-sm" onblur="TextVUnit_LostFocus()" value="0">
+			<input type="text" name="TextVUnit" id="TextVUnit" class="form-control input-xs" onblur="TextVUnit_LostFocus()" value="0">
 		</div> 
 		<div class="col-sm-1">
 			<b>TOTAL</b>
-			<input type="text" name="LabelVTotal" id="LabelVTotal" class="form-control input-sm" readonly="" value="0"> 
+			<input type="text" name="LabelVTotal" id="LabelVTotal" class="form-control input-xs" readonly="" value="0"> 
 		</div>
 	</div>
 	<div class="row"><br>
@@ -1562,32 +1561,32 @@ function DCCiudadI()
 	<div class="row">
 		<div class="col-sm-1" style="padding: 2px;">
 			<b>Total sin Iva</b>
-			<input type="text" name="LabelSubTotal" id="LabelSubTotal" class="form-control input-sm">
+			<input type="text" name="LabelSubTotal" id="LabelSubTotal" class="form-control input-xs">
 		</div>
 		<div class="col-sm-1" style="padding: 2px;">
 			<b>Total con IVA</b>
-			<input type="text" name="LabelConIVA" id="LabelConIVA" class="form-control input-sm">
+			<input type="text" name="LabelConIVA" id="LabelConIVA" class="form-control input-xs">
 		</div>
 		<div class="col-sm-1" style="padding: 2px;">
 			<b>Total Desc</b>
-			<input type="text" name="TextDesc" id="TextDesc" class="form-control input-sm">
+			<input type="text" name="TextDesc" id="TextDesc" class="form-control input-xs">
 		</div>
 		<div class="col-sm-1" style="padding: 2px;">
 			<b id="label36">Serv. 0.00%</b>
-			<input type="text" name="LabelServ" id="LabelServ" class="form-control input-sm">
+			<input type="text" name="LabelServ" id="LabelServ" class="form-control input-xs">
 		</div>
 		<div class="col-sm-1" style="padding: 2px;">
 			<b id="label3">I.V.A 12.00%</b>
-			<input type="text" name="LabelIVA" id="LabelIVA" class="form-control input-sm">
+			<input type="text" name="LabelIVA" id="LabelIVA" class="form-control input-xs">
 		</div>
 		<div class="col-sm-2" style="padding: 2px;">
 			<b>Total Facturado</b>
-			<input type="text" name="LabelTotal" id="LabelTotal" class="form-control input-sm">
+			<input type="text" name="LabelTotal" id="LabelTotal" class="form-control input-xs">
 		</div>
 		<div class="col-sm-5">
 			<!-- <b>P.V.P</b> --> 
 			<br>
-			<input type="text" name="LblGuia" id="LblGuia" class="form-control input-sm" readonly>
+			<input type="text" name="LblGuia" id="LblGuia" class="form-control input-xs" readonly>
 		</div>
 	</div>
   
@@ -1617,34 +1616,34 @@ function DCCiudadI()
 						<div class="col-sm-12">
 							<b class="col-sm-6 control-label" style="padding: 0px">Fecha de emision de guia</b>
 							<div class="col-sm-6" style="padding: 0px">
-								<input type="date" name="MBoxFechaGRE" id="MBoxFechaGRE" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" onblur="MBoxFechaGRE_LostFocus()">
+								<input type="date" name="MBoxFechaGRE" id="MBoxFechaGRE" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>" onblur="MBoxFechaGRE_LostFocus()">
 							</div>
 						</div>
 						<div class="col-sm-12">
 							<b class="col-sm-6 control-label" style="padding: 0px">Guia de remision No.</b>
 							<div class="col-sm-3" style="padding: 0px">
-								<select class="form-control input-sm" id="DCSerieGR" name="DCSerieGR" onchange="DCSerieGR_LostFocus()">
+								<select class="form-control input-xs" id="DCSerieGR" name="DCSerieGR" onchange="DCSerieGR_LostFocus()">
 									<option value="">No Existe</option>
 								</select>
 							</div>
 							<div class="col-sm-3" style="padding: 0px">
-								<input type="text" name="LblGuiaR" id="LblGuiaR" class="form-control input-sm" value="000000">
+								<input type="text" name="LblGuiaR" id="LblGuiaR" class="form-control input-xs" value="000000">
 							</div>
 						</div>
 						<div class="col-sm-12">
 							<b>AUTORIZACION GUIA DE REMISION</b>
-							<input type="text" name="LblAutGuiaRem" id="LblAutGuiaRem" class="form-control input-sm" value="0">							
+							<input type="text" name="LblAutGuiaRem" id="LblAutGuiaRem" class="form-control input-xs" value="0">							
 						</div>
 						<div class="col-sm-12">
 							<b class="col-sm-6 control-label" style="padding: 0px">Iniciacion del traslados</b>
 							<div class="col-sm-6" style="padding: 0px">		
-								<input type="date" name="MBoxFechaGRI" id="MBoxFechaGRI" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>">
+								<input type="date" name="MBoxFechaGRI" id="MBoxFechaGRI" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">
 							</div>			
 						</div>
 						<div class="col-sm-12">
 							<b class="col-sm-3 control-label" style="padding: 0px">Ciudad</b>
 							<div class="col-sm-9" style="padding: 0px">		
-								<select class="form-control input-sm" id="DCCiudadI" name="DCCiudadI">
+								<select class="form-control input-xs" id="DCCiudadI" name="DCCiudadI">
 									<option value=""></option>
 								</select>
 							</div>			
@@ -1652,44 +1651,44 @@ function DCCiudadI()
 						<div class="col-sm-12">
 							<b class="col-sm-6 control-label" style="padding: 0px">Finalizacion del traslados</b>
 							<div class="col-sm-6" style="padding: 0px">		
-								<input type="date" name="MBoxFechaGRF" id="MBoxFechaGRF" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>">
+								<input type="date" name="MBoxFechaGRF" id="MBoxFechaGRF" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">
 							</div>			
 						</div>
 						<div class="col-sm-12">
 							<b class="col-sm-3 control-label" style="padding: 0px">ciudad</b>
 							<div class="col-sm-9" style="padding: 0px">		
-								<select class="form-control input-sm" id="DCCiudadF" name="DCCiudadF">
+								<select class="form-control input-xs" id="DCCiudadF" name="DCCiudadF">
 									<option value=""></option>
 								</select>
 							</div>			
 						</div>
 						<div class="col-sm-12">
 							<b>Nombre o razon socila (Transportista)</b>
-								<select class="form-control input-sm" id="DCRazonSocial" name="DCRazonSocial">
+								<select class="form-control input-xs" id="DCRazonSocial" name="DCRazonSocial">
 									<option value=""></option>
 								</select>				
 						</div>
 						<div class="col-sm-12">
 							<b>Empresa de Transporte</b>
-							<select class="form-control input-sm" id="DCEmpresaEntrega" name="DCEmpresaEntrega">
+							<select class="form-control input-xs" id="DCEmpresaEntrega" name="DCEmpresaEntrega">
 									<option value=""></option>
 								</select>			
 						</div>
 						<div class="col-sm-4">
 							<b>Placa</b>
-							<input type="text" name="TxtPlaca" id="TxtPlaca" class="form-control input-sm" value="XXX-999">							
+							<input type="text" name="TxtPlaca" id="TxtPlaca" class="form-control input-xs" value="XXX-999">							
 						</div>
 						<div class="col-sm-4">
 							<b>Pedido</b>
-							<input type="text" name="TxtPedido" id="TxtPedido" class="form-control input-sm">							
+							<input type="text" name="TxtPedido" id="TxtPedido" class="form-control input-xs">							
 						</div>
 						<div class="col-sm-4">
 							<b>Zona</b>
-							<input type="text" name="TxtZona" id="TxtZona" class="form-control input-sm">							
+							<input type="text" name="TxtZona" id="TxtZona" class="form-control input-xs">							
 						</div>
 						<div class="col-sm-12">
 							<b>Lugar entrega</b>
-							<input type="text" name="TxtLugarEntrega" id="TxtLugarEntrega" class="form-control input-sm">							
+							<input type="text" name="TxtLugarEntrega" id="TxtLugarEntrega" class="form-control input-xs">							
 						</div>
 					</div>	
 
@@ -1758,8 +1757,8 @@ function DCCiudadI()
 	      			<input type="hidden" name="LblClienteCod" id="LblClienteCod">
 	      		<div class="row">
 	      			<div class="col-sm-12">
-	      				<input type="text" name="LblCliente" id="LblCliente" class="form-control input-sm" readonly>
-	      				<select class="form-control input-sm" id="DCCtaVenta" name="DCCtaVenta">
+	      				<input type="text" name="LblCliente" id="LblCliente" class="form-control input-xs" readonly>
+	      				<select class="form-control input-xs" id="DCCtaVenta" name="DCCtaVenta">
 									<option value="">Seleccione</option>
 								</select>			
 	      			</div>
@@ -1771,44 +1770,44 @@ function DCCiudadI()
 	      						<b>Periodo</b>
 	      						<div class="row">
 	      							<div class="col-sm-6" style="padding-right: 1px;">
-	      								 <input type="date" name="MBDesde"  id="MBDesde" class="form-control input-sm" style="font-size: 10.5px; padding: 2px;" value="<?php echo date('Y-m-d') ?>">
+	      								 <input type="date" name="MBDesde"  id="MBDesde" class="form-control input-xs" style="font-size: 10.5px; padding: 2px;" value="<?php echo date('Y-m-d') ?>">
 	      							</div>
 	      							<div class="col-sm-6" style="padding-left: 1px;">
-	      								<input type="date" name="MBHasta"  id="MBHasta" class="form-control input-sm"  style="font-size: 10.5px; padding: 2px;" value="<?php echo date('Y-m-d') ?>">	      							      								
+	      								<input type="date" name="MBHasta"  id="MBHasta" class="form-control input-xs"  style="font-size: 10.5px; padding: 2px;" value="<?php echo date('Y-m-d') ?>">	      							      								
 	      							</div>
 	      						</div>	      						
 	      					</div>
 	      					<div class="col-sm-3" style="padding: 1px;">
 	      						<b>Contrato No.</b>
-	      						<input type="text" name="TextContrato"  id="TextContrato" class="form-control input-sm" value=".">
+	      						<input type="text" name="TextContrato"  id="TextContrato" class="form-control input-xs" value=".">
 	      					</div>
 	      					<div class="col-sm-2" style="padding-left: 1px; padding-top: 1px;">
 	      						<b>Sector</b>
-	      						<input type="text" name="TextSector"  id="TextSector" class="form-control input-sm" value=".">
+	      						<input type="text" name="TextSector"  id="TextSector" class="form-control input-xs" value=".">
 	      					</div>
 	      				</div>
 	      				<div class="row">
 	      					<div class="col-sm-3" style="padding-right: 1px; padding-top: 1px;">
 	      						<b>Ent. hasta</b>
-	      						<input type="text" name="TxtHasta" id="TxtHasta" class="form-control input-sm" value="0.00">	      						
+	      						<input type="text" name="TxtHasta" id="TxtHasta" class="form-control input-xs" value="0.00">	      						
 	      					</div>	 
 	      					<div class="col-sm-3" style="padding: 1px;">
 	      						<b>Tipo</b>
-	      						<input type="text" name="TextTipo" id="TextTipo" class="form-control input-sm" value=".">	      						
+	      						<input type="text" name="TextTipo" id="TextTipo" class="form-control input-xs" value=".">	      						
 	      					</div>	 
 	      					<div class="col-sm-3" style="padding: 1px;">
 	      						<b>Comp. Venta</b>
-	      						<input type="text" name="TextFact" id="TextFact" class="form-control input-sm" value="0.00">	      						
+	      						<input type="text" name="TextFact" id="TextFact" class="form-control input-xs" value="0.00">	      						
 	      					</div>	 
 	      					<div class="col-sm-3" style="padding-left: 1px;  padding-top: 1px;">
 	      						<b>Valor suscr</b>
-	      						<input type="text" name="TextValor" id="TextValor" class="form-control input-sm" value="0.00">	      						
+	      						<input type="text" name="TextValor" id="TextValor" class="form-control input-xs" value="0.00">	      						
 	      					</div>				
 	      				</div>
 	      				<div class="row">
 	      					<div class="col-sm-12">
 	      						<b> Atención /Entregar a:</b>
-	      						<input type="text" name="TxtAtencion" id="TxtAtencion" class="form-control input-sm">	  	      						
+	      						<input type="text" name="TxtAtencion" id="TxtAtencion" class="form-control input-xs">	  	      						
 	      					</div>	      					
 	      				</div>	      				
 	      			</div>
@@ -1867,13 +1866,13 @@ function DCCiudadI()
 	      				<div class="row">
 		      					<div class="col-sm-6">
 		      						<b> Ejecutivo de Venta</b>
-		      						<select class="form-control input-sm" id="DCEjecutivoModal" name="DCEjecutivoModal">
+		      						<select class="form-control input-xs" id="DCEjecutivoModal" name="DCEjecutivoModal">
 												<option value="">Seleccione</option>
 											</select>	
 		      					</div>
 		      					<div class="col-sm-3">
 		      						<b>Comision %</b>
-		      						<input type="" name="TextComisionModal" id="TextComisionModal" class="form-control input-sm" onblur="TextComision_LostFocus()">      						
+		      						<input type="" name="TextComisionModal" id="TextComisionModal" class="form-control input-xs" onblur="TextComision_LostFocus()">      						
 		      					</div>
 		      					<div class="col-sm-3">
 			      					<div class="checkbox">

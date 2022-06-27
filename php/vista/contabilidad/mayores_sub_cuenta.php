@@ -206,32 +206,32 @@ function sucursal_exis()
 <div class="row">
 	<div class="col-md-3 col-sm-2 col-xs-2">
        <div class="input-group">
-	         <div class="input-group-addon input-sm">
+	         <div class="input-group-addon input-xs">
 	           <b>Desde:</b>
 	         </div>
-        	<input type="date" name="txt_desde" id="txt_desde" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);" class="form-control input-sm">
+        	<input type="date" name="txt_desde" id="txt_desde" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);" class="form-control input-xs">
        </div>
        <div class="input-group">
-	         <div class="input-group-addon input-sm">
+	         <div class="input-group-addon input-xs">
 	           <b>Hasta:</b>
 	         </div>
-        	<input type="date"  name="txt_hasta" id="txt_hasta" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);" class="form-control input-sm">
+        	<input type="date"  name="txt_hasta" id="txt_hasta" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);" class="form-control input-xs">
        </div>
     </div>
     <div class="col-sm-6">
     	<div class="input-group">
-	         <div class="input-group-addon input-sm">
-	          <label><input type="checkbox" name="check_usu" id="check_usu"> Por Usuario</label>
+	         <div class="input-group-addon input-xs">
+	          <label style="margin:-3px"><input type="checkbox" name="check_usu" id="check_usu"> Por Usuario</label>
 	         </div>
-        	<select class="form-control input-sm" id="DCUsuario" name="DCUsuario">
+        	<select class="form-control input-xs" id="DCUsuario" name="DCUsuario">
         		<option value="">Seleccione </option>
         	</select>
        	</div>
        	<div class="input-group" id="panel_agencia">
-	         <div class="input-group-addon input-sm">	           
-	          <label><input type="checkbox" name="check_agencia" id="check_agencia"> Agencia</label>
+	         <div class="input-group-addon input-xs">	           
+	          <label style="margin:-3px"><input type="checkbox" name="check_agencia" id="check_agencia"> Agencia</label>
 	         </div>
-        	<select class="form-control input-sm" id="DCAgencia" name="DCAgencia">
+        	<select class="form-control input-xs" id="DCAgencia" name="DCAgencia">
         		<option value="">Seleccione </option>
         	</select>
        </div>     	
@@ -266,10 +266,10 @@ function sucursal_exis()
     	</div>		
 	</div>
 	<div class="col-sm-5">
-		<select class="form-control input-sm" id="DCCtas" name="DCCtas" onchange="FDLCtas(this.value)">
+		<select class="form-control input-xs" id="DCCtas" name="DCCtas" onchange="FDLCtas(this.value)">
    		<option value="">Seleccione</option>
    	</select>      
-   	<select class="form-control input-sm" id="DLCtas" name="DLCtas">
+   	<select class="form-control input-xs" id="DLCtas" name="DLCtas">
    		<option value="">Seleccione</option>
    	</select>        	 
 	</div>
@@ -281,10 +281,10 @@ function sucursal_exis()
     		</div>
     	</div><br>
     	<div class="input-group">
-	         <div class="input-group-addon input-sm">
+	         <div class="input-group-addon input-xs">
 	           <b>Saldo Anterior:</b>
 	         </div>
-        	<input type="text" class="form-control input-sm" value="0.00" name="txt_saldo_ant" id="txt_saldo_ant">
+        	<input type="text" class="form-control input-xs" value="0.00" name="txt_saldo_ant" id="txt_saldo_ant">
        </div>		
 	</div>
 </div>

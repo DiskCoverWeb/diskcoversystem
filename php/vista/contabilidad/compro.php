@@ -50,23 +50,25 @@
 	  </div>   	
 	</div>
 	<div class="col-sm-4">
+		<br>
 			<?php echo $_SESSION['INGRESO']['item']; ?> 
-    	<button type="submit" class="btn btn-default active" onclick="reset_('comproba','CD');" id='CD'>Diario</button>
-			<button type="submit" class="btn btn-default" onclick="reset_('comproba','CI');" id='CI'>Ingreso</button>
-			<button type="submit" class="btn btn-default" onclick="reset_('comproba','CE');" id='CE'>Egreso</button>
-			<button type="submit" class="btn btn-default" onclick="reset_('comproba','ND');" id='ND'>N/D</button>
-			<button type="submit" class="btn btn-default" onclick="reset_('comproba','NC');" id='NC'>N/C</button>
+    	<button type="submit" class="btn btn-default btn-sm active" onclick="reset_('comproba','CD');" id='CD'>Diario</button>
+			<button type="submit" class="btn btn-default btn-sm" onclick="reset_('comproba','CI');" id='CI'>Ingreso</button>
+			<button type="submit" class="btn btn-default btn-sm" onclick="reset_('comproba','CE');" id='CE'>Egreso</button>
+			<button type="submit" class="btn btn-default btn-sm" onclick="reset_('comproba','ND');" id='ND'>N/D</button>
+			<button type="submit" class="btn btn-default btn-sm" onclick="reset_('comproba','NC');" id='NC'>N/C</button>
 			<input id="tipoc" name="tipoc" type="hidden" value="CD">					
 	</div>	
 	<div class="col-sm-3">
+		<br>
 		<div class="row">
   		<div class="col-sm-5" style="padding:0px">
-  			<select class="form-control input-sm" name="tipo" id='mes' onchange="comprobante()">
+  			<select class="form-control input-xs" name="tipo" id='mes' onchange="comprobante()">
 				   <option value='0'>Todos</option><?php echo  Tabla_Dias_Meses();?>
 			  </select>			      			
   		</div>
   		<div class="col-sm-7">
-  			 <select class="form-control input-sm" name="ddl_comprobantes" id="ddl_comprobantes" onchange="listar_comprobante()">
+  			 <select class="form-control input-xs" name="ddl_comprobantes" id="ddl_comprobantes" onchange="listar_comprobante()">
 		    	<option value="">Seleccione</option>
 		    </select>			      			
   		</div>			      		

@@ -142,43 +142,43 @@ class listar_facturasC
      InsValorCta Cta_IVA, -FA.Total_IVA*/
      
     //Listamos el error en la autorizacion del documento si tuvier error
-    if (strlen($Autorizacion)) {
-      # code...
-    }
-     If Len(FA.Autorizacion) >= 13 Then
-         Label20.Caption = "Clave de Accceso: " & FA.TC & " "
-         Cadena = SRI_Mensaje_Error(FA.ClaveAcceso)
-         If Len(Cadena) > 1 Then
-            TxtXML = "Clave de Accceso: " & FA.ClaveAcceso & vbCrLf _
-                   & String(100, "-") & vbCrLf _
-                   & Cadena _
-                   & String(100, "-")
-         Else
-            TxtXML = "Clave de Accceso: " & FA.ClaveAcceso & vbCrLf _
-                   & String(100, "-") & vbCrLf _
-                   & "OK: No existe ningun error en su aprobacion" & vbCrLf _
-                   & String(100, "-")
-         End If
-     End If
-     If SQL_Server Then
-        sSQL = "UPDATE Trans_Abonos " _
-             & "SET Tipo_Cta = CC.TC " _
-             & "FROM Trans_Abonos As TA, Catalogo_Cuentas As CC "
-     Else
-        sSQL = "UPDATE Trans_Abonos As TA, Catalogo_Cuentas As CC " _
-             & "SET TA.Tipo_Cta = CC.TC "
-     End If
-     sSQL = sSQL _
-          & "WHERE TA.Item = '" & NumEmpresa & "' " _
-          & "AND TA.Periodo = '" & Periodo_Contable & "' " _
-          & "AND TA.TP = '" & FA.TC & "' " _
-          & "AND TA.Serie = '" & FA.Serie & "' " _
-          & "AND TA.Factura = " & FA.Factura & " " _
-          & "AND TA.Autorizacion = '" & FA.Autorizacion & "' " _
-          & "AND TA.Item = CC.Item " _
-          & "AND TA.Periodo = CC.Periodo " _
-          & "AND TA.Cta = CC.Codigo "
-     Conectar_Ado_Execute sSQL
+    // if (strlen($Autorizacion)) {
+    //   # code...
+    // }
+    //  If Len(FA.Autorizacion) >= 13 Then
+    //      Label20.Caption = "Clave de Accceso: " & FA.TC & " "
+    //      Cadena = SRI_Mensaje_Error(FA.ClaveAcceso)
+    //      If Len(Cadena) > 1 Then
+    //         TxtXML = "Clave de Accceso: " & FA.ClaveAcceso & vbCrLf _
+    //                & String(100, "-") & vbCrLf _
+    //                & Cadena _
+    //                & String(100, "-")
+    //      Else
+    //         TxtXML = "Clave de Accceso: " & FA.ClaveAcceso & vbCrLf _
+    //                & String(100, "-") & vbCrLf _
+    //                & "OK: No existe ningun error en su aprobacion" & vbCrLf _
+    //                & String(100, "-")
+    //      End If
+    //  End If
+    //  If SQL_Server Then
+    //     sSQL = "UPDATE Trans_Abonos " _
+    //          & "SET Tipo_Cta = CC.TC " _
+    //          & "FROM Trans_Abonos As TA, Catalogo_Cuentas As CC "
+    //  Else
+    //     sSQL = "UPDATE Trans_Abonos As TA, Catalogo_Cuentas As CC " _
+    //          & "SET TA.Tipo_Cta = CC.TC "
+    //  End If
+    //  sSQL = sSQL _
+    //       & "WHERE TA.Item = '" & NumEmpresa & "' " _
+    //       & "AND TA.Periodo = '" & Periodo_Contable & "' " _
+    //       & "AND TA.TP = '" & FA.TC & "' " _
+    //       & "AND TA.Serie = '" & FA.Serie & "' " _
+    //       & "AND TA.Factura = " & FA.Factura & " " _
+    //       & "AND TA.Autorizacion = '" & FA.Autorizacion & "' " _
+    //       & "AND TA.Item = CC.Item " _
+    //       & "AND TA.Periodo = CC.Periodo " _
+    //       & "AND TA.Cta = CC.Codigo "
+    //  Conectar_Ado_Execute sSQL
      
      /*
      'FA.Autorizacion_GR = Ninguno

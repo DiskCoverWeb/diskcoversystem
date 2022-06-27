@@ -367,11 +367,11 @@
       <div class="col-sm-8 col-lg-8 col-md-4 col-xs-12">
         <div class="col-xs-6 col-md-3 col-sm-3 col-lg-3">
           <b>Desde:</b><br>
-            <input type="date" min="01-01-2000" max="31-12-2050"  name="txt_desde" id="txt_desde" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);consultar_datos();">  
+            <input class="form-control input-xs" type="date" min="01-01-2000" max="31-12-2050"  name="txt_desde" id="txt_desde" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);consultar_datos();">  
         </div>   
         <div class="col-xs-6 col-md-3 col-sm-3 col-lg-3">
           <b>Hasta:</b><br>
-            <input type="date"  min="01-01-2000" max="31-12-2050" name="txt_hasta" id="txt_hasta" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);consultar_datos();"> 
+            <input class="form-control input-xs" type="date"  min="01-01-2000" max="31-12-2050" name="txt_hasta" id="txt_hasta" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);consultar_datos();"> 
         </div>   
       </div>
     </div>
@@ -380,7 +380,7 @@
         <div class="col-sm-12">
           <div class="panel panel-default">
              <div class="panel-heading" style="padding: 5px 5px"><b>COMPROBANTES DE<b></div>
-            <div class="panel-body">
+            <div class="panel-body" style="padding:2px">
             <div class="col-sm-1  col-xs-3">
               <label class="radio-inline"><input type="radio" name="OpcP" id="OpcT" onchange="consultar_datos();" checked=""><b>Todos</b></label> 
             </div>
@@ -462,13 +462,13 @@
         <b>Total Debe</b>
       </div>
       <div class="col-sm-2">
-        <input type="text" id="debe" class="text-right rounded border border-primary" size="8" readonly/>
+        <input type="text" id="debe" class="text-right rounded border border-primary form-control input-xs" size="8" readonly/>
       </div>
       <div class="col-sm-2">
         <b>Total Haber</b>
       </div>
       <div class="col-sm-2">
-        <input type="text" id="haber" class="text-right rounded border border-primary" size="8" readonly/>
+        <input type="text" id="haber" class="text-right rounded border border-primary form-control input-xs" size="8" readonly/>
       </div>
       <div class="col-sm-2">
         <b>Debe - Haber</b>
@@ -481,13 +481,13 @@
         <b>Total Debe ME</b>
       </div>
       <div class="col-sm-2">
-        <input type="text" id="debe_me" class="text-right rounded border border-primary" size="8" readonly/>
+        <input type="text" id="debe_me" class="text-right rounded border border-primary form-control input-xs" size="8" readonly/>
       </div>
       <div class="col-sm-2">
         <b>Total Haber ME</b>
       </div>
       <div class="col-sm-2">
-        <input type="text" id="haber_me" class="text-right rounded border border-primary" size="8" readonly/>
+        <input type="text" id="haber_me" class="text-right rounded border border-primary form-control input-xs" size="8" readonly/>
       </div>
       <div class="col-sm-2">
         <b>Debe - Haber ME</b>

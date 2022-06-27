@@ -157,13 +157,13 @@
 	  			<div class="col-xs-6">
              		<b>Cuenta inicial:</b>
              		<br>
-             	   <input type="text" name="txt_CtaI" id="txt_CtaI" placeholder="<?php 
+             	   <input type="text" name="txt_CtaI" id="txt_CtaI" class="form-control input-xs" placeholder="<?php 
 						echo $_SESSION['INGRESO']['Formato_Cuentas']; ?>">
              	</div>
                 <div class="col-xs-6">
              	  <b> Cuenta final:</b>
              	<br>
-             	   <input type="text" name="txt_CtaF" id="txt_CtaF" placeholder="<?php 
+             	   <input type="text" name="txt_CtaF" id="txt_CtaF" class="form-control input-xs" placeholder="<?php 
 						echo $_SESSION['INGRESO']['Formato_Cuentas']; ?>"> 
              	</div>       	
              	  		
@@ -173,6 +173,7 @@
 	  	<div class="col-sm-4">
            <div class="row">
              <div class="col-sm-12">
+             	<br>
                 <label class="radio-inline"><input type="radio" name="OpcP" id="OpcT" checked="" onchange="consultar_datos();"><b>Todos</b></label>
           	    <label class="radio-inline"><input type="radio" name="OpcP" id="OpcG" onchange="consultar_datos();"><b>De grupo</b></label>            
           	    <label class="radio-inline"><input type="radio" name="OpcP" id="OpcD" onchange="consultar_datos();"><b>De Detalles</b></label>              			

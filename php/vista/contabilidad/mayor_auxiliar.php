@@ -266,36 +266,36 @@
               
 	  	<div class="col-sm-3"><br>
 	  	   <b>Cuenta inicial:</b>
-             <input type="text" name="txt_CtaI" id="txt_CtaI" class="input-sm" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas']; ?>">
+             <input type="text" name="txt_CtaI" id="txt_CtaI" class="input-xs" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas']; ?>">
 			 <br>
              <b>Cuenta final:&nbsp;&nbsp;&nbsp;</b>
-             <input type="text" name="txt_CtaF" id="txt_CtaF"  class="input-sm" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas']; ?>" > 
+             <input type="text" name="txt_CtaF" id="txt_CtaF"  class="input-xs" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas']; ?>" > 
         </div>
 	  	<div class="col-sm-3"><br>
 	  		<b>Desde:</b>
-            <input type="date" name="desde" id="desde" class="input-sm"  value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);">
+            <input type="date" name="desde" id="desde" class="input-xs"  value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);">
 			<br>
             <b>Hasta:&nbsp;</b>
-            <input type="date" name="hasta" id="hasta"  class="input-sm"  value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);">  	              	
+            <input type="date" name="hasta" id="hasta"  class="input-xs"  value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);">  	              	
 	  	</div>
 
 	  	<div class="col-sm-3">
-                <label><input type="checkbox" name="CheckUsu" id="CheckUsu">  <b>Por usuario</b></label>
-                <select class="form-control input-sm" id="DCUsuario"  onchange="consultar_datos(true,Individual);">
+                <label style="margin:0px"><input type="checkbox" name="CheckUsu" id="CheckUsu">  <b>Por usuario</b></label>
+                <select class="form-control input-xs" id="DCUsuario"  onchange="consultar_datos(true,Individual);">
                 	<option value="">Seleccione usuario</option>
                 </select>
           	    <label id="lblAgencia"><input type="checkbox" name="CheckAgencia" id="CheckAgencia">  <b>Agencia</b></label>
-          	     <select class="form-control input-sm" id="DCAgencia" onchange="consultar_datos(true,Individual);">
+          	     <select class="form-control input-xs" id="DCAgencia" onchange="consultar_datos(true,Individual);">
                 	<option value="">Seleccione agencia</option>
                 </select>             
         </div>
         <div class="col-sm-3">
         	<b>Por cuenta</b>
-                <select class="form-control input-sm" id="DCCtas" onchange="consultar_datos(true,Individual);">
+                <select class="form-control input-xs" id="DCCtas" onchange="consultar_datos(true,Individual);">
                 	<option value="">Seleccione cuenta</option>
                 </select>
           	    <b>Saldo anterior MN:</b> 
-          	    <input type="text" name="OpcP" id="OpcG" class="input-sm">           
+          	    <input type="text" name="OpcP" id="OpcG" class="input-xs">           
         </div>		
 	</div>
 	  <!--seccion de panel-->

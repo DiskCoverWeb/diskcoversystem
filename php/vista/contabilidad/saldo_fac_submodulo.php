@@ -303,16 +303,16 @@
 	  			<div class="col-xs-4">
 	         		<b>Desde:</b>
 	         		<br>
-	         	   <input type="date" style="width:125px" name="txt_desde" id="txt_desde" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);">
+	         	   <input type="date" class="input-xs" style="width:125px" name="txt_desde" id="txt_desde" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);">
 	         	</div>
 	            <div class="col-xs-4">
 	         	   <b>Hasta:</b>
 	         	<br>
-	         	   <input type="date" style="width:125px" name="txt_hasta" id="txt_hasta" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);"> 
+	         	   <input type="date" class="input-xs" style="width:125px" name="txt_hasta" id="txt_hasta" value="<?php echo date("Y-m-d");?>" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);"> 
 	         	</div>             	
 	         	<div class="col-xs-3">
 	         	<br>
-	         		<select id="tipo_cuenta" name="tipo_cuenta" onchange="cargar_cbx()">
+	         		<select id="tipo_cuenta" name="tipo_cuenta" class="input-xs" onchange="cargar_cbx()">
 	         	   	<option value="C">CxC</option>
 	         	   	<option value="P">CxP</option>
 	         	   	<option value="I">Ingresos</option>
@@ -330,7 +330,7 @@
 	  		    <label class="radio-inline"><input type="radio" name="OpcP" value="" id="OpcC"><b>Canceladas</b></label>              			
 	     		</div>
 	     		<div class="col-sm-12">
-	     		<label class="form-check-label" style="font-size: 12px"><input type="checkbox" name="chekSubCta" id="chekSubCta"> Procesar con Detalle de SubModulo</label>
+	     		<label class="form-check-label" style="font-size: 12px;margin: 0px;"><input type="checkbox" name="chekSubCta" id="chekSubCta"> Procesar con Detalle de SubModulo</label>
 	     		</div>             		
 	        </div>
 	     </div>	
@@ -338,19 +338,19 @@
 	  <div class="row">	  		
 	  	<div class="col-sm-4">
 	  	   <label class="form-check-label"><input type="checkbox" name="CheqCta" id="CheqCta" onchange="cuenta()" value="true"> Por Cta.</label>
-	  		<select class="form-control" id="select_cuenta" style="display: none;" onchange="consultar_datos();">
+	  		<select class="form-control input-xs" id="select_cuenta" style="display: none;" onchange="consultar_datos();">
 	  			<option value="">Seleccione cuenta</option>
 	  		</select>
 	 	</div>
 		  <div class="col-sm-4">
 		  	<label class="form-check-label"><input type="checkbox" name="CheqDet" id="CheqDet" onchange="detalle()"> Por det</label>	  	 
-	  		  <select class="form-control"   id="select_detalle" style="display: none;" onchange="consultar_datos();">
+	  		  <select class="form-control input-xs"   id="select_detalle" style="display: none;" onchange="consultar_datos();">
 	  			 <option value="">Seleccione detalle</option>
 	  		  </select>
 		  </div>
 		  <div class="col-sm-4">
 		  	<label class="form-check-label"><input type="checkbox" name="CheqIndiv" id="CheqIndiv" onchange="beneficiario()"><span id="lbl_bene"> Beneficiario</span></label> 
-			   <select  class="form-control" id="select_beneficiario" style="display: none;" onchange="consultar_datos();">
+			   <select  class="form-control input-xs" id="select_beneficiario" style="display: none;" onchange="consultar_datos();">
 		     	<option value="">Seleccione Beneficiario</option>
 		       </select> 
 		  </div>

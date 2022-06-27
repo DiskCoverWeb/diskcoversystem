@@ -254,25 +254,25 @@
 	<div class="row">   	  	
 	  	<div class="col-sm-3"><br>
 	  		<b>Desde:</b>
-            <input type="date" name="desde" id="desde" class="input-sm"  value="<?php echo date("Y-m-d");?>" onblur="validar_year_menor(this.id);fecha_fin()" onkeyup="validar_year_mayor(this.id)">
+            <input type="date" name="desde" id="desde" class="input-xs"  value="<?php echo date("Y-m-d");?>" onblur="validar_year_menor(this.id);fecha_fin()" onkeyup="validar_year_mayor(this.id)">
 			<br>
             <b>Hasta:&nbsp;</b>
-            <input type="date" name="hasta" id="hasta"  class="input-sm"  value="<?php echo date("Y-m-d");?>" onblur="validar_year_menor(this.id);consultar_datos(true,Individual);" onkeyup="validar_year_mayor(this.id)">  	              	
+            <input type="date" name="hasta" id="hasta"  class="input-xs"  value="<?php echo date("Y-m-d");?>" onblur="validar_year_menor(this.id);consultar_datos(true,Individual);" onkeyup="validar_year_mayor(this.id)">  	              	
 	  	</div>
 
 	  	<div class="col-sm-3">
-                <label><input type="checkbox" name="CheckUsu" id="CheckUsu">  <b>Por usuario</b></label>
-                <select class="form-control input-sm" id="DCUsuario"  onchange="consultar_datos(true,Individual);">
+                <label style="margin:0px"><input type="checkbox" name="CheckUsu" id="CheckUsu">  <b>Por usuario</b></label>
+                <select class="form-control input-xs" id="DCUsuario"  onchange="consultar_datos(true,Individual);">
                 	<option value="">Seleccione usuario</option>
                 </select>
-          	    <label id="lblAgencia"><input type="checkbox" name="CheckAgencia" id="CheckAgencia">  <b>Agencia</b></label>
-          	     <select class="form-control input-sm" id="DCAgencia" onchange="consultar_datos(true,Individual);">
+          	    <label id="lblAgencia" style="margin:0px"><input type="checkbox" name="CheckAgencia" id="CheckAgencia">  <b>Agencia</b></label>
+          	     <select class="form-control input-xs" id="DCAgencia" onchange="consultar_datos(true,Individual);">
                 	<option value="">Seleccione agencia</option>
                 </select>             
         </div>
         <div class="col-sm-3">
         	<b>Por cuenta</b>
-                <select class="form-control input-sm" id="DCCtas" onchange="consultar_datos(true,Individual);">
+                <select class="form-control input-xs" id="DCCtas" onchange="consultar_datos(true,Individual);">
                 	<option value="">Seleccione cuenta</option>
                 </select>
           	   
