@@ -132,7 +132,6 @@
 
 	</script>
 
-   <div class="container">
    <div class="col-ms-12" style="margin-top: -60px">
 	  <br><br>
 	  <div class="row">          
@@ -193,7 +192,7 @@
 	  		</ul>
 	  	    <div class="tab-content" style="background-color:#E7F5FF">
 	  	    	<div id="home" class="tab-pane fade in active">
-	  	    	   <div  id="tabla_" style="overflow-y: scroll; height:600px; width: auto;">
+	  	    	   <div  id="tabla_">
 	  	    	   		  	    	   	
 	  	    	   </div>
 	  	    	 </div>	  	    	
@@ -201,5 +200,4 @@
 	  	</div>
 	  </div>
 	</div>
-   </div>
    <br><br>

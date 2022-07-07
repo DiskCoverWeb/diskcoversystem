@@ -6570,35 +6570,66 @@ if ($pos === false) {
 
   $cid=$conn->conexion();
   $cid1=$conn->conexion();
-  $stmt = sqlsrv_query($cid, $sql);
+
+  $datos = $conn->datos($sql);
+  // $stmt = sqlsrv_query($cid, $sql);
   $columnas = sqlsrv_query($cid1, $sql);
   $columnas = sqlsrv_field_metadata($columnas);
+  // print_r($tabla);
+  // print_r($columnas);die();
+
+
   $columnas_uti = array();
+  $uti = datos_tabla($tabla);
+  $existe = false;
   foreach ($columnas as $key => $value) {
-      $d =  datos_tabla($tabla,$value['Name']);
-      if(empty($d))
-      {
-        array_push($columnas_uti,$value['Name']);
+    // aplica cuando la consulta sql tiene mas tablas incluidas
+    if(count($uti)>0){
+        foreach ($uti as $key1 => $value1) {    
+          if($value1['COLUMN_NAME']==$value['Name'])
+          {
+            array_push($columnas_uti, $value1['COLUMN_NAME']);
+            $existe = false;
+            break;
+          }else
+          {
+            $existe = true;
+            break;
+          }
+        }
+        if($existe)
+        {
+          array_push($columnas_uti,$value['Name']);
+         // print_r($columnas_uti);die();
+          $existe = false;
+        }
       }else
       {
-        array_push($columnas_uti, $d[0]);
+        array_push($columnas_uti,$value['Name']);
       }
-      // print_r($d);
+      
   }
+
+  // print_r($datos);
+  // print_r($uti);
+  // print_r($columnas);
   // print_r($columnas_uti);die();
   $medida_body =array();
   $alinea_body =array();
-   $datos =  array();
-     if( $stmt === false)  
-     {  
-     echo "Error en consulta PA.\n";  
-     return '';
-     die( print_r( sqlsrv_errors(), true));  
-     }
-     while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
-     {
-            $datos[]=$row;
-     }
+   // $datos =  array();
+   //   if( $stmt === false)  
+   //   {  
+   //   echo "Error en consulta PA.\n";  
+   //   return '';
+   //   die( print_r( sqlsrv_errors(), true));  
+   //   }
+   //   while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
+   //   {
+   //          $datos[]=$row;
+   //   }
+
+
+  // print_r($dato);die();
   $tbl='';
   if($estilo==1)
   {
@@ -6708,7 +6739,7 @@ if($titulo)
  if($botones)
   {
     $med_b = count($botones)*42;
-    $tbl.='<th width="'.$med_b.'"></th>';
+    $tbl.='<th style="width:'.$med_b.'px"></th>';
   }
   if($check)
   {
@@ -6725,52 +6756,60 @@ if($titulo)
         $tbl.='<th width="30px" class="text-center"></th>';
       }
   }
+  // print_r($datos);
+  // print_r($uti);
+   //print_r($columnas_uti);die();
   foreach ($columnas_uti as $key => $value) {
     //calcula dimenciones de cada columna 
     if(is_array($value))
     {
     if($value['CHARACTER_MAXIMUM_LENGTH']!='')
     {
-    if($value['CHARACTER_MAXIMUM_LENGTH']>=60)
-    {
-      $medida = '300px';
-    }else{
-      if(($value['CHARACTER_MAXIMUM_LENGTH']<=11 && strlen($value['COLUMN_NAME'])>2 && $value['COLUMN_NAME']!='Codigo' && $value['COLUMN_NAME']!='CodigoU' && $value['CHARACTER_MAXIMUM_LENGTH']!=-1))
-      {        
-        $medida = dimenciones_tabl(strlen($value['COLUMN_NAME']));       
-      }else if($value['COLUMN_NAME']=='Codigo' || $value['COLUMN_NAME']=='CodigoU'){
-
-        $medida = '100px'; 
-
-      // print_r($medida);die();      
-      }else
+      if($value['CHARACTER_MAXIMUM_LENGTH']>=60)
       {
-        if($value['CHARACTER_MAXIMUM_LENGTH']!=-1)
-        {
-        $med_nom = str_replace('px','', dimenciones_tabl(strlen($value['COLUMN_NAME'])));
-        $medida = str_replace('px','',dimenciones_tabl($value['CHARACTER_MAXIMUM_LENGTH']));
-        if($medida<$med_nom)
-        {
-          $medida = dimenciones_tabl(strlen($value['COLUMN_NAME']));
+        $medida = '300px';
+      }else{
+        if(($value['CHARACTER_MAXIMUM_LENGTH']<=11 && strlen($value['COLUMN_NAME'])>2 && $value['COLUMN_NAME']!='Codigo' && $value['COLUMN_NAME']!='CodigoU' && $value['CHARACTER_MAXIMUM_LENGTH']!=-1))
+        {        
+          $medida = dimenciones_tabl(strlen($value['COLUMN_NAME']));       
+        }else if($value['COLUMN_NAME']=='Codigo' || $value['COLUMN_NAME']=='CodigoU'){
+
+          $medida = '100px'; 
+
+        // print_r($medida);die();      
         }else
         {
-           $medida = dimenciones_tabl($value['CHARACTER_MAXIMUM_LENGTH']);
-           // print_r($medida);die();
+          if($value['CHARACTER_MAXIMUM_LENGTH']!=-1)
+          {
+            // print_r('expression');die()
+            $med_nom = str_replace('px','', dimenciones_tabl(strlen($value['COLUMN_NAME'])));
+            $medida = str_replace('px','',dimenciones_tabl($value['CHARACTER_MAXIMUM_LENGTH']));
+            if($medida<$med_nom)
+            {
+              $medida = dimenciones_tabl(strlen($value['COLUMN_NAME']));
+            }else
+            {
+               $medida = dimenciones_tabl($value['CHARACTER_MAXIMUM_LENGTH']);
+               // print_r($medida);die();
+            }
+          }else
+          {
+             $medida ='250px';
+          }
         }
-      }else
-      {
-         $medida ='250px';
       }
-      }
-    }
    }else
    {
     if($value['DATA_TYPE']=='datetime')
         {
           $medida = '100px';
+
         }else if($value['DATA_TYPE']=='int')
         {
           $medida ='70px';
+        }else if($value['DATA_TYPE']=='money')
+        {
+          $medida ='75px';
         }
         else{
         $medida = dimenciones_tabl(strlen($value['COLUMN_NAME']));
@@ -6808,7 +6847,9 @@ if($titulo)
     array_push($alinea_body, $alineado);
   }else
   {
-    // print_r($columnas);die();
+  //   if($tabla==' Trans_SubCtas As T,Clientes As C '){
+     // print_r($columnas);die();
+  // }
     foreach ($columnas as $key6 => $value6) {
       if($value == $value6['Name'])
       {
@@ -6818,10 +6859,12 @@ if($titulo)
           {
             if($value6['Size']!='')
             {
-              $medida = dimenciones_tabl($value6['Size']);
+              $medida = determinaAnchoTipos($value6['Type'],$EsCorto=false,$value6['Size'],$value6['Name']); 
+              // dimenciones_tabl($value6['Size']);
             }else
             {
-              $medida = dimenciones_tabl(strlen($value6['Name']));
+              $medida = determinaAnchoTipos($value6['Type'],$EsCorto=false,false,$value6['Name']);
+              // dimenciones_tabl(strlen($value6['Name']));
             }
           }
            switch ($value6['Type']) 
@@ -6839,7 +6882,6 @@ if($titulo)
                  break;
                case '93':       // campo date
                  $alineado = 'text-left'; 
-                 $medida ='100px';
                break;
              }
            // $medida1 = explode('p',$medida);
@@ -6861,7 +6903,8 @@ if($titulo)
 
 //cuerpo de la consulta
   $colum = 0;
-  if(!empty($datos))
+  // print_r($datos);die();
+  if(count($datos)>0)
   {
   foreach ($datos as $key => $value) {
      $tbl.='<tr>';
@@ -6869,7 +6912,7 @@ if($titulo)
        if($botones)
         {
           $med_b = count($botones)*42;
-          $tbl.='<td width="'.$med_b.'px">';
+          $tbl.='<td style="width:'.$med_b.'px">';
           foreach ($botones as $key3 => $value3) {
             $valor = '';
             $tipo = 'default';
@@ -6937,6 +6980,8 @@ if($titulo)
         }
         //fin de creacion de checks
 
+        // print_r($medida_body);die();
+        // print_r($value);die();
      foreach ($value as $key1 => $value1) { 
              $medida = $medida_body[$colum]; 
              $alineado = $alinea_body[$colum]; 
@@ -6963,7 +7008,7 @@ if($titulo)
                   {
                     $color = 'red';
                   }
-                 $tbl.='<td style="width:'.$medida.'; color:'.$color.'" class="'.$alineado.'">'.number_format($value1,$num_decimales,'.','').'</td>'; 
+                 $tbl.='<td style="width:'.$medida.'; color:'.$color.'" class="'.$alineado.'">'.number_format(floatval($value1),$num_decimales,'.','').'</td>'; 
                 }
               }    
              }
@@ -6993,6 +7038,97 @@ if($titulo)
 
     return $tbl;
 
+}
+
+function determinaAnchoTipos($tipo,$EsCorto=false,$size=false,$namecol=false)
+{
+   $valor = 0;
+   $pixel = 8;
+   if($tipo!='' && $size!=false && $size>17 ){ $valor = $size*$pixel;}
+
+   if($EsCorto){
+
+     //boolean
+    if($tipo=='-7'){ $valor = strlen("Si_")*4;}
+    //date
+    if($tipo=='93'){ $valor = strlen("dd/MM/aaaa ");}
+    //time
+     // if ($tipo==) { $valor = strlen("hh:mm "); }
+     //byte
+     // if ($tipo==) { $valor = strlen("999 ");  }
+     //integer
+     if ($tipo=='4') { $valor = strlen("9999999999"); }
+     //long
+     // if ($tipo==) { $valor = strlen("999999 ");  }
+     //single
+     // if ($tipo==) { $valor = strlen("999.99% ");}
+     //double
+     if ($tipo=='7') { $valor = strlen("9,999.99 ");  }
+     //money
+     if ($tipo=='3') { $valor = strlen("9,999,999.99 "); }
+
+     if ($tipo=='-9') { $valor = strlen("999")*3; }
+
+  }else{
+    //boolean
+    if($tipo=='-7'){ $valor = strlen("Yes_")*$pixel;}
+    //date
+    if($tipo=='93')
+    { 
+      $valor = strlen("dd/mm/yyyy")*$pixel;
+     if(strlen($namecol)>10){ $valor = strlen($namecol)*$pixel; /*print_r(strlen($namecol).'-'.$namecol);*/ }
+    }
+    //time
+     // if ($tipo==) { $valor = strlen("HH:MM:SS "); }
+     // integer
+     if ($tipo=='4') { $valor = strlen("+9999999999999999")*$pixel; }
+     //float
+     if ($tipo=='6') { $valor = strlen("9,999.99")*$pixel; /*print_r('expression');*/}
+     //tiyinit     
+     if ($tipo=='-6') 
+      {         
+         $valor = strlen("9,999.99")*$pixel; 
+        if(strlen($namecol)>8){ $valor = strlen($namecol)*$pixel; }
+      }
+     //long
+     // if ($tipo==) { $valor = strlen("+99999999 ");  }
+     //single
+     // if ($tipo==) { $valor = strlen("+999.99% ");}
+     //double o  real
+     if ($tipo=='7') 
+     {
+        $valor = strlen("+99,999,999.99")*$pixel; 
+       // if(strlen($namecol)>14){ $valor = strlen($namecol)*$pixel; } 
+     }
+     //bit
+     if ($tipo=='-7') 
+     {
+        $valor = strlen("YES")*$pixel; 
+        if(strlen($namecol)>3){ $valor = strlen($namecol)*$pixel; } 
+     }
+     //money
+     if ($tipo=='3') 
+     { 
+      $valor = strlen("+9,999,999,999")*$pixel; 
+      if(strlen($namecol)>14){ $valor = strlen($namecol)*$pixel; }
+     }
+     //nvarchar
+     if ($tipo=='-9' )
+     {
+       if($size<18 && $size>=5 ){ $valor = strlen("99999999999999999")*$pixel; }
+       if($size<5 && strlen($namecol)<5){ $valor = strlen("99999")*$pixel; }
+       if($size<5 && strlen($namecol)>5){ $valor = strlen($namecol)*$pixel; }
+       //if($size<5 && strlen($namecol)>11){ $valor = strlen($namecol)*$pixel; }
+     }
+     //smallint
+     if ($tipo=='5')
+     {
+       $valor = strlen("99999 ")*$pixel;
+       if(strlen($namecol)>5){ $valor = strlen($namecol)*$pixel; }   
+     }
+  }
+
+     return $valor.'px';    
 }
 
 function datos_tabla($tabla,$campo=false)

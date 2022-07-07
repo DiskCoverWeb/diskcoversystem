@@ -12,14 +12,20 @@ class db
 	private $servidor;
 	private $database;
 	private $puerto;
+	private $ipconfig;
 	
 	function __construct()
 	{
-		$this->usuario = 'diskcover';
-	    $this->password =  'disk2017Cover';  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
-	    $this->servidor ='mysql.diskcoversystem.com';
-	    $this->database = 'diskcover_empresas';
-	    $this->puerto = 13306;	   
+
+		// print_r(dirname(__DIR__));die();
+
+		if(!file_exists(dirname(__DIR__).'/db/ipconfig.ini'))
+		{
+			mkdir(dirname(__DIR__).'/db/ipconfig.ini');
+			//escribir local host adentro de ipconfig.ini
+		}
+    $p = file_get_contents(dirname(__DIR__).'/db/ipconfig.ini');
+	  $this->ipconfig = $p;
 	}
 
 	function conexion($tipo='')
@@ -40,12 +46,19 @@ class db
 	function SQLServer()
 	{
 		// print_r($_SESSION['INGRESO']);die();
-		$this->usuario = $_SESSION['INGRESO']['Usuario_DB'];
+			$this->usuario = $_SESSION['INGRESO']['Usuario_DB'];
 	    $this->password = $_SESSION['INGRESO']['Contraseña_DB'];  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
 	    $this->servidor = $_SESSION['INGRESO']['IP_VPN_RUTA'];
+	    if($_SESSION['INGRESO']['IP_VPN_RUTA']=='tcp:mysql.diskcoversystem.com' &&  $this->ipconfig=='localhost')
+	    {
+	    	$this->servidor = $this->ipconfig;
+	    }
 	    $this->database = $_SESSION['INGRESO']['Base_Datos'];
 	    $this->puerto = $_SESSION['INGRESO']['Puerto'];
 		// print_r($_SESSION);die();
+
+
+	    // print_r($this->servidor);die();
 
 		$connectionInfo = array("Database"=>$this->database, "UID" => $this->usuario,"PWD" => $this->password,"CharacterSet" => "UTF-8");
 		// print_r($connectionInfo);die();
@@ -63,9 +76,9 @@ class db
 
 	function MySQL()
 	{
-		$this->usuario = 'diskcover';
+			$this->usuario = 'diskcover';
 	    $this->password =  'disk2017Cover';  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
-	    $this->servidor ='mysql.diskcoversystem.com';
+	    $this->servidor = $this->ipconfig;
 	    $this->database = 'diskcover_empresas';
 	    $this->puerto = 13306;
 		$conn =  new mysqli($this->servidor, $this->usuario, $this->password,$this->database,$this->puerto);

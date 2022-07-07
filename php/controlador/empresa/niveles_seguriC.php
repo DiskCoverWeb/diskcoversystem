@@ -329,17 +329,18 @@ class niveles_seguriC
 										<b>'.$value1['text'].'</b> 
 								</div>
             				<div class="col-xs-10 col-lg-9" style="overflow-x:scroll;">
-              					<div class="row">';
+              					<div class="row"><div class="col-sm-12">';
+
 
 			// $tbl.='<tr><td style="width: 250px;"><i class="fa fa-circle-o text-red" style="display:none" id="indice_'.$value1['id'].'"></i><b>'.$value1['text'].'</b></td><td style="width: 50px; class="text-center" style="border: solid 1px;"><input type="checkbox" name="rbl_'.$value1['id'].'_T" id="rbl_'.$value1['id'].'_T" onclick="marcar_all(\''.$value1['id'].'\')" ></td>';
-			   $tbl2.=' <table class="table" style="margin-bottom:0px;"><tr>';
+			   $tbl2.=' <table class="table-sm" style="margin-bottom:0px;font-size:11px"><tr>';
 			foreach ($modulos as $key2 => $value2) {				
 				$tbl2.='<td class="text-center" style="border: solid 1px; width: 50px;">
 								'.$value2['aplicacion'].'</br>
 				            <input type="checkbox" name="rbl_'.$value2['modulo'].'_'.$value1['id'].'" id="rbl_'.$value2['modulo'].'_'.$value1['id'].'" title="'.$value2['aplicacion'].'" onclick="marcar_acceso(\''.$value1['id'].'\',\''.$value2['modulo'].'\')" >
 				        </td>';
 			}
-			$tbl2.='</tr></table></div></div></div></br>';	
+			$tbl2.='</tr></table></div></div></div></div></br>';	
 
 			// print_r($tbl2);die();
 		}
@@ -424,6 +425,7 @@ A solicitud de El(a) Sr(a) '.$parametros['usuario'].' se envian sus credenciales
 <br>
 <table>
 <tr><td><b>Link:</b></td><td>https://erp.diskcoversystem.com</td></tr>
+<tr><td><b>Nombre Usuario:</b></td><td>'.$datos[0]['Nombre_Usuario'].'</td></tr>
 <tr><td><b>Usuario:</b></td><td>'.$datos[0]['Usuario'].'</td></tr>
 <tr><td><b>Clave:</b></td><td>'.$datos[0]['Clave'].'</td></tr>
 <tr><td><b>Email:</b></td><td>'.$datos[0]['Email'].'</td></tr>
@@ -434,7 +436,7 @@ A este usuario se asigno las siguientes Entidades:
 <tr><td width="30%"><b>Codigo</b></td><td width="50%"><b>Entidad</b></td></tr>
 ';
 foreach ($datos as $value) {
-	$cuerpo_correo .= '<tr><td>'.$value['id'].'</td><td>'.utf8_encode($value['text']).'</td></tr>';
+	$cuerpo_correo .= '<tr><td>'.$value['id'].'</td><td>'.$value['text'].'</td></tr>';
 }
 $cuerpo_correo.='</table><br>';
 $cuerpo_correo .= ' 

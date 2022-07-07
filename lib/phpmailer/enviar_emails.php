@@ -224,8 +224,10 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
         // print_r($mail);
         // die();
 
-        $mail->send();
-        return 1;
+        if($mail->send())
+        {
+          return 1;
+        }
         
     } catch (Exception $e) {
       // print_r($mail);die();

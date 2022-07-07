@@ -700,7 +700,7 @@ function enviar_email()
         type:  'post',
         dataType: 'json',
         beforeSend: function () { 
-          $('#myModal_espera').modal('show'); 
+          // $('#myModal_espera').modal('show'); 
         },
         success:  function (response) { 
           console.log(response);
@@ -734,7 +734,7 @@ function enviar_email_masivo()
   }
     $.ajax({
         data:  {parametros:parametros},
-        url:   '../controlador/empresaniveles_seguriC.php?enviar_email_masivo=true',
+        url:   '../controlador/empresa/niveles_seguriC.php?enviar_email_masivo=true',
         type:  'post',
         dataType: 'json',
         beforeSend: function () { 
@@ -882,9 +882,9 @@ function DoubleScroll(element) {
     <b>Entidad</b> <br>
     <div class="input-group input-group-sm" id="ddl">
         <select class="form-control" id="ddl_entidad" name="ddl_entidad" onchange="cargar_empresas();"><option value="">Seleccione entidad</option></select>
-          <span class="input-group-btn">
-               <button type="button" class="btn btn-warning btn-md btn-flat" data-toggle="modal" data-target="#mymodal_user"><span class="fa fa-user"></span></button>
-               <button type="button" class="btn btn-success btn-md btn-flat" data-toggle="modal" data-target="#myModal_ruc"><span class="fa fa-search"></span> RUC</button>
+          <span class="">
+               <button type="button" class="btn btn-warning btn-xs " data-toggle="modal" data-target="#mymodal_user"><span class="fa fa-user"></span></button>
+               <button type="button" class="btn btn-success btn-xs " data-toggle="modal" data-target="#myModal_ruc"><span class="fa fa-search"></span> RUC</button>
           </span>
     </div>  
   </div>
@@ -895,7 +895,7 @@ function DoubleScroll(element) {
         <!-- <div class="input-group-btn"> -->
           <span class="input-group-btn">
         
-          <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#myModal"><span class="fa fa-plus"></span> Nuevo</button>
+          <button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#myModal"><span class="fa fa-plus"></span> Nuevo</button>
         </span>
         <!-- </div> -->
       </div>
@@ -903,16 +903,16 @@ function DoubleScroll(element) {
 	<div class="col-sm-4">
 		<div class="col-sm-6">
 			<b>Usuario</b> <br>
-			<input type="input" name="txt_usuario" class="form-control input-sm" id="txt_usuario">
+			<input type="input" name="txt_usuario" class="form-control input-xs" id="txt_usuario">
 		</div>
 		<div class="col-sm-6">
 			<b>Clave</b> <br>
-			<input type="input" name="txt_pass" class="form-control input-sm" id="txt_pass">	
+			<input type="input" name="txt_pass" class="form-control input-xs" id="txt_pass">	
 		</div>
     <div class="col-sm-12">
       <b>Email</b><br>
       <div class="input-group">
-        <input type="input" name="txt_email" class="form-control input-sm" id="txt_email"> 
+        <input type="input" name="txt_email" class="form-control input-xs" id="txt_email"> 
         <div class="input-group-btn">
           <button type="button" class="btn btn-primary btn-xs" onclick="enviar_email()"><span class="fa fa-send-o"></span> Enviar correo</button>
         </div>

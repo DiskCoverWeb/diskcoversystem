@@ -50,14 +50,14 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
     //llamamos a los parciales
 	if (isset($_SESSION['INGRESO']['accion'])) 
 	{
-		echo '<section class="content-header">
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i>'.$_GET['mod'].'</a></li>
-        <li class="active">'.$_SESSION['INGRESO']['accion1'].'</li>
-      </ol>
-    </section>';
+		// echo '<section class="content-header">
+  //     <ol class="breadcrumb">
+  //       <li><a href="#"><i class="fa fa-dashboard"></i>'.$_GET['mod'].'</a></li>
+  //       <li class="active">'.$_SESSION['INGRESO']['accion1'].'</li>
+  //     </ol>
+  //   </section>';
 
-    echo '<section class="content">';
+  //   echo '<section class="content">';
 
 		//cambio de clave
 		if ($_SESSION['INGRESO']['accion']=='cambioc') 

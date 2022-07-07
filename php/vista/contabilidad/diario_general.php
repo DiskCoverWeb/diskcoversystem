@@ -149,14 +149,14 @@
       type:  'post',
       dataType: 'json',
       beforeSend: function () {   
-           var spiner = '<div class="text-center"><img src="../../img/gif/proce.gif" width="100" height="100"></div>'     
-         $('#tabla_submodulo').html(spiner);
+           var spiner = '<div class="text-center"><img src="../../img/gif/loader4.1.gif" width="100" height="100"></div>';     
+           $('#tabla_submodulo').html(spiner);
       },
         success:  function (response) { 
-          if(response)
-          {
+          // if(response)
+          // {
             $('#tabla_submodulo').html(response);
-          }
+          // }
                 
       }
     });

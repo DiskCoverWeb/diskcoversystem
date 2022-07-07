@@ -225,6 +225,7 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
         <span class="sr-only">Toggle navigation</span>
       </a>
 
+
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
           <!-- Messages: style can be found in dropdown.less-->
@@ -304,6 +305,20 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
           </li>
         </ul>
       </div>
+
+      <?php if(isset($_GET['mod'])){ ?>
+      <div class="navbar-custom-menu" style="float:left;font-size: 11px;">
+        <ul class="nav navbar-nav">
+          <!-- Messages: style can be found in dropdown.less-->
+          <li class="dropdown messages-menu" >
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-dashboard"></i>
+              <b><?php echo $_GET['mod'];?> </b><?php echo ' > '; if(isset($_SESSION['INGRESO']['accion1'])){ echo $_SESSION['INGRESO']['accion1']; } ?>
+            </a>            
+          </li>         
+        </ul>
+      </div>
+    <?php } ?>
     </nav>
   </header>
   <!-- Left side column. contains the logo and sidebar -->

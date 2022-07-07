@@ -1,5 +1,5 @@
 <?php  
-require_once("panel.php");
+// require_once("panel.php");
 ?>
 <script type="text/javascript">
 
