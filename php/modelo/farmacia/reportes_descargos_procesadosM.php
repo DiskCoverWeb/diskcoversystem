@@ -52,6 +52,8 @@ class reportes_descargos_procesadosM
 		}
 		// " AND CP.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."';";
 
+		$sql.=" GROUP BY CP.Numero,CP.Fecha,Concepto,Monto_Total,Cliente,TK.Centro_Costo ";
+
 		// print_r($sql);die();
 	    $botones[0] = array('boton'=>'Ver detalle','icono'=>'<i class="fa fa-reorder"></i>', 'tipo'=>'primary', 'id'=>'Numero');
 	    $botones[1] = array('boton'=>'Ver Comprobante','icono'=>'<i class="fa fa-eye"></i>', 'tipo'=>'default', 'id'=>'Numero');
@@ -92,7 +94,7 @@ class reportes_descargos_procesadosM
 				$sql.=" AND CP.Numero = '".$query."'";
 			}else
 			{
-				$sql.=" AND C.Cliente like '%".$query."%'";				
+				$sql.=" AND C.Cliente like '".$query."%'";				
 			}
 		}
 		if($numero)
@@ -100,6 +102,7 @@ class reportes_descargos_procesadosM
 			$sql.="AND CP.Numero ='".$numero."'";
 		}
 		// " AND CP.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."';";
+		$sql.="GROUP BY CP.Numero,CP.Fecha,Concepto,Monto_Total,Cliente,Codigo_B,TK.Centro_Costo  ";
 
 		// print_r($sql);die();
 

@@ -19,6 +19,14 @@ if(isset($_GET['consultar']))
 	echo json_encode($tabla['tabla']);
 }
 
+if(isset($_GET['consultar_x_meses']))
+{
+	$parametros = $_POST['parametros'];
+	$parametros['tabla'] = '1';
+	$tabla = $controlador->cargar_consulta_x_meses($parametros);
+	echo json_encode($tabla);
+}
+
 if(isset($_GET['consultar_totales']))
 {
 	$parametros = $_POST['parametros'];
@@ -193,6 +201,24 @@ class Saldo_fac_sub_M
 						}
 		}
 
+	}
+
+	function cargar_consulta_x_meses($parametros)
+	{
+		// print_r($parametros);die();
+
+		$resultado = explode(' ',$parametros['Cta']);
+		$cta = $resultado[0];
+		$fechaini = str_replace("-","",$parametros['fechaini']);
+		$fechafin = str_replace("-","",$parametros['fechafin']);
+		sp_Reporte_CxCxP_x_Meses($cta,$fechafin);
+
+		$tabla = $this->modelo->cargar_consulta_x_meses('tabla');
+
+		// print_r($tabla);die();
+		$Total = 0;$Saldo = 0;
+		
+		return $tabla;
 	}
 
 	function cargar_consulta_totales($parametros)

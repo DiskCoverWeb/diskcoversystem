@@ -89,8 +89,10 @@ include(dirname(__DIR__,2).'/db/variables_globales.php');//
 
   	}
 
-    // print_r($sql);die();
-    $tbl = grilla_generica_new($sql,'Transacciones As T,Comprobantes As C,Clientes As Cl','tbl_lib',false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,500);
+    // print_r($_SESSION['INGRESO']);die();
+    $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-170;  //el numero es el alto de los demas conponenetes sumados
+    // print_r($medida);die();
+    $tbl = grilla_generica_new($sql,'Transacciones As T,Comprobantes As C,Clientes As Cl','tbl_lib',false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida);
 
        return $tbl;
         // return $tabla;

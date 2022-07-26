@@ -100,7 +100,7 @@
                      <a class="nav-link" id="contact-tab" data-toggle="tab" href="#informe" role="tab" aria-controls="informe" aria-selected="false">INFORME</a>
                    </li>
                  </ul>
-                 <div class="tab-content" id="myTabContent" style="height: 330px;">
+                 <div class="tab-content" id="myTabContent">
                    <div class="tab-pane active" id="contabilizacion" role="tabpanel" aria-labelledby="home-tab">
                    	 <div class="row" ><br>
                    	 	<div class="col-sm-12" id="tbl_contabilidad">
@@ -137,13 +137,13 @@
                    	 </div>
                    	 <div class="row">
                    	 	<div class="col-sm-6"></div>
-                   	 	<div class="col-sm-1">
+                   	 	<div class="col-sm-1" style="padding:0px;">
                    	 		<b>Total compra</b>
                    	 	</div> 
                    	 	<div class="col-sm-2">
                    	 		<input type="text" name="txt_total" readonly="" class="form-control input-sm" id="txt_total">
                    	 	</div> 
-                   	 	<div class="col-sm-1">
+                   	 	<div class="col-sm-1" style="padding:0px;">
                    	 		<b>Total costo</b>
                    	 	</div>                   	 	
                    	 	<div class="col-sm-2">

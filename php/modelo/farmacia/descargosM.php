@@ -28,7 +28,9 @@ class descargosM
 			LEFT JOIN Clientes C ON C.Codigo = A.Codigo_P 
 			LEFT JOIN Catalogo_SubCtas CS ON CS.Codigo = A.CodigoL
 			WHERE 1=1 AND Numero= '' AND Orden_No <> '.'
-			AND A.Item = '".$_SESSION['INGRESO']['item']."' AND A.Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+			AND A.Item = '".$_SESSION['INGRESO']['item']."' AND A.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+			AND CS.Item = A.Item
+			AND CS.Periodo = A.Periodo";
 		if($codigo_b)
 		{
 			$sql.=" AND Codigo_P = '".$codigo_b."' ";

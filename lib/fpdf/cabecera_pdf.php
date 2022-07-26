@@ -108,7 +108,7 @@ class cabecera_pdf
 
 	}
  
- function cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini,$fechafin,$sizetable,$mostrar=false,$sal_hea_body=30,$orientacion='P',$download = true)
+ function cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini,$fechafin,$sizetable,$mostrar=false,$sal_hea_body=15,$orientacion='P',$download = true)
 	{	
 
 	    $this->pdftable->fechaini = $fechaini; 
@@ -798,22 +798,32 @@ class PDF_MC extends PDF_MC_Table
 		   	}
 		  }
 
-         $this->Image($src,10,3,35,20); 
-         $this->SetFont('Times','b',12);
-         $this->SetXY(10,10);
+         $this->Image($src,10,18,35,20); 
+         $this->SetFont('Times','b',9);
+         $this->SetXY(10,20);
 
-		$this->Cell(0,3,$_SESSION['INGRESO']['Nombre_Comercial'],0,0,'C');
-		$this->SetFont('Times','I',13);
-		$this->Ln(5);
-		$this->Cell(0,3,strtoupper($_SESSION['INGRESO']['noempr']),0,0,'C');				
-		$this->Ln(5);
+         // print_r($_SESSION['INGRESO']);die();
+
+         if($_SESSION['INGRESO']['Razon_Social']!=$_SESSION['INGRESO']['Nombre_Comercial'])
+         {
+			$this->Cell(0,3,$_SESSION['INGRESO']['Razon_Social'],0,0,'C');
+			$this->SetFont('Times','I',9);
+			$this->Ln(5);
+			$this->Cell(0,3,strtoupper($_SESSION['INGRESO']['Nombre_Comercial']),0,0,'C');				
+			$this->Ln(5);
+		}else
+		{
+			$this->Cell(0,3,$_SESSION['INGRESO']['Razon_Social'],0,0,'C');
+			$this->SetFont('Times','I',9);
+			$this->Ln(5);
+		}
 
 
-		$this->SetFont('Times','I',11);
+		$this->SetFont('Times','I',8);
 		$this->Cell(0,3,ucfirst(strtolower($_SESSION['INGRESO']['Direccion'].' Telefono: '.$_SESSION['INGRESO']['Telefono1'])),0,0,'C');
 
 		$this->Ln(5);		
-		$this->SetFont('Arial','b',12);
+		$this->SetFont('Arial','b',8);
 
 		$this->Cell(0,3,$this->titulo,0,0,'C');
 		
@@ -827,69 +837,78 @@ class PDF_MC extends PDF_MC_Table
 		if($this->orientacion == 'P')
 		{
 		  //inicio--------logo superior derecho//		
-        $this->Image(dirname(__DIR__,2).'/img/logotipos/diskcov2.gif',182,3,20,8); 
-		$this->Ln(2);		
+        $this->Image(dirname(__DIR__,2).'/img/logotipos/diskcov2.gif',175,18,15,5); 
+		$this->Ln(2);
 
-		 $this->SetFont('Arial','b',8);
-        // $this->pdf->SetXY(10,10);
-		$this->SetXY(155,5);
-        $this->Cell(9,2,'Hora: ',0,0,'L');
-		$this->SetFont('Arial','',8);
-        $this->Cell(0,2,date('h:i:s A'),0,0,'L');
-		$this->Ln(2);		
-		$this->SetFont('Arial','b',8);
-		$this->SetXY(155,8);
-        $this->Cell(17,2,'Pagina No.  ',0,0,'L');
-		$this->SetFont('Arial','',8);
+		$this->SetFont('Arial','b',5);
+		$this->SetXY(190,19);
+        $this->Cell(10,2,'Pagina No.  ',0,0,'L');
+		$this->SetFont('Arial','',5);
         $this->Cell(0,2,$this->PageNo(),0,0,'L');
 		$this->Ln(2);
-		$this->SetXY(155,11);
-		$this->SetFont('Arial','b',8);		
-        $this->Cell(10,2,'Fecha: ',0,0,'L');
-		$this->SetFont('Arial','',8);
+		 $this->SetFont('Arial','b',5);
+        // $this->pdf->SetXY(10,10);
+		$this->SetXY(175,23);
+        $this->Cell(9,2,'Hora: ',0,0,'L');
+		$this->SetFont('Arial','',5);
+        $this->Cell(0,2,date('h:i:s A'),0,0,'L');
+		$this->Ln(2);				
+		$this->SetXY(175,26);
+		$this->SetFont('Arial','b',5);		
+        $this->Cell(8,2,'Fecha: ',0,0,'L');
+		$this->SetFont('Arial','',5);
         $this->Cell(0,2,date("Y-m-d") ,0,0,'L');
 		$this->Ln(2);
-		$this->SetXY(155,14);
-		$this->SetFont('Arial','b',8);	
-        $this->Cell(12,2,'Usuario: ',0,0,'L');
-		$this->SetFont('Arial','',8);	
+		$this->SetXY(175,29);
+		$this->SetFont('Arial','b',5);	
+        $this->Cell(8,2,'Usuario: ',0,0,'L');
+		$this->SetFont('Arial','',5);	
         $this->Cell(0,2,$_SESSION['INGRESO']['Nombre_Completo'],0,0,'L');
-		$this->Line(20, 35, 210-20, 35); 
-        $this->Line(20, 36, 210-20, 36);
+        $this->Ln(2);
+		$this->SetXY(175,32);
+		$this->SetFont('Arial','b',5);	
+        $this->Cell(10,2,'https://www.diskcoversystem.com',0,0,'L');
+		$this->Line(20, 45, 210-20, 45); 
+        $this->Line(20, 46, 210-20, 46);
 		$this->Ln($this->salto_header_cuerpo);
 	}else
 	{
 
 		  //inicio--------logo superior derecho//		
-        $this->Image(dirname(__DIR__,2).'/img/logotipos/diskcov2.gif',270,3,20,8); 
+		// 175,18,15,5); 
+        $this->Image(dirname(__DIR__,2).'/img/logotipos/diskcov2.gif',270,18,20,8); 
 		$this->Ln(2);		
 
 		 $this->SetFont('Arial','b',8);
         // $this->pdf->SetXY(10,10);
-		$this->SetXY(240,5);
+		$this->SetXY(240,19);
         $this->Cell(9,2,'Hora: ',0,0,'L');
 		$this->SetFont('Arial','',8);
         $this->Cell(0,2,date('h:i:s A'),0,0,'L');
 		$this->Ln(2);		
 		$this->SetFont('Arial','b',8);
-		$this->SetXY(240,8);
+		$this->SetXY(240,23);
         $this->Cell(17,2,'Pagina No.  ',0,0,'L');
 		$this->SetFont('Arial','',8);
         $this->Cell(0,2,$this->PageNo(),0,0,'L');
 		$this->Ln(2);
-		$this->SetXY(240,11);
+		$this->SetXY(240,26);
 		$this->SetFont('Arial','b',8);		
         $this->Cell(10,2,'Fecha: ',0,0,'L');
 		$this->SetFont('Arial','',8);
         $this->Cell(0,2,date("Y-m-d") ,0,0,'L');
 		$this->Ln(2);
-		$this->SetXY(240,14);
+		$this->SetXY(240,29);
 		$this->SetFont('Arial','b',8);	
         $this->Cell(12,2,'Usuario: ',0,0,'L');
 		$this->SetFont('Arial','',8);	
         $this->Cell(0,2,$_SESSION['INGRESO']['Nombre_Completo'],0,0,'L');
-		$this->Line(20, 35, 300-20, 35); 
-        $this->Line(20, 36, 300-20, 36);
+        $this->Ln(2);
+		$this->SetXY(240,32);
+		$this->SetFont('Arial','b',5);	
+        $this->Cell(10,2,'https://www.diskcoversystem.com',0,0,'L');
+		$this->Line(20, 40, 300-20, 40); 
+        $this->Line(20, 41, 300-20, 41);
 		$this->Ln($this->salto_header_cuerpo);
 
 	}

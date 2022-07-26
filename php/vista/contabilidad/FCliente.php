@@ -3,48 +3,92 @@
 	$( document ).ready(function() {
 		 provincias();
 
-        $( "#ruc" ).autocomplete({              
-            source: function( request, response ) {
-            	 $('#txt_id').val('');         
-                $.ajax({
-                	  url:   '../controlador/modalesC.php?buscar_cliente=true',          
-                    type: 'post',
-                    dataType: "json",
-                    data: {
-                        search: request.term
-                    },
-                    success: function( data ) {
-                      // console.log(data);
-                        response( data );
-                    }
-                });
-            },
-            select: function (event, ui) {
-            	 limpiar();
-              // console.log(ui.item);
-                $('#txt_id').val(ui.item.value); // display the selected text
-                $('#ruc').val(ui.item.label); // display the selected text
-                $('#nombrec').val(ui.item.nombre); // save selected id to input
-                $('#direccion').val(ui.item.direccion); // save selected id to input
-                $('#telefono').val(ui.item.telefono); // save selected id to input
-                $('#codigoc').val(ui.item.codigo); // save selected id to input
-                $('#email').val(ui.item.email); // save selected id to input
-                $('#nv').val(ui.item.vivienda); // save selected id to input
-                $('#grupo').val(ui.item.grupo); // save selected id to input
-                $('#naciona').val(ui.item.nacionalidad); // save selected id to input
-                $('#prov').val(ui.item.provincia); // save selected id to input
-                $('#ciu').val(ui.item.ciudad); // save selected id to input
-                if(ui.item.FA==1){ $('#rbl_facturar').prop('checked',true); }else{ $('#rbl_facturar').prop('checked',false);}
-                return false;
-            },
-            focus: function(event, ui){
-                $('#txt_id').val(ui.item.value); // display the selected text
-                $('#ruc').val(ui.item.label); // display the selected text
+        // $( "#ruc" ).autocomplete({              
+        //     source: function( request, response ) {
+        //     	 $('#txt_id').val('');         
+        //         $.ajax({
+        //         	  url:   '../controlador/modalesC.php?buscar_cliente=true',          
+        //             type: 'post',
+        //             dataType: "json",
+        //             data: {
+        //                 search: request.term
+        //             },
+        //             success: function( data ) {
+        //               // console.log(data);
+        //                 response( data );
+        //             }
+        //         });
+        //     },
+        //     select: function (event, ui) {
+        //     	 limpiar();
+        //       // console.log(ui.item);
+        //         $('#txt_id').val(ui.item.value); // display the selected text
+        //         $('#ruc').val(ui.item.label); // display the selected text
+        //         $('#nombrec').val(ui.item.nombre); // save selected id to input
+        //         $('#direccion').val(ui.item.direccion); // save selected id to input
+        //         $('#telefono').val(ui.item.telefono); // save selected id to input
+        //         $('#codigoc').val(ui.item.codigo); // save selected id to input
+        //         $('#email').val(ui.item.email); // save selected id to input
+        //         $('#nv').val(ui.item.vivienda); // save selected id to input
+        //         $('#grupo').val(ui.item.grupo); // save selected id to input
+        //         $('#naciona').val(ui.item.nacionalidad); // save selected id to input
+        //         $('#prov').val(ui.item.provincia); // save selected id to input
+        //         $('#ciu').val(ui.item.ciudad); // save selected id to input
+        //         if(ui.item.FA==1){ $('#rbl_facturar').prop('checked',true); }else{ $('#rbl_facturar').prop('checked',false);}
+        //         return false;
+        //     },
+        //     focus: function(event, ui){
+        //         $('#txt_id').val(ui.item.value); // display the selected text
+        //         $('#ruc').val(ui.item.label); // display the selected text
                 
-                return false;
-            },
-        });
+        //         return false;
+        //     },
+        // });
 	});
+
+
+
+  function buscar_numero_ci()
+  {
+       var ci_ruc = $('#ruc').val();         
+       $.ajax({
+        url:   '../controlador/modalesC.php?buscar_cliente=true',          
+        type:'post',
+        dataType:'json',
+        data:{search:ci_ruc},
+        beforeSend: function () {
+            $("#myModal_espera").modal('show');
+        },
+        success: function(response){
+          console.log(response);
+             limpiar();
+             if(response.length>0)
+             {
+              // console.log(response[0]);
+                $('#txt_id').val(response[0].value); // display the selected text
+                $('#ruc').val(response[0].label); // display the selected text
+                $('#nombrec').val(response[0].nombre); // save selected id to input
+                $('#direccion').val(response[0].direccion); // save selected id to input
+                $('#telefono').val(response[0].telefono); // save selected id to input
+                $('#codigoc').val(response[0].codigo); // save selected id to input
+                $('#email').val(response[0].email); // save selected id to input
+                $('#nv').val(response[0].vivienda); // save selected id to input
+                $('#grupo').val(response[0].grupo); // save selected id to input
+                $('#naciona').val(response[0].nacionalidad); // save selected id to input
+                $('#prov').val(response[0].provincia); // save selected id to input
+                $('#ciu').val(response[0].ciudad); // save selected id to input
+                if(response[0].FA==1){ $('#rbl_facturar').prop('checked',true); }else{ $('#rbl_facturar').prop('checked',false);}
+             }else
+             {
+               $('#ruc').val(ci_ruc);
+               codigo();
+             }
+
+            $("#myModal_espera").modal('hide');
+        
+        }
+      });
+  }
 
 	function provincias()
   {
@@ -262,7 +306,7 @@ function validar_sri()
 					<div class="col-xs-4 col-sm-3 ">
 					  <label for="ruc" class="control-label" id="resultado"><span style="color: red;">*</span>RUC/CI</label>
 						<input type="hidden" class="form-control" id="txt_id" name="txt_id" placeholder="ruc" autocomplete="off">
-						<input type="text" class="form-control input-sm" id="ruc" name="ruc" placeholder="RUC/CI" autocomplete="off" onblur="codigo()" style="z-index: 1;">
+						<input type="text" class="form-control input-sm" id="ruc" name="ruc" placeholder="RUC/CI" autocomplete="off" onblur="buscar_numero_ci();/*codigo()*/" style="z-index: 1;">
 							<span class="help-block" id='e_ruc' style='display:none;color: red;'>Debe ingresar RUC/CI</span>
 						
 					</div>
@@ -286,12 +330,12 @@ function validar_sri()
 					</div>
         </div>
         <div class="row">
-          <div class="col-xs-9 col-lg-11">
+          <div class="col-xs-9 col-sm-11 col-lg-10">
             <label for="nombrec" class="control-label"><span style="color: red;">*</span>Apellidos y Nombres</label>
             <input type="text" class="form-control input-sm" id="nombrec" name="nombrec" placeholder="Razon social" onkeyup="buscar_cliente_nom()">
               <span class="help-block" id='e_nombrec' style='display:none;color: red;'>Debe ingresar nombre</span>
            </div>
-          <div class="col-xs-3 col-lg-1">
+          <div class="col-xs-3 col-sm-1 col-lg-2">
             <br>
             <label> </label><input type="checkbox" name="rbl_facturar" id="rbl_facturar"> Para Facturar</div>
           </div>

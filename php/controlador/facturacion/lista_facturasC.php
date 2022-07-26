@@ -131,7 +131,7 @@ class lista_facturasC
 			$pos+=1;
 		}
 	   
-		$this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$Fechaini=false,$Fechafin=false,$sizetable,$mostrar,25,'H');
+		$this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$Fechaini=false,$Fechafin=false,$sizetable,$mostrar,15,'H');
   }
 
   function imprimir_excel($parametros)
@@ -166,7 +166,7 @@ class lista_facturasC
   	$datos = $this->modelo->Cliente($cod,$grupo,$query);
   	$res = array();
   	foreach ($datos as $key => $value) {
-  		$res[] = array('id'=>$value['Codigo'],'text'=>$value['Cliente'].'  CI:'.$value['CI_RUC'],'email'=>$value['Email']);
+  		$res[] = array('id'=>$value['Codigo'],'text'=>$value['Cliente'].'  CI:'.$value['CI_RUC'],'email'=>$value['Email'],'data'=>$value);
   	}
   	return $res;
   }

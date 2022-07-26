@@ -45,6 +45,8 @@ class autorizacion_sri
 
 	function Autorizar($parametros)
 	{
+
+		// print_r($parametros);die();
 		/*
 			retorna entre 1 2 3 4
 			1 Este documento electronico autorizado
@@ -61,6 +63,7 @@ class autorizacion_sri
 	    $cabecera['razon_social_principal']=$this->quitar_carac($_SESSION['INGRESO']['Razon_Social']);
 	    $cabecera['ruc_principal']=$_SESSION['INGRESO']['RUC'];
 	    $cabecera['direccion_principal']= $this->quitar_carac($_SESSION['INGRESO']['Direccion']);
+	    $cabecera['Entidad'] = $_SESSION['INGRESO']['IDEntidad'];
 	    if(isset($parametros['serie'])){
 	    	$cabecera['serie']=$parametros['serie'];
 	    	$cabecera['esta']=substr($parametros['serie'],0,3); 
@@ -95,6 +98,8 @@ class autorizacion_sri
 
 	    	$cabecera['cod_doc']=$parametros['cod_doc'];
 	    }
+
+	    // print_r($cabecera);die();
 
 	    $cabecera['periodo']=$_SESSION['INGRESO']['periodo'];
 		if($cabecera['tc']=='LC')
@@ -219,6 +224,188 @@ class autorizacion_sri
 			    // print_r($cabecera);print_r($detalle);die();
 	            
 	           $respuesta = $this->generar_xml($cabecera,$detalle);
+
+	           $num_res = count($respuesta);
+	           if($num_res>=2)
+	           {
+	           	// print_r($respuesta);die();
+	           	if($num_res!=2)
+	           	{
+	           	 $estado = explode(' ', $respuesta[2]);
+		           	 if($estado[1].' '.$estado[2]=='FACTURA AUTORIZADO' || $estado[2]=='AUTORIZADO')
+		           	 {
+		           	 	$respuesta = $this->actualizar_datos_CE(trim($estado[0]),$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['item'],$cabecera['Autorizacion']);
+		           	 	if($respuesta==1)
+		           	 	{
+		           	 	  return array('respuesta'=>1);
+		           	 	}
+		           	 }else
+		           	 {
+
+		           	   $compro = explode('FACTURA', $respuesta[2]);
+			           $entidad= $_SESSION['INGRESO']['item'];
+		           	   if(count($compro)>1)
+		           	   {
+			           	   $url_No_autorizados ='../../comprobantes/entidades/entidad_'.$entidad."/CE".$entidad.'/No_autorizados/';
+			           	   $resp = array('respuesta'=>2,'ar'=>trim($compro[0]).'.xml','url'=>$url_No_autorizados);
+			           	 	return $resp;
+		           	  	}else
+		           	  	{
+		           	  		$compro = explode('null', $respuesta[2]);
+		           	  		$url_No_autorizados ='../../comprobantes/entidades/entidad_'.$entidad."/CE".$entidad.'/No_autorizados/';
+		           	    	$resp = array('respuesta'=>2,'ar'=>trim($compro[0]).'.xml','url'=>$url_No_autorizados);
+		           	 		return $resp;	
+
+		           	  	}
+		           	 }
+	           	}else
+	           	{
+	           	 $estado = explode(' ', $respuesta[1]);
+	           	 if($estado[1].' '.$estado[2]=='FACTURA AUTORIZADO' || $estado[2]=='AUTORIZADO')
+	           	 {
+	           	 	$respuesta = $this->actualizar_datos_CE(trim($estado[0]),$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['item'],$cabecera['Autorizacion']);
+	           	 	if($respuesta==1)
+	           	 	{
+	           	 	  return array('respuesta'=>1);
+	           	 	}
+	           	 }
+	           	 if($estado[1].' '.$estado[2].' '.$estado[3]=='FACTURA NO PROCESADOEl')
+	           	 {
+	           	 	 // El comprobante fue enviado, está pendiente de autorización 0110202101070216417900110010010000001631234567811 FACTURA NO PROCESADOEl archivo no tiene autorizaciones relacionadas =>mensaje que nos envia el .jar cuando no tiene conexion con el sri
+	           	 	 return array('respuesta'=>4);
+	           	 }
+
+	           	}
+
+	           }else
+	           {
+	           	if ($respuesta) {
+	           		# code...
+	           	}
+	           	if($respuesta[1]=='Autorizado')
+	           	{
+	           		return array('respuesta'=>3);
+
+	           	}else{
+	           		$resp = utf8_encode($respuesta[1]);
+	           		return $resp;
+	           	}
+	           }
+
+	    }
+	    if($cabecera['cod_doc']=='03')
+	    {
+	    	//datos de factura
+	    	$datos_fac = $this->datos_factura($cabecera['serie'],$cabecera['factura'],$cabecera['tc']);
+	    	// print_r($datos_fac);die();
+	    	    $cabecera['RUC_CI']=$datos_fac[0]['RUC_CI'];
+				$cabecera['Fecha']=$datos_fac[0]['Fecha']->format('Y-m-d');
+				$cabecera['Razon_Social']=$this->quitar_carac($datos_fac[0]['Razon_Social']);
+				$cabecera['Direccion_RS']=$this->quitar_carac($datos_fac[0]['Direccion_RS']);
+				$cabecera['Sin_IVA']= $datos_fac[0]['Sin_IVA'];
+				$cabecera['Descuento'] = $datos_fac[0]['Descuento']+$datos_fac[0]['Descuento2'];
+				$cabecera['baseImponible'] = $datos_fac[0]['Sin_IVA']+$cabecera['Descuento'];
+				$cabecera['Porc_IVA'] = $datos_fac[0]['Porc_IVA'];
+				$cabecera['Con_IVA'] = $datos_fac[0]['Con_IVA'];
+				$cabecera['Total_MN'] = $datos_fac[0]['Total_MN'];
+				if($datos_fac[0]['Forma_Pago'] == '.')
+				{
+					$cabecera['formaPago']='01';
+				}else
+				{
+					$cabecera['formaPago']=$datos_fac[0]['Forma_Pago'];
+				}
+				$cabecera['Propina']=$datos_fac[0]['Propina'];
+				$cabecera['Autorizacion']=$datos_fac[0]['Autorizacion'];
+				$cabecera['Imp_Mes']=$datos_fac[0]['Imp_Mes'];
+				$cabecera['SP']=$datos_fac[0]['SP'];
+				$cabecera['CodigoC']=$datos_fac[0]['CodigoC'];
+				$cabecera['TelefonoC']=$datos_fac[0]['Telefono_RS'];
+				$cabecera['Orden_Compra']=$datos_fac[0]['Orden_Compra'];
+				$cabecera['baseImponibleSinIva'] = $cabecera['Sin_IVA']-$datos_fac[0]['Desc_0'];
+				$cabecera['baseImponibleConIva'] = $cabecera['Con_IVA']-$datos_fac[0]['Desc_X'];
+				$cabecera['totalSinImpuestos'] = $cabecera['Sin_IVA']+$cabecera['Con_IVA'] - $cabecera['Descuento'];
+				$cabecera['IVA'] = $datos_fac[0]['IVA'];
+				$cabecera['descuentoAdicional']=0;
+				$cabecera['moneda']="DOLAR";
+				$cabecera['tipoIden']='';
+
+				// print_r($cabecera);die();
+
+			//datos de cliente
+	    	$datos_cliente = $this->datos_cliente($datos_fac[0]['CodigoC']);
+	    	// print_r($datos_cliente);die();
+	    	    $cabecera['Cliente']=$this->quitar_carac($datos_cliente[0]['Cliente']);
+				$cabecera['DireccionC']=$this->quitar_carac($datos_cliente[0]['Direccion']);
+				$cabecera['TelefonoC']=$datos_cliente[0]['Telefono'];
+				$cabecera['EmailR']=$this->quitar_carac($datos_cliente[0]['Email2']);
+				$cabecera['EmailC']=$this->quitar_carac($datos_cliente[0]['Email']);
+				$cabecera['Contacto']=$datos_cliente[0]['Contacto'];
+				$cabecera['Grupo']=$datos_cliente[0]['Grupo'];
+
+			//codigo verificador 
+				if($cabecera['RUC_CI']=='9999999999999')
+				  {
+				  	$cabecera['tipoIden']='07';
+			      }else
+			      {
+			      	$cod_veri = $this->digito_verificadorf($datos_fac[0]['RUC_CI'],1);
+			      	switch ($cod_veri) {
+			      		case 'R':
+			      			$cabecera['tipoIden']='04';
+			      			break;
+			      		case 'C':
+			      			$cabecera['tipoIden']='05';
+			      			break;
+			      		case 'O':
+			      			$cabecera['tipoIden']='06';
+			      			break;
+			      	}
+			      }
+			    $cabecera['codigoPorcentaje']=0;
+			    if((floatval($cabecera['Porc_IVA'])*100)>12)
+			    {
+			       $cabecera['codigoPorcentaje']=3;
+			    }else
+			    {
+			      $cabecera['codigoPorcentaje']=2;
+			    }
+			   //detalle de factura
+			    $detalle = array();
+			    $cuerpo_fac = $this->detalle_factura($cabecera['serie'],$cabecera['factura'],$cabecera['Autorizacion'],$cabecera['tc']);
+			    foreach ($cuerpo_fac as $key => $value) 
+			    {			    	
+			    	$producto = $this->datos_producto($value['Codigo']);
+			    	$detalle[$key]['Codigo'] =  $value['Codigo'];
+			    	$detalle[$key]['Cod_Aux'] =  $producto[0]['Desc_Item'];
+				    $detalle[$key]['Cod_Bar'] =  $producto[0]['Codigo_Barra'];
+				    $detalle[$key]['Producto'] = $this->quitar_carac($value['Producto']);
+				    $detalle[$key]['Cantidad'] = $value['Cantidad'];
+				    $detalle[$key]['Precio'] = $value['Precio'];
+				    $detalle[$key]['descuento'] = $value['Total_Desc']+$value['Total_Desc2'];
+				  if ($cabecera['Imp_Mes']==true)
+				  {
+				   	$detalle[$key]['Producto'] = $this->quitar_carac($value['Producto']).', '.$value['Ticket'].': '.$value['Mes'].' ';
+				  }
+				  if($cabecera['SP']==true)
+				  {
+				  	$detalle[$key]['Producto'] = $this->quitar_carac($value['Producto']).', Lote No. '.$value['Lote_No'].
+					', ELAB. '.$value['Fecha_Fab'].
+					', VENC. '.$value['Fecha_Exp'].
+					', Reg. Sanit. '.$value['Reg_Sanitario'].
+					', Modelo: '.$value['Modelo'].
+					', Procedencia: '.$value['Procedencia'];
+				  }
+				   $detalle[$key]['SubTotal'] = ($value['Cantidad']*$value['Precio'])-($value['Total_Desc']+$value['Total_Desc2']);
+				   $detalle[$key]['Serie_No'] = $value['Serie_No'];
+				   $detalle[$key]['Total_IVA'] = number_format($value['Total_IVA'],2);
+				   $detalle[$key]['Porc_IVA']= $value['Porc_IVA'];
+			    }
+			    $cabecera['fechaem']=  date("d/m/Y", strtotime($cabecera['Fecha']));
+			    // print_r($cabecera);print_r($detalle);die();
+	            
+	           $respuesta = $this->generar_xml($cabecera,$detalle);
+	           // print_r($respuesta);die();
 
 	           $num_res = count($respuesta);
 	           if($num_res>=2)
@@ -828,7 +1015,7 @@ class autorizacion_sri
     9 Dígito Verificador (módulo 11 )       Numérico       1*/
 function generar_xml($cabecera,$detalle)
 {
-   	    $entidad=$cabecera['item'];
+   	    $entidad=$cabecera['Entidad']; //cambiar por la entidad
 	    $empresa=$cabecera['item'];
 	    $fecha = str_replace('/','',$cabecera['fechaem']);
 	    $ruc=$cabecera['ruc_principal'];
@@ -1229,11 +1416,11 @@ function generar_xml($cabecera,$detalle)
 
 		$xml->appendChild($xml_factura);
 
-		$ruta_G = dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$entidad.'/Generados';
+		$ruta_G = dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Generados';
 		if($archivo = fopen($ruta_G.'/'.$compro.'.xml',"w+b"))
 		  {
 		  	fwrite($archivo,$xml->saveXML());
-		  	 $respuesta =  $this->firmar_documento($compro,$entidad,$cabecera['clave_ce'],$cabecera['ruta_ce']);
+		  	 $respuesta =  $this->firmar_documento($compro,$entidad,$empresa,$cabecera['clave_ce'],$cabecera['ruta_ce']);
 		     return $respuesta;
 		  }else
 		  {
@@ -1592,7 +1779,7 @@ function generar_xml_retencion($cabecera,$detalle=false)
 	if($archivo = fopen($ruta_G.'/'.$cabecera[0]['ClaveAcceso'].'.xml',"w+b"))
 	  {
 	  	fwrite($archivo,$xml->saveXML());
-	  	 $respuesta =  $this->firmar_documento($cabecera[0]['ClaveAcceso'],$entidad,$_SESSION['INGRESO']['Clave_Certificado'],$_SESSION['INGRESO']['Ruta_Certificado']);
+	  	 $respuesta =  $this->firmar_documento($cabecera[0]['ClaveAcceso'],$entidad,$empresa,$_SESSION['INGRESO']['Clave_Certificado'],$_SESSION['INGRESO']['Ruta_Certificado']);
 	  	 // print_r($respuesta);die();
 	     return $respuesta;
 	  }else
@@ -1604,12 +1791,12 @@ function generar_xml_retencion($cabecera,$detalle=false)
 
 
 
-  function firmar_documento($nom_doc,$entidad,$pass,$p12)
+  function firmar_documento($nom_doc,$entidad,$empresa,$pass,$p12)
     {	
 
  	    $firmador = dirname(__DIR__).'/SRI/firmar/firmador.jar';
- 	    $url_generados=dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$entidad.'/Generados/';
- 	    $url_firmados =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$entidad.'/Firmados/';
+ 	    $url_generados=dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Generados/';
+ 	    $url_firmados =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Firmados/';
  	    $certificado_1 = dirname(__DIR__).'/certificados/';
  	    if(file_exists($certificado_1.$p12))
        {
@@ -1622,8 +1809,8 @@ function generar_xml_retencion($cabecera,$detalle=false)
  	   }
 
  		$quijoteCliente =  dirname(__DIR__).'/SRI/firmar/QuijoteLuiClient-1.2.1.jar';
- 	    $url_No_autorizados =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$entidad.'/No_autorizados/';
- 	    $url_autorizado =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$entidad.'/Autorizados';
+ 	    $url_No_autorizados =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/No_autorizados/';
+ 	    $url_autorizado =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Autorizados';
 
  	    $linkSriAutorizacion = $_SESSION['INGRESO']['Web_SRI_Autorizado'];
  	    $linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion'];
@@ -1632,14 +1819,16 @@ function generar_xml_retencion($cabecera,$detalle=false)
  		{
  		// Nombrexml,RutaxmlFirmado,RutaCarpetaNoAutorizado,RutaCarpetaAutorizado,linkSriAutorizacion,linkSriRecepcion
  			
-			// print_r("java -jar ".$quijoteCliente." ".$nom_doc." ".$url_firmados." ".$url_No_autorizados.
-			// " ".$url_autorizado." ".$linkSriAutorizacion." ".$linkSriRecepcion);
-			// die();
+			print_r("java -jar ".$quijoteCliente." ".$nom_doc." ".$url_firmados." ".$url_No_autorizados.
+			" ".$url_autorizado." ".$linkSriAutorizacion." ".$linkSriRecepcion);
+			die();
 
 			for ($i=1; $i < 4; $i++) { 
 				//autorizacion de factura
 				exec("java -jar ".$quijoteCliente." ".$nom_doc." ".$url_firmados." ".$url_No_autorizados.
 			" ".$url_autorizado." ".$linkSriAutorizacion." ".$linkSriRecepcion, $o);
+
+				// print_r($o);die();
 				if($o!=null)
 				{
 					sleep(5);

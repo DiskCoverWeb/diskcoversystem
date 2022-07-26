@@ -16,6 +16,13 @@ $mod = '';
 		}
 		$uri .= $_SERVER['HTTP_HOST'];
 		//echo "<script type='text/javascript'>window.location='".$uri."/store/php/view/login.php'</script>";
+		$cartera_usu ='';
+		$cartera_pass = '';
+		if(isset($_SESSION['INGRESO']['CARTERA_USUARIO']))
+		{
+		 $cartera_usu = $_SESSION['INGRESO']['CARTERA_USUARIO'];
+		 $cartera_pass = $_SESSION['INGRESO']['CARTERA_PASS'];
+		}
 	
 ?>
 <div class="modal fade bd-example-modal-sm" id="modal_espera" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false"  aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -32,6 +39,16 @@ $mod = '';
 
 $(document).ready(function() {  
 
+	var cartera_usu = '<?php echo $cartera_usu; ?>';
+	var cartera_pas = '<?php echo $cartera_pass;?>';
+	if(cartera_usu!='')
+	{
+		$('#txt_cod_banco').val(cartera_usu);
+		$('#txt_clave').val(cartera_pas);
+
+		$('#txt_cod_banco').attr('readonly',true);
+		$('#txt_clave').attr('readonly',true);
+	}
 	var mod='<?php echo $mod; ?>'; 
 	if(mod!='educativo')
 	{
@@ -589,7 +606,11 @@ function lista_cursos()
             }else if(response == '-2')
             {
 		        $('#myModal_espera').modal('hide');
-            	$('#nueva_matricula').modal('show');
+		        var cartera = '<?php echo $cartera_usu; ?>'
+		        if(cartera=='')
+		        {
+            		$('#nueva_matricula').modal('show');
+            	}
             	// alert('el usuario no tiene registrado un matricula');
             }else
             {

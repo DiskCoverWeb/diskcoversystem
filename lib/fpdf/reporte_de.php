@@ -2186,7 +2186,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetFont('Arial','B',7);
 	$pdf->SetXY(285, 61);
 	$pdf->SetWidths(array(140));
-	$arr=array(utf8_decode('FECHA Y HORA DE AUTORIZACIÓN:'));
+	$arr=array('FECHA Y HORA DE AUTORIZACIÓN:');
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
 	$pdf->SetXY(425, 61);
@@ -2230,7 +2230,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetFont('Arial','B',7);
 	$pdf->SetXY(285, 97);
 	$pdf->SetWidths(array(280));
-	$arr=array(utf8_decode('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO'));
+	$arr=array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
 	$pdf->Row($arr,10);
 	if($datos[0]['Clave_Acceso'] != $datos[0]['Autorizacion'])
 	 {
@@ -2284,7 +2284,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetFont('Arial','B',8);
 	$pdf->SetXY($x, 97);
 	$pdf->SetWidths(array(140));
-	$arr=array(utf8_decode('Dirección Matríz'));
+	$arr=array('Dirección Matríz');
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
 	$pdf->SetXY($x, 107);
@@ -2295,7 +2295,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetFont('Arial','B',8);
 	$pdf->SetXY($x, 117);
 	$pdf->SetWidths(array(140));
-	$arr=array(utf8_decode('Dirección Sucursal'));
+	$arr=array('Dirección Sucursal');
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
 	$pdf->SetXY($x, 127);
@@ -2330,7 +2330,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	//para posicion automatica
 	$y=35;
 	$pdf->SetWidths(array(270,185,80));
-	$arr=array(utf8_decode('Razón social/nombres y apellidos:'),'',utf8_decode('Identificación:'));//mio
+	$arr=array('Razón social/nombres y apellidos:','','Identificación:');//mio
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(270,185,80));
@@ -2360,8 +2360,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 		$adi='';
 	}*/
 
-	$arr=array(utf8_decode('Dirección: '.$datos[0]['Direccion_RS']),
-	utf8_decode('Fecha emisión: '.$datos[0]['Fecha']->format('Y-m-d')),'Fecha pago: '.$datos[0]['Fecha']->format('Y-m-d'));//mio
+	$arr=array('Dirección: '.$datos[0]['Direccion_RS'],'Fecha emisión: '.$datos[0]['Fecha']->format('Y-m-d'),'Fecha pago: '.$datos[0]['Fecha']->format('Y-m-d'));//mio
 	$pdf->Row($arr,10);
 	$pdf->SetWidths(array(270,155,100));
 	if('DOLAR'=='DOLAR')
@@ -2376,7 +2375,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	//die();
 	$arr=array('FORMA DE PAGO: '.$datos[0]['Forma_Pago'],
 	'MONTO: '.$datos[0]['Total_MN'].'  '
-	,utf8_decode('Condición de venta: '.$datos[0]['Fecha_C']->format('Y-m-d')));
+	,'Condición de venta: '.$datos[0]['Fecha_C']->format('Y-m-d'));
 	$pdf->Row($arr,10);
 	$y1=$pdf->GetY();
 	//echo $pdf->GetY().' '.$y;
@@ -2396,8 +2395,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	//$y=$y+188;//258
 	$pdf->SetXY(41, $y);
 	$pdf->SetWidths(array(55,55,45,45,110,45,45,40,40,45));
-	$arr=array("Codigo Unitario","Codigo Auxiliar","Cantidad Total","Cantidad Bonif.",utf8_decode("Descripción"),
-	"Lote","Precio Unitario","Valor Descuento","Desc. %","Valor Total");
+	$arr=array("Codigo Unitario","Codigo Auxiliar","Cantidad Total","Cantidad Bonif.","Descripción","Lote","Precio Unitario","Valor Descuento","Desc. %","Valor Total");
 	$pdf->Row($arr,10,1);
 	$pdf->SetFont('Arial','',6);
 	//imprimir detalles factura (hacer ciclo)
@@ -2405,8 +2403,14 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	//verificamos si es una o varias etiquetas
  //print_r($detalle);
 
+	// print_r($datos);die();
+	$imp_mes = $datos[0]['Imp_Mes'];
      foreach ($detalle as $key => $value) {
-     		
+     	// print_r($value);die();
+           if($imp_mes==1)
+           {
+           	 $value['Producto'] = $value['Producto'].' '.$value['Mes'].'/'.$value['Ticket'];
+           }     		
      	 	$pdf->SetWidths(array(55,55,45,45,110,45,45,40,40,45));
 			$pdf->SetAligns(array("L","L","R","R","L","L","R","R","R","R"));
 			//$arr=array($arr1[$i]);
@@ -2423,7 +2427,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$y=$pdf->GetY();
 	$pdf->SetXY(41, $y+5);
 	$pdf->SetWidths(array(140,40,95,46));
-	$arr=array(utf8_decode("INFORMACIÓN ADICIONAL"),"Fecha","Deltalle del pago","Monto Abono");
+	$arr=array("INFORMACIÓN ADICIONAL","Fecha","Deltalle del pago","Monto Abono");
     $pdf->Row($arr,10,1);
 	
 	$y=$pdf->GetY()-5;//377

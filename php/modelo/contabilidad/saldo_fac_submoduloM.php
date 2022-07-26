@@ -94,6 +94,24 @@ class Saldo_fac_sub_C
 
 	}
 
+    function cargar_consulta_x_meses($tabla=false)
+    {
+        $sql = "SELECT Cta, Beneficiario, Anio, Mes, Valor_x_Mes, Categoria
+            FROM Reporte_CxCxP_x_Meses
+            WHERE Item ='".$_SESSION['INGRESO']['item']."'
+            AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+            ORDER BY Beneficiario, Anio, Mes_No";
+            if($tabla)
+            {
+                $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-115;
+                $datos = grilla_generica_new($sql,' Reporte_CxCxP_x_Meses','',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,$medida);
+            }else
+            {
+                $datos = $this->conn->datos($sql);
+            }
+        return $datos;
+    }
+
 	function consulta_c_p_datos($tipocuenta,$ChecksubCta,$OpcP,$CheqCta,$CheqDet,$CheqIndiv,$fechaini,$fechafin,$Cta,$CodigoCli,$DCDet,$reporte=false)
 	{
 
@@ -267,7 +285,9 @@ class Saldo_fac_sub_C
          // print_r($sql);die();
 
         // $botones[0] = array('boton'=>'Eliminar linea', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'A_No,CODIGO' );
-        $datos = grilla_generica_new($sql,' Clientes As C, Catalogo_Cuentas As CC, Trans_SubCtas As TS','',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,300);
+
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-115;
+        $datos = grilla_generica_new($sql,' Clientes As C, Catalogo_Cuentas As CC, Trans_SubCtas As TS','',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,$medida);
 
         // print_r($datos);die();
 
@@ -436,7 +456,9 @@ class Saldo_fac_sub_C
 
 
          // print_r($sql);die();
-        $datos = grilla_generica_new($sql,'Catalogo_SubCtas As C, Catalogo_Cuentas As CC, Trans_SubCtas As TS','',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,300);
+
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-115;
+        $datos = grilla_generica_new($sql,'Catalogo_SubCtas As C, Catalogo_Cuentas As CC, Trans_SubCtas As TS','',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,$medida);
         return $datos;
 
    }
@@ -470,7 +492,8 @@ class Saldo_fac_sub_C
        //echo $sql;
 
 
-        $datos = grilla_generica_new($sql,'Saldo_Diarios','',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,300);
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-115;
+        $datos = grilla_generica_new($sql,'Saldo_Diarios','',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,$medida);
         return $datos;
    }
 

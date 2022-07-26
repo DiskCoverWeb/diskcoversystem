@@ -411,6 +411,8 @@ class niveles_seguriC
 	  	$this->modelo->actualizar_correo($parametros['email'],$parametros['CI_usuario']);
 	    $datos = $this->modelo->entidades_usuario($parametros['CI_usuario']);
 
+	    // print_r($datos);die();
+
 	  	$email_conexion = 'info@diskcoversystem.com'; //$empresaGeneral[0]['Email_Conexion'];
 	    $email_pass =  'info2021DiskCover'; //$empresaGeneral[0]['Email_Contraseña'];
 	    // print_r($empresaGeneral[0]);die();
@@ -510,6 +512,7 @@ A solicitud de El(a) Sr(a) '.$datos['Nombre_Usuario'].' se envian sus credencial
 <br>
 <table>
 <tr><td><b>Link:</b></td><td>https://erp.diskcoversystem.com</td></tr>
+<tr><td><b>Nombre Usuario:</b></td><td>'.$datos['Nombre_Usuario'].'</td></tr>
 <tr><td><b>Usuario:</b></td><td>'.$datos['Usuario'].'</td></tr>
 <tr><td><b>Clave:</b></td><td>'.$datos['Clave'].'</td></tr>
 <tr><td><b>Email:</b></td><td>'.$datos['Email'].'</td></tr>

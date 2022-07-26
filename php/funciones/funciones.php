@@ -153,7 +153,6 @@ function Actualizar_Datos_ATS_SP($Items,$MBFechaI,$MBFechaF,$Numero) //---------
     $conn = new db();
     $FechaIni = $MBFechaI;
     $FechaFin = $MBFechaF;
-      $Items = iconv("CP1252", "UTF-8",$Items);
     $parametros = array(
       array(&$Items, SQLSRV_PARAM_IN),
       array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
@@ -181,6 +180,23 @@ function Leer_Datos_Cliente_SP($BuscarCodigo)
     );
     $sql = "EXEC  sp_Leer_Datos_Cliente @Item= ?,@Periodo=?,@BuscarCodigo=?,@Codigo_Encontrado=?";
     return $conn->ejecutar_procesos_almacenados($sql,$parametros,$tipo=false);
+}
+
+function sp_Reporte_CxCxP_x_Meses($cta,$fecha)
+{
+
+  $conn = new db();
+   $parametros = array(
+      array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+      array(&$cta, SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
+      array(&$fecha, SQLSRV_PARAM_IN)
+    );
+
+   // print_r($parametros);die();
+    $sql = "EXEC  sp_Reporte_CxCxP_x_Meses @Item=?,@Periodo=?,@Cta=?,@CodigoUsuario=?,@FechaCorte=?";
+    $conn->ejecutar_procesos_almacenados($sql,$parametros);
 }
 
 
@@ -9176,11 +9192,43 @@ function CalculosSaldoAnt($TipoCod,$TDebe,$THaber,$TSaldo)
   return $TotSaldoAnt;
 }
 
+function medida_pantalla($medida)
+{
+  /* Extra small */
+  if($medida<=600)
+  {
+    return '100';
 
+  }
+  /*small */
+  if($medida>600 && $medida<768)
+  {
+    return '220';
+  }
 
-//
+  /* medium */
+  if($medida>=768 && $medida<992)
+  {
+    $medium = '484';
+    if($medida>=800 && $medida<=900)
+    {
+      $medium = '600';
+    }
+    if($medida>900 && $medida<=992)
+    {
+      $medium = '600';
+    }
+    return $medium;
 
+  }
 
+  /* large */
+  if($medida>=992)
+  {
 
+    return '600';
+  }
+
+}
 
 ?>

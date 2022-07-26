@@ -70,7 +70,7 @@ class libro_bancoC
   {
   	$desde = str_replace('-','',$parametros['desde']);
     $hasta = str_replace('-','',$parametros['hasta']);		
-  	$datos = $this->modelo->consultar_banco_($desde,$hasta,$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario'],$parametros['DCCtas']);
+  	$datos = $this->modelo->consultar_banco_($desde,$hasta,$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario'],$parametros['DCCtas'],$parametros['height']);
   	return $datos;
   }
   function imprimir_pdf($parametros)
@@ -220,7 +220,6 @@ class libro_bancoC
 		            $tablaHTML[$pos]['borde'] ='T';
 		            $tablaHTML[$pos]['estilo']='BI';				
 
-		
 		$this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$parametros['desde'],$parametros['hasta'],$sizetable,$mostrar,25,'L');
   }
 

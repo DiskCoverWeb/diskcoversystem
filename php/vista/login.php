@@ -34,7 +34,7 @@
 
      $.ajax({
       data:  {'entidad':entidad},
-      url:   '../controlador/login_controller.php?Entidad=true',
+      url:   '../controlador/login_controller.php?Entidad=true&pantalla='+screen.height,
       type:  'post',
       dataType: 'json',
       /*beforeSend: function () {   
@@ -46,9 +46,12 @@
         if(response.respuesta == 1)
         {
         	$('#alerta').css('display','block');
-        	$('#alerta').text(response.Nombre);
+        	$('#correo').val('');
+					$('#contra').val('');
+        	$('#alerta').html(response.Nombre);
         	$('#res').val(response.entidad);
-
+        	$('#txt_cartera').val('0');
+        
         }else if(response.respuesta==-1)
         {
         	$('#alerta').css('display','none');    
@@ -109,12 +112,40 @@
 
   }
 
-    function Ingresar()
+  function Ingresar_vali()
+  {
+  	if($('#txt_cartera').val()==1)
+  	{
+  		 Swal.fire({
+           title: 'Esta seguro?',
+           text: "Esta apunto de entrar a la cartera de clientes!",
+           type: 'warning',
+           showCancelButton: true,
+           confirmButtonColor: '#3085d6',
+           cancelButtonColor: '#d33',
+           confirmButtonText: 'Si!'
+         }).then((result) => {
+           if (result.value==true) {
+            Ingresar();
+           }
+         })
+
+  	}else
+  	{
+  		Ingresar();
+  	}
+  }
+
+  function Ingresar()
   { 
 
 		 var usuario = $("#correo").val();
 		 var entidad = $("#res").val();
-		 var pass = $("#contra").val();
+		 var pass = $("#contra").val();		 
+		 var cartera = $("#txt_cartera").val();
+		 var cartera_usu = $("#correo_cartera").val();
+		 var cartera_pass = $("#contra_cartera").val();
+		 var ci_empresa = $("#entidad").val();
 		 if(entidad =='')
 		 {
 		 		Swal.fire('No se a verificado la entidad Asegurese de colocar una entidad valida','Se volvera a verificar la empresa','info').then(function(){ $('#entidad').focus()});
@@ -130,7 +161,11 @@
 		 {
 		 	 'usuario':usuario,
 		 	 'entidad':entidad,
+		 	 'empresa':ci_empresa,
 		 	 'pass':pass,
+		 	 'cartera':cartera,
+		 	 'cartera_usu':cartera_usu,
+		 	 'cartera_pass':cartera_pass,
 		 }
      $.ajax({
       data:  {parametros:parametros},
@@ -146,7 +181,11 @@
         if(response==-1)
         {
         	Swal.fire('Clave o usuario invalidos!','No se pudo acceder.','error');
-        }else
+        }else if(response==-2)
+        {        	
+        	Swal.fire('Clave o usuario de cartera invalidos!','No se pudo acceder.','error');
+        }
+        else
         {      	
         	// console.log(response); return false;
         	window.location.href = response;
@@ -166,23 +205,32 @@
 		<div class="ContentForm">
 		   <form action="../controlador/login_controller.php" method="post" name="FormEntrar">
 		   	<div id="alerta" class="alert alert-success visible" align="center" style="display:none;"></div>
+		   	<input type="hidden" name="txt_cartera" id="txt_cartera" value="0">
 		   	<div class="input-group input-group-lg" >
 		   		<span class="input-group-addon" id="sizing-addon1"><i class="glyphicon glyphicon-home"></i></span>
 		   		<!-- 1792164710001 -->
 		   		<input type="text" class="form-control" name="entidad" placeholder="Entidad a la que perteneces" id="entidad" onblur="validar_entidad()">
 		   		<input type="hidden" name="res" id="res">
 				</div><br>
-        <div class="input-group input-group-lg" >
-        	<span class="input-group-addon" id="sizing-addon1"><i class="glyphicon glyphicon-envelope"></i></span>
-          <input type="text" class="form-control" name="correo" placeholder="Correo Electrónico/Usuario" id="correo" onblur="validar_usuario()">                 
-        </div>  <br>        
-         <div class="input-group input-group-lg" >
-            <span class="input-group-addon" id="sizing-addon1"><i class="glyphicon glyphicon-lock"></i></span>
-              <input type="password" name="contra" id="contra" class="form-control" placeholder="******" aria-describedby="sizing-addon1" required autocomplete="new-password">
-         </div><br>
-         <button type="button" id="IngresoLog" name="submitlog"  class="btn btn-lg btn-primary btn-block btn-signin" onclick="Ingresar()">Entrar</button>
+				<div id="form_login">
+					<div class="input-group input-group-lg" >
+	        	<span class="input-group-addon" id="sizing-addon1"><i class="glyphicon glyphicon-envelope"></i></span>
+	          <input type="text" class="form-control" name="correo" placeholder="Correo Electrónico/Usuario" id="correo" onblur="validar_usuario()">                 
+	        </div>  <br>        
+	         <div class="input-group input-group-lg" >
+	            <span class="input-group-addon" id="sizing-addon1"><i class="glyphicon glyphicon-lock"></i></span>
+	              <input type="password" name="contra" id="contra" class="form-control" placeholder="******" aria-describedby="sizing-addon1" required autocomplete="new-password">
+	         </div>					
+				</div>
+				
+        <br>
+         <button type="button" id="IngresoLog" name="submitlog"  class="btn btn-lg btn-primary btn-block btn-signin" onclick="/*Ingresar();*/Ingresar_vali()">Entrar</button>
 				 <!-- <input type="submit" name="submitlog" id='enviar' value="Entrar" class="btn btn-lg btn-primary btn-block btn-signin" id="IngresoLog" /> -->
-         <div class="opcioncontra"><a href="">Olvidaste tu contraseña?</a></div>
+         <div class="opcioncontra">
+				 	<a href="login_cartera.php">Cartera de Clientes</a>
+				 	<br>
+         	<a href="">Olvidaste tu contraseña?</a>
+         </div>
        </form>
       </div>
     </div>

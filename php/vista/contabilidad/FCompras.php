@@ -32,7 +32,7 @@ if(isset($_GET['fec']))
  select :active {
     box-shadow: 0 0 0 0px white, 0 0 0 2px black;
 }
-.input-sm:focus
+.input-xs:focus
 {
     box-shadow: 0 0 0 0px white, 0 0 0 2px black;
 }
@@ -387,15 +387,15 @@ function contracuenta()
             <div class="row">
               <div class="col-sm-8">
                 <b>PROVEEDOR</b>
-                <select class="form-control input-sm" id="DCProveedor">
+                <select class="form-control input-xs" id="DCProveedor">
                   <option value="">No seleccionado</option>
                 </select>
               </div>
               <div class="col-sm-1"><br>
-                <input type="text" class="form-control input-sm" name="" id="LblTD" style="color: red" readonly="">
+                <input type="text" class="form-control input-xs" name="" id="LblTD" style="color: red" readonly="">
               </div>
               <div class="col-sm-3"><br>                
-                <input type="text" class="form-control input-sm" name="" id="LblNumIdent" readonly="">
+                <input type="text" class="form-control input-xs" name="" id="LblNumIdent" readonly="">
               </div>
             </div>
           </div><br>
@@ -450,7 +450,7 @@ function contracuenta()
                                     <div class="row">
                                         <div class="col-sm-5">
                                             <b>Tipo de comprobate</b>
-                                            <select class="form-control input-sm" id="DCTipoComprobante" onchange="mostrar_panel()" onblur="selec_tipo_comp()">
+                                            <select class="form-control input-xs" id="DCTipoComprobante" onchange="mostrar_panel()" onblur="selec_tipo_comp()">
                                                 <option value="1">Factura</option>
                                             </select>
                                         </div>
@@ -458,51 +458,51 @@ function contracuenta()
                                             <b>Serie</b>
                                             <div class="row">
                                                 <div class="col-sm-6" style="padding: 0px">
-                                                    <input type="text" name="" class="form-control input-sm" id="TxtNumSerieUno" placeholder="001" onblur="autocompletar_serie_num(this.id)" onkeyup=" solo_3_numeros(this.id)"  autocomplete="off">
+                                                    <input type="text" name="" class="form-control input-xs" id="TxtNumSerieUno" placeholder="001" onblur="autocompletar_serie_num(this.id)" onkeyup=" solo_3_numeros(this.id)"  autocomplete="off">
                                                 </div>
                                                 <div class="col-sm-6" style="padding: 0px">
-                                                    <input type="text" name="" class="form-control input-sm" id="TxtNumSerieDos" placeholder="001" onblur="autocompletar_serie_num(this.id)" onkeyup=" solo_3_numeros(this.id)"  autocomplete="off">
+                                                    <input type="text" name="" class="form-control input-xs" id="TxtNumSerieDos" placeholder="001" onblur="autocompletar_serie_num(this.id)" onkeyup=" solo_3_numeros(this.id)"  autocomplete="off">
                                                 </div>
                                             </div>                                
                                         </div>
                                         <div class="col-sm-2">
                                             <b>Numero</b>
-                                            <input type="text" name="" class="form-control input-sm" id="TxtNumSerietres" onblur="validar_num_factura(this.id)" placeholder="000000001" onkeyup="solo_9_numeros(this.id)"  autocomplete="off">
+                                            <input type="text" name="" class="form-control input-xs" id="TxtNumSerietres" onblur="validar_num_factura(this.id)" placeholder="000000001" onkeyup="solo_9_numeros(this.id)"  autocomplete="off">
                                         </div>
                                         <div class="col-sm-3">
                                             <b>Autorizacion</b>
-                                            <input type="text" name="" class="form-control input-sm text-right" id="TxtNumAutor" onblur="autorizacion_factura()" placeholder="0000000001"  autocomplete="off"> <!--onkeyup="solo_10_numeros(this.id)"-->
+                                            <input type="text" name="" class="form-control input-xs text-right" id="TxtNumAutor" onblur="autorizacion_factura()" placeholder="0000000001"  autocomplete="off"> <!--onkeyup="solo_10_numeros(this.id)"-->
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <div class="col-sm-2"  style="padding-left: 0px;padding-right: 0px">
                                              <b>Emision</b>
-                                                <input type="date" name="" class="form-control input-sm" value="<?php echo date('Y-m-d') ?>" id="MBFechaEmi" onblur="cambiar_fecha();"  autocomplete="off">
+                                                <input type="date" name="" class="form-control input-xs" value="<?php echo date('Y-m-d') ?>" id="MBFechaEmi" onblur="cambiar_fecha();"  autocomplete="off">
                                             </div>
                                             <div class="col-sm-2"  style="padding-left: 0px;padding-right: 0px">
                                                 <b>Registro</b>
-                                                <input type="date" name="" class="form-control input-sm" value="<?php echo date('Y-m-d') ?>" id="MBFechaRegis" onblur="validar_fecha()"  autocomplete="off">
+                                                <input type="date" name="" class="form-control input-xs" value="<?php echo date('Y-m-d') ?>" id="MBFechaRegis" onblur="validar_fecha()"  autocomplete="off">
                                             </div>                                            
                                          <div class="col-sm-2" style="padding-left: 0px;padding-right: 0px">
                                                 <b>Caducidad</b>
-                                                <input type="date" name="" class="form-control input-sm" value="<?php echo date('Y-m-d') ?>" id="MBFechaCad"  autocomplete="off">
+                                                <input type="date" name="" class="form-control input-xs" value="<?php echo date('Y-m-d') ?>" id="MBFechaCad"  autocomplete="off">
                                             </div>
                                          <div class="col-sm-2">
                                                 <b>No Obj. IVA</b>
-                                                <input type="text" name="" class="form-control input-sm text-right" value="0.00" id="TxtBaseImpoNoObjIVA"  autocomplete="off">
+                                                <input type="text" name="" class="form-control input-xs text-right" value="0.00" id="TxtBaseImpoNoObjIVA"  autocomplete="off">
                                             </div>
                                             <div class="col-sm-1" style="padding-right: 5px;padding-left: 5px;">
                                                 <b>Tarifa 0</b>
-                                                <input type="text" name="" class="form-control input-sm text-right" value="0.00" id="TxtBaseImpo"  autocomplete="off">
+                                                <input type="text" name="" class="form-control input-xs text-right" value="0.00" id="TxtBaseImpo"  autocomplete="off">
                                             </div>
                                             <div class="col-sm-1" style="padding-right: 5px;padding-left: 5px;">
                                                 <b>Tarifa 12</b>
-                                                <input type="text" name="" class="form-control input-sm text-right" value="0.00" id="TxtBaseImpoGrav"  autocomplete="off">
+                                                <input type="text" name="" class="form-control input-xs text-right" value="0.00" id="TxtBaseImpoGrav"  autocomplete="off">
                                             </div>
                                             <div class="col-sm-2">
                                                 <b>Valor ICE</b>
-                                             <input type="text" name="" class="form-control input-sm  text-right" value="0.00"  id="TxtBaseImpoIce"  autocomplete="off">
+                                             <input type="text" name="" class="form-control input-xs  text-right" value="0.00"  id="TxtBaseImpoIce"  autocomplete="off">
                                             </div>  
                                     </div>                          
                                  </div>
@@ -523,7 +523,7 @@ function contracuenta()
                                             IVA
                                         </div>
                                         <div class="col-sm-4">
-                                            <select class="form-control input-sm" id="DCPorcenIva" onchange="calcular_iva()" onblur="calcular_iva();calcular_ice();">
+                                            <select class="form-control input-xs" id="DCPorcenIva" onchange="calcular_iva()" onblur="calcular_iva();calcular_ice();">
                                                 <option value="I">Iva</option>
                                             </select>
                                         </div>
@@ -531,7 +531,7 @@ function contracuenta()
                                             Valor I.V.A
                                         </div>
                                         <div class="col-sm-4">
-                                           <input type="text" name="" class="form-control input-sm  text-right" id="TxtMontoIva" value="0"  autocomplete="off">
+                                           <input type="text" name="" class="form-control input-xs  text-right" id="TxtMontoIva" value="0"  autocomplete="off">
                                         </div>                            
                                     </div>
                                     <div class="row">
@@ -539,7 +539,7 @@ function contracuenta()
                                             ICE
                                         </div>
                                         <div class="col-sm-4">
-                                            <select class="form-control input-sm" id="DCPorcenIce" onchange="calcular_ice()" onblur="calcular_iva();calcular_ice();">
+                                            <select class="form-control input-xs" id="DCPorcenIce" onchange="calcular_ice()" onblur="calcular_iva();calcular_ice();">
                                                 <option value="0">ICE</option>
                                             </select>
                                         </div>
@@ -547,7 +547,7 @@ function contracuenta()
                                             Valor ICE
                                         </div>
                                         <div class="col-sm-4">
-                                           <input type="text" name="" class="form-control input-sm  text-right" id="TxtMontoIce"  value="0.00" readonly=""  autocomplete="off">
+                                           <input type="text" name="" class="form-control input-xs  text-right" id="TxtMontoIce"  value="0.00" readonly=""  autocomplete="off">
                                         </div>       
                                     </div>
                                 </div>
@@ -565,11 +565,11 @@ function contracuenta()
                                         </div>
                                         <div class="col-sm-4">
                                             <b>BIENES</b>
-                                            <input type="text" name="" class="form-control input-sm  text-right" id="TxtIvaBienMonIva" readonly="" value="0"  autocomplete="off">
+                                            <input type="text" name="" class="form-control input-xs  text-right" id="TxtIvaBienMonIva" readonly="" value="0"  autocomplete="off">
                                         </div>                            
                                         <div class="col-sm-4">
                                             <b>SERVICIOS</b>
-                                           <input type="text" name="" class="form-control input-sm  text-right" id="TxtIvaSerMonIva" readonly="" value="0"  autocomplete="off">
+                                           <input type="text" name="" class="form-control input-xs  text-right" id="TxtIvaSerMonIva" readonly="" value="0"  autocomplete="off">
                                         </div>       
                                     </div>
                                     <div class="row">
@@ -592,10 +592,10 @@ function contracuenta()
                                 Valor RET
                                         </div>
                                         <div class="col-sm-4">
-                                            <input type="text" name="" class="form-control input-sm  text-right" id="TxtIvaBienValRet" value="0" autocomplete="off" readonly>
+                                            <input type="text" name="" class="form-control input-xs  text-right" id="TxtIvaBienValRet" value="0" autocomplete="off" readonly>
                                         </div>                            
                                         <div class="col-sm-4">
-                                           <input type="text" name="" class="form-control input-sm  text-right" id="TxtIvaSerValRet" value="0" autocomplete="off" readonly>
+                                           <input type="text" name="" class="form-control input-xs  text-right" id="TxtIvaSerValRet" value="0" autocomplete="off" readonly>
                                         </div>       
                                     </div>
                                 </div>
@@ -613,7 +613,7 @@ function contracuenta()
                                     <div class="row">
                                         <div class="col-sm-4">
                                             <b>tipo de comprobate</b>
-                                            <select class="form-control input-sm" id="DCDctoModif">
+                                            <select class="form-control input-xs" id="DCDctoModif">
                                                 <option>Seleccione tipo de comprobante</option>
                                             </select>
                                         </div>
@@ -621,24 +621,24 @@ function contracuenta()
                                             <b>Serie</b>
                                             <div class="row">
                                                 <div class="col-sm-6" style="padding: 0px">
-                                                    <input type="text" name="" class="form-control input-sm" id="TxtNumSerieUnoComp" placeholder="001" onblur="autocompletar_serie_num(this.id)" onkeyup="solo_3_numeros(this.id)"  autocomplete="off">
+                                                    <input type="text" name="" class="form-control input-xs" id="TxtNumSerieUnoComp" placeholder="001" onblur="autocompletar_serie_num(this.id)" onkeyup="solo_3_numeros(this.id)"  autocomplete="off">
                                                 </div>
                                                 <div class="col-sm-6" style="padding: 0px">
-                                                    <input type="text" name="" class="form-control input-sm" id="TxtNumSerieDosComp" placeholder="001" onblur="autocompletar_serie_num(this.id)" onkeyup="solo_3_numeros(this.id)"  autocomplete="off">
+                                                    <input type="text" name="" class="form-control input-xs" id="TxtNumSerieDosComp" placeholder="001" onblur="autocompletar_serie_num(this.id)" onkeyup="solo_3_numeros(this.id)"  autocomplete="off">
                                                 </div>
                                             </div>                                
                                         </div>
                                         <div class="col-sm-1" style="padding-left: 5px;padding-right: 5px">
                                             <b>Numero</b>
-                                            <input type="text" name="" class="form-control input-sm" id="CNumSerieTresComp" onkeyup="solo_9_numeros(this.id)" onblur="validar_num_factura(this.id)" placeholder="000000001"  autocomplete="off">
+                                            <input type="text" name="" class="form-control input-xs" id="CNumSerieTresComp" onkeyup="solo_9_numeros(this.id)" onblur="validar_num_factura(this.id)" placeholder="000000001"  autocomplete="off">
                                         </div>
                                         <div class="col-sm-2" style="padding-left: 5px;padding-right: 5px">
                                             <b>Fecha</b>
-                                            <input type="date" name="" class="form-control input-sm" id="MBFechaEmiComp"  autocomplete="off">
+                                            <input type="date" name="" class="form-control input-xs" id="MBFechaEmiComp"  autocomplete="off">
                                         </div>
                                         <div class="col-sm-3" style="padding-right: 5px;">
                                             <b>Autorizacion sri</b>
-                                            <input type="text" name="" class="form-control input-sm" id="TxtNumAutComp"  autocomplete="off">
+                                            <input type="text" name="" class="form-control input-xs" id="TxtNumAutComp"  autocomplete="off">
                                         </div>
                                     </div>
                                  </div>
@@ -666,7 +666,7 @@ function contracuenta()
                   <div class="row" id="panel_exterior" style="display: none;">
                     <div class="col-sm-4">
                       <b>Pais al que se efectua el pago</b>
-                      <select class="form-control input-sm" id="DCPais">
+                      <select class="form-control input-xs" id="DCPais">
                         <option>Seleccione Pais</option>
                       </select>
                     </div>
@@ -704,18 +704,18 @@ function contracuenta()
                                       <div class="col-sm-2">
                                         Serie
                                         <div class="row">
-                                          <div class="col-sm-6"style="padding-left: 0px;padding-right: 0px;"><input type="text" class="form-control input-sm" name="TxtNumUnoComRet" id="TxtNumUnoComRet" onkeyup="solo_3_numeros(this.id)" placeholder="001" onblur="autocompletar_serie_num(this.id)"  autocomplete="off"></div>
-                                          <div class="col-sm-6"style="padding-left: 0px;padding-right: 0px;"><input type="text" class="form-control input-sm" name="TxtNumDosComRet" id="TxtNumDosComRet" onkeyup="solo_3_numeros(this.id)" placeholder="001" onblur="autocompletar_serie_num(this.id)"  autocomplete="off"></div>
+                                          <div class="col-sm-6"style="padding-left: 0px;padding-right: 0px;"><input type="text" class="form-control input-xs" name="TxtNumUnoComRet" id="TxtNumUnoComRet" onkeyup="solo_3_numeros(this.id)" placeholder="001" onblur="autocompletar_serie_num(this.id)"  autocomplete="off"></div>
+                                          <div class="col-sm-6"style="padding-left: 0px;padding-right: 0px;"><input type="text" class="form-control input-xs" name="TxtNumDosComRet" id="TxtNumDosComRet" onkeyup="solo_3_numeros(this.id)" placeholder="001" onblur="autocompletar_serie_num(this.id)"  autocomplete="off"></div>
                                         </div>
                                       </div>
                                       <div class="col-sm-2">
                                         Numero
-                                        <input type="text" class="form-control input-sm" name="TxtNumTresComRet" id="TxtNumTresComRet" onblur="validar_num_retencion()" onkeyup="solo_9_numeros(this.id)" placeholder="000000001" tabindex="-1"  autocomplete="off">
+                                        <input type="text" class="form-control input-xs" name="TxtNumTresComRet" id="TxtNumTresComRet" onblur="validar_num_retencion()" onkeyup="solo_9_numeros(this.id)" placeholder="000000001" tabindex="-1"  autocomplete="off">
                                         <input type="hidden" name="val_num" id="val_num" value="0"  autocomplete="off">
                                       </div>
                                       <div class="col-sm-4">
                                         Autorizacion
-                                        <input type="text" name="" class="form-control input-sm" id="TxtNumUnoAutComRet" onblur="validar_autorizacion()"  autocomplete="off">
+                                        <input type="text" name="" class="form-control input-xs" id="TxtNumUnoAutComRet" onblur="validar_autorizacion()"  autocomplete="off">
                                       </div>
                                       <script type="text/javascript"> 
                                                function selec_tipo_comp()
@@ -784,7 +784,7 @@ function contracuenta()
                                             SUMATORIA
                                           </div>
                                           <div class="col-sm-8"><br>
-                                            <input type="text" name="" class="form-control input-sm  text-right" id="TxtSumatoria"  autocomplete="off">
+                                            <input type="text" name="" class="form-control input-xs  text-right" id="TxtSumatoria"  autocomplete="off">
                                           </div>
                                         </div>                                      
                                       </div>                          
@@ -798,15 +798,15 @@ function contracuenta()
                                       </div>
                                       <div class="col-sm-2">
                                         <b>BASE IMP</b>
-                                        <input type="text" class="form-control input-sm  text-right" name="TxtBimpConA" id="TxtBimpConA"  autocomplete="off">
+                                        <input type="text" class="form-control input-xs  text-right" name="TxtBimpConA" id="TxtBimpConA"  autocomplete="off">
                                       </div>
                                        <div class="col-sm-1" style="padding-left: 0px;padding-right: 0px">
                                         <b>PORC</b>
-                                        <input type="text" class="form-control input-sm  text-right" name="TxtPorRetConA" id="TxtPorRetConA" onblur="insertar_grid()" readonly=""  autocomplete="off">
+                                        <input type="text" class="form-control input-xs  text-right" name="TxtPorRetConA" id="TxtPorRetConA" onblur="insertar_grid()" readonly=""  autocomplete="off">
                                       </div>
                                        <div class="col-sm-2">
                                         <b>VALOR RET</b>
-                                        <input type="text" class="form-control input-sm text-right" name="TxtValConA" id="TxtValConA" readonly=""  autocomplete="off">
+                                        <input type="text" class="form-control input-xs text-right" name="TxtValConA" id="TxtValConA" readonly=""  autocomplete="off">
                                       </div>
                                     </div>
                                 </div>
@@ -821,7 +821,7 @@ function contracuenta()
                   <div class="row">
                     <div class="col-sm-12 text-right">
                       <b>Total Retencion</b>
-                      <input type="text" class="input-sm" name="" id="txt_total_retencion" readonly=""  autocomplete="off">
+                      <input type="text" class="input-xs" name="" id="txt_total_retencion" readonly=""  autocomplete="off">
                     </div>
                   </div>        
                </div>

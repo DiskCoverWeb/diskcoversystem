@@ -58,10 +58,10 @@ class niveles_seguriM
 				GROUP BY AU.Nombre_Usuario,AU.Email, E.Nombre_Entidad, E.RUC_CI_NIC,AU.Usuario,AU.Clave
 				ORDER BY E.Nombre_Entidad ";
 		$resp=$this->db->datos($sql,'MY SQL');
-		$datos=[];
+		$datos=array();
 		foreach ($resp as $key => $value) {
 		
-				$datos[]=['id'=>$value['Codigo_Entidad'],'text'=>$value['Nombre_Entidad'],'RUC'=>$value['Codigo_Entidad'],'Usuario'=>$value['Usuario'],'Clave'=>$value['Clave'],'Email'=>$value['Email']];				
+				$datos[]=array('id'=>$value['Codigo_Entidad'],'text'=>$value['Nombre_Entidad'],'RUC'=>$value['Codigo_Entidad'],'Usuario'=>$value['Usuario'],'Clave'=>$value['Clave'],'Email'=>$value['Email'],'Nombre_Usuario'=>$value['Nombre_Usuario']);				
 		}		
 	    return $datos;
 	}
@@ -75,10 +75,10 @@ class niveles_seguriM
 				AND AE.CI_NIC = AU.CI_NIC
 				GROUP BY AU.Nombre_Usuario,AU.Email, E.Nombre_Entidad, E.RUC_CI_NIC,AU.Usuario,AU.Clave
 				ORDER BY E.Nombre_Entidad ";
-		$datos=[];		
+		$datos=array();		
 		$resp=$this->db->datos($sql,'MY SQL');
 		foreach ($resp as $key => $value) {
-				$datos[]=['id'=>$value['Codigo_Entidad'],'text'=>$value['Nombre_Entidad'],'RUC'=>$value['Codigo_Entidad'],'Usuario'=>$value['Usuario'],'Clave'=>$value['Clave'],'Email'=>$value['Email'],'CI_NIC'=>$value['CI_NIC'], 'Nombre_Usuario'=>$value['Nombre_Usuario']];			
+				$datos[]=array('id'=>$value['Codigo_Entidad'],'text'=>$value['Nombre_Entidad'],'RUC'=>$value['Codigo_Entidad'],'Usuario'=>$value['Usuario'],'Clave'=>$value['Clave'],'Email'=>$value['Email'],'CI_NIC'=>$value['CI_NIC'], 'Nombre_Usuario'=>$value['Nombre_Usuario']);			
 		}
 	    return $datos;
 	}

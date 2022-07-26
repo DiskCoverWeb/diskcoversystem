@@ -77,7 +77,7 @@ class pacienteC
   					<td width="'.$d3.'">'.$value['Cliente'].'</td>
   					<td width="'.$d4.'">'.$value['CI_RUC'].'</td>
   					<td width="'.$d5.'">'.$value['Telefono'].'</td>
-  					<td width="90px">
+  					<td width="100px">
   					    <a href="../vista/farmacia.php?mod=Farmacia&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu&cod='.$value['Matricula'].'&ci='.$value['CI_RUC'].'#" class="btn btn-sm btn-default" title="Ver Historial"><span class="glyphicon glyphicon-th-large"></span></a>
   						<button class="btn btn-sm btn-primary" onclick="buscar_cod(\'E\',\''.$value['CI_RUC'].'\')" title="Editar paciente"><span class="glyphicon glyphicon-pencil"></span></button>  						
   						<button class="btn btn-sm btn-danger" title="Eliminar paciente"  onclick="eliminar(\''.$value['ID'].'\',\''.$value['CI_RUC'].'\')" ><span class="glyphicon glyphicon-trash"></span></button>
@@ -93,9 +93,8 @@ class pacienteC
 	}
 	function buscar_ficha($parametros)
 	{
-
 		// print_r($parametros);die();
-		$datos = $this->modelo->cargar_paciente($parametros);
+		$datos = $this->modelo->cargar_paciente_all($parametros,false,'1');
 		if(!empty($datos))
 		{
 			$ficha = array('id'=>$datos[0]['ID'],'nombre'=>$datos[0]['Cliente'],'ci'=>$datos[0]['CI_RUC'],'prov'=>$datos[0]['Prov'],'localidad'=>$datos[0]['Direccion'],'telefono'=>$datos[0]['Telefono'],'email'=>$datos[0]['Email'],'matricula'=>$datos[0]['Matricula'],'Codigo'=>$datos[0]['Codigo']);

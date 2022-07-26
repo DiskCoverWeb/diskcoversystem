@@ -188,7 +188,9 @@ class incomM
 		// }
 		$camne=array();
 		$botones[0] = array('boton'=>'validarc', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'CTA_BANCO,CHEQ_DEP' );
-	    $tbl = grilla_generica_new($sql,$ta,'',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,100);
+
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla']);
+	    $tbl = grilla_generica_new($sql,$ta,'',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,$medida);
 			 // print_r($tbl);die();
 		return $tbl;
 
@@ -230,7 +232,9 @@ class incomM
        AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
        AND T_No = ".$_SESSION['INGRESO']['modulo_']." ";
        $botones[0] = array('boton'=>'eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'CODIGO,asiento' );
-	   $tbl = grilla_generica_new($sql,'Asiento','',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,100);
+
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-307; //el numero es el espacio ya ocupado por los otros componenetes
+	   $tbl = grilla_generica_new($sql,'Asiento','',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,$medida);
 			 // print_r($tbl);die();
 		return $tbl;
     }
@@ -245,7 +249,9 @@ class incomM
        AND T_No = ".$_SESSION['INGRESO']['modulo_']." ";
 
         $botones[0] = array('boton'=>'eliminar','icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'Codigo,asientoSC' );
-        $tbl = grilla_generica_new($sql,'Asiento_SC',false,$titulo=false,$botones,$check=false,$imagen=false,1,1,1,100);
+
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-307;
+        $tbl = grilla_generica_new($sql,'Asiento_SC',false,$titulo=false,$botones,$check=false,$imagen=false,1,1,1,$medida);
 			 // print_r($tbl);die();
 		return $tbl;
     }
@@ -281,8 +287,10 @@ class incomM
        AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
        AND T_No = ".$_SESSION['INGRESO']['modulo_']." ";
        $datos = $this->conn->datos($sql);
+
+       $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-320;
        $botones[0] = array('boton'=>'eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'CodRet,air');
-	   $tbl = grilla_generica_new($sql,'Asiento_Air',false,$titulo=false,$botones,$check=false,$imagen=false,1,1,1,100);
+	   $tbl = grilla_generica_new($sql,'Asiento_Air','tbl_asientoR',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,$medida/2);
 			 // print_r($tbl);die();
 		return array('tbl'=>$tbl,'datos'=>$datos);
     }
@@ -308,8 +316,9 @@ class incomM
        AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
        AND T_No = ".$_SESSION['INGRESO']['modulo_']." ";
   
+       $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-320;
 	   $botones[0] = array('boton'=>'eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'IdProv,compras' );
-	   $tbl = grilla_generica_new($sql,'Asiento_Compras',$id_tabla = 'tbl_ac',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,100);
+	   $tbl = grilla_generica_new($sql,'Asiento_Compras',$id_tabla = 'tbl_ac',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,$medida/2);
 	   return $tbl;
 	
     }
@@ -323,8 +332,9 @@ class incomM
        AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
        AND T_No = ".$_SESSION['INGRESO']['modulo_']." ";
    
+       $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-350;
 	   $botones[0] = array('boton'=>'eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'IdProv,ventas' );
-	   $tbl = grilla_generica_new($sql,'Asiento_Ventas','tbl_av',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,30);
+	   $tbl = grilla_generica_new($sql,'Asiento_Ventas','tbl_av',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,$medida/3);
 	   return $tbl;
     }
 
@@ -349,8 +359,10 @@ class incomM
 			// 	 $button[0] = array('nombre'=>'eliminar','tipo'=>'danger','icon'=>'fa fa-trash','dato'=>array('0,expo'));
 			// 	 grilla_generica($stmt,null,null,1,null,null,null,false,$button);
 			// }
+
+       $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-350;
         $botones[0] = array('boton'=>'eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'Codigo,expo' );
-	   $tbl = grilla_generica_new($sql,'Asiento_Exportaciones',$id_tabla ='tbl_ae',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,30);
+	   $tbl = grilla_generica_new($sql,'Asiento_Exportaciones',$id_tabla ='tbl_ae',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,$medida/3);
 	   return $tbl;
     }
 
@@ -376,8 +388,10 @@ class incomM
 			// 	 $button[0] = array('nombre'=>'eliminar','tipo'=>'danger','icon'=>'fa fa-trash','dato'=>array('0,inpor'));
 			// 	 grilla_generica($stmt,null,null,1,null,null,null,false,$button);
 			// }
+
+       $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-350;
          $botones[0] = array('boton'=>'eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'CodSustento,inpor' );
-	   $tbl = grilla_generica_new($sql,'Asiento_Importaciones',$id_tabla ='tbl_ai',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,30);
+	   $tbl = grilla_generica_new($sql,'Asiento_Importaciones',$id_tabla ='tbl_ai',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,$medida/3);
 	   return $tbl;
 
     }
@@ -421,7 +435,9 @@ class incomM
 			// }
 			// else
 			// {
-		      $tbl = grilla_generica_new($sql,'Asiento_SC','tbl_subcta',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,100);
+
+       		$medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-307;
+		      $tbl = grilla_generica_new($sql,'Asiento_SC','tbl_subcta',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,$medida);
 			 // print_r($tbl);die();
 		     return $tbl;
 
@@ -1220,7 +1236,9 @@ class incomM
 			ORDER BY A_No ASC ";
 		if($tabla)
 		{
-			$tbl = grilla_generica_new($sql,'Asiento','tbl_asiento',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,100);
+
+       		$medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-307;
+			$tbl = grilla_generica_new($sql,'Asiento','tbl_asiento',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,$medida);
 			return $tbl;
 		}else{
 			$result = $this->conn->datos($sql);

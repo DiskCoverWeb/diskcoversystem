@@ -105,6 +105,7 @@ include('../controlador/contabilidad/contabilidad_controller.php');
   <script src="../../dist/js/js_globales.js"></script>
 
   <script type="text/javascript">
+    pantalla_medidas();
   var formato = "<?php if(isset($_SESSION['INGRESO']['Formato_Cuentas'])){echo $_SESSION['INGRESO']['Formato_Cuentas'];}?>";
   var formato_inv = "<?php if(isset($_SESSION['INGRESO']['Formato_Inventario'])){echo $_SESSION['INGRESO']['Formato_Inventario'];}?>";
   function addCliente(){
@@ -167,6 +168,19 @@ include('../controlador/contabilidad/contabilidad_controller.php');
       }
     });
   }
+
+  function pantalla_medidas()
+  {      
+     $.ajax({
+      // data:  {parametros:parametros},
+      url:   '../controlador/panel.php?pantalla=true&width='+screen.width+'&height='+screen.height,
+      type:  'post',
+      dataType: 'json',
+        success:  function (response) {             
+      }
+    });
+  }
+
 
     function formatoDate(date)
     {

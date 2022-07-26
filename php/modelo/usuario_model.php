@@ -96,6 +96,47 @@ class usuario_model{
 	}
 
 
+	function empresa_cartera($entidad,$ID_Entidad=false){		
+		$num = strlen($entidad);
+		if($num==10 || $num == 13 && is_numeric($entidad))
+		{
+			$query = "SELECT *
+					  FROM lista_empresas
+					  WHERE RUC_CI_NIC = '".$entidad."'";
+					  if($ID_Entidad)
+					  {
+					  	$query.=" AND ID_Empresa='".$ID_Entidad."'";
+					  }
+					  $query.=";";
+
+		// print_r($query);die();
+			$datos = $this->db1->datos($query,$tipo='MY SQL');
+			return $datos;
+		}else
+		{
+			//retorna -2 cuando no tiene el formato o la extencion correcta
+			return array('respuesta'=>-2,'entidad'=>'','Nombre'=>'');
+
+		// print_r($num);die();
+		}
+	}
+
+// validar cliente en cartera
+	function buscar_cliente_cartera($cartera_usu,$cartera_pass,$empresa)
+	{
+		// print_r($empresa);die();
+		$sql="SELECT Clave,Codigo FROM Clientes WHERE Clave = '".$cartera_pass."' AND CI_RUC= '".$cartera_usu."'";
+		// print_r($sql);die();
+		$datos = $this->db1->consulta_datos_db_sql_terceros($sql,$empresa[0]['IP_VPN_RUTA'],
+			$empresa[0]['Usuario_DB'],
+			$empresa[0]['Contrasena_DB'],
+			$empresa[0]['Base_Datos'],
+			$empresa[0]['Puerto']);
+		return $datos;
+	}
+
+
+
 	/*
 	 * Validamos la entrada de correo
 	 * electronico
@@ -146,8 +187,8 @@ class usuario_model{
 	
 		
 
-	function getEmpresas($id_entidad){
-	    $empresa_2 = array();	    
+	function getEmpresas($id_entidad,$item_empresa_cartera=false){
+	  $empresa_2 = array();	    
 		$empresa= array();
 		$items = '';
 		$sql2 = "SELECT  DISTINCT Item 
@@ -159,6 +200,7 @@ class usuario_model{
         	$items.='"'.$value['Item'].'",';
         }
         $items = substr($items,0,-1);
+        if($item_empresa_cartera){$items = $item_empresa_cartera;}
         
 		if($items!="")
 		{

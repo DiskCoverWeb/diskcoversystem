@@ -88,7 +88,11 @@ function bamup(tipo)
         		 $('#myModal_espera').modal('hide');
         		$('#tabla').html(response);
         	}
-      }
+      },
+       error: function(xhr, textStatus, error){
+		    $('#myModal_espera').modal('hide');
+		    Swal.fire('No se pudo cargar','Intente mas tarde','info');
+		  }
     }); 
 }
 </script>

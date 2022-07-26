@@ -25,7 +25,10 @@ class select_empresa
 
 	function lista_empresas()
 	{
-		$empresa= getEmpresas($_SESSION['INGRESO']['IDEntidad']);
+		// print_r($_SESSION['INGRESO']);die();
+		$cartera = false;
+		if(isset($_SESSION['INGRESO']['CARTERA_ITEM'])){$cartera = $_SESSION['INGRESO']['CARTERA_ITEM'];}
+		$empresa= getEmpresas($_SESSION['INGRESO']['IDEntidad'],$cartera);
 		$i=0;
 		$num = count($empresa);
 		if($num > 1)

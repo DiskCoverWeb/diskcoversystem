@@ -117,7 +117,9 @@ include(dirname(__DIR__,2).'/db/variables_globales.php');//
  // print_r($DCAgencia);print_r($CheckAgencia);
   // print_r($sql);
 // die();
-    $tbl = grilla_generica_new($sql,'Transacciones As T,Comprobantes As C,Clientes As Cl ','tbl_may',false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,500);
+
+    $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-144;
+    $tbl = grilla_generica_new($sql,'Transacciones As T,Comprobantes As C,Clientes As Cl ','tbl_may',false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida);
 
        return $tbl;
   

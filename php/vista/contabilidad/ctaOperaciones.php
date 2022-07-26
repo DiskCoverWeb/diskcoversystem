@@ -6,6 +6,8 @@
 
   $(document).ready(function()
   {
+    var h = (screen.height)-280;
+    $('#tabla').css('height',h);
     meses();
    cargar_cuentas();
    tipo_pago();
@@ -570,8 +572,8 @@ function validar_cambiar()
  </div>
 </div>
 <div class="row"><br>
-  <input type="" name="txt_anterior" id="txt_anterior">
-  <div class="col-sm-4" id="tabla" style="overflow-y: scroll; height: 500px;"></div>
+  <input type="hidden" name="txt_anterior" id="txt_anterior">
+  <div class="col-sm-4" id="tabla" style="overflow-y: scroll;"></div>
   <div class="col-sm-8">      
     <!-- <ul class="nav nav-tabs">
       <li class="active"><a data-toggle="tab" href="#home">DATOS PRINCIPALES</a></li>

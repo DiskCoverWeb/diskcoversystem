@@ -296,7 +296,7 @@ function sucursal_exis()
 			<div class="panel-heading text-center"  style="padding: 0px 0px 0px 6px;">
 				SUB MAYOR
 			</div>
-			<div class="panel-body" style="height: 350px;" id="tbl_body">
+			<div class="panel-body" id="tbl_body">
 				<!-- <div class="col-sm-12" id="tbl_body">
 					
 				</div>	 -->			

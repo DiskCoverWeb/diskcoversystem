@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/Guayaquil');
 //require('html_table.php');
 require('cabecera_pdf.php');
 include(dirname(__DIR__,2)."/php/modelo/contabilidad/saldo_fac_submoduloM.php");
@@ -88,9 +89,39 @@ if(isset($_GET['Mostrar_excel']))
    	
 	  $reporte->reporte_temporizado_excel($parametros);	   
    }
-
-
 }
+
+if(isset($_GET['excel_submodulo_mes']))
+{
+	$parametros=array(
+		    'tipocuenta'=>$_GET['tipocuenta'],
+			'ChecksubCta'=>$_GET['ChecksubCta'],
+			'CheqCta'=>$_GET['CheqCta'],
+			'fechafin'=>$_GET['fechafin'],
+			'fechaini'=>$_GET['fechaini'],
+			'Cta'=>$_GET['Cta'],
+			//'tipo'=>$_GET['tipo'],
+	);
+	$reporte = new Reporte_subModulo();
+	$reporte->reporte_excel_sub_modulo_mes($parametros);
+}
+
+
+if(isset($_GET['pdf_submodulo_mes']))
+{
+	$parametros=array(
+		    'tipocuenta'=>$_GET['tipocuenta'],
+			'ChecksubCta'=>$_GET['ChecksubCta'],
+			'CheqCta'=>$_GET['CheqCta'],
+			'fechafin'=>$_GET['fechafin'],
+			'fechaini'=>$_GET['fechaini'],
+			'Cta'=>$_GET['Cta'],
+			//'tipo'=>$_GET['tipo'],
+	);
+	$reporte = new Reporte_subModulo();
+	$reporte->reporte_pdf_sub_modulo_mes($parametros);
+}
+
 class Reporte_subModulo 
 {
 	private $pdf;
@@ -107,10 +138,123 @@ class Reporte_subModulo
 	}	
 
 
+	function reporte_excel_sub_modulo_mes($parametros)
+	{
+		$resultado = explode(' ',$parametros['Cta']);
+		$cta = $resultado[0];
+		$fechafin = str_replace("-","",$parametros['fechafin']);
+		$fechaini = str_replace("-","",$parametros['fechaini']);
+		$datos = $this->ModeloSubModulo->cargar_consulta_x_meses();
+		$titulo = str_replace($cta,'', $parametros['Cta']);
+		$tablaHTML = array();
+		$tablaHTML[0]['medidas']=array(51,10,25,60);
+		$tablaHTML[0]['datos']=array('PROVEEDOR','MES','VALOR POR MES','CATEGORIA');
+		$tablaHTML[0]['tipo'] ='C';
+
+		$pos = 1;
+		$bene = '';
+		$total = 0;
+		foreach ($datos as $key => $value) {
+			
+			if($value['Anio']!='TOTAL')
+			{
+				if($value['Beneficiario']==$bene){$prove = '';}else{$prove = $value['Beneficiario'];}
+				$tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+				$tablaHTML[$pos]['datos']=array($prove,$value['Mes'],number_format($value['Valor_x_Mes'],2,'.',''),$value['Categoria']);
+				$tablaHTML[$pos]['tipo'] ='N';
+			}else
+			{
+				$tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+				$tablaHTML[$pos]['datos']=array('TOTAL','',number_format($value['Valor_x_Mes'],2,'.',''),'');
+				$tablaHTML[$pos]['tipo'] ='SUBR';
+
+				$pos=$pos+1;
+				$tablaHTML[$pos]['medidas']=array(51);
+				$tablaHTML[$pos]['datos']=array('');
+				$tablaHTML[$pos]['tipo'] ='N';
+				$total+=$value['Valor_x_Mes'];
+
+				// $tablaHTML[$pos]['borde'] = 'B';
+
+			}
+			$pos=$pos+1;
+			$bene = $value['Beneficiario'];
+		}
+		$tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+		$tablaHTML[$pos]['datos']=array($titulo,'',number_format($total,2,'.',''),'');
+		$tablaHTML[$pos]['tipo'] ='SUBR';
+      excel_generico($titulo,$tablaHTML);  
+
+
+	}
+
+
+	function reporte_pdf_sub_modulo_mes($parametros)
+	{
+		$resultado = explode(' ',$parametros['Cta']);
+		$cta = $resultado[0];
+		$fechafin = str_replace("-","",$parametros['fechafin']);
+		$fechaini = str_replace("-","",$parametros['fechaini']);
+		$datos = $this->ModeloSubModulo->cargar_consulta_x_meses();
+		$titulo = 'Reporte '.str_replace($cta,'', $parametros['Cta']);
+		$tablaHTML = array();
+		$tablaHTML[0]['medidas']=array(80,10,10,25,60);
+		$tablaHTML[0]['alineado']=array('L','L','L','R','L');
+		$tablaHTML[0]['datos']=array('PROVEEDOR','Anio','MES','VALOR POR MES','CATEGORIA');
+		$tablaHTML[0]['estilo']='BI';
+		$tablaHTML[0]['borde'] = 'B';
+
+		$pos = 1;
+		$bene = '';
+		$total = 0;
+		foreach ($datos as $key => $value) {
+			
+			if($value['Anio']!='TOTAL')
+			{
+				if($value['Beneficiario']==$bene){$prove = '';}else{$prove = $value['Beneficiario'];}
+				$tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+				$tablaHTML[$pos]['alineado']=$tablaHTML[0]['alineado'];
+				$tablaHTML[$pos]['datos']=array($prove.'<b>',$value['Anio'],$value['Mes'],number_format($value['Valor_x_Mes'],2,'.',''),$value['Categoria']);
+				// $tablaHTML[$pos]['estilo']='BI';
+				// $tablaHTML[$pos]['borde'] = 0;
+			}else
+			{
+				$tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+				$tablaHTML[$pos]['alineado']=$tablaHTML[0]['alineado'];
+				$tablaHTML[$pos]['datos']=array('','TOTAL','',number_format($value['Valor_x_Mes'],2,'.',''),'');
+				$tablaHTML[$pos]['estilo']='B';
+				$tablaHTML[$pos]['borde'] = 'TB';
+
+				$total+=$value['Valor_x_Mes'];
+
+				$pos=$pos+1;
+				$tablaHTML[$pos]['medidas']=array(185);
+				$tablaHTML[$pos]['alineado']=array('L');
+				$tablaHTML[$pos]['datos']=array('');
+				$tablaHTML[$pos]['borde'] = 'B';
+
+			}
+			$pos=$pos+1;
+			$bene = $value['Beneficiario'];
+		}
+
+		$tablaHTML[$pos]['medidas']=array(90,10,25,60);
+		$tablaHTML[$pos]['alineado']=array('L','L','R','L');
+		$tablaHTML[$pos]['datos']=array('TOTAL '.$titulo,'',number_format($total,2,'.',''),'');
+		$tablaHTML[$pos]['estilo']='B';
+		$tablaHTML[$pos]['borde'] = 'TB';
+
+
+
+		// print_r($datos);die();
+
+		 $this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$imagen=false,$fechaini,$fechafin,6,true);
+
+	}
+
 
 	function cuentas_x_pagar($parametro)
 	{
-		date_default_timezone_set('America/Guayaquil');
 		$datos = $this->ModeloSubModulo->consulta_c_p_datos(
 			$parametro['tipocuenta'],
 			$parametro['ChecksubCta'],

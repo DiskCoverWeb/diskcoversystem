@@ -850,6 +850,26 @@
     });
   }
 
+  function validar_area()
+  {
+    Swal.fire({
+      title: 'Quiere Cambiar el area de descargo?',
+      text: "Si desea cambiar el area de descargo debera realizar un nuevo ingreso!",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Generar nuevo registro'
+    }).then((result) => {
+        if (result.value) {
+          location.href = 'farmacia.php?mod=Farmacia&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#';
+        }else
+        {
+          location.reload();
+        }
+    })
+  }
+
 </script>
   <div class="row">
     <div class="col-lg-8 col-sm-10 col-md-6 col-xs-12">
@@ -932,7 +952,7 @@
           </div>
           <div class="col-sm-3">
             <b>Area de descargo</b>
-            <select class="form-control input-xs" id="ddl_areas">
+            <select class="form-control input-xs" id="ddl_areas" onchange="validar_area()">
               <option value="">Seleccione motivo de ingreso</option>
             </select>            
           </div>          

@@ -61,7 +61,7 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
   //     </ol>
   //   </section>';
 
-  //   echo '<section class="content">';
+    echo '<section class="content">';
 
 		//cambio de empresa
 		if ($_SESSION['INGRESO']['accion']=='detalle_estudiante') 

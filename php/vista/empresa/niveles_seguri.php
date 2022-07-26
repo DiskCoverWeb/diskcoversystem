@@ -700,7 +700,7 @@ function enviar_email()
         type:  'post',
         dataType: 'json',
         beforeSend: function () { 
-          // $('#myModal_espera').modal('show'); 
+          $('#myModal_espera').modal('show'); 
         },
         success:  function (response) { 
           console.log(response);

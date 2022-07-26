@@ -34,8 +34,9 @@ class Subcta_proyectosM
 	       // print_r($sql);die();
 	    $datos = $this->conn->datos($sql);
 
-				 $button[0] = array('boton'=>'eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'ID' );
-	    $tabla = grilla_generica_new($sql,'Catalogo_Cuentas As CC, Catalogo_SubCtas As CS, Trans_Presupuestos As TP ',$id_tabla=false,$titulo='',$button,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$tamaño_tabla=700,$num_decimales=2);
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-46;  //el numero es el alto de los demas conponenetes sumados
+		$button[0] = array('boton'=>'eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'ID' );
+	    $tabla = grilla_generica_new($sql,'Catalogo_Cuentas As CC, Catalogo_SubCtas As CS, Trans_Presupuestos As TP ',$id_tabla=false,$titulo='',$button,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
 
 	      return array('tbl'=>$tabla,'datos'=>$datos);
 

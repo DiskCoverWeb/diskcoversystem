@@ -2,6 +2,8 @@
 	var Individual = false;
 	$(document).ready(function()
 	{
+
+		// console.log(screen.height);
 		sucursal_exis();
 		llenar_combobox();
 		llenar_combobox_cuentas();    
@@ -90,9 +92,10 @@
 			'hasta':$('#hasta').val(),	
 			'DCAgencia':$('#DCAgencia').val(),
 			'DCUsuario':$('#DCUsuario').val(),	
-			'DCCtas':$('#DCCtas').val(),			
+			'DCCtas':$('#DCCtas').val(),
+			'height':screen.height,			
 		}
-		$titulo = 'Mayor de '+$('#DCCtas option:selected').html(),
+		$titulo = 'Mayor de '+$('#DCCtas option:selected').html();
 		$.ajax({
 			data:  {parametros:parametros},
 			url:   '../controlador/contabilidad/libro_bancoC.php?consultar=true',
@@ -223,7 +226,7 @@
 	</script>
 
    	<div class="row">
-   		<div class="col-lg-4 col-sm-4 col-md-8 col-xs-12">
+   		<div class="col-lg-4 col-sm-8 col-md-8 col-xs-12">
    			<div class="col-xs-2 col-md-2 col-sm-2">
    				<a href="./contabilidad.php?mod=contabilidad#" data-toggle="tooltip" title="Salir de modulo" class="btn btn-default">
             		<img src="../../img/png/salire.png">
@@ -289,7 +292,7 @@
 	  		</ul>
 	  	    <div class="tab-content" style="background-color:#E7F5FF">
 	  	    	<div id="home" class="tab-pane fade in active">	  	    			
-	  	    	   <div id="tabla_" style="height:600px;">
+	  	    	   <div id="tabla_">
 	  	    	   		  	    	   	
 	  	    	   </div>
 	  	    	 </div>		  	    	  	    	

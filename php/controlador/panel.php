@@ -14,7 +14,11 @@ require_once("../modelo/usuario_model.php");
  * 
  */
 
-
+if(isset($_GET['pantalla']))
+{
+      $_SESSION['INGRESO']['Height_pantalla'] = $_GET['height'];
+      $_SESSION['INGRESO']['width_pantalla'] = $_GET['width'];
+}
 if(isset($_GET['IngClaves']))
 {
 	$parametros = $_POST['parametros'];
@@ -507,10 +511,10 @@ function eliminar_variables()
 }
 
 //devuelve empresas asociadas al usuario  * modificado: javier fainango.
-function getEmpresas($id_entidad)
+function getEmpresas($id_entidad,$cartera=false)
 {
 	$per=new usuario_model();
-	$empresa=$per->getEmpresas($id_entidad);
+	$empresa=$per->getEmpresas($id_entidad,$cartera);
 	// print_r($empresa);die();
 	return $empresa;
 }

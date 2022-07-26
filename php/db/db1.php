@@ -282,6 +282,33 @@ class db
 		return $cid;
 	}
 
+
+	function consulta_datos_db_sql_terceros($sql,$host,$user,$pass,$base,$Puerto)
+	{
+		$server=''.$host.', '.$Puerto;
+		$connectionInfo = array("Database"=>$base, "UID" => $user,"PWD" => $pass,"CharacterSet" => "UTF-8");
+	  $cid = sqlsrv_connect($server, $connectionInfo); //returns false
+		if( $cid === false )
+		{
+			echo 'no se pudo conectar a la base de datos';
+			die( print_r( sqlsrv_errors(), true));
+		}
+		$stmt = sqlsrv_query($cid,$sql);
+		// print_r($sql);die();
+		$result = array();	
+		if( $stmt === false) {
+			die( print_r( sqlsrv_errors(), true) );
+		}
+		while( $row = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC) ) 
+   	{
+   		$result[] = $row;
+   	}
+     	sqlsrv_close($cid);
+     	return $result;
+	
+	}
+
+
 	
 }
 ?>

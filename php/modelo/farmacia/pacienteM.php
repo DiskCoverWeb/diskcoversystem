@@ -21,7 +21,7 @@ class pacienteM
 			$pag = 0;
 		}
 		$cid = $this->conn;
-		$sql="SELECT * FROM Clientes WHERE 1=1 ";
+		$sql="SELECT * FROM Clientes WHERE 1=1 AND Matricula<>0";
 
 		if($parametros['codigo']!='')
 		{
@@ -66,6 +66,65 @@ class pacienteM
 		// print_r($datos);die();
 		return $datos;
 	}
+
+	function cargar_paciente_all($parametros,$pag=false,$sin_con=false)
+	{
+		// print_r($parametros);die();
+		if($pag==false)
+		{
+			$pag = 0;
+		}
+		$cid = $this->conn;
+		$sql="SELECT * FROM Clientes WHERE 1=1  ";
+		if($sin_con)
+		{
+			$sql.=" AND Matricula<>'0' ";
+		}
+
+		if($parametros['codigo']!='')
+		{
+			$sql.=" AND CI_RUC='".$parametros['codigo']."'";
+		}
+		if($parametros['query']!='')
+		{
+		   switch ($parametros['tipo']) {
+			    case 'N':
+				    $sql.=" AND Cliente like '%".$parametros['query']."%'";
+				    break;
+				case 'N1':
+				    $sql.=" AND Cliente = '".$parametros['query']."'";
+				    break;
+			    case 'C':
+				    $sql.=" AND Matricula like '%".$parametros['query']."%'";
+				    break;
+				case 'C1':
+				    $sql.=" AND Matricula='".$parametros['query']."'";
+				    break;
+			    case 'R':
+				    $sql.=" AND CI_RUC like '".$parametros['query']."%'";
+				    break;
+				case 'R1':
+				    $sql.=" AND CI_RUC = '".$parametros['query']."'";
+				    break;		
+		   }
+	    }
+		$sql.=" ORDER BY ID OFFSET ".$pag." ROWS FETCH NEXT 25 ROWS ONLY;";
+		// print_r($sql);die();
+		$stmt = sqlsrv_query($cid, $sql);
+		if( $stmt === false)  
+		{  
+			echo "Error en consulta PA.\n";  
+			die( print_r( sqlsrv_errors(), true));  
+		}
+		$datos = array();
+		while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC)) 
+		{
+			$datos[]=$row;
+		}
+		// print_r($datos);die();
+		return $datos;
+	}
+
 
 	function cargar_paciente_proveedor($parametros,$pag=false)
 	{

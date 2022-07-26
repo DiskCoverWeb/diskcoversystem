@@ -39,6 +39,8 @@
 
 		function cargar_cbx()
 		{
+
+         $('#myModal_espera').modal('show');  
 		var select = $('#tipo_cuenta').val();
 		if(select =='G' || select =='I'|| select == 'CC')
 		{
@@ -86,12 +88,16 @@
 				$('#select_beneficiario').html(bene);
 				console.log(response);
 				//console.log(response.titulo);
+				
+         $('#myModal_espera').modal('hide');  
 			}
+
 		});
 	}
 
 	function consultar_datos()
-	{
+	{		
+		$('#reporte_tipo').val(0);
 		var parametros =
 		{
 			'tipocuenta':$('#tipo_cuenta').val(),
@@ -115,7 +121,7 @@
 			  //    var spiner = '<div class="text-center"><img src="../../img/gif/proce.gif" width="100" height="100"></div>'			
 				 // $('#tabla_').html(spiner);
 
-         // $('#myModal_espera').modal('show');  
+         $('#myModal_espera').modal('show');  
 			},
 				success:  function (response) {
 				totales();
@@ -131,6 +137,65 @@
 		});
 
 	}
+
+	function consultar_datos_x_meses()
+	{
+		$('#reporte_tipo').val(1);
+		if($('#tipo_cuenta').val()=='')
+		{
+			Swal.fire('Seleccione tipo de Cuenta','','info');
+			return false;
+		}
+		if($("#CheqCta").prop('checked')==false)
+		{
+			Swal.fire('Active opcion Por Cta.','','info');
+			return false;
+		}
+		if($('#select_cuenta').val()=='')
+		{
+			Swal.fire('Seleccione una Cuenta','','info');
+			return false;
+		}
+		if($('#txt_hasta').val()=='')
+		{
+			Swal.fire('Fecha hasta invalida','','info');
+			return false;
+		}
+		var parametros =
+		{
+			'tipocuenta':$('#tipo_cuenta').val(),
+			'ChecksubCta':$("#ChecksubCta").is(':checked'),
+			'OpcP':$("#OpcP").is(':checked'),
+			'CheqCta':$("#CheqCta").is(':checked'),
+			'fechaini':$('#txt_desde').val(),
+			'fechafin':$('#txt_hasta').val(),
+			'Cta':$('#select_cuenta').val(),
+		}
+		$.ajax({
+			data:  {parametros:parametros},
+			url:   '../controlador/contabilidad/saldo_fac_submoduloC.php?consultar_x_meses=true',
+			type:  'post',
+			dataType: 'json',
+			beforeSend: function () {		
+			  //    var spiner = '<div class="text-center"><img src="../../img/gif/proce.gif" width="100" height="100"></div>'			
+				 // $('#tabla_').html(spiner);
+
+         $('#myModal_espera').modal('show');  
+			},
+				success:  function (response) {
+				 $('#tabla_').html(response);				 	
+				// consultar_datos_tempo();
+			    
+         $('#myModal_espera').modal('hide');  
+				
+				
+			console.log(response);
+				//console.log(response.titulo);
+			}
+		});
+
+	}
+
 	function totales()
 	{
 			var parametros =
@@ -245,10 +310,14 @@
     
        $("#descargar_pdf").click(function(){
 
-       	if($('#activo').val()=='1'){   
+       	if($('#reporte_tipo').val()==1)
+       	{
+       		var url ='../../lib/fpdf/reportes_Saldo_fac_subMod.php?pdf_submodulo_mes=true&tipocuenta='+$('#tipo_cuenta').val()+'&ChecksubCta='+$("#ChecksubCta").is(':checked')+'&CheqCta='+$("#CheqCta").is(':checked')+'&fechaini='+$('#txt_desde').val()+'&fechafin='+$('#txt_hasta').val()+'&Cta='+$('#select_cuenta').val();       		
+       	}
+       	if($('#activo').val()=='1' && $('#reporte_tipo').val()==0){   
 
        	var url ='../../lib/fpdf/reportes_Saldo_fac_subMod.php?Mostrar_pdf=true&tipocuenta='+$('#tipo_cuenta').val()+'&ChecksubCta='+$("#ChecksubCta").is(':checked')+'&OpcP='+$("#OpcP").is(':checked')+'&CheqCta='+$("#CheqCta").is(':checked')+'&CheqDet='+$("#CheqDet").is(':checked')+'&CheqIndiv='+$("#CheqIndiv").is(':checked')+'&CodigoCli='+$('#select_beneficiario').val()+'&Cta='+$('#select_cuenta').val()+'&DCDet='+$('#select_detalle').val()+'&fechaini='+$('#txt_desde').val()+'&fechafin='+$('#txt_hasta').val()+'&tipo=mostrar&tabla=normal'; 
-       }else{
+       }else if($('#activo').val()=='2' && $('#reporte_tipo').val()==0){
 
       	var url ='../../lib/fpdf/reportes_Saldo_fac_subMod.php?Mostrar_pdf=true&tipocuenta='+$('#tipo_cuenta').val()+'&ChecksubCta='+$("#ChecksubCta").is(':checked')+'&OpcP='+$("#OpcP").is(':checked')+'&CheqCta='+$("#CheqCta").is(':checked')+'&CheqDet='+$("#CheqDet").is(':checked')+'&CheqIndiv='+$("#CheqIndiv").is(':checked')+'&CodigoCli='+$('#select_beneficiario').val()+'&Cta='+$('#select_cuenta').val()+'&DCDet='+$('#select_detalle').val()+'&fechaini='+$('#txt_desde').val()+'&fechafin='+$('#txt_hasta').val()+'&tipo=imprimir&tabla=temp';  
       	} 	    
@@ -260,10 +329,15 @@
 
        $('#descargar_excel').click(function(){
 
-       		if($('#activo').val()=='1'){   
+       	if($('#reporte_tipo').val()==1)
+       	{
+    			var url ='../../lib/fpdf/reportes_Saldo_fac_subMod.php?excel_submodulo_mes=true&tipocuenta='+$('#tipo_cuenta').val()+'&ChecksubCta='+$("#ChecksubCta").is(':checked')+'&CheqCta='+$("#CheqCta").is(':checked')+'&fechaini='+$('#txt_desde').val()+'&fechafin='+$('#txt_hasta').val()+'&Cta='+$('#select_cuenta').val();
+       	}
+
+       	if($('#activo').val()=='1' && $('#reporte_tipo').val()==0 ){   
 
        	var url ='../../lib/fpdf/reportes_Saldo_fac_subMod.php?Mostrar_excel=true&tipocuenta='+$('#tipo_cuenta').val()+'&ChecksubCta='+$("#ChecksubCta").is(':checked')+'&OpcP='+$("#OpcP").is(':checked')+'&CheqCta='+$("#CheqCta").is(':checked')+'&CheqDet='+$("#CheqDet").is(':checked')+'&CheqIndiv='+$("#CheqIndiv").is(':checked')+'&CodigoCli='+$('#select_beneficiario').val()+'&Cta='+$('#select_cuenta').val()+'&DCDet='+$('#select_detalle').val()+'&fechaini='+$('#txt_desde').val()+'&fechafin='+$('#txt_hasta').val()+'&tipo=mostrar&tabla=normal'; 
-       }else{
+       }else if($('#activo').val()=='2' && $('#reporte_tipo').val()==0){
 
       	var url ='../../lib/fpdf/reportes_Saldo_fac_subMod.php?Mostrar_excel=true&tipocuenta='+$('#tipo_cuenta').val()+'&ChecksubCta='+$("#ChecksubCta").is(':checked')+'&OpcP='+$("#OpcP").is(':checked')+'&CheqCta='+$("#CheqCta").is(':checked')+'&CheqDet='+$("#CheqDet").is(':checked')+'&CheqIndiv='+$("#CheqIndiv").is(':checked')+'&CodigoCli='+$('#select_beneficiario').val()+'&Cta='+$('#select_cuenta').val()+'&DCDet='+$('#select_detalle').val()+'&fechaini='+$('#txt_desde').val()+'&fechafin='+$('#txt_hasta').val()+'&tipo=imprimir&tabla=temp';  
       	} 	    
@@ -281,24 +355,28 @@
 <div class="row">
    <div class="col-sm-12">
 	  <div class="row">          
-  	    <div class="col-sm-4">
+  	    <div class="col-sm-5 col-lg-5">
         	<a  href="./contabilidad.php?mod=contabilidad#" data-toggle="tooltip"  title="Salir de modulo" class="btn btn-default">
         		<img src="../../img/png/salire.png">
         	</a>
         	<button title="Consultar SubModulo" data-toggle="tooltip"   class="btn btn-default" onclick="consultar_datos();">
         		<img src="../../img/png/archivero1.png" >
         	</button>
+        	<button title="Consultar SubModulo por Meses" data-toggle="tooltip"   class="btn btn-default" onclick="consultar_datos_x_meses();">
+        		<img src="../../img/png/sub_mod_mes.png" >
+        	</button>
+        	<a href="" title="Presenta Resumen de costos"  data-toggle="tooltip"  class="btn btn-default">
+        		<img src="../../img/png/resumen.png">
+        	</a>   
         	 <a href="#" class="btn btn-default" id='descargar_pdf' data-toggle="tooltip"  title="Descargar PDF">
         		<img src="../../img/png/pdf.png">
         	</a>
         	<a href="#"  class="btn btn-default"  data-toggle="tooltip" title="Descargar excel" id='descargar_excel'>
         		<img src="../../img/png/table_excel.png">
-        	</a>        	
-        	<a href="" title="Presenta Resumen de costos"  data-toggle="tooltip"  class="btn btn-default">
-        		<img src="../../img/png/resumen.png">
-        	</a>            	
+        	</a> 
+        	<input type="hidden" name="reporte_tipo" id="reporte_tipo" value="0">        	
   	    </div>
-	  	<div class="col-sm-5">
+	  	<div class="col-sm-4">
 	  		<div class="row">
 	  			<div class="col-xs-4">
 	         		<b>Desde:</b>
@@ -313,6 +391,7 @@
 	         	<div class="col-xs-3">
 	         	<br>
 	         		<select id="tipo_cuenta" name="tipo_cuenta" class="input-xs" onchange="cargar_cbx()">
+	         			<option value="">Seleccione</option>
 	         	   	<option value="C">CxC</option>
 	         	   	<option value="P">CxP</option>
 	         	   	<option value="I">Ingresos</option>
@@ -323,7 +402,7 @@
 	  			
 	  		</div>             	
 	  	</div>
-	  	<div class="col-sm-3">
+	  	<div class="col-sm-3 text-center">
 	     	<div class="row">
 	     		<div class="col-sm-12">
 	     	    <label class="radio-inline"><input type="radio" name="OpcP" value="1" id="OpcP" checked=""><b>Pendientes</b></label>
@@ -338,19 +417,19 @@
 	  <div class="row">	  		
 	  	<div class="col-sm-4">
 	  	   <label class="form-check-label"><input type="checkbox" name="CheqCta" id="CheqCta" onchange="cuenta()" value="true"> Por Cta.</label>
-	  		<select class="form-control input-xs" id="select_cuenta" style="display: none;" onchange="consultar_datos();">
+	  		<select class="form-control input-xs" id="select_cuenta" style="display: none;">
 	  			<option value="">Seleccione cuenta</option>
 	  		</select>
 	 	</div>
 		  <div class="col-sm-4">
 		  	<label class="form-check-label"><input type="checkbox" name="CheqDet" id="CheqDet" onchange="detalle()"> Por det</label>	  	 
-	  		  <select class="form-control input-xs"   id="select_detalle" style="display: none;" onchange="consultar_datos();">
+	  		  <select class="form-control input-xs"   id="select_detalle" style="display: none;">
 	  			 <option value="">Seleccione detalle</option>
 	  		  </select>
 		  </div>
 		  <div class="col-sm-4">
 		  	<label class="form-check-label"><input type="checkbox" name="CheqIndiv" id="CheqIndiv" onchange="beneficiario()"><span id="lbl_bene"> Beneficiario</span></label> 
-			   <select  class="form-control input-xs" id="select_beneficiario" style="display: none;" onchange="consultar_datos();">
+			   <select  class="form-control input-xs" id="select_beneficiario" style="display: none;">
 		     	<option value="">Seleccione Beneficiario</option>
 		       </select> 
 		  </div>

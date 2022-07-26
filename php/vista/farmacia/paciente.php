@@ -79,6 +79,11 @@
 
   function nuevo_paciente()
   {
+    if($('#txt_validado').val()==0)
+    {
+      // Swal.fire('Se esta validando la cedua','','info');
+      return false;
+    }
     var parametros = 
     {
        'cod':$('#txt_codigo').val(),
@@ -352,9 +357,9 @@
 
                 }else
                 {
-
                 limpiar();
                 $('#txt_ruc').val('');
+                $('#txt_validado').val(0);
                 }
             });
         }else
@@ -363,6 +368,7 @@
            $('#txt_codigo').val('');
            $('#txt_tip').val('N');
         }
+        $('#txt_validado').val(1);
       }
     });
 
@@ -454,6 +460,7 @@
      </div> 
      <div class="col-sm-6">
         <div class="modal-footer">
+          <input type="hidden" name="txt_validado" id="txt_validado" value="0">
         <button type="button" class="btn btn-primary" id="btn_nu" onclick="nuevo_paciente()"><i class="fa fa-user-plus"></i> Nuevo cliente</button>
         <button type="button" class="btn btn-default" onclick=" limpiar()"><i class="fa fa-paint-brush"></i> Limpiar</button>
         <!-- <button type="button" class="btn btn-default"><i class="fa fa-print"></i> Imprimirr</button> -->

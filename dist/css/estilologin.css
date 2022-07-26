@@ -26,7 +26,7 @@ body{
 	/*background-color: #F3EDED;*/
 	background-color:#c9dff1;
     border: 1px solid #ECE8E8;
-	height: 440px;
+	height: auto;
 	border-radius:8px;
 	padding: 0px 9px 0px 9px;
 }
@@ -59,9 +59,24 @@ border-radius: 120px;
 .opcioncontra{
 	text-align: center;
 	margin-top: 20px;
-	font-size: 14px;
+	margin-bottom: 20px;
 }
 
+.opcioncontra a
+{
+	color: white;
+	font-size: 14px;
+}
+.opcioncontra a:hover
+{
+	color: darkblue;
+	font-size: 14px;
+}
+/*{
+	nth-child(even) { }
+nth-child(odd) { background: #e2fbff;}
+nth-child(even):hover {  background: #DDB;}
+}*/
 /**
  * EN las siguientes lineas
  * se define el diseño adaptable, para que

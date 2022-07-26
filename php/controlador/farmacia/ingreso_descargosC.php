@@ -309,7 +309,7 @@ class ingreso_descargosC
 		$iva = 0;$subtotal=0;$total=0;
 		$negativos = false;
 		$procedimiento = '';
-		$cabecera = '<table class="table-sm table-hover">
+		$cabecera = '<table class="table-sm table-hover" style="width:100%">
         <thead>
           <th>ITEM</th>
           <th>FECHA</th>

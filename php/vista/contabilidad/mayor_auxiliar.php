@@ -309,7 +309,7 @@
 	  	    <div class="tab-content" style="background-color:#E7F5FF">
 	  	    	<div id="home" class="tab-pane fade in active">
 	  	    			
-	  	    	   <div class="table-responsive" id="tabla_" style=" height:600px;">
+	  	    	   <div class="table-responsive" id="tabla_">
 	  	    	   		  	    	   	
 	  	    	   </div>
 	  	    	 </div>		  	    	  	    	

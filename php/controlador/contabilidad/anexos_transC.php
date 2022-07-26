@@ -80,19 +80,20 @@ class anexos_transC
      }else 
      {
        $Numero = $FechaFin;
-       
+       // print_r($Numero);die();
        if(Actualizar_Datos_ATS_SP($_SESSION['INGRESO']['item'],$FechaIni,$FechaFin,$Numero)==1)
        	 {
        	 	// 'LISTA DE CODIGO DE ANEXOS
-
-       	 	$lista = $this->modelo->codigo_anexo($FechaMid);
+          // print_r('expression');die();
+              $lista = $this->modelo->codigo_anexo($FechaMid);
        	 }
      }
      // comienza el proceso de generar ats
      //Consultar_Anexos
+     // print_r('expression');die();
     $resultados =  $this->consulta_anexos($FechaIni,$FechaFin,false);
 
-    print_r($resultados);die();
+    // print_r($resultados);die();
 
 		if($this->xml($mes,$Anio,$resultados,$FechaIni,$FechaFin)==1)
     {
@@ -140,15 +141,18 @@ class anexos_transC
    $this->modelo->Numerar_Lineas_SRI("Trans_Importaciones", "I",$FechaIni,$FechaFin,$ConSucursal=false);
   // Numerar_Lineas_SRI "Trans_Exportaciones", "E"
     $this->modelo->Numerar_Lineas_SRI("Trans_Exportaciones", "E",$FechaIni,$FechaFin,$ConSucursal=false);
-  
       
  //  If Periodo_Contable = "" Then Periodo_Contable = Ninguno
  // 'CLIENTES
   ini_set('memory_limit', '-1');
   $sql= "SELECT * FROM Clientes WHERE Codigo <> '.' ORDER BY Cliente ";
   // $sql ="select *  from(SELECT ROW_NUMBER() OVER(ORDER BY ID) AS rownum,*  FROM Clientes) m   WHERE m.rownum BETWEEN 1 AND 10000 AND Codigo<>'.'";
-  $CLIENTES = $this->modelo->traer_datos($sql);
+  $CLIENTES = array();
+ // preguntar para que clinetes esta aqui si no se utiliza //$this->modelo->traer_datos($sql);
+ 
  // 'ANULADOS
+
+  // print_r($CLIENTES);die();
   $sql=  "SELECT * FROM Trans_Anulados WHERE FechaAnulacion Between '".$FechaIni."' AND '".$FechaFin."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."' AND Item = '".$_SESSION['INGRESO']['item']."' ORDER BY Linea_SRI,FechaAnulacion ";
   $ANULADOS = $this->modelo->traer_datos($sql);
  //  SelectAdodc AdoAnulados, sSQL
@@ -161,6 +165,7 @@ class anexos_transC
        ORDER BY TC.Linea_SRI,C.Cliente, C.CI_RUC, C.TD ";
      $COMPRAS = $this->modelo->traer_datos($sql);
 
+  // print_r($COMPRAS);die();
  //  SelectAdodc AdoCompras, sSQL
   
  // 'IMPORTACIONES

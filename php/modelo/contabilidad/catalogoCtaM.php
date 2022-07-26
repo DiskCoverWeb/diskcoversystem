@@ -96,7 +96,8 @@ class catalogoCtaM
        }
        $sql.='ORDER BY Codigo';
       
-	   $tbl = grilla_generica_new($sql,'Catalogo_Cuentas','tbl_medi',false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,500);
+       $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-80;
+	   $tbl = grilla_generica_new($sql,'Catalogo_Cuentas','tbl_medi',false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida);
 
        return $tbl;
 

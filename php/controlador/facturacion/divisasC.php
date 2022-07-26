@@ -354,6 +354,8 @@ class divisasC
       
     }
 
+    // print_r($FA);
+
 
     if (strlen($FA['Autorizacion']) == 13) {    
 
