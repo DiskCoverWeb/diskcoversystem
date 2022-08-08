@@ -705,6 +705,7 @@ function confirmar_email()
         // },
         success:  function (response) { 
           $('#mymodal_email').modal('show');
+          $('#div_email').html(response);
           console.log(response);
          
            // $('#myModal_espera').modal('hide');
@@ -753,6 +754,7 @@ function enviar_email()
            }
 
            $('#myModal_espera').modal('hide');
+           $('#mymodal_email').modal('hide');
         }
       }); 
 }
@@ -1122,14 +1124,14 @@ function DoubleScroll(element) {
       </div>
       <div class="modal-body">
         <div class="row">
-            <div class="col-sm-12" id="">
+            <div class="col-sm-12" id="div_email">
                     
             </div>
         </div>        
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-success" onclick="">Enviar</button>
+        <button type="button" class="btn btn-success" onclick="enviar_email()">Enviar</button>
       </div>
     </div>
 

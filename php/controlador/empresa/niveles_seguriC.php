@@ -511,57 +511,33 @@ Emails: recepcion@diskcoversystem.com o prisma_net@hotmail.es
 	    //$Nombre_Usuario
 	  	$correo_apooyo="credenciales@diskcoversystem.com"; //correo que saldra ala do del emisor
 	  	$cuerpo_correo = '
-<pre>
+
 Este correo electronico fue generado automaticamente del Sistema Administrativo Financiero Contable DiskCover System a usted porque figura como correo electronico alternativo en nuestra base de datos.
 
 A solicitud de El(a) Sr(a) '.$parametros['usuario'].' se envian sus credenciales de acceso:
-</pre> 
 <br>
-<table>
-<tr><td><b>Link:</b></td><td>https://erp.diskcoversystem.com</td></tr>
-<tr><td><b>Nombre Usuario:</b></td><td>'.$datos[0]['Nombre_Usuario'].'</td></tr>
-<tr><td><b>Usuario:</b></td><td>'.$datos[0]['Usuario'].'</td></tr>
-<tr><td><b>Clave:</b></td><td>'.$datos[0]['Clave'].'</td></tr>
-<tr><td><b>Email:</b></td><td>'.$datos[0]['Email'].'</td></tr>
-</table>
+<b>Link:</b>https://erp.diskcoversystem.com<br>
+<b>Nombre Usuario:</b></td><td>'.$datos[0]['Nombre_Usuario'].'<br>
+<b>Usuario:</b></td><td>'.$datos[0]['Usuario'].'<br>
+<b>Clave:</b></td><td>'.$datos[0]['Clave'].'<br>
+<b>Email:</b></td><td>'.$datos[0]['Email'].'<br>
 A este usuario se asigno las siguientes Entidades: 
 <br>
 <table>
-<tr><td width="30%"><b>Codigo</b></td><td width="50%"><b>Entidad</b></td></tr>
-';
+<tr><td width="30%"><b>Codigo</b></td><td width="50%"><b>Entidad</b></td></tr>';
 foreach ($datos as $value) {
 	$cuerpo_correo .= '<tr><td>'.$value['id'].'</td><td>'.$value['text'].'</td></tr>';
 }
 $cuerpo_correo.='</table><br>';
-$cuerpo_correo .= ' 
-<pre>
+$cuerpo_correo .= '
 Nosotros respetamos su privacidad y solamente se utiliza este correo electronico para mantenerlo informado sobre nuestras ofertas, promociones, claves de acceso y comunicados. No compartimos, publicamos o vendemos su informacion personal fuera de nuestra empresa.
 
 Esta direccion de correo electronico no admite respuestas. En caso de requerir atencion personalizada por parte de un asesor de servicio al cliente; Usted podra solicitar ayuda mediante los canales de atencion al cliente oficiales que detallamos a continuacion:
-
-Telefonos: (+593) 098-652-4396/099-965-4196/098-910-5300.
-Emails: recepcion@diskcoversystem.com o prisma_net@hotmail.es
-</pre>
-<table width="100%">
-<tr>
- <td align="center">
- <hr>
-    SERVIRLES ES NUESTRO COMPROMISO, DISFRUTARLO ES EL SUYO
-<hr>
-    </td>
-    </tr>
-    <tr>   
- <td align="center">
-    www.diskcoversystem.com
-    </td>
-    </tr>
-     <tr>   
- <td align="center">
-        QUITO - ECUADOR
-    </td>
-    </tr>
-  </table>
-';
+<div class="text-center">
+    SERVIRLES ES NUESTRO COMPROMISO, DISFRUTARLO ES EL SUYO<br>
+    www.diskcoversystem.com <br>
+    QUITO - ECUADOR
+</div>';
 
 	  	return $cuerpo_correo;
   	}
