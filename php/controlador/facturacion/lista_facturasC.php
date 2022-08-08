@@ -10,6 +10,11 @@ if(isset($_GET['tabla']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->tabla_facturas($parametros));
 }
+if(isset($_GET['perido']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->factura_periodo($parametros));
+}
 if(isset($_GET['ver_fac']))
 {
   $controlador->ver_fac_pdf($_GET['codigo'],$_GET['ser'],$_GET['ci']);
@@ -80,8 +85,23 @@ class lista_facturasC
 
     	// print_r($parametros);die();
     	$codigo = $parametros['ci'];
-    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo);
+    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['per']);
     	return $tbl['tbl'];
+    }
+    function factura_periodo($parametros)
+    {
+    	$datos = $this->modelo->facturas_perido($parametros['codigo']);
+    	$opcion = '';
+    	foreach ($datos as $key => $value) {  
+    		$year = '.';
+    		if($value['Periodo']!='.')
+    		{
+    	   $year = explode('/',$value['Periodo']);
+    	   $year = $year[2];
+    	  }
+    		$opcion.='<option value="'.$year.'">'.$year.'</option>';
+    	}
+    	return $opcion;
     }
     function ver_fac_pdf($cod,$ser,$ci)
     {
@@ -92,7 +112,7 @@ class lista_facturasC
     {
     	// print_r($parametros);die();
     	$codigo = $parametros['ddl_cliente'];
-    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo);
+    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['ddl_periodo']);
 
   // 	    $desde = str_replace('-','',$parametros['txt_desde']);
 		// $hasta = str_replace('-','',$parametros['txt_hasta']);

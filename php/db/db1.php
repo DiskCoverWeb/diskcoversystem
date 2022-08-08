@@ -98,7 +98,8 @@ class db
 
 	function datos($sql,$tipo=false)
 	{
-		if($tipo=='MY SQL' || $tipo =='MYSQL' || $tipo=='My SQL' || $tipo=='My sql')
+		// print_r($tipo);die();
+		if($tipo=='MY SQL' || $tipo =='MYSQL' || $tipo=='My SQL' || $tipo=='My sql' || $tipo=='MySQL')
 		{
 			// print_r($sql);die();
 			$conn = $this->MySQL();
@@ -117,6 +118,8 @@ class db
 
 		}else
 		{
+
+			// print_r($sql);die();
 			$conn = $this->SQLServer();	
 			$stmt = sqlsrv_query($conn,$sql);
 			// print_r($sql);die();
@@ -305,6 +308,28 @@ class db
    	}
      	sqlsrv_close($cid);
      	return $result;
+	}
+
+	function ejecutar_sql_terceros($sql,$host,$user,$pass,$base,$Puerto)
+	{
+		$server=''.$host.', '.$Puerto;
+		$connectionInfo = array("Database"=>$base, "UID" => $user,"PWD" => $pass,"CharacterSet" => "UTF-8");
+	  $cid = sqlsrv_connect($server, $connectionInfo); //returns false
+		if( $cid === false )
+		{
+			echo 'no se pudo conectar a la base de datos';
+			die( print_r( sqlsrv_errors(), true));
+		}
+	    $stmt = sqlsrv_query($cid, $sql);
+	   if(!$stmt)
+	   {
+		   die( print_r( sqlsrv_errors(), true));
+		   sqlsrv_close($cid);
+			return -1;
+	   }
+
+	   sqlsrv_close($cid);
+	   return 1;
 	
 	}
 

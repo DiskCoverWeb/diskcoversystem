@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<liquidacionCompra id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>2</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>MILCAMBIOS S.A.</razonSocial>
+    <nombreComercial>MILCAMBIOS S.A.</nombreComercial>
+    <ruc>1792385407001</ruc>
+    <claveAcceso>0308202203179238540700120010020000006811234567815</claveAcceso>
+    <codDoc>03</codDoc>
+    <estab>001</estab>
+    <ptoEmi>002</ptoEmi>
+    <secuencial>000000681</secuencial>
+    <dirMatriz>AV. AMAZONAS N2387 Y WILSON</dirMatriz>
+  </infoTributaria>
+  <infoLiquidacionCompra>
+    <fechaEmision>03/08/2022</fechaEmision>
+    <dirEstablecimiento>AV. AMAZONAS N2387 Y WILSON</dirEstablecimiento>
+    <obligadoContabilidad>SI</obligadoContabilidad>
+    <tipoIdentificacionProveedor>04</tipoIdentificacionProveedor>
+    <razonSocialProveedor>VACA PRIETO WALTER VACA</razonSocialProveedor>
+    <identificacionProveedor>0702164179001</identificacionProveedor>
+    <totalSinImpuestos>1.00</totalSinImpuestos>
+    <totalDescuento>0</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0</descuentoAdicional>
+        <baseImponible>1</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <importeTotal>1</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>1</total>
+      </pago>
+    </pagos>
+  </infoLiquidacionCompra>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>03.02.11</codigoPrincipal>
+      <descripcion>Compra Dolar Australiano</descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.5400</cantidad>
+      <precioUnitario>0.649984</precioUnitario>
+      <descuento>0</descuento>
+      <precioTotalSinImpuesto>1</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
+          <baseImponible>1</baseImponible>
+          <valor>0</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">ATACAMES N23226 Y AV. L GASCA</campoAdicional>
+    <campoAdicional nombre="Telefono">023210051</campoAdicional>
+    <campoAdicional nombre="Email">prisma_net@hotmail.es</campoAdicional>
+  </infoAdicional>
+</liquidacionCompra>

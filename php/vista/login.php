@@ -27,14 +27,14 @@
 	  $(document).ready(function(){
 
 	  });
-	 function validar_entidad()
-  { 
 
+	function validar_entidad()
+  { 
 		 var entidad = $("#entidad").val();
 
      $.ajax({
       data:  {'entidad':entidad},
-      url:   '../controlador/login_controller.php?Entidad=true&pantalla='+screen.height,
+      url:   '../controlador/login_controller.php?Cartera_Entidad=true&pantalla='+screen.height,
       type:  'post',
       dataType: 'json',
       /*beforeSend: function () {   
@@ -42,13 +42,21 @@
          $('#tabla_').html(spiner);
       },*/
         success:  function (response) { 
-        	// console.log(response);
+        console.log(response);
         if(response.respuesta == 1)
         {
         	$('#alerta').css('display','block');
-        	$('#correo').val('');
-					$('#contra').val('');
-        	$('#alerta').html(response.Nombre);
+        	if(response.Nombre == response.Razon_Social)
+					{
+        		$('#alerta').html(response.Nombre);
+        	}else
+        	{
+        		$('#alerta').html(response.Razon_Social+'<br>'+response.Nombre);   
+        		$('#alerta').css('font-size','10px');        		
+        	}
+        	$('#img_logo').attr('src',response.Logo);
+        	$('#img_logo').css('width','35%');
+        	$('#img_logo').css('border-radius','5px');
         	$('#res').val(response.entidad);
         	$('#txt_cartera').val('0');
         
@@ -101,11 +109,35 @@
         	// console.log(response);
         if(response.respuesta == -1)
         {
-        	Swal.fire('Este usuario no esta registrado O no pertenece a la entidad!','No se a encontrado al usuario.','error');
+        	// Swal.fire({
+         //     title: 'Este usuario no esta registrado como usuario del sistema!',
+         //     text: "Desea revisar en cartera de clientes!",
+         //     type: 'warning',
+         //     showCancelButton: true,
+         //     confirmButtonColor: '#3085d6',
+         //     cancelButtonColor: '#d33',
+         //     confirmButtonText: 'Si!'
+         //   }).then((result) => {
+         //     if (result.value==true) {
+             	$('#txt_cartera').val('1');
+             	$('#correo_cartera').val(response.cartera_usu);
+							$('#contra_cartera').val(response.cartera_pass);
+       //       }else
+       //       {
+       //       	$('#txt_cartera').val('0');
+       //       	$('#correo_cartera').val('');
+							// $('#contra_cartera').val('');
+       //       }
+       //     })
 
+        	// Swal.fire('Este usuario no esta registrado O no pertenece a la entidad!','No se a encontrado al usuario.','info');
         }else if(response.respuesta==-2)
         {      	
+        	$('#txt_cartera').val('0');
         	Swal.fire('Este usuario se encuentra bloqueado!','Usuario bloqueado.','error');
+        }else if(response.respuesta==1)
+        {
+        	$('#txt_cartera').val('0');
         }     
       }
     });
@@ -200,7 +232,7 @@
 <body>
 	<div id="Contenedor" style="background:rgba(201, 223, 241,0.4);">
 		<div class="Icon">
-			<img src="../../img/jpg/logo.jpg" class="img-circle" alt="User Image" style="width: 20%; height:20%;">
+			<img src="../../img/jpg/logo.jpg" class="img-circle" alt="User Image" style="width: 20%; height:20%;" id="img_logo">
 		</div>
 		<div class="ContentForm">
 		   <form action="../controlador/login_controller.php" method="post" name="FormEntrar">
@@ -222,14 +254,24 @@
 	              <input type="password" name="contra" id="contra" class="form-control" placeholder="******" aria-describedby="sizing-addon1" required autocomplete="new-password">
 	         </div>					
 				</div>
+				<div id="form_cartera" style="display:none">
+					<div class="input-group input-group-lg" >
+	        	<span class="input-group-addon" id="sizing-addon1"><i class="glyphicon glyphicon-envelope"></i></span>
+	          <input type="text" class="form-control" name="correo_cartera" placeholder="Correo Electrónico/Usuario" id="correo_cartera" onblur="validar_usuario()">                 
+	        </div>  <br>        
+	         <div class="input-group input-group-lg" >
+	            <span class="input-group-addon" id="sizing-addon1"><i class="glyphicon glyphicon-lock"></i></span>
+	              <input type="password" name="contra_cartera" id="contra_cartera" class="form-control" placeholder="******" aria-describedby="sizing-addon1" required autocomplete="new-password">
+	         </div>							
+				</div>
 				
         <br>
          <button type="button" id="IngresoLog" name="submitlog"  class="btn btn-lg btn-primary btn-block btn-signin" onclick="/*Ingresar();*/Ingresar_vali()">Entrar</button>
 				 <!-- <input type="submit" name="submitlog" id='enviar' value="Entrar" class="btn btn-lg btn-primary btn-block btn-signin" id="IngresoLog" /> -->
          <div class="opcioncontra">
-				 	<a href="login_cartera.php">Cartera de Clientes</a>
-				 	<br>
-         	<a href="">Olvidaste tu contraseña?</a>
+				 	<!-- <a href="login_cartera.php">Cartera de Clientes</a> -->
+				 	<!-- <br> -->
+         	<a href="recuperar.php">Olvidaste tu contraseña?</a>
          </div>
        </form>
       </div>

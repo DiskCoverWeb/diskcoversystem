@@ -17,7 +17,7 @@ if(isset($_GET['guardarLineas']))
 
 if(isset($_GET['guardarFactura']))
 {
-  $controlador->guardarFactura();
+  echo json_encode($controlador->guardarFactura());
 }
 
 if(isset($_GET['ticketPDF']))
@@ -83,6 +83,12 @@ if(isset($_GET['buscar_facturas']))
   $datos = $controlador->buscar_facturas($parametros);
   echo json_encode($datos);
 }
+
+if(isset($_GET['autorizar_f']))
+{
+  $controlador->autorizar_fun();
+}
+
 
 
 class divisasC
@@ -228,7 +234,7 @@ class divisasC
     $TC = SinEspaciosIzq($_POST['DCLinea']);
     $serie = SinEspaciosDer($_POST['DCLinea']);
     //traer secuencial de catalogo lineas
-    $this->Grabar_FA($_POST,$TextFacturaNo);
+    return $this->Grabar_FA($_POST,$TextFacturaNo);
   }
 
 
@@ -359,15 +365,16 @@ class divisasC
 
     if (strlen($FA['Autorizacion']) == 13) {    
 
-       $resultado = $this->autorizar_sri->Autorizar($FA);
+       $resultado = $this->autorizar_sri->Autorizar_factura_o_liquidacion($FA);
     }else{
-      $resultado = array('respuesta'=>4);
+      $resultado = 4;
     }
-    echo json_encode($resultado);
+    return $resultado;
     
   }
 
   public function ticketPDF(){
+
     date_default_timezone_set('America/Guayaquil');
     $ci = $_GET['CI'];
     $serie = $_GET['serie'];
@@ -439,7 +446,7 @@ Email: ".$datos_pre['cliente']['Email']."
     }else
     {
 
-      $this->pdf->formatoPDFMatricial($html,$parametros,$datos_pre,$datos_empre,true);
+      $this->pdf->formatoPDFMatricial($html,$parametros,$datos_pre,$datos_empre,1);
       $archivos =array($datos_pre['lineas'][0]['Autorizacion'].'.pdf');
       $this->email->enviar_email($archivos,$datos_pre['cliente']['Email'],'Comprobante: '.$datos_pre['lineas'][0]['Autorizacion'],$titulo_correo='COMPROBANTE MIL CAMBIOS',$correo_apoyo='ejfc19omoshiroi@gmail.com',$nombre='mil cambios',$HTML=false);
 
@@ -488,6 +495,57 @@ Email: ".$datos_pre['cliente']['Email']."
   {
     $tbl = $this->modelo->lista_facturas($parametros['factura'],$parametros['query']);
     return $tbl;
+  }
+
+  function autorizar_fun()
+  {
+     // print_r('sdasd9');die();
+
+//      $clave_acceso = '0408202203070216417900110010020000000091234567816';
+
+// $firma = $this->autorizar_sri->firmar_documento(
+//                 $clave_acceso,
+//                 $_SESSION['INGRESO']['IDEntidad'],
+//                 $_SESSION['INGRESO']['item'],
+//                 $_SESSION['INGRESO']['Clave_Certificado'],
+//                 $_SESSION['INGRESO']['Ruta_Certificado']);
+
+
+//    $link_autorizacion = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl';
+
+
+// $validar_autorizado = $this->autorizar_sri->comprobar_xml_sri(
+//   $clave_acceso,
+//   $link_autorizacion);
+
+//   $link_recepcion = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl';
+//   $recibido = $this->autorizar_sri->enviar_xml_sri($clave_acceso,$link_recepcion);
+
+
+// $validar_autorizado = $this->autorizar_sri->comprobar_xml_sri(
+//   $clave_acceso,
+//   $link_autorizacion);
+
+   $d = $this->autorizar_sri->datos_rimpe();
+print_r($d);die();
+
+
+    //  $url_firmados = 'C:\xampp\htdocs\diskcoversystem\php\comprobantes/entidades/entidad_0/CE998/Firmados/';
+    //  $url_autorizados = 'C:\xampp\htdocs\diskcoversystem\php\comprobantes/entidades/entidad_0/CE998/Autorizados/';
+    //  $url_rechazados = 'C:\xampp\htdocs\diskcoversystem\php\comprobantes/entidades/entidad_0/CE998/No_autorizados/';
+    //  $url_No_autorizados = 'C:\xampp\htdocs\diskcoversystem\php\comprobantes/entidades/entidad_0/CE998/No_autorizados/';
+    //  $url_enviados = 'C:\xampp\htdocs\diskcoversystem\php\comprobantes/entidades/entidad_0/CE998/Enviados/';
+    //  $link_recepcion = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl';
+    //  $link_autorizacion = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl';
+
+    // $datos =  $this->autorizar_sri->comprobar_xml_sri($clave_acceso,$link_recepcion,$link_autorizacion,$url_firmados,$url_No_autorizados, $url_autorizados,$url_rechazados);
+    // // print_r($datos);die();
+
+    // // $datos =  $this->autorizar_sri->enviar_xml_sri($clave_acceso,$url_firmados,$url_enviados,$url_rechazados,$link_recepcion);
+
+    // print_r($firma);die();
+
+   
   }
         
 }

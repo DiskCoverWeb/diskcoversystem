@@ -153,24 +153,9 @@ class divisasM
   function datos_empresa(){
     // require_once("../../db/db.php");
     // $cid = Conectar::conexion('MYSQL');
-    $sql=" SELECT * 
-            FROM  micro_empresa  
-            WHERE  (RUC = '".$_SESSION['INGRESO']['RUC']."')";
-    $stmt = $this->db->datos($sql ,'MY SQL');
-    $micro_empresa = [];
-    foreach ($stmt as  $value) {
-      $micro_empresa = $value;
-    }
-    $sql=" SELECT * 
-            FROM  lista_agente_retencion  
-            WHERE  (RUC = '".$_SESSION['INGRESO']['RUC']."')";
-    $stmt = $this->db->datos($sql ,'MY SQL');
-    $agente_retencion = [];
-    foreach ($stmt as  $value) {
-      $agente_retencion = $value;
-    }
-    $datos_empresa = array('micro_empresa' =>$micro_empresa ,'agente_retencion' => $agente_retencion);
-    return $datos_empresa;
+    $sql = "SELECT * FROM lista_tipo_contribuyente WHERE RUC ='".$_SESSION['INGRESO']['RUC']."'";
+      // print_r($sql);die();
+    return $this->db->datos($sql,'MySQL');
   }
 
   public function limpiarGrid($cod=false){

@@ -35,7 +35,7 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
 	         $mail->SMTPAuth   = true; 
 	         $mail->Username = $_SESSION['INGRESO']['Email_Conexion'];
 	         $mail->Password =  $_SESSION['INGRESO']['Email_Contrasena'];
-	         if($_SESSION['INGRESO']['smtp_Secure']==0)
+	         if($_SESSION['INGRESO']['smtp_SSL']==0)
 	         {
 	           $mail->SMTPSecure = 'ssl';       
 	           $mail->Port     =465;
@@ -188,6 +188,7 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
 
   function enviar_credenciales($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$correo_apooyo,$nombre,$EMAIL_CONEXION,$EMAIL_CONTRASEÑA,$HTML=false,$empresaGeneral)
   {
+    
 
     // print_r($empresaGeneral)};die();
     //Instantiation and passing `true` enables exceptions
@@ -200,14 +201,17 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
         $mail->SMTPAuth   = true;           //Enable SMTP authentication
         $mail->Username   = $empresaGeneral[0]['Email_Conexion'];          //SMTP username
         $mail->Password   = $empresaGeneral[0]['Email_Contraseña'];                 //SMTP password
-        // $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
-        $mail->Port       = $empresaGeneral[0]['smtp_Puerto'];                                 //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
-        $mail->SMTPSecure = $empresaGeneral[0]['smtp_Secure'];
-        //$mail->SMTPSecure='STARTTLS';
-        //Recipients
+        if($empresaGeneral[0]['smtp_SSL']==1)
+           {
+             $mail->SMTPSecure = 'ssl';       
+             $mail->Port     =465;
+           }else
+           {                                 
+             $mail->SMTPSecure ='tls';      
+             $mail->Port     =587;          
+           }
+
         $mail->setFrom($empresaGeneral[0]['Email_Conexion'], 'DiskCover System');
-        $mail->addAddress('infosistema@diskcoversystem.com', 'Informacion DiskCover System');     //Add a recipient
-        //$mail->addAddress('jd-avalos@hotmail.com', 'Jonathan Avalos');     //Add a recipient
         $mail->addAddress($to_correo);     //Add a recipient
         $mail->addReplyTo($empresaGeneral[0]['Email_Conexion'], 'Informacion');
         //$mail->addCC('cc@example.com');
@@ -223,6 +227,8 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
         $mail->Body    = $cuerpo_correo;
         // print_r($mail);
         // die();
+
+        // print_r('host:'.$mail->Host.'//Username:'.$mail->Username.'//pass:'.$mail->Password.'//Puerto:'.$mail->Port.'//Secure:'.$mail->SMTPSecure);die();
 
         if($mail->send())
         {

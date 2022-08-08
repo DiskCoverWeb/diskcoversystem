@@ -42,7 +42,12 @@ if(isset($_GET['fac_emi']))
 }
 if(isset($_GET['imprimir_excel']))
 {
-  $controlador->exportar_Excel($_GET['codigo']);
+  $periodo = '';
+  if(isset($_GET['per']))
+  {
+    $perido = $_GET['per'];
+  }
+  $controlador->exportar_Excel($_GET['codigo'],$perido);
 
 }
 if(isset($_GET['imprimir_pdf']))
@@ -811,10 +816,10 @@ if (!file_exists('../../img/img_estudiantes/'.$datos[0]['Archivo_Foto']))
 
   }
 
-   function exportar_Excel($codigo)
+   function exportar_Excel($codigo,$perido)
   {
     $reporte_Excel = true;
-    $this->modelo->facturas_emitidas_excel($codigo,$reporte_Excel);
+    $this->modelo->facturas_emitidas_excel($codigo,$reporte_Excel,$perido);
   }
 
   function exportar_pdf($codigo)

@@ -19,12 +19,12 @@ $mail = new PHPMailer(true);
     $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
     $mail->Username   = 'infosistema@diskcoversystem.com';                     //SMTP username
     $mail->Password   = 'infoDlcjvl1210DiskCover';                               //SMTP password
-    $mail->SMTPSecure = 'tls';//PHPMailer::ENCRYPTION_STARTTLS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
-    $mail->Port       = 587;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+    $mail->SMTPSecure = 'ssl';//PHPMailer::ENCRYPTION_STARTTLS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+    $mail->Port       = 465;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 
     //Recipients
-    $mail->setFrom('from@example.com', 'Mailer');
-    $mail->addAddress('ejfc19omoshiroi@gmail.com');     //Add a recipient
+    $mail->setFrom('infosistema@diskcoversystem.com', 'Mailer');
+    $mail->addAddress('ejfc_omoshiroi@hotmail.com');     //Add a recipient
     // $mail->addAddress('ellen@example.com');               //Name is optional
     // $mail->addReplyTo('info@example.com', 'Information');
     // $mail->addCC('cc@example.com');

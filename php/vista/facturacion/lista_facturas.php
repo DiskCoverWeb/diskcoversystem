@@ -16,6 +16,7 @@
     if(cartera_usu!='')
     {
       buscar_cliente(cartera_usu);
+      periodos(cartera_usu);
       $('#txt_clave').val(cartera_pas);
       $('#ddl_cliente').attr('disabled',true);
       $('#ddl_grupo').attr('disabled',true);
@@ -27,6 +28,25 @@
   	autocmpletar_cliente();
   	
   });
+
+
+  function periodos(codigo){
+    var parametros = 
+    {
+      'codigo':codigo,
+    }
+    $.ajax({
+      type: "POST",      
+      dataType: 'json',
+      url: '../controlador/facturacion/lista_facturasC.php?perido=true',
+      data: {parametros:parametros }, 
+      success: function(data)
+      {
+        $('#ddl_periodo').html(data);
+      }
+    });
+  }
+
 
   function autocmpletar(){
       $('#ddl_grupo').select2({
@@ -91,9 +111,11 @@
    function cargar_registros()
    {
    
+    var per = $('#ddl_periodo').val();
     var parametros = 
     {
       'ci':$('#ddl_cliente').val(),
+      'per':per,
     }
      $.ajax({
        data:  {parametros:parametros},
@@ -134,7 +156,7 @@
     function generar_excel()
 	{		
 	  var cod = $('#ddl_cliente').val();
-	   var url = '../controlador/educativo/detalle_estudianteC.php?imprimir_excel=true&codigo='+cod;
+	   var url = '../controlador/educativo/detalle_estudianteC.php?imprimir_excel=true&codigo='+cod+'&per='+$('#ddl_periodo').val();
 	   window.open(url);
 
 	}
@@ -272,6 +294,12 @@
     				</select>
     				<!-- <input type="text" name="txt_grupo" id="txt_grupo" class="form-control input-sm"> -->
     			</div>
+          <div class="col-sm-2">
+            <b>Perido</b>
+            <select class="form-control input-xs" id="ddl_periodo" name="ddl_periodo">
+              <option value="">Seleccione perido</option>
+            </select>
+          </div>
     			<div class="col-sm-4">
     				<b>CI / RUC</b>
     				<select class="form-control input-xs" id="ddl_cliente" name="ddl_cliente">

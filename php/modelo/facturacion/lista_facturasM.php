@@ -8,9 +8,11 @@ include(dirname(__DIR__,3).'/lib/fpdf/reporte_de.php');
 class lista_facturasM
 {
 	private $conn;	
+	private $db;
 	function __construct()
 	{
 		$this->conn = cone_ajax();
+		$this->db = new db();
 	}
 
 	function ingresar_update($datos,$tabla,$campoWhere=false)
@@ -27,15 +29,24 @@ class lista_facturasM
 	}
 
  
-   function facturas_emitidas_excel($codigo,$reporte_Excel=false)
+   function facturas_emitidas_excel($codigo,$reporte_Excel=false,$periodo=false)
    {
    	$cid = $this->conn;
 		
 		$sql ="SELECT T,TC,Serie,Autorizacion,Factura,Fecha,SubTotal,Con_IVA,IVA,Descuento+Descuento2 as Descuentos,Total_MN as Total,Saldo_MN as Saldo,RUC_CI,TB,Razon_Social  FROM Facturas 
        WHERE CodigoC ='".$codigo."'
-      AND Item = '".$_SESSION['INGRESO']['item']."'
-       AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ORDER BY Fecha DESC"; 
-      
+      AND Item = '".$_SESSION['INGRESO']['item']."' ";
+       if($periodo && $periodo!='.')
+       {
+       	 $sql.=" AND Periodo BEETWEN '01/01/".$periodo."' AND '31/12".$periodo."'";
+       }else
+       {
+       	$sql.=" AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";
+       }
+
+       $sql.="ORDER BY Fecha DESC"; 
+
+      // print_r($sql);die();
 
        $stmt = sqlsrv_query($cid, $sql);
 	   if( $stmt === false)  
@@ -63,7 +74,18 @@ class lista_facturasM
 
    }
 
-    function facturas_emitidas_tabla($codigo)
+   function facturas_perido($codigo)
+   {
+   	    $sql="SELECT Periodo
+			FROM  Facturas
+			WHERE CodigoC = '".$codigo."'
+			GROUP BY Periodo
+			ORDER BY Periodo";
+			return $this->db->datos($sql);
+
+   }
+
+    function facturas_emitidas_tabla($codigo,$periodo=false)
    {
    	$cid = $this->conn;
 		
@@ -71,8 +93,18 @@ class lista_facturasM
 		FROM Facturas 
 		WHERE CodigoC ='".$codigo."' 
 		 AND CodigoC <> ''
-		AND Item = '".$_SESSION['INGRESO']['item']."'
-		AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ORDER BY Fecha DESC"; 
+		AND Item = '".$_SESSION['INGRESO']['item']."'";
+       if($periodo && $periodo!='.')
+       {
+       	 $sql.= " AND Periodo BETWEEN '01/01/".$periodo."' AND '31/12/".$periodo."'";
+       }else
+       {
+       	 $SQL.=" AND Periodo =  '".$_SESSION['INGRESO']['periodo']."'";
+       }
+
+       $sql.="ORDER BY Fecha DESC"; 
+
+      // print_r($sql);die();
 		  $stmt = sqlsrv_query($cid, $sql);
 	   if( $stmt === false)  
 	   {  

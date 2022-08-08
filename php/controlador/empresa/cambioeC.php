@@ -51,6 +51,12 @@ if(isset($_GET['guardar_masivo']))
 	echo json_encode($controlador->guardar_masivo($parametros));
 }
 
+if(isset($_GET['asignar_clave']))
+{
+	$parametros = $_POST;
+	echo json_encode($controlador->asignar_clave($parametros));
+}
+
 class cambioeC 
 {
 	private $modelo;
@@ -253,6 +259,12 @@ class cambioeC
 	{
 		return $this->modelo->guardar_masivo($parametros);
 
+	}
+
+	function asignar_clave($parametros)
+	{
+		// print_r($parametros);die();
+		return $this->modelo->asignar_clave($parametros);
 	}
 
 }

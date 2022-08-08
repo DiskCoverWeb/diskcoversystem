@@ -235,14 +235,14 @@ class cabecera_pdf
 		$pdf->Cell(0,0,'Fecha: '.date('Y-m-d').' - Hora: '.date('H:m:s'));
 		$pdf->Ln(5);
 		$pdf->Cell(0,0,'Cliente: '.$datos_pre['cliente']['Cliente']);
-		if (count($datos_empresa['micro_empresa']) && $datos_empresa['micro_empresa']['A2021'] == 'X') {
+		if ($datos_empresa[0]['Micro_2021']== '1') {
 			$pdf->Ln(5);
 			$pdf->Cell(0,0,'MICROEMPRESA');
 		}
-		if (count($datos_empresa['agente_retencion'])) 
-			{
+		if ($datos_empresa[0]['Agente_Retencion']!='.') 
+		{
 			$pdf->Ln(5);
-			$pdf->Cell(0,0,utf8_encode('Agente Retención: '.$datos_empresa['agente_retencion']['RESOLUCION']) );
+			$pdf->Cell(0,0,utf8_encode('Agente Retención: '.$datos_empresa[0]['agente_retencion']));
 		}		
 		$pdf->Ln(5);
 		$pdf->Cell(0,0,'R.U.C/C.I.: '.$datos_pre['cliente']['CI_RUC']);
@@ -296,7 +296,7 @@ class cabecera_pdf
 
 		if($descagar)
 		{
-			$pdf->Output('F',dirname(__DIR__,2).'/php/vista/TEMP/'.$datos_pre['lineas'][0]['Autorizacion'].'.pdf');
+			$pdf->Output('F',dirname(__DIR__,2).'/TEMP/'.$datos_pre['lineas'][0]['Autorizacion'].'.pdf');
 		}else
 		{
      		$pdf->Output();

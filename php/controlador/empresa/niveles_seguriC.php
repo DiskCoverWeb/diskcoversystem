@@ -77,6 +77,12 @@ if(isset($_GET['enviar_email']))
 	echo json_encode($controlador->enviar_email($parametros));
 	// echo json_encode($controlador->usuario_empresa($parametros['entidad'],$parametros['usuario']));
 }
+if(isset($_GET['confirmar_enviar_email']))
+{
+	$parametros=$_POST['parametros'];
+	echo json_encode($controlador->confirmar_enviar_email($parametros));
+	// echo json_encode($controlador->usuario_empresa($parametros['entidad'],$parametros['usuario']));
+}
 
 if(isset($_GET['enviar_email_masivo']))
 {
@@ -95,7 +101,7 @@ class niveles_seguriC
 		$this->modelo = new niveles_seguriM();	
 		$this->email = new enviar_emails();	
 		//$this->modeloFac = new lista_facturasM();
-		$this->empresaGeneral = $this->modelo->Empresa_data();
+		// $this->empresaGeneral = $this->modelo->Empresa_data();
 	}
 	function entidades($valor)
 	{
@@ -407,7 +413,7 @@ class niveles_seguriC
 
   	function enviar_email($parametros)
   	{
-  		$empresaGeneral = array_map(array($this, 'encode1'), $this->empresaGeneral);
+  		$empresaGeneral = array_map(array($this, 'encode1'), $this->modelo->Empresa_data());
 	  	$this->modelo->actualizar_correo($parametros['email'],$parametros['CI_usuario']);
 	    $datos = $this->modelo->entidades_usuario($parametros['CI_usuario']);
 
@@ -491,9 +497,79 @@ Emails: recepcion@diskcoversystem.com o prisma_net@hotmail.es
 	  	// }
   	}
 
+  	function confirmar_enviar_email($parametros)
+  	{
+  		$empresaGeneral = array_map(array($this, 'encode1'), $this->modelo->Empresa_data());
+	  	$this->modelo->actualizar_correo($parametros['email'],$parametros['CI_usuario']);
+	    $datos = $this->modelo->entidades_usuario($parametros['CI_usuario']);
+
+	    // print_r($datos);die();
+
+	  	$email_conexion = 'info@diskcoversystem.com'; //$empresaGeneral[0]['Email_Conexion'];
+	    $email_pass =  'info2021DiskCover'; //$empresaGeneral[0]['Email_Contraseña'];
+	    // print_r($empresaGeneral[0]);die();
+	    //$Nombre_Usuario
+	  	$correo_apooyo="credenciales@diskcoversystem.com"; //correo que saldra ala do del emisor
+	  	$cuerpo_correo = '
+<pre>
+Este correo electronico fue generado automaticamente del Sistema Administrativo Financiero Contable DiskCover System a usted porque figura como correo electronico alternativo en nuestra base de datos.
+
+A solicitud de El(a) Sr(a) '.$parametros['usuario'].' se envian sus credenciales de acceso:
+</pre> 
+<br>
+<table>
+<tr><td><b>Link:</b></td><td>https://erp.diskcoversystem.com</td></tr>
+<tr><td><b>Nombre Usuario:</b></td><td>'.$datos[0]['Nombre_Usuario'].'</td></tr>
+<tr><td><b>Usuario:</b></td><td>'.$datos[0]['Usuario'].'</td></tr>
+<tr><td><b>Clave:</b></td><td>'.$datos[0]['Clave'].'</td></tr>
+<tr><td><b>Email:</b></td><td>'.$datos[0]['Email'].'</td></tr>
+</table>
+A este usuario se asigno las siguientes Entidades: 
+<br>
+<table>
+<tr><td width="30%"><b>Codigo</b></td><td width="50%"><b>Entidad</b></td></tr>
+';
+foreach ($datos as $value) {
+	$cuerpo_correo .= '<tr><td>'.$value['id'].'</td><td>'.$value['text'].'</td></tr>';
+}
+$cuerpo_correo.='</table><br>';
+$cuerpo_correo .= ' 
+<pre>
+Nosotros respetamos su privacidad y solamente se utiliza este correo electronico para mantenerlo informado sobre nuestras ofertas, promociones, claves de acceso y comunicados. No compartimos, publicamos o vendemos su informacion personal fuera de nuestra empresa.
+
+Esta direccion de correo electronico no admite respuestas. En caso de requerir atencion personalizada por parte de un asesor de servicio al cliente; Usted podra solicitar ayuda mediante los canales de atencion al cliente oficiales que detallamos a continuacion:
+
+Telefonos: (+593) 098-652-4396/099-965-4196/098-910-5300.
+Emails: recepcion@diskcoversystem.com o prisma_net@hotmail.es
+</pre>
+<table width="100%">
+<tr>
+ <td align="center">
+ <hr>
+    SERVIRLES ES NUESTRO COMPROMISO, DISFRUTARLO ES EL SUYO
+<hr>
+    </td>
+    </tr>
+    <tr>   
+ <td align="center">
+    www.diskcoversystem.com
+    </td>
+    </tr>
+     <tr>   
+ <td align="center">
+        QUITO - ECUADOR
+    </td>
+    </tr>
+  </table>
+';
+
+	  	return $cuerpo_correo;
+  	}
+
+
   	function enviar_email_masivo($parametros)
   	{
-  		$empresaGeneral = array_map(array($this, 'encode1'), $this->empresaGeneral);
+  		$empresaGeneral = array_map(array($this, 'encode1'), $this->modelo->Empresa_data());
 	  	$fallo = false;
 	    $usuarios = $this->modelo->entidades_usuarios($parametros['ruc']);
 

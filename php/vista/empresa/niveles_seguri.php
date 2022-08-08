@@ -676,8 +676,46 @@ function activo(id)
   }
 }
 
+
+function confirmar_email()
+{
+  var email  = $('#txt_email').val();
+  if(email == '.' || email =='')
+  {
+      Swal.fire('Campo de email vacio','','info');
+    return false;
+  }
+  var parametros = 
+  {
+    'nick':$('#txt_usuario').val(),
+    'clave':$('#txt_pass').val(),
+    'email':email,
+    'entidad':$('select[name="ddl_entidad"] option:selected').text(),
+    'ruc':$('#ddl_entidad').val(),
+    'usuario':$('select[name="ddl_usuarios"] option:selected').text(), 
+    'CI_usuario':$('#ddl_usuarios').val(),
+  }
+    $.ajax({
+        data:  {parametros:parametros},
+        url:   '../controlador/empresa/niveles_seguriC.php?confirmar_enviar_email=true',
+        type:  'post',
+        dataType: 'json',
+        // beforeSend: function () { 
+        //   $('#myModal_espera').modal('show'); 
+        // },
+        success:  function (response) { 
+          $('#mymodal_email').modal('show');
+          console.log(response);
+         
+           // $('#myModal_espera').modal('hide');
+        }
+      }); 
+
+}
+
 function enviar_email()
 {
+
   var email  = $('#txt_email').val();
   if(email == '.' || email =='')
   {
@@ -914,7 +952,7 @@ function DoubleScroll(element) {
       <div class="input-group">
         <input type="input" name="txt_email" class="form-control input-xs" id="txt_email"> 
         <div class="input-group-btn">
-          <button type="button" class="btn btn-primary btn-xs" onclick="enviar_email()"><span class="fa fa-send-o"></span> Enviar correo</button>
+          <button type="button" class="btn btn-primary btn-xs" onclick="confirmar_email()"><span class="fa fa-send-o"></span> Enviar correo</button>
         </div>
       </div> 
     </div>	
@@ -1037,6 +1075,8 @@ function DoubleScroll(element) {
 
   </div>
 </div>
+
+
 <div id="mymodal_user" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog">
     <!-- Modal content-->
@@ -1065,6 +1105,31 @@ function DoubleScroll(element) {
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         <!-- <button type="button" class="btn btn-success" onclick="usar_busqueda()">Usar</button> -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<div id="mymodal_email" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Enviar email</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-12" id="">
+                    
+            </div>
+        </div>        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-success" onclick="">Enviar</button>
       </div>
     </div>
 

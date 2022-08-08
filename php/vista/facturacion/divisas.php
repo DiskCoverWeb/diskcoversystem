@@ -252,6 +252,17 @@ function aceptar(){
       Swal.fire('Seleccione un cliente','','info');
       return false;
     }
+
+     DCLinea = $("#DCLinea").val();
+     tipoFactura = DCLinea.split(" ");
+     TextCI = $("#ci_ruc").val();
+    // console.log(tipoFactura[0]);
+    if (tipoFactura[0] == 'LC' && TextCI == '9999999999999') {
+      Swal.fire('En liquidación de compras no puede elegir consumidor final','','info');
+      return false;
+    }
+
+
     pvp = $("#preciounitario").val();
     total = $("#total").val();
     cantidad = $("#cantidad").val();
@@ -371,10 +382,11 @@ function aceptar(){
 
 
         Swal.fire({
-          title: 'Esta seguro?',
-          text: "Esta seguro que desea guardar \n La factura No."+TextFacturaNo,
+          title: 'Esta seguro? \n Esta seguro que desea guardar \n La factura No.'+TextFacturaNo,
+          text: "",
           type: 'warning',
           showCancelButton: true,
+          allowOutsideClick: false,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
           confirmButtonText: 'Si!'
@@ -386,6 +398,7 @@ function aceptar(){
             $.ajax({
             type: "POST",
             url: '../controlador/facturacion/divisasC.php?guardarFactura=true',
+            dataType: 'json',
             data: {
               'DCLinea' : DCLinea,
               'Total' : Total,
@@ -412,18 +425,7 @@ function aceptar(){
               
               $('#myModal_espera').modal('hide');
               cargar_grilla();
-              if (response) {
-
-                response = JSON.parse(response);
-                if(response.respuesta == '3')
-                {
-                  Swal.fire({
-                       type: 'error',
-                       title: 'Este documento electronico ya esta autorizado',
-                       text: ''
-                     });
-
-                  }else if(response.respuesta == '1')
+                if(response == '1')
                   {
                     limpiar_grid();
                      serie = DCLinea.split(" ");
@@ -432,24 +434,22 @@ function aceptar(){
                      var url = '../controlador/facturacion/divisasC.php?ticketPDF=true&fac='+TextFacturaNo+'&serie='+serie[1]+'&CI='+TextCI+'&TC='+serie[0]+'&efectivo='+efectivo+'&saldo='+cambio;
                      imprimir(url); 
 
-                    Swal.fire({
+                     Swal.fire({
                       type: 'success',
-                      title: 'Este documento electronico fue autorizado',
-                      text: ''
-                    }).then(() => {
-                                      
-                      // var url = '../controlador/facturacion/divisasC.php?ticketPDF=true&fac='+TextFacturaNo+'&serie='+serie[1]+'&CI='+TextCI+'&TC='+serie[0]+'&efectivo='+efectivo+'&saldo='+cambio;
-                      window.open(url,'_blank');                      
+                      title: 'Documento electronico autorizado',
+                      allowOutsideClick: false,
+                    }).then(function(){
+                     window.open(url,'_blank');                      
                       location.reload();
                       // imprimir_ticket_fac(0,TextCI,TextFacturaNo,serie[1]);
                     });
-                  }else if(response.respuesta == '2')
+                  }else if(response==2)
                   {
                     Swal.fire({
-                       type: 'info',
-                       title: 'XML devuelto',
-                       text: ''
-                     }).then(() => {
+                      type: 'info',
+                      title: 'XML devuelto',
+                      allowOutsideClick: false,
+                    }).then(() => {
                       serie = DCLinea.split(" ");
                       cambio = $("#cambio").val();
                       efectivo = $("#efectivo").val();
@@ -460,12 +460,12 @@ function aceptar(){
                     });
                     //descargar_archivos(response.url,response.ar);
 
-                  }else if(response.respuesta == '4')
+                  }else if(response == 4)
                   {
-                    Swal.fire({
+                     Swal.fire({
                       type: 'success',
-                      title: 'Factura guardada correctamente',
-                      text: ''
+                      title: 'Factura guardada',
+                      allowOutsideClick: false,
                     }).then(() => {
                       serie = DCLinea.split(" ");
                       cambio = $("#cambio").val();
@@ -479,19 +479,11 @@ function aceptar(){
                   else
                   {
                     Swal.fire({
-                       type: 'info',
-                       title: 'Error por: '+response,
-                       text: ''
-                     });
-
-                  }
-              }else{
-                Swal.fire({
-                  type: 'info',
-                  title: 'La factura ya se autorizo',
-                  text: ''
-                });
-              }
+                      type: 'error',
+                      title: 'XML NO AUTORIZADO',
+                      allowOutsideClick: false,
+                    })
+                  }              
             }
             });
           }
@@ -639,6 +631,26 @@ function aceptar(){
 
   }
 
+  function autorizar_f()
+  {
+    //  var parametros = 
+    // {
+    //   'factura':$('#txt_fac').val(),
+    //   'query':$('#txt_buscar').val(),
+    // }
+    $.ajax({
+      url:'../controlador/facturacion/divisasC.php?autorizar_f=true',
+      type:'post',
+      dataType:'json',
+      // data:{parametros:parametros},
+      success: function(response){
+        $('#tbl_fac').html(response);
+        // console.log(response);
+       }
+    });
+
+  }
+
   function Re_imprimir(fac,serie,ci,tc)
   {
  var url = '../controlador/facturacion/divisasC.php?ticketPDF=true&fac='+fac+'&serie='+serie+'&CI='+ci+'&TC='+tc+'&efectivo=0.0000&saldo=0.00&pdf=no';
@@ -750,6 +762,9 @@ function validador_correo()
               <a title="Buscar y re imprimir" class="btn btn-default" tabindex="23" onclick="modal_reimprimir()">
                 <img src="../../img/png/re_print.png" width="25" height="30">
               </a>
+             <!--  <a title="Buscar y re imprimir" class="btn btn-default" tabindex="23" onclick="autorizar_f()">
+                <img src="../../img/png/sri.png" width="25" height="30">
+              </a> -->
           </div>
         </div>
         <div class="row"><br>

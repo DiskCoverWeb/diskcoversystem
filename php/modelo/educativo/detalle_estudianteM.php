@@ -289,14 +289,23 @@ C.Telefono_R,Telefono_RS,Lugar_Trabajo_R,Email_R,Email_R,Matricula_No,Folio_No,C
 	   return $result;
    }
 
-   function facturas_emitidas_excel($codigo,$reporte_Excel=false)
+   function facturas_emitidas_excel($codigo,$reporte_Excel=false,$periodo=false)
    {
    	$cid = $this->conn;
 		
 		$sql ="SELECT T,TC,Serie,Autorizacion,Factura,Fecha,SubTotal,Con_IVA,IVA,Descuento+Descuento2 as Descuentos,Total_MN as Total,Saldo_MN as Saldo,RUC_CI,TB,Razon_Social  FROM Facturas 
        WHERE CodigoC ='".$codigo."'
-      AND Item = '".$_SESSION['INGRESO']['item']."'
-       AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ORDER BY Fecha DESC"; 
+      AND Item = '".$_SESSION['INGRESO']['item']."'";
+       if($periodo && $periodo!='.')
+       {
+       	 $sql.=" AND Periodo BETWEEN '01/01/".$periodo."' AND '31/12/".$periodo."'";
+       }else
+       {
+       	$sql.=" AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";
+       }
+       $sql.=" ORDER BY Fecha DESC"; 
+
+       // print_r($sql);die();
 
        $result = $this->conn->datos($sql);
       

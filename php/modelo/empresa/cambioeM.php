@@ -116,6 +116,13 @@ class cambioeM
 		return $this->db->String_Sql($sql,'MYSQL');
 	}
 
+	function asignar_clave($parametros)
+	{
+		$sql="Update Clientes set Clave = SUBSTRING(CI_RUC,1,10)where Codigo <> '.' and LEN(Clave)<=1";		
+		// print_r($parametros);die();
+		return $this->db->ejecutar_sql_terceros($sql,$parametros['Servidor'],$parametros['Usuario'],$parametros['Clave'],$parametros['Base'],$parametros['Puerto']);
+	}
+
 
 
 }

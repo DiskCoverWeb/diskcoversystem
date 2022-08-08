@@ -78,7 +78,6 @@
       }
     });
   }
-
   function secuenciales(){
     $('#myModal_espera').modal('show');
     TC = $("#TC").val();

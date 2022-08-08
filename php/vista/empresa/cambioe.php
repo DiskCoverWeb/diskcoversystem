@@ -272,6 +272,36 @@ function reporte()
 	window.open(url,'_blank');
 }
 
+function asignar_clave()
+{
+	if($('#entidad').val()==''){Swal.fire('Seleccione una entidad','','info');return false;}
+	// if($('#ciudad').val()==''){Swal.fire('Seleccione una Ciudad','','info');return false;}
+	if($('#empresas').val()==''){Swal.fire('Seleccione una empresa','','info');return false;}
+	var parametros = $('#form_empresa').serialize();
+	$.ajax({
+		type: "POST",
+		 url: '../controlador/empresa/cambioeC.php?asignar_clave=true',
+		data: parametros,
+		dataType:'json',
+		beforeSend: function () {	
+			 $('#myModal_espera').modal('show');
+		},
+		success: function(data)
+		{
+
+			$('#myModal_espera').modal('hide');
+			if(data==1)
+			{
+				Swal.fire('Credenciales de comprobantes electronicos Asignados.','','success');
+			}else
+			{
+				Swal.fire('Intente mas tarde','','error');
+			}		
+
+		}
+	});
+}
+
 </script>
 
   <div class="row">
@@ -299,9 +329,13 @@ function reporte()
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
             <button type="button" class="btn btn-default" title="Mostrar Vencimiento" onclick='mostrarEmpresa();'><img src="../../img/png/reporte_1.png"></button>
         </div>
+        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1" >
+             <button type="button" class="btn btn-default" title="Asignar credenciales de comprobanmtes electronicos" onclick='asignar_clave();'><img src="../../img/png/credencial_cliente.png"></button>
+        </div>
          <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1" id="reporte_excel" style="display:none">
             <a href="#" class="btn btn-default" title="Asignar reserva" id="reporte_exc" onclick="reporte()"><img img src="../../img/png/table_excel.png"></a>
         </div>
+         
  </div>
 </div>
 	<div class="row" id="form_vencimiento" style="display:none;">
@@ -359,7 +393,7 @@ function reporte()
 		<div class="col-sm-4">
 			<div class="form-group">
 				<label for="Entidad">Empresa</label>
-				<select class="form-control input-sm" name="empresas" id='empresas' onchange="datos_empresa()">
+				<select class="form-control input-xs" name="empresas" id='empresas' onchange="datos_empresa()">
 					<option value=''>Seleccione Empresa</option>
 				</select>
 			</div>			
@@ -367,7 +401,7 @@ function reporte()
 		<div class="col-sm-2">
 			<div class="form-group">
 				<label for="Entidad">CI / RUC </label>
-				<input type="text" class="form-control input-sm" name="ci_ruc" id="ci_ruc" readonly>
+				<input type="text" class="form-control input-xs" name="ci_ruc" id="ci_ruc" readonly>
 			</div>			
 		</div>
 	</div>
