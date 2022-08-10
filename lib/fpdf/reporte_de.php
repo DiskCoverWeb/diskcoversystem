@@ -2102,6 +2102,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 //
  function imprimirDocEle_fac($datos,$detalle,$educativo,$matri=null,$id=null,$formato=null,$nombre_archivo=null,$va=null,$imp1=null)
 {
+	// print_r($datos);die();
 	$pdf = new PDF('P','pt','LETTER');
 	$pdf->AliasNbPages('TPAG');
 	$pdf->SetTopMargin(5);
@@ -2109,22 +2110,19 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetRightMargin(20);
 	$pdf->AddPage();
 	$i=0;
-	/*if($va==1)
+	$agente = '';
+	$rimpe = '';
+	if(count($datos['Tipo_contribuyente'])>0)
 	{
-		$autorizacion = simplexml_load_file($nombre_archivo);
+		$agente = $datos['Tipo_contribuyente'][0]['Agente_Retencion'];
+		if($datos['Tipo_contribuyente'][0]['RIMPE_E']==1)
+		{
+			$rimpe = 'Regimen RIMPE Emprendedores';
+		}
 	}
-	else
-	{
-		$stmt = str_replace("ï»¿", "", $stmt);
-		$autorizacion =simplexml_load_string($stmt);
-	}
-		$atrib=$autorizacion->attributes();
-		
-		$resultado = str_replace("<![CDATA[", "", $autorizacion->comprobante);
-		$resultado = str_replace("]]>", "", $resultado);
-		
-		$pdf->SetFont('Arial','B',30);
-		*/
+	
+
+
 	$x=41;
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
@@ -2162,45 +2160,67 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->cabeceraHorizontal(array(' '),285,30,280,115,20,5);
 	$pdf->SetFont('Arial','B',12);
 	$pdf->SetXY(285, 35);
-	$pdf->SetWidths(array(70,140));
-	$arr=array('R.U.C.');//mio
+	$pdf->SetWidths(array(42,100));
+	$arr=array('R.U.C.',$_SESSION['INGRESO']['RUCEnt']);//mio
 	$pdf->Row($arr,10);
 	$pdf->SetXY(425, 35);
 	$pdf->SetWidths(array(140));
-	$arr=array( $_SESSION['INGRESO']['RUCEnt']);//mio
-	$pdf->Row($arr,10);
-	 //factura
-	$pdf->SetXY(285, 47);
+
+	if($rimpe!='')
+	{
+		$pdf->SetTextColor(225,51,51);
+		$pdf->SetFont('Arial','',7);
+		$arr=array($rimpe);//mio
+		$pdf->Row($arr,10);	
+	}
+// /-----------------------------------------------------------------------------
+	if($agente!='')
+	{
+		$pdf->SetTextColor(225,51,51);
+		$pdf->SetFont('Arial','',7);
+		$pdf->SetXY(285, 45);
+		$pdf->SetWidths(array(240));
+		$arr=array('Agente de Retención Resolución: '.$agente);
+		$pdf->Row($arr,10);
+	}
+// ----------------------------------------------------------------------------------
+
+	$pdf->SetTextColor(0,0,0);
+	$pdf->SetFont('Arial','',12);
+	$pdf->SetXY(285, 55);
 	$pdf->SetWidths(array(140));
 	$arr=array('Factura No.');
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',11);
-	$pdf->SetXY(425, 47);
+	$pdf->SetXY(425, 55);
+	$pdf->SetTextColor(225,51,51);
 	$pdf->SetWidths(array(140));
 	$ptoEmi = substr($datos[0]['Serie'],0,3);
 	$Serie = substr($datos[0]['Serie'],0,-3);
 	$arr=array($Serie.'-'.$ptoEmi.'-'.generaCeros($datos[0]['Factura'],$tam));//mio
 	$pdf->Row($arr,10);
+	$pdf->SetTextColor(0);
+
   // print_r($datos);
 	//fecha y hora
 	$pdf->SetFont('Arial','B',7);
-	$pdf->SetXY(285, 61);
+	$pdf->SetXY(285, 66);
 	$pdf->SetWidths(array(140));
 	$arr=array('FECHA Y HORA DE AUTORIZACIÓN:');
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
-	$pdf->SetXY(425, 61);
+	$pdf->SetXY(425, 66);
 	$pdf->SetWidths(array(140));
 	$arr=array($datos[0]['Fecha_Aut']->format('Y-m-d  h:m:s'));//mio
 	$pdf->Row($arr,10);
 	//emisión
 	$pdf->SetFont('Arial','B',7);
-	$pdf->SetXY(285, 73);
+	$pdf->SetXY(285, 74);
 	$pdf->SetWidths(array(140));
-	$arr=array(utf8_decode('EMISIÓN:'));
+	$arr=array('EMISIÓN:');
 	$pdf->Row($arr,13);
 	$pdf->SetFont('Arial','',7);
-	$pdf->SetXY(425, 73);
+	$pdf->SetXY(425, 74);
 	$pdf->SetWidths(array(140));
 	$arr=array('NORMAL:');
 	$pdf->Row($arr,10);
@@ -2414,7 +2434,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
      	 	$pdf->SetWidths(array(55,55,45,45,110,45,45,40,40,45));
 			$pdf->SetAligns(array("L","L","R","R","L","L","R","R","R","R"));
 			//$arr=array($arr1[$i]);
-			$arr=array($value['Codigo'],$value['CodigoU'],$value['Cantidad'],'',$value['Producto'],'',sprintf("%01.2f", $value['Precio']),$value['Total_Desc'],'',$value['Total']);
+			$arr=array($value['Codigo'],$value['CodigoU'],$value['Cantidad'],'',$value['Producto'],'',sprintf("%01.2f", $value['Precio']),$value['Total_Desc'],'', number_format($value['Total'],2,'.',''));
 			$pdf->Row($arr,10,1);    	
      }
    
@@ -2548,11 +2568,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$arr=array("SUBTOTAL ".$imp."%:");
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
-	$pdf->SetXY(545, ($y-9));
-	$pdf->SetWidths(array(55));
-	$pdf->SetAligns(array("R"));
+	$pdf->SetXY(528, ($y-9));
 	$formateado = sprintf("%01.2f", $bai);
-	$pdf->Cell(10,10,$formateado);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
 
 	$y=$y-10+11;//365
 	$pdf->SetFont('Arial','B',7);
@@ -2564,12 +2582,10 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$arr=array("SUBTOTAL 0%:");
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
-	$pdf->SetXY(545, ($y+1));
-	$pdf->SetWidths(array(55));
-	$pdf->SetAligns(array("R"));
+	$pdf->SetXY(528, ($y+1));
 	$arr=array(sprintf("%01.2f", $ba0));
 	$formateado = sprintf("%01.2f", $ba0);
-	$pdf->Cell(10,10,$formateado);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
  	//echo $formateado;
 	//str_pad($ba0, 2, '0', STR_PAD_RIGHT);
 	//exit();
@@ -2585,11 +2601,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$arr=array("TOTAL DESCUENTO:");
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
-	$pdf->SetXY(545, ($y+1));
-	$pdf->SetWidths(array(55));
-	$pdf->SetAligns(array("R"));
+	$pdf->SetXY(528, ($y+1));
 	$formateado = sprintf("%01.2f", $descu);
-	$pdf->Cell(10,10,$formateado);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
 	
 	$y=$y+11;//395
 	$pdf->SetFont('Arial','B',7);
@@ -2601,11 +2615,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$arr=array("SUBTOTAL NO OBJETO DE IVA:");
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
-	$pdf->SetXY(545, ($y+1));
-	$pdf->SetWidths(array(55));
-	$pdf->SetAligns(array("R"));
+	$pdf->SetXY(528, ($y+1));
 	$formateado = sprintf("%01.2f", "0.00");
-	$pdf->Cell(10,10,$formateado);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
 	
 	$y=$y+11;//410
 	$pdf->SetFont('Arial','B',7);
@@ -2617,11 +2629,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$arr=array("SUBTOTAL EXENTO DE IVA:");
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
-	$pdf->SetXY(545, ($y+1));
-	$pdf->SetWidths(array(55));
-	$pdf->SetAligns(array("R"));
+	$pdf->SetXY(528, ($y+1));
 	$formateado = sprintf("%01.2f", "0.00");
-	$pdf->Cell(10,10,$formateado);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
 	
 	$y=$y+11;//425
 	$pdf->SetFont('Arial','B',7);
@@ -2633,11 +2643,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$arr=array("SUBTOTAL SIN IMPUESTOS:");
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
-	$pdf->SetXY(545, ($y+1));
-	$pdf->SetWidths(array(55));
-	$pdf->SetAligns(array("R"));
+	$pdf->SetXY(528, ($y+1));
 	$formateado = sprintf("%01.2f", $ba0);
-	$pdf->Cell(10,10,$formateado);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
 	
 	$y=$y+11;//440
 	$pdf->SetFont('Arial','B',7);
@@ -2649,11 +2657,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$arr=array("ICE:");
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
-	$pdf->SetXY(545, ($y+1));
-	$pdf->SetWidths(array(55));
-	$pdf->SetAligns(array("R"));
+	$pdf->SetXY(528, ($y+1));
 	$formateado = sprintf("%01.2f", "0.00");
-	$pdf->Cell(10,10,$formateado);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
 	
 	$y=$y+11;//455
 	$pdf->SetFont('Arial','B',7);
@@ -2665,11 +2671,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$arr=array("IVA ".$imp."%:");
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
-	$pdf->SetXY(545, ($y+1));
-	$pdf->SetWidths(array(55));
-	$pdf->SetAligns(array("R"));
+	$pdf->SetXY(528, ($y+1));
 	$formateado = sprintf("%01.2f", $vimp1);
-	$pdf->Cell(10,10,$formateado);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
 	
 	$y=$y+11;//470
 	$pdf->SetFont('Arial','B',7);
@@ -2681,11 +2685,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$arr=array("IVA 0%:");
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
-	$pdf->SetXY(545, ($y+1));
-	$pdf->SetWidths(array(55));
-	$pdf->SetAligns(array("R"));
+	$pdf->SetXY(528, ($y+1));
 	$formateado = sprintf("%01.2f", $vimp1);
-	$pdf->Cell(10,10,$formateado);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
 	
 	$y=$y+11;//485
 	$pdf->SetFont('Arial','B',7);
@@ -2697,27 +2699,24 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$arr=array("PROPINA:");
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
-	$pdf->SetXY(545, ($y+1));
-	$pdf->SetWidths(array(55));
-	$pdf->SetAligns(array("R"));
+	$pdf->SetXY(528, ($y+1));
 	$formateado = sprintf("%01.2f", "0.00");
-	$pdf->Cell(10,10,$formateado);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
 	
 	$y=$y+11;//500
 	$pdf->SetFont('Arial','B',7);
 	$pdf->SetXY(365, $y);
 	$pdf->Cell(201,11,'','1',1,'Q');
 	$pdf->SetXY(365, ($y+1));
-	$pdf->SetWidths(array(170));
+	$pdf->SetWidths(array(165));
 	$pdf->SetAligns(array("L"));
 	$arr=array("VALOR TOTAL:");
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
-	$pdf->SetXY(545, ($y+1));
-	$pdf->SetWidths(array(55));
+	$pdf->SetXY(528, ($y+1));
 	$pdf->SetAligns(array("R"));
-	$formateado = sprintf("%01.2f", $datos[0]['Total_MN']);
-	$pdf->Cell(10,10,$formateado);
+	$formateado = sprintf("%01.2f",$datos[0]['Total_MN']);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
 	//echo ' ddd '.$imp1;
 	//die();*/
 	if($imp1==null or $imp1==1)

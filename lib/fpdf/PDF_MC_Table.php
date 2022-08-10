@@ -175,7 +175,11 @@ class PDF_MC_Table extends FPDF
 			    }
 			}else
 			{
-			  $this->SetTextColor(0,0,0);
+			  if($this->TextColor=='0 g' || $this->TextColor=='0.000 g')
+			  {
+			  	$this->SetTextColor(0,0,0);
+			  }
+				// print_r($this->TextColor); die();
 			}
 			if(strpos($data[$i],'<') === false)
 			{

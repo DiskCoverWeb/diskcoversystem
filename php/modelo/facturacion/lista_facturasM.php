@@ -99,7 +99,7 @@ class lista_facturasM
        	 $sql.= " AND Periodo BETWEEN '01/01/".$periodo."' AND '31/12/".$periodo."'";
        }else
        {
-       	 $SQL.=" AND Periodo =  '".$_SESSION['INGRESO']['periodo']."'";
+       	 $sql.=" AND Periodo =  '".$_SESSION['INGRESO']['periodo']."'";
        }
 
        $sql.="ORDER BY Fecha DESC"; 
@@ -142,52 +142,33 @@ class lista_facturasM
    	AND CodigoC='".$ci."' 
    	AND Item = '".$_SESSION['INGRESO']['item']."'
 	AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";
+	$datos_fac = $this->db->datos($sql);
 
    	$sql1="SELECT * 
    	FROM Detalle_Factura 
    	WHERE Factura = '".$cod."' 
    	AND CodigoC='".$ci."' 
    	AND Item = '".$_SESSION['INGRESO']['item']."'
-	AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";
+	AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";	
+	$detalle_fac = $this->db->datos($sql1);
 
-       $stmt = sqlsrv_query($cid, $sql);
-	   if( $stmt === false)  
-	   {  
-		 echo "Error en consulta PA.\n";  
-		 return '';
-		 die( print_r( sqlsrv_errors(), true));  
-	   }
-// print_r($sql1);die();
-	   $datos_fac = array();	
-	   while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
-	   {
-		$datos_fac[] = $row;
-		//echo $row[0];
-	   }
-	     $stmt1 = sqlsrv_query($cid, $sql1);
-	   if( $stmt === false)  
-	   {  
-		 echo "Error en consulta PA.\n";  
-		 return '';
-		 die( print_r( sqlsrv_errors(), true));  
-	   }
+	$sql2 = "SELECT * FROM lista_tipo_contribuyente WHERE RUC = '".$_SESSION['INGRESO']['RUC']."'";
+	$tipo_con = $this->db->datos($sql2, 'MYSQL');
+	if(count($datos_fac)>0 && count($tipo_con)>0)
+	{
+		$datos_fac['Tipo_contribuyente'] = $tipo_con;
+	}
+	// array_push($datos_fac, $tipo_con);
 
-	   $detalle_fac = array();	
-	   while( $row1 = sqlsrv_fetch_array($stmt1, SQLSRV_FETCH_ASSOC) ) 
-	   {
-		$detalle_fac[] = $row1;
-		//echo $row[0];
-	   }
-        $datos_cli_edu=$this->cliente_matri($ci);
 
+    $datos_cli_edu=$this->cliente_matri($ci);
 	   if($datos_cli_edu != '' && !empty($datos_cli_edu))
 	   {
-	   		 imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,'matr',$id,null,'factura',null,null);
+	   		imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,'matr',$id,null,'factura',null,null);
 	   }else
 	   {
-
-        $datos_cli_edu=$this->Cliente($ci);
-        imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$id,null,'factura',null,null);
+		    $datos_cli_edu=$this->Cliente($ci);
+		    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$id,null,'factura',null,null);
 	   }
 
    }
