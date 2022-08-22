@@ -168,7 +168,7 @@ class punto_ventaC
 
 	function IngresarAsientoF($parametros)
 	{
-		$TextVUnit = $parametros['TextVUnit'];
+		 $TextVUnit = $parametros['TextVUnit'];
 	    $TextCant = $parametros['TextCant'];
 	    $TipoFactura = $parametros['TC'];
 	    $TxtDocumentos = $parametros['TxtDocumentos'];
@@ -244,6 +244,11 @@ class punto_ventaC
 		         }else{		         
 		//          print_r($articulo);
 		// die();	
+		         	if(isset($parametros['Producto']))
+		         	{
+		         		// esto se usa en facturacion_elec al cambiar el nombre
+		         		$articulo['Producto'] = $parametros['Producto'];
+		         	}
 
 		            $datos[0]['campo'] = "CODIGO"; 
 		            $datos[0]['dato']  = $articulo['Codigo_Inv'];

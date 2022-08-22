@@ -179,6 +179,10 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("facturacion/punto_venta.php");
 			}
+			if ($_SESSION['INGRESO']['accion']=='factura_elec') 
+			{
+				require_once("facturacion/facturacion_elec.php");
+			}
 			if ($_SESSION['INGRESO']['accion']=='catalogoPro') 
 			{
 				require_once("inventario/catalogo_producto.php");
