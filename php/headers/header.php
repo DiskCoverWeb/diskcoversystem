@@ -93,6 +93,8 @@ include('../controlador/contabilidad/contabilidad_controller.php');
   <link rel="stylesheet" href="../../bower_components/Ionicons/css/ionicons.min.css">
 
   <link rel="stylesheet" href="../../bower_components/select2/dist/css/select2.min.css">
+  
+  <link rel="shortcut icon" href="../../img/jpg/logo.jpg" />
   <!-- Theme style -->
   <link rel="stylesheet" href="../../dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
