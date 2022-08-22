@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<liquidacionCompra id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
+    <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
+    <ruc>0702164179001</ruc>
+    <claveAcceso>0408202203070216417900110010020000000131234567818</claveAcceso>
+    <codDoc>03</codDoc>
+    <estab>001</estab>
+    <ptoEmi>002</ptoEmi>
+    <secuencial>000000013</secuencial>
+    <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
+    <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
+  </infoTributaria>
+  <infoLiquidacionCompra>
+    <fechaEmision>04/08/2022</fechaEmision>
+    <dirEstablecimiento>Desarrollo para programacion de DiskCover System</dirEstablecimiento>
+    <obligadoContabilidad>SI</obligadoContabilidad>
+    <tipoIdentificacionProveedor>06</tipoIdentificacionProveedor>
+    <razonSocialProveedor>ATANCURI MERCHAN MARIO LUIS</razonSocialProveedor>
+    <identificacionProveedor>0951946268</identificacionProveedor>
+    <totalSinImpuestos>1.00</totalSinImpuestos>
+    <totalDescuento>0</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0</descuentoAdicional>
+        <baseImponible>1</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <importeTotal>1</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>1</total>
+      </pago>
+    </pagos>
+  </infoLiquidacionCompra>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>03.02.01</codigoPrincipal>
+      <descripcion>Compra Euro</descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>.8700</cantidad>
+      <precioUnitario>1.15</precioUnitario>
+      <descuento>0</descuento>
+      <precioTotalSinImpuesto>1</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
+          <baseImponible>1</baseImponible>
+          <valor>0</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">URB TOTTORI MZ569 V20</campoAdicional>
+    <campoAdicional nombre="Telefono">2017038</campoAdicional>
+    <campoAdicional nombre="Email">luis_maria28@outlook.com</campoAdicional>
+  </infoAdicional>
+</liquidacionCompra>
