@@ -4,7 +4,7 @@
   <div class="row">
     <div class="col-lg-6 col-sm-10 col-md-6 col-xs-12">
        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-            <a  href="./farmacia.php?mod=Farmacia#" title="Salir de modulo" class="btn btn-default">
+            <a  href="./farmacia.php?mod=28" title="Salir de modulo" class="btn btn-default">
               <img src="../../img/png/salire.png">
             </a>
         </div>

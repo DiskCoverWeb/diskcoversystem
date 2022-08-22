@@ -349,6 +349,7 @@ class punto_ventaC
 	        $FA['Cta_CxP'] = $datos[0]['CxC'];
 	        $FA['Autorizacion'] = $datos[0]['Autorizacion'];
 	        $FA['FechaTexto'] = $FechaTexto;
+	        $FA['Fecha'] = $FechaTexto;
 	        $FA['Total'] = $FA['Total_MN'];
 	        $FA['Total_Abonos'] = 0;
 	        $FA['TextBanco'] = $parametros['TextBanco'];
@@ -496,7 +497,7 @@ function ProcGrabar($FA)
      	// print_r('drrrrddd');die();
         if($FA['TC'] <> "DO"){
         	//la respuesta puede se texto si envia numero significa que todo saliobien
-        	$rep =  $this->sri->Autorizar($FA); 
+        	$rep =  $this->sri->Autorizar_factura_o_liquidacion($FA);
 
         	// print_r($rep);die();
            // SRI_Crear_Clave_Acceso_Facturas($FA,true); 
@@ -506,7 +507,7 @@ function ProcGrabar($FA)
            $TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
            $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
            $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
-           if(is_array($rep))
+           if($rep==1)
            {
            		return array('respuesta'=>$rep,'pdf'=>$imp);
            }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep);}
@@ -521,8 +522,8 @@ function ProcGrabar($FA)
         	 $TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
            $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
            $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
-           $rep = array('respuesta'=>1);
-           if(is_array($rep))
+           $rep = 1;
+           if($rep==1)
            {
            		return array('respuesta'=>$rep,'pdf'=>$imp);
            }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep);}

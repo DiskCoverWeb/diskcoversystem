@@ -83,6 +83,7 @@ class autorizacion_sri
 	    	$cabecera['pto_e']=substr($parametros['serie'],3,5); 	    
 	    }else if(isset($parametros['Serie']))
 	    {	    	
+	    	$parametros['serie'] = $parametros['Serie'];
 	    	$cabecera['serie']=$parametros['Serie'];
 	    	$cabecera['esta']=substr($parametros['Serie'],0,3); 
 	   		$cabecera['pto_e']=substr($parametros['Serie'],3,5); 	    

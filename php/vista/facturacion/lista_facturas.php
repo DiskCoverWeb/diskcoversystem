@@ -42,7 +42,10 @@
       data: {parametros:parametros }, 
       success: function(data)
       {
-        $('#ddl_periodo').html(data);
+        if(data!='')
+        {
+          $('#ddl_periodo').html(data);
+        }
       }
     });
   }
@@ -77,7 +80,7 @@
           url: '../controlador/facturacion/lista_facturasC.php?clientes=true&g='+g,
           dataType: 'json',
           delay: 250,
-          processResults: function (data) {
+          processResults: function (data) {           
             return {
               results: data
             };
@@ -97,6 +100,13 @@
       dataType: 'json',
        success:  function (response) { 
         console.log(response);
+           if(response.length==0)
+            {
+              Swal.fire('Cliente no apto para facturar <br> Asegurese que el cliente este asignado a facturacion','asegurece que FA = 1','info').then(function()
+                {
+                  location.href = '../vista/modulos.php';
+                });
+            }
           $('#ddl_cliente').append($('<option>',{value: response[0].id, text:response[0].text,selected: true }));
           $('#lbl_cliente').text(response[0].data.Cliente);
           $('#lbl_ci_ruc').text(response[0].data.CI_RUC);
@@ -133,7 +143,8 @@
 
    	function Ver_factura(id,serie,ci)
 	{		 
-		var url = '../controlador/facturacion/lista_facturasC.php?ver_fac=true&codigo='+id+'&ser='+serie+'&ci='+ci;		
+    peri = $('#ddl_periodo').val();
+		var url = '../controlador/facturacion/lista_facturasC.php?ver_fac=true&codigo='+id+'&ser='+serie+'&ci='+ci+'&per='+peri;		
 		window.open(url,'_blank');
 	}
 
@@ -295,9 +306,9 @@
     				<!-- <input type="text" name="txt_grupo" id="txt_grupo" class="form-control input-sm"> -->
     			</div>
           <div class="col-sm-2">
-            <b>Perido</b>
+            <b>Periodo</b>
             <select class="form-control input-xs" id="ddl_periodo" name="ddl_periodo">
-              <option value="">Seleccione perido</option>
+              <option value=".">Seleccione perido</option>
             </select>
           </div>
     			<div class="col-sm-4">

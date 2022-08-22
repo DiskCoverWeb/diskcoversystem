@@ -400,7 +400,8 @@
           if(ped==-1)
           {
             num_ped = $('#txt_pedido').val();
-            var url="../vista/farmacia.php?mod=Farmacia&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+num_ped+"&cod="+num_his+"#";
+            mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
+            var url="../vista/farmacia.php?mod="+mod+"&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+num_ped+"&cod="+num_his+"#";
             $(location).attr('href',url);
           }else
           {
@@ -713,24 +714,25 @@
             denyButtonText: `Don't save`,
           }).then((result) => {
 
-
+              var  mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
               if (result.isConfirmed) {
+
                 if(reg==0)
                 {
-                var url="../vista/farmacia.php?mod=Farmacia&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+orden+"&cod="+his+"#";
+                var url="../vista/farmacia.php?mod="+mod+"&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+orden+"&cod="+his+"#";
                 }else
                 {
-                  var url="../vista/farmacia.php?mod=Farmacia&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+orden+"&cod="+his+"#";
+                  var url="../vista/farmacia.php?mod="+mod+"&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+orden+"&cod="+his+"#";
                 }
                 $(location).attr('href',url);             
                   } else
                   {
                     if(reg==0)
                 {
-                 var url="../vista/farmacia.php?mod=Farmacia&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&cod="+his+"#";
+                 var url="../vista/farmacia.php?mod="+mod+"&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&cod="+his+"#";
                 }else
                 {
-                  var url="../vista/farmacia.php?mod=Farmacia&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+orden+"&cod="+his+"#";
+                  var url="../vista/farmacia.php?mod="+mod+"&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+orden+"&cod="+his+"#";
                 }
                 
                    
@@ -874,7 +876,7 @@
   <div class="row">
     <div class="col-lg-8 col-sm-10 col-md-6 col-xs-12">
        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-            <a  href="./farmacia.php?mod=Farmacia#" title="Salir de modulo" class="btn btn-default">
+            <a  href="./farmacia.php?mod=28" title="Salir de modulo" class="btn btn-default">
               <img src="../../img/png/salire.png">
             </a>
         </div>
@@ -884,17 +886,17 @@
           </button>
         </div>  -->
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-          <a href="./farmacia.php?mod=Farmacia&acc=pacientes&acc1=Visualizar%20paciente&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_pdf" title="Pacientes">
+          <a href="./farmacia.php?mod=28&acc=pacientes&acc1=Visualizar%20paciente&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_pdf" title="Pacientes">
             <img src="../../img/png/pacientes.png">
           </a>           
         </div>
        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-          <a href="./farmacia.php?mod=Farmacia&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_excel" title="Descargos">
+          <a href="./farmacia.php?mod=28&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_excel" title="Descargos">
             <img src="../../img/png/descargos.png">
           </a>         
         </div>        
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-          <a href="./farmacia.php?mod=Farmacia&acc=articulos&acc1=Visualizar%20articulos&b=1&po=subcu#" title="Ingresar Articulos"  class="btn btn-default" onclick="">
+          <a href="./farmacia.php?mod=28&acc=articulos&acc1=Visualizar%20articulos&b=1&po=subcu#" title="Ingresar Articulos"  class="btn btn-default" onclick="">
             <img src="../../img/png/articulos.png" >
           </a>
         </div> 

@@ -88,10 +88,12 @@ class niveles_seguriM
 		$sql="SELECT  ID,Empresa,Item,IP_VPN_RUTA,Base_Datos,Usuario_DB,Contrasena_DB,Tipo_Base,Puerto  FROM lista_empresas WHERE ID_empresa = ".$entidad." AND Item <> '".G_NINGUNO."' ORDER BY Empresa";
 		// print_r($sql);die();
 		$resp = $this->db->datos($sql,'MY SQL');
-		  $datos=[];
+		  $datos=array();
 		foreach ($resp as $key => $value) {
+			$server = 1;
+			if($value['IP_VPN_RUTA']=='.'){	$server = 0;}
 				//$datos[]=['id'=>utf8_encode($filas['Item']),'text'=>utf8_encode($filas['Empresa'])];
-				$datos[]=['id'=>$value['Item'],'text'=>$value['Empresa']];			
+				$datos[]=array('id'=>$value['Item'],'text'=>$value['Empresa'],'dbSQLSERVER'=>$server);			
 		 }
 	      return $datos;
 	}
@@ -275,7 +277,8 @@ class niveles_seguriM
 		 	     $cid2 = $this->db->modulos_sql_server($value['IP_VPN_RUTA'],$value['Usuario_DB'],$value['Contrasena_DB'],$value['Base_Datos'],$value['Puerto']);
 
 		 	     // print_r($value['IP_VPN_RUTA'].'-'.$value['Usuario_DB'].'-'.$value['Contrasena_DB'].'-'.$value['Base_Datos'].'-'.$value['Puerto']);die();
-
+		 	     if($cid2!=-1)
+		 	     {
 
 		 	     $sql = "INSERT INTO Clientes(T,FA,Codigo,Fecha,Cliente,TD,CI_RUC,FactM,Descuento,RISE,Especial)VALUES('N',0,'".$parametros['ced']."','".date('Y-m-d')."','".$parametros['nom']."','C','".$parametros['ced']."',0,0,0,0);";
 		 	     $sql.="INSERT INTO Accesos (TODOS,Clave,Usuario,Codigo,Nombre_Completo,Nivel_1,Nivel_2,Nivel_3,Nivel_4,Nivel_5,Nivel_6,Nivel_7,Supervisor,EmailUsuario) VALUES (1,'".$parametros['cla']."','".$parametros['usu']."','".$parametros['ced']."','".$parametros['nom']."','".$parametros['n1']."','".$parametros['n2']."','".$parametros['n3']."','".$parametros['n4']."','".$parametros['n5']."','".$parametros['n6']."','".$parametros['n7']."','".$parametros['super']."','".$parametros['email']."')";
@@ -295,6 +298,7 @@ class niveles_seguriM
 	            	    cerrarSQLSERVERFUN($cid2);
 	            	    $insertado = true;
 	                }     
+	            }
 	        }     
 		 }
 		 if($insertado == true)
@@ -311,7 +315,7 @@ class niveles_seguriM
 	function existe_en_SQLSERVER($parametros)
 	{
         $registrado = true;
-		$sql= "SELECT DISTINCT Base_Datos,Usuario_DB,Contrasena_DB,IP_VPN_RUTA,Tipo_Base,Puerto  FROM lista_empresas WHERE ID_Empresa = '".$parametros['entidad']."' AND Base_Datos <>'.'";
+		$sql= "SELECT DISTINCT Base_Datos,Usuario_DB,Contrasena_DB,IP_VPN_RUTA,Tipo_Base,Puerto,Empresa  FROM lista_empresas WHERE ID_Empresa = '".$parametros['entidad']."' AND Base_Datos <>'.'";
 		 // if($cid)
 		 // {
 		 // 	$consulta=$cid->query($sql) or die($cid->error);
@@ -321,8 +325,9 @@ class niveles_seguriM
 			// }
 		 // }
 		$datos = $this->db->datos($sql,'MY SQL');
-		 $insertado = false;
+		 $insertado = -1;
 		// print_r($datos);die();
+		 $mensaje = '';
 		 foreach ($datos as $key => $value) {
 		 	if($value['Usuario_DB']=='sa')
 		 	{
@@ -330,6 +335,12 @@ class niveles_seguriM
 		 	// print_r($value);die();
 		 	     $cid2 = $this->db->modulos_sql_server($value['IP_VPN_RUTA'],$value['Usuario_DB'],$value['Contrasena_DB'],$value['Base_Datos'],$value['Puerto']);
 		 	     // print_r($cid2);die();
+		 	     if($cid2==-1)
+		 	     {
+		 	     	// si entra qui es por que o no hay base de datos o las credenciales estan mal
+		 	     	$mensaje.='Revise datos de conexion en :'.$value['Empresa'].' \n ';
+		 	     	// break;
+		 	     }else{
 
 		 	     $sql = "SELECT * FROM Accesos WHERE Codigo = '".$parametros['CI_usuario']."'";
 		 	     // print_r($sql);die();
@@ -365,7 +376,7 @@ class niveles_seguriM
 		                        die( print_r( sqlsrv_errors(), true));  
 	                          }else
 	                          {
-	                          	$insertado = true;
+	                          	$insertado = 1;
 	                          }	 	    
 
 		 	     	 }else
@@ -390,19 +401,22 @@ class niveles_seguriM
 		 	            // print_r($parametros_ing);die();
 		 	     	 	 if($this->crear_como_cliente_SQLSERVER($parametros_ing)==1)
 		 	     	 	 {
-		 	     	 	 	$insertado = true;
+		 	     	 	 	$insertado = 1;
 		 	     	 	 }
 		 	     	 }
 		 	     }
+		 	  }
 	        }     
 		 }
-		 if($insertado == true)
-		 {
-		 	return 1;
-		 }else
-		 {
-		 	return -1;
-		 }
+
+		 return array('respuesta'=> $insertado,'mensaje'=>$mensaje);
+		 // if($insertado == true)
+		 // {
+		 // 	return 1;
+		 // }else
+		 // {
+		 // 	return -1;
+		 // }
 
 
 	}

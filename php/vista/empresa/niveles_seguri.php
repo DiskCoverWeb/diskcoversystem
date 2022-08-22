@@ -45,70 +45,6 @@
       });
   }
 
-  // function cargar_modulos(empresas)
-  //   {
-  //   	var parametros ={
-  //   		'empresa':empresas,
-  //   		'usu':$('#ddl_usuarios').val(),
-  //   		'entidad':$('#ddl_entidad').val(),
-  //   	}
-  //     console.log(parametros);
-  //   	$.ajax({
-  //   		data:  {parametros:parametros},
-  //   		url:   '../controlador/empresa/niveles_seguriC.php?modulos=true',
-  //   		type:  'post',
-  //   		dataType: 'json',
-  //   		beforeSend: function () { 
-  //   		  $('#modu').html('<img src="../../img/gif/loader4.1.gif" width="50%">');
-  //   		},
-  //   		success:  function (response) { 
-  //   			if(response)
-  //   			 {
-  //   			 	console.log(response);
-  //           // $('#modu').remove();
-  //           // $('#tabs_titulo').remove();
-
-  //   			 	$('#modu').html(response.body);
-  //           $('#tabs_titulo').html(response.header);
-  //   			 	cargar_modulos_otros(empresas);
-  //   					// $('#myModal_espera').modal('hide'); 
-  //   			 }
-  //   		}
-  //   	});
-  // }
-
-  // function cargar_modulos_otros(emp)
-  //   {
-  //   	var parametros ={
-  //   		'entidad':$('#ddl_entidad').val(),
-  //   		'empresa':emp,
-  //   		'usuario':$('#ddl_usuarios').val(),
-  //   	}
-  //   	$.ajax({
-  //   		 data:  {parametros:parametros},
-  //   		url:   '../controlador/empresa/niveles_seguriC.php?mod_activos=true',
-  //   		type:  'post',
-  //   		dataType: 'json',
-  //   		// beforeSend: function () { 
-  //   		//   $('#modu').html('<img src="../../img/gif/loader4.1.gif" width="50%">');
-  //   		// },
-  //   		success:  function (response) { 
-  //   			if(response)
-  //   			 {
-  //   			 	$.each(response, function(i, item){
-    			 		
-  //   			 		$('#modulos_'+item.item+'_'+item.Modulo).prop('checked',true);
-  //             //  $('.nav-tabs a[href="#modulos_' + item.item+'_'+item.Modulo + '"]').tab('show'); 
-
-  //             //$('#panel_mo').load(' #panel_mo');
-  //   			 		// console.log(item.Modulo);
-  //   			 		// console.log(i);
-  //   			 	}); 
-
-  //   			 }
-  //   		}
-  //   	});
-  // }
   function buscar_permisos()
   {
     
@@ -222,97 +158,7 @@
 
   }
 
-  // function empresa_select(id)
-  // {
 
-  // 	if($('#emp_'+id).prop('checked'))
-  // 	{
-  // 		var ant = $('#txt_empresas').val();
-  // 		if(ant == '')
-  // 		{
-  // 			$('#txt_empresas').val(id+',');
-  // 		}else
-  // 		{
-  // 			$('#txt_empresas').val(ant+id+',');
-  // 		}
-  // 		var ant = $('#txt_empresas').val();
-  //     activo(id);
-  // 		empresa_select1(ant);
-  		
-  // 	}else
-  // 	{
-  //     if($('#rbl_all').prop('checked')){
-  //       $('#rbl_all').prop('checked',false);
-  //       var lis = $('#txt_list_emp').val();
-  //       lis = lis.split(',');
-  //       ite = '';
-  //       $.each(lis,function(i,item){
-  //         if($('#emp_'+item).prop('checked'))
-  //         {
-  //           ite+=item+',';
-  //         }
-  //       })
-  //       if($('#txt_coincidencia').val()!='')
-  //       {
-  //         empresa_select($('#txt_modal_conten').val());
-  //       }else
-  //       {
-  //         empresa_select($('#txt_modal_conten').val());
-  //       }
-
-  //       var ant = $('#txt_empresas').val(ite);
-  //     }
-
-  //       var ant = $('#txt_empresas').val();
-  // 			var res = ant.split(id+',').join('');
-  // 			$('#txt_empresas').val(res);
-  // 			$('#'+id).remove();
-  // 			$("#tab_"+id).remove();
-  // 		if($('#txt_empresas').val() == '')
-  // 		{
-  // 			// alert('vacio');
-  // 			$('#modu').html('<div>No a seleccionado ninguna empresa</div>');
-  // 		}
-  		
-  		
-  // 	}
-
-  // }
-
-  // function empresa_select1(selected)
-  // {
-  // 	// alert(selected);
-  //       var num_em = selected.slice(0,-1).split(',');
-  //       var nom  = $('#lbl_'+num_em[num_em.length-1]).text();
-  //       if (selected !='') 
-  //       {
-  //       	if(num_em.length == 1)
-  //       	{
-  //       		cargar_modulos(selected);
-  //           // alert('sss');
-  //       	}else
-  //       	{
-  //       		var tab = $('#tabs_titulo').html();
-  //       		var num_tab = '<li id="tab_'+num_em[num_em.length-1]+'" onclick="activo(\''+num_em[num_em.length-1]+'\')"><a data-toggle="tab" href="#'+num_em[num_em.length-1]+'">'+nom+'</a></li>';
-  //       		$('#tabs_titulo').html(tab+num_tab);
-
-  //       		var cont = $('#tab-content').html();
-  //       		console.log(cont);
-
-  //       		var res = cont.split(num_em[0]).join(num_em[num_em.length-1]);
-  //       		var res = res.split('checked').join('');
-  //           var res = res.split('in active').join('');
-  //       		$('#tab-content').html(cont+res); 
-  //       		cargar_modulos_otros(num_em[num_em.length-1]);
-  //       		// console.log(res);
-  //       	}
-  //       }else
-  //       {
-  //       	$('#modu').html('<div>No a seleccionado ninguna empresa</div>')
-  //       } 
-       
-  //       		// buscar_permisos();
-  // }
 
   function cargar_empresas()
   {
@@ -403,23 +249,25 @@ function guardar()
     		type:  'post',
     		dataType: 'json',
     		beforeSend: function () { 
-    		 $('#myModal_espera').modal('show'); 
+    		 // $('#myModal_espera').modal('show'); 
     		},
     		success:  function (response) { 
-    			if(response==1)
+          // console.log(response);
+    			if(response.respuesta==1)
     				{    					
     					// $('#modulo').html(response);
     					Swal.fire({
     						//position: 'top-end',
     						type: 'success',
     						title: 'Guardado Correctamente!',
+                text: response.mensaje,
     						showConfirmButton: true
     						//timer: 2500
     						});
     					$('#myModal_espera').modal('hide'); 
               $('#rbl_all').prop('checked',false); 
     					//buscar_permisos();
-    				}else if(response == -2)
+    				}else if(response.respuesta== -1)
             {
               $('#myModal_espera').modal('hide'); 
               Swal.fire('No se pudo crear el usuario para SQLServer','Pongace en contacto con el administrador del sistema, su base no esta actualizada o no tiene las credenciales correctas','error');
@@ -998,7 +846,15 @@ function DoubleScroll(element) {
  <div class="row">
   <div class="col-sm-12">
     <div class="panel panel-default">      
-       <div class="panel-heading" style="padding: 5px"><b>Lista de empresas</b></div>
+       <div class="panel-heading" style="padding: 5px">
+        <div class="row">
+          <div class="col-sm-6">
+            <b>Lista de empresas</b>            
+          </div>
+          <div class="col-sm-6">
+          </div>          
+        </div>
+       </div>
        <div class="panel-body">
         <div class="box" id="tbl_modulos" style="overflow-y:scroll; height: 500px; overflow-x: hidden;">
           

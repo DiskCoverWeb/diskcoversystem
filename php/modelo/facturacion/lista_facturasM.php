@@ -131,7 +131,7 @@ class lista_facturasM
        return array('datos'=>$datos,'tbl'=>$tbl);
    }
 
-   function pdf_factura($cod,$ser,$ci)
+   function pdf_factura($cod,$ser,$ci,$periodo=false)
    {
    	$id='factura_'.$ci;
    	$cid = $this->conn;
@@ -140,8 +140,16 @@ class lista_facturasM
    	WHERE Serie='".$ser."' 
    	AND Factura='".$cod."' 
    	AND CodigoC='".$ci."' 
-   	AND Item = '".$_SESSION['INGRESO']['item']."'
-	AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";
+   	AND Item = '".$_SESSION['INGRESO']['item']."' ";
+   	if($periodo==false || $periodo =='.')
+   	{
+	   $sql.=" AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";
+	}else
+	{
+      	$sql.=" AND Periodo BETWEEN '01/01/".$periodo."' AND '31/12".$periodo."'";
+	}
+
+	// print_r($sql);die();
 	$datos_fac = $this->db->datos($sql);
 
    	$sql1="SELECT * 

@@ -729,17 +729,17 @@
             </button>          
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-          <a href="./farmacia.php?mod=Farmacia&acc=pacientes&acc1=Visualizar%20paciente&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_pdf" title="Pacientes" data-toggle="tooltip">
+          <a href="./farmacia.php?mod=28&acc=pacientes&acc1=Visualizar%20paciente&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_pdf" title="Pacientes" data-toggle="tooltip">
             <img src="../../img/png/pacientes.png">
           </a>           
         </div>
        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-          <a href="./farmacia.php?mod=Farmacia&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_excel" title="Descargos" data-toggle="tooltip">
+          <a href="./farmacia.php?mod=28&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_excel" title="Descargos" data-toggle="tooltip">
             <img src="../../img/png/descargos.png">
           </a>         
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-          <a href="./farmacia.php?mod=Farmacia&acc=articulos&acc1=Visualizar%20articulos&b=1&po=subcu#" title="Ingresar Articulosr"  class="btn btn-default" onclick="" data-toggle="tooltip">
+          <a href="./farmacia.php?mod=28&acc=articulos&acc1=Visualizar%20articulos&b=1&po=subcu#" title="Ingresar Articulosr"  class="btn btn-default" onclick="" data-toggle="tooltip">
             <img src="../../img/png/articulos.png" >
           </a>
         </div>     

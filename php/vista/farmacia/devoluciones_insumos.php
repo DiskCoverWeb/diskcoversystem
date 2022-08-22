@@ -126,7 +126,9 @@ $cod = ''; $ci =''; if(isset($_GET['cod'])){$cod = $_GET['cod'];} if(isset($_GET
             cargar_pedidos();
           }else
           {
-            var url = "../vista/farmacia.php?mod=Farmacia&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu&cod="+response[0].ORDEN+"&ci="+ci;
+
+            var mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
+            var url = "../vista/farmacia.php?mod="+mod+"&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu&cod="+response[0].ORDEN+"&ci="+ci;
             $(location).attr('href',url);
           }
         }
@@ -141,7 +143,8 @@ $cod = ''; $ci =''; if(isset($_GET['cod'])){$cod = $_GET['cod'];} if(isset($_GET
     var pro = $('#txt_procedimiento').val();
     if(cod_cli!='' && area !='' && pro!='')
     {
-      var href="../vista/farmacia.php?mod=Farmacia&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&cod="+cod_cli+"&area="+area+"-"+$('#txt_procedimiento').val()+"#";
+      var mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
+      var href="../vista/farmacia.php?mod="+mod+"&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&cod="+cod_cli+"&area="+area+"-"+$('#txt_procedimiento').val()+"#";
       $(location).attr('href',href);
     }else
     {
@@ -239,8 +242,9 @@ $cod = ''; $ci =''; if(isset($_GET['cod'])){$cod = $_GET['cod'];} if(isset($_GET
 
   function limpiar()
   {
-    
-    var href="../vista/farmacia.php?mod=Farmacia&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#";
+
+    var mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';    
+    var href="../vista/farmacia.php?mod="+mod+"&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#";
     $(location).attr('href',href);
     $('#txt_query').val('');
     $("#ddl_paciente").empty();
@@ -272,7 +276,8 @@ $cod = ''; $ci =''; if(isset($_GET['cod'])){$cod = $_GET['cod'];} if(isset($_GET
       success:  function (response) { 
         if(response==1)
         {
-           var href="../vista/farmacia.php?mod=Farmacia&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu&cod="+num_hi+"&ci="+ci+"#";
+          var mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>'; 
+           var href="../vista/farmacia.php?mod="+mod+"&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu&cod="+num_hi+"&ci="+ci+"#";
            $(location).attr('href',href);
         }else if(response == -2)
         {
@@ -376,7 +381,9 @@ function Ver_Comprobante(comprobante)
 }
 function Ver_detalle(comprobante)
 {
-    url='../vista/farmacia.php?mod=Farmacia&acc=devoluciones_detalle&acc1=Detalle de devolucion&b=1&po=subcu&comprobante='+comprobante;
+
+    var mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>'; 
+    url='../vista/farmacia.php?mod='+mod+'&acc=devoluciones_detalle&acc1=Detalle de devolucion&b=1&po=subcu&comprobante='+comprobante;
     window.open(url, '_blank');
 }
 

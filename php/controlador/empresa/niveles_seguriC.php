@@ -213,7 +213,7 @@ class niveles_seguriC
 	{
 		$r = $this->modelo->existe_en_SQLSERVER($parametros);
 		// print_r($r);die();
-		if($r==1)
+		if($r['respuesta']==1)
 		{		
 
 		$niveles = array('1'=>$parametros['n1'],'2'=>$parametros['n2'],'3'=>$parametros['n3'],'4'=>$parametros['n4'],'5'=>$parametros['n5'],'6'=>$parametros['n6'],'7'=>$parametros['n7'],'super'=>$parametros['super']);
@@ -224,14 +224,14 @@ class niveles_seguriC
 		$update = $this->modelo->update_acceso_usuario($niveles,$parametros['usuario'],$parametros['pass'],$parametros['entidad'],$parametros['CI_usuario'],$parametros['email']);
 		if($update == 1)
 		{
-			return 1;
+			return $r;
 		}else
 		{
 			return -1 ;
 		}
 	}else
 	{
-		return -2;
+		return $r;
 	}
 
 
@@ -308,42 +308,33 @@ class niveles_seguriC
 	function empresas($entidad)
 	{
 		$tbl2 = '';
-		// $tbl='<table class="table table-hover table-bordered"><thead><tr style="height:70px" class="bg-info"><th style="width:250px"></th><th style="width: 50px;">Todos</th>';
 		$modulos = $this->modelo->modulos_todo();
-		// // print_r($modulos);die();
-		// foreach ($modulos as $key => $value) {
-		// 	$tbl.='<th style="width: 50px; text-align: center; transform: rotate(-45deg);">'.$value['aplicacion'].'</th>';
-		// }
-		// $tbl.='</tr></thead><tbody>';		
 		$empresas = $this->modelo->empresas($entidad);
 		$usuarios_reg = $this->modelo->usuarios_registrados_entidad($entidad);
-		// //print_r($empresas);die();
-		// foreach ($empresas as $key1 => $value1) {
-		// 	$tbl.='<tr><td style="width: 250px;"><i class="fa fa-circle-o text-red" style="display:none" id="indice_'.$value1['id'].'"></i><b>'.$value1['text'].'</b></td><td style="width: 50px; class="text-center" style="border: solid 1px;"><input type="checkbox" name="rbl_'.$value1['id'].'_T" id="rbl_'.$value1['id'].'_T" onclick="marcar_all(\''.$value1['id'].'\')" ></td>';
-		// 	foreach ($modulos as $key2 => $value2) {				
-		// 		$tbl.='<td style="width: 50px; class="text-center" style="border: solid 1px;"><input type="checkbox" name="rbl_'.$value2['modulo'].'_'.$value1['id'].'" id="rbl_'.$value2['modulo'].'_'.$value1['id'].'" title="'.$value2['aplicacion'].'" onclick="marcar_acceso(\''.$value1['id'].'\',\''.$value2['modulo'].'\')" ></td>';
-		// 	}
-		// 	$tbl.='</tr>';	
-		// }
-		// $tbl.='</tbody></table>';
-          // $tbl2.='';
+
+		// print_r($empresas);die();
+		
 
 			foreach ($empresas as $key1 => $value1) {
+				$server = '<p><i class="fa fa-circle text-success"></i> En linea</p>';
+				if($value1['dbSQLSERVER']==0){$server = '<p><i class="fa fa-circle text-danger"></i> Acceso SQLServer no configurado</p>';}
 				$tbl2.='<div class="row">
 								<div class=" col-xs-2 col-sm-3 col-lg-3" style="background-color:#e2fbff;">
-								
-										<b>'.$value1['text'].'</b> 
+										<b>'.$value1['text'].'</b>	<br>
+										'.$server.'									
 								</div>
             				<div class="col-xs-10 col-lg-9" style="overflow-x:scroll;">
               					<div class="row"><div class="col-sm-12">';
 
 
-			// $tbl.='<tr><td style="width: 250px;"><i class="fa fa-circle-o text-red" style="display:none" id="indice_'.$value1['id'].'"></i><b>'.$value1['text'].'</b></td><td style="width: 50px; class="text-center" style="border: solid 1px;"><input type="checkbox" name="rbl_'.$value1['id'].'_T" id="rbl_'.$value1['id'].'_T" onclick="marcar_all(\''.$value1['id'].'\')" ></td>';
 			   $tbl2.=' <table class="table-sm" style="margin-bottom:0px;font-size:11px"><tr>';
-			foreach ($modulos as $key2 => $value2) {				
+			foreach ($modulos as $key2 => $value2) {	
+				$server = '';
+				if($value1['dbSQLSERVER']==0){$server = 'Disabled';}
+							
 				$tbl2.='<td class="text-center" style="border: solid 1px; width: 50px;">
 								'.$value2['aplicacion'].'</br>
-				            <input type="checkbox" name="rbl_'.$value2['modulo'].'_'.$value1['id'].'" id="rbl_'.$value2['modulo'].'_'.$value1['id'].'" title="'.$value2['aplicacion'].'" onclick="marcar_acceso(\''.$value1['id'].'\',\''.$value2['modulo'].'\')" >
+				            <input type="checkbox" name="rbl_'.$value2['modulo'].'_'.$value1['id'].'" id="rbl_'.$value2['modulo'].'_'.$value1['id'].'" title="'.$value2['aplicacion'].'" onclick="marcar_acceso(\''.$value1['id'].'\',\''.$value2['modulo'].'\')" '.$server.' >
 				        </td>';
 			}
 			$tbl2.='</tr></table></div></div></div></div></br>';	

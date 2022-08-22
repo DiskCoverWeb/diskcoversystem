@@ -472,7 +472,7 @@ function reporte_excel()
  <div class="row">
     <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-            <a  href="./farmacia.php?mod=Farmacia#" title="Salir de modulo" data-toggle="tooltip" class="btn btn-default">
+            <a  href="./farmacia.php?mod=28" title="Salir de modulo" data-toggle="tooltip" class="btn btn-default">
               <img src="../../img/png/salire.png">
             </a>
         </div>

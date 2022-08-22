@@ -134,7 +134,8 @@ function Ver_Comprobante(comprobante)
 }
 function Ver_detalle(comprobante)
 {
-    url='../vista/farmacia.php?mod=Farmacia&acc=utilidad_insumos&acc1=Utilidad insumos&b=1&po=subcu&comprobante='+comprobante;
+    var mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>'; 
+    url='../vista/farmacia.php?mod='+mod+'&acc=utilidad_insumos&acc1=Utilidad insumos&b=1&po=subcu&comprobante='+comprobante;
     window.open(url, '_blank');
 }
  function cargar_pedidos(f='')

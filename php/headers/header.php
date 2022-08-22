@@ -68,6 +68,14 @@ include('../controlador/contabilidad/contabilidad_controller.php');
         $estado1 = 'Comp-Elec. vencida';
         $color1='danger';
       }
+    $modulo_header = '';
+    if(isset($_GET['mod']))
+    {
+      $cod = $_GET['mod'];
+      $detalle_modulo = datos_modulo($cod);
+      $modulo_header = $detalle_modulo[0]['aplicacion'];
+      // print_r($detalle_modulo);
+    }
 ?>
 <!DOCTYPE html>
 <html>
@@ -109,9 +117,9 @@ include('../controlador/contabilidad/contabilidad_controller.php');
   var formato = "<?php if(isset($_SESSION['INGRESO']['Formato_Cuentas'])){echo $_SESSION['INGRESO']['Formato_Cuentas'];}?>";
   var formato_inv = "<?php if(isset($_SESSION['INGRESO']['Formato_Inventario'])){echo $_SESSION['INGRESO']['Formato_Inventario'];}?>";
   function addCliente(){
-    $("#myModal").modal("show");
     var src ="../vista/modales.php?FCliente=true";
-     $('#FCliente').attr('src',src).show();
+     $('#FCliente').attr('src',src);     
+    $("#myModal").modal("show");
   }
 
   function validador_correo(imput)
@@ -327,7 +335,22 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
           <li class="dropdown messages-menu" >
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-dashboard"></i>
-              <b><?php echo $_GET['mod'];?> </b><?php echo ' > '; if(isset($_SESSION['INGRESO']['accion1'])){ echo $_SESSION['INGRESO']['accion1']; } ?>
+              <b><?php 
+              //verificacion titulo accion
+                  // $acction1 = '';
+                  if(isset($_GET['acc1'])) 
+                  {
+                    unset($_SESSION['INGRESO']['accion1']);
+                    $_SESSION['INGRESO']['accion1']=ucwords($_GET['acc1']);
+                    // $acction1 = ucwords($_GET['acc1']);
+                  }
+                  else
+                  {
+                   $acction1 = '';
+                    unset($_SESSION['INGRESO']['accion1']);
+                  } 
+
+              echo $modulo_header;?> </b><?php echo ' > '; if(isset($_SESSION['INGRESO']['accion1'])){ echo $_SESSION['INGRESO']['accion1']; } ?>
             </a>            
           </li>         
         </ul>
@@ -376,33 +399,30 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
       </div>
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">       
-            <?php if(!isset($_SESSION['INGRESO']['modulo_']) || $_SESSION['INGRESO']['modulo_']=="")
+            <?php 
+            if(!isset($_SESSION['INGRESO']['modulo_']) || $_SESSION['INGRESO']['modulo_']=="")
             {
               // print_r($_SESSION['INGRESO']['modulo_']);die();
             }else{
               if(isset($_GET['mod']))
-       {
-              if(isset($_GET['acc'])) 
-              {
-                $_SESSION['INGRESO']['accion']=$_GET['acc'];
-              }
-              else
-              {
-                unset( $_SESSION['INGRESO']['accion']);
-              }
-              //verificacion titulo accion
-              if(isset($_GET['acc1'])) 
-              {
-                $_SESSION['INGRESO']['accion1']=ucwords($_GET['acc1']);
-              }
-              else
-              {
-                unset( $_SESSION['INGRESO']['accion1']);
-              } 
+               {
+                  if(isset($_GET['acc'])) 
+                  {
+                    $_SESSION['INGRESO']['accion']=$_GET['acc'];
+                  }
+                  else
+                  {
+                    unset( $_SESSION['INGRESO']['accion']);
+                  }
 
-
-        echo '<li class=" header"> Menu '.$_GET['mod'].' </li>';        
+        echo '<li class=" header"> Menu '.$modulo_header.' </li>';        
           $menu = select_menu_mysql();
+          if(count($menu)==0)
+          {
+             echo  '<li><a href="../vista/modulos.php" class="active treeview">
+                 <i class="fa fa-th"></i> <span>Salir a modulos</span>
+               </a></li>';
+          }
           foreach ($menu as $item_menu) {
             if (count(explode(".",$item_menu['codMenu'])) == 2) {
               $item = strtolower($item_menu['descripcionMenu']);

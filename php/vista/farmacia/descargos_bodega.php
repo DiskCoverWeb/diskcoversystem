@@ -413,7 +413,9 @@
           if(ped==-1)
           {
             num_ped = $('#txt_pedido').val();
-            var url="../vista/farmacia.php?mod=Farmacia&acc=descargos_bodega&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+num_ped+"&cod="+num_his;
+
+            var mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
+            var url="../vista/farmacia.php?mod="+mod+"&acc=descargos_bodega&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+num_ped+"&cod="+num_his;
             $(location).attr('href',url);
           }else
           {
@@ -726,24 +728,24 @@
             denyButtonText: `Don't save`,
           }).then((result) => {
 
-
+            var mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
               if (result.isConfirmed) {
                 if(reg==0)
                 {
-                var url="../vista/farmacia.php?mod=Farmacia&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+orden+"&cod="+his+"#";
+                var url="../vista/farmacia.php?mod="+mod+"&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+orden+"&cod="+his+"#";
                 }else
                 {
-                  var url="../vista/farmacia.php?mod=Farmacia&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+orden+"&cod="+his+"#";
+                  var url="../vista/farmacia.php?mod="+mod+"&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+orden+"&cod="+his+"#";
                 }
                 $(location).attr('href',url);             
                   } else
                   {
                     if(reg==0)
                 {
-                 var url="../vista/farmacia.php?mod=Farmacia&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&cod="+his+"#";
+                 var url="../vista/farmacia.php?mod="+mod+"&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&cod="+his+"#";
                 }else
                 {
-                  var url="../vista/farmacia.php?mod=Farmacia&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+orden+"&cod="+his+"#";
+                  var url="../vista/farmacia.php?mod="+mod+"&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+orden+"&cod="+his+"#";
                 }
                 
                    
