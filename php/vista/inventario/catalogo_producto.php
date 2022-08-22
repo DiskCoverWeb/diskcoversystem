@@ -2,6 +2,8 @@
 <script type="text/javascript">
 	 $(document).ready(function () { 
 	 		TVcatalogo();
+	 		var h = (screen.height)-478;
+    $('#tabla').css('height',h);
 
 	 $('#txt_codigo').keyup(function(e){ 
 			if(e.keyCode != 46 && e.keyCode !=8)
@@ -290,7 +292,7 @@
 <div class="row">
 	<div class="col-sm-8">
 		<div class="box">
-      <div class="box" style="height: 300px; overflow-y:auto">
+      <div class="box" id="tabla" style="overflow-y:auto">
         <ol class="tree" id="tree1">
         </ol>	
       </div>		

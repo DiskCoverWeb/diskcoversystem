@@ -2326,8 +2326,8 @@ function select_option_mysql($tabla,$value,$mostrar,$filtro=null)
 function select_menu_mysql()
 {
   $cid = new db();
-  $sql = "SELECT * FROM menu_modulos";
-  $datos = $cid->datos($sql,'MYSQL');
+  // $sql = "SELECT * FROM menu_modulos";
+  // $datos = $cid->datos($sql,'MYSQL');
   
   //verificar codigo del menu que se necesita
   // while ($menu_item = $consulta->fetch_assoc()) {
@@ -2336,11 +2336,11 @@ function select_menu_mysql()
   //   }
   // }
 
-  foreach ($datos as $key => $value) {
-     if (strtolower($_GET['mod']) == strtolower($value['descripcionMenu'])) {
-       $codMenu = $value['codMenu'];
-    }
-  }
+  // foreach ($datos as $key => $value) {
+     // if (strtolower($_GET['mod']) == strtolower($value['descripcionMenu'])) {
+       $codMenu = $_GET['mod'];
+    // }
+  // }
 
   //seleccionar todos los items del menu
   $sql = "SELECT * FROM menu_modulos WHERE codMenu LIKE '".$codMenu."%' ORDER BY codMenu ASC";

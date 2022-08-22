@@ -431,8 +431,8 @@ function aceptar(){
                      serie = DCLinea.split(" ");
                      cambio = $("#cambio").val();
                      efectivo = $("#efectivo").val();  
-                     var url = '../controlador/facturacion/divisasC.php?ticketPDF=true&fac='+TextFacturaNo+'&serie='+serie[1]+'&CI='+TextCI+'&TC='+serie[0]+'&efectivo='+efectivo+'&saldo='+cambio;
-                     imprimir(url); 
+                     // var url = '../controlador/facturacion/divisasC.php?ticketPDF=true&fac='+TextFacturaNo+'&serie='+serie[1]+'&CI='+TextCI+'&TC='+serie[0]+'&efectivo='+efectivo+'&saldo='+cambio;
+                     // imprimir(url); 
 
                      Swal.fire({
                       type: 'success',
@@ -691,66 +691,75 @@ function validador_correo()
               
             </div>
             <label>Fecha</label>
-            <input type="date" class="form-control input-sm" name="fecha" id="fecha" value="<?php echo date('Y-m-d'); ?>" onchange="numeroFactura();catalogoLineas();">
+            <input type="date" class="form-control input-xs" name="fecha" id="fecha" value="<?php echo date('Y-m-d'); ?>" onchange="numeroFactura();catalogoLineas();">
           </div>
           <div class="col-sm-5 col-xs-12">
-            <label class="text-right">Cliente</label>
-            <a title="Agregar nuevo cliente" style="padding-left: 20px" onclick="addCliente();">
+            <b>Cliente</b>
+           <!--  <a title="Agregar nuevo cliente" style="padding-left: 20px" onclick="addCliente();">
               <img src="../../img/png/mostrar.png" width="20" height="20">
-            </a>
-            <select class="form-control input-sm" id="cliente" name="cliente">
-              <option value="">Seleccione un cliente</option>
-            </select>
+            </a> -->
+            <div class="input-group">
+              <select class="form-control input-xs" id="cliente" name="cliente">
+                <option value="">Seleccione un cliente</option>
+              </select>
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-success btn-xs btn-flat" onclick="addCliente()" title="Nuevo cliente">
+                  <span class="fa fa-user-plus"></span>
+                </button>   
+              </span> 
+            </div>
+
+
             <input type="hidden" name="codigoCliente" id="codigoCliente">
-            <input type="text" class="form-control input-sm" placeholder="Ingrese nombre del nuevo cliente" name="nombreCliente" id="nombreCliente" autocomplete="off">
+            <input type="text" class="form-control input-xs" placeholder="Ingrese nombre del nuevo cliente" name="nombreCliente" id="nombreCliente" autocomplete="off">
             <input type="hidden" name="direccion" id="direccion">
             <input type="hidden" name="ci" id="ci_ruc">
             <input type="hidden" name="fechaEmision" id="fechaEmision" value="<?php echo date('Y-m-d'); ?>">
           </div>
           <div class="col-sm-3">
             <b>Email:</b>
-            <input type="text" class="form-control input-sm" placeholder="Email" name="email" id="email" onblur="validador_correo()">            
+            <input type="text" class="form-control input-xs" placeholder="Email" name="email" id="email" onblur="validador_correo()">            
           </div>
            <div class="col-sm-2">
             <b>Telefono:</b>
-            <input type="text" class="form-control input-sm" placeholder="Telefono" name="telefono" id="telefono">            
+            <input type="text" class="form-control input-xs" placeholder="Telefono" name="telefono" id="telefono">            
           </div>
-        </div><br>
+        </div>
         <div class="row">
           <div class="col-sm-2 col-sm-offset-1">
             <label class="text-right">TIPO DE PROCESO</label>
           </div>
           <div class="col-sm-4">
-            <select class="form-control input-sm" name="DCLinea" id="DCLinea" onchange="numeroFactura();productos();limpiar_grid(); cargar_grilla();">
+            <select class="form-control input-xs" name="DCLinea" id="DCLinea" onchange="numeroFactura();productos();limpiar_grid(); cargar_grilla();">
             </select>
           </div>
           <div class="col-sm-3">
             <label id="numeroSerie" class="red">() No.</label>
           </div>
           <div class="col-sm-2">
-            <input type="text" name="factura" id="factura" value="1" class="form-control input-sm text-right">
+            <input type="text" name="factura" id="factura" value="1" class="form-control input-xs text-right">
           </div>
         </div>
         <div class="row">
           <div class="col-sm-6 col-sm-offset-1">
             <label>PRODUCTO</label>
-            <select class="form-control input-sm" id="producto" onchange="setPVP();">
+            <select class="form-control input-xs" id="producto" onchange="setPVP();">
             </select>
           </div>
           <div class="col-sm-2">
             <label>Precio Unitario</label>
-            <input type="text" name="preciounitario" id="preciounitario" value="101.7900" class="form-control input-sm text-right">
+            <input type="text" name="preciounitario" id="preciounitario" value="101.7900" class="form-control input-xs text-right">
           </div>
         </div>
         <div class="row">          
           <input type="hidden" name="" id="tipo_cal" value="T">
           <div class="col-sm-4 col-sm-offset-1">
             <label>TOTAL EN DOLARES S/.</label>
-            <input type="text" name="total" id="total" value="0.00" class="form-control input-sm text-right" onblur="$('#tipo_cal').val('C')">
+            <input type="text" name="total" id="total" value="0.00" class="form-control input-xs text-right" onblur="$('#tipo_cal').val('C')">
           </div>
           <div class="col-sm-4">
             <label>Cantidad <label id="tipo_p"></label> </label>
-            <input type="text" name="cantidad" id="cantidad" value="0.00" class="form-control input-sm text-right" onblur="$('#tipo_cal').val('T')">
+            <input type="text" name="cantidad" id="cantidad" value="0.00" class="form-control input-xs text-right" onblur="$('#tipo_cal').val('T')">
           </div>
           <div class=" col-sm-3">
               <a title="Calcular" class="btn btn-default" tabindex="22" id="btn_cal">
@@ -779,13 +788,13 @@ function validador_correo()
             <label>Total Tarifa 0%</label>
           </div>
           <div class="col-sm-2">
-            <input type="text" name="total0" id="total0" class="form-control input-sm red text-right" value="0.00" readonly>
+            <input type="text" name="total0" id="total0" class="form-control input-xs red text-right" value="0.00" readonly>
           </div>
           <div class="col-sm-2">
             <label>Total Factura</label>
           </div>
           <div class="col-sm-2">
-            <input type="text" name="totalFac" id="totalFac" class="form-control input-sm red text-right" value="0.00" readonly>
+            <input type="text" name="totalFac" id="totalFac" class="form-control input-xs red text-right" value="0.00" readonly>
           </div>
           <div class="col-sm-2">
             <a title="Guardar" class="btn btn-default" tabindex="22">
@@ -798,13 +807,13 @@ function validador_correo()
             <label>Total Tarifa 12%</label>
           </div>
           <div class="col-sm-2">
-            <input type="text" name="total12" id="total12" class="form-control input-sm red text-right" value="0.00" readonly>
+            <input type="text" name="total12" id="total12" class="form-control input-xs red text-right" value="0.00" readonly>
           </div>
           <div class="col-sm-2">
             <label>Total Fact. (ME)</label>
           </div>
           <div class="col-sm-2">
-            <input type="text" name="totalFacMe" id="totalFacMe" class="form-control input-sm red text-right" value="0.00" readonly>
+            <input type="text" name="totalFacMe" id="totalFacMe" class="form-control input-xs red text-right" value="0.00" readonly>
           </div>
           <div class="col-sm-2">
             <a title="Guardar" class="btn btn-default" tabindex="22" title="Salir del panel" href="facturacion.php?mod=facturacion">
@@ -817,13 +826,13 @@ function validador_correo()
             <label>I.V.A. 12%</label>
           </div>
           <div class="col-sm-2">
-            <input type="text" name="iva12" id="iva12" class="form-control input-sm red text-right" value="0.00" readonly>
+            <input type="text" name="iva12" id="iva12" class="form-control input-xs red text-right" value="0.00" readonly>
           </div>
           <div class="col-sm-2">
             <label>EFECTIVO</label>
           </div>
           <div class="col-sm-2">
-            <input type="text" name="efectivo" id="efectivo" class="form-control input-sm red text-right" value="0.00" onkeyup="calcularSaldo();">
+            <input type="text" name="efectivo" id="efectivo" class="form-control input-xs red text-right" value="0.00" onkeyup="calcularSaldo();">
           </div>
         </div>
         <div class="row">
@@ -831,7 +840,7 @@ function validador_correo()
             <label>Cambio</label>
           </div>
           <div class="col-sm-2">
-            <input type="text" name="cambio" id="cambio" class="form-control input-sm red text-right" value="0.00">
+            <input type="text" name="cambio" id="cambio" class="form-control input-xs red text-right" value="0.00">
           </div>
         </div>
         </div>
@@ -876,11 +885,11 @@ function validador_correo()
          <div class="row">
            <div class="col-sm-8">
              <b>Nombre Cliente / CI / RUC</b>
-             <input type="text" name="txt_buscar" id="txt_buscar" class="form-control input-sm" placeholder="Nombre - CI - RUC " onkeyup="cargar_facs()">
+             <input type="text" name="txt_buscar" id="txt_buscar" class="form-control input-xs" placeholder="Nombre - CI - RUC " onkeyup="cargar_facs()">
            </div>
             <div class="col-sm-4">
              <b>Numero de comprobante</b>
-             <input type="text" name="txt_fac" id="txt_fac" class="form-control input-sm" placeholder="Numero comprobante" onkeyup="cargar_facs()">
+             <input type="text" name="txt_fac" id="txt_fac" class="form-control input-xs" placeholder="Numero comprobante" onkeyup="cargar_facs()">
            </div>
          </div>
            <br>

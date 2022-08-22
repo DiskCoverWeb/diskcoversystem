@@ -601,6 +601,13 @@ class usuario_model{
 
         return $usuario;
 	}
+
+	function detalle_modulos($cod)
+	{
+		$sql = "SELECT * FROM modulos WHERE modulo = '".$cod."'";
+		$consulta=$this->db1->datos($sql,'MYSQL');
+		return $consulta;
+	}
 	//consultar modulo
 	function getModuloSQL()
 	{

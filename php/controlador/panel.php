@@ -79,6 +79,14 @@ function IngClaves($parametros)
 	
 }
 
+
+function datos_modulo($cod)
+{
+      $per=new usuario_model();      
+      $datos = $per->detalle_modulos($cod);
+      return $datos;
+}
+
 function IngClaves_MYSQL($parametros)
 {
 	// print_r($_SESSION['INGRESO']);die();

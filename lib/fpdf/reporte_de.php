@@ -2112,7 +2112,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$i=0;
 	$agente = '';
 	$rimpe = '';
-	if(count($datos['Tipo_contribuyente'])>0)
+	if(isset($datos['Tipo_contribuyente']) && count($datos['Tipo_contribuyente'])>0)
 	{
 		$agente = $datos['Tipo_contribuyente'][0]['Agente_Retencion'];
 		if($datos['Tipo_contribuyente'][0]['RIMPE_E']==1)

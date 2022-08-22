@@ -345,7 +345,7 @@ class listar_facturasM
               AND DF.Item = CP.Item 
               AND DF.Codigo = CP.Codigo_Inv 
               ORDER BY CP.Cta_Ventas,DF.Codigo,DF.ID";
-              // print_r($sql);die();
+              print_r($sql);die();
       $stmt = $this->db->datos($sql);
       return $stmt; 
     }

@@ -17,7 +17,7 @@ if(isset($_GET['perido']))
 }
 if(isset($_GET['ver_fac']))
 {
-  $controlador->ver_fac_pdf($_GET['codigo'],$_GET['ser'],$_GET['ci']);
+  $controlador->ver_fac_pdf($_GET['codigo'],$_GET['ser'],$_GET['ci'],$_GET['per']);
 }
 if(isset($_GET['imprimir_pdf']))
 {
@@ -103,10 +103,10 @@ class lista_facturasC
     	}
     	return $opcion;
     }
-    function ver_fac_pdf($cod,$ser,$ci)
+    function ver_fac_pdf($cod,$ser,$ci,$per)
     {
     	// print_r($cod);die();
-    	$this->modelo->pdf_factura($cod,$ser,$ci);
+    	$this->modelo->pdf_factura($cod,$ser,$ci,$per);
     }
     function imprimir_pdf($parametros)
     {

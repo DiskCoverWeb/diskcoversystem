@@ -279,8 +279,7 @@ class db
 	    $cid = sqlsrv_connect($server, $connectionInfo); //returns false
 		if( $cid === false )
 			{
-				echo 'no se pudo conectar a la base de datos';
-				die( print_r( sqlsrv_errors(), true));
+				return -1;
 			}
 		return $cid;
 	}

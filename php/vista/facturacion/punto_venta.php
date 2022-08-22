@@ -484,9 +484,9 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
   	var efectivo = parseFloat($('#TxtEfectivo').val()).toFixed(4);
   	var banco = parseFloat($('#TextCheque').val()).toFixed(4);
   	 Swal.fire({
-  	 	allowOutsideClick:false,
-         title: 'Esta Seguro que desea grabar:',
-         text: "Recibo No. "+$('#TextFacturaNo').val(),
+  	 		allowOutsideClick:false,
+         title: 'Esta Seguro que desea grabar: \n Recibo  No. '+$('#TextFacturaNo').val(),
+         text:'',
          type: 'warning',
          showCancelButton: true,
          confirmButtonColor: '#3085d6',
@@ -544,33 +544,27 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 		{
 			$('#myModal_espera').modal('hide');
 			// console.log(data);
-			if(data.respuesta.respuesta==1)
-			{
-				var url=  '../../TEMP/'+data.pdf+'.pdf';
-			// console.log(url);
-			window.open(url, '_blank'); 		
-			
-
+			if(data.respuesta==1)
+			{	
 				Swal.fire({
-				  type:'success',
-				  title: 'Factura Procesada',
+					type:'success',
+				  title: 'Factura Procesada y Autorizada',
 				  confirmButtonText: 'Ok!',
 				  allowOutsideClick: false,
-				}).then((result) => {
-				  /* Read more about isConfirmed, isDenied below */
-				  if (result.value) {
-				  	location.reload();
-				  } 
-				})	
-				
+				}).then(function(){
+					var url=  '../../TEMP/'+data.pdf+'.pdf';
+					window.open(url, '_blank'); 
+					location.reload();		
+
+				})
 			}else if(data.respuesta==-1)
 			{
 				Swal.fire(data.text,'','error').then(function(){ var url=  '../../TEMP/'+data.pdf+'.pdf';		window.open(url, '_blank'); 	location.reload();	});	
-			}else if(data.respuesta.respuesta==2)
+			}else if(data.respuesta==2)
 			{
 				Swal.fire('XML devuelto','','error');	
 			}
-			else if(data.respuesta.respuesta==4)
+			else if(data.respuesta==4)
 			{
 				Swal.fire('SRI intermitente intente mas tarde','','info');	
 			}else
@@ -668,33 +662,33 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
         </div>   
     </div>
 	</div>
-			<input type="hidden" name="CodDoc" id="CodDoc" class="form-control input-sm" value="00">	 
+			<input type="hidden" name="CodDoc" id="CodDoc" class="form-control input-xs" value="00">	 
 			<div class="row">
 				<div class="col-sm-2">					
             <input type="hidden" id="Autorizacion">
             <input type="hidden" id="Cta_CxP">
-					<select class="form-control input-sm" name="DCLinea" id="DCLinea" tabindex="1" onchange="numeroFactura(); tipo_documento();"></select>
+					<select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="1" onchange="numeroFactura(); tipo_documento();"></select>
 
 					<b>Fecha</b>
-					<input type="date" name="MBFecha" id="MBFecha" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>">	
+					<input type="date" name="MBFecha" id="MBFecha" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">	
 				</div>
 				<div class="col-sm-4">
 					<b>Nombre del cliente</b>
-					 <div class="input-group input-group-sm" id="ddl">
-			        <select class="form-control input-sm select2" id="DCCliente" name="DCCliente" onchange="select()">
+					 <div class="input-group" id="ddl" style="width:100%">
+			        <select class="form-control" id="DCCliente" name="DCCliente" onchange="select()">
 								<option value="">Seleccione Bodega</option>
 							</select>	
-			          <span class="input-group-btn">	
-			               <button type="button" class="btn btn-success btn-md btn-flat" onclick="addCliente()" title="Nuevo cliente"><span class="fa fa-user-plus"></span></button>			               
-			          </span>
+							<span class="input-group-btn">
+			        <button type="button" class="btn btn-success btn-xs btn-flat" onclick="addCliente()" title="Nuevo cliente"><span class="fa fa-user-plus"></span></button>		
+			        </span>	   
 			     </div>  
-					<input type="hidden" name="codigoCliente" id="codigoCliente" class="form-control input-sm">	
-					<input type="hidden" name="LblT" id="LblT" class="form-control input-sm">	
+					<input type="hidden" name="codigoCliente" id="codigoCliente" class="form-control input-xs">	
+					<input type="hidden" name="LblT" id="LblT" class="form-control input-xs">	
 				</div>
 				<div class="col-sm-2">
 					<b>CI/RUC/PAS</b>
-					<input type="" name="LblRUC" id="LblRUC" class="form-control input-sm" readonly>	
-					<input type="hidden" name="Lblemail" id="Lblemail" class="form-control input-sm">	
+					<input type="" name="LblRUC" id="LblRUC" class="form-control input-xs" readonly>	
+					<input type="hidden" name="Lblemail" id="Lblemail" class="form-control input-xs">	
 					
 				</div>
 				<div class="col-sm-2">
@@ -704,13 +698,13 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 							999999
 						</div>
 						<div class="col-sm-9">
-							<input type="" class="form-control input-sm" id="TextFacturaNo" name="TextFacturaNo" readonly>					
+							<input type="" class="form-control input-xs" id="TextFacturaNo" name="TextFacturaNo" readonly>					
 						</div>				
 					</div>			
 				</div>
 				<div class="col-sm-2">
 					<b>BODEGAS</b>
-					<select class="form-control input-sm" id="DCBodega" name="DCBodega" onblur="validar_bodega()">
+					<select class="form-control input-xs" id="DCBodega" name="DCBodega" onblur="validar_bodega()">
 						<option value="">Seleccione Bodega</option>
 					</select>
 					
@@ -719,15 +713,15 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 			<div class="row">
 				<div class="col-sm-4">
 					<b>NOTA</b>
-					<input type="text" name="TxtNota" id="TxtNota" class="form-control input-sm">	
+					<input type="text" name="TxtNota" id="TxtNota" class="form-control input-xs">	
 				</div>
 				<div class="col-sm-4">			
 					<b>OBSERVACION</b>
-					<input type="text" name="TxtObservacion" id="TxtObservacion" class="form-control input-sm">		
+					<input type="text" name="TxtObservacion" id="TxtObservacion" class="form-control input-xs">		
 				</div>
 				<div class="col-sm-2">			
 					<b>COTIZACION</b>
-					<input type="text" name="TextCotiza" id="TextCotiza" class="form-control input-sm">				
+					<input type="text" name="TextCotiza" id="TextCotiza" class="form-control input-xs">				
 				</div>
 				<div class="col-sm-1">			
 					<b>CONVERSION</b>
@@ -742,7 +736,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 				</div>
 				<div class="col-sm-1">			
 					<b>Gavetas</b>
-					<input type="text" name="TxtGavetas" id="TxtGavetas" class="form-control input-sm">				
+					<input type="text" name="TxtGavetas" id="TxtGavetas" class="form-control input-xs">				
 				</div>
 			</div>
 			<div class="row">
@@ -750,29 +744,29 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 					<div class="row box box-success">
 						<div class="col-sm-6">
 							<b>Producto</b>
-							<select class="form-control input-sm" id="DCArticulo" name="DCArticulo" onchange="Articulo_Seleccionado()">
+							<select class="form-control input-xs" id="DCArticulo" name="DCArticulo" onchange="Articulo_Seleccionado()">
 								<option value="">Seleccione Bodega</option>
 							</select>					
 						</div>
 						<div class="col-sm-1" style="padding-right:0px">
 							<b>Stock</b>
-							<input type="text" name="LabelStock" id="LabelStock" class="form-control input-sm" readonly style="color: red;" value="9999">
+							<input type="text" name="LabelStock" id="LabelStock" class="form-control input-xs" readonly style="color: red;" value="9999">
 						</div>
 						<div class="col-sm-1" style="padding-right:0px">
 							<b>Cantidad</b>
-							<input type="text" name="TextCant" id="TextCant" class="form-control input-sm" value="1" onblur="valida_Stock()">
+							<input type="text" name="TextCant" id="TextCant" class="form-control input-xs" value="1" onblur="valida_Stock()">
 						</div>
 						<div class="col-sm-1" style="padding-right:0px">
 							<b>P.V.P</b>
-							<input type="text" name="TextVUnit" id="TextVUnit" class="form-control input-sm" value="0.01" onblur="calcular()">						
+							<input type="text" name="TextVUnit" id="TextVUnit" class="form-control input-xs" value="0.01" onblur="calcular()">						
 						</div>
 						<div class="col-sm-1" style="padding-right:0px">
 							<b>TOTAL</b>
-							<input type="text" name="LabelVTotal" id="LabelVTotal" class="form-control input-sm" value="0">					
+							<input type="text" name="LabelVTotal" id="LabelVTotal" class="form-control input-xs" value="0">					
 						</div>
 						<div class="col-sm-2">
 							<b>Detalle</b>
-							<input type="text" name="TxtDocumentos" id="TxtDocumentos" class="form-control input-sm" value="." onblur="ingresar()">					
+							<input type="text" name="TxtDocumentos" id="TxtDocumentos" class="form-control input-xs" value="." onblur="ingresar()">					
 						</div>
 
 					</div>
@@ -790,7 +784,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 							<b>Total Tarifa 0%</b>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" name="LabelSubTotal" id="LabelSubTotal" class="form-control input-sm text-right" value="0.00" style="color:red" readonly>						
+							<input type="text" name="LabelSubTotal" id="LabelSubTotal" class="form-control input-xs text-right" value="0.00" style="color:red" readonly>						
 						</div>
 					</div>
 					<div class="row">
@@ -798,7 +792,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 							<b>Total Tarifa 12%</b>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" name="LabelConIVA"  id="LabelConIVA" class="form-control input-sm text-right" value="0.00" style="color:red" readonly>						
+							<input type="text" name="LabelConIVA"  id="LabelConIVA" class="form-control input-xs text-right" value="0.00" style="color:red" readonly>						
 						</div>
 					</div>
 					<div class="row">
@@ -806,7 +800,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 							<b id="Label3">I.V.A. 12.00</b>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" name="LabelIVA"  id="LabelIVA" class="form-control input-sm text-right" value="0.00" style="color:red" readonly>						
+							<input type="text" name="LabelIVA"  id="LabelIVA" class="form-control input-xs text-right" value="0.00" style="color:red" readonly>						
 						</div>
 					</div>
 					<div class="row">
@@ -814,7 +808,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 							<b>Total Factura</b>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" name="LabelTotal"  id="LabelTotal" class="form-control input-sm text-right" value="0.00" style="color:red" readonly>						
+							<input type="text" name="LabelTotal"  id="LabelTotal" class="form-control input-xs text-right" value="0.00" style="color:red" readonly>						
 						</div>
 					</div>
 					<div class="row">
@@ -822,7 +816,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 							<b>Total Fact (ME)</b>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" name="LabelTotalME"  id="LabelTotalME" class="form-control input-sm text-right" value="0.00" style="color:red" readonly>						
+							<input type="text" name="LabelTotalME"  id="LabelTotalME" class="form-control input-xs text-right" value="0.00" style="color:red" readonly>						
 						</div>
 					</div>
 					<div class="row">
@@ -830,13 +824,13 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 							<b>EFECTIVO</b>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" name="TxtEfectivo" id="TxtEfectivo"  class="form-control input-sm text-right" value="0.00" onblur="calcular_pago()" onkeyup="calcular_pago()">						
+							<input type="text" name="TxtEfectivo" id="TxtEfectivo"  class="form-control input-xs text-right" value="0.00" onblur="calcular_pago()" onkeyup="calcular_pago()">						
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-sm-12">
 							<b>CUENTA DEL BANCO</b>
-							<select class="form-control input-sm select2" id="DCBanco" name="DCBanco">
+							<select class="form-control input-xs select2" id="DCBanco" name="DCBanco">
 								<option value="">Seleccione Banco</option>
 							</select>					
 						</div>				
@@ -846,13 +840,13 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 							<b>Documento</b>
 						</div>
 						<div class="col-sm-9">
-							<input type="text" name="TextCheqNo" id="TextCheqNo" class="form-control input-sm">						
+							<input type="text" name="TextCheqNo" id="TextCheqNo" class="form-control input-xs">						
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-sm-12">
 							<b>NOMBRE DEL BANCO</b>	
-							<input type="text" name="TextBanco" id="TextBanco" class="form-control input-sm">						
+							<input type="text" name="TextBanco" id="TextBanco" class="form-control input-xs">						
 						</div>				
 					</div>
 					<div class="row">
@@ -860,7 +854,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 							<b>VALOR BANCO</b>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" name="TextCheque" id="TextCheque" class="form-control input-sm text-right" value="0.00" onblur="calcular_pago()">						
+							<input type="text" name="TextCheque" id="TextCheque" class="form-control input-xs text-right" value="0.00" onblur="calcular_pago()">						
 						</div>
 					</div>
 					<div class="row">
@@ -868,7 +862,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 							<b>CAMBIO</b>
 						</div>
 						<div class="col-sm-6">
-							<input type="text" name="LblCambio" id="LblCambio" class="form-control input-sm text-right" style="color: red;" value="0.00">						
+							<input type="text" name="LblCambio" id="LblCambio" class="form-control input-xs text-right" style="color: red;" value="0.00">						
 						</div>
 					</div>
 					<div class="row">
@@ -891,9 +885,9 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
       </div>
       <div class="modal-body">
       	<b>Desde:</b>
-      	<input type="text" name="TxtRifaD" id="TxtRifaD" class="form-control input-sm" value="0">
+      	<input type="text" name="TxtRifaD" id="TxtRifaD" class="form-control input-xs" value="0">
       	<b>Hasta:</b>
-      	<input type="text" name="TxtRifaH" id="TxtRifaH" class="form-control input-sm" value="0">
+      	<input type="text" name="TxtRifaH" id="TxtRifaH" class="form-control input-xs" value="0">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

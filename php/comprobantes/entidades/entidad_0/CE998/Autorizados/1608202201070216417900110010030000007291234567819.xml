@@ -1,61 +1,65 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><factura id="comprobante" version="1.1.0">
+<?xml version="1.0" encoding="UTF-8"?><autorizacion>
+  <estado>AUTORIZADO</estado>
+  <numeroAutorizacion>1608202201070216417900110010030000007291234567819</numeroAutorizacion>
+  <fechaAutorizacion class="fechaAutorizacion">16/08/2022 15:46:27.000</fechaAutorizacion>
+  <comprobante><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?><factura id="comprobante" version="1.1.0">
   <infoTributaria>
     <ambiente>1</ambiente>
     <tipoEmision>1</tipoEmision>
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>0508202201070216417900110010030000007231234567818</claveAcceso>
+    <claveAcceso>1608202201070216417900110010030000007291234567819</claveAcceso>
     <codDoc>01</codDoc>
     <estab>001</estab>
     <ptoEmi>003</ptoEmi>
-    <secuencial>000000723</secuencial>
+    <secuencial>000000729</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
   <infoFactura>
-    <fechaEmision>05/08/2022</fechaEmision>
+    <fechaEmision>16/08/2022</fechaEmision>
     <dirEstablecimiento>Desarrollo para programacion de DiskCover System</dirEstablecimiento>
     <obligadoContabilidad>SI</obligadoContabilidad>
     <tipoIdentificacionComprador>07</tipoIdentificacionComprador>
     <razonSocialComprador>CONSUMIDOR FINAL</razonSocialComprador>
     <identificacionComprador>9999999999999</identificacionComprador>
-    <totalSinImpuestos>1.00</totalSinImpuestos>
+    <totalSinImpuestos>51.79</totalSinImpuestos>
     <totalDescuento>0</totalDescuento>
     <totalConImpuestos>
       <totalImpuesto>
         <codigo>2</codigo>
         <codigoPorcentaje>0</codigoPorcentaje>
         <descuentoAdicional>0</descuentoAdicional>
-        <baseImponible>1</baseImponible>
+        <baseImponible>51.79</baseImponible>
         <valor>0.00</valor>
       </totalImpuesto>
     </totalConImpuestos>
     <propina>0</propina>
-    <importeTotal>1</importeTotal>
+    <importeTotal>51.79</importeTotal>
     <moneda>DOLAR</moneda>
     <pagos>
       <pago>
         <formaPago>01</formaPago>
-        <total>1</total>
+        <total>51.79</total>
       </pago>
     </pagos>
   </infoFactura>
   <detalles>
     <detalle>
-      <codigoPrincipal>03.01.11</codigoPrincipal>
-      <descripcion>Venta Dolar Australiano</descripcion>
+      <codigoPrincipal>01.05.03.08</codigoPrincipal>
+      <descripcion>ABADIA DE SAN QUIRCE CRIANZA RIBERA DEL DUERO</descripcion>
       <unidadMedida>DOLAR</unidadMedida>
-      <cantidad>1.1700</cantidad>
-      <precioUnitario>0.854701</precioUnitario>
+      <cantidad>1.0000</cantidad>
+      <precioUnitario>51.79</precioUnitario>
       <descuento>0</descuento>
-      <precioTotalSinImpuesto>1</precioTotalSinImpuesto>
+      <precioTotalSinImpuesto>51.79</precioTotalSinImpuesto>
       <impuestos>
         <impuesto>
           <codigo>2</codigo>
           <codigoPorcentaje>0</codigoPorcentaje>
           <tarifa>0</tarifa>
-          <baseImponible>1</baseImponible>
+          <baseImponible>51.79</baseImponible>
           <valor>0</valor>
         </impuesto>
       </impuestos>
@@ -67,34 +71,34 @@
     <campoAdicional nombre="Email">asistencia@diskcoversystem.com</campoAdicional>
     <campoAdicional nombre="Email2">asistencia@diskcoversystem.com</campoAdicional>
   </infoAdicional>
-<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature123642">
-<ds:SignedInfo Id="Signature-SignedInfo572110">
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature643510">
+<ds:SignedInfo Id="Signature-SignedInfo796438">
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-<ds:Reference Id="SignedPropertiesID752022" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature123642-SignedProperties456444">
+<ds:Reference Id="SignedPropertiesID731533" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature643510-SignedProperties1038161">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>PBn6Vy8Uoz2phSi2ehKnJosLJbk=</ds:DigestValue>
+<ds:DigestValue>Z0ddit1r4oSRshJDL80pfU/6An8=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference URI="#Certificate1482777">
+<ds:Reference URI="#Certificate1955153">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>ULe62zJpv2BUFICeXv7RThg/6Sw=</ds:DigestValue>
+<ds:DigestValue>o3Bfgm6BB0hFFlJkLFjKoRzDLkg=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference Id="Reference-ID-639090" URI="#comprobante">
+<ds:Reference Id="Reference-ID-957767" URI="#comprobante">
 <ds:Transforms>
 <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>Dg1xVmZ/aPZ5AXMHIjnj3XtVd7M=</ds:DigestValue>
+<ds:DigestValue>xA0gy69af/N1udvwHrWmWdBQg+g=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue Id="SignatureValue962924">
-c2FY2zdXVLvGfX/KNr+mtkP2NQbAlqgjJh57N0VNCLGzCGFAKkl5dpVNM3xmYTikuLAWA9NJ45W7
-CQYGzY6rUFJtNbG23HhOsqWsiCAtTsWb883WeoCYSTPbNd2l3Tqk/hFhaWUeUnkf4sBgGq2HPdvt
-PS3t9llBL/HAULUvTt9KikH8EZkP7pk2k6R2RzRoBzB3eF0pm5juvJoL8MxvJESOzCCGe8+j88r6
-P2fgJn0NKVFpaSEYW16wQ7RAjoCA/1qpSXvzUipsxAVBiOetCTTeLjcsg6c/Z4H1b6+OqWi/jNhr
-xJcNeqm/+2MjndUa+0xemI+8GU6653s7ErsKkA==
+<ds:SignatureValue Id="SignatureValue38099">
+S/UbjAbkluQTvTbRq9Qcw3n9NBly0mSoG4aGJ7J49zdSXzS9AM2lpKSkMpHHUfTK0MdCMsoIVYRD
+ARpS2jNwIPxJAkVGW1US+j0IfNx4ImPW2M/oxjb3KCjsOZnG8zYNyy9KatbNwwGJrJTox0ysQ0Iw
+bdYKzBEVzUCMFw8xs+nhhRDnO7Kbr8TX6OWqK2w0fqDJqOHG67haGRbLmvJiJv+3vTbJnyw4cap2
+bkRziBm16G6788WgSUVrFdmRAwuy3KStUv2QpYPnu6lXzZPbVIW/TsTT8+zzszpy12proCjzWwvT
+W6gR3x+g5DCS8Uvs6evlFiRjUfpU8taG9udDew==
 </ds:SignatureValue>
-<ds:KeyInfo Id="Certificate1482777">
+<ds:KeyInfo Id="Certificate1955153">
 <ds:X509Data>
 <ds:X509Certificate>
 MIILkjCCCXqgAwIBAgIEXDrIAjANBgkqhkiG9w0BAQsFADCBmTELMAkGA1UEBhMCRUMxHTAbBgNV
@@ -165,4 +169,6 @@ LRuAVSyi58qyAD0Eu1zLMc3KhEUXoxF7aA8P0w==
 </ds:RSAKeyValue>
 </ds:KeyValue>
 </ds:KeyInfo>
-<ds:Object Id="Signature123642-Object989739"><etsi:QualifyingProperties Target="#Signature123642"><etsi:SignedProperties Id="Signature123642-SignedProperties456444"><etsi:SignedSignatureProperties><etsi:SigningTime>2022-08-05T14:25:42-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-639090"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></factura>
+<ds:Object Id="Signature643510-Object895977"><etsi:QualifyingProperties Target="#Signature643510"><etsi:SignedProperties Id="Signature643510-SignedProperties1038161"><etsi:SignedSignatureProperties><etsi:SigningTime>2022-08-16T15:46:12-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-957767"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></factura>]]></comprobante>
+  <mensajes/>
+</autorizacion>

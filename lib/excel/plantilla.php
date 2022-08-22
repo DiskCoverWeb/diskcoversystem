@@ -284,7 +284,7 @@ function excel_generico($titulo,$datos=false,$url=false)
 	    $write = new Xlsx($spreadsheet);
 	   	if(!is_dir($url))
 	    {
-	    	mkdir($url,7777,true);
+	    	mkdir($url,0777,true);
 	    }
 	    // print_r($url.$titulo);die();
 	    // $url = '';

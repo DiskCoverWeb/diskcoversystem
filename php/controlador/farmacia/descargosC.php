@@ -322,7 +322,7 @@ class ingreso_descargosC
   					<td width="'.$d6.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
   					<td width="'.$d7.'">E</td>
   					<td width="90px">
-  						<a href="../vista/farmacia.php?mod=Farmacia&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&num_ped='.$value['ORDEN'].'&area='.$value['area'].'-'.$value['Detalle'].'&cod='.$value['his'].'#" class="btn btn-sm btn-primary" title="Editar pedido"><span class="glyphicon glyphicon-pencil"></span></a>
+  						<a href="../vista/farmacia.php?mod='.$_SESSION['INGRESO']['modulo_'].'&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&num_ped='.$value['ORDEN'].'&area='.$value['area'].'-'.$value['Detalle'].'&cod='.$value['his'].'#" class="btn btn-sm btn-primary" title="Editar pedido"><span class="glyphicon glyphicon-pencil"></span></a>
   						<button class="btn btn-sm btn-danger" onclick="eliminar_pedido(\''.$value['ORDEN'].'\',\''.$value['area'].'\')"><span class="glyphicon glyphicon-trash"></span></button>
   					</td>
   				</tr>';

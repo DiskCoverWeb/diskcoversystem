@@ -192,7 +192,8 @@ function lista_devolucion()
           Swal.fire('Agregado a lista de devoluciones','','success');
           if($('#lineas').val()==0)
           {
-          location.href='../vista/farmacia.php?mod=Farmacia&acc=devoluciones_departamento&acc1=Devolucion%20por%20departamentos&b=1&po=sub&comprobante='+com+'&subcta='+are+'&area='+nom_a+'&centroc='+cc+'&cc_no='+cc_nom; 
+          var mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>'; 
+          location.href='../vista/farmacia.php?mod='+mod+'&acc=devoluciones_departamento&acc1=Devolucion%20por%20departamentos&b=1&po=sub&comprobante='+com+'&subcta='+are+'&area='+nom_a+'&centroc='+cc+'&cc_no='+cc_nom; 
           }else{
           lista_devolucion();
           }
@@ -275,7 +276,8 @@ function lista_devolucion()
             allowOutsideClick: false,
           }).then((result) => {
             if (result.value) {
-               location.href='../vista/farmacia.php?mod=Farmacia&acc=devoluciones_departamento&acc1=Devolucion%20por%20departamentos&b=1&po=sub'
+              var mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>'; 
+               location.href='../vista/farmacia.php?mod='+mod+'&acc=devoluciones_departamento&acc1=Devolucion%20por%20departamentos&b=1&po=sub'
             }
           })
 
