@@ -183,14 +183,11 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("inventario/catalogo_producto.php");
 			}
-<<<<<<< HEAD
-=======
-			
+
 			if ($_SESSION['INGRESO']['accion']=='lineas_cxc') 
 			{
 				require_once("facturacion/lineas_cxc.php");
 			}
->>>>>>> e213e3acd353e3cae79941204a9e88ca680d3e42
 //empresa
 
 			if ($_SESSION['INGRESO']['accion']=='cambioe') 
@@ -326,19 +323,6 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("inventario/catalogo_producto.php");
 			}
-<<<<<<< HEAD
-=======
-
-			
->>>>>>> e213e3acd353e3cae79941204a9e88ca680d3e42
-		
-
-
-
-
-
-
-
 
 	}else
 	{		
@@ -352,15 +336,12 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			case '02':
 				echo "<div class='box-body'><img src='../../img/modulo_facturacion.png' width='100%'></div>";
 				break;
-<<<<<<< HEAD
 			case '09':
 				echo "<div class='box-body'><img src='../../img/modulo_electronicos.png' width='100%'></div>";
 				break;
 			case '10':
 				echo "<div class='box-body'><img src='../../img/modulo_comprobantes.png' width='100%'></div>";
 				break;
-=======
->>>>>>> e213e3acd353e3cae79941204a9e88ca680d3e42
 			case '99':
 				echo "<div class='box-body'><img src='../../img/modulo_empresa.png' width='100%' heigth='500px'></div>";
 				break;			
