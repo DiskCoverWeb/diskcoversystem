@@ -379,7 +379,7 @@
   <div class="row"><br>
     <div class="col-lg-7 col-sm-10 col-md-6 col-xs-12">
        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-            <a  href="./farmacia.php?mod=28" title="Salir de modulo" class="btn btn-default">
+            <a  href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0].'#');?>" title="Salir de modulo" class="btn btn-default">
               <img src="../../img/png/salire.png">
             </a>
         </div>

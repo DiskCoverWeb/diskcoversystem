@@ -52,16 +52,41 @@ class facturar_pensionM
   }
 
 
-  public function getCatalogoLineas($fecha,$vencimiento){
+  public function getCatalogoLineas($fecha,$vencimiento,$serie=false){
     $sql="  SELECT * FROM Catalogo_Lineas 
             WHERE Item = '".$_SESSION['INGRESO']['item']."' 
 			      AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 			      AND CONVERT(DATE,Fecha) <= '".$fecha."'
-			      AND CONVERT(DATE,Vencimiento) >= '".$vencimiento."' 
-			      ORDER BY Codigo";
+			      AND CONVERT(DATE,Vencimiento) >= '".$vencimiento."' ";
+            if($serie)
+            {
+              $sql.=" AND Serie='".$serie."'";
+            }
+			      $sql.=" ORDER BY Codigo";
+
+            // print_r($sql);die();
             $stmt = $this->db->datos($sql);
             return $stmt;
   }
+
+    public function getCatalogoLineas13($fecha,$vencimiento){
+    $sql="  SELECT * FROM Catalogo_Lineas 
+            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+            AND CONVERT(DATE,Fecha) <= '".$fecha."'
+            AND CONVERT(DATE,Vencimiento) >= '".$vencimiento."'
+            AND len(Autorizacion)>=13
+            ORDER BY Codigo";
+            $stmt = $this->db->datos($sql);
+            return $stmt;
+    }
+
+  public function getSerieUsuario($codigoU){
+      $sql="SELECT * FROM Accesos WHERE Codigo = '".$codigoU."'";
+      // print_r($sql);die();
+      $stmt = $this->db->datos($sql);
+      return $stmt;
+    }
 
   public function getCatalogoCuentas(){
     $sql="SELECT Codigo, Cuenta As NomCuenta, TC 

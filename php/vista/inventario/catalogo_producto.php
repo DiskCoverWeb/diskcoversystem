@@ -302,8 +302,9 @@
     	<button class="btn btn-default"  data-toggle="tooltip" title="Grabar" onclick="guardarINV()">  <img src="../../img/png/grabar.png"></button><br>
     	<button class="btn btn-default"  data-toggle="tooltip" title="Imprimir Grupo" onclick="codigo_barras_grupo();"><img src="../../img/png/impresora.png"></button><br>
     	<button class="btn btn-default"  data-toggle="tooltip" title="Imprimir" onclick="cantidad_codigo_barras();//codigo_barras()">  <img src="../../img/png/barcode.png"></button><br>
-    	<button class="btn btn-default"  data-toggle="tooltip" title="Salir">  <img src="../../img/png/salire.png"></button><br>
-    	
+    	 <a  href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0].'#');?>" title="Salir de modulo" class="btn btn-default">
+          <img src="../../img/png/salire.png">
+       </a>
     </div>
 </div>
 <form id="form_datos" name="form_datos">

@@ -132,11 +132,38 @@ class facturar_pensionC
 	public function getCatalogoLineas(){
 		$emision = $_POST['fechaEmision'];
 		$vencimiento = $_POST['fechaVencimiento'];
-		$datos = $this->facturacion->getCatalogoLineas($emision,$vencimiento);
-		$catalogo = [];
-		foreach ($datos as $value) {
-			$catalogo[] = array('id'=>$value['Fact']." ".$value['Serie']." ".$value['Autorizacion']." ".$value['CxC'] ,'text'=>utf8_encode($value['Concepto']));
-		}
+
+    //busco serie_FA en accesos SQLSERVER
+    $usuario = $this->facturacion->getSerieUsuario($_SESSION['INGRESO']['CodigoU']);
+    // print_r($usuario);die();
+    $serie = '.';
+    $datos = array();
+    if(count($usuario)>0){ if(isset($usuario[0]['Serie_FA'])){$serie = $usuario[0]['Serie_FA'];}}
+    //buscar serie de usuario
+   
+    if($serie!='.'){
+      // si hay serie busco en catalogo lineas
+      $datos = $this->facturacion->getCatalogoLineas($emision,$vencimiento,$serie);
+    }
+    if(count($datos)==0)
+    {      
+      //buscar serie de empresa
+      if($_SESSION['INGRESO']['Serie_FA']!='.'){
+        $serie = $_SESSION['INGRESO']['Serie_FA'];
+        $datos = $this->facturacion->getCatalogoLineas($emision,$vencimiento,$serie);
+      }      
+    }
+
+    // si no existe ninguno de los dos
+    if(count($datos)==0)
+    {      
+      $datos = $this->facturacion->getCatalogoLineas13($emision,$vencimiento);
+    }
+
+    $catalogo = [];
+    foreach ($datos as $value) {
+      $catalogo[] = array('id'=>$value['Fact']." ".$value['Serie']." ".$value['Autorizacion']." ".$value['CxC'] ,'text'=>utf8_encode($value['Concepto']));
+    }    
     return $catalogo;
 	}
 

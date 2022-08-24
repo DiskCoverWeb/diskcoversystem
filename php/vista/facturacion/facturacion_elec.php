@@ -1,4 +1,5 @@
-<?php date_default_timezone_set('America/Guayaquil');  //print_r($_SESSION);die();//print_r($_SESSION['INGRESO']);die();
+<?php date_default_timezone_set('America/Guayaquil');  //print_r($_SESSION);die();
+//print_r($_SESSION['INGRESO']);die();
 $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 ?>
 <script type="text/javascript">
@@ -90,6 +91,10 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
   function tipo_documento()
   {
   	var tc = $('#DCLinea').val();
+  	if(tc=='')
+  	{
+  		return false;
+  	}
   	tc = tc.split(' ');
 
   	// var TipoFactura = '<?php //echo $TC; ?>';
@@ -637,7 +642,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
       dataType:'json', 
       success: function(data)             
       {
-        if (data) {
+        if (data.length>0) {
           datos = data;
           // Limpiamos el select
           cursos.find('option').remove();
@@ -645,7 +650,16 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
             cursos.append('<option value="' + datos[indice].id +" "+datos[indice].text+ ' ">' + datos[indice].text + '</option>');
           }
         }else{
-          console.log("No tiene datos");
+        	Swal.fire({
+					  type:'info',
+					  title: 'Usted no tiene un punto de venta asignado, contacte con la administracion del sistema',
+					  text:'',
+					  allowOutsideClick: false,
+					}).then(()=>{
+						console.log('ingresa');
+								location.href = '../vista/modulos.php';
+							});
+
         }
 
     tipo_documento();
@@ -692,7 +706,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 				<div class="col-sm-2">					
             <input type="hidden" id="Autorizacion">
             <input type="hidden" id="Cta_CxP">
-					<select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="1" onchange="numeroFactura(); tipo_documento();"></select>
+					<select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="1" onchange="numeroFactura(); tipo_documento();"><option value=""></option></select>
 
 					<b>Fecha</b>
 					<input type="date" name="MBFecha" id="MBFecha" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">	

@@ -116,6 +116,8 @@ $cod = ''; $ci =''; if(isset($_GET['cod'])){$cod = $_GET['cod'];} if(isset($_GET
       success:  function (response) { 
         
           console.log(response);
+
+        var mod = "<?php echo $_GET['mod'] ?>";
         if(response)
         {
           if(cod!='0')
@@ -126,8 +128,6 @@ $cod = ''; $ci =''; if(isset($_GET['cod'])){$cod = $_GET['cod'];} if(isset($_GET
             cargar_pedidos();
           }else
           {
-
-            var mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
             var url = "../vista/farmacia.php?mod="+mod+"&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu&cod="+response[0].ORDEN+"&ci="+ci;
             $(location).attr('href',url);
           }
@@ -143,7 +143,7 @@ $cod = ''; $ci =''; if(isset($_GET['cod'])){$cod = $_GET['cod'];} if(isset($_GET
     var pro = $('#txt_procedimiento').val();
     if(cod_cli!='' && area !='' && pro!='')
     {
-      var mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
+      var mod = '<?php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
       var href="../vista/farmacia.php?mod="+mod+"&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&cod="+cod_cli+"&area="+area+"-"+$('#txt_procedimiento').val()+"#";
       $(location).attr('href',href);
     }else
@@ -243,7 +243,7 @@ $cod = ''; $ci =''; if(isset($_GET['cod'])){$cod = $_GET['cod'];} if(isset($_GET
   function limpiar()
   {
 
-    var mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';    
+    var mod = '<?php echo $_SESSION["INGRESO"]["modulo_"]; ?>';    
     var href="../vista/farmacia.php?mod="+mod+"&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#";
     $(location).attr('href',href);
     $('#txt_query').val('');
@@ -276,7 +276,7 @@ $cod = ''; $ci =''; if(isset($_GET['cod'])){$cod = $_GET['cod'];} if(isset($_GET
       success:  function (response) { 
         if(response==1)
         {
-          var mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>'; 
+          var mod = '<?php echo $_SESSION["INGRESO"]["modulo_"]; ?>'; 
            var href="../vista/farmacia.php?mod="+mod+"&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu&cod="+num_hi+"&ci="+ci+"#";
            $(location).attr('href',href);
         }else if(response == -2)
@@ -382,7 +382,7 @@ function Ver_Comprobante(comprobante)
 function Ver_detalle(comprobante)
 {
 
-    var mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>'; 
+    var mod = '<?php echo $_SESSION["INGRESO"]["modulo_"]; ?>'; 
     url='../vista/farmacia.php?mod='+mod+'&acc=devoluciones_detalle&acc1=Detalle de devolucion&b=1&po=subcu&comprobante='+comprobante;
     window.open(url, '_blank');
 }
@@ -392,22 +392,22 @@ function Ver_detalle(comprobante)
   <div class="row">
     <div class="col-lg-8 col-sm-10 col-md-6 col-xs-12">
        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-            <a  href="./farmacia.php?mod=Farmacia#" title="Salir de modulo" class="btn btn-default">
+            <a  href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0].'#');?>" title="Salir de modulo" class="btn btn-default">
               <img src="../../img/png/salire.png">
             </a>
         </div>        
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-          <a href="./farmacia.php?mod=Farmacia&acc=pacientes&acc1=Visualizar%20paciente&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_pdf" title="Pacientes">
+          <a href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0]);?>&acc=pacientes&acc1=Visualizar%20paciente&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_pdf" title="Pacientes">
             <img src="../../img/png/pacientes.png">
           </a>           
         </div>
        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-          <a href="./farmacia.php?mod=Farmacia&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_excel" title="Descargos">
+          <a href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0]);?>&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_excel" title="Descargos">
             <img src="../../img/png/descargos.png">
           </a>         
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-          <a href="./farmacia.php?mod=Farmacia&acc=articulos&acc1=Visualizar%20articulos&b=1&po=subcu#" title="Ingresar Articulos"  class="btn btn-default" onclick="">
+          <a href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0]);?>&acc=articulos&acc1=Visualizar%20articulos&b=1&po=subcu#" title="Ingresar Articulos"  class="btn btn-default" onclick="">
             <img src="../../img/png/articulos.png" >
           </a>
         </div>

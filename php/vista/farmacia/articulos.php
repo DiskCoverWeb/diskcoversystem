@@ -973,7 +973,7 @@
                  <option value="">seleccione familia</option>
               </select>
                  <span>
-                  <button type="button" class="btn btn-success btn-flat" onclick="$('#modal_nueva_familia').modal('show')"><i class="fa fa-plus"></i></button>
+                  <button type="button" class="btn btn-success btn-flat btn-xs" onclick="$('#modal_nueva_familia').modal('show')"><i class="fa fa-plus"></i></button>
                 </span>
             </div>   
           </div>
@@ -982,7 +982,7 @@
               <div class="input-group" style="display: flex;">   
                 <select class="form-control form-control-sm"  name="ddl_cta_inv" id="ddl_cta_inv"></select>
                   <span class="">
-                    <button type="button" class="btn btn-info btn-flat" onclick="limpiar_cta('ddl_cta_inv')"><i class="fa fa-close"></i></button>
+                    <button type="button" class="btn btn-info btn-flat btn-xs" onclick="limpiar_cta('ddl_cta_inv')"><i class="fa fa-close"></i></button>
                   </span>
               </div>
           </div> 
@@ -1023,18 +1023,18 @@
             <div class="col-sm-6">
               <b>Cuenta Costo venta</b>
                <div class="input-group" style="display:flex;">   
-                <select class="form-control form-control-sm"  name="ddl_cta_CV" id="ddl_cta_CV" ></select>
+                <select class="form-control"  name="ddl_cta_CV" id="ddl_cta_CV" ></select>
                     <span>
-                      <button type="button" class="btn btn-info btn-flat" onclick="limpiar_cta('ddl_cta_CV')"><i class="fa fa-close"></i></button>
+                      <button type="button" class="btn btn-info btn-flat btn-xs" onclick="limpiar_cta('ddl_cta_CV')"><i class="fa fa-close"></i></button>
                     </span>
                </div>    
             </div>  
             <div class="col-sm-6">           
                <b>Cuenta Ventas</b><br>
                 <div class="input-group" style="display:flex;">      
-                <select class="form-control form-control-sm" name="ddl_cta_venta" id="ddl_cta_venta"></select>
+                <select class="form-control" name="ddl_cta_venta" id="ddl_cta_venta"></select>
                     <span>
-                      <button type="button" class="btn btn-info btn-flat" onclick="limpiar_cta('ddl_cta_venta')"><i class="fa fa-close"></i></button>
+                      <button type="button" class="btn btn-info btn-flat btn-xs" onclick="limpiar_cta('ddl_cta_venta')"><i class="fa fa-close"></i></button>
                     </span>
                </div>   
             </div>         
@@ -1043,18 +1043,18 @@
           <div class="col-sm-6">
             <b>Cuenta Ventas 0</b>
              <div class="input-group" style="display:flex;">   
-                <select class="form-control form-control-sm" name="ddl_cta_ventas_0" id="ddl_cta_ventas_0"></select>
+                <select class="form-control" name="ddl_cta_ventas_0" id="ddl_cta_ventas_0"></select>
                     <span>
-                      <button type="button" class="btn btn-info btn-flat" onclick="limpiar_cta('ddl_cta_ventas_0')"><i class="fa fa-close"></i></button>
+                      <button type="button" class="btn btn-info btn-flat btn-xs" onclick="limpiar_cta('ddl_cta_ventas_0')"><i class="fa fa-close"></i></button>
                     </span>
                </div>   
           </div>  
           <div class="col-sm-6">
             <b>Cuenta Ventas Anti</b>  
              <div class="input-group" style="display:flex;">     
-                <select class="form-control form-control-sm"  name="ddl_cta_vnt_anti" id="ddl_cta_vnt_anti"></select>
+                <select class="form-control"  name="ddl_cta_vnt_anti" id="ddl_cta_vnt_anti"></select>
                     <span>
-                      <button type="button" class="btn btn-info btn-flat"  onclick="limpiar_cta('ddl_cta_vnt_anti')"><i class="fa fa-close"></i></button>
+                      <button type="button" class="btn btn-info btn-flat btn-xs"  onclick="limpiar_cta('ddl_cta_vnt_anti')"><i class="fa fa-close"></i></button>
                     </span>
                </div>          
             </div>

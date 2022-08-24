@@ -411,25 +411,25 @@ function Ver_detalle(comprobante)
   <div class="row">
     <div class="col-lg-7 col-sm-10 col-md-6 col-xs-12">
        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-            <a  href="./farmacia.php?mod=Farmacia#" title="Salir de modulo" class="btn btn-default">
+            <a  href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0]);?>" title="Salir de modulo" class="btn btn-default">
               <img src="../../img/png/salire.png">
             </a>
-        </div>        
+        </div>  
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-          <a href="./farmacia.php?mod=Farmacia&acc=pacientes&acc1=Visualizar%20paciente&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_pdf" title="Pacientes">
+          <a href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0]);?>&acc=pacientes&acc1=Visualizar%20paciente&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_pdf" title="Pacientes">
             <img src="../../img/png/pacientes.png">
           </a>           
         </div>
        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-          <a href="./farmacia.php?mod=Farmacia&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_excel" title="Descargos">
+          <a href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0]);?>&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#" type="button" class="btn btn-default" id="imprimir_excel" title="Descargos">
             <img src="../../img/png/descargos.png">
           </a>         
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-          <a href="./farmacia.php?mod=Farmacia&acc=articulos&acc1=Visualizar%20articulos&b=1&po=subcu#" title="Ingresar Articulosr"  class="btn btn-default" onclick="">
+          <a href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0]);?>&acc=articulos&acc1=Visualizar%20articulos&b=1&po=subcu#" title="Ingresar Articulosr"  class="btn btn-default" onclick="">
             <img src="../../img/png/articulos.png" >
           </a>
-        </div>
+        </div> 
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
             <button type="button" class="btn btn-default" title="Generar pdf" onclick="reporte_pdf()"><img src="../../img/png/pdf.png"></button>
         </div>

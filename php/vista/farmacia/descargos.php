@@ -139,7 +139,7 @@
             cargar_pedidos();
           }else
           {
-            mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
+            mod = '<?php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
             var url = "../vista/farmacia.php?mod="+mod+"&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu&cod="+response[0].ORDEN+"&ci="+ci;
             $(location).attr('href',url);
           }
@@ -155,7 +155,7 @@
     var pro = $('#txt_procedimiento').val();
     if(cod_cli!='' && area !='' && pro!='')
     {
-       mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
+       mod = '<?php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
       var href="../vista/farmacia.php?mod="+mod+"&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&cod="+cod_cli+"&area="+area+"-"+$('#txt_procedimiento').val()+"#";
       $(location).attr('href',href);
     }else
@@ -274,7 +274,7 @@
 
   function limpiar()
   {
-    mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
+    mod = '<?php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
     var href="../vista/farmacia.php?mod="+mod+"&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#";
     $(location).attr('href',href);
     $('#txt_query').val('');
@@ -307,7 +307,7 @@
       success:  function (response) { 
         if(response==1)
         {
-           mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
+           mod = '<?php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
            var href="../vista/farmacia.php?mod="+mod+"&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu&cod="+num_hi+"&ci="+ci+"#";
            $(location).attr('href',href);
         }else if(response == -2)

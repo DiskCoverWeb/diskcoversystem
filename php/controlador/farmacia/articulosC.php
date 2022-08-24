@@ -452,7 +452,7 @@ class articulosC
 		$datos[17]['dato']='N'; 
 
 		// print_r($parametros);die();
-		if($parametros['txt_id']!='')
+		if(isset($parametros['txt_id']) AND $parametros['txt_id'] !='')
 		{
 			$where[0]['campo'] = 'ID';
 			$where[0]['valor'] = $parametros['txt_id'];

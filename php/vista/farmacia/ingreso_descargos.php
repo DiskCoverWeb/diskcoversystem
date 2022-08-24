@@ -400,7 +400,7 @@
           if(ped==-1)
           {
             num_ped = $('#txt_pedido').val();
-            mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
+            mod = '<?php echo $_GET["mod"]; ?>';
             var url="../vista/farmacia.php?mod="+mod+"&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+num_ped+"&cod="+num_his+"#";
             $(location).attr('href',url);
           }else
@@ -714,7 +714,7 @@
             denyButtonText: `Don't save`,
           }).then((result) => {
 
-              var  mod = '<php echo $_SESSION["INGRESO"]["modulo_"]; ?>';
+              var  mod = '<?php echo $_GET["mod"]; ?>';
               if (result.isConfirmed) {
 
                 if(reg==0)
