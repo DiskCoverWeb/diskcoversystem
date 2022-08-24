@@ -77,7 +77,8 @@ class cambioeM
 	    Fecha='".$parametros['FechaR']."',
 	    Fecha_VPN='".$parametros['FechaV']."',
 	    Fecha_DB='".$parametros['FechaDB']."',
-	    Fecha_P12='".$parametros['FechaP12']."' 
+	    Fecha_P12='".$parametros['FechaP12']."', 
+	    Tipo_Plan='".$parametros['Plan']."' 
 	    WHERE ID='".$parametros['empresas']."' ";
 
 	    // print_r($sql);die();

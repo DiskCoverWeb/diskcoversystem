@@ -199,6 +199,13 @@ class cambioeC
 					   
 					  <input type="text" class="form-control input-sm" id="Puerto" name="Puerto" placeholder="Puerto" value="'.$value['Puerto'].'">
 					</div>
+				</div>				
+				<div class="col-md-2">
+					<div class="form-group">
+					  <label for="Plan">Plan</label>
+					   
+					  <input type="text" class="form-control input-sm" id="Plan" name="Plan" placeholder="Plan" value="'.$value['Tipo_Plan'].'">
+					</div>
 				</div>
 				
 				<div class="col-md-12">

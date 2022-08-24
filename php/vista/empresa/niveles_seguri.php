@@ -148,6 +148,7 @@
             $('#txt_email').val(response[0].Email);
             $('#txt_ci_nic').val(response[0].CI_NIC);
     			 	console.log(response);
+            $('#serie').val(response[0].Serie_FA);
     			 }
 
             $('#myModal_espera').modal('hide'); 
@@ -235,6 +236,7 @@ function guardar()
     'nombre': $('select[name="ddl_usuarios"] option:selected').text(),
  		'pass':$('#txt_pass').val(),
     'email':$('#txt_email').val(),
+    'serie':$('#serie').val(),
  		'modulos':modulos,
     'empresas':empresas,
  		'entidad':$('#ddl_entidad').val(),
@@ -787,6 +789,15 @@ function DoubleScroll(element) {
         </span>
         <!-- </div> -->
       </div>
+      <div class="input-group">
+        <div class="row">
+          <div class="col-sm-6">
+             Serie
+             <input type="" name="serie" id="serie" class="form-control input-xs" placeholder="001001">
+          </div>
+        </div>
+      </div>
+     
 	</div>
 	<div class="col-sm-4">
 		<div class="col-sm-6">

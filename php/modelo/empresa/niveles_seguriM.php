@@ -155,7 +155,7 @@ class niveles_seguriM
 	}
 	function datos_usuario($entidad,$usuario)
 	{
-		$sql = "SELECT CI_NIC,Usuario,Clave,Nivel_1 as 'n1',Nivel_2 as 'n2',Nivel_3 as 'n3',Nivel_4 as 'n4',Nivel_5 as 'n5',Nivel_6 as 'n6',Nivel_7 as 'n7',Supervisor,Cod_Ejec,Email FROM acceso_usuarios WHERE  CI_NIC = '".$usuario."'";
+		$sql = "SELECT CI_NIC,Usuario,Clave,Nivel_1 as 'n1',Nivel_2 as 'n2',Nivel_3 as 'n3',Nivel_4 as 'n4',Nivel_5 as 'n5',Nivel_6 as 'n6',Nivel_7 as 'n7',Supervisor,Cod_Ejec,Email,Serie_FA FROM acceso_usuarios WHERE  CI_NIC = '".$usuario."'";
         $resp = $this->db->datos($sql,'MY SQL');
 		// // print_r($sql);die();
 		//  $datos=array();
@@ -220,9 +220,9 @@ class niveles_seguriM
 
 
 	}
-	function update_acceso_usuario($niveles,$usuario,$clave,$entidad,$CI_NIC,$email)
+	function update_acceso_usuario($niveles,$usuario,$clave,$entidad,$CI_NIC,$email,$serie)
 	{
-	   $sql = "UPDATE acceso_usuarios SET TODOS = 1, Nivel_1 =".$niveles['1'].", Nivel_2 =".$niveles['2'].", Nivel_3 =".$niveles['3'].", Nivel_4 =".$niveles['4'].",Nivel_5 =".$niveles['5'].", Nivel_6=".$niveles['6'].", Nivel_7=".$niveles['7'].", Supervisor = ".$niveles['super'].", Usuario = '".$usuario."',Clave = '".$clave."',Email='".$email."' WHERE CI_NIC = '".$CI_NIC."';";
+	   $sql = "UPDATE acceso_usuarios SET TODOS = 1, Nivel_1 =".$niveles['1'].", Nivel_2 =".$niveles['2'].", Nivel_3 =".$niveles['3'].", Nivel_4 =".$niveles['4'].",Nivel_5 =".$niveles['5'].", Nivel_6=".$niveles['6'].", Nivel_7=".$niveles['7'].", Supervisor = ".$niveles['super'].", Usuario = '".$usuario."',Clave = '".$clave."',Email='".$email."',Serie_FA='".$serie."' WHERE CI_NIC = '".$CI_NIC."';";
 	  return $this->db->String_Sql($sql,'MY SQL');
 
 	}
@@ -281,7 +281,7 @@ class niveles_seguriM
 		 	     {
 
 		 	     $sql = "INSERT INTO Clientes(T,FA,Codigo,Fecha,Cliente,TD,CI_RUC,FactM,Descuento,RISE,Especial)VALUES('N',0,'".$parametros['ced']."','".date('Y-m-d')."','".$parametros['nom']."','C','".$parametros['ced']."',0,0,0,0);";
-		 	     $sql.="INSERT INTO Accesos (TODOS,Clave,Usuario,Codigo,Nombre_Completo,Nivel_1,Nivel_2,Nivel_3,Nivel_4,Nivel_5,Nivel_6,Nivel_7,Supervisor,EmailUsuario) VALUES (1,'".$parametros['cla']."','".$parametros['usu']."','".$parametros['ced']."','".$parametros['nom']."','".$parametros['n1']."','".$parametros['n2']."','".$parametros['n3']."','".$parametros['n4']."','".$parametros['n5']."','".$parametros['n6']."','".$parametros['n7']."','".$parametros['super']."','".$parametros['email']."')";
+		 	     $sql.="INSERT INTO Accesos (TODOS,Clave,Usuario,Codigo,Nombre_Completo,Nivel_1,Nivel_2,Nivel_3,Nivel_4,Nivel_5,Nivel_6,Nivel_7,Supervisor,EmailUsuario,Serie_FA) VALUES (1,'".$parametros['cla']."','".$parametros['usu']."','".$parametros['ced']."','".$parametros['nom']."','".$parametros['n1']."','".$parametros['n2']."','".$parametros['n3']."','".$parametros['n4']."','".$parametros['n5']."','".$parametros['n6']."','".$parametros['n7']."','".$parametros['super']."','".$parametros['email']."','".$parametros['serie']."')";
 		 	     // print_r($sql);die();
 		 	    $stmt = sqlsrv_query($cid2, $sql);
 	            if($stmt === false)  
@@ -363,7 +363,7 @@ class niveles_seguriM
 		 	     	 {
 
 		 	     	// print_r('existe');die();
-		 	     	 	$sql = "UPDATE Accesos SET Nivel_1 =".$parametros['n1'].", Nivel_2 =".$parametros['n2'].", Nivel_3 =".$parametros['n3'].", Nivel_4 =".$parametros['n4'].",Nivel_5 =".$parametros['n5'].", Nivel_6=".$parametros['n6'].", Nivel_7=".$parametros['n7'].", Supervisor = ".$parametros['super'].", Usuario = '".$parametros['usuario']."',Clave = '".$parametros['pass']."',EmailUsuario='".$parametros['email']."' WHERE Codigo = '".$parametros['CI_usuario']."';";
+		 	     	 	$sql = "UPDATE Accesos SET Nivel_1 =".$parametros['n1'].", Nivel_2 =".$parametros['n2'].", Nivel_3 =".$parametros['n3'].", Nivel_4 =".$parametros['n4'].",Nivel_5 =".$parametros['n5'].", Nivel_6=".$parametros['n6'].", Nivel_7=".$parametros['n7'].", Supervisor = ".$parametros['super'].", Usuario = '".$parametros['usuario']."',Clave = '".$parametros['pass']."',EmailUsuario='".$parametros['email']."',Serie_FA = '".$parametros['serie']."' WHERE Codigo = '".$parametros['CI_usuario']."';";
 
 		 	     	 	  $sql = str_replace('false',0, $sql);
 		 	     	 	  $sql = str_replace('true',1, $sql);
@@ -398,6 +398,7 @@ class niveles_seguriM
 		 	            $parametros_ing['n7'] = $parametros['n7'];
 		 	            $parametros_ing['super'] = $parametros['super'];
 		 	            $parametros_ing['email'] = $parametros['email'];
+		 	            $parametros_ing['serie'] = $parametros['serie'];
 		 	            // print_r($parametros_ing);die();
 		 	     	 	 if($this->crear_como_cliente_SQLSERVER($parametros_ing)==1)
 		 	     	 	 {
