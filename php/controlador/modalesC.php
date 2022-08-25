@@ -136,18 +136,14 @@ class modalesC
 		$dato[13]['campo']='Ciudad';
 		$dato[13]['dato']=$parametro['ciu'];
 		//facturacion
-		if($_SESSION['INGRESO']['modulo_']=='02' || $_SESSION['INGRESO']['modulo_']=='16')
+		$dato[14]['campo']='FA';
+		$dato[14]['dato']=1;
+		if($parametro['rbl']=='false')
 		{
-			$dato[13]['campo']='FA';
-			$dato[13]['dato']=1;
-			if($parametro['rbl']=='false')
-			{
-				$dato[13]['campo']='FA';
-				$dato[13]['dato']=0;
-			}
+			$dato[14]['campo']='FA';
+			$dato[14]['dato']=0;
 		}
-
-			// print_r($parametro);die();
+		 //print_r($parametro);die();
 		if($parametro['txt_id']!='')
 		{
 			$campoWhere[0]['campo'] = 'ID';

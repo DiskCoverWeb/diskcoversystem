@@ -374,6 +374,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 			{
 				DGAsientoF();
 				Calculos_Totales_Factura();
+				$('#DCArticulo').empty();
 			}else
 			{
 				Swal.fire('Intente mas tarde','','info');
@@ -432,7 +433,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 		success: function(data)
 		{
 			// console.log(data)
-			$('#LabelSubTotal').val(parseFloat(data.SubTotal).toFixed(2));
+			$('#LabelSubTotal').val(parseFloat(data.Sin_IVA).toFixed(2));
 		    $('#LabelConIVA').val(parseFloat(data.Con_IVA).toFixed(2));
 		    $('#LabelIVA').val(parseFloat(data.Total_IVA).toFixed(2));
 		    $('#LabelTotal').val(parseFloat(data.Total_MN).toFixed(2));			
@@ -555,7 +556,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
   	}
   	$.ajax({
 		type: "POST",
-		url: '../controlador/facturacion/punto_ventaC.php?generar_factura=true',
+		url: '../controlador/facturacion/punto_ventaC.php?generar_factura_elec=true',
 		data: {parametros: parametros},
 		dataType:'json',
 		success: function(data)
@@ -587,7 +588,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 				Swal.fire('SRI intermitente intente mas tarde','','info');	
 			}else
 			{
-				Swal.fire(data.text,'','error');	
+				Swal.fire('XML devuelto por:'+data.text,'','error');	
 			}
 			
 		}
@@ -693,19 +694,23 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 </script>
 
   <div class="row">
-    <div class="col-lg-6 col-sm-10 col-md-6 col-xs-12">
+    <div class="col-lg-9 col-sm-10 col-md-8 col-xs-10">
        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
             <a  href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0].'#');?>" title="Salir de modulo" class="btn btn-default">
               <img src="../../img/png/salire.png">
             </a>
         </div>   
     </div>
+    <div class="col-sm-2 col-lg-3 col-md-4 col-xs-2">
+        	<?php if($_SESSION['INGRESO']['Ambiente']==1){echo '<h4>Ambiente Pruebas</h4>';}else if($_SESSION['INGRESO']['Ambiente']==2){echo '<h4>Ambiente Produccion</h4>';} ?>
+     </div>
 	</div>
 			<input type="hidden" name="CodDoc" id="CodDoc" class="form-control input-xs" value="00">	 
 			<div class="row">
 				<div class="col-sm-2">					
             <input type="hidden" id="Autorizacion">
             <input type="hidden" id="Cta_CxP">
+            <b>Punto de emision</b>
 					<select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="1" onchange="numeroFactura(); tipo_documento();"><option value=""></option></select>
 
 					<b>Fecha</b>
@@ -744,7 +749,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 				<div class="col-sm-2"  style="display:none">			
 					<b>BODEGAS</b>
 					<select class="form-control input-xs" id="DCBodega" name="DCBodega" onblur="validar_bodega()">
-						<option value="">Seleccione Bodega</option>
+						<option value="01">Seleccione Bodega</option>
 					</select>
 					
 				</div>
@@ -850,7 +855,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 							<input type="text" name="LabelTotal"  id="LabelTotal" class="form-control input-xs text-right" value="0.00" style="color:red" readonly>						
 						</div>
 					</div>
-					<div class="row">
+					<div class="row" style="display:none;">
 						<div class="col-sm-6">
 							<b>Total Fact (ME)</b>
 						</div>

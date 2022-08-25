@@ -7347,13 +7347,14 @@ function datos_tabla($tabla,$campo=false)
       $TFA['Descuento'] += $value['Total_Desc'];
       $TFA['Descuento2'] += $value['Total_Desc2'];
       $TFA['Total_IVA'] += $value['Total_IVA'];
-      if ($value['Total_IVA']) {
+      if (number_format($value['Total_IVA'],2)!=0) {
         $TFA['Con_IVA'] += $value['TOTAL'];
         $TFA['Descuento_X'] = $TFA['Descuento_X'] + $TFA['Descuento'] + $TFA['Descuento2'];
       }else{
         $TFA['Sin_IVA'] += $value['TOTAL'];
         $TFA['Descuento_0'] = $TFA['Descuento_0'] + $TFA['Descuento'] + $TFA['Descuento2'];
       }
+      //print_r($value);die();
     }
 
     $TFA['Total_IVA'] = round($TFA['Total_IVA'],2);
@@ -7363,6 +7364,8 @@ function datos_tabla($tabla,$campo=false)
     * $_SESSION['INGRESO']['Porc_Serv'],2);
     $TFA['SubTotal'] = $TFA['Sin_IVA'] + $TFA['Con_IVA'] - $TFA['Descuento'] - $TFA['Descuento2'];
     $TFA['Total_MN'] = $TFA['Sin_IVA'] + $TFA['Con_IVA'] - $TFA['Descuento'] - $TFA['Descuento2'] + $TFA['Total_IVA'] + $TFA['Servicio'];
+    //print_r($TFA);die();
+
     return $TFA;
   }
 

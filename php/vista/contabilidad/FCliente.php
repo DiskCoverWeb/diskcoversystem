@@ -337,7 +337,7 @@ function validar_sri()
            </div>
           <div class="col-xs-3 col-sm-1 col-lg-2">
             <br>
-            <label> </label><input type="checkbox" name="rbl_facturar" id="rbl_facturar"> Para Facturar</div>
+            <label> </label><input type="checkbox" name="rbl_facturar" id="rbl_facturar" checked> Para Facturar</div>
           </div>
         </div>
         <div class="row">

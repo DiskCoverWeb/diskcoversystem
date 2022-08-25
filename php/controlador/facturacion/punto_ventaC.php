@@ -85,6 +85,12 @@ if(isset($_GET['generar_factura']))
 	echo json_encode($controlador->generar_factura($parametros));
 }
 
+if(isset($_GET['generar_factura_elec']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->generar_factura_elec($parametros));
+}
+
 if(isset($_GET['validar_cta']))
 {
 	$parametros = $_POST['parametros'];
@@ -378,6 +384,50 @@ class punto_ventaC
 	  }
 	}
 
+   // funcion para vista de facturar electronico , sin restriccion de que la factura este en cero
+	function generar_factura_elec($parametros)
+	{
+		// print_r($parametros);die();
+	  // FechaValida MBFecha
+	  $FechaTexto = $parametros['MBFecha'];
+	  $FA = Calculos_Totales_Factura();
+	  	    $datos = $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie']);
+	  	    if(count($datos)>0)
+	  	    {
+	  	    // print_r($datos);die();
+	        $FA['Nota'] = $parametros['TxtNota'];
+	        $FA['Observacion'] = $parametros['TxtObservacion'];
+	        $FA['Gavetas'] = intval($parametros['TxtGavetas']);
+	        $FA['codigoCliente'] = $parametros['CodigoCliente'];
+	        $FA['TextCI'] = $parametros['CI'];
+	        $FA['TxtEmail'] = $parametros['email'];
+	        $FA['Cliente'] = $parametros['NombreCliente'];
+	        $FA['TC'] = $parametros['TC'];
+	        $FA['Serie'] = $parametros['Serie'];
+	        $FA['Cta_CxP'] = $datos[0]['CxC'];
+	        $FA['Autorizacion'] = $datos[0]['Autorizacion'];
+	        $FA['FechaTexto'] = $FechaTexto;
+	        $FA['Fecha'] = $FechaTexto;
+	        $FA['Total'] = $FA['Total_MN'];
+	        $FA['Total_Abonos'] = 0;
+	        $FA['TextBanco'] = $parametros['TextBanco'];
+	        $FA['TextCheqNo'] = $parametros['TextCheqNo'];
+	        $FA['DCBancoC'] = $parametros['DCBancoC'];
+	        $FA['T'] = $parametros['T'];
+	        $FA['CodDoc'] = $parametros['CodDoc'];
+	        $FA['valorBan'] = $parametros['valorBan'];
+	        $FA['TxtEfectivo'] = $parametros['TxtEfectivo'];
+
+	        $Moneda_US = False;
+	        $TextoFormaPago = G_PAGOCONT;
+	        // print_r($parametros);die();
+	       return $this->ProcGrabar($FA);
+	    }else
+	    {
+	    	 return array('respuesta'=>-1,'text'=>"Cuenta CxC sin setear en catalogo de lineas");
+	    }
+	}
+
 
 
 function ProcGrabar($FA)
@@ -486,7 +536,12 @@ function ProcGrabar($FA)
         $FA['Autorizacion'] = $TA['Autorizacion'];
         $FA['Factura'] = $Factura_No;
         $sql = "UPDATE Facturas
-          SET Saldo_MN = 0, T = 'C'
+          SET Saldo_MN = 0 ";
+          if(isset($FA['TxtEfectivo']) && $FA['TxtEfectivo']==0)
+          {
+          	$sql.=",T = 'P'";
+          }else{ $sql.=" T = 'C' "; }
+          $sql.="
           WHERE Item = '".$_SESSION['INGRESO']['item']."'
           AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
           AND Factura = ".$Factura_No."
@@ -494,6 +549,7 @@ function ProcGrabar($FA)
           AND CodigoC = '".$FA['codigoCliente']."'
           AND Autorizacion = '".$FA['Autorizacion']."'
           AND Serie = '".$FA['Serie']."' ";
+           
         $conn->String_Sql($sql);
       }
 

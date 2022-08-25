@@ -2081,7 +2081,7 @@ function generar_xml_retencion($cabecera,$detalle=false)
 
 	 	   }else
 	 	   {
-	 	   		$respuesta = array('0'=>'No se han encontrado Certificados');
+	 	   		$respuesta = 'No se han encontrado Certificados';
 	 			return $respuesta;
 	 	   }
 
@@ -2117,10 +2117,10 @@ function generar_xml_retencion($cabecera,$detalle=false)
    		 if(count($resp)>0)
    		 {
    		 	//cuando null NO PROCESADO es liquidacion de compras
-	   		 if($resp[1]=='FACTURA NO PROCESADO' || $resp[1]=='LIQUIDACION DE COMPRAS NO PROCESADO')
+	   		 if(isset($resp[1]) && $resp[1]=='FACTURA NO PROCESADO' || isset($resp[1]) && $resp[1]=='LIQUIDACION DE COMPRAS NO PROCESADO')
 	   		 {
 	   		 	return -1;
-	   		 }else if($resp[1]=='FACTURA AUTORIZADO' || $resp[1]=='LIQUIDACION DE COMPRAS AUTORIZADO')
+	   		 }else if(isset($resp[1]) && $resp[1]=='FACTURA AUTORIZADO' || isset($resp[1]) && $resp[1]=='LIQUIDACION DE COMPRAS AUTORIZADO')
 	   		 {
 	   		 	return 1;
 	   		 }else
