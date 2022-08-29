@@ -167,6 +167,23 @@ function Actualizar_Datos_ATS_SP($Items,$MBFechaI,$MBFechaF,$Numero) //---------
     return $res;
 }
 
+function sp_Reporte_Cartera_Clientes($CodigoCliente,$desde,$hasta)
+{
+
+    $conn = new db();
+    $parametros = array(
+      array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
+      array(&$CodigoCliente, SQLSRV_PARAM_IN),
+      array(&$desde, SQLSRV_PARAM_IN),
+      array(&$hasta, SQLSRV_PARAM_IN)
+
+    );
+    $sql = "EXEC  sp_Reporte_Cartera_Clientes @Item= ?,@Periodo=?,@CodigoUsuario=?,@CodigoCliente=?,@FechaInicio=?,@FechaCorte=?";
+    return $conn->ejecutar_procesos_almacenados($sql,$parametros,$tipo=false);
+}
+
 function Leer_Datos_Cliente_SP($BuscarCodigo)
 {
 
@@ -6572,7 +6589,7 @@ if ($pos === false) {
     $ddl_reg = $num_reg[1];
     $val_pagina = $num_reg[0];
     $fun_pagina = $num_reg[2];
-    $sql.= " ORDER BY Cliente OFFSET ".$num_reg[0]." ROWS FETCH NEXT ".$num_reg[1]." ROWS ONLY;";
+    $sql.= " OFFSET ".$num_reg[0]." ROWS FETCH NEXT ".$num_reg[1]." ROWS ONLY;";
   }else
   {
     $ddl_reg = '15';

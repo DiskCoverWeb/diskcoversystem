@@ -217,14 +217,14 @@
         $('#txt_max').val(partes[9]);
         $('#txt_min').val(partes[10]); 
 
-        if(partes[8]>=partes[10])
+        if(parseFloat(partes[8])>=parseFloat(partes[10]))
         {
           $('#txt_Stock').css('background-color','greenyellow');
         }else
         {
            $('#txt_Stock').css('background-color','coral');
         }
-        // console.log($('#ddl_referencia').val());
+        // console.log(partes[8]+'-'+partes[10]);
     }else
     {
       var val = $('#ddl_descripcion').val();
@@ -238,7 +238,7 @@
         $('#txt_Stock').val(partes[8]);
         $('#txt_max').val(partes[9]);
         $('#txt_min').val(partes[10]); 
-         if(partes[8]>=partes[10])
+         if(parseFloat(partes[8])>=parseFloat(partes[10]))
         {
           $('#txt_Stock').css('background-color','greenyellow');
         }else
@@ -246,6 +246,7 @@
            $('#txt_Stock').css('background-color','coral');
         }
         // console.log($('#ddl_descripcion').val());
+        // console.log(partes[8]+'-'+partes[10]);
     }
 
   }

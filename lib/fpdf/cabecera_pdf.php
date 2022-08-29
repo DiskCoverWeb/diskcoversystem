@@ -212,7 +212,7 @@ class cabecera_pdf
 
 	      }
 		}else{
-			$this->pdftable->Output('F',dirname(__DIR__,2).'/php/vista/TEMP/'.$titulo.'.pdf');
+			$this->pdftable->Output('F',dirname(__DIR__,2).'/TEMP/'.$titulo.'.pdf');
 		}
 		
 	}

@@ -187,11 +187,16 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("inventario/catalogo_producto.php");
 			}
-
 			if ($_SESSION['INGRESO']['accion']=='lineas_cxc') 
 			{
 				require_once("facturacion/lineas_cxc.php");
 			}
+			if ($_SESSION['INGRESO']['accion']=='cierre_diario') 
+			{
+				require_once("facturacion/cierre_diario_caja.php");
+			}
+			
+
 //empresa
 
 			if ($_SESSION['INGRESO']['accion']=='cambioe') 
