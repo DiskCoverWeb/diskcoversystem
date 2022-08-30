@@ -315,10 +315,38 @@ class cabecera_pdf
 		// print_r($info);die();
 		// print_r($_SESSION['INGRESO']);
 		// $orientation='P',$unit='mm', array(45,350)
+		if(isset($_SESSION['INGRESO']['Logo_Tipo']))
+		   {
+		   	$logo=$_SESSION['INGRESO']['Logo_Tipo'];
+		   	//si es jpg
+		   	$src = dirname(__DIR__,2).'/img/logotipos/'.$logo.'.jpg'; 
+		   	if(!file_exists($src))
+		   	{
+		   		$src = dirname(__DIR__,2).'/img/logotipos/'.$logo.'.gif'; 
+		   		if(!file_exists($src))
+		   		{
+		   			$src = dirname(__DIR__,2).'/img/logotipos/'.$logo.'.png'; 
+		   			if(!file_exists($src))
+		   			{
+		   				$logo="diskcover_web";
+		                $src= dirname(__DIR__,2).'/img/logotipos/'.$logo.'.gif';
+
+		   			}
+
+		   		}
+
+		   	}
+		  }
+
+
 		$pdf = new FPDF();
 		$pdf->setMargins(2,5);
 		$pdf->SetFont('Arial','B',8);
 		$pdf->AddPage('P');
+		
+		
+        $pdf->Image($src,5,5,25,10); 
+
 		$pdf->SetX(45);
 		$pdf->Cell(25,5,'R.U.C',0,1);
 		$pdf->SetX(40);
@@ -340,7 +368,15 @@ class cabecera_pdf
 		$pdf->Cell(0,0,'FECHA DE EMISION: '.$info['factura'][0]['Fecha']->format('Y-m-d'),0,1);
 		$pdf->Ln(3);		
 		$pdf->Cell(0,0,'DOCUMENTO DE FA No. '.$info['factura'][0]['Serie'].'-'.generaCeros($info['factura'][0]['Factura'],7),0,1);
-		$pdf->Ln(5);
+		$pdf->Ln(3);
+		$amb = 'PRUEBA';
+		if($_SESSION['INGRESO']['Ambiente']==2){$amb='PRODUCCION';}
+		$pdf->Cell(0,0,'AMBIENTE:'.$amb,0,1);
+		$pdf->Ln(3);
+		$pdf->Cell(0,0,'CLAVE DE ACCESO:',0,1);
+		$pdf->Ln(3);
+		$pdf->Cell(0,0,$info['CLAVE'],0,1);
+		$pdf->Ln(3);
 		$pdf->SetFont('Arial','',7);
 		$l = $pdf->GetY();
 		$pdf->Line(0,$l,70,$l);

@@ -66,7 +66,7 @@ class autorizacion_sri
 	function Autorizar_factura_o_liquidacion($parametros)
 	{
 		// 1 para autorizados
-	    //-1 para no autorizados
+	    //-1 para no autorizados y devueltas
 	    // 2 para devueltas
 	    // texto del erro en forma de matris
 		$cabecera['ambiente']=$_SESSION['INGRESO']['Ambiente'];
@@ -2155,8 +2155,12 @@ function generar_xml_retencion($cabecera,$detalle=false)
    		 }else if($resp[1]=='DEVUELTA')
    		 {
    		 	return 2;
-   		 }else
+   		 }else if($resp[1]==null || $resp[1]=='' )
    		 {
+   		 	//es devuelta
+   		 	return 2;
+   		 }else
+   		 {   		 	
    		 	return $f;
    		 }
     }

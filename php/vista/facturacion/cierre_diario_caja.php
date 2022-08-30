@@ -1,3 +1,4 @@
+<?php //print_r($_SESSION['INGRESO']);?>
 <script type="text/javascript">
    $( document ).ready(function() {
   	 	autocomplete_cliente();
@@ -25,9 +26,9 @@
 
   function consultar_datos()
   {
-  	if($('#txt_desde').val()!='' && $('#txt_hasta').val()=='' || $('#txt_desde').val()=='' && $('#txt_hasta').val()!='')
+  	if($('#txt_desde').val()=='' && $('#txt_hasta').val()=='')
   	{
-  		Swal.fire('Seleccione las dos fechas','','');
+  		Swal.fire('Seleccione fechas para la busqueda','','');
   		return false;
   	}
   	var parametros = 
@@ -156,7 +157,7 @@
 				     	    <div class="form-group">
 					          <label for="inputEmail3" class="col-sm-3 control-label">Desde</label>
 					          <div class="col-sm-9">
-					            <input type="date" class="form-control input-xs" id="txt_desde" name="txt_desde">
+					            <input type="date" class="form-control input-xs" id="txt_desde" name="txt_desde" value="<?php echo date('Y-m-d'); ?>">
 					          </div>
 					        </div>	
 					    </div>
@@ -164,13 +165,14 @@
 				     	    <div class="form-group">
 					          <label for="inputEmail3" class="col-sm-3 control-label">Hasta</label>
 					          <div class="col-sm-9">
-					            <input type="date" class="form-control input-xs" id="txt_hasta" name="txt_hasta">
+					            <input type="date" class="form-control input-xs" id="txt_hasta" name="txt_hasta" value="<?php echo date('Y-m-d'); ?>">
 					          </div>
 					        </div>	
 					    </div>				    
 					</form>
 				</div>
 				<div class="row">
+          <br>
 					<div class="col-sm-12">
 						<div id="tabla">
 							

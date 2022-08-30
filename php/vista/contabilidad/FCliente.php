@@ -2,48 +2,6 @@
 <script type="text/javascript">
 	$( document ).ready(function() {
 		 provincias();
-
-        // $( "#ruc" ).autocomplete({              
-        //     source: function( request, response ) {
-        //     	 $('#txt_id').val('');         
-        //         $.ajax({
-        //         	  url:   '../controlador/modalesC.php?buscar_cliente=true',          
-        //             type: 'post',
-        //             dataType: "json",
-        //             data: {
-        //                 search: request.term
-        //             },
-        //             success: function( data ) {
-        //               // console.log(data);
-        //                 response( data );
-        //             }
-        //         });
-        //     },
-        //     select: function (event, ui) {
-        //     	 limpiar();
-        //       // console.log(ui.item);
-        //         $('#txt_id').val(ui.item.value); // display the selected text
-        //         $('#ruc').val(ui.item.label); // display the selected text
-        //         $('#nombrec').val(ui.item.nombre); // save selected id to input
-        //         $('#direccion').val(ui.item.direccion); // save selected id to input
-        //         $('#telefono').val(ui.item.telefono); // save selected id to input
-        //         $('#codigoc').val(ui.item.codigo); // save selected id to input
-        //         $('#email').val(ui.item.email); // save selected id to input
-        //         $('#nv').val(ui.item.vivienda); // save selected id to input
-        //         $('#grupo').val(ui.item.grupo); // save selected id to input
-        //         $('#naciona').val(ui.item.nacionalidad); // save selected id to input
-        //         $('#prov').val(ui.item.provincia); // save selected id to input
-        //         $('#ciu').val(ui.item.ciudad); // save selected id to input
-        //         if(ui.item.FA==1){ $('#rbl_facturar').prop('checked',true); }else{ $('#rbl_facturar').prop('checked',false);}
-        //         return false;
-        //     },
-        //     focus: function(event, ui){
-        //         $('#txt_id').val(ui.item.value); // display the selected text
-        //         $('#ruc').val(ui.item.label); // display the selected text
-                
-        //         return false;
-        //     },
-        // });
 	});
 
 
@@ -152,28 +110,6 @@
 
   }
 
-
-	// function buscar_cliente_ci()
-	// {
-	// 	var ci = $('#ruc').val();
-	// 	var parametros = 
-	// 	{
-	// 		'ruc':ci,
-	// 	}
- //     $.ajax({
- //       data:  {parametros:parametros},
- //      url:   '../controlador/modalesC.php?buscar_cliente=true',
- //      type:  'post',
- //      dataType: 'json',
- //      success:  function (response) { 
- //        // console.log(response);
- //        if(response)
- //        {
-
- //        }
- //      }
- //    });
-	// }
 
 	function buscar_cliente_nom()
 	{
@@ -332,7 +268,7 @@ function validar_sri()
         <div class="row">
           <div class="col-xs-9 col-sm-11 col-lg-10">
             <label for="nombrec" class="control-label"><span style="color: red;">*</span>Apellidos y Nombres</label>
-            <input type="text" class="form-control input-sm" id="nombrec" name="nombrec" placeholder="Razon social" onkeyup="buscar_cliente_nom()">
+            <input type="text" class="form-control input-sm" id="nombrec" name="nombrec" placeholder="Razon social" onkeyup="buscar_cliente_nom();mayusculas('nombrec',this.value) " onblur="mayusculas('nombrec',this.value)">
               <span class="help-block" id='e_nombrec' style='display:none;color: red;'>Debe ingresar nombre</span>
            </div>
           <div class="col-xs-3 col-sm-1 col-lg-2">
@@ -343,7 +279,7 @@ function validar_sri()
         <div class="row">
 					<div class="col-xs-8">
 					  <label for="direccion" class="control-label"><span style="color: red;">*</span>Direccion</label>
-						<input type="text" class="form-control input-sm" id="direccion" name="direccion" placeholder="Direccion" tabindex="0">
+						<input type="text" class="form-control input-sm" id="direccion" name="direccion" placeholder="Direccion" tabindex="0" onkeyup="mayusculas('direccion',this.value)" onblur="mayusculas('direccion',this.value)">
 							<span class="help-block" id='e_direccion' style='display:none;color: red;'>debe agregar Direccion</span>
 					</div>
           <div class="col-xs-4">
@@ -356,7 +292,7 @@ function validar_sri()
 				<div class="row">
 				  <div class="col-xs-5">
 				    <label for="nv" class="control-label">Numero vivienda</label>
-				    <input type="text" class="form-control input-sm" id="nv" name="nv" placeholder="Numero vivienda"  tabindex="0">
+				    <input type="text" class="form-control input-sm" id="nv" name="nv" placeholder="Numero vivienda"  tabindex="0" onkeyup="mayusculas('nv',this.value)" onblur="mayusculas('nv',this.value)">
 				  </div>
 				  <div class="col-xs-2">
 				    <label for="grupo" class="control-label">Grupo</label>

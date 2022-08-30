@@ -25,9 +25,9 @@ class cierre_diario_cajaM
     $stmt = $this->db->datos($sql);
     if($tabla)
     {    
-   		$num_reg = array('0','100','consultar_datos');
+   		$num_reg = array('0','500','consultar_datos');
 	    $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-50;
-	    $tbl = grilla_generica_new($sql,'Reporte_Cartera_Clientes As RCC, Clientes As C','',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,$medida,$decimales=2,$num_reg,$paginacion=1);
+	    $tbl = grilla_generica_new($sql,'Reporte_Cartera_Clientes As RCC, Clientes As C','',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,$medida,$decimales=2,$num_reg,$paginacion=0);
 			 // print_r($tbl);die();
 		return $tbl;
 	}

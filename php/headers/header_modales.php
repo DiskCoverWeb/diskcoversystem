@@ -67,6 +67,8 @@ include("../funciones/funciones.php");
         $estado1 = 'Comp-Elec. vencida';
         $color1='danger';
       }
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -126,6 +128,8 @@ include("../funciones/funciones.php");
         return false;
       }
   }
+
+
 
   function logout()
   { 

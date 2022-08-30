@@ -124,6 +124,14 @@ include('../controlador/contabilidad/contabilidad_controller.php');
     $("#myModal").modal("show");
   }
 
+  // esta fyunciuon esta en js_globales
+  // function mayusculas(campo)
+  // {
+  //    var dato = $('#'+campo).val();
+  //    str = dato.toLowerCase();
+  //   $('#'+campo).val(str);
+  // }
+
   function validador_correo(imput)
   {
       var campo = $('#'+imput).val();   

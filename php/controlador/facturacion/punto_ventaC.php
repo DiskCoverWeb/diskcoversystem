@@ -114,7 +114,7 @@ class punto_ventaC
 		$datos = $this->modelo->Listar_Clientes_PV($query);
 		$res  =array();
 		foreach ($datos as $key => $value) {
-			$res[] = array('id'=>$value['Codigo'],'text'=>$value['Cliente'],'data'=>array($value));
+			$res[] = array('id'=>$value['Codigo'],'text'=>$value['CI_RUC'].' - '.$value['Cliente'],'data'=>array($value));
 		}
 		return $res;
 		// print_r($datos);die();
@@ -566,6 +566,8 @@ function ProcGrabar($FA)
            $FA['Hasta'] = $FA['Factura'];
            // Imprimir_Facturas_CxC(FacturasPV, FA, True, False, True, True);
            $TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
+           $clave = $this->sri->Clave_acceso($TA['Fecha'],'01', $TA['Serie'],$Factura_No);
+           $TFA['CLAVE'] = $clave;
            $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
            $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
            if($rep==1)

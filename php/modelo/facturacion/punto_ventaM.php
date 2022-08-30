@@ -30,6 +30,7 @@ class punto_ventaM
         FROM Clientes 
         WHERE Codigo = '9999999999' 
         ORDER BY Cliente ";
+        // print_r($sql);die();
 
      return $this->db->datos($sql);
   }

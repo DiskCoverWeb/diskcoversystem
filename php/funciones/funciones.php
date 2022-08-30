@@ -169,7 +169,8 @@ function Actualizar_Datos_ATS_SP($Items,$MBFechaI,$MBFechaF,$Numero) //---------
 
 function sp_Reporte_Cartera_Clientes($CodigoCliente,$desde,$hasta)
 {
-
+    $desde = str_replace('-','',$desde);
+    $hasta = str_replace('-','',$hasta);
     $conn = new db();
     $parametros = array(
       array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
@@ -4825,19 +4826,20 @@ function dimenciones_tabl($len)
   }elseif ($len==1) {
      $val = ($len+3)*8;
     return $val.'px';
-  }elseif ($len >= 10 And $len<=13){
+  }elseif ($len >= 10 && $len<=13){
      $val = ($len+3)*8;
     return $val.'px';
   }elseif ($len==10){
      $val = ($len+3)*8;
     return $val.'px';
-  }elseif ($len>3 And $len <6) {
+  }elseif ($len>3 && $len <6) {
      $val = ($len+3)*8;
+     print_r('expression');die();
     return $val.'px';
   }elseif ($len==3){
      $val = ($len+3)*8;
     return $val.'px';
-  }elseif ($len>13 And $len<60) {
+  }elseif ($len>13 && $len<60) {
      $val = ($len+3)*8;
     return $val.'px';
   }else
@@ -6649,20 +6651,7 @@ if ($pos === false) {
   // print_r($columnas_uti);die();
   $medida_body =array();
   $alinea_body =array();
-   // $datos =  array();
-   //   if( $stmt === false)  
-   //   {  
-   //   echo "Error en consulta PA.\n";  
-   //   return '';
-   //   die( print_r( sqlsrv_errors(), true));  
-   //   }
-   //   while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
-   //   {
-   //          $datos[]=$row;
-   //   }
-
-
-  // print_r($dato);die();
+  
   $tbl='';
   if($estilo==1)
   {
@@ -8202,7 +8191,7 @@ function VerSiExisteCta($ExisteCtas)
   if(strlen($NCtas) >= 1){
 
     $conn = new db();
-    $sql = "SELECT Codigo 
+    $sql = "SELECT Codigo,Cuenta 
             FROM Catalogo_Cuentas 
             WHERE Codigo IN (".$NCtas.") 
             AND Item = '".$_SESSION['INGRESO']['item']."' 
@@ -8217,6 +8206,7 @@ function VerSiExisteCta($ExisteCtas)
     }
   }
   $NCtas = "";
+  // $nombreCuenta = "";
   // $ExisteCtasV = count($ExisteCtas)-1;
   // $ListCtasV = count($ListCtas);
   $d='';
@@ -8234,9 +8224,8 @@ function VerSiExisteCta($ExisteCtas)
     }
   }
   if(strlen($NCtas) > 1){
-     return "Falta de setear la(s) cuenta(s) siguiente(s):".$NCtas." no existe en el 'Catalogo de Cuenta'
-           Debe Setearla en: 'Mantenimiento' del Módulo 
-           de SETEOS";
+     return "Falta de setear la(s) cuenta(s) siguiente(s):".$NCtas." no existe en el 'Catalogo de Lineas CxC'
+           Debe Setearla en: Linea de CxC de: FA, NV, NC, LC y GR";
   }
   return 1;
  }

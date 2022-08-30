@@ -578,7 +578,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 				})
 			}else if(data.respuesta==-1)
 			{
-				Swal.fire(data.text,'','error').then(function(){ var url=  '../../TEMP/'+data.pdf+'.pdf';		window.open(url, '_blank'); 	location.reload();	});	
+				Swal.fire('XML DEVUELTO:'+data.text,'XML DEVUELTO','error').then(function(){ var url=  '../../TEMP/'+data.pdf+'.pdf';		window.open(url, '_blank'); 	location.reload();	});	
 			}else if(data.respuesta==2)
 			{
 				Swal.fire('XML devuelto','','error');	
