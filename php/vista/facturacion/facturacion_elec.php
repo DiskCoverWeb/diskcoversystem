@@ -17,9 +17,9 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
   	DCBanco();
 
   	$(document).keyup(function(e) {
-	     if (e.key === "Escape") { // escape key maps to keycode `27`
-	       ingresar_total();
-	     }
+	     // if (e.key === "Escape") { // escape key maps to keycode `27`
+	     //   ingresar_total();
+	     // }
 	     console.log(e.key);
 	});
 

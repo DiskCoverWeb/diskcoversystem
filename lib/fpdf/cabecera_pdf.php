@@ -405,11 +405,11 @@ class cabecera_pdf
 		$l = $pdf->GetY();
 		$pdf->Line(0,$l,70,$l);
 		$pdf->Ln(3);
-		$pdf->SetFont('Arial','B',7);
+		$pdf->SetFont('Arial','B',6);
 		$pdf->Cell(8,0,'Cant.');
-		$pdf->Cell(35,0,'P R O D U C T O');
-		$pdf->Cell(10,0,'P.V.P.');
-		$pdf->Cell(10,0,'T O T A L',0,1);
+		$pdf->Cell(39,0,'P R O D U C T O');
+		$pdf->Cell(10,0,'P.V.P.',0,0,'R');
+		$pdf->Cell(10,0,'TOTAL',0,1,'R');
 		$pdf->Ln(3);		
 		$pdf->SetFont('Arial','',7);
 		$l = $pdf->GetY();
@@ -422,9 +422,9 @@ class cabecera_pdf
 			$pdf->Cell(8,2,$value['Cantidad']);
 			$pdf->MultiCell(35,2,$value['Producto']);
 			$pdf->SetXY(48,$y);
-			$pdf->Cell(10,2,number_format($value['Precio'],2,'.',''));
-			$pdf->Cell(10,2,number_format($value['Total'],2,'.',''),0,1);
-			$pdf->Ln(4);
+			$pdf->Cell(10,2,number_format($value['Precio'],2,'.',''),0,0,'R');
+			$pdf->Cell(10,2,number_format($value['Total'],2,'.',''),0,1,'R');
+			$pdf->Ln(3);
 			// $pdf->Row($value,null,1);
     	}
 
@@ -432,32 +432,32 @@ class cabecera_pdf
 		$pdf->Line(0,$l,70,$l);
 
 		$pdf->Ln(5);
-		$pdf->Cell(40,0,'Cajero: 0702X79');
+		$pdf->Cell(36,0,'Cajero: 0702X79');
 		$pdf->SetFont('Arial','B',7);
 		$pdf->Cell(20,0,'SUBTOTAL.');		
 		$pdf->SetFont('Arial','',7);
-		$pdf->Cell(10,0,number_format($info['factura'][0]['SubTotal'],2,'.',''));
+		$pdf->Cell(10,0,number_format($info['factura'][0]['SubTotal'],2,'.',''),0,0,'R');
 		$pdf->Ln(3);
 
-		$pdf->Cell(40,0,'');
+		$pdf->Cell(36,0,'');
 		$pdf->SetFont('Arial','B',7);
 		$pdf->Cell(20,0,'DESCUENTO');		
 		$pdf->SetFont('Arial','',7);
-		$pdf->Cell(10,0,number_format($info['factura'][0]['Descuento'],2,'.',''));
+		$pdf->Cell(10,0,number_format($info['factura'][0]['Descuento'],2,'.',''),0,0,'R');
 		$pdf->Ln(3);
 
 		$pdf->SetFont('Arial','B',7);
-		$pdf->Cell(40,0,'');
+		$pdf->Cell(36,0,'');
 		$pdf->Cell(20,0,'I.V.A. 12%');
 		$pdf->SetFont('Arial','',7);
-		$pdf->Cell(10,0,number_format($info['factura'][0]['IVA'],2,'.',''));
+		$pdf->Cell(10,0,number_format($info['factura'][0]['IVA'],2,'.',''),0,0,'R');
 		$pdf->Ln(3);
 
 		$pdf->SetFont('Arial','B',7);
-		$pdf->Cell(40,0,'');
+		$pdf->Cell(36,0,'');
 		$pdf->Cell(20,0,'T O T A L');		
 		$pdf->SetFont('Arial','',7);
-		$pdf->Cell(10,0,number_format($info['factura'][0]['Total_MN'],2,'.',''));
+		$pdf->Cell(10,0,number_format($info['factura'][0]['Total_MN'],2,'.',''),0,0,'R');
 		$pdf->Ln(5);
 		$l = $pdf->GetY();
 		$pdf->Line(0,$l,70,$l);

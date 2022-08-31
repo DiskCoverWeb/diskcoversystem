@@ -495,7 +495,7 @@ function reporte_pdf_nega()
 <div class="row">
   <div class="col-sm-12">
      <div class="panel panel-primary">
-      <div class="panel-heading text-center"><b>RESCARGOS REALIZADOS</b></div>
+      <div class="panel-heading text-center"><b>DESCARGOS REALIZADOS</b></div>
       <div class="panel-body">
       	<div class="row">
           <div class="col-sm-4">

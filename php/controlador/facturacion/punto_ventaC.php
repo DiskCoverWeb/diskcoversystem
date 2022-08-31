@@ -384,6 +384,56 @@ class punto_ventaC
 	  }
 	}
 
+	function generar_factura_abono_cero($parametros)
+	{
+		// print_r($parametros);die();
+	  // FechaValida MBFecha
+	  $FechaTexto = $parametros['MBFecha'];
+	  $FA = Calculos_Totales_Factura();
+
+	  // print_r(floatval(number_format($FA['Total_MN'],4,'.','')).'-'.floatval(number_format($parametros['TxtEfectivo'],4,'.','')).'-');
+	  // print_r(floatval(number_format($FA['Total_MN'],4,'.',''))-floatval(number_format($parametros['TxtEfectivo'],4,'.',''))); die();
+	  if((floatval(number_format($parametros['TxtEfectivo'],4,'.',''))+floatval(number_format($parametros['valorBan'],4,'.','')) - floatval(number_format($FA['Total_MN'],4,'.',''))) >= 0 ){
+	  	    $datos = $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie']);
+	  	    if(count($datos)>0)
+	  	    {
+	  	    // print_r($datos);die();
+	        $FA['Nota'] = $parametros['TxtNota'];
+	        $FA['Observacion'] = $parametros['TxtObservacion'];
+	        $FA['Gavetas'] = intval($parametros['TxtGavetas']);
+	        $FA['codigoCliente'] = $parametros['CodigoCliente'];
+	        $FA['TextCI'] = $parametros['CI'];
+	        $FA['TxtEmail'] = $parametros['email'];
+	        $FA['Cliente'] = $parametros['NombreCliente'];
+	        $FA['TC'] = $parametros['TC'];
+	        $FA['Serie'] = $parametros['Serie'];
+	        $FA['Cta_CxP'] = $datos[0]['CxC'];
+	        $FA['Autorizacion'] = $datos[0]['Autorizacion'];
+	        $FA['FechaTexto'] = $FechaTexto;
+	        $FA['Fecha'] = $FechaTexto;
+	        $FA['Total'] = $FA['Total_MN'];
+	        $FA['Total_Abonos'] = 0;
+	        $FA['TextBanco'] = $parametros['TextBanco'];
+	        $FA['TextCheqNo'] = $parametros['TextCheqNo'];
+	        $FA['DCBancoC'] = $parametros['DCBancoC'];
+	        $FA['T'] = $parametros['T'];
+	        $FA['CodDoc'] = $parametros['CodDoc'];
+	        $FA['valorBan'] = $parametros['valorBan'];
+	        $FA['TxtEfectivo'] = $parametros['TxtEfectivo'];
+
+	        $Moneda_US = False;
+	        $TextoFormaPago = G_PAGOCONT;
+	        // print_r($parametros);die();
+	       return $this->ProcGrabar_Abono_cero($FA);
+	    }else
+	    {
+	    	 return array('respuesta'=>-1,'text'=>"Cuenta CxC sin setear en catalogo de lineas");
+	    }
+	  }else{
+	     return array('respuesta'=>-5,'text'=>"El Efectivo no alcanza para grabar");
+	  }
+	}
+
    // funcion para vista de facturar electronico , sin restriccion de que la factura este en cero
 	function generar_factura_elec($parametros)
 	{
@@ -421,7 +471,7 @@ class punto_ventaC
 	        $Moneda_US = False;
 	        $TextoFormaPago = G_PAGOCONT;
 	        // print_r($parametros);die();
-	       return $this->ProcGrabar($FA);
+	       return $this->ProcGrabar_Abono_cero($FA);
 	    }else
 	    {
 	    	 return array('respuesta'=>-1,'text'=>"Cuenta CxC sin setear en catalogo de lineas");
@@ -553,6 +603,186 @@ function ProcGrabar($FA)
         $conn->String_Sql($sql);
       }
 
+     if(strlen($FA['Autorizacion']) >= 13){
+
+     	// print_r('drrrrddd');die();
+        if($FA['TC'] <> "DO"){
+        	//la respuesta puede se texto si envia numero significa que todo saliobien
+        	$rep =  $this->sri->Autorizar_factura_o_liquidacion($FA);
+
+        	// print_r($rep);die();
+           // SRI_Crear_Clave_Acceso_Facturas($FA,true); 
+           $FA['Desde'] = $FA['Factura'];
+           $FA['Hasta'] = $FA['Factura'];
+           // Imprimir_Facturas_CxC(FacturasPV, FA, True, False, True, True);
+           $TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
+           $clave = $this->sri->Clave_acceso($TA['Fecha'],'01', $TA['Serie'],$Factura_No);
+           $TFA['CLAVE'] = $clave;
+           $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
+           $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
+           if($rep==1)
+           {
+           		return array('respuesta'=>$rep,'pdf'=>$imp);
+           }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep);}
+        }
+     }else{
+     	// print_r('dddd');die();
+        if($Grafico_PV){
+          $TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
+           Imprimir_Punto_Venta_Grafico($TFA);
+           Imprimir_Punto_Venta_Grafico($TFA);
+        }else{
+        	 $TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
+           $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
+           $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
+           $rep = 1;
+           if($rep==1)
+           {
+           		return array('respuesta'=>$rep,'pdf'=>$imp);
+           }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep);}
+
+           // ojo ver cula se piensa imprimir
+           // Imprimir_Punto_Venta($FA);
+        }
+     }
+     $sql = "DELETE 
+      FROM Asiento_F
+      WHERE Item = '".$_SESSION['INGRESO']['item']."'
+      AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' ";
+     $conn->String_Sql($sql);
+     return 1;    
+  }else{
+    return  "No se puede grabar la Factura,  falta datos.";
+  }
+}
+
+
+function ProcGrabar_Abono_cero($FA)
+{  
+ $conn = new db();
+ $Grafico_PV = Leer_Campo_Empresa("Grafico_PV");
+ $FA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
+ // 'Seteamos los encabezados para las facturas
+  // $FA = Calculos_Totales_Factura();
+  $Dolar = 0;
+
+  // print_r($FA);die();
+  $datos = $this->modelo->DGAsientoF();
+  $datos = $datos['datos'];
+  // foreach ($datos as $key => $value) {
+  	// Total_Sin_IVA + Total_Con_IVA - Total_Desc - Total_Desc2 + Total_IVA + Total_Servicio
+  // }
+  if(count($datos) > 0)
+  {
+     $HoraTexto = date("H:i:s");     
+     $Total_FacturaME = 0;
+     $Moneda_US = False;
+     if($Moneda_US){
+        $Total_Factura = number_format(($FA['Sin_IVA'] + $FA['Con_IVA'] - $FA['Descuento'] - $FA['Descuento2']  + $FA['Total_IVA'] + $FA['Servicio']) * $Dolar, 2,'.',',');
+        $Total_FacturaME = number_format($FA['Sin_IVA'] + $FA['Con_IVA'] - $FA['Descuento'] - $FA['Descuento2']  + $FA['Total_IVA'] + $FA['Servicio'], 2,'.',',');
+     }else{
+        $Total_Factura = number_format($FA['Sin_IVA'] + $FA['Con_IVA'] -$FA['Descuento'] - $FA['Descuento2'] + $FA['Total_IVA'] +$FA['Servicio'], 2,'.',',');
+        $Total_FacturaME = 0;
+     }
+     $Saldo = $Total_Factura;
+     $Saldo_ME = $Total_FacturaME;
+     if($Saldo < 0){$Saldo = 0;}
+     $FA['Nuevo_Doc'] = True;
+     $FA['Saldo_MN'] = $Saldo;
+     $Factura_No = ReadSetDataNum($FA['TC']."_SERIE_".$FA['Serie'], True, True);
+     $FA['Factura'] = $Factura_No;
+     $FA['FacturaNo'] = $Factura_No;
+     $TipoFactura = $FA['TC'];
+     If($TipoFactura == "PV"){
+        Control_Procesos("F", "Grabar Ticket No. ".$Factura_No,'');
+     }else if($TipoFactura == "NV"){
+        Control_Procesos("F", "Grabar Nota de Venta No. ".$Factura_No,'');
+     }else if($TipoFactura == "CP") {
+        Control_Procesos("F", "Grabar Cheque Protestado No. ".$Factura_No,'');     
+     }else if($TipoFactura == "LC") {
+        Control_Procesos("F", "Grabar Liquidacion de Compras No. ".$Factura_No,'');     
+     }else if($TipoFactura == "DO") {
+        Control_Procesos("F", "Grabar Nota de Donacion No. ".$Factura_No,'');
+     }else{
+        Control_Procesos("F", "Grabar Factura No. ".$Factura_No,'');
+     }
+     $this->modelo->delete_factura($TipoFactura,$Factura_No);
+    
+     $TextoFormaPago = G_PAGOCRED;
+     $T = G_PENDIENTE;
+    // 'Grabamos el numero de factura
+      Grabar_Factura_abono_cero($FA);
+     // $this->ingresar_trans_kardex_salidas_FA($FA['Factura'],$FA['codigoCliente'],$FA['Cliente'],$FA['FechaTexto'],$TipoFactura); //($FA['Factura'],$codigoCliente);
+     // die();
+     
+     // print_r($FA);die();
+     if($FA['TC'] <> "CP"){
+        $Evaluar = True;
+        $FechaTexto = $FA['FechaTexto'];
+        $Total_Factura = $Total_Factura-$FA['valorBan'];        
+        // if($FA['TxtEfectivo']>$Total_Factura){$Total_Factura= }
+
+       // 'Abono en efectivo
+        $TA['T'] = G_NORMAL;
+        $TA['TP'] = $TipoFactura;
+        $TA['Fecha'] = $FechaTexto;
+        $TA['Cta_CxP'] = $FA['Cta_CxP'];
+        $TA['Cta'] = $_SESSION['SETEOS']['Cta_CajaG'];
+        $TA['Banco'] = "EFECTIVO MN";
+        $TA['Cheque'] = generaCeros($FA['Factura'],8);
+        $TA['Factura'] = $FA['Factura'];
+        $TA['Serie'] = $FA['Serie'];
+        $TA['Autorizacion'] = $FA['Autorizacion'];
+        $TA['CodigoC'] = $FA['codigoCliente'];
+        // $Total_Factura = 0;
+        $TA['Abono'] = $FA['TxtEfectivo'];
+        $TA['Saldo'] = $Total_Factura-$FA['TxtEfectivo'];
+        // print_r('adasdasdasd');die();
+        Grabar_Abonos($TA);
+        // print_r($TA);die();
+
+
+         // 'Abono de Factura Banco
+        $TA['T'] = G_NORMAL;
+        $TA['TP'] = $TipoFactura;
+        $TA['Fecha'] =$FechaTexto;
+        $TA['Cta'] = $FA['DCBancoC']; 
+        $TA['Cta_CxP'] = $FA['Cta_CxP'];
+        $TA['Banco'] = $FA['TextBanco']; 
+        $TA['Cheque'] = $FA['TextCheqNo']; 
+        $TA['Factura'] = $Factura_No; //pendiente
+        $Total_Bancos = 0;
+        $TA['Abono'] = $FA['valorBan'];
+        // print_r($TA);die();
+        Grabar_Abonos($TA);
+        // print_r($TA);die();
+
+
+
+        $FA['TC'] = $TA['TP'];
+        $FA['Serie'] = $TA['Serie'];
+        $FA['Autorizacion'] = $TA['Autorizacion'];
+        $FA['Factura'] = $Factura_No;
+        $sql = "UPDATE Facturas
+          SET Saldo_MN = 0 ";
+          if(isset($FA['TxtEfectivo']) && $FA['TxtEfectivo']==0)
+          {
+          	$sql.=",T = 'P'";
+          }else{ $sql.=" T = 'C' "; }
+          $sql.="
+          WHERE Item = '".$_SESSION['INGRESO']['item']."'
+          AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+          AND Factura = ".$Factura_No."
+          AND TC = '".$TipoFactura."'
+          AND CodigoC = '".$FA['codigoCliente']."'
+          AND Autorizacion = '".$FA['Autorizacion']."'
+          AND Serie = '".$FA['Serie']."' ";
+           
+        $conn->String_Sql($sql);
+      }
+
+      //ejecutar procedimiento almacenado para calcular saldos
+     sp_Actualizar_Saldos_Facturas('FA',$FA['Serie'],$FA['Factura']);
      if(strlen($FA['Autorizacion']) >= 13){
 
      	// print_r('drrrrddd');die();
