@@ -1561,7 +1561,7 @@ function generar_xml($cabecera,$detalle)
 					// }
 				}
 
-				$xml_descripcion = $xml->createElement( "descripcion",$value['Producto'] );
+				$xml_descripcion = $xml->createElement( "descripcion",preg_replace("/[\r\n|\n|\r]+/", " ",$value['Producto']));
 				$xml_unidadMedida = $xml->createElement( "unidadMedida",$cabecera['moneda'] );
 				$xml_cantidad = $xml->createElement( "cantidad",$value['Cantidad'] );
 				$xml_precioUnitario = $xml->createElement( "precioUnitario",round($value['Precio'],6) );
@@ -1625,15 +1625,19 @@ function generar_xml($cabecera,$detalle)
 			// $xml_campoAdicional = $xml->createElement( "campoAdicional",'.' );
 			// $xml_campoAdicional->setAttribute( "nombre", "adi" );
 			// $xml_infoAdicional->appendChild( $xml_campoAdicional );
-		if($cabecera['Cliente']<>'.' AND ($cabecera['Cliente']!=$cabecera['Razon_Social']))
+		if($cabecera['Cliente']<>'.' AND $cabecera['Cliente']!=$cabecera['Razon_Social'])
 		{
 			if(strlen($cabecera['Cliente'])>1)
 			{
-				$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Cliente'] );
+				$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Cliente']);
 				$xml_campoAdicional->setAttribute( "nombre", "Beneficiario" );
+				$xml_infoAdicional->appendChild($xml_campoAdicional );
+			}
+			if(strlen($cabecera['Grupo'])>1)
+			{
 				$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Grupo'] );
-				$xml_campoAdicional->setAttribute( "nombre", "Ubicacion" );
-				$xml_infoAdicional->appendChild( $xml_campoAdicional );
+				$xml_campoAdicional->setAttribute( "nombre", "Ubicacion");
+				$xml_infoAdicional->appendChild($xml_campoAdicional );
 			}
 		}
 		if(strlen($cabecera['DireccionC'])>1)

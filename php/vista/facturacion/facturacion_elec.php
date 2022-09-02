@@ -1,5 +1,5 @@
 <?php date_default_timezone_set('America/Guayaquil');  //print_r($_SESSION);die();
-//print_r($_SESSION['INGRESO']);die();
+// print_r($_SESSION['INGRESO']);die();
 $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 ?>
 <script type="text/javascript">

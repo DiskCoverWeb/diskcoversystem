@@ -2,14 +2,18 @@
 
 require_once(dirname(__DIR__,2)."/db/db1.php");
 require_once(dirname(__DIR__,2)."/funciones/funciones.php");
+require_once(dirname(__DIR__,3)."/lib/fpdf/reporte_de.php");
+require_once(dirname(__DIR__,3)."/lib/phpmailer/enviar_emails.php");
 
 class punto_ventaM
 {
 	private $db;
+  private $email;
 
 	public function __construct(){
 
       $this->db = new db();
+      $this->email = new enviar_emails(); 
   }
 
   function Listar_Clientes_PV($query)
@@ -196,6 +200,99 @@ class punto_ventaM
      }
        return $datos;
   }
+
+  function pdf_factura_elec($cod,$ser,$ci,$nombre,$clave_acceso,$periodo=false)
+   {
+    $sql="SELECT * 
+    FROM Facturas 
+    WHERE Serie='".$ser."' 
+    AND Factura='".$cod."' 
+    AND CodigoC='".$ci."' 
+    AND Item = '".$_SESSION['INGRESO']['item']."' ";
+    if($periodo==false || $periodo =='.')
+    {
+     $sql.=" AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";
+    }else
+    {
+      $sql.=" AND Periodo BETWEEN '01/01/".$periodo."' AND '31/12".$periodo."'";
+    }
+
+  // print_r($sql);die();
+  $datos_fac = $this->db->datos($sql);
+
+    $sql1="SELECT * 
+    FROM Detalle_Factura 
+    WHERE Factura = '".$cod."' 
+    AND CodigoC='".$ci."' 
+    AND Item = '".$_SESSION['INGRESO']['item']."'
+  AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' "; 
+  $detalle_fac = $this->db->datos($sql1);
+
+  $sql2 = "SELECT * FROM lista_tipo_contribuyente WHERE RUC = '".$_SESSION['INGRESO']['RUC']."'";
+  $tipo_con = $this->db->datos($sql2, 'MYSQL');
+  if(count($datos_fac)>0 && count($tipo_con)>0)
+  {
+    $datos_fac['Tipo_contribuyente'] = $tipo_con;
+  }
+  // array_push($datos_fac, $tipo_con);
+    $datos_cli_edu=$this->Cliente($ci);
+    $archivos = array('0'=>$nombre.'.pdf','1'=>$clave_acceso.'.xml');
+    $to_correo = '';
+    if(count($datos_cli_edu)>0)
+    {
+      if($datos_cli_edu[0]['Email']!='.' && $datos_cli_edu[0]['Email']!='')
+      {
+        $to_correo.= $datos_cli_edu[0]['Email'].',';
+      }
+      if($datos_cli_edu[0]['Email2']!='.' && $datos_cli_edu[0]['Email2']!='')
+      {
+        $to_correo.= $datos_cli_edu[0]['Email2'].',';
+      }
+      if($datos_cli_edu[0]['EmailR']!='.' && $datos_cli_edu[0]['EmailR']!='')
+      {
+        $to_correo.= $datos_cli_edu[0]['EmailR'].',';
+      }
+      // $to_correo = substr($to_correo, 0,-1);
+    }
+    
+    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$nombre,null,'factura',null,null,$imp=1);
+    if($to_correo!='')
+    {
+      $titulo_correo = 'comprobantes electronicos';
+      $cuerpo_correo = 'comprobantes electronico';
+      $r = $this->email->enviar_email($archivos,$to_correo,$cuerpo_correo,$titulo_correo,$HTML=false);
+      // print_r($r);
+    }
+   }
+
+  function Cliente($cod,$grupo = false,$query=false,$clave=false)
+   {
+     $sql = "SELECT * from Clientes WHERE FA=1 ";
+     if($cod){
+      $sql.=" and Codigo= '".$cod."'";
+     }
+     if($grupo)
+     {
+      $sql.=" and Grupo= '".$grupo."'";
+     }
+     if($query)
+     {
+      $sql.=" and Cliente +' '+ CI_RUC like '%".$query."%'";
+     }
+     if($clave)
+     {
+      $sql.=" and Clave= '".$clave."'";
+     }
+
+     $sql.=" ORDER BY ID OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
+
+     $result = $this->db->datos($sql);
+
+       // $result =  encode($result);
+        // print_r($result);
+        return $result;
+   }
+   
 
   
 }

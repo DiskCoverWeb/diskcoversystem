@@ -6,6 +6,12 @@
      $cartera_usu = $_SESSION['INGRESO']['CARTERA_USUARIO'];
      $cartera_pass = $_SESSION['INGRESO']['CARTERA_PASS'];
     }
+    $tipo = '';
+
+    if(isset($_GET['tipo']) && $_GET['tipo']==2)
+    {
+      $tipo=2;
+    }
 ?>
 <script type="text/javascript">
 
@@ -21,6 +27,11 @@
       $('#ddl_cliente').attr('disabled',true);
       $('#ddl_grupo').attr('disabled',true);
       $('#txt_clave').attr('readonly',true);
+    }
+    var tipo = '<?php echo $tipo; ?>';
+    if(tipo==2)
+    {
+      $('#campo_clave').css('display','none');
     }
 
   	cargar_registros();
@@ -317,7 +328,7 @@
     					<option value="">Seleccione Cliente</option>
     				</select>
     			</div>
-    			<div class="col-sm-2">
+    			<div class="col-sm-2" id="campo_clave">
     				<b>CLAVE</b>
     				<input type="password" name="txt_clave" id="txt_clave" class="form-control input-xs">
     				<a href="#" onclick="recuperar_clave()"><i class="fa fa-key"></i> Recupera clave</a>

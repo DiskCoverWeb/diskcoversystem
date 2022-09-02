@@ -2100,7 +2100,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 }
 
 //
- function imprimirDocEle_fac($datos,$detalle,$educativo,$matri=null,$id=null,$formato=null,$nombre_archivo=null,$va=null,$imp1=null)
+ function imprimirDocEle_fac($datos,$detalle,$educativo,$matri=null,$nombre,$formato=null,$nombre_archivo=null,$va=null,$imp1=false)
 {
 	// print_r($datos);die();
 	$pdf = new PDF('P','pt','LETTER');
@@ -2174,7 +2174,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 		$pdf->Row($arr,10);	
 	}
 // /-----------------------------------------------------------------------------
-	if($agente!='')
+	if($agente!='' && $agente!='.')
 	{
 		$pdf->SetTextColor(225,51,51);
 		$pdf->SetFont('Arial','',7);
@@ -2719,13 +2719,15 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->Cell(37,10,$formateado,0,0,'R');
 	//echo ' ddd '.$imp1;
 	//die();*/
-	if($imp1==null or $imp1==1)
+	if($imp1==false || $imp1==0)
 	{
 		$pdf->Output();
 	}
-	if($imp1==0)
+	if($imp1==1)
 	{
-		$pdf->Output('TEMP/'.$id.'.pdf','F'); 
+		$pdf->Output('F',dirname(__DIR__,2).'/TEMP/'.$datos[0]['Serie'].'-'.generaCeros($datos[0]['Factura'],7).'.pdf');
+
+		// $pdf->Output('TEMP/'.$nombre.'.pdf','F'); 
 	}
 }
 /* imprimirDocElNC

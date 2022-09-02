@@ -333,6 +333,36 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 				require_once("inventario/catalogo_producto.php");
 			}
 
+			//modales
+			if($_SESSION['INGRESO']['accion']=='FSubCtas')
+			{
+				require_once('contabilidad/FSubCtas.php');
+			}
+			if($_SESSION['INGRESO']['accion']=='FCompras')
+			{
+				require_once('contabilidad/FCompras.php');
+			}
+			if($_SESSION['INGRESO']['accion']=='FExportaciones')
+			{
+				require_once('contabilidad/FExportaciones.php');
+			}
+			if($_SESSION['INGRESO']['accion']=='FImportaciones')
+			{
+				require_once('contabilidad/FImportaciones.php');
+			}
+			if($_SESSION['INGRESO']['accion']=='FVentas')
+			{
+				require_once('contabilidad/FVentas.php');
+			}
+			if($_SESSION['INGRESO']['accion']=='FCliente')
+			{
+				require_once('contabilidad/FCliente.php');
+			}
+			if($_SESSION['INGRESO']['accion']=='FAbonos')
+			{
+				require_once('contabilidad/FAbonos.php');
+			}
+
 	}else
 	{		
 		switch ($_SESSION['INGRESO']['modulo_']) {

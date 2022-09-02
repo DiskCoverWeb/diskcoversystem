@@ -415,6 +415,7 @@ function variables_sistema($EmpresaEntidad,$NombreEmp,$ItemEmp)
         $_SESSION['INGRESO']['Ciudad'] = $empresa[0]['Ciudad'];;       
         $_SESSION['INGRESO']['accesoe']='0';
         $_SESSION['INGRESO']['Email_Conexion']=$empresa[0]['Email_Conexion'];
+        $_SESSION['INGRESO']['Impresora_Rodillo']=$empresa[0]['Impresora_Rodillo'];
 
 	  $_SESSION['INGRESO']['Email_Contrasena']=$empresa[0]['Email_Contraseña'];
 	  $_SESSION['INGRESO']['smtp_SSL']=$empresa[0]['smtp_SSL'];

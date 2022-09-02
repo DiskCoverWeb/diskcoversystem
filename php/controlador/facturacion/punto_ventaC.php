@@ -135,6 +135,7 @@ class punto_ventaC
 	{
 		$datos = $this->modelo->DCBodega();
 		// print_r($datos);die();
+		$resp = array();
 		foreach ($datos as $key => $value) {
 			$res[] = array('codigo'=>$value['CodBod'],'nombre'=>$value['Bodega']);
 		}
@@ -451,7 +452,7 @@ class punto_ventaC
 	        $FA['codigoCliente'] = $parametros['CodigoCliente'];
 	        $FA['TextCI'] = $parametros['CI'];
 	        $FA['TxtEmail'] = $parametros['email'];
-	        $FA['Cliente'] = $parametros['NombreCliente'];
+	        $FA['Cliente'] = str_replace( $parametros['CI'],'',$parametros['NombreCliente']);
 	        $FA['TC'] = $parametros['TC'];
 	        $FA['Serie'] = $parametros['Serie'];
 	        $FA['Cta_CxP'] = $datos[0]['CxC'];
@@ -618,7 +619,12 @@ function ProcGrabar($FA)
            $TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
            $clave = $this->sri->Clave_acceso($TA['Fecha'],'01', $TA['Serie'],$Factura_No);
            $TFA['CLAVE'] = $clave;
-           $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
+           if($_SESSION['INGRESO']['Impresora_Rodillo']==0)
+           {
+           		$this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
+           }else{
+           	$this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
+           }
            $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
            if($rep==1)
            {
@@ -798,11 +804,19 @@ function ProcGrabar_Abono_cero($FA)
            $TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
            $clave = $this->sri->Clave_acceso($TA['Fecha'],'01', $TA['Serie'],$Factura_No);
            $TFA['CLAVE'] = $clave;
-           $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
            $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
+           
            if($rep==1)
            {
-           		return array('respuesta'=>$rep,'pdf'=>$imp);
+	           	if($_SESSION['INGRESO']['Impresora_Rodillo']==0)
+	           {
+	           	$this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false);
+	           }else
+	           {
+	             $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
+	           }           
+           	return array('respuesta'=>$rep,'pdf'=>$imp);
+
            }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep);}
         }
      }else{

@@ -44,7 +44,7 @@
 		 })
 	 })
    $(document).keyup(function(e){ 
-   	console.log(e.target.type);
+   	console.log(e);
 		if(e.keyCode==46 && e.target.type=='checkbox')
 		{
 			eliminar();

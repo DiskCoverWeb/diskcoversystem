@@ -30,7 +30,7 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
     // print_r($_SESSION['INGRESO']);die();
     $to =explode(',', $to_correo);
      foreach ($to as $key => $value) {
-     	if($value!='.')
+     	if($value!='.' && $value!='')
      	{
 	          $mail = new PHPMailer(true);
             try {
@@ -52,7 +52,7 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
                    }
 
                 $mail->setFrom($empresaGeneral[0]['Email_Conexion'], 'DiskCover System');
-                $mail->addAddress($to_correo);     //Add a recipient
+                $mail->addAddress($value);     //Add a recipient
                 $mail->addReplyTo($empresaGeneral[0]['Email_Conexion'], 'Informacion');
                 //$mail->addCC('cc@example.com');
                 //$mail->addBCC('bcc@example.com');
@@ -65,6 +65,11 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
                      if(file_exists(dirname(__DIR__,2).'/TEMP/'.$value))
                       {                   
                         $mail->AddAttachment(dirname(__DIR__,2).'/TEMP/'.$value);
+                      }  
+                      if(file_exists(dirname(__DIR__,2).'/php/comprobantes/entidades/entidad_'.$_SESSION['INGRESO']['IDEntidad'].'/CE'.$_SESSION['INGRESO']['item'].'/Autorizados/'.$value))
+                      {                   
+                        $mail->AddAttachment(dirname(__DIR__,2).'/php/comprobantes/entidades/entidad_'.$_SESSION['INGRESO']['IDEntidad'].'/CE'.$_SESSION['INGRESO']['item'].'/Generados/'.$value); 
+                        $mail->AddAttachment(dirname(__DIR__,2).'/php/comprobantes/entidades/entidad_'.$_SESSION['INGRESO']['IDEntidad'].'/CE'.$_SESSION['INGRESO']['item'].'/Autorizados/'.$value);
                       }          
                     }         
                   }
@@ -87,7 +92,9 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
                 }
                 
             } catch (Exception $e) {
-              // print_r($mail);die();
+              // print_r($mail);
+              // print_r($e);
+              // die();
                 return -1;
             }
 	        
