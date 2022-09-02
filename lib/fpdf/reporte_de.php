@@ -2161,7 +2161,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetFont('Arial','B',12);
 	$pdf->SetXY(285, 35);
 	$pdf->SetWidths(array(42,100));
-	$arr=array('R.U.C.',$_SESSION['INGRESO']['RUCEnt']);//mio
+	$arr=array('R.U.C.',$_SESSION['INGRESO']['RUC']);
 	$pdf->Row($arr,10);
 	$pdf->SetXY(425, 35);
 	$pdf->SetWidths(array(140));
@@ -2434,7 +2434,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
      	 	$pdf->SetWidths(array(55,55,45,45,110,45,45,40,40,45));
 			$pdf->SetAligns(array("L","L","R","R","L","L","R","R","R","R"));
 			//$arr=array($arr1[$i]);
-			$arr=array($value['Codigo'],$value['CodigoU'],$value['Cantidad'],'',$value['Producto'],'',sprintf("%01.2f", $value['Precio']),$value['Total_Desc'],'', number_format($value['Total'],2,'.',''));
+			$arr=array($value['Codigo'],'',$value['Cantidad'],'',$value['Producto'],'',sprintf("%01.2f", $value['Precio']),$value['Total_Desc'],'', number_format($value['Total'],2,'.',''));
 			$pdf->Row($arr,10,1);    	
      }
    

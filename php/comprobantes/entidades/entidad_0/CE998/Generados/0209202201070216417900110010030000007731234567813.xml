@@ -6,11 +6,11 @@
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>0209202201070216417900110010030000007711234567812</claveAcceso>
+    <claveAcceso>0209202201070216417900110010030000007731234567813</claveAcceso>
     <codDoc>01</codDoc>
     <estab>001</estab>
     <ptoEmi>003</ptoEmi>
-    <secuencial>000000771</secuencial>
+    <secuencial>000000773</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
@@ -21,42 +21,60 @@
     <tipoIdentificacionComprador>06</tipoIdentificacionComprador>
     <razonSocialComprador>  JAVIER FARRINOS</razonSocialComprador>
     <identificacionComprador>1722214507</identificacionComprador>
-    <totalSinImpuestos>1.20</totalSinImpuestos>
+    <totalSinImpuestos>3.00</totalSinImpuestos>
     <totalDescuento>0</totalDescuento>
     <totalConImpuestos>
       <totalImpuesto>
         <codigo>2</codigo>
         <codigoPorcentaje>0</codigoPorcentaje>
         <descuentoAdicional>0</descuentoAdicional>
-        <baseImponible>1.2</baseImponible>
+        <baseImponible>3</baseImponible>
         <valor>0.00</valor>
       </totalImpuesto>
     </totalConImpuestos>
     <propina>0</propina>
-    <importeTotal>1.2</importeTotal>
+    <importeTotal>3</importeTotal>
     <moneda>DOLAR</moneda>
     <pagos>
       <pago>
         <formaPago>01</formaPago>
-        <total>1.2</total>
+        <total>3</total>
       </pago>
     </pagos>
   </infoFactura>
   <detalles>
     <detalle>
-      <codigoPrincipal>98.14</codigoPrincipal>
-      <descripcion>Abel Fourlan</descripcion>
+      <codigoPrincipal>98.24</codigoPrincipal>
+      <descripcion>6 LINEAS</descripcion>
       <unidadMedida>DOLAR</unidadMedida>
       <cantidad>1.0000</cantidad>
-      <precioUnitario>1.2</precioUnitario>
+      <precioUnitario>1</precioUnitario>
       <descuento>0</descuento>
-      <precioTotalSinImpuesto>1.2</precioTotalSinImpuesto>
+      <precioTotalSinImpuesto>1</precioTotalSinImpuesto>
       <impuestos>
         <impuesto>
           <codigo>2</codigo>
           <codigoPorcentaje>0</codigoPorcentaje>
           <tarifa>0</tarifa>
-          <baseImponible>1.2</baseImponible>
+          <baseImponible>1</baseImponible>
+          <valor>0</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+    <detalle>
+      <codigoPrincipal>98.40</codigoPrincipal>
+      <descripcion>7 LINEAS</descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.0000</cantidad>
+      <precioUnitario>2</precioUnitario>
+      <descuento>0</descuento>
+      <precioTotalSinImpuesto>2</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
+          <baseImponible>2</baseImponible>
           <valor>0</valor>
         </impuesto>
       </impuestos>

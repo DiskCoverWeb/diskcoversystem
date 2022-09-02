@@ -805,12 +805,12 @@ function ProcGrabar_Abono_cero($FA)
            $clave = $this->sri->Clave_acceso($TA['Fecha'],'01', $TA['Serie'],$Factura_No);
            $TFA['CLAVE'] = $clave;
            $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
-           
+           	$this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false);
            if($rep==1)
            {
-	           	if($_SESSION['INGRESO']['Impresora_Rodillo']==0)
+	           if($_SESSION['INGRESO']['Impresora_Rodillo']==0)
 	           {
-	           	$this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false);
+	           	$this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false,1);
 	           }else
 	           {
 	             $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);

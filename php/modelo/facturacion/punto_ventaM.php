@@ -201,7 +201,7 @@ class punto_ventaM
        return $datos;
   }
 
-  function pdf_factura_elec($cod,$ser,$ci,$nombre,$clave_acceso,$periodo=false)
+  function pdf_factura_elec($cod,$ser,$ci,$nombre,$clave_acceso,$periodo=false,$aprobado=false)
    {
     $sql="SELECT * 
     FROM Facturas 
@@ -260,7 +260,10 @@ class punto_ventaM
     {
       $titulo_correo = 'comprobantes electronicos';
       $cuerpo_correo = 'comprobantes electronico';
-      $r = $this->email->enviar_email($archivos,$to_correo,$cuerpo_correo,$titulo_correo,$HTML=false);
+      if($aprobado)
+      {
+        $r = $this->email->enviar_email($archivos,$to_correo,$cuerpo_correo,$titulo_correo,$HTML=false);
+      }
       // print_r($r);
     }
    }
