@@ -623,7 +623,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
                   {
                     Swal.fire({
                        type: 'info',
-                       title: 'Error por: '+response,
+                       title: 'Error por: '+response.text,
                        text: ''
                      });
 

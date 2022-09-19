@@ -317,20 +317,26 @@ class niveles_seguriC
 
 			foreach ($empresas as $key1 => $value1) {
 				$server = '<p><i class="fa fa-circle text-success"></i> En linea</p>';
-				if($value1['dbSQLSERVER']==0){$server = '<p><i class="fa fa-circle text-danger"></i> Acceso SQLServer no configurado</p>';}
+				if($value1['dbSQLSERVER']==0)
+				{$server = '<p><i class="fa fa-circle text-danger"></i> Acceso SQLServer no configurado</p>';}
+				else if($value1['dbSQLSERVER']==2)
+				{
+					$server = '<p><i class="fa fa-circle text-yellow"></i> Base de datos o nonexion no establecida</p>';
+				}
 				$tbl2.='<div class="row">
 								<div class=" col-xs-2 col-sm-3 col-lg-3" style="background-color:#e2fbff;">
 										<b>'.$value1['text'].'</b>	<br>
+										<b>RUC:</b>'.$value1['CI_RUC'].'<br>
 										'.$server.'									
 								</div>
             				<div class="col-xs-10 col-lg-9" style="overflow-x:scroll;">
               					<div class="row"><div class="col-sm-12">';
 
 
-			   $tbl2.=' <table class="table-sm" style="margin-bottom:0px;font-size:11px"><tr>';
+			   $tbl2.=' <table class="table-sm" style="margin-bottom:0px;font-size:11px;white-space: nowrap;"><tr>';
 			foreach ($modulos as $key2 => $value2) {	
 				$server = '';
-				if($value1['dbSQLSERVER']==0){$server = 'Disabled';}
+				// if($value1['dbSQLSERVER']==0){$server = 'Disabled';}
 							
 				$tbl2.='<td class="text-center" style="border: solid 1px; width: 50px;">
 								'.$value2['aplicacion'].'</br>

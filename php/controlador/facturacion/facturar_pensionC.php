@@ -579,6 +579,9 @@ class facturar_pensionC
       if ($SubTotal_NC > 0) {
         $SubTotal_NC = $SubTotal_NC - $TFA['Total_IVA'];
         $TA['Cta'] = $Cta1;
+        $TA['Serie_NC'] = G_NINGUNO;
+        $TA['Autorizacion_NC'] = G_NINGUNO;        
+        $TA['Nota_Credito'] = 0;
         $TA['Banco'] = "NOTA DE CREDITO";
         $TA['Cheque'] = "VENTAS";
         $TA['Abono'] = $SubTotal_NC;
@@ -629,7 +632,12 @@ class facturar_pensionC
       $FA['tc'] = $FA['TC'];
       $FA['cod_doc'] = '01';
       if (strlen($FA['Autorizacion']) == 13) {
-        $resultado = $this->autorizar_sri->Autorizar($FA);
+        $rep = $resultado = $this->autorizar_sri->Autorizar_factura_o_liquidacion($FA);
+        if($rep==1)
+           {
+              $resultado = array('respuesta'=>$rep);
+           }else{ $resultado = array('respuesta'=>-1,'text'=>$rep);}
+
       }else{
         $resultado = array('respuesta'=>5);
       }

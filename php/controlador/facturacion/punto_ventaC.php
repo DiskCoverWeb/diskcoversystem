@@ -684,10 +684,10 @@ function ProcGrabar_Abono_cero($FA)
      $Total_FacturaME = 0;
      $Moneda_US = False;
      if($Moneda_US){
-        $Total_Factura = number_format(($FA['Sin_IVA'] + $FA['Con_IVA'] - $FA['Descuento'] - $FA['Descuento2']  + $FA['Total_IVA'] + $FA['Servicio']) * $Dolar, 2,'.',',');
-        $Total_FacturaME = number_format($FA['Sin_IVA'] + $FA['Con_IVA'] - $FA['Descuento'] - $FA['Descuento2']  + $FA['Total_IVA'] + $FA['Servicio'], 2,'.',',');
+        $Total_Factura = number_format(($FA['Sin_IVA'] + $FA['Con_IVA'] - $FA['Descuento'] - $FA['Descuento2']  + $FA['Total_IVA'] + $FA['Servicio']) * $Dolar, 2,'.','');
+        $Total_FacturaME = number_format($FA['Sin_IVA'] + $FA['Con_IVA'] - $FA['Descuento'] - $FA['Descuento2']  + $FA['Total_IVA'] + $FA['Servicio'], 2,'.','');
      }else{
-        $Total_Factura = number_format($FA['Sin_IVA'] + $FA['Con_IVA'] -$FA['Descuento'] - $FA['Descuento2'] + $FA['Total_IVA'] +$FA['Servicio'], 2,'.',',');
+        $Total_Factura = number_format($FA['Sin_IVA'] + $FA['Con_IVA'] -$FA['Descuento'] - $FA['Descuento2'] + $FA['Total_IVA'] +$FA['Servicio'], 2,'.','');
         $Total_FacturaME = 0;
      }
      $Saldo = $Total_Factura;
@@ -717,7 +717,10 @@ function ProcGrabar_Abono_cero($FA)
      $TextoFormaPago = G_PAGOCRED;
      $T = G_PENDIENTE;
     // 'Grabamos el numero de factura
+     // print_r('expression');die();
       Grabar_Factura_abono_cero($FA);
+      // print_r('d');
+      // die();
      // $this->ingresar_trans_kardex_salidas_FA($FA['Factura'],$FA['codigoCliente'],$FA['Cliente'],$FA['FechaTexto'],$TipoFactura); //($FA['Factura'],$codigoCliente);
      // die();
      
@@ -745,6 +748,8 @@ function ProcGrabar_Abono_cero($FA)
         $TA['Saldo'] = $Total_Factura-$FA['TxtEfectivo'];
         // print_r('adasdasdasd');die();
         Grabar_Abonos($TA);
+         // print_r('d');
+      // die();
         // print_r($TA);die();
 
 
@@ -786,6 +791,9 @@ function ProcGrabar_Abono_cero($FA)
            
         $conn->String_Sql($sql);
       }
+
+      // print_r('d');
+      // die();
 
       //ejecutar procedimiento almacenado para calcular saldos
      sp_Actualizar_Saldos_Facturas('FA',$FA['Serie'],$FA['Factura']);

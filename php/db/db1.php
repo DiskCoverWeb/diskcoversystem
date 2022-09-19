@@ -319,11 +319,12 @@ class db
 			echo 'no se pudo conectar a la base de datos';
 			die( print_r( sqlsrv_errors(), true));
 		}
+		// print_r($sql);die();
 	    $stmt = sqlsrv_query($cid, $sql);
 	   if(!$stmt)
 	   {
-		   die( print_r( sqlsrv_errors(), true));
-		   sqlsrv_close($cid);
+		   // die( print_r( sqlsrv_errors(), true));
+		   // sqlsrv_close($cid);
 			return -1;
 	   }
 

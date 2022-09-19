@@ -44,8 +44,10 @@
 		 })
 	 })
    $(document).keyup(function(e){ 
-   	console.log(e);
-		if(e.keyCode==46 && e.target.type=='checkbox')
+   	// console.log(e);   	
+   	// console.log(document.activeElement);
+   	var ele = document.activeElement.tagName;   
+		if((e.keyCode==46 && e.target.type=='checkbox') || (e.keyCode==46 && ele=='A'))
 		{
 			eliminar();
 		}

@@ -85,15 +85,22 @@ class niveles_seguriM
 
 	function empresas($entidad)
 	{
-		$sql="SELECT  ID,Empresa,Item,IP_VPN_RUTA,Base_Datos,Usuario_DB,Contrasena_DB,Tipo_Base,Puerto  FROM lista_empresas WHERE ID_empresa = ".$entidad." AND Item <> '".G_NINGUNO."' ORDER BY Empresa";
+		$sql="SELECT  ID,Empresa,Item,IP_VPN_RUTA,Base_Datos,Usuario_DB,Contrasena_DB,Tipo_Base,Puerto,RUC_CI_NIC  FROM lista_empresas WHERE ID_empresa = ".$entidad." AND Item <> '".G_NINGUNO."' ORDER BY Empresa ASC";
 		// print_r($sql);die();
 		$resp = $this->db->datos($sql,'MY SQL');
 		  $datos=array();
 		foreach ($resp as $key => $value) {
 			$server = 1;
 			if($value['IP_VPN_RUTA']=='.'){	$server = 0;}
+			else{
+			$re = $this->db->modulos_sql_server($value['IP_VPN_RUTA'],$value['Usuario_DB'],$value['Contrasena_DB'],$value['Base_Datos'],$value['Puerto']);
+				if($re==-1)
+				{
+					$server = 2;
+				}
+			}
 				//$datos[]=['id'=>utf8_encode($filas['Item']),'text'=>utf8_encode($filas['Empresa'])];
-				$datos[]=array('id'=>$value['Item'],'text'=>$value['Empresa'],'dbSQLSERVER'=>$server);			
+				$datos[]=array('id'=>$value['Item'],'text'=>$value['Empresa'],'dbSQLSERVER'=>$server,'CI_RUC'=>$value['RUC_CI_NIC']);			
 		 }
 	      return $datos;
 	}
@@ -324,7 +331,7 @@ class niveles_seguriM
 			// 	$datos[] =$filas;			
 			// }
 		 // }
-		$datos = $this->db->datos($sql,'MY SQL');
+		 $datos = $this->db->datos($sql,'MY SQL');
 		 $insertado = -1;
 		// print_r($datos);die();
 		 $mensaje = '';
@@ -334,13 +341,10 @@ class niveles_seguriM
 
 		 	// print_r($value);die();
 		 	     $cid2 = $this->db->modulos_sql_server($value['IP_VPN_RUTA'],$value['Usuario_DB'],$value['Contrasena_DB'],$value['Base_Datos'],$value['Puerto']);
-		 	     // print_r($cid2);die();
-		 	     if($cid2==-1)
+		 	     // print_r($cid2);
+		 	     //die();
+		 	     if($cid2!=-1)
 		 	     {
-		 	     	// si entra qui es por que o no hay base de datos o las credenciales estan mal
-		 	     	$mensaje.='Revise datos de conexion en :'.$value['Empresa'].' \n ';
-		 	     	// break;
-		 	     }else{
 
 		 	     $sql = "SELECT * FROM Accesos WHERE Codigo = '".$parametros['CI_usuario']."'";
 		 	     // print_r($sql);die();
@@ -352,7 +356,8 @@ class niveles_seguriM
 		 	     	return -2;
 		 	     }else{
 
-		 	     	// print_r('consulto');die();
+		 	     	//print_r('consulto');
+		 	     	//die();
 		 	        while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC)) 
 		 	     	   {
 		 	     		   $result[] = $row;
@@ -368,21 +373,24 @@ class niveles_seguriM
 		 	     	 	  $sql = str_replace('false',0, $sql);
 		 	     	 	  $sql = str_replace('true',1, $sql);
 		 	     	 	  // print_r($sql);die();
-		 	     	 	 $stmt2 = sqlsrv_query($cid2, $sql);
-		 	     	 	  if( $stmt2 === false)                         
-	                          {  
-		                        echo "Error en consulta PA.\n";  
-		                        return '';
-		                        die( print_r( sqlsrv_errors(), true));  
-	                          }else
-	                          {
-	                          	$insertado = 1;
-	                          }	 	    
+		 	     	 	  //se repite la conexion a terceros por que al utilizarla una vez no se puede utilizar la misma conexion
+		 	     	 	  // print_r('expression');die();
+		 	     	 	  $r = $this->db->ejecutar_sql_terceros($sql,$value['IP_VPN_RUTA'],$value['Usuario_DB'],$value['Contrasena_DB'],$value['Base_Datos'],$value['Puerto']);
 
+		 	     	 	  // print_r($r);die();
+
+		 	     	 	  if($r==1)
+		 	     	 	  {
+		 	     	 	  	// print_r('s');die();
+		 	     	 	  	$insertado = 1;
+		 	     	 	  }else
+		 	     	 	  {
+		 	     	 	  	// echo "No se ueo actualizar en la base de terceros la sentencia sql.\n";  
+		                    //return '';
+		                    //die( print_r( sqlsrv_errors(), true));  
+		 	     	 	  }		 	     	 	    
 		 	     	 }else
 		 	     	 {
-
-		 	     	// print_r('no existe');die();
 		 	     	 	$parametros_ing = array();
 		 	            $parametros_ing['ent']	  = $parametros['entidad'];     	 	 
 		 	            $parametros_ing['cla'] = $parametros['pass'];
@@ -409,6 +417,8 @@ class niveles_seguriM
 		 	  }
 	        }     
 		 }
+
+		 print_r($insertado);die();
 
 		 return array('respuesta'=> $insertado,'mensaje'=>$mensaje);
 		 // if($insertado == true)

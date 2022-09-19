@@ -22,7 +22,7 @@ class reportes_descargos_procesadosM
 
 	function cargar_comprobantes($query=false,$desde,$hasta,$tipo='',$paginacion=false,$area=false)
 	{
-		$sql="SELECT CP.Numero,CP.Fecha,Concepto,Monto_Total,Cliente,TK.Centro_Costo as 'Area' FROM Comprobantes CP 
+		$sql="SELECT TOP 100 CP.Numero,CP.Fecha,Concepto,Monto_Total,Cliente,TK.Centro_Costo as 'Area' FROM Comprobantes CP 
 		LEFT JOIN Clientes C ON CP.Codigo_B = C.Codigo
 		LEFT JOIN Trans_Kardex TK ON CP.Numero = TK.Numero 
 		WHERE 1=1 AND CP.TP='CD' 
@@ -57,13 +57,9 @@ class reportes_descargos_procesadosM
 		// print_r($sql);die();
 	    $botones[0] = array('boton'=>'Ver detalle','icono'=>'<i class="fa fa-reorder"></i>', 'tipo'=>'primary', 'id'=>'Numero');
 	    $botones[1] = array('boton'=>'Ver Comprobante','icono'=>'<i class="fa fa-eye"></i>', 'tipo'=>'default', 'id'=>'Numero');
-		$num_reg = array('0','100','cargar_pedidos()');
-	    $datos = grilla_generica_new($sql,'Comprobantes CP',$id_tabla=false,false,$botones,false,$imagen=false,1,1,1,300,2,$num_reg,false);
-
-      	// $datos = grilla_generica_new($sql,' Comprobantes CP ',$id_tabla=false,null,$botones,null,false,null,null,null,null,null,null,$paginacion);
-
-		// $datos = $this->conn->datos($sql);
-		// print_r($datos);die();
+		//$num_reg = array('0','100','cargar_pedidos()');
+	    $datos = grilla_generica_new($sql,'Comprobantes CP',$id_tabla=false,false,$botones,false,$imagen=false,1,1,1,300,2,$num_reg=false,false);
+      
         return $datos;
 
 	}

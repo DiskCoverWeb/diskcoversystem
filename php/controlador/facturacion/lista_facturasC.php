@@ -2,7 +2,7 @@
 require_once(dirname(__DIR__,2)."/modelo/facturacion/lista_facturasM.php");
 require(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
 require(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
-//require_once(dirname(__DIR__,2)."/vista/appr/modelo/modelomesa.php");
+require(dirname(__DIR__,2)."/comprobantes/SRI/autorizar_sri.php");
 
 $controlador = new lista_facturasC();
 if(isset($_GET['tabla']))
@@ -65,6 +65,11 @@ if(isset($_GET['enviar_mail']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->enviar_mail($parametros));
 }
+if(isset($_GET['re_autorizar']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->autorizar($parametros));
+}
 
 class lista_facturasC
 {
@@ -72,10 +77,11 @@ class lista_facturasC
     private $email;
     private $pdf;
 	public function __construct(){
-        $this->modelo = new lista_facturasM();
+    $this->modelo = new lista_facturasM();
 		$this->pdf = new cabecera_pdf();
 		$this->email = new enviar_emails();
 		$this->empresaGeneral = $this->modelo->Empresa_data();
+		$this->sri = new autorizacion_sri();
         //$this->modelo = new MesaModel();
     }
 
@@ -85,8 +91,38 @@ class lista_facturasC
 
     	// print_r($parametros);die();
     	$codigo = $parametros['ci'];
-    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['per']);
-    	return $tbl['tbl'];
+    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['per'],$parametros['desde'],$parametros['hasta']);
+    	$tr='';
+    	foreach ($tbl as $key => $value) {
+    		 $exis = $this->modelo->catalogo_lineas($value['TC'],$value['Serie']);
+    		 $autorizar = '';
+    		 if(count($exis)>0 && strlen($value['Autorizacion'])==13)
+    		 {
+    		 	$autorizar = '<button type="button" class="btn btn-xs btn-primary" onclick="autorizar(\''.$value['TC'].'\',\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['Fecha']->format('Y-m-d').'\')" title="Autorizar"><i class="fa fa-paper-plane"></i></button>';
+    		 }
+    		$tr.='<tr>
+            <td><button type="button" class="btn btn-xs btn-default" onclick="Ver_factura(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')" title="Ver factura"><i class="fa fa-eye"></i></button>'.$autorizar.'</td>
+            <td>'.$value['T'].'</td>
+            <td>'.$value['TC'].'</td>
+            <td>'.$value['Serie'].'</td>
+            <td>'.$value['Autorizacion'].'</td>
+            <td>'.$value['Factura'].'</td>
+            <td>'.$value['Fecha']->format('Y-m-d').'</td>
+            <td class="text-right">'.$value['SubTotal'].'</td>
+            <td class="text-right">'.$value['Con_IVA'].'</td>
+            <td class="text-right">'.$value['IVA'].'</td>
+            <td class="text-right">'.$value['Descuentos'].'</td>
+            <td class="text-right">'.$value['Total'].'</td>
+            <td class="text-right">'.$value['Saldo'].'</td>
+            <td>'.$value['RUC_CI'].'</td>
+            <td>'.$value['TB'].'</td>
+            <td>'.$value['Razon_Social'].'</td>
+          </tr>';
+    	}
+
+    	// print_r($tbl);die();
+
+    	return $tr;
     }
     function factura_periodo($parametros)
     {
@@ -183,7 +219,7 @@ class lista_facturasC
   {
   	if($grupo=='.'){$grupo= '';}
   	$cod ='';
-  	$datos = $this->modelo->Cliente($cod,$grupo,$query);
+  	$datos = $this->modelo->Cliente_facturas($cod,$grupo,$query);
   	$res = array();
   	foreach ($datos as $key => $value) {
   		$res[] = array('id'=>$value['Codigo'],'text'=>$value['Cliente'].'  CI:'.$value['CI_RUC'],'email'=>$value['Email'],'data'=>$value);
@@ -192,7 +228,12 @@ class lista_facturasC
   }
   function validar_cliente($parametros)
   {
-  	$dato = $this->modelo->Cliente($parametros['cli'],false,false,$parametros['cla']);
+  	// print_r($parametros);die();
+  	if($parametros['tip']=='2')
+  	{
+  		$parametros['cla']=false;
+  	}
+  	$dato = $this->modelo->Cliente_facturas($parametros['cli'],false,false,$parametros['cla']);
   	if(empty($dato))
   	{
   		return -1;
@@ -277,6 +318,27 @@ class lista_facturasC
         }
      }
      return $new;
+    }
+
+    function autorizar($parametros)
+    {
+    	// $datos[0]['campo'] = 'Autorizacion';
+    	// $datos[0]['dato'] = $_SESSION['INGRESO']['RUC'];
+    	
+    	// $campoWhere[0]['campo'] = 'Item';
+    	// $campoWhere[0]['valor'] = $_SESSION['INGRESO']['item'];
+    	// $campoWhere[1]['campo'] = 'Periodo';
+    	// $campoWhere[1]['valor'] = $_SESSION['INGRESO']['periodo'];
+    	// $campoWhere[2]['campo'] = 'TC';
+    	// $campoWhere[2]['valor'] = $parametros['tc'];
+    	// $campoWhere[3]['campo'] = 'Serie';
+    	// $campoWhere[3]['valor'] = $parametros['serie'];
+    	// $campoWhere[4]['campo'] = 'Factura';
+    	// $campoWhere[4]['valor'] = $parametros['FacturaNo'];
+
+    	 // $this->modelo->ingresar_update($datos,'Facturas',$campoWhere);
+    	$res = $this->sri->Autorizar_factura_o_liquidacion($parametros);
+    	return $res;
     }
 
         

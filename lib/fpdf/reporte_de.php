@@ -2100,7 +2100,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 }
 
 //
- function imprimirDocEle_fac($datos,$detalle,$educativo,$matri=null,$nombre,$formato=null,$nombre_archivo=null,$va=null,$imp1=false)
+ function imprimirDocEle_fac($datos,$detalle,$educativo,$matri=false,$nombre,$formato=null,$nombre_archivo=null,$va=null,$imp1=false,$abonos=false)
 {
 	// print_r($datos);die();
 	$pdf = new PDF('P','pt','LETTER');
@@ -2185,6 +2185,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	}
 // ----------------------------------------------------------------------------------
 
+
 	$pdf->SetTextColor(0,0,0);
 	$pdf->SetFont('Arial','',12);
 	$pdf->SetXY(285, 55);
@@ -2195,8 +2196,8 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetXY(425, 55);
 	$pdf->SetTextColor(225,51,51);
 	$pdf->SetWidths(array(140));
-	$ptoEmi = substr($datos[0]['Serie'],0,3);
-	$Serie = substr($datos[0]['Serie'],0,-3);
+	$ptoEmi = substr($datos[0]['Serie'],3,6);
+	$Serie = substr($datos[0]['Serie'],0,3);
 	$arr=array($Serie.'-'.$ptoEmi.'-'.generaCeros($datos[0]['Factura'],$tam));//mio
 	$pdf->Row($arr,10);
 	$pdf->SetTextColor(0);
@@ -2394,7 +2395,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	}
 	//die();
 	$arr=array('FORMA DE PAGO: '.$datos[0]['Forma_Pago'],
-	'MONTO: '.$datos[0]['Total_MN'].'  '
+	'MONTO: '.number_format($datos[0]['Total_MN'],2,'.',',').'  '
 	,'Condición de venta: '.$datos[0]['Fecha_C']->format('Y-m-d'));
 	$pdf->Row($arr,10);
 	$y1=$pdf->GetY();
@@ -2427,7 +2428,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$imp_mes = $datos[0]['Imp_Mes'];
      foreach ($detalle as $key => $value) {
      	// print_r($value);die();
-           if($imp_mes==1)
+           if($imp_mes!=0)
            {
            	 $value['Producto'] = $value['Producto'].' '.$value['Mes'].'/'.$value['Ticket'];
            }     		
@@ -2447,6 +2448,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$y=$pdf->GetY();
 	$pdf->SetXY(41, $y+5);
 	$pdf->SetWidths(array(140,40,95,46));
+	// infofactura
 	$arr=array("INFORMACIÓN ADICIONAL","Fecha","Deltalle del pago","Monto Abono");
     $pdf->Row($arr,10,1);
 	
@@ -2464,61 +2466,99 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetWidths(array(140));
 	//print_r($educativo);
 
-	if($matri != null)
+     ///revisa si los datos vienen de detalle matricula o de cliente
+	if($matri)
 	{
-	if(isset($educativo[0]['Telefono_RS']) && $educativo[0]['Telefono_RS'] != '.' && $educativo[0]['Telefono_RS'] != '')
-	{	
-	$arr=array('Telefono: '.$educativo[0]['Telefono_RS']);
-	$pdf->Row($arr,10);
-	$pdf->SetWidths(array(140));
-    }
-    if(isset( $educativo[0]['Lugar_Trabajo_R']) && $educativo[0]['Lugar_Trabajo_R'] != '.' && $educativo[0]['Lugar_Trabajo_R'] != '')
-	{
-	$arr=array('Direccion: '.$educativo[0]['Lugar_Trabajo_R']);
-	$pdf->Row($arr,10);
-	$pdf->SetWidths(array(140));
-    }
-     if( isset($educativo[0]['Email_R']) && $educativo[0]['Email_R'] != '.' && $educativo[0]['Email_R'] != '')
-	{	
-	$arr=array('Emial: '.$educativo[0]['Email_R']);
-	$pdf->Row($arr,10);
-	$pdf->SetWidths(array(140));
-    }
+
+	// print_r($educativo);die();
+		if(isset($educativo[0]['Telefono_RS']) && $educativo[0]['Telefono_RS'] != '.' && $educativo[0]['Telefono_RS'] != '')
+		{	
+		$arr=array('Telefono: '.$educativo[0]['Telefono_RS']);
+		$pdf->Row($arr,10);
+		$pdf->SetWidths(array(140));
+	    }
+	    if(isset( $educativo[0]['Lugar_Trabajo_R']) && $educativo[0]['Lugar_Trabajo_R'] != '.' && $educativo[0]['Lugar_Trabajo_R'] != '')
+		{
+		$arr=array('Direccion: '.$educativo[0]['Lugar_Trabajo_R']);
+		$pdf->Row($arr,10);
+		$pdf->SetWidths(array(140));
+	    }
+	    if( isset($educativo[0]['Email_R']) && $educativo[0]['Email_R'] != '.' && $educativo[0]['Email_R'] != '')
+		{	
+		$arr=array('Emial: '.$educativo[0]['Email_R']);
+		$pdf->Row($arr,10);
+		$pdf->SetWidths(array(140));
+	    }
+	    if( isset($educativo[0]['Email_R']) && $educativo[0]['Email_R'] != '.' && $educativo[0]['Email_R'] != '')
+		{	
+		$arr=array('Emial: '.$educativo[0]['Email_R']);
+		$pdf->Row($arr,10);
+		$pdf->SetWidths(array(140));
+	    }
     }else
     {
-     if($educativo[0]['Telefono'] != '.' && $educativo[0]['Telefono'] != '')
-	{		
-    $arr=array('Telefono: '.$educativo[0]['Telefono']);
-	$pdf->Row($arr,10);
-	$pdf->SetWidths(array(140));
-    }
-    if($educativo[0]['DirecionT'] != '.' && $educativo[0]['DirecionT'] != '')
-	{		
-	$arr=array('Direccion: '.$educativo[0]['DirecionT']);
-	$pdf->Row($arr,10);
-	$pdf->SetWidths(array(140));
-     }
-	if($educativo[0]['Email'] != '.' && $educativo[0]['Email'] != '')
-	{	
-	
-	$arr=array('Email: '.$educativo[0]['Email']);
-	$pdf->Row($arr,10);
-	$pdf->SetWidths(array(140));
-    }
+
+	// print_r($educativo);die();
+     if(isset($educativo[0]['Telefono']) && $educativo[0]['Telefono'] != '.' && $educativo[0]['Telefono'] != '')
+		{		
+	    $arr=array('Telefono: '.$educativo[0]['Telefono']);
+		$pdf->Row($arr,10);
+		$pdf->SetWidths(array(140));
+	    }
+	    if(isset($educativo[0]['DirecionT']) &&  $educativo[0]['DirecionT'] != '.' && $educativo[0]['DirecionT'] != '')
+		{		
+		$arr=array('Direccion: '.$educativo[0]['DirecionT']);
+		$pdf->Row($arr,10);
+		$pdf->SetWidths(array(140));
+	     }
+		if(isset($educativo[0]['Email']) && $educativo[0]['Email'] != '.' && $educativo[0]['Email'] != '')
+		{			
+			$arr=array('Email: '.$educativo[0]['Email']);
+			$pdf->Row($arr,10);
+			$pdf->SetWidths(array(140));
+	    }
+	    if(isset($educativo[0]['EmailR']) && $educativo[0]['EmailR'] != '.' && $educativo[0]['EmailR'] != '')
+		{			
+			$arr=array('Email: '.$educativo[0]['EmailR']);
+			$pdf->Row($arr,10);
+			$pdf->SetWidths(array(140));
+	    }
 
     }
 
 
 	//fecha
-	$pdf->SetXY(181, $y+5);
-	$pdf->Cell(40,60,'','1',1,'Q');
-	//detalle pago
-	$pdf->SetXY(221, $y+5);
-	$pdf->Cell(95,60,'','1',1,'Q');
-	//monto abono
-	$pdf->SetXY(316, $y+5);
-	$pdf->Cell(46,60,'','1',1,'Q');
-	
+	if($abonos)
+	{
+		$pdf->SetFont('Arial','',5);
+		$y = $y+5;
+	    $pdf->SetXY(181, $y);
+		$pdf->Cell(40,60,'',1,1,'Q');
+		//detalle pago
+		$pdf->SetXY(221, $y);
+		$pdf->Cell(95,60,'',1,1,'Q');
+		//monto abono
+		$pdf->SetXY(316, $y);
+		$pdf->Cell(46,60,'',1,1,'Q');
+		$y = $y;
+
+		// print_r($abonos);die();
+		foreach ($abonos as $key => $value) {
+			// print_r($abonos);die();
+			$pdf->SetXY(181, $y);
+			$pdf->Cell(40,15,$value['Fecha']->format('Y-m-d'),0,1,'Q');
+			//detalle pago
+			$pdf->SetXY(221, $y);
+			if($value['Banco']!='.' && $value['Banco']!='' && $value['Cheque']!='.' && $value['Cheque']!='')
+			{
+				$pdf->Cell(95,15,$value['Banco'].' '.$value['Cheque'],0,1,'Q');
+			}
+			//monto abono
+			$pdf->SetXY(316, $y);
+			$pdf->Cell(46,15,$value['Abono'],0,1,'R');
+			$y =$y+6;
+		}
+	}
 	//leyenda final
 	$pdf->SetFont('Arial','',5);
 	$pdf->SetXY($x, ($y+65));

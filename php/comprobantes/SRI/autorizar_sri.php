@@ -271,6 +271,7 @@ class autorizacion_sri
 
 			   		 }else 
 			   		 {
+			   		 	// $resp = $this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion']);
 			   		 	// RETORNA SI YA ESTA AUTORIZADO O SI FALL LA REVISIO EN EL SRI
 			   			return $validar_autorizado;
 			   		 }
@@ -2151,7 +2152,8 @@ function generar_xml_retencion($cabecera,$detalle=false)
 
     	 // print_r("java -jar ".$enviar_sri." ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviado." ".$ruta_rechazados." ".$url_recepcion);die();
    		 exec("java -jar ".$enviar_sri." ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion,$f);
-
+   		 if(count($f)>0)
+   		 {
    		 $resp = explode('-',$f[0]);
    		 if($resp[1]=='RECIBIDA')
    		 {
@@ -2164,9 +2166,14 @@ function generar_xml_retencion($cabecera,$detalle=false)
    		 	//es devuelta
    		 	return 2;
    		 }else
-   		 {   		 	
+   		 {  
    		 	return $f;
    		 }
+   		}else
+   		{
+   			// algo paso
+   			return 2;
+   		}
     }
 
     function actualizar_datos_CE($autorizacion,$tc,$serie,$factura,$entidad,$autorizacion_ant)
@@ -2265,7 +2272,7 @@ function generar_xml_retencion($cabecera,$detalle=false)
     	$remplaza = array('a','e','i','o','u','A','E','I','O','U','N','n','','','','');
     	$corregido = str_replace($buscar, $remplaza, $query);
     	 // print_r($corregido);
-    	return $corregido;
+    	return trim($corregido);
 
     }
 

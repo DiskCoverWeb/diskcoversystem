@@ -525,7 +525,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 
   function generar_factura()
   {
-  	$('#myModal_espera').modal('show');
+  	// $('#myModal_espera').modal('show');
   	var tc = $('#DCLinea').val();
   	tc = tc.split(' ');
 

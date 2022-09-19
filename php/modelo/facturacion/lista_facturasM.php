@@ -85,7 +85,7 @@ class lista_facturasM
 
    }
 
-    function facturas_emitidas_tabla($codigo,$periodo=false)
+    function facturas_emitidas_tabla($codigo,$periodo=false,$desde=false,$hasta=false)
    {
    	$cid = $this->conn;
 		
@@ -94,13 +94,13 @@ class lista_facturasM
 		WHERE CodigoC ='".$codigo."' 
 		 AND CodigoC <> ''
 		AND Item = '".$_SESSION['INGRESO']['item']."'";
-       if($periodo && $periodo!='.')
-       {
-       	 $sql.= " AND Periodo BETWEEN '01/01/".$periodo."' AND '31/12/".$periodo."'";
-       }else
-       {
-       	 $sql.=" AND Periodo =  '".$_SESSION['INGRESO']['periodo']."'";
-       }
+       // if($periodo && $periodo!='.')
+       // {
+       	 $sql.= " AND Fecha BETWEEN '".$desde."' AND '".$hasta."'";
+       // }else
+       // {
+       // 	 $sql.= " AND Periodo BETWEEN   '01-01-".$_SESSION['INGRESO']['periodo']."' AND '31-12-".$_SESSION['INGRESO']['periodo']."' ";
+       // }
 
        $sql.="ORDER BY Fecha DESC"; 
 
@@ -120,15 +120,19 @@ class lista_facturasM
 		//echo $row[0];
 	   }
 
-      
-       $botones[0] = array('boton'=>'Ver factura','icono'=>'<i class="fa fa-eye"></i>', 'tipo'=>'default', 'id'=>'Factura,Serie,CodigoC');
-       // $botones[1] = array('boton'=>'Generar PDF','icono'=>'<i class="fa fa-file-pdf-o"></i>', 'tipo'=>'primary', 'id'=>'ID');
-       // $botones[2] = array('boton'=>'Generar EXCEL','icono'=>'<i class="fa fa-file-excel-o"></i>', 'tipo'=>'info', 'id'=>'ID');
 
-        $tbl = grilla_generica_new($sql,'Facturas',false,$titulo=false,$botones,$check=false,$imagen=false,1,1,1,400);
-        
-       // $tabla = grilla_generica($stmt,null,NULL,'1','2,4,clave');
-       return array('datos'=>$datos,'tbl'=>$tbl);
+
+      
+       // $botones[0] = array('boton'=>'Ver factura','icono'=>'<i class="fa fa-eye"></i>', 'tipo'=>'default', 'id'=>'Factura,Serie,CodigoC');
+       // $botones[1] = array('boton'=>'Generar PDF','icono'=>'<i class="fa fa-file-pdf-o"></i>', 'tipo'=>'primary', 'id'=>'ID');
+       // // $botones[2] = array('boton'=>'Generar EXCEL','icono'=>'<i class="fa fa-file-excel-o"></i>', 'tipo'=>'info', 'id'=>'ID');
+
+       //  $tbl = grilla_generica_new($sql,'Facturas',false,$titulo=false,$botones,$check=false,$imagen=false,1,1,1,400);
+       //  print_r($tbl);die();
+       // // $tabla = grilla_generica($stmt,null,NULL,'1','2,4,clave');
+       // return array('datos'=>$datos,'tbl'=>$tbl);
+
+       return $datos;
    }
 
    function pdf_factura($cod,$ser,$ci,$periodo=false)
@@ -224,6 +228,37 @@ class lista_facturasM
 	      // print_r($result);
 	      return $result;
    }
+
+
+   function Cliente_facturas($cod,$grupo = false,$query=false,$clave=false)
+   {
+	   $sql = "SELECT CodigoC as 'Codigo',C.Cliente as 'Cliente',C.CI_RUC,C.Email FROM Facturas F
+INNER JOIN Clientes C ON F.CodigoC = C.Codigo WHERE 1=1 ";
+	   if($cod){
+	   	$sql.=" and C.Codigo= '".$cod."'";
+	   }
+	   if($grupo)
+	   {
+	   	$sql.=" and C.Grupo= '".$grupo."'";
+	   }
+	   if($query)
+	   {
+	   	$sql.=" and C.Cliente +' '+ C.CI_RUC like '%".$query."%'";
+	   }
+	   if($clave)
+	   {
+	   	$sql.=" and C.Clave= '".$clave."'";
+	   }
+
+	   $sql.=" GROUP BY CodigoC,C.Cliente,C.CI_RUC,C.Email";
+	   $sql.=" ORDER BY C.Cliente OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
+	   
+	   // print_r($sql);die();
+		$result = $this->db->datos($sql);
+	   return $result;
+   }
+   
+
    
 
    function cliente_matri($codigo)
@@ -302,6 +337,22 @@ class lista_facturasM
 	      // print_r($result);
 	      return $result;
    }
+
+  function catalogo_lineas($TC,$SerieFactura)
+  {
+  	$sql = "SELECT *
+         FROM Catalogo_Lineas
+         WHERE Item = '".$_SESSION['INGRESO']['item']."'
+         AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+         AND Fact = '".$TC."'
+         AND Serie = '".$SerieFactura."'
+         AND Autorizacion = '".$_SESSION['INGRESO']['RUC']."'
+         AND TL <> 0
+         ORDER BY Codigo ";
+         // print_r($sql);die();
+	  return $this->db->datos($sql);
+
+  }
 
 
   

@@ -6617,7 +6617,7 @@ if ($pos === false) {
     //$sql.= " OFFSET ".$paginacion[0]." ROWS FETCH NEXT ".$paginacion[1]." ROWS ONLY;";
   }
 
-  //print_r($sql);die();
+  // print_r($sql);die();
 
   $cid=$conn->conexion();
   $cid1=$conn->conexion();
@@ -7896,11 +7896,11 @@ function factura_numero($ser)
               $dato[8]['campo']='Cantidad';
               $dato[8]['dato']=$value['CANT'];
               $dato[9]['campo']='Precio';
-              $dato[9]['dato']=$value['PRECIO']; 
+              $dato[9]['dato']= number_format($value['PRECIO'],2,'.',''); 
               $dato[10]['campo']='Total';
-              $dato[10]['dato']=$value['TOTAL'];//descontar descuentos  
+              $dato[10]['dato']= number_format($value['TOTAL'],2,'.','');//descontar descuentos  
               $dato[11]['campo']='Total_IVA';
-              $dato[11]['dato']=$value['Total_IVA']; 
+              $dato[11]['dato']= number_format($value['Total_IVA'],2,'.',''); 
               $dato[12]['campo']='Item';
               $dato[12]['dato']=$_SESSION['INGRESO']['item']; 
               $dato[13]['campo']='CodigoU';
@@ -7997,10 +7997,10 @@ function factura_numero($ser)
               $datoA[8]['dato']='.';
               $datoA[9]['campo']='Abono';
               //$daAto[9]['dato']=$row[9]; 
-              $datoA[9]['dato']=$total_total_;
+              $datoA[9]['dato']= number_format($total_total_,2,'.','');
               $datoA[10]['campo']='Total';
               //$daAto[10]['dato']=$row[9];  
-              $datoA[10]['dato']=$total_total_;
+              $datoA[10]['dato']= number_format($total_total_,2,'.','');
               $datoA[11]['campo']='Cheque';
               $datoA[11]['dato']=$value['Comprobante'];
               $datoA[12]['campo']='Fecha_Aut_NC';
@@ -8052,7 +8052,7 @@ function factura_numero($ser)
         $datoF[8]['campo']='Fecha_V';
         $datoF[8]['dato']=$fecha_actual;
         $datoF[9]['campo']='SubTotal';
-        $datoF[9]['dato']=number_format(($total_total_),2,'.','');
+        $datoF[9]['dato']=number_format(($total_coniva+$total_siniva),2,'.','');
         $datoF[10]['campo']='Con_IVA';
         $datoF[10]['dato']=number_format(($total_coniva),2,'.','');
         $datoF[11]['campo']='Sin_IVA';
@@ -8060,7 +8060,7 @@ function factura_numero($ser)
         $datoF[12]['campo']='IVA';
         $datoF[12]['dato']= number_format($total_iva,2,'.','');
         $datoF[13]['campo']='Total_MN';
-        $datoF[13]['dato']= number_format($total_total_+$total_iva,2,'.','');
+        $datoF[13]['dato']= number_format($datoF[9]['dato']+$total_iva,2,'.','');
         $datoF[14]['campo']='Cta_CxP';
         $datoF[14]['dato']=$cxc;
         $datoF[15]['campo']='Cta_Venta';
@@ -8094,26 +8094,25 @@ function factura_numero($ser)
         $datoF[29]['campo']='Razon_Social';
         $datoF[29]['dato']=$nombrec;
         $datoF[30]['campo']='Total_Efectivo';
-        $datoF[30]['dato']=$total_total_;
+        $datoF[30]['dato']= number_format($total_total_,2,'.','');
         $datoF[31]['campo']='Total_Banco';
         $datoF[31]['dato']=0;
         $datoF[32]['campo']='Otros_Abonos';
         $datoF[32]['dato']=0;
         $datoF[33]['campo']='Total_Abonos';
-        $datoF[33]['dato']=$total_total_;
+        $datoF[33]['dato']= number_format($total_total_,2,'.','');
         $datoF[34]['campo']='Abonos_MN';
-        $datoF[34]['dato']=$total_total_;
+        $datoF[34]['dato']= number_format($total_total_,2,'.','');
         $datoF[35]['campo']='Tipo_Pago';
         $datoF[35]['dato']=$tipo_pago;
         $datoF[36]['campo']='Porc_IVA';
         $datoF[36]['dato']=$_SESSION['INGRESO']['porc'];
         $datoF[37]['campo']='Propina';
-        $datoF[37]['dato']=$propina_a; 
+        $datoF[37]['dato']= number_format($propina_a,2,'.',''); 
         $datoF[38]['campo']='Autorizacion';
         $datoF[38]['dato']=$datos1['Autorizacion'];
         $datoF[39]['campo']='Saldo_MN';
-        $datoF[39]['dato']=$datos1['Saldo_MN'];
-
+        $datoF[39]['dato']= $datos1['Saldo_MN'];
         // print_r($datoF);die();
         insert_generico("Facturas",$datoF);
 

@@ -377,16 +377,25 @@ C.Telefono_R,Telefono_RS,Lugar_Trabajo_R,Email_R,Email_R,Matricula_No,Folio_No,C
 	   $detalle_fac= $this->conn->datos($sql1);
 	   
      $datos_cli_edu=$this->cliente_matri($ci);
+      $sql2="SELECT * 
+	    FROM Trans_Abonos 
+	    WHERE Factura = '".$cod."' 
+	    AND CodigoC='".$ci."' 
+	    AND Item = '".$_SESSION['INGRESO']['item']."'
+	  AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' "; 
+	  // print_r($sql2);die();
+	  $detalle_abonos = $this->conn->datos($sql2);
+
      // print_r($datos_cli_edu);die();
 	   if( count( $datos_cli_edu)>0)
 	   {
-	   		 imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,'matr',$id,null,'factura',null,null);
+	   		 imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$matri=1,$id,null,'factura',null,null,$detalle_abonos);
 	   }else
 	   {
 
         $datos_cli_edu=$this->Cliente($ci);
      // print_r($datos_cli_edu);die();
-        imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$id,null,'factura',null,null);
+        imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$matri=0,$id,null,'factura',null,null,$detalle_abonos);
 	   }
 
    }

@@ -10,7 +10,7 @@ span.classy {
   thead.tbl_style { background: #afd6e2; }
   tbody tr:nth-child(odd):hover {  background: #DDA;}
   table.tbl_style { border-collapse: collapse;}
-  table, th, td{  border: solid 1px #aba0a0;  padding: 2px;  }
+  table, th, td{  border: solid 1px #aba0a0;  padding: 0px 2px 0px 2px; }
   tbody { box-shadow: 10px 10px 6px rgba(0, 0, 0, 0.6);  }
   thead { background: #afd6e2;  box-shadow: 10px 0px 6px rgba(0, 0, 0, 0.6);} 
   /*#datos_t thead,tbody tr {    display:table;  width:100%;  table-layout:fixed; } */

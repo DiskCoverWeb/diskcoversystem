@@ -136,7 +136,9 @@
     var parametros = 
     {
       'ci':$('#ddl_cliente').val(),
-      'per':per,
+      'per':per,      
+      'desde':$('#txt_desde').val(),
+      'hasta':$('#txt_hasta').val(),
     }
      $.ajax({
        data:  {parametros:parametros},
@@ -152,12 +154,50 @@
 
    }
 
-   	function Ver_factura(id,serie,ci)
+  function Ver_factura(id,serie,ci)
 	{		 
     peri = $('#ddl_periodo').val();
 		var url = '../controlador/facturacion/lista_facturasC.php?ver_fac=true&codigo='+id+'&ser='+serie+'&ci='+ci+'&per='+peri;		
 		window.open(url,'_blank');
 	}
+
+  function autorizar(tc,factura,serie,fecha)
+  { 
+    $('#myModal_espera').modal('show');
+    var parametros = 
+    {
+      'tc':tc,
+      'FacturaNo':factura,
+      'serie':serie,
+      'Fecha':fecha,
+    }
+     $.ajax({
+       data:  {parametros:parametros},
+      url:   '../controlador/facturacion/lista_facturasC.php?re_autorizar=true',
+      type:  'post',
+      dataType: 'json',
+       success:  function (response) { 
+
+    $('#myModal_espera').modal('hide');
+       if(response==1)
+       {
+         Swal.fire('Factura autoizada','','success').then(function()
+         {
+           cargar_registros();
+         })
+       }else if(response == 2)
+       {
+        Swal.fire('Error al enviar el comprobante estado : Revisar la carpeta de rechazados','','error')
+       }else if(response==-1)
+       {
+        Swal.fire('Comprobante devuelto : Revisar la carpeta de rechazados','','error')
+       }else{        
+        Swal.fire(response,'','error')
+       }
+      }
+    });
+    
+  }
 
     function reporte_pdf()
     {  var cli = $('#ddl_cliente').val();
@@ -186,15 +226,59 @@
 	{
 		var cli = $('#ddl_cliente').val();
 		var cla = $('#txt_clave').val();
-		if(cli=='' || cla=='')
-		{
-			Swal.fire('Clave o clientes no ingresados','','error');
-			return false;
-		}
+    var tip = '<?php echo $tipo; ?>';
+    var ini = $('#txt_desde').val();
+    var fin = $('#txt_hasta').val();
+    var periodo = $('#ddl_periodo').val();
+    //si existe periodo valida si esta en el rango
+    if(periodo!='.')
+    {
+      const fechaInicio=new Date(periodo+'-01-01');
+      const fechaFin=new Date(periodo+'-01-30');
+      var ini = new Date(ini);
+      var fin = new Date(fin);
+
+      console.log(fechaInicio)
+      console.log(fechaFin)
+      console.log(ini)
+      console.log(fin)
+
+      if(ini>fechaFin || ini<fechaInicio)
+      {
+        Swal.fire('la fecha desde:'+ini,'No esta en el rango','info').then(function(){
+           $('#txt_desde').val(periodo+'-01-01');
+           return false;
+        })
+      }
+      if(fin>fechaFin || fin<fechaInicio)
+      {
+        Swal.fire('la fecha hasta:'+fin,'No esta en el rango','info').then(function(){
+           $('#txt_hasta').val(periodo+'-01-30');
+           return false;
+        })
+      }
+
+    }
+
+    
+      if(cli=='')
+      {
+        Swal.fire('Seleccione un cliente','','error');
+        return false;
+      }
+    if(tip=='')
+    {
+  		if(cla=='')
+  		{
+  			Swal.fire('Clave no ingresados','','error');
+  			return false;
+  		}
+    }
 		var parametros = 
 		{
 			'cli':cli,
 			'cla':cla,
+      'tip':tip,
 		}
 		 $.ajax({
              data:  {parametros:parametros},
@@ -291,6 +375,22 @@
     });
  }
 
+ function rangos()
+ {
+    var periodo = $('#ddl_periodo').val();
+    if(periodo!='.')
+    {
+       $('#txt_desde').val(periodo+'-01-01');
+       $('#txt_hasta').val(periodo+'-12-31');
+    }else
+    {
+      var currentTime = new Date();
+      var year = currentTime.getFullYear()
+      $('#txt_desde').val(year+'-01-01');
+      $('#txt_hasta').val(year+'-12-31');
+    }
+ }
+
 </script>
   <div class="row">
     <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
@@ -316,25 +416,33 @@
     				</select>
     				<!-- <input type="text" name="txt_grupo" id="txt_grupo" class="form-control input-sm"> -->
     			</div>
+          <div class="col-sm-4">
+            <b>CI / RUC</b>
+            <select class="form-control input-xs" id="ddl_cliente" name="ddl_cliente" onchange="periodos(this.value);rangos();">
+              <option value="">Seleccione Cliente</option>
+            </select>
+          </div>
+          <div class="col-sm-2" id="campo_clave">
+            <b>CLAVE</b>
+            <input type="password" name="txt_clave" id="txt_clave" class="form-control input-xs">
+            <a href="#" onclick="recuperar_clave()"><i class="fa fa-key"></i> Recupera clave</a>
+          </div>
           <div class="col-sm-2">
             <b>Periodo</b>
-            <select class="form-control input-xs" id="ddl_periodo" name="ddl_periodo">
+            <select class="form-control input-xs" id="ddl_periodo" name="ddl_periodo" onchange="rangos()">
               <option value=".">Seleccione perido</option>
             </select>
           </div>
-    			<div class="col-sm-4">
-    				<b>CI / RUC</b>
-    				<select class="form-control input-xs" id="ddl_cliente" name="ddl_cliente">
-    					<option value="">Seleccione Cliente</option>
-    				</select>
-    			</div>
-    			<div class="col-sm-2" id="campo_clave">
-    				<b>CLAVE</b>
-    				<input type="password" name="txt_clave" id="txt_clave" class="form-control input-xs">
-    				<a href="#" onclick="recuperar_clave()"><i class="fa fa-key"></i> Recupera clave</a>
-    			</div>
+          <div class="col-sm-2">
+            <b>Desde</b>
+              <input type="date" name="txt_desde" id="txt_desde" class="form-control input-xs">           
+          </div>
+          <div class="col-sm-2">
+            <b>Hasta</b>
+              <input type="date" name="txt_hasta" id="txt_hasta" class="form-control input-xs">            
+          </div>    			
     			<div class="col-sm-2"><br>
-    				<button class="btn btn-primary btn-sm" type="button" onclick="validar()"><i class="fa fa-search"></i> Buscar</button>
+    				<button class="btn btn-primary btn-xs" type="button" onclick="validar()"><i class="fa fa-search"></i> Buscar</button>
     			</div>
       </form>
 
@@ -362,7 +470,47 @@
     <div class="col-sm-12">
       <h2 style="margin-top: 0px;">Listado de facturas</h2>
     </div>
-		<div  class="col-sm-12" id="tbl_tabla">
+		<div  class="col-sm-12" style="overflow-x: scroll;">    
+      <table class="table text-sm" style=" white-space: nowrap;">
+        <thead>
+          <th></th>
+          <th>T</th>
+          <th>TC</th>
+          <th>Serie</th>
+          <th>Autorizacion</th>
+          <th>Factura</th>
+          <th>Fecha</th>
+          <th>SubTotal</th>
+          <th>Con_IVA</th>
+          <th>IVA</th>
+          <th>Descuento</th>
+          <th>Total</th>
+          <th>Saldo</th>
+          <th>RUC_CI</th>
+          <th>TB</th>
+          <th>Razon_Social</th>
+        </thead>
+        <tbody  id="tbl_tabla">
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
 			
 		</div>		
 	</div>

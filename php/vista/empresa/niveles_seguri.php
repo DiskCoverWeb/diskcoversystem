@@ -251,11 +251,11 @@ function guardar()
     		type:  'post',
     		dataType: 'json',
     		beforeSend: function () { 
-    		 // $('#myModal_espera').modal('show'); 
+    		 $('#myModal_espera').modal('show'); 
     		},
     		success:  function (response) { 
           // console.log(response);
-    			if(response.respuesta==1)
+    			if(response==1)
     				{    					
     					// $('#modulo').html(response);
     					Swal.fire({
@@ -269,7 +269,7 @@ function guardar()
     					$('#myModal_espera').modal('hide'); 
               $('#rbl_all').prop('checked',false); 
     					//buscar_permisos();
-    				}else if(response.respuesta== -1)
+    				}else if(response== -1)
             {
               $('#myModal_espera').modal('hide'); 
               Swal.fire('No se pudo crear el usuario para SQLServer','Pongace en contacto con el administrador del sistema, su base no esta actualizada o no tiene las credenciales correctas','error');

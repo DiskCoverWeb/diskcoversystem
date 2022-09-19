@@ -230,6 +230,17 @@ class punto_ventaM
 
   $sql2 = "SELECT * FROM lista_tipo_contribuyente WHERE RUC = '".$_SESSION['INGRESO']['RUC']."'";
   $tipo_con = $this->db->datos($sql2, 'MYSQL');
+
+   $sql2="SELECT * 
+    FROM Trans_Abonos 
+    WHERE Factura = '".$cod."' 
+    AND CodigoC='".$ci."' 
+    AND Item = '".$_SESSION['INGRESO']['item']."'
+  AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' "; 
+  $detalle_abonos = $this->db->datos($sql2);
+
+
+
   if(count($datos_fac)>0 && count($tipo_con)>0)
   {
     $datos_fac['Tipo_contribuyente'] = $tipo_con;
@@ -255,7 +266,7 @@ class punto_ventaM
       // $to_correo = substr($to_correo, 0,-1);
     }
     
-    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$nombre,null,'factura',null,null,$imp=1);
+    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$nombre,null,'factura',null,null,$imp=1,$detalle_abonos);
     if($to_correo!='')
     {
       $titulo_correo = 'comprobantes electronicos';
