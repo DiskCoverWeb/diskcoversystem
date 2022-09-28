@@ -52,6 +52,22 @@ class incomM
 	   return $result;
 	}
 
+	function beneficiarios_pro($query)
+	{
+		$sql="SELECT TOP 25 Cliente AS nombre, CI_RUC as id, email,TD,CI_RUC,Codigo
+		   FROM Clientes 
+		   WHERE T <> '.' AND TD = 'R' ";
+		   if($query != '')
+		   {
+		   	$sql.=" AND CI_RUC='".$query."'";
+		   }
+		  $sql.=" ORDER BY Cliente";
+
+		  // print_r($sql);die();
+		   $result = $this->conn->datos($sql);
+	   return $result;
+	}
+
 	function cuentas_efectivo($query)
 	{
 		$sql="SELECT Codigo,Codigo+' '+Cuenta  as 'cuenta' 

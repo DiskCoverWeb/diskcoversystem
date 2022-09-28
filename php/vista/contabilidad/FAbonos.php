@@ -25,7 +25,7 @@
 						<div class="col-sm-4 col-xs-3" style="padding:0px">
 								<b class="col-sm-6 col-xs-7">COTIZACION</b>
 								<div class="col-sm-6 col-xs-5" style="padding:0px">
-									<input type="text" name="LabelDolares" id="LabelDolares" class="form-control input-sm" value="0.00">
+									<input type="text" name="LabelDolares" id="LabelDolares" class="form-control input-sm text-right" value="0.00">
 								</div>
 						</div>
 						<div class="col-sm-4 col-xs-5" style="padding:0px">
@@ -63,7 +63,7 @@
 						<div class="col-sm-3 col-xs-2" style="padding:0px">
 							<b class="col-sm-4 col-xs-4" style="padding:0px">Saldo</b>
 							<div class="col-sm-8 col-xs-8" style="padding:0px">
-								<input type="text" name="LabelSaldo" id="LabelSaldo" class="form-control input-sm" value="0.00">
+								<input type="text" name="LabelSaldo" id="LabelSaldo" class="form-control input-sm text-right" value="0.00">
 							</div>
 						</div>  	
 			  </div>
@@ -94,16 +94,13 @@
 
 
 			  <div class="row">
-			  	<div class="col-sm-4 col-xs-4">
-				  		<b>Retencion No</b>
-							<div class="row">
-								<div class="col-sm-6 col-xs-6">
+			  	<div class="col-sm-2 col-xs-2">
+				  		<b>Serie Retencion</b>
 									<input type="text" name="TxtSerieRet" id="TxtSerieRet" class="form-control input-sm" placeholder="001" value="001001">
-								</div>
-								<div class="col-sm-6 col-xs-6">
-									<input type="text" name="TextCompRet" id="TextCompRet" class="form-control input-sm" placeholder="00000000" value="99999999">
-								</div>
-							</div>
+						</div>
+					<div class="col-sm-2 col-xs-2">
+				  		<b>Retencion No</b>
+							<input type="text" name="TextCompRet" id="TextCompRet" class="form-control input-sm text-right" placeholder="00000000" value="99999999">	
 					</div>
 					<div class="col-sm-8 col-xs-8">	
 						<b>Autorizacion	</b>
@@ -135,7 +132,7 @@
 				<div class="col-sm-4 col-xs-5">	<br>
 					<b class="col-sm-7 col-xs-6" style="padding:0px">VALOR RETENIDO.</b>
 					<div class="col-sm-5 col-xs-6">
-						<input type="text" name="TextRetIVAB" id="TextRetIVAB" class="form-control input-sm" placeholder="0.00" value="0.00" onblur="Calculo_Saldo()">
+						<input type="text" name="TextRetIVAB" id="TextRetIVAB" class="form-control input-sm text-right" placeholder="0.00" value="0.00" onblur="Calculo_Saldo()">
 					</div>
 				</div>
 			  </div>
@@ -162,7 +159,7 @@
 				<div class="col-sm-4 col-xs-5">	<br>
 					<b class="col-sm-7 col-xs-6" style="padding:0px">VALOR RETENIDO.</b>
 					<div class="col-sm-5 col-xs-6">
-						<input type="text" name="TextRetIVAS" id="TextRetIVAS" class="form-control input-sm" placeholder="0.00" onblur="Calculo_Saldo()" value="0.00">
+						<input type="text" name="TextRetIVAS" id="TextRetIVAS" class="form-control input-sm text-right" placeholder="0.00" onblur="Calculo_Saldo()" value="0.00">
 					</div>
 				</div>
 			  </div>
@@ -189,7 +186,7 @@
 				<div class="col-sm-4 col-xs-5">	<br>
 					<b class="col-sm-7 col-xs-6" style="padding: 0px;">VALOR RETENIDO.</b>
 					<div class="col-sm-5 col-xs-6">
-						<input type="text" name="TextRet" id="TextRet" class="form-control input-sm" placeholder="00000000" onblur="Calculo_Saldo()" value="0.00">
+						<input type="text" name="TextRet" id="TextRet" class="form-control input-sm text-right" placeholder="00000000" onblur="Calculo_Saldo()" value="0.00">
 					</div>
 				</div>
 			  </div>
@@ -215,7 +212,7 @@
 				<div class="col-sm-3 col-xs-4">	<br>
 					<b class="col-sm-6  col-xs-6">VALOR.</b>
 					<div class="col-sm-6 col-xs-6 " style="padding-left: 0px;">
-						<input type="text" name="TextCheque" id="TextCheque" class="form-control input-sm" placeholder="0.00" onblur="Calculo_Saldo()" value="0.00">
+						<input type="text" name="TextCheque" id="TextCheque" class="form-control input-sm text-right" placeholder="0.00" onblur="Calculo_Saldo()" value="0.00">
 					</div>
 				</div>
 			  </div>
@@ -233,14 +230,14 @@
 							<input type="text" name="TextBaucher" id="TextBaucher" class="form-control input-sm" placeholder="00000000">		
 						</div>
 						<div class="col-sm-4 col-xs-4" style="padding:0px"><b>INTERES DE LA TARJETA</b>
-							<input type="text" name="TextInteres" id="TextInteres" class="form-control input-sm" placeholder="00000000" value="0" onblur="TextInteres();TextRecibido();">				
+							<input type="text" name="TextInteres" id="TextInteres" class="form-control input-sm text-right" placeholder="00000000" value="0" onblur="TextInteres();TextRecibido();">				
 						</div>
 					</div>
 				</div>
 				<div class="col-sm-3 col-xs-4">	<br>
 					<b class="col-sm-6 col-xs-6">VALOR.</b>
 					<div class="col-sm-6 col-xs-6 " style="padding-left: 0px;">
-						<input type="text" name="TextTotalBaucher" id="TextTotalBaucher" class="form-control input-sm" placeholder="00000000" onblur="Calculo_Saldo()" value="0.00">
+						<input type="text" name="TextTotalBaucher" id="TextTotalBaucher" class="form-control input-sm text-right" placeholder="00000000" onblur="Calculo_Saldo()" value="0.00">
 					</div>
 				</div>
 			</div>
@@ -262,31 +259,31 @@
 					<div class="row">
 						<label class="col-sm-6 col-xs-6 control-label">Caja MN.</label>
 						<div class="col-sm-6 col-xs-6">
-							<input type="text" name="TextCajaMN" id="TextCajaMN" class="form-control input-sm" placeholder="00000000" value="0.00">
+							<input type="text" name="TextCajaMN" id="TextCajaMN" class="form-control input-sm text-right" placeholder="00000000" value="0.00">
 						</div>			
 					</div>
 					<div class="row">
 						<label class="col-sm-6 col-xs-6 control-label">Caja ME.</label>
 						<div class="col-sm-6 col-xs-6">
-							<input type="text" name="TextCajaME" id="TextCajaME" class="form-control input-sm" placeholder="00000000" value="0.00">
+							<input type="text" name="TextCajaME" id="TextCajaME" class="form-control input-sm text-right" placeholder="00000000" value="0.00">
 						</div>			
 					</div>
 					<div class="row">
 						<label class="col-sm-6 col-xs-6 control-label">SALDO ACTUAL.</label>
 						<div class="col-sm-6 col-xs-6">
-							<input type="text" name="LabelPend" style="color:red;" id="LabelPend" class="form-control input-sm" placeholder="00000000" value="0.00">
+							<input type="text" name="LabelPend" style="color:red;" id="LabelPend" class="form-control input-sm text-right" placeholder="00000000" value="0.00">
 						</div>			
 					</div>
 					<div class="row">
 						<label class="col-sm-6 col-xs-6 control-label">VALOR RECIBIDO.</label>
 						<div class="col-sm-6 col-xs-6">
-							<input type="text" name="TextRecibido" id="TextRecibido" class="form-control input-sm" placeholder="00000000" value="0.00">
+							<input type="text" name="TextRecibido" id="TextRecibido" class="form-control input-sm text-right" placeholder="00000000" value="0.00">
 						</div>			
 					</div>
 					<div class="row">
 						<label class="col-sm-6  col-xs-6 control-label">CAMBIO A ENTREGAR.</label>
 						<div class="col-sm-6 col-xs-6 ">
-							<input type="text" name="LabelCambio" style="color:red;" id="LabelCambio" class="form-control input-sm" placeholder="00000000" value="0.00">
+							<input type="text" name="LabelCambio" style="color:red;" id="LabelCambio" class="form-control input-sm text-right" placeholder="00000000" value="0.00">
 						</div>			
 					</div>
 					
@@ -296,8 +293,8 @@
   		</form>
   	</div>
   	<div class="col-sm-2">
-  		<button class="btn btn-default" id="btn_g" onclick="guardar_abonos();"> <img src="../../img/png/grabar.png"><br> Guardar</button>
-       <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button> -->
+  		<button class="btn btn-default" id="btn_g" onclick="guardar_abonos();"> <img src="../../img/png/grabar.png"><br>&nbsp;Guardar&nbsp;</button>
+       <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button> --><br> <br>
      <button class="btn btn-default" onclick="cerrar_modal()"> <img src="../../img/png/bloqueo.png" ><br> Cancelar</button>  		
   	</div>  	
   </div>

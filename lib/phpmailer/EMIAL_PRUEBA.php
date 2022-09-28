@@ -15,16 +15,16 @@ $mail = new PHPMailer(true);
     //Server settings
     $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
     $mail->isSMTP();                                            //Send using SMTP
-    $mail->Host       = 'mail.diskcoversystem.com';                     //Set the SMTP server to send through
+    $mail->Host       = 'smtp.office365.com';                     //Set the SMTP server to send through
     $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-    $mail->Username   = 'infosistema@diskcoversystem.com';                     //SMTP username
-    $mail->Password   = 'infoDlcjvl1210DiskCover';                               //SMTP password
-    $mail->SMTPSecure = 'ssl';//PHPMailer::ENCRYPTION_STARTTLS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
-    $mail->Port       = 465;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+    $mail->Username   = 'CONTROLDEACTIVOS@puce.edu.ec';                     //SMTP username
+    $mail->Password   = 'H7pDPuv!2U';                               //SMTP password
+    $mail->SMTPSecure = 'tls';//PHPMailer::ENCRYPTION_STARTTLS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+    $mail->Port       = 587;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 
     //Recipients
-    $mail->setFrom('infosistema@diskcoversystem.com', 'Mailer');
-    $mail->addAddress('ejfc_omoshiroi@hotmail.com');     //Add a recipient
+    $mail->setFrom('CONTROLDEACTIVOS@puce.edu.ec', 'Mailer');
+    $mail->addAddress('javier.farinango92@gmail.com');     //Add a recipient
     // $mail->addAddress('ellen@example.com');               //Name is optional
     // $mail->addReplyTo('info@example.com', 'Information');
     // $mail->addCC('cc@example.com');

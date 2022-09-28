@@ -48,6 +48,11 @@ if(isset($_GET['bloqueado']))
 	$parametros=$_POST['parametros'];
 	echo json_encode($controlador->bloqueado_usurio($parametros));
 }
+if(isset($_GET['desbloqueado']))
+{
+	$parametros=$_POST['parametros'];
+	echo json_encode($controlador->desbloqueado_usurio($parametros));
+}
 if(isset($_GET['nuevo_usuario']))
 {
 	$parametros=$_POST['parametros'];
@@ -242,6 +247,14 @@ class niveles_seguriC
 		return $rest;
 
 	}
+
+	function desbloqueado_usurio($parametros)
+	{
+		$rest = $this->modelo->desbloquear_usuario($parametros['entidad'],$parametros['usuario']);
+		return $rest;
+
+	}
+
 	function nuevo_usurio($parametros)
 	{
 		// print_r($parametros);die();

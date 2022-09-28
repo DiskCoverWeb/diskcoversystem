@@ -398,6 +398,7 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
         <!-- </div> -->
             <img src="<?php echo $url; ?>" width="50%">         
           </span>
+            <p class="text-gray" style="margin:0px"><?php echo $_SESSION['INGRESO']['Nombre_Comercial'];?></p> 
             <p class="text-gray" style="margin:0px">RUC: <?php echo $_SESSION['INGRESO']['RUC'];?></p> 
             <p class="text-gray" style="margin:0px">Item: <?php echo $_SESSION['INGRESO']['item'];?></p> 
         </div>

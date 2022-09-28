@@ -354,6 +354,11 @@ INNER JOIN Clientes C ON F.CodigoC = C.Codigo WHERE 1=1 ";
 
   }
 
+  function eliminar_abonos($parametros)
+  {
+  	$sql="DELETE FROM Trans_Abonos WHERE Factura ='".$parametros['factura']."' AND Serie = '".$parametros['serie']."' AND CodigoC = '".$parametros['codigo']."';";
+  	return $this->db->String_Sql($sql);
+  }
 
   
 }

@@ -98,7 +98,7 @@ $iv = base64_decode("C9fBxl1EWtYTL1/M8jfstw==");
  };
 
 //----------------------------------- fin funciones en duda--------------------------- 
-function control_procesos($TipoTrans,$Tarea,$opcional_proceso)
+function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
 {  
   // print_r($_SESSION['INGRESO']);die();
   $conn = new db();
@@ -4583,6 +4583,7 @@ function update_generico($datos,$tabla,$campoWhere) // optimizado javier farinan
 	$wherelist ='';
    	$sql = 'UPDATE '.$tabla.' SET '; 
    	 $set='';
+     // print_r($campos_db);die();
    	foreach ($datos as $key => $value) {
    		foreach ($campos_db as $key => $value1) 
    		{
@@ -9631,5 +9632,69 @@ function medida_pantalla($medida)
   }
 
 }
+
+function  AddNewCta($TipoTC,$Codigo,$Detalle)
+{
+
+// Dim SubInd As Integer
+// Dim inserteKey As Boolean
+  $h = '';
+  if(strlen($Codigo) == 1){
+       $h.='<li class="file" id="label_'.str_replace('.','_',$Codigo).'" title="Presione Suprimir para eliminar"><a href="">'.$Detalle.'</a></li>';
+  }else{
+    switch ($TipoTC) {
+      case '':
+        return 1;
+        break;
+      case 'A':
+        return 2;
+        break;
+      case 'S':
+        return 3;
+        break;
+      case 'T':
+        return 4;
+        break;
+       case 'D':
+        return 5;
+        break;
+    }     
+    $Cta_Sup = CodigoCuentaSup($Codigo);
+    $inserteKey = true;
+    for ($i=1; $i < 10; $i++) { 
+      
+    }
+     // For SubInd = 1 To TVCatalogo.Nodes.Count
+     //     If TVCatalogo.Nodes(SubInd).key = Codigo Then inserteKey = false
+     // Next SubInd
+     if($inserteKey){
+         $h.='<li class="file" id="label_'.str_replace('.','_',$Codigo).'" title="Presione Suprimir para eliminar"><a href="">'.$Detalle.'</a></li>';
+        //' MidStrg(Codigo, 2, Len(Codigo))
+     }
+  }
+
+  return $h;
+}
+
+function CambioCodigoCta($Codigo){
+  $Bandera = True;
+  $LongCta = strlen($Codigo);
+   while($LongCta > 0 And $Bandera){
+     if (substr($Codigo, $LongCta, 1) <> "." && substr($Codigo, $LongCta, 1) <> " "){ 
+      $Bandera = False;
+      $LongCta = $LongCta - 1;
+    }
+  }
+  $LongCta = $LongCta + 1;
+  if($LongCta < 1){$LongCta = 1;}
+  $Codigo_Cta = substr($Codigo, 1, $LongCta);
+  if($Codigo_Cta == ""){$Codigo_Cta = "0";}
+  if($Codigo_Cta == " "){ $Codigo_Cta = "0";}
+  if($Codigo_Cta ==G_NINGUNO){ $Codigo_Cta = "0";}
+
+  print_r($Codigo_Cta);die();
+  return $Codigo_Cta;
+}
+
 
 ?>

@@ -2,6 +2,7 @@
 $prv ='.';
 $ben = '.';
 $fec = date('Y-m-d');
+$tipo2 = ''; if(isset($_GET['tipo']) && $_GET['tipo']!=''){$tipo2 = 1;}
 if(isset($_GET['prv']))
 {
 	$prv = $_GET['prv'];
@@ -44,6 +45,7 @@ if(isset($_GET['fec']))
 <script type="text/javascript">
   $(document).ready(function()
   {
+    var tipo2 = '<?php echo $tipo2; ?>'
     $('#ChRetB').focus();    
     $('#myModal_espera').modal('show');
     familias();
@@ -62,10 +64,33 @@ if(isset($_GET['fec']))
     $('#MBFechaEmi').val(fecha);
     $('#MBFechaRegis').val(fecha);
     $('#MBFechaCad').val(fecha);
-
-
+console.log(tipo2)
+    if(tipo2!='')
+    {
+        autocoplet_bene();
+    }
     
   });
+
+     function autocoplet_bene(){
+      $('#DCProveedor').select2({
+        placeholder: 'Seleccione una beneficiario',
+        width:'90%',
+        ajax: {
+          url:   '../controlador/contabilidad/incomC.php?beneficiario_p=true',
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {
+            console.log(data);
+            return {
+              results: data
+            };
+          },
+          cache: true
+        }
+      });
+    }
+
    function familias()
   {
       $('#ddl_familia').select2({
@@ -343,6 +368,16 @@ function contracuenta()
     parent.location.reload();
     // cancelar();
   }
+
+  function datos_pro()
+  {
+    var ddl = $('#DCProveedor').val();
+    var ddl = ddl.split('-');
+    $('#LblTD').val(ddl[2])
+    $('#LblNumIdent').val(ddl[3])
+    var nombre = $('#DCProveedor option:selected').text()
+    $('#DCProveedor').append($('<option>',{value:ddl[4], text:nombre,selected: true }));
+  }
   </script>
 <div class="row">
           <div class="col-sm-12">
@@ -387,9 +422,15 @@ function contracuenta()
             <div class="row">
               <div class="col-sm-8">
                 <b>PROVEEDOR</b>
-                <select class="form-control input-xs" id="DCProveedor">
+                <?php if($tipo2!=''){ ?>
+                <select class="form-control input-xs" id="DCProveedor" onchange="datos_pro()">
                   <option value="">No seleccionado</option>
                 </select>
+                <?php }else{ ?>
+                     <select class="form-control input-xs" id="DCProveedor">
+                          <option value="">No seleccionado</option>
+                        </select>
+                <?php } ?>
               </div>
               <div class="col-sm-1"><br>
                 <input type="text" class="form-control input-xs" name="" id="LblTD" style="color: red" readonly="">

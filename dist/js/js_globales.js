@@ -196,3 +196,17 @@ function mayusculas(campo,valor)
 {
     $('#'+campo).val(valor.ucwords());
 }
+
+function generar_ceros(num,cant)
+{
+	var n = num.toString();
+	var len_num = n.length;
+	// console.log(len_num);
+	// console.log(cant);
+	if(len_num<cant)
+	{
+		ceros = cant-len_num;
+		var new_num = '0'.repeat(ceros);
+		return new_num+''+num;
+	} 
+}

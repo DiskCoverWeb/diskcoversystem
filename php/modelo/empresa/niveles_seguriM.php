@@ -252,6 +252,25 @@ class niveles_seguriM
 	function bloquear_usuario($entidad,$CI_NIC)
 	{
 	   $sql = "UPDATE acceso_usuarios SET TODOS=0 WHERE ID_Empresa = '".$entidad."' AND CI_NIC = '".$CI_NIC."';";
+	   $parametros['ent'] = $entidad;
+	   $parametros['ci'] = $CI_NIC;
+	   $r = $this->bloquear_cliente_SQLSERVER($parametros);
+	   if($r==1)
+	   {
+	   	return  $this->db->String_Sql($sql,'MY SQL');
+	   }else
+	   {
+	   	return $r;
+	   }
+	}
+
+	function desbloquear_usuario($entidad,$CI_NIC)
+	{
+	   $sql = "UPDATE acceso_usuarios SET TODOS=1 WHERE ID_Empresa = '".$entidad."' AND CI_NIC = '".$CI_NIC."';"; 
+	   $parametros['ent'] = $entidad;
+	   $parametros['ci'] = $CI_NIC;
+	   $this->desbloquear_cliente_SQLSERVER($parametros);
+	  
 	   return  $this->db->String_Sql($sql,'MY SQL');
 	}
 
@@ -260,6 +279,104 @@ class niveles_seguriM
 	   $sql = "INSERT INTO acceso_usuarios (TODOS,Clave,Usuario,CI_NIC,ID_Empresa,Nombre_Usuario) VALUES (1,'".$parametros['cla']."','".$parametros['usu']."','".$parametros['ced']."','".$parametros['ent']."','".$parametros['nom']."')";
 	   return $this->db->String_Sql($sql,'MY SQL');
 	}
+
+	function bloquear_cliente_SQLSERVER($parametros)
+	{
+		$registrado = true;
+		$sql= "SELECT DISTINCT Base_Datos,Usuario_DB,Contrasena_DB,IP_VPN_RUTA,Tipo_Base,Puerto  FROM lista_empresas WHERE ID_Empresa = '".$parametros['ent']."' AND Base_Datos <>'.'";
+		 $datos = $this->db->datos($sql,'MY SQL');
+		 $insertado = false;
+		// print_r($datos);die();
+		 foreach ($datos as $key => $value) {
+		 	if($value['Usuario_DB']=='sa')
+		 	{
+
+		 	// print_r($value);die();
+		 	     $cid2 = $this->db->modulos_sql_server($value['IP_VPN_RUTA'],$value['Usuario_DB'],$value['Contrasena_DB'],$value['Base_Datos'],$value['Puerto']);
+
+		 	     // print_r($value['IP_VPN_RUTA'].'-'.$value['Usuario_DB'].'-'.$value['Contrasena_DB'].'-'.$value['Base_Datos'].'-'.$value['Puerto']);
+		 	     if($cid2!=-1)
+		 	     {
+
+		 	     $sql="UPDATE Accesos SET TODOS =0 WHERE Codigo = '".$parametros['ci']."'";
+		 	     // print_r($sql);die();
+		 	    $stmt = sqlsrv_query($cid2, $sql);
+	            if($stmt === false)  
+	        	    {  
+	        	    	// print_r('fallo');die();
+	        		    // echo "Error en consulta PA.\n";
+	        		    // print_r($sql);die();
+	        		    return -1;
+		               die( print_r( sqlsrv_errors(), true));  
+	                }else
+	                {
+
+	        	    	// print_r('si');die();
+	            	    cerrarSQLSERVERFUN($cid2);
+	            	    $insertado = true;
+	                }     
+	            }
+	        }     
+		 }
+		 if($insertado == true)
+		 {
+		 	return 1;
+		 }else
+		 {
+		 	return -1;
+		 }
+
+	}
+
+
+	function desbloquear_cliente_SQLSERVER($parametros)
+	{
+		$registrado = true;
+		$sql= "SELECT DISTINCT Base_Datos,Usuario_DB,Contrasena_DB,IP_VPN_RUTA,Tipo_Base,Puerto  FROM lista_empresas WHERE ID_Empresa = '".$parametros['ent']."' AND Base_Datos <>'.'";
+		 $datos = $this->db->datos($sql,'MY SQL');
+		 $insertado = false;
+		// print_r($datos);die();
+		 foreach ($datos as $key => $value) {
+		 	if($value['Usuario_DB']=='sa')
+		 	{
+
+		 	// print_r($value);die();
+		 	     $cid2 = $this->db->modulos_sql_server($value['IP_VPN_RUTA'],$value['Usuario_DB'],$value['Contrasena_DB'],$value['Base_Datos'],$value['Puerto']);
+
+		 	     // print_r($value['IP_VPN_RUTA'].'-'.$value['Usuario_DB'].'-'.$value['Contrasena_DB'].'-'.$value['Base_Datos'].'-'.$value['Puerto']);die();
+		 	     if($cid2!=-1)
+		 	     {
+
+		 	     $sql="UPDATE Accesos SET TODOS= 1 WHERE Codigo = '".$parametros['ci']."'";
+		 	     // print_r($sql);die();
+		 	    $stmt = sqlsrv_query($cid2, $sql);
+	            if($stmt === false)  
+	        	    {  
+	        	    	// print_r('fallo');die();
+	        		    // echo "Error en consulta PA.\n";
+	        		    // print_r($sql);die();
+	        		    return -1;
+		               die( print_r( sqlsrv_errors(), true));  
+	                }else
+	                {
+
+	        	    	// print_r('si');die();
+	            	    cerrarSQLSERVERFUN($cid2);
+	            	    $insertado = true;
+	                }     
+	            }
+	        }     
+		 }
+		 if($insertado == true)
+		 {
+		 	return 1;
+		 }else
+		 {
+		 	return -1;
+		 }
+
+	}
+
 
 	function crear_como_cliente_SQLSERVER($parametros)
 	{

@@ -133,12 +133,14 @@
    {
    
     var per = $('#ddl_periodo').val();
+    var tipo = '<?php echo $tipo; ?>'
     var parametros = 
     {
       'ci':$('#ddl_cliente').val(),
       'per':per,      
       'desde':$('#txt_desde').val(),
       'hasta':$('#txt_hasta').val(),
+      'tipo':tipo,
     }
      $.ajax({
        data:  {parametros:parametros},
@@ -355,9 +357,9 @@
 
  function enviar_mail()
  {
- 	var cli = $('#ddl_cliente').val();
+ 	  var cli = $('#ddl_cliente').val();
     var ema = $('#txt_email').val();
- 	 var parametros = {  'ci':cli,'ema':ema }
+ 	  var parametros = {  'ci':cli,'ema':ema }
  	 $.ajax({
       data:  {parametros:parametros},
       url: '../controlador/facturacion/lista_facturasC.php?enviar_mail=true',
@@ -391,6 +393,51 @@
     }
  }
 
+
+ function anular_factura(Factura,Serie,Codigo)
+ {
+    Swal.fire({
+       title: 'Esta seguro? \n Esta usted seguro de Anular la factura:'+Factura,
+       text:'' ,
+       type: 'warning',
+       showCancelButton: true,
+       confirmButtonColor: '#3085d6',
+       cancelButtonColor: '#d33',
+       confirmButtonText: 'Si!'
+     }).then((result) => {
+       if (result.value==true) {
+         Anular(Factura,Serie,Codigo);
+       }
+     })
+ }
+
+ function Anular(Factura,Serie,Codigo)
+ {
+  var parametros = 
+  {
+    'factura':Factura,
+    'serie':Serie,
+    'codigo':Codigo,
+  }
+   $.ajax({
+      data:  {parametros:parametros},
+      url: '../controlador/facturacion/lista_facturasC.php?Anular=true',
+      type:  'post',
+      dataType: 'json',
+       success:  function (response) { 
+        console.log(response);
+        if(response==1)
+        {
+          Swal.fire('Factura Anulada','','success').then(function()
+          {
+            cargar_registros();
+          })
+        }
+       }
+        
+    });
+
+ }
 </script>
   <div class="row">
     <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">

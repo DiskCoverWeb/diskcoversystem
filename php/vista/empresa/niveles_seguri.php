@@ -308,6 +308,38 @@ function guardar()
     			 }
     		}
     	});
+ }
+
+ function desbloquear()
+ {
+  var parametros = 
+  {
+    'entidad':$('#ddl_entidad').val(),
+    'usuario':$('#ddl_usuarios').val(),
+  }
+  $.ajax({
+        data:  {parametros:parametros},
+        url:   '../controlador/empresa/niveles_seguriC.php?desbloqueado=true',
+        type:  'post',
+        dataType: 'json',
+        beforeSend: function () { 
+          $('#myModal_espera').modal('show'); 
+        },
+        success:  function (response) { 
+          if(response == 1)
+           {
+            Swal.fire({
+                //position: 'top-end',
+                type: 'success',
+                title: 'Usuario Desbloqueado Correctamente!',
+                showConfirmButton: true
+                //timer: 2500
+                });
+              $('#myModal_espera').modal('hide'); 
+            
+           }
+        }
+      });
 
  }
  function guardarN()
@@ -750,6 +782,11 @@ function DoubleScroll(element) {
    <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1">
      <button title="Bloquear"  class="btn btn-default" onclick="bloquear()">
        <img src="../../img/png/lock.png" >
+     </button>
+   </div>
+   <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1">
+     <button title="Desbloquear"  class="btn btn-default" onclick="desbloquear()">
+       <img src="../../img/png/unlock.png" >
      </button>
    </div>
    <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1">

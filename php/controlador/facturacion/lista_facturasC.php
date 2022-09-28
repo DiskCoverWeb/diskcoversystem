@@ -70,6 +70,11 @@ if(isset($_GET['re_autorizar']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->autorizar($parametros));
 }
+if(isset($_GET['Anular']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->anular($parametros));
+}
 
 class lista_facturasC
 {
@@ -95,13 +100,17 @@ class lista_facturasC
     	$tr='';
     	foreach ($tbl as $key => $value) {
     		 $exis = $this->modelo->catalogo_lineas($value['TC'],$value['Serie']);
-    		 $autorizar = '';
-    		 if(count($exis)>0 && strlen($value['Autorizacion'])==13)
+    		 $autorizar = '';$anular = '';
+    		 if(count($exis)>0 && strlen($value['Autorizacion'])==13 && $parametros['tipo']!='')
     		 {
     		 	$autorizar = '<button type="button" class="btn btn-xs btn-primary" onclick="autorizar(\''.$value['TC'].'\',\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['Fecha']->format('Y-m-d').'\')" title="Autorizar"><i class="fa fa-paper-plane"></i></button>';
     		 }
+    		 if($value['T']!='A' && $parametros['tipo']!='')
+    		 {
+    		 	$anular = '<button type="button" class="btn btn-xs btn-danger" onclick="anular_factura(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')" title="Anular factura"><i class="fa fa-times-circle"></i></button>';
+    		 }
     		$tr.='<tr>
-            <td><button type="button" class="btn btn-xs btn-default" onclick="Ver_factura(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')" title="Ver factura"><i class="fa fa-eye"></i></button>'.$autorizar.'</td>
+            <td><button type="button" class="btn btn-xs btn-default" onclick="Ver_factura(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')" title="Ver factura"><i class="fa fa-eye"></i></button>'.$autorizar.$anular.'</td>
             <td>'.$value['T'].'</td>
             <td>'.$value['TC'].'</td>
             <td>'.$value['Serie'].'</td>
@@ -339,6 +348,45 @@ class lista_facturasC
     	 // $this->modelo->ingresar_update($datos,'Facturas',$campoWhere);
     	$res = $this->sri->Autorizar_factura_o_liquidacion($parametros);
     	return $res;
+    }
+
+    function anular($parametros)
+    {
+    	 // print_r($parametros);die();
+    	 $datos[0]['campo'] = 'T';
+    	 $datos[0]['dato'] = 'A';
+    	 $datos[1]['campo'] = 'Nota';
+    	 $datos[1]['dato'] = 'Anulción de Factura No.'.$parametros['factura'].'.';
+
+    	 $campoWhere[0]['campo'] = 'Serie';
+    	 $campoWhere[0]['valor'] = $parametros['serie'];
+    	 $campoWhere[1]['campo'] = 'Factura';
+    	 $campoWhere[1]['valor'] = $parametros['factura'];
+    	 $campoWhere[2]['campo'] = 'CodigoC';
+    	 $campoWhere[2]['valor'] = $parametros['codigo'];
+
+    	 $tabla = 'Facturas';
+    	 $this->modelo->ingresar_update($datos,$tabla,$campoWhere);
+
+
+    	 $datos1[0]['campo'] = 'T';
+    	 $datos1[0]['dato'] = 'A';
+    	
+    	 $campoWhere1[0]['campo'] = 'Serie';
+    	 $campoWhere1[0]['valor'] = $parametros['serie'];
+    	 $campoWhere1[1]['campo'] = 'Factura';
+    	 $campoWhere1[1]['valor'] = $parametros['factura'];
+    	 $campoWhere1[2]['campo'] = 'CodigoC';
+    	 $campoWhere1[2]['valor'] = $parametros['codigo'];
+
+    	 $tabla1 = 'Detalle_Factura';
+    	 $this->modelo->ingresar_update($datos1,$tabla1,$campoWhere1);
+
+    	 return $this->modelo->eliminar_abonos($parametros);
+
+
+
+
     }
 
         

@@ -23,6 +23,15 @@ if(isset($_GET['beneficiario_C']))
 	}
 	echo json_encode($controlador->cargar_beneficiario_C($query));
 }
+if(isset($_GET['beneficiario_p']))
+{
+	$query = '';
+	if(isset($_GET['q']))
+	{
+		$query = $_GET['q'];
+	}
+	echo json_encode($controlador->cargar_beneficiario_pro($query));
+}
 if(isset($_GET['cuentas_efectivo']))
 {
 	$query = '';
@@ -251,6 +260,17 @@ class incomC
 		$bene = array();
 		foreach ($datos as $key => $value) {
 			$bene[] = array('id'=>$value['id'].'-'.$value['email'],'text'=>$value['nombre']);
+			// $bene[] = array('id'=>$value['id'].'-'.$value['email'],'text'=>$value['nombre']);//para produccion
+		}
+		return $bene;
+	}
+
+	function cargar_beneficiario_pro($query)
+	{
+		$datos = $this->modelo->beneficiarios_pro($query);
+		$bene = array();
+		foreach ($datos as $key => $value) {
+			$bene[] = array('id'=>$value['id'].'-'.$value['email'].'-'.$value['TD'].'-'.$value['CI_RUC'].'-'.$value['Codigo'],'text'=>$value['nombre']);
 			// $bene[] = array('id'=>$value['id'].'-'.$value['email'],'text'=>$value['nombre']);//para produccion
 		}
 		return $bene;

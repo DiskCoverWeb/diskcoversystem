@@ -579,9 +579,6 @@ class facturar_pensionC
       if ($SubTotal_NC > 0) {
         $SubTotal_NC = $SubTotal_NC - $TFA['Total_IVA'];
         $TA['Cta'] = $Cta1;
-        $TA['Serie_NC'] = G_NINGUNO;
-        $TA['Autorizacion_NC'] = G_NINGUNO;        
-        $TA['Nota_Credito'] = 0;
         $TA['Banco'] = "NOTA DE CREDITO";
         $TA['Cheque'] = "VENTAS";
         $TA['Abono'] = $SubTotal_NC;

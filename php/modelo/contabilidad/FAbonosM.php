@@ -141,14 +141,23 @@ class FAbonosM
     function DCSerie($TC)
     {
        $sql= "SELECT Serie 
-        FROM Facturas_Formatos 
+        FROM Facturas
         WHERE Item = '".$_SESSION['INGRESO']['item']."' 
         AND Periodo ='".$_SESSION['INGRESO']['periodo']."' 
         AND TC = '".$TC."' 
         GROUP BY Serie 
         ORDER BY Serie ";
         return $this->db->datos($sql);
-        
+/*
+        $sql = "SELECT Serie 
+        FROM Facturas
+        WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+        AND Periodo ='".$_SESSION['INGRESO']['periodo']."' 
+        AND TC = '".$TC."' 
+        GROUP BY Serie 
+        ORDER BY Serie ";*/
+    
+   
     }
 
     function DCFactura($TC,$Serie,$factura=false)
