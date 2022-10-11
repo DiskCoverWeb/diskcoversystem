@@ -48,6 +48,16 @@ if(isset($_GET['clientes']))
 	}
 	echo json_encode($controlador->clientes_x_grupo($query,$grupo));
 }
+if(isset($_GET['clientes2']))
+{
+	$query = '';
+	$grupo = $_GET['g'];
+	if(isset($_GET['q']))
+	{
+		$query = $_GET['q'];
+	}
+	echo json_encode($controlador->clientes2_x_grupo($query,$grupo));
+}
 if(isset($_GET['clientes_datos']))
 {
 	$parametros = $_POST['parametros'];
@@ -112,6 +122,7 @@ class lista_facturasC
     		$tr.='<tr>
             <td><button type="button" class="btn btn-xs btn-default" onclick="Ver_factura(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')" title="Ver factura"><i class="fa fa-eye"></i></button>'.$autorizar.$anular.'</td>
             <td>'.$value['T'].'</td>
+            <td>'.$value['Razon_Social'].'</td>
             <td>'.$value['TC'].'</td>
             <td>'.$value['Serie'].'</td>
             <td>'.$value['Autorizacion'].'</td>
@@ -125,7 +136,6 @@ class lista_facturasC
             <td class="text-right">'.$value['Saldo'].'</td>
             <td>'.$value['RUC_CI'].'</td>
             <td>'.$value['TB'].'</td>
-            <td>'.$value['Razon_Social'].'</td>
           </tr>';
     	}
 
@@ -235,12 +245,28 @@ class lista_facturasC
   	}
   	return $res;
   }
+
+  function clientes2_x_grupo($query,$grupo)
+  {
+  	if($grupo=='.'){$grupo= '';}
+  	$cod ='';
+  	$datos = $this->modelo->Cliente_facturas($cod,$grupo,$query);
+  	$res[0] = array('id'=>'T','text'=>'Todos','email'=>'','data'=>'');
+  	foreach ($datos as $key => $value) {
+  		$res[] = array('id'=>$value['Codigo'],'text'=>$value['Cliente'].'  CI:'.$value['CI_RUC'],'email'=>$value['Email'],'data'=>$value);
+  	}
+  	return $res;
+  }
   function validar_cliente($parametros)
   {
   	// print_r($parametros);die();
   	if($parametros['tip']=='2')
   	{
   		$parametros['cla']=false;
+  		if($parametros['cli']=='T')
+  		{
+  			 return 1;
+  		}
   	}
   	$dato = $this->modelo->Cliente_facturas($parametros['cli'],false,false,$parametros['cla']);
   	if(empty($dato))

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<factura id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
+    <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
+    <ruc>0702164179009</ruc>
+    <claveAcceso>0710202201070216417900910010050000150881234567813</claveAcceso>
+    <codDoc>01</codDoc>
+    <estab>001</estab>
+    <ptoEmi>005</ptoEmi>
+    <secuencial>000015088</secuencial>
+    <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
+  </infoTributaria>
+  <infoFactura>
+    <fechaEmision>07/10/2022</fechaEmision>
+    <dirEstablecimiento>Desarrollo para programacion de DiskCover System</dirEstablecimiento>
+    <obligadoContabilidad>SI</obligadoContabilidad>
+    <tipoIdentificacionComprador>04</tipoIdentificacionComprador>
+    <razonSocialComprador>ANDREA MARGARITA PICON</razonSocialComprador>
+    <identificacionComprador>0704039304001</identificacionComprador>
+    <totalSinImpuestos>20.00</totalSinImpuestos>
+    <totalDescuento>0</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0</descuentoAdicional>
+        <baseImponible>20</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>0</propina>
+    <importeTotal>20</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>20</total>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>98.40</codigoPrincipal>
+      <descripcion>7 LINEAS</descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.0000</cantidad>
+      <precioUnitario>20</precioUnitario>
+      <descuento>0</descuento>
+      <precioTotalSinImpuesto>20</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
+          <baseImponible>20</baseImponible>
+          <valor>0</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">PRESIDENTE CORDOVA 125</campoAdicional>
+    <campoAdicional nombre="Telefono">0983879556</campoAdicional>
+    <campoAdicional nombre="Email">andreapgonzalez89@gmail.com</campoAdicional>
+  </infoAdicional>
+</factura>

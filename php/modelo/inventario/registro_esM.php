@@ -463,6 +463,7 @@ class registro_esM
      $sql= "SELECT Codigo,Cliente FROM Clientes WHERE CI_RUC = '".$ruc."'";
        $stmt = sqlsrv_query($cid, $sql);
         $datos =  array();
+        // print_r($sql);die();
 	   if( $stmt === false)  
 	   {  
 		 echo "Error en consulta PA.\n";  
@@ -1401,7 +1402,52 @@ function cuentas_todos($query)
 		  return $result;
 
    }
-    
+  
+     function insertar_aseinto($codigo,$cuenta,$parcial,$debe,$haber,$chq_as,$dconcepto1,$efectivo_as,$t_no,$A_No,$TC)
+     {
+        $cid=$this->conn;
+     	$sql="INSERT INTO Asiento
+			(CODIGO,CUENTA,PARCIAL_ME,DEBE,HABER,CHEQ_DEP,DETALLE,EFECTIVIZAR,CODIGO_C,CODIGO_CC,ME,T_No,Item,CodigoU,A_No,TC)
+				VALUES
+			('".$codigo."','".$cuenta."',".$parcial.",".$debe.",".$haber.",'".$chq_as."','".$dconcepto1."',
+				'".$efectivo_as."','.','.',0,".$t_no.",'".$_SESSION['INGRESO']['item']."','".$_SESSION['INGRESO']['CodigoU']."',".$A_No.",'".$TC."')";
+		 $stmt = sqlsrv_query($cid, $sql);
+		if( $stmt === false)  
+		{  
+			return -1;
+			echo "Error en consulta PA.\n";  
+			die( print_r( sqlsrv_errors(), true));  
+		}
+		return 1;
+
+     }
+
+
+     function buscar_cta($cta)
+     {
+     	$cid = $this->conn;
+     	$sql = "SELECT * 
+     			FROM Ctas_Proceso 
+     			WHERE Detalle = '".$cta."' 
+     			AND Periodo = '".$_SESSION['INGRESO']["periodo"]."' 
+     			AND Item = '".$_SESSION['INGRESO']['item']."'";
+     	$result = array();
+       $stmt = sqlsrv_query( $cid, $sql);
+		if( $stmt === false)  
+		{  
+			echo "Error en consulta PA.\n";  
+			die( print_r( sqlsrv_errors(), true));  
+		}
+	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
+		 {
+		 	$result[] = $row;
+		 }
+		  return $result;
+
+     }
+
+
+
 
 }
 ?>

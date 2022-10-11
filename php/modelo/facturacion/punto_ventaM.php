@@ -106,7 +106,7 @@ class punto_ventaM
        return array('datos'=>$datos,'tbl'=>$tbl,'ln'=>$ln);
   }
 
-  function catalogo_lineas($TC,$SerieFactura)
+  function catalogo_lineas($TC,$SerieFactura,$emision,$vencimiento,$electronico=false)
   {
   	$sql = "SELECT *
          FROM Catalogo_Lineas
@@ -115,7 +115,13 @@ class punto_ventaM
          AND Fact = '".$TC."'
          AND Serie = '".$SerieFactura."'
          AND TL <> 0
-         ORDER BY Codigo ";
+         AND CONVERT(DATE,Fecha) <= '".$emision."'
+         AND CONVERT(DATE,Vencimiento) >= '".$vencimiento."'";
+         if($electronico)
+         {
+           $sql.=" AND len(Autorizacion)>=13";
+         }
+         $sql.=" ORDER BY Codigo ";
          // print_r($sql);die();
 	  return $this->db->datos($sql);
 
@@ -306,6 +312,25 @@ class punto_ventaM
         // print_r($result);
         return $result;
    }
+
+  function getSerieUsuario($codigoU){
+      $sql="SELECT * FROM Accesos WHERE Codigo = '".$codigoU."'";
+      // print_r($sql);die();
+      $stmt = $this->db->datos($sql);
+      return $stmt;
+    }
+  function getCatalogoLineas13($fecha,$vencimiento){
+    $sql="  SELECT * FROM Catalogo_Lineas 
+            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+            AND CONVERT(DATE,Fecha) <= '".$fecha."'
+            AND CONVERT(DATE,Vencimiento) >= '".$vencimiento."'
+            AND len(Autorizacion)>=13
+            ORDER BY Codigo";
+            $stmt = $this->db->datos($sql);
+            return $stmt;
+    }
+
    
 
   

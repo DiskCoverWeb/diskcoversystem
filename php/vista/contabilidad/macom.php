@@ -62,7 +62,7 @@
 						result.value
 					  ) {
 						console.log('I was closed by the timer');
-						location.href ='contabilidad.php?mod=contabilidad&er=1';
+						location.href ='inicio.php?mod=01&er=1';
 					  }
 					});
 		</script>";

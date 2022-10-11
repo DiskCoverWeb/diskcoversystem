@@ -29,14 +29,15 @@
       $('#txt_clave').attr('readonly',true);
     }
     var tipo = '<?php echo $tipo; ?>';
+    autocmpletar_cliente();
     if(tipo==2)
     {
+      autocmpletar_cliente_tipo2();
       $('#campo_clave').css('display','none');
     }
 
   	cargar_registros();
   	autocmpletar();
-  	autocmpletar_cliente();
   	
   });
 
@@ -101,6 +102,27 @@
       });
   }
 
+   function autocmpletar_cliente_tipo2(){
+       var g = $('#ddl_grupo').val();
+      $('#ddl_cliente').select2({
+        placeholder: 'Seleccione Cliente',
+        width:'resolve',
+      // minimumResultsForSearch: Infinity,
+        ajax: {
+          url: '../controlador/facturacion/lista_facturasC.php?clientes2=true&g='+g,
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {           
+            return {
+              results: data
+            };
+          },
+          cache: true
+        }
+      });
+  }
+
+
   function buscar_cliente(ci_ruc)
   {
      var g = $('#ddl_grupo').val();
@@ -147,6 +169,9 @@
       url:   '../controlador/facturacion/lista_facturasC.php?tabla=true',
       type:  'post',
       dataType: 'json',
+      beforeSend: function () {
+         $("#tbl_tabla").html('<tr class="text-center"><td colspan="16"><img src="../../img/gif/loader4.1.gif" width="20%">');
+      },
        success:  function (response) { 
         // console.log(response);
        $('#tbl_tabla').html(response);
@@ -521,7 +546,8 @@
       <table class="table text-sm" style=" white-space: nowrap;">
         <thead>
           <th></th>
-          <th>T</th>
+          <th>T</th>          
+          <th>Razon_Social</th>
           <th>TC</th>
           <th>Serie</th>
           <th>Autorizacion</th>
@@ -535,7 +561,6 @@
           <th>Saldo</th>
           <th>RUC_CI</th>
           <th>TB</th>
-          <th>Razon_Social</th>
         </thead>
         <tbody  id="tbl_tabla">
           <tr>

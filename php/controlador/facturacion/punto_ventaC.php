@@ -97,6 +97,12 @@ if(isset($_GET['validar_cta']))
 	echo  json_encode($controlador->validar_cta($parametros));
 }
 
+if(isset($_GET['error_sri']))
+{
+	$parametros =  $_POST['parametros'];
+	echo  json_encode($controlador->error_sri($parametros));
+}
+
 class punto_ventaC
 {
 	private $modelo;
@@ -122,8 +128,26 @@ class punto_ventaC
 
 	function SerieFactura($parametros){
 
+		// print_r($parametros);die();
+		$emision = date('Y-m-d');
+		$vencimiento = date('Y-m-d');
+		// busca serie de empresa
 		$serie = Leer_Campo_Empresa("Serie_FA");
-		// print_r($serie);die();
+		if($serie=='.')
+		{
+			// busca serie de usuario
+			$serie = $this->modelo->getSerieUsuario($_SESSION['INGRESO']['CodigoU']);
+			if(count($serie)>0 && isset($serie[0]['Serie_FA']))
+			{
+				$serie = $serie[0]['Serie_FA'];
+			}
+			// busca en catalogo de lineas si no en existe o es punto
+			if($serie=='.')
+			{
+				$datos = $this->modelo->getCatalogoLineas13($emision,$vencimiento);
+				$serie = $datos[0]['Serie'];
+			}
+		}
 		$NumComp = ReadSetDataNum($parametros['TC']."_SERIE_".$serie, True, False);
 
 		$res = array('serie'=>$serie,'NumCom'=>generaCeros($NumComp,9));
@@ -175,6 +199,9 @@ class punto_ventaC
 
 	function IngresarAsientoF($parametros)
 	{
+		// print_r($parametros);die();
+		$electronico = 0;
+		if(isset($parametros['electronico'])){$electronico = $parametros['electronico'];}
 		 $TextVUnit = $parametros['TextVUnit'];
 	    $TextCant = $parametros['TextCant'];
 	    $TipoFactura = $parametros['TC'];
@@ -184,7 +211,7 @@ class punto_ventaC
 	    $TxtRifaH =  $parametros['TxtRifaH'];
 	    $CodigoL = '.';
 	    $producto = Leer_Codigo_Inv($parametros['Codigo'],$parametros['fecha'],$parametros['CodBod']);
-	    $CodigoL2 =  $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie']);
+	    $CodigoL2 =  $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie'],$parametros['fecha'],$parametros['fecha'],$electronico);
 	    if(count($CodigoL2)>0)
 	    {
 	    	$CodigoL = $CodigoL2[0]['Codigo'];
@@ -345,7 +372,9 @@ class punto_ventaC
 	  // print_r(floatval(number_format($FA['Total_MN'],4,'.','')).'-'.floatval(number_format($parametros['TxtEfectivo'],4,'.','')).'-');
 	  // print_r(floatval(number_format($FA['Total_MN'],4,'.',''))-floatval(number_format($parametros['TxtEfectivo'],4,'.',''))); die();
 	  if((floatval(number_format($parametros['TxtEfectivo'],4,'.',''))+floatval(number_format($parametros['valorBan'],4,'.','')) - floatval(number_format($FA['Total_MN'],4,'.',''))) >= 0 ){
-	  	    $datos = $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie']);
+	  	    $electronico = 0;
+	  	    if(isset($parametros['electronico'])){$electronico = $parametros['electronico'];}
+	  	    $datos = $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie'],$FechaTexto,$FechaTexto,$electronico);
 	  	    if(count($datos)>0)
 	  	    {
 	  	    // print_r($datos);die();
@@ -355,7 +384,7 @@ class punto_ventaC
 	        $FA['codigoCliente'] = $parametros['CodigoCliente'];
 	        $FA['TextCI'] = $parametros['CI'];
 	        $FA['TxtEmail'] = $parametros['email'];
-	        $FA['Cliente'] = $parametros['NombreCliente'];
+	        $FA['Cliente'] = trim(str_replace( $parametros['CI'].' -','',$parametros['NombreCliente']));
 	        $FA['TC'] = $parametros['TC'];
 	        $FA['Serie'] = $parametros['Serie'];
 	        $FA['Cta_CxP'] = $datos[0]['CxC'];
@@ -395,7 +424,9 @@ class punto_ventaC
 	  // print_r(floatval(number_format($FA['Total_MN'],4,'.','')).'-'.floatval(number_format($parametros['TxtEfectivo'],4,'.','')).'-');
 	  // print_r(floatval(number_format($FA['Total_MN'],4,'.',''))-floatval(number_format($parametros['TxtEfectivo'],4,'.',''))); die();
 	  if((floatval(number_format($parametros['TxtEfectivo'],4,'.',''))+floatval(number_format($parametros['valorBan'],4,'.','')) - floatval(number_format($FA['Total_MN'],4,'.',''))) >= 0 ){
-	  	    $datos = $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie']);
+	  	$electronico = 0;
+		if(isset($parametros['electronico'])){$electronico = $parametros['electronico'];}
+	  	    $datos = $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie'],$FechaTexto,$FechaTexto,$electronico);
 	  	    if(count($datos)>0)
 	  	    {
 	  	    // print_r($datos);die();
@@ -405,7 +436,7 @@ class punto_ventaC
 	        $FA['codigoCliente'] = $parametros['CodigoCliente'];
 	        $FA['TextCI'] = $parametros['CI'];
 	        $FA['TxtEmail'] = $parametros['email'];
-	        $FA['Cliente'] = $parametros['NombreCliente'];
+	        $FA['Cliente'] = trim(str_replace( $parametros['CI'].' -','',$parametros['NombreCliente']));
 	        $FA['TC'] = $parametros['TC'];
 	        $FA['Serie'] = $parametros['Serie'];
 	        $FA['Cta_CxP'] = $datos[0]['CxC'];
@@ -438,11 +469,13 @@ class punto_ventaC
    // funcion para vista de facturar electronico , sin restriccion de que la factura este en cero
 	function generar_factura_elec($parametros)
 	{
-		// print_r($parametros);die();
+		$electronico = 0;
+		if(isset($parametros['electronico'])){$electronico = $parametros['electronico'];}
+		
 	  // FechaValida MBFecha
 	  $FechaTexto = $parametros['MBFecha'];
 	  $FA = Calculos_Totales_Factura();
-	  	    $datos = $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie']);
+	  	    $datos = $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie'],$FechaTexto,$FechaTexto,$electronico);
 	  	    if(count($datos)>0)
 	  	    {
 	  	    // print_r($datos);die();
@@ -452,7 +485,7 @@ class punto_ventaC
 	        $FA['codigoCliente'] = $parametros['CodigoCliente'];
 	        $FA['TextCI'] = $parametros['CI'];
 	        $FA['TxtEmail'] = $parametros['email'];
-	        $FA['Cliente'] = str_replace( $parametros['CI'],'',$parametros['NombreCliente']);
+	        $FA['Cliente'] = trim(str_replace( $parametros['CI'].' -','',$parametros['NombreCliente']));
 	        $FA['TC'] = $parametros['TC'];
 	        $FA['Serie'] = $parametros['Serie'];
 	        $FA['Cta_CxP'] = $datos[0]['CxC'];
@@ -591,7 +624,7 @@ function ProcGrabar($FA)
           if(isset($FA['TxtEfectivo']) && $FA['TxtEfectivo']==0)
           {
           	$sql.=",T = 'P'";
-          }else{ $sql.=" T = 'C' "; }
+          }else{ $sql.=" ,T = 'C' "; }
           $sql.="
           WHERE Item = '".$_SESSION['INGRESO']['item']."'
           AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
@@ -629,7 +662,7 @@ function ProcGrabar($FA)
            if($rep==1)
            {
            		return array('respuesta'=>$rep,'pdf'=>$imp);
-           }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep);}
+           }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep,'clave'=>$clave);}
         }
      }else{
      	// print_r('dddd');die();
@@ -779,7 +812,7 @@ function ProcGrabar_Abono_cero($FA)
           if(isset($FA['TxtEfectivo']) && $FA['TxtEfectivo']==0)
           {
           	$sql.=",T = 'P'";
-          }else{ $sql.=" T = 'C' "; }
+          }else{ $sql.=" ,T = 'C' "; }
           $sql.="
           WHERE Item = '".$_SESSION['INGRESO']['item']."'
           AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
@@ -788,6 +821,8 @@ function ProcGrabar_Abono_cero($FA)
           AND CodigoC = '".$FA['codigoCliente']."'
           AND Autorizacion = '".$FA['Autorizacion']."'
           AND Serie = '".$FA['Serie']."' ";
+
+          // print_r($sql);die();
            
         $conn->String_Sql($sql);
       }
@@ -799,11 +834,11 @@ function ProcGrabar_Abono_cero($FA)
      sp_Actualizar_Saldos_Facturas('FA',$FA['Serie'],$FA['Factura']);
      if(strlen($FA['Autorizacion']) >= 13){
 
+     	// print_r('si');die();
      	// print_r('drrrrddd');die();
         if($FA['TC'] <> "DO"){
         	//la respuesta puede se texto si envia numero significa que todo saliobien
         	$rep =  $this->sri->Autorizar_factura_o_liquidacion($FA);
-
         	// print_r($rep);die();
            // SRI_Crear_Clave_Acceso_Facturas($FA,true); 
            $FA['Desde'] = $FA['Factura'];
@@ -823,18 +858,25 @@ function ProcGrabar_Abono_cero($FA)
 	           {
 	             $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
 	           }           
-           	return array('respuesta'=>$rep,'pdf'=>$imp);
+           	return array('respuesta'=>$rep,'pdf'=>$imp,'clave'=>$clave);
 
-           }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep);}
+           }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep,'clave'=>$clave);}
         }
      }else{
-     	// print_r('dddd');die();
+     	// print_r($Grafico_PV);die();
         if($Grafico_PV){
           $TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
-           Imprimir_Punto_Venta_Grafico($TFA);
-           Imprimir_Punto_Venta_Grafico($TFA);
+          $clave = $this->sri->Clave_acceso($TA['Fecha'],'01', $TA['Serie'],$Factura_No);
+           $TFA['CLAVE'] = $clave;
+           $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
+           $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
+
+           	return array('respuesta'=>1,'pdf'=>$imp);
+           // Imprimir_Punto_Venta_Grafico($TFA);
         }else{
         	 $TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
+           $clave = $this->sri->Clave_acceso($TA['Fecha'],'01', $TA['Serie'],$Factura_No);
+           $TFA['CLAVE'] = $clave;
            $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
            $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
            $rep = 1;
@@ -860,7 +902,10 @@ function ProcGrabar_Abono_cero($FA)
 
 function validar_cta($parametros)
 {
-	$datos = $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie']);
+	$electronico = 0;
+	if(isset($parametros['electronico'])){$electronico = $parametros['electronico'];}
+	// print_r($parametros);die();
+	$datos = $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie'],$parametros['Fecha'],$parametros['Fecha'],$electronico);
 	$Cta_CxP = $datos[0]['CxC'];
 	// print_r($datos);die();
 	if($Cta_CxP <> G_NINGUNO ){
@@ -959,6 +1004,52 @@ function ingresar_trans_kardex_salidas_FA($orden,$ruc,$nombre,$fechaC,$TipoFactu
 	                		// print_r($resp);die();
 	return $resp;
 
+}
+
+function error_sri($parametros)
+{
+	$clave = $parametros['clave'].'.xml';
+	$entidad = generaCeros($_SESSION['INGRESO']['IDEntidad'],3);
+	$carpeta_entidad = dirname(__DIR__,2)."/comprobantes/entidades/entidad_".$entidad;
+	$carpeta_comprobantes = $carpeta_entidad.'/CE'.$_SESSION['INGRESO']['item'];
+	$carpeta_no_autori = $carpeta_comprobantes."/No_autorizados";
+	$carpeta_rechazados = $carpeta_comprobantes."/Rechazados";
+			  
+	    
+
+	$ruta1 = $carpeta_no_autori.'/'.$clave;
+	$ruta2 = $carpeta_rechazados.'/'.$clave;
+	if(file_exists($ruta1))
+	{
+		$xml = simplexml_load_file($ruta1);
+		$codigo = $xml->mensajes->mensaje->mensaje->identificador;
+		$mensaje = $xml->mensajes->mensaje->mensaje->mensaje;
+		$adicional = $xml->mensajes->mensaje->mensaje->informacionAdicional;
+		$estado = $xml->estado;
+		$fecha = $xml->fechaAutorizacion;
+		// print_r($mensaje);die();
+		return  array('estado'=>$estado,'codigo'=>$codigo,'mensaje'=>$mensaje,'adicional'=>$adicional,'fecha'=>$fecha);
+	}
+	if(file_exists($ruta2))
+	{
+		$fp = fopen($ruta2, "r");
+		 $linea = '';
+		while (!feof($fp)){
+		    $linea.= fgets($fp);
+		}
+		fclose($fp);
+		$linea = str_replace('ns2:','', $linea);
+		$xml = simplexml_load_string($linea);
+
+		$codigo = $xml->respuestaSolicitud->comprobantes->comprobante->mensajes->mensaje->identificador;
+		$mensaje = $xml->respuestaSolicitud->comprobantes->comprobante->mensajes->mensaje->mensaje;
+		$adicional = $xml->respuestaSolicitud->comprobantes->comprobante->mensajes->mensaje->informacionAdicional;
+		$estado = $xml->respuestaSolicitud->estado;
+		$fecha = '';
+		// print_r($mensaje);die();
+		return  array('estado'=>$estado,'codigo'=>$codigo,'mensaje'=>$mensaje,'adicional'=>$adicional,'fecha'=>$fecha);
+
+	}
 }
 
 

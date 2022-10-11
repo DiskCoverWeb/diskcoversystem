@@ -84,7 +84,17 @@
 			  	{
 				  	var padre_nl = $('#txt_padre_nl').val();
 				  	var padre = $('#txt_padre').val();
-				  	Swal.fire('Eliminado','','success').then(function(){ TVcatalogo(padre_nl,padre); });
+				  	Swal.fire('Eliminado','','success').then(function(){ 
+				  		var cod = $('#txt_codigo').val();
+			  				var cod = cod.split('.');
+			  				if(padre!=cod[0] && cod.length==2)
+			  				{
+			  					TVcatalogo(padre_nl,padre);
+			  				}else
+			  				{
+			  					TVcatalogo();
+			  				}
+				  	});
 			    }else
 			    {
 			    	Swal.fire('No se puede eliminar','','error');
@@ -253,7 +263,20 @@
 			  	{
 			  		var padre_nl = $('#txt_padre_nl').val();
 			  		var padre = $('#txt_padre').val();
-			  		Swal.fire('Guardado correctamente','','success').then(function(){ TVcatalogo(padre_nl,padre); });
+			  		Swal.fire('Guardado correctamente','','success').then(function()
+			  			{ 
+			  				console.log(padre_nl);
+			  				console.log(padre);
+			  				var cod = $('#txt_codigo').val();
+			  				var cod = cod.split('.');
+			  				if(padre==cod[0])
+			  				{
+			  					TVcatalogo(padre_nl,padre);
+			  				}else
+			  				{
+			  					TVcatalogo();
+			  				}
+			  			});
 			  	}
 			  	console.log(data);
 			  }

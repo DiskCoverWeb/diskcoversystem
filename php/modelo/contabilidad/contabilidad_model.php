@@ -3240,13 +3240,18 @@ function sp_Reporte_Analitico_Mensual($tipo,$desde,$hasta)
      function comprobantes_procesados($parametros)
      {
      	$sql="SELECT Numero ". 
-       "FROM Comprobantes ".
+       "FROM Comprobantes As C, Accesos As A, Clientes As Cl ".
        "WHERE Item = '".$_SESSION['INGRESO']['item']."' ".
        "AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ".
        "AND TP = '".$parametros['TP']."' ";
+
+       //preguntar si se pone asi
+       $sql.=" AND C.CodigoU = A.Codigo 
+               AND C.Codigo_B = Cl.Codigo ";
+        // ---------------------------------
 	   if($parametros['MesNo']>0)
 	   {
-		   $sql=$sql." AND MONTH(Fecha) = ".$parametros['MesNo']." ";
+		   $sql=$sql." AND MONTH(C.Fecha) = ".$parametros['MesNo']." ";
 	   }
 	   $sql=$sql." ORDER BY Numero ";
 	   // print_r($sql);die();

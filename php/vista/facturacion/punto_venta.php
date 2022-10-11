@@ -66,6 +66,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
   	{
   		'TC':'<?php echo $TC; ?>',
   		'Serie': $('#LblSerie').text(),
+  		'Fecha':$('#MBFecha').val(),
   	}
   	$.ajax({
 		type: "POST",

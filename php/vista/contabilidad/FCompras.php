@@ -40,12 +40,13 @@ if(isset($_GET['fec']))
 
 </style>
 <script type="text/javascript">
+    var tipo2 = '<?php echo $tipo2; ?>'
 </script>
+
 <script src="../../dist/js/kardex_ing.js"></script>
 <script type="text/javascript">
   $(document).ready(function()
   {
-    var tipo2 = '<?php echo $tipo2; ?>'
     $('#ChRetB').focus();    
     $('#myModal_espera').modal('show');
     familias();
@@ -68,6 +69,7 @@ console.log(tipo2)
     if(tipo2!='')
     {
         autocoplet_bene();
+        Tipo_De_Comprobante_No();
     }
     
   });
@@ -373,13 +375,22 @@ function contracuenta()
   {
     var ddl = $('#DCProveedor').val();
     var ddl = ddl.split('-');
+    $('#txtemail').val(ddl[1])
     $('#LblTD').val(ddl[2])
     $('#LblNumIdent').val(ddl[3])
     var nombre = $('#DCProveedor option:selected').text()
+    $('#DCProveedor').empty()
     $('#DCProveedor').append($('<option>',{value:ddl[4], text:nombre,selected: true }));
   }
   </script>
 <div class="row">
+    <?php if($tipo2!=''){?>
+        <div class="col-sm-12 text-center">
+          <h4  style="float: top;padding: 5px 10px 5px 10px;vertical-align:top; margin-top: 1px; margin-bottom: 1px;" id='num_com'>
+            Comprobante de Diario No. 0000-00000000
+          </h4>
+        </div>
+    <?php }?>
           <div class="col-sm-12">
               <div class="row">
                 <div class="col-sm-8" style="margin-bottom: auto;">
@@ -390,7 +401,7 @@ function contracuenta()
                         <div class="box-body" style="padding-top: 0px;">
                             <div class="row">
                                 <div class="col-sm-3">
-                                  <input type="hidden" name="txt_opc_mult" id="txt_opc_mult" value="<?php echo $_GET['opc_mult'];?>">
+                                  <input type="hidden" name="txt_opc_mult" id="txt_opc_mult" value="<?php if(isset($_GET['opc_mult'])){ echo $_GET['opc_mult']; }?>">
                                     <label class="radio-inline" onclick="habilitar_bienes()"><input type="checkbox" name="ChRetB" id="ChRetB"> Bienes</label>
                                 </div>
                                 <div class="col-sm-9">
@@ -437,6 +448,7 @@ function contracuenta()
               </div>
               <div class="col-sm-3"><br>                
                 <input type="text" class="form-control input-xs" name="" id="LblNumIdent" readonly="">
+                <input type="hidden" class="form-control input-xs" name="" id="txtemail" readonly="">
               </div>
             </div>
           </div><br>

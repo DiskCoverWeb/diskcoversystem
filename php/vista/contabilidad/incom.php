@@ -988,10 +988,8 @@
     {
       Swal.fire('seleccione un beneficiario','','info')
       return false;
-    }
-    
+    }    
         $('#myModal_espera').modal('show');
-
                // $('#myModal_espera').modal('show');    
       $.ajax({
           data:  {parametros:parametros},

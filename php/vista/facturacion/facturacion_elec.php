@@ -359,6 +359,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
   		'TxtRifaH':$('#TxtRifaH').val(),
   		'Serie':$('#LblSerie').text(),
   		'CodigoCliente':$('#codigoCliente').val(),
+  		'electronico':1,
   	}
   	$.ajax({
 		type: "POST",
@@ -525,7 +526,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 
   function generar_factura()
   {
-  	// $('#myModal_espera').modal('show');
+  	$('#myModal_espera').modal('show');
   	var tc = $('#DCLinea').val();
   	tc = tc.split(' ');
 
@@ -553,6 +554,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
   		'TextCheqNo':$('#TextCheqNo').val(),
   		'CodDoc':$('#CodDoc').val(),
   		'valorBan':$('#TextCheque').val(),
+  		'electronico':1,
   	}
   	$.ajax({
 		type: "POST",
@@ -578,10 +580,16 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 				})
 			}else if(data.respuesta==-1)
 			{
-				Swal.fire('XML DEVUELTO:'+data.text,'XML DEVUELTO','error').then(function(){ var url=  '../../TEMP/'+data.pdf+'.pdf';		window.open(url, '_blank'); 	location.reload();	});	
+
+				Swal.fire('XML DEVUELTO:'+data.text,'XML DEVUELTO','error').then(function(){ 
+					var url=  '../../TEMP/'+data.pdf+'.pdf';		window.open(url, '_blank'); 	
+					tipo_error_sri(data.clave);
+				});	
 			}else if(data.respuesta==2)
 			{
+				tipo_error_comprobante(clave)
 				Swal.fire('XML devuelto','','error');	
+				tipo_error_sri(data.clave);
 			}
 			else if(data.respuesta==4)
 			{
@@ -594,6 +602,32 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 		}
 	});
 
+  }
+
+
+  function tipo_error_sri(clave)
+  {
+  	var parametros = 
+  	{
+  		'clave':clave,
+  	}
+  	 $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/punto_ventaC.php?error_sri=true',
+      data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+         $('#myModal_sri_error').modal('show');
+        $('#sri_estado').text(data.estado[0]);
+				$('#sri_codigo').text(data.codigo[0]);
+				$('#sri_fecha').text(data.fecha[0]);
+				$('#sri_mensaje').text(data.mensaje[0]);
+				$('#sri_adicional').text(data.adicional[0]);
+				// $('#doc_xml').attr('href','')
+         console.log(data);
+      }
+    });
   }
 
   function calcular_pago()
@@ -724,7 +758,9 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 							</select>	
 							<span class="input-group-btn">
 			        <button type="button" class="btn btn-success btn-xs btn-flat" onclick="addCliente()" title="Nuevo cliente"><span class="fa fa-user-plus"></span></button>		
-			        </span>	   
+			        </span>	  
+
+			        <!-- <button onclick="tipo_error_sri('0308202203179238540700120010020000006811234567815')" class="btn">error</button>  -->
 			     </div>  
 					<input type="hidden" name="codigoCliente" id="codigoCliente" class="form-control input-xs">	
 					<input type="hidden" name="LblT" id="LblT" class="form-control input-xs">	

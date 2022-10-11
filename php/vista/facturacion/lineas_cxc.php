@@ -176,7 +176,7 @@
 	       	$('#TxtNumSerietres1').val(generar_ceros(data.Secuencial,9))
 	       	$('#TxtNumAutor').val(data.Autorizacion)
 	       	$('#TxtNumSerieUno').val(data.Serie.substring(0,3))
-	       	$('#TxtNumSerieDos').val(data.Serie.substring(-1,3))
+	       	$('#TxtNumSerieDos').val(data.Serie.substring(3,6))
 
 	       	$('#TxtNombreEstab').val(data.Nombre_Establecimiento)
 	       	$('#TxtDireccionEstab').val(data.Direccion_Establecimiento)

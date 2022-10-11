@@ -1,6 +1,6 @@
 <?php 
 include('../../modelo/inventario/registro_esM.php');
-// include('../../modelo/contabilidad/incomM.php');
+// include('../../controlador/contabilidad/incomC.php');
 /**
  * 
  */
@@ -209,7 +209,7 @@ class registro_esC
 	function __construct()
 	{
 		$this->modelo = new  registro_esM();
-    // $this->incom = new  incomM();
+    // $this->incom = new  incomC();
 	}
 
 	function familias($query)
@@ -226,7 +226,8 @@ class registro_esC
   function  codigo_proveedor($CodigoCliente)
   {
     $datos = $this->modelo->codigo_proveedor($CodigoCliente);
-    return $datos[0]['Codigo'];    
+      return $datos[0]['Codigo'];    
+
   }
   function producto_detalle($parametros)
   {
@@ -546,6 +547,7 @@ class registro_esC
   }
   function grabacion($parametros)
   {
+    // print_r($parametros);die();
     $datos[0]['campo']="IdProv";
     $datos[1]['campo']="DevIva";
     $datos[2]['campo']="CodSustento"; 
@@ -687,12 +689,95 @@ class registro_esC
     if(insert_generico("Asiento_Compras",$datos)==null)
     {
       $this->proceso_asientos($parametros);
-     // if($this->grabar_asiento_compras($parametros)==1)
-            // {
-             return 1;
-            // }
 
+      // si el tipo es distinto entonces este crea el haber autoamtico ya que no viene de incom
+      if($parametros['tipo']!='')
+      {
+          $r = $this->generar_comprobante_tipo2($parametros);
+          return $r;
+      }
     }
+  }
+
+
+  function generar_comprobante_tipo2($parametros)
+  {
+    $cta = 'Cta_Proveedores';
+    $datos1 = $this->modelo->buscar_cta($cta);
+    $datos2 = $this->modelo->LeerCta($datos1[0]['Codigo']);
+    if(count($datos2)==0)
+      {
+        return -2;  // falta setear cuneta de proveedores
+      }
+    // print_r($datos2);die();
+    if(count($datos1)==0)
+      {
+        $datos[0]['campo']='Detalle';
+        $datos[0]['dato']=$cta;
+        $datos[1]['campo']='Codigo';
+        $datos[1]['dato']='2.1';
+        $datos[2]['campo']='Periodo';
+        $datos[2]['dato']=$_SESSION['INGRESO']['periodo'];
+        $datos[3]['campo']='Item';
+        $datos[3]['dato']=$_SESSION['INGRESO']['item'];
+        $datos[4]['campo']='Campo';
+        $datos[4]['dato']='.';
+        $datos[5]['campo']='Lst';
+        $datos[5]['dato']='0';
+        $datos[6]['campo']='X';
+        $datos[6]['dato']='.' ;
+        insert_generico('Cta_Procesos',$datos);
+        $datos1[] = array('Codigo'=>$datos[1]['dato'],'Detalle'=>$datos[0]['dato']);
+      }
+      $valor = $parametros['ValorRetBienes']+$parametros['ValorRetServicios']+$parametros['RetIva'];
+
+      //inserta en asiento sc
+      $parametros_sc = array(
+            'be'=>$parametros['IdProv'],
+            'ru'=> '',
+            'co'=> $datos2[0]['Codigo'],// codigo de cuenta cc
+            'tip'=>'CD',//tipo de cuenta(CE,CD,..--) biene de catalogo subcuentas TC
+            'tic'=> '1', //debito o credito (1 o 2);
+            'sub'=> $parametros['CI_RUC'], //Codigo se trae catalogo subcuenta o ruc del proveedor en caso de que se este ingresando
+            'sub2'=>$parametros['NombreCliente'],//nombre del beneficiario
+            'fecha_sc'=> $parametros['FechaEmision'], //fecha 
+            'fac2'=>$parametros['Secuencial'],
+            'mes'=>0,
+            'valorn'=>  $valor,//valor de sub cuenta 
+            'moneda'=> 1, /// moneda 1
+            'Trans'=>'.',//detalle que se trae del asiento
+            'T_N'=> $_SESSION['INGRESO']['modulo_'],
+            't'=> 'P',                        
+        );
+        $resp = ingresar_asientos_SC($parametros_sc);
+        $this->modelo->insertar_aseinto($datos2[0]['Codigo'],$datos2[0]['Cuenta'],0,$valor,0,$chq_as='.','.',$parametros['FechaCaducidad'],$t_no=1,$A_No=4,'P');
+
+
+        return 1;
+
+        //--------------------------generar comprobantes----------------------------------------
+      // $ctas = '';
+      // $parametros1[] = array(
+      // 'ruc'=> $parametros['CI_RUC'], //codigo del cliente que sale co el ruc del beneficiario codigo
+      // 'tip'=>'CD',//tipo de cuenta contable cd, etc
+      // "fecha"=> $parametros['FechaEmision'],// fecha actual 2020-09-21
+      // 'concepto'=>'RETENCION NO. '.$parametros['TxtNumTresComRet'].' '.$parametros['NombreCliente'].' '.date('Y-m-d'), //detalle de la transaccion realida
+      // 'totalh'=> $valor, //total del haber
+      // 'num_com'=>1,
+      // 'CodigoB'=>$parametros['IdProv'],
+      // 'Serie_R'=> $parametros['EstabRetencion'].$parametros['PtoEmiRetencion'],
+      // 'Retencion'=>$parametros['SecRetencion'],
+      // 'Autorizacion_R'=>$parametros['AutRetencion'],
+      // 'Autorizacion_LC'=>'',
+      // 'TD'=>'P',
+      // 'bene'=>$parametros['NombreCliente'],
+      // 'email'=>$parametros['email'],
+      // 'Cta_modificar'=>$ctas,
+      // 'T'=>'N',
+      // 'modificado'=>0
+      // );
+      // $res =  generar_comprobante($parametros1);
+      // print_r($res);die();
   }
 
 

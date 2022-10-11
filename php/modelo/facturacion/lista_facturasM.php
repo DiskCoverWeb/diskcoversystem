@@ -91,8 +91,13 @@ class lista_facturasM
 		
 		$sql ="SELECT T,TC,Serie,Autorizacion,Factura,Fecha,SubTotal,Con_IVA,IVA,Descuento+Descuento2 as Descuentos,Total_MN as Total,Saldo_MN as Saldo,RUC_CI,TB,Razon_Social,CodigoC,ID 
 		FROM Facturas 
-		WHERE CodigoC ='".$codigo."' 
-		 AND CodigoC <> ''
+		WHERE 1=1 ";
+		if($codigo!='T')
+		{
+			// si el codigo es T se refiere a todos
+		   $sql.=" AND CodigoC ='".$codigo."'";
+		} 
+		 $sql.="AND CodigoC <> ''
 		AND Item = '".$_SESSION['INGRESO']['item']."'";
        // if($periodo && $periodo!='.')
        // {

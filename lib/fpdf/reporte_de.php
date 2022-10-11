@@ -2235,12 +2235,19 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetFont('Arial','',7);
 	$pdf->SetXY(425, 85);
 	$pdf->SetWidths(array(140));
-	if($_SESSION['INGRESO']['Ambiente']==1)
+
+	$ambiente = substr($datos[0]['Autorizacion'],23,1);
+	// print_r($datos[0]['Autorizacion']);die();
+	//print_r($ambiente);die();
+
+
+	if($ambiente==2)
 	{
-	  $arr=array('Produccion');
-	}else if($_SESSION['INGRESO']['Ambiente']==2)
+	  $arr=array('PRODUCCION');
+
+	}else if($ambiente==1)
 	{
-	  $arr=array('Prueba');
+	  $arr=array('PRUEBA');
 	}else
 	{
 		 $arr=array('');

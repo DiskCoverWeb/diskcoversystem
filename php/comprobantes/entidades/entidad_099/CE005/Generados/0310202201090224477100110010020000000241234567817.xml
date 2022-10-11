@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<factura id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>ALCIVAR ALAVA JORGE ALFREDO</razonSocial>
+    <nombreComercial>ALCIVAR ALAVA JORGE ALFREDO</nombreComercial>
+    <ruc>0902244771001</ruc>
+    <claveAcceso>0310202201090224477100110010020000000241234567817</claveAcceso>
+    <codDoc>01</codDoc>
+    <estab>001</estab>
+    <ptoEmi>002</ptoEmi>
+    <secuencial>000000024</secuencial>
+    <dirMatriz>FAVIO ALFARO Y MALECON, BARRIO SAN BARTOLO</dirMatriz>
+  </infoTributaria>
+  <infoFactura>
+    <fechaEmision>03/10/2022</fechaEmision>
+    <dirEstablecimiento>FAVIO ALFARO Y MALECON, BARRIO SAN BARTOLO</dirEstablecimiento>
+    <obligadoContabilidad>SI</obligadoContabilidad>
+    <tipoIdentificacionComprador>07</tipoIdentificacionComprador>
+    <razonSocialComprador>CONSUMIDOR FINAL</razonSocialComprador>
+    <identificacionComprador>9999999999999</identificacionComprador>
+    <totalSinImpuestos>1.00</totalSinImpuestos>
+    <totalDescuento>0</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0</descuentoAdicional>
+        <baseImponible>1</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>0</propina>
+    <importeTotal>1</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>1</total>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>01.01</codigoPrincipal>
+      <descripcion>Servicios Varios 0%</descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.0000</cantidad>
+      <precioUnitario>1</precioUnitario>
+      <descuento>0</descuento>
+      <precioTotalSinImpuesto>1</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
+          <baseImponible>1</baseImponible>
+          <valor>0</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">SD</campoAdicional>
+    <campoAdicional nombre="Telefono">025008082</campoAdicional>
+    <campoAdicional nombre="Email">infosistema@diskcoversystem.com</campoAdicional>
+  </infoAdicional>
+</factura>

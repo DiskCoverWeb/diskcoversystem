@@ -112,7 +112,7 @@ class niveles_seguriM
 		  $datos=[];
 		foreach ($resp as $key => $value) {
 		
-					$datos[]=['id'=>$value['ID'],'text'=>$value['Empresa'],'host'=>$value['IP_VPN_RUTA'],'usu'=>$value['Usuario_DB'],'base'=>$value['Base_Datos'],'Puerto'=>$value['Puerto'],'Item'=>$value['Item']];				
+					$datos[]=['id'=>$value['ID'],'text'=>$value['Empresa'],'host'=>$value['IP_VPN_RUTA'],'usu'=>$value['Usuario_DB'],'pass'=>$value['Contrasena_DB'],'base'=>$value['Base_Datos'],'Puerto'=>$value['Puerto'],'Item'=>$value['Item']];				
 		 }
 
 	      return $datos;
@@ -192,6 +192,7 @@ class niveles_seguriM
 	    $regis = $this->acceso_empresas_($entidad,$empresas,$usuario);
 	    $modulo = explode(',',$modulos);
 	    $valor = '';
+	   	$valor_sql = '';
 	    $existe = 0;
 	    if(count($regis)>0)
 	    {
@@ -206,6 +207,7 @@ class niveles_seguriM
 	    	    if($existe == 0)
 	    	       {
 	    	   	    $valor.= '('.$entidad.',"'.$usuario.'","'.$value.'","'.$empresas.'"),';
+	    	   	    $valor_sql.= "('".$value."','".$empresas."','".$usuario."','.'),";
 	    	       }
 	    	   $existe =0;	    	   
 	       }   	
@@ -213,14 +215,34 @@ class niveles_seguriM
 	    {
 	    	foreach ($modulo as $key => $value) {
 	    	  $valor.= '('.$entidad.',"'.$usuario.'","'.$value.'","'.$empresas.'"),';
+	    	  $valor_sql.= "('".$value."','".$empresas."','".$usuario."','.'),";
 	       }
 	    }
 
 	 	if($valor != "")
-	  	{
+	  	{	  		
 	  		$valor = substr($valor, 0,-1);
-	  	    $sql = "INSERT INTO acceso_empresas (ID_Empresa,CI_NIC,Modulo,item) VALUES ".$valor;
-	  	   return $this->db->String_Sql($sql,'MY SQL');
+	  		$valor_sql = substr($valor_sql, 0,-1);
+	  		$sql = "INSERT INTO acceso_empresas (ID_Empresa,CI_NIC,Modulo,item) VALUES ".$valor;
+	  		$r = $this->db->String_Sql($sql,'MY SQL');
+
+	  		// guarda en sql server
+	  		$conn_sql = $this->empresas_datos($entidad,$empresas);
+	  		if(count($conn_sql)>0)
+	  		{
+	  			$conn = $this->db->modulos_sql_server($conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	  			if($conn!=-1)
+	  			{
+	  				$sql = "INSERT INTO Acceso_Empresa (Modulo,Item,Codigo,X) VALUES ".$valor_sql;
+	  				// print_r($sql);die();
+	  				$re = $this->db->ejecutar_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	  				// print_r($re);die();
+	  			}
+	  			
+	  		}
+	  	   
+	  	    // print_r($sql);die();
+	  	   return $r;
 	    }
 	    return 1;
 	// }
@@ -229,31 +251,53 @@ class niveles_seguriM
 	}
 	function update_acceso_usuario($niveles,$usuario,$clave,$entidad,$CI_NIC,$email,$serie)
 	{
-	   $sql = "UPDATE acceso_usuarios SET TODOS = 1, Nivel_1 =".$niveles['1'].", Nivel_2 =".$niveles['2'].", Nivel_3 =".$niveles['3'].", Nivel_4 =".$niveles['4'].",Nivel_5 =".$niveles['5'].", Nivel_6=".$niveles['6'].", Nivel_7=".$niveles['7'].", Supervisor = ".$niveles['super'].", Usuario = '".$usuario."',Clave = '".$clave."',Email='".$email."',Serie_FA='".$serie."' WHERE CI_NIC = '".$CI_NIC."';";
+	   $sql = "UPDATE acceso_usuarios SET TODOS = 1, Nivel_1 =".$niveles['1'].", Nivel_2 =".$niveles['2'].", Nivel_3 =".$niveles['3'].", Nivel_4 =".$niveles['4'].",Nivel_5 =".$niveles['5'].", Nivel_6=".$niveles['6'].", Nivel_7=".$niveles['7'].", Supervisor = ".$niveles['super'].", Usuario = '".$usuario."',Clave = '".$clave."',Email='".$email."',Serie_FA='".$serie."',TODOS=1 WHERE CI_NIC = '".$CI_NIC."';";
 	  return $this->db->String_Sql($sql,'MY SQL');
 
 	}
 	function delete_modulos($entidad,$empresas=false,$usuario,$modulo=false)
 	{
 		$sql = "DELETE FROM acceso_empresas WHERE  ID_Empresa = ".$entidad." ";
+		$sql2 = "DELETE FROM Acceso_Empresa WHERE 1=1 ";
 		if($empresas)
 		{
 			$sql.=" AND Item='".$empresas."'";
+			$sql2.=" AND Item='".$empresas."'";
 		}
 			$sql.=" AND CI_NIC = '".$usuario."'";
+			$sql2.=" AND Codigo = '".$usuario."'";
 		if($modulo)
 		{
 			 $sql.=" AND Modulo='".$modulo."'";
+			 $sql2.=" AND Modulo='".$modulo."'";
 		}
-		return $this->db->String_Sql($sql,'MY SQL');
+		$r =  $this->db->String_Sql($sql,'MY SQL');
+
+		$conn_sql = $this->empresas_datos($entidad,$empresas);
+  		if(count($conn_sql)>0)
+  		{
+  			$conn = $this->db->modulos_sql_server($conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+  			if($conn!=-1)
+  			{  				
+  				// print_r($sql2);die();
+  				$re = $this->db->ejecutar_sql_terceros($sql2,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+  				print_r($re);die();
+  			}
+  			
+  		}
+
+
+		return $r;
 
 	}
 
 	function bloquear_usuario($entidad,$CI_NIC)
 	{
-	   $sql = "UPDATE acceso_usuarios SET TODOS=0 WHERE ID_Empresa = '".$entidad."' AND CI_NIC = '".$CI_NIC."';";
+	   $sql = "UPDATE acceso_usuarios SET TODOS=0 WHERE CI_NIC = '".$CI_NIC."';";
 	   $parametros['ent'] = $entidad;
 	   $parametros['ci'] = $CI_NIC;
+
+	   // print_r($sql);die();
 	   $r = $this->bloquear_cliente_SQLSERVER($parametros);
 	   if($r==1)
 	   {
@@ -266,7 +310,7 @@ class niveles_seguriM
 
 	function desbloquear_usuario($entidad,$CI_NIC)
 	{
-	   $sql = "UPDATE acceso_usuarios SET TODOS=1 WHERE ID_Empresa = '".$entidad."' AND CI_NIC = '".$CI_NIC."';"; 
+	   $sql = "UPDATE acceso_usuarios SET TODOS=1 WHERE CI_NIC = '".$CI_NIC."';"; 
 	   $parametros['ent'] = $entidad;
 	   $parametros['ci'] = $CI_NIC;
 	   $this->desbloquear_cliente_SQLSERVER($parametros);
@@ -485,7 +529,7 @@ class niveles_seguriM
 		 	     	 {
 
 		 	     	// print_r('existe');die();
-		 	     	 	$sql = "UPDATE Accesos SET Nivel_1 =".$parametros['n1'].", Nivel_2 =".$parametros['n2'].", Nivel_3 =".$parametros['n3'].", Nivel_4 =".$parametros['n4'].",Nivel_5 =".$parametros['n5'].", Nivel_6=".$parametros['n6'].", Nivel_7=".$parametros['n7'].", Supervisor = ".$parametros['super'].", Usuario = '".$parametros['usuario']."',Clave = '".$parametros['pass']."',EmailUsuario='".$parametros['email']."',Serie_FA = '".$parametros['serie']."' WHERE Codigo = '".$parametros['CI_usuario']."';";
+		 	     	 	$sql = "UPDATE Accesos SET Nivel_1 =".$parametros['n1'].", Nivel_2 =".$parametros['n2'].", Nivel_3 =".$parametros['n3'].", Nivel_4 =".$parametros['n4'].",Nivel_5 =".$parametros['n5'].", Nivel_6=".$parametros['n6'].", Nivel_7=".$parametros['n7'].", Supervisor = ".$parametros['super'].", Usuario = '".$parametros['usuario']."',Clave = '".$parametros['pass']."',EmailUsuario='".$parametros['email']."',Serie_FA = '".$parametros['serie']."',TODOS=1 WHERE Codigo = '".$parametros['CI_usuario']."';";
 
 		 	     	 	  $sql = str_replace('false',0, $sql);
 		 	     	 	  $sql = str_replace('true',1, $sql);

@@ -231,6 +231,12 @@ if(isset($_GET['ing1']))
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->ingresar_asiento($parametros));
 }
+if(isset($_GET['eliminar_asientos']))
+{
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->eliminar_asientos($parametros));
+}
+
 
 
 class incomC
@@ -1650,7 +1656,7 @@ class incomC
           $TFA[0]["ClaveAcceso"] = str_replace('.','1', $TFA[0]['ClaveAcceso']);
           $respuesta = $this->sri->generar_xml_retencion($TFA,$datos);
 
-         
+           // autorizar sri
 
           // print_r($respuesta);die();
           $num_res = count($respuesta);
@@ -2354,6 +2360,12 @@ function ingresar_asiento($parametros)
 		}
 		
 	
+}
+
+function eliminar_asientos($parametros)
+{
+	$Trans_No = $parametros['T_No'];
+	return $this->modelo->BorrarAsientos($Trans_No,true);
 }
 
 

@@ -76,7 +76,7 @@ class autorizacion_sri
 	    $cabecera['razon_social_principal']=$this->quitar_carac($_SESSION['INGRESO']['Razon_Social']);
 	    $cabecera['ruc_principal']=$_SESSION['INGRESO']['RUC'];
 	    $cabecera['direccion_principal']= $this->quitar_carac($_SESSION['INGRESO']['Direccion']);
-	    $cabecera['Entidad'] = $_SESSION['INGRESO']['IDEntidad'];
+	    $cabecera['Entidad'] = generaCeros($_SESSION['INGRESO']['IDEntidad'],3);
 	    if(isset($parametros['serie'])){
 	    	$cabecera['serie']=$parametros['serie'];
 	    	$cabecera['esta']=substr($parametros['serie'],0,3); 
@@ -240,10 +240,11 @@ class autorizacion_sri
 	           {
 	           	 $firma = $this->firmar_documento(
 	           	 	$cabecera['ClaveAcceso'],
-	           	 	$_SESSION['INGRESO']['IDEntidad'],
+	           	 	 generaCeros($_SESSION['INGRESO']['IDEntidad'],3),
 	           	 	$_SESSION['INGRESO']['item'],
 	           	 	$_SESSION['INGRESO']['Clave_Certificado'],
 	           	 	$_SESSION['INGRESO']['Ruta_Certificado']);
+	           	 // print($firma);die();
 	           	 if($firma==1)
 	           	 {
 	           	 	$validar_autorizado = $this->comprobar_xml_sri(
@@ -1735,50 +1736,64 @@ function generar_xml_retencion($cabecera,$detalle=false)
         $ContEspec = Leer_Campo_Empresa('Codigo_Contribuyente_Especial');
         // print_r($carpeta_entidad);die();
 
-	if(file_exists($carpeta_entidad))
-	{
-		$carpeta_comprobantes = $carpeta_entidad.'/CE'.$empresa;
-		if(file_exists($carpeta_comprobantes))
-		{
-		  $carpeta_autorizados = $carpeta_comprobantes."/Autorizados";		  
-		  $carpeta_generados = $carpeta_comprobantes."/Generados";
-		  $carpeta_firmados = $carpeta_comprobantes."/Firmados";
-		  $carpeta_no_autori = $carpeta_comprobantes."/No_autorizados";
 
-			if(!file_exists($carpeta_autorizados))
+		if(file_exists($carpeta_entidad))
+		{
+			$carpeta_comprobantes = $carpeta_entidad.'/CE'.$empresa;
+			if(file_exists($carpeta_comprobantes))
 			{
+			  $carpeta_autorizados = $carpeta_comprobantes."/Autorizados";		  
+			  $carpeta_generados = $carpeta_comprobantes."/Generados";
+			  $carpeta_firmados = $carpeta_comprobantes."/Firmados";
+			  $carpeta_no_autori = $carpeta_comprobantes."/No_autorizados";
+			  $carpeta_rechazados = $carpeta_comprobantes."/Rechazados";
+			  $carpeta_rechazados = $carpeta_comprobantes."/Enviados";
+
+				if(!file_exists($carpeta_autorizados))
+				{
+					mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
+				}
+				if(!file_exists($carpeta_generados))
+				{
+					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777);
+				}
+				if(!file_exists($carpeta_firmados))
+				{
+					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
+				}
+				if(!file_exists($carpeta_no_autori))
+				{
+					 mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777);
+				}
+				if(!file_exists($carpeta_rechazados))
+				{
+					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777);
+				}
+				if(!file_exists($carpeta_rechazados))
+				{
+					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777);
+				}
+			}else
+			{
+				mkdir($carpeta_entidad.'/CE'.$empresa, 0777);
 				mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
-			}
-			if(!file_exists($carpeta_generados))
-			{
-				 mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777);
-			}
-			if(!file_exists($carpeta_firmados))
-			{
-				 mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
-			}
-			if(!file_exists($carpeta_no_autori))
-			{
-				 mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777);
+			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777);
+			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
+			    mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777);
+			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777);
+			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777);
 			}
 		}else
 		{
-			mkdir($carpeta_entidad.'/CE'.$empresa, 0777);
-			mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
-		    mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777);
-		    mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
-		    mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777);
+			   mkdir($carpeta_entidad, 0777);
+			   mkdir($carpeta_entidad.'/CE'.$empresa, 0777);
+			   mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
+			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777);
+			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
+			   mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777);	  
+			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777);  
+			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777);
 		}
-	}else
-	{
-		   mkdir($carpeta_entidad, 0777);
-		   mkdir($carpeta_entidad.'/CE'.$empresa, 0777);
-		   mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
-		   mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777);
-		   mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
-		   mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777);	    
-	}
-		
 
 	if(file_exists($carpeta_autorizados.'/'.$cabecera[0]['ClaveAcceso'].'.xml'))
 	{
@@ -2074,13 +2089,12 @@ function generar_xml_retencion($cabecera,$detalle=false)
 
 	        	exec("java -jar ".$firmador." ".$nom_doc.".xml ".$url_generados." ".$url_firmados." ".$certificado_1." ".$p12." ".$pass, $f);
 
-	        	// print_r($f);die();
-	        	if(count($f)<6)
+	        	if(count($f)<6 && !empty($f))
 		 		{
 		 			return 1;		 		
 		 		}else
 		 		{		 			
-		 			$respuesta = 'Error al generar XML';
+		 			$respuesta = 'Error al generar XML o al firmar';
 		 			return $respuesta;          
 		        }
 
@@ -2106,7 +2120,7 @@ function generar_xml_retencion($cabecera,$detalle=false)
     // 2 para devueltas
     function comprobar_xml_sri($clave_acceso,$link_autorizacion)
     {
-    	$entidad = $_SESSION['INGRESO']['IDEntidad'];
+    	$entidad =  generaCeros($_SESSION['INGRESO']['IDEntidad'],3);
     	$empresa = $_SESSION['INGRESO']['item'];
     	$comprobar_sri = dirname(__DIR__).'/SRI/firmar/sri_comprobar.jar';
     	$url_autorizado=dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Autorizados/';
@@ -2115,6 +2129,10 @@ function generar_xml_retencion($cabecera,$detalle=false)
     	// print_r("java -jar ".$comprobar_sri." ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion);die();
    		 exec("java -jar ".$comprobar_sri." ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion,$f);   	
    		 // print_r($f);die();
+   		 if(empty($f))
+   		 {
+   		 	return 2;
+   		 }
 
    		 $resp = explode('-',$f[0]);
 
@@ -2141,7 +2159,7 @@ function generar_xml_retencion($cabecera,$detalle=false)
     //envia el xml asia el sri
     function enviar_xml_sri($clave_acceso,$url_recepcion)
     {
-    	$entidad = $_SESSION['INGRESO']['IDEntidad'];
+    	$entidad =  generaCeros($_SESSION['INGRESO']['IDEntidad'],3);
     	$empresa = $_SESSION['INGRESO']['item'];
 
     	$ruta_firmados=dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Firmados/';

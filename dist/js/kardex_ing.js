@@ -513,7 +513,7 @@ function mostra_select()
 
 function grabacion()
 {
-    $('#myModal_espera').modal('show');
+    // $('#myModal_espera').modal('show');
   var  parametros= 
   {
     "IdProv":$('#DCProveedor').val(), 
@@ -567,6 +567,15 @@ function grabacion()
     "OpcSiFormaLegal": $('input:radio[name=rbl_pago_retencion]:checked').val(),
     'NombreCliente':$('#DCProveedor').text(), 
     "opcion_mult":$('#txt_opc_mult').val(),
+    'RetIva':$('#TxtValConA').val(),
+    'CI_RUC':$('#LblNumIdent').val(),
+    'tipo':tipo2,
+
+    // retencion data
+     "EstabRetencion": $('#TxtNumUnoComRet').val(),
+     "PtoEmiRetencion": $('#TxtNumDosComRet').val(),
+     "SecRetencion": $('#TxtNumTresComRet').val(),
+     "AutRetencion": $('#TxtNumUnoAutComRet').val(),
 
   }
    $.ajax({
@@ -575,18 +584,136 @@ function grabacion()
       type:  'post',
       dataType: 'json',
         success:  function (response) {
-            if (response==1) 
+          if(response==1) 
             {
-               $('#myModal_espera').modal('hide');
-              Swal.fire( 'Retenciones ingresadas','','success');              
+              if(tipo2!='')
+              {
+                 grabar_comprobante()
+              }else
+              {
+                $('#myModal_espera').modal('hide');
+                Swal.fire( 'Retenciones ingresadas','','success');              
                 parent.location.reload();
                 $('#iframe').css('display','none');
+                $('#myModal_espera').modal('hide');
+              }
+               
             }
-         
-         $('#myModal_espera').modal('hide');
       }
     });  
 }
+
+
+function grabar_comprobante()
+  {  
+
+    if($('#DCProveedor').val()=='')
+    {
+      Swal.fire('seleccione un beneficiario','','info')
+      return false;
+    } 
+
+    var parametros = 
+    {
+      'ruc': $('#LblNumIdent').val(), //codigo del cliente que sale co el ruc del beneficiario codigo
+      'tip':'CD',//tipo de cuenta contable cd, etc
+      "fecha": $('#MBFechaEmi').val(),// fecha actual 2020-09-21
+      'concepto':'RETENCION NO. '+$('#TxtNumUnoComRet').val()+''+$('#TxtNumDosComRet').val(), //detalle de la transaccion realida
+      'totalh': parseFloat($('#TxtIvaBienValRet').val())+parseFloat($('#TxtIvaSerValRet').val())+parseFloat($('#TxtValConA').val()), //total del haber
+      'num_com':1,
+      'CodigoB':$('#DCProveedor').val(),
+      'Serie_R':$('#TxtNumUnoComRet').val()+''+$('#TxtNumDosComRet').val(),
+      'Retencion':$('#TxtNumTresComRet').val(),
+      'Autorizacion_R':$('#TxtNumUnoAutComRet').val(),
+      'Autorizacion_LC':'',
+      'TD':'C',
+      'bene':$('#DCProveedor option:selected').text(),
+      'email':$('#txtemail').val(),
+      'Cta_modificar':$('#DCRetIBienes').val()+','+$('#DCRetISer').val()+','+$('#DCRetFuente').val(),
+      'T':'N',
+      'modificado':0,
+    }
+
+        // $('#myModal_espera').modal('show');
+               // $('#myModal_espera').modal('show');    
+      $.ajax({
+          data:  {parametros:parametros},
+          url:   '../controlador/contabilidad/incomC.php?generar_comprobante=true',
+          type:  'post',
+          dataType: 'json',
+            success:  function (response) {
+               $('#myModal_espera').modal('hide');
+        console.log(response);
+        if(response.respuesta == '3')
+        {
+          Swal.fire('Este documento electronico ya esta autorizado','','error');
+
+          }else if(response.respuesta == '1')
+          {
+            // Swal.fire('Este documento electronico autorizado','','success');
+             eliminar_ac();
+                Swal.fire({
+                   title: 'Comprobante Generado',
+                   text: "",
+                   type: 'success',
+                   showCancelButton: false,
+                   confirmButtonColor: '#3085d6',
+                   cancelButtonColor: '#d33',
+                   confirmButtonText: 'OK!'
+                 }).then((result) => {
+                   if (result.value==true) { 
+                    var url = location.href; 
+                    location.reload(url+'&reload=1');
+                   }
+                 });
+          
+          }else if(response.respuesta == '2')
+          {
+            Swal.fire('XML devuelto','','info',);
+            descargar_archivos(response.url,response.ar);
+
+          }
+          else
+          {
+            Swal.fire('Error por: '+response,'','info');
+          }
+
+          if(response==1)
+          {
+             Swal.fire('Retencion ingresada','','success').then(function()
+              {
+                location.reload();
+              });
+             eliminar_todo_asisntoB();
+             
+          }           
+
+          }
+        });
+  }
+
+
+function eliminar_todo_asisntoB()
+{
+  var parametros = 
+  {
+    'T_No':1,
+  }
+   $.ajax({
+      data:  {parametros:parametros},
+      url:   '../controlador/contabilidad/incomC.php?eliminar_asientos=true',
+      type:  'post',
+      dataType: 'json',
+        success:  function (response) { 
+        if(response == 1)
+        {
+          $('#myModal_espera').modal('hide');
+        } 
+      }
+    });
+
+}
+
 
 function insertar_grid()
 {
@@ -999,6 +1126,11 @@ function validar_formulario()
           }
     }else
     {
+      var tipo = '<?php echo $tipo2; ?>';
+      if(tipo!='')
+      {
+         $('#myModal_espera').modal('show');
+      }
        // alert('Todos los datos estan correctos');
        grabacion();
     
@@ -1168,3 +1300,29 @@ function factura_repetida()
     });
 
 }
+
+function Tipo_De_Comprobante_No()
+{
+    var currentTime = new Date();
+    var year = currentTime.getFullYear()
+    var fecha = $('#MBFechaEmi').val();    
+    var parametros = 
+     {      
+       'tip': 'Diario',
+       'fecha': fecha,                    
+     };
+    $.ajax({
+      data:  {parametros:parametros},
+       url:   '../controlador/contabilidad/incomC.php?num_comprobante=true',
+      type:  'post',
+      // beforeSend: function () {
+      //    $("#num_com").html("");
+      // },
+      success:  function (response) {
+          $("#num_com").html("");
+          $("#num_com").html('Comprobante de Diario No.'+year+' -'+response);
+          // var valor = $("#subcuenta1").html(); 
+      }
+    });
+}
+
