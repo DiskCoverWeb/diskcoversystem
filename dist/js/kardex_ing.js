@@ -641,52 +641,41 @@ function grabar_comprobante()
           url:   '../controlador/contabilidad/incomC.php?generar_comprobante=true',
           type:  'post',
           dataType: 'json',
-            success:  function (response) {
+            success:  function (data) {
                $('#myModal_espera').modal('hide');
-        console.log(response);
-        if(response.respuesta == '3')
-        {
-          Swal.fire('Este documento electronico ya esta autorizado','','error');
+        if(data.respuesta==1)
+      { 
+        Swal.fire({
+          type:'success',
+          title: 'Factura Procesada y Autorizada',
+          confirmButtonText: 'Ok!',
+          allowOutsideClick: false,
+        }).then(function(){
+          var url=  '../../TEMP/'+data.pdf+'.pdf';
+          window.open(url, '_blank'); 
+          location.reload();    
 
-          }else if(response.respuesta == '1')
-          {
-            // Swal.fire('Este documento electronico autorizado','','success');
-             eliminar_ac();
-                Swal.fire({
-                   title: 'Comprobante Generado',
-                   text: "",
-                   type: 'success',
-                   showCancelButton: false,
-                   confirmButtonColor: '#3085d6',
-                   cancelButtonColor: '#d33',
-                   confirmButtonText: 'OK!'
-                 }).then((result) => {
-                   if (result.value==true) { 
-                    var url = location.href; 
-                    location.reload(url+'&reload=1');
-                   }
-                 });
-          
-          }else if(response.respuesta == '2')
-          {
-            Swal.fire('XML devuelto','','info',);
-            descargar_archivos(response.url,response.ar);
+        })
+      }else if(data.respuesta==-1)
+      {
 
-          }
-          else
-          {
-            Swal.fire('Error por: '+response,'','info');
-          }
-
-          if(response==1)
-          {
-             Swal.fire('Retencion ingresada','','success').then(function()
-              {
-                location.reload();
-              });
-             eliminar_todo_asisntoB();
-             
-          }           
+        Swal.fire('XML DEVUELTO:'+data.text,'XML DEVUELTO','error').then(function(){ 
+          var url=  '../../TEMP/'+data.pdf+'.pdf';    window.open(url, '_blank');   
+          tipo_error_sri(data.clave);
+        }); 
+      }else if(data.respuesta==2)
+      {
+        // tipo_error_comprobante(clave)
+        Swal.fire('XML devuelto','','error'); 
+        tipo_error_sri(data.clave);
+      }
+      else if(data.respuesta==4)
+      {
+        Swal.fire('SRI intermitente intente mas tarde','','info');  
+      }else
+      {
+        Swal.fire('XML devuelto por:'+data.text,'','error');  
+      }         
 
           }
         });
@@ -1326,3 +1315,30 @@ function Tipo_De_Comprobante_No()
     });
 }
 
+
+
+  function tipo_error_sri(clave)
+  {
+    var parametros = 
+    {
+      'clave':clave,
+    }
+     $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/punto_ventaC.php?error_sri=true',
+      data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+        
+         console.log(data);
+        $('#myModal_sri_error').modal('show');
+        $('#sri_estado').text(data.estado[0]);
+        $('#sri_codigo').text(data.codigo[0]);
+        $('#sri_fecha').text(data.fecha[0]);
+        $('#sri_mensaje').text(data.mensaje[0]);
+        $('#sri_adicional').text(data.adicional[0]);
+        // $('#doc_xml').attr('href','')
+      }
+    });
+  }

@@ -1,6 +1,7 @@
 <?php 
 include(dirname(__DIR__,2).'/modelo/contabilidad/incomM.php');
 include(dirname(__DIR__,2).'/comprobantes/SRI/autorizar_sri.php');
+date_default_timezone_set('America/Guayaquil'); 
 /**
  * 
  */
@@ -1123,6 +1124,8 @@ class incomC
                   // NumTrans = NumTrans + 1
              $resp = $this->modelo->insertar_ingresos_tabla("Trans_Air",$datosA);
 
+             // print_r($resp);die();
+
           	}
 
           }
@@ -1447,20 +1450,28 @@ class incomC
             $parametros_xml['ruc']=$parametros['ruc'];
             // print_r($Autorizacion_R);
             // exit();
+            // print_r($parametros);die();
             if(strlen($Autorizacion_R) >= 13){
             	$res = $this->SRI_Crear_Clave_Acceso_Retencines($parametros_xml); //function xml
             	// print_r($res);die();
-            	if(!is_null($res))
-            	{
-            	 return $res;
-                }
+				$aut = $this->sri->Clave_acceso($parametros['fecha'],'07',$Serie_R,generaCeros($parametros['Retencion'],9));
+				// if($res==1)
+				// {
+					 $Trans_No = $T_No;
+           			 $this->modelo->BorrarAsientos($Trans_No,true);
+				// }
+				return array('respuesta'=>$res,'pdf'=>'','text'=>$res,'clave'=>$aut);
+            	  
+				
+            	// if(!is_null($res))
+            	// {
+            	//  return $res;
+             //    }
             }
 
 
            // 'Eliminamos Asientos contables
-            $Trans_No = $T_No;
-            $this->modelo->BorrarAsientos($Trans_No,true);
-
+           
             // Control_Procesos Normal, "Grabar Comprobante de: " & C1.TP & " No. " & C1.Numero
             //   if($this->ingresar_trans_Air($num_com,$parametros['tip'])==1){
             //     $resp = generar_comprobantes($parametro_comprobante);
@@ -1477,7 +1488,7 @@ class incomC
             //     echo " no se genero";
             //   }
 
-            return 1;
+            // return 1;
            
 
      }
@@ -1649,17 +1660,78 @@ class incomC
           // print_r($dig);die();
 
           //10062021
-          
+           $aut = $this->sri->Clave_acceso($TFA[0]['Fecha']->format('Y-m-d'),'07',$TFA[0]["Serie_R"],$rete);
+           $TFA[0]["ClaveAcceso"]  = $aut;
+
+           // print_r( $TFA[0]["ClaveAcceso"]);die();
+
+          // $TFA[0]["ClaveAcceso"] = date("dmY", strtotime($TFA[0]['Fecha']->format('Y-m-d')))."07".$_SESSION['INGRESO']['RUC'].$_SESSION['INGRESO']['Ambiente'].$TFA[0]["Serie_R"].$rete."123456781";
+          // $TFA[0]["ClaveAcceso"] = str_replace('.','1', $TFA[0]['ClaveAcceso']);
+
+          // generamos el xmlo de la retencion
+          $xml = $this->sri->generar_xml_retencion($TFA,$datos);
+          $linkSriAutorizacion = $_SESSION['INGRESO']['Web_SRI_Autorizado'];
+ 	      $linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion'];
+	           if($xml==1)
+	           {
+	           	 $firma = $this->sri->firmar_documento(
+	           	 	$aut,
+	           	 	generaCeros($_SESSION['INGRESO']['IDEntidad'],3),
+	           	 	$_SESSION['INGRESO']['item'],
+	           	 	$_SESSION['INGRESO']['Clave_Certificado'],
+	           	 	$_SESSION['INGRESO']['Ruta_Certificado']);
+	           	 // print($firma);die();
+	           	 if($firma==1)
+	           	 {
+	           	 	$validar_autorizado = $this->sri->comprobar_xml_sri(
+	           	 		$aut,
+	           	 		$linkSriAutorizacion);
+	           	 	if($validar_autorizado == -1)
+			   		 {
+			   		 	$enviar_sri = $this->sri->enviar_xml_sri(
+			   		 		$aut,
+			   		 		$linkSriRecepcion);
+			   		 	if($enviar_sri==1)
+			   		 	{
+			   		 		//una vez enviado comprobamos el estado de la factura
+			   		 		$resp =  $this->sri->comprobar_xml_sri($aut,$linkSriAutorizacion);
+			   		 		if($resp==1)
+			   		 		{
+			   		 			$resp = $this->actualizar_datos_CER($aut,$parametros['TP'],$TFA[0]["Serie_R"],$rete,generaCeros($_SESSION['INGRESO']['IDEntidad'],3),$TFA[0]["Autorizacion_R"]);
+			   		 			return  $resp;
+			   		 		}else
+			   		 		{
+			   		 			return $resp;
+			   		 		}
+			   		 		// print_r($resp);die();
+			   		 	}else
+			   		 	{
+			   		 		return $enviar_sri;
+			   		 	}
+
+			   		 }else 
+			   		 {
+			   		 	// $resp = $this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion']);
+			   		 	// RETORNA SI YA ESTA AUTORIZADO O SI FALL LA REVISIO EN EL SRI
+			   			return $validar_autorizado;
+			   		 }
+	           	 }else
+	           	 {
+	           	 	//RETORNA SI FALLA AL FIRMAR EL XML
+	           	 	return $firma;
+	           	 }
+	           }else
+	           {
+	           	//RETORNA SI FALLA EL GENERAR EL XML
+	           	return $xml;
+	           }
 
 
-          $TFA[0]["ClaveAcceso"] = date("dmY", strtotime($TFA[0]['Fecha']->format('Y-m-d')))."07".$_SESSION['INGRESO']['RUC'].$_SESSION['INGRESO']['Ambiente'].$TFA[0]["Serie_R"].$rete."123456781";
-          $TFA[0]["ClaveAcceso"] = str_replace('.','1', $TFA[0]['ClaveAcceso']);
-          $respuesta = $this->sri->generar_xml_retencion($TFA,$datos);
 
            // autorizar sri
 
           // print_r($respuesta);die();
-          $num_res = count($respuesta);
+         /* $num_res = count($respuesta);
           if($num_res>=2)
 	           {
 	           	// print_r($respuesta);die();
@@ -1706,8 +1778,53 @@ class incomC
 	           		$resp = utf8_encode($respuesta[1]);
 	           		return $resp;
 	           	}
-	           }
+	           }*/
         }
+
+     }
+
+
+     function actualizar_datos_CER($autorizacion,$tc,$serie,$retencion,$entidad,$autorizacion_ant)
+     {
+
+     	$res = $this->modelo->actualizar_trans_compras($tc,$retencion,$serie,$autorizacion,$autorizacion_ant);
+     	$res2 = $this->modelo->atualizar_trans_air($tc,$retencion,$serie,$autorizacion,$autorizacion_ant);
+		$url_autorizado =dirname(__DIR__,2).'/comprobantes/entidades/entidad_'.$entidad."/CE".$_SESSION['INGRESO']['item'].'/Autorizados/'.$autorizacion.'.xml';
+		$archivo = fopen($url_autorizado,"rb");
+			if( $archivo != false ) 
+			{			
+				rewind($archivo);   // Volvemos a situar el puntero al principio del archivo
+				$cadena2 = fread($archivo, filesize($url_autorizado));  // Leemos hasta el final del archivo
+				if( $cadena2 == false ){
+					echo "Error al leer el archivo";
+				}
+			}
+			// Cerrar el archivo:
+			fclose($archivo);	
+
+		$res3 = $this->modelo->guardar_documento($autorizacion,$cadena2,$serie,$retencion);	
+			//echo $sql;
+		if($res==1)
+		{
+			if($res2==1)
+			{
+				if($res3==1)
+				{
+					return 1;
+				}else
+				{
+					return -3;
+				}
+			}else
+			{
+				return -2;
+			}
+		}else
+		{
+			return -1;
+		}
+			
+			// return 1;
 
      }
      function ListarAsientoB()

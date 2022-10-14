@@ -1705,27 +1705,28 @@ function generar_xml($cabecera,$detalle)
 function generar_xml_retencion($cabecera,$detalle=false)
 {
 
-	    $entidad=$_SESSION['INGRESO']['item'];
+	    $entidad=$this->generaCeros($_SESSION['INGRESO']['IDEntidad'],3);
 	    $Ambiente = $_SESSION['INGRESO']["Ambiente"];
 	    $ContEspec = '';//Leer_Campo_Empresa("Codigo_Contribuyente_Especial") ojo hay que ver
 	    $Obligado_Conta = $_SESSION["INGRESO"]["Obligado_Conta"];
 	    // ' RETENCIONES COMPRAS
 
 	    $empresa=$_SESSION['INGRESO']['item'];
-	    $Fecha1 = explode("-",$cabecera[0]['Fecha']->format('Y-m-d'));
+	    $ambiente=$_SESSION['INGRESO']["Ambiente"];
+	    $ruc=$_SESSION['INGRESO']['RUC'];
+	   /* $Fecha1 = explode("-",$cabecera[0]['Fecha']->format('Y-m-d'));
 		$fechaem=$Fecha1[2].'/'.$Fecha1[1].'/'.$Fecha1[0];
 	    $fecha = str_replace('/','',$fechaem);
-	    $ruc=$_SESSION['INGRESO']['RUC'];
 	    $tc=$cabecera[0]['TipoComprobante'];
 	    $serie=$cabecera[0]['Serie'];
 	    $numero=$this->generaCeros($cabecera[0]['Factura'], '9');
 	    $emi='1';
 	    $nume='12345678';
-	    $ambiente=$_SESSION['INGRESO']["Ambiente"];
+	    
 	    $codDoc=$cabecera[0]['TipoComprobante'];
 	
-	    $dig=$this->digito_verificador($cabecera[0]['ClaveAcceso']);
-	    $cabecera[0]['ClaveAcceso']=$cabecera[0]['ClaveAcceso'].$dig;
+	    $dig=$this->digito_verificador($cabecera[0]['ClaveAcceso']);*/
+	    $cabecera[0]['ClaveAcceso']=$cabecera[0]['ClaveAcceso'];
 
         //verificamos si existe una carpeta de la entidad si no existe las creamos
 	    $carpeta_entidad = dirname(__DIR__,1)."/entidades/entidad_".$entidad;
@@ -1845,11 +1846,7 @@ function generar_xml_retencion($cabecera,$detalle=false)
 	    $xml_infoCompRetencion = $xml->createElement( "infoCompRetencion");
 	    $xml_fechaEmision = $xml->createElement( "fechaEmision",$cabecera[0]['Fecha']->format('d/m/Y'));
 	    $xml_dirEstablecimiento = $xml->createElement( "dirEstablecimiento",strtoupper($_SESSION['INGRESO']['Direccion']));
-	    if(strlen($ContEspec)>1){
-	    	$xml_contribuyenteEspecial = $xml->createElement( "contribuyenteEspecial",$ContEspec);
-	        $xml_infoCompRetencion->appendChild($xml_contribuyenteEspecial);
-	    }
-
+	    
 	    $xml_obligadoContabilidad = $xml->createElement( "obligadoContabilidad",$_SESSION['INGRESO']['Obligado_Conta']);
 	    switch ($cabecera[0]['TD']) {
 	    	case 'R':
@@ -1867,9 +1864,14 @@ function generar_xml_retencion($cabecera,$detalle=false)
 	    $xml_identificacionSujetoRetenido = $xml->createElement( "identificacionSujetoRetenido",$cabecera[0]['CI_RUC']);
 	    $xml_periodoFiscal = $xml->createElement( "periodoFiscal",$cabecera[0]['Fecha']->format('m/Y'));
 
-
+    
 	    $xml_infoCompRetencion->appendChild($xml_fechaEmision);
 	    $xml_infoCompRetencion->appendChild($xml_dirEstablecimiento);
+	    // ojo con esto de contribuyente	
+	    // if(strlen($ContEspec)>1){
+	    // 	$xml_contribuyenteEspecial = $xml->createElement( "contribuyenteEspecial",$ContEspec);
+	    //     $xml_infoCompRetencion->appendChild($xml_contribuyenteEspecial);
+	    // }
 	    $xml_infoCompRetencion->appendChild($xml_obligadoContabilidad);
 	    $xml_infoCompRetencion->appendChild($xml_tipoIdentificacionSujetoRetenido);
 	    $xml_infoCompRetencion->appendChild($xml_razonSocialSujetoRetenido);
@@ -1887,7 +1889,11 @@ function generar_xml_retencion($cabecera,$detalle=false)
 	    	switch ($detalle[0]['Porc_Bienes']) {
 	    		case '10': $xml_codigoRetencion = $xml->createElement("codigoRetencion",'9');
 	    			break;
+	    		case '20': $xml_codigoRetencion = $xml->createElement("codigoRetencion",'10');
+	    			break;
 	    		case '30':$xml_codigoRetencion = $xml->createElement("codigoRetencion",'1');
+	    			break;
+	    		case '50':$xml_codigoRetencion = $xml->createElement("codigoRetencion",'11');
 	    			break;
 	    		case '70':$xml_codigoRetencion = $xml->createElement("codigoRetencion",'2');
 	    			break;
@@ -1919,14 +1925,19 @@ function generar_xml_retencion($cabecera,$detalle=false)
             $xml_impuestos->appendChild($xml_impuesto);
 
 	    }
+
 	     if($detalle[0]['Porc_Servicios']>0)
 	    {
 	    	$xml_impuesto = $xml->createElement("impuesto");
 	    	$xml_codigo = $xml->createElement("codigo",'2');
-	    	switch ($detalle[0]['Porc_Servicios']) {
-	    		case '10': $xml_codigoRetencion = $xml->createElement("codigoRetencion",'10');
+	    	switch ($detalle[0]['Porc_Servicios']) {	
+	    		case '10': $xml_codigoRetencion = $xml->createElement("codigoRetencion",'9');
+	    			break;
+	    		case '20': $xml_codigoRetencion = $xml->createElement("codigoRetencion",'10');
 	    			break;
 	    		case '30':$xml_codigoRetencion = $xml->createElement("codigoRetencion",'1');
+	    			break;
+	    		case '50':$xml_codigoRetencion = $xml->createElement("codigoRetencion",'11');
 	    			break;
 	    		case '70':$xml_codigoRetencion = $xml->createElement("codigoRetencion",'2');
 	    			break;
@@ -1962,6 +1973,8 @@ function generar_xml_retencion($cabecera,$detalle=false)
 
 			$con = $this->db->conexion();
 
+			// print_r(expression)
+
             // 'RETENCIONES AIR
              $sql = "SELECT * 
                    FROM Trans_Air
@@ -1970,8 +1983,8 @@ function generar_xml_retencion($cabecera,$detalle=false)
                    AND Numero = ".$cabecera[0]['Numero']."
                    AND TP = '".$cabecera[0]['TP']."'
                    AND Tipo_Trans = 'C'
-                   AND EstabRetencion = '".substr($cabecera[0]['Serie'] ,0, 3)."'
-                   AND PtoEmiRetencion = '".substr($cabecera[0]['Serie'], 3, 3)."'
+                   AND EstabRetencion = '".substr($cabecera[0]['Serie_R'] ,0, 3)."'
+                   AND PtoEmiRetencion = '".substr($cabecera[0]['Serie_R'], 3, 3)."'
                    AND SecRetencion = '".$cabecera[0]['Retencion']."'
                    AND AutRetencion = '".$cabecera[0]['Autorizacion_R']."'
                    ORDER BY ID ";
@@ -1989,8 +2002,10 @@ function generar_xml_retencion($cabecera,$detalle=false)
                    	    }
 
                   foreach ($result as $key => $value) {
-                  	if($value['BaseImp']>0)
+                  	// print_r($value);
+                  	if(number_format($value['BaseImp'],2,'.','')>0)
                   	{
+                  		// print_r($result);
                   	  $xml_impuesto = $xml->createElement("impuesto");
                   	  $xml_codigo = $xml->createElement("codigo",'1');
                   	  $xml_codigoRetencion = $xml->createElement("codigoRetencion",$value['CodRet']);
@@ -2013,7 +2028,6 @@ function generar_xml_retencion($cabecera,$detalle=false)
 	    	            $xml->appendChild($xml_impuesto);
 	    	            $xml_impuestos->appendChild($xml_impuesto);
 	    	        }
-
                   }
 
         $xml_inicio->appendChild($xml_impuestos);
@@ -2058,19 +2072,16 @@ function generar_xml_retencion($cabecera,$detalle=false)
         	$xml_inicio->appendChild($xml_infoAdicional);
         	$xml->appendChild($xml_inicio);
 
-     $ruta_G = dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$entidad.'/Generados';
-     // print_r($ruta_G);die();
-	if($archivo = fopen($ruta_G.'/'.$cabecera[0]['ClaveAcceso'].'.xml',"w+b"))
-	  {
-	  	fwrite($archivo,$xml->saveXML());
-	  	 $respuesta =  $this->firmar_documento($cabecera[0]['ClaveAcceso'],$entidad,$empresa,$_SESSION['INGRESO']['Clave_Certificado'],$_SESSION['INGRESO']['Ruta_Certificado']);
-	  	 // print_r($respuesta);die();
-	     return $respuesta;
-	  }else
-	  {
-	  	// print_r($ruta_G);die();
-	  	// return 's';
-	  }
+		     $ruta_G = dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Generados';
+		     // print_r($ruta_G);die();
+			if($archivo = fopen($ruta_G.'/'.$cabecera[0]['ClaveAcceso'].'.xml',"w+b"))
+			  {
+			  	fwrite($archivo,$xml->saveXML());
+			  	return 1;
+			  }else
+			  {
+			  	return -1;
+			  }
 }
 
 
@@ -2136,14 +2147,14 @@ function generar_xml_retencion($cabecera,$detalle=false)
 
    		 $resp = explode('-',$f[0]);
 
-   		 // print_r($resp);die();
-   		 if(count($resp)>0)
+   		 // print_r($f);
+   		 if(count($resp)>1)
    		 {
    		 	//cuando null NO PROCESADO es liquidacion de compras
-	   		 if(isset($resp[1]) && $resp[1]=='FACTURA NO PROCESADO' || isset($resp[1]) && $resp[1]=='LIQUIDACION DE COMPRAS NO PROCESADO')
+	   		 if(isset($resp[1]) && $resp[1]=='FACTURA NO PROCESADO' || isset($resp[1]) && $resp[1]=='LIQUIDACION DE COMPRAS NO PROCESADO' || $resp[1] == 'COMPROBANTE DE RETENCION NO PROCESADO')
 	   		 {
 	   		 	return -1;
-	   		 }else if(isset($resp[1]) && $resp[1]=='FACTURA AUTORIZADO' || isset($resp[1]) && $resp[1]=='LIQUIDACION DE COMPRAS AUTORIZADO')
+	   		 }else if(isset($resp[1]) && $resp[1]=='FACTURA AUTORIZADO' || isset($resp[1]) && $resp[1]=='LIQUIDACION DE COMPRAS AUTORIZADO' || $resp[1] == 'COMPROBANTE DE RETENCION AUTORIZADO')
 	   		 {
 	   		 	return 1;
 	   		 }else

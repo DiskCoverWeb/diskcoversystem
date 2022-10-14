@@ -111,6 +111,7 @@
 
 function cambiarEmpresa()
 {
+	$('#myModal_espera').modal('show');
 	var parametros = $('#form_empresa').serialize();
 	$.ajax({
 		type: "POST",
@@ -126,6 +127,7 @@ function cambiarEmpresa()
 			{
 				Swal.fire('Intente mas tarde','','error');
 			}
+			$('#myModal_espera').modal('hide');
 			
 		}
 	});
@@ -198,12 +200,14 @@ function mindividual()
 
 function cambiarEmpresaMa()
 {
+	$('#myModal_espera').modal('show');
 	var parametros = $('#form_empresa').serialize();
 	$.ajax({
 		type: "POST",
 		 url: '../controlador/empresa/cambioeC.php?guardar_masivo=true',
 		data: parametros,
 		dataType:'json',
+
 		success: function(data)
 		{
 			if(data==1)
@@ -212,7 +216,9 @@ function cambiarEmpresaMa()
 			}else
 			{
 				Swal.fire('Intente mas tarde','','error');
-			}			
+			}	
+
+			$('#myModal_espera').modal('hide');		
 		}
 	});
 }

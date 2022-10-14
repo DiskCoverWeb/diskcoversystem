@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<comprobanteRetencion id="comprobante" version="1.0.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
+    <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
+    <ruc>0702164179001</ruc>
+    <claveAcceso>1410202207070216417900110010030000005361234567813</claveAcceso>
+    <codDoc>07</codDoc>
+    <estab>001</estab>
+    <ptoEmi>003</ptoEmi>
+    <secuencial>000000536</secuencial>
+    <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
+  </infoTributaria>
+  <infoCompRetencion>
+    <fechaEmision>14/10/2022</fechaEmision>
+    <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <tipoIdentificacionSujetoRetenido>04</tipoIdentificacionSujetoRetenido>
+    <razonSocialSujetoRetenido>ABC ABC ABC S.A.</razonSocialSujetoRetenido>
+    <identificacionSujetoRetenido>0990221499001</identificacionSujetoRetenido>
+    <periodoFiscal>10/2022</periodoFiscal>
+  </infoCompRetencion>
+  <impuestos>
+    <impuesto>
+      <codigo>2</codigo>
+      <codigoRetencion>9</codigoRetencion>
+      <baseImponible>4.00</baseImponible>
+      <porcentajeRetener>10</porcentajeRetener>
+      <valorRetenido>0.40</valorRetenido>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>001005000000001</numDocSustento>
+      <fechaEmisionDocSustento>14/10/2022</fechaEmisionDocSustento>
+    </impuesto>
+    <impuesto>
+      <codigo>2</codigo>
+      <codigoRetencion>10</codigoRetencion>
+      <baseImponible>8.00</baseImponible>
+      <porcentajeRetener>20</porcentajeRetener>
+      <valorRetenido>1.60</valorRetenido>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>001005000000001</numDocSustento>
+      <fechaEmisionDocSustento>14/10/2022</fechaEmisionDocSustento>
+    </impuesto>
+    <impuesto>
+      <codigo>1</codigo>
+      <codigoRetencion>303</codigoRetencion>
+      <baseImponible>120.00</baseImponible>
+      <porcentajeRetener>10.00</porcentajeRetener>
+      <valorRetenido>12.0000</valorRetenido>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>001005000000001</numDocSustento>
+      <fechaEmisionDocSustento>14/10/2022</fechaEmisionDocSustento>
+    </impuesto>
+  </impuestos>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">URDESA CENTRAL DATILES S11 Y CALLE PRIMERA</campoAdicional>
+    <campoAdicional nombre="Telefono">000000000</campoAdicional>
+    <campoAdicional nombre="Email">diskcover@msn.com</campoAdicional>
+    <campoAdicional nombre="Comprobante No">CD-010000774</campoAdicional>
+    <campoAdicional nombre="Contribuyente Regimen Microempresas"> </campoAdicional>
+  </infoAdicional>
+</comprobanteRetencion>

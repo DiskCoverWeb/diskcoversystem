@@ -1,98 +1,93 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><factura id="comprobante" version="1.1.0">
+<?xml version="1.0" encoding="UTF-8"?><comprobanteRetencion id="comprobante" version="1.0.0">
   <infoTributaria>
     <ambiente>1</ambiente>
     <tipoEmision>1</tipoEmision>
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
-    <ruc>0702164179009</ruc>
-    <claveAcceso>0710202201070216417900910010050000150881234567813</claveAcceso>
-    <codDoc>01</codDoc>
+    <ruc>0702164179001</ruc>
+    <claveAcceso>1410202207070216417900110010030000005361234567813</claveAcceso>
+    <codDoc>07</codDoc>
     <estab>001</estab>
-    <ptoEmi>005</ptoEmi>
-    <secuencial>000015088</secuencial>
+    <ptoEmi>003</ptoEmi>
+    <secuencial>000000536</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
   </infoTributaria>
-  <infoFactura>
-    <fechaEmision>07/10/2022</fechaEmision>
-    <dirEstablecimiento>Desarrollo para programacion de DiskCover System</dirEstablecimiento>
-    <obligadoContabilidad>SI</obligadoContabilidad>
-    <tipoIdentificacionComprador>04</tipoIdentificacionComprador>
-    <razonSocialComprador>ANDREA MARGARITA PICON</razonSocialComprador>
-    <identificacionComprador>0704039304001</identificacionComprador>
-    <totalSinImpuestos>20.00</totalSinImpuestos>
-    <totalDescuento>0</totalDescuento>
-    <totalConImpuestos>
-      <totalImpuesto>
-        <codigo>2</codigo>
-        <codigoPorcentaje>0</codigoPorcentaje>
-        <descuentoAdicional>0</descuentoAdicional>
-        <baseImponible>20</baseImponible>
-        <valor>0.00</valor>
-      </totalImpuesto>
-    </totalConImpuestos>
-    <propina>0</propina>
-    <importeTotal>20</importeTotal>
-    <moneda>DOLAR</moneda>
-    <pagos>
-      <pago>
-        <formaPago>01</formaPago>
-        <total>20</total>
-      </pago>
-    </pagos>
-  </infoFactura>
-  <detalles>
-    <detalle>
-      <codigoPrincipal>98.40</codigoPrincipal>
-      <descripcion>7 LINEAS</descripcion>
-      <unidadMedida>DOLAR</unidadMedida>
-      <cantidad>1.0000</cantidad>
-      <precioUnitario>20</precioUnitario>
-      <descuento>0</descuento>
-      <precioTotalSinImpuesto>20</precioTotalSinImpuesto>
-      <impuestos>
-        <impuesto>
-          <codigo>2</codigo>
-          <codigoPorcentaje>0</codigoPorcentaje>
-          <tarifa>0</tarifa>
-          <baseImponible>20</baseImponible>
-          <valor>0</valor>
-        </impuesto>
-      </impuestos>
-    </detalle>
-  </detalles>
+  <infoCompRetencion>
+    <fechaEmision>14/10/2022</fechaEmision>
+    <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <tipoIdentificacionSujetoRetenido>04</tipoIdentificacionSujetoRetenido>
+    <razonSocialSujetoRetenido>ABC ABC ABC S.A.</razonSocialSujetoRetenido>
+    <identificacionSujetoRetenido>0990221499001</identificacionSujetoRetenido>
+    <periodoFiscal>10/2022</periodoFiscal>
+  </infoCompRetencion>
+  <impuestos>
+    <impuesto>
+      <codigo>2</codigo>
+      <codigoRetencion>9</codigoRetencion>
+      <baseImponible>4.00</baseImponible>
+      <porcentajeRetener>10</porcentajeRetener>
+      <valorRetenido>0.40</valorRetenido>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>001005000000001</numDocSustento>
+      <fechaEmisionDocSustento>14/10/2022</fechaEmisionDocSustento>
+    </impuesto>
+    <impuesto>
+      <codigo>2</codigo>
+      <codigoRetencion>10</codigoRetencion>
+      <baseImponible>8.00</baseImponible>
+      <porcentajeRetener>20</porcentajeRetener>
+      <valorRetenido>1.60</valorRetenido>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>001005000000001</numDocSustento>
+      <fechaEmisionDocSustento>14/10/2022</fechaEmisionDocSustento>
+    </impuesto>
+    <impuesto>
+      <codigo>1</codigo>
+      <codigoRetencion>303</codigoRetencion>
+      <baseImponible>120.00</baseImponible>
+      <porcentajeRetener>10.00</porcentajeRetener>
+      <valorRetenido>12.0000</valorRetenido>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>001005000000001</numDocSustento>
+      <fechaEmisionDocSustento>14/10/2022</fechaEmisionDocSustento>
+    </impuesto>
+  </impuestos>
   <infoAdicional>
-    <campoAdicional nombre="Direccion">PRESIDENTE CORDOVA 125</campoAdicional>
-    <campoAdicional nombre="Telefono">0983879556</campoAdicional>
-    <campoAdicional nombre="Email">andreapgonzalez89@gmail.com</campoAdicional>
+    <campoAdicional nombre="Direccion">URDESA CENTRAL DATILES S11 Y CALLE PRIMERA</campoAdicional>
+    <campoAdicional nombre="Telefono">000000000</campoAdicional>
+    <campoAdicional nombre="Email">diskcover@msn.com</campoAdicional>
+    <campoAdicional nombre="Comprobante No">CD-010000774</campoAdicional>
+    <campoAdicional nombre="Contribuyente Regimen Microempresas"> </campoAdicional>
   </infoAdicional>
-<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature454800">
-<ds:SignedInfo Id="Signature-SignedInfo585904">
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature338748">
+<ds:SignedInfo Id="Signature-SignedInfo248983">
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-<ds:Reference Id="SignedPropertiesID112348" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature454800-SignedProperties363140">
+<ds:Reference Id="SignedPropertiesID181707" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature338748-SignedProperties152775">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>1VsnKvbnSwlmg8lFhcd+hML4Hps=</ds:DigestValue>
+<ds:DigestValue>xVgjhxMEHsz/ZGn/8CLE0wMp5Gk=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference URI="#Certificate157297">
+<ds:Reference URI="#Certificate11016151">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>uikYZLkaabmBLdP9FbHxH4LIV2E=</ds:DigestValue>
+<ds:DigestValue>msT6Z8/X6TuaUhetWxenn1OBonI=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference Id="Reference-ID-29741" URI="#comprobante">
+<ds:Reference Id="Reference-ID-135067" URI="#comprobante">
 <ds:Transforms>
 <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>B5XfAyCIwFUPQTYz1O8artzRxNk=</ds:DigestValue>
+<ds:DigestValue>4cmOeyNhH7gLed6PxW/n4VMOvrM=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue Id="SignatureValue172230">
-ggNryuqccanmDsAamBPpgYTM/y+Vddn2rcNU2/Voy4iNfN7/HOlhhC75BKyZbQS4fkZ3PwqnwLNO
-i+a6lIpSuGjx44NOa5joc6TPV0A5SUEFAuwP4KUrDSKRcHQfpUxOI7rUoYpTne/p26P7oRLjl+yC
-RvSufnf9ph4WtjzaeDKJwXQlTejR7C5J7hvrRhn0M8Q4kN6idNVM57D4Gc2Wim7yDl9KmhYpSY2T
-Q9Xuf7SEhmSLZN1+RoRGBGbUtTLZ+v4kBw2wq7K6NFX5JvsTVwAehxLcpQEIPHC2WecJmPBn1Qte
-V3zJp3lZTuruE6t6zA3iP04bNpKWMcqD62mZXQ==
+<ds:SignatureValue Id="SignatureValue392483">
+gK9407vHxGMxO8iZ7iPT5LJTmaCUz4M1gNcUq54IuokkplnL8rAvJAZHm8SYdIROUkL7WwSYwfHt
+v9TCsB7TH1+/n1vGSzAGDgbj4gYIbzZnHev7nOemTg2TD2IMxx7wlIw5UPS2KawGBN+fBn3j8xSH
+kvAHVsR6cKE4PLz5Qrprvu4D+IM6nMydyWUYsFjJwbLBTg+fOewUSWfjVUnFsxC9cxWZ+Y67sRDV
+hVjomlK195tDSMaNNlfWDTCSBDMY9pv9Pt8UYWBT+j+8PLTKrkCjwFYHsTFZ0lhJkJ0VIeT9TZMe
+3RPsYP1NQzsImcvv1v5TqWJ3+VbAKDUXxJmbnQ==
 </ds:SignatureValue>
-<ds:KeyInfo Id="Certificate157297">
+<ds:KeyInfo Id="Certificate11016151">
 <ds:X509Data>
 <ds:X509Certificate>
 MIILkjCCCXqgAwIBAgIEXDrIAjANBgkqhkiG9w0BAQsFADCBmTELMAkGA1UEBhMCRUMxHTAbBgNV
@@ -163,4 +158,4 @@ LRuAVSyi58qyAD0Eu1zLMc3KhEUXoxF7aA8P0w==
 </ds:RSAKeyValue>
 </ds:KeyValue>
 </ds:KeyInfo>
-<ds:Object Id="Signature454800-Object216504"><etsi:QualifyingProperties Target="#Signature454800"><etsi:SignedProperties Id="Signature454800-SignedProperties363140"><etsi:SignedSignatureProperties><etsi:SigningTime>2022-10-07T17:49:27-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-29741"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></factura>
+<ds:Object Id="Signature338748-Object911953"><etsi:QualifyingProperties Target="#Signature338748"><etsi:SignedProperties Id="Signature338748-SignedProperties152775"><etsi:SignedSignatureProperties><etsi:SigningTime>2022-10-14T15:36:50-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-135067"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></comprobanteRetencion>

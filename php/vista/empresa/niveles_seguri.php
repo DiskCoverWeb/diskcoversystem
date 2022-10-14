@@ -184,6 +184,8 @@
     		//   $('#myModal_espera').modal('show'); 
     		// },
     		success:  function (response) { 
+            var enti = $('#ddl_entidad').val();
+            $('#lbl_enti').text(enti);
     			 	$('#myModal_espera').modal('hide');				
     				$('#tbl_modulos').html(response.tbl);
             $('#usuarios_tbl').html(response.usuarios);  
@@ -806,7 +808,7 @@ function DoubleScroll(element) {
 </div>
  <div class="row">
 	<div class="col-sm-4">
-    <b>Entidad</b> <br>
+    <b>Entidad:</b><b id="lbl_enti"></b> <br>
     <div class="input-group input-group-sm" id="ddl">
         <select class="form-control" id="ddl_entidad" name="ddl_entidad" onchange="cargar_empresas();"><option value="">Seleccione entidad</option></select>
           <span class="">

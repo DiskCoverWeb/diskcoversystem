@@ -1,98 +1,93 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><factura id="comprobante" version="1.1.0">
+<?xml version="1.0" encoding="UTF-8"?><comprobanteRetencion id="comprobante" version="1.0.0">
   <infoTributaria>
     <ambiente>1</ambiente>
     <tipoEmision>1</tipoEmision>
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
-    <ruc>0702164179009</ruc>
-    <claveAcceso>0710202201070216417900910010050000150891234567819</claveAcceso>
-    <codDoc>01</codDoc>
+    <ruc>0702164179001</ruc>
+    <claveAcceso>1410202207070216417900110010030000005361234567813</claveAcceso>
+    <codDoc>07</codDoc>
     <estab>001</estab>
-    <ptoEmi>005</ptoEmi>
-    <secuencial>000015089</secuencial>
+    <ptoEmi>003</ptoEmi>
+    <secuencial>000000536</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
   </infoTributaria>
-  <infoFactura>
-    <fechaEmision>07/10/2022</fechaEmision>
-    <dirEstablecimiento>Desarrollo para programacion de DiskCover System</dirEstablecimiento>
-    <obligadoContabilidad>SI</obligadoContabilidad>
-    <tipoIdentificacionComprador>06</tipoIdentificacionComprador>
-    <razonSocialComprador>ALEXANDRA LORENA YAGUAL TOMALA</razonSocialComprador>
-    <identificacionComprador>0919934745</identificacionComprador>
-    <totalSinImpuestos>51.79</totalSinImpuestos>
-    <totalDescuento>0</totalDescuento>
-    <totalConImpuestos>
-      <totalImpuesto>
-        <codigo>2</codigo>
-        <codigoPorcentaje>0</codigoPorcentaje>
-        <descuentoAdicional>0</descuentoAdicional>
-        <baseImponible>51.79</baseImponible>
-        <valor>0.00</valor>
-      </totalImpuesto>
-    </totalConImpuestos>
-    <propina>0</propina>
-    <importeTotal>51.79</importeTotal>
-    <moneda>DOLAR</moneda>
-    <pagos>
-      <pago>
-        <formaPago>01</formaPago>
-        <total>51.79</total>
-      </pago>
-    </pagos>
-  </infoFactura>
-  <detalles>
-    <detalle>
-      <codigoPrincipal>01.05.03.08</codigoPrincipal>
-      <descripcion>ABADIA DE SAN QUIRCE CRIANZA RIBERA DEL DUERO</descripcion>
-      <unidadMedida>DOLAR</unidadMedida>
-      <cantidad>1.0000</cantidad>
-      <precioUnitario>51.79</precioUnitario>
-      <descuento>0</descuento>
-      <precioTotalSinImpuesto>51.79</precioTotalSinImpuesto>
-      <impuestos>
-        <impuesto>
-          <codigo>2</codigo>
-          <codigoPorcentaje>0</codigoPorcentaje>
-          <tarifa>0</tarifa>
-          <baseImponible>51.79</baseImponible>
-          <valor>0</valor>
-        </impuesto>
-      </impuestos>
-    </detalle>
-  </detalles>
+  <infoCompRetencion>
+    <fechaEmision>14/10/2022</fechaEmision>
+    <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <tipoIdentificacionSujetoRetenido>04</tipoIdentificacionSujetoRetenido>
+    <razonSocialSujetoRetenido>ABC ABC ABC S.A.</razonSocialSujetoRetenido>
+    <identificacionSujetoRetenido>0990221499001</identificacionSujetoRetenido>
+    <periodoFiscal>10/2022</periodoFiscal>
+  </infoCompRetencion>
+  <impuestos>
+    <impuesto>
+      <codigo>2</codigo>
+      <codigoRetencion>9</codigoRetencion>
+      <baseImponible>4.00</baseImponible>
+      <porcentajeRetener>10</porcentajeRetener>
+      <valorRetenido>0.40</valorRetenido>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>001005000000001</numDocSustento>
+      <fechaEmisionDocSustento>14/10/2022</fechaEmisionDocSustento>
+    </impuesto>
+    <impuesto>
+      <codigo>2</codigo>
+      <codigoRetencion>10</codigoRetencion>
+      <baseImponible>8.00</baseImponible>
+      <porcentajeRetener>20</porcentajeRetener>
+      <valorRetenido>1.60</valorRetenido>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>001005000000001</numDocSustento>
+      <fechaEmisionDocSustento>14/10/2022</fechaEmisionDocSustento>
+    </impuesto>
+    <impuesto>
+      <codigo>1</codigo>
+      <codigoRetencion>303</codigoRetencion>
+      <baseImponible>120.00</baseImponible>
+      <porcentajeRetener>10.00</porcentajeRetener>
+      <valorRetenido>12.0000</valorRetenido>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>001005000000001</numDocSustento>
+      <fechaEmisionDocSustento>14/10/2022</fechaEmisionDocSustento>
+    </impuesto>
+  </impuestos>
   <infoAdicional>
-    <campoAdicional nombre="Direccion">COOP NUEVA PROSPERINA 2</campoAdicional>
-    <campoAdicional nombre="Telefono">0986896858</campoAdicional>
-    <campoAdicional nombre="Email">mallelfortin@bataecuador.com.ec</campoAdicional>
+    <campoAdicional nombre="Direccion">URDESA CENTRAL DATILES S11 Y CALLE PRIMERA</campoAdicional>
+    <campoAdicional nombre="Telefono">000000000</campoAdicional>
+    <campoAdicional nombre="Email">diskcover@msn.com</campoAdicional>
+    <campoAdicional nombre="Comprobante No">CD-010000774</campoAdicional>
+    <campoAdicional nombre="Contribuyente Regimen Microempresas"> </campoAdicional>
   </infoAdicional>
-<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature505748">
-<ds:SignedInfo Id="Signature-SignedInfo713070">
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature338748">
+<ds:SignedInfo Id="Signature-SignedInfo248983">
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-<ds:Reference Id="SignedPropertiesID676042" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature505748-SignedProperties249647">
+<ds:Reference Id="SignedPropertiesID181707" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature338748-SignedProperties152775">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>4F9/GMl19k5t8jAn5nHE/7SyQmg=</ds:DigestValue>
+<ds:DigestValue>xVgjhxMEHsz/ZGn/8CLE0wMp5Gk=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference URI="#Certificate1944760">
+<ds:Reference URI="#Certificate11016151">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>ZltCFPGMInMI25zFnnqfVLmKL2M=</ds:DigestValue>
+<ds:DigestValue>msT6Z8/X6TuaUhetWxenn1OBonI=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference Id="Reference-ID-203338" URI="#comprobante">
+<ds:Reference Id="Reference-ID-135067" URI="#comprobante">
 <ds:Transforms>
 <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>x4vxj/TUtjtUODqsHuFFcfaj2h8=</ds:DigestValue>
+<ds:DigestValue>4cmOeyNhH7gLed6PxW/n4VMOvrM=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue Id="SignatureValue1020406">
-Bx3biWdS+ibEyYPahNIXYps60Z6jQ1Y/H3B2NIYXFtaVedwOb2kXoFUHhc668AMDADJLrP+xK7UA
-IJS8sjSgwXb8IEjsIbkAdP6IXZS3+YuT0rLKeHq/yELRbjVhKW9sSnUTJQ0KRWJQjrFpq2rSigzP
-HmnTVZAo8IzYnYeu9x+EotbsW6poS7TIM9gHQNiciObCw02iXJY1UxErVc51Vv6BwigN7S0Z88Y3
-TwTGGXawixB2XVHYT05cbAou1q1StCJMtcGjmTgGtxeIjuRPFCQfSCdlJ1/GE5VME+I8twtT9i+t
-B8Z3nYOhiELVI4w9vp/FVKeoMZEft139B77dOQ==
+<ds:SignatureValue Id="SignatureValue392483">
+gK9407vHxGMxO8iZ7iPT5LJTmaCUz4M1gNcUq54IuokkplnL8rAvJAZHm8SYdIROUkL7WwSYwfHt
+v9TCsB7TH1+/n1vGSzAGDgbj4gYIbzZnHev7nOemTg2TD2IMxx7wlIw5UPS2KawGBN+fBn3j8xSH
+kvAHVsR6cKE4PLz5Qrprvu4D+IM6nMydyWUYsFjJwbLBTg+fOewUSWfjVUnFsxC9cxWZ+Y67sRDV
+hVjomlK195tDSMaNNlfWDTCSBDMY9pv9Pt8UYWBT+j+8PLTKrkCjwFYHsTFZ0lhJkJ0VIeT9TZMe
+3RPsYP1NQzsImcvv1v5TqWJ3+VbAKDUXxJmbnQ==
 </ds:SignatureValue>
-<ds:KeyInfo Id="Certificate1944760">
+<ds:KeyInfo Id="Certificate11016151">
 <ds:X509Data>
 <ds:X509Certificate>
 MIILkjCCCXqgAwIBAgIEXDrIAjANBgkqhkiG9w0BAQsFADCBmTELMAkGA1UEBhMCRUMxHTAbBgNV
@@ -163,4 +158,4 @@ LRuAVSyi58qyAD0Eu1zLMc3KhEUXoxF7aA8P0w==
 </ds:RSAKeyValue>
 </ds:KeyValue>
 </ds:KeyInfo>
-<ds:Object Id="Signature505748-Object314001"><etsi:QualifyingProperties Target="#Signature505748"><etsi:SignedProperties Id="Signature505748-SignedProperties249647"><etsi:SignedSignatureProperties><etsi:SigningTime>2022-10-07T17:56:18-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-203338"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></factura>
+<ds:Object Id="Signature338748-Object911953"><etsi:QualifyingProperties Target="#Signature338748"><etsi:SignedProperties Id="Signature338748-SignedProperties152775"><etsi:SignedSignatureProperties><etsi:SigningTime>2022-10-14T15:36:50-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-135067"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></comprobanteRetencion>

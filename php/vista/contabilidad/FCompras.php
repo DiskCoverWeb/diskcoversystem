@@ -1,4 +1,5 @@
-<?php 
+<?php
+date_default_timezone_set('America/Guayaquil');  
 $prv ='.';
 $ben = '.';
 $fec = date('Y-m-d');

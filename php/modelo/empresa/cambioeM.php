@@ -82,8 +82,32 @@ class cambioeM
 	    WHERE ID='".$parametros['empresas']."' ";
 
 	    // print_r($sql);die();
-	    $resp = $this->db->String_Sql($sql,'MYSQL');
 
+	    $em = $this->datos_empresa($parametros['empresas']);
+	    if(count($em)>0)
+	    {
+	    	if($em[0]['IP_VPN_RUTA']!='.' && $em[0]['IP_VPN_RUTA']!='')
+	    	{
+	            $conn = $this->db->modulos_sql_server($em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
+	            // print_r($conn);die();
+	            if($conn!=-1)
+	            {
+	            	$fe =  date("Y-m-d",strtotime($parametros['Fecha']."- 1 year"));
+	            	$sql2 = "UPDATE Catalogo_Lineas 
+		    		SET Vencimiento = '".$parametros['Fecha']."',Fecha = '".$fe."' 
+		    		WHERE Item = '".$em[0]['Item']."' AND Periodo = '.'  AND TL <> 0 AND len(Autorizacion)>=13";
+
+		    		// print_r($sql2);die();
+
+	            	$r = $this->db->ejecutar_sql_terceros($sql2,$em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
+
+	            	// print_r($r);die();
+	            }
+	        }
+
+
+	    }
+	    $resp = $this->db->String_Sql($sql,'MYSQL');
 	    return array('res'=>$resp,'empresa'=>$parametros['empresas']);
 	}
 	function mensaje_masivo($parametros)
@@ -114,6 +138,35 @@ class cambioeM
 	{
 		$sql = "UPDATE lista_empresas set Fecha='".$parametros['FechaR']."' , Fecha_VPN='".$parametros['FechaV']."' , Fecha_CE='".$parametros['Fecha']."'  
 		WHERE ID_Empresa='".$parametros['entidad']."'";
+
+		$em = $this->entidad($query=false,$parametros['entidad'],$ciudad=false);
+		if(count($em)>0)
+		{
+			foreach ($em as $key => $value) {
+				if($value['IP_VPN_RUTA']!='.' && $value['IP_VPN_RUTA']!='')
+				{
+					$conn = $this->db->modulos_sql_server($value['IP_VPN_RUTA'],$value['Usuario_DB'],$value['Contrasena_DB'],$value['Base_Datos'],$value['Puerto']);
+		            // print_r($conn);die();
+		            if($conn!=-1)
+		            {
+		            	$fe =  date("Y-m-d",strtotime($parametros['Fecha']."- 1 year"));
+		            	$sql2 = "UPDATE Catalogo_Lineas 
+			    		SET Vencimiento = '".$parametros['Fecha']."',Fecha = '".$fe."' 
+			    		WHERE Item = '".$value['Item']."' AND Periodo = '.'  AND TL <> 0 AND len(Autorizacion)>=13";
+
+			    		// print_r($sql2);die();
+
+		            	$r = $this->db->ejecutar_sql_terceros($sql2,$value['IP_VPN_RUTA'],$value['Usuario_DB'],$value['Contrasena_DB'],$value['Base_Datos'],$value['Puerto']);
+
+		            	// print_r($r);die();
+		            }
+	        	}
+			}
+		}
+
+		// print_r($em);die();
+
+
 		return $this->db->String_Sql($sql,'MYSQL');
 	}
 

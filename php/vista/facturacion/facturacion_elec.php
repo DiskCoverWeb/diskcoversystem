@@ -618,14 +618,15 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
       dataType:'json', 
       success: function(data)
       {
-         $('#myModal_sri_error').modal('show');
+      	
+         console.log(data);
+        $('#myModal_sri_error').modal('show');
         $('#sri_estado').text(data.estado[0]);
 				$('#sri_codigo').text(data.codigo[0]);
 				$('#sri_fecha').text(data.fecha[0]);
 				$('#sri_mensaje').text(data.mensaje[0]);
 				$('#sri_adicional').text(data.adicional[0]);
 				// $('#doc_xml').attr('href','')
-         console.log(data);
       }
     });
   }

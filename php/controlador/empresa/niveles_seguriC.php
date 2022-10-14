@@ -229,14 +229,14 @@ class niveles_seguriC
 		$update = $this->modelo->update_acceso_usuario($niveles,$parametros['usuario'],$parametros['pass'],$parametros['entidad'],$parametros['CI_usuario'],$parametros['email'],$parametros['serie']);
 		if($update == 1)
 		{
-			return $r;
+			return $r['respuesta'];
 		}else
 		{
 			return -1 ;
 		}
 	}else
 	{
-		return $r;
+		return $r['respuesta'];
 	}
 
 

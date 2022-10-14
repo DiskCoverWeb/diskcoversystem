@@ -251,6 +251,7 @@ class niveles_seguriM
 	}
 	function update_acceso_usuario($niveles,$usuario,$clave,$entidad,$CI_NIC,$email,$serie)
 	{
+		// print_r($niveles);die();
 	   $sql = "UPDATE acceso_usuarios SET TODOS = 1, Nivel_1 =".$niveles['1'].", Nivel_2 =".$niveles['2'].", Nivel_3 =".$niveles['3'].", Nivel_4 =".$niveles['4'].",Nivel_5 =".$niveles['5'].", Nivel_6=".$niveles['6'].", Nivel_7=".$niveles['7'].", Supervisor = ".$niveles['super'].", Usuario = '".$usuario."',Clave = '".$clave."',Email='".$email."',Serie_FA='".$serie."',TODOS=1 WHERE CI_NIC = '".$CI_NIC."';";
 	  return $this->db->String_Sql($sql,'MY SQL');
 
@@ -449,6 +450,7 @@ class niveles_seguriM
 		 	     {
 
 		 	     $sql = "INSERT INTO Clientes(T,FA,Codigo,Fecha,Cliente,TD,CI_RUC,FactM,Descuento,RISE,Especial)VALUES('N',0,'".$parametros['ced']."','".date('Y-m-d')."','".$parametros['nom']."','C','".$parametros['ced']."',0,0,0,0);";
+
 		 	     $sql.="INSERT INTO Accesos (TODOS,Clave,Usuario,Codigo,Nombre_Completo,Nivel_1,Nivel_2,Nivel_3,Nivel_4,Nivel_5,Nivel_6,Nivel_7,Supervisor,EmailUsuario,Serie_FA) VALUES (1,'".$parametros['cla']."','".$parametros['usu']."','".$parametros['ced']."','".$parametros['nom']."','".$parametros['n1']."','".$parametros['n2']."','".$parametros['n3']."','".$parametros['n4']."','".$parametros['n5']."','".$parametros['n6']."','".$parametros['n7']."','".$parametros['super']."','".$parametros['email']."','".$parametros['serie']."')";
 		 	     // print_r($sql);die();
 		 	    $stmt = sqlsrv_query($cid2, $sql);
@@ -579,7 +581,7 @@ class niveles_seguriM
 	        }     
 		 }
 
-		 print_r($insertado);die();
+		 // print_r($insertado);die();
 
 		 return array('respuesta'=> $insertado,'mensaje'=>$mensaje);
 		 // if($insertado == true)

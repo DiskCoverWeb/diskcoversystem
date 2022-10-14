@@ -1262,5 +1262,49 @@ class incomM
         }
      }
 
+     function actualizar_trans_compras($tp,$retencion,$serie,$autorizacion,$autAnte)
+     {
+     	$sql ="UPDATE Trans_Compras SET AutRetencion='".$autorizacion."' 
+     		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+			AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+			AND TP = '".$tp."' 
+			AND SecRetencion = '".$retencion."'
+			AND Serie_Retencion = '".$serie."' 
+			AND LEN(AutRetencion) = 13
+			AND AutRetencion = '".$autAnte."'";
+		return $this->conn->String_Sql($sql);
+
+     }
+     function atualizar_trans_air($tp,$retencion,$serie,$autorizacion,$autAnte)
+     {
+     	$sql="UPDATE Trans_Air SET AutRetencion='".$autorizacion."' 
+     	WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+		AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' 
+		AND TP = '".$tp."' 
+		AND EstabRetencion = '".substr($serie,0,3)."'
+		AND PtoEmiRetencion =  '".substr($serie,3,6)."'
+		AND SecRetencion = '".$retencion."'
+		AND LEN(AutRetencion) = 13  
+		AND AutRetencion ='".$autAnte."'";
+		return $this->conn->String_Sql($sql);
+     }
+
+     function guardar_documento($autorizacion,$cadena2,$serie,$retencion)
+     {
+     	$sql="INSERT INTO Trans_Documentos
+		    (Item,Periodo,Clave_Acceso,Documento_Autorizado,TD,Serie,Documento,X)
+			 VALUES
+		    ('".$_SESSION['INGRESO']['item']."' 
+		    ,'".$_SESSION['INGRESO']['periodo']."' 
+		    ,'".$autorizacion."'
+		    ,'".$cadena2."'
+		    ,'RE' 
+		    ,'".$serie."' 
+		    ,".$retencion." 
+			,'.');";
+		return $this->conn->String_Sql($sql);
+
+     }
+
 }
 ?>
