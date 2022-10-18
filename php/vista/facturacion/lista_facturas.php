@@ -461,8 +461,62 @@
        }
         
     });
-
  }
+
+function modal_email_fac(factura,serie,codigoc)
+  {
+    $('#myModal_email').modal('show'); 
+    $('#txt_fac').val(factura);
+    $('#txt_serie').val(serie);
+    $('#txt_codigoc').val(codigoc);
+  }
+
+ function enviar_email()
+  {
+    var to = $('#txt_to').val();
+    var cuerpo = $('#txt_texto').val();
+    var pdf_fac = $('#cbx_factura').prop('checked');
+    var titulo = $('#txt_titulo').val();
+    var factura = $('#txt_fac').val();
+    var serie = $('#txt_serie').val();
+    var codigoc = $('#txt_codigoc').val();
+
+    // var adjunto =  new FormData(document.getElementById("form_img"));
+
+    // console.log()
+// return false;
+    console.log(to);
+    parametros = 
+    {
+        'to':to,
+        'cuerpo':cuerpo,
+        'pdf_fac':pdf_fac,
+        'titulo':titulo,
+        'fac':factura,
+        'serie':serie,
+        'codigoc':codigoc,
+    }
+     $.ajax({
+        data: {parametros:parametros},
+        url:   '../controlador/facturacion/lista_facturasC.php?enviar_email_detalle=true',
+        dataType:'json',      
+        type:  'post',
+        // dataType: 'json',
+        success:  function (response) { 
+            if(response==1)
+            {
+                Swal.fire('Email enviado','','success').then(function(){
+                    $('#myModal_email').modal('hide');
+                })
+            }else
+            {
+                Swal.fire('Email no enviado','Revise que sea un correo valido','info');
+            }
+         
+        }
+      });
+
+  }
 </script>
   <div class="row">
     <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
@@ -583,7 +637,7 @@
           </tr>
         </tbody>
       </table>
-			
+	
 		</div>		
 	</div>
   
@@ -614,3 +668,48 @@
     </div>
   </div>
 </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal_email" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Enviar email</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row"> 
+                    <div class="col-sm-12">
+                        <div id="emails-input" name="emails-input" placeholder="añadir email"></div>
+                        <input type="hidden" name="txt_fac" id="txt_fac">
+                        <input type="hidden" name="txt_serie" id="txt_serie">
+                        <input type="hidden" name="txt_codigoc" id="txt_codigoc">
+                        <input type="hidden" name="txt_to" id="txt_to">
+                    </div>
+                    <div class="col-sm-12">
+                      <input type="" id="txt_titulo" name="txt_titulo" class="form-control form-control-sm" placeholder="titulo de correo" value="comprobantes">
+                    </div>
+                    <div class="col-sm-12">
+                        <textarea class="form-control" rows="3" style="resize:none" placeholder="Texto" id="txt_texto" name="txt_texto"></textarea>
+                    </div>                                                  
+                    <div class="col-sm-3">
+                        <label><input type="checkbox" name="cbx_factura" id="cbx_factura" checked>Enviar Factura</label>
+                    </div>  
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="enviar_email()" >Enviar</button>
+            </div>
+        </div>
+  </div>
+</div>
+
+
+
+
+
+  <script src="../../dist/js/utils.js"></script>
+  <script src="../../dist/js/emails-input.js"></script>
+  <script src="../../dist/js/multiple_email.js"></script>

@@ -695,6 +695,9 @@ class registro_esC
       {
           $r = $this->generar_comprobante_tipo2($parametros);
           return $r;
+      }else
+      {
+        return 1;
       }
     }
   }

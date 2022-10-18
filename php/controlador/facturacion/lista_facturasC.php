@@ -85,6 +85,11 @@ if(isset($_GET['Anular']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->anular($parametros));
 }
+if(isset($_GET['enviar_email_detalle']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->enviar_email_detalle($parametros));
+}
 
 class lista_facturasC
 {
@@ -111,16 +116,36 @@ class lista_facturasC
     	foreach ($tbl as $key => $value) {
     		 $exis = $this->modelo->catalogo_lineas($value['TC'],$value['Serie']);
     		 $autorizar = '';$anular = '';
-    		 if(count($exis)>0 && strlen($value['Autorizacion'])==13 && $parametros['tipo']!='')
-    		 {
-    		 	$autorizar = '<button type="button" class="btn btn-xs btn-primary" onclick="autorizar(\''.$value['TC'].'\',\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['Fecha']->format('Y-m-d').'\')" title="Autorizar"><i class="fa fa-paper-plane"></i></button>';
-    		 }
-    		 if($value['T']!='A' && $parametros['tipo']!='')
-    		 {
-    		 	$anular = '<button type="button" class="btn btn-xs btn-danger" onclick="anular_factura(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')" title="Anular factura"><i class="fa fa-times-circle"></i></button>';
-    		 }
+    		 // if(count($exis)>0 && strlen($value['Autorizacion'])==13 && $parametros['tipo']!='')
+    		 // {
+    		 // 	$autorizar = '<button type="button" class="btn btn-xs btn-primary" title="Autorizar"><i class="fa fa-paper-plane"></i></button>';
+    		 // }
+    		 // if($value['T']!='A' && $parametros['tipo']!='')
+    		 // {
+    		 // 	$anular = '<button type="button" class="btn btn-xs btn-danger"  title="Anular factura"><i class="fa fa-times-circle"></i></button>';
+    		 // }
     		$tr.='<tr>
-            <td><button type="button" class="btn btn-xs btn-default" onclick="Ver_factura(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')" title="Ver factura"><i class="fa fa-eye"></i></button>'.$autorizar.$anular.'</td>
+            <td>
+            <div class="input-group-btn">
+								<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Acciones
+								<span class="fa fa-caret-down"></span></button>
+								<ul class="dropdown-menu">
+								<li><a href="#" onclick="Ver_factura(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')"><i class="fa fa-eye"></i> Ver factura</a></li>';
+								if(count($exis)>0 && strlen($value['Autorizacion'])==13 && $parametros['tipo']!='')
+    		 				{
+									$tr.='<li><a href="#" onclick="autorizar(\''.$value['TC'].'\',\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['Fecha']->format('Y-m-d').'\')" ><i class="fa fa-paper-plane"></i>Autorizar</a></li>';
+								}
+								if($value['T']!='A' && $parametros['tipo']!='')
+    		 				{
+									$tr.='<li><a href="#" onclick="anular_factura(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')"><i class="fa fa-times-circle"></i>Anular factura</a></li>';
+								}
+								$tr.='<li><a href="#" onclick=" modal_email_fac(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')"><i class="fa fa-envelope"></i> Enviar Factura por email</a></li>
+								<li><a href="#"><i class="fa fa-download" onclick="descargar_fac(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')"></i> Descargar Factura</a></li>
+								</ul>
+						</div>
+
+
+            </td>
             <td>'.$value['T'].'</td>
             <td>'.$value['Razon_Social'].'</td>
             <td>'.$value['TC'].'</td>
@@ -409,10 +434,38 @@ class lista_facturasC
     	 $this->modelo->ingresar_update($datos1,$tabla1,$campoWhere1);
 
     	 return $this->modelo->eliminar_abonos($parametros);
+    }
 
+    function enviar_email_detalle($parametros)
+    {
+    	$to_correo = substr($parametros['to'],0,-1);
+    	$cuerpo_correo = $parametros['cuerpo'];
+    	$titulo_correo = $parametros['titulo'];
 
+    	$this->modelo->pdf_factura_descarga($parametros['fac'],$parametros['serie'],$parametros['codigoc']);
 
+    	$archivos[0] =$parametros['serie'].'-'.generaCeros($parametros['fac'],7).'.pdf';
 
+    	$datos = $this->modelo->factura_detalle($parametros['fac'],$parametros['serie'],$parametros['codigoc']);
+    	$rutaA = dirname(__DIR__,2).'/comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3).'/CE'.generaCeros($_SESSION['INGRESO']['item'],3).'/Autorizados/'.$datos[0]['Autorizacion'].'.xml';
+    	if(file_exists($rutaA))
+    	{
+    		$archivos[1] = $datos[0]['Autorizacion'].'.xml';
+    	}else
+    	{
+    		$docs = $this->modelo->trans_documentos($datos[0]['Autorizacion']);
+    		if(count($docs)>0)
+    		{
+
+    			$contenido = $docs[0]['Documento_Autorizado'];
+					$archivo = fopen($rutaA,'a');
+					fputs($archivo,$contenido);
+					fclose($archivo);
+    			$archivos[1] = $datos[0]['Autorizacion'].'.xml';
+    		}
+    	}
+    	return  $this->email->enviar_email($archivos,$to_correo,$cuerpo_correo,$titulo_correo,$HTML=false);
+    	
     }
 
         

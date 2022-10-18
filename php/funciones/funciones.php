@@ -4723,7 +4723,12 @@ function insert_generico($tabla=null,$datos=null) // optimizado pero falta
 					}
 					if($obj->DATA_TYPE=='int')
 					{
+            if($datos[$i]['dato']!='.'){
 						$sql_v=$sql_v."".$datos[$i]['dato'].",";
+            }else
+            {
+            $sql_v=$sql_v."0,";              
+            }
 					}
 					if($obj->DATA_TYPE=='float')
 					{
@@ -4805,7 +4810,7 @@ function insert_generico($tabla=null,$datos=null) // optimizado pero falta
 		$longitud_cad = strlen($sql_v); 
 		$v2 = substr_replace($sql_v,")",$longitud_cad-1,1);
 
-    // print_r($cam2.$v2);die();
+    // print_r($cam2.$v2);//die();
      $res = $conn->String_Sql($cam2.$v2);
      if($res==1)
      {

@@ -523,6 +523,12 @@ function marcar_all(item)
 
 function marcar_acceso(item,modulo)
 {
+  if($('#ddl_usuarios').val()=='' || $('#ddl_usuarios').val()=='.' || $('#ddl_usuarios').val()==null )
+{
+  Swal.fire('Seleccione un usuario','','info');
+  return false;
+}
+console.log($('#ddl_usuarios').val());
   var parametros = 
   {
     'item':item,
@@ -549,6 +555,43 @@ function marcar_acceso(item,modulo)
         }
       }); 
 }
+
+
+function marcar_acceso_todos(entidad,modulo)
+{
+  if($('#ddl_usuarios').val()=='' || $('#ddl_usuarios').val()=='.' || $('#ddl_usuarios').val()==null )
+{
+  Swal.fire('Seleccione un usuario','','info');
+  return false;
+}
+console.log($('#ddl_usuarios').val());
+  var parametros = 
+  {
+    'entidad':entidad,
+    'modulo':modulo,
+    'entidad':$('#ddl_entidad').val(),
+    'usuario':$('#ddl_usuarios').val(),
+    'check':$('#rbl_'+modulo+'_'+item).prop('checked'),
+  }
+    $.ajax({
+        data:  {parametros:parametros},
+        url:   '../controlador/empresa/niveles_seguriC.php?acceso_todos_empresa=true',
+        type:  'post',
+        dataType: 'json',
+        beforeSend: function () { 
+          // $('#myModal_espera').modal('show'); 
+        },
+        success:  function (response) { 
+          if(response == 1)
+           {
+              usuario_empresa();
+              // $('#myModal_espera').modal('hide');      
+            
+           }
+        }
+      }); 
+}
+
 
 function activo(id)
 {

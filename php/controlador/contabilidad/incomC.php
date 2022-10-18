@@ -761,29 +761,29 @@ class incomC
                 $datosC[10]['campo']= "FechaCaducidad"; 
                 $datosC[10]['dato']= $value["FechaCaducidad"]->format('Y-m-d');;
                 $datosC[11]['campo']= "BaseNoObjIVA"; 
-                $datosC[11]['dato']= $value["BaseNoObjIVA"];
+                $datosC[11]['dato']= number_format($value["BaseNoObjIVA"],2,'.','');
                 $datosC[12]['campo']= "BaseImponible"; 
-                $datosC[12]['dato']= $value["BaseImponible"];
+                $datosC[12]['dato']= number_format($value["BaseImponible"],2,'.','');
                 $datosC[13]['campo']= "BaseImpGrav"; 
-                $datosC[13]['dato']= $value["BaseImpGrav"];
+                $datosC[13]['dato']= number_format($value["BaseImpGrav"],2,'.','');
                 $datosC[14]['campo']= "PorcentajeIva"; 
                 $datosC[14]['dato']= $value["PorcentajeIva"];
                 $datosC[15]['campo']= "MontoIva"; 
-                $datosC[15]['dato']= $value["MontoIva"];
+                $datosC[15]['dato']= number_format($value["MontoIva"],2,'.','');
                 $datosC[16]['campo']= "BaseImpIce"; 
-                $datosC[16]['dato']= $value["BaseImpIce"];
+                $datosC[16]['dato']= number_format($value["BaseImpIce"],2,'.','');
                 $datosC[17]['campo']= "PorcentajeIce"; 
                 $datosC[17]['dato']= $value["PorcentajeIce"];
                 $datosC[18]['campo']= "MontoIce"; 
-                $datosC[18]['dato']= $value["MontoIce"];
+                $datosC[18]['dato']= number_format($value["MontoIce"],2,'.','');
                 $datosC[19]['campo']= "MontoIvaBienes"; 
-                $datosC[19]['dato']= $value["MontoIvaBienes"];
+                $datosC[19]['dato']= number_format($value["MontoIvaBienes"],2,'.','');
                 $datosC[20]['campo']= "PorRetBienes"; 
-                $datosC[20]['dato']= $value["PorRetBienes"];
+                $datosC[20]['dato']= number_format($value["PorRetBienes"],2,'.','');
                 $datosC[21]['campo']= "ValorRetBienes"; 
-                $datosC[21]['dato']= $value["ValorRetBienes"];
+                $datosC[21]['dato']= number_format($value["ValorRetBienes"],2,'.','');
                 $datosC[22]['campo']= "MontoIvaServicios"; 
-                $datosC[22]['dato']= $value["MontoIvaServicios"];
+                $datosC[22]['dato']= number_format($value["MontoIvaServicios"],2,'.','');
                 $datosC[23]['campo']= "PorRetServicios"; 
                 $datosC[23]['dato']= $value["PorRetServicios"];
                 $datosC[24]['campo']= "ValorRetServicios"; 
@@ -813,9 +813,9 @@ class incomC
                 $datosC[36]['campo']= "ContratoPartidoPolitico"; 
                 $datosC[36]['dato']= $value["ContratoPartidoPolitico"];
                 $datosC[37]['campo']= "MontoTituloOneroso"; 
-                $datosC[37]['dato']= $value["MontoTituloOneroso"];
+                $datosC[37]['dato']= number_format($value["MontoTituloOneroso"],2,'.','');
                 $datosC[38]['campo']= "MontoTituloGratuito"; 
-                $datosC[38]['dato']= $value["MontoTituloGratuito"];
+                $datosC[38]['dato']= number_format($value["MontoTituloGratuito"],2,'.','');
                 $datosC[39]['campo']= "PagoLocExt"; 
                 $datosC[39]['dato']= $value["PagoLocExt"];
                 $datosC[40]['campo']= "PaisEfecPago"; 
@@ -852,6 +852,8 @@ class incomC
                 // SetAdoUpdate
           	}
           }
+
+          // print_r($resp);die();
 
           // ' RETENCIONES VENTAS
            $rv = $this->modelo->RETENCIONES_VENTAS($T_No);    
@@ -1467,6 +1469,9 @@ class incomC
             	// {
             	//  return $res;
              //    }
+            }else
+            {
+            	return 1;
             }
 
 

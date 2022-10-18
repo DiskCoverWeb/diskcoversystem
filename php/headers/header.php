@@ -104,6 +104,7 @@ include('../controlador/contabilidad/contabilidad_controller.php');
   <link rel="stylesheet" href="../../dist/css/jquery-ui.css">
   <link rel="stylesheet" href="../../dist/css/sweetalert2.min.css">
   <link rel="stylesheet" href="../../dist/css/creados.css">
+  <link rel="stylesheet" href="../../dist/css/email.css" type="text/css">
 
   <!-- bootstrap wysihtml5 - text editor -->
   <link rel="stylesheet" href="../../plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">

@@ -58,6 +58,7 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
                 //$mail->addBCC('bcc@example.com');
 
                 //Attachments
+                // print_r($archivos);die();
                  if($archivos)
                    {
 
@@ -66,11 +67,23 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
                       {                   
                         $mail->AddAttachment(dirname(__DIR__,2).'/TEMP/'.$value);
                       }  
-                      if(file_exists(dirname(__DIR__,2).'/php/comprobantes/entidades/entidad_'.$_SESSION['INGRESO']['IDEntidad'].'/CE'.$_SESSION['INGRESO']['item'].'/Autorizados/'.$value))
+                      if(file_exists(dirname(__DIR__,2).'/php/comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3).'/CE'.generaCeros($_SESSION['INGRESO']['item'],3).'/Autorizados/'.$value))
                       {                   
-                        $mail->AddAttachment(dirname(__DIR__,2).'/php/comprobantes/entidades/entidad_'.$_SESSION['INGRESO']['IDEntidad'].'/CE'.$_SESSION['INGRESO']['item'].'/Generados/'.$value); 
-                        $mail->AddAttachment(dirname(__DIR__,2).'/php/comprobantes/entidades/entidad_'.$_SESSION['INGRESO']['IDEntidad'].'/CE'.$_SESSION['INGRESO']['item'].'/Autorizados/'.$value);
-                      }          
+                        $mail->AddAttachment(dirname(__DIR__,2).'/php/comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3).'/CE'.generaCeros($_SESSION['INGRESO']['item'],3).'/Autorizados/'.$value);                      
+                      }     
+
+                      if(file_exists(dirname(__DIR__,2).'/php/comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3).'/CE'.generaCeros($_SESSION['INGRESO']['item'],3).'/Generados/'.$value))
+                      {                   
+                        $mail->AddAttachment(dirname(__DIR__,2).'/php/comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3).'/CE'.generaCeros($_SESSION['INGRESO']['item'],3).'/Generados/'.$value);                       
+                      }
+
+                       if(file_exists(dirname(__DIR__,2).'/php/comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3).'/CE'.generaCeros($_SESSION['INGRESO']['item'],3).'/Autorizados/'.$value))
+                      {                   
+                       
+                        $mail->AddAttachment(dirname(__DIR__,2).'/php/comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3).'/CE'.generaCeros($_SESSION['INGRESO']['item'],3).'/Autorizados/'.$value);
+                      }     
+
+
                     }         
                   }
 
@@ -92,9 +105,9 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
                 }
                 
             } catch (Exception $e) {
-              // print_r($mail);
-              // print_r($e);
-              // die();
+              print_r($mail);
+              print_r($e);
+              die();
                 return -1;
             }
 	        
