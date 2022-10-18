@@ -517,6 +517,34 @@ function modal_email_fac(factura,serie,codigoc)
       });
 
   }
+
+
+  function descargar_fac(factura,serie,codigoc)
+  {
+    var parametros = 
+    {
+        'fac':factura,
+        'serie':serie,
+        'codigoc':codigoc,
+    }
+     $.ajax({
+        data: {parametros:parametros},
+        url:   '../controlador/facturacion/lista_facturasC.php?descargar_factura=true',
+        dataType:'json',      
+        type:  'post',
+        // dataType: 'json',
+        success:  function (response) { 
+            console.log(response);
+              var link = document.createElement("a");
+              link.download = response;
+              link.href = '../../TEMP/'+response;
+              link.click();
+        
+         
+        }
+      });
+
+  }
 </script>
   <div class="row">
     <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">

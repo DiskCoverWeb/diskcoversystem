@@ -91,6 +91,12 @@ if(isset($_GET['enviar_email_detalle']))
 	echo json_encode($controlador->enviar_email_detalle($parametros));
 }
 
+if(isset($_GET['descargar_factura']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->descargar_factura($parametros));
+}
+
 class lista_facturasC
 {
 	private $modelo;
@@ -140,7 +146,7 @@ class lista_facturasC
 									$tr.='<li><a href="#" onclick="anular_factura(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')"><i class="fa fa-times-circle"></i>Anular factura</a></li>';
 								}
 								$tr.='<li><a href="#" onclick=" modal_email_fac(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')"><i class="fa fa-envelope"></i> Enviar Factura por email</a></li>
-								<li><a href="#"><i class="fa fa-download" onclick="descargar_fac(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')"></i> Descargar Factura</a></li>
+								<li><a href="#" onclick="descargar_fac(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')"><i class="fa fa-download"></i> Descargar Factura</a></li>
 								</ul>
 						</div>
 
@@ -466,6 +472,12 @@ class lista_facturasC
     	}
     	return  $this->email->enviar_email($archivos,$to_correo,$cuerpo_correo,$titulo_correo,$HTML=false);
     	
+    }
+
+    function descargar_factura($parametros)
+    {
+    	$this->modelo->pdf_factura_descarga($parametros['fac'],$parametros['serie'],$parametros['codigoc']);
+       return $parametros['serie'].'-'.generaCeros($parametros['fac'],7).'.pdf';
     }
 
         
