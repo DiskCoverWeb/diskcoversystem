@@ -501,6 +501,13 @@ class punto_ventaC
 	        $FA['CodDoc'] = $parametros['CodDoc'];
 	        $FA['valorBan'] = $parametros['valorBan'];
 	        $FA['TxtEfectivo'] = $parametros['TxtEfectivo'];
+	        if(isset($parametros['tipo_pago']))
+	        {
+	        	$FA['TipoPago'] = $parametros['tipo_pago'];
+	        }else
+	        {
+	        	$FA['TipoPago'] = '01';
+	        }
 
 	        $Moneda_US = False;
 	        $TextoFormaPago = G_PAGOCONT;
@@ -808,7 +815,9 @@ function ProcGrabar_Abono_cero($FA)
         $FA['Autorizacion'] = $TA['Autorizacion'];
         $FA['Factura'] = $Factura_No;
         $sql = "UPDATE Facturas
-          SET Saldo_MN = 0 ";
+          SET Saldo_MN = 0,
+          Tipo_pago ='".$FA['TipoPago']."',
+          Observacion='".$FA['Observacion']."' ";
           if(isset($FA['TxtEfectivo']) && $FA['TxtEfectivo']==0)
           {
           	$sql.=",T = 'P'";
@@ -848,19 +857,23 @@ function ProcGrabar_Abono_cero($FA)
            $clave = $this->sri->Clave_acceso($TA['Fecha'],'01', $TA['Serie'],$Factura_No);
            $TFA['CLAVE'] = $clave;
            $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
-           	$this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false);
+           $this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false);
            if($rep==1)
            {
 	           if($_SESSION['INGRESO']['Impresora_Rodillo']==0)
 	           {
-	           	$this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false,1);
+	           	$ema_pdf = $this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false,1);
+	           	if($ema_pdf==-1)
+	           	{
+	           		return array('respuesta'=>5,'pdf'=>$imp,'clave'=>$clave);
+	           	}
 	           }else
 	           {
 	             $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
 	           }           
            	return array('respuesta'=>$rep,'pdf'=>$imp,'clave'=>$clave);
 
-           }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep,'clave'=>$clave);}
+            }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep,'clave'=>$clave);}
         }
      }else{
      	// print_r($Grafico_PV);die();

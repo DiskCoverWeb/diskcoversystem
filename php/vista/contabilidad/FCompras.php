@@ -372,6 +372,16 @@ function contracuenta()
     // cancelar();
   }
 
+
+  function pdf_retencion()
+  {
+
+    var src ="../controlador/modalesC.php?pdf_retencion=true";
+    window.open(src,'_blank');
+
+  }
+
+
   function datos_pro()
   {
     var ddl = $('#DCProveedor').val();
@@ -383,6 +393,24 @@ function contracuenta()
     $('#DCProveedor').empty()
     $('#DCProveedor').append($('<option>',{value:ddl[4], text:nombre,selected: true }));
   }
+
+
+  function addCliente(){
+    $("#myModal").modal("show");
+    var src ="../vista/modales.php?FCliente=true&proveedor=true";
+     $('#FCliente').attr('src',src).show();
+  }
+  function usar_cliente(nombre,ruc,codigo,email,t='N')
+  {
+      $('#txtemail').val(email);
+      $('#LblNumIdent').val(ruc);
+      $('#codigoCliente').val(codigo);
+      // $('#LblT').val(t);
+      // $('#DCCliente').append('<option value="' +codi+ ' ">' + datos[indice].text + '</option>');
+      $('#DCProveedor').append($('<option>',{value:codigo, text:nombre,selected: true }));
+      $('#myModal').modal('hide');
+  }
+
   </script>
 <div class="row">
     <?php if($tipo2!=''){?>
@@ -429,15 +457,23 @@ function contracuenta()
                   
                   <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button> -->
                   <button class="btn btn-default"  data-dismiss="modal" onclick="limpiar_retencaion();"> <img src="../../img/png/bloqueo.png" ><br> Cancelar</button>
+
+                  <button class="btn btn-default" onclick="pdf_retencion();"> <img src="../../img/png/bloqueo.png" ><br> pdf</button>
+
                 </div>            
             </div>
             <div class="row">
               <div class="col-sm-8">
                 <b>PROVEEDOR</b>
                 <?php if($tipo2!=''){ ?>
-                <select class="form-control input-xs" id="DCProveedor" onchange="datos_pro()">
-                  <option value="">No seleccionado</option>
-                </select>
+                    <!-- <div class="input-group"> -->
+                      <select class="form-control input-xs" id="DCProveedor" onchange="datos_pro()">
+                        <option value="">No seleccionado</option>
+                      </select>
+                    <button type="button" class="btn btn-success btn-xs btn-flat" onclick="addCliente()" title="Nuevo cliente">
+                      <span class="fa fa-user-plus"></span>
+                    </button>   
+                    <!-- </div> -->
                 <?php }else{ ?>
                      <select class="form-control input-xs" id="DCProveedor">
                           <option value="">No seleccionado</option>

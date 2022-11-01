@@ -1,5 +1,6 @@
 
 <script type="text/javascript">
+  var prove = '<?php if(isset($_GET['proveedor'])){echo 1;}?>'
 	$( document ).ready(function() {
 		 provincias();
 	});
@@ -143,7 +144,7 @@
     var rbl = $('#rbl_facturar').prop('checked');
 		 var datos = $('#form_cliente').serialize();
 		  $.ajax({
-       data:  datos+'&rbl='+rbl,
+       data:  datos+'&rbl='+rbl+'&cxp='+prove,
       url:   '../controlador/modalesC.php?guardar_cliente=true',
       type:  'post',
       dataType: 'json',

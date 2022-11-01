@@ -6,6 +6,7 @@
   $(document).ready(function()
   {
    // cargar_modulos();
+   todos_modulos();
    autocmpletar();
    autocmpletar_usuario();
   });
@@ -86,6 +87,28 @@
 
              // console.log(response);
            }
+        }
+      });
+
+  }
+
+   function todos_modulos()
+  {
+
+      var parametros ={
+        'entidad':$('#ddl_entidad').val(),
+        'usuario':$('#ddl_usuarios').val(),
+      }
+      $.ajax({
+         data:  {parametros:parametros},
+        url:   '../controlador/empresa/niveles_seguriC.php?todos_modulos=true',
+        type:  'post',
+        dataType: 'json',
+        // beforeSend: function () { 
+        //   $('#modu').html('<img src="../../img/gif/loader4.1.gif" width="50%">');
+        // },
+        success:  function (response) { 
+         $('#todo_modulos').html(response)
         }
       });
 
@@ -557,21 +580,32 @@ console.log($('#ddl_usuarios').val());
 }
 
 
-function marcar_acceso_todos(entidad,modulo)
+function marcar_acceso_todos(modulo)
 {
-  if($('#ddl_usuarios').val()=='' || $('#ddl_usuarios').val()=='.' || $('#ddl_usuarios').val()==null )
+
+  if($('#ddl_entidad').val()==null || $('#ddl_entidad').val()=='' || $('#ddl_entidad').val()=='.')
 {
-  Swal.fire('Seleccione un usuario','','info');
+  Swal.fire('Seleccione un Entidad','','info');
+  $('#rbl_'+modulo).prop('checked',false);
   return false;
 }
-console.log($('#ddl_usuarios').val());
+  if($('#ddl_usuarios').val()=='' || $('#ddl_usuarios').val()=='.' || $('#ddl_usuarios').val()==null || $('#ddl_usuarios').val()=='0')
+{
+  Swal.fire('Seleccione un usuario valido','','info');
+  $('#rbl_'+modulo).prop('checked',false);
+  return false;
+}
+// console.log($('#ddl_usuarios').val());
+
+  $('#myModal_espera').modal('show');
+var entidad = $('#ddl_entidad').val();
   var parametros = 
   {
     'entidad':entidad,
     'modulo':modulo,
     'entidad':$('#ddl_entidad').val(),
     'usuario':$('#ddl_usuarios').val(),
-    'check':$('#rbl_'+modulo+'_'+item).prop('checked'),
+    'check':$('#rbl_'+modulo).prop('checked'),
   }
     $.ajax({
         data:  {parametros:parametros},
@@ -585,7 +619,8 @@ console.log($('#ddl_usuarios').val());
           if(response == 1)
            {
               usuario_empresa();
-              // $('#myModal_espera').modal('hide');      
+              buscar_permisos();
+              $('#myModal_espera').modal('hide');      
             
            }
         }
@@ -949,6 +984,10 @@ function DoubleScroll(element) {
         </div>
        </div>
        <div class="panel-body">
+        <div class="box" id="todo_modulos" style="overflow-x: hidden; margin-bottom: 0px;">
+          
+        </div>      
+
         <div class="box" id="tbl_modulos" style="overflow-y:scroll; height: 500px; overflow-x: hidden;">
           
         </div>      

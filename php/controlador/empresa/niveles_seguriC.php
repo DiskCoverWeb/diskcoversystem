@@ -105,6 +105,15 @@ if(isset($_GET['enviar_email_masivo']))
 	// echo json_encode($controlador->usuario_empresa($parametros['entidad'],$parametros['usuario']));
 }
 
+if(isset($_GET['todos_modulos']))
+{
+	// $parametros=$_POST['parametros'];
+	echo json_encode($controlador->todos_los_modulos());
+	// echo json_encode($controlador->usuario_empresa($parametros['entidad'],$parametros['usuario']));
+}
+
+
+
 class niveles_seguriC
 {
 	private $modelo;
@@ -326,17 +335,14 @@ class niveles_seguriC
 	// 	return $linea;
 	// }
 
-
-	function empresas($entidad)
+	function todos_los_modulos()
 	{
+
 		$tbl2 = '';
 		$modulos = $this->modelo->modulos_todo();
-		$empresas = $this->modelo->empresas($entidad);
-		$usuarios_reg = $this->modelo->usuarios_registrados_entidad($entidad);
-
-		// print_r($empresas);die();				
 				$tbl2.='<div class="row">
 								<div class=" col-xs-2 col-sm-3 col-lg-3" style="background-color:#e2fbff;">
+								Aplicar a todas las empresas
 									<br>							
 								</div>
             				<div class="col-xs-10 col-lg-9" style="overflow-x:scroll;">
@@ -351,10 +357,44 @@ class niveles_seguriC
 							
 				$tbl2.='<td class="text-center" style="border: solid 1px; width: 50px;">
 								'.$value2['aplicacion'].'</br>
-				            <input type="checkbox" name="rbl_'.$value2['modulo'].'_'.$entidad.'" id="rbl_'.$value2['modulo'].'_'.$entidad.'" title="'.$value2['aplicacion'].'" onclick="marcar_acceso_todos(\''.$entidad.'\',\''.$value2['modulo'].'\')" '.$server.' >
+				            <input type="checkbox" name="rbl_'.$value2['modulo'].'" id="rbl_'.$value2['modulo'].'" title="'.$value2['aplicacion'].'" onclick="marcar_acceso_todos(\''.$value2['modulo'].'\')">
 				        </td>';
 			}
 			$tbl2.='</tr></table></div></div></div>';
+
+			return $tbl2;
+
+	}
+
+
+	function empresas($entidad)
+	{
+		$tbl2 = '';
+		$modulos = $this->modelo->modulos_todo();
+		$empresas = $this->modelo->empresas($entidad);
+		$usuarios_reg = $this->modelo->usuarios_registrados_entidad($entidad);
+
+		// print_r($empresas);die();				
+			// 	$tbl2.='<div class="box">
+			// 					<div class=" col-xs-2 col-sm-3 col-lg-3" style="background-color:#e2fbff;">
+			// 						<br>							
+			// 					</div>
+   //          				<div class="col-xs-10 col-lg-9" style="overflow-x:scroll;">
+   //            					<div class="row"><div class="col-sm-12">';
+
+
+			//    $tbl2.='			    
+			//    <table class="table-sm" style="margin-bottom:0px;font-size:11px;white-space: nowrap;"><tr>';
+			// foreach ($modulos as $key2 => $value2) {	
+			// 	$server = '';
+			// 	// if($value1['dbSQLSERVER']==0){$server = 'Disabled';}
+							
+			// 	$tbl2.='<td class="text-center" style="border: solid 1px; width: 50px;">
+			// 					'.$value2['aplicacion'].'</br>
+			// 	            <input type="checkbox" name="rbl_'.$value2['modulo'].'_'.$entidad.'" id="rbl_'.$value2['modulo'].'_'.$entidad.'" title="'.$value2['aplicacion'].'" onclick="marcar_acceso_todos(\''.$entidad.'\',\''.$value2['modulo'].'\')" '.$server.' >
+			// 	        </td>';
+			// }
+			// $tbl2.='</tr></table></div></div></div>';
 
 		
 
@@ -388,7 +428,7 @@ class niveles_seguriC
 				            <input type="checkbox" name="rbl_'.$value2['modulo'].'_'.$value1['id'].'" id="rbl_'.$value2['modulo'].'_'.$value1['id'].'" title="'.$value2['aplicacion'].'" onclick="marcar_acceso(\''.$value1['id'].'\',\''.$value2['modulo'].'\')" '.$server.' >
 				        </td>';
 			}
-			$tbl2.='</tr></table></div></div></div></div></br>';	
+			$tbl2.='</tr></table></div></div></div></div>';	
 
 			// print_r($tbl2);die();
 		}
@@ -434,6 +474,7 @@ class niveles_seguriC
 			     return $res;
 		    }else
 		    {
+		    	// print_r('elimi');
 			   $resp =   $this->modelo->delete_modulos($parametros['entidad'],$parametros['item'],$parametros['usuario']);
 			    return $resp;
 		    }
@@ -445,6 +486,7 @@ class niveles_seguriC
 				 return $res;
 			}else
 			{
+				// print_r('ss');die();
 			   $resp = 	$this->modelo->delete_modulos($parametros['entidad'],$parametros['item'],$parametros['usuario'],$parametros['modulo']);
 			   return $resp;
 
@@ -454,43 +496,43 @@ class niveles_seguriC
 	}
 
 
-	function accesos_todos_empresa($parametros)
-	{
-		print_r($parametros);die();
-		if($parametros['item']!='' && $parametros['modulo']=='')
-		{
-			if( $parametros['check']=='true')
-			{
-			     $this->modelo->delete_modulos($parametros['entidad'],$parametros['item'],$parametros['usuario']);
-			     $modulos = $this->modelo->modulos_todo();
-			     $m = '';
-			     foreach ($modulos as $key => $value) {
-				     $m.=$value['modulo'].',';
-			     }
+	// function accesos_todos_empresa($parametros)
+	// {
+	// 	// print_r($parametros);die();
+	// 	if($parametros['item']!='' && $parametros['modulo']=='')
+	// 	{
+	// 		if( $parametros['check']=='true')
+	// 		{
+	// 		     $this->modelo->delete_modulos($parametros['entidad'],$parametros['item'],$parametros['usuario']);
+	// 		     $modulos = $this->modelo->modulos_todo();
+	// 		     $m = '';
+	// 		     foreach ($modulos as $key => $value) {
+	// 			     $m.=$value['modulo'].',';
+	// 		     }
 
-			     $m = substr($m,0,-1);
-			     $res = $this->modelo->guardar_acceso_empresa($m,$parametros['entidad'],$parametros['item'],$parametros['usuario']);
-			     return $res;
-		    }else
-		    {
-			   $resp =   $this->modelo->delete_modulos($parametros['entidad'],$parametros['item'],$parametros['usuario']);
-			    return $resp;
-		    }
-		}else
-		{
-			if($parametros['check']=='true')
-			{
-				 $res = $this->modelo->guardar_acceso_empresa($parametros['modulo'],$parametros['entidad'],$parametros['item'],$parametros['usuario']);
-				 return $res;
-			}else
-			{
-			   $resp = 	$this->modelo->delete_modulos($parametros['entidad'],$parametros['item'],$parametros['usuario'],$parametros['modulo']);
-			   return $resp;
+	// 		     $m = substr($m,0,-1);
+	// 		     $res = $this->modelo->guardar_acceso_empresa($m,$parametros['entidad'],$parametros['item'],$parametros['usuario']);
+	// 		     return $res;
+	// 	    }else
+	// 	    {
+	// 		   $resp =   $this->modelo->delete_modulos($parametros['entidad'],$parametros['item'],$parametros['usuario']);
+	// 		    return $resp;
+	// 	    }
+	// 	}else
+	// 	{
+	// 		if($parametros['check']=='true')
+	// 		{
+	// 			 $res = $this->modelo->guardar_acceso_empresa($parametros['modulo'],$parametros['entidad'],$parametros['item'],$parametros['usuario']);
+	// 			 return $res;
+	// 		}else
+	// 		{
+	// 		   $resp = 	$this->modelo->delete_modulos($parametros['entidad'],$parametros['item'],$parametros['usuario'],$parametros['modulo']);
+	// 		   return $resp;
 
-			}
+	// 		}
 
-		}
-	}
+	// 	}
+	// }
 
 
 
@@ -744,6 +786,23 @@ Emails: recepcion@diskcoversystem.com o prisma_net@hotmail.es
         }
      }
      return $new;
+    }
+
+
+    function accesos_todos_empresa($parametros)
+    {
+    	// print_r($parametros);die();
+    	$datos = $this->modelo->empresas($parametros['entidad']);
+
+    	// print_r($datos);die();
+    	foreach ($datos as $key => $value) {
+    		$parametros2 = array('item'=>$value['id'],'modulo'=>$parametros['modulo'],'entidad'=>$parametros['entidad'],'usuario'=>$parametros['usuario'],'check'=>$parametros['check']);
+
+    		// print_r($parametros2);die();
+    		$this->accesos_todos($parametros2);
+    	}
+
+    	return 1;
     }
 
 }

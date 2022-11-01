@@ -1457,12 +1457,15 @@ class incomC
             	$res = $this->SRI_Crear_Clave_Acceso_Retencines($parametros_xml); //function xml
             	// print_r($res);die();
 				$aut = $this->sri->Clave_acceso($parametros['fecha'],'07',$Serie_R,generaCeros($parametros['Retencion'],9));
+				$pdf = 'RE_'.$Serie_R.'-'.generaCeros($parametros['Retencion'],7); 
+				$this->modelo->reporte_retencion($Numero,$TP,$Retencion,$Serie_R,$imp=1);
+
 				// if($res==1)
 				// {
 					 $Trans_No = $T_No;
            			 $this->modelo->BorrarAsientos($Trans_No,true);
 				// }
-				return array('respuesta'=>$res,'pdf'=>'','text'=>$res,'clave'=>$aut);
+				return array('respuesta'=>$res,'pdf'=>$pdf,'text'=>$res,'clave'=>$aut);
             	  
 				
             	// if(!is_null($res))

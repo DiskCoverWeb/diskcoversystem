@@ -2100,7 +2100,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 }
 
 //
- function imprimirDocEle_fac($datos,$detalle,$educativo,$matri=false,$nombre,$formato=null,$nombre_archivo=null,$va=null,$imp1=false,$abonos=false)
+ function imprimirDocEle_fac($datos,$detalle,$educativo,$matri=false,$nombre,$formato=null,$nombre_archivo=null,$va=null,$imp1=false,$abonos=false,$sucursal=array())
 {
 	// print_r($datos);die();
 	$pdf = new PDF('P','pt','LETTER');
@@ -2293,57 +2293,59 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	/******************/
 	/******************/
 	
-	$pdf->cabeceraHorizontal(array(' '),40,70,242,75,20,5);
+	$posy = 75;
+	if($_SESSION['INGRESO']['Nombre_Comercial'] == $_SESSION['INGRESO']['Razon_Social'])
+	{
+		$pdf->SetFont('Arial','B',9);
+		$pdf->SetXY($x, $posy);
+		$pdf->SetWidths(array(240));
+		$arr=array(utf8_decode($_SESSION['INGRESO']['Razon_Social']));//mio
+		$pdf->Row($arr,10);
+
+	}else{
 	//razon social
-	$pdf->SetFont('Arial','B',9);
-	$pdf->SetXY($x, 75);
-	$pdf->SetWidths(array(280));
-	$arr=array(utf8_decode($_SESSION['INGRESO']['Nombre_Comercial']));//mio
-	$pdf->Row($arr,10);
-//print_r($datos);
-	
-	//nombre comercial
-	$pdf->SetFont('Arial','B',9);
-	$pdf->SetXY($x, 87);
-	$pdf->SetWidths(array(280));
-	$arr=array(utf8_decode($_SESSION['INGRESO']['Razon_Social']));//mio
-	$pdf->Row($arr,10);
+		$pdf->SetFont('Arial','B',9);
+		$pdf->SetXY($x, $posy);
+		$pdf->SetWidths(array(240));
+		$arr=array(utf8_decode($_SESSION['INGRESO']['Razon_Social']));//mio
+		$pdf->Row($arr,10);
+		
+		//nombre comercial
+		$pdf->SetFont('Arial','B',9);
+		$pdf->SetXY($x,$posy+12);
+		$pdf->SetWidths(array(240));
+		$arr=array(utf8_decode($_SESSION['INGRESO']['Nombre_Comercial']));//mio
+		$pdf->Row($arr,10);
+	//print_r($datos);
+		
+		
+	}
 	//direccion matriz
+	// print_r($pdf->GetY());die();
+
+	// print_r($_SESSION['INGRESO']);die();
 	$pdf->SetFont('Arial','B',8);
-	$pdf->SetXY($x, 97);
-	$pdf->SetWidths(array(140));
+	$pdf->SetXY($x,$pdf->GetY()+5);
+	$pdf->SetWidths(array(140));	
 	$arr=array('Dirección Matríz');
+
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
-	$pdf->SetXY($x, 107);
+	$pdf->SetXY($x, $pdf->GetY());
 	$pdf->SetWidths(array(280));
 	$arr=array(utf8_decode($_SESSION['INGRESO']['Direccion']));//mio
 	$pdf->Row($arr,10);
-	//direccion sucursal
-	$pdf->SetFont('Arial','B',8);
-	$pdf->SetXY($x, 117);
-	$pdf->SetWidths(array(140));
-	$arr=array('Dirección Sucursal');
-	$pdf->Row($arr,10);
-	$pdf->SetFont('Arial','',7);
-	$pdf->SetXY($x, 127);
-	$pdf->SetWidths(array(280));
-	if($_SESSION['INGRESO']['Sucursal']==0 || $_SESSION['INGRESO']['Sucursal']==1 )
-	{
-	  $arr=array(utf8_decode($_SESSION['INGRESO']['Direccion']));//mio
-	}else
-	{
-	  $arr=array(utf8_decode($_SESSION['INGRESO']['Sucursal']));//mio
-	}
-	$pdf->Row($arr,10);
+	
+
 	//contab
+	$cont = $pdf->GetY();
 	$pdf->SetFont('Arial','B',6);
-	$pdf->SetXY($x, 135);
+	$pdf->SetXY($x, $pdf->GetY());
 	$pdf->SetWidths(array(260));
 	$arr=array('Obligatorio a llevar a contabilidad:');
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
-	$pdf->SetXY(165, 135);
+	$pdf->SetXY(165, $cont);
 	$pdf->SetWidths(array(20));
 	if($_SESSION['INGRESO']['Obligado_Conta'] == 'NO')
 	{
@@ -2353,9 +2355,75 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 		$arr=array('SI');//mio
 	}
 	$pdf->Row($arr,10);
+	$salto_linea = 5;
+	$a = $pdf->GetY()-$posy+$salto_linea;
+	// print_r($a);die();
+	if($a<105 && $a>45)
+	{
+		$salto_linea = 20;
+		$a = $pdf->GetY()-$posy+$salto_linea;
+	}else
+	{
+		$salto_linea = 35;
+		$a = $pdf->GetY()-$posy+$salto_linea;
+	}
+	$conti = $pdf->GetY()+$salto_linea;
+	$pdf->cabeceraHorizontal(array(' '),40,70,242,$a,20,2);
+
+	$su = $pdf->GetY()+$posy-35;
+	if(count($sucursal)>0 && $sucursal[0]['Nombre_Establecimiento']!='.')
+	{
+		if($sucursal[0]['Telefono_Estab']=='.' || $sucursal[0]['Telefono_Estab']=='')
+		{
+			$sucursal[0]['Telefono_Estab'] = '';
+		}
+		if($sucursal[0]['Email_Establecimiento']=='.' || $sucursal[0]['Email_Establecimiento']=='')
+		{
+			$sucursal[0]['Email_Establecimiento'] = '';
+		}
+		if($sucursal[0]['Email_Establecimiento']=='.' || $sucursal[0]['Email_Establecimiento']=='')
+		{
+			$sucursal[0]['Email_Establecimiento'] = '';
+		}
+
+		$pdf->SetFont('Arial','B',6);
+    	$pdf->SetY($conti);
+    	$su = $pdf->GetY()-3;
+    	$pdf->SetXY(41,$su);
+    	$pdf->Cell(525,40,'',1);
+    	$pdf->SetXY(41,$su);
+    	$pdf->SetWidths(array(270,155,100));
+		$arr=array('Nombre de establecimiento: ','RUC de establecimiento: ','Telefono de Establecimeinto: ');//mio
+		$pdf->Row($arr,10);
+
+		$pdf->SetWidths(array(270,155,100));
+		$arr=array($sucursal[0]['Nombre_Establecimiento'],$sucursal[0]['RUC_Establecimiento'],$sucursal[0]['Telefono_Estab']);//mio
+		$pdf->Row($arr,10);
+
+		$pdf->SetWidths(array(347,177));
+		$arr=array('Direccion de establecimiento: ','Email de Establecimeinto: ');//mio
+		$pdf->Row($arr,10);
+		$pdf->SetWidths(array(347,177));
+		$arr=array($sucursal[0]['Direccion_Establecimiento'],$sucursal[0]['Email_Establecimiento']);//mio
+		$pdf->Row($arr,10);
+	}
+
+	$pdf->SetXY(41,$su+43);
+
+    $cuadro2 = $pdf->GetY();
 	$pdf->SetFont('Arial','B',6);
-	$pdf->SetXY(41, 149);
+	$pdf->SetXY(41,$pdf->GetY());
 	//para posicion automatica
+
+  
+	
+
+
+
+
+
+
+	//datos de cliente
 	$y=35;
 	$pdf->SetWidths(array(270,185,80));
 	$arr=array('Razón social/nombres y apellidos:','','Identificación:');//mio
@@ -2387,8 +2455,8 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	{
 		$adi='';
 	}*/
-
-	$arr=array('Dirección: '.$datos[0]['Direccion_RS'],'Fecha emisión: '.$datos[0]['Fecha']->format('Y-m-d'),'Fecha pago: '.$datos[0]['Fecha']->format('Y-m-d'));//mio
+// print_r($educativo);die();
+	$arr=array('Dirección: '.$educativo[0]['Direccion'],'Fecha emisión: '.$datos[0]['Fecha']->format('Y-m-d'),'Fecha pago: '.$datos[0]['Fecha']->format('Y-m-d'));//mio
 	$pdf->Row($arr,10);
 	$pdf->SetWidths(array(270,155,100));
 	if('DOLAR'=='DOLAR')
@@ -2401,7 +2469,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 		//se busca otras monedas
 	}
 	//die();
-	$arr=array('FORMA DE PAGO: '.$datos[0]['Forma_Pago'],
+	$arr=array('FORMA DE PAGO: '.$datos[0]['Tipo_Pago'],
 	'MONTO: '.number_format($datos[0]['Total_MN'],2,'.',',').'  '
 	,'Condición de venta: '.$datos[0]['Fecha_C']->format('Y-m-d'));
 	$pdf->Row($arr,10);
@@ -2413,7 +2481,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	***********************************************
 	*********************************************/
 	//die();
-	$pdf->cabeceraHorizontal(array(' '),40,148,525,($pdf->GetY()-148),20,5);
+	$pdf->cabeceraHorizontal(array(' '),40,$cuadro2,525,($pdf->GetY()-$cuadro2),20,5);
 	//datos factura
 	/******************/
 	/******************/
@@ -2502,6 +2570,14 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 		$pdf->Row($arr,10);
 		$pdf->SetWidths(array(140));
 	    }
+
+	    if(isset($datos[0]['Observacion']) && $datos[0]['Observacion'] != '.' && $datos[0]['Observacion'] != '')
+		{			
+			// print_r('expression');die();
+			$arr=array('Observacion: '.$datos[0]['Observacion']);
+			$pdf->Row($arr,10);
+			$pdf->SetWidths(array(140));
+	    }
     }else
     {
 
@@ -2527,6 +2603,15 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	    if(isset($educativo[0]['EmailR']) && $educativo[0]['EmailR'] != '.' && $educativo[0]['EmailR'] != '')
 		{			
 			$arr=array('Email: '.$educativo[0]['EmailR']);
+			$pdf->Row($arr,10);
+			$pdf->SetWidths(array(140));
+	    }
+
+			// print_r($datos);die();
+	    if(isset($datos[0]['Observacion']) && $datos[0]['Observacion'] != '.' && $datos[0]['Observacion'] != '')
+		{			
+			// print_r('expression');die();
+			$arr=array('Observacion: '.$datos[0]['Observacion']);
 			$pdf->Row($arr,10);
 			$pdf->SetWidths(array(140));
 	    }
@@ -2733,7 +2818,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
 	$pdf->SetXY(528, ($y+1));
-	$formateado = sprintf("%01.2f", $vimp1);
+	$formateado = sprintf("%01.2f", $vimp0);
 	$pdf->Cell(37,10,$formateado,0,0,'R');
 	
 	$y=$y+11;//485
@@ -2777,6 +2862,406 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 		// $pdf->Output('TEMP/'.$nombre.'.pdf','F'); 
 	}
 }
+
+
+ function imprimirDocEle_ret($datos,$detalle,$nombre_archivo=null,$imp1=false)
+{
+	// print_r($datos);die();
+	$pdf = new PDF('P','pt','LETTER');
+	$pdf->AliasNbPages('TPAG');
+	$pdf->SetTopMargin(5);
+	$pdf->SetLeftMargin(41);
+	$pdf->SetRightMargin(20);
+	$pdf->AddPage();
+	$i=0;
+	$agente = '';
+	$rimpe = '';
+	if(isset($datos['Tipo_contribuyente']) && count($datos['Tipo_contribuyente'])>0)
+	{
+		$agente = $datos['Tipo_contribuyente'][0]['Agente_Retencion'];
+		if($datos['Tipo_contribuyente'][0]['RIMPE_E']==1)
+		{
+			$rimpe = 'Regimen RIMPE Emprendedores';
+		}
+	}
+	
+
+
+	$x=41;
+	$pdf->SetXY($x, 20);
+	//$pdf->SetWidths(array(250));
+
+	if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
+	{
+		$logo=$_SESSION['INGRESO']['Logo_Tipo'];
+		//si es jpg
+		$src = __DIR__ . '/../../img/logotipos/'.$logo.'.jpg'; 
+		if (@getimagesize($src)) 
+		{ 
+			$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.jpg',40,22,80,40,'','https://www.discoversystem.com');
+		}
+		//si es gif
+		$src = __DIR__ . '/../../img/logotipos/'.$logo.'.gif'; 
+		if (@getimagesize($src)) 
+		{ 
+			$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.gif',40,22,80,40,'','https://www.discoversystem.com');
+		}
+		//si es png
+		$src = __DIR__ . '/../../img/logotipos/'.$logo.'.png'; 
+		if (@getimagesize($src)) 
+		{ 
+			$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,22,80,40,'','https://www.discoversystem.com');
+		}
+	}
+	else
+	{
+		$logo="diskcover";
+		$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,22,80,40,'','https://www.discoversystem.com');
+	}
+
+	// print_r($datos);die();
+	$tam = 9;
+	$pdf->cabeceraHorizontal(array(' '),285,30,280,115,20,5);
+	$pdf->SetFont('Arial','B',12);
+	$pdf->SetXY(285, 35);
+	$pdf->SetWidths(array(42,100));
+	$arr=array('R.U.C.',$_SESSION['INGRESO']['RUC']);
+	$pdf->Row($arr,10);
+	$pdf->SetXY(425, 35);
+	$pdf->SetWidths(array(140));
+
+	if($rimpe!='')
+	{
+		$pdf->SetTextColor(225,51,51);
+		$pdf->SetFont('Arial','',7);
+		$arr=array($rimpe);//mio
+		$pdf->Row($arr,10);	
+	}
+// /-----------------------------------------------------------------------------
+	if($agente!='' && $agente!='.')
+	{
+		$pdf->SetTextColor(225,51,51);
+		$pdf->SetFont('Arial','',7);
+		$pdf->SetXY(285, 45);
+		$pdf->SetWidths(array(240));
+		$arr=array('Agente de Retención Resolución: '.$agente);
+		$pdf->Row($arr,10);
+	}
+// ----------------------------------------------------------------------------------
+// print_r($datos);die();
+
+	$pdf->SetTextColor(0,0,0);
+	$pdf->SetFont('Arial','',12);
+	$pdf->SetXY(285, 55);
+	$pdf->SetWidths(array(140));
+	$arr=array('Retención No.');
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',11);
+	$pdf->SetXY(425, 55);
+	$pdf->SetTextColor(225,51,51);
+	$pdf->SetWidths(array(140));
+	$ptoEmi = substr( $datos[0]['Serie_Retencion'] ,3,6);
+	$Serie = substr( $datos[0]['Serie_Retencion'] ,0,3);
+	$arr=array($Serie.'-'.$ptoEmi.'-'.generaCeros($datos[0]['SecRetencion'],$tam));//mio
+	$pdf->Row($arr,10);
+	$pdf->SetTextColor(0);
+
+  // print_r($datos);
+	//fecha y hora
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetXY(285, 66);
+	$pdf->SetWidths(array(140));
+	$arr=array('FECHA Y HORA DE AUTORIZACIÓN:');
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',7);
+	$pdf->SetXY(425, 66);
+	$pdf->SetWidths(array(140));
+	$arr=array($datos[0]['Fecha_Aut']->format('Y-m-d  h:m:s'));//mio
+	$pdf->Row($arr,10);
+	//emisión
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetXY(285, 74);
+	$pdf->SetWidths(array(140));
+	$arr=array('EMISIÓN:');
+	$pdf->Row($arr,13);
+	$pdf->SetFont('Arial','',7);
+	$pdf->SetXY(425, 74);
+	$pdf->SetWidths(array(140));
+	$arr=array('NORMAL:');
+	$pdf->Row($arr,10);
+	//ambiente
+
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetXY(285, 85);
+	$pdf->SetWidths(array(140));
+	$arr=array('AMBIENTE: ');
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',7);
+	$pdf->SetXY(425, 85);
+	$pdf->SetWidths(array(140));
+  // print_r($datos);die();
+	$ambiente = substr($datos[0]['AutRetencion'],23,1);
+	// print_r($datos[0]['Autorizacion']);die();
+	//print_r($ambiente);die();
+
+
+	if($ambiente==2)
+	{
+	  $arr=array('PRODUCCION');
+
+	}else if($ambiente==1)
+	{
+	  $arr=array('PRUEBA');
+	}else
+	{
+		 $arr=array('');
+	}
+	$pdf->Row($arr,10);
+
+	
+	//clave de acceso barcode y numero
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetXY(285, 97);
+	$pdf->SetWidths(array(280));
+	$arr=array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
+	$pdf->Row($arr,10);
+	if($datos[0]['Clave_Acceso'] != $datos[0]['AutRetencion'])
+	 {
+	$code=$datos[0]['AutRetencion'];
+	$pdf->SetXY(285,109);
+	$pdf->Code128(290,109,$code,260,20);
+
+	//$pdf->Write(5,'C set: "'.$code.'"');
+	$pdf->SetFont('Arial','',9);
+	$pdf->SetXY(285, 130);
+	$pdf->SetWidths(array(275));
+	//$arr=array($code);
+	//$pdf->Row($arr,10);
+		$pdf->Cell(10,10,$code);
+	 }else if($datos[0]['Clave_Acceso'] > 39)
+	 {	 	
+	    $code=$datos[0]['Clave_Acceso'];
+	    $pdf->SetXY(285,109);
+	    $pdf->Code128(290,109,$code,260,20);
+
+	    //$pdf->Write(5,'C set: "'.$code.'"');
+	    $pdf->SetFont('Arial','',7);
+	    $pdf->SetXY(285, 130);
+	    $pdf->SetWidths(array(275));
+	    //$arr=array($code);
+	    //$pdf->Row($arr,10);
+	    $pdf->Cell(10,10,$code);
+	 }
+	
+	/******************/
+	/******************/
+	/******************/
+	
+	$posy = 75;
+	if($_SESSION['INGRESO']['Nombre_Comercial'] == $_SESSION['INGRESO']['Razon_Social'])
+	{
+		$pdf->SetFont('Arial','B',9);
+		$pdf->SetXY($x, $posy);
+		$pdf->SetWidths(array(280));
+		$arr=array(utf8_decode($_SESSION['INGRESO']['Razon_Social']));//mio
+		$pdf->Row($arr,10);
+
+	}else{
+	//razon social
+		$pdf->SetFont('Arial','B',9);
+		$pdf->SetXY($x, $posy);
+		$pdf->SetWidths(array(280));
+		$arr=array(utf8_decode($_SESSION['INGRESO']['Razon_Social']));//mio
+		$pdf->Row($arr,10);
+		
+		//nombre comercial
+		$pdf->SetFont('Arial','B',9);
+		$pdf->SetXY($x,$posy+12);
+		$pdf->SetWidths(array(280));
+		$arr=array(utf8_decode($_SESSION['INGRESO']['Nombre_Comercial']));//mio
+		$pdf->Row($arr,10);
+	//print_r($datos);
+		
+		
+	}
+
+	//direccion matriz
+	// print_r($pdf->GetY());die();
+
+	// print_r($_SESSION['INGRESO']);die();
+	$pdf->SetFont('Arial','B',8);
+	$pdf->SetXY($x,$pdf->GetY());
+	$pdf->SetWidths(array(140));	
+	$arr=array('Dirección Matríz');
+
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',7);
+	$pdf->SetXY($x, $pdf->GetY());
+	$pdf->SetWidths(array(280));
+	$arr=array(utf8_decode($_SESSION['INGRESO']['Direccion']));//mio
+	$pdf->Row($arr,10);
+	
+	
+	//contab
+	$cont = $pdf->GetY();
+	$pdf->SetFont('Arial','B',6);
+	$pdf->SetXY($x, $pdf->GetY());
+	$pdf->SetWidths(array(260));
+	$arr=array('Obligatorio a llevar a contabilidad:');
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',6);
+	$pdf->SetXY(165, $cont);
+	$pdf->SetWidths(array(20));
+	if($_SESSION['INGRESO']['Obligado_Conta'] == 'NO')
+	{
+		$arr=array('NO');
+	}else
+	{
+		$arr=array('SI');//mio
+	}
+	$pdf->Row($arr,10);
+	$salto_linea = 5;
+	$a = $pdf->GetY()-$posy+$salto_linea;
+	// print_r($a);die();
+	if($a<105 && $a>45)
+	{
+		$salto_linea = 20;
+		$a = $pdf->GetY()-$posy+$salto_linea;
+	}else
+	{
+		$salto_linea = 35;
+		$a = $pdf->GetY()-$posy+$salto_linea;
+	}
+	$conti = $pdf->GetY()+$salto_linea;
+	$pdf->cabeceraHorizontal(array(' '),40,70,242,$a,20,2);
+     
+    $pdf->SetY($conti);
+    $cuadro2 = $pdf->GetY();
+	$pdf->SetFont('Arial','B',6);
+	$pdf->SetXY(41,$pdf->GetY());
+	//para posicion automatica
+	$y=35;
+	$pdf->SetWidths(array(270,185,80));
+	$arr=array('Razón social/nombres y apellidos:','','Identificación:');//mio
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',6);
+	$pdf->SetWidths(array(270,185,80));
+	$arr=array(utf8_decode($datos[0]['Cliente']),'',$datos[0]['CI_RUC']);//mio
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',6);
+	$pdf->SetWidths(array(270,155,100));
+
+	
+// print_r($datos);die();
+	$arr=array('Dirección: '.$datos[0]['Direccion'],'','Periodo Fiscal: '.$datos[0]['Fecha']->format('Y-m-d'));//mio
+	$pdf->Row($arr,10);
+	$pdf->SetWidths(array(270,155,100));
+	if('DOLAR'=='DOLAR')
+	{
+		$mon='USD';
+	}
+	else
+	{
+		$mon='USD';
+		//se busca otras monedas
+	}
+	//die();
+	$arr=array('Documento tipo Factura No: '.$datos[0]['Secuencial'],'','Fecha Emisión: '.$datos[0]['Fecha']->format('Y-m-d'));
+	$pdf->Row($arr,10);
+	$y1=$pdf->GetY();
+	$pdf->cabeceraHorizontal(array(' '),40,$cuadro2,525,($pdf->GetY()-$cuadro2),20,5);
+
+
+
+	//datos factura	
+	$pdf->SetFont('Arial','B',6);
+	$y=$y1+4;
+	//$y=$y+188;//258
+	$pdf->SetXY(41, $y);
+	$pdf->SetWidths(array(60,310,40,40,40,40,40));
+	$arr=array("Impuesto","Descripcion","Codigo Retencion","Base Imponible","Porcentaje Retenido","Valor Retenido");
+	$pdf->Row($arr,10,1);
+	$pdf->SetFont('Arial','',6);
+
+	// print_r($detalle);die();
+	 $valRet=0;  	
+     foreach ($detalle as $key => $value) {
+     	// print_r($value);die();
+           		
+     	 	$pdf->SetWidths(array(60,310,40,40,40,40,40));
+			$pdf->SetAligns(array("L","L","R","R","R","R","R"));
+			//$arr=array($arr1[$i]);
+			$arr=array('',$value['Concepto'],$value['CodRet'],number_format($value['BaseImp'],2,'.',''),$value['Porcentaje'], number_format($value['ValRet'],2,'.',''));
+			$pdf->Row($arr,10,1);   
+		$valRet+=$value['ValRet'];  	
+     }
+
+   	
+	//informacion adicional
+	$pdf->SetFont('Arial','B',6);
+	//echo $pdf->GetY();
+	//die();
+	$y=$pdf->GetY();
+	$pdf->SetXY(41, $y+3);
+	$pdf->SetWidths(array(405));
+	// infofactura
+	$arr=array("INFORMACIÓN ADICIONAL");
+    $pdf->Row($arr,10,1);
+	
+	$y=$pdf->GetY()-5;//377
+	$pdf->SetFont('Arial','',7);
+	//depende del valor de coordenada 'y' del detalle
+	//informacion adicional
+	$pdf->SetXY($x, $y+5);
+	$pdf->Cell(405,20,'','1',1,'Q');
+	
+
+     ///revisa si los datos vienen de detalle matricula o de cliente
+
+	
+	//leyenda final
+	$pdf->SetFont('Arial','',5);
+	$pdf->SetXY($x, $pdf->GetY()+2);
+	$pdf->SetWidths(array(405));
+	$arr=array($_SESSION['INGRESO']['LeyendaFA']);	
+	$pdf->Row($arr,8,1);
+	//subtotales
+	//depende del valor de coordenada 'y' del detalle
+	
+
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetXY(451, $y-5);
+	$pdf->Cell(120,20,'','1',1,'Q');
+	$pdf->SetXY(451, $y);
+	$pdf->SetWidths(array(170));
+	$pdf->SetAligns(array("L"));
+
+	//obtenemos valor
+
+
+
+    // print_r($datos);
+    // print_r($detalle);
+	// die();
+	$arr=array("TOTAL RETENIDO:");
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',7);
+	$pdf->SetXY(530, $y);
+	$formateado = number_format($valRet,2,'.','');
+	$pdf->Cell(37,10,$formateado,0,0,'R');
+
+	if($imp1==false || $imp1==0)
+	{
+		$pdf->Output();
+	}
+	if($imp1==1)
+	{
+		$pdf->Output('F',dirname(__DIR__,2).'/TEMP/RE_'.$datos[0]['Serie_Retencion'].'-'.generaCeros($datos[0]['SecRetencion'],9).'.pdf');
+
+		// $pdf->Output('TEMP/'.$nombre.'.pdf','F'); 
+	}
+}
+
 /* imprimirDocElNC
    $stmt= variable con datos xml $id id del campo $formato formato del reporte aqui es pdf
    $nombre_archivo ruta y nombre del archivo xml generado $va 0 para saber si lee de una variable o 1 un archivo xml

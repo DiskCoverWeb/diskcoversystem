@@ -5,6 +5,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 <script type="text/javascript">
 	eliminar_linea('','');
   $(document).ready(function () {
+  	ddl_DCTipoPago();
     catalogoLineas();
   	autocomplete_cliente(); 
   	autocomplete_producto();
@@ -555,6 +556,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
   		'CodDoc':$('#CodDoc').val(),
   		'valorBan':$('#TextCheque').val(),
   		'electronico':1,
+  		'tipo_pago':$('#DCTipoPago').val(),
   	}
   	$.ajax({
 		type: "POST",
@@ -578,13 +580,38 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 					location.reload();		
 
 				})
-			}else if(data.respuesta==-1)
+			}else if(data.respuesta==5)
+			{	
+				Swal.fire({
+					type:'success',
+				  title: 'Factura Procesada y Autorizada',
+				  text:'No se pudo enviar por email Revise sus credenciales smtp o el correo del cliente',
+				  confirmButtonText: 'Ok!',
+				  allowOutsideClick: false,
+				}).then(function(){
+					var url=  '../../TEMP/'+data.pdf+'.pdf';
+					window.open(url, '_blank'); 
+					location.reload();		
+
+				})
+			}
+			else if(data.respuesta==-1)
 			{
 
-				Swal.fire('XML DEVUELTO:'+data.text,'XML DEVUELTO','error').then(function(){ 
-					var url=  '../../TEMP/'+data.pdf+'.pdf';		window.open(url, '_blank'); 	
-					tipo_error_sri(data.clave);
+				if(data.text==2 || data.text==null)
+				{
+
+				Swal.fire('XML devuleto','XML DEVUELTO','error').then(function(){ 
+					var url=  '../../TEMP/'+data.pdf+'.pdf';		window.open(url, '_blank'); 						
 				});	
+					tipo_error_sri(data.clave);
+				}else
+				{
+
+					Swal.fire(data.text,'XML DEVUELTO','error').then(function(){ 
+						var url=  '../../TEMP/'+data.pdf+'.pdf';		window.open(url, '_blank'); 						
+					});	
+				}
 			}else if(data.respuesta==2)
 			{
 				tipo_error_comprobante(clave)
@@ -725,6 +752,32 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
     
   }
 
+  function mostara_observacion()
+  {
+  	 var op = $('#rbl_obs').prop('checked');
+  	 $('#modal_obs').modal('show');
+  }
+
+  function ddl_DCTipoPago() {
+ 	var opcion = '<option value="">Seleccione tipo de pago</option>';
+	$.ajax({
+      //data:  {parametros:parametros},
+      url:   '../controlador/inventario/registro_esC.php?DCTipoPago=true',
+      type:  'post',
+      dataType: 'json',
+        success:  function (response) {
+        	//console.log(response);
+        	$.each(response,function(i,item){
+        		opcion+='<option value="'+item.Codigo+'">'+item.CTipoPago+'</option>';
+        	})
+        	$('#DCTipoPago').html(opcion);
+          $('#DCTipoPago').val("01");
+                    // console.log(response);
+      }
+    }); 
+}
+
+
 
 </script>
 
@@ -765,6 +818,12 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 			     </div>  
 					<input type="hidden" name="codigoCliente" id="codigoCliente" class="form-control input-xs">	
 					<input type="hidden" name="LblT" id="LblT" class="form-control input-xs">	
+					
+            <b>Tipo de pago</b>
+            <select class="" style="width: 100%;" id="DCTipoPago" onchange="$('#DCTipoPago').css('border','1px solid #d2d6de');">
+              <option value="">Seleccione tipo de pago</option>
+            </select> 
+
 				</div>
 				<div class="col-sm-2">
 					<b>CI/RUC/PAS</b>
@@ -834,7 +893,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 					<input type="text" name="TxtNota" id="TxtNota" class="form-control input-xs">	
 				</div>
 				<div class="col-sm-6">			
-					<b>OBSERVACION</b>
+					<label><input type="checkbox" name="rbl_obs" id="rbl_obs" onclick="mostara_observacion()"> OBSERVACION</label>
 					<input type="text" name="TxtObservacion" id="TxtObservacion" class="form-control input-xs">		
 				</div>
 				<div class="col-sm-2" style="display:none">			
@@ -987,4 +1046,41 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
       </div>
     </div>
   </div>
+
+
+<div class="modal fade" id="modal_obs" role="dialog" data-keyboard="false" data-backdrop="static" tabindex="-1">
+   <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Observaciones</h4>
+      </div>
+      <div class="modal-body">
+      	<b>Tonelaje:</b>
+      	<input type="text" name="TxtTonelaje" id="TxtTonelaje" class="form-control input-xs" value="0">
+      	<b>Año:</b>
+      	<input type="text" name="TxtAnio" id="TxtAnio" class="form-control input-xs" value="0">
+      	<b>Placas:</b>
+      	<input type="text" name="TxtPlacas" id="TxtPlacas" class="form-control input-xs" value="0">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" onclick="add_observaciones()">Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+	function add_observaciones()
+	{
+		var to = $('#TxtTonelaje').val();
+		var an = $('#TxtAnio').val();
+		var pl = $('#TxtPlacas').val();
+		$('#modal_obs').modal('hide');
+		$('#TxtObservacion').val('Tonelaje='+to+', Año='+an+', Placa='+pl);
+	}
+</script>
+
+
 

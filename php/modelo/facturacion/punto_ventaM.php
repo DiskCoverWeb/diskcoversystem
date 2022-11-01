@@ -124,6 +124,21 @@ class punto_ventaM
          $sql.=" ORDER BY Codigo ";
          // print_r($sql);die();
 	  return $this->db->datos($sql);
+  }
+
+  function catalogo_lineas_($TC,$SerieFactura)
+  {
+    $sql = "SELECT *
+         FROM Catalogo_Lineas
+         WHERE Item = '".$_SESSION['INGRESO']['item']."'
+         AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+         AND Fact = '".$TC."'
+         AND Serie = '".$SerieFactura."'
+         AND Autorizacion = '".$_SESSION['INGRESO']['RUC']."'
+         AND TL <> 0
+         ORDER BY Codigo ";
+         // print_r($sql);die();
+    return $this->db->datos($sql);
 
   }
 
@@ -209,6 +224,7 @@ class punto_ventaM
 
   function pdf_factura_elec($cod,$ser,$ci,$nombre,$clave_acceso,$periodo=false,$aprobado=false)
    {
+    $res = 1;
     $sql="SELECT * 
     FROM Facturas 
     WHERE Serie='".$ser."' 
@@ -245,8 +261,6 @@ class punto_ventaM
   AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' "; 
   $detalle_abonos = $this->db->datos($sql2);
 
-
-
   if(count($datos_fac)>0 && count($tipo_con)>0)
   {
     $datos_fac['Tipo_contribuyente'] = $tipo_con;
@@ -271,8 +285,15 @@ class punto_ventaM
       }
       // $to_correo = substr($to_correo, 0,-1);
     }
-    
-    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$nombre,null,'factura',null,null,$imp=1,$detalle_abonos);
+    $sucursal = $this->catalogo_lineas_('FA',$ser);
+    $forma_pago = $this->DCTipoPago($datos_fac[0]['Tipo_Pago']);
+
+    if(count($forma_pago)>0)
+    {
+      $datos_fac[0]['Tipo_Pago'] = $forma_pago[0]['CTipoPago'];
+    }
+
+    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$nombre,null,'factura',null,null,$imp=1,$detalle_abonos,$sucursal);
     if($to_correo!='')
     {
       $titulo_correo = 'comprobantes electronicos';
@@ -280,9 +301,13 @@ class punto_ventaM
       if($aprobado)
       {
         $r = $this->email->enviar_email($archivos,$to_correo,$cuerpo_correo,$titulo_correo,$HTML=false);
+
+        // print_r($r);die();
+        return $r;
       }
       // print_r($r);
     }
+    return $res;
    }
 
   function Cliente($cod,$grupo = false,$query=false,$clave=false)
@@ -330,6 +355,21 @@ class punto_ventaM
             $stmt = $this->db->datos($sql);
             return $stmt;
     }
+
+  function DCTipoPago($cod=false)
+   {
+      $sql = "SELECT Codigo,(Codigo + ' ' + Descripcion) As CTipoPago
+         FROM Tabla_Referenciales_SRI
+         WHERE Tipo_Referencia = 'FORMA DE PAGO' ";
+         if($cod)
+         {
+          $sql.=" AND Codigo = '".$cod."'";
+         }
+         $sql.=" ORDER BY Codigo ";
+         // print_r($sql);die();
+          $stmt = $this->db->datos($sql);
+      return $stmt;
+   }
 
    
 

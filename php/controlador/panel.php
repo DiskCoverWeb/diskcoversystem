@@ -423,6 +423,9 @@ function variables_sistema($EmpresaEntidad,$NombreEmp,$ItemEmp)
 	  $_SESSION['INGRESO']['smtp_Puerto']=$empresa[0]['smtp_Puerto'];
 	  $_SESSION['INGRESO']['smtp_Servidor']=$empresa[0]['smtp_Servidor'];
 
+        $_SESSION['INGRESO']['paginacionIni']=0;
+        $_SESSION['INGRESO']['paginacionFin']=100;
+
 	  if(isset($empresa[0]['smtp_Secure']))
 	    {
 	       $_SESSION['INGRESO']['smtp_Secure']=$empresa[0]['smtp_Secure'];

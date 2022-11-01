@@ -27,7 +27,19 @@ class enviar_emails
 function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$HTML=false)
 {
   $empresaGeneral = $this->Empresa_data();
+
+
+  $res = 1;
+  // print_r($empresaGeneral);die();
+  if($empresaGeneral[0]['Email_CE_Copia']==1)
+  {
+    if($empresaGeneral[0]['Email_Procesos']!='' && $empresaGeneral[0]['Email_Procesos']!='.')
+    {
+      $to_correo.=','.$empresaGeneral[0]['Email_Procesos'];
+    }
+  }
     // print_r($_SESSION['INGRESO']);die();
+  // print_r($to_correo);die();
     $to =explode(',', $to_correo);
      foreach ($to as $key => $value) {
      	if($value!='.' && $value!='')
@@ -101,21 +113,20 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
 
                 if($mail->send())
                 {
-                  return 1;
+                  $res = 1;
                 }
                 
             } catch (Exception $e) {
-              print_r($mail);
-              print_r($e);
-              die();
+              // print_r($mail);
+              // print_r($e);
+              // die();
                 return -1;
             }
 	        
    		}
 	}
 
- 
- 
+      return $res; 
 }
 // funcion de envios enviando datos por correo (funciona)
   function enviar_credenciales($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$correo_apooyo,$nombre,$EMAIL_CONEXION,$EMAIL_CONTRASEÑA,$HTML=false,$empresaGeneral)

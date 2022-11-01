@@ -17,6 +17,10 @@
 
   $(document).ready(function()
   {
+    var inip = '<?php $_SESSION['INGRESO']['paginacionIni'];?>'
+    var finp = '<?php $_SESSION['INGRESO']['paginacionFin'];?>'
+    paginacion(inip,finp,'cargar_registros','panel_pag');
+
     var cartera_usu = '<?php echo $cartera_usu; ?>';
     var cartera_pas = '<?php echo $cartera_pass;?>';
     if(cartera_usu!='')
@@ -203,28 +207,103 @@
       url:   '../controlador/facturacion/lista_facturasC.php?re_autorizar=true',
       type:  'post',
       dataType: 'json',
-       success:  function (response) { 
+       success:  function (data) { 
+
+    // $('#myModal_espera').modal('hide');
+    //    if(response==1)
+    //    {
+    //      Swal.fire('Factura autoizada','','success').then(function()
+    //      {
+    //        cargar_registros();
+    //      })
+    //    }else if(response == 2)
+    //    {
+    //     Swal.fire('Error al enviar el comprobante estado : Revisar la carpeta de rechazados','','error')
+    //    }else if(response==-1)
+    //    {
+    //     Swal.fire('Comprobante devuelto : Revisar la carpeta de rechazados','','error')
+    //    }else{        
+    //     Swal.fire(response,'','error')
+    //    }
 
     $('#myModal_espera').modal('hide');
-       if(response==1)
-       {
-         Swal.fire('Factura autoizada','','success').then(function()
-         {
-           cargar_registros();
-         })
-       }else if(response == 2)
-       {
-        Swal.fire('Error al enviar el comprobante estado : Revisar la carpeta de rechazados','','error')
-       }else if(response==-1)
-       {
-        Swal.fire('Comprobante devuelto : Revisar la carpeta de rechazados','','error')
-       }else{        
-        Swal.fire(response,'','error')
-       }
+      // console.log(data);
+      if(data.respuesta==1)
+      { 
+        Swal.fire({
+          type:'success',
+          title: 'Factura Procesada y Autorizada',
+          confirmButtonText: 'Ok!',
+          allowOutsideClick: false,
+        }).then(function(){
+          // var url=  '../../TEMP/'+data.pdf+'.pdf';
+          // window.open(url, '_blank'); 
+          // location.reload();    
+
+        })
+      }else if(data.respuesta==-1)
+      {
+        if(data.text==2 || data.text==null)
+          {
+
+          Swal.fire('XML devuleto','XML DEVUELTO','error').then(function(){ 
+            // var url=  '../../TEMP/'+data.pdf+'.pdf';    window.open(url, '_blank');             
+          }); 
+            tipo_error_sri(data.clave);
+          }else
+          {
+
+            Swal.fire(data.text,'XML DEVUELTO','error').then(function(){ 
+              // var url=  '../../TEMP/'+data.pdf+'.pdf';    window.open(url, '_blank');             
+            }); 
+          }
+      }else if(data.respuesta==2)
+      {
+        tipo_error_comprobante(clave)
+        Swal.fire('XML devuelto','','error'); 
+        tipo_error_sri(data.clave);
+      }
+      else if(data.respuesta==4)
+      {
+        Swal.fire('SRI intermitente intente mas tarde','','info');  
+      }else
+      {
+        Swal.fire('XML devuelto por:'+data.text,'','error');  
+      }
+
+
       }
     });
     
   }
+
+
+  function tipo_error_sri(clave)
+  {
+    var parametros = 
+    {
+      'clave':clave,
+    }
+     $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/punto_ventaC.php?error_sri=true',
+      data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+        
+         console.log(data);
+        $('#myModal_sri_error').modal('show');
+        $('#sri_estado').text(data.estado[0]);
+        $('#sri_codigo').text(data.codigo[0]);
+        $('#sri_fecha').text(data.fecha[0]);
+        $('#sri_mensaje').text(data.mensaje[0]);
+        $('#sri_adicional').text(data.adicional[0]);
+        // $('#doc_xml').attr('href','')
+      }
+    });
+  }
+
 
     function reporte_pdf()
     {  var cli = $('#ddl_cliente').val();
@@ -463,16 +542,29 @@
     });
  }
 
-function modal_email_fac(factura,serie,codigoc)
+function modal_email_fac(factura,serie,codigoc,emails)
   {
     $('#myModal_email').modal('show'); 
     $('#txt_fac').val(factura);
     $('#txt_serie').val(serie);
     $('#txt_codigoc').val(codigoc);
+
+    var to = emails.substring(0,emails.length-1);
+    var ema = to.split(',');
+    var t = ''
+    ema.forEach(function(item,i)
+    {
+      t+='<div class="emails emails-input"><span role="email-chip" class="email-chip"><span>'+item+'</span><a href="#" class="remove">×</a></span><input type="text" role="emails-input" placeholder="añadir email ...">       </div>';
+       console.log(item);
+    })
+   $('#emails-input').html(t)
+   $('#txt_to').val(emails);
+
   }
 
  function enviar_email()
   {
+     $('#myModal_espera').modal('show');
     var to = $('#txt_to').val();
     var cuerpo = $('#txt_texto').val();
     var pdf_fac = $('#cbx_factura').prop('checked');
@@ -503,6 +595,7 @@ function modal_email_fac(factura,serie,codigoc)
         type:  'post',
         // dataType: 'json',
         success:  function (response) { 
+           $('#myModal_espera').modal('hide');
             if(response==1)
             {
                 Swal.fire('Email enviado','','success').then(function(){
@@ -513,6 +606,13 @@ function modal_email_fac(factura,serie,codigoc)
                 Swal.fire('Email no enviado','Revise que sea un correo valido','info');
             }
          
+        }, 
+        error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');
+            // $('#lbl_mensaje').text(xhr.statusText);
+            // alert(xhr.statusText);
+            // alert(textStatus);
+            // alert(error);
         }
       });
 
@@ -541,6 +641,36 @@ function modal_email_fac(factura,serie,codigoc)
               link.click();
         
          
+        }
+      });
+
+  }
+
+  function descargar_xml(xml)
+  {
+    var parametros = 
+    {
+        'xml':xml,
+    }
+     $.ajax({
+        data: {parametros:parametros},
+        url:   '../controlador/facturacion/lista_facturasC.php?descargar_xml=true',
+        dataType:'json',      
+        type:  'post',
+        // dataType: 'json',
+        success:  function (response) { 
+          if(response!='-1')
+          {
+            console.log(response);
+              var link = document.createElement("a");
+              link.download = response.xml;
+              link.href ='../../php/'+response.ruta;
+              link.click();
+              console.log(link.href)
+          }else
+          {
+            Swal.fire('No se encontro el xml','','info');
+          }
         }
       });
 
@@ -624,7 +754,10 @@ function modal_email_fac(factura,serie,codigoc)
     <div class="col-sm-12">
       <h2 style="margin-top: 0px;">Listado de facturas</h2>
     </div>
-		<div  class="col-sm-12" style="overflow-x: scroll;">    
+    <div class="col-sm-12" id="panel_pag">
+      
+    </div>
+		<div  class="col-sm-12" style="overflow-x: scroll;height: 500px;">    
       <table class="table text-sm" style=" white-space: nowrap;">
         <thead>
           <th></th>

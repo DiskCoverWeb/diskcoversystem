@@ -231,6 +231,7 @@ class niveles_seguriM
 	  		if(count($conn_sql)>0)
 	  		{
 	  			$conn = $this->db->modulos_sql_server($conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	  			// print_r($conn);
 	  			if($conn!=-1)
 	  			{
 	  				$sql = "INSERT INTO Acceso_Empresa (Modulo,Item,Codigo,X) VALUES ".$valor_sql;
@@ -272,6 +273,7 @@ class niveles_seguriM
 			 $sql.=" AND Modulo='".$modulo."'";
 			 $sql2.=" AND Modulo='".$modulo."'";
 		}
+		// print_r($sql);die();
 		$r =  $this->db->String_Sql($sql,'MY SQL');
 
 		$conn_sql = $this->empresas_datos($entidad,$empresas);
@@ -282,7 +284,7 @@ class niveles_seguriM
   			{  				
   				// print_r($sql2);die();
   				$re = $this->db->ejecutar_sql_terceros($sql2,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
-  				print_r($re);die();
+  				// print_r($re);die();
   			}
   			
   		}

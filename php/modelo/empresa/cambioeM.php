@@ -97,9 +97,12 @@ class cambioeM
 		    		SET Vencimiento = '".$parametros['Fecha']."',Fecha = '".$fe."' 
 		    		WHERE Item = '".$em[0]['Item']."' AND Periodo = '.'  AND TL <> 0 AND len(Autorizacion)>=13";
 
-		    		// print_r($sql2);die();
+		    		$sql3 = "UPDATE Empresas SET Fecha_CE = '".$parametros['Fecha']."' WHERE Item='".$em[0]['Item']."'";
+
+		    		// print_r($sql3);
 
 	            	$r = $this->db->ejecutar_sql_terceros($sql2,$em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
+	            	$r = $this->db->ejecutar_sql_terceros($sql3,$em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
 
 	            	// print_r($r);die();
 	            }
@@ -140,6 +143,7 @@ class cambioeM
 		WHERE ID_Empresa='".$parametros['entidad']."'";
 
 		$em = $this->entidad($query=false,$parametros['entidad'],$ciudad=false);
+		// print_r($em);die();
 		if(count($em)>0)
 		{
 			foreach ($em as $key => $value) {
@@ -155,8 +159,13 @@ class cambioeM
 			    		WHERE Item = '".$value['Item']."' AND Periodo = '.'  AND TL <> 0 AND len(Autorizacion)>=13";
 
 			    		// print_r($sql2);die();
+			    		$sql3 = "UPDATE Empresas SET Fecha_CE = '".$parametros['Fecha']."' WHERE Item='".$value['Item']."'";
 
-		            	$r = $this->db->ejecutar_sql_terceros($sql2,$value['IP_VPN_RUTA'],$value['Usuario_DB'],$value['Contrasena_DB'],$value['Base_Datos'],$value['Puerto']);
+		    		// print_r($sql3);
+
+	            	    $r = $this->db->ejecutar_sql_terceros($sql2,$value['IP_VPN_RUTA'],$value['Usuario_DB'],$value['Contrasena_DB'],$value['Base_Datos'],$value['Puerto']);
+
+		            	$r = $this->db->ejecutar_sql_terceros($sql3,$value['IP_VPN_RUTA'],$value['Usuario_DB'],$value['Contrasena_DB'],$value['Base_Datos'],$value['Puerto']);
 
 		            	// print_r($r);die();
 		            }

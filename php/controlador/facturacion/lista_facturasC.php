@@ -97,6 +97,12 @@ if(isset($_GET['descargar_factura']))
 	echo json_encode($controlador->descargar_factura($parametros));
 }
 
+if(isset($_GET['descargar_xml']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->descargar_xml($parametros));
+}
+
 class lista_facturasC
 {
 	private $modelo;
@@ -122,6 +128,23 @@ class lista_facturasC
     	foreach ($tbl as $key => $value) {
     		 $exis = $this->modelo->catalogo_lineas($value['TC'],$value['Serie']);
     		 $autorizar = '';$anular = '';
+    		 $cli_data = $this->modelo->Cliente($value['CodigoC']);
+    		 $email = '';
+    		 if(count($cli_data)>0)
+    		 {
+    		 	 if($cli_data[0]['Email']!='.' && $cli_data[0]['Email']!='')
+    		 	 {
+    		 	 	 $email.=$cli_data[0]['Email'].',';
+    		 	 }
+    		 	 if($cli_data[0]['EmailR']!='.' && $cli_data[0]['EmailR']!='')
+    		 	 {
+    		 	 	 $email.=$cli_data[0]['EmailR'].',';
+    		 	 }
+    		 	 if($cli_data[0]['Email2']!='.' && $cli_data[0]['Email2']!='')
+    		 	 {
+    		 	 	 $email.=$cli_data[0]['Email2'].',';
+    		 	 }
+    		 }
     		 // if(count($exis)>0 && strlen($value['Autorizacion'])==13 && $parametros['tipo']!='')
     		 // {
     		 // 	$autorizar = '<button type="button" class="btn btn-xs btn-primary" title="Autorizar"><i class="fa fa-paper-plane"></i></button>';
@@ -145,8 +168,13 @@ class lista_facturasC
     		 				{
 									$tr.='<li><a href="#" onclick="anular_factura(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')"><i class="fa fa-times-circle"></i>Anular factura</a></li>';
 								}
-								$tr.='<li><a href="#" onclick=" modal_email_fac(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')"><i class="fa fa-envelope"></i> Enviar Factura por email</a></li>
-								<li><a href="#" onclick="descargar_fac(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')"><i class="fa fa-download"></i> Descargar Factura</a></li>
+								$tr.='<li><a href="#" onclick=" modal_email_fac(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\',\''.$email.'\')"><i class="fa fa-envelope"></i> Enviar Factura por email</a></li>
+								<li><a href="#" onclick="descargar_fac(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')"><i class="fa fa-download"></i> Descargar Factura</a></li>';
+								if(strlen($value['Autorizacion'])>13)
+								{
+								 $tr.='<li><a href="#" onclick="descargar_xml(\''.$value['Autorizacion'].'\')"><i class="fa fa-download"></i> Descargar XML</a></li>';
+								}
+								 $tr.='
 								</ul>
 						</div>
 
@@ -170,7 +198,7 @@ class lista_facturasC
           </tr>';
     	}
 
-    	// print_r($tbl);die();
+    	// print_r($tr);die();
 
     	return $tr;
     }
@@ -199,6 +227,7 @@ class lista_facturasC
     	// print_r($parametros);die();
     	$codigo = $parametros['ddl_cliente'];
     	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['ddl_periodo']);
+    	// print_r($tbl);die();
 
   // 	    $desde = str_replace('-','',$parametros['txt_desde']);
 		// $hasta = str_replace('-','',$parametros['txt_hasta']);
@@ -226,7 +255,7 @@ class lista_facturasC
 		$tablaHTML[0]['borde'] =$borde;
 		$tablaHTML[0]['estilo'] ='b';
 
-		$datos = $tbl['datos'];
+		$datos = $tbl;
 		
 		foreach ($datos as $key => $value) {			
 
@@ -388,6 +417,7 @@ class lista_facturasC
 
     function autorizar($parametros)
     {
+    	// print_r($parametros);die();
     	// $datos[0]['campo'] = 'Autorizacion';
     	// $datos[0]['dato'] = $_SESSION['INGRESO']['RUC'];
     	
@@ -403,8 +433,15 @@ class lista_facturasC
     	// $campoWhere[4]['valor'] = $parametros['FacturaNo'];
 
     	 // $this->modelo->ingresar_update($datos,'Facturas',$campoWhere);
-    	$res = $this->sri->Autorizar_factura_o_liquidacion($parametros);
-    	return $res;
+    	$rep= $this->sri->Autorizar_factura_o_liquidacion($parametros);
+    	$clave = $this->sri->Clave_acceso($parametros['Fecha'],'01', $parametros['serie'],$parametros['FacturaNo']);
+       $imp = '';
+       if($rep==1)
+       {
+       		return array('respuesta'=>$rep,'pdf'=>$imp);
+       }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep,'clave'=>$clave);}
+
+    	// return $res;
     }
 
     function anular($parametros)
@@ -459,6 +496,74 @@ class lista_facturasC
     		$archivos[1] = $datos[0]['Autorizacion'].'.xml';
     	}else
     	{
+    		// crea las carpetas si no existen
+      $carpeta_entidad = dirname(__DIR__,2).'/comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3);
+      $empresa = generaCeros($_SESSION['INGRESO']['item'],3);
+	    $carpeta_autorizados = "";		  
+        $carpeta_generados = "";
+        $carpeta_firmados = "";
+        $carpeta_no_autori = "";
+		if(file_exists($carpeta_entidad))
+		{
+			$carpeta_comprobantes = $carpeta_entidad.'/CE'.$empresa;
+			if(file_exists($carpeta_comprobantes))
+			{
+			  $carpeta_autorizados = $carpeta_comprobantes."/Autorizados";		  
+			  $carpeta_generados = $carpeta_comprobantes."/Generados";
+			  $carpeta_firmados = $carpeta_comprobantes."/Firmados";
+			  $carpeta_no_autori = $carpeta_comprobantes."/No_autorizados";
+			  $carpeta_rechazados = $carpeta_comprobantes."/Rechazados";
+			  $carpeta_rechazados = $carpeta_comprobantes."/Enviados";
+
+				if(!file_exists($carpeta_autorizados))
+				{
+					mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
+				}
+				if(!file_exists($carpeta_generados))
+				{
+					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777);
+				}
+				if(!file_exists($carpeta_firmados))
+				{
+					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
+				}
+				if(!file_exists($carpeta_no_autori))
+				{
+					 mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777);
+				}
+				if(!file_exists($carpeta_rechazados))
+				{
+					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777);
+				}
+				if(!file_exists($carpeta_rechazados))
+				{
+					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777);
+				}
+			}else
+			{
+				mkdir($carpeta_entidad.'/CE'.$empresa, 0777);
+				mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
+			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777);
+			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
+			    mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777);
+			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777);
+			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777);
+			}
+		}else
+		{
+			   mkdir($carpeta_entidad, 0777);
+			   mkdir($carpeta_entidad.'/CE'.$empresa, 0777);
+			   mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
+			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777);
+			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
+			   mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777);	  
+			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777);  
+			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777);
+		}
+
+
+
+
     		$docs = $this->modelo->trans_documentos($datos[0]['Autorizacion']);
     		if(count($docs)>0)
     		{
@@ -470,6 +575,20 @@ class lista_facturasC
     			$archivos[1] = $datos[0]['Autorizacion'].'.xml';
     		}
     	}
+    	$cuerpo_correo = '
+Este correo electronico fue generado automaticamente a usted desde El Sistema Financiero Contable DiskCover System, porque figura como correo electronico alternativo de '.$_SESSION['INGRESO']['Razon_Social'].'. Nosotros respetamos su privacidad y solamente se utiliza este medio para mantenerlo informado sobre nuestras ofertas, promociones y comunicados. No compartimos, publicamos o vendemos su informacion personal fuera de nuestra empresa. Este mensaje fue procesado por un funcionario que forma parte de la Institucion.
+
+Por la atencion que se de al presente quedo de usted.
+
+Atentamente,
+
+ '.$_SESSION['INGRESO']['Razon_Social'].'
+
+Esta direccion de correo electronico no admite respuestas. En caso de requerir atencion personalizada por parte de un asesor de Servicio al Cliente de VACA PRIETO WALTER JALIL, podra solicitar ayuda mediante los canales oficiales que detallamos a continuación: Telefonos: 026052430 /  Correo: infosistema@diskcoversystem.com.
+
+www.diskcoversystem.com
+QUITO - ECUADOR';
+
     	return  $this->email->enviar_email($archivos,$to_correo,$cuerpo_correo,$titulo_correo,$HTML=false);
     	
     }
@@ -478,6 +597,102 @@ class lista_facturasC
     {
     	$this->modelo->pdf_factura_descarga($parametros['fac'],$parametros['serie'],$parametros['codigoc']);
        return $parametros['serie'].'-'.generaCeros($parametros['fac'],7).'.pdf';
+    }
+
+    function descargar_xml($parametros)
+    {
+    	$rutaA = dirname(__DIR__,2).'/comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3).'/CE'.generaCeros($_SESSION['INGRESO']['item'],3).'/Autorizados/'.$parametros['xml'].'.xml';
+
+    	$rutaB = 'comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3).'/CE'.generaCeros($_SESSION['INGRESO']['item'],3).'/Autorizados/'.$parametros['xml'].'.xml';
+    	if(file_exists($rutaA))
+    	{
+    		return array('ruta'=>$rutaB,'xml'=>$parametros['xml'].'.xml');
+    	}else
+    	{
+    		// crea las carpetas si no existen
+      $carpeta_entidad = dirname(__DIR__,2).'/comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3);
+      $empresa = generaCeros($_SESSION['INGRESO']['item'],3);
+	    $carpeta_autorizados = "";		  
+        $carpeta_generados = "";
+        $carpeta_firmados = "";
+        $carpeta_no_autori = "";
+		if(file_exists($carpeta_entidad))
+		{
+			$carpeta_comprobantes = $carpeta_entidad.'/CE'.$empresa;
+			if(file_exists($carpeta_comprobantes))
+			{
+			  $carpeta_autorizados = $carpeta_comprobantes."/Autorizados";		  
+			  $carpeta_generados = $carpeta_comprobantes."/Generados";
+			  $carpeta_firmados = $carpeta_comprobantes."/Firmados";
+			  $carpeta_no_autori = $carpeta_comprobantes."/No_autorizados";
+			  $carpeta_rechazados = $carpeta_comprobantes."/Rechazados";
+			  $carpeta_rechazados = $carpeta_comprobantes."/Enviados";
+
+				if(!file_exists($carpeta_autorizados))
+				{
+					mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
+				}
+				if(!file_exists($carpeta_generados))
+				{
+					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777);
+				}
+				if(!file_exists($carpeta_firmados))
+				{
+					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
+				}
+				if(!file_exists($carpeta_no_autori))
+				{
+					 mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777);
+				}
+				if(!file_exists($carpeta_rechazados))
+				{
+					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777);
+				}
+				if(!file_exists($carpeta_rechazados))
+				{
+					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777);
+				}
+			}else
+			{
+				mkdir($carpeta_entidad.'/CE'.$empresa, 0777);
+				mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
+			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777);
+			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
+			    mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777);
+			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777);
+			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777);
+			}
+		}else
+		{
+			   mkdir($carpeta_entidad, 0777);
+			   mkdir($carpeta_entidad.'/CE'.$empresa, 0777);
+			   mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
+			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777);
+			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
+			   mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777);	  
+			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777);  
+			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777);
+		}
+
+
+
+
+
+    		$docs = $this->modelo->trans_documentos($parametros['xml']);
+    		if(count($docs)>0)
+    		{
+
+
+    			$contenido = $docs[0]['Documento_Autorizado'];
+					$archivo = fopen($rutaA,'a');
+					fputs($archivo,$contenido);
+					fclose($archivo);
+    			return array('ruta'=>$rutaB,'xml'=>$parametros['xml'].'.xml');
+    		}else
+    		{
+    			return -1;
+    		}
+    	}
     }
 
         

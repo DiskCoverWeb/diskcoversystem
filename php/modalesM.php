@@ -34,6 +34,7 @@ class modalesM
 		return $datos;
 
 	}
+
 	
 }
 ?>

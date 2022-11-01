@@ -97,47 +97,22 @@ class lista_facturasM
 			// si el codigo es T se refiere a todos
 		   $sql.=" AND CodigoC ='".$codigo."'";
 		} 
-		 $sql.="AND CodigoC <> ''
-		AND Item = '".$_SESSION['INGRESO']['item']."'";
-       // if($periodo && $periodo!='.')
-       // {
+		 $sql.="AND Item = '".$_SESSION['INGRESO']['item']."'";
+        if($periodo && $periodo!='.')
+        {
        	 $sql.= " AND Fecha BETWEEN '".$desde."' AND '".$hasta."'";
-       // }else
+        }//else
        // {
        // 	 $sql.= " AND Periodo BETWEEN   '01-01-".$_SESSION['INGRESO']['periodo']."' AND '31-12-".$_SESSION['INGRESO']['periodo']."' ";
        // }
 
-       $sql.="ORDER BY Fecha DESC"; 
+       $sql.="ORDER BY ID DESC"; 
+	$sql.=" OFFSET ".$_SESSION['INGRESO']['paginacionIni']." ROWS FETCH NEXT ".$_SESSION['INGRESO']['paginacionFin']." ROWS ONLY;";   
 
-      // print_r($sql);die();
-		  $stmt = sqlsrv_query($cid, $sql);
-	   if( $stmt === false)  
-	   {  
-		 echo "Error en consulta PA.\n";  
-		 return '';
-		 die( print_r( sqlsrv_errors(), true));  
-	   }
-// print_r($sql);die();
-	   $datos = array();	
-	   while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
-	   {
-		$datos[] = $row;
-		//echo $row[0];
-	   }
+	// print_r($sql);die();    
+	return $this->db->datos($sql);
 
-
-
-      
-       // $botones[0] = array('boton'=>'Ver factura','icono'=>'<i class="fa fa-eye"></i>', 'tipo'=>'default', 'id'=>'Factura,Serie,CodigoC');
-       // $botones[1] = array('boton'=>'Generar PDF','icono'=>'<i class="fa fa-file-pdf-o"></i>', 'tipo'=>'primary', 'id'=>'ID');
-       // // $botones[2] = array('boton'=>'Generar EXCEL','icono'=>'<i class="fa fa-file-excel-o"></i>', 'tipo'=>'info', 'id'=>'ID');
-
-       //  $tbl = grilla_generica_new($sql,'Facturas',false,$titulo=false,$botones,$check=false,$imagen=false,1,1,1,400);
-       //  print_r($tbl);die();
-       // // $tabla = grilla_generica($stmt,null,NULL,'1','2,4,clave');
-       // return array('datos'=>$datos,'tbl'=>$tbl);
-
-       return $datos;
+       // return $datos;
    }
 
    function pdf_factura($cod,$ser,$ci,$periodo=false)
@@ -171,6 +146,19 @@ class lista_facturasM
 
 	$sql2 = "SELECT * FROM lista_tipo_contribuyente WHERE RUC = '".$_SESSION['INGRESO']['RUC']."'";
 	$tipo_con = $this->db->datos($sql2, 'MYSQL');
+
+	$sucursal = $this->catalogo_lineas('FA',$ser);
+	$forma_pago = $this->DCTipoPago($datos_fac[0]['Tipo_Pago']);
+	if(count($forma_pago)>0)
+	{
+		$datos_fac[0]['Tipo_Pago'] = $forma_pago[0]['CTipoPago'];
+	}
+
+	// print_r($forma_pago);die();
+	if(count($sucursal)==0)
+	{
+		$sucursal = array();
+	}
 	if(count($datos_fac)>0 && count($tipo_con)>0)
 	{
 		$datos_fac['Tipo_contribuyente'] = $tipo_con;
@@ -181,11 +169,11 @@ class lista_facturasM
     $datos_cli_edu=$this->cliente_matri($ci);
 	   if($datos_cli_edu != '' && !empty($datos_cli_edu))
 	   {
-	   		imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,'matr',$id,null,'factura',null,null);
+	   		imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,'matr',$id,null,'factura',null,null,false,false,$sucursal);
 	   }else
 	   {
 		    $datos_cli_edu=$this->Cliente($ci);
-		    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$id,null,'factura',null,null);
+		    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,false,null,'factura',null,null,false,false,$sucursal);
 	   }
 
    }
@@ -229,13 +217,14 @@ class lista_facturasM
 
 
     $datos_cli_edu=$this->cliente_matri($ci);
+    $sucursal = $this->catalogo_lineas('FA',$ser);
 	   if($datos_cli_edu != '' && !empty($datos_cli_edu))
 	   {
-	   	    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,'matr',$id,null,'factura',null,null,1);
+	   	    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,'matr',$id,null,'factura',null,null,1,false,$sucursal);
 	   }else
 	   {
 		    $datos_cli_edu=$this->Cliente($ci);
-		    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$id,null,'factura',null,null,1);
+		    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$id,null,'factura',null,null,1,false,$sucursal);
 	   }
 
    }
@@ -445,6 +434,22 @@ INNER JOIN Clientes C ON F.CodigoC = C.Codigo WHERE 1=1 ";
   	WHERE Clave_Acceso = '".$clave."'";
 	return $this->db->datos($sql);
   }
+
+   function DCTipoPago($cod=false)
+   {
+     $cid=$this->conn;
+      $sql = "SELECT Codigo,(Codigo + ' ' + Descripcion) As CTipoPago
+         FROM Tabla_Referenciales_SRI
+         WHERE Tipo_Referencia = 'FORMA DE PAGO' ";
+         if($cod)
+         {
+          $sql.=" AND Codigo = '".$cod."'";
+         }
+         $sql.=" ORDER BY Codigo ";
+         // print_r($sql);die();
+          $stmt = $this->db->datos($sql);
+      return $stmt;
+   }
 
 
   

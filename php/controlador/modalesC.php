@@ -1,5 +1,5 @@
 <?php 
-require_once("../modelo/modalesM.php");
+require_once(dirname(__DIR__,2)."/modelo/modalesM.php");
 
 
 
@@ -56,6 +56,12 @@ if(isset($_GET['DLSubModulo']))
 	echo json_encode($controlador->DLSubModulo($query));
 }
 
+if(isset($_GET['pdf_retencion']))
+{
+	$parametros = $_GET;
+	echo json_encode($controlador->pdf_retenciones($parametros));
+}
+
 /**
  * 
  */
@@ -106,6 +112,7 @@ class modalesC
 
 	function guardar_cliente($parametro)
 	{
+		// print_r($parametro);die();
 		$resp = $this->modelo->buscar_cliente(trim($parametro['ruc']));		
 		$dato[0]['campo']='T';
 		$dato[0]['dato']='N';
@@ -159,6 +166,32 @@ class modalesC
 			  	return 2;
 			  }
 		}
+
+		if(isset($parametro['cxp']) && $parametro['cxp']==1)
+		{
+			$pro = $this->modelo->catalogo_Cxcxp($parametro['codigoc']);
+			if(count($pro)==0)
+			{
+				$cta = 'Cta_Proveedores';
+				$ctas = $this->modelo->buscar_cta($cta);
+				// print_r($ctas);die();
+				$datos2 = $this->modelo->LeerCta($ctas[0]['Codigo']);
+
+				// print_r($datos2);die();
+				$datosCXP[0]['campo']='TC';
+				$datosCXP[0]['dato']='P';
+				$datosCXP[1]['campo']='Codigo';
+				$datosCXP[1]['dato']=$parametro['codigoc'];
+				$datosCXP[2]['campo']='Cta';
+				$datosCXP[2]['dato']=$datos2[0]['Codigo'];
+				$datosCXP[3]['campo']='Item';
+				$datosCXP[3]['dato']=$_SESSION['INGRESO']['item'];
+				$datosCXP[4]['campo']='Periodo';
+				$datosCXP[4]['dato']=$_SESSION['INGRESO']['periodo'];
+				insert_generico('Catalogo_CxCxP',$datosCXP);
+			}
+		}
+
 		if($re==1 || $re==null)
 		{
 			return 1;
@@ -254,6 +287,22 @@ class modalesC
 			$op[]= array('id'=>$value['Codigo'],'text'=>$value['Detalle']);
 		}
 		return $op;
+	}
+
+	function pdf_retenciones($numero,$TP,$retencion,$serie,$imp=1)
+	{
+		// $numero = '10000800';
+		// $TP = 'CD';
+		// $retencion = '603';
+		// $serie = '001003';
+
+		// print_r($parametros);die();
+		$this->modelo->reporte_retencion($numero,$TP,$retencion,$serie,1);
+		// $datos = array();
+		// $detalle = array(); 
+		// $cliente = array();
+		// imprimirDocEle_ret($datos,$detalle,$cliente,$nombre,$sucursal,'factura',$imp=1);
+		print_r($parametros);die();
 	}
 
 

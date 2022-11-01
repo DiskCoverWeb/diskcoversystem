@@ -530,8 +530,8 @@ function ReadSetDataNum($sqls,$ParaEmpresa =false,$Incrementar = false) // optim
 	  {
 	    if($NuevoNumero)
 	    {
-	    	$Strgs = "INSERT INTO Codigos (Periodo,Item,Concepto,Numero)
-                VALUES ('".$_SESSION['INGRESO']['periodo']."','".$_SESSION['INGRESO']['item']."','".$sqls."',".$NumCodigo.") ";
+	    	$Strgs = "INSERT INTO Codigos (Periodo,Item,Concepto,x,Numero)
+                VALUES ('".$_SESSION['INGRESO']['periodo']."','".$_SESSION['INGRESO']['item']."','".$sqls."','.',".$NumCodigo.") ";
                 //faltra ejecutar
                  $conn->String_Sql($Strgs);
 	    }
@@ -9699,6 +9699,30 @@ function CambioCodigoCta($Codigo){
 
   print_r($Codigo_Cta);die();
   return $Codigo_Cta;
+}
+
+
+
+function Validar_Porc_IVA($FechaIVA)
+{
+  $conn = new db();
+   // 'Carga la Tabla de Porcentaje IVA
+    $Porc_IVA = 0;
+    if($FechaIVA == "00/00/0000"){$FechaIVA = date('Y-m-d');}
+      $sql = "SELECT * 
+      FROM Tabla_Por_ICE_IVA 
+      WHERE IVA <> 0  
+      AND Fecha_Inicio <= '".BuscarFecha($FechaIVA)."' 
+      AND Fecha_Final >= '".BuscarFecha($FechaIVA)."' 
+      ORDER BY Porc DESC ";
+      $datos1 = $conn->datos($sql);
+
+      if(count($datos1)>0)
+      {
+        $Porc_IVA = number_format($datos1[0]["Porc"] / 100,2,'.','');
+      }
+
+      return $Porc_IVA;
 }
 
 

@@ -210,3 +210,28 @@ function generar_ceros(num,cant)
 		return new_num+''+num;
 	} 
 }
+
+function paginacion(inicio,fin,funcion,posicion)
+{
+	var pag = '<nav aria-label="...">'+
+	  '<ul class="pagination">'+
+	   ' <li class="page-item disabled">'+
+	      '<a class="page-link" href="#" tabindex="-1">Previous</a>'+
+	   ' </li>'
+	    for (var i = 1; i <= 10; i++) {
+	    	var ini = i*100
+	    	if(inicio==1)
+	    	{
+		   		pag+=' <li class="page-item active" onclick="paginacion("'+ini+'")"><a class="page-link" href="#">'+i+'</a></li>'
+			}else
+			{
+				pag+=' <li class="page-item"  onclick="paginacion("'+ini+'")"><a class="page-link" href="#">'+i+'</a></li>'
+			}
+		}
+	    pag+='<li class="page-item">'+
+	      '<a class="page-link" href="#">Next</a>'+
+	    '</li>'+
+	  '</ul>'+
+	'</nav>';
+	$('#'+posicion).html(pag);
+}

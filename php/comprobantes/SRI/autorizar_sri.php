@@ -133,12 +133,13 @@ class autorizacion_sri
 				$cabecera['Porc_IVA'] = $datos_fac[0]['Porc_IVA'];
 				$cabecera['Con_IVA'] = $datos_fac[0]['Con_IVA'];
 				$cabecera['Total_MN'] = $datos_fac[0]['Total_MN'];
-				if($datos_fac[0]['Forma_Pago'] == '.')
+				$cabecera['Observacion'] = $datos_fac[0]['Observacion'];
+				if($datos_fac[0]['Tipo_Pago'] == '.')
 				{
 					$cabecera['formaPago']='01';
 				}else
 				{
-					$cabecera['formaPago']=$datos_fac[0]['Forma_Pago'];
+					$cabecera['formaPago']=$datos_fac[0]['Tipo_Pago'];
 				}
 				$cabecera['Propina']=$datos_fac[0]['Propina'];
 				$cabecera['Autorizacion']=$datos_fac[0]['Autorizacion'];
@@ -1427,7 +1428,7 @@ function generar_xml($cabecera,$detalle)
 		{
 			$xml_dirEstablecimiento = $xml->createElement( "dirEstablecimiento",$cabecera['Direccion_RS'] );
 		}
-		$xml_obligadoContabilidad = $xml->createElement( "obligadoContabilidad",'SI' );
+		$xml_obligadoContabilidad = $xml->createElement( "obligadoContabilidad",$_SESSION['INGRESO']['Obligado_Conta']);
 
 		$xml_tipoIdentificacionComprador = $xml->createElement( "tipoIdentificacionComprador",$cabecera['tipoIden'] );
 		$xml_razonSocialComprador = $xml->createElement( "razonSocialComprador",$cabecera['Razon_Social'] );
@@ -1676,6 +1677,12 @@ function generar_xml($cabecera,$detalle)
 		{
 			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Orden_Compra'] );
 			$xml_campoAdicional->setAttribute( "nombre", "ordenCompra" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}
+		if(strlen($cabecera['Observacion'])>1)
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Observacion'] );
+			$xml_campoAdicional->setAttribute( "nombre", "Observacion" );
 			$xml_infoAdicional->appendChild( $xml_campoAdicional );
 		}
 		
@@ -2096,7 +2103,10 @@ function generar_xml_retencion($cabecera,$detalle=false)
  	    $certificado_1 = dirname(__DIR__).'/certificados/';
  	    if(file_exists($certificado_1.$p12))
 	       {
-	       	// print_r("java -jar ".$firmador." ".$nom_doc.".xml ".$url_generados." ".$url_firmados." ".$certificado_1." ".$p12." ".$pass);die();
+	       	
+	       	if(file_exists($url_generados.$nom_doc.".xml"))
+	       	{
+	       		// print_r("java -jar ".$firmador." ".$nom_doc.".xml ".$url_generados." ".$url_firmados." ".$certificado_1." ".$p12." ".$pass);die();
 
 	        	exec("java -jar ".$firmador." ".$nom_doc.".xml ".$url_generados." ".$url_firmados." ".$certificado_1." ".$p12." ".$pass, $f);
 
@@ -2108,7 +2118,11 @@ function generar_xml_retencion($cabecera,$detalle=false)
 		 			$respuesta = 'Error al generar XML o al firmar';
 		 			return $respuesta;          
 		        }
-
+		    }else
+		    {
+		    	$respuesta = 'XML generado no encontrado';
+	 			return $respuesta;
+		    }
 	 	   }else
 	 	   {
 	 	   		$respuesta = 'No se han encontrado Certificados';
@@ -2178,26 +2192,30 @@ function generar_xml_retencion($cabecera,$detalle=false)
  	    $ruta_rechazados =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Rechazados/';
     	$enviar_sri = dirname(__DIR__).'/SRI/firmar/sri_enviar.jar';
 
-
+    	if(!file_exists($ruta_firmados.$clave_acceso.'.xml'))
+    	{
+    		$respuesta = ' XML firmado no encontrado';
+	 		return $respuesta;
+    	}
     	 // print_r("java -jar ".$enviar_sri." ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviado." ".$ruta_rechazados." ".$url_recepcion);die();
    		 exec("java -jar ".$enviar_sri." ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion,$f);
    		 if(count($f)>0)
    		 {
-   		 $resp = explode('-',$f[0]);
-   		 if($resp[1]=='RECIBIDA')
-   		 {
-   		 	return 1;
-   		 }else if($resp[1]=='DEVUELTA')
-   		 {
-   		 	return 2;
-   		 }else if($resp[1]==null || $resp[1]=='' )
-   		 {
-   		 	//es devuelta
-   		 	return 2;
-   		 }else
-   		 {  
-   		 	return $f;
-   		 }
+	   		 $resp = explode('-',$f[0]);
+	   		 if($resp[1]=='RECIBIDA')
+	   		 {
+	   		 	return 1;
+	   		 }else if($resp[1]=='DEVUELTA')
+	   		 {
+	   		 	return 2;
+	   		 }else if($resp[1]==null || $resp[1]=='' )
+	   		 {
+	   		 	//es devuelta
+	   		 	return 2;
+	   		 }else
+	   		 {  
+	   		 	return $f;
+	   		 }
    		}else
    		{
    			// algo paso
