@@ -67,10 +67,10 @@ class db
 		   {
 				echo 'no se pudo conectar a la base de datos';
 				die( print_r( sqlsrv_errors(), true));
-		   }else
-		   {
-		   	// echo 'sql con';
-		   }
+		   }else{
+		    $_SESSION['INGRESO']['base_actual'] = $this->servidor;
+		   	  // print_r($this->servidor);die();
+			}
 		return $cid;
 	}
 
@@ -90,6 +90,7 @@ class db
 		}else
 		{
 			// echo 'conec 1';
+			$_SESSION['INGRESO']['base_actual'] =   $this->servidor;
 		}
 		return $conn;
 	}
@@ -274,7 +275,11 @@ class db
 	// conexion a base SQL server de terceros
  function modulos_sql_server($host,$user,$pass,$base,$Puerto)
    {
-   	  	$server=''.$host.', '.$Puerto;
+   	if($host=='tcp:mysql.diskcoversystem.com' &&  $this->ipconfig=='localhost')
+    {
+    	$host = $this->ipconfig;
+    }
+   	 $server=''.$host.', '.$Puerto;
 		$connectionInfo = array("Database"=>$base, "UID" => $user,"PWD" => $pass,"CharacterSet" => "UTF-8");
 	    $cid = sqlsrv_connect($server, $connectionInfo); //returns false
 		if( $cid === false )
@@ -287,6 +292,10 @@ class db
 
 	function consulta_datos_db_sql_terceros($sql,$host,$user,$pass,$base,$Puerto)
 	{
+		if($host=='tcp:mysql.diskcoversystem.com' &&  $this->ipconfig=='localhost')
+    {
+    	$host = $this->ipconfig;
+    }
 		$server=''.$host.', '.$Puerto;
 		$connectionInfo = array("Database"=>$base, "UID" => $user,"PWD" => $pass,"CharacterSet" => "UTF-8");
 	  $cid = sqlsrv_connect($server, $connectionInfo); //returns false
@@ -311,6 +320,10 @@ class db
 
 	function ejecutar_sql_terceros($sql,$host,$user,$pass,$base,$Puerto)
 	{
+		if($host=='tcp:mysql.diskcoversystem.com' &&  $this->ipconfig=='localhost')
+    {
+    	$host = $this->ipconfig;
+    }
 		$server=''.$host.', '.$Puerto;
 		$connectionInfo = array("Database"=>$base, "UID" => $user,"PWD" => $pass,"CharacterSet" => "UTF-8");
 	  $cid = sqlsrv_connect($server, $connectionInfo); //returns false

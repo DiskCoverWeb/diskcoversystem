@@ -817,7 +817,8 @@ function ProcGrabar_Abono_cero($FA)
         $sql = "UPDATE Facturas
           SET Saldo_MN = 0,
           Tipo_pago ='".$FA['TipoPago']."',
-          Observacion='".$FA['Observacion']."' ";
+          Observacion='".$FA['Observacion']."', 
+          Nota='".$FA['Nota']."' ";
           if(isset($FA['TxtEfectivo']) && $FA['TxtEfectivo']==0)
           {
           	$sql.=",T = 'P'";

@@ -216,11 +216,11 @@ function paginacion(inicio,fin,funcion,posicion)
 	var pag = '<nav aria-label="...">'+
 	  '<ul class="pagination">'+
 	   ' <li class="page-item disabled">'+
-	      '<a class="page-link" href="#" tabindex="-1">Previous</a>'+
+	      '<a class="page-link" href="#" tabindex="-1">Inicio</a>'+
 	   ' </li>'
 	    for (var i = 1; i <= 10; i++) {
 	    	var ini = i*100
-	    	if(inicio==1)
+	    	if(inicio==0)
 	    	{
 		   		pag+=' <li class="page-item active" onclick="paginacion("'+ini+'")"><a class="page-link" href="#">'+i+'</a></li>'
 			}else
@@ -229,7 +229,7 @@ function paginacion(inicio,fin,funcion,posicion)
 			}
 		}
 	    pag+='<li class="page-item">'+
-	      '<a class="page-link" href="#">Next</a>'+
+	      '<a class="page-link" href="#">Fin</a>'+
 	    '</li>'+
 	  '</ul>'+
 	'</nav>';

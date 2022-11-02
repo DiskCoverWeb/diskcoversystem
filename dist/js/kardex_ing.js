@@ -647,7 +647,7 @@ function grabar_comprobante()
       { 
         Swal.fire({
           type:'success',
-          title: 'Factura Procesada y Autorizada',
+          title: 'Retencion Procesada y Autorizada',
           confirmButtonText: 'Ok!',
           allowOutsideClick: false,
         }).then(function(){

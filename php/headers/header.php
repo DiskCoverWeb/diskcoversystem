@@ -76,6 +76,9 @@ include('../controlador/contabilidad/contabilidad_controller.php');
       $modulo_header = $detalle_modulo[0]['aplicacion'];
       // print_r($detalle_modulo);
     }
+
+    $cuentas = SeteosCtas();
+    
 ?>
 <!DOCTYPE html>
 <html>
@@ -116,6 +119,27 @@ include('../controlador/contabilidad/contabilidad_controller.php');
   <script src="../../dist/js/js_globales.js"></script>
 
   <script type="text/javascript">
+
+     $(document).ready(function () {
+      var cuentas = '<?php echo $cuentas; ?>';
+      if(cuentas!='')
+      {
+        // console.log(cuentas);
+       Swal.fire(cuentas,'Faltan cetear cuentas','info');
+      }
+
+     })
+     
+
+
+        document.onclick = actualizar_base_actual;
+        document.onchange = actualizar_base_actual;
+        document.onblur = actualizar_base_actual;
+        document.onkeyup = actualizar_base_actual;
+
+
+
+    // setInterval(actualizar_base_actual, 1000);
     pantalla_medidas();
   var formato = "<?php if(isset($_SESSION['INGRESO']['Formato_Cuentas'])){echo $_SESSION['INGRESO']['Formato_Cuentas'];}?>";
   var formato_inv = "<?php if(isset($_SESSION['INGRESO']['Formato_Inventario'])){echo $_SESSION['INGRESO']['Formato_Inventario'];}?>";
@@ -133,6 +157,21 @@ include('../controlador/contabilidad/contabilidad_controller.php');
   //   $('#'+campo).val(str);
   // }
 
+
+  function actualizar_base_actual()
+  {
+    $.ajax({
+      // data:  {parametros:parametros},
+      url:   '../controlador/login_controller.php?base_actual_=true',
+      type:  'post',
+      dataType: 'json',     
+        success:  function (response) { 
+          console.log(response);
+          $("#base_actual").text(response);
+      }
+    });
+
+  }
   function validador_correo(imput)
   {
       var campo = $('#'+imput).val();   
@@ -399,6 +438,7 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
         <!-- </div> -->
             <img src="<?php echo $url; ?>" width="50%">         
           </span>
+            <p class="text-gray" style="margin:0px" id="base_actual"></p> 
             <p class="text-gray" style="margin:0px"><?php echo $_SESSION['INGRESO']['Nombre_Comercial'];?></p> 
             <p class="text-gray" style="margin:0px">RUC: <?php echo $_SESSION['INGRESO']['RUC'];?></p> 
             <p class="text-gray" style="margin:0px">Item: <?php echo $_SESSION['INGRESO']['item'];?></p> 

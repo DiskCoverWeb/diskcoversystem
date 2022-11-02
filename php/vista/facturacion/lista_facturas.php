@@ -17,9 +17,11 @@
 
   $(document).ready(function()
   {
-    var inip = '<?php $_SESSION['INGRESO']['paginacionIni'];?>'
-    var finp = '<?php $_SESSION['INGRESO']['paginacionFin'];?>'
+    // paginacion
+    var inip = '<?php echo $_SESSION['INGRESO']['paginacionIni'];?>'
+    var finp = '<?php echo $_SESSION['INGRESO']['paginacionFin'];?>'
     paginacion(inip,finp,'cargar_registros','panel_pag');
+    // fin paginacion
 
     var cartera_usu = '<?php echo $cartera_usu; ?>';
     var cartera_pas = '<?php echo $cartera_pass;?>';

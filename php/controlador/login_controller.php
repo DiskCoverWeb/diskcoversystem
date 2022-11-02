@@ -12,6 +12,11 @@ if(isset($_GET['Entidad']))
 	echo json_encode($login->validar_entidad($entidad));
 }
 
+if(isset($_GET['base_actual_']))
+{
+	echo json_encode($_SESSION['INGRESO']['base_actual']);
+}
+
 if(isset($_GET['Cartera_Entidad']))
 {
 	$entidad = $_POST['entidad'];

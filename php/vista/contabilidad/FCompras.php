@@ -458,7 +458,7 @@ function contracuenta()
                   <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button> -->
                   <button class="btn btn-default"  data-dismiss="modal" onclick="limpiar_retencaion();"> <img src="../../img/png/bloqueo.png" ><br> Cancelar</button>
 
-                  <button class="btn btn-default" onclick="pdf_retencion();"> <img src="../../img/png/bloqueo.png" ><br> pdf</button>
+                  <!-- <button class="btn btn-default" onclick="pdf_retencion();"> <img src="../../img/png/bloqueo.png" ><br> pdf</button> -->
 
                 </div>            
             </div>
@@ -568,7 +568,7 @@ function contracuenta()
                                         <div class="col-sm-12">
                                             <div class="col-sm-2"  style="padding-left: 0px;padding-right: 0px">
                                              <b>Emision</b>
-                                                <input type="date" name="" class="form-control input-xs" value="<?php echo date('Y-m-d') ?>" id="MBFechaEmi" onblur="cambiar_fecha();"  autocomplete="off">
+                                                <input type="date" name="" class="form-control input-xs" value="<?php echo date('Y-m-d') ?>" id="MBFechaEmi" autocomplete="off">
                                             </div>
                                             <div class="col-sm-2"  style="padding-left: 0px;padding-right: 0px">
                                                 <b>Registro</b>
@@ -861,7 +861,7 @@ function contracuenta()
                                               function validar_fecha(){
                                               var fr = new Date($('#MBFechaRegis').val());
                                               var fe = new Date($('#MBFechaEmi').val());
-                                              if(fr>fe)
+                                              if(fr<fe)
                                               {
                                                 Swal.fire('La Fecha de Registro debe ser mayor o igual que la Fecha de Emisión','','info');
                                                 $('#MBFechaRegis').val($('#MBFechaEmi').val());

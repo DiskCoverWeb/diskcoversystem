@@ -1,5 +1,5 @@
 <?php 
-require_once(dirname(__DIR__,2)."/modelo/modalesM.php");
+require_once(dirname(__DIR__,1)."/modelo/modalesM.php");
 
 
 
@@ -172,10 +172,10 @@ class modalesC
 			$pro = $this->modelo->catalogo_Cxcxp($parametro['codigoc']);
 			if(count($pro)==0)
 			{
-				$cta = 'Cta_Proveedores';
-				$ctas = $this->modelo->buscar_cta($cta);
+				// $cta = 'Cta_Proveedores';
+				// $ctas = $this->modelo->buscar_cta($cta);
 				// print_r($ctas);die();
-				$datos2 = $this->modelo->LeerCta($ctas[0]['Codigo']);
+				// $datos2 = $this->modelo->LeerCta($ctas[0]['Codigo']);
 
 				// print_r($datos2);die();
 				$datosCXP[0]['campo']='TC';
@@ -183,12 +183,30 @@ class modalesC
 				$datosCXP[1]['campo']='Codigo';
 				$datosCXP[1]['dato']=$parametro['codigoc'];
 				$datosCXP[2]['campo']='Cta';
-				$datosCXP[2]['dato']=$datos2[0]['Codigo'];
+				$datosCXP[2]['dato']=$_SESSION['SETEOS']['Cta_Proveedores'];
 				$datosCXP[3]['campo']='Item';
 				$datosCXP[3]['dato']=$_SESSION['INGRESO']['item'];
 				$datosCXP[4]['campo']='Periodo';
 				$datosCXP[4]['dato']=$_SESSION['INGRESO']['periodo'];
 				insert_generico('Catalogo_CxCxP',$datosCXP);
+			}else
+			{
+				$datosCXP[0]['campo']='TC';
+				$datosCXP[0]['dato']='P';
+				$datosCXP[1]['campo']='Codigo';
+				$datosCXP[1]['dato']=$parametro['codigoc'];
+				$datosCXP[2]['campo']='Cta';
+				$datosCXP[2]['dato']=$_SESSION['SETEOS']['Cta_Proveedores'];
+				$datosCXP[3]['campo']='Item';
+				$datosCXP[3]['dato']=$_SESSION['INGRESO']['item'];
+				$datosCXP[4]['campo']='Periodo';
+				$datosCXP[4]['dato']=$_SESSION['INGRESO']['periodo'];
+
+				$where[0]['campo'] = 'Codigo';
+				$where[0]['valor'] = $parametro['codigoc'];
+				$where[0]['tipo'] = 'string';
+				update_generico($datosCXP,'Catalogo_CxCxP',$where);
+				// insert_generico('Catalogo_CxCxP',$datosCXP);
 			}
 		}
 

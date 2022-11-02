@@ -46,7 +46,13 @@ class incomM
 		   WHERE T <> '.' ";
 		   if($query != '')
 		   {
-		   	$sql.=" AND CI_RUC='".$query."'";
+		   if(is_numeric($query))
+		   	{
+		   		$sql.=" AND CI_RUC='".$query."'";
+		   	}else
+		   	{
+		   		$sql.=" AND Cliente like '%".$query."%'";
+		   	}
 		   }
 		  $sql.=" ORDER BY Cliente";
 		   $result = $this->conn->datos($sql);
@@ -57,10 +63,16 @@ class incomM
 	{
 		$sql="SELECT TOP 25 Cliente AS nombre, CI_RUC as id, email,TD,CI_RUC,Codigo
 		   FROM Clientes 
-		   WHERE T <> '.' AND TD = 'R' ";
+		   WHERE T <> '.' ";
 		   if($query != '')
 		   {
-		   	$sql.=" AND CI_RUC='".$query."'";
+		   	if(is_numeric($query))
+		   	{
+		   		$sql.=" AND CI_RUC='".$query."'";
+		   	}else
+		   	{
+		   		$sql.=" AND Cliente like '%".$query."%'";
+		   	}
 		   }
 		  $sql.=" ORDER BY Cliente";
 

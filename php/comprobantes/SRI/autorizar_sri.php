@@ -134,6 +134,9 @@ class autorizacion_sri
 				$cabecera['Con_IVA'] = $datos_fac[0]['Con_IVA'];
 				$cabecera['Total_MN'] = $datos_fac[0]['Total_MN'];
 				$cabecera['Observacion'] = $datos_fac[0]['Observacion'];
+				$cabecera['Nota'] = $datos_fac[0]['Nota'];
+
+				$cabecera['Nota'] = $datos_fac[0]['Nota'];
 				if($datos_fac[0]['Tipo_Pago'] == '.')
 				{
 					$cabecera['formaPago']='01';
@@ -1683,6 +1686,12 @@ function generar_xml($cabecera,$detalle)
 		{
 			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Observacion'] );
 			$xml_campoAdicional->setAttribute( "nombre", "Observacion" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}
+		if(strlen($cabecera['Nota'])>1)
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Nota'] );
+			$xml_campoAdicional->setAttribute( "nombre", "Nota" );
 			$xml_infoAdicional->appendChild( $xml_campoAdicional );
 		}
 		

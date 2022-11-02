@@ -156,6 +156,7 @@ function  SeteosCtas()
   $_SESSION['SETEOS']['Cta_Del_Banco'] = "0";
   $_SESSION['SETEOS']['Cta_Seguro'] = "0";
   $_SESSION['SETEOS']['Cta_Seguro_I'] = "0";
+  $_SESSION['SETEOS']['Cta_Proveedores'] = "0";
 // 	// ' Consultamos las cuentas de la tabla
  	$datos = $modelo->SeteoCta();
 
@@ -303,6 +304,9 @@ function  SeteosCtas()
             case "Cta_Seguro_Ingreso":
                  $_SESSION['SETEOS']['Cta_Seguro_I'] = $value['Codigo'];
             break;
+             case "Cta_Proveedores":
+                 $_SESSION['SETEOS']['Cta_Proveedores'] = $value['Codigo'];
+            break;
             case "Inv_Promedio": 
                  If($value['Codigo']== "TRUE"){ $Inv_Promedio = True;}
             break;
@@ -326,8 +330,11 @@ function  SeteosCtas()
   if($_SESSION['SETEOS']['Cta_Gastos']== "0"){ $SSQLSeteos.="Cta_Gastos ,";}
   if($_SESSION['SETEOS']['Cta_Diferencial']== "0"){ $SSQLSeteos.="Cta_Diferencial_Cambiario ,";}
   if($_SESSION['SETEOS']['Cta_IVA_Inventario']== "0"){ $SSQLSeteos.="Cta_IVA_Inventario ,";}
+  if($_SESSION['SETEOS']['Cta_Proveedores']== "0"){ $SSQLSeteos.="Cta_Proveedores ,";}
   If($SSQLSeteos <> ""){
      $SSQLSeteos = "Verifique el codigo de:".$SSQLSeteos."La proxima vez que ejecute el sistema se crearan estas cuentas ";
+
+     // print_r($SSQLSeteos);die();
      return $SSQLSeteos;
    // ' MsgBox SSQLSeteos
    // ' CtasSeteos AdoRec
@@ -425,6 +432,7 @@ function variables_sistema($EmpresaEntidad,$NombreEmp,$ItemEmp)
 
         $_SESSION['INGRESO']['paginacionIni']=0;
         $_SESSION['INGRESO']['paginacionFin']=100;
+        $_SESSION['INGRESO']['base_actual']='';
 
 	  if(isset($empresa[0]['smtp_Secure']))
 	    {
