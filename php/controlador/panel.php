@@ -19,6 +19,11 @@ if(isset($_GET['pantalla']))
       $_SESSION['INGRESO']['Height_pantalla'] = $_GET['height'];
       $_SESSION['INGRESO']['width_pantalla'] = $_GET['width'];
 }
+if(isset($_GET['paginacion']))
+{
+      $_SESSION['INGRESO']['paginacionIni'] = $_GET['ini'];
+      $_SESSION['INGRESO']['numreg'] = $_GET['numreg'];
+}
 if(isset($_GET['IngClaves']))
 {
 	$parametros = $_POST['parametros'];
@@ -429,6 +434,11 @@ function variables_sistema($EmpresaEntidad,$NombreEmp,$ItemEmp)
 	  $_SESSION['INGRESO']['smtp_UseAuntentificacion']=$empresa[0]['smtp_UseAuntentificacion'];
 	  $_SESSION['INGRESO']['smtp_Puerto']=$empresa[0]['smtp_Puerto'];
 	  $_SESSION['INGRESO']['smtp_Servidor']=$empresa[0]['smtp_Servidor'];
+        $_SESSION['INGRESO']['RUC_Operadora'] = '.';
+        if(isset($empresa[0]['RUC_Operadora']))
+          {
+             $_SESSION['INGRESO']['RUC_Operadora']=$empresa[0]['RUC_Operadora'];
+          }
 
         $_SESSION['INGRESO']['paginacionIni']=0;
         $_SESSION['INGRESO']['paginacionFin']=100;

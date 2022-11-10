@@ -38,6 +38,22 @@ class punto_ventaM
 
      return $this->db->datos($sql);
   }
+  function Listar_Clientes_PV_exacto($query)
+  {
+      $sql= "SELECT TOP 100 Cliente,Codigo,CI_RUC,TD,Grupo,Email,T 
+        FROM Clientes 
+        WHERE Cliente <> '.' 
+        AND FA <> 0 ";
+        if(!is_numeric($query))
+        {
+          $sql.=" AND Cliente LIKE '%".$query."%'";
+        }else
+        {
+          $sql.=" AND CI_RUC = '".$query."'";
+        } // print_r($sql);die();
+
+     return $this->db->datos($sql);
+  }
 
   function DCBodega()
   {

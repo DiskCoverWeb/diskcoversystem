@@ -238,6 +238,7 @@ class autorizacion_sri
 		
 	            
 	           $xml = $this->generar_xml($cabecera,$detalle);
+	           // print_r('expression');
 	           // die();
 
 	           if($xml==1)
@@ -265,6 +266,7 @@ class autorizacion_sri
 			   		 		$resp =  $this->comprobar_xml_sri($cabecera['ClaveAcceso'],$linkSriAutorizacion);
 			   		 		if($resp==1)
 			   		 		{
+			   		 			// print('dd');
 			   		 			$resp = $this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion']);
 			   		 			return  $resp;
 			   		 		}
@@ -276,7 +278,11 @@ class autorizacion_sri
 
 			   		 }else 
 			   		 {
-			   		 	// $resp = $this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion']);
+			   		 	// print_r('expressiondd');die();
+			   		 	if($validar_autorizado==1)
+			   		 	{
+			   		 		 $this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion']);
+			   		 	}
 			   		 	// RETORNA SI YA ESTA AUTORIZADO O SI FALL LA REVISIO EN EL SRI
 			   			return $validar_autorizado;
 			   		 }
@@ -287,7 +293,8 @@ class autorizacion_sri
 	           	 }
 	           }else
 	           {
-	           	//RETORNA SI FALLA EL GENERAR EL XML
+	           	//RETORNA SI FALLA EL GENERAR EL XML o si ya esta en la carpeta de autorizados
+	           	$this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion']);
 	           	return $xml;
 	           }
 
@@ -1341,7 +1348,7 @@ function generar_xml($cabecera,$detalle)
 
 		if(file_exists($carpeta_autorizados.'/'.$compro.'.xml'))
 		{
-			$respuesta = array('1'=>'Autorizado');
+			$respuesta = 'Documento ya autorizado';
 			return $respuesta;
 		}
 	

@@ -2190,7 +2190,11 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetFont('Arial','',12);
 	$pdf->SetXY(285, 55);
 	$pdf->SetWidths(array(140));
-	$arr=array('Factura No.');
+	// print_r($datos);die();
+	if(isset($datos[0]['TC']) && $datos[0]['TC']=='LC')
+	{
+		$arr=array('Liquidacion compra No.');
+	}else{	$arr=array('Factura No.'); }
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',11);
 	$pdf->SetXY(425, 55);
@@ -2268,11 +2272,16 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 
 	//$pdf->Write(5,'C set: "'.$code.'"');
 	$pdf->SetFont('Arial','',9);
-	$pdf->SetXY(285, 110);
-	$pdf->SetWidths(array(275));
-	//$arr=array($code);
-	//$pdf->Row($arr,10);
-		$pdf->Cell(10,10,$code);
+
+	$pdf->SetXY(285,109);
+	    $pdf->Code128(290,109,$code,260,20);
+
+	    //$pdf->Write(5,'C set: "'.$code.'"');
+	    $pdf->SetFont('Arial','',7);
+	    $pdf->SetXY(285, 130);
+	    $pdf->SetWidths(array(275));
+
+	 $pdf->Cell(10,10,$code);
 	 }else if($datos[0]['Clave_Acceso'] > 39)
 	 {	 	
 	    $code=$datos[0]['Clave_Acceso'];
@@ -2385,7 +2394,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->cabeceraHorizontal(array(' '),40,70,242,$a,20,2);
 
 	$su = $pdf->GetY()+$posy-35;
-	$pdf->SetXY(41,$su+38);
+	$pdf->SetXY(41,$su+45);
 	if(count($sucursal)>0 && $sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='')
 	{
 		if($sucursal[0]['Telefono_Estab']=='.' || $sucursal[0]['Telefono_Estab']=='')
@@ -2486,9 +2495,12 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 		$adi='';
 	}*/
 // print_r($educativo);die();
-	$arr=array('Dirección: '.$educativo[0]['Direccion'],'Fecha emisión: '.$datos[0]['Fecha']->format('Y-m-d'),'Fecha pago: '.$datos[0]['Fecha']->format('Y-m-d'));//mio
-	$pdf->Row($arr,10);
-	$pdf->SetWidths(array(270,155,100));
+    if(count($educativo)>0)
+    {
+		$arr=array('Dirección: '.$educativo[0]['Direccion'],'Fecha emisión: '.$datos[0]['Fecha']->format('Y-m-d'),'Fecha pago: '.$datos[0]['Fecha']->format('Y-m-d'));//mio
+		$pdf->Row($arr,10);
+		$pdf->SetWidths(array(270,155,100));
+	}
 	if('DOLAR'=='DOLAR')
 	{
 		$mon='USD';

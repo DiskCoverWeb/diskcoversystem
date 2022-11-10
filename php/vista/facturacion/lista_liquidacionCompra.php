@@ -53,7 +53,7 @@
     $.ajax({
       type: "POST",      
       dataType: 'json',
-      url: '../controlador/facturacion/lista_facturasC.php?perido=true',
+      url: '../controlador/facturacion/lista_liquidacionCompraC.php?perido=true',
       data: {parametros:parametros }, 
       success: function(data)
       {
@@ -72,7 +72,7 @@
         width:'resolve',
 	    // minimumResultsForSearch: Infinity,
         ajax: {
-          url: '../controlador/facturacion/lista_facturasC.php?grupos=true',
+          url: '../controlador/facturacion/lista_liquidacionCompraC.php?grupos=true',
           dataType: 'json',
           delay: 250,
           processResults: function (data) {
@@ -92,7 +92,7 @@
         width:'resolve',
 	    // minimumResultsForSearch: Infinity,
         ajax: {
-          url: '../controlador/facturacion/lista_facturasC.php?clientes=true&g='+g,
+          url: '../controlador/facturacion/lista_liquidacionCompraC.php?clientes=true&g='+g,
           dataType: 'json',
           delay: 250,
           processResults: function (data) {           
@@ -112,7 +112,7 @@
         width:'resolve',
       // minimumResultsForSearch: Infinity,
         ajax: {
-          url: '../controlador/facturacion/lista_facturasC.php?clientes2=true&g='+g,
+          url: '../controlador/facturacion/lista_liquidacionCompraC.php?clientes2=true&g='+g,
           dataType: 'json',
           delay: 250,
           processResults: function (data) {           
@@ -131,7 +131,7 @@
      var g = $('#ddl_grupo').val();
      $.ajax({
        // data:  {parametros:parametros},
-      url: '../controlador/facturacion/lista_facturasC.php?clientes=true&q='+ci_ruc+'&g='+g,         
+      url: '../controlador/facturacion/lista_liquidacionCompraC.php?clientes=true&q='+ci_ruc+'&g='+g,         
       type:  'post',
       dataType: 'json',
        success:  function (response) { 
@@ -169,7 +169,7 @@
     }
      $.ajax({
        data:  {parametros:parametros},
-      url:   '../controlador/facturacion/lista_facturasC.php?tabla=true',
+      url:   '../controlador/facturacion/lista_liquidacionCompraC.php?tabla=true',
       type:  'post',
       dataType: 'json',
       beforeSend: function () {
@@ -187,7 +187,7 @@
   function Ver_factura(id,serie,ci)
 	{		 
     peri = $('#ddl_periodo').val();
-		var url = '../controlador/facturacion/lista_facturasC.php?ver_fac=true&codigo='+id+'&ser='+serie+'&ci='+ci+'&per='+peri;		
+		var url = '../controlador/facturacion/lista_liquidacionCompraC.php?ver_fac=true&codigo='+id+'&ser='+serie+'&ci='+ci+'&per='+peri;		
 		window.open(url,'_blank');
 	}
 
@@ -203,7 +203,7 @@
     }
      $.ajax({
        data:  {parametros:parametros},
-      url:   '../controlador/facturacion/lista_facturasC.php?re_autorizar=true',
+      url:   '../controlador/facturacion/lista_liquidacionCompraC.php?re_autorizar=true',
       type:  'post',
       dataType: 'json',
        success:  function (data) { 
@@ -231,10 +231,11 @@
       { 
         Swal.fire({
           type:'success',
-          title: 'Factura Procesada y Autorizada',
+          title: 'Liquidacion de compras Procesada y Autorizada',
           confirmButtonText: 'Ok!',
           allowOutsideClick: false,
         }).then(function(){
+        	cargar_registros();
           // var url=  '../../TEMP/'+data.pdf+'.pdf';
           // window.open(url, '_blank'); 
           // location.reload();    
@@ -306,7 +307,7 @@
 
     function reporte_pdf()
     {  var cli = $('#ddl_cliente').val();
-       var url = '../controlador/facturacion/lista_facturasC.php?imprimir_pdf=true&ddl_cliente='+cli+'&';
+       var url = '../controlador/facturacion/lista_liquidacionCompraC.php?imprimir_pdf=true&ddl_cliente='+cli+'&';
        var datos =  $("#filtros").serialize();
         window.open(url+datos, '_blank');
          $.ajax({
@@ -387,7 +388,7 @@
 		}
 		 $.ajax({
              data:  {parametros:parametros},
-             url:   '../controlador/facturacion/lista_facturasC.php?validar=true',
+             url:   '../controlador/facturacion/lista_liquidacionCompraC.php?validar=true',
              type:  'post',
              dataType: 'json',
              success:  function (response) {
@@ -416,7 +417,7 @@
  	 var parametros = {  'ci':cli,'gru':g, }
      $.ajax({
       data:  {parametros:parametros},
-      url: '../controlador/facturacion/lista_facturasC.php?clientes_datos=true',
+      url: '../controlador/facturacion/lista_liquidacionCompraC.php?clientes_datos=true',
       type:  'post',
       dataType: 'json',
        success:  function (response) { 
@@ -465,7 +466,7 @@
  	  var parametros = {  'ci':cli,'ema':ema }
  	 $.ajax({
       data:  {parametros:parametros},
-      url: '../controlador/facturacion/lista_facturasC.php?enviar_mail=true',
+      url: '../controlador/facturacion/lista_liquidacionCompraC.php?enviar_mail=true',
       type:  'post',
       dataType: 'json',
        success:  function (response) { 
@@ -524,14 +525,14 @@
   }
    $.ajax({
       data:  {parametros:parametros},
-      url: '../controlador/facturacion/lista_facturasC.php?Anular=true',
+      url: '../controlador/facturacion/lista_liquidacionCompraC.php?Anular=true',
       type:  'post',
       dataType: 'json',
        success:  function (response) { 
         console.log(response);
         if(response==1)
         {
-          Swal.fire('Factura Anulada','','success').then(function()
+          Swal.fire('Liquidacion de compras Anulada','','success').then(function()
           {
             cargar_registros();
           })
@@ -589,7 +590,7 @@ function modal_email_fac(factura,serie,codigoc,emails)
     }
      $.ajax({
         data: {parametros:parametros},
-        url:   '../controlador/facturacion/lista_facturasC.php?enviar_email_detalle=true',
+        url:   '../controlador/facturacion/lista_liquidacionCompraC.php?enviar_email_detalle=true',
         dataType:'json',      
         type:  'post',
         // dataType: 'json',
@@ -628,7 +629,7 @@ function modal_email_fac(factura,serie,codigoc,emails)
     }
      $.ajax({
         data: {parametros:parametros},
-        url:   '../controlador/facturacion/lista_facturasC.php?descargar_factura=true',
+        url:   '../controlador/facturacion/lista_liquidacionCompraC.php?descargar_factura=true',
         dataType:'json',      
         type:  'post',
         // dataType: 'json',
@@ -653,7 +654,7 @@ function modal_email_fac(factura,serie,codigoc,emails)
     }
      $.ajax({
         data: {parametros:parametros},
-        url:   '../controlador/facturacion/lista_facturasC.php?descargar_xml=true',
+        url:   '../controlador/facturacion/lista_liquidacionCompraC.php?descargar_xml=true',
         dataType:'json',      
         type:  'post',
         // dataType: 'json',

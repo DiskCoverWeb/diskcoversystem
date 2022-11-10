@@ -15,6 +15,15 @@ if(isset($_GET['DCCliente']))
 	}
 	echo json_encode($controlador->Listar_Clientes_PV($query));
 }
+if(isset($_GET['DCCliente_exacto']))
+{
+	$query = '';
+	if(isset($_GET['q']))
+	{
+		$query = $_GET['q'];
+	}
+	echo json_encode($controlador->Listar_Clientes_PV_exacto($query));
+}
 
 if(isset($_GET['DCArticulo']))
 {
@@ -118,6 +127,16 @@ class punto_ventaC
 	function Listar_Clientes_PV($query)
 	{
 		$datos = $this->modelo->Listar_Clientes_PV($query);
+		$res  =array();
+		foreach ($datos as $key => $value) {
+			$res[] = array('id'=>$value['Codigo'],'text'=>$value['CI_RUC'].' - '.$value['Cliente'],'data'=>array($value));
+		}
+		return $res;
+		// print_r($datos);die();
+	}
+	function Listar_Clientes_PV_exacto($query)
+	{
+		$datos = $this->modelo->Listar_Clientes_PV_exacto($query);
 		$res  =array();
 		foreach ($datos as $key => $value) {
 			$res[] = array('id'=>$value['Codigo'],'text'=>$value['CI_RUC'].' - '.$value['Cliente'],'data'=>array($value));
@@ -1033,8 +1052,12 @@ function error_sri($parametros)
 
 	$ruta1 = $carpeta_no_autori.'/'.$clave;
 	$ruta2 = $carpeta_rechazados.'/'.$clave;
+
+	// print_r($ruta);print_r($ruta2);die();
 	if(file_exists($ruta1))
 	{
+
+	// print_r($ruta);die();
 		$xml = simplexml_load_file($ruta1);
 		$codigo = $xml->mensajes->mensaje->mensaje->identificador;
 		$mensaje = $xml->mensajes->mensaje->mensaje->mensaje;
@@ -1044,8 +1067,10 @@ function error_sri($parametros)
 		// print_r($mensaje);die();
 		return  array('estado'=>$estado,'codigo'=>$codigo,'mensaje'=>$mensaje,'adicional'=>$adicional,'fecha'=>$fecha);
 	}
+
 	if(file_exists($ruta2))
 	{
+	    // print_r($ruta2);die();
 		$fp = fopen($ruta2, "r");
 		 $linea = '';
 		while (!feof($fp)){

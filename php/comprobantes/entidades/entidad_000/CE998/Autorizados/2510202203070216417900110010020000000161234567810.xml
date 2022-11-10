@@ -1,100 +1,102 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><factura id="comprobante" version="1.1.0">
+<?xml version="1.0" encoding="UTF-8"?><autorizacion>
+  <estado>AUTORIZADO</estado>
+  <numeroAutorizacion>2510202203070216417900110010020000000161234567810</numeroAutorizacion>
+  <fechaAutorizacion class="fechaAutorizacion">10/11/2022 15:44:29.000</fechaAutorizacion>
+  <comprobante><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?><liquidacionCompra id="comprobante" version="1.1.0">
   <infoTributaria>
     <ambiente>1</ambiente>
     <tipoEmision>1</tipoEmision>
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>0211202201070216417900110010050000000231234567816</claveAcceso>
-    <codDoc>01</codDoc>
+    <claveAcceso>2510202203070216417900110010020000000161234567810</claveAcceso>
+    <codDoc>03</codDoc>
     <estab>001</estab>
-    <ptoEmi>005</ptoEmi>
-    <secuencial>000000023</secuencial>
+    <ptoEmi>002</ptoEmi>
+    <secuencial>000000016</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
-  <infoFactura>
-    <fechaEmision>02/11/2022</fechaEmision>
+  <infoLiquidacionCompra>
+    <fechaEmision>25/10/2022</fechaEmision>
     <dirEstablecimiento>Desarrollo para programacion de DiskCover System</dirEstablecimiento>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <tipoIdentificacionComprador>06</tipoIdentificacionComprador>
-    <razonSocialComprador>ALEXANDRA LORENA YAGUAL TOMALA</razonSocialComprador>
-    <identificacionComprador>0919934745</identificacionComprador>
-    <totalSinImpuestos>20.00</totalSinImpuestos>
+    <tipoIdentificacionProveedor>06</tipoIdentificacionProveedor>
+    <razonSocialProveedor>ALMEIDA JAVIER</razonSocialProveedor>
+    <identificacionProveedor>0910602325</identificacionProveedor>
+    <totalSinImpuestos>23.00</totalSinImpuestos>
     <totalDescuento>0</totalDescuento>
     <totalConImpuestos>
       <totalImpuesto>
         <codigo>2</codigo>
         <codigoPorcentaje>0</codigoPorcentaje>
         <descuentoAdicional>0</descuentoAdicional>
-        <baseImponible>20</baseImponible>
+        <baseImponible>23</baseImponible>
         <valor>0.00</valor>
       </totalImpuesto>
     </totalConImpuestos>
-    <propina>0</propina>
-    <importeTotal>20</importeTotal>
+    <importeTotal>23</importeTotal>
     <moneda>DOLAR</moneda>
     <pagos>
       <pago>
         <formaPago>01</formaPago>
-        <total>20</total>
+        <total>23</total>
       </pago>
     </pagos>
-  </infoFactura>
+  </infoLiquidacionCompra>
   <detalles>
     <detalle>
-      <codigoPrincipal>98.40</codigoPrincipal>
-      <descripcion>7 LINEAS</descripcion>
+      <codigoPrincipal>03.02.01</codigoPrincipal>
+      <descripcion>Compra Euro</descripcion>
       <unidadMedida>DOLAR</unidadMedida>
-      <cantidad>1.0000</cantidad>
-      <precioUnitario>20</precioUnitario>
+      <cantidad>20.0000</cantidad>
+      <precioUnitario>1.15</precioUnitario>
       <descuento>0</descuento>
-      <precioTotalSinImpuesto>20</precioTotalSinImpuesto>
+      <precioTotalSinImpuesto>23</precioTotalSinImpuesto>
       <impuestos>
         <impuesto>
           <codigo>2</codigo>
           <codigoPorcentaje>0</codigoPorcentaje>
           <tarifa>0</tarifa>
-          <baseImponible>20</baseImponible>
+          <baseImponible>23</baseImponible>
           <valor>0</valor>
         </impuesto>
       </impuestos>
     </detalle>
   </detalles>
   <infoAdicional>
-    <campoAdicional nombre="Direccion">COOP NUEVA PROSPERINA 2</campoAdicional>
-    <campoAdicional nombre="Telefono">0986896858</campoAdicional>
-    <campoAdicional nombre="Email">mallelfortin@bataecuador.com.ec</campoAdicional>
-    <campoAdicional nombre="Nota">adasdasdas</campoAdicional>
+    <campoAdicional nombre="Direccion">SAUCES 6 MZ 319</campoAdicional>
+    <campoAdicional nombre="Telefono">042887528</campoAdicional>
+    <campoAdicional nombre="Email">diskcover@msn.com</campoAdicional>
   </infoAdicional>
-<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature468613">
-<ds:SignedInfo Id="Signature-SignedInfo472729">
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature840235">
+<ds:SignedInfo Id="Signature-SignedInfo219555">
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-<ds:Reference Id="SignedPropertiesID53452" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature468613-SignedProperties874395">
+<ds:Reference Id="SignedPropertiesID562406" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature840235-SignedProperties426518">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>u28Py/XqUsnTRqsndjS+W4lJ838=</ds:DigestValue>
+<ds:DigestValue>wS5dRVrLekMsZHOUMybb10TPCu0=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference URI="#Certificate1564884">
+<ds:Reference URI="#Certificate1113056">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>zXJXM7Y9jRYDx2rKhjPQB5bA3/k=</ds:DigestValue>
+<ds:DigestValue>waZ5AyfqYepFt7+dfNY0LMtVhKw=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference Id="Reference-ID-945607" URI="#comprobante">
+<ds:Reference Id="Reference-ID-825528" URI="#comprobante">
 <ds:Transforms>
 <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>Nl/WpUlDlRH2NfFXG6R/RA7nLtc=</ds:DigestValue>
+<ds:DigestValue>ypOKMma3Vqmgumsuj0RBueEGLQo=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue Id="SignatureValue169458">
-Irm9O+hA8y9p+fM1qHtApkx2WGOf/UN4/bi3XeV9BXNvrQBhoXsBrH9xPBiJjnjQYjfqgPcVRzTI
-PPKNva99BIlmBWJEQCKNlDE7/DcsYisUK+NH9aM5frraxR1YbpIpx/2PEeVrEeseeM2OOIvE+Z4s
-dPt+duUY0RqhT7agAeGUeRbiaRsnXGPm4qMVc9spwV+dRPZHveEge7FVAOai/wak+2tC//wH7Jck
-QTxeuxDslFHERTnyawRMYPJUVqm8BMJZ1uZzQQyqEKxuBxYGl3l3sMAK4x5vWkTdsWPQZ1M613gC
-zp1ttWS7DpSE8G2iFa0gByMKcDQCyaFXEovypA==
+<ds:SignatureValue Id="SignatureValue977168">
+aS6d9zKIqr1uwiG6d9cuD9japf+HZXvzCUoeo1w9K1nlC9rF+D6X6BKpehVdpFPKrETPO9/qusLd
+SLWRi+f7/utom9ZE6zeFMy8or0/oK5chLQdTKNTvH2nCrXFN1K+cAvHhypcAiXbNJok1tAA5YOAE
+IxF2Tjv2U+zjLSWzMlpHvyv1f6jtCr9Vo3/Sr9wxsN9RluHZ+bbI1BDcqb5A+zNhT6NNHk2ItIk8
+IowbYacGh9qY7JpFc5NbcAL7yn+tlsiHSvjd6KYP2v6ju/xaqIGMD5qipaHdRL/P3dtVlGNXNm2X
+13YQpOf7f4jicZGNMWmzOFy9fhQL2imEYSk3Nw==
 </ds:SignatureValue>
-<ds:KeyInfo Id="Certificate1564884">
+<ds:KeyInfo Id="Certificate1113056">
 <ds:X509Data>
 <ds:X509Certificate>
 MIILkjCCCXqgAwIBAgIEXDrIAjANBgkqhkiG9w0BAQsFADCBmTELMAkGA1UEBhMCRUMxHTAbBgNV
@@ -165,4 +167,6 @@ LRuAVSyi58qyAD0Eu1zLMc3KhEUXoxF7aA8P0w==
 </ds:RSAKeyValue>
 </ds:KeyValue>
 </ds:KeyInfo>
-<ds:Object Id="Signature468613-Object482312"><etsi:QualifyingProperties Target="#Signature468613"><etsi:SignedProperties Id="Signature468613-SignedProperties874395"><etsi:SignedSignatureProperties><etsi:SigningTime>2022-11-02T17:21:01-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-945607"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></factura>
+<ds:Object Id="Signature840235-Object823909"><etsi:QualifyingProperties Target="#Signature840235"><etsi:SignedProperties Id="Signature840235-SignedProperties426518"><etsi:SignedSignatureProperties><etsi:SigningTime>2022-11-10T15:44:17-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-825528"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></liquidacionCompra>]]></comprobante>
+  <mensajes/>
+</autorizacion>

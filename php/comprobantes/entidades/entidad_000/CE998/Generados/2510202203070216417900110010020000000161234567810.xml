@@ -1,70 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<factura id="comprobante" version="1.1.0">
+<liquidacionCompra id="comprobante" version="1.1.0">
   <infoTributaria>
     <ambiente>1</ambiente>
     <tipoEmision>1</tipoEmision>
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>0111202201070216417900110010050000000181234567814</claveAcceso>
-    <codDoc>01</codDoc>
+    <claveAcceso>2510202203070216417900110010020000000161234567810</claveAcceso>
+    <codDoc>03</codDoc>
     <estab>001</estab>
-    <ptoEmi>005</ptoEmi>
-    <secuencial>000000018</secuencial>
+    <ptoEmi>002</ptoEmi>
+    <secuencial>000000016</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
-  <infoFactura>
-    <fechaEmision>01/11/2022</fechaEmision>
+  <infoLiquidacionCompra>
+    <fechaEmision>25/10/2022</fechaEmision>
     <dirEstablecimiento>Desarrollo para programacion de DiskCover System</dirEstablecimiento>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <tipoIdentificacionComprador>04</tipoIdentificacionComprador>
-    <razonSocialComprador>ANDREA MARGARITA PICON</razonSocialComprador>
-    <identificacionComprador>0704039304001</identificacionComprador>
-    <totalSinImpuestos>1.00</totalSinImpuestos>
+    <tipoIdentificacionProveedor>06</tipoIdentificacionProveedor>
+    <razonSocialProveedor>ALMEIDA JAVIER</razonSocialProveedor>
+    <identificacionProveedor>0910602325</identificacionProveedor>
+    <totalSinImpuestos>23.00</totalSinImpuestos>
     <totalDescuento>0</totalDescuento>
     <totalConImpuestos>
       <totalImpuesto>
         <codigo>2</codigo>
         <codigoPorcentaje>0</codigoPorcentaje>
         <descuentoAdicional>0</descuentoAdicional>
-        <baseImponible>1</baseImponible>
+        <baseImponible>23</baseImponible>
         <valor>0.00</valor>
       </totalImpuesto>
     </totalConImpuestos>
-    <propina>0</propina>
-    <importeTotal>1</importeTotal>
+    <importeTotal>23</importeTotal>
     <moneda>DOLAR</moneda>
     <pagos>
       <pago>
         <formaPago>01</formaPago>
-        <total>1</total>
+        <total>23</total>
       </pago>
     </pagos>
-  </infoFactura>
+  </infoLiquidacionCompra>
   <detalles>
     <detalle>
-      <codigoPrincipal>01.05.03.11</codigoPrincipal>
-      <descripcion>ABADIA DE SAN QUIRCE ROBLE RIBERA DEL DUERO</descripcion>
+      <codigoPrincipal>03.02.01</codigoPrincipal>
+      <descripcion>Compra Euro</descripcion>
       <unidadMedida>DOLAR</unidadMedida>
-      <cantidad>1.0000</cantidad>
-      <precioUnitario>1</precioUnitario>
+      <cantidad>20.0000</cantidad>
+      <precioUnitario>1.15</precioUnitario>
       <descuento>0</descuento>
-      <precioTotalSinImpuesto>1</precioTotalSinImpuesto>
+      <precioTotalSinImpuesto>23</precioTotalSinImpuesto>
       <impuestos>
         <impuesto>
           <codigo>2</codigo>
           <codigoPorcentaje>0</codigoPorcentaje>
           <tarifa>0</tarifa>
-          <baseImponible>1</baseImponible>
+          <baseImponible>23</baseImponible>
           <valor>0</valor>
         </impuesto>
       </impuestos>
     </detalle>
   </detalles>
   <infoAdicional>
-    <campoAdicional nombre="Direccion">PRESIDENTE CORDOVA 125</campoAdicional>
-    <campoAdicional nombre="Telefono">0983879556</campoAdicional>
-    <campoAdicional nombre="Email">andreapgonzalez89@gmail.com</campoAdicional>
+    <campoAdicional nombre="Direccion">SAUCES 6 MZ 319</campoAdicional>
+    <campoAdicional nombre="Telefono">042887528</campoAdicional>
+    <campoAdicional nombre="Email">diskcover@msn.com</campoAdicional>
   </infoAdicional>
-</factura>
+</liquidacionCompra>

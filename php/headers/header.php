@@ -132,10 +132,10 @@ include('../controlador/contabilidad/contabilidad_controller.php');
      
 
 
-        document.onclick = actualizar_base_actual;
-        document.onchange = actualizar_base_actual;
-        document.onblur = actualizar_base_actual;
-        document.onkeyup = actualizar_base_actual;
+        // document.onclick = actualizar_base_actual;
+        // document.onchange = actualizar_base_actual;
+        // document.onblur = actualizar_base_actual;
+        // document.onkeyup = actualizar_base_actual;
 
 
 

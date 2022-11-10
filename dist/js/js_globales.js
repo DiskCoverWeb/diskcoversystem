@@ -211,27 +211,48 @@ function generar_ceros(num,cant)
 	} 
 }
 
-function paginacion(inicio,fin,funcion,posicion)
+function paginacion(funcion,posicion,inicio=0,numreg=50)
 {
+
+	$.ajax({
+       // data:  {parametros:parametros},
+      url:   '../controlador/panel.php?paginacion=true&ini='+inicio+'&numreg='+numreg,
+      type:  'post',
+      dataType: 'json',
+       success:  function (response) { 
+       
+      }
+    });
+
 	var pag = '<nav aria-label="...">'+
 	  '<ul class="pagination">'+
 	   ' <li class="page-item disabled">'+
-	      '<a class="page-link" href="#" tabindex="-1">Inicio</a>'+
+	      '<!-- <a class="page-link" href="#" tabindex="-1">Inicio</a> -->'+
 	   ' </li>'
-	    for (var i = 1; i <= 10; i++) {
-	    	var ini = i*100
-	    	if(inicio==0)
+	    for (var i = 0; i < 10; i++) {
+	    	var pos = (inicio/numreg);
+	    	console.log(pos);
+	    	var ini = i*numreg
+	    	if(pos==i)
 	    	{
-		   		pag+=' <li class="page-item active" onclick="paginacion("'+ini+'")"><a class="page-link" href="#">'+i+'</a></li>'
+		   		pag+=' <li class="page-item active" onclick="paginacion(\''+funcion+'\',\''+posicion+'\','+ini+','+numreg+');'+funcion+'()"><a class="page-link" href="#">'+(i+1)+'</a></li>'
 			}else
 			{
-				pag+=' <li class="page-item"  onclick="paginacion("'+ini+'")"><a class="page-link" href="#">'+i+'</a></li>'
+				pag+=' <li class="page-item"  onclick="paginacion(\''+funcion+'\',\''+posicion+'\','+ini+','+numreg+');'+funcion+'()"><a class="page-link" href="#">'+(i+1)+'</a></li>'
 			}
 		}
 	    pag+='<li class="page-item">'+
-	      '<a class="page-link" href="#">Fin</a>'+
+	      '<!-- <a class="page-link" href="#">Fin</a> -->'+
 	    '</li>'+
 	  '</ul>'+
+	  '<!-- <select id="ddl_pag" onchange="paginacion(\''+funcion+'\',\''+posicion+'\','+ini+','+numreg+');'+funcion+'()">'+
+	'<option value="50">50</option>'+
+	'<option value="100">100</option>'+
+	'<option value="150">150</option>'+
+	'</select> -->'+
 	'</nav>';
+
+	// setTimeout(funcion,100);
 	$('#'+posicion).html(pag);
+	$('#ddl_pag').val();
 }

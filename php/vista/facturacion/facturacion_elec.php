@@ -1,10 +1,23 @@
 <?php date_default_timezone_set('America/Guayaquil');  //print_r($_SESSION);die();
 // print_r($_SESSION['INGRESO']);die();
 $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
+$operadora = $_SESSION['INGRESO']['RUC_Operadora'];
+if($operadora!='.' && strlen($operadora)==10)
+{
+	$operadora = $_SESSION['INGRESO']['RUC_Operadora'];
+}
 ?>
 <script type="text/javascript">
 	eliminar_linea('','');
   $(document).ready(function () {
+
+  	var operadora = '<?php echo $operadora; ?>';
+  	if(operadora!='.')
+  	{
+  		buscar_cliente(operadora);
+  		$('#btn_nuevo_cli').css('display','none');
+  		$('#DCCliente').prop('disabled',true);
+  	}
   	ddl_DCTipoPago();
     catalogoLineas();
   	autocomplete_cliente(); 
@@ -23,6 +36,45 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 	     // }
 	     console.log(e.key);
 	});
+
+
+  function buscar_cliente(ruc)
+  {   
+
+  	$.ajax({
+		type: "POST",
+		url: '../controlador/facturacion/punto_ventaC.php?DCCliente_exacto=true&q='+ruc,
+		// data: {parametros: parametros},
+		dataType:'json',
+		success: function(data)
+		{
+			datos = data[0].data[0];
+			// console.log(datos);
+			$('#Lblemail').val(datos.Email);
+		  $('#LblRUC').val(datos.CI_RUC);
+		  $('#codigoCliente').val(datos.Codigo);
+		  $('#LblT').val(datos.T);
+		  // $('#DCCliente').append('<option value="' +codi+ ' ">' + datos[indice].text + '</option>');
+		  $('#DCCliente').append($('<option>',{value:datos.Codigo, text:datos.Cliente,selected: true }));
+			 // console.log(data);
+		}
+	});
+
+
+   // $.ajax({
+   //      url: '../controlador/facturacion/punto_ventaC.php?DCCliente=true&q='+ruc,
+   //      dataType: 'json',
+   //      delay: 250,
+   //      processResults: function (data) {
+   //        return {
+   //          results: data
+   //        };
+   //      },
+   //      cache: true
+   //    })
+  }
+
+
 
 
 	 // $('#DCCliente').on('select2:select', function (e) {
@@ -811,7 +863,7 @@ $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 								<option value="">Seleccione Bodega</option>
 							</select>	
 							<span class="input-group-btn">
-			        <button type="button" class="btn btn-success btn-xs btn-flat" onclick="addCliente()" title="Nuevo cliente"><span class="fa fa-user-plus"></span></button>		
+			        <button type="button" class="btn btn-success btn-xs btn-flat" id="btn_nuevo_cli" onclick="addCliente()" title="Nuevo cliente"><span class="fa fa-user-plus"></span></button>		
 			        </span>	  
 
 			        <!-- <button onclick="tipo_error_sri('0308202203179238540700120010020000006811234567815')" class="btn">error</button>  -->
