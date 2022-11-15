@@ -734,7 +734,7 @@ function imprimirDocElPF($stmt,$id=null,$formato=null,$nombre_archivo=null,$va=n
 	$pdf->SetFont('Arial','B',6);
 	$pdf->SetXY($x, 135);
 	$pdf->SetWidths(array(260));
-	$arr=array('Obligatorio a llevar a contabilidad:');
+	$arr=array('Obligado a llevar contabilidad:');
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetXY(165, 135);
@@ -1581,7 +1581,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetFont('Arial','B',6);
 	$pdf->SetXY($x, 135);
 	$pdf->SetWidths(array(260));
-	$arr=array('Obligatorio a llevar a contabilidad:');
+	$arr=array('Obligado a llevar contabilidad:');
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetXY(165, 135);
@@ -2365,7 +2365,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetFont('Arial','B',6);
 	$pdf->SetXY($x, $pdf->GetY());
 	$pdf->SetWidths(array(260));
-	$arr=array('Obligatorio a llevar a contabilidad:');
+	$arr=array('Obligado a llevar contabilidad:');
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetXY(165, $cont);
@@ -3157,7 +3157,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetFont('Arial','B',6);
 	$pdf->SetXY($x, $pdf->GetY());
 	$pdf->SetWidths(array(260));
-	$arr=array('Obligatorio a llevar a contabilidad:');
+	$arr=array('Obligado a llevar contabilidad:');
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetXY(165, $cont);
@@ -3517,7 +3517,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetFont('Arial','B',6);
 	$pdf->SetXY($x, 135);
 	$pdf->SetWidths(array(260));
-	$arr=array('Obligatorio a llevar a contabilidad:');
+	$arr=array('Obligado a llevar contabilidad:');
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetXY(165, 135);
@@ -4240,7 +4240,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetFont('Arial','B',6);
 	$pdf->SetXY($x, 135);
 	$pdf->SetWidths(array(260));
-	$arr=array('Obligatorio a llevar a contabilidad:');
+	$arr=array('Obligado a llevar contabilidad:');
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetXY(165, 135);
@@ -4993,7 +4993,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetFont('Arial','B',6);
 	$pdf->SetXY($x, 135);
 	$pdf->SetWidths(array(260));
-	$arr=array('Obligatorio a llevar a contabilidad:');
+	$arr=array('Obligado a llevar contabilidad:');
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetXY(165, 135);
@@ -5519,7 +5519,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetFont('Arial','B',6);
 	$pdf->SetXY($x, 135);
 	$pdf->SetWidths(array(260));
-	$arr=array('Obligatorio a llevar a contabilidad:');
+	$arr=array('Obligado a llevar contabilidad:');
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetXY(165, 135);
@@ -6241,7 +6241,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetFont('Arial','B',6);
 	$pdf->SetXY($x, 135);
 	$pdf->SetWidths(array(260));
-	$arr=array('Obligatorio a llevar a contabilidad:');
+	$arr=array('Obligado a llevar contabilidad:');
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetXY(165, 135);

@@ -471,6 +471,7 @@ if($operadora!='.' && strlen($operadora)==10)
 				if(data==1)
 				{
 					DGAsientoF();
+					Calculos_Totales_Factura();
 				}
 			}
 		});
