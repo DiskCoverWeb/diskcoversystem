@@ -199,7 +199,10 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("facturacion/lista_liquidacionCompra.php");
 			}
-			
+			if ($_SESSION['INGRESO']['accion']=='notascredito') 
+			{
+				require_once("facturacion/notas_credito.php");
+			}			
 
 //empresa
 
