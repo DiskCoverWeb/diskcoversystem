@@ -323,7 +323,7 @@
     function generar_excel()
 	{		
 	  var cod = $('#ddl_cliente').val();
-	   var url = '../controlador/educativo/detalle_estudianteC.php?imprimir_excel=true&codigo='+cod+'&per='+$('#ddl_periodo').val();
+	   var url = '../controlador/educativo/detalle_estudianteC.php?imprimir_excel=true&codigo='+cod+'&per='+$('#ddl_periodo').val()+'&TC=FA';
 	   window.open(url);
 
 	}

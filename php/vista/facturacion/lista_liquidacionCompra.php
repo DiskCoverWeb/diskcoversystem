@@ -324,7 +324,7 @@
     function generar_excel()
 	{		
 	  var cod = $('#ddl_cliente').val();
-	   var url = '../controlador/educativo/detalle_estudianteC.php?imprimir_excel=true&codigo='+cod+'&per='+$('#ddl_periodo').val();
+	   var url = '../controlador/educativo/detalle_estudianteC.php?imprimir_excel=true&codigo='+cod+'&per='+$('#ddl_periodo').val()+'&TC=LC';
 	   window.open(url);
 
 	}
@@ -752,7 +752,7 @@ function modal_email_fac(factura,serie,codigoc,emails)
     </div>
 	<div class="row">
     <div class="col-sm-12">
-      <h2 style="margin-top: 0px;">Listado de facturas</h2>
+      <h2 style="margin-top: 0px;">Listado de Liquidacion de compras</h2>
     </div>
     <div class="col-sm-12 text-right" id="panel_pag">
       

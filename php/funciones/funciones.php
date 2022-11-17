@@ -7824,8 +7824,13 @@ function factura_numero($ser)
       $me= $datos1['me'];
     }
     $total_total_= $datos1['Total'];
-    $total_abono= $datos1['Total_Abonos']; 
+    $total_abono= $datos1['Total_Abonos'];
     $fecha_actual = date("Y-m-d"); 
+    $fecha_aut = date("Y-m-d"); 
+    if(isset($datos1['Fecha']))
+    {
+      $fecha_actual = $datos1['Fecha']; 
+    } 
     $hora = date("H:i:s");
     $fechaEntera = strtotime($fecha_actual);
     $anio = date("Y", $fechaEntera);
@@ -8092,7 +8097,7 @@ function factura_numero($ser)
         $datoF[25]['campo']='P';
         $datoF[25]['dato']=0;
         $datoF[26]['campo']='Fecha_Aut';
-        $datoF[26]['dato']=$fecha_actual;
+        $datoF[26]['dato']=$fecha_aut;
         $datoF[27]['campo']='RUC_CI';
         $datoF[27]['dato']=$ruc;
         $datoF[28]['campo']='TB';
@@ -9723,6 +9728,21 @@ function Validar_Porc_IVA($FechaIVA)
       }
 
       return $Porc_IVA;
+}
+
+function filtra_datos_unico_array($array, $key) {
+    $temp_array = array();
+    $i = 0;
+    $key_array = array();
+   
+    foreach($array as $val) {
+        if (!in_array($val[$key], $key_array)) {
+            $key_array[$i] = $val[$key];
+            $temp_array[$i] = $val;
+        }
+        $i++;
+    }
+    return $temp_array;
 }
 
 

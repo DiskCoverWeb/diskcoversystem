@@ -203,6 +203,7 @@
            $('#txt_telefono').val(response.telefono);
            $('#txt_email').val(response.email);
            $('#txt_id').val(response.id);
+           $('#txt_validado').val(1);
            if(response.matricula == 0 || response.matricula == '')
            {
                 $('#txt_codigo').attr("readonly",false);

@@ -301,14 +301,18 @@ class db
 	  $cid = sqlsrv_connect($server, $connectionInfo); //returns false
 		if( $cid === false )
 		{
-			echo 'no se pudo conectar a la base de datos';
-			die( print_r( sqlsrv_errors(), true));
+			//devuelve -1 cuando la conexion a sql server o la base de dato no estan bien 
+			return -1;
+			// echo 'no se pudo conectar a la base de datos';
+			// die( print_r( sqlsrv_errors(), true));
 		}
 		$stmt = sqlsrv_query($cid,$sql);
 		// print_r($sql);die();
 		$result = array();	
 		if( $stmt === false) {
-			die( print_r( sqlsrv_errors(), true) );
+			// die( print_r( sqlsrv_errors(), true) );
+			//revuelve -2 cuando el sql no esta bien realizado
+			return -2;
 		}
 		while( $row = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC) ) 
    	{
