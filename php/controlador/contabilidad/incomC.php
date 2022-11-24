@@ -1633,7 +1633,7 @@ class incomC
           $TFA[0]["Retencion"] = $datos[0]["SecRetencion"];
           $TFA[0]["Autorizacion_R"] = $datos[0]["AutRetencion"];
           $TFA[0]["Autorizacion"] = $datos[0]["Autorizacion"];
-          $TFA[0]["Fecha"] = $datos[0]["FechaRegistro"];
+          $TFA[0]["Fecha"] = $datos[0]["FechaEmision"];
           $TFA[0]["Vencimiento"] = $datos[0]["FechaRegistro"];
           $TFA[0]["Serie"] = $datos[0]["Establecimiento"].$datos[0]["PuntoEmision"];
           $TFA[0]["Factura"] = $datos[0]["Secuencial"];

@@ -186,6 +186,18 @@ class cambioeM
 		return $this->db->ejecutar_sql_terceros($sql,$parametros['Servidor'],$parametros['Usuario'],$parametros['Clave'],$parametros['Base'],$parametros['Puerto']);
 	}
 
+	function todos_modulos()
+	{
+		$sql = "SELECT modulo,aplicacion FROM modulos WHERE modulo <> '.' and modulo <> 'VS' ORDER BY aplicacion ASC";
+		return $this->db->datos($sql,'MYSQL');
+	}
+
+	function paginas($modulo)
+	{
+		$sql = "SELECT ID,CodMenu,descripcionMenu FROM menu_modulos WHERE codMenu like '".$modulo.".%' AND LENGTH(codMenu)>4 ORDER BY descripcionMenu ASC";
+		return $this->db->datos($sql,'MYSQL');
+	}
+
 
 
 }

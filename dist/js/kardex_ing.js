@@ -643,6 +643,7 @@ function grabar_comprobante()
           dataType: 'json',
             success:  function (data) {
                $('#myModal_espera').modal('hide');
+               console.log(data);
         if(data.respuesta==1)
       { 
         Swal.fire({

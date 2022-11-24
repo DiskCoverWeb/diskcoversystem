@@ -215,7 +215,10 @@ class cambioeC
 					   if($sms!=''){ $op.= $sms;}else{ $op.= $value['Mensaje'];} 
 					   $op.='">
 					</div>
+				</div>			
+				
 				</div>';
+
 			//echo '<div id="alerta" class="alert alert-success visible">'.$filas['Empresa'].'</div>';
 			
 		}

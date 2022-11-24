@@ -289,13 +289,18 @@ C.Telefono_R,Telefono_RS,Lugar_Trabajo_R,Email_R,Email_R,Matricula_No,Folio_No,C
 	   return $result;
    }
 
-   function facturas_emitidas_excel($codigo,$reporte_Excel=false,$periodo=false)
+   function facturas_emitidas_excel($codigo,$reporte_Excel=false,$periodo=false,$tc='FA')
    {
    	$cid = $this->conn;
 		
 		$sql ="SELECT T,TC,Serie,Autorizacion,Factura,Fecha,SubTotal,Con_IVA,IVA,Descuento+Descuento2 as Descuentos,Total_MN as Total,Saldo_MN as Saldo,RUC_CI,TB,Razon_Social  FROM Facturas 
-       WHERE CodigoC ='".$codigo."'
-      AND Item = '".$_SESSION['INGRESO']['item']."'";
+       WHERE TC = '".$tc."' ";
+       if($codigo!='T')
+       {
+       	 $slq.=" and  CodigoC ='".$codigo."'";
+      
+       }
+       $sql.=" AND Item = '".$_SESSION['INGRESO']['item']."'";
        if($periodo && $periodo!='.')
        {
        	 $sql.=" AND Periodo BETWEEN '01/01/".$periodo."' AND '31/12/".$periodo."'";
@@ -305,7 +310,7 @@ C.Telefono_R,Telefono_RS,Lugar_Trabajo_R,Email_R,Email_R,Matricula_No,Folio_No,C
        }
        $sql.=" ORDER BY Fecha DESC"; 
 
-       // print_r($sql);die();
+        ///print_r($sql);die();
 
        $result = $this->conn->datos($sql);
       
@@ -316,7 +321,10 @@ C.Telefono_R,Telefono_RS,Lugar_Trabajo_R,Email_R,Email_R,Matricula_No,Folio_No,C
 	   {
 
 	   	 $b = 1;
-	     $titulo='F A C T U R A S   E M I T I D A S';
+	   	 $titulo='F A C T U R A S   E M I T I D A S';
+	   	 if($tc=='LC'){
+	   	 	$titulo='L I Q U I D A C I O N   D E  C O M P R A S   E M I T I D A S';
+	   	 }
 	     $tablaHTML =array();
 	     $tablaHTML[0]['medidas']=array(6,6,13,25,15,23,18,12,12,12,12,12,12,6,20);
 	     $tablaHTML[0]['datos']=array('T','TC','Serie','Autorizacion','Factura','Fecha','SubTotal','Con_IVA','IVA','Descuentos','Total','Saldo','RUC_CI','TB','Razon_Social');

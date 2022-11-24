@@ -26,6 +26,8 @@ class enviar_emails
 // funcion de envios enviando datos por correo (funciona)
 function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$HTML=false)
 {
+
+  // print_r('ingresa');die();
   $empresaGeneral = $this->Empresa_data();
 
 
@@ -133,7 +135,7 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
   {
     
 
-    // print_r($empresaGeneral)};die();
+    // print_r($empresaGeneral);die();
     //Instantiation and passing `true` enables exceptions
     $mail = new PHPMailer(true);
     try {

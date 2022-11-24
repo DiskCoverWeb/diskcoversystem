@@ -29,7 +29,7 @@ class modalesM
 		    }	
 		$sql.=" ORDER BY Cliente OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
 
-		// print_r($sql);die();
+		print_r($sql);die();
 		$datos = $this->db->datos($sql);
 		return $datos;
 

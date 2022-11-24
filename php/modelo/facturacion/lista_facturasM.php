@@ -252,7 +252,7 @@ class lista_facturasM
 	   $sql.=" ORDER BY ID OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
 		
 
-	   // print_r($sql);die();
+	   // print_r($sql);
 	   $stmt = sqlsrv_query($cid, $sql);
 	    if( $stmt === false)  
 	      {  

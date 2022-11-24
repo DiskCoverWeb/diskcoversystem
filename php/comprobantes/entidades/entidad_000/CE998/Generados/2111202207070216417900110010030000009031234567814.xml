@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<comprobanteRetencion id="comprobante" version="1.0.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
+    <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
+    <ruc>0702164179001</ruc>
+    <claveAcceso>2111202207070216417900110010030000009031234567814</claveAcceso>
+    <codDoc>07</codDoc>
+    <estab>001</estab>
+    <ptoEmi>003</ptoEmi>
+    <secuencial>000000903</secuencial>
+    <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
+  </infoTributaria>
+  <infoCompRetencion>
+    <fechaEmision>21/11/2022</fechaEmision>
+    <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <tipoIdentificacionSujetoRetenido>06</tipoIdentificacionSujetoRetenido>
+    <razonSocialSujetoRetenido>.</razonSocialSujetoRetenido>
+    <identificacionSujetoRetenido>9999999999</identificacionSujetoRetenido>
+    <periodoFiscal>11/2022</periodoFiscal>
+  </infoCompRetencion>
+  <impuestos>
+    <impuesto>
+      <codigo>2</codigo>
+      <codigoRetencion>9</codigoRetencion>
+      <baseImponible>12.00</baseImponible>
+      <porcentajeRetener>10</porcentajeRetener>
+      <valorRetenido>1.20</valorRetenido>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>003005000000001</numDocSustento>
+      <fechaEmisionDocSustento>21/11/2022</fechaEmisionDocSustento>
+    </impuesto>
+    <impuesto>
+      <codigo>2</codigo>
+      <codigoRetencion>10</codigoRetencion>
+      <baseImponible>3.60</baseImponible>
+      <porcentajeRetener>20</porcentajeRetener>
+      <valorRetenido>0.72</valorRetenido>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>003005000000001</numDocSustento>
+      <fechaEmisionDocSustento>21/11/2022</fechaEmisionDocSustento>
+    </impuesto>
+    <impuesto>
+      <codigo>1</codigo>
+      <codigoRetencion>303</codigoRetencion>
+      <baseImponible>350.00</baseImponible>
+      <porcentajeRetener>10.00</porcentajeRetener>
+      <valorRetenido>35.0000</valorRetenido>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>003005000000001</numDocSustento>
+      <fechaEmisionDocSustento>21/11/2022</fechaEmisionDocSustento>
+    </impuesto>
+  </impuestos>
+  <infoAdicional>
+    <campoAdicional nombre="Email">asistencia@diskcoversystem.com</campoAdicional>
+    <campoAdicional nombre="Comprobante No">CD-010000810</campoAdicional>
+    <campoAdicional nombre="Contribuyente Regimen Microempresas"> </campoAdicional>
+  </infoAdicional>
+</comprobanteRetencion>

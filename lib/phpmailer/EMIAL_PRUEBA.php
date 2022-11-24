@@ -11,19 +11,20 @@ require 'vendor/autoload.php';
 //Instantiation and passing `true` enables exceptions
 $mail = new PHPMailer(true);
 
+// host://Username://pass://Puerto://Secure:ssl
 
     //Server settings
     $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
     $mail->isSMTP();                                            //Send using SMTP
-    $mail->Host       = 'smtp.office365.com';                     //Set the SMTP server to send through
+    $mail->Host       = 'mail.diskcoversystem.com';                     //Set the SMTP server to send through
     $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-    $mail->Username   = 'CONTROLDEACTIVOS@puce.edu.ec';                     //SMTP username
-    $mail->Password   = 'H7pDPuv!2U';                               //SMTP password
+    $mail->Username   = 'electronicos@diskcoversystem.com';                     //SMTP username
+    $mail->Password   = 'Electronicos2022@';                               //SMTP password
     $mail->SMTPSecure = 'tls';//PHPMailer::ENCRYPTION_STARTTLS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
-    $mail->Port       = 587;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+    $mail->Port       = 26;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 
     //Recipients
-    $mail->setFrom('CONTROLDEACTIVOS@puce.edu.ec', 'Mailer');
+    $mail->setFrom('electronicos@diskcoversystem.com', 'Mailer');
     $mail->addAddress('javier.farinango92@gmail.com');     //Add a recipient
     // $mail->addAddress('ellen@example.com');               //Name is optional
     // $mail->addReplyTo('info@example.com', 'Information');

@@ -112,6 +112,18 @@ if(isset($_GET['todos_modulos']))
 	// echo json_encode($controlador->usuario_empresa($parametros['entidad'],$parametros['usuario']));
 }
 
+if(isset($_GET['paginas_acceso']))
+{
+	$parametros=$_POST['parametros'];
+	echo json_encode($controlador->paginas_acceso($parametros));
+}
+if(isset($_GET['savepag']))
+{
+	$parametros=$_POST['parametros'];
+	echo json_encode($controlador->savepag($parametros));
+}
+
+
 
 
 class niveles_seguriC
@@ -234,31 +246,191 @@ class niveles_seguriC
 	}
 	function guardar_datos_modulo($parametros)
 	{
-		$r = $this->modelo->existe_en_SQLSERVER($parametros);
-		// print_r($r);die();
-		if($r['respuesta']==1)
-		{		
 
+		 //print_r($parametros);die();
+
+		$modulos_empresa = str_replace('rbl_','',$parametros['modulos']); 
+		$modulos_empresa = str_replace('=on','',$modulos_empresa); 
+		$modulos_empresa = str_replace('&',',',$modulos_empresa); 
+		$modulos_empresa = str_replace('_','-',$modulos_empresa);
+		$mensaje = '';
+		$resp = 1;
+		$server_estado = 1;
+
+		$modulos_empresa = explode(',',$modulos_empresa);
 		$niveles = array('1'=>$parametros['n1'],'2'=>$parametros['n2'],'3'=>$parametros['n3'],'4'=>$parametros['n4'],'5'=>$parametros['n5'],'6'=>$parametros['n6'],'7'=>$parametros['n7'],'super'=>$parametros['super']);
-
-		// $insert = $this->modelo->guardar_acceso_empresa($modulos,$parametros['entidad'],$empresa,$parametros['CI_usuario']);
-
-
-		$update = $this->modelo->update_acceso_usuario($niveles,$parametros['usuario'],$parametros['pass'],$parametros['entidad'],$parametros['CI_usuario'],$parametros['email'],$parametros['serie']);
-		if($update == 1)
-		{
-			return $r['respuesta'];
-		}else
-		{
-			return -1 ;
+		$empresas_eli = array();
+		foreach ($modulos_empresa as $key => $value) {
+			$datos = explode('-', $value);
+			$modulo = $datos[0];
+			$empresa = $datos[1];
+			array_push($empresas_eli,$empresa);			
 		}
-	}else
-	{
-		return $r['respuesta'];
-	}
+		$empresas_eli =  array_unique($empresas_eli);
+
+		foreach ($empresas_eli as $key => $value) {
+			$this->modelo->delete_modulos_mysql($parametros['entidad'],false,$parametros['CI_usuario']);
+		}
+
+
+		foreach ($modulos_empresa as $key => $value) {
+
+			$datos = explode('-', $value);
+			$modulo = $datos[0];
+			$empresa = $datos[1];
+			$server_estado = 1;		
+
+			//busca en tabla  accesos de sqlserver para actualizar o crear
+			$respuesta = $this->modelo->existe_en_SQLSERVER($parametros['entidad'],$empresa,$parametros['CI_usuario']);
+
+			if($respuesta['resp']!=-1)
+			{
+				
+				switch ($respuesta['resp']) {
+					case '1':
+						// si encuentra datos actualiza en sql server
+						$res = $this->modelo->actualizar_en_sql_tercero($parametros['entidad'],$empresa,$parametros['CI_usuario'],$parametros);
+						if($res==-1)
+						{
+							$mensaje.='No se puedo actualizar en SQLServer: items'.$empresa.' Entidad:'.$parametros['entidad'];
+							$resp = 0;
+						}else if($res==-2)
+						{
+							$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+							$resp = 0;
+						}	
+						 $this->modelo->update_acceso_usuario($niveles,$parametros['usuario'],$parametros['pass'],$parametros['entidad'],$parametros['CI_usuario'],$parametros['email'],$parametros['serie']);
+						break;
+					case '-2':
+						//cuando tiene credenciales validas pero el usuario no existe
+						$res = $this->modelo->insertat_en_sql_terceros($parametros['entidad'],$empresa,$parametros['CI_usuario'],$parametros);
+						if($res==-1)
+						{
+							$mensaje.='No se puedo Insertar en SQLServer: items'.$empresa.' Entidad:'.$parametros['entidad'];
+							$resp = 0;
+						}else if($res==-2)
+						{
+							$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+							$resp = 0;
+						}	
+						break;				
+					default:
+					    // cuando las conexiones del sqlserver o base de datos no son las correctas
+						$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+						$resp = 0;
+						break;
+				}
+			
+				//busca en clientes para actualizar o insertar
+				$respuesta = $this->modelo->existe_en_SQLSERVER_cliente($parametros['entidad'],$empresa,$parametros['CI_usuario']);
+				switch ($respuesta['resp']) {
+					case '1':
+						// si encuentra datos actualiza en sql server
+						$res = $this->modelo->actualizar_cliente_en_sql_tercero($parametros['entidad'],$empresa,$parametros['CI_usuario'],$parametros);
+						if($res==-1)
+						{
+							$mensaje.='No se puedo actualizar Cliente en SQLServer: items'.$empresa.' Entidad:'.$parametros['entidad'];
+							$resp = 0;
+						}else if($res==-2)
+						{
+							$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+							$resp = 0;
+						}	
+						break;
+					case '-2':
+						//cuando tiene credenciales validas pero el usuario no existe
+						$res = $this->modelo->insertar_cliente_en_sql_terceros($parametros['entidad'],$empresa,$parametros['CI_usuario'],$parametros);
+						if($res==-1)
+						{
+							$mensaje.='No se puedo Insertar Cliente en SQLServer: items'.$empresa.' Entidad:'.$parametros['entidad'];
+							$resp = 0;
+						}else if($res==-2)
+						{
+							$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+							$resp = 0;
+						}	
+						break;				
+					default:
+					    // cuando las conexiones del sqlserver o base de datos no son las correctas
+						$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+						$resp = 0;
+						break;
+				}
+
+			//verifica si esta en acceso_empresa
+				$respuesta = $this->modelo->existe_en_SQLSERVER_acceso_empresa($parametros['entidad'],$empresa,$parametros['CI_usuario'],$modulo);
+				// print_r($respuesta);die();
+				switch ($respuesta['resp']) {
+					case '1':
+						// verifica si esta en mysql
+					    $this->modelo->guardar_acceso_empresa($modulo,$parametros['entidad'],$empresa,$parametros['CI_usuario']);
+						break;
+					case '-2':
+						//cuando tiene credenciales validas pero el usuario no existe
+						$res = $this->modelo->insertar_acceso_en_sql_terceros($parametros['entidad'],$empresa,$parametros['CI_usuario'],$modulo);
+						if($res==-1)
+						{
+							$mensaje.='No se puedo Insertar Cliente en SQLServer: items'.$empresa.' Entidad:'.$parametros['entidad'];
+							$resp = 0;
+						}else if($res==-2)
+						{
+							$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+							$resp = 0;
+						}
+						$this->modelo->guardar_acceso_empresa($modulo,$parametros['entidad'],$empresa,$parametros['CI_usuario']);	
+						break;				
+					default:
+					    // cuando las conexiones del sqlserver o base de datos no son las correctas
+						$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+						$resp = 0;
+						break;
+				}
+			}else
+			{
+				$this->modelo->guardar_acceso_empresa($modulo,$parametros['entidad'],$empresa,$parametros['CI_usuario']);
+				$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+			}
+		    // return $r;	
+			//validamos si existe en sql 
+
+		 } 
+
+		    $r =  array('estado_proceso'=>$resp,'mensaje'=>$mensaje);	
+
+		    return $r;
+
+	// 	 	print_r($r);die();
+
+	// 	print_r($modulos_empresa);die();
+
+	// 	///falta optimizar de aqui 
+	// 	$r = $this->modelo->existe_en_SQLSERVER($parametros);
+	// 	// print_r($r);die();
+	// 	if($r['respuesta']==1)
+	// 	{		
+
+	// 	$niveles = array('1'=>$parametros['n1'],'2'=>$parametros['n2'],'3'=>$parametros['n3'],'4'=>$parametros['n4'],'5'=>$parametros['n5'],'6'=>$parametros['n6'],'7'=>$parametros['n7'],'super'=>$parametros['super']);
+
+	// 	// $insert = $this->modelo->guardar_acceso_empresa($modulos,$parametros['entidad'],$empresa,$parametros['CI_usuario']);
+
+
+	// 	$update = $this->modelo->update_acceso_usuario($niveles,$parametros['usuario'],$parametros['pass'],$parametros['entidad'],$parametros['CI_usuario'],$parametros['email'],$parametros['serie']);
+	// 	if($update == 1)
+	// 	{
+	// 		return $r['respuesta'];
+	// 	}else
+	// 	{
+	// 		return -1 ;
+	// 	}
+	// }else
+	// {
+	// 	return $r['respuesta'];
+	// }
 
 
 	}
+
+
 	function bloqueado_usurio($parametros)
 	{
 		$rest = $this->modelo->bloquear_usuario($parametros['entidad'],$parametros['usuario']);
@@ -372,31 +544,28 @@ class niveles_seguriC
 		$tbl2 = '';
 		$modulos = $this->modelo->modulos_todo();
 		$empresas = $this->modelo->empresas($entidad);
+		$empresas_unicas = filtra_datos_unico_array($empresas, 'id');
 		$usuarios_reg = $this->modelo->usuarios_registrados_entidad($entidad);
+		$mensaje = '';
+		$count_emp = 0;
 
-		// print_r($empresas);die();				
-			// 	$tbl2.='<div class="box">
-			// 					<div class=" col-xs-2 col-sm-3 col-lg-3" style="background-color:#e2fbff;">
-			// 						<br>							
-			// 					</div>
-   //          				<div class="col-xs-10 col-lg-9" style="overflow-x:scroll;">
-   //            					<div class="row"><div class="col-sm-12">';
-
-
-			//    $tbl2.='			    
-			//    <table class="table-sm" style="margin-bottom:0px;font-size:11px;white-space: nowrap;"><tr>';
-			// foreach ($modulos as $key2 => $value2) {	
-			// 	$server = '';
-			// 	// if($value1['dbSQLSERVER']==0){$server = 'Disabled';}
-							
-			// 	$tbl2.='<td class="text-center" style="border: solid 1px; width: 50px;">
-			// 					'.$value2['aplicacion'].'</br>
-			// 	            <input type="checkbox" name="rbl_'.$value2['modulo'].'_'.$entidad.'" id="rbl_'.$value2['modulo'].'_'.$entidad.'" title="'.$value2['aplicacion'].'" onclick="marcar_acceso_todos(\''.$entidad.'\',\''.$value2['modulo'].'\')" '.$server.' >
-			// 	        </td>';
-			// }
-			// $tbl2.='</tr></table></div></div></div>';
-
-		
+		//validando que los items sean unicos
+		foreach ($empresas_unicas as $key => $value2) {
+			// $item_temp = $value2['id'];
+			foreach ($empresas as $key3 => $value3) {
+				if($value2['id']==$value3['id'])
+				{
+					$count_emp++;		
+				}
+			}
+			$count_emp = $count_emp-1;
+			if($count_emp>=1)
+			{
+				$mensaje.='Item de empresa:<br> '.$value2['id'].' '.$value2['text'].' Veces Repetido: '.$count_emp.'<br>';
+				$count_emp = 0;
+			}
+		}
+		// creamos el grid de modulos y empresas
 
 			foreach ($empresas as $key1 => $value1) {
 				$server = '<p><i class="fa fa-circle text-success"></i> En linea</p>';
@@ -408,9 +577,23 @@ class niveles_seguriC
 				}
 				$tbl2.='<div class="row">
 								<div class=" col-xs-2 col-sm-3 col-lg-3" style="background-color:#e2fbff;">
-										<b>'.$value1['text'].'</b>	<br>
-										<b>RUC:</b>'.$value1['CI_RUC'].'<br>
-										'.$server.'									
+										<div class="row">
+										  <div class="col-sm-12">
+										  	<b>'.$value1['text'].'</b>
+										  </div>
+										  <div class="col-sm-6">
+										  	<b>RUC:</b>'.$value1['CI_RUC'].'<br>
+										  </div>
+										  <div class="col-sm-6">
+										  	<b>Item:</b>'.$value1['id'].'<br>
+										  </div>
+										  <div class="col-sm-12">
+										  	'.$server.'	
+										  </div>
+										  <div class="col-sm-12">
+										  	 <button type="button" class="btn btn-primary btn-xs" onclick="acceso_pagina(\''.$entidad.'\',\''.$value1['id'].'\')">Asignar acceso a paginas</button>
+										  </div>
+										</div>									
 								</div>
             				<div class="col-xs-10 col-lg-9" style="overflow-x:scroll;">
               					<div class="row"><div class="col-sm-12">';
@@ -425,7 +608,7 @@ class niveles_seguriC
 							
 				$tbl2.='<td class="text-center" style="border: solid 1px; width: 50px;">
 								'.$value2['aplicacion'].'</br>
-				            <input type="checkbox" name="rbl_'.$value2['modulo'].'_'.$value1['id'].'" id="rbl_'.$value2['modulo'].'_'.$value1['id'].'" title="'.$value2['aplicacion'].'" onclick="marcar_acceso(\''.$value1['id'].'\',\''.$value2['modulo'].'\')" '.$server.' >
+				            <input type="checkbox" name="rbl_'.$value2['modulo'].'_'.$value1['id'].'" id="rbl_'.$value2['modulo'].'_'.$value1['id'].'" title="'.$value2['aplicacion'].'" onclick="marcar_acceso1(\''.$value1['id'].'\',\''.$value2['modulo'].'\')" '.$server.' >
 				        </td>';
 			}
 			$tbl2.='</tr></table></div></div></div></div>';	
@@ -441,7 +624,9 @@ class niveles_seguriC
 		}
 		// print_r($tbl);die();
 		// return utf8_decode($tbl);
-		$tbl = array('tbl'=>$tbl2,'usuarios'=>$usuarios);
+		$tbl = array('tbl'=>$tbl2,'usuarios'=>$usuarios,'empresas'=>$empresas_unicas,'alerta'=>$mensaje);
+
+		// print_r($tbl);die();
 		return $tbl;
 	}
 
@@ -611,6 +796,8 @@ Emails: recepcion@diskcoversystem.com o prisma_net@hotmail.es
 	  	
 	  	// if($resp==1)
 	  	// {
+
+	  	// print_r($empresaGeneral);die();
 	  	if($this->email->enviar_credenciales($archivos,$correo,$cuerpo_correo,$titulo_correo,$correo_apooyo,'Credenciales de acceso al sistema DiskCover System',$email_conexion,$email_pass,$html=1,$empresaGeneral)==1){
 	  		return 1;
 	  	}else{
@@ -805,5 +992,56 @@ Emails: recepcion@diskcoversystem.com o prisma_net@hotmail.es
     	return 1;
     }
 
+    function paginas_acceso($parametros)
+    {
+    	// print_r($parametros);die();
+    	$op='<div class="col-sm-12">
+					<ul class="nav nav-tabs">';
+				$modulos = $this->modelo->todos_modulos($parametros['entidad'],$parametros['item'],$parametros['usuario']);
+				foreach ($modulos as $key => $value) {
+					$ver = '';
+					if($key==0){ $ver = 'active';}
+					$op.='<li class="'.$ver.'"><a data-toggle="tab" href="#'.str_replace(' ','_',$value['aplicacion']).'">'.$value['aplicacion'].'</a></li>';
+				}
+				$op.='</ul>
+					  <div class="tab-content">';
+				foreach ($modulos as $key => $value) {
+					$ver = '';
+					if($key==0){$ver = 'in active';}
+					$op.='<div id="'.str_replace(' ','_',$value['aplicacion']).'" class="tab-pane fade '.$ver.'"><br>';
+					$pag = $this->modelo->paginas($value['modulo']);
+					foreach ($pag as $key => $value1) {
+						$op.='<label><input type="checkbox" id="rbl_'.$value1['ID'].'" onclick="guardar_pag(\''.$parametros['entidad'].'\',\''.$parametros['item'].'\',\''.$parametros['usuario'].'\',\''.$value1['ID'].'\',\''.$value['modulo'].'\')"> '.$value1['descripcionMenu'].'</label><br>';
+					}
+					$op.='</div>';
+				}
+				$op.='</div>';
+
+				return $op;
+    }
+
+    function savepag($parametros)
+    {
+    	if($parametros['estado']=='true')
+    	{
+    		$datos[0]['campo'] = 'ID_Empresa';
+    		$datos[0]['dato']  = $parametros['entidad'];
+    		$datos[1]['campo'] = 'CI_NIC';
+    		$datos[1]['dato']  = $parametros['usuario'];
+    		$datos[2]['campo'] = 'Modulo';
+    		$datos[2]['dato']  = $parametros['modulo'];
+    		$datos[2]['tipo']  = 'string';
+    		$datos[3]['campo'] = 'Item';
+    		$datos[3]['dato']  = $parametros['empresa'];
+    		$datos[4]['campo'] = 'Pagina';
+    		$datos[4]['dato']  = $parametros['pagina'];
+    		$this->modelo->add_accesos('acceso_empresas',$datos);
+    	}else
+    	{
+    		$this->modelo->delete_acceso($parametros['entidad'],$parametros['usuario'],$parametros['modulo'],$parametros['empresa'],$parametros['pagina']);
+    		// elimina el acceso
+    	}
+    	print_r($parametros);die();
+    }
 }
 ?>

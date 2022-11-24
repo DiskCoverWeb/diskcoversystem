@@ -145,14 +145,7 @@ class lista_facturasC
     		 	 	 $email.=$cli_data[0]['Email2'].',';
     		 	 }
     		 }
-    		 // if(count($exis)>0 && strlen($value['Autorizacion'])==13 && $parametros['tipo']!='')
-    		 // {
-    		 // 	$autorizar = '<button type="button" class="btn btn-xs btn-primary" title="Autorizar"><i class="fa fa-paper-plane"></i></button>';
-    		 // }
-    		 // if($value['T']!='A' && $parametros['tipo']!='')
-    		 // {
-    		 // 	$anular = '<button type="button" class="btn btn-xs btn-danger"  title="Anular factura"><i class="fa fa-times-circle"></i></button>';
-    		 // }
+    		 
     		$tr.='<tr>
             <td>
             <div class="input-group-btn">

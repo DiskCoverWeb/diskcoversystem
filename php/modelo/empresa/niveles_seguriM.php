@@ -92,13 +92,13 @@ class niveles_seguriM
 		foreach ($resp as $key => $value) {
 			$server = 1;
 			if($value['IP_VPN_RUTA']=='.'){	$server = 0;}
-			else{
-			$re = $this->db->modulos_sql_server($value['IP_VPN_RUTA'],$value['Usuario_DB'],$value['Contrasena_DB'],$value['Base_Datos'],$value['Puerto']);
-				if($re==-1)
-				{
-					$server = 2;
-				}
-			}
+			// else{
+			// $re = $this->db->modulos_sql_server($value['IP_VPN_RUTA'],$value['Usuario_DB'],$value['Contrasena_DB'],$value['Base_Datos'],$value['Puerto']);
+			// 	if($re==-1)
+			// 	{
+			// 		$server = 2;
+			// 	}
+			// }
 				//$datos[]=['id'=>utf8_encode($filas['Item']),'text'=>utf8_encode($filas['Empresa'])];
 				$datos[]=array('id'=>$value['Item'],'text'=>$value['Empresa'],'dbSQLSERVER'=>$server,'CI_RUC'=>$value['RUC_CI_NIC']);			
 		 }
@@ -148,9 +148,13 @@ class niveles_seguriM
 	      return $datos;
 
 	}
-	function acceso_empresas_($entidad,$empresas,$usuario)
+	function acceso_empresas_($entidad,$empresas,$usuario,$modulo=false)
 	{
 		$sql = "SELECT * FROM acceso_empresas WHERE  ID_Empresa = ".$entidad." AND Item='".$empresas."' AND CI_NIC = '".$usuario."'";
+		if($modulo)
+		{
+			$sql.=" AND Modulo='".$modulo."'";
+		}
 		 $datos=[];
 		 // print_r($sql);
 		 $resp = $this->db->datos($sql,'MY SQL');
@@ -189,63 +193,17 @@ class niveles_seguriM
 	    // $delet = $this->delete_modulos($entidad,$empresas,$usuario);
 	    // if($delet==1)
 	    // {
-	    $regis = $this->acceso_empresas_($entidad,$empresas,$usuario);
+	    $regis = $this->acceso_empresas_($entidad,$empresas,$usuario,$modulos);
 	    $modulo = explode(',',$modulos);
 	    $valor = '';
 	   	$valor_sql = '';
 	    $existe = 0;
-	    if(count($regis)>0)
+	    if(count($regis)==0)
 	    {
-	       foreach ($modulo as $key => $value) {
-	    	   foreach ($regis as $key1 => $value1) {
-	    	    if($value == $value1['Modulo'])
-	    		   {
-	    		   	$existe = 1;
-	    		   	break;
-	    		   }	    		  
-	    	   }
-	    	    if($existe == 0)
-	    	       {
-	    	   	    $valor.= '('.$entidad.',"'.$usuario.'","'.$value.'","'.$empresas.'"),';
-	    	   	    $valor_sql.= "('".$value."','".$empresas."','".$usuario."','.'),";
-	    	       }
-	    	   $existe =0;	    	   
-	       }   	
-	    }else
-	    {
-	    	foreach ($modulo as $key => $value) {
-	    	  $valor.= '('.$entidad.',"'.$usuario.'","'.$value.'","'.$empresas.'"),';
-	    	  $valor_sql.= "('".$value."','".$empresas."','".$usuario."','.'),";
-	       }
-	    }
-
-	 	if($valor != "")
-	  	{	  		
-	  		$valor = substr($valor, 0,-1);
-	  		$valor_sql = substr($valor_sql, 0,-1);
-	  		$sql = "INSERT INTO acceso_empresas (ID_Empresa,CI_NIC,Modulo,item) VALUES ".$valor;
+	  		$sql = "INSERT INTO acceso_empresas (ID_Empresa,CI_NIC,Modulo,item,Pagina) VALUES ('".$entidad."','".$usuario."','".$modulos."','".$empresas."','.')";
 	  		$r = $this->db->String_Sql($sql,'MY SQL');
-
-	  		// guarda en sql server
-	  		$conn_sql = $this->empresas_datos($entidad,$empresas);
-	  		if(count($conn_sql)>0)
-	  		{
-	  			$conn = $this->db->modulos_sql_server($conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
-	  			// print_r($conn);
-	  			if($conn!=-1)
-	  			{
-	  				$sql = "INSERT INTO Acceso_Empresa (Modulo,Item,Codigo,X) VALUES ".$valor_sql;
-	  				// print_r($sql);die();
-	  				$re = $this->db->ejecutar_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
-	  				// print_r($re);die();
-	  			}
-	  			
-	  		}
-	  	   
-	  	    // print_r($sql);die();
 	  	   return $r;
 	    }
-	    return 1;
 	// }
 
 
@@ -293,6 +251,27 @@ class niveles_seguriM
 		return $r;
 
 	}
+
+
+	function delete_modulos_mysql($entidad,$empresas=false,$usuario,$modulo=false)
+	{
+		$sql = "DELETE FROM acceso_empresas WHERE  ID_Empresa = ".$entidad." ";
+		if($empresas)
+		{
+			$sql.=" AND Item='".$empresas."'";
+		}
+			$sql.=" AND CI_NIC = '".$usuario."'";
+		if($modulo)
+		{
+			 $sql.=" AND Modulo='".$modulo."'";
+		}
+		// print_r($sql);
+		// die();
+		$r =  $this->db->String_Sql($sql,'MY SQL');
+		return $r;
+
+	}
+
 
 	function bloquear_usuario($entidad,$CI_NIC)
 	{
@@ -484,7 +463,254 @@ class niveles_seguriM
 	}
 
 
-	function existe_en_SQLSERVER($parametros)
+	function existe_en_SQLSERVER($entidad,$id_empresa,$CI_usuario)
+	{
+		set_time_limit(0);
+		$mensaje='';
+		$sql= "SELECT Base_Datos,Usuario_DB,Contrasena_DB,IP_VPN_RUTA,Tipo_Base,Puerto,Empresa  FROM lista_empresas WHERE ID_Empresa = '".$entidad."' AND Item = '".$id_empresa."'";
+		$datos = $this->db->datos($sql,'MY SQL');
+		if(count($datos)>0)
+		{
+			// print_r($datos);die();
+			$sql = "SELECT * FROM Accesos WHERE Codigo = '".$CI_usuario."'";
+			$res = $this->db->consulta_datos_db_sql_terceros($sql,$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
+			if($res==-1)
+			{
+				//mensaje cuando las credencioales estan mal configuradas
+				$mensaje.= 'Base de datos o credenciales SQL SERVER no correctas para:'.$datos[0]['Empresa'];
+				return array('resp'=>-1,'mensaje'=>$mensaje);
+			}else
+			{
+				// si las conexiones estan bien configuradas y ejecuta el sql ingresa aqui
+				if(count($res)>0)
+				{
+					// si la consulta encuentra datos actualiza en sql server
+					return array('resp'=>1,'mensaje'=>$mensaje);
+		 	     	 	 
+
+				}else
+				{
+					// si la consulta no encuentra datos lo crea en sql server
+					return array('resp'=>-2,'mensaje'=>$mensaje);
+				}
+			}
+		}
+
+	}
+
+	function existe_en_SQLSERVER_cliente($entidad,$id_empresa,$CI_usuario)
+	{
+		set_time_limit(0);
+		$mensaje='';
+		$sql= "SELECT Base_Datos,Usuario_DB,Contrasena_DB,IP_VPN_RUTA,Tipo_Base,Puerto,Empresa  FROM lista_empresas WHERE ID_Empresa = '".$entidad."' AND Item = '".$id_empresa."'";
+		$datos = $this->db->datos($sql,'MY SQL');
+		if(count($datos)>0)
+		{
+			// print_r($datos);die();
+			$sql = "SELECT * FROM Clientes WHERE CI_RUC = '".$CI_usuario."'";
+			$res = $this->db->consulta_datos_db_sql_terceros($sql,$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
+			if($res==-1)
+			{
+				//mensaje cuando las credencioales estan mal configuradas
+				$mensaje.= 'Base de datos o credenciales SQL SERVER no correctas para:'.$datos[0]['Empresa'];
+				return array('resp'=>-1,'mensaje'=>$mensaje);
+			}else
+			{
+				// si las conexiones estan bien configuradas y ejecuta el sql ingresa aqui
+				if(count($res)>0)
+				{
+					// si la consulta encuentra datos actualiza en sql server
+					return array('resp'=>1,'mensaje'=>$mensaje);
+		 	     	 	 
+
+				}else
+				{
+					// si la consulta no encuentra datos lo crea en sql server
+					return array('resp'=>-2,'mensaje'=>$mensaje);
+				}
+			}
+		}
+
+	}
+
+	function existe_en_SQLSERVER_acceso_empresa($entidad,$id_empresa,$CI_usuario,$modulo)
+	{
+		set_time_limit(0);
+		$mensaje='';
+		$sql= "SELECT Base_Datos,Usuario_DB,Contrasena_DB,IP_VPN_RUTA,Tipo_Base,Puerto,Empresa  FROM lista_empresas WHERE ID_Empresa = '".$entidad."' AND Item = '".$id_empresa."'";
+		$datos = $this->db->datos($sql,'MY SQL');
+		if(count($datos)>0)
+		{
+			// print_r($datos);die();
+			$sql = "SELECT * FROM Acceso_Empresa WHERE Codigo = '".$CI_usuario."' AND Modulo = '".$modulo."' AND Item='".$id_empresa."'";
+			$res = $this->db->consulta_datos_db_sql_terceros($sql,$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
+			if($res==-1)
+			{
+				//mensaje cuando las credencioales estan mal configuradas
+				$mensaje.= 'Base de datos o credenciales SQL SERVER no correctas para:'.$datos[0]['Empresa'];
+				return array('resp'=>-1,'mensaje'=>$mensaje);
+			}else
+			{
+				// si las conexiones estan bien configuradas y ejecuta el sql ingresa aqui
+				if(count($res)>0)
+				{
+					// si la consulta encuentra datos actualiza en sql server
+					return array('resp'=>1,'mensaje'=>$mensaje);
+		 	     	 	 
+
+				}else
+				{
+					// si la consulta no encuentra datos lo crea en sql server
+					return array('resp'=>-2,'mensaje'=>$mensaje);
+				}
+			}
+		}
+
+	}
+
+
+	function actualizar_en_sql_tercero($entidad,$id_empresa,$CI_usuario,$parametros)
+	{
+		set_time_limit(0);
+		$mensaje='';
+		$sql= "SELECT Base_Datos,Usuario_DB,Contrasena_DB,IP_VPN_RUTA,Tipo_Base,Puerto,Empresa  FROM lista_empresas WHERE ID_Empresa = '".$entidad."' AND Item = '".$id_empresa."'";
+		$datos = $this->db->datos($sql,'MY SQL');
+		if(count($datos)>0)
+		{
+			$sql = "UPDATE Accesos SET Nivel_1 =".$parametros['n1'].", Nivel_2 =".$parametros['n2'].", Nivel_3 =".$parametros['n3'].", Nivel_4 =".$parametros['n4'].",Nivel_5 =".$parametros['n5'].", Nivel_6=".$parametros['n6'].", Nivel_7=".$parametros['n7'].", Supervisor = ".$parametros['super'].", Usuario = '".$parametros['usuario']."',Clave = '".$parametros['pass']."',EmailUsuario='".$parametros['email']."',Serie_FA = '".$parametros['serie']."',TODOS=1 WHERE Codigo = '".$parametros['CI_usuario']."';";
+		 	  $sql = str_replace('false',0, $sql);
+		 	  $sql = str_replace('true',1, $sql);
+		 	  // print_r($sql);die();
+		 	  $r = $this->db->ejecutar_sql_terceros($sql,$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
+		 	  return $r;
+		}else
+		{
+			return -2;
+		}
+
+	}
+
+	function actualizar_cliente_en_sql_tercero($entidad,$id_empresa,$CI_usuario,$parametros)
+	{
+		set_time_limit(0);
+		$mensaje='';
+		$sql= "SELECT Base_Datos,Usuario_DB,Contrasena_DB,IP_VPN_RUTA,Tipo_Base,Puerto,Empresa  FROM lista_empresas WHERE ID_Empresa = '".$entidad."' AND Item = '".$id_empresa."'";
+		$datos = $this->db->datos($sql,'MY SQL');
+		if(count($datos)>0)
+		{
+
+			// ver que se puede actualizar 
+			$r = 1;
+			// $sql = "UPDATE Clientes SET T,FA,Codigo,Fecha,Cliente,TD,CI_RUC,FactM,Descuento,RISE,Especial WHERE CI_RUC = '".$parametros['CI_usuario']."';";
+		 	//   $sql = str_replace('false',0, $sql);
+		 	//   $sql = str_replace('true',1, $sql);
+
+		 	//    $sql = "INSERT INTO Clientes(T,FA,Codigo,Fecha,Cliente,TD,CI_RUC,FactM,Descuento,RISE,Especial)VALUES('N',0,'".$parametros['CI_usuario']."','".date('Y-m-d')."','".$parametros['nombre']."','C','".$parametros['CI_usuario']."',0,0,0,0);";
+
+		 	//   // print_r($sql);die();
+		 	//   $r = $this->db->ejecutar_sql_terceros($sql,$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
+		 	  return $r;
+		}else
+		{
+			return -2;
+		}
+
+	}
+
+
+	function actualizar_acceso_empresa_en_sql_tercero($entidad,$id_empresa,$CI_usuario,$parametros)
+	{
+		set_time_limit(0);
+		$mensaje='';
+		$sql= "SELECT Base_Datos,Usuario_DB,Contrasena_DB,IP_VPN_RUTA,Tipo_Base,Puerto,Empresa  FROM lista_empresas WHERE ID_Empresa = '".$entidad."' AND Item = '".$id_empresa."'";
+		$datos = $this->db->datos($sql,'MY SQL');
+		if(count($datos)>0)
+		{
+
+			// ver que se puede actualizar 
+			 $sql = "UPDATE Acceso_Empresa SET Codigo,Usuario,Clave,Nombre_Completo,T,FA,Codigo,Fecha,Cliente,TD,CI_RUC,FactM,Descuento,RISE,Especial WHERE CI_RUC = '".$parametros['CI_usuario']."';";
+		 	//   $sql = str_replace('false',0, $sql);
+		 	//   $sql = str_replace('true',1, $sql);
+
+		 	
+		 	 // print_r($sql);die();
+		 	$r = $this->db->ejecutar_sql_terceros($sql,$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
+		 	  return $r;
+		}else
+		{
+			return -2;
+		}
+
+	}
+
+	function insertat_en_sql_terceros($entidad,$id_empresa,$CI_usuario,$parametros)
+	{
+		// print_r($parametros);die();
+		set_time_limit(0);
+		$mensaje='';
+		$sql= "SELECT Base_Datos,Usuario_DB,Contrasena_DB,IP_VPN_RUTA,Tipo_Base,Puerto,Empresa  FROM lista_empresas WHERE ID_Empresa = '".$entidad."' AND Item = '".$id_empresa."'";
+		$datos = $this->db->datos($sql,'MY SQL');
+		if(count($datos)>0)
+		{
+			
+			$sql="INSERT INTO Accesos (TODOS,Clave,Usuario,Codigo,Nombre_Completo,Nivel_1,Nivel_2,Nivel_3,Nivel_4,Nivel_5,Nivel_6,Nivel_7,Supervisor,EmailUsuario,Serie_FA,P_Com,OK,X,Primaria,Secundaria,Bachillerato,Impresora_Defecto,Papel_Impresora,Impresora_Defecto_2,Papel_Impresora_2,CodBod,Cod_Ejec,Cuota_Venta) VALUES (1,'".$parametros['pass']."','".$parametros['usuario']."','".$parametros['CI_usuario']."','".$parametros['nombre']."','".$parametros['n1']."','".$parametros['n2']."','".$parametros['n3']."','".$parametros['n4']."','".$parametros['n5']."','".$parametros['n6']."','".$parametros['n7']."','".$parametros['super']."','".$parametros['email']."','".$parametros['serie']."',0,0,'.',0,0,0,'.','.','.','.','.','.','.')";
+
+				// print_r($sql);die();
+			$r = $this->db->ejecutar_sql_terceros($sql,$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
+		 	  return $r;
+		}else
+		{
+			return -2;
+		}
+
+	}
+
+	function insertar_cliente_en_sql_terceros($entidad,$id_empresa,$CI_usuario,$parametros)
+	{
+		// print_r($parametros);die();
+		set_time_limit(0);
+		$mensaje='';
+		$sql= "SELECT Base_Datos,Usuario_DB,Contrasena_DB,IP_VPN_RUTA,Tipo_Base,Puerto,Empresa  FROM lista_empresas WHERE ID_Empresa = '".$entidad."' AND Item = '".$id_empresa."'";
+		$datos = $this->db->datos($sql,'MY SQL');
+		if(count($datos)>0)
+		{
+			 $sql = "INSERT INTO Clientes(T,FA,Codigo,Fecha,Cliente,TD,CI_RUC,FactM,Descuento,RISE,Especial)VALUES('N',0,'".$parametros['CI_usuario']."','".date('Y-m-d')."','".$parametros['nombre']."','C','".$parametros['CI_usuario']."',0,0,0,0);";
+
+				// print_r($sql);die();
+			$r = $this->db->ejecutar_sql_terceros($sql,$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
+		 	  return $r;
+		}else
+		{
+			return -2;
+		}
+
+	}
+
+	function insertar_acceso_en_sql_terceros($entidad,$id_empresa,$CI_usuario,$modulo)
+	{
+		// print_r($parametros);die();
+		set_time_limit(0);
+		$mensaje='';
+		$sql= "SELECT Base_Datos,Usuario_DB,Contrasena_DB,IP_VPN_RUTA,Tipo_Base,Puerto,Empresa  FROM lista_empresas WHERE ID_Empresa = '".$entidad."' AND Item = '".$id_empresa."'";
+		$datos = $this->db->datos($sql,'MY SQL');
+		if(count($datos)>0)
+		{
+			 $sql = "INSERT INTO Acceso_Empresa (Modulo,Item,Codigo,X)VALUES($modulo,$id_empresa,$CI_usuario,'.');";
+				// print_r($sql);die();
+			$r = $this->db->ejecutar_sql_terceros($sql,$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
+		 	  return $r;
+		}else
+		{
+			return -2;
+		}
+
+	}
+
+
+
+
+	//************** se piensa borrar *********** // 
+	function existe_en_SQLSERVER2($parametros)
 	{
         $registrado = true;
 		$sql= "SELECT DISTINCT Base_Datos,Usuario_DB,Contrasena_DB,IP_VPN_RUTA,Tipo_Base,Puerto,Empresa  FROM lista_empresas WHERE ID_Empresa = '".$parametros['entidad']."' AND Base_Datos <>'.'";
@@ -619,10 +845,18 @@ class niveles_seguriM
 
 	}
 
-	function accesos_modulos($entidad,$usuario)
+	function accesos_modulos($entidad,$usuario,$item=false,$modulo=false)
 	{
 
 		$sql="SELECT Item,Modulo FROM acceso_empresas WHERE ID_Empresa = '".$entidad."' AND CI_NIC = '".$usuario."'";
+		if($item)
+		{
+			$sql.=" AND Item = '".$item."'";
+		}
+		if($modulo)
+		{
+			$sql.=" AND Modulo= '".$modulo."'";
+		}
 		$datos = $this->db->datos($sql,'MY SQL');
 	      return $datos;
 	}
@@ -641,6 +875,51 @@ class niveles_seguriM
    	$datos = $this->db->datos($sql,'MY SQL');
 	 return $datos;
    }
+
+
+	function todos_modulos($entidad,$item,$usuario)
+	{
+		$sql = "SELECT aplicacion, AE.modulo
+		FROM acceso_empresas  AE
+		INNER JOIN modulos M ON AE.Modulo= M.modulo
+		WHERE CI_NIC='".$usuario."' AND item = '".$item."' AND ID_EMPRESA = '".$entidad."'";
+		// print_r($sql);die();
+		return $this->db->datos($sql,'MYSQL');
+	}
+
+	function paginas($modulo)
+	{
+		$sql = "SELECT ID,CodMenu,descripcionMenu FROM menu_modulos WHERE codMenu like '".$modulo.".%' AND LENGTH(codMenu)>4 ORDER BY descripcionMenu ASC";
+		return $this->db->datos($sql,'MYSQL');
+	}
+
+	function add_accesos($tabla,$da)
+	{
+		$campos = '';
+		$datos = '';
+		foreach ($da as $key => $value) {
+			$campos.= $value['campo'].',';
+			if(isset($value['tipo']) && $value['tipo']=='string')
+			{
+				$datos.= "'".$value['dato']."',";			
+			}else
+			{
+		    	$datos.= $value['dato'].',';	
+		    }		
+		}
+		$campos = substr($campos,0,-1);
+		$datos = substr($datos,0,-1);
+		$sql='INSERT INTO '.$tabla.' ('.$campos.')VALUES('.$datos.')';
+		// print_r($sql);die();
+		return $this->db->String_Sql($sql,'MYSQL');
+	}
+
+	function delete_acceso($enti,$usu,$mod,$item,$pag)
+	{
+		$sql = "DELETE FROM acceso_empresas WHERE ID_Empresa='".$enti."' AND CI_NIC='".$usu."' AND Modulo = '".$mod."' AND Item='".$item."' AND Pagina = '".$pag."'";
+		return $this->db->String_Sql($sql,'MYSQL');
+	}
+
 	
 }
 ?>

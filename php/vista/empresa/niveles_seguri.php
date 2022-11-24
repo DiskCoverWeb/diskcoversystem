@@ -2,7 +2,7 @@
 ?>
  <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script> -->
 <script type="text/javascript">
-
+  let listado_empresas = [];
   $(document).ready(function()
   {
    // cargar_modulos();
@@ -28,6 +28,12 @@
       });
   }
 
+  function guardar_accesos()
+  {
+    data = $('#form_modulos_check').serialize();
+    console.log(data);
+  }
+
   function autocmpletar_usuario(){
        let entidad = $('#ddl_entidad').val();	
       $('#ddl_usuarios').select2({
@@ -44,6 +50,11 @@
           cache: true
         }
       });
+  }
+
+  function limpiar_check_todos()
+  {
+
   }
 
   function buscar_permisos()
@@ -102,6 +113,32 @@
       $.ajax({
          data:  {parametros:parametros},
         url:   '../controlador/empresa/niveles_seguriC.php?todos_modulos=true',
+        type:  'post',
+        dataType: 'json',
+        // beforeSend: function () { 
+        //   $('#modu').html('<img src="../../img/gif/loader4.1.gif" width="50%">');
+        // },
+        success:  function (response) { 
+         $('#todo_modulos').html(response)
+        }
+      });
+
+  }
+
+  function guardar_pag(entidad,empresa,usuario,pag,mod)
+  {
+      var estado = $('#rbl_'+pag).prop('checked');
+      var parametros ={
+        'entidad':entidad,
+        'empresa':empresa,
+        'usuario':usuario,
+        'estado':estado,
+        'pagina':pag,
+        'modulo':mod,
+      }
+      $.ajax({
+         data:  {parametros:parametros},
+        url:   '../controlador/empresa/niveles_seguriC.php?savepag=true',
         type:  'post',
         dataType: 'json',
         // beforeSend: function () { 
@@ -197,7 +234,7 @@
   	autocmpletar_usuario();
   	let entidad = $('#ddl_entidad').val();
     // alert(entidad);
-    $('#myModal_espera').modal('show');
+    // $('#myModal_espera').modal('show');
   	$.ajax({
     		 data:  {entidad:entidad},
     		url:   '../controlador/empresa/niveles_seguriC.php?empresas=true',
@@ -207,6 +244,23 @@
     		//   $('#myModal_espera').modal('show'); 
     		// },
     		success:  function (response) { 
+          // console.log(response);
+          listado_empresas = [];
+           if(response.alerta!='')
+           {
+            Swal.fire({
+                title: response.alerta,
+                text:'Esto podria ocasionar problemas futuros',
+                type:'info',
+                width: 600,
+              })
+             // Swal.fire(,'s','info');
+           }
+
+           $.each(response.empresas,function(i,item){
+              listado_empresas.push(item)
+              })
+          
             var enti = $('#ddl_entidad').val();
             $('#lbl_enti').text(enti);
     			 	$('#myModal_espera').modal('hide');				
@@ -220,7 +274,7 @@
 function guardar()
   {
 
-    var selected = '';
+    var selected = $('#form_modulos_check').serialize();
     // if($('#txt_coincidencia').val()!='')
     // {
       var emp = $('#txt_empresas').val();
@@ -279,26 +333,38 @@ function guardar()
     		 $('#myModal_espera').modal('show'); 
     		},
     		success:  function (response) { 
-          // console.log(response);
-    			if(response==1)
-    				{    					
-    					// $('#modulo').html(response);
-    					Swal.fire({
-    						//position: 'top-end',
-    						type: 'success',
-    						title: 'Guardado Correctamente!',
-                text: response.mensaje,
-    						showConfirmButton: true
-    						//timer: 2500
-    						});
-    					$('#myModal_espera').modal('hide'); 
-              $('#rbl_all').prop('checked',false); 
-    					//buscar_permisos();
-    				}else if(response== -1)
-            {
+          console.log(response);
+          if(response.mensaje!='')
+          {
+            todos_modulos()
+            Swal.fire({
+               type: 'success',               
+               tittle: response.mensaje,
+               text: 'Guardado Correctamente!',
+               showConfirmButton: true
+               //timer: 2500
+               });
+
+          }
+    			// if(response==1)
+    			// 	{    					
+    			// 		// $('#modulo').html(response);
+    			// 		Swal.fire({
+    			// 			//position: 'top-end',
+    			// 			type: 'success',
+    			// 			title: 'Guardado Correctamente!',
+          //       text: response.mensaje,
+    			// 			showConfirmButton: true
+    			// 			//timer: 2500
+    			// 			});
+    			// 		$('#myModal_espera').modal('hide'); 
+          //     $('#rbl_all').prop('checked',false); 
+    			// 		//buscar_permisos();
+    			// 	}else if(response== -1)
+          //   {
               $('#myModal_espera').modal('hide'); 
-              Swal.fire('No se pudo crear el usuario para SQLServer','Pongace en contacto con el administrador del sistema, su base no esta actualizada o no tiene las credenciales correctas','error');
-            }
+          //     Swal.fire('No se pudo crear el usuario para SQLServer','Pongace en contacto con el administrador del sistema, su base no esta actualizada o no tiene las credenciales correctas','error');
+          //   }
     		}
     	});
 
@@ -597,6 +663,19 @@ function marcar_acceso_todos(modulo)
 }
 // console.log($('#ddl_usuarios').val());
 
+if($('#rbl_'+modulo).prop('checked'))
+{
+  $.each(listado_empresas,function(i,item){
+    $('#rbl_'+modulo+'_'+item.id).prop('checked',true);
+  })
+}else
+{
+   $.each(listado_empresas,function(i,item){
+    $('#rbl_'+modulo+'_'+item.id).prop('checked',false);
+  })
+}
+
+/*return false;
   $('#myModal_espera').modal('show');
 var entidad = $('#ddl_entidad').val();
   var parametros = 
@@ -624,7 +703,7 @@ var entidad = $('#ddl_entidad').val();
             
            }
         }
-      }); 
+      }); */
 }
 
 
@@ -775,6 +854,35 @@ function DoubleScroll(element) {
 }
 
 
+function acceso_pagina(entidad,item)
+{
+  var usu = $('#ddl_usuarios').val();
+  console.log(usu);
+  if(usu=='' || usu==null)
+  {
+    Swal.fire('Seleccione un usuario','','info');
+    return false;
+  }
+  var parametros = 
+  {
+    'entidad':entidad,
+    'item':item,
+    'usuario':usu,
+  }
+  $.ajax({
+    data:  {parametros:parametros},
+    url:   '../controlador/empresa/niveles_seguriC.php?paginas_acceso=true',
+    type:  'post',
+    dataType: 'json',       
+    success:  function (response) { 
+      console.log(response);
+      $('#panel_paginas').html(response);          
+      $('#mymodal_acceso_pag').modal('show');
+    }
+    }); 
+}
+
+
 
 </script>
 <!-- 
@@ -850,7 +958,7 @@ function DoubleScroll(element) {
      </button>
    </div>   
    <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1">
-     <button title="Copiar catalogos de periodo"  class="btn btn-default">
+     <button title="Copiar catalogos de periodo"  class="btn btn-default" onclick="guardar_accesos()">
        <img src="../../img/png/copiar_1.png" >
      </button>
    </div>
@@ -888,7 +996,7 @@ function DoubleScroll(element) {
 	<div class="col-sm-4">
     <b>Entidad:</b><b id="lbl_enti"></b> <br>
     <div class="input-group input-group-sm" id="ddl">
-        <select class="form-control" id="ddl_entidad" name="ddl_entidad" onchange="cargar_empresas();"><option value="">Seleccione entidad</option></select>
+        <select class="form-control" id="ddl_entidad" name="ddl_entidad" onchange="todos_modulos();cargar_empresas();"><option value="">Seleccione entidad</option></select>
           <span class="">
                <button type="button" class="btn btn-warning btn-xs " data-toggle="modal" data-target="#mymodal_user"><span class="fa fa-user"></span></button>
                <button type="button" class="btn btn-success btn-xs " data-toggle="modal" data-target="#myModal_ruc"><span class="fa fa-search"></span> RUC</button>
@@ -898,7 +1006,9 @@ function DoubleScroll(element) {
 	<div class="col-sm-4">    
    <b>Usuario</b> <br>
     <div class="input-group">
-        <select class="form-control input" id="ddl_usuarios"  name="ddl_usuarios" onchange="buscar_permisos();"></select>
+        <select class="form-control input" id="ddl_usuarios"  name="ddl_usuarios" onchange="todos_modulos();buscar_permisos();">
+          <option value="">Seleccione Usuario</option>
+        </select>
         <!-- <div class="input-group-btn"> -->
           <span class="input-group-btn">
         
@@ -965,6 +1075,9 @@ function DoubleScroll(element) {
 			 	<div class="col-sm-1 col-xs-3">
 			 		<label class="checkbox-inline"><input type="checkbox" name="rbl_super" id="rbl_super"><b>Supervisor</b></label>
 			 	</div>
+        <div class="col-sm-4 col-xs-3 text-right">
+          <!-- <button class="btn btn-primary btn-sm" onclick="acceso_pagina()">Asignar acceso a paginas</button> -->
+        </div>
 			 </div>
 		</div>
 	</div>      
@@ -988,9 +1101,11 @@ function DoubleScroll(element) {
           
         </div>      
 
-        <div class="box" id="tbl_modulos" style="overflow-y:scroll; height: 500px; overflow-x: hidden;">
-          
-        </div>      
+        <form id="form_modulos_check">
+          <div class="box" id="tbl_modulos" style="overflow-y:scroll; height: 500px; overflow-x: hidden;">
+            
+          </div>
+        </form>      
        </div>
       </div> 
       <ul class="nav nav-tabs" id="tabs_titulo">
@@ -1120,6 +1235,28 @@ function DoubleScroll(element) {
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         <button type="button" class="btn btn-success" onclick="enviar_email()">Enviar</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="mymodal_acceso_pag" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Accesos para pagina</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row" id="panel_paginas">
+           
+        </div>        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <!-- <button type="button" class="btn btn-success" onclick="enviar_email()">Enviar</button> -->
       </div>
     </div>
 
