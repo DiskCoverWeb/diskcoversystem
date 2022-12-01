@@ -9,7 +9,7 @@ class crear_empresaM
         $this->db = new db();
     }
 
-    function lista_empresas($query)
+    function lista_empresas($query=false, $item=false)
     {
         $sql = "SELECT *
         FROM Empresas WHERE Item <> '000'";
@@ -17,9 +17,24 @@ class crear_empresaM
         {
             $sql.=" AND Empresa like '%".$query."%'";
         }
+        if($item)
+        {
+            $sql.=" AND Item ='".$item."'";
+        }
+        return  $this->db->datos($sql);
+    }
+    function delete_empresa($id)
+	{
+        $sql= "DELETE FROM Empresas WHERE Item = '".$id."'";
+		return $this->db->String_Sql($sql);
+	}
+    function usuario($CI)
+    {
+        $sql = "SELECT Codigo, Usuario, Clave
+        FROM Accesos        
+        WHERE Codigo = '".$CI."'";
         return  $this->db->datos($sql);
     }
     
 }
-
 ?>
