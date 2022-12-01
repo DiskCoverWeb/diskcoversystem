@@ -11,15 +11,44 @@ if(isset($_GET['llamar'])){
     }
     echo json_encode($controlador->llamardb($ll));	
 }
-
-if(isset($_GET['provincias']))
-{	
-    $pais = '';
-    if(isset($_POST['pais']))
+if(isset($_GET['guardar_empresa']))
+{
+    print_r ($_POST);die();
+    // $razon1 = '';
+    // if(isset($_POST['razon1']));
+    // {
+    //     $razon1 = $_POST['razon1'];
+    // }
+    // echo json_encode($controlador->guardardb_empresa($razon1));
+    $query = $_POST;
+	echo json_encode($controlador->guardardb_empresas($query));
+}
+if(isset($_GET['delete']))
+{
+    // print_r($_POST);die();
+    $id='';
+    if(isset($_POST['id']));
     {
-        $pais = $_POST['pais'];
+        $id =$_POST['id'];
     }
-	echo json_encode(provincia_todas($pais));	
+	echo json_encode($controlador->delete_empresas($id));
+}
+if(isset($_GET['naciones']))
+{
+  //echo 'hola';
+  echo json_encode(naciones_todas());
+  //print_r(provincia_todas());
+}
+if(isset($_GET['provincias']))
+{
+	//echo 'hola';
+  $pais = '';
+  if(isset($_POST['pais']))
+  {
+    $pais = $_POST['pais'];
+  }
+	echo json_encode(provincia_todas($pais));
+	//print_r(provincia_todas());
 }
 if(isset($_GET['ciudad']))
 {
@@ -34,13 +63,25 @@ if(isset($_GET['empresas']))
     }
 	echo json_encode($controlador->lista_empresas($dato));	
 }
+if(isset($_GET['usuario']))
+{	
+    // $dato = '';
+    // if(isset($_GET['q']))
+    // {
+    //     $dato = $_GET['q'];
+    // }
+	// echo json_encode($controlador->lista_usuario($dato));
+    //print_r($_POST);die();
+    $query = $_POST;
+	echo json_encode($controlador->lista_usuario($query));	
+}
 if(isset($_GET['informacion_empre']))
 {	
     $para = $_POST['parametros'];
     $res = $controlador->info_empresa($para);
 
     // echo json_encode($res);
-    print_r($res);die();
+//    print_r($res);die();
 }
 if(isset($_GET['formulario']))
 {	
@@ -73,8 +114,7 @@ class crear_empresaC
     }
     function formulario1($dato)
     {
-        $datos = $this->modelo->lista_empresas($dato);
-
+        $datos = $this->modelo->lista_empresas($dato);        
         $lis = array();
         foreach ($datos as $key => $value) {
             $lis[] = array(
@@ -215,9 +255,187 @@ class crear_empresaC
         }
         return $lis;    
     }
+    function lista_usuario($dato)
+    {
+        //print_r($dato);die();
+        $datos = $this->modelo->usuario($dato);
+        $lis = array();
+        foreach ($datos as $key => $value) {
+            $lis[] = array('id'=>$value['Codigo'],'text'=>$value['Usuario']);
+        }
+        return $lis;    
+    }
     function llamardb($l1)
     {
+        $datos = $this->modelo->lista_empresas(false,$l1);
+        // print_r($datos);die();
+        return $datos;
+    }
+    function guardardb_empresa($parametro)
+    {
+        //  print_r($parametro);die();
+        $resp = $this->modelo->lista_empresas(trim($parametro['item']));
+        $datos[0]['campo'] = 'Razon_Social'; 
+        $datos[0]['dato'] = $parametro['TxtRazonSocial']; 
+        // // // $datos[1]['campo'] = 'Nombre'; 
+        // // // $datos[1]['dato'] = $parametros['nombre']; 
+        
+        if($parametro['TxtItem']!='')
+		{
+			$campoWhere[0]['campo'] = 'Item';
+			$campoWhere[0]['valor'] = $parametro['TxtItem'];
+			$re = update_generico($datos,'Empresa',$campoWhere);
+		}else
+		{
+			print_r($resp);die();
+			if(count($resp)==0)
+		      {
+			    $re = insert_generico('Empresas',$datos); // optimizado pero falta 
+			  }else{
+			  	return 2;
+			  }
+		}
 
+        // insert_generico('Empresas',$datos);
+    }
+    function delete_empresas($id)
+	{
+        // print_r('---'$id);die();
+		return $this->modelo->delete_empresa($id);
+	}
+    function guardardb_empresas($parametros)  //para un solo dato string
+    {
+        //print_r($parametros);die();
+        //$datos[0]['campo'] = 'Razon_Social'; 
+        //$datos[0]['dato'] = $razon;
+        //DATOS PRINCIPALES
+        $datos[0]['dato'] = $parametros['TxtEmpresa']; 
+        $datos[0]['campo'] = 'Empresa'; 
+	    $datos[1]["dato"] = $parametros["TxtRazonSocial"];
+	    $datos[1]["campo"] = 'Razon_Social';
+	    $datos[2]["dato"] = $parametros["TxtNomComercial"];
+	    $datos[2]["campo"] = 'Nombre_Comercial';
+	    $datos[3]["dato"] = $parametros["TxtRuc"];
+	    $datos[3]["campo"] = 'RUC';
+        $datos[4]["dato"] = $parametros["TxtRepresentanteLegal"];
+	    $datos[4]["campo"] = 'Gerente';
+	    $datos[5]["dato"] = $parametros["TxtCI"];
+	    $datos[5]["campo"] = 'CI_Representante';
+	    $datos[6]["dato"] = $parametros["TxtDirMatriz"];
+	    $datos[6]["campo"] = 'Direccion';
+	    $datos[7]["dato"] = $parametros["TxtEsta"];
+	    $datos[7]["campo"] = 'Establecimientos';
+	    $datos[8]["dato"] = $parametros["TxtTelefono"];
+	    $datos[8]["campo"] = 'Telefono1';
+	    $datos[9]["dato"] = $parametros["TxtTelefono2"];
+	    $datos[9]["campo"] = 'Telefono2';
+	    $datos[10]["dato"] = $parametros["TxtFax"];
+	    $datos[10]["campo"] = 'FAX';
+	    $datos[11]["dato"] = $parametros["TxtMoneda"];
+	    $datos[11]["campo"] = 'S_M';
+	    $datos[12]["dato"] = $parametros["TxtNPatro"];
+	    $datos[12]["campo"] = 'No_Patronal';
+	    $datos[13]["dato"] = $parametros["TxtCodBanco"];
+	    $datos[13]["campo"] = 'CodBanco';
+	    $datos[14]["dato"] = $parametros["TxtTipoCar"];
+	    $datos[14]["campo"] = 'Tipo_Carga_Banco';
+	    $datos[15]["dato"] = $parametros["TxtAbrevi"];
+	    $datos[15]["campo"] = 'Abreviatura';
+	    $datos[16]["dato"] = $parametros["TxtEmailEmpre"];
+	    $datos[16]["campo"] = 'Email';
+	    $datos[17]["dato"] = $parametros["TxtEmailConta"];
+	    $datos[17]["campo"] = 'Email_Contabilidad';
+	    $datos[18]["dato"] = $parametros["TxtEmailRespa"];
+	    $datos[18]["campo"] = 'Email_Respaldos';
+	    $datos[19]["dato"] = $parametros["TxtSegDes1"];
+	    $datos[19]["campo"] = 'Seguro';
+	    $datos[20]["dato"] = $parametros["TxtSegDes2"];
+	    $datos[20]["campo"] = 'Seguro2';
+	    $datos[21]["dato"] = $parametros["TxtSubdir"];
+	    $datos[21]["campo"] = 'SubDir';
+	    $datos[22]["dato"] = $parametros["TxtNombConta"];
+	    $datos[22]["campo"] = 'Contador';
+	    $datos[23]["dato"] = $parametros["TxtRucConta"];
+	    $datos[23]["campo"] = 'RUC_Contador';
+	    $datos[24]["dato"] = $parametros["ddl_obli"];
+	    $datos[24]["campo"] = 'Obligado_Conta';
+	    $datos[25]["dato"] = $parametros["ddl_naciones"];
+	    $datos[25]["campo"] = 'CPais';
+	    $datos[26]["dato"] = $parametros["prov"];
+	    $datos[26]["campo"] = 'Prov';
+	    $datos[27]["dato"] = $parametros["ddl_ciudad"];
+	    $datos[27]["campo"] = 'Ciudad';
+        //PROCESOS GENERALES        
+        if($parametros['ckASDAS']=='false')
+		{
+			$dato[28]['campo']='Det_SubMod';
+            $dato[28]['dato']=0;
+		}else
+        {
+            $datos[28]["campo"] = 'Det_SubMod';
+            $datos[28]["dato"] = 1;
+        }
+        $datos[29]["dato"] = $parametros["TxtServidorSMTP"];
+        $datos[29]["campo"] = 'smtp_Servidor';
+	    $datos[30]["dato"] = $parametros["TxtPuerto"];
+	    $datos[30]["campo"] = 'smtp_Puerto';
+	    $datos[31]["dato"] = $parametros["TxtPVP"];
+	    $datos[31]["campo"] = 'Dec_PVP';
+	    $datos[32]["dato"] = $parametros["TxtCOSTOS"];
+	    $datos[32]["campo"] = 'Dec_Costo';
+	    $datos[33]["dato"] = $parametros["TxtIVA"];
+	    $datos[33]["campo"] = 'Dec_IVA';
+	    $datos[34]["dato"] = $parametros["TxtCantidad"];
+		$datos[34]["campo"] = 'Dec_Cant';
+
+        //COMPROBANTES ELECTRÓNICOS
+		$datos[35]["dato"] = $parametros["TxtContriEspecial"];
+		$datos[35]["campo"] = 'Codigo_Contribuyente_Especial';
+		$datos[36]["dato"] = $parametros["TxtWebSRIre"];
+		$datos[36]["campo"] = 'Web_SRI_Recepcion';
+		$datos[37]["dato"] = $parametros["TxtWebSRIau"];
+		$datos[37]["campo"] = 'Web_SRI_Autorizado';
+		$datos[38]["dato"] = $parametros["TxtEXTP12"];
+		$datos[38]["campo"] = 'Ruta_Certificado';
+        $datos[39]["dato"] = $parametros["TxtContraExtP12"];
+		$datos[39]["campo"] = 'Clave_Certificado';
+		$datos[40]["dato"] = $parametros["TxtEmailGE"];
+		$datos[40]["campo"] = 'Email_Conexion';
+		$datos[41]["dato"] = $parametros["TxtContraEmailGE"];
+		$datos[41]["campo"] = 'Email_Contraseña';
+		$datos[42]["dato"] = $parametros["TxtEmaiElect"];
+		$datos[42]["campo"] = 'Email_Conexion_CE';
+
+        $datos[43]["dato"] = $parametros["TxtContraEmaiElect"];
+		$datos[43]["campo"] = 'Email_Contraseña_CE';
+		$datos[44]["dato"] = $parametros["TxtCopiaEmai"];
+		$datos[44]["campo"] = 'Email_Procesos';
+        $datos[45]["dato"] = $parametros["TxtRUCOpe"];
+		$datos[45]["campo"] = 'RUC_Operadora';
+		$datos[46]["dato"] = $parametros["txtLeyendaDocumen"];
+		$datos[46]["campo"] = 'LeyendaFA';
+		$datos[47]["dato"] = $parametros["txtLeyendaImpresora"];
+		$datos[47]["campo"] = 'LeyendaFAT';
+
+        if($parametros['TxtItem']!='')
+	    {
+	    	$where[0]['campo'] = 'Item'; 
+	    	$where[0]['valor'] = $parametros['TxtItem'];
+	    	return update_generico($datos,'Empresas',$where);
+	    }else
+	    {
+	    	// $resp = $this->modelo->lista_empresas(trim(false,$parametros['TxtItem']));
+		    // if(count($resp)>0){return -2;}
+		
+	    	$r = insert_generico('Empresas',$datos);
+	    	if($r==null)
+	    	{
+	    		return 1;
+	    	}else
+	    	{
+	    		return -1;
+	    	}
+	    }        
     }
 
 }
