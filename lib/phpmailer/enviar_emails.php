@@ -47,6 +47,14 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
      	if($value!='.' && $value!='')
      	{
 	          $mail = new PHPMailer(true);
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                )
+            );
+    
             try {
                 //Server settings
                  //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                 //Enable verbose debug output
@@ -138,6 +146,14 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
     // print_r($empresaGeneral);die();
     //Instantiation and passing `true` enables exceptions
     $mail = new PHPMailer(true);
+     $mail->SMTPOptions = array(
+        'ssl' => array(
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true
+        )
+    );
+    
     try {
         //Server settings
         // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                 //Enable verbose debug output
@@ -190,6 +206,14 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
   {
     //Instantiation and passing `true` enables exceptions
     $mail = new PHPMailer(true);
+     $mail->SMTPOptions = array(
+        'ssl' => array(
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true
+        )
+    );
+    
     try {
         //Server settings
         //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                 //Enable verbose debug output
@@ -236,6 +260,14 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
     $to =explode(',', $to_correo);
      foreach ($to as $key => $value) {
        $mail = new PHPMailer();
+        $mail->SMTPOptions = array(
+        'ssl' => array(
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true
+        )
+    );
+    
          //Server settings
          // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
          $mail->isSMTP();                                            //Send using SMTP

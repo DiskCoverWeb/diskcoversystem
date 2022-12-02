@@ -467,14 +467,59 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
                     unset( $_SESSION['INGRESO']['accion']);
                   }
 
-        echo '<li class=" header"> Menu '.$modulo_header.' </li>';        
+        echo '<li class=" header"> Menu '.$modulo_header.' </li>';  
+          $paginas = 
           $menu = select_menu_mysql();
+          $accesos_pag = pagina_acceso_hijos($_SESSION['INGRESO']['CodigoU'],$_SESSION['INGRESO']['IDEntidad'],$_SESSION['INGRESO']['item']);
           if(count($menu)==0)
           {
              echo  '<li><a href="../vista/modulos.php" class="active treeview">
                  <i class="fa fa-th"></i> <span>Salir a modulos</span>
                </a></li>';
           }
+          if(count($accesos_pag)>0)
+          {
+          $m='';
+          foreach ($menu as $key => $value) {
+            if(count(explode('.',$value['codMenu']))==2)
+            {
+              if(count(pagina_acceso_hijos($_SESSION['INGRESO']['CodigoU'],$_SESSION['INGRESO']['IDEntidad'],$_SESSION['INGRESO']['item'],$value['codMenu']))>0)
+              {
+              $item = strtolower($value['descripcionMenu']);
+              $m.= '<li class="treeview">';
+                $m.='<a class="nav-link dropdown-toggle" id="'.$item.'">'.
+                  $value['descripcionMenu'].' <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span> </a>';
+                  $m.='<ul class="treeview-menu" aria-labelledby="'.$item.'">';
+                    $m.='<li class="dropdown-submenu">';
+                      $nivel = select_nivel_menu_mysql($value['codMenu']);
+                      foreach ($nivel as $key2 => $value2) 
+                      {
+                        if (count(explode(".",$value2['codMenu'])) == 3) 
+                        {
+                            if(count(pagina_acceso($value2['codMenu'],$_SESSION['INGRESO']['CodigoU'],$_SESSION['INGRESO']['IDEntidad'],$_SESSION['INGRESO']['item']))>0)
+                              {                                                              
+                                $ico = '';
+                                $acceso = '';
+                                if ($value2['accesoRapido'] != ".")
+                                {
+                                  $ico = '<small class="label pull-right bg-yellow">('.$value2['accesoRapido'].')</small>';
+                                  $acceso = 'Acceso Rapido ('.$value2['accesoRapido'].')' ;
+                                }
+                                $m.='<li title="'.$acceso.'"><a href="'.$value2['rutaProceso'].'">'.$value2['descripcionMenu'].$ico.'</a></li>';
+                              }
+                        }                        
+                      }
+                  $m.='</li>';
+                $m.='</ul>';
+              $m.='</li>';
+              } 
+            }
+          }
+           $m.='<li><a href="../vista/modulos.php" class="active treeview">
+                 <i class="fa fa-th"></i> <span>Salir a modulos</span>
+               </a></li>';
+          echo $m;
+          }else{ 
           foreach ($menu as $item_menu) {
             if (count(explode(".",$item_menu['codMenu'])) == 2) {
               $item = strtolower($item_menu['descripcionMenu']);
@@ -484,6 +529,8 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
                 echo '<ul class="treeview-menu" aria-labelledby="'.$item.'">';
                   echo '<li class="dropdown-submenu">';
                     $nivel = select_nivel_menu_mysql($item_menu['codMenu']);
+
+                    // print_r($nivel);die();
                     foreach ($nivel as $item_nivel) {
                       if (count(explode(".",$item_nivel['codMenu'])) == 3) {
                         $subnivel = select_nivel_menu_mysql($item_nivel['codMenu']);
@@ -541,7 +588,7 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
                </a></li>';
         }
        
-
+}
 
             ?>
              <!--  <li class="active treeview">

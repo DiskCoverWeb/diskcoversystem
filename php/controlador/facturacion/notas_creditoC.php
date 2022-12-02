@@ -8,6 +8,13 @@ if(isset($_GET['tabla']))
 	echo json_encode($controlador->cargar_tabla($parametros));
 }
 
+if(isset($_GET['cliente']))
+{
+	$q = '';
+	if(isset($_GET['q'])){ $q = $_GET['q'];}
+	echo json_encode($controlador->Listar_Facturas_Pendientes_NC($q));
+}
+
 /**
  * 
  */
@@ -23,6 +30,16 @@ class notas_creditoC
 	function cargar_tabla($parametro)
 	{
 		return  $this->modelo->cargar_tabla($parametro,$tabla=1);
+	}
+
+	function Listar_Facturas_Pendientes_NC()
+	{
+		$datos = $this->modelo->Listar_Facturas_Pendientes_NC();
+		$cli = array();	
+		foreach ($datos as $key => $value) {
+			$cli[] = array('id'=>$value['Codigo'],'text'=>$value['Cliente'],'data'=>$value);
+		}
+		return $cli;
 	}
 }
 ?>

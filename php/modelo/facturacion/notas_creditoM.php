@@ -13,6 +13,8 @@ class notas_creditoM
       $this->db = new db();
 	}
 
+
+
 	function cargar_tabla($parametro,$tabla = false)
 	{
 		$sql = "SELECT *
@@ -28,10 +30,37 @@ class notas_creditoM
 		{
 			$tbl = $this->db->datos($sql);
 		}
-
        return $tbl;
-
-
 	}
+
+	function Listar_Facturas_Pendientes_NC()
+	{ 
+		$sql = "SELECT C.Grupo, C.Codigo, C.Cliente, F.Cta_CxP, SUM(F.Total_MN) As TotFact 
+       	FROM Clientes As C, Facturas As F 
+       	WHERE F.Item = '".$_SESSION['INGRESO']['item']."' 
+       	AND F.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+       	AND NOT F.TC IN ('DO','OP') 
+       	AND F.T <> 'A' 
+       	AND F.Saldo_MN <> 0 
+       	AND C.Codigo = F.CodigoC 
+       	GROUP BY C.Grupo, C.Codigo, C.Cliente, F.Cta_CxP 
+       	ORDER BY C.Cliente ";
+       	return $this->db->datos($sql);
+   }
+
+   funtion Dlineas()
+   {
+   	   sSQL = "SELECT Codigo, Concepto, CxC 
+       FROM Catalogo_Lineas 
+       WHERE Fact = 'NC' 
+       AND Item = '" & NumEmpresa & "' 
+       AND Periodo = '" & Periodo_Contable & "' 
+       AND Fecha <= #" & BuscarFecha(MBoxFecha) & "# 
+       AND Vencimiento >= #" & BuscarFecha(MBoxFecha) & "# "
+  If Len(FA.Cta_CxP) > 2 Then sSQL = sSQL & "AND '" & FA.Cta_CxP & "' IN (CxC,CxC_Anterior) "
+  sSQL = sSQL & "ORDER BY CxC, Concepto "
+  SelectDB_Combo DCLinea,
+   }
+
 }
 ?>

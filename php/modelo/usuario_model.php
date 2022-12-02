@@ -680,13 +680,13 @@ class usuario_model{
 	function modulos_registrados()
 	{
 		$usuario=array();
-		$sql="SELECT A.Modulo as 'modulo',M.Aplicacion as 'apli',M.link as 'link',M.icono as 'icono' 
+		$sql="SELECT DISTINCT M.modulo,A.Modulo as 'modulo',M.Aplicacion as 'apli',M.link as 'link',M.icono as 'icono' 
 		FROM acceso_empresas A 
 		JOIN modulos M on A.Modulo = M.modulo 
 		WHERE CI_NIC='".$_SESSION['INGRESO']['Id']."' 
 		AND Item='".$_SESSION['INGRESO']['item']."' 
 		AND ID_Empresa='".$_SESSION['INGRESO']['IDEntidad']."' ";
-		//echo $sql;
+		// echo $sql;
 		$datos = $this->db1->datos($sql,$tipo='MY SQL');
 		return $datos;
 	}

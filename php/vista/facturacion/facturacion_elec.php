@@ -315,7 +315,7 @@ if($operadora!='.' && strlen($operadora)==10)
 		dataType:'json',
 		success: function(data)
 		{
-			// console.log(data);
+			console.log(data);
 			if(data.respueta==true)
 			{
 				if(data.datos.Stock<=0)
@@ -914,7 +914,7 @@ if($operadora!='.' && strlen($operadora)==10)
 						</div>
 						<div class="col-sm-1" style="padding-right:0px">
 							<b>Stock</b>
-							<input type="text" name="LabelStock" id="LabelStock" class="form-control input-xs" readonly style="color: red;" value="9999">
+							<input type="text" name="LabelStock" id="LabelStock" class="form-control input-xs" readonly style="color: red;" value="999999999">
 						</div>
 						<div class="col-sm-1" style="padding-right:0px">
 							<b>Cantidad</b>

@@ -339,7 +339,7 @@ function guardar()
             todos_modulos()
             Swal.fire({
                type: 'success',               
-               tittle: response.mensaje,
+               title: response.mensaje,
                text: 'Guardado Correctamente!',
                showConfirmButton: true
                //timer: 2500

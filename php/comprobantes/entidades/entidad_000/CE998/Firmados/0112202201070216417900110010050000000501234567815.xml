@@ -1,96 +1,99 @@
-<?xml version="1.0" encoding="UTF-8"?><autorizacion>
-  <estado>AUTORIZADO</estado>
-  <numeroAutorizacion>2010202207070216417900110010030000009041234567819</numeroAutorizacion>
-  <fechaAutorizacion class="fechaAutorizacion">21/11/2022 16:24:54.000</fechaAutorizacion>
-  <comprobante><![CDATA[<?xml version="1.0" encoding="UTF-8"?><comprobanteRetencion id="comprobante" version="1.0.0">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><factura id="comprobante" version="1.1.0">
   <infoTributaria>
     <ambiente>1</ambiente>
     <tipoEmision>1</tipoEmision>
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>2010202207070216417900110010030000009041234567819</claveAcceso>
-    <codDoc>07</codDoc>
+    <claveAcceso>0112202201070216417900110010050000000501234567815</claveAcceso>
+    <codDoc>01</codDoc>
     <estab>001</estab>
-    <ptoEmi>003</ptoEmi>
-    <secuencial>000000904</secuencial>
+    <ptoEmi>005</ptoEmi>
+    <secuencial>000000050</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
+    <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
-  <infoCompRetencion>
-    <fechaEmision>20/10/2022</fechaEmision>
-    <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
+  <infoFactura>
+    <fechaEmision>01/12/2022</fechaEmision>
+    <dirEstablecimiento>Desarrollo para programacion de DiskCover System</dirEstablecimiento>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <tipoIdentificacionSujetoRetenido>04</tipoIdentificacionSujetoRetenido>
-    <razonSocialSujetoRetenido>8A IMPORTACIONES</razonSocialSujetoRetenido>
-    <identificacionSujetoRetenido>0190376826001</identificacionSujetoRetenido>
-    <periodoFiscal>10/2022</periodoFiscal>
-  </infoCompRetencion>
-  <impuestos>
-    <impuesto>
-      <codigo>2</codigo>
-      <codigoRetencion>9</codigoRetencion>
-      <baseImponible>0.30</baseImponible>
-      <porcentajeRetener>10</porcentajeRetener>
-      <valorRetenido>0.03</valorRetenido>
-      <codDocSustento>01</codDocSustento>
-      <numDocSustento>003001000000001</numDocSustento>
-      <fechaEmisionDocSustento>20/10/2022</fechaEmisionDocSustento>
-    </impuesto>
-    <impuesto>
-      <codigo>2</codigo>
-      <codigoRetencion>10</codigoRetencion>
-      <baseImponible>0.90</baseImponible>
-      <porcentajeRetener>20</porcentajeRetener>
-      <valorRetenido>0.18</valorRetenido>
-      <codDocSustento>01</codDocSustento>
-      <numDocSustento>003001000000001</numDocSustento>
-      <fechaEmisionDocSustento>20/10/2022</fechaEmisionDocSustento>
-    </impuesto>
-    <impuesto>
-      <codigo>1</codigo>
-      <codigoRetencion>303</codigoRetencion>
-      <baseImponible>32.00</baseImponible>
-      <porcentajeRetener>10.00</porcentajeRetener>
-      <valorRetenido>3.2000</valorRetenido>
-      <codDocSustento>01</codDocSustento>
-      <numDocSustento>003001000000001</numDocSustento>
-      <fechaEmisionDocSustento>20/10/2022</fechaEmisionDocSustento>
-    </impuesto>
-  </impuestos>
+    <tipoIdentificacionComprador>04</tipoIdentificacionComprador>
+    <razonSocialComprador>FRANCISCO SEPULVEDA</razonSocialComprador>
+    <identificacionComprador>1707386973001</identificacionComprador>
+    <totalSinImpuestos>2758.25</totalSinImpuestos>
+    <totalDescuento>0</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0</descuentoAdicional>
+        <baseImponible>2758.25</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>0</propina>
+    <importeTotal>2758.25</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>2758.25</total>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>99.02</codigoPrincipal>
+      <descripcion>Socios Corporativos</descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>85000.0000</cantidad>
+      <precioUnitario>0.03245</precioUnitario>
+      <descuento>0</descuento>
+      <precioTotalSinImpuesto>2758.25</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
+          <baseImponible>2758.25</baseImponible>
+          <valor>0</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
   <infoAdicional>
-    <campoAdicional nombre="Direccion">MANUEL VEGA 8-48 Y SUCRE</campoAdicional>
-    <campoAdicional nombre="Email">monge</campoAdicional>
-    <campoAdicional nombre="Comprobante No">CD-010000811</campoAdicional>
-    <campoAdicional nombre="Contribuyente Regimen Microempresas"> </campoAdicional>
+    <campoAdicional nombre="Direccion">SAN RAFAEL</campoAdicional>
+    <campoAdicional nombre="Telefono">0995312671</campoAdicional>
+    <campoAdicional nombre="Email">pjs8027@hotmail.com</campoAdicional>
   </infoAdicional>
-<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature927345">
-<ds:SignedInfo Id="Signature-SignedInfo825680">
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature564278">
+<ds:SignedInfo Id="Signature-SignedInfo260650">
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-<ds:Reference Id="SignedPropertiesID799867" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature927345-SignedProperties1012768">
+<ds:Reference Id="SignedPropertiesID247485" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature564278-SignedProperties370399">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>DNx4ckfhNEmB0uvQV4jXWNjW6Og=</ds:DigestValue>
+<ds:DigestValue>cRDll8QNhn3B25vSOhsq812jENU=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference URI="#Certificate183312">
+<ds:Reference URI="#Certificate1289749">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>cMTo0Xd0wWUtji2FSjXw+GgnwaM=</ds:DigestValue>
+<ds:DigestValue>Gdtqvt2y7W88w0eUpP5K2uR5hxo=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference Id="Reference-ID-700706" URI="#comprobante">
+<ds:Reference Id="Reference-ID-459755" URI="#comprobante">
 <ds:Transforms>
 <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>6KrqCIDooCxnoI/8QuIYRccAXRo=</ds:DigestValue>
+<ds:DigestValue>a4IV5PVtgFaG2vws20OGBrXb0dE=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue Id="SignatureValue270333">
-Mjp34Q2CTFY7LuYB7qQTKeLEqP1lU9VVvzf+vKz5W23uWhxnd/lgcTcWT6hXL34ayIX/8H07M8fl
-aKSGvfKRpey2rjkA/HTybfS3t6D99Ir+ynTWo9DGLxvJ1Gn9yC+bWaciZdf9CMYTwe8t78g7MI8U
-exUDHhejLLhwi++ivUjiApoUlCX1LjwxhSVpPF10kde9ns9SC4ClS2gGdrDWndSnncymjseygwL3
-YQ8BVEFQIf0K1XaOcfbM5bW/2V2O138pS3RRd8g00XOQnM7dA0EifGJdyuNKzyw5gPdTXQ5f9GCY
-q4iCtQLrN+wOej66X072ljX0vEV+E7+weQ+5yg==
+<ds:SignatureValue Id="SignatureValue676855">
+MltS82My34HVWJ1Iuu1stzO56dhLtZQWAFebGHzLGPHotGhpjjtgjijrq0bUXdGsjdnYUCeSldnU
+d362AVaO9zMketOXwCyWyROoXFfcQWuaWevqBUF/dmwbS+a0YPi5kHwMo37DqWkUIMHMdCtGTCrF
+8fXGxfuztr1X8PqC73g0b62BzMr9A4sVBU7d1wiSFBLOVQ4A4zw4a0H5eAdshWhYHu5YpvvTI0eI
+PsFITsFGK2Tc9wiKX7q3l1TUWhEsUgb2q7uSWiQFvG4znyXNUjcDSzle3JgjpOQELVnxWxe+zqSg
+ydt4xdnprH7Z+epr5mHgopCOcq73M4l21hwV+A==
 </ds:SignatureValue>
-<ds:KeyInfo Id="Certificate183312">
+<ds:KeyInfo Id="Certificate1289749">
 <ds:X509Data>
 <ds:X509Certificate>
 MIILkjCCCXqgAwIBAgIEXDrIAjANBgkqhkiG9w0BAQsFADCBmTELMAkGA1UEBhMCRUMxHTAbBgNV
@@ -161,6 +164,4 @@ LRuAVSyi58qyAD0Eu1zLMc3KhEUXoxF7aA8P0w==
 </ds:RSAKeyValue>
 </ds:KeyValue>
 </ds:KeyInfo>
-<ds:Object Id="Signature927345-Object31707"><etsi:QualifyingProperties Target="#Signature927345"><etsi:SignedProperties Id="Signature927345-SignedProperties1012768"><etsi:SignedSignatureProperties><etsi:SigningTime>2022-11-21T16:24:50-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-700706"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></comprobanteRetencion>]]></comprobante>
-  <mensajes/>
-</autorizacion>
+<ds:Object Id="Signature564278-Object562375"><etsi:QualifyingProperties Target="#Signature564278"><etsi:SignedProperties Id="Signature564278-SignedProperties370399"><etsi:SignedSignatureProperties><etsi:SigningTime>2022-12-01T16:49:28-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-459755"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></factura>

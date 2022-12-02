@@ -312,9 +312,9 @@ class punto_ventaC
 		            $datos[3]['campo']  = "Tipo_Hab"; 
 		            $datos[3]['dato']  =  substr($TxtDocumentos,0,12);
 		            $datos[4]['campo'] = "CANT"; 
-		            $datos[4]['dato']  = floatval($TextCant);
+		            $datos[4]['dato']  = number_format(floatval($TextCant),2,'.','');
 		            $datos[5]['campo'] = "PRECIO"; 
-		            $datos[5]['dato']  = number_format($TextVUnit,2,'.','');
+		            $datos[5]['dato']  = number_format($TextVUnit,6,'.','');
 		            $datos[6]['campo'] = "TOTAL"; 
 		            $datos[6]['dato']  = $Real1;
 		            $datos[7]['campo'] = "Total_IVA"; 

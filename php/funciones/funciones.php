@@ -2405,6 +2405,85 @@ function select_menu_mysql()
   // exit();
 }
 
+
+//consulta menus del sistema
+function pagina_acceso_hijos($usuario,$entidad,$item,$codMenu=false)
+{
+  // print_r($_SESSION['INGRESO']);die();
+  if(!$codMenu)
+  {
+    $codMenu = $_GET['mod'];
+  }
+  $cid = new db();
+  // $usuario = $_SESSION['INGRESO']['CodigoU'];
+  // $id_entidad = $_SESSION['INGRESO']['IDEntidad'];
+  // $item = $_SESSION['INGRESO']['item'];
+  //seleccionar todos los items del menu
+  $sql  = "SELECT * 
+           FROM acceso_empresas AE
+           INNER JOIN menu_modulos MM ON AE.Pagina = MM.ID 
+           WHERE ID_Empresa = '".$entidad."' 
+           AND CI_NIC = '".$usuario."' 
+           AND codMenu LIKE '".$codMenu."%' 
+           AND Item = '".$item."' 
+           AND Pagina != '.' 
+           AND Pagina != ''
+           ORDER BY CodMenu ASC";
+
+ // print_r($sql);
+  $submenu = $cid->datos($sql,'MYSQL');
+  // $submenu=$cid->query($sql) or die($cid->error);
+  $array_menu = array();
+  $i = 0;
+
+  foreach ($submenu as $key => $value) {
+    $array_menu[$key]['codMenu'] = $value['codMenu'];
+    $array_menu[$key]['descripcionMenu'] = $value['descripcionMenu'];
+    $array_menu[$key]['accesoRapido'] = $value['accesoRapido'];
+    $array_menu[$key]['rutaProceso'] = $value['rutaProceso'];
+    $array_menu[$key]['Pagina'] = $value['Pagina'];
+    
+  }
+ 
+  return $array_menu;
+  
+}
+
+function pagina_acceso($codMenu,$usuario,$entidad,$item)
+{
+  // print_r($_SESSION['INGRESO']);die();
+  $cid = new db();
+  //seleccionar todos los items del menu
+  $sql  = "SELECT * 
+           FROM acceso_empresas AE
+           INNER JOIN menu_modulos MM ON AE.Pagina = MM.ID 
+           WHERE ID_Empresa = '".$entidad."' 
+           AND CI_NIC = '".$usuario."' 
+           AND codMenu LIKE '".$codMenu."' 
+           AND Item = '".$item."' 
+           AND Pagina != '.' 
+           AND Pagina != ''
+           ORDER BY CodMenu ASC";
+
+ // print_r($sql);
+  $submenu = $cid->datos($sql,'MYSQL');
+  // $submenu=$cid->query($sql) or die($cid->error);
+  $array_menu = array();
+  $i = 0;
+
+  foreach ($submenu as $key => $value) {
+    $array_menu[$key]['codMenu'] = $value['codMenu'];
+    $array_menu[$key]['descripcionMenu'] = $value['descripcionMenu'];
+    $array_menu[$key]['accesoRapido'] = $value['accesoRapido'];
+    $array_menu[$key]['rutaProceso'] = $value['rutaProceso'];
+    
+  }
+ 
+  return $array_menu;
+  
+}
+
+
 //consulta niveles del menu
 function select_nivel_menu_mysql($padre) // otimizado
 {
@@ -7524,13 +7603,13 @@ function factura_numero($ser)
               $dato[7]['campo']='Producto';
               $dato[7]['dato']=$value['PRODUCTO']; 
               $dato[8]['campo']='Cantidad';
-              $dato[8]['dato']=$value['CANT'];
+              $dato[8]['dato']= number_format($value['CANT'],2,'.','');
               $dato[9]['campo']='Precio';
-              $dato[9]['dato']=$value['PRECIO']; 
+              $dato[9]['dato']= number_format($value['PRECIO'],6,'.',''); 
               $dato[10]['campo']='Total';
-              $dato[10]['dato']=$value['TOTAL'];//descontar descuentos  
+              $dato[10]['dato']= number_format($value['TOTAL'],2,'.','');//descontar descuentos  
               $dato[11]['campo']='Total_IVA';
-              $dato[11]['dato']=$value['Total_IVA']; 
+              $dato[11]['dato']= number_format($value['Total_IVA'],2,'.',''); 
               $dato[12]['campo']='Item';
               $dato[12]['dato']=$_SESSION['INGRESO']['item']; 
               $dato[13]['campo']='CodigoU';
@@ -7905,9 +7984,9 @@ function factura_numero($ser)
               $dato[7]['campo']='Producto';
               $dato[7]['dato']=$value['PRODUCTO']; 
               $dato[8]['campo']='Cantidad';
-              $dato[8]['dato']=$value['CANT'];
+              $dato[8]['dato']= number_format($value['CANT'],2,'.','');
               $dato[9]['campo']='Precio';
-              $dato[9]['dato']= number_format($value['PRECIO'],2,'.',''); 
+              $dato[9]['dato']= number_format($value['PRECIO'],6,'.',''); 
               $dato[10]['campo']='Total';
               $dato[10]['dato']= number_format($value['TOTAL'],2,'.','');//descontar descuentos  
               $dato[11]['campo']='Total_IVA';
@@ -8424,7 +8503,7 @@ function Leer_Codigo_Inv($CodigoDeInv,$FechaInventario,$CodBodega,$CodMarca='')
           }
           if(strlen($DatInv["Cta_Ventas"])>1 && strlen($DatInv["Cta_Inventario"])<=1)
           {
-            $DatInv["Stock"] =9999;
+            $DatInv["Stock"] =99999999;
           }         
           $Codigo_Ok = True;     
 

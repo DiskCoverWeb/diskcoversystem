@@ -147,6 +147,16 @@ class lista_facturasM
 	$sql2 = "SELECT * FROM lista_tipo_contribuyente WHERE RUC = '".$_SESSION['INGRESO']['RUC']."'";
 	$tipo_con = $this->db->datos($sql2, 'MYSQL');
 
+   $clave_acceso =  $datos_fac[0]['Autorizacion'];
+   $sql2="SELECT * 
+    FROM Trans_Abonos 
+    WHERE Factura = '".$cod."' 
+    AND CodigoC='".$ci."' 
+    AND Item = '".$_SESSION['INGRESO']['item']."'
+    AND Autorizacion = '".$clave_acceso."'
+    AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' "; 
+  $detalle_abonos = $this->db->datos($sql2);
+
 	$sucursal = $this->catalogo_lineas('FA',$ser);
 	$forma_pago = $this->DCTipoPago($datos_fac[0]['Tipo_Pago']);
 	if(count($forma_pago)>0)
@@ -169,11 +179,11 @@ class lista_facturasM
     $datos_cli_edu=$this->cliente_matri($ci);
 	   if($datos_cli_edu != '' && !empty($datos_cli_edu))
 	   {
-	   		imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,'matr',$id,null,'factura',null,null,false,false,$sucursal);
+	   		imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,'matr',$id,null,'factura',null,null,false,$detalle_abonos,$sucursal);
 	   }else
 	   {
 		    $datos_cli_edu=$this->Cliente($ci);
-		    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,false,null,'factura',null,null,false,false,$sucursal);
+		    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,false,null,'factura',null,null,false,$detalle_abonos,$sucursal);
 	   }
 
    }

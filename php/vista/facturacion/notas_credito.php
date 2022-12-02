@@ -2,6 +2,7 @@
  $(document).ready(function()
   {
   	cargar_tabla();
+  	autocoplete_clinete();
   })
 
 function cargar_tabla()
@@ -19,6 +20,26 @@ function cargar_tabla()
       }
     });
 }
+
+function autocoplete_clinete(){
+      $('#DCClientes').select2({
+        placeholder: 'Seleccione una beneficiario',
+        width:'90%',
+        ajax: {
+          url:   '../controlador/facturacion/notas_creditoC.php?cliente=true',
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {
+            console.log(data);
+            return {
+              results: data
+            };
+          },
+          cache: true
+        }
+      });
+    }
+
 	
 </script>
 <div class="row">
@@ -43,7 +64,7 @@ function cargar_tabla()
 		<div class="form-group">
           <label class="col-sm-1" style="padding:0px">Cliente</label>
           <div class="col-sm-11" style="padding:0px">
-          	<select class="form-control input-xs">
+          	<select class="form-control input-xs" id="DCClientes" name="DCClientes">
           		<option>Seleccione cliente</option>
           	</select>
           </div>

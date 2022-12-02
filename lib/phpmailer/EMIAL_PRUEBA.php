@@ -11,6 +11,15 @@ require 'vendor/autoload.php';
 //Instantiation and passing `true` enables exceptions
 $mail = new PHPMailer(true);
 
+ $mail->SMTPOptions = array(
+        'ssl' => array(
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true
+        )
+    );
+    
+
 // host://Username://pass://Puerto://Secure:ssl
 
     //Server settings
@@ -21,11 +30,14 @@ $mail = new PHPMailer(true);
     $mail->Username   = 'electronicos@diskcoversystem.com';                     //SMTP username
     $mail->Password   = 'Electronicos2022@';                               //SMTP password
     $mail->SMTPSecure = 'tls';//PHPMailer::ENCRYPTION_STARTTLS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
-    $mail->Port       = 26;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+    $mail->Port       = 587;                                    //TCP port to connect to, use 465 for PHPMailer::ENCRYPTION_SMTPS` above
+
+   
+
 
     //Recipients
     $mail->setFrom('electronicos@diskcoversystem.com', 'Mailer');
-    $mail->addAddress('javier.farinango92@gmail.com');     //Add a recipient
+    $mail->addAddress('ejfc_omoshiroi@hotmail.com');     //Add a recipient
     // $mail->addAddress('ellen@example.com');               //Name is optional
     // $mail->addReplyTo('info@example.com', 'Information');
     // $mail->addCC('cc@example.com');

@@ -367,7 +367,7 @@ class niveles_seguriC
 						break;
 					case '-2':
 						//cuando tiene credenciales validas pero el usuario no existe
-						$res = $this->modelo->insertar_acceso_en_sql_terceros($parametros['entidad'],$empresa,$parametros['CI_usuario'],$modulo);
+						$res = $this->modelo->insertar_acceso_en_sql_terceros($parametros['entidad'],generaCeros($empresa,3),$parametros['CI_usuario'],generaCeros($modulo,2));
 						if($res==-1)
 						{
 							$mensaje.='No se puedo Insertar Cliente en SQLServer: items'.$empresa.' Entidad:'.$parametros['entidad'];
@@ -1003,6 +1003,7 @@ Emails: recepcion@diskcoversystem.com o prisma_net@hotmail.es
 					if($key==0){ $ver = 'active';}
 					$op.='<li class="'.$ver.'"><a data-toggle="tab" href="#'.str_replace(' ','_',$value['aplicacion']).'">'.$value['aplicacion'].'</a></li>';
 				}
+				$encontrado = 0;
 				$op.='</ul>
 					  <div class="tab-content">';
 				foreach ($modulos as $key => $value) {
@@ -1010,8 +1011,26 @@ Emails: recepcion@diskcoversystem.com o prisma_net@hotmail.es
 					if($key==0){$ver = 'in active';}
 					$op.='<div id="'.str_replace(' ','_',$value['aplicacion']).'" class="tab-pane fade '.$ver.'"><br>';
 					$pag = $this->modelo->paginas($value['modulo']);
+					$pag_select = pagina_acceso_hijos($parametros['usuario'],$parametros['entidad'],$parametros['item'],$value['modulo']);
 					foreach ($pag as $key => $value1) {
+						$encontrado = 0;
+						// print_r($pag);
+						// print_r($pag_select);die();
+						if(count($pag_select)>0)
+						{
+							foreach ($pag_select as $key2 => $value2) {
+								if($value1['ID']==$value2['Pagina'])
+								{
+									$op.='<label><input type="checkbox" checked id="rbl_'.$value1['ID'].'" onclick="guardar_pag(\''.$parametros['entidad'].'\',\''.$parametros['item'].'\',\''.$parametros['usuario'].'\',\''.$value1['ID'].'\',\''.$value['modulo'].'\')"> '.$value1['descripcionMenu'].'</label><br>';
+									$encontrado = 1;
+								}
+							}
+
+						}
+						if($encontrado==0)
+						{
 						$op.='<label><input type="checkbox" id="rbl_'.$value1['ID'].'" onclick="guardar_pag(\''.$parametros['entidad'].'\',\''.$parametros['item'].'\',\''.$parametros['usuario'].'\',\''.$value1['ID'].'\',\''.$value['modulo'].'\')"> '.$value1['descripcionMenu'].'</label><br>';
+						}
 					}
 					$op.='</div>';
 				}
@@ -1024,18 +1043,24 @@ Emails: recepcion@diskcoversystem.com o prisma_net@hotmail.es
     {
     	if($parametros['estado']=='true')
     	{
-    		$datos[0]['campo'] = 'ID_Empresa';
-    		$datos[0]['dato']  = $parametros['entidad'];
-    		$datos[1]['campo'] = 'CI_NIC';
-    		$datos[1]['dato']  = $parametros['usuario'];
-    		$datos[2]['campo'] = 'Modulo';
-    		$datos[2]['dato']  = $parametros['modulo'];
-    		$datos[2]['tipo']  = 'string';
-    		$datos[3]['campo'] = 'Item';
-    		$datos[3]['dato']  = $parametros['empresa'];
-    		$datos[4]['campo'] = 'Pagina';
-    		$datos[4]['dato']  = $parametros['pagina'];
-    		$this->modelo->add_accesos('acceso_empresas',$datos);
+    		$existe = $this->modelo->existe_acceso_pag($parametros['entidad'],$parametros['usuario'],$parametros['modulo'],$parametros['empresa'],$parametros['pagina']);
+    		if(count($existe)==0)
+    		{
+	    		$datos[0]['campo'] = 'ID_Empresa';
+	    		$datos[0]['dato']  = $parametros['entidad'];
+	    		$datos[1]['campo'] = 'CI_NIC';
+	    		$datos[1]['dato']  = $parametros['usuario'];
+	    		$datos[1]['tipo']  = 'string';
+	    		$datos[2]['campo'] = 'Modulo';
+	    		$datos[2]['dato']  = $parametros['modulo'];
+	    		$datos[2]['tipo']  = 'string';
+	    		$datos[3]['campo'] = 'Item';
+	    		$datos[3]['dato']  = generaCeros($parametros['empresa'],3);
+	    		$datos[3]['tipo']  = 'string';
+	    		$datos[4]['campo'] = 'Pagina';
+	    		$datos[4]['dato']  = $parametros['pagina'];
+	    		$this->modelo->add_accesos('acceso_empresas',$datos);
+    		}
     	}else
     	{
     		$this->modelo->delete_acceso($parametros['entidad'],$parametros['usuario'],$parametros['modulo'],$parametros['empresa'],$parametros['pagina']);

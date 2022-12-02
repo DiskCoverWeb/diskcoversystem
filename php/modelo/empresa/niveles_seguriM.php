@@ -255,7 +255,7 @@ class niveles_seguriM
 
 	function delete_modulos_mysql($entidad,$empresas=false,$usuario,$modulo=false)
 	{
-		$sql = "DELETE FROM acceso_empresas WHERE  ID_Empresa = ".$entidad." ";
+		$sql = "DELETE FROM acceso_empresas WHERE  ID_Empresa = ".$entidad." AND Pagina='.' AND Pagina='' ";
 		if($empresas)
 		{
 			$sql.=" AND Item='".$empresas."'";
@@ -577,7 +577,7 @@ class niveles_seguriM
 		$datos = $this->db->datos($sql,'MY SQL');
 		if(count($datos)>0)
 		{
-			$sql = "UPDATE Accesos SET Nivel_1 =".$parametros['n1'].", Nivel_2 =".$parametros['n2'].", Nivel_3 =".$parametros['n3'].", Nivel_4 =".$parametros['n4'].",Nivel_5 =".$parametros['n5'].", Nivel_6=".$parametros['n6'].", Nivel_7=".$parametros['n7'].", Supervisor = ".$parametros['super'].", Usuario = '".$parametros['usuario']."',Clave = '".$parametros['pass']."',EmailUsuario='".$parametros['email']."',Serie_FA = '".$parametros['serie']."',TODOS=1 WHERE Codigo = '".$parametros['CI_usuario']."';";
+			$sql = "UPDATE Accesos SET Nivel_1 =".$parametros['n1'].", Nivel_2 =".$parametros['n2'].", Nivel_3 =".$parametros['n3'].", Nivel_4 =".$parametros['n4'].",Nivel_5 =".$parametros['n5'].", Nivel_6=".$parametros['n6'].", Nivel_7=".$parametros['n7'].", Supervisor = ".$parametros['super'].",Nombre_Completo='".$parametros['nombre']."', Usuario = '".$parametros['usuario']."',Clave = '".$parametros['pass']."',EmailUsuario='".$parametros['email']."',Serie_FA = '".$parametros['serie']."',TODOS=1 WHERE Codigo = '".$parametros['CI_usuario']."';";
 		 	  $sql = str_replace('false',0, $sql);
 		 	  $sql = str_replace('true',1, $sql);
 		 	  // print_r($sql);die();
@@ -695,7 +695,7 @@ class niveles_seguriM
 		$datos = $this->db->datos($sql,'MY SQL');
 		if(count($datos)>0)
 		{
-			 $sql = "INSERT INTO Acceso_Empresa (Modulo,Item,Codigo,X)VALUES($modulo,$id_empresa,$CI_usuario,'.');";
+			 $sql = "INSERT INTO Acceso_Empresa (Modulo,Item,Codigo,X)VALUES('".$modulo."','".$id_empresa."','".$CI_usuario."','.');";
 				// print_r($sql);die();
 			$r = $this->db->ejecutar_sql_terceros($sql,$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
 		 	  return $r;
@@ -879,7 +879,7 @@ class niveles_seguriM
 
 	function todos_modulos($entidad,$item,$usuario)
 	{
-		$sql = "SELECT aplicacion, AE.modulo
+		$sql = "SELECT DISTINCT(aplicacion), AE.modulo
 		FROM acceso_empresas  AE
 		INNER JOIN modulos M ON AE.Modulo= M.modulo
 		WHERE CI_NIC='".$usuario."' AND item = '".$item."' AND ID_EMPRESA = '".$entidad."'";
@@ -891,6 +891,19 @@ class niveles_seguriM
 	{
 		$sql = "SELECT ID,CodMenu,descripcionMenu FROM menu_modulos WHERE codMenu like '".$modulo.".%' AND LENGTH(codMenu)>4 ORDER BY descripcionMenu ASC";
 		return $this->db->datos($sql,'MYSQL');
+	}
+
+	function existe_acceso_pag($entidad,$usuario,$mod,$item,$pagina)
+	{
+		$sql = "SELECT * FROM acceso_empresas
+				WHERE ID_Empresa = '".$entidad."' 
+				AND CI_NIC = '".$usuario."' 
+				AND Modulo = '".$mod."' 
+				AND Item = '".$item."' 
+				AND Pagina = '".$pagina."'";
+		// print_r($sql);die();
+		return $this->db->datos($sql,'MYSQL');
+
 	}
 
 	function add_accesos($tabla,$da)

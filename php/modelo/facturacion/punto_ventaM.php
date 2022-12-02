@@ -263,7 +263,7 @@ class punto_ventaM
     WHERE Factura = '".$cod."' 
     AND CodigoC='".$ci."' 
     AND Item = '".$_SESSION['INGRESO']['item']."'
-  AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' "; 
+    AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' "; 
   $detalle_fac = $this->db->datos($sql1);
 
   $sql2 = "SELECT * FROM lista_tipo_contribuyente WHERE RUC = '".$_SESSION['INGRESO']['RUC']."'";
@@ -274,7 +274,8 @@ class punto_ventaM
     WHERE Factura = '".$cod."' 
     AND CodigoC='".$ci."' 
     AND Item = '".$_SESSION['INGRESO']['item']."'
-  AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' "; 
+    AND Autorizacion = '".$clave_acceso."'
+    AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' "; 
   $detalle_abonos = $this->db->datos($sql2);
 
   if(count($datos_fac)>0 && count($tipo_con)>0)
