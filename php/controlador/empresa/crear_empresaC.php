@@ -4,6 +4,7 @@ include(dirname(__DIR__,2).'/modelo/empresa/crear_empresaM.php');
 $controlador = new crear_empresaC();
 
 if(isset($_GET['llamar'])){
+    //print_r ($_POST);die();
     $ll='';
     if(isset($_POST['item']))
     {
@@ -13,7 +14,7 @@ if(isset($_GET['llamar'])){
 }
 if(isset($_GET['guardar_empresa']))
 {
-    print_r ($_POST);die();
+    //print_r ($_POST);die();
     // $razon1 = '';
     // if(isset($_POST['razon1']));
     // {
@@ -63,7 +64,7 @@ if(isset($_GET['empresas']))
     }
 	echo json_encode($controlador->lista_empresas($dato));	
 }
-if(isset($_GET['usuario']))
+if(isset($_GET['traer_usuario']))
 {	
     // $dato = '';
     // if(isset($_GET['q']))
@@ -71,9 +72,15 @@ if(isset($_GET['usuario']))
     //     $dato = $_GET['q'];
     // }
 	// echo json_encode($controlador->lista_usuario($dato));
-    //print_r($_POST);die();
-    $query = $_POST;
-	echo json_encode($controlador->lista_usuario($query));	
+    // print_r($_POST);die();
+    $ll='';
+    if(isset($_POST['form']))
+    {
+        $ll=$_POST['form'];
+    }
+    // echo json_encode($controlador->llamardb($ll));
+    // $query = $_POST;
+	echo json_encode($controlador->lista_usuario($ll));	
 }
 if(isset($_GET['informacion_empre']))
 {	
@@ -257,11 +264,15 @@ class crear_empresaC
     }
     function lista_usuario($dato)
     {
-        //print_r($dato);die();
+        // print_r($dato);die();
         $datos = $this->modelo->usuario($dato);
         $lis = array();
         foreach ($datos as $key => $value) {
-            $lis[] = array('id'=>$value['Codigo'],'text'=>$value['Usuario']);
+            $lis[] = array(
+                'Codigo'=>$value['Codigo'],
+                'Usuario'=>$value['Usuario'],
+                'Clave'=>$value['Clave']
+            );
         }
         return $lis;    
     }
