@@ -51,7 +51,7 @@ function MostrarUsuClave()
         $('#lblUsuario').css('display','block');
         $('#TxtClave').css('display','block');
         $('#lblClave').css('display','block');
-        formulario();
+        TraerUsuClave();
     }else
     {
         $('#TxtUsuario').css('display','none');
@@ -61,7 +61,7 @@ function MostrarUsuClave()
     }
 }
 function MostrarEmpresaCopia()
-{
+{//CheqCopiiarEmpresa_Click
     if($('#CopSeEmp').prop('checked'))
     {
         $('#ListaCopiaEmpresa').css('display','block');
@@ -71,26 +71,19 @@ function MostrarEmpresaCopia()
     }
 }
 function TraerUsuClave()
-{//CheqUsuario_Click()
-    var ckASDAS = $('#ASDAS').prop('checked');
-    console.log(datos);
-    $.ajax({	 	    
-	 	type: "POST",
-	 		url: '../controlador/empresa/crear_empresaC.php?traer_empresa=true',
-	 		// data: {razon1:razon}, 
-            data:datos+'&ckASDAS='+ckASDAS,
-	 		dataType:'json',
-	 		success: function(response)
-	 		{
-                if(response==1)
-		  	{
-		  		Swal.fire('Datos Guardados','','success').then(function(){
-		  			$('#TxtEmpresa').attr('readonly',true);
-		  		});
-		  		console.log(response);
-	 		}
-	 		}
-	 	});
+{
+    var form = $('#TxtCI').val();
+        $.ajax({
+            data:{form:form},//son los datos que se van a enviar por $_POST
+            url: '../controlador/empresa/crear_empresaC.php?traer_usuario=true',//los datos hacia donde se van a enviar el envio por url es por GET
+            type:'post',//envio por post
+            dataType:'json',
+            success: function(response){
+                console.log(response);
+                $('#TxtUsuario').val(response[0]['Usuario']);
+                $('#TxtClave').val(response[0]['Clave']);
+            }
+        });
 }
 function naciones()
 {
@@ -190,6 +183,8 @@ function formulario()
             dataType:'json',
             success: function(response){
                 console.log(response);
+                $('#TxtUsuario').val(response[0]['Usuario']);
+                $('#TxtClave').val(response[0]['Clave']);
                 // console.log(response[0].id);
                 // $('#TxtEmpresa').val(response[0]['Empresa']);
                 // $('#TxtRazonSocial').val(response[0]['Razon_Social']);
@@ -283,8 +278,6 @@ function llamar()
                 $('#TxtRUCOpe').val(response[0]['RUC_Operadora']);
                 $('#txtLeyendaDocumen').val(response[0]['LeyendaFA']);
                 $('#txtLeyendaImpresora').val(response[0]['LeyendaFAT']);
-                $('#TxtUsuario').val(response[0]['Usuario']);
-                $('#TxtClave').val(response[0]['Clave']);
                 if(response[0]['Det_SubMod']!=0)
                 {
                     $('#ASDAS').prop('checked',true);
@@ -708,7 +701,7 @@ function limpiar()
             <!-- PROCESOS GENERALES INICIO -->
             <div class="tab-pane" id="tab_2">                                
                 <div class="row">
-                    <div class="col-md-4">                                   
+                    <div class="col-md-4" style="background-color:#ffe0c0">                                   
                     <!-- setesos -->
                         <label>|Seteos Generales|</label>
                         <div class="checkbox">
@@ -832,10 +825,16 @@ function limpiar()
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <label>|Servidor de Correos|</label><BR>
-                        <label>Servidor SMTP</label>
-                        <input type="text" name="TxtServidorSMTP" id="TxtServidorSMTP" class="form-control input-xs" value="">
+                    <div class="col-sm-8" style="background-color:#ffffc0">
+                        <div class="form-group">
+                            <label>|Servidor de Correos|</label><BR>
+                            <label>Servidor SMTP</label>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-8">
+                                <input type="text" name="TxtServidorSMTP" id="TxtServidorSMTP" class="form-control input-xs" value="">
+                            </div>
+                        </div>
                         <div class="form-group">
                             <div class="col-sm-3">
                                 <div class="checkbox">
@@ -905,24 +904,24 @@ function limpiar()
             </div>
                 
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-4" style="background-color:#c0ffc0">
                         <label>|Cantidad de Decimales en|</label>
                     </div>                                    
                 </div>
                 <div class="row">
-                    <div class="col-md-1">
+                    <div class="col-md-1" style="background-color:#c0ffc0">
                         P.V.P
                         <input type="text" name="TxtPVP" id="TxtPVP" class="form-control input-xs" value="">
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-1" style="background-color:#c0ffc0">
                         COSTOS
                         <input type="text" name="TxtCOSTOS" id="TxtCOSTOS" class="form-control input-xs" value="">
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-1" style="background-color:#c0ffc0">
                         I.V.A
                         <input type="text" name="TxtIVA" id="TxtIVA" class="form-control input-xs" value="">
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-1" style="background-color:#c0ffc0">
                         CANTIDAD
                         <input type="text" name="TxtCantidad" id="TxtCantidad" class="form-control input-xs" value="">
                     </div>
