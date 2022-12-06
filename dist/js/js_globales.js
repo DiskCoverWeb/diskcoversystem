@@ -256,3 +256,12 @@ function paginacion(funcion,posicion,inicio=0,numreg=50)
 	$('#'+posicion).html(pag);
 	$('#ddl_pag').val();
 }
+
+function fecha_actual()
+{
+	 var d = new Date();
+    var month = d.getMonth()+1;
+    var day = d.getDate();
+    var output = d.getFullYear() + '-' +((''+month).length<2 ? '0' : '') + month + '-' +((''+day).length<2 ? '0' : '') + day;
+    return output;
+}

@@ -17,6 +17,7 @@
 
   $(document).ready(function()
   {
+    catalogoLineas();
     paginacion('cargar_registros','panel_pag');
     // fin paginacion
 
@@ -154,10 +155,54 @@
     });
   }
 
+
+   function catalogoLineas(){
+    fechaEmision = fecha_actual();
+    fechaVencimiento = fecha_actual();
+    $.ajax({
+      type: "POST",                 
+      url: '../controlador/facturacion/facturar_pensionC.php?catalogo=true',
+      data: {'fechaVencimiento' : fechaVencimiento , 'fechaEmision' : fechaEmision},      
+      dataType:'json', 
+      success: function(data)             
+      {
+        if (data.length>0) {
+          datos = data;
+          // Limpiamos el select
+          $("#DCLinea").find('option').remove();
+          for (var indice in datos) {
+            $("#DCLinea").append('<option value="' + datos[indice].id +" "+datos[indice].text+ ' ">' + datos[indice].text + '</option>');
+          }
+        }else{
+          Swal.fire({
+            type:'info',
+            title: 'Usted no tiene un punto de venta asignado, contacte con la administracion del sistema',
+            text:'',
+            allowOutsideClick: false,
+          }).then(()=>{
+            console.log('ingresa');
+                location.href = '../vista/modulos.php';
+              });
+
+        }         
+      }
+    });
+  }
+
+
    function cargar_registros()
    {
    
     var per = $('#ddl_periodo').val();
+    var serie = $('#DCLinea').val();
+    if(serie!='' && serie!='.')
+    {
+     var serie = serie.split(' ');
+     var serie = serie[1];
+    }else
+    {
+      serie = '';
+    }
     var tipo = '<?php echo $tipo; ?>'
     var parametros = 
     {
@@ -166,6 +211,7 @@
       'desde':$('#txt_desde').val(),
       'hasta':$('#txt_hasta').val(),
       'tipo':tipo,
+      'serie':serie,
     }
      $.ajax({
        data:  {parametros:parametros},
@@ -173,7 +219,7 @@
       type:  'post',
       dataType: 'json',
       beforeSend: function () {
-         $("#tbl_tabla").html('<tr class="text-center"><td colspan="16"><img src="../../img/gif/loader4.1.gif" width="20%">');
+         // $("#tbl_tabla").html('<tr class="text-center"><td colspan="16"><img src="../../img/gif/loader4.1.gif" width="20%">');
       },
        success:  function (response) { 
         // console.log(response);
@@ -704,6 +750,10 @@ function modal_email_fac(factura,serie,codigoc,emails)
             <select class="form-control input-xs" id="ddl_cliente" name="ddl_cliente" onchange="periodos(this.value);rangos();">
               <option value="">Seleccione Cliente</option>
             </select>
+          </div>
+          <div class="col-sm-2">
+            <b>Serie</b>
+              <select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="1"><option value=""></option></select>
           </div>
           <div class="col-sm-2" id="campo_clave">
             <b>CLAVE</b>

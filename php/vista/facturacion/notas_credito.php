@@ -1,13 +1,114 @@
 <script type="text/javascript">
  $(document).ready(function()
   {
+  	delete_sientos_nc();
+  	DCBodega();
+  	DCMarca();
+		autocoplete_contraCta()
+  	autocoplete_articulos();
+
   	cargar_tabla();
   	autocoplete_clinete();
   })
 
+function delete_sientos_nc()
+{
+  	 $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/notas_creditoC.php?delete_sientos_nc=true',
+      // data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+         //console.log(data);
+         //$('#tbl_datos').html(data);
+      }
+    });
+}
+
+function DCBodega()
+{
+  	 $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/notas_creditoC.php?DCBodega=true',
+      // data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+      	llenarComboList(data,'DCBodega'); 
+      }
+    });
+}
+function DCMarca()
+{
+  	 $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/notas_creditoC.php?DCMarca=true',
+      // data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+      	llenarComboList(data,'DCMarca'); 
+      }
+    });
+}
+
+function DCMarca()
+{
+  	 $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/notas_creditoC.php?DCMarca=true',
+      // data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+      	llenarComboList(data,'DCMarca'); 
+      }
+    });
+}
+
+
+function autocoplete_articulos(){
+    $('#DCArticulo').select2({
+      placeholder: 'Seleccione articulos',
+      width:'90%',
+      ajax: {
+        url:   '../controlador/facturacion/notas_creditoC.php?DCArticulo=true',
+        dataType: 'json',
+        delay: 250,
+        processResults: function (data) {
+          // console.log(data);
+          return {
+            results: data
+          };
+        },
+        cache: true
+      }
+    });
+  }
+
+function autocoplete_contraCta(){
+    $('#DCContraCta').select2({
+      placeholder: 'Seleccione cuenta',
+      width:'90%',
+      ajax: {
+        url: '../controlador/facturacion/notas_creditoC.php?DCContraCta=true',
+        dataType: 'json',
+        delay: 250,
+        processResults: function (data) {
+          // console.log(data);
+          return {
+            results: data
+          };
+        },
+        cache: true
+      }
+    });
+  }
+
+
 function cargar_tabla()
 {
-
   	 $.ajax({
       type: "POST",
       url: '../controlador/facturacion/notas_creditoC.php?tabla=true',
@@ -64,7 +165,7 @@ function autocoplete_clinete(){
 		<div class="form-group">
           <label class="col-sm-1" style="padding:0px">Cliente</label>
           <div class="col-sm-11" style="padding:0px">
-          	<select class="form-control input-xs" id="DCClientes" name="DCClientes">
+          	<select class="form-control input-xs" id="DCClientes" name="DCClientes" onchange="">
           		<option>Seleccione cliente</option>
           	</select>
           </div>
@@ -86,14 +187,14 @@ function autocoplete_clinete(){
 		<b>Serie</b>
 		<input type="text" name="" class="form-control input-xs">
 	</div>
-	<div class="col-sm-1">
+	<div class="col-sm-1" style="padding: 0px;">
 		<b>Comp No.</b>
 		<input type="text" name="" class="form-control input-xs">
 	</div>
 	<div class="col-sm-4">
 		<b>Contra Cuenta a aplicar a la Nota de Credito</b>
-		<select class="form-control input-xs">
-      		<option>Seleccione cliente</option>
+		<select class="form-control input-xs" id="DCContraCta" name="DCContraCta">
+      		<option>Seleccione cuenta</option>
       	</select>
 	</div>
 </div>
@@ -144,8 +245,8 @@ function autocoplete_clinete(){
 		<div class="form-group">
           <label class="col-sm-2" style="padding:0px">Bodega</label>
           <div class="col-sm-10" style="padding:0px">
-            <select class="form-control input-xs">
-	      		<option>Seleccione cliente</option>
+            <select class="form-control input-xs" id="DCBodega" name="DCBodega">
+	      		<option>Seleccione bodega</option>
 	      	</select>
           </div>
         </div>
@@ -154,8 +255,8 @@ function autocoplete_clinete(){
 		<div class="form-group">
           <label class="col-sm-2" style="padding:0px">Marca</label>
           <div class="col-sm-10" style="padding:0px">
-            <select class="form-control input-xs">
-	      		<option>Seleccione cliente</option>
+            <select class="form-control input-xs" id="DCMarca" name="DCMarca">
+	      		<option>Seleccione marca</option>
 	      	</select>
           </div>
         </div>
@@ -169,8 +270,8 @@ function autocoplete_clinete(){
 				<div class="row">
 					<div class="col-sm-7">
 						<b>Producto</b>
-						<select class="form-control input-xs">
-				          	<option>Seleccione cliente</option>
+						<select class="form-control input-xs" id="DCArticulo" name="DCArticulo">
+				          	<option>Seleccione producto</option>
 				        </select>
 					</div>
 					<div class="col-sm-1">

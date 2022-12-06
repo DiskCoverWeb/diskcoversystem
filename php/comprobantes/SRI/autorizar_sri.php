@@ -131,6 +131,15 @@ class autorizacion_sri
 		 	$cabecera['Telefono_Establecimiento'] = $sucursal[0]['Telefono_Estab'];
 		 	$cabecera['Ruc_Establecimiento'] = $sucursal[0]['RUC_Establecimiento'];
 		 	$cabecera['Email_Establecimiento'] = $sucursal[0]['Email_Establecimiento'];
+		 	$cabecera['Placa_Vehiculo'] ='.';
+		 	$cabecera['Cta_Establecimiento'] = '.';
+		 	if(isset($sucursal[0]['Placa_Vehiculo']))
+		 	{
+		 		$cabecera['Placa_Vehiculo'] = $sucursal[0]['Placa_Vehiculo'];
+		 	}
+		 	if (isset($sucursal[0]['Cta_Establecimiento'])) {
+		 		$cabecera['Cta_Establecimiento'] = $sucursal[0]['Cta_Establecimiento'];
+		 	}		 	
 		 }
 				//datos de factura
 	    		$datos_fac = $this->datos_factura($cabecera['serie'],$cabecera['factura'],$cabecera['tc']);
@@ -1742,7 +1751,21 @@ function generar_xml($cabecera,$detalle)
 
 				$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Email_Establecimiento'] );
 				$xml_campoAdicional->setAttribute( "nombre", "socioEmail" );
-				$xml_infoAdicional->appendChild( $xml_campoAdicional );	
+				$xml_infoAdicional->appendChild( $xml_campoAdicional );
+
+				if(isset($cabecera['Placa_Vehiculo']))
+				{
+					$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Placa_Vehiculo'] );
+					$xml_campoAdicional->setAttribute( "nombre", "PlacaVehiculo" );
+					$xml_infoAdicional->appendChild( $xml_campoAdicional );
+				}
+
+				if(isset($cabecera['Cta_Establecimiento']))
+				{
+					$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Cta_Establecimiento'] );
+					$xml_campoAdicional->setAttribute( "nombre", "CtaEstablecimiento" );
+					$xml_infoAdicional->appendChild( $xml_campoAdicional );
+				}	
 		}
 
 		if($estable!='001' && isset($cabecera['Nombre_Establecimiento']) &&  strlen($cabecera['Nombre_Establecimiento'])>0 && $cabecera['Nombre_Establecimiento']!='.')

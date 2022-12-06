@@ -247,19 +247,35 @@ class niveles_seguriC
 	function guardar_datos_modulo($parametros)
 	{
 
-		 //print_r($parametros);die();
+		 // print_r($parametros);die();
+		$modulos_empresa = array();
+		$empresas_eli = array();
 
-		$modulos_empresa = str_replace('rbl_','',$parametros['modulos']); 
-		$modulos_empresa = str_replace('=on','',$modulos_empresa); 
-		$modulos_empresa = str_replace('&',',',$modulos_empresa); 
-		$modulos_empresa = str_replace('_','-',$modulos_empresa);
+		//si viene marcado los modulos;
+		if($parametros['modulos']!='')
+		{ 
+			$modulos_empresa = str_replace('rbl_','',$parametros['modulos']); 
+			$modulos_empresa = str_replace('=on','',$modulos_empresa); 
+			$modulos_empresa = str_replace('&',',',$modulos_empresa); 
+			$modulos_empresa = str_replace('_','-',$modulos_empresa);
+			$modulos_empresa = explode(',',$modulos_empresa);
+		}else
+		{
+			// en el caso de que se haya borrado tyodo los acceso entra y consulta todos los acceso de la entidad y usuario
+			$modulos_empresa_delete =  $this->modelo->accesos_modulos($parametros['entidad'],$parametros['CI_usuario']);
+			foreach ($modulos_empresa_delete as $key => $value) {
+			$modulo = $value['Modulo'];
+			$empresa = $value['Item'];
+			array_push($empresas_eli,$empresa);			
+		}
+
+		}
 		$mensaje = '';
 		$resp = 1;
 		$server_estado = 1;
 
-		$modulos_empresa = explode(',',$modulos_empresa);
 		$niveles = array('1'=>$parametros['n1'],'2'=>$parametros['n2'],'3'=>$parametros['n3'],'4'=>$parametros['n4'],'5'=>$parametros['n5'],'6'=>$parametros['n6'],'7'=>$parametros['n7'],'super'=>$parametros['super']);
-		$empresas_eli = array();
+		
 		foreach ($modulos_empresa as $key => $value) {
 			$datos = explode('-', $value);
 			$modulo = $datos[0];
@@ -268,12 +284,14 @@ class niveles_seguriC
 		}
 		$empresas_eli =  array_unique($empresas_eli);
 
+		// print_r($empresas_eli);die();
 		foreach ($empresas_eli as $key => $value) {
-			$this->modelo->delete_modulos_mysql($parametros['entidad'],false,$parametros['CI_usuario']);
+			$this->modelo->delete_modulos_mysql($parametros['entidad'],$value,$parametros['CI_usuario']);
 		}
 
-
-		foreach ($modulos_empresa as $key => $value) {
+		 // print_r($modulos_empresa);die();
+		foreach ($modulos_empresa as $key => $value) 
+		{
 
 			$datos = explode('-', $value);
 			$modulo = $datos[0];

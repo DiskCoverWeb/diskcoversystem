@@ -2242,6 +2242,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 
 	//=============================== cuadro datos sucursal==================================================
 
+	// print_r($sucursal);die();
 	if(count($sucursal)>0 && $sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='' && $punto!='001' && $suc=='001')
 	{
 		$y = $pdf->GetY()+$margen*2;	
@@ -2279,10 +2280,10 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
     		$arr=array($sucursal[0]['Nombre_Establecimiento'],'',$sucursal[0]['Telefono_Estab']);
     	}
 		$pdf->Row($arr,10);
-		 $pdf->SetWidths(array($margen_med));
-		 $arr=array('Direccion');//mio
+		 $pdf->SetWidths(array(350,50,100));
+		 $arr=array('Direccion','Placa','Cta Establecimiento');//mio
 		 $pdf->Row($arr,10);
-		 $arr=array($sucursal[0]['Direccion_Establecimiento']);//mio
+		 $arr=array($sucursal[0]['Direccion_Establecimiento'],$sucursal[0]['Placa_Vehiculo'],$sucursal[0]['Cta_Establecimiento']);//mio
 		 $pdf->Row($arr,10);
 
 
@@ -2489,6 +2490,17 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 
     }
 
+    if(count($sucursal)>0 && $sucursal[0]['Placa_Vehiculo']!='.' && $sucursal[0]['Placa_Vehiculo']!='' && $punto!='001')
+	{
+		$arr=array('Placas: '.$sucursal[0]['Placa_Vehiculo']);
+	    $pdf->Row($arr,10);
+	}
+	if(count($sucursal)>0 && $sucursal[0]['Cta_Establecimiento']!='.' && $sucursal[0]['Cta_Establecimiento']!='' && $punto!='001')
+	{
+		$arr=array('Cta_Establecimiento: '.$sucursal[0]['Cta_Establecimiento']);
+	    $pdf->Row($arr,10);
+	}
+
     if(count($sucursal)>0 && $sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='' && $suc!='001')
 	{
 		if($sucursal[0]['Telefono_Estab']=='.' || $sucursal[0]['Telefono_Estab']=='')
@@ -2503,6 +2515,14 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 		{
 			$sucursal[0]['Email_Establecimiento'] = '';
 		}
+
+		if($sucursal[0]['Placa_Vehiculo']!='.' && $sucursal[0]['Placa_Vehiculo']!='')
+		{
+			$arr=array('Placas: '.$sucursal[0]['Placa_Vehiculo']);
+		    $pdf->Row($arr,10);
+		}
+
+
 
 		$arr=array('Establecimiento: '.$datos[0]['Serie']);
 		$pdf->Row($arr,10);

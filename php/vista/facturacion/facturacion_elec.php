@@ -2,7 +2,7 @@
 // print_r($_SESSION['INGRESO']);die();
 $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 $operadora = $_SESSION['INGRESO']['RUC_Operadora'];
-if($operadora!='.' && strlen($operadora)==10)
+if($operadora!='.' && strlen($operadora)>=13)
 {
 	$operadora = $_SESSION['INGRESO']['RUC_Operadora'];
 }
@@ -355,7 +355,7 @@ if($operadora!='.' && strlen($operadora)==10)
   function calcular()
   {
   	 var VUnit = $('#TextVUnit').val();
-  	 if(VUnit=='' || VUnit==0)
+  	 if(VUnit=='')
   	 {
   	 	Swal.fire('INGRESE UN PRECIO VALIDO','PUNTO VENTA','info').then(function(){$('#TextVUnit').select()})
   	 }
@@ -392,6 +392,12 @@ if($operadora!='.' && strlen($operadora)==10)
   	if(cli=='')
   	{
   		Swal.fire('Seleccione un cliente','','info');
+  		return false;
+  	}
+  	var pro = $('#DCArticulo').val();
+  	if(pro=='')
+  	{
+  		Swal.fire('Seleccione un producto valido','','info');
   		return false;
   	}
   	var tc = $('#DCLinea').val();

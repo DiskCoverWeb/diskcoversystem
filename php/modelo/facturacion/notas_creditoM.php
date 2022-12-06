@@ -48,19 +48,79 @@ class notas_creditoM
        	return $this->db->datos($sql);
    }
 
-   funtion Dlineas()
+   function Dlineas($MBoxFecha,$Cta_CxP)
    {
-   	   sSQL = "SELECT Codigo, Concepto, CxC 
+   	   $sql = "SELECT Codigo, Concepto, CxC 
        FROM Catalogo_Lineas 
        WHERE Fact = 'NC' 
-       AND Item = '" & NumEmpresa & "' 
-       AND Periodo = '" & Periodo_Contable & "' 
-       AND Fecha <= #" & BuscarFecha(MBoxFecha) & "# 
-       AND Vencimiento >= #" & BuscarFecha(MBoxFecha) & "# "
-  If Len(FA.Cta_CxP) > 2 Then sSQL = sSQL & "AND '" & FA.Cta_CxP & "' IN (CxC,CxC_Anterior) "
-  sSQL = sSQL & "ORDER BY CxC, Concepto "
-  SelectDB_Combo DCLinea,
+       AND Item = '".$_SESSION['INGRESO']['item']."' 
+       AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+       AND Fecha <= '".BuscarFecha($MBoxFecha)."' 
+       AND Vencimiento >= '".BuscarFecha($MBoxFecha)."' ";
+       if(strlen($Cta_CxP) > 2 ){ $sql.=" AND '".$Cta_CxP."' IN (CxC,CxC_Anterior) ";}
+	  	$sql.=" ORDER BY CxC, Concepto ";
+	  	return $this->db->datos($sql);
    }
+
+   function delete_asiento_nc()
+   {
+   	  $sql = "DELETE
+	  FROM Asiento_NC 
+	  WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+	  AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' ";
+	  return $this->db->String_Sql($sql);
+   }
+
+   function catalogo_bodega(){
+       $sql = "SELECT * 
+       FROM Catalogo_Bodegas 
+       WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+       AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+       ORDER BY CodBod, Bodega ";
+       return $this->db->datos($sql);
+	}
+
+	function catalogo_marca()
+	{   
+	  $sql = "SELECT * 
+	  FROM Catalogo_Marcas 
+	  WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+	  AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+	  ORDER BY Marca ";
+	  return $this->db->datos($sql);
+	}
+
+
+	function Catalogo_Cuentas($query)
+	{  
+	  $sql = "SELECT Codigo,Codigo+SPACE(10)+Cuenta As NomCuenta 
+	    FROM Catalogo_Cuentas 
+	    WHERE SUBSTRING(Codigo,1,1) IN ('1','2','4','5') 
+	    AND DG = 'D' 
+	    AND Item = '".$_SESSION['INGRESO']['item']."' 
+	    AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+	    if($query)
+	    {
+	    	$sql.=" AND Cuenta like '%".$query."%'";
+	    }
+	    $sql.="  ORDER BY Codigo ";
+	    return $this->db->datos($sql);
+	}
+
+	function Catalogo_Productos($query)
+	{  
+	  $sql = "SELECT Producto, Codigo_Inv, PVP, IVA, Cta_Inventario 
+	    FROM Catalogo_Productos 
+	    WHERE TC = 'P' 
+	    AND Item = '".$_SESSION['INGRESO']['item']."' 
+	    AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+	    if($query)
+	    {
+	    	$sql.=" AND Producto like '%".$query."%'";
+	    } 
+	    $sql.=" ORDER BY Producto ";
+	    return $this->db->datos($sql);
+	}
 
 }
 ?>

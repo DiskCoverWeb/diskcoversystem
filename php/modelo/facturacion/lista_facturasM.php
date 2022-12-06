@@ -85,7 +85,7 @@ class lista_facturasM
 
    }
 
-    function facturas_emitidas_tabla($codigo,$periodo=false,$desde=false,$hasta=false)
+    function facturas_emitidas_tabla($codigo,$periodo=false,$desde=false,$hasta=false,$serie=false)
    {
    	$cid = $this->conn;
 		
@@ -97,18 +97,24 @@ class lista_facturasM
 			// si el codigo es T se refiere a todos
 		   $sql.=" AND CodigoC ='".$codigo."'";
 		} 
+		if($serie)
+		{
+			// si el codigo es T se refiere a todos
+		   $sql.=" AND Serie ='".$serie."'";
+		} 
 		 $sql.="AND Item = '".$_SESSION['INGRESO']['item']."'";
-        if($periodo && $periodo!='.')
+        if($periodo && $periodo!='.' && $periodo!='')
         {
        	 $sql.= " AND Fecha BETWEEN '".$desde."' AND '".$hasta."'";
-        }//else
-       // {
-       // 	 $sql.= " AND Periodo BETWEEN   '01-01-".$_SESSION['INGRESO']['periodo']."' AND '31-12-".$_SESSION['INGRESO']['periodo']."' ";
-       // }
+        }
+        if($desde!='' && $hasta!='')
+       {
+       	 $sql.= " AND Fecha BETWEEN   '".$desde."' AND '".$hasta."' ";
+       }
 
        $sql.="ORDER BY ID DESC "; 
 	$sql.=" OFFSET ".$_SESSION['INGRESO']['paginacionIni']." ROWS FETCH NEXT ".$_SESSION['INGRESO']['numreg']." ROWS ONLY;";   
-
+    // print_r($_SESSION['INGRESO']);
 	// print_r($sql);die();    
 	return $this->db->datos($sql);
 

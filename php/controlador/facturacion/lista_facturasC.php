@@ -123,7 +123,7 @@ class lista_facturasC
 
     	// print_r($parametros);die();
     	$codigo = $parametros['ci'];
-    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['per'],$parametros['desde'],$parametros['hasta']);
+    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['per'],$parametros['desde'],$parametros['hasta'],$parametros['serie']);
     	$tr='';
     	foreach ($tbl as $key => $value) {
     		 $exis = $this->modelo->catalogo_lineas($value['TC'],$value['Serie']);

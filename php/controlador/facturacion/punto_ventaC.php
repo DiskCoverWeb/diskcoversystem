@@ -264,7 +264,7 @@ class punto_ventaC
 	         if(intval($TextCant) == 0){ $TextCant = "1";}
 	         if($parametros['opc']=='OpcMult'){$Real1 = $TextCant * $TextVUnit;} else { $Real1 = $TextCant / $TextVUnit;}
 	        }
-		      if($Real1 > 0 ){
+		      if($Real1 >= 0 ){
 		      	switch ($TipoFactura) {
 		      		case 'NV':
 		      		case 'PV':
@@ -275,6 +275,9 @@ class punto_ventaC
 		      			break;
 		      	}
 		         $VTotal = number_format($Real1,2,'.','');
+		//          	 print_r($articulo);
+		// die();	
+
 		         if(strlen($TxtDocumentos) > 1){ $articulo['Producto'] = $articulo['Producto']." - ".$TxtDocumentos;}
 		         if(is_numeric($TxtRifaD) && is_numeric($TxtRifaH) && intval($TxtRifaD) < intval($TxtRifaH)){
 		               // For i = Val(TxtRifaD) To Val(TxtRifaH)
@@ -295,7 +298,7 @@ class punto_ventaC
 		               //     Ln_No = Ln_No + 1
 		               // Next i
 		         }else{		         
-		//          print_r($articulo);
+		         // print_r($articulo);
 		// die();	
 		         	if(isset($parametros['Producto']))
 		         	{
@@ -332,6 +335,8 @@ class punto_ventaC
 		            
 		         }
 		      }
+		//       print_r($parametros);
+		// die();
 		   }else{
 		   	return 2;
 		      // 'TxtEfectivo.SetFocus
