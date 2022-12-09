@@ -35,6 +35,12 @@ class crear_empresaM
         WHERE Codigo = '".$CI."'";
         return  $this->db->datos($sql);
     }
-    
+    function copia_empresa($nombre)
+    {
+        $sql= "SELECT Empresa, Item
+            FROM Empresas
+            WHERE Empresa <> '" .$nombre. "' ";
+        return  $this->db->datos($sql);
+    }
 }
 ?>
