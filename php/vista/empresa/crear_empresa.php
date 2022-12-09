@@ -1,8 +1,10 @@
 <script>
 buscar_empresas();
+// TraerCheqCopiarEmpresa();
 $(document).ready(function()
 {
-    autocompletar();    
+    autocompletar();
+    // autocompletarCempresa();
     informacion_empresa();
     
     naciones();
@@ -10,6 +12,7 @@ $(document).ready(function()
     ciudad(17);
     MostrarUsuClave();
     MostrarEmpresaCopia();
+    AmbientePrueba();
 });
 function autocompletar(){
         $('#select_empresa').select2({
@@ -43,6 +46,7 @@ function buscar_empresas()
         }
     });
 }
+
 function MostrarUsuClave() 
 {
     if($('#AsigUsuClave').prop('checked'))
@@ -65,6 +69,8 @@ function MostrarEmpresaCopia()
     if($('#CopSeEmp').prop('checked'))
     {
         $('#ListaCopiaEmpresa').css('display','block');
+        autocompletarCempresa();
+        TraerCheqCopiarEmpresa();
     }else
     {
         $('#ListaCopiaEmpresa').css('display','none');
@@ -84,6 +90,40 @@ function TraerUsuClave()
                 $('#TxtClave').val(response[0]['Clave']);
             }
         });
+}
+function autocompletarCempresa(){
+        $('#ListaCopiaEmpresa').select2({
+        placeholder: 'Seleccionar copia empresa',
+        ajax: {
+            url: '../controlador/empresa/crear_empresaC.php?Copiarempresas=true',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            },
+            cache: true
+        }
+    });
+}
+function TraerCheqCopiarEmpresa()
+{
+    var option ="<option value=''>Seleccione empresa</option>";
+    var Nomempresa = $('#Txtempresa').val();
+    $.ajax({
+        data:{Nomempresa:Nomempresa},
+        url:'../controlador/empresa/crear_empresaC.php?Copiarempresas=true',
+        type:'post',
+        dataTye:'jason',
+        success: function(response){
+            response.forEach(function(data,index){
+                option+="<option value='"+data.Codigo+"'>"+data.Descripcion_Rubro+"</option>";
+            });
+            $('#ListaCopiaEmpresa').html(option);
+            console.log(response);
+        }
+    });
 }
 function naciones()
 {
@@ -490,6 +530,16 @@ function limpiar()
     $("#TxtNombConta").val('')
     $("#TxtRucConta").val('');
 }
+function AmbientePrueba()
+{
+    $('#TxtWebSRIre').val('https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl');
+    $('#TxtWebSRIau').val('https://celcer.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl');
+}
+function AmbienteProduccion()
+{
+    $('#TxtWebSRIre').val('https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl');
+    $('#TxtWebSRIau').val('https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl');
+}
 </script>
 <div class="row">
     <div class="col-lg-7 col-sm-10 col-md-6 col-xs-12">
@@ -825,82 +875,72 @@ function limpiar()
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-8" style="background-color:#ffffc0">
-                        <div class="form-group">
-                            <label>|Servidor de Correos|</label><BR>
-                            <label>Servidor SMTP</label>
+                    <div class="col-sm-8">                        
+                        <div class="row">
+                            <div class="col-sm-12" style="background-color:#ffffc0">
+                                <b>|Servidor de Correos|</b>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-8">
+                        <div class="row">
+                            <div class="col-sm-10" style="background-color:#ffffc0">
+                                <b>Servidor SMTP</b>
                                 <input type="text" name="TxtServidorSMTP" id="TxtServidorSMTP" class="form-control input-xs" value="">
                             </div>
+                            <div class="col-sm-2" style="background-color:#ffffc0">
+                                <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
+                                <button type="button" class="btn btn-default" title="Grabar Empresa" onclick="()">
+                                    <img src="../../img/png/grabar.png">
+                                </button>
+                            </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-3">
-                                <div class="checkbox">
-                                    <input type="checkbox" id="Autenti">Autentificación
-                                </div>
+                        <div class="row" style="background-color:#ffffc0">
+                            <div class="col-sm-2">
+                                <input type="checkbox" id="Autenti">Autentificación
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="checkbox" id="SSL">SSL
                             </div>
                             <div class="col-sm-2">
-                                <div class="checkbox">
-                                    <input type="checkbox" id="SSL">SSL
-                                </div>
+                                <input type="checkbox" id="Secure">SECURE
+                            </div>
+                            <div class="col-sm-1">
+                                PUERTO
                             </div>
                             <div class="col-sm-2">
-                                <div class="checkbox">
-                                    <input type="checkbox" id="Secure">SECURE
-                                </div>
+                                <input type="text" name="TxtPuerto" id="TxtPuerto" class="form-control input-xs" value="">                                
                             </div>
-                            <div class="col-sm-5">                                
-                                <div class="col-sm-6">
-                                    <div class="checkbox">
-                                        PUERTO
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="checkbox">
-                                        <input type="text" name="TxtPuerto" id="TxtPuerto" class="form-control input-xs" value="">
-                                    </div>
-                                </div>
-                            </div>                            
                         </div>
-                    </div>
-                <div class="row">
-                    <div class="col-sm-2">
-                        <img src="" alt="IMG">
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="checkbox">
+                        <div class="row">
+                            <div class="col-sm-8">
                                 <input type="checkbox" id="AsigUsuClave" onclick="MostrarUsuClave()">ASIGNA USUARIO Y CLAVE DEL REPRESENTANTE LEGAL
                             </div>
-                            <div class="checkbox">
+                            <div class="col-sm-2">
+                                <label id="lblUsuario">USUARIO</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="text" name="TxtUsuario" id="TxtUsuario" class="form-control input-xs" value=""> 
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-8">
                                 <input type="checkbox" id="CopSeEmp" onclick="MostrarEmpresaCopia()">COPIAR SETEOS DE OTRA EMPRESA
                             </div>
-                        </div>
-                        <div class="col-sm-3">                        
-                            <div class="form-group">
-                                <div class="col-sm-6">
-                                    <label id="lblUsuario">USUARIO</label>
-                                </div>
-                                <div class="col-sm-6">
-                                    <input type="text" name="TxtUsuario" id="TxtUsuario" class="form-control input-xs" value="">                                    
-                                </div>
+                            <div class="col-sm-2">
+                                <label id="lblClave">CLAVE</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="text" name="TxtClave" id="TxtClave" class="form-control input-xs" value="">
                             </div>
                         </div>
-                        <div class="col-sm-3">
-                            <div class="form-group"> <!--style="visibility:hidden" -->
-                                <div class="col-sm-6">
-                                    <label id="lblClave">CLAVE</label>
-                                </div>
-                                <div class="col-sm-6">
-                                    <input type="text" name="TxtClave" id="TxtClave" class="form-control input-xs" value="">
-                                </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <select class="form-control input-xs" id="ListaCopiaEmpresa" name="ListaCopiaEmpresa">
+                                    <option value="">Empresa</option>
+                                </select>
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
                 
                 <div class="row">
@@ -925,12 +965,7 @@ function limpiar()
                         CANTIDAD
                         <input type="text" name="TxtCantidad" id="TxtCantidad" class="form-control input-xs" value="">
                     </div>
-                    <div class="col-md-8">                                                    
-                        <select class="form-control input-xs" id="ListaCopiaEmpresa" name="ListaCopiaEmpresa">
-                            <option value="">Empresa</option>
-                        </select>
-                    </div>
-                </div>                                
+                </div>
             </div>
             <!-- PROCESOS GENERALES FIN -->
             <!-- COMPROBANTES ELECTRONICOS INICIO-->
@@ -940,11 +975,11 @@ function limpiar()
                         <label>|Firma Electrónica|</label>
                     </div>                                
                     <div class="col-sm-4">                                    
-                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="">
+                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="" onclick="AmbientePrueba()">
                         Ambiente de Prueba
                     </div>
                     <div class="col-sm-4">
-                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onclick="AmbienteProduccion()">
                             Ambiente de Producción
                         </div>
                         <div class="col-sm-2">
