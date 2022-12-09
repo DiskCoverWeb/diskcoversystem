@@ -64,6 +64,16 @@ if(isset($_GET['empresas']))
     }
 	echo json_encode($controlador->lista_empresas($dato));	
 }
+if(isset($_GET['Copiarempresas']))
+{
+    //print_r($_POST);die();
+    $cempresa = '';
+    if(isset($_GET['Nomempresa']))
+    {
+        $cempresa = $_GET['Nomempresa'];
+    }
+    echo json_encode($controlador->lista_cempresa($cempresa));
+}
 if(isset($_GET['traer_usuario']))
 {	
     // $dato = '';
@@ -261,6 +271,16 @@ class crear_empresaC
             $lis[] = array('id'=>$value['Item'],'text'=>$value['Empresa']);
         }
         return $lis;    
+    }
+    function lista_cempresa($dato)
+    {
+        $datos = $this->modelo->copia_empresa($dato);
+
+        $lis = array();
+        foreach ($datos as $key => $value) {
+            $lis[] = array('id'=>$value['Item'],'text'=>$value['Empresa']);
+        }
+        return $lis; 
     }
     function lista_usuario($dato)
     {
