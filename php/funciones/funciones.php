@@ -144,7 +144,19 @@ function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
 
   }
 }
-
+function Eliminar_Empresa_SP($Item, $NombreEmpresa)
+{
+  $conn = new db();
+  $parametros = array(
+    array(&$Item, SQLSRV_PARAM_IN),
+    array($NombreEmpresa, SQLSRV_PARAM_IN),
+  );
+  // print_r('...'.$parametros);die();
+  $sql = "EXEC sp_Eliminar_Empresa @Item= ?,@NombreEmpresa=?";
+  $res = $conn->ejecutar_procesos_almacenados($sql,$parametros,$tipo=false);
+  //print_r($res);die();
+  return $res;
+}
 function Actualizar_Datos_ATS_SP($Items,$MBFechaI,$MBFechaF,$Numero) //-------------optimizado javier farinango
 {
 
