@@ -299,13 +299,20 @@ function llamar()
                 {
                     $("#ddl_ciudad").val(response[0]['Ciudad']);
                 }
-                $('#TxtServidorSMTP').val(response[0]['smtp_Servidor']);
+                $('#TxtServidorSMTP').val(response[0]['smtp_Servidor']);//mail.diskcoversystem.com
                 $('#TxtPuerto').val(response[0]['smtp_Puerto']);
                 $('#TxtPVP').val(response[0]['Dec_PVP']);
                 $('#TxtCOSTOS').val(response[0]['Dec_Costo']);
                 $('#TxtIVA').val(response[0]['Dec_IVA']);
                 $('#TxtCantidad').val(response[0]['Dec_Cant']);
                 $('#TxtContriEspecial').val(response[0]['Codigo_Contribuyente_Especial']);
+                if(response[0]['Ambiente'] == 1)
+                {
+                    $('#optionsRadios1').prop('checked',true);
+                }else if(response[0]['Ambiente'] == 2)
+                {
+                    $('#optionsRadios2').prop('checked',true);
+                }
                 $('#TxtWebSRIre').val(response[0]['Web_SRI_Recepcion']);
                 $('#TxtWebSRIau').val(response[0]['Web_SRI_Autorizado']);
                 $('#TxtEXTP12').val(response[0]['Ruta_Certificado']);
@@ -318,75 +325,151 @@ function llamar()
                 $('#TxtRUCOpe').val(response[0]['RUC_Operadora']);
                 $('#txtLeyendaDocumen').val(response[0]['LeyendaFA']);
                 $('#txtLeyendaImpresora').val(response[0]['LeyendaFAT']);
+                
                 if(response[0]['Det_SubMod']!=0)
                 {
                     $('#ASDAS').prop('checked',true);
+                }else if(response[0]['Det_SubMod']==0)
+                {
+                    $('#ASDAS').prop('checked',false);
                 }
+
                 if(response[0]['Mod_Fact']!=0)
                 {
                     $('#MFNV').prop('checked',true);
+                }else if(response[0]['Mod_Fact']==0)
+                {
+                    $('#MFNV').prop('checked',false);
                 }
+
                 if(response[0]['Mod_PVP']!=0)
                 {
                     $('#MPVP').prop('checked',true);
+                }else if(response[0]['Mod_PVP']==0)
+                {
+                    $('#MPVP').prop('checked',false);
                 }
+
                 if(response[0]['Imp_Recibo_Caja']!=0)
                 {
                     $('#IRCF').prop('checked',true);
+                }else if(response[0]['Imp_Recibo_Caja']==0)
+                {
+                    $('#IRCF').prop('checked',false);
                 }
+
                 if(response[0]['Medio_Rol']!=0)
                 {
                     $('#IMR').prop('checked',true);
+                }else if(response[0]['Medio_Rol']==0)
+                {
+                    $('#IMR').prop('checked',false);
                 }
+
                 if(response[0]['Rol_2_Pagina']!=0)
                 {
                     $('#IRIP').prop('checked',true);
+                }else if(response[0]['Rol_2_Pagina']==0)
+                {
+                    $('#IRIP').prop('checked',false);
                 }
+
                 if(response[0]['Det_Comp']!=0)
                 {
                     $('#PDAC').prop('checked',true);
+                }else if(response[0]['Det_Comp']==0)
+                {
+                    $('#PDAC').prop('checked',false);
                 }
+
                 if(response[0]['Registrar_IVA']!=0)
                 {
                     $('#RIAC').prop('checked',true);
+                }else if(response[0]['Registrar_IVA']==0)
+                {
+                    $('#RIAC').prop('checked',false);
                 }
+
                 // if(response[0]['Sucursal']!=0)
                 // {
                 //     $('#FCMS').prop('checked',true);
                 // }
                 //DS   IS  ES  NDS  NCS
+                //NUMERACION DE COMPROBANTES
                 if(response[0]['Num_CD']!=0)
                 {
                     $('#DM').prop('checked',true);
+                    $('#DS').prop('checked',false);
+                }else if(response[0]['Num_CD']==0)
+                {
+                    $('#DM').prop('checked',false);
+                    $('#DS').prop('checked',true);
                 }
+
                 if(response[0]['Num_CI']!=0)
                 {
                     $('#IM').prop('checked',true);
+                    $('#IS').prop('checked',false);
+                }else if(response[0]['Num_CI']==0)
+                {
+                    $('#IM').prop('checked',false);
+                    $('#IS').prop('checked',true);
                 }
+
                 if(response[0]['Num_CE']!=0)
                 {
                     $('#EM').prop('checked',true);
+                    $('#ES').prop('checked',false);
+                }else if(response[0]['Num_CE']==0)
+                {
+                    $('#EM').prop('checked',false);
+                    $('#ES').prop('checked',true);
                 }
+
                 if(response[0]['Num_ND']!=0)
                 {
                     $('#NDM').prop('checked',true);
+                    $('#NDS').prop('checked',false);
+                }else if(response[0]['Num_ND']==0)
+                {
+                    $('#NDM').prop('checked',false);
+                    $('#NDS').prop('checked',true);
                 }
+
                 if(response[0]['Num_NC']!=0)
                 {
                     $('#NCM').prop('checked',true);
+                    $('#NCS').prop('checked',false);
+                }else if(response[0]['Num_NC']==0)
+                {
+                    $('#NCM').prop('checked',false);
+                    $('#NCS').prop('checked',true);
                 }
+
                 if(response[0]['smtp_UseAuntentificacion']!=0)
                 {
                     $('#Autenti').prop('checked',true);
+                }else if(response[0]['smtp_UseAuntentificacion']==0)
+                {
+                    $('#Autenti').prop('checked',false);
                 }
+
                 if(response[0]['smtp_SSL']!=0)
                 {
                     $('#SSL').prop('checked',true);
+                }else if(response[0]['smtp_SSL']==0)
+                {
+                    $('#SSL').prop('checked',false);
                 }
+
                 if(response[0]['smtp_Secure']!=0)
                 {
                     $('#Secure').prop('checked',true);
+                }else if(response[0]['smtp_Secure']==0)
+                {
+                    $('#Secure').prop('checked',false);
                 }
+
                 if(response[0]['Obligado_Conta']!= '')
                 {
                     $('#ddl_obli').val(response[0]['Obligado_Conta']);
@@ -424,7 +507,7 @@ function guardar_empresa()
         $("#TxtAbrevi").val()==''||
         $("#TxtEmailEmpre").val()==''||
         $("#TxtEmailConta").val()==''||
-        $("#TxtEmailRespa").val()==''||
+        // $("#TxtEmailRespa").val()==''||
         $("#TxtSegDes1").val()==''||
         $("#TxtSegDes2").val()==''||
         $("#TxtSubdir").val()==''||
@@ -438,19 +521,66 @@ function guardar_empresa()
     }
     // var razon = $('#TxtRazonSocial').val();
     var ckASDAS = $('#ASDAS').prop('checked');
+    var ckMFNV = $('#MFNV').prop('checked');
+    var ckMPVP = $('#MPVP').prop('checked');
+    var ckIRCF = $('#IRCF').prop('checked');
+    var ckIMR = $('#IMR').prop('checked');
+    var ckIRIP = $('#IRIP').prop('checked');
+    var ckPDAC = $('#PDAC').prop('checked');
+    var ckRIAC = $('#RIAC').prop('checked');
+    var ckFCMS = $('#FCMS').prop('checked');
+    var ckDM = $('#DM').prop('checked');
+    var ckDS = $('#DS').prop('checked');
+    var ckIM = $('#IM').prop('checked');
+    var ckIS = $('#IS').prop('checked');
+    var ckEM = $('#EM').prop('checked');
+    var ckES = $('#ES').prop('checked');
+    var ckNDM = $('#NDM').prop('checked');
+    var ckNDS = $('#NDS').prop('checked');
+    var ckNCM = $('#NCM').prop('checked');
+    var ckNCS = $('#NCS').prop('checked');
+    var ckAutenti = $('#Autenti').prop('checked');
+    var ckSSL = $('#SSL').prop('checked');
+    var ckSecure = $('#Secure').prop('checked');
+    var Ambiente1 = $('#optionsRadios1').prop('checked');
+    var Ambiente2 = $('#optionsRadios2').prop('checked');
     var datos = $('#formulario').serialize();
     console.log(datos);
+    // guardar_usuario_clave();
     limpiar();
     
     $.ajax({	 	    
 	 	type: "POST",
 	 		url: '../controlador/empresa/crear_empresaC.php?guardar_empresa=true',
 	 		// data: {razon1:razon}, 
-            data:datos+'&ckASDAS='+ckASDAS,
+            data:datos+
+            '&ckASDAS='+ckASDAS+
+            '&ckMFNV='+ckMFNV+
+            '&ckMPVP='+ckMPVP+
+            '&ckIRCF='+ckIRCF+
+            '&ckIMR='+ckIMR+
+            '&ckIRIP='+ckIRIP+
+            '&ckPDAC='+ckPDAC+
+            '&ckRIAC='+ckRIAC+
+            '&ckDM='+ckDM+
+            '&ckDS='+ckDS+
+            '&ckIM='+ckIM+
+            '&ckIS='+ckIS+
+            '&ckEM='+ckEM+
+            '&ckES='+ckES+
+            '&ckNDM='+ckNDM+
+            '&ckNDS='+ckNDS+
+            '&ckNCM='+ckNCM+
+            '&ckNCS='+ckNCS+
+            '&ckAutenti='+ckAutenti+
+            '&ckSSL='+ckSSL+
+            '&ckSecure='+ckSecure+
+            '&Ambiente1='+Ambiente1+
+            '&Ambiente2='+Ambiente2,
 	 		dataType:'json',
 	 		success: function(response)
 	 		{
-                if(response==1)
+                if(response==2)
 		  	{
 		  		Swal.fire('Datos Guardados','','success').then(function(){
 		  			$('#TxtEmpresa').attr('readonly',true);
@@ -512,11 +642,11 @@ function limpiar()
     $("#TxtCI").val('');
     $("#ddl_naciones").val('');
     $("#TxtDirMatriz").val('');
-    $("#TxtEsta").val('')
+    $("#TxtEsta").val('000')
     $("#TxtTelefono").val('');
     $("#TxtTelefono2").val('');
     $("#TxtFax").val('');
-    $("#TxtMoneda").val('');
+    $("#TxtMoneda").val('USD');
     $("#TxtNPatro").val('');
     $("#TxtCodBanco").val('');
     $("#TxtTipoCar").val('');
@@ -539,6 +669,143 @@ function AmbienteProduccion()
 {
     $('#TxtWebSRIre').val('https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl');
     $('#TxtWebSRIau').val('https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl');
+}
+function DiariosM()
+{
+    $('#DM').prop('checked',true);
+    $('#DS').prop('checked',false);
+}
+function DiariosS()
+{
+    $('#DM').prop('checked',false);
+    $('#DS').prop('checked',true);
+}
+function IngresosM()
+{
+    $('#IM').prop('checked',true);
+    $('#IS').prop('checked',false);
+}
+function IngresosS()
+{
+    $('#IM').prop('checked',false);
+    $('#IS').prop('checked',true);
+}
+function EgresosM()
+{
+    $('#EM').prop('checked',true);
+    $('#ES').prop('checked',false);
+}
+function EgresosS()
+{
+    $('#EM').prop('checked',false);
+    $('#ES').prop('checked',true);
+}
+function NDPM()
+{
+    $('#NDM').prop('checked',true);
+    $('#NDS').prop('checked',false);
+}
+function NDPS()
+{
+    $('#NDM').prop('checked',false);
+    $('#NDS').prop('checked',true);
+}
+function NCPM()
+{
+    $('#NCM').prop('checked',true);
+    $('#NCS').prop('checked',false);
+}
+function NCPS()
+{
+    $('#NCM').prop('checked',false);
+    $('#NCS').prop('checked',true);
+}
+function validar_CI()
+{
+    var ci = $('#TxtCI').val();
+    if(ci.length<10)
+    {
+        Swal.fire('La cedula no tiene 10 caracteres','','info');
+        $('#TxtCI').val('');
+        return false;
+    }
+    $.ajax
+    ({
+        data:  {ci:ci},
+        url:   '../controlador/empresa/crear_empresaC.php?validarCI=true',
+        type:  'post',
+        dataType: 'json',
+        success:  function (response)
+        { 
+            console.log(response);
+            
+        }
+    });
+}
+function validar_RUC()
+{
+    var txtruc = $('#TxtRuc').val();
+    if(txtruc.length<13)
+    {
+        Swal.fire('El RUC no tiene 13 caracteres','','info');
+        $('#TxtRuc').val('');
+        return false;
+    }
+    $.ajax
+    ({
+        data:  {txtruc:txtruc},
+        url:   '../controlador/empresa/crear_empresaC.php?validarRUC=true',
+        type:  'post',
+        dataType: 'json',
+        success:  function (response) 
+        { 
+            console.log(response);
+            
+        }
+    });
+}
+function validar_RUConta()
+{
+    var txtruconta = $('#TxtRucConta').val();
+    if(txtruconta.length<13)
+    {
+        Swal.fire('El RUC no tiene 13 caracteres','','info');
+        $('#TxtRucConta').val('');
+        return false;
+    }
+    $.ajax
+    ({
+        data:  {txtruconta:txtruconta},
+        url:   '../controlador/empresa/crear_empresaC.php?validarRUConta=true',
+        type:  'post',
+        dataType: 'json',
+        success:  function (response) 
+        { 
+            console.log(response);
+            $('#TxtEmpresa').val('Tipo');
+            if(response == 2)
+            {
+                Swal.fire('Numero de cedula invalido.','','error');
+                $('#txt_ruc').val('');
+                return false;
+        }
+        }
+    });
+}
+function subdireccion()
+{
+    var txtsubdi = $('#TxtSubdir').val();
+    $.ajax
+    ({
+        data:  {txtsubdi:txtsubdi},
+        url:   '../controlador/empresa/crear_empresaC.php?subdireccion=true',
+        type:  'post',
+        dataType: 'json',
+        success:  function (response) 
+        { 
+            console.log(response);
+        }
+    });
 }
 </script>
 <div class="row">
@@ -620,7 +887,7 @@ function AmbienteProduccion()
                 <div class="row">
                     <div class="col-sm-2">
                         <label>RUC:</label>
-                        <input type="text" name="TxtRuc" id="TxtRuc" class="form-control input-xs" value="">
+                        <input type="text" name="TxtRuc" id="TxtRuc" class="form-control input-xs" value="" onblur="validar_RUC()" onkeyup="num_caracteres('TxtRuc',13)" autocomplete="off">
                     </div>
                     <div class="col-sm-2">
                         <label>OBLIG</label>
@@ -636,7 +903,7 @@ function AmbienteProduccion()
                     </div>
                     <div class="col-sm-2">
                         <label>C.I/PASAPORTE</label>
-                        <input type="text" name="TxtCI" id="TxtCI" class="form-control input-xs" value="">
+                        <input type="text" name="TxtCI" id="TxtCI" class="form-control input-xs" value="" onblur="validar_CI()" onkeyup="num_caracteres('TxtCI',10)" autocomplete="off">
                     </div>
                 </div>                    
                 <div class="row">
@@ -666,7 +933,7 @@ function AmbienteProduccion()
                     </div>
                     <div class="col-sm-2">
                         <label>ESTA.</label>
-                        <input type="text" name="TxtEsta" id="TxtEsta" class="form-control input-xs" value="">
+                        <input type="text" name="TxtEsta" id="TxtEsta" class="form-control input-xs" value="000">
                     </div>                        
                 </div>
                 <div class="row">
@@ -684,7 +951,7 @@ function AmbienteProduccion()
                     </div>
                     <div class="col-sm-1">
                         <label>MONEDA</label>
-                        <input type="text" name="TxtMoneda" id="TxtMoneda" class="form-control input-xs" value="">
+                        <input type="text" name="TxtMoneda" id="TxtMoneda" class="form-control input-xs" value="USD">
                     </div>
                     <div class="col-sm-2">
                         <label>NO. PATRONAL:</label>
@@ -733,7 +1000,7 @@ function AmbienteProduccion()
                     </div>
                     <div class="col-sm-2">
                         <label>SUBDIR:</label>
-                        <input type="text" name="TxtSubdir" id="TxtSubdir" class="form-control input-xs" value="">
+                        <input type="text" name="TxtSubdir" id="TxtSubdir" class="form-control input-xs" value="Ninguno" onblur="subdireccion()">
                     </div>
                 </div>
                 <div class="row">
@@ -743,7 +1010,7 @@ function AmbienteProduccion()
                     </div>
                     <div class="col-sm-2">
                         <label>RUC CONTADOR:</label>
-                        <input type="text" name="TxtRucConta" id="TxtRucConta" class="form-control input-xs" value="">
+                        <input type="text" name="TxtRucConta" id="TxtRucConta" class="form-control input-xs" value="" onblur="validar_RUConta()" onkeyup="num_caracteres('TxtRucConta',13)" autocomplete="off">
                     </div>
                 </div>
             </div>
@@ -817,60 +1084,60 @@ function AmbienteProduccion()
                         <div class="form-group">
                             <div class="col-sm-6">
                                 <div class="checkbox">
-                                    <input type="checkbox" name="dm1"id="DM">Diarios por meses
+                                    <input type="checkbox" name="dm1" id="DM" onclick="DiariosM()">Diarios por meses
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="checkbox">
-                                    <input type="checkbox" name="dm1" id="DS">Diarios secuenciales
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                <div class="checkbox">
-                                    <input type="checkbox" id="IM">Ingresos por meses
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="checkbox">
-                                    <input type="checkbox" id="IS">Ingresos secuenciales
+                                    <input type="checkbox" name="dm1" id="DS" onclick="DiariosS()">Diarios secuenciales
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-6">
                                 <div class="checkbox">
-                                    <input type="checkbox" id="EM">Egresos por meses
+                                    <input type="checkbox" id="IM" onclick="IngresosM()">Ingresos por meses
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="checkbox">
-                                    <input type="checkbox" id="ES">Egresos secuenciales
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                <div class="checkbox">
-                                    <input type="checkbox" id="NDM">N/D por meses
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="checkbox">
-                                    <input type="checkbox" id="NDS">N/D secuenciales
+                                    <input type="checkbox" id="IS" onclick="IngresosS()">Ingresos secuenciales
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-6">
                                 <div class="checkbox">
-                                    <input type="checkbox" id="NCM">N/C por meses
+                                    <input type="checkbox" id="EM" onclick="EgresosM()">Egresos por meses
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="checkbox">
-                                    <input type="checkbox" id="NCS">N/C secuenciales
+                                    <input type="checkbox" id="ES" onclick="EgresosS()">Egresos secuenciales
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <div class="checkbox">
+                                    <input type="checkbox" id="NDM" onclick="NDPM()">N/D por meses
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="checkbox">
+                                    <input type="checkbox" id="NDS" onclick="NDPS()">N/D secuenciales
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <div class="checkbox">
+                                    <input type="checkbox" id="NCM" onclick="NCPM()">N/C por meses
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="checkbox">
+                                    <input type="checkbox" id="NCS" onclick="NCPS()">N/C secuenciales
                                 </div>
                             </div>
                         </div>
@@ -919,7 +1186,7 @@ function AmbienteProduccion()
                                 <label id="lblUsuario">USUARIO</label>
                             </div>
                             <div class="col-sm-2">
-                                <input type="text" name="TxtUsuario" id="TxtUsuario" class="form-control input-xs" value=""> 
+                                <input type="text" name="TxtUsuario" id="TxtUsuario" class="form-control input-xs" value="USUARIO"> 
                             </div>
                         </div>
                         <div class="row">
