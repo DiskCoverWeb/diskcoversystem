@@ -144,15 +144,14 @@ function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
 
   }
 }
-function Eliminar_Empresa_SP($Item, $NombreEmpresa)
+function Eliminar_Empresa_SP($Item, $NombreEmpresa=false)
 {
   $conn = new db();
   $parametros = array(
     array(&$Item, SQLSRV_PARAM_IN),
-    array($NombreEmpresa, SQLSRV_PARAM_IN),
   );
   // print_r('...'.$parametros);die();
-  $sql = "EXEC sp_Eliminar_Empresa @Item= ?,@NombreEmpresa=?";
+  $sql = "EXEC sp_Eliminar_Empresa @Item= ?";
   $res = $conn->ejecutar_procesos_almacenados($sql,$parametros,$tipo=false);
   //print_r($res);die();
   return $res;
@@ -4713,7 +4712,7 @@ function update_generico($datos,$tabla,$campoWhere) // optimizado javier farinan
    	$wherelist = substr($wherelist,0,-5);
    	$where = " WHERE ".$wherelist;   
    	$sql = $sql.$set.$where;
-    // print_r($sql);
+    // print_r($sql);die();
    	return $conn->String_Sql($sql);
 }
 
