@@ -9,6 +9,19 @@
 
   	cargar_tabla();
   	autocoplete_clinete();
+
+
+  	 $('#DCClientes').on('select2:select', function (e) {
+      console.log(e);
+      var data = e.params.data.data;
+      // var dataM = e.params.data.dataMatricula;
+      $('#TxtConcepto').val('Nota de Crédito de: '+data.Cliente);
+        fecha= fecha_actual();
+      	DCLineas(data.Cta_CxP);
+      	DCTC(data.Codigo)    
+    });
+
+
   })
 
 function delete_sientos_nc()
@@ -122,6 +135,142 @@ function cargar_tabla()
     });
 }
 
+function DCLineas(cta_cxp)
+{
+	var parametros = 
+	{
+		'fecha':$('#MBoxFecha').val(),
+		'cta_cxp':cta_cxp,
+	}
+  	 $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/notas_creditoC.php?DCLineas=true',
+      data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+      console.log(data);         
+       llenarComboList(data,'DCLineas');
+      }
+    });
+}
+
+function DCTC(codigoC)
+{
+	var parametros = 
+	{
+		'CodigoC':codigoC,
+	}
+  	 $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/notas_creditoC.php?DCTC=true',
+      data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+         if(data.length==0)
+         {
+         	 Swal.fire('Este Cliente no ha empezado a generar facturas','','info')
+         }else
+         {
+         	llenarComboList(data,'DCTC');
+         	// console.log(data);
+         	DCSerie(data[0].codigo,codigoC);
+         	 // console.log(data);
+         }
+      }
+    });
+}
+
+function DCSerie(TC=false,codigoC=false)
+{
+	if(TC==false)	{		TC = $('#DCTC').val();	}
+	if(codigoC==false)	{		codigoC = $('#DCClientes').val();	}
+	var parametros = 
+	{
+		'TC':TC,
+		'CodigoC':codigoC,
+	}
+  	 $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/notas_creditoC.php?DCSerie=true',
+      data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+         if(data.length==0)
+         {
+         	 Swal.fire('Este Cliente no ha empezado a generar facturas','','info')
+         }else
+         {
+         	llenarComboList(data,'DCSerie');
+         	DCFactura(data[0].codigo,TC,codigoC)
+         	 // console.log(data);
+         }
+      }
+    });
+}
+
+function DCFactura(Serie=false,TC=false,codigoC=false)
+{
+	if(Serie==false)	{		Serie = $('#DCSerie').val();	}
+	if(TC==false)	{		TC = $('#DCTC').val();	}
+	if(codigoC==false)	{		codigoC = $('#DCClientes').val();	}
+
+	var parametros = 
+	{
+		'Serie':Serie,
+		'TC':TC,
+		'CodigoC':codigoC,
+	}
+  	 $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/notas_creditoC.php?DCFactura=true',
+      data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+         if(data.length==0)
+         {
+         	 Swal.fire('Este Cliente no ha empezado a generar facturas','','info')
+         }else
+         {
+         	llenarComboList(data,'DCFactura');
+         	Detalle_Factura(data[0].codigo,Serie,TC,codigoC)
+         	 // console.log(data);
+         }
+      }
+    });
+}
+
+function Detalle_Factura(Factura=false,Serie=false,TC=false,codigoC=false)
+{
+	if(Factura==false)	{	Factura = $('#DCFactura').val();	}
+	if(Serie==false)	{	Serie = $('#DCSerie').val();	}
+	if(TC==false)	{	TC = $('#DCTC').val();	}
+	if(codigoC==false)	{	codigoC = $('#DCClientes').val();	}
+
+	var parametros = 
+	{		
+		'Factura':Factura,
+		'Serie':Serie,
+		'TC':TC,
+		'CodigoC':codigoC,
+	}
+  	 $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/notas_creditoC.php?Detalle_Factura=true',
+      data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+         
+         	 console.log(data);
+         
+      }
+    });
+}
+
 function autocoplete_clinete(){
       $('#DCClientes').select2({
         placeholder: 'Seleccione una beneficiario',
@@ -139,7 +288,7 @@ function autocoplete_clinete(){
           cache: true
         }
       });
-    }
+}
 
 	
 </script>
@@ -157,7 +306,7 @@ function autocoplete_clinete(){
 		<div class="form-group">
           <label class="col-sm-4" style="padding:0px">Fecha NC</label>
           <div class="col-sm-8" style="padding:0px">
-            <input type="date" name="cta_inventario" id="cta_inventario" class="form-control input-xs">
+            <input type="date" name="MBoxFecha" id="MBoxFecha" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">
           </div>
         </div>
 	</div>
@@ -175,21 +324,21 @@ function autocoplete_clinete(){
 <div class="row">
 	<div class="col-sm-3">
 		<b>Lineas de Nota de Credito</b>
-		<select class="form-control input-xs">
-          	<option>Seleccione cliente</option>
+		<select class="form-control input-xs" id="DCLineas">
+          	<option value="">Seleccione</option>
         </select>
 	</div>
 	<div class="col-sm-3">
 		<b>Autorizacion Nota de Credito</b>
-		<input type="text" name="" class="form-control input-xs">
+		<input type="text" name="" class="form-control input-xs" value=".">
 	</div>
-	<div class="col-sm-1">
+	<div class="col-sm-1" style="padding:0px">
 		<b>Serie</b>
-		<input type="text" name="" class="form-control input-xs">
+		<input type="text" name="" class="form-control input-xs" value="001001">
 	</div>
 	<div class="col-sm-1" style="padding: 0px;">
 		<b>Comp No.</b>
-		<input type="text" name="" class="form-control input-xs">
+		<input type="text" name="" class="form-control input-xs" value="00000000">
 	</div>
 	<div class="col-sm-4">
 		<b>Contra Cuenta a aplicar a la Nota de Credito</b>
@@ -211,19 +360,19 @@ function autocoplete_clinete(){
 <div class="row">
 	<div class="col-sm-1">
 		<b>T.D.</b>
-		<select class="form-control input-xs">
+		<select class="form-control input-xs" id="DCTC" style="padding: 2px 5px;"  onchange="DCSerie()">
       		<option>Seleccione cliente</option>
       	</select>
 	</div>
-	<div class="col-sm-1">
+	<div class="col-sm-1" style="padding: 2px">
 		<b>Serie</b>
-		<select class="form-control input-xs">
+		<select class="form-control input-xs" id="DCSerie" style="padding: 2px 7px;" onchange="DCFactura()">
       		<option>Seleccione cliente</option>
       	</select>
 	</div>
 	<div class="col-sm-2">
 		<b>No.</b>
-		<select class="form-control input-xs">
+		<select class="form-control input-xs" id="DCFactura" onchange="Detalle_Factura()">
       		<option>Seleccione cliente</option>
       	</select>
 	</div>
@@ -274,21 +423,21 @@ function autocoplete_clinete(){
 				          	<option>Seleccione producto</option>
 				        </select>
 					</div>
-					<div class="col-sm-1">
+					<div class="col-sm-1" style="padding:3px">
 						<b>Cantidad</b>
-						<input type="text" name="" class="form-control input-xs">
+						<input type="text" name="" class="form-control input-xs" value="0">
 					</div>
-					<div class="col-sm-1">
+					<div class="col-sm-1" style="padding:3px">
 						<b>P.V.P.</b>
-						<input type="text" name="" class="form-control input-xs">
+						<input type="text" name="" class="form-control input-xs" value="0.00">
 					</div>
-					<div class="col-sm-1">
+					<div class="col-sm-1" style="padding:3px">
 						<b>DESC</b>
-						<input type="text" name="" class="form-control input-xs">
+						<input type="text" name="" class="form-control input-xs" value="0.00">
 					</div>
 					<div class="col-sm-2">
 						<b>TOTAL</b>		
-						<input type="text" name="" class="form-control input-xs">
+						<input type="text" name="" class="form-control input-xs" value="0.00">
 					</div>
 				</div>
 			</div>

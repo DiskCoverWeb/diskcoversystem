@@ -29,6 +29,11 @@ if(isset($_GET['imprimir_excel']))
 	$parametros= $_GET;
 	$controlador->imprimir_excel($parametros);	
 }
+if(isset($_GET['imprimir_excel_fac']))
+{   
+	$parametros= $_GET;
+	$controlador->imprimir_excel_fac($parametros);	
+}
 if(isset($_GET['grupos']))
 {
 	$query = '';
@@ -218,8 +223,10 @@ class lista_facturasC
     function imprimir_pdf($parametros)
     {
     	// print_r($parametros);die();
+    	$serie = explode(' ',$parametros['DCLinea']);
+    	$serie = $serie[1];
     	$codigo = $parametros['ddl_cliente'];
-    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['ddl_periodo']);
+    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['ddl_periodo'],$parametros['txt_desde'],$parametros['txt_hasta'],$serie);
     	// print_r($tbl);die();
 
   // 	    $desde = str_replace('-','',$parametros['txt_desde']);
@@ -262,8 +269,37 @@ class lista_facturasC
 		$this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$Fechaini=false,$Fechafin=false,$sizetable,$mostrar,15,'H');
   }
 
+  function imprimir_excel_fac($parametros)
+  {
+  		$serie = explode(' ',$parametros['DCLinea']);
+    	$serie = $serie[1];
+    	$codigo = $parametros['ddl_cliente'];
+    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['ddl_periodo'],$parametros['txt_desde'],$parametros['txt_hasta'],$serie);
+
+    	 $b = 1;
+	   	 $titulo='F A C T U R A S   E M I T I D A S';
+	   	 if($tc=='LC'){
+	   	 	$titulo='L I Q U I D A C I O N   D E  C O M P R A S   E M I T I D A S';
+	   	 }
+	     $tablaHTML =array();
+	     $tablaHTML[0]['medidas']=array(6,6,13,25,15,23,18,12,12,12,12,12,12,6,20);
+	     $tablaHTML[0]['datos']=array('T','TC','Serie','Autorizacion','Factura','Fecha','SubTotal','Con_IVA','IVA','Descuentos','Total','Saldo','RUC_CI','TB','Razon_Social');
+	     $tablaHTML[0]['tipo'] ='C';
+	     $pos = 1;
+	     $compro1='';
+	    foreach ($tbl as $key => $value) {
+	          $tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+	          $tablaHTML[$pos]['datos']=array($value['T'],$value['TC'],$value['Serie'],$value['Autorizacion'],$value['Factura'],$value['Fecha']->format('Y-m-d'),$value['SubTotal'],$value['Con_IVA'],$value['IVA'],$value['Descuentos'],$value['Total'],$value['Saldo'],$value['RUC_CI'],$value['TB'],$value['Razon_Social']);
+	          $tablaHTML[$pos]['tipo'] ='N';          
+	          $pos+=1;
+	    }
+      excel_generico($titulo,$tablaHTML);  
+
+  }
+
   function imprimir_excel($parametros)
   {
+  	print_r($parametros);die();
 		$empresa = explode('_', $parametros['ddl_entidad']);
 		$parametros['ddl_entidad'] = $empresa[0];
   	$datos = $this->modelo->tabla_registros($parametros['ddl_entidad'],$parametros['ddl_empresa'],$parametros['ddl_usuario'],$parametros['ddl_modulos'],$parametros['txt_desde'],$parametros['txt_hasta'],$parametros['ddl_num_reg']);

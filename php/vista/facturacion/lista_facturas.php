@@ -169,14 +169,24 @@
         if (data.length>0) {
           datos = data;
           // Limpiamos el select
+          console.log(datos);
           $("#DCLinea").find('option').remove();
-          for (var indice in datos) {
-            $("#DCLinea").append('<option value="' + datos[indice].id +" "+datos[indice].text+ ' ">' + datos[indice].text + '</option>');
+          if(data.length>1)
+          {
+            $("#DCLinea").append('<option value="">Todos</option>');
           }
+          data.forEach(function(item,i){
+            serie = item.id.split(' ');
+            serie = serie[1];
+             $("#DCLinea").append('<option value="' + item.id +" "+item.text+ ' ">' + serie + '</option>');
+
+            // console.log(item);
+             // console.log(i);
+          })
         }else{
           Swal.fire({
             type:'info',
-            title: 'Usted no tiene un punto de venta asignado, contacte con la administracion del sistema',
+            title: 'Usted no tiene un punto de venta asignado o esta mal configurado, contacte con la administracion del sistema',
             text:'',
             allowOutsideClick: false,
           }).then(()=>{
@@ -219,7 +229,7 @@
       type:  'post',
       dataType: 'json',
       beforeSend: function () {
-         // $("#tbl_tabla").html('<tr class="text-center"><td colspan="16"><img src="../../img/gif/loader4.1.gif" width="20%">');
+        $("#tbl_tabla").html('<tr class="text-center"><td colspan="16"><img src="../../img/gif/loader4.1.gif" width="20%">');
       },
        success:  function (response) { 
         // console.log(response);
@@ -366,10 +376,11 @@
            });
 
     }
-    function generar_excel()
+  function generar_excel()
 	{		
-	  var cod = $('#ddl_cliente').val();
-	   var url = '../controlador/educativo/detalle_estudianteC.php?imprimir_excel=true&codigo='+cod+'&per='+$('#ddl_periodo').val()+'&TC=FA';
+	 var cli = $('#ddl_cliente').val();
+     var datos =  $("#filtros").serialize();
+	   var url = '../controlador/facturacion/lista_facturasC.php?imprimir_excel_fac=true&ddl_cliente='+cli+'&'+datos;
 	   window.open(url);
 
 	}
@@ -751,9 +762,11 @@ function modal_email_fac(factura,serie,codigoc,emails)
               <option value="">Seleccione Cliente</option>
             </select>
           </div>
-          <div class="col-sm-2">
+          <div class="col-sm-1" style="padding: 0px;">
             <b>Serie</b>
-              <select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="1"><option value=""></option></select>
+              <select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="1" style="padding-left:8px">
+                <option value=""></option>
+              </select>
           </div>
           <div class="col-sm-2" id="campo_clave">
             <b>CLAVE</b>
@@ -800,10 +813,10 @@ function modal_email_fac(factura,serie,codigoc,emails)
       </div>      
     </div>
 	<div class="row">
-    <div class="col-sm-12">
+    <div class="col-sm-6">
       <h2 style="margin-top: 0px;">Listado de facturas</h2>
     </div>
-    <div class="col-sm-12 text-right" id="panel_pag">
+    <div class="col-sm-6 text-right" id="panel_pag">
       
     </div>
 		<div  class="col-sm-12" style="overflow-x: scroll;height: 500px;">    

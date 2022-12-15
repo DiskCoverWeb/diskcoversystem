@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?><autorizacion>
+  <estado>AUTORIZADO</estado>
+  <numeroAutorizacion>1512202201049151442600120010040000000261234567812</numeroAutorizacion>
+  <fechaAutorizacion class="fechaAutorizacion">15/12/2022 17:33:16.000</fechaAutorizacion>
+  <comprobante><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?><factura id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>2</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>SERVICIOS DE RADIODIFUSION ALMEIDA Y HURTADO S.A.</razonSocial>
+    <nombreComercial>SERVICIOS DE RADIODIFUSION ALMEIDA Y HURTADO S.A.</nombreComercial>
+    <ruc>0491514426001</ruc>
+    <claveAcceso>1512202201049151442600120010040000000261234567812</claveAcceso>
+    <codDoc>01</codDoc>
+    <estab>001</estab>
+    <ptoEmi>004</ptoEmi>
+    <secuencial>000000026</secuencial>
+    <dirMatriz>OLMEDO Y AYACUCHO</dirMatriz>
+    <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
+  </infoTributaria>
+  <infoFactura>
+    <fechaEmision>15/12/2022</fechaEmision>
+    <dirEstablecimiento>SD</dirEstablecimiento>
+    <obligadoContabilidad>SI</obligadoContabilidad>
+    <tipoIdentificacionComprador>07</tipoIdentificacionComprador>
+    <razonSocialComprador>CONSUMIDOR FINAL</razonSocialComprador>
+    <identificacionComprador>9999999999999</identificacionComprador>
+    <totalSinImpuestos>1.00</totalSinImpuestos>
+    <totalDescuento>0</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0</descuentoAdicional>
+        <baseImponible>0</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>2</codigoPorcentaje>
+        <descuentoAdicional>0</descuentoAdicional>
+        <baseImponible>1</baseImponible>
+        <tarifa>12</tarifa>
+        <valor>0.12</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>0</propina>
+    <importeTotal>1.12</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>1.12</total>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>01.02</codigoPrincipal>
+      <descripcion>Cunas Publicitarias</descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.00</cantidad>
+      <precioUnitario>1</precioUnitario>
+      <descuento>0</descuento>
+      <precioTotalSinImpuesto>1</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>2</codigoPorcentaje>
+          <tarifa>12</tarifa>
+          <baseImponible>1</baseImponible>
+          <valor>0.12</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">SD</campoAdicional>
+    <campoAdicional nombre="Telefono">2986136</campoAdicional>
+    <campoAdicional nombre="Email">ondascarchenses@gmail.com</campoAdicional>
+    <campoAdicional nombre="Email2">ondascarchenses@gmail.com</campoAdicional>
+  </infoAdicional>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature213499">
+<ds:SignedInfo Id="Signature-SignedInfo884466">
+<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+<ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+<ds:Reference Id="SignedPropertiesID781181" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature213499-SignedProperties17464">
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+<ds:DigestValue>zytATnloyZwHz8dDJOfmyxP5Z7Q=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference URI="#Certificate1310696">
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+<ds:DigestValue>soVhg/E15+Ton0sNezr4e0OWD0k=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference Id="Reference-ID-662320" URI="#comprobante">
+<ds:Transforms>
+<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+</ds:Transforms>
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+<ds:DigestValue>uWKYbfBBAl7KvdyKUEjzT/B4TDY=</ds:DigestValue>
+</ds:Reference>
+</ds:SignedInfo>
+<ds:SignatureValue Id="SignatureValue374558">
+s8UjxK5R98cjOQ5maXTm7ofLvddbaNoZGTvi/IID7Q1eBj6Ab34ULecrsLgVvab5hTHcYKv/MoXk
+IfpgfbZSUPnMRkxDGpImEOvV17gaEROjb4ZqjrBn5sWBJ3tstuecK2jNOSmL+HjDFbcrknZgV0TA
+JIxbniZv5OnhROUYzAFa15bGe6TC1wEv7BuddiyPwvfFL5gkJcvNulpGIYfjqGE2c3ngZalR+Gt5
+2lVDVxyZmuuzvMrtClOWuEMlX9BGVWjixG2c0eaW63mMa3bB3Ymisob19iwxrcb3FxshdltFaOw6
+hu3rs7mfNgBkj7wlfjO/pWJyo4P9oZJM3/uvOA==
+</ds:SignatureValue>
+<ds:KeyInfo Id="Certificate1310696">
+<ds:X509Data>
+<ds:X509Certificate>
+MIIKBjCCB+6gAwIBAgIEW2cQdTANBgkqhkiG9w0BAQsFADCBoTELMAkGA1UEBhMCRUMxIjAgBgNV
+BAoTGUJBTkNPIENFTlRSQUwgREVMIEVDVUFET1IxNzA1BgNVBAsTLkVOVElEQUQgREUgQ0VSVElG
+SUNBQ0lPTiBERSBJTkZPUk1BQ0lPTi1FQ0lCQ0UxDjAMBgNVBAcTBVFVSVRPMSUwIwYDVQQDExxB
+QyBCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9SMB4XDTIwMTIzMTE0MjUyNVoXDTIyMTIzMTE0NTUy
+NVowgbExCzAJBgNVBAYTAkVDMSIwIAYDVQQKExlCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9SMTcw
+NQYDVQQLEy5FTlRJREFEIERFIENFUlRJRklDQUNJT04gREUgSU5GT1JNQUNJT04tRUNJQkNFMQ4w
+DAYDVQQHEwVRVUlUTzE1MBEGA1UEBRMKMDAwMDU5MjIyNjAgBgNVBAMTGUFOQSBMVUNJQSBBTE1F
+SURBIEhVUlRBRE8wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDOWQsL7DGzyc2K24M2
+1kDWR+lD6j8OJqzgq5jmCn4WuhRkvuWcdEB8eI2ei8bIVBHF+u9g9tlfFuln/gL8ISiElCbkgsrQ
+V5jUnDQXWUw6YRjP+uOCDTVjEPPqFtLS/Jplwr/IvurjEnQxaPVNq3ACo11Iee6eczKmkScI8w8a
+9d/WhHrvlZxb4earkMpF8qBtmT236Pjkq+QgGA6EdA5CT+bzgwfuJpRfqHRxesEoIvk418P03zO4
+eYzx2ebY5zUxb6xeGLXCbjrc0fh+0cXw2e1hd0ZR1LlKumhmFWp/GmUiKNFKEOMFRW7Z8NldCIh8
+GLtGLA97ZHsEz9A/h3IPAgMBAAGjggUyMIIFLjALBgNVHQ8EBAMCB4AwZwYDVR0gBGAwXjBcBgsr
+BgEEAYKoOwICATBNMEsGCCsGAQUFBwIBFj9odHRwOi8vd3d3LmVjaS5iY2UuZWMvcG9saXRpY2Et
+Y2VydGlmaWNhZG8vcGVyc29uYS1qdXJpZGljYS5wZGYwgZEGCCsGAQUFBwEBBIGEMIGBMD4GCCsG
+AQUFBzABhjJodHRwOi8vb2NzcC5lY2kuYmNlLmVjL2VqYmNhL3B1YmxpY3dlYi9zdGF0dXMvb2Nz
+cDA/BggrBgEFBQcwAYYzaHR0cDovL29jc3AxLmVjaS5iY2UuZWMvZWpiY2EvcHVibGljd2ViL3N0
+YXR1cy9vY3NwMD4GCisGAQQBgqg7AwoEMBMuU0VSVklDSU9TIERFIFJBRElPRElGVVNJT04gQUxN
+RUlEQSAgSFVSVEFETyBTQTAdBgorBgEEAYKoOwMLBA8TDTA0OTE1MTQ0MjYwMDEwGgYKKwYBBAGC
+qDsDAQQMEwowNDAwNTgxODA3MBkGCisGAQQBgqg7AwIECxMJQU5BIExVQ0lBMBcGCisGAQQBgqg7
+AwMECRMHQUxNRUlEQTAXBgorBgEEAYKoOwMEBAkTB0hVUlRBRE8wIwYKKwYBBAGCqDsDBQQVExNS
+RVBSRVNFTlRBTlRFIExFR0FMMCkGCisGAQQBgqg7AwcEGxMZT0xNRURPIFkgQVlBQ1VDSE8gRVNR
+VUlOQTAZBgorBgEEAYKoOwMIBAsTCTA2Mjk4MDQ1MDAWBgorBgEEAYKoOwMJBAgTBlR1bGNhbjAX
+BgorBgEEAYKoOwMMBAkTB0VDVUFET1IwIAYKKwYBBAGCqDsDMwQSExBTT0ZUV0FSRS1BUkNISVZP
+MCQGA1UdEQQdMBuBGW9uZGFzY2FyY2hlbnNlc0BnbWFpbC5jb20wggHhBgNVHR8EggHYMIIB1DCC
+AdCgggHMoIIByIaB1mxkYXA6Ly9iY2VxbGRhcHN1YnAxLmJjZS5lYy9jbj1DUkwxMTU5LGNuPUFD
+JTIwQkFOQ08lMjBDRU5UUkFMJTIwREVMJTIwRUNVQURPUixsPVFVSVRPLG91PUVOVElEQUQlMjBE
+RSUyMENFUlRJRklDQUNJT04lMjBERSUyMElORk9STUFDSU9OLUVDSUJDRSxvPUJBTkNPJTIwQ0VO
+VFJBTCUyMERFTCUyMEVDVUFET1IsYz1FQz9jZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0P2Jhc2WG
+NGh0dHA6Ly93d3cuZWNpLmJjZS5lYy9DUkwvZWNpX2JjZV9lY19jcmxmaWxlY29tYi5jcmykgbYw
+gbMxCzAJBgNVBAYTAkVDMSIwIAYDVQQKExlCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9SMTcwNQYD
+VQQLEy5FTlRJREFEIERFIENFUlRJRklDQUNJT04gREUgSU5GT1JNQUNJT04tRUNJQkNFMQ4wDAYD
+VQQHEwVRVUlUTzElMCMGA1UEAxMcQUMgQkFOQ08gQ0VOVFJBTCBERUwgRUNVQURPUjEQMA4GA1UE
+AxMHQ1JMMTE1OTArBgNVHRAEJDAigA8yMDIwMTIzMTE0MjUyNVqBDzIwMjIxMjMxMTQ1NTI1WjAf
+BgNVHSMEGDAWgBRIot8jHx34LFF6jAPNSTKlCcGUqzAdBgNVHQ4EFgQUZwgepN8JhLpnZ8flZoD3
+s4x97S0wCQYDVR0TBAIwADAZBgkqhkiG9n0HQQAEDDAKGwRWOC4xAwIEsDANBgkqhkiG9w0BAQsF
+AAOCAgEApwJw7d1OcpluqKPuQSLLx00wHlS8njxHWnW1unEQgmEzJz3qoaHLhGScIWa8A6DVfJd+
+BlIrZUdCXYbW0uG9yEEAP5Y5fsikECRDWNnOyFbuHjPNuvDPGnmtg3yV/NS01Y0YEZKIx9yV0h/P
+wM3jKrFhuIw03HFWzh9BJFreg8/7Q4xYWsN90v9nZm/vbhojMTnudUqdUHRfPk//SD+2isXJFNtr
+PnqdBQ1lIO8quCddBzD6L1lMZwA/sWqRgoHUF+ZMSnfv67KNKJlPqPMy1UJIfixGSsePcZDe/H/C
+bCOnYgolDGTE+f4jCBuI3g3yGPXgHmPdCsZAGWlXwle0Pzr9XdNPAZu9IuguO9pVtqwCWATniZ+d
+t9Fa2AA7l2z7cOKVqM0u9H8evzqqSjYG7OxJ6H8BC7/bYGwVZ7U9MFm13KbsZFMQ1qKf4r5tCj2F
+FzwcT2XRssrP7GuZowTEa2fMUtCAqSkY2G1dYUd/fwHJimff8KOEzIKbQ275X+J25fh5BMVP3+LL
+AnQVH52+N/XXiCj1ytyaznNn4sOp9IV4xyqkE43sclWflQ73rVq42UkOLvu+Gutf2I8a3jFNr/iq
+jVyb86KIuYaE2NlnZHMxShEHE6hAH2ep4kItNnDhEAlyD6M4rxhyX+TwyHa/FmpRqVVcNFjLOUuz
+kY5+91I=
+</ds:X509Certificate>
+</ds:X509Data>
+<ds:KeyValue>
+<ds:RSAKeyValue>
+<ds:Modulus>
+zlkLC+wxs8nNituDNtZA1kfpQ+o/Dias4KuY5gp+FroUZL7lnHRAfHiNnovGyFQRxfrvYPbZXxbp
+Z/4C/CEohJQm5ILK0FeY1Jw0F1lMOmEYz/rjgg01YxDz6hbS0vyaZcK/yL7q4xJ0MWj1TatwAqNd
+SHnunnMyppEnCPMPGvXf1oR675WcW+Hmq5DKRfKgbZk9t+j45KvkIBgOhHQOQk/m84MH7iaUX6h0
+cXrBKCL5ONfD9N8zuHmM8dnm2Oc1MW+sXhi1wm463NH4ftHF8NntYXdGUdS5SrpoZhVqfxplIijR
+ShDjBUVu2fDZXQiIfBi7RiwPe2R7BM/QP4dyDw==
+</ds:Modulus>
+<ds:Exponent>AQAB</ds:Exponent>
+</ds:RSAKeyValue>
+</ds:KeyValue>
+</ds:KeyInfo>
+<ds:Object Id="Signature213499-Object938609"><etsi:QualifyingProperties Target="#Signature213499"><etsi:SignedProperties Id="Signature213499-SignedProperties17464"><etsi:SignedSignatureProperties><etsi:SigningTime>2022-12-15T17:33:11-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>fzj/7T32cnSKExXcjQdS1hqURQo=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AC BANCO CENTRAL DEL ECUADOR,L=QUITO,OU=ENTIDAD DE CERTIFICACION DE INFORMACION-ECIBCE,O=BANCO CENTRAL DEL ECUADOR,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1533481077</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-662320"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></factura>]]></comprobante>
+  <mensajes/>
+</autorizacion>

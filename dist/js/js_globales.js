@@ -225,7 +225,7 @@ function paginacion(funcion,posicion,inicio=0,numreg=50)
     });
 
 	var pag = '<nav aria-label="...">'+
-	  '<ul class="pagination">'+
+	  '<ul class="pagination pagination-sm" style="margin: 0px;">'+
 	   ' <li class="page-item disabled">'+
 	      '<!-- <a class="page-link" href="#" tabindex="-1">Inicio</a> -->'+
 	   ' </li>'

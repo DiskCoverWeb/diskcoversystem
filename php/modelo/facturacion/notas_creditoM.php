@@ -48,7 +48,7 @@ class notas_creditoM
        	return $this->db->datos($sql);
    }
 
-   function Dlineas($MBoxFecha,$Cta_CxP)
+   function DClineas($MBoxFecha,$Cta_CxP)
    {
    	   $sql = "SELECT Codigo, Concepto, CxC 
        FROM Catalogo_Lineas 
@@ -59,6 +59,7 @@ class notas_creditoM
        AND Vencimiento >= '".BuscarFecha($MBoxFecha)."' ";
        if(strlen($Cta_CxP) > 2 ){ $sql.=" AND '".$Cta_CxP."' IN (CxC,CxC_Anterior) ";}
 	  	$sql.=" ORDER BY CxC, Concepto ";
+	  	// print_r($sql);die();
 	  	return $this->db->datos($sql);
    }
 
@@ -120,6 +121,69 @@ class notas_creditoM
 	    } 
 	    $sql.=" ORDER BY Producto ";
 	    return $this->db->datos($sql);
+	}
+
+	function DCTC($CodigoC){
+  	// 'MsgBox sSQL
+	  $sql = "SELECT TC 
+	       FROM Facturas 
+	       WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+	       AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+	       AND CodigoC = '".$CodigoC."'
+	       AND T = '".G_PENDIENTE."' 
+	       AND TC <> 'OP' 
+	       GROUP BY TC 
+	       ORDER BY TC ";
+	    return $this->db->datos($sql);
+	  // SelectDB_Combo DCTC, AdoTC, sSQL, "TC"
+	  // If AdoTC.Recordset.RecordCount <= 0 Then MsgBox "Este Cliente no ha empezado a generar facturas"
+	}
+  	
+  	function DCSerie($TC,$CodigoC)
+  	{
+	   $sql = "SELECT Serie 
+	      FROM Facturas 
+	      WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+	      AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+	      AND CodigoC = '".$CodigoC."' 
+	      AND TC = '".$TC."' 
+	      AND T = '".G_PENDIENTE."' 
+	      GROUP BY Serie 
+	      ORDER BY Serie ";
+	      return $this->db->datos($sql);
+  	}
+
+  	function DCFactura($Serie,$TC,$CodigoC)
+  	{
+	   $sql = "SELECT Factura 
+	     FROM Facturas 
+	     WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+	     AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+	     AND CodigoC = '".$CodigoC."' 
+	     AND TC = '".$TC."' 
+	     AND Serie = '".$Serie."' 
+	     AND T = '".G_PENDIENTE."' 
+	     AND Saldo_MN > 0 
+	     GROUP BY Factura 
+	     ORDER BY Factura ";
+	     return $this->db->datos($sql);
+
+	}
+
+	function Factura_detalle($Factura,$Serie,$TC,$CodigoC)
+	{
+	  $sql = "SELECT T,Fecha,Cta_CxP,Cod_CxC,Porc_IVA,Total_MN,Saldo_MN,IVA,Autorizacion 
+	     FROM Facturas 
+	     WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+	     AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+	     AND TC = '".$TC."' 
+	     AND Serie = '".$Serie."' 
+	     AND Factura = ".$Factura." 
+	     AND T <> '".G_ANULADO."' 
+	     AND Saldo_MN > 0 
+	     ORDER BY Autorizacion ";
+	     // print_r($sql);die();
+	     return $this->db->datos($sql);
 	}
 
 }

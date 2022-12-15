@@ -138,26 +138,36 @@ class facturar_pensionC
     // print_r($usuario);die();
     $serie = '.';
     $datos = array();
-    if(count($usuario)>0){ if(isset($usuario[0]['Serie_FA'])){$serie = $usuario[0]['Serie_FA'];}}
+    if(count($usuario)>0)
+      { 
+        if(isset($usuario[0]['Serie_FA']))
+          {
+            $serie = $usuario[0]['Serie_FA'];
+          }
+      }
     //buscar serie de usuario
    
+    if($serie=='.'){ 
+
+      if($_SESSION['INGRESO']['Serie_FA']!='.')
+        { 
+          $serie = $_SESSION['INGRESO']['Serie_FA'];
+        }
+
+    }
     if($serie!='.'){
       // si hay serie busco en catalogo lineas
       $datos = $this->facturacion->getCatalogoLineas($emision,$vencimiento,$serie);
-    }
-    if(count($datos)==0)
-    {      
-      //buscar serie de empresa
-      if($_SESSION['INGRESO']['Serie_FA']!='.'){
-        $serie = $_SESSION['INGRESO']['Serie_FA'];
-        $datos = $this->facturacion->getCatalogoLineas($emision,$vencimiento,$serie);
-      }      
-    }
-
-    // si no existe ninguno de los dos
-    if(count($datos)==0)
-    {      
+      if(count($datos)==0)
+      {
+        return array();
+      }  
+    }else{
       $datos = $this->facturacion->getCatalogoLineas13($emision,$vencimiento);
+      if(count($datos)==0)
+      {
+        return array();
+      }
     }
 
     $catalogo = [];

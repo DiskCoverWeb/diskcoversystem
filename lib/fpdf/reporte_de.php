@@ -2114,6 +2114,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$rimpe = '';
 	if(isset($datos['Tipo_contribuyente']) && count($datos['Tipo_contribuyente'])>0)
 	{
+		// print_r($datos['Tipo_contribuyente']);die();
 		$agente = $datos['Tipo_contribuyente'][0]['Agente_Retencion'];
 		if($datos['Tipo_contribuyente'][0]['RIMPE_E']==1)
 		{
@@ -2946,7 +2947,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$arr=array('R.U.C. '.$_SESSION['INGRESO']['RUC']);
 	$pdf->Row($arr,10);
 
-	if($rimpe=='')
+	if($rimpe!='')
 	{
 		$pdf->SetXY($x,$misma_ln);
 		$pdf->SetTextColor(225,51,51);

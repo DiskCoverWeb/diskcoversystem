@@ -37,6 +37,37 @@ if(isset($_GET['tabla']))
 	echo json_encode($controlador->cargar_tabla($parametros));
 }
 
+if(isset($_GET['DCLineas']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->DCLineas($parametros));
+}
+
+if(isset($_GET['DCTC']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->DCTC($parametros));
+}
+
+if(isset($_GET['DCSerie']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->DCSerie($parametros));
+}
+
+if(isset($_GET['Detalle_Factura']))
+{
+	$parametros = $_POST['parametros'];
+	// print_r($parametros);die();
+	echo json_encode($controlador->Detalle_Factura($parametros));
+}
+
+if(isset($_GET['DCFactura']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->DCFactura($parametros));
+}
+
 if(isset($_GET['cliente']))
 {
 	$q = '';
@@ -111,11 +142,57 @@ class notas_creditoC
 		return $cli;
 	}
 
-	function Dlineas($MBoxFecha,$Cta_CxP)
+	function DClineas($parametro)
 	{
-
-		$this->modelo->Dlineas($MBoxFecha,$Cta_CxP);
+		// print_r($parametro);die();
+		$datos = $this->modelo->DClineas($parametro['fecha'],$parametro['cta_cxp']);
+		$list = array();		
+		foreach ($datos as $key => $value) {
+			$list[] = array('codigo'=>$value['Codigo'],'nombre'=>$value['Concepto']); 
+		}
+		if(count($list)==0)
+		{
+			$list[] = array('codigo'=>'','nombre'=>'No exsiten datos');	
+		}
+		return $list;
 	}
+
+	function DCTC($parametro)
+	{
+		// print_r($parametro);die();
+		$datos = $this->modelo->DCTC($parametro['CodigoC']);
+		$list = array();
+		foreach ($datos as $key => $value) {
+			$list[] = array('codigo'=>$value['TC'],'nombre'=>$value['TC']); 
+		}
+		return $list;
+	}
+
+	function DCSerie($parametro)
+	{
+		$datos = $this->modelo->DCSerie($parametro['TC'],$parametro['CodigoC']);
+		$list = array();
+		foreach ($datos as $key => $value) {
+			$list[] = array('codigo'=>$value['Serie'],'nombre'=>$value['Serie']); 
+		}
+		return $list;
+	}
+
+	function DCFactura($parametro)
+	{
+		$datos = $this->modelo->DCFactura($parametro['Serie'],$parametro['TC'],$parametro['CodigoC']);
+		$list = array();
+		foreach ($datos as $key => $value) {
+			$list[] = array('codigo'=>$value['Factura'],'nombre'=>$value['Factura']); 
+		}
+		return $list;
+	}
+
+	function Detalle_Factura($parametro)
+	{
+		return $this->modelo->Factura_detalle($parametro['Factura'],$parametro['Serie'],$parametro['TC'],$parametro['CodigoC']);
+	}
+
 
 	function delete_sientos_nc()
 	{

@@ -110,7 +110,7 @@ class punto_ventaM
        FROM Asiento_F 
        WHERE Item = '".$_SESSION['INGRESO']['item']."'
        AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
-       ORDER BY A_No desc";
+       ORDER BY A_No Asc";
        $datos =  $this->db->datos($sql);
        $ln = count($datos);
        $tbl='';

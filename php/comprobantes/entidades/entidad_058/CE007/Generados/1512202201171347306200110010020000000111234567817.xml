@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<factura id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>MUNOZ ANDRADE MARUXI ELIZABETH</razonSocial>
+    <nombreComercial>MUNOZ ANDRADE MARUXI ELIZABETH</nombreComercial>
+    <ruc>1713473062001</ruc>
+    <claveAcceso>1512202201171347306200110010020000000111234567817</claveAcceso>
+    <codDoc>01</codDoc>
+    <estab>001</estab>
+    <ptoEmi>002</ptoEmi>
+    <secuencial>000000011</secuencial>
+    <dirMatriz>PASAJE ROMELIA 171 Y AV. EQINOCCIAL</dirMatriz>
+  </infoTributaria>
+  <infoFactura>
+    <fechaEmision>15/12/2022</fechaEmision>
+    <dirEstablecimiento>DP: A003+ PQ 69+ PQ 70+ BD 43</dirEstablecimiento>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <tipoIdentificacionComprador>06</tipoIdentificacionComprador>
+    <razonSocialComprador>A003 CARDOSO CARRASCO EDISON</razonSocialComprador>
+    <identificacionComprador>1702783489</identificacionComprador>
+    <totalSinImpuestos>278.00</totalSinImpuestos>
+    <totalDescuento>0</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0</descuentoAdicional>
+        <baseImponible>0</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>2</codigoPorcentaje>
+        <descuentoAdicional>0</descuentoAdicional>
+        <baseImponible>278</baseImponible>
+        <tarifa>12</tarifa>
+        <valor>33.36</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>0</propina>
+    <importeTotal>311.36</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>311.36</total>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>01.01</codigoPrincipal>
+      <descripcion>HONORARIOS PROFESIONALES</descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.00</cantidad>
+      <precioUnitario>278</precioUnitario>
+      <descuento>0</descuento>
+      <precioTotalSinImpuesto>278</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>2</codigoPorcentaje>
+          <tarifa>12</tarifa>
+          <baseImponible>278</baseImponible>
+          <valor>33.36</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">DP: A003+ PQ 69+ PQ 70+ BD 43</campoAdicional>
+    <campoAdicional nombre="Telefono">0992807901</campoAdicional>
+    <campoAdicional nombre="Email">caron_edison@hotmail.com</campoAdicional>
+  </infoAdicional>
+</factura>

@@ -318,7 +318,7 @@ if($operadora!='.' && strlen($operadora)>=13)
 			console.log(data);
 			if(data.respueta==true)
 			{
-				if(data.datos.Stock<=0)
+				if(data.datos.Stock<0)
 				{
 					Swal.fire(data.datos.Producto+' ES UN PRODUCTO SIN EXISTENCIA','','info').then(function()
 						{
@@ -774,7 +774,7 @@ if($operadora!='.' && strlen($operadora)>=13)
         }else{
         	Swal.fire({
 					  type:'info',
-					  title: 'Usted no tiene un punto de venta asignado, contacte con la administracion del sistema',
+					  title: 'Usted no tiene un punto de emsion asignado  o esta mal configurado, contacte con la administracion del sistema',
 					  text:'',
 					  allowOutsideClick: false,
 					}).then(()=>{

@@ -192,6 +192,7 @@ class db
 
 	function String_Sql($sql,$tipo=false)
 	{
+		set_time_limit(0);
 		if($tipo=='MY SQL'|| $tipo =='MYSQL' || $tipo=='My SQL' || $tipo=='My sql')
 		{
 			$conn = $this->MySQL();

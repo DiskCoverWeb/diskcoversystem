@@ -208,7 +208,7 @@ function Leer_Datos_Cliente_SP($BuscarCodigo)
       array(&$BuscarCodigo, SQLSRV_PARAM_IN),
       array(&$BuscarCodigo1, SQLSRV_PARAM_INOUT)
     );
-    $sql = "EXEC  sp_Leer_Datos_Cliente @Item= ?,@Periodo=?,@BuscarCodigo=?,@Codigo_Encontrado=?";
+    $sql = "EXEC  sp_Leer_Datos_Cliente @Item= ?,@Periodo=?,@Codigo_CIRUC_Cliente=?,@Codigo_Encontrado=?";
     return $conn->ejecutar_procesos_almacenados($sql,$parametros,$tipo=false);
 }
 
@@ -7520,6 +7520,812 @@ function factura_numero($ser)
 }
 
 
+// 'Facturas            : RUC_CI, TB, Razon_Social
+// 'Clientes_Matriculas : Cedula_R, TD, Representante
+function  Leer_Datos_Cliente_FA($Codigo_CIRUC_Cliente)
+{
+    $conn = new db();
+    $TFA = array();    
+    if(strlen($Codigo_CIRUC_Cliente) <= 0){$Codigo_CIRUC_Cliente = G_NINGUNO;}
+    Leer_Datos_Cliente_SP($Codigo_CIRUC_Cliente);
+    $TFA['CodigoC'] = $Codigo_CIRUC_Cliente;
+    
+   // 'Verificamos la informacion del Clienete
+     if( $TFA['CodigoC'] <> ".")
+     {  
+         $sql = "SELECT Cliente,CI_RUC,TD,Email,EmailR,Direccion,DireccionT,Ciudad,Telefono,Telefono_R,Grupo,Representante,CI_RUC_R,TD_R 
+          FROM Clientes 
+          WHERE Codigo = '".$TFA['CodigoC']."' ";
+
+          $datos = $conn->datos($sql);
+
+         if(count($datos) > 0)
+          {
+           $TFA['Cliente'] = $datos[0]["Cliente"];
+           $TFA['CI_RUC'] = $datos[0]["CI_RUC"];
+           $TFA['TD'] = $datos[0]["TD"];
+           $TFA['EmailC'] = $datos[0]["Email"];
+           $TFA['EmailR'] = $datos[0]["EmailR"];
+           $TFA['TelefonoC'] = $datos[0]["Telefono"];
+           $TFA['DireccionC'] = $datos[0]["Direccion"];
+           $TFA['Curso'] = $datos[0]["Direccion"];
+           $TFA['CiudadC'] = $datos[0]["Ciudad"];
+           $TFA['Grupo'] = $datos[0]["Grupo"];
+           
+           $TFA['Razon_Social'] = "CONSUMIDOR FINAL";
+           $TFA['RUC_CI'] = "9999999999999";
+           $TFA['TB'] = "R";
+            if( strlen($datos[0]["Representante"]) > 1 And strlen($datos[0]["CI_RUC_R"]) > 1)
+            {
+              $TFA['TB'] = $datos[0]["TD_R"];
+              switch ($TFA['TB']) {
+                case 'C':
+                case 'R':
+                case 'P':
+                     $TFA['Razon_Social'] = $datos[0]["Representante"];
+                     $TFA['RUC_CI'] = $datos[0]["CI_RUC_R"];
+                     $TFA['TelefonoC'] = $datos[0]["Telefono_R"];
+                     $TFA['DireccionC'] = $datos[0]["DireccionT"];
+                  break;
+              }               
+
+            }else{
+
+              switch ($TFA['TD']) {
+                case 'C':
+                case 'R':
+                case 'P':
+                   $TFA['Razon_Social'] = $datos[0]["Cliente"];
+                     $TFA['RUC_CI'] = $datos[0]["CI_RUC"];
+                     $TFA['TB'] = $datos[0]["TD"];
+                  break;
+                
+                default:
+                  // code...
+                  break;
+              }
+            }               
+            if(strlen($TFA['TelefonoC']) <= 1 ){$TFA['TelefonoC'] ='';}
+            return $TFA;
+          }
+    }
+
+}
+
+
+function Grabar_Factura1($TFA,$VerFactura = false, $NoRegTrans = false)
+{
+   // print_r($TFA);die();
+   $FA = variables_tipo_factura();
+   $TFA = array_merge($FA,$TFA);
+    //RatonReloj
+   //'Averiguamos si la Factura esta a nombre del Representante
+
+  // print_r($TFA);die();
+  $conn = new db();
+  $cliente = Leer_Datos_Cliente_FA($TFA['CodigoC']);
+  $TFA = array_merge($TFA,$cliente);
+  
+  $Orden_No = 0;
+  $Total_Desc_ME = 0;
+  if(strlen($TFA['Tipo_Pago']) <= 1){ $TFA['Tipo_Pago'] = "01";}
+  $TFA['T'] = G_PENDIENTE;
+  $TFA['SubTotal'] = 0;
+  $TFA['Con_IVA'] = 0;
+  $TFA['Sin_IVA'] = 0;
+  $TFA['Total_IVA'] = 0;
+  $TFA['Total_MN'] = 0;
+  $TFA['Total_ME'] = 0;
+  $TFA['Descuento'] = 0;
+  $TFA['Descuento2'] = 0;
+  $TFA['Descuento_0'] = 0;
+  $TFA['Descuento_X'] = 0;
+  $TFA['Servicio'] = 0;
+  $TFA['Cta_CxP_Anterior']='0';
+  if(strlen($TFA['Autorizacion']) >= 13){  $TMail['TipoDeEnvio'] = "CE";}
+  // if($TFA['DireccionC'] <> $FA['DireccionS'] And strlen($TFA['DireccionS']) > 1 ){$TFA['DireccionC'] = $FA['DireccionS'];}
+  if($TFA['TC'] =="PV")
+  {
+     $sql = "DELETE 
+        FROM Trans_Ticket
+        WHERE Ticket = ".$TFA['Factura']."
+        AND TC = '".$TFA['TC']."'
+        AND Item = '".$_SESSION['INGRESO']['item']."'
+        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+        $conn->String_Sql($sql);
+  }else{
+     $sql = "DELETE 
+        FROM Detalle_Factura 
+        WHERE Factura = ".$TFA['Factura']." 
+        AND TC = '".$TFA['TC']."' 
+        AND Serie = '".$TFA['Serie']."' 
+        AND Autorizacion = '".$TFA['Autorizacion']."' 
+        AND Item = '".$_SESSION['INGRESO']['item']."' 
+        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+        $conn->String_Sql($sql);
+
+     $sql = "DELETE 
+        FROM Facturas
+        WHERE Factura = ".$TFA['Factura']."
+        AND TC = '".$TFA['TC']."'
+        AND Serie = '".$TFA['Serie']."'
+        AND Autorizacion = '".$TFA['Autorizacion']."'
+        AND Item = '".$_SESSION['INGRESO']['item']."'
+        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' "; 
+        $conn->String_Sql($sql);
+
+     $sql = "DELETE 
+        FROM Trans_Abonos 
+        WHERE Factura = ".$TFA['Factura']." 
+        AND TP = '".$TFA['TC']."' 
+        AND Serie = '".$TFA['Serie']."' 
+        AND Autorizacion = '".$TFA['Autorizacion']."' 
+        AND Item = '".$_SESSION['INGRESO']['item']."' 
+        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+        $conn->String_Sql($sql);
+    
+     $sql = "DELETE 
+        FROM Facturas_Auxiliares 
+        WHERE Factura = ".$TFA['Factura']." 
+        AND TC = '".$TFA['TC']."' 
+        AND Serie = '".$TFA['Serie']."' 
+        AND Autorizacion = '".$TFA['Autorizacion']."' 
+        AND Item = '".$_SESSION['INGRESO']['item']."' 
+        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+        $conn->String_Sql($sql);
+    
+     $sql = "DELETE 
+        FROM Trans_Kardex 
+        WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+        AND TC = '".$TFA['TC']."' 
+        AND Serie = '".$TFA['Serie']."' 
+        AND Factura = ".$TFA['Factura']." 
+        AND SUBSTRING(Detalle, 1, 3) = 'FA:' ";
+        $conn->String_Sql($sql);
+  }
+  
+  $sql = "SELECT * 
+    FROM Asiento_F 
+    WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+    AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
+    ORDER BY A_No ";
+  $datos = $conn->datos($sql);
+
+   if(count($datos) > 0 )
+   {
+       foreach ($datos as $key => $value) 
+       {
+          if($value["Total_IVA"] > 0 ){
+             $TFA['Descuento_X'] = $TFA['Descuento_X'] + $value["Total_Desc"] + $value["Total_Desc2"];
+             $TFA['Con_IVA'] = $TFA['Con_IVA'] + $value["TOTAL"];
+          }else{
+             $TFA['Descuento_0'] = $TFA['Descuento_0'] + $value["Total_Desc"] + $value["Total_Desc2"];
+             $TFA['Sin_IVA'] = $TFA['Sin_IVA'] + $value["TOTAL"];
+          }
+          $TFA['Total_IVA'] = $TFA['Total_IVA'] + $value["Total_IVA"];
+          $TFA['Descuento'] = $TFA['Descuento'] + $value["Total_Desc"];
+          $TFA['Descuento2'] = $TFA['Descuento2'] + $value["Total_Desc2"];
+          $TFA['Servicio'] = $TFA['Servicio'] + $value["SERVICIO"];
+          
+          if($value["HABIT"] <> G_NINGUNO)
+          {
+              $SQLHab = "DELETE
+                    FROM Trans_Pedidos 
+                    WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+                    AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+                    AND No_Hab = '".$value["HABIT"]."' ";
+                    $conn->String_Sql($SQLHab);
+          }  
+          if($value["Numero"] <> 0){
+              $SQLHab = "DELETE 
+                    FROM Trans_Kardex
+                    WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+                    AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+                    AND TC = 'OP'
+                    AND Factura = ".$value["Numero"]." ";
+                    $conn->String_Sql($SQLHab);
+              $Orden_No = $value["Numero"];
+          }    
+        }
+       
+       // print_r($TFA);die();   
+      // 'If Total_Desc_ME > 0 Then Total_Desc = Total_Desc_ME
+       $TFA['Total_IVA'] = number_format($TFA['Total_IVA'], 2,'.','');
+       $TFA['Con_IVA'] = number_format($TFA['Con_IVA'], 2,'.','');
+       $TFA['Sin_IVA'] = number_format($TFA['Sin_IVA'], 2,'.','');
+       $TFA['Servicio'] = number_format($TFA['Servicio'], 2,'.','');
+       $TFA['SubTotal'] = $TFA['Sin_IVA'] + $TFA['Con_IVA'] - $TFA['Descuento'] - $TFA['Descuento2'];
+       $TFA['Total_MN'] = $TFA['Sin_IVA'] + $TFA['Con_IVA'] - $TFA['Descuento'] - $TFA['Descuento2'] + $TFA['Total_IVA'] + $TFA['Servicio'];
+       $TFA['Saldo_MN'] = $TFA['Total_MN'];
+      // 'Averiguamos si tenemos facturas de años anteriores
+       if($TFA['Cta_CxP'] <> $TFA['Cta_CxP_Anterior']){
+          foreach ($datos as $key => $value) {
+            if(is_numeric($value['TICKET']))
+            {
+              $year = date("Y", strtotime($TFA['Fecha']));
+              if(intval($value['TICKET'])<>$year)
+              {
+                $TFA['Cta_CxP'] = $TFA['Cta_CxP_Anterior'];
+              }
+            }
+            
+          }
+       }
+       $Cta_Cobrar = $TFA['Cta_CxP'];
+       $TFA['Hora'] =  date('h:i:s a', time());  
+       
+      // 'Totales de la Factura/Nota de Venta
+       if($TFA['TC'] == "PV")
+       {
+             $Ln_No = 1;
+          foreach ($datos as $key => $value) {
+             $datosTT[0]['campo'] =  "TC";
+             $datosTT[0]['dato'] = $TFA['TC'];
+             $datosTT[1]['campo'] =  "Ticket";
+             $datosTT[1]['dato'] = $TFA['Factura'];
+             $datosTT[2]['campo'] =  "CodigoC";
+             $datosTT[2]['dato'] = $TFA['CodigoC'];
+             $datosTT[3]['campo'] =  "Fecha";
+             $datosTT[3]['dato'] = $TFA['Fecha'];
+             $datosTT[4]['campo'] =  "Efectivo";
+             $datosTT[4]['dato'] = $TFA['Efectivo'];
+             $datosTT[5]['campo'] =  "Codigo_Inv";
+             $datosTT[5]['dato'] = $value[ "CODIGO"];
+             $datosTT[6]['campo'] =  "Cantidad";
+             $datosTT[6]['dato'] = $value[ "CANT"];
+             $datosTT[7]['campo'] =  "Precio";
+             $datosTT[7]['dato'] = $value[ "PRECIO"];
+             $datosTT[8]['campo'] =  "Total";
+             $datosTT[8]['dato'] = $value[ "TOTAL"];
+             $datosTT[9]['campo'] =  "Descuento";
+             $datosTT[9]['dato'] = $value[ "Total_Desc"] + $value["Total_Desc2"];
+             $datosTT[10]['campo'] =  "Producto";
+             $datosTT[10]['dato'] =  substr($value["PRODUCTO"], 1, 40);
+             $datosTT[11]['campo'] =  "CodigoU";
+             $datosTT[11]['dato'] = $_SESSION['INGRESO']['CodigoU'];
+             $datosTT[12]['campo'] =  "Periodo";
+             $datosTT[12]['dato'] = $_SESSION['INGRESO']['periodo'];
+             $datosTT[13]['campo'] =  "Hora";
+             $datosTT[13]['dato'] = $TFA['Hora'];
+             $datosTT[14]['campo'] =  "Item";             
+             $datosTT[14]['dato'] = $_SESSION['INGRESO']['item'];
+             insert_generico('Trans_Ticket',$datosTT);
+          }
+            
+       }else{
+         // 'Grabamos el numero de factura
+          // RatonReloj
+          // SetAdoAddNew "Facturas"
+          $datosFA[0]['campo'] = "T"; 
+          $datosFA[0]['dato'] = $TFA['T'];
+          $datosFA[1]['campo'] = "TC"; 
+          $datosFA[1]['dato'] = $TFA['TC'];
+          $datosFA[2]['campo'] = "Serie"; 
+          $datosFA[2]['dato'] = $TFA['Serie'];
+          $datosFA[3]['campo'] = "Factura"; 
+          $datosFA[3]['dato'] = $TFA['Factura'];
+          $datosFA[4]['campo'] = "Autorizacion"; 
+          $datosFA[4]['dato'] = $TFA['Autorizacion'];
+          
+          $datosFA[5]['campo'] = "ME"; 
+          $datosFA[5]['dato'] = $TFA['ME_'];
+          $datosFA[6]['campo'] = "SP"; 
+          $datosFA[6]['dato'] = $TFA['SP'];
+          $datosFA[7]['campo'] = "Porc_IVA"; 
+          $datosFA[7]['dato'] = $TFA['Porc_IVA'];
+          $datosFA[8]['campo'] = "CodigoC"; 
+          $datosFA[8]['dato'] = $TFA['CodigoC'];
+          $datosFA[9]['campo'] = "CodigoB"; 
+          $datosFA[9]['dato'] = $TFA['CodigoB'];
+          $datosFA[10]['campo'] = "CodigoA"; 
+          $datosFA[10]['dato'] = $TFA['CodigoA'];
+          $datosFA[11]['campo'] = "CodigoDr"; 
+          $datosFA[11]['dato'] = $TFA['CodigoDr'];
+          $datosFA[12]['campo'] = "Cod_Ejec"; 
+          $datosFA[12]['dato'] = $TFA['Cod_Ejec'];
+          $datosFA[13]['campo'] = "Fecha"; 
+          $datosFA[13]['dato'] = $TFA['Fecha'];
+          $datosFA[14]['campo'] = "Fecha_C"; 
+          $datosFA[14]['dato'] = $TFA['Fecha_C'];
+          $datosFA[15]['campo'] = "Fecha_V"; 
+          $datosFA[15]['dato'] = $TFA['Fecha_V'];
+          $datosFA[16]['campo'] = "Cod_CxC"; 
+          $datosFA[16]['dato'] = $TFA['Cod_CxC'];
+          $datosFA[17]['campo'] = "Forma_Pago"; 
+          $datosFA[17]['dato'] = $TFA['Forma_Pago'];
+          $datosFA[18]['campo'] = "Servicio"; 
+          $datosFA[18]['dato'] = $TFA['Servicio'];
+          $datosFA[19]['campo'] = "Sin_IVA"; 
+          $datosFA[19]['dato'] = $TFA['Sin_IVA'];
+          $datosFA[20]['campo'] = "Con_IVA"; 
+          $datosFA[20]['dato'] = $TFA['Con_IVA'];
+          $datosFA[21]['campo'] = "SubTotal"; 
+          $datosFA[21]['dato'] = $TFA['Sin_IVA'] + $TFA['Con_IVA'];
+          $datosFA[22]['campo'] = "Descuento"; 
+          $datosFA[22]['dato'] = $TFA['Descuento'];
+          $datosFA[23]['campo'] = "Descuento2"; 
+          $datosFA[23]['dato'] = $TFA['Descuento2'];
+          $datosFA[24]['campo'] = "Desc_0"; 
+          $datosFA[24]['dato'] = $TFA['Descuento_0'];   // Descuentos por el detalle de la factura
+          $datosFA[25]['campo'] = "Desc_X"; 
+          $datosFA[25]['dato'] = $TFA['Descuento_X'];
+          $datosFA[26]['campo'] = "IVA"; 
+          $datosFA[26]['dato'] = $TFA['Total_IVA'];
+          $datosFA[27]['campo'] = "Total_MN"; 
+          $datosFA[27]['dato'] = $TFA['Total_MN'];
+          $datosFA[28]['campo'] = "Total_ME"; 
+          $datosFA[28]['dato'] = $TFA['Total_ME'];
+          $datosFA[29]['campo'] = "Saldo_MN"; 
+          $datosFA[29]['dato'] = $TFA['Saldo_MN'];
+          $datosFA[30]['campo'] = "Saldo_ME"; 
+          $datosFA[30]['dato'] = $TFA['Saldo_ME'];
+          $datosFA[31]['campo'] = "Porc_C"; 
+          $datosFA[31]['dato'] = $TFA['Porc_C'];
+          $datosFA[32]['campo'] = "Comision"; 
+          $datosFA[32]['dato'] = $TFA['Comision'];
+          $datosFA[33]['campo'] = "SubCta"; 
+          $datosFA[33]['dato'] = $TFA['SubCta'];
+          $datosFA[34]['campo'] = "Tipo_Pago"; 
+          $datosFA[34]['dato'] = $TFA['Tipo_Pago'];
+          $datosFA[35]['campo'] = "Propina"; 
+          $datosFA[35]['dato'] = $TFA['Propina'];
+          $datosFA[36]['campo'] = "Efectivo"; 
+          $datosFA[36]['dato'] = $TFA['Efectivo'];
+          $datosFA[37]['campo'] = "Cotizacion"; 
+          $datosFA[37]['dato'] = $TFA['Cotizacion'];
+          $datosFA[38]['campo'] = "Observacion"; 
+          $datosFA[38]['dato'] = $TFA['Observacion'];
+          $datosFA[39]['campo'] = "Nota"; 
+          $datosFA[39]['dato'] = $TFA['Nota'];
+          $datosFA[40]['campo'] = "Clave_Acceso"; 
+          $datosFA[40]['dato'] = $TFA['ClaveAcceso'];
+          $datosFA[41]['campo'] = "Cta_CxP"; 
+          $datosFA[41]['dato'] = $TFA['Cta_CxP'];
+          $datosFA[42]['campo'] = "Cta_Venta"; 
+          $datosFA[42]['dato'] = $TFA['Cta_Venta'];
+          $datosFA[43]['campo'] = "Hora"; 
+          $datosFA[43]['dato'] = $TFA['Hora'];
+          $datosFA[44]['campo'] = "Vencimiento"; 
+          $datosFA[44]['dato'] = $TFA['Vencimiento'];
+          $datosFA[45]['campo'] = "Imp_Mes"; 
+          $datosFA[45]['dato'] = $TFA['Imp_Mes'];
+          $datosFA[46]['campo'] = "Orden_Compra"; 
+          $datosFA[46]['dato'] = $TFA['Orden_Compra'];
+          $datosFA[47]['campo'] = "Gavetas"; 
+          $datosFA[47]['dato'] = $TFA['Gavetas'];
+          $datosFA[48]['campo'] = "CodigoU"; 
+          $datosFA[48]['dato'] = $_SESSION['INGRESO']['CodigoU'];
+          $datosFA[49]['campo'] = "Periodo"; 
+          $datosFA[49]['dato'] = $_SESSION['INGRESO']['periodo'];
+          $datosFA[50]['campo'] = "Item"; 
+          $datosFA[50]['dato'] = $_SESSION['INGRESO']['item'];
+          
+         // 'MsgBox TFA.Razon_Social
+          $datosFA[51]['campo'] = "Razon_Social"; 
+          $datosFA[51]['dato'] = $TFA['Razon_Social'];
+          $datosFA[52]['campo'] = "RUC_CI"; 
+          $datosFA[52]['dato'] = $TFA['RUC_CI'];
+          $datosFA[53]['campo'] = "TB";
+          $datosFA[53]['dato'] = $TFA['TB'];
+          $datosFA[54]['campo'] = "Telefono_RS"; 
+          $datosFA[54]['dato'] = $TFA['TelefonoC'];
+          $datosFA[55]['campo'] = "Direccion_RS"; 
+          $datosFA[55]['dato'] = $TFA['DireccionC'];
+
+          insert_generico('Facturas',$datosFA);
+
+         // 'MsgBox TFA.Fecha & "-" & TFA.TC & "-" & TFA.Serie & "-" & TFA.Factura
+         // 'Datos de la Guia de Remision
+          if($TFA['Remision'] > 0 ){
+             // SetAdoAddNew "Facturas_Auxiliares"
+             $datosREM[0]['campo'] =  "TC";
+             $datosREM[0]['dato'] = $TFA['TC'];
+             $datosREM[1]['campo'] =  "Serie";
+             $datosREM[1]['dato'] = $TFA['Serie'];
+             $datosREM[2]['campo'] =  "Factura";
+             $datosREM[2]['dato'] = $TFA['Factura'];
+             $datosREM[3]['campo'] =  "Autorizacion";
+             $datosREM[3]['dato'] = $TFA['Autorizacion'];
+             $datosREM[4]['campo'] =  "Fecha";
+             $datosREM[4]['dato'] = $TFA['Fecha'];
+             $datosREM[5]['campo'] =  "CodigoC";
+             $datosREM[5]['dato'] = $TFA['CodigoC'];
+             $datosREM[6]['campo'] =  "Remision";
+             $datosREM[6]['dato'] = $TFA['Remision'];
+             $datosREM[7]['campo'] =  "Comercial";
+             $datosREM[7]['dato'] = $TFA['Comercial'];
+             $datosREM[8]['campo'] =  "CIRUC_Comercial";
+             $datosREM[8]['dato'] = $TFA['CIRUCComercial'];
+             $datosREM[9]['campo'] =  "Entrega"; 
+             $datosREM[9]['dato'] = $TFA['Entrega'];
+             $datosREM[10]['campo'] =  "CIRUC_Entrega"; 
+             $datosREM[10]['dato'] = $TFA['CIRUCEntrega'];
+             $datosREM[11]['campo'] =  "CiudadGRI"; 
+             $datosREM[11]['dato'] = $TFA['CiudadGRI'];
+             $datosREM[12]['campo'] =  "CiudadGRF"; 
+             $datosREM[12]['dato'] = $TFA['CiudadGRF'];
+             $datosREM[13]['campo'] =  "Placa_Vehiculo"; 
+             $datosREM[13]['dato'] = $TFA['Placa_Vehiculo'];
+             $datosREM[14]['campo'] =  "FechaGRE"; 
+             $datosREM[14]['dato'] = $TFA['FechaGRE'];
+             $datosREM[15]['campo'] =  "FechaGRI"; 
+             $datosREM[15]['dato'] = $TFA['FechaGRI'];
+             $datosREM[16]['campo'] =  "FechaGRF"; 
+             $datosREM[16]['dato'] = $TFA['FechaGRF'];
+             $datosREM[17]['campo'] =  "Pedido"; 
+             $datosREM[17]['dato'] = $TFA['Pedido'];
+             $datosREM[18]['campo'] =  "Zona"; 
+             $datosREM[18]['dato'] = $TFA['Zona'];
+             $datosREM[19]['campo'] =  "Orden_Compra"; 
+             $datosREM[19]['dato'] = $TFA['Orden_Compra'];
+             $datosREM[20]['campo'] =  "Serie_GR"; 
+             $datosREM[20]['dato'] = $TFA['Serie_GR'];
+             $datosREM[21]['campo'] =  "Autorizacion_GR"; 
+             $datosREM[21]['dato'] = $TFA['Autorizacion_GR'];
+             $datosREM[22]['campo'] =  "Lugar_Entrega"; 
+             $datosREM[22]['dato'] = $TFA['Lugar_Entrega'];
+             $datosREM[23]['campo'] =  "CodigoU"; 
+             $datosREM[23]['dato'] =  $_SESSION['INGRESO']['CodigoU'];
+             $datosREM[24]['campo'] =  "Periodo"; 
+             $datosREM[24]['dato'] =  $_SESSION['INGRESO']['periodo'];
+             $datosREM[25]['campo'] =  "Item"; 
+             $datosREM[25]['dato'] = $_SESSION['INGRESO']['item'];
+             insert_generico('Facturas_Auxiliares',$datosREM);
+          }
+         // 'Detalle de la Factura/Nota de Venta
+          $Habitacion_No = G_NINGUNO;
+          foreach ($datos as $key => $value) 
+          {           
+             $No_Mes = 0;
+             if($value["Mes"] == G_NINGUNO){ $No_Mes=date("m", strtotime($TFA['Fecha'])); }else{ $No_Mes = MesesLetras($value["Mes"]); }
+             // SetAdoAddNew "Detalle_Factura"
+             $datosDET[0]['campo'] =  "T"; 
+             $datosDET[0]['dato'] = $TFA['T'];
+             $datosDET[1]['campo'] =  "TC"; 
+             $datosDET[1]['dato'] = $TFA['TC'];
+             $datosDET[2]['campo'] =  "SP"; 
+             $datosDET[2]['dato'] = $TFA['SP'];
+             $datosDET[3]['campo'] =  "Porc_IVA"; 
+             $datosDET[3]['dato'] = $TFA['Porc_IVA'];
+             $datosDET[4]['campo'] =  "Factura"; 
+             $datosDET[4]['dato'] = $TFA['Factura'];
+             $datosDET[5]['campo'] =  "CodigoC"; 
+             $datosDET[5]['dato'] = $TFA['CodigoC'];
+             $datosDET[6]['campo'] =  "CodigoB"; 
+             $datosDET[6]['dato'] = $TFA['CodigoB'];
+             $datosDET[7]['campo'] =  "CodigoA"; 
+             $datosDET[7]['dato'] = $TFA['CodigoA'];
+             $datosDET[8]['campo'] =  "Fecha"; 
+             $datosDET[8]['dato'] = $TFA['Fecha'];
+             $datosDET[9]['campo'] =  "CodigoL"; 
+             $datosDET[9]['dato'] = $TFA['Cod_CxC'];
+             $datosDET[10]['campo'] =  "Serie"; 
+             $datosDET[10]['dato'] = $TFA['Serie'];
+             $datosDET[11]['campo'] =  "Autorizacion"; 
+             $datosDET[11]['dato'] = $TFA['Autorizacion'];
+             $datosDET[12]['campo'] =  "No_Hab"; 
+             $datosDET[12]['dato'] = $value["HABIT"];
+             $datosDET[13]['campo'] =  "Codigo"; 
+             $datosDET[13]['dato'] = $value["CODIGO"];
+             $datosDET[14]['campo'] =  "Cantidad"; 
+             $datosDET[14]['dato'] = $value["CANT"];
+             $datosDET[15]['campo'] =  "Reposicion"; 
+             $datosDET[15]['dato'] = $value["REP"];
+             $datosDET[16]['campo'] =  "Precio"; 
+             $datosDET[16]['dato'] = $value["PRECIO"];
+             $datosDET[17]['campo'] =  "Precio2"; 
+             $datosDET[17]['dato'] = $value["PRECIO2"];
+             $datosDET[18]['campo'] =  "Total"; 
+             $datosDET[18]['dato'] = $value["TOTAL"];
+             $datosDET[19]['campo'] =  "Total_Desc"; 
+             $datosDET[19]['dato'] = $value["Total_Desc"];
+             $datosDET[20]['campo'] =  "Total_Desc2"; 
+             $datosDET[20]['dato'] = $value["Total_Desc2"];
+             $datosDET[21]['campo'] =  "Total_IVA"; 
+             $datosDET[21]['dato'] = $value["Total_IVA"];
+             $datosDET[22]['campo'] =  "Producto"; 
+             $datosDET[22]['dato'] = $value["PRODUCTO"];
+             $datosDET[23]['campo'] =  "Cod_Ejec"; 
+             $datosDET[23]['dato'] = $value["Cod_Ejec"];
+             $datosDET[24]['campo'] =  "Porc_C"; 
+             $datosDET[24]['dato'] = $value["Porc_C"];
+             $datosDET[25]['campo'] =  "Ruta"; 
+             $datosDET[25]['dato'] = $value["RUTA"];
+             $datosDET[26]['campo'] =  "Corte"; 
+             $datosDET[26]['dato'] = $value["CORTE"];
+             $datosDET[27]['campo'] =  "Mes";
+             $datosDET[27]['dato'] = MesesLetras($No_Mes);
+             $datosDET[28]['campo'] =  "Mes_No";
+             $datosDET[28]['dato'] = $No_Mes;
+             $datosDET[29]['campo'] =  "Ticket"; 
+             $datosDET[29]['dato'] = $value["TICKET"];
+             $datosDET[30]['campo'] =  "CodBodega"; 
+             $datosDET[30]['dato'] = $value["CodBod"];
+             $datosDET[31]['campo'] =  "CodMarca"; 
+             $datosDET[31]['dato'] = $value["CodMar"];
+             $datosDET[32]['campo'] =  "Codigo_Barra"; 
+             $datosDET[32]['dato'] = $value["COD_BAR"];
+             $datosDET[33]['campo'] =  "Orden_No"; 
+             $datosDET[33]['dato'] = $value["Numero"];
+             $datosDET[34]['campo'] =  "CodigoU";
+             $datosDET[34]['dato'] =  $_SESSION['INGRESO']['CodigoU'];
+             $datosDET[35]['campo'] =  "Periodo";
+             $datosDET[35]['dato'] =  $_SESSION['INGRESO']['periodo'];
+             $datosDET[36]['campo'] =  "Item";
+             $datosDET[36]['dato'] =  $_SESSION['INGRESO']['item'];
+             $datosDET[37]['campo'] =  "Fecha_IN"; 
+             $datosDET[37]['dato'] = $value["Fecha_IN"]->format('Y-m-d');
+             $datosDET[38]['campo'] =  "Fecha_OUT"; 
+             $datosDET[38]['dato'] = $value["Fecha_OUT"]->format('Y-m-d');
+             $datosDET[39]['campo'] =  "Cant_Hab"; 
+             $datosDET[39]['dato'] = $value["Cant_Hab"];
+             $datosDET[40]['campo'] =  "Tipo_Hab"; 
+             $datosDET[40]['dato'] = $value["Tipo_Hab"];
+             $datosDET[41]['campo'] =  "Fecha_V"; 
+             $datosDET[41]['dato'] = $value["Fecha_V"]->format('Y-m-d');
+             $datosDET[42]['campo'] =  "Lote_No"; 
+             $datosDET[42]['dato'] = $value["Lote_No"];
+             $datosDET[43]['campo'] =  "Fecha_Fab"; 
+             $datosDET[43]['dato'] = $value["Fecha_Fab"]->format('Y-m-d');
+             $datosDET[44]['campo'] =  "Fecha_Exp"; 
+             $datosDET[44]['dato'] = $value["Fecha_Exp"]->format('Y-m-d');
+             //'$datosDET[0]['campo'] =  "Reg_Sanitario"; $datosDET[0]['dato'] = $value["Reg_Sanitario")
+             $datosDET[45]['campo'] =  "Procedencia"; 
+             $datosDET[45]['dato'] = $value["Procedencia"];
+             $datosDET[46]['campo'] =  "Modelo"; 
+             $datosDET[46]['dato'] = $value["Modelo"];
+             $datosDET[47]['campo'] =  "Serie_No"; 
+             $datosDET[47]['dato'] = $value["Serie_No"];
+             $datosDET[48]['campo'] =  "Costo"; 
+             $datosDET[48]['dato'] = $value["COSTO"];
+
+             // print_r($datosDET);die();
+             insert_generico('Detalle_Factura',$datosDET);
+                             
+            // 'Grabamos el submodulo de ingreso
+             if($value["TOTAL"] > 0 And $value["Cta_SubMod"] <> G_NINGUNO)
+             {
+                 // SetAdoAddNew "Trans_SubCtas"
+                 $datosTS[0]['campo'] =  "T"; 
+                 $datosTS[0]['dato'] =  G_NORMAL;
+                 $datosTS[1]['campo'] =  "TP"; 
+                 $datosTS[1]['dato'] =  G_NINGUNO;
+                 $datosTS[2]['campo'] =  "Numero"; 
+                 $datosTS[2]['dato'] =  0;
+                 $datosTS[3]['campo'] =  "Fecha"; 
+                 $datosTS[3]['dato'] =  $TFA['Fecha'];
+                 $datosTS[4]['campo'] =  "Item"; 
+                 $datosTS[4]['dato'] =  $_SESSION['INGRESO']['item'];
+                 $datosTS[5]['campo'] =  "CodigoU"; 
+                 $datosTS[5]['dato'] =   $_SESSION['INGRESO']['CodigoU'];
+                 $datosTS[6]['campo'] =  "TC"; 
+                 $datosTS[6]['dato'] =  "I";
+                 $datosTS[7]['campo'] =  "Cta"; 
+                 $datosTS[7]['dato'] =  $value["Cta"];
+                 $datosTS[8]['campo'] =  "Codigo"; 
+                 $datosTS[8]['dato'] =  $value["Cta_SubMod"];
+                 $datosTS[9]['campo'] =  "Fecha_V"; 
+                 $datosTS[9]['dato'] =  $TFA['Fecha_V'];
+                 $datosTS[10]['campo'] =  "Factura"; 
+                 $datosTS[10]['dato'] =  $TFA['Factura'];
+                 $datosTS[11]['campo'] =  "Creditos"; 
+                 $datosTS[11]['dato'] =  $value["TOTAL"];
+                 insert_generico('Trans_SubCtas',$datosTS);
+                
+             }
+
+            // 'Grabamos en el Kardex la factura
+             if($value["COSTO"] > 0)
+             {
+                 // SetAdoAddNew "Trans_Kardex"
+                 $datosTK[0]['campo'] =   "T"; 
+                 $datosTK[0]['dato'] = G_NORMAL;
+                 $datosTK[1]['campo'] =   "TC"; 
+                 $datosTK[1]['dato'] = $TFA['TC'];
+                 $datosTK[2]['campo'] =   "Serie"; 
+                 $datosTK[2]['dato'] = $TFA['Serie'];
+                 $datosTK[3]['campo'] =   "Fecha"; 
+                 $datosTK[3]['dato'] = $TFA['Fecha'];
+                 $datosTK[4]['campo'] =   "Factura"; 
+                 $datosTK[4]['dato'] = $TFA['Factura'];
+                 $datosTK[5]['campo'] =   "Codigo_P"; 
+                 $datosTK[5]['dato'] = $TFA['CodigoC'];
+                 $datosTK[6]['campo'] =   "CodBodega"; 
+                 $datosTK[6]['dato'] = $value["CodBod"];
+                 $datosTK[7]['campo'] =   "CodMarca"; 
+                 $datosTK[7]['dato'] = $value["CodMar"];
+                 $datosTK[8]['campo'] =   "Codigo_Inv"; 
+                 $datosTK[8]['dato'] = $value["CODIGO"];
+                 $datosTK[9]['campo'] =   "CodigoL"; 
+                 $datosTK[9]['dato'] = $TFA['Cod_CxC'];
+                 $datosTK[10]['campo'] =   "Lote_No"; 
+                 $datosTK[10]['dato'] = $value["Lote_No"];
+                 $datosTK[11]['campo'] =   "Fecha_Fab"; 
+                 $datosTK[11]['dato'] = $value["Fecha_Fab"]->format('Y-m-d');
+                 $datosTK[12]['campo'] =   "Fecha_Exp"; 
+                 $datosTK[12]['dato'] = $value["Fecha_Exp"]->format('Y-m-d');
+                 $datosTK[13]['campo'] =   "Procedencia"; 
+                 $datosTK[13]['dato'] = $value["Procedencia"];
+                 $datosTK[14]['campo'] =   "Modelo"; 
+                 $datosTK[14]['dato'] = $value["Modelo"];
+                 $datosTK[15]['campo'] =   "Serie_No"; 
+                 $datosTK[15]['dato'] = $value["Serie_No"];
+                 $datosTK[16]['campo'] =   "Total_IVA"; 
+                 $datosTK[16]['dato'] = $value["Total_IVA"];
+                 $datosTK[17]['campo'] =   "Porc_C"; 
+                 $datosTK[17]['dato'] = $value["Porc_C"];
+                 $datosTK[18]['campo'] =   "Salida"; 
+                 $datosTK[18]['dato'] = $value["CANT"];
+                 $datosTK[19]['campo'] =   "PVP"; 
+                 $datosTK[19]['dato'] = $value["PRECIO"];
+                 $datosTK[20]['campo'] =   "Valor_Unitario"; 
+                 $datosTK[20]['dato'] = $value["PRECIO"];
+                 $datosTK[21]['campo'] =   "Costo"; 
+                 $datosTK[21]['dato'] = $value["COSTO"];
+                 $datosTK[22]['campo'] =   "Valor_Total";
+                 $datosTK[22]['dato'] =  number_format($value["CANT"] * $value["PRECIO"],2,'.','');
+                 $datosTK[23]['campo'] =   "Total";
+                 $datosTK[23]['dato'] =  number_format($value["CANT"] * $value["COSTO"],2,'.','');
+                 $datosTK[24]['campo'] = "Detalle";
+                 $datosTK[24]['dato'] =  "FA: ".substr($TFA['Cliente'],0,96);
+                 $datosTK[25]['campo'] = "Codigo_Barra"; 
+                 $datosTK[25]['dato'] = $value["COD_BAR"];
+                 $datosTK[26]['campo'] = "Orden_No"; 
+                 $datosTK[26]['dato'] = $value["Numero"];
+                 $datosTK[27]['campo'] = "Cta_Inv"; 
+                 $datosTK[27]['dato'] = $value["Cta_Inv"];
+                 $datosTK[28]['campo'] = "Contra_Cta"; 
+                 $datosTK[28]['dato'] = $value["Cta_Costo"];
+                 $datosTK[29]['campo'] = "Item";
+                 $datosTK[29]['dato'] =  $_SESSION['INGRESO']['item'];
+                 $datosTK[30]['campo'] = "Periodo";
+                 $datosTK[30]['dato'] =  $_SESSION['INGRESO']['periodo'];
+                 $datosTK[31]['campo'] = "CodigoU";
+                 $datosTK[31]['dato'] =  $_SESSION['INGRESO']['CodigoU'];                 
+                 insert_generico('Trans_Kardex',$datosTK);
+              }            
+          }
+        }
+
+       $sql = "UPDATE Trans_Fletes 
+        SET T = 'P' 
+        WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+        AND Ok <> 0  
+        AND CodigoC = '".$TFA['CodigoC']."' ";
+        $conn->String_Sql($sql);
+        // '''   sSQL = "UPDATE Trans_Comision " _
+        // '''   & "SET Factura = " & TFA.Factura & " " _
+        // '''   & "WHERE Factura = 0 " _
+        // '''   & "AND Item = '" & NumEmpresa & "' " _
+        // '''   & "AND Periodo = '" & Periodo_Contable & "' " _
+        // '''   & "AND CodigoU = '" & CodigoUsuario & "' "
+        // '''   Ejecutar_SQL_SP sSQL
+
+       $sql = "DELETE
+          FROM Clientes_Facturacion
+          WHERE Item = '".$_SESSION['INGRESO']['item']."'
+          AND Valor <= 0
+          AND Num_Mes >= 0 ";
+          $conn->String_Sql($sql);
+      
+       if($Orden_No > 0)
+       {
+          $Orden_No = $datos[0]["Numero"];
+          foreach ($datos as $key => $value) 
+          {            
+             if($Orden_No <> $value["Numero"])
+             {
+                $sql = "UPDATE Facturas 
+                  SET T = 'A' 
+                  WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+                  AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+                  AND Factura = ".$Orden_No." 
+                  AND TC = 'OP' ";
+                  $conn->String_Sql($sql);
+                // Ejecutar_SQL_SP sSQL
+                
+                $sql = "UPDATE Detalle_Factura 
+                  SET T = 'A' 
+                  WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+                  AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+                  AND Factura = ".$Orden_No." 
+                  AND TC = 'OP' ";
+                  $conn->String_Sql($sql);
+                
+                $sql = "UPDATE Trans_Pedidos 
+                  SET Factura = ".$TFA['Factura'].",Serie = '".$TFA['Serie']."',Autorizacion = '".$TFA['Autorizacion']."' 
+                  WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+                  AND Orden_No = ".$Orden_No." 
+                  AND TC = 'OP' ";
+                  $conn->String_Sql($sql);
+                $Orden_No = $value["Numero"];
+             }            
+          }
+           $sql = "UPDATE Facturas 
+               SET T = 'A' 
+               WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+               AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+               AND Factura = ".$Orden_No." 
+               AND TC = 'OP' ";
+                $conn->String_Sql($sql);
+               // Ejecutar_SQL_SP sSQL
+        
+           $sql = "UPDATE Detalle_Factura 
+               SET T = 'A' 
+               WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+               AND Periodo = '".$_SESSION['INGRESO']['item']."' 
+               AND Factura = ".$Orden_No." 
+               AND TC = 'OP' ";
+                $conn->String_Sql($sql);
+               // Ejecutar_SQL_SP sSQL
+            
+           $sql = "UPDATE Trans_Pedidos 
+               SET Factura = ".$TFA['Factura'].",Serie = '".$TFA['Serie']."',Autorizacion = '".$TFA['Autorizacion']."' 
+               WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+               AND Orden_No = ".$Orden_No." 
+               AND TC = 'OP' ";
+                $conn->String_Sql($sql);
+               // Ejecutar_SQL_SP sSQL
+        }
+       
+       $sql = "DELETE 
+          FROM Asiento_F 
+          WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+          AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' ";
+           $conn->String_Sql($sql);
+          // Ejecutar_SQL_SP sSQL
+                   
+         if($NoRegTrans)
+         {
+            Actualiza_Procesado_Kardex_Factura($TFA);
+            // Control_Procesos "G", "Grabar " & TFA.TC & " No. " & TFA.Serie & "-" & Format$(TFA.Factura, "000000000") & " [" & TFA.Hora & "]"
+         }
+
+         return 1;
+    }else{
+       return "No se puede grabar el documento, falta datos.";
+   }
+  }
+
+function Actualiza_Procesado_Kardex_Factura($TFA)
+{
+    $SQLKardex = "UPDATE Trans_Kardex 
+        SET Procesado = 0 
+        FROM Trans_Kardex As TK, Detalle_Factura As DF 
+        WHERE DF.Item = '".$_SESSION['INGRESO']['item']."' 
+        AND DF.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+        AND DF.TC = '" & TFA.TC & "' 
+        AND DF.Serie = '" & TFA.Serie & "' 
+        AND DF.Factura = " & TFA.Factura & " 
+        AND TK.Item = DF.Item 
+        AND TK.Periodo = DF.Periodo 
+        AND TK.Codigo_Inv = DF.Codigo ";
+        $conn->String_Sql($SQLKardex);
+    
+    $SQLKardex = "UPDATE Trans_Kardex 
+        SET Procesado = 0 
+        FROM Trans_Kardex As TK, Asiento_NC As ANC 
+        WHERE TK.Item = '".$_SESSION['INGRESO']['item']."' 
+        AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+        AND ANC.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
+        AND TK.Item = ANC.Item 
+        AND TK.Codigo_Inv = ANC.CODIGO ";
+        $conn->String_Sql($SQLKardex);
+    
+    $SQLKardex = "UPDATE Trans_Kardex 
+        SET Procesado = 0 
+        FROM Trans_Kardex As TK, Asiento_F As AF 
+        WHERE TK.Item = '".$_SESSION['INGRESO']['item']."' 
+        AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+        AND AF.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
+        AND TK.Item = AF.Item 
+        AND TK.Codigo_Inv = AF.CODIGO ";        
+        $conn->String_Sql($SQLKardex);
+}
+
+
   function Grabar_Factura($datos1)
   {
     //conexion
@@ -8513,10 +9319,13 @@ function Leer_Codigo_Inv($CodigoDeInv,$FechaInventario,$CodBodega,$CodMarca='')
                  $DatInv["IVA"] = $datos[0]["IVA"];
               break;
           }
+
+          //revisar por si hay que comentar---
           if(strlen($DatInv["Cta_Ventas"])>1 && strlen($DatInv["Cta_Inventario"])<=1)
           {
             $DatInv["Stock"] =99999999;
-          }         
+          }      
+          //----------------------------------------------------------------------   
           $Codigo_Ok = True;     
 
       }else
@@ -9834,6 +10643,191 @@ function filtra_datos_unico_array($array, $key) {
         $i++;
     }
     return $temp_array;
+}
+
+
+function variables_tipo_factura()
+{
+   $FA = array(
+     
+    'T'=>'.',
+    'TC'=>'.',
+    'Porc_IVA_S' =>'.',
+    'Tipo_PRN'   =>'.',
+    'CodigoC'=>'.',
+    'CodigoB'=>'.',
+    'CodigoA'=>'.',
+    'CodigoDr'=>'.',
+    'Grupo'=>'.',
+    'Curso'=>'.',
+    'Cliente'=>'.',
+    'Contacto'=>'.',
+    'CI_RUC' =>'.', //Solo Clientes
+    'TD'=>'.',
+    'Razon_Social' =>'.',
+    'RUC_CI' =>'.', //Clientes Matriculas
+    'TB'=>'.',
+    'DireccionC' =>'.',
+    'DireccionS' =>'.',
+    'CiudadC'=>'.',
+    'DirNumero'  =>'.',
+    'TelefonoC'  =>'.',
+    'EmailC' =>'.',
+    'EmailR' =>'.',
+    'Forma_Pago' =>'.',
+    'Ejecutivo_Venta'  =>'.',
+    'Cta_CxP'=>'0',
+    'Cta_CxP_Anterior' =>'0',
+    'Cta_Venta'  =>'0',
+    'Cod_Ejec'   =>'.',
+    'Vendedor'   =>'.',
+    'Afiliado'   =>'.',
+    'Digitador'  =>'.',
+    'Nivel'=>'.',
+    'Nota'=>'.', 
+    'Observacion'=>'.',
+    'Definitivo' =>'.',
+    'Codigo_T'   =>'.',
+    'CodigoU'=>'.',
+    'Declaracion'=>'.',
+    'SubCta' =>'.',
+    'Hora'=>date('H:i:s'),
+    'Hora_FA'=>date('H:i:s'),
+    'Hora_NC'=>date('H:i:s'),
+    'Hora_GR'=>date('H:i:s'),
+    'Hora_LC'=>date('H:i:s'),
+    'Serie'=>'.',
+    'Serie_R'=>'.',
+    'Serie_NC'   =>'.',
+    'Serie_GR'   =>'.',
+    'Serie_LC'   =>'.',
+    'Autorizacion' =>'.',
+    'Autorizacion_R'   =>'.',
+    'Autorizacion_NC'  =>'.',
+    'Autorizacion_GR'  =>'.',
+    'Autorizacion_LC'  =>'.',
+    'Fecha_Tours'=>date('Y-m-d'),
+    'ClaveAcceso'=>'.',
+    'ClaveAcceso_NC'   =>'.',
+    'ClaveAcceso_GR'   =>'.',
+    'ClaveAcceso_LC'   =>'.',
+    'Fecha'=>date('Y-m-d'),
+    'Fecha_C'=>date('Y-m-d'),
+    'Fecha_V'=>date('Y-m-d'),
+    'Fecha_NC'   =>date('Y-m-d'),
+    'Fecha_Aut'  =>date('Y-m-d'),
+    'Fecha_Aut_NC' =>date('Y-m-d'),
+    'Fecha_Aut_GR' =>date('Y-m-d'),
+    'Fecha_Aut_LC' =>date('Y-m-d'),
+    'Fecha_Corte'=>date('Y-m-d'),
+    'Fecha_Desde'=>date('Y-m-d'),
+    'Fecha_Hasta'=>date('Y-m-d'),
+    'Vencimiento'=>date('Y-m-d'),
+    'FechaGRE'   =>'.',
+    'FechaGRI'   =>'.',
+    'FechaGRF'   =>'.',
+    'CiudadGRI'  =>'.',
+    'CiudadGRF'  =>'.',
+    'Comercial'  =>'.',
+    'CIRUCComercial'   =>'.',
+    'Entrega'=>'.',
+    'CIRUCEntrega' =>'.',
+    'Dir_PartidaGR'=>'.',
+    'Dir_EntregaGR'=>'.',
+    'Pedido' =>'.',
+    'Zona'=>'.',
+    'Placa_Vehiculo'=>'.',
+    'Error_SRI'  =>'.',
+    'Estado_SRI' =>'.',
+    'Estado_SRI_NC'=>'.',
+    'Estado_SRI_GR'=>'.',
+    'Estado_SRI_LC'=>'.',
+    'Lugar_Entrega'=>'.',
+    'DireccionEstab'   =>'.',
+    'NombreEstab'=>'.',
+    'TelefonoEstab'=>'.',
+    'LogoTipoEstab'=>'.',
+    'TP'=>'.',
+    'Tipo_Pago'  =>'.',
+    'Tipo_Pago_Det'=>'.',
+    'Tipo_Comp'  =>'.',
+    'Cod_CxC'=>'.',
+    'CxC_Clientes' =>'.',
+    'LogoFactura'=>'.',
+    'LogoNotaCredito'  =>'.',
+    'PDF_ClaveAcceso'  =>'.',
+
+    'C'=>'0',   
+    'p'=>'0',
+    'SP'=>'0',  
+    'ME_'=>'0', 
+    'Com_Pag'=>'0',
+    'Educativo'  =>'0',
+    'Imp_Mes'=>'0',
+    'Si_Existe_Doc'=>'0',
+    'Nuevo_Doc'  =>'0',
+    'EsPorReembolso' =>'0',
+    
+    'Gavetas' =>'0',
+    
+    'CantFact' =>'.',
+    
+    'Factura'=>'.',
+    'Desde'=>'.',
+    'Hasta'=>'.',
+    'DAU'=>'.',
+    'FUE'=>'.',
+    'Remision'   =>'0',
+    'Solicitud'  =>'.',
+    'Retencion'  =>'.',
+    'Nota_Credito' =>'.',
+    'Numero' =>'.',
+    'Orden_Compra' =>'.',
+    
+    'Porc_C' =>'0',
+    'Cotizacion' =>'0',
+    'Porc_NC'=>'.',
+    'Porc_IVA'   =>'.',
+    'AltoFactura'=>'.',
+    'AnchoFactura' =>'.',
+    'EspacioFactura'   =>'.',
+    'Pos_Factura'=>'.',
+    'Pos_Copia'  =>'.',
+    
+    'SubTotal' =>'0',
+    'SubTotal_NC'=>'0',
+    'SubTotal_NCX'=>'0',
+    'Sin_IVA'=>'0',
+    'Con_IVA'=>'0',
+    'Total_Sin_No_IVA'=>'0',
+    'Total_Descuento'=>'0',
+    'Total_IVA'  =>'0',
+    'Total_IVA_NC'=>'0',
+    'Total_Abonos'=>'0',
+    'Descuento'  =>'0',
+    'Descuento2' =>'0',
+    'Descuento_0'=>'0',
+    'Descuento_X'=>'0',
+    'Descuento_NC'=>'0',
+    'Comision'   =>'0',
+    'Servicio'   =>'0',
+    'Propina'    =>'0',
+    'Total_MN'   =>'0',
+    'Total_ME'   =>'0',
+    'Saldo_MN'   =>'0',
+    'Saldo_ME'   =>'0',
+    'Cantidad'   =>'0',
+    'Kilos'=>'0',
+    'Saldo_Actual'=>'0',
+    'Efectivo' =>'0',
+    'Saldo_Pend' =>'0',
+    'Saldo_Pend_MN' =>'0',
+    'Saldo_Pend_ME' =>'0',
+    'Ret_Fuente'=>'.',
+    'Ret_IVA'=>'.',
+    );
+
+   return $FA;
 }
 
 
