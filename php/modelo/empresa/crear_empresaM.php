@@ -8,7 +8,14 @@ class crear_empresaM
     {
         $this->db = new db();
     }
-
+    function consulta_empresa()
+    {
+        $sql = "SELECT *
+        FROM Empresas
+        WHERE Item <> '000'
+        ORDER BY Item DESC"
+        return $this->db->datos($sql);
+    }
     function lista_empresas($query=false, $item=false)
     {
         $sql = "SELECT *
