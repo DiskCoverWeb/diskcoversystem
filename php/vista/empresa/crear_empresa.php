@@ -803,7 +803,15 @@ function subdireccion()
         dataType: 'json',
         success:  function (response) 
         { 
-            console.log(response);
+            if(response == null)
+            {
+                Swal.fire('Este directorio ya existe seleccione otro','','error');
+                $('#TxtSubdir').val('');
+            }
+            else{
+                console.log(response);
+            $('#TxtSubdir').val(response);
+            }
         }
     });
 }
@@ -1000,7 +1008,7 @@ function subdireccion()
                     </div>
                     <div class="col-sm-2">
                         <label>SUBDIR:</label>
-                        <input type="text" name="TxtSubdir" id="TxtSubdir" class="form-control input-xs" value="Ninguno" onblur="subdireccion()">
+                        <input type="text" name="TxtSubdir" id="TxtSubdir" class="form-control input-xs" value="" onblur="subdireccion()" onkeyup="mayusculas('TxtSubdir',this.value);">
                     </div>
                 </div>
                 <div class="row">
