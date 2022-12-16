@@ -57,9 +57,9 @@ if(isset($_GET['validarRUConta']))
 }
 if(isset($_GET['subdireccion']))
 {
-    print_r($_POST);die();
-    $query = $_POST;
-	echo json_encode($controlador->guardar_subdirecc($query));
+    // print_r($_POST);die();
+    $query = $_POST['txtsubdi'];
+	echo json_encode($controlador->TextSubDir_LostFocus($query));
 }
 
 if(isset($_GET['naciones']))
@@ -330,12 +330,96 @@ class crear_empresaC
         // print_r($datos);die();
         return $datos;
     }
-    function guardar_subdirecc($subdir)
+
+
+function  TextSubDir_LostFocus($query)
+{
+    $TextSubDir = TextoValido($query);
+    //print_r($TextSubDir);die();
+    $dato = $this->modelo->consulta_empresa();
+    //print_r($TextSubDir);die();
+    if(count($dato)>0)
     {
-        $datos[0]['dato'] = $subdir[TextoValido($txtsubdi,"" , true)];
-        $datos[0]['campo'] = 'SubDir';
-        print_r($datos);die();
+        if($TextSubDir == G_NINGUNO  )
+        {
+            $NumEmpSubDir = 0;
+            if(count($dato) > 0)
+            {
+                $NumEmpSubDir = intval($dato[0]["Item"]);
+            }
+            $NumEmpSubDir = $NumEmpSubDir + 1;
+            $TextSubDir = "EMPRE".generaCeros($NumEmpSubDir,3);
+            return $TextSubDir;
+        }else
+        {
+            $dato2 = $this->modelo->consulta_empresa($TextSubDir);
+            if(count($dato2)>0)
+            {
+                if($_SESSION['INGRESO']['item'] <> $dato2[0]["Item"] )
+                {
+                    return null;
+                }
+
+            }
+        }
     }
+}
+
+
+    // function guardar_subdirec($parametros)
+    // {
+
+    //     $variable = $parametros[]
+    //     // print_r($_POST);
+    //     // $txtsubdi = $_POST['txtsubdi'];
+    //     // TextoValido($txtsubdi,"" , true);
+    //     // if($parametros["txtsubdi"]=='Ninguno')
+    //     // {
+    //     //     $NumEmpSubDir = '0';
+    //     //     print_r($NumEmpSubDir);0
+    //     // }
+    //     // if(guardardb_empresa()!='0'){
+    //     //     MoveFirst();
+    //     //     $NumEmpSubDir = $NumEmpSubDir + '1' ;
+    //     //     print_r($NumEmpSubDir);die();
+    //     // }
+    //     // if($parametros["txtsubdi"]!='')
+    //     // {
+    //     //     $txtsubdi = $_POST['txtsubdi'];
+    //     //     $r = TextoValido($txtsubdi);
+    //     //     print_r($r);die();
+    //     //     return $r;
+    //     // }
+    //     // else
+    //     // {
+    //     //     print_r('0');
+    //     // }
+    //     $txtsubdi = $parametros["txtsubdi"];
+    //     $r = TextoValido($txtsubdi,'',true)
+
+    //     $datos = $this->modelo->consulta_empresa();
+    //     if(count($dato)>0)
+    //     {
+            
+    //     }
+    //     // if($r!= '')
+	// 	// {
+	// 	// 	$datos[0]["dato"] = $r;
+    //     //     $datos[0]["campo"]='Det_SubMod';
+    //     //     print_r($datos);die();
+	// 	// }else
+    //     // {
+    //     //     print_r('0');
+    //     // }
+    //     // $txtsubdi = $_POST['txtsubdi'];
+    //     // TextoValido($txtsubdi,"" , true);
+
+    //     // if($txtsubdi == 'Ninguno')
+    //     // {
+    //     //     $NumEmpSubDir == $txtsubdi;
+    //     //     print_r($NumEmpSubDir);die();
+    //     // }
+    // }
     function guardardb_empresa($parametro)
     {
         //  print_r($parametro);die();
