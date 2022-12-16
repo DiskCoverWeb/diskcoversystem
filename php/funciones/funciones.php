@@ -650,7 +650,7 @@ function TextoValido($texto,$numero=false,$Mayusculas=false,$NumeroDecimales=fal
 	{
 		if($texto == '')
 		{
-			$result = 'Ninguno';
+			$result = G_NINGUNO;
 		}else
 		{
 			$result = $texto;
