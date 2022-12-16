@@ -8,12 +8,17 @@ class crear_empresaM
     {
         $this->db = new db();
     }
-    function consulta_empresa()
+    function consulta_empresa($subdir=false)
     {
         $sql = "SELECT *
         FROM Empresas
-        WHERE Item <> '000'
-        ORDER BY Item DESC"
+        WHERE Item <> '000'";
+        if($subdir)
+        {
+            $sql.=" AND SubDir = '".$subdir."'";
+        }
+        $sql.="
+        ORDER BY Item DESC";
         return $this->db->datos($sql);
     }
     function lista_empresas($query=false, $item=false)
