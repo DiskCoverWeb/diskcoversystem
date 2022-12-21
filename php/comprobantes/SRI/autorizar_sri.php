@@ -1416,9 +1416,7 @@ function generar_xml($cabecera,$detalle)
 		$xml_ptoEmi = $xml->createElement( "ptoEmi",$cabecera['pto_e'] );
 		$xml_secuencial = $xml->createElement( "secuencial",$numero );
 		$xml_dirMatriz = $xml->createElement( "dirMatriz",$cabecera['direccion_principal'] );
-		$xml_contribuyenteRimpe = $xml->createElement( "contribuyenteRimpe",'CONTRIBUYENTE RÉGIMEN RIMPE' );
 			
-		$xml_agenteRetencion = $xml->createElement( "agenteRetencion",'1');
 			
 		$xml_infoTributaria->appendChild( $xml_ambiente );
 		$xml_infoTributaria->appendChild( $xml_tipoEmision );
@@ -1433,12 +1431,14 @@ function generar_xml($cabecera,$detalle)
 		$xml_infoTributaria->appendChild( $xml_dirMatriz );
 		if(count($RIMPE)>0)
 		{
-			if($RIMPE[0]['RIMPE_E']==1)
+			if($RIMPE['@micro']!='.' && $RIMPE['@micro']!='.' )
 			{
+				$xml_contribuyenteRimpe = $xml->createElement( "contribuyenteRimpe",$RIMPE['@micro']);
 				$xml_infoTributaria->appendChild( $xml_contribuyenteRimpe);
-				}
-			if($RIMPE[0]['Agente_Retencion']!='.')
+			}
+			if($RIMPE['@Agente']!='.' && $RIMPE['@Agente']!='')
 			{
+				$xml_agenteRetencion = $xml->createElement( "agenteRetencion",'1');
 				$xml_infoTributaria->appendChild( $xml_agenteRetencion);
 			}
 		}
@@ -1451,14 +1451,19 @@ function generar_xml($cabecera,$detalle)
 	    }
 
 		$xml_fechaEmision = $xml->createElement( "fechaEmision",$cabecera['fechaem'] );
-		if($cabecera['Direccion_RS']=='.')
+
+		$estable = $cabecera['esta'];
+		$punto = $cabecera['pto_e'];
+		if(isset($cabecera['Nombre_Establecimiento']) &&  strlen($cabecera['Nombre_Establecimiento'])>0 && $cabecera['Nombre_Establecimiento']!='.')
+		{
+			$xml_dirEstablecimiento = $xml->createElement( "dirEstablecimiento",$cabecera['Direccion_Establecimiento']);
+
+		}else
 		{
 			$xml_dirEstablecimiento = $xml->createElement( "dirEstablecimiento",$cabecera['direccion_principal']);
 		}
-		else
-		{
-			$xml_dirEstablecimiento = $xml->createElement( "dirEstablecimiento",$cabecera['Direccion_RS'] );
-		}
+		
+		
 		$xml_obligadoContabilidad = $xml->createElement( "obligadoContabilidad",$_SESSION['INGRESO']['Obligado_Conta']);
 
 		$xml_tipoIdentificacionComprador = $xml->createElement( "tipoIdentificacionComprador",$cabecera['tipoIden'] );
@@ -1726,7 +1731,129 @@ function generar_xml($cabecera,$detalle)
 		$estable = $cabecera['esta'];
 		$punto = $cabecera['pto_e'];
 
-		if($estable=='001' && isset($cabecera['Nombre_Establecimiento']) &&  strlen($cabecera['Nombre_Establecimiento'])>0 && $cabecera['Nombre_Establecimiento']!='.')
+	///----------------------  infomrmacion adicional cuando punto de venta es diferente de 001 ----------------------
+	// print_r($sucursal);die();
+	if($estable=='001' && $punto!='001')
+	{
+		$xml_campoAdicional = $xml->createElement( "campoAdicional", $cabecera['esta'].$cabecera['pto_e']);
+		$xml_campoAdicional->setAttribute( "nombre", "seriePuntoEmision" );
+		$xml_infoAdicional->appendChild( $xml_campoAdicional );
+
+		if($cabecera['Nombre_Establecimiento']!='.' && $cabecera['Nombre_Establecimiento']!='')
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Nombre_Establecimiento'] );
+			$xml_campoAdicional->setAttribute( "nombre", "socioRazonSocial" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}
+
+		if($cabecera['Ruc_Establecimiento']!='' && $cabecera['Ruc_Establecimiento']!='.')
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Ruc_Establecimiento'] );
+			$xml_campoAdicional->setAttribute( "nombre", "socioRUC" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}
+
+		if($cabecera['Direccion_Establecimiento']!='.' && $cabecera['Direccion_Establecimiento']!='')
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Direccion_Establecimiento'] );
+			$xml_campoAdicional->setAttribute( "nombre", "socioDireccion" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}
+
+		if($cabecera['Telefono_Establecimiento']!='.' && $cabecera['Telefono_Establecimiento']!='')
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Telefono_Establecimiento'] );
+			$xml_campoAdicional->setAttribute( "nombre", "socioTelefono" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}
+
+		if($cabecera['Email_Establecimiento']!='.' && $cabecera['Email_Establecimiento']!='')
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Email_Establecimiento'] );
+			$xml_campoAdicional->setAttribute( "nombre", "socioEmail" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}
+
+		if(isset($cabecera['Placa_Vehiculo']))
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Placa_Vehiculo'] );
+			$xml_campoAdicional->setAttribute( "nombre", "PlacaVehiculo" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}
+
+		if(isset($cabecera['Cta_Establecimiento']))
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Cta_Establecimiento'] );
+			$xml_campoAdicional->setAttribute( "nombre", "CtaEstablecimiento" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}
+	}
+
+	///----------------------  fin infomrmacion adicional cuando punto de venta es diferente de 001 ----------------------
+
+
+	///----------------------  infomrmacion adicional cuan establecimiento es diferente de 001 ----------------------
+
+    if($estable!='001')
+	{
+
+		$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['esta'].$cabecera['pto_e']);
+		$xml_campoAdicional->setAttribute( "nombre", "serieEstablecimiento" );
+		$xml_infoAdicional->appendChild( $xml_campoAdicional );
+
+		if($cabecera['Nombre_Establecimiento']!='.' && $cabecera['Nombre_Establecimiento']!='')
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Nombre_Establecimiento'] );
+			$xml_campoAdicional->setAttribute( "nombre", "NombreEstablecimiento" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}
+
+		if($cabecera['Ruc_Establecimiento']!='' && $cabecera['Ruc_Establecimiento']!='.')
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Ruc_Establecimiento'] );
+			$xml_campoAdicional->setAttribute( "nombre", "RUCEstablecimiento" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}
+       /*
+       este dato ya viene al inicio del xml en direstablecimiento
+		if($cabecera['Direccion_Establecimiento']!='.' && $cabecera['Direccion_Establecimiento']!='')
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Direccion_Establecimiento'] );
+			$xml_campoAdicional->setAttribute( "nombre", "direccionEstablecimiento" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}
+       */
+		if($cabecera['Telefono_Establecimiento']!='.' && $cabecera['Telefono_Establecimiento']!='')
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Telefono_Establecimiento'] );
+			$xml_campoAdicional->setAttribute( "nombre", "TelefonoEstablecimiento" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}
+
+		if($cabecera['Email_Establecimiento']!='.' && $cabecera['Email_Establecimiento']!='')
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Email_Establecimiento'] );
+			$xml_campoAdicional->setAttribute( "nombre", "EmailEstablecimiento" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}
+
+		if(isset($cabecera['Placa_Vehiculo']))
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Placa_Vehiculo'] );
+			$xml_campoAdicional->setAttribute( "nombre", "PlacaVehiculo" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}
+
+		if(isset($cabecera['Cta_Establecimiento']))
+		{
+			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Cta_Establecimiento'] );
+			$xml_campoAdicional->setAttribute( "nombre", "CtaEstablecimiento" );
+			$xml_infoAdicional->appendChild( $xml_campoAdicional );
+		}		
+	}
+
+/*
+		if($estable!='001' && isset($cabecera['Nombre_Establecimiento']) &&  strlen($cabecera['Nombre_Establecimiento'])>0 && $cabecera['Nombre_Establecimiento']!='.')
 		{
 			
 				$xml_campoAdicional = $xml->createElement( "campoAdicional", $cabecera['esta'].$cabecera['pto_e']);
@@ -1766,7 +1893,8 @@ function generar_xml($cabecera,$detalle)
 					$xml_campoAdicional->setAttribute( "nombre", "CtaEstablecimiento" );
 					$xml_infoAdicional->appendChild( $xml_campoAdicional );
 				}	
-		}
+		}*/
+		/*
 
 		if($estable!='001' && isset($cabecera['Nombre_Establecimiento']) &&  strlen($cabecera['Nombre_Establecimiento'])>0 && $cabecera['Nombre_Establecimiento']!='.')
 		{
@@ -1790,7 +1918,7 @@ function generar_xml($cabecera,$detalle)
 			// 	$xml_campoAdicional->setAttribute( "nombre", "socioEmail" );
 			// 	$xml_infoAdicional->appendChild( $xml_campoAdicional );		
 			
-		}
+		}*/
 
 		
 
@@ -2436,9 +2564,9 @@ function generar_xml_retencion($cabecera,$detalle=false)
 
     function datos_rimpe()
     {
-    	$sql = "SELECT * FROM lista_tipo_contribuyente WHERE RUC ='".$_SESSION['INGRESO']['RUC']."'";
+    	$tipo_con = Tipo_Contribuyente_SP_MYSQL($_SESSION['INGRESO']['RUC']);
     	// print_r($sql);die();
-    	return $this->db->datos($sql,'MySQL');
+    	return $tipo_con;
     }
 
   function catalogo_lineas($TC,$SerieFactura)

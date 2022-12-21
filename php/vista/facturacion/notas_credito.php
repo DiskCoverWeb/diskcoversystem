@@ -264,12 +264,50 @@ function Detalle_Factura(Factura=false,Serie=false,TC=false,codigoC=false)
       dataType:'json', 
       success: function(data)
       {
+        
+        $('#TxtAutorizacion').val(data[0].Autorizacion);
+        $('#LblTotal').val(data[0].Saldo_MN); 
+        $('#LblSaldo').val(data[0].Total_MN); 
+        $('#LblSaldo').val(data[0].Total_MN); 
+        Lineas_Factura(Factura,Serie,TC,data[0].Autorizacion)
          
+      }
+    });
+}
+
+
+function Lineas_Factura(Factura=false,Serie=false,TC=false,Autorizacion=false)
+{
+	if(Factura==false)	{	Factura = $('#DCFactura').val();	}
+	if(Serie==false)	{	Serie = $('#DCSerie').val();	}
+	if(TC==false)	{	TC = $('#DCTC').val();	}
+
+	var parametros = 
+	{		
+		'Factura':Factura,
+		'Serie':Serie,
+		'TC':TC,
+		'Autorizacion':Autorizacion,
+		'Fecha':$('#MBoxFecha').val(),
+		'CodigoC':$('#DCClientes').val(),
+	}
+  	 $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/notas_creditoC.php?Lineas_Factura=true',
+      data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+        
+        $('#TxtAutorizacion').val(data[0].Autorizacion);
+        $('#LblTotal').val(data[0].Saldo_MN); 
+        $('#LblSaldo').val(data[0].Total_MN); 
          	 console.log(data);
          
       }
     });
 }
+
 
 function autocoplete_clinete(){
       $('#DCClientes').select2({
@@ -350,9 +388,9 @@ function autocoplete_clinete(){
 <div class="row">
 	<div class="col-sm-12">
 		<div class="form-group">
-          <label class="col-sm-2" style="padding:0px">Motivo de la Nota de credito</label>
-          <div class="col-sm-10" style="padding:0px">
-            <input type="text" name="cta_inventario" id="cta_inventario" class="form-control input-xs">
+          <label class="col-sm-3" style="padding:0px">Motivo de la Nota de credito</label>
+          <div class="col-sm-9" style="padding:0px">
+            <input type="text" name="TxtConcepto" id="TxtConcepto" class="form-control input-xs">
           </div>
         </div>
 	</div>
@@ -378,15 +416,15 @@ function autocoplete_clinete(){
 	</div>
 	<div class="col-sm-4">
 		<b>Autorizacion del documento</b>
-		<input type="text" name="cta_inventario" id="cta_inventario" class="form-control input-xs">
+		<input type="text" name="TxtAutorizacion" id="TxtAutorizacion" class="form-control input-xs">
 	</div>
 	<div class="col-sm-2">
 		<b>Total de Factura</b>
-		<input type="text" name="cta_inventario" id="cta_inventario" class="form-control input-xs">
+		<input type="text" name="LblTotal" id="LblTotal" class="form-control input-xs" value="0.00">
 	</div>
 	<div class="col-sm-2">
 		<b>Saldo de Factura</b>
-		<input type="text" name="cta_inventario" id="cta_inventario" class="form-control input-xs">
+		<input type="text" name="LblSaldo" id="LblSaldo" class="form-control input-xs" value="0.00">
 	</div>	
 </div>
 <div class="row">
@@ -470,7 +508,7 @@ function autocoplete_clinete(){
 				<div class="form-group">
 		          <label class="col-sm-6" style="padding:0px">sub total sin iva</label>
 		          <div class="col-sm-6" style="padding:0px">
-		            <input type="text" name="" class="form-control input-xs">
+		            <input type="text" name="TxtSinIVA" id="TxtSinIVA" class="form-control input-xs">
 		          </div>
 		        </div>
 			</div>
@@ -478,7 +516,7 @@ function autocoplete_clinete(){
 				<div class="form-group">
 		          <label class="col-sm-6" style="padding:0px">sub total con iva</label>
 		          <div class="col-sm-6" style="padding:0px">
-		            <input type="text" name="" class="form-control input-xs">
+		            <input type="text" name="TxtConIVA" id="TxtConIVA" class="form-control input-xs">
 		          </div>
 		        </div>
 			</div>
@@ -486,7 +524,7 @@ function autocoplete_clinete(){
 				<div class="form-group">
 		          <label class="col-sm-6" style="padding:0px">Total descuento</label>
 		          <div class="col-sm-6" style="padding:0px">
-		            <input type="text" name="" class="form-control input-xs">
+		            <input type="text" name="TxtDescuento" id="TxtDescuento" class="form-control input-xs">
 		          </div>
 		        </div>
 			</div>
@@ -498,7 +536,7 @@ function autocoplete_clinete(){
 				<div class="form-group">
 		          <label class="col-sm-6" style="padding:0px">Sub total</label>
 		          <div class="col-sm-6" style="padding:0px">
-		            <input type="text" name="" class="form-control input-xs">
+		            <input type="text" name="TxtSaldo" id="TxtSaldo" class="form-control input-xs">
 		          </div>
 		        </div>
 			</div>
@@ -506,7 +544,7 @@ function autocoplete_clinete(){
 				<div class="form-group">
 		          <label class="col-sm-6" style="padding:0px">Total del I.V.A</label>
 		          <div class="col-sm-6" style="padding:0px">
-		            <input type="text" name="" class="form-control input-xs">
+		            <input type="text" name="TxtIVA" id="TxtIVA" class="form-control input-xs">
 		          </div>
 		        </div>
 			</div>
@@ -514,7 +552,7 @@ function autocoplete_clinete(){
 				<div class="form-group">
 		          <label class="col-sm-6" style="padding:0px">Total Nota Credito</label>
 		          <div class="col-sm-6" style="padding:0px">
-		            <input type="text" name="" class="form-control input-xs">
+		            <input type="text" name="LblTotalDC" id="LblTotalDC" class="form-control input-xs">
 		          </div>
 		        </div>
 			</div>

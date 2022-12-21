@@ -76,6 +76,12 @@ class modalesC
 	function busca_cliente($query)
 	{
 		$resp = $this->modelo->buscar_cliente($query);
+		// print_r($resp);die();	
+		if(count($resp)>0)
+		{
+			$veri = digito_verificador_nuevo($query);
+			if($resp[0]['TD']==''){$resp[0]['TD'] = $veri['Tipo'];}
+		}
 		$datos = array();
 		foreach ($resp as $key => $value) {
 			$datos[] = array(
@@ -93,8 +99,9 @@ class modalesC
 			    'provincia'=>$value['Prov'],
 			    'ciudad'=>$value['Ciudad'],
 			    'FA'=>$value['FA'],
+			    'TD'=>$value['TD'],
 			);
-		}		
+		}	
 		return $datos;
 	}
 
@@ -131,7 +138,7 @@ class modalesC
 		$dato[7]['campo']='Email';
 		$dato[7]['dato']=$parametro['email'];
 		$dato[8]['campo']='TD';
-		$dato[8]['dato']=$parametro['TC'];
+		$dato[8]['dato']=$parametro['TD'];
 		$dato[9]['campo']='CodigoU';
 		$dato[9]['dato']=$_SESSION['INGRESO']['CodigoU'];
 		$dato[10]['campo']='Prov';

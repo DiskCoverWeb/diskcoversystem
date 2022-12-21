@@ -36,6 +36,7 @@
                 $('#naciona').val(response[0].nacionalidad); // save selected id to input
                 $('#prov').val(response[0].provincia); // save selected id to input
                 $('#ciu').val(response[0].ciudad); // save selected id to input
+                $('#TD').val(response[0].TD); // save selected id to input
                 if(response[0].FA==1){ $('#rbl_facturar').prop('checked',true); }else{ $('#rbl_facturar').prop('checked',false);}
              }else
              {
@@ -100,7 +101,7 @@
       success: function(response){     	
       	console.log(response);
       	$('#codigoc').val(response.Codigo);
-      	$('#TC').val(response.Tipo);
+      	$('#TD').val(response.Tipo);
         
       }
     });
@@ -261,7 +262,7 @@ function validar_sri()
 					<div class="col-xs-3 col-sm-3 ">
 					 <label for="codigoc" class="control-label"><span style="color: red;">*</span>Codigo</label>
 						<input type="hidden" id='buscar' name='buscar'  value='' />
-						<input type="hidden" id='TC' name='TC'  value='' />
+						<input type="hidden" id='TD' name='TD'  value='' />
 						<input type="text" class="form-control input-sm" id="codigoc" name="codigoc" placeholder="Codigo" readonly="">
 						<span class="help-block" id='e_codigoc' style='display:none;color: red;'>debe agregar Codigo</span>						
 					</div>

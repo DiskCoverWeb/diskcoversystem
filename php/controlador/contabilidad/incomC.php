@@ -1369,7 +1369,7 @@ class incomC
                 $CodigoP = $value["CODIGO_C"];
                 if($CodigoP == '.'){ $CodigoP = $CodigoB;}
                 // 'MsgBox C1.T_No & vbCrLf & C1.Concepto & vbCrLf & Debe & vbCrLf & Haber
-                if (strpos($Ctas_Modificar, $Cta) !== true) {  $Ctas_Modificar.= $Ctas_Modificar.''.$Cta.",";}
+                if (stristr($Ctas_Modificar, $Cta) === false) {  $Ctas_Modificar.= $Ctas_Modificar.''.$Cta.",";}
                 // if (InStr(C1.Ctas_Modificar, $Cta) == 0){ C1.Ctas_Modificar == C1.Ctas_Modificar.''.$Cta.",";}
                 if(($Debe + $Haber) > 0){
                    // SetAdoAddNew "Transacciones"

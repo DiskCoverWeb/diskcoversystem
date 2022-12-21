@@ -62,6 +62,13 @@ if(isset($_GET['Detalle_Factura']))
 	echo json_encode($controlador->Detalle_Factura($parametros));
 }
 
+if(isset($_GET['Lineas_Factura']))
+{
+	$parametros = $_POST['parametros'];
+	// print_r($parametros);die();
+	echo json_encode($controlador->Lineas_Factura($parametros));
+}
+
 if(isset($_GET['DCFactura']))
 {
 	$parametros = $_POST['parametros'];
@@ -197,6 +204,88 @@ class notas_creditoC
 	function delete_sientos_nc()
 	{
 		return $this->modelo->delete_asiento_nc();
+	}
+
+	function Lineas_Factura($parametros)
+	{
+		// print_r($parametro);die();
+     $DocConInv = false;
+     $Ln_No = 0;
+     $this->modelo->delete_asiento_nc();
+    
+     //LblSaldo.Caption = Format(FA.Saldo_MN, "#,##0.00")
+     //LblTotal.Caption = Format(FA.Total_MN, "#,##0.00")
+     $datos = $this->modelo->lineas_factura($parametros['Factura'],$parametros['Serie'],$parametros['TC'],$parametros['Autorizacion']);
+     // print_r($datos);die();     
+      if(count($datos)  > 0)
+      {
+          // $FA.Cod_Ejec = .fields("Cod_Ejec")
+          // $FA.Porc_C = .fields("Porc_C")
+          $NoMes = $datos[0]["Mes_No"];
+          $MiMes = $datos[0]["Mes"];
+          $Cod_Bodega = $datos[0]["CodBodega"];
+          foreach ($datos as $key => $value) 
+          {
+             $Ok_Inv = Leer_Codigo_Inv($value["Codigo"], $parametros['Fecha']);
+              // print_r($Ok_Inv);
+              // print_r($datos);die();     
+             $datosNC[0]['campo'] =  "CODIGO"; 
+             $datosNC[0]['dato'] = $value[ "Codigo"];
+             $datosNC[1]['campo'] =  "CANT"; 
+             $datosNC[1]['dato'] = $value[ "Cantidad"];
+             $datosNC[2]['campo'] =  "PRODUCTO"; 
+             $datosNC[2]['dato'] = $value[ "Producto"];
+             $datosNC[3]['campo'] =  "SUBTOTAL"; 
+             $datosNC[3]['dato'] = $value[ "Total"];
+             $datosNC[4]['campo'] =  "DESCUENTO"; 
+             $datosNC[4]['dato'] = $value[ "Total_Desc"] + $value["Total_Desc2"];
+             $datosNC[5]['campo'] =  "TOTAL_IVA"; 
+             $datosNC[5]['dato'] = $value[ "Total_IVA"];
+             $datosNC[6]['campo'] =  "CodBod"; 
+             $datosNC[6]['dato'] = $value[ "CodBodega"];
+             $datosNC[7]['campo'] =  "CodMar"; 
+             $datosNC[7]['dato'] = $value[ "CodMarca"];
+             $datosNC[8]['campo'] =  "Codigo_C"; 
+             $datosNC[8]['dato'] =  $parametros['CodigoC'];
+             $datosNC[9]['campo'] =  "Item"; 
+             $datosNC[9]['dato'] =  $_SESSION['INGRESO']['item']; // NumEmpresa
+             $datosNC[10]['campo'] =  "CodigoU"; 
+             $datosNC[10]['dato'] =  $_SESSION['INGRESO']['CodigoU']; // CodigoUsuario
+             $datosNC[11]['campo'] =  "PVP"; 
+             $datosNC[11]['dato'] = $value[ "Precio"];
+             $datosNC[12]['campo'] =  "COSTO";
+             $datosNC[12]['dato'] =  $Ok_Inv['datos']['Costo'];
+             $datosNC[13]['campo'] =  "Cod_Ejec"; 
+             $datosNC[13]['dato'] = $value[ "Cod_Ejec"];
+             $datosNC[14]['campo'] =  "Porc_C"; 
+             $datosNC[14]['dato'] = $value[ "Porc_C"];
+             $datosNC[15]['campo'] =  "Porc_IVA"; 
+             $datosNC[15]['dato'] = $value[ "Porc_IVA"];
+             $datosNC[16]['campo'] =  "Mes_No"; 
+             $datosNC[16]['dato'] = $value[ "Mes_No"];
+             $datosNC[17]['campo'] =  "Mes"; 
+             $datosNC[17]['dato'] = $value[ "Mes"];
+             $datosNC[18]['campo'] =  "Anio"; 
+             $datosNC[18]['dato'] = $value[ "Ticket"];
+             $datosNC[19]['campo'] =  "A_No";
+             $datosNC[19]['dato'] = $Ln_No;           
+             if($Ok_Inv['datos']['Con_Kardex'])
+             {
+               $datosNC[20]['campo'] =  "Ok";
+               $datosNC[20]['dato'] = $Ok_Inv['datos']['Con_Kardex'];
+               $datosNC[21]['campo'] =  "Cta_Inventario"; 
+               $datosNC[21]['dato']  = $Ok_tInv['Cta_Inventario'];
+               $datosNC[22]['campo'] =  "Cta_Costo"; 
+               $datosNC[22]['dato']  = $Ok_tInv['Cta_Costo_Venta'];
+             }
+             insert_generico('Asiento_NC',$datosNC);
+             $Ln_No = $Ln_No + 1;
+             // DocConInv = DatInv.Con_Kardex
+          }
+      }
+
+     // Listar_Articulos_Malla
+     // If DocConInv Then DCBodega.SetFocus Else DGAsiento_NC.SetFocus
 	}
 }
 ?>

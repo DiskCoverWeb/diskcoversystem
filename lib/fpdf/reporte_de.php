@@ -2102,7 +2102,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 //
  function imprimirDocEle_fac($datos,$detalle,$educativo,$matri=false,$nombre,$formato=null,$nombre_archivo=null,$va=null,$imp1=false,$abonos=false,$sucursal=array())
 {
-	// print_r($datos);die();
+	// print_r($sucursal);die();
 	$pdf = new PDF('P','pt','LETTER');
 	$pdf->AliasNbPages('TPAG');
 	$pdf->SetTopMargin(5);
@@ -2115,10 +2115,10 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	if(isset($datos['Tipo_contribuyente']) && count($datos['Tipo_contribuyente'])>0)
 	{
 		// print_r($datos['Tipo_contribuyente']);die();
-		$agente = $datos['Tipo_contribuyente'][0]['Agente_Retencion'];
-		if($datos['Tipo_contribuyente'][0]['RIMPE_E']==1)
+		$agente = $datos['Tipo_contribuyente']['@Agente'];
+		if($datos['Tipo_contribuyente']['@micro']!='.')
 		{
-			$rimpe = 'Regimen RIMPE Emprendedores';
+			$rimpe = $datos['Tipo_contribuyente']['@micro'];
 		}
 	}
 	
@@ -2241,61 +2241,6 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$y_alineado = $yfin;
 	//==================================fin cuadro izquierda inicial==================
 
-	//=============================== cuadro datos sucursal==================================================
-
-	// print_r($sucursal);die();
-	if(count($sucursal)>0 && $sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='' && $punto!='001' && $suc=='001')
-	{
-		$y = $pdf->GetY()+$margen*2;	
-	    $x = $pdf->GetX();
-
-	    $pdf->SetXY($x,$y);
-
-	    $margen_med3 = 540;
-		if($sucursal[0]['Telefono_Estab']=='.' || $sucursal[0]['Telefono_Estab']=='')
-		{
-			$sucursal[0]['Telefono_Estab'] = '';
-		}
-		if($sucursal[0]['Email_Establecimiento']=='.' || $sucursal[0]['Email_Establecimiento']=='')
-		{
-			$sucursal[0]['Email_Establecimiento'] = '';
-		}
-		if($sucursal[0]['Email_Establecimiento']=='.' || $sucursal[0]['Email_Establecimiento']=='')
-		{
-			$sucursal[0]['Email_Establecimiento'] = '';
-		}
-
-		$pdf->SetFont('Arial','B',6);
-    	$pdf->SetWidths(array(225,100,100,100));
-    	$arr=array('Punto de emision: '.$datos[0]['Serie'],'RUC: ','Telefono: ','Email: ');
-    	if(strlen($sucursal[0]['RUC_Establecimiento'])==1)
-    	{
-    		$arr=array('Nombre de punto de venta: ','','Telefono de punto de venta ');
-    	}
-		$pdf->Row($arr,10);
-
-		$pdf->SetWidths(array(225,100,100,100));
-		$arr=array($sucursal[0]['Nombre_Establecimiento'],$sucursal[0]['RUC_Establecimiento'],$sucursal[0]['Telefono_Estab'],$sucursal[0]['Email_Establecimiento']);
-		if(strlen($sucursal[0]['RUC_Establecimiento'])==1)
-    	{
-    		$arr=array($sucursal[0]['Nombre_Establecimiento'],'',$sucursal[0]['Telefono_Estab']);
-    	}
-		$pdf->Row($arr,10);
-		 $pdf->SetWidths(array(350,50,100));
-		 $arr=array('Direccion','Placa','Cta Establecimiento');//mio
-		 $pdf->Row($arr,10);
-		 $arr=array($sucursal[0]['Direccion_Establecimiento'],$sucursal[0]['Placa_Vehiculo'],$sucursal[0]['Cta_Establecimiento']);//mio
-		 $pdf->Row($arr,10);
-
-
-		$yfin = $pdf->GetY();	
-	    $xfin = $pdf->GetX();
-
-		$pdf->RoundedRect($x-$margen, $y-$margen, $margen_med3, $yfin-$y+$margen, $radio, $style = '', $angle = '1234');	
-
-	}
-	//============================= fin cuadros datos sucursal==============================================
-
 
 
 	//============================================cuadro cliente ==========================================
@@ -2314,8 +2259,13 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(270,155,100));
+	// print_r($educativo);die();
     if(count($educativo)>0)
     {
+    	if(!isset($educativo[0]['Direccion']))
+    	{
+    		$educativo[0]['Direccion'] = '.';
+    	}
 		$arr=array('Dirección: '.$educativo[0]['Direccion'],'Fecha emisión: '.$datos[0]['Fecha']->format('Y-m-d'),'Fecha pago: '.$datos[0]['Fecha']->format('Y-m-d'));//mio
 		$pdf->Row($arr,10);
 		$pdf->SetWidths(array(270,155,100));
@@ -2491,31 +2441,92 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 
     }
 
-    if(count($sucursal)>0 && $sucursal[0]['Placa_Vehiculo']!='.' && $sucursal[0]['Placa_Vehiculo']!='' && $punto!='001')
+
+	///----------------------  infomrmacion adicional cuando punto de venta es diferente de 001 ----------------------
+	// print_r($sucursal);die();
+	if(count($sucursal)>0 && $punto!='001' && $suc=='001')
 	{
-		$arr=array('Placas: '.$sucursal[0]['Placa_Vehiculo']);
-	    $pdf->Row($arr,10);
-	}
-	if(count($sucursal)>0 && $sucursal[0]['Cta_Establecimiento']!='.' && $sucursal[0]['Cta_Establecimiento']!='' && $punto!='001')
-	{
-		$arr=array('Cta_Establecimiento: '.$sucursal[0]['Cta_Establecimiento']);
-	    $pdf->Row($arr,10);
+		$arr=array('Punto Emision: '.$datos[0]['Serie']);
+		$pdf->Row($arr,10);
+
+		if($sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='')
+		{
+			$arr=array($sucursal[0]['Nombre_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+		if($sucursal[0]['RUC_Establecimiento']!='.' && $sucursal[0]['RUC_Establecimiento']!='')
+		{
+			$arr=array('Ruc punto Emision: '.$sucursal[0]['RUC_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+		if($sucursal[0]['Direccion_Establecimiento']!='.' && $sucursal[0]['Direccion_Establecimiento']!='')
+		{
+			$arr=array('Direccion punto Emision: '.$sucursal[0]['Direccion_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+		if($sucursal[0]['Telefono_Estab']!='.' && $sucursal[0]['Telefono_Estab']!='')
+		{
+			$arr=array('Telefono punto Emision: '.$sucursal[0]['Telefono_Estab']);
+		    $pdf->Row($arr,10);
+		}
+		if($sucursal[0]['Email_Establecimiento']!='.' && $sucursal[0]['Email_Establecimiento']!='')
+		{
+			$arr=array('Email punto Emision: '.$sucursal[0]['Email_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+
+		if($sucursal[0]['Cta_Establecimiento']!='.' && $sucursal[0]['Cta_Establecimiento']!='')
+		{
+			$arr=array('Cta Punto Emision: '.$sucursal[0]['Cta_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+			
+
+		if($sucursal[0]['Placa_Vehiculo']!='.' && $sucursal[0]['Placa_Vehiculo']!='')
+		{
+			$arr=array('Placas: '.$sucursal[0]['Placa_Vehiculo']);
+		    $pdf->Row($arr,10);
+		}	   
+
+		
 	}
 
-    if(count($sucursal)>0 && $sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='' && $suc!='001')
+	///----------------------  fin infomrmacion adicional cuando punto de venta es diferente de 001 ----------------------
+
+
+	///----------------------  infomrmacion adicional cuan establecimiento es diferente de 001 ----------------------
+
+    if(count($sucursal)>0 && $suc!='001')
 	{
-		if($sucursal[0]['Telefono_Estab']=='.' || $sucursal[0]['Telefono_Estab']=='')
+		$arr=array('Establecimiento: '.$datos[0]['Serie']);
+		$pdf->Row($arr,10);
+
+		if($sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='')
 		{
-			$sucursal[0]['Telefono_Estab'] = '';
+			$arr=array($sucursal[0]['Nombre_Establecimiento']);
+		    $pdf->Row($arr,10);
 		}
-		if($sucursal[0]['Email_Establecimiento']=='.' || $sucursal[0]['Email_Establecimiento']=='')
+		if($sucursal[0]['RUC_Establecimiento']!='.' && $sucursal[0]['RUC_Establecimiento']!='')
 		{
-			$sucursal[0]['Email_Establecimiento'] = '';
+			$arr=array('Ruc establecimiento: '.$sucursal[0]['RUC_Establecimiento']);
+		    $pdf->Row($arr,10);
 		}
-		if($sucursal[0]['Email_Establecimiento']=='.' || $sucursal[0]['Email_Establecimiento']=='')
+		if($sucursal[0]['Telefono_Estab']!='.' && $sucursal[0]['Telefono_Estab']!='')
 		{
-			$sucursal[0]['Email_Establecimiento'] = '';
+			$arr=array('Telefono establecimiento: '.$sucursal[0]['Telefono_Estab']);
+		    $pdf->Row($arr,10);
 		}
+		if($sucursal[0]['Email_Establecimiento']!='.' && $sucursal[0]['Email_Establecimiento']!='')
+		{
+			$arr=array('Email establecimiento: '.$sucursal[0]['Email_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+		if($sucursal[0]['Cta_Establecimiento']!='.' && $sucursal[0]['Cta_Establecimiento']!='')
+		{
+			$arr=array('Cta_Establecimiento: '.$sucursal[0]['Cta_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+
 
 		if($sucursal[0]['Placa_Vehiculo']!='.' && $sucursal[0]['Placa_Vehiculo']!='')
 		{
@@ -2523,19 +2534,10 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 		    $pdf->Row($arr,10);
 		}
 
-
-
-		$arr=array('Establecimiento: '.$datos[0]['Serie']);
-		$pdf->Row($arr,10);
-		//$arr=array('Telefono Establecimiento: '.$sucursal[0]['Telefono_Estab']);
-		//$pdf->Row($arr,10);
-		//$pdf->SetWidths(array(140));
-		//$arr=array('Email establecimiento: '.$sucursal[0]['Email_Establecimiento']);
-		//$pdf->Row($arr,10);
-		//$pdf->SetWidths(array(140));
-
-
+		
 	}
+
+	///---------------------- fin infomrmacion adicional cuan establecimiento es diferente de 001 ----------------------
     $yfin_adiconales = $pdf->GetY();
     $pdf->SetXY($x,$y+$margen);
 	$pdf->Cell(140,$yfin_adiconales-$y-$margen,'','1',1,'Q');

@@ -156,6 +156,23 @@ function Eliminar_Empresa_SP($Item, $NombreEmpresa=false)
   //print_r($res);die();
   return $res;
 }
+
+function Tipo_Contribuyente_SP_MYSQL($CI_RUC)
+{
+  $agente = 'Agente';
+  $micro = 'micro';
+  $conn = new db();
+  $parametros = array(
+    array($CI_RUC,'IN'),
+    array($agente,'OUT'),
+    array($micro,'OUT'),
+  );
+  $sql = "CALL sp_tipo_contribuyente";
+  $res = $conn->ejecutar_procesos_almacenados($sql,$parametros,$respuesta='1',$tipo='MYSQL');
+  //print_r($res);die();
+  return $res;
+}
+
 function Actualizar_Datos_ATS_SP($Items,$MBFechaI,$MBFechaF,$Numero) //-------------optimizado javier farinango
 {
 

@@ -45,6 +45,10 @@
     <div class="modal-content">
       <div class="modal-body">
         <div class="row">
+          <div class="col-xs-2"><b>RUC Empresa</b> </div>
+          <div class="col-xs-10"><?php echo $_SESSION['INGRESO']['RUC']; ?></div>          
+        </div>
+        <div class="row">
           <div class="col-xs-2"><b>Estado</b> </div>
           <div class="col-xs-10" id="sri_estado"></div>          
         </div>

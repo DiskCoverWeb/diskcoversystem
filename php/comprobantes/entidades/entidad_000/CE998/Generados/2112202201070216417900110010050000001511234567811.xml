@@ -6,21 +6,21 @@
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>1512202201070216417900110010050000001321234567812</claveAcceso>
+    <claveAcceso>2112202201070216417900110010050000001511234567811</claveAcceso>
     <codDoc>01</codDoc>
     <estab>001</estab>
     <ptoEmi>005</ptoEmi>
-    <secuencial>000000132</secuencial>
+    <secuencial>000000151</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
-    <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
+    <contribuyenteRimpe>Contribuyente Régimen RIMPE</contribuyenteRimpe>
   </infoTributaria>
   <infoFactura>
-    <fechaEmision>15/12/2022</fechaEmision>
-    <dirEstablecimiento>SAN RAFAEL</dirEstablecimiento>
+    <fechaEmision>21/12/2022</fechaEmision>
+    <dirEstablecimiento>direccion de empresa xyz</dirEstablecimiento>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <tipoIdentificacionComprador>04</tipoIdentificacionComprador>
-    <razonSocialComprador>FRANCISCO SEPULVEDA</razonSocialComprador>
-    <identificacionComprador>1707386973001</identificacionComprador>
+    <tipoIdentificacionComprador>06</tipoIdentificacionComprador>
+    <razonSocialComprador>HELENE PAREDES</razonSocialComprador>
+    <identificacionComprador>1721240610</identificacionComprador>
     <totalSinImpuestos>20.00</totalSinImpuestos>
     <totalDescuento>0</totalDescuento>
     <totalConImpuestos>
@@ -28,32 +28,24 @@
         <codigo>2</codigo>
         <codigoPorcentaje>0</codigoPorcentaje>
         <descuentoAdicional>0</descuentoAdicional>
-        <baseImponible>0</baseImponible>
-        <valor>0.00</valor>
-      </totalImpuesto>
-      <totalImpuesto>
-        <codigo>2</codigo>
-        <codigoPorcentaje>2</codigoPorcentaje>
-        <descuentoAdicional>0</descuentoAdicional>
         <baseImponible>20</baseImponible>
-        <tarifa>12</tarifa>
-        <valor>2.4</valor>
+        <valor>0.00</valor>
       </totalImpuesto>
     </totalConImpuestos>
     <propina>0</propina>
-    <importeTotal>22.4</importeTotal>
+    <importeTotal>20</importeTotal>
     <moneda>DOLAR</moneda>
     <pagos>
       <pago>
         <formaPago>01</formaPago>
-        <total>22.4</total>
+        <total>20</total>
       </pago>
     </pagos>
   </infoFactura>
   <detalles>
     <detalle>
-      <codigoPrincipal>98.01</codigoPrincipal>
-      <descripcion>Socios Promotores y Esposa</descripcion>
+      <codigoPrincipal>98.24</codigoPrincipal>
+      <descripcion>6 LINEAS</descripcion>
       <unidadMedida>DOLAR</unidadMedida>
       <cantidad>1.00</cantidad>
       <precioUnitario>20</precioUnitario>
@@ -62,24 +54,22 @@
       <impuestos>
         <impuesto>
           <codigo>2</codigo>
-          <codigoPorcentaje>2</codigoPorcentaje>
-          <tarifa>12</tarifa>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
           <baseImponible>20</baseImponible>
-          <valor>2.4</valor>
+          <valor>0</valor>
         </impuesto>
       </impuestos>
     </detalle>
   </detalles>
   <infoAdicional>
-    <campoAdicional nombre="Direccion">SAN RAFAEL</campoAdicional>
-    <campoAdicional nombre="Telefono">0995312671</campoAdicional>
-    <campoAdicional nombre="Email">pjs8027@hotmail.com</campoAdicional>
-    <campoAdicional nombre="puntoEmision">001005</campoAdicional>
+    <campoAdicional nombre="Direccion">TUMBACO</campoAdicional>
+    <campoAdicional nombre="Telefono">2374504</campoAdicional>
+    <campoAdicional nombre="Email">maholy_96pa@hotmail.com</campoAdicional>
+    <campoAdicional nombre="seriePuntoEmision">001005</campoAdicional>
     <campoAdicional nombre="socioRazonSocial">Empresa xyz</campoAdicional>
     <campoAdicional nombre="socioRUC">123456789</campoAdicional>
-    <campoAdicional nombre="socioDireccion">Direccion de prueba</campoAdicional>
-    <campoAdicional nombre="socioTelefono">.</campoAdicional>
-    <campoAdicional nombre="socioEmail">.</campoAdicional>
+    <campoAdicional nombre="socioDireccion">direccion de empresa xyz</campoAdicional>
     <campoAdicional nombre="PlacaVehiculo">XYZ-123</campoAdicional>
     <campoAdicional nombre="CtaEstablecimiento">1.01</campoAdicional>
   </infoAdicional>

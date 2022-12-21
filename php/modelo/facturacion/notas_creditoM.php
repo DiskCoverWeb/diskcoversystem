@@ -186,5 +186,19 @@ class notas_creditoM
 	     return $this->db->datos($sql);
 	}
 
+	function lineas_factura($Factura,$Serie,$TC,$Autorizacion)
+	{
+		$sql = "SELECT Codigo,Cantidad,Precio,Producto,Total,Total_Desc,Total_Desc2,Total_IVA,CodBodega,CodMarca,Cod_Ejec,Porc_C,Porc_IVA,Mes_No,Mes,Ticket 
+          	FROM Detalle_Factura 
+          	WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+          	AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+          	AND TC = '".$TC."' 
+          	AND Serie = '".$Serie."' 
+          	AND Factura = ".$Factura." 
+          	AND Autorizacion = '".$Autorizacion."' 
+          	ORDER BY ID ";
+        return $this->db->datos($sql);
+	}
+
 }
 ?>

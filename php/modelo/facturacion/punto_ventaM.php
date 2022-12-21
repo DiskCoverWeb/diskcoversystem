@@ -29,11 +29,11 @@ class punto_ventaM
         {
           $sql.=" AND CI_RUC LIKE '".$query."%'";
         } 
-        $sql.=" UNION 
-        SELECT Cliente,Codigo,CI_RUC,TD,Grupo,Email,T 
-        FROM Clientes 
-        WHERE Codigo = '9999999999' 
-        ORDER BY Cliente ";
+        // $sql.=" UNION 
+        // SELECT Cliente,Codigo,CI_RUC,TD,Grupo,Email,T 
+        // FROM Clientes 
+        // WHERE Codigo = '9999999999' 
+        // ORDER BY Cliente ";
         // print_r($sql);die();
 
      return $this->db->datos($sql);
@@ -266,8 +266,8 @@ class punto_ventaM
     AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' "; 
   $detalle_fac = $this->db->datos($sql1);
 
-  $sql2 = "SELECT * FROM lista_tipo_contribuyente WHERE RUC = '".$_SESSION['INGRESO']['RUC']."'";
-  $tipo_con = $this->db->datos($sql2, 'MYSQL');
+  // $sql2 = "SELECT * FROM lista_tipo_contribuyente WHERE RUC = '".$_SESSION['INGRESO']['RUC']."'";
+  $tipo_con = Tipo_Contribuyente_SP_MYSQL($_SESSION['INGRESO']['RUC']);
 
    $sql2="SELECT * 
     FROM Trans_Abonos 

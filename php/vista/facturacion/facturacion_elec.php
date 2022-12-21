@@ -586,7 +586,7 @@ if($operadora!='.' && strlen($operadora)>=13)
 
   function generar_factura()
   {
-  	$('#myModal_espera').modal('show');
+  	// $('#myModal_espera').modal('show');
   	var tc = $('#DCLinea').val();
   	tc = tc.split(' ');
 

@@ -229,7 +229,38 @@ class db
 	{
 		if($tipo=='MY SQL' || $tipo =='MYSQL' || $tipo=='My SQL' || $tipo=='My sql')
 		{
-			// colocar funcion para ejecutar procesos almacenados en mysql
+			$conn = $this->MySQL();
+			$select = '';
+			$variables = '';
+			if(count($parametros)>1)
+			{
+				 foreach ($parametros as $key => $value) {
+				 		if($value[1]=='OUT' || $value[1]=='out')
+				 		{
+				 			 $select.='@'.$value[0].',';
+				 			 $variables.= '@'.$value[0].',';
+				 		}else{
+				 		$variables.= '"'.$value[0].'",'; 
+				 	}
+				 }
+				 $variables = substr($variables,0,-1);
+				 $select = substr($select,0,-1);
+			}
+
+			$sql = $sql.'('.$variables.')';
+
+
+		if (!$conn->query($sql)) {
+		   return  "Falló CALL: (" . $conn->errno . ") " . $conn->error;
+		}
+
+		if (!($resultado = $conn->query("SELECT ".$select))) {
+		    return "Falló la obtención: (" . $conn->errno . ") " . $conn->error;
+		}
+
+		$fila = $resultado->fetch_assoc();
+		return $fila;
+
 
 		}else
 		{
