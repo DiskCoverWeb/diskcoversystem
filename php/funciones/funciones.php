@@ -1046,6 +1046,232 @@ function convertirnumle($digito=null)
 	return $letra;
 }
 
+/*------------------------- pausado------------------
+function Digito_Verificador($URLInet,$NumeroRUC)
+{
+  // Dim DigStr As String
+  // Dim VecDig As String
+  // Dim Dig3 As Byte
+  // Dim sSQLRUC As String
+  // Dim CodigoEmp As String
+  // Dim Producto As Integer
+  // Dim SumaDig As Integer
+  // Dim NumDig As Integer
+  // Dim ValDig As Integer
+  // Dim TipoModulo As Integer
+  // Dim CodigoRUC As Long
+  // Dim Residuo As Byte
+  // Dim AdoDBRUC As ADODB.Recordset
+  // 'Tercer Digito
+   // RatonReloj
+   $Dig3 = Val(MidStrg($NumeroRUC, 3, 1))
+  // 'Determinamos que tipo de RUC/CI es
+   $Tipo_RUC_CI['Tipo_Beneficiario'] = "P";
+   $Tipo_RUC_CI['Codigo_RUC_CI'] =$_SESSION['INGRESO']['item']."0000001";
+   $Tipo_RUC_CI['Digito_Verificador'] = "-";
+   $Tipo_RUC_CI['RUC_CI'] = $NumeroRUC;
+   $Tipo_RUC_CI['RUC_Natural'] = false;
+   $TipoSRI['Existe'] = false;
+   
+  // 'Es CONSUMIDOR FINAL
+   if($NumeroRUC == "9999999999999")
+   {
+      $Tipo_RUC_CI['Tipo_Beneficiario'] = "R";
+      $Tipo_RUC_CI['Codigo_RUC_CI'] = substr($NumeroRUC,0, 10);
+      $Tipo_RUC_CI['Digito_Verificador'] = 9;
+      $DigStr = "9"
+   }else
+      $DigStr = $NumeroRUC;
+      $TipoBenef = "P";
+      $VecDig = "000000000";
+      $TipoModulo = 1;
+      if(is_numeric($NumeroRUC) && intval($NumeroRUC) <= 0)
+      {
+         $Tipo_RUC_CI['Codigo_RUC_CI'] = $_SESSION['INGRESO']['item']."0000001";
+      }else{
+        // 'Es Cedula
+         if(strlen($NumeroRUC) == 10 && is_numeric($NumeroRUC))
+         {
+            $TipoModulo = 10
+            $VecDig = "212121212"
+           // 'Realizamos los productos y la sumatoria
+            $SumaDig = 0
+            for($I = 1 ; $I> strlen($VecDig);$I++)
+            {
+                $ValDig = intval(substr($VecDig,$I, 1))    //'Digitos del RUC/CI
+                $NumDig = intval(substr($DigStr, $I, 1))    //'Vector Verificador del RUC/CI
+                $Producto = $ValDig * $NumDig;
+                if($Producto > 9 ){$Producto = $Producto - 9;}
+               // 'Sumamos los productos
+                $SumaDig = $SumaDig + $Producto;
+            }
+            $Residuo = $SumaDig % $TipoModulo
+            if($Residuo == 0)
+            {
+               $Tipo_RUC_CI['Digito_Verificador'] = "0";
+            }else{
+               $Residuo = $TipoModulo - $Residuo;
+               $Tipo_RUC_CI['Digito_Verificador'] = ''.$Residuo.'';
+            }
+            if($Tipo_RUC_CI['Digito_Verificador'] = intval(substr($NumeroRUC, 10, 1))){$Tipo_RUC_CI['Tipo_Beneficiario'] = "C";}
+          //'Es RUC
+         }else if(strlen($NumeroRUC) == 13 && is_numeric($NumeroRUC))
+         {
+           // 'Averiguamos si es RUC extranjero
+            $Tipo_RUC_CI['Tipo_Beneficiario'] = "O";
+            if($Dig3 == 6)
+            {
+               $TipoModulo = 10
+               $VecDig = "212121212";
+              // 'Realizamos los productos y la sumatoria
+               $SumaDig = 0;
+               for($I = 1;$I>=strlen($VecDig);$I++)
+               {
+                   $ValDig = intval(substr($VecDig,$I, 1));     //'Digitos del RUC/CI
+                   $NumDig = intval(substr($DigStr,$I, 1));    //'Vector Verificador del RUC/CI
+                   $Producto = $ValDig * $NumDig;
+                   if($Producto > 9 ){ $Producto = $Producto - 9;}
+                  // 'Sumamos los productos
+                   $SumaDig = $SumaDig + $Producto;
+               }
+               $Residuo = $SumaDig % $TipoModulo;
+               if($Residuo == 0)
+               {
+                  $Tipo_RUC_CI['Digito_Verificador'] = "0";
+               }else
+               {
+                  $Residuo = $TipoModulo - $Residuo;
+                  $Tipo_RUC_CI['Digito_Verificador'] = ''.$Residuo.'';
+               }
+               if($Tipo_RUC_CI['Digito_Verificador'] == intval(substr($NumeroRUC, 10, 1)))
+               {
+                  $Tipo_RUC_CI['Tipo_Beneficiario'] = "R"
+                  $Tipo_RUC_CI['RUC_Natural'] = True
+               }
+            }
+            
+            if($Tipo_RUC_CI['Tipo_Beneficiario'] == "O")
+            {
+               $TipoModulo = 11;
+               switch ($Dig3) {
+                 case '0':
+                 case '1':
+                 case '2':
+                 case '3':
+                 case '4':
+                 case '5':
+                    $TipoModulo = 10;
+                    $VecDig = "212121212";
+                   break;
+                 case '6':
+                    $VecDig = "32765432";
+                   break;
+                 case '9':
+                    $VecDig = "432765432";
+                   break;                 
+                 default:
+                    $VecDig = "222222222";
+                   break;
+               }             
+             
+              // 'Realizamos los productos y la sumatoria
+               $SumaDig = 0
+               for($I = 1; $I>=strlen($VecDig);$I++)
+               {
+                   $ValDig = intval(substr($VecDig, $I, 1));    //'Digitos del RUC/CI
+                   $NumDig = intval(substr($DigStr, $I, 1));    //'Vector Verificador del RUC/CI
+                   $Producto = $ValDig * $NumDig
+                   if(0 <= $Dig3 && $Dig3 <= 5 && $Producto > 9){ $Producto = $Producto - 9;}
+                  //'Sumamos los productos
+                   $SumaDig = $SumaDig + $Producto;
+                }
+               $Residuo = $SumaDig % $TipoModulo;
+               if($Residuo == 0)
+               {
+                  $Tipo_RUC_CI['Digito_Verificador'] = "0";
+               }else{
+                  $Residuo = $TipoModulo - $Residuo;
+                  $Tipo_RUC_CI['Digito_Verificador'] = ''.$Residuo.'';
+               }
+              // 'MsgBox Dig3
+               if($Dig3 == 6)
+               {
+                  if($Tipo_RUC_CI['Digito_Verificador'] == intval(substr($NumeroRUC, 9, 1))){ $Tipo_RUC_CI['Tipo_Beneficiario'] = "R";}
+               }else{
+                  if($Tipo_RUC_CI['Digito_Verificador'] = intval(substr($NumeroRUC, 10, 1))){ $Tipo_RUC_CI['Tipo_Beneficiario'] = "R";}
+               }
+               if($Dig3 < 6){ $Tipo_RUC_CI['RUC_Natural'] = true;}
+            }
+            
+            if($Tipo_RUC_CI['Tipo_Beneficiario']== "O"){
+               // RatonReloj
+               $TipoSRI = consulta_RUC_SRI($URLInet,$NumeroRUC);
+               if($TipoSRI['Existe'])
+               {
+                  if($Dig3 < 6)
+                  { 
+                     $Tipo_RUC_CI['RUC_Natural'] = true;
+                     $Tipo_RUC_CI['Digito_Verificador'] = intval(substr($NumeroRUC, 10, 1))
+                  }else{
+                     $Tipo_RUC_CI['Digito_Verificador'] = intval(substr($NumeroRUC, 9, 1));
+                  }
+                  $Tipo_RUC_CI['Tipo_Beneficiario'] = "R";
+              }
+            }
+         }
+      }
+      
+     // 'Procedemos a generar el codigo de RUC/CI/Otro
+      Select Case Tipo_RUC_CI.Tipo_Beneficiario
+        Case "C"
+             Tipo_RUC_CI.Codigo_RUC_CI = MidStrg(NumeroRUC, 1, 10)
+        Case "R"
+            'Si es Natural Cambio los dos primeros digitos por letras equivalentes
+             If Tipo_RUC_CI.RUC_Natural Then
+                Tipo_RUC_CI.Codigo_RUC_CI = Chr(Val(MidStrg(NumeroRUC, 1, 1)) + 65) & Chr(Val(MidStrg(NumeroRUC, 2, 1)) + 65) & MidStrg(NumeroRUC, 3, 8)
+             Else
+               'Es RUC comercial o publico
+                Tipo_RUC_CI.Codigo_RUC_CI = MidStrg(NumeroRUC, 1, 10)
+             End If
+             TipoSRI.Existe = True
+        Case Else
+            'Si no es RUC/CI, procesamos el numero de codigo que le corresponde
+             Tipo_RUC_CI.Codigo_RUC_CI = NumEmpresa & "0000001"
+             CodigoEmp = NumEmpresa & "9999999"
+             sSQLRUC = "SELECT MAX(Codigo) As Cod_RUC " _
+                     & "FROM Clientes " _
+                     & "WHERE Codigo < '" & CodigoEmp & "' " _
+                     & "AND MidStrg(Codigo,1,3) = '" & NumEmpresa & "' " _
+                     & "AND LEN(Codigo) = 10 " _
+                     & "AND ISNUMERIC(Codigo) <> 0 "
+             Select_AdoDB AdoDBRUC, sSQLRUC
+             With AdoDBRUC
+              If .RecordCount > 0 Then
+                  If IsNull(.fields("Cod_RUC")) Then
+                     CodigoRUC = 1
+                  Else
+                     CodigoRUC = Val(MidStrg(.fields("Cod_RUC"), 4, Len(.fields("Cod_RUC")))) + 1
+                  End If
+                  Tipo_RUC_CI.Codigo_RUC_CI = NumEmpresa & Format$(CodigoRUC, "0000000")
+              End If
+             End With
+             AdoDBRUC.Close
+            'MsgBox Tipo_RUC_CI.Codigo_RUC_CI
+      End Select
+      TipoBenef = Tipo_RUC_CI.Tipo_Beneficiario
+      DigStr = Tipo_RUC_CI.Digito_Verificador
+      Select Case Tipo_RUC_CI.Tipo_Beneficiario
+        Case "R": Tipo_Contribuyente_SP_MySQL NumeroRUC, Tipo_RUC_CI.MicroEmpresa, Tipo_RUC_CI.AgenteRetencion
+                  If Len(NumeroRUC) <> 13 Then Tipo_RUC_CI.Tipo_Beneficiario = "P"
+        Case "C": If Len(NumeroRUC) <> 10 Then Tipo_RUC_CI.Tipo_Beneficiario = "P"
+      End Select
+   End If
+   RatonNormal
+   Digito_Verificador = DigStr
+End Function
+}
+
+*/
 
 function digito_verificador_nuevo($NumeroRUC){
     $DigStr= '';
@@ -7535,7 +7761,6 @@ function  Leer_Datos_Cliente_FA($Codigo_CIRUC_Cliente)
          $sql = "SELECT Cliente,CI_RUC,TD,Email,EmailR,Direccion,DireccionT,Ciudad,Telefono,Telefono_R,Grupo,Representante,CI_RUC_R,TD_R 
           FROM Clientes 
           WHERE Codigo = '".$TFA['CodigoC']."' ";
-
           $datos = $conn->datos($sql);
 
          if(count($datos) > 0)
@@ -7574,13 +7799,9 @@ function  Leer_Datos_Cliente_FA($Codigo_CIRUC_Cliente)
                 case 'C':
                 case 'R':
                 case 'P':
-                   $TFA['Razon_Social'] = $datos[0]["Cliente"];
+                     $TFA['Razon_Social'] = $datos[0]["Cliente"];
                      $TFA['RUC_CI'] = $datos[0]["CI_RUC"];
                      $TFA['TB'] = $datos[0]["TD"];
-                  break;
-                
-                default:
-                  // code...
                   break;
               }
             }               
@@ -7604,6 +7825,8 @@ function Grabar_Factura1($TFA,$VerFactura = false, $NoRegTrans = false)
   $conn = new db();
   $cliente = Leer_Datos_Cliente_FA($TFA['CodigoC']);
   $TFA = array_merge($TFA,$cliente);
+
+  // print_r($TFA);die();
   
   $Orden_No = 0;
   $Total_Desc_ME = 0;
@@ -9243,7 +9466,7 @@ function Actualiza_Procesado_Kardex_Factura($TFA)
     return $CadAux;
   }
 
-function Leer_Codigo_Inv($CodigoDeInv,$FechaInventario,$CodBodega,$CodMarca='')
+function Leer_Codigo_Inv($CodigoDeInv,$FechaInventario,$CodBodega='',$CodMarca='')
 {
  // 'Datos por default
   if($CodBodega == "" ){$CodBodega = G_NINGUNO;}
@@ -9260,6 +9483,7 @@ function Leer_Codigo_Inv($CodigoDeInv,$FechaInventario,$CodBodega,$CodMarca='')
   $DatInv["Codigo_Inv"] = $CodigoDeInv;
   $DatInv["Fecha_Stock"] = $FechaInventario;
   $DatInv["TC"]='';
+  $DatInv['Con_Kardex'] = false;
 
   $f = explode('-',$FechaInventario);
   // print_r($f);die();
@@ -9278,7 +9502,7 @@ function Leer_Codigo_Inv($CodigoDeInv,$FechaInventario,$CodBodega,$CodMarca='')
 
      $conn = new db();
      $sql = "SELECT Producto, Detalle, Codigo_Barra_K, Unidad, Minimo, Maximo, Cta_Inventario, Cta_Costo_Venta, Cta_Ventas, Cta_Ventas_0, Cta_Venta_Anticipada, 
-          Utilidad, Div, PVP_2, Por_Reservas, Reg_Sanitario, IVA, PVP, Tipo_SubMod, Stock, Costo, Valor_Unit 
+          Utilidad, Div, PVP_2, Por_Reservas, Reg_Sanitario, IVA, PVP, Tipo_SubMod, Stock, Costo, Valor_Unit,Con_Kardex  
           FROM Catalogo_Productos 
           WHERE Item = '".$_SESSION['INGRESO']['item']."' 
           AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
@@ -9307,6 +9531,7 @@ function Leer_Codigo_Inv($CodigoDeInv,$FechaInventario,$CodBodega,$CodMarca='')
           $DatInv["Costo"] = number_format($datos[0]["Costo"], $_SESSION['INGRESO']['Dec_Costo'],'.','');
           $DatInv["Valor_Unit"] = number_format($datos[0]["Valor_Unit"], $_SESSION['INGRESO']['Dec_Costo'],'.','');
           $DatInv["Tipo_SubMod"] = $datos[0]["Tipo_SubMod"];
+          $DatInv['Con_Kardex'] = $datos[0]["Con_Kardex"];
           switch ($DatInv["TC"]) {
             case 'NV':
             case 'PV':
