@@ -48,8 +48,8 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 }
 ?>
 
-  <div class="content-wrapper">
-<?php 
+<div class="content-wrapper">
+    <?php 
     //llamamos a los parciales
 	if (isset($_SESSION['INGRESO']['accion'])) 
 	{
@@ -203,7 +203,15 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("facturacion/notas_credito.php");
 			}			
-
+//Agua Potable
+			if ($_SESSION['INGRESO']['accion']=='ingresar_usuario') 
+			{
+				require_once("aguaPotable/ingresar_usuario.php");
+			}
+			if ($_SESSION['INGRESO']['accion']=='ingreso_consumo_agua') 
+			{
+				require_once("aguaPotable/ingreso_consumo_agua.php");
+			}
 //empresa
 
 			if ($_SESSION['INGRESO']['accion']=='cambioe') 
@@ -434,7 +442,5 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 ?>
 
     </section>
-  </div>
-<?php	require_once("../headers/footer.php"); ?>	
-		
-	
+</div>
+<?php	require_once("../headers/footer.php"); ?>
