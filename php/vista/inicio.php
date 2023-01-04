@@ -235,6 +235,10 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("empresa/crear_empresa.php");
 			}
+			if ($_SESSION['INGRESO']['accion']=='recuperar_fac') 
+			{
+				require_once("empresa/recuperar_factura.php");
+			}
 //farmacia
 				if ($_SESSION['INGRESO']['accion']=='ingresar_proveedor') 
 			{
