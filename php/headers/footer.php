@@ -100,7 +100,6 @@
  -->
 
   <!--inicia modal Guia de remision -->
-  <!-- Modal cliente nuevo -->
   <div id="myModal_guia" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
       <div class="modal-dialog modal-md" style="width: 30%;">
           <div class="modal-content">
@@ -121,8 +120,8 @@
                           <b class="col-sm-6 control-label" style="padding: 0px">Guia de remision No.</b>
                           <div class="col-sm-3" style="padding: 0px">
                               <select class="form-control input-xs" id="DCSerieGR" name="DCSerieGR"
-                                  onchange="DCSerieGR_LostFocus()">
-                                  <option value="">No Existe</option>
+                                  onblur="DCSerieGR_LostFocus()">
+                                  <option value="">Selecciones</option>
                               </select>
                           </div>
                           <div class="col-sm-3" style="padding: 0px">
@@ -136,15 +135,15 @@
                               value="0">
                       </div>
                       <div class="col-sm-12">
-                          <b class="col-sm-6 control-label" style="padding: 0px">Iniciacion del traslados</b>
+                          <b class="col-sm-6 control-label" style="padding: 0px">Iniciación del traslados</b>
                           <div class="col-sm-6" style="padding: 0px">
                               <input type="date" name="MBoxFechaGRI" id="MBoxFechaGRI" class="form-control input-xs"
                                   value="<?php echo date('Y-m-d'); ?>">
                           </div>
                       </div>
                       <div class="col-sm-12">
-                          <b class="col-sm-3 control-label" style="padding: 0px">Ciudad</b>
-                          <div class="col-sm-9" style="padding: 0px">
+                          <b class="col-sm-6 control-label" style="padding: 0px">Ciudad</b>
+                          <div class="col-sm-6" style="padding: 0px">
                               <select class="form-control input-xs" id="DCCiudadI" name="DCCiudadI">
                                   <option value=""></option>
                               </select>
@@ -158,15 +157,15 @@
                           </div>
                       </div>
                       <div class="col-sm-12">
-                          <b class="col-sm-3 control-label" style="padding: 0px">ciudad</b>
-                          <div class="col-sm-9" style="padding: 0px">
+                          <b class="col-sm-6 control-label" style="padding: 0px">Ciudad</b>
+                          <div class="col-sm-6" style="padding: 0px">
                               <select class="form-control input-xs" id="DCCiudadF" name="DCCiudadF">
                                   <option value=""></option>
                               </select>
                           </div>
                       </div>
                       <div class="col-sm-12">
-                          <b>Nombre o razon socila (Transportista)</b>
+                          <b>Nombre o Razon Social (Transportista)</b>
                           <select class="form-control input-xs" id="DCRazonSocial" name="DCRazonSocial">
                               <option value=""></option>
                           </select>
@@ -195,6 +194,8 @@
                           <input type="text" name="TxtLugarEntrega" id="TxtLugarEntrega" class="form-control input-xs">
                       </div>
                   </div>
+
+
               </div>
               <div class="modal-footer">
                   <button class="btn btn-primary" onclick="Command8_Click();">Aceptar</button>
