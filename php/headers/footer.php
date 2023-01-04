@@ -173,9 +173,16 @@
 <script type="text/javascript">
   function datos_cliente()
   {
+    
     var frame = document.getElementById('FCliente');
+    var id = frame.contentWindow.document.getElementById('txt_id').value; 
+    if(id=='')
+    {
+      Swal.fire('Seleccione un cliente valido','','info');
+      return false;
+    } 
     var ruc = frame.contentWindow.document.getElementById('ruc').value;
-    var codigocliente = frame.contentWindow.document.getElementById('codigoc').value;
+    var codigocliente = frame.contentWindow.document.getElementById('codigoc').value;  
     var email  = frame.contentWindow.document.getElementById('email').value;
     var nombre  = frame.contentWindow.document.getElementById('nombrec').value;
     var T  = 'N';
