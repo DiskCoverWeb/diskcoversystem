@@ -96,6 +96,7 @@ if(isset($_GET['generar_factura']))
 
 if(isset($_GET['generar_factura_elec']))
 {
+	//print_r($_POST);die();
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->generar_factura_elec($parametros));
 }
@@ -552,6 +553,40 @@ class punto_ventaC
 	        	$FA['Tipo_Pago'] = '01';
 	        }
 
+
+			//datos para guia de remision
+			if($parametros['LblGuiaR']!=0)
+			{
+				$RazonSocial = explode('_',$parametros['DCRazonSocial']);
+				$CI_RUC = $RazonSocial[0];
+				$DIR = $RazonSocial[1];
+				$EmpresaEntrega = explode('_',$parametros['DCEmpresaEntrega']);
+				$CI_RUC_E = $EmpresaEntrega[0];
+				// $dire_E = $EmpresaEntrega[1];
+				// $Direccion = $EmpresaEntrega[2];
+
+				$TFA['Remision'] =1;
+				$FA['ClaveAcceso_GR'] = G_NINGUNO;
+				$FA['Autorizacion_GR'] = $parametros['LblAutGuiaRem'];
+				$FA['Serie_GR'] = $parametros['DCSerieGR'];
+				$FA['Remision'] = $parametros['LblGuiaR'];
+				$FA['FechaGRE'] = $parametros['MBoxFechaGRE'];
+				$FA['FechaGRI'] = $parametros['MBoxFechaGRI'];
+				$FA['FechaGRF'] = $parametros['MBoxFechaGRF'];
+				$FA['Placa_Vehiculo'] = $parametros['TxtPlaca'];
+				$FA['Lugar_Entrega'] = $parametros['TxtLugarEntrega'];
+				$FA['Zona'] = $parametros['TxtZona'];
+				$FA['CiudadGRI'] = $parametros['DCCiudadI'];
+				$FA['CiudadGRF'] = $parametros['DCCiudadF'];
+				$FA['Comercial'] = $parametros['Razon'];
+				$FA['CIRUCComercial'] = $CI_RUC;
+				
+				$FA['Entrega'] =$parametros['Entrega'];
+				$FA['CIRUCEntrega'] = $CI_RUC_E;
+				$FA['Dir_EntregaGR'] = G_NINGUNO;
+				$FA['Pedido'] = $parametros['TxtPedido'];
+			}
+
 	        $Moneda_US = False;
 	        $TextoFormaPago = G_PAGOCONT;
 	        // print_r($parametros);die();
@@ -704,6 +739,10 @@ function ProcGrabar($FA)
         if($FA['TC'] <> "DO"){
         	//la respuesta puede se texto si envia numero significa que todo saliobien
         	$rep =  $this->sri->Autorizar_factura_o_liquidacion($FA);
+			if($FA['Remision']=!'')
+			{
+				$rep =  $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision($FA);
+			}
         	// print_r($rep);die();
            // SRI_Crear_Clave_Acceso_Facturas($FA,true); 
            $FA['Desde'] = $FA['Factura'];

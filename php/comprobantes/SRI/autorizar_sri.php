@@ -322,6 +322,7 @@ class autorizacion_sri
 	           // print_r($respuesta);die();
 	}
 
+	
 	function Autorizar($parametros)
 	{
 
@@ -882,6 +883,158 @@ class autorizacion_sri
 		return $datos;
 	}
 
+	//inicio guia remision
+	function SRI_Crear_Clave_Acceso_Guia_Remision($TFA)
+	{
+		print_r($TFA);
+		$Autorizar_XML = True;
+		
+		// if(strlen($Fecha_Igualar) = 10)
+		// {
+		// 	if($CFechaLong($TFA['Fecha']) < $CFechaLong($Fecha_Igualar))
+		// 	{
+		// 		$Autorizar_XML = False;
+		// 	}
+		// }
+		$TextoXML = "";
+
+		if($Autorizar_XML)
+		{
+			$TBeneficiario = Leer_Datos_Clientes($TFA['CodigoC']);
+			$TFA['Cliente'] = $TBeneficiario['Representante'];
+			$TFA['TD'] = $TBeneficiario['TD_R'];
+			$TFA['CI_RUC'] = $TBeneficiario['CI_RUC_R'];
+			$TFA['TelefonoC'] = $TBeneficiario['Telefono'];
+			$TFA['DireccionC'] = $TBeneficiario['DireccionT'];
+			$TFA['Curso'] = $TBeneficiario['Direccion'];
+			$TFA['Grupo'] = $TBeneficiario['Grupo'];
+			$TFA['EmailC'] = $TBeneficiario['Email2'];
+			$TFA['EmailR'] = $TBeneficiario['EmailR'];
+			// $TFA['TD'] = $TBeneficiario['TD_Rep'];
+			// $TFA['CI_RUC'] = $TBeneficiario['RUC_CI_Rep'];
+			// $TFA['TelefonoC'] = $TBeneficiario['Telefono1'];
+			// $TFA['DireccionC'] = $TBeneficiario['Direccion_Rep'];
+			// $TFA['Curso'] = $TBeneficiario['Direccion'];
+			// $TFA['Grupo'] = $TBeneficiario['Grupo_No'];
+			// $TFA['EmailC'] = $TBeneficiario['Email1'];
+			// $TFA['EmailR'] = $TBeneficiario['Email2'];
+
+			//Detalle de descuentos
+			$AdoDBDet = $this->Detalle_de_descuentos($TFA['TC'],$TFA['Serie'],$TFA['Autorizacion'],$TFA['Factura']);
+			print_r($AdoDBDet);
+			//Encabezado de la Guia de Remision
+			$AdoDBFA = $this->Encabezado_de_la_Guia_de_Remision($TFA['TC'],$TFA['Serie'],$TFA['Autorizacion'],$TFA['Factura']);
+
+			print_r($AdoDBFA);die();
+
+			if($AdoDBFA)
+			{
+				if(count($AdoDBFA)>0)
+				{
+					$Autorizar_XML = true;
+					$TFA['T'] = $AdoDBFA[0]["T"];
+					$TFA['SP'] = $AdoDBFA[0]["SP"];
+					$TFA['Porc_IVA'] = $AdoDBFA[0]["Porc_IVA"];
+					$TFA['Imp_Mes'] = $AdoDBFA[0]["Imp_Mes"];
+					$TFA['Fecha'] = $AdoDBFA[0]["Fecha"];
+					$TFA['Vencimiento'] = $AdoDBFA[0]["Vencimiento"];
+					$TFA['SubTotal'] = $AdoDBFA[0]["SubTotal"];
+					$TFA['Sin_IVA'] = $AdoDBFA[0]["Sin_IVA"];
+					$TFA['Con_IVA'] = $AdoDBFA[0]["Con_IVA"];
+					$TFA['Descuento'] = $AdoDBFA[0]["Descuento"];
+					$TFA['Descuento2'] = $AdoDBFA[0]["Descuento2"];
+					$TFA['Total_IVA'] = $AdoDBFA[0]["IVA"];
+					$TFA['Total_MN'] = $AdoDBFA[0]["Total_MN"];
+					$TFA['Razon_Social'] = $AdoDBFA[0]["Razon_Social"];
+					$TFA['RUC_CI'] = $AdoDBFA[0]["RUC_CI"];
+					$TFA['TB'] = $AdoDBFA[0]["TB"];
+					
+					//MsgBox "Validar Porc IVA"
+					//Validar_Porc_IVA TFA.Fecha
+					//Generamos la Clave de acceso
+					//& Format$(TFA.Fecha, "ddmmyyyy") &
+					// if(Len($TFA['Autorizacion_GR']) >= 13)
+					// {
+					// 	$TFA['ClaveAcceso_GR'] = Format$(TFA.Fecha, "ddmmyyyy") & "06" & RUC & Ambiente & TFA.Serie_GR _
+					// 					& Format$(TFA.Remision, String(9, "0")) _
+					// 					& "123456781"
+					// 	$TFA['ClaveAcceso_GR'] = TFA.ClaveAcceso_GR & Digito_Verificador_Modulo11(TFA.ClaveAcceso_GR)
+					// }else{
+					// 	$TFA['ClaveAcceso_GR'] = G_Ninguno;
+					// }
+
+					// $TFA['Hora_GR'] = Format$(Time, FormatoTimes);
+					// $SRI_Autorizacion['Clave_De_Acceso'] = $TFA['ClaveAcceso_GR'];
+
+					// //ENCABEZADO XML PARA EL SRI DE LA GUIA DE REMISION
+					//  $this->XML_Encabezado_de_la_Guia_de_Remision($TFA,$AdoDBDet);
+            	}
+
+            }
+        }
+    }
+	function facturas_Auxiliares()
+	{
+		$sql = "UPDATE Facturas_Auxiliares
+		SET Clave_Acceso_GR = '".$TFA['ClaveAcceso_GR']."'
+		WHERE Item = '".$NumEmpresa."'
+		AND Periodo = '".$Periodo_Contable."'
+		AND TC = '".$TFA['TC']."'
+		AND Serie = '".$TFA['Serie']."'
+		AND Factura = ".$TFA['Factura']."
+		AND CodigoC = '".$TFA['CodigoC']."'
+		AND Autorizacion = '".$TFA['Autorizacion']."'";
+		//Ejecutar_SQL_SP sSQL
+	}
+                    
+	function Detalle_de_descuentos($TC,$Serie,$Autorizacion,$Factura)
+	{
+		//Detalle de descuentos
+		$sql = "SELECT DF.*,CP.Reg_Sanitario,CP.Marca
+		FROM Detalle_Factura As DF, Catalogo_Productos As CP
+		WHERE DF.Item = '".$_SESSION['INGRESO']['item']."'
+		AND DF.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND DF.TC = '".$TC."'
+		AND DF.Serie = '".$Serie."'
+		AND DF.Autorizacion = '".$Autorizacion."'
+		AND DF.Factura = ".$Factura."
+		AND strlen(DF.Autorizacion) >= 13
+		AND DF.T <> 'A'
+		AND DF.Item = CP.Item
+		AND DF.Periodo = CP.Periodo
+		AND DF.Codigo = CP.Codigo_Inv
+		ORDER BY DF.ID,DF.Codigo ";
+		return $this->db->datos($sql);
+	}
+
+	function Encabezado_de_la_Guia_de_Remision($TC,$Serie,$Autorizacion,$Factura)
+	{
+		//Encabezado de la Guia de Remision
+		$con = $this->db->conexion();	
+		$sql = "SELECT
+		F.*,GR.Remision,GR.Comercial,GR.CIRUC_Comercial,GR.Entrega,GR.CIRUC_Entrega,GR.CiudadGRI,GR.CiudadGRF,
+		GR.Placa_Vehiculo,GR.FechaGRE,GR.FechaGRI,GR.FechaGRF,GR.Pedido,GR.Zona,GR.Serie_GR,GR.Autorizacion_GR,
+		GR.Clave_Acceso_GR,GR.Hora_Aut_GR,GR.Estado_SRI_GR,GR.Error_FA_SRI,GR.Fecha_Aut_GR
+		FROM Facturas As F, Facturas_Auxiliares As GR
+		WHERE F.Item = '".$_SESSION['INGRESO']['item']."'
+		AND F.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND F.TC = '".$TC."'
+		AND F.Serie = '".$Serie."'
+		AND F.Autorizacion = '".$Autorizacion."'
+		AND F.Factura = ".$Factura."
+		AND strlen(GR.Autorizacion_GR) = 13
+		AND GR.Remision > 0
+		AND F.T <> 'A'
+		AND F.Item = GR.Item
+		AND F.Periodo = GR.Periodo
+		AND F.TC = GR.TC
+		AND F.Serie = GR.Serie
+		AND F.Autorizacion = GR.Autorizacion
+		AND F.Factura = GR.Factura ";
+		return $this->db->datos($sql);
+	}
+	
+	//fin guia remision
     function digito_verificadorf($ruc,$tipo=null,$pag=null,$idMen=null,$item=null)
     {
 		$DigStr = "";
@@ -2220,7 +2373,7 @@ function generar_xml_retencion($cabecera,$detalle)
 
         $xml_codigo = $xml->createElement("codigo",'1');
         $xml_codigoretencion = $xml->createElement("codigoRetencion",'312');
-        $xml_baseimponible = $xml->createElement("baseImponible",'30.00');
+        $xml_baseimfootponible = $xml->createElement("baseImponible",'30.00');
         $xml_porcentajeretencion = $xml->createElement("porcentajeRetener",'0.00');
         $xml_valorretenido = $xml->createElement("valorRetenido",'0.00');
 
@@ -2765,293 +2918,246 @@ function generar_xml_retencion($cabecera,$detalle)
   	$texto = file_get_contents($ruta_G.'/'.$autorizacion.'.xml');
   	$texto = str_replace('ï»¿','', $texto);
   	$texto = str_replace('<![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>','', $texto);
-  	$texto = str_replace('<![CDATA[<?xml version="1.0" encoding="UTF-8"?>','', $texto);
+$texto = str_replace('
+<![CDATA[<?xml version="1.0" encoding="UTF-8"?>','', $texto);
   	$texto = str_replace(']]>','', $texto);
-  	$xml = simplexml_load_string($texto);
+$xml = simplexml_load_string($texto);
 
-	$objJsonDocument = json_encode($xml);
-    $factura = json_decode($objJsonDocument, TRUE);
-    // print_r($factura);die();
-    $tributaria = $factura['comprobante']['factura']['infoTributaria'];
-    $cabecera = $factura['comprobante']['factura']['infoFactura'];    
-    $detalle = $factura['comprobante']['factura']['detalles'];
+$objJsonDocument = json_encode($xml);
+$factura = json_decode($objJsonDocument, TRUE);
+// print_r($factura);die();
+$tributaria = $factura['comprobante']['factura']['infoTributaria'];
+$cabecera = $factura['comprobante']['factura']['infoFactura'];
+$detalle = $factura['comprobante']['factura']['detalles'];
 
-    // print_r($tributaria);die();
+// print_r($tributaria);die();
 
 
 
-    $serie = $tributaria['estab'].''.$tributaria['ptoEmi'];
-    $CI_RUC = $cabecera['identificacionComprador'];
-    $codigoC = $this->datos_cliente($codigo=false,$CI_RUC);
-    if(count($codigoC)>0)
-    {
-    	return $codigoC[0]['Codigo'];
-    }else
-    {
-    	return -1;
-    }
+$serie = $tributaria['estab'].''.$tributaria['ptoEmi'];
+$CI_RUC = $cabecera['identificacionComprador'];
+$codigoC = $this->datos_cliente($codigo=false,$CI_RUC);
+if(count($codigoC)>0)
+{
+return $codigoC[0]['Codigo'];
+}else
+{
+return -1;
+}
 }
 
 
-  function recuperar_xml_a_factura($documento,$autorizacion,$entidad,$empresa)
-  {
-  	$this->generar_carpetas($entidad,$empresa);
-  	$respuesta = 1;
-  	//busco el archivo xml
-  	 $ruta_G = dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Autorizados';
-		     // print_r($ruta_G);die();
-	if($archivo = fopen($ruta_G.'/'.$autorizacion.'.xml',"w+b"))
-	  {
-	  	fwrite($archivo,$documento);
-	  }
+function recuperar_xml_a_factura($documento,$autorizacion,$entidad,$empresa)
+{
+$this->generar_carpetas($entidad,$empresa);
+$respuesta = 1;
+//busco el archivo xml
+$ruta_G = dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Autorizados';
+// print_r($ruta_G);die();
+if($archivo = fopen($ruta_G.'/'.$autorizacion.'.xml',"w+b"))
+{
+fwrite($archivo,$documento);
+}
 
-  	$texto = file_get_contents($ruta_G.'/'.$autorizacion.'.xml');
-  	$texto = str_replace('EN PROCESO','nulo', $texto,$remplazado);
-  	if($remplazado>0)
-  	{
-  		return -2;
-  	}
+$texto = file_get_contents($ruta_G.'/'.$autorizacion.'.xml');
+$texto = str_replace('EN PROCESO','nulo', $texto,$remplazado);
+if($remplazado>0)
+{
+return -2;
+}
 
-  	$texto = str_replace('ï»¿','', $texto);
-  	$texto = str_replace('<![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>','', $texto);
+$texto = str_replace('ï»¿','', $texto);
+$texto = str_replace('
+<![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>','', $texto);
   	$texto = str_replace('<![CDATA[<?xml version="1.0" encoding="UTF-8"?>','', $texto);
   	$texto = str_replace(']]>','', $texto);
 
-  	// print_r($texto);die();
-  	$xml = simplexml_load_string($texto);
+// print_r($texto);die();
+$xml = simplexml_load_string($texto);
 
 
-	$objJsonDocument = json_encode($xml);
-    $factura = json_decode($objJsonDocument, TRUE);
-    // print_r($factura);die();
-    $tributaria = $factura['comprobante']['factura']['infoTributaria'];
-    $cabecera = $factura['comprobante']['factura']['infoFactura'];    
-    $detalle = $factura['comprobante']['factura']['detalles'];
+$objJsonDocument = json_encode($xml);
+$factura = json_decode($objJsonDocument, TRUE);
+// print_r($factura);die();
+$tributaria = $factura['comprobante']['factura']['infoTributaria'];
+$cabecera = $factura['comprobante']['factura']['infoFactura'];
+$detalle = $factura['comprobante']['factura']['detalles'];
 
-    // print_r($tributaria);die();
-
-
-
-    $serie = $tributaria['estab'].''.$tributaria['ptoEmi'];
-    $CI_RUC = $cabecera['identificacionComprador'];
-    $Fecha = date('Y-m-d',strtotime(str_replace('/','-',$cabecera['fechaEmision'])));
-    $codigoC = $this->datos_cliente($codigo=false,$CI_RUC);
-    if(count($codigoC)==0)
-    {
-    	return -1;
-    }
-    $cliente = Leer_Datos_Cliente_FA($codigoC[0]['Codigo']);
-   
-
-    // print_r($cliente);die();
-
-    $CodigoL = '.';
-	$CodigoL2 =  $this->catalogo_lineas_sri('FA',$serie,$Fecha,$Fecha,1);
-	// print_r($CodigoL2);die();
-	if(count($CodigoL2)>0)
-	{
-	   	$CodigoL = $CodigoL2[0]['Codigo'];
-	}
-
-    $A_No = 0;
-    $Real3 = 0;
-    $Real2 = 0;
-
-    if(isset($detalle['detalle']['codigoPrincipal']))
-    {
-
-    	//no se hace nada
-    }else
-    {
-    	$detalle = $detalle['detalle'];
-    }
-    foreach ($detalle as $key => $value) {   
-    	// print_r($value);die();
-    	$producto = Leer_Codigo_Inv($value['codigoPrincipal'],$Fecha,$CodBodega='',$CodMarca='');
-    	$Real1 = number_format(floatval($value['cantidad']),2,'.','') * number_format($value['precioUnitario'],6,'.','');
-    	if($producto['datos']['IVA']!=0){$Real3 = number_format(($Real1 - $Real2) * $_SESSION['INGRESO']['porc'], 2,'.','');}else{$Real3 = 0;}
-
-    	// print_r($producto);
-    	// print_r($value);
-    	// die();
-		$datos[0]['campo'] = "CODIGO"; 
-		$datos[0]['dato']  = $value['codigoPrincipal'];
-		$datos[1]['campo'] = "CODIGO_L"; 
-		$datos[1]['dato']  = $CodigoL;
-		$datos[2]['campo'] = "PRODUCTO"; 
-		$datos[2]['dato'] = $value['descripcion'];
-		$datos[3]['campo']  = "Tipo_Hab"; 
-		$datos[3]['dato']  =  '.';
-		$datos[4]['campo'] = "CANT"; 
-		$datos[4]['dato']  = number_format(floatval($value['cantidad']),2,'.','');
-		$datos[5]['campo'] = "PRECIO"; 
-		$datos[5]['dato']  = number_format($value['precioUnitario'],6,'.','');
-		$datos[6]['campo'] = "TOTAL"; 
-		$datos[6]['dato']  = $value['precioTotalSinImpuesto'];
-		$datos[7]['campo'] = "Total_IVA"; 
-		$datos[7]['dato']  = $Real3;
-		$datos[8]['campo'] = "Item"; 
-		$datos[8]['dato']  = $empresa;
-		$datos[9]['campo'] = "CodigoU"; 
-		$datos[9]['dato']  = $_SESSION['INGRESO']['CodigoU'];
-		$datos[10]['campo'] = "Codigo_Cliente"; 
-		$datos[10]['dato']  = $cliente['CodigoC'];
-		$datos[11]['campo'] = "A_No"; 
-		$datos[11]['dato']  = $A_No+1;
+// print_r($tributaria);die();
 
 
-		$datos[12]['campo'] = "CodBod"; 
-		$datos[12]['dato']  ='.';            
-		$datos[13]['campo'] = "COSTO";
-		$datos[13]['dato']  = $producto['datos']['Costo'];
-		if($producto['datos']['Costo']>0)
-		{ 	            
-		    $datos[14]['campo'] = "Cta_Inv"; 
-		    $datos[14]['dato']  = $producto['datos']['Cta_Inventario'];
-		    $datos[15]['campo'] = "Cta_Costo"; 
-		    $datos[15]['dato']  = $producto['datos']['Cta_Costo_Venta'];
-		}
-	    if(insert_generico('Asiento_F',$datos)!=null)
-    	{
-    		$respuesta = -1;
-    	};
-	}
 
-	return $respuesta;
+$serie = $tributaria['estab'].''.$tributaria['ptoEmi'];
+$CI_RUC = $cabecera['identificacionComprador'];
+$Fecha = date('Y-m-d',strtotime(str_replace('/','-',$cabecera['fechaEmision'])));
+$codigoC = $this->datos_cliente($codigo=false,$CI_RUC);
+if(count($codigoC)==0)
+{
+return -1;
+}
+$cliente = Leer_Datos_Cliente_FA($codigoC[0]['Codigo']);
 
 
-  }
+// print_r($cliente);die();
 
-  function Actualizar_factura($CI_RUC,$FacturaNo,$serie)
-  {
-  	$digito = digito_verificador_nuevo($CI_RUC);
-  	$cli = $this->datos_cliente_todo(false,$CI_RUC);
+$CodigoL = '.';
+$CodigoL2 = $this->catalogo_lineas_sri('FA',$serie,$Fecha,$Fecha,1);
+// print_r($CodigoL2);die();
+if(count($CodigoL2)>0)
+{
+$CodigoL = $CodigoL2[0]['Codigo'];
+}
 
-  	if(count($cli)>0)
-  	{
-	  	$datosC[0]['campo']='Codigo';
-	  	$datosC[0]['dato']=$digito['Codigo'];
-	  	$datosC[1]['campo']='TD';
-	  	$datosC[1]['dato']=$digito['Tipo'];
-	  	$datosC[2]['campo']='FA';
-	  	$datosC[2]['dato']=1;
+$A_No = 0;
+$Real3 = 0;
+$Real2 = 0;
 
-	  	$whereC[0]['campo']='CI_RUC';
-	  	$whereC[0]['valor']=$CI_RUC;
-	  	$whereC[0]['tipo']='string';
-	  	if($cli[0]['TD']=='' || $cli[0]['TD']=='.' ||$cli[0]['Codigo']=='' || $cli[0]['Codigo']=='.')
-	  	{
-	  		update_generico($datosC,'Clientes',$whereC);
-	  	}
+if(isset($detalle['detalle']['codigoPrincipal']))
+{
+
+//no se hace nada
+}else
+{
+$detalle = $detalle['detalle'];
+}
+foreach ($detalle as $key => $value) {
+// print_r($value);die();
+$producto = Leer_Codigo_Inv($value['codigoPrincipal'],$Fecha,$CodBodega='',$CodMarca='');
+$Real1 = number_format(floatval($value['cantidad']),2,'.','') * number_format($value['precioUnitario'],6,'.','');
+if($producto['datos']['IVA']!=0){$Real3 = number_format(($Real1 - $Real2) * $_SESSION['INGRESO']['porc'],
+2,'.','');}else{$Real3 = 0;}
+
+// print_r($producto);
+// print_r($value);
+// die();
+$datos[0]['campo'] = "CODIGO";
+$datos[0]['dato'] = $value['codigoPrincipal'];
+$datos[1]['campo'] = "CODIGO_L";
+$datos[1]['dato'] = $CodigoL;
+$datos[2]['campo'] = "PRODUCTO";
+$datos[2]['dato'] = $value['descripcion'];
+$datos[3]['campo'] = "Tipo_Hab";
+$datos[3]['dato'] = '.';
+$datos[4]['campo'] = "CANT";
+$datos[4]['dato'] = number_format(floatval($value['cantidad']),2,'.','');
+$datos[5]['campo'] = "PRECIO";
+$datos[5]['dato'] = number_format($value['precioUnitario'],6,'.','');
+$datos[6]['campo'] = "TOTAL";
+$datos[6]['dato'] = $value['precioTotalSinImpuesto'];
+$datos[7]['campo'] = "Total_IVA";
+$datos[7]['dato'] = $Real3;
+$datos[8]['campo'] = "Item";
+$datos[8]['dato'] = $empresa;
+$datos[9]['campo'] = "CodigoU";
+$datos[9]['dato'] = $_SESSION['INGRESO']['CodigoU'];
+$datos[10]['campo'] = "Codigo_Cliente";
+$datos[10]['dato'] = $cliente['CodigoC'];
+$datos[11]['campo'] = "A_No";
+$datos[11]['dato'] = $A_No+1;
 
 
-	  	$cliente = Leer_Datos_Cliente_FA($digito['Codigo']);
-	  	// print_r($cliente);die();
-	  	$datosF[0]['campo']='CodigoC';
-	  	$datosF[0]['dato']=$cliente['CodigoC'];
-	  	$datosF[1]['campo']='TB';
-	  	$datosF[1]['dato']=$cliente['TD'];
-	  	$datosF[2]['campo']='Razon_Social';
-	  	$datosF[2]['dato']=$cliente['Razon_Social'];  	
-	  	$datosF[3]['campo']='Direccion_RS';
-	  	$datosF[3]['dato']=$cliente['DireccionC'];  	
-	  	$datosF[4]['campo']='Telefono_RS';
-	  	$datosF[4]['dato']=$cliente['TelefonoC'];
+$datos[12]['campo'] = "CodBod";
+$datos[12]['dato'] ='.';
+$datos[13]['campo'] = "COSTO";
+$datos[13]['dato'] = $producto['datos']['Costo'];
+if($producto['datos']['Costo']>0)
+{
+$datos[14]['campo'] = "Cta_Inv";
+$datos[14]['dato'] = $producto['datos']['Cta_Inventario'];
+$datos[15]['campo'] = "Cta_Costo";
+$datos[15]['dato'] = $producto['datos']['Cta_Costo_Venta'];
+}
+if(insert_generico('Asiento_F',$datos)!=null)
+{
+$respuesta = -1;
+};
+}
 
-	  	$whereF[0]['campo']='Serie';
-	  	$whereF[0]['valor']=$serie;
-	  	$whereF[1]['campo']='Factura';
-	  	$whereF[1]['valor']=$FacturaNo;
-	  	$whereF[2]['campo']='Item';
-	  	$whereF[2]['valor']=$_SESSION['INGRESO']['item'];
-	  	$whereF[2]['tipo']='string';
-	  	$whereF[3]['campo']='Periodo';
-	  	$whereF[3]['valor']=$_SESSION['INGRESO']['periodo'];
-	  	$whereF[4]['campo']='TC';
-	  	$whereF[4]['valor']='FA';
-
-	  	// print_r($datosF);
-	  	// print_r($whereF);
-	  	// die();
-	  	update_generico($datosF,'Facturas',$whereF);
-
-	  	return 1;
-	  }else
-	  {
-	  	return -1;
-	  }
-  }
-
-  function generar_carpetas($entidad,$empresa)
-  {
-  	    if(strlen($entidad)<3){$entidad = generaCeros($entidad,3);}
-  	    if(strlen($empresa)<3){$empresa = generaCeros($empresa,3);}
-
-  	    $carpeta_entidad = dirname(__DIR__)."/entidades/entidad_".$entidad;
-	    $carpeta_autorizados = "";		  
-        $carpeta_generados = "";
-        $carpeta_firmados = "";
-        $carpeta_no_autori = "";
-		if(file_exists($carpeta_entidad))
-		{
-			$carpeta_comprobantes = $carpeta_entidad.'/CE'.$empresa;
-			if(file_exists($carpeta_comprobantes))
-			{
-			  $carpeta_autorizados = $carpeta_comprobantes."/Autorizados";		  
-			  $carpeta_generados = $carpeta_comprobantes."/Generados";
-			  $carpeta_firmados = $carpeta_comprobantes."/Firmados";
-			  $carpeta_no_autori = $carpeta_comprobantes."/No_autorizados";
-			  $carpeta_rechazados = $carpeta_comprobantes."/Rechazados";
-			  $carpeta_rechazados = $carpeta_comprobantes."/Enviados";
-
-				if(!file_exists($carpeta_autorizados))
-				{
-					mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
-				}
-				if(!file_exists($carpeta_generados))
-				{
-					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777);
-				}
-				if(!file_exists($carpeta_firmados))
-				{
-					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
-				}
-				if(!file_exists($carpeta_no_autori))
-				{
-					 mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777);
-				}
-				if(!file_exists($carpeta_rechazados))
-				{
-					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777);
-				}
-				if(!file_exists($carpeta_rechazados))
-				{
-					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777);
-				}
-			}else
-			{
-				mkdir($carpeta_entidad.'/CE'.$empresa, 0777);
-				mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
-			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777);
-			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
-			    mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777);
-			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777);
-			    mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777);
-			}
-		}else
-		{
-			   mkdir($carpeta_entidad, 0777);
-			   mkdir($carpeta_entidad.'/CE'.$empresa, 0777);
-			   mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
-			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777);
-			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
-			   mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777);	  
-			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777);  
-			   mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777);
-		}
-  }
+return $respuesta;
 
 
 }
 
-?>
+function Actualizar_factura($CI_RUC,$FacturaNo,$serie)
+{
+$digito = digito_verificador_nuevo($CI_RUC);
+$cli = $this->datos_cliente_todo(false,$CI_RUC);
+
+if(count($cli)>0)
+{
+$datosC[0]['campo']='Codigo';
+$datosC[0]['dato']=$digito['Codigo'];
+$datosC[1]['campo']='TD';
+$datosC[1]['dato']=$digito['Tipo'];
+$datosC[2]['campo']='FA';
+$datosC[2]['dato']=1;
+
+$whereC[0]['campo']='CI_RUC';
+$whereC[0]['valor']=$CI_RUC;
+$whereC[0]['tipo']='string';
+if($cli[0]['TD']=='' || $cli[0]['TD']=='.' ||$cli[0]['Codigo']=='' || $cli[0]['Codigo']=='.')
+{
+update_generico($datosC,'Clientes',$whereC);
+}
+
+
+$cliente = Leer_Datos_Cliente_FA($digito['Codigo']);
+// print_r($cliente);die();
+$datosF[0]['campo']='CodigoC';
+$datosF[0]['dato']=$cliente['CodigoC'];
+$datosF[1]['campo']='TB';
+$datosF[1]['dato']=$cliente['TD'];
+$datosF[2]['campo']='Razon_Social';
+$datosF[2]['dato']=$cliente['Razon_Social'];
+$datosF[3]['campo']='Direccion_RS';
+$datosF[3]['dato']=$cliente['DireccionC'];
+$datosF[4]['campo']='Telefono_RS';
+$datosF[4]['dato']=$cliente['TelefonoC'];
+
+$whereF[0]['campo']='Serie';
+$whereF[0]['valor']=$serie;
+$whereF[1]['campo']='Factura';
+$whereF[1]['valor']=$FacturaNo;
+$whereF[2]['campo']='Item';
+$whereF[2]['valor']=$_SESSION['INGRESO']['item'];
+$whereF[2]['tipo']='string';
+$whereF[3]['campo']='Periodo';
+$whereF[3]['valor']=$_SESSION['INGRESO']['periodo'];
+$whereF[4]['campo']='TC';
+$whereF[4]['valor']='FA';
+
+// print_r($datosF);
+// print_r($whereF);
+// die();
+update_generico($datosF,'Facturas',$whereF);
+
+return 1;
+}else
+{
+return -1;
+}
+}
+
+function generar_carpetas($entidad,$empresa)
+{
+if(strlen($entidad)<3){$entidad=generaCeros($entidad,3);} if(strlen($empresa)<3){$empresa=generaCeros($empresa,3);}
+    $carpeta_entidad=dirname(__DIR__)."/entidades/entidad_".$entidad; $carpeta_autorizados="" ; $carpeta_generados="" ;
+    $carpeta_firmados="" ; $carpeta_no_autori="" ; if(file_exists($carpeta_entidad)) {
+    $carpeta_comprobantes=$carpeta_entidad.'/CE'.$empresa; if(file_exists($carpeta_comprobantes)) {
+    $carpeta_autorizados=$carpeta_comprobantes."/Autorizados"; $carpeta_generados=$carpeta_comprobantes."/Generados";
+    $carpeta_firmados=$carpeta_comprobantes."/Firmados"; $carpeta_no_autori=$carpeta_comprobantes."/No_autorizados";
+    $carpeta_rechazados=$carpeta_comprobantes."/Rechazados"; $carpeta_rechazados=$carpeta_comprobantes."/Enviados";
+    if(!file_exists($carpeta_autorizados)) { mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777); }
+    if(!file_exists($carpeta_generados)) { mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777); }
+    if(!file_exists($carpeta_firmados)) { mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777); }
+    if(!file_exists($carpeta_no_autori)) { mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777); }
+    if(!file_exists($carpeta_rechazados)) { mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777); }
+    if(!file_exists($carpeta_rechazados)) { mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777); } }else {
+    mkdir($carpeta_entidad.'/CE'.$empresa, 0777); mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
+    mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
+    mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados',
+    0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777); } }else { mkdir($carpeta_entidad, 0777);
+    mkdir($carpeta_entidad.'/CE'.$empresa, 0777); mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
+    mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
+    mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados',
+    0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777); } } } ?>
