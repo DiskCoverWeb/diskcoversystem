@@ -121,7 +121,7 @@
                           <b class="col-sm-6 control-label" style="padding: 0px">Guia de remision No.</b>
                           <div class="col-sm-3" style="padding: 0px">
                               <select class="form-control input-xs" id="DCSerieGR" name="DCSerieGR"
-                                  onchange="DCSerieGR_LostFocus()">
+                                  onblur="DCSerieGR_LostFocus()">
                                   <option value="">No Existe</option>
                               </select>
                           </div>
