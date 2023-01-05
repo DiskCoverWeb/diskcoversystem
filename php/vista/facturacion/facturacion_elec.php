@@ -210,7 +210,7 @@ if($operadora!='.' && strlen($operadora)>=13)
   {
   	var parametros = '&TC='+'<?php echo $TC; ?>';
     $('#DCArticulo').select2({
-      placeholder: 'Seleccione un cliente',
+      placeholder: 'Seleccione producto',
       ajax: {
         url: '../controlador/facturacion/punto_ventaC.php?DCArticulo=true'+parametros,
         dataType: 'json',
@@ -586,7 +586,7 @@ if($operadora!='.' && strlen($operadora)>=13)
 
   function generar_factura()
   {
-  	// $('#myModal_espera').modal('show');
+  	$('#myModal_espera').modal('show');
   	var tc = $('#DCLinea').val();
   	tc = tc.split(' ');
 
@@ -915,7 +915,7 @@ if($operadora!='.' && strlen($operadora)>=13)
 						<div class="col-sm-6">
 							<b>Producto</b>
 							<select class="form-control input-xs" id="DCArticulo" name="DCArticulo" onchange="Articulo_Seleccionado()">
-								<option value="">Seleccione Bodega</option>
+								<option value="">Seleccione producto</option>
 							</select>					
 						</div>
 						<div class="col-sm-1" style="padding-right:0px">
@@ -932,7 +932,7 @@ if($operadora!='.' && strlen($operadora)>=13)
 						</div>
 						<div class="col-sm-1" style="padding-right:0px">
 							<b>TOTAL</b>
-							<input type="text" name="LabelVTotal" id="LabelVTotal" class="form-control input-xs" value="0">					
+							<input type="text" name="LabelVTotal" id="LabelVTotal" class="form-control input-xs" value="0" readonly>					
 						</div>
 						<div class="col-sm-2">
 							<b>Detalle</b>

@@ -713,12 +713,12 @@ function ProcGrabar($FA)
            $clave = $this->sri->Clave_acceso($TA['Fecha'],'01', $TA['Serie'],$Factura_No);
            $TFA['CLAVE'] = $clave;
            $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
-           $this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false);
+           $this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false,1,1);
            if($rep==1)
            {
 	           if($_SESSION['INGRESO']['Impresora_Rodillo']==0)
 	           {
-	           	$ema_pdf = $this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false,1);
+	           	$ema_pdf = $this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false,1,1);
 	           	if($ema_pdf==-1)
 	           	{
 	           		return array('respuesta'=>5,'pdf'=>$imp,'clave'=>$clave);
