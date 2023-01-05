@@ -1,7 +1,11 @@
 <?php
 require_once(dirname(__DIR__,2)."/modelo/facturacion/lista_facturasM.php");
+require_once(dirname(__DIR__,2)."/modelo/facturacion/punto_ventaM.php");
 require(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
-require(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
+if(!class_exists('enviar_emails'))
+{
+	require(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
+}
 require(dirname(__DIR__,2)."/comprobantes/SRI/autorizar_sri.php");
 
 $controlador = new lista_facturasC();
@@ -17,7 +21,7 @@ if(isset($_GET['perido']))
 }
 if(isset($_GET['ver_fac']))
 {
-  $controlador->ver_fac_pdf($_GET['codigo'],$_GET['ser'],$_GET['ci'],$_GET['per']);
+  $controlador->ver_fac_pdf($_GET['codigo'],$_GET['ser'],$_GET['ci'],$_GET['per'],$_GET['auto']);
 }
 if(isset($_GET['imprimir_pdf']))
 {
@@ -113,12 +117,14 @@ class lista_facturasC
 	private $modelo;
     private $email;
     private $pdf;
+    private $punto_venta;
 	public function __construct(){
     $this->modelo = new lista_facturasM();
 		$this->pdf = new cabecera_pdf();
 		$this->email = new enviar_emails();
 		$this->empresaGeneral = $this->modelo->Empresa_data();
 		$this->sri = new autorizacion_sri();
+		$this->punto_venta = new punto_ventaM();
         //$this->modelo = new MesaModel();
     }
 
@@ -157,7 +163,7 @@ class lista_facturasC
 								<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Acciones
 								<span class="fa fa-caret-down"></span></button>
 								<ul class="dropdown-menu">
-								<li><a href="#" onclick="Ver_factura(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\')"><i class="fa fa-eye"></i> Ver factura</a></li>';
+								<li><a href="#" onclick="Ver_factura(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['CodigoC'].'\',\''.$value['Autorizacion'].'\')"><i class="fa fa-eye"></i> Ver factura</a></li>';
 								if(count($exis)>0 && strlen($value['Autorizacion'])==13 && $parametros['tipo']!='')
     		 				{
 									$tr.='<li><a href="#" onclick="autorizar(\''.$value['TC'].'\',\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['Fecha']->format('Y-m-d').'\')" ><i class="fa fa-paper-plane"></i>Autorizar</a></li>';
@@ -215,10 +221,12 @@ class lista_facturasC
     	}
     	return $opcion;
     }
-    function ver_fac_pdf($cod,$ser,$ci,$per)
+    function ver_fac_pdf($cod,$ser,$ci,$per,$auto)
     {
     	// print_r($cod);die();
-    	$this->modelo->pdf_factura($cod,$ser,$ci,$per);
+    	$nombre = $ser.'-'.generaCeros($cod,7);
+    	$this->punto_venta->pdf_factura_elec($cod,$ser,$ci,$nombre,$auto,$per,$aprobado=false);
+    	// $this->modelo->pdf_factura($cod,$ser,$ci,$per);
     }
     function imprimir_pdf($parametros)
     {
@@ -447,21 +455,14 @@ class lista_facturasC
     function autorizar($parametros)
     {
     	// print_r($parametros);die();
-    	// $datos[0]['campo'] = 'Autorizacion';
-    	// $datos[0]['dato'] = $_SESSION['INGRESO']['RUC'];
-    	
-    	// $campoWhere[0]['campo'] = 'Item';
-    	// $campoWhere[0]['valor'] = $_SESSION['INGRESO']['item'];
-    	// $campoWhere[1]['campo'] = 'Periodo';
-    	// $campoWhere[1]['valor'] = $_SESSION['INGRESO']['periodo'];
-    	// $campoWhere[2]['campo'] = 'TC';
-    	// $campoWhere[2]['valor'] = $parametros['tc'];
-    	// $campoWhere[3]['campo'] = 'Serie';
-    	// $campoWhere[3]['valor'] = $parametros['serie'];
-    	// $campoWhere[4]['campo'] = 'Factura';
-    	// $campoWhere[4]['valor'] = $parametros['FacturaNo'];
+    	$cliente_factura = $this->modelo->factura_detalle($parametros['FacturaNo'],$parametros['serie'],$ci=false,$periodo=false);
+    	// print_r($cliente_factura);die();
 
-    	 // $this->modelo->ingresar_update($datos,'Facturas',$campoWhere);
+    	$respuesta = $this->sri->Actualizar_factura($cliente_factura[0]['RUC_CI'],$parametros['FacturaNo'],$parametros['serie']);
+    	if($respuesta==-1)
+    	{
+    		return -1;
+    	}
     	$rep= $this->sri->Autorizar_factura_o_liquidacion($parametros);
     	$clave = $this->sri->Clave_acceso($parametros['Fecha'],'01', $parametros['serie'],$parametros['FacturaNo']);
        $imp = '';

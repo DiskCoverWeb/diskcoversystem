@@ -9,7 +9,11 @@
 
   function buscar_numero_ci()
   {
-       var ci_ruc = $('#ruc').val();         
+       var ci_ruc = $('#ruc').val();
+       if(ci_ruc=='' || ci_ruc=='.')
+       {
+        return false;
+       }         
        $.ajax({
         url:   '../controlador/modalesC.php?buscar_cliente=true',          
         type:'post',
@@ -249,6 +253,7 @@ function validar_sri()
 						
 					</div>
           <div class="col-xs-2 col-sm-1" style="padding:0px"><br>
+            <!-- <iframe src="https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=1722214507001&output=embed"></iframe> -->
             <button type="button" class="btn btn-sm" onclick="validar_sri()">
               <img src="../../img/png/SRI.jpg" style="width: 60%">
             </button>

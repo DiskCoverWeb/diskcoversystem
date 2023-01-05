@@ -135,7 +135,7 @@ class punto_ventaM
          AND CONVERT(DATE,Vencimiento) >= '".$vencimiento."'";
          if($electronico)
          {
-           $sql.=" AND len(Autorizacion)>=13";
+           $sql.=" AND len(Autorizacion)=13";
          }
          $sql.=" ORDER BY Codigo ";
          // print_r($sql);die();
@@ -238,7 +238,7 @@ class punto_ventaM
        return $datos;
   }
 
-  function pdf_factura_elec($cod,$ser,$ci,$nombre,$clave_acceso,$periodo=false,$aprobado=false)
+  function pdf_factura_elec($cod,$ser,$ci,$nombre,$clave_acceso,$periodo=false,$aprobado=false,$descargar=false)
    {
     $res = 1;
     $sql="SELECT * 
@@ -310,7 +310,7 @@ class punto_ventaM
       $datos_fac[0]['Tipo_Pago'] = $forma_pago[0]['CTipoPago'];
     }
 
-    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$nombre,null,'factura',null,null,$imp=1,$detalle_abonos,$sucursal);
+    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$nombre,null,'factura',null,null,$imp=$descargar,$detalle_abonos,$sucursal);
     if($to_correo!='')
     {
       $titulo_correo = 'comprobantes electronicos';
@@ -365,6 +365,7 @@ class punto_ventaM
     $sql="  SELECT * FROM Catalogo_Lineas 
             WHERE Item = '".$_SESSION['INGRESO']['item']."' 
             AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+            AND Fact = 'FA'
             AND CONVERT(DATE,Fecha) <= '".$fecha."'
             AND CONVERT(DATE,Vencimiento) >= '".$vencimiento."'
             AND len(Autorizacion)>=13

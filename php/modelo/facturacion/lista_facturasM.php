@@ -85,7 +85,7 @@ class lista_facturasM
 
    }
 
-    function facturas_emitidas_tabla($codigo,$periodo=false,$desde=false,$hasta=false,$serie=false)
+   function facturas_emitidas_tabla($codigo,$periodo=false,$desde=false,$hasta=false,$serie=false)
    {
    	$cid = $this->conn;
 		
@@ -422,16 +422,19 @@ INNER JOIN Clientes C ON F.CodigoC = C.Codigo WHERE 1=1 ";
   }
 
 
-  function factura_detalle($cod,$ser,$ci,$periodo=false)
+  function factura_detalle($cod,$ser,$ci=false,$periodo=false)
   {
    	$id='factura_'.$ci;
    	$cid = $this->conn;
    	$sql="SELECT * 
    	FROM Facturas 
-   	WHERE Serie='".$ser."' 
-   	AND Factura='".$cod."' 
-   	AND CodigoC='".$ci."' 
-   	AND Item = '".$_SESSION['INGRESO']['item']."' ";
+   	WHERE  Item = '".$_SESSION['INGRESO']['item']."'
+   	AND Serie='".$ser."' 
+   	AND Factura='".$cod."'";
+   	if($ci)
+   	{ 
+   		$sql.=" AND CodigoC='".$ci."'";
+   	}
    	if($periodo==false || $periodo =='.')
    	{
 	   $sql.=" AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";

@@ -1290,6 +1290,36 @@ End Function
 
 */
 
+function codigo_verificador($CI_RUC)
+{
+
+
+  //devuelve datos de sp
+     $conn = new db();
+     $RUCCI='';$CODIGORUCI='';$DIGITO='';$TIPO='';$NATURAL='';
+
+     $parametros = array(
+      array(&$CI_RUC, SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+      array(&$RUCCI, SQLSRV_PARAM_INOUT),
+      array(&$CODIGORUCI, SQLSRV_PARAM_INOUT),
+      array(&$DIGITO, SQLSRV_PARAM_INOUT),
+      array(&$TIPO,SQLSRV_PARAM_INOUT),
+      array(&$NATURAL, SQLSRV_PARAM_INOUT)
+      );     
+     $sql="EXEC sp_Digito_Verificador @NumeroRUC=?, @Item=?, @RUCCI=?, @CodigoRUCCI=?,@DigitoVerificador=?,@TipoBeneficiario=?, @RUCNatural=?";
+     // print_r($_SESSION['INGRESO']);die();}
+      $respuesta = $conn->ejecutar_procesos_almacenados($sql,$parametros);
+      if($respuesta==1)
+      {
+         $res = array('Codigo'=>$CODIGORUCI,'Tipo'=>$TIPO,'Dig_ver'=>$DIGITO,'Ruc_Natu'=>$NATURAL,'CI'=> $RUCCI);
+          return $res;
+      }
+      return $respuesta;   
+
+
+}
+
 function digito_verificador_nuevo($NumeroRUC){
     $DigStr= '';
     $VecDig= '';
@@ -5143,7 +5173,8 @@ function insert_generico($tabla=null,$datos=null) // optimizado pero falta
 		$longitud_cad = strlen($sql_v); 
 		$v2 = substr_replace($sql_v,")",$longitud_cad-1,1);
 
-    // print_r($cam2.$v2);//die();
+    // print_r($cam2.$v2);
+    // die();
      $res = $conn->String_Sql($cam2.$v2);
      if($res==1)
      {
@@ -10893,7 +10924,7 @@ function variables_tipo_factura()
      
     'T'=>'.',
     'TC'=>'.',
-    'Porc_IVA_S' =>'.',
+    'Porc_IVA_S' =>'0',
     'Tipo_PRN'   =>'.',
     'CodigoC'=>'.',
     'CodigoB'=>'.',
@@ -11028,7 +11059,7 @@ function variables_tipo_factura()
     'Porc_C' =>'0',
     'Cotizacion' =>'0',
     'Porc_NC'=>'.',
-    'Porc_IVA'   =>'.',
+    'Porc_IVA'   =>'0',
     'AltoFactura'=>'.',
     'AnchoFactura' =>'.',
     'EspacioFactura'   =>'.',

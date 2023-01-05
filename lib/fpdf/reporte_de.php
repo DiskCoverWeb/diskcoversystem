@@ -2241,6 +2241,297 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$y_alineado = $yfin;
 	//==================================fin cuadro izquierda inicial==================
 
+	//==================================cuadro derecha inicial invisible========================
+
+	$medida_1 = $pdf->GETY();
+
+	$pdf->SetTextColor(255,255,255);
+	$x = 200+100;
+	$pdf->SetY($yfin+20);
+	$y = $pdf->GetY();
+	$margen_med2 = 280;
+    $col_1 = 142;
+	$pdf->SetXY($x,$pdf->GetY());
+	$col_2 = $margen_med2-$col_1;
+
+	$misma_ln = $pdf->GetY();
+	$pdf->SetFont('Arial','B',12);
+	$pdf->SetWidths(array($col_1));
+	$arr=array('R.U.C. '.$_SESSION['INGRESO']['RUC']);
+	$pdf->Row($arr,10);
+
+	if($rimpe=='')
+	{
+		$pdf->SetXY($x,$misma_ln);
+		// $pdf->SetTextColor(225,51,51);
+		$pdf->SetTextColor(255,255,255);
+ 	    $pdf->SetWidths(array($col_1,$col_2));
+		$pdf->SetFont('Arial','',7);
+		$arr=array('',$rimpe);//mio
+		$pdf->Row($arr,10);	
+	}
+// /-----------------------------------------------------------------------------
+	if($agente!='' && $agente!='.')
+	{
+		$pdf->SetX($x);
+		// $pdf->SetTextColor(225,51,51);
+		$pdf->SetTextColor(255,255,255);
+		$pdf->SetFont('Arial','',7);
+ 	    $pdf->SetWidths(array($col_1+$col_2));
+		$arr=array('Agente de Retención Resolución: '.$agente);
+		$pdf->Row($arr,10);
+	}
+// ----------------------------------------------------------------------------------
+	$pdf->SetX($x);
+	$pdf->SetTextColor(255,255,255);
+	// $pdf->SetTextColor(0,0,0);
+	$pdf->SetFont('Arial','',12);
+	$pdf->SetWidths(array($col_1));
+	// print_r($datos);die();
+	
+	$misma_ln = $pdf->GetY();
+	if(isset($datos[0]['TC']) && $datos[0]['TC']=='LC')
+	{
+		$arr=array('Liquidacion compra No.');
+	}else{	$arr=array('Factura No.'); }
+	$pdf->Row($arr,10);
+
+	$pdf->SetXY($x,$misma_ln);
+	$pdf->SetFont('Arial','',11);
+	// $pdf->SetTextColor(225,51,51);
+	$pdf->SetTextColor(255,255,255);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$ptoEmi = substr($datos[0]['Serie'],3,6);
+	$Serie = substr($datos[0]['Serie'],0,3);
+	$arr=array('',$Serie.'-'.$ptoEmi.'-'.generaCeros($datos[0]['Factura'],9));//mio
+	$pdf->Row($arr,10);
+	$pdf->SetTextColor(0);
+    // print_r($datos);
+	// fecha y hora
+
+
+	$pdf->SetX($x);
+	$pdf->SetTextColor(255,255,255);
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$arr=array('FECHA Y HORA DE AUTORIZACIÓN:',$datos[0]['Fecha_Aut']->format('Y-m-d  h:m:s'));
+	$pdf->Row($arr,10);
+
+
+	//emisión
+	$pdf->SetX($x);
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$arr=array('EMISIÓN:','NORMAL');
+	$pdf->Row($arr,13);	
+
+
+	//ambiente
+	$ambiente = substr($datos[0]['Autorizacion'],23,1);
+	// print_r($datos[0]['Autorizacion']);die();
+	//print_r($ambiente);die();
+	$am = '';
+	if($ambiente==2)
+	{
+	  $am = 'PRODUCCION';
+
+	}else if($ambiente==1)
+	{
+	  $am='PRUEBA';
+	}
+	$pdf->SetX($x);
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$arr=array('AMBIENTE: ',$am);
+	$pdf->Row($arr,10);	
+	
+	
+	//clave de acceso barcode y numero
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetX($x);
+	$pdf->SetWidths(array($margen_med));
+	$arr=array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
+	$pdf->Row($arr,10);
+	if($datos[0]['Clave_Acceso'] != $datos[0]['Autorizacion'])
+	 {
+		$code=$datos[0]['Clave_Acceso'];
+	    // $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
+
+	    $pdf->SetY($pdf->GetY()+20);	    
+	    $pdf->SetFont('Arial','',7);
+	    $pdf->SetWidths(array(275));
+	    $pdf->SetX($x);
+	    // $arr=array($code);
+		// $pdf->Row($arr,10);	
+	 }else if($datos[0]['Clave_Acceso'] > 39)
+	 {	 	
+	    $code=$datos[0]['Clave_Acceso'];
+	    // $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
+
+	    $pdf->SetY($pdf->GetY()+20);	    
+	    $pdf->SetFont('Arial','',7);
+	    $pdf->SetWidths(array(275));
+	    $pdf->SetX($x);
+	    $arr=array($code);
+		// $pdf->Row($arr,10);	
+	 }
+	 $yfin = $pdf->GetY();
+	 // $pdf->RoundedRect($x-$margen, $y-$margen, $margen_med2, $yfin-$y+$margen, 10, $style = '', $angle = '1234');		
+
+	 $medida_fin = $yfin;
+
+//==========================================
+// 	if($medida_fin>$medida_1)
+// 	{
+      $medida_burbu = $medida_fin-$medida_1;
+      $pos_burbuja_derecha_y = $y_alineado-$medida_burbu+$margen*2;
+//   }else{
+
+//   	// print_r($pdf->PageNo());die();
+//     $medida_burbu = $medida_1-$medida_fin;    
+//     $pos_burbuja_derecha_y = $y_alineado+100+$margen*2;
+// }
+
+// print_r($y_alineado*-1);die();
+// print_r($pos_burbuja_derecha_y*-1);die();
+	$x = 200+100;
+	$pdf->SetAligns('L');
+	$pdf->SetY($pos_burbuja_derecha_y);
+	$y = $pdf->GetY();
+	$margen_med2 = 280;
+    $col_1 = 142;
+	$pdf->SetXY($x,$pdf->GetY());
+	$col_2 = $margen_med2-$col_1;
+	$pdf->SetTextColor(0,0,0);
+	$misma_ln = $pdf->GetY();
+	$pdf->SetFont('Arial','B',12);
+	$pdf->SetWidths(array($col_1));
+	$arr=array('R.U.C. '.$_SESSION['INGRESO']['RUC']);
+	$pdf->Row($arr,10);
+
+	if($rimpe!='')
+	{
+		$pdf->SetXY($x,$misma_ln);
+		$pdf->SetTextColor(225,51,51);
+ 	    $pdf->SetWidths(array($col_1,$col_2));
+		$pdf->SetFont('Arial','',7);
+		$arr=array('',$rimpe);//mio
+		$pdf->Row($arr,10);	
+	}
+// /-----------------------------------------------------------------------------
+	if($agente!='' && $agente!='.')
+	{
+		$pdf->SetX($x);
+		$pdf->SetTextColor(225,51,51);
+		$pdf->SetFont('Arial','',7);
+ 	    $pdf->SetWidths(array($col_1+$col_2));
+		$arr=array('Agente de Retención Resolución: '.$agente);
+		$pdf->Row($arr,10);
+	}
+// ----------------------------------------------------------------------------------
+	$pdf->SetX($x);
+	$pdf->SetTextColor(0,0,0);
+	$pdf->SetFont('Arial','',12);
+	$pdf->SetWidths(array($col_1));
+	// print_r($datos);die();
+	
+	$misma_ln = $pdf->GetY();
+	if(isset($datos[0]['TC']) && $datos[0]['TC']=='LC')
+	{
+		$arr=array('Liquidacion compra No.');
+	}else{	$arr=array('Factura No.'); }
+	$pdf->Row($arr,10);
+
+	$pdf->SetXY($x,$misma_ln);
+	$pdf->SetFont('Arial','',11);
+	$pdf->SetTextColor(225,51,51);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$ptoEmi = substr($datos[0]['Serie'],3,6);
+	$Serie = substr($datos[0]['Serie'],0,3);
+	$arr=array('',$Serie.'-'.$ptoEmi.'-'.generaCeros($datos[0]['Factura'],9));//mio
+	$pdf->Row($arr,10);
+	$pdf->SetTextColor(0);
+    // print_r($datos);
+	// fecha y hora
+
+
+	$pdf->SetX($x);
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$arr=array('FECHA Y HORA DE AUTORIZACIÓN:',$datos[0]['Fecha_Aut']->format('Y-m-d  h:m:s'));
+	$pdf->Row($arr,10);
+
+
+	//emisión
+	$pdf->SetX($x);
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$arr=array('EMISIÓN:','NORMAL');
+	$pdf->Row($arr,13);	
+
+
+	//ambiente
+	$ambiente = substr($datos[0]['Autorizacion'],23,1);
+	// print_r($datos[0]['Autorizacion']);die();
+	//print_r($ambiente);die();
+	$am = '';
+	if($ambiente==2)
+	{
+	  $am = 'PRODUCCION';
+
+	}else if($ambiente==1)
+	{
+	  $am='PRUEBA';
+	}
+	$pdf->SetX($x);
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$arr=array('AMBIENTE: ',$am);
+	$pdf->Row($arr,10);	
+	
+	
+	//clave de acceso barcode y numero
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetX($x);
+	$pdf->SetWidths(array($margen_med));
+	$arr=array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
+	$pdf->Row($arr,10);
+	if($datos[0]['Clave_Acceso'] != $datos[0]['Autorizacion'])
+	 {
+		$code=$datos[0]['Autorizacion'];
+	    $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
+
+	    $pdf->SetY($pdf->GetY()+20);	    
+	    $pdf->SetFont('Arial','',7);
+	    $pdf->SetWidths(array(275));
+	    $pdf->SetX($x);
+	    $arr=array($code);
+		$pdf->Row($arr,10);	
+	 
+	 }else if($datos[0]['Clave_Acceso'] > 39)
+	 {	 	
+	    $code=$datos[0]['Clave_Acceso'];
+	    $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
+
+	    $pdf->SetY($pdf->GetY()+20);	    
+	    $pdf->SetFont('Arial','',7);
+	    $pdf->SetWidths(array(275));
+	    $pdf->SetX($x);
+	    $arr=array($code);
+		$pdf->Row($arr,10);	
+	 }
+	 $yfin = $pdf->GetY();
+	 $pdf->RoundedRect($x-$margen, $y-$margen, $margen_med2, $yfin-$y+$margen, 10, $style = '', $angle = '1234');		
+
+	 $medida_fin = $pdf->GetY();
+
+
+	 //========================= fin cuadro derecha inicial========================
+
+
+
+
+
 
 
 	//============================================cuadro cliente ==========================================
@@ -2250,26 +2541,19 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$margen_med3 = 540;
 
 
-	$pdf->SetWidths(array(270,185,80));
-	$arr=array('Razón social/nombres y apellidos:','','Identificación:');//mio
+	$pdf->SetWidths(array(370,85,80));
+	$arr=array('Razón social/nombres y apellidos:','Identificación:','Telefono');//mio
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
-	$pdf->SetWidths(array(270,185,80));
-	$arr=array(utf8_decode($datos[0]['Razon_Social']),'',$datos[0]['RUC_CI']);//mio
+	$pdf->SetWidths(array(370,85,80));
+	$arr=array(utf8_decode($datos[0]['Razon_Social']),$datos[0]['RUC_CI'],$datos[0]['Telefono_RS']);//mio
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(270,155,100));
-	// print_r($educativo);die();
-    if(count($educativo)>0)
-    {
-    	if(!isset($educativo[0]['Direccion']))
-    	{
-    		$educativo[0]['Direccion'] = '.';
-    	}
-		$arr=array('Dirección: '.$educativo[0]['Direccion'],'Fecha emisión: '.$datos[0]['Fecha']->format('Y-m-d'),'Fecha pago: '.$datos[0]['Fecha']->format('Y-m-d'));//mio
-		$pdf->Row($arr,10);
-		$pdf->SetWidths(array(270,155,100));
-	}
+	
+	$arr=array('Dirección: '.$datos[0]['Direccion_RS'],'Fecha emisión: '.$datos[0]['Fecha']->format('Y-m-d'),'Fecha pago: '.$datos[0]['Fecha']->format('Y-m-d'));//mio
+	$pdf->Row($arr,10);
+	$pdf->SetWidths(array(270,155,100));
 	if('DOLAR'=='DOLAR')
 	{
 		$mon='USD';
@@ -2364,88 +2648,23 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	$pdf->SetWidths(array(140));
 	//print_r($educativo);
 
-     ///revisa si los datos vienen de detalle matricula o de cliente
-	if($matri)
-	{
 
-	// print_r($educativo);die();
-		if(isset($educativo[0]['Telefono_RS']) && $educativo[0]['Telefono_RS'] != '.' && $educativo[0]['Telefono_RS'] != '')
+	 if( isset($dato[0]['Telefono_RS']) && $datos[0]['Telefono_RS'] != '.' && $datos[0]['Telefono_RS'] != '')
 		{	
-		$arr=array('Telefono: '.$educativo[0]['Telefono_RS']);
-		$pdf->Row($arr,10);
-		$pdf->SetWidths(array(140));
-	    }
-	    if(isset( $educativo[0]['Lugar_Trabajo_R']) && $educativo[0]['Lugar_Trabajo_R'] != '.' && $educativo[0]['Lugar_Trabajo_R'] != '')
-		{
-		$arr=array('Direccion: '.$educativo[0]['Lugar_Trabajo_R']);
-		$pdf->Row($arr,10);
-		$pdf->SetWidths(array(140));
-	    }
-	    if( isset($educativo[0]['Email_R']) && $educativo[0]['Email_R'] != '.' && $educativo[0]['Email_R'] != '')
-		{	
-		$arr=array('Emial: '.$educativo[0]['Email_R']);
-		$pdf->Row($arr,10);
-		$pdf->SetWidths(array(140));
-	    }
-	    if( isset($educativo[0]['Email_R']) && $educativo[0]['Email_R'] != '.' && $educativo[0]['Email_R'] != '')
-		{	
-		$arr=array('Emial: '.$educativo[0]['Email_R']);
+		$arr=array('Telefono: '.$datos[0]['Telefono_RS']);
 		$pdf->Row($arr,10);
 		$pdf->SetWidths(array(140));
 	    }
 
-	    if(isset($datos[0]['Observacion']) && $datos[0]['Observacion'] != '.' && $datos[0]['Observacion'] != '')
-		{			
-			// print_r('expression');die();
-			$arr=array('Observacion: '.$datos[0]['Observacion']);
-			$pdf->Row($arr,10);
-			$pdf->SetWidths(array(140));
-	    }
-    }else
-    {
-
-	// print_r($educativo);die();
-     if(isset($educativo[0]['Telefono']) && $educativo[0]['Telefono'] != '.' && $educativo[0]['Telefono'] != '')
-		{		
-	    $arr=array('Telefono: '.$educativo[0]['Telefono']);
-		$pdf->Row($arr,10);
-		$pdf->SetWidths(array(140));
-	    }
-	    if(isset($educativo[0]['DirecionT']) &&  $educativo[0]['DirecionT'] != '.' && $educativo[0]['DirecionT'] != '')
-		{		
-		$arr=array('Direccion: '.$educativo[0]['DirecionT']);
-		$pdf->Row($arr,10);
-		$pdf->SetWidths(array(140));
-	     }
-		if(isset($educativo[0]['Email']) && $educativo[0]['Email'] != '.' && $educativo[0]['Email'] != '')
-		{			
-			$arr=array('Email: '.$educativo[0]['Email']);
-			$pdf->Row($arr,10);
-			$pdf->SetWidths(array(140));
-	    }
-	    if(isset($educativo[0]['EmailR']) && $educativo[0]['EmailR'] != '.' && $educativo[0]['EmailR'] != '')
-		{			
-			$arr=array('Email: '.$educativo[0]['EmailR']);
-			$pdf->Row($arr,10);
-			$pdf->SetWidths(array(140));
-	    }
-
-			// print_r($datos);die();
-	    if(isset($datos[0]['Observacion']) && $datos[0]['Observacion'] != '.' && $datos[0]['Observacion'] != '')
-		{			
-			// print_r('expression');die();
-			$arr=array('Observacion: '.$datos[0]['Observacion']);
-			$pdf->Row($arr,10);
-			$pdf->SetWidths(array(140));
-	    }
-
-    }
 
 
 	///----------------------  infomrmacion adicional cuando punto de venta es diferente de 001 ----------------------
 	// print_r($sucursal);die();
-	if(count($sucursal)>0 && $punto!='001' && $suc=='001')
+
+
+	if(count($sucursal)>0 && $punto!='001' && $suc=='001' && strlen($sucursal[0]['RUC_Establecimiento'])==13)
 	{
+
 		$arr=array('Punto Emision: '.$datos[0]['Serie']);
 		$pdf->Row($arr,10);
 
@@ -2496,7 +2715,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 
 	///----------------------  infomrmacion adicional cuan establecimiento es diferente de 001 ----------------------
 
-    if(count($sucursal)>0 && $suc!='001')
+    if(count($sucursal)>0 && $suc!='001' && strlen($sucursal[0]['RUC_Establecimiento'])==13)
 	{
 		$arr=array('Establecimiento: '.$datos[0]['Serie']);
 		$pdf->Row($arr,10);
@@ -2791,286 +3010,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 
 	//========================================= fin cuadro totales======================================
 
-	//==================================cuadro derecha inicial========================
-
-	$medida_1 = $pdf->GETY();
-
-	$pdf->SetTextColor(255,255,255);
-	$x = 200+100;
-	$pdf->SetY($yfin+20);
-	$y = $pdf->GetY();
-	$margen_med2 = 280;
-    $col_1 = 142;
-	$pdf->SetXY($x,$pdf->GetY());
-	$col_2 = $margen_med2-$col_1;
-
-	$misma_ln = $pdf->GetY();
-	$pdf->SetFont('Arial','B',12);
-	$pdf->SetWidths(array($col_1));
-	$arr=array('R.U.C. '.$_SESSION['INGRESO']['RUC']);
-	$pdf->Row($arr,10);
-
-	if($rimpe=='')
-	{
-		$pdf->SetXY($x,$misma_ln);
-		// $pdf->SetTextColor(225,51,51);
-		$pdf->SetTextColor(255,255,255);
- 	    $pdf->SetWidths(array($col_1,$col_2));
-		$pdf->SetFont('Arial','',7);
-		$arr=array('',$rimpe);//mio
-		$pdf->Row($arr,10);	
-	}
-// /-----------------------------------------------------------------------------
-	if($agente!='' && $agente!='.')
-	{
-		$pdf->SetX($x);
-		// $pdf->SetTextColor(225,51,51);
-		$pdf->SetTextColor(255,255,255);
-		$pdf->SetFont('Arial','',7);
- 	    $pdf->SetWidths(array($col_1+$col_2));
-		$arr=array('Agente de Retención Resolución: '.$agente);
-		$pdf->Row($arr,10);
-	}
-// ----------------------------------------------------------------------------------
-	$pdf->SetX($x);
-	$pdf->SetTextColor(255,255,255);
-	// $pdf->SetTextColor(0,0,0);
-	$pdf->SetFont('Arial','',12);
-	$pdf->SetWidths(array($col_1));
-	// print_r($datos);die();
 	
-	$misma_ln = $pdf->GetY();
-	if(isset($datos[0]['TC']) && $datos[0]['TC']=='LC')
-	{
-		$arr=array('Liquidacion compra No.');
-	}else{	$arr=array('Factura No.'); }
-	$pdf->Row($arr,10);
-
-	$pdf->SetXY($x,$misma_ln);
-	$pdf->SetFont('Arial','',11);
-	// $pdf->SetTextColor(225,51,51);
-	$pdf->SetTextColor(255,255,255);
-	$pdf->SetWidths(array($col_1,$col_2));
-	$ptoEmi = substr($datos[0]['Serie'],3,6);
-	$Serie = substr($datos[0]['Serie'],0,3);
-	$arr=array('',$Serie.'-'.$ptoEmi.'-'.generaCeros($datos[0]['Factura'],9));//mio
-	$pdf->Row($arr,10);
-	$pdf->SetTextColor(0);
-    // print_r($datos);
-	// fecha y hora
-
-
-	$pdf->SetX($x);
-	$pdf->SetTextColor(255,255,255);
-	$pdf->SetFont('Arial','B',7);
-	$pdf->SetWidths(array($col_1,$col_2));
-	$arr=array('FECHA Y HORA DE AUTORIZACIÓN:',$datos[0]['Fecha_Aut']->format('Y-m-d  h:m:s'));
-	$pdf->Row($arr,10);
-
-
-	//emisión
-	$pdf->SetX($x);
-	$pdf->SetFont('Arial','B',7);
-	$pdf->SetWidths(array($col_1,$col_2));
-	$arr=array('EMISIÓN:','NORMAL');
-	$pdf->Row($arr,13);	
-
-
-	//ambiente
-	$ambiente = substr($datos[0]['Autorizacion'],23,1);
-	// print_r($datos[0]['Autorizacion']);die();
-	//print_r($ambiente);die();
-	$am = '';
-	if($ambiente==2)
-	{
-	  $am = 'PRODUCCION';
-
-	}else if($ambiente==1)
-	{
-	  $am='PRUEBA';
-	}
-	$pdf->SetX($x);
-	$pdf->SetFont('Arial','B',7);
-	$pdf->SetWidths(array($col_1,$col_2));
-	$arr=array('AMBIENTE: ',$am);
-	$pdf->Row($arr,10);	
-	
-	
-	//clave de acceso barcode y numero
-	$pdf->SetFont('Arial','B',7);
-	$pdf->SetX($x);
-	$pdf->SetWidths(array($margen_med));
-	$arr=array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
-	$pdf->Row($arr,10);
-	if($datos[0]['Clave_Acceso'] != $datos[0]['Autorizacion'])
-	 {
-		$code=$datos[0]['Clave_Acceso'];
-	    // $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
-
-	    $pdf->SetY($pdf->GetY()+20);	    
-	    $pdf->SetFont('Arial','',7);
-	    $pdf->SetWidths(array(275));
-	    $pdf->SetX($x);
-	    // $arr=array($code);
-		// $pdf->Row($arr,10);	
-	 }else if($datos[0]['Clave_Acceso'] > 39)
-	 {	 	
-	    $code=$datos[0]['Clave_Acceso'];
-	    // $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
-
-	    $pdf->SetY($pdf->GetY()+20);	    
-	    $pdf->SetFont('Arial','',7);
-	    $pdf->SetWidths(array(275));
-	    $pdf->SetX($x);
-	    $arr=array($code);
-		// $pdf->Row($arr,10);	
-	 }
-	 $yfin = $pdf->GetY();
-	 // $pdf->RoundedRect($x-$margen, $y-$margen, $margen_med2, $yfin-$y+$margen, 10, $style = '', $angle = '1234');		
-
-	 $medida_fin = $yfin;
-
-//==========================================
-    $medida_burbu = $medida_fin-$medida_1;
-
-    $pos_burbuja_derecha_y = $y_alineado-$medida_burbu+$margen*2;
-	$x = 200+100;
-	$pdf->SetAligns('L');
-	$pdf->SetY($pos_burbuja_derecha_y);
-	$y = $pdf->GetY();
-	$margen_med2 = 280;
-    $col_1 = 142;
-	$pdf->SetXY($x,$pdf->GetY());
-	$col_2 = $margen_med2-$col_1;
-	$pdf->SetTextColor(0,0,0);
-	$misma_ln = $pdf->GetY();
-	$pdf->SetFont('Arial','B',12);
-	$pdf->SetWidths(array($col_1));
-	$arr=array('R.U.C. '.$_SESSION['INGRESO']['RUC']);
-	$pdf->Row($arr,10);
-
-	if($rimpe!='')
-	{
-		$pdf->SetXY($x,$misma_ln);
-		$pdf->SetTextColor(225,51,51);
- 	    $pdf->SetWidths(array($col_1,$col_2));
-		$pdf->SetFont('Arial','',7);
-		$arr=array('',$rimpe);//mio
-		$pdf->Row($arr,10);	
-	}
-// /-----------------------------------------------------------------------------
-	if($agente!='' && $agente!='.')
-	{
-		$pdf->SetX($x);
-		$pdf->SetTextColor(225,51,51);
-		$pdf->SetFont('Arial','',7);
- 	    $pdf->SetWidths(array($col_1+$col_2));
-		$arr=array('Agente de Retención Resolución: '.$agente);
-		$pdf->Row($arr,10);
-	}
-// ----------------------------------------------------------------------------------
-	$pdf->SetX($x);
-	$pdf->SetTextColor(0,0,0);
-	$pdf->SetFont('Arial','',12);
-	$pdf->SetWidths(array($col_1));
-	// print_r($datos);die();
-	
-	$misma_ln = $pdf->GetY();
-	if(isset($datos[0]['TC']) && $datos[0]['TC']=='LC')
-	{
-		$arr=array('Liquidacion compra No.');
-	}else{	$arr=array('Factura No.'); }
-	$pdf->Row($arr,10);
-
-	$pdf->SetXY($x,$misma_ln);
-	$pdf->SetFont('Arial','',11);
-	$pdf->SetTextColor(225,51,51);
-	$pdf->SetWidths(array($col_1,$col_2));
-	$ptoEmi = substr($datos[0]['Serie'],3,6);
-	$Serie = substr($datos[0]['Serie'],0,3);
-	$arr=array('',$Serie.'-'.$ptoEmi.'-'.generaCeros($datos[0]['Factura'],9));//mio
-	$pdf->Row($arr,10);
-	$pdf->SetTextColor(0);
-    // print_r($datos);
-	// fecha y hora
-
-
-	$pdf->SetX($x);
-	$pdf->SetFont('Arial','B',7);
-	$pdf->SetWidths(array($col_1,$col_2));
-	$arr=array('FECHA Y HORA DE AUTORIZACIÓN:',$datos[0]['Fecha_Aut']->format('Y-m-d  h:m:s'));
-	$pdf->Row($arr,10);
-
-
-	//emisión
-	$pdf->SetX($x);
-	$pdf->SetFont('Arial','B',7);
-	$pdf->SetWidths(array($col_1,$col_2));
-	$arr=array('EMISIÓN:','NORMAL');
-	$pdf->Row($arr,13);	
-
-
-	//ambiente
-	$ambiente = substr($datos[0]['Autorizacion'],23,1);
-	// print_r($datos[0]['Autorizacion']);die();
-	//print_r($ambiente);die();
-	$am = '';
-	if($ambiente==2)
-	{
-	  $am = 'PRODUCCION';
-
-	}else if($ambiente==1)
-	{
-	  $am='PRUEBA';
-	}
-	$pdf->SetX($x);
-	$pdf->SetFont('Arial','B',7);
-	$pdf->SetWidths(array($col_1,$col_2));
-	$arr=array('AMBIENTE: ',$am);
-	$pdf->Row($arr,10);	
-	
-	
-	//clave de acceso barcode y numero
-	$pdf->SetFont('Arial','B',7);
-	$pdf->SetX($x);
-	$pdf->SetWidths(array($margen_med));
-	$arr=array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
-	$pdf->Row($arr,10);
-	if($datos[0]['Clave_Acceso'] != $datos[0]['Autorizacion'])
-	 {
-		$code=$datos[0]['Autorizacion'];
-	    $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
-
-	    $pdf->SetY($pdf->GetY()+20);	    
-	    $pdf->SetFont('Arial','',7);
-	    $pdf->SetWidths(array(275));
-	    $pdf->SetX($x);
-	    $arr=array($code);
-		$pdf->Row($arr,10);	
-	 
-	 }else if($datos[0]['Clave_Acceso'] > 39)
-	 {	 	
-	    $code=$datos[0]['Clave_Acceso'];
-	    $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
-
-	    $pdf->SetY($pdf->GetY()+20);	    
-	    $pdf->SetFont('Arial','',7);
-	    $pdf->SetWidths(array(275));
-	    $pdf->SetX($x);
-	    $arr=array($code);
-		$pdf->Row($arr,10);	
-	 }
-	 $yfin = $pdf->GetY();
-	 $pdf->RoundedRect($x-$margen, $y-$margen, $margen_med2, $yfin-$y+$margen, 10, $style = '', $angle = '1234');		
-
-	 $medida_fin = $pdf->GetY();
-
-
-	 //========================= fin cuadro derecha inicial========================
-
-
-
-
 
 
 

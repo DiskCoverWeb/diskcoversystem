@@ -240,16 +240,16 @@
 
    }
 
-  function Ver_factura(id,serie,ci)
+  function Ver_factura(id,serie,ci,aut)
 	{		 
     peri = $('#ddl_periodo').val();
-		var url = '../controlador/facturacion/lista_facturasC.php?ver_fac=true&codigo='+id+'&ser='+serie+'&ci='+ci+'&per='+peri;		
+		var url = '../controlador/facturacion/lista_facturasC.php?ver_fac=true&codigo='+id+'&ser='+serie+'&ci='+ci+'&per='+peri+'&auto='+aut;		
 		window.open(url,'_blank');
 	}
 
   function autorizar(tc,factura,serie,fecha)
   { 
-    $('#myModal_espera').modal('show');
+    // $('#myModal_espera').modal('show');
     var parametros = 
     {
       'tc':tc,
@@ -262,7 +262,8 @@
       url:   '../controlador/facturacion/lista_facturasC.php?re_autorizar=true',
       type:  'post',
       dataType: 'json',
-       success:  function (data) { 
+       success:  function (data) {
+       
 
     // $('#myModal_espera').modal('hide');
     //    if(response==1)
@@ -323,7 +324,12 @@
         Swal.fire('SRI intermitente intente mas tarde','','info');  
       }else
       {
-        Swal.fire('XML devuelto por:'+data.text,'','error');  
+        if(data==-1)
+        {
+           Swal.fire('Revise CI_RUC de factura en base','Cliente no encontrado','info');
+         }else{
+          Swal.fire('XML devuelto por:'+data.text,'','error');  
+        }
       }
 
 

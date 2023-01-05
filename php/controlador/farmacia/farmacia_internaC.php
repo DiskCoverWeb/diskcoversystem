@@ -370,7 +370,7 @@ class farmacia_internaC
 
 			 	 $tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
             	 $tablaHTML[$pos]['alineado']=$tablaHTML[0]['alineado'];
-            	 $tablaHTML[$pos]['datos']=array($value['Codigo'],$value['Producto'],$value['Cuenta'],$value['Valor_Total'],$tra[0]['Existencia']);
+            	 $tablaHTML[$pos]['datos']=array($value['Codigo'],$value['Producto'],$value['Cuenta'],$value['Valor_Unit'],$tra[0]['Existencia']);
             	 $tablaHTML[$pos]['borde'] =1;
             	 $pos+=1;
          	}
@@ -639,7 +639,7 @@ class farmacia_internaC
 
 			 	 $tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
             	 $tablaHTML[$pos]['alineado']=$tablaHTML[0]['alineado'];
-            	 $tablaHTML[$pos]['datos']=array($value['Codigo'],$value['Producto'],$value['Cuenta'],$value['Valor_Total'],$tra[0]['Existencia']);
+            	 $tablaHTML[$pos]['datos']=array($value['Codigo'],$value['Producto'],$value['Cuenta'],$value['Valor_Unit'],$tra[0]['Existencia']);
             	 $tablaHTML[$pos]['tipo'] ='N';
             	 $pos+=1;
          	}

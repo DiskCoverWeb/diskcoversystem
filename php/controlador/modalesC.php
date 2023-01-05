@@ -112,7 +112,7 @@ class modalesC
 	}
 	function codigo_CI($ci)
 	{
-		$datos = digito_verificador_nuevo(trim($ci));
+		$datos = codigo_verificador($ci);
 		return $datos;
 
 	}
@@ -232,6 +232,8 @@ class modalesC
 		$url_sri = "https://srienlinea.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos2.jspa?accion=siguiente&ruc=".$ci;
 		$res = $this->getRemoteFile($url);
 		$r = array('res'=>2,'tbl'=>'');
+
+		print_r($res);die();
 		if($res=='true')
 		{
 			$r = array('res'=>2,'tbl'=>'');
@@ -273,9 +275,18 @@ class modalesC
 
 	function getRemoteFile($url, $timeout = 10) {
 	  $ch = curl_init();
+	  curl_setopt($ch, CURLOPT_POST      ,1);
+	 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+	 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 	  curl_setopt ($ch, CURLOPT_URL, $url);
 	  curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
 	  curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+	  curl_setopt($ch, CURLOPT_FOLLOWLOCATION  ,1);
+	 curl_setopt($ch, CURLOPT_HEADER      ,0);  
+ 
+ 
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
 	  $file_contents = curl_exec($ch);
 	  curl_close($ch);
 	  return ($file_contents) ? $file_contents : FALSE;

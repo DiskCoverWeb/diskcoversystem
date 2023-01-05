@@ -1119,7 +1119,7 @@ function validar_formulario()
       var tipo = '<?php echo $tipo2; ?>';
       if(tipo!='')
       {
-         $('#myModal_espera').modal('show');
+         // $('#myModal_espera').modal('show');
       }
        // alert('Todos los datos estan correctos');
        grabacion();

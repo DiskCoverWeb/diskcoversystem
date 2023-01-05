@@ -1454,7 +1454,10 @@ class incomC
             // exit();
             // print_r($parametros);die();
             if(strlen($Autorizacion_R) >= 13){
-            	$res = $this->SRI_Crear_Clave_Acceso_Retencines($parametros_xml); //function xml
+
+            	$res = $this->sri->Autorizar_retencion($parametros_xml);
+
+            	// $res = $this->SRI_Crear_Clave_Acceso_Retencines($parametros_xml); //function xml
             	// print_r($res);die();
 				$aut = $this->sri->Clave_acceso($parametros['fecha'],'07',$Serie_R,generaCeros($parametros['Retencion'],9));
 				$pdf = 'RE_'.$Serie_R.'-'.generaCeros($parametros['Retencion'],7); 
@@ -1622,117 +1625,103 @@ class incomC
        return $this->modelo->eliminar_registros($tabla,$Codigo);
      }
 
-     function SRI_Crear_Clave_Acceso_Retencines($parametros)
-     {
+     // function SRI_Crear_Clave_Acceso_Retencines($parametros)
+     // {
 
-        $datos = $this->modelo->retencion_compras($parametros['Numero'],$parametros['TP']);
-        // print_r($datos);die();
-        if(count($datos)>0)
-        {
-          $TFA[0]["Serie_R"] = $datos[0]["Serie_Retencion"];
-          $TFA[0]["Retencion"] = $datos[0]["SecRetencion"];
-          $TFA[0]["Autorizacion_R"] = $datos[0]["AutRetencion"];
-          $TFA[0]["Autorizacion"] = $datos[0]["Autorizacion"];
-          $TFA[0]["Fecha"] = $datos[0]["FechaEmision"];
-          $TFA[0]["Vencimiento"] = $datos[0]["FechaRegistro"];
-          $TFA[0]["Serie"] = $datos[0]["Establecimiento"].$datos[0]["PuntoEmision"];
-          $TFA[0]["Factura"] = $datos[0]["Secuencial"];
-          $TFA[0]["Hora"] = date('H:m:s');
-          $TFA[0]["Cliente"] = $datos[0]["Cliente"];
-          $TFA[0]["CI_RUC"] = $datos[0]["CI_RUC"];
-          $TFA[0]["TD"] = $datos[0]["TD"];
-          $TFA[0]["DireccionC"] = $datos[0]["Direccion"];
-          $TFA[0]["TelefonoC"] = $datos[0]["Telefono"];
-          $TFA[0]["EmailC"] = $datos[0]["Email"];
-          $CodSustento = $datos[0]["CodSustento"];
+     //    $datos = $this->modelo->retencion_compras($parametros['Numero'],$parametros['TP']);
+     //    // print_r($datos);die();
+     //    if(count($datos)>0)
+     //    {
+     //      $TFA[0]["Serie_R"] = $datos[0]["Serie_Retencion"];
+     //      $TFA[0]["Retencion"] = $datos[0]["SecRetencion"];
+     //      $TFA[0]["Autorizacion_R"] = $datos[0]["AutRetencion"];
+     //      $TFA[0]["Autorizacion"] = $datos[0]["Autorizacion"];
+     //      $TFA[0]["Fecha"] = $datos[0]["FechaEmision"];
+     //      $TFA[0]["Vencimiento"] = $datos[0]["FechaRegistro"];
+     //      $TFA[0]["Serie"] = $datos[0]["Establecimiento"].$datos[0]["PuntoEmision"];
+     //      $TFA[0]["Factura"] = $datos[0]["Secuencial"];
+     //      $TFA[0]["Hora"] = date('H:m:s');
+     //      $TFA[0]["Cliente"] = $datos[0]["Cliente"];
+     //      $TFA[0]["CI_RUC"] = $datos[0]["CI_RUC"];
+     //      $TFA[0]["TD"] = $datos[0]["TD"];
+     //      $TFA[0]["DireccionC"] = $datos[0]["Direccion"];
+     //      $TFA[0]["TelefonoC"] = $datos[0]["Telefono"];
+     //      $TFA[0]["EmailC"] = $datos[0]["Email"];
+     //      $CodSustento = $datos[0]["CodSustento"];
 
-          $TFA[0]["Ruc"] = $datos[0]["CI_RUC"];
-          $TFA[0]["TP"] = $parametros['TP'];
-          $TFA[0]["Numero"] = $parametros['Numero'];
-          $TFA[0]["TipoComprobante"] = '0'.$datos[0]["TipoComprobante"];
+     //      $TFA[0]["Ruc"] = $datos[0]["CI_RUC"];
+     //      $TFA[0]["TP"] = $parametros['TP'];
+     //      $TFA[0]["Numero"] = $parametros['Numero'];
+     //      $TFA[0]["TipoComprobante"] = '0'.$datos[0]["TipoComprobante"];
 
-          // Validar_Porc_IVA $TFA[0]["Fecha"];
+     //      // Validar_Porc_IVA $TFA[0]["Fecha"];
           
-         // 'Algoritmo Modulo 11 para la clave de la retencion
-         // '& Format$(TFA.Vencimiento, "ddmmyyyy")
-          $len= strlen($TFA[0]["Retencion"]);
-          // $rete = '';
-          if($len<9)
-          {
-            $num_ce = 9-$len;
-            $retencion = str_repeat('0',$num_ce);
-            $rete = $retencion.$TFA[0]["Retencion"];
-          }
-          // print_r($rete);die();
-          $dig = digito_verificador_nuevo($parametros['ruc']);
-          // print_r($dig);die();
+        
+     //       $aut = $this->sri->Clave_acceso($TFA[0]['Fecha']->format('Y-m-d'),'07',$TFA[0]["Serie_R"],$rete);
+     //       $TFA[0]["ClaveAcceso"]  = $aut;
 
-          //10062021
-           $aut = $this->sri->Clave_acceso($TFA[0]['Fecha']->format('Y-m-d'),'07',$TFA[0]["Serie_R"],$rete);
-           $TFA[0]["ClaveAcceso"]  = $aut;
+     //       // print_r( $TFA[0]["ClaveAcceso"]);die();
 
-           // print_r( $TFA[0]["ClaveAcceso"]);die();
+     //      // $TFA[0]["ClaveAcceso"] = date("dmY", strtotime($TFA[0]['Fecha']->format('Y-m-d')))."07".$_SESSION['INGRESO']['RUC'].$_SESSION['INGRESO']['Ambiente'].$TFA[0]["Serie_R"].$rete."123456781";
+     //      // $TFA[0]["ClaveAcceso"] = str_replace('.','1', $TFA[0]['ClaveAcceso']);
 
-          // $TFA[0]["ClaveAcceso"] = date("dmY", strtotime($TFA[0]['Fecha']->format('Y-m-d')))."07".$_SESSION['INGRESO']['RUC'].$_SESSION['INGRESO']['Ambiente'].$TFA[0]["Serie_R"].$rete."123456781";
-          // $TFA[0]["ClaveAcceso"] = str_replace('.','1', $TFA[0]['ClaveAcceso']);
+     //      // generamos el xmlo de la retencion
+     //      $xml = $this->sri->generar_xml_retencion($TFA,$datos);
+     //      $linkSriAutorizacion = $_SESSION['INGRESO']['Web_SRI_Autorizado'];
+ 	 //      $linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion'];
+	 //           if($xml==1)
+	 //           {
+	 //           	 $firma = $this->sri->firmar_documento(
+	 //           	 	$aut,
+	 //           	 	generaCeros($_SESSION['INGRESO']['IDEntidad'],3),
+	 //           	 	$_SESSION['INGRESO']['item'],
+	 //           	 	$_SESSION['INGRESO']['Clave_Certificado'],
+	 //           	 	$_SESSION['INGRESO']['Ruta_Certificado']);
+	 //           	 // print($firma);die();
+	 //           	 if($firma==1)
+	 //           	 {
+	 //           	 	$validar_autorizado = $this->sri->comprobar_xml_sri(
+	 //           	 		$aut,
+	 //           	 		$linkSriAutorizacion);
+	 //           	 	if($validar_autorizado == -1)
+	// 		   		 {
+	// 		   		 	$enviar_sri = $this->sri->enviar_xml_sri(
+	// 		   		 		$aut,
+	// 		   		 		$linkSriRecepcion);
+	// 		   		 	if($enviar_sri==1)
+	// 		   		 	{
+	// 		   		 		//una vez enviado comprobamos el estado de la factura
+	// 		   		 		$resp =  $this->sri->comprobar_xml_sri($aut,$linkSriAutorizacion);
+	// 		   		 		if($resp==1)
+	// 		   		 		{
+	// 		   		 			$resp = $this->actualizar_datos_CER($aut,$parametros['TP'],$TFA[0]["Serie_R"],$rete,generaCeros($_SESSION['INGRESO']['IDEntidad'],3),$TFA[0]["Autorizacion_R"]);
+	// 		   		 			return  $resp;
+	// 		   		 		}else
+	// 		   		 		{
+	// 		   		 			return $resp;
+	// 		   		 		}
+	// 		   		 		// print_r($resp);die();
+	// 		   		 	}else
+	// 		   		 	{
+	// 		   		 		return $enviar_sri;
+	// 		   		 	}
 
-          // generamos el xmlo de la retencion
-          $xml = $this->sri->generar_xml_retencion($TFA,$datos);
-          $linkSriAutorizacion = $_SESSION['INGRESO']['Web_SRI_Autorizado'];
- 	      $linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion'];
-	           if($xml==1)
-	           {
-	           	 $firma = $this->sri->firmar_documento(
-	           	 	$aut,
-	           	 	generaCeros($_SESSION['INGRESO']['IDEntidad'],3),
-	           	 	$_SESSION['INGRESO']['item'],
-	           	 	$_SESSION['INGRESO']['Clave_Certificado'],
-	           	 	$_SESSION['INGRESO']['Ruta_Certificado']);
-	           	 // print($firma);die();
-	           	 if($firma==1)
-	           	 {
-	           	 	$validar_autorizado = $this->sri->comprobar_xml_sri(
-	           	 		$aut,
-	           	 		$linkSriAutorizacion);
-	           	 	if($validar_autorizado == -1)
-			   		 {
-			   		 	$enviar_sri = $this->sri->enviar_xml_sri(
-			   		 		$aut,
-			   		 		$linkSriRecepcion);
-			   		 	if($enviar_sri==1)
-			   		 	{
-			   		 		//una vez enviado comprobamos el estado de la factura
-			   		 		$resp =  $this->sri->comprobar_xml_sri($aut,$linkSriAutorizacion);
-			   		 		if($resp==1)
-			   		 		{
-			   		 			$resp = $this->actualizar_datos_CER($aut,$parametros['TP'],$TFA[0]["Serie_R"],$rete,generaCeros($_SESSION['INGRESO']['IDEntidad'],3),$TFA[0]["Autorizacion_R"]);
-			   		 			return  $resp;
-			   		 		}else
-			   		 		{
-			   		 			return $resp;
-			   		 		}
-			   		 		// print_r($resp);die();
-			   		 	}else
-			   		 	{
-			   		 		return $enviar_sri;
-			   		 	}
-
-			   		 }else 
-			   		 {
-			   		 	// $resp = $this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion']);
-			   		 	// RETORNA SI YA ESTA AUTORIZADO O SI FALL LA REVISIO EN EL SRI
-			   			return $validar_autorizado;
-			   		 }
-	           	 }else
-	           	 {
-	           	 	//RETORNA SI FALLA AL FIRMAR EL XML
-	           	 	return $firma;
-	           	 }
-	           }else
-	           {
-	           	//RETORNA SI FALLA EL GENERAR EL XML
-	           	return $xml;
-	           }
+	// 		   		 }else 
+	// 		   		 {
+	// 		   		 	// $resp = $this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion']);
+	// 		   		 	// RETORNA SI YA ESTA AUTORIZADO O SI FALL LA REVISIO EN EL SRI
+	// 		   			return $validar_autorizado;
+	// 		   		 }
+	 //           	 }else
+	 //           	 {
+	 //           	 	//RETORNA SI FALLA AL FIRMAR EL XML
+	 //           	 	return $firma;
+	 //           	 }
+	 //           }else
+	 //           {
+	 //           	//RETORNA SI FALLA EL GENERAR EL XML
+	 //           	return $xml;
+	 //           }
 
 
 
@@ -1787,9 +1776,9 @@ class incomC
 	           		return $resp;
 	           	}
 	           }*/
-        }
+     //    }
 
-     }
+     // }
 
 
      function actualizar_datos_CER($autorizacion,$tc,$serie,$retencion,$entidad,$autorizacion_ant)

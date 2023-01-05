@@ -2111,7 +2111,7 @@ function Autorizar_retencion($parametros)
  	   $linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion'];
 	           if($xml==1)
 	           {
-	           	 $firma = $this->sri->firmar_documento(
+	           	 $firma = $this->firmar_documento(
 	           	 	$aut,
 	           	 	generaCeros($_SESSION['INGRESO']['IDEntidad'],3),
 	           	 	$_SESSION['INGRESO']['item'],
@@ -2120,21 +2120,21 @@ function Autorizar_retencion($parametros)
 	           	 // print($firma);die();
 	           	 if($firma==1)
 	           	 {
-	           	 	$validar_autorizado = $this->sri->comprobar_xml_sri(
+	           	 	$validar_autorizado = $this->comprobar_xml_sri(
 	           	 		$aut,
 	           	 		$linkSriAutorizacion);
 	           	 	if($validar_autorizado == -1)
 			   		 {
-			   		 	$enviar_sri = $this->sri->enviar_xml_sri(
+			   		 	$enviar_sri = $this->enviar_xml_sri(
 			   		 		$aut,
 			   		 		$linkSriRecepcion);
 			   		 	if($enviar_sri==1)
 			   		 	{
 			   		 		//una vez enviado comprobamos el estado de la factura
-			   		 		$resp =  $this->sri->comprobar_xml_sri($aut,$linkSriAutorizacion);
+			   		 		$resp =  $this->comprobar_xml_sri($aut,$linkSriAutorizacion);
 			   		 		if($resp==1)
 			   		 		{
-			   		 			$resp = $this->actualizar_datos_CER($aut,$parametros['TP'],$TFA[0]["Serie_R"],$rete,generaCeros($_SESSION['INGRESO']['IDEntidad'],3),$TFA[0]["Autorizacion_R"]);
+			   		 			$resp = $this->actualizar_datos_CER($aut,$parametros['TP'],$TFA[0]["Serie_R"],$TFA[0]["Retencion"],generaCeros($_SESSION['INGRESO']['IDEntidad'],3),$TFA[0]["Autorizacion_R"],$TFA[0]['Fecha']->format('Y-m-d'));
 			   		 			return  $resp;
 			   		 		}else
 			   		 		{
@@ -2182,6 +2182,25 @@ function generar_xml_retencion($cabecera,$detalle)
 	$this->generar_carpetas($entidad,$empresa);
 	$ambiente =$_SESSION['INGRESO']['Ambiente'];
 	$RIMPE =  $this->datos_rimpe();
+	$sucursal = $this->catalogo_lineas('RE',$cabecera[0]['Serie_R']);
+	 if(count($sucursal)>0)
+	 {
+	 	$cabecera[0]['Nombre_Establecimiento'] = $sucursal[0]['Nombre_Establecimiento'];
+	 	$cabecera[0]['Direccion_Establecimiento'] = $sucursal[0]['Direccion_Establecimiento'];
+	 	$cabecera[0]['Telefono_Establecimiento'] = $sucursal[0]['Telefono_Estab'];
+	 	$cabecera[0]['Ruc_Establecimiento'] = $sucursal[0]['RUC_Establecimiento'];
+	 	$cabecera[0]['Email_Establecimiento'] = $sucursal[0]['Email_Establecimiento'];
+	 	$cabecera[0]['Placa_Vehiculo'] ='.';
+	 	$cabecera[0]['Cta_Establecimiento'] = '.';
+	 	if(isset($sucursal[0]['Placa_Vehiculo']))
+	 	{
+	 		$cabecera[0]['Placa_Vehiculo'] = $sucursal[0]['Placa_Vehiculo'];
+	 	}
+	 	if (isset($sucursal[0]['Cta_Establecimiento'])) {
+	 		$cabecera[0]['Cta_Establecimiento'] = $sucursal[0]['Cta_Establecimiento'];
+	 	}		 	
+	 }
+
 	$carpeta_autorizados = dirname(__DIR__)."/entidades/entidad_".generaCeros($entidad,3).'/CE'.generaCeros($empresa,3)."/Autorizados";		  
 	if(file_exists($carpeta_autorizados.'/'.$cabecera[0]['ClaveAcceso'].'.xml'))
 	{
@@ -2248,7 +2267,16 @@ function generar_xml_retencion($cabecera,$detalle)
 
 	    $xml_infoCompRetencion = $xml->createElement( "infoCompRetencion");
 	    $xml_fechaEmision = $xml->createElement( "fechaEmision",$cabecera[0]['Fecha']->format('d/m/Y'));
-	    $xml_dirEstablecimiento = $xml->createElement( "dirEstablecimiento",strtoupper($_SESSION['INGRESO']['Direccion']));
+	    if(isset($cabecera[0]['Nombre_Establecimiento']) &&  strlen($cabecera[0]['Nombre_Establecimiento'])>0 && $cabecera['Nombre_Establecimiento']!='.')
+		{
+			$xml_dirEstablecimiento = $xml->createElement( "dirEstablecimiento",$cabecera[0]['Direccion_Establecimiento']);
+
+		}else
+		{
+			$xml_dirEstablecimiento = $xml->createElement( "dirEstablecimiento",strtoupper($_SESSION['INGRESO']['Direccion']));
+		}
+
+	    // $xml_dirEstablecimiento = $xml->createElement( "dirEstablecimiento",strtoupper($_SESSION['INGRESO']['Direccion']));
 	    
 	    $xml_obligadoContabilidad = $xml->createElement( "obligadoContabilidad",$_SESSION['INGRESO']['Obligado_Conta']);
 	    switch ($cabecera[0]['TD']) {
@@ -2265,7 +2293,6 @@ function generar_xml_retencion($cabecera,$detalle)
 	    $xml_tipoIdentificacionSujetoRetenido = $xml->createElement( "tipoIdentificacionSujetoRetenido",$cabecera[0]['TD']);
 
         if($detalle[0]["PagoLocExt"] == "01"){        	
-            $xml_tipoSujetoRetenido = $xml->createElement('tipoSujetoRetenido',$detalle[0]["PagoLocExt"]);
             $xml_parterel  = $xml->createElement("parteRel",'NO');
           }else{                    
             $xml_tipoSujetoRetenido = $xml->createElement('tipoSujetoRetenido',$detalle[0]["PagoLocExt"]);
@@ -2285,8 +2312,11 @@ function generar_xml_retencion($cabecera,$detalle)
 	    //     $xml_infoCompRetencion->appendChild($xml_contribuyenteEspecial);
 	    // }
 	    $xml_infoCompRetencion->appendChild($xml_obligadoContabilidad);
-	    $xml_infoCompRetencion->appendChild($xml_tipoIdentificacionSujetoRetenido);	 
-	    $xml_infoCompRetencion->appendChild($xml_tipoSujetoRetenido);   
+	    $xml_infoCompRetencion->appendChild($xml_tipoIdentificacionSujetoRetenido);	
+	    if($detalle[0]['PagoLocExt']!='01')
+	    { 
+	    	$xml_infoCompRetencion->appendChild($xml_tipoSujetoRetenido);   
+	    }
 	    $xml_infoCompRetencion->appendChild($xml_parterel);
 	    $xml_infoCompRetencion->appendChild($xml_razonSocialSujetoRetenido);
 	    $xml_infoCompRetencion->appendChild($xml_identificacionSujetoRetenido);
@@ -2294,19 +2324,30 @@ function generar_xml_retencion($cabecera,$detalle)
 
         $xml_inicio->appendChild($xml_infoCompRetencion);
 
+        $Total_Servicio = 0;
+        $Total_Propinas = 0;
+        $Total_Comision = 0;
+        $Total_Sin_No_IVA = 0;
+        $Total_Sin_IVA = $detalle[0]['BaseImponible'];
+        $Total_Con_IVA = $detalle[0]['BaseImpGrav'];
+        $Total_IVA = $detalle[0]['MontoIva'];
+        $Total_SubTotal = $Total_Sin_IVA + $Total_Con_IVA;
+        $Total_Factura = $Total_SubTotal + $Total_IVA;
+
+
 
         $xml_docsSustento = $xml->createElement("docsSustento");
         $xml_docSustento = $xml->createElement("docSustento");
 
-        $xml_codsustento = $xml->createElement("codSustento",'01');
-        $xml_coddocsustento = $xml->createElement("codDocSustento",'01');
-        $xml_numdocsustento = $xml->createElement("numDodSustento",'0010010000009');
-        $xml_fechaemisiondocsustento = $xml->createElement("fechaEmisionDocSustento",'30/11/2022');
-        $xml_fecharegistrocontable = $xml->createElement("fechaRegistroContable",'30/11/2022');
-        $xml_numautodocsustento = $xml->createElement("numAutDocSustento",'01');
-        $xml_pagolocext = $xml->createElement("pagoLocExt",'01');
-        $xml_totalsinimpuesto = $xml->createElement("totalSinImpuestos",'01');
-        $xml_importetotal = $xml->createElement("importeTotal",'01');
+        $xml_codsustento = $xml->createElement("codSustento",generaCeros($detalle[0]['CodSustento'],2));
+        $xml_coddocsustento = $xml->createElement("codDocSustento",generaCeros($detalle[0]['TipoComprobante'],2));
+        $xml_numdocsustento = $xml->createElement("numDocSustento",$cabecera[0]['Serie'].generaCeros($cabecera[0]['Factura'],9));
+        $xml_fechaemisiondocsustento = $xml->createElement("fechaEmisionDocSustento",$cabecera[0]['Fecha']->format('d/m/Y'));
+        $xml_fecharegistrocontable = $xml->createElement("fechaRegistroContable",$cabecera[0]['Vencimiento']->format('d/m/Y'));
+        $xml_numautodocsustento = $xml->createElement("numAutDocSustento",$cabecera[0]['Autorizacion']);
+        $xml_pagolocext = $xml->createElement("pagoLocExt",$detalle[0]['PagoLocExt']);
+        $xml_totalsinimpuesto = $xml->createElement("totalSinImpuestos",number_format($Total_SubTotal,2,'.',''));
+        $xml_importetotal = $xml->createElement("importeTotal",number_format($Total_Factura,2,'.',''));
 
 
          $xml_docSustento->appendChild($xml_codsustento);
@@ -2324,72 +2365,157 @@ function generar_xml_retencion($cabecera,$detalle)
 
         $xml_impuestodocssustento =$xml->createElement("impuestosDocSustento");
 
-        $Total_Servicio = 0;
-        $Total_Propinas = 0;
-        $Total_Comision = 0;
-        $Total_Sin_No_IVA = 0;
-        $Total_Sin_IVA = $detalle[0]['BaseImponible'];
-        $Total_Con_IVA = $detalle[0]['BaseImpGrav'];
-        $Total_IVA = $detalle[0]['MontoIva'];
-        $Total_SubTotal = $Total_Sin_IVA + $Total_Con_IVA;
-        $Total_Factura = $Total_SubTotal + $Total_IVA;
-
-
+        
         $xml_impuestodocsustento =$xml->createElement("impuestoDocSustento");
         $xml_codimpuestodocsustento = $xml->createElement("codImpuestoDocSustento",'2');
         $xml_codigoprocentaje = $xml->createElement("codigoPorcentaje",'2');
-        $xml_baseimponible = $xml->createElement("baseImponible", $Total_Con_IVA);
+        $xml_baseimponible1 = $xml->createElement("baseImponible", $Total_Con_IVA);
         $xml_tarifa = $xml->createElement("tarifa",$_SESSION['INGRESO']['porc'] * 100);
         $xml_valorimpuesto = $xml->createElement("valorImpuesto",$Total_IVA);
 
         $xml_impuestodocsustento->appendChild($xml_codimpuestodocsustento);
         $xml_impuestodocsustento->appendChild($xml_codigoprocentaje);
-        $xml_impuestodocsustento->appendChild($xml_baseimponible);
+        $xml_impuestodocsustento->appendChild($xml_baseimponible1);
         $xml_impuestodocsustento->appendChild($xml_tarifa);
         $xml_impuestodocsustento->appendChild($xml_valorimpuesto);
-        $xml_impuestodocssustento->appendChild($xml_impuestodocsustento);   
+        $xml_impuestodocssustento->appendChild($xml_impuestodocsustento);
 
-        
+        $xml_impuestodocssustento->appendChild($xml_impuestodocsustento);        
 
-        // servicio
-        $xml_impuestodocsustento =$xml->createElement("impuestoDocSustento");
+
+        // print_r($Total_Sin_IVA);die();
+        $xml_impuestodocsustento2 =$xml->createElement("impuestoDocSustento");
         $xml_codimpuestodocsustento = $xml->createElement("codImpuestoDocSustento",'2');
         $xml_codigoprocentaje = $xml->createElement("codigoPorcentaje",'0');
-        $xml_baseimponible = $xml->createElement("baseImponible",$Total_Sin_IVA);
+        $xml_baseimponible2 = $xml->createElement("baseImponible",$Total_Sin_IVA);
         $xml_tarifa = $xml->createElement("tarifa",'0');
         $xml_valorimpuesto = $xml->createElement("valorImpuesto",'0.00');
 
-        $xml_impuestodocsustento->appendChild($xml_codimpuestodocsustento);
-        $xml_impuestodocsustento->appendChild($xml_codigoprocentaje);
-        $xml_impuestodocsustento->appendChild($xml_baseimponible);
-        $xml_impuestodocsustento->appendChild($xml_tarifa);
-        $xml_impuestodocsustento->appendChild($xml_valorimpuesto);
+        $xml_impuestodocsustento2->appendChild($xml_codimpuestodocsustento);
+        $xml_impuestodocsustento2->appendChild($xml_codigoprocentaje);
+        $xml_impuestodocsustento2->appendChild($xml_baseimponible2);
+        $xml_impuestodocsustento2->appendChild($xml_tarifa);
+        $xml_impuestodocsustento2->appendChild($xml_valorimpuesto);
 
-        $xml_impuestodocssustento->appendChild($xml_impuestodocsustento);
+        $xml_impuestodocssustento->appendChild($xml_impuestodocsustento2);
 
 
         $xml_retenciones =$xml->createElement("retenciones");
-        $xml_retencion =$xml->createElement("retencion");
 
-        $xml_codigo = $xml->createElement("codigo",'1');
-        $xml_codigoretencion = $xml->createElement("codigoRetencion",'312');
-        $xml_baseimfootponible = $xml->createElement("baseImponible",'30.00');
-        $xml_porcentajeretencion = $xml->createElement("porcentajeRetener",'0.00');
-        $xml_valorretenido = $xml->createElement("valorRetenido",'0.00');
 
-        $xml_retencion->appendChild($xml_codigo);
-        $xml_retencion->appendChild($xml_codigoretencion);
-        $xml_retencion->appendChild($xml_baseimponible);
-        $xml_retencion->appendChild($xml_porcentajeretencion);
-        $xml_retencion->appendChild($xml_valorretenido);
 
-        $xml_retenciones->appendChild($xml_retencion);
+
+         // 'RETENCIONES AIR
+            $sql = "SELECT * 
+           FROM Trans_Air
+           WHERE Item = '".$_SESSION['INGRESO']['item']."'
+           AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+           AND Numero = ".$cabecera[0]['Numero']."
+           AND TP = '".$cabecera[0]['TP']."'
+           AND Tipo_Trans = 'C'
+           AND EstabRetencion = '".substr($cabecera[0]['Serie_R'] ,0, 3)."'
+           AND PtoEmiRetencion = '".substr($cabecera[0]['Serie_R'], 3, 3)."'
+           AND SecRetencion = '".$cabecera[0]['Retencion']."'
+           AND AutRetencion = '".$cabecera[0]['Autorizacion_R']."'
+           ORDER BY ID ";
+           // print_r($sql);die();
+           $result = $this->db->datos($sql);
+          foreach ($result as $key => $value) {
+          	$xml_retencion =$xml->createElement("retencion");
+	        $xml_codigo = $xml->createElement("codigo",'1');
+	        $xml_codigoretencion = $xml->createElement("codigoRetencion",$value['CodRet']);
+	        $xml_baseimponible3= $xml->createElement("baseImponible",$value['BaseImp']);
+	        $xml_porcentajeretencion = $xml->createElement("porcentajeRetener",number_format(($value["Porcentaje"] * 100),2,'.',''));
+	        $xml_valorretenido = $xml->createElement("valorRetenido",$value['ValRet']);
+
+	        $xml_retencion->appendChild($xml_codigo);
+	        $xml_retencion->appendChild($xml_codigoretencion);
+	        $xml_retencion->appendChild($xml_baseimponible3);
+	        $xml_retencion->appendChild($xml_porcentajeretencion);
+	        $xml_retencion->appendChild($xml_valorretenido);
+
+	        $xml_retenciones->appendChild($xml_retencion);
+	    }
+
+
+
+	    if($detalle[0]['Porc_Bienes']>0)
+	    {
+	    	$xml_retencion =$xml->createElement("retencion");
+	    	switch ($detalle[0]['Porc_Bienes']) {
+	    		case '10':  $CodigoA = '9';
+	    			break;	    		
+	    		case '30': $CodigoA = '1';
+	    			break;	    		
+	    		case '70': $CodigoA = '2';
+	    			break;
+	    		case '100': $CodigoA = '3';
+	    			break;
+	    		default:  $CodigoA = '2';
+	    		break;
+	    	}
+	    	
+	    	$Total = $detalle[0]["MontoIvaBienes"];
+            $Retencion = intval($detalle[0]["Porc_Bienes"]);
+            $Valor = number_format(($Total * ($Retencion / 100)), 2);
+
+
+            $xml_codigo = $xml->createElement("codigo",'2');
+	        $xml_codigoretencion = $xml->createElement("codigoRetencion",$CodigoA);
+	        $xml_baseimponible4 = $xml->createElement("baseImponible",$Total);
+	        $xml_porcentajeretencion = $xml->createElement("porcentajeRetener",$Retencion);
+	        $xml_valorretenido = $xml->createElement("valorRetenido",$Valor);
+
+	        $xml_retencion->appendChild($xml_codigo);
+	        $xml_retencion->appendChild($xml_codigoretencion);
+	        $xml_retencion->appendChild($xml_baseimponible4);
+	        $xml_retencion->appendChild($xml_porcentajeretencion);
+	        $xml_retencion->appendChild($xml_valorretenido);
+
+	        $xml_retenciones->appendChild($xml_retencion);
+
+	    }
+
+	     if($detalle[0]['Porc_Servicios']>0)
+	    {	    	
+	    	$xml_retencion =$xml->createElement("retencion");
+	    	switch ($detalle[0]['Porc_Servicios']) {	
+	    		case '20': $CodigoA = '10';
+	    			break;
+	    		case '30':$CodigoA = '1';
+	    			break;
+	    		case '70':$CodigoA = '2';
+	    			break;
+	    		case '100':$CodigoA = '3';
+	    			break;
+	    		default:  $CodigoA = '2';
+	    		break;
+	    	}
+	    	$Total = $detalle[0]["MontoIvaServicios"];
+            $Retencion = intval($detalle[0]["Porc_Servicios"]);
+            $Valor = number_format(($Total * ($Retencion / 100)), 2);
+
+	    	$xml_codigo = $xml->createElement("codigo",'2');
+	        $xml_codigoretencion = $xml->createElement("codigoRetencion",$CodigoA);
+	        $xml_baseimponible5 = $xml->createElement("baseImponible",$Total);
+	        $xml_porcentajeretencion = $xml->createElement("porcentajeRetener",$Retencion);
+	        $xml_valorretenido = $xml->createElement("valorRetenido",$Valor);
+
+	        $xml_retencion->appendChild($xml_codigo);
+	        $xml_retencion->appendChild($xml_codigoretencion);
+	        $xml_retencion->appendChild($xml_baseimponible5);
+	        $xml_retencion->appendChild($xml_porcentajeretencion);
+	        $xml_retencion->appendChild($xml_valorretenido);
+
+	        $xml_retenciones->appendChild($xml_retencion);
+
+	    }
 
         $xml_pagos =$xml->createElement("pagos");
         $xml_pago =$xml->createElement("pago");
 
-        $xml_formapago = $xml->createElement("formaPago",'01');
-        $xml_total = $xml->createElement("total",'32.12');
+        $xml_formapago = $xml->createElement("formaPago",$detalle[0]['FormaPago']);
+        $xml_total = $xml->createElement("total",$Total_Factura);
 
         $xml_pago->appendChild($xml_formapago);
         $xml_pago->appendChild($xml_total);
@@ -2406,172 +2532,6 @@ function generar_xml_retencion($cabecera,$detalle)
 
 
 
-
-
-
-
-
-
-
-
-
-
-	    
-
-
-
-/*
-	    $xml_impuestos = $xml->createElement("impuestos");
-	    if($detalle[0]['Porc_Bienes']>0)
-	    {
-	    	$xml_impuesto = $xml->createElement("impuesto");
-	    	$xml_codigo = $xml->createElement("codigo",'2');
-	    	switch ($detalle[0]['Porc_Bienes']) {
-	    		case '10': $xml_codigoRetencion = $xml->createElement("codigoRetencion",'9');
-	    			break;
-	    		case '20': $xml_codigoRetencion = $xml->createElement("codigoRetencion",'10');
-	    			break;
-	    		case '30':$xml_codigoRetencion = $xml->createElement("codigoRetencion",'1');
-	    			break;
-	    		case '50':$xml_codigoRetencion = $xml->createElement("codigoRetencion",'11');
-	    			break;
-	    		case '70':$xml_codigoRetencion = $xml->createElement("codigoRetencion",'2');
-	    			break;
-	    		case '100':$xml_codigoRetencion = $xml->createElement("codigoRetencion",'3');
-	    			break;
-	    	}
-	    	$Total = $detalle[0]["MontoIvaBienes"];
-            $Retencion = intval($detalle[0]["Porc_Bienes"]);
-            $Valor = number_format(($Total * ($Retencion / 100)), 2);
-
-	    	$xml_baseImponible = $xml->createElement("baseImponible", number_format($Total,2 , '.', ''));
-	    	$xml_porcentajeRetener = $xml->createElement("porcentajeRetener",$Retencion);
-	    	$xml_valorRetenido = $xml->createElement("valorRetenido",number_format($Valor,2, '.', ''));
-	    	$xml_codDocSustento = $xml->createElement("codDocSustento",$cabecera[0]['TipoComprobante']);
-	    	$xml_numDocSustento = $xml->createElement("numDocSustento", $cabecera[0]['Serie'].$this->generaCeros($cabecera[0]['Factura'],9));
-	    	$xml_fechaEmisionDocSustento = $xml->createElement("fechaEmisionDocSustento",$cabecera[0]['Fecha']->format('d/m/Y'));
-
-	    	$xml_impuesto->appendChild($xml_codigo);
-	    	$xml_impuesto->appendChild($xml_codigoRetencion);
-	    	$xml_impuesto->appendChild($xml_baseImponible);
-	    	$xml_impuesto->appendChild($xml_porcentajeRetener);
-	    	$xml_impuesto->appendChild($xml_valorRetenido);
-	    	$xml_impuesto->appendChild($xml_codDocSustento);
-	    	$xml_impuesto->appendChild($xml_numDocSustento);
-	    	$xml_impuesto->appendChild($xml_fechaEmisionDocSustento);
-
-
-            $xml->appendChild($xml_impuesto);
-            $xml_impuestos->appendChild($xml_impuesto);
-
-	    }
-
-	     if($detalle[0]['Porc_Servicios']>0)
-	    {
-	    	$xml_impuesto = $xml->createElement("impuesto");
-	    	$xml_codigo = $xml->createElement("codigo",'2');
-	    	switch ($detalle[0]['Porc_Servicios']) {	
-	    		case '10': $xml_codigoRetencion = $xml->createElement("codigoRetencion",'9');
-	    			break;
-	    		case '20': $xml_codigoRetencion = $xml->createElement("codigoRetencion",'10');
-	    			break;
-	    		case '30':$xml_codigoRetencion = $xml->createElement("codigoRetencion",'1');
-	    			break;
-	    		case '50':$xml_codigoRetencion = $xml->createElement("codigoRetencion",'11');
-	    			break;
-	    		case '70':$xml_codigoRetencion = $xml->createElement("codigoRetencion",'2');
-	    			break;
-	    		case '100':$xml_codigoRetencion = $xml->createElement("codigoRetencion",'3');
-	    			break;
-	    	}
-	    	$Total = $detalle[0]["MontoIvaServicios"];
-            $Retencion = intval($detalle[0]["Porc_Servicios"]);
-            $Valor = number_format(($Total * ($Retencion / 100)), 2);
-
-	    	$xml_baseImponible = $xml->createElement("baseImponible",number_format($Total,2, '.', ''));
-	    	$xml_porcentajeRetener = $xml->createElement("porcentajeRetener",$Retencion);
-	    	$xml_valorRetenido = $xml->createElement("valorRetenido",number_format($Valor,2, '.', ''));
-	    	$xml_codDocSustento = $xml->createElement("codDocSustento",$cabecera[0]['TipoComprobante']);
-	    	$xml_numDocSustento = $xml->createElement("numDocSustento", $cabecera[0]['Serie'].$this->generaCeros($cabecera[0]['Factura'],9));
-	    	$xml_fechaEmisionDocSustento = $xml->createElement("fechaEmisionDocSustento",$cabecera[0]['Fecha']->format('d/m/Y'));
-
-	    	$xml_impuesto->appendChild($xml_codigo);
-	    	$xml_impuesto->appendChild($xml_codigoRetencion);
-	    	$xml_impuesto->appendChild($xml_baseImponible);
-	    	$xml_impuesto->appendChild($xml_porcentajeRetener);
-	    	$xml_impuesto->appendChild($xml_valorRetenido);
-	    	$xml_impuesto->appendChild($xml_codDocSustento);
-	    	$xml_impuesto->appendChild($xml_numDocSustento);
-	    	$xml_impuesto->appendChild($xml_fechaEmisionDocSustento);
-
-
-            $xml->appendChild($xml_impuesto);
-	        $xml_impuestos->appendChild($xml_impuesto);
-
-	    }
-
-
-			$con = $this->db->conexion();
-
-			// print_r(expression)
-
-            // 'RETENCIONES AIR
-             $sql = "SELECT * 
-                   FROM Trans_Air
-                   WHERE Item = '".$_SESSION['INGRESO']['item']."'
-                   AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
-                   AND Numero = ".$cabecera[0]['Numero']."
-                   AND TP = '".$cabecera[0]['TP']."'
-                   AND Tipo_Trans = 'C'
-                   AND EstabRetencion = '".substr($cabecera[0]['Serie_R'] ,0, 3)."'
-                   AND PtoEmiRetencion = '".substr($cabecera[0]['Serie_R'], 3, 3)."'
-                   AND SecRetencion = '".$cabecera[0]['Retencion']."'
-                   AND AutRetencion = '".$cabecera[0]['Autorizacion_R']."'
-                   ORDER BY ID ";
-                   // print_r($sql);die();
-                   $result = array();
-                   $stmt = sqlsrv_query($con, $sql);
-                   if( $stmt === false)  
-                   	{
-                   		echo "Error en consulta PA.\n";  
-                   		die( print_r( sqlsrv_errors(), true)); 
-                   	}
-                   	while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
-                   		{
-                   			$result[] = $row;
-                   	    }
-
-                  foreach ($result as $key => $value) {
-                  	// print_r($value);
-                  	if(number_format($value['BaseImp'],2,'.','')>0)
-                  	{
-                  		// print_r($result);
-                  	  $xml_impuesto = $xml->createElement("impuesto");
-                  	  $xml_codigo = $xml->createElement("codigo",'1');
-                  	  $xml_codigoRetencion = $xml->createElement("codigoRetencion",$value['CodRet']);
-
-	    	          $xml_baseImponible = $xml->createElement("baseImponible",number_format($value['BaseImp'],2, '.', ''));
-	    	          $xml_porcentajeRetener = $xml->createElement("porcentajeRetener",number_format(($value['Porcentaje']*100),2, '.', ''));
-	    	          $xml_valorRetenido = $xml->createElement("valorRetenido",$value['ValRet']);
-	    	          $xml_codDocSustento = $xml->createElement("codDocSustento",$cabecera[0]['TipoComprobante']);
-	    	          $xml_numDocSustento = $xml->createElement("numDocSustento", $cabecera[0]['Serie'].$this->generaCeros($cabecera[0]['Factura'],9));
-	    	          $xml_fechaEmisionDocSustento = $xml->createElement("fechaEmisionDocSustento",$cabecera[0]['Fecha']->format('d/m/Y'));
-	    	          $xml_impuesto->appendChild($xml_codigo);
-	    	          $xml_impuesto->appendChild($xml_codigoRetencion);
-	    	          $xml_impuesto->appendChild($xml_baseImponible);
-	    	          $xml_impuesto->appendChild($xml_porcentajeRetener);
-	    	          $xml_impuesto->appendChild($xml_valorRetenido);
-	    	          $xml_impuesto->appendChild($xml_codDocSustento);
-	    	          $xml_impuesto->appendChild($xml_numDocSustento);
-	    	          $xml_impuesto->appendChild($xml_fechaEmisionDocSustento);
-
-	    	            $xml->appendChild($xml_impuesto);
-	    	            $xml_impuestos->appendChild($xml_impuesto);
-	    	        }
-                  }
-
-        $xml_inicio->appendChild($xml_impuestos);
-        */
 
         //fin de xml retencion
         $xml_infoAdicional = $xml->createElement("infoAdicional");
@@ -2613,12 +2573,12 @@ function generar_xml_retencion($cabecera,$detalle)
         	$xml_inicio->appendChild($xml_infoAdicional);
         	$xml->appendChild($xml_inicio);
 
-		     $ruta_G = dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Generados';
+		     $ruta_G = dirname(__DIR__).'/entidades/entidad_'.generaCeros($entidad,3)."/CE".generaCeros($empresa,3).'/Generados';
 		     // print_r($ruta_G);die();
 			if($archivo = fopen($ruta_G.'/'.$cabecera[0]['ClaveAcceso'].'.xml',"w+b"))
 			  {
 			  	fwrite($archivo,$xml->saveXML());
-			  	die();
+			  	// die();
 			  	return 1;
 			  }else
 			  {
@@ -3138,6 +3098,96 @@ return -1;
 }
 }
 
+  function actualizar_datos_CER($autorizacion,$tc,$serie,$retencion,$entidad,$autorizacion_ant,$fecha)
+     {
+
+     	$res = $this->actualizar_trans_compras($tc,$retencion,$serie,$autorizacion,$autorizacion_ant);
+     	$res2 = $this->atualizar_trans_air($tc,$retencion,$serie,$autorizacion,$autorizacion_ant);
+		$url_autorizado =dirname(__DIR__,2).'/comprobantes/entidades/entidad_'.$entidad."/CE".$_SESSION['INGRESO']['item'].'/Autorizados/'.$autorizacion.'.xml';
+		$archivo = fopen($url_autorizado,"rb");
+			if( $archivo != false ) 
+			{			
+				rewind($archivo);   // Volvemos a situar el puntero al principio del archivo
+				$cadena2 = fread($archivo, filesize($url_autorizado));  // Leemos hasta el final del archivo
+				if( $cadena2 == false ){
+					echo "Error al leer el archivo";
+				}
+			}
+			// Cerrar el archivo:
+			fclose($archivo);	
+
+		$res3 = $this->guardar_documento($autorizacion,$cadena2,$serie,$retencion,$fecha);	
+			//echo $sql;
+		if($res==1)
+		{
+			if($res2==1)
+			{
+				if($res3==1)
+				{
+					return 1;
+				}else
+				{
+					return -3;
+				}
+			}else
+			{
+				return -2;
+			}
+		}else
+		{
+			return -1;
+		}
+			
+			// return 1;
+
+     }
+  function guardar_documento($autorizacion,$cadena2,$serie,$retencion,$Fecha)
+     {
+     	$sql="INSERT INTO Trans_Documentos
+		    (Item,Periodo,Clave_Acceso,Documento_Autorizado,TD,Serie,Documento,Fecha,X)
+			 VALUES
+		    ('".$_SESSION['INGRESO']['item']."' 
+		    ,'".$_SESSION['INGRESO']['periodo']."' 
+		    ,'".$autorizacion."'
+		    ,'".$cadena2."'
+		    ,'RE' 
+		    ,'".$serie."' 
+		    ,".$retencion." 
+		    ,".$Fecha."
+			,'.');";
+		return $this->db->String_Sql($sql);
+
+     }
+
+ function actualizar_trans_compras($tp,$retencion,$serie,$autorizacion,$autAnte)
+     {
+     	$sql ="UPDATE Trans_Compras SET AutRetencion='".$autorizacion."' 
+     		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+			AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+			AND TP = '".$tp."' 
+			AND SecRetencion = '".$retencion."'
+			AND Serie_Retencion = '".$serie."' 
+			AND LEN(AutRetencion) = 13
+			AND AutRetencion = '".$autAnte."'";
+		return $this->db->String_Sql($sql);
+
+     }
+     function atualizar_trans_air($tp,$retencion,$serie,$autorizacion,$autAnte)
+     {
+     	$sql="UPDATE Trans_Air SET AutRetencion='".$autorizacion."' 
+     	WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+		AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' 
+		AND TP = '".$tp."' 
+		AND EstabRetencion = '".substr($serie,0,3)."'
+		AND PtoEmiRetencion =  '".substr($serie,3,6)."'
+		AND SecRetencion = '".$retencion."'
+		AND LEN(AutRetencion) = 13  
+		AND AutRetencion ='".$autAnte."'";
+		return $this->db->String_Sql($sql);
+     }
+
+
+
 function generar_carpetas($entidad,$empresa)
 {
 if(strlen($entidad)<3){$entidad=generaCeros($entidad,3);} if(strlen($empresa)<3){$empresa=generaCeros($empresa,3);}
@@ -3160,4 +3210,7 @@ if(strlen($entidad)<3){$entidad=generaCeros($entidad,3);} if(strlen($empresa)<3)
     mkdir($carpeta_entidad.'/CE'.$empresa, 0777); mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
     mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
     mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados',
-    0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777); } } } ?>
+    0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777); } 
+} 
+} 
+?>
