@@ -66,7 +66,7 @@ class recuperar_facturaC
             }   
         }
 
-        // print_r($lista_faltantes);die();
+        print_r($lista_faltantes);die();
 
         if(count($lista_faltantes)>0)
         {
@@ -85,7 +85,7 @@ class recuperar_facturaC
                         {
                             return -2;
                         }
-                        $ci_ruc =  $this->sri->recuperar_cliente_xml_a_factura($factura[0]['Documento_Autorizado'],$value['Clave_Acceso'],$entidad,$item);
+                            $data =  $this->sri->recuperar_cliente_xml_a_factura($factura[0]['Documento_Autorizado'],$value['Clave_Acceso'],$entidad,$item);
                         $lineas = $this->sri->catalogo_lineas_sri('FA',$value['Serie'],$factura[0]['Fecha']->format('Y-m-d') ,$factura[0]['Fecha']->format('Y-m-d'),1);
                         if(count($lineas)==0)
                         {
@@ -99,10 +99,11 @@ class recuperar_facturaC
                             $TFA['TC'] = 'FA';
                             $TFA['Serie'] = $value['Serie'];
                             $TFA['Autorizacion'] = $value['Clave_Acceso'];
-                            $TFA['CodigoC'] = $ci_ruc;
+                            $TFA['CodigoC'] = $data['Codigo'];
                             $TFA['ClaveAcceso'] = $value['Clave_Acceso'];
                             $TFA['Cta_CxP'] = $lineas[0]['CxC'];
                             $TFA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
+                            $TFA['Fecha'] = $data['Fecha'];
                             // print_r($TFA);die();
                             if(Grabar_Factura1($TFA)!=1)
                             {
@@ -116,6 +117,10 @@ class recuperar_facturaC
                     }
                 }
                 
+                // if($key==20)
+                // {
+                     // print_r('diez');die();
+                // }
             }
             // print_r('uno');die();
             return $respuesta;

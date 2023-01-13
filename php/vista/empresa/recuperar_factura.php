@@ -157,13 +157,7 @@
             <a  href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0].'#');?>" title="Salir de modulo" class="btn btn-default">
               <img src="../../img/png/salire.png">
             </a>
-        </div>
-        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-            <button type="button" class="btn btn-default" title="Mensaje masivo todas las empresas" onclick='mmasivo();'><img src="../../img/png/masivo.png"></button>
-        </div>
-        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-            <button type="button" class="btn btn-default" title="Mensaje masivo a grupo seleccionado" onclick='mgrupo();'><img src="../../img/png/email_grupo.png" ></button>
-        </div>
+        </div>       
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
             <button type="button" class="btn btn-default" title="Mensaje masivo a grupo seleccionado" onclick='recuperar();'><img src="../../img/png/email_grupo.png" ></button>
         </div>
