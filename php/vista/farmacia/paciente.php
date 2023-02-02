@@ -104,7 +104,7 @@
     }
     if($('#txt_codigo').val() =='' || $('#txt_codigo').val()==0)
     {
-       Swal.fire('','Numero de Historia invalido.','info');
+       Swal.fire('Numero de Historia invalido.','','info');
       return false;
     }
      $.ajax({
@@ -333,8 +333,8 @@
         if(response!=-1)
         {
           Swal.fire({
-            title: 'Este CI ya esta registrado?',
-            text: "Desea cargar sus datos!",
+            title: 'Esta Cedula ya esta registrada! <br> Pero podria no tener Numero de historia clinica <br> Desea cargar sus datos!',
+            // text: "Desea cargar sus datos!",
             type: 'info',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -422,7 +422,7 @@
               <input type="text" name="txt_nombre" id="txt_nombre" class="form-control input-sm" onblur="nombres(this.value)" autocomplete="off">            
           </div>
           <div class="col-sm-4">
-             <b>RUC / CI:</b>
+             <b>CI / Cedula:</b>
             <input type="text" name="txt_ruc" id="txt_ruc" class="form-control input-sm" onblur="paciente_existente()" onkeyup="num_caracteres('txt_ruc',10)" autocomplete="off">            
           </div>
         </div>
