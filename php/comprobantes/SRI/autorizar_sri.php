@@ -168,7 +168,7 @@ class autorizacion_sri
 				{
 					$cabecera['formaPago']=$datos_fac[0]['Tipo_Pago'];
 				}
-				$cabecera['Propina']=$datos_fac[0]['Propina'];
+				$cabecera['Propina']= number_format($datos_fac[0]['Servicio'],2,'.','');
 				$cabecera['Autorizacion']=$datos_fac[0]['Autorizacion'];
 				$cabecera['Imp_Mes']=$datos_fac[0]['Imp_Mes'];
 				$cabecera['SP']=$datos_fac[0]['SP'];
@@ -604,7 +604,7 @@ class autorizacion_sri
 			   		 	// print_r('expressiondd');die();
 			   		 	if($validar_autorizado==1)
 			   		 	{
-			   		 		$resp = $this->actualizar_datos_GR($TFA);
+			   		 		return $this->actualizar_datos_GR($TFA);
 			   		 	}
 			   		 	// RETORNA SI YA ESTA AUTORIZADO O SI FALL LA REVISIO EN EL SRI
 			   			return $validar_autorizado;
@@ -623,7 +623,8 @@ class autorizacion_sri
 
 	       }else
 	       {
-	       	 print_r($sql);die();
+	       	 // print_r($sql);die();
+	       	 return -1;
 	       }
 
         
@@ -1523,7 +1524,7 @@ function generar_xml($cabecera,$detalle)
 		$xml_infoTributaria->appendChild( $xml_dirMatriz );
 		if(count($RIMPE)>0)
 		{
-			if($RIMPE['@micro']!='.' && $RIMPE['@micro']!='.' )
+			if($RIMPE['@micro']!='.' && $RIMPE['@micro']!='' && $RIMPE['@micro']=='CONTRIBUYENTE RÉGIMEN RIMPE' )
 			{
 				$xml_contribuyenteRimpe = $xml->createElement( "contribuyenteRimpe",$RIMPE['@micro']);
 				$xml_infoTributaria->appendChild( $xml_contribuyenteRimpe);
@@ -1819,6 +1820,16 @@ function generar_xml($cabecera,$detalle)
 			$xml_campoAdicional->setAttribute( "nombre", "Nota" );
 			$xml_infoAdicional->appendChild( $xml_campoAdicional );
 		}
+		if(count($RIMPE)>0)
+		{
+			if($RIMPE['@micro']!='CONTRIBUYENTE RÉGIMEN RIMPE')
+			{
+				$xml_campoAdicional = $xml->createElement( "campoAdicional",$RIMPE['@micro']);
+				$xml_campoAdicional->setAttribute( "nombre", "tipoContribuyente" );
+				$xml_infoAdicional->appendChild( $xml_campoAdicional );
+			}			
+		}
+
 
 		$estable = $cabecera['esta'];
 		$punto = $cabecera['pto_e'];
@@ -2021,7 +2032,7 @@ function Autorizar_retencion($parametros)
 			   		 {
 			   		 	$enviar_sri = $this->enviar_xml_sri(
 			   		 		$aut,
-			   		 		$this->$linkSriRecepcion);
+			   		 		$this->linkSriRecepcion);
 			   		 	if($enviar_sri==1)
 			   		 	{
 			   		 		//una vez enviado comprobamos el estado de la factura
@@ -2628,7 +2639,8 @@ function generar_xml_retencion($cabecera,$detalle)
 	        AND Factura = ".$TFA['Factura']."
 	        AND CodigoC = '".$TFA['CodigoC']."'
 	        AND Autorizacion = '".$TFA['Autorizacion']."' ";
-	        $this->db->String_Sql($sql);
+	    return    $this->db->String_Sql($sql);
+
     }
 
     function actualizar_datos_CE($autorizacion,$tc,$serie,$factura,$entidad,$autorizacion_ant,$fecha_emi = false,$codigoC=false)
@@ -2806,6 +2818,7 @@ function generar_xml_retencion($cabecera,$detalle)
   	$texto = str_replace('<![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>','', $texto);
 	$texto = str_replace('<![CDATA[<?xml version="1.0" encoding="UTF-8"?>','', $texto);
 	  	$texto = str_replace(']]>','', $texto);
+	  	// print_r($texto);die();
 	$xml = simplexml_load_string($texto);
 
 	$objJsonDocument = json_encode($xml);
@@ -2821,14 +2834,32 @@ function generar_xml_retencion($cabecera,$detalle)
 
 	$serie = $tributaria['estab'].''.$tributaria['ptoEmi'];
 	$CI_RUC = $cabecera['identificacionComprador'];	
+	$cliente_xml = $cabecera['razonSocialComprador'];
 	$Fecha = date('Y-m-d',strtotime(str_replace('/','-',$cabecera['fechaEmision'])));
 	$codigoC = $this->datos_cliente($codigo=false,$CI_RUC);
+	// print_r($CI_RUC);die();
 	if(count($codigoC)>0)
 	{
-	return array('Codigo' =>$codigoC[0]['Codigo'],'Fecha'=>$Fecha);
+		return array('Codigo' =>$codigoC[0]['Codigo'],'Fecha'=>$Fecha);
 	}else
 	{
-	return -1;
+		$veri = codigo_verificador($CI_RUC);
+		$datos[0]['campo'] = 'FA';
+		$datos[0]['dato'] = 1;
+		$datos[1]['campo'] = 'CI_RUC';
+		$datos[1]['dato'] = $CI_RUC;
+		$datos[2]['campo'] = 'Cliente';
+		$datos[2]['dato'] = $cliente_xml;
+		$datos[3]['campo'] = 'TD';
+		$datos[3]['dato'] = $veri['Tipo'];
+		$datos[4]['campo'] = 'Codigo';
+		$datos[4]['dato'] = $veri['Codigo'];
+		// print_r($datos);die();
+		insert_generico('Clientes',$datos);
+		
+		return array('Codigo' =>$veri['Codigo'],'Fecha'=>$Fecha);
+
+		// return -1;
 	}
 }
 

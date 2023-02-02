@@ -11,8 +11,8 @@
   	autocoplete_clinete();
 
 
-  	 $('#DCClientes').on('select2:select', function (e) {
-      console.log(e);
+  	$('#DCClientes').on('select2:select', function (e) {
+      // console.log(e);
       var data = e.params.data.data;
       // var dataM = e.params.data.dataMatricula;
       $('#TxtConcepto').val('Nota de Crédito de: '+data.Cliente);
@@ -20,6 +20,15 @@
       	DCLineas(data.Cta_CxP);
       	DCTC(data.Codigo)    
     });
+
+    $('#DCArticulo').on('select2:select', function (e) {
+      // console.log(e);
+      var data = e.params.data.data;
+      $('#TextVUnit').val(data.PVP);
+      // $('#TextDesc').val(data.);
+      // $('#LabelVTotal').val(data.);
+      console.log(data);
+    }); 	 
 
 
   })
@@ -130,7 +139,14 @@ function cargar_tabla()
       success: function(data)
       {
          console.log(data);
-         $('#tbl_datos').html(data);
+         $('#tbl_datos').html(data.tabla);
+
+         $('#TxtConIVA').val(data.TxtConIVA);
+         $('#TxtDescuento').val(data.TxtDescuento);
+         $('#TxtIVA').val(data.TxtIVA);
+         $('#TxtSaldo').val(data.TxtSaldo);
+         $('#TxtSinIVA').val(data.TxtSinIVA);
+         $('#LblTotalDC').val(data.LblTotalDC);
       }
     });
 }
@@ -270,11 +286,11 @@ function Detalle_Factura(Factura=false,Serie=false,TC=false,codigoC=false)
         $('#LblSaldo').val(data[0].Total_MN); 
         $('#LblSaldo').val(data[0].Total_MN); 
         Lineas_Factura(Factura,Serie,TC,data[0].Autorizacion)
+        cargar_tabla();
          
       }
     });
 }
-
 
 function Lineas_Factura(Factura=false,Serie=false,TC=false,Autorizacion=false)
 {
@@ -297,18 +313,17 @@ function Lineas_Factura(Factura=false,Serie=false,TC=false,Autorizacion=false)
       data: {parametros: parametros},
       dataType:'json', 
       success: function(data)
-      {
-        
-        $('#TxtAutorizacion').val(data[0].Autorizacion);
-        $('#LblTotal').val(data[0].Saldo_MN); 
-        $('#LblSaldo').val(data[0].Total_MN); 
-         	 console.log(data);
+      { 
+        if(data!=null)
+        {       
+          $('#TxtAutorizacion').val(data[0].Autorizacion);
+          $('#LblTotal').val(data[0].Saldo_MN); 
+          $('#LblSaldo').val(data[0].Total_MN); 
+        }
          
       }
     });
 }
-
-
 function autocoplete_clinete(){
       $('#DCClientes').select2({
         placeholder: 'Seleccione una beneficiario',
@@ -328,7 +343,75 @@ function autocoplete_clinete(){
       });
 }
 
-	
+function TextDesc_lost()
+{
+   Factura = $('#DCFactura').val();  
+   Serie = $('#DCSerie').val(); 
+   TC = $('#DCTC').val();  
+   codigoC = $('#DCClientes').val(); 
+   auto =  $('#TxtAutorizacion').val();
+   if($('#TextCant').val()=='' || $('#TextCant').val()=='0' || $('#TextCant').val() =='.')
+   {
+
+      Swal.fire('Cantidad invalida','','info')
+      return false;
+   }
+
+    var parametros = 
+    {   
+      'productos':$('#DCArticulo').val(),
+      'Factura':Factura,
+      'Serie':Serie,
+      'CodigoC':codigoC,
+      'TC':TC,
+      'Autorizacion':auto,
+      'TextCant':$('#TextCant').val(),
+      'TextVUnit':$('#TextVUnit').val(),
+      'TextDesc':$('#TextDesc').val(),
+      'MBoxFecha':$('#MBoxFecha').val(),
+      'Cod_Bodega':$('#DCBodega').val(),
+      'Cod_Marca':$('#DCMarca').val(),
+      'ConIVA':$('#TxtConIVA').val(),
+      'Descuento':$('#TxtDescuento').val(),
+      'IVA':$('#TxtIVA').val(),
+      'Saldo':$('#TxtSaldo').val(),
+      'SinIVA':$('#TxtSinIVA').val(),
+      'TotalDC':$('#LblTotalDC').val(),
+    }
+     $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/notas_creditoC.php?guardar=true',
+      data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+        if(data==-3)
+        {
+          Swal.fire('el producto ya sea ingresado','','info')
+        }
+        cargar_tabla();         
+      }
+    });
+}
+
+function generar_nc()
+{
+  datos = $('#form_nc').serialize();  
+  $.ajax({
+    type: "POST",
+    url: '../controlador/facturacion/notas_creditoC.php?generar_nota_credito=true',
+    data: datos,
+    dataType:'json', 
+    success: function(data)
+    {
+      if(data==-3)
+      {
+        Swal.fire('el producto ya sea ingresado','','info')
+      }
+      cargar_tabla();         
+    }
+  });
+}	
 </script>
 <div class="row">
 	<div class="col-lg-4 col-sm-8 col-md-8 col-xs-12">
@@ -339,6 +422,7 @@ function autocoplete_clinete(){
     	</div>
    </div>
 </div>
+<form id="form_nc">
 <div class="row">
 	<div class="col-sm-3">
 		<div class="form-group">
@@ -362,21 +446,21 @@ function autocoplete_clinete(){
 <div class="row">
 	<div class="col-sm-3">
 		<b>Lineas de Nota de Credito</b>
-		<select class="form-control input-xs" id="DCLineas">
+		<select class="form-control input-xs" id="DCLineas" name="DCLineas">
           	<option value="">Seleccione</option>
         </select>
 	</div>
 	<div class="col-sm-3">
 		<b>Autorizacion Nota de Credito</b>
-		<input type="text" name="" class="form-control input-xs" value=".">
+		<input type="text" name="TextBanco" id="TextBanco" class="form-control input-xs" value=".">
 	</div>
 	<div class="col-sm-1" style="padding:0px">
 		<b>Serie</b>
-		<input type="text" name="" class="form-control input-xs" value="001001">
+		<input type="text" name="TextCheqNo" id="TextCheqNo" class="form-control input-xs" value="001001">
 	</div>
 	<div class="col-sm-1" style="padding: 0px;">
 		<b>Comp No.</b>
-		<input type="text" name="" class="form-control input-xs" value="00000000">
+		<input type="text" name="TextCompRet" id="TextCompRet" class="form-control input-xs" value="00000000">
 	</div>
 	<div class="col-sm-4">
 		<b>Contra Cuenta a aplicar a la Nota de Credito</b>
@@ -398,19 +482,19 @@ function autocoplete_clinete(){
 <div class="row">
 	<div class="col-sm-1">
 		<b>T.D.</b>
-		<select class="form-control input-xs" id="DCTC" style="padding: 2px 5px;"  onchange="DCSerie()">
+		<select class="form-control input-xs" id="DCTC" name="DCTC" style="padding: 2px 5px;"  onchange="DCSerie()">
       		<option>Seleccione cliente</option>
       	</select>
 	</div>
 	<div class="col-sm-1" style="padding: 2px">
 		<b>Serie</b>
-		<select class="form-control input-xs" id="DCSerie" style="padding: 2px 7px;" onchange="DCFactura()">
+		<select class="form-control input-xs" id="DCSerie" name="DCSerie" style="padding: 2px 7px;" onchange="DCFactura()">
       		<option>Seleccione cliente</option>
       	</select>
 	</div>
 	<div class="col-sm-2">
 		<b>No.</b>
-		<select class="form-control input-xs" id="DCFactura" onchange="Detalle_Factura()">
+		<select class="form-control input-xs" id="DCFactura" name="DCFactura" onchange="Detalle_Factura()">
       		<option>Seleccione cliente</option>
       	</select>
 	</div>
@@ -463,19 +547,19 @@ function autocoplete_clinete(){
 					</div>
 					<div class="col-sm-1" style="padding:3px">
 						<b>Cantidad</b>
-						<input type="text" name="" class="form-control input-xs" value="0">
+						<input type="text" name="TextCant" id="TextCant" class="form-control input-xs" value="0">
 					</div>
 					<div class="col-sm-1" style="padding:3px">
 						<b>P.V.P.</b>
-						<input type="text" name="" class="form-control input-xs" value="0.00">
+						<input type="text" name="TextVUnit" id="TextVUnit" class="form-control input-xs" value="0.00">
 					</div>
 					<div class="col-sm-1" style="padding:3px">
 						<b>DESC</b>
-						<input type="text" name="" class="form-control input-xs" value="0.00">
+						<input type="text" name="TextDesc" id="TextDesc" class="form-control input-xs" value="0.00" onblur="TextDesc_lost()">
 					</div>
 					<div class="col-sm-2">
 						<b>TOTAL</b>		
-						<input type="text" name="" class="form-control input-xs" value="0.00">
+						<input type="text" name="LabelVTotal" id="LabelVTotal" class="form-control input-xs" value="0.00">
 					</div>
 				</div>
 			</div>
@@ -492,10 +576,10 @@ function autocoplete_clinete(){
 	</div>
 </div>
 <div class="row" style="height: 200px;">
-					<div class="col-sm-12" id="tbl_datos">
-						
-					</div>	
-				</div>
+	<div class="col-sm-12" id="tbl_datos">
+		
+	</div>	
+</div>
 
 
 <div class="row">
@@ -559,10 +643,11 @@ function autocoplete_clinete(){
 		</div>		
 	</div>
 	<div class="col-sm-3">		
-		<button class="btn btn-default">
+		<button type="button" class="btn btn-default" onclick="generar_nc()">
 			<img src="../../img/png/grabar.png">
 			<br>
 			Nota de credito
 		</button>
 	</div>
 </div>
+</form>

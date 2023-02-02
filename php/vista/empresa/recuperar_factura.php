@@ -112,15 +112,23 @@
 
   function recuperar()
   {
+
+  	if($('#total_fac').text()=='0')
+  	{
+  		Swal.fire('Realize una busqueda primero','','info');
+  		return false;
+  	}
   	if($('#entidad').val()=='' || $('#empresas').val()=='')
   	{
   		Swal.fire('Seleccione una entidad y una empresa','','info')
   		return false;
   	}
+  	$('#myModal_espera').modal('show');
+  	
   	var parametros = 
   	{
-  		'entidad':$('#entidad').val(),
-  		'item':$('#empresas').val(),
+  		'desde':$('#txt_desde').val(),
+  		'hasta':$('#txt_hasta').val(),
   	}
   	
   	$.ajax({
@@ -130,6 +138,7 @@
 		dataType:'json',
 		success: function(data)
 		{
+			 $('#myModal_espera').modal('hide');
 			if(data==1)
 			{
 				Swal.fire('Factura recuperada de xml','','info');
@@ -141,11 +150,79 @@
 			{
 				Swal.fire('No hay facturas que recuperar','','info');				
 			}
-			
-
 			console.log(data);
-		}
+		},error: function (request, status, error) {   
+          Swal.fire('Error inesperado ','consulte con su proveedor de servicio','error');         
+          $('#myModal_espera').modal('hide');
+      }
 	});
+  }
+
+  function lista_recuperar()
+  {
+  	$('#myModal_espera').modal('show');
+  	var parametros = 
+  	{
+  		'desde':$('#txt_desde').val(),
+  		'hasta':$('#txt_hasta').val(),
+  	}  	  	
+  	$.ajax({
+			type: "POST",
+			 url: '../controlador/empresa/recuperar_facturaC.php?lista_factura_recuperar=true',
+			data: {parametros: parametros},
+			dataType:'json',
+			success: function(data)
+			{
+				$('#myModal_espera').modal('hide');			
+				$('#tbl_datos').html(data.tabla);
+				$('#total_fac').text(data.num)	
+				if(data.num==0)
+				{
+						Swal.fire('No existen documentos electronicos','','info')
+				}
+
+				console.log(data);
+			},
+      error: function (request, status, error) {   
+          Swal.fire('Error inesperado ','consulte con su proveedor de servicio','error');         
+          $('#myModal_espera').modal('hide');
+      }
+		});
+  }
+
+  function editar_fechas()
+  {
+  	if($('#total_fac').text()=='0')
+  	{
+  		Swal.fire('Realize una busqueda primero','','info');
+  		return false;
+  	}
+  	$('#myModal_espera').modal('show');
+  	
+  	var parametros = 
+  	{
+  		'desde':$('#txt_desde').val(),
+  		'hasta':$('#txt_hasta').val(),
+  	}  	  	
+  	$.ajax({
+			type: "POST",
+			 url: '../controlador/empresa/recuperar_facturaC.php?actualizar_fechas=true',
+			data: {parametros: parametros},
+			dataType:'json',
+			success: function(data)
+			{
+				if(data!=1){ text = 'Uno o varios Documentos no pudieron editar fecha'; tipo = 'info'}else{text = 'Fechas de Documentos Actualizados';tipo='success'}
+				Swal.fire(text,'',tipo).then(function()
+					{
+						lista_recuperar();
+					})
+
+			},error: function (request, status, error) {   
+          Swal.fire('Error inesperado ','consulte con su proveedor de servicio','error');         
+          $('#myModal_espera').modal('hide');
+      }
+		});
+
   }
 
 
@@ -157,81 +234,65 @@
             <a  href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0].'#');?>" title="Salir de modulo" class="btn btn-default">
               <img src="../../img/png/salire.png">
             </a>
-        </div>       
+        </div> 
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-            <button type="button" class="btn btn-default" title="Mensaje masivo a grupo seleccionado" onclick='recuperar();'><img src="../../img/png/email_grupo.png" ></button>
+            <button type="button" class="btn btn-default" title="Buscar" onclick='lista_recuperar();'><img src="../../img/png/consultar.png" ></button>
         </div>
-         
+       	<div class="col-xs-1 col-md-2 col-sm-2 col-lg-1">
+          <button type="button" class="btn btn-default" title="Recuperar Facturas" onclick='recuperar();'><img src="../../img/png/update.png" ></button>
+      	</div>  
+        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
+            <button type="button" class="btn btn-default" title="Igualar fecha de autorizacion con fecha de Emision" onclick='editar_fechas();'><img src="../../img/png/sub_mod_mes.png" ></button>
+        </div>              
  </div>
 </div>
-	<div class="row" id="form_vencimiento" style="display:none;">
-		<br>
-		<div class="col-sm-1">
-			<br>
-			<button class="btn btn-default btn-sm" type="button" onclick="cerrarEmpresa()"><i class="fa fa-close"></i> Cerrar</button>
+	<div class="row">
+		<div class="col-sm-6">			
+			<p style="margin: 0px;"><b>Entidad:</b><?php echo $_SESSION['INGRESO']['IDEntidad']; ?></p>
+			<p style="margin: 0px;"><b>Item: </b><?php echo $_SESSION['INGRESO']['item']; ?></p>
+			<p style="margin: 0px;"><b>Empresa: </b><?php echo $_SESSION['INGRESO']['Nombre_Comercial']; ?></p>
+			<p style="margin: 0px;"><b>Base de datos: </b><?php echo $_SESSION['INGRESO']['Base_Datos']; ?></p>
+
+			<!-- <p><?php print_r($_SESSION['INGRESO']);?></p> -->			
 		</div>
-		<div class="col-sm-2">
-			<b>Desde:</b>
-			<input type="date" class="form-control input-sm" id="desde" value="<?php echo date("Y-m-d");?>"  onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
-		</div>
-		<div class="col-sm-2">
-			<b>Hasta</b>
-			<input type="date" id="hasta"  class="form-control input-sm"  value="<?php echo date("Y-m-d");?>"  onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);consultar_datos();">
-		</div><br>
-		<div class="col-sm-12">
+		<div class="col-sm-6">
+			<div class="row">			
+				<div class="col-sm-6">
+					<b>Desde:</b>
+					<input type="date" class="form-control input-xs" id="txt_desde" value=""  onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
+				</div>
+				<div class="col-sm-6">
+					<b>Hasta</b>
+					<input type="date" id="txt_hasta"  class="form-control input-xs"  value=""  onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id);consultar_datos();">
+				</div>
+			</div>
+			<!-- <i>*Si las fechas son iguales este motrara todos los registros entocntrados</i> -->
+	</div>
+</div>	
+
+	<div class="row">
+		<div class="col-sm-8">			
+		<p>Total de facturas:<b id="total_fac">0</b></p>
 			<div class="table-responsive">
-				<table class="" id="tbl_style" style="width: 98%;">
+				<table class="table text-sm">
 					<thead>
-						<tr>
-							<td>Tipo</td>
-							<td>Item</td>
-							<td>Empresa</td>
-							<td>Fecha</td>
-							<td>Enero</td>
-						</tr>
+						<th>Fecha Emision</th>
+						<th>Autorizacion</th>
+						<th>Serie</th>
+						<th>Factura</th>
 					</thead>
-					<tbody id="tbl_vencimiento">
-						
+					<tbody id="tbl_datos">
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>						
 					</tbody>
 				</table>
 			</div>
 		</div>
-	</div>
-
-	<form id="form_empresa">
-	<div class="row">
 		<div class="col-sm-4">
-			<div class="form-group">
-				<label>Entidad: </label><i id="lbl_ruc"></i>-<i id="lbl_enti"></i>
-				<select class="form-control fomr" name="entidad" id='entidad' onChange="buscar_ciudad();">
-					<option value=''>Seleccione Entidad</option>
-				</select>
-			</div>			
-		</div>
-		<div class="col-sm-2">
-			<div class="form-group">
-				<label for="Entidad">Ciudad</label>
-				<select class="form-control input-sm" name="ciudad" id='ciudad' onchange="buscar_empresas()">
-					<option value=''>Seleccione ciudad</option>
-				</select>
-			</div>			
-		</div>
-		<div class="col-sm-4">
-			<div class="form-group">
-				<label for="Entidad">Empresa</label>
-				<select class="form-control input-xs" name="empresas" id='empresas' onchange="datos_empresa()">
-					<option value=''>Seleccione Empresa</option>
-				</select>
-			</div>			
-		</div>
-		<div class="col-sm-2">
-			<div class="form-group">
-				<label for="Entidad">CI / RUC </label>
-				<input type="text" class="form-control input-xs" name="ci_ruc" id="ci_ruc" readonly>
-			</div>			
+						
 		</div>
 	</div>
-	<div class="row" id="datos_empresa">
-		
-	</div>
-	</form>	

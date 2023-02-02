@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?><autorizacion>
+  <estado>AUTORIZADO</estado>
+  <numeroAutorizacion>2012202201179134763300120011160000000201234567819</numeroAutorizacion>
+  <fechaAutorizacion class="fechaAutorizacion">20/12/2022 15:01:45.000</fechaAutorizacion>
+  <comprobante><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?><factura id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>2</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>COOPERATIVA DE TRANSPORTE DE CARGA EN CAMIONES Y CAMIONETAS AEROPUERTO</razonSocial>
+    <nombreComercial>COOPERATIVA DE TRANSPORTE DE CARGA EN CAMIONES Y CAMIONETAS AEROPUERTO</nombreComercial>
+    <ruc>1791347633001</ruc>
+    <claveAcceso>2012202201179134763300120011160000000201234567819</claveAcceso>
+    <codDoc>01</codDoc>
+    <estab>001</estab>
+    <ptoEmi>116</ptoEmi>
+    <secuencial>000000020</secuencial>
+    <dirMatriz>PARROQIA COTOCOLLAO CALLE AV. CARLOS SN INTERSECCION ENTRE</dirMatriz>
+  </infoTributaria>
+  <infoFactura>
+    <fechaEmision>20/12/2022</fechaEmision>
+    <dirEstablecimiento>PINARGOTE N5-12 Y JUAN SOTO</dirEstablecimiento>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <tipoIdentificacionComprador>04</tipoIdentificacionComprador>
+    <razonSocialComprador>NOBREAK</razonSocialComprador>
+    <identificacionComprador>1792108497001</identificacionComprador>
+    <totalSinImpuestos>40.00</totalSinImpuestos>
+    <totalDescuento>0</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0</descuentoAdicional>
+        <baseImponible>40</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>0</propina>
+    <importeTotal>40</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>40</total>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>01.01</codigoPrincipal>
+      <descripcion>Transporte interno</descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.00</cantidad>
+      <precioUnitario>40</precioUnitario>
+      <descuento>0</descuento>
+      <precioTotalSinImpuesto>40</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
+          <baseImponible>40</baseImponible>
+          <valor>0</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">LEONARDO MURIALDO OE112 Y AV GALO PLAZA LASSO</campoAdicional>
+    <campoAdicional nombre="Telefono">2416760</campoAdicional>
+    <campoAdicional nombre="Email">alexandra.luna@nobreak.com.ec</campoAdicional>
+    <campoAdicional nombre="puntoEmision">001116</campoAdicional>
+    <campoAdicional nombre="socioRazonSocial">Morales Asifuela Henry Vinicio</campoAdicional>
+    <campoAdicional nombre="socioRUC">1717621633001</campoAdicional>
+    <campoAdicional nombre="socioDireccion">PINARGOTE N5-12 Y JUAN SOTO</campoAdicional>
+    <campoAdicional nombre="socioTelefono">0983151465</campoAdicional>
+    <campoAdicional nombre="socioEmail">transportedecargam@gmail.com;vicohevis1985@gmail.com</campoAdicional>
+    <campoAdicional nombre="PlacaVehiculo">PCD-4403</campoAdicional>
+    <campoAdicional nombre="CtaEstablecimiento">.</campoAdicional>
+  </infoAdicional>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature535155">
+<ds:SignedInfo Id="Signature-SignedInfo361200">
+<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+<ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+<ds:Reference Id="SignedPropertiesID511835" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature535155-SignedProperties87872">
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+<ds:DigestValue>4H9DpzkZPBt9PC+kmSDWJrVqZIA=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference URI="#Certificate1563996">
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+<ds:DigestValue>PbbLTgSg5PMZO39yt01W2gr0z/Q=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference Id="Reference-ID-914767" URI="#comprobante">
+<ds:Transforms>
+<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+</ds:Transforms>
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+<ds:DigestValue>BenOTDQ/qjsy2EHsrV3bR/GIr2s=</ds:DigestValue>
+</ds:Reference>
+</ds:SignedInfo>
+<ds:SignatureValue Id="SignatureValue242164">
+R4QNCQHHaDuc9fKa4hi48980F8s9hJq/OuW4SMdMHnVOo/wdl4b7GIC8sfCGgd3/76qJBObou5UY
+setTORYP6Spi1Aylb0LsHq33pwcYDxT6uzrnsH1oufNTT+2rRBay7RnE4g+WG7clPPDs3qDMuGx3
+MUj43j12wbRweB3ZAHKUVXowO0XXub+aRGdAzMLpqG2STnj8lQ7fgpu4sDSUFzV7SJ6ED/MFvXC9
+MX52ip6NdODcnjr3RKseO0MD1mpYnKp97hhEQDANJMHRqenaPkw4py19aEN+ya6lQgA3KwAu7S/b
+JOeHfQJjx2xhFxfcCEFHs7o2dTbBm6P4K16dvA==
+</ds:SignatureValue>
+<ds:KeyInfo Id="Certificate1563996">
+<ds:X509Data>
+<ds:X509Certificate>
+MIIKETCCB/mgAwIBAgIEW25QLjANBgkqhkiG9w0BAQsFADCBoTELMAkGA1UEBhMCRUMxIjAgBgNV
+BAoTGUJBTkNPIENFTlRSQUwgREVMIEVDVUFET1IxNzA1BgNVBAsTLkVOVElEQUQgREUgQ0VSVElG
+SUNBQ0lPTiBERSBJTkZPUk1BQ0lPTi1FQ0lCQ0UxDjAMBgNVBAcTBVFVSVRPMSUwIwYDVQQDExxB
+QyBCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9SMB4XDTIyMDkxMjE2MDEyNVoXDTI0MDkxMjE2MzEy
+NVowgbYxCzAJBgNVBAYTAkVDMSIwIAYDVQQKExlCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9SMTcw
+NQYDVQQLEy5FTlRJREFEIERFIENFUlRJRklDQUNJT04gREUgSU5GT1JNQUNJT04tRUNJQkNFMQ4w
+DAYDVQQHEwVRVUlUTzE6MBEGA1UEBRMKMDAwMDc1MTU0NzAlBgNVBAMTHlJPTEFOIEdJT1ZBTk5Z
+IE1PUklMTE8gU0FOQ0hFWjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKOZqB627qpt
+VBGB4BgiOYlk5Xptq2nmVDHdwoPi9iTmHl3XfV5WxpFfmQPao2cKv1j6kJQLHEx58gJuH+Bqh7Rf
+9yOzc6zYYAWw5seSMv97aSDDeYHWPQNagc5wdTU2nHP4GzK1Zntx1IFpcCetiPqwV2DpiRX9Dyfb
+n55p5M+ck75JYnrJoQFJtVjUGHrduKEEx8iWRtTgMUU0qAKxlsKxWLila0zEKKvnM7UAm4H5ikiY
+ERwXregFMKpIrCTEwhtWlHe++hsaQTvRD0iyIletnZHsc5oebYNw+EuoDmvQ8DOwdOZFjA64PRWA
+YInJyF3wCQ/MAQEZgF78LBANFYkCAwEAAaOCBTgwggU0MAsGA1UdDwQEAwIHgDBnBgNVHSAEYDBe
+MFwGCysGAQQBgqg7AgIBME0wSwYIKwYBBQUHAgEWP2h0dHA6Ly93d3cuZWNpLmJjZS5lYy9wb2xp
+dGljYS1jZXJ0aWZpY2Fkby9wZXJzb25hLWp1cmlkaWNhLnBkZjCBkQYIKwYBBQUHAQEEgYQwgYEw
+PgYIKwYBBQUHMAGGMmh0dHA6Ly9vY3NwLmVjaS5iY2UuZWMvZWpiY2EvcHVibGljd2ViL3N0YXR1
+cy9vY3NwMD8GCCsGAQUFBzABhjNodHRwOi8vb2NzcDEuZWNpLmJjZS5lYy9lamJjYS9wdWJsaWN3
+ZWIvc3RhdHVzL29jc3AwVgYKKwYBBAGCqDsDCgRIE0ZDT09QRVJBVElWQSBERSBUUkFOU1BPUlRF
+IERFIENBUkdBIEVOIENBTUlPTkVTIFkgQ0FNSU9ORVRBUyBBRVJPUFVFUlRPMB0GCisGAQQBgqg7
+AwsEDxMNMTc5MTM0NzYzMzAwMTAaBgorBgEEAYKoOwMBBAwTCjE3MDk0ODg1MjAwHgYKKwYBBAGC
+qDsDAgQQEw5ST0xBTiBHSU9WQU5OWTAXBgorBgEEAYKoOwMDBAkTB01PUklMTE8wFwYKKwYBBAGC
+qDsDBAQJEwdTQU5DSEVaMBcGCisGAQQBgqg7AwUECRMHR0VSRU5URTAbBgorBgEEAYKoOwMHBA0T
+C0FWIENBUkxPUyBWMBkGCisGAQQBgqg7AwgECxMJMDIyNTgzMTAyMBUGCisGAQQBgqg7AwkEBxMF
+UXVpdG8wFwYKKwYBBAGCqDsDDAQJEwdFQ1VBRE9SMCAGCisGAQQBgqg7AzMEEhMQU09GVFdBUkUt
+QVJDSElWTzAoBgNVHREEITAfgR1jb29wYWVyb3B1ZXJ0b2NhcmdhQHlhaG9vLmNvbTCCAeEGA1Ud
+HwSCAdgwggHUMIIB0KCCAcygggHIhoHWbGRhcDovL2JjZXFsZGFwc3VicDEuYmNlLmVjL2NuPUNS
+TDE1NDgsY249QUMlMjBCQU5DTyUyMENFTlRSQUwlMjBERUwlMjBFQ1VBRE9SLGw9UVVJVE8sb3U9
+RU5USURBRCUyMERFJTIwQ0VSVElGSUNBQ0lPTiUyMERFJTIwSU5GT1JNQUNJT04tRUNJQkNFLG89
+QkFOQ08lMjBDRU5UUkFMJTIwREVMJTIwRUNVQURPUixjPUVDP2NlcnRpZmljYXRlUmV2b2NhdGlv
+bkxpc3Q/YmFzZYY0aHR0cDovL3d3dy5lY2kuYmNlLmVjL0NSTC9lY2lfYmNlX2VjX2NybGZpbGVj
+b21iLmNybKSBtjCBszELMAkGA1UEBhMCRUMxIjAgBgNVBAoTGUJBTkNPIENFTlRSQUwgREVMIEVD
+VUFET1IxNzA1BgNVBAsTLkVOVElEQUQgREUgQ0VSVElGSUNBQ0lPTiBERSBJTkZPUk1BQ0lPTi1F
+Q0lCQ0UxDjAMBgNVBAcTBVFVSVRPMSUwIwYDVQQDExxBQyBCQU5DTyBDRU5UUkFMIERFTCBFQ1VB
+RE9SMRAwDgYDVQQDEwdDUkwxNTQ4MCsGA1UdEAQkMCKADzIwMjIwOTEyMTYwMTI1WoEPMjAyNDA5
+MTIxNjMxMjVaMB8GA1UdIwQYMBaAFEii3yMfHfgsUXqMA81JMqUJwZSrMB0GA1UdDgQWBBTZ1S35
+d8qifBfa/AMvnnobPWNO3jAJBgNVHRMEAjAAMBkGCSqGSIb2fQdBAAQMMAobBFY4LjEDAgSwMA0G
+CSqGSIb3DQEBCwUAA4ICAQCFgRoU0L+GY6QunXgSW7AwDL4w+LRQA5qImfASEc3uZ25TPrh0tKcy
+Mp/0eK5C+AW2bENEqPfyDMLukbgV5YfTsfSQuT9IJEKcd0a4JQXCqAK9b7/hkyoFNJri1ww31kjv
+LaJCrkZWZbmtsBiY+k0IWULXtET19WeKnmHrJMId70TG053TmI93g+R+8S+bfcPqqljMoPoQHc1m
+inGFYVxTkrA96zS4P8OS8cCdTAJP8iu886k4hbMMR5J0H4X75kc219CtlzUsDS4w1Duf44isuUOU
+i4rAXLDb52pofHNMjBP9mcUq0D/Rd1LjJanTjp6Wlf1c3AJMSSfHQ3+PLe7bwSfJHQsaYN34IPXh
+/rmgt2vtlW5X8K0e7miXPa4ze03c5R8Aip1S7WeUU0egL55fUG9kt1VHtJ58M3UjHWWyHwUPHF6t
+4WxQH1bGf/uPGNlsCDOJ7G7RM2ApI+UBfKWgLKJxPyp1CZzFh+5iHsD7tSk25N1lkGRcnZzu6EIE
+gRb/zkzGxsvqnWC9niim6jHWx9OtJxLr3PLoF2HKaS+C9r70UO00e5C4G4DVoyr6yy4fkP7vQkZL
+xisRNx1lkbxwIIiAexAmRM15PO5c6ablRf7lDggQAdZoY/amGNUheJv5ax7TexobMUTHP2luPyeb
+zVaeKAdVQoCnkktHSR1Dvw==
+</ds:X509Certificate>
+</ds:X509Data>
+<ds:KeyValue>
+<ds:RSAKeyValue>
+<ds:Modulus>
+o5moHrbuqm1UEYHgGCI5iWTlem2raeZUMd3Cg+L2JOYeXdd9XlbGkV+ZA9qjZwq/WPqQlAscTHny
+Am4f4GqHtF/3I7NzrNhgBbDmx5Iy/3tpIMN5gdY9A1qBznB1NTacc/gbMrVme3HUgWlwJ62I+rBX
+YOmJFf0PJ9ufnmnkz5yTvkliesmhAUm1WNQYet24oQTHyJZG1OAxRTSoArGWwrFYuKVrTMQoq+cz
+tQCbgfmKSJgRHBet6AUwqkisJMTCG1aUd776GxpBO9EPSLIiV62dkexzmh5tg3D4S6gOa9DwM7B0
+5kWMDrg9FYBgicnIXfAJD8wBARmAXvwsEA0ViQ==
+</ds:Modulus>
+<ds:Exponent>AQAB</ds:Exponent>
+</ds:RSAKeyValue>
+</ds:KeyValue>
+</ds:KeyInfo>
+<ds:Object Id="Signature535155-Object746059"><etsi:QualifyingProperties Target="#Signature535155"><etsi:SignedProperties Id="Signature535155-SignedProperties87872"><etsi:SignedSignatureProperties><etsi:SigningTime>2022-12-20T14:54:27-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>x/vmc0HudSlM2ENQcbJ3bNdQwp0=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AC BANCO CENTRAL DEL ECUADOR,L=QUITO,OU=ENTIDAD DE CERTIFICACION DE INFORMACION-ECIBCE,O=BANCO CENTRAL DEL ECUADOR,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1533956142</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-914767"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></factura>]]></comprobante>
+  <mensajes/>
+</autorizacion>

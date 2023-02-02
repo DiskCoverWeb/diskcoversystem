@@ -229,6 +229,7 @@ class punto_ventaC
 	    $Real1 = $parametros['VTotal'];
 	    $TxtRifaD = $parametros['TxtRifaD'];
 	    $TxtRifaH =  $parametros['TxtRifaH'];
+	    $TextServicios = $parametros['TextServicios'];
 	    $CodigoL = '.';
 	    $producto = Leer_Codigo_Inv($parametros['Codigo'],$parametros['fecha'],$parametros['CodBod']);
 	    $CodigoL2 =  $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie'],$parametros['fecha'],$parametros['fecha'],$electronico);
@@ -278,6 +279,11 @@ class punto_ventaC
 		      			break;
 		      	}
 		         $VTotal = number_format($Real1,2,'.','');
+		         if($parametros['TextVDescto']=='')
+		         {
+		         	$parametros['TextVDescto'] = 0;
+		         }
+		         $Dscto = number_format($parametros['TextVDescto'],2,'.','');	    		
 		//          	 print_r($articulo);
 		// die();	
 
@@ -301,8 +307,8 @@ class punto_ventaC
 		               //     Ln_No = Ln_No + 1
 		               // Next i
 		         }else{		         
-		         // print_r($articulo);
-		// die();	
+		         	// print_r($articulo);
+					// die();	
 		         	if(isset($parametros['Producto']))
 		         	{
 		         		// esto se usa en facturacion_elec al cambiar el nombre
@@ -316,7 +322,7 @@ class punto_ventaC
 		            $datos[2]['campo'] = "PRODUCTO"; 
 		            $datos[2]['dato'] = $articulo['Producto'];
 		            $datos[3]['campo']  = "Tipo_Hab"; 
-		            $datos[3]['dato']  =  substr($TxtDocumentos,0,12);
+		            $datos[3]['dato']  =  substr($TxtDocumentos,0,40);
 		            $datos[4]['campo'] = "CANT"; 
 		            $datos[4]['dato']  = number_format(floatval($TextCant),2,'.','');
 		            $datos[5]['campo'] = "PRECIO"; 
@@ -339,12 +345,17 @@ class punto_ventaC
 		            $datos[12]['dato']  =$parametros['CodBod'];            
 		            $datos[13]['campo'] = "COSTO";
 		            $datos[13]['dato']  = $articulo['Costo'];
+		            $datos[14]['campo'] = "Total_Desc";
+		            $datos[14]['dato']  = $Dscto;
+		            $datos[15]['campo'] = "SERVICIO";
+		            $datos[15]['dato']  = $TextServicios;		           
+
 		            if($articulo['Costo']>0)
 		            { 	            
-			            $datos[14]['campo'] = "Cta_Inv"; 
-			            $datos[14]['dato']  = $articulo['Cta_Inventario'];
-			            $datos[15]['campo'] = "Cta_Costo"; 
-			            $datos[15]['dato']  = $articulo['Cta_Costo_Venta'];
+			            $datos[16]['campo'] = "Cta_Inv"; 
+			            $datos[16]['dato']  = $articulo['Cta_Inventario'];
+			            $datos[17]['campo'] = "Cta_Costo"; 
+			            $datos[17]['dato']  = $articulo['Cta_Costo_Venta'];
 			        }
 
 		            // print_r($datos);die();     
@@ -446,7 +457,7 @@ class punto_ventaC
 
 	        $Moneda_US = False;
 	        $TextoFormaPago = G_PAGOCONT;
-	        // print_r($parametros);die();
+	        // print_r($parametros);die();	       
 	       return $this->ProcGrabar($FA);
 	    }else
 	    {
@@ -512,6 +523,7 @@ class punto_ventaC
    // funcion para vista de facturar electronico , sin restriccion de que la factura este en cero
 	function generar_factura_elec($parametros)
 	{
+		// print_r($parametros);die();
 		$electronico = 0;
 		if(isset($parametros['electronico'])){$electronico = $parametros['electronico'];}
 		
@@ -545,6 +557,8 @@ class punto_ventaC
 	        $FA['CodDoc'] = $parametros['CodDoc'];
 	        $FA['valorBan'] = $parametros['valorBan'];
 	        $FA['TxtEfectivo'] = $parametros['TxtEfectivo'];
+	        $FA['Cod_CxC'] = $datos[0]['Codigo'];
+	        $FA['Remision'] = 0;
 	        if(isset($parametros['tipo_pago']))
 	        {
 	        	$FA['Tipo_Pago'] = $parametros['tipo_pago'];
@@ -555,20 +569,23 @@ class punto_ventaC
 
 
 			//datos para guia de remision
-			if($parametros['LblGuiaR']!=0)
+			if(isset($parametros['LblGuiaR']) && $parametros['LblGuiaR']!=0)
 			{
+				// print_r('dasd');die();
 				$RazonSocial = explode('_',$parametros['DCRazonSocial']);
 				$CI_RUC = $RazonSocial[0];
 				$DIR = $RazonSocial[1];
 				$EmpresaEntrega = explode('_',$parametros['DCEmpresaEntrega']);
 				$CI_RUC_E = $EmpresaEntrega[0];
+
+				$serie_gr = explode('_',$parametros['DCSerieGR']);
 				// $dire_E = $EmpresaEntrega[1];
 				// $Direccion = $EmpresaEntrega[2];
 
 				$TFA['Remision'] =1;
 				$FA['ClaveAcceso_GR'] = G_NINGUNO;
 				$FA['Autorizacion_GR'] = $parametros['LblAutGuiaRem'];
-				$FA['Serie_GR'] = $parametros['DCSerieGR'];
+				$FA['Serie_GR'] = $serie_gr[1];
 				$FA['Remision'] = $parametros['LblGuiaR'];
 				$FA['FechaGRE'] = $parametros['MBoxFechaGRE'];
 				$FA['FechaGRI'] = $parametros['MBoxFechaGRI'];
@@ -588,8 +605,7 @@ class punto_ventaC
 			}
 
 	        $Moneda_US = False;
-	        $TextoFormaPago = G_PAGOCONT;
-	        // print_r($parametros);die();
+	        $TextoFormaPago = G_PAGOCONT;	        
 	       return $this->ProcGrabar($FA);
 	    }else
 	    {
@@ -611,9 +627,10 @@ function ProcGrabar($FA)
   // print_r($FA);die();
   $datos = $this->modelo->DGAsientoF();
   $datos = $datos['datos'];
+  // $servicios = 0;
   // foreach ($datos as $key => $value) {
-  	// Total_Sin_IVA + Total_Con_IVA - Total_Desc - Total_Desc2 + Total_IVA + Total_Servicio
-  // }
+  // 	$servicios+= $value['SERVICIO'];
+  //  }
   if(count($datos) > 0)
   {
      $HoraTexto = date("H:i:s");     
@@ -648,17 +665,18 @@ function ProcGrabar($FA)
      }else{
         Control_Procesos("F", "Grabar Factura No. ".$Factura_No,'');
      }
-     $this->modelo->delete_factura($TipoFactura,$Factura_No);
+     // $this->modelo->delete_factura($TipoFactura,$Factura_No);
     
      $TextoFormaPago = G_PAGOCRED;
      $T = G_PENDIENTE;
     // 'Grabamos el numero de factura
-     $r = Grabar_Factura1($FA);
-      if($r!=1)
-	  	{
 
-	  		return $r;
-	  	}
+     // print_r($FA);die();
+     $r = Grabar_Factura1($FA);
+    if($r!=1)
+  	{
+  		return $r;
+  	}
 
      // $this->ingresar_trans_kardex_salidas_FA($FA['Factura'],$FA['codigoCliente'],$FA['Cliente'],$FA['FechaTexto'],$TipoFactura); //($FA['Factura'],$codigoCliente);
      // die();
@@ -736,12 +754,24 @@ function ProcGrabar($FA)
      	
      	// print_r('si');die();
      	// print_r('drrrrddd');die();
+     	$imp_guia = '';
         if($FA['TC'] <> "DO"){
         	//la respuesta puede se texto si envia numero significa que todo saliobien
         	$rep =  $this->sri->Autorizar_factura_o_liquidacion($FA);
-			if($FA['Remision']=!'')
+        	$clave = $this->sri->Clave_acceso($TA['Fecha'],'01', $TA['Serie'],$Factura_No); 
+        	$rep1=0;
+			$imp_guia='';
+			$clave_guia ='';	          
+			if($FA['Remision']!=0)
 			{
-				$rep =  $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision($FA);
+				$FA['Autorizacion'] = $clave;
+				if($FA['Autorizacion_GR']>=13)
+				{
+					$rep1 =  $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision($FA);
+					$this->modelo->pdf_guia_remision_elec($FA,$FA['Autorizacion_GR'],$periodo=false,0,1);
+					$clave_guia =  $this->sri->Clave_acceso($FA['FechaGRE'],'06', $FA['Serie_GR'],$FA['Remision']); 
+					$imp_guia =  $FA['Serie_GR'].'-'.generaCeros($FA['Remision'],7);           
+				}
 			}
         	// print_r($rep);die();
            // SRI_Crear_Clave_Acceso_Facturas($FA,true); 
@@ -749,9 +779,9 @@ function ProcGrabar($FA)
            $FA['Hasta'] = $FA['Factura'];
            // Imprimir_Facturas_CxC(FacturasPV, FA, True, False, True, True);
            $TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
-           $clave = $this->sri->Clave_acceso($TA['Fecha'],'01', $TA['Serie'],$Factura_No);
            $TFA['CLAVE'] = $clave;
            $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
+
            $this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false,1,1);
            if($rep==1)
            {
@@ -760,15 +790,17 @@ function ProcGrabar($FA)
 	           	$ema_pdf = $this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false,1,1);
 	           	if($ema_pdf==-1)
 	           	{
-	           		return array('respuesta'=>5,'pdf'=>$imp,'clave'=>$clave);
+	           		return array('respuesta'=>5,'pdf'=>$imp,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia);
 	           	}
 	           }else
 	           {
 	             $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
+	             return array('respuesta'=>$rep,'pdf'=>$imp,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia);
+	         
 	           }           
-           	return array('respuesta'=>$rep,'pdf'=>$imp,'clave'=>$clave);
+           		return array('respuesta'=>$rep,'pdf'=>$imp,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia);
 
-            }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep,'clave'=>$clave);}
+            }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia);}
         }
      }else{
      	// print_r('dddd');die();
@@ -801,221 +833,6 @@ function ProcGrabar($FA)
   }
 }
 
-
-function ProcGrabar_Abono_cero($FA)
-{  
- $conn = new db();
- $Grafico_PV = Leer_Campo_Empresa("Grafico_PV");
- $FA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
- // 'Seteamos los encabezados para las facturas
-  // $FA = Calculos_Totales_Factura();
-  $Dolar = 0;
-
-  // print_r($FA);die();
-  $datos = $this->modelo->DGAsientoF();
-  $datos = $datos['datos'];
-  // foreach ($datos as $key => $value) {
-  	// Total_Sin_IVA + Total_Con_IVA - Total_Desc - Total_Desc2 + Total_IVA + Total_Servicio
-  // }
-  if(count($datos) > 0)
-  {
-     $HoraTexto = date("H:i:s");     
-     $Total_FacturaME = 0;
-     $Moneda_US = False;
-     if($Moneda_US){
-        $Total_Factura = number_format(($FA['Sin_IVA'] + $FA['Con_IVA'] - $FA['Descuento'] - $FA['Descuento2']  + $FA['Total_IVA'] + $FA['Servicio']) * $Dolar, 2,'.','');
-        $Total_FacturaME = number_format($FA['Sin_IVA'] + $FA['Con_IVA'] - $FA['Descuento'] - $FA['Descuento2']  + $FA['Total_IVA'] + $FA['Servicio'], 2,'.','');
-     }else{
-        $Total_Factura = number_format($FA['Sin_IVA'] + $FA['Con_IVA'] -$FA['Descuento'] - $FA['Descuento2'] + $FA['Total_IVA'] +$FA['Servicio'], 2,'.','');
-        $Total_FacturaME = 0;
-     }
-     $Saldo = $Total_Factura;
-     $Saldo_ME = $Total_FacturaME;
-     if($Saldo < 0){$Saldo = 0;}
-     $FA['Nuevo_Doc'] = True;
-     $FA['Saldo_MN'] = $Saldo;
-     $Factura_No = ReadSetDataNum($FA['TC']."_SERIE_".$FA['Serie'], True, True);
-     $FA['Factura'] = $Factura_No;
-     $FA['FacturaNo'] = $Factura_No;
-     $TipoFactura = $FA['TC'];
-     If($TipoFactura == "PV"){
-        Control_Procesos("F", "Grabar Ticket No. ".$Factura_No,'');
-     }else if($TipoFactura == "NV"){
-        Control_Procesos("F", "Grabar Nota de Venta No. ".$Factura_No,'');
-     }else if($TipoFactura == "CP") {
-        Control_Procesos("F", "Grabar Cheque Protestado No. ".$Factura_No,'');     
-     }else if($TipoFactura == "LC") {
-        Control_Procesos("F", "Grabar Liquidacion de Compras No. ".$Factura_No,'');     
-     }else if($TipoFactura == "DO") {
-        Control_Procesos("F", "Grabar Nota de Donacion No. ".$Factura_No,'');
-     }else{
-        Control_Procesos("F", "Grabar Factura No. ".$Factura_No,'');
-     }
-     $this->modelo->delete_factura($TipoFactura,$Factura_No);
-    
-     $TextoFormaPago = G_PAGOCRED;
-     $T = G_PENDIENTE;
-    // 'Grabamos el numero de factura
-     // print_r('expression');die();
-      if(Grabar_Factura1($FA)!='1')
-      {
-      	return -1;
-      }
-      // print_r('d');
-      // die();
-     // $this->ingresar_trans_kardex_salidas_FA($FA['Factura'],$FA['codigoCliente'],$FA['Cliente'],$FA['FechaTexto'],$TipoFactura); //($FA['Factura'],$codigoCliente);
-     // die();
-     
-     // print_r($FA);die();
-     if($FA['TC'] <> "CP"){
-        $Evaluar = True;
-        $FechaTexto = $FA['FechaTexto'];
-        $Total_Factura = $Total_Factura-$FA['valorBan'];        
-        // if($FA['TxtEfectivo']>$Total_Factura){$Total_Factura= }
-
-       // 'Abono en efectivo
-        $TA['T'] = G_NORMAL;
-        $TA['TP'] = $TipoFactura;
-        $TA['Fecha'] = $FechaTexto;
-        $TA['Cta_CxP'] = $FA['Cta_CxP'];
-        $TA['Cta'] = $_SESSION['SETEOS']['Cta_CajaG'];
-        $TA['Banco'] = "EFECTIVO MN";
-        $TA['Cheque'] = generaCeros($FA['Factura'],8);
-        $TA['Factura'] = $FA['Factura'];
-        $TA['Serie'] = $FA['Serie'];
-        $TA['Autorizacion'] = $FA['Autorizacion'];
-        $TA['CodigoC'] = $FA['codigoCliente'];
-        $TA['codigoCliente'] = $FA['codigoCliente'];
-        // $Total_Factura = 0;
-        $TA['Abono'] = $FA['TxtEfectivo'];
-        $TA['Saldo'] = $Total_Factura-$FA['TxtEfectivo'];
-        // print_r('adasdasdasd');die();
-        Grabar_Abonos($TA);
-         // print_r('d');
-      // die();
-        // print_r($TA);die();
-
-
-         // 'Abono de Factura Banco
-        $TA['T'] = G_NORMAL;
-        $TA['TP'] = $TipoFactura;
-        $TA['Fecha'] =$FechaTexto;
-        $TA['Cta'] = $FA['DCBancoC']; 
-        $TA['Cta_CxP'] = $FA['Cta_CxP'];
-        $TA['Banco'] = $FA['TextBanco']; 
-        $TA['Cheque'] = $FA['TextCheqNo']; 
-        $TA['Factura'] = $Factura_No; //pendiente
-        $Total_Bancos = 0;
-        $TA['Abono'] = $FA['valorBan'];
-        // print_r($TA);die();
-        Grabar_Abonos($TA);
-        // print_r($TA);die();
-
-
-
-        $FA['TC'] = $TA['TP'];
-        $FA['Serie'] = $TA['Serie'];
-        $FA['Autorizacion'] = $TA['Autorizacion'];
-        $FA['Factura'] = $Factura_No;
-        $sql = "UPDATE Facturas
-          SET Saldo_MN = 0,
-          Tipo_pago ='".$FA['Tipo_Pago']."',
-          Observacion='".$FA['Observacion']."', 
-          Nota='".$FA['Nota']."' ";
-          if(isset($FA['TxtEfectivo']) && $FA['TxtEfectivo']==0)
-          {
-          	$sql.=",T = 'P'";
-          }else{ $sql.=" ,T = 'C' "; }
-          $sql.="
-          WHERE Item = '".$_SESSION['INGRESO']['item']."'
-          AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
-          AND Factura = ".$Factura_No."
-          AND TC = '".$TipoFactura."'
-          AND CodigoC = '".$FA['codigoCliente']."'
-          AND Autorizacion = '".$FA['Autorizacion']."'
-          AND Serie = '".$FA['Serie']."' ";
-
-          // print_r($sql);die();
-           
-        $conn->String_Sql($sql);
-      }
-
-      // print_r('d');
-      // die();
-
-      //ejecutar procedimiento almacenado para calcular saldos
-     sp_Actualizar_Saldos_Facturas('FA',$FA['Serie'],$FA['Factura']);
-     if(strlen($FA['Autorizacion']) >= 13){
-
-     	// print_r('si');die();
-     	// print_r('drrrrddd');die();
-        if($FA['TC'] <> "DO"){
-        	//la respuesta puede se texto si envia numero significa que todo saliobien
-        	$rep =  $this->sri->Autorizar_factura_o_liquidacion($FA);
-        	// print_r($rep);die();
-           // SRI_Crear_Clave_Acceso_Facturas($FA,true); 
-           $FA['Desde'] = $FA['Factura'];
-           $FA['Hasta'] = $FA['Factura'];
-           // Imprimir_Facturas_CxC(FacturasPV, FA, True, False, True, True);
-           $TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
-           $clave = $this->sri->Clave_acceso($TA['Fecha'],'01', $TA['Serie'],$Factura_No);
-           $TFA['CLAVE'] = $clave;
-           $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
-           $this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false);
-           if($rep==1)
-           {
-	           if($_SESSION['INGRESO']['Impresora_Rodillo']==0)
-	           {
-	           	$ema_pdf = $this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false,1);
-	           	if($ema_pdf==-1)
-	           	{
-	           		return array('respuesta'=>5,'pdf'=>$imp,'clave'=>$clave);
-	           	}
-	           }else
-	           {
-	             $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
-	           }           
-           	return array('respuesta'=>$rep,'pdf'=>$imp,'clave'=>$clave);
-
-            }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep,'clave'=>$clave);}
-        }
-     }else{
-     	// print_r($Grafico_PV);die();
-        if($Grafico_PV){
-          $TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
-          $clave = $this->sri->Clave_acceso($TA['Fecha'],'01', $TA['Serie'],$Factura_No);
-           $TFA['CLAVE'] = $clave;
-           $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
-           $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
-
-           	return array('respuesta'=>1,'pdf'=>$imp);
-           // Imprimir_Punto_Venta_Grafico($TFA);
-        }else{
-        	 $TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
-           $clave = $this->sri->Clave_acceso($TA['Fecha'],'01', $TA['Serie'],$Factura_No);
-           $TFA['CLAVE'] = $clave;
-           $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
-           $imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
-           $rep = 1;
-           if($rep==1)
-           {
-           		return array('respuesta'=>$rep,'pdf'=>$imp);
-           }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep);}
-
-           // ojo ver cula se piensa imprimir
-           // Imprimir_Punto_Venta($FA);
-        }
-     }
-     $sql = "DELETE 
-      FROM Asiento_F
-      WHERE Item = '".$_SESSION['INGRESO']['item']."'
-      AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' ";
-     $conn->String_Sql($sql);
-     return 1;    
-  }else{
-    return  "No se puede grabar la Factura,  falta datos.";
-  }
-}
 
 function validar_cta($parametros)
 {

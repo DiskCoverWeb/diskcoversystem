@@ -885,7 +885,7 @@ function delete_asientoF($parametros)
    {
       $Autorizacion = $datos[0]['Autorizacion'];
    }
-   return $Autorizacion;
+   return array('Auto'=>$Autorizacion,'Guia'=>$LblGuiaR);
   }
  //------------------fin guia------------
 

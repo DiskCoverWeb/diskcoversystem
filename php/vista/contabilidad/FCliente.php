@@ -298,7 +298,7 @@ function validar_sri()
 				
 				<div class="row">
 				  <div class="col-xs-5">
-				    <label for="nv" class="control-label">Numero vivienda</label>
+				    <label for="nv" class="control-label">Ubicacion geografica</label>
 				    <input type="text" class="form-control input-sm" id="nv" name="nv" placeholder="Numero vivienda"  tabindex="0" onkeyup="mayusculas('nv',this.value)" onblur="mayusculas('nv',this.value)">
 				  </div>
 				  <div class="col-xs-2">

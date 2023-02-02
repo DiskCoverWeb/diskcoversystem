@@ -94,7 +94,7 @@ class pacienteC
 	function buscar_ficha($parametros)
 	{
 		// print_r($parametros);die();
-		$datos = $this->modelo->cargar_paciente_all($parametros,false,'1');
+		$datos = $this->modelo->cargar_paciente_all($parametros,false,false);
 		if(!empty($datos))
 		{
 			$ficha = array('id'=>$datos[0]['ID'],'nombre'=>$datos[0]['Cliente'],'ci'=>$datos[0]['CI_RUC'],'prov'=>$datos[0]['Prov'],'localidad'=>$datos[0]['Direccion'],'telefono'=>$datos[0]['Telefono'],'email'=>$datos[0]['Email'],'matricula'=>$datos[0]['Matricula'],'Codigo'=>$datos[0]['Codigo']);

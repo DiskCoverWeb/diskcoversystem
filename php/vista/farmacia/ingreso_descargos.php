@@ -60,6 +60,7 @@
    function autocoplet_paci(){
       $('#ddl_paciente').select2({
         placeholder: 'Seleccione una paciente',
+        disabled:true,
         ajax: {
           url:   '../controlador/farmacia/ingreso_descargosC.php?paciente=true',
           dataType: 'json',
@@ -192,6 +193,12 @@
       dataType: 'json',
       success:  function (response) { 
         // console.log(response);
+        if(response.matricula==0 || response.matricula=='' || response.matricula==null)
+        {
+          Swal.fire('El paciente no tiene numero de historial','','error').then(function(){
+            location.href = 'farmacia.php?mod=28&acc=vis_descargos&acc1=Visualizar%20descargos&b=1&po=subcu#';
+          })
+        }
        
            $('#txt_codigo').val(response.matricula);
            $('#txt_nombre').val(response.nombre);
@@ -281,6 +288,13 @@
    var cc = $('#ddl_cc').val();
    var cos = $('#txt_precio').val();
    var soli = '.';//$('#txt_soli').val();
+
+   var paciente = $('#ddl_paciente').val();
+   if(paciente=='' || paciente=='0')
+   {
+    Swal.fire('Paciente no seleccionado','','info');
+    return false;
+   }
    // if(soli=='')
    // {
    //   Swal.fire('Agregue la persona solicitante','','info');
@@ -933,7 +947,7 @@
           </div>
           <div class="col-sm-3">
             <b>RUC:</b>
-            <input type="text" name="txt_ruc" id="txt_ruc" class="form-control input-xs">             
+            <input type="text" name="txt_ruc" id="txt_ruc" class="form-control input-xs" readonly>             
           </div>          
         </div>
       </div>
@@ -941,7 +955,7 @@
         <div class="row">
           <div class="col-sm-4"> 
             <b>Centro de costos:</b>
-            <select class="form-control input-xs" id="ddl_cc" onchange="')">
+            <select class="form-control input-xs" id="ddl_cc" onchange="">
               <option value="">Seleccione Centro de costos</option>
             </select>           
           </div>

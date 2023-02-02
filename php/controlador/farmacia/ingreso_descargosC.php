@@ -98,7 +98,7 @@ if(isset($_GET['lin_eli']))
 }
 if(isset($_GET['facturar']))
 {
-		$orden = $_POST['orden'];
+	$orden = $_POST['orden'];
     $ruc = $_POST['ruc'];
     $area = $_POST['area'];
     $nombre = $_POST['nombre'];
@@ -269,6 +269,7 @@ class ingreso_descargosC
     		  	$neg = $datos['neg'];
     		  }
     		  $procedimiento = $datos['detalle'];
+    		  // print_r($datos);die();
     		  $ruc = $datos['ruc'];
     		  // print_r($datos['tabla']);die();
 
@@ -428,7 +429,7 @@ class ingreso_descargosC
 			return $tabla;		
 		}else
 		{
-			$tabla = array('num_lin'=>0,'tabla'=>'<tr><td colspan="7" class="text-center"><b><i>Sin registros...<i></b></td></tr>','item'=>0,'subtotal'=>$subtotal,'iva'=>$iva,'total'=>$total+$iva,'neg'=>$negativos,'detalle'=>$procedimiento);
+			$tabla = array('num_lin'=>0,'tabla'=>'<tr><td colspan="7" class="text-center"><b><i>Sin registros...<i></b></td></tr>','item'=>0,'subtotal'=>$subtotal,'iva'=>$iva,'total'=>$total+$iva,'ruc'=>$datos[0]['Codigo_P'],'neg'=>$negativos,'detalle'=>$procedimiento);
 			return $tabla;		
 		}
 		

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?><autorizacion>
+  <estado>AUTORIZADO</estado>
+  <numeroAutorizacion>2311202201179127855000120010480000000021234567816</numeroAutorizacion>
+  <fechaAutorizacion class="fechaAutorizacion">25/11/2022 03:11:37.000</fechaAutorizacion>
+  <comprobante><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?><factura id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>2</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>TRANSPORTE INSTITUCIONAL INTIMUNDO SAN ANTONIO S.A.</razonSocial>
+    <nombreComercial>TRANSPORTE INSTITUCIONAL INTIMUNDO SAN ANTONIO S.A.</nombreComercial>
+    <ruc>1791278550001</ruc>
+    <claveAcceso>2311202201179127855000120010480000000021234567816</claveAcceso>
+    <codDoc>01</codDoc>
+    <estab>001</estab>
+    <ptoEmi>048</ptoEmi>
+    <secuencial>000000002</secuencial>
+    <dirMatriz>EL CALVARIO N1270 Y AV. EQUINOCCIAL</dirMatriz>
+    <agenteRetencion>1</agenteRetencion>
+  </infoTributaria>
+  <infoFactura>
+    <fechaEmision>23/11/2022</fechaEmision>
+    <dirEstablecimiento>EL CALVARIO N1270 Y AV. EQUINOCCIAL</dirEstablecimiento>
+    <obligadoContabilidad>SI</obligadoContabilidad>
+    <tipoIdentificacionComprador>06</tipoIdentificacionComprador>
+    <razonSocialComprador>JENNY FERNANDA VACA LUNA</razonSocialComprador>
+    <identificacionComprador>1724058704</identificacionComprador>
+    <totalSinImpuestos>55.00</totalSinImpuestos>
+    <totalDescuento>0</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0</descuentoAdicional>
+        <baseImponible>55</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>0</propina>
+    <importeTotal>55</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>55</total>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>01.05</codigoPrincipal>
+      <descripcion>Servicio de Transporte mes Noviembre del 2022</descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.0000</cantidad>
+      <precioUnitario>55</precioUnitario>
+      <descuento>0</descuento>
+      <precioTotalSinImpuesto>55</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
+          <baseImponible>55</baseImponible>
+          <valor>0</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="puntoEmision">001048</campoAdicional>
+    <campoAdicional nombre="socioRazonSocial">LANDETA DONOSO LUIS HOMERO</campoAdicional>
+    <campoAdicional nombre="socioRUC">1708321144001</campoAdicional>
+    <campoAdicional nombre="socioDireccion">AV.10 DE AGOSTO N.3 Y DIEGO DE VASQUEZ</campoAdicional>
+    <campoAdicional nombre="socioTelefono">022479428</campoAdicional>
+    <campoAdicional nombre="socioEmail">kaseli7@hotmail.com</campoAdicional>
+  </infoAdicional>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature255969">
+<ds:SignedInfo Id="Signature-SignedInfo312870">
+<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+<ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+<ds:Reference Id="SignedPropertiesID195720" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature255969-SignedProperties909461">
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+<ds:DigestValue>wF/2/ptH65lnBkA4axqDEK6nXLU=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference URI="#Certificate1673331">
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+<ds:DigestValue>xy5ium+Ijv2cHmPyxRAnaKGG/Z4=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference Id="Reference-ID-174642" URI="#comprobante">
+<ds:Transforms>
+<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+</ds:Transforms>
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+<ds:DigestValue>+dwrqs2lR+IrHAcgp/jB7pg8Krs=</ds:DigestValue>
+</ds:Reference>
+</ds:SignedInfo>
+<ds:SignatureValue Id="SignatureValue499649">
+TWK84RpY/6Wzrz+8R95uyNrZdk0r1hho0OfSHPx8y16mEldpF7PCsEjHdVwssq/Xf6hsZ+wcrHMK
+LUGvaQxK09sw6fbg4+wsdBVaG1ItXtqrbL/qLfxHGEhDnHNyi3vW3T0JtV6yQWyNenviC3sCKEby
+kR/PQReCAtP5vuE2f4o8gTnld96TFiSwte9BVYd0Cs33Q27IlmPCTePGOWDNZrjcFXN+CFL6cMKG
+iVLrvtiTIFfPLF/F9ZCI2GZ2mw1vwI6lZZeD0sEISjj5qHXvBRGtkvx41GVytZzhDapGweS+UZ/V
+a0Xe+ZKLfKqDrHSdo/RRamhZ7kibwOdGyFTsEQ==
+</ds:SignatureValue>
+<ds:KeyInfo Id="Certificate1673331">
+<ds:X509Data>
+<ds:X509Certificate>
+MIIKOTCCCCGgAwIBAgIEW2snATANBgkqhkiG9w0BAQsFADCBoTELMAkGA1UEBhMCRUMxIjAgBgNV
+BAoTGUJBTkNPIENFTlRSQUwgREVMIEVDVUFET1IxNzA1BgNVBAsTLkVOVElEQUQgREUgQ0VSVElG
+SUNBQ0lPTiBERSBJTkZPUk1BQ0lPTi1FQ0lCQ0UxDjAMBgNVBAcTBVFVSVRPMSUwIwYDVQQDExxB
+QyBCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9SMB4XDTIxMTExNTE5MjAyMFoXDTIzMTExNTE5NTAy
+MFowgbgxCzAJBgNVBAYTAkVDMSIwIAYDVQQKExlCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9SMTcw
+NQYDVQQLEy5FTlRJREFEIERFIENFUlRJRklDQUNJT04gREUgSU5GT1JNQUNJT04tRUNJQkNFMQ4w
+DAYDVQQHEwVRVUlUTzE8MBEGA1UEBRMKMDAwMDI0NzE1ODAnBgNVBAMTIEdBQlJJRUwgRU5SSVFV
+RSBNVU5PWiBWQUxFTlpVRUxBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxqShzikl
+4dkx4KTeIgq7O7Vvzd00S0d+wtO/tUgBHH11wMteyoaoBMqETwTA2DWXGoE8pXXSRQzA0Lmbogoo
+4JsM9cFsMT0KI2PvMTIbT9YyJZ7YDjJfb1Zbbe4+cM5GjqzXcP9hBFx3ibrsNt8A9I61OWiWf8oS
+yEejYJVewr78F573W7ah8dQU6Hw8dZ5FU84qjgG4oZ4kYLnRMdtTLNbgnuMUqk+W6CfqayP9m0Vw
+pRCGry1sKRxIsYgTjgvxpn4TNSEfahZHoGvyyemkuSXlGftTxeLV6duc+z6ny3gFqyVOlDEBvZ3T
+HzHkXckzbaCYql53rYermBsRq3jVRQIDAQABo4IFXjCCBVowCwYDVR0PBAQDAgeAMGcGA1UdIARg
+MF4wXAYLKwYBBAGCqDsCAgEwTTBLBggrBgEFBQcCARY/aHR0cDovL3d3dy5lY2kuYmNlLmVjL3Bv
+bGl0aWNhLWNlcnRpZmljYWRvL3BlcnNvbmEtanVyaWRpY2EucGRmMIGRBggrBgEFBQcBAQSBhDCB
+gTA+BggrBgEFBQcwAYYyaHR0cDovL29jc3AuZWNpLmJjZS5lYy9lamJjYS9wdWJsaWN3ZWIvc3Rh
+dHVzL29jc3AwPwYIKwYBBQUHMAGGM2h0dHA6Ly9vY3NwMS5lY2kuYmNlLmVjL2VqYmNhL3B1Ymxp
+Y3dlYi9zdGF0dXMvb2NzcDBBBgorBgEEAYKoOwMKBDMTMVRSQU5TUE9SVEUgSU5TVElUVUNJT05B
+TCBJTlRJTVVORE8gU0FOIEFOVE9OSU8gU0EwHQYKKwYBBAGCqDsDCwQPEw0xNzkxMjc4NTUwMDAx
+MBoGCisGAQQBgqg7AwEEDBMKMTcwMzk2NzI3MTAfBgorBgEEAYKoOwMCBBETD0dBQlJJRUwgRU5S
+SVFVRTAVBgorBgEEAYKoOwMDBAcTBU1VTk9aMBoGCisGAQQBgqg7AwQEDBMKVkFMRU5aVUVMQTAj
+BgorBgEEAYKoOwMFBBUTE1JFUFJFU0VOVEFOVEUgTEVHQUwwTgYKKwYBBAGCqDsDBwRAEz5QQVJS
+T1FVSUEgU0FOIEFOVE9OSU8gQ0FMTEUgRUwgQ0FMVkFSSU8gTjEyNzAgWSBBViBFUVVJTk9DQ0lB
+TDAZBgorBgEEAYKoOwMIBAsTCTAyMjM5NzE2OTAVBgorBgEEAYKoOwMJBAcTBVF1aXRvMBcGCisG
+AQQBgqg7AwwECRMHRUNVQURPUjAgBgorBgEEAYKoOwMzBBITEFNPRlRXQVJFLUFSQ0hJVk8wIgYD
+VR0RBBswGYEXZGlza2NvdmVyc3lzdGVtQG1zbi5jb20wggHhBgNVHR8EggHYMIIB1DCCAdCgggHM
+oIIByIaB1mxkYXA6Ly9iY2VxbGRhcHN1YnAxLmJjZS5lYy9jbj1DUkwxMzgwLGNuPUFDJTIwQkFO
+Q08lMjBDRU5UUkFMJTIwREVMJTIwRUNVQURPUixsPVFVSVRPLG91PUVOVElEQUQlMjBERSUyMENF
+UlRJRklDQUNJT04lMjBERSUyMElORk9STUFDSU9OLUVDSUJDRSxvPUJBTkNPJTIwQ0VOVFJBTCUy
+MERFTCUyMEVDVUFET1IsYz1FQz9jZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0P2Jhc2WGNGh0dHA6
+Ly93d3cuZWNpLmJjZS5lYy9DUkwvZWNpX2JjZV9lY19jcmxmaWxlY29tYi5jcmykgbYwgbMxCzAJ
+BgNVBAYTAkVDMSIwIAYDVQQKExlCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9SMTcwNQYDVQQLEy5F
+TlRJREFEIERFIENFUlRJRklDQUNJT04gREUgSU5GT1JNQUNJT04tRUNJQkNFMQ4wDAYDVQQHEwVR
+VUlUTzElMCMGA1UEAxMcQUMgQkFOQ08gQ0VOVFJBTCBERUwgRUNVQURPUjEQMA4GA1UEAxMHQ1JM
+MTM4MDArBgNVHRAEJDAigA8yMDIxMTExNTE5MjAyMFqBDzIwMjMxMTE1MTk1MDIwWjAfBgNVHSME
+GDAWgBRIot8jHx34LFF6jAPNSTKlCcGUqzAdBgNVHQ4EFgQUKog+IUMKwlB9BXEZKo241aEwkvcw
+CQYDVR0TBAIwADAZBgkqhkiG9n0HQQAEDDAKGwRWOC4xAwIEsDANBgkqhkiG9w0BAQsFAAOCAgEA
+WEP2UBMwbfyeQjXL8DZG9Yrx1fpmDDZn/jz/c52Yv8nS1ME6p7n7MT3v6XsDDjRT7ZvXA5UdiM0x
+xb1ac0s9xBe22OsZK2sF6Ah4OhaIxPfmBi4gxHMBZ3UNOVbtKdqxtYGudbzqdGAcXJPqwHeNcQRl
+i9vjqrmw7nI0Cng/wSrTobNxcdTJsPbWZWIqckKTWW5bH1s++EElRZgw5s1s+zZ3iMwCqPMV0++J
+9RA8IXGV/5+nz2l89C0J5OmpQed50OJ5iK/a7S+Y5KLpYzQ6P8bsnIvdXV86+9Kori9//Qv9//uj
+8odXTDEmW+AMS2UF8BZIwkqjXt1AK01hsrENKZc0exq9pp9kOOyHIrl8ieaE7mJyHu90dH1Bje6T
+Y1TyqagA4vwzWgiHmKyavWRkJzoQkDOmZBVBo8uc/rqf4dFDxEFt8IlLHYalqLcbCLNTrGnR8xRv
+uqovMeddTDDNG0Lb7aQa6pziTPmBVPwp6ebqpHtXIGWEhFRRdRaRdt7KTFm7UkaDc9UaoNzMKovz
+4zXdSIlJHutd6fnoiNT9XA+QBpxhBK2WldwaBPGkdgg8HjXMGeOC4ZHcT+hW2EM39hf5kOdlMS1m
+R+rbt9W66QwuXJhKMnfXxFjgY9tiLS1EGPEDeZ1P7ufWudTdPwOUN1D6LL4UD0nry0msPm/mfo8=
+</ds:X509Certificate>
+</ds:X509Data>
+<ds:KeyValue>
+<ds:RSAKeyValue>
+<ds:Modulus>
+xqShzikl4dkx4KTeIgq7O7Vvzd00S0d+wtO/tUgBHH11wMteyoaoBMqETwTA2DWXGoE8pXXSRQzA
+0Lmbogoo4JsM9cFsMT0KI2PvMTIbT9YyJZ7YDjJfb1Zbbe4+cM5GjqzXcP9hBFx3ibrsNt8A9I61
+OWiWf8oSyEejYJVewr78F573W7ah8dQU6Hw8dZ5FU84qjgG4oZ4kYLnRMdtTLNbgnuMUqk+W6Cfq
+ayP9m0VwpRCGry1sKRxIsYgTjgvxpn4TNSEfahZHoGvyyemkuSXlGftTxeLV6duc+z6ny3gFqyVO
+lDEBvZ3THzHkXckzbaCYql53rYermBsRq3jVRQ==
+</ds:Modulus>
+<ds:Exponent>AQAB</ds:Exponent>
+</ds:RSAKeyValue>
+</ds:KeyValue>
+</ds:KeyInfo>
+<ds:Object Id="Signature255969-Object270781"><etsi:QualifyingProperties Target="#Signature255969"><etsi:SignedProperties Id="Signature255969-SignedProperties909461"><etsi:SignedSignatureProperties><etsi:SigningTime>2022-11-25T03:04:53-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>bEziieBzANaHPBsTubqa3nT4Et4=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AC BANCO CENTRAL DEL ECUADOR,L=QUITO,OU=ENTIDAD DE CERTIFICACION DE INFORMACION-ECIBCE,O=BANCO CENTRAL DEL ECUADOR,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1533748993</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-174642"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></factura>]]></comprobante>
+  <mensajes/>
+</autorizacion>

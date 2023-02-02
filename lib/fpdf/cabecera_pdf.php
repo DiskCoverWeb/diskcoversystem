@@ -343,7 +343,7 @@ class cabecera_pdf
 		$pdf->setMargins(2,5);
 		$pdf->SetFont('Arial','B',8);
 		$pdf->AddPage('P');
-		
+		// print_r($info);die();
 		
         $pdf->Image($src,5,5,25,10); 
 
@@ -354,10 +354,16 @@ class cabecera_pdf
 		$pdf->SetX(40);
 		$pdf->Cell(0,0,'Telefono: '.$_SESSION['INGRESO']['Telefono1'],'',1);
 		$pdf->Ln(5);	
-		$pdf->Cell(70,0,$_SESSION['INGRESO']['Razon_Social'],0,1,'C');
-		$pdf->Ln(5);
-		$pdf->Cell(70,0,$_SESSION['INGRESO']['Nombre_Comercial'],0,1,'C');
-		$pdf->Ln(5);
+		if($_SESSION['INGRESO']['Nombre_Comercial']==$_SESSION['INGRESO']['Razon_Social'])
+		{
+			$pdf->Cell(70,0,$_SESSION['INGRESO']['Razon_Social'],0,1,'C');
+			$pdf->Ln(5);
+		}else{
+			$pdf->Cell(70,0,$_SESSION['INGRESO']['Razon_Social'],0,1,'C');
+			$pdf->Ln(5);
+			$pdf->Cell(70,0,$_SESSION['INGRESO']['Nombre_Comercial'],0,1,'C');
+			$pdf->Ln(5);
+		}
 		$pdf->SetFont('Arial','B',7);
 		$pdf->Cell(0,0,'Direccion Matriz:');
 		$pdf->Ln(5);		
@@ -420,7 +426,7 @@ class cabecera_pdf
 		foreach ($info['lineas'] as $key => $value) {
 			$y = $pdf->GetY();
 			$pdf->Cell(8,2,$value['Cantidad']);
-			$pdf->MultiCell(35,2,$value['Producto']);
+			$pdf->MultiCell(35,2,utf8_decode($value['Producto']));
 			$pdf->SetXY(48,$y);
 			$pdf->Cell(10,2,number_format($value['Precio'],2,'.',''),0,0,'R');
 			$pdf->Cell(10,2,number_format($value['Total'],2,'.',''),0,1,'R');

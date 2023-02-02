@@ -14,6 +14,7 @@ class punto_ventaM
 
       $this->db = new db();
       $this->email = new enviar_emails(); 
+      $this->pdf = new cabecera_pdf(); 
   }
 
   function Listar_Clientes_PV($query)
@@ -238,6 +239,183 @@ class punto_ventaM
        return $datos;
   }
 
+  function pdf_guia_remision_elec($TFA,$nombre_archivo,$periodo=false,$aprobado=false,$descargar=false)
+   {
+    $res = 1;    
+        $sql = "SELECT DF.*,CP.Reg_Sanitario,CP.Marca
+        FROM Detalle_Factura As DF, Catalogo_Productos As CP
+        WHERE DF.Item = '".$_SESSION['INGRESO']['item']."'
+        AND DF.Periodo =  '".$_SESSION['INGRESO']['periodo']."'
+        AND DF.TC = '".$TFA['TC']."'
+        AND DF.Serie = '".$TFA['Serie']."'
+        AND DF.Autorizacion = '".$TFA['Autorizacion']."'
+        AND DF.Factura = ".$TFA['Factura']."
+        AND LEN(DF.Autorizacion) >= 13
+        AND DF.T <> 'A'
+        AND DF.Item = CP.Item
+        AND DF.Periodo = CP.Periodo
+        AND DF.Codigo = CP.Codigo_Inv
+        ORDER BY DF.ID,DF.Codigo ";
+      $AdoDBDet = $this->db->datos($sql);
+      
+   // 'Encabezado de la Guia de Remision
+      $sql2 = "SELECT F.*,GR.Remision,GR.Comercial,GR.CIRUC_Comercial,GR.Entrega,GR.CIRUC_Entrega,GR.CiudadGRI,GR.CiudadGRF,
+        GR.Placa_Vehiculo,GR.FechaGRE,GR.FechaGRI,GR.FechaGRF,GR.Pedido,GR.Zona,GR.Serie_GR,GR.Autorizacion_GR,
+        GR.Clave_Acceso_GR,GR.Hora_Aut_GR,GR.Estado_SRI_GR,GR.Error_FA_SRI,GR.Fecha_Aut_GR,GR.Lugar_Entrega 
+        FROM Facturas As F, Facturas_Auxiliares As GR 
+        WHERE F.Item = '".$_SESSION['INGRESO']['item']."'
+        AND F.Periodo =  '".$_SESSION['INGRESO']['periodo']."'
+        AND F.TC = '".$TFA['TC']."' 
+        AND F.Serie = '".$TFA['Serie']."' 
+        AND F.Autorizacion = '".$TFA['Autorizacion']."' 
+        AND F.Factura = ".$TFA['Factura']." 
+        AND LEN(GR.Autorizacion_GR) >= 13 
+        AND GR.Remision > 0 
+        AND F.T <> 'A' 
+        AND F.Item = GR.Item 
+        AND F.Periodo = GR.Periodo 
+        AND F.TC = GR.TC
+        AND F.Serie = GR.Serie 
+        AND F.Autorizacion = GR.Autorizacion 
+        AND F.Factura = GR.Factura ";
+        // print_r($sql2);die();
+      $AdoDBFA = $this->db->datos($sql2);
+      // print_r($AdoDBFA);die();
+
+      $tipo_con = Tipo_Contribuyente_SP_MYSQL($_SESSION['INGRESO']['RUC']);
+
+  if(count($AdoDBFA)>0 && count($tipo_con)>0)
+  {
+    $AdoDBFA['Tipo_contribuyente'] = $tipo_con;
+  }
+  // array_push($datos_fac, $tipo_con);
+    $datos_cli_edu=$this->Cliente($TFA['CodigoC']);
+    $archivos = array('0'=>$nombre_archivo.'.pdf','1'=>$TFA['Autorizacion_GR'].'.xml');
+    $to_correo = '';
+    if(count($datos_cli_edu)>0)
+    {
+      if($datos_cli_edu[0]['Email']!='.' && $datos_cli_edu[0]['Email']!='')
+      {
+        $to_correo.= $datos_cli_edu[0]['Email'].',';
+      }
+      if($datos_cli_edu[0]['Email2']!='.' && $datos_cli_edu[0]['Email2']!='')
+      {
+        $to_correo.= $datos_cli_edu[0]['Email2'].',';
+      }
+      if($datos_cli_edu[0]['EmailR']!='.' && $datos_cli_edu[0]['EmailR']!='')
+      {
+        $to_correo.= $datos_cli_edu[0]['EmailR'].',';
+      }
+      // $to_correo = substr($to_correo, 0,-1);
+    }
+    $sucursal = $this->catalogo_lineas_('GR',$TFA['Serie']);
+    $forma_pago = $this->DCTipoPago($AdoDBFA[0]['Tipo_Pago']);
+
+    if(count($forma_pago)>0)
+    {
+      $AdoDBFA[0]['Tipo_Pago'] = $forma_pago[0]['CTipoPago'];
+    }
+
+    imprimirDocEle_guia($AdoDBFA,$AdoDBDet,$datos_cli_edu,$nombre_archivo,null,'factura',null,null,$imp=$descargar,$sucursal);
+    if($to_correo!='')
+    {
+      $titulo_correo = 'comprobantes electronicos';
+      $cuerpo_correo = 'comprobantes electronico';
+      if($aprobado)
+      {
+        $r = $this->email->enviar_email($archivos,$to_correo,$cuerpo_correo,$titulo_correo,$HTML=false);
+
+        // print_r($r);die();
+        return $r;
+      }
+      // print_r($r);
+    }
+    return $res;
+   }
+
+  function pdf_factura_elec_rodillo($cod,$ser,$ci,$nombre,$clave_acceso,$periodo=false,$aprobado=false,$descargar=false)
+   {
+    $res = 1;
+    $sql="SELECT * 
+    FROM Facturas 
+    WHERE Serie='".$ser."' 
+    AND Factura='".$cod."' 
+    AND CodigoC='".$ci."' 
+    AND Item = '".$_SESSION['INGRESO']['item']."' ";
+    if($periodo==false || $periodo =='.')
+    {
+     $sql.=" AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";
+    }else
+    {
+      $sql.=" AND Periodo BETWEEN '01/01/".$periodo."' AND '31/12".$periodo."'";
+    }
+
+  // print_r($sql);die();
+  $datos_fac = $this->db->datos($sql);
+
+    $sql1="SELECT * 
+    FROM Detalle_Factura 
+    WHERE Factura = '".$cod."' 
+    AND CodigoC='".$ci."' 
+    AND Serie='".$ser."' 
+    AND Item = '".$_SESSION['INGRESO']['item']."'
+    AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' "; 
+  $detalle_fac = $this->db->datos($sql1);
+
+  // $sql2 = "SELECT * FROM lista_tipo_contribuyente WHERE RUC = '".$_SESSION['INGRESO']['RUC']."'";
+  $tipo_con = Tipo_Contribuyente_SP_MYSQL($_SESSION['INGRESO']['RUC']);
+
+  $cliente = 
+   $sql2="SELECT * 
+    FROM Trans_Abonos 
+    WHERE Factura = '".$cod."' 
+    AND CodigoC='".$ci."' 
+    AND Item = '".$_SESSION['INGRESO']['item']."'
+    AND Autorizacion = '".$clave_acceso."'
+    AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' "; 
+  $detalle_abonos = $this->db->datos($sql2);
+
+  if(count($datos_fac)>0 && count($tipo_con)>0)
+  {
+    $datos_fac['Tipo_contribuyente'] = $tipo_con;
+  }
+  // array_push($datos_fac, $tipo_con);
+    $datos_cli_edu=$this->Cliente($ci);
+    $archivos = array('0'=>$nombre.'.pdf','1'=>$clave_acceso.'.xml');
+    $to_correo = '';
+    if(count($datos_cli_edu)>0)
+    {
+      if($datos_cli_edu[0]['Email']!='.' && $datos_cli_edu[0]['Email']!='')
+      {
+        $to_correo.= $datos_cli_edu[0]['Email'].',';
+      }
+      if($datos_cli_edu[0]['Email2']!='.' && $datos_cli_edu[0]['Email2']!='')
+      {
+        $to_correo.= $datos_cli_edu[0]['Email2'].',';
+      }
+      if($datos_cli_edu[0]['EmailR']!='.' && $datos_cli_edu[0]['EmailR']!='')
+      {
+        $to_correo.= $datos_cli_edu[0]['EmailR'].',';
+      }
+      // $to_correo = substr($to_correo, 0,-1);
+    }
+    $sucursal = $this->catalogo_lineas_('FA',$ser);
+    $forma_pago = $this->DCTipoPago($datos_fac[0]['Tipo_Pago']);
+
+    if(count($forma_pago)>0)
+    {
+      $datos_fac[0]['Tipo_Pago'] = $forma_pago[0]['CTipoPago'];
+    }
+
+    $TFA['factura'] = $datos_fac;
+    $TFA['lineas'] = $detalle_fac;
+    $TFA['CLAVE'] = $datos_fac[0]['Autorizacion'];
+    $TFA['factura'][0]['Telefono'] = $datos_cli_edu[0]['Telefono'];
+    $TFA['factura'][0]['Email'] =  $datos_cli_edu[0]['Email'];
+
+     $this->pdf->Imprimir_Punto_Venta_Grafico($TFA,0);
+   }
+
   function pdf_factura_elec($cod,$ser,$ci,$nombre,$clave_acceso,$periodo=false,$aprobado=false,$descargar=false)
    {
     $res = 1;
@@ -262,6 +440,7 @@ class punto_ventaM
     FROM Detalle_Factura 
     WHERE Factura = '".$cod."' 
     AND CodigoC='".$ci."' 
+    AND Serie='".$ser."' 
     AND Item = '".$_SESSION['INGRESO']['item']."'
     AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' "; 
   $detalle_fac = $this->db->datos($sql1);

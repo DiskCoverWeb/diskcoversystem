@@ -27,7 +27,7 @@ class descargosM
 			FROM Trans_Kardex A
 			LEFT JOIN Clientes C ON C.Codigo = A.Codigo_P 
 			LEFT JOIN Catalogo_SubCtas CS ON CS.Codigo = A.CodigoL
-			WHERE 1=1 AND Numero= '' AND Orden_No <> '.'
+			WHERE 1=1 AND Numero= 0 AND Orden_No <> '.'
 			AND A.Item = '".$_SESSION['INGRESO']['item']."' AND A.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 			AND CS.Item = A.Item
 			AND CS.Periodo = A.Periodo";

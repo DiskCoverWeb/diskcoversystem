@@ -116,7 +116,7 @@ class lista_facturasC
 {
 	private $modelo;
     private $email;
-    private $pdf;
+    public $pdf;
     private $punto_venta;
 	public function __construct(){
     $this->modelo = new lista_facturasM();
@@ -225,8 +225,15 @@ class lista_facturasC
     {
     	// print_r($cod);die();
     	$nombre = $ser.'-'.generaCeros($cod,7);
+  	 if($_SESSION['INGRESO']['Impresora_Rodillo']==0)
+      {
     	$this->punto_venta->pdf_factura_elec($cod,$ser,$ci,$nombre,$auto,$per,$aprobado=false);
+   	 	}else
+   	 	{
+   	 		 $this->punto_venta->pdf_factura_elec_rodillo($cod,$ser,$ci,$nombre,$auto,$per,$aprobado=false);
+   	 	}
     	// $this->modelo->pdf_factura($cod,$ser,$ci,$per);
+   
     }
     function imprimir_pdf($parametros)
     {
@@ -484,10 +491,17 @@ class lista_facturasC
 
     	 $campoWhere[0]['campo'] = 'Serie';
     	 $campoWhere[0]['valor'] = $parametros['serie'];
+    	 $campoWhere[0]['tipo'] =  'string';
     	 $campoWhere[1]['campo'] = 'Factura';
     	 $campoWhere[1]['valor'] = $parametros['factura'];
     	 $campoWhere[2]['campo'] = 'CodigoC';
     	 $campoWhere[2]['valor'] = $parametros['codigo'];
+    	 $campoWhere[2]['tipo'] =  'string';    	 
+    	 $campoWhere[3]['campo'] = 'Item';
+    	 $campoWhere[3]['valor'] = $_SESSION['INGRESO']['item'];
+    	 $campoWhere[3]['tipo'] =  'string';
+    	 $campoWhere[4]['campo'] = 'Periodo';
+    	 $campoWhere[4]['valor'] = $_SESSION['INGRESO']['periodo'];
 
     	 $tabla = 'Facturas';
     	 $this->modelo->ingresar_update($datos,$tabla,$campoWhere);
@@ -498,10 +512,17 @@ class lista_facturasC
     	
     	 $campoWhere1[0]['campo'] = 'Serie';
     	 $campoWhere1[0]['valor'] = $parametros['serie'];
+    	 $campoWhere1[0]['tipo'] =  'string';
     	 $campoWhere1[1]['campo'] = 'Factura';
     	 $campoWhere1[1]['valor'] = $parametros['factura'];
     	 $campoWhere1[2]['campo'] = 'CodigoC';
     	 $campoWhere1[2]['valor'] = $parametros['codigo'];
+    	 $campoWhere1[2]['tipo'] =  'string';
+    	 $campoWhere1[3]['campo'] = 'Item';
+    	 $campoWhere1[3]['valor'] = $_SESSION['INGRESO']['item'];
+    	 $campoWhere1[3]['tipo'] =  'string';
+    	 $campoWhere1[4]['campo'] = 'Periodo';
+    	 $campoWhere1[4]['valor'] = $_SESSION['INGRESO']['periodo'];
 
     	 $tabla1 = 'Detalle_Factura';
     	 $this->modelo->ingresar_update($datos1,$tabla1,$campoWhere1);

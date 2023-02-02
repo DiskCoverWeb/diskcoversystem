@@ -7727,6 +7727,7 @@ function datos_tabla($tabla,$campo=false)
     $TFA['Descuento2'] = 0;
     $TFA['Descuento_0'] = 0;
     $TFA['Descuento_X'] = 0;
+    $TFA['Servicio'] = 0;
 
     //Miramos de cuanto es la factura para los calculos de los totales
     $Total_Desc_ME = 0;
@@ -7734,11 +7735,14 @@ function datos_tabla($tabla,$campo=false)
           FROM Asiento_F 
           WHERE Item = '".$_SESSION['INGRESO']['item']."'
           AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' ";
+
+          // print_r($sql);die();
     $datos = sqlsrv_query( $cid, $sql);
     while ($value = sqlsrv_fetch_array( $datos, SQLSRV_FETCH_ASSOC)) {
       $TFA['Descuento'] += $value['Total_Desc'];
       $TFA['Descuento2'] += $value['Total_Desc2'];
       $TFA['Total_IVA'] += $value['Total_IVA'];
+      $TFA['Servicio']+= floatval($value['SERVICIO']);
       if (number_format($value['Total_IVA'],2)!=0) {
         $TFA['Con_IVA'] += $value['TOTAL'];
         $TFA['Descuento_X'] = $TFA['Descuento_X'] + $TFA['Descuento'] + $TFA['Descuento2'];
@@ -7752,11 +7756,9 @@ function datos_tabla($tabla,$campo=false)
     $TFA['Total_IVA'] = round($TFA['Total_IVA'],2);
     $TFA['Con_IVA'] = round($TFA['Con_IVA'],2);
     $TFA['Sin_IVA'] = round($TFA['Sin_IVA'],2);
-    $TFA['Servicio'] = round(($TFA['Sin_IVA'] + $TFA['Con_IVA'] - $TFA['Descuento'] - $TFA['Descuento2']) 
-    * $_SESSION['INGRESO']['Porc_Serv'],2);
     $TFA['SubTotal'] = $TFA['Sin_IVA'] + $TFA['Con_IVA'] - $TFA['Descuento'] - $TFA['Descuento2'];
     $TFA['Total_MN'] = $TFA['Sin_IVA'] + $TFA['Con_IVA'] - $TFA['Descuento'] - $TFA['Descuento2'] + $TFA['Total_IVA'] + $TFA['Servicio'];
-    //print_r($TFA);die();
+    // print_r($TFA);die();
 
     return $TFA;
   }

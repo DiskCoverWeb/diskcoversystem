@@ -422,7 +422,8 @@ function variables_sistema($EmpresaEntidad,$NombreEmp,$ItemEmp)
         $_SESSION['INGRESO']['Clave_Certificado'] = $empresa[0]['Clave_Certificado'];
         $_SESSION['INGRESO']['Dec_PVP'] = $empresa[0]['Dec_PVP'];
         $_SESSION['INGRESO']['Dec_Costo'] = $empresa[0]['Dec_Costo'];
-        $_SESSION['INGRESO']['Cotizacion'] = $empresa[0]['Cotizacion'];
+        $_SESSION['INGRESO']['Cotizacion'] = $empresa[0]['Cotizacion'];        
+        $_SESSION['INGRESO']['Servicio'] = $empresa[0]['Servicio'];
         // print_r($empresa_d);die();
         $_SESSION['INGRESO']['Ciudad'] = $empresa[0]['Ciudad'];;       
         $_SESSION['INGRESO']['accesoe']='0';

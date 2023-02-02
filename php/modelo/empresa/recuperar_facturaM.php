@@ -116,7 +116,17 @@ class recuperar_facturaM
      {
 
         $sql= "SELECT Serie,Factura,Fecha,Clave_Acceso FROM Facturas WHERE Item = '".$item."' AND TC = 'FA' AND Serie = '".$serie."' AND Periodo = '".$periodo."'";
-        $sql2 = "SELECT Serie,Documento,Fecha,Clave_Acceso FROM Trans_Documentos WHERE Item = '".$item."' AND TD = 'FA' AND Serie = '".$serie."' AND Periodo = '".$periodo."'";
+        if($desde!='' && $hasta!='')
+        {
+            $sql.=" AND Fecha BETWEEN '".$desde."' AND '".$hasta."'";
+        }
+        $sql2 = "SELECT ID,Serie,Documento,Fecha,Clave_Acceso FROM Trans_Documentos WHERE Item = '".$item."' AND TD = 'FA' AND Serie = '".$serie."' AND Periodo = '".$periodo."'";
+        if($desde!='' && $hasta!='')
+        {
+            $sql2.=" AND Fecha BETWEEN '".$desde."' AND '".$hasta."'";
+        }
+
+        // print_r($sql);print_r($sql2);die();
 
         $facturas =  $this->db->datos($sql);
         $xmls =  $this->db->datos($sql2);

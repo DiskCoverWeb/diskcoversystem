@@ -1,0 +1,158 @@
+ï»¿<?xml  version="1.0"  encoding="UTF-8" ?>
+<autorizacion estado="AUTORIZADO" numeroAutorizacion="2301201801200110000000000717912785501">
+  <fechaAutorizacion   class="fechaAutorizacion">2018-01-23T10:07:03-05:00</fechaAutorizacion  >
+  <comprobante><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<factura id="comprobante" version="1.1.0">
+<infoTributaria>
+<ambiente>2</ambiente>
+<tipoEmision>1</tipoEmision>
+<razonSocial>.</razonSocial>
+<nombreComercial>TRANSPORTE INSTITUCIONAL INTIMUNDO</nombreComercial>
+<ruc>1791278550001</ruc>
+<claveAcceso>2301201801179127855000120011000000000071910201819</claveAcceso>
+<codDoc>01</codDoc>
+<estab>001</estab>
+<ptoEmi>100</ptoEmi>
+<secuencial>000000007</secuencial>
+<dirMatriz>El Calvario N12-70 Y Av. Equinoccial</dirMatriz>
+</infoTributaria>
+<infoFactura>
+<fechaEmision>23/01/2018</fechaEmision>
+<dirEstablecimiento>El Calvario N12-70 Y Av. Equinoccial</dirEstablecimiento>
+<obligadoContabilidad>SI</obligadoContabilidad>
+<tipoIdentificacionComprador>05</tipoIdentificacionComprador>
+<razonSocialComprador>JOSE TRUJILLO</razonSocialComprador>
+<identificacionComprador>1710621879</identificacionComprador>
+<totalSinImpuestos>18.50</totalSinImpuestos>
+<totalDescuento>0.00</totalDescuento>
+<totalConImpuestos>
+<totalImpuesto>
+<codigo>2</codigo>
+<codigoPorcentaje>0</codigoPorcentaje>
+<descuentoAdicional>0</descuentoAdicional>
+<baseImponible>18.50</baseImponible>
+<valor>0.00</valor>
+</totalImpuesto>
+</totalConImpuestos>
+<propina>0</propina>
+<importeTotal>18.50</importeTotal>
+<moneda>DOLAR</moneda>
+</infoFactura>
+<detalles>
+<detalle>
+<codigoPrincipal>01.06</codigoPrincipal>
+<descripcion>TRANSPORTE COTAC</descripcion>
+<unidadMedida>DOLAR</unidadMedida>
+<cantidad>1.000000</cantidad>
+<precioUnitario>18.500000</precioUnitario>
+<descuento>0.00</descuento>
+<precioTotalSinImpuesto>18.50</precioTotalSinImpuesto>
+<impuestos>
+<impuesto>
+<codigo>2</codigo>
+<codigoPorcentaje>0</codigoPorcentaje>
+<tarifa>0</tarifa>
+<baseImponible>18.50</baseImponible>
+<valor>0.00</valor>
+</impuesto>
+</impuestos>
+</detalle>
+</detalles>
+<infoAdicional>
+<campoAdicional nombre="Direccion">13 DE JUNIO S1218 Y 21 DE MARZO</campoAdicional>
+<campoAdicional nombre="Telefono">022398745</campoAdicional>
+<campoAdicional nombre="Email">decoceramicastrujillo@hotmail.com</campoAdicional>
+</infoAdicional>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature340305">
+<ds:SignedInfo Id="Signature-SignedInfo471606">
+<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"></ds:CanonicalizationMethod>
+<ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"></ds:SignatureMethod>
+<ds:Reference Id="SignedPropertiesID445691" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature340305-SignedProperties472297">
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod>
+<ds:DigestValue>56AoR4h6nRyHp79CxEPsdm0OHFw=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference URI="#Certificate1238437">
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod>
+<ds:DigestValue>ubr8dStncbQye4r+ta4ei4WmxzQ=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference Id="Reference-ID-895344" URI="#comprobante">
+<ds:Transforms>
+<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform>
+</ds:Transforms>
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod>
+<ds:DigestValue>sKgafAstmm2rWGUvdTp7VwN97oo=</ds:DigestValue>
+</ds:Reference>
+</ds:SignedInfo>
+<ds:SignatureValue Id="SignatureValue481051">
+j0BaxTzfXsThN5JWwOTXhwpDqlsZwapgRm9xYn+C+GaeBEzH9Z1swh3EzRek3br2XvHUkOnyuev1
+As9xFptEkjYW8Wn3C64uHJBfIAJ4HNJL0DZ/QHcZRiS5YQE4Qo2CfsAxkFnlPe85kH1MOFTN/T8p
+LLD5l9cCkJaxqqOoGqvSivZPoqvryRK9YF0lCCsCQtvMmQU/pQPYRHZlk3bqMc0R94WpWHeUb6am
+ZEJBIpJ08C6/Yoz0z2oiEFoKhwe1hcx/w1Wa59P/tMqLTQFfRRqtZ2BIYaxYEspdUoVyrqabjd4O
+dftYOVJ6jLYuvoKnmnJnmFKT3v+skUP8905XJA==
+</ds:SignatureValue>
+<ds:KeyInfo Id="Certificate1238437">
+<ds:X509Data>
+<ds:X509Certificate>
+MIIKNzCCCB+gAwIBAgIEWH+O0zANBgkqhkiG9w0BAQsFADCBoTELMAkGA1UEBhMCRUMxIjAgBgNV
+BAoTGUJBTkNPIENFTlRSQUwgREVMIEVDVUFET1IxNzA1BgNVBAsTLkVOVElEQUQgREUgQ0VSVElG
+SUNBQ0lPTiBERSBJTkZPUk1BQ0lPTi1FQ0lCQ0UxDjAMBgNVBAcTBVFVSVRPMSUwIwYDVQQDExxB
+QyBCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9SMB4XDTE3MTIyMjE4MDMxNVoXDTE5MTIyMjE4MzMx
+NVowgbgxCzAJBgNVBAYTAkVDMSIwIAYDVQQKExlCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9SMTcw
+NQYDVQQLEy5FTlRJREFEIERFIENFUlRJRklDQUNJT04gREUgSU5GT1JNQUNJT04tRUNJQkNFMQ4w
+DAYDVQQHEwVRVUlUTzE8MBEGA1UEBRMKMDAwMDI0NzE1ODAnBgNVBAMTIEdBQlJJRUwgRU5SSVFV
+RSBNVU5PWiBWQUxFTlpVRUxBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwpi7H3TJ
+8KlXK8fZwITx6Yx+/r/13I825dzW70R1NtjBpMmjN9sZnbY6rTNW50i74+79RSluGe9zBv7I851D
+y7STnqOp9DVijF9d/fOILk8G8W/F+93g9QBdyLeVyB8OygvX0y2h3s9aeSfQqlDBXhk9YsynVP5e
+KrBV605alK5z500Y1S2QYx/Y49yS19fZ4TgKQebSJL3aQ9kJ2rQ9U1RHlRG1vY8IfZsp8FXAanQB
++d7RXhRdViYc0HRHUohEfgp++pC42JIGqelHYYG0QESiCCnzSygPY2ntfdZgnWKGJo2E/xq/qBNA
+6I1cFUH9wqKqx9yKTVBsBWNnAIHqIwIDAQABo4IFXDCCBVgwCwYDVR0PBAQDAgeAMGcGA1UdIARg
+MF4wXAYLKwYBBAGCqDsCAgEwTTBLBggrBgEFBQcCARY/aHR0cDovL3d3dy5lY2kuYmNlLmVjL3Bv
+bGl0aWNhLWNlcnRpZmljYWRvL3BlcnNvbmEtanVyaWRpY2EucGRmMIGRBggrBgEFBQcBAQSBhDCB
+gTA+BggrBgEFBQcwAYYyaHR0cDovL29jc3AuZWNpLmJjZS5lYy9lamJjYS9wdWJsaWN3ZWIvc3Rh
+dHVzL29jc3AwPwYIKwYBBQUHMAGGM2h0dHA6Ly9vY3NwMS5lY2kuYmNlLmVjL2VqYmNhL3B1Ymxp
+Y3dlYi9zdGF0dXMvb2NzcDBBBgorBgEEAYKoOwMKBDMTMVRSQU5TUE9SVEUgSU5TVElUVUNJT05B
+TCBJTlRJTVVORE8gU0FOIEFOVE9OSU8gU0EwHQYKKwYBBAGCqDsDCwQPEw0xNzkxMjc4NTUwMDAx
+MBoGCisGAQQBgqg7AwEEDBMKMTcwMzk2NzI3MTAfBgorBgEEAYKoOwMCBBETD0dBQlJJRUwgRU5S
+SVFVRTAVBgorBgEEAYKoOwMDBAcTBU1VTk9aMBoGCisGAQQBgqg7AwQEDBMKVkFMRU5aVUVMQTAj
+BgorBgEEAYKoOwMFBBUTE1JFUFJFU0VOVEFOVEUgTEVHQUwwTgYKKwYBBAGCqDsDBwRAEz5QQVJS
+T1FVSUEgU0FOIEFOVE9OSU8gQ0FMTEUgRUwgQ0FMVkFSSU8gTjEyNzAgWSBBViBFUVVJTk9DQ0lB
+TDAZBgorBgEEAYKoOwMIBAsTCTAyMjM5NzE2OTAVBgorBgEEAYKoOwMJBAcTBVF1aXRvMBcGCisG
+AQQBgqg7AwwECRMHRUNVQURPUjAgBgorBgEEAYKoOwMzBBITEFNPRlRXQVJFLUFSQ0hJVk8wIgYD
+VR0RBBswGYEXZGlza2NvdmVyc3lzdGVtQG1zbi5jb20wggHfBgNVHR8EggHWMIIB0jCCAc6gggHK
+oIIBxoaB1WxkYXA6Ly9iY2VxbGRhcHN1YnAxLmJjZS5lYy9jbj1DUkw0OTEsY249QUMlMjBCQU5D
+TyUyMENFTlRSQUwlMjBERUwlMjBFQ1VBRE9SLGw9UVVJVE8sb3U9RU5USURBRCUyMERFJTIwQ0VS
+VElGSUNBQ0lPTiUyMERFJTIwSU5GT1JNQUNJT04tRUNJQkNFLG89QkFOQ08lMjBDRU5UUkFMJTIw
+REVMJTIwRUNVQURPUixjPUVDP2NlcnRpZmljYXRlUmV2b2NhdGlvbkxpc3Q/YmFzZYY0aHR0cDov
+L3d3dy5lY2kuYmNlLmVjL0NSTC9lY2lfYmNlX2VjX2NybGZpbGVjb21iLmNybKSBtTCBsjELMAkG
+A1UEBhMCRUMxIjAgBgNVBAoTGUJBTkNPIENFTlRSQUwgREVMIEVDVUFET1IxNzA1BgNVBAsTLkVO
+VElEQUQgREUgQ0VSVElGSUNBQ0lPTiBERSBJTkZPUk1BQ0lPTi1FQ0lCQ0UxDjAMBgNVBAcTBVFV
+SVRPMSUwIwYDVQQDExxBQyBCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9SMQ8wDQYDVQQDEwZDUkw0
+OTEwKwYDVR0QBCQwIoAPMjAxNzEyMjIxODAzMTVagQ8yMDE5MTIyMjE4MzMxNVowHwYDVR0jBBgw
+FoAUGPnw++YyHJlmOSrKi7JpfUknv84wHQYDVR0OBBYEFFc1FOZOKcvZtnPLSdVO2HNJeLEqMAkG
+A1UdEwQCMAAwGQYJKoZIhvZ9B0EABAwwChsEVjguMQMCBLAwDQYJKoZIhvcNAQELBQADggIBACeU
+1soRyt85vNnRZkLoGAQcmJYpYkuayCYcV1+ZjZVf/NjzdYdDzt04FMAMGQ1mVTVSK7T2qimnyIjW
+xgj6042XrReIwCYJPmYCZw9xfEO+bcYbrDKx03EmQ5fbRkFQ4eCy4CCuse9hs/i+5SBatp7AYZml
+aeLOkiwUUN3i30J3eq3oqS1i9xzd+3QjJH1j1VhVBQAgXUUDspM0GHfF3dPK5jeAmKNiCMKBJ1fn
+ZOMlqSk7SYXhBjhzy0brv4BwIT3GdsfWPFPQ41fcp69Okbes5rqOM/CMMWqlnBvMfMex3fflADnL
+HnyMPPv14b2DYIsPO4j2MTFSzqoCc4qaydTo5xiGwliNeupI0sJ+ZP3okl2IagvTtyRkpjgukkyX
+T23NAS0HVBllThve68+X+LyyKeJoi3rRD/huZLBHQ2OXmGzTLk6FgC9dFSdrpxD2QLV8OMS7ZMjE
+0vlvjek+j1EUYoXPKth3SG7pc4DFWyocscDwZ3yUAT7x0PGNVYWVkiCKENisT+rBe3SJz+lkMAFF
+y0rDUhL5l19QY0cViNcoWcD02LSsQSrghyI2/KURkpPm8Q5Yxub5le22bE2Bh0B4zoaMjDxTuKon
+VS/JtEya2nQrZVuyXjIN2CFpM3SlBm67cYT7L8Ef6NcOUsDj5Be+8mwNbZpWYxseZrJXuJh9
+</ds:X509Certificate>
+</ds:X509Data>
+<ds:KeyValue>
+<ds:RSAKeyValue>
+<ds:Modulus>
+wpi7H3TJ8KlXK8fZwITx6Yx+/r/13I825dzW70R1NtjBpMmjN9sZnbY6rTNW50i74+79RSluGe9z
+Bv7I851Dy7STnqOp9DVijF9d/fOILk8G8W/F+93g9QBdyLeVyB8OygvX0y2h3s9aeSfQqlDBXhk9
+YsynVP5eKrBV605alK5z500Y1S2QYx/Y49yS19fZ4TgKQebSJL3aQ9kJ2rQ9U1RHlRG1vY8IfZsp
+8FXAanQB+d7RXhRdViYc0HRHUohEfgp++pC42JIGqelHYYG0QESiCCnzSygPY2ntfdZgnWKGJo2E
+/xq/qBNA6I1cFUH9wqKqx9yKTVBsBWNnAIHqIw==
+</ds:Modulus>
+<ds:Exponent>AQAB</ds:Exponent>
+</ds:RSAKeyValue>
+</ds:KeyValue>
+</ds:KeyInfo>
+<ds:Object Id="Signature340305-Object612128"><etsi:QualifyingProperties Target="#Signature340305"><etsi:SignedProperties Id="Signature340305-SignedProperties472297"><etsi:SignedSignatureProperties><etsi:SigningTime>2018-01-23T10:06:59-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod><ds:DigestValue>+UdyMyWj7O6ZFfP3IrhcpGNL41U=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AC BANCO CENTRAL DEL ECUADOR,L=QUITO,OU=ENTIDAD DE CERTIFICACION DE INFORMACION-ECIBCE,O=BANCO CENTRAL DEL ECUADOR,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1484754643</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-895344"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></factura>]]></comprobante>
+</autorizacion>

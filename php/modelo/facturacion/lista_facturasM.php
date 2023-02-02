@@ -88,6 +88,8 @@ class lista_facturasM
    function facturas_emitidas_tabla($codigo,$periodo=false,$desde=false,$hasta=false,$serie=false)
    {
    	$cid = $this->conn;
+
+   			// print_r($codigo);die();
 		
 		$sql ="SELECT T,TC,Serie,Autorizacion,Factura,Fecha,SubTotal,Con_IVA,IVA,Descuento+Descuento2 as Descuentos,Total_MN as Total,Saldo_MN as Saldo,RUC_CI,TB,Razon_Social,CodigoC,ID 
 		FROM Facturas 
@@ -112,7 +114,7 @@ class lista_facturasM
        	 $sql.= " AND Fecha BETWEEN   '".$desde."' AND '".$hasta."' ";
        }
 
-       $sql.="ORDER BY ID DESC "; 
+       $sql.="ORDER BY Serie,Factura DESC "; 
 	$sql.=" OFFSET ".$_SESSION['INGRESO']['paginacionIni']." ROWS FETCH NEXT ".$_SESSION['INGRESO']['numreg']." ROWS ONLY;";   
     // print_r($_SESSION['INGRESO']);
 	// print_r($sql);die();    
@@ -417,7 +419,12 @@ INNER JOIN Clientes C ON F.CodigoC = C.Codigo WHERE 1=1 ";
 
   function eliminar_abonos($parametros)
   {
-  	$sql="DELETE FROM Trans_Abonos WHERE Factura ='".$parametros['factura']."' AND Serie = '".$parametros['serie']."' AND CodigoC = '".$parametros['codigo']."';";
+  	$sql="DELETE FROM Trans_Abonos 
+  	WHERE Factura ='".$parametros['factura']."' 
+  	AND Serie = '".$parametros['serie']."' 
+  	AND CodigoC = '".$parametros['codigo']."' 
+  	AND Item = '".$_SESSION['INGRESO']['item']."' 
+  	AND Periodo = '".$_SESSION['INGRESO']['periodo']."';";
   	return $this->db->String_Sql($sql);
   }
 

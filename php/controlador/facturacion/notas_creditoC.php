@@ -82,6 +82,18 @@ if(isset($_GET['cliente']))
 	echo json_encode($controlador->Listar_Facturas_Pendientes_NC($q));
 }
 
+if(isset($_GET['guardar']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->guardar($parametros));
+}
+
+if(isset($_GET['generar_nota_credito']))
+{
+	$parametros = $_POST;
+	echo json_encode($controlador->generar_nota_credito($parametros));
+}
+
 /**
  * 
  */
@@ -136,7 +148,29 @@ class notas_creditoC
 
 	function cargar_tabla($parametro)
 	{
-		return  $this->modelo->cargar_tabla($parametro,$tabla=1);
+		$IVA_NC = 0;
+		$Total_Con_IVA = 0;
+		$Total_Desc2  = 0;
+		$Total_Sin_IVA  = 0;
+		$Total_Desc = 0;
+		$SubTotal_NC = 0;
+
+		 $table = $this->modelo->cargar_tabla($parametro,$tabla=1);
+		 $totales = $this->modelo->cargar_tabla($parametro);
+
+		 foreach ($totales as $key => $value) {
+		 		  if($value["TOTAL_IVA"] > 0 ){
+               $IVA_NC = $IVA_NC + $value["TOTAL_IVA"];
+               $Total_Con_IVA = $Total_Con_IVA + $value["SUBTOTAL"];
+               $Total_Desc2 = $Total_Desc2 + $value["DESCUENTO"];
+           }else{
+               $Total_Sin_IVA = $Total_Sin_IVA + $value["SUBTOTAL"];
+               $Total_Desc = $Total_Desc + $value["DESCUENTO"];
+           }
+           $SubTotal_NC = $SubTotal_NC + $value["SUBTOTAL"];
+		 }
+
+		return  array('tabla'=>$table,'TxtIVA'=>$IVA_NC,'TxtConIVA'=>$Total_Con_IVA,'TxtDescuento'=>$Total_Desc2+$Total_Desc,'TxtSinIVA'=>$Total_Sin_IVA,'TxtSaldo'=>$SubTotal_NC,'LblTotalDC'=>$SubTotal_NC+$IVA_NC - ($Total_Desc + $Total_Desc2) );
 	}
 
 	function Listar_Facturas_Pendientes_NC()
@@ -286,6 +320,301 @@ class notas_creditoC
 
      // Listar_Articulos_Malla
      // If DocConInv Then DCBodega.SetFocus Else DGAsiento_NC.SetFocus
+	}
+
+	function guardar($parametros)
+	{
+		$SubTotalDesc = 0;
+    $SubTotalIVA = 0;
+		$SubTotal_NC = $parametros['Saldo'];
+		$IVA_NC = $parametros['IVA'];
+		$Total_Desc = $parametros['Descuento'];
+
+		$lista = $this->modelo->lineas_factura($parametros['Factura'],$parametros['Serie'],$parametros['TC'],$parametros['Autorizacion']);
+		foreach ($lista as $key => $value) {
+			if($value['Codigo']==$parametros['productos'])
+			{
+				 return -3; // ya esta reguistrado alerta
+			}
+		}
+		$Ln_No  = count($lista)+1;
+
+		if($parametros['TextCant'] > 0 &&  $parametros['TextVUnit'] > 0 ){
+       $SubTotalDesc = $parametros['TextDesc'];
+       $SubTotal = number_format($parametros['TextCant'] * $parametros['TextVUnit'],2,'.','');
+       $product = Leer_Codigo_Inv($parametros['productos'],$parametros['MBoxFecha']);
+       $BanIVA = $product['datos']['IVA'];
+       if($BanIVA==1 && $parametros['TC'] <> "NV"){ $SubTotalIVA = number_format(($SubTotal-$SubTotalDesc)*$_SESSION['INGRESO']['porc'], 4,'.','');}
+       $Total = $SubTotal_NC + $SubTotal + $IVA_NC + $SubTotalIVA - $SubTotalDesc - $Total_Desc;
+       // SetAdoAddNew "Asiento_NC"
+       $datosNC[0]['campo']= "CODIGO";
+       $datosNC[0]['dato'] =  $parametros['productos'];
+       $datosNC[1]['campo']= "CANT";
+       $datosNC[1]['dato'] =  $parametros['TextCant'];
+       $datosNC[2]['campo']= "PRODUCTO";
+       $datosNC[2]['dato'] =  $product['datos']['Producto'];
+       $datosNC[3]['campo']= "SUBTOTAL";
+       $datosNC[3]['dato'] =  $SubTotal;
+       $datosNC[4]['campo']= "DESCUENTO";
+       $datosNC[4]['dato'] =  $SubTotalDesc;
+       $datosNC[5]['campo']= "TOTAL_IVA";
+       $datosNC[5]['dato'] =  $SubTotalIVA;
+       $datosNC[6]['campo']= "CodBod";
+       $datosNC[6]['dato'] =  $parametros['Cod_Bodega'];
+       $datosNC[7]['campo']= "CodMar";
+       $datosNC[7]['dato'] =  $parametros['Cod_Marca'];
+       $datosNC[8]['campo']= "Codigo_C";
+       $datosNC[8]['dato'] =  $parametros['CodigoC'];
+       $datosNC[9]['campo']= "Item";
+       $datosNC[9]['dato'] =  $_SESSION['INGRESO']['item']; 
+       $datosNC[10]['campo']= "CodigoU";
+       $datosNC[10]['dato'] =  $_SESSION['INGRESO']['CodigoU'];
+       $datosNC[11]['campo']= "PVP";
+       $datosNC[11]['dato'] =  number_format($parametros['TextVUnit'],$_SESSION['INGRESO']['Dec_PVP'],'.','');
+       $datosNC[12]['campo']= "COSTO";
+       $datosNC[12]['dato'] =  $product['datos']['Costo'];
+       $datosNC[13]['campo']= "Mes_No";
+       $datosNC[13]['dato'] =  date('m',strtotime($parametros['MBoxFecha']));
+       $datosNC[14]['campo']= "Mes";
+       $datosNC[14]['dato'] =  MesesLetras(date('m',strtotime($parametros['MBoxFecha'])));
+       $datosNC[15]['campo']= "Anio";
+       $datosNC[15]['dato'] =  date('Y',strtotime($parametros['MBoxFecha']));
+       $datosNC[16]['campo']= "Porc_IVA";
+       $datosNC[16]['dato'] =  $_SESSION['INGRESO']['porc'];
+       $datosNC[17]['campo']= "A_No";
+       $datosNC[17]['dato'] = $Ln_No;
+       if($product['datos']['Con_Kardex']){
+         $datosNC[18]['campo']= "Ok";
+         $datosNC[18]['dato'] = $product['datos']['Con_Kardex'];
+         $datosNC[19]['campo']= "Cta_Inventario";
+         $datosNC[19]['dato'] = $product['datos']['Cta_Inventario'];
+         $datosNC[20]['campo']= "Cta_Costo";
+         $datosNC[20]['dato'] = $product['datos']['Cta_Costo_Venta'];
+       }
+       
+       if(insert_generico('Asiento_NC',$datosNC)==null)
+       {
+       	return 1;
+       }
+		}else
+		{
+			 return -1;
+		}
+		 // print_r($parametros);die();
+	}
+
+	function generar_nota_credito($parametros)
+	{
+
+		print_r($parametros);die();
+
+		/*
+		Dim SubTotalCosto As Currency
+		Dim Grupo As String
+		    FechaValida MBoxFecha
+		   // 'MsgBox CCur(LblTotalDC.Caption) & vbCrLf & CCur(LblSaldo.Caption)
+		    If CCur(LblTotalDC.Caption) <= CCur(LblSaldo.Caption) Then
+		       If Not ReIngNC Then FA.Nota_Credito = ReadSetDataNum("NC_SERIE_" & FA.Serie_NC, True, True)
+		        FA.Fecha_NC = MBoxFecha
+		        Contra_Cta = SinEspaciosIzq(DCContraCta)
+		        If Len(Contra_Cta) <= 1 Then Contra_Cta = ReadAdoCta("Cta_Devolucion_Ventas")
+		        Listar_Articulos_Malla
+		        
+		        Actualiza_Procesado_Kardex_Factura FA
+		        
+		        sSQL = "DELETE * " _
+		             & "FROM Detalle_Nota_Credito " _
+		             & "WHERE Item = '" & NumEmpresa & "' " _
+		             & "AND Periodo = '" & Periodo_Contable & "' " _
+		             & "AND Serie = '" & FA.Serie_NC & "' " _
+		             & "AND Secuencial = " & FA.Nota_Credito & " "
+		        Ejecutar_SQL_SP sSQL
+		        
+		        FA.ClaveAcceso_NC = Ninguno
+		        FA.SubTotal_NC = 0
+		        FA.Total_IVA_NC = 0
+		        FA.Descuento_NC = 0
+		        Cantidad = 0
+		        If Len(FA.Autorizacion_NC) >= 13 Then TMail.TipoDeEnvio = "CE"
+		        With AdoAsiento_NC.Recordset
+		         If .RecordCount > 0 Then
+		            .MoveFirst
+		             Do While Not .EOF
+		                FA.SubTotal_NC = FA.SubTotal_NC + .fields("SUBTOTAL")
+		                FA.Total_IVA_NC = FA.Total_IVA_NC + .fields("TOTAL_IVA")
+		                FA.Descuento_NC = FA.Descuento_NC + .fields("DESCUENTO")
+		                SubTotalCosto = Redondear(.fields("SUBTOTAL") / .fields("CANT"), 6)
+		               // 'SubTotal = Redondear(.Fields("CANT") * SubTotalCosto, 2)
+		                SubTotal = Redondear(.fields("CANT") * .fields("COSTO"), 2)
+		                
+		               // 'Grabamos el detalle de la NC
+		               // 'Cta_Devolucion, , Porc_IVA,
+		                SetAdoAddNew "Detalle_Nota_Credito"
+		                SetAdoFields "T", Normal
+		                SetAdoFields "CodigoC", .fields("Codigo_C")
+		                SetAdoFields "Cta_Devolucion", Contra_Cta
+		                SetAdoFields "Fecha", FA.Fecha_NC
+		                SetAdoFields "Serie", FA.Serie_NC
+		                SetAdoFields "Secuencial", FA.Nota_Credito
+		                SetAdoFields "Autorizacion", FA.Autorizacion_NC
+		                SetAdoFields "Codigo_Inv", .fields("CODIGO")
+		                SetAdoFields "Cantidad", .fields("CANT")
+		                SetAdoFields "Producto", .fields("PRODUCTO")
+		                SetAdoFields "CodBodega", .fields("CodBod")
+		                SetAdoFields "Total_IVA", .fields("TOTAL_IVA")
+		                SetAdoFields "Precio", .fields("PVP")
+		                SetAdoFields "Total", .fields("SUBTOTAL")
+		                SetAdoFields "CodMar", .fields("CodMar")
+		                SetAdoFields "Cod_Ejec", .fields("Cod_Ejec")
+		                SetAdoFields "Porc_C", .fields("Porc_C")
+		                SetAdoFields "Porc_IVA", .fields("Porc_IVA")
+		                SetAdoFields "Mes_No", .fields("Mes_No")
+		                SetAdoFields "Mes", .fields("Mes")
+		                SetAdoFields "Anio", .fields("Anio")
+		                SetAdoFields "TC", FA.TC
+		                SetAdoFields "Serie_FA", FA.Serie
+		                SetAdoFields "Factura", FA.Factura
+		                SetAdoFields "A_No", CByte(Ln_No)
+		                SetAdoUpdate
+		                
+		               // 'Grabamos en el Kardex la factura
+		                If .fields("Ok") Then
+		                    SetAdoAddNew "Trans_Kardex"
+		                    SetAdoFields "T", Normal
+		                    SetAdoFields "TP", Ninguno
+		                    SetAdoFields "Numero", 0
+		                    SetAdoFields "TC", FA.TC
+		                    SetAdoFields "Serie", FA.Serie
+		                    SetAdoFields "Fecha", FA.Fecha_NC
+		                    SetAdoFields "Factura", FA.Factura
+		                    SetAdoFields "Codigo_P", FA.CodigoC
+		                    SetAdoFields "CodigoL", FA.Cod_CxC
+		                    SetAdoFields "Codigo_Inv", .fields("CODIGO")
+		                    SetAdoFields "Total_IVA", .fields("Total_IVA")
+		                    SetAdoFields "Entrada", .fields("CANT")
+		                    SetAdoFields "PVP", .fields("PVP") 'SubTotalCosto
+		                    SetAdoFields "Valor_Unitario", .fields("COSTO") 'SubTotalCosto
+		                    SetAdoFields "Costo", .fields("COSTO")
+		                    SetAdoFields "Valor_Total", Redondear(.fields("CANT") * .fields("COSTO"), 2)
+		                    SetAdoFields "Total", Redondear(.fields("CANT") * .fields("COSTO"), 2)
+		                    SetAdoFields "Descuento", .fields("DESCUENTO")
+		                    SetAdoFields "Detalle", "NC: " + FA.Serie_NC + "-" + Format(FA.Nota_Credito, "000000000") + " -" + MidStrg(FA.Cliente, 1, 79)
+		                    SetAdoFields "Cta_Inv", .fields("Cta_Inventario")
+		                    SetAdoFields "Contra_Cta", .fields("Cta_Costo")
+		                    SetAdoFields "CodBodega", .fields("CodBod")
+		                    SetAdoFields "CodMarca", .fields("CodMar")
+		                    SetAdoFields "Item", NumEmpresa
+		                    SetAdoFields "Periodo", Periodo_Contable
+		                    SetAdoFields "CodigoU", CodigoUsuario
+		                    SetAdoUpdate
+		                   // 'MsgBox "Grabado"
+		                End If
+		               .MoveNext
+		             Loop
+		         End If
+		        End With
+		        
+		        TA.T = Normal
+		        TA.TP = FA.TC
+		        TA.Serie = FA.Serie
+		        TA.Factura = FA.Factura
+		        TA.Autorizacion = FA.Autorizacion
+		        TA.Fecha = MBoxFecha
+		        TA.CodigoC = FA.CodigoC
+		        TA.Cta_CxP = FA.Cta_CxP
+		        TA.Cta = Contra_Cta
+		        
+		        TA.Serie_NC = FA.Serie_NC
+		        TA.Autorizacion_NC = FA.Autorizacion_NC
+		        TA.Nota_Credito = FA.Nota_Credito
+		        
+		        TA.Banco = "NOTA DE CREDITO"
+		        TA.Cheque = "VENTAS SIN IVA"
+		        TA.Abono = Total_Sin_IVA - Total_Desc
+		        Grabar_Abonos TA
+		        
+		        TA.Banco = "NOTA DE CREDITO"
+		        TA.Cheque = "VENTAS CON IVA"
+		        TA.Abono = Total_Con_IVA - Total_Desc2
+		        Grabar_Abonos TA
+		        
+		        TA.Cta = Cta_IVA
+		        TA.Banco = "NOTA DE CREDITO"
+		        TA.Cheque = "I.V.A."
+		        TA.Abono = FA.Total_IVA_NC
+		        Grabar_Abonos TA
+		        If TxtConcepto = "" Then TxtConcepto = Ninguno
+		        
+		        sSQL = "UPDATE Facturas " _
+		             & "SET Nota = '" & TxtConcepto & "' " _
+		             & "WHERE Item = '" & NumEmpresa & "' " _
+		             & "AND Periodo = '" & Periodo_Contable & "' " _
+		             & "AND Factura = " & FA.Factura & " " _
+		             & "AND TC = '" & FA.TC & "' " _
+		             & "AND Serie = '" & FA.Serie & "' " _
+		             & "AND Autorizacion = '" & FA.Autorizacion & "' "
+		        Ejecutar_SQL_SP sSQL
+		            
+		        sSQL = "UPDATE Trans_Abonos " _
+		             & "SET Serie_NC = '" & FA.Serie_NC & "', " _
+		             & "Autorizacion_NC = '" & FA.Autorizacion_NC & "', " _
+		             & "Secuencial_NC = '" & FA.Nota_Credito & "', " _
+		             & "Clave_Acceso_NC = '" & Ninguno & "', " _
+		             & "Estado_SRI_NC = 'CG' " _
+		             & "WHERE Item = '" & NumEmpresa & "' " _
+		             & "AND Periodo = '" & Periodo_Contable & "' " _
+		             & "AND Factura = " & FA.Factura & " " _
+		             & "AND TP = '" & FA.TC & "' " _
+		             & "AND Serie = '" & FA.Serie & "' " _
+		             & "AND Autorizacion = '" & FA.Autorizacion & "' "
+		        Ejecutar_SQL_SP sSQL
+		        If ((FA.SubTotal_NC + FA.Total_IVA_NC) > 0) And Len(FA.Autorizacion_NC) >= 13 Then SRI_Crear_Clave_Acceso_Nota_Credito FA, True
+		        
+		    // ''''  If SaldoPendiente + SubTotal_IVA > 0 Then
+		    // ''''     Mensajes = "Esta seguro que desea proceder," & vbCrLf _
+		    // ''''              & "con la Nota de Credito"
+		    // ''''     Titulo = "FORMULARIO DE NC"
+		    // ''''     If BoxMensaje = vbYes Then
+		    // ''''        RatonReloj
+		    // ''''        sSQL = "SELECT * " _
+		    // ''''             & "FROM Catalogo_CxCxP " _
+		    // ''''             & "WHERE Item = '" & NumEmpresa & "' " _
+		    // ''''             & "AND Periodo = '" & Periodo_Contable & "' " _
+		    // ''''             & "AND Codigo = '" & CodigoCliente & "' " _
+		    // ''''             & "AND Cta = '" & TA.Cta_CxP & "' " _
+		    // ''''             & "AND TC = 'P' "
+		    // ''''        Select_Adodc AdoComision, sSQL
+		    // ''''        With AdoComision.Recordset
+		    // ''''         If .RecordCount <= 0 Then
+		    // ''''             SetAddNew AdoComision
+		    // ''''             SetFields AdoComision, "Item", NumEmpresa
+		    // ''''             SetFields AdoComision, "Periodo", Periodo_Contable
+		    // ''''             SetFields AdoComision, "Codigo", CodigoCliente
+		    // ''''             SetFields AdoComision, "Cta", TA.Cta_CxP
+		    // ''''             SetFields AdoComision, "TC", "P"
+		    // ''''             SetUpdate AdoComision
+		    // ''''         End If
+		    // ''''        End With
+		        Ln_No = 0
+		        sSQL = "DELETE * " _
+		             & "FROM Asiento_NC " _
+		             & "WHERE Item = '" & NumEmpresa & "' " _
+		             & "AND CodigoU = '" & CodigoUsuario & "' "
+		        Ejecutar_SQL_SP sSQL
+		        
+		        Actualizar_Saldos_Facturas_SP FA.TC, FA.Serie, FA.Factura
+		        
+		        Listar_Facturas_Pendientes_NC
+
+		        Listar_Articulos_Malla
+		        RatonNormal
+		        MsgBox "Proceso Terminado con éxito"
+		        MBoxFecha.SetFocus
+		    Else
+		        RatonNormal
+		        MsgBox "No se puede proceder, El Saldo Pendiente es menor que el total de la Nota de Credito"
+		        TxtAutorizacion.SetFocus
+		    End If*/
 	}
 }
 ?>

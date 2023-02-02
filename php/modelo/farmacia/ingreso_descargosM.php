@@ -104,7 +104,7 @@ class ingreso_descargosM
      WHERE Orden_No = '".$orden."' 
      AND T.CodigoL = '".$SUBCTA."'
      AND T.Codigo_P = '".$paciente."'
-     AND Numero =''
+     AND Numero =0
      AND T.Item = P.Item
      AND T.Periodo = P.Periodo
 	 AND T.Codigo_Inv = P.Codigo_Inv";

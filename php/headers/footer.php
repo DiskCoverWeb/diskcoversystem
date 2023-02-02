@@ -41,7 +41,7 @@
           </div>
       </div>
   </div>
-  <div class="modal fade" id="myModal_sri_error" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal fade" id="myModal_sri_error" role="dialog" data-keyboard="false" data-backdrop="static" style="z-index: 1600;">
       <div class="modal-dialog modal-sm">
           <div class="modal-content">
               <div class="modal-body">
@@ -74,7 +74,8 @@
 
               <div class="modal-footer">
                   <!-- <a type="button" class="btn btn-primary" href="#" id="doc_xml">Descargar xml</button>         -->
-                  <button type="button" class="btn btn-default" onclick="location.reload();">Cerrar</button>
+                  <!-- <button type="button" class="btn btn-default" onclick="location.reload();">Cerrar</button> -->
+                   <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
               </div>
           </div>
       </div>
@@ -118,8 +119,8 @@
                           </div>
                       </div>
                       <div class="col-sm-12">
-                          <b class="col-sm-6 control-label" style="padding: 0px">Guia de remision No.</b>
-                          <div class="col-sm-3" style="padding: 0px">
+                          <b class="col-sm-6 control-label" style="padding: 0px">Guia de remision No.</b><br>
+                          <div class="col-sm-9" style="padding: 0px">
                               <select class="form-control input-xs" id="DCSerieGR" name="DCSerieGR"
                                   onblur="DCSerieGR_LostFocus()">
                                   <option value="">No Existe</option>
@@ -145,7 +146,7 @@
                       <div class="col-sm-12">
                           <b class="col-sm-3 control-label" style="padding: 0px">Ciudad</b>
                           <div class="col-sm-9" style="padding: 0px">
-                              <select class="form-control input-xs" id="DCCiudadI" name="DCCiudadI">
+                              <select class="form-control input-xs" id="DCCiudadI" name="DCCiudadI" style="width:100%">
                                   <option value=""></option>
                               </select>
                           </div>
@@ -160,20 +161,20 @@
                       <div class="col-sm-12">
                           <b class="col-sm-3 control-label" style="padding: 0px">ciudad</b>
                           <div class="col-sm-9" style="padding: 0px">
-                              <select class="form-control input-xs" id="DCCiudadF" name="DCCiudadF">
+                              <select class="form-control input-xs" id="DCCiudadF" name="DCCiudadF" style="width:100%">
                                   <option value=""></option>
                               </select>
                           </div>
                       </div>
                       <div class="col-sm-12">
                           <b>Nombre o razon socila (Transportista)</b>
-                          <select class="form-control input-xs" id="DCRazonSocial" name="DCRazonSocial">
+                          <select class="form-control input-xs" id="DCRazonSocial" name="DCRazonSocial" style="width:100%">
                               <option value=""></option>
                           </select>
                       </div>
                       <div class="col-sm-12">
                           <b>Empresa de Transporte</b>
-                          <select class="form-control input-xs" id="DCEmpresaEntrega" name="DCEmpresaEntrega">
+                          <select class="form-control input-xs" id="DCEmpresaEntrega" name="DCEmpresaEntrega" style="width:100%">
                               <option value=""></option>
                           </select>
                       </div>
