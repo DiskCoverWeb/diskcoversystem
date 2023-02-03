@@ -340,7 +340,7 @@
           </button>
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-          <button type="button" class="btn btn-default"  data-toggle="tooltip" title="Descargar PDF">
+          <button type="button" class="btn btn-default"  data-toggle="dropdown" title="Descargar PDF">
             <img src="../../img/png/pdf.png">
           </button>
             <ul class="dropdown-menu">
@@ -349,7 +349,7 @@
             </ul>
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2">
-          <button type="button" class="btn btn-default"   data-toggle="tooltip" title="Descargar Excel">
+          <button type="button" class="btn btn-default"   data-toggle="dropdown" title="Descargar Excel">
             <img src="../../img/png/table_excel.png">
           </button>
           <ul class="dropdown-menu">
