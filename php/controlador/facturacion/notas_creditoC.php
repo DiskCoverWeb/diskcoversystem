@@ -88,6 +88,12 @@ if(isset($_GET['guardar']))
 	echo json_encode($controlador->guardar($parametros));
 }
 
+if(isset($_GET['eliminar_linea']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->eliminar_linea($parametros));
+}
+
 if(isset($_GET['generar_nota_credito']))
 {
 	$parametros = $_POST;
@@ -403,218 +409,272 @@ class notas_creditoC
 		 // print_r($parametros);die();
 	}
 
+	function eliminar_linea($parametros)
+	{
+		// print_r($parametros);die();
+		return  $this->modelo->delete_asientonNC($parametros['codigo'],$parametros['a_no']);
+	}
+
 	function generar_nota_credito($parametros)
 	{
 
-		print_r($parametros);die();
+		// print_r($parametros);die();
+		$FA = array();
+		$SubTotalCosto = 0;
+		$Grupo = '';
+		$FA['Serie_NC'] = $parametros['TextCheqNo'];
+		$FA['Serie'] = $parametros['DCSerie'];
+		$FA['TC'] = $parametros['DCTC'];
+		$FA['Factura'] = $parametros['DCFactura'];	    
+		$FA['Nota_Credito'] = $parametros['TextCompRet'];
+		$FA['Autorizacion_NC'] = $parametros['TextBanco'];
+		$FA['Autorizacion'] = $parametros['TxtAutorizacion'];
+    $FA['CodigoC'] = $parametros['DCClientes'];
+    $cliente_cta =  $this->modelo->Listar_Facturas_Pendientes_NC($parametros['DCClientes']);
+    $FA['Cta_CxP'] = $cliente_cta[0]['Cta_CxP'];
+		$MBoxFecha = $parametros['MBoxFecha'];
 
-		/*
-		Dim SubTotalCosto As Currency
-		Dim Grupo As String
-		    FechaValida MBoxFecha
-		   // 'MsgBox CCur(LblTotalDC.Caption) & vbCrLf & CCur(LblSaldo.Caption)
-		    If CCur(LblTotalDC.Caption) <= CCur(LblSaldo.Caption) Then
-		       If Not ReIngNC Then FA.Nota_Credito = ReadSetDataNum("NC_SERIE_" & FA.Serie_NC, True, True)
-		        FA.Fecha_NC = MBoxFecha
-		        Contra_Cta = SinEspaciosIzq(DCContraCta)
-		        If Len(Contra_Cta) <= 1 Then Contra_Cta = ReadAdoCta("Cta_Devolucion_Ventas")
-		        Listar_Articulos_Malla
+		$IVA_NC = 0;
+		$Total_Con_IVA = 0;
+		$Total_Desc2  = 0;
+		$Total_Sin_IVA  = 0;
+		$Total_Desc = 0;
+		$SubTotal_NC = 0;
+
+		 $totales = $this->modelo->cargar_tabla($parametros);
+		 foreach ($totales as $key => $value) {
+		 		  if($value["TOTAL_IVA"] > 0 ){
+               $IVA_NC = $IVA_NC + $value["TOTAL_IVA"];
+               $Total_Con_IVA = $Total_Con_IVA + $value["SUBTOTAL"];
+               $Total_Desc2 = $Total_Desc2 + $value["DESCUENTO"];
+           }else{
+               $Total_Sin_IVA = $Total_Sin_IVA + $value["SUBTOTAL"];
+               $Total_Desc = $Total_Desc + $value["DESCUENTO"];
+           }
+           $SubTotal_NC = $SubTotal_NC + $value["SUBTOTAL"];
+		 }
+
+
+		    	// print_r($parametros);die();
+		    if($parametros['LblTotalDC'] <= $parametros['LblSaldo'])
+		    {
+		       if($parametros['ReIngNC']==0){ $FA['Nota_Credito'] = ReadSetDataNum("NC_SERIE_".$FA['Serie_NC'],True,True); }
+		        $FA['Fecha_NC'] = $MBoxFecha;
+		        $Contra_Cta = $parametros['DCContraCta'];
+		        if(strlen($Contra_Cta) <= 1 ){ $Contra_Cta = ReadAdoCta("Cta_Devolucion_Ventas"); }
+		        $Listar_Articulos_Malla = $this->modelo->cargar_tabla($parametros,$tabla = false);		        
+		        Actualiza_Procesado_Kardex_Factura($FA);
 		        
-		        Actualiza_Procesado_Kardex_Factura FA
+		        //$resp = $this->modelo->delete_Detalle_Nota_Credito($FA['Serie_NC'],$FA['Nota_Credito']);
 		        
-		        sSQL = "DELETE * " _
-		             & "FROM Detalle_Nota_Credito " _
-		             & "WHERE Item = '" & NumEmpresa & "' " _
-		             & "AND Periodo = '" & Periodo_Contable & "' " _
-		             & "AND Serie = '" & FA.Serie_NC & "' " _
-		             & "AND Secuencial = " & FA.Nota_Credito & " "
-		        Ejecutar_SQL_SP sSQL
-		        
-		        FA.ClaveAcceso_NC = Ninguno
-		        FA.SubTotal_NC = 0
-		        FA.Total_IVA_NC = 0
-		        FA.Descuento_NC = 0
-		        Cantidad = 0
-		        If Len(FA.Autorizacion_NC) >= 13 Then TMail.TipoDeEnvio = "CE"
-		        With AdoAsiento_NC.Recordset
-		         If .RecordCount > 0 Then
-		            .MoveFirst
-		             Do While Not .EOF
-		                FA.SubTotal_NC = FA.SubTotal_NC + .fields("SUBTOTAL")
-		                FA.Total_IVA_NC = FA.Total_IVA_NC + .fields("TOTAL_IVA")
-		                FA.Descuento_NC = FA.Descuento_NC + .fields("DESCUENTO")
-		                SubTotalCosto = Redondear(.fields("SUBTOTAL") / .fields("CANT"), 6)
+		        $FA['ClaveAcceso_NC'] = G_NINGUNO;
+		        $FA['SubTotal_NC'] = 0;
+		        $FA['Total_IVA_NC'] = 0;
+		        $FA['Descuento_NC'] = 0;
+		        $Cantidad = 0;
+		        if(strlen($FA['Autorizacion_NC']) >= 13 ){ $TMail['TipoDeEnvio'] = "CE"; }
+
+
+
+		        foreach ($Listar_Articulos_Malla  as $key => $value) 
+		        {		        	
+		                $FA['SubTotal_NC'] = $FA['SubTotal_NC']+ $value["SUBTOTAL"];
+		                $FA['Total_IVA_NC'] = $FA['Total_IVA_NC']+ $value["TOTAL_IVA"];
+		                $FA['Descuento_NC'] = $FA['Descuento_NC']+ $value["DESCUENTO"];
+		                $SubTotalCosto = number_format(($value["SUBTOTAL"] / $value["CANT"]), 6,'.','');
 		               // 'SubTotal = Redondear(.Fields("CANT") * SubTotalCosto, 2)
-		                SubTotal = Redondear(.fields("CANT") * .fields("COSTO"), 2)
+		                $SubTotal = number_format($value["CANT"] * $value["COSTO"], 2,'.','');
 		                
 		               // 'Grabamos el detalle de la NC
 		               // 'Cta_Devolucion, , Porc_IVA,
-		                SetAdoAddNew "Detalle_Nota_Credito"
-		                SetAdoFields "T", Normal
-		                SetAdoFields "CodigoC", .fields("Codigo_C")
-		                SetAdoFields "Cta_Devolucion", Contra_Cta
-		                SetAdoFields "Fecha", FA.Fecha_NC
-		                SetAdoFields "Serie", FA.Serie_NC
-		                SetAdoFields "Secuencial", FA.Nota_Credito
-		                SetAdoFields "Autorizacion", FA.Autorizacion_NC
-		                SetAdoFields "Codigo_Inv", .fields("CODIGO")
-		                SetAdoFields "Cantidad", .fields("CANT")
-		                SetAdoFields "Producto", .fields("PRODUCTO")
-		                SetAdoFields "CodBodega", .fields("CodBod")
-		                SetAdoFields "Total_IVA", .fields("TOTAL_IVA")
-		                SetAdoFields "Precio", .fields("PVP")
-		                SetAdoFields "Total", .fields("SUBTOTAL")
-		                SetAdoFields "CodMar", .fields("CodMar")
-		                SetAdoFields "Cod_Ejec", .fields("Cod_Ejec")
-		                SetAdoFields "Porc_C", .fields("Porc_C")
-		                SetAdoFields "Porc_IVA", .fields("Porc_IVA")
-		                SetAdoFields "Mes_No", .fields("Mes_No")
-		                SetAdoFields "Mes", .fields("Mes")
-		                SetAdoFields "Anio", .fields("Anio")
-		                SetAdoFields "TC", FA.TC
-		                SetAdoFields "Serie_FA", FA.Serie
-		                SetAdoFields "Factura", FA.Factura
-		                SetAdoFields "A_No", CByte(Ln_No)
-		                SetAdoUpdate
+		                // SetAdoAddNew "Detalle_Nota_Credito"
+		                $datosDNC[0]['campo'] = "T"; 
+		                $datosDNC[0]['dato']  = G_NORMAL;
+		                $datosDNC[1]['campo'] = "CodigoC"; 
+		                $datosDNC[1]['dato']  = $value['Codigo_C'];
+		                $datosDNC[2]['campo'] = "Cta_Devolucion"; 
+		                $datosDNC[2]['dato']  = $Contra_Cta;
+		                $datosDNC[3]['campo'] = "Fecha"; 
+		                $datosDNC[3]['dato']  = $FA['Fecha_NC'];
+		                $datosDNC[4]['campo'] = "Serie"; 
+		                $datosDNC[4]['dato']  = $FA['Serie_NC'];
+		                $datosDNC[5]['campo'] = "Secuencial"; 
+		                $datosDNC[5]['dato']  = $FA['Nota_Credito'];
+		                $datosDNC[6]['campo'] = "Autorizacion"; 
+		                $datosDNC[6]['dato']  = $FA['Autorizacion_NC'];
+		                $datosDNC[7]['campo'] = "Codigo_Inv"; 
+		                $datosDNC[7]['dato']  = $value["CODIGO"];
+		                $datosDNC[8]['campo'] = "Cantidad"; 
+		                $datosDNC[8]['dato']  = $value["CANT"];
+		                $datosDNC[9]['campo'] = "Producto"; 
+		                $datosDNC[9]['dato']  = $value["PRODUCTO"];
+		                $datosDNC[10]['campo'] = "CodBodega"; 
+		                $datosDNC[10]['dato']  = $value["CodBod"];
+		                $datosDNC[11]['campo'] = "Total_IVA"; 
+		                $datosDNC[11]['dato']  = $value["TOTAL_IVA"];
+		                $datosDNC[12]['campo'] = "Precio"; 
+		                $datosDNC[12]['dato']  = $value["PVP"];
+		                $datosDNC[13]['campo'] = "Total"; 
+		                $datosDNC[13]['dato']  = $value["SUBTOTAL"];
+		                $datosDNC[14]['campo'] = "CodMar"; 
+		                $datosDNC[14]['dato']  = $value["CodMar"];
+		                $datosDNC[15]['campo'] = "Cod_Ejec"; 
+		                $datosDNC[15]['dato']  = $value["Cod_Ejec"];
+		                $datosDNC[16]['campo'] = "Porc_C"; 
+		                $datosDNC[16]['dato']  = $value["Porc_C"];
+		                $datosDNC[17]['campo'] = "Porc_IVA"; 
+		                $datosDNC[17]['dato']  = $value["Porc_IVA"];
+		                $datosDNC[18]['campo'] = "Mes_No"; 
+		                $datosDNC[18]['dato']  = $value["Mes_No"];
+		                $datosDNC[19]['campo'] = "Mes"; 
+		                $datosDNC[19]['dato']  = $value["Mes"];
+		                $datosDNC[20]['campo'] = "Anio"; 
+		                $datosDNC[20]['dato']  = $value["Anio"];
+		                $datosDNC[21]['campo'] = "TC"; 
+		                $datosDNC[21]['dato']  = $FA['TC'];
+		                $datosDNC[22]['campo'] = "Serie_FA"; 
+		                $datosDNC[22]['dato']  = $FA['Serie'];
+		                $datosDNC[23]['campo'] = "Factura"; 
+		                $datosDNC[23]['dato']  = $FA['Factura'];
+		                $datosDNC[24]['campo'] =  "Item"; 
+		                $datosDNC[24]['dato'] =  $_SESSION['INGRESO']['item'];
+		                $datosDNC[25]['campo'] =  "Periodo"; 
+		                $datosDNC[25]['dato'] =  $_SESSION['INGRESO']['periodo'];
+		                $datosDNC[26]['campo'] =  "CodigoU"; 
+		                $datosDNC[26]['dato'] =  $_SESSION['INGRESO']['CodigoU'];		                    
+		                $datosDNC[27]['campo'] = "A_No"; 
+		                $datosDNC[27]['dato'] = $key+1;
+
+
+		                insert_generico('Detalle_Nota_Credito',$datosDNC);
 		                
 		               // 'Grabamos en el Kardex la factura
-		                If .fields("Ok") Then
-		                    SetAdoAddNew "Trans_Kardex"
-		                    SetAdoFields "T", Normal
-		                    SetAdoFields "TP", Ninguno
-		                    SetAdoFields "Numero", 0
-		                    SetAdoFields "TC", FA.TC
-		                    SetAdoFields "Serie", FA.Serie
-		                    SetAdoFields "Fecha", FA.Fecha_NC
-		                    SetAdoFields "Factura", FA.Factura
-		                    SetAdoFields "Codigo_P", FA.CodigoC
-		                    SetAdoFields "CodigoL", FA.Cod_CxC
-		                    SetAdoFields "Codigo_Inv", .fields("CODIGO")
-		                    SetAdoFields "Total_IVA", .fields("Total_IVA")
-		                    SetAdoFields "Entrada", .fields("CANT")
-		                    SetAdoFields "PVP", .fields("PVP") 'SubTotalCosto
-		                    SetAdoFields "Valor_Unitario", .fields("COSTO") 'SubTotalCosto
-		                    SetAdoFields "Costo", .fields("COSTO")
-		                    SetAdoFields "Valor_Total", Redondear(.fields("CANT") * .fields("COSTO"), 2)
-		                    SetAdoFields "Total", Redondear(.fields("CANT") * .fields("COSTO"), 2)
-		                    SetAdoFields "Descuento", .fields("DESCUENTO")
-		                    SetAdoFields "Detalle", "NC: " + FA.Serie_NC + "-" + Format(FA.Nota_Credito, "000000000") + " -" + MidStrg(FA.Cliente, 1, 79)
-		                    SetAdoFields "Cta_Inv", .fields("Cta_Inventario")
-		                    SetAdoFields "Contra_Cta", .fields("Cta_Costo")
-		                    SetAdoFields "CodBodega", .fields("CodBod")
-		                    SetAdoFields "CodMarca", .fields("CodMar")
-		                    SetAdoFields "Item", NumEmpresa
-		                    SetAdoFields "Periodo", Periodo_Contable
-		                    SetAdoFields "CodigoU", CodigoUsuario
-		                    SetAdoUpdate
-		                   // 'MsgBox "Grabado"
-		                End If
-		               .MoveNext
-		             Loop
-		         End If
-		        End With
-		        
-		        TA.T = Normal
-		        TA.TP = FA.TC
-		        TA.Serie = FA.Serie
-		        TA.Factura = FA.Factura
-		        TA.Autorizacion = FA.Autorizacion
-		        TA.Fecha = MBoxFecha
-		        TA.CodigoC = FA.CodigoC
-		        TA.Cta_CxP = FA.Cta_CxP
-		        TA.Cta = Contra_Cta
-		        
-		        TA.Serie_NC = FA.Serie_NC
-		        TA.Autorizacion_NC = FA.Autorizacion_NC
-		        TA.Nota_Credito = FA.Nota_Credito
-		        
-		        TA.Banco = "NOTA DE CREDITO"
-		        TA.Cheque = "VENTAS SIN IVA"
-		        TA.Abono = Total_Sin_IVA - Total_Desc
-		        Grabar_Abonos TA
-		        
-		        TA.Banco = "NOTA DE CREDITO"
-		        TA.Cheque = "VENTAS CON IVA"
-		        TA.Abono = Total_Con_IVA - Total_Desc2
-		        Grabar_Abonos TA
-		        
-		        TA.Cta = Cta_IVA
-		        TA.Banco = "NOTA DE CREDITO"
-		        TA.Cheque = "I.V.A."
-		        TA.Abono = FA.Total_IVA_NC
-		        Grabar_Abonos TA
-		        If TxtConcepto = "" Then TxtConcepto = Ninguno
-		        
-		        sSQL = "UPDATE Facturas " _
-		             & "SET Nota = '" & TxtConcepto & "' " _
-		             & "WHERE Item = '" & NumEmpresa & "' " _
-		             & "AND Periodo = '" & Periodo_Contable & "' " _
-		             & "AND Factura = " & FA.Factura & " " _
-		             & "AND TC = '" & FA.TC & "' " _
-		             & "AND Serie = '" & FA.Serie & "' " _
-		             & "AND Autorizacion = '" & FA.Autorizacion & "' "
-		        Ejecutar_SQL_SP sSQL
-		            
-		        sSQL = "UPDATE Trans_Abonos " _
-		             & "SET Serie_NC = '" & FA.Serie_NC & "', " _
-		             & "Autorizacion_NC = '" & FA.Autorizacion_NC & "', " _
-		             & "Secuencial_NC = '" & FA.Nota_Credito & "', " _
-		             & "Clave_Acceso_NC = '" & Ninguno & "', " _
-		             & "Estado_SRI_NC = 'CG' " _
-		             & "WHERE Item = '" & NumEmpresa & "' " _
-		             & "AND Periodo = '" & Periodo_Contable & "' " _
-		             & "AND Factura = " & FA.Factura & " " _
-		             & "AND TP = '" & FA.TC & "' " _
-		             & "AND Serie = '" & FA.Serie & "' " _
-		             & "AND Autorizacion = '" & FA.Autorizacion & "' "
-		        Ejecutar_SQL_SP sSQL
-		        If ((FA.SubTotal_NC + FA.Total_IVA_NC) > 0) And Len(FA.Autorizacion_NC) >= 13 Then SRI_Crear_Clave_Acceso_Nota_Credito FA, True
-		        
-		    // ''''  If SaldoPendiente + SubTotal_IVA > 0 Then
-		    // ''''     Mensajes = "Esta seguro que desea proceder," & vbCrLf _
-		    // ''''              & "con la Nota de Credito"
-		    // ''''     Titulo = "FORMULARIO DE NC"
-		    // ''''     If BoxMensaje = vbYes Then
-		    // ''''        RatonReloj
-		    // ''''        sSQL = "SELECT * " _
-		    // ''''             & "FROM Catalogo_CxCxP " _
-		    // ''''             & "WHERE Item = '" & NumEmpresa & "' " _
-		    // ''''             & "AND Periodo = '" & Periodo_Contable & "' " _
-		    // ''''             & "AND Codigo = '" & CodigoCliente & "' " _
-		    // ''''             & "AND Cta = '" & TA.Cta_CxP & "' " _
-		    // ''''             & "AND TC = 'P' "
-		    // ''''        Select_Adodc AdoComision, sSQL
-		    // ''''        With AdoComision.Recordset
-		    // ''''         If .RecordCount <= 0 Then
-		    // ''''             SetAddNew AdoComision
-		    // ''''             SetFields AdoComision, "Item", NumEmpresa
-		    // ''''             SetFields AdoComision, "Periodo", Periodo_Contable
-		    // ''''             SetFields AdoComision, "Codigo", CodigoCliente
-		    // ''''             SetFields AdoComision, "Cta", TA.Cta_CxP
-		    // ''''             SetFields AdoComision, "TC", "P"
-		    // ''''             SetUpdate AdoComision
-		    // ''''         End If
-		    // ''''        End With
-		        Ln_No = 0
-		        sSQL = "DELETE * " _
-		             & "FROM Asiento_NC " _
-		             & "WHERE Item = '" & NumEmpresa & "' " _
-		             & "AND CodigoU = '" & CodigoUsuario & "' "
-		        Ejecutar_SQL_SP sSQL
-		        
-		        Actualizar_Saldos_Facturas_SP FA.TC, FA.Serie, FA.Factura
-		        
-		        Listar_Facturas_Pendientes_NC
+		                if($value["Ok"])
+		                {
+		                    // SetAdoAddNew "Trans_Kardex"
+		                    $datosTK[0]['campo'] =  "T"; 
+		                    $datosTK[0]['dato']  =  G_NORMAL;
+		                    $datosTK[0]['campo'] =  "TP"; 
+		                    $datosTK[0]['dato']  =  G_NINGUNO;
+		                    $datosTK[0]['campo'] =  "Numero"; 
+		                    $datosTK[0]['dato']  = '0';
+		                    $datosTK[0]['campo'] =  "TC"; 
+		                    $datosTK[0]['dato']  = $FA['TC'];
+		                    $datosTK[0]['campo'] = "Serie"; 
+		                    $datosTK[0]['dato']  = $FA['Serie'];
+		                    $datosTK[0]['campo'] = "Fecha"; 
+		                    $datosTK[0]['dato']  = $FA['Fecha_NC'];
+		                    $datosTK[0]['campo'] = "Factura"; 
+		                    $datosTK[0]['dato']  = $FA['Factura'];
+		                    $datosTK[0]['campo'] = "Codigo_P"; 
+		                    $datosTK[0]['dato']  = $FA['CodigoC'];
+		                    $datosTK[0]['campo'] =  "CodigoL"; 
+		                    $datosTK[0]['dato'] =  $FA['Cod_CxC'];
+		                    $datosTK[0]['campo'] =  "Codigo_Inv"; 
+		                    $datosTK[0]['dato'] = $value["CODIGO"];
+		                    $datosTK[0]['campo'] =  "Total_IVA";
+		                    $datosTK[0]['dato'] = $value["Total_IVA"];
+		                    $datosTK[0]['campo'] =  "Entrada"; 
+		                    $datosTK[0]['dato'] = $value["CANT"];
+		                    $datosTK[0]['campo'] =  "PVP"; 
+		                    $datosTK[0]['dato'] = $value["PVP"]; //'SubTotalCosto
+		                    $datosTK[0]['campo'] =  "Valor_Unitario"; 
+		                    $datosTK[0]['dato'] = $value["COSTO"]; //'SubTotalCosto
+		                    $datosTK[0]['campo'] =  "Costo"; 
+		                    $datosTK[0]['dato'] = $value["COSTO"];
+		                    $datosTK[0]['campo'] =  "Valor_Total"; 
+		                    $datosTK[0]['dato'] = number_format($value["CANT"]*$value["COSTO"], 2,'.','');
+		                    $datosTK[0]['campo'] =  "Total"; 
+		                    $datosTK[0]['dato'] = number_format($value["CANT"]*$value["COSTO"], 2,'.','');
+		                    $datosTK[0]['campo'] =  "Descuento"; 
+		                    $datosTK[0]['dato'] = $value["DESCUENTO"];
+		                    $datosTK[0]['campo'] =  "Detalle"; 
+		                    $datosTK[0]['dato'] = "NC:".$FA['Serie_NC']."-".generaCeros($FA['Nota_Credito'],9)."-".$FA['Cliente'];
+		                    $datosTK[0]['campo'] =  "Cta_Inv"; 
+		                    $datosTK[0]['dato'] = $value["Cta_Inventario"];
+		                    $datosTK[0]['campo'] =  "Contra_Cta"; 
+		                    $datosTK[0]['dato'] = $value["Cta_Costo"];
+		                    $datosTK[0]['campo'] =  "CodBodega"; 
+		                    $datosTK[0]['dato'] = $value["CodBod"];
+		                    $datosTK[0]['campo'] =  "CodMarca"; 
+		                    $datosTK[0]['dato'] = $value["CodMar"];
+		                    $datosTK[0]['campo'] =  "Item"; 
+		                    $datosTK[0]['dato'] =  $_SESSION['INGRESO']['item'];
+		                    $datosTK[0]['campo'] =  "Periodo"; 
+		                    $datosTK[0]['dato'] =  $_SESSION['INGRESO']['periodo'];
+		                    $datosTK[0]['campo'] =  "CodigoU"; 
+		                    $datosTK[0]['dato'] =  $_SESSION['INGRESO']['CodigoU'];
+		                    insert_generico('Trans_Kardex',$datosDNC);
+		                    // 'MsgBox "Grabado"
+		                }
+		        }
 
-		        Listar_Articulos_Malla
-		        RatonNormal
-		        MsgBox "Proceso Terminado con éxito"
-		        MBoxFecha.SetFocus
-		    Else
-		        RatonNormal
-		        MsgBox "No se puede proceder, El Saldo Pendiente es menor que el total de la Nota de Credito"
-		        TxtAutorizacion.SetFocus
-		    End If*/
+		        $TA['T'] = G_NORMAL;
+		        $TA['TP'] = $FA['TC'];
+		        $TA['Serie'] = $FA['Serie'];
+		        $TA['Factura'] = $FA['Factura'];
+		        $TA['Autorizacion'] = $FA['Autorizacion'];
+		        $TA['Fecha'] = $MBoxFecha;
+		        $TA['CodigoC'] = $FA['CodigoC'];
+		        $TA['Cta_CxP'] = $FA['Cta_CxP'];
+		        $TA['Cta'] = $Contra_Cta;
+		        
+		        $TA['Serie_NC'] = $FA['Serie_NC'];
+		        $TA['Autorizacion_NC'] = $FA['Autorizacion_NC'];
+		        $TA['Nota_Credito'] = $FA['Nota_Credito'];
+		        
+		        $TA['Banco'] = "NOTA DE CREDITO";
+		        $TA['Cheque'] = "VENTAS SIN IVA";
+		        $TA['Abono'] = $Total_Sin_IVA - $Total_Desc;
+		        Grabar_Abonos($TA);
+
+		        
+		        $TA['Banco'] = "NOTA DE CREDITO";
+		        $TA['Cheque'] = "VENTAS CON IVA";
+		        $TA['Abono'] = $Total_Con_IVA - $Total_Desc2;
+		        Grabar_Abonos($TA);
+
+		        $Cta_IVA = "";		        
+		        $TA['Cta'] = $Cta_IVA;
+		        $TA['Banco'] = "NOTA DE CREDITO";
+		        $TA['Cheque'] = "I.V.A.";
+		        $TA['Abono'] = $FA['Total_IVA_NC'];
+		        Grabar_Abonos($TA);
+
+
+		        if( $parametros['TxtConcepto'] == ""){ $parametros['TxtConcepto'] = G_NINGUNO;}
+		        
+		        $resp = $this->modelo->Actualizar_facturas_trans_abonos($parametros['TxtConcepto'] ,$FA);
+
+
+		        if(($FA['SubTotal_NC'] + $FA['Total_IVA_NC']) > 0 && strLen($FA['Autorizacion_NC']) >= 13)
+		        { 
+
+		        	// SRI_Crear_Clave_Acceso_Nota_Credito FA, True  
+		        	//genera aqui el xml
+		        
+		  			}
+
+			        $Ln_No = 0;
+			        $this->modelo->delete_asientonNC();		
+
+			        // hay que generar esta funcion o proceso almacenado        
+			        // Actualizar_Saldos_Facturas_SP($FA['TC'],$FA['Serie'],$FA['Factura']);
+
+			        return 1;
+
+			        // esto pasasr avista
+			        
+			        // Listar_Facturas_Pendientes_NC();
+			        // Listar_Articulos_Malla
+			        // RatonNormal
+			        // MsgBox "Proceso Terminado con éxito"
+			        // MBoxFecha.SetFocus
+				    
+			}else
+			{
+				return -2;
+			}
 	}
 }
 ?>
