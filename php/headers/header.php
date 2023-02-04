@@ -143,10 +143,14 @@ include('../controlador/contabilidad/contabilidad_controller.php');
     pantalla_medidas();
   var formato = "<?php if(isset($_SESSION['INGRESO']['Formato_Cuentas'])){echo $_SESSION['INGRESO']['Formato_Cuentas'];}?>";
   var formato_inv = "<?php if(isset($_SESSION['INGRESO']['Formato_Inventario'])){echo $_SESSION['INGRESO']['Formato_Inventario'];}?>";
-  function addCliente(){
+  function addCliente(otherName=0){
     var src ="../vista/modales.php?FCliente=true";
      $('#FCliente').attr('src',src);     
-    $("#myModal").modal("show");
+    if(otherName==0){
+      $("#myModal").modal("show");
+    }else{
+      $(".myModalNuevoCliente").modal("show");
+    }
   }
 
   // esta fyunciuon esta en js_globales

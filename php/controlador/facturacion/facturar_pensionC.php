@@ -1,5 +1,6 @@
 <?php
 require_once(dirname(__DIR__,2)."/modelo/facturacion/facturar_pensionM.php");
+require_once(dirname(__DIR__,2)."/modelo/facturacion/catalogo_productosM.php");
 require_once(dirname(__DIR__,2)."/comprobantes/SRI/autorizar_sri.php");
 require_once(dirname(__DIR__,3)."/lib/excel/plantilla.php");
 require_once(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
@@ -97,14 +98,26 @@ if(isset($_GET['guardarLineas']))
   $controlador->guardarLineas();
 }
 
+if(isset($_GET['CatalogoProductosByPeriodo']))
+{
+    //se definen los parametros que deseamos obtener
+    $columnas = [
+      'Codigo_Inv',
+      'Producto'
+    ];
+  $controlador->CatalogoProductosByPeriodo();
+}
+
 class facturar_pensionC
 {
-	private $facturacion;
+  private $facturacion;
+	private $catalogoProductosModel;
   private $pdf;
 
 
 	public function __construct(){
         $this->facturacion = new facturar_pensionM();
+        $this->catalogoProductosModel = new catalogo_productosM();
         $this->autorizar_sri = new autorizacion_sri();
         $this->pdf = new cabecera_pdf();
         $this->email = new enviar_emails(); 
@@ -696,6 +709,11 @@ class facturar_pensionC
       insert_generico("Asiento_F",$dato);
     }
   }
-        
+  //El parametro columnas es un array que definen los parametros que deseamos obtener de la consulta sql
+  public function CatalogoProductosByPeriodo(array $columnas){
+    echo json_encode($this->catalogoProductosModel->getCatalogoProductosByPeriodo($columnas));
+    exit();
+  }
+
 }
 ?>

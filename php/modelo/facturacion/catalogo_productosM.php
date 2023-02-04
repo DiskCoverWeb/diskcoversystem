@@ -67,5 +67,22 @@ class catalogo_productosM
           AND Codigo like '" .$codigo."%' ";     
           return $this->db->datos($sql);
 	}
+
+	function getCatalogoProductosByPeriodo(array $Producto)
+	{
+		$columnas = implode(',', $Producto);
+		if($columnas!=""){
+			$sql="SELECT Codigo_Inv, Producto 
+         		FROM Catalogo_Productos 
+         		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+         		AND Item = '".$_SESSION['INGRESO']['item']."' 
+         		AND LEN(Cta_Inventario) <= 1 
+         		AND LEN(Cta_Ventas) > 1 
+         		AND LEN(Cta_Ventas_0) > 1 
+         		AND TC = 'P' 
+         		ORDER BY Producto " ;
+          	return $this->db->datos($sql);
+		}
+	}
 }
 ?>

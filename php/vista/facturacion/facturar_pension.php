@@ -62,6 +62,12 @@
     });
   });
 
+  function usar_cliente(nombre, ruc, codigocliente, email, T) {
+    // TODO IMPLEMENTAR
+    $('#codigoCliente').val(codigocliente);
+    alert('vamos a usar al cliente, pero aun no sabemos como :C')
+  }
+
   function autocomplete_cliente(){
     $('#cliente').select2({
       placeholder: 'Seleccione un cliente',
@@ -662,6 +668,14 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
       <div class="col-sm-2">
         <a href="#" title="Presenta la deuda pendiente"  class="btn btn-default" onclick="DeudaPensionPDF()">
           <img src="../../img/png/project.png" width="25" height="30">
+        </a>
+      </div>
+
+      <?php include("componentes/pre_factura.php") ?>
+      
+      <div class="col-sm-2">
+        <a href="#" title="Nuevo Cliente"  class="btn btn-default" onclick="addCliente(1)">
+          <img src="../../img/png/group.png" width="25" height="30">
         </a>
       </div>
    
