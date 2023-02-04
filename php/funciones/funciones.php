@@ -8563,14 +8563,16 @@ function Grabar_Factura1($TFA,$VerFactura = false, $NoRegTrans = false)
 
 function Actualiza_Procesado_Kardex_Factura($TFA)
 {
+
+    $conn = new db();
     $SQLKardex = "UPDATE Trans_Kardex 
         SET Procesado = 0 
         FROM Trans_Kardex As TK, Detalle_Factura As DF 
         WHERE DF.Item = '".$_SESSION['INGRESO']['item']."' 
         AND DF.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-        AND DF.TC = '" & TFA.TC & "' 
-        AND DF.Serie = '" & TFA.Serie & "' 
-        AND DF.Factura = " & TFA.Factura & " 
+        AND DF.TC = '".$TFA['TC']."' 
+        AND DF.Serie = '".$TFA['Serie']."' 
+        AND DF.Factura = ".$TFA['Factura']." 
         AND TK.Item = DF.Item 
         AND TK.Periodo = DF.Periodo 
         AND TK.Codigo_Inv = DF.Codigo ";
@@ -9410,8 +9412,17 @@ function Actualiza_Procesado_Kardex_Factura($TFA)
     }else{
       $TA['Recibo_No'] = "0000000000";
     }
+    $cta = '.';
     $Tipo_Cta = Leer_Cta_Catalogo($TA['Cta']);
-      
+    // print_r($TA['Cta']);
+    if(count($Tipo_Cta)>0)
+    {
+      $cta = $Tipo_Cta['Codigo_Catalogo'];
+      $Tipo_Cta = $Tipo_Cta['SubCta'];
+    }else
+    {
+      $Tipo_Cta='.';      
+    }
     // print_r('dasdasasd');die();
 
     $dato[0]['campo'] = 'T';
@@ -9423,7 +9434,7 @@ function Actualiza_Procesado_Kardex_Factura($TFA)
     $dato[3]['campo'] = 'Recibo_No';
     $dato[3]['dato'] = $TA['Recibo_No'];
     $dato[4]['campo'] = 'Tipo_Cta';
-    $dato[4]['dato'] = $TA['TP'];
+    $dato[4]['dato'] = $Tipo_Cta;
     $dato[5]['campo'] = 'Cta';
     $dato[5]['dato'] = $TA['Cta'];
     $dato[6]['campo'] = 'Cta_CxP';
@@ -9479,7 +9490,11 @@ function Actualiza_Procesado_Kardex_Factura($TFA)
        End If
       */
        // print_r($dato);die();
-    $resp = insert_generico("Trans_Abonos",$dato);
+    $resp = null;
+    if($TA['Abono']>0 && strlen($cta) > 1 && $ipoCta = "D" )
+    {
+      $resp = insert_generico("Trans_Abonos",$dato);
+    }
     // print_r($resp);die();
     if($resp==1)
     {
@@ -10918,6 +10933,24 @@ function filtra_datos_unico_array($array, $key) {
     }
     return $temp_array;
 }
+
+function ReadAdoCta($query) 
+{  
+  $conn = new db();
+  $NumCodigo = G_NINGUNO;
+  if($query <> "" )
+  {
+     $sql = "SELECT *
+            FROM Ctas_Proceso
+            WHERE Item = '" .$_SESSION['INGRESO']['item']."'
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+            AND Detalle = '".$query."' ";
+      $datos = $conn->datos($sql); 
+
+     if(count($datos)> 0){$NumCodigo = $datos[0]["Codigo"];}
+   }
+   return  $NumCodigo;
+  }
 
 
 function variables_tipo_factura()

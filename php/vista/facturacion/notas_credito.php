@@ -396,6 +396,11 @@ function TextDesc_lost()
 
 function generar_nc()
 {
+  if($('#DCContraCta').val()=='')
+  {
+    Swal.fire('Contra Cuenta a aplicar a la Nota de Credito','','info')
+    return false;
+  }
   datos = $('#form_nc').serialize();  
   $.ajax({
     type: "POST",
@@ -408,10 +413,72 @@ function generar_nc()
       {
         Swal.fire('el producto ya sea ingresado','','info')
       }
+      if(data==-2)
+      {
+        Swal.fire('No se puede proceder <br> El Saldo Pendiente es menor que el total de la Nota de Credito','','info');
+      }
+      if(data==1)
+      {
+        Swal.fire('Proceso Terminado con éxito','','success');
+      }
       cargar_tabla();         
     }
   });
+}
+
+function valida_cxc()
+{
+   var serie =  $('#DCLineas').val();
+   if(serie=='' || serie =='.')
+   {
+     Swal.fire('Lineas Cxc No asignada o fuera de fecha','','info');
+     $('#TextCheqNo').val('.');
+     $('#TextCompRet').val('00000001');
+   }
 }	
+
+function validar_procesar()
+{
+  // cambiar el uno opr la variable corespondiente
+   numero = $('#TextCompRet').val();
+   if(1 != null)
+   {
+     Swal.fire({
+         title: 'Desea procesar esta nota de credito?',
+         // text: "Esta usted seguro de que quiere borrar este registro!",
+         type: 'warning',
+         showCancelButton: true,
+         confirmButtonColor: '#3085d6',
+         cancelButtonColor: '#d33',
+         confirmButtonText: 'Si!'
+       }).then((result) => {
+         if (result.value==true) {
+            $('#ReIngNC').val('1');
+         }
+       })
+   }
+}
+
+function eliminar(CODIGO,A_NO)
+{
+  parametros = 
+  {
+    'codigo':CODIGO,
+    'a_no':A_NO,
+  }
+   $.ajax({
+    type: "POST",
+    url: '../controlador/facturacion/notas_creditoC.php?eliminar_linea=true',
+    data: {parametros,parametros},
+    dataType:'json', 
+    success: function(data)
+    {
+      
+      cargar_tabla();         
+    }
+  });
+
+}
 </script>
 <div class="row">
 	<div class="col-lg-4 col-sm-8 col-md-8 col-xs-12">
@@ -445,8 +512,9 @@ function generar_nc()
 </div>
 <div class="row">
 	<div class="col-sm-3">
+    <input type="hidden" name="ReIngNC" id="ReIngNC" value="0">
 		<b>Lineas de Nota de Credito</b>
-		<select class="form-control input-xs" id="DCLineas" name="DCLineas">
+		<select class="form-control input-xs" id="DCLineas" name="DCLineas" onblur="valida_cxc()">
           	<option value="">Seleccione</option>
         </select>
 	</div>
@@ -460,12 +528,12 @@ function generar_nc()
 	</div>
 	<div class="col-sm-1" style="padding: 0px;">
 		<b>Comp No.</b>
-		<input type="text" name="TextCompRet" id="TextCompRet" class="form-control input-xs" value="00000000">
+		<input type="text" name="TextCompRet" id="TextCompRet" class="form-control input-xs" value="00000000" onblur="validar_procesar()">
 	</div>
 	<div class="col-sm-4">
 		<b>Contra Cuenta a aplicar a la Nota de Credito</b>
 		<select class="form-control input-xs" id="DCContraCta" name="DCContraCta">
-      		<option>Seleccione cuenta</option>
+      		<option value="">Seleccione cuenta</option>
       	</select>
 	</div>
 </div>

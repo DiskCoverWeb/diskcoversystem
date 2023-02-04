@@ -25,7 +25,8 @@ class notas_creditoM
         if($tabla)
         {
 	        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-170;
-			$tbl = grilla_generica_new($sql,'Transacciones As T,Comprobantes As C,Clientes As Cl','tbl_lib',false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida);
+	        $botones[0] = array('boton'=>'eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'CODIGO,A_No' );
+			$tbl = grilla_generica_new($sql,'Transacciones As T,Comprobantes As C,Clientes As Cl','tbl_lib',false,$botones,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida);
 		}else
 		{
 			$tbl = $this->db->datos($sql);
@@ -33,7 +34,7 @@ class notas_creditoM
        return $tbl;
 	}
 
-	function Listar_Facturas_Pendientes_NC()
+	function Listar_Facturas_Pendientes_NC($codigo=false)
 	{ 
 		$sql = "SELECT C.Grupo, C.Codigo, C.Cliente, F.Cta_CxP, SUM(F.Total_MN) As TotFact 
        	FROM Clientes As C, Facturas As F 
@@ -42,8 +43,12 @@ class notas_creditoM
        	AND NOT F.TC IN ('DO','OP') 
        	AND F.T <> 'A' 
        	AND F.Saldo_MN <> 0 
-       	AND C.Codigo = F.CodigoC 
-       	GROUP BY C.Grupo, C.Codigo, C.Cliente, F.Cta_CxP 
+       	AND C.Codigo = F.CodigoC";
+       	if($codigo)
+       	{
+       		$sql.=" AND C.Codigo = '".$codigo."' ";
+       	} 
+       	$sql.="GROUP BY C.Grupo, C.Codigo, C.Cliente, F.Cta_CxP 
        	ORDER BY C.Cliente ";
        	return $this->db->datos($sql);
    }
@@ -198,6 +203,61 @@ class notas_creditoM
           	AND Autorizacion = '".$Autorizacion."' 
           	ORDER BY ID ";
         return $this->db->datos($sql);
+	}
+
+	function delete_Detalle_Nota_Credito($serieNC,$Nota_Credito)
+	{
+	  $sql = "DELETE 
+	         FROM Detalle_Nota_Credito 
+	         WHERE Item ='".$_SESSION['INGRESO']['item']."' 
+	         AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+	         AND Serie = '".$serieNC."' 
+	         AND Secuencial = ".$Nota_Credito; 
+	  	return $this->db->String_Sql($sql);
+	}
+
+	function Actualizar_facturas_trans_abonos($TxtConcepto,$FA)
+	{
+	    $sql = "UPDATE Facturas
+        	SET Nota = '".$TxtConcepto."'
+        	WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+        	AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+        	AND Factura = ".$FA['Factura']."
+        	AND TC = '".$FA['TC']."'
+        	AND Serie = '".$FA['Serie']."'
+            AND Autorizacion = '".$FA['Autorizacion']."';";
+	            
+        $sql2 = "UPDATE Trans_Abonos
+            SET Serie_NC = '".$FA['Serie_NC']."',
+            Autorizacion_NC = '".$FA['Autorizacion_NC']."',
+            Secuencial_NC = '".$FA['Nota_Credito']."',
+            Clave_Acceso_NC = '".G_NINGUNO."',
+            Estado_SRI_NC = 'CG'
+            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+            AND Factura = ".$FA['Factura']."
+            AND TP = '".$FA['TC']."'
+            AND Serie = '".$FA['Serie']."'
+            AND Autorizacion = '".$FA['Autorizacion']."'; ";
+	  	return $this->db->String_Sql($sql.$sql2);
+	}
+
+
+	function delete_asientonNC($codigo=False,$A_no=false)
+	{
+		$sql = "DELETE 
+        FROM Asiento_NC
+        WHERE Item =  '".$_SESSION['INGRESO']['item']."' 
+        AND CodigoU =  '".$_SESSION['INGRESO']['CodigoU']."'";
+        if($codigo)
+        {
+        	$sql.=" AND CODIGO = '".$codigo."'";
+        }
+        if($A_no)
+        {
+         $sql.=" AND A_No = '".$A_no."'";
+     	}
+	  	return $this->db->String_Sql($sql);
 	}
 
 }
