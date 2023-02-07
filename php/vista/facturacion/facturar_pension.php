@@ -653,19 +653,19 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
 </script>
   <div class="row">
     <div class="col-lg-4 col-sm-10 col-md-7 col-xs-12">
-      <div class="col-sm-2">
+      <div class="col-xs-2 col-sm-2">
         <a  href="./panel.php" title="Salir de modulo" class="btn btn-default">
           <img src="../../img/png/salire.png" width="25" height="30">
         </a>
       </div>
 
-      <div class="col-sm-2">
+      <div class="col-xs-2 col-sm-2">
         <a title="Historia del cliente"  class="btn btn-default" onclick="historiaCliente()">
           <img src="../../img/png/document.png" width="25" height="30">
         </a>
       </div>
       
-      <div class="col-sm-2">
+      <div class="col-xs-2 col-sm-2">
         <a href="#" title="Presenta la deuda pendiente"  class="btn btn-default" onclick="DeudaPensionPDF()">
           <img src="../../img/png/project.png" width="25" height="30">
         </a>
@@ -673,7 +673,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
 
       <?php include("componentes/prefactura.php") ?>
       
-      <div class="col-sm-2">
+      <div class="col-xs-2 col-sm-2">
         <a href="#" title="Nuevo Cliente"  class="btn btn-default" onclick="addCliente(1)">
           <img src="../../img/png/group.png" width="25" height="30">
         </a>

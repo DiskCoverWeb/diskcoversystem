@@ -72,7 +72,7 @@ class catalogo_productosM
 	{
 		$columnas = implode(',', $Producto);
 		if($columnas!=""){
-			$sql="SELECT Codigo_Inv, Producto 
+			$sql="SELECT $columnas 
          		FROM Catalogo_Productos 
          		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
          		AND Item = '".$_SESSION['INGRESO']['item']."' 
@@ -82,7 +82,7 @@ class catalogo_productosM
          		AND TC = 'P' 
          		ORDER BY Producto " ;
           	return $this->db->datos($sql);
-		}
+		}else{return [];}
 	}
 }
 ?>

@@ -128,6 +128,13 @@ include('../controlador/contabilidad/contabilidad_controller.php');
        Swal.fire(cuentas,'Faltan cetear cuentas','info');
       }
 
+      $('.inputNumero').on('input', function () { 
+          this.value = this.value.replace(/[^0-9]/g,'');
+      });
+
+      $('.inputMoneda').on('input', function () {
+          this.value = this.value.replace(/[^0-9.]/g,'');
+      });
      })
      
 

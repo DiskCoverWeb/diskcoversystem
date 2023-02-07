@@ -102,10 +102,15 @@ if(isset($_GET['CatalogoProductosByPeriodo']))
 {
     //se definen los parametros que deseamos obtener
     $columnas = [
-      'Codigo_Inv',
-      'Producto'
+      'Codigo_Inv as id',
+      'Producto as text'
     ];
-  $controlador->CatalogoProductosByPeriodo();
+  $controlador->CatalogoProductosByPeriodo($columnas);
+
+}else if(isset($_GET['GuardarInsPreFacturas']))
+{
+  print_r($_POST);
+  //TODO AQUI VAMOS PROCESAR LA DATA RECIBIDA
 }
 
 class facturar_pensionC
