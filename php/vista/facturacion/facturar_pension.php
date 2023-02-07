@@ -671,7 +671,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
         </a>
       </div>
 
-      <?php include("componentes/pre_factura.php") ?>
+      <?php include("componentes/prefactura.php") ?>
       
       <div class="col-sm-2">
         <a href="#" title="Nuevo Cliente"  class="btn btn-default" onclick="addCliente(1)">
