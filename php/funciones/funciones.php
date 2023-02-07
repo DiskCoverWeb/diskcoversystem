@@ -526,7 +526,7 @@ function ReadSetDataNum($sqls,$ParaEmpresa =false,$Incrementar = false) // optim
     $MesComp = "";
     if(strlen($FechaComp) >= 10)
     {
-    	$MesComp = date('m');
+    	$MesComp = date('mm');
     }
     if($MesComp == '')
     {

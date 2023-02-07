@@ -569,6 +569,7 @@ class incomC
      }
      function generar_comprobante($parametros)
      {
+     	// print_r($parametros);die();
      	$Autorizacion_LC=''; //revisar
      	$T_No='01';
          if($parametros['tip']=='CD'){$tip = 'Diario';}
@@ -579,7 +580,12 @@ class incomC
 
          if($parametros['modificado']==0)
          {
-         	$num_com = numero_comprobante1($tip,true,true,$parametros['fecha']);
+         	if($parametros['tip']!='Diario' &&  $parametros['tip'] != 'Ingresos' && $parametros['tip']!='Egresos' && $parametros['tip']!='NotaDebito'&& $parametros['tip']!='NotaCredito')
+         	{
+         		$num_com = ReadSetDataNum("RE_SERIE_".$parametros['Serie_R'], True, True);
+         	}else{
+         		$num_com = numero_comprobante1($tip,true,true,$parametros['fecha']);
+        	}
          }else
          {
          	$num_com = explode('-',$parametros['num_com']);
