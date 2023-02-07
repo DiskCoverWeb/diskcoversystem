@@ -513,7 +513,7 @@ function mostra_select()
 
 function grabacion()
 {
-    // $('#myModal_espera').modal('show');
+    $('#myModal_espera').modal('show');
   var  parametros= 
   {
     "IdProv":$('#DCProveedor').val(), 

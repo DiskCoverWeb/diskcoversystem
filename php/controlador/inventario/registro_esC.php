@@ -352,81 +352,6 @@ class registro_esC
 		$this->modelo->dtaAsiento($Trans_No);
 
 	}
-	function ReadSetDataNum($sql,$ParaEmpresa,$Incrementar,$FechaComp="00/00/0000")
-	{
-		$empresa = $this->modelo->dato_empresa();
-		$Num_Meses_CD = boolval($empresa[0]['Num_CD']) ? True : False;
-		$Num_Meses_CI = boolval($empresa[0]['Num_CI']) ? True : False;
-		$Num_Meses_CE = boolval($empresa[0]['Num_CE']) ? True : False;
-		$Num_Meses_ND = boolval($empresa[0]['Num_ND']) ? True : False;
-		$Num_Meses_NC = boolval($empresa[0]['Num_CD']) ? True : False;
-
-    $NumCodigo = 0;
-    $NuevoNumero = False;
-    if (strlen($FechaComp) < 10 ){ $FechaComp = date('Y-m-d');}
-    if($FechaComp = "00/00/0000"){$FechaComp = date('Y-m-d');}
-    $Si_MesComp = False;
-    if($ParaEmpresa==True){$NumEmpA = $_SESSION['INGRESO']['item'];}else { $NumEmpA = "000";}
-    
-    // HoraDelSistema = Second(Time)
-    // HoraDelSistema = Int((HoraDelSistema * Rnd) + 1)
-    // If HoraDelSistema < 6 Then HoraDelSistema = 6
-    // Sleep HoraDelSistema
-    
-    if ($sql <> ""){
-       $MesComp = "";
-       if(strlen($FechaComp) >= 10){ $MesComp = date('m',strtotime($FechaComp));}
-       if($MesComp = "" ){$MesComp = "01";}
-       if($Num_Meses_CD && $sql == "Diario"){
-          $sql= $MesComp.$sql;
-          $Si_MesComp = True;
-       }
-       if($Num_Meses_CI &&  $sql == "Ingresos"){
-          $sql = $MesComp.$sql;
-          $Si_MesComp = True;
-       }
-       if($Num_Meses_CE && $sql == "Egresos"){
-          $sql= $MesComp.$sql;
-          $Si_MesComp = True;
-       }
-       if($Num_Meses_ND && $sql == "NotaDebito" ){
-          $sql = $MesComp.$sql;
-          $Si_MesComp = True;
-       }
-       if($Num_Meses_NC && $sql == "NotaCredito"){
-          $sql = $MesComp.$sql;
-          $Si_MesComp = True;
-       }
-          
-        $datos =  $this->modelo->codigos($sql); 
-        // print_r($datos);die();
-       if(count($datos)>0)
-       {
-       	$NumCodigo = $datos[0]['Numero'];
-       }else
-       {
-       	$NuevoNumero = True;
-       	$NumCodigo = 1;
-       	 if($Num_Meses_CD && $Si_MesComp){$NumCodigo = strval($MesComp."000001");}
-         if($Num_Meses_CI && $Si_MesComp){$NumCodigo = strval($MesComp."000001");}
-         if($Num_Meses_CE && $Si_MesComp){$NumCodigo = strval($MesComp."000001");}
-         if($Num_Meses_ND && $Si_MesComp){$NumCodigo = strval($MesComp."000001");}
-         if($Num_Meses_NC && $Si_MesComp){$NumCodigo = strval($MesComp."000001");}
-
-       }
-    }
-    if($NumCodigo>0)
-    {
-    	if ($NuevoNumero) {
-    		$this->modelo->ingresar_codigo($NumEmpA,$sql,$NumCodigo);
-    	}
-    	if ($Incrementar) {
-    		$this->modelo->ingresar_codigo($NumEmpA,$sql);
-    	}
-    }
-    // print_r($NumCodigo);die();
-    return $NumCodigo;
-	}
   function DCRetIBienes()
   {
     $datos = $this->modelo->DCRetIBienes();
@@ -732,7 +657,7 @@ class registro_esC
         insert_generico('Cta_Procesos',$datos);
         $datos1[] = array('Codigo'=>$datos[1]['dato'],'Detalle'=>$datos[0]['dato']);
       }
-      $valor = $parametros['ValorRetBienes']+$parametros['ValorRetServicios']+$parametros['RetIva'];
+      $valor = floatval($parametros['ValorRetBienes'])+floatval($parametros['ValorRetServicios'])+floatval($parametros['RetIva']);
 
       //inserta en asiento sc
       $parametros_sc = array(
@@ -1284,7 +1209,11 @@ class registro_esC
      {
         $serie1 = substr($parametros['serie'],0,3);
         $serie2 = substr($parametros['serie'],3,6);
-        $numero =ReadSetDataNum("RE_SERIE_".$parametros['serie'],True,false);
+        $numero = 1;
+        if($parametros['serie']!='')
+        {
+          $numero =ReadSetDataNum("RE_SERIE_".$parametros['serie'],True,false);
+        }
         $datos_auto = $this->modelo->numero_autorizacion($serie1,$serie2,$parametros['fechaReg']);
 
         // print_r($datos_auto);die();
