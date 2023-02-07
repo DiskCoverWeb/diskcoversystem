@@ -548,10 +548,10 @@ function contracuenta()
                                             <b>Serie</b>
                                             <div class="row">
                                                 <div class="col-sm-6" style="padding: 0px">
-                                                    <input type="text" name="" class="form-control input-xs" id="TxtNumSerieUno" placeholder="001" onblur="autocompletar_serie_num(this.id)" onkeyup=" solo_3_numeros(this.id)"  autocomplete="off">
+                                                    <input type="text" name="" class="form-control input-xs" id="TxtNumSerieUno" placeholder="001" onblur="autocompletar_serie_num_fac(this.id)" onkeyup=" solo_3_numeros(this.id)"  autocomplete="off">
                                                 </div>
                                                 <div class="col-sm-6" style="padding: 0px">
-                                                    <input type="text" name="" class="form-control input-xs" id="TxtNumSerieDos" placeholder="001" onblur="autocompletar_serie_num(this.id)" onkeyup=" solo_3_numeros(this.id)"  autocomplete="off">
+                                                    <input type="text" name="" class="form-control input-xs" id="TxtNumSerieDos" placeholder="001" onblur="autocompletar_serie_num_fac(this.id)" onkeyup=" solo_3_numeros(this.id)"  autocomplete="off">
                                                 </div>
                                             </div>                                
                                         </div>

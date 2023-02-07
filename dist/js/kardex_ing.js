@@ -961,7 +961,7 @@ function autorizacion_factura()
   factura_repetida();
 }
 
-function autocompletar_serie_num(id)
+function autocompletar_serie_num_fac(id)
 {
   var v = $('#'+id).val();
   if($('#'+id).val()<=0 || $('#'+id).val()=="")
@@ -977,6 +977,27 @@ function autocompletar_serie_num(id)
   }
   var serie = $('#TxtNumUnoComRet').val()+''+$('#TxtNumDosComRet').val();
   serie_ultima(serie)
+}
+
+function autocompletar_serie_num(id)
+{
+  var v = $('#'+id).val();
+  if($('#'+id).val()<=0 || $('#'+id).val()=="")
+  {
+     $('#'+id).val("001");
+  }else
+  {
+     while(v.length < 3 )
+    {
+      v = '0'+v;
+    }
+    $('#'+id).val(v);
+  }
+  var serie = $('#TxtNumUnoComRet').val()+''+$('#TxtNumDosComRet').val();
+  if($('#TxtNumUnoComRet').val()!='' && $('#TxtNumDosComRet').val()!='')
+  {
+    serie_ultima(serie)
+  }
 }
 
 function serie_ultima(serie)
