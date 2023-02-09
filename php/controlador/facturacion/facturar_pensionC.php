@@ -107,10 +107,19 @@ if(isset($_GET['CatalogoProductosByPeriodo']))
     ];
   $controlador->CatalogoProductosByPeriodo($columnas);
 
-}else if(isset($_GET['GuardarInsPreFacturas']))
+}
+else if(isset($_GET['GuardarInsPreFacturas']))
 {
-  print_r($_POST);
-  //TODO AQUI VAMOS PROCESAR LA DATA RECIBIDA
+  //Eliminamos pensiones si los tuviera
+  $controlador->deleteClientesFacturacionProductoClienteAnioMes($_POST);
+  //Procedemos a insertar las pensiones
+  $controlador->insertClientesFacturacionProductoClienteAnioMes($_POST);
+  exit();
+}
+else if(isset($_GET['EliminarInsPreFacturas']))
+{
+  $controlador->deleteClientesFacturacionProductoClienteAnioMes($_POST, true);
+  exit();
 }
 
 class facturar_pensionC
@@ -718,6 +727,87 @@ class facturar_pensionC
   public function CatalogoProductosByPeriodo(array $columnas){
     echo json_encode($this->catalogoProductosModel->getCatalogoProductosByPeriodo($columnas));
     exit();
+  }
+
+  public function deleteClientesFacturacionProductoClienteAnioMes($POST, $responder = false)
+  {
+    $CheqProducto   = @$POST['PFcheckProducto'];
+    $DCProducto     = @$POST['PFselectProducto']; 
+    $MBFechaP       = @$POST['PFfechaInicial']; 
+    $TxtCantidad    = @$POST['PFcantidad']; 
+    $TxtValor       = @$POST['PFvalor']; 
+    $TxtDescuento   = @$POST['PFdescuento']; 
+    $TxtDescuento2  = @$POST['PFdescuento2']; 
+    $codigoCliente  = @$POST['PFcodigoCliente']; 
+
+    if($codigoCliente!=""){
+      $respuestaDB = $peticionesDB = 0;
+      foreach ($CheqProducto as $item => $check) {
+        if($check=='on' || $check == '1'){
+          $Cantidad = $TxtCantidad[$item];
+          $Valor = $TxtValor[$item];
+          if ($Cantidad > 0){
+            $Mifecha = PrimerDiaMes($MBFechaP[$item]);
+            $CodigoInv = $DCProducto[$item];
+            $CodigoInv = ($CodigoInv!="")?$CodigoInv:G_NINGUNO;
+            for ($i=0; $i < $Cantidad; $i++) { 
+              $NoMes = ObtenerMesFecha($Mifecha);
+              $Anio = ObtenerAnioFecha($Mifecha);
+              $peticionesDB++;
+              $respuestaDB += $this->facturacion->deleteClientes_FacturacionProductoClienteAnioMes($codigoCliente, $CodigoInv, $Anio, $NoMes);
+              $Mifecha = PrimerDiaSeguienteMes($Mifecha);
+            }
+          }
+        }
+      }
+      if($responder){
+        echo json_encode(array("rps" => 1 , "mensaje" => "Proceso finalizado correctamente" ));
+      }
+    }else{
+      if($responder){
+        echo json_encode(array("rps" => false , "mensaje" => "Debe seleccionar un cliente." ));
+      }
+    }
+  }
+
+  public function insertClientesFacturacionProductoClienteAnioMes($POST)
+  {
+    $CheqProducto   = @$POST['PFcheckProducto'];
+    $DCProducto     = @$POST['PFselectProducto']; 
+    $MBFechaP       = @$POST['PFfechaInicial']; 
+    $TxtCantidad    = @$POST['PFcantidad']; 
+    $TxtValor       = @$POST['PFvalor']; 
+    $TxtDescuento   = @$POST['PFdescuento']; 
+    $TxtDescuento2  = @$POST['PFdescuento2']; 
+    $codigoCliente  = @$POST['PFcodigoCliente']; 
+    $GrupoNo        = @$POST['PFGrupoNo']; 
+
+    if($codigoCliente!=""){
+      $respuestaDB = $peticionesDB = 0;
+      foreach ($CheqProducto as $item => $check) {
+        if($check=='on' || $check == '1'){
+          $Cantidad = $TxtCantidad[$item];
+          $Valor = $TxtValor[$item];
+          $Total_Desc = (($TxtDescuento[$item]=="")?0:$TxtDescuento[$item]);
+          $Total_Desc2 = (($TxtDescuento2[$item]=="")?0:$TxtDescuento2[$item]);
+          if ($Cantidad > 0 && $Valor > 0){
+            $Mifecha = PrimerDiaMes($MBFechaP[$item]);
+            $CodigoInv = $DCProducto[$item];
+            $CodigoInv = ($CodigoInv!="")?$CodigoInv:G_NINGUNO;
+            for ($i=0; $i < $Cantidad; $i++) { 
+              $NoMes = ObtenerMesFecha($Mifecha);
+              $Anio = ObtenerAnioFecha($Mifecha);
+              $peticionesDB++;
+              $respuestaDB += $this->facturacion->insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, $CodigoInv, $Valor, $GrupoNo, $NoMes, $Anio, $Mifecha, $Total_Desc, $Total_Desc2);
+              $Mifecha = PrimerDiaSeguienteMes($Mifecha);     
+            }
+          }
+        }
+      }
+      echo json_encode(array("rps" => 1 , "mensaje" => "PROCESO EXITOSO.", "mensaje_extra" => "Vuelva a listar el Cliente y verifique los datos procesados" ));
+    }else{
+      echo json_encode(array("rps" => false , "mensaje" => "Debe seleccionar un cliente." ));
+    }
   }
 
 }

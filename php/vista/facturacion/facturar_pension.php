@@ -22,12 +22,9 @@
     verificarTJ();
     //enviar datos del cliente
     $('#cliente').on('select2:select', function (e) {
-      console.log(e);
       var data = e.params.data.data;
       // var dataM = e.params.data.dataMatricula;
 
-      // console.log(dataM);
-      // console.log(data);
       $('#email').val(data.email);
       $('#direccion').val(data.direccion);
       $('#direccion1').val(data.direccion1);
@@ -59,13 +56,19 @@
       catalogoProductos(data.codigo);
       saldoFavor(data.codigo);
       saldoPendiente(data.codigo);
+
+      //prefactura pension
+      $('#PFcodigoCliente').val(data.codigo);
+      $('#PFnombreCliente').text(data.cliente);
+      $('#PFGrupoNo').val(data.grupo);
     });
   });
 
-  function usar_cliente(nombre, ruc, codigocliente, email, T) {
-    // TODO IMPLEMENTAR
-    $('#codigoCliente').val(codigocliente);
-    alert('vamos a usar al cliente, pero aun no sabemos como :C')
+  function usar_cliente(nombre, ruc, codigocliente, email, T, grupo) {
+    $('#PFcodigoCliente').val(codigocliente);
+    $('#PFnombreCliente').text(nombre);
+    $('#PFGrupoNo').val(grupo);
+    OpenModalPreFactura(cantidadProductoPreFacturar)
   }
 
   function autocomplete_cliente(){
@@ -671,7 +674,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
         </a>
       </div>
 
-      <?php include("componentes/prefactura.php") ?>
+      <?php include("prefactura.php") ?>
       
       <div class="col-xs-2 col-sm-2">
         <a href="#" title="Nuevo Cliente"  class="btn btn-default" onclick="addCliente(1)">

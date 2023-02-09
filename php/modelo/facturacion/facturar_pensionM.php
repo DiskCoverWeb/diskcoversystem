@@ -380,6 +380,41 @@ class facturar_pensionM
 
   }
 
+  function deleteClientes_FacturacionProductoClienteAnioMes($codigoCliente, $CodigoInv, $Anio, $NoMes){
+     $sSQL = "DELETE 
+          FROM Clientes_Facturacion 
+          WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+          AND Codigo = '$codigoCliente' 
+          AND Codigo_Inv = '$CodigoInv' 
+          AND Periodo = '$Anio' 
+          AND Num_Mes = '$NoMes'";
+    $stmt = $this->db->String_Sql($sSQL);
+    return $stmt;
+  }
+
+  function insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, $CodigoInv, $Valor, $GrupoNo, $NoMes, $Anio, $Mifecha, $Total_Desc, $Total_Desc2){
+     $sSQL = "INSERT
+        INTO Clientes_Facturacion 
+        (T,Codigo,Codigo_Inv,Valor,GrupoNo,Num_Mes,Mes,Periodo,Fecha,Descuento,Descuento2,Item)
+        VALUES (
+          '".G_NORMAL."',
+          '$codigoCliente',
+          '$CodigoInv',
+          '$Valor',
+          '$GrupoNo',
+          '$NoMes',
+          '".MesesLetras($NoMes)."',
+          '$Anio',
+          '$Mifecha',
+          '$Total_Desc',
+          '$Total_Desc2',
+          '".$_SESSION['INGRESO']['item']."'
+        )";
+
+    $stmt = $this->db->String_Sql($sSQL);
+    return $stmt;
+  }
+
 }
 
 ?>
