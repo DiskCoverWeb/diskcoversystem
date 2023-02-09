@@ -10187,6 +10187,36 @@ function UltimoDiaMes($FechaStr)
   return $UltimoDiaMes = generaCeros($vDia,2)."/".generaCeros($Vmes,2)."/".generaCeros($Vanio,4);
 }
 
+function PrimerDiaMes($fecha, $formato_salida ="d/m/Y")
+{
+  $d = new datetime($fecha);
+  $d->modify('first day of this month'); 
+  return $d->format($formato_salida);
+}
+
+function PrimerDiaSeguienteMes($fecha, $formato_salida ="d/m/Y")
+{
+  $d = date_create_from_format($formato_salida, $fecha);
+  $fecha = date_format($d,'Y-m-d');
+  $d = new datetime($fecha);
+  $fecha = $d->modify('next month');
+  $newFecha= new datetime($fecha->format('Y-m-d'));
+  $newFecha->modify('first day of this month'); 
+  return $newFecha->format($formato_salida);
+}
+
+function ObtenerMesFecha($fecha, $formato_entrada ="d/m/Y")
+{
+  $d = date_create_from_format($formato_entrada, $fecha);
+  return date_format($d,'m');
+}
+
+function ObtenerAnioFecha($fecha, $formato_entrada ="d/m/Y")
+{
+  $d = date_create_from_format($formato_entrada, $fecha);
+  return date_format($d,'Y');
+}
+
 function MesesLetras($Mes,$Mayuscula=false)
 {
    $SMes = "";

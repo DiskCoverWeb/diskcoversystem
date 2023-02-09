@@ -293,9 +293,10 @@ function datos_cliente() {
     var codigocliente = frame.contentWindow.document.getElementById('codigoc').value;
     var email = frame.contentWindow.document.getElementById('email').value;
     var nombre = frame.contentWindow.document.getElementById('nombrec').value;
+    var grupo = frame.contentWindow.document.getElementById('grupo').value;
     var T = 'N';
     // crear esta funcion donde se desee agregar estos datos de cliente
-    usar_cliente(nombre, ruc, codigocliente, email, T);
+    usar_cliente(nombre, ruc, codigocliente, email, T,grupo);
 }
 
 

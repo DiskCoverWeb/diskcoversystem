@@ -1,5 +1,4 @@
 <!-- INICIO MODULO PRE-FACTURA -->
-<!-- TODO DEFINIR TITLE -->
 <?php define('cantidadProductoPreFacturar', 3); ?>
 <style type="text/css">
   .check-group-xs{
@@ -13,6 +12,11 @@
   .padding-l-5{
     padding-left: 5px !important;
   }
+
+  #swal2-content{
+    font-weight: 500;
+    font-size: 1.3em;
+  }
 </style>
 <div class="col-xs-2">
   <a href="#" title="Agregar Pre-Factura"  class="btn btn-default" onclick="OpenModalPreFactura(<?php echo cantidadProductoPreFacturar ?>)">
@@ -24,7 +28,7 @@
     <div class="modal-content">
       <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Registrar Pre-Factura</h4> <!-- TODO EN EL TITULO CREO VA EL NOMBRE DEL CLEINTE -->
+          <h4 class="modal-title">Registrar Pre-Factura: <b><span id="PFnombreCliente"></span></b></h4>
       </div>
       <div class="modal-body">
         <form role="form" id="FInsPreFacturas" name="FInsPreFacturas">
@@ -80,15 +84,17 @@
               </div>
               <hr>
             <?php } ?>
+            <input type="hidden" name="PFcodigoCliente" id="PFcodigoCliente">
+            <input type="hidden" name="PFGrupoNo" id="PFGrupoNo">
           </div>
         </form>
       </div>
-      <div class="modal-footer"> <!--TODO acomodar botones -->
+      <div class="modal-footer">
           
-        <button class="btn btn-success" title="Inserta Rubros a Facturar" onclick="GuardarPreFactura(<?php echo cantidadProductoPreFacturar ?>)">
+        <button class="btn btn-success" title="Inserta Rubros a Facturar" onclick="GuardarPreFactura()">
           <img  src="../../img/png/grabar.png" width="25" height="30">
         </button>
-        <button  class="btn btn-danger" title="Eliminar Rubros" onclick="EliminarPreFactura(<?php echo cantidadProductoPreFacturar ?>)">
+        <button  class="btn btn-danger" title="Eliminar Rubros" onclick="EliminarPreFactura()">
           <img src="../../img/png/delete_file.png" width="25" height="30">
         </button>
         <button class="btn btn-warning" id="btnSalirModuloPF" title="Salir del Modulo" data-dismiss="modal">
@@ -98,8 +104,8 @@
     </div>
   </div>
 </div>
-<!-- FIN MODULO PRE-FACTURA --> <!-- TODO CAMBIAR DATE POR DIA -->
+<!-- FIN MODULO PRE-FACTURA -->
 <script type="text/javascript">
   var cantidadProductoPreFacturar = <?php echo cantidadProductoPreFacturar ?>;
 </script>
-<script type="text/javascript" src="../../dist/js/pages/preFactura.js?<?php echo date('is') ?>"></script>
+<script type="text/javascript" src="../../dist/js/pages/preFactura.js?<?php echo date('d') ?>"></script>
