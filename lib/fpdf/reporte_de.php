@@ -4666,6 +4666,913 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 }
 
 
+ function imprimirDocEle_NC($datos,$detalle,$cliente,$matri=false,$nombre,$formato=null,$nombre_archivo=null,$va=null,$imp1=false,$abonos=false,$sucursal=array())
+{
+
+	// print_r($_SESSION['INGRESO']);die();
+	// print_r($sucursal);die();
+	$pdf = new PDF('P','pt','LETTER');
+	$pdf->AliasNbPages('TPAG');
+	$pdf->SetTopMargin(5);
+	$pdf->SetLeftMargin(41);
+	$pdf->SetRightMargin(20);
+	$pdf->AddPage();
+	$i=0;
+	$agente = '';
+	$rimpe = '';
+	if(isset($datos['Tipo_contribuyente']) && count($datos['Tipo_contribuyente'])>0)
+	{
+		// print_r($datos['Tipo_contribuyente']);die();
+		$agente = $datos['Tipo_contribuyente']['@Agente'];
+		if($datos['Tipo_contribuyente']['@micro']!='.')
+		{
+			$rimpe = $datos['Tipo_contribuyente']['@micro'];
+		}
+	}
+	
+
+
+	$x=41;
+	$pdf->SetXY($x, 20);
+	//$pdf->SetWidths(array(250));
+
+	if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
+	{
+		$logo=$_SESSION['INGRESO']['Logo_Tipo'];
+		//si es jpg
+		$src = __DIR__ . '/../../img/logotipos/'.$logo.'.jpg'; 
+		if (@getimagesize($src)) 
+		{ 
+			$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.jpg',40,22,80,40,'','https://www.discoversystem.com');
+		}
+		//si es gif
+		$src = __DIR__ . '/../../img/logotipos/'.$logo.'.gif'; 
+		if (@getimagesize($src)) 
+		{ 
+			$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.gif',40,22,80,40,'','https://www.discoversystem.com');
+		}
+		//si es png
+		$src = __DIR__ . '/../../img/logotipos/'.$logo.'.png'; 
+		if (@getimagesize($src)) 
+		{ 
+			$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,22,80,40,'','https://www.discoversystem.com');
+		}
+	}
+	else
+	{
+		$logo="diskcover";
+		$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,22,80,40,'','https://www.discoversystem.com');
+	}
+
+	$pdf->Ln(60);
+	$x = $pdf->GetX();
+	$y = $pdf->GetY();
+	$salto_ln = 5;
+	$radio = 5;
+
+    //=======================================cuadro izquierda inicial=================
+    $margen_med = 240;
+    $margen = 5;
+	if($_SESSION['INGRESO']['Nombre_Comercial'] == $_SESSION['INGRESO']['Razon_Social'])
+	{
+		$pdf->SetFont('Arial','B',9);
+		$pdf->SetWidths(array($margen_med));
+		$arr=array($_SESSION['INGRESO']['Razon_Social']);//mio
+		$pdf->Row($arr,10);
+
+	}else{
+	//razon social
+		$pdf->SetFont('Arial','B',9);
+		$pdf->SetWidths(array($margen_med));
+		$arr=array($_SESSION['INGRESO']['Razon_Social']);//mio
+		$pdf->Row($arr,8);
+		// $pdf->Ln($salto_ln);		
+		//nombre comercial
+		$pdf->SetWidths(array($margen_med));
+		$arr=array($_SESSION['INGRESO']['Nombre_Comercial']);//mio
+		$pdf->Row($arr,8);
+	}
+
+	$pdf->SetFont('Arial','B',8);	
+	$pdf->SetWidths(array($margen_med));	
+	$arr=array('Dirección Matríz');
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',7);
+	$pdf->SetWidths(array($margen_med));
+	$arr=array($_SESSION['INGRESO']['Direccion']);
+	$pdf->Row($arr,10);
+
+	// print_r($datos[0]['Serie']);die();
+	//sucursal si es diferente a 001
+	$punto= substr($datos['Serie'],3,6);
+	$suc= substr($datos['Serie'],0,3);
+
+	// print_r($punto);die();
+	if(isset($datos['Serie']))
+	{
+		if ($suc!='001' && count($sucursal)>0 && $sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='') {
+			 $pdf->SetWidths(array($margen_med));
+			 $arr=array('Direccion de establecimiento / Sucursal');//mio
+			 $pdf->Row($arr,10);
+			 $arr=array($sucursal[0]['Direccion_Establecimiento']);//mio
+			 $pdf->Row($arr,10);
+		}
+	}	
+
+	if(strlen($_SESSION['INGRESO']['Telefono1'])>1)
+	{
+	 $pdf->SetWidths(array($margen_med));
+	 $arr=array(utf8_decode($_SESSION['INGRESO']['Telefono1']));//mio
+	 $pdf->Row($arr,10);
+	}
+	if(strlen($_SESSION['INGRESO']['Email'])>1)
+	{
+	 $pdf->SetWidths(array($margen_med));
+	 $arr=array(utf8_decode($_SESSION['INGRESO']['Email']));//mio
+	 $pdf->Row($arr,10);
+	}
+
+	$pdf->SetFont('Arial','B',6);
+	$pdf->SetWidths(array(200,40));
+	$conta='NO';
+	if($_SESSION['INGRESO']['Obligado_Conta'] != 'NO')
+	{
+		$conta = 'SI';//mio
+	}
+	$arr=array('Obligado a llevar contabilidad:',$conta);
+	$pdf->Row($arr,10);
+	$yfin = $pdf->GetY();	
+	$xfin = $pdf->GetX();
+	$pdf->RoundedRect($x-$margen, $y-$margen, $margen_med, $yfin-$y+$margen, $radio, $style = '', $angle = '1234');	
+	$pdf->ln(2);
+	// print_r($yfin);die();
+	$y_alineado = $yfin;
+	//==================================fin cuadro izquierda inicial==================
+
+	//==================================cuadro derecha inicial invisible========================
+
+	$medida_1 = $pdf->GETY();
+
+	$pdf->SetTextColor(255,255,255);
+	$x = 200+100;
+	$pdf->SetY($yfin+20);
+	$y = $pdf->GetY();
+	$margen_med2 = 280;
+    $col_1 = 142;
+	$pdf->SetXY($x,$pdf->GetY());
+	$col_2 = $margen_med2-$col_1;
+
+	$misma_ln = $pdf->GetY();
+	$pdf->SetFont('Arial','B',12);
+	$pdf->SetWidths(array($col_1));
+	$arr=array('R.U.C. '.$_SESSION['INGRESO']['RUC']);
+	$pdf->Row($arr,10);
+
+	if($rimpe=='')
+	{
+		$pdf->SetXY($x,$misma_ln);
+		// $pdf->SetTextColor(225,51,51);
+		$pdf->SetTextColor(255,255,255);
+ 	    $pdf->SetWidths(array($col_1,$col_2));
+		$pdf->SetFont('Arial','',7);
+		$arr=array('',$rimpe);//mio
+		$pdf->Row($arr,10);	
+	}
+// /-----------------------------------------------------------------------------
+	if($agente!='' && $agente!='.')
+	{
+		$pdf->SetX($x);
+		// $pdf->SetTextColor(225,51,51);
+		$pdf->SetTextColor(255,255,255);
+		$pdf->SetFont('Arial','',7);
+ 	    $pdf->SetWidths(array($col_1+$col_2));
+		$arr=array('Agente de Retención Resolución: '.$agente);
+		$pdf->Row($arr,10);
+	}
+// ----------------------------------------------------------------------------------
+	$pdf->SetX($x);
+	$pdf->SetTextColor(255,255,255);
+	// $pdf->SetTextColor(0,0,0);
+	$pdf->SetFont('Arial','',12);
+	$pdf->SetWidths(array($col_1));
+	// print_r($datos);die();
+	
+	$misma_ln = $pdf->GetY();
+	$arr=array('NOTA DE CREDITO No.'); 
+	$pdf->Row($arr,10);
+
+	$pdf->SetXY($x,$misma_ln);
+	$pdf->SetFont('Arial','',11);
+	// $pdf->SetTextColor(225,51,51);
+	$pdf->SetTextColor(255,255,255);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$ptoEmi = substr($datos['Serie'],3,6);
+	$Serie = substr($datos['Serie'],0,3);
+	$arr=array('',$Serie.'-'.$ptoEmi.'-'.generaCeros($datos['Factura'],9));//mio
+	$pdf->Row($arr,10);
+	$pdf->SetTextColor(0);
+    // print_r($datos);
+	// fecha y hora
+
+
+	$pdf->SetX($x);
+	$pdf->SetTextColor(255,255,255);
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$arr=array('FECHA Y HORA DE AUTORIZACIÓN:',$datos['Fecha_NC']->format('Y-m-d'));
+	$pdf->Row($arr,10);
+
+
+	//emisión
+	$pdf->SetX($x);
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$arr=array('EMISIÓN:','NORMAL');
+	$pdf->Row($arr,13);	
+
+
+	//ambiente
+	$ambiente = substr($datos['Autorizacion_NC'],23,1);
+	// print_r($datos[0]['Autorizacion']);die();
+	//print_r($ambiente);die();
+	$am = '';
+	if($ambiente==2)
+	{
+	  $am = 'PRODUCCION';
+
+	}else if($ambiente==1)
+	{
+	  $am='PRUEBA';
+	}
+	$pdf->SetX($x);
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$arr=array('AMBIENTE: ',$am);
+	$pdf->Row($arr,10);	
+	
+	
+	//clave de acceso barcode y numero
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetX($x);
+	$pdf->SetWidths(array($margen_med));
+	$arr=array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
+	$pdf->Row($arr,10);
+	if($datos['ClaveAcceso_NC'] != $datos['Autorizacion'])
+	 {
+		$code=$datos['ClaveAcceso_NC'];
+	    // $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
+
+	    $pdf->SetY($pdf->GetY()+20);	    
+	    $pdf->SetFont('Arial','',7);
+	    $pdf->SetWidths(array(275));
+	    $pdf->SetX($x);
+	    // $arr=array($code);
+		// $pdf->Row($arr,10);	
+	 }else if($datos['ClaveAcceso_NC'] > 39)
+	 {	 	
+	    $code=$datos['ClaveAcceso_NC'];
+	    // $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
+
+	    $pdf->SetY($pdf->GetY()+20);	    
+	    $pdf->SetFont('Arial','',7);
+	    $pdf->SetWidths(array(275));
+	    $pdf->SetX($x);
+	    $arr=array($code);
+		// $pdf->Row($arr,10);	
+	 }
+	 $yfin = $pdf->GetY();
+	 // $pdf->RoundedRect($x-$margen, $y-$margen, $margen_med2, $yfin-$y+$margen, 10, $style = '', $angle = '1234');		
+
+	 $medida_fin = $yfin;
+
+//==========================================
+// 	if($medida_fin>$medida_1)
+// 	{
+      $medida_burbu = $medida_fin-$medida_1;
+      $pos_burbuja_derecha_y = $y_alineado-$medida_burbu+$margen*2;
+//   }else{
+
+//   	// print_r($pdf->PageNo());die();
+//     $medida_burbu = $medida_1-$medida_fin;    
+//     $pos_burbuja_derecha_y = $y_alineado+100+$margen*2;
+// }
+
+// print_r($y_alineado*-1);die();
+// print_r($pos_burbuja_derecha_y*-1);die();
+	$x = 200+100;
+	$pdf->SetAligns('L');
+	$pdf->SetY($pos_burbuja_derecha_y);
+	$y = $pdf->GetY();
+	$margen_med2 = 280;
+    $col_1 = 142;
+	$pdf->SetXY($x,$pdf->GetY());
+	$col_2 = $margen_med2-$col_1;
+	$pdf->SetTextColor(0,0,0);
+	$misma_ln = $pdf->GetY();
+	$pdf->SetFont('Arial','B',12);
+	$pdf->SetWidths(array($col_1));
+	$arr=array('R.U.C. '.$_SESSION['INGRESO']['RUC']);
+	$pdf->Row($arr,10);
+
+	if($rimpe!='')
+	{
+		$pdf->SetXY($x,$misma_ln);
+		$pdf->SetTextColor(225,51,51);
+ 	    $pdf->SetWidths(array($col_1,$col_2));
+		$pdf->SetFont('Arial','',7);
+		$arr=array('',$rimpe);//mio
+		$pdf->Row($arr,10);	
+	}
+// /-----------------------------------------------------------------------------
+	if($agente!='' && $agente!='.')
+	{
+		$pdf->SetX($x);
+		$pdf->SetTextColor(225,51,51);
+		$pdf->SetFont('Arial','',7);
+ 	    $pdf->SetWidths(array($col_1+$col_2));
+		$arr=array('Agente de Retención Resolución: '.$agente);
+		$pdf->Row($arr,10);
+	}
+// ----------------------------------------------------------------------------------
+	$pdf->SetX($x);
+	$pdf->SetTextColor(0,0,0);
+	$pdf->SetFont('Arial','',12);
+	$pdf->SetWidths(array($col_1));
+	// print_r($datos);die();
+	
+	$misma_ln = $pdf->GetY();	
+	$arr=array('NOTA DE CREDITO No.'); 
+	$pdf->Row($arr,10);
+
+	$pdf->SetXY($x,$misma_ln);
+	$pdf->SetFont('Arial','',11);
+	$pdf->SetTextColor(225,51,51);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$ptoEmi = substr($datos['Serie_NC'],3,6);
+	$Serie = substr($datos['Serie_NC'],0,3);
+	$arr=array('',$Serie.'-'.$ptoEmi.'-'.generaCeros($datos['Nota_Credito'],9));//mio
+	$pdf->Row($arr,10);
+	$pdf->SetTextColor(0);
+    // print_r($datos);
+	// fecha y hora
+
+
+	$pdf->SetX($x);
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$arr=array('FECHA Y HORA DE AUTORIZACIÓN:',$datos['Fecha_NC']->format('Y-m-d'));
+	$pdf->Row($arr,10);
+
+
+	//emisión
+	$pdf->SetX($x);
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$arr=array('EMISIÓN:','NORMAL');
+	$pdf->Row($arr,13);	
+
+
+	//ambiente
+	$ambiente = substr($datos['Autorizacion_NC'],23,1);
+	// print_r($datos[0]['Autorizacion']);die();
+	//print_r($ambiente);die();
+	$am = '';
+	if($ambiente==2)
+	{
+	  $am = 'PRODUCCION';
+
+	}else if($ambiente==1)
+	{
+	  $am='PRUEBA';
+	}
+	$pdf->SetX($x);
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetWidths(array($col_1,$col_2));
+	$arr=array('AMBIENTE: ',$am);
+	$pdf->Row($arr,10);	
+	
+	
+	//clave de acceso barcode y numero
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetX($x);
+	$pdf->SetWidths(array($margen_med));
+	$arr=array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
+	$pdf->Row($arr,10);
+	if($datos['ClaveAcceso_NC'] != $datos['Autorizacion_NC'])
+	 {
+		$code=$datos['Autorizacion_NC'];
+	    $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
+
+	    $pdf->SetY($pdf->GetY()+20);	    
+	    $pdf->SetFont('Arial','',7);
+	    $pdf->SetWidths(array(275));
+	    $pdf->SetX($x);
+	    $arr=array($code);
+		$pdf->Row($arr,10);	
+	 
+	 }else if($datos['ClaveAcceso_NC'] > 39)
+	 {	 	
+	    $code=$datos['ClaveAcceso_NC'];
+	    $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
+
+	    $pdf->SetY($pdf->GetY()+20);	    
+	    $pdf->SetFont('Arial','',7);
+	    $pdf->SetWidths(array(275));
+	    $pdf->SetX($x);
+	    $arr=array($code);
+		$pdf->Row($arr,10);	
+	 }
+	 $yfin = $pdf->GetY();
+	 $pdf->RoundedRect($x-$margen, $y-$margen, $margen_med2, $yfin-$y+$margen, 10, $style = '', $angle = '1234');		
+
+	 $medida_fin = $pdf->GetY();
+
+
+	 //========================= fin cuadro derecha inicial========================
+
+
+
+
+
+
+
+	//============================================cuadro cliente ==========================================
+	$y = $pdf->GetY()+$margen*2;	
+    $x = $pdf->GetX();
+    $pdf->SetXY($x,$y);
+	$margen_med3 = 540;
+
+
+	$pdf->SetWidths(array(380,165));
+	$arr=array('Razón social/nombres y apellidos:','Identificación:');//mio
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',6);
+	$pdf->SetWidths(array(380,165));
+	$arr=array(utf8_decode($cliente[0]['Cliente']),$cliente[0]['CI_RUC']);//mio
+	$pdf->Row($arr,10);
+
+	$pdf->SetFont('Arial','',6);
+	$pdf->SetWidths(array(270,255));	
+	$arr=array('Dirección: '.$cliente[0]['Direccion']);//mio
+	$pdf->Row($arr,10);
+
+
+	$estaF = substr($datos['Serie'],0,3);
+	$puntoF = substr($datos['Serie'],3,6);
+
+	$pdf->SetFont('Arial','',6);
+	$pdf->SetWidths(array(380,250));	
+	$arr=array('Comprobante que se Modifica, Factura No.: '.$estaF.'-'.$puntoF.'-'.generaCeros($datos['Factura']),'Fecha pago: '.$datos['Fecha_NC']->format('Y-m-d'));//mio
+	$pdf->Row($arr,10);
+
+	$pdf->SetFont('Arial','',6);
+	$pdf->SetWidths(array(380,250));	
+	$arr=array('Razon de la modificacion: '.$estaF.'-'.$puntoF.'-'.generaCeros($datos['Factura']),'Fecha Emisión (Comprobante a Modificar):'.$datos['Fecha']->format('Y-m-d'));//mio
+	$pdf->Row($arr,10);
+
+	$pdf->SetFont('Arial','',6);
+	$pdf->SetWidths(array(520));	
+	$arr=array($datos['Nota']);//mio
+	$pdf->Row($arr,10);
+
+
+
+	if('DOLAR'=='DOLAR')
+	{
+		$mon='USD';
+	}
+	else
+	{
+		$mon='USD';
+		//se busca otras monedas
+	}
+	//die();
+	
+    $yfin = $pdf->GetY();	
+	$xfin = $pdf->GetX();
+	$pdf->RoundedRect($x-$margen, $y-$margen, $margen_med3, $yfin-$y+$margen, $radio, $style = '', $angle = '1234');	
+
+
+
+//================================fin cuadro cliente========================================================= 
+
+//================================cuadro detalle========================================================= 
+
+	//datos factura
+	$y = $pdf->GetY()+$margen+2;	
+    $x = $pdf->GetX()-$margen;
+    $pdf->SetXY($x,$y);
+	$margen_med3 = 540;
+
+	$pdf->SetFont('Arial','B',6);
+	$pdf->SetWidths(array(55,315,45,40,40,45));
+	$arr=array("Codigo","Descripción","Cantidad","Precio Unitario","Descuento","Valor Total");
+	$pdf->Row($arr,10,1);
+	$pdf->SetFont('Arial','',6);
+	
+	
+
+	// print_r($detalle_descuento);die();
+	$totaldes=0;$descto=0; $totalfac = 0;
+     foreach ($detalle as $key => $value) {
+     	 // print_r($value);
+     	$descto = number_format($value['Descuento'],2,'.','');
+     	// if($value['Total']>0)
+     	// {
+     	// 	$descto = number_format((($value['Descuento']*100)/$value['Total']),2,'.','').'%';
+     	// }
+     	 $pdf->SetX($x);
+          // if($imp_mes!=0)
+           //{
+           	// $value['Producto'] = $value['Producto'].' '.$value['Mes'].'/'.$value['Ticket'];
+          // }
+
+           //if(strlen($value["Tipo_Hab"]) > 1)
+			// {
+	        //   if($value['Total_Desc'] > 0){
+	        //   	$descto = '';
+	        //   	$totaldes ='';
+	       	//	$totalfac = number_format($value['Total'],2,'.','');
+
+	          //}else
+	          // {
+	          // 	$totaldes = number_format($value['Total_Desc'],2,'.','');
+
+	       	$totalfac = number_format($value['Total'],2,'.',''); 
+
+     	 	$pdf->SetWidths(array(55,315,45,40,40,45));
+			$pdf->SetAligns(array("L","L","R","R","R","R"));
+			//$arr=array($arr1[$i]);
+			$arr=array($value['Codigo_Inv'],$value['Producto'],number_format($value['Cantidad'],2,'.',''),number_format($value['Precio'],6,'.',''),$descto, $totalfac);
+			$pdf->Row($arr,10,1);
+			
+   	
+     }
+
+
+    $yfin = $pdf->GetY();	
+	$xfin = $pdf->GetX();
+	// $pdf->RoundedRect($x-$margen, $y-$margen, $margen_med3, $yfin-$y+$margen, $radio, $style = '', $angle = '1234');
+   
+	//===================================================fin cuadrpo detalle======================================
+
+	//====================================================cuadro datos adicionales======================
+	$y = $pdf->GetY();	
+    $x = $pdf->GetX()-$margen;
+    $pdf->SetXY($x,$y);
+    $misma_ln = $y;
+	
+	//informacion adicional
+	$pdf->SetFont('Arial','B',6);
+	//echo $pdf->GetY();
+	//die();
+	$y=$pdf->GetY();
+	$pdf->SetXY(41-$margen, $y+5);
+	$pdf->SetWidths(array(140,40,95,46));
+	// infofactura
+	$arr=array("INFORMACIÓN ADICIONAL","Fecha","Deltalle del pago","Monto Abono");
+    $pdf->Row($arr,10,1);
+	
+	$y=$pdf->GetY()-5;//377
+	$pdf->SetFont('Arial','',6);
+	$pdf->SetXY($x, $y+5);
+	$pdf->SetFont('Arial','',5.5);
+	$pdf->SetXY($x, ($y+8));
+	$pdf->SetWidths(array(40));
+	//verificamos si es una o varias etiquetas
+	// datos adicionales
+	$pdf->SetWidths(array(140));
+	//print_r($educativo);
+
+
+	 if( isset($dato[0]['Telefono_RS']) && $datos[0]['Telefono_RS'] != '.' && $datos[0]['Telefono_RS'] != '')
+		{	
+		$arr=array('Telefono: '.$datos[0]['Telefono_RS']);
+		$pdf->Row($arr,10);
+		$pdf->SetWidths(array(140));
+	    }
+
+
+
+	///----------------------  infomrmacion adicional cuando punto de venta es diferente de 001 ----------------------
+	// print_r($sucursal);die();
+
+
+	if(count($sucursal)>0 && $punto!='001' && $suc=='001' && strlen($sucursal[0]['RUC_Establecimiento'])==13)
+	{
+
+		$arr=array('Punto Emision: '.$datos[0]['Serie']);
+		$pdf->Row($arr,10);
+
+		if($sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='')
+		{
+			$arr=array($sucursal[0]['Nombre_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+		if($sucursal[0]['RUC_Establecimiento']!='.' && $sucursal[0]['RUC_Establecimiento']!='')
+		{
+			$arr=array('Ruc punto Emision: '.$sucursal[0]['RUC_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+		if($sucursal[0]['Direccion_Establecimiento']!='.' && $sucursal[0]['Direccion_Establecimiento']!='')
+		{
+			$arr=array('Direccion punto Emision: '.$sucursal[0]['Direccion_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+		if($sucursal[0]['Telefono_Estab']!='.' && $sucursal[0]['Telefono_Estab']!='')
+		{
+			$arr=array('Telefono punto Emision: '.$sucursal[0]['Telefono_Estab']);
+		    $pdf->Row($arr,10);
+		}
+		if($sucursal[0]['Email_Establecimiento']!='.' && $sucursal[0]['Email_Establecimiento']!='')
+		{
+			$arr=array('Email punto Emision: '.$sucursal[0]['Email_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+
+		if($sucursal[0]['Cta_Establecimiento']!='.' && $sucursal[0]['Cta_Establecimiento']!='')
+		{
+			$arr=array('Cta Punto Emision: '.$sucursal[0]['Cta_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+			
+
+		if($sucursal[0]['Placa_Vehiculo']!='.' && $sucursal[0]['Placa_Vehiculo']!='')
+		{
+			$arr=array('Placas: '.$sucursal[0]['Placa_Vehiculo']);
+		    $pdf->Row($arr,10);
+		}	   
+
+		
+	}
+
+	///----------------------  fin infomrmacion adicional cuando punto de venta es diferente de 001 ----------------------
+
+
+	///----------------------  infomrmacion adicional cuan establecimiento es diferente de 001 ----------------------
+
+    if(count($sucursal)>0 && $suc!='001' && strlen($sucursal[0]['RUC_Establecimiento'])==13)
+	{
+		$arr=array('Establecimiento: '.$datos[0]['Serie']);
+		$pdf->Row($arr,10);
+
+		if($sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='')
+		{
+			$arr=array($sucursal[0]['Nombre_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+		if($sucursal[0]['RUC_Establecimiento']!='.' && $sucursal[0]['RUC_Establecimiento']!='')
+		{
+			$arr=array('Ruc establecimiento: '.$sucursal[0]['RUC_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+		if($sucursal[0]['Telefono_Estab']!='.' && $sucursal[0]['Telefono_Estab']!='')
+		{
+			$arr=array('Telefono establecimiento: '.$sucursal[0]['Telefono_Estab']);
+		    $pdf->Row($arr,10);
+		}
+		if($sucursal[0]['Email_Establecimiento']!='.' && $sucursal[0]['Email_Establecimiento']!='')
+		{
+			$arr=array('Email establecimiento: '.$sucursal[0]['Email_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+		if($sucursal[0]['Cta_Establecimiento']!='.' && $sucursal[0]['Cta_Establecimiento']!='')
+		{
+			$arr=array('Cta_Establecimiento: '.$sucursal[0]['Cta_Establecimiento']);
+		    $pdf->Row($arr,10);
+		}
+
+
+		if($sucursal[0]['Placa_Vehiculo']!='.' && $sucursal[0]['Placa_Vehiculo']!='')
+		{
+			$arr=array('Placas: '.$sucursal[0]['Placa_Vehiculo']);
+		    $pdf->Row($arr,10);
+		}
+
+		
+	}
+	if(isset($datos[0]['Observacion']) && $datos[0]['Observacion'] != '.' && $datos[0]['Observacion'] != '')
+	{			
+		// print_r('expression');die();
+		$arr=array('Observacion: '.$datos[0]['Observacion']);
+		$pdf->Row($arr,10);
+		$pdf->SetWidths(array(140));
+    }
+	if(isset($cliente[0]['Email']) && $cliente[0]['Email'] != '.' && $cliente[0]['Email'] != '')
+	{			
+		// print_r('expression');die();
+		$arr=array('Email: '.$cliente[0]['Email']);
+		$pdf->Row($arr,10);
+		$pdf->SetWidths(array(140));
+    }
+
+
+	///---------------------- fin infomrmacion adicional cuan establecimiento es diferente de 001 ----------------------
+    $yfin_adiconales = $pdf->GetY();
+    $pdf->SetXY($x,$y+$margen);
+	$pdf->Cell(140,$yfin_adiconales-$y-$margen,'','1',1,'Q');
+	$y_final_leyenda = $yfin_adiconales;
+
+
+
+	//fecha
+	if($abonos)
+	{
+		$pdf->SetFont('Arial','',5);
+		$pdf->SetXY(140+$pdf->GetX()-$margen,$y+$margen);	
+
+		// print_r($abonos);die();
+		foreach ($abonos as $key => $value) {
+			$pdf->SetWidths(array(40,95,46));
+			$arr=array($value['Fecha']->format('Y-m-d'),$value['Banco'].' '.$value['Cheque'],$value['Abono']);
+		    $pdf->Row($arr,10,1);
+		    $pdf->SetX(140+$pdf->GetX()-$margen);	
+
+			// // print_r($abonos);die();
+			// $pdf->SetXY(181, $y);
+			// $pdf->Cell(40,15,$value['Fecha']->format('Y-m-d'),0,1,'Q');
+			// //detalle pago
+			// $pdf->SetXY(221, $y);
+			// if($value['Banco']!='.' && $value['Banco']!='' && $value['Cheque']!='.' && $value['Cheque']!='')
+			// {
+			// 	$pdf->Cell(95,15,$value['Banco'].' '.$value['Cheque'],0,1,'Q');
+			// }
+			// //monto abono
+			// $pdf->SetXY(316, $y);
+			// $pdf->Cell(46,15,$value['Abono'],0,1,'R');
+			// $y =$y+6;
+		}
+		$y_fin_abonos = $pdf->GetY();
+		if($yfin_adiconales<$y_fin_abonos)
+		{
+			$y_final_leyenda = $y_fin_abonos;
+		}
+	}
+	//leyenda final
+	$pdf->SetFont('Arial','',5);
+	$pdf->SetXY($x, ($y_final_leyenda));
+	$pdf->Cell(321,46,'','1',1,'Q');
+	$pdf->SetXY($x, ($y_final_leyenda+2));
+	$pdf->SetWidths(array(319));
+	$arr=array($_SESSION['INGRESO']['LeyendaFA']);	
+	$pdf->Row($arr,8);
+	//subtotales
+	//depende del valor de coordenada 'y' del detalle
+	$pdf->SetFont('Arial','',7);
+	
+
+	$yfin = $pdf->GetY();	
+	$xfin = $pdf->GetX();
+
+
+
+
+	//========================================= cuadro totales======================================
+	
+//	$arr1="<totalImpuesto";
+	//$arr1=array("<totalImpuesto>","</totalImpuesto>");
+	$sub_con_iva =0;
+	$sub_sin_iva =0;
+	 foreach ($detalle as $key => $value) {
+     	
+     	//print_r($value['Total_IVA']);
+     	 	if($value['Total_IVA'] != .0000)
+     	 	{
+     	 		$sub_con_iva+=$value['Total'];
+     	 	}else
+     	 	{
+     	 		$sub_sin_iva+=$value['Total'];
+
+     	 	}
+     }
+	$imp= number_format(($datos['Porc_IVA']*100),0,'.','');
+	$ba0=$sub_sin_iva;
+	$bai=$sub_con_iva;
+	$vimp0=0;
+	$vimp1=$datos['IVA'];
+	$descu = $datos['Descuento'];
+	//print_r($datos);
+
+	//die();
+	$margen_med4 = 210;
+
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetXY(365, ($y-10));
+	$pdf->Cell($margen_med4,11,'','1',1,'Q');
+	$pdf->SetXY(365, ($y-9));
+	$pdf->SetWidths(array(170));
+	$pdf->SetAligns(array("L"));
+
+	$arr=array("SUBTOTAL ".$imp."%:");
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',7);
+	$pdf->SetXY(528, ($y-9));
+	$formateado = sprintf("%01.2f", $bai);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
+
+	$y=$y-10+11;//365
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetXY(365, $y);
+	$pdf->Cell($margen_med4,11,'','1',1,'Q');
+	$pdf->SetXY(365, ($y+1));
+	$pdf->SetWidths(array(175));
+	$pdf->SetAligns(array("L"));
+	$arr=array("SUBTOTAL 0%:");
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',7);
+	$pdf->SetXY(528, ($y+1));
+	$arr=array(sprintf("%01.2f", $ba0));
+	$formateado = sprintf("%01.2f", $ba0);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
+ 	//echo $formateado;
+	//str_pad($ba0, 2, '0', STR_PAD_RIGHT);
+	//exit();
+	//$pdf->Row($arr,10);
+	
+	$y=$y+11;//380
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetXY(365, $y);
+	$pdf->Cell($margen_med4,11,'','1',1,'Q');
+	$pdf->SetXY(365, ($y+1));
+	$pdf->SetWidths(array(170));
+	$pdf->SetAligns(array("L"));
+	$arr=array("TOTAL DESCUENTO:");
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',7);
+	$pdf->SetXY(528, ($y+1));
+	$formateado = sprintf("%01.2f", $descu);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
+	
+	
+	$y=$y+11;//425
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetXY(365, $y);
+	$pdf->Cell($margen_med4,11,'','1',1,'Q');
+	$pdf->SetXY(365, ($y+1));
+	$pdf->SetWidths(array(170));
+	$pdf->SetAligns(array("L"));
+	$arr=array("SUBTOTAL SIN IMPUESTOS:");
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',7);
+	$pdf->SetXY(528, ($y+1));
+	$formateado = sprintf("%01.2f", $ba0);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
+	
+	
+	$y=$y+11;//455
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetXY(365, $y);
+	$pdf->Cell($margen_med4,11,'','1',1,'Q');
+	$pdf->SetXY(365, ($y+1));
+	$pdf->SetWidths(array(170));
+	$pdf->SetAligns(array("L"));
+	$arr=array("IVA ".$imp."%:");
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',7);
+	$pdf->SetXY(528, ($y+1));
+	$formateado = sprintf("%01.2f", $vimp1);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
+	
+	// print_r($datos);die();
+	
+	$y=$y+11;//500
+	$pdf->SetFont('Arial','B',7);
+	$pdf->SetXY(365, $y);
+	$pdf->Cell($margen_med4,11,'','1',1,'Q');
+	$pdf->SetXY(365, ($y+1));
+	$pdf->SetWidths(array(165));
+	$pdf->SetAligns(array("L"));
+	$arr=array("VALOR TOTAL:");
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',7);
+	$pdf->SetXY(528, ($y+1));
+	$pdf->SetAligns(array("R"));
+	$formateado = sprintf("%01.2f",$datos['Total_MN']);
+	$pdf->Cell(37,10,$formateado,0,0,'R');
+
+	$yfin = $pdf->GetY();	
+	$xfin = $pdf->GetX();
+
+	//========================================= fin cuadro totales======================================
+
+	
+
+
+
+	if($imp1==false || $imp1==0)
+	{
+		$pdf->Output();
+	}
+	if($imp1==1)
+	{
+		$pdf->Output('F',dirname(__DIR__,2).'/TEMP/'.$datos['Serie_NC'].'-'.generaCeros($datos['Nota_Credito'],7).'.pdf');
+
+		// $pdf->Output('TEMP/'.$nombre.'.pdf','F'); 
+	}
+}
+
+
+
 
  function imprimirDocEle_ret($datos,$detalle,$nombre_archivo=null,$imp1=false)
 {

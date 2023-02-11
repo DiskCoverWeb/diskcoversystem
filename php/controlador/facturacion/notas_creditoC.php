@@ -1,5 +1,7 @@
 <?php 
 require(dirname(__DIR__,2).'/modelo/facturacion/notas_creditoM.php');
+require(dirname(__DIR__,2).'/comprobantes/SRI/autorizar_sri.php');
+require_once(dirname(__DIR__,3)."/lib/fpdf/cabecera_pdf.php");
 
 $controlador = new notas_creditoC();
 if(isset($_GET['delete_sientos_nc']))
@@ -17,6 +19,10 @@ if(isset($_GET['DCMarca']))
 	echo json_encode($controlador->DCMarca());
 }
 
+if(isset($_GET['generar_pdf']))
+{
+	echo json_encode($controlador->generar_pdf());
+}
 if(isset($_GET['DCContraCta']))
 {
 	$q = '';
@@ -41,6 +47,11 @@ if(isset($_GET['DCLineas']))
 {
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->DCLineas($parametros));
+}
+if(isset($_GET['numero_autorizacion']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->numero_autorizacion($parametros));
 }
 
 if(isset($_GET['DCTC']))
@@ -106,9 +117,12 @@ if(isset($_GET['generar_nota_credito']))
 class notas_creditoC
 {
 	private $modelo;	
+	private $sri;
 	function __construct()
 	{
+
 		$this->modelo = new notas_creditoM(); 
+		$this->sri = new autorizacion_sri(); 
 		// code...
 	}
 
@@ -195,13 +209,21 @@ class notas_creditoC
 		$datos = $this->modelo->DClineas($parametro['fecha'],$parametro['cta_cxp']);
 		$list = array();		
 		foreach ($datos as $key => $value) {
-			$list[] = array('codigo'=>$value['Codigo'],'nombre'=>$value['Concepto']); 
+			$list[] = array('codigo'=>$value['Serie'],'nombre'=>$value['Concepto'],'Autorizacion'=>$value['Autorizacion']); 
 		}
 		if(count($list)==0)
 		{
-			$list[] = array('codigo'=>'','nombre'=>'No exsiten datos');	
+			$list[] = array('codigo'=>'','nombre'=>'No existen datos');	
 		}
 		return $list;
+	}
+
+
+	function numero_autorizacion($parametro)
+	{
+		 $numero  = ReadSetDataNum("NC_SERIE_".$parametro['serie'], True, False);
+		 return $numero;
+
 	}
 
 	function DCTC($parametro)
@@ -430,8 +452,25 @@ class notas_creditoC
 		$FA['Autorizacion_NC'] = $parametros['TextBanco'];
 		$FA['Autorizacion'] = $parametros['TxtAutorizacion'];
     $FA['CodigoC'] = $parametros['DCClientes'];
+    $FA['Cliente'] = $parametros['Cliente'];
     $cliente_cta =  $this->modelo->Listar_Facturas_Pendientes_NC($parametros['DCClientes']);
     $FA['Cta_CxP'] = $cliente_cta[0]['Cta_CxP'];
+    $FA['Nota'] = $parametros['TxtConcepto'];
+
+
+		$FAC = $this->modelo->Factura_detalle($parametros['DCFactura'],$parametros['DCSerie'],$parametros['DCTC']);
+	  $FA['T'] = $FAC[0]["T"];
+    $FA['Fecha'] = $FAC[0]["Fecha"];
+    $FA['Cta_CxP'] = $FAC[0]["Cta_CxP"];
+    $FA['Cod_CxC'] = $FAC[0]["Cod_CxC"];
+    $FA['Porc_IVA'] = $FAC[0]["Porc_IVA"];
+    $FA['Total_MN'] = $FAC[0]["Total_MN"];
+    $FA['Saldo_MN'] = $FAC[0]["Saldo_MN"];
+    $FA['Autorizacion'] = $FAC[0]["Autorizacion"];
+    $FA['Descuento'] = $FAC[0]["Descuento"];
+    $FA['IVA'] = $FAC[0]["IVA"];
+    if($FAC[0]["IVA"] > 0){ $FA['Porc_NC'] = $FAC[0]["Porc_IVA"];}
+
 		$MBoxFecha = $parametros['MBoxFecha'];
 
 		$IVA_NC = 0;
@@ -456,7 +495,7 @@ class notas_creditoC
 
 
 		    	// print_r($parametros);die();
-		    if($parametros['LblTotalDC'] <= $parametros['LblSaldo'])
+		    if( floatval($parametros['LblTotalDC']) <= floatval($parametros['LblSaldo']))
 		    {
 		       if($parametros['ReIngNC']==0){ $FA['Nota_Credito'] = ReadSetDataNum("NC_SERIE_".$FA['Serie_NC'],True,True); }
 		        $FA['Fecha_NC'] = $MBoxFecha;
@@ -554,56 +593,56 @@ class notas_creditoC
 		                    // SetAdoAddNew "Trans_Kardex"
 		                    $datosTK[0]['campo'] =  "T"; 
 		                    $datosTK[0]['dato']  =  G_NORMAL;
-		                    $datosTK[0]['campo'] =  "TP"; 
-		                    $datosTK[0]['dato']  =  G_NINGUNO;
-		                    $datosTK[0]['campo'] =  "Numero"; 
-		                    $datosTK[0]['dato']  = '0';
-		                    $datosTK[0]['campo'] =  "TC"; 
-		                    $datosTK[0]['dato']  = $FA['TC'];
-		                    $datosTK[0]['campo'] = "Serie"; 
-		                    $datosTK[0]['dato']  = $FA['Serie'];
-		                    $datosTK[0]['campo'] = "Fecha"; 
-		                    $datosTK[0]['dato']  = $FA['Fecha_NC'];
-		                    $datosTK[0]['campo'] = "Factura"; 
-		                    $datosTK[0]['dato']  = $FA['Factura'];
-		                    $datosTK[0]['campo'] = "Codigo_P"; 
-		                    $datosTK[0]['dato']  = $FA['CodigoC'];
-		                    $datosTK[0]['campo'] =  "CodigoL"; 
-		                    $datosTK[0]['dato'] =  $FA['Cod_CxC'];
-		                    $datosTK[0]['campo'] =  "Codigo_Inv"; 
-		                    $datosTK[0]['dato'] = $value["CODIGO"];
-		                    $datosTK[0]['campo'] =  "Total_IVA";
-		                    $datosTK[0]['dato'] = $value["Total_IVA"];
-		                    $datosTK[0]['campo'] =  "Entrada"; 
-		                    $datosTK[0]['dato'] = $value["CANT"];
-		                    $datosTK[0]['campo'] =  "PVP"; 
-		                    $datosTK[0]['dato'] = $value["PVP"]; //'SubTotalCosto
-		                    $datosTK[0]['campo'] =  "Valor_Unitario"; 
-		                    $datosTK[0]['dato'] = $value["COSTO"]; //'SubTotalCosto
-		                    $datosTK[0]['campo'] =  "Costo"; 
-		                    $datosTK[0]['dato'] = $value["COSTO"];
-		                    $datosTK[0]['campo'] =  "Valor_Total"; 
-		                    $datosTK[0]['dato'] = number_format($value["CANT"]*$value["COSTO"], 2,'.','');
-		                    $datosTK[0]['campo'] =  "Total"; 
-		                    $datosTK[0]['dato'] = number_format($value["CANT"]*$value["COSTO"], 2,'.','');
-		                    $datosTK[0]['campo'] =  "Descuento"; 
-		                    $datosTK[0]['dato'] = $value["DESCUENTO"];
-		                    $datosTK[0]['campo'] =  "Detalle"; 
-		                    $datosTK[0]['dato'] = "NC:".$FA['Serie_NC']."-".generaCeros($FA['Nota_Credito'],9)."-".$FA['Cliente'];
-		                    $datosTK[0]['campo'] =  "Cta_Inv"; 
-		                    $datosTK[0]['dato'] = $value["Cta_Inventario"];
-		                    $datosTK[0]['campo'] =  "Contra_Cta"; 
-		                    $datosTK[0]['dato'] = $value["Cta_Costo"];
-		                    $datosTK[0]['campo'] =  "CodBodega"; 
-		                    $datosTK[0]['dato'] = $value["CodBod"];
-		                    $datosTK[0]['campo'] =  "CodMarca"; 
-		                    $datosTK[0]['dato'] = $value["CodMar"];
-		                    $datosTK[0]['campo'] =  "Item"; 
-		                    $datosTK[0]['dato'] =  $_SESSION['INGRESO']['item'];
-		                    $datosTK[0]['campo'] =  "Periodo"; 
-		                    $datosTK[0]['dato'] =  $_SESSION['INGRESO']['periodo'];
-		                    $datosTK[0]['campo'] =  "CodigoU"; 
-		                    $datosTK[0]['dato'] =  $_SESSION['INGRESO']['CodigoU'];
+		                    $datosTK[1]['campo'] =  "TP"; 
+		                    $datosTK[1]['dato']  =  G_NINGUNO;
+		                    $datosTK[2]['campo'] =  "Numero"; 
+		                    $datosTK[2]['dato']  = '0';
+		                    $datosTK[3]['campo'] =  "TC"; 
+		                    $datosTK[3]['dato']  = $FA['TC'];
+		                    $datosTK[4]['campo'] = "Serie"; 
+		                    $datosTK[4]['dato']  = $FA['Serie'];
+		                    $datosTK[5]['campo'] = "Fecha"; 
+		                    $datosTK[5]['dato']  = $FA['Fecha_NC'];
+		                    $datosTK[6]['campo'] = "Factura"; 
+		                    $datosTK[6]['dato']  = $FA['Factura'];
+		                    $datosTK[7]['campo'] = "Codigo_P"; 
+		                    $datosTK[7]['dato']  = $FA['CodigoC'];
+		                    $datosTK[8]['campo'] =  "CodigoL"; 
+		                    $datosTK[8]['dato'] =  $FA['Cod_CxC'];
+		                    $datosTK[9]['campo'] =  "Codigo_Inv"; 
+		                    $datosTK[9]['dato'] = $value["CODIGO"];
+		                    $datosTK[10]['campo'] =  "Total_IVA";
+		                    $datosTK[10]['dato'] = $value["TOTAL_IVA"];
+		                    $datosTK[11]['campo'] =  "Entrada"; 
+		                    $datosTK[11]['dato'] = $value["CANT"];
+		                    $datosTK[12]['campo'] =  "PVP"; 
+		                    $datosTK[12]['dato'] = $value["PVP"]; //'SubTotalCosto
+		                    $datosTK[13]['campo'] =  "Valor_Unitario"; 
+		                    $datosTK[13]['dato'] = $value["COSTO"]; //'SubTotalCosto
+		                    $datosTK[14]['campo'] =  "Costo"; 
+		                    $datosTK[14]['dato'] = $value["COSTO"];
+		                    $datosTK[15]['campo'] =  "Valor_Total"; 
+		                    $datosTK[15]['dato'] = number_format($value["CANT"]*$value["COSTO"], 2,'.','');
+		                    $datosTK[16]['campo'] =  "Total"; 
+		                    $datosTK[16]['dato'] = number_format($value["CANT"]*$value["COSTO"], 2,'.','');
+		                    $datosTK[17]['campo'] =  "Descuento"; 
+		                    $datosTK[17]['dato'] = $value["DESCUENTO"];
+		                    $datosTK[18]['campo'] =  "Detalle"; 
+		                    $datosTK[18]['dato'] = "NC:".$FA['Serie_NC']."-".generaCeros($FA['Nota_Credito'],9)."-".$FA['Cliente'];
+		                    $datosTK[19]['campo'] =  "Cta_Inv"; 
+		                    $datosTK[19]['dato'] = $value["Cta_Inventario"];
+		                    $datosTK[20]['campo'] =  "Contra_Cta"; 
+		                    $datosTK[20]['dato'] = $value["Cta_Costo"];
+		                    $datosTK[21]['campo'] =  "CodBodega"; 
+		                    $datosTK[21]['dato'] = $value["CodBod"];
+		                    $datosTK[22]['campo'] =  "CodMarca"; 
+		                    $datosTK[22]['dato'] = $value["CodMar"];
+		                    $datosTK[23]['campo'] =  "Item"; 
+		                    $datosTK[23]['dato'] =  $_SESSION['INGRESO']['item'];
+		                    $datosTK[24]['campo'] =  "Periodo"; 
+		                    $datosTK[24]['dato'] =  $_SESSION['INGRESO']['periodo'];
+		                    $datosTK[25]['campo'] =  "CodigoU"; 
+		                    $datosTK[25]['dato'] =  $_SESSION['INGRESO']['CodigoU'];
 		                    insert_generico('Trans_Kardex',$datosDNC);
 		                    // 'MsgBox "Grabado"
 		                }
@@ -650,7 +689,15 @@ class notas_creditoC
 		        if(($FA['SubTotal_NC'] + $FA['Total_IVA_NC']) > 0 && strLen($FA['Autorizacion_NC']) >= 13)
 		        { 
 
-		        	// SRI_Crear_Clave_Acceso_Nota_Credito FA, True  
+		        	  $resp = $this->sri->SRI_Crear_Clave_Acceso_Nota_Credito($FA); 
+
+		        	  // print_r($FA);die();
+
+		        	  // crea pdf
+		        	  $this->modelo->pdf_nota_credito($FA);
+		        	  $clave = $this->sri->Clave_acceso($FA['Fecha_NC'],'04',$FA['Serie_NC'],$FA['Nota_Credito']);		        	 
+		        	 return array('respuesta'=>$resp,'pdf'=>$FA['Serie_NC'].'-'.generaCeros($FA['Nota_Credito'],7),'clave'=>$clave);
+		        	  // return $resp;
 		        	//genera aqui el xml
 		        
 		  			}
@@ -676,5 +723,37 @@ class notas_creditoC
 				return -2;
 			}
 	}
+
+	function generar_pdf()
+	{
+		$TFA['TC'] = 'NC';
+		$TFA['Serie'] = '001003';
+		$TFA['Autorizacion'] = '0604202201070216417900110010030000006691234567814';
+		$TFA['Factura'] = '669';
+		$TFA['Serie_NC'] = '001003';
+		$TFA['Nota_Credito'] = '71';
+		$TFA['CodigoC'] = '1792558662';
+
+		$TFA['Fecha_NC'] = '2012-12-03';
+
+		$TFA['Fecha'] = '2012-01-03';
+		$TFA['Autorizacion_NC'] = '0902202304070216417900110010030000000711234567818';
+		$TFA['ClaveAcceso_NC']  = '0902202304070216417900110010030000000711234567818';
+		$TFA['Porc_IVA'] = '12';
+		$TFA['Descuento']=0;
+		$TFA['Descuento2'] = 0;
+		$TFA['IVA'] = '0';
+		$TFA['Total_MN'] = 0;
+		$TFA['Nota'] = '- Nota de Crédito de: VACA PRIETO WALTER JALIL';
+
+
+		//$FA['Autorizacion_NC'] = $parametros['TextBanco'];
+		//
+
+		
+
+		 $this->modelo->pdf_nota_credito($TFA);
+	}
+		        	 
 }
 ?>

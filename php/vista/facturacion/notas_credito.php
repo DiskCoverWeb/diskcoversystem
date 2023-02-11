@@ -165,8 +165,30 @@ function DCLineas(cta_cxp)
       dataType:'json', 
       success: function(data)
       {
-      console.log(data);         
+      // console.log(data);         
        llenarComboList(data,'DCLineas');
+       $('#TextBanco').val(data[0].Autorizacion);
+       $('#TextCheqNo').val(data[0].codigo);
+       numero_autorizacion();
+      }
+    });
+}
+
+
+function numero_autorizacion()
+{
+  var parametros = 
+  {
+    'serie':$('#DCLineas').val(),
+  }
+     $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/notas_creditoC.php?numero_autorizacion=true',
+      data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+        $('#TextCompRet').val(data);
       }
     });
 }
@@ -282,9 +304,8 @@ function Detalle_Factura(Factura=false,Serie=false,TC=false,codigoC=false)
       {
         
         $('#TxtAutorizacion').val(data[0].Autorizacion);
-        $('#LblTotal').val(data[0].Saldo_MN); 
-        $('#LblSaldo').val(data[0].Total_MN); 
-        $('#LblSaldo').val(data[0].Total_MN); 
+        $('#LblTotal').val(data[0].Total_MN); 
+        $('#LblSaldo').val(data[0].Saldo_MN); 
         Lineas_Factura(Factura,Serie,TC,data[0].Autorizacion)
         cargar_tabla();
          
@@ -394,6 +415,34 @@ function TextDesc_lost()
     });
 }
 
+function generar_pdf()
+{
+  $.ajax({
+    type: "POST",
+    url: '../controlador/facturacion/notas_creditoC.php?generar_pdf=true',
+    //data: datos,
+    dataType:'json', 
+    success: function(data)
+    {
+      if(data.respuesta == 1)
+        {
+            Swal.fire({
+                type: 'success',
+                title: 'Factura Procesada y Autorizada',
+                confirmButtonText: 'Ok!',
+                allowOutsideClick: false,
+            }).then(function() {
+                var url = '../../TEMP/' + data.pdf + '.pdf';
+                window.open(url, '_blank'); 
+                location.reload();
+
+            })
+        }
+      cargar_tabla();         
+    }
+  });
+}
+
 function generar_nc()
 {
   if($('#DCContraCta').val()=='')
@@ -401,7 +450,10 @@ function generar_nc()
     Swal.fire('Contra Cuenta a aplicar a la Nota de Credito','','info')
     return false;
   }
+  $('#myModal_espera').modal('show');
+  var cliente = $('#DCClientes option:selected').text();
   datos = $('#form_nc').serialize();  
+  datos = datos+'&Cliente='+cliente;
   $.ajax({
     type: "POST",
     url: '../controlador/facturacion/notas_creditoC.php?generar_nota_credito=true',
@@ -409,17 +461,20 @@ function generar_nc()
     dataType:'json', 
     success: function(data)
     {
-      if(data==-3)
+      $('#myModal_espera').modal('hide');
+      if(data.respuesta == 1)
       {
-        Swal.fire('el producto ya sea ingresado','','info')
-      }
-      if(data==-2)
-      {
-        Swal.fire('No se puede proceder <br> El Saldo Pendiente es menor que el total de la Nota de Credito','','info');
-      }
-      if(data==1)
-      {
-        Swal.fire('Proceso Terminado con éxito','','success');
+          Swal.fire({
+              type: 'success',
+              title: 'Nota de Credito Procesada y Autorizada',
+              confirmButtonText: 'Ok!',
+              allowOutsideClick: false,
+          }).then(function() {
+              var url = '../../TEMP/' + data.pdf + '.pdf';
+              window.open(url, '_blank'); 
+              location.reload();
+
+          })
       }
       cargar_tabla();         
     }
@@ -716,6 +771,11 @@ function eliminar(CODIGO,A_NO)
 			<br>
 			Nota de credito
 		</button>
+    <!-- <button type="button" class="btn btn-default" onclick="generar_pdf()">
+      <img src="../../img/png/grabar.png">
+      <br>
+      Nota de credito
+    </button> -->
 	</div>
 </div>
 </form>
