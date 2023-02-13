@@ -462,20 +462,41 @@ function generar_nc()
     success: function(data)
     {
       $('#myModal_espera').modal('hide');
-      if(data.respuesta == 1)
-      {
+      
+        if(data.respuesta==1)
+        { 
           Swal.fire({
-              type: 'success',
-              title: 'Nota de Credito Procesada y Autorizada',
-              confirmButtonText: 'Ok!',
-              allowOutsideClick: false,
-          }).then(function() {
-              var url = '../../TEMP/' + data.pdf + '.pdf';
-              window.open(url, '_blank'); 
-              location.reload();
+            type:'success',
+            title: 'Nota de Credito Procesada y Autorizada',
+            confirmButtonText: 'Ok!',
+            allowOutsideClick: false,
+          }).then(function(){
+            var url=  '../../TEMP/'+data.pdf+'.pdf';
+            window.open(url, '_blank'); 
+            location.reload();    
 
           })
-      }
+        }else if(data.respuesta==-1)
+        {
+
+          Swal.fire('XML DEVUELTO:'+data.text,'XML DEVUELTO','error').then(function(){ 
+            var url=  '../../TEMP/'+data.pdf+'.pdf';    window.open(url, '_blank');   
+            tipo_error_sri(data.clave);
+          }); 
+        }else if(data.respuesta==2)
+        {
+          // tipo_error_comprobante(clave)
+          Swal.fire('XML devuelto','','error'); 
+          tipo_error_sri(data.clave);
+        }
+        else if(data.respuesta==4)
+        {
+          Swal.fire('SRI intermitente intente mas tarde','','info');  
+        }else
+        {
+          Swal.fire('XML devuelto por:'+data.text,'','error');  
+        }         
+
       cargar_tabla();         
     }
   });
