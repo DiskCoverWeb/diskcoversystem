@@ -1,10 +1,118 @@
-<?php  @session_start();  date_default_timezone_set('America/Guayaquil');  //print_r($_SESSION['INGRESO']);die();?>
+<?php  @session_start();  date_default_timezone_set('America/Guayaquil');  //print_r($_SESSION['INGRESO']);die();
+$tipo='';
+?>
 <script type="text/javascript">
 
   $(document).ready(function()
   {
+  	catalogoLineas();
+  	cargar_registros();
+  	autocmpletar_cliente()
+  })
 
+   function cargar_registros()
+   {   
+    var serie = $('#DCLinea').val();
+    if(serie!='' && serie!='.')
+    {
+     var serie = serie.split(' ');
+     var serie = serie[1];
+    }else
+    {
+      serie = '';
+    }
+    var tipo = '<?php echo $tipo; ?>'
+    var parametros = 
+    {
+      'ci':$('#ddl_cliente').val(),
+      'desde':$('#txt_desde').val(),
+      'hasta':$('#txt_hasta').val(),
+      'tipo':tipo,
+      'serie':serie,
+    }
+     $.ajax({
+       data:  {parametros:parametros},
+      url:   '../controlador/facturacion/lista_retencionesC.php?tabla=true',
+      type:  'post',
+      dataType: 'json',
+      beforeSend: function () {
+        $("#tbl_tabla").html('<tr class="text-center"><td colspan="16"><img src="../../img/gif/loader4.1.gif" width="20%">');
+      },
+       success:  function (response) { 
+        // console.log(response);
+       $('#tbl_tabla').html(response);
+       $('#myModal_espera').modal('hide');
+      }
+    });
+
+   }
+
+
+
+  function autocmpletar_cliente(){
+  	   var g = '.';
+      $('#ddl_cliente').select2({
+        placeholder: 'RUC / CI / Nombre',
+        width:'resolve',
+	    // minimumResultsForSearch: Infinity,
+        ajax: {
+          url: '../controlador/facturacion/lista_facturasC.php?clientes2=true&g='+g,
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {           
+            return {
+              results: data
+            };
+          },
+          cache: true
+        }
+      });
   }
+
+
+function catalogoLineas(){
+    fechaEmision = fecha_actual();
+    fechaVencimiento = fecha_actual();
+    $.ajax({
+      type: "POST",                 
+      url: '../controlador/facturacion/facturar_pensionC.php?catalogo=true',
+      data: {'fechaVencimiento' : fechaVencimiento , 'fechaEmision' : fechaEmision},      
+      dataType:'json', 
+      success: function(data)             
+      {
+        if (data.length>0) {
+          datos = data;
+          // Limpiamos el select
+          console.log(datos);
+          $("#DCLinea").find('option').remove();
+          if(data.length>1)
+          {
+            $("#DCLinea").append('<option value="">Todos</option>');
+          }
+          data.forEach(function(item,i){
+            serie = item.id.split(' ');
+            serie = serie[1];
+             $("#DCLinea").append('<option value="' + item.id +" "+item.text+ ' ">' + serie + '</option>');
+
+            // console.log(item);
+             // console.log(i);
+          })
+        }else{
+          Swal.fire({
+            type:'info',
+            title: 'Usted no tiene un punto de venta asignado o esta mal configurado, contacte con la administracion del sistema',
+            text:'',
+            allowOutsideClick: false,
+          }).then(()=>{
+            console.log('ingresa');
+                location.href = '../vista/modulos.php';
+              });
+
+        }         
+      }
+    });
+  }
+
   </script>
 
   <div class="row">
@@ -24,9 +132,9 @@
 </div>
 		<div class="row">
       <form id="filtros">    			
-          <div class="col-sm-4">
-            <b>CI / RUC</b>
-            <select class="form-control input-xs" id="ddl_cliente" name="ddl_cliente" onchange="periodos(this.value);rangos();">
+          <div class="col-sm-5">
+            <b>Nombre</b>
+            <select class="form-control input-xs" id="ddl_cliente" name="ddl_cliente">
               <option value="">Seleccione Cliente</option>
             </select>
           </div>
@@ -45,7 +153,7 @@
               <input type="date" name="txt_hasta" id="txt_hasta" class="form-control input-xs">            
           </div>    			
     			<div class="col-sm-2"><br>
-    				<button class="btn btn-primary btn-xs" type="button" onclick="validar()"><i class="fa fa-search"></i> Buscar</button>
+    				<button class="btn btn-primary btn-xs" type="button" onclick="cargar_registros();"><i class="fa fa-search"></i> Buscar</button>
     			</div>
       </form>
 
@@ -71,7 +179,7 @@
     </div>
 	<div class="row">
     <div class="col-sm-6">
-      <h2 style="margin-top: 0px;">Listado de facturas</h2>
+      <h2 style="margin-top: 0px;">Listado de retenciones</h2>
     </div>
     <div class="col-sm-6 text-right" id="panel_pag">
       

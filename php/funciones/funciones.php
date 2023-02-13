@@ -47,6 +47,79 @@ function ip()
 
 }
 
+function Empresa_data()
+ {
+  $conn = new db();
+  $cid= $conn->conexion();
+   $sql = "SELECT * FROM Empresas where Item='".$_SESSION['INGRESO']['item']."'";
+   $stmt = sqlsrv_query($cid, $sql);
+    if( $stmt === false)  
+      {  
+       echo "Error en consulta PA.\n";  
+       return '';
+       die( print_r( sqlsrv_errors(), true));  
+      }
+
+    $result = array();  
+    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC)) 
+      {
+      $result[] = $row;
+      //echo $row[0];
+      }
+
+     // $result =  encode($result);
+      // print_r($result);
+      return $result;
+ }
+
+ function Cliente($cod,$grupo = false,$query=false,$clave=false)
+ {
+   $conn = new db();
+   $cid= $conn->conexion();
+   $sql = "SELECT * from Clientes WHERE 1=1";
+   if($cod){
+    $sql.=" and Codigo= '".$cod."'";
+   }
+   if($grupo)
+   {
+    $sql.=" and Grupo= '".$grupo."'";
+   }
+   if($query)
+   {
+    $sql.=" and Cliente +' '+ CI_RUC like '%".$query."%'";
+   }
+   if($clave)
+   {
+    $sql.=" and Clave= '".$clave."'";
+   }
+
+   $sql.=" ORDER BY ID OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
+  
+
+   // print_r($sql);
+   $stmt = sqlsrv_query($cid, $sql);
+    if( $stmt === false)  
+      {  
+       echo "Error en consulta PA.\n";  
+       return '';
+       die( print_r( sqlsrv_errors(), true));  
+      }
+
+    $result = array();  
+    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC)) 
+      {
+      $result[] = $row;
+      //echo $row[0];
+      }
+
+     // $result =  encode($result);
+      // print_r($result);
+      return $result;
+ }
+
+
+
+
 // clave aleatoria 
 function generate_clave($strength = 16) {
   $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
