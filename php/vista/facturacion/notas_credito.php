@@ -463,11 +463,24 @@ function generar_nc()
     {
       $('#myModal_espera').modal('hide');
       
-        if(data.respuesta==1)
+        if(data.respuesta==1 && data.clave!='')
         { 
           Swal.fire({
             type:'success',
             title: 'Nota de Credito Procesada y Autorizada',
+            confirmButtonText: 'Ok!',
+            allowOutsideClick: false,
+          }).then(function(){
+            var url=  '../../TEMP/'+data.pdf+'.pdf';
+            window.open(url, '_blank'); 
+            location.reload();    
+
+          })
+        }else if(data.respuesta==1 && data.clave=='')
+        { 
+          Swal.fire({
+            type:'success',
+            title: 'Nota de Credito Procesada',
             confirmButtonText: 'Ok!',
             allowOutsideClick: false,
           }).then(function(){

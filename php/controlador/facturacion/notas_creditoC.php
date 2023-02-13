@@ -708,7 +708,7 @@ class notas_creditoC
 			        // hay que generar esta funcion o proceso almacenado        
 			        // Actualizar_Saldos_Facturas_SP($FA['TC'],$FA['Serie'],$FA['Factura']);
 
-			        return 1;
+			        return array('respuesta'=>1,'pdf'=>$FA['Serie_NC'].'-'.generaCeros($FA['Nota_Credito'],7),'clave'=>'');
 
 			        // esto pasasr avista
 			        
