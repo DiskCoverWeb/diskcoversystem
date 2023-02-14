@@ -1,6 +1,8 @@
 <?php 
 require_once(dirname(__DIR__,2)."/db/db1.php");
 require_once(dirname(__DIR__,2)."/funciones/funciones.php");
+require_once(dirname(__DIR__,3)."/lib/fpdf/reporte_de.php");
+require_once(dirname(__DIR__,3)."/lib/phpmailer/enviar_emails.php");
 	
 /**
  * 
@@ -11,6 +13,7 @@ class notas_creditoM
 	function __construct()
 	{		
       $this->db = new db();
+      $this->pdf = new cabecera_pdf(); 
 	}
 
 
@@ -48,14 +51,16 @@ class notas_creditoM
        	{
        		$sql.=" AND C.Codigo = '".$codigo."' ";
        	} 
-       	$sql.="GROUP BY C.Grupo, C.Codigo, C.Cliente, F.Cta_CxP 
+       	$sql.=" GROUP BY C.Grupo, C.Codigo, C.Cliente, F.Cta_CxP 
        	ORDER BY C.Cliente ";
+
+       	// print_r($sql);die();
        	return $this->db->datos($sql);
    }
 
    function DClineas($MBoxFecha,$Cta_CxP)
    {
-   	   $sql = "SELECT Codigo, Concepto, CxC 
+   	   $sql = "SELECT Codigo, Concepto, CxC,Serie,Autorizacion  
        FROM Catalogo_Lineas 
        WHERE Fact = 'NC' 
        AND Item = '".$_SESSION['INGRESO']['item']."' 
@@ -175,9 +180,9 @@ class notas_creditoM
 
 	}
 
-	function Factura_detalle($Factura,$Serie,$TC,$CodigoC)
+	function Factura_detalle($Factura,$Serie,$TC)
 	{
-	  $sql = "SELECT T,Fecha,Cta_CxP,Cod_CxC,Porc_IVA,Total_MN,Saldo_MN,IVA,Autorizacion 
+	  $sql = "SELECT T,Fecha,Cta_CxP,Cod_CxC,Porc_IVA,Total_MN,Saldo_MN,IVA,Autorizacion,Descuento 
 	     FROM Facturas 
 	     WHERE Item = '".$_SESSION['INGRESO']['item']."' 
 	     AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
@@ -259,6 +264,132 @@ class notas_creditoM
      	}
 	  	return $this->db->String_Sql($sql);
 	}
+
+	function pdf_nota_credito($TFA)
+	{
+		$sql = "SELECT *
+		    FROM Trans_Abonos
+		    WHERE Item = '".$_SESSION['INGRESO']['item']."'
+		    AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		    AND TP = '".$TFA['TC']."'
+		    AND Serie = '".$TFA['Serie']."'
+		    AND Autorizacion = '".$TFA['Autorizacion']."'
+		    AND Factura = ".$TFA['Factura']."
+		    AND Banco = 'NOTA DE CREDITO'
+		    ORDER BY Cheque DESC ";
+
+		  $AdoDBDet = $this->db->datos($sql);
+		  if(count($AdoDBDet))
+		  {
+		  	$TFA['Fecha_NC'] = $AdoDBDet[0]["Fecha"];
+		    $TFA['Serie_NC'] = $AdoDBDet[0]["Serie_NC"];
+		    $TFA['ClaveAcceso_NC'] = $AdoDBDet[0]["Clave_Acceso_NC"];
+		    $TFA['Autorizacion_NC'] = $AdoDBDet[0]["Autorizacion_NC"];
+		    $TFA['Nota_Credito'] = $AdoDBDet[0]["Secuencial_NC"];
+			foreach ($AdoDBDet as $key => $value) {
+				if($value['Cheque']=='I.V.A')
+				{
+					$TFA['Total_IVA_NC'] = $TFA['Total_IVA_NC']+ $value["Abono"];
+				}else
+				{
+					$TFA['SubTotal_NC']= $TFA['SubTotal_NC']+ $value["Abono"];
+				}
+			}
+		     
+		  }
+
+		$sql = "SELECT Autorizacion, Codigo_Inv, Producto, Cantidad, Precio, Total, Total_IVA, Descuento, Cta_Devolucion, CodBodega, Porc_IVA, Mes, Mes_No , Anio, ID
+		    FROM Detalle_Nota_Credito
+		    WHERE Item = '".$_SESSION['INGRESO']['item']."'
+		    AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		    AND Serie = '".$TFA['Serie_NC']."'
+		    AND Secuencial = ".$TFA['Nota_Credito']."
+		    ORDER BY ID ";
+		$AdoDBDetFA = $this->db->datos($sql);
+
+
+		$tipo_con = Tipo_Contribuyente_SP_MYSQL($_SESSION['INGRESO']['RUC']);
+		  if(count($AdoDBDetFA)>0 && count($tipo_con)>0)
+		  {
+		    $TFA['Tipo_contribuyente'] = $tipo_con;
+		  }
+		  $sucursal = $this->catalogo_lineas_('NC',$TFA['Serie_NC']);
+		$datos_cli_edu=$this->Cliente($TFA['CodigoC']);
+	    
+	    //$archivos = array('0'=>$nombre_archivo.'.pdf','1'=>$TFA['Autorizacion_GR'].'.xml');
+	    $to_correo = '';
+	    if(count($datos_cli_edu)>0)
+	    {
+	      if($datos_cli_edu[0]['Email']!='.' && $datos_cli_edu[0]['Email']!='')
+	      {
+	        $to_correo.= $datos_cli_edu[0]['Email'].',';
+	      }
+	      if($datos_cli_edu[0]['Email2']!='.' && $datos_cli_edu[0]['Email2']!='')
+	      {
+	        $to_correo.= $datos_cli_edu[0]['Email2'].',';
+	      }
+	      if($datos_cli_edu[0]['EmailR']!='.' && $datos_cli_edu[0]['EmailR']!='')
+	      {
+	        $to_correo.= $datos_cli_edu[0]['EmailR'].',';
+	      }
+	      // $to_correo = substr($to_correo, 0,-1);
+	    }
+
+	    // print_r($TFA);	    
+	    // print_r($AdoDBDetFA);
+	    // print_r($AdoDBDet);
+	    // print_r($datos_cli_edu);
+	    // die();
+    
+
+		imprimirDocEle_NC($TFA,$AdoDBDetFA,$datos_cli_edu,$matri=false,$nombre='ddddd',$formato=null,$nombre_archivo=null,$va=null,$imp1=1,$AdoDBDet=false,$sucursal=array());
+	}
+
+  function Cliente($cod,$grupo = false,$query=false,$clave=false)
+   {
+     $sql = "SELECT * from Clientes WHERE 1=1 ";
+     if($cod){
+      $sql.=" and Codigo= '".$cod."'";
+     }
+     if($grupo)
+     {
+      $sql.=" and Grupo= '".$grupo."'";
+     }
+     if($query)
+     {
+      $sql.=" and Cliente +' '+ CI_RUC like '%".$query."%'";
+     }
+     if($clave)
+     {
+      $sql.=" and Clave= '".$clave."'";
+     }
+
+     $sql.=" ORDER BY ID OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
+
+     $result = $this->db->datos($sql);
+
+       // $result =  encode($result);
+        // print_r($result);
+        return $result;
+   }
+
+
+  function catalogo_lineas_($TC,$SerieFactura)
+  {
+    $sql = "SELECT *
+         FROM Catalogo_Lineas
+         WHERE Item = '".$_SESSION['INGRESO']['item']."'
+         AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+         AND Fact = '".$TC."'
+         AND Serie = '".$SerieFactura."'
+         AND Autorizacion = '".$_SESSION['INGRESO']['RUC']."'
+         AND TL <> 0
+         ORDER BY Codigo ";
+         // print_r($sql);die();
+    return $this->db->datos($sql);
+
+  }
+
 
 }
 ?>

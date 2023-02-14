@@ -423,11 +423,19 @@ function variables_sistema($EmpresaEntidad,$NombreEmp,$ItemEmp)
         $_SESSION['INGRESO']['Dec_PVP'] = $empresa[0]['Dec_PVP'];
         $_SESSION['INGRESO']['Dec_Costo'] = $empresa[0]['Dec_Costo'];
         $_SESSION['INGRESO']['Cotizacion'] = $empresa[0]['Cotizacion'];        
-        $_SESSION['INGRESO']['Servicio'] = $empresa[0]['Servicio'];
+        $_SESSION['INGRESO']['Servicio'] = $empresa[0]['Servicio'];     
+
+        if(is_object($empresa[0]['Fecha_Igualar']))
+        {
+            $_SESSION['INGRESO']['Fecha_Igualar'] = $empresa[0]['Fecha_Igualar']->format('Y-m-d');
+        }else{
+            $_SESSION['INGRESO']['Fecha_Igualar'] = $empresa[0]['Fecha_Igualar'];
+        }
         // print_r($empresa_d);die();
         $_SESSION['INGRESO']['Ciudad'] = $empresa[0]['Ciudad'];;       
         $_SESSION['INGRESO']['accesoe']='0';
         $_SESSION['INGRESO']['Email_Conexion']=$empresa[0]['Email_Conexion'];
+        $_SESSION['INGRESO']['Email_Procesos']=$empresa[0]['Email_Procesos'];
         $_SESSION['INGRESO']['Impresora_Rodillo']=$empresa[0]['Impresora_Rodillo'];
 
 	  $_SESSION['INGRESO']['Email_Contrasena']=$empresa[0]['Email_Contraseña'];

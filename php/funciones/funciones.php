@@ -47,6 +47,79 @@ function ip()
 
 }
 
+function Empresa_data()
+ {
+  $conn = new db();
+  $cid= $conn->conexion();
+   $sql = "SELECT * FROM Empresas where Item='".$_SESSION['INGRESO']['item']."'";
+   $stmt = sqlsrv_query($cid, $sql);
+    if( $stmt === false)  
+      {  
+       echo "Error en consulta PA.\n";  
+       return '';
+       die( print_r( sqlsrv_errors(), true));  
+      }
+
+    $result = array();  
+    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC)) 
+      {
+      $result[] = $row;
+      //echo $row[0];
+      }
+
+     // $result =  encode($result);
+      // print_r($result);
+      return $result;
+ }
+
+ function Cliente($cod,$grupo = false,$query=false,$clave=false)
+ {
+   $conn = new db();
+   $cid= $conn->conexion();
+   $sql = "SELECT * from Clientes WHERE 1=1";
+   if($cod){
+    $sql.=" and Codigo= '".$cod."'";
+   }
+   if($grupo)
+   {
+    $sql.=" and Grupo= '".$grupo."'";
+   }
+   if($query)
+   {
+    $sql.=" and Cliente +' '+ CI_RUC like '%".$query."%'";
+   }
+   if($clave)
+   {
+    $sql.=" and Clave= '".$clave."'";
+   }
+
+   $sql.=" ORDER BY ID OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
+  
+
+   // print_r($sql);
+   $stmt = sqlsrv_query($cid, $sql);
+    if( $stmt === false)  
+      {  
+       echo "Error en consulta PA.\n";  
+       return '';
+       die( print_r( sqlsrv_errors(), true));  
+      }
+
+    $result = array();  
+    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC)) 
+      {
+      $result[] = $row;
+      //echo $row[0];
+      }
+
+     // $result =  encode($result);
+      // print_r($result);
+      return $result;
+ }
+
+
+
+
 // clave aleatoria 
 function generate_clave($strength = 16) {
   $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -9648,6 +9721,10 @@ function BuscarFecha($FechaStr)
   }else{
 
      if($_SESSION['INGRESO']['Tipo_Base']=='SQLSERVER' || $_SESSION['INGRESO']['Tipo_Base']== 'SQL SERVER'){
+      if(is_object($FechaStr))
+      {
+        $FechaStr = $FechaStr->format('Y-m-d');
+      }
       $newDate = date("Ymd", strtotime($FechaStr));
 
         return $newDate;     
@@ -10934,6 +11011,21 @@ function CambioCodigoCta($Codigo){
   return $Codigo_Cta;
 }
 
+function CambioCodigoCtaSup($Codigo)
+{
+  $CadAux = ""; 
+  $Bandera = True;
+  $LongCta = strLen($Codigo);
+  While (($LongCta > 0) And $Bandera)
+  {
+     if (substr($Codigo, $LongCta, 1) == "."){$Bandera = False;}
+     $LongCta = $LongCta - 1;
+  }
+  if($LongCta < 1){ $CadAux = "0"; }else{ $CadAux = substr($Codigo, 1, $LongCta);}
+  return  $CadAux;
+
+}
+
 
 
 function Validar_Porc_IVA($FechaIVA)
@@ -11174,6 +11266,229 @@ function variables_tipo_factura()
     );
 
    return $FA;
+}
+
+
+function Leer_Datos_FA_NV($TFA)
+{
+    $conn = new db();
+    $TFA['Fecha_Aut_GR'] = date('Y-m-d');
+    $TFA['Hora_GR'] = date('H:i:s');
+    $TFA['Estado_SRI_GR'] = G_NINGUNO;
+    $TFA['Serie_GR'] = G_NINGUNO;
+    $TFA['ClaveAcceso_GR'] = G_NINGUNO;
+    $TFA['Autorizacion_GR'] = G_NINGUNO;
+    $TFA['Vendedor'] = G_NINGUNO;
+    $TFA['Remision'] = 0;
+    $TFA['Comercial'] = G_NINGUNO;
+    $TFA['CIRUCComercial'] = G_NINGUNO;
+    $TFA['CIRUCEntrega'] = G_NINGUNO;
+    $TFA['Entrega'] = G_NINGUNO;
+    $TFA['CiudadGRI'] = G_NINGUNO;
+    $TFA['CiudadGRF'] = G_NINGUNO;
+    $TFA['Serie_GR'] = G_NINGUNO;
+    $TFA['FechaGRE'] = date('Y-m-d');
+    $TFA['FechaGRI'] = date('Y-m-d');
+    $TFA['FechaGRF'] = date('Y-m-d');
+    $TFA['Pedido'] = G_NINGUNO;
+    $TFA['Zona'] = G_NINGUNO;
+    $TFA['Orden_Compra'] = 0;
+    $TFA['Placa_Vehiculo'] = G_NINGUNO;
+    $TFA['Lugar_Entrega'] = G_NINGUNO;
+    $TFA['Descuento_X'] = 0;
+    $TFA['Descuento_0'] = 0;
+    $TFA['Gavetas'] = 0;
+    $TFA['Servicio'] = 0;
+    $TFA['EsPorReembolso'] = False;
+
+    $sql = "SELECT F.*,C.Cliente,C.CI_RUC,C.TD,C.Grupo,C.Direccion,C.DireccionT,C.Celular,C.Codigo,C.Ciudad,C.Email,C.Email2,C.EmailR,
+        C.Contacto,C.DirNumero,C.Fecha As Fecha_C 
+        FROM Facturas As F, Clientes As C 
+        WHERE F.Item = '".$_SESSION['INGRESO']['item']."' 
+        AND F.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+        AND F.TC = '".$TFA['TC']. "' 
+        AND F.Serie = '".$TFA['Serie']. "' 
+        AND F.Autorizacion = '".$TFA['Autorizacion']. "' 
+        AND F.Factura = ".$TFA['Factura']." 
+        AND C.Codigo = F.CodigoC ";
+    $AdoDBFac = $conn->datos($sql);
+    if(count($AdoDBFac) > 0)
+    {
+    
+        // 'Datos del SRI
+         $TFA['Si_Existe_Doc'] = True;
+         $TFA['T'] = $AdoDBFac[0]["T"];
+         $TFA['SP'] = $AdoDBFac[0]["SP"];
+         $TFA['Porc_IVA'] = $AdoDBFac[0]["Porc_IVA"];
+         $TFA['Porc_IVA_S'] = $AdoDBFac[0]["Porc_IVA"] * 100;
+         $TFA['Cta_CxP'] = $AdoDBFac[0]["Cta_CxP"];
+         $TFA['Cod_CxC'] = $AdoDBFac[0]["Cod_CxC"];
+         $TFA['Estado_SRI'] = $AdoDBFac[0]["Estado_SRI"];
+         $TFA['Error_SRI'] = $AdoDBFac[0]["Error_FA_SRI"];
+         $TFA['ClaveAcceso'] = $AdoDBFac[0]["Clave_Acceso"];
+         $TFA['CodigoU'] = $AdoDBFac[0]["CodigoU"];
+                
+        // 'Encabezado de Facturas
+         $TFA['CodigoC'] = $AdoDBFac[0]["CodigoC"];
+         $TFA['Contacto'] = $AdoDBFac[0]["Contacto"];
+         $TFA['Cliente'] = $AdoDBFac[0]["Cliente"];
+         $TFA['CI_RUC'] = $AdoDBFac[0]["CI_RUC"];
+         $TFA['TD'] = $AdoDBFac[0]["TD"];
+         $TFA['Razon_Social'] = $AdoDBFac[0]["Razon_Social"];
+         $TFA['RUC_CI'] = $AdoDBFac[0]["RUC_CI"];
+         $TFA['TB'] = $AdoDBFac[0]["TB"];
+         $TFA['DireccionC'] = $AdoDBFac[0]["Direccion_RS"];
+         $TFA['TelefonoC'] = $AdoDBFac[0]["Telefono_RS"];
+         $TFA['DirNumero'] = $AdoDBFac[0]["DirNumero"];
+         $TFA['Curso'] = $AdoDBFac[0]["Direccion"];
+         $TFA['CiudadC'] = $AdoDBFac[0]["Ciudad"];
+         $TFA['Grupo'] = $AdoDBFac[0]["Grupo"];
+         $TFA['Cod_Ejec'] = $AdoDBFac[0]["Cod_Ejec"];
+         $TFA['Imp_Mes'] = $AdoDBFac[0]["Imp_Mes"];
+         $TFA['Fecha'] = $AdoDBFac[0]["Fecha"];
+         $TFA['Fecha_V'] = $AdoDBFac[0]["Fecha_V"];
+         $TFA['Fecha_C'] = $AdoDBFac[0]["Fecha_C"];
+         $TFA['Fecha_Aut'] = $AdoDBFac[0]["Fecha_Aut"];
+         $TFA['Hora'] = $AdoDBFac[0]["Hora"];
+         $TFA['Tipo_Pago'] = $AdoDBFac[0]["Tipo_Pago"];
+         $TFA['EmailC'] = $AdoDBFac[0]["Email"];
+         $TFA['EmailR'] = $AdoDBFac[0]["EmailR"];
+         $TFA['Observacion'] = $AdoDBFac[0]["Observacion"];
+         $TFA['Nota'] = $AdoDBFac[0]["Nota"];
+         $TFA['Orden_Compra'] = $AdoDBFac[0]["Orden_Compra"];
+         $TFA['Gavetas'] = $AdoDBFac[0]["Gavetas"];
+         if($TFA['EmailR'] == G_NINGUNO){$TFA['EmailR'] = $_SESSION['INGRESO']['Email_Procesos'];}
+
+        // 'SubTotales de la Factura
+         $TFA['Descuento'] = $AdoDBFac[0]["Descuento"];
+         $TFA['Descuento2'] = $AdoDBFac[0]["Descuento2"];
+         $TFA['Descuento_0'] = $AdoDBFac[0]["Desc_0"];
+         $TFA['Descuento_X'] = $AdoDBFac[0]["Desc_X"];
+         $TFA['SubTotal'] = $AdoDBFac[0]["SubTotal"];
+         $TFA['Total_IVA'] = $AdoDBFac[0]["IVA"];
+         $TFA['Con_IVA'] = $AdoDBFac[0]["Con_IVA"];
+         $TFA['Sin_IVA'] = $AdoDBFac[0]["Sin_IVA"];
+         $TFA['Servicio'] = $AdoDBFac[0]["Servicio"];
+         $TFA['Total_MN'] = $AdoDBFac[0]["Total_MN"];
+         $TFA['Saldo_MN'] = $AdoDBFac[0]["Saldo_MN"];
+         $TFA['Saldo_Actual'] = $AdoDBFac[0]["Saldo_MN"];
+         $TFA['Total_Descuento'] = $TFA['Descuento'] + $TFA['Descuento2'];
+    }
+            
+         $sql = "SELECT *
+         FROM Facturas_Auxiliares
+         WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+         AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+         AND Remision <> 0
+         AND TC = '".$TFA['TC']."'
+         AND Serie = '".$TFA['Serie']."'
+         AND Autorizacion = '".$TFA['Autorizacion']."'
+         AND Factura = ".$TFA['Factura']." ";
+
+         $AdoDBFac = $conn->datos($sql);
+
+         if(count($AdoDBFac) > 0)
+         {
+            // 'Guia de Remision
+             $TFA['Fecha_Aut_GR'] = $AdoDBFac[0]["Fecha_Aut_GR"];
+             $TFA['Hora_GR'] = $AdoDBFac[0]["Hora_Aut_GR"];
+             $TFA['Estado_SRI_GR'] = $AdoDBFac[0]["Estado_SRI_GR"];
+             $TFA['Serie_GR'] = $AdoDBFac[0]["Serie_GR"];
+             $TFA['ClaveAcceso_GR ']= $AdoDBFac[0]["Clave_Acceso_GR"];
+             $TFA['Autorizacion_GR'] = $AdoDBFac[0]["Autorizacion_GR"];
+             $TFA['Remision'] = $AdoDBFac[0]["Remision"];
+             $TFA['Comercial'] = $AdoDBFac[0]["Comercial"];
+             $TFA['CIRUCComercial'] = $AdoDBFac[0]["CIRUC_Comercial"];
+             $TFA['CIRUCEntrega ']= $AdoDBFac[0]["CIRUC_Entrega"];
+             $TFA['Entrega'] = $AdoDBFac[0]["Entrega"];
+             $TFA['CiudadGRI'] = $AdoDBFac[0]["CiudadGRI"];
+             $TFA['CiudadGRF'] = $AdoDBFac[0]["CiudadGRF"];
+             $TFA['Serie_GR'] = $AdoDBFac[0]["Serie_GR"];
+             $TFA['FechaGRE'] = $AdoDBFac[0]["FechaGRE"];
+             $TFA['FechaGRI'] = $AdoDBFac[0]["FechaGRI"];
+             $TFA['FechaGRF'] = $AdoDBFac[0]["FechaGRF"];
+             $TFA['Pedido'] = $AdoDBFac[0]["Pedido"];
+             $TFA['Zona'] = $AdoDBFac[0]["Zona"];
+             $TFA['Orden_Compra'] = $AdoDBFac[0]["Orden_Compra"];
+             $TFA['Placa_Vehiculo'] = $AdoDBFac[0]["Placa_Vehiculo"];
+             $TFA['Lugar_Entrega'] = $AdoDBFac[0]["Lugar_Entrega"];
+         }
+            
+          $sql = "SELECT Direccion 
+              FROM Clientes 
+              WHERE CI_RUC = '".$TFA['CIRUCComercial']."' ";
+            $AdoDBFac = $conn->datos($sql);
+
+          if(count($AdoDBFac) > 0){ $TFA['Dir_PartidaGR'] = $AdoDBFac[0]["Direccion"];}
+          
+    
+        $sql = "SELECT Direccion 
+            FROM Clientes 
+            WHERE CI_RUC = '".$TFA['CIRUCEntrega']."' ";
+            $AdoDBFac = $conn->datos($sql);
+          if(count($AdoDBFac) > 0){  $TFA['Dir_EntregaGR'] = $AdoDBFac[0]["Direccion"];}
+    
+        $sql = "SELECT Nombre_Completo
+            FROM Accesos
+            WHERE Codigo = '".$TFA['Cod_Ejec']."' ";
+        $AdoDBFac = $conn->datos($sql);
+        if(count($AdoDBFac) > 0){ $TFA['Ejecutivo_Venta'] = $AdoDBFac[0]["Nombre_Completo"];}
+    
+        $sql = "SELECT Nombre_Completo 
+             FROM Accesos 
+             WHERE Codigo = '".$TFA['CodigoU']."' ";
+         $AdoDBFac = $conn->datos($sql);
+         if(count($AdoDBFac) > 0){  $TFA['Digitador'] = $AdoDBFac[0]["Nombre_Completo"];}
+       
+    
+        $sql = "SELECT Descripcion 
+            FROM Tabla_Referenciales_SRI 
+            WHERE Tipo_Referencia = 'FORMA DE PAGO' 
+            AND Codigo = '".$TFA['Tipo_Pago']."' ";
+        $AdoDBFac = $conn->datos($sql);
+        if(count($AdoDBFac) > 0){  $TFA['Tipo_Pago_Det'] = "Forma de Pago: ".strtoupper($AdoDBFac[0]["Descripcion"]);}
+        
+    
+        $sql = "SELECT * 
+            FROM Facturas_Formatos 
+            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+            AND TC = '".$TFA['TC']."' 
+            AND Serie = '".$TFA['Serie']."' 
+            AND Cod_CxC = '".$TFA['Cod_CxC']."' 
+            AND '".BuscarFecha($TFA['Fecha'])."' BETWEEN Fecha_Inicio and Fecha_Final 
+            ORDER BY Cod_CxC ";
+           $AdoDBFac = $conn->datos($sql);
+
+          if(count($AdoDBFac) > 0){       
+             $TFA['CxC_Clientes'] = $AdoDBFac[0]["Concepto"];
+             $TFA['LogoFactura'] = $AdoDBFac[0]["Formato_Factura"];
+             $TFA['AltoFactura'] = $AdoDBFac[0]["Largo"];
+             $TFA['AnchoFactura'] = $AdoDBFac[0]["Ancho"];
+             $TFA['EspacioFactura'] = $AdoDBFac[0]["Espacios"];
+             $TFA['Pos_Factura'] = $AdoDBFac[0]["Pos_Factura"];
+             $TFA['DireccionEstab'] = $AdoDBFac[0]["Direccion_Establecimiento"];
+             $TFA['NombreEstab'] = $AdoDBFac[0]["Nombre_Establecimiento"];
+             $TFA['TelefonoEstab'] = $AdoDBFac[0]["Telefono_Estab"];
+             $TFA['Vencimiento'] = $AdoDBFac[0]["Fecha_Final"];
+             $TFA['CantFact'] = $AdoDBFac[0]["Fact_Pag"];
+             $TFA['LogoTipoEstab'] = dirname(__DIR__)."\LOGOS\"".$AdoDBFac[0]["Logo_Tipo_Estab"].".jpg";
+          }
+    
+          $sql = "SELECT Codigo 
+               FROM Detalle_Factura 
+               WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+               AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+               AND Codigo = '99.41' 
+               AND TC = '".$TFA['TC']."' 
+               AND Serie = '".$TFA['Serie']."' 
+               AND Factura = ".$TFA['Factura']." ";
+         $AdoDBFac = $conn->datos($sql);
+         if(count($AdoDBFac) > 0){  $TFA['EsPorReembolso'] = True;}
+
+         return $TFA;
+          
+
 }
 
 

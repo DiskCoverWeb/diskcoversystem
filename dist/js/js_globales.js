@@ -265,3 +265,29 @@ function fecha_actual()
     var output = d.getFullYear() + '-' +((''+month).length<2 ? '0' : '') + month + '-' +((''+day).length<2 ? '0' : '') + day;
     return output;
 }
+
+ function tipo_error_sri(clave)
+  {
+    var parametros = 
+    {
+      'clave':clave,
+    }
+     $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/punto_ventaC.php?error_sri=true',
+      data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+        
+         console.log(data);
+        $('#myModal_sri_error').modal('show');
+        $('#sri_estado').text(data.estado[0]);
+        $('#sri_codigo').text(data.codigo[0]);
+        $('#sri_fecha').text(data.fecha[0]);
+        $('#sri_mensaje').text(data.mensaje[0]);
+        $('#sri_adicional').text(data.adicional[0]);
+        // $('#doc_xml').attr('href','')
+      }
+    });
+  }

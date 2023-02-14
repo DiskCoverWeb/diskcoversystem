@@ -377,7 +377,7 @@ INNER JOIN Clientes C ON F.CodigoC = C.Codigo WHERE 1=1 ";
 	      return $result;
    }
 
-    function Empresa_data()
+   function Empresa_data()
    {
    	$cid=$this->conn;
 	   $sql = "SELECT * FROM Empresas where Item='".$_SESSION['INGRESO']['item']."'";

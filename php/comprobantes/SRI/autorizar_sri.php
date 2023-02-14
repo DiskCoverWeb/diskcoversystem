@@ -452,6 +452,168 @@ class autorizacion_sri
 		return $datos;
 	}
 
+	function SRI_Crear_Clave_Acceso_Nota_Credito($TFA)
+	{
+		$Con_Inv = False;
+		$Autorizar_XML = True;
+    if(strlen($_SESSION['INGRESO']['Fecha_Igualar']) == 10)
+    {
+       if($TFA['Fecha']->format('Y-m-d') < $_SESSION['INGRESO']['Fecha_Igualar'] ){ $Autorizar_XML = False;}
+    }
+    
+   // 'Autorizamos la Nota de Credito
+    if($Autorizar_XML){
+		    
+		$TFA = Leer_Datos_FA_NV($TFA);
+
+		// print_r($TFA);die();
+		//    'NOTA DE CREDITO
+		$SubT_Con_Inv = False;
+		$Total_Sin_IVA = 0;
+		$Total_Con_IVA = 0;
+		$Total_Desc = 0;
+		$Total_Desc2 = 0;
+		$TFA['Total_IVA_NC'] = 0;
+		    
+	    $sql = "SELECT Autorizacion, Codigo_Inv, Producto, Cantidad, Precio, Total, Total_IVA, Descuento, Cta_Devolucion, CodBodega, Porc_IVA, Mes, Mes_No , Anio, ID
+	        FROM Detalle_Nota_Credito
+	        WHERE Item = '".$_SESSION['INGRESO']['item']."'
+	        AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+	        AND Serie = '".$TFA['Serie_NC']."'
+	        AND Secuencial = ".$TFA['Nota_Credito']."
+	        ORDER BY ID ";
+	    $AdoDBNC = $datos = $this->db->datos($sql);
+	    if(count($AdoDBNC)>0)
+	    {
+	    	$Con_Inv = True;
+	    	foreach ($AdoDBNC as $key => $value) {
+	    		$Total_Desc = $Total_Desc + $value["Descuento"];
+	            if($value["Total_IVA"] == 0){
+	                $Total_Sin_IVA = $Total_Sin_IVA + $value["Total"];
+	            }else{
+	                $Total_Con_IVA = $Total_Con_IVA + $value["Total"];
+	            }
+	            $TFA['Total_IVA_NC'] = $TFA['Total_IVA_NC'] + $value["Total_IVA"];	    		
+	    	}
+	    }
+	       
+		    if(count($AdoDBNC)<= 0 )
+		    {
+		       $sql = "SELECT *
+		            FROM Trans_Abonos
+		            WHERE Item = '".$_SERVER['INGRESO']['item']."'
+		            AND Periodo = '".$_SERVER['INGRESO']['periodo']."'
+		            AND Autorizacion = '".$TFA['Autorizacion'] & "'
+		            AND Serie = '".$TFA['Serie'] & "'
+		            AND TP = '".$TFA['TC'] & "'
+		            AND Factura = ".$TFA['Factura'] & "
+		            AND Serie_NC = '".$TFA['Serie_NC'] & "'
+		            AND Secuencial_NC = ".$TFA['Nota_Credito'] & "
+		            AND Banco = 'NOTA DE CREDITO'
+		            ORDER BY TP,Fecha,Cta,Cta_CxP,Abono,Banco,Cheque ";
+		       	   $AdoDBNC = $this->db->datos($sql);
+		       
+		         if(count($AdoDBNC) > 0)
+		         {
+		         	foreach ($AdoDBNC as $key => $value) 
+		         	{	
+		                if($value["Cheque"] = "I.V.A.")
+		                {
+		                    $TFA['Total_IVA_NC'] = $value["Abono"];
+		                    $SubT_Con_Inv = True;
+		                }else if($value["Cheque"] == "VENTAS SIN IVA")
+		                {
+		                    $Total_Sin_IVA = $value["Abono"];
+		                }else{
+		                    $Total_Con_IVA = $value["Abono"];
+		                }
+		            }		
+		         }
+		    }
+		    $Total_Sin_IVA = number_format($Total_Sin_IVA, 2,'.','');
+		    $Total_Con_IVA = number_format($Total_Con_IVA, 2,'.','');
+		    $TFA['Total_IVA_NC'] = number_format($TFA['Total_IVA_NC'], 2,'.','');
+		    $TFA['SubTotal_NC'] = number_format($Total_Sin_IVA + $Total_Con_IVA, 2,'.','');
+		    $TextoXML = "";
+		}
+
+		if(!isset($TFA['Porc_NC']) || $TFA['Porc_NC'] == 0){
+            $TFA['Porc_IVA'] = Validar_Porc_IVA($TFA['Fecha_NC']);
+         }else{
+            $TFA['Porc_IVA'] = $TFA['Porc_NC'];
+         }
+
+
+		// print_r($TFA);die();
+		$TFA['TOTAL_SIN_IMPUESTOS'] = $Total_Sin_IVA + $Total_Con_IVA - $Total_Desc;
+		$TFA['VALOR_MODIFICACION'] = $Total_Sin_IVA + $Total_Con_IVA - $Total_Desc + $TFA['Total_IVA_NC'];
+		$TFA['BASEIMPONIBLE'] = number_format($Total_Con_IVA - $Total_Desc,2,'.','');
+		$TFA['ClaveAcceso_NC'] = $this->Clave_acceso($TFA['Fecha_NC'],'04',$TFA['Serie_NC'],$TFA['Nota_Credito']);
+		$aut = $TFA['ClaveAcceso_NC'];
+		// print_r($TFA);die();
+		 $xml = $this->generar_xml_nota_credito($TFA,$AdoDBNC);
+
+		 if($xml==1)
+	       {
+	       	 $firma = $this->firmar_documento(
+	       	 	$aut,
+	       	 	generaCeros($_SESSION['INGRESO']['IDEntidad'],3),
+	       	 	$_SESSION['INGRESO']['item'],
+	       	 	$_SESSION['INGRESO']['Clave_Certificado'],
+	       	 	$_SESSION['INGRESO']['Ruta_Certificado']);
+	       	 // print($firma);die();
+	       	 if($firma==1)
+	       	 {
+	       	 	$validar_autorizado = $this->comprobar_xml_sri(
+	       	 		$aut,
+	       	 		$this->linkSriAutorizacion);
+
+	       	 	// print_r($validar_autorizado);die();
+	       	 	if($validar_autorizado == -1)
+		   		 {
+		   		 	$enviar_sri = $this->enviar_xml_sri(
+		   		 		$aut,
+		   		 		$this->linkSriRecepcion);
+		   		 	if($enviar_sri==1)
+		   		 	{
+		   		 		//una vez enviado comprobamos el estado de la factura
+		   		 		// sleep(3);
+		   		 		$resp =  $this->comprobar_xml_sri($aut,$this->linkSriAutorizacion);
+		   		 		if($resp==1)
+		   		 		{
+		   		 			$this->SRI_Actualizar_Autorizacion_Nota_Credito($TFA);
+		   		 			$this->SRI_Actualizar_Documento_XML($TFA['ClaveAcceso_NC']);
+		   		 			return  $resp;
+		   		 		}else
+		   		 		{
+		   		 			return $resp;
+		   		 		}
+		   		 		// print_r($resp);die();
+		   		 	}else
+		   		 	{
+		   		 		return $enviar_sri;
+		   		 	}
+
+		   		 }else 
+		   		 {
+		   		 	// $resp = $this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion']);
+		   		 	// RETORNA SI YA ESTA AUTORIZADO O SI FALL LA REVISIO EN EL SRI
+		   			return $validar_autorizado;
+		   		 }
+	       	 }else
+	       	 {
+	       	 	//RETORNA SI FALLA AL FIRMAR EL XML
+	       	 	return $firma;
+	       	 }
+	       }else
+	       {
+	       	//RETORNA SI FALLA EL GENERAR EL XML
+	       	return $xml;
+	       }
+
+
+	}
+
 	//inicio guia remision
 	function SRI_Crear_Clave_Acceso_Guia_Remision($TFA)
 	{
@@ -917,6 +1079,328 @@ class autorizacion_sri
 		     $ruta_G = dirname(__DIR__).'/entidades/entidad_'.generaCeros($entidad,3)."/CE".generaCeros($empresa,3).'/Generados';
 		     // print_r($ruta_G);die();
 			if($archivo = fopen($ruta_G.'/'.$cabecera['ClaveAcceso_GR'].'.xml',"w+b"))
+			  {
+			  	fwrite($archivo,$xml->saveXML());
+			  	// die();
+			  	return 1;
+			  }else
+			  {
+			  	return -1;
+			  }
+
+
+	}
+
+	function generar_xml_nota_credito($cabecera,$detalle)
+	{
+
+	// print_r($cabecera);
+	// print_r('expression');
+	// print_r($detalle);
+	// die();
+	$entidad = $_SESSION['INGRESO']['IDEntidad'];
+	$empresa = $_SESSION['INGRESO']['item'];
+	$this->generar_carpetas($entidad,$empresa);
+	$ambiente =$_SESSION['INGRESO']['Ambiente'];
+	$RIMPE =  $this->datos_rimpe();
+	$sucursal = $this->catalogo_lineas('RE',$cabecera['Serie_GR']);
+	 if(count($sucursal)>0)
+	 {
+	 	$cabecera[0]['Nombre_Establecimiento'] = $sucursal[0]['Nombre_Establecimiento'];
+	 	$cabecera[0]['Direccion_Establecimiento'] = $sucursal[0]['Direccion_Establecimiento'];
+	 	$cabecera[0]['Telefono_Establecimiento'] = $sucursal[0]['Telefono_Estab'];
+	 	$cabecera[0]['Ruc_Establecimiento'] = $sucursal[0]['RUC_Establecimiento'];
+	 	$cabecera[0]['Email_Establecimiento'] = $sucursal[0]['Email_Establecimiento'];
+	 	$cabecera[0]['Placa_Vehiculo'] ='.';
+	 	$cabecera[0]['Cta_Establecimiento'] = '.';
+	 	if(isset($sucursal[0]['Placa_Vehiculo']))
+	 	{
+	 		$cabecera['Placa_Vehiculo'] = $sucursal[0]['Placa_Vehiculo'];
+	 	}
+	 	if (isset($sucursal[0]['Cta_Establecimiento'])) {
+	 		$cabecera['Cta_Establecimiento'] = $sucursal[0]['Cta_Establecimiento'];
+	 	}		 	
+	 }
+
+	$carpeta_autorizados = dirname(__DIR__)."/entidades/entidad_".generaCeros($entidad,3).'/CE'.generaCeros($empresa,3)."/Autorizados";		  
+	if(file_exists($carpeta_autorizados.'/'.$cabecera['ClaveAcceso_NC'].'.xml'))
+	{
+		$respuesta = array('1'=>'Autorizado');
+		return $respuesta;
+	}
+
+	    $xml = new DOMDocument( "1.0", "UTF-8");
+        $xml->formatOutput = true;
+        $xml->preserveWhiteSpace = false;
+	    $xml->xmlStandalone = true;
+
+	    $xml_inicio = $xml->createElement( "notaCredito" );
+        $xml_inicio->setAttribute( "id", "comprobante" );
+        $xml_inicio->setAttribute( "version", "1.0.0" );
+        //informacion de cabecera
+	    $xml_infotributaria = $xml->createElement("infoTributaria");
+	    $xml_ambiente = $xml->createElement("ambiente",$ambiente);
+	    $xml_tipoEmision = $xml->createElement("tipoEmision","1");
+	    $xml_razonSocial = $xml->createElement("razonSocial",$_SESSION['INGRESO']['Razon_Social']);
+	    $xml_nombreComercial = $xml->createElement("nombreComercial",$_SESSION['INGRESO']['Nombre_Comercial']);
+	    $xml_ruc = $xml->createElement("ruc",$_SESSION['INGRESO']['RUC']);
+	    $xml_claveAcceso = $xml->createElement("claveAcceso",$cabecera['ClaveAcceso_NC']);
+	    $xml_codDoc = $xml->createElement("codDoc",'04');
+	    $xml_estab = $xml->createElement("estab",substr($cabecera['Serie_NC'], 0,3));
+	    $xml_ptoEmi = $xml->createElement("ptoEmi",substr($cabecera['Serie_NC'], 3,3));
+	    $xml_secuencial = $xml->createElement("secuencial",$this->generaCeros($cabecera['Nota_Credito'],9));
+	    $xml_dirMatriz = $xml->createElement("dirMatriz",$_SESSION['INGRESO']['Direccion']);
+
+
+
+
+        $xml_infotributaria->appendChild($xml_ambiente);
+        $xml_infotributaria->appendChild($xml_tipoEmision);
+        $xml_infotributaria->appendChild($xml_razonSocial);
+        $xml_infotributaria->appendChild($xml_nombreComercial);
+        $xml_infotributaria->appendChild($xml_ruc);
+        $xml_infotributaria->appendChild($xml_claveAcceso);
+        $xml_infotributaria->appendChild($xml_codDoc);
+        $xml_infotributaria->appendChild($xml_estab);
+        $xml_infotributaria->appendChild($xml_ptoEmi);
+        $xml_infotributaria->appendChild($xml_secuencial);
+        $xml_infotributaria->appendChild($xml_dirMatriz);
+
+		if(count($RIMPE)>0)
+		{
+			if($RIMPE['@micro']!='.' && $RIMPE['@micro']!='' && $RIMPE['@micro']=='CONTRIBUYENTE RÉGIMEN RIMPE' )
+			{
+				$xml_contribuyenteRimpe = $xml->createElement( "contribuyenteRimpe",$RIMPE['@micro']);
+				$xml_infotributaria->appendChild( $xml_contribuyenteRimpe);
+			}
+			if($RIMPE['@Agente']!='.' && $RIMPE['@Agente']!='')
+			{
+				$xml_agenteRetencion = $xml->createElement( "agenteRetencion",'1');
+				$xml_infotributaria->appendChild( $xml_agenteRetencion);
+			}
+		}
+
+        // $xml->appendChild($xml_infotributaria);
+
+        $xml_inicio->appendChild($xml_infotributaria);
+        //fin de cabecera
+
+	    $xml_infoNotaCredito = $xml->createElement( "infoNotaCredito");
+	    
+	    	$xml_fechaemidocsus = $xml->createElement('fechaEmision',date('d/m/Y',strtotime($cabecera["Fecha_NC"])));
+	    	$xml_infoNotaCredito->appendChild($xml_fechaemidocsus);
+
+	
+	    if(isset($cabecera[0]['Nombre_Establecimiento']) &&  strlen($cabecera[0]['Nombre_Establecimiento'])>0 && $cabecera['Nombre_Establecimiento']!='.')
+		{
+			$xml_dirEstablecimiento = $xml->createElement( "dirEstablecimiento",$cabecera[0]['Direccion_Establecimiento']);
+		}else
+		{
+			$xml_dirEstablecimiento = $xml->createElement( "dirEstablecimiento",strtoupper($_SESSION['INGRESO']['Direccion']));
+		}    
+	   $xml_infoNotaCredito->appendChild($xml_dirEstablecimiento);
+
+	    // print_r($cabecera);
+
+	    //codigo verificador 
+      	switch ($cabecera['TB']) {
+      		case 'R':
+      			if($cabecera['RUC_CI']=='9999999999999')
+				  {
+				  	$cabecera['tipoIden']='07';
+			      }else{
+      				$cabecera['tipoIden']='04';
+      			}
+      			break;
+      		case 'C':
+      			$cabecera['tipoIden']='05';
+      			break;
+      		case 'O':
+      			$cabecera['tipoIden']='06';
+      			break;
+      	}
+
+      	$xml_tipoIdentificacionComprador = $xml->createElement( "tipoIdentificacionComprador",$cabecera['tipoIden'] );
+		$xml_infoNotaCredito->appendChild( $xml_tipoIdentificacionComprador );	 
+
+		$xml_razonSocialComprador = $xml->createElement( "razonSocialComprador",$cabecera['Razon_Social'] );
+		$xml_infoNotaCredito->appendChild( $xml_razonSocialComprador );
+
+		$xml_identificacionComprador = $xml->createElement( "identificacionComprador",$cabecera['RUC_CI'] );		
+		$xml_infoNotaCredito->appendChild( $xml_identificacionComprador );
+
+		$xml_obligadoContabilidad = $xml->createElement("obligadoContabilidad",$_SESSION['INGRESO']['Obligado_Conta']);
+	    $xml_infoNotaCredito->appendChild($xml_obligadoContabilidad);
+		   
+
+	    $xml_codDocModificado = $xml->createElement('codDocModificado','01');
+	    $xml_infoNotaCredito->appendChild($xml_codDocModificado);
+
+	    $xml_numDocModificado = $xml->createElement('numDocModificado',substr($cabecera['Serie'],0,3).'-'.substr($cabecera['Serie'],3,6).'-'.generaCeros($cabecera['Factura'],9));
+		$xml_infoNotaCredito->appendChild($xml_numDocModificado);
+
+		$xml_fechaEmisionDocSustento = $xml->createElement('fechaEmisionDocSustento',$cabecera['Fecha']->format('d/m/Y'));
+		$xml_infoNotaCredito->appendChild($xml_fechaEmisionDocSustento);
+
+
+	    $xml_totalSinImpuestos = $xml->createElement('totalSinImpuestos', $cabecera['TOTAL_SIN_IMPUESTOS']);
+	    $xml_infoNotaCredito->appendChild($xml_totalSinImpuestos);
+
+	    $xml_valorModificacion = $xml->createElement('valorModificacion', $cabecera['VALOR_MODIFICACION']);
+	    $xml_infoNotaCredito->appendChild($xml_valorModificacion);
+
+	    $xml_moneda = $xml->createElement('moneda','DOLAR');
+	    $xml_infoNotaCredito->appendChild($xml_moneda);	
+
+	    $xml_totalConImpuestos = $xml->createElement( "totalConImpuestos" );
+		//sin iva
+		$xml_totalImpuesto = $xml->createElement( "totalImpuesto" );		 
+
+		$xml_codigo = $xml->createElement( "codigo",'2' );
+		if(($cabecera['Porc_IVA'] * 100) > 12 ){
+             $xml_codigoPorcentaje = $xml->createElement( "codigoPorcentaje",'3' );
+           }else{
+             $xml_codigoPorcentaje = $xml->createElement( "codigoPorcentaje",'2' );
+           }
+
+		$xml_baseImponible = $xml->createElement( "baseImponible",$cabecera['BASEIMPONIBLE'] );
+		//$xml_tarifa = $xml->createElement( "tarifa",'0.00' );
+		$xml_valor = $xml->createElement( "valor",$cabecera['Total_IVA_NC'] );
+		
+		$xml_totalImpuesto->appendChild( $xml_codigo );
+		$xml_totalImpuesto->appendChild( $xml_codigoPorcentaje );
+		$xml_totalImpuesto->appendChild( $xml_baseImponible );
+		//$xml_totalImpuesto->appendChild( $xml_tarifa );
+		$xml_totalImpuesto->appendChild( $xml_valor );
+		$xml_totalConImpuestos->appendChild( $xml_totalImpuesto );
+        
+        $xml_infoNotaCredito->appendChild( $xml_totalConImpuestos );
+
+        $xml_motivo = $xml->createElement('motivo','Anulacion por Nota de Credito');
+	    $xml_infoNotaCredito->appendChild($xml_motivo);	
+
+
+        $xml_inicio->appendChild($xml_infoNotaCredito);  
+
+		if(count($detalle)>0)
+		{
+			$xml_detalles = $xml->createElement( "detalles");
+			foreach ($detalle as $key => $value) {	    					
+	 			$xml_detalle = $xml->createElement( "detalle");
+
+	 			$CodAdicional = CambioCodigoCtaSup($value["Codigo_Inv"]);
+
+	 			$Producto = trim($value["Producto"]);	 			
+                // $SubTotal = ($value["Cantidad"] * $value["Precio"]) - ($value["Total_Desc"] + $value["Total_Desc2"]);
+
+ 			  	$xml_codigo = $xml->createElement('codigoInterno',$value["Codigo_Inv"]);
+ 			  	$xml_detalle->appendChild($xml_codigo);
+
+ 			  	$xml_codigoAdi = $xml->createElement('codigoAdicional',$CodAdicional);
+ 			  	$xml_detalle->appendChild($xml_codigoAdi);
+
+ 			  	$xml_descripcion = $xml->createElement('descripcion',$Producto);
+ 			  	$xml_detalle->appendChild($xml_descripcion);
+
+ 			  	$xml_cantidad = $xml->createElement('cantidad',$value["Cantidad"]);
+ 			  	$xml_detalle->appendChild($xml_cantidad);
+
+ 			  	$xml_precio = $xml->createElement('precioUnitario',$value["Precio"]);
+ 			  	$xml_detalle->appendChild($xml_precio);
+
+ 			  	$xml_descuento = $xml->createElement('descuento',$value["Descuento"]);
+ 			  	$xml_detalle->appendChild($xml_descuento);
+
+ 			  	$xml_sinImpu = $xml->createElement('precioTotalSinImpuesto',$value["Total"]-$value["Descuento"]);
+ 			  	$xml_detalle->appendChild($xml_sinImpu);
+
+ 			  	$xml_impuestos = $xml->createElement( "impuestos" );
+				$xml_impuesto = $xml->createElement( "impuesto" );
+				$xml_codigo = $xml->createElement( "codigo",'2' );
+
+					if($value['Total_IVA'] == 0)
+					{
+						$xml_codigoPorcentaje = $xml->createElement( "codigoPorcentaje",'0' );
+						$xml_tarifa = $xml->createElement( "tarifa",'0' );
+					}
+					else
+					{
+						if(($cabecera['Porc_IVA']*100) > 12)
+						{
+							$xml_codigoPorcentaje = $xml->createElement( "codigoPorcentaje",'3' );
+						}
+						else
+						{
+							$xml_codigoPorcentaje = $xml->createElement( "codigoPorcentaje",'2' );
+						}
+						$xml_tarifa = $xml->createElement( "tarifa",round(($cabecera['Porc_IVA']*100),2) );
+						
+					}
+					$xml_baseImponible = $xml->createElement( "baseImponible",$value['Total']-$value['Descuento'] );
+					$xml_valor = $xml->createElement( "valor",number_format($value['Total_IVA'],2,'.','')  );
+
+					$xml_impuesto->appendChild( $xml_codigo );
+					$xml_impuesto->appendChild( $xml_codigoPorcentaje );
+					$xml_impuesto->appendChild( $xml_tarifa );
+					$xml_impuesto->appendChild( $xml_baseImponible );
+					$xml_impuesto->appendChild( $xml_valor );
+				
+					$xml_impuestos->appendChild( $xml_impuesto );
+					$xml_detalle->appendChild( $xml_impuestos );
+					$xml_detalles->appendChild( $xml_detalle );
+
+
+	 			$xml_detalles->appendChild($xml_detalle);   		
+			}
+
+			$xml_inicio->appendChild($xml_detalles);
+		}      
+        // $xml_inicio->appendChild($xml_destinatarios);
+
+
+
+
+        //fin de xml retencion
+        $xml_infoAdicional = $xml->createElement("infoAdicional");
+
+        if($cabecera['Cliente'] <>G_NINGUNO &&  $cabecera['Razon_Social'] <> $cabecera['Cliente'])
+        {
+           if(strlen($cabecera['Cliente']) > 1){
+        	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['Cliente']);
+        	 $xml_campoAdicional->setAttribute( "nombre", "Beneficiario");
+        	 $xml_infoAdicional->appendChild($xml_campoAdicional);
+        	}
+
+            if(strlen($cabecera['Curso']) > 1){
+        	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['Grupo']."-".$cabecera['Curso']);
+        	 $xml_campoAdicional->setAttribute( "nombre", "Ubicacion");
+        	 $xml_infoAdicional->appendChild($xml_campoAdicional);
+        	}
+	    }
+
+	    if (strlen($cabecera['DireccionC']) > 1){ 
+        	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['DireccionC']);
+        	 $xml_campoAdicional->setAttribute( "nombre", "Direccion");
+        	 $xml_infoAdicional->appendChild($xml_campoAdicional);
+
+        	}
+         if (strlen($cabecera['TelefonoC']) > 1){ 
+        	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['TelefonoC']);
+        	 $xml_campoAdicional->setAttribute( "nombre", "Telefono");
+        	$xml_infoAdicional->appendChild($xml_campoAdicional);
+        	}
+         if( strlen($cabecera['EmailC']) > 1){ 
+        	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['EmailC']);
+        	 $xml_campoAdicional->setAttribute( "nombre", "Email");
+        	$xml_infoAdicional->appendChild($xml_campoAdicional);
+        	}
+        	$xml_inicio->appendChild($xml_infoAdicional);
+        
+        	$xml->appendChild($xml_inicio);
+
+		     $ruta_G = dirname(__DIR__).'/entidades/entidad_'.generaCeros($entidad,3)."/CE".generaCeros($empresa,3).'/Generados';
+		     // print_r($ruta_G);die();
+			if($archivo = fopen($ruta_G.'/'.$cabecera['ClaveAcceso_NC'].'.xml',"w+b"))
 			  {
 			  	fwrite($archivo,$xml->saveXML());
 			  	// die();
@@ -2553,23 +3037,30 @@ function generar_xml_retencion($cabecera,$detalle)
 
     	// print_r("java -jar ".$comprobar_sri." ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion);die();
    		 exec("java -jar ".$comprobar_sri." ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion,$f);   	
-   		 // print_r($f);die();
+   		 // print_r($f);
+   		 // die();
    		 if(empty($f))
    		 {
-   		 	return 2;
+   		 	return;
    		 }
+
 
    		 $resp = explode('-',$f[0]);
 
-   		 // print_r($f);
+   		 // print_r($resp);
    		 if(count($resp)>1)
    		 {
+   		 	$resp[1] = trim($resp[1]);
+   		 	// print_r($resp[1]);
    		 	//cuando null NO PROCESADO es liquidacion de compras
-	   		 if(isset($resp[1]) && $resp[1]=='FACTURA NO PROCESADO' || isset($resp[1]) && $resp[1]=='LIQUIDACION DE COMPRAS NO PROCESADO' || $resp[1] == 'COMPROBANTE DE RETENCION NO PROCESADO' || $resp[1]=='GUIA DE REMISION NO PROCESADO')
+	   		 if(isset($resp[1]) && $resp[1]=='FACTURA NO PROCESADO' || isset($resp[1]) && $resp[1]=='LIQUIDACION DE COMPRAS NO PROCESADO' || $resp[1] == 'COMPROBANTE DE RETENCION NO PROCESADO' || $resp[1]=='GUIA DE REMISION NO PROCESADO' || isset($resp[1]) && $resp[1]=='NOTA DE CREDITO NO PROCESADO')
 	   		 {
+	   		 	// print_r($resp[1].'<br>');
+
 	   		 	return -1;
-	   		 }else if(isset($resp[1]) && $resp[1]=='FACTURA AUTORIZADO' || isset($resp[1]) && $resp[1]=='LIQUIDACION DE COMPRAS AUTORIZADO' || $resp[1] == 'COMPROBANTE DE RETENCION AUTORIZADO' || $resp[1]=='GUIA DE REMISION AUTORIZADO')
+	   		 }else if(isset($resp[1]) && $resp[1]=='FACTURA AUTORIZADO' || isset($resp[1]) && $resp[1]=='LIQUIDACION DE COMPRAS AUTORIZADO' || $resp[1] == 'COMPROBANTE DE RETENCION AUTORIZADO' || isset($resp[1]) && $resp[1]=='GUIA DE REMISION AUTORIZADO' || isset($resp[1]) && $resp[1]=='NOTA DE CREDITO AUTORIZADO')
 	   		 {
+	   		 	// print_r('as');
 	   		 	return 1;
 	   		 }else
 	   		 {
@@ -2754,8 +3245,8 @@ function generar_xml_retencion($cabecera,$detalle)
     }
     function quitar_carac($query)
     {
-    	$buscar = array('á','é','í','ó','ú','Á','É','Í','Ó','Ú','Ñ','ñ','/','?','�','-');
-    	$remplaza = array('a','e','i','o','u','A','E','I','O','U','N','n','','','','');
+    	$buscar = array('á','é','í','ó','ú','Á','É','Í','Ó','Ú','Ñ','ñ','/','?','�','-','.');
+    	$remplaza = array('a','e','i','o','u','A','E','I','O','U','N','n','','','','','');
     	$corregido = str_replace($buscar, $remplaza, $query);
     	 // print_r($corregido);
     	return trim($corregido);
@@ -3062,49 +3553,156 @@ return -1;
 }
 }
 
-  function actualizar_datos_CER($autorizacion,$tc,$serie,$retencion,$entidad,$autorizacion_ant,$fecha)
-     {
 
-     	$res = $this->actualizar_trans_compras($tc,$retencion,$serie,$autorizacion,$autorizacion_ant);
-     	$res2 = $this->atualizar_trans_air($tc,$retencion,$serie,$autorizacion,$autorizacion_ant);
-		$url_autorizado =dirname(__DIR__,2).'/comprobantes/entidades/entidad_'.$entidad."/CE".$_SESSION['INGRESO']['item'].'/Autorizados/'.$autorizacion.'.xml';
-		$archivo = fopen($url_autorizado,"rb");
-			if( $archivo != false ) 
-			{			
-				rewind($archivo);   // Volvemos a situar el puntero al principio del archivo
-				$cadena2 = fread($archivo, filesize($url_autorizado));  // Leemos hasta el final del archivo
-				if( $cadena2 == false ){
-					echo "Error al leer el archivo";
-				}
-			}
-			// Cerrar el archivo:
-			fclose($archivo);	
+function SRI_Actualizar_Documento_XML($ClaveDeAcceso)
+{
+	 if(strLen($ClaveDeAcceso) >= 13)
+	 {
+	 	$url_autorizado =dirname(__DIR__).'/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3)."/CE".generaCeros($_SESSION['INGRESO']['item'],3).'/Autorizados/'.$ClaveDeAcceso.'.xml';
 
-		$res3 = $this->guardar_documento($autorizacion,$cadena2,$serie,$retencion,$fecha);	
-			//echo $sql;
-		if($res==1)
-		{
-			if($res2==1)
+			$archivo = fopen($url_autorizado,"rb");
+			if( $archivo == false ) 
 			{
-				if($res3==1)
+				echo "Error al abrir el archivo";
+			}
+			else
+			{
+				rewind($archivo);   // Volvemos a situar el puntero al principio del archivo
+				$DatosXMLA = fread($archivo, filesize($url_autorizado));  // Leemos hasta el final del archivo
+				if( $DatosXMLA == false )
 				{
-					return 1;
-				}else
-				{
-					return -3;
-				}
+					echo "Error al leer el archivo";
+				}				
+			}
+
+	    if(strLen($DatosXMLA) > 1 )
+	    {
+	       $SerieF = substr($ClaveDeAcceso, 24, 6);
+	       $Documento = intval(substr($ClaveDeAcceso, 30, 9));
+	       switch (substr($ClaveDeAcceso, 8, 2)) {
+	       	case '01':
+	       		$TD = "FA";
+	       		break;
+	       	case '03':
+	       		$TD = "LC";
+	       		break;
+	       	case '04':
+	       		$TD = "NC";
+	       		break;
+	       	case '07':
+	       		 $TD = "RE";
+	       		break;	       	
+	       	default:
+	       		$TD = "XX";
+	       		break;
+	       }
+
+	       $sql = "SELECT * 
+	        FROM Trans_Documentos 
+	        WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+	        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+	        AND Clave_Acceso = '".$ClaveDeAcceso."' ";
+	        $datos = $this->db->datos($sql);
+	        if(count($datos)<=0)
+	        {
+	        	$datosT[0]['campo'] = 'Item';
+	        	$datosT[0]['dato'] = $_SESSION['INGRESO']['item'];
+	        	$datosT[1]['campo'] = 'Periodo';
+	        	$datosT[1]['dato'] = $_SESSION['INGRESO']['periodo'];
+	        	$datosT[2]['campo'] = 'Clave_Acceso';
+	        	$datosT[2]['dato'] = $ClaveDeAcceso;
+	        	$datosT[3]['campo'] = 'TD';
+	        	$datosT[3]['dato'] = $TD;
+	        	$datosT[4]['campo'] = 'Serie';
+	        	$datosT[4]['dato'] = $SerieF;
+	        	$datosT[5]['campo'] = 'Documento';
+	        	$datosT[5]['dato'] = $Documento;
+	        	$datosT[6]['campo'] = 'Documento_Autorizado';
+	        	$datosT[6]['dato'] = $DatosXMLA;
+	        	insert_generico('Trans_Documentos',$datosT);
+	        }
+	    }
+	 }
+}
+
+function SRI_Actualizar_Autorizacion_Nota_Credito($TFA)
+{
+	$Fecha_Autorizacion= date('Y-m-d');
+    $Hora_Autorizacion= date('H:i:s');
+    $Estado_SRI= 'OK';
+
+    $sql = "UPDATE Trans_Abonos
+        SET Autorizacion_NC = '".$TFA['ClaveAcceso_NC']."',
+        Fecha_Aut_NC = '".BuscarFecha($Fecha_Autorizacion)."',
+        Hora_Aut_NC = '".$Hora_Autorizacion."',
+        Estado_SRI_NC = '".$Estado_SRI."'
+        WHERE Item = '".$_SESSION['INGRESO']['item']."'
+        AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+        AND TP = '".$TFA['TC']."'
+        AND Serie = '".$TFA['Serie']."'
+        AND Factura = ".$TFA['Factura']."
+        AND CodigoC = '".$TFA['CodigoC']."'
+        AND Autorizacion = '".$TFA['Autorizacion']."'
+        AND Serie_NC = '".$TFA['Serie_NC']."'
+        AND Secuencial_NC = ".$TFA['Nota_Credito']."
+        AND Banco = 'NOTA DE CREDITO' ";
+        $this->db->String_Sql($sql);
+    
+    $sql = "UPDATE Detalle_Nota_Credito 
+        SET Autorizacion = '".$TFA['ClaveAcceso_NC']."' 
+        WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+        AND TC = '".$TFA['TC']."' 
+        AND Serie_FA = '".$TFA['Serie']."' 
+        AND Factura = ".$TFA['Factura']." 
+        AND Serie = '".$TFA['Serie_NC']."' 
+        AND Secuencial = ".$TFA['Nota_Credito']." ";
+        $this->db->String_Sql($sql);
+}
+
+function actualizar_datos_CER($autorizacion,$tc,$serie,$retencion,$entidad,$autorizacion_ant,$fecha)
+ {
+
+ 	$res = $this->actualizar_trans_compras($tc,$retencion,$serie,$autorizacion,$autorizacion_ant);
+ 	$res2 = $this->atualizar_trans_air($tc,$retencion,$serie,$autorizacion,$autorizacion_ant);
+	$url_autorizado =dirname(__DIR__,2).'/comprobantes/entidades/entidad_'.$entidad."/CE".$_SESSION['INGRESO']['item'].'/Autorizados/'.$autorizacion.'.xml';
+	$archivo = fopen($url_autorizado,"rb");
+		if( $archivo != false ) 
+		{			
+			rewind($archivo);   // Volvemos a situar el puntero al principio del archivo
+			$cadena2 = fread($archivo, filesize($url_autorizado));  // Leemos hasta el final del archivo
+			if( $cadena2 == false ){
+				echo "Error al leer el archivo";
+			}
+		}
+		// Cerrar el archivo:
+		fclose($archivo);	
+
+	$res3 = $this->guardar_documento($autorizacion,$cadena2,$serie,$retencion,$fecha);	
+		//echo $sql;
+	if($res==1)
+	{
+		if($res2==1)
+		{
+			if($res3==1)
+			{
+				return 1;
 			}else
 			{
-				return -2;
+				return -3;
 			}
 		}else
 		{
-			return -1;
+			return -2;
 		}
-			
-			// return 1;
+	}else
+	{
+		return -1;
+	}
+		
+		// return 1;
 
-     }
+ }
   function guardar_documento($autorizacion,$cadena2,$serie,$retencion,$Fecha)
      {
      	$sql="INSERT INTO Trans_Documentos
@@ -3136,19 +3734,19 @@ return -1;
 		return $this->db->String_Sql($sql);
 
      }
-     function atualizar_trans_air($tp,$retencion,$serie,$autorizacion,$autAnte)
-     {
-     	$sql="UPDATE Trans_Air SET AutRetencion='".$autorizacion."' 
-     	WHERE Item = '".$_SESSION['INGRESO']['item']."' 
-		AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' 
-		AND TP = '".$tp."' 
-		AND EstabRetencion = '".substr($serie,0,3)."'
-		AND PtoEmiRetencion =  '".substr($serie,3,6)."'
-		AND SecRetencion = '".$retencion."'
-		AND LEN(AutRetencion) = 13  
-		AND AutRetencion ='".$autAnte."'";
-		return $this->db->String_Sql($sql);
-     }
+ function atualizar_trans_air($tp,$retencion,$serie,$autorizacion,$autAnte)
+ {
+ 	$sql="UPDATE Trans_Air SET AutRetencion='".$autorizacion."' 
+ 	WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+	AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' 
+	AND TP = '".$tp."' 
+	AND EstabRetencion = '".substr($serie,0,3)."'
+	AND PtoEmiRetencion =  '".substr($serie,3,6)."'
+	AND SecRetencion = '".$retencion."'
+	AND LEN(AutRetencion) = 13  
+	AND AutRetencion ='".$autAnte."'";
+	return $this->db->String_Sql($sql);
+ }
 
 
 
