@@ -20,6 +20,13 @@
     catalogoLineas();
     totalRegistros();
     verificarTJ();
+    cargarBancos();
+    DCGrupo_No();
+
+    $(".btnDepositoAutomatico").on('click',function () {
+      $(".contenidoDepositoAutomatico").toggle()
+    })
+
     //enviar datos del cliente
     $('#cliente').on('select2:select', function (e) {
       var data = e.params.data.data;
@@ -32,7 +39,6 @@
       $('#codigo').val(data.codigo);
       $('#ci_ruc').val(data.ci_ruc);
       $('#persona').val(data.cliente);
-      $('#grupo').val(data.grupo);
       $('#chequeNo').val(data.grupo);
       $('#codigoCliente').val(data.codigo);
       $('#tdCliente').val(data.tdCliente);
@@ -47,6 +53,13 @@
       $("#total0").val(parseFloat(0.00).toFixed(2));
       $("#valorBanco").val(parseFloat(0.00).toFixed(2));
       $("#saldoTotal").val(parseFloat(0.00).toFixed(2));
+      DCGrupo_NoPreseleccion(data.grupo)
+
+      if(data.Archivo_Foto!='' && data.Archivo_Foto!='.' && data.Archivo_Foto!='SINFOTO'){
+        $("#img_estudiante").attr('src','../img/img_estudiantes/'+data.Archivo_Foto)
+      }else{ //TODO LS definir foto por defecto
+        $("#img_estudiante").attr('src','../img/img_estudiantes/1722214507.png')
+      }
       //$("input[type=checkbox]").prop("checked", false);
       total = 0;
       total0 = 0;
@@ -56,11 +69,22 @@
       catalogoProductos(data.codigo);
       saldoFavor(data.codigo);
       saldoPendiente(data.codigo);
+      clienteMatricula(data.codigo);
 
       //prefactura pension
       $('#PFcodigoCliente').val(data.codigo);
       $('#PFnombreCliente').text(data.cliente);
       $('#PFGrupoNo').val(data.grupo);
+    });
+
+    $("#DCGrupo_No").on('select2:select', function (e) {
+      $.ajax({
+        url:   '../controlador/facturacion/facturar_pensionC.php?DireccionByGrupo=true&grupo='+$("#DCGrupo_No").val()+'',
+        dataType: 'json',
+        success: function (data) {
+          $('#direccion').val(data[0].Direccion)
+        }
+      })
     });
   });
 
@@ -317,7 +341,6 @@
 
   function totalFactura(id,valor,iva,descuento1,datos){
 
-    console.log($('#'+id).prop('checked'));
     $('#txt_cant_datos').val(datos);
 
     // if($('#'+id).prop('checked'))
@@ -425,7 +448,6 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
 
   function numeroFactura(){
     DCLinea = $("#DCLinea").val();
-    console.log(DCLinea);
     $.ajax({
       type: "POST",
       url: '../controlador/facturacion/facturar_pensionC.php?numFactura=true',
@@ -507,7 +529,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
         TxtDireccion = $("#direccion").val();
         TxtTelefono = $("#telefono").val();
         TextFacturaNo = $("#factura").val();
-        TxtGrupo = $("#grupo").val();
+        TxtGrupo = $("#DCGrupo_No").val();
         TextCI = $("#ci_ruc").val();
         TD_Rep = $("#tdCliente").val();
         TxtEmail = $("#email").val();
@@ -525,6 +547,16 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
         codigoCliente = $("#codigoCliente").val();
         saldoFavor = $('#saldoFavor').val();
         abono = $('#abono').val();
+        debito_automatica = $('#debito_automatica').val();
+        tipo_debito_automatico = $('#tipo_debito_automatico').val();
+        numero_cuenta_debito_automatico = $('#numero_cuenta_debito_automatico').val();
+        caducidad_debito_automatico = $('#caducidad_debito_automatico').val();
+
+        let por_deposito_debito_automatico ="0";
+        if($('#por_deposito_debito_automatico').prop('checked')){
+          por_deposito_debito_automatico = "1";
+        }
+
         //var confirmar = confirm("Esta seguro que desea guardar \n La factura No."+TextFacturaNo);
         Swal.fire({
           title: 'Esta seguro?',
@@ -564,6 +596,11 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
               'saldoTotal':saldoTotal,
               'saldoFavor':saldoFavor,
               'TxtNCVal':abono, 
+              'DCDebito':debito_automatica, 
+              'CTipoCta':tipo_debito_automatico, 
+              'TxtCtaNo':numero_cuenta_debito_automatico, 
+              'MBFecha':caducidad_debito_automatico, 
+              'CheqPorDeposito':por_deposito_debito_automatico, 
             },
             dataType:'json',  
             success: function(response)
@@ -645,6 +682,10 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
                 });
                 catalogoProductos(codigoCliente);
               }
+            },
+            error: function () {
+              $('#myModal_espera').modal('hide');
+              alert("Ocurrio un error inesperado, por favor contacte a soporte.");
             }
             });
           }
@@ -653,7 +694,135 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
     }
   }
 
+  function clienteMatricula(codigoCliente){
+    $.ajax({
+      type: "POST",                 
+      url: '../controlador/facturacion/facturar_pensionC.php?clienteMatricula=true&codigoCliente='+codigoCliente,
+      dataType:'json', 
+      success: function(data)
+      {
+        if (data[0]) {
+          let Caducidad = new Date(data[0].Caducidad.date);
+          let mesCaducidad = (Caducidad.getMonth()+1);
+          if(mesCaducidad<10){
+            mesCaducidad = '0'+mesCaducidad; 
+          }
+          cargarBancosPreseleccion(data[0].Cod_Banco)
+          $("#tipo_debito_automatico").val(data[0].Tipo_Cta);
+          $("#numero_cuenta_debito_automatico").val(data[0].Cta_Numero);
+          $("#caducidad_debito_automatico").val(mesCaducidad+'/'+Caducidad.getFullYear());
+          if(data[0].Por_Deposito=='1'){
+            $("#por_deposito_debito_automatico").prop('checked', true);
+          }else{
+            $("#por_deposito_debito_automatico").prop('checked', false);
+          }
+
+          $('.contenidoDepositoAutomatico').css('display', 'block')
+        }else{
+          $('#debito_automatica').val(null).trigger('change');
+          $("#tipo_debito_automatico").val('.');
+          $("#numero_cuenta_debito_automatico").val('');
+          $("#caducidad_debito_automatico").val('');
+          $("#por_deposito_debito_automatico").prop('checked', false);
+          $('.contenidoDepositoAutomatico').css('display', 'none')
+        }            
+      }
+    });
+  }
+
+  function cargarBancos() {
+    $('#debito_automatica').select2({
+      width: '100%',
+      placeholder: 'Seleccione un Banco',
+      ajax: {
+        url: '../controlador/facturacion/facturar_pensionC.php?cargarBancos=true&limit=true',
+        dataType: 'json',
+        processResults: function (data) {
+          return {
+            results: data
+          };
+        },
+        cache: false
+      }
+    });
+  }
+
+  function cargarBancosPreseleccion(preseleccionado) {
+    var debito = $('#debito_automatica');
+    $.ajax({
+      type: 'GET',
+      dataType: 'json',
+      url: '../controlador/facturacion/facturar_pensionC.php?cargarBancos=true&limit=true&id='+preseleccionado
+    }).then(function (data) {
+      if(data.length>0){
+        var option = new Option(data[0].text, data[0].id, true, true);
+        debito.append(option).trigger('change');
+        debito.trigger({
+            type: 'select2:select',
+            params: {
+                data: data[0]
+            }
+        });
+      }else{
+        $('#debito_automatica').val(null).trigger('change');
+      }
+    });
+  }
+
+  function DCGrupo_No()
+  {
+    $('#DCGrupo_No').select2({
+      placeholder: 'Grupo',
+      ajax: {
+        url: '../controlador/facturacion/facturar_pensionC.php?DCGrupo_No=true',
+        dataType: 'json',
+        delay: 250,
+        processResults: function (data) {
+          return {
+            results: data
+          };
+        },
+        cache: true
+      }
+    });
+  }
+
+   function DCGrupo_NoPreseleccion(preseleccionado) {
+    var debito = $('#DCGrupo_No');
+    $.ajax({
+      type: 'GET',
+      dataType: 'json',
+      url: '../controlador/facturacion/facturar_pensionC.php?DCGrupo_No=true&q='+preseleccionado
+    }).then(function (data) {
+      if(data.length>0){
+        var option = new Option(data[0].text, data[0].id, true, true);
+        debito.append(option).trigger('change');
+        debito.trigger({
+            type: 'select2:select',
+            params: {
+                data: data[0]
+            }
+        });
+      }else{
+        $('#DCGrupo_No').val(null).trigger('change');
+      }
+    });
+  }
+
 </script>
+<style type="text/css"> 
+ .contenedor_img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100px;
+    background: #e5e5e5;
+    margin: 3px auto;
+    min-height: 100px;
+    border-radius: 10px;
+}
+ }
+</style>
   <div class="row">
     <div class="col-lg-4 col-sm-10 col-md-7 col-xs-12">
       <div class="col-xs-2 col-sm-2">
@@ -696,105 +865,172 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
               
             </select>
           </div>
-          <div class="col-sm-1" style="padding:0px">
+          <div class="col-xs-6 col-md-1 text-right no-padding">
             <b style="font-weight: 600;">Fecha emisión</b>
           </div>
-          <div class="col-sm-2">
+          <div class="col-xs-6 col-md-2 no-padding">
             <input tabindex="2" type="date" name="fechaEmision" id="fechaEmision" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
           </div>
-          <div class="col-sm-2 text-right">
+          <div class="col-xs-6 col-md-2 no-padding text-right">
             <label>Fecha vencimiento</label>
           </div>
-          <div class="col-sm-2">
+          <div class="col-xs-6 col-md-2 no-padding">
             <input type="date" tabindex="3" name="fechaVencimiento" id="fechaVencimiento" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
           </div>
-          <div class=" col-sm-2">
+          <div class="col-xs-6 col-md-2 no-padding">
             <label class="red">Factura No.</label>
             <label id="numeroSerie" class="red"></label>
           </div>
-           <div class=" col-sm-1" style="padding:0px">
+           <div class="col-xs-6 col-md-1 no-padding">
             <input tabindex="7" type="input" class="form-control input-xs text-right" name="factura" id="factura">
           </div>
         </div>
-        <div class="row">
-          <div class="col-sm-2 text-right">
-            <label class="text-right">Cliente/Alumno(C)</label>
-          </div>
-          <div class="col-sm-6">
-            <select class="form-control" id="cliente" name="cliente" tabindex="5">
-              <option value="">Seleccione un cliente</option>
-            </select>
-            <input type="hidden" name="codigoCliente" id="codigoCliente">
-          </div>
-          <div class="col-sm-2">
-            <input type="input" class="form-control input-xs" id="grupo" name="grupo" tabindex="6">
-          </div>        
-        </div>
-        <div class="row">
-          <div class="col-sm-2 text-right">
-            <label>Curso</label>
-          </div>
-          <div class="col-sm-6">
-            <input tabindex="8" type="input" class="form-control input-xs" name="direccion" id="direccion">
-          </div>
-          <div class="col-sm-2 text-right">
-            <label id="saldo">Saldo pendiente</label>
-          </div>
-          <div class="col-sm-2">
-            <input type="input" id="saldoPendiente" class="form-control input-xs text-right blue saldo_input" name="saldoPendiente">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-2 text-right">
-            <label>Razón social</label>
-          </div>
-          <div class="col-sm-4">
-            <input tabindex="9" type="input" class="form-control input-xs" name="persona" id="persona">
-          </div>
-          <div class="col-sm-1 text-right">
-            <label>CI/R.U.C</label>
-          </div>
-          <div class="col-sm-1 text-right">
-            <input tabindex="10" type="input" class="form-control input-xs" name="tdCliente" id="tdCliente" readonly>
-          </div>
-          <div class=" col-sm-2">
-            <input tabindex="10" type="input" class="form-control input-xs" name="ci" id="ci_ruc">   
-          </div>
-          <div class="col-sm-2">
-            <label class="online-radio"><input tabindex="4" type="checkbox" name="rbl_radio" id="rbl_no" checked="" style="margin-right: 2px;">Con mes</label>  
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-2 text-right">
-            <label>Dirección</label>
-          </div>
-          <div class="col-sm-5">
-            <input tabindex="11" type="input" class="form-control input-xs" name="direccion" id="direccion1">
-          </div>
-          <div class="col-sm-1 text-right">
-            <label>Telefono</label>
-          </div>
-          <div class=" col-sm-2">
-            <input tabindex="12" type="input" class="form-control input-xs" name="telefono" id="telefono">
-          </div>
-          <div class="col-sm-2">
-            <label>Código interno</label>
-             <input type="hidden" name="txt_cant_datos" id="txt_cant_datos" readonly>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-2 text-right">
-            <label>Email</label>
-          </div>
-          <div class="col-sm-8">
-            <input tabindex="13" type="input" class="form-control input-xs" name="email" id="email">
-          </div>
-          <div class=" col-sm-2">
-            <input type="input" class="form-control input-xs" name="codigo" id="codigo" tabindex="26">
-          </div>
-        </div>
-        <div class="row">
 
+        <div class="row">
+          <div class="col-md-9">
+            <div class="row">
+              <div class="col-xs-3 text-right">
+                <label class="text-right">Cliente/Alumno(C)</label>
+              </div>
+              <div class="col-xs-9">
+                <select class="form-control" id="cliente" name="cliente" tabindex="5">
+                  <option value="">Seleccione un cliente</option>
+                </select>
+                <input type="hidden" name="codigoCliente" id="codigoCliente">
+              </div>       
+            </div>
+            <div class="row">
+              <div class="col-xs-3 text-right">
+                <select class="form-control input-xs" id="DCGrupo_No" name="grupo" tabindex="5">
+                  <option value=".">Grupo</option>
+                </select>
+              </div>
+              <div class="col-xs-9">
+                <input tabindex="8" type="input" class="form-control input-xs" name="direccion" id="direccion">
+              </div>
+            </div>
+            <div class="row bg-warning" style="margin-top: 10px;">
+              <div class="col-xs-6 col-sm-3 text-right ">
+                <label>Razón social</label>
+              </div>
+              <div class="col-xs-6 col-sm-6 ">
+                <input tabindex="9" type="input" class="form-control input-xs" name="persona" id="persona">
+              </div>
+              <div class="col-xs-6 col-sm-1 text-right ">
+                <label>CI/R.U.C</label>
+              </div>
+              <div class="col-xs-6 col-sm-2 text-right ">
+                <input tabindex="10" type="input" class="form-control input-xs" name="tdCliente" id="tdCliente" readonly>
+              </div>
+            </div>
+            <div class="row bg-warning">
+              <div class="col-xs-6 col-sm-3 text-right ">
+                <label>Dirección</label>
+              </div>
+              <div class="col-xs-6 col-sm-9 ">
+                <input tabindex="11" type="input" class="form-control input-xs" name="direccion" id="direccion1">
+              </div>
+            </div>
+            <div class="row bg-warning">
+              <div class="col-xs-6 col-sm-3 text-right">
+                <label>Email</label>
+              </div>
+              <div class="col-xs-6 col-sm-6">
+                <input tabindex="13" type="input" class="form-control input-xs" name="email" id="email">
+              </div>
+
+              <div class="col-xs-6 col-sm-1 text-right">
+                <label>Telefono</label>
+              </div>
+              <div class="col-xs-6 col-sm-2">
+                <input tabindex="12" type="input" class="form-control input-xs" name="telefono" id="telefono">
+              </div>
+            </div>
+            <div class="row bg-info"  style="margin-top: 10px;">
+              <div class="col-xs-12 text-center">
+                <button style="margin: 8px 0px;" class="btn btn-block btn-info btn-xs btnDepositoAutomatico">Ingrese sus datos para el Debito Automatico</button>
+              </div>
+            </div>
+            <div class="row bg-info contenidoDepositoAutomatico" style="display: none;">
+              <div class="col-xs-6 col-sm-2 text-right">
+                <label for="debito_automatica">Debito Automatico</label>
+              </div>
+              <div class="col-xs-6 col-sm-6">
+                <select tabindex="13" class="form-control input-xs" name="debito_automatica" id="debito_automatica">
+                  <option value="">Seleccione un Banco</option>
+                </select>
+              </div>
+
+              <div class="col-xs-6 col-sm-1 text-right">
+                <label>Tipo</label>
+              </div>
+              <div class="col-xs-6 col-sm-3">
+                <select tabindex="12" type="input" class="form-control input-xs" name="tipo_debito_automatico" id="tipo_debito_automatico">
+                  <option value=".">Seleccionar Tipo</option>
+                  <option value="CORRIENTE">CORRIENTE</option>
+                  <option value="AHORROS">AHORROS</option>
+                  <option value="TARJETA">TARJETA</option>
+                </select>
+              </div>
+            </div>
+            <div class="row bg-info contenidoDepositoAutomatico" style="display: none;">
+              <div class="col-xs-6 col-sm-2 text-right">
+                <label>Numero de Cuenta</label>
+              </div>
+              <div class="col-xs-6 col-sm-3">
+                <input tabindex="13" type="input" class="form-control input-xs" name="numero_cuenta_debito_automatico" id="numero_cuenta_debito_automatico">
+              </div>
+
+              <div class="col-xs-6 col-sm-1 text-right">
+                <label>Caducidad</label>
+              </div>
+              <div class="col-xs-6 col-sm-2 contenedor_fecha_caducidad">
+                <input tabindex="12" type="text" maxlength="7"  class="form-control input-xs fecha_caducidad" name="caducidad_debito_automatico" id="caducidad_debito_automatico" placeholder="MM/YYYY">
+              </div>
+              <div class="col-xs-6 col-sm-3 text-right">
+                <label class="text-right" for="rbl_no">Depositar al Banco</label>
+              </div>
+              <div class="col-xs-6 col-sm-1 no-padding">
+                <input style="margin-top: 0px;margin-right: 2px;" tabindex="4" type="checkbox" name="por_deposito_debito_automatico" id="por_deposito_debito_automatico">
+              </div>
+            </div>
+
+
+          </div>
+          <div class="col-md-3">
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="col-xs-6 text-right">
+                  <label class="text-right" for="rbl_no">Con mes</label>
+                </div>
+                <div class="col-xs-6 no-padding">
+                  <input style="margin-top: 0px;margin-right: 2px;" tabindex="4" type="checkbox" name="rbl_radio" id="rbl_no" checked="">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="col-xs-6 text-right">
+                  <label>RUC</label>
+                </div>
+                <div class="col-xs-6 no-padding">
+                  <input tabindex="10" type="input" class="form-control input-xs" name="ci" id="ci_ruc">   
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xs-12 text-center">
+                <div class="contenedor_img">
+                  <img src="../img/img_estudiantes/1722214507.png" id="img_estudiante" class="img-responsive img-thumbnail">
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="row"  style="margin-top: 10px;">
           <div class="col-sm-12">
             <!-- <div class="tab-content" style="background-color:#E7F5FF"> -->
             <div class="tab-content">
@@ -856,11 +1092,11 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <input type="text" style="color: coral;" name="descuento" id="descuento" class="form-control input-xs red text-right" readonly value="0.00">
           </div>
           <div class="col-sm-2">
-            <div class="input-group input-group-sm">
+            <div class="input-group input-group-xs">
                 <input type="text" style="color: coral;"  name="descuentop" id="descuentop" class="form-control input-xs red text-right" readonly value="0.00">
                     <span class="input-group-btn">
                       <!-- <button type="button" class="btn btn-info btn-flat">Go!</button> -->
-                      <button tabindex="25" type="button" class="btn" data-toggle="modal" data-target="#myModal">%</button>
+                      <button tabindex="25" type="button" class="btn btn-xs" data-toggle="modal" data-target="#myModal">%</button>
                     </span>
               </div>
           </div>
@@ -871,25 +1107,27 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <input type="text" style="color: coral;"  name="total" id="total" class="form-control input-xs red text-right" readonly value="0.00" onblur="$('#cheque').focus()">
           </div>
         </div>
-        <div class="row">
-          <div class="col-sm-2 text-right">
+        <div class="row" style="margin-top: 8px;">
+          <div class="col-sm-2 text-right no-padding">
             <label>Detalle del pago</label>
           </div>
-          <div class="col-sm-4">
+          <div class="col-sm-6 no-padding">
             <input type="text" name="cheque" id="cheque" class="form-control input-xs" value="." tabindex="17">
           </div>
-          <div class="col-sm-2 text-right">
-            <b>Cheque No.</b>
+
+          <div class="col-sm-3 text-right no-padding">
+            <label id="saldo">Saldo pendiente</label>
           </div>
-          <div class="col-sm-2">
-            <input type="text" name="chequeNo" id="chequeNo" class="form-control input-xs text-right" tabindex="18"  onblur="$('#cuentaBanco').focus()">
+          <div class="col-sm-1  no-padding">
+            <input type="input" id="saldoPendiente" class="form-control input-xs text-right blue saldo_input text-right" name="saldoPendiente">
           </div>
+
         </div>
         <div class="row">
-          <div class="col-sm-2 text-right">
+          <div class="col-sm-2 text-right no-padding">
             <label>Bancos/Tarjetas</label>
           </div>
-          <div class="col-sm-7">
+          <div class="col-sm-4 no-padding">
             <select class="form-control input-xs" name="cuentaBanco" id="cuentaBanco" tabindex="15" onchange="verificarTJ();" onblur="$('#valorBanco').focus()">
               <?php
                 $cuentas = $facturar->getCatalogoCuentas();
@@ -899,18 +1137,26 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
               ?>
             </select>
           </div>
-          <div class="col-sm-1 text-right">
+
+          <div class="col-sm-2 text-right no-padding">
+            <b>Cheque No.</b>
+          </div>
+          <div class="col-sm-2 no-padding">
+            <input type="text" name="chequeNo" id="chequeNo" class="form-control input-xs text-right" tabindex="18"  onblur="$('#cuentaBanco').focus()">
+          </div>
+
+          <div class="col-sm-1 text-right no-padding">
             <label>USD</label>
           </div>
-          <div class="col-sm-2">
+          <div class="col-sm-1 no-padding">
             <input tabindex="19" type="text" name="valorBanco" id="valorBanco" onkeyup="calcularSaldo();" class="form-control input-xs red text-right" value="0.00" onblur="$('#cuentaNC').focus()">
           </div>
         </div>
         <div class="row">
-          <div class="col-sm-2 text-right">
+          <div class="col-sm-2 text-right no-padding">
             <label>Anticipos</label>
           </div>
-          <div class="col-sm-7">
+          <div class="col-sm-8 no-padding">
             <select class="form-control input-xs" name="cuentaBanco" id="cuentaBanco" tabindex="15">
               <?php
                 $cuentas = $facturar->getAnticipos();
@@ -920,18 +1166,18 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
               ?>
             </select>
           </div>
-          <div class="col-sm-1 text-right">
+          <div class="col-sm-1 text-right no-padding">
             <label>USD</label>
           </div>
-          <div class="col-sm-2">
+          <div class="col-sm-1 no-padding">
             <input type="input" id="saldoFavor" class="form-control input-xs red text-right" name="saldoFavor" tabindex="24" onkeyup="calcularSaldo();" value="0.00" style="color:yellowgreen;">
           </div>
         </div>
         <div class="row">
-          <div class="col-sm-2 text-right">
+          <div class="col-sm-2 text-right no-padding">
             <label>Notas de crédito</label>
           </div>
-          <div class="col-sm-7">
+          <div class="col-sm-8 no-padding">
             <select class="form-control input-xs" name="cuentaNC" id="cuentaNC" tabindex="16"  onblur="$('#abono').focus()">
               <?php
                 $cuentas = $facturar->getNotasCredito();
@@ -941,37 +1187,48 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
               ?>
             </select>
           </div>
-          <div class="col-sm-1 text-right">
+          <div class="col-sm-1 text-right no-padding">
             <label>USD</label>
           </div>
-          <div class="col-sm-2">
+          <div class="col-sm-1 no-padding">
             <input tabindex="21" type="text" name="abono" id="abono" onkeyup="calcularSaldo();" class="form-control input-xs red text-right" value="0.00"  onblur="$('#efectivo').focus()">
           </div>
         </div>
         <div class="row">
-          <div class="col-sm-4 text-center">
+          <div class="col-sm-4 text-center" no-padding>
             <input type="text" name="codigoB" class="form-control input-xs" id="codigoB" style="color: white; background: brown;" value="Código del banco: " readonly />
           </div>
-          <div class="col-sm-2 col-sm-offset-4 text-right">
+          <div class="col-sm-2 col-sm-offset-5 text-right no-padding">
             <b>Efectivo USD</b>
           </div>
-          <div class="col-sm-2">
+          <div class="col-sm-1 no-padding">
             <input tabindex="20" type="text" name="efectivo" id="efectivo" onkeyup="calcularSaldo();" class="form-control input-xs red text-right" value="0.00"  onblur="$('#saldoTotal').focus()">
           </div>
         </div>
         <div class="row" id="divInteres">
-          <div class="col-sm-2 col-sm-offset-8 text-right">
+          <div class="col-sm-2 col-sm-offset-8 text-right no-padding">
             <b>Interés Tarjeta USD</b>
           </div>
-          <div class="col-sm-2">
+          <div class="col-sm-1 no-padding">
             <input tabindex="20" type="text" name="interesTarjeta" id="interesTarjeta" class="form-control input-xs red text-right" >
           </div>
         </div>
         <div class="row">
+
+          <div class="col-xs-12 col-sm-4">
+            <div class="col-xs-6 text-right">
+              <label>Código interno</label>
+               <input type="hidden" name="txt_cant_datos" id="txt_cant_datos" readonly>
+            </div>
+            <div class="col-xs-6 no-padding">
+              <input type="input" class="form-control input-xs" name="codigo" id="codigo" tabindex="26">
+            </div>
+          </div>
+
           <div class="col-sm-1 text-center justify-content-center align-items-center">
             <input style="width: 50px" type="text" id="registros" class="form-control input-xs text-center justify-content-center align-items-center" readonly>
           </div>
-          <div class=" col-sm-4 col-sm-offset-3">
+          <div class=" col-sm-4 ">
             <div class="col-sm-2 col-sm-offset-4">
               <a title="Guardar" class="btn btn-default" tabindex="22" id="guardar">
                 <img src="../../img/png/grabar.png" width="25" height="30" onclick="guardarPension();">
@@ -983,10 +1240,10 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
               </a>
             </div>
           </div>
-          <div class="col-sm-2 text-right">
+          <div class="col-sm-2 text-right no-padding">
             <b>Saldo USD</b>
           </div>
-          <div class="col-sm-2">
+          <div class="col-sm-1 no-padding">
             <input type="text" name="saldoTotal" id="saldoTotal" class="form-control input-xs red text-right" value="0.00" style="color:coral;" onblur="$('#guardar').focus()">
           </div>
         </div>

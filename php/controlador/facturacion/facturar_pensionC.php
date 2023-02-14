@@ -122,6 +122,39 @@ else if(isset($_GET['EliminarInsPreFacturas']))
   exit();
 }
 
+if(isset($_GET['clienteMatricula']))
+{
+  echo json_encode($controlador->getClientesMatriculas(@$_GET['codigoCliente']));
+}
+if(isset($_GET['cargarBancos']))
+{
+  $columnas = [
+      'Codigo as id',
+      'Descripcion as text'
+    ];
+
+  $filtro = '';
+  if(isset($_GET['q']) && $_GET['q'] != ''  )
+  {
+    $filtro = $_GET['q']; 
+  }
+  echo json_encode($controlador->getcargarBancos($columnas, @$_GET['id'],$filtro, @$_GET['limit']));
+}
+if(isset($_GET['DCGrupo_No']))
+{
+  $query = '';
+  if(isset($_GET['q']))
+  {
+    $query = $_GET['q'];
+  }
+  echo json_encode($controlador->getDCGrupo($query));
+}
+
+if(isset($_GET['DireccionByGrupo']))
+{
+  echo json_encode($controlador->getCargarDireccionByGrupo(@$_GET['grupo']));
+}
+
 class facturar_pensionC
 {
   private $facturacion;
@@ -143,8 +176,7 @@ class facturar_pensionC
 		$datos = $this->facturacion->getClientes($query);
 		$clientes = [];
 		foreach ($datos as $value) {
-      // $matricula = $this->facturacion->getClientesMatriculas($query=false,$codigo=$value['Codigo']);
-			$clientes[] = array('id'=>$value['Cliente'],'text'=>$value['Cliente'],'data'=>array('email'=> $value['Email'],'direccion' => $value['Direccion'],'direccion1'=>$value['DireccionT'], 'telefono' =>$value['Telefono'], 'ci_ruc' => $value['CI_RUC'], 'codigo' => $value['Codigo'], 'cliente' => $value['Cliente'], 'grupo' => $value['Grupo'], 'tdCliente' => $value['TD'])); //,'dataMatricula'=>$matricula);
+			$clientes[] = array('id'=>$value['Cliente'],'text'=>$value['Cliente'],'data'=>array('email'=> $value['Email'],'direccion' => $value['Direccion'],'direccion1'=>$value['DireccionT'], 'telefono' =>$value['Telefono'], 'ci_ruc' => $value['CI_RUC'], 'codigo' => $value['Codigo'], 'cliente' => $value['Cliente'], 'grupo' => $value['Grupo'], 'tdCliente' => $value['TD'], 'Archivo_Foto'=> $value['Archivo_Foto'])); //,'dataMatricula'=>$matricula);
 		}
     return $clientes;
 	}
@@ -460,6 +492,12 @@ class facturar_pensionC
   	$TxtEfectivo = $_POST['TxtEfectivo'];
   	$TxtNC = $_POST['TxtNC'];
   	$DCNC = $_POST['DCNC'];
+
+    $DCDebito = $_POST['DCDebito'];
+    $CTipoCta = $_POST['CTipoCta'];
+    $TxtCtaNo = $_POST['TxtCtaNo'];
+    $MBFecha = $_POST['MBFecha'];
+    $CheqPorDeposito = @($_POST['CheqPorDeposito']=='on' || $_POST['CheqPorDeposito'] == '1')?true:false;
   	$Cta_CajaG = 1;
     $Titulo = "Formulario de Grabacion";
     $Mensajes = "Esta Seguro que desea grabar: La Factura No. ".$TextFacturaNo;
@@ -484,8 +522,14 @@ class facturar_pensionC
 
    	if ($update) {
    		$updateCliF = $this->facturacion->updateClientesFacturacion($TxtGrupo,$codigoCliente);
-   		$updateCliM = $this->facturacion->updateClientesMatriculas($TextRepresentante,$TextCI,$TD_Rep,$TxtTelefono,$TxtDireccion,$TxtEmail,$TxtGrupo,$codigoCliente);
    		$updateCli = $this->facturacion->updateClientes($TxtTelefono,$TxtDirS,$TxtDireccion,$TxtEmail,$TxtGrupo,$codigoCliente);
+
+      $dataClienteMatricula = $this->facturacion->getClientesMatriculas($codigoCliente);
+      if(count($dataClienteMatricula)>0){
+        $updateCliM = $this->facturacion->updateClientesMatriculas($TextRepresentante,$TextCI,$TD_Rep,$TxtTelefono,$TxtDireccion,$TxtEmail,$TxtGrupo,$codigoCliente,$CTipoCta,$TxtCtaNo,$CheqPorDeposito,UltimoDiaMes2("01/".$MBFecha, 'm/d/Y'),$DCDebito);
+      }else{
+        $updateCliM = $this->facturacion->insertClientesMatriculas($TextRepresentante,$TextCI,$TD_Rep,$TxtTelefono,$TxtDireccion,$TxtEmail,$TxtGrupo,$codigoCliente,$CTipoCta,$TxtCtaNo,$CheqPorDeposito,UltimoDiaMes2("01/".$MBFecha, 'm/d/Y'),$DCDebito);
+      }
    	}
     $TC = SinEspaciosIzq($_POST['DCLinea']);
     $serie = SinEspaciosDer($_POST['DCLinea']);
@@ -808,6 +852,31 @@ class facturar_pensionC
     }else{
       echo json_encode(array("rps" => false , "mensaje" => "Debe seleccionar un cliente." ));
     }
+  }
+
+  public function getClientesMatriculas($codigoCliente)
+  {
+    return $this->facturacion->getClientesMatriculas($codigoCliente);
+  }
+
+  public function getcargarBancos($columnas, $id, $filtro, $limit)
+  {
+    return $this->facturacion->getBancos($columnas,$id, $filtro, $limit);
+  }
+
+  public function getCargarDireccionByGrupo($grupo)
+  {
+    return $this->facturacion->getDireccionByGrupo($grupo);
+  }   
+
+  public function getDCGrupo($query)
+  {
+    $datos = $this->facturacion->getDCGrupo($query);
+    $lis = array();
+    foreach ($datos as $key => $value) {
+      $lis[] =array('id'=>$value['Grupo'],'text'=>$value['Grupo']);
+    }
+    return $lis;
   }
 
 }

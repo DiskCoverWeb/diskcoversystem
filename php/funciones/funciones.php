@@ -10187,6 +10187,15 @@ function UltimoDiaMes($FechaStr)
   return $UltimoDiaMes = generaCeros($vDia,2)."/".generaCeros($Vmes,2)."/".generaCeros($Vanio,4);
 }
 
+function UltimoDiaMes2($FechaStr, $formato_salida='d/m/Y', $formato_entrada='d/m/Y')
+{
+  $d = date_create_from_format($formato_entrada, $FechaStr);
+  $fecha = date_format($d,'Y-m-d');
+  $newFecha = new datetime($fecha);
+  $newFecha->modify('last day of this month'); 
+  return $newFecha->format($formato_salida);
+}
+
 function PrimerDiaMes($fecha, $formato_salida ="d/m/Y")
 {
   $d = new datetime($fecha);

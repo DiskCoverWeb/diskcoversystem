@@ -12,42 +12,44 @@ class facturar_pensionM
   }
 	
 	public function getClientes($query,$ruc=false){
-    $sql="  SELECT C.Email,C.T,C.Codigo,C.Cliente,C.Direccion,C.Grupo,C.Telefono,C.CI_RUC,C.TD,SUM(CF.Valor) As Deuda_Total,DireccionT 
-			      FROM Clientes As C, Clientes_Facturacion As CF 
-			      WHERE C.T = 'N'
-			      AND CF.Item = '".$_SESSION['INGRESO']['item']."' 
-			      AND CF.Num_Mes >= 0
-			      AND C.Codigo <> '9999999999' 
-			      AND C.FA <> 0
-			      AND CF.Codigo = C.Codigo";
+    $sql="  SELECT C.Email,C.T,C.Codigo,C.Cliente,C.Direccion,C.Grupo,C.Telefono,C.CI_RUC,C.TD,SUM(CF.Valor) As Deuda_Total,DireccionT , C.Archivo_Foto
+            FROM Clientes As C, Clientes_Facturacion As CF 
+            WHERE C.T = 'N'
+            AND CF.Item = '".$_SESSION['INGRESO']['item']."' 
+            AND CF.Num_Mes >= 0
+            AND C.Codigo <> '9999999999' 
+            AND C.FA <> 0
+            AND CF.Codigo = C.Codigo";
     if($ruc)
     {
       $sql.=" AND C.Codigo = '".$ruc."'";
     }
-		if($query != 'total' and $query!='' and !is_numeric($query) )
-		{
-		  $sql.=" AND Cliente LIKE '%".$query."%'";
-		}else
+    if($query != 'total' and $query!='' and !is_numeric($query) )
+    {
+      $sql.=" AND Cliente LIKE '%".$query."%'";
+    }else
     {
        $sql.=" AND C.CI_RUC LIKE '".$query."%'";
     }
-		$sql.=" GROUP BY C.Email, C.T,C.Codigo,C.Cliente,C.Direccion,C.Grupo,C.Telefono,C.CI_RUC,C.TD,DireccionT ORDER BY C.Cliente";
+    $sql.=" GROUP BY C.Email, C.T,C.Codigo,C.Cliente,C.Direccion,C.Grupo,C.Telefono,C.CI_RUC,C.TD,DireccionT, C.Archivo_Foto ORDER BY C.Cliente";
     if ($query != 'total') {
       $sql .= " OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY";
     }
-    // print_r($sql);die();
     $stmt = $this->db->datos($sql);
     return $stmt;
   }
 
-  public function getClientesMatriculas($query=false,$codigo=false)
+  public function getClientesMatriculas($codigo=false)
   {
-    $sql="SELECT * FROM Clientes_Matriculas WHERE 1=1 ";
+    $sSQL = "SELECT * 
+              FROM Clientes_Matriculas 
+              WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+              AND Item = '".$_SESSION['INGRESO']['item']."'";
     if($codigo)
-      {
-        $sql.="AND Codigo='".$codigo."'";
-      }
-    $stmt = $this->db->datos($sql);
+    {
+      $sSQL.=" AND Codigo='".$codigo."'";
+    }
+    $stmt = $this->db->datos($sSQL);
     return $stmt;
   }
 
@@ -188,7 +190,7 @@ class facturar_pensionM
     return $stmt;
   }
 
-  public function updateClientesMatriculas($TextRepresentante,$TextCI,$TD_Rep,$TxtTelefono,$TxtDireccion,$TxtEmail,$TxtGrupo,$codigoCliente){
+  public function updateClientesMatriculas($TextRepresentante,$TextCI,$TD_Rep,$TxtTelefono,$TxtDireccion,$TxtEmail,$TxtGrupo,$codigoCliente,$CTipoCta,$TxtCtaNo,$CheqPorDeposito,$Caducidad,$DCDebito){
     $sql = "UPDATE Clientes_Matriculas
                 	SET Representante = '".$TextRepresentante."', 
                 	Cedula_R = '".$TextCI."', 
@@ -196,7 +198,12 @@ class facturar_pensionM
                 	Telefono_R = '".$TxtTelefono."', 
                 	Lugar_Trabajo_R = '".$TxtDireccion."', 
                 	Email_R = '".$TxtEmail."', 
-                	Grupo_No = '".$TxtGrupo."' 
+                	Grupo_No = '".$TxtGrupo."',
+                  Cta_Numero ='".$TxtCtaNo."' ,
+                  Tipo_Cta ='".$CTipoCta."' ,
+                  Caducidad ='".$Caducidad."' ,
+                  Por_Deposito ='".$CheqPorDeposito."' ,
+                  Cod_Banco ='".$DCDebito."' 
                 	WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
                 	AND Item = '".$_SESSION['INGRESO']['item']."'
                 	AND Codigo = '".$codigoCliente."' ";
@@ -395,7 +402,7 @@ class facturar_pensionM
   function insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, $CodigoInv, $Valor, $GrupoNo, $NoMes, $Anio, $Mifecha, $Total_Desc, $Total_Desc2){
      $sSQL = "INSERT
         INTO Clientes_Facturacion 
-        (T,Codigo,Codigo_Inv,Valor,GrupoNo,Num_Mes,Mes,Periodo,Fecha,Descuento,Descuento2,Item)
+        (T,Codigo,Codigo_Inv,Valor,GrupoNo,Num_Mes,Mes,Periodo,Fecha,Descuento,Descuento2,Item,CodigoU)
         VALUES (
           '".G_NORMAL."',
           '$codigoCliente',
@@ -408,13 +415,108 @@ class facturar_pensionM
           '$Mifecha',
           '$Total_Desc',
           '$Total_Desc2',
-          '".$_SESSION['INGRESO']['item']."'
+          '".$_SESSION['INGRESO']['item']."',
+          '".$_SESSION['INGRESO']['CodigoU']."'
         )";
 
     $stmt = $this->db->String_Sql($sSQL);
     return $stmt;
   }
 
+  public function insertClientesMatriculas($TextRepresentante,$TextCI,$TD_Rep,$TxtTelefono,$TxtDireccion,$TxtEmail,$TxtGrupo,$codigoCliente,$CTipoCta,$TxtCtaNo,$CheqPorDeposito,$Caducidad,$DCDebito){
+
+    $sql = "INSERT INTO Clientes_Matriculas
+            (
+              Representante , 
+              Cedula_R , 
+              TD , 
+              Telefono_R, 
+              Lugar_Trabajo_R , 
+              Email_R , 
+              Grupo_No ,
+              Cta_Numero  ,
+              Tipo_Cta  ,
+              Caducidad  ,
+              Por_Deposito  ,
+              Cod_Banco , 
+              Periodo ,
+              Item ,
+              Codigo 
+              ) 
+            VALUES
+            (
+              '".$TextRepresentante."', 
+              '".$TextCI."', 
+              '".$TD_Rep."', 
+              '".$TxtTelefono."', 
+              '".$TxtDireccion."', 
+              '".$TxtEmail."', 
+              '".$TxtGrupo."',
+              '".$TxtCtaNo."' ,
+              '".$CTipoCta."' ,
+              '".$Caducidad."' ,
+              '".$CheqPorDeposito."' ,
+              '".$DCDebito."' ,
+              '".$_SESSION['INGRESO']['periodo']."',
+              '".$_SESSION['INGRESO']['item']."',
+              '".$codigoCliente."' 
+            )";
+
+    $stmt = $this->db->String_Sql($sql);
+    return $stmt;
+  }
+
+  public function getBancos($campos, $id, $filtro, $limit)
+  {
+    $columnas = implode(',', $campos);
+    if($columnas==""){
+      $columnas ="Codigo, Descripcion";
+    }
+    $sSQL = "SELECT $columnas
+          FROM Tabla_Referenciales_SRI 
+          WHERE Tipo_Referencia = 'BANCOS Y COOP'
+          ".(($filtro!="")?" AND Descripcion like '%$filtro%' ":"")."
+          ".(($id!="")?" AND Codigo = $id ":"")."
+          AND Codigo >= '0'
+          ORDER BY Descripcion";
+
+    if ($limit) {
+      $sSQL .= " OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY";
+    }
+
+    $stmt = $this->db->datos($sSQL);
+    return $stmt;
+  }
+
+  public function getDireccionByGrupo($grupo)
+  {
+    $sSQL = "SELECT Direccion 
+          FROM Clientes 
+          WHERE Grupo = '$grupo' 
+          AND LEN(Direccion) > 1 
+          AND FA <> 0
+
+          ".(($_SESSION['INGRESO']['Mas_Grupos'])?" AND DirNumero = '".$_SESSION['INGRESO']['item']."' ":"")."
+
+          GROUP BY Direccion
+          ORDER BY Direccion";
+    $stmt = $this->db->datos($sSQL);
+    return $stmt;
+  }
+
+  public function getDCGrupo($query=false)
+  {
+    $sql = "SELECT Grupo 
+            FROM Clientes 
+            WHERE FA <> 0
+
+            ".(($_SESSION['INGRESO']['Mas_Grupos'])?" AND DirNumero = '".$_SESSION['INGRESO']['item']."' ":"")."
+            ".(($query)?" AND Grupo LIKE '%".$query."%'  ":"")."
+
+            GROUP BY Grupo 
+            ORDER BY Grupo";       
+            return $this->db->datos($sql);
+  }
 }
 
 ?>
