@@ -460,6 +460,23 @@ function variables_sistema($EmpresaEntidad,$NombreEmp,$ItemEmp)
 	
       $_SESSION['INGRESO']['Serie_FA'] = $empresa[0]['Serie_FA'];
 	$_SESSION['INGRESO']['modulo']=modulos_habiliatados();
+
+      $_SESSION['INGRESO']['CentroDeCosto']=$empresa[0]['Centro_Costos'];
+      $_SESSION['INGRESO']['Copia_PV']=$empresa[0]['Copia_PV'];
+      $_SESSION['INGRESO']['Mod_Fact']=$empresa[0]['Mod_Fact'];
+      $_SESSION['INGRESO']['Mod_Fecha']=$empresa[0]['Mod_Fecha'];
+      $_SESSION['INGRESO']['Plazo_Fijo']=$empresa[0]['Plazo_Fijo'];
+      $_SESSION['INGRESO']['No_Autorizar']=$empresa[0]['No_Autorizar'];
+      $_SESSION['INGRESO']['Mas_Grupos']=$empresa[0]['Separar_Grupos'];
+      $_SESSION['INGRESO']['Medio_Rol']=$empresa[0]['Medio_Rol'];
+      $_SESSION['INGRESO']['Encabezado_PV']=$empresa[0]['Encabezado_PV'];
+      $_SESSION['INGRESO']['CalcComision']=$empresa[0]['Calcular_Comision'];
+      $_SESSION['INGRESO']['Grafico_PV']=$empresa[0]['Grafico_PV'];
+      $_SESSION['INGRESO']['ComisionEjec']=$empresa[0]['Comision_Ejecutivo'];
+      $_SESSION['INGRESO']['ImpCeros']=$empresa[0]['Imp_Ceros'];
+      $_SESSION['INGRESO']['Email_CE_Copia']=$empresa[0]['Email_CE_Copia'];
+      $_SESSION['INGRESO']['Ret_Aut']=$empresa[0]['Ret_Aut'];
+
 	//datos del periodo periodo
 
       //esto se debe sacar de la entidad ----------------------

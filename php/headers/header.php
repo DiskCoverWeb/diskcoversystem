@@ -135,6 +135,38 @@ include('../controlador/contabilidad/contabilidad_controller.php');
       $('.inputMoneda').on('input', function () {
           this.value = this.value.replace(/[^0-9.]/g,'');
       });
+
+      $('.fecha_caducidad').on('input', function () {
+        let correcta = true;
+        this.value = this.value.replace(/[^0-9]/g,'');
+        let str = $(this).val().replace('/','');
+        if(str.length > 2)
+          $(this).val(str.slice(0,2)+'/'+str.slice(2,str.length))
+
+        if(str.length >= 2 && str.slice(0,2)>12){
+          $(".contenedor_fecha_caducidad").addClass('has-error')
+          $('.fecha_caducidad').attr('title','Fecha incorrecta')
+          correcta = false
+        }
+
+        if(str.length >= 4){
+          if(str.slice(2,str.length)<2022 || str.slice(2,str.length)>3022){
+            $(".contenedor_fecha_caducidad").addClass('has-error')
+            $('.fecha_caducidad').attr('title','Fecha incorrecta')
+            correcta = false
+          }
+          if(str.slice(0,2)>12){
+            $(".contenedor_fecha_caducidad").addClass('has-error')
+            $('.fecha_caducidad').attr('title','Fecha incorrecta')
+            correcta = false
+          }
+        }
+        if(correcta){
+          $(".contenedor_fecha_caducidad").removeClass('has-error')
+          $('.fecha_caducidad').removeAttr('title','Fecha incorrecta')
+        }
+      });
+
      })
      
 
