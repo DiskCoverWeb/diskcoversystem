@@ -266,8 +266,8 @@ function validar_sri()
 					</div>
 					<div class="col-xs-3 col-sm-3 ">
 					 <label for="codigoc" class="control-label"><span style="color: red;">*</span>Codigo</label>
-						<input type="hidden" id='buscar' name='buscar'  value='' />
-						<input type="hidden" id='TD' name='TD'  value='' />
+						<input type="hidden" id='buscar' name='buscar'  value='' />            
+            <input type="text" id='TD' name='TD'  value='' readonly  style="width:30px" />
 						<input type="text" class="form-control input-sm" id="codigoc" name="codigoc" placeholder="Codigo" readonly="">
 						<span class="help-block" id='e_codigoc' style='display:none;color: red;'>debe agregar Codigo</span>						
 					</div>
