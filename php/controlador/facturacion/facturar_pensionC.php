@@ -226,7 +226,7 @@ class facturar_pensionC
       if(count($datos)==0)
       {
         return array();
-      }
+      } 
     }
 
     $catalogo = [];
@@ -540,7 +540,7 @@ class facturar_pensionC
 
 
 	public function Grabar_FA_Pensiones($FA,$TextFacturaNo){
-		$codigoCliente = $FA['codigoCliente'];
+    $codigoCliente = $FA['codigoCliente'];
 		//Seteamos los encabezados para las facturas
 		$Estudiante['cedula'] = $FA['TextCI'];
 		$Estudiante['fonopaga'] = $FA['TxtTelefono'];
@@ -587,6 +587,7 @@ class facturar_pensionC
     foreach ($datos as $key => $value) {
       // print_r($key);
 		  $TFA = Calculos_Totales_Factura($codigoCliente);
+      $FA['CodigoC'] = $codigoCliente;
       $FA['Tipo_PRN'] = "FM";
       $FA['FacturaNo'] = $TextFacturaNo;
       $FA['Nuevo_Doc'] = true;
@@ -624,7 +625,7 @@ class facturar_pensionC
       $Anio1 = $value["TICKET"];
       // $this->facturacion->updateClientesFacturacion1($Valor,$Anio1,$Codigo1,$Codigo,$Codigo3,$Codigo2);
       //Grabamos el numero de factura
-      Grabar_Factura($FA);
+      Grabar_Factura1($FA);
 
       //Seteos de Abonos Generales para todos los tipos de abonos
       $TA['T'] = $FA['T'];

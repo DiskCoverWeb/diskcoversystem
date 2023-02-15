@@ -309,11 +309,9 @@
       dataType:'json', 
       success: function(data)
       {
-        // console.log(data);
-        datos = data;
-        valor = 0;
-        if (datos.length>0) {
-          valor = datos.Saldo_Pendiente;
+        let valor = 0;
+        if (data.length>0) {
+          valor = data[0].Saldo_Pendiente;
         }
         $("#saldoFavor").val(parseFloat(valor).toFixed(2));
       }
@@ -328,11 +326,9 @@
       dataType:'json', 
       success: function(data)
       {
-        datos = data;
-        valor = 0;
-        // console.log(datos);
-        if (datos.length>0) {
-          valor = datos.Saldo_Pend;
+        let valor = 0;
+        if (data.length>0) {
+          valor = data[0].Saldo_Pend;
         }
         $("#saldoPendiente").val(parseFloat(valor).toFixed(2));
       }
@@ -928,7 +924,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
                 <label>Dirección</label>
               </div>
               <div class="col-xs-6 col-sm-9 ">
-                <input tabindex="11" type="input" class="form-control input-xs" name="direccion" id="direccion1">
+                <input tabindex="11" type="input" class="form-control input-xs" name="direccion1" id="direccion1">
               </div>
             </div>
             <div class="row bg-warning">
