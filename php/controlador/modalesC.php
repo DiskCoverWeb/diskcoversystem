@@ -113,9 +113,56 @@ class modalesC
 	function codigo_CI($ci)
 	{
 		$datos = codigo_verificador($ci);
+
+		// print_r($datos);die();
+		if($datos['Tipo']!= "R" && strlen($datos['CI'])== 13)
+		{
+			$res = file_get_contents("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=".$ci);
+			if($res==true)
+			{
+				$res2 = file_get_contents("https://srienlinea.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos2.jspa?accion=siguiente&ruc=".$ci);
+				$res2 = explode('<table class="formulario">',$res2); //divide en tabla formulario que viene en el html
+				$res2 = $res2[1]; //solo toma de tabla formulario para abajo
+				$res2 = explode('</table>', $res2); //divide cuando lña tabla termina 
+				$res2 = $res2[0]; //se selecciona solo la parte primera que seran los tr
+				$res2 = str_replace('<tr>','', $res2); //remplazamos todos los tr
+
+				$datos =  explode('</tr>', $res2);  //dividimos por el final del tr
+
+				// if($datos[2])
+
+				// // $res2 =json_encode($res2);
+				// print_r($datos);die();
+
+
+				$tipo = explode('\'">', $datos[11]);
+				$tipo = str_replace(array('</a>','</td>'),'', $tipo[1]);
+
+				return array('Codigo'=>substr($ci, 0,10),'Tipo'=>'R','Dig_ver'=>substr($ci, 10,1),'Ruc_Natu'=>trim($tipo),'CI'=> $ci);
+
+			}else
+			{
+				print_r('No existe');die();
+			}
+
+			print_r($res);die();
+		 // TipoSRI = consulta_RUC_SRI(URLInet, NumeroRUC)
+		}
+
 		return $datos;
 
 	}
+function li2Array($html,$elemento="li"){
+ 
+  $a = array("/<".$elemento.">(.*?)</".$elemento.">/is");
+  $b = array("$1 <explode>");
+ 
+  $html  = preg_replace($a, $b, $html);
+  $array = explode("<explode>",$html);
+ 
+  return $array;
+ 
+}
 
 	function guardar_cliente($parametro)
 	{
@@ -228,47 +275,25 @@ class modalesC
 
 	function validar_sri($ci)
 	{
-		$url = "https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=".$ci;
-		$url_sri = "https://srienlinea.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos2.jspa?accion=siguiente&ruc=".$ci;
-		$res = $this->getRemoteFile($url);
-		$r = array('res'=>2,'tbl'=>'');
-
-		print_r($res);die();
-		if($res=='true')
-		{
-			$r = array('res'=>2,'tbl'=>'');
-			$datos = $this->getRemoteFile($url_sri);
-			if($datos!= false)
+		$res = file_get_contents("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=".$ci);
+			if($res==true)
 			{
-		    $tr='';
-			$sp = '<table class="formulario">';
-            $tbl = explode($sp, $datos); //tomo los datos de la tabla que envioa a pagina del sri
-            $tbl =  explode('</table>',$tbl[1]); //quito el final de la tabla
-            $html  = explode('</tr>',str_replace('<tr>','',$tbl[0]));  //tomo los elementos de cada tr
-            foreach ($html as $key => $value) {
+				$res2 = file_get_contents("https://srienlinea.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos2.jspa?accion=siguiente&ruc=".$ci);
+				$res2 = explode('<table class="formulario">',$res2); //divide en tabla formulario que viene en el html
+				$res2 = $res2[1]; //solo toma de tabla formulario para abajo
+				$res2 = explode('</table>', $res2); //divide cuando lña tabla termina 
+				$res2 = $res2[0]; //se selecciona solo la parte primera que seran los tr
 
-            // print_r($value);die();
-            	//comparo si los tr estan vacios
-            	if(trim($value)!='<td colspan="2" class="lineaSep" />' && trim($value)!='<td colspan="2">&nbsp;</td>')
-            	{
-            		$tr.="<tr>".$value."</tr>";
-            	}
-            }
+				$res2 = str_replace(array('<td colspan="2" class="lineaSep" />','th','<td colspan="2">&nbsp;</td>'),array('','td',''), $res2);
 
-            // print_r($tr);die();
-			// $html  = str_replace('<tr>
-			// 	<td colspan="2"></td>
-			// </tr>','',$html);
-			$html = str_replace('&oacute;','o',$tr);
-			$html = str_replace('&nbsp;','',$html);
+				// print_r($res2);die();
+				
 
-			// print_r($html);die();
-			// $html = str_replace('U+FFFD','',$html);
-            $tbl =strval('<table class="table">'.utf8_encode($html).'</table>');
+
+
+            $tbl =strval('<table class="table">'.utf8_encode($res2).'</table>');
             $r = array('res'=>1,'tbl'=>$tbl);
            }
-
-		}
 		// print_r($tbl);die();
 		return $r;
 	}
