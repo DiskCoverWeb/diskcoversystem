@@ -1,6 +1,13 @@
 <?php 
-include(dirname(__DIR__,2).'/funciones/funciones.php');
-include(dirname(__DIR__,3).'/lib/fpdf/reporte_de.php');
+if(!include_once(dirname(__DIR__,2).'/funciones/funciones.php'))
+{
+	include_once(dirname(__DIR__,2).'/funciones/funciones.php');
+}
+if(!class_exists('PDF'))
+{
+	include(dirname(__DIR__,3).'/lib/fpdf/reporte_de.php');
+}
+
 if(!class_exists('db'))
 {
 	include(dirname(__DIR__,2).'/db/db1.php');
@@ -1343,7 +1350,7 @@ class incomM
         ORDER BY Cta_Servicio,Cta_Bienes";
 	   $datos = $this->conn->datos($sql);
 
-	   // print_r($datos);die();
+	   // print_r($sql);die();
 	   if(count($datos)>0)
 	   {
 	   	 $TFA['Fecha'] = $datos[0]["Fecha"];

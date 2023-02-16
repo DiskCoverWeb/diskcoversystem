@@ -23,6 +23,7 @@ class descargosM
 	{
 
 		$cid = $this->conn;
+		
 		$sql = "SELECT SUM(Valor_Total) as 'importe',Orden_No as ORDEN,Codigo_P as 'Codigo_B',A.Fecha as 'Fecha_Fab',C.Cliente as 'nombre',A.CodigoL as 'area',CS.Detalle as 'subcta',C.Matricula as 'his',A.Detalle as 'Detalle'
 			FROM Trans_Kardex A
 			LEFT JOIN Clientes C ON C.Codigo = A.Codigo_P 
@@ -63,6 +64,47 @@ class descargosM
 		$sql.=" GROUP BY Orden_No ,Codigo_P,A.Fecha,C.Cliente,A.CodigoL,CS.Detalle,C.Matricula,A.Detalle ORDER BY A.Fecha DESC";
 		$sql.=" OFFSET 0 ROWS FETCH NEXT 50 ROWS ONLY;";
 		
+/*
+		$sql="SELECT top(50) Valor_Total as 'importe',Codigo_P as 'Codigo_B',C.Cliente as 'nombre',Orden_No as 'ORDEN',A.CodigoL as 'area',A.Fecha as 'Fecha_Fab',C.Matricula as 'his',A.Detalle as 'Detalle',CS.Detalle as 'subcta'
+			FROM Trans_Kardex A
+			LEFT JOIN Clientes C ON A.Codigo_P  = C.Codigo
+			LEFT JOIN Catalogo_SubCtas CS ON  A.CodigoL = CS.Codigo
+			WHERE Numero= 0 
+			AND A.Item = '".$_SESSION['INGRESO']['item']."' 
+			AND A.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+			AND Orden_No <> '.'
+			AND CS.Item = A.Item
+			AND CS.Periodo = A.Periodo";
+			if($codigo_b)
+			{
+				$sql.=" AND Codigo_P = '".$codigo_b."' ";
+			}
+			if($tipo=='P' AND $query!='')
+			{
+				$sql.=" AND Orden_No = '".$query."' ";
+			}
+			if($tipo=='C' AND $query!='')
+			{
+				$sql.=" AND Codigo_P LIKE '".$query."%' ";
+			}
+			if ($tipo=='N' AND $query!='') 
+			{
+				$sql.=" AND Cliente LIKE '%".$query."%'";
+			}
+			if($busfe)
+			{		
+				  $sql.=" AND A.Fecha BETWEEN '".$desde."' and '".$hasta."'";
+			}
+			if($area)
+			{
+				$sql.=" AND CS.Codigo like '".$area."%'";
+			}
+			if($articulo)
+			{
+				$sql.=" AND Codigo_Inv = '".$articulo."'";
+			}
+
+			$sql.=" GROUP BY Valor_Total,Codigo_P,Orden_No,A.Fecha,C.Cliente,A.CodigoL,C.Matricula,A.Detalle,CS.Detalle";*/
 		// print_r($sql);die();
 		$stmt = sqlsrv_query($cid, $sql);
         $datos =  array();

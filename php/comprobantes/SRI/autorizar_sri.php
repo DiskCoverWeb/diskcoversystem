@@ -2537,6 +2537,10 @@ function Autorizar_retencion($parametros)
 
 			   		 }else 
 			   		 {
+			   		 	if($validar_autorizado==1)
+			   		 	{
+			   		 		$resp = $this->actualizar_datos_CER($aut,$parametros['TP'],$TFA[0]["Serie_R"],$TFA[0]["Retencion"],generaCeros($_SESSION['INGRESO']['IDEntidad'],3),$TFA[0]["Autorizacion_R"],$TFA[0]['Fecha']->format('Y-m-d'));
+			   		 	}
 			   		 	// $resp = $this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion']);
 			   		 	// RETORNA SI YA ESTA AUTORIZADO O SI FALL LA REVISIO EN EL SRI
 			   			return $validar_autorizado;
@@ -2639,12 +2643,12 @@ function generar_xml_retencion($cabecera,$detalle)
 			if($RIMPE['@micro']!='.' && $RIMPE['@micro']!='' && $RIMPE['@micro']=='CONTRIBUYENTE RÉGIMEN RIMPE' )
 			{
 				$xml_contribuyenteRimpe = $xml->createElement( "contribuyenteRimpe",$RIMPE['@micro']);
-				$xml_infoTributaria->appendChild( $xml_contribuyenteRimpe);
+				$xml_infotributaria->appendChild( $xml_contribuyenteRimpe);
 			}
 			if($RIMPE['@Agente']!='.' && $RIMPE['@Agente']!='')
 			{
 				$xml_agenteRetencion = $xml->createElement( "agenteRetencion",'1');
-				$xml_infoTributaria->appendChild( $xml_agenteRetencion);
+				$xml_infotributaria->appendChild( $xml_agenteRetencion);
 			}
 		}
 
@@ -2656,7 +2660,7 @@ function generar_xml_retencion($cabecera,$detalle)
 
 	    $xml_infoCompRetencion = $xml->createElement( "infoCompRetencion");
 	    $xml_fechaEmision = $xml->createElement( "fechaEmision",$cabecera[0]['Fecha']->format('d/m/Y'));
-	    if(isset($cabecera[0]['Nombre_Establecimiento']) &&  strlen($cabecera[0]['Nombre_Establecimiento'])>0 && $cabecera['Nombre_Establecimiento']!='.')
+	    if(isset($cabecera[0]['Nombre_Establecimiento']) &&  strlen($cabecera[0]['Nombre_Establecimiento'])>0 && $cabecera[0]['Nombre_Establecimiento']!='.')
 		{
 			$xml_dirEstablecimiento = $xml->createElement( "dirEstablecimiento",$cabecera[0]['Direccion_Establecimiento']);
 
@@ -3731,6 +3735,7 @@ function actualizar_datos_CER($autorizacion,$tc,$serie,$retencion,$entidad,$auto
 			AND Serie_Retencion = '".$serie."' 
 			AND LEN(AutRetencion) = 13
 			AND AutRetencion = '".$autAnte."'";
+			// print_r($sql);die();
 		return $this->db->String_Sql($sql);
 
      }

@@ -121,7 +121,7 @@ class pacienteM
 		{
 			$datos[]=$row;
 		}
-		// print_r($datos);die();
+		print_r($datos);die();
 		return $datos;
 	}
 
