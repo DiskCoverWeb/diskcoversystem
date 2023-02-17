@@ -1,92 +1,125 @@
-<?xml version="1.0" encoding="UTF-8"?><notaCredito id="comprobante" version="1.0.0">
+<?xml version="1.0" encoding="UTF-8"?><autorizacion>
+  <estado>AUTORIZADO</estado>
+  <numeroAutorizacion>0501202307070216417900110010030009632581234567814</numeroAutorizacion>
+  <fechaAutorizacion class="fechaAutorizacion">05/01/2023 18:03:38.000</fechaAutorizacion>
+  <comprobante><![CDATA[<?xml version="1.0" encoding="UTF-8"?><comprobanteRetencion id="comprobante" version="2.0.0">
   <infoTributaria>
     <ambiente>1</ambiente>
     <tipoEmision>1</tipoEmision>
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>1302202304070216417900110010030000000991234567817</claveAcceso>
-    <codDoc>04</codDoc>
+    <claveAcceso>0501202307070216417900110010030009632581234567814</claveAcceso>
+    <codDoc>07</codDoc>
     <estab>001</estab>
     <ptoEmi>003</ptoEmi>
-    <secuencial>000000099</secuencial>
+    <secuencial>000963258</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
-  <infoNotaCredito>
-    <fechaEmision>13/02/2023</fechaEmision>
+  <infoCompRetencion>
+    <fechaEmision>05/01/2023</fechaEmision>
     <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
-    <tipoIdentificacionComprador>04</tipoIdentificacionComprador>
-    <razonSocialComprador>AGUINAGA POVEDA MAYRA VALERIA</razonSocialComprador>
-    <identificacionComprador>1707127336</identificacionComprador>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <codDocModificado>01</codDocModificado>
-    <numDocModificado>001-003-000000781</numDocModificado>
-    <fechaEmisionDocSustento>08/09/2022</fechaEmisionDocSustento>
-    <totalSinImpuestos>4</totalSinImpuestos>
-    <valorModificacion>4</valorModificacion>
-    <moneda>DOLAR</moneda>
-    <totalConImpuestos>
-      <totalImpuesto>
-        <codigo>2</codigo>
-        <codigoPorcentaje>2</codigoPorcentaje>
-        <baseImponible>0.00</baseImponible>
-        <valor>0.00</valor>
-      </totalImpuesto>
-    </totalConImpuestos>
-    <motivo>Anulacion por Nota de Credito</motivo>
-  </infoNotaCredito>
-  <detalles>
-    <detalle>
-      <codigoInterno>98.22</codigoInterno>
-      <codigoAdicional>8</codigoAdicional>
-      <descripcion>1865</descripcion>
-      <cantidad>1.0000</cantidad>
-      <precioUnitario>4</precioUnitario>
-      <descuento>.0000</descuento>
-      <precioTotalSinImpuesto>4</precioTotalSinImpuesto>
-      <impuestos>
-        <impuesto>
-          <codigo>2</codigo>
+    <tipoIdentificacionSujetoRetenido>05</tipoIdentificacionSujetoRetenido>
+    <parteRel>NO</parteRel>
+    <razonSocialSujetoRetenido>ADRIAN RIOFRIO</razonSocialSujetoRetenido>
+    <identificacionSujetoRetenido>1205106402</identificacionSujetoRetenido>
+    <periodoFiscal>01/2023</periodoFiscal>
+  </infoCompRetencion>
+  <docsSustento>
+    <docSustento>
+      <codSustento>01</codSustento>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>001006000000156</numDocSustento>
+      <fechaEmisionDocSustento>05/01/2023</fechaEmisionDocSustento>
+      <fechaRegistroContable>05/01/2023</fechaRegistroContable>
+      <numAutDocSustento>0000000001</numAutDocSustento>
+      <pagoLocExt>01</pagoLocExt>
+      <totalSinImpuestos>280.00</totalSinImpuestos>
+      <importeTotal>299.20</importeTotal>
+      <impuestosDocSustento>
+        <impuestoDocSustento>
+          <codImpuestoDocSustento>2</codImpuestoDocSustento>
+          <codigoPorcentaje>2</codigoPorcentaje>
+          <baseImponible>160.0000</baseImponible>
+          <tarifa>12</tarifa>
+          <valorImpuesto>19.2000</valorImpuesto>
+        </impuestoDocSustento>
+        <impuestoDocSustento>
+          <codImpuestoDocSustento>2</codImpuestoDocSustento>
           <codigoPorcentaje>0</codigoPorcentaje>
+          <baseImponible>120.0000</baseImponible>
           <tarifa>0</tarifa>
-          <baseImponible>4</baseImponible>
-          <valor>0.00</valor>
-        </impuesto>
-      </impuestos>
-    </detalle>
-  </detalles>
+          <valorImpuesto>0.00</valorImpuesto>
+        </impuestoDocSustento>
+      </impuestosDocSustento>
+      <retenciones>
+        <retencion>
+          <codigo>1</codigo>
+          <codigoRetencion>303</codigoRetencion>
+          <baseImponible>420.0000</baseImponible>
+          <porcentajeRetener>10.00</porcentajeRetener>
+          <valorRetenido>42.0000</valorRetenido>
+        </retencion>
+        <retencion>
+          <codigo>2</codigo>
+          <codigoRetencion>9</codigoRetencion>
+          <baseImponible>7.6500</baseImponible>
+          <porcentajeRetener>10</porcentajeRetener>
+          <valorRetenido>0.77</valorRetenido>
+        </retencion>
+        <retencion>
+          <codigo>2</codigo>
+          <codigoRetencion>10</codigoRetencion>
+          <baseImponible>11.5500</baseImponible>
+          <porcentajeRetener>20</porcentajeRetener>
+          <valorRetenido>2.31</valorRetenido>
+        </retencion>
+      </retenciones>
+      <pagos>
+        <pago>
+          <formaPago>01</formaPago>
+          <total>299.2</total>
+        </pago>
+      </pagos>
+    </docSustento>
+  </docsSustento>
   <infoAdicional>
-    <campoAdicional nombre="Email">mayrava@imagination.com.ec</campoAdicional>
+    <campoAdicional nombre="Direccion">CIUDAD CELESTE ETAPA ESTELA</campoAdicional>
+    <campoAdicional nombre="Telefono">0999327869</campoAdicional>
+    <campoAdicional nombre="Email">adrian.riofrio2014@gmail.com</campoAdicional>
+    <campoAdicional nombre="Comprobante No">CD-001000185</campoAdicional>
+    <campoAdicional nombre="Contribuyente Regimen Microempresas"> </campoAdicional>
   </infoAdicional>
-<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature581749">
-<ds:SignedInfo Id="Signature-SignedInfo745376">
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature382690">
+<ds:SignedInfo Id="Signature-SignedInfo189586">
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-<ds:Reference Id="SignedPropertiesID8848" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature581749-SignedProperties535673">
+<ds:Reference Id="SignedPropertiesID983069" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature382690-SignedProperties681452">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>nT/sFMRvqU6eNr8Dxk79ZQ5Xiqo=</ds:DigestValue>
+<ds:DigestValue>ls+5lPeXWgpiY/FBxpMdt/C/CJM=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference URI="#Certificate1768287">
+<ds:Reference URI="#Certificate141678">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>qj+8QDrOCAyZcc5g0Qr1IlvppvM=</ds:DigestValue>
+<ds:DigestValue>wCVlQZMnd7eDAPIWibQTYocSC1Y=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference Id="Reference-ID-923313" URI="#comprobante">
+<ds:Reference Id="Reference-ID-507534" URI="#comprobante">
 <ds:Transforms>
 <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>XcSa8l7qg8sXRSypx8/LDh0L5pI=</ds:DigestValue>
+<ds:DigestValue>iRRBcK7dkWXRRP6TLn/dK+YdYDo=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue Id="SignatureValue123229">
-EBc2H2LNT3L0P8MXMoXG2KaBcyLGEcNbhrIPXHRs8WCLIg/ERdrN/GeWkCixV7qsE2nP6tiO3p4S
-fJs8f4b/69sr4ddYtrtuVSx6nDcrmQcu4TWsU9sdUjwpsU9Y4XsVDPNlkwUEfqZk05Q6AJiVXObe
-UgVPvC6iofDlphbFiRfaL2N+yYj8fZu68F/hDRIHkV3XunE3hRhY/5mFNS8Ysn+sZsiAKdrslUZ+
-i78aYbd8b0xdrLIV4KdYs2+2sJPqzChEGODRlq9s41/9p52T4NfNAHsESX0ba3hpYV3vmUU/3yhi
-gNMiaxb/Jnook6wxKU5uHwkOwbJPoS8OmZGjCg==
+<ds:SignatureValue Id="SignatureValue366751">
+Yzs2vwAndR5ZiEGV/wJrSxkMftrvoZFxBwJP946zgHntwOCzy7/CFYTdpfvWox3RKKSvCoeKsSIX
+omFnbM6ypvzCQCDpRKzin5roHqNZ0fMRboH+tRJrShAVKG6Tlsap1WOdY3XMYbGatYbh+RAKCp6o
+2FXN/aiqkurcLg+XhsMHU5OCJ385pfJ7WCfjEsIMv4qQTO9NPaXRvcNi0lJHKoPp13SRJvz4uHP+
+5N11MrGeKZCY/2xTvvQfxEW6xu930qMBgrzsTv/X/rC/uiXl9b3SYNjHFvpW0SdQ+7Xm4f4TBCQ4
+n5hm1R6OaoMeYZsN14YarnPKOY7MJvVaBc0XFw==
 </ds:SignatureValue>
-<ds:KeyInfo Id="Certificate1768287">
+<ds:KeyInfo Id="Certificate141678">
 <ds:X509Data>
 <ds:X509Certificate>
 MIILkjCCCXqgAwIBAgIEXDrIAjANBgkqhkiG9w0BAQsFADCBmTELMAkGA1UEBhMCRUMxHTAbBgNV
@@ -157,4 +190,6 @@ LRuAVSyi58qyAD0Eu1zLMc3KhEUXoxF7aA8P0w==
 </ds:RSAKeyValue>
 </ds:KeyValue>
 </ds:KeyInfo>
-<ds:Object Id="Signature581749-Object638633"><etsi:QualifyingProperties Target="#Signature581749"><etsi:SignedProperties Id="Signature581749-SignedProperties535673"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-02-13T16:05:26-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-923313"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></notaCredito>
+<ds:Object Id="Signature382690-Object182517"><etsi:QualifyingProperties Target="#Signature382690"><etsi:SignedProperties Id="Signature382690-SignedProperties681452"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-01-05T17:55:58-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-507534"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></comprobanteRetencion>]]></comprobante>
+  <mensajes/>
+</autorizacion>
