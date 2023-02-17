@@ -3364,7 +3364,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
      	$descto = '0';
      	if($value['Total']>0)
      	{
-     		$descto = number_format((($value['Total_Desc']*100)/$value['Total']),2,'.','').'%';
+     		$descto = number_format(((($value['Total_Desc']+$value['Total_Desc2'])*100)/$value['Total']),2,'.','').'%';
      	}
      	 $pdf->SetX($x);
            if($imp_mes!=0)
@@ -3381,12 +3381,12 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 
 	           }else
 	           {
-	           	$totaldes = number_format($value['Total_Desc'],2,'.','');
+	           	$totaldes = number_format($value['Total_Desc'],2,'.','')+number_format($value['Total_Desc2'],2,'.','');
 	       		$totalfac = number_format($value['Total'],2,'.','');
 	           }
 	       	}else
 	       	{
-	       		$totaldes = number_format($value['Total_Desc'],2,'.','');
+	       		$totaldes = number_format($value['Total_Desc'],2,'.','')+number_format($value['Total_Desc2'],2,'.','');
 	       		$totalfac = number_format($value['Total'],2,'.','');
 	       	}              		
      	 	$pdf->SetWidths(array(55,55,45,45,123,45,45,40,40,45));
@@ -3599,7 +3599,8 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 		// print_r($abonos);die();
 		foreach ($abonos as $key => $value) {
 			$pdf->SetWidths(array(40,95,46));
-			$arr=array($value['Fecha']->format('Y-m-d'),$value['Banco'].' '.$value['Cheque'],$value['Abono']);
+			// $arr=array($value['Fecha']->format('Y-m-d'),$value['Banco'].' '.$value['Cheque'],$value['Abono']);
+			$arr=array($value['Fecha']->format('Y-m-d'),$value['Banco'].' ',$value['Abono']);
 		    $pdf->Row($arr,10,1);
 		    $pdf->SetX(140+$pdf->GetX()-$margen);	
 
