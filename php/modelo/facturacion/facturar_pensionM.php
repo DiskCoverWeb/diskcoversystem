@@ -420,8 +420,8 @@ class facturar_pensionM
           '".$_SESSION['INGRESO']['item']."',
           '".$_SESSION['INGRESO']['CodigoU']."'
         )";
-
     $stmt = $this->db->String_Sql($sSQL);
+    Eliminar_Nulos_SP("Clientes_Facturacion");
     return $stmt;
   }
 
@@ -465,6 +465,7 @@ class facturar_pensionM
             )";
 
     $stmt = $this->db->String_Sql($sql);
+    Eliminar_Nulos_SP("Clientes_Matriculas");
     return $stmt;
   }
 

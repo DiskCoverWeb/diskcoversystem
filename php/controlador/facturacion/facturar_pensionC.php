@@ -176,7 +176,7 @@ class facturar_pensionC
 		$datos = $this->facturacion->getClientes($query);
 		$clientes = [];
 		foreach ($datos as $value) {
-			$clientes[] = array('id'=>$value['Cliente'],'text'=>$value['Cliente'],'data'=>array('email'=> $value['Email'],'direccion' => $value['Direccion'],'direccion1'=>$value['DireccionT'], 'telefono' =>$value['Telefono'], 'ci_ruc' => $value['CI_RUC'], 'codigo' => $value['Codigo'], 'cliente' => $value['Cliente'], 'grupo' => $value['Grupo'], 'tdCliente' => $value['TD'], 'Archivo_Foto'=> $value['Archivo_Foto'])); //,'dataMatricula'=>$matricula);
+			$clientes[] = array('id'=>$value['Cliente'],'text'=>$value['Cliente'],'data'=>array('email'=> $value['Email'],'direccion' => $value['Direccion'],'direccion1'=>$value['DireccionT'], 'telefono' =>$value['Telefono'], 'ci_ruc' => $value['CI_RUC'], 'codigo' => $value['Codigo'], 'cliente' => $value['Cliente'], 'grupo' => $value['Grupo'], 'tdCliente' => $value['TD'], 'Archivo_Foto'=> $value['Archivo_Foto'], 'Archivo_Foto_Url'=> BuscarArchivo_Foto_Estudiante($value['Archivo_Foto']))); //,'dataMatricula'=>$matricula);
 		}
     return $clientes;
 	}
@@ -473,7 +473,7 @@ class facturar_pensionC
 		$TxtDireccion = $_POST['TxtDireccion'];
 		$TxtTelefono = $_POST['TxtTelefono'];
 		$TextFacturaNo = $_POST['TextFacturaNo'];
-		$TxtGrupo = $_POST['TxtGrupo'];
+		$Grupo_No = $_POST['Grupo_No'];
   	$TextCI = $_POST['TextCI'];
   	$TD_Rep = $_POST['TD_Rep'];
   	$TxtEmail = $_POST['TxtEmail'];
@@ -521,14 +521,15 @@ class facturar_pensionC
     }
 
    	if ($update) {
-   		$updateCliF = $this->facturacion->updateClientesFacturacion($TxtGrupo,$codigoCliente);
-   		$updateCli = $this->facturacion->updateClientes($TxtTelefono,$TxtDirS,$TxtDireccion,$TxtEmail,$TxtGrupo,$codigoCliente);
+   		$updateCliF = $this->facturacion->updateClientesFacturacion($Grupo_No,$codigoCliente);
+   		$updateCli = $this->facturacion->updateClientes($TxtTelefono,$TxtDirS,$TxtDireccion,$TxtEmail,$Grupo_No,$codigoCliente);
 
       $dataClienteMatricula = $this->facturacion->getClientesMatriculas($codigoCliente);
+      $MBFecha = (($MBFecha!="")?UltimoDiaMes2("01/".$MBFecha, 'm/d/Y'):null);
       if(count($dataClienteMatricula)>0){
-        $updateCliM = $this->facturacion->updateClientesMatriculas($TextRepresentante,$TextCI,$TD_Rep,$TxtTelefono,$TxtDireccion,$TxtEmail,$TxtGrupo,$codigoCliente,$CTipoCta,$TxtCtaNo,$CheqPorDeposito,UltimoDiaMes2("01/".$MBFecha, 'm/d/Y'),$DCDebito);
+        $updateCliM = $this->facturacion->updateClientesMatriculas($TextRepresentante,$TextCI,$TD_Rep,$TxtTelefono,$TxtDireccion,$TxtEmail,$Grupo_No,$codigoCliente,$CTipoCta,$TxtCtaNo,$CheqPorDeposito,$MBFecha,$DCDebito);
       }else{
-        $updateCliM = $this->facturacion->insertClientesMatriculas($TextRepresentante,$TextCI,$TD_Rep,$TxtTelefono,$TxtDireccion,$TxtEmail,$TxtGrupo,$codigoCliente,$CTipoCta,$TxtCtaNo,$CheqPorDeposito,UltimoDiaMes2("01/".$MBFecha, 'm/d/Y'),$DCDebito);
+        $updateCliM = $this->facturacion->insertClientesMatriculas($TextRepresentante,$TextCI,$TD_Rep,$TxtTelefono,$TxtDireccion,$TxtEmail,$Grupo_No,$codigoCliente,$CTipoCta,$TxtCtaNo,$CheqPorDeposito,$MBFecha,$DCDebito);
       }
    	}
     $TC = SinEspaciosIzq($_POST['DCLinea']);
@@ -579,13 +580,7 @@ class facturar_pensionC
           }
     }
 
-
-    // print_r($FA);
-    // print_r($TotalAbonos);
-    // print_r($datos);die();
-
     foreach ($datos as $key => $value) {
-      // print_r($key);
 		  $TFA = Calculos_Totales_Factura($codigoCliente);
       $FA['CodigoC'] = $codigoCliente;
       $FA['Tipo_PRN'] = "FM";
@@ -602,7 +597,8 @@ class facturar_pensionC
       if ($FA['Nuevo_Doc']) {
         $FA['Factura'] = ReadSetDataNum($FA['TC']."_SERIE_".$FA['Serie'], True, True);
       }
-      $SubTotal_NC = $FA['DCNC'];
+      $SubTotal_NC = $FA['TxtNC'];
+      $Total_Anticipo = $FA['saldoFavor'];
       $Total_Bancos = $FA['TextCheque'];
       $TotalCajaMN = $FA['Total'] - $Total_Bancos - $SubTotal_NC;
       $TextoFormaPago = "CONTADO";
@@ -610,7 +606,7 @@ class facturar_pensionC
       $FA['Total_Abonos'] = $Total_Abonos;
       $FA['T'] = G_PENDIENTE;
       $FA['Saldo_MN'] = $FA['Total'] - $Total_Abonos;
-      $FA['Porc_IVA'] = $value['Total_IVA'];
+      $FA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
       $FA['Cliente'] = $FA['TextRepresentante'];
       $FA['me'] = $value['HABIT'];
       $TA['me'] = $value['HABIT'];
@@ -623,106 +619,108 @@ class facturar_pensionC
       $Codigo2 = $value["Mes"];
       $Codigo3 = ".";
       $Anio1 = $value["TICKET"];
-      // $this->facturacion->updateClientesFacturacion1($Valor,$Anio1,$Codigo1,$Codigo,$Codigo3,$Codigo2);
       //Grabamos el numero de factura
       Grabar_Factura1($FA);
 
-      //Seteos de Abonos Generales para todos los tipos de abonos
-      $TA['T'] = $FA['T'];
-      $TA['TP'] = $FA['TC'];
-      $TA['Serie'] = $FA['Serie'];
-      $TA['Autorizacion'] = $FA['Autorizacion'];
-      $TA['CodigoC'] = $FA['codigoCliente']; //codigo cliente
-      $TA['Factura'] = $FA['Factura'];
-      $TA['Fecha'] = $FA['Fecha'];
-      $TA['Cta_CxP'] = $FA['Cta_CxP'];
-      $TA['email'] = $FA['TxtEmail'];
-      $TA['Comprobante'] = "";
-      $TA['Codigo_Inv'] = "";
-     
-      //Abono de Factura Banco o Tarjetas
-      $TA['Cta'] = $Cta;
-      $TA['Banco'] = strtoupper($FA['TxtGrupo'])." - ".$FA['DCBanco'];
-      $TA['Cheque'] = $FA['chequeNo'];
-      $TA['Abono'] = $Total_Bancos;
-      Grabar_Abonos($TA);
-
-      $Cta_CajaG = 1;
-      //Abono de Factura
-      $TA['Cta'] = $Cta_CajaG;
-      $TA['Banco'] = "EFECTIVO MN";
-      $TA['Cheque'] = strtoupper($FA['TextCheque']);
-      $TA['Abono'] = $TotalCajaMN;
-      $TA['Comprobante'] = "";
-      $TA['Codigo_Inv'] = "";
-      Grabar_Abonos($TA);
-
-      //Forma del Abono SubTotal NC
-      if ($SubTotal_NC > 0) {
-        $SubTotal_NC = $SubTotal_NC - $TFA['Total_IVA'];
-        $TA['Cta'] = $Cta1;
-        $TA['Banco'] = "NOTA DE CREDITO";
-        $TA['Cheque'] = "VENTAS";
-        $TA['Abono'] = $SubTotal_NC;
-        Grabar_Abonos($TA);
-      }
-     
-      //Forma del Abono IVA NC
-      if ($TFA['Total_IVA'] > 0) {
-        $TA['Cta'] = $Cta_IVA;
-        $TA['Banco'] = "NOTA DE CREDITO";
-        $TA['Cheque'] = "I.V.A.";
-        $TA['Abono'] = $TFA['Total_IVA'];
-        Grabar_Abonos($TA);
-      }
-     
-      $TextInteres = 0;
-      //Abono de Factura
-      $TA['T'] = G_NORMAL;
-      $TA['TP'] = "TJ";
-      $TACta = $Cta;
-      $TA['Cta_CxP'] = $FA['Cta_CxP'];
-      $TA['Banco'] = "INTERES POR TARJETA";
-      $TA['Cheque'] =  $FA['TextCheque'];
-      $TA['Abono'] = intval($TextInteres);
-      $TA['Recibi_de'] = $FA['Cliente'];
-      Grabar_Abonos($TA);
-       
-      $TA['T'] = $FA['T'];
-      $TA['TP'] = $FA['TC'];
-      $TA['Serie'] = $FA['Serie'];
-      $TA['Factura'] = $FA['Factura'];
-      $TA['Autorizacion'] = $FA['Autorizacion'];
-      $TA['CodigoC'] = $FA['codigoCliente'];
-
-      $TxtEfectivo = "0.00";
-      if (strlen($FA['Autorizacion']) >= 13) {
-        /*if (!$No_Autorizar) {
-        }*/
-        //print_r("expression");
-        //generar_xml();
-        $FA['Desde'] = $FA['Factura'];
-        $FA['Hasta'] = $FA['Factura'];
-        //Imprimir_Facturas_CxC(FacturasPension, FA, True, False, True, True);
-        //SRI_Generar_PDF_FA(FA, True);
-      }
-      $FA['serie'] = $FA['Serie'];
-      $FA['num_fac'] = $FA['Factura'];
-      $FA['tc'] = $FA['TC'];
-      $FA['cod_doc'] = '01';
-      if (strlen($FA['Autorizacion']) == 13) {
-        $rep = $resultado = $this->autorizar_sri->Autorizar_factura_o_liquidacion($FA);
-        if($rep==1)
-           {
-              $resultado = array('respuesta'=>$rep);
-           }else{ $resultado = array('respuesta'=>-1,'text'=>$rep);}
-
-      }else{
-        $resultado = array('respuesta'=>5);
-      }
-      echo json_encode($resultado);
-      exit();
+    //Seteos de Abonos Generales para todos los tipos de abonos
+    $TA['T'] = $FA['T'];
+    $TA['TP'] = $FA['TC'];
+    $TA['Serie'] = $FA['Serie'];
+    $TA['Autorizacion'] = $FA['Autorizacion'];
+    $TA['CodigoC'] = $FA['codigoCliente']; //codigo cliente
+    $TA['Factura'] = $FA['Factura'];
+    $TA['Fecha'] = $FA['Fecha'];
+    $TA['Cta_CxP'] = $FA['Cta_CxP'];
+    $TA['email'] = $FA['TxtEmail'];
+    $TA['Comprobante'] = "";
+    $TA['Codigo_Inv'] = "";
+   
+    //Abono de Factura Banco o Tarjetas
+    $TA['Cta'] = $Cta;
+    if(strlen($FA['TextBanco'])<=1){
+      $TA['Banco'] = strtoupper($FA['DCBanco']);
+    }else{
+      $TA['Banco'] = strtoupper($FA['TextBanco'].' - '.$FA['Grupo_No']);
     }
+    $TA['Cheque'] = $FA['chequeNo'];
+    $TA['Abono'] = $Total_Bancos;
+    Grabar_Abonos($TA);
+
+    //Abono de Factura
+    $TA['Cta'] = $_SESSION['SETEOS']['Cta_CajaG'];
+    $TA['Banco'] = "EFECTIVO MN";
+    $TA['Cheque'] = strtoupper($FA['Grupo_No']);
+    $TA['Abono'] = $TotalCajaMN;
+    $TA['Comprobante'] = "";
+    $TA['Codigo_Inv'] = "";
+    Grabar_Abonos($TA);
+
+    //Forma del Abono SubTotal NC
+    if ($SubTotal_NC > 0) {
+      $SubTotal_NC = $SubTotal_NC - $TFA['Total_IVA'];
+      $TA['Cta'] = $Cta1;
+      $TA['Banco'] = "NOTA DE CREDITO";
+      $TA['Cheque'] = "VENTAS";
+      $TA['Abono'] = $SubTotal_NC;
+      Grabar_Abonos($TA);
+    }
+    
+    //Abonos Anticipados Cta_Ant_Cli
+     $TA['Cta'] = SinEspaciosIzq($FA['DCAnticipo']);
+     if(strlen($FA['TextBanco']) > 1) { $TA['Banco'] = strtoupper($FA['TextBanco']); } else { $TA['Banco'] = "ANTICIPO PENSIONES";};
+     $TA['Cheque'] = strtoupper($FA['Grupo_No']);
+     $TA['Abono'] = $Total_Anticipo;
+     Grabar_Abonos($TA);
+   
+    //Forma del Abono IVA NC
+    if ($TFA['Total_IVA'] > 0) {
+      $TA['Cta'] = $Cta_IVA;
+      $TA['Banco'] = "NOTA DE CREDITO";
+      $TA['Cheque'] = "I.V.A.";
+      $TA['Abono'] = $TFA['Total_IVA'];
+      Grabar_Abonos($TA);
+    }
+   
+    //Abono de Factura
+    $TA['T'] = G_NORMAL;
+    $TA['TP'] = "TJ";
+    $TACta = $Cta;
+    $TA['Cta_CxP'] = $FA['Cta_CxP'];
+    $TA['Banco'] = "INTERES POR TARJETA";
+    $TA['Cheque'] =  $FA['chequeNo'];
+    $TA['Abono'] = intval($FA['TextInteres']);
+    $TA['Recibi_de'] = $FA['Cliente'];
+    Grabar_Abonos($TA);
+     
+    $TA['T'] = $FA['T'];
+    $TA['TP'] = $FA['TC'];
+    $TA['Serie'] = $FA['Serie'];
+    $TA['Factura'] = $FA['Factura'];
+    $TA['Autorizacion'] = $FA['Autorizacion'];
+    $TA['CodigoC'] = $FA['codigoCliente'];
+
+    $TxtEfectivo = "0.00";
+    if (strlen($FA['Autorizacion']) >= 13) {
+      $FA['Desde'] = $FA['Factura'];
+      $FA['Hasta'] = $FA['Factura'];
+    }
+    $FA['serie'] = $FA['Serie'];
+    $FA['num_fac'] = $FA['Factura'];
+    $FA['tc'] = $FA['TC'];
+    $FA['cod_doc'] = '01';
+    if (strlen($FA['Autorizacion']) == 13) {
+      $rep = $resultado = $this->autorizar_sri->Autorizar_factura_o_liquidacion($FA);
+      if($rep==1)
+     {
+        $resultado = array('respuesta'=>$rep);
+     }else{ $resultado = array('respuesta'=>-1,'text'=>$rep);}
+
+    }else{
+      $resultado = array('respuesta'=>5);
+    }
+    echo json_encode($resultado);
+    exit();
+  }
 	}
 
   public function guardarLineas(){
@@ -745,7 +743,7 @@ class facturar_pensionC
       $dato[6]['campo']='Total_Desc2';
       $dato[6]['dato']= $producto['Total_Desc2'] ;
       $dato[7]['campo']='TOTAL';
-      $dato[7]['dato']= $producto['Total'];
+      $dato[7]['dato']= $producto['Precio'];
       $dato[8]['campo']='Total_IVA';
       $dato[8]['dato']= $producto['Total'] * ($producto['Iva'] / 100);
       $dato[9]['campo']='Cta';
@@ -764,6 +762,8 @@ class facturar_pensionC
       $dato[15]['dato']= $_SESSION['INGRESO']['CodigoU'];
       $dato[16]['campo']='A_No';
       $dato[16]['dato']= $Contador;
+      $dato[16]['campo']='Tipo_Hab';
+      $dato[16]['dato']= '.';
       $Contador++;
       insert_generico("Asiento_F",$dato);
     }
@@ -849,7 +849,7 @@ class facturar_pensionC
           }
         }
       }
-      echo json_encode(array("rps" => 1 , "mensaje" => "PROCESO EXITOSO.", "mensaje_extra" => "Vuelva a listar el Cliente y verifique los datos procesados" ));
+      echo json_encode(array("rps" => 1 , "mensaje" => "PROCESO EXITOSO."));
     }else{
       echo json_encode(array("rps" => false , "mensaje" => "Debe seleccionar un cliente." ));
     }

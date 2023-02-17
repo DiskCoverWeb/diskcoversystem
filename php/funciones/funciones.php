@@ -11500,4 +11500,41 @@ function Leer_Datos_FA_NV($TFA)
 }
 
 
+function Eliminar_Nulos_SP($NombreTabla)
+{
+  $conn = new db();
+  $parametros = array(
+    array(&$NombreTabla, SQLSRV_PARAM_IN),
+  );
+  $sql = "EXEC sp_Eliminar_Nulos @NombreTabla= ?";
+  $res = $conn->ejecutar_procesos_almacenados($sql,$parametros,$tipo=false);
+  return $res;
+}
+
+function BuscarArchivo_Foto_Estudiante($nombre){
+  $imagen_url = BuscarImagen($nombre, __DIR__ ."/../img/img_estudiantes/");
+  if($imagen_url==""){
+    $imagen_url = BuscarImagen('SINFOTO', __DIR__ ."/../img/img_estudiantes/");
+  }
+  return $imagen_url;
+}
+
+function BuscarImagen($nombre, $ruta)
+{
+  $imagen ="";
+  if (@getimagesize($ruta.$nombre.'.png')) 
+  { 
+    $imagen = $nombre.'.png';
+  }else if (@getimagesize($ruta.$nombre.'.jpg')) 
+  { 
+    $imagen = $nombre.'.jpg';
+  }else if (@getimagesize($ruta.$nombre.'.jpeg')) 
+  { 
+    $imagen = $nombre.'.jpeg';
+  }else if (@getimagesize($ruta.$nombre.'.gif')) 
+  { 
+    $imagen = $nombre.'.gif'; 
+  }
+  return $imagen;
+}
 ?>

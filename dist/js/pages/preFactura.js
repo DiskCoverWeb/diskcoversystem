@@ -62,11 +62,11 @@ function GuardarPreFactura() {
     {
       $('#myModal_espera').modal('hide');  
       if(response.rps){
-        if(response.mensaje_extra){
-          Swal.fire(response.mensaje, response.mensaje_extra, 'success')
-        }else{
-          Swal.fire('¡Bien!', response.mensaje, 'success')
+        if($('#persona').val()!=""){
+          ClientePreseleccion($('#persona').val());
         }
+        
+        Swal.fire('¡Bien!', response.mensaje, 'success')
         $('#myModalPreFactura').modal('hide');
       }else{
         Swal.fire('¡Oops!', response.mensaje, 'warning')

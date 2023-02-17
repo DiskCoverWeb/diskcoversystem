@@ -55,10 +55,11 @@
       $("#saldoTotal").val(parseFloat(0.00).toFixed(2));
       DCGrupo_NoPreseleccion(data.grupo)
 
-      if(data.Archivo_Foto!='' && data.Archivo_Foto!='.' && data.Archivo_Foto!='SINFOTO'){
-        $("#img_estudiante").attr('src','../img/img_estudiantes/'+data.Archivo_Foto)
-      }else{ //TODO LS definir foto por defecto
-        $("#img_estudiante").attr('src','../img/img_estudiantes/1722214507.png')
+      if(data.Archivo_Foto_url!=''){
+        $("#img_estudiante").attr('src','../img/img_estudiantes/'+data.Archivo_Foto_Url)
+      }else{
+        $("#img_estudiante").attr('src','../img/img_estudiantes/SINFOTO.jpg')
+
       }
       //$("input[type=checkbox]").prop("checked", false);
       total = 0;
@@ -162,8 +163,8 @@
           $("#cuerpo").empty();
           for (var indice in datos) {
             subtotal = (parseFloat(datos[indice].valor) + (parseFloat(datos[indice].valor) * parseFloat(datos[indice].iva) / 100)) - parseFloat(datos[indice].descuento) - parseFloat(datos[indice].descuento2);
-            var tr = `<tr>
-              <td><input style="border:0px;background:bottom" type="checkbox" id="checkbox`+clave+`" onclick="totalFactura('checkbox`+clave+`','`+subtotal+`','`+datos[indice].iva+`','`+datos[indice].descuento+`','`+datos.length+`')" name="`+datos[indice].mes+`"></td>
+            var tr = `<tr class="tr`+clave+`">
+              <td><input style="border:0px;background:bottom" type="checkbox" id="checkbox`+clave+`" onclick="totalFactura('checkbox`+clave+`','`+subtotal+`','`+datos[indice].iva+`','`+datos[indice].descuento+`','`+datos.length+`','`+clave+`')" name="`+datos[indice].mes+`"></td>
               <td><input style="border:0px;background:bottom" type ="text" id="Mes`+clave+`" value ="`+datos[indice].mes+`" disabled/></td>
               <td><input style="border:0px;background:bottom" type ="text" id="Codigo`+clave+`" value ="`+datos[indice].codigo+`" disabled/></td>
               <td><input style="border:0px;background:bottom" type ="text" id="Periodo`+clave+`" value ="`+datos[indice].periodo+`" disabled/></td>
@@ -335,101 +336,115 @@
     });
   }
 
-  function totalFactura(id,valor,iva,descuento1,datos){
-
+  function totalFactura(id,valor,iva,descuento1,datos,clave){
     $('#txt_cant_datos').val(datos);
-
-    // if($('#'+id).prop('checked'))
-    // {
-        datosLineas = [];
-        key = 0;
-        for (var i = 1; i <= datos; i++) {
-          datosId = 'checkbox'+i;
-          // datosCheckBox = document.getElementById(datosId);
-          if ($('#'+datosId).prop('checked')) {
-            datosLineas[key] = {
-              'Codigo' : $("#Codigo"+i).val(),
-              'CodigoL' : $("#CodigoL"+i).val(),
-              'Producto' : $("#Producto"+i).val(),
-              'Precio' : $("#valor"+i).val(),
-              'Total_Desc' : $("#descuento"+i).val(),
-              'Total_Desc2' : $("#descuento2"+i).val(),
-              'Iva' : $("#Iva"+i).val(),
-              'Total' : $("#subtotal"+i).val(),
-              'MiMes' : $("#Mes"+i).val(),
-              'Periodo' : $("#Periodo"+i).val(),
-            };
-            key++;
-          }
-        }
-        codigoCliente = $("#codigoCliente").val();
-        $.ajax({
-          type: "POST",
-          url: '../controlador/facturacion/facturar_pensionC.php?guardarLineas=true',
-          data: {
-            'codigoCliente' : codigoCliente,
-            'datos' : datosLineas,
-          }, 
-          success: function(data)
-          {
-
-          }
-        });
-      // }
-
-// ------------------------------
-var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
-  for(var i=1; i<datos+1; i++){
+    $('.tr'+clave).toggleClass("filaSeleccionada");
+    datosLineas = [];
+    key = 0;
+    for (var i = 1; i <= datos; i++) {
+      datosId = 'checkbox'+i;
+      if ($('#'+datosId).prop('checked')) {
+        datosLineas[key] = {
+          'Codigo' : $("#Codigo"+i).val(),
+          'CodigoL' : $("#CodigoL"+i).val(),
+          'Producto' : $("#Producto"+i).val(),
+          'Precio' : $("#valor"+i).val(),
+          'Total_Desc' : $("#descuento"+i).val(),
+          'Total_Desc2' : $("#descuento2"+i).val(),
+          'Iva' : $("#Iva"+i).val(),
+          'Total' : $("#subtotal"+i).val(),
+          'MiMes' : $("#Mes"+i).val(),
+          'Periodo' : $("#Periodo"+i).val(),
+        };
+        key++;
+      }
+    }
+    codigoCliente = $("#codigoCliente").val();
+    $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/facturar_pensionC.php?guardarLineas=true',
+      data: {
+        'codigoCliente' : codigoCliente,
+        'datos' : datosLineas,
+      }, 
+      success: function(data){}
+    });
+    var valor = 0; var descuento = 0; var descuentop = 0; var total = 0;var subtotal = 0;
+    for(var i=1; i<datos+1; i++){
       checkbox = "checkbox"+i;
       if($('#'+checkbox).prop('checked'))
       {
-        descuento+=parseFloat($('#descuento2'+i).val());
+        descuento+=parseFloat($('#descuento'+i).val());
+        descuentop+=parseFloat($('#descuento2'+i).val());
         valor+=parseFloat($('#valor'+i).val());
         subtotal+=parseFloat($('#descuento2'+i).val());
         total+=parseFloat($('#subtotal'+i).val());
       }
-     
+
     }
 
-
-    $("#total12").val(parseFloat(subtotal).toFixed(2));
-    $("#descuentop").val(parseFloat(descuento).toFixed(2));
+    //$("#total12").val(parseFloat(subtotal).toFixed(2));
+    $("#descuentop").val(parseFloat(descuentop).toFixed(2));
+    $("#descuento").val(parseFloat(descuento).toFixed(2));
     $("#iva12").val(parseFloat(iva12).toFixed(2));
     $("#total").val(parseFloat(total).toFixed(2));
     $("#total0").val(parseFloat(valor).toFixed(2));
     $("#valorBanco").val(parseFloat(total).toFixed(2));
-    $("#saldoTotal").val(parseFloat(0).toFixed(2));
+   // $("#saldoTotal").val(parseFloat(0).toFixed(2));
 
 
   }
 
   function calcularDescuento(){
-    $('#myModal').modal('hide');
-    porcentaje = $('#porcentaje').val();
-    var table = document.getElementById('tbl_style');
-    var rowLength = table.rows.length;
+    $('#myModalDescuentoP').modal('hide');
+    let ContDesc = 0
+    let SubTotal_Desc2 = parseFloat($("#total0").val()) + parseFloat($("#total12").val()) - parseFloat($("#descuento").val())
 
-    for(var i=1; i<rowLength; i+=1){
-      var row = table.rows[i];
-      var cellLength = row.cells.length;
-      checkbox = "checkbox"+i;
-      // var checkBox = document.getElementById(checkbox);
-      if ($('#'+checkbox).prop('checked')){
-        valor = $("#valor"+i).val();
-        descuento1 = valor * (porcentaje/100);
-        $("#descuento2"+i).val(descuento1.toFixed(2));
-        subtotal = valor - descuento1;
-        $("#subtotal"+i).val(subtotal.toFixed(2));
-        iva = 0;
-         totalFactura(checkbox,valor,iva,descuento1,rowLength);
+    if (SubTotal_Desc2 > 0 ){
+      let Valor_Desc2 = 0
+      let Porc_Desc2 = $('#porcentaje').val();
+
+      if( $.isNumeric(Porc_Desc2) ){
+        var table = document.getElementById('tablaDetalle');
+        var rowLength = table.rows.length;
+        for(let i=1; i<rowLength; i+=1){
+          if ($("#checkbox"+i).prop('checked')){
+            ContDesc++
+          }
+        }
+
+        if(ContDesc>0){ Valor_Desc2 = (((Porc_Desc2 / 100) * SubTotal_Desc2) / ContDesc).toFixed(2) }
+        let S_Descuento2_Total = S_Descuento1_Total = 0;
+        for(let i=1; i<rowLength; i+=1){
+          if ($("#checkbox"+i).prop('checked')){
+            let S_Valor = $("#valor"+i).val()
+            let S_Descuento1 = $("#descuento"+i).val()
+            let S_Descuento2 = Valor_Desc2
+            let S_SubTotal = ((S_Valor) - (S_Descuento1) - (S_Descuento2)).toFixed(2)
+
+            S_Descuento2_Total += parseFloat(S_Descuento2)
+            S_Descuento1_Total += parseFloat(S_Descuento1)
+            $("#descuento2"+i).val(S_Descuento2);
+            $("#subtotal"+i).val(S_SubTotal);
+            totalFactura("checkbox"+i,S_Valor,iva=0,S_Descuento1,rowLength);
+          }
+        }
+
+        total0 = $("#total0").val();
+        total = total0 - S_Descuento2_Total - S_Descuento1_Total;
+        $("#descuentop").val(parseFloat(S_Descuento2_Total).toFixed(2));
+        $("#total").val(parseFloat(total).toFixed(2));
+        $("#valorBanco").val(parseFloat(total).toFixed(2));
+
+        calcularSaldo()
       }
-      total0 = $("#total0").val();
-      descuento = total0 * (porcentaje/100);
-      total = total0 - descuento;
-      $("#descuentop").val(parseFloat(descuento).toFixed(2));
-      $("#total").val(parseFloat(total).toFixed(2));
-      $("#valorBanco").val(parseFloat(total).toFixed(2));
-      $("#saldoTotal").val(total.toFixed(2));
+      else{
+        Swal.fire({
+          type: 'info',
+          title: 'No tiene items a descontar',
+          text: ''
+        });
+      }
     }
   }
 
@@ -438,7 +453,8 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
     efectivo = $("#efectivo").val();
     abono = $("#abono").val();
     banco = $("#valorBanco").val();
-    saldo = total - banco - efectivo - abono;
+    saldoFavor = $("#saldoFavor").val();
+    saldo = total - banco - efectivo - abono -saldoFavor;
     $("#saldoTotal").val(saldo.toFixed(2));
   }
 
@@ -525,21 +541,25 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
         TxtDireccion = $("#direccion").val();
         TxtTelefono = $("#telefono").val();
         TextFacturaNo = $("#factura").val();
-        TxtGrupo = $("#DCGrupo_No").val();
+        Grupo_No = $("#DCGrupo_No").val();
         TextCI = $("#ci_ruc").val();
         TD_Rep = $("#tdCliente").val();
         TxtEmail = $("#email").val();
         TxtDirS = $("#direccion1").val();
         TextCheque = $("#valorBanco").val();
+        TextBanco = $("#TextBanco").val();
         DCBanco = $("#cuentaBanco").val();
         DCBanco = DCBanco.split("/");
         DCBanco = DCBanco[0];
+        DCAnticipo = $("#DCAnticipo").val();
         chequeNo = $("#chequeNo").val();
         TxtEfectivo = $("#efectivo").val();
-        TxtNC = $("#cuentaNC").val();
-        DCNC = $("#abono").val();
+        TxtNC = $("#abono").val();
+        DCNC = $("#cuentaNC").val();
         Fecha = $("#fechaEmision").val();
         Total = $("#total").val();
+        Descuento = $("#descuento").val();
+        Descuento2 = $("#descuentop").val();
         codigoCliente = $("#codigoCliente").val();
         saldoFavor = $('#saldoFavor').val();
         abono = $('#abono').val();
@@ -547,6 +567,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
         tipo_debito_automatico = $('#tipo_debito_automatico').val();
         numero_cuenta_debito_automatico = $('#numero_cuenta_debito_automatico').val();
         caducidad_debito_automatico = $('#caducidad_debito_automatico').val();
+        TextInteres = $('#interesTarjeta').val();
 
         let por_deposito_debito_automatico ="0";
         if($('#por_deposito_debito_automatico').prop('checked')){
@@ -572,11 +593,13 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
               'update' : update,
               'DCLinea' : DCLinea,
               'Total' : Total,
+              'Descuento' : Descuento,
+              'Descuento2' : Descuento2,
               'TextRepresentante' : TextRepresentante,
               'TxtDireccion' : TxtDireccion,
               'TxtTelefono' : TxtTelefono,
               'TextFacturaNo' : TextFacturaNo,
-              'TxtGrupo' : TxtGrupo,
+              'Grupo_No' : Grupo_No,
               'chequeNo' : chequeNo,
               'TextCI' : TextCI,
               'TD_Rep' : TD_Rep,
@@ -584,7 +607,9 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
               'TxtDirS' : TxtDirS,
               'codigoCliente' : codigoCliente,
               'TextCheque' : TextCheque,
+              'TextBanco': TextBanco,
               'DCBanco' : DCBanco,
+              'DCAnticipo' : DCAnticipo,
               'TxtEfectivo' : TxtEfectivo,
               'TxtNC' : TxtNC,
               'Fecha' : Fecha,
@@ -597,6 +622,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
               'TxtCtaNo':numero_cuenta_debito_automatico, 
               'MBFecha':caducidad_debito_automatico, 
               'CheqPorDeposito':por_deposito_debito_automatico, 
+              'TextInteres' : TextInteres
             },
             dataType:'json',  
             success: function(response)
@@ -678,6 +704,11 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
                 });
                 catalogoProductos(codigoCliente);
               }
+
+              if($('#persona').val()!=""){
+                ClientePreseleccion($('#persona').val());
+              }
+
             },
             error: function () {
               $('#myModal_espera').modal('hide');
@@ -805,6 +836,28 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
     });
   }
 
+  function ClientePreseleccion(preseleccionado) {
+    var debito = $('#cliente');
+    $.ajax({
+      type: 'GET',
+      dataType: 'json',
+      url: '../controlador/facturacion/facturar_pensionC.php?cliente=true&q='+preseleccionado
+    }).then(function (data) {
+      if(data.length>0){
+        var option = new Option(data[0].text, data[0].id, true, true);
+        debito.append(option).trigger('change');
+        debito.trigger({
+            type: 'select2:select',
+            params: {
+                data: data[0]
+            }
+        });
+      }else{
+        $('#cliente').val(null).trigger('change');
+      }
+    });
+  }
+
 </script>
 <style type="text/css"> 
  .contenedor_img{
@@ -817,7 +870,11 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
     min-height: 100px;
     border-radius: 10px;
 }
+tbody tr:nth-child(odd):hover {  background: #DDA !important;}
+.filaSeleccionada{
+  background: #ccccff !important;
  }
+}
 </style>
   <div class="row">
     <div class="col-lg-4 col-sm-10 col-md-7 col-xs-12">
@@ -1019,7 +1076,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <div class="row">
               <div class="col-xs-12 text-center">
                 <div class="contenedor_img">
-                  <img src="../img/img_estudiantes/1722214507.png" id="img_estudiante" class="img-responsive img-thumbnail">
+                  <img src="../img/img_estudiantes/SINFOTO.jpg" id="img_estudiante" class="img-responsive img-thumbnail">
                 </div>
               </div>
             </div>
@@ -1033,7 +1090,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
               <div id="home" class="tab-pane fade in active">
                 <div class="table-responsive" style="overflow-y: scroll; height:250px; width: auto;">
                   <!-- <div class="sombra" style> -->
-                    <table class="table-sm" style="width: -webkit-fill-available;">
+                    <table id="tablaDetalle" class="table-sm" style="width: -webkit-fill-available;">
                       <thead>
                         <tr>
                           <th></th>
@@ -1091,8 +1148,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <div class="input-group input-group-xs">
                 <input type="text" style="color: coral;"  name="descuentop" id="descuentop" class="form-control input-xs red text-right" readonly value="0.00">
                     <span class="input-group-btn">
-                      <!-- <button type="button" class="btn btn-info btn-flat">Go!</button> -->
-                      <button tabindex="25" type="button" class="btn btn-xs" data-toggle="modal" data-target="#myModal">%</button>
+                      <button style="border: 2px #b1b1b1 solid;padding: 2px;" tabindex="25" type="button" class="btn btn-xs" data-toggle="modal" data-target="#myModalDescuentoP">%</button>
                     </span>
               </div>
           </div>
@@ -1100,7 +1156,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <input type="text" style="color: coral;"  name="iva12" id="iva12" class="form-control input-xs red text-right" readonly value="0.00">
           </div>
           <div class="col-sm-2">
-            <input type="text" style="color: coral;"  name="total" id="total" class="form-control input-xs red text-right" readonly value="0.00" onblur="$('#cheque').focus()">
+            <input type="text" style="color: coral;"  name="total" id="total" class="form-control input-xs red text-right" readonly value="0.00" onblur="$('#TextBanco').focus()">
           </div>
         </div>
         <div class="row" style="margin-top: 8px;">
@@ -1108,7 +1164,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <label>Detalle del pago</label>
           </div>
           <div class="col-sm-6 no-padding">
-            <input type="text" name="cheque" id="cheque" class="form-control input-xs" value="." tabindex="17">
+            <input type="text" name="TextBanco" id="TextBanco" class="form-control input-xs" value="." tabindex="17">
           </div>
 
           <div class="col-sm-3 text-right no-padding">
@@ -1153,7 +1209,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <label>Anticipos</label>
           </div>
           <div class="col-sm-8 no-padding">
-            <select class="form-control input-xs" name="cuentaBanco" id="cuentaBanco" tabindex="15">
+            <select class="form-control input-xs" name="DCAnticipo" id="DCAnticipo" tabindex="15">
               <?php
                 $cuentas = $facturar->getAnticipos();
                 foreach ($cuentas as $cuenta) {
@@ -1166,7 +1222,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
             <label>USD</label>
           </div>
           <div class="col-sm-1 no-padding">
-            <input type="input" id="saldoFavor" class="form-control input-xs red text-right" name="saldoFavor" tabindex="24" onkeyup="calcularSaldo();" value="0.00" style="color:yellowgreen;">
+            <input title="Saldo a Favor" type="input" id="saldoFavor" class="form-control input-xs red text-right" name="saldoFavor" tabindex="24" onkeyup="calcularSaldo();" value="0.00" style="color:yellowgreen;">
           </div>
         </div>
         <div class="row">
@@ -1202,7 +1258,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
           </div>
         </div>
         <div class="row" id="divInteres">
-          <div class="col-sm-2 col-sm-offset-8 text-right no-padding">
+          <div class="col-sm-2 col-sm-offset-5 text-right no-padding">
             <b>Interés Tarjeta USD</b>
           </div>
           <div class="col-sm-1 no-padding">
@@ -1253,7 +1309,7 @@ var valor = 0; var descuento = 0; var total = 0;var subtotal = 0;
 </div>
 
 <!-- Modal porcentaje-->
-<div id="myModal" class="modal fade" role="dialog">
+<div id="myModalDescuentoP" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
     <!-- Modal content-->
