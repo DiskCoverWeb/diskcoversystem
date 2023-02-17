@@ -8322,8 +8322,16 @@ function Grabar_Factura1($TFA,$VerFactura = false, $NoRegTrans = false)
           $Habitacion_No = G_NINGUNO;
           foreach ($datos as $key => $value) 
           {           
-             $No_Mes = 0;
-             if($value["Mes"] == G_NINGUNO){ $No_Mes=date("m", strtotime($TFA['Fecha'])); }else{ $No_Mes = MesesLetras($value["Mes"]); }
+            $No_Mes = 0;
+            $Mes = "";
+            if($value["Mes"] == G_NINGUNO){ 
+              $No_Mes = date("m", strtotime($TFA['Fecha'])); 
+              $Mes = MesesLetras($No_Mes); 
+            }else{ 
+              $Mes = $value["Mes"]; 
+              $No_Mes = nombre_X_mes($value["Mes"]); 
+            }
+
              // SetAdoAddNew "Detalle_Factura"
              $datosDET[0]['campo'] =  "T"; 
              $datosDET[0]['dato'] = $TFA['T'];
@@ -8380,7 +8388,7 @@ function Grabar_Factura1($TFA,$VerFactura = false, $NoRegTrans = false)
              $datosDET[26]['campo'] =  "Corte"; 
              $datosDET[26]['dato'] = $value["CORTE"];
              $datosDET[27]['campo'] =  "Mes";
-             $datosDET[27]['dato'] = MesesLetras($No_Mes);
+             $datosDET[27]['dato'] = $Mes;
              $datosDET[28]['campo'] =  "Mes_No";
              $datosDET[28]['dato'] = $No_Mes;
              $datosDET[29]['campo'] =  "Ticket"; 
