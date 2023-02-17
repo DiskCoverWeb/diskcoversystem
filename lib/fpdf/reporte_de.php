@@ -3599,7 +3599,8 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 		// print_r($abonos);die();
 		foreach ($abonos as $key => $value) {
 			$pdf->SetWidths(array(40,95,46));
-			$arr=array($value['Fecha']->format('Y-m-d'),$value['Banco'].' '.$value['Cheque'],$value['Abono']);
+			// $arr=array($value['Fecha']->format('Y-m-d'),$value['Banco'].' '.$value['Cheque'],$value['Abono']);
+			$arr=array($value['Fecha']->format('Y-m-d'),$value['Banco'].' ',$value['Abono']);
 		    $pdf->Row($arr,10,1);
 		    $pdf->SetX(140+$pdf->GetX()-$margen);	
 
