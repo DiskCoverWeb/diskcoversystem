@@ -3651,12 +3651,14 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 	$sub_sin_iva =0;
 	 foreach ($detalle as $key => $value) {
      	
-     	//print_r($value['Total_IVA']);
-     	 	if($value['Total_IVA'] != .0000)
+     	// print_r($value);
+     	 	if(number_format($value['Total_IVA'],2,'.','') != 0)
      	 	{
+     	 		// print_r($value['Total_IVA'].'-'.$value['Total']);
      	 		$sub_con_iva+=$value['Total'];
      	 	}else
      	 	{
+     	 		// print_r($value['Total_IVA'].'-'.$value['Total']);
      	 		$sub_sin_iva+=$value['Total'];
 
      	 	}
@@ -3758,7 +3760,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
 	$pdf->SetXY(528, ($y+1));
-	$formateado = sprintf("%01.2f", $ba0);
+	$formateado = number_format($ba0-$descu,2,'.','');
 	$pdf->Cell(37,10,$formateado,0,0,'R');
 	
 	$y=$y+11;//440
