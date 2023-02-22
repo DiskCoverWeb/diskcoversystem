@@ -95,7 +95,7 @@ if(isset($_GET['guardarPension']))
 
 if(isset($_GET['guardarLineas']))
 {
-  $controlador->guardarLineas();
+  echo json_encode($controlador->guardarLineas());
 }
 
 if(isset($_GET['CatalogoProductosByPeriodo']))
@@ -622,88 +622,88 @@ class facturar_pensionC
       //Grabamos el numero de factura
       Grabar_Factura1($FA);
 
-    //Seteos de Abonos Generales para todos los tipos de abonos
-    $TA['T'] = $FA['T'];
-    $TA['TP'] = $FA['TC'];
-    $TA['Serie'] = $FA['Serie'];
-    $TA['Autorizacion'] = $FA['Autorizacion'];
-    $TA['CodigoC'] = $FA['codigoCliente']; //codigo cliente
-    $TA['Factura'] = $FA['Factura'];
-    $TA['Fecha'] = $FA['Fecha'];
-    $TA['Cta_CxP'] = $FA['Cta_CxP'];
-    $TA['email'] = $FA['TxtEmail'];
-    $TA['Comprobante'] = "";
-    $TA['Codigo_Inv'] = "";
-   
-    //Abono de Factura Banco o Tarjetas
-    $TA['Cta'] = $Cta;
-    if(strlen($FA['TextBanco'])<=1){
-      $TA['Banco'] = strtoupper($FA['DCBanco']);
-    }else{
-      $TA['Banco'] = strtoupper($FA['TextBanco'].' - '.$FA['Grupo_No']);
-    }
-    $TA['Cheque'] = $FA['chequeNo'];
-    $TA['Abono'] = $Total_Bancos;
-    Grabar_Abonos($TA);
-
-    //Abono de Factura
-    $TA['Cta'] = $_SESSION['SETEOS']['Cta_CajaG'];
-    $TA['Banco'] = "EFECTIVO MN";
-    $TA['Cheque'] = strtoupper($FA['Grupo_No']);
-    $TA['Abono'] = $TotalCajaMN;
-    $TA['Comprobante'] = "";
-    $TA['Codigo_Inv'] = "";
-    Grabar_Abonos($TA);
-
-    //Forma del Abono SubTotal NC
-    if ($SubTotal_NC > 0) {
-      $SubTotal_NC = $SubTotal_NC - $TFA['Total_IVA'];
-      $TA['Cta'] = $Cta1;
-      $TA['Banco'] = "NOTA DE CREDITO";
-      $TA['Cheque'] = "VENTAS";
-      $TA['Abono'] = $SubTotal_NC;
-      Grabar_Abonos($TA);
-    }
-    
-    //Abonos Anticipados Cta_Ant_Cli
-     $TA['Cta'] = SinEspaciosIzq($FA['DCAnticipo']);
-     if(strlen($FA['TextBanco']) > 1) { $TA['Banco'] = strtoupper($FA['TextBanco']); } else { $TA['Banco'] = "ANTICIPO PENSIONES";};
-     $TA['Cheque'] = strtoupper($FA['Grupo_No']);
-     $TA['Abono'] = $Total_Anticipo;
-     Grabar_Abonos($TA);
-   
-    //Forma del Abono IVA NC
-    if ($TFA['Total_IVA'] > 0) {
-      $TA['Cta'] = $Cta_IVA;
-      $TA['Banco'] = "NOTA DE CREDITO";
-      $TA['Cheque'] = "I.V.A.";
-      $TA['Abono'] = $TFA['Total_IVA'];
-      Grabar_Abonos($TA);
-    }
-   
-    //Abono de Factura
-    $TA['T'] = G_NORMAL;
-    $TA['TP'] = "TJ";
-    $TACta = $Cta;
-    $TA['Cta_CxP'] = $FA['Cta_CxP'];
-    $TA['Banco'] = "INTERES POR TARJETA";
-    $TA['Cheque'] =  $FA['chequeNo'];
-    $TA['Abono'] = intval($FA['TextInteres']);
-    $TA['Recibi_de'] = $FA['Cliente'];
-    Grabar_Abonos($TA);
+      //Seteos de Abonos Generales para todos los tipos de abonos
+      $TA['T'] = $FA['T'];
+      $TA['TP'] = $FA['TC'];
+      $TA['Serie'] = $FA['Serie'];
+      $TA['Autorizacion'] = $FA['Autorizacion'];
+      $TA['CodigoC'] = $FA['codigoCliente']; //codigo cliente
+      $TA['Factura'] = $FA['Factura'];
+      $TA['Fecha'] = $FA['Fecha'];
+      $TA['Cta_CxP'] = $FA['Cta_CxP'];
+      $TA['email'] = $FA['TxtEmail'];
+      $TA['Comprobante'] = "";
+      $TA['Codigo_Inv'] = "";
      
-    $TA['T'] = $FA['T'];
-    $TA['TP'] = $FA['TC'];
-    $TA['Serie'] = $FA['Serie'];
-    $TA['Factura'] = $FA['Factura'];
-    $TA['Autorizacion'] = $FA['Autorizacion'];
-    $TA['CodigoC'] = $FA['codigoCliente'];
+      //Abono de Factura Banco o Tarjetas
+      $TA['Cta'] = $Cta;
+      if(strlen($FA['TextBanco'])<=1){
+        $TA['Banco'] = strtoupper($FA['DCBanco']);
+      }else{
+        $TA['Banco'] = strtoupper($FA['TextBanco'].' - '.$FA['Grupo_No']);
+      }
+      $TA['Cheque'] = $FA['chequeNo'];
+      $TA['Abono'] = $Total_Bancos;
+      Grabar_Abonos($TA);
 
-    $TxtEfectivo = "0.00";
+      //Abono de Factura
+      $TA['Cta'] = $_SESSION['SETEOS']['Cta_CajaG'];
+      $TA['Banco'] = "EFECTIVO MN";
+      $TA['Cheque'] = strtoupper($FA['Grupo_No']);
+      $TA['Abono'] = $TotalCajaMN;
+      $TA['Comprobante'] = "";
+      $TA['Codigo_Inv'] = "";
+      Grabar_Abonos($TA);
+
+      //Forma del Abono SubTotal NC
+      if ($SubTotal_NC > 0) {
+        $SubTotal_NC = $SubTotal_NC - $TFA['Total_IVA'];
+        $TA['Cta'] = $Cta1;
+        $TA['Banco'] = "NOTA DE CREDITO";
+        $TA['Cheque'] = "VENTAS";
+        $TA['Abono'] = $SubTotal_NC;
+        Grabar_Abonos($TA);
+      }
+      
+      //Abonos Anticipados Cta_Ant_Cli
+       $TA['Cta'] = SinEspaciosIzq($FA['DCAnticipo']);
+       if(strlen($FA['TextBanco']) > 1) { $TA['Banco'] = strtoupper($FA['TextBanco']); } else { $TA['Banco'] = "ANTICIPO PENSIONES";};
+       $TA['Cheque'] = strtoupper($FA['Grupo_No']);
+       $TA['Abono'] = $Total_Anticipo;
+       Grabar_Abonos($TA);
+     
+      //Forma del Abono IVA NC
+      if ($TFA['Total_IVA'] > 0) {
+        $TA['Cta'] = $Cta_IVA;
+        $TA['Banco'] = "NOTA DE CREDITO";
+        $TA['Cheque'] = "I.V.A.";
+        $TA['Abono'] = $TFA['Total_IVA'];
+        Grabar_Abonos($TA);
+      }
+     
+      //Abono de Factura
+      $TA['T'] = G_NORMAL;
+      $TA['TP'] = "TJ";
+      $TACta = $Cta;
+      $TA['Cta_CxP'] = $FA['Cta_CxP'];
+      $TA['Banco'] = "INTERES POR TARJETA";
+      $TA['Cheque'] =  $FA['chequeNo'];
+      $TA['Abono'] = intval($FA['TextInteres']);
+      $TA['Recibi_de'] = $FA['Cliente'];
+      Grabar_Abonos($TA);
+       
+      $TA['T'] = $FA['T'];
+      $TA['TP'] = $FA['TC'];
+      $TA['Serie'] = $FA['Serie'];
+      $TA['Factura'] = $FA['Factura'];
+      $TA['Autorizacion'] = $FA['Autorizacion'];
+      $TA['CodigoC'] = $FA['codigoCliente'];
+
+      $TxtEfectivo = "0.00";
     if (strlen($FA['Autorizacion']) >= 13) {
-      $FA['Desde'] = $FA['Factura'];
-      $FA['Hasta'] = $FA['Factura'];
-    }
+        $FA['Desde'] = $FA['Factura'];
+        $FA['Hasta'] = $FA['Factura'];
+         }
     $FA['serie'] = $FA['Serie'];
     $FA['num_fac'] = $FA['Factura'];
     $FA['tc'] = $FA['TC'];
@@ -711,62 +711,44 @@ class facturar_pensionC
     if (strlen($FA['Autorizacion']) == 13) {
       $rep = $resultado = $this->autorizar_sri->Autorizar_factura_o_liquidacion($FA);
       if($rep==1)
-     {
+      {
         $resultado = array('respuesta'=>$rep);
-     }else{ $resultado = array('respuesta'=>-1,'text'=>$rep);}
+      }else{ $resultado = array('respuesta'=>-1,'text'=>$rep);}
 
-    }else{
+    }else{ 
       $resultado = array('respuesta'=>5);
     }
     echo json_encode($resultado);
-    exit();
+      exit();
+    }
   }
-	}
 
   public function guardarLineas(){
     $this->facturacion->deleteAsiento($_POST['codigoCliente']);
     $datos = array();
     $Contador = 0;
     foreach ($_POST['datos'] as $key => $producto) {
-      $dato[0]['campo']='CODIGO';
-      $dato[0]['dato']= $producto['Codigo'];
-      $dato[1]['campo']='CODIGO_L';
-      $dato[1]['dato']= $producto['CodigoL'];
-      $dato[2]['campo']='PRODUCTO';
-      $dato[2]['dato']= $producto['Producto'] ;
-      $dato[3]['campo']='CANT';
-      $dato[3]['dato']= 1;
-      $dato[4]['campo']='PRECIO';
-      $dato[4]['dato']= $producto['Precio'] ;
-      $dato[5]['campo']='Total_Desc';
-      $dato[5]['dato']= $producto['Total_Desc'] ;
-      $dato[6]['campo']='Total_Desc2';
-      $dato[6]['dato']= $producto['Total_Desc2'] ;
-      $dato[7]['campo']='TOTAL';
-      $dato[7]['dato']= $producto['Precio'];
-      $dato[8]['campo']='Total_IVA';
-      $dato[8]['dato']= $producto['Total'] * ($producto['Iva'] / 100);
-      $dato[9]['campo']='Cta';
-      $dato[9]['dato']= 'Cuenta' ;
-      $dato[10]['campo']='Item';
-      $dato[10]['dato']= $_SESSION['INGRESO']['item'];
-      $dato[11]['campo']='Codigo_Cliente';
-      $dato[11]['dato']= $_POST['codigoCliente'];
-      $dato[12]['campo']='HABIT';
-      $dato[12]['dato']= G_NINGUNO; // hay que revisar aqui que valor va por el moento que da con punto
-      $dato[13]['campo']='Mes';
-      $dato[13]['dato']= $producto['MiMes'] ;
-      $dato[14]['campo']='TICKET';
-      $dato[14]['dato']= $producto['Periodo'] ;
-      $dato[15]['campo']='CodigoU';
-      $dato[15]['dato']= $_SESSION['INGRESO']['CodigoU'];
-      $dato[16]['campo']='A_No';
-      $dato[16]['dato']= $Contador;
-      $dato[16]['campo']='Tipo_Hab';
-      $dato[16]['dato']= '.';
+      SetAdoAddNew('Asiento_F');
+      SetAdoFields("CODIGO", $producto['Codigo']);
+      SetAdoFields("CODIGO_L", $producto['CodigoL']);
+      SetAdoFields("PRODUCTO", $producto['Producto']);
+      SetAdoFields("CANT", 1);
+      SetAdoFields("PRECIO", $producto['Precio']);
+      SetAdoFields("Total_Desc", $producto['Total_Desc']);
+      SetAdoFields("Total_Desc2", $producto['Total_Desc2']);
+      SetAdoFields("TOTAL", $producto['Precio']);
+      SetAdoFields("Total_IVA", ($producto['Total'] * ($producto['Iva'] / 100)));
+      SetAdoFields("Cta", 'Cuenta');
+      SetAdoFields("Codigo_Cliente", $_POST['codigoCliente']);
+      SetAdoFields("Mes", $producto['MiMes']);
+      SetAdoFields("TICKET", $producto['Periodo']);
+      SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+      SetAdoFields("A_No", $Contador);
       $Contador++;
-      insert_generico("Asiento_F",$dato);
+      $stmt = SetAdoUpdate();
     }
+    Eliminar_Nulos_SP("Asiento_F");
+    return (count($_POST['datos'])==($Contador));
   }
   //El parametro columnas es un array que definen los parametros que deseamos obtener de la consulta sql
   public function CatalogoProductosByPeriodo(array $columnas){
@@ -836,15 +818,15 @@ class facturar_pensionC
           $Total_Desc = (($TxtDescuento[$item]=="")?0:$TxtDescuento[$item]);
           $Total_Desc2 = (($TxtDescuento2[$item]=="")?0:$TxtDescuento2[$item]);
           if ($Cantidad > 0 && $Valor > 0){
-            $Mifecha = PrimerDiaMes($MBFechaP[$item]);
+            $Mifecha = PrimerDiaMes($MBFechaP[$item],'Ymd');
             $CodigoInv = $DCProducto[$item];
             $CodigoInv = ($CodigoInv!="")?$CodigoInv:G_NINGUNO;
             for ($i=0; $i < $Cantidad; $i++) { 
-              $NoMes = ObtenerMesFecha($Mifecha);
-              $Anio = ObtenerAnioFecha($Mifecha);
+              $NoMes = ObtenerMesFecha($Mifecha,'Ymd');
+              $Anio = ObtenerAnioFecha($Mifecha,'Ymd');
               $peticionesDB++;
               $respuestaDB += $this->facturacion->insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, $CodigoInv, $Valor, $GrupoNo, $NoMes, $Anio, $Mifecha, $Total_Desc, $Total_Desc2);
-              $Mifecha = PrimerDiaSeguienteMes($Mifecha);     
+              $Mifecha = PrimerDiaSeguienteMes($Mifecha,'Ymd');     
             }
           }
         }

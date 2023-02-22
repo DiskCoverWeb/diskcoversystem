@@ -11537,4 +11537,350 @@ function BuscarImagen($nombre, $ruta)
   }
   return $imagen;
 }
+
+function CFechaLong($CFecha)
+{
+  if (strlen($CFecha) == 10) {
+    if ($CFecha == "00/00/0000") $CFecha = date('Y-m-d');
+  } else {
+    $CFecha = date('Y-m-d');
+  }
+  $CFecha = date('Y-m-d', strtotime($CFecha));
+  return strtotime($CFecha);
+}
+
+function setObjectOrArray($value)
+{
+  return json_decode(json_encode($value), false);
+}
+
+function valorPorDefectoSegunTipo($tipo)
+{
+  switch ($tipo) {
+    case 'nvarchar':
+    case 'ntext':
+      $default = G_NINGUNO;
+      break;
+    case 'int':
+    case 'int identity':
+    case 'tinyint':
+    case 'real':
+    case 'bit':
+    case 'money':
+    case 'float':
+    case 'decimal':
+    case 'smallint':
+    case 'uniqueidentifier':
+      $default = "0";
+      break;
+    case 'date':
+      $default = date('Ymd');
+      break;
+    case 'datetime':
+    case 'datetime2':
+    case 'datetimeoffset':
+    case 'smalldatetime':
+      $default = date('YmdHis');
+      break;
+    default:
+      $default = G_NINGUNO;
+    break;
+  }
+  return $default;
+}
+
+function Generar_File_SQL($nombreFile, $sqlQuery) {
+  $NumFile = 0;
+  if (strlen($nombreFile) > 1) {
+    $datosFile = $sqlQuery;
+    $datosFile = str_replace("FROM", "\nFROM", $datosFile);
+    $datosFile = str_replace("WHERE", "\nWHERE", $datosFile);
+    $datosFile = str_replace("AND", "\nAND", $datosFile);
+    $datosFile = str_replace("OR ", "\nOR ", $datosFile);
+    $datosFile = str_replace("SET", "\nSET", $datosFile);
+    $datosFile = str_replace("GROUP BY", "\nGROUP BY", $datosFile);
+    $datosFile = str_replace("ORDER BY", "\nORDER BY", $datosFile);
+    $datosFile = str_replace("HAVING", "\nHAVING", $datosFile);
+    $datosFile = str_replace("VALUES", "\nVALUES\n", $datosFile);
+    $NumFile = fopen(dirname(__DIR__,2)."/TEMP/" . $nombreFile . ".sql", "w");
+    fwrite($NumFile, $datosFile);
+    fclose($NumFile);
+  }
+}
+
+function CompilarSQL($CadSQL) {
+  $StrSQL = $CadSQL;
+  $Indc = 0;
+  $Fecha_SQL = "";
+  $Inic_Fecha = false;
+  if (isset($_SESSION['INGRESO']['Tipo_Base']) and $_SESSION['INGRESO']['Tipo_Base']=='SQL SERVER') {
+      if (strlen($CadSQL) > 0) {
+          $StrSQL = "";
+          for ($Indc = 0; $Indc < strlen($CadSQL); $Indc++) {
+              if (substr($CadSQL, $Indc, 1) != "#") {
+                  if (substr($CadSQL, $Indc, 1) == "&") {
+                      $StrSQL = $StrSQL . "+";
+                  } else {
+                      $StrSQL = $StrSQL . substr($CadSQL, $Indc, 1);
+                  }
+              } elseif (substr($CadSQL, $Indc, 1) == "#") {
+                  $StrSQL = $StrSQL . "'";
+                  $Inic_Fecha = !$Inic_Fecha;
+              }
+              if ($Inic_Fecha) {
+                  $Fecha_SQL = $Fecha_SQL . substr($CadSQL, $Indc, 1);
+              }
+          }
+      } else {
+          $StrSQL = "";
+      }
+      $CadSQL = $StrSQL;
+      if (strtoupper(substr($CadSQL, 0, 6)) == "DELETE" && strlen($CadSQL) > 0) {
+          $StrSQL = "";
+          for ($Indc = 0; $Indc < strlen($CadSQL); $Indc++) {
+              if (substr($CadSQL, $Indc, 1) != "*") {
+                  $StrSQL = $StrSQL . substr($CadSQL, $Indc, 1);
+              }
+          }
+      }
+      $StrSQL = str_replace("MidStrg(", "SUBSTRING(", $StrSQL);
+      $StrSQL = str_replace("UCaseStrg(", "UPPER(", $StrSQL);
+      $StrSQL = str_replace("LeftStrg(", "LTRIM(", $StrSQL);
+      $StrSQL = str_replace("RightStrg(", "RTRIM(", $StrSQL);
+  } else {
+      $StrSQL = str_replace("MidStrg(", "MidStrg(", $StrSQL);
+      $StrSQL = str_replace("UCaseStrg(", "UCase$(", $StrSQL);
+      $StrSQL = str_replace("LeftStrg(", "Ltrim$(", $StrSQL);
+      $StrSQL = str_replace("RightStrg(", "RTrim$(", $StrSQL);
+  }
+  $StrSQL = str_replace("CSTR(", "STR(", $StrSQL);
+  $StrSQL = str_replace("CStr(", "STR(", $StrSQL);
+  $StrSQL = str_replace("False", "0", $StrSQL);
+  $StrSQL = str_replace("True", "1", $StrSQL);
+  $StrSQL = str_replace("false", "0", $StrSQL);
+  $StrSQL = str_replace("true", "1", $StrSQL);
+  if (isset($_SESSION['INGRESO']['Tipo_Base']) and $_SESSION['INGRESO']['Tipo_Base']=='SQL SERVER') {
+      $StrSQL = str_replace("#", "'", $StrSQL);
+  }
+  return $StrSQL;
+}
+
+function Ejecutar_SQL_SP($SQL, $NoCompilar = false, $NombreFile ="")
+{
+  $conn = new db();
+  if (!$NoCompilar) {  $SQL = CompilarSQL($SQL);}
+  Generar_File_SQL($NombreFile, $SQL);
+  $parametros = array(
+    array(&$SQL, SQLSRV_PARAM_IN),
+  );
+  $sql = "EXEC sp_Ejecutar_SQL @sSQL= ?";
+  return $conn->ejecutar_procesos_almacenados($sql,$parametros,$tipo=false);
+}
+
+function Full_Fields($NombreTabla) 
+{
+  $conn = new db();
+  $SQLTable = "SELECT COLUMN_NAME FROM information_schema.columns WHERE table_name = '$NombreTabla' ORDER BY ORDINAL_POSITION";
+  $result =  $conn->datos($SQLTable);
+  $listaCampos = '';
+  foreach ($result as $row) {
+    $listaCampos .= $row['COLUMN_NAME'] . ', ';
+  }
+  $listaCampos = trim($listaCampos);
+  $listaCampos = substr($listaCampos, 0, -1);
+  return $listaCampos;
+}
+
+function SetAdoAddNew($NombreTabla, $SinElItem = false) {
+  $RegAdodc = [];
+  $DatosSelect  ="";
+  $IndDato = 0;
+
+  $NombreTabla = trim($NombreTabla);
+  $RegAdodc["fields"] = datos_tabla($NombreTabla);
+  if(count($RegAdodc)>0){ 
+    $RegAdodc = setObjectOrArray($RegAdodc);
+    $DatosTabla = array();
+    $DatosTabla[0]["Campo"] = $NombreTabla;
+    $DatosTabla[0]["Ancho"] = count($RegAdodc->fields);
+    $DatosTabla[0]["Valor"] = 0;
+    $DatosTabla[0]["Tipo"] = 0;
+    for ($IndDato = 0; $IndDato < count($RegAdodc->fields); $IndDato++) {
+      $DatosTabla[$IndDato + 1]["Campo"] = $RegAdodc->fields[$IndDato]->COLUMN_NAME;
+      $DatosTabla[$IndDato + 1]["Ancho"] = $RegAdodc->fields[$IndDato]->CHARACTER_MAXIMUM_LENGTH;
+      $DatosTabla[$IndDato + 1]["Tipo"] = $RegAdodc->fields[$IndDato]->DATA_TYPE;
+      $DatosTabla[$IndDato + 1]["Valor"] = valorPorDefectoSegunTipo($RegAdodc->fields[$IndDato]->DATA_TYPE);
+    }
+    $_SESSION['SetAdoAddNew'][0] = $DatosTabla;
+    //echo "<pre>";print_r($_SESSION['SetAdoAddNew'][0]);echo "</pre>";die();
+  }
+}
+
+function SetAdoFields($NombCampo, $ValorCampo) {
+  $DatosTabla = $_SESSION['SetAdoAddNew'][0];
+  $NombCampo = trim($NombCampo);
+  if (is_null($ValorCampo) || empty($ValorCampo)) $ValorCampo = null;
+  for ($IndDato = 1; $IndDato <= $DatosTabla[0]['Ancho']; $IndDato++) {
+    if ($DatosTabla[$IndDato]['Campo'] == $NombCampo) {
+      switch ($DatosTabla[$IndDato]['Tipo']) {
+        case 'nvarchar':
+        case 'ntext':
+          if (is_null($ValorCampo) || empty($ValorCampo)) $ValorCampo = '';
+          $ValorCampo = str_replace("'", "`", $ValorCampo);
+          $ValorCampo = str_replace("#", "No.", $ValorCampo);
+          if (strlen($ValorCampo) > $DatosTabla[$IndDato]['Ancho']) {
+            $ValorCampo = trim(substr($ValorCampo, 1, $DatosTabla[$IndDato]['Ancho']));
+          }
+          if (strlen($ValorCampo) == 0) $ValorCampo = G_NINGUNO;
+        break;
+        case 'datetime':
+        case 'datetime2':
+        case 'datetimeoffset':
+        case 'smalldatetime':
+          if ($ValorCampo == 0 || $ValorCampo == G_NINGUNO) $ValorCampo = date('YmdHis');
+          if (is_null($ValorCampo)) $ValorCampo = date('YmdHis');
+          if (!strtotime($ValorCampo)) $ValorCampo = date('YmdHis');
+        break;
+        case 'date':
+          if ($ValorCampo == 0 || $ValorCampo == G_NINGUNO) $ValorCampo = date('Ymd');
+          if (is_null($ValorCampo)) $ValorCampo = date('Ymd');
+          if (!strtotime($ValorCampo)) $ValorCampo = date('Ymd');
+        break;
+        case 'bit':
+          if (is_null($ValorCampo) || empty($ValorCampo)) $ValorCampo = false;
+        break;
+        case 'tinyint':
+        if ($ValorCampo > 255) $ValorCampo = 0;
+        break;
+        case 'smallint':
+        if ($ValorCampo > 32767) $ValorCampo = 0;
+        break;
+        case 'int':
+        if ($ValorCampo > 2147483647) $ValorCampo = 0;
+        break;
+        case 'real':
+        if ($ValorCampo > 9999999999.99) $ValorCampo = 0;
+        break;
+        case 'bigint':
+        case 'float':
+        case 'numeric':
+        case 'money':
+        case 'decimal':
+        if ($ValorCampo > 999999999999.99) $ValorCampo = 0;
+        break;
+      }
+      $DatosTabla[$IndDato]['Valor'] = $ValorCampo;
+    }
+  }
+  $_SESSION['SetAdoAddNew'][0] = $DatosTabla;
+}
+
+function SetAdoUpdate(){
+  $AdoCon1 = new db();
+  $DatosTabla = $_SESSION['SetAdoAddNew'][0];
+  $DatosSelect = "";
+  $InsertarCampos = "";
+  $InsertDato = 0;
+  $IndDato = 0;
+  $IdTime = 0;
+
+  $InsertarCampos = "";
+
+  $DatosSelect = "INSERT INTO ".$DatosTabla[0]['Campo']." (";
+  for ($indDato = 1; $indDato <= $DatosTabla[0]['Ancho']; $indDato++) {
+    if ($DatosTabla[$indDato]['Campo'] != 'ID') {
+      $DatosSelect .= " [".$DatosTabla[$indDato]['Campo']."],";
+    }
+  }
+  if (substr($DatosSelect, -1) == ',') {
+    $DatosSelect = substr($DatosSelect, 0, -1);
+  }
+  $DatosSelect .= ") VALUES (";
+  for ($IndDato = 1; $IndDato <= $DatosTabla[0]['Ancho']; $IndDato++) { 
+    if ($DatosTabla[$IndDato]['Campo'] != 'ID') {
+      switch ($DatosTabla[$IndDato]['Tipo']) {
+        case 'bit':
+          if (is_null($DatosTabla[$IndDato]['Valor'])) {
+            $DatosTabla[$IndDato]['Valor'] = 0;
+          }
+          if (is_bool($DatosTabla[$IndDato]['Valor']) && $DatosTabla[$IndDato]['Valor']) {
+            $DatosTabla[$IndDato]['Valor'] = 1;
+          }
+          if ($DatosTabla[$IndDato]['Valor'] == G_NINGUNO || $DatosTabla[$IndDato]['Valor'] == "") {
+            $DatosTabla[$IndDato]['Valor'] = 0;
+          }
+          if ($DatosTabla[$IndDato]['Valor'] < 0) {
+            $DatosTabla[$IndDato]['Valor'] = 1;
+          }
+          if ($DatosTabla[$IndDato]['Valor'] > 1) {
+            $DatosTabla[$IndDato]['Valor'] = 1;
+          }
+          $DatosSelect .= (int)$DatosTabla[$IndDato]['Valor'];
+          $InsertarCampos .= $DatosTabla[$IndDato]['Campo'] . " = " . (int)$DatosTabla[$IndDato]['Valor'] . "\n";
+          break;
+        case 'nvarchar':
+        case 'ntext':
+            if (is_null($DatosTabla[$IndDato]['Valor']) || empty($DatosTabla[$IndDato]['Valor'])) {
+            $DatosTabla[$IndDato]['Valor'] = G_NINGUNO;
+          }
+          if ($DatosTabla[$IndDato]['Campo'] == "Periodo" && $DatosTabla[$IndDato]['Valor'] == G_NINGUNO) {
+            $DatosTabla[$IndDato]['Valor'] = $_SESSION['INGRESO']['periodo'];
+          }
+          if ($DatosTabla[$IndDato]['Campo'] == "Item" && $DatosTabla[$IndDato]['Valor'] == G_NINGUNO) {
+            $DatosTabla[$IndDato]['Valor'] = $_SESSION['INGRESO']['item'];
+          }
+          if ($DatosTabla[$IndDato]['Campo'] == "CodigoU" && $DatosTabla[$IndDato]['Valor'] == G_NINGUNO) {
+            $DatosTabla[$IndDato]['Valor'] = $_SESSION['INGRESO']['CodigoU'];
+          }
+          $DatosSelect .= "'" . $DatosTabla[$IndDato]['Valor'] . "'";
+          $InsertarCampos .= $DatosTabla[$IndDato]['Campo'] . " = '" . $DatosTabla[$IndDato]['Valor'] . "'\n";
+          break;
+        case 'date':
+          if (is_null($DatosTabla[$IndDato]['Valor'])) {
+            $DatosTabla[$IndDato]['Valor'] = date("Ymd");
+          }
+          $DatosSelect .= "#" . BuscarFecha((string)$DatosTabla[$IndDato]['Valor']) . "#";
+          $InsertarCampos .= $DatosTabla[$IndDato]['Campo'] . " = #" . BuscarFecha((string)$DatosTabla[$IndDato]['Valor']) . "#\n";
+          break;
+        case 'datetime':
+        case 'datetime2':
+        case 'datetimeoffset':
+        case 'smalldatetime':
+          if (is_null($DatosTabla[$IndDato]['Valor'])) {
+            $DatosTabla[$IndDato]['Valor'] = date("YmdHis");
+          }
+          $DatosSelect .= "#" . BuscarFecha((string)$DatosTabla[$IndDato]['Valor']) . "#";
+          $InsertarCampos .= $DatosTabla[$IndDato]['Campo'] . " = #" . BuscarFecha((string)$DatosTabla[$IndDato]['Valor']) . "#\n";
+          break;
+        case 'tinyint':
+        case 'int':
+        case 'bigint':
+        case 'smallint':
+          if (is_null($DatosTabla[$IndDato]['Valor'])) {
+              $DatosTabla[$IndDato]['Valor'] = 0;
+          }
+          $DatosSelect .= (int) $DatosTabla[$IndDato]['Valor'];
+          $InsertarCampos .= $DatosTabla[$IndDato]['Campo'] . ' = ' . (int) $DatosTabla[$IndDato]['Valor'] . PHP_EOL;
+          break;
+        case 'real':
+        case 'float':
+        case 'numeric':
+        case 'money':
+        case 'decimal':
+          if (is_null($DatosTabla[$IndDato]['Valor'])) {
+            $DatosTabla[$IndDato]['Valor'] = 0;
+          }
+          $DatosSelect .= (float) $DatosTabla[$IndDato]['Valor'];
+          $InsertarCampos .= $DatosTabla[$IndDato]['Campo'] . ' = ' . (float) $DatosTabla[$IndDato]['Valor'] . PHP_EOL;
+          break;
+      }
+      $DatosSelect .= ",";
+    }
+  }
+  $DatosSelect .=  ");";
+  $DatosSelect = str_replace(",)", ")", $DatosSelect);
+  $DatosSelect = CompilarSQL($DatosSelect);
+  return Ejecutar_SQL_SP($DatosSelect);
+}
+
 ?>

@@ -41,7 +41,7 @@ class facturar_pensionM
 
   public function getClientesMatriculas($codigo=false)
   {
-    $sSQL = "SELECT * 
+    $sSQL = "SELECT ".Full_Fields("Clientes_Matriculas")." 
               FROM Clientes_Matriculas 
               WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
               AND Item = '".$_SESSION['INGRESO']['item']."'";
@@ -226,7 +226,7 @@ class facturar_pensionM
     return $stmt;
   }
 
-  public function deleteAsiento($codigoCliente){
+  public function deleteAsiento($codigoCliente){//TODO LS SE DEBERIA ESTAR BORRANDO TODO NO LO DE Codigo_Cliente
     $sql = "DELETE
             FROM Asiento_F
             WHERE Item = '".$_SESSION['INGRESO']['item']."' 
@@ -247,7 +247,7 @@ class facturar_pensionM
   }
 
   public function getAsiento(){
-    $sql = "SELECT * 
+    $sql = "SELECT ".Full_Fields("Asiento_F")." 
        			FROM Asiento_F
        			WHERE Item = '".$_SESSION['INGRESO']['item']."' 
        			AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
@@ -402,69 +402,41 @@ class facturar_pensionM
   }
 
   function insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, $CodigoInv, $Valor, $GrupoNo, $NoMes, $Anio, $Mifecha, $Total_Desc, $Total_Desc2){
-     $sSQL = "INSERT
-        INTO Clientes_Facturacion 
-        (T,Codigo,Codigo_Inv,Valor,GrupoNo,Num_Mes,Mes,Periodo,Fecha,Descuento,Descuento2,Item,CodigoU)
-        VALUES (
-          '".G_NORMAL."',
-          '$codigoCliente',
-          '$CodigoInv',
-          '$Valor',
-          '$GrupoNo',
-          '$NoMes',
-          '".MesesLetras($NoMes)."',
-          '$Anio',
-          '$Mifecha',
-          '$Total_Desc',
-          '$Total_Desc2',
-          '".$_SESSION['INGRESO']['item']."',
-          '".$_SESSION['INGRESO']['CodigoU']."'
-        )";
-    $stmt = $this->db->String_Sql($sSQL);
+    SetAdoAddNew('Clientes_Facturacion');
+    SetAdoFields("T", G_NORMAL);
+    SetAdoFields("Codigo", $codigoCliente);
+    SetAdoFields("Codigo_Inv", $CodigoInv);
+    SetAdoFields("Valor", $Valor);
+    SetAdoFields("Descuento", $Total_Desc);
+    SetAdoFields("Descuento2", $Total_Desc2);
+    SetAdoFields("GrupoNo", $GrupoNo);
+    SetAdoFields("Num_Mes", "$NoMes");
+    SetAdoFields("Mes", MesesLetras($NoMes));
+    SetAdoFields("Periodo", $Anio);
+    SetAdoFields("Fecha", $Mifecha);
+    $stmt = SetAdoUpdate();
     Eliminar_Nulos_SP("Clientes_Facturacion");
     return $stmt;
   }
 
   public function insertClientesMatriculas($TextRepresentante,$TextCI,$TD_Rep,$TxtTelefono,$TxtDireccion,$TxtEmail,$TxtGrupo,$codigoCliente,$CTipoCta,$TxtCtaNo,$CheqPorDeposito,$Caducidad,$DCDebito){
 
-    $sql = "INSERT INTO Clientes_Matriculas
-            (
-              Representante , 
-              Cedula_R , 
-              TD , 
-              Telefono_R, 
-              Lugar_Trabajo_R , 
-              Email_R , 
-              Grupo_No ,
-              Cta_Numero  ,
-              Tipo_Cta  ,
-              Caducidad  ,
-              Por_Deposito  ,
-              Cod_Banco , 
-              Periodo ,
-              Item ,
-              Codigo 
-              ) 
-            VALUES
-            (
-              '".$TextRepresentante."', 
-              '".$TextCI."', 
-              '".$TD_Rep."', 
-              '".$TxtTelefono."', 
-              '".$TxtDireccion."', 
-              '".$TxtEmail."', 
-              '".$TxtGrupo."',
-              '".$TxtCtaNo."' ,
-              '".$CTipoCta."' ,
-              '".$Caducidad."' ,
-              '".$CheqPorDeposito."' ,
-              '".$DCDebito."' ,
-              '".$_SESSION['INGRESO']['periodo']."',
-              '".$_SESSION['INGRESO']['item']."',
-              '".$codigoCliente."' 
-            )";
-
-    $stmt = $this->db->String_Sql($sql);
+    SetAdoAddNew('Clientes_Matriculas');
+    SetAdoFields("Representante", $TextRepresentante);
+    SetAdoFields("Cedula_R", $TextCI);
+    SetAdoFields("TD", $TD_Rep);
+    SetAdoFields("Telefono_R", $TxtTelefono);
+    SetAdoFields("Lugar_Trabajo_R", $TxtDireccion);
+    SetAdoFields("Email_R", $TxtEmail);
+    SetAdoFields("Grupo_No", $TxtGrupo);
+    SetAdoFields("Cta_Numero", "$TxtCtaNo");
+    SetAdoFields("Tipo_Cta", $CTipoCta);
+    SetAdoFields("Caducidad", $Caducidad);
+    SetAdoFields("Por_Deposito", $CheqPorDeposito);
+    SetAdoFields("Cod_Banco", $DCDebito);
+    SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
+    SetAdoFields("Codigo", $codigoCliente);
+    $stmt = SetAdoUpdate();
     Eliminar_Nulos_SP("Clientes_Matriculas");
     return $stmt;
   }

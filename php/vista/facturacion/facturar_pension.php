@@ -744,14 +744,18 @@
             $("#por_deposito_debito_automatico").prop('checked', false);
           }
 
-          $('.contenidoDepositoAutomatico').css('display', 'block')
+          if (data[0].Cod_Banco!="<?php echo G_NINGUNO; ?>" && data[0].Cta_Numero!="<?php echo G_NINGUNO; ?>") {
+            $('.contenidoDepositoAutomatico').css('visibility', 'visible')
+          }else{
+            $('.contenidoDepositoAutomatico').css('visibility', 'hidden')
+          }
         }else{
           $('#debito_automatica').val(null).trigger('change');
           $("#tipo_debito_automatico").val('.');
           $("#numero_cuenta_debito_automatico").val('');
           $("#caducidad_debito_automatico").val('');
           $("#por_deposito_debito_automatico").prop('checked', false);
-          $('.contenidoDepositoAutomatico').css('display', 'none')
+          $('.contenidoDepositoAutomatico').css('visibility', 'hidden')
         }            
       }
     });
@@ -864,10 +868,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    max-width: 100px;
+    max-width: 150px;
     background: #e5e5e5;
     margin: 3px auto;
-    min-height: 100px;
+    min-height: 150px;
     border-radius: 10px;
 }
 tbody tr:nth-child(odd):hover {  background: #DDA !important;}
@@ -1004,7 +1008,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
                 <button style="margin: 8px 0px;" class="btn btn-block btn-info btn-xs btnDepositoAutomatico">Ingrese sus datos para el Debito Automatico</button>
               </div>
             </div>
-            <div class="row bg-info contenidoDepositoAutomatico" style="display: none;">
+            <div class="row bg-info contenidoDepositoAutomatico" style="visibility: hidden;">
               <div class="col-xs-6 col-sm-2 text-right">
                 <label for="debito_automatica">Debito Automatico</label>
               </div>
@@ -1026,7 +1030,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
                 </select>
               </div>
             </div>
-            <div class="row bg-info contenidoDepositoAutomatico" style="display: none;">
+            <div class="row bg-info contenidoDepositoAutomatico" style="visibility: hidden;">
               <div class="col-xs-6 col-sm-2 text-right">
                 <label>Numero de Cuenta</label>
               </div>
@@ -1287,7 +1291,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
               </a>
             </div>
             <div class="col-sm-2">
-              <a title="Guardar" class="btn btn-default" tabindex="22" title="Salir del panel" href="facturacion.php?mod=facturacion">
+              <a title="Guardar" class="btn btn-default" tabindex="22" title="Salir del panel" href="inicio.php?mod=02">
                 <img src="../../img/png/salire.png" width="25" height="30" >
               </a>
             </div>
