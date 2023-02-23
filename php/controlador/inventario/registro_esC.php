@@ -1212,7 +1212,7 @@ class registro_esC
         $numero = 1;
         if($parametros['serie']!='')
         {
-          $numero =ReadSetDataNum("RE_SERIE_".$parametros['serie'],True,false);
+          $numero =ReadSetDataNum("RE_SERIE_".$parametros['serie'],True,true);
         }
         $datos_auto = $this->modelo->numero_autorizacion($serie1,$serie2,$parametros['fechaReg']);
 

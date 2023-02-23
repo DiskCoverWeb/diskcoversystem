@@ -49,6 +49,7 @@ class autorizacion_sri
 
 	function Clave_acceso($fecha,$tipo_com,$serie,$numfac)
 	{
+		// print_r($fecha);die();
 		$ambiente = $_SESSION['INGRESO']['Ambiente'];
 	    $Fecha1 = explode("-",$fecha);
 		$fechaem=$Fecha1[2].'/'.$Fecha1[1].'/'.$Fecha1[0];
@@ -501,8 +502,8 @@ class autorizacion_sri
 		    {
 		       $sql = "SELECT *
 		            FROM Trans_Abonos
-		            WHERE Item = '".$_SERVER['INGRESO']['item']."'
-		            AND Periodo = '".$_SERVER['INGRESO']['periodo']."'
+		            WHERE Item = '".$_SESSION['INGRESO']['item']."'
+		            AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		            AND Autorizacion = '".$TFA['Autorizacion'] & "'
 		            AND Serie = '".$TFA['Serie'] & "'
 		            AND TP = '".$TFA['TC'] & "'
@@ -1103,7 +1104,7 @@ class autorizacion_sri
 	$this->generar_carpetas($entidad,$empresa);
 	$ambiente =$_SESSION['INGRESO']['Ambiente'];
 	$RIMPE =  $this->datos_rimpe();
-	$sucursal = $this->catalogo_lineas('RE',$cabecera['Serie_GR']);
+	$sucursal = $this->catalogo_lineas('NC',$cabecera['Serie_NC']);
 	 if(count($sucursal)>0)
 	 {
 	 	$cabecera[0]['Nombre_Establecimiento'] = $sucursal[0]['Nombre_Establecimiento'];
@@ -1191,7 +1192,7 @@ class autorizacion_sri
 	    	$xml_infoNotaCredito->appendChild($xml_fechaemidocsus);
 
 	
-	    if(isset($cabecera[0]['Nombre_Establecimiento']) &&  strlen($cabecera[0]['Nombre_Establecimiento'])>0 && $cabecera['Nombre_Establecimiento']!='.')
+	    if(isset($cabecera[0]['Nombre_Establecimiento']) &&  strlen($cabecera[0]['Nombre_Establecimiento'])>0 && $cabecera[0]['Nombre_Establecimiento']!='.')
 		{
 			$xml_dirEstablecimiento = $xml->createElement( "dirEstablecimiento",$cabecera[0]['Direccion_Establecimiento']);
 		}else
@@ -1365,31 +1366,31 @@ class autorizacion_sri
 
         if($cabecera['Cliente'] <>G_NINGUNO &&  $cabecera['Razon_Social'] <> $cabecera['Cliente'])
         {
-           if(strlen($cabecera['Cliente']) > 1){
+           if( isset($cabecera['Cliente']) &&  strlen($cabecera['Cliente']) > 1){
         	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['Cliente']);
         	 $xml_campoAdicional->setAttribute( "nombre", "Beneficiario");
         	 $xml_infoAdicional->appendChild($xml_campoAdicional);
         	}
 
-            if(strlen($cabecera['Curso']) > 1){
+            if( isset($cabecera['Curso']) &&   strlen($cabecera['Curso']) > 1){
         	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['Grupo']."-".$cabecera['Curso']);
         	 $xml_campoAdicional->setAttribute( "nombre", "Ubicacion");
         	 $xml_infoAdicional->appendChild($xml_campoAdicional);
         	}
 	    }
 
-	    if (strlen($cabecera['DireccionC']) > 1){ 
+	    if ( isset($cabecera['DireccionC']) &&  strlen($cabecera['DireccionC']) > 1){ 
         	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['DireccionC']);
         	 $xml_campoAdicional->setAttribute( "nombre", "Direccion");
         	 $xml_infoAdicional->appendChild($xml_campoAdicional);
 
         	}
-         if (strlen($cabecera['TelefonoC']) > 1){ 
+         if ( isset($cabecera['TelefonoC']) && strlen($cabecera['TelefonoC']) > 1){ 
         	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['TelefonoC']);
         	 $xml_campoAdicional->setAttribute( "nombre", "Telefono");
         	$xml_infoAdicional->appendChild($xml_campoAdicional);
         	}
-         if( strlen($cabecera['EmailC']) > 1){ 
+         if( isset($cabecera['EmailC']) && strlen($cabecera['EmailC']) > 1){ 
         	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['EmailC']);
         	 $xml_campoAdicional->setAttribute( "nombre", "Email");
         	$xml_infoAdicional->appendChild($xml_campoAdicional);

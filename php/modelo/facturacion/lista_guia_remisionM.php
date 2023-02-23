@@ -7,7 +7,7 @@ include(dirname(__DIR__,3).'/lib/fpdf/reporte_de.php');
 
 
 
-class lista_notas_creditoM
+class lista_guia_remisionM
 {
 	private $conn;	
 	private $db;

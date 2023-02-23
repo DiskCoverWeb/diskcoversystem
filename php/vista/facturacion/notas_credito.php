@@ -505,6 +505,9 @@ function generar_nc()
         else if(data.respuesta==4)
         {
           Swal.fire('SRI intermitente intente mas tarde','','info');  
+        }else if(data.respuesta==5)
+        {
+          Swal.fire('El Saldo Pendiente es menor que el total de la Nota de Credito','','info');  
         }else
         {
           Swal.fire('XML devuelto por:'+data.text,'','error');  

@@ -267,6 +267,8 @@ class notas_creditoM
 
 	function pdf_nota_credito($TFA)
 	{
+		$imp = 1;
+		if(isset($TFA['imprimir'])){$imp = $TFA['imprimir'];}
 		$sql = "SELECT *
 		    FROM Trans_Abonos
 		    WHERE Item = '".$_SESSION['INGRESO']['item']."'
@@ -342,7 +344,7 @@ class notas_creditoM
 	    // die();
     
 
-		imprimirDocEle_NC($TFA,$AdoDBDetFA,$datos_cli_edu,$matri=false,$nombre='ddddd',$formato=null,$nombre_archivo=null,$va=null,$imp1=1,$AdoDBDet=false,$sucursal=array());
+		imprimirDocEle_NC($TFA,$AdoDBDetFA,$datos_cli_edu,$matri=false,$nombre='ddddd',$formato=null,$nombre_archivo=null,$va=null,$imp,$AdoDBDet=false,$sucursal=array());
 	}
 
   function Cliente($cod,$grupo = false,$query=false,$clave=false)

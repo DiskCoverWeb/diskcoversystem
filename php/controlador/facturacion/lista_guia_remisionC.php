@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__DIR__,2)."/modelo/facturacion/lista_notas_creditoM.php");
+require_once(dirname(__DIR__,2)."/modelo/facturacion/lista_guia_remisionM.php");
 require_once(dirname(__DIR__,2)."/modelo/facturacion/punto_ventaM.php");
 require_once(dirname(__DIR__,2)."/modelo/facturacion/notas_creditoM.php");
 require(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
@@ -9,7 +9,7 @@ if(!class_exists('enviar_emails'))
 }
 require(dirname(__DIR__,2)."/comprobantes/SRI/autorizar_sri.php");
 
-$controlador = new lista_notas_creditoC();
+$controlador = new lista_guia_remisionC();
 
 if(isset($_GET['tabla']))
 {
@@ -52,7 +52,7 @@ if(isset($_GET['descargar_xml']))
 /**
  * 
  */
-class lista_notas_creditoC
+class lista_guia_remisionC
 {	
 	private $modelo;
     private $email;
@@ -60,7 +60,7 @@ class lista_notas_creditoC
     private $punto_venta;
     
 	public function __construct(){
-    	$this->modelo = new lista_notas_creditoM();
+    	$this->modelo = new lista_guia_remisionM();
 		$this->pdf = new cabecera_pdf();
 		$this->email = new enviar_emails();
 		$this->empresaGeneral = Empresa_data();
