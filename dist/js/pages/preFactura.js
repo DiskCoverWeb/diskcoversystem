@@ -1,4 +1,14 @@
 $(document).ready(function () {
+
+  $(".PFselectProducto").on('change',function () {
+    let indice = $(this).data().indice;
+    if($(this).val()!="" && $(this).val()!="."){
+      $(".ContenedorDataPFCheck"+indice+" input").removeAttr('disabled');
+    }else{
+      $(".ContenedorDataPFCheck"+indice+" input").attr('disabled','disabled');
+    }
+  });
+
   $("#btnSalirModuloPF").on("click", function () {
     document.getElementById('FInsPreFacturas').reset();
     for (var i = 1; i <= cantidadProductoPreFacturar; i++) {
@@ -27,56 +37,73 @@ function MostrarOcultarContenedorDataPFCheck(id, i) {
 }
 
 function OpenModalPreFactura(cantidadProductos){
-  $('.myModalNuevoCliente').modal('hide');
-  $('#myModalPreFactura').modal('show');
-  
-  $.ajax({
-    type: "POST",                 
-    url: '../controlador/facturacion/facturar_pensionC.php?CatalogoProductosByPeriodo=true',
-    dataType:'json', 
-    success: function(productos)
-    {
-      for (var i = 1; i <= cantidadProductos; i++) {
-        $('#PFselectProducto'+i).select2({
-          placeholder: 'Seleccione un producto',
-          data : productos
-        });
+  if($("#PFcodigoCliente").val()!=""){
+    $('.myModalNuevoCliente').modal('hide');
+    $('#myModalPreFactura').modal('show');
+    
+    $.ajax({
+      type: "POST",                 
+      url: '../controlador/facturacion/facturar_pensionC.php?CatalogoProductosByPeriodo=true',
+      dataType:'json', 
+      success: function(productos)
+      {
+        for (var i = 1; i <= cantidadProductos; i++) {
+          $('#PFselectProducto'+i).select2({
+            placeholder: 'Seleccione un producto',
+            data : productos
+          });
+        }
+                   
       }
-                 
-    }
-  });
+    });
+  }else{
+    Swal.fire('¡Oops!', "Primero debe seleccionar un Beneficiario/Cliente", 'info')
+  }
 }
 
 function GuardarPreFactura() {
-  $('#myModal_espera').modal('show');
-
-  $.ajax({
-    type: "POST",                 
-    url: '../controlador/facturacion/facturar_pensionC.php?GuardarInsPreFacturas=true',
-    data: $("#FInsPreFacturas").serialize(),
-    dataType:'json', 
-    beforeSend: function () {   
-        $('#myModal_espera').modal('show');
-    },    
-    success: function(response)
-    {
-      $('#myModal_espera').modal('hide');  
-      if(response.rps){
-        if($('#persona').val()!=""){
-          ClientePreseleccion($('#persona').val());
-        }
-        
-        Swal.fire('¡Bien!', response.mensaje, 'success')
-        $('#myModalPreFactura').modal('hide');
-      }else{
-        Swal.fire('¡Oops!', response.mensaje, 'warning')
-      }        
-    },
-    error: function () {
-      $('#myModal_espera').modal('hide');
-      alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+  let hayproductosMarcados = false
+  for (var i = 1; i <= cantidadProductoPreFacturar; i++) {
+    console.log($("#PFcheckProducto"+i).prop('checked'));
+    if($("#PFcheckProducto"+i).prop('checked')){
+      hayproductosMarcados = true
+      break
     }
-  });
+  }
+
+  if(hayproductosMarcados){
+    $('#myModal_espera').modal('show');
+
+    $.ajax({
+        type: "POST",                 
+        url: '../controlador/facturacion/facturar_pensionC.php?GuardarInsPreFacturas=true',
+        data: $("#FInsPreFacturas").serialize(),
+        dataType:'json', 
+        beforeSend: function () {   
+            $('#myModal_espera').modal('show');
+        },    
+        success: function(response)
+        {
+          $('#myModal_espera').modal('hide');  
+          if(response.rps){
+            if($('#persona').val()!=""){
+              ClientePreseleccion($('#persona').val());
+            }
+            
+            Swal.fire('¡Bien!', response.mensaje, 'success')
+            $('#myModalPreFactura').modal('hide');
+          }else{
+            Swal.fire('¡Oops!', response.mensaje, 'warning')
+          }        
+        },
+        error: function () {
+          $('#myModal_espera').modal('hide');
+          alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+        }
+      });
+  }else{
+    Swal.fire('¡Oops!', "No ha seleccionado ningun producto.", 'info')
+  }
 }
 
 function EliminarPreFactura() {

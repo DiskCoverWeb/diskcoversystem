@@ -19,7 +19,7 @@
   }
 </style>
 <div class="col-xs-2">
-  <a href="#" title="Agregar Pre-Factura"  class="btn btn-default" onclick="OpenModalPreFactura(<?php echo cantidadProductoPreFacturar ?>)">
+  <a href="#" title="Insertar Prefacturacion Mensual"  class="btn btn-default" onclick="OpenModalPreFactura(<?php echo cantidadProductoPreFacturar ?>)">
     <img src="../../img/png/doc-green.png" width="25" height="30">
   </a>
 </div>
@@ -28,7 +28,7 @@
     <div class="modal-content">
       <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Registrar Pre-Factura: <b><span id="PFnombreCliente"></span></b></h4>
+          <h4 class="modal-title">Registrar Prefacturacion Mensual: <b><span id="PFnombreCliente"></span></b></h4>
       </div>
       <div class="modal-body">
         <form role="form" id="FInsPreFacturas" name="FInsPreFacturas">
@@ -45,7 +45,7 @@
                   </div>
                 </div>
                 <div class="col-xs-8 no-padding">
-                  <select class="form-control input-xs PFselectProducto" id="PFselectProducto<?php echo $prod ?>" name="PFselectProducto[<?php echo $prod ?>]" tabindex="<?php echo $tabindex++ ?>">
+                  <select class="form-control input-xs PFselectProducto" id="PFselectProducto<?php echo $prod ?>" name="PFselectProducto[<?php echo $prod ?>]" data-indice="<?php echo $prod ?>" tabindex="<?php echo $tabindex++ ?>">
                     <option value="">Seleccione un producto</option>
                   </select>
                 </div>
@@ -54,31 +54,31 @@
                 <div class="col-md-3 col-md-offset-1 padding-3">
                   <div class="form-group bg-success">
                     <label for="PFfechaInicial<?php echo $prod ?>" class="padding-l-5">Fecha Inic.</label>
-                    <input type="date" name="PFfechaInicial[<?php echo $prod ?>]" id="PFfechaInicial<?php echo $prod ?>" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>" tabindex="<?php echo $tabindex++ ?>">
+                    <input disabled type="date" name="PFfechaInicial[<?php echo $prod ?>]" id="PFfechaInicial<?php echo $prod ?>" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>" tabindex="<?php echo $tabindex++ ?>">
                   </div>
                 </div>
                 <div class="col-xs-6 col-md-2 padding-3">
                   <div class="form-group bg-success">
                     <label for="PFcantidad<?php echo $prod ?>" class="padding-l-5">Cant.</label>
-                    <input type="tel" name="PFcantidad[<?php echo $prod ?>]" id="PFcantidad<?php echo $prod ?>" class="form-control input-xs inputNumero text-right" maxlength="2" placeholder="0" tabindex="<?php echo $tabindex++ ?>">
+                    <input disabled type="tel" name="PFcantidad[<?php echo $prod ?>]" id="PFcantidad<?php echo $prod ?>" class="form-control input-xs inputNumero text-right" maxlength="2" placeholder="0" tabindex="<?php echo $tabindex++ ?>">
                   </div>
                 </div>
                 <div class="col-xs-6 col-md-2 padding-3">
                   <div class="form-group bg-success">
                     <label for="PFvalor<?php echo $prod ?>" class="padding-l-5">Valor</label>
-                    <input type="tel" name="PFvalor[<?php echo $prod ?>]" id="PFvalor<?php echo $prod ?>" class="form-control input-xs inputMoneda text-right" placeholder="0.00" tabindex="<?php echo $tabindex++ ?>">
+                    <input disabled type="tel" name="PFvalor[<?php echo $prod ?>]" id="PFvalor<?php echo $prod ?>" class="form-control input-xs inputMoneda text-right" placeholder="0.00" tabindex="<?php echo $tabindex++ ?>">
                   </div>
                 </div>
                 <div class="col-xs-6 col-md-2 padding-3">
                   <div class="form-group bg-success">
                     <label for="PFdescuento<?php echo $prod ?>" class="padding-l-5">Descuento</label>
-                    <input type="tel" name="PFdescuento[<?php echo $prod ?>]" id="PFdescuento<?php echo $prod ?>" class="form-control input-xs inputMoneda text-right" placeholder="0.00" tabindex="<?php echo $tabindex++ ?>">
+                    <input disabled type="tel" name="PFdescuento[<?php echo $prod ?>]" id="PFdescuento<?php echo $prod ?>" class="form-control input-xs inputMoneda text-right" placeholder="0.00" tabindex="<?php echo $tabindex++ ?>">
                   </div>
                 </div>
                 <div class="col-xs-6 col-md-2 padding-3">
                   <div class="form-group bg-success">
                     <label for="PFdescuento2_<?php echo $prod ?>" class="padding-l-5">Descuento 2</label>
-                    <input type="tel" name="PFdescuento2[<?php echo $prod ?>]" id="PFdescuento2_<?php echo $prod ?>" class="form-control input-xs inputMoneda text-right" placeholder="0.00" tabindex="<?php echo $tabindex++ ?>">
+                    <input disabled type="tel" name="PFdescuento2[<?php echo $prod ?>]" id="PFdescuento2_<?php echo $prod ?>" class="form-control input-xs inputMoneda text-right" placeholder="0.00" tabindex="<?php echo $tabindex++ ?>">
                   </div>
                 </div>
               </div>
