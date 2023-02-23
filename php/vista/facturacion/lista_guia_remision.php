@@ -35,7 +35,7 @@ $tipo='';
     }
      $.ajax({
        data:  {parametros:parametros},
-      url:   '../controlador/facturacion/lista_notas_creditoC.php?tabla=true',
+      url:   '../controlador/facturacion/lista_guia_remisionC.php?tabla=true',
       type:  'post',
       dataType: 'json',
       beforeSend: function () {
@@ -52,7 +52,7 @@ $tipo='';
 
   function Ver_Nota_credito(nota,serie)
   {    
-    var url = '../controlador/facturacion/lista_notas_creditoC.php?Ver_nota_credito=true&nota='+nota+'&serie='+serie;   
+    var url = '../controlador/facturacion/lista_guia_remisionC.php?Ver_nota_credito=true&nota='+nota+'&serie='+serie;   
     window.open(url,'_blank');
   }
 
@@ -135,7 +135,7 @@ function catalogoLineas(){
     }
      $.ajax({
       data:  {parametros:parametros},
-      url:   '../controlador/facturacion/lista_notas_creditoC.php?autorizar_nota=true',
+      url:   '../controlador/facturacion/lista_guia_remisionC.php?autorizar_nota=true',
       type:  'post',
       dataType: 'json',
        success:  function (data) {
@@ -203,7 +203,7 @@ function catalogoLineas(){
     }
      $.ajax({
         data: {parametros:parametros},
-        url:   '../controlador/facturacion/lista_notas_creditoC.php?descargar_xml=true',
+        url:   '../controlador/facturacion/lista_guia_remisionC.php?descargar_xml=true',
         dataType:'json',      
         type:  'post',
         // dataType: 'json',
@@ -236,7 +236,7 @@ function catalogoLineas(){
     }
      $.ajax({
         data: {parametros:parametros},
-        url:   '../controlador/facturacion/lista_notas_creditoC.php?descargar_notacredito=true',
+        url:   '../controlador/facturacion/lista_guia_remisionC.php?descargar_notacredito=true',
         dataType:'json',      
         type:  'post',
         // dataType: 'json',
@@ -305,7 +305,7 @@ function modal_email_nota(nota,serie_nc,factura,autorizacion_nc,emails)
     }
      $.ajax({
         data: {parametros:parametros},
-        url:   '../controlador/facturacion/lista_notas_creditoC.php?enviar_email_detalle=true',
+        url:   '../controlador/facturacion/lista_guia_remisionC.php?enviar_email_detalle=true',
         dataType:'json',      
         type:  'post',
         // dataType: 'json',

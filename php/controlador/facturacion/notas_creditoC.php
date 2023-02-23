@@ -720,13 +720,13 @@ class notas_creditoC
 				    
 			}else
 			{
-				return -2;
+				return array('respuesta'=>5);
 			}
 	}
 
 	function generar_pdf()
 	{
-		$TFA['TC'] = 'NC';
+	/*	$TFA['TC'] = 'NC';
 		$TFA['Serie'] = '001003';
 		$TFA['Autorizacion'] = '0604202201070216417900110010030000006691234567814';
 		$TFA['Factura'] = '669';
@@ -746,7 +746,7 @@ class notas_creditoC
 		$TFA['Total_MN'] = 0;
 		$TFA['Nota'] = '- Nota de Crédito de: VACA PRIETO WALTER JALIL';
 
-
+*/
 		//$FA['Autorizacion_NC'] = $parametros['TextBanco'];
 		//
 
