@@ -23,8 +23,41 @@
     cargarBancos();
     DCGrupo_No();
 
+    $('.validateDate').on('keyup', function () {
+        if($(this).val().length >= 10){
+          let inputDate = $(this).val();
+          const dateArray = inputDate.split("-"); // Separar la fecha en partes (año, mes, día)
+          let year = dateArray[0];
+          const month = dateArray[1];
+          const day = dateArray[2];
+          if(year.length>4){
+            year = year.slice(0,4)
+          }
+          $(this).val(year+'-'+month+'-'+day);
+       }
+    });
+
+    $("input").focusin(function() {
+      $(this).select();
+    });
+    $("#factura").blur(function(){
+      var currentTabIndex = parseInt($(this).attr("tabindex"));
+      var nextTabIndex = currentTabIndex + 1;
+      $("[tabindex='" + nextTabIndex + "']").focus();
+    });
+
+    $("#telefono").blur(function(){
+      if($('.contenidoDepositoAutomatico').is(':visible') && $('.contenidoDepositoAutomatico').css("visibility") != "hidden"){
+        $('#debito_automatica').focus()
+      }
+    });
+
     $(".btnDepositoAutomatico").on('click',function () {
-      $(".contenidoDepositoAutomatico").toggle()
+      if($('.contenidoDepositoAutomatico').is(':visible') && $('.contenidoDepositoAutomatico').css("visibility") != "hidden"){
+        $('.contenidoDepositoAutomatico').css('visibility', 'hidden')
+      }else{
+        $('.contenidoDepositoAutomatico').css('visibility', 'visible')
+      }
     })
 
     //enviar datos del cliente
@@ -544,8 +577,8 @@
         Grupo_No = $("#DCGrupo_No").val();
         TextCI = $("#ci_ruc").val();
         TD_Rep = $("#tdCliente").val();
-        TxtEmail = $("#email").val();
-        TxtDirS = $("#direccion1").val();
+        TxtEmail = $("#email").val().toUpperCase();
+        TxtDirS = $("#direccion1").val().toUpperCase();
         TextCheque = $("#valorBanco").val();
         TextBanco = $("#TextBanco").val();
         DCBanco = $("#cuentaBanco").val();
@@ -878,6 +911,12 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
 .filaSeleccionada{
   background: #ccccff !important;
  }
+
+.visible{
+  visibility: visible;
+}
+input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
+  border: 2.3px solid #3c8cbb !important;
 }
 </style>
   <div class="row">
@@ -889,13 +928,13 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
       </div>
 
       <div class="col-xs-2 col-sm-2">
-        <a title="Historia del cliente"  class="btn btn-default" onclick="historiaCliente()">
+        <a title="Presenta la historia del cliente"  class="btn btn-default" onclick="historiaCliente()">
           <img src="../../img/png/document.png" width="25" height="30">
         </a>
       </div>
       
       <div class="col-xs-2 col-sm-2">
-        <a href="#" title="Presenta la deuda pendiente"  class="btn btn-default" onclick="DeudaPensionPDF()">
+        <a href="#" title="Presenta la Deuda Pendiente"  class="btn btn-default" onclick="DeudaPensionPDF()">
           <img src="../../img/png/project.png" width="25" height="30">
         </a>
       </div>
@@ -903,7 +942,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
       <?php include("prefactura.php") ?>
       
       <div class="col-xs-2 col-sm-2">
-        <a href="#" title="Nuevo Cliente"  class="btn btn-default" onclick="addCliente(1)">
+        <a href="#" title="Insertar nuevo Beneficiario/Cliente"  class="btn btn-default" onclick="addCliente(1)">
           <img src="../../img/png/group.png" width="25" height="30">
         </a>
       </div>
@@ -926,20 +965,20 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
             <b style="font-weight: 600;">Fecha emisión</b>
           </div>
           <div class="col-xs-6 col-md-2 no-padding">
-            <input tabindex="2" type="date" name="fechaEmision" id="fechaEmision" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
+            <input tabindex="2" type="date" name="fechaEmision" id="fechaEmision" class="form-control input-xs validateDate" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
           </div>
           <div class="col-xs-6 col-md-2 no-padding text-right">
             <label>Fecha vencimiento</label>
           </div>
           <div class="col-xs-6 col-md-2 no-padding">
-            <input type="date" tabindex="3" name="fechaVencimiento" id="fechaVencimiento" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
+            <input type="date" tabindex="3" name="fechaVencimiento" id="fechaVencimiento" class="form-control input-xs validateDate" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
           </div>
           <div class="col-xs-6 col-md-2 no-padding">
             <label class="red">Factura No.</label>
             <label id="numeroSerie" class="red"></label>
           </div>
            <div class="col-xs-6 col-md-1 no-padding">
-            <input tabindex="7" type="input" class="form-control input-xs text-right" name="factura" id="factura">
+            <input tabindex="4" type="input" class="form-control input-xs text-right" name="factura" id="factura"  >
           </div>
         </div>
 
@@ -958,7 +997,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
             </div>
             <div class="row">
               <div class="col-xs-3 text-right">
-                <select class="form-control input-xs" id="DCGrupo_No" name="grupo" tabindex="5">
+                <select class="form-control input-xs" id="DCGrupo_No" name="grupo" tabindex="7">
                   <option value=".">Grupo</option>
                 </select>
               </div>
@@ -971,13 +1010,13 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
                 <label>Razón social</label>
               </div>
               <div class="col-xs-6 col-sm-6 ">
-                <input tabindex="9" type="input" class="form-control input-xs" name="persona" id="persona">
+                <input tabindex="10" type="input" class="form-control input-xs" name="persona" id="persona">
               </div>
               <div class="col-xs-6 col-sm-1 text-right ">
                 <label>CI/R.U.C</label>
               </div>
               <div class="col-xs-6 col-sm-2 text-right ">
-                <input tabindex="10" type="input" class="form-control input-xs" name="tdCliente" id="tdCliente" readonly>
+                <input  type="input" class="form-control input-xs" name="tdCliente" id="tdCliente" readonly>
               </div>
             </div>
             <div class="row bg-warning">
@@ -985,7 +1024,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
                 <label>Dirección</label>
               </div>
               <div class="col-xs-6 col-sm-9 ">
-                <input tabindex="11" type="input" class="form-control input-xs" name="direccion1" id="direccion1">
+                <input tabindex="11" type="input" class="form-control input-xs" style="text-transform: uppercase;" name="direccion1" id="direccion1">
               </div>
             </div>
             <div class="row bg-warning">
@@ -993,14 +1032,14 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
                 <label>Email</label>
               </div>
               <div class="col-xs-6 col-sm-6">
-                <input tabindex="13" type="input" class="form-control input-xs" name="email" id="email">
+                <input tabindex="12" type="input" class="form-control input-xs" style="text-transform: uppercase;" name="email" id="email">
               </div>
 
               <div class="col-xs-6 col-sm-1 text-right">
                 <label>Telefono</label>
               </div>
               <div class="col-xs-6 col-sm-2">
-                <input tabindex="12" type="input" class="form-control input-xs" name="telefono" id="telefono">
+                <input tabindex="13" type="input" class="form-control input-xs" name="telefono" id="telefono">
               </div>
             </div>
             <div class="row bg-info"  style="margin-top: 10px;">
@@ -1013,7 +1052,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
                 <label for="debito_automatica">Debito Automatico</label>
               </div>
               <div class="col-xs-6 col-sm-6">
-                <select tabindex="13" class="form-control input-xs" name="debito_automatica" id="debito_automatica">
+                <select  class="form-control input-xs" name="debito_automatica" id="debito_automatica">
                   <option value="">Seleccione un Banco</option>
                 </select>
               </div>
@@ -1022,7 +1061,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
                 <label>Tipo</label>
               </div>
               <div class="col-xs-6 col-sm-3">
-                <select tabindex="12" type="input" class="form-control input-xs" name="tipo_debito_automatico" id="tipo_debito_automatico">
+                <select  type="input" class="form-control input-xs" name="tipo_debito_automatico" id="tipo_debito_automatico">
                   <option value=".">Seleccionar Tipo</option>
                   <option value="CORRIENTE">CORRIENTE</option>
                   <option value="AHORROS">AHORROS</option>
@@ -1035,20 +1074,20 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
                 <label>Numero de Cuenta</label>
               </div>
               <div class="col-xs-6 col-sm-3">
-                <input tabindex="13" type="input" class="form-control input-xs" name="numero_cuenta_debito_automatico" id="numero_cuenta_debito_automatico">
+                <input  type="input" class="form-control input-xs" name="numero_cuenta_debito_automatico" id="numero_cuenta_debito_automatico">
               </div>
 
               <div class="col-xs-6 col-sm-1 text-right">
                 <label>Caducidad</label>
               </div>
               <div class="col-xs-6 col-sm-2 contenedor_fecha_caducidad">
-                <input tabindex="12" type="text" maxlength="7"  class="form-control input-xs fecha_caducidad" name="caducidad_debito_automatico" id="caducidad_debito_automatico" placeholder="MM/YYYY">
+                <input  type="text" maxlength="7"  class="form-control input-xs fecha_caducidad" name="caducidad_debito_automatico" id="caducidad_debito_automatico" placeholder="MM/YYYY">
               </div>
               <div class="col-xs-6 col-sm-3 text-right">
                 <label class="text-right" for="rbl_no">Depositar al Banco</label>
               </div>
               <div class="col-xs-6 col-sm-1 no-padding">
-                <input style="margin-top: 0px;margin-right: 2px;" tabindex="4" type="checkbox" name="por_deposito_debito_automatico" id="por_deposito_debito_automatico">
+                <input style="margin-top: 0px;margin-right: 2px;" type="checkbox" name="por_deposito_debito_automatico" id="por_deposito_debito_automatico">
               </div>
             </div>
 
@@ -1061,7 +1100,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
                   <label class="text-right" for="rbl_no">Con mes</label>
                 </div>
                 <div class="col-xs-6 no-padding">
-                  <input style="margin-top: 0px;margin-right: 2px;" tabindex="4" type="checkbox" name="rbl_radio" id="rbl_no" checked="">
+                  <input style="margin-top: 0px;margin-right: 2px;" tabindex="6" type="checkbox" name="rbl_radio" id="rbl_no" checked="">
                 </div>
               </div>
             </div>
@@ -1072,7 +1111,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
                   <label>RUC</label>
                 </div>
                 <div class="col-xs-6 no-padding">
-                  <input tabindex="10" type="input" class="form-control input-xs" name="ci" id="ci_ruc">   
+                  <input tabindex="9" type="input" class="form-control input-xs" name="ci" id="ci_ruc">   
                 </div>
               </div>
             </div>
@@ -1152,7 +1191,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
             <div class="input-group input-group-xs">
                 <input type="text" style="color: coral;"  name="descuentop" id="descuentop" class="form-control input-xs red text-right" readonly value="0.00">
                     <span class="input-group-btn">
-                      <button style="border: 2px #b1b1b1 solid;padding: 2px;" tabindex="25" type="button" class="btn btn-xs" data-toggle="modal" data-target="#myModalDescuentoP">%</button>
+                      <button style="border: 2px #b1b1b1 solid;padding: 2px;" tabindex="27" type="button" class="btn btn-xs" data-toggle="modal" data-target="#myModalDescuentoP">%</button>
                     </span>
               </div>
           </div>
@@ -1184,7 +1223,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
             <label>Bancos/Tarjetas</label>
           </div>
           <div class="col-sm-4 no-padding">
-            <select class="form-control input-xs" name="cuentaBanco" id="cuentaBanco" tabindex="15" onchange="verificarTJ();" onblur="$('#valorBanco').focus()">
+            <select class="form-control input-xs" name="cuentaBanco" id="cuentaBanco" tabindex="18" onchange="verificarTJ();" onblur="$('#valorBanco').focus()">
               <?php
                 $cuentas = $facturar->getCatalogoCuentas();
                 foreach ($cuentas as $cuenta) {
@@ -1198,14 +1237,14 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
             <b>Cheque No.</b>
           </div>
           <div class="col-sm-2 no-padding">
-            <input type="text" name="chequeNo" id="chequeNo" class="form-control input-xs text-right" tabindex="18"  onblur="$('#cuentaBanco').focus()">
+            <input type="text" name="chequeNo" id="chequeNo" class="form-control input-xs text-right" tabindex="19"  onblur="$('#cuentaBanco').focus()">
           </div>
 
           <div class="col-sm-1 text-right no-padding">
             <label>USD</label>
           </div>
           <div class="col-sm-1 no-padding">
-            <input tabindex="19" type="text" name="valorBanco" id="valorBanco" onkeyup="calcularSaldo();" class="form-control input-xs red text-right" value="0.00" onblur="$('#cuentaNC').focus()">
+            <input tabindex="19" type="text" name="valorBanco" id="valorBanco" onkeyup="calcularSaldo();" class="form-control input-xs red text-right" value="0.00">
           </div>
         </div>
         <div class="row">
@@ -1213,7 +1252,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
             <label>Anticipos</label>
           </div>
           <div class="col-sm-8 no-padding">
-            <select class="form-control input-xs" name="DCAnticipo" id="DCAnticipo" tabindex="15">
+            <select class="form-control input-xs" name="DCAnticipo" id="DCAnticipo" tabindex="20">
               <?php
                 $cuentas = $facturar->getAnticipos();
                 foreach ($cuentas as $cuenta) {
@@ -1234,7 +1273,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
             <label>Notas de crédito</label>
           </div>
           <div class="col-sm-8 no-padding">
-            <select class="form-control input-xs" name="cuentaNC" id="cuentaNC" tabindex="16"  onblur="$('#abono').focus()">
+            <select class="form-control input-xs" name="cuentaNC" id="cuentaNC" tabindex="20">
               <?php
                 $cuentas = $facturar->getNotasCredito();
                 foreach ($cuentas as $cuenta) {
@@ -1247,7 +1286,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
             <label>USD</label>
           </div>
           <div class="col-sm-1 no-padding">
-            <input tabindex="21" type="text" name="abono" id="abono" onkeyup="calcularSaldo();" class="form-control input-xs red text-right" value="0.00"  onblur="$('#efectivo').focus()">
+            <input tabindex="21" type="text" name="abono" id="abono" onkeyup="calcularSaldo();" class="form-control input-xs red text-right" value="0.00">
           </div>
         </div>
         <div class="row">
@@ -1258,7 +1297,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
             <b>Efectivo USD</b>
           </div>
           <div class="col-sm-1 no-padding">
-            <input tabindex="20" type="text" name="efectivo" id="efectivo" onkeyup="calcularSaldo();" class="form-control input-xs red text-right" value="0.00"  onblur="$('#saldoTotal').focus()">
+            <input tabindex="22" type="text" name="efectivo" id="efectivo" onkeyup="calcularSaldo();" class="form-control input-xs red text-right" value="0.00"  onblur="$('#saldoTotal').focus()">
           </div>
         </div>
         <div class="row" id="divInteres">
@@ -1286,12 +1325,12 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
           </div>
           <div class=" col-sm-4 ">
             <div class="col-sm-2 col-sm-offset-4">
-              <a title="Guardar" class="btn btn-default" tabindex="22" id="guardar">
+              <a title="Guardar" class="btn btn-default" tabindex="24" id="guardar">
                 <img src="../../img/png/grabar.png" width="25" height="30" onclick="guardarPension();">
               </a>
             </div>
             <div class="col-sm-2">
-              <a title="Guardar" class="btn btn-default" tabindex="22" title="Salir del panel" href="inicio.php?mod=02">
+              <a title="Salir del panel" class="btn btn-default" tabindex="25" href="inicio.php?mod=02">
                 <img src="../../img/png/salire.png" width="25" height="30" >
               </a>
             </div>
@@ -1300,7 +1339,7 @@ tbody tr:nth-child(odd):hover {  background: #DDA !important;}
             <b>Saldo USD</b>
           </div>
           <div class="col-sm-1 no-padding">
-            <input type="text" name="saldoTotal" id="saldoTotal" class="form-control input-xs red text-right" value="0.00" style="color:coral;" onblur="$('#guardar').focus()">
+            <input type="text" name="saldoTotal" id="saldoTotal" class="form-control input-xs red text-right" value="0.00" style="color:coral;" onblur="$('#guardar').focus()" tabindex="23" >
           </div>
         </div>
       </div>

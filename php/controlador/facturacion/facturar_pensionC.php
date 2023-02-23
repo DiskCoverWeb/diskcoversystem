@@ -110,10 +110,31 @@ if(isset($_GET['CatalogoProductosByPeriodo']))
 }
 else if(isset($_GET['GuardarInsPreFacturas']))
 {
-  //Eliminamos pensiones si los tuviera
-  $controlador->deleteClientesFacturacionProductoClienteAnioMes($_POST);
-  //Procedemos a insertar las pensiones
-  $controlador->insertClientesFacturacionProductoClienteAnioMes($_POST);
+  $hayData = false;
+  $CheqProducto   = @$_POST['PFcheckProducto'];
+  $TxtCantidad    = @$_POST['PFcantidad']; 
+  $TxtValor       = @$_POST['PFvalor']; 
+  if(is_array($CheqProducto)){
+    foreach ($CheqProducto as $item => $check) {
+      if($check=='on' || $check == '1'){
+        $Cantidad = $TxtCantidad[$item];
+        $Valor = $TxtValor[$item];
+        if ($Cantidad > 0 && $Valor > 0){
+          $hayData = true;
+          break;
+        }
+      }
+    }
+  }
+
+  if($hayData){
+    //Eliminamos pensiones si los tuviera
+    $controlador->deleteClientesFacturacionProductoClienteAnioMes($_POST);
+    //Procedemos a insertar las pensiones
+    $controlador->insertClientesFacturacionProductoClienteAnioMes($_POST);
+  }else{
+    echo json_encode(array("rps" => 0 , "mensaje" => "Por favor complete la información."));
+  }
   exit();
 }
 else if(isset($_GET['EliminarInsPreFacturas']))
@@ -771,11 +792,11 @@ class facturar_pensionC
       $respuestaDB = $peticionesDB = 0;
       foreach ($CheqProducto as $item => $check) {
         if($check=='on' || $check == '1'){
-          $Cantidad = $TxtCantidad[$item];
-          $Valor = $TxtValor[$item];
+          $Cantidad = @(int)$TxtCantidad[$item];
+          $Valor = @(float)$TxtValor[$item];
           if ($Cantidad > 0){
             $Mifecha = PrimerDiaMes($MBFechaP[$item]);
-            $CodigoInv = $DCProducto[$item];
+            $CodigoInv = @$DCProducto[$item];
             $CodigoInv = ($CodigoInv!="")?$CodigoInv:G_NINGUNO;
             for ($i=0; $i < $Cantidad; $i++) { 
               $NoMes = ObtenerMesFecha($Mifecha);
@@ -813,13 +834,13 @@ class facturar_pensionC
       $respuestaDB = $peticionesDB = 0;
       foreach ($CheqProducto as $item => $check) {
         if($check=='on' || $check == '1'){
-          $Cantidad = $TxtCantidad[$item];
-          $Valor = $TxtValor[$item];
-          $Total_Desc = (($TxtDescuento[$item]=="")?0:$TxtDescuento[$item]);
-          $Total_Desc2 = (($TxtDescuento2[$item]=="")?0:$TxtDescuento2[$item]);
+          $Cantidad = @(int)$TxtCantidad[$item];
+          $Valor = @(float)$TxtValor[$item];
+          $Total_Desc = @(float)(($TxtDescuento[$item]=="")?0:$TxtDescuento[$item]);
+          $Total_Desc2 = @(float)(($TxtDescuento2[$item]=="")?0:$TxtDescuento2[$item]);
           if ($Cantidad > 0 && $Valor > 0){
             $Mifecha = PrimerDiaMes($MBFechaP[$item],'Ymd');
-            $CodigoInv = $DCProducto[$item];
+            $CodigoInv = @$DCProducto[$item];
             $CodigoInv = ($CodigoInv!="")?$CodigoInv:G_NINGUNO;
             for ($i=0; $i < $Cantidad; $i++) { 
               $NoMes = ObtenerMesFecha($Mifecha,'Ymd');
