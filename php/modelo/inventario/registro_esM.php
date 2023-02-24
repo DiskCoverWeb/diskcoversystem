@@ -1,5 +1,6 @@
 <?php 
 include(dirname(__DIR__,2).'/db/variables_globales.php');//
+include(dirname(__DIR__,2).'/db/db1.php');//
 include(dirname(__DIR__,2).'/funciones/funciones.php');
 
 
@@ -13,6 +14,7 @@ class registro_esM
 	function __construct()
 	{
 	   $this->conn = cone_ajax();
+	   $this->db = new db();
 	}
 	function familias($query='')
 	{
@@ -1154,8 +1156,8 @@ function dtaAsiento_sc($Trans_No){
 		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>utf8_encode($row['Detalle_Conceptos'])];	
 		  $datos[] = $row;
 	   }
-
-       $tbl = grilla_generica_new($sql,'Asiento_Air',$id_tabla = 'tbl_airV',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,40);
+	   $botones[0] = array('boton'=>'eliminar linea Retencion', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'A_No,CodRet' );
+       $tbl = grilla_generica_new($sql,'Asiento_Air',$id_tabla = 'tbl_airV',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,70);
 	   return array('datos'=>$datos,'tbl'=>$tbl);
    }
 
@@ -1446,8 +1448,12 @@ function cuentas_todos($query)
 
      }
 
+     function eliminar_air($a_no,$cod)
+     {
 
-
+     	$sql = "DELETE From Asiento_Air WHERE CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' AND A_No = '".$a_no."' AND CodRet = '".$cod."'";
+     	return $this->db->String_Sql($sql);
+     }
 
 }
 ?>

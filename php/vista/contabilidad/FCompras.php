@@ -411,6 +411,31 @@ function contracuenta()
       $('#myModal').modal('hide');
   }
 
+
+  function eliminar_linea_Retencion(A_no,Codret)
+  {
+
+     var parametros = 
+    {
+        'a_no':A_no,
+        'cod':Codret,
+    }
+    $.ajax({
+      data:  {parametros:parametros},
+      url:   '../controlador/inventario/registro_esC.php?eliminar_air=true',
+      type:  'post',
+      dataType: 'json',
+        success:  function (response) {
+        if (response.length !=0) 
+        {
+           cargar_grilla();
+        }         
+      }
+    });  
+
+
+  }
+
   </script>
 <div class="row">
     <?php if($tipo2!=''){?>

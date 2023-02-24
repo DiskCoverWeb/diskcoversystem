@@ -202,6 +202,13 @@ if(isset($_GET['validar_factura']))
    echo  json_encode($controlador->validar_factura($parametros));
 
 }
+
+if(isset($_GET['eliminar_air']))
+{  
+   $parametros = $_POST['parametros'];
+   echo  json_encode($controlador->eliminar_air($parametros));
+
+}
 class registro_esC
 {
 	private $modelo;
@@ -1248,6 +1255,11 @@ class registro_esC
           return 1;
         }
 
+     }
+
+     function eliminar_air($parametros)
+     {
+       return $this->modelo->eliminar_air($parametros['a_no'],$parametros['cod']);
      }
 }
 ?>
