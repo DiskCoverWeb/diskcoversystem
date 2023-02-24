@@ -16,43 +16,60 @@ class lista_guia_remisionM
 		$this->db = new db();
 	}
 
-	function notas_credito_emitidas_tabla($codigo=false,$desde=false,$hasta=false,$serie=false,$secuencia_NC=false)
+	function guia_remision_emitidas_tabla($codigo=false,$desde=false,$hasta=false,$serie=false,$factura=false)
 	{
-		$sql ="SELECT TA.T,TC,Cliente,C.Codigo,C.CI_RUC,TA.Fecha,F.Fecha as 'FechaF',Serie_NC,TA.Clave_Acceso_NC,TA.Autorizacion_NC,Secuencial_NC,F.Factura,F.Serie,F.Autorizacion,F.Total_MN,F.Descuento,F.Descuento2,Nota,IVA,F.Porc_IVA,TA.Autorizacion_NC,TA.Clave_Acceso_NC,TA.Cod_Ejec,Tipo_Pago,Cod_CxC,TA.CodigoU,TB
-			FROM Trans_Abonos TA 
-			INNER JOIN Facturas F ON TA.Factura = F.Factura
-			INNER JOIN Clientes C ON F.CodigoC = C.Codigo
-			WHERE TA.Item = '".$_SESSION['INGRESO']['item']."' 
-			AND TA.Periodo ='".$_SESSION['INGRESO']['periodo']."'
-			AND TA.Item = F.Item
-			AND TA.Periodo = F.Periodo 
-			AND Secuencial_NC<>0";    
+		$sql ="SELECT * FROM Facturas_Auxiliares
+				WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND Item = '".$_SESSION['INGRESO']['item']."'";    
 		if($codigo!='T' && $codigo!='')
 		{
 			// si el codigo es T se refiere a todos
-		   $sql.=" AND F.Codigo ='".$codigo."'";
+		   $sql.=" AND CodigoC ='".$codigo."'";
 		} 
 		if($serie)
 		{
 			// si el codigo es T se refiere a todos
-		   $sql.=" AND Serie_NC ='".$serie."'";
+		   $sql.=" AND Serie_GR ='".$serie."'";
 		} 
         if($desde!='' && $hasta!='')
 	    {
-	     	$sql.= " AND TA.Fecha BETWEEN   '".$desde."' AND '".$hasta."' ";
+	     	$sql.= " AND FechaGRE BETWEEN   '".$desde."' AND '".$hasta."' ";
 	    }
-	    if($secuencia_NC)
+	    if($factura)
 	    {
-	    	$sql.=" AND Secuencial_NC = '".$secuencia_NC."'";
+	    	$sql.=" AND Factura = '".$factura."'";
 	    }
-	    $sql.=" GROUP BY TA.T,TC,Cliente,C.Codigo,C.CI_RUC,TA.Fecha,F.Fecha,Serie_NC,TA.Clave_Acceso_NC,TA.Autorizacion_NC,Secuencial_NC,F.Factura,F.Serie,F.Autorizacion,F.Total_MN,F.Descuento,F.Descuento2,Nota,IVA,F.Porc_IVA,TA.Autorizacion_NC,TA.Clave_Acceso_NC,TA.Cod_Ejec,Tipo_Pago,Cod_CxC,TA.CodigoU,TB";
-       $sql.=" ORDER BY Serie_NC,Secuencial_NC DESC "; 
+	   $sql.=" ORDER BY Remision DESC"; 
 		$sql.=" OFFSET ".$_SESSION['INGRESO']['paginacionIni']." ROWS FETCH NEXT ".$_SESSION['INGRESO']['numreg']." ROWS ONLY;";   
 	    // // print_r($_SESSION['INGRESO']);
 		// print_r($sql);die();    
 		return $this->db->datos($sql);
 
 	       // return $datos;
+	}
+
+
+	function factura($factura=false,$serie=false,$Autorizacion=false)
+	{
+		$sql="SELECT * 
+		    FROM Facturas 
+		    WHERE Item = '".$_SESSION['INGRESO']['item']."'
+		    AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+		    if($serie)
+		    { 
+		    	$sql.=" AND Serie='".$serie."'";
+		    } 
+		    if($factura)
+		    {
+		    	$sql.=" AND Factura='".$factura."'";
+		    } 
+		    if($Autorizacion)
+		    {
+		    	$sql.=" AND Autorizacion='".$Autorizacion."' ";
+			}
+
+		return $this->db->datos($sql);
+		   
 	}
 
 	function lineas_nota_credito($serie,$numero)
