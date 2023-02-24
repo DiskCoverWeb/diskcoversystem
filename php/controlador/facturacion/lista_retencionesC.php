@@ -78,7 +78,7 @@ class lista_retencionesC
     	$tbl = $this->modelo->retenciones_emitidas_tabla($codigo,$parametros['desde'],$parametros['hasta'],$parametros['serie']);
     	$tr='';
     	foreach ($tbl as $key => $value) {
-    		 $exis = $this->sri->catalogo_lineas('RE',$value['Serie_Retencion']);
+    		 $exis =  true;//$this->sri->catalogo_lineas('RE',$value['Serie_Retencion']);
     		 $autorizar = '';$anular = '';
     		 $cli_data = Cliente($value['IdProv']);
     		 $email = '';
@@ -105,10 +105,10 @@ class lista_retencionesC
 					<span class="fa fa-caret-down"></span></button>
 					<ul class="dropdown-menu">
 					<li><a href="#" onclick="Ver_retencion(\''.$value['SecRetencion'].'\',\''.$value['Serie_Retencion'].'\',\''.$value['Numero'].'\')"><i class="fa fa-eye"></i> Ver Retencion</a></li>';
-					if(count($exis)>0 && strlen($value['AutRetencion'])==13)
+					if(strlen($value['AutRetencion'])==13)
 					{
 						$tr.='<li><a href="#" onclick="autorizar(\''.$value['SecRetencion'].'\',\''.$value['Serie_Retencion'].'\',\''.$value['Fecha']->format('Y-m-d').'\')" ><i class="fa fa-paper-plane"></i>Autorizar</a></li>';
-					}else if(count($exis)==0 && strlen($value['AutRetencion'])==13)
+					}else if(strlen($value['AutRetencion'])==13)
 					{
 						$tr.='<li><a class="btn-danger"><i class="fa fa-info"></i>Para autorizar Asigne el catalo de lineas la serie:'.$value['Serie_Retencion'].'</a></li>';
 					}
