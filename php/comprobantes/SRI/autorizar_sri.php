@@ -874,12 +874,12 @@ class autorizacion_sri
 			if($RIMPE['@micro']!='.' && $RIMPE['@micro']!='' && $RIMPE['@micro']=='CONTRIBUYENTE RÉGIMEN RIMPE' )
 			{
 				$xml_contribuyenteRimpe = $xml->createElement( "contribuyenteRimpe",$RIMPE['@micro']);
-				$xml_infoTributaria->appendChild( $xml_contribuyenteRimpe);
+				$xml_infotributaria->appendChild( $xml_contribuyenteRimpe);
 			}
 			if($RIMPE['@Agente']!='.' && $RIMPE['@Agente']!='')
 			{
 				$xml_agenteRetencion = $xml->createElement( "agenteRetencion",'1');
-				$xml_infoTributaria->appendChild( $xml_agenteRetencion);
+				$xml_infotributaria->appendChild( $xml_agenteRetencion);
 			}
 		}
 
