@@ -605,15 +605,15 @@ function contracuenta()
                                             </div>
                                          <div class="col-sm-2">
                                                 <b>No Obj. IVA</b>
-                                                <input type="text" name="" class="form-control input-xs text-right" value="0.00" id="TxtBaseImpoNoObjIVA"  autocomplete="off">
+                                                <input type="text" name="" class="form-control input-xs text-right" value="0.00" id="TxtBaseImpoNoObjIVA"  autocomplete="off" onblur="base_impo_cal()">
                                             </div>
                                             <div class="col-sm-1" style="padding-right: 5px;padding-left: 5px;">
                                                 <b>Tarifa 0</b>
-                                                <input type="text" name="" class="form-control input-xs text-right" value="0.00" id="TxtBaseImpo"  autocomplete="off">
+                                                <input type="text" name="" class="form-control input-xs text-right" value="0.00" id="TxtBaseImpo"  autocomplete="off"  onblur="base_impo_cal()">
                                             </div>
                                             <div class="col-sm-1" style="padding-right: 5px;padding-left: 5px;">
                                                 <b>Tarifa 12</b>
-                                                <input type="text" name="" class="form-control input-xs text-right" value="0.00" id="TxtBaseImpoGrav"  autocomplete="off">
+                                                <input type="text" name="" class="form-control input-xs text-right" value="0.00" id="TxtBaseImpoGrav"  autocomplete="off"  onblur="base_impo_cal()">
                                             </div>
                                             <div class="col-sm-2">
                                                 <b>Valor ICE</b>
@@ -913,7 +913,7 @@ function contracuenta()
                                       </div>
                                       <div class="col-sm-2">
                                         <b>BASE IMP</b>
-                                        <input type="text" class="form-control input-xs  text-right" name="TxtBimpConA" id="TxtBimpConA"  autocomplete="off">
+                                        <input type="text" class="form-control input-xs  text-right" name="TxtBimpConA" id="TxtBimpConA"  autocomplete="off" onblur="validar_base_impo()">
                                       </div>
                                        <div class="col-sm-1" style="padding-left: 0px;padding-right: 0px">
                                         <b>PORC</b>
