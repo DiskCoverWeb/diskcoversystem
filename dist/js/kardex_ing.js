@@ -1338,7 +1338,33 @@ function Tipo_De_Comprobante_No()
 }
 
 
+function base_impo_cal()
+{
+   tarifa_no_obj_iva = $('#TxtBaseImpoNoObjIVA').val();
+   tarifa_0 = $('#TxtBaseImpo').val();
+   tarifa_12 = $('#TxtBaseImpoGrav').val();
 
+   total = parseFloat(tarifa_12)+parseFloat(tarifa_0)+parseFloat(tarifa_no_obj_iva)
+   $('#TxtBimpConA').val(total.toFixed(2))
+}
+
+
+function validar_base_impo()
+{
+  tarifa_no_obj_iva = $('#TxtBaseImpoNoObjIVA').val();
+   tarifa_0 = $('#TxtBaseImpo').val();
+   tarifa_12 = $('#TxtBaseImpoGrav').val();
+
+   total = parseFloat(tarifa_12)+parseFloat(tarifa_0)+parseFloat(tarifa_no_obj_iva)
+   var totaim = $('#TxtBimpConA').val();
+
+   if(parseFloat(totaim)>total)
+   {
+      Swal.fire('El valor ingresado supera a la base imponible recomendada','','info').then(function(){
+        $('#TxtBimpConA').val(0);
+      })
+   }
+}
   function tipo_error_sri(clave)
   {
     var parametros = 

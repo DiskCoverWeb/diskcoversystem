@@ -874,12 +874,12 @@ class autorizacion_sri
 			if($RIMPE['@micro']!='.' && $RIMPE['@micro']!='' && $RIMPE['@micro']=='CONTRIBUYENTE RÉGIMEN RIMPE' )
 			{
 				$xml_contribuyenteRimpe = $xml->createElement( "contribuyenteRimpe",$RIMPE['@micro']);
-				$xml_infoTributaria->appendChild( $xml_contribuyenteRimpe);
+				$xml_infotributaria->appendChild( $xml_contribuyenteRimpe);
 			}
 			if($RIMPE['@Agente']!='.' && $RIMPE['@Agente']!='')
 			{
 				$xml_agenteRetencion = $xml->createElement( "agenteRetencion",'1');
-				$xml_infoTributaria->appendChild( $xml_agenteRetencion);
+				$xml_infotributaria->appendChild( $xml_agenteRetencion);
 			}
 		}
 
@@ -2576,6 +2576,7 @@ function generar_xml_retencion($cabecera,$detalle)
 	$this->generar_carpetas($entidad,$empresa);
 	$ambiente =$_SESSION['INGRESO']['Ambiente'];
 	$RIMPE =  $this->datos_rimpe();
+	/*
 	$sucursal = $this->catalogo_lineas('RE',$cabecera[0]['Serie_R']);
 	 if(count($sucursal)>0)
 	 {
@@ -2593,7 +2594,7 @@ function generar_xml_retencion($cabecera,$detalle)
 	 	if (isset($sucursal[0]['Cta_Establecimiento'])) {
 	 		$cabecera[0]['Cta_Establecimiento'] = $sucursal[0]['Cta_Establecimiento'];
 	 	}		 	
-	 }
+	 }*/
 
 	$carpeta_autorizados = dirname(__DIR__)."/entidades/entidad_".generaCeros($entidad,3).'/CE'.generaCeros($empresa,3)."/Autorizados";		  
 	if(file_exists($carpeta_autorizados.'/'.$cabecera[0]['ClaveAcceso'].'.xml'))

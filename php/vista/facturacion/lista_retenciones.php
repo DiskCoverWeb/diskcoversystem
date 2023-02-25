@@ -95,7 +95,7 @@ function catalogoLineas(){
           // Limpiamos el select
           console.log(datos);
           $("#DCLinea").find('option').remove();
-          if(data.length>1)
+          if(data.length>0)
           {
             $("#DCLinea").append('<option value="">Todos</option>');
           }

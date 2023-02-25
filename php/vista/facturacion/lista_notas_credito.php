@@ -415,14 +415,14 @@ function modal_email_nota(nota,serie_nc,factura,autorizacion_nc,emails)
           <th>TC</th>
           <th>Serie</th>
           <th>Autorizacion</th>
-          <th>Factura</th>
+          <th>Nota credito</th>
           <th>Fecha</th>
-          <th>SubTotal</th>
-          <th>Con_IVA</th>
-          <th>IVA</th>
-          <th>Descuento</th>
+          <th>Factura</th>
+          <th>Serie FA</th>
+          <th>Autorizacion FA</th>          
           <th>Total</th>
-          <th>Saldo</th>
+          <th>Descuento</th>
+          <th>Descuento2</th>
           <th>RUC_CI</th>
         </thead>
         <tbody  id="tbl_tabla">

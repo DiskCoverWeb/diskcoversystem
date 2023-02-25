@@ -50,9 +50,9 @@ $tipo='';
 
    }
 
-  function Ver_Nota_credito(nota,serie)
+  function Ver_guia_remision(TC,Serie,Factura,Autorizacion,Autorizacion_GR)
   {    
-    var url = '../controlador/facturacion/lista_guia_remisionC.php?Ver_nota_credito=true&nota='+nota+'&serie='+serie;   
+    var url = '../controlador/facturacion/lista_guia_remisionC.php?Ver_guia_remision=true&tc='+TC+'&factura='+Factura+'&serie='+Serie+'&Auto='+Autorizacion+'&AutoGR='+Autorizacion_GR;   
     window.open(url,'_blank');
   }
 
@@ -95,7 +95,7 @@ function catalogoLineas(){
           // Limpiamos el select
           console.log(datos);
           $("#DCLinea").find('option').remove();
-          if(data.length>1)
+          if(data.length>0)
           {
             $("#DCLinea").append('<option value="">Todos</option>');
           }
@@ -225,18 +225,20 @@ function catalogoLineas(){
 
   }
 
-   function descargar_nota(nota,serie_nc,factura,seriefa)
+   function descargar_guia(factura,serie,auto,auto_gr,guia,serie_gr)
   {
     var parametros = 
     {
-        'nota':nota,
-        'serie_nc':serie,
         'factura':factura,
-        'serie':seriefa,
+        'serie':serie,
+        'autorizacion':auto,
+        'autorizacion_gr':auto_gr,
+        'guia':guia,
+        'serie_gr':serie_gr,
     }
      $.ajax({
         data: {parametros:parametros},
-        url:   '../controlador/facturacion/lista_guia_remisionC.php?descargar_notacredito=true',
+        url:   '../controlador/facturacion/lista_guia_remisionC.php?descargar_guia=true',
         dataType:'json',      
         type:  'post',
         // dataType: 'json',
@@ -253,14 +255,16 @@ function catalogoLineas(){
 
   }
 
+function modal_email_guia(Remision,Serie_GR,Factura,Serie,Autorizacion_GR,Autorizacion,emails)
+{
 
-function modal_email_nota(nota,serie_nc,factura,autorizacion_nc,emails)
-  {
     $('#myModal_email').modal('show'); 
-    $('#txt_fac').val(nota);
-    $('#txt_serie').val(serie_nc);
-    $('#txt_codigoc').val(factura);
-    $('#txt_autorizacion').val(autorizacion_nc);
+    $('#txt_fac').val(Remision);
+    $('#txt_serie').val(Serie);
+    $('#txt_seriegr').val(Serie_GR);
+    $('#txt_numero').val(Factura);
+    $('#txt_autorizacion').val(Autorizacion);
+    $('#txt_autorizaciongr').val(Autorizacion_GR);
 
     var to = emails.substring(0,emails.length-1);
     var ema = to.split(',');
@@ -282,10 +286,12 @@ function modal_email_nota(nota,serie_nc,factura,autorizacion_nc,emails)
     var cuerpo = $('#txt_texto').val();
     var pdf_fac = $('#cbx_factura').prop('checked');
     var titulo = $('#txt_titulo').val();
-    var nota = $('#txt_fac').val();
+    var factura = $('#txt_numero').val();
     var serie = $('#txt_serie').val();
-    var numero = $('#txt_codigoc').val();
+    var seriegr = $('#txt_seriegr').val();
+    var remision = $('#txt_fac').val();
     var autoriza = $('#txt_autorizacion').val();
+    var autorizagr = $('#txt_autorizaciongr').val();
 
     // var adjunto =  new FormData(document.getElementById("form_img"));
 
@@ -298,10 +304,12 @@ function modal_email_nota(nota,serie_nc,factura,autorizacion_nc,emails)
         'cuerpo':cuerpo,
         'pdf_fac':pdf_fac,
         'titulo':titulo,
-        'nota':nota,
-        'serie_nc':serie,
-        'numero':numero,
+        'factura':factura,
+        'serie':serie,
+        'seriegr':seriegr,
+        'remision':remision,
         'autoriza':autoriza,
+        'autorizagr':autorizagr,
     }
      $.ajax({
         data: {parametros:parametros},
@@ -401,7 +409,7 @@ function modal_email_nota(nota,serie_nc,factura,autorizacion_nc,emails)
     </div>
 	<div class="row">
     <div class="col-sm-6">
-      <h2 style="margin-top: 0px;">Listado de notas de credito</h2>
+      <h2 style="margin-top: 0px;">Listado de guias de remision</h2>
     </div>
     <div class="col-sm-6 text-right" id="panel_pag">
       
@@ -409,20 +417,19 @@ function modal_email_nota(nota,serie_nc,factura,autorizacion_nc,emails)
 		<div  class="col-sm-12" style="overflow-x: scroll;height: 500px;">    
       <table class="table text-sm" style=" white-space: nowrap;">
         <thead>
-          <th></th>
-          <th>T</th>          
+          <th></th>   
           <th>Razon_Social</th>
           <th>TC</th>
           <th>Serie</th>
           <th>Autorizacion</th>
-          <th>Factura</th>
+          <th>guia remision</th>
           <th>Fecha</th>
-          <th>SubTotal</th>
-          <th>Con_IVA</th>
-          <th>IVA</th>
-          <th>Descuento</th>
-          <th>Total</th>
-          <th>Saldo</th>
+          <th>Factura</th>
+          <th>Serie</th>
+          <th>Autorizacion FA</th>
+          <th>Ciudad inicio</th>
+          <th>Ciudad Final</th>
+          <th>Placa</th>
           <th>RUC_CI</th>
         </thead>
         <tbody  id="tbl_tabla">
@@ -493,8 +500,11 @@ function modal_email_nota(nota,serie_nc,factura,autorizacion_nc,emails)
                         <div id="emails-input" name="emails-input" placeholder="añadir email"></div>
                         <input type="hidden" name="txt_fac" id="txt_fac">
                         <input type="hidden" name="txt_serie" id="txt_serie">
+                        <input type="hidden" name="txt_seriegr" id="txt_seriegr">
                         <input type="hidden" name="txt_codigoc" id="txt_codigoc">
                         <input type="hidden" name="txt_autorizacion" id="txt_autorizacion">
+                        <input type="hidden" name="txt_autorizaciongr" id="txt_autorizaciongr">
+                        <input type="hidden" name="txt_numero" id="txt_numero">
                         <input type="hidden" name="txt_to" id="txt_to">
                     </div>
                     <div class="col-sm-12">

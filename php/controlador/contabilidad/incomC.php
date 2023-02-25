@@ -588,6 +588,7 @@ class incomC
         	}
          }else
          {
+         	ReadSetDataNum("RE_SERIE_".$parametros['Serie_R'], True, True);
          	$num_com = explode('-',$parametros['num_com']);
          	$num_com = $num_com[1];
          }

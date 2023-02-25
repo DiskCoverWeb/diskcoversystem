@@ -1,7 +1,6 @@
 <?php
 require_once(dirname(__DIR__,2)."/modelo/facturacion/lista_guia_remisionM.php");
 require_once(dirname(__DIR__,2)."/modelo/facturacion/punto_ventaM.php");
-require_once(dirname(__DIR__,2)."/modelo/facturacion/notas_creditoM.php");
 require(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
 if(!class_exists('enviar_emails'))
 {
@@ -23,9 +22,9 @@ if(isset($_GET['autorizar_nota']))
 	echo json_encode($controlador->autorizar_sri($parametros));
 }
 
-if(isset($_GET['Ver_nota_credito']))
+if(isset($_GET['Ver_guia_remision']))
 {
-  $controlador->ver_nota_credito_pdf($_GET['nota'],$_GET['serie']);
+  $controlador->ver_guia_remision_pdf($_GET['tc'],$_GET['serie'],$_GET['factura'],$_GET['Auto'],$_GET['AutoGR']);
 }
 
 if(isset($_GET['enviar_email_detalle']))
@@ -34,10 +33,10 @@ if(isset($_GET['enviar_email_detalle']))
 	echo json_encode($controlador->enviar_email_detalle($parametros));
 }
 
-if(isset($_GET['descargar_notacredito']))
+if(isset($_GET['descargar_guia']))
 {
 	$parametros = $_POST['parametros'];
-	echo json_encode($controlador->descargar_notacredito($parametros));
+	echo json_encode($controlador->descargar_guia($parametros));
 }
 
 if(isset($_GET['descargar_xml']))
@@ -66,7 +65,6 @@ class lista_guia_remisionC
 		$this->empresaGeneral = Empresa_data();
 		$this->sri = new autorizacion_sri();
 		$this->punto_venta = new punto_ventaM();
-        $this->notas_credito = new notas_creditoM();
     }
 
    function tabla_facturas($parametros)
@@ -74,12 +72,12 @@ class lista_guia_remisionC
 
     	// print_r($parametros);die();
     	$codigo = $parametros['ci'];
-    	$tbl = $this->modelo->notas_credito_emitidas_tabla($codigo,$parametros['desde'],$parametros['hasta'],$parametros['serie']);
+    	$tbl = $this->modelo->guia_remision_emitidas_tabla($codigo,$parametros['desde'],$parametros['hasta'],$parametros['serie']);
     	$tr='';
     	foreach ($tbl as $key => $value) {
-    		 $exis = $this->sri->catalogo_lineas('NC',$value['Serie_NC']);
+    		 $exis = $this->sri->catalogo_lineas('GR',$value['Serie_GR']);
     		 $autorizar = '';$anular = '';
-    		 $cli_data = Cliente($value['Codigo']);
+    		 $cli_data = Cliente($value['CodigoC']);
     		 $email = '';
     		 if(count($cli_data)>0)
     		 {
@@ -103,23 +101,23 @@ class lista_guia_remisionC
 					<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Acciones
 					<span class="fa fa-caret-down"></span></button>
 					<ul class="dropdown-menu">
-					<li><a href="#" onclick="Ver_Nota_credito(\''.$value['Secuencial_NC'].'\',\''.$value['Serie_NC'].'\')"><i class="fa fa-eye"></i> Ver Nota de credito</a></li>';
-					if(count($exis)>0 && strlen($value['Autorizacion_NC'])==13)
+					<li><a href="#" onclick="Ver_guia_remision(\''.$value['TC'].'\',\''.$value['Serie'].'\',\''.$value['Factura'].'\',\''.$value['Autorizacion'].'\',\''.$value['Autorizacion_GR'].'\')"><i class="fa fa-eye"></i> Ver  Guia de Remision</a></li>';
+					if(count($exis)>0 && strlen($value['Autorizacion_GR'])==13)
 					{
-						$tr.='<li><a href="#" onclick="autorizar(\''.$value['Secuencial_NC'].'\',\''.$value['Serie_NC'].'\',\''.$value['Fecha']->format('Y-m-d').'\')" ><i class="fa fa-paper-plane"></i>Autorizar</a></li>';
-					}else if(count($exis)==0 && strlen($value['Autorizacion_NC'])==13)
+						$tr.='<li><a href="#" onclick="autorizar(\''.$value['Remision'].'\',\''.$value['Serie_GR'].'\',\''.$value['FechaGRE']->format('Y-m-d').'\')" ><i class="fa fa-paper-plane"></i>Autorizar</a></li>';
+					}else if(count($exis)==0 && strlen($value['Autorizacion_GR'])==13)
 					{
-						$tr.='<li><a class="btn-danger"><i class="fa fa-info"></i>Para autorizar Asigne en catalo de lineas la serie:'.$value['Serie_NC'].'</a></li>';
+						$tr.='<li><a class="btn-danger"><i class="fa fa-info"></i>Para autorizar Asigne en catalo de lineas la serie:'.$value['Serie_GR'].'</a></li>';
 					}
-					if($value['T']!='A')
+				/*	if($value['T']!='A')
 					{
-						$tr.='<li><a href="#" onclick="anular_factura(\''.$value['Secuencial_NC'].'\',\''.$value['Serie_NC'].'\',\''.$value['Codigo'].'\')"><i class="fa fa-times-circle"></i>Anular Nota de credito</a></li>';
-					}
-					$tr.='<li><a href="#" onclick=" modal_email_nota(\''.$value['Secuencial_NC'].'\',\''.$value['Serie_NC'].'\',\''.$value['Factura'].'\',\''.$value['Autorizacion_NC'].'\',\''.$email.'\')"><i class="fa fa-envelope"></i> Enviar Nota de credito por email</a></li>
-					<li><a href="#" onclick="descargar_nota(\''.$value['Secuencial_NC'].'\',\''.$value['Serie_NC'].'\',\''.$value['Factura'].'\',\''.$value['Serie'].'\')"><i class="fa fa-download"></i> Descargar Nota de credito</a></li>';
-					if(strlen($value['Autorizacion_NC'])>13)
+						$tr.='<li><a href="#" onclick="anular_factura(\''.$value['Remision'].'\',\''.$value['Serie_GR'].'\',\''.$value['CodigoC'].'\')"><i class="fa fa-times-circle"></i>Anular Nota de credito</a></li>';
+					}*/
+					$tr.='<li><a href="#" onclick=" modal_email_guia(\''.$value['Remision'].'\',\''.$value['Serie_GR'].'\',\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['Autorizacion_GR'].'\',\''.$value['Autorizacion'].'\',\''.$email.'\')"><i class="fa fa-envelope"></i> Enviar  Guia de Remision por email</a></li>
+					<li><a href="#" onclick="descargar_guia(\''.$value['Factura'].'\',\''.$value['Serie'].'\',\''.$value['Autorizacion'].'\',\''.$value['Autorizacion_GR'].'\',\''.$value['Remision'].'\',\''.$value['Serie_GR'].'\')"><i class="fa fa-download"></i> Descargar Guia de Remision</a></li>';
+					if(strlen($value['Autorizacion_GR'])>13)
 					{
-					 $tr.='<li><a href="#" onclick="descargar_xml(\''.$value['Autorizacion_NC'].'\')"><i class="fa fa-download"></i> Descargar XML</a></li>';
+					 $tr.='<li><a href="#" onclick="descargar_xml(\''.$value['Autorizacion_GR'].'\')"><i class="fa fa-download"></i> Descargar XML</a></li>';
 					}
 					 $tr.='
 					</ul>
@@ -127,20 +125,19 @@ class lista_guia_remisionC
 
 
             </td>
-            <td>'.$value['T'].'</td>
-            <td>'.$value['Cliente'].'</td>
+            <td>'.$cli_data[0]['Cliente'].'</td>
             <td>'.$value['TC'].'</td>
-            <td>'.$value['Serie_NC'].'</td>
-            <td>'.$value['Autorizacion_NC'].'</td>
-            <td>'.$value['Secuencial_NC'].'</td>
-            <td>'.$value['Fecha']->format('Y-m-d').'</td>
+            <td>'.$value['Serie_GR'].'</td>
+            <td>'.$value['Autorizacion_GR'].'</td>
+            <td>'.$value['Remision'].'</td>
+            <td>'.$value['FechaGRE']->format('Y-m-d').'</td>
             <td class="text-right">'.$value['Factura'].'</td>
             <td class="text-right">'.$value['Serie'].'</td>
             <td class="text-right">'.$value['Autorizacion'].'</td>
-            <td class="text-right">'.$value['Total_MN'].'</td>
-            <td class="text-right">'.$value['Descuento'].'</td>
-            <td class="text-right">'.$value['Descuento2'].'</td>
-            <td>'.$value['CI_RUC'].'</td>
+            <td class="text-right">'.$value['CiudadGRI'].'</td>
+            <td class="text-right">'.$value['CiudadGRF'].'</td>
+            <td class="text-right">'.$value['Placa_Vehiculo'].'</td>
+            <td>'.$cli_data[0]['CI_RUC'].'</td>
           </tr>';
     	}
 
@@ -154,7 +151,7 @@ class lista_guia_remisionC
     function autorizar_sri($parametros)
     {
     	// print_r($parametros);die();
-    	$datos = $this->modelo->notas_credito_emitidas_tabla($codigo=false,$desde=false,$hasta=false,$parametros['serie'],$parametros['nota']);
+    	$datos = $this->modelo->guia_remision_emitidas_tabla($codigo=false,$desde=false,$hasta=false,$parametros['serie'],$parametros['nota']);
 
     	$TFA['Serie_NC'] = $parametros['serie'];
 		$TFA['Nota_Credito'] = $parametros['nota'];
@@ -185,110 +182,34 @@ class lista_guia_remisionC
 
     }
 
-    function ver_nota_credito_pdf($nota,$serie)
+    function ver_guia_remision_pdf($tc,$serie,$factura,$Auto,$AutoGR)
     {
-    	$datos = $this->modelo->notas_credito_emitidas_tabla($codigo=false,$desde=false,$hasta=false,$serie,$secuencia_NC=$nota);
-
-    	// print_r($datos);die();
-
-    	$TFA['TC'] = $datos[0]['TC'];    	
-    	$TFA['imprimir'] = 0;
-		$TFA['Serie'] = $datos[0]['Serie'];
-		$TFA['Autorizacion'] = $datos[0]['Autorizacion'];
-		$TFA['Factura'] = $datos[0]['Factura'];
-		$TFA['Serie_NC'] = $datos[0]['Serie_NC'];
-		$TFA['Nota_Credito'] = $datos[0]['Secuencial_NC'];
-		$TFA['CodigoC'] = $datos[0]['Codigo'];		
-		$TFA['Fecha'] = $datos[0]['FechaF'];	
-		$TFA['IVA'] = $datos[0]['IVA'];
-		$TFA['Porc_IVA'] = $datos[0]['Porc_IVA'];
-		$TFA['Nota'] = $datos[0]['Nota'];
-		$TFA['Total_MN'] = $datos[0]['Total_MN'];		
-		$TFA['Fecha_NC'] = $datos[0]['Fecha'];
-		$TFA['Autorizacion_NC'] = $datos[0]['Autorizacion_NC']; 
-		$TFA['ClaveAcceso_NC'] = $datos[0]['Autorizacion_NC'];
-
-		$TFA['SubTotal_NC'] = 0;
-		$TFA['Descuento'] = 0;
-		$lineas = $this->modelo->lineas_nota_credito($TFA['Serie'],$TFA['Factura']);
-		$SubTotal_NC = 0;
-		$descuento = 0;
-		foreach ($lineas as $key => $value) {
-			$SubTotal_NC = $SubTotal_NC + $value["SUBTOTAL"];			
-		    $descuento = $value['Total_Desc']+$value['Total_Desc2'];
-		}
-		$TFA['Descuento'] =  $descuento;
-		$TFA['SubTotal_NC'] = $SubTotal_NC;
-/*
-		$TFA['Total_IVA_NC'] = 0;
-		/*$TFA['Total_IVA_NC']
-		$TFA['SubTotal_NC']*/
-
-/*
-    	$TFA['TC'] = 'NC';
-		$TFA['Serie'] = '001003';
-		$TFA['Autorizacion'] = '0604202201070216417900110010030000006691234567814';
-		$TFA['Factura'] = '669';
-		$TFA['Serie_NC'] = '001003';
-		$TFA['Nota_Credito'] = '71';
-		$TFA['CodigoC'] = '1792558662';
-
-		$TFA['Fecha_NC'] = date('Y-m-d');
-
-		$TFA['Fecha'] = date('Y-m-d');
-		$TFA['Autorizacion_NC'] = '0902202304070216417900110010030000000711234567818';
-		$TFA['ClaveAcceso_NC']  = '0902202304070216417900110010030000000711234567818';
-		$TFA['Porc_IVA'] = '12';
-		$TFA['Descuento']=0;
-		$TFA['Descuento2'] = 0;
-		$TFA['IVA'] = '0';
-		$TFA['Total_MN'] = 0;
-		$TFA['Nota'] = '- Nota de Crédito de: VACA PRIETO WALTER JALIL';
-
-
-    	// print_r($nota);die();*/
-      	$this->notas_credito->pdf_nota_credito($TFA);
+    	$FA = $this->modelo->factura($factura,$serie,$Auto);
+    	$TFA['TC'] = $tc;
+		$TFA['Serie'] = $serie;
+		$TFA['Autorizacion'] = $Auto;
+		$TFA['Factura'] = $factura;
+		$TFA['Autorizacion_GR'] = $AutoGR;
+		$TFA['CodigoC'] = $FA[0]['CodigoC']; 
+      	$this->punto_venta->pdf_guia_remision_elec($TFA,$TFA['Autorizacion_GR'],$periodo=false,0,0);
 	 	
    
     }
 
-     function descargar_notacredito($parametros)
+     function descargar_guia($parametros)
     {
-    	$datos = $this->modelo->notas_credito_emitidas_tabla($codigo=false,$desde=false,$hasta=false,$parametros['serie_nc'],$parametros['nota']);
 
-    	// print_r($datos);die();
-
-    	$TFA['TC'] = $datos[0]['TC'];    	
-    	$TFA['imprimir'] = 1;
-		$TFA['Serie'] = $datos[0]['Serie'];
-		$TFA['Autorizacion'] = $datos[0]['Autorizacion'];
-		$TFA['Factura'] = $datos[0]['Factura'];
-		$TFA['Serie_NC'] = $datos[0]['Serie_NC'];
-		$TFA['Nota_Credito'] = $datos[0]['Secuencial_NC'];
-		$TFA['CodigoC'] = $datos[0]['Codigo'];		
-		$TFA['Fecha'] = $datos[0]['FechaF'];	
-		$TFA['IVA'] = $datos[0]['IVA'];
-		$TFA['Porc_IVA'] = $datos[0]['Porc_IVA'];
-		$TFA['Nota'] = $datos[0]['Nota'];
-		$TFA['Total_MN'] = $datos[0]['Total_MN'];		
-		$TFA['Fecha_NC'] = $datos[0]['Fecha'];
-		$TFA['Autorizacion_NC'] = $datos[0]['Autorizacion_NC']; 
-		$TFA['ClaveAcceso_NC'] = $datos[0]['Autorizacion_NC'];
-
-		$TFA['SubTotal_NC'] = 0;
-		$TFA['Descuento'] = 0;
-		$lineas = $this->modelo->lineas_nota_credito($TFA['Serie'],$TFA['Factura']);
-		$SubTotal_NC = 0;
-		$descuento = 0;
-		foreach ($lineas as $key => $value) {
-			$SubTotal_NC = $SubTotal_NC + $value["SUBTOTAL"];			
-		    $descuento = $value['Total_Desc']+$value['Total_Desc2'];
-		}
-		$TFA['Descuento'] =  $descuento;
-		$TFA['SubTotal_NC'] = $SubTotal_NC;
-
-      	$this->notas_credito->pdf_nota_credito($TFA);    	
-       return $parametros['serie_nc'].'-'.generaCeros($parametros['nota'],7).'.pdf';
+    	$FA = $this->modelo->factura($parametros['factura'],$parametros['serie'],$parametros['autorizacion']);
+    	$TFA['TC'] = $FA[0]['TC'];
+		$TFA['Serie'] = $FA[0]['Serie'];
+		$TFA['Autorizacion'] = $FA[0]['Autorizacion'];
+		$TFA['Factura'] = $parametros['factura'];
+		$TFA['Autorizacion_GR'] = $parametros['autorizacion_gr'];
+		$TFA['CodigoC'] = $FA[0]['CodigoC']; 
+      	$this->punto_venta->pdf_guia_remision_elec($TFA,$TFA['Autorizacion_GR'],$periodo=false,0,1);
+	 	
+     	
+       return $parametros['serie_gr'].'-'.generaCeros($parametros['guia'],7).'.pdf';
     }
 
      function descargar_xml($parametros)
@@ -326,44 +247,20 @@ class lista_guia_remisionC
     	$cuerpo_correo = $parametros['cuerpo'];
     	$titulo_correo = $parametros['titulo'];
 
-    	$datos = $this->modelo->notas_credito_emitidas_tabla($codigo=false,$desde=false,$hasta=false,$parametros['serie_nc'],$parametros['nota']);
 
-    	// print_r($datos);die();
+    	// print_r($parametros);die();
 
-    	$TFA['TC'] = $datos[0]['TC'];    	
-    	$TFA['imprimir'] = 1;
-		$TFA['Serie'] = $datos[0]['Serie'];
-		$TFA['Autorizacion'] = $datos[0]['Autorizacion'];
-		$TFA['Factura'] = $datos[0]['Factura'];
-		$TFA['Serie_NC'] = $datos[0]['Serie_NC'];
-		$TFA['Nota_Credito'] = $datos[0]['Secuencial_NC'];
-		$TFA['CodigoC'] = $datos[0]['Codigo'];		
-		$TFA['Fecha'] = $datos[0]['FechaF'];	
-		$TFA['IVA'] = $datos[0]['IVA'];
-		$TFA['Porc_IVA'] = $datos[0]['Porc_IVA'];
-		$TFA['Nota'] = $datos[0]['Nota'];
-		$TFA['Total_MN'] = $datos[0]['Total_MN'];		
-		$TFA['Fecha_NC'] = $datos[0]['Fecha'];
-		$TFA['Autorizacion_NC'] = $datos[0]['Autorizacion_NC']; 
-		$TFA['ClaveAcceso_NC'] = $datos[0]['Autorizacion_NC'];
+    	$FA = $this->modelo->factura($parametros['factura'],$parametros['serie'],$parametros['autoriza']);
+    	$TFA['TC'] = $FA[0]['TC'];
+		$TFA['Serie'] = $FA[0]['Serie'];
+		$TFA['Autorizacion'] = $FA[0]['Autorizacion'];
+		$TFA['Factura'] = $parametros['factura'];
+		$TFA['Autorizacion_GR'] = $parametros['autorizagr'];
+		$TFA['CodigoC'] = $FA[0]['CodigoC']; 
+      	$this->punto_venta->pdf_guia_remision_elec($TFA,$TFA['Autorizacion_GR'],$periodo=false,0,1);
+    	$archivos[0] =$parametros['seriegr'].'-'.generaCeros($parametros['remision'],7).'.pdf';
 
-		$TFA['SubTotal_NC'] = 0;
-		$TFA['Descuento'] = 0;
-		$lineas = $this->modelo->lineas_nota_credito($TFA['Serie'],$TFA['Factura']);
-		$SubTotal_NC = 0;
-		$descuento = 0;
-		foreach ($lineas as $key => $value) {
-			$SubTotal_NC = $SubTotal_NC + $value["SUBTOTAL"];			
-		    $descuento = $value['Total_Desc']+$value['Total_Desc2'];
-		}
-		$TFA['Descuento'] =  $descuento;
-		$TFA['SubTotal_NC'] = $SubTotal_NC;
-
-      	$this->notas_credito->pdf_nota_credito($TFA);     	
-
-    	$archivos[0] =$parametros['serie_nc'].'-'.generaCeros($parametros['nota'],7).'.pdf';
-
-    	$autorizar = $parametros['autoriza'];
+    	$autorizar = $parametros['autorizagr'];
 // print_r('expression');die();
     	
     	$rutaA = dirname(__DIR__,2).'/comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3).'/CE'.generaCeros($_SESSION['INGRESO']['item'],3).'/Autorizados/'.$autorizar.'.xml';

@@ -93,7 +93,8 @@ class lista_facturasM
 		
 		$sql ="SELECT T,TC,Serie,Autorizacion,Factura,Fecha,SubTotal,Con_IVA,IVA,Descuento+Descuento2 as Descuentos,Total_MN as Total,Saldo_MN as Saldo,RUC_CI,TB,Razon_Social,CodigoC,ID 
 		FROM Facturas 
-		WHERE 1=1 ";
+		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
 		if($codigo!='T')
 		{
 			// si el codigo es T se refiere a todos
@@ -104,7 +105,6 @@ class lista_facturasM
 			// si el codigo es T se refiere a todos
 		   $sql.=" AND Serie ='".$serie."'";
 		} 
-		 $sql.="AND Item = '".$_SESSION['INGRESO']['item']."'";
         if($periodo && $periodo!='.' && $periodo!='')
         {
        	 $sql.= " AND Fecha BETWEEN '".$desde."' AND '".$hasta."'";

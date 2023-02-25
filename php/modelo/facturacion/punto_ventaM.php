@@ -201,7 +201,9 @@ class punto_ventaM
     // 'LISTA DE CODIGO DE ANEXOS
      $sql = "SELECT D.*,P.Producto 
      FROM Detalle_Factura  D ,Catalogo_Productos P
-     WHERE D.Factura = '".$orden."' 
+     WHERE D.Item = '".$_SESSION['INGRESO']['item']."'
+      AND D.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+     AND D.Factura = '".$orden."' 
      AND D.CodigoC = '".$cliente."'
      AND D.Item = P.Item
      AND D.Periodo = P.Periodo
