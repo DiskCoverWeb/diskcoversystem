@@ -10356,6 +10356,17 @@ function MesesLetras($Mes,$Mayuscula=false)
    return $SMes;
 }
 
+function FechaStrg($Fechas,$FormatoFechas = "dd/mm/yyyy") {
+  $Fechas = date($FormatoFechas, strtotime($Fechas)); // convierte la fecha a formato dd/mm/yyyy
+  $dd = date("d", strtotime($Fechas));
+  $MM = date("n", strtotime($Fechas));
+  $AA = date("Y", strtotime($Fechas));
+  if ($AA < 1) $AA = date("Y"); // si el año es menor que 1, utiliza el año actual
+  if (($MM < 1) || ($MM > 12)) $MM = date("n"); // si el mes es menor que 1 o mayor que 12, utiliza el mes actual
+  if (($dd < 1) || ($dd > cal_days_in_month(CAL_GREGORIAN, $MM, $AA))) $dd = cal_days_in_month(CAL_GREGORIAN, $MM, $AA); // si el día es menor que 1 o mayor que los días del mes, utiliza los días del mes actual
+  return $dd . " de " . MesesLetras($MM) . " del " . $AA;
+}
+
 function  Imprimir_Facturas($TFA){
 // Dim AdoDBDetalle As ADODB.Recordset
 // Dim CadenaMoneda As String
@@ -11881,6 +11892,30 @@ function SetAdoUpdate(){
   $DatosSelect = str_replace(",)", ")", $DatosSelect);
   $DatosSelect = CompilarSQL($DatosSelect);
   return Ejecutar_SQL_SP($DatosSelect);
+}
+
+function Reporte_Cartera_Clientes_SP($MBFechaInicial, $MBFechaFinal, $CodigoCliente)
+{
+  $conn = new db();
+  $parametros = array(
+    array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+    array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+    array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
+    array(&$CodigoCliente, SQLSRV_PARAM_IN),
+    array(&$MBFechaInicial, SQLSRV_PARAM_IN),
+    array(&$MBFechaFinal, SQLSRV_PARAM_IN)
+  );
+  $sql = "EXEC sp_Reporte_Cartera_Clientes @Item= ?,@Periodo=?,@CodigoUsuario=?,@CodigoCliente=?,@FechaInicio=?,@FechaCorte=?";
+  return $conn->ejecutar_procesos_almacenados($sql,$parametros);
+}
+
+function Insertar_Mail($ListaMails, $InsertarMail) {
+  if (strpos($ListaMails, $InsertarMail) === false && strpos($InsertarMail, '@') !== false && strlen($InsertarMail) > 3) {
+      $ListaMails .= $InsertarMail . ';';
+  } /*else {
+      $TMail->ListaError .= $TMail->Destinatario . ': ' . $InsertarMail . "\n";
+  }*/
+  return $ListaMails;
 }
 
 ?>

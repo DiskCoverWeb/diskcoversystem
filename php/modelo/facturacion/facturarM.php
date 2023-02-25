@@ -481,6 +481,13 @@ class facturarM
   }
 
 
+  function FechaInicialHistoricoFacturas()
+  {
+    $sSQL = "SELECT MIN(Fecha) As MinFecha " .
+    "FROM Facturas " .
+    "WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' ";
+    return $this->db->datos($sSQL);
+  }
 
 }
 

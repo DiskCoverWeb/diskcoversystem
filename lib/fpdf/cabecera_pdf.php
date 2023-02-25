@@ -108,7 +108,7 @@ class cabecera_pdf
 
 	}
  
- function cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini,$fechafin,$sizetable,$mostrar=false,$sal_hea_body=15,$orientacion='P',$download = true)
+ function cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini,$fechafin,$sizetable,$mostrar=false,$sal_hea_body=15,$orientacion='P',$download = true, $repetirCabecera=null)
 	{	
 
 	    $this->pdftable->fechaini = $fechaini; 
@@ -134,19 +134,23 @@ class cabecera_pdf
 		 	 if($value['tipo'] == 'texto' && $value['posicion']=='top-tabla')
 		 	 {
 		 	 	$siz = 11;
+		 	 	$separacion = 4;
 		 	 	if(isset($value['tamaño'])){$siz = $value['tamaño'];}
+		 	 	if(isset($value['separacion'])){$separacion = $value['separacion'];}
 		 	 	//print_r($value);
 		 	 	$this->pdftable->SetFont('Arial',$value['estilo'],$siz);
 		 	 	$this->pdftable->MultiCell(0,3,$value['valor']);
-		 	 	$this->pdftable->Ln(4);
+		 	 	$this->pdftable->Ln($separacion);
 
 		 	 }else if($value['tipo'] == 'titulo' && $value['posicion']=='top-tabla')
 		 	 {
 		 	 	$siz = 18;
+		 	 	$separacion = 4;
 		 	 	if(isset($value['tamaño'])){$siz = $value['tamaño'];}
+		 	 	if(isset($value['separacion'])){$separacion = $value['separacion'];}
 		 	 	$this->pdftable->SetFont('Arial','',$siz);
 		 	 	$this->pdftable->Cell(0,3,$value['valor'],0,0,'C');
-		 	 	$this->pdftable->Ln(4);
+		 	 	$this->pdftable->Ln($separacion);
 
 		 	 }
 		 }
@@ -175,7 +179,11 @@ class cabecera_pdf
 			   $this->pdftable->SetAligns($value['alineado']);
 			   //print_r($value['datos']);
 			   $arr= $value['datos'];
-			   $this->pdftable->Row($arr,4,$borde,$estiloRow);		    	
+			   if(!is_null($repetirCabecera) && is_array($repetirCabecera)){
+			   	$repetirCabecera['row']['medidas'] = $value['medidas'];
+			   	$repetirCabecera['row']['alineado'] = $value['alineado'];
+			   }
+			   $this->pdftable->Row($arr,4,$borde,$estiloRow,null,false,$repetirCabecera);		    	
 		    }
 		
 
