@@ -5938,12 +5938,13 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 	$arr=array("INFORMACIÓN ADICIONAL");
     $pdf->Row($arr,10,1);
 	
+	// print_r($datos);die();
 	$y=$pdf->GetY()-5;//377
 	$pdf->SetFont('Arial','',7);
 	//depende del valor de coordenada 'y' del detalle
 	//informacion adicional
 	$pdf->SetXY($x, $y+5);
-	$pdf->Cell(405,20,'','1',1,'Q');
+	$pdf->Cell(405,20,'Telefono: '.$datos[0]['Email'].', Tipo Comprobante:'.$datos[0]['TP'].'-'.$datos[0]['Numero'].', Email:'.$datos[0]['Email'],'1',1,'Q');
 	
 
      ///revisa si los datos vienen de detalle matricula o de cliente
