@@ -5589,6 +5589,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 	$i=0;
 	$agente = '';
 	$rimpe = '';
+	// print_r($datos);die();
 	if(isset($datos['Tipo_contribuyente']) && count($datos['Tipo_contribuyente'])>0)
 	{
 		$agente = $datos['Tipo_contribuyente'][0]['Agente_Retencion'];
@@ -5596,6 +5597,8 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 		{
 			$rimpe = 'Regimen RIMPE Emprendedores';
 		}
+
+		// print_r($agente);die();
 	}
 	
 
@@ -5812,6 +5815,19 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 	$pdf->SetXY($x, $pdf->GetY());
 	$pdf->SetWidths(array(280));
 	$arr=array(utf8_decode($_SESSION['INGRESO']['Direccion']));//mio
+
+
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','B',8);
+	$pdf->SetXY($x,$pdf->GetY());
+	$pdf->SetWidths(array(140));	
+	$arr=array('Dirección sucursal');
+
+	$pdf->Row($arr,10);
+	$pdf->SetFont('Arial','',7);
+	$pdf->SetXY($x, $pdf->GetY());
+	$pdf->SetWidths(array(280));
+	$arr=array(utf8_decode($_SESSION['INGRESO']['Direccion']));//mio
 	$pdf->Row($arr,10);
 	
 	
@@ -5878,8 +5894,9 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 		$mon='USD';
 		//se busca otras monedas
 	}
+	// print_r($datos);die();
 	//die();
-	$arr=array('Documento tipo Factura No: '.$datos[0]['Secuencial'],'','Fecha Emisión: '.$datos[0]['Fecha']->format('Y-m-d'));
+	$arr=array('Documento tipo Factura No: '.$datos[0]['Establecimiento'].$datos[0]['PuntoEmision'].'-'.generaCeros($datos[0]['Secuencial'],9),'','Fecha Emisión: '.$datos[0]['Fecha']->format('Y-m-d'));
 	$pdf->Row($arr,10);
 	$y1=$pdf->GetY();
 	$pdf->cabeceraHorizontal(array(' '),40,$cuadro2,525,($pdf->GetY()-$cuadro2),20,5);
