@@ -37,7 +37,7 @@ class PDF_MC_Table extends FPDF
 		$this->aligns=$a;
 	}
 	//data = array con datos, h1 altura, b 0,1 para borde, ali = para tipo de alineacion
-	function Row($data,$h1=null,$b=null,$estiloRow=null,$ali=null,$mostrar_cero=false)
+	function Row($data,$h1=null,$b=null,$estiloRow=null,$ali=null,$mostrar_cero=false, $dataCabecera=null)
 	{
 		//para el alto
 		if ($h1==null)
@@ -50,7 +50,7 @@ class PDF_MC_Table extends FPDF
 			$nb=max($nb,$this->NbLines($this->widths[$i],$data[$i]));
 		$h=$h1*$nb;
 		//Issue a page break first if needed
-		$this->CheckPageBreak($h);		
+		$this->CheckPageBreak($h,$dataCabecera);		
 		//Draw the cells of the row
 		for($i=0;$i<count($data);$i++)
 		{
@@ -216,11 +216,33 @@ class PDF_MC_Table extends FPDF
 		//Go to the next line
 		$this->Ln($h);
 	}
-	function CheckPageBreak($h)
+	function CheckPageBreak($h, $dataCabecera=null)
 	{
 		//If the height h would cause an overflow, add a new page immediately
-		if($this->GetY()+$h>$this->PageBreakTrigger)
+		if($this->GetY()+$h>$this->PageBreakTrigger){
 			$this->AddPage($this->CurOrientation);
+			if(!is_null($dataCabecera) && is_array($dataCabecera)){
+		       @$borde = (isset($dataCabecera['borde']) && $dataCabecera['borde']!='0')?$dataCabecera['borde']:0;
+
+		    	if(isset($dataCabecera['estilo']) && $dataCabecera['estilo']!='')
+		    	{
+		    		$this->SetFont('Arial',$dataCabecera['estilo'],$dataCabecera['sizetable']);
+		    		$estiloRow = $dataCabecera['estilo'];
+		    	}else
+		    	{
+		    		$this->SetFont('Arial','',$dataCabecera['sizetable']);
+		    		$estiloRow ='';
+		    	}
+
+		       $this->SetWidths(@$dataCabecera['medidas']);
+			   $this->SetAligns(@$dataCabecera['alineado']);
+			   if(isset($dataCabecera['datos'])){
+			   		$this->Row($dataCabecera['datos'],4,$borde,@$estiloRow);
+		       		$this->SetWidths($dataCabecera['row']['medidas']);
+			   		$this->SetAligns($dataCabecera['row']['alineado']);
+			   }
+			}
+		}
 	}
 	function NbLines($w,$txt)
 	{

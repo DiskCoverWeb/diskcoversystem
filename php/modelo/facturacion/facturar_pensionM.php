@@ -194,7 +194,8 @@ class facturar_pensionM
 
   public function updateClientesMatriculas($TextRepresentante,$TextCI,$TD_Rep,$TxtTelefono,$TxtDireccion,$TxtEmail,$TxtGrupo,$codigoCliente,$CTipoCta,$TxtCtaNo,$CheqPorDeposito,$Caducidad,$DCDebito){
     $sql = "UPDATE Clientes_Matriculas
-                	SET Representante = '".$TextRepresentante."', 
+                	SET T = '".G_NORMAL."',
+                  Representante = '".$TextRepresentante."', 
                 	Cedula_R = '".$TextCI."', 
                 	TD = '".$TD_Rep."', 
                 	Telefono_R = '".$TxtTelefono."', 
@@ -491,6 +492,67 @@ class facturar_pensionM
             GROUP BY Grupo 
             ORDER BY Grupo";       
             return $this->db->datos($sql);
+  }
+
+  public function Actualiza_Datos_Cliente($data)
+  {
+    $sSQL = "SELECT Codigo " .
+        "FROM Clientes_Matriculas " .
+        "WHERE Codigo = '" . $data['codigoCliente'] . "' " .
+        "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' " .
+        "AND Item = '" . $_SESSION['INGRESO']['item'] . "' ";
+    $AdoAux = $this->db->datos($sSQL);
+    $MBFecha = (($data['MBFecha']!="")?UltimoDiaMes2("01/".$data['MBFecha'], 'Ymd'):null);
+
+    if (count($AdoAux) <= 0) {
+        SetAdoAddNew("Clientes_Matriculas");
+        SetAdoFields("T", G_NORMAL);
+        SetAdoFields("Codigo", $data['codigoCliente']);
+        SetAdoFields("Grupo_No", $data['Grupo_No']);
+        SetAdoFields("Lugar_Trabajo_R", $data['TxtDireccion']);
+        SetAdoFields("Email_R", $data['TxtEmail']);
+        SetAdoFields("Representante", $data['TextRepresentante']);
+        SetAdoFields("Cedula_R", $data['TextCI']);
+        SetAdoFields("TD", (isset($data['Label18'])?$data['Label18']:$data['TD_Rep']));
+        SetAdoFields("Telefono_R", $data['TxtTelefono']);
+        SetAdoFields("Cta_Numero", $data['TxtCtaNo']);
+        SetAdoFields("Tipo_Cta", $data['CTipoCta']);
+        SetAdoFields("Caducidad", $MBFecha);
+        SetAdoFields("Por_Deposito", (bool)$data['CheqPorDeposito']);
+        SetAdoFields("Cod_Banco", $data['Documento']);
+        SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
+        SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+        SetAdoUpdate();
+    } else {
+      self::updateClientesMatriculas(
+        $data['TextRepresentante'],
+        $data['TextCI'],
+        (isset($data['Label18'])?$data['Label18']:$data['TD_Rep']),
+        $data['TxtTelefono'],
+        $data['TxtDireccion'],
+        $data['TxtEmail'],
+        $data['Grupo_No'],
+        $data['codigoCliente'],
+        $data['CTipoCta'],
+        $data['TxtCtaNo'],
+        $data['CheqPorDeposito'],
+        $MBFecha,
+        (isset($data['Documento'])?$data['Documento']:$data['DCDebito']));
+    }
+    return true;
+  }
+
+  public function Reporte_Cartera_Clientes_PDF_Data($CodigoCliente)
+  {
+    $sSQL = "SELECT C.Cliente, RCC.T, RCC.TC, RCC.Serie, RCC.Factura, RCC.Fecha, RCC.Detalle, RCC.Anio, RCC.Mes, RCC.Cargos, RCC.Abonos, RCC.Saldo, RCC.CodigoC, " .
+    "C.Email, C.Email2, C.EmailR, C.Direccion " .
+    "FROM Reporte_Cartera_Clientes AS RCC, Clientes AS C " .
+    "WHERE RCC.Item = '" . $_SESSION['INGRESO']['item'] . "' " .
+    "AND RCC.CodigoU = '" . $CodigoCliente . "' " .
+    "AND RCC.T <> 'A' " .
+    "AND RCC.CodigoC = C.Codigo " .
+    "ORDER BY C.Cliente, RCC.TC, RCC.Serie, RCC.Factura, RCC.Anio, RCC.Mes, RCC.ID ";
+    return $this->db->datos($sSQL);
   }
 }
 

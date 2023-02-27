@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(__DIR__,2)."/modelo/facturacion/facturarM.php");
 require_once(dirname(__DIR__,2)."/modelo/facturacion/facturar_pensionM.php");
 require_once(dirname(__DIR__,2)."/modelo/facturacion/catalogo_productosM.php");
 require_once(dirname(__DIR__,2)."/comprobantes/SRI/autorizar_sri.php");
@@ -117,7 +118,7 @@ else if(isset($_GET['GuardarInsPreFacturas']))
   if(is_array($CheqProducto)){
     foreach ($CheqProducto as $item => $check) {
       if($check=='on' || $check == '1'){
-        $Cantidad = $TxtCantidad[$item];
+        $Cantidad = @(int)$TxtCantidad[$item];
         $Valor = $TxtValor[$item];
         if ($Cantidad > 0 && $Valor > 0){
           $hayData = true;
@@ -139,7 +140,27 @@ else if(isset($_GET['GuardarInsPreFacturas']))
 }
 else if(isset($_GET['EliminarInsPreFacturas']))
 {
-  $controlador->deleteClientesFacturacionProductoClienteAnioMes($_POST, true);
+  $hayData = false;
+  $CheqProducto   = @$_POST['PFcheckProducto'];
+  $TxtCantidad    = @$_POST['PFcantidad']; 
+  $TxtValor       = @$_POST['PFvalor']; 
+  if(is_array($CheqProducto)){
+    foreach ($CheqProducto as $item => $check) {
+      if($check=='on' || $check == '1'){
+        $Cantidad = @(int)$TxtCantidad[$item];
+        if ($Cantidad > 0 ){
+          $hayData = true;
+          break;
+        }
+      }
+    }
+  }
+
+  if($hayData){
+    $controlador->deleteClientesFacturacionProductoClienteAnioMes($_POST, true);
+  }else{
+    echo json_encode(array("rps" => 0 , "mensaje" => "Por favor complete la información."));
+  }
   exit();
 }
 
@@ -176,15 +197,23 @@ if(isset($_GET['DireccionByGrupo']))
   echo json_encode($controlador->getCargarDireccionByGrupo(@$_GET['grupo']));
 }
 
+if(isset($_GET['ActualizaDatosCliente']))
+{
+  echo json_encode($controlador->ActualizaDatosCliente($_POST));
+  exit();
+}
+
 class facturar_pensionC
 {
   private $facturacion;
 	private $catalogoProductosModel;
   private $pdf;
+  private $facturas;
 
 
 	public function __construct(){
         $this->facturacion = new facturar_pensionM();
+        $this->facturas = new facturarM();
         $this->catalogoProductosModel = new catalogo_productosM();
         $this->autorizar_sri = new autorizacion_sri();
         $this->pdf = new cabecera_pdf();
@@ -313,39 +342,70 @@ class facturar_pensionC
     $cli = $this->facturacion->getClientes(false,$codigoCliente);
     // print_r($cli);die();
 
-    $titulo = 'RESUMEN DE CARTERA POR CLIENTES';
+    $AdoAux = $this->facturas->FechaInicialHistoricoFacturas();
+    @$AdoAux = (isset($AdoAux[0]["MinFecha"]))?$AdoAux[0]["MinFecha"]->format("Ymd"):"";
+    $FechaInicial = (($AdoAux!="")?PrimerDiaMes($AdoAux,"Ymd"):"20000101");
+
+    Reporte_Cartera_Clientes_SP($FechaInicial, UltimoDiaMes2(date('d/m/Y'),'Ymd'), $codigoCliente);
+    $AdoCarteraDB = $this->facturacion->Reporte_Cartera_Clientes_PDF_Data($_SESSION['INGRESO']['CodigoU']);
+    $titulo = 'REPORTE CARTERA DE CLIENTES';
     $parametros['desde'] = false;
     $parametros['hasta'] = false;
-    $sizetable = 6;
+    $sizetable = 8;
     $mostrar = true;
     $tablaHTML = array();
 
+    $EmailCli = "";
+    $EmailCli = Insertar_Mail($EmailCli, $AdoCarteraDB[0]['EmailR']);
+    $EmailCli = Insertar_Mail($EmailCli, $AdoCarteraDB[0]['Email2']);
+    $EmailCli = Insertar_Mail($EmailCli, $AdoCarteraDB[0]['Email']);
+
     $contenido[0]['tipo'] = 'texto';
     $contenido[0]['posicion'] = 'top-tabla';
-    $contenido[0]['valor'] = 'Cliente: '.$cli[0]['Cliente'];
+    $contenido[0]['valor'] = 'CLIENTE: '.$AdoCarteraDB[0]['Cliente'];
     $contenido[0]['estilo'] = 'I';
+    $contenido[0]['tamaño'] = '9';
+    $contenido[0]['separacion'] = '1';
     $contenido[1]['tipo'] = 'texto';
     $contenido[1]['posicion'] = 'top-tabla';
-    $contenido[1]['valor'] = 'Direccion: '.$cli[0]['Direccion'];
+    $contenido[1]['valor'] = 'UBICACION: '.$AdoCarteraDB[0]['Direccion'];
     $contenido[1]['estilo'] = 'I';
+    $contenido[1]['tamaño'] = '9';
+    $contenido[1]['separacion'] = '1';
+    $contenido[2]['tipo'] = 'texto';
+    $contenido[2]['posicion'] = 'top-tabla';
+    $contenido[2]['valor'] = 'EMAILS: '.$EmailCli;
+    $contenido[2]['estilo'] = 'I';
+    $contenido[2]['tamaño'] = '9';
+    $contenido[3]['tipo'] = 'texto';
+    $contenido[3]['posicion'] = 'top-tabla';
+    $contenido[3]['valor'] = 'La informacion presente reposa en la base de dato de la Institucion, corte realizado desde '.FechaStrg($FechaInicial,"Ymd").' al '.FechaStrg(date("Ymd"),"Ymd").', cualquier informacion adicional comuniquese a la institucion';
+    $contenido[3]['estilo'] = 'I';
+    $contenido[3]['tamaño'] = '8';
 
-
-
-    $tablaHTML[0]['medidas'] = array(8,18,10,15,60,10,20,15,15,10,10);
+    $tablaHTML[0]['medidas'] = array(6,6,13,15,17,80,14,8,15,16,16);
     $tablaHTML[0]['alineado'] = array('L','L','L','L','L','L','L','L','L','L','L');
-    $tablaHTML[0]['datos'] = array('TD','Fecha','Serie','Factura','Detalle','Año','Mes','Total','Abonos','Mes No','No');
-    $tablaHTML[0]['borde'] = 1;
+    $tablaHTML[0]['datos'] = array('T','TC','Serie','Factura','Fecha','Detalle','Año','Mes','Cargos','Abonos'/*,'Mes No','No'*/);
+    $tablaHTML[0]['borde'] = "BT";
     $tablaHTML[0]['estilo'] = 'B';
+    $tablaHTML[0]['sizetable'] = $sizetable;
 
     $count = 1;
-    foreach ($datos as $value) {
+    $factura="";
+    foreach ($AdoCarteraDB as $value) {
+          $tablaHTML[$count]['borde'] = 0;
       $tablaHTML[$count]['medidas'] = $tablaHTML[0]['medidas'];
-      $tablaHTML[$count]['alineado'] = array('L','L','L','L','L','L','R','R','R','R','R');
-      $tablaHTML[$count]['datos'] = array($value['TD'],$value['Fecha']->format('Y-m-d'),$value['Serie'],$value['Factura'],$value['Detalle'], $value['Anio'],$value['Mes'],number_format($value['Total'],2),number_format($value['Abonos'],2),$value['Mes_No'],$value['No']);
-      $tablaHTML[$count]['borde'] = $tablaHTML[0]['borde'];
+      $tablaHTML[$count]['alineado'] = array('L','L','L','R','L','L','R','R','R','R','R');
+      $tablaHTML[$count]['datos'] = array($value['T'],$value['TC'],$value['Serie'],$value['Factura'],$value['Fecha']->format('d/m/Y'),$value['Detalle'], $value['Anio'],str_pad($value['Mes'], 2, "0", STR_PAD_LEFT),number_format($value['Cargos'],2),number_format($value['Abonos'],2)/*,$value['Mes_No'],$value['No']*/);
+      if(strpos($value['Detalle'], 'SALDO TOTAL')){
+          $tablaHTML[$count]['medidas'] = array(188);
+          $tablaHTML[$count]['alineado'] = array('C');
+          $tablaHTML[$count]['datos'] = array($value['Detalle']);
+          $tablaHTML[$count]['borde'] = $tablaHTML[0]['borde'];
+      }
       $count+=1;
     }
-    $this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido,$image=false,$parametros['desde'],$parametros['hasta'],$sizetable,$mostrar,25,$orientacion='P',$download);
+    $this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido,$image=false,$parametros['desde'],$parametros['hasta'],$sizetable,$mostrar,18,$orientacion='P',$download, $tablaHTML[0]);
   }
 
   public function DeudaPensionPDF($codigo,$lineas,$download = true){
@@ -397,16 +457,16 @@ class facturar_pensionC
 
   public function enviarCorreo(){
     //Eliminar archivos temporales
-    if (file_exists(dirname(__DIR__,2).'/vista/TEMP/HistoriaCliente.xlsx')) {
-      unlink(dirname(__DIR__,2).'/vista/TEMP/HistoriaCliente.xlsx');
+    if (file_exists(dirname(__DIR__,3).'/TEMP/EMPRESA_'.$_SESSION['INGRESO']['item'].'/Historia del cliente.xlsx')) {
+      unlink(dirname(__DIR__,3).'/TEMP/EMPRESA_'.$_SESSION['INGRESO']['item'].'/Historia del cliente.xlsx');
     }
-    if (file_exists(dirname(__DIR__,2).'/vista/TEMP/HistoriaCliente.pdf')) {
-      unlink(dirname(__DIR__,2).'/vista/TEMP/HistoriaCliente.pdf');
+    if (file_exists(dirname(__DIR__,3).'/TEMP/REPORTE CARTERA DE CLIENTES.pdf')) {
+      unlink(dirname(__DIR__,3).'/TEMP/REPORTE CARTERA DE CLIENTES.pdf');
     }
     $this->historiaClientePDf($_REQUEST['codigoCliente'],false);
     $this->historiaClienteExcel($_REQUEST['codigoCliente'],false);
-    $archivos[0] = dirname(__DIR__,2).'/vista/TEMP/HistoriaCliente.xlsx';
-    $archivos[1] = dirname(__DIR__,2).'/vista/TEMP/HistoriaCliente.pdf';
+    $archivos[0] = dirname(__DIR__,3).'/TEMP/EMPRESA_'.$_SESSION['INGRESO']['item'].'/Historia del cliente.xlsx';
+    $archivos[1] = dirname(__DIR__,3).'/TEMP/REPORTE CARTERA DE CLIENTES.pdf';
     $to_correo = $_REQUEST['email'];
     $titulo_correo = 'Historial de cliente';
     $nombre = 'DiskCover System';
@@ -544,15 +604,9 @@ class facturar_pensionC
    	if ($update) {
    		$updateCliF = $this->facturacion->updateClientesFacturacion($Grupo_No,$codigoCliente);
    		$updateCli = $this->facturacion->updateClientes($TxtTelefono,$TxtDirS,$TxtDireccion,$TxtEmail,$Grupo_No,$codigoCliente);
-
-      $dataClienteMatricula = $this->facturacion->getClientesMatriculas($codigoCliente);
-      $MBFecha = (($MBFecha!="")?UltimoDiaMes2("01/".$MBFecha, 'm/d/Y'):null);
-      if(count($dataClienteMatricula)>0){
-        $updateCliM = $this->facturacion->updateClientesMatriculas($TextRepresentante,$TextCI,$TD_Rep,$TxtTelefono,$TxtDireccion,$TxtEmail,$Grupo_No,$codigoCliente,$CTipoCta,$TxtCtaNo,$CheqPorDeposito,$MBFecha,$DCDebito);
-      }else{
-        $updateCliM = $this->facturacion->insertClientesMatriculas($TextRepresentante,$TextCI,$TD_Rep,$TxtTelefono,$TxtDireccion,$TxtEmail,$Grupo_No,$codigoCliente,$CTipoCta,$TxtCtaNo,$CheqPorDeposito,$MBFecha,$DCDebito);
-      }
+      $this->facturacion->Actualiza_Datos_Cliente($_POST);
    	}
+
     $TC = SinEspaciosIzq($_POST['DCLinea']);
     $serie = SinEspaciosDer($_POST['DCLinea']);
     //traer secuencial de catalogo lineas
@@ -881,6 +935,15 @@ class facturar_pensionC
       $lis[] =array('id'=>$value['Grupo'],'text'=>$value['Grupo']);
     }
     return $lis;
+  }
+
+  public function ActualizaDatosCliente($post)
+  {
+    if($this->facturacion->Actualiza_Datos_Cliente($post)){
+      return (array("rps" => 1 , "mensaje" => "PROCESO EXITOSO."));
+    }else{
+      return (array("rps" => 0 , "mensaje" => "No fue posible procesar su solicitud."));
+    }
   }
 
 }

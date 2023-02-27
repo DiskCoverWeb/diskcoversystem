@@ -15,6 +15,19 @@
   var total12 = 0;
   var iva12 = 0;
   var descuento = 0;
+
+  var tempRepresentante = "";
+  var tempCI = "";
+  var tempTD = "";
+  var tempTelefono = "";
+  var tempDirS = "";
+  var tempDireccion = "";
+  var tempEmail = "";
+  var tempGrupo = "";
+  var tempCtaNo = "";
+  var tempTipoCta = "";
+  var tempDocumento = "";
+  var tempCaducidad = "";
   $(document).ready(function () {
     autocomplete_cliente();
     catalogoLineas();
@@ -104,6 +117,20 @@
       saldoFavor(data.codigo);
       saldoPendiente(data.codigo);
       clienteMatricula(data.codigo);
+
+      //Actualizar cliente
+      tempRepresentante = $('#persona').val()
+      tempCI  = $('#ci_ruc').val()
+      tempTD  = $('#tdCliente').val()
+      tempTelefono  = $('#telefono').val()
+      tempDireccion  = $('#direccion').val()
+      tempDirS  = $("#direccion1").val().toUpperCase()
+      tempEmail  = $("#email").val().toUpperCase()
+      tempGrupo  = $("#DCGrupo_No").val()
+      tempCtaNo  = $('#numero_cuenta_debito_automatico').val()
+      tempTipoCta  = $('#tipo_debito_automatico').val()
+      tempDocumento  = $('#debito_automatica').val()
+      tempCaducidad  = $('#caducidad_debito_automatico').val()
 
       //prefactura pension
       $('#PFcodigoCliente').val(data.codigo);
@@ -266,8 +293,21 @@
 
   function historiaClienteExcel(){
     codigoCliente = $('#codigoCliente').val();
-    url = '../controlador/facturacion/facturar_pensionC.php?historiaClienteExcel=true&codigoCliente='+codigoCliente;
-    window.open(url, '_blank');
+    if(codigoCliente=='')
+    {
+      codigoCliente = $('#codigo').val();
+    }
+
+    if(codigoCliente!=''){
+      url = '../controlador/facturacion/facturar_pensionC.php?historiaClienteExcel=true&codigoCliente='+codigoCliente;
+      window.open(url, '_blank');
+    }else{
+      Swal.fire({
+          type: 'warning',
+          title: 'Seleccione un cliente',
+          text: ''
+        });
+    }
   }
 
   function historiaClientePDF(){
@@ -276,8 +316,17 @@
     {
       codigoCliente = $('#codigo').val();
     }
-    url = '../controlador/facturacion/facturar_pensionC.php?historiaClientePDF=true&codigoCliente='+codigoCliente;
-    window.open(url,'_blank');
+
+    if(codigoCliente!=''){
+      url = '../controlador/facturacion/facturar_pensionC.php?historiaClientePDF=true&codigoCliente='+codigoCliente;
+      window.open(url,'_blank');
+    }else{
+      Swal.fire({
+          type: 'warning',
+          title: 'Seleccione un cliente',
+          text: ''
+        });
+    }
   }
 
     function DeudaPensionPDF(){
@@ -316,23 +365,32 @@
   function enviarHistoriaCliente(){
     codigoCliente = $('#codigoCliente').val();
     email = $('#email').val();
-    //url = '../controlador/facturacion/facturar_pensionC.php?enviarCorreo=true&codigoCliente='+codigoCliente+'&email='+email;
-    //window.open(url, '_blank');
-    $('#myModal_espera').modal('show');
-    $.ajax({
-      type: "POST",                 
-      url: '../controlador/facturacion/facturar_pensionC.php?enviarCorreo=true&codigoCliente='+codigoCliente,
-      data: {'email' : email }, 
-      success: function(data)
-      {
-        $('#myModal_espera').modal('hide');
-        Swal.fire({
-          type: 'success',
-          title: 'Correo enviado correctamente',
+    if(email!=""){
+      //url = '../controlador/facturacion/facturar_pensionC.php?enviarCorreo=true&codigoCliente='+codigoCliente+'&email='+email;
+      //window.open(url, '_blank');
+      $('#myModal_espera').modal('show');
+      $.ajax({
+        type: "POST",                 
+        url: '../controlador/facturacion/facturar_pensionC.php?enviarCorreo=true&codigoCliente='+codigoCliente,
+        data: {'email' : email }, 
+        success: function(data)
+        {
+          $('#myModal_espera').modal('hide');
+          Swal.fire({
+            type: 'success',
+            title: 'Correo enviado correctamente',
+            text: ''
+          });
+        }
+      });
+    }else{
+      Swal.fire({
+          type: 'warning',
+          title: 'Seleccione un cliente',
           text: ''
         });
-      }
-    });
+      
+    }
   }
 
   function saldoFavor(codigoCliente){
@@ -470,14 +528,19 @@
         $("#valorBanco").val(parseFloat(total).toFixed(2));
 
         calcularSaldo()
-      }
-      else{
+      }else{
         Swal.fire({
           type: 'info',
-          title: 'No tiene items a descontar',
+          title: 'Por favor indique un valor numerico',
           text: ''
         });
       }
+    }else{
+      Swal.fire({
+        type: 'info',
+        title: 'No tiene items a descontar',
+        text: ''
+      });
     }
   }
 
@@ -895,6 +958,78 @@
     });
   }
 
+  function Actualiza_Datos_Cliente() {
+    if (tempRepresentante !== $('#persona').val() ||
+    tempCI !== $('#ci_ruc').val() ||
+    tempTD !== $('#tdCliente').val() ||
+    tempTelefono !== $('#telefono').val() ||
+    tempDireccion !== $('#direccion').val() ||
+    tempDirS !== $("#direccion1").val().toUpperCase() ||
+    tempEmail !== $("#email").val().toUpperCase() ||
+    tempGrupo !== $("#DCGrupo_No").val() ||
+    tempCtaNo !== $('#numero_cuenta_debito_automatico').val() ||
+    tempTipoCta !== $('#tipo_debito_automatico').val() ||
+    tempDocumento !== $('#debito_automatica').val() ||
+    tempCaducidad !== $('#caducidad_debito_automatico').val()) {
+      Swal.fire({
+          title: 'DESEA ACTUALIZAR DATOS DEL REPRESENTANTE',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Si!'
+        }).then((result) => {
+          if (result.value==true) {
+
+            let CheqPorDeposito ="0";
+            if($('#por_deposito_debito_automatico').prop('checked')){
+              CheqPorDeposito = "1";
+            }
+
+            $.ajax({
+              type: 'POST',
+              dataType: 'json',
+              url: '../controlador/facturacion/facturar_pensionC.php?ActualizaDatosCliente=true',
+              data: {
+                "TextRepresentante" : $("#persona").val(),
+                "TxtDireccion" : $("#direccion").val(),
+                "TxtTelefono" : $("#telefono").val(),
+                "Grupo_No" : $("#DCGrupo_No").val(),
+                "TextCI" : $("#ci_ruc").val(),
+                "TxtEmail" : $("#email").val().toUpperCase(),
+                "TxtDirS" : $("#direccion1").val().toUpperCase(),
+                "codigoCliente" : $("#codigoCliente").val(),
+                "Documento" : $('#debito_automatica').val(),
+                "CTipoCta" : $('#tipo_debito_automatico').val(),
+                "TxtCtaNo" : $('#numero_cuenta_debito_automatico').val(),
+                "MBFecha" : $('#caducidad_debito_automatico').val(),
+                "Label18" : $("#tdCliente").val(),
+                "CheqPorDeposito" : CheqPorDeposito
+              }, 
+              beforeSend: function () {   
+                  $('#myModal_espera').modal('show');
+              },    
+              success: function(response)
+              {
+                $('#myModal_espera').modal('hide');  
+                if(response.rps){
+                  Swal.fire('¡Bien!', response.mensaje, 'success')
+                }else{
+                  Swal.fire('¡Oops!', response.mensaje, 'warning')
+                }        
+              },
+              error: function () {
+                $('#myModal_espera').modal('hide');
+                alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+              }
+            });
+          }
+        })
+    }else{
+      Swal.fire({type: 'info',title: 'NO SE ACTUALIZARA DATOS PORQUE USTED NO HA REALIZADO CAMBIOS DEL REPRESENTANTE',text: ''});
+    }
+  }
+
 </script>
 <style type="text/css"> 
  .contenedor_img{
@@ -928,9 +1063,14 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
       </div>
 
       <div class="col-xs-2 col-sm-2">
-        <a title="Presenta la historia del cliente"  class="btn btn-default" onclick="historiaCliente()">
+        <a title="Presenta la historia del cliente" data-toggle="dropdown" class="btn btn-default" >
           <img src="../../img/png/document.png" width="25" height="30">
         </a>
+        <ul class="dropdown-menu">
+          <li><a href="#" onclick="historiaClientePDF();">En PDF</a></li>
+          <li><a href="#" onclick="historiaClienteExcel();">En Excel</a></li>
+          <li><a href="#" onclick="enviarHistoriaCliente();">Por Email</a></li>
+        </ul>
       </div>
       
       <div class="col-xs-2 col-sm-2">
@@ -944,6 +1084,12 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
       <div class="col-xs-2 col-sm-2">
         <a href="#" title="Insertar nuevo Beneficiario/Cliente"  class="btn btn-default" onclick="addCliente(1)">
           <img src="../../img/png/group.png" width="25" height="30">
+        </a>
+      </div>
+      
+      <div class="col-xs-2 col-sm-2">
+        <a href="#" title="Actualizar datos del Cliente"  class="btn btn-default" onclick="Actualiza_Datos_Cliente()">
+          <img src="../../img/png/update_user.png" width="25" height="30">
         </a>
       </div>
    
@@ -1365,7 +1511,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
         <input type="text" name="porcentaje" id="porcentaje" class="form-control" placeholder="Ingrese el porcentaje de descuento %">
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" onclick="calcularDescuento();">Aceptar</button>
+        <button type="button" class="btn btn-success" onclick="calcularDescuento();">Aceptar</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
       </div>
     </div>
