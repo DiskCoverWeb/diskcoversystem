@@ -214,7 +214,11 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			if ($_SESSION['INGRESO']['accion']=='lista_guias') 
 			{
 				require_once("facturacion/lista_guia_remision.php");
-			}						
+			}
+			if ($_SESSION['INGRESO']['accion']=='liquidacioncompra') 
+			{
+				require_once("facturacion/liquidacion_compra.php");
+			}							
 //Agua Potable
 			if ($_SESSION['INGRESO']['accion']=='ingresar_usuario') 
 			{

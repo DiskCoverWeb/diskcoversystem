@@ -5940,7 +5940,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 	
 	// print_r($datos);die();
 	$y=$pdf->GetY()-5;//377
-	$pdf->SetFont('Arial','',7);
+	$pdf->SetFont('Arial','',6);
 	//depende del valor de coordenada 'y' del detalle
 	//informacion adicional
 	$pdf->SetXY($x, $y+5);
