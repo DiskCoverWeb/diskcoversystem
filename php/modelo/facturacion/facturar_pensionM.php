@@ -539,6 +539,7 @@ class facturar_pensionM
         $MBFecha,
         (isset($data['Documento'])?$data['Documento']:$data['DCDebito']));
     }
+    Leer_Datos_Clientes2($data['codigoCliente']);
     return true;
   }
 
