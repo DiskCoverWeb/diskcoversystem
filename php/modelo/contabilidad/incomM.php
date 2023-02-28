@@ -1411,6 +1411,8 @@ class incomM
     	AND R.CodRet = TIV.Codigo 
     	ORDER BY R.Cta_Retencion ";
     	$datos2 = $this->conn->datos($sql);
+
+    	$datos = array_merge($datos,$TFA);
    // 'Encabezado Factura
 
  	// print_r($TFA);
