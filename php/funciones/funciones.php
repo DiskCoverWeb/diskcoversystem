@@ -11918,4 +11918,121 @@ function Insertar_Mail($ListaMails, $InsertarMail) {
   return $ListaMails;
 }
 
+function Leer_Datos_Clientes2($Codigo_CIRUC_Cliente, $NoActualizaSP = false) {
+    $conn = new db();
+    $AdoCliDB = [];
+    $Por_Codigo = false;
+    $Por_CIRUC = false;
+    $Por_Cliente = false;
+
+    $TBenef = array(
+        "FA" => false,
+        "Asignar_Dr" => false,
+        "Codigo" => "",
+        "Cliente" => "",
+        "Tipo_Cta" => "",
+        "Cta_Numero" => "",
+        "Descuento" => false,
+        "T" => "",
+        "TP" => "",
+        "CI_RUC" => "",
+        "TD" => "",
+        "Fecha" => "",
+        "Fecha_A" => "",
+        "Fecha_N" => "",
+        "Sexo" => "",
+        "Email1" => "",
+        "Email2" => "",
+        "Direccion" => "",
+        "DirNumero" => "",
+        "Telefono" => "",
+        "Telefono1" => "",
+        "TelefonoT" => "",
+        "Celular" => "",
+        "Ciudad" => "",
+        "Prov" => "",
+        "Pais" => "",
+        "Profesion" => "",
+        "Archivo_Foto" => "",
+        "Representante" => "",
+        "RUC_CI_Rep" => "",
+        "TD_Rep" => "",
+        "Direccion_Rep" => "SD",
+        "Grupo_No" => "",
+        "Contacto" => "",
+        "Calificacion" => "",
+        "Plan_Afiliado" => "",
+        "Cte_Ahr_Otro" => "",
+        "Cta_Transf" => "",
+        "Cod_Banco" => 0,
+        "Salario" => 0,
+        "Saldo_Pendiente" => 0,
+        "Total_Anticipo" => 0
+    );
+
+    if (strlen($Codigo_CIRUC_Cliente) <= 0) {
+      $Codigo_CIRUC_Cliente = G_NINGUNO;
+    }
+
+    if (!$NoActualizaSP) {
+      Leer_Datos_Cliente_SP($Codigo_CIRUC_Cliente);
+    }
+
+    $TBenef["Codigo"] = $Codigo_CIRUC_Cliente;
+
+    //Verificamos la informacion del Cliente
+    if ($TBenef["Codigo"] != G_NINGUNO) {
+        $sSQL = "SELECT " . Full_Fields("Clientes") .
+                  " FROM Clientes " .
+                  " WHERE Codigo = '" . $TBenef["Codigo"] . "' ";
+        $AdoCliDB = $conn->datos($sSQL);
+
+        if (count($AdoCliDB) > 0) {
+          $AdoCliDB = $AdoCliDB[0];
+          $TBenef["FA"] = $AdoCliDB["FA"];
+          $TBenef["Asignar_Dr"] = $AdoCliDB["Asignar_Dr"];
+          $TBenef["Cliente"] = $AdoCliDB["Cliente"];
+          $TBenef["Descuento"] = $AdoCliDB["Descuento"];
+          $TBenef["T"] = $AdoCliDB["T"];
+          $TBenef["CI_RUC"] = $AdoCliDB["CI_RUC"];
+          $TBenef["TD"] = $AdoCliDB["TD"];
+          $TBenef["Fecha"] = $AdoCliDB["Fecha"];
+          $TBenef["Fecha_N"] = $AdoCliDB["Fecha_N"];
+          $TBenef["Sexo"] = $AdoCliDB["Sexo"];
+          $TBenef["Email1"] = $AdoCliDB["Email"];
+          $TBenef["Email2"] = $AdoCliDB["Email2"];
+          $TBenef["EmailR"] = $AdoCliDB["EmailR"];
+          $TBenef["Direccion"] = $AdoCliDB["Direccion"];
+          $TBenef["DirNumero"] = $AdoCliDB["DirNumero"];
+          $TBenef["Telefono"] = $AdoCliDB["Telefono"];
+          $TBenef["Telefono1"] = $AdoCliDB["Telefono_R"];
+          $TBenef["TelefonoT"] = $AdoCliDB["TelefonoT"];
+          $TBenef["Ciudad"] = $AdoCliDB["Ciudad"];
+          $TBenef["Prov"] = $AdoCliDB["Prov"];
+          $TBenef["Pais"] = $AdoCliDB["Pais"];
+          $TBenef["Profesion"] = $AdoCliDB["Profesion"];
+          $TBenef["Grupo_No"] = $AdoCliDB["Grupo"];
+          $TBenef["Contacto"] = $AdoCliDB["Contacto"];
+          $TBenef["Calificacion"] = $AdoCliDB["Calificacion"];
+          $TBenef["Plan_Afiliado"] = $AdoCliDB["Plan_Afiliado"];
+          $TBenef["Actividad"] = $AdoCliDB["Actividad"];
+          $TBenef["Credito"] = $AdoCliDB["Credito"];
+
+          $TBenef["Representante"] = str_replace("  ", " ", $AdoCliDB["Representante"]);
+          $TBenef["RUC_CI_Rep"] = $AdoCliDB["CI_RUC_R"];
+          $TBenef["TD_Rep"] = $AdoCliDB["TD_R"];
+          $TBenef["Tipo_Cta"] = $AdoCliDB["Tipo_Cta"];
+          $TBenef["Cod_Banco"] = $AdoCliDB["Cod_Banco"];
+          $TBenef["Cta_Numero"] = $AdoCliDB["Cta_Numero"];
+          $TBenef["Direccion_Rep"] = $AdoCliDB["DireccionT"];
+          $TBenef["Fecha_Cad"] = $AdoCliDB["Fecha_Cad"];
+          $TBenef["Saldo_Pendiente"] = $AdoCliDB["Saldo_Pendiente"];
+          $TBenef["Archivo_Foto"] = $AdoCliDB["Archivo_Foto"];
+      }
+    }
+
+    return $TBenef;
+}
+
+
 ?>
