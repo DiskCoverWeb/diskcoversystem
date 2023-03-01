@@ -678,12 +678,13 @@ function validador_correo()
       </a>
   </div>
 </div>
-<div class="row">
-  <div class="col-sm-2">            
-    <label>Fecha</label>
-    <input type="date" class="form-control input-xs" name="fecha" id="fecha" value="<?php echo date('Y-m-d'); ?>" onchange="numeroFactura();catalogoLineas();">
+
+ <div class="row">
+  <div class="col-sm-2">
+    <b>Fecha de emision de guia</b>
+    <input type="date" name="MBoxFechaGRE" id="MBoxFechaGRE" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>" onblur="MBoxFechaGRE_LostFocus()">
   </div>
-  <div class="col-sm-5 col-xs-12">
+    <div class="col-sm-5 col-xs-12">
     <b>Cliente</b>
    <div class="input-group">
       <select class="form-control input-xs" id="cliente" name="cliente">
@@ -709,9 +710,93 @@ function validador_correo()
     <b>Telefono:</b>
     <input type="text" class="form-control input-xs" placeholder="Telefono" name="telefono" id="telefono">            
   </div> 
-</div>
-<div class="row">
+  <div class="col-sm-4">
+	<b>Guia de remision No.</b><br>
+    <select class="form-control input-xs" id="DCSerieGR" name="DCSerieGR" onblur="DCSerieGR_LostFocus()">
+       	<option value="">No Existe</option>
+  	</select>
+  </div>
+  <div class="col-sm-2" style="padding: 0px">
+  	<b>Numero</b>
+    <input type="text" name="LblGuiaR" id="LblGuiaR" class="form-control input-xs"  value="000000">
+  </div>
+    <div class="col-sm-6">
+	  <b>AUTORIZACION GUIA DE REMISION</b>
+	  <input type="text" name="LblAutGuiaRem" id="LblAutGuiaRem" class="form-control input-xs" value="0">
+	</div>
+  <div class="col-sm-6">
+      <b class="col-sm-6 control-label" style="padding: 0px">Iniciacion del traslados</b>
+      <div class="col-sm-6" style="padding: 0px">
+          <input type="date" name="MBoxFechaGRI" id="MBoxFechaGRI" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">
+      </div>
+  </div>
+  <div class="col-sm-6">
+      <b class="col-sm-3 control-label" style="padding: 0px">Ciudad</b>
+      <div class="col-sm-9" style="padding: 0px">
+          <select class="form-control input-xs" id="DCCiudadI" name="DCCiudadI" style="width:100%">
+              <option value=""></option>
+          </select>
+      </div>
+  </div>
+  <div class="col-sm-6">
+      <b class="col-sm-6 control-label" style="padding: 0px">Finalizacion del traslados</b>
+      <div class="col-sm-6" style="padding: 0px">
+          <input type="date" name="MBoxFechaGRF" id="MBoxFechaGRF" class="form-control input-xs"
+              value="<?php echo date('Y-m-d'); ?>">
+      </div>
+  </div>
+  <div class="col-sm-6">
+      <b class="col-sm-3 control-label" style="padding: 0px">ciudad</b>
+      <div class="col-sm-9" style="padding: 0px">
+          <select class="form-control input-xs" id="DCCiudadF" name="DCCiudadF" style="width:100%">
+              <option value=""></option>
+          </select>
+      </div>
+  </div>
+  <div class="col-sm-6">
+      <b>Nombre o razon socila (Transportista)</b>
+      <select class="form-control input-xs" id="DCRazonSocial" name="DCRazonSocial" style="width:100%">
+          <option value=""></option>
+      </select>
+  </div>
+  <div class="col-sm-6">
+      <b>Empresa de Transporte</b>
+      <select class="form-control input-xs" id="DCEmpresaEntrega" name="DCEmpresaEntrega" style="width:100%">
+          <option value=""></option>
+      </select>
+  </div>
   <div class="col-sm-2">
+      <b>Placa</b>
+      <input type="text" name="TxtPlaca" id="TxtPlaca" class="form-control input-xs"
+          value="XXX-999">
+  </div>
+  <div class="col-sm-2">
+      <b>Pedido</b>
+      <input type="text" name="TxtPedido" id="TxtPedido" class="form-control input-xs">
+  </div>
+  <div class="col-sm-2">
+      <b>Zona</b>
+      <input type="text" name="TxtZona" id="TxtZona" class="form-control input-xs">
+  </div>
+  <div class="col-sm-6">
+      <b>Lugar entrega</b>
+      <input type="text" name="TxtLugarEntrega" id="TxtLugarEntrega" class="form-control input-xs">
+  </div>
+</div>
+
+
+<!--
+<div class="row">
+  <div class="col-sm-2">            
+    <label>Fecha</label>
+    <input type="date" class="form-control input-xs" name="fecha" id="fecha" value="<?php echo date('Y-m-d'); ?>" onchange="numeroFactura();catalogoLineas();">
+  </div>
+
+</div>
+
+
+<div class="row">
+  <div class="col-sm-2 col-sm-offset-1">
     <label class="text-right">TIPO DE PROCESO</label>
   </div>
   <div class="col-sm-4">
@@ -725,8 +810,10 @@ function validador_correo()
     <input type="text" name="factura" id="factura" value="1" class="form-control input-xs text-right">
   </div>
 </div>
+
+-->
 <div class="row">
-  <div class="col-sm-6">
+  <div class="col-sm-6 col-sm-offset-1">
     <label>PRODUCTO</label>
     <select class="form-control input-xs" id="producto" onchange="Articulo_Seleccionado();">
     </select>
@@ -745,13 +832,13 @@ function validador_correo()
   </div>
   <div class="col-sm-1">
     <label>Total</label>
-    <input type="text" name="total" id="total" value="0.00" class="form-control input-xs text-right" onblur="aceptar();">
+    <input type="text" name="total" id="total" value="0.00" class="form-control input-xs text-right">
   </div>
-  <!-- <div class=" col-sm-1 text-right">     <br>
-      <a title="Aprobar" class="btn btn-default btn-block"  onclick="">
+   <div class=" col-sm-1 text-right">     <br>
+      <a title="Aprobar" class="btn btn-default btn-block"  onclick="calcular_totales();aceptar();">
         <img src="../../img/png/mostrar.png" width="25">
       </a>     
-  </div>-->
+  </div>
 </div>
 
 <br>
