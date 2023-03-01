@@ -745,7 +745,7 @@ function validador_correo()
   </div>
   <div class="col-sm-1">
     <label>Total</label>
-    <input type="text" name="total" id="total" value="0.00" class="form-control input-xs text-right" onblur="aceptar();">
+    <input type="text" name="total" id="total" value="0.00" class="form-control input-xs text-right" onblur="aceptar();" readonly>
   </div>
   <!-- <div class=" col-sm-1 text-right">     <br>
       <a title="Aprobar" class="btn btn-default btn-block"  onclick="">
