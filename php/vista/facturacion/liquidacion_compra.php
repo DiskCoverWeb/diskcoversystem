@@ -247,6 +247,11 @@ function aceptar(){
     pvp = $("#preciounitario").val();
     total = $("#total").val();
     cantidad = $("#cantidad").val();
+    if(cantidad==0 || cantidad=='')
+    {
+      Swal.fire('Cantidad no valida','','info');
+      return false;
+    }
     var year = new Date().getFullYear();
     $('#myModal_espera').modal('show');
     var datosLineas = 
