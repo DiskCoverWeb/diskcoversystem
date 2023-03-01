@@ -18,7 +18,7 @@
     font-size: 1.3em;
   }
 </style>
-<div class="col-xs-2">
+<div class="col">
   <a href="#" title="Insertar Prefacturacion Mensual"  class="btn btn-default" onclick="OpenModalPreFactura(<?php echo cantidadProductoPreFacturar ?>)">
     <img src="../../img/png/doc-green.png" width="25" height="30">
   </a>

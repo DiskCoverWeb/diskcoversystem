@@ -203,6 +203,21 @@ if(isset($_GET['ActualizaDatosCliente']))
   exit();
 }
 
+if(isset($_GET['getMBHistorico']))
+{
+  $datos = $controlador->getMBHistorico();
+  echo json_encode($datos);
+}
+if(isset($_GET['BuscarClienteCodigo']))
+{
+  $data = $controlador->getClientes('',"{$_GET['BuscarClienteCodigo']}");
+  if(count($data)>0){
+    echo json_encode(['rps'=>true, 'data' => $data[0]]);
+  }else{
+    echo json_encode(['rps'=>false, 'data' => [], 'mensaje' => 'Usuario no encontrado']);
+  }
+}
+
 class facturar_pensionC
 {
   private $facturacion;
@@ -221,12 +236,12 @@ class facturar_pensionC
         //$this->modelo = new MesaModel();
     }
 
-	public function getClientes($query){
+	public function getClientes($query, $ruc=false){
     // Leer_Datos_Cliente_SP($codigo)
-		$datos = $this->facturacion->getClientes($query);
+		$datos = $this->facturacion->getClientes($query,$ruc);
 		$clientes = [];
 		foreach ($datos as $value) {
-			$clientes[] = array('id'=>$value['Cliente'],'text'=>$value['Cliente'],'data'=>array('email'=> $value['Email'],'direccion' => $value['Direccion'],'direccion1'=>$value['DireccionT'], 'telefono' =>$value['Telefono'], 'ci_ruc' => $value['CI_RUC'], 'codigo' => $value['Codigo'], 'cliente' => $value['Cliente'], 'grupo' => $value['Grupo'], 'tdCliente' => $value['TD'], 'Archivo_Foto'=> $value['Archivo_Foto'], 'Archivo_Foto_Url'=> BuscarArchivo_Foto_Estudiante($value['Archivo_Foto']))); //,'dataMatricula'=>$matricula);
+			$clientes[] = array('id'=>$value['Cliente'],'text'=>$value['Cliente'],'data'=>array('email'=> $value['Email'],'direccion' => $value['Direccion'],'direccion1'=>$value['DireccionT'], 'telefono' =>$value['Telefono'], 'ci_ruc' => $value['CI_RUC'], 'codigo' => $value['Codigo'], 'cliente' => $value['Cliente'], 'grupo' => $value['Grupo'], 'tdCliente' => $value['TD'], 'Archivo_Foto'=> $value['Archivo_Foto'], 'Archivo_Foto_Url'=> BuscarArchivo_Foto_Estudiante($value['Archivo_Foto']), 'RUC_CI_Rep' => $value['CI_RUC_R'])); //,'dataMatricula'=>$matricula);
 		}
     return $clientes;
 	}
@@ -944,6 +959,15 @@ class facturar_pensionC
     }else{
       return (array("rps" => 0 , "mensaje" => "No fue posible procesar su solicitud."));
     }
+  }
+
+  public function getMBHistorico()
+  {
+    $AdoAux = $this->facturas->FechaInicialHistoricoFacturas();
+    @$AdoAux = (isset($AdoAux[0]["MinFecha"]))?$AdoAux[0]["MinFecha"]->format("Y-m-d"):"";
+    $FechaInicial = (($AdoAux!="")?PrimerDiaMes($AdoAux,"Y-m-d"):"2000-01-01");
+
+    return (array("MBHistorico" => $FechaInicial ));
   }
 
 }
