@@ -45,6 +45,31 @@ class divisasM
     return $stmt;
   }
 
+  public function getProductos_normales($Grupo_Inv,$TipoFactura,$query)
+  {
+     $sql = "SELECT Producto,Codigo_Inv,Codigo_Barra 
+        FROM Catalogo_Productos 
+        WHERE Item = '".$_SESSION['INGRESO']['item']."'
+        AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+        AND TC = 'P' ";
+    if(strlen($Grupo_Inv) > 1){ $sql.="AND MidStrg(Codigo_Inv,1,2) = '".$Grupo_Inv."' ";}
+    // if($TipoFactura == "CP"){
+    //    $sql.=" AND Cta_Inventario = '0' ";
+    // }else{
+    //    $sql.=" AND LEN(Cta_Inventario) > 1 ";
+    // }
+    if($query)
+    {
+      $sql.=" AND Producto like '%".$query."%'";
+    }
+    $sql.=" ORDER BY Producto,Codigo_Inv "; 
+
+    // print_r($sql);die();
+    return $this->db->datos($sql);
+  }
+
+
+
 
    function getProductos_datos($codigo){
 

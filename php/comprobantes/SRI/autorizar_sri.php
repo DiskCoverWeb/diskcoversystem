@@ -118,7 +118,7 @@ class autorizacion_sri
 	    }
 
 	    $cabecera['periodo']=$_SESSION['INGRESO']['periodo'];
-		if($cabecera['tc']=='LC')
+		if( isset($cabecera['tc']) && $cabecera['tc']=='LC' || isset($cabecera['TC']) && $cabecera['TC']=='LC')
 		{
 			$cabecera['cod_doc']='03';
 		}else if($cabecera['tc']=='FA')

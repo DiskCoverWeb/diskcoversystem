@@ -144,8 +144,10 @@ class lista_liquidacionCompraM
 	AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";	
 	$detalle_fac = $this->db->datos($sql1);
 
-	$sql2 = "SELECT * FROM lista_tipo_contribuyente WHERE RUC = '".$_SESSION['INGRESO']['RUC']."'";
-	$tipo_con = $this->db->datos($sql2, 'MYSQL');
+	$tipo_con = Tipo_Contribuyente_SP_MYSQL($_SESSION['INGRESO']['RUC']);
+
+	// $sql2 = "SELECT * FROM lista_tipo_contribuyente WHERE RUC = '".$_SESSION['INGRESO']['RUC']."'";
+	// $tipo_con = $this->db->datos($sql2, 'MYSQL');
 
 	$sucursal = $this->catalogo_lineas('FA',$ser);
 	$forma_pago = $this->DCTipoPago($datos_fac[0]['Tipo_Pago']);

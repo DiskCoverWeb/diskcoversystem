@@ -25,6 +25,7 @@ if(isset($_GET['ticketPDF']))
   $controlador->ticketPDF();
 }
 
+// compra y venta de divisas
 if(isset($_GET['productos']))
 {
   $codigoLinea = $_POST['DCLinea'];
@@ -32,6 +33,25 @@ if(isset($_GET['productos']))
   $datos = $controlador->getProductos($TC[0]);
   echo json_encode($datos);
 }
+
+//liquidacion de compras
+if(isset($_GET['productos2']))
+{
+  
+  $query = '';
+  $TC = 'LC';
+  if(isset($_GET['q']))
+  {
+    $query = $_GET['q'];
+  }
+  if(isset($_GET['TC']))
+  {
+    $TC = $_GET['TC'];
+  } 
+  $Grupo_Inv = G_NINGUNO;
+  echo json_encode($controlador->getProductos2($Grupo_Inv,$TC,$query));
+}
+
 
 if(isset($_GET['cliente']))
 {
@@ -120,6 +140,17 @@ class divisasC
       $productos[] = array('codigo'=>$value['Codigo_Inv']."/".$value['Producto']."/".$value['PVP']."/".$value['Div'] ,'nombre'=> $value['Producto']);
     }
     return $productos;
+  }
+
+  public function getProductos2($Grupo_Inv,$TipoFactura,$query)
+  {
+    $datos = $this->modelo->getProductos_normales($Grupo_Inv,$TipoFactura,$query);
+    $res = array();
+    foreach ($datos as $key => $value) {
+      $res[] = array('id'=>$value['Codigo_Inv'],'text'=>$value['Producto']);
+    }
+    return $res;
+    // print_r($datos);die();
   }
 
   public function getClientes($query){
@@ -242,12 +273,14 @@ class divisasC
 
     // print_r($FA);die();
     $codigoCliente = $FA['codigoCliente'];
+    $FA['CodigoC'] = $FA['codigoCliente'];
 
     $resultado = explode(" ", $FA['DCLinea']);
     $FA['Autorizacion'] = $resultado[2];
     $FA['Cta_CxP'] = $resultado[3];
     //Procedemos a grabar la factura
     $datos = $this->modelo->getAsiento();
+    // print_r($datos);die();
     foreach ($datos as $value) {
       $TFA = Calculos_Totales_Factura($codigoCliente);
       $FA['Tipo_PRN'] = "FM";
@@ -257,8 +290,8 @@ class divisasC
       $FA['TC'] = SinEspaciosIzq($FA['DCLinea']);
       $FA['Serie'] = SinEspaciosDer($FA['DCLinea']);
       if (Existe_Factura($FA)) {
-        $resultado = array('respuesta'=>5);
-        exit();
+        $resultado = 5;
+        return $resultado;
       }
       $SaldoPendiente = 0;
       $DiarioCaja = ReadSetDataNum("Recibo_No", True, True);
@@ -278,7 +311,8 @@ class divisasC
       $TA['Recibi_de'] = $FA['Cliente'];
       $Cta = SinEspaciosIzq($FA['DCBanco']);
       $Cta1 = SinEspaciosIzq($FA['DCNC']);
-      Grabar_Factura($FA);
+      // print_r($FA);die();
+      Grabar_Factura1($FA);
       
       //Seteos de Abonos Generales para todos los tipos de abonos
       $TA['T'] = $FA['T'];
@@ -364,7 +398,7 @@ class divisasC
 
 
     if (strlen($FA['Autorizacion']) == 13) {    
-
+// print_r('expression');die();
        $resultado = $this->autorizar_sri->Autorizar_factura_o_liquidacion($FA);
     }else{
       $resultado = 4;
@@ -488,7 +522,10 @@ Email: ".$datos_pre['cliente']['Email']."
     $where[0]['campo'] = 'Codigo';
     $where[0]['valor'] = $parametros['cod'];
     $where[0]['tipo'] = 'string';
-    return update_generico($datos,'Clientes',$where);
+
+    $resp =  update_generico($datos,'Clientes',$where);
+    // print_r($resp);die();
+    return $resp;
   }
 
   function buscar_facturas($parametros)
