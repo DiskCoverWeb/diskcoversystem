@@ -6,21 +6,21 @@
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>2802202303070216417900110010020000000231234567814</claveAcceso>
+    <claveAcceso>0103202303070216417900110010020000000271234567813</claveAcceso>
     <codDoc>03</codDoc>
     <estab>001</estab>
     <ptoEmi>002</ptoEmi>
-    <secuencial>000000023</secuencial>
+    <secuencial>000000027</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
   <infoLiquidacionCompra>
-    <fechaEmision>28/02/2023</fechaEmision>
+    <fechaEmision>01/03/2023</fechaEmision>
     <dirEstablecimiento>direccion prueba</dirEstablecimiento>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <tipoIdentificacionProveedor>04</tipoIdentificacionProveedor>
-    <razonSocialProveedor>360ELECTRIC</razonSocialProveedor>
-    <identificacionProveedor>1792558662001</identificacionProveedor>
+    <tipoIdentificacionProveedor>06</tipoIdentificacionProveedor>
+    <razonSocialProveedor>ABRAHAM LOJA</razonSocialProveedor>
+    <identificacionProveedor>0302219456</identificacionProveedor>
     <totalSinImpuestos>20.00</totalSinImpuestos>
     <totalDescuento>0</totalDescuento>
     <totalConImpuestos>
@@ -43,8 +43,8 @@
   </infoLiquidacionCompra>
   <detalles>
     <detalle>
-      <codigoPrincipal>98.22</codigoPrincipal>
-      <descripcion>1865</descripcion>
+      <codigoPrincipal>98.24</codigoPrincipal>
+      <descripcion>6 LINEAS</descripcion>
       <unidadMedida>DOLAR</unidadMedida>
       <cantidad>1.00</cantidad>
       <precioUnitario>20</precioUnitario>
@@ -62,8 +62,9 @@
     </detalle>
   </detalles>
   <infoAdicional>
-    <campoAdicional nombre="Direccion">URB CAMINO DEL RIO</campoAdicional>
-    <campoAdicional nombre="Email">javier@examplecom</campoAdicional>
+    <campoAdicional nombre="Direccion">QUITO</campoAdicional>
+    <campoAdicional nombre="Telefono">3191519</campoAdicional>
+    <campoAdicional nombre="Email">abrahamlojar@gmailcom</campoAdicional>
     <campoAdicional nombre="seriePuntoEmision">001002</campoAdicional>
     <campoAdicional nombre="socioRazonSocial">Nombre establecimiento</campoAdicional>
     <campoAdicional nombre="socioRUC">123456789</campoAdicional>

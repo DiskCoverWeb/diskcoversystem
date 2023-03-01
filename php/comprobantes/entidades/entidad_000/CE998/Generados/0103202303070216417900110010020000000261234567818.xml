@@ -6,65 +6,65 @@
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>2802202303070216417900110010020000000221234567819</claveAcceso>
+    <claveAcceso>0103202303070216417900110010020000000261234567818</claveAcceso>
     <codDoc>03</codDoc>
     <estab>001</estab>
     <ptoEmi>002</ptoEmi>
-    <secuencial>000000022</secuencial>
+    <secuencial>000000026</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
   <infoLiquidacionCompra>
-    <fechaEmision>28/02/2023</fechaEmision>
+    <fechaEmision>01/03/2023</fechaEmision>
     <dirEstablecimiento>direccion prueba</dirEstablecimiento>
     <obligadoContabilidad>NO</obligadoContabilidad>
     <tipoIdentificacionProveedor>06</tipoIdentificacionProveedor>
-    <razonSocialProveedor>ALAVA BAZURTO STALYN JAVIER</razonSocialProveedor>
-    <identificacionProveedor>0919044693</identificacionProveedor>
-    <totalSinImpuestos>20.00</totalSinImpuestos>
+    <razonSocialProveedor>ABRAHAM LOJA</razonSocialProveedor>
+    <identificacionProveedor>0302219456</identificacionProveedor>
+    <totalSinImpuestos>60.00</totalSinImpuestos>
     <totalDescuento>0</totalDescuento>
     <totalConImpuestos>
       <totalImpuesto>
         <codigo>2</codigo>
         <codigoPorcentaje>0</codigoPorcentaje>
         <descuentoAdicional>0</descuentoAdicional>
-        <baseImponible>20</baseImponible>
+        <baseImponible>60</baseImponible>
         <valor>0.00</valor>
       </totalImpuesto>
     </totalConImpuestos>
-    <importeTotal>20</importeTotal>
+    <importeTotal>60</importeTotal>
     <moneda>DOLAR</moneda>
     <pagos>
       <pago>
         <formaPago>01</formaPago>
-        <total>20</total>
+        <total>60</total>
       </pago>
     </pagos>
   </infoLiquidacionCompra>
   <detalles>
     <detalle>
       <codigoPrincipal>98.24</codigoPrincipal>
-      <descripcion/>
+      <descripcion>6 LINEAS</descripcion>
       <unidadMedida>DOLAR</unidadMedida>
-      <cantidad>1.00</cantidad>
+      <cantidad>3.00</cantidad>
       <precioUnitario>20</precioUnitario>
       <descuento>0</descuento>
-      <precioTotalSinImpuesto>20</precioTotalSinImpuesto>
+      <precioTotalSinImpuesto>60</precioTotalSinImpuesto>
       <impuestos>
         <impuesto>
           <codigo>2</codigo>
           <codigoPorcentaje>0</codigoPorcentaje>
           <tarifa>0</tarifa>
-          <baseImponible>20</baseImponible>
+          <baseImponible>60</baseImponible>
           <valor>0</valor>
         </impuesto>
       </impuestos>
     </detalle>
   </detalles>
   <infoAdicional>
-    <campoAdicional nombre="Direccion">SD</campoAdicional>
-    <campoAdicional nombre="Telefono">022000000</campoAdicional>
-    <campoAdicional nombre="Email">javierfarinango92@gmailcom</campoAdicional>
+    <campoAdicional nombre="Direccion">QUITO</campoAdicional>
+    <campoAdicional nombre="Telefono">3191519</campoAdicional>
+    <campoAdicional nombre="Email">abrahamlojar@gmailcom</campoAdicional>
     <campoAdicional nombre="seriePuntoEmision">001002</campoAdicional>
     <campoAdicional nombre="socioRazonSocial">Nombre establecimiento</campoAdicional>
     <campoAdicional nombre="socioRUC">123456789</campoAdicional>

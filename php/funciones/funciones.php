@@ -636,13 +636,15 @@ function ReadSetDataNum($sqls,$ParaEmpresa =false,$Incrementar = false) // optim
                 //faltra ejecutar
                  $conn->String_Sql($Strgs);
 	    }
+      // print_r($NumCodigo);die();
 	    if($Incrementar)
 	    {
 	    	$Strgs = "UPDATE Codigos 
-                SET Numero = Numero + 1 
+                SET Numero = Numero+1 
                 WHERE Concepto = '".$sqls."'
                 AND Periodo = '" .$_SESSION['INGRESO']['periodo']."' 
                 AND Item = '".$_SESSION['INGRESO']['item']. "' ";
+                // print_r($Strgs);
         $conn->String_Sql($Strgs);
 	    }
 	  }
