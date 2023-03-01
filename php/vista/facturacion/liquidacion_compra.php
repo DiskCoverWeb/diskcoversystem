@@ -164,7 +164,7 @@
     fecha = $("#fecha").val();
     $.ajax({
       type: "POST",
-      url: '../controlador/facturacion/divisasC.php?catalogoLineas=true',
+      url: '../controlador/facturacion/divisasC.php?catalogoLineas_lc=true',
       data: {
         'fecha' : fecha,
       }, 
@@ -418,7 +418,8 @@ function aceptar(){
                      cambio = $("#cambio").val();
                      efectivo = $("#efectivo").val();  
                      var url = '../controlador/facturacion/divisasC.php?ticketPDF=true&fac='+TextFacturaNo+'&serie='+serie[1]+'&CI='+TextCI+'&TC='+serie[0]+'&efectivo='+efectivo+'&saldo='+cambio;
-                     // imprimir(url); 
+                     // imprimir(url); git status
+
 
                      Swal.fire({
                       type: 'success',

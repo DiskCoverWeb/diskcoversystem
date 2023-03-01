@@ -26,6 +26,21 @@ class divisasM
     return $stmt;
   }
 
+    public function getCatalogoLineas_lc($FechaProceso){
+    $sql="SELECT * 
+          FROM Catalogo_Lineas 
+          WHERE TL <> 0 
+          AND Item = '".$_SESSION['INGRESO']['item']."' 
+          AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+          AND Fecha <= '".$FechaProceso."' 
+          AND Vencimiento >= '".$FechaProceso."' 
+          AND Fact = 'LC'
+          ORDER BY Fact,Codigo";
+          // print_r($sql);die();
+    $stmt = $this->db->datos($sql);
+    return $stmt;
+  }
+
   public function getProductos($tipoConsulta){
     if ($tipoConsulta=='FA') {
       $Tipo ='03.01';
