@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<liquidacionCompra id="comprobante" version="1.1.0">
+<factura id="comprobante" version="1.1.0">
   <infoTributaria>
     <ambiente>1</ambiente>
     <tipoEmision>1</tipoEmision>
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>0103202303070216417900110010020000000271234567813</claveAcceso>
-    <codDoc>03</codDoc>
+    <claveAcceso>0203202301070216417900110010030000011091234567817</claveAcceso>
+    <codDoc>01</codDoc>
     <estab>001</estab>
-    <ptoEmi>002</ptoEmi>
-    <secuencial>000000027</secuencial>
+    <ptoEmi>003</ptoEmi>
+    <secuencial>000001109</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
-  <infoLiquidacionCompra>
-    <fechaEmision>01/03/2023</fechaEmision>
-    <dirEstablecimiento>direccion prueba</dirEstablecimiento>
+  <infoFactura>
+    <fechaEmision>02/03/2023</fechaEmision>
+    <dirEstablecimiento>direccion de empresa xyz</dirEstablecimiento>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <tipoIdentificacionProveedor>06</tipoIdentificacionProveedor>
-    <razonSocialProveedor>ABRAHAM LOJA</razonSocialProveedor>
-    <identificacionProveedor>0302219456</identificacionProveedor>
+    <tipoIdentificacionComprador>06</tipoIdentificacionComprador>
+    <razonSocialComprador>HELENE PAREDES</razonSocialComprador>
+    <identificacionComprador>1721240610</identificacionComprador>
     <totalSinImpuestos>20.00</totalSinImpuestos>
     <totalDescuento>0</totalDescuento>
     <totalConImpuestos>
@@ -32,6 +32,7 @@
         <valor>0.00</valor>
       </totalImpuesto>
     </totalConImpuestos>
+    <propina>0</propina>
     <importeTotal>20</importeTotal>
     <moneda>DOLAR</moneda>
     <pagos>
@@ -40,11 +41,11 @@
         <total>20</total>
       </pago>
     </pagos>
-  </infoLiquidacionCompra>
+  </infoFactura>
   <detalles>
     <detalle>
-      <codigoPrincipal>98.24</codigoPrincipal>
-      <descripcion>6 LINEAS</descripcion>
+      <codigoPrincipal>98.22</codigoPrincipal>
+      <descripcion>1865 cunas publicitarias intitucionales 10 pautas publicitarias del 01 al 28 de febrero 2023</descripcion>
       <unidadMedida>DOLAR</unidadMedida>
       <cantidad>1.00</cantidad>
       <precioUnitario>20</precioUnitario>
@@ -62,16 +63,13 @@
     </detalle>
   </detalles>
   <infoAdicional>
-    <campoAdicional nombre="Direccion">QUITO</campoAdicional>
-    <campoAdicional nombre="Telefono">3191519</campoAdicional>
-    <campoAdicional nombre="Email">abrahamlojar@gmailcom</campoAdicional>
-    <campoAdicional nombre="seriePuntoEmision">001002</campoAdicional>
-    <campoAdicional nombre="socioRazonSocial">Nombre establecimiento</campoAdicional>
-    <campoAdicional nombre="socioRUC">123456789</campoAdicional>
-    <campoAdicional nombre="socioDireccion">direccion prueba</campoAdicional>
-    <campoAdicional nombre="socioTelefono">022222222</campoAdicional>
-    <campoAdicional nombre="socioEmail">eample@establecimeinto.com</campoAdicional>
+    <campoAdicional nombre="Direccion">TUMBACO</campoAdicional>
+    <campoAdicional nombre="Telefono">2374504</campoAdicional>
+    <campoAdicional nombre="Email">maholy_96pa@hotmailcom</campoAdicional>
+    <campoAdicional nombre="seriePuntoEmision">001003</campoAdicional>
+    <campoAdicional nombre="socioRazonSocial">Empresa xyz</campoAdicional>
+    <campoAdicional nombre="socioDireccion">direccion de empresa xyz</campoAdicional>
     <campoAdicional nombre="PlacaVehiculo">.</campoAdicional>
     <campoAdicional nombre="CtaEstablecimiento">.</campoAdicional>
   </infoAdicional>
-</liquidacionCompra>
+</factura>

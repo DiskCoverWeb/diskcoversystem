@@ -1142,8 +1142,8 @@ class autorizacion_sri
 	    $xml_infotributaria = $xml->createElement("infoTributaria");
 	    $xml_ambiente = $xml->createElement("ambiente",$ambiente);
 	    $xml_tipoEmision = $xml->createElement("tipoEmision","1");
-	    $xml_razonSocial = $xml->createElement("razonSocial",$_SESSION['INGRESO']['Razon_Social']);
-	    $xml_nombreComercial = $xml->createElement("nombreComercial",$_SESSION['INGRESO']['Nombre_Comercial']);
+	    $xml_razonSocial = $xml->createElement("razonSocial",$this->quitar_carac($_SESSION['INGRESO']['Razon_Social']));
+	    $xml_nombreComercial = $xml->createElement("nombreComercial",$this->quitar_carac($_SESSION['INGRESO']['Nombre_Comercial']));
 	    $xml_ruc = $xml->createElement("ruc",$_SESSION['INGRESO']['RUC']);
 	    $xml_claveAcceso = $xml->createElement("claveAcceso",$cabecera['ClaveAcceso_NC']);
 	    $xml_codDoc = $xml->createElement("codDoc",'04');
@@ -1291,7 +1291,7 @@ class autorizacion_sri
 
 	 			$CodAdicional = CambioCodigoCtaSup($value["Codigo_Inv"]);
 
-	 			$Producto = trim($value["Producto"]);	 			
+	 			$Producto = trim($this->quitar_carac($value["Producto"]));	 			
                 // $SubTotal = ($value["Cantidad"] * $value["Precio"]) - ($value["Total_Desc"] + $value["Total_Desc2"]);
 
  			  	$xml_codigo = $xml->createElement('codigoInterno',$value["Codigo_Inv"]);
