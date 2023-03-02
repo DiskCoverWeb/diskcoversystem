@@ -70,7 +70,7 @@
     });
 
       $(".btnDepositoAutomatico").blur(function(){
-        if($('.contenidoDepositoAutomatico').is(':visible') && $('.contenidoDepositoAutomatico').css("visibility") != "hidden"){
+        if($('.contenidoDepositoAutomatico').is(':visible') && $('.contenidoDepositoAutomatico').css("display") != "none"){
           var currentTabIndex = parseInt($(this).attr("tabindex"));
           var nextTabIndex = currentTabIndex + 1;
           $("[tabindex='" + nextTabIndex + "']").focus();
@@ -80,10 +80,10 @@
       });
 
     $(".btnDepositoAutomatico").on('click',function () {
-      if($('.contenidoDepositoAutomatico').is(':visible') && $('.contenidoDepositoAutomatico').css("visibility") != "hidden"){
-        $('.contenidoDepositoAutomatico').css('visibility', 'hidden')
+      if($('.contenidoDepositoAutomatico').is(':visible') && $('.contenidoDepositoAutomatico').css("display") != "none"){
+        $('.contenidoDepositoAutomatico').css('display', 'none')
       }else{
-        $('.contenidoDepositoAutomatico').css('visibility', 'visible')
+        $('.contenidoDepositoAutomatico').css('display', 'block')
       }
     })
 
@@ -858,9 +858,9 @@
           }
 
           if (data[0].Cod_Banco!="<?php echo G_NINGUNO; ?>" && data[0].Cta_Numero!="<?php echo G_NINGUNO; ?>") {
-            $('.contenidoDepositoAutomatico').css('visibility', 'visible')
+            $('.contenidoDepositoAutomatico').css('display', 'block')
           }else{
-            $('.contenidoDepositoAutomatico').css('visibility', 'hidden')
+            $('.contenidoDepositoAutomatico').css('display', 'none')
           }
         }else{
           $('#debito_automatica').val(null).trigger('change');
@@ -868,7 +868,7 @@
           $("#numero_cuenta_debito_automatico").val('');
           $("#caducidad_debito_automatico").val('');
           $("#por_deposito_debito_automatico").prop('checked', false);
-          $('.contenidoDepositoAutomatico').css('visibility', 'hidden')
+          $('.contenidoDepositoAutomatico').css('display', 'none')
         }            
       }
     });
@@ -1098,13 +1098,85 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
   background-color: #fffec5;
 }
 
+
+.max-width-110{
+    max-width: 110px !important;
+  }
+
+  .min-width-150{
+    min-width: 150px !important;
+  }
+
+@media (max-width: 1325px) {
+ 
+  .min-width-150{
+    min-width: 140px !important;
+  }
+  
+}
+
+@media (max-width: 1286px) {
+ 
+  .min-width-150{
+    min-width: 130px !important;
+  }
+  
+}
+
+@media (max-width: 1243px) {
+ 
+  .min-width-150{
+    min-width: 125px !important;
+  }
+  
+}
+
+@media (max-width: 1223px) {
+ 
+  .min-width-150{
+    min-width: 115px !important;
+  }
+  
+}
+
+@media (max-width: 1178px) {
+ 
+  .min-width-150{
+    min-width: 105px !important;
+  }
+  
+}
+
+@media (max-width: 1121px) {
+ 
+  .min-width-150{
+    min-width: 90px !important;
+  }
+  
+}
+
+
+@media (max-width: 1029px) {
+ 
+  .min-width-150{
+    min-width: 80px !important;
+  }
+  
+}
+
 @media (max-width: 986px) {
   .panel-body .text-right{
     text-align: left !important;
   }
+  .min-width-150{
+    min-width: 110% !important;
+  }
 }
 
 @media (max-width: 768px) {
+  .min-width-150{
+    min-width: 100% !important;
+  }
   .labelDCLinea{
     display: none;
   }
@@ -1124,7 +1196,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
   <div class="row">
     <div class="col-lg-6 col-sm-12 col-md-9 col-xs-12">
       <div class="col">
-        <a  href="./panel.php" title="Salir de modulo" class="btn btn-default">
+        <a  href="./inicio.php?mod=<?php echo @$_GET['mod']; ?>" title="Salir de modulo" class="btn btn-default">
           <img src="../../img/png/salire.png" width="25" height="30">
         </a>
       </div>
@@ -1159,8 +1231,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
           <img src="../../img/png/update_user.png" width="25" height="30">
         </a>
       </div>
-
-      <?php include("ingreso_consumo_agua.php") ?>
+    </div>
   </div>
 
   <div class="row">
@@ -1280,7 +1351,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                 <button tabindex="15" style="margin: 8px 0px;background-color: #c0c0fc !important; color: black;" class="btn btn-block btn-info btn-xs btnDepositoAutomatico strong">Ingrese sus datos para el Debito Automatico</button>
               </div>
             </div>
-            <div class="row bg-info contenidoDepositoAutomatico" style="visibility: hidden;">
+            <div class="row bg-info contenidoDepositoAutomatico" style="display: none;">
               <div class="col-xs-12 col-sm-2 text-right">
                 <label for="debito_automatica">Debito Automatico</label>
               </div>
@@ -1302,7 +1373,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                 </select>
               </div>
             </div>
-            <div class="row bg-info contenidoDepositoAutomatico" style="visibility: hidden;">
+            <div class="row bg-info contenidoDepositoAutomatico" style="display: none;">
               <div class="col-xs-12 col-sm-2 text-right">
                 <label>Numero de Cuenta</label>
               </div>
@@ -1356,54 +1427,54 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
           <div class="col-md-3 ">
             <div class="row">
               <div class="form-group">
-                <label for="inputEmail3" class="col-xs-6 control-label">Total Tarifa 0%</label>
+                <label for="inputEmail3" class="col-xs-6 control-label padding-all  max-width-110">Total Tarifa 0%</label>
                 <div class="col-xs-6">
-                  <input type="text" style="color: coral;" name="total0" id="total0" class="form-control input-xs red text-right" readonly value="0.00">
+                  <input type="text" style="color: coral;" name="total0" id="total0" class="form-control input-xs red text-right min-width-150" readonly value="0.00">
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="form-group">
-                <label for="inputEmail3" class="col-xs-6 control-label">Total Tarifa 12%</label>
+                <label for="inputEmail3" class="col-xs-6 control-label padding-all  max-width-110">Total Tarifa 12%</label>
                 <div class="col-xs-6">
-                  <input type="text" style="color: coral;" name="total12" id="total12" class="form-control input-xs red text-right" readonly value="0.00">
+                  <input type="text" style="color: coral;" name="total12" id="total12" class="form-control input-xs red text-right min-width-150" readonly value="0.00">
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="form-group">
-                <label for="inputEmail3" class="col-xs-6 control-label">Descuentos</label>
+                <label for="inputEmail3" class="col-xs-6 control-label padding-all  max-width-110">Descuentos</label>
                 <div class="col-xs-6">
-                  <input type="text" style="color: coral;" name="descuento" id="descuento" class="form-control input-xs red text-right" readonly value="0.00">
+                  <input type="text" style="color: coral;" name="descuento" id="descuento" class="form-control input-xs red text-right min-width-150" readonly value="0.00">
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="form-group">
-                <label for="inputEmail3" class="col-xs-6 control-label">Desc x P P</label>
+                <label for="inputEmail3" class="col-xs-6 control-label padding-all  max-width-110">Desc x P P</label>
                 <div class="col-xs-6">
-                  <div class="input-group input-group-xs">
-                    <input type="text" style="color: coral;"  name="descuentop" id="descuentop" class="form-control input-xs red text-right" readonly value="0.00">
+                  <div class="input-group input-group-xs  min-width-150">
                     <span class="input-group-btn">
-                      <button tabindex="41" style="border: 2px #b1b1b1 solid;padding: 2px;"  type="button" class="btn btn-xs" data-toggle="modal" data-target="#myModalDescuentoP">%</button>
+                      <button tabindex="41" style="border: 1px #b1b1b1 solid;border-right: 2px #b1b1b1 solid;padding: 2px;"  type="button" class="btn btn-xs" data-toggle="modal" data-target="#myModalDescuentoP">%</button>
                     </span>
+                    <input type="text" style="color: coral;"  name="descuentop" id="descuentop" class="form-control input-xs red text-right" readonly value="0.00">
                   </div>
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="form-group">
-                <label for="inputEmail3" class="col-xs-6 control-label">I.V.A. 12%</label>
+                <label for="inputEmail3" class="col-xs-6 control-label padding-all  max-width-110">I.V.A. 12%</label>
                 <div class="col-xs-6">
-                  <input type="text" style="color: coral;"  name="iva12" id="iva12" class="form-control input-xs red text-right" readonly value="0.00">
+                  <input type="text" style="color: coral;"  name="iva12" id="iva12" class="form-control input-xs red text-right min-width-150" readonly value="0.00">
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="form-group">
-                <label for="inputEmail3" class="col-xs-6 control-label">Total Facturado</label>
+                <label for="inputEmail3" class="col-xs-6 control-label padding-all  max-width-110">Total Facturado</label>
                 <div class="col-xs-6">
-                  <input type="text" style="color: coral;"  name="total" id="total" class="form-control input-xs red text-right" readonly value="0.00" onblur="$('#TextBanco').focus()">
+                  <input type="text" style="color: coral;"  name="total" id="total" class="form-control input-xs red text-right min-width-150" readonly value="0.00" onblur="$('#TextBanco').focus()">
                 </div>
               </div>
             </div>
@@ -1442,7 +1513,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
         </div>
 
         <div class="row" style="margin-top: 8px;">
-          <div class="col-sm-2 text-right padding-all">
+          <div class="col-sm-2 text-right padding-all max-width-110">
             <label>Detalle del pago</label>
           </div>
           <div class="col-sm-6 padding-all">
@@ -1453,16 +1524,16 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             <label id="saldo">Saldo pendiente</label>
           </div>
           <div class="col-sm-1  padding-all bg-amarillo-suave">
-            <input type="input" id="saldoPendiente" class="form-control input-xs text-right blue saldo_input text-right bg-amarillo-suave" name="saldoPendiente">
+            <input type="input" id="saldoPendiente" class="form-control input-xs text-right blue saldo_input text-right bg-amarillo-suave min-width-150" name="saldoPendiente">
           </div>
         </div>
 
         <div class="row">
-          <div class="col-sm-2 text-right padding-all">
+          <div class="col-sm-2 text-right padding-all max-width-110">
             <label>Bancos/Tarjetas</label>
           </div>
           <div class="col-sm-4 padding-all">
-            <select class="form-control input-xs" name="cuentaBanco" id="cuentaBanco" tabindex="29" onchange="verificarTJ();" onblur="$('#valorBanco').focus()">
+            <select class="form-control input-xs" name="cuentaBanco" id="cuentaBanco" tabindex="29" onchange="verificarTJ();" onblur="$('#chequeNo').focus()">
               <?php
                 $cuentas = $facturar->getCatalogoCuentas();
                 foreach ($cuentas as $cuenta) {
@@ -1476,22 +1547,22 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             <b>Cheque No.</b>
           </div>
           <div class="col-sm-2 padding-all">
-            <input type="text" name="chequeNo" id="chequeNo" class="form-control input-xs text-right" tabindex="22"  onblur="$('#cuentaBanco').focus()">
+            <input type="text" name="chequeNo" id="chequeNo" class="form-control input-xs text-right" tabindex="30"  >
           </div>
 
           <div class="col-sm-1 text-right padding-all">
             <label>USD</label>
           </div>
           <div class="col-sm-1 padding-all">
-            <input  type="text" name="valorBanco" id="valorBanco" tabindex="30" onkeyup="calcularSaldo();" class="form-control input-xs red text-right" value="0.00">
+            <input  type="text" name="valorBanco" id="valorBanco" tabindex="31" onkeyup="calcularSaldo();" class="form-control input-xs red text-right min-width-150" value="0.00">
           </div>
         </div>
         <div class="row">
-          <div class="col-sm-2 text-right padding-all">
+          <div class="col-sm-2 text-right padding-all max-width-110">
             <label>Anticipos</label>
           </div>
           <div class="col-sm-8 padding-all">
-            <select class="form-control input-xs" name="DCAnticipo" id="DCAnticipo" tabindex="31">
+            <select class="form-control input-xs" name="DCAnticipo" id="DCAnticipo" tabindex="32">
               <?php
                 $cuentas = $facturar->getAnticipos();
                 foreach ($cuentas as $cuenta) {
@@ -1504,15 +1575,15 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             <label>USD</label>
           </div>
           <div class="col-sm-1 padding-all">
-            <input title="Saldo a Favor" type="input" id="saldoFavor" class="form-control input-xs red text-right" name="saldoFavor" tabindex="32" onkeyup="calcularSaldo();" value="0.00" style="color:yellowgreen;">
+            <input title="Saldo a Favor" type="input" id="saldoFavor" class="form-control input-xs red text-right min-width-150" name="saldoFavor" tabindex="33" onkeyup="calcularSaldo();" value="0.00" style="color:yellowgreen;">
           </div>
         </div>
         <div class="row">
-          <div class="col-sm-2 text-right padding-all">
+          <div class="col-sm-2 text-right padding-all max-width-110">
             <label>Notas de crédito</label>
           </div>
           <div class="col-sm-8 padding-all">
-            <select class="form-control input-xs" name="cuentaNC" id="cuentaNC" tabindex="33">
+            <select class="form-control input-xs" name="cuentaNC" id="cuentaNC" tabindex="34">
               <?php
                 $cuentas = $facturar->getNotasCredito();
                 foreach ($cuentas as $cuenta) {
@@ -1525,18 +1596,18 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             <label>USD</label>
           </div>
           <div class="col-sm-1 padding-all">
-            <input tabindex="34" type="text" name="abono" id="abono" onkeyup="calcularSaldo();" class="form-control input-xs red text-right" value="0.00">
+            <input tabindex="35" type="text" name="abono" id="abono" onkeyup="calcularSaldo();" class="form-control input-xs red text-right min-width-150" value="0.00">
           </div>
         </div>
         <div class="row">
-          <div class="col-sm-4 text-center padding-all" style="display: none;">
+          <div class="col-sm-2 text-center padding-all max-width-110" style="visibility: hidden;">
             <input type="text" name="codigoB" class="form-control input-xs" id="codigoB" style="color: white; background: brown;" value="Código del banco: " readonly />
           </div>
-          <div class="col-sm-2 col-sm-offset-9 text-right padding-all">
+          <div class="col-sm-2 col-sm-offset-7 text-right padding-all">
             <b>Efectivo USD</b>
           </div>
           <div class="col-sm-1 padding-all">
-            <input tabindex="35" type="text" name="efectivo" id="efectivo" onkeyup="calcularSaldo();" class="form-control input-xs red text-right" value="0.00"  onblur="$('#saldoTotal').focus()">
+            <input tabindex="36" type="text" name="efectivo" id="efectivo" onkeyup="calcularSaldo();" class="form-control input-xs red text-right min-width-150" value="0.00"  onblur="$('#saldoTotal').focus()">
           </div>
         </div>
         <div class="row" id="divInteres">
@@ -1544,18 +1615,18 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             <b>Interés Tarjeta USD</b>
           </div>
           <div class="col-sm-1 padding-all">
-            <input tabindex="36" type="text" name="interesTarjeta" id="interesTarjeta" class="form-control input-xs red text-right" >
+            <input tabindex="37" type="text" name="interesTarjeta" id="interesTarjeta" class="form-control input-xs red text-right min-width-150" >
           </div>
         </div>
         <div class="row">
 
-          <div class="col-xs-12 col-sm-4">
-            <div class="col-xs-6 text-right">
+          <div class="col-xs-12 col-sm-4 padding-all">
+            <div class="col-sm-4 text-right padding-all max-width-110">
               <label>Código interno</label>
                <input type="hidden" name="txt_cant_datos" id="txt_cant_datos" readonly>
             </div>
             <div class="col-xs-6 padding-all">
-              <input type="input" class="form-control input-xs" name="codigo" id="codigo" tabindex="40">
+              <input type="input" class="form-control input-xs" name="codigo" id="codigo" tabindex="41">
             </div>
           </div>
 
@@ -1563,22 +1634,22 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             <input style="width: 50px" type="text" id="registros" class="form-control input-xs text-center justify-content-center align-items-center" readonly>
           </div>
           <div class=" col-sm-4 ">
-            <div class="col-sm-2 col-sm-offset-4">
-              <a title="Guardar" class="btn btn-default" tabindex="38" id="guardar">
+            <div class="col-sm-2 col-sm-offset-2">
+              <a title="Guardar" class="btn btn-default" tabindex="39" id="guardar">
                 <img src="../../img/png/grabar.png" width="25" height="30" onclick="guardarPension();">
               </a>
             </div>
             <div class="col-sm-2">
-              <a title="Salir del panel" class="btn btn-default" tabindex="39" href="inicio.php?mod=02">
+              <a title="Salir del panel" class="btn btn-default" tabindex="40" href="inicio.php?mod=02">
                 <img src="../../img/png/salire.png" width="25" height="30" >
               </a>
             </div>
           </div>
-          <div class="col-sm-2 text-right padding-all">
+          <div class="col-sm-2 text-right padding-all max-width-110">
             <b>Saldo USD</b>
           </div>
           <div class="col-sm-1 padding-all">
-            <input type="text" name="saldoTotal" id="saldoTotal" class="form-control input-xs red text-right" value="0.00" style="color:coral;" onblur="$('#guardar').focus()" tabindex="37" >
+            <input type="text" name="saldoTotal" id="saldoTotal" class="form-control input-xs red text-right min-width-150" value="0.00" style="color:coral;" onblur="$('#guardar').focus()" tabindex="38" >
           </div>
         </div>
 
