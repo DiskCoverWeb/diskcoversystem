@@ -70,6 +70,12 @@ if(isset($_GET['catalogoLineas']))
   $datos = $controlador->getCatalogoLineas($fecha);
   echo json_encode($datos);
 }
+if(isset($_GET['catalogoLineas_lc']))
+{
+  $fecha = $_POST['fecha'];
+  $datos = $controlador->getCatalogoLineas_lc($fecha);
+  echo json_encode($datos);
+}
 
 if(isset($_GET['guardar_datoC']))
 {
@@ -125,6 +131,15 @@ class divisasC
 
   public function getCatalogoLineas($fecha){
     $datos = $this->modelo->getCatalogoLineas($fecha);
+    $catalogo = [];
+    foreach ($datos as $value) {
+      $catalogo[] = array('codigo'=>$value['Fact']." ".$value['Serie']." ".$value['Autorizacion']." ".$value['CxC']." " ,'nombre'=>$value['Concepto']);
+    }
+    return $catalogo;
+  }
+
+    public function getCatalogoLineas_lc($fecha){
+    $datos = $this->modelo->getCatalogoLineas_lc($fecha);
     $catalogo = [];
     foreach ($datos as $value) {
       $catalogo[] = array('codigo'=>$value['Fact']." ".$value['Serie']." ".$value['Autorizacion']." ".$value['CxC']." " ,'nombre'=>$value['Concepto']);
@@ -291,10 +306,12 @@ class divisasC
       $FA['Serie'] = SinEspaciosDer($FA['DCLinea']);
       if (Existe_Factura($FA)) {
         $resultado = 5;
+        $lc = ReadSetDataNum("LC_SERIE_".$FA['Serie'], True, True);
         return $resultado;
       }
       $SaldoPendiente = 0;
       $DiarioCaja = ReadSetDataNum("Recibo_No", True, True);
+      $lc = ReadSetDataNum("LC_SERIE_".$FA['Serie'], True, True);
       
       $SubTotal_NC = $FA['DCNC'];
       $Total_Bancos = $FA['TextCheque'];

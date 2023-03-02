@@ -164,7 +164,7 @@
     fecha = $("#fecha").val();
     $.ajax({
       type: "POST",
-      url: '../controlador/facturacion/divisasC.php?catalogoLineas=true',
+      url: '../controlador/facturacion/divisasC.php?catalogoLineas_lc=true',
       data: {
         'fecha' : fecha,
       }, 
@@ -247,6 +247,11 @@ function aceptar(){
     pvp = $("#preciounitario").val();
     total = $("#total").val();
     cantidad = $("#cantidad").val();
+    if(cantidad==0 || cantidad=='')
+    {
+      Swal.fire('Cantidad no valida','','info');
+      return false;
+    }
     var year = new Date().getFullYear();
     $('#myModal_espera').modal('show');
     var datosLineas = 
@@ -417,8 +422,9 @@ function aceptar(){
                      serie = DCLinea.split(" ");
                      cambio = $("#cambio").val();
                      efectivo = $("#efectivo").val();  
-                     // var url = '../controlador/facturacion/divisasC.php?ticketPDF=true&fac='+TextFacturaNo+'&serie='+serie[1]+'&CI='+TextCI+'&TC='+serie[0]+'&efectivo='+efectivo+'&saldo='+cambio;
-                     // imprimir(url); 
+                     var url = '../controlador/facturacion/divisasC.php?ticketPDF=true&fac='+TextFacturaNo+'&serie='+serie[1]+'&CI='+TextCI+'&TC='+serie[0]+'&efectivo='+efectivo+'&saldo='+cambio;
+                     // imprimir(url); git status
+
 
                      Swal.fire({
                       type: 'success',
@@ -705,7 +711,7 @@ function validador_correo()
   </div> 
 </div>
 <div class="row">
-  <div class="col-sm-2 col-sm-offset-1">
+  <div class="col-sm-2">
     <label class="text-right">TIPO DE PROCESO</label>
   </div>
   <div class="col-sm-4">
@@ -720,7 +726,7 @@ function validador_correo()
   </div>
 </div>
 <div class="row">
-  <div class="col-sm-6 col-sm-offset-1">
+  <div class="col-sm-6">
     <label>PRODUCTO</label>
     <select class="form-control input-xs" id="producto" onchange="Articulo_Seleccionado();">
     </select>
@@ -739,13 +745,13 @@ function validador_correo()
   </div>
   <div class="col-sm-1">
     <label>Total</label>
-    <input type="text" name="total" id="total" value="0.00" class="form-control input-xs text-right">
+    <input type="text" name="total" id="total" value="0.00" class="form-control input-xs text-right" onblur="aceptar();" readonly>
   </div>
-   <div class=" col-sm-1 text-right">     <br>
-      <a title="Aprobar" class="btn btn-default btn-block"  onclick="calcular_totales();aceptar();">
+  <!-- <div class=" col-sm-1 text-right">     <br>
+      <a title="Aprobar" class="btn btn-default btn-block"  onclick="">
         <img src="../../img/png/mostrar.png" width="25">
       </a>     
-  </div>
+  </div>-->
 </div>
 
 <br>
