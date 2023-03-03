@@ -192,16 +192,7 @@ function aceptar(){
       return false;
     }
 
-     DCLinea = $("#DCLinea").val();
-     tipoFactura = DCLinea.split(" ");
-     TextCI = $("#ci_ruc").val();
-    // console.log(tipoFactura[0]);
-    if (tipoFactura[0] == 'LC' && TextCI == '9999999999999') {
-      Swal.fire('En liquidación de compras no puede elegir consumidor final','','info');
-      return false;
-    }
-
-
+     
     pvp = $("#preciounitario").val();
     total = $("#total").val();
     cantidad = $("#cantidad").val();

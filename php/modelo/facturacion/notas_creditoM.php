@@ -27,7 +27,7 @@ class notas_creditoM
         ORDER BY A_No ";
         if($tabla)
         {
-	        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-170;
+	        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-320;
 	        $botones[0] = array('boton'=>'eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'CODIGO,A_No' );
 			$tbl = grilla_generica_new($sql,'Transacciones As T,Comprobantes As C,Clientes As Cl','tbl_lib',false,$botones,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida);
 		}else
