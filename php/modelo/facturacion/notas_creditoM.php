@@ -49,7 +49,7 @@ class notas_creditoM
        	AND C.Codigo = F.CodigoC";
        	if($codigo)
        	{
-       		$sql.=" AND C.Codigo = '".$codigo."' ";
+       		$sql.=" AND Cliente like '%".$codigo."%' ";
        	} 
        	$sql.=" GROUP BY C.Grupo, C.Codigo, C.Cliente, F.Cta_CxP 
        	ORDER BY C.Cliente ";

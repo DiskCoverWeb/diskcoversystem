@@ -193,9 +193,9 @@ class notas_creditoC
 		return  array('tabla'=>$table,'TxtIVA'=>$IVA_NC,'TxtConIVA'=>$Total_Con_IVA,'TxtDescuento'=>$Total_Desc2+$Total_Desc,'TxtSinIVA'=>$Total_Sin_IVA,'TxtSaldo'=>$SubTotal_NC,'LblTotalDC'=>$SubTotal_NC+$IVA_NC - ($Total_Desc + $Total_Desc2) );
 	}
 
-	function Listar_Facturas_Pendientes_NC()
+	function Listar_Facturas_Pendientes_NC($q)
 	{
-		$datos = $this->modelo->Listar_Facturas_Pendientes_NC();
+		$datos = $this->modelo->Listar_Facturas_Pendientes_NC($q);
 		$cli = array();	
 		foreach ($datos as $key => $value) {
 			$cli[] = array('id'=>$value['Codigo'],'text'=>$value['Cliente'],'data'=>$value);
