@@ -1236,8 +1236,8 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
 
   <div class="row">
 
-    <div class="panel panel-primary col-sm-12">
-      <div class="panel-body">
+    <div class="panel panel-primary col-sm-12" style="  margin-bottom: 5px;">
+      <div class="panel-body" style=" padding-top: 5px;">
         <div class="row">
           <div class="form-group col-xs-6 padding-all margin-b-1">
             <label for="inputEmail3" class="col control-label">Inicio Resumen</label>
@@ -1486,7 +1486,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             <!-- <div class="tab-content" style="background-color:#E7F5FF"> -->
             <div class="tab-content">
               <div id="home" class="tab-pane fade in active">
-                <div class="table-responsive" style="overflow-y: scroll; height:250px; width: auto;">
+                <div class="table-responsive" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;">
                   <!-- <div class="sombra" style> -->
                     <table id="tablaDetalle" class="table-sm" style="width: -webkit-fill-available;">
                       <thead>
