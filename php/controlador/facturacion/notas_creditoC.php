@@ -440,6 +440,7 @@ class notas_creditoC
 	function generar_nota_credito($parametros)
 	{
 
+
 		// print_r($parametros);die();
 		$FA = array();
 		$SubTotalCosto = 0;
@@ -457,6 +458,7 @@ class notas_creditoC
     $FA['Cta_CxP'] = $cliente_cta[0]['Cta_CxP'];
     $FA['Nota'] = $parametros['TxtConcepto'];
 
+		$this->modelo->delete_Detalle_Nota_Credito($FA['Serie_NC'],$FA['Nota_Credito']);
 
 		$FAC = $this->modelo->Factura_detalle($parametros['DCFactura'],$parametros['DCSerie'],$parametros['DCTC']);
 	  $FA['T'] = $FAC[0]["T"];
@@ -492,7 +494,6 @@ class notas_creditoC
            }
            $SubTotal_NC = $SubTotal_NC + $value["SUBTOTAL"];
 		 }
-
 
 		    	// print_r($parametros);die();
 		    if( floatval($parametros['LblTotalDC']) <= floatval($parametros['LblSaldo']))
