@@ -553,7 +553,7 @@ class autorizacion_sri
 		$aut = $TFA['ClaveAcceso_NC'];
 		// print_r($TFA);die();
 		 $xml = $this->generar_xml_nota_credito($TFA,$AdoDBNC);
-
+die();
 		 if($xml==1)
 	       {
 	       	 $firma = $this->firmar_documento(
@@ -3251,6 +3251,7 @@ function generar_xml_retencion($cabecera,$detalle)
     }
     function quitar_carac($query)
     {
+    	$query = preg_replace("[\n|\r|\n\r]", "", $query);
     	$buscar = array('á','é','í','ó','ú','Á','É','Í','Ó','Ú','Ñ','ñ','/','?','�','-','.');
     	$remplaza = array('a','e','i','o','u','A','E','I','O','U','N','n','','','','','');
     	$corregido = str_replace($buscar, $remplaza, $query);
