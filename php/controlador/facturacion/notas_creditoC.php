@@ -453,7 +453,7 @@ class notas_creditoC
 		$FA['Autorizacion'] = $parametros['TxtAutorizacion'];
     $FA['CodigoC'] = $parametros['DCClientes'];
     $FA['Cliente'] = $parametros['Cliente'];
-    $cliente_cta =  $this->modelo->Listar_Facturas_Pendientes_NC($parametros['DCClientes']);
+    $cliente_cta =  $this->modelo->Listar_Facturas_Pendientes_NC($parametros['Cliente']);
     $FA['Cta_CxP'] = $cliente_cta[0]['Cta_CxP'];
     $FA['Nota'] = $parametros['TxtConcepto'];
 
