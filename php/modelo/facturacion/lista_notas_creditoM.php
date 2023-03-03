@@ -24,6 +24,7 @@ class lista_notas_creditoM
 			INNER JOIN Clientes C ON F.CodigoC = C.Codigo
 			WHERE TA.Item = '".$_SESSION['INGRESO']['item']."' 
 			AND TA.Periodo ='".$_SESSION['INGRESO']['periodo']."'
+			AND TA.Serie =  F.Serie
 			AND TA.Item = F.Item
 			AND TA.Periodo = F.Periodo 
 			AND Secuencial_NC<>0";    
