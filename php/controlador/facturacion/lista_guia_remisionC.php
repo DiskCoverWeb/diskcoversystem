@@ -44,6 +44,10 @@ if(isset($_GET['descargar_xml']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->descargar_xml($parametros));
 }
+if(isset($_GET['guardarLineas']))
+{
+  $controlador->guardarLineas();
+}
 
 
 
@@ -304,6 +308,50 @@ QUITO - ECUADOR';
     	return  $this->email->enviar_email($archivos,$to_correo,$cuerpo_correo,$titulo_correo,$HTML=false);
     	
     }
+
+
+  	public function guardarLineas(){
+	    // $this->modelo->deleteAsiento($_POST['codigoCliente']);
+	    $num = count($this->modelo->getAsiento());
+	    $datos = array();
+	    $producto = $_POST['datos'];
+	    $precio_nuevo = $_POST['datos']['Precio'];
+	    if($producto['Cantidad']>$producto['Total'])
+	    {
+	     $precio_nuevo = number_format(($producto['Total'] / $producto['Cantidad']),7,'.','');     
+	    }
+	    //print_r($producto);die();
+
+	     // $precio_nuevo = number_format(($producto['Total'] / $producto['Cantidad']),6,'.','');
+	      // $totalNuevo = number_format(($producto['Cantidad'] * $precio_nuevo),4,'.','');
+	      $totalNuevo = number_format($producto['Total'],2,'.','');
+	      
+
+			SetAdoAddNew('Detalle_Factura');
+			SetAdoFields('TC','GR');
+			SetAdoFields('CODIGO',$producto['Codigo']);
+			SetAdoFields('CODIGO_L',$producto['CodigoL']);
+			SetAdoFields('PRODUCTO',$producto['Producto'] );
+			SetAdoFields('CANT',number_format($producto['Cantidad'],2,'.','') );
+			SetAdoFields('PRECIO',$precio_nuevo );
+			SetAdoFields('Total_Desc',$producto['Total_Desc'] );
+			SetAdoFields('Total_Desc2',$producto['Total_Desc2']);
+			SetAdoFields('TOTAL',$totalNuevo );
+			SetAdoFields('Total_IVA',number_format($producto['Total'] * ($producto['Iva'] / 100),2,'.','') );
+			SetAdoFields('Cta','Cuenta' );
+			SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+			SetAdoFields('Codigo_Cliente', );
+			SetAdoFields('HABIT', G_PENDIENTE);
+			SetAdoFields('Mes',$producto['MiMes'] );
+			SetAdoFields('TICKET',$producto['Periodo'] );
+			SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU'] );
+			SetAdoFields('A_No',$num+1 );
+			SetAdoFields('PRECIO2', $producto['Precio']);
+			return SetAdoUpdate();
+	      
+	      
+	     // return insert_generico("Detalle_Factura",$dato);
+ 	}
 
 
 

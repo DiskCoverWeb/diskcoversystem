@@ -553,7 +553,7 @@ class autorizacion_sri
 		$aut = $TFA['ClaveAcceso_NC'];
 		// print_r($TFA);die();
 		 $xml = $this->generar_xml_nota_credito($TFA,$AdoDBNC);
-die();
+// die();
 		 if($xml==1)
 	       {
 	       	 $firma = $this->firmar_documento(

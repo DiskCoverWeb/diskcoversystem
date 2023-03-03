@@ -12,6 +12,10 @@
       DCCiudadI()
       DCCiudadF()
       autocomplete_cliente();
+      AdoPersonas()
+      DCEmpresaEntrega()
+      cargar_grilla()
+      productos()
 
  $('#cliente').on('select2:select', function (e) {
       var data = e.params.data.data;
@@ -24,6 +28,18 @@
       console.log(data);
     });
   });
+
+   function calcular_totales(){
+    var TextVUnit = parseFloat($("#preciounitario").val());
+    var TextCant = parseFloat($("#cantidad").val());
+    var producto = $("#producto").val();
+    if (TextVUnit <= 0) {
+      $("#preciounitario").val(1);
+    }
+    var TextVTotal = TextVUnit*TextCant;
+     
+    $("#total").val(parseFloat(TextVTotal).toFixed(4));
+  }
 
   function autocomplete_cliente(){
     $('#cliente').select2({
@@ -163,6 +179,153 @@ function DCCiudadF() {
     })
 
 }
+
+
+
+function aceptar(){
+    producto = $("#producto").val();
+    productoDes = $("#producto option:selected").text();
+    cliente = $("#cliente").val();
+    if(cliente=='')
+    {
+      Swal.fire('Seleccione un cliente','','info');
+      return false;
+    }
+
+     DCLinea = $("#DCLinea").val();
+     tipoFactura = DCLinea.split(" ");
+     TextCI = $("#ci_ruc").val();
+    // console.log(tipoFactura[0]);
+    if (tipoFactura[0] == 'LC' && TextCI == '9999999999999') {
+      Swal.fire('En liquidación de compras no puede elegir consumidor final','','info');
+      return false;
+    }
+
+
+    pvp = $("#preciounitario").val();
+    total = $("#total").val();
+    cantidad = $("#cantidad").val();
+    if(cantidad==0 || cantidad=='')
+    {
+      Swal.fire('Cantidad no valida','','info');
+      return false;
+    }
+    var year = new Date().getFullYear();
+    $('#myModal_espera').modal('show');
+    var datosLineas = 
+    {
+        'Codigo' : producto,
+        'CodigoL' : producto[0],
+        'Producto' : productoDes,
+        'Precio' :pvp,
+        'Total_Desc' : 0,
+        'Total_Desc2' : 0,
+        'Iva' : 0,
+        'Total':total,
+        'MiMes': '',
+        'Periodo' :year,
+        'Cantidad' :cantidad,
+    }
+    codigoCliente = $("#codigoCliente").val();
+    $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/lista_guia_remisionC.php?guardarLineas=true',
+      data: {
+        'codigoCliente' : codigoCliente,
+        'datos' : datosLineas,
+      }, 
+      success: function(data)
+      {
+        cargar_grilla();
+      }
+    });
+  }
+
+
+  function cargar_grilla()
+  {
+    $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/divisasC.php?cargarLineas=true',
+      dataType: 'json',
+      success: function(data)
+      {
+        $('#tbl_divisas').html(data.tbl);   
+        $("#total0").val(parseFloat(data.total).toFixed(2));
+        $("#totalFac").val(parseFloat(data.total).toFixed(2));
+        $("#efectivo").val(parseFloat(data.total).toFixed(2));
+        $('#myModal_espera').modal('hide');
+      }
+    });
+  }
+
+  function productos(){
+    $('#producto').select2({
+        placeholder: 'Seleccione un Producto',
+        ajax: {
+             url: '../controlador/facturacion/divisasC.php?productos2=true',
+            dataType: 'json',
+            delay: 250,
+            processResults: function(data) {
+                return {
+                    results: data
+                };
+            },
+            cache: true
+        }
+    });
+  }
+
+
+  function Articulo_Seleccionado() {
+    var parametros = {
+        'codigo': $('#producto').val(),
+        'fecha': $('#fecha').val(),
+        'CodBod': '1',
+    }
+    $.ajax({
+        type: "POST",
+        url: '../controlador/facturacion/punto_ventaC.php?ArtSelec=true',
+        data: {
+            parametros: parametros
+        },
+        dataType: 'json',
+        success: function(data) {
+            console.log(data);
+            if (data.respueta == true) {
+                if (data.datos.Stock < 0) {
+                    Swal.fire(data.datos.Producto + ' ES UN PRODUCTO SIN EXISTENCIA', '', 'info').then(
+                        function() {
+                            $('#producto').empty();
+                            // $('#LabelStock').val(0);
+                        });
+
+                } else {
+
+                    $('#stock').val(data.datos.Stock);
+                    $('#preciounitario').val(data.datos.PVP);
+                    $('#LabelStock').focus();
+
+                    // $('#TxtDetalle').val(data.datos.Producto);
+                    // $('#').val(data.datos.);
+
+
+                    // $('#cambiar_nombre').on('shown.bs.modal', function() {
+                    //     $('#TxtDetalle').focus();
+                    // })
+
+                    // $('#cambiar_nombre').modal('show', function() {
+                    //     $('#TxtDetalle').focus();
+                    // })
+
+                }
+
+            }
+        }
+    });
+
+}
+
 </script>
 <div class="row">
   <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
@@ -306,7 +469,7 @@ function DCCiudadF() {
 
 -->
 <div class="row">
-  <div class="col-sm-6 col-sm-offset-1">
+  <div class="col-sm-6">
     <label>PRODUCTO</label>
     <select class="form-control input-xs" id="producto" onchange="Articulo_Seleccionado();">
     </select>
@@ -325,13 +488,13 @@ function DCCiudadF() {
   </div>
   <div class="col-sm-1">
     <label>Total</label>
-    <input type="text" name="total" id="total" value="0.00" class="form-control input-xs text-right">
+    <input type="text" name="total" id="total" value="0.00" class="form-control input-xs text-right" readonly onblur="aceptar()">
   </div>
-   <div class=" col-sm-1 text-right">     <br>
+   <!-- <div class=" col-sm-1 text-right">     <br>
       <a title="Aprobar" class="btn btn-default btn-block"  onclick="calcular_totales();aceptar();">
         <img src="../../img/png/mostrar.png" width="25">
       </a>     
-  </div>
+  </div> -->
 </div>
 
 <br>
