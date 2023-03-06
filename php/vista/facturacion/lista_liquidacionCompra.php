@@ -486,14 +486,14 @@
     var periodo = $('#ddl_periodo').val();
     if(periodo!='.')
     {
-       $('#txt_desde').val(periodo+'-01-01');
-       $('#txt_hasta').val(periodo+'-12-31');
+       //$('#txt_desde').val(periodo+'-01-01');
+       //$('#txt_hasta').val(periodo+'-12-31');
     }else
     {
       var currentTime = new Date();
       var year = currentTime.getFullYear()
-      $('#txt_desde').val(year+'-01-01');
-      $('#txt_hasta').val(year+'-12-31');
+     // $('#txt_desde').val(year+'-01-01');
+      //$('#txt_hasta').val(year+'-12-31');
     }
  }
 
