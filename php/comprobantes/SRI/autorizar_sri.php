@@ -640,7 +640,6 @@ class autorizacion_sri
 	    $TFA['Grupo'] = $TBeneficiario['Grupo'];
 	    $TFA['EmailC'] = $TBeneficiario['Email'];
 	    $TFA['EmailR'] = $TBeneficiario['Email2'];
-	     
    		// 'Detalle de descuentos
   	  	$sql = "SELECT DF.*,CP.Reg_Sanitario,CP.Marca
         FROM Detalle_Factura As DF, Catalogo_Productos As CP
@@ -679,7 +678,7 @@ class autorizacion_sri
         AND F.Autorizacion = GR.Autorizacion 
         AND F.Factura = GR.Factura ";
     	$AdoDBFA = $this->db->datos($sql2);
-
+    	
     	// print_r($sql);print_r($sql2);die();
 
 	     if(count($AdoDBFA) > 0)
@@ -726,6 +725,180 @@ class autorizacion_sri
 	         // Ejecutar_SQL_SP sSQL
 
 	         $xml = $this->generar_xml_guia_remision($TFA,$AdoDBDet);
+	          if($xml==1)
+	           {
+	           	 $firma = $this->firmar_documento(
+	           	 	$TFA['ClaveAcceso_GR'],
+	           	 	 generaCeros($_SESSION['INGRESO']['IDEntidad'],3),
+	           	 	$_SESSION['INGRESO']['item'],
+	           	 	$_SESSION['INGRESO']['Clave_Certificado'],
+	           	 	$_SESSION['INGRESO']['Ruta_Certificado']);
+	           	 // print($firma);die();
+	           	 if($firma==1)
+	           	 {
+	           	 	$validar_autorizado = $this->comprobar_xml_sri(
+	           	 		$TFA['ClaveAcceso_GR'],
+	           	 		$this->linkSriAutorizacion);
+	           	 	// print_r($validar_autorizado);die();
+	           	 	if($validar_autorizado == -1)
+			   		 {
+			   		 	$enviar_sri = $this->enviar_xml_sri(
+			   		 		$TFA['ClaveAcceso_GR'],
+			   		 		$this->linkSriRecepcion);
+			   		 	if($enviar_sri==1)
+			   		 	{
+			   		 		//una vez enviado comprobamos el estado de la factura
+			   		 		$resp =  $this->comprobar_xml_sri($TFA['ClaveAcceso_GR'],$this->linkSriAutorizacion);
+			   		 		if($resp==1)
+			   		 		{
+			   		 			// print('dd');
+			   		 			$resp = $this->actualizar_datos_GR($TFA);
+			   		 			return  $resp;
+			   		 		}
+			   		 		// print_r($resp);die();
+			   		 	}else
+			   		 	{
+			   		 		return $enviar_sri;
+			   		 	}
+
+			   		 }else 
+			   		 {
+			   		 	// print_r('expressiondd');die();
+			   		 	if($validar_autorizado==1)
+			   		 	{
+			   		 		return $this->actualizar_datos_GR($TFA);
+			   		 	}
+			   		 	// RETORNA SI YA ESTA AUTORIZADO O SI FALL LA REVISIO EN EL SRI
+			   			return $validar_autorizado;
+			   		 }
+	           	 }else
+	           	 {
+	           	 	//RETORNA SI FALLA AL FIRMAR EL XML
+	           	 	return $firma;
+	           	 }
+	           }else
+	           {
+	           	//RETORNA SI FALLA EL GENERAR EL XML o si ya esta en la carpeta de autorizados
+	            $resp = $this->actualizar_datos_GR($TFA);
+	           	return $xml;
+	           }
+
+	       }else
+	       {
+	       	 // print_r($sql);die();
+	       	 return -1;
+	       }
+
+        
+         
+    }
+
+    function SRI_Crear_Clave_Acceso_Guia_Remision_sin_factura($TFA)
+	{
+		$fecha_igualar = Leer_Campo_Empresa('Fecha_Igualar');
+
+		$Autorizar_XML = True;
+	    if(strlen($fecha_igualar) == 10){
+	       // if(CFechaLong(TFA.Fecha) < CFechaLong(Fecha_Igualar)){$Autorizar_XML = False;}
+	    }
+	    $TextoXML = "";
+	    
+	    // If Autorizar_XML Then
+	   // 'Averiguamos si la Factura esta a nombre del Representante
+	    $TBeneficiario = Leer_Datos_Clientes($TFA['CodigoC'],$codigo=1);
+	   // 'MsgBox TBeneficiario.RUC_CI_Rep & vbCrLf & TBeneficiario.Representante & vbCrLf & TBeneficiario.TD_Rep
+	    
+	    $TFA['Cliente'] = $TBeneficiario['Cliente'];
+	    $TFA['TD'] = $TBeneficiario['TD'];
+	    $TFA['CI_RUC'] = $TBeneficiario['CI_RUC'];
+	    $TFA['TelefonoC'] = $TBeneficiario['Telefono'];
+	    $TFA['DireccionC'] = $TBeneficiario['Direccion'];
+	    $TFA['Curso'] = $TBeneficiario['Direccion'];
+	    $TFA['Grupo'] = $TBeneficiario['Grupo'];
+	    $TFA['EmailC'] = $TBeneficiario['Email'];
+	    $TFA['EmailR'] = $TBeneficiario['Email2'];
+
+	    $TFA['T'] = 'P';
+	    $TFA['SP'] = '0';
+	    $TFA['Razon_Social'] = $TBeneficiario['Cliente'];
+	    $TFA['RUC_CI'] = $TBeneficiario['CI_RUC'];
+	    $TFA['TB'] =  $TBeneficiario['TD'];
+	        
+
+   		// 'Detalle de descuentos
+  	  	$sql = "SELECT DF.*,CP.Reg_Sanitario,CP.Marca
+        FROM Detalle_Factura As DF, Catalogo_Productos As CP
+        WHERE DF.Item = '".$_SESSION['INGRESO']['item']."'
+        AND DF.Periodo =  '".$_SESSION['INGRESO']['periodo']."'
+        AND DF.TC = '".$TFA['TC']."'
+        AND DF.Serie = '".$TFA['Serie']."'
+        AND DF.Autorizacion = '".$TFA['Autorizacion']."'
+        AND DF.Factura = ".$TFA['Factura']."
+        AND LEN(DF.Autorizacion) >= 13
+        AND DF.T <> 'A'
+        AND DF.Item = CP.Item
+        AND DF.Periodo = CP.Periodo
+        AND DF.Codigo = CP.Codigo_Inv
+        ORDER BY DF.ID,DF.Codigo ";
+   		$AdoDBDet = $this->db->datos($sql);
+
+   		// print_r($AdoDBDet);die();
+      
+		// 'Encabezado de la Guia de Remision
+    	
+		$sql = "SELECT GR.Remision,GR.Comercial,GR.CIRUC_Comercial,GR.Entrega,GR.CIRUC_Entrega,GR.CiudadGRI,GR.CiudadGRF,
+		        GR.Placa_Vehiculo,GR.FechaGRE,GR.FechaGRI,GR.FechaGRF,GR.Pedido,GR.Zona,GR.Serie_GR,GR.Autorizacion_GR,
+		        GR.Clave_Acceso_GR,GR.Hora_Aut_GR,GR.Estado_SRI_GR,GR.Error_FA_SRI,GR.Fecha_Aut_GR,GR.Fecha 
+		        FROM Facturas_Auxiliares As GR 
+		        WHERE GR.Item = '".$_SESSION['INGRESO']['item']."'
+		        AND GR.Periodo =  '".$_SESSION['INGRESO']['periodo']."'
+		        AND GR.TC = '".$TFA['TC']."' 
+		        AND GR.Serie = '".$TFA['Serie']."' 
+		        AND GR.Autorizacion = '".$TFA['Autorizacion']."' 
+		        AND GR.Factura =".$TFA['Factura']." 
+		        AND LEN(GR.Autorizacion_GR) = 13 
+		        AND GR.Remision > 0 ";
+		$AdoDBFA = $this->db->datos($sql);
+    	// print_r($sql);
+    	// print_r($AdoDBFA);die();
+
+	     if(count($AdoDBFA) > 0)
+	     {
+	         $Autorizar_XML = True;
+	         $TFA['Autorizacion_GR'] = $AdoDBFA[0]['Autorizacion_GR'];
+	         $TFA['Serie_GR'] = $AdoDBFA[0]['Serie_GR'];
+	         $TFA['Remision'] = $AdoDBFA[0]['Remision'];
+	         $TFA['Fecha'] = $AdoDBFA[0]['Fecha'];
+
+	        // -- 'MsgBox "Validar Porc IVA"
+	         Validar_Porc_IVA($TFA['Fecha']->format('Y-m-d'));
+	        // -- 'Generamos la Clave de acceso
+	        // -- '& Format$(TFA.Fecha, "ddmmyyyy") &
+	         if(strlen($TFA['Autorizacion_GR']) >= 13){
+	            $TFA['ClaveAcceso_GR'] = $this->Clave_acceso($TFA['Fecha']->format('Y-m-d'),'06',$TFA['Serie_GR'],$TFA['Remision']);
+	         }else{
+	            $TFA['ClaveAcceso_GR'] = G_NINGUNO;
+	         }
+
+	         // print_r($TFA);die();
+	         // TFA.Hora_GR = Format$(Time, FormatoTimes)
+	         // SRI_Autorizacion.Clave_De_Acceso = TFA.ClaveAcceso_GR
+	         	$sql = "UPDATE Facturas_Auxiliares 
+	            SET Clave_Acceso_GR = '" .$TFA['ClaveAcceso_GR']."' 
+	            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+	            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+	            AND TC = '" .$TFA['TC']."' 
+	            AND Serie = '" .$TFA['Serie']."' 
+	            AND Factura = " .$TFA['Factura']." 
+	            AND CodigoC = '" .$TFA['CodigoC']."' 
+	            AND Autorizacion = '" .$TFA['Autorizacion']."' ";
+	         	$this->db->String_Sql($sql);
+	         // Ejecutar_SQL_SP sSQL
+
+	         	// print_r($TFA);print_r($AdoDBDet);
+// die();
+	         $xml = $this->generar_xml_guia_remision($TFA,$AdoDBDet);
+	         // die();
 	          if($xml==1)
 	           {
 	           	 $firma = $this->firmar_documento(
