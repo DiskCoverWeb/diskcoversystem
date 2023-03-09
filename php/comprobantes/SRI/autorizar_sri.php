@@ -834,15 +834,15 @@ class autorizacion_sri
         AND DF.Serie = '".$TFA['Serie']."'
         AND DF.Autorizacion = '".$TFA['Autorizacion']."'
         AND DF.Factura = ".$TFA['Factura']."
-        AND LEN(DF.Autorizacion) >= 13
-        AND DF.T <> 'A'
         AND DF.Item = CP.Item
         AND DF.Periodo = CP.Periodo
         AND DF.Codigo = CP.Codigo_Inv
         ORDER BY DF.ID,DF.Codigo ";
+        // print_r($sql);
    		$AdoDBDet = $this->db->datos($sql);
 
-   		// print_r($AdoDBDet);die();
+   		// print_r($AdoDBDet);
+   		// die();
       
 		// 'Encabezado de la Guia de Remision
     	
@@ -860,7 +860,8 @@ class autorizacion_sri
 		        AND GR.Remision > 0 ";
 		$AdoDBFA = $this->db->datos($sql);
     	// print_r($sql);
-    	// print_r($AdoDBFA);die();
+    	// print_r($AdoDBFA);
+    	// die();
 
 	     if(count($AdoDBFA) > 0)
 	     {
@@ -868,7 +869,7 @@ class autorizacion_sri
 	         $TFA['Autorizacion_GR'] = $AdoDBFA[0]['Autorizacion_GR'];
 	         $TFA['Serie_GR'] = $AdoDBFA[0]['Serie_GR'];
 	         $TFA['Remision'] = $AdoDBFA[0]['Remision'];
-	         $TFA['Fecha'] = $AdoDBFA[0]['Fecha'];
+	         $TFA['Fecha'] = $AdoDBFA[0]['FechaGRE'];
 
 	        // -- 'MsgBox "Validar Porc IVA"
 	         Validar_Porc_IVA($TFA['Fecha']->format('Y-m-d'));

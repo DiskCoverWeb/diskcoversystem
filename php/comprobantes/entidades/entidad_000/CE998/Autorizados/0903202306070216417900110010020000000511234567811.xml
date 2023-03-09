@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><autorizacion>
   <estado>AUTORIZADO</estado>
-  <numeroAutorizacion>0803202306070216417900110010020000000091234567816</numeroAutorizacion>
-  <fechaAutorizacion class="fechaAutorizacion">08/03/2023 17:09:41.000</fechaAutorizacion>
+  <numeroAutorizacion>0903202306070216417900110010020000000511234567811</numeroAutorizacion>
+  <fechaAutorizacion class="fechaAutorizacion">09/03/2023 17:59:52.000</fechaAutorizacion>
   <comprobante><![CDATA[<?xml version="1.0" encoding="UTF-8"?><guiaRemision id="comprobante" version="1.0.0">
   <infoTributaria>
     <ambiente>1</ambiente>
@@ -9,79 +9,79 @@
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>0803202306070216417900110010020000000091234567816</claveAcceso>
+    <claveAcceso>0903202306070216417900110010020000000511234567811</claveAcceso>
     <codDoc>06</codDoc>
     <estab>001</estab>
     <ptoEmi>002</ptoEmi>
-    <secuencial>000000009</secuencial>
+    <secuencial>000000051</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
   <infoGuiaRemision>
     <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
     <dirPartida>24 DE MAYO</dirPartida>
-    <razonSocialTransportista>AARON LINO SOLEDISPA</razonSocialTransportista>
+    <razonSocialTransportista>0903722452</razonSocialTransportista>
     <tipoIdentificacionTransportista>05</tipoIdentificacionTransportista>
-    <rucTransportista>0953108966</rucTransportista>
+    <rucTransportista>0903722452</rucTransportista>
     <rise>000</rise>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <fechaIniTransporte>08/03/2023</fechaIniTransporte>
-    <fechaFinTransporte>08/03/2023</fechaFinTransporte>
+    <fechaIniTransporte>09/03/2023</fechaIniTransporte>
+    <fechaFinTransporte>09/03/2023</fechaFinTransporte>
     <placa>XXX-999</placa>
   </infoGuiaRemision>
   <destinatarios>
     <destinatario>
-      <identificacionDestinatario>0916682032</identificacionDestinatario>
-      <razonSocialDestinatario>ABAD HENRY</razonSocialDestinatario>
-      <dirDestinatario>BABA</dirDestinatario>
+      <identificacionDestinatario>1150669362</identificacionDestinatario>
+      <razonSocialDestinatario>1150669362</razonSocialDestinatario>
+      <dirDestinatario>AGUARICO</dirDestinatario>
       <motivoTraslado>Translado de mercaderia</motivoTraslado>
-      <ruta>De 24 DE MAYO a BABA</ruta>
+      <ruta>De 24 DE MAYO a AGUARICO</ruta>
       <codDocSustento>00</codDocSustento>
-      <numDocSustento>001-002-000000009</numDocSustento>
-      <numAutDocSustento>0702164179001</numAutDocSustento>
-      <fechaEmisionDocSustento>08/03/2023</fechaEmisionDocSustento>
+      <numDocSustento>001-006-000000005</numDocSustento>
+      <numAutDocSustento>159875321456987</numAutDocSustento>
+      <fechaEmisionDocSustento>09/03/2023</fechaEmisionDocSustento>
       <detalles>
         <detalle>
           <codigoInterno>98.24</codigoInterno>
           <descripcion>6 LINEAS, 2023: 0303</descripcion>
-          <cantidad>2.0000</cantidad>
+          <cantidad>1.0000</cantidad>
         </detalle>
       </detalles>
     </destinatario>
   </destinatarios>
   <infoAdicional>
-    <campoAdicional nombre="Direccion">RIO COCA</campoAdicional>
-    <campoAdicional nombre="Telefono">0961000174</campoAdicional>
-    <campoAdicional nombre="Email">jdae_14@hotmail.com</campoAdicional>
+    <campoAdicional nombre="Direccion">CDLA PRADERA 2 MZ D 20</campoAdicional>
+    <campoAdicional nombre="Telefono">042438591</campoAdicional>
+    <campoAdicional nombre="Email">diskcover@msn.com</campoAdicional>
   </infoAdicional>
-<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature122627">
-<ds:SignedInfo Id="Signature-SignedInfo70787">
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature333577">
+<ds:SignedInfo Id="Signature-SignedInfo665579">
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-<ds:Reference Id="SignedPropertiesID741775" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature122627-SignedProperties693517">
+<ds:Reference Id="SignedPropertiesID168456" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature333577-SignedProperties558587">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>jwx9BMrke2lgFPRZX2T7Aouuhls=</ds:DigestValue>
+<ds:DigestValue>Fw7qSfy7c6pTnCsywUw4GcUGuu4=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference URI="#Certificate1821840">
+<ds:Reference URI="#Certificate1417613">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>HdkNXsU2OtlfxF63BBEWD7hNIkw=</ds:DigestValue>
+<ds:DigestValue>h1MrkXOICV5mj75lLdXlABE6TSk=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference Id="Reference-ID-271671" URI="#comprobante">
+<ds:Reference Id="Reference-ID-46016" URI="#comprobante">
 <ds:Transforms>
 <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>R85ugnyVYhVjOMDHtzvC3ntIu9k=</ds:DigestValue>
+<ds:DigestValue>25F5PPKs7r6XWkHD0p8/D+1xWjs=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue Id="SignatureValue241593">
-SmuHO2kb/y1bZ9lvrleOoUwziLtzquop/gggYQ3ah2ZqTvZyC63wtZL2m0GaDpI3CsKVznVs5z5m
-ZtmCjZ8dtB4Pg+lw3xTKlsg+F5g/IGF9l7PtEcBjJ5MyCZ+r2Kzym+6CZx/hX2EqiBKt4eIbxATN
-IrqYKtLcKDNnmVYt+oCddQyBCIER8u/4kNVIWtM1ZjGRDvWN0snsykVEEgr3NL84Hb7wq1YYd6NV
-VejVXZsy7ZLS8Ia1WpZEPEPt3OkBOM0Mi1geaM1nwO5jVq9mAeZFiX0W5i5oGg6BgE1sK5aCvBUq
-WzEd5LKVFSDhXjhalT0vTup+hWM2ZqUAmgBJJA==
+<ds:SignatureValue Id="SignatureValue62158">
+AuaEWjiKx3kQcttKqML0WKJGEnUpSg/4xWw7k2q0QquiO+dNceUpRrH+IoTpcOK6qvPzyR02Jz1S
+RPBCrWAW7+epQkG3Kt5zieWEis7fZ/hdOMHkZkZ1T7qtUoyGZ2w0w/gSS418AP9vNn+bZmBQxB6S
+/FPjDGzMlGdUVCq5KJXpbek9Emw3XLBpuaJGCvxTNuVdcJ/MWHvs4LRqKnFf6pXtYmajuxS1dRKE
+73F2Y7RvVey5Cz4K+YaV6o2lKRr65UOlkJJfkCuZyeqJfjmvX91sM5O5yPhDeVio8B71CQMu2PZP
+Q5jr2gNcv3wp08bwHYeVSDQL9zyvPQiXLopjPg==
 </ds:SignatureValue>
-<ds:KeyInfo Id="Certificate1821840">
+<ds:KeyInfo Id="Certificate1417613">
 <ds:X509Data>
 <ds:X509Certificate>
 MIILkjCCCXqgAwIBAgIEXDrIAjANBgkqhkiG9w0BAQsFADCBmTELMAkGA1UEBhMCRUMxHTAbBgNV
@@ -152,6 +152,6 @@ LRuAVSyi58qyAD0Eu1zLMc3KhEUXoxF7aA8P0w==
 </ds:RSAKeyValue>
 </ds:KeyValue>
 </ds:KeyInfo>
-<ds:Object Id="Signature122627-Object1004799"><etsi:QualifyingProperties Target="#Signature122627"><etsi:SignedProperties Id="Signature122627-SignedProperties693517"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-03-08T17:09:35-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-271671"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></guiaRemision>]]></comprobante>
+<ds:Object Id="Signature333577-Object374726"><etsi:QualifyingProperties Target="#Signature333577"><etsi:SignedProperties Id="Signature333577-SignedProperties558587"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-03-09T17:59:47-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-46016"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></guiaRemision>]]></comprobante>
   <mensajes/>
 </autorizacion>

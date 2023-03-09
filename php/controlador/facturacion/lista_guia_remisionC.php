@@ -369,9 +369,9 @@ QUITO - ECUADOR';
 			SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU'] );
 			SetAdoFields('A_No',$num+1);
 			SetAdoFields('Precio2',$linea['Precio']);
-			SetAdoFields('Factura',$parametros['LblGuiaR_']);
-			SetAdoFields('Autorizacion',$parametros['LblAutGuiaRem_']);			
-			SetAdoFields('Serie',$codig_l[1]);
+			SetAdoFields('Factura',$parametros['txt_num_fac']);
+			SetAdoFields('Autorizacion',$parametros['txt_auto_fac']);			
+			SetAdoFields('Serie',$parametros['txt_serie_fac']);
 			return SetAdoUpdate();
 	      
 	      
@@ -401,19 +401,22 @@ QUITO - ECUADOR';
 	    $ci_comer = explode('_', $parametros['DCRazonSocial']);
 	    $codig_l = explode('_',$parametros['DCSerieGR']);
 	    $GR = $this->modelo->guia_remision_existente($codigo=false,$desde=false,$hasta=false,$serie=$codig_l[1],$factura=$parametros['LblGuiaR_']);
+	    $cliente = Cliente($parametros['codigoCliente'],$grupo = false,$query=false,$clave=false);
 
+	    // print_r($cliente);die();
+// print_r($GR);die();
   		if(count($GR)>0)
   		{
         $lc = ReadSetDataNum("GR_SERIE_".$codig_l[1], True, True);
-  			return 5;
+  			return array('resp'=>5,'clave'=>'');
   		}
 	    SetAdoAddNew('Facturas_Auxiliares');
 			SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
 			SetAdoFields('Item',$_SESSION['INGRESO']['item']);
 			SetAdoFields('TC','GR');	
-			SetAdoFields('Serie',$codig_l[1]);
-			SetAdoFields('Factura',$parametros['LblGuiaR_']);
-			SetAdoFields('Autorizacion',$parametros['LblAutGuiaRem_']);	
+			SetAdoFields('Serie',$parametros['txt_serie_fac']);
+			SetAdoFields('Factura',$parametros['txt_num_fac']);
+			SetAdoFields('Autorizacion',$parametros['txt_auto_fac']);	
 			SetAdoFields('Fecha',$parametros['MBoxFechaGRE']);
 			SetAdoFields('CodigoC',$parametros['codigoCliente']);
 			SetAdoFields('Remision',$parametros['LblGuiaR_']);
@@ -442,23 +445,25 @@ QUITO - ECUADOR';
 				// print_r('prin');die();
 				$TFA['CodigoC'] = $parametros['codigoCliente'];
 				$TFA['TC'] = 'GR';
-				$TFA['Serie'] = $codig_l[1];
-				$TFA['Autorizacion'] = $parametros['LblAutGuiaRem_'];
-				$TFA['Factura'] = $parametros['LblGuiaR_'];
+				$TFA['Serie'] = $parametros['txt_serie_fac'];
+				$TFA['Autorizacion'] = $parametros['txt_auto_fac'];
+				$TFA['Factura'] = $parametros['txt_num_fac'];
 				$FTA['SinFactura'] = 1;
 				$TFA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
 				$TFA['Fecha'] = $parametros['MBoxFechaGRE'];
         $TFA['Vencimiento'] = $parametros['MBoxFechaGRE'];
 
-			 $TFA['Comercial'] = $parametros['Comercial'];
-			 $TFA['CIRUCComercial'] =$ci_comer[0];
-			 $TFA['FechaGRI'] = $parametros['MBoxFechaGRI'];
-			 $TFA['FechaGRF'] = $parametros['MBoxFechaGRF'];
-			 $TFA['Placa_Vehiculo'] = $parametros['TxtPlaca'];
-			 $TFA['CIRUCEntrega'] = $parametros['DCEmpresaEntrega'];
-			 $TFA['Entrega'] = $parametros['Entrega'];
-			 $TFA['CiudadGRI'] = $parametros['DCCiudadI'];
-			 $TFA['CiudadGRF'] = $parametros['DCCiudadF'];
+				$TFA['Comercial'] = $parametros['Comercial'];
+				$TFA['CIRUCComercial'] =$ci_comer[0];
+				$TFA['FechaGRI'] = $parametros['MBoxFechaGRI'];
+				$TFA['FechaGRF'] = $parametros['MBoxFechaGRF'];
+				$TFA['Placa_Vehiculo'] = $parametros['TxtPlaca'];
+				$TFA['CIRUCEntrega'] = $parametros['DCEmpresaEntrega'];
+				$TFA['Entrega'] = $parametros['Entrega'];
+				$TFA['CiudadGRI'] = $parametros['DCCiudadI'];
+				$TFA['CiudadGRF'] = $parametros['DCCiudadF'];
+				$TFA['Serie_GR'] = $codig_l[1];
+				$TFA['Remision'] = $parametros['LblGuiaR_'];
 
 
 
@@ -493,8 +498,17 @@ QUITO - ECUADOR';
          $TFA['Descuento2'] = $descuento2;
          $TFA['Total_IVA'] = $total_iva;
          $TFA['Total_MN'] = $Total;
-        $lc = ReadSetDataNum($TFA['TC']."_SERIE_".$TFA['Serie'], True, True);
- 				return  $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision_sin_factura($TFA);
+        $lc = ReadSetDataNum($TFA['TC']."_SERIE_".$TFA['Serie_GR'], True, True);
+        $ClaveAcceso_GR = $this->sri->Clave_acceso($TFA['Fecha'],'06',$TFA['Serie_GR'],$TFA['Remision']);
+        $TFA['Autorizacion_GR'] = $ClaveAcceso_GR;
+ 				$respuesta = $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision_sin_factura($TFA);
+ 				 $TFA['Razon_Social'] = $cliente[0]['Cliente'];
+         $TFA['RUC_CI'] = $cliente[0]['CI_RUC'];
+         $TFA['Direccion_RS'] = $cliente[0]['Direccion'];
+
+ 				$this->punto_venta->pdf_guia_remision_elec_sin_fac($TFA,$TFA['Autorizacion_GR'],$periodo=false,0,1);
+
+ 				return array('resp'=>$respuesta,'clave'=>$ClaveAcceso_GR,'pdf'=>$TFA['Serie_GR'].'-'.generaCeros($TFA['Remision'],7));
     	}
   }
 

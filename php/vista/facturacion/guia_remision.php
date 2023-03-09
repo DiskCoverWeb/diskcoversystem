@@ -186,6 +186,30 @@ function DCCiudadF() {
 
 function validar_datos()
 {
+      if($('#txt_num_fac').val()=='')
+    {
+      Swal.fire('coloque un numero de factura','','info').then(function()
+        {
+           $('#txt_num_fac').select2('focus');
+        });
+      return false;
+    }
+    if($('#txt_serie_fac').val()=='')
+    {
+      Swal.fire('Coloque una serie de factura','','info').then(function()
+        {
+           $('#txt_serie_fac').select2('focus');
+        });
+      return false;
+    }
+    if($('#txt_auto_fac').val()=='')
+    {
+      Swal.fire('Autorizacion de factura invalida','','info').then(function()
+        {
+           $('#txt_auto_fac').select2('focus');
+        });
+      return false;
+    }
     producto = $("#producto").val();
     if(producto=='')
     {
@@ -427,6 +451,30 @@ function Eliminar(cod)
         });
       return false;
     }
+    if($('#txt_num_fac').val()=='')
+    {
+      Swal.fire('coloque un numero de factura','','info').then(function()
+        {
+           $('#txt_num_fac').select2('focus');
+        });
+      return false;
+    }
+    if($('#txt_serie_fac').val()=='')
+    {
+      Swal.fire('Coloque una serie de factura','','info').then(function()
+        {
+           $('#txt_serie_fac').select2('focus');
+        });
+      return false;
+    }
+    if($('#txt_auto_fac').val()=='')
+    {
+      Swal.fire('Autorizacion de factura invalida','','info').then(function()
+        {
+           $('#txt_auto_fac').select2('focus');
+        });
+      return false;
+    }
     cliente = $("#cliente").val();
     if(cliente=='')
     {
@@ -512,7 +560,7 @@ function Eliminar(cod)
        return false;
     } 
 
-    // $('#myModal_espera').modal('show');
+    $('#myModal_espera').modal('show');
 
     parametros = $('#form_guia').serialize();
     parametros = parametros+'&Comercial='+$('#DCRazonSocial option:selected').text()+'&Entrega='+$('#DCEmpresaEntrega option:selected').text();
@@ -524,37 +572,30 @@ function Eliminar(cod)
         success: function(response)
         {
           console.log(response);
-          // $('#myModal_espera').modal('hide');
+          $('#myModal_espera').modal('hide');
           cargar_grilla();
-            if(response == 1)
+            if(response.resp == 1)
               {
                  Swal.fire({
                   type: 'success',
                   title: 'Documento electronico autorizado',
                   allowOutsideClick: false,
                 }).then(function(){
-                 //window.open(url,'_blank');                      
+
+                  var url = '../../TEMP/' + response.pdf + '.pdf'; 
+                 window.open(url,'_blank');                      
                   location.reload();
                   // imprimir_ticket_fac(0,TextCI,TextFacturaNo,serie[1]);
                 });
-              }else if(response==2)
+              }else if(response.resp==2)
               {
-                Swal.fire({
-                  type: 'info',
-                  title: 'XML devuelto',
-                  allowOutsideClick: false,
-                }).then(() => {
-                  serie = DCLinea.split(" ");
-                  cambio = $("#cambio").val();
-                  efectivo = $("#efectivo").val();
-                  var url = '../controlador/facturacion/divisasC.php?ticketPDF=true&fac='+TextFacturaNo+'&serie='+serie[1]+'&CI='+TextCI+'&TC='+serie[0]+'&efectivo='+efectivo+'&saldo='+cambio;
-                  window.open(url,'_blank');
-                  location.reload();
-                  //imprimir_ticket_fac(0,TextCI,TextFacturaNo,serie[1]);
+                tipo_error_sri(response.clave);
+                Swal.fire('XML devuelto','','error').then(() => {
+                  location.reload();                 
                 });
                 //descargar_archivos(response.url,response.ar);
 
-              }else if(response == 4)
+              }else if(response.resp == 4)
               {
                  Swal.fire({
                   type: 'success',
@@ -569,7 +610,7 @@ function Eliminar(cod)
                   location.reload();
                   //imprimir_ticket_fac(0,TextCI,TextFacturaNo,serie[1]);
                 });
-              }else if(response==5)
+              }else if(response.resp==5)
               {
                 Swal.fire({
                   type: 'error',
@@ -579,9 +620,16 @@ function Eliminar(cod)
                 }).then(function(){
                   location.reload();
                 })
+              }else if(response.resp == -1)
+              {
+                tipo_error_sri(response.clave);
               }
               else
               {
+                if(response.clave!='')
+                {
+                    tipo_error_sri(response.clave);
+                }
                 Swal.fire({
                   type: 'error',
                   title: 'XML NO AUTORIZADO',
@@ -642,18 +690,30 @@ function Eliminar(cod)
   <div class="col-sm-2">
     <b>Telefono:</b>
     <input type="text" class="form-control input-xs" placeholder="Telefono" name="telefono" id="telefono">            
+  </div>
+  <div class="col-sm-1" style="padding-right: 0px;">
+    <b>No. Fac</b>
+    <input type="text" class="form-control input-xs" placeholder="1" name="txt_num_fac" id="txt_num_fac">            
   </div> 
-  <div class="col-sm-4">
+  <div class="col-sm-1" style="padding: 0px;">
+    <b>Serie Fac</b>
+    <input type="text" class="form-control input-xs" placeholder="001001" name="txt_serie_fac" id="txt_serie_fac">            
+  </div> 
+  <div class="col-sm-3">
+    <b>Autorizacion Factura:</b>
+    <input type="text" class="form-control input-xs" placeholder="" name="txt_auto_fac" id="txt_auto_fac">            
+  </div>  
+  <div class="col-sm-3">
 	<b>Guia de remision No.</b><br>
     <select class="form-control input-xs" id="DCSerieGR" name="DCSerieGR" onblur="DCSerieGR_LostFocus()">
        	<option value="">No Existe</option>
   	</select>
   </div>
-  <div class="col-sm-2" style="padding: 0px">
+  <div class="col-sm-1" style="padding: 0px;">
   	<b>Numero</b>
     <input type="text" name="LblGuiaR_" id="LblGuiaR_" class="form-control input-xs"  value="000000">
   </div>
-    <div class="col-sm-6">
+    <div class="col-sm-3">
 	  <b>AUTORIZACION GUIA DE REMISION</b>
 	  <input type="text" name="LblAutGuiaRem_" id="LblAutGuiaRem_" class="form-control input-xs" value="0">
 	</div>

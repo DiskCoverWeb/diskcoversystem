@@ -335,6 +335,103 @@ class punto_ventaM
     return $res;
    }
 
+    function pdf_guia_remision_elec_sin_fac($TFA,$nombre_archivo,$periodo=false,$aprobado=false,$descargar=false)
+   {
+    $res = 1;    
+        $sql = "SELECT DF.*,CP.Reg_Sanitario,CP.Marca
+        FROM Detalle_Factura As DF, Catalogo_Productos As CP
+        WHERE DF.Item = '".$_SESSION['INGRESO']['item']."'
+        AND DF.Periodo =  '".$_SESSION['INGRESO']['periodo']."'
+        AND DF.TC = '".$TFA['TC']."'
+        AND DF.Serie = '".$TFA['Serie']."'
+        AND DF.Autorizacion = '".$TFA['Autorizacion']."'
+        AND DF.Factura = ".$TFA['Factura']."
+        AND LEN(DF.Autorizacion) >= 13
+        AND DF.T <> 'A'
+        AND DF.Item = CP.Item
+        AND DF.Periodo = CP.Periodo
+        AND DF.Codigo = CP.Codigo_Inv
+        ORDER BY DF.ID,DF.Codigo ";
+      $AdoDBDet = $this->db->datos($sql);
+      
+   // 'Encabezado de la Guia de Remision
+      $sql2 = "SELECT GR.Remision,GR.Comercial,GR.CIRUC_Comercial,GR.Entrega,GR.CIRUC_Entrega,GR.CiudadGRI,GR.CiudadGRF,
+            GR.Placa_Vehiculo,GR.FechaGRE,GR.FechaGRI,GR.FechaGRF,GR.Pedido,GR.Zona,GR.Serie_GR,GR.Autorizacion_GR,
+            GR.Clave_Acceso_GR,GR.Hora_Aut_GR,GR.Estado_SRI_GR,GR.Error_FA_SRI,GR.Fecha_Aut_GR,GR.Fecha,GR.FechaGRE as 'Fecha_Aut',Autorizacion,Clave_Acceso_GR as 'Clave_Acceso'
+            FROM Facturas_Auxiliares As GR 
+            WHERE GR.Item = '".$_SESSION['INGRESO']['item']."'
+            AND GR.Periodo =  '".$_SESSION['INGRESO']['periodo']."'
+            AND GR.TC = '".$TFA['TC']."' 
+            AND GR.Serie = '".$TFA['Serie']."' 
+            AND GR.Autorizacion = '".$TFA['Autorizacion']."' 
+            AND GR.Factura =".$TFA['Factura']." 
+            AND Remision = '".$TFA['Remision']."'
+            AND LEN(GR.Autorizacion_GR) >= 13 
+            AND GR.Remision > 0 ";
+        // print_r($sql2);die();
+      $AdoDBFA = $this->db->datos($sql2);
+      // print_r($AdoDBFA);die();
+       $AdoDBFA[0]['Serie']=$TFA['Serie'];
+       $AdoDBFA[0]['Factura'] = $TFA['Factura'];
+       $AdoDBFA[0]['Factura_Aut']=$TFA['Autorizacion']; 
+       $AdoDBFA[0]['Razon_Social']= $TFA['Razon_Social']; 
+       $AdoDBFA[0]['RUC_CI']= $TFA['RUC_CI']; 
+       $AdoDBFA[0]['Lugar_Entrega']= $TFA['Entrega']; 
+       $AdoDBFA[0]['Nota'] = '';
+       $AdoDBFA[0]['Direccion_RS'] = $TFA['Direccion_RS'];
+       $AdoDBFA[0]['Imp_Mes'] = '.';
+
+      $tipo_con = Tipo_Contribuyente_SP_MYSQL($_SESSION['INGRESO']['RUC']);
+
+  if(count($AdoDBFA)>0 && count($tipo_con)>0)
+  {
+    $AdoDBFA['Tipo_contribuyente'] = $tipo_con;
+  }
+  // array_push($datos_fac, $tipo_con);
+    $datos_cli_edu=$this->Cliente($TFA['CodigoC']);
+    $archivos = array('0'=>$nombre_archivo.'.pdf','1'=>$TFA['Autorizacion_GR'].'.xml');
+    $to_correo = '';
+    if(count($datos_cli_edu)>0)
+    {
+      if($datos_cli_edu[0]['Email']!='.' && $datos_cli_edu[0]['Email']!='')
+      {
+        $to_correo.= $datos_cli_edu[0]['Email'].',';
+      }
+      if($datos_cli_edu[0]['Email2']!='.' && $datos_cli_edu[0]['Email2']!='')
+      {
+        $to_correo.= $datos_cli_edu[0]['Email2'].',';
+      }
+      if($datos_cli_edu[0]['EmailR']!='.' && $datos_cli_edu[0]['EmailR']!='')
+      {
+        $to_correo.= $datos_cli_edu[0]['EmailR'].',';
+      }
+      // $to_correo = substr($to_correo, 0,-1);
+    }
+    $sucursal = $this->catalogo_lineas_('GR',$TFA['Serie']);
+    $forma_pago = $this->DCTipoPago('01');
+
+    if(count($forma_pago)>0)
+    {
+      $AdoDBFA[0]['Tipo_Pago'] = $forma_pago[0]['CTipoPago'];
+    }
+
+    imprimirDocEle_guia($AdoDBFA,$AdoDBDet,$datos_cli_edu,$nombre_archivo,null,'factura',null,null,$imp=$descargar,$sucursal);
+    if($to_correo!='')
+    {
+      $titulo_correo = 'comprobantes electronicos';
+      $cuerpo_correo = 'comprobantes electronico';
+      if($aprobado)
+      {
+        $r = $this->email->enviar_email($archivos,$to_correo,$cuerpo_correo,$titulo_correo,$HTML=false);
+
+        // print_r($r);die();
+        return $r;
+      }
+      // print_r($r);
+    }
+    return $res;
+   }
+
   function pdf_factura_elec_rodillo($cod,$ser,$ci,$nombre,$clave_acceso,$periodo=false,$aprobado=false,$descargar=false)
    {
     $res = 1;

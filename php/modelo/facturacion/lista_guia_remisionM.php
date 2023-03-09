@@ -70,7 +70,7 @@ class lista_guia_remisionM
 	    }
 	    if($factura)
 	    {
-	    	$sql.=" AND Factura = '".$factura."'";
+	    	$sql.=" AND Remision = '".$factura."'";
 	    }
 	   $sql.=" ORDER BY Remision DESC"; 
 	   // // print_r($_SESSION['INGRESO']);
