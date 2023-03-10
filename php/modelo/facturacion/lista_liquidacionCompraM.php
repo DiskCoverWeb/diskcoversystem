@@ -91,20 +91,17 @@ class lista_liquidacionCompraM
 		
 		$sql ="SELECT T,TC,Serie,Autorizacion,Factura,Fecha,SubTotal,Con_IVA,IVA,Descuento+Descuento2 as Descuentos,Total_MN as Total,Saldo_MN as Saldo,RUC_CI,TB,Razon_Social,CodigoC,ID 
 		FROM Facturas 
-		WHERE TC='LC' ";
+		WHERE TC='LC' 
+		AND Item = '".$_SESSION['INGRESO']['item']."' ";
 		if($codigo!='T')
 		{
 			// si el codigo es T se refiere a todos
 		   $sql.=" AND CodigoC ='".$codigo."'";
 		} 
-		 $sql.="AND Item = '".$_SESSION['INGRESO']['item']."'";
-        if($periodo && $periodo!='.')
+        if($desde!='' && $hasta!='')
         {
-       	 $sql.= " AND Fecha BETWEEN '".$desde."' AND '".$hasta."'";
-        }//else
-       // {
-       // 	 $sql.= " AND Periodo BETWEEN   '01-01-".$_SESSION['INGRESO']['periodo']."' AND '31-12-".$_SESSION['INGRESO']['periodo']."' ";
-       // }
+       		 $sql.= " AND Fecha BETWEEN '".$desde."' AND '".$hasta."'";
+        }
 
        $sql.="ORDER BY ID DESC "; 
 	$sql.=" OFFSET ".$_SESSION['INGRESO']['paginacionIni']." ROWS FETCH NEXT ".$_SESSION['INGRESO']['numreg']." ROWS ONLY;";   

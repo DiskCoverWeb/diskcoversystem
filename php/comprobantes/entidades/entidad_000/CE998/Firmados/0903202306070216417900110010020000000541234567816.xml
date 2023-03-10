@@ -1,115 +1,83 @@
-<?xml version="1.0" encoding="UTF-8"?><autorizacion>
-  <estado>AUTORIZADO</estado>
-  <numeroAutorizacion>0203202304070216417900110010030000001031234567815</numeroAutorizacion>
-  <fechaAutorizacion class="fechaAutorizacion">02/03/2023 17:02:56.000</fechaAutorizacion>
-  <comprobante><![CDATA[<?xml version="1.0" encoding="UTF-8"?><notaCredito id="comprobante" version="1.0.0">
+<?xml version="1.0" encoding="UTF-8"?><guiaRemision id="comprobante" version="1.0.0">
   <infoTributaria>
     <ambiente>1</ambiente>
     <tipoEmision>1</tipoEmision>
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>0203202304070216417900110010030000001031234567815</claveAcceso>
-    <codDoc>04</codDoc>
+    <claveAcceso>0903202306070216417900110010020000000541234567816</claveAcceso>
+    <codDoc>06</codDoc>
     <estab>001</estab>
-    <ptoEmi>003</ptoEmi>
-    <secuencial>000000103</secuencial>
+    <ptoEmi>002</ptoEmi>
+    <secuencial>000000054</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
-  <infoNotaCredito>
-    <fechaEmision>02/03/2023</fechaEmision>
+  <infoGuiaRemision>
     <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
-    <tipoIdentificacionComprador>04</tipoIdentificacionComprador>
-    <razonSocialComprador>360ELECTRIC</razonSocialComprador>
-    <identificacionComprador>1792558662001</identificacionComprador>
+    <dirPartida>24 DE MAYO</dirPartida>
+    <razonSocialTransportista>1150669362</razonSocialTransportista>
+    <tipoIdentificacionTransportista>05</tipoIdentificacionTransportista>
+    <rucTransportista>1150669362</rucTransportista>
+    <rise>000</rise>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <codDocModificado>01</codDocModificado>
-    <numDocModificado>001-002-000000023</numDocModificado>
-    <fechaEmisionDocSustento>28/02/2023</fechaEmisionDocSustento>
-    <totalSinImpuestos>24.4</totalSinImpuestos>
-    <valorModificacion>24.4</valorModificacion>
-    <moneda>DOLAR</moneda>
-    <totalConImpuestos>
-      <totalImpuesto>
-        <codigo>2</codigo>
-        <codigoPorcentaje>2</codigoPorcentaje>
-        <baseImponible>0.00</baseImponible>
-        <valor>0.00</valor>
-      </totalImpuesto>
-    </totalConImpuestos>
-    <motivo>Anulacion por Nota de Credito</motivo>
-  </infoNotaCredito>
-  <detalles>
-    <detalle>
-      <codigoInterno>01.01.12</codigoInterno>
-      <codigoAdicional>1.01</codigoAdicional>
-      <descripcion>AALTORibera del Dueroespana</descripcion>
-      <cantidad>1.0000</cantidad>
-      <precioUnitario>4.4</precioUnitario>
-      <descuento>.0000</descuento>
-      <precioTotalSinImpuesto>4.4</precioTotalSinImpuesto>
-      <impuestos>
-        <impuesto>
-          <codigo>2</codigo>
-          <codigoPorcentaje>0</codigoPorcentaje>
-          <tarifa>0</tarifa>
-          <baseImponible>4.4</baseImponible>
-          <valor>0.00</valor>
-        </impuesto>
-      </impuestos>
-    </detalle>
-    <detalle>
-      <codigoInterno>98.24</codigoInterno>
-      <codigoAdicional>8</codigoAdicional>
-      <descripcion>6 LINEAS</descripcion>
-      <cantidad>1.0000</cantidad>
-      <precioUnitario>20</precioUnitario>
-      <descuento>.0000</descuento>
-      <precioTotalSinImpuesto>20</precioTotalSinImpuesto>
-      <impuestos>
-        <impuesto>
-          <codigo>2</codigo>
-          <codigoPorcentaje>0</codigoPorcentaje>
-          <tarifa>0</tarifa>
-          <baseImponible>20</baseImponible>
-          <valor>0.00</valor>
-        </impuesto>
-      </impuestos>
-    </detalle>
-  </detalles>
+    <fechaIniTransporte>09/03/2023</fechaIniTransporte>
+    <fechaFinTransporte>09/03/2023</fechaFinTransporte>
+    <placa>XXX-999</placa>
+  </infoGuiaRemision>
+  <destinatarios>
+    <destinatario>
+      <identificacionDestinatario>0926008491</identificacionDestinatario>
+      <razonSocialDestinatario>ABAD BARONA</razonSocialDestinatario>
+      <dirDestinatario>AGUARICO</dirDestinatario>
+      <motivoTraslado>Translado de mercaderia</motivoTraslado>
+      <ruta>De 24 DE MAYO a AGUARICO</ruta>
+      <codDocSustento>00</codDocSustento>
+      <numDocSustento>001-003-000000065</numDocSustento>
+      <numAutDocSustento>159875321456987</numAutDocSustento>
+      <fechaEmisionDocSustento>09/03/2023</fechaEmisionDocSustento>
+      <detalles>
+        <detalle>
+          <codigoInterno>98.40</codigoInterno>
+          <descripcion>7 LINEAS, 2023: 0303</descripcion>
+          <cantidad>3.0000</cantidad>
+        </detalle>
+      </detalles>
+    </destinatario>
+  </destinatarios>
   <infoAdicional>
-    <campoAdicional nombre="Direccion">URB. CAMINO DEL RIO</campoAdicional>
-    <campoAdicional nombre="Email">javier@example.com</campoAdicional>
+    <campoAdicional nombre="Direccion">SAUCES 6 MZ 319</campoAdicional>
+    <campoAdicional nombre="Telefono">042239711</campoAdicional>
+    <campoAdicional nombre="Email">diskcover@msn.com</campoAdicional>
   </infoAdicional>
-<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature221173">
-<ds:SignedInfo Id="Signature-SignedInfo144080">
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature118955">
+<ds:SignedInfo Id="Signature-SignedInfo338582">
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-<ds:Reference Id="SignedPropertiesID683446" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature221173-SignedProperties830018">
+<ds:Reference Id="SignedPropertiesID207753" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature118955-SignedProperties10017">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>qLmE3XLZGRoeKKuRCgHqsdx5G/I=</ds:DigestValue>
+<ds:DigestValue>NzjCidlBAN1ckoJMDKQmHSczo6I=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference URI="#Certificate1436185">
+<ds:Reference URI="#Certificate1615752">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>0dNP+5OcMU4tj6cf0NqdwtZu6Cs=</ds:DigestValue>
+<ds:DigestValue>/93g9rAtnt/fMq+RSz3ejJkQetE=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference Id="Reference-ID-1008352" URI="#comprobante">
+<ds:Reference Id="Reference-ID-992349" URI="#comprobante">
 <ds:Transforms>
 <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>X3Ug8dgTqLGzSJEnPuTYUiKoEdA=</ds:DigestValue>
+<ds:DigestValue>jOTDWIJoHNBwquOy2Yvp525cw9s=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue Id="SignatureValue365106">
-RWT0LDRo2CaQYzY51hrnYUTHRhrTlAOgt5Zc7u2es+bsmM4CRhgzbAWE2djYZVNNfdkql9ULeSSb
-Brrs7718oSuA++WRAaC+Fz9UXBV9InfrsaPUq960Mrd4R5crEk1hTtjIm9Y3uM1t16V4DgmQx2DR
-HeOouWtnTQT6BP9erzuub7pKrIdKV9qLmwTovKrTUvKvFucPZW/GdQtdKGhmAc8FGS5YswmtepI0
-ROPb3VC4EjUV/W0pUDqoYIAktIhzM0ja5GKZKwmAoIAtgZww1RIbM/bNGEVJ+uOdsF/S7ayEYu/l
-vD0UeV5XTO/3k+aMGLeQVU3eZFYzDXR1ZUGc2w==
+<ds:SignatureValue Id="SignatureValue880590">
+JIjO5ib7Tx2uuOy/LRQINqNRhfR6QPkFW5hI87wjljAEOF1DXN0n42KZ4xR4C6OZ0dIF3SbRVAIa
+hF+1pqQO+QCXf91bg6HU8q6UHBtvb6ZtkMISL2uQWIUuzlEpgKVW2/gbAdI/VRopB0HrPKBJWwHr
+H70AyBgLr4g20aYH1AqTxl7yOLCYAJmt80oAs23ifc0A5MMRsbw12JYXY+KEHKNRlygMoGSwA6Tj
+sGUWFLWy9EvyXP+wNz61tmo/l/CMTzLQCa3ip7q4C6RN5+WoGzZ5lhuwfI2VliPUQy9tOcWz/ray
+wx9Uus7VO/00ii7hmfS+eG7UmK9OFey6tWPULg==
 </ds:SignatureValue>
-<ds:KeyInfo Id="Certificate1436185">
+<ds:KeyInfo Id="Certificate1615752">
 <ds:X509Data>
 <ds:X509Certificate>
 MIILkjCCCXqgAwIBAgIEXDrIAjANBgkqhkiG9w0BAQsFADCBmTELMAkGA1UEBhMCRUMxHTAbBgNV
@@ -180,6 +148,4 @@ LRuAVSyi58qyAD0Eu1zLMc3KhEUXoxF7aA8P0w==
 </ds:RSAKeyValue>
 </ds:KeyValue>
 </ds:KeyInfo>
-<ds:Object Id="Signature221173-Object13820"><etsi:QualifyingProperties Target="#Signature221173"><etsi:SignedProperties Id="Signature221173-SignedProperties830018"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-03-02T17:02:50-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-1008352"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></notaCredito>]]></comprobante>
-  <mensajes/>
-</autorizacion>
+<ds:Object Id="Signature118955-Object87957"><etsi:QualifyingProperties Target="#Signature118955"><etsi:SignedProperties Id="Signature118955-SignedProperties10017"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-03-09T18:09:42-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-992349"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></guiaRemision>

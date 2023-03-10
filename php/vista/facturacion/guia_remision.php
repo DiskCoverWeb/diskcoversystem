@@ -1,12 +1,10 @@
 
 <?php
-  include "../controlador/facturacion/divisasC.php";
-  $divisas = new divisasC();
-
-  // print_r($_SESSION);die();
+  date_default_timezone_set('America/Guayaquil');
 ?>
 <script type="text/javascript">
   $(document).ready(function() {
+    limpiar_grid();
     $('#MBoxFechaGRE').select();
     autocomplete_cliente()
       DCCiudadI()
@@ -25,6 +23,7 @@
       $('#ci_ruc').val(data.ci_ruc);
       $('#codigoCliente').val(data.codigo);
       $('#celular').val(data.celular);
+      $('#txt_tc').text(data.tdCliente);
       console.log(data);
     });
   });
@@ -32,6 +31,10 @@
    function calcular_totales(){
     var TextVUnit = parseFloat($("#preciounitario").val());
     var TextCant = parseFloat($("#cantidad").val());
+    if(TextCant==0 || TextCant =='')
+    {
+      $("#cantidad").val(1);
+    }
     var producto = $("#producto").val();
     if (TextVUnit <= 0) {
       $("#preciounitario").val(1);
@@ -145,7 +148,7 @@ function DCCiudadF() {
             if (data.length > 0) {
                 llenarComboList(data, 'DCSerieGR');
             }
-
+            DCSerieGR_LostFocus();
         }
     })
 }
@@ -169,7 +172,7 @@ function DCCiudadF() {
            
                 //llenarComboList(data, 'DCSerieGR');
                 $('#LblGuiaR_').val(data['Guia']);
-                $('#LblAutGuiaRem').val(data['Auto']);
+                $('#LblAutGuiaRem_').val(data['Auto']);
            
         }
         // success: function(response) {
@@ -181,50 +184,157 @@ function DCCiudadF() {
 }
 
 
-
-function aceptar(){
+function validar_datos()
+{
+      if($('#txt_num_fac').val()=='')
+    {
+      Swal.fire('coloque un numero de factura','','info').then(function()
+        {
+           $('#txt_num_fac').select2('focus');
+        });
+      return false;
+    }
+    if($('#txt_serie_fac').val()=='')
+    {
+      Swal.fire('Coloque una serie de factura','','info').then(function()
+        {
+           $('#txt_serie_fac').select2('focus');
+        });
+      return false;
+    }
+    if($('#txt_auto_fac').val()=='')
+    {
+      Swal.fire('Autorizacion de factura invalida','','info').then(function()
+        {
+           $('#txt_auto_fac').select2('focus');
+        });
+      return false;
+    }
     producto = $("#producto").val();
-    productoDes = $("#producto option:selected").text();
+    if(producto=='')
+    {
+      Swal.fire('Seleccione un producto','','info').then(function()
+        {
+           $('#producto').select2('focus');
+        });
+      return false;
+    }
     cliente = $("#cliente").val();
     if(cliente=='')
     {
-      Swal.fire('Seleccione un cliente','','info');
+      Swal.fire('Seleccione un cliente','','info').then(function()
+        {
+          $('#cliente').select2('focus');
+        });
       return false;
     }
+    ciudad1 = $('#DCCiudadI').val();
+    if(ciudad1=='')
+    {
+       Swal.fire('Seleccione Ciudad de inicio','','info').then(function()
+        {
+            $('#DCCiudadI').select2('focus');
+        });
+       return false;
+    }   
+    ciudad2 = $('#DCCiudadF').val();
+    if(ciudad2=='')
+    {
+       Swal.fire('Seleccione Ciudad de Fin','','info').then(function()
+        {
+            $('#DCCiudadF').select2('focus');
+        });
+       return false;
+    }   
 
-     
-    pvp = $("#preciounitario").val();
-    total = $("#total").val();
-    cantidad = $("#cantidad").val();
-    if(cantidad==0 || cantidad=='')
+    DCRazonSocial = $('#DCRazonSocial').val();
+    if(DCRazonSocial=='')
     {
-      Swal.fire('Cantidad no valida','','info');
-      return false;
-    }
+       Swal.fire('Seleccione Transportista','','info').then(function()
+        {
+           // $('#DCRazonSocial').select();
+            $('#DCRazonSocial').select2('focus');
+        });
+       return false;
+    }   
+    DCEmpresaEntrega = $('#DCEmpresaEntrega').val();
+    if(DCEmpresaEntrega=='')
+    {
+       Swal.fire('Seleccione empresa Transportista','','info').then(function()
+        {
+            $('#DCEmpresaEntrega').select2('focus');
+           // $('#DCEmpresaEntrega').select();
+        });
+       return false;
+    }   
+    TxtPlaca = $('#TxtPlaca').val();
+    if(TxtPlaca=='')
+    {
+       Swal.fire('Ingrese un numero de placa','','info').then(function()
+        {
+           $('#TxtPlaca').select();
+        });
+       return false;
+    }   
+    TxtPedido = $('#TxtPedido').val();
+    if(TxtPedido=='')
+    {
+       Swal.fire('Ingrese un numero de pedido','','info').then(function()
+        {
+           $('#TxtPedido').select();
+        });
+       return false;
+    }   
+    TxtZona_ = $('#TxtZona_').val();
+    if(TxtZona_=='')
+    {
+       Swal.fire('Ingrese una Zona','','info').then(function()
+        {
+           $('#TxtZona_').select();
+        });
+       return false;
+    }   
+    TxtLugarEntrega = $('#TxtLugarEntrega').val();
+    if(TxtLugarEntrega=='')
+    {
+       Swal.fire('Ingrese un lugar de entrega','','info').then(function()
+        {
+           $('#TxtLugarEntrega').select();
+        });
+       return false;
+    }   
+    aceptar();
+}
+
+
+
+function aceptar(){
+   
     var year = new Date().getFullYear();
-    $('#myModal_espera').modal('show');
-    var datosLineas = 
+    producto = $("#producto").val();
+    productoDes = $("#producto option:selected").text();
+    cliente = $("#cliente").val();
+    codigoCliente = $("#codigoCliente").val();
+    // $('#myModal_espera').modal('show');
+    parametros = $('#form_guia').serialize();
+    var lineas = 
     {
-        'Codigo' : producto,
-        'CodigoL' : producto[0],
         'Producto' : productoDes,
-        'Precio' :pvp,
+        'productoCod':producto,
+        'Precio' :$('#preciounitario').val(),
         'Total_Desc' : 0,
         'Total_Desc2' : 0,
         'Iva' : 0,
-        'Total':total,
+        'Total':$('#total').val(),
         'MiMes': '',
         'Periodo' :year,
-        'Cantidad' :cantidad,
+        'Cantidad' :$('#cantidad').val(),
+        'codigoCliente':codigoCliente,
     }
-    codigoCliente = $("#codigoCliente").val();
     $.ajax({
       type: "POST",
-      url: '../controlador/facturacion/lista_guia_remisionC.php?guardarLineas=true',
-      data: {
-        'codigoCliente' : codigoCliente,
-        'datos' : datosLineas,
-      }, 
+      url: '../controlador/facturacion/lista_guia_remisionC.php?guardarLineas=true&'+parametros+'&T='+$('#txt_tc').text(),
+      data: {lineas:lineas}, 
       success: function(data)
       {
         cargar_grilla();
@@ -237,7 +347,7 @@ function aceptar(){
   {
     $.ajax({
       type: "POST",
-      url: '../controlador/facturacion/divisasC.php?cargarLineas=true',
+      url: '../controlador/facturacion/lista_guia_remisionC.php?cargarLineas=true',
       dataType: 'json',
       success: function(data)
       {
@@ -271,7 +381,7 @@ function aceptar(){
   function Articulo_Seleccionado() {
     var parametros = {
         'codigo': $('#producto').val(),
-        'fecha': $('#fecha').val(),
+        'fecha': $('#MBoxFechaGRE').val(),
         'CodBod': '1',
     }
     $.ajax({
@@ -296,19 +406,6 @@ function aceptar(){
                     $('#stock').val(data.datos.Stock);
                     $('#preciounitario').val(data.datos.PVP);
                     $('#LabelStock').focus();
-
-                    // $('#TxtDetalle').val(data.datos.Producto);
-                    // $('#').val(data.datos.);
-
-
-                    // $('#cambiar_nombre').on('shown.bs.modal', function() {
-                    //     $('#TxtDetalle').focus();
-                    // })
-
-                    // $('#cambiar_nombre').modal('show', function() {
-                    //     $('#TxtDetalle').focus();
-                    // })
-
                 }
 
             }
@@ -316,8 +413,239 @@ function aceptar(){
     });
 
 }
+function Eliminar(cod)
+{
+     $.ajax({
+      url:'../controlador/facturacion/lista_guia_remisionC.php?Eliminar=true',
+      type:'post',
+      dataType:'json',
+      data:{cod:cod},
+      success: function(response){
+        cargar_grilla()  
+       }
+    });
+}
+  function limpiar_grid()
+  {   
+     $.ajax({
+      url:'../controlador/facturacion/lista_guia_remisionC.php?limpiar_grid=true',
+      type:'post',
+      dataType:'json',
+      // data:{idpro:idpro},
+      success: function(response){
+        cargar_grilla(); 
+     
+    }
+    });
+  }
+
+ function guardarFactura(){
+
+
+     producto = $("#producto").val();
+    if(producto=='')
+    {
+      Swal.fire('Seleccione un producto','','info').then(function()
+        {
+           $('#producto').select2('focus');
+        });
+      return false;
+    }
+    if($('#txt_num_fac').val()=='')
+    {
+      Swal.fire('coloque un numero de factura','','info').then(function()
+        {
+           $('#txt_num_fac').select2('focus');
+        });
+      return false;
+    }
+    if($('#txt_serie_fac').val()=='')
+    {
+      Swal.fire('Coloque una serie de factura','','info').then(function()
+        {
+           $('#txt_serie_fac').select2('focus');
+        });
+      return false;
+    }
+    if($('#txt_auto_fac').val()=='')
+    {
+      Swal.fire('Autorizacion de factura invalida','','info').then(function()
+        {
+           $('#txt_auto_fac').select2('focus');
+        });
+      return false;
+    }
+    cliente = $("#cliente").val();
+    if(cliente=='')
+    {
+      Swal.fire('Seleccione un cliente','','info').then(function()
+        {
+          $('#cliente').select2('focus');
+        });
+      return false;
+    }
+    ciudad1 = $('#DCCiudadI').val();
+    if(ciudad1=='')
+    {
+       Swal.fire('Seleccione Ciudad de inicio','','info').then(function()
+        {
+            $('#DCCiudadI').select2('focus');
+        });
+       return false;
+    }   
+    ciudad2 = $('#DCCiudadF').val();
+    if(ciudad2=='')
+    {
+       Swal.fire('Seleccione Ciudad de Fin','','info').then(function()
+        {
+            $('#DCCiudadF').select2('focus');
+        });
+       return false;
+    }   
+
+    DCRazonSocial = $('#DCRazonSocial').val();
+    if(DCRazonSocial=='')
+    {
+       Swal.fire('Seleccione Transportista','','info').then(function()
+        {
+           // $('#DCRazonSocial').select();
+            $('#DCRazonSocial').select2('focus');
+        });
+       return false;
+    }   
+    DCEmpresaEntrega = $('#DCEmpresaEntrega').val();
+    if(DCEmpresaEntrega=='')
+    {
+       Swal.fire('Seleccione empresa Transportista','','info').then(function()
+        {
+            $('#DCEmpresaEntrega').select2('focus');
+           // $('#DCEmpresaEntrega').select();
+        });
+       return false;
+    }   
+    TxtPlaca = $('#TxtPlaca').val();
+    if(TxtPlaca=='')
+    {
+       Swal.fire('Ingrese un numero de placa','','info').then(function()
+        {
+           $('#TxtPlaca').select();
+        });
+       return false;
+    }   
+    TxtPedido = $('#TxtPedido').val();
+    if(TxtPedido=='')
+    {
+       Swal.fire('Ingrese un numero de pedido','','info').then(function()
+        {
+           $('#TxtPedido').select();
+        });
+       return false;
+    }   
+    TxtZona_ = $('#TxtZona_').val();
+    if(TxtZona_=='')
+    {
+       Swal.fire('Ingrese una Zona','','info').then(function()
+        {
+           $('#TxtZona_').select();
+        });
+       return false;
+    }   
+    TxtLugarEntrega = $('#TxtLugarEntrega').val();
+    if(TxtLugarEntrega=='')
+    {
+       Swal.fire('Ingrese un lugar de entrega','','info').then(function()
+        {
+           $('#TxtLugarEntrega').select();
+        });
+       return false;
+    } 
+
+    $('#myModal_espera').modal('show');
+
+    parametros = $('#form_guia').serialize();
+    parametros = parametros+'&Comercial='+$('#DCRazonSocial option:selected').text()+'&Entrega='+$('#DCEmpresaEntrega option:selected').text();
+    $.ajax({
+        type: "POST",
+        url: '../controlador/facturacion/lista_guia_remisionC.php?guardarFactura=true',
+        dataType: 'json',
+        data: parametros, 
+        success: function(response)
+        {
+          console.log(response);
+          $('#myModal_espera').modal('hide');
+          cargar_grilla();
+            if(response.resp == 1)
+              {
+                 Swal.fire({
+                  type: 'success',
+                  title: 'Documento electronico autorizado',
+                  allowOutsideClick: false,
+                }).then(function(){
+
+                  var url = '../../TEMP/' + response.pdf + '.pdf'; 
+                 window.open(url,'_blank');                      
+                  location.reload();
+                  // imprimir_ticket_fac(0,TextCI,TextFacturaNo,serie[1]);
+                });
+              }else if(response.resp==2)
+              {
+                tipo_error_sri(response.clave);
+                Swal.fire('XML devuelto','','error').then(() => {
+                  location.reload();                 
+                });
+                //descargar_archivos(response.url,response.ar);
+
+              }else if(response.resp == 4)
+              {
+                 Swal.fire({
+                  type: 'success',
+                  title: 'Factura guardada',
+                  allowOutsideClick: false,
+                }).then(() => {
+                  serie = DCLinea.split(" ");
+                  cambio = $("#cambio").val();
+                  efectivo = $("#efectivo").val();
+                  var url = '../controlador/facturacion/divisasC.php?ticketPDF=true&fac='+TextFacturaNo+'&serie='+serie[1]+'&CI='+TextCI+'&TC='+serie[0]+'&efectivo='+efectivo+'&saldo='+cambio;
+                  window.open(url,'_blank');
+                  location.reload();
+                  //imprimir_ticket_fac(0,TextCI,TextFacturaNo,serie[1]);
+                });
+              }else if(response.resp==5)
+              {
+                Swal.fire({
+                  type: 'error',
+                  title: 'Numero de documento repetido se recargara la pagina para colocar el numero correcto',
+                  // text:''
+                  allowOutsideClick: false,
+                }).then(function(){
+                  location.reload();
+                })
+              }else if(response.resp == -1)
+              {
+                tipo_error_sri(response.clave);
+              }
+              else
+              {
+                if(response.clave!='')
+                {
+                    tipo_error_sri(response.clave);
+                }
+                Swal.fire({
+                  type: 'error',
+                  title: 'XML NO AUTORIZADO',
+                  allowOutsideClick: false,
+                })
+              }              
+        }
+    });
+  }
 
 </script>
+<style>
+    .select2-container *:focus {
+        outline: solid 1px !important;
+    }
+  </style>
 <div class="row">
   <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
       <a href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0].'#');?>"
@@ -328,9 +656,10 @@ function aceptar(){
 </div>
 
  <div class="row">
+  <form id="form_guia">
   <div class="col-sm-2">
     <b>Fecha de emision de guia</b>
-    <input type="date" name="MBoxFechaGRE" id="MBoxFechaGRE" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>" onblur="MBoxFechaGRE_LostFocus()">
+    <input type="date" name="MBoxFechaGRE" id="MBoxFechaGRE" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>" onblur="MBoxFechaGRE_LostFocus();">
   </div>
     <div class="col-sm-5 col-xs-12">
     <b>Cliente</b>
@@ -338,6 +667,11 @@ function aceptar(){
       <select class="form-control input-xs" id="cliente" name="cliente">
         <option value="">Seleccione un cliente</option>
       </select>
+      <span class="input-group-btn">
+        <button type="button" class="btn btn-default btn-xs btn-flat" disabled >
+           <span class="fa" id="txt_tc" style="color:coral;" name="txt_tc">-</span>
+        </button>
+      </span>
       <span class="input-group-btn">
         <button type="button" class="btn btn-success btn-xs btn-flat" onclick="addCliente()" title="Nuevo cliente">
           <span class="fa fa-user-plus"></span>
@@ -351,23 +685,35 @@ function aceptar(){
   </div>
   <div class="col-sm-3">
     <b>Email:</b>
-    <input type="text" class="form-control input-xs" placeholder="Email" name="email" id="email" onblur="validador_correo()">            
+    <input type="text" class="form-control input-xs" placeholder="Email" name="email" id="email" readonly>            
   </div>
   <div class="col-sm-2">
     <b>Telefono:</b>
     <input type="text" class="form-control input-xs" placeholder="Telefono" name="telefono" id="telefono">            
+  </div>
+  <div class="col-sm-1" style="padding-right: 0px;">
+    <b>No. Fac</b>
+    <input type="text" class="form-control input-xs" placeholder="1" name="txt_num_fac" id="txt_num_fac">            
   </div> 
-  <div class="col-sm-4">
+  <div class="col-sm-1" style="padding: 0px;">
+    <b>Serie Fac</b>
+    <input type="text" class="form-control input-xs" placeholder="001001" name="txt_serie_fac" id="txt_serie_fac">            
+  </div> 
+  <div class="col-sm-3">
+    <b>Autorizacion Factura:</b>
+    <input type="text" class="form-control input-xs" placeholder="" name="txt_auto_fac" id="txt_auto_fac">            
+  </div>  
+  <div class="col-sm-3">
 	<b>Guia de remision No.</b><br>
     <select class="form-control input-xs" id="DCSerieGR" name="DCSerieGR" onblur="DCSerieGR_LostFocus()">
        	<option value="">No Existe</option>
   	</select>
   </div>
-  <div class="col-sm-2" style="padding: 0px">
+  <div class="col-sm-1" style="padding: 0px;">
   	<b>Numero</b>
     <input type="text" name="LblGuiaR_" id="LblGuiaR_" class="form-control input-xs"  value="000000">
   </div>
-    <div class="col-sm-6">
+    <div class="col-sm-3">
 	  <b>AUTORIZACION GUIA DE REMISION</b>
 	  <input type="text" name="LblAutGuiaRem_" id="LblAutGuiaRem_" class="form-control input-xs" value="0">
 	</div>
@@ -429,6 +775,7 @@ function aceptar(){
       <b>Lugar entrega</b>
       <input type="text" name="TxtLugarEntrega" id="TxtLugarEntrega" class="form-control input-xs">
   </div>
+</form>
 </div>
 
 
@@ -479,7 +826,7 @@ function aceptar(){
   </div>
   <div class="col-sm-1">
     <label>Total</label>
-    <input type="text" name="total" id="total" value="0.00" class="form-control input-xs text-right" readonly onblur="aceptar()">
+    <input type="text" name="total" id="total" value="0.00" class="form-control input-xs text-right" readonly onblur="validar_datos()">
   </div>
    <!-- <div class=" col-sm-1 text-right">     <br>
       <a title="Aprobar" class="btn btn-default btn-block"  onclick="calcular_totales();aceptar();">

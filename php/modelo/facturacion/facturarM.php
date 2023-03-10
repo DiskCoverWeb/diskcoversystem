@@ -419,6 +419,8 @@ class facturarM
       }
 
       $sql.=" ORDER BY Serie ";
+
+      // print_r($sql);die();
        $respuest  = $this->db->datos($sql);
      return $respuest;
   }

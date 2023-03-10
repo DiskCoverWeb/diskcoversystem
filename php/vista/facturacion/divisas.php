@@ -475,6 +475,16 @@ function aceptar(){
                       location.reload();
                       //imprimir_ticket_fac(0,TextCI,TextFacturaNo,serie[1]);
                     });
+                  }else if(response==5)
+                  {
+                    Swal.fire({
+                      type: 'error',
+                      title: 'Numero de documento repetido se recargara la pagina para colocar el numero correcto',
+                      // text:''
+                      allowOutsideClick: false,
+                    }).then(function(){
+                      location.reload();
+                    })
                   }
                   else
                   {

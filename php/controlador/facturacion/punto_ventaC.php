@@ -945,7 +945,7 @@ function error_sri($parametros)
 	$clave = $parametros['clave'].'.xml';
 	$entidad = generaCeros($_SESSION['INGRESO']['IDEntidad'],3);
 	$carpeta_entidad = dirname(__DIR__,2)."/comprobantes/entidades/entidad_".$entidad;
-	$carpeta_comprobantes = $carpeta_entidad.'/CE'.$_SESSION['INGRESO']['item'];
+	$carpeta_comprobantes = $carpeta_entidad.'/CE'.generaCeros($_SESSION['INGRESO']['item'],3);
 	$carpeta_no_autori = $carpeta_comprobantes."/No_autorizados";
 	$carpeta_rechazados = $carpeta_comprobantes."/Rechazados";
 			  
@@ -954,7 +954,7 @@ function error_sri($parametros)
 	$ruta1 = $carpeta_no_autori.'/'.$clave;
 	$ruta2 = $carpeta_rechazados.'/'.$clave;
 
-	// print_r($ruta);print_r($ruta2);die();
+	// print_r($ruta1);print_r($ruta2);die();
 	if(file_exists($ruta1))
 	{
 

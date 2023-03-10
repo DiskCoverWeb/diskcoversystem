@@ -306,12 +306,12 @@ class divisasC
       $FA['Serie'] = SinEspaciosDer($FA['DCLinea']);
       if (Existe_Factura($FA)) {
         $resultado = 5;
-        $lc = ReadSetDataNum("LC_SERIE_".$FA['Serie'], True, True);
+        $lc = ReadSetDataNum($FA['TC']."_SERIE_".$FA['Serie'], True, True);
         return $resultado;
       }
       $SaldoPendiente = 0;
       $DiarioCaja = ReadSetDataNum("Recibo_No", True, True);
-      $lc = ReadSetDataNum("LC_SERIE_".$FA['Serie'], True, True);
+      $lc = ReadSetDataNum($FA['TC']."_SERIE_".$FA['Serie'], True, True);
       
       $SubTotal_NC = $FA['DCNC'];
       $Total_Bancos = $FA['TextCheque'];

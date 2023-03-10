@@ -46,9 +46,33 @@ if(isset($_GET['descargar_xml']))
 }
 if(isset($_GET['guardarLineas']))
 {
-  $controlador->guardarLineas();
+	$parametros = $_GET;
+	$linea = $_POST['lineas'];
+    echo json_encode($controlador->guardarLineas($parametros,$linea));
 }
-
+if(isset($_GET['cargarLineas']))
+{
+  // print_r('e');die();
+  $datos = $controlador->cargaLineas();
+  echo json_encode($datos);
+}
+if(isset($_GET['Eliminar']))
+{
+  // print_r('e');die();
+  $datos = $controlador->Eliminar($_POST['cod']);
+  echo json_encode($datos);
+}
+if(isset($_GET['guardarFactura']))
+{
+	$parametros = $_POST;
+  echo json_encode($controlador->guardarFactura($parametros));
+}
+if(isset($_GET['limpiar_grid']))
+{
+  // print_r('e');die();
+  $datos = $controlador->limpiar_grid();
+  echo json_encode($datos);
+}
 
 
 
@@ -310,51 +334,188 @@ QUITO - ECUADOR';
     }
 
 
-  	public function guardarLineas(){
+  	public function guardarLineas($parametros,$linea){
 	    // $this->modelo->deleteAsiento($_POST['codigoCliente']);
+        // print_r($linea);
+	    // print_r($parametros);die();
 	    $num = count($this->modelo->getAsiento());
 	    $datos = array();
-	    $producto = $_POST['datos'];
-	    $precio_nuevo = $_POST['datos']['Precio'];
-	    if($producto['Cantidad']>$producto['Total'])
-	    {
-	     $precio_nuevo = number_format(($producto['Total'] / $producto['Cantidad']),7,'.','');     
-	    }
-	    //print_r($producto);die();
+	    $precio_nuevo = $linea['Precio'];
+	    $totalNuevo = number_format($linea['Total'],2,'.','');
+	    $producto = $this->modelo->getProductos_datos($linea['productoCod']);
+	    $codig_l = explode('_',$parametros['DCSerieGR']);
 
-	     // $precio_nuevo = number_format(($producto['Total'] / $producto['Cantidad']),6,'.','');
-	      // $totalNuevo = number_format(($producto['Cantidad'] * $precio_nuevo),4,'.','');
-	      $totalNuevo = number_format($producto['Total'],2,'.','');
-	      
+	      // print_r($producto);
+	      // print_r($parametros);die();
 
 			SetAdoAddNew('Detalle_Factura');
 			SetAdoFields('TC','GR');
-			SetAdoFields('CODIGO',$producto['Codigo']);
-			SetAdoFields('CODIGO_L',$producto['CodigoL']);
-			SetAdoFields('PRODUCTO',$producto['Producto'] );
-			SetAdoFields('CANT',number_format($producto['Cantidad'],2,'.','') );
-			SetAdoFields('PRECIO',$precio_nuevo );
-			SetAdoFields('Total_Desc',$producto['Total_Desc'] );
-			SetAdoFields('Total_Desc2',$producto['Total_Desc2']);
-			SetAdoFields('TOTAL',$totalNuevo );
-			SetAdoFields('Total_IVA',number_format($producto['Total'] * ($producto['Iva'] / 100),2,'.','') );
+			SetAdoFields('T',$parametros['T']);
+			SetAdoFields('Codigo',$producto[0]['Codigo_Inv']);
+			SetAdoFields('CodigoL',$codig_l[0]);
+			SetAdoFields('Producto',$producto[0]['Producto'] );
+			SetAdoFields('Cantidad',number_format($linea['Cantidad'],2,'.','') );
+			SetAdoFields('Precio',$precio_nuevo );
+			SetAdoFields('Total_Desc',$linea['Total_Desc'] );
+			SetAdoFields('Total_Desc2',$linea['Total_Desc2']);
+			SetAdoFields('Total',$totalNuevo );
+			SetAdoFields('Total_IVA',number_format($linea['Total'] * ($linea['Iva'] / 100),2,'.','') );
 			SetAdoFields('Cta','Cuenta' );
 			SetAdoFields('Item',$_SESSION['INGRESO']['item']);
-			SetAdoFields('Codigo_Cliente', );
+			SetAdoFields('CodigoC',$linea['codigoCliente']);
 			SetAdoFields('HABIT', G_PENDIENTE);
-			SetAdoFields('Mes',$producto['MiMes'] );
-			SetAdoFields('TICKET',$producto['Periodo'] );
+			SetAdoFields('Mes',date('mm'));
+			SetAdoFields('Ticket',$linea['Periodo'] );
 			SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU'] );
-			SetAdoFields('A_No',$num+1 );
-			SetAdoFields('PRECIO2', $producto['Precio']);
+			SetAdoFields('A_No',$num+1);
+			SetAdoFields('Precio2',$linea['Precio']);
+			SetAdoFields('Factura',$parametros['txt_num_fac']);
+			SetAdoFields('Autorizacion',$parametros['txt_auto_fac']);			
+			SetAdoFields('Serie',$parametros['txt_serie_fac']);
 			return SetAdoUpdate();
 	      
 	      
 	     // return insert_generico("Detalle_Factura",$dato);
  	}
 
+ 	function cargaLineas()
+	{
+	    $reg = $this->modelo->cargarLineas();
+	    $total = 0;
+	    foreach ($reg['datos'] as $key => $value) {
+	      $total+=$value['Total'];     
+	    }
+	    return array('tbl'=>$reg['tbl'],'total'=>$total);
+	}
+
+	function Eliminar($codigo)
+  	{
+    	return $this->modelo->limpiarGrid($codigo);
+  	}
+
+  	function guardarFactura($parametros)
+  	{
+  		
+	    // print_r($parametros);die();
+	    $TFA = array();
+	    $ci_comer = explode('_', $parametros['DCRazonSocial']);
+	    $codig_l = explode('_',$parametros['DCSerieGR']);
+	    $GR = $this->modelo->guia_remision_existente($codigo=false,$desde=false,$hasta=false,$serie=$codig_l[1],$factura=$parametros['LblGuiaR_']);
+	    $cliente = Cliente($parametros['codigoCliente'],$grupo = false,$query=false,$clave=false);
+
+	    // print_r($cliente);die();
+// print_r($GR);die();
+  		if(count($GR)>0)
+  		{
+        $lc = ReadSetDataNum("GR_SERIE_".$codig_l[1], True, True);
+  			return array('resp'=>5,'clave'=>'');
+  		}
+	    SetAdoAddNew('Facturas_Auxiliares');
+			SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
+			SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+			SetAdoFields('TC','GR');	
+			SetAdoFields('Serie',$parametros['txt_serie_fac']);
+			SetAdoFields('Factura',$parametros['txt_num_fac']);
+			SetAdoFields('Autorizacion',$parametros['txt_auto_fac']);	
+			SetAdoFields('Fecha',$parametros['MBoxFechaGRE']);
+			SetAdoFields('CodigoC',$parametros['codigoCliente']);
+			SetAdoFields('Remision',$parametros['LblGuiaR_']);
+			SetAdoFields('Comercial',$parametros['Comercial'] );
+			SetAdoFields('CIRUC_Comercial',$ci_comer[0]);
+			SetAdoFields('Entrega',$parametros['Entrega'] );
+			SetAdoFields('CIRUC_Entrega',$parametros['DCEmpresaEntrega'] );
+
+			SetAdoFields('CiudadGRI',$parametros['DCCiudadI']);
+			SetAdoFields('CiudadGRF',$parametros['DCCiudadF'] );
+			SetAdoFields('Placa_Vehiculo',$parametros['TxtPlaca'] );
+			SetAdoFields('FechaGRE',$parametros['MBoxFechaGRE'] );
+			SetAdoFields('FechaGRI',$parametros['MBoxFechaGRI']);
+			SetAdoFields('FechaGRF',$parametros['MBoxFechaGRF']);
+			SetAdoFields('Pedido',$parametros['TxtPedido']);
+			SetAdoFields('Zona',$parametros['TxtZona_'] );
+			SetAdoFields('Serie_GR',$codig_l[1]  );
+			SetAdoFields('Autorizacion_GR',$parametros['LblAutGuiaRem_']);
+			SetAdoFields('Clave_Acceso_GR',$parametros['LblAutGuiaRem_']);
+			SetAdoFields('Lugar_Entrega',$parametros['TxtLugarEntrega']);	
+			SetAdoUpdate();
 
 
+			if(strlen($parametros['LblAutGuiaRem_'])>=13)
+			{
+				// print_r('prin');die();
+				$TFA['CodigoC'] = $parametros['codigoCliente'];
+				$TFA['TC'] = 'GR';
+				$TFA['Serie'] = $parametros['txt_serie_fac'];
+				$TFA['Autorizacion'] = $parametros['txt_auto_fac'];
+				$TFA['Factura'] = $parametros['txt_num_fac'];
+				$FTA['SinFactura'] = 1;
+				$TFA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
+				$TFA['Fecha'] = $parametros['MBoxFechaGRE'];
+        $TFA['Vencimiento'] = $parametros['MBoxFechaGRE'];
+
+				$TFA['Comercial'] = $parametros['Comercial'];
+				$TFA['CIRUCComercial'] =$ci_comer[0];
+				$TFA['FechaGRI'] = $parametros['MBoxFechaGRI'];
+				$TFA['FechaGRF'] = $parametros['MBoxFechaGRF'];
+				$TFA['Placa_Vehiculo'] = $parametros['TxtPlaca'];
+				$TFA['CIRUCEntrega'] = $parametros['DCEmpresaEntrega'];
+				$TFA['Entrega'] = $parametros['Entrega'];
+				$TFA['CiudadGRI'] = $parametros['DCCiudadI'];
+				$TFA['CiudadGRF'] = $parametros['DCCiudadF'];
+				$TFA['Serie_GR'] = $codig_l[1];
+				$TFA['Remision'] = $parametros['LblGuiaR_'];
+
+
+
+				$datos = $this->modelo->lineas_guia_remision($codig_l[1],$parametros['LblGuiaR_']);
+				$descuento = 0;
+				$descuento2 = 0;
+				$subtotal = 0;
+				$Total = 0;
+				$total_iva = 0;
+				$con_iva = 0;$sin_iva=0;
+				foreach ($datos as $key => $value) {
+					$descuento+=$value['Total_Desc'];
+					$descuento2+=$value['Total_Desc2'];
+					$subtotal+=$value['Total'];
+					$Total+=$value['Total'];
+					$total_iva+=$value['Total_IVA'];
+					if($value['Total_IVA']>0)
+					{
+						$con_iva+=number_format($value['Cantidad']*$value['Precio'],2,'.','');
+					}else
+					{
+						$sin_iva+=number_format($value['Cantidad']*$value['Precio'],2,'.','');
+					}
+
+				}
+
+         $TFA['Imp_Mes'] = '.';
+         $TFA['SubTotal'] = $subtotal;
+         $TFA['Sin_IVA'] = $sin_iva;
+         $TFA['Con_IVA'] = $con_iva;
+         $TFA['Descuento'] = $descuento;
+         $TFA['Descuento2'] = $descuento2;
+         $TFA['Total_IVA'] = $total_iva;
+         $TFA['Total_MN'] = $Total;
+        $lc = ReadSetDataNum($TFA['TC']."_SERIE_".$TFA['Serie_GR'], True, True);
+        $ClaveAcceso_GR = $this->sri->Clave_acceso($TFA['Fecha'],'06',$TFA['Serie_GR'],$TFA['Remision']);
+        $TFA['Autorizacion_GR'] = $ClaveAcceso_GR;
+ 				$respuesta = $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision_sin_factura($TFA);
+ 				 $TFA['Razon_Social'] = $cliente[0]['Cliente'];
+         $TFA['RUC_CI'] = $cliente[0]['CI_RUC'];
+         $TFA['Direccion_RS'] = $cliente[0]['Direccion'];
+
+ 				$this->punto_venta->pdf_guia_remision_elec_sin_fac($TFA,$TFA['Autorizacion_GR'],$periodo=false,0,1);
+
+ 				return array('resp'=>$respuesta,'clave'=>$ClaveAcceso_GR,'pdf'=>$TFA['Serie_GR'].'-'.generaCeros($TFA['Remision'],7));
+    	}
+  }
+
+    function limpiar_grid()
+ 	{
+    	return $this->modelo->limpiarGrid();
+  	}
 }
 
 

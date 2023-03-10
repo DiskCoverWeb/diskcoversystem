@@ -49,6 +49,39 @@ class lista_guia_remisionM
 	}
 
 
+	function guia_remision_existente($codigo=false,$desde=false,$hasta=false,$serie=false,$factura=false)
+	{
+		$sql ="SELECT * FROM Facturas_Auxiliares
+				WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND Item = '".$_SESSION['INGRESO']['item']."'";    
+		if($codigo!='T' && $codigo!='')
+		{
+			// si el codigo es T se refiere a todos
+		   $sql.=" AND CodigoC ='".$codigo."'";
+		} 
+		if($serie)
+		{
+			// si el codigo es T se refiere a todos
+		   $sql.=" AND Serie_GR ='".$serie."'";
+		} 
+        if($desde!='' && $hasta!='')
+	    {
+	     	$sql.= " AND FechaGRE BETWEEN   '".$desde."' AND '".$hasta."' ";
+	    }
+	    if($factura)
+	    {
+	    	$sql.=" AND Remision = '".$factura."'";
+	    }
+	   $sql.=" ORDER BY Remision DESC"; 
+	   // // print_r($_SESSION['INGRESO']);
+		// print_r($sql);die();    
+		return $this->db->datos($sql);
+
+	       // return $datos;
+	}
+
+
+
 	function factura($factura=false,$serie=false,$Autorizacion=false)
 	{
 		$sql="SELECT * 
@@ -72,12 +105,14 @@ class lista_guia_remisionM
 		   
 	}
 
-	function lineas_nota_credito($serie,$numero)
+	function lineas_guia_remision($serie,$numero)
 	{
         $sql = "SELECT * FROM Detalle_Factura WHERE 
-        Periodo = '".$_SESSION['INGRESO']['item']."'
-		AND Item = '".$_SESSION['INGRESO']['periodo']."'
-        AND Factura = '".$numero."' AND Serie = '".$serie."' ";
+        Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND Item = '".$_SESSION['INGRESO']['item']."'
+				AND TC = 'GR'
+        AND Factura = '".$numero."' 
+        AND Serie = '".$serie."' ";
         // print_r($sql);die();
          $result = $this->db->datos($sql);
 	     return $result;
@@ -90,6 +125,56 @@ class lista_guia_remisionM
 	  	WHERE Clave_Acceso = '".$clave."'";
 		return $this->db->datos($sql);
 	  }
+
+	function getAsiento(){
+    	$sql = "SELECT * 
+            FROM Asiento_F
+            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+            ORDER BY A_No ";
+    $stmt = $this->db->datos($sql);
+    return $stmt;
+  }
+   function getProductos_datos($codigo){
+
+    $sql="SELECT *
+          FROM Catalogo_Productos 
+          WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+          AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+          AND TC = 'P' 
+          AND  Codigo_Inv = '".$codigo."'
+          ORDER BY Producto,Codigo_Inv ";
+          // print_r($sql);die();
+    $stmt = $this->db->datos($sql);
+    return $stmt;
+  }
+
+	function cargarLineas(){
+    $sql = "SELECT Codigo,Cantidad as 'CANTIDAD',Producto,Precio AS 'PRECIO',Total,ID
+            FROM Detalle_Factura
+            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+            AND TC = 'GR'
+            ORDER BY ID Desc ";
+            $botones[0] = array('boton'=>'Eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'ID' );
+           $datos = $this->db->datos($sql);
+           $stmt =  grilla_generica_new($sql,'Asiento_F','tbl_lineas',false,$botones,false,false,1,1,0,$tamaño_tabla=250,4);
+     return array('tbl'=>$stmt,'datos'=>$datos);
+  }
+
+  function limpiarGrid($cod=false){
+    $sql = "DELETE
+          FROM Detalle_Factura
+          WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+          AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+          AND CodigoU = '". $_SESSION['INGRESO']['CodigoU'] ."' ";
+          if($cod)
+          {
+            $sql.=" AND ID = '".$cod."'";
+          }
+    $stmt = $this->db->String_Sql($sql);
+    return $stmt;
+  }
 
 }
 

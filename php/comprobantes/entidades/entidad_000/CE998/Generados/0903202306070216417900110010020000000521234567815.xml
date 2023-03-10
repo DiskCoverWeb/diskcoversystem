@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<guiaRemision id="comprobante" version="1.0.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
+    <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
+    <ruc>0702164179001</ruc>
+    <claveAcceso>0903202306070216417900110010020000000521234567815</claveAcceso>
+    <codDoc>06</codDoc>
+    <estab>001</estab>
+    <ptoEmi>002</ptoEmi>
+    <secuencial>000000052</secuencial>
+    <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
+    <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
+  </infoTributaria>
+  <infoGuiaRemision>
+    <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
+    <dirPartida>24 DE MAYO</dirPartida>
+    <razonSocialTransportista>0903722452</razonSocialTransportista>
+    <tipoIdentificacionTransportista>05</tipoIdentificacionTransportista>
+    <rucTransportista>0903722452</rucTransportista>
+    <rise>000</rise>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <fechaIniTransporte>09/03/2023</fechaIniTransporte>
+    <fechaFinTransporte>09/03/2023</fechaFinTransporte>
+    <placa>XXX-999</placa>
+  </infoGuiaRemision>
+  <destinatarios>
+    <destinatario>
+      <identificacionDestinatario>1150669362</identificacionDestinatario>
+      <razonSocialDestinatario>1150669362</razonSocialDestinatario>
+      <dirDestinatario>AGUARICO</dirDestinatario>
+      <motivoTraslado>Translado de mercaderia</motivoTraslado>
+      <ruta>De 24 DE MAYO a AGUARICO</ruta>
+      <codDocSustento>00</codDocSustento>
+      <numDocSustento>001-006-000000005</numDocSustento>
+      <numAutDocSustento>159875321456987</numAutDocSustento>
+      <fechaEmisionDocSustento>09/03/2023</fechaEmisionDocSustento>
+      <detalles>
+        <detalle>
+          <codigoInterno>98.24</codigoInterno>
+          <descripcion>6 LINEAS, 2023: 0303</descripcion>
+          <cantidad>1.0000</cantidad>
+        </detalle>
+      </detalles>
+    </destinatario>
+  </destinatarios>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">CDLA PRADERA 2 MZ D 20</campoAdicional>
+    <campoAdicional nombre="Telefono">042438591</campoAdicional>
+    <campoAdicional nombre="Email">diskcover@msn.com</campoAdicional>
+  </infoAdicional>
+</guiaRemision>
