@@ -1,8 +1,27 @@
+<?php
+$mostrar_medidor = false;
+  switch ($_SESSION['INGRESO']['modulo_']) {
+    case '07': //AGUA POTABLE
+      $mostrar_medidor =  true;
+      break;    
+    default:
+      
+      break;
+  }
 
+?>
 <script type="text/javascript">
   var prove = '<?php if(isset($_GET['proveedor'])){echo 1;}?>'
 	$( document ).ready(function() {
 		 provincias();
+
+     $("#CMedidor").on('change',function() {
+       if($("#CMedidor").val()!="." && $("#CMedidor").val()!=""){
+        $("#DeleteMedidor").removeClass("no-visible")
+       }else{
+        $("#DeleteMedidor").addClass("no-visible")
+       }
+     })
 	});
 
 
@@ -23,7 +42,6 @@
             $("#myModal_espera").modal('show');
         },
         success: function(response){
-          console.log(response);
              limpiar();
              if(response.length>0)
              {
@@ -46,6 +64,13 @@
              {
                $('#ruc').val(ci_ruc);
                codigo();
+             }
+
+             if($('#codigoc').val()!="" && $('#codigoc').val()!="."){
+              $("#AddMedidor").removeClass("no-visible")
+              ListarMedidores($('#codigoc').val())
+             }else{
+              $("#AddMedidor").addClass("no-visible")
              }
 
             $("#myModal_espera").modal('hide');
@@ -174,7 +199,7 @@
     });
 	}
 
-function validar_sri()
+  function validar_sri()
   {
     var ci = $('#ruc').val();
      $.ajax({
@@ -236,7 +261,163 @@ function validar_sri()
     return vali;
 
   }
-</script>			
+
+  function AddMedidor(){
+    let CodigoC =$("#codigoc").val();
+
+    if (CodigoC!="" && CodigoC!=".") {
+      Swal.fire({
+        title: 'Ingresar Nuevo Medidor:',
+        showCancelButton: true,
+        cancelButtonText: 'Cerrar',
+        confirmButtonText: 'Guardar',
+        html:
+          '<label for="CMedidorNew">Numero de Medidor</label>' +
+          '<input type="tel" id="CMedidorNew" class="swal2-input" required>' +
+          '<span id="error1" style="color: red;"></span><br>' +
+          '<label for="LecturaInicial">Lectura Anterior</label>' +
+          '<input type="tel" id="LecturaInicial" class="swal2-input inputNumero">'+
+          '<span id="error2" style="color: red;"></span><br>' ,
+        focusConfirm: false,
+        preConfirm: () => {
+          const CMedidorNew = document.getElementById('CMedidorNew').value;
+          const LecturaInicial = document.getElementById('LecturaInicial').value;
+
+          if($.isNumeric(CMedidorNew)){
+            if($.isNumeric(LecturaInicial) || LecturaInicial==""){
+              return [CMedidorNew, LecturaInicial];
+            }else{
+              Swal.getPopup().querySelector('#error2').textContent = 'Debe ingresar un valor numérico';
+              return false
+            }
+          }else{
+            Swal.getPopup().querySelector('#error1').textContent = 'Debe ingresar un valor numérico';
+            return false
+          }
+        }
+      }).then((result) => {
+        if (result.value) {
+          const [CMedidorNew, LecturaInicial] = result.value;
+          if($.isNumeric(CMedidorNew)){
+            $.ajax({
+              type: 'POST',
+              dataType: 'json',
+              url: '../controlador/modalesC.php?AddMedidor=true',
+              data: {'Cuenta_No' : CMedidorNew , 'TxtCodigo' : CodigoC, 'LecturaInicial' : LecturaInicial},
+              beforeSend: function () {   
+                  $('#myModal_espera').modal('show');
+              },    
+              success: function(response)
+              {
+                $('#myModal_espera').modal('hide');  
+                if(response.rps){
+                  Swal.fire('¡Bien!', response.mensaje, 'success')
+                  ListarMedidores(CodigoC)
+                }else{
+                  Swal.fire('¡Oops!', response.mensaje, 'warning')
+                }        
+              },
+              error: function () {
+                $('#myModal_espera').modal('hide');
+                alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+              }
+            });
+          }
+        }
+      });
+    }else{
+      swal.fire('No se ha definido un Codigo de usuario, ingrese un RUC/CI para obtener el codigo.','','warning')
+    }
+  }
+
+  function DeleteMedidor(){
+    let idMedidor = $("#CMedidor").val();
+    let TxtApellidosS =$("#nombrec").val();
+    let CodigoC =$("#codigoc").val();
+
+    if(idMedidor!="." && idMedidor !=""){
+      Swal.fire({
+          title: `Esta seguro que desea Eliminar\nEl Medidor No. ${idMedidor} \nDe ${TxtApellidosS}`,
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          cancelButtonText: 'No.',
+          confirmButtonText: 'Si, Eliminar'
+        }).then((result) => {
+          if (result.value==true) {
+            $.ajax({
+              type: 'POST',
+              dataType: 'json',
+              url: '../controlador/modalesC.php?DeleteMedidor=true',
+              data: {'Cuenta_No' : idMedidor , 'TxtCodigo' : CodigoC},
+              beforeSend: function () {   
+                  $('#myModal_espera').modal('show');
+              },    
+              success: function(response)
+              {
+                $('#myModal_espera').modal('hide');  
+                if(response.rps){
+                  Swal.fire('¡Bien!', response.mensaje, 'success')
+                }else{
+                  Swal.fire('¡Oops!', response.mensaje, 'warning')
+                }  
+                ListarMedidores(CodigoC)      
+              },
+              error: function () {
+                $('#myModal_espera').modal('hide');
+                alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+              }
+            });
+          }
+        })
+    }else{
+      swal.fire('Debe seleccionar el medidor que desea eliminar','','warning')
+    }
+  }
+
+  function ListarMedidores(codigo)
+  {
+    if(codigo!="" && codigo!="."){
+      $.ajax({
+        url:   '../controlador/modalesC.php?ListarMedidores=true',      
+        type:'POST',
+        dataType:'json',
+        data:{'codigo':codigo},
+        success: function(response){
+          // construye las opciones del select dinámicamente
+          var select = $('#CMedidor');
+          select.empty(); // limpia las opciones existentes
+          $.each(response, function (i, opcion) {
+              if(opcion.Cuenta_No=="."){
+                select.append($('<option>', {
+                    value: '.',
+                    text: 'NINGUNO'
+                }));
+              }else{
+                select.append($('<option>', {
+                  value: opcion.Cuenta_No,
+                  text: opcion.Cuenta_No
+                }));
+              }
+          });
+          $('#CMedidor').change()
+        }
+      });
+    }
+
+  }
+</script>		
+
+<style type="text/css">
+  .visible{
+  visibility: visible;
+}
+
+.no-visible{
+  visibility: hidden;
+}
+</style>	
 
 			<div class="box box-info">
 
@@ -282,7 +463,6 @@ function validar_sri()
             <br>
             <label> </label><input type="checkbox" name="rbl_facturar" id="rbl_facturar" checked> Para Facturar</div>
           </div>
-        </div>
         <div class="row">
 					<div class="col-xs-8">
 					  <label for="direccion" class="control-label"><span style="color: red;">*</span>Direccion</label>
@@ -325,14 +505,29 @@ function validar_sri()
 						tabindex="0">
 					</div>
         </div>
-              </div>
-              <!-- /.box-body -->
-              <div class="box-footer">
-              	<button type="button" onclick="guardar_cliente()" class="btn btn-primary">Guardar</button>
-				      </div>
-              <!-- /.box-footer -->
-            </form>
-          </div>          
+        <?php if ($mostrar_medidor): ?>
+          <div class="row">
+            <div class="col-xs-6 col-sm-4">
+                <label for="CMedidor" class="control-label">Medidor No.</label>
+                <div class="input-group contenedor_item_center">
+                  <select class="form-control input-sm" id="CMedidor" name="CMedidor">
+                    <option value="<?php echo G_NINGUNO ?>">NINGUNO</option>
+                  </select>
+                    <a class="btn btn-sm btn-success no-visible" id="AddMedidor" title="Agregar Medidor" onclick="AddMedidor()"><i class="fa fa-plus"></i></a>
+                    <a class="btn btn-sm btn-danger no-visible" id="DeleteMedidor" title="Eliminar Medidor" onclick="DeleteMedidor()"><i class="fa fa-trash-o"></i></a>
+                  
+                </div>
+            </div>
+          </div>
+        <?php endif ?>
+      </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+        	<button type="button" onclick="guardar_cliente()" class="btn btn-primary">Guardar</button>
+	      </div>
+        <!-- /.box-footer -->
+      </form>
+    </div>          
 
   <div class="modal fade" id="datos_sri_cliente" role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">

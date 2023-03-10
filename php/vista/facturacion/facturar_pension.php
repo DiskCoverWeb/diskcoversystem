@@ -1,6 +1,16 @@
 <?php
   include "../controlador/facturacion/facturar_pensionC.php";
   $facturar = new facturar_pensionC();
+
+  $mostrar_medidor = false;
+  switch ($_SESSION['INGRESO']['modulo_']) {
+    case '07': //AGUA POTABLE
+      $mostrar_medidor =  true;
+      break;    
+    default:
+      
+      break;
+  }
 ?>
 
 <script type="text/javascript">
@@ -250,6 +260,10 @@
               <td><input class="text-right" style="border:0px;background:bottom"  size="10px" type ="text" id="descuento`+clave+`" value ="`+parseFloat(datos[indice].descuento).toFixed(2)+`" disabled/></td>
               <td><input class="text-right" style="border:0px;background:bottom"  size="10px" type ="text" id="descuento2`+clave+`" value ="`+parseFloat(datos[indice].descuento2).toFixed(2)+`" disabled/></td>
               <td><input class="text-right" style="border:0px;background:bottom" size="10px" type ="text" id="subtotal`+clave+`" value ="`+parseFloat(subtotal).toFixed(2)+`" disabled/></td>
+              
+              <td <?php echo ($mostrar_medidor)?"":'style="display:none"'?>><input class="text-right" style="border:0px;background:bottom" size="10px" type ="text" id="inputLectura`+clave+`" value ="`+datos[indice].Credito_No+`" disabled/></td>
+              <td <?php echo ($mostrar_medidor)?"":'style="display:none"'?>><input class="text-right" style="border:0px;background:bottom" size="10px" type ="text" id="inputMedidor`+clave+`"  value ="`+datos[indice].Codigo_Auto+`" disabled/></td>
+              
               <input size="10px" type ="hidden" id="CodigoL`+clave+`" value ="`+datos[indice].CodigoL+`"/>
               <input size="10px" type ="hidden" id="Iva`+clave+`" value ="`+datos[indice].iva+`"/>
             </tr>`;
@@ -452,10 +466,12 @@
     for (var i = 1; i <= datos; i++) {
       datosId = 'checkbox'+i;
       if ($('#'+datosId).prop('checked')) {
+        let adicionNombre = (($("#inputMedidor"+i).val()!="." && $("#inputMedidor"+i).val()!="")?" - "+$("#inputMedidor"+i).val():"");
+        adicionNombre += (($("#inputLectura"+i).val()!="." && $("#inputLectura"+i).val()!="")?" - "+$("#inputLectura"+i).val():"");
         datosLineas[key] = {
           'Codigo' : $("#Codigo"+i).val(),
           'CodigoL' : $("#CodigoL"+i).val(),
-          'Producto' : $("#Producto"+i).val(),
+          'Producto' : $("#Producto"+i).val()+adicionNombre,
           'Precio' : $("#valor"+i).val(),
           'Total_Desc' : $("#descuento"+i).val(),
           'Total_Desc2' : $("#descuento2"+i).val(),
@@ -463,6 +479,8 @@
           'Total' : $("#subtotal"+i).val(),
           'MiMes' : $("#Mes"+i).val(),
           'Periodo' : $("#Periodo"+i).val(),
+          'CORTE' : $("#inputLectura"+i).val(),
+          'Tipo_Hab' : $("#inputMedidor"+i).val(),
         };
         key++;
       }
@@ -1500,6 +1518,8 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                           <th>Descuento</th>
                           <th>Desc. P. P.</th>
                           <th>Total</th>
+                          <th <?php echo ($mostrar_medidor)?"":'style="display:none"'?>>Lectura</th>
+                          <th <?php echo ($mostrar_medidor)?"":'style="display:none"'?>>Medidor</th>
                         </tr>
                       </thead>
                       <tbody id="cuerpo">

@@ -129,7 +129,7 @@ class facturar_pensionM
   }
 
   public function getCatalogoProductos($codigoCliente){
-    $sql = "SELECT CF.Mes,CF.Num_Mes,CF.Valor,CF.Descuento,CF.Descuento2,CF.Codigo,CF.Periodo As Periodos,CF.Mensaje,CF.Credito_No,CP.*
+    $sql = "SELECT CF.Mes,CF.Num_Mes,CF.Valor,CF.Descuento,CF.Descuento2,CF.Codigo,CF.Periodo As Periodos,CF.Mensaje,CF.Credito_No, CF.Codigo_Auto ,CP.*
 			FROM Clientes_Facturacion As CF,Catalogo_Productos As CP
 			WHERE CF.Codigo = '".$codigoCliente."'
 			AND CP.Item = '".$_SESSION['INGRESO']['item']."'
@@ -402,7 +402,8 @@ class facturar_pensionM
     return $stmt;
   }
 
-  function insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, $CodigoInv, $Valor, $GrupoNo, $NoMes, $Anio, $Mifecha, $Total_Desc, $Total_Desc2){
+  function insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, $CodigoInv, $Valor, $GrupoNo, $NoMes, $Anio, $Mifecha, $Total_Desc, $Total_Desc2, $Credito_No=G_NINGUNO, $Codigo_Auto=G_NINGUNO){
+    $Codigo_Auto = ($Codigo_Auto!=G_NINGUNO)?str_pad($Codigo_Auto, 6, "0", STR_PAD_LEFT):G_NINGUNO;
     SetAdoAddNew('Clientes_Facturacion');
     SetAdoFields("T", G_NORMAL);
     SetAdoFields("Codigo", $codigoCliente);
@@ -415,6 +416,8 @@ class facturar_pensionM
     SetAdoFields("Mes", MesesLetras($NoMes));
     SetAdoFields("Periodo", $Anio);
     SetAdoFields("Fecha", $Mifecha);
+    SetAdoFields("Credito_No", $Credito_No);
+    SetAdoFields("Codigo_Auto", $Codigo_Auto);
     $stmt = SetAdoUpdate();
     Eliminar_Nulos_SP("Clientes_Facturacion");
     return $stmt;
@@ -553,6 +556,67 @@ class facturar_pensionM
     "AND RCC.T <> 'A' " .
     "AND RCC.CodigoC = C.Codigo " .
     "ORDER BY C.Cliente, RCC.TC, RCC.Serie, RCC.Factura, RCC.Anio, RCC.Mes, RCC.ID ";
+    return $this->db->datos($sSQL);
+  }
+
+  public function BuscarClienteCodigoMedidor($CMedidor){
+    $CMedidor = str_pad($CMedidor, 6, "0", STR_PAD_LEFT);
+    $sql="  SELECT C.Codigo,C.Cliente,CDE.Acreditacion
+        FROM Clientes As C INNER JOIN Clientes_Datos_Extras CDE ON CDE.Codigo=C.Codigo
+        WHERE C.T = 'N' 
+        AND C.Codigo <> '9999999999' 
+        AND CDE.Cuenta_No = '".$CMedidor."' ";
+   
+    $stmt = $this->db->datos($sql);
+    return $stmt;
+  }
+
+  public function getCatalogo_Cyber_Tiempo(){
+    $sql="SELECT Item, Desde, Hasta, Valor, X, ID
+          FROM   Catalogo_Cyber_Tiempo
+          WHERE  (Item = '" . $_SESSION['INGRESO']['item'] . "')
+          ORDER BY Desde DESC";
+    return $this->db->datos($sql);
+  }
+
+  public function getUltimoRegistroClientes_Facturacion($codigoCliente, $Codigo_Auto="", $Codigo_Inv=""){
+    $Codigo_Auto = ($Codigo_Auto!="")?str_pad($Codigo_Auto, 6, "0", STR_PAD_LEFT):"";
+    $sql = "SELECT CF.ID, CF.Mes,CF.Num_Mes,CF.Valor,CF.Periodo,CF.Codigo_Inv,CF.Credito_No 
+      FROM Clientes_Facturacion As CF 
+      WHERE CF.Codigo = '".$codigoCliente."'
+      AND CF.Item = '".$_SESSION['INGRESO']['item']."'
+      AND CF.Mes <> '.'
+      ".(($Codigo_Auto!="")?" AND CF.Codigo_Auto = '".$Codigo_Auto."' ":"")."
+      ".(($Codigo_Inv!="")?" AND CF.Codigo_Inv = '".$Codigo_Inv."' ":"")."
+      ORDER BY CF.Periodo DESC,CF.Num_Mes DESC, CF.ID DESC
+      OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY";
+    $stmt = $this->db->datos($sql);
+    return $stmt;
+  }
+
+  public function getUltimoRegistroDetalleFactura($codigoCliente, $Tipo_Hab="", $Codigo_Inv=""){
+    $Tipo_Hab = ($Tipo_Hab!="")?str_pad($Tipo_Hab, 6, "0", STR_PAD_LEFT):"";
+    $sql = "SELECT DF.ID, DF.Corte, DF.Tipo_Hab, DF.Codigo, DF.Mes_No,DF.Ticket
+      FROM Detalle_Factura As DF 
+      WHERE DF.CodigoC = '".$codigoCliente."'
+      AND DF.Item = '".$_SESSION['INGRESO']['item']."'
+      ".(($Tipo_Hab!="")?" AND DF.Tipo_Hab = '".$Tipo_Hab."' ":"")."
+      ".(($Codigo_Inv!="")?" AND DF.Codigo = '".$Codigo_Inv."' ":"")."
+      ORDER BY DF.Ticket,DF.Mes_No DESC
+      OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY";
+    $stmt = $this->db->datos($sql);
+    return $stmt;
+  }
+
+  public function getPeriodoAbierto()
+  {
+    $sSQL = "SELECT ".Full_Fields('Fechas_Balance')." FROM Fechas_Balance " .
+       "WHERE Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' " .
+       "AND Item = '" . $_SESSION['INGRESO']['item'] . "' " .
+       "AND ISNUMERIC(SUBSTRING(Detalle,1,4)) <> 0 " .
+       "AND Cerrado = 0 " .
+       "ORDER BY Fecha_Final  ASC
+        OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY";
     return $this->db->datos($sSQL);
   }
 }

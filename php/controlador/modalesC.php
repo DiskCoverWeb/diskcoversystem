@@ -62,6 +62,22 @@ if(isset($_GET['pdf_retencion']))
 	echo json_encode($controlador->pdf_retenciones($parametros));
 }
 
+if(isset($_GET['AddMedidor']))
+{
+	echo json_encode($controlador->AddMedidor($_POST));
+}
+
+if(isset($_GET['DeleteMedidor']))
+{
+	echo json_encode($controlador->DeleteMedidor($_POST));
+}
+
+if(isset($_GET['ListarMedidores']))
+{
+	echo json_encode($controlador->Listar_Medidores($_POST["codigo"]));
+	exit();
+}
+
 /**
  * 
  */
@@ -366,6 +382,40 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		print_r($parametros);die();
 	}
 
+	function DeleteMedidor($parametros)
+	{
+		@$parametros['Cuenta_No'] = str_pad($parametros['Cuenta_No'], 6, "0", STR_PAD_LEFT);
+		extract($parametros);
+		$respuesta = $this->modelo->DeleteMedidor($parametros);
+		if($respuesta){
+			return array('rps'=>true, 'mensaje' => "Medidor No. {$Cuenta_No} eliminado correctamente.");
+		}else{
+			return array('rps'=>false, 'mensaje' => 'No se pudo eliminar el medidor No. '.$Cuenta_No);
+		}
+	}
+
+	function AddMedidor($parametros)
+	{
+		@$parametros['Cuenta_No'] = str_pad($parametros['Cuenta_No'], 6, "0", STR_PAD_LEFT);
+		extract($parametros);
+		$respuesta = $this->modelo->GetMedidor($parametros);
+		if(count($respuesta)<=0){
+			$this->modelo->DeleteMedidor($parametros);
+			$respuesta = $this->modelo->AddMedidor($parametros);
+			if($respuesta){
+				return array('rps'=>true, 'mensaje' => "Medidor No. {$Cuenta_No} creado correctamente.");
+			}else{
+				return array('rps'=>false, 'mensaje' => 'No se pudo crear el medidor No. '.$Cuenta_No);
+			}
+		}else{
+			return array('rps'=>false, 'mensaje' => "El medidor No. {$Cuenta_No} ya esta asociado al cliente {$respuesta[0]['Codigo']}");
+		}
+	}
+
+	function Listar_Medidores($codigo)
+	{
+		return $this->modelo->Listar_Medidores($codigo);
+	}
 
 
 }

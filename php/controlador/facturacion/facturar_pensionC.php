@@ -208,6 +208,7 @@ if(isset($_GET['getMBHistorico']))
   $datos = $controlador->getMBHistorico();
   echo json_encode($datos);
 }
+
 if(isset($_GET['BuscarClienteCodigo']))
 {
   $data = $controlador->getClientes('',"{$_GET['BuscarClienteCodigo']}");
@@ -216,6 +217,18 @@ if(isset($_GET['BuscarClienteCodigo']))
   }else{
     echo json_encode(['rps'=>false, 'data' => [], 'mensaje' => 'Usuario no encontrado']);
   }
+}
+
+if(isset($_GET['BuscarClienteCodigoMedidor']))
+{
+  echo json_encode($controlador->getClienteCodigoMedidor("{$_GET['BuscarClienteCodigoMedidor']}"));
+  exit();
+}
+
+if(isset($_GET['GuardarConsumoAgua']))
+{
+  echo json_encode($controlador->GuardarConsumoAgua($_POST));
+  exit();
 }
 
 class facturar_pensionC
@@ -306,7 +319,7 @@ class facturar_pensionC
 		$datos = $this->facturacion->getCatalogoProductos($codigoCliente);
 		$catalogo = [];
 		foreach ($datos as $value) {
-			$catalogo[] = array('mes'=> utf8_encode($value['Mes']),'codigo'=> utf8_encode($value['Codigo_Inv']),'periodo'=> utf8_encode($value['Periodos']),'producto'=>$value['Producto'],'valor'=> utf8_encode($value['Valor']), 'descuento'=> utf8_encode($value['Descuento']),'descuento2'=> utf8_encode($value['Descuento2']),'iva'=> utf8_encode($value['IVA']),'CodigoL'=> utf8_encode($value['Codigo']),'CodigoL'=> utf8_encode($value['Codigo']));
+			$catalogo[] = array('mes'=> utf8_encode($value['Mes']),'codigo'=> utf8_encode($value['Codigo_Inv']),'periodo'=> utf8_encode($value['Periodos']),'producto'=>$value['Producto'],'valor'=> utf8_encode($value['Valor']), 'descuento'=> utf8_encode($value['Descuento']),'descuento2'=> utf8_encode($value['Descuento2']),'iva'=> utf8_encode($value['IVA']),'CodigoL'=> utf8_encode($value['Codigo']),'CodigoL'=> utf8_encode($value['Codigo']),'Credito_No'=>$value['Credito_No'],'Codigo_Auto'=>$value['Codigo_Auto']);
 		}
     return $catalogo;
 	}
@@ -833,6 +846,14 @@ class facturar_pensionC
       SetAdoFields("Mes", $producto['MiMes']);
       SetAdoFields("TICKET", $producto['Periodo']);
       SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+
+      if(isset($producto['CORTE'])){
+        SetAdoFields("CORTE", $producto['CORTE']);
+      }
+      if(isset($producto['Tipo_Hab'])){
+        SetAdoFields("Tipo_Hab", $producto['Tipo_Hab']);
+      }
+
       SetAdoFields("A_No", $Contador);
       $Contador++;
       $stmt = SetAdoUpdate();
@@ -970,5 +991,86 @@ class facturar_pensionC
     return (array("MBHistorico" => $FechaInicial ));
   }
 
+  public function getClienteCodigoMedidor($CMedidor){
+    $dataCliente = $this->facturacion->BuscarClienteCodigoMedidor($CMedidor);
+    if(count($dataCliente)>0){
+      $data = $dataCliente[0];
+      $ClienteFacturacion = $this->facturacion->getUltimoRegistroClientes_Facturacion($data['Codigo'], $CMedidor, "JG.01");
+      $DetalleFactura = $this->facturacion->getUltimoRegistroDetalleFactura($data['Codigo'], $CMedidor, "JG.01");
+      if (count($ClienteFacturacion) > 0 && ($ClienteFacturacion[0]['Periodo'] >= @$DetalleFactura[0]['Periodo'] && $ClienteFacturacion[0]['Num_Mes'] >= @$DetalleFactura[0]['Mes_No'])) {
+        $data['ultimaMedida'] = $ClienteFacturacion[0]['Credito_No'];
+        $data['fechaUltimaMedida'] = MesesLetras($ClienteFacturacion[0]['Num_Mes']) . "/" . $ClienteFacturacion[0]['Periodo'];
+      } elseif (count($DetalleFactura) > 0) {
+        $data['ultimaMedida'] = $DetalleFactura[0]['Corte'];
+        $data['fechaUltimaMedida'] = MesesLetras($DetalleFactura[0]['Mes_No']) . "/" . $DetalleFactura[0]['Periodo'];
+      } else {
+        $data['ultimaMedida'] = $data['Acreditacion'];
+        $data['fechaUltimaMedida'] = "";
+      }
+
+      $data['ultimaMedida'] = (is_numeric($data['ultimaMedida']))?$data['ultimaMedida']:0;
+      return array('rps'=>true, 'data'=>$data);
+    }else{
+      return array('rps'=>false, 'mensaje'=>'Medidor no encontrado');
+    }
+  }
+
+  public function GuardarConsumoAgua($parametros){
+    extract($parametros);
+    if($CMedidor != "" && $CMedidor!="."){
+      $dataCliente = @$this->getClienteCodigoMedidor($CMedidor)['data'];
+      $LecturaAnterior = ((!is_null($dataCliente['ultimaMedida']) && is_numeric($dataCliente['ultimaMedida']))?$dataCliente['ultimaMedida']:0);
+      if($Lectura<$LecturaAnterior){return (array("rps" => 0 , "mensaje" => "La lectura actual no puede ser inferior a la anterior"));}
+      $rangoValores = $this->facturacion->getCatalogo_Cyber_Tiempo();
+      $consumoActual = $Lectura-$LecturaAnterior; 
+      $valorMinimo = ($rangoValores[array_key_last($rangoValores)]['Desde'])-1;
+      $excedente = (($consumoActual>$valorMinimo)?$consumoActual-$valorMinimo:0);
+      $productos = $this->catalogoProductosModel->TVCatalogo("JG","P");
+
+      $Mifecha = date('YmdHis');
+
+      $periodo = $this->facturacion->getPeriodoAbierto();
+      if(count($periodo)>0){
+        $dataperiodo = explode(" ", $periodo[0]['Detalle']);
+        $NoMes = nombre_X_mes($dataperiodo[1]);
+        $Anio = $dataperiodo[0];
+      }else{
+        $NoMes = ObtenerMesFecha($Mifecha,'YmdHis');
+        $Anio = ObtenerAnioFecha($Mifecha,'YmdHis');
+      }
+
+      if($excedente>0){
+        foreach ($rangoValores as $key => $rango) {
+          if($consumoActual>= $rango['Desde'] && $consumoActual<= $rango['Hasta']){
+            $montoExcedente = $excedente*$rango['Valor'];
+            break;
+          }
+        }
+      }
+      //insert consumo
+      $clave = array_search("JG.01", array_column($productos, "Codigo_Inv"));
+      if ($clave !== false) {
+        $productoConsumo = $productos[$clave];
+        $this->facturacion->insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, $productoConsumo['Codigo_Inv'], $productoConsumo['PVP'], G_NINGUNO, $NoMes, $Anio, $Mifecha, 0, 0, $Lectura,$CMedidor);
+
+        //insert alcantarilado
+        $clave = array_search("JG.02", array_column($productos, "Codigo_Inv"));
+        if ($clave !== false) {
+          $productoAlcantarillado = $productos[$clave];
+          $this->facturacion->insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, $productoAlcantarillado['Codigo_Inv'], $productoAlcantarillado['PVP'], G_NINGUNO, $NoMes, $Anio, $Mifecha, 0, 0,G_NINGUNO,$CMedidor);
+        }
+
+        //insert excedente
+        if($excedente>0){
+          $this->facturacion->insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, "JG.03", $montoExcedente, G_NINGUNO, $NoMes, $Anio, $Mifecha, 0, 0,G_NINGUNO,$CMedidor);
+        }
+        return (array("rps" => true , "mensaje" => "Consumo registrado con exito."));
+      }else{
+        return (array("rps" => false , "mensaje" => "No se ha configurado el producto para guardar el consumo."));
+      }
+    }else{
+      return (array("rps" => 0 , "mensaje" => "Debe indicar el medidor."));
+    }
+  }
 }
 ?>

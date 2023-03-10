@@ -225,6 +225,60 @@ function DLCxCxP($SubCta,$query=false)
 
 	}	
 
+	function GetMedidor($parametros)
+	{
+		extract($parametros);
+        $sql = "SELECT Codigo 
+        FROM Clientes_Datos_Extras ".
+        "WHERE Cuenta_No = '" . $Cuenta_No . "' ".
+        "AND Tipo_Dato = 'MEDIDOR' ";
+        return $this->db->datos($sql);
+	}	
+
+	function AddMedidor($parametros)
+	{
+		extract($parametros);
+        SetAdoAddNew("Clientes_Datos_Extras");
+        SetAdoFields("T", G_NORMAL);
+        SetAdoFields("Codigo", $TxtCodigo);
+        SetAdoFields("Tipo_Dato", "MEDIDOR");
+        SetAdoFields("Cuenta_No", $Cuenta_No);
+        SetAdoFields("Acreditacion", $LecturaInicial);
+        return SetAdoUpdate();
+	}	
+
+	function DeleteMedidor($parametros)
+	{
+		extract($parametros);
+        $sSQL = "DELETE * ".
+            "FROM Clientes_Datos_Extras ".
+            "WHERE Codigo = '" . $TxtCodigo . "' ".
+            "AND Cuenta_No = '" . $Cuenta_No . "' ".
+            "AND Tipo_Dato = 'MEDIDOR' ";
+        return Ejecutar_SQL_SP($sSQL);
+	}
+
+	function Listar_Medidores($codigoDelCliente) {
+	    $cMedidor = array();
+
+	    if ($codigoDelCliente != G_NINGUNO && strlen($codigoDelCliente) > 1) {
+	        $sSQL = "SELECT Cuenta_No " .
+	                "FROM Clientes_Datos_Extras " .
+	                "WHERE Codigo = '" . $codigoDelCliente . "' " .
+	                "AND Tipo_Dato = 'MEDIDOR' " .
+	                "AND T = '".G_NORMAL."' " .
+	                "ORDER BY Fecha_Registro";
+	        $cMedidor = $this->db->datos($sSQL);
+	        if (count($cMedidor) <= 0) {
+	            $cMedidor[]['Cuenta_No'] = G_NINGUNO;
+	        }
+	    } else {
+	        $cMedidor[]['Cuenta_No'] = G_NINGUNO;
+	    }
+	    
+	    return $cMedidor;
+	}
+
 	
 }
 ?>
