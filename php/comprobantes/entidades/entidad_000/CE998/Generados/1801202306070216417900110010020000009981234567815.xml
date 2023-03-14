@@ -6,11 +6,11 @@
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>1003202306070216417900110010020000000581234567810</claveAcceso>
+    <claveAcceso>1801202306070216417900110010020000009981234567815</claveAcceso>
     <codDoc>06</codDoc>
     <estab>001</estab>
     <ptoEmi>002</ptoEmi>
-    <secuencial>000000058</secuencial>
+    <secuencial>000000998</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
@@ -22,32 +22,25 @@
     <rucTransportista>0190376826001</rucTransportista>
     <rise>000</rise>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <fechaIniTransporte>10/03/2023</fechaIniTransporte>
-    <fechaFinTransporte>10/03/2023</fechaFinTransporte>
+    <fechaIniTransporte>18/01/2023</fechaIniTransporte>
+    <fechaFinTransporte>18/01/2023</fechaFinTransporte>
     <placa>XXX-999</placa>
   </infoGuiaRemision>
   <destinatarios>
     <destinatario>
-      <identificacionDestinatario>0150797520</identificacionDestinatario>
-      <razonSocialDestinatario>AARON HAZELTON</razonSocialDestinatario>
-      <dirDestinatario>AGUARICO</dirDestinatario>
+      <identificacionDestinatario>0914152822</identificacionDestinatario>
+      <razonSocialDestinatario>ABAD VALVERDE ANDREE</razonSocialDestinatario>
+      <dirDestinatario>AMBATO</dirDestinatario>
       <motivoTraslado>Translado de mercaderia</motivoTraslado>
-      <ruta>De 24 DE MAYO a AGUARICO</ruta>
+      <ruta>De 24 DE MAYO a AMBATO</ruta>
       <codDocSustento>01</codDocSustento>
-      <numDocSustento>001-003-000001118</numDocSustento>
-      <numAutDocSustento>1003202301070216417900110010030000011181234567810</numAutDocSustento>
-      <fechaEmisionDocSustento>10/03/2023</fechaEmisionDocSustento>
-      <detalles>
-        <detalle>
-          <codigoInterno>98.22</codigoInterno>
-          <descripcion>1865</descripcion>
-          <cantidad>1.0000</cantidad>
-        </detalle>
-      </detalles>
+      <numDocSustento>001-003-000000921</numDocSustento>
+      <numAutDocSustento>1801202301070216417900110010030000009211234567811</numAutDocSustento>
+      <fechaEmisionDocSustento>18/01/2023</fechaEmisionDocSustento>
     </destinatario>
   </destinatarios>
   <infoAdicional>
-    <campoAdicional nombre="Telefono">2476257</campoAdicional>
-    <campoAdicional nombre="Email">enriqueviracocha@hotmail.com</campoAdicional>
+    <campoAdicional nombre="Telefono">2374504</campoAdicional>
+    <campoAdicional nombre="Email">maholy_96pa@hotmail.com</campoAdicional>
   </infoAdicional>
 </guiaRemision>

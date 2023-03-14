@@ -138,60 +138,74 @@ function catalogoLineas(){
       url:   '../controlador/facturacion/lista_guia_remisionC.php?autorizar_nota=true',
       type:  'post',
       dataType: 'json',
-       success:  function (data) {
+       success:  function (response) {
+        $('#myModal_espera').modal('hide');
+        // console.log(data);
 
-    $('#myModal_espera').modal('hide');
-      // console.log(data);
-      if(data.respuesta==1)
-      { 
-        Swal.fire({
-          type:'success',
-          title: 'Retencion Procesada y Autorizada',
-          confirmButtonText: 'Ok!',
-          allowOutsideClick: false,
-        }).then(function(){
-          // var url=  '../../TEMP/'+data.pdf+'.pdf';
-          // window.open(url, '_blank'); 
-          // location.reload();    
+         if(response.resp == 1)
+              {
+                 Swal.fire({
+                  type: 'success',
+                  title: 'Documento electronico autorizado',
+                  allowOutsideClick: false,
+                }).then(function(){
 
-        })
-      }else if(data.respuesta==-1)
-      {
-        if(data.text==2 || data.text==null)
-          {
+                  var url = '../../TEMP/' + response.pdf + '.pdf'; 
+                 window.open(url,'_blank');                      
+                  location.reload();
+                  // imprimir_ticket_fac(0,TextCI,TextFacturaNo,serie[1]);
+                });
+              }else if(response.resp==2)
+              {
+                tipo_error_sri(response.clave);
+                Swal.fire('XML devuelto','','error').then(() => {
+                  
+                });
+                //descargar_archivos(response.url,response.ar);
 
-          Swal.fire('XML devuleto','XML DEVUELTO','error').then(function(){ 
-            // var url=  '../../TEMP/'+data.pdf+'.pdf';    window.open(url, '_blank');             
-          }); 
-            tipo_error_sri(data.clave);
-          }else
-          {
+              }else if(response.resp == 4)
+              {
+                 Swal.fire({
+                  type: 'success',
+                  title: 'Factura guardada',
+                  allowOutsideClick: false,
+                }).then(() => {
+                  serie = DCLinea.split(" ");
+                  cambio = $("#cambio").val();
+                  efectivo = $("#efectivo").val();
+                  var url = '../controlador/facturacion/divisasC.php?ticketPDF=true&fac='+TextFacturaNo+'&serie='+serie[1]+'&CI='+TextCI+'&TC='+serie[0]+'&efectivo='+efectivo+'&saldo='+cambio;
+                  window.open(url,'_blank');
+                  location.reload();
+                  //imprimir_ticket_fac(0,TextCI,TextFacturaNo,serie[1]);
+                });
+              }else if(response.resp==5)
+              {
+                Swal.fire({
+                  type: 'error',
+                  title: 'Numero de documento repetido se recargara la pagina para colocar el numero correcto',
+                  // text:''
+                  allowOutsideClick: false,
+                }).then(function(){
+                  location.reload();
+                })
+              }else if(response.resp == -1)
+              {
+                tipo_error_sri(response.clave);
+              }
+              else
+              {
+                if(response.clave!='')
+                {
+                    tipo_error_sri(response.clave);
+                }
+                Swal.fire({
+                  type: 'error',
+                  title: 'XML NO AUTORIZADO',
+                  allowOutsideClick: false,
+                })
+              }              
 
-            Swal.fire(data.text,'XML DEVUELTO','error').then(function(){ 
-              // var url=  '../../TEMP/'+data.pdf+'.pdf';    window.open(url, '_blank');             
-            }); 
-          }
-      }else if(data.respuesta==2)
-      {
-        // tipo_error_comprobante(clave)
-        Swal.fire('XML devuelto','','error'); 
-        tipo_error_sri(data.clave);
-      }
-      else if(data.respuesta==4)
-      {
-        Swal.fire('SRI intermitente intente mas tarde','','info');  
-      }else
-      {
-        if(data==-1)
-        {
-           Swal.fire('Revise CI_RUC de factura en base','Cliente no encontrado','info');
-         }else{
-          Swal.fire('XML devuelto por:'+data.text,'','error');  
-        }
-      }
-
-
-      }
+       }
     });
   }
 

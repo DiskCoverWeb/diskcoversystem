@@ -706,7 +706,7 @@ class autorizacion_sri
 	        // -- 'Generamos la Clave de acceso
 	        // -- '& Format$(TFA.Fecha, "ddmmyyyy") &
 	         if(strlen($TFA['Autorizacion_GR']) >= 13){
-	            $TFA['ClaveAcceso_GR'] = $this->Clave_acceso($TFA['Fecha']->format('Y-m-d'),'06',$TFA['Serie_GR'],$TFA['Remision']);
+	            $TFA['ClaveAcceso_GR'] = $this->Clave_acceso($TFA['FechaGRE']->format('Y-m-d'),'06',$TFA['Serie_GR'],$TFA['Remision']);
 	         }else{
 	            $TFA['ClaveAcceso_GR'] = G_NINGUNO;
 	         }
@@ -856,11 +856,13 @@ class autorizacion_sri
 		        AND GR.Serie = '".$TFA['Serie']."' 
 		        AND GR.Autorizacion = '".$TFA['Autorizacion']."' 
 		        AND GR.Factura =".$TFA['Factura']." 
+		        AND Remision = '".$TFA['Remision']."'
 		        AND LEN(GR.Autorizacion_GR) = 13 
 		        AND GR.Remision > 0 ";
 		$AdoDBFA = $this->db->datos($sql);
     	// print_r($sql);
     	// print_r($AdoDBFA);
+    	// print_r($TFA);
     	// die();
 
 	     if(count($AdoDBFA) > 0)
@@ -876,7 +878,7 @@ class autorizacion_sri
 	        // -- 'Generamos la Clave de acceso
 	        // -- '& Format$(TFA.Fecha, "ddmmyyyy") &
 	         if(strlen($TFA['Autorizacion_GR']) >= 13){
-	            $TFA['ClaveAcceso_GR'] = $this->Clave_acceso($TFA['Fecha']->format('Y-m-d'),'06',$TFA['Serie_GR'],$TFA['Remision']);
+	            $TFA['ClaveAcceso_GR'] = $this->Clave_acceso($TFA['FechaGRE']->format('Y-m-d'),'06',$TFA['Serie_GR'],$TFA['Remision']);
 	         }else{
 	            $TFA['ClaveAcceso_GR'] = G_NINGUNO;
 	         }

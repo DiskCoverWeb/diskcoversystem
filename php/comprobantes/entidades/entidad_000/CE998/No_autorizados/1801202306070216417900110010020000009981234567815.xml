@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><autorizacion>
   <estado>NO AUTORIZADO</estado>
-  <fechaAutorizacion class="fechaAutorizacion">10/03/2023 12:06:54.000</fechaAutorizacion>
+  <fechaAutorizacion class="fechaAutorizacion">18/01/2023 15:26:29.000</fechaAutorizacion>
   <comprobante><![CDATA[<?xml version="1.0" encoding="UTF-8"?><guiaRemision id="comprobante" version="1.0.0">
   <infoTributaria>
     <ambiente>1</ambiente>
@@ -8,11 +8,11 @@
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>1003202306070216417900110010020000000571234567815</claveAcceso>
+    <claveAcceso>1801202306070216417900110010020000009981234567815</claveAcceso>
     <codDoc>06</codDoc>
     <estab>001</estab>
     <ptoEmi>002</ptoEmi>
-    <secuencial>000000057</secuencial>
+    <secuencial>000000998</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
@@ -24,63 +24,62 @@
     <rucTransportista>0190376826001</rucTransportista>
     <rise>000</rise>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <fechaIniTransporte>10/03/2023</fechaIniTransporte>
-    <fechaFinTransporte>10/03/2023</fechaFinTransporte>
+    <fechaIniTransporte>18/01/2023</fechaIniTransporte>
+    <fechaFinTransporte>18/01/2023</fechaFinTransporte>
     <placa>XXX-999</placa>
   </infoGuiaRemision>
   <destinatarios>
     <destinatario>
-      <identificacionDestinatario>0150797520</identificacionDestinatario>
-      <razonSocialDestinatario>AARON HAZELTON</razonSocialDestinatario>
-      <dirDestinatario>AGUARICO</dirDestinatario>
+      <identificacionDestinatario>0914152822</identificacionDestinatario>
+      <razonSocialDestinatario>ABAD VALVERDE ANDREE</razonSocialDestinatario>
+      <dirDestinatario>AMBATO</dirDestinatario>
       <motivoTraslado>Translado de mercaderia</motivoTraslado>
-      <ruta>De 24 DE MAYO a AGUARICO</ruta>
-      <codDocSustento>00</codDocSustento>
-      <numDocSustento>001-006-000000204</numDocSustento>
-      <numAutDocSustento>159875321456987</numAutDocSustento>
-      <fechaEmisionDocSustento>10/03/2023</fechaEmisionDocSustento>
+      <ruta>De 24 DE MAYO a AMBATO</ruta>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>001-003-000000921</numDocSustento>
+      <numAutDocSustento>1801202301070216417900110010030000009211234567811</numAutDocSustento>
+      <fechaEmisionDocSustento>18/01/2023</fechaEmisionDocSustento>
       <detalles>
         <detalle>
           <codigoInterno>98.24</codigoInterno>
-          <descripcion>6 LINEAS, 2023: 0303</descripcion>
+          <descripcion>6 LINEAS</descripcion>
           <cantidad>1.0000</cantidad>
         </detalle>
       </detalles>
     </destinatario>
   </destinatarios>
   <infoAdicional>
-    <campoAdicional nombre="Direccion">CDLA. URDESA CENTRAL CALLE AV. LAS MONJAS  402</campoAdicional>
-    <campoAdicional nombre="Telefono">000000000</campoAdicional>
-    <campoAdicional nombre="Email">diskcover@msn.com</campoAdicional>
+    <campoAdicional nombre="Telefono">2374504</campoAdicional>
+    <campoAdicional nombre="Email">maholy_96pa@hotmail.com</campoAdicional>
   </infoAdicional>
-<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature145448">
-<ds:SignedInfo Id="Signature-SignedInfo99166">
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature766930">
+<ds:SignedInfo Id="Signature-SignedInfo250054">
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-<ds:Reference Id="SignedPropertiesID572488" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature145448-SignedProperties748663">
+<ds:Reference Id="SignedPropertiesID806648" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature766930-SignedProperties116639">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>splLt2I5+kBNO1LRJagNCH5iQOs=</ds:DigestValue>
+<ds:DigestValue>JSOzA47kQ3IoJ/ylVJ80vgVSW8Y=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference URI="#Certificate1956680">
+<ds:Reference URI="#Certificate1407854">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>V8Z+ual96ckKvBbIO402akfuUSw=</ds:DigestValue>
+<ds:DigestValue>Bd8hIwc43gF47wFx9PjuLcqDRxM=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference Id="Reference-ID-809175" URI="#comprobante">
+<ds:Reference Id="Reference-ID-168741" URI="#comprobante">
 <ds:Transforms>
 <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>HHFX9zyzXiYcOLICbqde19Nt5/E=</ds:DigestValue>
+<ds:DigestValue>AtxfXtzZtYtGjlmCzFidSn/rp+A=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue Id="SignatureValue460568">
-izkd/z9PrGchZn4jiz2lGpiS19HsmTWaYEytfJRcphMX6dRYIyUiaMt7E/BgwrErzC+uU0VyS7kl
-jUlPtgNRnMZ+Jl3Ms/I/tz02kJCpFRcjFib+gNKILbTu6IzIp2GxI685juCPhPt5LvYBdXH7SYz2
-IjWPDkzgOtA6oQALxMQo2xdiUVpXvO9vBwz3/e0lrijbVsINVERA5srgjyLEvTxGhY58bKXJSxo0
-hs8yYdfY7XH6UUGIskHa1/aVY1iaqrqyR1EPPTjut/u4CA84kG8p3H28vZeu6rHyakYDU3t/5kFJ
-uBWfO40sb8yVlcaF0hUsP8QrB1pZj4mJXM7Vaw==
+<ds:SignatureValue Id="SignatureValue47142">
+TKxov8dgPxsd+liC4Os36pJGk8qyQ1x0ofV0fYv7KfZqqMURpruREnei3U98cML7zal3AsfLmgyx
+xncakcv4+pxFvQqmWo1spizRpPkcwOIKVxoMZB8diXFB/AursxuqOMqsyeHgWErJNjHSMilY9RnN
+13NJzX3vLMuhjFRgCpUs2E28NYKEUAEbVD/nMeA/DmuFpK4IlphQoD6J2JkGKyP9Kn2Z9gjj2A/z
+oFIW4V2QzZtjI3gegaYF1LqIGZJc+6UYrlekR+5Jo3FtGea2im+yuKCuf6YhjlicnteDmpw0cWDf
+x/U1eAzXcQS87dbxXhYxrCfQ7IKvKpdO1jzYbA==
 </ds:SignatureValue>
-<ds:KeyInfo Id="Certificate1956680">
+<ds:KeyInfo Id="Certificate1407854">
 <ds:X509Data>
 <ds:X509Certificate>
 MIILkjCCCXqgAwIBAgIEXDrIAjANBgkqhkiG9w0BAQsFADCBmTELMAkGA1UEBhMCRUMxHTAbBgNV
@@ -151,7 +150,7 @@ LRuAVSyi58qyAD0Eu1zLMc3KhEUXoxF7aA8P0w==
 </ds:RSAKeyValue>
 </ds:KeyValue>
 </ds:KeyInfo>
-<ds:Object Id="Signature145448-Object110693"><etsi:QualifyingProperties Target="#Signature145448"><etsi:SignedProperties Id="Signature145448-SignedProperties748663"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-03-10T12:06:49-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-809175"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></guiaRemision>]]></comprobante>
+<ds:Object Id="Signature766930-Object723569"><etsi:QualifyingProperties Target="#Signature766930"><etsi:SignedProperties Id="Signature766930-SignedProperties116639"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-01-18T15:26:22-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-168741"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></guiaRemision>]]></comprobante>
   <mensajes>
     <mensaje>
       <mensaje>

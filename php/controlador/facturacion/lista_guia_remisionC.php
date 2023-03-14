@@ -179,38 +179,136 @@ class lista_guia_remisionC
     function autorizar_sri($parametros)
     {
     	// print_r($parametros);die();
-    	$datos = guia_remision_emitidas_tabla($codigo=false,$desde=false,$hasta=false,$parametros['serie'],$factura=false,$Autorizacion=false,$Autorizacion_GR=false,$parametros['nota'],$serie_gr=false)
+    	$TFA = array();
+    	$TFA = $this->modelo->guia_remision_emitidas_tabla($codigo=false,$desde=false,$hasta=false,false,$factura=false,$Autorizacion=false,$Autorizacion_GR=false,$parametros['nota'],$serie_gr=$parametros['serie']);
 
-    	// $this->modelo->guia_remision_emitidas_tabla($codigo=false,$desde=false,$hasta=false,$parametros['serie'],$parametros['nota']);
+    	if($TFA[0]['TC']=='FA')
+    	{
+    		$TFA[0]['FechaGRI'] = $TFA[0]['FechaGRI']->format('Y/m/d'); 
+				$TFA[0]['FechaGRF'] = $TFA[0]['FechaGRF']->format('Y/m/d'); 
+				$TFA[0]['CIRUCComercial'] = $TFA[0]['CIRUC_Comercial'];
+				$TFA[0]['CIRUCEntrega'] = $TFA[0]['CIRUC_Entrega'];
+    		$ClaveAcceso_GR = $this->sri->Clave_acceso($TFA[0]['FechaGRE']->format('Y-m-d'),'06',$TFA[0]['Serie_GR'],$TFA[0]['Remision']);
+       	$this->punto_venta->pdf_guia_remision_elec($TFA[0],$TFA[0]['Autorizacion_GR'],$periodo=false,0,1);		
+    		$respuesta = $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision($TFA[0]);
+    		return array('resp'=>$respuesta,'clave'=>$ClaveAcceso_GR,'pdf'=>$TFA[0]['Serie_GR'].'-'.generaCeros($TFA[0]['Remision'],7));
+    	}else
+    	{		
 
-    $TFA['Serie_NC'] = $parametros['serie'];
-		$TFA['Nota_Credito'] = $parametros['nota'];
-		$TFA['Serie'] = $datos[0]['Serie'];
-		$TFA['TC'] = $datos[0]['Serie'];
-		$TFA['Factura'] = $datos[0]['Factura'];
-		$TFA['Porc_NC'] = $datos[0]['Porc_IVA'];
-		$TFA['Autorizacion'] = $datos[0]['Autorizacion'];	
-		$TFA['Fecha'] = $datos[0]['FechaF'];		
-		$TFA['Fecha_NC'] = $datos[0]['Fecha']->format('Y-m-d');
-
-		$TFA['Cod_Ejec'] = $datos[0]['Cod_Ejec'];
-		$TFA['CodigoU'] = $datos[0]['CodigoU'];
-		$TFA['Tipo_Pago'] = $datos[0]['Tipo_Pago'];
-		$TFA['Cod_CxC'] = $datos[0]['Cod_CxC']	;
-		$TFA['TB'] = $datos[0]['TB'];
-		$TFA['RUC_CI'] = $datos[0]['CI_RUC'];
-		$TFA['Cliente'] = $datos[0]['Cliente'];
-		$TFA['Razon_Social'] = $datos[0]['Cliente'];
-
-
-        $res = $this->sri->SRI_Crear_Clave_Acceso_Nota_Credito($TFA);
-       $clave = $this->sri->Clave_acceso($TFA['Fecha_NC'],'04',$TFA['Serie_NC'],$TFA['Nota_Credito']);		        	 
-		return array('respuesta'=>$res,'pdf'=>$TFA['Serie_NC'].'-'.generaCeros($TFA['Nota_Credito'],7),'clave'=>$clave);
+    		// print_r($TFA);die();
+    		$cliente = Cliente($TFA[0]['CodigoC'],$grupo = false,$query=false,$clave=false); 
+    		$TFA = array_merge($TFA[0],$cliente[0]);
+    		$TFA['FechaGRI'] = $TFA['FechaGRI']->format('Y/m/d'); 
+				$TFA['FechaGRF'] = $TFA['FechaGRF']->format('Y/m/d'); 
+				$TFA['CIRUCComercial'] = $TFA['CIRUC_Comercial'];
+				$TFA['CIRUCEntrega'] = $TFA['CIRUC_Entrega'];
+				$TFA['Razon_Social'] = $cliente[0]['Cliente'];
+	      $TFA['RUC_CI'] = $cliente[0]['CI_RUC'];
+	      $TFA['Direccion_RS'] = $cliente[0]['Direccion'];
+    		
+    		// print_r($TFA);die();
+    		$ClaveAcceso_GR = $this->sri->Clave_acceso($TFA['FechaGRE']->format('Y-m-d'),'06',$TFA['Serie_GR'],$TFA['Remision']);
+       
+    		$respuesta = $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision_sin_factura($TFA);
+ 				$this->punto_venta->pdf_guia_remision_elec_sin_fac($TFA,$TFA['Autorizacion_GR'],$periodo=false,0,1);
+				return array('resp'=>$respuesta,'clave'=>$ClaveAcceso_GR,'pdf'=>$TFA['Serie_GR'].'-'.generaCeros($TFA['Remision'],7));
 
 
-        // return $res;
+    	}
+    	
 
-    }
+
+
+
+
+
+    	// print_r($TFA);die();
+    	if(count($TFA)==0)
+    	{
+				 $datos = $this->modelo->guia_remision_existente($codigo=false,$desde=false,$hasta=false,$serie=$parametros['serie'],$remision=$parametros['nota']);
+				 $cliente = Cliente($datos[0]['CodigoC'],$grupo = false,$query=false,$clave=false);
+				 
+
+
+				 	$TFA['CodigoC'] = $datos[0]['CodigoC'];
+					$TFA['TC'] = 'GR';
+					$TFA['Serie'] = $datos[0]['Serie'];
+					$TFA['Autorizacion'] =$datos[0]['Autorizacion'];
+					$TFA['Factura'] = $datos[0]['Factura'];
+					$TFA['SinFactura'] = 1;
+					$TFA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
+					$TFA['Fecha'] = $datos[0]['FechaGRE']->format('Y-m-d');
+	        $TFA['Vencimiento'] = $datos[0]['FechaGRF']->format('Y-m-d');
+	        $TFA['Fecha_Aut'] =$datos[0]['FechaGRE'];
+
+					$TFA['Comercial'] = $datos[0]['Comercial'];
+					$TFA['CIRUCComercial'] =$datos[0]['CIRUC_Comercial'];
+					$TFA['FechaGRI'] = $datos[0]['FechaGRI']->format('Y-m-d');
+					$TFA['FechaGRF'] = $datos[0]['FechaGRF']->format('Y-m-d');
+					$TFA['Placa_Vehiculo'] = $datos[0]['Placa_Vehiculo'];
+					$TFA['CIRUCEntrega'] = $datos[0]['CIRUC_Entrega'];
+					$TFA['Entrega'] = $datos[0]['Entrega'];
+					$TFA['CiudadGRI'] = $datos[0]['CiudadGRI'];
+					$TFA['CiudadGRF'] = $datos[0]['CiudadGRF'];
+					$TFA['Serie_GR'] = $datos[0]['Serie_GR'];
+					$TFA['Remision'] = $datos[0]['Remision'];
+
+
+
+				$datos = $this->modelo->lineas_guia_remision($datos[0]['Serie_GR'],$datos[0]['Remision']);
+				$descuento = 0;
+				$descuento2 = 0;
+				$subtotal = 0;
+				$Total = 0;
+				$total_iva = 0;
+				$con_iva = 0;$sin_iva=0;
+				foreach ($datos as $key => $value) {
+					$descuento+=$value['Total_Desc'];
+					$descuento2+=$value['Total_Desc2'];
+					$subtotal+=$value['Total'];
+					$Total+=$value['Total'];
+					$total_iva+=$value['Total_IVA'];
+					if($value['Total_IVA']>0)
+					{
+						$con_iva+=number_format($value['Cantidad']*$value['Precio'],2,'.','');
+					}else
+					{
+						$sin_iva+=number_format($value['Cantidad']*$value['Precio'],2,'.','');
+					}
+
+				}
+
+         $TFA['Imp_Mes'] = '.';
+         $TFA['SubTotal'] = $subtotal;
+         $TFA['Sin_IVA'] = $sin_iva;
+         $TFA['Con_IVA'] = $con_iva;
+         $TFA['Descuento'] = $descuento;
+         $TFA['Descuento2'] = $descuento2;
+         $TFA['Total_IVA'] = $total_iva;
+         $TFA['Total_MN'] = $Total;
+        $lc = ReadSetDataNum($TFA['TC']."_SERIE_".$TFA['Serie_GR'], True, True);
+        $ClaveAcceso_GR = $this->sri->Clave_acceso($TFA['Fecha'],'06',$TFA['Serie_GR'],$TFA['Remision']);
+        $TFA['Autorizacion_GR'] = $ClaveAcceso_GR;
+        print_r($TFA);die();
+ 				$respuesta = $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision_sin_factura($TFA);
+ 				 $TFA['Razon_Social'] = $cliente[0]['Cliente'];
+         $TFA['RUC_CI'] = $cliente[0]['CI_RUC'];
+         $TFA['Direccion_RS'] = $cliente[0]['Direccion'];
+
+print_r($TFA);die();
+         	$this->punto_venta->pdf_guia_remision_elec_sin_fac($TFA,$TFA['Autorizacion_GR'],$periodo=false,0,1);
+					return array('resp'=>$respuesta,'clave'=>$ClaveAcceso_GR,'pdf'=>$TFA['Serie_GR'].'-'.generaCeros($TFA['Remision'],7));
+  
+
+    	}else{
+
+        $ClaveAcceso_GR = $this->sri->Clave_acceso($TFA[0]['Fecha']->format('Y-m-d'),'06',$TFA[0]['Serie_GR'],$TFA[0]['Remision']);
+       	$this->punto_venta->pdf_guia_remision_elec($TFA[0],$TFA[0]['Autorizacion_GR'],$periodo=false,0,1);		
+    		$respuesta = $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision($TFA[0]);
+    		return array('resp'=>$respuesta,'clave'=>$ClaveAcceso_GR,'pdf'=>$TFA[0]['Serie_GR'].'-'.generaCeros($TFA[0]['Remision'],7));
+  
+    	}
+   }
 
     function ver_guia_remision_pdf($tc,$serie,$factura,$Auto,$AutoGR)
     {
@@ -470,16 +568,18 @@ QUITO - ECUADOR';
 // die();
 			if(strlen($parametros['LblAutGuiaRem_'])>=13)
 			{
+				$GR = $this->modelo->guia_remision_existente($codigo=false,$desde=false,$hasta=false,$serie=$codig_l[1],$factura=$parametros['LblGuiaR_']);
+
 				// print_r('prin');die();
 				$TFA['CodigoC'] = $parametros['codigoCliente'];
 				$TFA['TC'] = 'GR';
 				$TFA['Serie'] = $parametros['txt_serie_fac'];
 				$TFA['Autorizacion'] = $parametros['txt_auto_fac'];
 				$TFA['Factura'] = $parametros['txt_num_fac'];
-				$FTA['SinFactura'] = 1;
+				$TFA['SinFactura'] = 1;
 				$TFA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
 				$TFA['Fecha'] = $parametros['MBoxFechaGRE'];
-        $TFA['Vencimiento'] = $parametros['MBoxFechaGRE'];
+        $TFA['FechaGRE'] = $GR[0]['FechaGRE'];
 
 				$TFA['Comercial'] = $parametros['Comercial'];
 				$TFA['CIRUCComercial'] =$ci_comer[0];
@@ -526,9 +626,12 @@ QUITO - ECUADOR';
          $TFA['Descuento2'] = $descuento2;
          $TFA['Total_IVA'] = $total_iva;
          $TFA['Total_MN'] = $Total;
+
+        // print_r($TFA);die();
         $lc = ReadSetDataNum($TFA['TC']."_SERIE_".$TFA['Serie_GR'], True, True);
-        $ClaveAcceso_GR = $this->sri->Clave_acceso($TFA['Fecha'],'06',$TFA['Serie_GR'],$TFA['Remision']);
+        $ClaveAcceso_GR = $this->sri->Clave_acceso($TFA['FechaGRE']->format('Y-m-d'),'06',$TFA['Serie_GR'],$TFA['Remision']);
         $TFA['Autorizacion_GR'] = $ClaveAcceso_GR;
+        // print_r($FTA);die();
  				$respuesta = $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision_sin_factura($TFA);
  				 $TFA['Razon_Social'] = $cliente[0]['Cliente'];
          $TFA['RUC_CI'] = $cliente[0]['CI_RUC'];

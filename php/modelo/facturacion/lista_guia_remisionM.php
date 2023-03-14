@@ -57,7 +57,7 @@ $Autorizacion_GR=false,$remision=false,$serie_gr=false)
 	    }
 	    if($remision)
 	    {
-	    	$sql.=" AND Factura = '".$remision."'";
+	    	$sql.=" AND Remision = '".$remision."'";
 	    }
 	   $sql.=" ORDER BY Remision DESC"; 
 		$sql.=" OFFSET ".$_SESSION['INGRESO']['paginacionIni']." ROWS FETCH NEXT ".$_SESSION['INGRESO']['numreg']." ROWS ONLY;";   
