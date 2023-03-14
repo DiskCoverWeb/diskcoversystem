@@ -6,48 +6,48 @@
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>0903202306070216417900110010020000000481234567813</claveAcceso>
+    <claveAcceso>1003202306070216417900110010020000000581234567810</claveAcceso>
     <codDoc>06</codDoc>
     <estab>001</estab>
     <ptoEmi>002</ptoEmi>
-    <secuencial>000000048</secuencial>
+    <secuencial>000000058</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
   <infoGuiaRemision>
     <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
     <dirPartida>24 DE MAYO</dirPartida>
-    <razonSocialTransportista>AB.GARAICOA ARELLANO HIPOLITO</razonSocialTransportista>
-    <tipoIdentificacionTransportista>05</tipoIdentificacionTransportista>
-    <rucTransportista>0915423040</rucTransportista>
+    <razonSocialTransportista>8A IMPORTACIONES</razonSocialTransportista>
+    <tipoIdentificacionTransportista>07</tipoIdentificacionTransportista>
+    <rucTransportista>0190376826001</rucTransportista>
     <rise>000</rise>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <fechaIniTransporte>09/03/2023</fechaIniTransporte>
-    <fechaFinTransporte>09/03/2023</fechaFinTransporte>
+    <fechaIniTransporte>10/03/2023</fechaIniTransporte>
+    <fechaFinTransporte>10/03/2023</fechaFinTransporte>
     <placa>XXX-999</placa>
   </infoGuiaRemision>
   <destinatarios>
     <destinatario>
-      <identificacionDestinatario>0914152822</identificacionDestinatario>
-      <razonSocialDestinatario>ABAD VALVERDE ANDREE</razonSocialDestinatario>
+      <identificacionDestinatario>0150797520</identificacionDestinatario>
+      <razonSocialDestinatario>AARON HAZELTON</razonSocialDestinatario>
       <dirDestinatario>AGUARICO</dirDestinatario>
       <motivoTraslado>Translado de mercaderia</motivoTraslado>
       <ruta>De 24 DE MAYO a AGUARICO</ruta>
-      <codDocSustento>00</codDocSustento>
-      <numDocSustento>001-006-000000003</numDocSustento>
-      <numAutDocSustento>159875321456987</numAutDocSustento>
-      <fechaEmisionDocSustento>09/03/2023</fechaEmisionDocSustento>
+      <codDocSustento>01</codDocSustento>
+      <numDocSustento>001-003-000001118</numDocSustento>
+      <numAutDocSustento>1003202301070216417900110010030000011181234567810</numAutDocSustento>
+      <fechaEmisionDocSustento>10/03/2023</fechaEmisionDocSustento>
       <detalles>
         <detalle>
-          <codigoInterno>98.24</codigoInterno>
-          <descripcion>6 LINEAS, 2023: 0303</descripcion>
+          <codigoInterno>98.22</codigoInterno>
+          <descripcion>1865</descripcion>
           <cantidad>1.0000</cantidad>
         </detalle>
       </detalles>
     </destinatario>
   </destinatarios>
   <infoAdicional>
-    <campoAdicional nombre="Direccion">SD</campoAdicional>
-    <campoAdicional nombre="Telefono">022000000</campoAdicional>
+    <campoAdicional nombre="Telefono">2476257</campoAdicional>
+    <campoAdicional nombre="Email">enriqueviracocha@hotmail.com</campoAdicional>
   </infoAdicional>
 </guiaRemision>

@@ -1,82 +1,108 @@
-<?xml version="1.0" encoding="UTF-8"?><guiaRemision id="comprobante" version="1.0.0">
+<?xml version="1.0" encoding="UTF-8"?><autorizacion>
+  <estado>AUTORIZADO</estado>
+  <numeroAutorizacion>1003202301070216417900110010030000011181234567810</numeroAutorizacion>
+  <fechaAutorizacion class="fechaAutorizacion">10/03/2023 12:10:06.000</fechaAutorizacion>
+  <comprobante><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?><factura id="comprobante" version="1.1.0">
   <infoTributaria>
     <ambiente>1</ambiente>
     <tipoEmision>1</tipoEmision>
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>0903202306070216417900110010020000000481234567813</claveAcceso>
-    <codDoc>06</codDoc>
+    <claveAcceso>1003202301070216417900110010030000011181234567810</claveAcceso>
+    <codDoc>01</codDoc>
     <estab>001</estab>
-    <ptoEmi>002</ptoEmi>
-    <secuencial>000000048</secuencial>
+    <ptoEmi>003</ptoEmi>
+    <secuencial>000001118</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
-  <infoGuiaRemision>
-    <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
-    <dirPartida>24 DE MAYO</dirPartida>
-    <razonSocialTransportista>AB.GARAICOA ARELLANO HIPOLITO</razonSocialTransportista>
-    <tipoIdentificacionTransportista>05</tipoIdentificacionTransportista>
-    <rucTransportista>0915423040</rucTransportista>
-    <rise>000</rise>
+  <infoFactura>
+    <fechaEmision>10/03/2023</fechaEmision>
+    <dirEstablecimiento>direccion de empresa xyz</dirEstablecimiento>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <fechaIniTransporte>09/03/2023</fechaIniTransporte>
-    <fechaFinTransporte>09/03/2023</fechaFinTransporte>
-    <placa>XXX-999</placa>
-  </infoGuiaRemision>
-  <destinatarios>
-    <destinatario>
-      <identificacionDestinatario>0914152822</identificacionDestinatario>
-      <razonSocialDestinatario>ABAD VALVERDE ANDREE</razonSocialDestinatario>
-      <dirDestinatario>AGUARICO</dirDestinatario>
-      <motivoTraslado>Translado de mercaderia</motivoTraslado>
-      <ruta>De 24 DE MAYO a AGUARICO</ruta>
-      <codDocSustento>00</codDocSustento>
-      <numDocSustento>001-006-000000003</numDocSustento>
-      <numAutDocSustento>159875321456987</numAutDocSustento>
-      <fechaEmisionDocSustento>09/03/2023</fechaEmisionDocSustento>
-      <detalles>
-        <detalle>
-          <codigoInterno>98.24</codigoInterno>
-          <descripcion>6 LINEAS, 2023: 0303</descripcion>
-          <cantidad>1.0000</cantidad>
-        </detalle>
-      </detalles>
-    </destinatario>
-  </destinatarios>
+    <tipoIdentificacionComprador>06</tipoIdentificacionComprador>
+    <razonSocialComprador>ENRIQUE VIRACOCHA</razonSocialComprador>
+    <identificacionComprador>1716332315</identificacionComprador>
+    <totalSinImpuestos>20.00</totalSinImpuestos>
+    <totalDescuento>0</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0</descuentoAdicional>
+        <baseImponible>20</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>0</propina>
+    <importeTotal>20</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>20</total>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>98.22</codigoPrincipal>
+      <descripcion>1865</descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.00</cantidad>
+      <precioUnitario>20</precioUnitario>
+      <descuento>0</descuento>
+      <precioTotalSinImpuesto>20</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
+          <baseImponible>20</baseImponible>
+          <valor>0</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
   <infoAdicional>
-    <campoAdicional nombre="Direccion">SD</campoAdicional>
-    <campoAdicional nombre="Telefono">022000000</campoAdicional>
+    <campoAdicional nombre="Direccion">LA RUMINAHUI</campoAdicional>
+    <campoAdicional nombre="Telefono">2476257</campoAdicional>
+    <campoAdicional nombre="Email">enriqueviracocha@hotmailcom</campoAdicional>
+    <campoAdicional nombre="seriePuntoEmision">001003</campoAdicional>
+    <campoAdicional nombre="socioRazonSocial">Empresa xyz</campoAdicional>
+    <campoAdicional nombre="socioDireccion">direccion de empresa xyz</campoAdicional>
+    <campoAdicional nombre="PlacaVehiculo">.</campoAdicional>
+    <campoAdicional nombre="CtaEstablecimiento">.</campoAdicional>
   </infoAdicional>
-<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature484012">
-<ds:SignedInfo Id="Signature-SignedInfo173433">
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature916227">
+<ds:SignedInfo Id="Signature-SignedInfo712350">
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-<ds:Reference Id="SignedPropertiesID399929" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature484012-SignedProperties454494">
+<ds:Reference Id="SignedPropertiesID268068" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature916227-SignedProperties406134">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>zWZsh0yyvSK3Pz+yydQi3V7k/hE=</ds:DigestValue>
+<ds:DigestValue>OUTeKHrzzFeMp+bd5Fv2d0SMso8=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference URI="#Certificate121397">
+<ds:Reference URI="#Certificate1125373">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>WtysjHmUadhbETOUSchTps//JWw=</ds:DigestValue>
+<ds:DigestValue>8arVdHsft8zXGkxpNLaGDsRVc/E=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference Id="Reference-ID-340514" URI="#comprobante">
+<ds:Reference Id="Reference-ID-466751" URI="#comprobante">
 <ds:Transforms>
 <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>/k1azNYu0rpUH+qJ5By4VYBn9FY=</ds:DigestValue>
+<ds:DigestValue>6c1QoB8MP04iUHTWQbkLIZLt8Jk=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue Id="SignatureValue540878">
-AcuT6q05oRGOXok2ycpx9DAU9emUpA1UY3cKRJo2do/WFB6BortssTd0olnWsjBKiqZvu5PDG48Y
-q92qCQ2BgroGdY1vjzy9C17kZQzpuiLh+n+WrKbbd5pncu1CeVKbRUYBHeR1e1TWoplDKkfT+K6O
-ahKKKgO/yJcb9d77CZuIRO9e1JLd9a8SQPoT9aOv8SFGMo0EWQL3Ky+bQHu/AOuN9lPZeI1ApnmE
-XX8rLSQZhu1s5GP8tFq2cIp1pTNfvv1MJmOl1mGW6qRoQXctSatrFOwxfkOPiuXPbKlWZMBO/pcY
-5ADFS8sIDxHt/nAccEyzxIEFe4J4QSLJsOZXwQ==
+<ds:SignatureValue Id="SignatureValue300852">
+TwxaWZdT8W0FKhiDzAqsAVu2TnM611ZLlZ7hik43CTbBo29ptabVavIUgB37pD4aKw6Rhxu1r0El
+8eLzWLRjE/krf+HEvtvtDc5EbxW47qsd3gYiqAuqD/kQ4VSYUJaYs21gPp1Hlg0DE61oQXp0UleN
+1ao4TM/adCfaNKcGjakUG5Qtw1dJ6JqjJFzTIKCSAUkyyOWGQR8tJfA/7JDJmWCL0TgnHz6g/Fje
+1WWVHgvjnCK+VSaTku6nfxPhQlc/jT5QAJovAmqLGtmNlx9dow0CzdwpOqrEBGLE+9uUshbiMdS7
+0F7NGZaVqMFnv2ppWVNaIshBXKG//wnWPGC/9g==
 </ds:SignatureValue>
-<ds:KeyInfo Id="Certificate121397">
+<ds:KeyInfo Id="Certificate1125373">
 <ds:X509Data>
 <ds:X509Certificate>
 MIILkjCCCXqgAwIBAgIEXDrIAjANBgkqhkiG9w0BAQsFADCBmTELMAkGA1UEBhMCRUMxHTAbBgNV
@@ -147,4 +173,6 @@ LRuAVSyi58qyAD0Eu1zLMc3KhEUXoxF7aA8P0w==
 </ds:RSAKeyValue>
 </ds:KeyValue>
 </ds:KeyInfo>
-<ds:Object Id="Signature484012-Object41843"><etsi:QualifyingProperties Target="#Signature484012"><etsi:SignedProperties Id="Signature484012-SignedProperties454494"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-03-09T17:55:16-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-340514"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></guiaRemision>
+<ds:Object Id="Signature916227-Object246715"><etsi:QualifyingProperties Target="#Signature916227"><etsi:SignedProperties Id="Signature916227-SignedProperties406134"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-03-10T12:09:59-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-466751"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></factura>]]></comprobante>
+  <mensajes/>
+</autorizacion>

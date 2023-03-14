@@ -179,9 +179,11 @@ class lista_guia_remisionC
     function autorizar_sri($parametros)
     {
     	// print_r($parametros);die();
-    	$datos = $this->modelo->guia_remision_emitidas_tabla($codigo=false,$desde=false,$hasta=false,$parametros['serie'],$parametros['nota']);
+    	$datos = guia_remision_emitidas_tabla($codigo=false,$desde=false,$hasta=false,$parametros['serie'],$factura=false,$Autorizacion=false,$Autorizacion_GR=false,$parametros['nota'],$serie_gr=false)
 
-    	$TFA['Serie_NC'] = $parametros['serie'];
+    	// $this->modelo->guia_remision_emitidas_tabla($codigo=false,$desde=false,$hasta=false,$parametros['serie'],$parametros['nota']);
+
+    $TFA['Serie_NC'] = $parametros['serie'];
 		$TFA['Nota_Credito'] = $parametros['nota'];
 		$TFA['Serie'] = $datos[0]['Serie'];
 		$TFA['TC'] = $datos[0]['Serie'];
@@ -213,13 +215,38 @@ class lista_guia_remisionC
     function ver_guia_remision_pdf($tc,$serie,$factura,$Auto,$AutoGR)
     {
     	$FA = $this->modelo->factura($factura,$serie,$Auto);
+    	if(count($FA)==0)
+    	{				
+				$FA = $this->modelo->guia_remision_emitidas_tabla($codigo=false,$desde=false,$hasta=false,$serie,$factura,$Auto,$AutoGR,$remision=false,$serie_gr=false);
+				$cliente = Cliente($FA[0]['CodigoC'],$grupo = false,$query=false,$clave=false);
+				$TFA['Razon_Social'] = $cliente[0]['Cliente'];
+        $TFA['RUC_CI'] = $cliente[0]['CI_RUC'];
+        $TFA['Direccion_RS'] = $cliente[0]['Direccion'];
+				$TFA['Serie'] = $FA[0]['Serie']; 
+				$TFA['Factura'] = $FA[0]['Factura']; 
+				$TFA['Fecha_Aut'] = $FA[0]['FechaGRE']; 
+				$TFA['TC'] = $tc;
+				$TFA['Serie'] = $serie;
+				$TFA['Autorizacion'] = $Auto;
+				$TFA['Factura'] = $factura;
+				$TFA['Autorizacion_GR'] = $AutoGR;
+				$TFA['CodigoC'] = $FA[0]['CodigoC']; 
+				$TFA['Remision'] = $FA[0]['Remision']; 
+				$TFA['Entrega'] = $FA[0]['Entrega']; 
+
+				$this->punto_venta->pdf_guia_remision_elec_sin_fac($TFA,$nombre_archivo=false,$periodo=false,$aprobado=false,$descargar=false);
+			}
+
+			// print_r($FA);die();
+			$TFA['CodigoC'] = $FA[0]['CodigoC']; 
     	$TFA['TC'] = $tc;
-		$TFA['Serie'] = $serie;
-		$TFA['Autorizacion'] = $Auto;
-		$TFA['Factura'] = $factura;
-		$TFA['Autorizacion_GR'] = $AutoGR;
-		$TFA['CodigoC'] = $FA[0]['CodigoC']; 
-      	$this->punto_venta->pdf_guia_remision_elec($TFA,$TFA['Autorizacion_GR'],$periodo=false,0,0);
+			$TFA['Serie'] = $serie;
+			$TFA['Autorizacion'] = $Auto;
+			$TFA['Factura'] = $factura;
+			$TFA['Autorizacion_GR'] = $AutoGR;
+      $this->punto_venta->pdf_guia_remision_elec($TFA,$TFA['Autorizacion_GR'],$periodo=false,0,0);
+
+
 	 	
    
     }
@@ -396,7 +423,8 @@ QUITO - ECUADOR';
   	function guardarFactura($parametros)
   	{
   		
-	    // print_r($parametros);die();
+	    // print_r($parametros);
+	    // die();
 	    $TFA = array();
 	    $ci_comer = explode('_', $parametros['DCRazonSocial']);
 	    $codig_l = explode('_',$parametros['DCSerieGR']);
@@ -439,7 +467,7 @@ QUITO - ECUADOR';
 			SetAdoFields('Lugar_Entrega',$parametros['TxtLugarEntrega']);	
 			SetAdoUpdate();
 
-
+// die();
 			if(strlen($parametros['LblAutGuiaRem_'])>=13)
 			{
 				// print_r('prin');die();
