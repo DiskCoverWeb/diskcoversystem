@@ -790,12 +790,12 @@ function ProcGrabar($FA)
 	           	$ema_pdf = $this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false,1,1);
 	           	if($ema_pdf==-1)
 	           	{
-	           		return array('respuesta'=>5,'pdf'=>$imp,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia);
+	           		return array('respuesta'=>5,'pdf'=>$imp,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia,'rodillo'=>$_SESSION['INGRESO']['Impresora_Rodillo']);
 	           	}
 	           }else
 	           {
 	             $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
-	             return array('respuesta'=>$rep,'pdf'=>$imp,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia);
+	             return array('respuesta'=>$rep,'pdf'=>$imp,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia,'rodillo'=>$_SESSION['INGRESO']['Impresora_Rodillo']);
 	         
 	           }           
            		return array('respuesta'=>$rep,'pdf'=>$imp,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia);

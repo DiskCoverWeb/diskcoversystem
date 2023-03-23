@@ -865,7 +865,7 @@
              return false;
            }
             eliminar_ac();
-             borrar_asientos();
+             //borrar_asientos();
            $('#titulo_frame').text("COMPRAS");
           
            var fec = $('#fecha1').val();
@@ -1003,7 +1003,7 @@
         {
           Swal.fire('Este documento electronico ya esta autorizado','','error');
 
-          }else if(response.respuesta == '1')
+          }else if(response.respuesta == 1 || response==1)
           {
             // Swal.fire('Este documento electronico autorizado','','success');
              eliminar_ac();
@@ -1030,10 +1030,10 @@
           }
           else
           {
-            Swal.fire('Error por: '+response,'','info');
+            Swal.fire('Error por: '+response.respuesta,'','info');
           }
 
-          if(response==1)
+          if(response.respuesta==1 || response==1)
           {
              Swal.fire('Retencion ingresada','','success');
              eliminar_todo_asisntoB();

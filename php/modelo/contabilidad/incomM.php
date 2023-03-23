@@ -730,6 +730,7 @@ class incomM
 	}
 	function Actualiza_Procesado_Kardex($CodigoInv)
 	{
+			$cid = $this->conn;
 		 if(strlen($CodigoInv) > 2){ 
          $sql = "UPDATE Trans_Kardex
                SET Procesado = 0
