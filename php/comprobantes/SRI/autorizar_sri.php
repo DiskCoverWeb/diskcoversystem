@@ -2503,35 +2503,35 @@ function generar_xml($cabecera,$detalle)
 		$xml_campoAdicional->setAttribute( "nombre", "seriePuntoEmision" );
 		$xml_infoAdicional->appendChild( $xml_campoAdicional );
 
-		if($cabecera['Nombre_Establecimiento']!='.' && $cabecera['Nombre_Establecimiento']!='')
+		if(isset($cabecera['Nombre_Establecimiento']) && $cabecera['Nombre_Establecimiento']!='.' && $cabecera['Nombre_Establecimiento']!='')
 		{
 			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Nombre_Establecimiento'] );
 			$xml_campoAdicional->setAttribute( "nombre", "socioRazonSocial" );
 			$xml_infoAdicional->appendChild( $xml_campoAdicional );
 		}
 
-		if($cabecera['Ruc_Establecimiento']!='' && $cabecera['Ruc_Establecimiento']!='.')
+		if(isset($cabecera['Ruc_Establecimiento']) && $cabecera['Ruc_Establecimiento']!='' && $cabecera['Ruc_Establecimiento']!='.')
 		{
 			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Ruc_Establecimiento'] );
 			$xml_campoAdicional->setAttribute( "nombre", "socioRUC" );
 			$xml_infoAdicional->appendChild( $xml_campoAdicional );
 		}
 
-		if($cabecera['Direccion_Establecimiento']!='.' && $cabecera['Direccion_Establecimiento']!='')
+		if(isset($cabecera['Direccion_Establecimiento']) && $cabecera['Direccion_Establecimiento']!='.' && $cabecera['Direccion_Establecimiento']!='')
 		{
 			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Direccion_Establecimiento'] );
 			$xml_campoAdicional->setAttribute( "nombre", "socioDireccion" );
 			$xml_infoAdicional->appendChild( $xml_campoAdicional );
 		}
 
-		if($cabecera['Telefono_Establecimiento']!='.' && $cabecera['Telefono_Establecimiento']!='')
+		if(isset($cabecera['Telefono_Establecimiento']) && $cabecera['Telefono_Establecimiento']!='.' && $cabecera['Telefono_Establecimiento']!='')
 		{
 			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Telefono_Establecimiento'] );
 			$xml_campoAdicional->setAttribute( "nombre", "socioTelefono" );
 			$xml_infoAdicional->appendChild( $xml_campoAdicional );
 		}
 
-		if($cabecera['Email_Establecimiento']!='.' && $cabecera['Email_Establecimiento']!='')
+		if(isset($cabecera['Email_Establecimiento']) && $cabecera['Email_Establecimiento']!='.' && $cabecera['Email_Establecimiento']!='')
 		{
 			$xml_campoAdicional = $xml->createElement( "campoAdicional",$cabecera['Email_Establecimiento'] );
 			$xml_campoAdicional->setAttribute( "nombre", "socioEmail" );
