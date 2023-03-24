@@ -749,8 +749,8 @@ function ProcGrabar($FA)
         $conn->String_Sql($sql);
       }
 
-     if(strlen($FA['Autorizacion']) >= 13){
-
+     if(strlen($FA['Autorizacion']) >= 13)
+     {
      	
      	// print_r('si');die();
      	// print_r('drrrrddd');die();
@@ -785,22 +785,34 @@ function ProcGrabar($FA)
            $this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false,1,1);
            if($rep==1)
            {
-	           if($_SESSION['INGRESO']['Impresora_Rodillo']==0)
+	           if($_SESSION['INGRESO']['Impresora_Rodillo']==0 && $_SESSION['INGRESO']['Grafico_PV']==0)
 	           {
-	           	$ema_pdf = $this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false,1,1);
-	           	if($ema_pdf==-1)
-	           	{
-	           		return array('respuesta'=>5,'pdf'=>$imp,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia,'rodillo'=>$_SESSION['INGRESO']['Impresora_Rodillo']);
-	           	}
-	           }else
+	           		$ema_pdf = $this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false,1,1);
+		           	if($ema_pdf==-1)
+		           	{
+		           		//pdf normal
+		           		return array('respuesta'=>5,'pdf'=>$imp,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia,'rodillo'=>$_SESSION['INGRESO']['Impresora_Rodillo']);
+		           	}
+
+           			return array('respuesta'=>$rep,'pdf'=>$imp,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia,'rodillo'=>$_SESSION['INGRESO']['Impresora_Rodillo']);
+
+	           }else if($_SESSION['INGRESO']['Impresora_Rodillo']==1 && $_SESSION['INGRESO']['Grafico_PV']==0)
+	           {
+	           		// impresion matricial
+	           		return array('respuesta'=>$rep,'pdf'=>$imp,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia,'rodillo'=>$_SESSION['INGRESO']['Impresora_Rodillo']);
+
+	           }else if($_SESSION['INGRESO']['Impresora_Rodillo']==0 && $_SESSION['INGRESO']['Grafico_PV']==1)
 	           {
 	             $this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
 	             return array('respuesta'=>$rep,'pdf'=>$imp,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia,'rodillo'=>$_SESSION['INGRESO']['Impresora_Rodillo']);
-	         
-	           }           
-           		return array('respuesta'=>$rep,'pdf'=>$imp,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia);
+	           }else
+	           {
 
-            }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia);}
+	           	$this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
+	             return array('respuesta'=>$rep,'pdf'=>$imp,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia,'rodillo'=>$_SESSION['INGRESO']['Impresora_Rodillo']);
+	           }
+
+            }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep,'clave'=>$clave,'respuesta_guia'=>$rep1,'pdf_guia'=>$imp_guia,'clave_guia'=>$clave_guia,'rodillo'=>$_SESSION['INGRESO']['Impresora_Rodillo']);}
         }
      }else{
      	// print_r('dddd');die();

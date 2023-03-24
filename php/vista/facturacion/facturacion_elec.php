@@ -1,5 +1,5 @@
 <?php date_default_timezone_set('America/Guayaquil');  //print_r($_SESSION);die();
-// print_r($_SESSION['INGRESO']);die();
+ // print_r($_SESSION['INGRESO']);die();
 $TC = 'FA'; if(isset($_GET['tipo'])){$TC = $_GET['tipo'];}
 $operadora = $_SESSION['INGRESO']['RUC_Operadora'];
 if($operadora!='.' && strlen($operadora)>=13)
@@ -649,7 +649,7 @@ function generar_factura() {
         dataType: 'json',
         success: function(data) {
             $('#myModal_espera').modal('hide');
-            // console.log(data);
+            console.log(data);
             if(data.respuesta == 1 && data.respuesta_guia==0)
             {
                 
@@ -659,7 +659,7 @@ function generar_factura() {
                             confirmButtonText: 'Ok!',
                             allowOutsideClick: false,
                         }).then(function() {
-                            if (typeof data.rodillo === 'undefined') 
+                            if (data.rodillo == '0') 
                             {
                                 var url = '../../TEMP/' + data.pdf + '.pdf';
                                 window.open(url, '_blank'); 
@@ -899,7 +899,7 @@ function generar_factura() {
 
 function Re_imprimir(fac,serie,ci,tc)
   {
- var url = '../controlador/facturacion/divisasC.php?ticketPDF=true&fac='+fac+'&serie='+serie+'&CI='+ci+'&TC='+tc+'&efectivo=0.0000&saldo=0.00&pdf=no';
+ var url = '../controlador/facturacion/divisasC.php?ticketPDF_fac=true&fac='+fac+'&serie='+serie+'&CI='+ci+'&TC='+tc+'&efectivo=0.0000&saldo=0.00&pdf=no';
      var html='<iframe style="width:100%; height:50vw;" src="'+url+'&pdf=no" frameborder="0" allowfullscreen id="re_ticket"></iframe>';
     $('#re_frame').html(html);
      Swal.fire({
@@ -908,7 +908,7 @@ function Re_imprimir(fac,serie,ci,tc)
         confirmButtonText: 'Ok!',
         allowOutsideClick: false,
     }).then(function(){
-        location.reload();
+        // location.reload();
     })
     document.getElementById('re_ticket').contentWindow.print();
                      
