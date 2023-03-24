@@ -908,7 +908,7 @@ function Re_imprimir(fac,serie,ci,tc)
         confirmButtonText: 'Ok!',
         allowOutsideClick: false,
     }).then(function(){
-        // location.reload();
+        location.reload();
     })
     document.getElementById('re_ticket').contentWindow.print();
                      
