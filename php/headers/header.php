@@ -1,7 +1,7 @@
 <?php  @session_start(); 
 include("../db/chequear_seguridad.php"); 
 include("../controlador/panel.php");
-include("../funciones/funciones.php");
+include_once("../funciones/funciones.php");
 include('../controlador/contabilidad/contabilidad_controller.php');
 
        $f =date('Y-m-d');
@@ -121,6 +121,9 @@ include('../controlador/contabilidad/contabilidad_controller.php');
   <script type="text/javascript">
 
      $(document).ready(function () {
+      validateStar();
+      setInterval(validateStar, 6*60000);
+
       var cuentas = '<?php echo $cuentas; ?>';
       if(cuentas!='')
       {
@@ -302,6 +305,48 @@ include('../controlador/contabilidad/contabilidad_controller.php');
       console.log(Fecha);
       return Fecha;
     }
+
+  function validateStar()
+  {      
+     $.ajax({
+      url:   '../controlador/panel.php?validateStar=true',
+      type:  'post',
+      data:  {'NumModulo':'<?php echo @$_SESSION['INGRESO']['modulo_'] ?>'},
+      dataType: 'json',
+      success:  function (response) { 
+        if(!response.rps & response.mensaje!=""){
+          Swal.fire({
+            type: "warning",
+            html: `<div style="width: 100%; color:black;font-weight: 400;">${response.mensaje}</div>`,
+            title: response.titulo,
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'SI',
+            cancelButtonText: 'NO'
+          }).then((result) => {
+             $.ajax({
+                url:   '../controlador/panel.php?ConfirmacionComunicado=true',
+                type:  'post',
+                data:  {'NumModulo':'<?php echo @$_SESSION['INGRESO']['modulo_'] ?>', 'SeguirMostrando': (result.value==true)},
+                dataType: 'json',
+                success:  function (response) { 
+                  if(!response.rps & response.mensaje!=""){
+                    Swal.fire({
+                      type: "warning",
+                      html: `<div style="width: 100%; color:black;font-weight: 400;">${response.mensaje}</div>`,
+                      title: response.titulo
+                    }).then((result) => {
+                      logout();
+                    });        
+                  }
+                }
+              });
+          });        
+        }
+      }
+    });
+  }
 
   </script>
 

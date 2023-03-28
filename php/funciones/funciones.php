@@ -39,11 +39,13 @@ function ip()
         $ipaddress = getenv('HTTP_FORWARDED_FOR');
     else if(getenv('HTTP_FORWARDED'))
        $ipaddress = getenv('HTTP_FORWARDED');
+    else if (getenv('HTTP_X_REAL_IP'))
+        $ip_address = getenv('HTTP_X_REAL_IP');
     else if(getenv('REMOTE_ADDR'))
         $ipaddress = getenv('REMOTE_ADDR');
     else
         $ipaddress = 'UNKNOWN';
-  echo $ipaddress;
+  return $ipaddress;
 
 }
 
@@ -211,7 +213,7 @@ function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
       $opcional_proceso = G_NINGUNO;
     }
     $sql = "INSERT INTO acceso_pcs (IP_Acceso,CodigoU,Item,Aplicacion,RUC,Fecha,Hora,
-             ES,Tarea,Proceso,Credito_No,Periodo)VALUES('172.168.2.20','".$CodigoUsuario."','".$NumEmpresa."',
+             ES,Tarea,Proceso,Credito_No,Periodo)VALUES(ip(),'".$CodigoUsuario."','".$NumEmpresa."',
              '".$Modulo."','".$_SESSION['INGRESO']['Id']."','".$Mifecha1."','".$MiHora1."','".$TipoTrans."','".$Tarea."','".$proceso."','".$TMail_Credito_No."','".$_SESSION['INGRESO']['periodo']."');";
     $conn->String_Sql($sql,'MYSQL');
 
@@ -12036,5 +12038,215 @@ function Leer_Datos_Clientes2($Codigo_CIRUC_Cliente, $NoActualizaSP = false) {
     return $TBenef;
 }
 
+function Datos_Iniciales_Entidad_SP_MySQL($empresa, $usuario)
+{
+  global $Fecha_CO, $Fecha_CE, $Fecha_VPN, $Fecha_DB, $Fecha_P12, $AgenteRetencion, $MicroEmpresa, $EstadoEmpresa, $DescripcionEstado, $NombreEntidad, $RepresentanteLegal, $MensajeEmpresa, $ComunicadoEntidad, $SerieFE, $Cartera, $Cant_FA, $TipoPlan, $PCActivo, $EstadoUsuario, $ConexionConMySQL;
+
+  $ConexionConMySQL = false;
+  $PCActivo = true;
+  $EstadoUsuario = true;
+  $IDEntidad = 0;
+  $DescripcionEstado = "OK";
+  $EstadoEmpresa = G_NINGUNO;
+  $Fecha_CE = date('Y-m-d H:i:s');
+  $Fecha_CO = date('Y-m-d H:i:s');
+  $Fecha_VPN = date('Y-m-d H:i:s');
+  $Fecha_DB = date('Y-m-d H:i:s');
+  $Fecha_P12 = date('Y-m-d H:i:s');
+  $SerieFE = G_NINGUNO;
+  $MicroEmpresa = G_NINGUNO;
+  $AgenteRetencion = G_NINGUNO;
+  $Cartera = 0;
+  $Cant_FA = 0;
+  $TipoPlan = 0;
+  
+  $CadenaParcial = "";
+  $modulos = getModulosGeneral();
+  foreach ($modulos as $key => $row) {
+        $CadenaParcial .= $row["Modulo"] . "^" . $row["Item"] . "^" . $row["Codigo"] . "^~";
+  }
+  $ItemEmpresa = $empresa["Item"];
+  $RUCEmpresa = $empresa["RUC"];
+  $CodigoUsuario = $usuario['Codigo'];
+  $NombreUsuario = $usuario['Nombre_Completo'];
+  $IDEUsuario = $usuario['Usuario'];
+  $PWRUsuario = $usuario['Clave'];
+  $NombreEmpresa = $empresa["Empresa"];
+  $RazonSocialEmpresa = $empresa["Razon_Social"];
+  $NombreCiudad = $empresa["Ciudad"];
+  $ContadorEmpresa = $empresa["Contador"];
+  $ContadorRUC = $empresa["RUC_Contador"];
+  $GerenteEmpresa = $empresa["Gerente"];
+  $NLogoTipo = $empresa["Logo_Tipo"];
+  $NMarcaAgua = $empresa["Marca_Agua"];
+  $EmailUsuario = $usuario['EmailUsuario'];
+  $NivelesDeAccesos = $CadenaParcial;
+  $IP_Local = @$_SESSION['INGRESO']['IP_Local'];
+  $IP_WAN = ip();
+  $PC_Nombre = G_NINGUNO;
+  $PC_MAC = G_NINGUNO;
+
+  $conn = new db();
+  //Enviamos los parametro de solo entrada al SP
+  $parametros = array(
+      array(&$ItemEmpresa, 'IN'),
+      array(&$RUCEmpresa, 'IN'),
+      array(&$CodigoUsuario, 'IN'),
+      array(&$NombreUsuario, 'IN'),
+      array(&$IDEUsuario, 'IN'),
+      array(&$PWRUsuario, 'IN'),
+      array(&$NombreEmpresa, 'IN'),
+      array(&$RazonSocialEmpresa, 'IN'),
+      array(&$NombreCiudad, 'IN'),
+      array(&$ContadorEmpresa, 'IN'),
+      array(&$ContadorRUC, 'IN'),
+      array(&$GerenteEmpresa, 'IN'),
+      array(&$NLogoTipo, 'IN'),
+      array(&$NMarcaAgua, 'IN'),
+      array(&$EmailUsuario, 'IN'),
+      array(&$NivelesDeAccesos, 'IN'),
+      array(&$IP_Local, 'IN'),
+      array(&$IP_WAN, 'IN'),
+      array(&$PC_Nombre, 'IN'),
+      array(&$PC_MAC, 'IN'),
+      array("FechaCO", 'OUT'),
+      array("FechaCE", 'OUT'),
+      array("FechaVPN", 'OUT'),
+      array("FechaDB", 'OUT'),
+      array("FechaP12", 'OUT'),
+      array("AgenteRetencion", 'OUT'),
+      array("MicroEmpresa", 'OUT'),
+      array("EstadoEmpresa", 'OUT'),
+      array("DescripcionEstado", 'OUT'),
+      array("NombreEntidad", 'OUT'),
+      array("Representante", 'OUT'),
+      array("MensajeEmpresa", 'OUT'),
+      array("ComunicadoEntidad", 'OUT'),
+      array("SerieFA", 'OUT'),
+      array("TotCartera", 'OUT'),
+      array("CantFA", 'OUT'),
+      array("TipoPlan", 'OUT'),
+      array("pActivo", 'OUT'),
+      array("EstadoUsuario", 'OUT'),
+  );
+  $sql = "Call sp_mysql_datos_iniciales";
+  $rsMySQL =  $conn->ejecutar_procesos_almacenados($sql,$parametros, true,$tipo='MYSQL');
+  $Fecha_CO = $rsMySQL["@FechaCO"];
+  $Fecha_CE = $rsMySQL["@FechaCE"];
+  $Fecha_VPN = $rsMySQL["@FechaVPN"];
+  $Fecha_DB = $rsMySQL["@FechaDB"];
+  $Fecha_P12 = $rsMySQL["@FechaP12"];
+  $AgenteRetencion = $rsMySQL["@AgenteRetencion"];
+  $MicroEmpresa = $rsMySQL["@MicroEmpresa"];
+  $EstadoEmpresa = $rsMySQL["@EstadoEmpresa"];
+  $DescripcionEstado = $rsMySQL["@DescripcionEstado"];
+  $NombreEntidad = $rsMySQL["@NombreEntidad"];
+  $RepresentanteLegal = $rsMySQL["@Representante"];
+  $MensajeEmpresa = $rsMySQL["@MensajeEmpresa"];
+  $ComunicadoEntidad = $rsMySQL["@ComunicadoEntidad"];
+  $SerieFE = $rsMySQL["@SerieFA"];
+  $Cartera = $rsMySQL["@TotCartera"];
+  $Cant_FA = $rsMySQL["@CantFA"];
+  $TipoPlan = $rsMySQL["@TipoPlan"];
+  $PCActivo = $rsMySQL["@pActivo"];
+  $EstadoUsuario = $rsMySQL["@EstadoUsuario"];
+  $ConexionConMySQL = true;
+}
+
+function getModulosGeneral()
+{
+  $conn = new db();
+  $sql = "SELECT Modulo, Item, Codigo 
+             FROM Acceso_Empresa 
+             WHERE Modulo <> '00'" ;
+  return $conn->datos($sql);
+}
+
+function sp_Iniciar_Datos_Default($Item, $Periodo, $Cotizacion, $RUCEmpresa, $CodigoUsuario, $FechaC, $NumModulo)
+{
+  $conn = new db();
+  $No_ATS = G_NINGUNO;
+  $ListSucursales = G_NINGUNO;
+  $NombreProvincia = G_NINGUNO;
+  $ConSucursal = 0;
+  $SiUnidadEducativa = 0;
+  $PorcIVA = 0.0; //float
+  $parametros = array(
+    array(&$Item, SQLSRV_PARAM_IN),
+    array(&$Periodo, SQLSRV_PARAM_IN),
+    array(&$Cotizacion, SQLSRV_PARAM_IN),
+    array(&$RUCEmpresa, SQLSRV_PARAM_IN),
+    array(&$CodigoUsuario, SQLSRV_PARAM_IN),
+    array(&$FechaC, SQLSRV_PARAM_IN),
+    array(&$NumModulo, SQLSRV_PARAM_IN),
+
+    array(&$No_ATS, SQLSRV_PARAM_INOUT),
+    array(&$ListSucursales, SQLSRV_PARAM_INOUT),
+    array(&$NombreProvincia, SQLSRV_PARAM_INOUT),
+    array(&$ConSucursal, SQLSRV_PARAM_INOUT),
+    array(&$SiUnidadEducativa, SQLSRV_PARAM_INOUT),
+    array(&$PorcIVA, SQLSRV_PARAM_INOUT),
+  );
+  $sql = "EXEC sp_Iniciar_Datos_Default @Item=?, @Periodo=?, @Cotizacion=?, @RUCEmpresa=?, @CodigoUsuario=?, @FechaC=?, @NumModulo=? , @No_ATS=?, @ListSucursales=?, @NombreProvincia=?, @ConSucursal=?, @SiUnidadEducativa=?, @PorcIVA=?";
+  $exec = $conn->ejecutar_procesos_almacenados($sql,$parametros);
+
+    $_SESSION['INGRESO']['porc'] = $PorcIVA;
+    $_SESSION['INGRESO']['No_ATS'] = $No_ATS;
+    $_SESSION['INGRESO']['ListSucursales'] = $ListSucursales;
+    $_SESSION['INGRESO']['NombreProvincia'] = $NombreProvincia;
+    $_SESSION['INGRESO']['Sucursal'] = $ConSucursal;
+    $_SESSION['INGRESO']['SiUnidadEducativa'] = $SiUnidadEducativa;
+
+  if($exec){
+    return compact("No_ATS","ListSucursales","NombreProvincia","ConSucursal","SiUnidadEducativa","PorcIVA");
+  }else{
+    return $exec;
+  }
+}
+
+function Estado_Empresa_SP_MySQL()
+{
+  $conn = new db();
+
+  $ItemEmpresa = $_SESSION['INGRESO']['item'];
+  $CodigoUsuario = $_SESSION['INGRESO']['CodigoU'];
+  $RUCEmpresa = $_SESSION['INGRESO']['RUC'];
+  $IP_WAN = ip();
+  $IP_Local = @$_SESSION['INGRESO']['IP_Local'];
+  $PC_Nombre = G_NINGUNO;
+  $PC_MAC = G_NINGUNO;
+  //Parametros de entrada y de salida
+  $parametros = array(
+    array($ItemEmpresa,'IN'),
+    array($RUCEmpresa,'IN'),
+    array($CodigoUsuario,'IN'),
+    array($IP_Local,'IN'), 
+    array($IP_WAN,'IN'),
+    array($PC_Nombre,'IN'),
+    array($PC_MAC,'IN'),
+
+    array('FechaCO','OUT'),
+    array('FechaCE','OUT'),
+    array('FechaVPN','OUT'),
+    array('FechaDB','OUT'),
+    array('FechaP12','OUT'),
+    array('AgenteRetencion','OUT'),
+    array('MicroEmpresa','OUT'),
+    array('EstadoEmpresa','OUT'),
+    array('DescripcionEstado','OUT'),
+    array('NombreEntidad','OUT'),
+    array('Representante','OUT'),
+    array('MensajeEmpresa','OUT'),
+    array('ComunicadoEntidad','OUT'),
+    array('TotCartera','OUT'),
+    array('CantFA','OUT'),
+    array('TipoPlan','OUT'),
+    array('SerieFA','OUT'),
+    array('pActivo','OUT'),
+    array('EstadoUsuario','OUT'),
+  );
+  $sql = "CALL sp_mysql_datos_estado_empresa";
+  return $conn->ejecutar_procesos_almacenados($sql,$parametros,$respuesta='1',$tipo='MYSQL');
+}
 
 ?>

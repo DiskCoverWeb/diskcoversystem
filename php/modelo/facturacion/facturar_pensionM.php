@@ -542,6 +542,12 @@ class facturar_pensionM
         $MBFecha,
         (isset($data['Documento'])?$data['Documento']:$data['DCDebito']));
     }
+
+    $sSQL = "UPDATE Clientes "
+           ."SET Grupo = '" . $data['Grupo_No'] . "', Direccion = '" .$data['TxtDirS'] . "' "
+           ."WHERE Codigo = '" . $data['codigoCliente'] . "' ";
+          Ejecutar_SQL_SP($sSQL);
+
     Leer_Datos_Clientes2($data['codigoCliente']);
     return true;
   }

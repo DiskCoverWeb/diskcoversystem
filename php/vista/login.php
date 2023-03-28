@@ -188,7 +188,23 @@
 		 	Swal.fire('Llene todo los campos','Asegurese de colocar una entidad, usuario y password validos','info')
 		 	return false;
 		 }
-		 
+
+		 var localIp;
+		 var pc = new RTCPeerConnection();
+      pc.createDataChannel('');
+      pc.createOffer(function(sdp) {
+          pc.setLocalDescription(sdp);
+      }, function() {});
+      pc.onicecandidate = function(event) {
+        if (event.candidate) {
+            var ipRegex = /(\d+\.\d+\.\d+\.\d+)/;
+            let a = ipRegex.exec(event.candidate.candidate);
+            if(a){
+            	localIp = a[1];
+            }
+				}
+			}
+
 		 var parametros = 
 		 {
 		 	 'usuario':usuario,
@@ -198,7 +214,9 @@
 		 	 'cartera':cartera,
 		 	 'cartera_usu':cartera_usu,
 		 	 'cartera_pass':cartera_pass,
+		 	 'localIp':localIp
 		 }
+
      $.ajax({
       data:  {parametros:parametros},
       url:   '../controlador/login_controller.php?Ingresar=true',
@@ -209,7 +227,6 @@
          $('#tabla_').html(spiner);
       },*/
         success:  function (response) { 
-        	console.log(response);
         if(response==-1)
         {
         	Swal.fire('Clave o usuario invalidos!','No se pudo acceder.','error');

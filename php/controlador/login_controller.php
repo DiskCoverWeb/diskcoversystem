@@ -3,7 +3,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 require_once("../modelo/usuario_model.php");
-require(dirname(__DIR__,2).'/lib/phpmailer/enviar_emails.php');
+require_once(dirname(__DIR__,2).'/lib/phpmailer/enviar_emails.php');
 $login = new login_controller();
 if(isset($_GET['Entidad']))
 {
@@ -143,6 +143,9 @@ class login_controller
 		// print_r($parametro);
 		// print_r($datos);
 		// die();
+		$_SESSION['INGRESO']['msjMora'] = true; //indica que se debe mostrado el msj de mora en caso de existir.
+		$_SESSION['INGRESO']['IP_Local'] = !empty($parametro['localIp'])?$parametro['localIp']:"."; 
+		
 		if($parametro['cartera']==1)
 		{
 			$datos = $this->modelo->Ingresar($parametro['cartera_usu'],$parametro['cartera_pass'],$parametro['entidad']);

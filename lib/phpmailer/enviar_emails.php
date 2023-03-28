@@ -315,7 +315,122 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
      return $datos;
    }
 
-  
+  function FEnviarCorreos($TMail, $Lista_De_Correos= null, $itemEmpresa='')
+  {
+    $Si_Enviar = false;
+    if ($TMail->de == CorreoDiskCover) {
+      $TMail->Usuario = CorreoDiskCover;
+      $TMail->PassWord = ContrasenaDiskCover;
+      $TMail->servidor = "mail.diskcoversystem.com";
+      $TMail->puerto = 465;
+      $TMail->UseAuntentificacion = true;
+      $TMail->ssl = true;
+      $Si_Enviar = true;
+    } else {
+      if($itemEmpresa==''){
+        $itemEmpresa = @$_SESSION['INGRESO']['item'];
+      }
+
+      $conn = new db();
+      $sSQL = "SELECT smtp_Servidor, smtp_Puerto, smtp_UseAuntentificacion, smtp_SSL, smtp_Secure, " .
+      "Email_Conexion, Email_Contraseña, Email_Conexion_CE, Email_Contraseña_CE, Email_CE_Copia " .
+      "FROM Empresas " .
+      "WHERE Item = '" . $itemEmpresa . "' " .
+      "AND LEN(smtp_Servidor) > 1 " .
+      "AND smtp_Puerto > 0 ";
+      $AdoSMTP = $conn->datos($sSQL);;
+      if (count($AdoSMTP) > 0) {
+        $TMail->UseAuntentificacion = boolval($AdoSMTP[0]["smtp_UseAuntentificacion"]);
+        $TMail->ssl = boolval($AdoSMTP[0]["smtp_SSL"]);
+        $TMail->puerto = $AdoSMTP[0]["smtp_Puerto"];
+        switch ($TMail->TipoDeEnvio) {
+          case "CE":
+            $TMail->de = $AdoSMTP[0]["Email_Conexion_CE"];
+            $TMail->Usuario = $AdoSMTP[0]["Email_Conexion_CE"];
+            $TMail->PassWord = $AdoSMTP[0]["Email_Contraseña_CE"];
+          break;
+          default:
+            // En caso de que se envie desde otro correo por default
+            if (0 <= $TMail->ListaMail && $TMail->ListaMail <= 6 && $TMail->de == "") {
+              $TMail->de = $Lista_De_Correos[$TMail->ListaMail]->Correo_Electronico;
+              $TMail->Usuario = $Lista_De_Correos[$TMail->ListaMail]->Correo_Electronico;
+              $TMail->PassWord = $Lista_De_Correos[$TMail->ListaMail]->Contraseña;
+            } else {
+              $TMail->de = $AdoSMTP[0]["Email_Conexion"];
+              $TMail->Usuario = $AdoSMTP[0]["Email_Conexion"];
+              $TMail->PassWord = $AdoSMTP[0]["Email_Contraseña"];
+            }
+        }
+
+        if (strpos($TMail->Usuario, "gmail.com") !== false) {
+          $TMail->servidor = "smtp.gmail.com";
+        } elseif (strpos($TMail->Usuario, "diskcoversystem.com") !== false) {
+          $TMail->servidor = "mail.diskcoversystem.com";
+        } else {
+          $TMail->servidor = $AdoSMTP[0]["smtp_Servidor"];
+        }
+
+        $Si_Enviar = true;
+      } else {
+        $rps = ['error' => true,'mensaje' => "Credenciales no asignadas para el envio de Correos electronicos, solicite ayuda al Administrador del Sistema"];
+      }
+    }
+
+    if ($TMail->Subject == "") {
+      $TMail->Subject = "Sin asunto";
+    }
+    if($Si_Enviar){
+      $mail = new PHPMailer(true);
+      $mail->SMTPOptions = array(
+      'ssl' => array(
+        'verify_peer' => false,
+        'verify_peer_name' => false,
+        'allow_self_signed' => true
+        )
+      );
+
+      $recipients = explode(";", $TMail->para);
+      $rps = [];
+      foreach ($recipients as $key => $recipient) {
+        if(strpos($recipient, '@') !== false){
+          try {
+            //$mail->SMTPDebug = SMTP::DEBUG_SERVER;
+            $mail->isSMTP();
+            $mail->Host       = $TMail->servidor;
+            $mail->SMTPAuth   = $TMail->UseAuntentificacion;
+            $mail->Username   = $TMail->Usuario;
+            $mail->Password   = $TMail->PassWord;
+            if($TMail->ssl)
+              $mail->SMTPSecure = 'ssl';       
+            else
+              $mail->SMTPSecure = 'tls';
+            $mail->Port       = $TMail->puerto;          
+
+            $mail->setFrom($TMail->de, 'DiskCover System');
+            $mail->addAddress($recipient);
+            $mail->addReplyTo($TMail->de, 'Informacion');
+
+            if(is_array($TMail->Adjunto)){
+              foreach ($TMail->Adjunto as $key => $archivo) {//TODO LS esto no se ha testeado
+                if(file_exists(dirname(__DIR__,2).'/'.$archivo))
+                  $mail->AddAttachment(dirname(__DIR__,2).'/'.$archivo);
+              }
+            }         
+
+            $mail->isHTML(true);   
+            $mail->Subject = $TMail->Subject;
+            $mail->Body    = $TMail->Mensaje;
+            $a = $mail->send();
+            $rps[] = array('para' => $recipient, 'rps'=>true);
+
+          } catch (Exception $e) {
+            $rps[] = array('para' => $recipient, 'rps'=>false);
+          }
+        }
+      }
+      return $rps;
+    }
+  }  
 
 }
 ?>

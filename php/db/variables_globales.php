@@ -49,4 +49,8 @@ DEFINE('G_COMPABONOFACT','AF');
 DEFINE('G_CTABANCOS','BA');
 DEFINE('G_CTACAJA','CJ');
 //--------------------------------------
+
+DEFINE('CorreoDiskCover',"infosistema@diskcoversystem.com");
+DEFINE('ContrasenaDiskCover',"infoDlcjvl1210DiskCover");
+//-------------------------------------
 ?>
