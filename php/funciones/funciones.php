@@ -5405,7 +5405,7 @@ function dimenciones_tabl($len)
                 $conn->String_Sql($sql);
         }
       }
-      return $NumCodigo;
+      return generaCeros($NumCodigo,8);
   
   }
 
