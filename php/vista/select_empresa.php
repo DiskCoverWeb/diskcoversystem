@@ -52,14 +52,39 @@ class select_empresa
 		}else if($num == 1)
 		{				
 		   $resp = $this->cargar_credenciales($empresa[0]['ID'].'-'.$empresa[0]['Item'],$empresa[0]['Empresa'],$empresa[0]['Item']);
-		   if($resp==1)
+		   if($resp['rps'])
 		   {
-			$html='<script>$(document).ready(function(){	
-				window.location="modulos.php";
-			  })
-			</script>';
-			return $html;
-		  }
+				if (isset($resp["mensaje"]) && $resp["mensaje"]!="") {
+					$_SESSION['INGRESO']['msjMora'] = false; //indica que ya se mostro el msj en esta sesion
+					return '<script>$(document).ready(function(){	
+						Swal.fire({
+	                      type: "warning",
+            			  html: `<div style="width: 100%; color:black;font-weight: 400;">
+            				'.$resp['mensaje'].'</div>`
+	                    }).then(() => {
+	                      window.location="modulos.php";
+	                    });
+					  })
+					</script>';
+				}else{
+					$html='<script>$(document).ready(function(){	
+						window.location="modulos.php";
+					  })
+					</script>';
+					return $html;
+				}
+			}else{
+				return '<script>$(document).ready(function(){	
+						Swal.fire({
+	                      type: "error",
+	                      html: `<div style="width: 100%; color:black;font-weight: 400;">'.$resp['mensaje'].'</div>`,
+	                      title: "Acceso no permitido"
+	                    }).then(() => {
+	                      window.location="../vista/login.php";
+	                    });
+					  })
+					</script>';
+		  	}
 		}else
 		{
 			$html = '<div class="box-body text-center"><div class="col-lg-12 col-xs-9"><img src="../../img/NO_ASIGNADO.gif" style="width: 50%;"></div></div>';
@@ -70,8 +95,11 @@ class select_empresa
 
 	function cargar_credenciales($ID,$Empresa,$Item)
 	{
-		variables_sistema($ID,$Empresa,$Item);
-		return 1;
+		$respuesta = variables_sistema($ID,$Empresa,$Item);
+		if(!is_null($respuesta)){
+			return $respuesta;
+		}
+		return array('rps'=> true);
 	} 
 }
 	

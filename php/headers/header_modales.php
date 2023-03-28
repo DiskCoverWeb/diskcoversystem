@@ -1,7 +1,7 @@
 <?php  @session_start(); 
 include("../db/chequear_seguridad.php"); 
 include("../controlador/panel.php");
-include("../funciones/funciones.php");
+include_once("../funciones/funciones.php");
 
        $f =date('Y-m-d');
        // print_r($_SESSION);die();

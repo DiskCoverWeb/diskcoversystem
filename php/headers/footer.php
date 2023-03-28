@@ -394,3 +394,37 @@ function limpiar_IngresoClave_MYSQL() {
     $('#txt_IngClave_MYSQL').val('');
 }
   </script>
+
+<?php
+if(isset($_SESSION['INGRESO']['Mail']) && isset($_SESSION['INGRESO']['Clave']) && isset($_SESSION['INGRESO']['noempr']) && isset($_SESSION['INGRESO']['empresa']) && !empty($_SESSION['INGRESO']['noempr']) && !empty($_SESSION['INGRESO']['empresa'])){
+  //INICIO VALIDAMOS SI EL USUARIO TIENE PERMISO DE ACCESO AL SISTEMA
+    $resp =  validacionAcceso($_SESSION['INGRESO']['noempr'], $_SESSION['INGRESO']['Mail'], $_SESSION['INGRESO']['Clave']);
+    if($resp['rps'])
+    {
+      if (isset($resp["mensaje"]) && $resp["mensaje"]!="" && $_SESSION['INGRESO']['msjMora']) {
+        $_SESSION['INGRESO']['msjMora'] = false; //indica que ya se mostro el msj en esta sesion
+        echo '<script>$(document).ready(function(){ 
+          Swal.fire({
+            type: "warning",
+            html: `<div style="width: 100%; color:black;font-weight: 400;">
+            '.$resp['mensaje'].'</div>`
+            })
+        })
+        </script>';
+      }
+    }else if(!isset($_SESSION['INGRESO']['modulo_']) || empty($_SESSION['INGRESO']['modulo_'])){
+      echo '
+          <script>$(document).ready(function(){ 
+            Swal.fire({
+              type: "warning",
+              title: "Acceso no permitido",
+              html: `<div style="width: 100%; color:black;font-weight: 400;">'.$resp['mensaje'].'</div>`
+            }).then(() => {
+              logout()
+            });
+          })
+        </script>';
+    }
+  //FIN VALIDAMOS SI EL USUARIO TIENE PERMISO DE ACCESO AL SISTEMA
+}
+?>

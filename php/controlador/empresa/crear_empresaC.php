@@ -458,8 +458,8 @@ function  TextSubDir_LostFocus($query)
 	}
     function guardardb_empresas($parametros)  //para un solo dato string
     {
-        $CorreoDiskCover = "infosistema@diskcoversystem.com";
-        $ContrasenaDiskCover = "infoDlcjvl1210DiskCover";
+        $CorreoDiskCover = CorreoDiskCover;
+        $ContrasenaDiskCover = ContrasenaDiskCover;
         // $ci = $parametros["TxtCI"];
         //print_r($parametros);die();
         //$datos[0]['campo'] = 'Razon_Social'; 
