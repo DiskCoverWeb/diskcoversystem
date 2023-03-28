@@ -97,7 +97,7 @@ class cambioeM
 		    		SET Vencimiento = '".$parametros['Fecha']."',Fecha = '".$fe."' 
 		    		WHERE Item = '".$em[0]['Item']."' AND Periodo = '.'  AND TL <> 0 AND len(Autorizacion)>=13";
 
-		    		$sql3 = "UPDATE Empresas SET Fecha_CE = '".$parametros['Fecha']."' WHERE Item='".$em[0]['Item']."'";
+		    		$sql3 = "UPDATE Empresas SET Fecha_CE = '".$parametros['Fecha']."',Estado = '".$parametros['Estado']."' WHERE Item='".$em[0]['Item']."'";
 
 		    		// print_r($sql3);
 

@@ -312,25 +312,26 @@ function Grabar_abonos($parametro){
      $TA['Recibo_No'] = $DiarioCaja;
 
      $banco = '';$Cta = '';
+     // print_r($parametro);die();
      if($parametro['DCBancoNom']!=''){     
-	     $banco = explode('  ',$parametro['DCBancoNom']);
-	     $banco = strlen($banco[0]);
-	     $Cta = trim($banco[0]);
+	     $banco1 = explode('  ',$parametro['DCBancoNom']);
+	     $banco = strlen($banco1[0]);
+	     $Cta = trim($banco1[0]);
      }
      // trim(substr($parametro['DCBancoNom'],$banco,strlen($parametro['DCBancoNom'])));
 
      $tarjeta = '';
      if($parametro['DCTarjetaNom']!='')
      {
-	     $tarjeta = explode('  ',$parametro['DCTarjetaNom']);
-	     $tarjeta = strlen($tarjeta[0]);
+	     $tarjeta1 = explode('  ',$parametro['DCTarjetaNom']);
+	     $tarjeta = strlen($tarjeta1[0]);
      }
 
      $Cta1 = $parametro['DCTarjeta'];
      $NombreBanco1 = '';
      if($parametro['DCTarjetaNom'] !='')
      {
-       $NombreBanco1 = trim(substr($parametro['DCTarjetaNom'],$banco,strlen($parametro['DCTarjetaNom']))); 
+       $NombreBanco1 = trim($tarjeta1[1]); 
      }
  
     // 'Abono de Factura Caja MN

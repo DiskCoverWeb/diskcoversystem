@@ -128,9 +128,10 @@ class FAbonosM
 	function DCTipo()
 	{
 	   $sql = "SELECT TC 
-       FROM Facturas_Formatos 
+       FROM Facturas
        WHERE Item = '".$_SESSION['INGRESO']['item']."' 
-       AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+       AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+       AND T = '".G_PENDIENTE."' 
        AND NOT TC IN ('OP','C','P') 
        GROUP BY TC 
        ORDER BY TC ";
@@ -143,7 +144,8 @@ class FAbonosM
        $sql= "SELECT Serie 
         FROM Facturas
         WHERE Item = '".$_SESSION['INGRESO']['item']."' 
-        AND Periodo ='".$_SESSION['INGRESO']['periodo']."' 
+        AND Periodo ='".$_SESSION['INGRESO']['periodo']."'
+        AND T = '".G_PENDIENTE."' 
         AND TC = '".$TC."' 
         GROUP BY Serie 
         ORDER BY Serie ";
@@ -165,14 +167,15 @@ class FAbonosM
         $sql = "SELECT F.TC,F.Factura,F.Autorizacion,F.Serie,F.CodigoC,F.Fecha,F.Fecha_V,
         F.Total_MN,F.Total_ME,F.Saldo_MN,F.Saldo_ME,F.Cta_CxP,F.Nota,F.Observacion,F.Cotizacion,
         C.Cliente,C.Direccion,C.CI_RUC,C.Telefono,C.Grupo 
-        FROM Facturas As F,Clientes As C 
+        FROM Facturas As F 
+        INNER JOIN Clientes As C
+        ON F.CodigoC = C.Codigo 
         WHERE F.T = '".G_PENDIENTE."' 
         AND F.Item = '".$_SESSION['INGRESO']['item']."' 
         AND F.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
         AND F.Serie = '".$Serie."' 
         AND F.TC = '".$TC."' 
-        AND F.Saldo_MN > 0 
-        AND F.CodigoC = C.Codigo ";
+        AND F.Saldo_MN > 0 ";
         if($factura)
         {
             $sql.=" AND F.Factura ='".$factura."' ";

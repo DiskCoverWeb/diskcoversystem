@@ -363,7 +363,9 @@ function Grabar_abonos()
 		dataType:'json',
 		success: function(data)
 		{
-			cerrar_modal();
+			Swal.fire('Abono Guardado','','success').then(function(){
+						cerrar_modal();
+			})
 		}
 	});
 

@@ -16,28 +16,48 @@ class lista_guia_remisionM
 		$this->db = new db();
 	}
 
-	function guia_remision_emitidas_tabla($codigo=false,$desde=false,$hasta=false,$serie=false,$factura=false)
+	function guia_remision_emitidas_tabla($codigo=false,$desde=false,$hasta=false,$serie=false,$factura=false,$Autorizacion=false,
+$Autorizacion_GR=false,$remision=false,$serie_gr=false)
 	{
 		$sql ="SELECT * FROM Facturas_Auxiliares
 				WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
 				AND Item = '".$_SESSION['INGRESO']['item']."'";    
-		if($codigo!='T' && $codigo!='')
-		{
-			// si el codigo es T se refiere a todos
-		   $sql.=" AND CodigoC ='".$codigo."'";
-		} 
-		if($serie)
-		{
-			// si el codigo es T se refiere a todos
-		   $sql.=" AND Serie_GR ='".$serie."'";
-		} 
-        if($desde!='' && $hasta!='')
+			if($codigo!='T' && $codigo!='')
+			{
+				// si el codigo es T se refiere a todos
+			   $sql.=" AND CodigoC ='".$codigo."'";
+			} 
+			if($serie)
+			{
+				// si el codigo es T se refiere a todos
+			   $sql.=" AND Serie ='".$serie."'";
+			} 
+			if($serie_gr)
+			{
+				// si el codigo es T se refiere a todos
+			   $sql.=" AND Serie_GR ='".$serie_gr."'";
+			} 
+			if($Autorizacion)
+			{
+				// si el codigo es T se refiere a todos
+			   $sql.=" AND Autorizacion ='".$Autorizacion."'";
+			} 
+			if($Autorizacion_GR)
+			{
+				// si el codigo es T se refiere a todos
+			   $sql.=" AND Autorizacion_GR ='".$Autorizacion_GR."'";
+			} 
+      if($desde!='' && $hasta!='')
 	    {
 	     	$sql.= " AND FechaGRE BETWEEN   '".$desde."' AND '".$hasta."' ";
 	    }
 	    if($factura)
 	    {
 	    	$sql.=" AND Factura = '".$factura."'";
+	    }
+	    if($remision)
+	    {
+	    	$sql.=" AND Remision = '".$remision."'";
 	    }
 	   $sql.=" ORDER BY Remision DESC"; 
 		$sql.=" OFFSET ".$_SESSION['INGRESO']['paginacionIni']." ROWS FETCH NEXT ".$_SESSION['INGRESO']['numreg']." ROWS ONLY;";   

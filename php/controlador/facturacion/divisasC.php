@@ -24,6 +24,10 @@ if(isset($_GET['ticketPDF']))
 {
   $controlador->ticketPDF();
 }
+if(isset($_GET['ticketPDF_fac']))
+{
+  $controlador->ticketPDF_fac();
+}
 
 // compra y venta de divisas
 if(isset($_GET['productos']))
@@ -455,6 +459,7 @@ PRODUCTO      /    Cant x PVP   / TOTAL</pre>' ;
 $lineas = "<pre>
 ---------------------------------------
 ";
+
   foreach ($datos_pre['lineas'] as $key => $value) {
     // print_r($pro);die();
     if($value['Total_IVA']==0)
@@ -464,10 +469,9 @@ $lineas = "<pre>
     {
       $lineas.= $value['Producto'];
     }
+    if($value['Precio2']==0){$value['Precio2'] = $value['Precio'];}
    
-    $lineas.='
-'.number_format($value['Cantidad'],2,'.','').' X '.number_format($value['Precio2'],2,'.','').'                '.number_format($value['Total'],2,'.','').'
-';
+    $lineas.='     '.number_format($value['Cantidad'],2,'.','').' X '.number_format($value['Precio2'],2,'.','').'      '.number_format($value['Total'],2,'.','');
    
  }
    $lineas.='</pre>';
@@ -508,6 +512,105 @@ Email: ".$datos_pre['cliente']['Email']."
     // $archivos =array($datos_pre['lineas'][0]['Autorizacion'].'pdf');
     // $this->email->enviar_email($archivos,$datos_pre['cliente']['Email'],'Comprobante',$titulo_correo='aaaa',$correo_apooyo='ejfc19omoshiroi@gmail.com',$nombre='dasdas',$HTML=false);
   }
+
+  public function ticketPDF_fac(){
+
+    date_default_timezone_set('America/Guayaquil');
+    $ci = $_GET['CI'];
+    $serie = $_GET['serie'];
+    $fac = $_GET['fac'];
+    $TC = $_GET['TC'];
+    $efectivo = $_GET['efectivo'];
+    $saldo = $_GET['saldo'];
+    $parametros = array('tipo'=>'FA','ci'=>$ci,'serie'=>$serie,'factura'=>$fac,'TC' => $TC,'efectivo' => $efectivo,
+      'saldo' => $saldo);
+    $datos_pre  ="";
+    $datos_pre =  $this->modelo->datos_factura($parametros);
+    $datos_empre =  $this->modelo->datos_empresa();
+    $datos_pre['lineas'][0]['Factura'] = generaCeros($datos_pre['lineas'][0]['Factura'],9);
+
+$cabe = '<pre>
+Transaccion ('.$TC.'): No. '.$datos_pre['lineas'][0]['Serie'].'-'.$datos_pre['lineas'][0]['Factura'].'
+Autorizacion:
+'.$datos_pre['lineas'][0]['Autorizacion'].'
+Fecha: '.date('Y-m-d').' - Hora: </b>'.date('H:m:s').'
+Cliente: <br>'.$datos_pre['cliente']['Cliente'].'
+R.U.C/C.I.: '.$datos_pre['cliente']['CI_RUC'].'
+Cajero: '.$_SESSION['INGRESO']['Nombre'].'
+Telefono: '.$datos_pre['cliente']['Telefono'].'
+Direccion: '.$datos_pre['cliente']['Direccion'];
+$lineas = "<pre>
+---------------------------------------
+";
+
+$lineas.="<table style='width: 284px;'>
+<tr>
+<td>PRODUCTO</td>
+<td>CANT</td>
+<td>PVP</td>
+<td>TOTAL</td>
+</tr>";
+  foreach ($datos_pre['lineas'] as $key => $value) {
+    $lineas.="<tr style='font-size: 11px;'>";   
+      $lineas.='<td>'.$value['Producto'].'</td>';
+      $lineas.='<td>'.number_format($value['Cantidad'],2,'.','').'</td>';
+      $lineas.='<td>'.number_format($value['Precio'],2,'.','').'</td>';
+      $lineas.='<td>'.number_format($value['Total'],2,'.','').'</td>';
+    $lineas.="<tr>";
+ }
+ $lineas.="</table>";
+ $lineas.= "<pre>
+----------------------------------------</pre>";
+ $lineas.="<table style='solid;width: 284px;'>
+   <tr>
+      <td style='width: 155px;'></td><td> SUBTOTAL:</td> <td>".number_format($datos_pre['tota'],2,'.','') ."</td>
+   </tr>
+   <tr>
+      <td style='width: 155px;'></td><td> I.V.A 12%:</td> <td>".number_format($datos_pre['iva'],2,'.','')."</td>
+   </tr>
+   <tr>
+      <td style='width: 155px;'></td><td> TOTAL FACTURA:</td> <td>".number_format($datos_pre['tota'],2,'.','')."</td>
+   </tr>
+   <tr>
+      <td style='width: 155px;'></td><td> EFECTIVO:</td> <td>".number_format($efectivo,2,'.','')."</td>
+   </tr>
+   <tr>
+      <td style='width: 155px;'></td><td> CAMBIO:</td> <td>".number_format($saldo,2,'.','')."</td>
+   </tr>
+ </table>";
+   $totales = "<pre>
+----------------------------------------</pre>";
+$datos_extra = "<pre>
+Email: ".$datos_pre['cliente']['Email']."
+         Fue un placer atenderle 
+          Gracias por su compra
+
+
+
+
+<br>
+<br>
+</pre>";
+
+    $html =  $cabe.$lineas.$totales.$datos_extra;
+    if(isset($_GET['pdf']) && $_GET['pdf']=='no')
+    {
+      echo $html;
+    }else
+    {
+
+      $this->pdf->formatoPDFMatricial($html,$parametros,$datos_pre,$datos_empre,1);
+      $archivos =array($datos_pre['lineas'][0]['Autorizacion'].'.pdf');
+      $this->email->enviar_email($archivos,$datos_pre['cliente']['Email'],'Comprobante: '.$datos_pre['lineas'][0]['Autorizacion'],$titulo_correo='COMPROBANTE MIL CAMBIOS',$correo_apoyo='ejfc19omoshiroi@gmail.com',$nombre='mil cambios',$HTML=false);
+
+     $this->pdf->formatoPDFMatricial($html,$parametros,$datos_pre,$datos_empre);
+    }
+    //crea pdf para enviar por corre
+    // $this->pdf->formatoPDFMatricial($html,$parametros,$datos_pre,$datos_empre,true);
+    // $archivos =array($datos_pre['lineas'][0]['Autorizacion'].'pdf');
+    // $this->email->enviar_email($archivos,$datos_pre['cliente']['Email'],'Comprobante',$titulo_correo='aaaa',$correo_apooyo='ejfc19omoshiroi@gmail.com',$nombre='dasdas',$HTML=false);
+  }
+
 
   function limpiar_grid()
   {
