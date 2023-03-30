@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="../../dist/css/arbol.css">
-<?php //print_r($_SESSION['INGRESO']);?>
+<?php print_r($_SESSION['INGRESO']);?>
 <script type="text/javascript">
   $(document).ready(function () {
   	$('#MBoxCta_Anio_Anterior').keyup(function(e){ 

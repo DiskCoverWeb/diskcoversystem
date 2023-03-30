@@ -30,9 +30,9 @@ class incomM
 
 	function beneficiarios($query)
 	{
-		$sql="SELECT TOP 25 Cliente AS nombre, CI_RUC as id, email
+		$sql="SELECT TOP 50 Cliente AS nombre, CI_RUC as id, email
 		   FROM Clientes 
-		   WHERE T <> '.' ";
+		   WHERE 1=1";
 		   if($query != '' and !is_numeric($query))
 		   {
 		   	$sql.=" AND Cliente LIKE '%".$query."%'";
@@ -601,7 +601,6 @@ class incomM
     }
     function asientos()
     { 
-
     	$cid = $this->conn;
 		$result = array();
     	$sql = "SELECT *
@@ -730,19 +729,13 @@ class incomM
 	}
 	function Actualiza_Procesado_Kardex($CodigoInv)
 	{
-			$cid = $this->conn;
 		 if(strlen($CodigoInv) > 2){ 
          $sql = "UPDATE Trans_Kardex
                SET Procesado = 0
                WHERE Item = '".$_SESSION['INGRESO']['item']."'
                AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
                AND Codigo_Inv = '".$CodigoInv."' ";
-         $stmt = sqlsrv_query( $cid, $sql);
-		if( $stmt === false)  
-		{  
-			echo "Error en consulta PA.\n";  
-			die( print_r( sqlsrv_errors(), true));  
-		}
+      	 $this->conn->String_Sql($sql);
        }
 	}
 

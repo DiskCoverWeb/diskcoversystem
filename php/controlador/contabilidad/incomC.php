@@ -569,6 +569,78 @@ class incomC
      }
      function generar_comprobante($parametros)
      {
+     	$Monto_Total = $parametros['monto_total'];// LabelTotal.Caption)
+     	$Trans_No = $_SESSION['INGRESO']['modulo_'];
+     	// Asientos_Grabados
+     	$AdoAsientos = $this->modelo->asientos();
+     	$AdoAsientosSC = $this->modelo->asientos_SC();
+     	// ------------------------------------------------     
+  		$OpcSubCtaDH = 1;
+  		$TextoImprimio = "";
+
+  		// print_r($parametros);die();
+  		if(count($AdoAsientos)> 0)
+  		{
+          if($parametros['NuevoComp']){
+             If($parametros['tip']=='CD'){ $NumComp = ReadSetDataNum("Diario", True, True);}
+             If($parametros['tip']=='CI'){ $NumComp = ReadSetDataNum("Ingresos", True, True);}
+             If($parametros['tip']=='CE'){ $NumComp = ReadSetDataNum("Egresos", True, True);}
+             If($parametros['tip']=='ND'){ $NumComp = ReadSetDataNum("NotaDebito", True, True);}
+             If($parametros['tip']=='NC'){ $NumComp = ReadSetDataNum("NotaCredito", True, True);}
+          }
+
+          $FechaTexto = $parametros['fecha'];
+          $Co['TP'] = $parametros['tip'];
+          $Co['Cotizacion'] = $parametros['TextCotiza'];
+          $Co['T'] = G_NORMAL;
+          $Co['Fecha'] =$FechaTexto:
+          $Co['Numero'] =$NumComp
+          $Co['Monto_Total'] =$Monto_Total;
+          $Co['Concepto'] =$parametros['concepto'];
+         // 'Co.CodigoB'] =$CodigoBenef
+          $Co['Efectivo'] =$parametros['Abono'];
+          $Co['Cotizacion'] =$parametros['TextCotiza'];
+          $Co['Item'] =$_SESSION['INGRESO']['item'];
+          $Co['Usuario'] =$_SESSION['INGRESO']['item'];
+          $Co['T_No'] =$Trans_No;
+         // 'Grabamos el Comprobante
+          GrabarComprobante($Co);
+        // ' Seteamos para el siguiente comprobante
+          DGAsientosB.Visible = False
+          RatonNormal
+          ImprimirComprobantesDe False, Co
+          If CheqCopia.value Then ImprimirComprobantesDe False, Co
+          BorrarAsientos True
+          NumComp = NumComp + 1
+          Co.Numero = NumComp
+          LabelComp.Caption = Format(NumComp, "00000000")
+          LabelTotal.Caption = "0.00"
+          Label6.Visible = False
+          DGAsientos.Visible = True
+          If ModificarComp Then
+             ModificarComp = False
+             CopiarComp = False
+             NuevoComp = True
+             Unload FComprobantes
+             Exit Sub
+          Else
+             ModificarComp = False
+             CopiarComp = False
+             NuevoComp = True
+             Tipo_De_Comprobante_No Co
+             MBoxFecha.SetFocus
+          End If
+       }else{
+          MsgBox "Warning: Falta de Ingresar datos."
+          DGAsientos.Visible = True
+          TextCodigo.SetFocus
+       }
+*/
+
+     }
+
+     function generar_comprobante1($parametros)
+     {
      	// print_r($parametros);die();
      	$Autorizacion_LC=''; //revisar
      	$T_No='01';
