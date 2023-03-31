@@ -212,7 +212,7 @@ class db
 		   $conn = $this->SQLServer();
            $stmt = sqlsrv_query($conn, $sql);
 		   if(!$stmt)
-		   {
+		   {echo $sql;
 			   die( print_r( sqlsrv_errors(), true));
 			   sqlsrv_close($conn);
 			return -1;

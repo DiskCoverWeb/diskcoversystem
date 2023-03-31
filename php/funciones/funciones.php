@@ -174,7 +174,7 @@ $iv = base64_decode("C9fBxl1EWtYTL1/M8jfstw==");
 
 //----------------------------------- fin funciones en duda--------------------------- 
 function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
-{  
+{
   // print_r($_SESSION['INGRESO']);die();
   $conn = new db();
   $TMail_Credito_No = G_NINGUNO;
@@ -191,6 +191,16 @@ function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
   }
   if($Modulo <> G_NINGUNO AND $TipoTrans<>G_NINGUNO AND $NumEmpresa<>G_NINGUNO)
   {
+    try {
+      $sSQL = "SELECT Aplicacion " .
+        "FROM modulos " .
+        "WHERE modulo = '" . $Modulo . "' ";
+      $rps = $conn->datos($sSQL,'MYSQL');
+      $ModuloName = $rps[0]['Aplicacion'] ;
+    } catch (Exception $e) {
+      $ModuloName = $Modulo;
+    }
+
     if($Tarea == G_NINGUNO)
     {
       $Tarea = "Inicio de Sección";
@@ -212,9 +222,11 @@ function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
     {
       $opcional_proceso = G_NINGUNO;
     }
+
+    $ip= ip();
     $sql = "INSERT INTO acceso_pcs (IP_Acceso,CodigoU,Item,Aplicacion,RUC,Fecha,Hora,
-             ES,Tarea,Proceso,Credito_No,Periodo)VALUES(ip(),'".$CodigoUsuario."','".$NumEmpresa."',
-             '".$Modulo."','".$_SESSION['INGRESO']['Id']."','".$Mifecha1."','".$MiHora1."','".$TipoTrans."','".$Tarea."','".$proceso."','".$TMail_Credito_No."','".$_SESSION['INGRESO']['periodo']."');";
+             ES,Tarea,Proceso,Credito_No,Periodo)VALUES('".$ip."','".$CodigoUsuario."','".$NumEmpresa."',
+             '".$ModuloName."','".$_SESSION['INGRESO']['Id']."','".$Mifecha1."','".$MiHora1."','".$TipoTrans."','".$Tarea."','".$proceso."','".$TMail_Credito_No."','".$_SESSION['INGRESO']['periodo']."');";
     $conn->String_Sql($sql,'MYSQL');
 
   }
@@ -12249,4 +12261,35 @@ function Estado_Empresa_SP_MySQL()
   return $conn->ejecutar_procesos_almacenados($sql,$parametros,$respuesta='1',$tipo='MYSQL');
 }
 
+function Progreso_Iniciar_Errores()
+{
+    $sSQL = "DELETE * "
+       ."FROM Tabla_Temporal "
+       ."WHERE Item = '" .$_SESSION['INGRESO']['item'] ."' "
+       ."AND Modulo = '" .$_SESSION['INGRESO']['modulo_'] ."' "
+       ."AND CodigoU = '" .$_SESSION['INGRESO']['CodigoU'] ."' ";
+  Ejecutar_SQL_SP($sSQL);
+}
+
+function Productos_Cierre_Caja_SP($FechaDesde, $FechaHasta)
+{
+  $conn = new db();
+  $FechaIniSP = BuscarFecha($FechaDesde);
+  $FechaFinSP = BuscarFecha($FechaHasta);
+  $parametros = array(
+    array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+    array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+    array(&$FechaIniSP, SQLSRV_PARAM_IN),
+    array(&$FechaFinSP, SQLSRV_PARAM_IN),
+  );
+  $sql = "EXEC sp_Productos_Cierre_Caja @Item=?, @Periodo=?, @FechaDesde=?, @FechaHasta=?";
+  return $conn->ejecutar_procesos_almacenados($sql,$parametros);
+}
+
+function FInfoErrorShow($parametros)
+{
+  //TODO LS faltaria
+  sleep(2);
+  return [];
+}
 ?>

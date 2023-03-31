@@ -41,6 +41,22 @@
           </div>
       </div>
   </div>
+
+  <div class="modal fade" id="myModal_espera_progress" role="dialog" data-keyboard="false" data-backdrop="static">
+      <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+              <div class="modal-body text-center">
+                  <img src="../../img/gif/loader4.1.gif" width="80%">
+                    <div class="progress progress-striped active" style="height: 30px;">
+                      <div style="margin-top: 10px;" id="Bar_espera_progress" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                        <span style="font-weight: 700;font-size: 14px;text-shadow: 1px 1px grey;" class="txt_progress text-black"></span>
+                      </div>
+                    </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
   <div class="modal fade" id="myModal_sri_error" role="dialog" data-keyboard="false" data-backdrop="static" style="z-index: 1600;">
       <div class="modal-dialog modal-sm">
           <div class="modal-content">
