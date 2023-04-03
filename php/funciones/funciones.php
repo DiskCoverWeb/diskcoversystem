@@ -191,6 +191,16 @@ function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
   }
   if($Modulo <> G_NINGUNO AND $TipoTrans<>G_NINGUNO AND $NumEmpresa<>G_NINGUNO)
   {
+    try {
+      $sSQL = "SELECT Aplicacion " .
+        "FROM modulos " .
+        "WHERE modulo = '" . $Modulo . "' ";
+      $rps = $conn->datos($sSQL,'MYSQL');
+      $ModuloName = $rps[0]['Aplicacion'] ;
+    } catch (Exception $e) {
+      $ModuloName = $Modulo;
+    }
+    
     if($Tarea == G_NINGUNO)
     {
       $Tarea = "Inicio de Sección";
@@ -216,7 +226,7 @@ function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
     $ip= ip();
     $sql = "INSERT INTO acceso_pcs (IP_Acceso,CodigoU,Item,Aplicacion,RUC,Fecha,Hora,
              ES,Tarea,Proceso,Credito_No,Periodo)VALUES('".$ip."','".$CodigoUsuario."','".$NumEmpresa."',
-             '".$Modulo."','".$_SESSION['INGRESO']['Id']."','".$Mifecha1."','".$MiHora1."','".$TipoTrans."','".$Tarea."','".$proceso."','".$TMail_Credito_No."','".$_SESSION['INGRESO']['periodo']."');";
+             '".$ModuloName."','".$_SESSION['INGRESO']['Id']."','".$Mifecha1."','".$MiHora1."','".$TipoTrans."','".$Tarea."','".$proceso."','".$TMail_Credito_No."','".$_SESSION['INGRESO']['periodo']."');";
     $conn->String_Sql($sql,'MYSQL');
 
   }
@@ -1400,7 +1410,11 @@ function codigo_verificador($CI_RUC)
 }
 
 function digito_verificador_nuevo($NumeroRUC){
-    $DigStr= '';
+  //03-04-2023 Laura: se comenta toda la funciona y se cambia solo por el llamado al SP correspondiente
+  $R = Digito_Verificador_SP($NumeroRUC);
+  return array('Codigo'=>$R['Codigo_RUC_CI'],'Tipo'=>$R['Tipo_Beneficiario'],'Dig_ver'=>$R['Digito_Verificador'],'Ruc_Natu'=> $R['RUC_Natural'],'CI'=>$R['RUC_CI'], 'TipoSRI_Existe' => $R['TipoSRI_Existe']);
+
+  /*  $DigStr= '';
     $VecDig= '';
   // 'Tercer Digito
    $Dig3 = intval(substr($NumeroRUC, 2, 1));
@@ -1589,7 +1603,7 @@ function digito_verificador_nuevo($NumeroRUC){
 
    $res = array('Codigo'=>$R_Codigo_RUC_CI,'Tipo'=>$R_Tipo_Beneficiario,'Dig_ver'=>$R_Digito_Verificador,'Ruc_Natu'=> $R_RUC_Natural,'CI'=>$R_RUC_CI);
 // print_r($res);die();
-   return $res;
+   return $res;*/
 }
 //digito_verificadorf('1710034065'); $solovar = si es uno devuelve solo el codigo
 function digito_verificadorf($ruc,$solovar=null,$pag=null,$idMen=null,$item=null,$estudiante=null)
@@ -7564,7 +7578,7 @@ function  Leer_Datos_Cliente_FA($Codigo_CIRUC_Cliente)
     if(strlen($Codigo_CIRUC_Cliente) <= 0){$Codigo_CIRUC_Cliente = G_NINGUNO;}
     Leer_Datos_Cliente_SP($Codigo_CIRUC_Cliente);
     $TFA['CodigoC'] = $Codigo_CIRUC_Cliente;
-    
+
    // 'Verificamos la informacion del Clienete
      if( $TFA['CodigoC'] <> ".")
      {  
@@ -12702,5 +12716,39 @@ function GrabarComprobante($C1)
  /* BorrarAsientos True
   Control_Procesos Normal, "Grabar Comprobante de: " & $C1["TP & " No. " & $C1["Numero"]
   RatonNormal*/
+}
+
+function Digito_Verificador_SP($NumeroRUC)
+{
+  $conn = new db();
+  $RUCCI = "";
+  $CodigoRUCCI = "";
+  $DigitoVerificador = "";
+  $TipoBeneficiario = "";
+  $RUCNatural = false;
+
+  //Determinamos que tipo de RUC/CI es
+  $Tipo_Beneficiario = "P";
+  $Codigo_RUC_CI = $_SESSION['INGRESO']['item']. "0000001";
+  $Digito_Verificador = "-";
+  $RUC_CI = $NumeroRUC;
+  $RUC_Natural = 0;
+  $TipoSRI_Existe = 0;
+  $parametros = array(
+    array(&$NumeroRUC, SQLSRV_PARAM_IN),
+    array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+
+    array(&$RUC_CI, SQLSRV_PARAM_INOUT),
+    array(&$Codigo_RUC_CI, SQLSRV_PARAM_INOUT),
+    array(&$Digito_Verificador, SQLSRV_PARAM_INOUT),
+    array(&$Tipo_Beneficiario, SQLSRV_PARAM_INOUT),
+    array(&$RUC_Natural, SQLSRV_PARAM_INOUT),
+  );
+  $sql = "EXEC sp_Digito_Verificador @NumeroRUC=?, @Item=?, @RUCCI=?, @CodigoRUCCI=?, @DigitoVerificador=?, @TipoBeneficiario=?, @RUCNatural=?";
+  $exec = $conn->ejecutar_procesos_almacenados($sql,$parametros);
+
+  if($Tipo_Beneficiario != "R") {$TipoSRI_Existe  = false; };
+
+  return compact('RUC_CI', 'Codigo_RUC_CI', 'Digito_Verificador', 'Tipo_Beneficiario', 'RUC_Natural', 'TipoSRI_Existe'); 
 }
 ?>

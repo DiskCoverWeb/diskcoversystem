@@ -476,7 +476,14 @@ class lista_facturasC
        if($rep==1)
        {
        		return array('respuesta'=>$rep,'pdf'=>$imp);
-       }else{ return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep,'clave'=>$clave);}
+       }else{ 
+       		try {
+       			if(json_encode($rep)==false){ //si retorna false puede ser por la codificación debido a caracteres especiales, como tildes.
+	       			$rep = utf8_encode($rep);
+	       		}
+       		} catch (Exception $e) { }
+       	return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep,'clave'=>$clave);
+       }
 
     	// return $res;
     }

@@ -91,7 +91,8 @@ if(isset($_GET['saldoPendiente']))
 
 if(isset($_GET['guardarPension']))
 {
-	$controlador->guardarFacturaPension();
+  echo json_encode($controlador->guardarFacturaPension());
+  exit();
 }
 
 if(isset($_GET['guardarLineas']))
@@ -635,11 +636,11 @@ class facturar_pensionC
       $this->facturacion->Actualiza_Datos_Cliente($_POST);
    	}
 
-    $TC = SinEspaciosIzq($_POST['DCLinea']);
-    $serie = SinEspaciosDer($_POST['DCLinea']);
+    $TC = @SinEspaciosIzq($_POST['DCLinea']);
+    $serie = @SinEspaciosDer($_POST['DCLinea']);
     //traer secuencial de catalogo lineas
    	$TextFacturaNo = ReadSetDataNum($TC."_SERIE_".$serie, True, False);
-   	$this->Grabar_FA_Pensiones($_POST,$TextFacturaNo);
+   	return $this->Grabar_FA_Pensiones($_POST,$TextFacturaNo);
 	}
 
 
@@ -655,7 +656,10 @@ class facturar_pensionC
     $FA['Cta_CxP'] = $resultado[3];
 		//Procedemos a grabar la factura
   	$datos = $this->facturacion->getAsiento();
-    $Total_Abonos = $FA['TxtEfectivo']+$FA['TextCheque']+$FA['TxtNCVal']+$FA['saldoFavor']; 
+    $Total_Abonos = $FA['TxtEfectivo']+$FA['TextCheque']+$FA['TxtNCVal']+$FA['saldoFavor'];
+    if(count($datos)<=0){
+      return (array('respuesta'=>-1,'text'=>"No se encontraron asientos para procesar."));
+    }
     foreach ($datos as $key => $value) {
        
        $Valor = $value["TOTAL"];
@@ -682,7 +686,6 @@ class facturar_pensionC
             }
           }
     }
-
     foreach ($datos as $key => $value) {
 		  $TFA = Calculos_Totales_Factura($codigoCliente);
       $FA['CodigoC'] = $codigoCliente;
@@ -764,6 +767,9 @@ class facturar_pensionC
         $TA['Cta'] = $Cta1;
         $TA['Banco'] = "NOTA DE CREDITO";
         $TA['Cheque'] = "VENTAS";
+        $TA['Serie_NC'] = G_NINGUNO;
+        $TA['Autorizacion_NC'] = G_NINGUNO;
+        $TA['Nota_Credito'] = 0;
         $TA['Abono'] = $SubTotal_NC;
         Grabar_Abonos($TA);
       }
@@ -780,6 +786,9 @@ class facturar_pensionC
         $TA['Cta'] = $Cta_IVA;
         $TA['Banco'] = "NOTA DE CREDITO";
         $TA['Cheque'] = "I.V.A.";
+        $TA['Serie_NC'] = G_NINGUNO;
+        $TA['Autorizacion_NC'] = G_NINGUNO;
+        $TA['Nota_Credito'] = 0;
         $TA['Abono'] = $TFA['Total_IVA'];
         Grabar_Abonos($TA);
       }
@@ -812,17 +821,19 @@ class facturar_pensionC
     $FA['tc'] = $FA['TC'];
     $FA['cod_doc'] = '01';
     if (strlen($FA['Autorizacion']) == 13) {
-      $rep = $resultado = $this->autorizar_sri->Autorizar_factura_o_liquidacion($FA);
-      if($rep==1)
-      {
-        $resultado = array('respuesta'=>$rep);
-      }else{ $resultado = array('respuesta'=>-1,'text'=>$rep);}
-
+      try {
+        $rep = $resultado = $this->autorizar_sri->Autorizar_factura_o_liquidacion($FA);
+        if($rep==1)
+        {
+          $resultado = array('respuesta'=>$rep);
+        }else{ $resultado = array('respuesta'=>-1,'text'=>utf8_encode($rep));}
+      } catch (Exception $e) {
+        $resultado = array('respuesta'=>-1,'text'=>$e->getMessage());
+      }
     }else{ 
       $resultado = array('respuesta'=>5);
     }
-    echo json_encode($resultado);
-      exit();
+    return $resultado;
     }
   }
 
@@ -859,7 +870,7 @@ class facturar_pensionC
       $stmt = SetAdoUpdate();
     }
     Eliminar_Nulos_SP("Asiento_F");
-    return (count($_POST['datos'])==($Contador));
+    return (@count($_POST['datos'])==($Contador));
   }
   //El parametro columnas es un array que definen los parametros que deseamos obtener de la consulta sql
   public function CatalogoProductosByPeriodo(array $columnas){
