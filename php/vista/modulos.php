@@ -5,7 +5,7 @@
     <section class="content-header">
       <h1>
         <?php echo $_SESSION['INGRESO']['item'];?> -
-        <?php echo $_SESSION['INGRESO']['Nombre_Comercial'];?>
+        <?php echo $_SESSION['INGRESO']['noempr'];?>
         <small>Panel de control</small>
       </h1>
       <ol class="breadcrumb">
