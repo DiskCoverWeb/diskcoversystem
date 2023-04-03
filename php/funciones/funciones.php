@@ -8265,7 +8265,7 @@ function Grabar_Factura1($TFA,$VerFactura = false, $NoRegTrans = false)
                          {
                             
                             $CantidadAnt = $value["CANT"] * $valueAdo["Cantidad"];
-                            $ValorTotal = number_format($CantidadAnt * $DatInv.Costo, 2,'.','');
+                            $ValorTotal = number_format($CantidadAnt * $DatInv['Costo'], 2,'.','');
                             SetAdoAddNew("Trans_Kardex");
                             SetAdoFields("T", G_NORMAL);
                             SetAdoFields("TC", $TFA['TC']);
@@ -8290,7 +8290,7 @@ function Grabar_Factura1($TFA,$VerFactura = false, $NoRegTrans = false)
                             SetAdoFields("Valor_Total", $ValorTotal);
                             SetAdoFields("Costo", $DatInv['Costo']);
                             SetAdoFields("Total", $ValorTotal);
-                            // SetAdoFields("Detalle", MidStrg("FA: RE-".$TFA['Cliente'], 1, 100);
+                            SetAdoFields("Detalle", substr("FA: RE-".$TFA['Cliente'], 1, 100));
                             SetAdoFields("Codigo_Barra", $value["COD_BAR"]);
                             SetAdoFields("Orden_No", $value["Numero"]);
                             SetAdoFields("Cta_Inv", $DatInv['Cta_Inventario']);

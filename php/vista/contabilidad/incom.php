@@ -9,9 +9,9 @@
   //CI_NIC
   //echo $_SESSION['INGRESO']['Opc'].' '.$_SESSION['INGRESO']['Sucursal'].' '.$_SESSION['INGRESO']['item'].' '.$_SESSION['INGRESO']['periodo'].' ';
     $variables_mod = '';
-    $modificar = 0;
+    $NuevoComp = 1;
     $load = 0;
-    if(isset($_GET["modificar"])){ $variables_mod=$_GET["variables"]; $modificar=1;}
+    if(isset($_GET["modificar"])){ $variables_mod=$_GET["variables"]; $NuevoComp=0;}
     if(isset($_GET["num_load"])){$load = 1;}
 ?>
 <style>
@@ -66,7 +66,7 @@
     if(modificar!='')
     {
       // console.log(load);
-      $('#modificar').val(modificar);
+      $('#NuevoComp').val(modificar);
       if(load==0)
       {
        listar_comprobante();
@@ -150,7 +150,7 @@
         placeholder: 'Seleccione una beneficiario',
         width:'90%',
         ajax: {
-          url:   '../controlador/contabilidad/incomC.php?beneficiario=true',
+          url:   '../controlador/contabilidad/incomC.php?beneficiario=true&q=.',
           dataType: 'json',
           delay: 250,
           processResults: function (data) {
@@ -169,13 +169,11 @@
       var valor = $('#beneficiario1').val();
       parte = valor.split('-');
       let url = window.location.href;
-       url =  url.toString().slice(0,url.length-1);
+       // url =  url.toString().slice(0,url.length-1);
+       url = url.split('b=1');
       // var url ="../vista/contabilidad.php?mod=contabilidad&acc=incom&acc1=Ingresar%20Comprobantes&b=1";
       // console.log(data);
-      window.location.href= url+"&cliente="+parte[0]+'#';
-      // $('#ruc').val(parte[0]);
-      // $('#email').val(parte[1]);
-      // cargar_beneficiario();
+      window.location.href= url[0]+"b=1&cliente="+parte[0];
     }
 
     function cargar_beneficiario(ci)
@@ -456,6 +454,7 @@
       data:  {parametros:parametros},
        url:   '../controlador/contabilidad/incomC.php?num_comprobante=true',
       type:  'post',
+      dataType: 'json',
       // beforeSend: function () {
       //    $("#num_com").html("");
       // },
@@ -932,7 +931,7 @@
     var concepto = $('#concepto').val();
     var haber = $('#txt_haber').val();
     var com = $('#num_com').text();
-     var modificar = '<?php echo $modificar; ?>';
+     var modificar = '<?php echo $NuevoComp; ?>';
     // var comprobante = com.split('.');
     if((debe != haber) || (debe==0 && haber==0) )
     {
@@ -961,7 +960,10 @@
       'email':$('#email').val(),
       'Cta_modificar':$('#txt_cta_modificar').val(),
       'T':'N',
-      'modificado':modificar,
+      'monto_total':$('#VT').val(),
+      'Abono':$('#vae').val(),
+      'TextCotiza':$("#cotizacion").val(),
+      'NuevoComp':modificar,
     }
     Swal.fire({
       title: "Esta seguro de Grabar el "+$('#num_com').text(),
@@ -989,8 +991,7 @@
       Swal.fire('seleccione un beneficiario','','info')
       return false;
     }    
-        $('#myModal_espera').modal('show');
-               // $('#myModal_espera').modal('show');    
+        // $('#myModal_espera').modal('show');  
       $.ajax({
           data:  {parametros:parametros},
           url:   '../controlador/contabilidad/incomC.php?generar_comprobante=true',
@@ -1167,7 +1168,7 @@
 
   function Llenar_Encabezado_Comprobante()
   {
-     var parametros = $('#modificar').val();
+     var parametros = $('#NuevoComp').val();
      $.ajax({
           data:  {parametros:parametros},
           url:   '../controlador/contabilidad/incomC.php?Llenar_Encabezado_Comprobante=true',
@@ -1187,7 +1188,7 @@
   }
   function Tipo_De_Comprobante_No()
   {
-    var parametros = $('#modificar').val();
+    var parametros = $('#NuevoComp').val();
      $.ajax({
           data:  {parametros:parametros},
           url:   '../controlador/contabilidad/incomC.php?Tipo_De_Comprobante_No=true',
@@ -1203,7 +1204,7 @@
 
   function listar_comprobante()
   {
-    var parametros = $('#modificar').val();
+    var parametros = $('#NuevoComp').val();
      $.ajax({
           data:  {parametros:parametros},
           url:   '../controlador/contabilidad/incomC.php?listar_comprobante=true',
@@ -1255,7 +1256,7 @@
         <button type="button" class="btn btn-default btn-xs" onclick="reset_1('comproba','NC');" 
         id='NC' style="width: 15%;" title='Comprobante nota de credito'>N/C</button>
         <input id="tipoc" name="tipoc" type="hidden" value="CD">
-        <input type="hidden" name="modificar" id="modificar">
+        <input type="hidden" name="NuevoComp" id="NuevoComp">
         <input type="hidden" name="num_load" id="num_load" value="0">
 
       </div>                      

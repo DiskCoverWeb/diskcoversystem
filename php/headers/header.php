@@ -121,8 +121,8 @@ include('../controlador/contabilidad/contabilidad_controller.php');
   <script type="text/javascript">
 
      $(document).ready(function () {
-      validateStar();
-      setInterval(validateStar, 6*60000);
+      // validateStar();
+      // setInterval(validateStar, 6*60000);
 
       var cuentas = '<?php echo $cuentas; ?>';
       if(cuentas!='')
@@ -527,7 +527,12 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
             <img src="<?php echo $url; ?>" width="50%">         
           </span>
             <p class="text-gray" style="margin:0px" id="base_actual"></p> 
-            <p class="text-gray" style="margin:0px"><?php echo $_SESSION['INGRESO']['Nombre_Comercial'];?></p> 
+            <?php if($_SESSION['INGRESO']['Razon_Social']== $_SESSION['INGRESO']['Nombre_Comercial']){ ?>
+            <p class="text-gray" style="margin:0px"><?php echo $_SESSION['INGRESO']['Razon_Social'];?></p> 
+          <?php }else{?>
+            <p class="text-gray" style="margin:0px"><?php echo $_SESSION['INGRESO']['Razon_Social'];?></p>
+            <p class="text-gray" style="margin:0px"><?php echo $_SESSION['INGRESO']['Nombre_Comercial'];?></p>
+          <?php } ?>
             <p class="text-gray" style="margin:0px">RUC: <?php echo $_SESSION['INGRESO']['RUC'];?></p> 
             <p class="text-gray" style="margin:0px">Item: <?php echo $_SESSION['INGRESO']['item'];?></p> 
         </div>
