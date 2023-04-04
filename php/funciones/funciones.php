@@ -12286,10 +12286,74 @@ function Productos_Cierre_Caja_SP($FechaDesde, $FechaHasta)
   return $conn->ejecutar_procesos_almacenados($sql,$parametros);
 }
 
+function Actualizar_Abonos_Facturas_SP($TFA, $SaldoReal = false, $PorFecha = false)
+{
+  $conn = new db();
+  $TFA = (Object)$TFA;
+  $FechaCorte = $TFA->Fecha_Corte;
+  $FechaIni = $TFA->Fecha_Desde;
+  $FechaFin = $TFA->Fecha_Hasta;
+  $FechaSistema =  date('Y-m-d');
+  $FechaCorte = (strtotime($FechaCorte) !== false) ? BuscarFecha($FechaCorte) : BuscarFecha($FechaSistema);
+  $FechaIni = (strtotime($FechaIni) !== false) ? BuscarFecha($FechaIni) : BuscarFecha($FechaSistema);
+  $FechaFin = (strtotime($FechaFin) !== false) ? BuscarFecha($FechaFin) : BuscarFecha($FechaSistema);
+  $SaldoReal = ($FechaCorte == BuscarFecha($FechaSistema));
+  $ExisteErrores = 0;
+  $parametros = array(
+    array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+    array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+    array(&$_SESSION['INGRESO']['modulo_'], SQLSRV_PARAM_IN),
+    array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
+    array(&$TFA->TC, SQLSRV_PARAM_IN), //TODO LS donde se definentos 3 campos!!
+    array(&$TFA->Serie, SQLSRV_PARAM_IN),
+    array(&$TFA->Factura, SQLSRV_PARAM_IN),
+    array(&$FechaCorte, SQLSRV_PARAM_IN),
+    array(&$FechaIni, SQLSRV_PARAM_IN),
+    array(&$FechaFin, SQLSRV_PARAM_IN),
+    array(&$SaldoReal, SQLSRV_PARAM_IN),
+    array(&$PorFecha, SQLSRV_PARAM_IN),
+    array(&$ExisteErrores, SQLSRV_PARAM_INOUT)
+  );
+  $sql = "EXEC sp_Actualizar_Abonos_Facturas @Item=?, @Periodo=?, @NumModulo=?, @Usuario=?, @TC=?, @Serie=?, @Factura=?, @FechaCorte=?, @FechaDesde=?, @FechaHasta=?, @SaldoReal=?, @PorFecha=?, @ExisteErrores=?";
+  $exec = $conn->ejecutar_procesos_almacenados($sql,$parametros);
+  if($exec){
+    return compact("ExisteErrores");
+  }else{
+    return $exec;
+  }
+}
+
+function Actualizar_Datos_Representantes_SP($MasGrupos = false)
+{
+  $conn = new db();
+  $BuscarCodigo1 = "";
+  $parametros = array(
+    array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+    array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+    array(&$MasGrupos, SQLSRV_PARAM_IN),
+  );
+  $sql = "EXEC sp_Actualizar_Datos_Representantes @Item=?, @Periodo=?, @MasGrupos=?";
+  return $conn->ejecutar_procesos_almacenados($sql,$parametros);
+}
+
 function FInfoErrorShow($parametros)
 {
   //TODO LS faltaria
   sleep(2);
   return [];
 }
+
+function Redondear($Valor, $Decim = 2) {
+  $Decim = max(0, min($Decim, 6));
+  $Valor_Redondeo = round($Valor, 6);
+  $Valor_Redondeo = (float)number_format($Valor_Redondeo, $Decim, '.', '');
+  return $Valor_Redondeo;
+}
+
+function Insertar_Ctas_Cierre_SP($InsCta, $Valor)
+{
+          //TODO LS AQUIIIII VAMOSSS llamar SP sp_Insertar_Ctas_Cierre
+
+}
+
 ?>

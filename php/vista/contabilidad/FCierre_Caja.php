@@ -262,7 +262,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
               type: "POST",                 
               url: '../controlador/contabilidad/FCierre_CajaC.php?Mayorizar_Inventario=true',
               dataType:'json', 
-              data: {'MBFechaI' : $("#MBFechaI").val() ,'MBFechaF' : $("#MBFechaF").val() },
+              // data: {'MBFechaI' : $("#MBFechaI").val() ,'MBFechaF' : $("#MBFechaF").val() },
               success: function(datos3)             
               {
                 $("#Bar_espera_progress").css('width','60%')
@@ -289,7 +289,12 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                           type: "POST",                 
                           url: '../controlador/contabilidad/FCierre_CajaC.php?Grabar_Asientos_Facturacion=true',
                           dataType:'json', 
-                          data: {'MBFechaI' : $("#MBFechaI").val() ,'MBFechaF' : $("#MBFechaF").val() },
+                          data: {
+                            'MBFechaI' : $("#MBFechaI").val() ,
+                            'MBFechaF' : $("#MBFechaF").val(),
+                            'CheqCajero' : $("#CheqCajero").val() ,
+                            'CheqOrdDep' : $("#CheqOrdDep").val(),
+                            'DCBenef' : $("#DCBenef").val()  },
                           success: function(datos3)             
                           {
                             $("#Bar_espera_progress").css('width','85%')
