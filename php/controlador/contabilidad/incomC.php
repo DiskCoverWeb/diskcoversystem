@@ -568,8 +568,9 @@ class incomC
      	return array('debe'=>$debe,'haber'=>$haber,'diferencia'=>$debe-$haber,'Ctas_Modificar'=>$Ctas_Modificar);
 
      }
-    /* function generar_comprobante_prueba($parametros)
-     {
+/*
+    function generar_comprobante_prueba($parametros)
+    {
      	$Monto_Total = $parametros['monto_total'];// LabelTotal.Caption)
      	$Trans_No = $_SESSION['INGRESO']['modulo_'];
      	// Asientos_Grabados
@@ -605,7 +606,7 @@ class incomC
           $Co['Usuario'] =$_SESSION['INGRESO']['item'];
           $Co['T_No'] =$Trans_No;
          // 'Grabamos el Comprobante
-          GrabarComprobante($Co);*/
+          GrabarComprobante($Co);
         // ' Seteamos para el siguiente comprobante
         /*  DGAsientosB.Visible = False
           RatonNormal
@@ -637,8 +638,7 @@ class incomC
           TextCodigo.SetFocus
        }
 */
-
-     // }
+    // }
 
      function generar_comprobante($parametros)
      {
