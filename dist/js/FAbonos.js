@@ -298,6 +298,7 @@ function Calculo_Saldo(){
 	// console.log(Saldo);
 	// console.log()
 
+	 
   var TotalAbonos = parseFloat(TotalCajaMN) + parseFloat(TotalCajaME) + parseFloat(Total_Bancos) + parseFloat(Total_Tarjeta) + parseFloat(Total_IVA) + parseFloat(Total_Ret) + parseFloat(Total_RetIVAB) + parseFloat(Total_RetIVAS);
   var SaldoDisp = parseFloat(Saldo) - parseFloat(TotalAbonos);
   $('#LabelPend').val(SaldoDisp.toFixed(2));

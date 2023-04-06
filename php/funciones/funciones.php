@@ -1405,8 +1405,6 @@ function codigo_verificador($CI_RUC)
           return $res;
       }
       return $respuesta;   
-
-
 }
 
 function digito_verificador_nuevo($NumeroRUC){
@@ -11892,6 +11890,7 @@ function Datos_Iniciales_Entidad_SP_MySQL($empresa, $usuario)
       array("pActivo", 'OUT'),
       array("EstadoUsuario", 'OUT'),
   );
+  print_r($parametros);die();
   $sql = "Call sp_mysql_datos_iniciales";
   $rsMySQL =  $conn->ejecutar_procesos_almacenados($sql,$parametros, true,$tipo='MYSQL');
   $Fecha_CO = $rsMySQL["@FechaCO"];

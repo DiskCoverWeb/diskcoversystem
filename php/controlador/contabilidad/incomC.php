@@ -278,6 +278,7 @@ class incomC
 		$bene = array();
 		foreach ($datos as $key => $value) {
 			$bene[] = array('id'=>$value['id'].'-'.$value['email'].'-'.$value['TD'].'-'.$value['CI_RUC'].'-'.$value['Codigo'],'text'=>$value['nombre']);
+
 			// $bene[] = array('id'=>$value['id'].'-'.$value['email'],'text'=>$value['nombre']);//para produccion
 		}
 		return $bene;
@@ -567,8 +568,9 @@ class incomC
      	return array('debe'=>$debe,'haber'=>$haber,'diferencia'=>$debe-$haber,'Ctas_Modificar'=>$Ctas_Modificar);
 
      }
-     function generar_comprobante($parametros)
-     {
+/*
+    function generar_comprobante_prueba($parametros)
+    {
      	$Monto_Total = $parametros['monto_total'];// LabelTotal.Caption)
      	$Trans_No = $_SESSION['INGRESO']['modulo_'];
      	// Asientos_Grabados
@@ -593,8 +595,8 @@ class incomC
           $Co['TP'] = $parametros['tip'];
           $Co['Cotizacion'] = $parametros['TextCotiza'];
           $Co['T'] = G_NORMAL;
-          $Co['Fecha'] =$FechaTexto:
-          $Co['Numero'] =$NumComp
+          $Co['Fecha'] =$FechaTexto;
+          $Co['Numero'] =$NumComp;
           $Co['Monto_Total'] =$Monto_Total;
           $Co['Concepto'] =$parametros['concepto'];
          // 'Co.CodigoB'] =$CodigoBenef
@@ -606,7 +608,7 @@ class incomC
          // 'Grabamos el Comprobante
           GrabarComprobante($Co);
         // ' Seteamos para el siguiente comprobante
-          DGAsientosB.Visible = False
+        /*  DGAsientosB.Visible = False
           RatonNormal
           ImprimirComprobantesDe False, Co
           If CheqCopia.value Then ImprimirComprobantesDe False, Co
@@ -636,10 +638,9 @@ class incomC
           TextCodigo.SetFocus
        }
 */
+    // }
 
-     }
-
-     function generar_comprobante1($parametros)
+     function generar_comprobante($parametros)
      {
      	// print_r($parametros);die();
      	$Autorizacion_LC=''; //revisar
@@ -1533,7 +1534,7 @@ class incomC
             // exit();
             // print_r($parametros);die();
             if(strlen($Autorizacion_R) >= 13){
-
+            	$res = '0';
             	$res = $this->sri->Autorizar_retencion($parametros_xml);
 
             	// $res = $this->SRI_Crear_Clave_Acceso_Retencines($parametros_xml); //function xml
@@ -1542,11 +1543,13 @@ class incomC
 				$pdf = 'RE_'.$Serie_R.'-'.generaCeros($parametros['Retencion'],7); 
 				$this->modelo->reporte_retencion($Numero,$TP,$Retencion,$Serie_R,$imp=1);
 
+            // print_r($parametros);die();
 				// if($res==1)
 				// {
 					 $Trans_No = $T_No;
            			 $this->modelo->BorrarAsientos($Trans_No,true);
 				// }
+           			 // print_r(array('respuesta'=>$res,'pdf'=>$pdf,'text'=>$res,'clave'=>$aut));die();
 				return array('respuesta'=>$res,'pdf'=>$pdf,'text'=>$res,'clave'=>$aut);
             	  
 				
