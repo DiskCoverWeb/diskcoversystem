@@ -516,7 +516,7 @@ function variables_sistema($EmpresaEntidad,$NombreEmp,$ItemEmp)
       $_SESSION['INGRESO']['SiUnidadEducativa'] = false;
 
       //INICIO VALIDAMOS SI EL USUARIO TIENE PERMISO DE ACCESO AL SISTEMA
-      return validacionAcceso($empresa[0]['Empresa'], $_SESSION['INGRESO']['Mail'], $_SESSION['INGRESO']['Clave']);
+      //return validacionAcceso($empresa[0]['Empresa'], $_SESSION['INGRESO']['Mail'], $_SESSION['INGRESO']['Clave']);
       //FIN VALIDAMOS SI EL USUARIO TIENE PERMISO DE ACCESO AL SISTEMA
 				
   }else
@@ -809,6 +809,8 @@ function validacionAcceso($nombreEmpresa, $Usuario, $Clave)
       . "AND UPPER(Clave) = '" . strtoupper($Clave) . "' ";
       $dataUser = $conn->datos($sSQL);
 
+      // print_r($empresa);
+      // print_r($dataUser);die();
       //*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
       //Asignacion de correos automáticos para envio a procesos automatizados
       $Lista_De_Correos = array();

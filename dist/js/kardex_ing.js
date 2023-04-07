@@ -642,7 +642,7 @@ function grabar_comprobante()
           type:  'post',
           dataType: 'json',
             success:  function (data) {
-               $('#myModal_espera').modal('hide');
+               // $('#myModal_espera').modal('hide');
                console.log(data);
         if(data.respuesta==1)
       { 
@@ -1326,6 +1326,7 @@ function Tipo_De_Comprobante_No()
       data:  {parametros:parametros},
        url:   '../controlador/contabilidad/incomC.php?num_comprobante=true',
       type:  'post',
+      dataType: 'json',
       // beforeSend: function () {
       //    $("#num_com").html("");
       // },

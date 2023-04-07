@@ -822,8 +822,8 @@
                   {
                     Swal.fire({
                        type: 'info',
-                       title: 'Error por: '+response.text,
-                       text: ''
+                       title: 'Error por: ',
+                       html: `<div style="width: 100%; color:black;font-weight: 400;">${response.text}</div>`
                      });
 
                   }
@@ -1077,6 +1077,9 @@
     max-width: 170px;
 }
 
+.mw115{
+  max-width: 115px;
+}
 .centrado_margin{
   margin: 3px auto;
 }
@@ -1133,12 +1136,25 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
   
 }
 
+@media (max-width: 1336px) {
+ 
+  .div_fechas_emision, .div_fechas_vencimiento{
+    width: 210px !important;
+  }
+  
+   .div_fechas_dc{
+    width: 105px !important;
+  }
+}
+
 @media (max-width: 1286px) {
  
   .min-width-150{
     min-width: 130px !important;
   }
-  
+  .div_fechas_emision, .div_fechas_vencimiento{
+    width: 180px !important;
+  }
 }
 
 @media (max-width: 1243px) {
@@ -1173,6 +1189,12 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
   
 }
 
+@media (max-width: 1033px) {
+ 
+  .div_fechas_emision, .div_fechas_vencimiento{
+    width: 140px !important;
+  }
+}
 
 @media (max-width: 1029px) {
  
@@ -1195,10 +1217,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
   .min-width-150{
     min-width: 100% !important;
   }
-  .labelDCLinea{
-    display: none;
-  }
-
   .colDCLinea{
     width: 98% !important;
     margin: 5px 0px;
@@ -1212,7 +1230,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
 
 </style>
   <div class="row">
-    <div class="col-lg-6 col-sm-12 col-md-9 col-xs-12">
+    <div class="col-sm-5 col-xs-12">
       <div class="col">
         <a  href="./inicio.php?mod=<?php echo @$_GET['mod']; ?>" title="Salir de modulo" class="btn btn-default">
           <img src="../../img/png/salire.png" width="25" height="30">
@@ -1250,13 +1268,8 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
         </a>
       </div>
     </div>
-  </div>
-
-  <div class="row">
-
-    <div class="panel panel-primary col-sm-12" style="  margin-bottom: 5px;">
-      <div class="panel-body" style=" padding-top: 5px;">
-        <div class="row">
+    <div class="col-sm-7 col-xs-12">
+      <div class="row">
           <div class="form-group col-xs-6 padding-all margin-b-1">
             <label for="inputEmail3" class="col control-label">Inicio Resumen</label>
             <div class="col">
@@ -1268,28 +1281,35 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             <label for="exampleInputEmail2"  class="col control-label">Factura No. <span id="numeroSerie" class="red"></span></label>
 
             <div class="col">
-              <input type="input" class="form-control input-xs" tabindex="1" name="factura" id="factura">
+              <input style="  max-width: 110px;" type="input" class="form-control input-xs" tabindex="1" name="factura" id="factura">
             </div>
           </div>
         </div>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <div class="panel panel-primary col-sm-12" style="  margin-bottom: 5px;">
+      <div class="panel-body" style=" padding-top: 5px;">
         <div class="row">
           <div class="col-md-7 padding-all">
             <div class="row">
               
-              <div class="form-group col-xs-6 col-md-4  padding-all margin-b-1">
+              <div class="form-group col-xs-6 col-md-4  padding-all margin-b-1 div_fechas_emision">
                 <label for="inputEmail3" class="col control-label">Fecha Emision</label>
                 <div class="col">
-                  <input tabindex="2" type="date" name="fechaEmision" id="fechaEmision" class="form-control input-xs validateDate" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
+                  <input tabindex="2" type="date" name="fechaEmision" id="fechaEmision" class="form-control input-xs validateDate mw115" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
                 </div>
               </div>
-              <div class="form-group col-xs-6 col-md-4  padding-all margin-b-1">
+              <div class="form-group col-xs-6 col-md-5  padding-all margin-b-1 div_fechas_vencimiento">
                 <label for="inputEmail3" class="col control-label">Fecha Vencimiento</label>
                 <div class="col">
-                  <input type="date" tabindex="3" name="fechaVencimiento" id="fechaVencimiento" class="form-control input-xs validateDate" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
+                  <input type="date" tabindex="3" name="fechaVencimiento" id="fechaVencimiento" class="form-control input-xs validateDate mw115" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
                 </div>
               </div>
-              <div class="form-group col-xs-12 col-md-4  padding-all margin-b-1">
-                <label for="inputEmail3" class="labelDCLinea col control-label no-visible">DCLineaaaaaaaaaaaaa</label>
+              <div class="form-group col-xs-12 col-md-2  padding-all margin-b-1 div_fechas_dc">
+                <label for="inputEmail3" class="labelDCLinea col control-label no-visible">.</label>
                 <div class="col colDCLinea">
                   <select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="4" onchange="numeroFactura();">
                   </select>
