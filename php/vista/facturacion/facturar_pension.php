@@ -251,18 +251,18 @@
           for (var indice in datos) {
             subtotal = (parseFloat(datos[indice].valor) + (parseFloat(datos[indice].valor) * parseFloat(datos[indice].iva) / 100)) - parseFloat(datos[indice].descuento) - parseFloat(datos[indice].descuento2);
             var tr = `<tr class="tr`+clave+`">
-              <td><input ${((totalItem==clave)?`onblur="$('#TextBanco').focus()"`:'')} style="border:0px;background:bottom" type="checkbox" id="checkbox`+clave+`" onclick="totalFactura('checkbox`+clave+`','`+subtotal+`','`+datos[indice].iva+`','`+datos[indice].descuento+`','`+datos.length+`','`+clave+`')" name="`+datos[indice].mes+`"></td>
-              <td><input style="border:0px;background:bottom" type ="text" id="Mes`+clave+`" value ="`+datos[indice].mes+`" disabled/></td>
+              <td><input ${((totalItem==clave)?`onblur="$('#TextBanco').focus()"`:'')} style="border:0px;background:bottom;" type="checkbox" id="checkbox`+clave+`" onclick="totalFactura('checkbox`+clave+`','`+subtotal+`','`+datos[indice].iva+`','`+datos[indice].descuento+`','`+datos.length+`','`+clave+`')" name="`+datos[indice].mes+`"></td>
+              <td><input style="border:0px;background:bottom;max-width: 85px;" type ="text" id="Mes`+clave+`" value ="`+datos[indice].mes+`" disabled/></td>
               <td><input style="border:0px;background:bottom" type ="text" id="Codigo`+clave+`" value ="`+datos[indice].codigo+`" disabled/></td>
-              <td><input style="border:0px;background:bottom" type ="text" id="Periodo`+clave+`" value ="`+datos[indice].periodo+`" disabled/></td>
+              <td><input style="border:0px;background:bottom;max-width: 50px;" type ="text" id="Periodo`+clave+`" value ="`+datos[indice].periodo+`" disabled/></td>
               <td><input style="border:0px;background:bottom" type ="text" id="Producto`+clave+`" value ="`+datos[indice].producto+`" disabled/></td>
-              <td><input class="text-right" style="border:0px;background:bottom"  size="10px" type ="text" id="valor`+clave+`" value ="`+parseFloat(datos[indice].valor).toFixed(2)+`" disabled/></td>
-              <td><input class="text-right" style="border:0px;background:bottom"  size="10px" type ="text" id="descuento`+clave+`" value ="`+parseFloat(datos[indice].descuento).toFixed(2)+`" disabled/></td>
-              <td><input class="text-right" style="border:0px;background:bottom"  size="10px" type ="text" id="descuento2`+clave+`" value ="`+parseFloat(datos[indice].descuento2).toFixed(2)+`" disabled/></td>
-              <td><input class="text-right" style="border:0px;background:bottom" size="10px" type ="text" id="subtotal`+clave+`" value ="`+parseFloat(subtotal).toFixed(2)+`" disabled/></td>
+              <td><input class="text-right" style="border:0px;background:bottom;max-width: 75px;"  size="10px" type ="text" id="valor`+clave+`" value ="`+parseFloat(datos[indice].valor).toFixed(2)+`" disabled/></td>
+              <td><input class="text-right" style="border:0px;background:bottom;max-width: 85px;"  size="10px" type ="text" id="descuento`+clave+`" value ="`+parseFloat(datos[indice].descuento).toFixed(2)+`" disabled/></td>
+              <td><input class="text-right" style="border:0px;background:bottom;max-width: 85px;"  size="10px" type ="text" id="descuento2`+clave+`" value ="`+parseFloat(datos[indice].descuento2).toFixed(2)+`" disabled/></td>
+              <td><input class="text-right" style="border:0px;background:bottom;max-width: 85px;" size="10px" type ="text" id="subtotal`+clave+`" value ="`+parseFloat(subtotal).toFixed(2)+`" disabled/></td>
               
-              <td <?php echo ($mostrar_medidor)?"":'style="display:none"'?>><input class="text-right" style="border:0px;background:bottom" size="10px" type ="text" id="inputLectura`+clave+`" value ="`+datos[indice].Credito_No+`" disabled/></td>
-              <td <?php echo ($mostrar_medidor)?"":'style="display:none"'?>><input class="text-right" style="border:0px;background:bottom" size="10px" type ="text" id="inputMedidor`+clave+`"  value ="`+datos[indice].Codigo_Auto+`" disabled/></td>
+              <td <?php echo ($mostrar_medidor)?"":'style="display:none"'?>><input class="text-right" style="border:0px;background:bottom;max-width: 65px;" size="10px" type ="text" id="inputLectura`+clave+`" value ="`+datos[indice].Credito_No+`" disabled/></td>
+              <td <?php echo ($mostrar_medidor)?"":'style="display:none"'?>><input class="text-right" style="border:0px;background:bottom;max-width: 65px;" size="10px" type ="text" id="inputMedidor`+clave+`"  value ="`+datos[indice].Codigo_Auto+`" disabled/></td>
               
               <input size="10px" type ="hidden" id="CodigoL`+clave+`" value ="`+datos[indice].CodigoL+`"/>
               <input size="10px" type ="hidden" id="Iva`+clave+`" value ="`+datos[indice].iva+`"/>
@@ -493,7 +493,7 @@
         'codigoCliente' : codigoCliente,
         'datos' : datosLineas,
       }, 
-      success: function(data){}
+      success: function(data){calcularSaldo()}
     });
     var valor = 0; var descuento = 0; var descuentop = 0; var total = 0;var subtotal = 0;
     for(var i=1; i<datos+1; i++){

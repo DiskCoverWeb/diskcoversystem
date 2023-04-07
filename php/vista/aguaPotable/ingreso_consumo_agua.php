@@ -67,7 +67,10 @@
                     </div>
                     <hr style="margin: 0px;">
                     <div class="form-group">
-                      <label class="col-xs-12 control-label text-red text-center labelUltimaLectura no-visible">Ultima lectura <span id="FechaUltimaLectura"></span> =>(<span id="UltimaLectura"></span>)</label>
+                      <?php if (count($periodo)<=0): ?>
+                        <h4 style="color: red; text-align: center;">ACTIVE EL MES A PROCESAR</h4>
+                      <?php endif ?>
+                      <label class="col-xs-12 control-label text-red text-center labelUltimaLectura no-visible">Ultima lectura <span id="FechaUltimaLectura"></span>: (<span id="UltimaLectura"></span> m<sup>3</sup>) <label id="ConsumoActual" style="color: blue;"></label>
                     </div>
                     <div class="form-group">
                       <label class="col-xs-2 control-label">Año</label>
@@ -107,7 +110,6 @@
                       <!-- <label for="inputPassword" class="col-xs-12 col-lg-6 control-label text-red text-left">Ingrese lectura de Noviembre/2022</label> -->
                       <div class="col-xs-12 col-lg-6  strong text-right" >
                         <input onkeydown="if (event.keyCode === 13) GuardarConsumoAgua()"  style="max-width: 120px;display: inline-block;" type="tel" class="form-control input-xs " name="Lectura" id="Lectura" tabindex="2"> m<sup>3</sup>
-                        <label class="errorLectura" style="color: red;"></label>
                       </div>
                     </div>
                     <div class="form-group" style=" margin-bottom: 2px;">
@@ -128,14 +130,15 @@
         </div>
 
         <div class="row contenedor_item_center">
+          <?php if (count($periodo)>0): ?>
             <button class="btn btn-success" title="Guardar Consumo" onclick="GuardarConsumoAgua()">
               <img  src="../../img/png/grabar.png" width="25" height="30" tabindex="3">
             </button>
-            
-            </button>
-            <a href="./inicio.php?mod=<?php echo @$_GET['mod']?>" class="btn btn-warning" id="btnSalirModuloPF" title="Salir del Modulo" data-dismiss="modal">
-              <img  src="../../img/png/salire.png" width="25" height="30">
-            </a>
+          <?php endif ?>
+          </button>
+          <a href="./inicio.php?mod=<?php echo @$_GET['mod']?>" class="btn btn-warning" id="btnSalirModuloPF" title="Salir del Modulo" data-dismiss="modal">
+            <img  src="../../img/png/salire.png" width="25" height="30">
+          </a>
         </div>
     </div>
 </div>
@@ -144,19 +147,29 @@
 <script type="text/javascript">
   $(document).ready(function () {
     $("#CMedidor").focus();
+
     $("#Lectura").on('blur',function () {
-      if(parseFloat($("#Lectura").val())<parseFloat($("#UltimaLectura").text())){
-        $("#Lectura").select();
-        $(".errorLectura").text("La lectura actual no puede ser inferior a la anterior")
-      }else{
-        $(".errorLectura").text("") 
-        if(parseFloat($("#Lectura").val())-parseFloat($("#UltimaLectura").text())>15){
+      if($("#Lectura").val()!=""){
+        let LIMITE_MEDIDOR = "<?php echo LIMITE_MEDIDOR ?>";
+        let $Lectura = parseFloat($("#Lectura").val());
+        let $LecturaAnterior = parseFloat($("#UltimaLectura").text());
+        if($Lectura<$LecturaAnterior){//si la lectura actual es menor que la anterior, se asume que el contador llego a 10000 y se reinicio
+          $anterior = LIMITE_MEDIDOR-$LecturaAnterior;
+          $consumoActual = $anterior+$Lectura;
+
+        }else{
+          $consumoActual = $Lectura-$LecturaAnterior; 
+        }
+        $("#ConsumoActual").html(`Consumo Actual: ${$consumoActual} m<sup>3</sup>`);
+        if($consumoActual>15){
           $('input[name="optionrango"][value="mas15"]').prop('checked', true);
         }else{
           $('input[name="optionrango"][value="menos15"]').prop('checked', true);
         }
       }
     })
+
+    //Obtener datos del medidor
     $("#CMedidor").on("blur", function(){
       let medidor = $("#CMedidor").val();
       if(medidor!=""){
@@ -177,12 +190,15 @@
               $("#UltimaLectura").text(response.data.ultimaMedida);
               $("#Lectura").focus();
               $(".labelUltimaLectura").removeClass('no-visible')
+              $("#ConsumoActual").text("");
             }else{
               Swal.fire('¡Oops!', response.mensaje, 'warning')
+              $("#ConsumoActual").text("");
             }        
           },
           error: function () {
             $('#myModal_espera').modal('hide');
+            $("#ConsumoActual").text("");
             alert("Ocurrio un error inesperado, por favor contacte a soporte.");
           }
         });
@@ -232,4 +248,5 @@
       Swal.fire('¡Oops!', "No ha seleccionado ningun producto.", 'info')
     }
   }
+
 </script>

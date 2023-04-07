@@ -576,8 +576,25 @@ class facturar_pensionC
 	}
 
 	public function guardarFacturaPension(){
-
-    // print_r($_POST);die();
+    if(empty(trim($_POST['DCLinea']))){
+      echo json_encode(array('respuesta'=>6, 'text'=>"Se debe indicar una Linea de Catalogo"));
+      exit();
+    }
+    
+    if($_POST['saldoTotal']>0){//Significa que es un pago parcial
+      $datos = $this->facturacion->getAsiento();
+      if(count($datos)>0){
+        $intersection = array_intersect(array_column($datos, 'CODIGO'), array(JG01, JG02, JG03));
+        if (!empty($intersection)) {
+          echo json_encode(array('respuesta'=>-1,'text'=>"Esta operacion no se puede procesar con pago parcial."));
+          exit();
+        }
+      }else{
+        echo json_encode(array('respuesta'=>-1,'text'=>"No se encontraron asientos para procesar."));
+        exit();
+      }
+    }
+     print_r('pasa');die();
 		$TextRepresentante = $_POST['TextRepresentante'];
 		$TxtDireccion = $_POST['TxtDireccion'];
 		$TxtTelefono = $_POST['TxtTelefono'];
@@ -995,8 +1012,8 @@ class facturar_pensionC
     $dataCliente = $this->facturacion->BuscarClienteCodigoMedidor($CMedidor);
     if(count($dataCliente)>0){
       $data = $dataCliente[0];
-      $ClienteFacturacion = $this->facturacion->getUltimoRegistroClientes_Facturacion($data['Codigo'], $CMedidor, "JG.01");
-      $DetalleFactura = $this->facturacion->getUltimoRegistroDetalleFactura($data['Codigo'], $CMedidor, "JG.01");
+      $ClienteFacturacion = $this->facturacion->getUltimoRegistroClientes_Facturacion($data['Codigo'], $CMedidor, JG01);
+      $DetalleFactura = $this->facturacion->getUltimoRegistroDetalleFactura($data['Codigo'], $CMedidor, JG01);
       if (count($ClienteFacturacion) > 0 && ($ClienteFacturacion[0]['Periodo'] >= @$DetalleFactura[0]['Periodo'] && $ClienteFacturacion[0]['Num_Mes'] >= @$DetalleFactura[0]['Mes_No'])) {
         $data['ultimaMedida'] = $ClienteFacturacion[0]['Credito_No'];
         $data['fechaUltimaMedida'] = MesesLetras($ClienteFacturacion[0]['Num_Mes']) . "/" . $ClienteFacturacion[0]['Periodo'];
@@ -1020,14 +1037,23 @@ class facturar_pensionC
     if($CMedidor != "" && $CMedidor!="."){
       $dataCliente = @$this->getClienteCodigoMedidor($CMedidor)['data'];
       $LecturaAnterior = ((!is_null($dataCliente['ultimaMedida']) && is_numeric($dataCliente['ultimaMedida']))?$dataCliente['ultimaMedida']:0);
-      if($Lectura<$LecturaAnterior){return (array("rps" => 0 , "mensaje" => "La lectura actual no puede ser inferior a la anterior"));}
+      //OBTENER CONSUMO ACTUAL
+      if($Lectura<$LecturaAnterior){//si la lectura actual es menor que la anterior, se asume que el contador llego a 10000 y se reinicio
+        $anterior = LIMITE_MEDIDOR-$LecturaAnterior;
+        $consumoActual = $anterior+$Lectura;
+
+      }else{
+        $consumoActual = $Lectura-$LecturaAnterior; 
+      }
       $rangoValores = $this->facturacion->getCatalogo_Cyber_Tiempo();
-      $consumoActual = $Lectura-$LecturaAnterior; 
+      if(count($rangoValores)<=0){
+        return (array("rps" => false , "mensaje" => "No se ha configurado los rangos de valores para el calculo del excedente."));
+      }
       $valorMinimo = ($rangoValores[array_key_last($rangoValores)]['Desde'])-1;
       $excedente = (($consumoActual>$valorMinimo)?$consumoActual-$valorMinimo:0);
       $productos = $this->catalogoProductosModel->TVCatalogo("JG","P");
 
-      $Mifecha = date('YmdHis');
+      $Mifecha = PrimerDiaMes(date('Ymd'),'Ymd');;
 
       $periodo = $this->facturacion->getPeriodoAbierto();
       if(count($periodo)>0){
@@ -1048,13 +1074,13 @@ class facturar_pensionC
         }
       }
       //insert consumo
-      $clave = array_search("JG.01", array_column($productos, "Codigo_Inv"));
+      $clave = array_search(JG01, array_column($productos, "Codigo_Inv"));
       if ($clave !== false) {
         $productoConsumo = $productos[$clave];
         $this->facturacion->insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, $productoConsumo['Codigo_Inv'], $productoConsumo['PVP'], G_NINGUNO, $NoMes, $Anio, $Mifecha, 0, 0, $Lectura,$CMedidor);
 
         //insert alcantarilado
-        $clave = array_search("JG.02", array_column($productos, "Codigo_Inv"));
+        $clave = array_search(JG02, array_column($productos, "Codigo_Inv"));
         if ($clave !== false) {
           $productoAlcantarillado = $productos[$clave];
           $this->facturacion->insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, $productoAlcantarillado['Codigo_Inv'], $productoAlcantarillado['PVP'], G_NINGUNO, $NoMes, $Anio, $Mifecha, 0, 0,G_NINGUNO,$CMedidor);
@@ -1062,7 +1088,7 @@ class facturar_pensionC
 
         //insert excedente
         if($excedente>0){
-          $this->facturacion->insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, "JG.03", $montoExcedente, G_NINGUNO, $NoMes, $Anio, $Mifecha, 0, 0,G_NINGUNO,$CMedidor);
+          $this->facturacion->insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, JG03, $montoExcedente, G_NINGUNO, $NoMes, $Anio, $Mifecha, 0, 0,G_NINGUNO,$CMedidor);
         }
         return (array("rps" => true , "mensaje" => "Consumo registrado con exito."));
       }else{

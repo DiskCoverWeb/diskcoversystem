@@ -137,7 +137,7 @@ class facturar_pensionM
 			AND CF.Mes <> '.'
 			AND CF.Item = CP.Item 
 			AND CF.Codigo_Inv = CP.Codigo_Inv 
-			ORDER BY CF.Periodo,CF.Num_Mes,CP.Codigo_Inv,CF.Credito_No";
+			ORDER BY CF.Periodo,CF.Num_Mes,CF.Codigo_Inv,CF.Credito_No";
     $stmt = $this->db->datos($sql);
     return $stmt;
   }
