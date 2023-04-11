@@ -412,6 +412,7 @@ function limpiar_IngresoClave_MYSQL() {
   </script>
 
 <?php
+/*
 if(isset($_SESSION['INGRESO']['Mail']) && isset($_SESSION['INGRESO']['Clave']) && isset($_SESSION['INGRESO']['noempr']) && isset($_SESSION['INGRESO']['empresa']) && !empty($_SESSION['INGRESO']['noempr']) && !empty($_SESSION['INGRESO']['empresa'])){
   //INICIO VALIDAMOS SI EL USUARIO TIENE PERMISO DE ACCESO AL SISTEMA
     $resp =  validacionAcceso($_SESSION['INGRESO']['noempr'], $_SESSION['INGRESO']['Mail'], $_SESSION['INGRESO']['Clave']);
@@ -443,4 +444,5 @@ if(isset($_SESSION['INGRESO']['Mail']) && isset($_SESSION['INGRESO']['Clave']) &
     }
   //FIN VALIDAMOS SI EL USUARIO TIENE PERMISO DE ACCESO AL SISTEMA
 }
+*/
 ?>

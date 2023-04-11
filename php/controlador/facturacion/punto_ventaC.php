@@ -770,7 +770,8 @@ function ProcGrabar($FA)
 					$rep1 =  $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision($FA);
 					$this->modelo->pdf_guia_remision_elec($FA,$FA['Autorizacion_GR'],$periodo=false,0,1);
 					$clave_guia =  $this->sri->Clave_acceso($FA['FechaGRE'],'06', $FA['Serie_GR'],$FA['Remision']); 
-					$imp_guia =  $FA['Serie_GR'].'-'.generaCeros($FA['Remision'],7);           
+					$imp_guia =  $FA['Serie_GR'].'-'.generaCeros($FA['Remision'],7); 
+					$GR = ReadSetDataNum("GR_SERIE_".$FA['Serie_GR'], True, True);          
 				}
 			}
         	// print_r($rep);die();

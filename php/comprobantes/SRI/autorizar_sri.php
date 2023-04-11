@@ -706,7 +706,8 @@ class autorizacion_sri
 	        // -- 'Generamos la Clave de acceso
 	        // -- '& Format$(TFA.Fecha, "ddmmyyyy") &
 	         if(strlen($TFA['Autorizacion_GR']) >= 13){
-	            $TFA['ClaveAcceso_GR'] = $this->Clave_acceso($TFA['FechaGRE']->format('Y-m-d'),'06',$TFA['Serie_GR'],$TFA['Remision']);
+	         	if(is_object($TFA['FechaGRE'])){ $TFA['FechaGRE'] = $TFA['FechaGRE']->format('Y-m-d');}
+	            $TFA['ClaveAcceso_GR'] = $this->Clave_acceso($TFA['FechaGRE'],'06',$TFA['Serie_GR'],$TFA['Remision']);
 	         }else{
 	            $TFA['ClaveAcceso_GR'] = G_NINGUNO;
 	         }
@@ -3270,7 +3271,7 @@ function generar_xml_retencion($cabecera,$detalle)
     		$respuesta = ' XML firmado no encontrado';
 	 		return $respuesta;
     	}
-    	 // print_r("java -jar ".$enviar_sri." ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviado." ".$ruta_rechazados." ".$url_recepcion);die();
+    	 // print_r("java -jar ".$enviar_sri." ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion);die();
    		 exec("java -jar ".$enviar_sri." ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion,$f);
    		 if(count($f)>0)
    		 {

@@ -278,6 +278,7 @@ class incomC
 		$bene = array();
 		foreach ($datos as $key => $value) {
 			$bene[] = array('id'=>$value['id'].'-'.$value['email'].'-'.$value['TD'].'-'.$value['CI_RUC'].'-'.$value['Codigo'],'text'=>$value['nombre']);
+
 			// $bene[] = array('id'=>$value['id'].'-'.$value['email'],'text'=>$value['nombre']);//para produccion
 		}
 		return $bene;
@@ -567,6 +568,78 @@ class incomC
      	return array('debe'=>$debe,'haber'=>$haber,'diferencia'=>$debe-$haber,'Ctas_Modificar'=>$Ctas_Modificar);
 
      }
+/*
+    function generar_comprobante_prueba($parametros)
+    {
+     	$Monto_Total = $parametros['monto_total'];// LabelTotal.Caption)
+     	$Trans_No = $_SESSION['INGRESO']['modulo_'];
+     	// Asientos_Grabados
+     	$AdoAsientos = $this->modelo->asientos();
+     	$AdoAsientosSC = $this->modelo->asientos_SC();
+     	// ------------------------------------------------     
+  		$OpcSubCtaDH = 1;
+  		$TextoImprimio = "";
+
+  		// print_r($parametros);die();
+  		if(count($AdoAsientos)> 0)
+  		{
+          if($parametros['NuevoComp']){
+             If($parametros['tip']=='CD'){ $NumComp = ReadSetDataNum("Diario", True, True);}
+             If($parametros['tip']=='CI'){ $NumComp = ReadSetDataNum("Ingresos", True, True);}
+             If($parametros['tip']=='CE'){ $NumComp = ReadSetDataNum("Egresos", True, True);}
+             If($parametros['tip']=='ND'){ $NumComp = ReadSetDataNum("NotaDebito", True, True);}
+             If($parametros['tip']=='NC'){ $NumComp = ReadSetDataNum("NotaCredito", True, True);}
+          }
+
+          $FechaTexto = $parametros['fecha'];
+          $Co['TP'] = $parametros['tip'];
+          $Co['Cotizacion'] = $parametros['TextCotiza'];
+          $Co['T'] = G_NORMAL;
+          $Co['Fecha'] =$FechaTexto;
+          $Co['Numero'] =$NumComp;
+          $Co['Monto_Total'] =$Monto_Total;
+          $Co['Concepto'] =$parametros['concepto'];
+         // 'Co.CodigoB'] =$CodigoBenef
+          $Co['Efectivo'] =$parametros['Abono'];
+          $Co['Cotizacion'] =$parametros['TextCotiza'];
+          $Co['Item'] =$_SESSION['INGRESO']['item'];
+          $Co['Usuario'] =$_SESSION['INGRESO']['item'];
+          $Co['T_No'] =$Trans_No;
+         // 'Grabamos el Comprobante
+          GrabarComprobante($Co);
+        // ' Seteamos para el siguiente comprobante
+        /*  DGAsientosB.Visible = False
+          RatonNormal
+          ImprimirComprobantesDe False, Co
+          If CheqCopia.value Then ImprimirComprobantesDe False, Co
+          BorrarAsientos True
+          NumComp = NumComp + 1
+          Co.Numero = NumComp
+          LabelComp.Caption = Format(NumComp, "00000000")
+          LabelTotal.Caption = "0.00"
+          Label6.Visible = False
+          DGAsientos.Visible = True
+          If ModificarComp Then
+             ModificarComp = False
+             CopiarComp = False
+             NuevoComp = True
+             Unload FComprobantes
+             Exit Sub
+          Else
+             ModificarComp = False
+             CopiarComp = False
+             NuevoComp = True
+             Tipo_De_Comprobante_No Co
+             MBoxFecha.SetFocus
+          End If
+       }else{
+          MsgBox "Warning: Falta de Ingresar datos."
+          DGAsientos.Visible = True
+          TextCodigo.SetFocus
+       }
+*/
+    // }
+
      function generar_comprobante($parametros)
      {
      	// print_r($parametros);die();
@@ -1461,7 +1534,7 @@ class incomC
             // exit();
             // print_r($parametros);die();
             if(strlen($Autorizacion_R) >= 13){
-
+            	$res = '0';
             	$res = $this->sri->Autorizar_retencion($parametros_xml);
 
             	// $res = $this->SRI_Crear_Clave_Acceso_Retencines($parametros_xml); //function xml
@@ -1470,11 +1543,13 @@ class incomC
 				$pdf = 'RE_'.$Serie_R.'-'.generaCeros($parametros['Retencion'],7); 
 				$this->modelo->reporte_retencion($Numero,$TP,$Retencion,$Serie_R,$imp=1);
 
+            // print_r($parametros);die();
 				// if($res==1)
 				// {
 					 $Trans_No = $T_No;
            			 $this->modelo->BorrarAsientos($Trans_No,true);
 				// }
+           			 // print_r(array('respuesta'=>$res,'pdf'=>$pdf,'text'=>$res,'clave'=>$aut));die();
 				return array('respuesta'=>$res,'pdf'=>$pdf,'text'=>$res,'clave'=>$aut);
             	  
 				

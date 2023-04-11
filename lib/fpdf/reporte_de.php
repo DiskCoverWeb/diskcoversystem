@@ -3430,7 +3430,11 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 	// $pdf->RoundedRect($x-$margen, $y-$margen, $margen_med3, $yfin-$y+$margen, $radio, $style = '', $angle = '1234');
    
 	//===================================================fin cuadrpo detalle======================================
-
+	if($yfin >=612)
+	{
+		$pdf->AddPage();
+	}
+	// print_r($yfin);die();
 	//====================================================cuadro datos adicionales======================
 	$y = $pdf->GetY();	
     $x = $pdf->GetX()-$margen;
@@ -3624,6 +3628,8 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 			$y_final_leyenda = $y_fin_abonos;
 		}
 	}
+
+	
 	//leyenda final
 	$pdf->SetFont('Arial','',5);
 	$pdf->SetXY($x, ($y_final_leyenda));

@@ -336,7 +336,6 @@ function guardar()
           console.log(response);
           if(response.mensaje!='')
           {
-            todos_modulos()
             Swal.fire({
                type: 'success',               
                title: response.mensaje,
@@ -345,6 +344,11 @@ function guardar()
                //timer: 2500
                });
 
+          }else
+          {
+
+            todos_modulos();
+            Swal.fire('Guardado Correctamente','','success');
           }
     			// if(response==1)
     			// 	{    					

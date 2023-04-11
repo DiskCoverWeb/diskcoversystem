@@ -1405,8 +1405,6 @@ function codigo_verificador($CI_RUC)
           return $res;
       }
       return $respuesta;   
-
-
 }
 
 function digito_verificador_nuevo($NumeroRUC){
@@ -5292,6 +5290,15 @@ function dimenciones_tabla($tabla) //---------optimizado por javier farinango
 	}
 }
 
+function cabecera_tabla($tabla)
+{
+  $sql = "SELECT COLUMN_NAME,DATA_TYPE,IS_NULLABLE,CHARACTER_MAXIMUM_LENGTH
+    FROM Information_Schema.Columns
+    WHERE TABLE_NAME ='".$tabla."'";
+    $campos = $conn->datos($sql);
+    return $campos;
+}
+
 function dimenciones_tabl($len)
 {
   $px = 8;
@@ -5419,7 +5426,7 @@ function dimenciones_tabl($len)
                 $conn->String_Sql($sql);
         }
       }
-      return $NumCodigo;
+      return generaCeros($NumCodigo,8);
   
   }
 
@@ -6768,68 +6775,6 @@ function costo_venta($codigo_inv)  // optimizado
 
   }
   
-
-// function crear_variables_session($empresa)
-// {
-
-//   // print_r($empresa);die();
-//         $_SESSION['INGRESO']['IP_VPN_RUTA']='mysql.diskcoversystem.com';
-//         $_SESSION['INGRESO']['Base_Datos']='diskcover_empresas';
-//         $_SESSION['INGRESO']['Usuario_DB']='diskcover';
-//         $_SESSION['INGRESO']['Contraseña_DB']='disk2017Cover';
-//         $_SESSION['INGRESO']['Tipo_Base']='MySQL';
-//         $_SESSION['INGRESO']['Puerto']='13306';
-//         $_SESSION['INGRESO']['Fecha']='';
-//         $_SESSION['INGRESO']['Logo_Tipo']=$empresa[0]['Logo_Tipo'];
-//         $_SESSION['INGRESO']['periodo']='.';
-//         $_SESSION['INGRESO']['Razon_Social']=$empresa[0]['Razon_Social'];
-//         $_SESSION['INGRESO']['Fecha_ce']='';
-//         //echo $_SESSION['INGRESO']['IP_VPN_RUTA'];
-//         //obtenemos el resto de inf. de la empresa tales como correo direccion
-//         // print_r($empresa_d);die();
-//         $_SESSION['INGRESO']['Direccion']='';
-//         $_SESSION['INGRESO']['Telefono1']='';
-//         $_SESSION['INGRESO']['FAX']='';
-//         $_SESSION['INGRESO']['Nombre_Comercial']='';
-//         $_SESSION['INGRESO']['Razon_Social']=$empresa[0]['Razon_Social'];
-//         $_SESSION['INGRESO']['Sucursal']='';
-//         $_SESSION['INGRESO']['Opc']='';
-//         $_SESSION['INGRESO']['noempr']=$empresa[0]['Empresa'];
-//         $_SESSION['INGRESO']['S_M']='';
-//         $_SESSION['INGRESO']['Num_CD']='';
-//         $_SESSION['INGRESO']['Num_CE']='';
-//         $_SESSION['INGRESO']['Num_CI']='';
-//         $_SESSION['INGRESO']['Num_ND']='';
-//         $_SESSION['INGRESO']['Num_NC']='';
-//         $_SESSION['INGRESO']['Email_Conexion_CE']='';
-//         $_SESSION['INGRESO']['Formato_Cuentas']='';
-//         $_SESSION['INGRESO']['Formato_Inventario']='';
-//         $_SESSION['INGRESO']['porc']='';
-//         $_SESSION['INGRESO']['Ambiente']='';
-//         $_SESSION['INGRESO']['Obligado_Conta']='';
-//         $_SESSION['INGRESO']['LeyendaFA']='';
-//         $_SESSION['INGRESO']['Email']='';
-//         $_SESSION['INGRESO']['RUC']=$empresa[0]['RUC_CI_NIC'];
-//         $_SESSION['INGRESO']['Gerente']=$empresa[0]['Gerente'];;
-//         $_SESSION['INGRESO']['Det_Comp']='';
-//         $_SESSION['INGRESO']['Signo_Dec']='';
-//         $_SESSION['INGRESO']['Signo_Mil']='';
-//         $_SESSION['INGRESO']['Sucursal']='';
-//         $_SESSION['INGRESO']['RUC_Contador'] = '';
-//         $_SESSION['INGRESO']['CI_Representante'] = '';
-//         $_SESSION['INGRESO']['Ruta_Certificado'] = '';
-//         $_SESSION['INGRESO']['Clave_Certificado'] = '';
-//         $_SESSION['INGRESO']['Ambiente'] = '';
-//         $_SESSION['INGRESO']['Dec_PVP'] = '';
-//         $_SESSION['INGRESO']['Dec_Costo'] = '';
-//         $_SESSION['INGRESO']['Cotizacion'] = '';
-//         // print_r($empresa_d);die();
-//         $_SESSION['INGRESO']['Ciudad'] = $empresa[0]['Ciudad'];;       
-//         $_SESSION['INGRESO']['accesoe']='0';
-//         $_SESSION['INGRESO']['CodigoU']='';
-//          $_SESSION['INGRESO']['Nombre_Completo']='';
-// }
-
   function Leer_Seteos_Ctas($Det_Cta = "") // optimizado
   {
     //conexion
@@ -6846,175 +6791,7 @@ function costo_venta($codigo_inv)  // optimizado
     return $datos[0]['Codigo'];
   }
 
-  // function sp_mayorizar_cuentas()
-  // {
-    // set_time_limit(1024);
-    // ini_set("memory_limit", "-1");
-    // $desde = '2019/10/28';
-    // $hasta = '2019/11/29';
-    // $Escoop = false;
-    // $ConSucursal = false;
-    //  $conn = new Conectar();
-    //   $cid=$conn->conexion();
-    //   $parametros = array(
-    //   array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
-    //   array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
-    //   array(&$Escoop, SQLSRV_PARAM_IN),
-    //   array(&$ConSucursal, SQLSRV_PARAM_IN),
-    //   );     
-    //  $sql="EXEC sp_Reindexar_Periodo @Item=?, @Periodo=?";
-    //  // print_r($_SESSION['INGRESO']);die();
-
-    //   $stmt = sqlsrv_prepare($cid, $sql,$parametros);
-    //   if(!$stmt)
-    //   {
-    //     die( print_r( sqlsrv_errors(), true));
-    //   }
-    //   if (!sqlsrv_execute($stmt)) {
-   
-    //      echo "Error en consulta PA.\n";         
-    //      $respuesta = -1;
-    //      die( print_r( sqlsrv_errors(), true));
-    //      return $respuesta;  
-    //    die;
-    //   }
-    //  $respuesta =  1;
-    //    return $respuesta;   
-  // }
-
-      
-    //if (strlen($Codigo_CIRUC_Cliente) <= 0) $Codigo_CIRUC_Cliente = G_NINGUNO;
-    /*
-   'Por Codigo
-    sSQL = "SELECT Codigo " _
-         & "FROM Clientes " _
-         & "WHERE Codigo = '" & Codigo_CIRUC_Cliente & "' "
-    Select_AdoDB AdoCliDB, sSQL
-    If AdoCliDB.RecordCount > 0 Then
-       TBenef.Codigo = AdoCliDB.Fields("Codigo")
-       Por_Codigo = True
-    End If
-    AdoCliDB.Close
-    
-   'Por CI o RUC
-    If Not Por_Codigo Then
-       sSQL = "SELECT Codigo " _
-            & "FROM Clientes " _
-            & "WHERE CI_RUC = '" & Codigo_CIRUC_Cliente & "' "
-       Select_AdoDB AdoCliDB, sSQL
-       If AdoCliDB.RecordCount > 0 Then
-          TBenef.Codigo = AdoCliDB.Fields("Codigo")
-          Por_CIRUC = True
-       End If
-       AdoCliDB.Close
-    End If
-        
-   'Por Cliente
-    If Not Por_CIRUC Then
-       sSQL = "SELECT Codigo " _
-            & "FROM Clientes " _
-            & "WHERE Cliente = '" & Codigo_CIRUC_Cliente & "' "
-       Select_AdoDB AdoCliDB, sSQL
-       If AdoCliDB.RecordCount > 0 Then
-          TBenef.Codigo = AdoCliDB.Fields("Codigo")
-          Por_Cliente = True
-       End If
-       AdoCliDB.Close
-    End If
-    
-   'Verificamos la informacion del Clienete
-    If Por_Codigo Or Por_CIRUC Or Por_Cliente Then
-       With TBenef
-            sSQL = "SELECT * " _
-                 & "FROM Clientes " _
-                 & "WHERE Codigo = '" & .Codigo & "' "
-            Select_AdoDB AdoCliDB, sSQL
-            If AdoCliDB.RecordCount > 0 Then
-              .FA = AdoCliDB.Fields("FA")
-              .Asignar_Dr = AdoCliDB.Fields("Asignar_Dr")
-              .Cliente = AdoCliDB.Fields("Cliente")
-              .Descuento = AdoCliDB.Fields("Descuento")
-              .T = AdoCliDB.Fields("T")
-              .CI_RUC = AdoCliDB.Fields("CI_RUC")
-              .TD = AdoCliDB.Fields("TD")
-              .Fecha = AdoCliDB.Fields("Fecha")
-              .Fecha_N = AdoCliDB.Fields("Fecha_N")
-              .Sexo = AdoCliDB.Fields("Sexo")
-              .Email1 = AdoCliDB.Fields("Email")
-              .Email2 = AdoCliDB.Fields("Email2")
-              .EmailR = .Email1
-              .Direccion = AdoCliDB.Fields("Direccion")
-              .DirNumero = AdoCliDB.Fields("DirNumero")
-              .Telefono1 = AdoCliDB.Fields("Telefono")
-              .TelefonoT = AdoCliDB.Fields("Telefono")
-              .Ciudad = AdoCliDB.Fields("Ciudad")
-              .Prov = AdoCliDB.Fields("Prov")
-              .Pais = AdoCliDB.Fields("Pais")
-              .Profesion = AdoCliDB.Fields("Profesion")
-              .Grupo_No = AdoCliDB.Fields("Grupo")
-              .Contacto = AdoCliDB.Fields("Contacto")
-              .Calificacion = AdoCliDB.Fields("Calificacion")
-              .Plan_Afiliado = AdoCliDB.Fields("Plan_Afiliado")
-              .Actividad = AdoCliDB.Fields("Actividad")
-              .Credito = AdoCliDB.Fields("Credito")
-              .Direccion_Rep = .Direccion
-              'Averiguamos si no funciona con unidades educativas
-               Select Case .TD
-                 Case "C", "R", "P"
-                     .Representante = .Cliente
-                     .RUC_CI_Rep = .CI_RUC
-                     .TD_Rep = .TD
-                 Case Else
-                     .Representante = "CONSUMIDOR FINAL"
-                     .RUC_CI_Rep = "9999999999999"
-                     .TD_Rep = "R"
-               End Select
-             '.Salario = 0
-            End If
-            AdoCliDB.Close
-       
-           'Averiguamos si tiene Representante
-            sSQL = "SELECT Representante, Cedula_R, Lugar_Trabajo_R, Telefono_RS, TD, Email_R, Tipo_Cta, Cod_Banco, Cta_Numero, Caducidad " _
-                 & "FROM Clientes_Matriculas " _
-                 & "WHERE Item = '" & NumEmpresa & "' " _
-                 & "AND Periodo = '" & Periodo_Contable & "' " _
-                 & "AND Codigo = '" & .Codigo & "' "
-            Select_AdoDB AdoCliDB, sSQL
-            If AdoCliDB.RecordCount > 0 Then
-               Select Case AdoCliDB.Fields("TD")
-                 Case "C", "R", "P"
-                      If Len(AdoCliDB.Fields("Representante")) > 1 And Len(AdoCliDB.Fields("Cedula_R")) > 1 Then
-                        .Representante = Replace(AdoCliDB.Fields("Representante"), "  ", " ")
-                        .RUC_CI_Rep = AdoCliDB.Fields("Cedula_R")
-                        .TD_Rep = AdoCliDB.Fields("TD")
-                        .Telefono1 = AdoCliDB.Fields("Telefono_RS")
-                        .TelefonoT = AdoCliDB.Fields("Telefono_RS")
-                        .Tipo_Cta = AdoCliDB.Fields("Tipo_Cta")
-                        .Cod_Banco = AdoCliDB.Fields("Cod_Banco")
-                        .Cta_Numero = AdoCliDB.Fields("Cta_Numero")
-                        .Direccion_Rep = AdoCliDB.Fields("Lugar_Trabajo_R")
-                        .Fecha_Cad = AdoCliDB.Fields("Caducidad")
-                        .EmailR = AdoCliDB.Fields("Email_R")
-                      End If
-                 Case Else
-                     .Representante = "CONSUMIDOR FINAL"
-                     .RUC_CI_Rep = "9999999999999"
-                     .TD_Rep = "R"
-               End Select
-            End If
-            AdoCliDB.Close
-            CadAux = .Email1 & .Email2 & .EmailR
-            If Len(CadAux) <= 3 Then
-              .Email1 = EmailProcesos
-              .Email2 = EmailProcesos
-              .EmailR = EmailProcesos
-            End If
-       End With
-    End If
-    Leer_Datos_Clientes = TBenef
-    End Function*/
-  // }
-
+ 
   function SinEspaciosDer($texto = ""){
     $resultado = explode(" ", $texto);
     return $resultado[1];
@@ -7642,104 +7419,6 @@ function datos_tabla($tabla,$campo=false)
      return $datos;
 }
 
-
-// Public Sub FechaValida(NomBox As MaskEdBox, Optional ChequearCierreMes As Boolean)
-
-//  'Empezamos a verificar la fecha ingresada'
-//   $ErrorFecha = False
-//   If NomBox.Text = LimpiarFechas Then NomBox.Text = FechaSistema
-//   NomBox.Text = Format$(NomBox.Text, FormatoFechas)
-//   DiaV = Val(MidStrg(NomBox.Text, 1, 2))
-//   MesV = Val(MidStrg(NomBox.Text, 4, 2))
-//   AñoV = Val(MidStrg(NomBox.Text, 7, 4))
-//   If AñoV <= 1900 Then ErrorFecha = True   ' AñoV = 2000'
-//   If AñoV >= Year(FechaSistema) + 8 Then ErrorFecha = True  ' AñoV = 2000'
-//  'MsgBox AñoV'
-//   If (AñoV > 0) And (DiaV > 0) And (MesV > 0) Then
-//      Select Case MesV
-//        Case 1, 3, 5, 7, 8, 10, 12
-//            If (DiaV > 31) Then ErrorFecha = True
-//        Case 2
-//            If ((AñoV Mod 4 <> 0) And (DiaV > 28)) Then ErrorFecha = True
-//            If ((AñoV Mod 4 = 0) And (DiaV > 29)) Then ErrorFecha = True
-//        Case 4, 6, 9, 11
-//            If (DiaV > 30) Then ErrorFecha = True
-//        Case Else
-//             ErrorFecha = True
-//      End Select
-//   Else
-//      ErrorFecha = True
-//   End If
-//  'Resultado Final de la verificacion de la Fecha ingresada'
-//   Cadena = ""
-//   If ErrorFecha Then
-//      Cadena = "ESTA INCORRECTA" & vbCrLf
-//   Else
-//     'Abrimos la base de datos para los cierres del mes
-//      Set AdoCierre = New ADODB.Recordset
-//      AdoCierre.CursorType = adOpenDynamic
-//      AdoCierre.CursorLocation = adUseClient'
-//     'Averiguamos si esta cerrado el mes de procesamiento'
-//      Anio = Year(NomBox.Text)
-//      FechaCierre = "01/" & Month(FechaSistema) & "/" & Year(FechaSistema)
-//      FechaFin1 = BuscarFecha(NomBox.Text)
-//      sSQL1 = "SELECT * " _
-//            & "FROM Fechas_Balance " _
-//            & "WHERE Periodo = '" & Periodo_Contable & "' " _
-//            & "AND Item = '" & NumEmpresa & "' " _
-//            & "AND Cerrado = " & Val(adFalse) & " " _
-//            & "AND Fecha_Inicial <= #" & FechaFin1 & "# " _
-//            & "AND Fecha_Final >= #" & FechaFin1 & "# " _
-//            & "AND MidStrg(Detalle,1,4) = '" & Anio & "' " _
-//            & "ORDER BY Fecha_Inicial "
-//      sSQL1 = CompilarSQL(sSQL1)
-//     'MsgBox sSQL1'
-//      AdoCierre.open sSQL1, AdoStrCnn, , , adCmdText
-//      With AdoCierre
-//       If .RecordCount > 0 Then
-//           FechaCierre = .Fields("Fecha_Inicial")
-//       End If
-//      End With
-//      AdoCierre.Close
-//     'MsgBox ChequearCierreMes & vbCrLf & ErrorFecha'
-//      If ChequearCierreMes Then
-//         If CFechaLong(NomBox.Text) < CFechaLong(FechaCierre) Then
-//            ErrorFecha = True
-//            Cadena = Cadena & "ES INFERIOR A LA DEL CIERRE DEL MES" & vbCrLf
-//         End If
-//      End If
-//      If (AñoV > 2050) Then
-//         Cadena = Cadena & "ES SUPERIOR A LA PERMITIDA POR EL SISTEMA" & vbCrLf
-//         ErrorFecha = True
-//      End If
-     
-//     'Carga la Tabla de Porcentaje Iva'
-//      Set AdoCierre = New ADODB.Recordset
-//      AdoCierre.CursorType = adOpenDynamic
-//      AdoCierre.CursorLocation = adUseClient
-     
-//      sSQL1 = "SELECT * " _
-//            & "FROM Tabla_Por_ICE_IVA " _
-//            & "WHERE IVA <> " & Val(adFalse) & " " _
-//            & "AND Fecha_Inicio <= #" & FechaFin1 & "# " _
-//            & "AND Fecha_Final >= #" & FechaFin1 & "# " _
-//            & "ORDER BY Porc "
-//      sSQL1 = CompilarSQL(sSQL1)
-//      AdoCierre.open sSQL1, AdoStrCnn, , , adCmdText
-//      If AdoCierre.RecordCount > 0 Then Porc_IVA = Redondear(AdoCierre.Fields("Porc") / 100, 2)
-//      AdoCierre.Close
-//   End If
-//   RatonNormal
-//   If ErrorFecha Then
-//      MsgBox "LA FECHA QUE ESTA INTENTANDO INGRESAR" & vbCrLf & vbCrLf _
-//           & Cadena & vbCrLf _
-//           & "CONSULTE AL ADMINISTRADOR DEL SISTEMA" & vbCrLf & vbCrLf _
-//           & "PARA SOLUCIONAR EL INCONVENIENTE"
-//      NomBox.Text = LimpiarFechas
-//      NomBox.SetFocus
-//   End If
-//   RatonNormal
-// End Sub
 
   function Leer_Cta_Catalogo($CodigoCta = ""){
     
@@ -8554,6 +8233,72 @@ function Grabar_Factura1($TFA,$VerFactura = false, $NoRegTrans = false)
                  $datosTK[31]['dato'] =  $_SESSION['INGRESO']['CodigoU'];                 
                  insert_generico('Trans_Kardex',$datosTK);
               }            
+
+              // 'Salida si es por recetas y ademas el producto es por servicios
+             // 'caso contrario hay que acondicionar desde el Modulo de Inventario
+             if(strlen($value["Cta_Inv"]) == 1 && strlen($value["Cta_Costo"]) == 1)
+             {
+                $sql = "SELECT Codigo_Receta, Cantidad, Costo, ID 
+                     FROM Catalogo_Recetas 
+                     WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+                     AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+                     AND Codigo_PP = '".$value["CODIGO"]."' 
+                     AND TC = 'P' 
+                     ORDER BY Codigo_Receta ";
+                $AdoDBReceta = $conn->datos($sql);
+
+                if(count($AdoDBReceta)> 0)
+                {
+                  $FechaSistema = date('Y-m-d');
+                   foreach ($AdoDBReceta as $key => $valueAdo) {
+
+                     $DatInv = Leer_Codigo_Inv($AdoDBReceta[0]["Codigo_Receta"],$FechaSistema, $value("CodBod"), $value["CodMar"]);                    
+                      if(count($codigo_inve)>0)
+                      {
+                         if($DatInv['Costo'] > 0 )
+                         {
+                            
+                            $CantidadAnt = $value["CANT"] * $valueAdo["Cantidad"];
+                            $ValorTotal = number_format($CantidadAnt * $DatInv['Costo'], 2,'.','');
+                            SetAdoAddNew("Trans_Kardex");
+                            SetAdoFields("T", G_NORMAL);
+                            SetAdoFields("TC", $TFA['TC']);
+                            SetAdoFields("Serie", $TFA['Serie']);
+                            SetAdoFields("Fecha", $TFA['Fecha']);
+                            SetAdoFields("Factura", $TFA['Factura']);
+                            SetAdoFields("Codigo_P", $TFA['CodigoC']);
+                            SetAdoFields("CodBodega", $value["CodBod"]);
+                            SetAdoFields("CodMarca", $value["CodMar"]);
+                            SetAdoFields("Codigo_Inv", $valueAdo["Codigo_Receta"]);
+                            SetAdoFields("CodigoL", $TFA['Cod_CxC']);
+                            SetAdoFields("Lote_No", $value["Lote_No"]);
+                            SetAdoFields("Fecha_Fab", $value["Fecha_Fab"]);
+                            SetAdoFields("Fecha_Exp", $value["Fecha_Exp"]);
+                            SetAdoFields("Procedencia", $value["Procedencia"]);
+                            SetAdoFields("Modelo", $value["Modelo"]);
+                            SetAdoFields("Serie_No", $value["Serie_No"]);
+                            SetAdoFields("Porc_C", $value["Porc_C"]);
+                            SetAdoFields("PVP", $DatInv['Costo']);
+                            SetAdoFields("Valor_Unitario", $DatInv['Costo']);
+                            SetAdoFields("Salida", $CantidadAnt);
+                            SetAdoFields("Valor_Total", $ValorTotal);
+                            SetAdoFields("Costo", $DatInv['Costo']);
+                            SetAdoFields("Total", $ValorTotal);
+                            SetAdoFields("Detalle", substr("FA: RE-".$TFA['Cliente'], 1, 100));
+                            SetAdoFields("Codigo_Barra", $value["COD_BAR"]);
+                            SetAdoFields("Orden_No", $value["Numero"]);
+                            SetAdoFields("Cta_Inv", $DatInv['Cta_Inventario']);
+                            SetAdoFields("Contra_Cta", $DatInv['Cta_Costo_Venta']);
+                            SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+                            SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+                            SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+                            SetAdoUpdat();
+                         }
+                    }
+                  }
+                }
+              }
+
           }
         }
 
@@ -12141,6 +11886,7 @@ function Datos_Iniciales_Entidad_SP_MySQL($empresa, $usuario)
       array("pActivo", 'OUT'),
       array("EstadoUsuario", 'OUT'),
   );
+  print_r($parametros);die();
   $sql = "Call sp_mysql_datos_iniciales";
   $rsMySQL =  $conn->ejecutar_procesos_almacenados($sql,$parametros, true,$tipo='MYSQL');
   $Fecha_CO = $rsMySQL["@FechaCO"];
@@ -12259,101 +12005,6 @@ function Estado_Empresa_SP_MySQL()
   );
   $sql = "CALL sp_mysql_datos_estado_empresa";
   return $conn->ejecutar_procesos_almacenados($sql,$parametros,$respuesta='1',$tipo='MYSQL');
-}
-
-function Progreso_Iniciar_Errores()
-{
-    $sSQL = "DELETE * "
-       ."FROM Tabla_Temporal "
-       ."WHERE Item = '" .$_SESSION['INGRESO']['item'] ."' "
-       ."AND Modulo = '" .$_SESSION['INGRESO']['modulo_'] ."' "
-       ."AND CodigoU = '" .$_SESSION['INGRESO']['CodigoU'] ."' ";
-  Ejecutar_SQL_SP($sSQL);
-}
-
-function Productos_Cierre_Caja_SP($FechaDesde, $FechaHasta)
-{
-  $conn = new db();
-  $FechaIniSP = BuscarFecha($FechaDesde);
-  $FechaFinSP = BuscarFecha($FechaHasta);
-  $parametros = array(
-    array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
-    array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
-    array(&$FechaIniSP, SQLSRV_PARAM_IN),
-    array(&$FechaFinSP, SQLSRV_PARAM_IN),
-  );
-  $sql = "EXEC sp_Productos_Cierre_Caja @Item=?, @Periodo=?, @FechaDesde=?, @FechaHasta=?";
-  return $conn->ejecutar_procesos_almacenados($sql,$parametros);
-}
-
-function Actualizar_Abonos_Facturas_SP($TFA, $SaldoReal = false, $PorFecha = false)
-{
-  $conn = new db();
-  $TFA = (Object)$TFA;
-  $FechaCorte = $TFA->Fecha_Corte;
-  $FechaIni = $TFA->Fecha_Desde;
-  $FechaFin = $TFA->Fecha_Hasta;
-  $FechaSistema =  date('Y-m-d');
-  $FechaCorte = (strtotime($FechaCorte) !== false) ? BuscarFecha($FechaCorte) : BuscarFecha($FechaSistema);
-  $FechaIni = (strtotime($FechaIni) !== false) ? BuscarFecha($FechaIni) : BuscarFecha($FechaSistema);
-  $FechaFin = (strtotime($FechaFin) !== false) ? BuscarFecha($FechaFin) : BuscarFecha($FechaSistema);
-  $SaldoReal = ($FechaCorte == BuscarFecha($FechaSistema));
-  $ExisteErrores = 0;
-  $parametros = array(
-    array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
-    array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
-    array(&$_SESSION['INGRESO']['modulo_'], SQLSRV_PARAM_IN),
-    array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
-    array(&$TFA->TC, SQLSRV_PARAM_IN), //TODO LS donde se definentos 3 campos!!
-    array(&$TFA->Serie, SQLSRV_PARAM_IN),
-    array(&$TFA->Factura, SQLSRV_PARAM_IN),
-    array(&$FechaCorte, SQLSRV_PARAM_IN),
-    array(&$FechaIni, SQLSRV_PARAM_IN),
-    array(&$FechaFin, SQLSRV_PARAM_IN),
-    array(&$SaldoReal, SQLSRV_PARAM_IN),
-    array(&$PorFecha, SQLSRV_PARAM_IN),
-    array(&$ExisteErrores, SQLSRV_PARAM_INOUT)
-  );
-  $sql = "EXEC sp_Actualizar_Abonos_Facturas @Item=?, @Periodo=?, @NumModulo=?, @Usuario=?, @TC=?, @Serie=?, @Factura=?, @FechaCorte=?, @FechaDesde=?, @FechaHasta=?, @SaldoReal=?, @PorFecha=?, @ExisteErrores=?";
-  $exec = $conn->ejecutar_procesos_almacenados($sql,$parametros);
-  if($exec){
-    return compact("ExisteErrores");
-  }else{
-    return $exec;
-  }
-}
-
-function Actualizar_Datos_Representantes_SP($MasGrupos = false)
-{
-  $conn = new db();
-  $BuscarCodigo1 = "";
-  $parametros = array(
-    array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
-    array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
-    array(&$MasGrupos, SQLSRV_PARAM_IN),
-  );
-  $sql = "EXEC sp_Actualizar_Datos_Representantes @Item=?, @Periodo=?, @MasGrupos=?";
-  return $conn->ejecutar_procesos_almacenados($sql,$parametros);
-}
-
-function FInfoErrorShow($parametros)
-{
-  //TODO LS faltaria
-  sleep(2);
-  return [];
-}
-
-function Redondear($Valor, $Decim = 2) {
-  $Decim = max(0, min($Decim, 6));
-  $Valor_Redondeo = round($Valor, 6);
-  $Valor_Redondeo = (float)number_format($Valor_Redondeo, $Decim, '.', '');
-  return $Valor_Redondeo;
-}
-
-function Insertar_Ctas_Cierre_SP($InsCta, $Valor)
-{
-          //TODO LS AQUIIIII VAMOSSS llamar SP sp_Insertar_Ctas_Cierre
-
 }
 
 ?>

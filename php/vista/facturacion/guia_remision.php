@@ -560,7 +560,7 @@ function Eliminar(cod)
        return false;
     } 
 
-    // $('#myModal_espera').modal('show');
+    $('#myModal_espera').modal('show');
 
     parametros = $('#form_guia').serialize();
     parametros = parametros+'&Comercial='+$('#DCRazonSocial option:selected').text()+'&Entrega='+$('#DCEmpresaEntrega option:selected').text();

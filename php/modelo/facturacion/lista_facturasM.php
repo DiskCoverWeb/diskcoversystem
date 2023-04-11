@@ -226,12 +226,14 @@ class lista_facturasM
 	AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";	
 	$detalle_fac = $this->db->datos($sql1);
 
-	$sql2 = "SELECT * FROM lista_tipo_contribuyente WHERE RUC = '".$_SESSION['INGRESO']['RUC']."'";
-	$tipo_con = $this->db->datos($sql2, 'MYSQL');
+	
+	$tipo_con = Tipo_Contribuyente_SP_MYSQL($_SESSION['INGRESO']['RUC']);
+
 	if(count($datos_fac)>0 && count($tipo_con)>0)
-	{
-		$datos_fac['Tipo_contribuyente'] = $tipo_con;
-	}
+	  {
+	    $datos_fac['Tipo_contribuyente'] = $tipo_con;
+	  }
+
 	// array_push($datos_fac, $tipo_con);
 
 
