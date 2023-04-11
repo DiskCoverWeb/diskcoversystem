@@ -26,6 +26,15 @@ if(isset($_GET['cliente']))
   }
   echo json_encode($controlador->getClientes($query));
 }
+if(isset($_GET['clienteBasic']))
+{
+  $query = '';
+  if(isset($_GET['q']) && $_GET['q'] != ''  )
+  {
+    $query = $_GET['q']; 
+  }
+  echo json_encode($controlador->getclienteBasic($query));
+}
 
 if(isset($_GET['numFactura']))
 {
@@ -232,6 +241,11 @@ if(isset($_GET['GuardarConsumoAgua']))
   exit();
 }
 
+if(isset($_GET['GuardarCambiosMedidorAgua']))
+{
+  echo json_encode($controlador->GuardarCambiosMedidorAgua($_POST));
+  exit();
+}
 class facturar_pensionC
 {
   private $facturacion;
@@ -249,6 +263,16 @@ class facturar_pensionC
         $this->email = new enviar_emails(); 
         //$this->modelo = new MesaModel();
     }
+
+
+  public function getclienteBasic($query){
+    $datos = $this->facturacion->getclienteBasic($query);
+    $clientes = [];
+    foreach ($datos as $value) {
+      $clientes[] = array('id'=>$value['Cliente'],'text'=>$value['Cliente'],'data'=>array( 'codigo' => $value['Codigo']));
+    }
+    return $clientes;
+  }
 
 	public function getClientes($query, $ruc=false){
     // Leer_Datos_Cliente_SP($codigo)
@@ -587,7 +611,7 @@ class facturar_pensionC
       if(count($datos)>0){
         $intersection = array_intersect(array_column($datos, 'CODIGO'), array(JG01, JG02, JG03));
         if (!empty($intersection)) {
-          echo json_encode(array('respuesta'=>-1,'text'=>"Esta operacion no se puede procesar con pago parcial."));
+          echo json_encode(array('respuesta'=>6,'text'=>"Esta operacion no se puede procesar con pago parcial."));
           exit();
         }
       }else{
@@ -595,7 +619,7 @@ class facturar_pensionC
         exit();
       }
     }
-     print_r('pasa');die();
+
 		$TextRepresentante = $_POST['TextRepresentante'];
 		$TxtDireccion = $_POST['TxtDireccion'];
 		$TxtTelefono = $_POST['TxtTelefono'];
@@ -1104,6 +1128,21 @@ class facturar_pensionC
         return (array("rps" => true , "mensaje" => "Consumo registrado con exito."));
       }else{
         return (array("rps" => false , "mensaje" => "No se ha configurado el producto para guardar el consumo."));
+      }
+    }else{
+      return (array("rps" => 0 , "mensaje" => "Debe indicar el medidor."));
+    }
+  }
+  public function GuardarCambiosMedidorAgua($parametros)
+  {
+    extract($parametros);
+    if($CMedidor != "" && $CMedidor!="."){
+      $dataCliente = @$this->getClienteCodigoMedidor($CMedidor);
+      if($dataCliente['rps']){
+        $parametros['Encerar'] = ((isset($Encerar) && $Encerar!='')?"1":"0");
+        $respuesta = $this->facturacion->UpdateMedidor($parametros);
+      }else{
+        return (array("rps" => false , "mensaje" => "No se ha encontrado informacion del medidor."));
       }
     }else{
       return (array("rps" => 0 , "mensaje" => "Debe indicar el medidor."));

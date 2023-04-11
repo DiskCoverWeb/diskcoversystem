@@ -758,7 +758,7 @@
             dataType:'json',  
             success: function(response)
             {
-              
+              recargarData = true;
               $('#myModal_espera').modal('hide');
               if (response) {
 
@@ -825,7 +825,7 @@
                        title: 'Error por: ',
                        html: `<div style="width: 100%; color:black;font-weight: 400;">${response.text}</div>`
                      });
-
+                    if(response.respuesta==6){recargarData = false}
                   }
               }else{
                 Swal.fire({
@@ -836,8 +836,10 @@
                 catalogoProductos(codigoCliente);
               }
 
-              if($('#persona').val()!=""){
-                ClientePreseleccion($('#persona').val());
+              if(recargarData){
+                if($('#persona').val()!=""){
+                  ClientePreseleccion($('#persona').val());
+                }
               }
 
             },

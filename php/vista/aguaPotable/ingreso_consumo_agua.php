@@ -40,6 +40,10 @@
 .no-visible{
   visibility: hidden;
 }
+.full-width + .select2-container {
+  width: 100% !important;
+}
+
 </style>
 <div class="box box-info">
     <div class="box-header">
@@ -56,7 +60,7 @@
                       <div class="col-xs-10">
                         <input  onkeydown="if (event.keyCode === 13) $('#CMedidor').blur()" type="text" class="form-control input-xs " name="CMedidor" id="CMedidor" placeholder="0" style="max-width: 150px;display: inline-block;" tabindex="1">
                         <input type="hidden"  name="codigoCliente" id="codigoCliente">
-                      <!-- <label class="text-red">Con servicio y medidor</label> -->
+                      <br><label>¿No tiene el código del medidor? <a class="btn btn-xs btn-info" data-toggle="modal" data-target="#myModalBuscarMedidorCliente">Buscar por nombre de cliente <i class="fa fa-mouse-pointer"></i></a></label>
                       </div>
                     </div>
                     <div class="form-group">
@@ -144,8 +148,52 @@
 </div>
 
 
+<div id="myModalBuscarMedidorCliente" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Buscar medidores por nombre del cliente: <b><span id="PFnombreCliente"></span></b></h4>
+      </div>
+      <div class="modal-body">
+        <form role="form" id="FInsPreFacturas" name="FInsPreFacturas">
+          <div class="box-body">
+            <div class="col-xs-12" style="margin-bottom: 5px;">
+              <div class="col-xs-12 col-md-3   ">
+                <label class="">Cliente </label>
+              </div>
+              <div class="col-xs-12 col-md-9 colCliente   ">
+                <select class="form-control full-width" id="cliente" name="cliente">
+                  <option value="">Seleccione un cliente</option>
+                </select>
+                <input type="hidden" name="codigoCliente" id="codigoCliente">
+              </div>
+            </div>
+            <div class="col-xs-12">
+              <div class="col-xs-12 col-md-3   ">
+                <label class="">Medidor No.</label>
+              </div>
+              <div class="col-xs-12 col-md-9 colCliente   ">
+                  <select class="form-control input-sm" id="SelectMedidor" name="SelectMedidor">
+                    <option value="<?php echo G_NINGUNO ?>">NINGUNO</option>
+                  </select>
+                <input type="hidden" name="codigoCliente" id="codigoCliente">
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning" title="Cerrar modal" data-dismiss="modal">
+          <img  src="../../img/png/salire.png" width="25" height="30">
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <script type="text/javascript">
   $(document).ready(function () {
+
     $("#CMedidor").focus();
 
     $("#Lectura").on('blur',function () {
@@ -204,6 +252,22 @@
         });
       }
     })
+
+    //Cuando se cambia el cliente
+    $('#cliente').on('select2:select', function (e) {
+      var data = e.params.data.data;
+      ListarMedidores(data.codigo)
+    });
+
+    $('#SelectMedidor').on('change', function (e) {
+      let medidor = $('#SelectMedidor').val();
+      medidor = (medidor=='' || medidor=='.')?'':medidor
+      $("#CMedidor").val(medidor);
+      if(medidor!=''){$("#myModalBuscarMedidorCliente").modal('hide');}
+      $("#CMedidor").blur();
+    })
+
+    autocomplete_cliente()
   });
   
   function OpenModalIngresoConsumoAgua(){
@@ -245,8 +309,58 @@
           }
         });
     }else{
-      Swal.fire('¡Oops!', "No ha seleccionado ningun producto.", 'info')
+      Swal.fire('¡Oops!', "No ha seleccionado ningun medidor.", 'info')
     }
   }
 
+  function autocomplete_cliente(){
+    $('#cliente').select2({
+      placeholder: 'Seleccione un cliente',
+      ajax: {
+        url:   '../controlador/facturacion/facturar_pensionC.php?clienteBasic=true',
+        dataType: 'json',
+        delay: 250,
+        processResults: function (data) {
+          return {
+            results: data
+          };
+        },
+        cache: true
+      }
+    });
+  }
+
+  function ListarMedidores(codigo)
+  {
+    if(codigo!="" && codigo!="."){
+      $.ajax({
+        url:   '../controlador/modalesC.php?ListarMedidores=true',      
+        type:'POST',
+        dataType:'json',
+        data:{'codigo':codigo},
+        success: function(response){
+          // construye las opciones del select dinámicamente
+          var select = $('#SelectMedidor');
+          select.empty(); // limpia las opciones existentes
+          $.each(response, function (i, opcion) {
+
+            if(i==0){
+              select.append($('<option>', {
+                value: '.',
+                text: (opcion.Cuenta_No!=".")?'Selecciona un Medidor':'NINGUNO'
+              }));
+            }
+
+            if(opcion.Cuenta_No!="."){
+              select.append($('<option>', {
+                value: opcion.Cuenta_No,
+                text: opcion.Cuenta_No
+              }));
+            }
+          });
+        }
+      });
+    }
+
+  }
 </script>

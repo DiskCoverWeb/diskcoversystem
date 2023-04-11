@@ -11,6 +11,29 @@ class facturar_pensionM
     $this->db = new db();
   }
 	
+  public function getclienteBasic($query){
+    $sql="  SELECT Codigo, Cliente
+            FROM Clientes 
+            WHERE T = 'N'
+            AND DirNumero = '".$_SESSION['INGRESO']['item']."' 
+            AND Codigo <> '9999999999' 
+            AND FA <> 0";
+   
+    if($query != 'total' and $query!='' and !is_numeric($query) )
+    {
+      $sql.=" AND Cliente LIKE '%".$query."%'";
+    }else
+    {
+       $sql.=" AND CI_RUC LIKE '".$query."%'";
+    }
+    $sql.=" ORDER BY Cliente";
+    if ($query != 'total') {
+      $sql .= " OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY";
+    }
+    $stmt = $this->db->datos($sql);
+    return $stmt;
+  }
+  
 	public function getClientes($query,$ruc=false){
     $sql="  SELECT C.Email,C.T,C.Codigo,C.Cliente,C.Direccion,C.Grupo,C.Telefono,C.CI_RUC,C.TD,SUM(CF.Valor) As Deuda_Total,DireccionT , C.Archivo_Foto, C.CI_RUC_R
             FROM Clientes As C, Clientes_Facturacion As CF 
@@ -624,6 +647,20 @@ class facturar_pensionM
        "ORDER BY Fecha_Final  ASC
         OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY";
     return $this->db->datos($sSQL);
+  }
+
+  function UpdateMedidor($parametros)
+  {
+    extract($parametros);
+        $sSQL = "UPDATE ".
+            " Clientes_Datos_Extras ".
+            "SET Codigo = '" . $Encerar . "' ". //TODO LS pendiente definir que campo
+            "WHERE Codigo = '" . $codigoCliente . "' ".
+            "AND Item = '" . $_SESSION['INGRESO']['item'] . "' ".
+            "AND Cuenta_No = '" . $CMedidor . "' ".
+            "AND Tipo_Dato = 'MEDIDOR' ";
+            echo "<pre>";print_r($sSQL);echo "</pre>";die();
+        //return Ejecutar_SQL_SP($sSQL);
   }
 }
 

@@ -47,7 +47,25 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 		</script>";
 }
 ?>
+<style type="text/css">
+	.div_titulo_modulo{
+		position:absolute;top:20%;left:8%;font-size:97px;max-width: 50%;line-height: 80px;
+	}
 
+	.div_img_modulo{
+		position:absolute;top:25%;left:70%;width:25%
+	}
+	@media (max-width: 659px) {
+		.div_titulo_modulo{
+			font-size: 70px;
+	    	line-height: 60px;
+	    }
+
+		.div_img_modulo{
+			position:absolute;top:35%;
+		}
+	}
+</style>
 <div class="content-wrapper">
     <?php 
     //llamamos a los parciales
@@ -231,6 +249,10 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			if ($_SESSION['INGRESO']['accion']=='ingreso_consumo_agua') 
 			{
 				require_once("aguaPotable/ingreso_consumo_agua.php");
+			}
+			if ($_SESSION['INGRESO']['accion']=='correccion_captacion') 
+			{
+				require_once("aguaPotable/correccion_captacion.php");
 			}
 //empresa
 
@@ -439,24 +461,24 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			
 			default:
 				$titulo = "<div class='box-body' style='position:absolute'>
-				<img src='../../img/fondo.png' width='100%'>
-				<div style='position:absolute;top:15%;left:70%;width:25%'>
-					<img src='".$modulo_logo."' width='100%'>
+				<img src='../../img/fondo.png' width='100%;' style='min-height: 400px;'>
+				<div class='div_img_modulo'>
+					<img src='".$modulo_logo."' width='100%;'>
 				</div>
-				<div style='position:absolute;top:20%;left:8%;font-size:97px'>
-				<b>MÓDULO</b>
+				<div class='div_titulo_modulo'>
+				<b>MÓDULO ".((isset($_GET['mod']))?$modulo_header:'')."</b>
 				</div>";
-				if(isset($_GET['mod']))
-				{					
-					$text = explode(' ',$modulo_header);
-					$salto = 3;
-					foreach ($text as $key => $value) {
-						$titulo.= "<div style='position:absolute;top:".$salto."2%;left:8%;font-size:97px'>";
-						$titulo.='<b>'.$value.'</b>';
-						$titulo.="</div>";
-						$salto = $salto+1;
-					}	
-				}
+				// if(isset($_GET['mod']))
+				// {					
+				// 	$text = explode(' ',$modulo_header);
+				// 	$salto = 45;
+				// 	foreach ($text as $key => $value) {
+				// 		$titulo.= "<div style='position:absolute;top:".$salto."%;left:8%;font-size:97px'>";
+				// 		$titulo.='<b>'.$value.'</b>';
+				// 		$titulo.="</div>";
+				// 		$salto = $salto+10+((1+$key)*25);
+				// 	}	
+				// }
 				$titulo.='</div>';				
 				echo $titulo;
 				break;
