@@ -53,7 +53,8 @@ if(isset($_GET['guardarLineas']))
 if(isset($_GET['cargarLineas']))
 {
   // print_r('e');die();
-  $datos = $controlador->cargaLineas();
+  $parametros = $_POST['parametros'];
+  $datos = $controlador->cargaLineas($parametros);
   echo json_encode($datos);
 }
 if(isset($_GET['Eliminar']))
@@ -478,7 +479,7 @@ QUITO - ECUADOR';
 			SetAdoFields('T',$parametros['T']);
 			SetAdoFields('Codigo',$producto[0]['Codigo_Inv']);
 			SetAdoFields('CodigoL',$codig_l[0]);
-			SetAdoFields('Producto',$producto[0]['Producto'] );
+			SetAdoFields('Producto',$linea['Producto'] );
 			SetAdoFields('Cantidad',number_format($linea['Cantidad'],2,'.','') );
 			SetAdoFields('Precio',$precio_nuevo );
 			SetAdoFields('Total_Desc',$linea['Total_Desc'] );
@@ -503,9 +504,10 @@ QUITO - ECUADOR';
 	     // return insert_generico("Detalle_Factura",$dato);
  	}
 
- 	function cargaLineas()
+ 	function cargaLineas($parametros)
 	{
-	    $reg = $this->modelo->cargarLineas();
+		  $guia = $parametros['guia'];
+	    $reg = $this->modelo->cargarLineas($guia);
 	    $total = 0;
 	    foreach ($reg['datos'] as $key => $value) {
 	      $total+=$value['Total'];     
