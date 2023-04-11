@@ -101,7 +101,7 @@ class lista_guia_remisionC
 
     	// print_r($parametros);die();
     	$codigo = $parametros['ci'];
-    	$tbl = $this->modelo->guia_remision_emitidas_tabla($codigo,$parametros['desde'],$parametros['hasta'],$parametros['serie']);
+    	$tbl = $this->modelo->guia_remision_emitidas_tabla($codigo,$parametros['desde'],$parametros['hasta'],$serie=false,$factura=false,$Autorizacion=false,$Autorizacion_GR=false,$remision=false,$parametros['serie']);
     	$tr='';
     	foreach ($tbl as $key => $value) {
     		 $exis = $this->sri->catalogo_lineas('GR',$value['Serie_GR']);
@@ -469,16 +469,16 @@ QUITO - ECUADOR';
 	    $precio_nuevo = $linea['Precio'];
 	    $totalNuevo = number_format($linea['Total'],2,'.','');
 	    $producto = $this->modelo->getProductos_datos($linea['productoCod']);
-	    $codig_l = explode('_',$parametros['DCSerieGR']);
+	    $codig_l = explode(' ',$parametros['DCSerieGR']);
 
 	      // print_r($producto);
-	      // print_r($parametros);die();
+	      // print_r($codig_l);die();
 
 			SetAdoAddNew('Detalle_Factura');
 			SetAdoFields('TC','GR');
 			SetAdoFields('T',$parametros['T']);
 			SetAdoFields('Codigo',$producto[0]['Codigo_Inv']);
-			SetAdoFields('CodigoL',$codig_l[0]);
+			SetAdoFields('CodigoL',$codig_l[4]);
 			SetAdoFields('Producto',$linea['Producto'] );
 			SetAdoFields('Cantidad',number_format($linea['Cantidad'],2,'.','') );
 			SetAdoFields('Precio',$precio_nuevo );
@@ -527,7 +527,7 @@ QUITO - ECUADOR';
 	    // die();
 	    $TFA = array();
 	    $ci_comer = explode('_', $parametros['DCRazonSocial']);
-	    $codig_l = explode('_',$parametros['DCSerieGR']);
+	    $codig_l = explode(' ',$parametros['DCSerieGR']);
 	    $GR = $this->modelo->guia_remision_existente($codigo=false,$desde=false,$hasta=false,$serie=$codig_l[1],$factura=$parametros['LblGuiaR_']);
 	    $cliente = Cliente($parametros['codigoCliente'],$grupo = false,$query=false,$clave=false);
 

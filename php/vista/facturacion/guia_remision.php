@@ -147,8 +147,48 @@ function DCCiudadF() {
     });
 }
 
+function MBoxFechaGRE_LostFocus()
+{
+    fechaEmision =  $('#MBoxFechaGRE').val()
+    fechaVencimiento =  $('#MBoxFechaGRE').val()
+    $.ajax({
+        type: "POST",
+        url: '../controlador/facturacion/facturar_pensionC.php?catalogo=true',
+        data: {
+            'fechaVencimiento': fechaVencimiento,
+            'fechaEmision': fechaEmision,
+            'tipo':'GR',
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.length > 0) {
+                
+                console.log(data);
+                opcion = '';
+                // Limpiamos el select
+                data.forEach(function(item,i){
+                    opcion+='<option value="' +item.id + '">'+item.text + '</option>';
+                })
+                $('#DCSerieGR').html(opcion);
+            } else {
+                Swal.fire({
+                    type: 'info',
+                    title: 'Usted no tiene un punto de emsion asignado  o esta mal configurado, contacte con la administracion del sistema',
+                    text: '',
+                    allowOutsideClick: false,
+                }).then(() => {
+                    console.log('ingresa');
+                    location.href = '../vista/modulos.php';
+                });
 
-  function MBoxFechaGRE_LostFocus() {
+            }
+            DCSerieGR_LostFocus();
+        }
+    });
+}
+
+/*
+function MBoxFechaGRE_LostFocus() {
     var parametros = {
         'MBoxFechaGRE': $('#MBoxFechaGRE').val(),
     }
@@ -167,10 +207,10 @@ function DCCiudadF() {
         }
     })
 }
-  
+  */
   function DCSerieGR_LostFocus() {
     var DCserie = $('#DCSerieGR').val();
-    serie = DCserie.split('_');
+    serie = DCserie.split(' ');
     var parametros = {
         'DCSerieGR': serie[1],
         'MBoxFechaGRE': $('#MBoxFechaGRE').val(),
@@ -884,7 +924,7 @@ function Eliminar(cod)
     <input type="text" name="cantidad" id="cantidad" value="0.00" class="form-control input-xs text-right" onblur="calcular_totales()">
   </div>
   <div class="col-sm-1">
-    <label>PVP</label>
+    <label>Peso</label>
     <input type="text" name="preciounitario" id="preciounitario" value="0.00" class="form-control input-xs text-right" onblur="calcular_totales()">
   </div>
   <div class="col-sm-1">

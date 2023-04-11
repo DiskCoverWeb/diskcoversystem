@@ -95,7 +95,7 @@ class lista_facturasM
 		FROM Facturas 
 		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
-		if($codigo!='T')
+		if($codigo!='T' && $codigo!='')
 		{
 			// si el codigo es T se refiere a todos
 		   $sql.=" AND CodigoC ='".$codigo."'";
@@ -114,7 +114,7 @@ class lista_facturasM
        	 $sql.= " AND Fecha BETWEEN   '".$desde."' AND '".$hasta."' ";
        }
 
-       $sql.="ORDER BY Serie,Factura DESC "; 
+       $sql.=" ORDER BY Serie,Factura DESC "; 
 	$sql.=" OFFSET ".$_SESSION['INGRESO']['paginacionIni']." ROWS FETCH NEXT ".$_SESSION['INGRESO']['numreg']." ROWS ONLY;";   
     // print_r($_SESSION['INGRESO']);
 	// print_r($sql);die();    
