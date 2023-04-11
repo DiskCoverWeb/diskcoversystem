@@ -9,7 +9,6 @@ $tipo='';
 
     paginacion('cargar_registros','panel_pag');
   	catalogoLineas();
-  	cargar_registros();
   	autocmpletar_cliente()
   })
 
@@ -86,7 +85,7 @@ function catalogoLineas(){
     $.ajax({
       type: "POST",                 
       url: '../controlador/facturacion/facturar_pensionC.php?catalogo=true',
-      data: {'fechaVencimiento' : fechaVencimiento , 'fechaEmision' : fechaEmision},      
+      data: {'fechaVencimiento' : fechaVencimiento , 'fechaEmision' : fechaEmision,'tipo':'GR'},      
       dataType:'json', 
       success: function(data)             
       {
@@ -95,7 +94,7 @@ function catalogoLineas(){
           // Limpiamos el select
           console.log(datos);
           $("#DCLinea").find('option').remove();
-          if(data.length>0)
+          if(data.length>1)
           {
             $("#DCLinea").append('<option value="">Todos</option>');
           }
@@ -118,7 +117,8 @@ function catalogoLineas(){
                 location.href = '../vista/modulos.php';
               });
 
-        }         
+        }
+        cargar_registros();         
       }
     });
   }

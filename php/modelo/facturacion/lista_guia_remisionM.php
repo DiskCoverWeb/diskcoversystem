@@ -169,12 +169,13 @@ $Autorizacion_GR=false,$remision=false,$serie_gr=false)
     return $stmt;
   }
 
-	function cargarLineas(){
+	function cargarLineas($guia){
     $sql = "SELECT Codigo,Cantidad as 'CANTIDAD',Producto,Precio AS 'PRECIO',Total,ID
             FROM Detalle_Factura
             WHERE Item = '".$_SESSION['INGRESO']['item']."' 
             AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
             AND TC = 'GR'
+            AND Factura = '".$guia."'
             ORDER BY ID Desc ";
             $botones[0] = array('boton'=>'Eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'ID' );
            $datos = $this->db->datos($sql);
@@ -187,7 +188,8 @@ $Autorizacion_GR=false,$remision=false,$serie_gr=false)
           FROM Detalle_Factura
           WHERE Item = '".$_SESSION['INGRESO']['item']."' 
           AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-          AND CodigoU = '". $_SESSION['INGRESO']['CodigoU'] ."' ";
+          AND CodigoU = '". $_SESSION['INGRESO']['CodigoU'] ."' 
+          AND LEN(Autorizacion)<=13 ";
           if($cod)
           {
             $sql.=" AND ID = '".$cod."'";

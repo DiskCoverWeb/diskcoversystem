@@ -40,7 +40,7 @@
       $('#campo_clave').css('display','none');
     }
 
-  	cargar_registros();
+  	// cargar_registros();
   	autocmpletar();
   	
   });
@@ -194,7 +194,8 @@
                 location.href = '../vista/modulos.php';
               });
 
-        }         
+        }  
+        cargar_registros();       
       }
     });
   }

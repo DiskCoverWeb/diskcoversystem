@@ -269,6 +269,11 @@ class facturar_pensionC
 	public function getCatalogoLineas(){
 		$emision = $_POST['fechaEmision'];
 		$vencimiento = $_POST['fechaVencimiento'];
+    $tipo = 'FA';
+    if(isset($_POST['tipo']))
+    {
+      $tipo = $_POST['tipo'];
+    }
 
     //busco serie_FA en accesos SQLSERVER
     $usuario = $this->facturacion->getSerieUsuario($_SESSION['INGRESO']['CodigoU']);
@@ -294,13 +299,13 @@ class facturar_pensionC
     }
     if($serie!='.'){
       // si hay serie busco en catalogo lineas
-      $datos = $this->facturacion->getCatalogoLineas($emision,$vencimiento,$serie);
+      $datos = $this->facturacion->getCatalogoLineas($emision,$vencimiento,$serie,$tipo);
       if(count($datos)==0)
       {
         return array();
       }  
     }else{
-      $datos = $this->facturacion->getCatalogoLineas13($emision,$vencimiento);
+      $datos = $this->facturacion->getCatalogoLineas13($emision,$vencimiento,$tipo);
       if(count($datos)==0)
       {
         return array();
@@ -309,7 +314,7 @@ class facturar_pensionC
 
     $catalogo = [];
     foreach ($datos as $value) {
-      $catalogo[] = array('id'=>$value['Fact']." ".$value['Serie']." ".$value['Autorizacion']." ".$value['CxC'] ,'text'=>utf8_encode($value['Concepto']));
+      $catalogo[] = array('id'=>$value['Fact']." ".$value['Serie']." ".$value['Autorizacion']." ".$value['CxC']." ".$value['Codigo'] ,'text'=>utf8_encode($value['Concepto']));
     }    
     return $catalogo;
 	}

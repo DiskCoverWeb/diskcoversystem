@@ -4,7 +4,7 @@
 ?>
 <script type="text/javascript">
   $(document).ready(function() {
-    limpiar_grid();
+    // limpiar_grid();
     $('#MBoxFechaGRE').select();
     autocomplete_cliente()
       DCCiudadI()
@@ -27,6 +27,21 @@
       console.log(data);
     });
   });
+
+  function cerrar_modal_cambio_nombre() {
+    var nuevo = $('#TxtDetalle').val();
+    var dcart = $('#producto').val();
+    $('#producto').append($('<option>', {
+        value: dcart,
+        text: nuevo,
+        selected: true
+    }));
+    $('#stock').focus();
+
+    $('#cambiar_nombre').modal('hide');
+
+}
+
 
    function calcular_totales(){
     var TextVUnit = parseFloat($("#preciounitario").val());
@@ -132,8 +147,48 @@ function DCCiudadF() {
     });
 }
 
+function MBoxFechaGRE_LostFocus()
+{
+    fechaEmision =  $('#MBoxFechaGRE').val()
+    fechaVencimiento =  $('#MBoxFechaGRE').val()
+    $.ajax({
+        type: "POST",
+        url: '../controlador/facturacion/facturar_pensionC.php?catalogo=true',
+        data: {
+            'fechaVencimiento': fechaVencimiento,
+            'fechaEmision': fechaEmision,
+            'tipo':'GR',
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.length > 0) {
+                
+                console.log(data);
+                opcion = '';
+                // Limpiamos el select
+                data.forEach(function(item,i){
+                    opcion+='<option value="' +item.id + '">'+item.text + '</option>';
+                })
+                $('#DCSerieGR').html(opcion);
+            } else {
+                Swal.fire({
+                    type: 'info',
+                    title: 'Usted no tiene un punto de emsion asignado  o esta mal configurado, contacte con la administracion del sistema',
+                    text: '',
+                    allowOutsideClick: false,
+                }).then(() => {
+                    console.log('ingresa');
+                    location.href = '../vista/modulos.php';
+                });
 
-  function MBoxFechaGRE_LostFocus() {
+            }
+            DCSerieGR_LostFocus();
+        }
+    });
+}
+
+/*
+function MBoxFechaGRE_LostFocus() {
     var parametros = {
         'MBoxFechaGRE': $('#MBoxFechaGRE').val(),
     }
@@ -152,10 +207,10 @@ function DCCiudadF() {
         }
     })
 }
-  
+  */
   function DCSerieGR_LostFocus() {
     var DCserie = $('#DCSerieGR').val();
-    serie = DCserie.split('_');
+    serie = DCserie.split(' ');
     var parametros = {
         'DCSerieGR': serie[1],
         'MBoxFechaGRE': $('#MBoxFechaGRE').val(),
@@ -186,7 +241,7 @@ function DCCiudadF() {
 
 function validar_datos()
 {
-      if($('#txt_num_fac').val()=='')
+    if($('#txt_num_fac').val()=='')
     {
       Swal.fire('coloque un numero de factura','','info').then(function()
         {
@@ -345,8 +400,13 @@ function aceptar(){
 
   function cargar_grilla()
   {
+    parametros = 
+    {
+        'guia':$('#LblGuiaR_').val(),
+    }
     $.ajax({
       type: "POST",
+      data:{parametros:parametros},
       url: '../controlador/facturacion/lista_guia_remisionC.php?cargarLineas=true',
       dataType: 'json',
       success: function(data)
@@ -406,6 +466,15 @@ function aceptar(){
                     $('#stock').val(data.datos.Stock);
                     $('#preciounitario').val(data.datos.PVP);
                     $('#LabelStock').focus();
+                    $('#TxtDetalle').val(data.datos.Producto);
+
+                    $('#cambiar_nombre').on('shown.bs.modal', function() {
+                        $('#TxtDetalle').focus();
+                    })
+
+                    $('#cambiar_nombre').modal('show', function() {
+                        $('#TxtDetalle').focus();
+                    })
                 }
 
             }
@@ -693,15 +762,49 @@ function Eliminar(cod)
   </div>
   <div class="col-sm-1" style="padding-right: 0px;">
     <b>No. Fac</b>
-    <input type="text" class="form-control input-xs" placeholder="1" name="txt_num_fac" id="txt_num_fac">            
+    <input type="text" class="form-control input-xs" placeholder="1" name="txt_num_fac" id="txt_num_fac" onblur="default_numero()">            
   </div> 
+  <script type="text/javascript">
+      function default_numero()
+      {
+         num = $('#txt_num_fac').val();
+         if(num=='')
+         {
+            guia = $('#LblGuiaR_').val();
+            if(guia!='')
+            {
+                $('#txt_num_fac').val(guia);
+            }else
+            {
+                $('#txt_num_fac').val(1)
+            }
+         }
+      }
+      function default_serie()
+      {
+         num = $('#txt_serie_fac').val();
+         if(num=='')
+         {            
+            $('#txt_serie_fac').val('001001'); 
+         }
+      }
+      function default_auto()
+      {
+         num = $('#txt_auto_fac').val();
+         if(num=='')
+         {            
+            auto = '<?php echo $_SESSION['INGRESO']['RUC']; ?>'
+            $('#txt_auto_fac').val(auto); 
+         }
+      }
+  </script>
   <div class="col-sm-1" style="padding: 0px;">
     <b>Serie Fac</b>
-    <input type="text" class="form-control input-xs" placeholder="001001" name="txt_serie_fac" id="txt_serie_fac">            
+    <input type="text" class="form-control input-xs" placeholder="001001" name="txt_serie_fac" id="txt_serie_fac" onblur="default_serie()">            
   </div> 
   <div class="col-sm-3">
     <b>Autorizacion Factura:</b>
-    <input type="text" class="form-control input-xs" placeholder="" name="txt_auto_fac" id="txt_auto_fac">            
+    <input type="text" class="form-control input-xs" placeholder="" name="txt_auto_fac" id="txt_auto_fac" onblur="default_auto()">            
   </div>  
   <div class="col-sm-3">
 	<b>Guia de remision No.</b><br>
@@ -821,7 +924,7 @@ function Eliminar(cod)
     <input type="text" name="cantidad" id="cantidad" value="0.00" class="form-control input-xs text-right" onblur="calcular_totales()">
   </div>
   <div class="col-sm-1">
-    <label>PVP</label>
+    <label>Peso</label>
     <input type="text" name="preciounitario" id="preciounitario" value="0.00" class="form-control input-xs text-right" onblur="calcular_totales()">
   </div>
   <div class="col-sm-1">
@@ -973,4 +1076,18 @@ function Eliminar(cod)
 
   </div>
 </div>
+<div class="modal fade" id="cambiar_nombre" role="dialog" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog modal-dialog-centered modal-sm"
+        style="margin-left: 300px; margin-top: 345px;">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <textarea class="form-control" style="resize: none;" rows="4" id="TxtDetalle" name="TxtDetalle"
+                    onblur="cerrar_modal_cambio_nombre()"></textarea>
+                <button style="border:0px"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
  <!-- Fin Modal cliente nuevo-->
