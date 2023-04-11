@@ -76,8 +76,26 @@ class facturar_pensionM
     return $stmt;
   }
 
+  public function getCatalogoLineas($fecha,$vencimiento,$serie=false,$tipo){
+  $sql="  SELECT * FROM Catalogo_Lineas 
+          WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+          AND Fact ='".$tipo."'
+          AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+          AND CONVERT(DATE,Fecha) <= '".$fecha."'
+          AND CONVERT(DATE,Vencimiento) >= '".$vencimiento."' ";
+          if($serie)
+          {
+            $sql.=" AND Serie='".$serie."'";
+          }
+          $sql.=" ORDER BY Codigo";
 
-  public function getCatalogoLineas($fecha,$vencimiento,$serie=false){
+          // print_r($sql);die();
+          $stmt = $this->db->datos($sql);
+          return $stmt;
+}
+
+
+  public function getCatalogoLineas2($fecha,$vencimiento,$serie=false){
     $sql="  SELECT * FROM Catalogo_Lineas 
             WHERE Item = '".$_SESSION['INGRESO']['item']."' 
             AND Fact IN ('".G_COMPFACTURA."','".G_COMPNOTAVENTA."')
@@ -95,18 +113,18 @@ class facturar_pensionM
             return $stmt;
   }
 
-    public function getCatalogoLineas13($fecha,$vencimiento){
-    $sql="  SELECT * FROM Catalogo_Lineas 
-            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
-            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-            AND Fact IN ('".G_COMPFACTURA."','".G_COMPNOTAVENTA."')
-            AND CONVERT(DATE,Fecha) <= '".$fecha."'
-            AND CONVERT(DATE,Vencimiento) >= '".$vencimiento."'
-            AND len(Autorizacion)>=13
-            ORDER BY Codigo";
-            $stmt = $this->db->datos($sql);
-            return $stmt;
-    }
+  public function getCatalogoLineas13($fecha,$vencimiento,$tipo){
+  $sql="  SELECT * FROM Catalogo_Lineas 
+          WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+          AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+          AND Fact ='".$tipo."'
+          AND CONVERT(DATE,Fecha) <= '".$fecha."'
+          AND CONVERT(DATE,Vencimiento) >= '".$vencimiento."'
+          AND len(Autorizacion)>=13
+          ORDER BY Codigo";
+          $stmt = $this->db->datos($sql);
+          return $stmt;
+  }
 
   public function getSerieUsuario($codigoU){
       $sql="SELECT * FROM Accesos WHERE Codigo = '".$codigoU."'";
