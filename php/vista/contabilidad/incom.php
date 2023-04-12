@@ -95,7 +95,7 @@
     cargar_cuenta();
     cargar_tablas_contabilidad();
     // cargar_tablas_tab4();
-    // cargar_tablas_retenciones();
+    cargar_tablas_retenciones();
     // cargar_tablas_sc();
     ListarAsientoB();
     
@@ -1028,6 +1028,9 @@
             Swal.fire('XML devuelto','','info',);
             descargar_archivos(response.url,response.ar);
 
+          }else if(response.respuesta == '-2')
+          {
+            Swal.fire('Falta de Ingresar datos.','','info',);
           }
           else
           {
