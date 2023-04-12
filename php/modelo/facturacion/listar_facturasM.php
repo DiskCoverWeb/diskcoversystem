@@ -47,7 +47,7 @@ class listar_facturasM
 			AND CONVERT(DATE,Vencimiento) >= '".$vencimiento."' 
 			ORDER BY Codigo";
 
-      print_r($sql);die();
+      // print_r($sql);die();
 		$stmt = sqlsrv_query( $this->dbs, $sql);
 		return $stmt;
     }
