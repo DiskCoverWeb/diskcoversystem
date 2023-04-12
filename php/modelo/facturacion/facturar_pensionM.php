@@ -68,7 +68,7 @@ class facturar_pensionM
           }
           $sql.=" ORDER BY Codigo";
 
-          print_r($sql);die();
+          // print_r($sql);die();
           $stmt = $this->db->datos($sql);
           return $stmt;
 }
