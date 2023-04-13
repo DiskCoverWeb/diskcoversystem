@@ -250,7 +250,7 @@
 
   function autorizar(tc,factura,serie,fecha)
   { 
-    // $('#myModal_espera').modal('show');
+    $('#myModal_espera').modal('show');
     var parametros = 
     {
       'tc':tc,
