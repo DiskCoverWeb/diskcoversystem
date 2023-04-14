@@ -674,11 +674,13 @@ class notas_creditoC
 		        $TA['Abono'] = $Total_Con_IVA - $Total_Desc2;
 		        Grabar_Abonos($TA);
 
-		        $Cta_IVA = "";		        
+		        $Cta_IVA = $_SESSION['SETEOS']['Cta_IVA'];	        
 		        $TA['Cta'] = $Cta_IVA;
 		        $TA['Banco'] = "NOTA DE CREDITO";
 		        $TA['Cheque'] = "I.V.A.";
 		        $TA['Abono'] = $FA['Total_IVA_NC'];
+
+		        // print_r($TA);die();
 		        Grabar_Abonos($TA);
 
 

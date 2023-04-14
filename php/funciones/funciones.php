@@ -7419,18 +7419,18 @@ function datos_tabla($tabla,$campo=false)
 
     //RatonReloj
     $NoEncontroCta = true;
-    $Cuenta = G_NINGUNO;
-    $Codigo_Catalogo = G_NINGUNO;
-    $TipoCta = "G";
-    $SubCta = "N";
-    $TipoPago = "01";
-    $Moneda_US = false;
     $cuenta = [];
+    $cuenta['Codigo_Catalogo'] =  G_NINGUNO;
+    $cuenta['Cuenta'] = G_NINGUNO;
+    $cuenta['SubCta'] ="N";
+    $cuenta['Moneda_US'] =  false;
+    $cuenta['TipoCta'] = "G";
+    $cuenta['TipoPago'] = "01";
     $auxCodigoCta = intval(substr($CodigoCta, 0,1));
     if ($auxCodigoCta >= 1) {
       $sql = "SELECT Codigo, Cuenta, TC, ME, DG, Tipo_Pago
             FROM Catalogo_Cuentas
-            WHERE Codigo = '".$CodigoCta."' 
+            WHERE '".$CodigoCta."' IN (Codigo,Codigo_Ext) 
             AND Item = '".$_SESSION['INGRESO']['item']."'
             AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
       $datos = sqlsrv_query( $cid, $sql);
@@ -7446,26 +7446,6 @@ function datos_tabla($tabla,$campo=false)
       if (intval($cuenta['TipoPago']) <= 0) {
         $cuenta['TipoPago'] = "01";
         $NoEncontroCta = false;
-      }
-      if ($NoEncontroCta) {
-        $sql = "SELECT Codigo, Cuenta, TC, ME, DG, Tipo_Pago
-                FROM Catalogo_Cuentas
-                WHERE Codigo_Ext LIKE '%".$CodigoCta."'_
-                AND Item = '".$_SESSION['INGRESO']['item']."'
-                AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
-        $datos = sqlsrv_query( $cid, $sql);
-        while ($value = sqlsrv_fetch_array( $datos, SQLSRV_FETCH_ASSOC)) {
-          $cuenta['Codigo_Catalogo'] = $value['Codigo'];
-          $cuenta['Cuenta'] = $value['Cuenta'];
-          $cuenta['SubCta'] = $value['TC'];
-          $cuenta['Moneda_US'] = $value['ME'];
-          $cuenta['TipoCta'] = $value['DG'];
-          $cuenta['TipoPago'] = $value['Tipo_Pago'];
-        }
-        if (intval($cuenta['TipoPago']) <= 0) {
-          $cuenta['TipoPago'] = "01";
-          $NoEncontroCta = false;
-        }
       }
     }
     return $cuenta;
