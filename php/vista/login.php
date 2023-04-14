@@ -42,7 +42,49 @@
          $('#tabla_').html(spiner);
       },*/
         success:  function (response) { 
-        console.log(response);
+         if(response==-2)
+         {
+	         	$('#alerta').css('display','none');        	
+	        	$('#res').val('');
+	        	Swal.fire('Error Entidad!','"La entidad que ingresaste no tiene el formato correcto.','error');
+         }
+        if(response.length==1)
+        {
+        	$('#alerta').css('display','block');
+        	$('#txt_item').val(response[0].Item);
+        	if(response[0].Nombre == response[0].Razon_Social)
+					{
+        		$('#alerta').html(response[0].Nombre);
+        	}else
+        	{
+        		$('#alerta').html(response[0].Razon_Social+'<br>'+response[0].Nombre);   
+        		$('#alerta').css('font-size','10px');        		
+        	}
+        	$('#img_logo').attr('src',response[0].Logo);
+        	$('#img_logo').css('width','35%');
+        	$('#img_logo').css('border-radius','5px');
+        	$('#res').val(response[0].entidad);
+        	$('#txt_cartera').val('0');
+
+
+        }else if(response.length>1)
+        {
+        	 $('#lbl_ruc').text(entidad);
+        	 tr = '';
+        	 response.forEach(function(item,i){
+        	 	  tr+='<tr><td><img style="width:100%" src="'+item.Logo+'"></td><td><button class="btn btn-block btn-default" onclick="seleccionar_empresa(\''+item.Nombre+'\',\''+item.Razon_Social+'\',\''+item.Logo+'\',\''+item.entidad+'\',\''+item.Item+'\')">'+item.Razon_Social+'<br>'+item.Nombre+'</button></td></tr>';
+        	 })
+
+        	 	// console.log(item)
+        	 $('#tbl_empresas').html(tr);
+        	 $('#mis_empresas').modal('show');
+        }else
+        {
+        		$('#alerta').css('display','none');    
+        		$('#res').val('');    	
+        		Swal.fire('Error Entidad!','No se a encontrado la entidad.','error');
+        }
+/*
         if(response.respuesta == 1)
         {
         	$('#alerta').css('display','block');
@@ -71,17 +113,64 @@
         	$('#alerta').css('display','none');        	
         	$('#res').val('');
         	Swal.fire('Error Entidad!','"La entidad que ingresaste no tiene el formato correcto.','error');
-        }        
+        }        */
       }
     });
 
   }
 
+
+  function seleccionar_empresa(Nombre,Razon_Social,Logo,entidad,item)
+  {
+  	  $('#mis_empresas').modal('hide');
+
+  	 	$('#txt_item').val(item);
+  	 	$('#alerta').css('display','block');
+	  	if(Nombre == Razon_Social)
+			{
+	  		$('#alerta').html(Nombre);
+	  	}else
+	  	{
+	  		$('#alerta').html(Razon_Social+'<br>'+Nombre);   
+	  		$('#alerta').css('font-size','10px');        		
+	  	}
+	  	$('#img_logo').attr('src',Logo);
+	  	$('#img_logo').css('width','35%');
+	  	$('#img_logo').css('border-radius','5px');
+	  	$('#res').val(entidad);
+	  	$('#txt_cartera').val('0');
+	  	$('#correo').focus();
+	  	var parametros = 
+	  	{
+	  		'empresa':Nombre,
+	  		'item_cartera':item,
+	  	}
+
+	  	 $.ajax({
+	      data:  {parametros:parametros},
+	      url:   '../controlador/login_controller.php?setear_empresa=true',
+	      type:  'post',
+	      dataType: 'json',
+	      /*beforeSend: function () {   
+	           var spiner = '<div class="text-center"><img src="../../img/gif/proce.gif" width="100" height="100"></div>'     
+	         $('#tabla_').html(spiner);
+	      },*/
+	        success:  function (response) { 
+	        
+	      }
+	    });
+
+
+
+
+  }
    function validar_usuario()
   { 
 
 		 var usuario = $("#correo").val();
-		 var entidad = $("#res").val();
+		 var entidad = $("#res").val();		 
+		 var item = $("#txt_item").val();
+
 		 if(usuario =='')
 		 {
 		 	//Swal.fire('USUARIO','Ingrese un usuario valido','info')
@@ -95,6 +184,7 @@
 		 {
 		 	 'usuario':usuario,
 		 	 'entidad':entidad,
+		 	 'item':item,
 		 }
      $.ajax({
       data:  {parametros:parametros},
@@ -173,6 +263,7 @@
 
 		 var usuario = $("#correo").val();
 		 var entidad = $("#res").val();
+		 var item = $("#txt_item").val();
 		 var pass = $("#contra").val();		 
 		 var cartera = $("#txt_cartera").val();
 		 var cartera_usu = $("#correo_cartera").val();
@@ -209,6 +300,7 @@
 		 {
 		 	 'usuario':usuario,
 		 	 'entidad':entidad,
+		 	 'item':item,
 		 	 'empresa':ci_empresa,
 		 	 'pass':pass,
 		 	 'cartera':cartera,
@@ -260,6 +352,7 @@
 		   		<!-- 1792164710001 -->
 		   		<input type="text" class="form-control" name="entidad" placeholder="Entidad a la que perteneces" id="entidad" onblur="validar_entidad()">
 		   		<input type="hidden" name="res" id="res">
+		   		<input type="hidden" name="txt_item" id="txt_item">
 				</div><br>
 				<div id="form_login">
 					<div class="input-group input-group-lg" >
@@ -293,6 +386,33 @@
        </form>
       </div>
     </div>
+
+     <div id="mis_empresas" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+      <div class="modal-dialog modal-dialog-centered modal-md">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Empreas asociadas a <label id="lbl_ruc"></label></h4>
+              </div>
+              <div class="modal-body">
+              	<table class="table table-hover">
+              		<thead>
+              			<th style="width: 35%;"></th>
+              			<th>Empresa</th>
+              		</thead>
+              		<tbody id="tbl_empresas">
+              		</tbody>
+              	</table>
+
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-default" onclick="location.reload()">Cerrar</button>
+              </div>
+          </div>
+
+      </div>
+  </div>
+
 </body>
 
 </html>
