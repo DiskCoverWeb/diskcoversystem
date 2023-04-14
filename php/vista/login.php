@@ -387,14 +387,14 @@
       </div>
     </div>
 
-     <div id="mis_empresas" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+     <div id="mis_empresas" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static" style="border-radius: 10px;">
       <div class="modal-dialog modal-dialog-centered modal-md">
-          <div class="modal-content">
+          <div class="modal-content" style=" background: rgba(201, 223, 241,0.7); border-radius: 10px;">
               <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
                   <h4 class="modal-title">Empreas asociadas a <label id="lbl_ruc"></label></h4>
               </div>
-              <div class="modal-body">
+              <div class="modal-body" style="height:300px; overflow-y:scroll;">
               	<table class="table table-hover">
               		<thead>
               			<th style="width: 35%;"></th>
