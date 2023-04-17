@@ -544,7 +544,7 @@ function Rubro_Rol_Pago($Detalle_Rol)
 
 
 
-function ReadSetDataNum($sqls,$ParaEmpresa =false,$Incrementar = false) // optimizado por javier farinango // pendiente a revicion repetida
+function ReadSetDataNum($SQLs,$ParaEmpresa =false,$Incrementar = false) // optimizado por javier farinango // pendiente a revicion repetida
 {
   $result = '';
   $NumCodigo = 0;
@@ -552,7 +552,7 @@ function ReadSetDataNum($sqls,$ParaEmpresa =false,$Incrementar = false) // optim
   $FechaComp = '';
   if(strlen($FechaComp) < 10 || $FechaComp == '00/00/0000')
   {
-  	$FechaComp =date('d/m/Y');
+  	$FechaComp =date('Y-m-d');
   }
 
   if($ParaEmpresa)
@@ -563,14 +563,14 @@ function ReadSetDataNum($sqls,$ParaEmpresa =false,$Incrementar = false) // optim
   	$NumEmpresa = '000';
   }
 
-  $Num_Meses_CI=false;
-  $Num_Meses_CD=false;  
-  $Num_Meses_CE=false;
-  $Num_Meses_ND=false;
-  $Num_Meses_NC=false;
+  $Num_Meses_CI=true;
+  $Num_Meses_CD=true;  
+  $Num_Meses_CE=true;
+  $Num_Meses_ND=true;
+  $Num_Meses_NC=true;
     
-
-  if($sqls != '')
+// print_r($FechaComp);die();
+  if($SQLs != '')
   {
     $MesComp = '';
     if(strlen($FechaComp) >= 10)
@@ -581,39 +581,39 @@ function ReadSetDataNum($sqls,$ParaEmpresa =false,$Incrementar = false) // optim
     {
     	$MesComp = '01';
     }
-    if($Num_Meses_CD and $sqls == 'Diario')
+    if($Num_Meses_CD and $SQLs == 'Diario')
     {
-    	$SQLs = $MesComp.''.$sqls;
+    	$SQLs = $MesComp.''.$SQLs;
       $Si_MesComp = True;
     }
-    if($Num_Meses_CI and $sqls == 'Ingresos')
+    if($Num_Meses_CI and $SQLs == 'Ingresos')
     {
-    	$SQLs = $MesComp.''.$sqls;
+    	$SQLs = $MesComp.''.$SQLs;
       $Si_MesComp = True;
     }
-    if($Num_Meses_CE and $sqls == 'Egresos')
+    if($Num_Meses_CE and $SQLs == 'Egresos')
     {
-    	$SQLs = $MesComp.''.$sqls;
+    	$SQLs = $MesComp.''.$SQLs;
       $Si_MesComp = True;
     }
-    if($Num_Meses_ND and $sqls == 'NotaDebito')
+    if($Num_Meses_ND and $SQLs == 'NotaDebito')
     {
-    	$SQLs = $MesComp.''.$sqls;
+    	$SQLs = $MesComp.''.$SQLs;
       $Si_MesComp = True;
     }
-    if($Num_Meses_NC and $sqls == 'NotaCredito')
+    if($Num_Meses_NC and $SQLs == 'NotaCredito')
     {
-    	$SQLs = $MesComp.''.$sqls;
+    	$SQLs = $MesComp.''.$SQLs;
       $Si_MesComp = True;
     }
+    // print_r($SQLs);die();
   }
-
-  if($sqls !='')
+  if($SQLs !='')
   {
     $MesComp = "";
     if(strlen($FechaComp) >= 10)
     {
-    	$MesComp = date('mm');
+    	$MesComp = date('m');
     }
     if($MesComp == '')
     {
@@ -621,10 +621,10 @@ function ReadSetDataNum($sqls,$ParaEmpresa =false,$Incrementar = false) // optim
     }
     $conn = new db();
     $sql = "SELECT Numero, ID FROM Codigos
-            WHERE Concepto = '".$sqls. "' 
+            WHERE Concepto = '".$SQLs. "' 
             AND Periodo = '".$_SESSION['INGRESO']['periodo']. "'
             AND Item = '".$_SESSION['INGRESO']['item']."'" ;
-    
+    // print_r($sql);die();
 		$result = $conn->datos($sql);
 	  if(count($result)>0)
 	  {
@@ -646,7 +646,7 @@ function ReadSetDataNum($sqls,$ParaEmpresa =false,$Incrementar = false) // optim
 	    if($NuevoNumero)
 	    {
 	    	$Strgs = "INSERT INTO Codigos (Periodo,Item,Concepto,x,Numero)
-                VALUES ('".$_SESSION['INGRESO']['periodo']."','".$_SESSION['INGRESO']['item']."','".$sqls."','.',".$NumCodigo.") ";
+                VALUES ('".$_SESSION['INGRESO']['periodo']."','".$_SESSION['INGRESO']['item']."','".$SQLs."','.',".$NumCodigo.") ";
                 //faltra ejecutar
                  $conn->String_Sql($Strgs);
 	    }
@@ -655,7 +655,7 @@ function ReadSetDataNum($sqls,$ParaEmpresa =false,$Incrementar = false) // optim
 	    {
 	    	$Strgs = "UPDATE Codigos 
                 SET Numero = Numero+1 
-                WHERE Concepto = '".$sqls."'
+                WHERE Concepto = '".$SQLs."'
                 AND Periodo = '" .$_SESSION['INGRESO']['periodo']."' 
                 AND Item = '".$_SESSION['INGRESO']['item']. "' ";
                 // print_r($Strgs);
@@ -5296,6 +5296,7 @@ function dimenciones_tabla($tabla) //---------optimizado por javier farinango
 
 function cabecera_tabla($tabla)
 {
+  $conn = new db();
   $sql = "SELECT COLUMN_NAME,DATA_TYPE,IS_NULLABLE,CHARACTER_MAXIMUM_LENGTH
     FROM Information_Schema.Columns
     WHERE TABLE_NAME ='".$tabla."'";
@@ -7432,18 +7433,18 @@ function datos_tabla($tabla,$campo=false)
 
     //RatonReloj
     $NoEncontroCta = true;
-    $Cuenta = G_NINGUNO;
-    $Codigo_Catalogo = G_NINGUNO;
-    $TipoCta = "G";
-    $SubCta = "N";
-    $TipoPago = "01";
-    $Moneda_US = false;
     $cuenta = [];
+    $cuenta['Codigo_Catalogo'] =  G_NINGUNO;
+    $cuenta['Cuenta'] = G_NINGUNO;
+    $cuenta['SubCta'] ="N";
+    $cuenta['Moneda_US'] =  false;
+    $cuenta['TipoCta'] = "G";
+    $cuenta['TipoPago'] = "01";
     $auxCodigoCta = intval(substr($CodigoCta, 0,1));
     if ($auxCodigoCta >= 1) {
       $sql = "SELECT Codigo, Cuenta, TC, ME, DG, Tipo_Pago
             FROM Catalogo_Cuentas
-            WHERE Codigo = '".$CodigoCta."' 
+            WHERE '".$CodigoCta."' IN (Codigo,Codigo_Ext) 
             AND Item = '".$_SESSION['INGRESO']['item']."'
             AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
       $datos = sqlsrv_query( $cid, $sql);
@@ -7459,26 +7460,6 @@ function datos_tabla($tabla,$campo=false)
       if (intval($cuenta['TipoPago']) <= 0) {
         $cuenta['TipoPago'] = "01";
         $NoEncontroCta = false;
-      }
-      if ($NoEncontroCta) {
-        $sql = "SELECT Codigo, Cuenta, TC, ME, DG, Tipo_Pago
-                FROM Catalogo_Cuentas
-                WHERE Codigo_Ext LIKE '%".$CodigoCta."'_
-                AND Item = '".$_SESSION['INGRESO']['item']."'
-                AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
-        $datos = sqlsrv_query( $cid, $sql);
-        while ($value = sqlsrv_fetch_array( $datos, SQLSRV_FETCH_ASSOC)) {
-          $cuenta['Codigo_Catalogo'] = $value['Codigo'];
-          $cuenta['Cuenta'] = $value['Cuenta'];
-          $cuenta['SubCta'] = $value['TC'];
-          $cuenta['Moneda_US'] = $value['ME'];
-          $cuenta['TipoCta'] = $value['DG'];
-          $cuenta['TipoPago'] = $value['Tipo_Pago'];
-        }
-        if (intval($cuenta['TipoPago']) <= 0) {
-          $cuenta['TipoPago'] = "01";
-          $NoEncontroCta = false;
-        }
       }
     }
     return $cuenta;
@@ -11053,6 +11034,38 @@ function variables_tipo_factura()
 }
 
 
+function datos_Co()
+{
+    $Co['Item'] = $_SESSION['INGRESO']['item'];
+    $Co['RetNueva'] = True;
+    $Co['Ctas_Modificar'] = "";
+    $Co['TipoContribuyente'] = "";
+    $Co['RUC_CI'] = G_NINGUNO;
+    $Co['CodigoB'] = G_NINGUNO;
+    $Co['Beneficiario'] = G_NINGUNO;
+    $Co['Email'] = G_NINGUNO;
+    $Co['TD'] = G_NINGUNO;
+    $Co['Direccion'] = G_NINGUNO;
+    $Co['Telefono'] = G_NINGUNO;
+    $Co['Grupo'] = G_NINGUNO;
+    $Co['AgenteRetencion'] = G_NINGUNO;
+    $Co['MicroEmpresa'] = G_NINGUNO;
+    $Co['Estado'] = G_NINGUNO;
+    $Co['Autorizacion_LC'] = G_NINGUNO;
+    $Co['Autorizacion_R'] = G_NINGUNO;
+    $Co['Autorizado'] = G_NINGUNO;
+    $Co['Serie_R'] = G_NINGUNO;
+    $Co['Retencion'] = G_NINGUNO;
+    $Co['Cotizacion'] = 0;
+    $Co['Concepto'] = "";
+    $Co['Efectivo'] = 0;
+    $Co['Total_Banco'] = 0;
+    $Co['Monto_Total'] = 0;
+
+    return $Co;
+}
+
+
 function Leer_Datos_FA_NV($TFA)
 {
     $conn = new db();
@@ -12028,28 +12041,28 @@ function EliminarComprobantes($C1)
 {
 
   $conn = new db();
-  $sql = "DELETE * 
+  $sql = "DELETE 
        FROM Comprobantes 
        WHERE TP = '".$C1['TP']."' 
        AND Numero = ".$C1['Numero']." 
        AND Item = '".$C1['Item']."' 
        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
   $conn->String_Sql($sql);
-  $sql = "DELETE * 
+  $sql = "DELETE 
        FROM Transacciones 
        WHERE TP = '".$C1['TP']."' 
        AND Numero = ".$C1['Numero']." 
        AND Item = '".$C1['Item']."' 
        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
   $conn->String_sql($sql);
-  $sql = "DELETE * 
+  $sql = "DELETE 
        FROM Trans_SubCtas 
        WHERE TP = '".$C1['TP']."' 
        AND Numero = ".$C1['Numero']." 
        AND Item = '".$C1['Item']."' 
        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
   $conn->String_sql($sql);
-  $sql = "DELETE * 
+  $sql = "DELETE  
        FROM Trans_Kardex 
        WHERE TP = '".$C1['TP']."' 
        AND Numero = ".$C1['Numero']." 
@@ -12057,35 +12070,35 @@ function EliminarComprobantes($C1)
        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
        AND LEN(TC) <= 1 ";
   $conn->String_sql($sql);
-  $sql = "DELETE * 
+  $sql = "DELETE 
        FROM Trans_Compras 
        WHERE TP = '".$C1['TP']."' 
        AND Numero = ".$C1['Numero']." 
        AND Item = '".$C1['Item']."' 
        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
   $conn->String_sql($sql);
-  $sql = "DELETE * 
+  $sql = "DELETE 
        FROM Trans_Air 
        WHERE TP = '".$C1['TP']."' 
        AND Numero = ".$C1['Numero']." 
        AND Item = '".$C1['Item']."' 
        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
   $conn->String_sql($sql);
-  $sql = "DELETE * 
+  $sql = "DELETE 
        FROM Trans_Ventas 
        WHERE TP = '".$C1['TP']."' 
        AND Numero = ".$C1['Numero']." 
        AND Item = '".$C1['Item']."' 
        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
   $conn->String_sql($sql);
-  $sql = "DELETE * 
+  $sql = "DELETE 
        FROM Trans_Exportaciones 
        WHERE TP = '".$C1['TP']."' 
        AND Numero = ".$C1['Numero']." 
        AND Item = '".$C1['Item']."' 
        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
   $conn->String_sql($sql);
-  $sql = "DELETE * 
+  $sql = "DELETE  
        FROM Trans_Importaciones 
        WHERE TP = '".$C1['TP']."' 
        AND Numero = ".$C1['Numero']." 
@@ -12093,7 +12106,7 @@ function EliminarComprobantes($C1)
        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
   $conn->String_sql($sql);
   
-  $sql = "DELETE * 
+  $sql = "DELETE  
        FROM Trans_Rol_Pagos 
        WHERE TP = '".$C1['TP']."' 
        AND Numero = ".$C1['Numero']." 
@@ -12143,7 +12156,7 @@ function GrabarComprobante($C1)
           AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
           AND T_No = ".$C1['T_No']." 
           ORDER BY Tipo_Trans, A_No ";
-    $AdoTemp = $comm->datos($sq);
+    $AdoTemp = $conn->datos($sql);
     if(count($AdoTemp)>0 && $C1['RetNueva'] && $C1['RetSecuencial'])
     {    
        $C1['Retencion'] = ReadSetDataNum("RE_SERIE_".$C1['Serie_R'], True, True);
@@ -12161,7 +12174,7 @@ function GrabarComprobante($C1)
       AND Numero = ".$C1['Numero']." 
       AND Item = '".$_SESSION['INGRESO']['item']."' 
       AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
-  $AdoTemp = $comm->datos($sql);
+  $AdoTemp = $conn->datos($sql1);
   if(count($AdoTemp)>0)
   {
   foreach ($AdoTemp as $key => $value) {
@@ -12198,7 +12211,7 @@ function GrabarComprobante($C1)
           $TipoCta = $value["TC"];
           $OpcDH = intval($value["DH"]);
           $Factura_No = $value["Factura"];
-          $Fecha_Vence = $value["FECHA_V"];
+          $Fecha_Vence = $value["FECHA_V"]->format('Y-m-d');
           $Cta_Cobrar = trim($value["Cta"]);
           if($Valor <> 0 || $Valor_ME <> 0)
           {
@@ -12224,7 +12237,7 @@ function GrabarComprobante($C1)
                 SetAdoFields("Parcial_ME",$Valor_ME * -1);
              }
              SetAdoUpdate();
-             $NumTrans = $NumTrans + 1;
+             // $NumTrans = $NumTrans + 1;
           }
       }
   }
@@ -12240,6 +12253,10 @@ function GrabarComprobante($C1)
    if(count($AdoTemp)> 0)
    {
       // 'Generacion de la Retencion si es Electronica
+    foreach ($AdoTemp as $key => $value) 
+    {
+
+    // print_r($AdoTemp);die();
        $FechaTexto = $value["FechaRegistro"];
        $CodSustento = generaCeros($value["CodSustento"],2);
        SetAdoAddNew("Trans_Compras");
@@ -12251,9 +12268,9 @@ function GrabarComprobante($C1)
        SetAdoFields("PuntoEmision", $value["PuntoEmision"]);
        SetAdoFields("Secuencial", $value["Secuencial"]);
        SetAdoFields("Autorizacion", $value["Autorizacion"]);
-       SetAdoFields("FechaEmision", $value["FechaEmision"]);
-       SetAdoFields("FechaRegistro", $value["FechaRegistro"]);
-       SetAdoFields("FechaCaducidad", $value["FechaCaducidad"]);
+       SetAdoFields("FechaEmision", $value["FechaEmision"]->format('Y-m-d'));
+       SetAdoFields("FechaRegistro", $value["FechaRegistro"]->format('Y-m-d'));
+       SetAdoFields("FechaCaducidad", $value["FechaCaducidad"]->format('Y-m-d'));
        SetAdoFields("BaseNoObjIVA", $value["BaseNoObjIVA"]);
        SetAdoFields("BaseImponible", $value["BaseImponible"]);
        SetAdoFields("BaseImpGrav", $value["BaseImpGrav"]);
@@ -12274,7 +12291,7 @@ function GrabarComprobante($C1)
        SetAdoFields("Cta_Bienes", $value["Cta_Bienes"]);
        SetAdoFields("Linea_SRI", 0);
        SetAdoFields("DocModificado", $value["DocModificado"]);
-       SetAdoFields("FechaEmiModificado", $value["FechaEmiModificado"]);
+       SetAdoFields("FechaEmiModificado", $value["FechaEmiModificado"]->format('Y-m-d'));
        SetAdoFields("EstabModificado", $value["EstabModificado"]);
        SetAdoFields("PtoEmiModificado", $value["PtoEmiModificado"]);
        SetAdoFields("SecModificado", $value["SecModificado"]);
@@ -12296,8 +12313,9 @@ function GrabarComprobante($C1)
        SetAdoFields("Numero", $C1['Numero']);
        SetAdoFields("Fecha", $C1['Fecha']);
        SetAdoUpdate();
+     }
  }
-
+// print('arg');die();
 // ' RETENCIONES VENTAS
   $sql = "SELECT *
        FROM Asiento_Ventas
@@ -12312,8 +12330,8 @@ function GrabarComprobante($C1)
        SetAdoAddNew("Trans_Ventas");
        SetAdoFields("IdProv",$C1['CodigoB']);
        SetAdoFields("TipoComprobante",$value["TipoComprobante"]);
-       SetAdoFields("FechaRegistro",$value["FechaRegistro"]);
-       SetAdoFields("FechaEmision",$value["FechaEmision"]);
+       SetAdoFields("FechaRegistro",$value["FechaRegistro"]->format('Y-m-d'));
+       SetAdoFields("FechaEmision",$value["FechaEmision"]->format('Y-m-d'));
        SetAdoFields("Establecimiento",$value["Establecimiento"]);
        SetAdoFields("PuntoEmision",$value["PuntoEmision"]);
        SetAdoFields("Secuencial",$value["Secuencial"]);
@@ -12366,7 +12384,7 @@ function GrabarComprobante($C1)
        SetAdoFields("CtasxCobrar",$value["CtasxCobrar"]);
        SetAdoFields("ExportacionDe",$value["ExportacionDe"]);
        SetAdoFields("TipoComprobante",$value["TipoComprobante"]);
-       SetAdoFields("FechaEmbarque",$value["FechaEmbarque"]);
+       SetAdoFields("FechaEmbarque",$value["FechaEmbarque"]->format('Y-m-d'));
        SetAdoFields("NumeroDctoTransporte",$value["NumeroDctoTransporte"]);
        SetAdoFields("IdFiscalProv", $C1['CodigoB']);
        SetAdoFields("ValorFOB",$value["ValorFOB"]);
@@ -12382,8 +12400,8 @@ function GrabarComprobante($C1)
        SetAdoFields("PuntoEmision",$value["PuntoEmision"]);
        SetAdoFields("Secuencial",$value["Secuencial"]);
        SetAdoFields("Autorizacion",$value["Autorizacion"]);
-       SetAdoFields("FechaEmision",$value["FechaEmision"]);
-       SetAdoFields("FechaRegistro",$value["FechaRegistro"]);
+       SetAdoFields("FechaEmision",$value["FechaEmision"]->format('Y-m-d'));
+       SetAdoFields("FechaRegistro",$value["FechaRegistro"]->format('Y-m-d'));
        SetAdoFields("Linea_SRI", 0);
        SetAdoFields("T", G_NORMAL);
        SetAdoFields("TP", $C1['TP']);
@@ -12398,14 +12416,16 @@ function GrabarComprobante($C1)
       AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
       AND T_No = ".$C1['T_No']." 
       ORDER BY T_No DESC ";
-  $AdoTemp = $conn->sql($sql);
+  $AdoTemp = $conn->datos($sql);
    if(count($AdoTemp) > 0 )
    {
-       $FechaTexto =$value["FechaLiquidacion"];
+    foreach ($AdoTemp as $key => $value) 
+    {     
+       $FechaTexto =$value["FechaLiquidacion"]->format('Y-m-d');
        SetAdoAddNew("Trans_Importaciones");
        SetAdoFields("CodSustento",$value["CodSustento"]);
        SetAdoFields("ImportacionDe",$value["ImportacionDe"]);
-       SetAdoFields("FechaLiquidacion",$value["FechaLiquidacion"]);
+       SetAdoFields("FechaLiquidacion",$value["FechaLiquidacion"]->format('Y-m-d'));
        SetAdoFields("TipoComprobante",$value["TipoComprobante"]);
        SetAdoFields("DistAduanero",$value["DistAduanero"]);
        SetAdoFields("Anio",$value["Anio"]);
@@ -12426,8 +12446,10 @@ function GrabarComprobante($C1)
        SetAdoFields("TP", $C1['TP']);
        SetAdoFields("Numero", $C1['Numero']);
        SetAdoFields("Fecha", $C1['Fecha']);
-       SetAdoUpdate();  
-    }
+       SetAdoUpdate(); 
+        // code...
+    } 
+  }
 
 // ' RETENCIONES AIR
   $sql = "SELECT * 
@@ -12462,7 +12484,7 @@ function GrabarComprobante($C1)
           SetAdoFields("SecRetencion", $C1['Retencion']);
           SetAdoFields("AutRetencion", $C1['Autorizacion_R']);
           SetAdoUpdate();
-          $NumTrans = $NumTrans + 1;
+          // $NumTrans = $NumTrans + 1;
       }
     }
   
@@ -12534,8 +12556,8 @@ function GrabarComprobante($C1)
         SetAdoFields("PVP",$value["PVP"]);
         SetAdoFields("No_Refrendo",$value["No_Refrendo"]);
         SetAdoFields("Lote_No",$value["Lote_No"]);
-        SetAdoFields("Fecha_Fab",$value["Fecha_Fab"]);
-        SetAdoFields("Fecha_Exp",$value["Fecha_Exp"]);
+        SetAdoFields("Fecha_Fab",$value["Fecha_Fab"]->format('Y-m-d'));
+        SetAdoFields("Fecha_Exp",$value["Fecha_Exp"]->format('Y-m-d'));
         SetAdoFields("Modelo",$value["Modelo"]);
         SetAdoFields("Serie_No",$value["Serie_No"]);
         SetAdoFields("Procedencia",$value["Procedencia"]);
@@ -12576,7 +12598,7 @@ function GrabarComprobante($C1)
         {
            SetAdoAddNew("Trans_Prestamos");
            SetAdoFields("T", "P");
-           SetAdoFields("Fecha",$value["Fecha"]);
+           SetAdoFields("Fecha",$value["Fecha"]->format('Y-m-d'));
            SetAdoFields("TP", $C1['TP']);
            SetAdoFields("Credito_No", $_SESSION['INGRESO']['item'].generaCeros($C1['Numero'],7));
            SetAdoFields("Cta", $Cta);
@@ -12621,13 +12643,13 @@ function GrabarComprobante($C1)
   SetAdoFields("TP", $C1["TP"]);
   SetAdoFields("Numero", $C1["Numero"]);
   SetAdoFields("Codigo_B", $C1["CodigoB"]);
-  SetAdoFields("Monto_Total", number_format($C1["Monto_Total"], 2));
+  SetAdoFields("Monto_Total", number_format(floatval($C1["Monto_Total"]), 2));
   SetAdoFields("Concepto", $C1["Concepto"]);
   SetAdoFields("Efectivo", $C1["Efectivo"]);
   SetAdoFields("Cotizacion", $C1["Cotizacion"]);
   SetAdoFields("CodigoU", $C1["Usuario"]);
-  SetAdoFields("Autorizado", $C1["Autorizado"]);
-  SetAdoFields();
+  SetAdoFields("Autorizado",$C1["Autorizado"]);
+  SetAdoUpdate();
 // ' Grabamos Transacciones
   $sql = "SELECT *
       FROM Asiento
@@ -12638,6 +12660,7 @@ function GrabarComprobante($C1)
   $AdoTemp = $conn->datos($sql);
   if(count($AdoTemp) > 0)
   {
+    // print_r($AdoTemp);die();
     foreach ($AdoTemp as $key => $value) 
     {  
       $Moneda_US =$value["ME"];
@@ -12666,15 +12689,15 @@ function GrabarComprobante($C1)
          SetAdoFields("Haber", $Haber);
          SetAdoFields("Parcial_ME", $Parcial);
          SetAdoFields("Cheq_Dep", $NoCheque);
-         SetAdoFields("Fecha_Efec", $Fecha_Vence);
+         SetAdoFields("Fecha_Efec", $Fecha_Vence->format('Y-m-d'));
          SetAdoFields("Detalle", $DetalleComp);
          SetAdoFields("Codigo_C", $CodigoP);
          SetAdoFields("C_Costo", $CodigoCC);
          SetAdoFields("Item", $C1["Item"]);
         // 'SetAdoFields("C", True)
          SetAdoFields("Procesado", False);
-         SetAdoFields();
-         $NumTrans = $NumTrans + 1;
+         SetAdoUpdate();
+         // $NumTrans = $NumTrans + 1;
       }
     }
   }
@@ -12685,7 +12708,7 @@ function GrabarComprobante($C1)
   {
      while(strlen($C1["Ctas_Modificar"]) > 1)
      {
-        $I = InStr($C1["Ctas_Modificar"], ",");
+        $I = strpos($C1["Ctas_Modificar"], ",");
         $Cta = trim(substr($C1["Ctas_Modificar"], 1, $I-1));
         $sql = "UPDATE Transacciones 
             SET Procesado = 0 
@@ -12708,12 +12731,12 @@ function GrabarComprobante($C1)
   $FA["Autorizacion_R"] = $C1["Autorizacion_R"];
   $FA["Retencion"] = $C1["Retencion"];
   $FA["Serie_R"] = $C1["Serie_R"];
-  if(strlen($FA["Autorizacion_R"]) >= 13){ SRI_Crear_Clave_Acceso_Retenciones($FA, True);}
+  if(strlen($FA["Autorizacion_R"]) >= 13){ //Autorizar_retencion($FA); //SRI_Crear_Clave_Acceso_Retenciones($FA, True);
+  }
  // 'Eliminamos Asientos contables
   $Trans_No = $C1["T_No"];
- /* BorrarAsientos True
-  Control_Procesos Normal, "Grabar Comprobante de: " & $C1["TP & " No. " & $C1["Numero"]
-  RatonNormal*/
+  // BorrarAsientos('',True);
+  // Control_Procesos Normal, "Grabar Comprobante de: " & $C1["TP & " No. " & $C1["Numero"]
 }
 
 function Digito_Verificador_SP($NumeroRUC)
@@ -12749,4 +12772,92 @@ function Digito_Verificador_SP($NumeroRUC)
 
   return compact('RUC_CI', 'Codigo_RUC_CI', 'Digito_Verificador', 'Tipo_Beneficiario', 'RUC_Natural', 'TipoSRI_Existe'); 
 }
+
+
+
+   function BorrarAsientos($Trans_No,$B_Asiento=false)
+   {    
+    $conn = new db();
+    $sql='';
+    if($Trans_No <= 0){$Trans_No = 1;}
+      if($B_Asiento){
+         $sql.= "DELETE
+           FROM Asiento
+           WHERE Item = '".$_SESSION['INGRESO']['item']."'
+           AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+           AND T_No = ".$Trans_No." ";
+      }
+      $sql.= "DELETE
+      FROM Asiento_SC
+      WHERE Item = '".$_SESSION['INGRESO']['item']."'
+      AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+      AND T_No = ".$Trans_No." ";
+
+    $sql.= "DELETE
+      FROM Asiento_B
+      WHERE Item = '".$_SESSION['INGRESO']['item']."'
+      AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+      AND T_No = ".$Trans_No." ";
+
+
+    $sql.= "DELETE
+      FROM Asiento_R
+      WHERE Item = '".$_SESSION['INGRESO']['item']."'
+      AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+      AND T_No = ".$Trans_No." ";
+
+
+    $sql.= "DELETE
+      FROM Asiento_RP
+      WHERE Item = '".$_SESSION['INGRESO']['item']."'
+      AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+      AND T_No = ".$Trans_No." ";
+
+
+    $sql.= "DELETE
+      FROM Asiento_K
+      WHERE Item = '".$_SESSION['INGRESO']['item']."'
+      AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+      AND T_No = ".$Trans_No." ";
+
+    $sql.= "DELETE
+      FROM Asiento_P
+      WHERE Item = '".$_SESSION['INGRESO']['item']."'
+      AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+      AND T_No = ".$Trans_No." ";
+
+    $sql.= "DELETE
+      FROM Asiento_Air
+      WHERE Item = '".$_SESSION['INGRESO']['item']."'
+      AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+      AND T_No = ".$Trans_No." ";
+
+    $sql.= "DELETE
+      FROM Asiento_Compras
+      WHERE Item = '".$_SESSION['INGRESO']['item']."'
+      AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+      AND T_No = ".$Trans_No." ";
+
+    $sql.= "DELETE
+      FROM Asiento_Exportaciones
+      WHERE Item = '".$_SESSION['INGRESO']['item']."'
+      AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+      AND T_No = ".$Trans_No." ";
+
+    $sql.= "DELETE
+      FROM Asiento_Importaciones
+      WHERE Item = '".$_SESSION['INGRESO']['item']."'
+      AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+      AND T_No = ".$Trans_No." ";
+
+    $sql.= "DELETE
+      FROM Asiento_Ventas
+      WHERE Item = '".$_SESSION['INGRESO']['item']."'
+      AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+      AND T_No = ".$Trans_No." ";
+      // print_r($sql);die();
+    $result = $conn->String_Sql($sql);
+       return $result;
+  }
+
 ?>

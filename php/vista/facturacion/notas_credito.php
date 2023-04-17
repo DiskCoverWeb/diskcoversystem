@@ -1,3 +1,4 @@
+<?php  //print_r( $_SESSION['SETEOS']);die();?>
 <script type="text/javascript">
  $(document).ready(function()
   {

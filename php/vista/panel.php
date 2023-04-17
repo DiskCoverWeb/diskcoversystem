@@ -2,6 +2,8 @@
 include('../headers/header_panel.php');
 $empresa = '';
 if (isset($_SESSION['INGRESO']['empresa'])) { $empresa = $_SESSION['INGRESO']['empresa'];}
+
+// print_r($_SESSION['INGRESO']);die();
 ?>
 <script>
   $(document).ready(function(){

@@ -513,7 +513,7 @@ function mostra_select()
 
 function grabacion()
 {
-    $('#myModal_espera').modal('show');
+    // $('#myModal_espera').modal('show');
   var  parametros= 
   {
     "IdProv":$('#DCProveedor').val(), 
@@ -638,7 +638,7 @@ function grabar_comprobante()
                // $('#myModal_espera').modal('show');    
       $.ajax({
           data:  {parametros:parametros},
-          url:   '../controlador/contabilidad/incomC.php?generar_comprobante=true',
+          url:   '../controlador/contabilidad/incomC.php?generar_comprobante2=true',
           type:  'post',
           dataType: 'json',
             success:  function (data) {

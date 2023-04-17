@@ -187,6 +187,11 @@ if(isset($_GET['generar_comprobante']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->generar_comprobante($parametros));
 }
+if(isset($_GET['generar_comprobante2']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->generar_comprobante2($parametros));
+}
 if(isset($_GET['eliminarregistro']))
 {
     $parametros = $_POST['parametros'];
@@ -568,9 +573,12 @@ class incomC
      	return array('debe'=>$debe,'haber'=>$haber,'diferencia'=>$debe-$haber,'Ctas_Modificar'=>$Ctas_Modificar);
 
      }
-/*
-    function generar_comprobante_prueba($parametros)
+
+    function generar_comprobante($parametros)
     {
+
+    	// print_r($parametros);die();
+    	$ModificarComp = False;
      	$Monto_Total = $parametros['monto_total'];// LabelTotal.Caption)
      	$Trans_No = $_SESSION['INGRESO']['modulo_'];
      	// Asientos_Grabados
@@ -579,8 +587,8 @@ class incomC
      	// ------------------------------------------------     
   		$OpcSubCtaDH = 1;
   		$TextoImprimio = "";
+  		$bene = $this->modelo->beneficiarios($parametros['ruc']);
 
-  		// print_r($parametros);die();
   		if(count($AdoAsientos)> 0)
   		{
           if($parametros['NuevoComp']){
@@ -592,6 +600,11 @@ class incomC
           }
 
           $FechaTexto = $parametros['fecha'];
+          $Co = datos_Co();
+          $Co['Autorizacion_R'] = $parametros['Autorizacion_R'];
+          $Co['Serie_R'] = $parametros['Serie_R'];
+          $Co['CodigoB'] = $bene[0]['Codigo'];
+          $Co['RetSecuencial'] = $parametros['Retencion'];
           $Co['TP'] = $parametros['tip'];
           $Co['Cotizacion'] = $parametros['TextCotiza'];
           $Co['T'] = G_NORMAL;
@@ -603,46 +616,46 @@ class incomC
           $Co['Efectivo'] =$parametros['Abono'];
           $Co['Cotizacion'] =$parametros['TextCotiza'];
           $Co['Item'] =$_SESSION['INGRESO']['item'];
-          $Co['Usuario'] =$_SESSION['INGRESO']['item'];
+          $Co['Usuario'] =$_SESSION['INGRESO']['CodigoU'];
           $Co['T_No'] =$Trans_No;
+          // print_r($parametros);
+          // print_r($Co);die();
          // 'Grabamos el Comprobante
           GrabarComprobante($Co);
         // ' Seteamos para el siguiente comprobante
-        /*  DGAsientosB.Visible = False
-          RatonNormal
-          ImprimirComprobantesDe False, Co
-          If CheqCopia.value Then ImprimirComprobantesDe False, Co
-          BorrarAsientos True
-          NumComp = NumComp + 1
-          Co.Numero = NumComp
-          LabelComp.Caption = Format(NumComp, "00000000")
-          LabelTotal.Caption = "0.00"
-          Label6.Visible = False
-          DGAsientos.Visible = True
-          If ModificarComp Then
-             ModificarComp = False
-             CopiarComp = False
-             NuevoComp = True
-             Unload FComprobantes
-             Exit Sub
-          Else
-             ModificarComp = False
-             CopiarComp = False
-             NuevoComp = True
-             Tipo_De_Comprobante_No Co
-             MBoxFecha.SetFocus
-          End If
+        //  DGAsientosB.Visible = False
+         // RatonNormal
+          // ImprimirComprobantesDe False, Co
+          // If CheqCopia.value Then ImprimirComprobantesDe False, Co
+          BorrarAsientos($Trans_No,true);
+          $NumComp = $NumComp + 1;
+          $Co['Numero'] = $NumComp;
+          if($ModificarComp){
+             // ModificarComp = False
+             $CopiarComp = False;
+             // NuevoComp = True
+             // Unload FComprobantes
+             // Exit Sub
+             return 1;
+          }else{
+             // ModificarComp = False
+             // CopiarComp = False
+             $NuevoComp = True;
+             // Tipo_De_Comprobante_No Co
+             // MBoxFecha.SetFocus
+             return 1;
+          }
        }else{
-          MsgBox "Warning: Falta de Ingresar datos."
-          DGAsientos.Visible = True
-          TextCodigo.SetFocus
+       	return -2;
+          // MsgBox "Warning: Falta de Ingresar datos."
+          // DGAsientos.Visible = True
+          // TextCodigo.SetFocus
        }
-*/
-    // }
+    }
 
-     function generar_comprobante($parametros)
+     function generar_comprobante2($parametros)
      {
-     	// print_r($parametros);die();
+     	
      	$Autorizacion_LC=''; //revisar
      	$T_No='01';
          if($parametros['tip']=='CD'){$tip = 'Diario';}
@@ -2418,7 +2431,7 @@ function Llenar_Encabezado_Comprobante($parametros)
     // print_r($bene);
     // print_r($parametros); die();
 
-    return  array('beneficiario'=>$parametros['beneficiario'],'RUC_CI'=>$bene[0]['id'],'email'=>$bene[0]['email'],'Concepto'=>$parametros['Concepto'],'CodigoB'=>$parametros['CodigoB'],'fecha'=>$parametros['fecha']);  
+    return  array('beneficiario'=>$parametros['beneficiario'],'RUC_CI'=>$bene[0]['id'],'email'=>$bene[0]['email'],'Concepto'=>$parametros['Concepto'],'CodigoB'=>$bene[0]['Codigo'],'fecha'=>$parametros['fecha']);  
 }
 
 function ingresar_asiento($parametros)

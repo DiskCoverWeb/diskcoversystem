@@ -294,10 +294,10 @@ class facturar_pensionC
 	public function getCatalogoLineas(){
 		$emision = $_POST['fechaEmision'];
 		$vencimiento = $_POST['fechaVencimiento'];
-    $tipo = 'FA';
+    $tipo = "'FA','NV'";
     if(isset($_POST['tipo']))
     {
-      $tipo = $_POST['tipo'];
+      $tipo = "'".$_POST['tipo']."'";
     }
 
     //busco serie_FA en accesos SQLSERVER

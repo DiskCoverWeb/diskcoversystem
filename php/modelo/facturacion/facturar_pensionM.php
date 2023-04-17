@@ -76,10 +76,12 @@ class facturar_pensionM
     return $stmt;
   }
 
-  public function getCatalogoLineas($fecha,$vencimiento,$serie=false,$tipo){
+  public function getCatalogoLineas($fecha,$vencimiento,$serie=false,$tipo)
+  {
+
   $sql="  SELECT * FROM Catalogo_Lineas 
           WHERE Item = '".$_SESSION['INGRESO']['item']."' 
-          AND Fact ='".$tipo."'
+          AND Fact IN (".$tipo.")
           AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
           AND CONVERT(DATE,Fecha) <= '".$fecha."'
           AND CONVERT(DATE,Vencimiento) >= '".$vencimiento."' ";
@@ -94,30 +96,11 @@ class facturar_pensionM
           return $stmt;
 }
 
-
-  public function getCatalogoLineas2($fecha,$vencimiento,$serie=false){
-    $sql="  SELECT * FROM Catalogo_Lineas 
-            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
-            AND Fact IN ('".G_COMPFACTURA."','".G_COMPNOTAVENTA."')
-			      AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-			      AND CONVERT(DATE,Fecha) <= '".$fecha."'
-			      AND CONVERT(DATE,Vencimiento) >= '".$vencimiento."' ";
-            if($serie)
-            {
-              $sql.=" AND Serie='".$serie."'";
-            }
-			      $sql.=" ORDER BY Codigo";
-
-            // print_r($sql);die();
-            $stmt = $this->db->datos($sql);
-            return $stmt;
-  }
-
   public function getCatalogoLineas13($fecha,$vencimiento,$tipo){
   $sql="  SELECT * FROM Catalogo_Lineas 
           WHERE Item = '".$_SESSION['INGRESO']['item']."' 
           AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-          AND Fact ='".$tipo."'
+          AND Fact IN (".$tipo.")
           AND CONVERT(DATE,Fecha) <= '".$fecha."'
           AND CONVERT(DATE,Vencimiento) >= '".$vencimiento."'
           AND len(Autorizacion)>=13

@@ -37,12 +37,13 @@ class usuario_model{
 
 	
 	// Metdo devuelve true o false para ingresar a la sesccion de pagina de administracion
-	function Ingresar($usuario,$pass,$entidad){
+	function Ingresar($usuario,$pass,$entidad,$item){
 		$query = "SELECT * 
 		          FROM acceso_usuarios AU
 		          INNER JOIN acceso_empresas AE ON AU.CI_NIC = AE.CI_NIC 
 		          WHERE AU.Usuario = '".$usuario."' 
 		          and AE.ID_Empresa = '".$entidad."' 
+		          and AE.Item = '".$item."' 
 		          and AU.Clave = '".$pass."'
 		          LIMIT 1";
 
@@ -61,6 +62,7 @@ class usuario_model{
 			$_SESSION['INGRESO']['Id'] = $datos[0]['CI_NIC'];
 			$_SESSION['INGRESO']['Clave'] = $datos[0]['Clave'];
 			$_SESSION['INGRESO']['Mail'] = $datos[0]['Usuario'];
+
 	// print_r($datos);die();
 			return 'panel.php';
 		}else
@@ -99,12 +101,10 @@ class usuario_model{
 
 
 	function empresa_cartera($entidad,$ID_Entidad=false){		
-		$num = strlen($entidad);
-		if($num==10 || $num == 13 && is_numeric($entidad))
-		{
 			$query = "SELECT *
 					  FROM lista_empresas
-					  WHERE RUC_CI_NIC = '".$entidad."'";
+					  WHERE RUC_CI_NIC = '".$entidad."'
+					  AND IP_VPN_RUTA <> '.'";
 					  if($ID_Entidad)
 					  {
 					  	$query.=" AND ID_Empresa='".$ID_Entidad."'";
@@ -114,13 +114,7 @@ class usuario_model{
 		// print_r($query);die();
 			$datos = $this->db1->datos($query,$tipo='MY SQL');
 			return $datos;
-		}else
-		{
-			//retorna -2 cuando no tiene el formato o la extencion correcta
-			return array('respuesta'=>-2,'entidad'=>'','Nombre'=>'');
-
-		// print_r($num);die();
-		}
+		
 	}
 
 // validar cliente en cartera
@@ -152,12 +146,15 @@ class usuario_model{
 	 * electronico
 	 * @param [String mail]
 	 */
-	function ValidarUser1($usuario,$entidad){
+	function ValidarUser1($usuario,$entidad,$item){
 
 		$query = "SELECT * 
 		          FROM acceso_usuarios AU
 		          INNER JOIN acceso_empresas AE ON AU.CI_NIC = AE.CI_NIC 
-		          WHERE AU.Usuario = '".$usuario."' and AE.ID_Empresa = '".$entidad."' LIMIT 1";
+		          WHERE AU.Usuario = '".$usuario."' 
+		          and AE.ID_Empresa = '".$entidad."' 
+		          AND AE.Item = '".$item."'
+		          LIMIT 1";
 		 // print_r($query);die();
 	    $datos = $this->db1->datos($query,$tipo='MY SQL');
 	    if(count($datos)>0)
@@ -229,7 +226,10 @@ class usuario_model{
 		$sql2 = "SELECT  DISTINCT Item 
 		         FROM acceso_empresas 
 		         WHERE ID_Empresa = '".$id_entidad."' 
-		         AND CI_NIC = '".$_SESSION['INGRESO']['Id']."';";
+		         AND CI_NIC = '".$_SESSION['INGRESO']['Id']."'
+		         AND Item = '".$_SESSION['INGRESO']['item']."';";
+
+		         // print_r($sql2);die();
 		  $datos = $this->db1->datos($sql2,$tipo='MY SQL');
         foreach ($datos as $key => $value) {
         	$items.='"'.$value['Item'].'",';
