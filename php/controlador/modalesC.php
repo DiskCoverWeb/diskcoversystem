@@ -77,7 +77,11 @@ if(isset($_GET['ListarMedidores']))
 	echo json_encode($controlador->Listar_Medidores($_POST["codigo"]));
 	exit();
 }
-
+else
+if(isset($_GET['FInfoErrorShow']))
+{
+   echo json_encode($controlador->FInfoErrorShow());
+}
 /**
  * 
  */
@@ -417,6 +421,8 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		return $this->modelo->Listar_Medidores($codigo);
 	}
 
-
+	function FInfoErrorShow(){
+		return $this->modelo->FInfoError();
+	}
 }
 ?>

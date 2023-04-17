@@ -270,7 +270,7 @@ class db
 		       // print_r('expression');die();
            $res = sqlsrv_execute($stmt);
            if ($res === false) 
-           {
+           {echo "<pre>";print_r($sql);echo "</pre>";echo "<pre>";print_r($parametros);echo "</pre>";
            	echo "Error en consulta PA.\n";  
            	$respuesta = -1;
            	die( print_r( sqlsrv_errors(), true));  

@@ -154,6 +154,10 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 		{
 			require_once("contabilidad/mayores_sub_cuenta.php");
 		}
+		if ($_SESSION['INGRESO']['accion']=='InfoError') 
+		{
+			include("contabilidad/FInfoError.php");
+		}
 //facturacion
 
 			//facturar pension

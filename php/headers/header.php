@@ -348,6 +348,11 @@ include('../controlador/contabilidad/contabilidad_controller.php');
     });
   }
 
+  function ShowFInfoErrorShowView() {
+    $("#myModalInfoError").modal("show");
+    var src ="../vista/modales.php?FInfoError=true";
+    $('#FInfoErrorFrame').attr('src',src).show();
+  }
   </script>
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

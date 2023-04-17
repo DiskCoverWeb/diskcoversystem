@@ -278,7 +278,16 @@ function DLCxCxP($SubCta,$query=false)
 	    
 	    return $cMedidor;
 	}
-
 	
+	function FInfoError()
+	{
+		$cSQL = "SELECT Texto
+				FROM Tabla_Temporal
+				WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+				AND Modulo = '" . $_SESSION['INGRESO']['modulo_'] . "'
+				AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'
+				ORDER BY ID";
+		return $this->db->datos($cSQL);
+	}
 }
 ?>
