@@ -100,6 +100,7 @@ class cambioeM
 		    		$sql3 = "UPDATE Empresas SET Fecha_CE = '".$parametros['Fecha']."',Estado = '".$parametros['Estado']."' WHERE Item='".$em[0]['Item']."'";
 
 		    		// print_r($sql3);
+		    		// print_r($sql2);
 
 	            	$r = $this->db->ejecutar_sql_terceros($sql2,$em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
 	            	$r = $this->db->ejecutar_sql_terceros($sql3,$em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
