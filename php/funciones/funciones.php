@@ -13054,7 +13054,7 @@ function Digito_Verificador_SP($NumeroRUC)
       "PARA SOLUCIONAR EL INCONVENIENTE";
     }
 
-    return ['ErrorFecha' =>$ErrorFecha, 'MsgBox' =>$MsgBox,'NomBox'=>$NomBox];
+    return ['ErrorFecha' =>$ErrorFecha, 'MsgBox' =>$MsgBox];
   }
 
   function MidStrg($Cadena, $InicioStr, $CantStr = null) {

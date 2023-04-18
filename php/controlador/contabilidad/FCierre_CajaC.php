@@ -44,6 +44,10 @@ if(isset($_GET['FechasdeCierre']))
 if(isset($_GET['Grabar_Cierre_Diario']))
 {
    echo json_encode($controlador->Grabar_Cierre_Diario($_POST));
+}else
+if(isset($_GET['FechaValida']))
+{
+   echo json_encode(FechaValida($_POST['fecha']));
 }
 
 class FCierre_CajaC
@@ -111,7 +115,7 @@ class FCierre_CajaC
         //Progreso_Iniciar_Errores();
         $_SESSION['FCierre_Caja']['ErrorFacturas'] = "";
         $_SESSION['FCierre_Caja']['ErrorInventario'] = "";
-        //control_procesos("F", "Cierre Diarios de Caja");
+        control_procesos("F", "Cierre Diarios de Caja");
         $_SESSION['FCierre_Caja']['Presentar_Inventario'] = False;
         $FechaIni = BuscarFecha($MBFechaI);
         $FechaFin = BuscarFecha($MBFechaF);
@@ -270,14 +274,11 @@ class FCierre_CajaC
         $FechaValida = FechaValida($MBFechaI);
         if($FechaValida["ErrorFecha"]){
             return ['error' => true, "mensaje" =>$FechaValida["MsgBox"]];
-        }else{
-            $MBFechaI = $FechaValida['NomBox'];
         }
+
         $FechaValida = FechaValida($MBFechaF);
         if($FechaValida["ErrorFecha"]){
             return ['error' => true, "mensaje" =>$FechaValida["MsgBox"]];
-        }else{
-           $MBFechaF = $FechaValida['NomBox'];
         }
 
         $_SESSION['FCierre_Caja']['ErrorInventario'] = "";
@@ -286,7 +287,7 @@ class FCierre_CajaC
         $VentasDia = false;
         $FechaIni = BuscarFecha($MBFechaI);
         $FechaFin = BuscarFecha($MBFechaF);
-        $Fecha_Vence = $MBFechaF;
+        $Fecha_Vence = $MBFechaF; //TODO LS donde se usa
 
         //"Verificando Cuentas involucradas"
         //Listado de los tipos de abonos
@@ -336,7 +337,7 @@ class FCierre_CajaC
         $AdoVentas = $this->CierreCajaM->SelectDB($sSQL);
 
         $Combos = G_NINGUNO; //TODO LS donde USO
-        $FechaFinal = BuscarFecha("31/12/" .date('Y', strtotime($MBFechaF)));
+        $FechaFinal = BuscarFecha("31/12/" .date('Y', strtotime($MBFechaF))); //TODO LS donde se usa
         $ContCtas = 0; //TODO LS donde USO
         $Total = 0; //TODO LS donde USO
 
@@ -873,15 +874,11 @@ class FCierre_CajaC
         $dataCierre = [];
         if($FechaValida["ErrorFecha"]){
             return ['error' => true, "mensaje" =>$FechaValida["MsgBox"]];
-        }else{
-            $MBFechaI = $FechaValida['NomBox'];
         }
 
         $FechaValida = FechaValida($MBFechaF);
         if($FechaValida["ErrorFecha"]){
             return ['error' => true, "mensaje" =>$FechaValida["MsgBox"]];
-        }else{
-            $MBFechaF = $FechaValida['NomBox'];
         }
 
         $FechaTexto = $MBFechaF;
@@ -932,11 +929,12 @@ class FCierre_CajaC
             $DiarioCaja = $NumComp;
             $FechaIni = BuscarFecha($MBFechaI);
             $FechaFin = BuscarFecha($MBFechaF);
-            if ($FormaCierre) {//TODO LS definir variables de impresion
-                Imprimir_Diario_Caja($AdoVentas, $AdoCxC, $AdoInv, $AdoProductos, $AdoAnticipos, $MBFechaI, $MBFechaF);
-            } else {
-                Imprimir_Diario_Caja_Resumen($AdoVentas, $AdoCxC, $AdoInv, $AdoProductos, $AdoAnticipos, $MBFechaI, $MBFechaF);
-            }
+            //TODO LS descomentar
+            // if ($FormaCierre) {//TODO LS definir variables de impresion
+            //     Imprimir_Diario_Caja($AdoVentas, $AdoCxC, $AdoInv, $AdoProductos, $AdoAnticipos, $MBFechaI, $MBFechaF);
+            // } else {
+            //     Imprimir_Diario_Caja_Resumen($AdoVentas, $AdoCxC, $AdoInv, $AdoProductos, $AdoAnticipos, $MBFechaI, $MBFechaF);
+            // }
             // Grabacion del Comprobante de CxC
             if (count($AdoAsiento1) > 0) {
                 $Trans_No = 97;
@@ -971,8 +969,8 @@ class FCierre_CajaC
                       . "AND Fecha BETWEEN '" . $FechaIni . "' and '" . $FechaFin . "' "
                       . "AND SUBSTRING(Detalle,1,3) ='FA:' ";
                 Ejecutar_SQL_SP($sSQL);
-                Control_Procesos(G_NORMAL, $_SESSION['FCierre_Caja']['Co']['Concepto']);
-                ImprimirComprobantesDe(false, $Co); //TODO LS definir funcion
+                control_procesos(G_NORMAL, $_SESSION['FCierre_Caja']['Co']['Concepto']);
+                //ImprimirComprobantesDe(false, $Co); //TODO LS definir funcion
                 $AdoAsiento1 = $this->CierreCajaM->IniciarAsientosDe($Trans_No); //TODO LS para que se le pasa $DGAsiento1, $AdoAsiento1
                 $_SESSION['FCierre_Caja']['AdoAsiento1'] = $AdoAsiento1 ;
             }
@@ -999,7 +997,7 @@ class FCierre_CajaC
               $_SESSION['FCierre_Caja']['Co']['Usuario'] = $CodigoUsuario;
               $_SESSION['FCierre_Caja']['Co']['Item'] = $NumEmpresa;
               
-              GrabarComprobante($Co);
+              GrabarComprobante($_SESSION['FCierre_Caja']['Co']);
               
               //Los Asientos de SubModulos
               $sSQL = "UPDATE Trans_SubCtas " .
@@ -1029,8 +1027,8 @@ class FCierre_CajaC
               $FechaFin = BuscarFecha($FechaSistema);
               Productos_Cierre_Caja_SP($FechaIni, $FechaFin);
               
-              Control_Procesos(G_NORMAL, $_SESSION['FCierre_Caja']['Co']['Concepto']);
-              ImprimirComprobantesDe(false, $Co);
+              control_procesos(G_NORMAL, $_SESSION['FCierre_Caja']['Co']['Concepto']);
+              //ImprimirComprobantesDe(false, $Co);
               
               $AdoAsiento = $this->CierreCajaM->IniciarAsientosDe($Trans_No);
             }

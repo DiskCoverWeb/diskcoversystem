@@ -25,6 +25,9 @@ switch ($_SESSION['INGRESO']['modulo_']) {
     font-size: 13px;
     font-weight: 500;
 }
+input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
+  border: 2px solid #3c8cbb !important;
+}
 </style>
 <div class="row">
   <div class="col-sm-5 col-xs-12">
@@ -53,10 +56,10 @@ switch ($_SESSION['INGRESO']['modulo_']) {
           <label for="inputEmail3" class="col control-label" style="font-size: 13px;">Periodo de Cierre</label>
         </div>
         <div class="col-xs-6">
-          <input tabindex="43" type="date" name="MBFechaI" id="MBFechaI" class="form-control input-xs validateDate" onchange="">
+          <input tabindex="43" type="date" name="MBFechaI" id="MBFechaI" class="form-control input-xs validateDate" onchange="" title="Fecha Inicial">
         </div>
         <div class="col-xs-6">
-          <input tabindex="44" type="date" name="MBFechaF" id="MBFechaF" class="form-control input-xs validateDate" onchange="">
+          <input tabindex="44" type="date" name="MBFechaF" id="MBFechaF" class="form-control input-xs validateDate" onchange="" title="Fecha Final">
         </div>
       </div>
       <div class="form-group col-xs-12 col-md-6  padding-all margin-b-1">
@@ -438,6 +441,28 @@ switch ($_SESSION['INGRESO']['modulo_']) {
         $('#DCBenef').hide();
       }
     });
+
+    $('#MBFechaI').blur(function() {
+      let fechaI = $(this).val();
+      FechaValidaJs(fechaI)
+      $('#MBFechaF').val(fechaI);
+    });
+
+    $('#MBFechaF').blur(function() {
+      let fechaF = $(this).val();
+      FechaValidaJs(fechaF);
+    });
+
+    $('#MBFechaF').keydown(function(event) {
+      let keyCode = event.which;
+      let shift = event.shiftKey;
+      if (shift && keyCode === 77) { // 77 es el código para la letra "M"
+        let fechaI = $('#MBFechaI').val();
+        let fechaF = UltimoDiaMes(fechaI);
+        $(this).val(fechaF);
+      }
+    });
+
   });
 
   function Form_Activate() {
@@ -479,7 +504,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
         for (var j = 0; j < numColumnas; j++) {
             var nombreColumna = encabezado.eq(j).text();
             let valor = datos[i][nombreColumna];           
-            if(typeof valor === 'object'){
+            if(valor !== null && typeof valor === 'object'){
               valor = valor.date;
               if (valor.endsWith(".000000")) {
                 valor = valor.slice(0, -7); // Obtiene los primeros 6 caracteres del final
@@ -742,7 +767,6 @@ switch ($_SESSION['INGRESO']['modulo_']) {
               success: function(datos)             
               {
                 if(datos.error){
-                  $('#myModal_espera').modal('hide');
                   Swal.fire({
                     type: 'warning',
                     title: datos.mensaje,
@@ -752,7 +776,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                 else{
                   Swal.fire({
                     type: 'success',
-                    title: 'Cierre del día '+((datos.dataCierre.MBFechaI)?datos.dataCierre.MBFechaI:"")+((datos.dataCierre.Factura)?"("+Factura+")":""),
+                    title: 'Cierre del día '+((datos.dataCierre.MBFechaI)?datos.dataCierre.MBFechaI:"")+((datos.dataCierre.Factura)?"("+datos.dataCierre.Factura+")":""),
                   });
                 }
 
@@ -766,4 +790,24 @@ switch ($_SESSION['INGRESO']['modulo_']) {
           }
         })
   }
+
+  function FechaValidaJs(fecha) {
+    $.ajax({
+      type: "POST",                 
+      url: '../controlador/contabilidad/FCierre_CajaC.php?FechaValida=true',
+      dataType:'json', 
+      data: {'fecha' : fecha },
+      success: function(datos)             
+      {
+        if(datos.ErrorFecha){
+          Swal.fire({
+            type: 'warning',
+            title: datos.MsgBox,
+            text: fecha
+          });
+        }
+      }
+    });
+  }
+
 </script> 
