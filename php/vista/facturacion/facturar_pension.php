@@ -251,18 +251,18 @@
           for (var indice in datos) {
             subtotal = (parseFloat(datos[indice].valor) + (parseFloat(datos[indice].valor) * parseFloat(datos[indice].iva) / 100)) - parseFloat(datos[indice].descuento) - parseFloat(datos[indice].descuento2);
             var tr = `<tr class="tr`+clave+`">
-              <td><input ${((totalItem==clave)?`onblur="$('#TextBanco').focus()"`:'')} style="border:0px;background:bottom" type="checkbox" id="checkbox`+clave+`" onclick="totalFactura('checkbox`+clave+`','`+subtotal+`','`+datos[indice].iva+`','`+datos[indice].descuento+`','`+datos.length+`','`+clave+`')" name="`+datos[indice].mes+`"></td>
-              <td><input style="border:0px;background:bottom" type ="text" id="Mes`+clave+`" value ="`+datos[indice].mes+`" disabled/></td>
+              <td><input ${((totalItem==clave)?`onblur="$('#TextBanco').focus()"`:'')} style="border:0px;background:bottom;" type="checkbox" id="checkbox`+clave+`" onclick="totalFactura('checkbox`+clave+`','`+subtotal+`','`+datos[indice].iva+`','`+datos[indice].descuento+`','`+datos.length+`','`+clave+`')" name="`+datos[indice].mes+`"></td>
+              <td><input style="border:0px;background:bottom;max-width: 85px;" type ="text" id="Mes`+clave+`" value ="`+datos[indice].mes+`" disabled/></td>
               <td><input style="border:0px;background:bottom" type ="text" id="Codigo`+clave+`" value ="`+datos[indice].codigo+`" disabled/></td>
-              <td><input style="border:0px;background:bottom" type ="text" id="Periodo`+clave+`" value ="`+datos[indice].periodo+`" disabled/></td>
+              <td><input style="border:0px;background:bottom;max-width: 50px;" type ="text" id="Periodo`+clave+`" value ="`+datos[indice].periodo+`" disabled/></td>
               <td><input style="border:0px;background:bottom" type ="text" id="Producto`+clave+`" value ="`+datos[indice].producto+`" disabled/></td>
-              <td><input class="text-right" style="border:0px;background:bottom"  size="10px" type ="text" id="valor`+clave+`" value ="`+parseFloat(datos[indice].valor).toFixed(2)+`" disabled/></td>
-              <td><input class="text-right" style="border:0px;background:bottom"  size="10px" type ="text" id="descuento`+clave+`" value ="`+parseFloat(datos[indice].descuento).toFixed(2)+`" disabled/></td>
-              <td><input class="text-right" style="border:0px;background:bottom"  size="10px" type ="text" id="descuento2`+clave+`" value ="`+parseFloat(datos[indice].descuento2).toFixed(2)+`" disabled/></td>
-              <td><input class="text-right" style="border:0px;background:bottom" size="10px" type ="text" id="subtotal`+clave+`" value ="`+parseFloat(subtotal).toFixed(2)+`" disabled/></td>
+              <td><input class="text-right" style="border:0px;background:bottom;max-width: 75px;"  size="10px" type ="text" id="valor`+clave+`" value ="`+parseFloat(datos[indice].valor).toFixed(2)+`" disabled/></td>
+              <td><input class="text-right" style="border:0px;background:bottom;max-width: 85px;"  size="10px" type ="text" id="descuento`+clave+`" value ="`+parseFloat(datos[indice].descuento).toFixed(2)+`" disabled/></td>
+              <td><input class="text-right" style="border:0px;background:bottom;max-width: 85px;"  size="10px" type ="text" id="descuento2`+clave+`" value ="`+parseFloat(datos[indice].descuento2).toFixed(2)+`" disabled/></td>
+              <td><input class="text-right" style="border:0px;background:bottom;max-width: 85px;" size="10px" type ="text" id="subtotal`+clave+`" value ="`+parseFloat(subtotal).toFixed(2)+`" disabled/></td>
               
-              <td <?php echo ($mostrar_medidor)?"":'style="display:none"'?>><input class="text-right" style="border:0px;background:bottom" size="10px" type ="text" id="inputLectura`+clave+`" value ="`+datos[indice].Credito_No+`" disabled/></td>
-              <td <?php echo ($mostrar_medidor)?"":'style="display:none"'?>><input class="text-right" style="border:0px;background:bottom" size="10px" type ="text" id="inputMedidor`+clave+`"  value ="`+datos[indice].Codigo_Auto+`" disabled/></td>
+              <td <?php echo ($mostrar_medidor)?"":'style="display:none"'?>><input class="text-right" style="border:0px;background:bottom;max-width: 65px;" size="10px" type ="text" id="inputLectura`+clave+`" value ="`+datos[indice].Credito_No+`" disabled/></td>
+              <td <?php echo ($mostrar_medidor)?"":'style="display:none"'?>><input class="text-right" style="border:0px;background:bottom;max-width: 65px;" size="10px" type ="text" id="inputMedidor`+clave+`"  value ="`+datos[indice].Codigo_Auto+`" disabled/></td>
               
               <input size="10px" type ="hidden" id="CodigoL`+clave+`" value ="`+datos[indice].CodigoL+`"/>
               <input size="10px" type ="hidden" id="Iva`+clave+`" value ="`+datos[indice].iva+`"/>
@@ -493,7 +493,7 @@
         'codigoCliente' : codigoCliente,
         'datos' : datosLineas,
       }, 
-      success: function(data){}
+      success: function(data){calcularSaldo()}
     });
     var valor = 0; var descuento = 0; var descuentop = 0; var total = 0;var subtotal = 0;
     for(var i=1; i<datos+1; i++){
@@ -758,7 +758,7 @@
             dataType:'json',  
             success: function(response)
             {
-              
+              recargarData = true;
               $('#myModal_espera').modal('hide');
               if (response) {
 
@@ -822,10 +822,10 @@
                   {
                     Swal.fire({
                        type: 'info',
-                       title: 'Error por: '+response.text,
-                       text: ''
+                       title: 'Error por: ',
+                       html: `<div style="width: 100%; color:black;font-weight: 400;">${response.text}</div>`
                      });
-
+                    if(response.respuesta==6){recargarData = false}
                   }
               }else{
                 Swal.fire({
@@ -836,8 +836,10 @@
                 catalogoProductos(codigoCliente);
               }
 
-              if($('#persona').val()!=""){
-                ClientePreseleccion($('#persona').val());
+              if(recargarData){
+                if($('#persona').val()!=""){
+                  ClientePreseleccion($('#persona').val());
+                }
               }
 
             },
@@ -1077,6 +1079,9 @@
     max-width: 170px;
 }
 
+.mw115{
+  max-width: 115px;
+}
 .centrado_margin{
   margin: 3px auto;
 }
@@ -1133,12 +1138,25 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
   
 }
 
+@media (max-width: 1336px) {
+ 
+  .div_fechas_emision, .div_fechas_vencimiento{
+    width: 210px !important;
+  }
+  
+   .div_fechas_dc{
+    width: 105px !important;
+  }
+}
+
 @media (max-width: 1286px) {
  
   .min-width-150{
     min-width: 130px !important;
   }
-  
+  .div_fechas_emision, .div_fechas_vencimiento{
+    width: 180px !important;
+  }
 }
 
 @media (max-width: 1243px) {
@@ -1173,6 +1191,12 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
   
 }
 
+@media (max-width: 1033px) {
+ 
+  .div_fechas_emision, .div_fechas_vencimiento{
+    width: 140px !important;
+  }
+}
 
 @media (max-width: 1029px) {
  
@@ -1195,10 +1219,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
   .min-width-150{
     min-width: 100% !important;
   }
-  .labelDCLinea{
-    display: none;
-  }
-
   .colDCLinea{
     width: 98% !important;
     margin: 5px 0px;
@@ -1212,7 +1232,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
 
 </style>
   <div class="row">
-    <div class="col-lg-6 col-sm-12 col-md-9 col-xs-12">
+    <div class="col-sm-5 col-xs-12">
       <div class="col">
         <a  href="./inicio.php?mod=<?php echo @$_GET['mod']; ?>" title="Salir de modulo" class="btn btn-default">
           <img src="../../img/png/salire.png" width="25" height="30">
@@ -1250,13 +1270,8 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
         </a>
       </div>
     </div>
-  </div>
-
-  <div class="row">
-
-    <div class="panel panel-primary col-sm-12" style="  margin-bottom: 5px;">
-      <div class="panel-body" style=" padding-top: 5px;">
-        <div class="row">
+    <div class="col-sm-7 col-xs-12">
+      <div class="row">
           <div class="form-group col-xs-6 padding-all margin-b-1">
             <label for="inputEmail3" class="col control-label">Inicio Resumen</label>
             <div class="col">
@@ -1268,28 +1283,35 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             <label for="exampleInputEmail2"  class="col control-label">Factura No. <span id="numeroSerie" class="red"></span></label>
 
             <div class="col">
-              <input type="input" class="form-control input-xs" tabindex="1" name="factura" id="factura">
+              <input style="  max-width: 110px;" type="input" class="form-control input-xs" tabindex="1" name="factura" id="factura">
             </div>
           </div>
         </div>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <div class="panel panel-primary col-sm-12" style="  margin-bottom: 5px;">
+      <div class="panel-body" style=" padding-top: 5px;">
         <div class="row">
           <div class="col-md-7 padding-all">
             <div class="row">
               
-              <div class="form-group col-xs-6 col-md-4  padding-all margin-b-1">
+              <div class="form-group col-xs-6 col-md-4  padding-all margin-b-1 div_fechas_emision">
                 <label for="inputEmail3" class="col control-label">Fecha Emision</label>
                 <div class="col">
-                  <input tabindex="2" type="date" name="fechaEmision" id="fechaEmision" class="form-control input-xs validateDate" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
+                  <input tabindex="2" type="date" name="fechaEmision" id="fechaEmision" class="form-control input-xs validateDate mw115" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
                 </div>
               </div>
-              <div class="form-group col-xs-6 col-md-4  padding-all margin-b-1">
+              <div class="form-group col-xs-6 col-md-5  padding-all margin-b-1 div_fechas_vencimiento">
                 <label for="inputEmail3" class="col control-label">Fecha Vencimiento</label>
                 <div class="col">
-                  <input type="date" tabindex="3" name="fechaVencimiento" id="fechaVencimiento" class="form-control input-xs validateDate" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
+                  <input type="date" tabindex="3" name="fechaVencimiento" id="fechaVencimiento" class="form-control input-xs validateDate mw115" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
                 </div>
               </div>
-              <div class="form-group col-xs-12 col-md-4  padding-all margin-b-1">
-                <label for="inputEmail3" class="labelDCLinea col control-label no-visible">DCLineaaaaaaaaaaaaa</label>
+              <div class="form-group col-xs-12 col-md-2  padding-all margin-b-1 div_fechas_dc">
+                <label for="inputEmail3" class="labelDCLinea col control-label no-visible">.</label>
                 <div class="col colDCLinea">
                   <select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="4" onchange="numeroFactura();">
                   </select>

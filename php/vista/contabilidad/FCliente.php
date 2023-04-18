@@ -60,17 +60,11 @@ $mostrar_medidor = false;
                 $('#ciu').val(response[0].ciudad); // save selected id to input
                 $('#TD').val(response[0].TD); // save selected id to input
                 if(response[0].FA==1){ $('#rbl_facturar').prop('checked',true); }else{ $('#rbl_facturar').prop('checked',false);}
+                MostrarOcultarBtnAddMedidor()
              }else
              {
                $('#ruc').val(ci_ruc);
                codigo();
-             }
-
-             if($('#codigoc').val()!="" && $('#codigoc').val()!="."){
-              $("#AddMedidor").removeClass("no-visible")
-              ListarMedidores($('#codigoc').val())
-             }else{
-              $("#AddMedidor").addClass("no-visible")
              }
 
             $("#myModal_espera").modal('hide');
@@ -115,6 +109,8 @@ $mostrar_medidor = false;
     $('#naciona').val(''); // save selected id to input
     $('#prov').val(''); // save selected id to input
     $('#ciu').val(''); // save selected id to input
+    $('#CMedidor').empty();
+    MostrarOcultarBtnAddMedidor()
   }
 
   function codigo()
@@ -131,7 +127,7 @@ $mostrar_medidor = false;
       	console.log(response);
       	$('#codigoc').val(response.Codigo);
       	$('#TD').val(response.Tipo);
-        
+        MostrarOcultarBtnAddMedidor()
       }
     });
    }else
@@ -406,6 +402,15 @@ $mostrar_medidor = false;
       });
     }
 
+  }
+
+  function MostrarOcultarBtnAddMedidor() {
+    if($('#codigoc').val()!="" && $('#codigoc').val()!="."){
+      $("#AddMedidor").removeClass("no-visible")
+      ListarMedidores($('#codigoc').val())
+     }else{
+      $("#AddMedidor").addClass("no-visible")
+     }
   }
 </script>		
 

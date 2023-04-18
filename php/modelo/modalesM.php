@@ -231,6 +231,7 @@ function DLCxCxP($SubCta,$query=false)
         $sql = "SELECT Codigo 
         FROM Clientes_Datos_Extras ".
         "WHERE Cuenta_No = '" . $Cuenta_No . "' ".
+        "AND Item = '" . $_SESSION['INGRESO']['item'] . "' ".
         "AND Tipo_Dato = 'MEDIDOR' ";
         return $this->db->datos($sql);
 	}	
@@ -253,6 +254,7 @@ function DLCxCxP($SubCta,$query=false)
         $sSQL = "DELETE * ".
             "FROM Clientes_Datos_Extras ".
             "WHERE Codigo = '" . $TxtCodigo . "' ".
+            "AND Item = '" . $_SESSION['INGRESO']['item'] . "' ".
             "AND Cuenta_No = '" . $Cuenta_No . "' ".
             "AND Tipo_Dato = 'MEDIDOR' ";
         return Ejecutar_SQL_SP($sSQL);
@@ -265,6 +267,7 @@ function DLCxCxP($SubCta,$query=false)
 	        $sSQL = "SELECT Cuenta_No " .
 	                "FROM Clientes_Datos_Extras " .
 	                "WHERE Codigo = '" . $codigoDelCliente . "' " .
+            		"AND Item = '" . $_SESSION['INGRESO']['item'] . "' ".
 	                "AND Tipo_Dato = 'MEDIDOR' " .
 	                "AND T = '".G_NORMAL."' " .
 	                "ORDER BY Fecha_Registro";

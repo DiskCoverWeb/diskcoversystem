@@ -258,6 +258,7 @@ class punto_ventaM
         AND DF.Periodo = CP.Periodo
         AND DF.Codigo = CP.Codigo_Inv
         ORDER BY DF.ID,DF.Codigo ";
+        // print_r($sql);die();
       $AdoDBDet = $this->db->datos($sql);
       
    // 'Encabezado de la Guia de Remision
@@ -352,6 +353,7 @@ class punto_ventaM
         AND DF.Periodo = CP.Periodo
         AND DF.Codigo = CP.Codigo_Inv
         ORDER BY DF.ID,DF.Codigo ";
+        // print_r($sql);die();
       $AdoDBDet = $this->db->datos($sql);
       
    // 'Encabezado de la Guia de Remision

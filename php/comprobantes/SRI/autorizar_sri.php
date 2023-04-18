@@ -3679,25 +3679,27 @@ function recuperar_xml_a_factura($documento,$autorizacion,$entidad,$empresa)
 
 function Actualizar_factura($CI_RUC,$FacturaNo,$serie)
 {
-$digito = digito_verificador_nuevo($CI_RUC);
-$cli = $this->datos_cliente_todo(false,$CI_RUC);
+	$digito = codigo_verificador($CI_RUC);
+	$cli = $this->datos_cliente_todo(false,$CI_RUC);
 
-if(count($cli)>0)
-{
-$datosC[0]['campo']='Codigo';
-$datosC[0]['dato']=$digito['Codigo'];
-$datosC[1]['campo']='TD';
-$datosC[1]['dato']=$digito['Tipo'];
-$datosC[2]['campo']='FA';
-$datosC[2]['dato']=1;
+	// print_r($digito);die();
 
-$whereC[0]['campo']='CI_RUC';
-$whereC[0]['valor']=$CI_RUC;
-$whereC[0]['tipo']='string';
-if($cli[0]['TD']=='' || $cli[0]['TD']=='.' ||$cli[0]['Codigo']=='' || $cli[0]['Codigo']=='.')
-{
-update_generico($datosC,'Clientes',$whereC);
-}
+	if(count($cli)>0)
+	{
+	$datosC[0]['campo']='Codigo';
+	$datosC[0]['dato']=$digito['Codigo'];
+	$datosC[1]['campo']='TD';
+	$datosC[1]['dato']=$digito['Tipo'];
+	$datosC[2]['campo']='FA';
+	$datosC[2]['dato']=1;
+
+	$whereC[0]['campo']='CI_RUC';
+	$whereC[0]['valor']=$CI_RUC;
+	$whereC[0]['tipo']='string';
+	if($cli[0]['TD']=='' || $cli[0]['TD']=='.' ||$cli[0]['Codigo']=='' || $cli[0]['Codigo']=='.')
+	{
+		update_generico($datosC,'Clientes',$whereC);
+	}
 
 
 $cliente = Leer_Datos_Cliente_FA($digito['Codigo']);

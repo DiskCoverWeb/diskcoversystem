@@ -250,7 +250,7 @@
 
   function autorizar(tc,factura,serie,fecha)
   { 
-    // $('#myModal_espera').modal('show');
+    $('#myModal_espera').modal('show');
     var parametros = 
     {
       'tc':tc,
@@ -309,10 +309,11 @@
             tipo_error_sri(data.clave);
           }else
           {
-
-            Swal.fire(data.text,'XML DEVUELTO','error').then(function(){ 
-              // var url=  '../../TEMP/'+data.pdf+'.pdf';    window.open(url, '_blank');             
-            }); 
+            Swal.fire({
+             type: 'error',
+             title: 'XML DEVUELTO',
+             html: `<div style="width: 100%; color:black;font-weight: 400;font-size: 1.525em;">${data.text}</div>`
+           });
           }
       }else if(data.respuesta==2)
       {
@@ -334,6 +335,10 @@
       }
 
 
+      },
+      error: function () {
+        $('#myModal_espera').modal('hide');
+        alert("Ocurrio un error inesperado, por favor contacte a soporte.");
       }
     });
     

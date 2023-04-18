@@ -40,6 +40,10 @@
 .no-visible{
   visibility: hidden;
 }
+.full-width + .select2-container {
+  width: 100% !important;
+}
+
 </style>
 <div class="box box-info">
     <div class="box-header">
@@ -56,7 +60,7 @@
                       <div class="col-xs-10">
                         <input  onkeydown="if (event.keyCode === 13) $('#CMedidor').blur()" type="text" class="form-control input-xs " name="CMedidor" id="CMedidor" placeholder="0" style="max-width: 150px;display: inline-block;" tabindex="1">
                         <input type="hidden"  name="codigoCliente" id="codigoCliente">
-                      <!-- <label class="text-red">Con servicio y medidor</label> -->
+                      <br><label>¿No tiene el código del medidor? <a class="btn btn-xs btn-info" data-toggle="modal" data-target="#myModalBuscarMedidorCliente">Buscar por nombre de cliente <i class="fa fa-mouse-pointer"></i></a></label>
                       </div>
                     </div>
                     <div class="form-group">
@@ -67,7 +71,10 @@
                     </div>
                     <hr style="margin: 0px;">
                     <div class="form-group">
-                      <label class="col-xs-12 control-label text-red text-center labelUltimaLectura no-visible">Ultima lectura <span id="FechaUltimaLectura"></span> =>(<span id="UltimaLectura"></span>)</label>
+                      <?php if (count($periodo)<=0): ?>
+                        <h4 style="color: red; text-align: center;">ACTIVE EL MES A PROCESAR</h4>
+                      <?php endif ?>
+                      <label class="col-xs-12 control-label text-red text-center labelUltimaLectura no-visible">Ultima lectura <span id="FechaUltimaLectura"></span>: (<span id="UltimaLectura"></span> m<sup>3</sup>) <label id="ConsumoActual" style="color: blue;"></label>
                     </div>
                     <div class="form-group">
                       <label class="col-xs-2 control-label">Año</label>
@@ -107,7 +114,6 @@
                       <!-- <label for="inputPassword" class="col-xs-12 col-lg-6 control-label text-red text-left">Ingrese lectura de Noviembre/2022</label> -->
                       <div class="col-xs-12 col-lg-6  strong text-right" >
                         <input onkeydown="if (event.keyCode === 13) GuardarConsumoAgua()"  style="max-width: 120px;display: inline-block;" type="tel" class="form-control input-xs " name="Lectura" id="Lectura" tabindex="2"> m<sup>3</sup>
-                        <label class="errorLectura" style="color: red;"></label>
                       </div>
                     </div>
                     <div class="form-group" style=" margin-bottom: 2px;">
@@ -128,35 +134,90 @@
         </div>
 
         <div class="row contenedor_item_center">
+          <?php if (count($periodo)>0): ?>
             <button class="btn btn-success" title="Guardar Consumo" onclick="GuardarConsumoAgua()">
               <img  src="../../img/png/grabar.png" width="25" height="30" tabindex="3">
             </button>
-            
-            </button>
-            <a href="./inicio.php?mod=<?php echo @$_GET['mod']?>" class="btn btn-warning" id="btnSalirModuloPF" title="Salir del Modulo" data-dismiss="modal">
-              <img  src="../../img/png/salire.png" width="25" height="30">
-            </a>
+          <?php endif ?>
+          </button>
+          <a href="./inicio.php?mod=<?php echo @$_GET['mod']?>" class="btn btn-warning" id="btnSalirModuloPF" title="Salir del Modulo" data-dismiss="modal">
+            <img  src="../../img/png/salire.png" width="25" height="30">
+          </a>
         </div>
     </div>
 </div>
 
 
+<div id="myModalBuscarMedidorCliente" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Buscar medidores por nombre del cliente: <b><span id="PFnombreCliente"></span></b></h4>
+      </div>
+      <div class="modal-body">
+        <form role="form" id="FInsPreFacturas" name="FInsPreFacturas">
+          <div class="box-body">
+            <div class="col-xs-12" style="margin-bottom: 5px;">
+              <div class="col-xs-12 col-md-3   ">
+                <label class="">Cliente </label>
+              </div>
+              <div class="col-xs-12 col-md-9 colCliente   ">
+                <select class="form-control full-width" id="cliente" name="cliente">
+                  <option value="">Seleccione un cliente</option>
+                </select>
+                <input type="hidden" name="codigoCliente" id="codigoCliente">
+              </div>
+            </div>
+            <div class="col-xs-12">
+              <div class="col-xs-12 col-md-3   ">
+                <label class="">Medidor No.</label>
+              </div>
+              <div class="col-xs-12 col-md-9 colCliente   ">
+                  <select class="form-control input-sm" id="SelectMedidor" name="SelectMedidor">
+                    <option value="<?php echo G_NINGUNO ?>">NINGUNO</option>
+                  </select>
+                <input type="hidden" name="codigoCliente" id="codigoCliente">
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning" title="Cerrar modal" data-dismiss="modal">
+          <img  src="../../img/png/salire.png" width="25" height="30">
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <script type="text/javascript">
   $(document).ready(function () {
+
     $("#CMedidor").focus();
+
     $("#Lectura").on('blur',function () {
-      if(parseFloat($("#Lectura").val())<parseFloat($("#UltimaLectura").text())){
-        $("#Lectura").select();
-        $(".errorLectura").text("La lectura actual no puede ser inferior a la anterior")
-      }else{
-        $(".errorLectura").text("") 
-        if(parseFloat($("#Lectura").val())-parseFloat($("#UltimaLectura").text())>15){
+      if($("#Lectura").val()!=""){
+        let LIMITE_MEDIDOR = "<?php echo LIMITE_MEDIDOR ?>";
+        let $Lectura = parseFloat($("#Lectura").val());
+        let $LecturaAnterior = parseFloat($("#UltimaLectura").text());
+        if($Lectura<$LecturaAnterior){//si la lectura actual es menor que la anterior, se asume que el contador llego a 10000 y se reinicio
+          $anterior = LIMITE_MEDIDOR-$LecturaAnterior;
+          $consumoActual = $anterior+$Lectura;
+
+        }else{
+          $consumoActual = $Lectura-$LecturaAnterior; 
+        }
+        $("#ConsumoActual").html(`Consumo Actual: ${$consumoActual} m<sup>3</sup>`);
+        if($consumoActual>15){
           $('input[name="optionrango"][value="mas15"]').prop('checked', true);
         }else{
           $('input[name="optionrango"][value="menos15"]').prop('checked', true);
         }
       }
     })
+
+    //Obtener datos del medidor
     $("#CMedidor").on("blur", function(){
       let medidor = $("#CMedidor").val();
       if(medidor!=""){
@@ -177,17 +238,36 @@
               $("#UltimaLectura").text(response.data.ultimaMedida);
               $("#Lectura").focus();
               $(".labelUltimaLectura").removeClass('no-visible')
+              $("#ConsumoActual").text("");
             }else{
               Swal.fire('¡Oops!', response.mensaje, 'warning')
+              $("#ConsumoActual").text("");
             }        
           },
           error: function () {
             $('#myModal_espera').modal('hide');
+            $("#ConsumoActual").text("");
             alert("Ocurrio un error inesperado, por favor contacte a soporte.");
           }
         });
       }
     })
+
+    //Cuando se cambia el cliente
+    $('#cliente').on('select2:select', function (e) {
+      var data = e.params.data.data;
+      ListarMedidores(data.codigo)
+    });
+
+    $('#SelectMedidor').on('change', function (e) {
+      let medidor = $('#SelectMedidor').val();
+      medidor = (medidor=='' || medidor=='.')?'':medidor
+      $("#CMedidor").val(medidor);
+      if(medidor!=''){$("#myModalBuscarMedidorCliente").modal('hide');}
+      $("#CMedidor").blur();
+    })
+
+    autocomplete_cliente()
   });
   
   function OpenModalIngresoConsumoAgua(){
@@ -229,7 +309,58 @@
           }
         });
     }else{
-      Swal.fire('¡Oops!', "No ha seleccionado ningun producto.", 'info')
+      Swal.fire('¡Oops!', "No ha seleccionado ningun medidor.", 'info')
     }
+  }
+
+  function autocomplete_cliente(){
+    $('#cliente').select2({
+      placeholder: 'Seleccione un cliente',
+      ajax: {
+        url:   '../controlador/facturacion/facturar_pensionC.php?clienteBasic=true',
+        dataType: 'json',
+        delay: 250,
+        processResults: function (data) {
+          return {
+            results: data
+          };
+        },
+        cache: true
+      }
+    });
+  }
+
+  function ListarMedidores(codigo)
+  {
+    if(codigo!="" && codigo!="."){
+      $.ajax({
+        url:   '../controlador/modalesC.php?ListarMedidores=true',      
+        type:'POST',
+        dataType:'json',
+        data:{'codigo':codigo},
+        success: function(response){
+          // construye las opciones del select dinámicamente
+          var select = $('#SelectMedidor');
+          select.empty(); // limpia las opciones existentes
+          $.each(response, function (i, opcion) {
+
+            if(i==0){
+              select.append($('<option>', {
+                value: '.',
+                text: (opcion.Cuenta_No!=".")?'Selecciona un Medidor':'NINGUNO'
+              }));
+            }
+
+            if(opcion.Cuenta_No!="."){
+              select.append($('<option>', {
+                value: opcion.Cuenta_No,
+                text: opcion.Cuenta_No
+              }));
+            }
+          });
+        }
+      });
+    }
+
   }
 </script>

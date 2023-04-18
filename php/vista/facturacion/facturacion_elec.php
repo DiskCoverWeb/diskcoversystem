@@ -989,7 +989,8 @@ function catalogoLineas() {
         url: '../controlador/facturacion/facturar_pensionC.php?catalogo=true',
         data: {
             'fechaVencimiento': fechaVencimiento,
-            'fechaEmision': fechaEmision
+            'fechaEmision': fechaEmision,
+            'tipo':'FA',
         },
         dataType: 'json',
         success: function(data) {

@@ -43,6 +43,13 @@ if(isset($_GET['recuperar']))
 	$parametro = $_POST['parametros'];
 	echo json_encode($login->recuperar_clave($parametro));
 }
+if(isset($_GET['setear_empresa']))
+{
+	$parametro = $_POST['parametros'];
+	$_SESSION['INGRESO']['CARTERA_ITEM'] = $parametro['item_cartera'];
+
+	// print_r($parametro);die();
+}
 if(isset($_GET['logout']))
 {
 	echo json_encode($login->logout());
@@ -94,45 +101,41 @@ class login_controller
 
 	function validar_entidad_cartera($entidad)
 	{
+		if(is_numeric($entidad) && strlen($entidad)==10 || is_numeric($entidad) && strlen($entidad)==13)
+		{
 		
-		$datos = $this->modelo->empresa_cartera($entidad);
+			$datos = $this->modelo->empresa_cartera($entidad);
 			// print_r($datos);die();
+			$datos1 = array();
 			if(count($datos)>0)
 			{
-				
-				$datos1['respuesta'] = 1;
-				$datos1['entidad'] = $datos[0]['ID_Empresa'];
-				$datos1['Nombre'] = $datos[0]['Empresa'];
-				$datos1['Razon_Social'] = $datos[0]['Razon_Social'];
-				$datos1['Item'] = $datos[0]['Item'];
+				foreach ($datos as $key => $value) {
 
-				 $url = '../../img/jpg/logo.jpg'; 
-	            $tipo_img = array('jpg','gif','png','jpeg');
-	              foreach ($tipo_img as $key => $value) {
-	                if(file_exists( dirname(__DIR__,2). '/img/logotipos/'.$datos[0]['Logo_Tipo'].'.'.$value))
-	                {                   
-	                  $url='../../img/logotipos/'.$datos[0]['Logo_Tipo'].'.'.$value;
-	                  break;
-	                }
-	              }
-		 
-				$datos1['Logo'] = $url;
-				$_SESSION['INGRESO']['CARTERA_ITEM'] = $datos[0]['Item'];
-			}else
-			{
-				//retorna -1 cuando no se encuentra la empresa 			
-				$datos1['respuesta'] = -1;
-				$datos1['entidad'] = '';
-				$datos1['Nombre'] = '';
+					 $url = '../../img/jpg/logo.jpg'; 
+		            $tipo_img = array('jpg','gif','png','jpeg');
+		              foreach ($tipo_img as $key2 => $value2) {
+		                if(file_exists( dirname(__DIR__,2). '/img/logotipos/'.$value['Logo_Tipo'].'.'.$value2))
+		                {                   
+		                  $url='../../img/logotipos/'.$value['Logo_Tipo'].'.'.$value2;
+		                  break;
+		                }
+		              }
+					$datos1[] = array('entidad'=>$value['ID_Empresa'],'Nombre'=>$value['Empresa'],'Razon_Social'=>$value['Razon_Social'],'Item'=>$value['Item'],'Logo'=>$url);					
+						
+				}
 			}
 			
-		return $datos1;
+			return $datos1;
+		}else
+		{
+			return -2; 
+		}
 		// print_r($datos);die();
 	}
 
 	function validar_usuario($parametro)
 	{
-		$datos = $this->modelo->ValidarUser1($parametro['usuario'],$parametro['entidad']);
+		$datos = $this->modelo->ValidarUser1($parametro['usuario'],$parametro['entidad'],$parametro['item']);
 		$datos['cartera_usu'] = 'Cartera';
 		$datos['cartera_pass'] = '999999';
 		return $datos;
@@ -148,7 +151,7 @@ class login_controller
 		
 		if($parametro['cartera']==1)
 		{
-			$datos = $this->modelo->Ingresar($parametro['cartera_usu'],$parametro['cartera_pass'],$parametro['entidad']);
+			$datos = $this->modelo->Ingresar($parametro['cartera_usu'],$parametro['cartera_pass'],$parametro['entidad'],$parametro['item']);
 			// validar cliente en cartera
 			$empresa = $this->modelo->empresa_cartera($parametro['empresa'],$parametro['entidad']);
 			// print_r($empresa);die();
@@ -166,7 +169,7 @@ class login_controller
 			// print_r($empresa);print_r($cliente);die();
 		}else
 		{
-			$datos = $this->modelo->Ingresar($parametro['usuario'],$parametro['pass'],$parametro['entidad']);
+			$datos = $this->modelo->Ingresar($parametro['usuario'],$parametro['pass'],$parametro['entidad'],$parametro['item']);
 		}
 
 
