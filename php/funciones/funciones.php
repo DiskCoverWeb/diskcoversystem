@@ -12643,7 +12643,7 @@ function GrabarComprobante($C1)
   SetAdoFields("TP", $C1["TP"]);
   SetAdoFields("Numero", $C1["Numero"]);
   SetAdoFields("Codigo_B", $C1["CodigoB"]);
-  SetAdoFields("Monto_Total", number_format(floatval($C1["Monto_Total"]), 2));
+  SetAdoFields("Monto_Total", number_format(floatval($C1["Monto_Total"]), 2,'.',''));
   SetAdoFields("Concepto", $C1["Concepto"]);
   SetAdoFields("Efectivo", $C1["Efectivo"]);
   SetAdoFields("Cotizacion", $C1["Cotizacion"]);
@@ -12665,9 +12665,9 @@ function GrabarComprobante($C1)
     {  
       $Moneda_US =$value["ME"];
       $Cta = trim($value["CODIGO"]);
-      $Debe = number_format($value["DEBE"], 2);
-      $Haber = number_format($value["HABER"], 2);
-      $Parcial = number_format($value["PARCIAL_ME"], 2);
+      $Debe = number_format($value["DEBE"], 2,'.','');
+      $Haber = number_format($value["HABER"], 2,'.','');
+      $Parcial = number_format($value["PARCIAL_ME"], 2,'.','');
       $NoCheque =$value["CHEQ_DEP"];
       $CodigoCC =$value["CODIGO_CC"];
       $Fecha_Vence =$value["EFECTIVIZAR"];
