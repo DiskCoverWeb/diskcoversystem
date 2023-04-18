@@ -3299,7 +3299,7 @@ function recuperar_xml_a_factura($documento,$autorizacion,$entidad,$empresa)
 
 function Actualizar_factura($CI_RUC,$FacturaNo,$serie)
 {
-	$digito = Codigo_RUC_CI($CI_RUC);
+	$digito = Digito_verificador($CI_RUC);
 	$cli = $this->datos_cliente_todo(false,$CI_RUC);
 
 	// print_r($digito);die();
