@@ -22,8 +22,9 @@ class FCierre_CajaM
 		$SQL2 = "SELECT *
 	        FROM Asiento
 	        WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+       		AND T_No = " . $Trans_No . " 
+       		AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'
 	        ";
-
        return $this->db->datos($SQL2);
 	}
 

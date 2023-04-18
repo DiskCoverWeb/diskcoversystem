@@ -21,6 +21,10 @@ switch ($_SESSION['INGRESO']['modulo_']) {
 .table-responsive {
   box-shadow: 5px 5px 6px rgba(0, 0, 0, 0.6);
 }
+#swal2-content{
+    font-size: 13px;
+    font-weight: 500;
+}
 </style>
 <div class="row">
   <div class="col-sm-5 col-xs-12">
@@ -36,7 +40,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
     </div>
     <?php if ($GrabarEnabled): ?>
       <div class="col">
-        <a  href="javascript:void(0)" id="Grabar" title="Grabar Diario de Caja" class="btn btn-default"  onclick="">
+        <a  href="javascript:void(0)" id="Grabar" title="Grabar Diario de Caja" class="btn btn-default"  onclick="Grabar_Cierre_DiarioV()">
           <img src="../../img/png/grabar.png" width="25" height="30">
         </a>
       </div>
@@ -216,13 +220,11 @@ switch ($_SESSION['INGRESO']['modulo_']) {
             </div>
             <div class="tab-pane modal-body" id="inventario">
               <div class="col-md-2">
+                <label class="text-center">Dias Cierres</label>
                 <div class="table-responsive DGCierres-container" style="overflow-y: scroll; min-height: 50px; width: auto;">
                   <div class="sombra" style>
                     <table id="DGCierres" class="table-sm tablaHeight" style="width: -webkit-fill-available;">
                       <thead>
-                        <tr>
-                          <th>Dias Cierres</th>
-                        </tr>
                         <tr>
                           <th>Fecha</th>
                         </tr>
@@ -288,7 +290,9 @@ switch ($_SESSION['INGRESO']['modulo_']) {
               </div>
 
               <div class="text-right" style="margin-bottom: 15px;">
+                <label for="LblDiferencia">Diferencia</label>
                 <input id="LblDiferencia"></input>
+                <label>TOTALES</label>
                 <input id="LabelDebe"></input>
                 <input id="LabelHaber"></input>
               </div>
@@ -310,7 +314,9 @@ switch ($_SESSION['INGRESO']['modulo_']) {
               </div>
 
               <div class="text-right">
+                <label for="LblDiferencia">Diferencia</label>
                 <input id="LblDiferencia1"></input>
+                <label>TOTALES</label>
                 <input id="LabelDebe1"></input>
                 <input id="LabelHaber1"></input>
               </div>
@@ -467,6 +473,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
 
     // crea las filas con los datos
     var tbody = $("#" + tablaId + " tbody");
+    tbody.empty();
     for (var i = 0; i < datos.length; i++) {
         var fila = $("<tr>");
         for (var j = 0; j < numColumnas; j++) {
@@ -543,8 +550,8 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                           data: {
                             'MBFechaI' : $("#MBFechaI").val() ,
                             'MBFechaF' : $("#MBFechaF").val(),
-                            'CheqCajero' : $("#CheqCajero").val() ,
-                            'CheqOrdDep' : $("#CheqOrdDep").val(),
+                            'CheqCajero' : ($('#CheqCajero').prop('checked'))?1:0,
+                            'CheqOrdDep' : ($('#CheqOrdDep').prop('checked'))?1:0,
                             'DCBenef' : $("#DCBenef").val()  },
                           success: function(datos6)             
                           {
@@ -584,7 +591,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
 
                                       $("#Bar_espera_progress").css('width','99%')
                                       $("#Bar_espera_progress .txt_progress").text('Finalizando Proceso')
-                                      if (redondear(datos6.LabelDebe - datos6.LabelHaber, 2) !== 0) {
+                                      if (redondear(datos6.LabelDebe1 - datos6.LabelHaber1, 2) !== 0) {
                                         $('#myModal_espera_progress').modal('hide');
                                         Swal.fire({
                                           type: 'warning',
@@ -708,5 +715,55 @@ switch ($_SESSION['INGRESO']['modulo_']) {
     $(".DGFactAnul-container").height(alturaDisponible);
     $(".DGBanco-container").height(alturaDisponible - 40);
 
+  }
+
+  function Grabar_Cierre_DiarioV() {
+
+    Swal.fire({
+          title: 'Esta seguro?',
+          text: "¿Está seguro de grabar el Cierre de Caja?",
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Si!'
+        }).then((result) => {
+          if (result.value==true) {
+            $('#myModal_espera').modal('show');
+            $.ajax({
+              type: "POST",                 
+              url: '../controlador/contabilidad/FCierre_CajaC.php?Grabar_Cierre_Diario=true',
+              dataType:'json', 
+              data: {'MBFechaI' : $("#MBFechaI").val() ,
+                    'MBFechaF' : $("#MBFechaF").val(),
+                    'CheqCajero' : ($('#CheqCajero').prop('checked'))?1:0,
+                    'CheqOrdDep' : ($('#CheqOrdDep').prop('checked'))?1:0,
+                    'DCBenef' : $("#DCBenef").val() },
+              success: function(datos)             
+              {
+                if(datos.error){
+                  $('#myModal_espera').modal('hide');
+                  Swal.fire({
+                    type: 'warning',
+                    title: datos.mensaje,
+                    text: ''
+                  });
+                }
+                else{
+                  Swal.fire({
+                    type: 'success',
+                    title: 'Cierre del día '+((datos.dataCierre.MBFechaI)?datos.dataCierre.MBFechaI:"")+((datos.dataCierre.Factura)?"("+Factura+")":""),
+                  });
+                }
+
+                $('#myModal_espera').modal('hide');
+              },
+              error: function (e) {
+                $('#myModal_espera').modal('hide');
+                alert("error inesperado en Grabar_Cierre_Diario")
+              }
+            });
+          }
+        })
   }
 </script> 

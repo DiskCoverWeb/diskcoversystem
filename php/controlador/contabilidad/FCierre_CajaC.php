@@ -40,6 +40,10 @@ if(isset($_GET['VerificandoErrores']))
 if(isset($_GET['FechasdeCierre']))
 {
    echo json_encode($controlador->FechasdeCierre($_POST));
+}else
+if(isset($_GET['Grabar_Cierre_Diario']))
+{
+   echo json_encode($controlador->Grabar_Cierre_Diario($_POST));
 }
 
 class FCierre_CajaC
@@ -59,18 +63,21 @@ class FCierre_CajaC
 
         $AdoAsiento1 = $this->CierreCajaM->IniciarAsientosDe($Trans_No = 97); // CxC
         $AdoAsiento = $this->CierreCajaM->IniciarAsientosDe($Trans_No = 96); // Abonos
-        //TODO LS definir donde se usa AdoAsiento1 AdoAsiento en vista o solo en back
-        $Co = new stdClass();
-        $Co->TP = G_COMPDIARIO;
-        $Co->Numero = 0;
-        $Co->RUC_CI = G_NINGUNO;
-        $Co->CodigoB = G_NINGUNO;
-        $Co->Cotizacion = 0;
-        $Co->Beneficiario = G_NINGUNO;
-        $Co->Concepto = "";
-        $Co->Efectivo = 0;
-        $Co->Total_Banco = 0;
-        $Co->Item = $_SESSION['INGRESO']['item'];
+        $_SESSION['FCierre_Caja']['AdoAsiento1'] = $AdoAsiento1 ;
+        $_SESSION['FCierre_Caja']['AdoAsiento'] = $AdoAsiento ;
+        
+        $_SESSION['FCierre_Caja']['Co'] = datos_Co();
+        $_SESSION['FCierre_Caja']['Co']['TP'] = G_COMPDIARIO;
+        $_SESSION['FCierre_Caja']['Co']['Numero'] = 0;
+        $_SESSION['FCierre_Caja']['Co']['RUC_CI'] = G_NINGUNO;
+        $_SESSION['FCierre_Caja']['Co']['CodigoB'] = G_NINGUNO;
+        $_SESSION['FCierre_Caja']['Co']['Cotizacion'] = 0;
+        $_SESSION['FCierre_Caja']['Co']['Beneficiario'] = G_NINGUNO;
+        $_SESSION['FCierre_Caja']['Co']['Concepto'] = "";
+        $_SESSION['FCierre_Caja']['Co']['Efectivo'] = 0;
+        $_SESSION['FCierre_Caja']['Co']['Total_Banco'] = 0;
+        $_SESSION['FCierre_Caja']['Co']['Item'] = $_SESSION['INGRESO']['item'];
+
         //TODO LS este co creo que no va aqui
 
         $ModificarComp = false; //TODO LS definir si declarar
@@ -88,7 +95,7 @@ class FCierre_CajaC
 
         $sSQL = "SELECT CONCAT(Nombre_Completo, ' - ', Codigo) As Cajero " .
             "FROM Accesos " .
-            "WHERE Ok <> 0 " . //TODO LS pendiente validar si si es 0
+            "WHERE Ok <> 0 " .
             "ORDER BY Nombre_Completo ";
         $AdoClientes = $this->CierreCajaM->SelectDB($sSQL); //TODO definir si se usara o no
 
@@ -117,6 +124,8 @@ class FCierre_CajaC
         //---------------------------------------------------------------------------------------
         $AdoAsiento1 = $this->CierreCajaM->IniciarAsientosDe($Trans_No = 97); // CxC
         $AdoAsiento = $this->CierreCajaM->IniciarAsientosDe($Trans_No = 96); // Abonos
+        $_SESSION['FCierre_Caja']['AdoAsiento1'] = $AdoAsiento1 ;
+        $_SESSION['FCierre_Caja']['AdoAsiento'] = $AdoAsiento ;
 
         return compact('AdoAsiento1','AdoAsiento');
     }
@@ -173,6 +182,9 @@ class FCierre_CajaC
                 "ORDER BY A_No ";
         $AdoAsiento1 = $this->CierreCajaM->SelectDB($SQL2);
 
+        $_SESSION['FCierre_Caja']['AdoAsiento1'] = $AdoAsiento1 ;
+        $_SESSION['FCierre_Caja']['AdoAsiento'] = $AdoAsiento ;
+
         return compact('AdoAsiento','AdoAsiento1');
 
     }
@@ -201,8 +213,7 @@ class FCierre_CajaC
                 "AND Fecha BETWEEN '" . $FechaIni . "' and '" . $FechaFin . "' " .
                 "GROUP BY Fecha " .
                 "ORDER BY Fecha ";
-                $AdoCierres = $this->CierreCajaM->SelectDB($sSQL); //TODO LS asignar DGCierres
-                //$DGCierres->Caption = "Dias Cierres";
+                $AdoCierres = $this->CierreCajaM->SelectDB($sSQL);
 
                 // Resumen de abonos anticipados de Clientes
         $sSQL = "SELECT CC.Cuenta, C.Cliente, TS.Fecha, TS.TP, TS.Numero, TS.Creditos, T.Cta AS Contra_Cta, TS.Cta " .
@@ -259,13 +270,17 @@ class FCierre_CajaC
         $FechaValida = FechaValida($MBFechaI);
         if($FechaValida["ErrorFecha"]){
             return ['error' => true, "mensaje" =>$FechaValida["MsgBox"]];
+        }else{
+            $MBFechaI = $FechaValida['NomBox'];
         }
         $FechaValida = FechaValida($MBFechaF);
         if($FechaValida["ErrorFecha"]){
             return ['error' => true, "mensaje" =>$FechaValida["MsgBox"]];
+        }else{
+           $MBFechaF = $FechaValida['NomBox'];
         }
 
-        $ErrorInventario = "";
+        $_SESSION['FCierre_Caja']['ErrorInventario'] = "";
         $Total_Vaucher = 0;
         $Total_Propinas = 0;
         $VentasDia = false;
@@ -298,7 +313,6 @@ class FCierre_CajaC
         }
 
         $AdoCxC = $this->CierreCajaM->SelectDB($sSQL);
-        //$AdoCxC = $DGCxC//TODO LS definir uso
 
         // Listado de las CxC Clientes
         $sSQL = "SELECT F.TC,F.Fecha,C.Cliente,F.Serie,F.Autorizacion,F.Factura,F.IVA As Total_IVA,F.Descuento," .
@@ -319,7 +333,7 @@ class FCierre_CajaC
 
         $sSQL .= "ORDER BY F.TC,F.Fecha,F.Cta_CxP,F.Factura,C.Cliente ";
 
-        $AdoVentas = $this->CierreCajaM->SelectDB($sSQL); //TODO LS asignaar tambien en $DGVentas
+        $AdoVentas = $this->CierreCajaM->SelectDB($sSQL);
 
         $Combos = G_NINGUNO; //TODO LS donde USO
         $FechaFinal = BuscarFecha("31/12/" .date('Y', strtotime($MBFechaF)));
@@ -644,9 +658,9 @@ class FCierre_CajaC
             }
         }
 
-        if (!empty($ErrorInventario)) {//TODO LS donde se define este valor $ErrorInventario
+        if (!empty($_SESSION['FCierre_Caja']['ErrorInventario'])) {//TODO LS donde se cambia este  $ErrorInventario
             $TextoImprimio .= "Warning: Falta de Ingresar Entrada Inicial de los siguientes producto(s):" . PHP_EOL;
-            $TextoImprimio .= $ErrorInventario . PHP_EOL;
+            $TextoImprimio .= $_SESSION['FCierre_Caja']['ErrorInventario'] . PHP_EOL;
         }
 
         // Totalizamos los dos asientos para ver descuadres
@@ -661,6 +675,8 @@ class FCierre_CajaC
                . "AND CodigoU = '" . $CodigoUsuario . "' "
                . "ORDER BY CODIGO,DEBE DESC,HABER ";
         $DGAsiento  = $AdoAsiento= $this->CierreCajaM->SelectDB($SQL2);
+        $_SESSION['FCierre_Caja']['AdoAsiento'] = $AdoAsiento ;
+
         if (count($DGAsiento) > 0) {
             foreach ($DGAsiento as $key => $fields) {
                 $Debe = $Debe + $fields["DEBE"];
@@ -683,6 +699,8 @@ class FCierre_CajaC
                  AND CodigoU = '" . $CodigoUsuario . "' 
                  ORDER BY CODIGO,DEBE DESC,HABER ";
         $AdoAsiento1  = $this->CierreCajaM->SelectDB($SQL2);
+        $_SESSION['FCierre_Caja']['AdoAsiento1'] = $AdoAsiento1 ;
+
         if (count($AdoAsiento1) > 0) {
             foreach ($AdoAsiento1 as $key => $fields) {
                 $Debe = $Debe + $fields["DEBE"];
@@ -741,7 +759,7 @@ class FCierre_CajaC
             $sSQL .= "AND F.CodigoU = '" . SinEspaciosDer($DCBenef) . "' ";
         }
         $sSQL .= "ORDER BY F.Factura,F.TC,F.Fecha,F.Cta_CxP,C.Cliente ";
-        $AdoSRI  = $this->CierreCajaM->SelectDB($sSQL); //TODO LS asignar tambien a DGSRI
+        $AdoSRI  = $this->CierreCajaM->SelectDB($sSQL);
 
         $Total_Con_IVA = 0;
         $Total_Sin_IVA = 0;
@@ -789,7 +807,7 @@ class FCierre_CajaC
                 "AND T <> '" . G_ANULADO . "' " .
                 "ORDER BY Codigo, Producto ";
 
-        $AdoProductos = $this->CierreCajaM->SelectDB($sSQL); ////TODO LS asignar a DGProductos
+        $AdoProductos = $this->CierreCajaM->SelectDB($sSQL);
 
         $sSQL = "SELECT TK.TC As Doc, TK.Codigo_Inv, CP.Producto, 0 As Entradas, SUM(TK.Salida) As Salidas, AVG(TK.Costo) As Costos, " .
         "(SUM(TK.Salida) * AVG(TK.Costo)) As Totales, TK.Cta_Inv, TK.Contra_Cta, TK.CodBodega, CP.Unidad, COUNT(TK.TC) As Cant_Doc " .
@@ -829,7 +847,7 @@ class FCierre_CajaC
                "GROUP BY TK.Codigo_Inv, CP.Producto, TK.Cta_Inv, TK.Contra_Cta, TK.CodBodega, CP.Unidad " .
                "ORDER BY Doc, TK.Codigo_Inv, CP.Producto, TK.Cta_Inv, TK.Contra_Cta, TK.CodBodega, CP.Unidad ";
         //$SQLDec = "Costos " . strval($Dec_Costo) . "|."; //TODO LS no se que signifca este fragmentp
-        $AdoInv = $this->CierreCajaM->SelectDB($sSQL); //TODO LS asignar tbm a DGInv
+        $AdoInv = $this->CierreCajaM->SelectDB($sSQL);
 
         //podria retornarse pero parce no ser necesario
         /*
@@ -838,4 +856,243 @@ class FCierre_CajaC
         return compact('error','AdoCxC','AdoVentas', 'AdoAsiento','AdoAsiento1','AdoFactAnul','AdoProductos','AdoInv','TextoImprimio','LabelDebe', 'LabelHaber', 'LblDiferencia','LabelDebe1','LabelHaber1','LblDiferencia1','LblConcepto','LblConcepto1','DGSRI', 'AdoSRI', 'LblConIVA', 'LblSinIVA', 'LblDescuento', 'LblIVA', 'LblServicio', 'LblTotalFacturado','LabelCheque', 'LabelAbonos' ) ;
     }
 
+    function Grabar_Cierre_Diario($parametros)
+    {
+        extract($parametros);
+        $ModificarComp = false; //TODO LS definir si declarar
+        $CopiarComp = false; //TODO LS definir si declarar
+        $NuevoComp = true; //TODO LS definir si declarar
+        $error = false;
+
+        $NumEmpresa = $_SESSION['INGRESO']['item'];
+        $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
+        $CodigoUsuario = $_SESSION['INGRESO']['CodigoU'];
+
+        $FechaSistema = date('Y-m-d');
+        $FechaValida = FechaValida($MBFechaI);
+        $dataCierre = [];
+        if($FechaValida["ErrorFecha"]){
+            return ['error' => true, "mensaje" =>$FechaValida["MsgBox"]];
+        }else{
+            $MBFechaI = $FechaValida['NomBox'];
+        }
+
+        $FechaValida = FechaValida($MBFechaF);
+        if($FechaValida["ErrorFecha"]){
+            return ['error' => true, "mensaje" =>$FechaValida["MsgBox"]];
+        }else{
+            $MBFechaF = $FechaValida['NomBox'];
+        }
+
+        $FechaTexto = $MBFechaF;
+        $FechaComp = $FechaTexto;
+        $Nombre_Cajero = null;
+
+        if ($CheqCajero == 1) {//TODO LS $DCBenef debe ser id o nombre???
+            $Nombre_Cajero = substr($DCBenef, 0, strlen($DCBenef) - strlen(SinEspaciosDer($DCBenef)) - 1);
+        }
+
+        //TODO LS validar uso de variable $Cadena
+        if ($MBFechaI == $MBFechaF) {
+            $Cadena = "Cierre de Caja del " . $MBFechaI;
+        } else {
+            $Cadena = "Cierre de Caja del " . $MBFechaI . " al " . $MBFechaF;
+        }
+
+        $AdoAsiento1 = $_SESSION['FCierre_Caja']['AdoAsiento1'];
+        $AdoAsiento = $_SESSION['FCierre_Caja']['AdoAsiento'];
+
+        // Verificamos partida doble de los dos asientos
+        $Debe = 0;
+        $Haber = 0;
+
+        if (count($AdoAsiento) > 0) {
+          foreach ($AdoAsiento as $key => $fields) {
+            $Debe += $fields["DEBE"];
+            $Haber += $fields["HABER"];
+          }
+        }
+
+        if (count($AdoAsiento1) > 0) {
+          foreach ($AdoAsiento1 as $key => $fields) {
+            $Debe += $fields["DEBE"];
+            $Haber += $fields["HABER"];
+          }
+        }
+
+        $LabelDebe = number_format($Debe, 2, '.', ',');
+        $LabelHaber = number_format($Haber, 2, '.', ',');
+        $LblDiferencia = number_format($Debe - $Haber, 2, '.', ',');
+
+        if ($_SESSION['FCierre_Caja']['NuevoDiario'] && round($Debe - $Haber, 2) == 0) {
+            $FechaTexto = $MBFechaF;
+            $FechaComp = $FechaTexto;
+            $NumComp = ReadSetDataNum("Diario", true, false);
+
+            $DiarioCaja = $NumComp;
+            $FechaIni = BuscarFecha($MBFechaI);
+            $FechaFin = BuscarFecha($MBFechaF);
+            if ($FormaCierre) {//TODO LS definir variables de impresion
+                Imprimir_Diario_Caja($AdoVentas, $AdoCxC, $AdoInv, $AdoProductos, $AdoAnticipos, $MBFechaI, $MBFechaF);
+            } else {
+                Imprimir_Diario_Caja_Resumen($AdoVentas, $AdoCxC, $AdoInv, $AdoProductos, $AdoAnticipos, $MBFechaI, $MBFechaF);
+            }
+            // Grabacion del Comprobante de CxC
+            if (count($AdoAsiento1) > 0) {
+                $Trans_No = 97;
+                $NumComp = ReadSetDataNum("Diario", true, true);
+                $_SESSION['FCierre_Caja']['Co']['T'] = G_NORMAL;
+                $_SESSION['FCierre_Caja']['Co']['TP'] = G_COMPDIARIO;
+                $_SESSION['FCierre_Caja']['Co']['Fecha'] = $FechaTexto;
+                $_SESSION['FCierre_Caja']['Co']['Numero'] = $NumComp;
+                if ($MBFechaI == $MBFechaF) {
+                    $_SESSION['FCierre_Caja']['Co']['Concepto'] = "Cierre de Caja de Cuentas por Cobrar del " . $MBFechaI . ", Diario No. " . $NumComp;
+                } else {
+                    $_SESSION['FCierre_Caja']['Co']['Concepto'] = "Cierre de Caja de Cuentas por Cobrar del " . $MBFechaI . " al " . $MBFechaF . ", Diario No. " . $NumComp;
+                }
+                $_SESSION['FCierre_Caja']['Co']['CodigoB'] = G_NINGUNO;
+                $_SESSION['FCierre_Caja']['Co']['Beneficiario'] = G_NINGUNO;
+                $_SESSION['FCierre_Caja']['Co']['Efectivo'] = 0;
+                $_SESSION['FCierre_Caja']['Co']['Monto_Total'] = $Debe;
+                $_SESSION['FCierre_Caja']['Co']['T_No'] = $Trans_No;
+                $_SESSION['FCierre_Caja']['Co']['Usuario'] = $CodigoUsuario;
+                $_SESSION['FCierre_Caja']['Co']['Item'] = $NumEmpresa;
+
+                GrabarComprobante($_SESSION['FCierre_Caja']['Co']); //TODO LS validar que la funcion no le falta parametros
+                
+                $sSQL = "UPDATE Trans_Kardex "
+                      . "SET TP = '" . $_SESSION['FCierre_Caja']['Co']['TP'] . "', Numero = " . $_SESSION['FCierre_Caja']['Co']['Numero'] . " "
+                      . "WHERE Item = '" . $NumEmpresa . "' "
+                      . "AND Periodo = '" . $Periodo_Contable . "' "
+                      . "AND LEN(TC) = 2 "
+                      . "AND LEN(Serie) = 6 "
+                      . "AND Factura <> 0 "
+                      . "AND Salida <> 0 "
+                      . "AND Fecha BETWEEN '" . $FechaIni . "' and '" . $FechaFin . "' "
+                      . "AND SUBSTRING(Detalle,1,3) ='FA:' ";
+                Ejecutar_SQL_SP($sSQL);
+                Control_Procesos(G_NORMAL, $_SESSION['FCierre_Caja']['Co']['Concepto']);
+                ImprimirComprobantesDe(false, $Co); //TODO LS definir funcion
+                $AdoAsiento1 = $this->CierreCajaM->IniciarAsientosDe($Trans_No); //TODO LS para que se le pasa $DGAsiento1, $AdoAsiento1
+                $_SESSION['FCierre_Caja']['AdoAsiento1'] = $AdoAsiento1 ;
+            }
+
+            //Grabacion del Comprobante de Abonos
+            if (count($AdoAsiento) > 0) {
+              $Trans_No = 96;
+              $NumComp = ReadSetDataNum("Diario", true, true);
+              $_SESSION['FCierre_Caja']['Co']['T'] = G_NORMAL;
+              $_SESSION['FCierre_Caja']['Co']['TP'] = G_COMPDIARIO;
+              $_SESSION['FCierre_Caja']['Co']['Fecha'] = $FechaTexto;
+              $_SESSION['FCierre_Caja']['Co']['Numero'] = $NumComp;
+              
+              if ($MBFechaI == $MBFechaF) {
+                $_SESSION['FCierre_Caja']['Co']['Concepto'] = "Cierre de Caja de Abonos del " . $MBFechaI . ", Diario No. " . $NumComp;
+              } else {
+                $_SESSION['FCierre_Caja']['Co']['Concepto'] = "Cierre de Caja de Abonos del " . $MBFechaI . " al " . $MBFechaF . ", Diario No. " . $NumComp;
+              }
+              
+              $_SESSION['FCierre_Caja']['Co']['CodigoB'] = G_NINGUNO;
+              $_SESSION['FCierre_Caja']['Co']['Efectivo'] = 0;
+              $_SESSION['FCierre_Caja']['Co']['Monto_Total'] = $Debe;
+              $_SESSION['FCierre_Caja']['Co']['T_No'] = $Trans_No;
+              $_SESSION['FCierre_Caja']['Co']['Usuario'] = $CodigoUsuario;
+              $_SESSION['FCierre_Caja']['Co']['Item'] = $NumEmpresa;
+              
+              GrabarComprobante($Co);
+              
+              //Los Asientos de SubModulos
+              $sSQL = "UPDATE Trans_SubCtas " .
+                "SET TP = '" . $_SESSION['FCierre_Caja']['Co']['TP'] . "', Numero = " . $_SESSION['FCierre_Caja']['Co']['Numero'] . " " .
+                "WHERE Item = '" . $NumEmpresa . "' " .
+                "AND Periodo = '" . $Periodo_Contable . "' " .
+                "AND TP = '.' " .
+                "AND Numero = 0 " .
+                "AND Fecha BETWEEN '" . $FechaIni . "' and '" . $FechaFin . "' ";
+              
+              Ejecutar_SQL_SP($sSQL);
+              
+              //Abonos NC
+              $sSQL = "UPDATE Trans_Kardex " .
+                "SET TP = '" . $_SESSION['FCierre_Caja']['Co']['TP'] . "', Numero = " . $_SESSION['FCierre_Caja']['Co']['Numero'] . " " .
+                "WHERE Item = '" . $NumEmpresa . "' " .
+                "AND Periodo = '" . $Periodo_Contable . "' " .
+                "AND LEN(TC) = 2 " .
+                "AND LEN(Serie) = 6 " .
+                "AND Factura <> 0 " .
+                "AND Entrada <> 0 " .
+                "AND Fecha BETWEEN '" . $FechaIni . "' and '" . $FechaFin . "' " .
+                "AND SUBSTRING(Detalle,1,3) ='NC:' ";
+              
+              Ejecutar_SQL_SP($sSQL);
+              
+              $FechaFin = BuscarFecha($FechaSistema);
+              Productos_Cierre_Caja_SP($FechaIni, $FechaFin);
+              
+              Control_Procesos(G_NORMAL, $_SESSION['FCierre_Caja']['Co']['Concepto']);
+              ImprimirComprobantesDe(false, $Co);
+              
+              $AdoAsiento = $this->CierreCajaM->IniciarAsientosDe($Trans_No);
+            }
+
+            $LabelDebe = number_format(0, 2, ',', '.');
+            $LabelHaber = number_format(0, 2, ',', '.');
+    
+            $Mifecha = BuscarFecha($FechaSistema);
+            $sSQL = "UPDATE Trans_Abonos " .
+                    "SET C = " . intval(true) . " " .
+                    "WHERE Item = '" . $NumEmpresa . "' " .
+                    "AND Periodo = '" . $Periodo_Contable . "' " .
+                    "AND Fecha BETWEEN '" . $FechaIni . "' and '" . $FechaFin . "' ";
+            Ejecutar_SQL_SP($sSQL);
+
+            $sSQL = "UPDATE Facturas " .
+                    "SET C = " . intval(true) . " " .
+                    "WHERE Item = '" . $NumEmpresa . "' " .
+                    "AND Periodo = '" . $Periodo_Contable . "' " .
+                    "AND Fecha BETWEEN '" . $FechaIni . "' and '" . $FechaFin . "' ";
+            Ejecutar_SQL_SP($sSQL);
+            $dataCierre = $this->CierreDelDia();
+        } else {
+            return ['error' => true, "mensaje" =>"Ya está cerrado este día o no hay datos que procesar"];
+        }
+
+        return compact('error','AdoAsiento1','LabelDebe', 'LabelHaber', 'LblDiferencia','dataCierre' );
+    }
+
+    function CierreDelDia() {
+        $FechaSistema = date('Y-m-d');
+        $Factura = "";
+        $MBFechaI = "";
+        $MBFechaF = "";
+
+        $sSQL = "SELECT Fecha,Factura " .
+                 "FROM Trans_Abonos " .
+                 "WHERE C = 0 " .
+                 "AND Item = '" . $_SESSION['INGRESO']['item'] . "' " .
+                 "AND T <> 'A' " .
+                 "AND Fecha <= '" . BuscarFecha($FechaSistema) . "' " .
+                 "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' " .
+                 "GROUP BY Fecha,Factura " .
+                 "UNION " .
+                 "SELECT Fecha,Factura " .
+                 "FROM Facturas " .
+                 "WHERE C = 0 " .
+                 "AND Item = '" . $_SESSION['INGRESO']['item'] . "' " .
+                 "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' " .
+                 "AND TC NOT IN ('C','P') " .
+                 "AND T <> 'A' " .
+                 "AND Fecha <= '" . BuscarFecha($FechaSistema) . "' " .
+                 "GROUP BY Fecha,Factura " .
+                 "ORDER BY Fecha ";
+        $AdoAux = $this->CierreCajaM->SelectDB($sSQL);
+
+        if (count($AdoAux) > 0) {
+            $Factura = $AdoAux[0]["Factura"];
+            $MBFechaI = $AdoAux[0]["Fecha"];
+            $MBFechaF = $AdoAux[0]["Fecha"];
+        }
+
+        return compact('MBFechaI','MBFechaF','Factura');
+    }
 }
