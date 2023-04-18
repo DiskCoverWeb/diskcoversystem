@@ -398,15 +398,14 @@ class detalle_estudianteC
   }
 
   function nuevo_estudiante($parametros){
-  //	echo digito_verificadorf($parametros,1).'<br>';
-     $datos =  digito_verificadorf($parametros['codigo'],'',null,null,null,'si');
+     $datos =  Digito_verificador($parametros['codigo']);
 // print_r('expression');
      // print_r($datos);die();
-     if($datos['codigo']!=2)
+     if($datos['Codigo_RUC_CI']!=2)
      {
     // print_r($datos);
   	 $dato[0]['campo']='Codigo';
-     $dato[0]['dato']=$datos['codigo'];
+     $dato[0]['dato']=$datos['Codigo_RUC_CI'];
      $dato[1]['campo']='CI_RUC';
      $dato[1]['dato']=$parametros['codigo'];
      $dato[2]['campo']='FA';
@@ -418,7 +417,7 @@ class detalle_estudianteC
      $dato[5]['campo']='Item';
      $dato[5]['dato']=$_SESSION['INGRESO']['item'];
      $dato[6]['campo']='TD';
-     $dato[6]['dato']=$datos['tipo'];
+     $dato[6]['dato']=$datos['Tipo_Beneficiario'];
      if(empty($this->usu_clave_regi($parametros['codigo'],$parametros['clave'])))
      {
      if(insert_generico("Clientes",$dato) == null)

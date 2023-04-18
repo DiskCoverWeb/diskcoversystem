@@ -115,6 +115,7 @@ $mostrar_medidor = false;
 
   function codigo()
   {
+    $("#myModal_espera").modal('show');
   	 var ci = $('#ruc').val();
   	 if(ci!='')
   	 {
@@ -123,11 +124,16 @@ $mostrar_medidor = false;
       type:'post',
       dataType:'json',
       data:{ci:ci},
+     beforeSend: function () {
+          // $("#myModal_espera").modal('show');
+      },
       success: function(response){     	
       	console.log(response);
-      	$('#codigoc').val(response.Codigo);
-      	$('#TD').val(response.Tipo);
+      	$('#codigoc').val(response.Codigo_RUC_CI);
+      	$('#TD').val(response.Tipo_Beneficiario);
+        $("#myModal_espera").modal('hide');
         MostrarOcultarBtnAddMedidor()
+
       }
     });
    }else

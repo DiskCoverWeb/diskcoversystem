@@ -48,7 +48,7 @@ if(isset($_GET['paciente_existente']))
 if(isset($_GET['validar_ci']))
 {
 	$ci =$_POST['num'] ;
-	echo json_encode(digito_verificador_nuevo($ci));
+	echo json_encode(Digito_verificador($ci));
 }
 class pacienteC
 {
@@ -146,16 +146,16 @@ class pacienteC
 		if($parametros['tip']=='E')
 		{
 		
-		$codig = digito_verificador_nuevo($parametros['ruc']);
+		$codig = Digito_Verificador($parametros['ruc']);
 		// print_r($codig);die();
-		if($codig['Tipo']!='C')
+		if($codig['Tipo_Beneficiario']!='C')
 		{
 			return -2;
 		}
 		$datos[7]['campo'] = 'Codigo';
-		$datos[7]['dato']=$codig['Codigo'];
+		$datos[7]['dato']=$codig['Codigo_RUC_CI'];
 		$datos[8]['campo'] = 'TD';
-		$datos[8]['dato']=$codig['Tipo'];
+		$datos[8]['dato']=$codig['Tipo_Beneficiario'];
 
 			$campoWhere[0]['campo']='ID';
 			$campoWhere[0]['valor']=$parametros['id'];
@@ -164,18 +164,18 @@ class pacienteC
 		}else
 		{
 		
-		$codig = digito_verificador_nuevo($parametros['ruc']);
+		$codig = Digito_Verificador($parametros['ruc']);
 		// print_r($codig);die();
-		if($codig['Tipo']!='C')
+		if($codig['Tipo_Beneficiario']!='C')
 		{
 			return -2;
 		}
 		$datos[7]['campo'] = 'T';
 		$datos[7]['dato']='N';
 		$datos[8]['campo'] = 'Codigo';
-		$datos[8]['dato']=$codig['Codigo'];
+		$datos[8]['dato']=$codig['Codigo_RUC_CI'];
 		$datos[9]['campo'] = 'TD';
-		$datos[9]['dato']=$codig['Tipo'];
+		$datos[9]['dato']=$codig['Tipo_Beneficiario'];
 			return  $this->modelo->insertar_paciente($datos,false,$parametros['tip']);
 		}
 

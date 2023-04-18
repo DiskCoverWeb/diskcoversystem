@@ -39,21 +39,21 @@ if(isset($_GET['validarCI']))
     //print_r($_POST);die();
 	$ci =$_POST['ci'] ;
     //print_r($ci);die();
-	echo json_encode(digito_verificador_nuevo($ci));
+	echo json_encode(Digito_verificador($ci));
 }
 if(isset($_GET['validarRUC']))
 {
     //print_r($_POST);die();
 	$ci =$_POST['txtruc'] ;
     //print_r($ci);die();
-	echo json_encode(digito_verificador_nuevo($ci));
+	echo json_encode(Digito_verificador($ci));
 }
 if(isset($_GET['validarRUConta']))
 {
     //print_r($_POST);die();
 	$ci =$_POST['txtruconta'] ;
     //print_r($ci);die();
-	echo json_encode(digito_verificador_nuevo($ci));
+	echo json_encode(Digito_verificador($ci));
 }
 if(isset($_GET['subdireccion']))
 {

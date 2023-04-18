@@ -202,8 +202,8 @@ class autorizacion_sri
 				  	$cabecera['tipoIden']='07';
 			      }else
 			      {
-			      	$cod_veri = $this->digito_verificadorf($datos_fac[0]['RUC_CI'],1);
-			      	switch ($cod_veri) {
+			      	$cod_veri = Digito_verificador($datos_fac[0]['RUC_CI'],1);
+			      	switch ($cod_veri['Tipo_Beneficiario']) {
 			      		case 'R':
 			      			$cabecera['tipoIden']='04';
 			      			break;
@@ -1083,9 +1083,9 @@ class autorizacion_sri
 	    $xml_razonsocialtrans = $xml->createElement('razonSocialTransportista',$cabecera['Comercial']);
 	    $xml_infoCompGuia->appendChild($xml_razonsocialtrans);
 
-	    $DigVerif =  codigo_verificador($cabecera["CIRUCComercial"]);
+	    $DigVerif =  Digito_Verificador($cabecera["CIRUCComercial"]);
         $TipoIdent = "P";
-        switch ($DigVerif['Tipo']) {
+        switch ($DigVerif['Tipo_Beneficiario']) {
         	case 'R':
         		if($cabecera['CIRUCComercial']){$TipoIdent = '07';}else{$TipoIdent = '04';}
         		break;
@@ -1591,386 +1591,6 @@ class autorizacion_sri
 
 	}
 	
-	//fin guia remision
-    function digito_verificadorf($ruc,$tipo=null,$pag=null,$idMen=null,$item=null)
-    {
-		$DigStr = "";
-		$VecDig = "";
-		$Dig3 = "";
-		$sSQLRUC = "";
-		$CodigoEmp = "";
-		$Producto = "";
-		$SumaDig = "";
-		$NumDig = "";
-		$ValDig = "";
-		$TipoModulo = "";
-		$CodigoRUC = "";
-		$Residuo = "";
-		//echo $ruc.' ';
-		$Dig3 = substr($ruc, 2, 1);
-		//echo $Dig3;
-		//$Codigo_RUC_CI = substr($ruc, 0, 10);
-		//echo $Dig3.' '.$Codigo_RUC_CI ;
-		$Tipo_Beneficiario = "P";
-		//$NumEmpresa='001';
-		$NumEmpresa=$item;
-		//echo $item.' dddvc '.$NumEmpresa;
-		$Codigo_RUC_CI = $NumEmpresa . "0000001";
-		$Digito_Verificador = "-";
-		$RUC_CI = $ruc;
-		$RUC_Natural = False;
-		//echo $Codigo_RUC_CI;
-		//die();
-		if($ruc == "9999999999999" )
-		{
-			$Tipo_Beneficiario = "R";
-			$Codigo_RUC_CI = substr($ruc, 0, 10);
-			$Digito_Verificador = 9;
-			$DigStr = "9";
-			//echo ' ccc '.$Codigo_RUC_CI;
-			//die();
-		}
-		else
-		{
-			$DigStr = $ruc;
-			$TipoBenef = "P";
-			$VecDig = "000000000";
-			$TipoModulo = 1;
-			If (is_numeric($ruc) And $ruc <= 0)
-			{
-				$Codigo_RUC_CI = $NumEmpresa & "0000001";
-			}
-			Else
-			{
-				//es cedula
-				if(strlen($ruc)==10 and is_numeric($ruc))
-				{
-					$coe = array("2", "1", "2", "1","2", "1", "2", "1","2");
-					$arr1 = str_split($ruc);
-					$resu = array();
-					$resu1=0;
-					$coe1=0;
-					$pro='';
-					$ter='';
-					$TipoModulo=10;
-					//validador
-					$ban=0;
-					for($jj=0;$jj<(strlen($ruc));$jj++)
-					{
-						//echo $arr1[$jj].' -- '.$jj.' cc ';
-						//validar los dos primeros registros
-						if($jj==0 or $jj==1)
-						{
-							$pro=$pro.$arr1[$jj];
-						}
-						if($jj==2)
-						{
-							$ter=$arr1[$jj];
-						}
-						//operacion suma
-						if($jj<=(strlen($ruc)-2))
-						{
-							$resu[$jj]=$coe[$jj]*$arr1[$jj];
-							if($resu[$jj]>=10)
-							{
-								$resu[$jj]=$resu[$jj]-9;
-							}
-							//suma
-							$resu1=$resu[$jj]+$resu1;
-						}
-						//ultimo digito
-						if($jj==(strlen($ruc)-1))
-						{
-							//echo " entro ";
-							$coe1=$arr1[$jj];
-						}
-						
-					}
-					//verificamos los dos primeros registros
-					if($pro>=24)
-					{
-						//echo "RUC/CI <p style='color:#FF0000;'>incorrecto los dos primeros digitos</p>";
-						$ban=1;
-					}
-					//verificamos el tercer registros
-					if($ter>6)
-					{
-						//echo "RUC/CI <p style='color:#FF0000;'>incorrecto el tercer digito</p>";
-						$ban=1;
-					}
-					//partimos string
-					$arr2 = str_split($resu1);
-					for($jj=0;$jj<(strlen($resu1));$jj++)
-					{
-						if($jj==0)
-						{
-							$arr2[$jj]=$arr2[$jj]+1;
-						}
-					}
-					//aumentamos a la siguiente decena
-					$resu2=$arr2[0].'0';
-					//resultado del ultimo coeficioente
-					$resu3 = $resu2- $resu1;
-					$Residuo = $resu1 % $TipoModulo;
-					//echo ' dsdsd '.$Residuo;
-					//die();
-					If ($Residuo == 0)
-					{
-					  $Digito_Verificador = "0";
-					}
-					Else
-					{
-					   $Residuo = $TipoModulo - $Residuo;
-					   $Digito_Verificador = $Residuo;
-					}
-					//echo $Digito_Verificador .' correcto '. substr($ruc, 9, 1);
-					if($ban==0)
-					{
-						If ($Digito_Verificador == substr($ruc, 9, 1))
-						{
-							$Tipo_Beneficiario = "C";
-						}	
-					}					
-				}
-				else
-				{
-					//caso ruc
-					if(strlen($ruc)==13 and is_numeric($ruc))
-					{
-						//caso ruc ecuatorianos de extrangeros
-						$Tipo_Beneficiario='O';
-						if ($Dig3 == 6 )
-						{
-							$coe = array("2", "1", "2", "1","2", "1", "2", "1","2");
-							$arr1 = str_split($ruc);
-							$resu = array();
-							$resu1=0;
-							$coe1=0;
-							$pro='';
-							$ter='';
-							$TipoModulo=10;
-							//validador
-							$ban=0;
-							for($jj=0;$jj<(count($coe));$jj++)
-							{
-								//echo $arr1[$jj].' -- '.$jj.' cc ';
-								//validar los dos primeros registros
-								if($jj==0 or $jj==1)
-								{
-									$pro=$pro.$arr1[$jj];
-								}
-								if($jj==2)
-								{
-									$ter=$arr1[$jj];
-								}
-								//operacion suma
-								if($jj<=(count($coe)-2))
-								{
-									$resu[$jj]=$coe[$jj]*$arr1[$jj];
-									if($resu[$jj]>=10)
-									{
-										$resu[$jj]=$resu[$jj]-9;
-									}
-									//suma
-									$resu1=$resu[$jj]+$resu1;
-								}
-								//ultimo digito
-								if($jj==(count($coe)-1))
-								{
-									//echo " entro ";
-									$coe1=$arr1[$jj];
-								}
-								
-							}
-							//verificamos los dos primeros registros
-							if($pro>=24)
-							{
-								//echo "RUC/CI <p style='color:#FF0000;'>incorrecto los dos primeros digitos</p>";
-								$ban=1;
-							}
-							//verificamos el tercer registros
-							if($ter>6)
-							{
-								//echo "RUC/CI <p style='color:#FF0000;'>incorrecto el tercer digito</p>";
-								$ban=1;
-							}
-							//partimos string
-							$arr2 = str_split($resu1);
-							for($jj=0;$jj<(strlen($resu1));$jj++)
-							{
-								if($jj==0)
-								{
-									$arr2[$jj]=$arr2[$jj]+1;
-								}
-							}
-							//aumentamos a la siguiente decena
-							$resu2=$arr2[0].'0';
-							//resultado del ultimo coeficioente
-							$resu3 = $resu2- $resu1;
-							$Residuo = $resu1 % $TipoModulo;
-							//echo ' dsdsd '.$Residuo;
-							//die();
-							If ($Residuo == 0)
-							{
-							  $Digito_Verificador = "0";
-							}
-							Else
-							{
-							   $Residuo = $TipoModulo - $Residuo;
-							   $Digito_Verificador = $Residuo;
-							}
-							//echo $Digito_Verificador .' correcto '. substr($ruc, 9, 1);
-							if($ban==0)
-							{
-								If ($Digito_Verificador == substr($ruc, 9, 1))
-								{
-									$Tipo_Beneficiario = "R";
-									$RUC_Natural = True;
-								}	
-							}	
-						}
-						if($Tipo_Beneficiario=='O')
-						{
-							$TipoModulo = 11;
-							//echo $Dig3.' qmm ';
-							if (($Dig3 <= 5) and ($Dig3 >= 0))
-							{
-								$TipoModulo = 10;
-								$TipoModulo1=9;
-								$coe = array("2", "1", "2", "1","2", "1", "2", "1","2");
-								$VecDig = "212121212";
-								//echo " aquiii 1 ";
-							}
-							else
-							{
-								if ($Dig3 == 6)
-								{
-									$coe = array("3", "2", "7", "6","5", "4", "3", "2");
-									$TipoModulo1=8;
-									$VecDig = "32765432";
-									//echo " aquiii 2 ";
-								}
-								else
-								{
-									if($Dig3 == 9)
-									{
-										$coe = array("4", "3", "2", "7", "6","5", "4", "3", "2");
-										$TipoModulo1=9;
-										$VecDig = "432765432";
-										//echo " aquiii 3 ";/
-									}
-									else
-									{
-										$VecDig = "222222222";
-										$TipoModulo1=9;
-										//echo " aquiii 4 ";
-										$coe = array("2", "2", "2", "2", "2","2", "2", "2", "2");
-									}
-								}
-							}
-							$arr1 = str_split($ruc);
-							$resu = array();
-							$resu1=0;
-							$coe1=0;
-							$pro='';
-							$ter='';
-							$ban=0;
-							for($jj=0;$jj<($TipoModulo1);$jj++)
-							{
-								if($jj==0 or $jj==1)
-								{
-									$pro=$pro.$arr1[$jj];
-								}
-								if($jj==2)
-								{
-									$ter=$arr1[$jj];
-								}
-								if($jj<=(strlen($ruc)-2))
-								{
-									$resu[$jj]=$coe[$jj]*$arr1[$jj];
-									If (0 <= $Dig3 And $Dig3 <= 5 And $resu[$jj] > 9)
-									{
-										$resu[$jj]=$resu[$jj]-9;
-									}									
-									//suma
-									$resu1=$resu[$jj]+$resu1;
-									
-								}
-								if($jj==(strlen($ruc)-1))
-								{
-									//echo " entro ";
-									$coe1=$arr1[$jj];
-								}
-								
-							}
-							//partimos string
-							$arr2 = str_split($resu1);
-							for($jj=0;$jj<(strlen($resu1));$jj++)
-							{
-								if($jj==0)
-								{
-									$arr2[$jj]=$arr2[$jj]+1;
-								}
-							}
-							//aumentamos a la siguiente decena
-							$resu2=$arr2[0].'0';
-							//resultado del ultimo coeficioente
-							$resu3 = $resu2- $resu1;
-							$Residuo = $resu1 % $TipoModulo;
-							If ($Residuo == 0)
-							{
-							  $Digito_Verificador = "0";
-							}
-							Else
-							{
-							   $Residuo = $TipoModulo - $Residuo;
-							   $Digito_Verificador = $Residuo;
-							}
-							//echo $Digito_Verificador.' '.$Dig3.' ';
-							If ($Dig3 == 6) 
-							{
-								If ($Digito_Verificador = substr($ruc, 8, 1)) 
-								{
-									$Tipo_Beneficiario = "R";
-								}
-							} 
-							Else
-							{
-								If ($Digito_Verificador == substr($ruc, 9, 1))
-								{
-									$Tipo_Beneficiario = "R";
-								}							
-							}
-							If ($Dig3 < 6 )
-							{
-								$RUC_Natural = True;
-							}
-						}
-					}
-					else
-					{
-						if(strlen($ruc)==48 and is_numeric($ruc))
-						{
-							
-						}
-					}
-				}
-			}
-			if(substr($ruc, 12, 1)!='1')
-			{
-				$Tipo_Beneficiario = 'O';
-			}
-			
-		}
-	    if($tipo==null OR $tipo==0)
-	    {	
-		   return $Digito_Verificador;
-	    }
-	    else
-	    {
-		   return $Tipo_Beneficiario;
-	    }
-    } 
 
     function generaCeros($numero, $tamaño=null)
     {
@@ -3518,7 +3138,7 @@ function generar_xml_retencion($cabecera,$detalle)
 		return array('Codigo' =>$codigoC[0]['Codigo'],'Fecha'=>$Fecha);
 	}else
 	{
-		$veri = codigo_verificador($CI_RUC);
+		$veri = Digito_verificador($CI_RUC);
 		$datos[0]['campo'] = 'FA';
 		$datos[0]['dato'] = 1;
 		$datos[1]['campo'] = 'CI_RUC';
@@ -3526,13 +3146,13 @@ function generar_xml_retencion($cabecera,$detalle)
 		$datos[2]['campo'] = 'Cliente';
 		$datos[2]['dato'] = $cliente_xml;
 		$datos[3]['campo'] = 'TD';
-		$datos[3]['dato'] = $veri['Tipo'];
+		$datos[3]['dato'] = $veri['Tipo_Beneficiario'];
 		$datos[4]['campo'] = 'Codigo';
-		$datos[4]['dato'] = $veri['Codigo'];
+		$datos[4]['dato'] = $veri['Codigo_RUC_CI'];
 		// print_r($datos);die();
 		insert_generico('Clientes',$datos);
 		
-		return array('Codigo' =>$veri['Codigo'],'Fecha'=>$Fecha);
+		return array('Codigo' =>$veri['Codigo_RUC_CI'],'Fecha'=>$Fecha);
 
 		// return -1;
 	}
@@ -3679,7 +3299,7 @@ function recuperar_xml_a_factura($documento,$autorizacion,$entidad,$empresa)
 
 function Actualizar_factura($CI_RUC,$FacturaNo,$serie)
 {
-	$digito = codigo_verificador($CI_RUC);
+	$digito = Codigo_RUC_CI($CI_RUC);
 	$cli = $this->datos_cliente_todo(false,$CI_RUC);
 
 	// print_r($digito);die();
@@ -3687,9 +3307,9 @@ function Actualizar_factura($CI_RUC,$FacturaNo,$serie)
 	if(count($cli)>0)
 	{
 	$datosC[0]['campo']='Codigo';
-	$datosC[0]['dato']=$digito['Codigo'];
+	$datosC[0]['dato']=$digito['Codigo_RUC_CI'];
 	$datosC[1]['campo']='TD';
-	$datosC[1]['dato']=$digito['Tipo'];
+	$datosC[1]['dato']=$digito['Tipo_Beneficiario'];
 	$datosC[2]['campo']='FA';
 	$datosC[2]['dato']=1;
 
@@ -3702,7 +3322,7 @@ function Actualizar_factura($CI_RUC,$FacturaNo,$serie)
 	}
 
 
-$cliente = Leer_Datos_Cliente_FA($digito['Codigo']);
+$cliente = Leer_Datos_Cliente_FA($digito['Tipo_Beneficiario']);
 // print_r($cliente);die();
 $datosF[0]['campo']='CodigoC';
 $datosF[0]['dato']=$cliente['CodigoC'];

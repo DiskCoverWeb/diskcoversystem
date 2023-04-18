@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<guiaRemision id="comprobante" version="1.0.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
+    <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
+    <ruc>0702164179001</ruc>
+    <claveAcceso>1804202306070216417900110010020000001181234567819</claveAcceso>
+    <codDoc>06</codDoc>
+    <estab>001</estab>
+    <ptoEmi>002</ptoEmi>
+    <secuencial>000000118</secuencial>
+    <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
+    <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
+  </infoTributaria>
+  <infoGuiaRemision>
+    <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
+    <dirPartida>24 DE MAYO</dirPartida>
+    <razonSocialTransportista>ABAD SUAREZ MARIA</razonSocialTransportista>
+    <tipoIdentificacionTransportista>05</tipoIdentificacionTransportista>
+    <rucTransportista>0923458798</rucTransportista>
+    <rise>000</rise>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <fechaIniTransporte>18/04/2023</fechaIniTransporte>
+    <fechaFinTransporte>18/04/2023</fechaFinTransporte>
+    <placa>XXX-999</placa>
+  </infoGuiaRemision>
+  <destinatarios>
+    <destinatario>
+      <identificacionDestinatario>0701520546</identificacionDestinatario>
+      <razonSocialDestinatario>ABAD MOSQUERA EDITHSON MARCELO</razonSocialDestinatario>
+      <dirDestinatario>AGUARICO</dirDestinatario>
+      <motivoTraslado>Translado de mercaderia</motivoTraslado>
+      <ruta>De 24 DE MAYO a AGUARICO</ruta>
+      <codDocSustento>00</codDocSustento>
+      <numDocSustento>001-001-000000118</numDocSustento>
+      <numAutDocSustento>0702164179001</numAutDocSustento>
+      <fechaEmisionDocSustento>18/04/2023</fechaEmisionDocSustento>
+      <detalles>
+        <detalle>
+          <codigoInterno>MS.03</codigoInterno>
+          <descripcion>A Barril 1, 2023: 0404</descripcion>
+          <cantidad>1.0000</cantidad>
+        </detalle>
+      </detalles>
+    </destinatario>
+  </destinatarios>
+  <infoAdicional>
+    <campoAdicional nombre="Telefono">0987242579</campoAdicional>
+    <campoAdicional nombre="Email">diskcover@msn.com</campoAdicional>
+  </infoAdicional>
+</guiaRemision>

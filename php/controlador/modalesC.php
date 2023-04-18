@@ -95,8 +95,8 @@ class modalesC
 		// print_r($resp);die();	
 		if(count($resp)>0)
 		{
-			$veri = digito_verificador_nuevo($query);
-			if($resp[0]['TD']==''){$resp[0]['TD'] = $veri['Tipo'];}
+			$veri = Digito_verificador($query);
+			if($resp[0]['TD']==''){$resp[0]['TD'] = $veri['Tipo_Beneficiario'];}
 		}
 		$datos = array();
 		foreach ($resp as $key => $value) {
@@ -126,12 +126,19 @@ class modalesC
 		$resp = $this->modelo->buscar_cliente(false,$query['nombre']);
 		return $resp;
 	}
-	function codigo_CI($ci)
+
+	function codigo_CI($CI_RUC)
 	{
-		$datos = codigo_verificador($ci);
+		 $datos = Digito_verificador($CI_RUC);
+		 return $datos;
+	}
+
+	function codigo_CI1($ci)
+	{
+		$datos = Digito_Verificador($ci);
 
 		// print_r($datos);die();
-		if($datos['Tipo']!= "R" && strlen($datos['CI'])== 13)
+		if($datos['Tipo_Beneficiario']!= "R" && strlen($datos['CI'])== 13)
 		{
 			$res = file_get_contents("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=".$ci);
 			if($res==true)
@@ -296,6 +303,7 @@ function li2Array($html,$elemento="li"){
 			{
 				$res2 = file_get_contents("https://srienlinea.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos2.jspa?accion=siguiente&ruc=".$ci);
 				$res2 = explode('<table class="formulario">',$res2); //divide en tabla formulario que viene en el html
+				print_r($res2);die();
 				$res2 = $res2[1]; //solo toma de tabla formulario para abajo
 				$res2 = explode('</table>', $res2); //divide cuando lña tabla termina 
 				$res2 = $res2[0]; //se selecciona solo la parte primera que seran los tr
