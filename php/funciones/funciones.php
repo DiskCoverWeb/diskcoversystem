@@ -12647,22 +12647,22 @@ function GrabarComprobante($C1)
      SetAdoUpdate();
   }
 
-  // ' Grabamos Comprobantes
-    SetAdoAddNew("Comprobantes");
-    SetAdoFields("Item", $C1["Item"]);
-    SetAdoFields("T", $C1["T"]);
-    SetAdoFields("Fecha", $C1["Fecha"]);
-    SetAdoFields("TP", $C1["TP"]);
-    SetAdoFields("Numero", $C1["Numero"]);
-    SetAdoFields("Codigo_B", $C1["CodigoB"]);
-    SetAdoFields("Monto_Total", number_format(floatval($C1["Monto_Total"]), 2));
-    SetAdoFields("Concepto", $C1["Concepto"]);
-    SetAdoFields("Efectivo", $C1["Efectivo"]);
-    SetAdoFields("Cotizacion", $C1["Cotizacion"]);
-    SetAdoFields("CodigoU", $C1["Usuario"]);
-    SetAdoFields("Autorizado",$C1["Autorizado"]);
-    SetAdoUpdate();
-  // ' Grabamos Transacciones
+// ' Grabamos Comprobantes
+  SetAdoAddNew("Comprobantes");
+  SetAdoFields("Item", $C1["Item"]);
+  SetAdoFields("T", $C1["T"]);
+  SetAdoFields("Fecha", $C1["Fecha"]);
+  SetAdoFields("TP", $C1["TP"]);
+  SetAdoFields("Numero", $C1["Numero"]);
+  SetAdoFields("Codigo_B", $C1["CodigoB"]);
+  SetAdoFields("Monto_Total", number_format(floatval($C1["Monto_Total"]), 2,'.',''));
+  SetAdoFields("Concepto", $C1["Concepto"]);
+  SetAdoFields("Efectivo", $C1["Efectivo"]);
+  SetAdoFields("Cotizacion", $C1["Cotizacion"]);
+  SetAdoFields("CodigoU", $C1["Usuario"]);
+  SetAdoFields("Autorizado",$C1["Autorizado"]);
+  SetAdoUpdate();
+// ' Grabamos Transacciones
   $sql = "SELECT *
       FROM Asiento
       WHERE Item = '".$C1["Item"]."'
@@ -12677,9 +12677,9 @@ function GrabarComprobante($C1)
     {  
       $Moneda_US =$value["ME"];
       $Cta = trim($value["CODIGO"]);
-      $Debe = number_format($value["DEBE"], 2);
-      $Haber = number_format($value["HABER"], 2);
-      $Parcial = number_format($value["PARCIAL_ME"], 2);
+      $Debe = number_format($value["DEBE"], 2,'.','');
+      $Haber = number_format($value["HABER"], 2,'.','');
+      $Parcial = number_format($value["PARCIAL_ME"], 2,'.','');
       $NoCheque =$value["CHEQ_DEP"];
       $CodigoCC =$value["CODIGO_CC"];
       $Fecha_Vence =$value["EFECTIVIZAR"];
