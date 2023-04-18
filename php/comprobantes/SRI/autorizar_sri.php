@@ -3322,7 +3322,7 @@ function Actualizar_factura($CI_RUC,$FacturaNo,$serie)
 	}
 
 
-$cliente = Leer_Datos_Cliente_FA($digito['Tipo_Beneficiario']);
+$cliente = Leer_Datos_Cliente_FA($digito['Codigo_RUC_CI']);
 // print_r($cliente);die();
 $datosF[0]['campo']='CodigoC';
 $datosF[0]['dato']=$cliente['CodigoC'];
