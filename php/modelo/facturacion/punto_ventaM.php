@@ -347,7 +347,8 @@ class punto_ventaM
         AND DF.Serie = '".$TFA['Serie']."'
         AND DF.Autorizacion = '".$TFA['Autorizacion']."'
         AND DF.Factura = ".$TFA['Factura']."
-        AND LEN(DF.Autorizacion) >= 13
+        AND LEN(DF.Autorizacion) >= 4
+        AND LEN(DF.Autorizacion) <= 49
         AND DF.T <> 'A'
         AND DF.Item = CP.Item
         AND DF.Periodo = CP.Periodo

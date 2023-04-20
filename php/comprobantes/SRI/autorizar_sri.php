@@ -147,7 +147,7 @@ class autorizacion_sri
 		 }
 				//datos de factura
 	    		$datos_fac = $this->datos_factura($cabecera['serie'],$cabecera['factura'],$cabecera['tc']);
-	    		// print_r($datos_fac);die();
+	    		print_r($datos_fac);die();
 	    	    $cabecera['RUC_CI']=$datos_fac[0]['RUC_CI'];
 				$cabecera['Fecha']=$datos_fac[0]['Fecha']->format('Y-m-d');
 				$cabecera['Razon_Social']=$this->quitar_carac($datos_fac[0]['Razon_Social']);
@@ -202,7 +202,8 @@ class autorizacion_sri
 				  	$cabecera['tipoIden']='07';
 			      }else
 			      {
-			      	$cod_veri = Digito_verificador($datos_fac[0]['RUC_CI'],1);
+			      	$cod_veri = Digito_verificador($datos_fac[0]['RUC_CI']);
+			      	print_r($cod_veri);die();
 			      	switch ($cod_veri['Tipo_Beneficiario']) {
 			      		case 'R':
 			      			$cabecera['tipoIden']='04';
@@ -210,11 +211,13 @@ class autorizacion_sri
 			      		case 'C':
 			      			$cabecera['tipoIden']='05';
 			      			break;
-			      		case 'O':
+			      		case 'P':
 			      			$cabecera['tipoIden']='06';
 			      			break;
 			      	}
 			      }
+
+			      // print_r($cabecera);die();
 			    $cabecera['codigoPorcentaje']=0;
 			    if((floatval($cabecera['Porc_IVA'])*100)>12)
 			    {
@@ -1393,8 +1396,11 @@ class autorizacion_sri
       		case 'C':
       			$cabecera['tipoIden']='05';
       			break;
-      		case 'O':
+      		case 'P':
       			$cabecera['tipoIden']='06';
+      			break;
+      			default:
+      			$cabecera['tipoIden']='07';
       			break;
       	}
 
@@ -3302,7 +3308,8 @@ function Actualizar_factura($CI_RUC,$FacturaNo,$serie)
 	$digito = Digito_verificador($CI_RUC);
 	$cli = $this->datos_cliente_todo(false,$CI_RUC);
 
-	// print_r($digito);die();
+	// print_r($digito);
+	// print_r($cli);die();
 
 	if(count($cli)>0)
 	{
