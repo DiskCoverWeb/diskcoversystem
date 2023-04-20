@@ -147,7 +147,7 @@ class autorizacion_sri
 		 }
 				//datos de factura
 	    		$datos_fac = $this->datos_factura($cabecera['serie'],$cabecera['factura'],$cabecera['tc']);
-	    		print_r($datos_fac);die();
+	    		// print_r($datos_fac);die();
 	    	    $cabecera['RUC_CI']=$datos_fac[0]['RUC_CI'];
 				$cabecera['Fecha']=$datos_fac[0]['Fecha']->format('Y-m-d');
 				$cabecera['Razon_Social']=$this->quitar_carac($datos_fac[0]['Razon_Social']);
@@ -203,7 +203,7 @@ class autorizacion_sri
 			      }else
 			      {
 			      	$cod_veri = Digito_verificador($datos_fac[0]['RUC_CI']);
-			      	print_r($cod_veri);die();
+			      	// print_r($cod_veri);die();
 			      	switch ($cod_veri['Tipo_Beneficiario']) {
 			      		case 'R':
 			      			$cabecera['tipoIden']='04';
