@@ -3405,7 +3405,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 			$Total_Desc = $value["Total_Desc"] + $value["Total_Desc2"];
 
 			if ($Total_Desc > 0 && $value["Total"] <> 0) {
-			  $Porc_Str = number_format($Total_Desc / $value["Total"], 2, ".", "") . "%";
+			  $Porc_Str = number_format((($Total_Desc*100)/$value['Total']),0,'.','').'%';
 			} else {
 			  $Porc_Str = "";
 			}
