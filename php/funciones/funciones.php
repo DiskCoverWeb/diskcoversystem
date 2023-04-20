@@ -11855,4 +11855,25 @@ function GrabarComprobante($C1)
        return $result;
   }
 
+  function ULCase($textoConversion) {
+    $textoULCase = strtolower($textoConversion);
+    if ($textoULCase == "") {
+        $textoULCase = G_NINGUNO;
+    }
+    $cadAux = "";
+    $mayusc = true;
+    for ($ti = 0; $ti < strlen($textoULCase); $ti++) {
+        $caracter = substr($textoULCase, $ti, 1);
+        if ($mayusc) {
+            $caracter = strtoupper($caracter);
+            $mayusc = false;
+        }
+        $cadAux .= $caracter;
+        if ($caracter == " ") {
+            $mayusc = true;
+        }
+    }
+    return $cadAux;
+}
+
 ?>
