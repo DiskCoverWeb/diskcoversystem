@@ -22,7 +22,7 @@ if(isset($_POST['RUC']) AND !isset($_POST['submitweb']))
 	$ruc=$_POST['RUC'];
 	$idMen=$_POST['idMen'];
 	$item=$_POST['item'];
-	digito_verificadorf($ruc,$pag,$idMen,$item);
+  Digito_verificador($ruc);
 }
 
 function ip()
@@ -1152,1050 +1152,79 @@ function convertirnumle($digito=null)
 	return $letra;
 }
 
-/*------------------------- pausado------------------
-function Digito_Verificador($URLInet,$NumeroRUC)
-{
-  // Dim DigStr As String
-  // Dim VecDig As String
-  // Dim Dig3 As Byte
-  // Dim sSQLRUC As String
-  // Dim CodigoEmp As String
-  // Dim Producto As Integer
-  // Dim SumaDig As Integer
-  // Dim NumDig As Integer
-  // Dim ValDig As Integer
-  // Dim TipoModulo As Integer
-  // Dim CodigoRUC As Long
-  // Dim Residuo As Byte
-  // Dim AdoDBRUC As ADODB.Recordset
-  // 'Tercer Digito
-   // RatonReloj
-   $Dig3 = Val(MidStrg($NumeroRUC, 3, 1))
-  // 'Determinamos que tipo de RUC/CI es
-   $Tipo_RUC_CI['Tipo_Beneficiario'] = "P";
-   $Tipo_RUC_CI['Codigo_RUC_CI'] =$_SESSION['INGRESO']['item']."0000001";
-   $Tipo_RUC_CI['Digito_Verificador'] = "-";
-   $Tipo_RUC_CI['RUC_CI'] = $NumeroRUC;
-   $Tipo_RUC_CI['RUC_Natural'] = false;
-   $TipoSRI['Existe'] = false;
-   
-  // 'Es CONSUMIDOR FINAL
-   if($NumeroRUC == "9999999999999")
-   {
-      $Tipo_RUC_CI['Tipo_Beneficiario'] = "R";
-      $Tipo_RUC_CI['Codigo_RUC_CI'] = substr($NumeroRUC,0, 10);
-      $Tipo_RUC_CI['Digito_Verificador'] = 9;
-      $DigStr = "9"
-   }else
-      $DigStr = $NumeroRUC;
-      $TipoBenef = "P";
-      $VecDig = "000000000";
-      $TipoModulo = 1;
-      if(is_numeric($NumeroRUC) && intval($NumeroRUC) <= 0)
-      {
-         $Tipo_RUC_CI['Codigo_RUC_CI'] = $_SESSION['INGRESO']['item']."0000001";
-      }else{
-        // 'Es Cedula
-         if(strlen($NumeroRUC) == 10 && is_numeric($NumeroRUC))
-         {
-            $TipoModulo = 10
-            $VecDig = "212121212"
-           // 'Realizamos los productos y la sumatoria
-            $SumaDig = 0
-            for($I = 1 ; $I> strlen($VecDig);$I++)
-            {
-                $ValDig = intval(substr($VecDig,$I, 1))    //'Digitos del RUC/CI
-                $NumDig = intval(substr($DigStr, $I, 1))    //'Vector Verificador del RUC/CI
-                $Producto = $ValDig * $NumDig;
-                if($Producto > 9 ){$Producto = $Producto - 9;}
-               // 'Sumamos los productos
-                $SumaDig = $SumaDig + $Producto;
-            }
-            $Residuo = $SumaDig % $TipoModulo
-            if($Residuo == 0)
-            {
-               $Tipo_RUC_CI['Digito_Verificador'] = "0";
-            }else{
-               $Residuo = $TipoModulo - $Residuo;
-               $Tipo_RUC_CI['Digito_Verificador'] = ''.$Residuo.'';
-            }
-            if($Tipo_RUC_CI['Digito_Verificador'] = intval(substr($NumeroRUC, 10, 1))){$Tipo_RUC_CI['Tipo_Beneficiario'] = "C";}
-          //'Es RUC
-         }else if(strlen($NumeroRUC) == 13 && is_numeric($NumeroRUC))
-         {
-           // 'Averiguamos si es RUC extranjero
-            $Tipo_RUC_CI['Tipo_Beneficiario'] = "O";
-            if($Dig3 == 6)
-            {
-               $TipoModulo = 10
-               $VecDig = "212121212";
-              // 'Realizamos los productos y la sumatoria
-               $SumaDig = 0;
-               for($I = 1;$I>=strlen($VecDig);$I++)
-               {
-                   $ValDig = intval(substr($VecDig,$I, 1));     //'Digitos del RUC/CI
-                   $NumDig = intval(substr($DigStr,$I, 1));    //'Vector Verificador del RUC/CI
-                   $Producto = $ValDig * $NumDig;
-                   if($Producto > 9 ){ $Producto = $Producto - 9;}
-                  // 'Sumamos los productos
-                   $SumaDig = $SumaDig + $Producto;
-               }
-               $Residuo = $SumaDig % $TipoModulo;
-               if($Residuo == 0)
-               {
-                  $Tipo_RUC_CI['Digito_Verificador'] = "0";
-               }else
-               {
-                  $Residuo = $TipoModulo - $Residuo;
-                  $Tipo_RUC_CI['Digito_Verificador'] = ''.$Residuo.'';
-               }
-               if($Tipo_RUC_CI['Digito_Verificador'] == intval(substr($NumeroRUC, 10, 1)))
-               {
-                  $Tipo_RUC_CI['Tipo_Beneficiario'] = "R"
-                  $Tipo_RUC_CI['RUC_Natural'] = True
-               }
-            }
-            
-            if($Tipo_RUC_CI['Tipo_Beneficiario'] == "O")
-            {
-               $TipoModulo = 11;
-               switch ($Dig3) {
-                 case '0':
-                 case '1':
-                 case '2':
-                 case '3':
-                 case '4':
-                 case '5':
-                    $TipoModulo = 10;
-                    $VecDig = "212121212";
-                   break;
-                 case '6':
-                    $VecDig = "32765432";
-                   break;
-                 case '9':
-                    $VecDig = "432765432";
-                   break;                 
-                 default:
-                    $VecDig = "222222222";
-                   break;
-               }             
-             
-              // 'Realizamos los productos y la sumatoria
-               $SumaDig = 0
-               for($I = 1; $I>=strlen($VecDig);$I++)
-               {
-                   $ValDig = intval(substr($VecDig, $I, 1));    //'Digitos del RUC/CI
-                   $NumDig = intval(substr($DigStr, $I, 1));    //'Vector Verificador del RUC/CI
-                   $Producto = $ValDig * $NumDig
-                   if(0 <= $Dig3 && $Dig3 <= 5 && $Producto > 9){ $Producto = $Producto - 9;}
-                  //'Sumamos los productos
-                   $SumaDig = $SumaDig + $Producto;
-                }
-               $Residuo = $SumaDig % $TipoModulo;
-               if($Residuo == 0)
-               {
-                  $Tipo_RUC_CI['Digito_Verificador'] = "0";
-               }else{
-                  $Residuo = $TipoModulo - $Residuo;
-                  $Tipo_RUC_CI['Digito_Verificador'] = ''.$Residuo.'';
-               }
-              // 'MsgBox Dig3
-               if($Dig3 == 6)
-               {
-                  if($Tipo_RUC_CI['Digito_Verificador'] == intval(substr($NumeroRUC, 9, 1))){ $Tipo_RUC_CI['Tipo_Beneficiario'] = "R";}
-               }else{
-                  if($Tipo_RUC_CI['Digito_Verificador'] = intval(substr($NumeroRUC, 10, 1))){ $Tipo_RUC_CI['Tipo_Beneficiario'] = "R";}
-               }
-               if($Dig3 < 6){ $Tipo_RUC_CI['RUC_Natural'] = true;}
-            }
-            
-            if($Tipo_RUC_CI['Tipo_Beneficiario']== "O"){
-               // RatonReloj
-               $TipoSRI = consulta_RUC_SRI($URLInet,$NumeroRUC);
-               if($TipoSRI['Existe'])
-               {
-                  if($Dig3 < 6)
-                  { 
-                     $Tipo_RUC_CI['RUC_Natural'] = true;
-                     $Tipo_RUC_CI['Digito_Verificador'] = intval(substr($NumeroRUC, 10, 1))
-                  }else{
-                     $Tipo_RUC_CI['Digito_Verificador'] = intval(substr($NumeroRUC, 9, 1));
-                  }
-                  $Tipo_RUC_CI['Tipo_Beneficiario'] = "R";
-              }
-            }
-         }
-      }
-      
-     // 'Procedemos a generar el codigo de RUC/CI/Otro
-      Select Case Tipo_RUC_CI.Tipo_Beneficiario
-        Case "C"
-             Tipo_RUC_CI.Codigo_RUC_CI = MidStrg(NumeroRUC, 1, 10)
-        Case "R"
-            'Si es Natural Cambio los dos primeros digitos por letras equivalentes
-             If Tipo_RUC_CI.RUC_Natural Then
-                Tipo_RUC_CI.Codigo_RUC_CI = Chr(Val(MidStrg(NumeroRUC, 1, 1)) + 65) & Chr(Val(MidStrg(NumeroRUC, 2, 1)) + 65) & MidStrg(NumeroRUC, 3, 8)
-             Else
-               'Es RUC comercial o publico
-                Tipo_RUC_CI.Codigo_RUC_CI = MidStrg(NumeroRUC, 1, 10)
-             End If
-             TipoSRI.Existe = True
-        Case Else
-            'Si no es RUC/CI, procesamos el numero de codigo que le corresponde
-             Tipo_RUC_CI.Codigo_RUC_CI = NumEmpresa & "0000001"
-             CodigoEmp = NumEmpresa & "9999999"
-             sSQLRUC = "SELECT MAX(Codigo) As Cod_RUC " _
-                     & "FROM Clientes " _
-                     & "WHERE Codigo < '" & CodigoEmp & "' " _
-                     & "AND MidStrg(Codigo,1,3) = '" & NumEmpresa & "' " _
-                     & "AND LEN(Codigo) = 10 " _
-                     & "AND ISNUMERIC(Codigo) <> 0 "
-             Select_AdoDB AdoDBRUC, sSQLRUC
-             With AdoDBRUC
-              If .RecordCount > 0 Then
-                  If IsNull(.fields("Cod_RUC")) Then
-                     CodigoRUC = 1
-                  Else
-                     CodigoRUC = Val(MidStrg(.fields("Cod_RUC"), 4, Len(.fields("Cod_RUC")))) + 1
-                  End If
-                  Tipo_RUC_CI.Codigo_RUC_CI = NumEmpresa & Format$(CodigoRUC, "0000000")
-              End If
-             End With
-             AdoDBRUC.Close
-            'MsgBox Tipo_RUC_CI.Codigo_RUC_CI
-      End Select
-      TipoBenef = Tipo_RUC_CI.Tipo_Beneficiario
-      DigStr = Tipo_RUC_CI.Digito_Verificador
-      Select Case Tipo_RUC_CI.Tipo_Beneficiario
-        Case "R": Tipo_Contribuyente_SP_MySQL NumeroRUC, Tipo_RUC_CI.MicroEmpresa, Tipo_RUC_CI.AgenteRetencion
-                  If Len(NumeroRUC) <> 13 Then Tipo_RUC_CI.Tipo_Beneficiario = "P"
-        Case "C": If Len(NumeroRUC) <> 10 Then Tipo_RUC_CI.Tipo_Beneficiario = "P"
-      End Select
-   End If
-   RatonNormal
-   Digito_Verificador = DigStr
-End Function
-}
-
-*/
-
-function codigo_verificador($CI_RUC)
+function Digito_verificador($CI_RUC)
 {
 
-
-  //devuelve datos de sp
-     $conn = new db();
-     $RUCCI='';$CODIGORUCI='';$DIGITO='';$TIPO='';$NATURAL='';
-
-     $parametros = array(
-      array(&$CI_RUC, SQLSRV_PARAM_IN),
-      array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
-      array(&$RUCCI, SQLSRV_PARAM_INOUT),
-      array(&$CODIGORUCI, SQLSRV_PARAM_INOUT),
-      array(&$DIGITO, SQLSRV_PARAM_INOUT),
-      array(&$TIPO,SQLSRV_PARAM_INOUT),
-      array(&$NATURAL, SQLSRV_PARAM_INOUT)
-      );     
-     $sql="EXEC sp_Digito_Verificador @NumeroRUC=?, @Item=?, @RUCCI=?, @CodigoRUCCI=?,@DigitoVerificador=?,@TipoBeneficiario=?, @RUCNatural=?";
-     // print_r($_SESSION['INGRESO']);die();}
-      $respuesta = $conn->ejecutar_procesos_almacenados($sql,$parametros);
-      if($respuesta==1)
-      {
-         $res = array('Codigo'=>$CODIGORUCI,'Tipo'=>$TIPO,'Dig_ver'=>$DIGITO,'Ruc_Natu'=>$NATURAL,'CI'=> $RUCCI);
-          return $res;
-      }
-      return $respuesta;   
-}
-
-function digito_verificador_nuevo($NumeroRUC){
-  //03-04-2023 Laura: se comenta toda la funciona y se cambia solo por el llamado al SP correspondiente
-  $R = Digito_Verificador_SP($NumeroRUC);
-  return array('Codigo'=>$R['Codigo_RUC_CI'],'Tipo'=>$R['Tipo_Beneficiario'],'Dig_ver'=>$R['Digito_Verificador'],'Ruc_Natu'=> $R['RUC_Natural'],'CI'=>$R['RUC_CI'], 'TipoSRI_Existe' => $R['TipoSRI_Existe']);
-
-  /*  $DigStr= '';
-    $VecDig= '';
-  // 'Tercer Digito
-   $Dig3 = intval(substr($NumeroRUC, 2, 1));
-  // 'Determinamos que tipo de RUC/CI es
-   $R_Tipo_Beneficiario = "P";
-   $R_Codigo_RUC_CI = $_SESSION['INGRESO']['item']."0000001";
-   $R_Digito_Verificador = "-";
-   $R_RUC_CI = $NumeroRUC;
-   $R_RUC_Natural = False;
-  // 'Es CONSUMIDOR FINAL
-   if($NumeroRUC == "9999999999999"){
-      $R_Tipo_Beneficiario = "R";
-      $R_Codigo_RUC_CI = substr($NumeroRUC, 0, 10);
-      $R_Digito_Verificador = 9;
-      $DigStr = "9";
-   }else{
-      $DigStr = $NumeroRUC;
-      $TipoBenef = "P";
-      $VecDig = "000000000";
-      $TipoModulo = 1;
-      if(is_numeric($NumeroRUC) &&  intval($NumeroRUC) <= 0) {
-         $R_Codigo_RUC_CI = $_SESSION['INGRESO']['item']."0000001";
-      }else{
-        // 'Es Cedula
-         if(strlen($NumeroRUC) == 10 && is_numeric($NumeroRUC)){
-            $TipoModulo = 10;
-            $VecDig = "212121212";
-           // 'Realizamos los productos y la sumatoria
-            $SumaDig = 0;
-            for ($i=0; $i <=strlen($VecDig) ; $i++) { 
-                $ValDig = intval(substr($VecDig, $i, 1));    //'Digitos del RUC/CI
-                $NumDig = intval(substr($DigStr, $i, 1));   // 'Vector Verificador del RUC/CI
-                $Producto = $ValDig * $NumDig;
-                if($Producto > 9 ){ $Producto = $Producto - 9;}
-               // 'Sumamos los productos
-                $SumaDig = $SumaDig + $Producto;  
-            }           
-            $Residuo = $SumaDig % $TipoModulo;
-            if( $Residuo == 0){
-               $R_Digito_Verificador = "0";
-            }else{
-               $Residuo = $TipoModulo - $Residuo;
-               $R_Digito_Verificador = strval($Residuo);
-            }
-            if( $R_Digito_Verificador == intval(substr($NumeroRUC, 9, 1))){ $R_Tipo_Beneficiario = "C";}
-        // 'Es RUC
-         }else If( strlen($NumeroRUC) == 13 && is_numeric($NumeroRUC)) {
-           // 'Averiguamos si es RUC extranjero
-            $R_Tipo_Beneficiario = "O";
-            if( $Dig3 == 6){
-               $TipoModulo = 10;
-               $VecDig = "212121212";
-              // 'Realizamos los productos y la sumatoria
-               $SumaDig = 0;
-               for ($i=1; $i < strlen($VecDig); $i++) { 
-                   $ValDig = intval(substr($VecDig, $i, 1));//    'Digitos del RUC/CI
-                   $NumDig = intval(substr($DigStr, $i, 1));//    'Vector Verificador del RUC/CI
-                   $Producto = $ValDig * $NumDig;
-                   if( $Producto > 9){$Producto = $Producto - 9;}
-                  // 'Sumamos los productos
-                   $SumaDig = $SumaDig + $Producto;               
-                }
-               $Residuo = $SumaDig % $TipoModulo;
-               if( $Residuo == 0) {
-                  $R_Digito_Verificador = "0";
-               }else{
-                  $Residuo = $TipoModulo - $Residuo;
-                  $R_Digito_Verificador = strval($Residuo);
-               }
-               if($R_Digito_Verificador == intval(substr($NumeroRUC, 10, 1))){
-                  $R_Tipo_Beneficiario = "R";
-                  
-                  $R_RUC_Natural = True;
-               }
-            }
-
-            if( $R_Tipo_Beneficiario == "O"){
-                $TipoModulo = 11;
-                switch ($Dig3) {
-                  case '0':
-                  case '1':
-                  case '2':
-                  case '3':
-                  case '4':
-                  case '5':
-                    $TipoModulo = 10;
-                    $VecDig = "212121212";
-                    break;
-                  case '6':
-                    $VecDig = "32765432";
-                    break;
-                  case '9':
-                    $VecDig = "432765432";
-                    break;                  
-                  default:
-                    $VecDig = "222222222";
-                    break;
-                }
-               // 'Realizamos los productos y la sumatoria
-                $SumaDig = 0;
-                for ($i=0; $i <=strlen($VecDig) ; $i++) { 
-                    $ValDig = intval(substr($VecDig,$i, 1));//    'Digitos del RUC/CI
-                    $NumDig = intval(substr($DigStr, $i, 1));   //'Vector Verificador del RUC/CI
-                    $Producto = $ValDig * $NumDig;
-                    if( 0 <= $Dig3 && $Dig3 <= 5 && $Producto > 9){ $Producto = $Producto - 9;}
-                   // 'Sumamos los productos
-                    $SumaDig = $SumaDig + $Producto;
-
-                }              
-                $Residuo = $SumaDig % $TipoModulo;
-                if( $Residuo == 0){
-                   $R_Digito_Verificador = "0";
-                }else{
-                   $Residuo = $TipoModulo - $Residuo;
-                   $R_Digito_Verificador = strval($Residuo);
-                }
-                // 'MsgBox Dig3
-                if( $Dig3 == 6) {
-                   if($R_Digito_Verificador == intval(substr($NumeroRUC, 8, 1))) { $R_Tipo_Beneficiario = "R";}
-                }else{
-                   if( $R_Digito_Verificador == intval(substr($NumeroRUC, 9, 1))){ $R_Tipo_Beneficiario = "R";}
-                }
-
-                if( $Dig3 < 6 ){ $R_RUC_Natural = True;}
-            }
-         }
-      }
-     // 'Procedemos a generar el codigo de RUC/CI/Otro
-
-      switch ($R_Tipo_Beneficiario) {
-        case 'C':
-          $R_Codigo_RUC_CI = substr($NumeroRUC, 0, 10);          
-          break;
-        case 'R':
-            // 'Si es Natural Cambio los dos primeros digitos por letras equivalentes
-             if($R_RUC_Natural){
-                $R_Codigo_RUC_CI = chr(intval(substr($NumeroRUC, 0, 1)) + 65).chr(intval(substr($NumeroRUC, 1, 1)) + 65).substr($NumeroRUC, 2, 8);
-
-             }else{ //'Es RUC comercial o publico
-                $R_Codigo_RUC_CI = substr($NumeroRUC, 0, 10);
-             }
-          break;
-        default:
-            // 'Si no es RUC/CI, procesamos el numero de codigo que le corresponde
-             $R_Codigo_RUC_CI = $_SESSION['INGRESO']['item']."0000001";
-             $CodigoEmp = $_SESSION['INGRESO']['item']."8888888";
-             $SQLRUC = "SELECT MAX(Codigo) As Cod_RUC 
-                        FROM Clientes 
-                        WHERE Codigo < '".$CodigoEmp."' 
-                        AND SUBSTRING(Codigo,1,3) = '".$_SESSION['INGRESO']['item']."' 
-                        AND LEN(Codigo) = 10 
-                        AND TD NOT IN ('C','R') 
-                        AND ISNUMERIC(Codigo) <> 0 ";
-                        // print_r($SQLRUC);die();
-             $conn = new db();
-             $result1 = $conn->datos($SQLRUC);
-                if(count($result1)>0)
-                {                  
-                  if(is_null($result1[0]['Cod_RUC']))
-                  {
-                    $CodigoRUC = 1;
-                  }else
-                  {
-                    $CodigoRUC = intval(substr($result1[0]["Cod_RUC"], 3, strlen($result1[0]["Cod_RUC"]))) + 1;
-                    // print_r($CodigoRUC);die();
-                  }
-                  $R_Codigo_RUC_CI = $_SESSION['INGRESO']['item'].generaCeros($CodigoRUC,7);                  
-                }
-            // 'MsgBox $R_Codigo_RUC_CI
-          break;
-      }
-     
-      $TipoBenef = $R_Tipo_Beneficiario;
-      $DigStr = $R_Digito_Verificador;
-      switch ($R_Tipo_Beneficiario) {
-        case 'R':
-          if(strlen($NumeroRUC) <> 13){ $R_Tipo_Beneficiario = "P"; }
-          break;
-        
-        case 'C':
-          if (strlen($NumeroRUC) <> 10 ){ $R_Tipo_Beneficiario = "P";}
-          break;
+  // 'SP que determinar que tipo de contribuyente es y el codigo si es pasaporte
+   $datos = Digito_Verificador_SP($CI_RUC);
+   if($datos['Tipo_Beneficiario'] <> "R" && strlen($datos['RUC_CI']) == 13){
+      if(ping("srienlinea.sri.gob.ec")==1 && GetUrlSource("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=".$datos['RUC_CI'])== true){
+        // print_r('expression');die();
+         $datos['Tipo_Beneficiario'] = "R";
+         $datos['Codigo_RUC_CI'] = substr($datos['RUC_CI'], 0, 10);
+         $datos['Digito_Verificador'] = substr($datos['RUC_CI'], 10, 1);
       }
    }
-   $Digito_Verificador = $DigStr;
+   $TipoBenef = $datos['Tipo_Beneficiario'];
+   if($datos['Tipo_Beneficiario'] == "R")
+    { 
+       $datos1 = Tipo_Contribuyente_SP_MySQL($datos['RUC_CI']);
+       $datos['MicroEmpresa'] = $datos1['@micro'];
+       $datos['AgenteRetencion'] = $datos1['@Agente'];
+    }
 
-   $res = array('Codigo'=>$R_Codigo_RUC_CI,'Tipo'=>$R_Tipo_Beneficiario,'Dig_ver'=>$R_Digito_Verificador,'Ruc_Natu'=> $R_RUC_Natural,'CI'=>$R_RUC_CI);
-// print_r($res);die();
-   return $res;*/
+    return $datos;
+   // RatonNormal
+   // Digito_Verificador = Tipo_RUC_CI.Digito_Verificador
 }
-//digito_verificadorf('1710034065'); $solovar = si es uno devuelve solo el codigo
-function digito_verificadorf($ruc,$solovar=null,$pag=null,$idMen=null,$item=null,$estudiante=null)
-{
-	//$ruc=$_POST['RUC'];
-	//echo $ruc.' '.strlen($ruc);
-	//codigo walter
-	$DigStr = "";
-	$VecDig = "";
-	$Dig3 = "";
-	$sSQLRUC = "";
-	$CodigoEmp = "";
-	$Producto = "";
-	$SumaDig = "";
-	$NumDig = "";
-	$ValDig = "";
-	$TipoModulo = "";
-	$CodigoRUC = "";
-	$Residuo = "";
-	//echo $ruc.' ';
-	$Dig3 = substr($ruc, 2, 1);
-	//echo $Dig3;
-	//$Codigo_RUC_CI = substr($ruc, 0, 10);
-	//echo $Dig3.' '.$Codigo_RUC_CI ;
-	$Tipo_Beneficiario = "P";
-	//$NumEmpresa='001';
-	$NumEmpresa=$item;
-	//echo $item.' dddvc '.$NumEmpresa;
-	$Codigo_RUC_CI = $NumEmpresa . "0000001";
-	$Digito_Verificador = "-";
-	$RUC_CI = $ruc;
-	$RUC_Natural = False;
-	//echo $Codigo_RUC_CI;
-	//die();
-	if($ruc == "9999999999999" )
-	{
-		$Tipo_Beneficiario = "R";
-		$Codigo_RUC_CI = substr($ruc, 0, 10);
-		$Digito_Verificador = 9;
-		$DigStr = "9";
-		//echo ' ccc '.$Codigo_RUC_CI;
-		//die();
-	}
-	else
-	{
-		$DigStr = $ruc;
-		$TipoBenef = "P";
-		$VecDig = "000000000";
-		$TipoModulo = 1;
-		If (is_numeric($ruc) And $ruc <= 0)
-		{
-			$Codigo_RUC_CI = $NumEmpresa & "0000001";
-		}
-		Else
-		{
-			//es cedula
-			if(strlen($ruc)==10 and is_numeric($ruc))
-			{
-				$coe = array("2", "1", "2", "1","2", "1", "2", "1","2");
-				$arr1 = str_split($ruc);
-				$resu = array();
-				$resu1=0;
-				$coe1=0;
-				$pro='';
-				$ter='';
-				$TipoModulo=10;
-				//validador
-				$ban=0;
-				for($jj=0;$jj<(strlen($ruc));$jj++)
-				{
-					//echo $arr1[$jj].' -- '.$jj.' cc ';
-					//validar los dos primeros registros
-					if($jj==0 or $jj==1)
-					{
-						$pro=$pro.$arr1[$jj];
-					}
-					if($jj==2)
-					{
-						$ter=$arr1[$jj];
-					}
-					//operacion suma
-					if($jj<=(strlen($ruc)-2))
-					{
-						$resu[$jj]=$coe[$jj]*$arr1[$jj];
-						if($resu[$jj]>=10)
-						{
-							$resu[$jj]=$resu[$jj]-9;
-						}
-						//suma
-						$resu1=$resu[$jj]+$resu1;
-					}
-					//ultimo digito
-					if($jj==(strlen($ruc)-1))
-					{
-						//echo " entro ";
-						$coe1=$arr1[$jj];
-					}
-					
-				}
-				//verificamos los dos primeros registros
-				if($pro>=24)
-				{
-					//echo "RUC/CI <p style='color:#FF0000;'>incorrecto los dos primeros digitos</p>";
-					$ban=1;
-				}
-				//verificamos el tercer registros
-				if($ter>6)
-				{
-					//echo "RUC/CI <p style='color:#FF0000;'>incorrecto el tercer digito</p>";
-					$ban=1;
-				}
-				//partimos string
-				$arr2 = str_split($resu1);
-				for($jj=0;$jj<(strlen($resu1));$jj++)
-				{
-					if($jj==0)
-					{
-						$arr2[$jj]=$arr2[$jj]+1;
-					}
-				}
-				//aumentamos a la siguiente decena
-				$resu2=$arr2[0].'0';
-				//resultado del ultimo coeficioente
-				$resu3 = $resu2- $resu1;
-				$Residuo = $resu1 % $TipoModulo;
-				//echo ' dsdsd '.$Residuo;
-				//die();
-				If ($Residuo == 0)
-				{
-				  $Digito_Verificador = "0";
-				}
-				Else
-				{
-				   $Residuo = $TipoModulo - $Residuo;
-				   $Digito_Verificador = $Residuo;
-				}
-				//echo $Digito_Verificador .' correcto '. substr($ruc, 9, 1);
-				if($ban==0)
-				{
-					If ($Digito_Verificador == substr($ruc, 9, 1))
-					{
-						$Tipo_Beneficiario = "C";
-					}	
-				}					
-			}
-			else
-			{
-				//caso ruc
-				if(strlen($ruc)==13 and is_numeric($ruc))
-				{
-					//caso ruc ecuatorianos de extrangeros
-					$Tipo_Beneficiario='O';
-					if ($Dig3 == 6 )
-					{
-						$coe = array("2", "1", "2", "1","2", "1", "2", "1","2");
-						$arr1 = str_split($ruc);
-						$resu = array();
-						$resu1=0;
-						$coe1=0;
-						$pro='';
-						$ter='';
-						$TipoModulo=10;
-						//validador
-						$ban=0;
-						for($jj=0;$jj<(count($coe));$jj++)
-						{
-							//echo $arr1[$jj].' -- '.$jj.' cc ';
-							//validar los dos primeros registros
-							if($jj==0 or $jj==1)
-							{
-								$pro=$pro.$arr1[$jj];
-							}
-							if($jj==2)
-							{
-								$ter=$arr1[$jj];
-							}
-							//operacion suma
-							if($jj<=(count($coe)-2))
-							{
-								$resu[$jj]=$coe[$jj]*$arr1[$jj];
-								if($resu[$jj]>=10)
-								{
-									$resu[$jj]=$resu[$jj]-9;
-								}
-								//suma
-								$resu1=$resu[$jj]+$resu1;
-							}
-							//ultimo digito
-							if($jj==(count($coe)-1))
-							{
-								//echo " entro ";
-								$coe1=$arr1[$jj];
-							}
-							
-						}
-						//verificamos los dos primeros registros
-						if($pro>=24)
-						{
-							//echo "RUC/CI <p style='color:#FF0000;'>incorrecto los dos primeros digitos</p>";
-							$ban=1;
-						}
-						//verificamos el tercer registros
-						if($ter>6)
-						{
-							//echo "RUC/CI <p style='color:#FF0000;'>incorrecto el tercer digito</p>";
-							$ban=1;
-						}
-						//partimos string
-						$arr2 = str_split($resu1);
-						for($jj=0;$jj<(strlen($resu1));$jj++)
-						{
-							if($jj==0)
-							{
-								$arr2[$jj]=$arr2[$jj]+1;
-							}
-						}
-						//aumentamos a la siguiente decena
-						$resu2=$arr2[0].'0';
-						//resultado del ultimo coeficioente
-						$resu3 = $resu2- $resu1;
-						$Residuo = $resu1 % $TipoModulo;
-						//echo ' dsdsd '.$Residuo;
-						//die();
-						If ($Residuo == 0)
-						{
-						  $Digito_Verificador = "0";
-						}
-						Else
-						{
-						   $Residuo = $TipoModulo - $Residuo;
-						   $Digito_Verificador = $Residuo;
-						}
-						//echo $Digito_Verificador .' correcto '. substr($ruc, 9, 1);
-						if($ban==0)
-						{
-							If ($Digito_Verificador == substr($ruc, 9, 1))
-							{
-								$Tipo_Beneficiario = "R";
-								$RUC_Natural = True;
-							}	
-						}	
-					}
-					if($Tipo_Beneficiario=='O')
-					{
-						$TipoModulo = 11;
-						//echo $Dig3.' qmm ';
-						if (($Dig3 <= 5) and ($Dig3 >= 0))
-						{
-							$TipoModulo = 10;
-							$TipoModulo1=9;
-							$coe = array("2", "1", "2", "1","2", "1", "2", "1","2");
-							$VecDig = "212121212";
-							//echo " aquiii 1 ";
-						}
-						else
-						{
-							if ($Dig3 == 6)
-							{
-								$coe = array("3", "2", "7", "6","5", "4", "3", "2");
-								$TipoModulo1=8;
-								$VecDig = "32765432";
-								//echo " aquiii 2 ";
-							}
-							else
-							{
-								if($Dig3 == 9)
-								{
-									$coe = array("4", "3", "2", "7", "6","5", "4", "3", "2");
-									$TipoModulo1=9;
-									$VecDig = "432765432";
-									//echo " aquiii 3 ";/
-								}
-								else
-								{
-									$VecDig = "222222222";
-									$TipoModulo1=9;
-									//echo " aquiii 4 ";
-									$coe = array("2", "2", "2", "2", "2","2", "2", "2", "2");
-								}
-							}
-						}
-						
-						$arr1 = str_split($ruc);
-						$resu = array();
-						$resu1=0;
-						$coe1=0;
-						$pro='';
-						$ter='';
-						//$TipoModulo=10;
-						//validador
-						$ban=0;
-						for($jj=0;$jj<($TipoModulo1);$jj++)
-						{
-							//echo $arr1[$jj].' -- '.$jj.' cc ';
-							//validar los dos primeros registros
-							if($jj==0 or $jj==1)
-							{
-								$pro=$pro.$arr1[$jj];
-							}
-							if($jj==2)
-							{
-								$ter=$arr1[$jj];
-							}
-							//operacion suma
-							if($jj<=(strlen($ruc)-2))
-							{
-								$resu[$jj]=$coe[$jj]*$arr1[$jj];
-								/*if($resu[$jj]>=10)
-								{
-									$resu[$jj]=$resu[$jj]-9;
-								}*/
-								If (0 <= $Dig3 And $Dig3 <= 5 And $resu[$jj] > 9)
-								{
-									$resu[$jj]=$resu[$jj]-9;
-								}									
-								//suma
-								$resu1=$resu[$jj]+$resu1;
-								//echo $coe[$jj].' * '.$arr1[$jj].' = '.$resu[$jj].' sum '.$resu1.' -- ';
-								
-							}
-							//ultimo digito
-							if($jj==(strlen($ruc)-1))
-							{
-								//echo " entro ";
-								$coe1=$arr1[$jj];
-							}
-							
-						}
-						//partimos string
-						$arr2 = str_split($resu1);
-						for($jj=0;$jj<(strlen($resu1));$jj++)
-						{
-							if($jj==0)
-							{
-								$arr2[$jj]=$arr2[$jj]+1;
-							}
-						}
-						//aumentamos a la siguiente decena
-						$resu2=$arr2[0].'0';
-						//resultado del ultimo coeficioente
-						$resu3 = $resu2- $resu1;
-						$Residuo = $resu1 % $TipoModulo;
-						If ($Residuo == 0)
-						{
-						  $Digito_Verificador = "0";
-						}
-						Else
-						{
-						   $Residuo = $TipoModulo - $Residuo;
-						   $Digito_Verificador = $Residuo;
-						}
-						//echo $Digito_Verificador.' '.$Dig3.' ';
-						If ($Dig3 == 6) 
-						{
-							If ($Digito_Verificador = substr($ruc, 8, 1)) 
-							{
-								$Tipo_Beneficiario = "R";
-							}
-						} 
-						Else
-						{
-							//echo $Digito_Verificador.' veri '.substr($ruc, 9, 1);
-							If ($Digito_Verificador == substr($ruc, 9, 1))
-							{
-								$Tipo_Beneficiario = "R";
-							}							
-						}
-						If ($Dig3 < 6 )
-						{
-							$RUC_Natural = True;
-						}
-					}
-				}
-				//echo $Tipo_Beneficiario;
-			}
-		}
-		//$_SESSION['INGRESO']['item']
-		//Si no es RUC/CI, procesamos el numero de codigo que le corresponde
-		//echo ' www '.substr($ruc, 12, 1).' -- '.$ruc;
-		if(substr($ruc, 12, 1)!='1' and strlen($ruc)<>10)
-		{
-			$Tipo_Beneficiario = 'O';
-		}
-		if(isset($_SESSION['INGRESO']['IP_VPN_RUTA'])) 
-		{
-			$database=$_SESSION['INGRESO']['Base_Datos'];
-			//$server=$_SESSION['INGRESO']['IP_VPN_RUTA'];
-			$server=''.$_SESSION['INGRESO']['IP_VPN_RUTA'].', '.$_SESSION['INGRESO']['Puerto'];
-			$user=$_SESSION['INGRESO']['Usuario_DB'];
-			$password=$_SESSION['INGRESO']['Contraseña_DB'];
-		}
-		else
-		{
-			$database="DiskCover_Prismanet";
-			$server="tcp:mysql.diskcoversystem.com, 11433";
-			$user="sa";
-			$password="disk2017Cover";
-		}
-		/*$database="DiskCover_Prismanet";
-		$server="mysql.diskcoversystem.com";
-		$user="sa";
-		$password="disk2017Cover";*/
-		if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) and $_SESSION['INGRESO']['Tipo_Base']=='SQL SERVER') 
-		{
-			$connectionInfo = array("Database"=>$database, "UID" => $user, "PWD" => $password);
 
-			$cid = sqlsrv_connect($server, $connectionInfo); //returns false
-			if( $cid === false )
-			{
-				echo "fallo conecion sql server";
-			}
-			
-		}
-		switch ($Tipo_Beneficiario) 
-		{
-			case ($Tipo_Beneficiario =='C'):
-			{
-				$Codigo_RUC_CI = substr($ruc, 0, 10);
-				//verificamos que no exista cliente
-				$sql="SELECT Codigo from Clientes WHERE CI_RUC = '".$ruc."' AND TD ='C' ";
-				//echo $sql;
-				$stmt = sqlsrv_query( $cid, $sql);
-				if( $stmt === false)  
-				{  
-					 echo "Error en consulta.\n";  
-					 die( print_r( sqlsrv_errors(), true));  
-				} 
-				$ii=0;				
-				while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
-				{
-					//echo " cc ".$row[0];
-					$ii++;
-				}
-				//echo $ii;
-				if($ii>0)
-				{
-					if($solovar!=1)
-					{
-						echo "<script> alert('ya existe este RUC/CI: ".$ruc." '); </script>";
-					}
-					
-					$Codigo_RUC_CI = 'ya existe';
-				}
-				sqlsrv_close( $cid );
-				break;
-			}
-			case ($Tipo_Beneficiario =='R' ):
-			{
-				if($RUC_Natural == True)
-				{
-					//echo " natural ";
-					//transformamos los primeros dos digitos ABCDEF 012345
-					$let1=convertirnumle(substr($ruc, 0, 1));
-					$let2=convertirnumle(substr($ruc, 1, 1));
-					//$Codigo_RUC_CI = substr($ruc, 1, 1).''.substr($ruc, 2, 1).''. substr($ruc, 3, 8);
-					$Codigo_RUC_CI = $let1.''.$let2.''. substr($ruc, 2, 8);
-				}
-				else
-				{
-					$Codigo_RUC_CI = substr($ruc, 0, 10);
-				}
-				//verificamos que no exista cliente
-				$sql="SELECT Codigo As Cod_RUC from Clientes WHERE CI_RUC = '".$ruc."' AND TD ='R' ";
-				//echo $sql;
-				$stmt = sqlsrv_query( $cid, $sql);
-				if( $stmt === false)  
-				{  
-					 echo "Error en consulta.\n";  
-					 die( print_r( sqlsrv_errors(), true));  
-				} 
-				$ii=0;				
-				while( $obj = sqlsrv_fetch_object( $stmt)) 
-				{
-					$ii++;
-				}
-				if($ii>0)
-				{
-					if($solovar!=1)
-					{
-						echo "<script> alert('ya existe este RUC/CI: ".$ruc." '); </script>";
-					}
-					
-					$Codigo_RUC_CI = 'ya existe';
-				}
-				sqlsrv_close( $cid );
-				break;
-			}
-			default:    
-			{    
-				$Codigo_RUC_CI = $NumEmpresa."0000001";
-				$CodigoEmp = $NumEmpresa."8888888";
-				//echo $_SESSION['INGRESO']['IP_VPN_RUTA'];
-				$sql="SELECT MAX(Codigo) As Cod_RUC from Clientes WHERE Codigo <  '".$CodigoEmp."'
-				AND SUBSTRING(Codigo,1,3) = '".$NumEmpresa."' AND LEN(Codigo) = 10 
-				AND TD NOT IN ('C','R') AND ISNUMERIC(Codigo) <> 0 ";
-				//echo $sql;
-				$stmt = sqlsrv_query( $cid, $sql);
-				if( $stmt === false)  
-				{  
-					 echo "Error en consulta.\n";  
-					 die( print_r( sqlsrv_errors(), true));  
-				}  
-				$i=0;
-				while( $obj = sqlsrv_fetch_object( $stmt)) 
-				{
-					//echo $obj->TABLE_NAME."<br />";
-					$CodigoRUC=$obj->Cod_RUC;
-					//echo $obj->Cod_RUC.' vvv ';
-					$CodigoRUC = substr($obj->Cod_RUC, 4, strlen($obj->Cod_RUC))+1;
-					//buscar funcion para agregar ceros
-					$CodigoRUC=generaCeros($CodigoRUC);
-					$Codigo_RUC_CI = $NumEmpresa . $CodigoRUC;
-					$i++;
-				}
-				
-				//verificamos que no exista cliente
-				$sql="SELECT Codigo As Cod_RUC from Clientes WHERE Codigo = '".$Codigo_RUC_CI."' ";
-				$stmt = sqlsrv_query( $cid, $sql);
-				if( $stmt === false)  
-				{  
-					 echo "Error en consulta.\n";  
-					 die( print_r( sqlsrv_errors(), true));  
-				} 
-				$ii=0;				
-				while( $obj = sqlsrv_fetch_object( $stmt)) 
-				{
-					$ii++;
-				}
-				if($i==0)
-				{
-					$CodigoRUC = 1;
-				}
-				if($ii>0)
-				{
-					if($solovar!=1)
-					{
-						///
-            echo "<script> alert('ya existe este RUC/CI: ".$ruc." '); </script>";
-					}
-					
-					$Codigo_RUC_CI++;
-					//$Codigo_RUC_CI = 'ya existe';
-				}
-				sqlsrv_close( $cid );
-			} 
-		}
-		//echo $Codigo_RUC_CI;
-		$TipoBenef = $Tipo_Beneficiario;
-		$DigStr = $Digito_Verificador;
-		//echo $Tipo_Beneficiario.' vvv '.strlen($ruc).' ccc ';
-		switch ($Tipo_Beneficiario) 
-		{
-			case ($Tipo_Beneficiario =='R'):
-			{
-				if(strlen($ruc)<> 13 )
-				{
-					//echo " entro 1 ";
-					$Tipo_Beneficiario = "P";
-				}
-				break;
-			}
-			//echo $Tipo_Beneficiario.' aden ';
-			case ($Tipo_Beneficiario =='C'):
-			{
-				if(strlen($ruc)<> 10 )
-				{
-					//echo " entro 2 ";
-					$Tipo_Beneficiario = "P";
-				}
-				break;
-			}
-			default:    
-			{
-				break;
-			}
-		}
-		if($solovar!=1)
-		{
-			if($estudiante == null)
-			{
-			echo "<script> document.getElementById('".$_POST['idMen']."').value='".$Codigo_RUC_CI."'; </script>";
-			//echo "<script> document.getElementById('".$_POST['TC']."').value='".$Tipo_Beneficiario."'; </script>";
-			echo 'RUC/CI ('.$Tipo_Beneficiario.') ';
-			return 'RUC/CI ('.$Tipo_Beneficiario.') ';
-		   }else
-		   {
-		   	 return array('tipo'=>$Tipo_Beneficiario,'codigo'=>$Codigo_RUC_CI);
-		   }
-		}
-		else
-		{
-			return  strval($Codigo_RUC_CI);
-		}
-	}
+function ping($ip)
+{
+  $output = shell_exec("ping $ip");   
+  if (strpos($output, "recibidos = 0")) {
+      return -1;
+  } else {
+     return 1;
+  }
+}
+function GetUrlSource($url)
+{
+  $res = file_get_contents($url);
+  return $res;
+}
+
+function Digito_Verificador_SP($NumeroRUC)
+{
+  $conn = new db();
+  $RUCCI = "";
+  $CodigoRUCCI = "";
+  $DigitoVerificador = "";
+  $TipoBeneficiario = "";
+  $RUCNatural = false;
+
+  //Determinamos que tipo de RUC/CI es
+  $Tipo_Beneficiario = "P";
+  $Codigo_RUC_CI = $_SESSION['INGRESO']['item']. "0000001";
+  $Digito_Verificador = "-";
+  $RUC_CI = $NumeroRUC;
+  $RUC_Natural = 0;
+  $TipoSRI_Existe = 0;
+  $parametros = array(
+    array(&$NumeroRUC, SQLSRV_PARAM_IN),
+    array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+
+    array(&$RUC_CI, SQLSRV_PARAM_INOUT),
+    array(&$Codigo_RUC_CI, SQLSRV_PARAM_INOUT),
+    array(&$Digito_Verificador, SQLSRV_PARAM_INOUT),
+    array(&$Tipo_Beneficiario, SQLSRV_PARAM_INOUT),
+    array(&$RUC_Natural, SQLSRV_PARAM_INOUT),
+  );
+  $sql = "EXEC sp_Digito_Verificador @NumeroRUC=?, @Item=?, @RUCCI=?, @CodigoRUCCI=?, @DigitoVerificador=?, @TipoBeneficiario=?, @RUCNatural=?";
+  $exec = $conn->ejecutar_procesos_almacenados($sql,$parametros);
+
+  if($Tipo_Beneficiario != "R") {$TipoSRI_Existe  = false; };
+
+  return compact('RUC_CI', 'Codigo_RUC_CI', 'Digito_Verificador', 'Tipo_Beneficiario', 'RUC_Natural', 'TipoSRI_Existe'); 
 }
 
 
@@ -12751,40 +11780,6 @@ function GrabarComprobante($C1)
   // Control_Procesos Normal, "Grabar Comprobante de: " & $C1["TP & " No. " & $C1["Numero"]
 }
 
-function Digito_Verificador_SP($NumeroRUC)
-{
-  $conn = new db();
-  $RUCCI = "";
-  $CodigoRUCCI = "";
-  $DigitoVerificador = "";
-  $TipoBeneficiario = "";
-  $RUCNatural = false;
-
-  //Determinamos que tipo de RUC/CI es
-  $Tipo_Beneficiario = "P";
-  $Codigo_RUC_CI = $_SESSION['INGRESO']['item']. "0000001";
-  $Digito_Verificador = "-";
-  $RUC_CI = $NumeroRUC;
-  $RUC_Natural = 0;
-  $TipoSRI_Existe = 0;
-  $parametros = array(
-    array(&$NumeroRUC, SQLSRV_PARAM_IN),
-    array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
-
-    array(&$RUC_CI, SQLSRV_PARAM_INOUT),
-    array(&$Codigo_RUC_CI, SQLSRV_PARAM_INOUT),
-    array(&$Digito_Verificador, SQLSRV_PARAM_INOUT),
-    array(&$Tipo_Beneficiario, SQLSRV_PARAM_INOUT),
-    array(&$RUC_Natural, SQLSRV_PARAM_INOUT),
-  );
-  $sql = "EXEC sp_Digito_Verificador @NumeroRUC=?, @Item=?, @RUCCI=?, @CodigoRUCCI=?, @DigitoVerificador=?, @TipoBeneficiario=?, @RUCNatural=?";
-  $exec = $conn->ejecutar_procesos_almacenados($sql,$parametros);
-
-  if($Tipo_Beneficiario != "R") {$TipoSRI_Existe  = false; };
-
-  return compact('RUC_CI', 'Codigo_RUC_CI', 'Digito_Verificador', 'Tipo_Beneficiario', 'RUC_Natural', 'TipoSRI_Existe'); 
-}
-
 
 
    function BorrarAsientos($Trans_No,$B_Asiento=false)
@@ -13095,4 +12090,25 @@ function Digito_Verificador_SP($NumeroRUC)
     }
   }
   // FIN CIERRE DE CAJA
+  function ULCase($textoConversion) {
+    $textoULCase = strtolower($textoConversion);
+    if ($textoULCase == "") {
+        $textoULCase = G_NINGUNO;
+    }
+    $cadAux = "";
+    $mayusc = true;
+    for ($ti = 0; $ti < strlen($textoULCase); $ti++) {
+        $caracter = substr($textoULCase, $ti, 1);
+        if ($mayusc) {
+            $caracter = strtoupper($caracter);
+            $mayusc = false;
+        }
+        $cadAux .= $caracter;
+        if ($caracter == " ") {
+            $mayusc = true;
+        }
+    }
+    return $cadAux;
+}
+
 ?>

@@ -3284,7 +3284,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(270,155,100));
 	
-	$arr=array('Dirección: '.$datos[0]['Direccion_RS'],'Fecha emisión: '.$datos[0]['Fecha']->format('Y-m-d'),'Fecha pago: '.$datos[0]['Fecha']->format('Y-m-d'));//mio
+	$arr=array('Dirección: '.$datos[0]['Direccion_RS'],'Fecha emisión: '.$datos[0]['Fecha']->format('Y-m-d'),'Fecha pago: '.$datos[0]['Fecha_V']->format('Y-m-d'));//mio
 	$pdf->Row($arr,10);
 	$pdf->SetWidths(array(270,155,100));
 	if('DOLAR'=='DOLAR')
@@ -3297,17 +3297,12 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 		//se busca otras monedas
 	}
 	//die();
+	$DiasPago = strval(strtotime($datos[0]['Fecha_V']->format('Y-m-d')) - strtotime($datos[0]['Fecha']->format('Y-m-d')))/ (60 * 60 * 24);
 	$arr=array('FORMA DE PAGO: '.$datos[0]['Tipo_Pago'],
 	'MONTO: '.number_format($datos[0]['Total_MN'],2,'.',',').'  '
-	,'Condición de venta: '.$datos[0]['Fecha_C']->format('Y-m-d'));
+	,'Condición de venta: '.$DiasPago.' días');
 	$pdf->Row($arr,10);
-	if($datos[0]['Nota']!='.' && $datos[0]['Nota']!='')
-	{
-	$pdf->SetWidths(array(525));
-	$arr=array('Nota: '.$datos[0]['Nota']);
-	$pdf->Row($arr,10);
-    }
-
+	
     $yfin = $pdf->GetY();	
 	$xfin = $pdf->GetX();
 	$pdf->RoundedRect($x-$margen, $y-$margen, $margen_med3, $yfin-$y+$margen, $radio, $style = '', $angle = '1234');	
@@ -3316,7 +3311,46 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 
 //================================fin cuadro cliente========================================================= 
 
+//================================Inicio Guía de Remisión=========================================================
+	//TOMADO DE VB SRI_Generar_Documento_PDF(
+	switch ($datos[0]['TC']) {
+		case 'FA':
+			if ($datos[0]['Remision'] > 0) {
+				$y = $pdf->GetY()+$margen*2;	
+			    $x = $pdf->GetX();
+			    $pdf->SetXY($x,$y);
+				$pdf->SetFont('Arial','',6);
+				$pdf->SetWidths(array(270,155,250));
+				$arr=array("Guía Remisión: " . $datos[0]['Serie_GR'] . "-" . sprintf("%09d", $datos[0]['Remision']),"Entrega: " . $datos[0]['Comercial']);
+				$pdf->Row($arr,10);
+
+				$pdf->SetWidths(array(140,130,250));
+				$arr=array("Pedido: " . $datos[0]['Pedido'],"Zona: " . ULCase($datos[0]['CiudadGRF']) . " - " . $datos[0]['Zona'],((strlen($datos[0]['Lugar_Entrega']) > 1) ?"Lugar de Entrega: " . $datos[0]['Lugar_Entrega']:"Lugar de Entrega: " . $datos[0]['DireccionC']));
+				$pdf->Row($arr,10);
+
+			    $yfin = $pdf->GetY();	
+				$xfin = $pdf->GetX();
+				$pdf->RoundedRect($x-$margen, $y-$margen, $margen_med3, $yfin-$y+$margen, $radio, $style = '', $angle = '1234');
+			}
+			break;
+		
+		default:
+			// code...
+			break;
+	}
+//================================fin Guía de Remisión=========================================================
+
 //================================cuadro detalle========================================================= 
+
+	//Tomado de SRI_Generar_PDF_FA( Linea 1259
+	if ($datos[0]['SP']) {
+	    $titulo1 = "Codigo Auxiliar";
+	    $titulo2 = "Codigo Unitario";
+	} else {
+	    $titulo1 = "Codigo Unitario";
+	    $titulo2 = "Codigo Auxiliar";
+	}
+	//FIN Tomado de SRI_Generar_PDF_FA( Linea 1259
 
 	//datos factura
 	$y = $pdf->GetY()+$margen+2;	
@@ -3325,8 +3359,8 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 	$margen_med3 = 540;
 
 	$pdf->SetFont('Arial','B',6);
-	$pdf->SetWidths(array(55,55,45,45,123,45,45,40,40,45));
-	$arr=array("Codigo Unitario","Codigo Auxiliar","Cantidad Total","Cantidad Bonif.","Descripción","Lote","Precio Unitario","Valor Descuento","Desc. %","Valor Total");
+	$pdf->SetWidths(array(55,55,35,45,134,45,45,40,40,45));
+	$arr=array($titulo1,$titulo2,"Cantidad Total","Cantidad Bonif.","D e s c r i p c i ó n","Lote No. /Orden No","Precio Unitario","Valor Descuento","Desc. %","Valor Total");
 	$pdf->Row($arr,10,1);
 	$pdf->SetFont('Arial','',6);
 	
@@ -3360,17 +3394,71 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 
 	// print_r($detalle_descuento);die();
      foreach ($detalle as $key => $value) {
-     	// print_r($value);
+     	//tomado de SRI_Generar_PDF_FA( Linea 1298
+     		if (strlen($value["Codigo_Barra"]) > 1) {
+			  $Cod_Bar = $value["Codigo_Barra"];
+			} else {
+			  $Cod_Bar = $value["Cod_Barras"];
+			}
+
+			$Cod_Aux = $value["Desc_Item"];
+			$Total_Desc = $value["Total_Desc"] + $value["Total_Desc2"];
+
+			if ($Total_Desc > 0 && $value["Total"] <> 0) {
+			  $Porc_Str = number_format((($Total_Desc*100)/$value['Total']),0,'.','').'%';
+			} else {
+			  $Porc_Str = "";
+			}
+
+			$CODIGO1="";
+			$CODIGO2="";
+			if ($datos[0]['SP']) {
+			  if (strlen($Cod_Bar) > 1) {
+			    $CODIGO1 = $Cod_Bar;
+			  }
+			  $CODIGO2  = (strlen($Cod_Aux) > 1)?$Cod_Aux:$value["Codigo"];
+
+			} else {
+			  $CODIGO1 = (strlen($Cod_Aux) > 1)?$Cod_Aux:$value["Codigo"];
+			  if (strlen($Cod_Bar) > 1) {
+			    $CODIGO2 = $Cod_Bar;
+			  }
+			}
+     	//FIN tomado de  SRI_Generar_PDF_FA( Linea 1298
      	$descto = '0';
      	if($value['Total']>0)
      	{
-     		$descto = number_format(((($value['Total_Desc']+$value['Total_Desc2'])*100)/$value['Total']),2,'.','').'%';
+     		$descto = $Porc_Str;
      	}
      	 $pdf->SetX($x);
-           if($imp_mes!=0)
-           {
-           	 $value['Producto'] = $value['Producto'].' '.$value['Mes'].'/'.$value['Ticket'];
-           }
+           	//INICIO PRODUCTO
+            $Producto = $value["Producto"];
+			if ($value["Codigo"] != "99.41" && $imp_mes) {
+			  $Producto = $Producto . " " . $value["Ticket"] . " " . $value["Mes"]. PHP_EOL;
+			}
+
+			if ($datos[0]['SP']) {
+			  if (CFechaLong($value["Fecha_Fab"]) != CFechaLong($value["Fecha_Exp"])) {
+			    $Producto .= "ELAB. " . $value["Fecha_Fab"] . ", VENC. " . $value["Fecha_Exp"] . " " . PHP_EOL;
+			  }
+
+			  if (strlen($value["Reg_Sanitario"]) > 1) {
+			    $Producto .= "Reg. Sanit. " . $value["Reg_Sanitario"]. PHP_EOL;
+			  }
+
+			  if (strlen($value["Modelo"]) > 1) {
+			    $Producto .= "Modelo: " . $value["Modelo"]. PHP_EOL;
+			  }
+
+			  if (strlen($value["Procedencia"]) > 1) {
+			    $Producto .= "Procedencia: " . $value["Procedencia"]. PHP_EOL;
+			  }
+			}
+
+			if (strlen($value["Serie_No"]) > 1) {
+			  $Producto .= "Serie No. " . $value["Serie_No"];
+			}
+			//FIN PRODUCTO
 
            if(strlen($value["Tipo_Hab"]) > 1)
 			 {
@@ -3389,10 +3477,10 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 	       		$totaldes = number_format($value['Total_Desc'],2,'.','')+number_format($value['Total_Desc2'],2,'.','');
 	       		$totalfac = number_format($value['Total'],2,'.','');
 	       	}              		
-     	 	$pdf->SetWidths(array(55,55,45,45,123,45,45,40,40,45));
+     	 	$pdf->SetWidths(array(55,55,35,45,134,45,45,40,40,45));
 			$pdf->SetAligns(array("L","L","R","R","L","L","R","R","R","R"));
 			//$arr=array($arr1[$i]);
-			$arr=array($value['Codigo'],'',number_format($value['Cantidad'],2,'.',''),'',$value['Producto'],'',number_format($value['Precio'],6,'.',''),$totaldes,$descto, $totalfac);
+			$arr=array($CODIGO1,$CODIGO2,number_format($value['Cantidad'],2,'.',''),'',$Producto,'',number_format($value['Precio'],2,'.',''),$totaldes,$descto, $totalfac);
 			$pdf->Row($arr,10,1);
 
 			 // if(strlen($value["Tipo_Hab"]) > 1)
@@ -3415,7 +3503,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
      	foreach ($detalle_descuento as $key => $value) {
  		 	$pdf->SetX(36);
            	$totaldes = number_format($value['valor'],2,'.','');
-            $pdf->SetWidths(array(55,55,45,45,123,45,45,40,40,45));
+            $pdf->SetWidths(array(55,55,35,45,134,45,45,40,40,45));
 			$pdf->SetAligns(array("L","L","R","R","L","L","R","R","R","R"));
 			//$arr=array($arr1[$i]);
 			$arr=array('','','','',$value['detalle'],'','','','',$totaldes);
@@ -3429,7 +3517,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 	$xfin = $pdf->GetX();
 	// $pdf->RoundedRect($x-$margen, $y-$margen, $margen_med3, $yfin-$y+$margen, $radio, $style = '', $angle = '1234');
    
-	//===================================================fin cuadrpo detalle======================================
+//===================================================fin cuadrpo detalle======================================
 	if($yfin >=612)
 	{
 		$pdf->AddPage();
@@ -3449,7 +3537,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 	$pdf->SetXY(41-$margen, $y+5);
 	$pdf->SetWidths(array(140,40,95,46));
 	// infofactura
-	$arr=array("INFORMACIÓN ADICIONAL","Fecha","Deltalle del pago","Monto Abono");
+	$arr=array("INFORMACIÓN ADICIONAL","Fecha","Detalle del pago","Monto Abono");
     $pdf->Row($arr,10,1);
 	
 	$y=$pdf->GetY()-5;//377
@@ -3567,24 +3655,65 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 			$arr=array('Placas: '.$sucursal[0]['Placa_Vehiculo']);
 		    $pdf->Row($arr,10);
 		}
-
-		
 	}
-	if(isset($datos[0]['Observacion']) && $datos[0]['Observacion'] != '.' && $datos[0]['Observacion'] != '')
-	{			
-		// print_r('expression');die();
-		$arr=array('Observacion: '.$datos[0]['Observacion']);
-		$pdf->Row($arr,10);
-		$pdf->SetWidths(array(140));
-    }
-	if(isset($educativo[0]['Email']) && $educativo[0]['Email'] != '.' && $educativo[0]['Email'] != '')
-	{			
-		// print_r('expression');die();
-		$arr=array('Email: '.$educativo[0]['Email']);
-		$pdf->Row($arr,10);
-		$pdf->SetWidths(array(140));
-    }
 
+	// if(isset($educativo[0]['Email']) && $educativo[0]['Email'] != '.' && $educativo[0]['Email'] != '')
+	// {			
+	// 	// print_r('expression');die();
+	// 	$arr=array('Email: '.$educativo[0]['Email']);
+	// 	$pdf->Row($arr,10);
+	// 	$pdf->SetWidths(array(140));
+    // }
+
+	//================================Inicio INFORMACION ADICIONAL=======================
+			$pdf->Row([],10);
+			$pdf->SetWidths(array(140));
+	    if ($datos[0]['Razon_Social'] != $datos[0]['Cliente']) {
+			$arr=array('Beneficiario: '.$datos[0]['Cliente']);
+			$pdf->Row($arr,10);
+			$pdf->SetWidths(array(140));
+
+			$arr=array('Codigo: '.$datos[0]['CI_RUC']);
+			$pdf->Row($arr,10);
+			$pdf->SetWidths(array(140));
+		}
+		if ($datos[0]['Grupo'] != G_NINGUNO && $datos[0]['Curso'] != $datos[0]['DireccionC'] && $datos[0]['Imp_Mes']) {
+			$arr=array('Grupo: '.$datos[0]['Grupo']."-".$datos[0]['Curso']);
+			$pdf->Row($arr,10);
+			$pdf->SetWidths(array(140));
+		}
+		if (strlen($datos[0]['EmailC']) > 1 && strpos($datos[0]['EmailC'], "@") > 0) {
+			$arr=array('Email: '.$datos[0]['EmailC']);
+			$pdf->Row($arr,10);
+			$pdf->SetWidths(array(140));
+		}
+		if (strlen($datos[0]['EmailR']) > 1 && strpos($datos[0]['EmailR'], "@") > 0 && strpos($datos[0]['EmailC'], $datos[0]['EmailR']) === false) {
+			$arr=array('Email2: '.$datos[0]['EmailR']);
+			$pdf->Row($arr,10);
+			$pdf->SetWidths(array(140));
+		}
+		if (strlen($datos[0]['Contacto']) > 1) {
+			$arr=array('Referencia: '.$datos[0]['Contacto']);
+			$pdf->Row($arr,10);
+			$pdf->SetWidths(array(140));
+		}
+		if (strlen($datos[0]['TelefonoC']) > 1) {
+			$arr=array('Teléfono: '.$datos[0]['TelefonoC']);
+			$pdf->Row($arr,10);
+			$pdf->SetWidths(array(140));
+		}
+		if (strlen($datos[0]['Nota']) > 1) {
+			$arr=array('Nota: '.$datos[0]['Nota']);
+			$pdf->Row($arr,10);
+			$pdf->SetWidths(array(140));
+		}
+		if (strlen($datos[0]['Observacion']) > 1) {
+			$arr=array('Observacion: '.$datos[0]['Observacion']);
+			$pdf->Row($arr,10);
+			$pdf->SetWidths(array(140));
+		}
+
+	//================================Fin INFORMACION ADICIONAL=======================
 
 	///---------------------- fin infomrmacion adicional cuan establecimiento es diferente de 001 ----------------------
     $yfin_adiconales = $pdf->GetY();
@@ -3594,18 +3723,25 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 
 
 
-	//fecha
+	//================================Inicio INFORMACION DE ABONOS=======================
 	if($abonos)
 	{
 		$pdf->SetFont('Arial','',5);
 		$pdf->SetXY(140+$pdf->GetX()-$margen,$y+$margen);	
 
 		// print_r($abonos);die();
+		//Este calculo lo agrego para hacer que el ultimo abono tome el tamaño necesario para quedar a la misma altura de la informacion adiciona
+		//aunque considero queeodria cambiar  a que sea una sola fila y cada item se separe por salto de linea y no que cada item sea una fila asi ambos tendria siempre el mismo alto
+		$extra = 0;
+		$total_item_abonos = count($abonos);
+		$alto_abonos = $total_item_abonos*10;
+		$alto_adicion = $yfin_adiconales-($y+$margen);
+		if($alto_abonos<$alto_adicion){$extra = ($alto_adicion-$alto_abonos);}
 		foreach ($abonos as $key => $value) {
 			$pdf->SetWidths(array(40,95,46));
 			// $arr=array($value['Fecha']->format('Y-m-d'),$value['Banco'].' '.$value['Cheque'],$value['Abono']);
 			$arr=array($value['Fecha']->format('Y-m-d'),$value['Banco'].' ',$value['Abono']);
-		    $pdf->Row($arr,10,1);
+		    $pdf->Row($arr,10+((($key+1)==$total_item_abonos)?$extra:0),['LR','LR','LR']);
 		    $pdf->SetX(140+$pdf->GetX()-$margen);	
 
 			// // print_r($abonos);die();
@@ -3628,7 +3764,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 			$y_final_leyenda = $y_fin_abonos;
 		}
 	}
-
+	//================================Fin INFORMACION DE ABONOS=======================
 	
 	//leyenda final
 	$pdf->SetFont('Arial','',5);

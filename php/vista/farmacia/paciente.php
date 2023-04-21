@@ -296,7 +296,7 @@
       type:  'post',
       dataType: 'json',
       success:  function (response) { 
-        if(response == 2)
+        if(response.Tipo_Beneficiario == 'P')
         {
            Swal.fire('Numero de cedula invalido.','','error');
             $('#txt_ruc').val('');

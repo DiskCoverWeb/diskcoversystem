@@ -258,8 +258,13 @@ C.Telefono_R,Telefono_RS,Lugar_Trabajo_R,Email_R,Email_R,Matricula_No,Folio_No,C
 	//       {
 	//     	$result[] = $row;
 	//       }
+       // print_r($sql);die();
    $result = $this->conn->String_Sql($sql);
-	$row = $result[0]['num']+1;
+   // print_r($result);die();
+   // if(count($result)>0)
+   // {
+			$row = $result+1;
+		// }else{ $row=1;}
 	if($row<10)
 	{
 		$row = '00'.$row;
@@ -349,7 +354,7 @@ C.Telefono_R,Telefono_RS,Lugar_Trabajo_R,Email_R,Email_R,Matricula_No,Folio_No,C
    	$cid = $this->conn;
 		
 		$sql ="SELECT T,TC,Serie,Autorizacion,Factura,Fecha,SubTotal,Con_IVA,IVA,Descuento+Descuento2 as Descuentos,Total_MN as Total,Saldo_MN as Saldo,RUC_CI,TB,Razon_Social,CodigoC FROM Facturas 
-		WHERE CI_RUC ='".$codigo."'
+		WHERE CodigoC ='".$codigo."'
 		AND Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ORDER BY Fecha DESC"; 
       
@@ -364,7 +369,7 @@ C.Telefono_R,Telefono_RS,Lugar_Trabajo_R,Email_R,Email_R,Matricula_No,Folio_No,C
         
    //     $tabla = grilla_generica($stmt,null,NULL,'1','2,4,clave');
 
-		print_r($sql);die();
+		// print_r($sql);die();
 		$botones[0] = array('boton'=>'Ver factura','icono'=>'<i class="fa fa-eye"></i>', 'tipo'=>'default', 'id'=>'Factura,Serie,CodigoC');
 		$tabla = grilla_generica_new($sql,'Facturas',$id_tabla=false,$titulo=false,$botones,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$tamaño_tabla=300,$num_decimales=2,$num_reg=false,$paginacion_view= false,$estilo=1);
 

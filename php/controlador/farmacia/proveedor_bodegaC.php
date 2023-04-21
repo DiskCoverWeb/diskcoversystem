@@ -92,18 +92,18 @@ class proveedor_bodegaC
 		$datos[3]['campo']='Email';
 		$datos[3]['dato']=$parametros['email'];
 				
-		$codig = digito_verificador_nuevo($parametros['ci']);
+		$codig = Digito_Verificador($parametros['ci']);
 		// print_r($codig);die();
-		if($codig['Tipo']!='C')
+		if($codig['Tipo_Beneficiario']!='C')
 		{
 			return -3;
 		}
 		$datos[4]['campo'] = 'T';
 		$datos[4]['dato']='N';
 		$datos[5]['campo'] = 'Codigo';
-		$datos[5]['dato']=$codig['Codigo'];
+		$datos[5]['dato']=$codig['Codigo_RUC_CI'];
 		$datos[6]['campo'] = 'TD';
-		$datos[6]['dato']=$codig['Tipo'];
+		$datos[6]['dato']=$codig['Tipo_Beneficiario'];
 		$datos[7]['campo'] = 'Direccion';
 		$datos[7]['dato']=$parametros['direccion'];
 
