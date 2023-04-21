@@ -204,23 +204,29 @@ $mostrar_medidor = false;
   function validar_sri()
   {
     var ci = $('#ruc').val();
-     $.ajax({
-    data: {ci,ci},
-    url: '../controlador/modalesC.php?validar_sri=true',
-    type: 'POST',
-    dataType: 'json',
-    success: function(response) {
-      if(response.res=='1')
-        {
-          $('#datos_sri_cliente').modal('show');
-          $('#tbl_sri').html(response.tbl);
-        }else
-        {
-          Swal.fire('Ruc no encontrado en el SRI','','info')
-        }
+    if(ci!='')
+    {
+      url = 'https://srienlinea.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos2.jspa?accion=siguiente&ruc='+ci
+      window.open(url, "_blank");
+    }
+    // var ci = $('#ruc').val();
+    //  $.ajax({
+    // data: {ci,ci},
+    // url: '../controlador/modalesC.php?validar_sri=true',
+    // type: 'POST',
+    // dataType: 'json',
+    // success: function(response) {
+    //   if(response.res=='1')
+    //     {
+    //       $('#datos_sri_cliente').modal('show');
+    //       $('#tbl_sri').html(response.tbl);
+    //     }else
+    //     {
+    //       Swal.fire('Ruc no encontrado en el SRI','','info')
+    //     }
 
-      }
-    });
+    //   }
+    // });
 
   }
 
