@@ -208,6 +208,9 @@ $mostrar_medidor = false;
     {
       url = 'https://srienlinea.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos2.jspa?accion=siguiente&ruc='+ci
       window.open(url, "_blank");
+    }else
+    {
+       Swal.fire('Coloque un numero de CI / RUC','','info')
     }
     // var ci = $('#ruc').val();
     //  $.ajax({
