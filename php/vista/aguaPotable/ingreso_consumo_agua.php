@@ -307,7 +307,8 @@
               $(".labelUltimaLectura").addClass('no-visible')
             }else{
               Swal.fire('¡Oops!', response.mensaje, 'warning')
-            }        
+            }  
+            $('#myModal_espera').modal('hide');      
           },
           error: function () {
             $('#myModal_espera').modal('hide');

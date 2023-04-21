@@ -626,7 +626,7 @@ class facturar_pensionM
 
   public function getUltimoRegistroDetalleFactura($codigoCliente, $Tipo_Hab="", $Codigo_Inv=""){
     $Tipo_Hab = ($Tipo_Hab!="")?str_pad($Tipo_Hab, 6, "0", STR_PAD_LEFT):"";
-    $sql = "SELECT DF.ID, DF.Corte, DF.Tipo_Hab, DF.Codigo, DF.Mes_No,DF.Ticket
+    $sql = "SELECT DF.ID, DF.Corte, DF.Tipo_Hab, DF.Codigo, DF.Mes_No,DF.Ticket,DF.Periodo
       FROM Detalle_Factura As DF 
       WHERE DF.CodigoC = '".$codigoCliente."'
       AND DF.Item = '".$_SESSION['INGRESO']['item']."'
@@ -662,6 +662,37 @@ class facturar_pensionM
             "AND Tipo_Dato = 'MEDIDOR' ";
             echo "<pre>";print_r($sSQL);echo "</pre>";die();
         //return Ejecutar_SQL_SP($sSQL);
+  }
+
+  public function AnyRegistroClientes_FacturacionAnoMes($codigoCliente, $Codigo_Auto="", $Codigo_Inv="", $Anio, $NoMes){
+    $Codigo_Auto = ($Codigo_Auto!="")?str_pad($Codigo_Auto, 6, "0", STR_PAD_LEFT):"";
+    $sql = "SELECT Top(1) CF.ID
+      FROM Clientes_Facturacion As CF 
+      WHERE CF.Codigo = '".$codigoCliente."'
+      AND CF.Item = '".$_SESSION['INGRESO']['item']."'
+      AND CF.Mes <> '.'
+      ".(($Codigo_Auto!="")?" AND CF.Codigo_Auto = '".$Codigo_Auto."' ":"")."
+      ".(($Codigo_Inv!="")?" AND CF.Codigo_Inv = '".$Codigo_Inv."' ":"")."
+      ".(($Anio!="")?" AND CF.Periodo = '".$Anio."' ":"")."
+      ".(($NoMes!="")?" AND CF.Num_Mes = '".$NoMes."' ":"")."
+      ";
+    $stmt = $this->db->datos($sql);
+    return count($stmt)>0;
+  }
+
+  public function AnyRegistroDetalleFacturaAnoMes($codigoCliente, $Tipo_Hab="", $Codigo_Inv="", $Anio, $NoMes){
+    $Tipo_Hab = ($Tipo_Hab!="")?str_pad($Tipo_Hab, 6, "0", STR_PAD_LEFT):"";
+    $sql = "SELECT Top(1) DF.ID
+      FROM Detalle_Factura As DF 
+      WHERE DF.CodigoC = '".$codigoCliente."'
+      AND DF.Item = '".$_SESSION['INGRESO']['item']."'
+      ".(($Tipo_Hab!="")?" AND DF.Tipo_Hab = '".$Tipo_Hab."' ":"")."
+      ".(($Codigo_Inv!="")?" AND DF.Codigo = '".$Codigo_Inv."' ":"")."
+      ".(($Anio!="")?" AND DF.Periodo = '".$Anio."' ":"")."
+      ".(($NoMes!="")?" AND DF.Mes_No = '".$NoMes."' ":"")."
+      ";
+    $stmt = $this->db->datos($sql);
+    return count($stmt)>0;
   }
 }
 

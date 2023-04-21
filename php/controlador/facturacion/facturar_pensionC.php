@@ -1074,7 +1074,7 @@ class facturar_pensionC
 
   public function GuardarConsumoAgua($parametros){
     extract($parametros);
-    if(!isset($Lectura)){
+    if(!isset($Lectura) || $Lectura==""){
       return (array("rps" => false , "mensaje" => "No se indico la lectura"));
     }
 
@@ -1109,7 +1109,7 @@ class facturar_pensionC
         $Anio = ObtenerAnioFecha($Mifecha,'YmdHis');
       }
 
-      if($dataCliente["fechaUltimaMedida"]==mes_X_nombre($NoMes)."/$Anio"){
+      if($dataCliente["fechaUltimaMedida"]==mes_X_nombre($NoMes)."/$Anio" || @$this->validarExisteLecturaREgistradaAnoMes($CMedidor, $codigoCliente, $Anio, $NoMes, JG01 )){
         return (array("rps" => false , "mensaje" => "Ya se registro la lectura para Febrero/2022"));
       }
 
@@ -1160,6 +1160,11 @@ class facturar_pensionC
     }else{
       return (array("rps" => 0 , "mensaje" => "Debe indicar el medidor."));
     }
+  }
+
+  public function validarExisteLecturaREgistradaAnoMes($cMedidor, $codigoCliente, $Anio, $NoMes, $Codigo_Inv )
+  {
+    return ($this->facturacion->AnyRegistroClientes_FacturacionAnoMes($codigoCliente, $cMedidor, $Codigo_Inv, $Anio, $NoMes))?true:    $this->facturacion->AnyRegistroDetalleFacturaAnoMes($codigoCliente, $cMedidor, $Codigo_Inv, $Anio, $NoMes);
   }
 }
 ?>
