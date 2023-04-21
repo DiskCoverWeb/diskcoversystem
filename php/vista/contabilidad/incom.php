@@ -60,6 +60,7 @@
     }
   
   $(document).ready(function () {
+    cargar_cuenta();
     var modificar = '<?php echo $variables_mod; ?>';
     var modificar = '<?php echo $variables_mod; ?>';
     var load = '<?php echo $load; ?>';
@@ -126,7 +127,7 @@
             return false;
         },
         focus: function(event, ui){
-            $( "#codigo" ).val( ui.item.value);
+            $( "#codigo").val(ui.item.value);
             return false;
         },
     });
@@ -914,7 +915,7 @@
 
     if(cod!='AC' && cod!='AV' && cod!='AI' && cod!='AE')
     {
-      $('#cuentar').select2('open');
+      // $('#cuentar').select2('open');
     }
 
     // $('#cuentar').select();
@@ -1533,7 +1534,7 @@
                                  <div class="btn_f input-xs col-md-12 text-center">
                                   <b>DIGITE LA CLAVE O SELECCIONE LA CUENTA:</b>
                                  </div>
-                                 <select id="cuentar" class=" form-control input-xs" onchange="abrir_modal_cuenta()" onfocus="cargar_cuenta()">
+                                 <select id="cuentar" class=" form-control input-xs" onchange="abrir_modal_cuenta()">
                                   <option value="">Seleccione una cuenta</option>   
                                  </select>
                                    <!--  <input type="text" class="xs" id="cuenta" name='cuenta' placeholder="cuenta" maxlength='70' size='153'/>
