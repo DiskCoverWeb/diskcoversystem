@@ -1158,7 +1158,7 @@ function Digito_verificador($CI_RUC)
   // 'SP que determinar que tipo de contribuyente es y el codigo si es pasaporte
    $datos = Digito_Verificador_SP($CI_RUC);
    if($datos['Tipo_Beneficiario'] <> "R" && strlen($datos['RUC_CI']) == 13){
-      if(ping("srienlinea.sri.gob.ec")==1 && GetUrlSource("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=".$datos['RUC_CI'])== true){
+      if(GetUrlSource("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=".$datos['RUC_CI'])== true){
         // print_r('expression');die();
          $datos['Tipo_Beneficiario'] = "R";
          $datos['Codigo_RUC_CI'] = substr($datos['RUC_CI'], 0, 10);
