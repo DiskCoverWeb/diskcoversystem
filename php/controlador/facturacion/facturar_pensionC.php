@@ -1054,12 +1054,12 @@ class facturar_pensionC
       $data = $dataCliente[0];
       $ClienteFacturacion = $this->facturacion->getUltimoRegistroClientes_Facturacion($data['Codigo'], $CMedidor, JG01);
       $DetalleFactura = $this->facturacion->getUltimoRegistroDetalleFactura($data['Codigo'], $CMedidor, JG01);
-      if (count($ClienteFacturacion) > 0 && ($ClienteFacturacion[0]['Periodo'] >= @$DetalleFactura[0]['Periodo'] && $ClienteFacturacion[0]['Num_Mes'] >= @$DetalleFactura[0]['Mes_No'])) {
+      if (count($ClienteFacturacion) > 0 && ($ClienteFacturacion[0]['Periodo'] >= @$DetalleFactura[0]['Ticket'] && $ClienteFacturacion[0]['Num_Mes'] >= @$DetalleFactura[0]['Mes_No'])) {
         $data['ultimaMedida'] = $ClienteFacturacion[0]['Credito_No'];
         $data['fechaUltimaMedida'] = MesesLetras($ClienteFacturacion[0]['Num_Mes']) . "/" . $ClienteFacturacion[0]['Periodo'];
       } elseif (count($DetalleFactura) > 0) {
         $data['ultimaMedida'] = $DetalleFactura[0]['Corte'];
-        $data['fechaUltimaMedida'] = MesesLetras($DetalleFactura[0]['Mes_No']) . "/" . $DetalleFactura[0]['Periodo'];
+        $data['fechaUltimaMedida'] = MesesLetras($DetalleFactura[0]['Mes_No']) . "/" . $DetalleFactura[0]['Ticket'];
       } else {
         $data['ultimaMedida'] = $data['Acreditacion'];
         $data['fechaUltimaMedida'] = "";
