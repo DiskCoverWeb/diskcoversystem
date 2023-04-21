@@ -1074,6 +1074,10 @@ class facturar_pensionC
 
   public function GuardarConsumoAgua($parametros){
     extract($parametros);
+    if(!isset($Lectura)){
+      return (array("rps" => false , "mensaje" => "No se indico la lectura"));
+    }
+
     if($CMedidor != "" && $CMedidor!="."){
       $dataCliente = @$this->getClienteCodigoMedidor($CMedidor)['data'];
       $LecturaAnterior = ((!is_null($dataCliente['ultimaMedida']) && is_numeric($dataCliente['ultimaMedida']))?$dataCliente['ultimaMedida']:0);
@@ -1103,6 +1107,10 @@ class facturar_pensionC
       }else{
         $NoMes = ObtenerMesFecha($Mifecha,'YmdHis');
         $Anio = ObtenerAnioFecha($Mifecha,'YmdHis');
+      }
+
+      if($dataCliente["fechaUltimaMedida"]==mes_X_nombre($NoMes)."/$Anio"){
+        return (array("rps" => false , "mensaje" => "Ya se registro la lectura para Febrero/2022"));
       }
 
       if($excedente>0){
