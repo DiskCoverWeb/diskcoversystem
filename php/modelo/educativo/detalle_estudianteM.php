@@ -302,7 +302,7 @@ C.Telefono_R,Telefono_RS,Lugar_Trabajo_R,Email_R,Email_R,Matricula_No,Folio_No,C
        WHERE TC = '".$tc."' ";
        if($codigo!='T')
        {
-       	 $slq.=" and  CodigoC ='".$codigo."'";
+       	 $sql.=" and  CodigoC ='".$codigo."'";
       
        }
        $sql.=" AND Item = '".$_SESSION['INGRESO']['item']."'";
@@ -376,42 +376,53 @@ C.Telefono_R,Telefono_RS,Lugar_Trabajo_R,Email_R,Email_R,Matricula_No,Folio_No,C
        return $tabla;
    }
 
-   function pdf_factura($cod,$ser,$ci)
-   {
+  function pdf_factura($cod,$ser,$ci)
+  {
    	$id='factura_'.$ci;
-   	$cid = $this->conn;
-   	$sql="SELECT * FROM Facturas WHERE Serie='".$ser."' and Factura='".$cod."'
-   	AND Item = '".$_SESSION['INGRESO']['item']."' AND CodigoC = '".$ci."'
+   	$sql="SELECT * 
+   	FROM Facturas 
+   	WHERE Serie='".$ser."' 
+   	AND Factura='".$cod."'
+   	AND Item = '".$_SESSION['INGRESO']['item']."' 
+   	AND CodigoC = '".$ci."'
 		AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";
-   	$sql1="SELECT * from Detalle_Factura WHERE Factura = '".$cod."' AND Item = '".$_SESSION['INGRESO']['item']."'
-		AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' AND CodigoC = '".$ci."'";
-// print_r($sql);die();
-	   $datos_fac = $this->conn->datos($sql);	 
-	   $detalle_fac= $this->conn->datos($sql1);
+	  $datos_fac = $this->conn->datos($sql);	 
+	  $datos_fac[0] = $TFA = Leer_Datos_FA_NV($datos_fac[0]);
+
+   	$sSQL = "SELECT DF.*, CP.Reg_Sanitario, CP.Marca, CP.Desc_Item, CP.Codigo_Barra As Cod_Barras
+         FROM Detalle_Factura DF, Catalogo_Productos CP 
+         WHERE DF.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+         AND DF.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+         AND DF.TC = '" . $TFA['TC'] . "' 
+         AND DF.Serie = '" . $TFA['Serie'] . "' 
+         AND DF.Autorizacion = '" . $TFA['Autorizacion'] . "' 
+         AND DF.Factura = " . $TFA['Factura'] . " 
+         AND DF.Item = CP.Item 
+         AND DF.Periodo = CP.Periodo 
+         AND DF.Codigo = CP.Codigo_Inv 
+         ORDER BY DF.ID, DF.Codigo";
+	  $detalle_fac= $this->conn->datos($sSQL);
 	   
-     $datos_cli_edu=$this->cliente_matri($ci);
-      $sql2="SELECT * 
+    $datos_cli_edu=$this->cliente_matri($ci);
+    $sql2="SELECT * 
 	    FROM Trans_Abonos 
 	    WHERE Factura = '".$cod."' 
 	    AND CodigoC='".$ci."' 
 	    AND Item = '".$_SESSION['INGRESO']['item']."'
-	  AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' "; 
-	  // print_r($sql2);die();
+	    AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' "; 
 	  $detalle_abonos = $this->conn->datos($sql2);
 
-     // print_r($datos_cli_edu);die();
 	   if( count( $datos_cli_edu)>0)
 	   {
-	   		 imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$matri=1,$id,null,'factura',null,null,$detalle_abonos);
+	   		$matri=1;
 	   }else
 	   {
-
         $datos_cli_edu=$this->Cliente($ci);
-     // print_r($datos_cli_edu);die();
-        imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$matri=0,$id,null,'factura',null,null,$detalle_abonos);
+     		$matri=0;
 	   }
-
-   }
+     
+     imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$matri,$id,null,'factura',null,null,$detalle_abonos);
+  }
 
   function Cliente($cod)
    {
