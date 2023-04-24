@@ -25,7 +25,8 @@ class autorizacion_sri
 	private $conn;
 	private $db;
 	// Puedes generar una diferente usando la funcion $getIV()
-	
+	private $linkSriAutorizacion;
+	private $linkSriRecepcion;
 	function __construct()
 	{
 		$this->clave = 'Una cadena, muy, muy larga para mejorar la encriptacion';
@@ -34,8 +35,8 @@ class autorizacion_sri
 		// $this->conn = new Conectar();
 		$this->db = new db();
 
-       $this->linkSriAutorizacion = $_SESSION['INGRESO']['Web_SRI_Autorizado'];
- 	   $this->linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion'];
+       if(isset($_SESSION['INGRESO']['Web_SRI_Autorizado'])){$this->linkSriAutorizacion = $_SESSION['INGRESO']['Web_SRI_Autorizado']};
+ 	   if(isset($_SESSION['INGRESO']['Web_SRI_Recepcion'])){$this->linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion']}
 	}
 	function encriptar($dato)
 	{

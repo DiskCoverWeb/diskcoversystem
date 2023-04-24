@@ -12,10 +12,10 @@ if(!isset($_SESSION))
 			@session_start();
 	}
 //require_once("../../lib/excel/plantilla.php");
+require_once(dirname(__DIR__,1)."/comprobantes/SRI/autorizar_sri.php");
 require_once(dirname(__DIR__,2)."/lib/excel/plantilla.php");
 require_once(dirname(__DIR__,1)."/db/db1.php");
 require_once(dirname(__DIR__,1)."/db/variables_globales.php");
-require_once(dirname(__DIR__,1)."/comprobantes/SRI/autorizar_sri.php");
 
 
 if(isset($_POST['RUC']) AND !isset($_POST['submitweb'])) 
