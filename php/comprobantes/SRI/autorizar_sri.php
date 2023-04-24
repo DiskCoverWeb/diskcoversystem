@@ -148,7 +148,7 @@ class autorizacion_sri
 				//datos de factura
 	    		$datos_fac = $this->datos_factura($cabecera['serie'],$cabecera['factura'],$cabecera['tc']);
 	    		// print_r($datos_fac);die();
-	    	    $cabecera['RUC_CI']=$datos_fac[0]['RUC_CI'];
+	    	    $cabecera['RUC_CI']=$this->quitar_carac($datos_fac[0]['RUC_CI']);
 				$cabecera['Fecha']=$datos_fac[0]['Fecha']->format('Y-m-d');
 				$cabecera['Razon_Social']=$this->quitar_carac($datos_fac[0]['Razon_Social']);
 				$cabecera['Direccion_RS']=$this->quitar_carac($datos_fac[0]['Direccion_RS']);
