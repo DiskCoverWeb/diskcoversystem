@@ -470,6 +470,7 @@ class lista_facturasC
     	{
     		return -1;
     	}
+    	// print_r('ss');die();
     	$rep= $this->sri->Autorizar_factura_o_liquidacion($parametros);
     	$clave = $this->sri->Clave_acceso($parametros['Fecha'],'01', $parametros['serie'],$parametros['FacturaNo']);
        $imp = '';

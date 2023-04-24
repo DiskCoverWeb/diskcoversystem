@@ -1,5 +1,6 @@
 <?php 
-require_once(dirname(__DIR__,1)."/modelo/modalesM.php");
+include(dirname(__DIR__,1)."/modelo/modalesM.php");
+include(dirname(__DIR__,1)."/comprobantes/SRI/autorizar_sri.php");
 
 
 
@@ -86,6 +87,7 @@ class modalesC
 	private $modelo;	
 	function __construct()
 	{
+		$this->sri = new autorizacion_sri();
 		$this->modelo = new modalesM();
 	}
 
@@ -129,6 +131,7 @@ class modalesC
 
 	function codigo_CI($CI_RUC)
 	{
+		 $CI_RUC = $this->sri->quitar_carac($CI_RUC);
 		 $datos = Digito_verificador($CI_RUC);
 		 return $datos;
 	}

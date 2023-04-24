@@ -3535,19 +3535,19 @@ function actualizar_datos_CER($autorizacion,$tc,$serie,$retencion,$entidad,$auto
      }
 
  function actualizar_trans_compras($tp,$retencion,$serie,$autorizacion,$autAnte)
-     {
-     	$sql ="UPDATE Trans_Compras SET AutRetencion='".$autorizacion."' 
-     		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
-			AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-			AND TP = '".$tp."' 
-			AND SecRetencion = '".$retencion."'
-			AND Serie_Retencion = '".$serie."' 
-			AND LEN(AutRetencion) = 13
-			AND AutRetencion = '".$autAnte."'";
-			// print_r($sql);die();
-		return $this->db->String_Sql($sql);
+ {
+ 	$sql ="UPDATE Trans_Compras SET AutRetencion='".$autorizacion."' 
+ 		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+		AND TP = '".$tp."' 
+		AND SecRetencion = '".$retencion."'
+		AND Serie_Retencion = '".$serie."' 
+		AND LEN(AutRetencion) = 13
+		AND AutRetencion = '".$autAnte."'";
+		// print_r($sql);die();
+	return $this->db->String_Sql($sql);
 
-     }
+ }
  function atualizar_trans_air($tp,$retencion,$serie,$autorizacion,$autAnte)
  {
  	$sql="UPDATE Trans_Air SET AutRetencion='".$autorizacion."' 
