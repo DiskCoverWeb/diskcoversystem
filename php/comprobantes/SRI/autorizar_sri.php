@@ -3060,7 +3060,8 @@ function generar_xml_retencion($cabecera,$detalle)
     	$remplaza = array('a','e','i','o','u','A','E','I','O','U','N','n','','','','','');
     	$corregido = str_replace($buscar, $remplaza, $query);
     	 // print_r($corregido);
-    	return trim($corregido);
+    	$corregido = trim($corregido);
+    	return $corregido;
 
     }
 

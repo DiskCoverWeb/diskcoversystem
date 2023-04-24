@@ -200,7 +200,7 @@ function li2Array($html,$elemento="li"){
 		$dato[2]['campo']='Cliente';
 		$dato[2]['dato']=$parametro['nombrec'];
 		$dato[3]['campo']='CI_RUC';
-		$dato[3]['dato']=$parametro['ruc'];
+		$dato[3]['dato']= $this->sri->quitar_carac($parametro['ruc']);
 		$dato[4]['campo']='Direccion';
 		$dato[4]['dato']=$parametro['direccion'];
 		$dato[5]['campo']='Telefono';
@@ -239,7 +239,8 @@ function li2Array($html,$elemento="li"){
 		{
 			// print_r($resp);die();
 			if(count($resp)==0)
-		      {
+		    {
+		    	// print_r($dato);die();
 			    $re = insert_generico('Clientes',$dato); // optimizado pero falta 
 			  }else{
 			  	return 2;
