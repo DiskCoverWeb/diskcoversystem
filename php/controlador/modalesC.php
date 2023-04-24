@@ -1,6 +1,5 @@
 <?php 
 include(dirname(__DIR__,1)."/modelo/modalesM.php");
-include(dirname(__DIR__,1)."/comprobantes/SRI/autorizar_sri.php");
 
 
 
