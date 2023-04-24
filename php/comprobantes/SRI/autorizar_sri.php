@@ -35,8 +35,8 @@ class autorizacion_sri
 		// $this->conn = new Conectar();
 		$this->db = new db();
 
-       if(isset($_SESSION['INGRESO']['Web_SRI_Autorizado'])){$this->linkSriAutorizacion = $_SESSION['INGRESO']['Web_SRI_Autorizado']};
- 	   if(isset($_SESSION['INGRESO']['Web_SRI_Recepcion'])){$this->linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion']}
+       if(isset($_SESSION['INGRESO']['Web_SRI_Autorizado'])){$this->linkSriAutorizacion = $_SESSION['INGRESO']['Web_SRI_Autorizado'];}
+ 	   if(isset($_SESSION['INGRESO']['Web_SRI_Recepcion'])){$this->linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion'];}
 	}
 	function encriptar($dato)
 	{
