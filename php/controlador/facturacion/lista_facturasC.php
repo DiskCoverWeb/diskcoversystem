@@ -1,4 +1,6 @@
 <?php
+$tipo=2; //Se usa para saber que debe regresar dos carpetas en chequear_seguridad
+require_once(dirname(__DIR__,2)."/db/chequear_seguridad.php"); 
 require_once(dirname(__DIR__,2)."/modelo/facturacion/lista_facturasM.php");
 require_once(dirname(__DIR__,2)."/modelo/facturacion/punto_ventaM.php");
 require(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');

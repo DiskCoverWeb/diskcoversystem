@@ -866,18 +866,20 @@ class facturar_pensionC
     $FA['num_fac'] = $FA['Factura'];
     $FA['tc'] = $FA['TC'];
     $FA['cod_doc'] = '01';
+
     if (strlen($FA['Autorizacion']) == 13) {
       try {
         $rep = $resultado = $this->autorizar_sri->Autorizar_factura_o_liquidacion($FA);
+        $dataFac = $this->facturacion->getDataBasicFactura($FA['Serie'], $FA['Factura'], $FA['CodigoC']);
         if($rep==1)
         {
-          $resultado = array('respuesta'=>$rep);
-        }else{ $resultado = array('respuesta'=>-1,'text'=>utf8_encode($rep));}
+          $resultado = array('respuesta'=>$rep, 'auto'=>$dataFac['Autorizacion'], 'per' => $dataFac['Periodo']);
+        }else{ $resultado = array('respuesta'=>-1,'text'=>utf8_encode($rep), 'auto'=>$dataFac['Autorizacion'], 'per' => $dataFac['Periodo']);}
       } catch (Exception $e) {
         $resultado = array('respuesta'=>-1,'text'=>$e->getMessage());
       }
     }else{ 
-      $resultado = array('respuesta'=>5);
+      $resultado = array('respuesta'=>5, 'auto' =>((isset($FA['Autorizacion']))?$FA['Autorizacion']:G_NINGUNO), 'per'=> $_SESSION['INGRESO']['item']);
     }
     return $resultado;
     }

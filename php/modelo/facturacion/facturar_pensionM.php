@@ -694,6 +694,25 @@ class facturar_pensionM
     $stmt = $this->db->datos($sql);
     return count($stmt)>0;
   }
+
+  public function getDataBasicFactura($Serie, $Factura, $CodigoC){
+      $sql="SELECT Autorizacion, Periodo 
+      FROM Facturas 
+      WHERE Serie='".$Serie."' 
+      AND Factura='".$Factura."' 
+      AND CodigoC='".$CodigoC."' 
+      AND Item = '".$_SESSION['INGRESO']['item']."'
+      ";
+
+      $stmt = $this->db->datos($sql);
+      if(count($stmt)>0){
+        $data = $stmt[0];
+      }else{
+        $data['Autorizacion'] = G_NINGUNO;
+        $data['Periodo'] = G_NINGUNO;
+      }
+      return $data;
+    }
 }
 
 ?>
