@@ -383,7 +383,7 @@ function variables_sistema($EmpresaEntidad,$NombreEmp,$ItemEmp)
         $_SESSION['INGRESO']['IP_VPN_RUTA']=$empresa[0]['IP_VPN_RUTA'];
         $_SESSION['INGRESO']['Base_Datos']=$empresa[0]['Base_Datos'];
         $_SESSION['INGRESO']['Usuario_DB']=$empresa[0]['Usuario_DB'];
-        $_SESSION['INGRESO']['Contraseña_DB']=$empresa[0]['Contrasena_DB'];
+        $_SESSION['INGRESO']['Password_DB']=$empresa[0]['Contrasena_DB'];
         $_SESSION['INGRESO']['Tipo_Base']=$empresa[0]['Tipo_Base'];
         $_SESSION['INGRESO']['Puerto']=$empresa[0]['Puerto'];
         $_SESSION['INGRESO']['Fecha']=$empresa[0]['Fecha'];
@@ -528,7 +528,7 @@ function variables_sistema($EmpresaEntidad,$NombreEmp,$ItemEmp)
         $_SESSION['INGRESO']['IP_VPN_RUTA']='mysql.diskcoversystem.com';
         $_SESSION['INGRESO']['Base_Datos']='diskcover_empresas';
         $_SESSION['INGRESO']['Usuario_DB']='diskcover';
-        $_SESSION['INGRESO']['Contraseña_DB']='disk2017Cover';
+        $_SESSION['INGRESO']['Password_DB']='disk2017Cover';
         $_SESSION['INGRESO']['Tipo_Base']='My SQL';
         $_SESSION['INGRESO']['Puerto']=13306;
      //    $this->usuario = 'diskcover';
@@ -568,7 +568,7 @@ function eliminar_variables()
 		unset($_SESSION['INGRESO']['IP_VPN_RUTA']);
 		unset($_SESSION['INGRESO']['Base_Datos']);
 		unset($_SESSION['INGRESO']['Usuario_DB']);
-		unset($_SESSION['INGRESO']['Contraseña_DB']);
+		unset($_SESSION['INGRESO']['Password_DB']);
 		unset($_SESSION['INGRESO']['Tipo_Base']);
 		unset($_SESSION['INGRESO']['Puerto']);
 		unset($_SESSION['INGRESO']['Fecha']);

@@ -12,10 +12,10 @@ if(!isset($_SESSION))
 			@session_start();
 	}
 //require_once("../../lib/excel/plantilla.php");
-require_once(dirname(__DIR__,1)."/comprobantes/SRI/autorizar_sri.php");
 require_once(dirname(__DIR__,2)."/lib/excel/plantilla.php");
 require_once(dirname(__DIR__,1)."/db/db1.php");
 require_once(dirname(__DIR__,1)."/db/variables_globales.php");
+require_once(dirname(__DIR__,1)."/comprobantes/SRI/autorizar_sri.php");
 
 
 if(isset($_POST['RUC']) AND !isset($_POST['submitweb'])) 
@@ -1520,7 +1520,7 @@ function select_option_aj($tabla,$value,$mostrar,$filtro=null,$sel=null)//------
 		//$server=$_SESSION['INGRESO']['IP_VPN_RUTA'];
 		$server=''.$_SESSION['INGRESO']['IP_VPN_RUTA'].', '.$_SESSION['INGRESO']['Puerto'];
 		$user=$_SESSION['INGRESO']['Usuario_DB'];
-		$password=$_SESSION['INGRESO']['Contraseña_DB'];
+		$password=$_SESSION['INGRESO']['Password_DB'];
 	}
 	else
 	{
@@ -1631,7 +1631,7 @@ function select_option($tabla,$value,$mostrar,$filtro=null,$click=null,$id_html=
 		//$server=$_SESSION['INGRESO']['IP_VPN_RUTA'];
 		$server=''.$_SESSION['INGRESO']['IP_VPN_RUTA'].', '.$_SESSION['INGRESO']['Puerto'];
 		$user=$_SESSION['INGRESO']['Usuario_DB'];
-		$password=$_SESSION['INGRESO']['Contraseña_DB'];
+		$password=$_SESSION['INGRESO']['Password_DB'];
 	}
 	else
 	{
@@ -1920,7 +1920,7 @@ function contar_option($tabla,$value,$mostrar,$filtro=null)  ///----------------
 		//$server=$_SESSION['INGRESO']['IP_VPN_RUTA'];
 		$server=''.$_SESSION['INGRESO']['IP_VPN_RUTA'].', '.$_SESSION['INGRESO']['Puerto'];
 		$user=$_SESSION['INGRESO']['Usuario_DB'];
-		$password=$_SESSION['INGRESO']['Contraseña_DB'];
+		$password=$_SESSION['INGRESO']['Password_DB'];
 	}
 	else
 	{

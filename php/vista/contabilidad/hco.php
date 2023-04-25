@@ -121,7 +121,7 @@
 				$database=$_SESSION['INGRESO']['Base_Datos'];
 				$server=$_SESSION['INGRESO']['IP_VPN_RUTA'];
 				$user=$_SESSION['INGRESO']['Usuario_DB'];
-				$password=$_SESSION['INGRESO']['Contraseña_DB'];
+				$password=$_SESSION['INGRESO']['Password_DB'];
 			}
 			$OpcDG=null;
 			//border

@@ -47,7 +47,7 @@ class db
 	{
 		// print_r($_SESSION['INGRESO']);die();
 			$this->usuario = $_SESSION['INGRESO']['Usuario_DB'];
-	    $this->password = $_SESSION['INGRESO']['Contraseña_DB'];  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
+	    $this->password = $_SESSION['INGRESO']['Password_DB'];  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
 	    $this->servidor = $_SESSION['INGRESO']['IP_VPN_RUTA'];
 	    if($_SESSION['INGRESO']['IP_VPN_RUTA']=='tcp:mysql.diskcoversystem.com' &&  $this->ipconfig=='localhost')
 	    {
@@ -271,9 +271,11 @@ class db
            $res = sqlsrv_execute($stmt);
            if ($res === false) 
            {
-           	echo "Error en consulta PA.\n";  
-           	$respuesta = -1;
-           	die( print_r( sqlsrv_errors(), true));  
+           	// echo "<script type='text/javascript'>alert('Estructura procesco almacenado')</script>";
+           	// die();
+           	// echo "Error en consulta PA.\n";  
+           	// $respuesta = -1;
+           	die( print_r("<script type='text/javascript'>alert('Estructura procesco almacenado')</script>", true));  
            }else{
 				   sqlsrv_close($conn);
 				   // if($retorna)
