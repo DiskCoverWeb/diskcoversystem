@@ -25,7 +25,8 @@ class autorizacion_sri
 	private $conn;
 	private $db;
 	// Puedes generar una diferente usando la funcion $getIV()
-	
+	private $linkSriAutorizacion;
+	private $linkSriRecepcion;
 	function __construct()
 	{
 		$this->clave = 'Una cadena, muy, muy larga para mejorar la encriptacion';
@@ -34,8 +35,8 @@ class autorizacion_sri
 		// $this->conn = new Conectar();
 		$this->db = new db();
 
-       $this->linkSriAutorizacion = $_SESSION['INGRESO']['Web_SRI_Autorizado'];
- 	   $this->linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion'];
+       if(isset($_SESSION['INGRESO']['Web_SRI_Autorizado'])){$this->linkSriAutorizacion = $_SESSION['INGRESO']['Web_SRI_Autorizado'];}
+ 	   if(isset($_SESSION['INGRESO']['Web_SRI_Recepcion'])){$this->linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion'];}
 	}
 	function encriptar($dato)
 	{
@@ -148,7 +149,7 @@ class autorizacion_sri
 				//datos de factura
 	    		$datos_fac = $this->datos_factura($cabecera['serie'],$cabecera['factura'],$cabecera['tc']);
 	    		// print_r($datos_fac);die();
-	    	    $cabecera['RUC_CI']=$datos_fac[0]['RUC_CI'];
+	    	    $cabecera['RUC_CI']=$this->quitar_carac($datos_fac[0]['RUC_CI']);
 				$cabecera['Fecha']=$datos_fac[0]['Fecha']->format('Y-m-d');
 				$cabecera['Razon_Social']=$this->quitar_carac($datos_fac[0]['Razon_Social']);
 				$cabecera['Direccion_RS']=$this->quitar_carac($datos_fac[0]['Direccion_RS']);
@@ -3059,7 +3060,8 @@ function generar_xml_retencion($cabecera,$detalle)
     	$remplaza = array('a','e','i','o','u','A','E','I','O','U','N','n','','','','','');
     	$corregido = str_replace($buscar, $remplaza, $query);
     	 // print_r($corregido);
-    	return trim($corregido);
+    	$corregido = trim($corregido);
+    	return $corregido;
 
     }
 
@@ -3535,19 +3537,19 @@ function actualizar_datos_CER($autorizacion,$tc,$serie,$retencion,$entidad,$auto
      }
 
  function actualizar_trans_compras($tp,$retencion,$serie,$autorizacion,$autAnte)
-     {
-     	$sql ="UPDATE Trans_Compras SET AutRetencion='".$autorizacion."' 
-     		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
-			AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-			AND TP = '".$tp."' 
-			AND SecRetencion = '".$retencion."'
-			AND Serie_Retencion = '".$serie."' 
-			AND LEN(AutRetencion) = 13
-			AND AutRetencion = '".$autAnte."'";
-			// print_r($sql);die();
-		return $this->db->String_Sql($sql);
+ {
+ 	$sql ="UPDATE Trans_Compras SET AutRetencion='".$autorizacion."' 
+ 		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+		AND TP = '".$tp."' 
+		AND SecRetencion = '".$retencion."'
+		AND Serie_Retencion = '".$serie."' 
+		AND LEN(AutRetencion) = 13
+		AND AutRetencion = '".$autAnte."'";
+		// print_r($sql);die();
+	return $this->db->String_Sql($sql);
 
-     }
+ }
  function atualizar_trans_air($tp,$retencion,$serie,$autorizacion,$autAnte)
  {
  	$sql="UPDATE Trans_Air SET AutRetencion='".$autorizacion."' 

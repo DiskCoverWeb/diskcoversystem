@@ -12,9 +12,11 @@ if(!isset($_SESSION))
 			@session_start();
 	}
 //require_once("../../lib/excel/plantilla.php");
+require_once(dirname(__DIR__,1)."/comprobantes/SRI/autorizar_sri.php");
 require_once(dirname(__DIR__,2)."/lib/excel/plantilla.php");
 require_once(dirname(__DIR__,1)."/db/db1.php");
 require_once(dirname(__DIR__,1)."/db/variables_globales.php");
+
 
 if(isset($_POST['RUC']) AND !isset($_POST['submitweb'])) 
 {
@@ -1154,9 +1156,11 @@ function convertirnumle($digito=null)
 
 function Digito_verificador($CI_RUC)
 {
-
+  $sri = new autorizacion_sri();
+  $CI_RUC = $sri->quitar_carac($CI_RUC);
   // 'SP que determinar que tipo de contribuyente es y el codigo si es pasaporte
    $datos = Digito_Verificador_SP($CI_RUC);
+   // print_r($datos);die();
    if($datos['Tipo_Beneficiario'] <> "R" && strlen($datos['RUC_CI']) == 13){
       if(GetUrlSource("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=".$datos['RUC_CI'])== true){
         // print_r('expression');die();
