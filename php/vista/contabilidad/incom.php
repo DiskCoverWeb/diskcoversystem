@@ -992,7 +992,7 @@
       Swal.fire('seleccione un beneficiario','','info')
       return false;
     }    
-        // $('#myModal_espera').modal('show');  
+        $('#myModal_espera').modal('show');  
       $.ajax({
           data:  {parametros:parametros},
           url:   '../controlador/contabilidad/incomC.php?generar_comprobante=true',
