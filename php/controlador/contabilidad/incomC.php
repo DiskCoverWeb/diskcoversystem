@@ -1,6 +1,6 @@
 <?php 
 include(dirname(__DIR__,2).'/modelo/contabilidad/incomM.php');
-include(dirname(__DIR__,2).'/comprobantes/SRI/autorizar_sri.php');
+// include(dirname(__DIR__,2).'/comprobantes/SRI/autorizar_sri.php');
 date_default_timezone_set('America/Guayaquil'); 
 /**
  * 
