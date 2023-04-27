@@ -238,8 +238,8 @@ class autorizacion_sri
 				    $detalle[$key]['Cod_Bar'] =  $producto[0]['Codigo_Barra'];
 				    $detalle[$key]['Producto'] = $this->quitar_carac($value['Producto']);
 				    $detalle[$key]['Cantidad'] = $value['Cantidad'];
-				    $detalle[$key]['Precio'] = $value['Precio'];
-				    $detalle[$key]['descuento'] = $value['Total_Desc']+$value['Total_Desc2'];
+				    $detalle[$key]['Precio'] =  number_format($value['Precio'],2,'.','');
+				    $detalle[$key]['descuento'] = number_format(($value['Total_Desc']+$value['Total_Desc2']),2,'.','');
 				  if ($cabecera['Imp_Mes']==true)
 				  {
 				   	$detalle[$key]['Producto'] = $this->quitar_carac($value['Producto']).', '.$value['Ticket'].': '.$value['Mes'].' ';
@@ -253,9 +253,9 @@ class autorizacion_sri
 					', Modelo: '.$value['Modelo'].
 					', Procedencia: '.$value['Procedencia'];
 				  }
-				   $detalle[$key]['SubTotal'] = ($value['Cantidad']*$value['Precio'])-($value['Total_Desc']+$value['Total_Desc2']);
+				   $detalle[$key]['SubTotal'] =  number_format(($value['Cantidad']*$value['Precio'])-($value['Total_Desc']+$value['Total_Desc2']),2,'.','');
 				   $detalle[$key]['Serie_No'] = $value['Serie_No'];
-				   $detalle[$key]['Total_IVA'] = number_format($value['Total_IVA'],2);
+				   $detalle[$key]['Total_IVA'] = number_format($value['Total_IVA'],2,'.','');
 				   $detalle[$key]['Porc_IVA']= $value['Porc_IVA'];
 			    }
 			    $cabecera['fechaem']=  date("d/m/Y", strtotime($cabecera['Fecha']));		
@@ -264,6 +264,10 @@ class autorizacion_sri
  	    		// $linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion'];
 			    // print_r($cabecera);print_r($detalle);die();
 			    $cabecera['ClaveAcceso'] =$this->Clave_acceso($parametros['Fecha'],$cabecera['cod_doc'],$parametros['serie'],$parametros['FacturaNo']);
+
+			    // print_r($cabecera);
+// print_r($detalle);die();
+			    // die();
 		
 	            
 	           $xml = $this->generar_xml($cabecera,$detalle);
