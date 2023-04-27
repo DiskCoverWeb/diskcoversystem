@@ -6,7 +6,7 @@ if(!class_exists('enviar_emails'))
 {
 	require(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
 }
-require(dirname(__DIR__,2)."/comprobantes/SRI/autorizar_sri.php");
+// require(dirname(__DIR__,2)."/comprobantes/SRI/autorizar_sri.php");
 
 $controlador = new lista_guia_remisionC();
 
