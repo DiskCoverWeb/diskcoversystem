@@ -78,6 +78,12 @@ if(isset($_GET['ListarMedidores']))
 	exit();
 }
 
+if(isset($_GET['ActualizarDocumentoCliente']))
+{
+	echo json_encode($controlador->ActualizarDocumentoCliente($_POST));
+	exit();
+}
+
 /**
  * 
  */
@@ -428,6 +434,13 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		return $this->modelo->Listar_Medidores($codigo);
 	}
 
+	function ActualizarDocumentoCliente($parametros)
+	{
+		extract($parametros);
+		$datos = Digito_verificador($NewDocument);
+		echo "<pre>";print_r($datos);echo "</pre>";die();
+		return array('rps'=>true, 'mensaje' => "Dato actualizado.");
+	}
 
 }
 ?>
