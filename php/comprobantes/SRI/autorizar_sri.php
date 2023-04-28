@@ -153,12 +153,14 @@ class autorizacion_sri
 				$cabecera['Fecha']=$datos_fac[0]['Fecha']->format('Y-m-d');
 				$cabecera['Razon_Social']=$this->quitar_carac($datos_fac[0]['Razon_Social']);
 				$cabecera['Direccion_RS']=$this->quitar_carac($datos_fac[0]['Direccion_RS']);
-				$cabecera['Sin_IVA']= $datos_fac[0]['Sin_IVA'];
-				$cabecera['Descuento'] = $datos_fac[0]['Descuento']+$datos_fac[0]['Descuento2'];
+				$cabecera['Sin_IVA']= $this->money_formato($datos_fac[0]['Sin_IVA'],2);
+				$cabecera['Descuento'] = $this->money_formato($datos_fac[0]['Descuento']+$datos_fac[0]['Descuento2'],2);
 				$cabecera['baseImponible'] = $datos_fac[0]['Sin_IVA']+$cabecera['Descuento'];
-				$cabecera['Porc_IVA'] = $datos_fac[0]['Porc_IVA'];
+				$cabecera['Porc_IVA'] = $this->money_formato($datos_fac[0]['Porc_IVA'],2);
+
+				// print_r($cabecera['Porc_IVA']);die();
 				$cabecera['Con_IVA'] = $datos_fac[0]['Con_IVA'];
-				$cabecera['Total_MN'] = $datos_fac[0]['Total_MN'];
+				$cabecera['Total_MN'] = $this->money_formato($datos_fac[0]['Total_MN'],2);
 				$cabecera['Observacion'] = $datos_fac[0]['Observacion'];
 				$cabecera['Nota'] = $datos_fac[0]['Nota'];
 
@@ -177,11 +179,11 @@ class autorizacion_sri
 				$cabecera['CodigoC']=$datos_fac[0]['CodigoC'];
 				$cabecera['TelefonoC']=$datos_fac[0]['Telefono_RS'];
 				$cabecera['Orden_Compra']=$datos_fac[0]['Orden_Compra'];
-				$cabecera['baseImponibleSinIva'] = $cabecera['Sin_IVA']-$datos_fac[0]['Desc_0'];
-				$cabecera['baseImponibleConIva'] = $cabecera['Con_IVA']-$datos_fac[0]['Desc_X'];
-				$cabecera['totalSinImpuestos'] = $cabecera['Sin_IVA']+$cabecera['Con_IVA'] - $cabecera['Descuento'];
-				$cabecera['IVA'] = $datos_fac[0]['IVA'];
-				$cabecera['descuentoAdicional']=0;
+				$cabecera['baseImponibleSinIva'] = $this->money_formato(($cabecera['Sin_IVA']-$datos_fac[0]['Desc_0']),2);
+				$cabecera['baseImponibleConIva'] = $this->money_formato(($cabecera['Con_IVA']-$datos_fac[0]['Desc_X']),2);
+				$cabecera['totalSinImpuestos'] = $this->money_formato(($cabecera['Sin_IVA']+$cabecera['Con_IVA']-$cabecera['Descuento']),2);
+				$cabecera['IVA'] = $this->money_formato($datos_fac[0]['IVA'],2);
+				$cabecera['descuentoAdicional']= $this->money_formato(0,2);
 				$cabecera['moneda']="DOLAR";
 				$cabecera['tipoIden']='';
 				// print_r($cabecera);die();
@@ -237,9 +239,9 @@ class autorizacion_sri
 			    	$detalle[$key]['Cod_Aux'] =  $producto[0]['Desc_Item'];
 				    $detalle[$key]['Cod_Bar'] =  $producto[0]['Codigo_Barra'];
 				    $detalle[$key]['Producto'] = $this->quitar_carac($value['Producto']);
-				    $detalle[$key]['Cantidad'] = $value['Cantidad'];
-				    $detalle[$key]['Precio'] =  number_format($value['Precio'],2,'.','');
-				    $detalle[$key]['descuento'] = number_format(($value['Total_Desc']+$value['Total_Desc2']),2,'.','');
+				    $detalle[$key]['Cantidad'] = $this->money_formato($value['Cantidad'],6);
+				    $detalle[$key]['Precio'] =  $this->money_formato($value['Precio'],6);
+				    $detalle[$key]['descuento'] = $this->money_formato(($value['Total_Desc']+$value['Total_Desc2']),2);
 				  if ($cabecera['Imp_Mes']==true)
 				  {
 				   	$detalle[$key]['Producto'] = $this->quitar_carac($value['Producto']).', '.$value['Ticket'].': '.$value['Mes'].' ';
@@ -253,10 +255,10 @@ class autorizacion_sri
 					', Modelo: '.$value['Modelo'].
 					', Procedencia: '.$value['Procedencia'];
 				  }
-				   $detalle[$key]['SubTotal'] =  number_format(($value['Cantidad']*$value['Precio'])-($value['Total_Desc']+$value['Total_Desc2']),2,'.','');
+				   $detalle[$key]['SubTotal'] =  $this->money_formato(($value['Cantidad']*$value['Precio'])-($value['Total_Desc']+$value['Total_Desc2']),2);
 				   $detalle[$key]['Serie_No'] = $value['Serie_No'];
-				   $detalle[$key]['Total_IVA'] = number_format($value['Total_IVA'],2,'.','');
-				   $detalle[$key]['Porc_IVA']= $value['Porc_IVA'];
+				   $detalle[$key]['Total_IVA'] = $this->money_formato($value['Total_IVA'],2);
+				   $detalle[$key]['Porc_IVA']= $this->money_formato($value['Porc_IVA'],2);
 			    }
 			    $cabecera['fechaem']=  date("d/m/Y", strtotime($cabecera['Fecha']));		
 
@@ -1510,7 +1512,7 @@ class autorizacion_sri
 					if($value['Total_IVA'] == 0)
 					{
 						$xml_codigoPorcentaje = $xml->createElement( "codigoPorcentaje",'0' );
-						$xml_tarifa = $xml->createElement( "tarifa",'0' );
+						$xml_tarifa = $xml->createElement( "tarifa",'0.00' );
 					}
 					else
 					{
@@ -1522,7 +1524,7 @@ class autorizacion_sri
 						{
 							$xml_codigoPorcentaje = $xml->createElement( "codigoPorcentaje",'2' );
 						}
-						$xml_tarifa = $xml->createElement( "tarifa",round(($cabecera['Porc_IVA']*100),2) );
+						$xml_tarifa = $xml->createElement( "tarifa",$cabecera['Porc_IVA']*100 );
 						
 					}
 					$xml_baseImponible = $xml->createElement( "baseImponible",$value['Total']-$value['Descuento'] );
@@ -1855,8 +1857,8 @@ function generar_xml($cabecera,$detalle)
 		$xml_tipoIdentificacionComprador = $xml->createElement( "tipoIdentificacionComprador",$cabecera['tipoIden'] );
 		$xml_razonSocialComprador = $xml->createElement( "razonSocialComprador",$cabecera['Razon_Social'] );
 		$xml_identificacionComprador = $xml->createElement( "identificacionComprador",$cabecera['RUC_CI'] );
-		$xml_totalSinImpuestos = $xml->createElement( "totalSinImpuestos",number_format(floatval($cabecera['totalSinImpuestos']),2,'.','') );
-		$xml_totalDescuento = $xml->createElement( "totalDescuento",round($cabecera['Descuento'],2) );
+		$xml_totalSinImpuestos = $xml->createElement( "totalSinImpuestos",$cabecera['totalSinImpuestos']);
+		$xml_totalDescuento = $xml->createElement( "totalDescuento",$cabecera['Descuento']);
 
 		if($codDoc=='03')
 		{
@@ -1880,8 +1882,8 @@ function generar_xml($cabecera,$detalle)
 		$xml_totalImpuesto = $xml->createElement( "totalImpuesto" );
 		$xml_codigo = $xml->createElement( "codigo",'2' );
 		$xml_codigoPorcentaje = $xml->createElement( "codigoPorcentaje",'0'  );
-		$xml_descuentoAdicional = $xml->createElement( "descuentoAdicional",round($cabecera['descuentoAdicional'],2) );
-		$xml_baseImponible = $xml->createElement( "baseImponible",round($cabecera['baseImponibleSinIva'],2) );
+		$xml_descuentoAdicional = $xml->createElement( "descuentoAdicional",$cabecera['descuentoAdicional']);
+		$xml_baseImponible = $xml->createElement( "baseImponible",$cabecera['baseImponibleSinIva']);
 		//$xml_tarifa = $xml->createElement( "tarifa",'0.00' );
 		$xml_valor = $xml->createElement( "valor",'0.00' );
 		
@@ -1897,10 +1899,10 @@ function generar_xml($cabecera,$detalle)
 			$xml_totalImpuesto = $xml->createElement( "totalImpuesto" );
 			$xml_codigo = $xml->createElement( "codigo",'2' );
 			$xml_codigoPorcentaje = $xml->createElement( "codigoPorcentaje",$cabecera['codigoPorcentaje'] );
-			$xml_descuentoAdicional = $xml->createElement( "descuentoAdicional",round($cabecera['descuentoAdicional'],2) );
-			$xml_baseImponible = $xml->createElement( "baseImponible",round($cabecera['baseImponibleConIva'],2) );
-			$xml_tarifa = $xml->createElement( "tarifa",round(($cabecera['Porc_IVA']*100),2) );
-			$xml_valor = $xml->createElement( "valor",round($cabecera['IVA'],2) );
+			$xml_descuentoAdicional = $xml->createElement( "descuentoAdicional",$cabecera['descuentoAdicional'] );
+			$xml_baseImponible = $xml->createElement( "baseImponible",$cabecera['baseImponibleConIva'] );
+			$xml_tarifa = $xml->createElement( "tarifa",($cabecera['Porc_IVA']*100) );
+			$xml_valor = $xml->createElement( "valor",$cabecera['IVA'] );
 			
 			$xml_totalImpuesto->appendChild( $xml_codigo );
 			$xml_totalImpuesto->appendChild( $xml_codigoPorcentaje );
@@ -1914,17 +1916,17 @@ function generar_xml($cabecera,$detalle)
 		$xml_infoFactura->appendChild( $xml_totalConImpuestos );
 		if($codDoc=='01')
 		{
-			$xml_propina = $xml->createElement( "propina",round($cabecera['Propina'],2) );		
+			$xml_propina = $xml->createElement( "propina",$cabecera['Propina'] );		
 			$xml_infoFactura->appendChild( $xml_propina );
 		}
 
-		$xml_importeTotal = $xml->createElement( "importeTotal",round($cabecera['Total_MN'],2) );
+		$xml_importeTotal = $xml->createElement( "importeTotal",$cabecera['Total_MN']);
 		$xml_moneda = $xml->createElement( "moneda",$cabecera['moneda'] );
 
 		$xml_pagos = $xml->createElement("pagos");
 		$xml_pago = $xml->createElement("pago");
 		   $xml_formapago = $xml->createElement( "formaPago",$cabecera['formaPago']);
-		   $xml_total = $xml->createElement( "total",round($cabecera['Total_MN'],2));
+		   $xml_total = $xml->createElement( "total",$cabecera['Total_MN']);
 		   $xml_pago->appendChild( $xml_formapago );
 		   $xml_pago->appendChild($xml_total);
 
@@ -1988,10 +1990,10 @@ function generar_xml($cabecera,$detalle)
 
 				$xml_descripcion = $xml->createElement( "descripcion",preg_replace("/[\r\n|\n|\r]+/", " ",$value['Producto']));
 				$xml_unidadMedida = $xml->createElement( "unidadMedida",$cabecera['moneda'] );
-				$xml_cantidad = $xml->createElement( "cantidad", number_format($value['Cantidad'],2,'.','') );
-				$xml_precioUnitario = $xml->createElement( "precioUnitario",round($value['Precio'],6) );
-				$xml_descuento = $xml->createElement( "descuento",round($value['descuento'],2) );
-				$xml_precioTotalSinImpuesto = $xml->createElement( "precioTotalSinImpuesto",round($value['SubTotal'],2) );
+				$xml_cantidad = $xml->createElement( "cantidad", $value['Cantidad']);
+				$xml_precioUnitario = $xml->createElement( "precioUnitario",$value['Precio']);
+				$xml_descuento = $xml->createElement( "descuento",$value['descuento'] );
+				$xml_precioTotalSinImpuesto = $xml->createElement( "precioTotalSinImpuesto",$value['SubTotal'] );
 				
 				$xml_detalle->appendChild( $xml_codigoPrincipal );
 				
@@ -2029,11 +2031,11 @@ function generar_xml($cabecera,$detalle)
 					{
 						$xml_codigoPorcentaje = $xml->createElement( "codigoPorcentaje",'2' );
 					}
-					$xml_tarifa = $xml->createElement( "tarifa",round(($value['Porc_IVA']*100),2) );
+					$xml_tarifa = $xml->createElement( "tarifa", ($value['Porc_IVA']*100));
 					
 				}
-				$xml_baseImponible = $xml->createElement( "baseImponible",round($value['SubTotal'],2) );
-				$xml_valor = $xml->createElement( "valor",round($value['Total_IVA'],2)  );
+				$xml_baseImponible = $xml->createElement( "baseImponible",$value['SubTotal'] );
+				$xml_valor = $xml->createElement( "valor",$value['Total_IVA']  );
 				$xml_impuesto->appendChild( $xml_codigo );
 				$xml_impuesto->appendChild( $xml_codigoPorcentaje );
 				$xml_impuesto->appendChild( $xml_tarifa );
@@ -3566,6 +3568,30 @@ function actualizar_datos_CER($autorizacion,$tc,$serie,$retencion,$entidad,$auto
 	AND LEN(AutRetencion) = 13  
 	AND AutRetencion ='".$autAnte."'";
 	return $this->db->String_Sql($sql);
+ }
+
+
+ function money_formato($valor,$decimales)
+ {
+
+ 	$valor = number_format($valor,$decimales,'.','');
+ 	if(strpos($valor,'.')!==false)
+ 	{
+ 		$numero_decimales = explode('.',$valor);
+ 		$deci = substr($numero_decimales[1],0,$decimales);
+ 		if($numero_decimales[0]==''){$numero_decimales[0] = 0;}
+ 		return $numero_decimales[0].'.'.$deci;
+ 	}else
+ 	{
+ 		if($decimales!=0)
+ 		{
+ 			$ceros = generaCeros($decimales);
+ 			return $valor.'.'.$ceros;
+ 		}else
+ 		{
+ 			return $valor;
+ 		}
+ 	}
  }
 
 

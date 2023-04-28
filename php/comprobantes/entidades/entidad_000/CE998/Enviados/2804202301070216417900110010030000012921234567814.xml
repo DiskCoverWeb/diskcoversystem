@@ -1,120 +1,112 @@
-<?xml version="1.0" encoding="UTF-8"?><comprobanteRetencion id="comprobante" version="2.0.0">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><factura id="comprobante" version="1.1.0">
   <infoTributaria>
     <ambiente>1</ambiente>
     <tipoEmision>1</tipoEmision>
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>2604202307070216417900110010030000000271234567813</claveAcceso>
-    <codDoc>07</codDoc>
+    <claveAcceso>2804202301070216417900110010030000012921234567814</claveAcceso>
+    <codDoc>01</codDoc>
     <estab>001</estab>
     <ptoEmi>003</ptoEmi>
-    <secuencial>000000027</secuencial>
+    <secuencial>000001292</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
-  <infoCompRetencion>
-    <fechaEmision>26/04/2023</fechaEmision>
-    <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
+  <infoFactura>
+    <fechaEmision>28/04/2023</fechaEmision>
+    <dirEstablecimiento>direccion de empresa xyz</dirEstablecimiento>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <tipoIdentificacionSujetoRetenido>04</tipoIdentificacionSujetoRetenido>
-    <parteRel>NO</parteRel>
-    <razonSocialSujetoRetenido>PRUEBA JAVIER</razonSocialSujetoRetenido>
-    <identificacionSujetoRetenido>1722214507001</identificacionSujetoRetenido>
-    <periodoFiscal>04/2023</periodoFiscal>
-  </infoCompRetencion>
-  <docsSustento>
-    <docSustento>
-      <codSustento>01</codSustento>
-      <codDocSustento>01</codDocSustento>
-      <numDocSustento>001003000000052</numDocSustento>
-      <fechaEmisionDocSustento>26/04/2023</fechaEmisionDocSustento>
-      <fechaRegistroContable>26/04/2023</fechaRegistroContable>
-      <numAutDocSustento>0000000001</numAutDocSustento>
-      <pagoLocExt>01</pagoLocExt>
-      <totalSinImpuestos>270.00</totalSinImpuestos>
-      <importeTotal>286.80</importeTotal>
-      <impuestosDocSustento>
-        <impuestoDocSustento>
-          <codImpuestoDocSustento>2</codImpuestoDocSustento>
+    <tipoIdentificacionComprador>06</tipoIdentificacionComprador>
+    <razonSocialComprador>JUAN YUNGAN</razonSocialComprador>
+    <identificacionComprador>0201186101</identificacionComprador>
+    <totalSinImpuestos>1705.00</totalSinImpuestos>
+    <totalDescuento>0.00</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0.00</descuentoAdicional>
+        <baseImponible>0.00</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>2</codigoPorcentaje>
+        <descuentoAdicional>0.00</descuentoAdicional>
+        <baseImponible>1705.00</baseImponible>
+        <tarifa>12</tarifa>
+        <valor>204.60</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>0.00</propina>
+    <importeTotal>1909.60</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>1909.60</total>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>98.01</codigoPrincipal>
+      <descripcion>Socios Promotores y Esposa</descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>25000.000000</cantidad>
+      <precioUnitario>0.068200</precioUnitario>
+      <descuento>0.00</descuento>
+      <precioTotalSinImpuesto>1705.00</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
           <codigoPorcentaje>2</codigoPorcentaje>
-          <baseImponible>140.0000</baseImponible>
           <tarifa>12</tarifa>
-          <valorImpuesto>16.8000</valorImpuesto>
-        </impuestoDocSustento>
-        <impuestoDocSustento>
-          <codImpuestoDocSustento>2</codImpuestoDocSustento>
-          <codigoPorcentaje>0</codigoPorcentaje>
-          <baseImponible>130.0000</baseImponible>
-          <tarifa>0</tarifa>
-          <valorImpuesto>0.00</valorImpuesto>
-        </impuestoDocSustento>
-      </impuestosDocSustento>
-      <retenciones>
-        <retencion>
-          <codigo>1</codigo>
-          <codigoRetencion>303</codigoRetencion>
-          <baseImponible>390.0000</baseImponible>
-          <porcentajeRetener>10.00</porcentajeRetener>
-          <valorRetenido>39.0000</valorRetenido>
-        </retencion>
-        <retencion>
-          <codigo>2</codigo>
-          <codigoRetencion>9</codigoRetencion>
-          <baseImponible>7.2000</baseImponible>
-          <porcentajeRetener>10</porcentajeRetener>
-          <valorRetenido>0.72</valorRetenido>
-        </retencion>
-        <retencion>
-          <codigo>2</codigo>
-          <codigoRetencion>10</codigoRetencion>
-          <baseImponible>9.6000</baseImponible>
-          <porcentajeRetener>20</porcentajeRetener>
-          <valorRetenido>1.92</valorRetenido>
-        </retencion>
-      </retenciones>
-      <pagos>
-        <pago>
-          <formaPago>01</formaPago>
-          <total>286.8</total>
-        </pago>
-      </pagos>
-    </docSustento>
-  </docsSustento>
+          <baseImponible>1705.00</baseImponible>
+          <valor>204.60</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
   <infoAdicional>
-    <campoAdicional nombre="Telefono">032145697</campoAdicional>
-    <campoAdicional nombre="Email">javier.farinango92@gmail.com</campoAdicional>
-    <campoAdicional nombre="Comprobante No">CD-000000027</campoAdicional>
-    <campoAdicional nombre="Contribuyente Regimen Microempresas"> </campoAdicional>
+    <campoAdicional nombre="Direccion">GUAMANI</campoAdicional>
+    <campoAdicional nombre="Telefono">0983277109</campoAdicional>
+    <campoAdicional nombre="Email">bubblegummersrecreo@bataecuadorcomec</campoAdicional>
+    <campoAdicional nombre="seriePuntoEmision">001003</campoAdicional>
+    <campoAdicional nombre="socioRazonSocial">Empresa xyz</campoAdicional>
+    <campoAdicional nombre="socioDireccion">direccion de empresa xyz</campoAdicional>
+    <campoAdicional nombre="PlacaVehiculo">.</campoAdicional>
+    <campoAdicional nombre="CtaEstablecimiento">.</campoAdicional>
   </infoAdicional>
-<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature358773">
-<ds:SignedInfo Id="Signature-SignedInfo730067">
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature257891">
+<ds:SignedInfo Id="Signature-SignedInfo213362">
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-<ds:Reference Id="SignedPropertiesID820545" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature358773-SignedProperties315858">
+<ds:Reference Id="SignedPropertiesID654349" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature257891-SignedProperties890999">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>1qmtPRKAxJ+SdSpXzuaL58oamGg=</ds:DigestValue>
+<ds:DigestValue>/TQr08PsWYXDPuH+jWoGI1Qqovk=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference URI="#Certificate1747718">
+<ds:Reference URI="#Certificate11000838">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>wxe/C7XmoSfVLZ0b23LtweqEk00=</ds:DigestValue>
+<ds:DigestValue>TbcoKaz0Q45kSsyb1mVdiPLQXg0=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference Id="Reference-ID-621786" URI="#comprobante">
+<ds:Reference Id="Reference-ID-308051" URI="#comprobante">
 <ds:Transforms>
 <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>n8KEy+4HdnPMbtmgYhZK3OdJYko=</ds:DigestValue>
+<ds:DigestValue>Y0O80YDjTK0x6VzsUavNFILbJEU=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue Id="SignatureValue278585">
-d4FrFAooj5q2Am/kItaz7CIqrRkwAWhO5DynR4BYk+EdALcn5BhBzlcJQLNVbbU8ReDzURfrG5Th
-JrZ7eHGykTNzCUDVrOEg3x6Z1NKBd+R7B28DFGul3kb2zdrF97uF4LAigkw3NtiF6IOmjqPQdtyL
-J3VjmcLRrkc6ZjRYSaSsKVhGPKWAgyX3xDu+9afmeADTl/WX9Xz+IIQXxFsQC7aDMJDX3CSgC0O2
-hSfi1qWqBzfuVYQGtCS6z1uq2zDqd9nlB6ixrQyXqmPnwKm00csQMsNMkmet9EHKwY+MUdA3nJkW
-JmLGBQb5vAWsQyK+uviF7xuVZOEEPVjRUK5NPQ==
+<ds:SignatureValue Id="SignatureValue620834">
+K9R6PmvkTdV5e2BzBE2/JR3gU8LieX/y1QGWUZNAP1iERdTmPnj5wMLPgGDHQq78tpEC33tAHgfN
+zUFXM1f2aYj9EnxYs4kd7EBFYrQ1nn+FWoa3T/sm764l77ObNdu+Pfde/J4yQnBAMNzx0HIxwEEg
+GJue4Tfy3geQUgcf+OtQ+lbij6DOgqtHuuhU4BY9zstnsj5ORuKX+v0ufxTvmrWI4ZWk04lC+l9W
+c+QWA+BHQ4T/vWI5xIc8rumST3CeqvvYjiSEslHRKyUw+eHnBaQgsjdSxAvvgbYyV09InmkPYA1g
+LAWK0fg3S6K3jSRzmfQ4EG1HW43H6Upuqxm0IQ==
 </ds:SignatureValue>
-<ds:KeyInfo Id="Certificate1747718">
+<ds:KeyInfo Id="Certificate11000838">
 <ds:X509Data>
 <ds:X509Certificate>
 MIILkjCCCXqgAwIBAgIEXDrIAjANBgkqhkiG9w0BAQsFADCBmTELMAkGA1UEBhMCRUMxHTAbBgNV
@@ -185,4 +177,4 @@ LRuAVSyi58qyAD0Eu1zLMc3KhEUXoxF7aA8P0w==
 </ds:RSAKeyValue>
 </ds:KeyValue>
 </ds:KeyInfo>
-<ds:Object Id="Signature358773-Object1019174"><etsi:QualifyingProperties Target="#Signature358773"><etsi:SignedProperties Id="Signature358773-SignedProperties315858"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-04-26T11:42:42-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-621786"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></comprobanteRetencion>
+<ds:Object Id="Signature257891-Object869457"><etsi:QualifyingProperties Target="#Signature257891"><etsi:SignedProperties Id="Signature257891-SignedProperties890999"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-04-28T16:54:09-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-308051"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></factura>
