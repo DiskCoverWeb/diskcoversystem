@@ -292,7 +292,19 @@ class punto_ventaM
     $AdoDBFA['Tipo_contribuyente'] = $tipo_con;
   }
   // array_push($datos_fac, $tipo_con);
+  // print_r($TFA);
     $datos_cli_edu=$this->Cliente($TFA['CodigoC']);
+    $datos_trans  =$this->Cliente(false,false,false,false,$AdoDBFA[0]['CIRUC_Comercial']);
+
+      // print_r($datos_trans);die();
+      $datos_cli_edu[0]['Direccion_tras'] = '.';
+      $datos_cli_edu[0]['Email_tras'] = '.';
+    if(count($datos_trans)>0)
+    {
+      // print_r($datos_trans);die();
+       $datos_cli_edu[0]['Direccion_tras'] = $datos_trans[0]['Direccion'];
+       $datos_cli_edu[0]['Email_tras'] = $datos_trans[0]['Email'];
+    }
     $archivos = array('0'=>$nombre_archivo.'.pdf','1'=>$TFA['Autorizacion_GR'].'.xml');
     $to_correo = '';
     if(count($datos_cli_edu)>0)
@@ -392,6 +404,18 @@ class punto_ventaM
   }
   // array_push($datos_fac, $tipo_con);
     $datos_cli_edu=$this->Cliente($TFA['CodigoC']);
+     $datos_trans  =$this->Cliente(false,false,false,false,$AdoDBFA[0]['CIRUC_Comercial']);
+
+      // print_r($datos_trans);die();
+      $datos_cli_edu[0]['Direccion_tras'] = '.';
+      $datos_cli_edu[0]['Email_tras'] = '.';
+    if(count($datos_trans)>0)
+    {
+      // print_r($datos_trans);die();
+       $datos_cli_edu[0]['Direccion_tras'] = $datos_trans[0]['Direccion'];
+       $datos_cli_edu[0]['Email_tras'] = $datos_trans[0]['Email'];
+    }
+    
     $archivos = array('0'=>$nombre_archivo.'.pdf','1'=>$TFA['Autorizacion_GR'].'.xml');
     $to_correo = '';
     if(count($datos_cli_edu)>0)
@@ -613,9 +637,9 @@ class punto_ventaM
     return $res;
    }
 
-  function Cliente($cod,$grupo = false,$query=false,$clave=false)
+  function Cliente($cod,$grupo = false,$query=false,$clave=false,$ci=false)
    {
-     $sql = "SELECT * from Clientes WHERE FA=1 ";
+     $sql = "SELECT * from Clientes WHERE 1=1 ";
      if($cod){
       $sql.=" and Codigo= '".$cod."'";
      }
@@ -631,13 +655,18 @@ class punto_ventaM
      {
       $sql.=" and Clave= '".$clave."'";
      }
+     if($ci){
+      $sql.=" and CI_RUC= '".$ci."'";
+     }
 
      $sql.=" ORDER BY ID OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
+
+     // print_r($sql);die();
 
      $result = $this->db->datos($sql);
 
        // $result =  encode($result);
-        // print_r($result);
+        // print_r($result);die();
         return $result;
    }
 

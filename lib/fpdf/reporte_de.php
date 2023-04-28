@@ -2102,8 +2102,8 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$formato=null,$nombre_archivo=null,$va=null,$imp1=false,$sucursal=array())
 {
 
-	// print_r($_SESSION['INGRESO']);die();
-	// print_r($sucursal);die();
+	// print_r($datos);
+	// print_r($detalle);die();
 	$pdf = new PDF('P','pt','LETTER');
 	$pdf->AliasNbPages('TPAG');
 	$pdf->SetTopMargin(5);
@@ -2597,7 +2597,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 	
 	$arr=array('<b>Punto de Partida: ','<b>Fecha Inicio: ','<b>Fecha fin: ','<b>Placa: ');//mio
 	$pdf->Row($arr,10);
-	$arr=array($datos[0]['Direccion_RS'],$datos[0]['FechaGRI']->format('Y-m-d'),$datos[0]['FechaGRF']->format('Y-m-d'),$datos[0]['Placa_Vehiculo']);//mio
+	$arr=array($educativo[0]['Direccion_tras'],$datos[0]['FechaGRI']->format('Y-m-d'),$datos[0]['FechaGRF']->format('Y-m-d'),$datos[0]['Placa_Vehiculo']);//mio
 	$pdf->Row($arr,10);
     $yfin = $pdf->GetY();	
 	$xfin = $pdf->GetX();
@@ -2697,7 +2697,9 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 	$pdf->SetWidths(array(40));
 	//verificamos si es una o varias etiquetas
 	// datos adicionales
-	$pdf->SetWidths(array(537));
+	$pdf->SetWidths(array(200,200,135));
+	$arr=array('<b>Email: '.$educativo[0]['Email'],'<b>Email2: '.$educativo[0]['Email_tras'],'<b>Telefono:'.$educativo[0]['Telefono']);
+	$pdf->Row($arr,10);
 	//print_r($educativo);
 
 
