@@ -77,7 +77,7 @@ class db
 	function MySQL()
 	{
 			$this->usuario = 'diskcover';
-	    $this->password =  'disk2017Cover';  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
+	    $this->password =  'disk2017@Cover';  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
 	    $this->servidor = $this->ipconfig;
 	    $this->database = 'diskcover_empresas';
 	    $this->puerto = 13306;
