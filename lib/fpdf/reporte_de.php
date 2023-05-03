@@ -2172,6 +2172,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$pdf->SetWidths(array($margen_med));
 		$arr=array($_SESSION['INGRESO']['Razon_Social']);//mio
 		$pdf->Row($arr,10);
+		$pdf->ln(10);;
 
 	}else{
 	//razon social
@@ -2179,21 +2180,26 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$pdf->SetWidths(array($margen_med));
 		$arr=array($_SESSION['INGRESO']['Razon_Social']);//mio
 		$pdf->Row($arr,8);
+		$pdf->ln(8);
 		// $pdf->Ln($salto_ln);		
 		//nombre comercial
 		$pdf->SetWidths(array($margen_med));
 		$arr=array($_SESSION['INGRESO']['Nombre_Comercial']);//mio
-		$pdf->Row($arr,8);
+		$pdf->Row($arr,8);		
+		$pdf->ln(8);
 	}
 
 	$pdf->SetFont('Arial','B',8);	
 	$pdf->SetWidths(array($margen_med));	
 	$arr=array('Dirección Matríz');
 	$pdf->Row($arr,10);
+
+	$pdf->ln(10);;
 	$pdf->SetFont('Arial','',7);
 	$pdf->SetWidths(array($margen_med));
 	$arr=array($_SESSION['INGRESO']['Direccion']);
 	$pdf->Row($arr,10);
+	$pdf->ln(10);;
 
 	// print_r($datos[0]['Serie']);die();
 	//sucursal si es diferente a 001
@@ -2207,8 +2213,10 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 			 $pdf->SetWidths(array($margen_med));
 			 $arr=array('Direccion de establecimiento / Sucursal');//mio
 			 $pdf->Row($arr,10);
+			 $pdf->ln(10);;
 			 $arr=array($sucursal[0]['Direccion_Establecimiento']);//mio
 			 $pdf->Row($arr,10);
+			 $pdf->ln(10);;
 		}
 	}	
 
@@ -2217,12 +2225,14 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	 $pdf->SetWidths(array($margen_med));
 	 $arr=array(utf8_decode($_SESSION['INGRESO']['Telefono1']));//mio
 	 $pdf->Row($arr,10);
+	 $pdf->ln(10);;
 	}
 	if(strlen($_SESSION['INGRESO']['Email'])>1)
 	{
 	 $pdf->SetWidths(array($margen_med));
 	 $arr=array(utf8_decode($_SESSION['INGRESO']['Email']));//mio
 	 $pdf->Row($arr,10);
+	 $pdf->ln(10);;
 	}
 
 	$pdf->SetFont('Arial','B',6);
@@ -2357,7 +2367,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	 {
 		$code=$datos[0]['Clave_Acceso'];
 	    // $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
-
+		$pdf->ln(10);
 	    $pdf->SetY($pdf->GetY()+20);	    
 	    $pdf->SetFont('Arial','',7);
 	    $pdf->SetWidths(array(275));
@@ -2368,7 +2378,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	 {	 	
 	    $code=$datos[0]['Clave_Acceso'];
 	    // $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
-
+		$pdf->ln(10);
 	    $pdf->SetY($pdf->GetY()+20);	    
 	    $pdf->SetFont('Arial','',7);
 	    $pdf->SetWidths(array(275));
@@ -2376,6 +2386,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	    $arr=array($code);
 		// $pdf->Row($arr,10);	
 	 }
+	 $pdf->ln(10);
 	 $yfin = $pdf->GetY();
 	 // $pdf->RoundedRect($x-$margen, $y-$margen, $margen_med2, $yfin-$y+$margen, 10, $style = '', $angle = '1234');		
 
@@ -2497,6 +2508,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	if($datos[0]['Clave_Acceso'] != $datos[0]['Autorizacion_GR'])
 	 {
 		$code=$datos[0]['Autorizacion_GR'];
+		$pdf->ln(10);
 	    $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
 
 	    $pdf->SetY($pdf->GetY()+20);	    
@@ -2509,6 +2521,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	 }else if($datos[0]['Clave_Acceso_GR'] > 39)
 	 {	 	
 	    $code=$datos[0]['Clave_Acceso_GR'];
+	    $pdf->ln(10);
 	    $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
 
 	    $pdf->SetY($pdf->GetY()+20);	    
@@ -2518,6 +2531,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	    $arr=array($code);
 		$pdf->Row($arr,10);	
 	 }
+	 $pdf->ln(10);
 	 $yfin = $pdf->GetY();
 	 $pdf->RoundedRect($x-$margen, $y-$margen, $margen_med2, $yfin-$y+$margen, 10, $style = '', $angle = '1234');		
 
@@ -2626,6 +2640,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	
 	$arr=array('Destino: De '.$datos[0]['CiudadGRI'].' a '.$datos[0]['CiudadGRF'].', '.$datos[0]['Lugar_Entrega']);
 	$pdf->Row($arr,10);
+	$pdf->ln(10);
     $yfin = $pdf->GetY();	
 	$xfin = $pdf->GetX();
 	$pdf->RoundedRect($x-$margen, $y-$margen, $margen_med3, $yfin-$y+$margen, $radio, $style = '', $angle = '1234');	
@@ -2662,7 +2677,8 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 			$pdf->SetAligns(array("L","L","R","L"));
 			//$arr=array($arr1[$i]);
 			$arr=array($value['Codigo'],'',number_format($value['Cantidad'],2,'.',''),$value['Producto']);
-			$pdf->Row($arr,10,1);    	
+			$pdf->Row($arr,10,1);  
+			// $pdf->ln(10);  	
      }
 
 
@@ -2688,6 +2704,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	// infofactura
 	$arr=array("INFORMACIÓN ADICIONAL");
     $pdf->Row($arr,10,1);
+    $pdf->ln(10);
 	
 	$y=$pdf->GetY()-5;//377
 	$pdf->SetFont('Arial','',6);
@@ -4848,6 +4865,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$pdf->SetWidths(array($margen_med));
 		$arr=array($_SESSION['INGRESO']['Razon_Social']);//mio
 		$pdf->Row($arr,10);
+		$pdf->ln(10);
 
 	}else{
 	//razon social
@@ -4855,21 +4873,25 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$pdf->SetWidths(array($margen_med));
 		$arr=array($_SESSION['INGRESO']['Razon_Social']);//mio
 		$pdf->Row($arr,8);
+		$pdf->ln(8);
 		// $pdf->Ln($salto_ln);		
 		//nombre comercial
 		$pdf->SetWidths(array($margen_med));
 		$arr=array($_SESSION['INGRESO']['Nombre_Comercial']);//mio
 		$pdf->Row($arr,8);
+		$pdf->ln(8);
 	}
 
 	$pdf->SetFont('Arial','B',8);	
 	$pdf->SetWidths(array($margen_med));	
 	$arr=array('Dirección Matríz');
 	$pdf->Row($arr,10);
+	$pdf->ln(10);
 	$pdf->SetFont('Arial','',7);
 	$pdf->SetWidths(array($margen_med));
 	$arr=array($_SESSION['INGRESO']['Direccion']);
 	$pdf->Row($arr,10);
+	$pdf->ln(10);
 
 	// print_r($datos[0]['Serie']);die();
 	//sucursal si es diferente a 001
@@ -4893,12 +4915,14 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	 $pdf->SetWidths(array($margen_med));
 	 $arr=array(utf8_decode($_SESSION['INGRESO']['Telefono1']));//mio
 	 $pdf->Row($arr,10);
+	 $pdf->ln(10);
 	}
 	if(strlen($_SESSION['INGRESO']['Email'])>1)
 	{
 	 $pdf->SetWidths(array($margen_med));
 	 $arr=array(utf8_decode($_SESSION['INGRESO']['Email']));//mio
 	 $pdf->Row($arr,10);
+	 $pdf->ln(10);
 	}
 
 	$pdf->SetFont('Arial','B',6);
@@ -5030,7 +5054,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	 {
 		$code=$datos['ClaveAcceso_NC'];
 	    // $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
-
+		$pdf->ln(10);
 	    $pdf->SetY($pdf->GetY()+20);	    
 	    $pdf->SetFont('Arial','',7);
 	    $pdf->SetWidths(array(275));
@@ -5041,7 +5065,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	 {	 	
 	    $code=$datos['ClaveAcceso_NC'];
 	    // $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
-
+		$pdf->ln(10);
 	    $pdf->SetY($pdf->GetY()+20);	    
 	    $pdf->SetFont('Arial','',7);
 	    $pdf->SetWidths(array(275));
@@ -5049,6 +5073,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	    $arr=array($code);
 		// $pdf->Row($arr,10);	
 	 }
+	 $pdf->ln(10);
 	 $yfin = $pdf->GetY();
 	 // $pdf->RoundedRect($x-$margen, $y-$margen, $margen_med2, $yfin-$y+$margen, 10, $style = '', $angle = '1234');		
 
@@ -5169,6 +5194,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->Row($arr,10);
 	if($datos['ClaveAcceso_NC'] != $datos['Autorizacion_NC'])
 	 {
+	 	$pdf->ln(10);
 		$code=$datos['Autorizacion_NC'];
 	    $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
 
@@ -5181,6 +5207,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	 
 	 }else if($datos['ClaveAcceso_NC'] > 39)
 	 {	 	
+	 	$pdf->ln(10);
 	    $code=$datos['ClaveAcceso_NC'];
 	    $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
 
@@ -5191,6 +5218,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	    $arr=array($code);
 		$pdf->Row($arr,10);	
 	 }
+	 $pdf->ln(10);
 	 $yfin = $pdf->GetY();
 	 $pdf->RoundedRect($x-$margen, $y-$margen, $margen_med2, $yfin-$y+$margen, 10, $style = '', $angle = '1234');		
 
@@ -5224,8 +5252,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->SetWidths(array(270,255));	
 	$arr=array('Dirección: '.$cliente[0]['Direccion']);//mio
 	$pdf->Row($arr,10);
-
-
+	$pdf->ln(10);
 	$estaF = substr($datos['Serie'],0,3);
 	$puntoF = substr($datos['Serie'],3,6);
 
@@ -5243,7 +5270,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->SetWidths(array(520));	
 	$arr=array($datos['Nota']);//mio
 	$pdf->Row($arr,10);
-
+	$pdf->ln(10);
 
 
 	if('DOLAR'=='DOLAR')
@@ -5358,6 +5385,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		{	
 		$arr=array('Telefono: '.$datos[0]['Telefono_RS']);
 		$pdf->Row($arr,10);
+		$pdf->ln(10);
 		$pdf->SetWidths(array(140));
 	    }
 
@@ -5372,37 +5400,44 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 
 		$arr=array('Punto Emision: '.$datos[0]['Serie']);
 		$pdf->Row($arr,10);
+		$pdf->ln(10);
 
 		if($sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='')
 		{
 			$arr=array($sucursal[0]['Nombre_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 		if($sucursal[0]['RUC_Establecimiento']!='.' && $sucursal[0]['RUC_Establecimiento']!='')
 		{
 			$arr=array('Ruc punto Emision: '.$sucursal[0]['RUC_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 		if($sucursal[0]['Direccion_Establecimiento']!='.' && $sucursal[0]['Direccion_Establecimiento']!='')
 		{
 			$arr=array('Direccion punto Emision: '.$sucursal[0]['Direccion_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 		if($sucursal[0]['Telefono_Estab']!='.' && $sucursal[0]['Telefono_Estab']!='')
 		{
 			$arr=array('Telefono punto Emision: '.$sucursal[0]['Telefono_Estab']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 		if($sucursal[0]['Email_Establecimiento']!='.' && $sucursal[0]['Email_Establecimiento']!='')
 		{
 			$arr=array('Email punto Emision: '.$sucursal[0]['Email_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 
 		if($sucursal[0]['Cta_Establecimiento']!='.' && $sucursal[0]['Cta_Establecimiento']!='')
 		{
 			$arr=array('Cta Punto Emision: '.$sucursal[0]['Cta_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 			
 
@@ -5410,6 +5445,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		{
 			$arr=array('Placas: '.$sucursal[0]['Placa_Vehiculo']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}	   
 
 		
@@ -5424,31 +5460,37 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	{
 		$arr=array('Establecimiento: '.$datos[0]['Serie']);
 		$pdf->Row($arr,10);
+		$pdf->ln(10);
 
 		if($sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='')
 		{
 			$arr=array($sucursal[0]['Nombre_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 		if($sucursal[0]['RUC_Establecimiento']!='.' && $sucursal[0]['RUC_Establecimiento']!='')
 		{
 			$arr=array('Ruc establecimiento: '.$sucursal[0]['RUC_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 		if($sucursal[0]['Telefono_Estab']!='.' && $sucursal[0]['Telefono_Estab']!='')
 		{
 			$arr=array('Telefono establecimiento: '.$sucursal[0]['Telefono_Estab']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 		if($sucursal[0]['Email_Establecimiento']!='.' && $sucursal[0]['Email_Establecimiento']!='')
 		{
 			$arr=array('Email establecimiento: '.$sucursal[0]['Email_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 		if($sucursal[0]['Cta_Establecimiento']!='.' && $sucursal[0]['Cta_Establecimiento']!='')
 		{
 			$arr=array('Cta_Establecimiento: '.$sucursal[0]['Cta_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 
 
@@ -5456,6 +5498,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		{
 			$arr=array('Placas: '.$sucursal[0]['Placa_Vehiculo']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 
 		
@@ -5465,6 +5508,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		// print_r('expression');die();
 		$arr=array('Observacion: '.$datos[0]['Observacion']);
 		$pdf->Row($arr,10);
+		$pdf->ln(10);
 		$pdf->SetWidths(array(140));
     }
 	if(isset($cliente[0]['Email']) && $cliente[0]['Email'] != '.' && $cliente[0]['Email'] != '')
@@ -5472,6 +5516,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		// print_r('expression');die();
 		$arr=array('Email: '.$cliente[0]['Email']);
 		$pdf->Row($arr,10);
+		$pdf->ln(10);
 		$pdf->SetWidths(array(140));
     }
 
@@ -5887,6 +5932,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$pdf->SetWidths(array(280));
 		$arr=array(utf8_decode($_SESSION['INGRESO']['Razon_Social']));//mio
 		$pdf->Row($arr,10);
+		$pdf->ln(10);
 
 	}else{
 	//razon social
@@ -5895,6 +5941,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$pdf->SetWidths(array(280));
 		$arr=array(utf8_decode($_SESSION['INGRESO']['Razon_Social']));//mio
 		$pdf->Row($arr,10);
+		$pdf->ln(10);
 		
 		//nombre comercial
 		$pdf->SetFont('Arial','B',9);
@@ -5902,6 +5949,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$pdf->SetWidths(array(280));
 		$arr=array(utf8_decode($_SESSION['INGRESO']['Nombre_Comercial']));//mio
 		$pdf->Row($arr,10);
+		$pdf->ln(10);
 	//print_r($datos);
 		
 		
@@ -5915,27 +5963,29 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->SetXY($x,$pdf->GetY());
 	$pdf->SetWidths(array(140));	
 	$arr=array('Dirección Matríz');
-
 	$pdf->Row($arr,10);
+	$pdf->ln(10);
+	
 	$pdf->SetFont('Arial','',7);
 	$pdf->SetXY($x, $pdf->GetY());
 	$pdf->SetWidths(array(280));
 	$arr=array(utf8_decode($_SESSION['INGRESO']['Direccion']));//mio
-
-
 	$pdf->Row($arr,10);
+	$pdf->ln(10);
+	
 	$pdf->SetFont('Arial','B',8);
 	$pdf->SetXY($x,$pdf->GetY());
 	$pdf->SetWidths(array(140));	
 	$arr=array('Dirección sucursal');
-
 	$pdf->Row($arr,10);
+	$pdf->ln(10);
+
 	$pdf->SetFont('Arial','',7);
 	$pdf->SetXY($x, $pdf->GetY());
 	$pdf->SetWidths(array(280));
 	$arr=array(utf8_decode($_SESSION['INGRESO']['Direccion']));//mio
 	$pdf->Row($arr,10);
-	
+	$pdf->ln(10);
 	
 	//contab
 	$cont = $pdf->GetY();
@@ -5944,6 +5994,8 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->SetWidths(array(260));
 	$arr=array('Obligado a llevar contabilidad:');
 	$pdf->Row($arr,10);
+	$pdf->ln(10);
+	
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetXY(165, $cont);
 	$pdf->SetWidths(array(20));
