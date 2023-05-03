@@ -3606,37 +3606,44 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 
 		$arr=array('Punto Emision: '.$datos[0]['Serie']);
 		$pdf->Row($arr,10);
+		$pdf->ln(10);
 
 		if($sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='')
 		{
 			$arr=array($sucursal[0]['Nombre_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 		if($sucursal[0]['RUC_Establecimiento']!='.' && $sucursal[0]['RUC_Establecimiento']!='')
 		{
 			$arr=array('Ruc punto Emision: '.$sucursal[0]['RUC_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 		if($sucursal[0]['Direccion_Establecimiento']!='.' && $sucursal[0]['Direccion_Establecimiento']!='')
 		{
 			$arr=array('Direccion punto Emision: '.$sucursal[0]['Direccion_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 		if($sucursal[0]['Telefono_Estab']!='.' && $sucursal[0]['Telefono_Estab']!='')
 		{
 			$arr=array('Telefono punto Emision: '.$sucursal[0]['Telefono_Estab']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 		if($sucursal[0]['Email_Establecimiento']!='.' && $sucursal[0]['Email_Establecimiento']!='')
 		{
 			$arr=array('Email punto Emision: '.$sucursal[0]['Email_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 
 		if($sucursal[0]['Cta_Establecimiento']!='.' && $sucursal[0]['Cta_Establecimiento']!='')
 		{
 			$arr=array('Cta Punto Emision: '.$sucursal[0]['Cta_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}
 			
 
@@ -3644,6 +3651,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		{
 			$arr=array('Placas: '.$sucursal[0]['Placa_Vehiculo']);
 		    $pdf->Row($arr,10);
+		    $pdf->ln(10);
 		}	   
 
 		
@@ -3658,31 +3666,43 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	{
 		$arr=array('Establecimiento: '.$datos[0]['Serie']);
 		$pdf->Row($arr,10);
+		
+		$pdf->ln(10);
 
 		if($sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='')
 		{
 			$arr=array($sucursal[0]['Nombre_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    
+		$pdf->ln(10);
 		}
 		if($sucursal[0]['RUC_Establecimiento']!='.' && $sucursal[0]['RUC_Establecimiento']!='')
 		{
 			$arr=array('Ruc establecimiento: '.$sucursal[0]['RUC_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    
+		$pdf->ln(10);
 		}
 		if($sucursal[0]['Telefono_Estab']!='.' && $sucursal[0]['Telefono_Estab']!='')
 		{
 			$arr=array('Telefono establecimiento: '.$sucursal[0]['Telefono_Estab']);
 		    $pdf->Row($arr,10);
+		    
+		$pdf->ln(10);
 		}
 		if($sucursal[0]['Email_Establecimiento']!='.' && $sucursal[0]['Email_Establecimiento']!='')
 		{
 			$arr=array('Email establecimiento: '.$sucursal[0]['Email_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    
+		$pdf->ln(10);
 		}
 		if($sucursal[0]['Cta_Establecimiento']!='.' && $sucursal[0]['Cta_Establecimiento']!='')
 		{
 			$arr=array('Cta_Establecimiento: '.$sucursal[0]['Cta_Establecimiento']);
 		    $pdf->Row($arr,10);
+		    
+		$pdf->ln(10);
 		}
 
 
@@ -3690,6 +3710,8 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		{
 			$arr=array('Placas: '.$sucursal[0]['Placa_Vehiculo']);
 		    $pdf->Row($arr,10);
+		    
+		$pdf->ln(10);
 		}
 	}
 
