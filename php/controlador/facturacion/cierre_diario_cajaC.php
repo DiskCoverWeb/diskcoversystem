@@ -235,7 +235,7 @@ www.diskcoversystem.com
 QUITO - ECUADOR';
         $titulo_correo = 'Estimado(a): , usted tiene los siguientes pendientes.';
         $datos = $this->modelo->consultar_reporte_cartera();
-        $to_correo = $datos[0]['C.Email'].','.$datos[0]['C.EmailR'];
+        $to_correo = $datos[0]['Email'].','.$datos[0]['EmailR'];
         $correo_apoyo = 'diskcover.system@gmail.com';
 
 

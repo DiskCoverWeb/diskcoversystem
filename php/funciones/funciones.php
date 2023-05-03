@@ -495,6 +495,7 @@ function ReadSetDataNum($SQLs,$ParaEmpresa =false,$Incrementar = false) // optim
   $NumCodigo = 0;
   $NuevoNumero = False;
   $FechaComp = '';
+  $Si_MesComp = false;
   if(strlen($FechaComp) < 10 || $FechaComp == '00/00/0000')
   {
   	$FechaComp =date('Y-m-d');
@@ -4149,7 +4150,12 @@ function insert_generico($tabla=null,$datos=null) // optimizado pero falta
 					}
 					if($obj->DATA_TYPE=='money')
 					{
-						$sql_v=$sql_v."".$datos[$i]['dato'].",";
+            if($datos[$i]['dato']!='.' && $datos[$i]['dato']!=''){
+            $sql_v=$sql_v."".$datos[$i]['dato'].",";
+            }else
+            {
+            $sql_v=$sql_v."0,";              
+            }
 					}
 					if($obj->DATA_TYPE=='int')
 					{
@@ -5262,7 +5268,7 @@ function generar_comprobantes($parametros) //revision parece repetida
     
     //echo $_POST['fecha1'];
     //die();
-    
+
     $sql="INSERT INTO Comprobantes
            (Periodo ,Item,T ,TP,Numero ,Fecha ,Codigo_B,Presupuesto,Concepto,Cotizacion,Efectivo,Monto_Total
            ,CodigoU ,Autorizado,Si_Existe ,Hora,CEj,X)
@@ -5278,7 +5284,7 @@ function generar_comprobantes($parametros) //revision parece repetida
            ,'".$parametros['concepto']."'
            ,'".$parametros['cotizacion']."'
            ,0
-           ,'".$parametros['totalh']."'
+           ,'".((is_numeric($parametros['totalh']))?$parametros['totalh']:0)."'
            ,'".$_SESSION['INGRESO']['CodigoU']."'
            ,'.'
            ,0
