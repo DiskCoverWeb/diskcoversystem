@@ -2906,6 +2906,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$pdf->SetWidths(array($margen_med));
 		$arr=array($_SESSION['INGRESO']['Razon_Social']);//mio
 		$pdf->Row($arr,10);
+		$pdf->ln(10);
 
 	}else{
 	//razon social
@@ -2913,21 +2914,26 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$pdf->SetWidths(array($margen_med));
 		$arr=array($_SESSION['INGRESO']['Razon_Social']);//mio
 		$pdf->Row($arr,8);
+
+		$pdf->ln(8);
 		// $pdf->Ln($salto_ln);		
 		//nombre comercial
 		$pdf->SetWidths(array($margen_med));
 		$arr=array($_SESSION['INGRESO']['Nombre_Comercial']);//mio
 		$pdf->Row($arr,8);
+		$pdf->ln(8);
 	}
-
+	// $pdf->ln(5);
 	$pdf->SetFont('Arial','B',8);	
 	$pdf->SetWidths(array($margen_med));	
 	$arr=array('Dirección Matríz');
 	$pdf->Row($arr,10);
+	$pdf->ln(10);
 	$pdf->SetFont('Arial','',7);
 	$pdf->SetWidths(array($margen_med));
 	$arr=array($_SESSION['INGRESO']['Direccion']);
 	$pdf->Row($arr,10);
+	$pdf->ln(10);
 
 	// print_r($datos[0]['Serie']);die();
 	//sucursal si es diferente a 001
@@ -2941,8 +2947,10 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 			 $pdf->SetWidths(array($margen_med));
 			 $arr=array('Direccion de establecimiento / Sucursal');//mio
 			 $pdf->Row($arr,10);
+			 $pdf->ln(10);
 			 $arr=array($sucursal[0]['Direccion_Establecimiento']);//mio
 			 $pdf->Row($arr,10);
+			 $pdf->ln(10);
 		}
 	}	
 
@@ -2951,12 +2959,14 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	 $pdf->SetWidths(array($margen_med));
 	 $arr=array(utf8_decode($_SESSION['INGRESO']['Telefono1']));//mio
 	 $pdf->Row($arr,10);
+	 $pdf->ln(10);
 	}
 	if(strlen($_SESSION['INGRESO']['Email'])>1)
 	{
 	 $pdf->SetWidths(array($margen_med));
 	 $arr=array(utf8_decode($_SESSION['INGRESO']['Email']));//mio
 	 $pdf->Row($arr,10);
+	 $pdf->ln(10);
 	}
 
 	$pdf->SetFont('Arial','B',6);
@@ -3089,6 +3099,8 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->Row($arr,10);
 	if($datos[0]['Clave_Acceso'] != $datos[0]['Autorizacion'])
 	 {
+
+	 	$pdf->ln(10);
 		$code=$datos[0]['Clave_Acceso'];
 	    // $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
 
@@ -3100,6 +3112,8 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		// $pdf->Row($arr,10);	
 	 }else if($datos[0]['Clave_Acceso'] > 39)
 	 {	 	
+
+	 	$pdf->ln(10);
 	    $code=$datos[0]['Clave_Acceso'];
 	    // $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
 
@@ -3110,12 +3124,13 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	    $arr=array($code);
 		// $pdf->Row($arr,10);	
 	 }
+	 $pdf->ln(10);
 	 $yfin = $pdf->GetY();
 	 // $pdf->RoundedRect($x-$margen, $y-$margen, $margen_med2, $yfin-$y+$margen, 10, $style = '', $angle = '1234');		
 
 	 $medida_fin = $yfin;
 
-//==========================================
+//========================================== finde cuado invisible==============================000
 // 	if($medida_fin>$medida_1)
 // 	{
       $medida_burbu = $medida_fin-$medida_1;
@@ -3233,6 +3248,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->Row($arr,10);
 	if($datos[0]['Clave_Acceso'] != $datos[0]['Autorizacion'])
 	 {
+	 	$pdf->ln(10);
 		$code=$datos[0]['Autorizacion'];
 	    $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
 
@@ -3245,6 +3261,8 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	 
 	 }else if($datos[0]['Clave_Acceso'] > 39)
 	 {	 	
+
+	 	$pdf->ln(10);
 	    $code=$datos[0]['Clave_Acceso'];
 	    $pdf->Code128($x,$pdf->GetY(),$code,$margen_med2-10,20);
 
@@ -3255,6 +3273,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	    $arr=array($code);
 		$pdf->Row($arr,10);	
 	 }
+	 $pdf->ln(10);
 	 $yfin = $pdf->GetY();
 	 $pdf->RoundedRect($x-$margen, $y-$margen, $margen_med2, $yfin-$y+$margen, 10, $style = '', $angle = '1234');		
 
