@@ -19,7 +19,7 @@ class devoluciones_insumosM
 	   $this->conn = new db();
 	}
 
-	function cargar_comprobantes($query=false,$desde,$hasta,$tipo='',$paginacion=false)
+	function cargar_comprobantes($query=false,$desde=false,$hasta=false,$tipo='',$paginacion=false)
 	{
 		$sql="SELECT Numero,CP.Fecha,Concepto,Monto_Total,Cliente FROM Comprobantes CP 
 		LEFT JOIN Clientes C ON CP.Codigo_B = C.Codigo

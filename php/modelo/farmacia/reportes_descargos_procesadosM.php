@@ -20,7 +20,7 @@ class reportes_descargos_procesadosM
 	}
 
 
-	function cargar_comprobantes($query=false,$desde,$hasta,$tipo='',$paginacion=false,$area=false)
+	function cargar_comprobantes($query=false,$desde=false,$hasta=false,$tipo='',$paginacion=false,$area=false)
 	{
 		$sql="SELECT TOP 100 CP.Numero,CP.Fecha,Concepto,Monto_Total,Cliente,TK.Centro_Costo as 'Area' FROM Comprobantes CP 
 		LEFT JOIN Clientes C ON CP.Codigo_B = C.Codigo

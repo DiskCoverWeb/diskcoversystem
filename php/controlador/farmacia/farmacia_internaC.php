@@ -116,13 +116,14 @@ class farmacia_internaC
 			// print_r($value);die();
 			$tra = $this->modelo->costo_producto_comprobante($value['Codigo']);
 			$ad = $this->modelo->fecha_cantidad_ultimo_ingreso($value['Codigo']);
-			if(count($tra)>0)
+			if(count($tra)>0 && count($ad)>0)
 			{
+				// print_r($ad);die();
 			$tr.='<tr>
 			<td>'.$value['Codigo'].'</td>
 			<td>'.$value['Producto'].'</td>
 			<td>'.$tra[0]['Existencia'].'</td>
-			<td>'.number_format($tra[0]['Valor_Unitario'],2).'</td>
+			<td>'.number_format($ad[0]['Valor_Unitario'],2).'</td>
 			<td>'.$ad[0]['Fecha']->format('Y-m-d').'</td>
 			<td>'.$ad[0]['Entrada'].'</td>
 			</tr>';			
