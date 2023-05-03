@@ -287,7 +287,7 @@ class punto_ventaC
 		//          	 print_r($articulo);
 		// die();	
 
-		         if(strlen($TxtDocumentos) > 1){ $articulo['Producto'] = $articulo['Producto']." - ".$TxtDocumentos;}
+		         if(strlen($TxtDocumentos) > 1){ @$articulo['Producto'] = $articulo['Producto']." - ".$TxtDocumentos;}
 		         if(is_numeric($TxtRifaD) && is_numeric($TxtRifaH) && intval($TxtRifaD) < intval($TxtRifaH)){
 		               // For i = Val(TxtRifaD) To Val(TxtRifaH)
 		               //     ProductoAux = Producto & " " & Format(i, "000000")

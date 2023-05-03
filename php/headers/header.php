@@ -12,7 +12,8 @@ include('../controlador/contabilidad/contabilidad_controller.php');
        }
       $date1 = new DateTime(date('Y-m-d'));
       $date2 = new DateTime($f);
-      $diff = date_diff($date1, $date2)->format('%R%a días');
+      $diff = date_diff($date1, $date2)->format('%R%a');
+      $diffdias = date_diff($date1, $date2)->format('%R%a días');
       // $interval = date_diff($date1, $date2);
       // echo $interval->format('%R%a días');
       $color='white';
@@ -45,7 +46,8 @@ include('../controlador/contabilidad/contabilidad_controller.php');
        }
       $date11 = new DateTime(date('Y-m-d'));
       $date21 = new DateTime($f1);
-      $diff1 = date_diff($date11, $date21)->format('%R%a días');
+      $diff1 = date_diff($date11, $date21)->format('%R%a');
+      $diffdias = date_diff($date11, $date21)->format('%R%a días');
       $color1='white';
       $estado1 = 'Infefinido';
       if($diff1 > 241)
@@ -408,7 +410,7 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
                         Fecha de comprobante:
                       </h4>
                       <p><?php if(isset($_SESSION['INGRESO']['Fecha_ce'])){ $originalDate = $_SESSION['INGRESO']['Fecha_ce']; $newDate = date("Y-m-d", strtotime($originalDate)); echo $newDate;}else{ echo date('Y-m-d');}?></p>
-                      <p>DIAS RESTANTES: <?php echo $diff1 ?></p>
+                      <p>DIAS RESTANTES: <?php echo $diffdias ?></p>
                     </a>
                   </li>
                 </ul>
@@ -434,7 +436,7 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
                         Fecha de licencia:
                       </h4>
                       <p><?php if(isset($_SESSION['INGRESO']['Fecha'])){ $originalDate = $_SESSION['INGRESO']['Fecha']; $newDate = date("Y-m-d", strtotime($originalDate)); echo $newDate;}else{ echo date('Y-m-d');}?></p>
-                      <p>DIAS RESTANTES: <?php echo $diff ?></p>
+                      <p>DIAS RESTANTES: <?php echo $diffdias ?></p>
                     </a>
                   </li>
                 </ul>
