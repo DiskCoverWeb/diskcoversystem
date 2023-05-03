@@ -46,7 +46,7 @@ class PDF_MC_Table extends FPDF
 		}
 		//Calculate the height of the row
 		$nb=0;
-		for($i=0;$i<count($data);$i++)
+		for($i=0;$i<(count($data)-1);$i++)
 			$nb=max($nb,$this->NbLines($this->widths[$i],$data[$i]));
 		$h=$h1*$nb;
 		//Issue a page break first if needed
@@ -54,6 +54,7 @@ class PDF_MC_Table extends FPDF
 		//Draw the cells of the row
 		for($i=0;$i<count($data);$i++)
 		{
+			if(!isset($data[$i]) || is_null($data[$i])){continue;}
 			$w=$this->widths[$i];
 			$a=isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
 			//Save the current position
@@ -181,7 +182,7 @@ class PDF_MC_Table extends FPDF
 			  }
 				// print_r($this->TextColor); die();
 			}
-			if(strpos($data[$i],'<') === false)
+			if( !is_null($data[$i]) && strpos($data[$i],'<') === false)
 			{
 			  if($estiloRow != '')
 			  {
@@ -251,7 +252,7 @@ class PDF_MC_Table extends FPDF
 		if($w==0)
 			$w=$this->w-$this->rMargin-$this->x;
 		$wmax=($w-2*$this->cMargin)*1000/$this->FontSize;
-		$s=str_replace("\r",'',$txt);
+		$s=@str_replace("\r",'',$txt);
 		$nb=strlen($s);
 		if($nb>0 and $s[$nb-1]=="\n")
 			$nb--;

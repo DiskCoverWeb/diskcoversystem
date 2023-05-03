@@ -45,7 +45,7 @@ class registro_esM
        return $datos;
 
 	}
-	function Producto($fami,$query='',$opcion)
+	function Producto($fami,$query='',$opcion="")
 	{
 		 $cid = $this->conn;
 		 //CodigoInv = SinEspaciosIzq(DCTInv.Text)
@@ -85,7 +85,7 @@ class registro_esM
 
 	}
 
-		function producto_detalle($fami,$query='',$codBarra='',$CodInv='',$CodInv_='',$opcion)
+		function producto_detalle($fami,$query='',$codBarra='',$CodInv='',$CodInv_='',$opcion='')
 	{
 		 $cid = $this->conn;
 		 //CodigoInv = SinEspaciosIzq(DCTInv.Text)

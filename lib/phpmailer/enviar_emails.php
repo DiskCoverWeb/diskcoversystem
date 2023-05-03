@@ -24,7 +24,7 @@ class enviar_emails
 
 
 // funcion de envios enviando datos por correo (funciona)
-function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$HTML=false)
+function enviar_email($archivos=false,$to_correo="",$cuerpo_correo="",$titulo_correo="",$HTML=false)
 {
 
   // print_r('ingresa');die();
@@ -139,7 +139,7 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
       return $res; 
 }
 // funcion de envios enviando datos por correo (funciona)
-  function enviar_credenciales($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$correo_apooyo,$nombre,$EMAIL_CONEXION,$EMAIL_CONTRASEÑA,$HTML=false,$empresaGeneral)
+  function enviar_credenciales($archivos=false,$to_correo="",$cuerpo_correo="",$titulo_correo="",$correo_apooyo="",$nombre="",$EMAIL_CONEXION="",$EMAIL_CONTRASEÑA="",$HTML=false,$empresaGeneral="")
   {
     
 
@@ -202,7 +202,7 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
     }
   }
 
-  function enviar_historial($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$nombre)
+  function enviar_historial($archivos=false,$to_correo="",$cuerpo_correo="",$titulo_correo="",$nombre="")
   {
     //Instantiation and passing `true` enables exceptions
     $mail = new PHPMailer(true);
@@ -255,7 +255,7 @@ function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$
     }
   }
 
-  function recuperar_clave($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$correo_apooyo,$nombre,$EMAIL_CONEXION,$EMAIL_CONTRASEÑA)
+  function recuperar_clave($archivos=false,$to_correo="",$cuerpo_correo="",$titulo_correo="",$correo_apooyo="",$nombre="",$EMAIL_CONEXION="",$EMAIL_CONTRASEÑA="")
   {
     $to =explode(',', $to_correo);
      foreach ($to as $key => $value) {

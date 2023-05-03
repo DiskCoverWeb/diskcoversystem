@@ -118,7 +118,7 @@ class usuario_model{
 	}
 
 // validar cliente en cartera
-	function buscar_cliente_cartera($cartera_usu=false,$cartera_pass=false,$empresa)
+	function buscar_cliente_cartera($cartera_usu=false,$cartera_pass=false,$empresa=[])
 	{
 		// print_r($empresa);die();
 		$sql="SELECT Clave,Codigo,* FROM Clientes WHERE 1=1 ";

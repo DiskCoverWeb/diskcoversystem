@@ -81,7 +81,7 @@ class facturarM
        return $this->db->datos($sql);
   }
 
-  function Listar_Tipo_Beneficiarios($query=false,$grupo,$ci=false)
+  function Listar_Tipo_Beneficiarios($query=false,$grupo=G_NINGUNO,$ci=false)
   {
     $sql = "SELECT Cliente,CI_RUC,Codigo,Cta_CxP,Grupo,Cod_Ejec
          FROM Clientes

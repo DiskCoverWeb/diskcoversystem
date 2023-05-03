@@ -233,7 +233,7 @@ class registro_esC
   function  codigo_proveedor($CodigoCliente)
   {
     $datos = $this->modelo->codigo_proveedor($CodigoCliente);
-      return $datos[0]['Codigo'];    
+      return isset($datos[0]['Codigo'])?$datos[0]['Codigo']:G_NINGUNO;    
 
   }
   function producto_detalle($parametros)
@@ -587,8 +587,8 @@ class registro_esC
      {
        $datos[33]['dato']=$parametros['ContratoPartidoPolitico'];
      }
-      $datos[34]['dato']=round($parametros["MontoTituloOneroso"],2, PHP_ROUND_HALF_ODD);
-      $datos[35]['dato']=round($parametros["MontoTituloGratuito"],2, PHP_ROUND_HALF_ODD);
+      $datos[34]['dato']=round((is_numeric($parametros["MontoTituloOneroso"])?$parametros["MontoTituloOneroso"]:0),2, PHP_ROUND_HALF_ODD);
+      $datos[35]['dato']=round((is_numeric($parametros["MontoTituloGratuito"])?$parametros["MontoTituloGratuito"]:0),2, PHP_ROUND_HALF_ODD);
 
       if($parametros['CFormaPago']==2)
       {

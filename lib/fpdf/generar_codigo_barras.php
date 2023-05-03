@@ -20,7 +20,7 @@ class generar_codigo_barras
 		// code...
 	}
 
-	function generar_barras($cantidad=1,$datos)
+	function generar_barras($cantidad=1,$datos=[])
 	{
 		// print_r($_SESSION['INGRESO']);die();
 		// print_r($datos);die();

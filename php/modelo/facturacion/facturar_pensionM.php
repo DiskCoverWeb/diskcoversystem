@@ -76,7 +76,7 @@ class facturar_pensionM
     return $stmt;
   }
 
-  public function getCatalogoLineas($fecha,$vencimiento,$serie=false,$tipo)
+  public function getCatalogoLineas($fecha,$vencimiento,$serie=false,$tipo="")
   {
 
   $sql="  SELECT * FROM Catalogo_Lineas 
@@ -96,7 +96,7 @@ class facturar_pensionM
           return $stmt;
 }
 
-  public function getCatalogoLineas13($fecha,$vencimiento,$tipo){
+  public function getCatalogoLineas13($fecha,$vencimiento,$tipo=""){
   $sql="  SELECT * FROM Catalogo_Lineas 
           WHERE Item = '".$_SESSION['INGRESO']['item']."' 
           AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
@@ -664,7 +664,7 @@ class facturar_pensionM
         //return Ejecutar_SQL_SP($sSQL);
   }
 
-  public function AnyRegistroClientes_FacturacionAnoMes($codigoCliente, $Codigo_Auto="", $Codigo_Inv="", $Anio, $NoMes){
+  public function AnyRegistroClientes_FacturacionAnoMes($codigoCliente, $Codigo_Auto="", $Codigo_Inv="", $Anio="", $NoMes=""){
     $Codigo_Auto = ($Codigo_Auto!="")?str_pad($Codigo_Auto, 6, "0", STR_PAD_LEFT):"";
     $sql = "SELECT Top(1) CF.ID
       FROM Clientes_Facturacion As CF 
@@ -680,7 +680,7 @@ class facturar_pensionM
     return count($stmt)>0;
   }
 
-  public function AnyRegistroDetalleFacturaAnoMes($codigoCliente, $Tipo_Hab="", $Codigo_Inv="", $Anio, $NoMes){
+  public function AnyRegistroDetalleFacturaAnoMes($codigoCliente, $Tipo_Hab="", $Codigo_Inv="", $Anio="", $NoMes=""){
     $Tipo_Hab = ($Tipo_Hab!="")?str_pad($Tipo_Hab, 6, "0", STR_PAD_LEFT):"";
     $sql = "SELECT Top(1) DF.ID
       FROM Detalle_Factura As DF 

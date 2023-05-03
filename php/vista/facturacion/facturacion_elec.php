@@ -129,6 +129,7 @@ function validar_cta() {
     var parametros = {
         'TC': '<?php echo $TC; ?>',
         'Serie': $('#LblSerie').text(),
+        'Fecha':'',
     }
     $.ajax({
         type: "POST",

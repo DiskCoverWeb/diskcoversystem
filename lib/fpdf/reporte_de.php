@@ -2099,7 +2099,7 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 	}
 }
 
-function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$formato=null,$nombre_archivo=null,$va=null,$imp1=false,$sucursal=array())
+function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",$formato=null,$nombre_archivo=null,$va=null,$imp1=false,$sucursal=array())
 {
 
 	// print_r($datos);
@@ -2833,7 +2833,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 
 
 
- function imprimirDocEle_fac($datos,$detalle,$educativo,$matri=false,$nombre,$formato=null,$nombre_archivo=null,$va=null,$imp1=false,$abonos=false,$sucursal=array())
+ function imprimirDocEle_fac($datos,$detalle,$educativo,$matri=false,$nombre="",$formato=null,$nombre_archivo=null,$va=null,$imp1=false,$abonos=false,$sucursal=array())
 {
 
 	// print_r($_SESSION['INGRESO']);die();
@@ -3945,7 +3945,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 
 
 
- function imprimirDocEle_fac_anterior($datos,$detalle,$educativo,$matri=false,$nombre,$formato=null,$nombre_archivo=null,$va=null,$imp1=false,$abonos=false,$sucursal=array())
+ function imprimirDocEle_fac_anterior($datos,$detalle,$educativo,$matri=false,$nombre="",$formato=null,$nombre_archivo=null,$va=null,$imp1=false,$abonos=false,$sucursal=array())
 {
 	// print_r($datos);die();
 	$pdf = new PDF('P','pt','LETTER');
@@ -4756,7 +4756,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre,$fo
 }
 
 
- function imprimirDocEle_NC($datos,$detalle,$cliente,$matri=false,$nombre,$formato=null,$nombre_archivo=null,$va=null,$imp1=false,$abonos=false,$sucursal=array())
+ function imprimirDocEle_NC($datos,$detalle,$cliente,$matri=false,$nombre="",$formato=null,$nombre_archivo=null,$va=null,$imp1=false,$abonos=false,$sucursal=array())
 {
 
 	// print_r($_SESSION['INGRESO']);die();

@@ -2301,7 +2301,7 @@ function SQL_Tipo_Balance($TipoBalance,$TipoPyGCC)
 	{
 		
 	}
-	function ExportarExcelUsuario($ti,$Opcb,$Opcem,$OpcDG,$b,$opcr=null,$OpcCE,$base=null,$generico,$proceso,$arr)
+	function ExportarExcelUsuario($ti,$Opcb,$Opcem,$OpcDG,$b,$opcr=null,$OpcCE=null,$base=null,$generico=null,$proceso=null,$arr=[])
 	{
 		//echo $sql;
 		if($base=='MYSQL')

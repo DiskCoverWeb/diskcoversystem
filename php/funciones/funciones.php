@@ -739,7 +739,7 @@ function TiposCtaStrg($cuenta) {
 }
 
 //enviar emails
-  function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$correo_apooyo,$nombre,$EMAIL_CONEXION,$EMAIL_CONTRASEÑA)
+  function enviar_email($archivos=false,$to_correo="",$cuerpo_correo="",$titulo_correo="",$correo_apooyo="",$nombre="",$EMAIL_CONEXION="",$EMAIL_CONTRASEÑA="")
   {
 
   	$respuesta=true;
@@ -4153,7 +4153,7 @@ function insert_generico($tabla=null,$datos=null) // optimizado pero falta
 					}
 					if($obj->DATA_TYPE=='int')
 					{
-            if($datos[$i]['dato']!='.'){
+            if($datos[$i]['dato']!='.' && $datos[$i]['dato']!=''){
 						$sql_v=$sql_v."".$datos[$i]['dato'].",";
             }else
             {
