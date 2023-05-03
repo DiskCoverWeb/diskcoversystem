@@ -84,7 +84,9 @@ $(document).ready(function() {
     }
 
 
-
+    $('#MBFecha').on('change', function(){
+        validar_cta()
+    })
 
     // $('#DCCliente').on('select2:select', function (e) {
     //     var data = e.params.data.data;
@@ -129,7 +131,7 @@ function validar_cta() {
     var parametros = {
         'TC': '<?php echo $TC; ?>',
         'Serie': $('#LblSerie').text(),
-        'Fecha':'',
+        'Fecha': $('#MBFecha').val(),
     }
     $.ajax({
         type: "POST",
