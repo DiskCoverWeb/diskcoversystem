@@ -564,11 +564,11 @@ class articulosC
 		   $datos[10]['campo']='TC';
 		   $datos[10]['dato']='P';
 		   $datos[11]['campo']='VALOR_TOTAL';
-		   $datos[11]['dato']=bcdiv($parametro['txt_total'],'1',4);
+		   $datos[11]['dato']=number_format($parametro['txt_total'],4,'.','');
 		   $datos[12]['campo']='CANTIDAD';
 		   $datos[12]['dato']=$parametro['txt_canti'];
 		   $datos[13]['campo']='VALOR_UNIT';
-		   $datos[13]['dato']= bcdiv($parametro['txt_precio'], '1', 7);
+		   $datos[13]['dato']= number_format($parametro['txt_precio'],7,'.','');
 		   //round($parametro['txt_precio'],2,PHP_ROUND_HALF_DOWN);
 		   $datos[14]['campo']='DH';
 		   $datos[14]['dato']=1;
@@ -577,7 +577,7 @@ class articulosC
 		   $datos[16]['campo']='ORDEN';
 		   $datos[16]['dato']=$parametro['txt_num_fac'];
 		   $datos[17]['campo']='IVA';
-		   $datos[17]['dato']=bcdiv($parametro['txt_iva'],'1',4);
+		   $datos[17]['dato']=number_format($parametro['txt_iva'],4,'.','');
 
 		   $datos[18]['campo']='Fecha_Fab';
 		   $datos[18]['dato']=$parametro['txt_fecha_ela'];
