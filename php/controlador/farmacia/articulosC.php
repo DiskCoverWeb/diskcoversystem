@@ -239,14 +239,14 @@ class articulosC
     		$nombre =  $this->paciente->cargar_paciente_proveedor($parametros);
     		// print_r($nombre);die();
     		$provee = $nombre[0]['Cliente'];
-    		$subtotal+=bcdiv(($value['VALOR_UNIT']*$value['CANTIDAD'])-$value['P_DESC'],'1',2);
+    		$subtotal+=number_format(($value['VALOR_UNIT']*$value['CANTIDAD'])-$value['P_DESC'],2,'.','');
     		$ivatotal+=$value['IVA'];
     		$total+=$value['VALOR_TOTAL'];
     		$dcto+=$value['P_DESC'];
 
     		$fecha = $value['Fecha_DUI']->format('Y-m-d');
 
-    		$su = bcdiv(($value['VALOR_UNIT']*$value['CANTIDAD'])-number_format($value['P_DESC'],2),'1',2);
+    		$su = number_format(($value['VALOR_UNIT']*$value['CANTIDAD'])-number_format($value['P_DESC'],2),2,'.','');
 
 			$d =   dimenciones_tabl(strlen($value['A_No']));
 			$d1 =   dimenciones_tabl(strlen($fecha));
@@ -732,7 +732,7 @@ class articulosC
 		    foreach ($total_iva as $key => $value) 
 		    {
 				    $parametros_debe = array(
-				     "va" =>bcdiv($value['IVA'],'1',2),//valor que se trae del otal sumado
+				     "va" =>number_format($value['IVA'],2,'.',''),//valor que se trae del otal sumado
                       "dconcepto1" =>'Cta_IVA_Inventario',
                       "codigo" => $cuenta_iva, // cuenta de codigo de 
                       "cuenta" => 'Cta_IVA_Inventario', // detalle de cuenta;
@@ -754,7 +754,7 @@ class articulosC
 			       $cuenta = $this->ing_descargos->catalogo_cuentas($value['cuenta']);		
 			       // print_r($cuenta);die();
 				    $parametros_debe = array(
-				     "va" =>bcdiv($value['sub'],'1',2),//valor que se trae del otal sumado
+				     "va" =>number_format($value['sub'],2,'.',''),//valor que se trae del otal sumado
                       "dconcepto1" =>$cuenta[0]['Cuenta'],
                       "codigo" => $value['cuenta'], // cuenta de codigo de 
                       "cuenta" => $cuenta[0]['Cuenta'], // detalle de cuenta;
