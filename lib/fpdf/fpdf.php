@@ -2102,7 +2102,7 @@ function WriteHTML($html)
     }
 
 }
-
+/*
 function NbLines($w,$txt)
 	{
 		//Computes the number of lines a MultiCell of width w will take
@@ -2153,7 +2153,7 @@ function NbLines($w,$txt)
 		}
 		return $nl;
 	}
-
+*/
 
 function OpenTag($tag, $attr)
 {
