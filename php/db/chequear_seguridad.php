@@ -1,8 +1,9 @@
 <?php
  @session_start();
-if(!isset($_SESSION['INGRESO']['IDEntidad']))
+if(!isset($_SESSION['INGRESO']['IDEntidad']) || !isset($_SESSION['INGRESO']['item']))
 {
-	echo "<script type='text/javascript'>window.location='../vista/login.php'</script>";
+	echo "<script type='text/javascript'>window.location='".((isset($tipo)&&$tipo==2)?"../":"")."../vista/login.php'</script>";
+	die();
 }
 
 // if(!isset($_SESSION)) 

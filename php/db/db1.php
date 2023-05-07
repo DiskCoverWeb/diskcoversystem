@@ -47,7 +47,7 @@ class db
 	{
 		// print_r($_SESSION['INGRESO']);die();
 			$this->usuario = $_SESSION['INGRESO']['Usuario_DB'];
-	    $this->password = $_SESSION['INGRESO']['Contraseña_DB'];  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
+	    $this->password = $_SESSION['INGRESO']['Password_DB'];  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
 	    $this->servidor = $_SESSION['INGRESO']['IP_VPN_RUTA'];
 	    if($_SESSION['INGRESO']['IP_VPN_RUTA']=='tcp:mysql.diskcoversystem.com' &&  $this->ipconfig=='localhost')
 	    {
@@ -60,7 +60,7 @@ class db
 
 	    // print_r($this->servidor);die();
 
-		$connectionInfo = array("Database"=>$this->database, "UID" => $this->usuario,"PWD" => $this->password,"CharacterSet" => "UTF-8");
+		$connectionInfo = array("Database"=>$this->database, "UID" => $this->usuario,"PWD" => $this->password,"CharacterSet" => "UTF-8","Encrypt" => false);
 		// print_r($connectionInfo);die();
 		$cid = sqlsrv_connect($this->servidor.', '.$this->puerto, $connectionInfo); //returns false
 		if( $cid === false )
@@ -77,7 +77,7 @@ class db
 	function MySQL()
 	{
 			$this->usuario = 'diskcover';
-	    $this->password =  'disk2017Cover';  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
+	    $this->password =  'disk2017@Cover';  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
 	    $this->servidor = $this->ipconfig;
 	    $this->database = 'diskcover_empresas';
 	    $this->puerto = 13306;
@@ -212,7 +212,7 @@ class db
 		   $conn = $this->SQLServer();
            $stmt = sqlsrv_query($conn, $sql);
 		   if(!$stmt)
-		   {echo $sql;
+		   {
 			   die( print_r( sqlsrv_errors(), true));
 			   sqlsrv_close($conn);
 			return -1;
@@ -270,10 +270,12 @@ class db
 		       // print_r('expression');die();
            $res = sqlsrv_execute($stmt);
            if ($res === false) 
-           {echo "<pre>";print_r($sql);echo "</pre>";echo "<pre>";print_r($parametros);echo "</pre>";
-           	echo "Error en consulta PA.\n";  
-           	$respuesta = -1;
-           	die( print_r( sqlsrv_errors(), true));  
+           {
+           	// echo "<script type='text/javascript'>alert('Estructura procesco almacenado')</script>";
+           	// die();
+           	// echo "Error en consulta PA.\n";  
+           	// $respuesta = -1;
+           	die( print_r("<script type='text/javascript'>alert('Estructura procesco almacenado')</script>", true));  
            }else{
 				   sqlsrv_close($conn);
 				   // if($retorna)
@@ -381,9 +383,65 @@ class db
 	   sqlsrv_close($cid);
 	   return 1;
 	
-	}
+	}	
+}
 
+function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
+{  
+  // print_r($_SESSION['INGRESO']);die();
+  $conn = new db();
+  $TMail_Credito_No = G_NINGUNO;
+  $NumEmpresa = $_SESSION['INGRESO']['item'];
+  $TMail = '';
+  $Modulo = $_SESSION['INGRESO']['modulo_'];
+  if($NumEmpresa=="")
+  {
+    $NumEmpresa = G_NINGUNO;
+  }
+  if($TMail == "")
+  {
+    $TMail = G_NINGUNO;
+  }
+  if($Modulo <> G_NINGUNO AND $TipoTrans<>G_NINGUNO AND $NumEmpresa<>G_NINGUNO)
+  {
+    try {
+      $sSQL = "SELECT Aplicacion " .
+        "FROM modulos " .
+        "WHERE modulo = '" . $Modulo . "' ";
+      $rps = $conn->datos($sSQL,'MYSQL');
+      $ModuloName = $rps[0]['Aplicacion'] ;
+    } catch (Exception $e) {
+      $ModuloName = $Modulo;
+    }
+    
+    if($Tarea == G_NINGUNO)
+    {
+      $Tarea = "Inicio de Sección";
+    }else
+    {
+      $Tarea = substr($Tarea,0,60);
+    }
+    $proceso = substr($opcional_proceso,0,60);
+    $NombreUsuario1 = substr($_SESSION['INGRESO']['Nombre'], 0, 60);
+    $TipoTrans = $TipoTrans;
+    $Mifecha1 = date("Y-m-d");
+    $MiHora1 = date("H:i:s");
+    $CodigoUsuario= $_SESSION['INGRESO']['CodigoU'];
+    if($Tarea == "")
+    {
+      $Tarea = G_NINGUNO;
+    }
+    if($opcional_proceso=="")
+    {
+      $opcional_proceso = G_NINGUNO;
+    }
 
-	
+    $ip= ip();
+    $sql = "INSERT INTO acceso_pcs (IP_Acceso,CodigoU,Item,Aplicacion,RUC,Fecha,Hora,
+             ES,Tarea,Proceso,Credito_No,Periodo)VALUES('".$ip."','".$CodigoUsuario."','".$NumEmpresa."',
+             '".$ModuloName."','".$_SESSION['INGRESO']['Id']."','".$Mifecha1."','".$MiHora1."','".$TipoTrans."','".$Tarea."','".$proceso."','".$TMail_Credito_No."','".$_SESSION['INGRESO']['periodo']."');";
+    $conn->String_Sql($sql,'MYSQL');
+
+  }
 }
 ?>

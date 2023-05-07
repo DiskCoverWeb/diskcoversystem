@@ -866,18 +866,20 @@ class facturar_pensionC
     $FA['num_fac'] = $FA['Factura'];
     $FA['tc'] = $FA['TC'];
     $FA['cod_doc'] = '01';
+
     if (strlen($FA['Autorizacion']) == 13) {
       try {
         $rep = $resultado = $this->autorizar_sri->Autorizar_factura_o_liquidacion($FA);
+        $dataFac = $this->facturacion->getDataBasicFactura($FA['Serie'], $FA['Factura'], $FA['CodigoC']);
         if($rep==1)
         {
-          $resultado = array('respuesta'=>$rep);
-        }else{ $resultado = array('respuesta'=>-1,'text'=>utf8_encode($rep));}
+          $resultado = array('respuesta'=>$rep, 'auto'=>$dataFac['Autorizacion'], 'per' => $dataFac['Periodo']);
+        }else{ $resultado = array('respuesta'=>-1,'text'=>utf8_encode($rep), 'auto'=>$dataFac['Autorizacion'], 'per' => $dataFac['Periodo']);}
       } catch (Exception $e) {
         $resultado = array('respuesta'=>-1,'text'=>$e->getMessage());
       }
     }else{ 
-      $resultado = array('respuesta'=>5);
+      $resultado = array('respuesta'=>5, 'auto' =>((isset($FA['Autorizacion']))?$FA['Autorizacion']:G_NINGUNO), 'per'=> $_SESSION['INGRESO']['item']);
     }
     return $resultado;
     }
@@ -1054,12 +1056,12 @@ class facturar_pensionC
       $data = $dataCliente[0];
       $ClienteFacturacion = $this->facturacion->getUltimoRegistroClientes_Facturacion($data['Codigo'], $CMedidor, JG01);
       $DetalleFactura = $this->facturacion->getUltimoRegistroDetalleFactura($data['Codigo'], $CMedidor, JG01);
-      if (count($ClienteFacturacion) > 0 && ($ClienteFacturacion[0]['Periodo'] >= @$DetalleFactura[0]['Periodo'] && $ClienteFacturacion[0]['Num_Mes'] >= @$DetalleFactura[0]['Mes_No'])) {
+      if (count($ClienteFacturacion) > 0 && ($ClienteFacturacion[0]['Periodo'] >= @$DetalleFactura[0]['Ticket'] && $ClienteFacturacion[0]['Num_Mes'] >= @$DetalleFactura[0]['Mes_No'])) {
         $data['ultimaMedida'] = $ClienteFacturacion[0]['Credito_No'];
         $data['fechaUltimaMedida'] = MesesLetras($ClienteFacturacion[0]['Num_Mes']) . "/" . $ClienteFacturacion[0]['Periodo'];
       } elseif (count($DetalleFactura) > 0) {
         $data['ultimaMedida'] = $DetalleFactura[0]['Corte'];
-        $data['fechaUltimaMedida'] = MesesLetras($DetalleFactura[0]['Mes_No']) . "/" . $DetalleFactura[0]['Periodo'];
+        $data['fechaUltimaMedida'] = MesesLetras($DetalleFactura[0]['Mes_No']) . "/" . $DetalleFactura[0]['Ticket'];
       } else {
         $data['ultimaMedida'] = $data['Acreditacion'];
         $data['fechaUltimaMedida'] = "";
@@ -1074,6 +1076,10 @@ class facturar_pensionC
 
   public function GuardarConsumoAgua($parametros){
     extract($parametros);
+    if(!isset($Lectura) || $Lectura==""){
+      return (array("rps" => false , "mensaje" => "No se indico la lectura"));
+    }
+
     if($CMedidor != "" && $CMedidor!="."){
       $dataCliente = @$this->getClienteCodigoMedidor($CMedidor)['data'];
       $LecturaAnterior = ((!is_null($dataCliente['ultimaMedida']) && is_numeric($dataCliente['ultimaMedida']))?$dataCliente['ultimaMedida']:0);
@@ -1103,6 +1109,10 @@ class facturar_pensionC
       }else{
         $NoMes = ObtenerMesFecha($Mifecha,'YmdHis');
         $Anio = ObtenerAnioFecha($Mifecha,'YmdHis');
+      }
+
+      if($dataCliente["fechaUltimaMedida"]==mes_X_nombre($NoMes)."/$Anio" || @$this->validarExisteLecturaREgistradaAnoMes($CMedidor, $codigoCliente, $Anio, $NoMes, JG01 )){
+        return (array("rps" => false , "mensaje" => "Ya se registro la lectura para Febrero/2022"));
       }
 
       if($excedente>0){
@@ -1152,6 +1162,11 @@ class facturar_pensionC
     }else{
       return (array("rps" => 0 , "mensaje" => "Debe indicar el medidor."));
     }
+  }
+
+  public function validarExisteLecturaREgistradaAnoMes($cMedidor, $codigoCliente, $Anio, $NoMes, $Codigo_Inv )
+  {
+    return ($this->facturacion->AnyRegistroClientes_FacturacionAnoMes($codigoCliente, $cMedidor, $Codigo_Inv, $Anio, $NoMes))?true:    $this->facturacion->AnyRegistroDetalleFacturaAnoMes($codigoCliente, $cMedidor, $Codigo_Inv, $Anio, $NoMes);
   }
 }
 ?>

@@ -111,9 +111,10 @@
                       </div>
                     </div>
                     <div class="form-group" style=" margin-bottom: 2px;">
-                      <!-- <label for="inputPassword" class="col-xs-12 col-lg-6 control-label text-red text-left">Ingrese lectura de Noviembre/2022</label> -->
+                      
                       <div class="col-xs-12 col-lg-6  strong text-right" >
                         <input onkeydown="if (event.keyCode === 13) GuardarConsumoAgua()"  style="max-width: 120px;display: inline-block;" type="tel" class="form-control input-xs " name="Lectura" id="Lectura" tabindex="2"> m<sup>3</sup>
+                        <br><label id="ErrorLecturaExiste" class="control-label text-red text-left"></label>
                       </div>
                     </div>
                     <div class="form-group" style=" margin-bottom: 2px;">
@@ -135,7 +136,7 @@
 
         <div class="row contenedor_item_center">
           <?php if (count($periodo)>0): ?>
-            <button class="btn btn-success" title="Guardar Consumo" onclick="GuardarConsumoAgua()">
+            <button class="btn btn-success" title="Guardar Consumo" onclick="GuardarConsumoAgua()" id="GuardarConsumo">
               <img  src="../../img/png/grabar.png" width="25" height="30" tabindex="3">
             </button>
           <?php endif ?>
@@ -166,7 +167,6 @@
                 <select class="form-control full-width" id="cliente" name="cliente">
                   <option value="">Seleccione un cliente</option>
                 </select>
-                <input type="hidden" name="codigoCliente" id="codigoCliente">
               </div>
             </div>
             <div class="col-xs-12">
@@ -177,7 +177,6 @@
                   <select class="form-control input-sm" id="SelectMedidor" name="SelectMedidor">
                     <option value="<?php echo G_NINGUNO ?>">NINGUNO</option>
                   </select>
-                <input type="hidden" name="codigoCliente" id="codigoCliente">
               </div>
             </div>
           </div>
@@ -236,9 +235,19 @@
               $("#codigoCliente").val(response.data.Codigo);
               $("#FechaUltimaLectura").text(response.data.fechaUltimaMedida);
               $("#UltimaLectura").text(response.data.ultimaMedida);
+              $("#Lectura").val("");
               $("#Lectura").focus();
               $(".labelUltimaLectura").removeClass('no-visible')
               $("#ConsumoActual").text("");
+              if(response.data.fechaUltimaMedida=='<?php echo $dataperiodo[1] ?>/<?php echo $dataperiodo[0] ?>'){
+                $("#Lectura").attr('disabled','disabled')
+                $("#GuardarConsumo").attr('disabled','disabled')
+                $("#ErrorLecturaExiste").text("Ya se registro la lectura del mes actual");
+              }else{
+                $("#Lectura").removeAttr('disabled')
+                $("#GuardarConsumo").removeAttr('disabled')
+                $("#ErrorLecturaExiste").text('');
+              }
             }else{
               Swal.fire('¡Oops!', response.mensaje, 'warning')
               $("#ConsumoActual").text("");
@@ -280,8 +289,6 @@
     let medidor = $("#CMedidor").val();
     $("#CMedidor").focus();
     if(medidor!=""){
-      $('#myModal_espera').modal('show');
-
       $.ajax({
           type: "POST",                 
           url: '../controlador/facturacion/facturar_pensionC.php?GuardarConsumoAgua=true',
@@ -292,7 +299,6 @@
           },    
           success: function(response)
           {
-            $('#myModal_espera').modal('hide');  
             if(response.rps){
               $("#FIngresoConsumoAgua")[0].reset();
               Swal.fire('¡Bien!', response.mensaje, 'success');
@@ -301,7 +307,8 @@
               $(".labelUltimaLectura").addClass('no-visible')
             }else{
               Swal.fire('¡Oops!', response.mensaje, 'warning')
-            }        
+            }  
+            $('#myModal_espera').modal('hide');      
           },
           error: function () {
             $('#myModal_espera').modal('hide');

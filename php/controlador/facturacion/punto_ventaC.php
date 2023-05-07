@@ -287,7 +287,7 @@ class punto_ventaC
 		//          	 print_r($articulo);
 		// die();	
 
-		         if(strlen($TxtDocumentos) > 1){ $articulo['Producto'] = $articulo['Producto']." - ".$TxtDocumentos;}
+		         if(strlen($TxtDocumentos) > 1){ @$articulo['Producto'] = $articulo['Producto']." - ".$TxtDocumentos;}
 		         if(is_numeric($TxtRifaD) && is_numeric($TxtRifaH) && intval($TxtRifaD) < intval($TxtRifaH)){
 		               // For i = Val(TxtRifaD) To Val(TxtRifaH)
 		               //     ProductoAux = Producto & " " & Format(i, "000000")
@@ -853,7 +853,7 @@ function validar_cta($parametros)
 	if(isset($parametros['electronico'])){$electronico = $parametros['electronico'];}
 	// print_r($parametros);die();
 	$datos = $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie'],$parametros['Fecha'],$parametros['Fecha'],$electronico);
-	$Cta_CxP = $datos[0]['CxC'];
+	$Cta_CxP = isset( $datos[0]['CxC']) ? $datos[0]['CxC'] : G_NINGUNO;
 	// print_r($datos);die();
 	if($Cta_CxP <> G_NINGUNO ){
      $ExisteCtas = array();
@@ -862,6 +862,8 @@ function validar_cta($parametros)
      $ExisteCtas[2] =  $_SESSION['SETEOS']['Cta_CajaGE']; //$Cta_CajaGE;
      $ExisteCtas[3] =  $_SESSION['SETEOS']['Cta_CajaBA']; //$Cta_CajaBA;
      return VerSiExisteCta($ExisteCtas);
+  }else{
+  	return 'No se encontro Catalogo de Lineas';
   }
 }
 

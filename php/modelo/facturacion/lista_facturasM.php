@@ -217,14 +217,21 @@ class lista_facturasM
 
 	// print_r($sql);die();
 	$datos_fac = $this->db->datos($sql);
+    $datos_fac[0] = $TFA = Leer_Datos_FA_NV($datos_fac[0]);
 
-   	$sql1="SELECT * 
-   	FROM Detalle_Factura 
-   	WHERE Factura = '".$cod."' 
-   	AND CodigoC='".$ci."' 
-   	AND Item = '".$_SESSION['INGRESO']['item']."'
-	AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";	
-	$detalle_fac = $this->db->datos($sql1);
+   	$sSQL = "SELECT DF.*, CP.Reg_Sanitario, CP.Marca, CP.Desc_Item, CP.Codigo_Barra As Cod_Barras
+         FROM Detalle_Factura DF, Catalogo_Productos CP 
+         WHERE DF.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+         AND DF.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+         AND DF.TC = '" . $TFA['TC'] . "' 
+         AND DF.Serie = '" . $TFA['Serie'] . "' 
+         AND DF.Autorizacion = '" . $TFA['Autorizacion'] . "' 
+         AND DF.Factura = " . $TFA['Factura'] . " 
+         AND DF.Item = CP.Item 
+         AND DF.Periodo = CP.Periodo 
+         AND DF.Codigo = CP.Codigo_Inv 
+         ORDER BY DF.ID, DF.Codigo";
+    $detalle_fac = $this->db->datos($sSQL);
 
 	
 	$tipo_con = Tipo_Contribuyente_SP_MYSQL($_SESSION['INGRESO']['RUC']);

@@ -1,4 +1,6 @@
 <?php
+$tipo=2; //Se usa para saber que debe regresar dos carpetas en chequear_seguridad
+require_once(dirname(__DIR__,2)."/db/chequear_seguridad.php"); 
 require_once(dirname(__DIR__,2)."/modelo/facturacion/lista_facturasM.php");
 require_once(dirname(__DIR__,2)."/modelo/facturacion/punto_ventaM.php");
 require(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
@@ -6,7 +8,6 @@ if(!class_exists('enviar_emails'))
 {
 	require(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
 }
-require(dirname(__DIR__,2)."/comprobantes/SRI/autorizar_sri.php");
 
 $controlador = new lista_facturasC();
 if(isset($_GET['tabla']))
@@ -470,6 +471,7 @@ class lista_facturasC
     	{
     		return -1;
     	}
+    	// print_r('ss');die();
     	$rep= $this->sri->Autorizar_factura_o_liquidacion($parametros);
     	$clave = $this->sri->Clave_acceso($parametros['Fecha'],'01', $parametros['serie'],$parametros['FacturaNo']);
        $imp = '';

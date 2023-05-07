@@ -132,19 +132,19 @@ class lista_liquidacionCompraM
 
 	// print_r($sql);die();
 	$datos_fac = $this->db->datos($sql);
-
-   	$sql1="SELECT * 
-   	FROM Detalle_Factura 
-   	WHERE Factura = '".$cod."' 
-   	AND CodigoC='".$ci."' 
-   	AND Item = '".$_SESSION['INGRESO']['item']."'
-	AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";	
-	$detalle_fac = $this->db->datos($sql1);
+    $datos_fac[0] = $TFA = Leer_Datos_FA_NV($datos_fac[0]);
+   	$sSQL = "SELECT DF.*, CP.Reg_Sanitario, CP.Marca, CP.Desc_Item, CP.Codigo_Barra As Cod_Barras
+         FROM Detalle_Factura DF, Catalogo_Productos CP 
+         WHERE DF.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+         AND DF.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+         AND DF.Factura = " . $TFA['Factura'] . "  
+         AND DF.Item = CP.Item 
+         AND DF.Periodo = CP.Periodo 
+         AND DF.Codigo = CP.Codigo_Inv 
+         ORDER BY DF.ID, DF.Codigo";
+    $detalle_fac = $this->db->datos($sSQL);
 
 	$tipo_con = Tipo_Contribuyente_SP_MYSQL($_SESSION['INGRESO']['RUC']);
-
-	// $sql2 = "SELECT * FROM lista_tipo_contribuyente WHERE RUC = '".$_SESSION['INGRESO']['RUC']."'";
-	// $tipo_con = $this->db->datos($sql2, 'MYSQL');
 
 	$sucursal = $this->catalogo_lineas('FA',$ser);
 	$forma_pago = $this->DCTipoPago($datos_fac[0]['Tipo_Pago']);
@@ -153,7 +153,6 @@ class lista_liquidacionCompraM
 		$datos_fac[0]['Tipo_Pago'] = $forma_pago[0]['CTipoPago'];
 	}
 
-	// print_r($forma_pago);die();
 	if(count($sucursal)==0)
 	{
 		$sucursal = array();
@@ -162,8 +161,6 @@ class lista_liquidacionCompraM
 	{
 		$datos_fac['Tipo_contribuyente'] = $tipo_con;
 	}
-	// array_push($datos_fac, $tipo_con);
-
 
     $datos_cli_edu=$this->cliente_matri($ci);
 	   if($datos_cli_edu != '' && !empty($datos_cli_edu))
@@ -197,17 +194,20 @@ class lista_liquidacionCompraM
 
 	// print_r($sql);die();
 	$datos_fac = $this->db->datos($sql);
+    $datos_fac[0] = $TFA = Leer_Datos_FA_NV($datos_fac[0]);
 
-   	$sql1="SELECT * 
-   	FROM Detalle_Factura 
-   	WHERE Factura = '".$cod."' 
-   	AND CodigoC='".$ci."' 
-   	AND Item = '".$_SESSION['INGRESO']['item']."'
-	AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";	
-	$detalle_fac = $this->db->datos($sql1);
+    $sSQL = "SELECT DF.*, CP.Reg_Sanitario, CP.Marca, CP.Desc_Item, CP.Codigo_Barra As Cod_Barras
+         FROM Detalle_Factura DF, Catalogo_Productos CP 
+         WHERE DF.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+         AND DF.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+         AND DF.Factura = " . $TFA['Factura'] . "  
+         AND DF.Item = CP.Item 
+         AND DF.Periodo = CP.Periodo 
+         AND DF.Codigo = CP.Codigo_Inv 
+         ORDER BY DF.ID, DF.Codigo";
+    $detalle_fac = $this->db->datos($sSQL);
 
-	$sql2 = "SELECT * FROM lista_tipo_contribuyente WHERE RUC = '".$_SESSION['INGRESO']['RUC']."'";
-	$tipo_con = $this->db->datos($sql2, 'MYSQL');
+	$tipo_con = Tipo_Contribuyente_SP_MYSQL($_SESSION['INGRESO']['RUC']);
 	if(count($datos_fac)>0 && count($tipo_con)>0)
 	{
 		$datos_fac['Tipo_contribuyente'] = $tipo_con;

@@ -15,6 +15,8 @@ if(!isset($_SESSION))
 require_once(dirname(__DIR__,2)."/lib/excel/plantilla.php");
 require_once(dirname(__DIR__,1)."/db/db1.php");
 require_once(dirname(__DIR__,1)."/db/variables_globales.php");
+require_once(dirname(__DIR__,1)."/comprobantes/SRI/autorizar_sri.php");
+
 
 if(isset($_POST['RUC']) AND !isset($_POST['submitweb'])) 
 {
@@ -173,64 +175,7 @@ $iv = base64_decode("C9fBxl1EWtYTL1/M8jfstw==");
  };
 
 //----------------------------------- fin funciones en duda--------------------------- 
-function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
-{
-  // print_r($_SESSION['INGRESO']);die();
-  $conn = new db();
-  $TMail_Credito_No = G_NINGUNO;
-  $NumEmpresa = $_SESSION['INGRESO']['item'];
-  $TMail = '';
-  $Modulo = $_SESSION['INGRESO']['modulo_'];
-  if($NumEmpresa=="")
-  {
-    $NumEmpresa = G_NINGUNO;
-  }
-  if($TMail == "")
-  {
-    $TMail = G_NINGUNO;
-  }
-  if($Modulo <> G_NINGUNO AND $TipoTrans<>G_NINGUNO AND $NumEmpresa<>G_NINGUNO)
-  {
-    try {
-      $sSQL = "SELECT Aplicacion " .
-        "FROM modulos " .
-        "WHERE modulo = '" . $Modulo . "' ";
-      $rps = $conn->datos($sSQL,'MYSQL');
-      $ModuloName = $rps[0]['Aplicacion'] ;
-    } catch (Exception $e) {
-      $ModuloName = $Modulo;
-    }
-    
-    if($Tarea == G_NINGUNO)
-    {
-      $Tarea = "Inicio de Sección";
-    }else
-    {
-      $Tarea = substr($Tarea,0,60);
-    }
-    $proceso = substr($opcional_proceso,0,60);
-    $NombreUsuario1 = substr($_SESSION['INGRESO']['Nombre'], 0, 60);
-    $TipoTrans = $TipoTrans;
-    $Mifecha1 = date("Y-m-d");
-    $MiHora1 = date("H:i:s");
-    $CodigoUsuario= $_SESSION['INGRESO']['CodigoU'];
-    if($Tarea == "")
-    {
-      $Tarea = G_NINGUNO;
-    }
-    if($opcional_proceso=="")
-    {
-      $opcional_proceso = G_NINGUNO;
-    }
 
-    $ip= ip();
-    $sql = "INSERT INTO acceso_pcs (IP_Acceso,CodigoU,Item,Aplicacion,RUC,Fecha,Hora,
-             ES,Tarea,Proceso,Credito_No,Periodo)VALUES('".$ip."','".$CodigoUsuario."','".$NumEmpresa."',
-             '".$ModuloName."','".$_SESSION['INGRESO']['Id']."','".$Mifecha1."','".$MiHora1."','".$TipoTrans."','".$Tarea."','".$proceso."','".$TMail_Credito_No."','".$_SESSION['INGRESO']['periodo']."');";
-    $conn->String_Sql($sql,'MYSQL');
-
-  }
-}
 function Eliminar_Empresa_SP($Item, $NombreEmpresa=false)
 {
   $conn = new db();
@@ -550,6 +495,7 @@ function ReadSetDataNum($SQLs,$ParaEmpresa =false,$Incrementar = false) // optim
   $NumCodigo = 0;
   $NuevoNumero = False;
   $FechaComp = '';
+  $Si_MesComp = false;
   if(strlen($FechaComp) < 10 || $FechaComp == '00/00/0000')
   {
   	$FechaComp =date('Y-m-d');
@@ -794,7 +740,7 @@ function TiposCtaStrg($cuenta) {
 }
 
 //enviar emails
-  function enviar_email($archivos=false,$to_correo,$cuerpo_correo,$titulo_correo,$correo_apooyo,$nombre,$EMAIL_CONEXION,$EMAIL_CONTRASEÑA)
+  function enviar_email($archivos=false,$to_correo="",$cuerpo_correo="",$titulo_correo="",$correo_apooyo="",$nombre="",$EMAIL_CONEXION="",$EMAIL_CONTRASEÑA="")
   {
 
   	$respuesta=true;
@@ -1154,11 +1100,13 @@ function convertirnumle($digito=null)
 
 function Digito_verificador($CI_RUC)
 {
-
+  $sri = new autorizacion_sri();
+  $CI_RUC = $sri->quitar_carac($CI_RUC);
   // 'SP que determinar que tipo de contribuyente es y el codigo si es pasaporte
    $datos = Digito_Verificador_SP($CI_RUC);
+   // print_r($datos);die();
    if($datos['Tipo_Beneficiario'] <> "R" && strlen($datos['RUC_CI']) == 13){
-      if(ping("srienlinea.sri.gob.ec")==1 && GetUrlSource("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=".$datos['RUC_CI'])== true){
+      if(GetUrlSource("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=".$datos['RUC_CI'])== true){
         // print_r('expression');die();
          $datos['Tipo_Beneficiario'] = "R";
          $datos['Codigo_RUC_CI'] = substr($datos['RUC_CI'], 0, 10);
@@ -1516,7 +1464,7 @@ function select_option_aj($tabla,$value,$mostrar,$filtro=null,$sel=null)//------
 		//$server=$_SESSION['INGRESO']['IP_VPN_RUTA'];
 		$server=''.$_SESSION['INGRESO']['IP_VPN_RUTA'].', '.$_SESSION['INGRESO']['Puerto'];
 		$user=$_SESSION['INGRESO']['Usuario_DB'];
-		$password=$_SESSION['INGRESO']['Contraseña_DB'];
+		$password=$_SESSION['INGRESO']['Password_DB'];
 	}
 	else
 	{
@@ -1627,7 +1575,7 @@ function select_option($tabla,$value,$mostrar,$filtro=null,$click=null,$id_html=
 		//$server=$_SESSION['INGRESO']['IP_VPN_RUTA'];
 		$server=''.$_SESSION['INGRESO']['IP_VPN_RUTA'].', '.$_SESSION['INGRESO']['Puerto'];
 		$user=$_SESSION['INGRESO']['Usuario_DB'];
-		$password=$_SESSION['INGRESO']['Contraseña_DB'];
+		$password=$_SESSION['INGRESO']['Password_DB'];
 	}
 	else
 	{
@@ -1916,7 +1864,7 @@ function contar_option($tabla,$value,$mostrar,$filtro=null)  ///----------------
 		//$server=$_SESSION['INGRESO']['IP_VPN_RUTA'];
 		$server=''.$_SESSION['INGRESO']['IP_VPN_RUTA'].', '.$_SESSION['INGRESO']['Puerto'];
 		$user=$_SESSION['INGRESO']['Usuario_DB'];
-		$password=$_SESSION['INGRESO']['Contraseña_DB'];
+		$password=$_SESSION['INGRESO']['Password_DB'];
 	}
 	else
 	{
@@ -4202,11 +4150,16 @@ function insert_generico($tabla=null,$datos=null) // optimizado pero falta
 					}
 					if($obj->DATA_TYPE=='money')
 					{
-						$sql_v=$sql_v."".$datos[$i]['dato'].",";
+            if($datos[$i]['dato']!='.' && $datos[$i]['dato']!=''){
+            $sql_v=$sql_v."".$datos[$i]['dato'].",";
+            }else
+            {
+            $sql_v=$sql_v."0,";              
+            }
 					}
 					if($obj->DATA_TYPE=='int')
 					{
-            if($datos[$i]['dato']!='.'){
+            if($datos[$i]['dato']!='.' && $datos[$i]['dato']!=''){
 						$sql_v=$sql_v."".$datos[$i]['dato'].",";
             }else
             {
@@ -5315,7 +5268,7 @@ function generar_comprobantes($parametros) //revision parece repetida
     
     //echo $_POST['fecha1'];
     //die();
-    
+
     $sql="INSERT INTO Comprobantes
            (Periodo ,Item,T ,TP,Numero ,Fecha ,Codigo_B,Presupuesto,Concepto,Cotizacion,Efectivo,Monto_Total
            ,CodigoU ,Autorizado,Si_Existe ,Hora,CEj,X)
@@ -5331,7 +5284,7 @@ function generar_comprobantes($parametros) //revision parece repetida
            ,'".$parametros['concepto']."'
            ,'".$parametros['cotizacion']."'
            ,0
-           ,'".$parametros['totalh']."'
+           ,'".((is_numeric($parametros['totalh']))?$parametros['totalh']:0)."'
            ,'".$_SESSION['INGRESO']['CodigoU']."'
            ,'.'
            ,0

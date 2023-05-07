@@ -1,7 +1,10 @@
 <?php 
 include('../headers/header_panel.php');
 $empresa = '';
-if (isset($_SESSION['INGRESO']['empresa'])) { $empresa = $_SESSION['INGRESO']['empresa'];}
+if (isset($_SESSION['INGRESO']['empresa'])) { 
+  $empresa = $_SESSION['INGRESO']['empresa'];
+  session_destroy();
+}
 
 // print_r($_SESSION['INGRESO']);die();
 ?>
@@ -10,7 +13,7 @@ if (isset($_SESSION['INGRESO']['empresa'])) { $empresa = $_SESSION['INGRESO']['e
     var empresa = '<?php echo $empresa; ?>';
     if(empresa!='')
     {
-      Swal.fire('Sesion anterior encontrada','','info').then(function(){ location.href = 'modulos.php'; });
+      Swal.fire('Sesion anterior encontrada \n Se cerraran todas las sesiones encontradas \n Y debera iniciar sesion nuevamente','esto se deba a que no se cerro de manera adecuada el sistema','info').then(function(){ location.href = 'modulos.php'; });
     }else
     {
       listado_empresas();

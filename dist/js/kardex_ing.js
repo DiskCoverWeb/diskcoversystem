@@ -634,7 +634,7 @@ function grabar_comprobante()
       'modificado':0,
     }
 
-        // $('#myModal_espera').modal('show');
+        $('#myModal_espera').modal('show');
                // $('#myModal_espera').modal('show');    
       $.ajax({
           data:  {parametros:parametros},

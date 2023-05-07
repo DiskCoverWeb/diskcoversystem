@@ -405,8 +405,13 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("inventario/catalogo_producto.php");
 			}
+		//auditoria
+			if ($_SESSION['INGRESO']['accion']=='auditoria') 
+			{
+				require_once("auditoria/modulo_auditoria.php");
+			}
 
-			//modales
+		//modales
 			if($_SESSION['INGRESO']['accion']=='FSubCtas')
 			{
 				require_once('contabilidad/FSubCtas.php');

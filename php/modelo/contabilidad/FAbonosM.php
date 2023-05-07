@@ -109,7 +109,7 @@ class FAbonosM
        return $this->db->datos($sql);
 		
 	}
-	function DCCodRet($query=false,$MBFecha)
+	function DCCodRet($query=false,$MBFecha="")
 	{
 	   $sql = "SELECT * 
        FROM Tipo_Concepto_Retencion 

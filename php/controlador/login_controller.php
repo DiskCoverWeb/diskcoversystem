@@ -142,7 +142,7 @@ class login_controller
 	}
 	function login($parametro)
 	{
-		
+		// session_destroy();		
 		// print_r($parametro);
 		// print_r($datos);
 		// die();

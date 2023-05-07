@@ -400,12 +400,12 @@ function contracuenta()
     var src ="../vista/modales.php?FCliente=true&proveedor=true";
      $('#FCliente').attr('src',src).show();
   }
-  function usar_cliente(nombre,ruc,codigo,email,t='N')
+  function usar_cliente(nombre,ruc,codigo,email,td='N')
   {
       $('#txtemail').val(email);
       $('#LblNumIdent').val(ruc);
       $('#codigoCliente').val(codigo);
-      // $('#LblT').val(t);
+      $('#LblTD').val(td);
       // $('#DCCliente').append('<option value="' +codi+ ' ">' + datos[indice].text + '</option>');
       $('#DCProveedor').append($('<option>',{value:codigo, text:nombre,selected: true }));
       $('#myModal').modal('hide');

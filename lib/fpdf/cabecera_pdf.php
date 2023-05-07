@@ -38,7 +38,7 @@ class cabecera_pdf
 		
 	}	
 
-	function cabecera_reporte($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini,$fechafin,$sizetable,$mostrar=false,$sal_hea_body=30,$orientacion='P')
+	function cabecera_reporte($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$sal_hea_body=30,$orientacion='P')
 	{	
 
 	    $this->pdf->fechaini = $fechaini; 
@@ -108,7 +108,7 @@ class cabecera_pdf
 
 	}
  
- function cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini,$fechafin,$sizetable,$mostrar=false,$sal_hea_body=15,$orientacion='P',$download = true, $repetirCabecera=null)
+ function cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$sal_hea_body=15,$orientacion='P',$download = true, $repetirCabecera=null)
 	{	
 
 	    $this->pdftable->fechaini = $fechaini; 
@@ -502,7 +502,7 @@ class cabecera_pdf
 	}
 
 
-	function DeudapendientePensionesPDF($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini,$fechafin,$sizetable,$mostrar=false,$sal_hea_body=30,$orientacion='P',$download=true)
+	function DeudapendientePensionesPDF($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$sal_hea_body=30,$orientacion='P',$download=true)
 	{	
 		$this->pdf_sin_cabecera->AddPage($orientacion);
 
@@ -564,7 +564,7 @@ class cabecera_pdf
 
 
 
-	function cabecera_reporte_colegio($titulo,$nombre,$tablaHTML,$contenido=false,$image=false,$fechaini,$fechafin,$sizetable,$mostrar=false,$email=false,$sal_hea_body=30)
+	function cabecera_reporte_colegio($titulo,$nombre,$tablaHTML,$contenido=false,$image=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$email=false,$sal_hea_body=30)
 	{	
 
 
