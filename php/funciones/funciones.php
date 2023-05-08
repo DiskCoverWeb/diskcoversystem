@@ -10091,6 +10091,7 @@ function Leer_Datos_FA_NV($TFA)
         AND F.Factura = ".$TFA['Factura']." 
         AND C.Codigo = F.CodigoC ";
     $AdoDBFac = $conn->datos($sql);
+    // print_r($AdoDBFac);die();
     if(count($AdoDBFac) > 0)
     {
     
@@ -10136,7 +10137,9 @@ function Leer_Datos_FA_NV($TFA)
          $TFA['Nota'] = $AdoDBFac[0]["Nota"];
          $TFA['Orden_Compra'] = $AdoDBFac[0]["Orden_Compra"];
          $TFA['Gavetas'] = $AdoDBFac[0]["Gavetas"];
-         if($TFA['EmailR'] == G_NINGUNO){$TFA['EmailR'] = $_SESSION['INGRESO']['Email_Procesos'];}
+         if($TFA['EmailR'] == G_NINGUNO){
+         //$TFA['EmailR'] = $_SESSION['INGRESO']['Email_Procesos'];
+         }
 
         // 'SubTotales de la Factura
          $TFA['Descuento'] = $AdoDBFac[0]["Descuento"];
