@@ -160,7 +160,7 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 		{
 			require_once("contabilidad/Subcta_proyectos.php");
 		}
-		if ($_SESSION['INGRESO']['accion']=='cierre_mes') 
+		if ($_SESSION['INGRESO']['accion']=='CierreMes') 
 		{
 			require_once("contabilidad/cierre_mes.php");
 		}
