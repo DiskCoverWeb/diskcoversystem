@@ -82,6 +82,12 @@ if(isset($_GET['FInfoErrorShow']))
 {
    echo json_encode($controlador->FInfoErrorShow());
 }
+else
+if(isset($_GET['FInfoErrorEliminarTablaTemporal']))
+{
+   echo json_encode($controlador->EliminarTablaTemporal());
+   die();
+}
 /**
  * 
  */
@@ -434,6 +440,10 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
 	function FInfoErrorShow(){
 		return $this->modelo->FInfoError();
+	}
+
+	function EliminarTablaTemporal(){
+		return $this->modelo->EliminarTablaTemporal();
 	}
 }
 ?>

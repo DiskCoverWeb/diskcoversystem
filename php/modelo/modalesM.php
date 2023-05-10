@@ -292,5 +292,14 @@ function DLCxCxP($SubCta,$query=false)
 				ORDER BY ID";
 		return $this->db->datos($cSQL);
 	}
+	
+	function EliminarTablaTemporal()
+	{
+		$sSQL = "DELETE * FROM Tabla_Temporal 
+            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+			AND Modulo = '" . $_SESSION['INGRESO']['modulo_'] . "'
+			AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'";
+    	return Ejecutar_SQL_SP($sSQL);
+	}
 }
 ?>

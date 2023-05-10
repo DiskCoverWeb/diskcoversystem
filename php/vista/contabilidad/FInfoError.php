@@ -18,7 +18,27 @@
         }
       },
       error: function (e) {
-        alert("error inesperado en Fechas de Cierres")
+        alert("Disculpe, ocurrio un error inesperado en InfoErrorShow")
+      }
+    });
+  }
+
+  function fEliminarTablaTemporal() {
+    $.ajax({
+      type: "POST",                 
+      url: '../controlador/modalesC.php?FInfoErrorEliminarTablaTemporal=true',
+      dataType:'json', 
+      beforeSend: function () {
+        $("#myModal_espera").modal('show');
+      },
+      success: function(response)             
+      {
+        window.parent.$("#myModalInfoError").modal("hide");
+        $("#DGInfoError tbody").empty()
+        $("#myModal_espera").modal('hide');
+      },
+      error: function (e) {
+        alert("Disculpe, ocurrio un error inesperado en EliminarTablaTemporal")
       }
     });
   }
@@ -35,7 +55,7 @@
   <div class="row">
     <div class="col-xs-12" style="margin: 5px;">
       <div class="col">
-        <a  href="javascript:void(0)" title="Ok" class="btn btn-default">
+        <a  href="javascript:void(0)" title="Ok" class="btn btn-default" onclick="fEliminarTablaTemporal()">
           <img src="../../img/png/check_ok_accept.png" width="25" height="30">
           <!-- <br>OK -->
         </a>
@@ -54,7 +74,7 @@
       </div>
     </div><br>
     <div class="col-xs-12">
-      <div class="table-responsive" style="overflow-y: scroll; min-height: 50px;max-height:300px; width: auto;">
+      <div class="table-responsive" style="overflow-y: scroll; min-height: 50px;max-height:75vh; width: auto;">
         <div class="sombra" style>
           <table id="DGInfoError" class="table-sm" style="width: -webkit-fill-available;">
             <thead>
