@@ -10138,7 +10138,7 @@ function Leer_Datos_FA_NV($TFA)
          $TFA['Orden_Compra'] = $AdoDBFac[0]["Orden_Compra"];
          $TFA['Gavetas'] = $AdoDBFac[0]["Gavetas"];
          if($TFA['EmailR'] == G_NINGUNO){
-         //$TFA['EmailR'] = $_SESSION['INGRESO']['Email_Procesos'];
+            //$TFA['EmailR'] = $_SESSION['INGRESO']['Email_Procesos'];
          }
 
         // 'SubTotales de la Factura
