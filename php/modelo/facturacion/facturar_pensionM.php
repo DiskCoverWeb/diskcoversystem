@@ -617,7 +617,7 @@ class facturar_pensionM
       AND CF.Item = '".$_SESSION['INGRESO']['item']."'
       AND CF.Mes <> '.'
       ".(($Codigo_Auto!="")?" AND CF.Codigo_Auto = '".$Codigo_Auto."' ":"")."
-      ".(($Codigo_Inv!="")?" AND CF.Codigo_Inv = '".$Codigo_Inv."' ":"")."
+      ".(($Codigo_Inv!="")?" AND CF.Codigo_Inv IN (".$Codigo_Inv.") ":"")."
       ORDER BY CF.Periodo DESC,CF.Num_Mes DESC, CF.ID DESC
       OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY";
     $stmt = $this->db->datos($sql);
@@ -631,7 +631,7 @@ class facturar_pensionM
       WHERE DF.CodigoC = '".$codigoCliente."'
       AND DF.Item = '".$_SESSION['INGRESO']['item']."'
       ".(($Tipo_Hab!="")?" AND DF.Tipo_Hab = '".$Tipo_Hab."' ":"")."
-      ".(($Codigo_Inv!="")?" AND DF.Codigo = '".$Codigo_Inv."' ":"")."
+      ".(($Codigo_Inv!="")?" AND DF.Codigo IN (".$Codigo_Inv.") ":"")."
       ORDER BY DF.Ticket,DF.Mes_No DESC
       OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY";
     $stmt = $this->db->datos($sql);

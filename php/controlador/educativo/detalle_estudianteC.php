@@ -164,6 +164,7 @@ class detalle_estudianteC
 	private $est_d;
 	private $empresaGeneral;
   private $email;
+  private $sri;
 	
 	function __construct()
 	{
@@ -172,6 +173,7 @@ class detalle_estudianteC
 		$this->empresa = $this->modelo->institucion_data();
 		$this->empresaGeneral = $this->modelo->Empresa_data();
     $this->email = new enviar_emails();
+    $this->sri = new autorizacion_sri();
 
 	}
 
@@ -182,25 +184,15 @@ class detalle_estudianteC
 	}
 	function validar_estudiante($usu,$pass,$nuevo)
 	{
-
-  	$this->est_d = $this->modelo->login($usu,$pass,$nuevo);
-
-    // print_r($this->est_d);
 		$datos = $this->modelo->login($usu,$pass,$nuevo);
-
-    // print_r($datos);die();
     if(!empty($datos)){
-	    // print_r($datos);
-      $datos1= array_map(array($this, 'encode'), $datos);
-    return $datos1;
+      return array_map(array($this, 'encode'), $datos);
     }else
     {
       return -2;
     }
-		
-		//print_r($datos1);
-
 	}
+
   function usu_regi($ci)
   {
     return $this->modelo->usuario_registrado($ci);
@@ -399,60 +391,42 @@ class detalle_estudianteC
   }
 
   function nuevo_estudiante($parametros){
-     $datos =  Digito_verificador($parametros['codigo']);
-// print_r('expression');
-     // print_r($datos);die();
-     if($datos['Codigo_RUC_CI']!=2)
-     {
-    // print_r($datos);
-  	 $dato[0]['campo']='Codigo';
-     $dato[0]['dato']=$datos['Codigo_RUC_CI'];
-     $dato[1]['campo']='CI_RUC';
-     $dato[1]['dato']=$parametros['codigo'];
-     $dato[2]['campo']='FA';
-     $dato[2]['dato']=true;
-     $dato[3]['campo']='Clave';
-     $dato[3]['dato']=$parametros['clave'];
-     $dato[4]['campo']='T';
-     $dato[4]['dato']='N';
-     $dato[5]['campo']='Item';
-     $dato[5]['dato']=$_SESSION['INGRESO']['item'];
-     $dato[6]['campo']='TD';
-     $dato[6]['dato']=$datos['Tipo_Beneficiario'];
-     if(empty($this->usu_clave_regi($parametros['codigo'],$parametros['clave'])))
-     {
-     if(insert_generico("Clientes",$dato) == null)
-     {
-
-  	    $dato1[0]['campo']='Codigo';
-        $dato1[0]['dato']=$parametros;
-        if(insert_generico("Clientes_Matriculas",$dato)==null)
-        {
-        	return 'ok';
-
-        }else{
-        	return 'fail2';
+    $datos =  Digito_verificador($parametros['codigo']);
+    if($datos['Codigo_RUC_CI']!=2)
+    {
+      if(empty($this->usu_clave_regi($parametros['codigo'],$parametros['clave'])))
+      {
+        SetAdoAddNew('Clientes');
+        SetAdoFields("Codigo", $datos['Codigo_RUC_CI']);
+        SetAdoFields("CI_RUC", $this->sri->quitar_carac($parametros['codigo']));
+        SetAdoFields("FA", true);
+        SetAdoFields("Clave", $parametros['clave']);
+        SetAdoFields("T", G_NORMAL);
+        SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+        SetAdoFields("TD", $datos['Tipo_Beneficiario']);
+        if(SetAdoUpdate()!=1){
+          return "Error al registrar en Clientes";
         }
+        Eliminar_Nulos_SP("Clientes");
+      }
 
-     }else
-     {
-     	return 'fail';
-     }
-   }else
-   {
-     if(insert_generico("Clientes_Matriculas",$dato)==null)
-        {
-          return 'ok';
-
-        }else{
-          return 'fail2';
+        SetAdoAddNew('Clientes_Matriculas');
+        SetAdoFields("Codigo", $parametros['codigo']);
+        SetAdoFields("FA", true);
+        SetAdoFields("Clave", $parametros['clave']);
+        SetAdoFields("T", G_NORMAL);
+        SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+        SetAdoFields("TD", $datos['Tipo_Beneficiario']);
+        if(SetAdoUpdate()!=1){
+          return "Error al registrar en Clientes_Matriculas";
         }
-   }
- }else
- {
-  ob_end_clean();
-   return 'ci';
- }
+        Eliminar_Nulos_SP("Clientes_Matriculas");
+        return 'ok';
+    }else
+    {
+      ob_end_clean();
+      return 'ci';
+    }
 
   }
 
@@ -949,12 +923,14 @@ if (!file_exists('../../img/img_estudiantes/'.$datos[0]['Archivo_Foto']))
 
   function nueva_matricula($usuario)
   {
-     $datos[0]['campo']='Codigo';
-     $datos[0]['dato']=$usuario;
-     $datos[1]['campo']='T';
-     $datos[1]['dato']='N';
-     return  insert_generico("Clientes_Matriculas",$datos);
-
+    SetAdoAddNew('Clientes_Matriculas');
+    SetAdoFields("Codigo", $usuario);
+    SetAdoFields("T", G_NORMAL);
+    if(SetAdoUpdate()!=1){
+      return "Error al registrar en Clientes_Matriculas";
+    }
+    Eliminar_Nulos_SP("Clientes_Matriculas");
+    return null;
   }
 
 

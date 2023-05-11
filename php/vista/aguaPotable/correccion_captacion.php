@@ -147,7 +147,7 @@
             $('#myModal_espera').modal('show');
           },    
           success: function(response)
-          {alert('proceso no programado'); //TODO LS quitaar
+          {
             $('#myModal_espera').modal('hide');  
             if(response.rps){
               $("#FIngresoConsumoAgua")[0].reset();

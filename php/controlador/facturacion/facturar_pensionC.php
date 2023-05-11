@@ -1054,8 +1054,8 @@ class facturar_pensionC
     $dataCliente = $this->facturacion->BuscarClienteCodigoMedidor($CMedidor);
     if(count($dataCliente)>0){
       $data = $dataCliente[0];
-      $ClienteFacturacion = $this->facturacion->getUltimoRegistroClientes_Facturacion($data['Codigo'], $CMedidor, JG01);
-      $DetalleFactura = $this->facturacion->getUltimoRegistroDetalleFactura($data['Codigo'], $CMedidor, JG01);
+      $ClienteFacturacion = $this->facturacion->getUltimoRegistroClientes_Facturacion($data['Codigo'], $CMedidor, "'".JG01."','".JG04."'");
+      $DetalleFactura = $this->facturacion->getUltimoRegistroDetalleFactura($data['Codigo'], $CMedidor, "'".JG01."','".JG04."'");
       if (count($ClienteFacturacion) > 0 && ($ClienteFacturacion[0]['Periodo'] >= @$DetalleFactura[0]['Ticket'] && $ClienteFacturacion[0]['Num_Mes'] >= @$DetalleFactura[0]['Mes_No'])) {
         $data['ultimaMedida'] = $ClienteFacturacion[0]['Credito_No'];
         $data['fechaUltimaMedida'] = MesesLetras($ClienteFacturacion[0]['Num_Mes']) . "/" . $ClienteFacturacion[0]['Periodo'];
@@ -1154,8 +1154,27 @@ class facturar_pensionC
     if($CMedidor != "" && $CMedidor!="."){
       $dataCliente = @$this->getClienteCodigoMedidor($CMedidor);
       if($dataCliente['rps']){
-        $parametros['Encerar'] = ((isset($Encerar) && $Encerar!='')?"1":"0");
-        $respuesta = $this->facturacion->UpdateMedidor($parametros);
+        if(isset($Encerar) && ($Encerar=='1' || $Encerar=='on')){
+          $productos = $this->catalogoProductosModel->TVCatalogo("JG","P", false, JG04);
+          if(count($productos)>0){
+
+            $Mifecha = PrimerDiaMes(date('Ymd'),'Ymd');
+            $periodo = $this->facturacion->getPeriodoAbierto();
+            if(count($periodo)>0){
+              $dataperiodo = explode(" ", $periodo[0]['Detalle']);
+              $NoMes = nombre_X_mes($dataperiodo[1]);
+              $Anio = $dataperiodo[0];
+            }else{
+              $NoMes = ObtenerMesFecha($Mifecha,'YmdHis');
+              $Anio = ObtenerAnioFecha($Mifecha,'YmdHis');
+            }
+
+            $this->facturacion->insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, $productos[0]['Codigo_Inv'], $productos[0]['PVP'], G_NINGUNO, $NoMes, $Anio, $Mifecha, 0, 0, 0,$CMedidor);
+            return (array("rps" => true , "mensaje" => "Cambios guardados con exito."));
+          }else{
+            return (array("rps" => false , "mensaje" => "No se ha configurado el producto para Reinicio del Medidor."));
+          }
+        }
       }else{
         return (array("rps" => false , "mensaje" => "No se ha encontrado informacion del medidor."));
       }

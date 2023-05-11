@@ -759,7 +759,7 @@ function lista_cursos()
 		  	{
 		       $('#modal_espera').modal('hide');
 		       $('#select_cursos').val('');
-		  		validar_estudiante(nuevo,nuevo,true);
+		  		validar_estudiante(nuevo,clave,true);
 		  	}else if(response=='ci')
             {
             	Swal.fire({
