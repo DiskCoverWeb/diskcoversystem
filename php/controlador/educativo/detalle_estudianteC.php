@@ -514,7 +514,7 @@ class detalle_estudianteC
     $datos1[1]['dato']=$parametros['email_fac_r'];
     
 
-     $this->modelo->actualizar_datos($datos1,'Clientes','Codigo',$parametros['codigo']);
+     $this->modelo->actualizar_datos($datos1,'Clientes','CI_RUC',$parametros['codigo']);
      Eliminar_Nulos_SP("Clientes");
    	 $rps = $this->modelo->actualizar_datos($datos,'Clientes_Matriculas','Codigo',$parametros['codigo']);
      Eliminar_Nulos_SP("Clientes_Matriculas");
