@@ -72,8 +72,6 @@ function GuardarPreFactura() {
   }
 
   if(hayproductosMarcados){
-    $('#myModal_espera').modal('show');
-
     $.ajax({
         type: "POST",                 
         url: '../controlador/facturacion/facturar_pensionC.php?GuardarInsPreFacturas=true',
@@ -117,7 +115,6 @@ function EliminarPreFactura() {
     confirmButtonText: 'Si, Eliminar'
   }).then((result) => {
     if (result.value) {
-      $('#myModal_espera').modal('show');
 
       $.ajax({
         type: "POST",                 
