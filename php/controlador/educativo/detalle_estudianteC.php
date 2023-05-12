@@ -484,7 +484,7 @@ class detalle_estudianteC
   	
     //$datos[7]['campo']='Matricula';
   	//$datos[7]['dato']=$parametros['nombre_r'];  	
-  	$this->modelo->actualizar_datos($datos,'Clientes','Codigo',$parametros['codigo']);
+  	$this->modelo->actualizar_datos($datos,'Clientes','CI_RUC',$parametros['codigo']);
   	 return $this->modelo->actualizar_datos($datos1,'Clientes_Matriculas','Codigo',$parametros['codigo']);
   	// return $this->modelo-> actualizar_estudiante($parametros);
   }
@@ -515,7 +515,10 @@ class detalle_estudianteC
     
 
      $this->modelo->actualizar_datos($datos1,'Clientes','Codigo',$parametros['codigo']);
-   	 return $this->modelo->actualizar_datos($datos,'Clientes_Matriculas','Codigo',$parametros['codigo']);
+     Eliminar_Nulos_SP("Clientes");
+   	 $rps = $this->modelo->actualizar_datos($datos,'Clientes_Matriculas','Codigo',$parametros['codigo']);
+     Eliminar_Nulos_SP("Clientes_Matriculas");
+     return $rps;
     // return $this->modelo->actualizar_datos($datos1,'Clientes','Codigo',$parametros['codigo']);
 
   }
@@ -557,18 +560,18 @@ class detalle_estudianteC
     $datos[16]['dato']=strtoupper($parametros['ocupacion_p']);
     $datos[17]['campo']='Ocupacion_M';
     $datos[17]['dato']=strtoupper($parametros['ocupacion_m']);
-    return $this->modelo->actualizar_datos($datos,'Clientes_Matriculas','Codigo',$parametros['codigo']);
-
+    $rps = $this->modelo->actualizar_datos($datos,'Clientes_Matriculas','Codigo',$parametros['codigo']);
+    Eliminar_Nulos_SP("Clientes_Matriculas");
+    return  $rps;
   }
 
   function generar_pdf($usu,$pass,$nuevo,$email)
   {
 
-date_default_timezone_set("America/Caracas");
-//$Hora = date('h:i:s');  
-setlocale(LC_ALL,"es_ES@euro","es_ES","esp");
-$fecha=strftime("%A %d de %B del %Y");
-
+    $fecha = new DateTime();
+    $fecha->setTimezone(new DateTimeZone('America/Guayaquil'));
+    setlocale(LC_ALL, 'es_ES.utf8');
+    $fecha = $fecha->format('l d \d\e F \d\e\l Y');
 
   	$datos = $this->modelo->login($usu,$pass,$nuevo);
 

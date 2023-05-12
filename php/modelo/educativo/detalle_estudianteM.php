@@ -142,7 +142,7 @@ class detalle_estudianteM
 	function img_guardar($name,$codigo)
 	{
 		 $cid=$this->conn;
-		$sql = "UPDATE Clientes SET Archivo_foto = '".$name."' WHERE Codigo='".$codigo."'";
+		$sql = "UPDATE Clientes SET Archivo_foto = '".$name."' WHERE CI_RUC='".$codigo."'";
 		//echo $sql;
 		// $stmt = sqlsrv_query($cid, $sql);
 	 //    if( $stmt === false)  
@@ -320,24 +320,12 @@ class detalle_estudianteM
    {
    	$cid = $this->conn;
 		
-		$sql ="SELECT T,TC,Serie,Autorizacion,Factura,Fecha,SubTotal,Con_IVA,IVA,Descuento+Descuento2 as Descuentos,Total_MN as Total,Saldo_MN as Saldo,RUC_CI,TB,Razon_Social,CodigoC FROM Facturas 
+		$sql ="SELECT T,TC,Serie,Autorizacion,Factura,Fecha,SubTotal,Con_IVA,IVA,Descuento+Descuento2 as Descuentos,Total_MN as Total,Saldo_MN as Saldo,RUC_CI,TB,Razon_Social,CodigoC,Periodo FROM Facturas 
 		WHERE CodigoC ='".$codigo."'
 		AND Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ORDER BY Fecha DESC"; 
-      
-       //echo $sql;
-   //     $stmt = sqlsrv_query($cid, $sql);
-	  //  if( $stmt === false)  
-	  //  {  
-		 // echo "Error en consulta PA.\n";  
-		 // return '';
-		 // die( print_r( sqlsrv_errors(), true));  
-	  //  }
-        
-   //     $tabla = grilla_generica($stmt,null,NULL,'1','2,4,clave');
 
-		// print_r($sql);die();
-		$botones[0] = array('boton'=>'Ver factura','icono'=>'<i class="fa fa-eye"></i>', 'tipo'=>'default', 'id'=>'Factura,Serie,CodigoC');
+		$botones[0] = array('boton'=>'Ver factura','icono'=>'<i class="fa fa-eye"></i>', 'tipo'=>'default', 'id'=>'Factura,Serie,CodigoC,Periodo,Autorizacion');
 		$tabla = grilla_generica_new($sql,'Facturas',$id_tabla=false,$titulo=false,$botones,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$tamaño_tabla=300,$num_decimales=2,$num_reg=false,$paginacion_view= false,$estilo=1);
 
        return $tabla;

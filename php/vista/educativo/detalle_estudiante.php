@@ -50,7 +50,7 @@ $(document).ready(function() {
 		$('#txt_clave').attr('readonly',true);
 	}
 	var mod='<?php echo $mod; ?>'; 
-	if(mod!='educativo')
+	if(mod!='11')
 	{
 		$('#home_t').css('display','none');
 		$('#menu2_t').css('display','none');
@@ -68,6 +68,7 @@ $(document).ready(function() {
 	$(".upload").on('click', function() {
     	var curso = '123647899';    	
 		var nuevo = $('#txt_cod_banco').val(); 
+		var pass = $('#txt_clave').val();
         var formData = new FormData(document.getElementById("img_ajax"));
         var files = $('#foto')[0].files[0];
         formData.append('file',files);
@@ -85,7 +86,7 @@ $(document).ready(function() {
             success: function(response) {
             if(response=='ok')
             {
-            	validar_estudiante(nuevo,nuevo,false);
+            	validar_estudiante(nuevo,pass,false);
 
             	$("#home_1").load(" #home_1");
             }
@@ -96,7 +97,7 @@ $(document).ready(function() {
 				 title: 'No se pudo subir el archivo',
 				 text: 'Asegurese que su archivo sea formato jpg, gif o png!'
              });
-            	validar_estudiante(nuevo,nuevo,false);
+            	validar_estudiante(nuevo,pass,false);
 
             }                  
                
@@ -491,7 +492,7 @@ function lista_cursos()
 			$("#select_cursos option[value='"+response[0]['Grupo']+"']").attr("selected",true);
 			if(response[0]['Archivo_Foto'] !='.' &&  response[0]['Archivo_Foto']!='')
 			{
-			 $("#foto_alumno").attr('src','../../img/img_estudiantes/'+response[0]['Archivo_Foto']+'?ver='+Math.floor(Date.now()));
+			 $("#foto_alumno").attr('src','../img/img_estudiantes/'+response[0]['Archivo_Foto']+'?ver='+Math.floor(Date.now()));
 			}else{				
 			$("#foto_alumno").attr('src','../../img/jpg/sinimagen.jpg');
 		    }
@@ -653,9 +654,9 @@ function lista_cursos()
 	  })	
 
 	}
- 	function Ver_factura(id,serie,ci)
+ 	function Ver_factura(id,serie,ci,per,auto)
 	{		 
-		var url = '../controlador/facturacion/lista_facturasC.php?ver_fac=true&codigo='+id+'&ser='+serie+'&ci='+ci;		
+		var url = '../controlador/facturacion/lista_facturasC.php?ver_fac=true&codigo='+id+'&ser='+serie+'&ci='+ci+'&per='+per+'&auto='+auto;		
 		window.open(url,'_blank');
 	}
 
