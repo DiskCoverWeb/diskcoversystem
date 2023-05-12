@@ -108,4 +108,4 @@
 <script type="text/javascript">
   var cantidadProductoPreFacturar = <?php echo cantidadProductoPreFacturar ?>;
 </script>
-<script type="text/javascript" src="../../dist/js/pages/preFactura.js?<?php echo date('d') ?>"></script>
+<script type="text/javascript" src="../../dist/js/pages/preFactura.js?<?php echo date('dH') ?>"></script>
