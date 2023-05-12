@@ -724,8 +724,8 @@ class facturar_pensionC
             $Valor = $Valor + $Total_Abonos;
             if($Valor > 0){
               $this->facturacion->actualizar_Clientes_Facturacion2($Total_Abonos,$Total_Desc,$Anio1,$Codigo,$Codigo1,$Codigo2,$Codigo3);
-               $Total_Abonos = $Total_Abonos + $Total_Desc;
-               $Valor = $Valor - $Total_Desc;
+              $Total_Abonos = $Total_Abonos + $Total_Desc;
+              $Valor = $Valor - $Total_Desc;
               $this->facturacion->actualizar_asiento_F($Valor,$ID_Reg);
             }else{
               $this->facturacion->deleteAsientoEd($ID_Reg);              
@@ -889,33 +889,35 @@ class facturar_pensionC
     $this->facturacion->deleteAsiento($_POST['codigoCliente']);
     $datos = array();
     $Contador = 0;
-    foreach ($_POST['datos'] as $key => $producto) {
-      SetAdoAddNew('Asiento_F');
-      SetAdoFields("CODIGO", $producto['Codigo']);
-      SetAdoFields("CODIGO_L", $producto['CodigoL']);
-      SetAdoFields("PRODUCTO", $producto['Producto']);
-      SetAdoFields("CANT", 1);
-      SetAdoFields("PRECIO", $producto['Precio']);
-      SetAdoFields("Total_Desc", $producto['Total_Desc']);
-      SetAdoFields("Total_Desc2", $producto['Total_Desc2']);
-      SetAdoFields("TOTAL", $producto['Precio']);
-      SetAdoFields("Total_IVA", ($producto['Total'] * ($producto['Iva'] / 100)));
-      SetAdoFields("Cta", 'Cuenta');
-      SetAdoFields("Codigo_Cliente", $_POST['codigoCliente']);
-      SetAdoFields("Mes", $producto['MiMes']);
-      SetAdoFields("TICKET", $producto['Periodo']);
-      SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+    if(isset($_POST['datos'])){
+      foreach ($_POST['datos'] as $key => $producto) {
+        SetAdoAddNew('Asiento_F');
+        SetAdoFields("CODIGO", $producto['Codigo']);
+        SetAdoFields("CODIGO_L", $producto['CodigoL']);
+        SetAdoFields("PRODUCTO", $producto['Producto']);
+        SetAdoFields("CANT", 1);
+        SetAdoFields("PRECIO", $producto['Precio']);
+        SetAdoFields("Total_Desc", $producto['Total_Desc']);
+        SetAdoFields("Total_Desc2", $producto['Total_Desc2']);
+        SetAdoFields("TOTAL", $producto['Precio']);
+        SetAdoFields("Total_IVA", ($producto['Total'] * ($producto['Iva'] / 100)));
+        SetAdoFields("Cta", 'Cuenta');
+        SetAdoFields("Codigo_Cliente", $_POST['codigoCliente']);
+        SetAdoFields("Mes", $producto['MiMes']);
+        SetAdoFields("TICKET", $producto['Periodo']);
+        SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
 
-      if(isset($producto['CORTE'])){
-        SetAdoFields("CORTE", $producto['CORTE']);
-      }
-      if(isset($producto['Tipo_Hab'])){
-        SetAdoFields("Tipo_Hab", $producto['Tipo_Hab']);
-      }
+        if(isset($producto['CORTE'])){
+          SetAdoFields("CORTE", $producto['CORTE']);
+        }
+        if(isset($producto['Tipo_Hab'])){
+          SetAdoFields("Tipo_Hab", $producto['Tipo_Hab']);
+        }
 
-      SetAdoFields("A_No", $Contador);
-      $Contador++;
-      $stmt = SetAdoUpdate();
+        SetAdoFields("A_No", $Contador);
+        $Contador++;
+        $stmt = SetAdoUpdate();
+      }
     }
     Eliminar_Nulos_SP("Asiento_F");
     return (@count($_POST['datos'])==($Contador));
