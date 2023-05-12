@@ -63,6 +63,7 @@ class campeC
 
 	function cambiarPeriodo($periodo)
 	{
+		// print_r($periodo);die();
 		switch ($periodo) {
 			case 'actual':
 				$_SESSION['INGRESO']['periodo'] = '.';

@@ -18,7 +18,6 @@
   $(document).ready(function()
   {
     catalogoLineas();
-    paginacion('cargar_registros','panel_pag');
     // fin paginacion
 
     var cartera_usu = '<?php echo $cartera_usu; ?>';
@@ -27,6 +26,7 @@
     {
       buscar_cliente(cartera_usu);
       periodos(cartera_usu);
+      rangos();
       $('#txt_clave').val(cartera_pas);
       $('#ddl_cliente').attr('disabled',true);
       $('#ddl_grupo').attr('disabled',true);
@@ -41,7 +41,8 @@
     }
 
   	// cargar_registros();
-  	autocmpletar();
+  	autocmpletar();    
+    paginacion('cargar_registros','panel_pag');
   	
   });
 
@@ -195,7 +196,7 @@
               });
 
         }  
-        cargar_registros();       
+        // cargar_registros();       
       }
     });
   }
@@ -551,15 +552,20 @@
 
  function rangos()
  {
-    var periodo = $('#ddl_periodo').val();
+    periodo  = '<?php echo $_SESSION['INGRESO']['periodo'];?>';
     if(periodo!='.')
     {
-       $('#txt_desde').val(periodo+'-01-01');
-       $('#txt_hasta').val(periodo+'-12-31');
+      year = periodo.split('/');
+      year = year[2];
+    }
+    if(periodo!='.')
+    {
+       $('#txt_desde').val(year+'-01-01');
+       $('#txt_hasta').val(year+'-12-31');
     }else
     {
-      var currentTime = new Date();
-      var year = currentTime.getFullYear()
+       year = new Date().getFullYear();
+      // console.log(currentTime);
       $('#txt_desde').val(year+'-01-01');
       $('#txt_hasta').val(year+'-12-31');
     }
@@ -761,47 +767,55 @@ function modal_email_fac(factura,serie,codigoc,emails)
 </div>
 		<div class="row">
       <form id="filtros">
-    			<div class="col-sm-2">
-    				<b>GRUPO</b>
-    				<select class="form-control input-xs" id="ddl_grupo" name="ddl_grupo" onchange="autocmpletar_cliente()">
-    					<option value=".">TODOS</option>
-    				</select>
-    				<!-- <input type="text" name="txt_grupo" id="txt_grupo" class="form-control input-sm"> -->
-    			</div>
-          <div class="col-sm-4">
-            <b>CI / RUC</b>
-            <select class="form-control input-xs" id="ddl_cliente" name="ddl_cliente" onchange="periodos(this.value);rangos();">
-              <option value="">Seleccione Cliente</option>
-            </select>
-          </div>
-          <div class="col-sm-1" style="padding: 0px;">
-            <b>Serie</b>
-              <select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="1" style="padding-left:8px">
-                <option value=""></option>
+        <div class="col-sm-12">
+          <div class="row">
+            <div class="col-sm-2">
+              <b>GRUPO</b>
+              <select class="form-control input-xs" id="ddl_grupo" name="ddl_grupo" onchange="autocmpletar_cliente()">
+                <option value=".">TODOS</option>
               </select>
+              <!-- <input type="text" name="txt_grupo" id="txt_grupo" class="form-control input-sm"> -->
+            </div>
+            <div class="col-sm-5">
+              <b>CI / RUC</b>
+              <select class="form-control input-xs" id="ddl_cliente" name="ddl_cliente" onchange="periodos(this.value);rangos();">
+                <option value="">Seleccione Cliente</option>
+              </select>
+            </div>
+            <div class="col-sm-1" style="padding: 0px;">
+              <b>Serie</b>
+                <select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="1" style="padding-left:8px">
+                  <option value=""></option>
+                </select>
+            </div>
+            <div class="col-sm-2" id="campo_clave">
+              <b>CLAVE</b>
+              <input type="password" name="txt_clave" id="txt_clave" class="form-control input-xs">
+              <a href="#" onclick="recuperar_clave()"><i class="fa fa-key"></i> Recupera clave</a>
+            </div>
+            <div class="col-sm-2" style="display:none;" >
+              <b>Periodo</b>
+              <select class="form-control input-xs" id="ddl_periodo" name="ddl_periodo" onchange="rangos()">
+                <option value=".">Seleccione perido</option>
+              </select>
+            </div>
+                      
           </div>
-          <div class="col-sm-2" id="campo_clave">
-            <b>CLAVE</b>
-            <input type="password" name="txt_clave" id="txt_clave" class="form-control input-xs">
-            <a href="#" onclick="recuperar_clave()"><i class="fa fa-key"></i> Recupera clave</a>
+          <div class="row">
+            <div class="col-sm-2">
+              <b>Desde</b>
+                <input type="date" name="txt_desde" id="txt_desde" class="form-control input-xs" value="<?php echo date('Y-m-d')?>">
+            </div>  
+            <div class="col-sm-2">
+              <b>Hasta</b>
+                <input type="date" name="txt_hasta" id="txt_hasta" class="form-control input-xs" value="<?php echo date('Y-m-d')?>">
+            </div>          
+            <div class="col-sm-6 text-right"><br>
+              <button class="btn btn-primary btn-xs" type="button" onclick="validar()"><i class="fa fa-search"></i> Buscar</button>
+            </div>
+            
           </div>
-          <div class="col-sm-2">
-            <b>Periodo</b>
-            <select class="form-control input-xs" id="ddl_periodo" name="ddl_periodo" onchange="rangos()">
-              <option value=".">Seleccione perido</option>
-            </select>
-          </div>
-          <div class="col-sm-2">
-            <b>Desde</b>
-              <input type="date" name="txt_desde" id="txt_desde" class="form-control input-xs">           
-          </div>
-          <div class="col-sm-2">
-            <b>Hasta</b>
-              <input type="date" name="txt_hasta" id="txt_hasta" class="form-control input-xs">            
-          </div>    			
-    			<div class="col-sm-2"><br>
-    				<button class="btn btn-primary btn-xs" type="button" onclick="validar()"><i class="fa fa-search"></i> Buscar</button>
-    			</div>
+        </div>
       </form>
 
 		</div>

@@ -93,8 +93,17 @@ class lista_facturasM
 		
 		$sql ="SELECT T,TC,Serie,Autorizacion,Factura,Fecha,SubTotal,Con_IVA,IVA,Descuento+Descuento2 as Descuentos,Total_MN as Total,Saldo_MN as Saldo,RUC_CI,TB,Razon_Social,CodigoC,ID 
 		FROM Facturas 
-		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
-		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+		WHERE Item = '".$_SESSION['INGRESO']['item']."' ";
+
+		if($_SESSION['INGRESO']['periodo']=='.')
+		{
+			$sql.=" AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+		}else
+		{
+			$year =  $dateNew = DateTime::createFromFormat('d/m/Y', $_SESSION['INGRESO']['periodo'])->format('Y');
+			// print_r($year);die();
+			$sql.=" AND Periodo BETWEEN '01/01/".$year."' AND '".$_SESSION['INGRESO']['periodo']."'";
+		}
 		if($codigo!='T' && $codigo!='')
 		{
 			// si el codigo es T se refiere a todos
@@ -105,10 +114,10 @@ class lista_facturasM
 			// si el codigo es T se refiere a todos
 		   $sql.=" AND Serie ='".$serie."'";
 		} 
-        if($periodo && $periodo!='.' && $periodo!='')
-        {
-       	 $sql.= " AND Fecha BETWEEN '".$desde."' AND '".$hasta."'";
-        }
+        // if($periodo && $periodo!='.' && $periodo!='')
+        // {
+       	//  $sql.= " AND Fecha BETWEEN '".$desde."' AND '".$hasta."'";
+        // }
         if($desde!='' && $hasta!='')
        {
        	 $sql.= " AND Fecha BETWEEN   '".$desde."' AND '".$hasta."' ";
