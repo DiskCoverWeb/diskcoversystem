@@ -3603,44 +3603,37 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 
 		$arr=array('Punto Emision: '.$datos[0]['Serie']);
 		$pdf->Row($arr,10);
-		$pdf->ln(10);
 
 		if($sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='')
 		{
 			$arr=array($sucursal[0]['Nombre_Establecimiento']);
 		    $pdf->Row($arr,10);
-		    $pdf->ln(10);
 		}
 		if($sucursal[0]['RUC_Establecimiento']!='.' && $sucursal[0]['RUC_Establecimiento']!='')
 		{
 			$arr=array('Ruc punto Emision: '.$sucursal[0]['RUC_Establecimiento']);
 		    $pdf->Row($arr,10);
-		    $pdf->ln(10);
 		}
 		if($sucursal[0]['Direccion_Establecimiento']!='.' && $sucursal[0]['Direccion_Establecimiento']!='')
 		{
 			$arr=array('Direccion punto Emision: '.$sucursal[0]['Direccion_Establecimiento']);
 		    $pdf->Row($arr,10);
-		    $pdf->ln(10);
 		}
 		if($sucursal[0]['Telefono_Estab']!='.' && $sucursal[0]['Telefono_Estab']!='')
 		{
 			$arr=array('Telefono punto Emision: '.$sucursal[0]['Telefono_Estab']);
 		    $pdf->Row($arr,10);
-		    $pdf->ln(10);
 		}
 		if($sucursal[0]['Email_Establecimiento']!='.' && $sucursal[0]['Email_Establecimiento']!='')
 		{
 			$arr=array('Email punto Emision: '.$sucursal[0]['Email_Establecimiento']);
 		    $pdf->Row($arr,10);
-		    $pdf->ln(10);
 		}
 
 		if($sucursal[0]['Cta_Establecimiento']!='.' && $sucursal[0]['Cta_Establecimiento']!='')
 		{
 			$arr=array('Cta Punto Emision: '.$sucursal[0]['Cta_Establecimiento']);
 		    $pdf->Row($arr,10);
-		    $pdf->ln(10);
 		}
 			
 
@@ -3648,7 +3641,6 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		{
 			$arr=array('Placas: '.$sucursal[0]['Placa_Vehiculo']);
 		    $pdf->Row($arr,10);
-		    $pdf->ln(10);
 		}	   
 
 		
@@ -3664,42 +3656,30 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$arr=array('Establecimiento: '.$datos[0]['Serie']);
 		$pdf->Row($arr,10);
 
-		$pdf->ln(10);
-
 		if($sucursal[0]['Nombre_Establecimiento']!='.' && $sucursal[0]['Nombre_Establecimiento']!='')
 		{
 			$arr=array($sucursal[0]['Nombre_Establecimiento']);
 		    $pdf->Row($arr,10);
-
-		$pdf->ln(10);
 		}
 		if($sucursal[0]['RUC_Establecimiento']!='.' && $sucursal[0]['RUC_Establecimiento']!='')
 		{
 			$arr=array('Ruc establecimiento: '.$sucursal[0]['RUC_Establecimiento']);
 		    $pdf->Row($arr,10);
-
-		$pdf->ln(10);
 		}
 		if($sucursal[0]['Telefono_Estab']!='.' && $sucursal[0]['Telefono_Estab']!='')
 		{
 			$arr=array('Telefono establecimiento: '.$sucursal[0]['Telefono_Estab']);
 		    $pdf->Row($arr,10);
-
-		$pdf->ln(10);
 		}
 		if($sucursal[0]['Email_Establecimiento']!='.' && $sucursal[0]['Email_Establecimiento']!='')
 		{
 			$arr=array('Email establecimiento: '.$sucursal[0]['Email_Establecimiento']);
 		    $pdf->Row($arr,10);
-
-		$pdf->ln(10);
 		}
 		if($sucursal[0]['Cta_Establecimiento']!='.' && $sucursal[0]['Cta_Establecimiento']!='')
 		{
 			$arr=array('Cta_Establecimiento: '.$sucursal[0]['Cta_Establecimiento']);
 		    $pdf->Row($arr,10);
-
-		$pdf->ln(10);
 		}
 
 
@@ -3707,8 +3687,6 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		{
 			$arr=array('Placas: '.$sucursal[0]['Placa_Vehiculo']);
 		    $pdf->Row($arr,10);
-
-		$pdf->ln(10);
 		}
 	}
 
@@ -3753,19 +3731,32 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 				}
 			}
 		//================================Fin INFORMACION DE ABONOS=======================
+	$info_ad = 140; $info_fe = 40;$info_de = 95;$info_monto = 46;
 
 	$pdf->SetAligns(array("L","L","L","R"));
-	$pdf->SetWidths(array(140,40,95,46));
+	$pdf->SetWidths(array($info_ad,$info_fe,$info_de,$info_monto));
 	$arr=array($info_adicional,$fechas_abonos, $detalle_abonos, $monto_abonos);
-    $pdf->Row($arr,10,1);
+    $pdf->Row($arr,10);
 	//================================Fin INFORMACION ADICIONAL=======================
 
 	///---------------------- fin infomrmacion adicional cuan establecimiento es diferente de 001 ----------------------
+
+	//bordes de informacion adicional---------------------
     $yfin_adiconales = $pdf->GetY();
     $pdf->SetXY($x,$y+$margen);
-	$pdf->Cell(140,$yfin_adiconales-$y-$margen,'','1',1,'Q');
+	$pdf->Cell($info_ad,$yfin_adiconales-$y-$margen,'','1',1,'Q');
+    $pdf->SetXY($x+$info_ad,$y+$margen);
+	$pdf->Cell($info_fe,$yfin_adiconales-$y-$margen,'','1',1,'Q');
+
+    $pdf->SetXY($x+$info_ad+$info_fe,$y+$margen);
+	$pdf->Cell($info_de,$yfin_adiconales-$y-$margen,'','1',1,'Q');
+    $pdf->SetXY($x+$info_ad+$info_fe+$info_de,$y+$margen);
+	$pdf->Cell($info_monto,$yfin_adiconales-$y-$margen,'','1',1,'Q');
+	//-----------------fin bordes de informacion adicional;
+
 	$y_final_leyenda = $yfin_adiconales;
 	
+	// print_r($_SESSION['INGRESO']);die();
 	//leyenda final
 	$pdf->SetFont('Arial','',5);
 	$pdf->SetXY($x, ($y_final_leyenda));
