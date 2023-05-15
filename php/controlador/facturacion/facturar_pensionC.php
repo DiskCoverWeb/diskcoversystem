@@ -724,8 +724,8 @@ class facturar_pensionC
             $Valor = $Valor + $Total_Abonos;
             if($Valor > 0){
               $this->facturacion->actualizar_Clientes_Facturacion2($Total_Abonos,$Total_Desc,$Anio1,$Codigo,$Codigo1,$Codigo2,$Codigo3);
-               $Total_Abonos = $Total_Abonos + $Total_Desc;
-               $Valor = $Valor - $Total_Desc;
+              $Total_Abonos = $Total_Abonos + $Total_Desc;
+              $Valor = $Valor - $Total_Desc;
               $this->facturacion->actualizar_asiento_F($Valor,$ID_Reg);
             }else{
               $this->facturacion->deleteAsientoEd($ID_Reg);              
@@ -889,33 +889,35 @@ class facturar_pensionC
     $this->facturacion->deleteAsiento($_POST['codigoCliente']);
     $datos = array();
     $Contador = 0;
-    foreach ($_POST['datos'] as $key => $producto) {
-      SetAdoAddNew('Asiento_F');
-      SetAdoFields("CODIGO", $producto['Codigo']);
-      SetAdoFields("CODIGO_L", $producto['CodigoL']);
-      SetAdoFields("PRODUCTO", $producto['Producto']);
-      SetAdoFields("CANT", 1);
-      SetAdoFields("PRECIO", $producto['Precio']);
-      SetAdoFields("Total_Desc", $producto['Total_Desc']);
-      SetAdoFields("Total_Desc2", $producto['Total_Desc2']);
-      SetAdoFields("TOTAL", $producto['Precio']);
-      SetAdoFields("Total_IVA", ($producto['Total'] * ($producto['Iva'] / 100)));
-      SetAdoFields("Cta", 'Cuenta');
-      SetAdoFields("Codigo_Cliente", $_POST['codigoCliente']);
-      SetAdoFields("Mes", $producto['MiMes']);
-      SetAdoFields("TICKET", $producto['Periodo']);
-      SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+    if(isset($_POST['datos'])){
+      foreach ($_POST['datos'] as $key => $producto) {
+        SetAdoAddNew('Asiento_F');
+        SetAdoFields("CODIGO", $producto['Codigo']);
+        SetAdoFields("CODIGO_L", $producto['CodigoL']);
+        SetAdoFields("PRODUCTO", $producto['Producto']);
+        SetAdoFields("CANT", 1);
+        SetAdoFields("PRECIO", $producto['Precio']);
+        SetAdoFields("Total_Desc", $producto['Total_Desc']);
+        SetAdoFields("Total_Desc2", $producto['Total_Desc2']);
+        SetAdoFields("TOTAL", $producto['Precio']);
+        SetAdoFields("Total_IVA", ($producto['Total'] * ($producto['Iva'] / 100)));
+        SetAdoFields("Cta", 'Cuenta');
+        SetAdoFields("Codigo_Cliente", $_POST['codigoCliente']);
+        SetAdoFields("Mes", $producto['MiMes']);
+        SetAdoFields("TICKET", $producto['Periodo']);
+        SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
 
-      if(isset($producto['CORTE'])){
-        SetAdoFields("CORTE", $producto['CORTE']);
-      }
-      if(isset($producto['Tipo_Hab'])){
-        SetAdoFields("Tipo_Hab", $producto['Tipo_Hab']);
-      }
+        if(isset($producto['CORTE'])){
+          SetAdoFields("CORTE", $producto['CORTE']);
+        }
+        if(isset($producto['Tipo_Hab'])){
+          SetAdoFields("Tipo_Hab", $producto['Tipo_Hab']);
+        }
 
-      SetAdoFields("A_No", $Contador);
-      $Contador++;
-      $stmt = SetAdoUpdate();
+        SetAdoFields("A_No", $Contador);
+        $Contador++;
+        $stmt = SetAdoUpdate();
+      }
     }
     Eliminar_Nulos_SP("Asiento_F");
     return (@count($_POST['datos'])==($Contador));
@@ -1054,8 +1056,8 @@ class facturar_pensionC
     $dataCliente = $this->facturacion->BuscarClienteCodigoMedidor($CMedidor);
     if(count($dataCliente)>0){
       $data = $dataCliente[0];
-      $ClienteFacturacion = $this->facturacion->getUltimoRegistroClientes_Facturacion($data['Codigo'], $CMedidor, JG01);
-      $DetalleFactura = $this->facturacion->getUltimoRegistroDetalleFactura($data['Codigo'], $CMedidor, JG01);
+      $ClienteFacturacion = $this->facturacion->getUltimoRegistroClientes_Facturacion($data['Codigo'], $CMedidor, "'".JG01."','".JG04."'");
+      $DetalleFactura = $this->facturacion->getUltimoRegistroDetalleFactura($data['Codigo'], $CMedidor, "'".JG01."','".JG04."'");
       if (count($ClienteFacturacion) > 0 && ($ClienteFacturacion[0]['Periodo'] >= @$DetalleFactura[0]['Ticket'] && $ClienteFacturacion[0]['Num_Mes'] >= @$DetalleFactura[0]['Mes_No'])) {
         $data['ultimaMedida'] = $ClienteFacturacion[0]['Credito_No'];
         $data['fechaUltimaMedida'] = MesesLetras($ClienteFacturacion[0]['Num_Mes']) . "/" . $ClienteFacturacion[0]['Periodo'];
@@ -1154,8 +1156,27 @@ class facturar_pensionC
     if($CMedidor != "" && $CMedidor!="."){
       $dataCliente = @$this->getClienteCodigoMedidor($CMedidor);
       if($dataCliente['rps']){
-        $parametros['Encerar'] = ((isset($Encerar) && $Encerar!='')?"1":"0");
-        $respuesta = $this->facturacion->UpdateMedidor($parametros);
+        if(isset($Encerar) && ($Encerar=='1' || $Encerar=='on')){
+          $productos = $this->catalogoProductosModel->TVCatalogo("JG","P", false, JG04);
+          if(count($productos)>0){
+
+            $Mifecha = PrimerDiaMes(date('Ymd'),'Ymd');
+            $periodo = $this->facturacion->getPeriodoAbierto();
+            if(count($periodo)>0){
+              $dataperiodo = explode(" ", $periodo[0]['Detalle']);
+              $NoMes = nombre_X_mes($dataperiodo[1]);
+              $Anio = $dataperiodo[0];
+            }else{
+              $NoMes = ObtenerMesFecha($Mifecha,'YmdHis');
+              $Anio = ObtenerAnioFecha($Mifecha,'YmdHis');
+            }
+
+            $this->facturacion->insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, $productos[0]['Codigo_Inv'], $productos[0]['PVP'], G_NINGUNO, $NoMes, $Anio, $Mifecha, 0, 0, 0,$CMedidor);
+            return (array("rps" => true , "mensaje" => "Cambios guardados con exito."));
+          }else{
+            return (array("rps" => false , "mensaje" => "No se ha configurado el producto para Reinicio del Medidor."));
+          }
+        }
       }else{
         return (array("rps" => false , "mensaje" => "No se ha encontrado informacion del medidor."));
       }

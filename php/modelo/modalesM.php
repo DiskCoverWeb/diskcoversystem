@@ -281,6 +281,36 @@ function DLCxCxP($SubCta,$query=false)
 	    
 	    return $cMedidor;
 	}
+
+
+	function editar_cliente($parametro)
+	{
+		$fa = 1;
+		if($parametro['rbl']=='false')
+		{
+			$fa = 0;
+		}
+		// print_r($parametros);die();
+		$sql = "UPDATE Clientes SET Cliente = '".$parametro['nombrec']."',Direccion = '".$parametro['direccion']."',Telefono = '".$parametro['telefono']."',DirNumero = '".$parametro['nv']."',Email='".$parametro['email']."',Prov = '".$parametro['prov']."',Grupo='".$parametro['grupo']."',Ciudad = '".$parametro['ciu']."', FA = ".$fa." WHERE ID = '".$parametro['txt_id']."'";
+
+		// print_r($sql);die();
+		return $this->db->String_Sql($sql);
+	}
+
+	function editar_Catalogo_CxCxP($parametros)
+	{
+		$sql = "UPDATE Catalogo_CxCxP SET 
+				TC = 'P',
+				Codigo = '".$parametro['codigoc']."',
+				Cta = '".$_SESSION['SETEOS']['Cta_Proveedores']."',
+				Item = '".$_SESSION['INGRESO']['item']."',
+				Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				where Codigo = '".$parametro['codigoc']."' ";
+
+		return $this->db->String_Sql($sql);
+	}
+
+	
 	
 	function FInfoError()
 	{

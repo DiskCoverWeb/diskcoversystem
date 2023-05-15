@@ -239,16 +239,15 @@ class facturar_pensionM
   }
 
   public function updateClientes($TxtTelefono,$TxtDirS,$TxtDireccion,$TxtEmail,$TxtGrupo,$codigoCliente){
-    $sql = "UPDATE Clientes
-                	SET Telefono = '".$TxtTelefono."', 
-                	Telefono_R = '".$TxtTelefono."', 
-                	DireccionT = '".$TxtDirS."', 
-                	Direccion = '".$TxtDireccion."', 
-                	Email = '".$TxtEmail."', 
-                	Grupo = '".$TxtGrupo."' 
-                	WHERE Codigo = '".$codigoCliente."'";
-    $stmt = $this->db->String_Sql($sql);
-    return $stmt;
+    SetAdoAddNew("Clientes");
+    SetAdoFields("Telefono", $TxtTelefono);
+    SetAdoFields("Telefono_R", $TxtTelefono);
+    SetAdoFields("DireccionT", $TxtDirS);
+    SetAdoFields("Direccion", $TxtDireccion);
+    SetAdoFields("Email", $TxtEmail);
+    SetAdoFields("Grupo", $TxtGrupo);
+    SetAdoFieldsWhere("Codigo", $codigoCliente);
+    return SetAdoUpdateGeneric();
   }
 
   public function deleteAsiento($codigoCliente){//TODO LS SE DEBERIA ESTAR BORRANDO TODO NO LO DE Codigo_Cliente
@@ -359,13 +358,15 @@ class facturar_pensionM
 
   public function actualizar_asiento_F($Valor,$ID_Reg)
   {
-    $sql = "UPDATE Asiento_F
-           SET TOTAL = ".$Valor.", PRECIO = ".$Valor.", Total_Desc = 0, Total_Desc2 = 0
-           WHERE Item = '".$_SESSION['INGRESO']['item']."'
-           AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
-           AND A_No = ".$ID_Reg." ";
-    $stmt = $this->db->String_Sql($sql);
-    return $stmt;
+    SetAdoAddNew("Asiento_F");
+    SetAdoFields("TOTAL", $Valor);
+    SetAdoFields("PRECIO", $Valor);
+    SetAdoFields("Total_Desc", 0);
+    SetAdoFields("Total_Desc2", 0);
+    SetAdoFieldsWhere("Item", $_SESSION['INGRESO']['item']);
+    SetAdoFieldsWhere("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+    SetAdoFieldsWhere("A_No", $ID_Reg);
+    SetAdoUpdateGeneric();
   }
 
    function historial_cliente($codigoCliente)
@@ -531,40 +532,31 @@ class facturar_pensionM
     $AdoAux = $this->db->datos($sSQL);
     $MBFecha = (($data['MBFecha']!="")?UltimoDiaMes2("01/".$data['MBFecha'], 'Ymd'):null);
 
+    SetAdoAddNew("Clientes_Matriculas");
+    SetAdoFields("T", G_NORMAL);
+    SetAdoFields("Grupo_No", $data['Grupo_No']);
+    SetAdoFields("Lugar_Trabajo_R", $data['TxtDireccion']);
+    SetAdoFields("Email_R", $data['TxtEmail']);
+    SetAdoFields("Representante", $data['TextRepresentante']);
+    SetAdoFields("Cedula_R", $data['TextCI']);
+    SetAdoFields("TD", (isset($data['Label18'])?$data['Label18']:$data['TD_Rep']));
+    SetAdoFields("Telefono_R", $data['TxtTelefono']);
+    SetAdoFields("Cta_Numero", $data['TxtCtaNo']);
+    SetAdoFields("Tipo_Cta", $data['CTipoCta']);
+    SetAdoFields("Caducidad", $MBFecha);
+    SetAdoFields("Por_Deposito", (bool)$data['CheqPorDeposito']);
+    SetAdoFields("Cod_Banco", (isset($data['Documento'])?$data['Documento']:$data['DCDebito']));
+
     if (count($AdoAux) <= 0) {
-        SetAdoAddNew("Clientes_Matriculas");
-        SetAdoFields("T", G_NORMAL);
-        SetAdoFields("Codigo", $data['codigoCliente']);
-        SetAdoFields("Grupo_No", $data['Grupo_No']);
-        SetAdoFields("Lugar_Trabajo_R", $data['TxtDireccion']);
-        SetAdoFields("Email_R", $data['TxtEmail']);
-        SetAdoFields("Representante", $data['TextRepresentante']);
-        SetAdoFields("Cedula_R", $data['TextCI']);
-        SetAdoFields("TD", (isset($data['Label18'])?$data['Label18']:$data['TD_Rep']));
-        SetAdoFields("Telefono_R", $data['TxtTelefono']);
-        SetAdoFields("Cta_Numero", $data['TxtCtaNo']);
-        SetAdoFields("Tipo_Cta", $data['CTipoCta']);
-        SetAdoFields("Caducidad", $MBFecha);
-        SetAdoFields("Por_Deposito", (bool)$data['CheqPorDeposito']);
-        SetAdoFields("Cod_Banco", $data['Documento']);
-        SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
-        SetAdoFields("Item", $_SESSION['INGRESO']['item']);
-        SetAdoUpdate();
+      SetAdoFields("Codigo", $data['codigoCliente']);
+      SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
+      SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+      SetAdoUpdate();
     } else {
-      self::updateClientesMatriculas(
-        $data['TextRepresentante'],
-        $data['TextCI'],
-        (isset($data['Label18'])?$data['Label18']:$data['TD_Rep']),
-        $data['TxtTelefono'],
-        $data['TxtDireccion'],
-        $data['TxtEmail'],
-        $data['Grupo_No'],
-        $data['codigoCliente'],
-        $data['CTipoCta'],
-        $data['TxtCtaNo'],
-        $data['CheqPorDeposito'],
-        $MBFecha,
-        (isset($data['Documento'])?$data['Documento']:$data['DCDebito']));
+      SetAdoFieldsWhere("Periodo", $_SESSION['INGRESO']['periodo']);
+      SetAdoFieldsWhere("Item", $_SESSION['INGRESO']['item']);
+      SetAdoFieldsWhere("Codigo", $data['codigoCliente']);
+      SetAdoUpdateGeneric();
     }
 
     $sSQL = "UPDATE Clientes "
@@ -617,7 +609,7 @@ class facturar_pensionM
       AND CF.Item = '".$_SESSION['INGRESO']['item']."'
       AND CF.Mes <> '.'
       ".(($Codigo_Auto!="")?" AND CF.Codigo_Auto = '".$Codigo_Auto."' ":"")."
-      ".(($Codigo_Inv!="")?" AND CF.Codigo_Inv = '".$Codigo_Inv."' ":"")."
+      ".(($Codigo_Inv!="")?" AND CF.Codigo_Inv IN (".$Codigo_Inv.") ":"")."
       ORDER BY CF.Periodo DESC,CF.Num_Mes DESC, CF.ID DESC
       OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY";
     $stmt = $this->db->datos($sql);
@@ -631,7 +623,7 @@ class facturar_pensionM
       WHERE DF.CodigoC = '".$codigoCliente."'
       AND DF.Item = '".$_SESSION['INGRESO']['item']."'
       ".(($Tipo_Hab!="")?" AND DF.Tipo_Hab = '".$Tipo_Hab."' ":"")."
-      ".(($Codigo_Inv!="")?" AND DF.Codigo = '".$Codigo_Inv."' ":"")."
+      ".(($Codigo_Inv!="")?" AND DF.Codigo IN (".$Codigo_Inv.") ":"")."
       ORDER BY DF.Ticket,DF.Mes_No DESC
       OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY";
     $stmt = $this->db->datos($sql);

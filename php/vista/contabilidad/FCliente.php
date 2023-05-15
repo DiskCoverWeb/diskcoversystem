@@ -57,6 +57,10 @@ $mostrar_medidor = false;
                 $('#grupo').val(response[0].grupo); // save selected id to input
                 $('#naciona').val(response[0].nacionalidad); // save selected id to input
                 $('#prov').val(response[0].provincia); // save selected id to input
+                if(response[0].provincia=='' || response[0].provincia=='.')
+                {
+                  $('#prov').append('<option value=".">Seleccione</option>'); // save selected id to input                  
+                }
                 $('#ciu').val(response[0].ciudad); // save selected id to input
                 $('#TD').val(response[0].TD); // save selected id to input
                 if(response[0].FA==1){ $('#rbl_facturar').prop('checked',true); }else{ $('#rbl_facturar').prop('checked',false);}

@@ -7259,7 +7259,7 @@ function Grabar_Factura1($TFA,$VerFactura = false, $NoRegTrans = false)
                             SetAdoFields("Item", $_SESSION['INGRESO']['item']);
                             SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
                             SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
-                            SetAdoUpdat();
+                            SetAdoUpdate();
                          }
                     }
                   }
@@ -10091,6 +10091,7 @@ function Leer_Datos_FA_NV($TFA)
         AND F.Factura = ".$TFA['Factura']." 
         AND C.Codigo = F.CodigoC ";
     $AdoDBFac = $conn->datos($sql);
+    // print_r($AdoDBFac);die();
     if(count($AdoDBFac) > 0)
     {
     
@@ -10136,7 +10137,9 @@ function Leer_Datos_FA_NV($TFA)
          $TFA['Nota'] = $AdoDBFac[0]["Nota"];
          $TFA['Orden_Compra'] = $AdoDBFac[0]["Orden_Compra"];
          $TFA['Gavetas'] = $AdoDBFac[0]["Gavetas"];
-         if($TFA['EmailR'] == G_NINGUNO){$TFA['EmailR'] = $_SESSION['INGRESO']['Email_Procesos'];}
+         if($TFA['EmailR'] == G_NINGUNO){
+            //$TFA['EmailR'] = $_SESSION['INGRESO']['Email_Procesos'];
+         }
 
         // 'SubTotales de la Factura
          $TFA['Descuento'] = $AdoDBFac[0]["Descuento"];
@@ -10481,6 +10484,7 @@ function SetAdoAddNew($NombreTabla, $SinElItem = false) {
       $DatosTabla[$IndDato + 1]["Ancho"] = $RegAdodc->fields[$IndDato]->CHARACTER_MAXIMUM_LENGTH;
       $DatosTabla[$IndDato + 1]["Tipo"] = $RegAdodc->fields[$IndDato]->DATA_TYPE;
       $DatosTabla[$IndDato + 1]["Valor"] = valorPorDefectoSegunTipo($RegAdodc->fields[$IndDato]->DATA_TYPE);
+      $DatosTabla[$IndDato + 1]["Update"] = false;
     }
     $_SESSION['SetAdoAddNew'][0] = $DatosTabla;
     //echo "<pre>";print_r($_SESSION['SetAdoAddNew'][0]);echo "</pre>";die();
@@ -10553,6 +10557,7 @@ function SetAdoFields($NombCampo, $ValorCampo) {
         break;
       }
       $DatosTabla[$IndDato]['Valor'] = $ValorCampo;
+      $DatosTabla[$IndDato]['Update'] = true;
     }
   }
   $_SESSION['SetAdoAddNew'][0] = $DatosTabla;
@@ -12064,4 +12069,124 @@ function GrabarComprobante($C1)
     return $cadAux;
 }
 
+function SetAdoFieldsWhere($Campo, $Valor)
+{
+  $_SESSION['SetAdoAddNew']['SetAdoWhere'][$Campo] = $Valor;
+}
+
+function SetAdoUpdateGeneric(){
+  if(!isset($_SESSION['SetAdoAddNew']['SetAdoWhere']) || count($_SESSION['SetAdoAddNew']['SetAdoWhere'])<1){
+    echo 'No es posible hacer un Update sin un condicional';
+    return false;
+  }
+  $DatosTabla = $_SESSION['SetAdoAddNew'][0];
+  $IndDato = 0;
+
+  $DatosSelect = "UPDATE  ".$DatosTabla[0]['Campo']." SET ";
+
+  for ($IndDato = 1; $IndDato <= $DatosTabla[0]['Ancho']; $IndDato++) { 
+    if ($DatosTabla[$IndDato]['Campo'] != 'ID' && $DatosTabla[$IndDato]['Update']) {
+      $DatosSelect .= validateTypeFieldAssign($DatosTabla[$IndDato]).",";
+    }
+  }
+
+  if (substr($DatosSelect, -1) === ',') {
+    $DatosSelect = rtrim($DatosSelect, ',');
+  }
+
+  $DatosSelect .=" WHERE ";
+  foreach ($_SESSION['SetAdoAddNew']['SetAdoWhere'] as $key => $value) {
+    for ($IndDato = 1; $IndDato <= $DatosTabla[0]['Ancho']; $IndDato++) { 
+      if ($DatosTabla[$IndDato]['Campo'] == $key) {
+        $DatosTabla[$IndDato]['Valor'] = $value;
+        $DatosSelect .= validateTypeFieldAssign($DatosTabla[$IndDato])." AND ";
+        break;
+      }
+    }
+  }
+
+  if (substr($DatosSelect, -4) === 'AND ') {
+    $DatosSelect = rtrim($DatosSelect, 'AND ');
+  }
+
+  $DatosSelect = CompilarSQL($DatosSelect);
+  unset($_SESSION['SetAdoAddNew']['SetAdoWhere']);
+  return Ejecutar_SQL_SP($DatosSelect);
+}
+
+function validateTypeFieldAssign($DatoTablaI)
+{
+  switch ($DatoTablaI['Tipo']) {
+    case 'bit':
+      if (is_null($DatoTablaI['Valor'])) {
+        $DatoTablaI['Valor'] = 0;
+      }
+      if (is_bool($DatoTablaI['Valor']) && $DatoTablaI['Valor']) {
+        $DatoTablaI['Valor'] = 1;
+      }
+      if ($DatoTablaI['Valor'] == G_NINGUNO || $DatoTablaI['Valor'] == "") {
+        $DatoTablaI['Valor'] = 0;
+      }
+      if ($DatoTablaI['Valor'] < 0) {
+        $DatoTablaI['Valor'] = 1;
+      }
+      if ($DatoTablaI['Valor'] > 1) {
+        $DatoTablaI['Valor'] = 1;
+      }
+      $DatosSelect    = $DatoTablaI['Campo'] . " = " .(int)$DatoTablaI['Valor'];
+      break;
+    case 'nvarchar':
+    case 'ntext':
+        if (is_null($DatoTablaI['Valor']) || empty($DatoTablaI['Valor'])) {
+        $DatoTablaI['Valor'] = G_NINGUNO;
+      }
+      if ($DatoTablaI['Campo'] == "Periodo" && $DatoTablaI['Valor'] == G_NINGUNO) {
+        $DatoTablaI['Valor'] = $_SESSION['INGRESO']['periodo'];
+      }
+      if ($DatoTablaI['Campo'] == "Item" && $DatoTablaI['Valor'] == G_NINGUNO) {
+        $DatoTablaI['Valor'] = $_SESSION['INGRESO']['item'];
+      }
+      if ($DatoTablaI['Campo'] == "CodigoU" && $DatoTablaI['Valor'] == G_NINGUNO) {
+        $DatoTablaI['Valor'] = $_SESSION['INGRESO']['CodigoU'];
+      }
+      $DatosSelect = $DatoTablaI['Campo'] . " = '" . $DatoTablaI['Valor'] . "'";
+      break;
+    case 'date':
+      if (is_null($DatoTablaI['Valor'])) {
+        $DatoTablaI['Valor'] = date("Ymd");
+      }
+      $DatosSelect = $DatoTablaI['Campo'] . " = #" . BuscarFecha((string)$DatoTablaI['Valor']) . "#";
+      break;
+    case 'datetime':
+    case 'datetime2':
+    case 'datetimeoffset':
+    case 'smalldatetime':
+      if (is_null($DatoTablaI['Valor'])) {
+        $DatoTablaI['Valor'] = date("YmdHis");
+      }
+      $DatosSelect = $DatoTablaI['Campo'] . " = #" . BuscarFecha((string)$DatoTablaI['Valor']) . "#";
+      break;
+    case 'tinyint':
+    case 'int':
+    case 'bigint':
+    case 'smallint':
+      if (is_null($DatoTablaI['Valor'])) {
+          $DatoTablaI['Valor'] = 0;
+      }
+      $DatosSelect = $DatoTablaI['Campo'] . ' = ' . (int) $DatoTablaI['Valor'];
+      break;
+    case 'real':
+    case 'float':
+    case 'numeric':
+    case 'money':
+    case 'decimal':
+      if (is_null($DatoTablaI['Valor'])) {
+        $DatoTablaI['Valor'] = 0;
+      }
+      $DatosSelect = $DatoTablaI['Campo'] . ' = ' .(float) $DatoTablaI['Valor'];
+      break;
+  }
+
+  return $DatosSelect;
+}
 ?>

@@ -201,57 +201,40 @@ function li2Array($html,$elemento="li"){
 
 	function guardar_cliente($parametro)
 	{
+
 		// print_r($parametro);die();
 		$resp = $this->modelo->buscar_cliente(trim($parametro['ruc']));		
-		$dato[0]['campo']='T';
-		$dato[0]['dato']='N';
-		$dato[1]['campo']='Codigo';
-		$dato[1]['dato']=$parametro['codigoc'];
-		$dato[2]['campo']='Cliente';
-		$dato[2]['dato']=$parametro['nombrec'];
-		$dato[3]['campo']='CI_RUC';
-		$dato[3]['dato']= $this->sri->quitar_carac($parametro['ruc']);
-		$dato[4]['campo']='Direccion';
-		$dato[4]['dato']=$parametro['direccion'];
-		$dato[5]['campo']='Telefono';
-		$dato[5]['dato']=$parametro['telefono'];
-		$dato[6]['campo']='DirNumero';
-		$dato[6]['dato']=$parametro['nv'];
-		$dato[7]['campo']='Email';
-		$dato[7]['dato']=$parametro['email'];
-		$dato[8]['campo']='TD';
-		$dato[8]['dato']=$parametro['TD'];
-		$dato[9]['campo']='CodigoU';
-		$dato[9]['dato']=$_SESSION['INGRESO']['CodigoU'];
-		$dato[10]['campo']='Prov';
-		$dato[10]['dato']=$parametro['prov'];
-		$dato[11]['campo']='Pais';
-		$dato[11]['dato']='593';
-		$dato[12]['campo']='Grupo';
-		$dato[12]['dato']=$parametro['grupo'];
-		$dato[13]['campo']='Ciudad';
-		$dato[13]['dato']=$parametro['ciu'];
-		//facturacion
-		$dato[14]['campo']='FA';
-		$dato[14]['dato']=1;
-		if($parametro['rbl']=='false')
-		{
-			$dato[14]['campo']='FA';
-			$dato[14]['dato']=0;
-		}
-		 //print_r($parametro);die();
 		if($parametro['txt_id']!='')
-		{
-			$campoWhere[0]['campo'] = 'ID';
-			$campoWhere[0]['valor'] = $parametro['txt_id'];
-			$re = update_generico($dato,'Clientes',$campoWhere);
+		{			
+			$re = $this->modelo->editar_cliente($parametro);
 		}else
 		{
 			// print_r($resp);die();
 			if(count($resp)==0)
 		    {
-		    	// print_r($dato);die();
-			    $re = insert_generico('Clientes',$dato); // optimizado pero falta 
+		    	SetAdoAddNew("Clientes");
+			    SetAdoFields("T", G_NORMAL);
+			    SetAdoFields("Cliente", $parametro['nombrec']);
+			    SetAdoFields("CI_RUC", $this->sri->quitar_carac($parametro['ruc']));
+			    SetAdoFields("Codigo",$parametro['codigoc']);
+			    SetAdoFields("Direccion", $parametro['direccion']);
+			    SetAdoFields("Telefono", $parametro['telefono']);
+			    SetAdoFields("DirNumero", $parametro['nv']);
+			    SetAdoFields("Email", $parametro['email']);
+			    SetAdoFields("TD", $parametro['TD']);
+			    SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+			    SetAdoFields("Prov", $parametro['prov']);
+			    SetAdoFields("Pais", "593");
+			    SetAdoFields("Grupo", $parametro['grupo']);
+			    SetAdoFields("Ciudad", $parametro['ciu']);
+			    if($parametro['rbl']=='false')
+			    {
+				    SetAdoFields("FA", 0);
+			    }else
+			    {
+			    	SetAdoFields("FA", 1);    	
+			    }    
+			    $re = SetAdoUpdate();		    	
 			  }else{
 			  	return 2;
 			  }
@@ -262,45 +245,22 @@ function li2Array($html,$elemento="li"){
 			$pro = $this->modelo->catalogo_Cxcxp($parametro['codigoc']);
 			if(count($pro)==0)
 			{
-				// $cta = 'Cta_Proveedores';
-				// $ctas = $this->modelo->buscar_cta($cta);
-				// print_r($ctas);die();
-				// $datos2 = $this->modelo->LeerCta($ctas[0]['Codigo']);
+				SetAdoAddNew("Catalogo_CxCxP");
+			  SetAdoFields("TC",'P');
+			  SetAdoFields("Codigo",$parametro['codigoc']);
+			  SetAdoFields("Cta", $_SESSION['SETEOS']['Cta_Proveedores']);
+			  SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+			  SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);			    
+				SetAdoUpdate();	
 
-				// print_r($datos2);die();
-				$datosCXP[0]['campo']='TC';
-				$datosCXP[0]['dato']='P';
-				$datosCXP[1]['campo']='Codigo';
-				$datosCXP[1]['dato']=$parametro['codigoc'];
-				$datosCXP[2]['campo']='Cta';
-				$datosCXP[2]['dato']=$_SESSION['SETEOS']['Cta_Proveedores'];
-				$datosCXP[3]['campo']='Item';
-				$datosCXP[3]['dato']=$_SESSION['INGRESO']['item'];
-				$datosCXP[4]['campo']='Periodo';
-				$datosCXP[4]['dato']=$_SESSION['INGRESO']['periodo'];
-				insert_generico('Catalogo_CxCxP',$datosCXP);
 			}else
-			{
-				$datosCXP[0]['campo']='TC';
-				$datosCXP[0]['dato']='P';
-				$datosCXP[1]['campo']='Codigo';
-				$datosCXP[1]['dato']=$parametro['codigoc'];
-				$datosCXP[2]['campo']='Cta';
-				$datosCXP[2]['dato']=$_SESSION['SETEOS']['Cta_Proveedores'];
-				$datosCXP[3]['campo']='Item';
-				$datosCXP[3]['dato']=$_SESSION['INGRESO']['item'];
-				$datosCXP[4]['campo']='Periodo';
-				$datosCXP[4]['dato']=$_SESSION['INGRESO']['periodo'];
-
-				$where[0]['campo'] = 'Codigo';
-				$where[0]['valor'] = $parametro['codigoc'];
-				$where[0]['tipo'] = 'string';
-				update_generico($datosCXP,'Catalogo_CxCxP',$where);
-				// insert_generico('Catalogo_CxCxP',$datosCXP);
+			{				
+			  $this->modelo->editar_Catalogo_CxCxP($parametros);
+			// insert_generico('Catalogo_CxCxP',$datosCXP);
 			}
 		}
 
-		if($re==1 || $re==null)
+		if($re==1)
 		{
 			return 1;
 		}else

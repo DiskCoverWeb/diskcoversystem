@@ -3515,7 +3515,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
      	 	$pdf->SetWidths(array(55,55,35,45,134,45,45,40,40,45));
 			$pdf->SetAligns(array("L","L","R","R","L","L","R","R","R","R"));
 			//$arr=array($arr1[$i]);
-			$arr=array($CODIGO1,$CODIGO2,number_format($value['Cantidad'],2,'.',''),'',$Producto,'',number_format($value['Precio'],2,'.',''),$totaldes,$descto, $totalfac);
+			$arr=array($CODIGO1,$CODIGO2,number_format($value['Cantidad'],2,'.',''),'',$Producto,'',number_format($value['Precio'],$_SESSION['INGRESO']['Dec_PVP'],'.',''),$totaldes,$descto, $totalfac);
 			$pdf->Row($arr,10,1);
 
 			 // if(strlen($value["Tipo_Hab"]) > 1)

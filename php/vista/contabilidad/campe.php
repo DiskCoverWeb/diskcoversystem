@@ -58,7 +58,7 @@ function cambiarPeriodo()
         // console.log(response);
         if(response==1)
         {
-        	Swal.fire('Periodo Cambiado','','success').then(function(){ location.href ="contabilidad.php?mod=contabilidad"; })
+        	Swal.fire('Periodo Cambiado','','success').then(function(){ location.href ="inicio.php?mod=10"; })
         }
       }
     });
