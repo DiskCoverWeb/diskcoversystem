@@ -61,7 +61,7 @@ class FCierre_CajaC
 
     function Form_Activate()
     {
-        $_SESSION['FCierre_Caja']['CtaDeAnticipos'] = Leer_Seteos_Ctas("Cta_Anticipos_Clientes");
+        $_SESSION['SETEOS']['Cta_Anticipos'] = Leer_Seteos_Ctas("Cta_Anticipos_Clientes");
         $Valor_Retorno = Leer_Campo_Empresa("Cierre_Vertical");
         $_SESSION['FCierre_Caja']['FormaCierre'] = (is_null($Valor_Retorno) || empty($Valor_Retorno))?G_NINGUNO:$Valor_Retorno;
 
@@ -97,11 +97,11 @@ class FCierre_CajaC
             "ORDER BY Codigo ";
         $AdoCtaBanco = $this->CierreCajaM->SelectDB($sSQL);
 
-        $sSQL = "SELECT CONCAT(Nombre_Completo, ' - ', Codigo) As Cajero " .
+        $sSQL = "SELECT CONCAT(Nombre_Completo, ' - ', Codigo) As Cajero, Codigo" .
             "FROM Accesos " .
             "WHERE Ok <> 0 " .
             "ORDER BY Nombre_Completo ";
-        $AdoClientes = $this->CierreCajaM->SelectDB($sSQL); //TODO definir si se usara o no
+        $AdoClientes = $this->CierreCajaM->SelectDB($sSQL);
 
         $_SESSION['FCierre_Caja']['NuevoDiario'] = false;
 
@@ -202,14 +202,14 @@ class FCierre_CajaC
         $FechaIni = BuscarFecha($MBFechaI);
         $FechaFin = BuscarFecha($MBFechaF);
 
-        $sSQL = "SELECT Fecha " .
+        $sSQL = "SELECT FORMAT(Fecha, 'yyyy-MM-dd')  AS Fecha " .
                 "FROM Facturas " .
                 "WHERE Item = '" . $NumEmpresa . "' " .
                 "AND Periodo = '" . $Periodo_Contable . "' " .
                 "AND TC <> 'OP' " .
                 "AND Fecha BETWEEN '" . $FechaIni . "' and '" . $FechaFin . "' " .
                 "UNION " .
-                "SELECT Fecha " .
+                "SELECT FORMAT(Fecha, 'yyyy-MM-dd')  AS Fecha " .
                 "FROM Trans_Abonos " .
                 "WHERE Item = '" . $NumEmpresa . "' " .
                 "AND Periodo = '" . $Periodo_Contable . "' " .
@@ -226,7 +226,7 @@ class FCierre_CajaC
                 "AND TS.Item = '" . $NumEmpresa . "' " .
                 "AND TS.Periodo = '" . $Periodo_Contable . "' " .
                 "AND TS.T <> 'A' " .
-                "AND TS.Cta = '" . $_SESSION['FCierre_Caja']['CtaDeAnticipos'] . "' " .
+                "AND TS.Cta = '" . $_SESSION['SETEOS']['Cta_Anticipos'] . "' " .
                 "AND TS.Creditos > 0 " .
                 "AND TS.Periodo = T.Periodo " .
                 "AND TS.Periodo = CC.Periodo " .
@@ -248,14 +248,7 @@ class FCierre_CajaC
         extract($parametros);
         $AdoDBAux = [];
         $VentasDia = false;
-        $Ctas_Catalogo = "";
 
-        $Cta_Propinas = "";
-        $Cta_CajaG = "";
-        $Cta_Desc = "";
-        $Cta_Desc2 = "";
-        $Cta_IVA = "";
-        $Cta_Servicio = "";
         $Autorizacion = "01234567899";
 
         $TextoImprimio = "";
@@ -269,7 +262,6 @@ class FCierre_CajaC
         $error = false;
 
         $Trans_No = 96;
-        $Ctas_Catalogo = "";
         $Beneficiario = G_NINGUNO;
         $FechaValida = FechaValida($MBFechaI);
         if($FechaValida["ErrorFecha"]){
@@ -438,10 +430,10 @@ class FCierre_CajaC
         if (count($AdoDBAux) > 0) {
             foreach ($AdoDBAux as $key => $fields) {
                 $Total_Propinas = $Total_Propinas + $fields["Total_Propina"];
-                Insertar_Ctas_Cierre_SP($Cta_Propinas, -$fields["Total_Propina"], $Trans_No); //TODO LS de donde sale  Cta_Propinas
+                Insertar_Ctas_Cierre_SP($_SESSION['SETEOS']['Cta_CxP_Propinas'], -$fields["Total_Propina"], $Trans_No);
             }
         }
-        Insertar_Ctas_Cierre_SP($Cta_CajaG, $Total_Propinas,$Trans_No); //TODO LS de donde sale  Cta_CajaG
+        Insertar_Ctas_Cierre_SP($_SESSION['SETEOS']['Cta_CajaG'], $Total_Propinas,$Trans_No);
 
         //Totalizamos las Liquidacion de Compras Debe
         $sSQL = "SELECT F.Cta_CxP, C.T, SUM(F.Total_MN) As Total_LC " .
@@ -599,7 +591,7 @@ class FCierre_CajaC
                 "AND Item = '" . $NumEmpresa . "' " .
                 "AND Periodo = '" . $Periodo_Contable . "' ";
         if ($CheqCajero == 1) {
-          $sSQL .= "AND CodigoU = '" . SinEspaciosDer($DCBenef->Text) . "' ";
+          $sSQL .= "AND CodigoU = '" . SinEspaciosDer($DCBenef) . "' ";
         }
         $sSQL .= "GROUP BY TC, Cta_CxP " .
                 "ORDER BY TC, Cta_CxP ";
@@ -607,10 +599,10 @@ class FCierre_CajaC
         if (count($AdoDBAux) > 0) {
             foreach ($AdoDBAux as $key => $fields) {
             Insertar_Ctas_Cierre_SP($fields["Cta_CxP"], $fields["T_Total_MN"], $Trans_No);
-            Insertar_Ctas_Cierre_SP($Cta_Desc, $fields["T_Descuento"], $Trans_No); //TODO LS de donde sale la variable $Cta_Desc
-            Insertar_Ctas_Cierre_SP($Cta_Desc2, $fields["T_Descuento2"], $Trans_No); //TODO LS de donde sale la variable $Cta_Desc2
-            Insertar_Ctas_Cierre_SP($Cta_IVA, -$fields["T_IVA"], $Trans_No);
-            Insertar_Ctas_Cierre_SP($Cta_Servicio, -$fields["T_Servicio"], $Trans_No);
+            Insertar_Ctas_Cierre_SP($_SESSION['SETEOS']['Cta_Desc'], $fields["T_Descuento"], $Trans_No);
+            Insertar_Ctas_Cierre_SP($_SESSION['SETEOS']['Cta_Desc2'], $fields["T_Descuento2"], $Trans_No);
+            Insertar_Ctas_Cierre_SP($_SESSION['SETEOS']['Cta_IVA'], -$fields["T_IVA"], $Trans_No);
+            Insertar_Ctas_Cierre_SP($_SESSION['SETEOS']['Cta_Servicio'], -$fields["T_Servicio"], $Trans_No);
             $total = $total + number_format($fields["T_Total_MN"], 2, '.', '');
           }
         }
@@ -732,7 +724,7 @@ class FCierre_CajaC
                 AND F.Periodo = '".$Periodo_Contable."' 
                 AND F.TC <> 'OP'";
         if ($CheqCajero == 1) {
-            $sql .= "AND F.CodigoU = '" . SinEspaciosDer($DCBenef->Text) . "' ";
+            $sql .= "AND F.CodigoU = '" . SinEspaciosDer($DCBenef) . "' ";
         }
         $sql .= "AND F.CodigoC = C.Codigo 
                  ORDER BY F.TC,F.Fecha,F.Cta_CxP,C.Cliente,F.Factura";
@@ -929,7 +921,6 @@ class FCierre_CajaC
             $DiarioCaja = $NumComp;
             $FechaIni = BuscarFecha($MBFechaI);
             $FechaFin = BuscarFecha($MBFechaF);
-            //TODO LS descomentar
             // if ($FormaCierre) {//TODO LS definir variables de impresion
             //     Imprimir_Diario_Caja($AdoVentas, $AdoCxC, $AdoInv, $AdoProductos, $AdoAnticipos, $MBFechaI, $MBFechaF);
             // } else {
@@ -1087,8 +1078,8 @@ class FCierre_CajaC
 
         if (count($AdoAux) > 0) {
             $Factura = $AdoAux[0]["Factura"];
-            $MBFechaI = $AdoAux[0]["Fecha"];
-            $MBFechaF = $AdoAux[0]["Fecha"];
+            $MBFechaI = BuscarFecha($AdoAux[0]["Fecha"]);
+            $MBFechaF = BuscarFecha($AdoAux[0]["Fecha"]);
         }
 
         return compact('MBFechaI','MBFechaF','Factura');

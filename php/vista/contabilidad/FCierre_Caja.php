@@ -482,7 +482,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
 
         var DCBenef = $("#DCBenef"); ////TODO LS carga a carga con ajax
         for (var indice in data.AdoClientes) {
-          DCBenef.append('<option value="' + data.AdoClientes[indice].NomCuenta+ ' ">' + data.AdoClientes[indice].NomCuenta + '</option>');
+          DCBenef.append('<option value="' + data.AdoClientes[indice].Codigo+ ' ">' + data.AdoClientes[indice].Cajero + '</option>');
         }
       }
     });
@@ -778,6 +778,11 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                     type: 'success',
                     title: 'Cierre del día '+((datos.dataCierre.MBFechaI)?datos.dataCierre.MBFechaI:"")+((datos.dataCierre.Factura)?"("+datos.dataCierre.Factura+")":""),
                   });
+
+                  if(datos.dataCierre.MBFechaI){
+                    $("#MBFechaI").val(datos.dataCierre.MBFechaI)
+                    $("#MBFechaF").val(datos.dataCierre.MBFechaI)
+                  }
                 }
 
                 $('#myModal_espera').modal('hide');

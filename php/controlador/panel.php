@@ -160,6 +160,7 @@ function  SeteosCtas()
   $_SESSION['SETEOS']['Cta_IVA'] = "0";
   $_SESSION['SETEOS']['Cta_IVA_Inventario'] = "0";
   $_SESSION['SETEOS']['Cta_CxP_Retenciones'] = "0";
+  $_SESSION['SETEOS']['Cta_CxP_Propinas'] = "0";
   $_SESSION['SETEOS']['Cta_Desc'] = "0";
   $_SESSION['SETEOS']['Cta_Desc2'] = "0";
   $_SESSION['SETEOS']['Cta_CajaG'] = "0";
@@ -176,6 +177,7 @@ function  SeteosCtas()
   $_SESSION['SETEOS']['Cta_Seguro'] = "0";
   $_SESSION['SETEOS']['Cta_Seguro_I'] = "0";
   $_SESSION['SETEOS']['Cta_Proveedores'] = "0";
+  $_SESSION['SETEOS']['Cta_Anticipos'] = "0";
 // 	// ' Consultamos las cuentas de la tabla
  	$datos = $modelo->SeteoCta();
 
@@ -277,6 +279,9 @@ function  SeteosCtas()
             case "Cta_CxP_Retenciones":
                   $_SESSION['SETEOS']['Cta_CxP_Retenciones'] = $value['Codigo'];
             break;
+            case "Cta_CxP_Propinas":
+                  $_SESSION['SETEOS']['Cta_CxP_Propinas'] = $value['Codigo'];
+            break;
             case "Cta_Inventario":
                   $_SESSION['SETEOS']['Cta_Inventario'] = $value['Codigo'];
                   $_SESSION['SETEOS']['DC_Inventario'] = $value['DC'];
@@ -325,6 +330,9 @@ function  SeteosCtas()
             break;
              case "Cta_Proveedores":
                  $_SESSION['SETEOS']['Cta_Proveedores'] = $value['Codigo'];
+            break;
+            case "Cta_Anticipos":
+                 $_SESSION['SETEOS']['Cta_Anticipos'] = $value['Codigo'];
             break;
             case "Inv_Promedio": 
                  If($value['Codigo']== "TRUE"){ $Inv_Promedio = True;}
