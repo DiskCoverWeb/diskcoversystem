@@ -53,8 +53,9 @@ DEFINE('G_CTACAJA','CJ');
 DEFINE('CorreoDiskCover',"infosistema@diskcoversystem.com");
 DEFINE('ContrasenaDiskCover',"infoDlcjvl1210DiskCover");
 DEFINE('LIMITE_MEDIDOR',"10000");
-DEFINE('JG01',"JG.01");
-DEFINE('JG02',"JG.02");
-DEFINE('JG03',"JG.03");
+DEFINE('JG01',"JG.01"); //Consumo
+DEFINE('JG02',"JG.02"); //Alcantarilado
+DEFINE('JG03',"JG.03"); //Excedente
+DEFINE('JG04',"JG.04"); //Reinicio del Medidor
 //-------------------------------------
 ?>

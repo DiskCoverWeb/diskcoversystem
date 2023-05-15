@@ -41,6 +41,22 @@
           </div>
       </div>
   </div>
+
+  <div class="modal fade" id="myModal_espera_progress" role="dialog" data-keyboard="false" data-backdrop="static">
+      <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+              <div class="modal-body text-center">
+                  <img src="../../img/gif/loader4.1.gif" width="80%">
+                    <div class="progress progress-striped active" style="height: 30px;">
+                      <div style="margin-top: 10px;" id="Bar_espera_progress" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                        <span style="font-weight: 700;font-size: 14px;text-shadow: 1px 1px grey;" class="txt_progress text-black"></span>
+                      </div>
+                    </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
   <div class="modal fade" id="myModal_sri_error" role="dialog" data-keyboard="false" data-backdrop="static" style="z-index: 1600;">
       <div class="modal-dialog modal-sm">
           <div class="modal-content">
@@ -208,18 +224,17 @@
   <!--fin modal Guia de remision -->
 
 
-  <div id="myModal" class="modal fade myModalNuevoCliente" role="dialog">
+  <div id="myModalInfoError" class="modal fade" role="dialog">
       <div class="modal-dialog">
           <div class="modal-content">
               <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  <h4 class="modal-title">Cliente Nuevo</h4>
+                  <h4 class="modal-title">FORMULARIO DE INFORME DE ERRORES</h4>
               </div>
               <div class="modal-body">
-                  <iframe id="FCliente" width="100%" height="400px" marginheight="0" frameborder="0"></iframe>
+                  <iframe id="FInfoErrorFrame" width="100%" height="400px" marginheight="0" frameborder="0"></iframe>
               </div>
               <div class="modal-footer">
-                  <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button>
                   <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
               </div>
           </div>
@@ -284,6 +299,25 @@
               </div>
           </div>
       </div>
+  </div>
+
+
+  <div id="myModal" class="modal fade myModalNuevoCliente" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Cliente Nuevo</h4>
+            </div>
+            <div class="modal-body">
+                <iframe id="FCliente" width="100%" height="400px" marginheight="0" frameborder="0"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
   </div>
 
   <script type="text/javascript">

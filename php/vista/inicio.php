@@ -164,9 +164,17 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 		{
 			require_once("contabilidad/cierre_mes.php");
 		}
+		if ($_SESSION['INGRESO']['accion']=='cierre_caja') 
+		{
+			require_once("contabilidad/FCierre_Caja.php");
+		}
 		if ($_SESSION['INGRESO']['accion']=='MayoresSubCta') 
 		{
 			require_once("contabilidad/mayores_sub_cuenta.php");
+		}
+		if ($_SESSION['INGRESO']['accion']=='InfoError') 
+		{
+			include("contabilidad/FInfoError.php");
 		}
 //facturacion
 

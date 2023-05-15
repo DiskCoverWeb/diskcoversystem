@@ -7259,7 +7259,7 @@ function Grabar_Factura1($TFA,$VerFactura = false, $NoRegTrans = false)
                             SetAdoFields("Item", $_SESSION['INGRESO']['item']);
                             SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
                             SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
-                            SetAdoUpdat();
+                            SetAdoUpdate();
                          }
                     }
                   }
@@ -10484,6 +10484,7 @@ function SetAdoAddNew($NombreTabla, $SinElItem = false) {
       $DatosTabla[$IndDato + 1]["Ancho"] = $RegAdodc->fields[$IndDato]->CHARACTER_MAXIMUM_LENGTH;
       $DatosTabla[$IndDato + 1]["Tipo"] = $RegAdodc->fields[$IndDato]->DATA_TYPE;
       $DatosTabla[$IndDato + 1]["Valor"] = valorPorDefectoSegunTipo($RegAdodc->fields[$IndDato]->DATA_TYPE);
+      $DatosTabla[$IndDato + 1]["Update"] = false;
     }
     $_SESSION['SetAdoAddNew'][0] = $DatosTabla;
     //echo "<pre>";print_r($_SESSION['SetAdoAddNew'][0]);echo "</pre>";die();
@@ -10511,14 +10512,26 @@ function SetAdoFields($NombCampo, $ValorCampo) {
         case 'datetime2':
         case 'datetimeoffset':
         case 'smalldatetime':
-          if ($ValorCampo == 0 || $ValorCampo == G_NINGUNO) $ValorCampo = date('YmdHis');
-          if (is_null($ValorCampo)) $ValorCampo = date('YmdHis');
-          if (!strtotime($ValorCampo)) $ValorCampo = date('YmdHis');
+          if($ValorCampo instanceof DateTime){
+            $ValorCampo = $ValorCampo->format('YmdHis');
+            break;
+          }
+          if ((is_int($ValorCampo) && $ValorCampo == 0) || (is_string($ValorCampo) && $ValorCampo == G_NINGUNO)){
+            $ValorCampo = date('YmdHis'); break;
+          } 
+          if (is_null($ValorCampo)){ $ValorCampo = date('YmdHis'); break;} 
+          if (!strtotime($ValorCampo)){$ValorCampo = date('YmdHis'); break;} 
         break;
         case 'date':
-          if ($ValorCampo == 0 || $ValorCampo == G_NINGUNO) $ValorCampo = date('Ymd');
-          if (is_null($ValorCampo)) $ValorCampo = date('Ymd');
-          if (!strtotime($ValorCampo)) $ValorCampo = date('Ymd');
+          if($ValorCampo instanceof DateTime){
+            $ValorCampo = $ValorCampo->format('Ymd');
+            break;
+          }
+          if ((is_int($ValorCampo) && $ValorCampo == 0) || (is_string($ValorCampo) && $ValorCampo == G_NINGUNO)){
+            $ValorCampo = date('Ymd'); break;
+          } 
+          if (is_null($ValorCampo)){ $ValorCampo = date('Ymd'); break;} 
+          if (!strtotime($ValorCampo)){$ValorCampo = date('Ymd'); break;}
         break;
         case 'bit':
           if (is_null($ValorCampo) || empty($ValorCampo)) $ValorCampo = false;
@@ -10544,6 +10557,7 @@ function SetAdoFields($NombCampo, $ValorCampo) {
         break;
       }
       $DatosTabla[$IndDato]['Valor'] = $ValorCampo;
+      $DatosTabla[$IndDato]['Update'] = true;
     }
   }
   $_SESSION['SetAdoAddNew'][0] = $DatosTabla;
@@ -11167,9 +11181,9 @@ function GrabarComprobante($C1)
       }    
   }
 
-// ' Borramos la informacion del comprobante si lo hubiera
+  // ' Borramos la informacion del comprobante si lo hubiera
   EliminarComprobantes($C1);
-// ' Por Bodegas
+  // ' Por Bodegas
   $ConBodegas = false;
   $sql1 = "SELECT CodBod 
        FROM Catalogo_Bodegas 
@@ -11300,8 +11314,8 @@ function GrabarComprobante($C1)
        SetAdoUpdate();
      }
  }
-// print('arg');die();
-// ' RETENCIONES VENTAS
+  // print('arg');die();
+  // ' RETENCIONES VENTAS
   $sql = "SELECT *
        FROM Asiento_Ventas
        WHERE Item = '".$_SESSION['INGRESO']['item']."'
@@ -11354,7 +11368,7 @@ function GrabarComprobante($C1)
        SetAdoUpdate();    
   }
 
-// ' RETENCIONES EXPORTACION
+  // ' RETENCIONES EXPORTACION
     $sql = "SELECT * 
       FROM Asiento_Exportaciones 
       WHERE Item = '".$_SESSION['INGRESO']['item']."' 
@@ -11394,7 +11408,7 @@ function GrabarComprobante($C1)
        SetAdoFields("Fecha", $C1['Fecha']);
        SetAdoUpdate();
     }
-// ' RETENCIONES IMPORTACIONES
+  // ' RETENCIONES IMPORTACIONES
   $sql = "SELECT * 
       FROM Asiento_Importaciones 
       WHERE Item = '".$_SESSION['INGRESO']['item']."' 
@@ -11436,7 +11450,7 @@ function GrabarComprobante($C1)
     } 
   }
 
-// ' RETENCIONES AIR
+  // ' RETENCIONES AIR
   $sql = "SELECT * 
       FROM Asiento_Air 
       WHERE Item = '".$_SESSION['INGRESO']['item']."' 
@@ -11473,7 +11487,7 @@ function GrabarComprobante($C1)
       }
     }
   
-// ' Grabamos Retencion de Rol de Pagos
+  // ' Grabamos Retencion de Rol de Pagos
   $sql = "SELECT * 
       FROM Asiento_RP 
       WHERE Item = '".$C1['Item']."' 
@@ -11505,7 +11519,7 @@ function GrabarComprobante($C1)
       }
     }
   
-// ' Grabamos Inventarios
+  // ' Grabamos Inventarios
   $sql = "SELECT * 
       FROM Asiento_K 
       WHERE Item = '".$C1['Item']."' 
@@ -11566,7 +11580,7 @@ function GrabarComprobante($C1)
         $NumTrans = $NumTrans + 1;
     }
   }
-// ' Grabamos Prestamos
+  // ' Grabamos Prestamos
   $sql = "SELECT * 
       FROM Asiento_P 
       WHERE Item = '".$C1['Item']."' 
@@ -11618,7 +11632,7 @@ function GrabarComprobante($C1)
      SetAdoFields("Saldo_Pendiente", $TotalCapital);
      SetAdoFields("Item", $C1['Item']);
      SetAdoUpdate();
-}
+  }
 
 // ' Grabamos Comprobantes
   SetAdoAddNew("Comprobantes");
@@ -11811,6 +11825,229 @@ function GrabarComprobante($C1)
        return $result;
   }
 
+
+  // INICIO CIERRE DE CAJA
+  
+  function Insertar_Ctas_Cierre_SP($InsCta, $Valor, $Trans_No)
+  {
+    if (strlen($InsCta) > 1 && $Valor != 0) {
+      $conn = new db();
+      $parametros = array(
+        array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+        array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+        array(&$_SESSION['INGRESO']['modulo_'], SQLSRV_PARAM_IN),
+        array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
+        array(&$InsCta, SQLSRV_PARAM_IN),
+        array(&$Valor, SQLSRV_PARAM_IN),
+        array(&$Trans_No, SQLSRV_PARAM_IN),
+      );
+      $sql = "EXEC sp_Insertar_Ctas_Cierre @Item=?, @Periodo=?, @NumModulo=?, @Usuario=?, @Codigo=?, @Valor=?, @TransNo=?";
+      return $conn->ejecutar_procesos_almacenados($sql,$parametros);
+    }
+  }
+
+  function Productos_Cierre_Caja_SP($FechaDesde, $FechaHasta)
+  {
+    $FechaIniSP = BuscarFecha($FechaDesde);
+    $FechaFinSP = BuscarFecha($FechaHasta);
+    $conn = new db();
+    $parametros = array(
+      array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+      array(&$FechaIniSP, SQLSRV_PARAM_IN),
+      array(&$FechaFinSP, SQLSRV_PARAM_IN),
+    );
+    $sql = "EXEC sp_Productos_Cierre_Caja @Item=?, @Periodo=?,@FechaDesde=?, @FechaHasta=?";
+    return $conn->ejecutar_procesos_almacenados($sql,$parametros);
+  }
+
+  function Actualizar_Abonos_Facturas_SP($TFA, $SaldoReal=false, $PorFecha = false)
+  {
+    $FechaCorte = $TFA['Fecha_Corte'];
+    $FechaIni = $TFA['Fecha_Desde'];
+    $FechaFin = $TFA['Fecha_Hasta'];
+    $FechaSistema = date('Y-m-d');
+    $FechaCorte = strtotime($FechaCorte) ? BuscarFecha($FechaCorte) : BuscarFecha($FechaSistema);
+    $FechaIni = strtotime($FechaIni) ? BuscarFecha($FechaIni) : BuscarFecha($FechaSistema);
+    $FechaFin = strtotime($FechaFin) ? BuscarFecha($FechaFin) : BuscarFecha($FechaSistema);
+    $SaldoReal = ($FechaCorte == BuscarFecha($FechaSistema)) ? true : false;
+    $ExisteErrores = 0;
+
+    $conn = new db();
+    $parametros = array(
+      array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['modulo_'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
+      array(&$TFA['TC'], SQLSRV_PARAM_IN),
+      array(&$TFA['Serie'], SQLSRV_PARAM_IN),
+      array(&$TFA['Factura'], SQLSRV_PARAM_IN),
+      array(&$FechaCorte, SQLSRV_PARAM_IN),
+      array(&$FechaIni, SQLSRV_PARAM_IN),
+      array(&$FechaFin, SQLSRV_PARAM_IN),
+      array(&$SaldoReal, SQLSRV_PARAM_IN),
+      array(&$PorFecha, SQLSRV_PARAM_IN),
+      array(&$ExisteErrores, SQLSRV_PARAM_INOUT),
+    );
+    $sql = "EXEC sp_Actualizar_Abonos_Facturas @Item=?, @Periodo=?,@NumModulo=?, @Usuario=?, @TC=?, @Serie=?, @Factura=?, @FechaCorte=?, @FechaDesde=?, @FechaHasta=?, @SaldoReal=?, @PorFecha=?, @ExisteErrores=?";
+    $exec = $conn->ejecutar_procesos_almacenados($sql,$parametros);
+    if($exec){
+      return compact("ExisteErrores");
+    }else{
+      return $exec;
+    }
+  }
+
+  function Actualizar_Datos_Representantes_SP($MasGrupos = false)
+  {
+    $conn = new db();
+    $parametros = array(
+      array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+      array(&$MasGrupos, SQLSRV_PARAM_IN),
+    );
+    $sql = "EXEC sp_Actualizar_Datos_Representantes @Item=?, @Periodo=?,@MasGrupos=?";
+    return $conn->ejecutar_procesos_almacenados($sql,$parametros);
+  }
+
+  function FechaValida($NomBox, $ChequearCierreMes = false) {
+    $conn = new db();
+    $AdoCierre = [];
+    $DiaV = 0;
+    $MesV = 0;
+    $AnioV = 0;
+    $ErrorFecha = false;
+    $NoMes = 0;
+    $Anio = "";
+    $sSQL1 = "";
+    $FechaIni1 = "";
+    $FechaFin1 = "";
+    $FechaSistema = date('Y-m-d');
+    $MsgBox = "";
+    
+    $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
+    $NumEmpresa = $_SESSION['INGRESO']['item'];
+
+    //Empezamos a verificar la fecha ingresada
+    $ErrorFecha = false;
+    if ($NomBox == 'LimpiarFechas') {
+        $NomBox = $FechaSistema;
+    }
+    $NomBox = date('d-m-Y', strtotime($NomBox));
+    $DiaV = intval(substr($NomBox, 0, 2));
+    $MesV = intval(substr($NomBox, 3, 2));
+    $AnioV = intval(substr($NomBox, 6, 4));
+    if ($AnioV <= 1900) {
+        $ErrorFecha = true;   // AnioV = 2000
+    }
+    if ($AnioV >= date('Y') + 8) {
+        $ErrorFecha = true;  // AnioV = 2000
+    }
+    //MsgBox AnioV
+    $timestamp = strtotime($NomBox);
+    if (!($timestamp !== false && checkdate(date('m', $timestamp), date('d', $timestamp), date('Y', $timestamp)))) {
+        $ErrorFecha = true;
+    }
+
+    //Resultado Final de la verificacion de la Fecha ingresada
+    $Cadena = "";
+    if ($ErrorFecha) {
+        $Cadena = "ESTA INCORRECTA" . PHP_EOL;
+    } else {
+      //Averiguamos si esta cerrado el mes de procesamiento
+      $Anio = date('Y', strtotime($NomBox));
+      $FechaCierre = PrimerDiaMes($FechaSistema, "d/m/Y");
+      $FechaFin1 = BuscarFecha($NomBox);
+      $sSQL1 = "SELECT * " .
+             "FROM Fechas_Balance " .
+             "WHERE Periodo = '" . $Periodo_Contable . "' " .
+           "AND Item = '" . $NumEmpresa . "' " .
+           "AND Cerrado = 0 " .
+           "AND Fecha_Inicial <= '" . $FechaFin1 . "' " .
+           "AND Fecha_Final >= '" . $FechaFin1 . "' " .
+           "AND MidStrg(Detalle,1,4) = '" . $Anio . "' " .
+           "ORDER BY Fecha_Inicial ";
+      $sSQL1 = CompilarSQL($sSQL1);
+      $AdoCierre = $conn->datos($sSQL1);
+      if(count($AdoCierre) > 0){       
+        $FechaCierre = $AdoCierre[0]["Fecha_Inicial"];
+      }
+
+      //Chequea si es necesario cerrar el mes
+      if ($ChequearCierreMes) {
+        //Compara la fecha de NomBox con la fecha de cierre del mes
+        if (strtotime($NomBox) < strtotime($FechaCierre)) {
+          $ErrorFecha = true;
+          $Cadena .= "ES INFERIOR A LA DEL CIERRE DEL MES" . PHP_EOL;
+        }
+      }
+
+      if ($AnioV > 2050) {
+          $Cadena .= "ES SUPERIOR A LA PERMITIDA POR EL SISTEMA" . PHP_EOL;
+          $ErrorFecha = true;
+      }
+      //Carga la tabla de Porcentaje IVA
+      $sSQL1 = "SELECT * " .
+               "FROM Tabla_Por_ICE_IVA " .
+               "WHERE IVA <> 0 " .
+               "AND Fecha_Inicio <= '" . $FechaFin1 . "' " .
+               "AND Fecha_Final >= '" . $FechaFin1 . "' " .
+               "ORDER BY Porc DESC ";
+      $sSQL1 = CompilarSQL($sSQL1);
+      $AdoStrCnn = $conn->datos($sSQL1); ////TODO LS asignar a AdoStrCnn
+      if(count($AdoStrCnn) > 0){
+        $_SESSION['INGRESO']['porc'] = number_format($AdoStrCnn[0]["Porc"] / 100, 2, '.', '');
+      }
+    }
+
+    if ($ErrorFecha) {
+      $MsgBox =  "LA FECHA QUE ESTA INTENTANDO INGRESAR" . PHP_EOL . PHP_EOL .
+      $Cadena . PHP_EOL .
+      "CONSULTE AL ADMINISTRADOR DEL SISTEMA" . PHP_EOL . PHP_EOL .
+      "PARA SOLUCIONAR EL INCONVENIENTE";
+    }
+
+    return ['ErrorFecha' =>$ErrorFecha, 'MsgBox' =>$MsgBox];
+  }
+
+  function MidStrg($Cadena, $InicioStr, $CantStr = null) {
+    if (strlen($Cadena) > 0 && $CantStr > 0) {
+        if ($InicioStr > 0) {
+            $Resultado = substr($Cadena, $InicioStr, $CantStr);
+        } else {
+            $Resultado = substr($Cadena, 0, $CantStr);
+        }
+    } else {
+        $Resultado = "";
+    }
+    return $Resultado;
+  }
+
+  function Presenta_Errores_Facturacion_SP($FechaDesde, $FechaHasta)
+  {
+    $FechaIniSP = BuscarFecha($FechaDesde);
+    $FechaFinSP = BuscarFecha($FechaHasta);
+    $ExisteErrores = 0;
+    $conn = new db();
+    $parametros = array(
+      array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+      array(&$FechaIniSP, SQLSRV_PARAM_IN),
+      array(&$FechaFinSP, SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['Dec_Costo'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['modulo_'], SQLSRV_PARAM_IN),
+      array(&$ExisteErrores, SQLSRV_PARAM_INOUT),
+    );
+    $sql = "EXEC sp_Presenta_Errores_Facturacion @Item=?, @Periodo=?,@FechaDesde=?, @FechaHasta=?, @DecCosto=?, @Usuario=?, @NumModulo=?, @ExisteErrores=?";
+    $exec = $conn->ejecutar_procesos_almacenados($sql,$parametros);
+    if($exec){
+      return compact("ExisteErrores");
+    }else{
+      return $exec;
+    }
+  }
+  // FIN CIERRE DE CAJA
   function ULCase($textoConversion) {
     $textoULCase = strtolower($textoConversion);
     if ($textoULCase == "") {
@@ -11832,4 +12069,124 @@ function GrabarComprobante($C1)
     return $cadAux;
 }
 
+function SetAdoFieldsWhere($Campo, $Valor)
+{
+  $_SESSION['SetAdoAddNew']['SetAdoWhere'][$Campo] = $Valor;
+}
+
+function SetAdoUpdateGeneric(){
+  if(!isset($_SESSION['SetAdoAddNew']['SetAdoWhere']) || count($_SESSION['SetAdoAddNew']['SetAdoWhere'])<1){
+    echo 'No es posible hacer un Update sin un condicional';
+    return false;
+  }
+  $DatosTabla = $_SESSION['SetAdoAddNew'][0];
+  $IndDato = 0;
+
+  $DatosSelect = "UPDATE  ".$DatosTabla[0]['Campo']." SET ";
+
+  for ($IndDato = 1; $IndDato <= $DatosTabla[0]['Ancho']; $IndDato++) { 
+    if ($DatosTabla[$IndDato]['Campo'] != 'ID' && $DatosTabla[$IndDato]['Update']) {
+      $DatosSelect .= validateTypeFieldAssign($DatosTabla[$IndDato]).",";
+    }
+  }
+
+  if (substr($DatosSelect, -1) === ',') {
+    $DatosSelect = rtrim($DatosSelect, ',');
+  }
+
+  $DatosSelect .=" WHERE ";
+  foreach ($_SESSION['SetAdoAddNew']['SetAdoWhere'] as $key => $value) {
+    for ($IndDato = 1; $IndDato <= $DatosTabla[0]['Ancho']; $IndDato++) { 
+      if ($DatosTabla[$IndDato]['Campo'] == $key) {
+        $DatosTabla[$IndDato]['Valor'] = $value;
+        $DatosSelect .= validateTypeFieldAssign($DatosTabla[$IndDato])." AND ";
+        break;
+      }
+    }
+  }
+
+  if (substr($DatosSelect, -4) === 'AND ') {
+    $DatosSelect = rtrim($DatosSelect, 'AND ');
+  }
+
+  $DatosSelect = CompilarSQL($DatosSelect);
+  unset($_SESSION['SetAdoAddNew']['SetAdoWhere']);
+  return Ejecutar_SQL_SP($DatosSelect);
+}
+
+function validateTypeFieldAssign($DatoTablaI)
+{
+  switch ($DatoTablaI['Tipo']) {
+    case 'bit':
+      if (is_null($DatoTablaI['Valor'])) {
+        $DatoTablaI['Valor'] = 0;
+      }
+      if (is_bool($DatoTablaI['Valor']) && $DatoTablaI['Valor']) {
+        $DatoTablaI['Valor'] = 1;
+      }
+      if ($DatoTablaI['Valor'] == G_NINGUNO || $DatoTablaI['Valor'] == "") {
+        $DatoTablaI['Valor'] = 0;
+      }
+      if ($DatoTablaI['Valor'] < 0) {
+        $DatoTablaI['Valor'] = 1;
+      }
+      if ($DatoTablaI['Valor'] > 1) {
+        $DatoTablaI['Valor'] = 1;
+      }
+      $DatosSelect    = $DatoTablaI['Campo'] . " = " .(int)$DatoTablaI['Valor'];
+      break;
+    case 'nvarchar':
+    case 'ntext':
+        if (is_null($DatoTablaI['Valor']) || empty($DatoTablaI['Valor'])) {
+        $DatoTablaI['Valor'] = G_NINGUNO;
+      }
+      if ($DatoTablaI['Campo'] == "Periodo" && $DatoTablaI['Valor'] == G_NINGUNO) {
+        $DatoTablaI['Valor'] = $_SESSION['INGRESO']['periodo'];
+      }
+      if ($DatoTablaI['Campo'] == "Item" && $DatoTablaI['Valor'] == G_NINGUNO) {
+        $DatoTablaI['Valor'] = $_SESSION['INGRESO']['item'];
+      }
+      if ($DatoTablaI['Campo'] == "CodigoU" && $DatoTablaI['Valor'] == G_NINGUNO) {
+        $DatoTablaI['Valor'] = $_SESSION['INGRESO']['CodigoU'];
+      }
+      $DatosSelect = $DatoTablaI['Campo'] . " = '" . $DatoTablaI['Valor'] . "'";
+      break;
+    case 'date':
+      if (is_null($DatoTablaI['Valor'])) {
+        $DatoTablaI['Valor'] = date("Ymd");
+      }
+      $DatosSelect = $DatoTablaI['Campo'] . " = #" . BuscarFecha((string)$DatoTablaI['Valor']) . "#";
+      break;
+    case 'datetime':
+    case 'datetime2':
+    case 'datetimeoffset':
+    case 'smalldatetime':
+      if (is_null($DatoTablaI['Valor'])) {
+        $DatoTablaI['Valor'] = date("YmdHis");
+      }
+      $DatosSelect = $DatoTablaI['Campo'] . " = #" . BuscarFecha((string)$DatoTablaI['Valor']) . "#";
+      break;
+    case 'tinyint':
+    case 'int':
+    case 'bigint':
+    case 'smallint':
+      if (is_null($DatoTablaI['Valor'])) {
+          $DatoTablaI['Valor'] = 0;
+      }
+      $DatosSelect = $DatoTablaI['Campo'] . ' = ' . (int) $DatoTablaI['Valor'];
+      break;
+    case 'real':
+    case 'float':
+    case 'numeric':
+    case 'money':
+    case 'decimal':
+      if (is_null($DatoTablaI['Valor'])) {
+        $DatoTablaI['Valor'] = 0;
+      }
+      $DatosSelect = $DatoTablaI['Campo'] . ' = ' .(float) $DatoTablaI['Valor'];
+      break;
+  }
+
+  return $DatosSelect;
+}
 ?>

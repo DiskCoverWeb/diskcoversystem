@@ -350,6 +350,22 @@ include('../controlador/contabilidad/contabilidad_controller.php');
     });
   }
 
+  function ShowFInfoErrorShowView() {
+    $("#myModalInfoError").modal("show");
+    var src ="../vista/modales.php?FInfoError=true";
+    $('#FInfoErrorFrame').attr('src',src).show();
+  }
+
+  function UltimoDiaMes(fechaStr) {
+    let match = fechaStr.match(/^(\d{4})([\/-]?)(\d{2})\2(\d{2})$/);
+    if (!match) {
+      return alert("Formato de fecha no válido");
+    }
+    let anio = parseInt(match[1]);
+    let mes = parseInt(match[3]);
+    let ultimoDia = new Date(anio, mes, 0).getDate();
+    return anio + '-' + (mes < 10 ? '0' : '') + mes + '-' + (ultimoDia < 10 ? '0' : '') + ultimoDia;
+  }
   </script>
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

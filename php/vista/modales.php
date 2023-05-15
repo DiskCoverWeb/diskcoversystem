@@ -36,6 +36,10 @@ if(isset($_GET['FAbonos']))
 {
 	require_once('contabilidad/FAbonos.php');
 }
+if(isset($_GET['FInfoError']))
+{
+	require_once('contabilidad/FInfoError.php');
+}
 
 ?>
 
