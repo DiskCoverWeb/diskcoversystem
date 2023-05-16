@@ -941,6 +941,9 @@ class facturar_pensionC
 
     if($codigoCliente!=""){
       $respuestaDB = $peticionesDB = 0;
+
+      $medidor =  ((isset($POST['CMedidorPrefactura']))?$POST['CMedidorPrefactura']:G_NINGUNO);
+
       foreach ($CheqProducto as $item => $check) {
         if($check=='on' || $check == '1'){
           $Cantidad = @(int)$TxtCantidad[$item];
@@ -953,7 +956,7 @@ class facturar_pensionC
               $NoMes = ObtenerMesFecha($Mifecha);
               $Anio = ObtenerAnioFecha($Mifecha);
               $peticionesDB++;
-              $respuestaDB += $this->facturacion->deleteClientes_FacturacionProductoClienteAnioMes($codigoCliente, $CodigoInv, $Anio, $NoMes);
+              $respuestaDB += $this->facturacion->deleteClientes_FacturacionProductoClienteAnioMes($codigoCliente, $CodigoInv, $Anio, $NoMes, $medidor);
               $Mifecha = PrimerDiaSeguienteMes($Mifecha);
             }
           }
@@ -983,6 +986,9 @@ class facturar_pensionC
 
     if($codigoCliente!=""){
       $respuestaDB = $peticionesDB = 0;
+
+      $medidor =  ((isset($POST['CMedidorPrefactura']))?$POST['CMedidorPrefactura']:G_NINGUNO);
+
       foreach ($CheqProducto as $item => $check) {
         if($check=='on' || $check == '1'){
           $Cantidad = @(int)$TxtCantidad[$item];
@@ -997,7 +1003,7 @@ class facturar_pensionC
               $NoMes = ObtenerMesFecha($Mifecha,'Ymd');
               $Anio = ObtenerAnioFecha($Mifecha,'Ymd');
               $peticionesDB++;
-              $respuestaDB += $this->facturacion->insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, $CodigoInv, $Valor, $GrupoNo, $NoMes, $Anio, $Mifecha, $Total_Desc, $Total_Desc2);
+              $respuestaDB += $this->facturacion->insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, $CodigoInv, $Valor, $GrupoNo, $NoMes, $Anio, $Mifecha, $Total_Desc, $Total_Desc2,G_NINGUNO,$medidor);
               $Mifecha = PrimerDiaSeguienteMes($Mifecha,'Ymd');     
             }
           }

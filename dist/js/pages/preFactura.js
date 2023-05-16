@@ -40,7 +40,8 @@ function OpenModalPreFactura(cantidadProductos){
   if($("#PFcodigoCliente").val()!=""){
     $('.myModalNuevoCliente').modal('hide');
     $('#myModalPreFactura').modal('show');
-    
+    ListarMedidoresHeader($("#CMedidorPrefactura"),$('#PFcodigoCliente').val(), true)
+
     $.ajax({
       type: "POST",                 
       url: '../controlador/facturacion/facturar_pensionC.php?CatalogoProductosByPeriodo=true',
@@ -128,6 +129,11 @@ function EliminarPreFactura() {
         {
           $('#myModal_espera').modal('hide');  
           if(response.rps){
+            
+            if($('#persona').val()!=""){
+              ClientePreseleccion($('#persona').val());
+            }
+
             if(response.mensaje_extra){
               Swal.fire(response.mensaje, response.mensaje_extra, 'success')
             }else{

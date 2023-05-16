@@ -1,5 +1,20 @@
 <!-- INICIO MODULO PRE-FACTURA -->
-<?php define('cantidadProductoPreFacturar', 3); ?>
+<?php
+  if(!isset($facturar)){
+    $facturar = new facturar_pensionC();
+  }
+
+  if(!isset($mostrar_medidor)){
+    $mostrar_medidor = false;
+    switch ($_SESSION['INGRESO']['modulo_']) {
+      case '07': //AGUA POTABLE
+        $mostrar_medidor =  true;
+        break;  
+    }
+  }
+
+  define('cantidadProductoPreFacturar', 3);
+?>
 <style type="text/css">
   .check-group-xs{
     padding: 3px 6px !important;
@@ -33,6 +48,20 @@
       <div class="modal-body">
         <form role="form" id="FInsPreFacturas" name="FInsPreFacturas">
           <div class="box-body">
+
+            <?php if ($mostrar_medidor): ?>
+              <div class="row">
+                <div class="col-xs-4  no-padding" style="text-align: center;">
+                  <label for="CMedidorPrefactura" class="input-xs">Medidor No.</label>
+                </div>
+                <div class="col-xs-8 no-padding">
+                  <select class="form-control input-xs" id="CMedidorPrefactura" name="CMedidorPrefactura">  <option value="<?php echo G_NINGUNO ?>">NINGUNO</option>
+                  </select>
+                </div>
+              </div>
+              <hr>
+            <?php endif ?>
+
             <?php $tabindex=55; 
             for ($prod = 1; $prod<=cantidadProductoPreFacturar; $prod++){  ?>
               <div class="row">
@@ -108,4 +137,4 @@
 <script type="text/javascript">
   var cantidadProductoPreFacturar = <?php echo cantidadProductoPreFacturar ?>;
 </script>
-<script type="text/javascript" src="../../dist/js/pages/preFactura.js?<?php echo date('dH') ?>"></script>
+<script type="text/javascript" src="../../dist/js/pages/preFactura.js?<?php echo date('d') ?>"></script>

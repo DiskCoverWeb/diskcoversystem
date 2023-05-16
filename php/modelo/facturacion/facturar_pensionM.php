@@ -415,14 +415,16 @@ class facturar_pensionM
 
   }
 
-  function deleteClientes_FacturacionProductoClienteAnioMes($codigoCliente, $CodigoInv, $Anio, $NoMes){
+  function deleteClientes_FacturacionProductoClienteAnioMes($codigoCliente, $CodigoInv, $Anio, $NoMes, $Codigo_Auto=G_NINGUNO){
+    $Codigo_Auto = ($Codigo_Auto!=G_NINGUNO)?str_pad($Codigo_Auto, 6, "0", STR_PAD_LEFT):G_NINGUNO;
      $sSQL = "DELETE 
           FROM Clientes_Facturacion 
           WHERE Item = '".$_SESSION['INGRESO']['item']."' 
           AND Codigo = '$codigoCliente' 
           AND Codigo_Inv = '$CodigoInv' 
           AND Periodo = '$Anio' 
-          AND Num_Mes = '$NoMes'";
+          AND Num_Mes = '$NoMes'
+          ".(($Codigo_Auto!=G_NINGUNO)?" AND Codigo_Auto='".$Codigo_Auto."'":"");
     $stmt = $this->db->String_Sql($sSQL);
     return $stmt;
   }

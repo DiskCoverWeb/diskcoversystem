@@ -366,6 +366,45 @@ include('../controlador/contabilidad/contabilidad_controller.php');
     let ultimoDia = new Date(anio, mes, 0).getDate();
     return anio + '-' + (mes < 10 ? '0' : '') + mes + '-' + (ultimoDia < 10 ? '0' : '') + ultimoDia;
   }
+
+  function ListarMedidoresHeader(select, codigo, ninguno=false, todos=false)
+  {
+    if(codigo!="" && codigo!="."){
+      $.ajax({
+        url:   '../controlador/modalesC.php?ListarMedidores=true',      
+        type:'POST',
+        dataType:'json',
+        data:{'codigo':codigo},
+        success: function(response){
+          select.empty(); // limpia las opciones existentes
+          $.each(response, function (i, opcion) {
+
+            if(i==0 && ninguno){
+              select.append($('<option>', {
+                value: '.',
+                text: (opcion.Cuenta_No!=".")?'Selecciona un Medidor':'NINGUNO'
+              }));
+            }
+
+            if(i==0 && todos){
+              select.append($('<option>', {
+                value: 'all',
+                text: 'TODOS'
+              }));
+            }
+
+            if(opcion.Cuenta_No!="."){
+              select.append($('<option>', {
+                value: opcion.Cuenta_No,
+                text: opcion.Cuenta_No
+              }));
+            }
+          });
+        }
+      });
+    }
+  }
+
   </script>
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
