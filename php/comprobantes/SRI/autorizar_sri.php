@@ -1094,10 +1094,12 @@ class autorizacion_sri
 	    $xml_infoCompGuia->appendChild($xml_razonsocialtrans);
 
 	    $DigVerif =  Digito_Verificador($cabecera["CIRUCComercial"]);
+	     // print_r($cabecera["CIRUCComercial"]);
+	    // print_r($DigVerif);die();
         $TipoIdent = "P";
-        switch ($DigVerif['Tipo_Beneficiario']) {
+        switch (trim($DigVerif['Tipo_Beneficiario'])) {
         	case 'R':
-        		if($cabecera['CIRUCComercial']){$TipoIdent = '07';}else{$TipoIdent = '04';}
+        		if($cabecera['CIRUCComercial']=='9999999999999'){$TipoIdent = '07';}else{$TipoIdent = '04';}
         		break;
         	case 'C':
         	 	$TipoIdent = '05';
@@ -1706,7 +1708,7 @@ function generar_xml($cabecera,$detalle)
 			  $carpeta_firmados = $carpeta_comprobantes."/Firmados";
 			  $carpeta_no_autori = $carpeta_comprobantes."/No_autorizados";
 			  $carpeta_rechazados = $carpeta_comprobantes."/Rechazados";
-			  $carpeta_rechazados = $carpeta_comprobantes."/Enviados";
+			  $carpeta_enviados = $carpeta_comprobantes."/Enviados";
 
 				if(!file_exists($carpeta_autorizados))
 				{
@@ -1728,7 +1730,7 @@ function generar_xml($cabecera,$detalle)
 				{
 					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777);
 				}
-				if(!file_exists($carpeta_rechazados))
+				if(!file_exists($carpeta_enviados))
 				{
 					 mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777);
 				}

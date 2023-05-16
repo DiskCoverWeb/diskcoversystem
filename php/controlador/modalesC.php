@@ -210,16 +210,42 @@ function li2Array($html,$elemento="li"){
 	{
 
 		// print_r($parametro);die();
-		$resp = $this->modelo->buscar_cliente(trim($parametro['ruc']));		
+		$resp = $this->modelo->buscar_cliente(trim($parametro['ruc']));
+
+		 SetAdoAddNew("Clientes");
+	    SetAdoFields("T", G_NORMAL);
+	    SetAdoFields("Cliente", $parametro['nombrec']);
+	    SetAdoFields("CI_RUC", $this->sri->quitar_carac($parametro['ruc']));
+	    SetAdoFields("Codigo",$parametro['codigoc']);
+	    SetAdoFields("Direccion", $parametro['direccion']);
+	    SetAdoFields("Telefono", $parametro['telefono']);
+	    SetAdoFields("DirNumero", $parametro['nv']);
+	    SetAdoFields("Email", $parametro['email']);
+	    SetAdoFields("TD", $parametro['TD']);
+	    SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+	    SetAdoFields("Prov", $parametro['prov']);
+	    SetAdoFields("Pais", "593");
+	    SetAdoFields("Grupo", $parametro['grupo']);
+	    SetAdoFields("Ciudad", $parametro['ciu']);
+	    if($parametro['rbl']=='false')
+	    {
+		    SetAdoFields("FA", 0);
+	    }else
+	    {
+	    	SetAdoFields("FA", 1);    	
+	    }    
+
 		if($parametro['txt_id']!='')
 		{			
-			$re = $this->modelo->editar_cliente($parametro);
+			// $re = $this->modelo->editar_cliente($parametro);
+			SetAdoFieldsWhere("ID", $parametro['txt_id']);
+   		$re = SetAdoUpdateGeneric();
 		}else
 		{
 			// print_r($resp);die();
 			if(count($resp)==0)
 		    {
-		    	SetAdoAddNew("Clientes");
+		    	 /*SetAdoAddNew("Clientes");
 			    SetAdoFields("T", G_NORMAL);
 			    SetAdoFields("Cliente", $parametro['nombrec']);
 			    SetAdoFields("CI_RUC", $this->sri->quitar_carac($parametro['ruc']));
@@ -240,7 +266,7 @@ function li2Array($html,$elemento="li"){
 			    }else
 			    {
 			    	SetAdoFields("FA", 1);    	
-			    }    
+			    }    */
 			    $re = SetAdoUpdate();		    	
 			  }else{
 			  	return 2;
@@ -250,20 +276,20 @@ function li2Array($html,$elemento="li"){
 		if(isset($parametro['cxp']) && $parametro['cxp']==1)
 		{
 			$pro = $this->modelo->catalogo_Cxcxp($parametro['codigoc']);
-			if(count($pro)==0)
-			{
-				SetAdoAddNew("Catalogo_CxCxP");
+			  SetAdoAddNew("Catalogo_CxCxP");
 			  SetAdoFields("TC",'P');
 			  SetAdoFields("Codigo",$parametro['codigoc']);
 			  SetAdoFields("Cta", $_SESSION['SETEOS']['Cta_Proveedores']);
 			  SetAdoFields("Item", $_SESSION['INGRESO']['item']);
-			  SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);			    
-				SetAdoUpdate();	
-
+			  SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+			if(count($pro)==0)
+			{			 			    
+			  SetAdoUpdate();	
 			}else
 			{				
-			  $this->modelo->editar_Catalogo_CxCxP($parametros);
-			// insert_generico('Catalogo_CxCxP',$datosCXP);
+				
+				SetAdoFieldsWhere("Codigo",$parametro['codigoc']);
+   		  	SetAdoUpdateGeneric();
 			}
 		}
 

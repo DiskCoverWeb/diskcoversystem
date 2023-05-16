@@ -1,3 +1,5 @@
+
+
 <?php 
 require(dirname(__DIR__,2).'/modelo/facturacion/punto_ventaM.php');
 require_once(dirname(__DIR__,2)."/comprobantes/SRI/autorizar_sri.php");
@@ -315,53 +317,29 @@ class punto_ventaC
 		         		$articulo['Producto'] = $parametros['Producto'];
 		         	}
 
-		            $datos[0]['campo'] = "CODIGO"; 
-		            $datos[0]['dato']  = $articulo['Codigo_Inv'];
-		            $datos[1]['campo'] = "CODIGO_L"; 
-		            $datos[1]['dato']  = $CodigoL;
-		            $datos[2]['campo'] = "PRODUCTO"; 
-		            $datos[2]['dato'] = $articulo['Producto'];
-		            $datos[3]['campo']  = "Tipo_Hab"; 
-		            $datos[3]['dato']  =  substr($TxtDocumentos,0,40);
-		            $datos[4]['campo'] = "CANT"; 
-		            $datos[4]['dato']  = number_format(floatval($TextCant),2,'.','');
-		            $datos[5]['campo'] = "PRECIO"; 
-		            $datos[5]['dato']  = number_format($TextVUnit,6,'.','');
-		            $datos[6]['campo'] = "TOTAL"; 
-		            $datos[6]['dato']  = $Real1;
-		            $datos[7]['campo'] = "Total_IVA"; 
-		            $datos[7]['dato']  = $Real3;
-		            $datos[8]['campo'] = "Item"; 
-		            $datos[8]['dato']  = $_SESSION['INGRESO']['item'];
-		            $datos[9]['campo'] = "CodigoU"; 
-		            $datos[9]['dato']  = $_SESSION['INGRESO']['CodigoU'];
-		            $datos[10]['campo'] = "Codigo_Cliente"; 
-		            $datos[10]['dato']  = $parametros['CodigoCliente'];
-		            $datos[11]['campo'] = "A_No"; 
-		            $datos[11]['dato']  = $A_No+1;
-
-
-		            $datos[12]['campo'] = "CodBod"; 
-		            $datos[12]['dato']  =$parametros['CodBod'];            
-		            $datos[13]['campo'] = "COSTO";
-		            $datos[13]['dato']  = $articulo['Costo'];
-		            $datos[14]['campo'] = "Total_Desc";
-		            $datos[14]['dato']  = $Dscto;
-		            $datos[15]['campo'] = "SERVICIO";
-		            $datos[15]['dato']  = $TextServicios;		           
-
-		            if($articulo['Costo']>0)
-		            { 	            
-			            $datos[16]['campo'] = "Cta_Inv"; 
-			            $datos[16]['dato']  = $articulo['Cta_Inventario'];
-			            $datos[17]['campo'] = "Cta_Costo"; 
-			            $datos[17]['dato']  = $articulo['Cta_Costo_Venta'];
-			        }
-
-		            // print_r($datos);die();     
-
-
-		            return  insert_generico('Asiento_F',$datos);
+		         	SetAdoAddNew('Asiento_F');
+					SetAdoFields('CODIGO',$articulo['Codigo_Inv']);
+					SetAdoFields('CODIGO_L',$CodigoL);
+					SetAdoFields('PRODUCTO',$articulo['Producto']);
+					SetAdoFields('Tipo_Hab',substr($TxtDocumentos,0,40));
+					SetAdoFields('CANT',number_format(floatval($TextCant),2,'.',''));
+					SetAdoFields('PRECIO', number_format($TextVUnit,$_SESSION['INGRESO']['Dec_PVP'],'.',''));
+					SetAdoFields('TOTAL',$Real1);
+					SetAdoFields('Total_IVA',$Real3);
+					SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+					SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);
+					SetAdoFields('Codigo_Cliente',$parametros['CodigoCliente']);
+					SetAdoFields('A_No',$A_No+1);
+					SetAdoFields('CodBod',$parametros['CodBod']);
+					SetAdoFields('COSTO',$articulo['Costo']);
+					SetAdoFields('Total_Desc',$Dscto);
+					SetAdoFields('SERVICIO',$TextServicios);
+					if($articulo['Costo']>0)
+		            { 	 
+						SetAdoFields('Cta_Inv',$articulo['Cta_Inventario']);
+						SetAdoFields('Cta_Costo',$articulo['Cta_Costo_Venta']);
+					}	
+					 return  SetAdoUpdate();
 		            
 		         }
 		      }
@@ -886,64 +864,30 @@ function ingresar_trans_kardex_salidas_FA($orden,$ruc,$nombre,$fechaC,$TipoFactu
 		   {
 		   	 $cant = explode(',',$datos_inv[0]['id']);
 		   }
-		    $datos[0]['campo'] ='Numero';
-		    $datos[0]['dato'] =0;  
-		    $datos[1]['campo'] ='T';
-		    $datos[1]['dato'] ='N'; 
-		    $datos[2]['campo'] ='TP';
-		    $datos[2]['dato'] ='.'; 
-		    $datos[3]['campo'] ='Costo';
-		    $datos[3]['dato'] =round($value['Precio'],2); 
-		    $datos[4]['campo'] ='Total';
-		    $datos[4]['dato'] =round($value['Total'],2);
-		    $datos[5]['campo'] ='Existencia';
-		    $datos[5]['dato'] =round(($cant[2]),2)-round(($value['Cantidad']),2);
-		    $datos[6]['campo'] ='CodBodega';
-		    $datos[6]['dato'] ='01';
 
-		    $datos[7]['campo'] ='Detalle';
-		    $datos[7]['dato'] ='Salida de inventario ('.$TipoFactura.') para '.$nombre.' con CI: '.$ruc.' el dia '.$fechaC;
-		    $datos[8]['campo'] ='Procesado';
-		    $datos[8]['dato'] =0;
-		    $datos[9]['campo'] ='Total_IVA';
-		    $datos[9]['dato'] =round($value['Total_IVA'],2);
-		    $datos[10]['campo'] ='Codigo_Inv';
-		    $datos[10]['dato'] =$value['Codigo'];
-		    $datos[11]['campo'] ='Salida';
-		    $datos[11]['dato'] =$value['Cantidad'];		    
-		    $datos[12]['campo'] ='Valor_Unitario';
-		    $datos[12]['dato'] =$value['Precio'];		    
-		    $datos[13]['campo'] ='Valor_Total';
-		    $datos[13]['dato'] =$value['Total'];
-
-		    $datos[14]['campo'] ='CodigoU';
-		    $datos[14]['dato'] =$_SESSION['INGRESO']['CodigoU'];
-		    $datos[15]['campo'] ='Item';
-		    $datos[15]['dato'] =$_SESSION['INGRESO']['item'];
-		    $datos[16]['campo'] ='Periodo';
-		    $datos[16]['dato'] =$_SESSION['INGRESO']['periodo'];
-		    $datos[17]['campo'] ='Factura';
-		    $datos[17]['dato'] =$orden;
-
-		    // $where[0]['campo'] = 'ID'; 
-		    // $where[0]['valor'] = $value['ID'];
-
-		    // print_r($datos);die();
-
-		    $res = insert_generico('Trans_Kardex',$datos);
+		   	SetAdoAddNew('Trans_Kardex');
+			SetAdoFields('Numero',0);
+			SetAdoFields('T','N');
+			SetAdoFields('TP','.');
+			SetAdoFields('Costo',number_format($value['Precio'],2,'.',''));
+			SetAdoFields('Total',number_format($value['Total'],2,'.',''));
+			SetAdoFields('Existencia',number_format(($cant[2]),2,'.','')- number_format(($value['Cantidad']),2,'.',''));
+			SetAdoFields('CodBodega','01');
+			SetAdoFields('Detalle','Salida de inventario ('.$TipoFactura.') para '.$nombre.' con CI: '.$ruc.' el dia '.$fechaC);
+			SetAdoFields('Procesado',0);
+			SetAdoFields('Total_IVA',number_format($value['Total_IVA'],2,'.',''));
+			SetAdoFields('Codigo_Inv',$value['Codigo']);
+			SetAdoFields('Salida',$value['Cantidad']);
+			SetAdoFields('Valor_Unitario',number_format($value['Precio'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
+			SetAdoFields('Valor_Total',number_format($value['Total'],2,'.',''));
+			SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);
+			SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+			SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
+			SetAdoFields('Factura',$orden);
+			$res = SetAdoUpdate();
 
 
-
-		    // $datosAr[0]['campo'] ='Procesado';
-		    // $datosAr[0]['dato'] =0;
-		    // $whereAr[0]['campo'] = 'Codigo_Inv'; 
-		    // $whereAr[0]['valor'] = $value['Codigo_Inv'];
-		    // $whereAr[1]['campo'] = 'Item'; 
-		    // $whereAr[1]['valor'] = $_SESSION['INGRESO']['item'];
-		    // $whereAr[2]['campo'] = 'Periodo'; 
-		    // $whereAr[2]['valor'] = $_SESSION['INGRESO']['periodo'];
-		    // $resA = update_generico($datosAr,'Trans_Kardex',$whereAr);
-
+		   
 		    if($res!=1)
 		    {
 		    	$resp = 0;

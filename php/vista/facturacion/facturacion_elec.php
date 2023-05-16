@@ -108,6 +108,7 @@ function usar_cliente(nombre, ruc, codigo, email, t = 'N') {
     $('#LblRUC').val(ruc);
     $('#codigoCliente').val(codigo);
     $('#LblT').val(t);
+    $('#LblTD').text(t);
     // $('#DCCliente').append('<option value="' +codi+ ' ">' + datos[indice].text + '</option>');
     $('#DCCliente').append($('<option>', {
         value: codigo,
@@ -120,11 +121,12 @@ function usar_cliente(nombre, ruc, codigo, email, t = 'N') {
 function select() {
     var seleccionado = $('#DCCliente').select2("data");
     var data = seleccionado[0].data;
-    // console.log(data);
+    console.log(data);
     $('#Lblemail').val(data[0].Email);
     $('#LblRUC').val(data[0].CI_RUC);
     $('#codigoCliente').val(data[0].Codigo);
     $('#LblT').val(data[0].T);
+    $('#LblTD').text(data[0].TD);
 }
 
 function validar_cta() {
@@ -441,7 +443,7 @@ function ingresar() {
         success: function(data) {
             if (data == 2) {
                 Swal.fire('Ya no puede ingresar mas productos', '', 'info');
-            } else if (data == null) {
+            } else if (data == 1) {
                 DGAsientoF();
                 Calculos_Totales_Factura();
                 $('#DCArticulo').empty();
@@ -697,7 +699,7 @@ function generar_factura() {
             }else if(data.respuesta == -1 || data.respuesta == 2 && data.respuesta_guia==0)
             {
                  Swal.fire('XML Devuelto',data.text,'error');
-                 if(data.text=='' || data.text == null)
+                 if(data.text=='' || data.text == null || data.text == 2)
                  {
                     tipo_error_sri(data.clave);
                  }
@@ -1301,9 +1303,14 @@ function Command8_Click() {
     </div>
     <div class="col-sm-2">
         <b>CI/RUC/PAS</b>
-        <input type="" name="LblRUC" id="LblRUC" class="form-control input-xs" readonly>
-        <input type="hidden" name="Lblemail" id="Lblemail" class="form-control input-xs">
-
+        <div class="input-group">
+            <input type="" name="LblRUC" id="LblRUC" class="form-control input-xs" readonly>
+            <input type="hidden" name="Lblemail" id="Lblemail" class="form-control input-xs">
+            <span class="input-group-btn">
+               <label id="LblTD" name="LblTD" class="input-xs form-control" style="color :coral;"></label>
+            </span>
+            
+        </div>
     </div>
     <div class="col-sm-2">
         <b id="Label1">FACTURA No.</b>
