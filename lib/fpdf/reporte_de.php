@@ -2932,7 +2932,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$pdf->SetFont('Arial','B',9);
 		$pdf->SetWidths(array($margen_med));
 		$arr=array($_SESSION['INGRESO']['Razon_Social']);//mio
-		$pdf->Row($arr,8,1);
+		$pdf->Row($arr,8);
 		// $pdf->ln(8);
 		// $pdf->Ln($salto_ln);		
 		//nombre comercial
