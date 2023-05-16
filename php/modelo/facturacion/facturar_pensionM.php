@@ -583,7 +583,7 @@ class facturar_pensionM
 
   public function BuscarClienteCodigoMedidor($CMedidor){
     $CMedidor = str_pad($CMedidor, 6, "0", STR_PAD_LEFT);
-    $sql="  SELECT C.Codigo,C.Cliente,CDE.Acreditacion
+    $sql="  SELECT C.Codigo,C.Cliente,CDE.Acreditacion, C.TD
         FROM Clientes As C INNER JOIN Clientes_Datos_Extras CDE ON CDE.Codigo=C.Codigo
         WHERE C.T = 'N' 
         AND C.Codigo <> '9999999999' 

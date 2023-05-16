@@ -12189,4 +12189,91 @@ function validateTypeFieldAssign($DatoTablaI)
 
   return $DatosSelect;
 }
+
+function Cambio_De_Codigo($NombreTabla, $Campo, $CodOld, $CodNew) {
+  if ($CodNew != $CodOld) {
+    $sSQL = "UPDATE " . $NombreTabla . " " .
+            "SET " . $Campo . " = '" . $CodNew . "' " .
+            "WHERE " . $Campo . " = '" . $CodOld . "'";
+    Ejecutar_SQL_SP($sSQL);
+  }
+}
+
+function Procesar_Renumerar_CIRUC_JuntaAgua($CodigoCliente, $CI_RUC_Actual) {
+  $conn = new db();
+  $sSQL = "SELECT Codigo, CI_RUC, TD, Cliente, Direccion, Grupo " .
+          "FROM Clientes " .
+          "WHERE Codigo = '$CodigoCliente' ".
+          "ORDER BY TD, Cliente, Grupo, Codigo ";
+  $result = $conn->datos($sSQL);
+  if (count($result) > 0) {
+    foreach ($result as $key => $fields) {
+      
+      $Codigo1 = $fields["Codigo"];
+      $CadenaDV = Digito_verificador($CI_RUC_Actual);
+
+      if(!isset($CadenaDV['Codigo_RUC_CI']) || !isset($CadenaDV['Tipo_Beneficiario']) || !isset($CadenaDV['RUC_CI'] )){
+        return array('rps' => false, "mensaje" =>"No fue posible validar el Digito Verificador");
+      }
+      $Codigo2 = $CadenaDV['Codigo_RUC_CI'];
+      
+      $sSQL = "UPDATE Clientes " .
+               "SET TD = '" . $CadenaDV['Tipo_Beneficiario'] . "', 
+               CI_RUC = '" . $CadenaDV['RUC_CI'] . "' ".
+               "WHERE Codigo = '" . $Codigo1 . "'";
+      Ejecutar_SQL_SP($sSQL);
+                
+      Cambio_De_Codigo("Acceso_Empresa", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Accesos", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Catalogo_CxCxP", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Catalogo_Rol_Pagos", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Catalogo_Rol_Rubros", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Catalogo_SubCtas", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Clientes", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Clientes_Datos_Extras", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Clientes_Facturacion", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Clientes_Matriculas", "Codigo", $Codigo1, $Codigo2);
+        Cambio_De_Codigo("Clientes_Matriculas", "Cedula_R", $CI_RUC_Actual, $CadenaDV['RUC_CI']);
+      Cambio_De_Codigo("Comprobantes", "Codigo_B", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Detalle_Factura", "CodigoC", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Facturas", "CodigoC", $Codigo1, $Codigo2);
+        Cambio_De_Codigo("Facturas", "RUC_CI", $CI_RUC_Actual, $CadenaDV['RUC_CI']);
+      Cambio_De_Codigo("Trans_Abonos", "CodigoC", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Actas", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Activos", "Codigo_R", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Aduanas", "CodigoC", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Air", "IdProv", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Asistencia", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Comision", "CodigoC", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Compras", "IdProv", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Cuotas", "CodigoC", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Exportaciones", "IdFiscalProv", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Fideicomiso", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Fletes", "CodigoC", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Gastos_Caja", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Importaciones", "IdFiscalProv", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Kardex", "Codigo_P", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Memos", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Memos", "CC1", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Memos", "CC2", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Notas", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Notas_Grado", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Pedidos", "CodigoC", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Promedios", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Rol_de_Pagos", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Rol_Horas", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Rol_Pagos", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_SubCtas", "Codigo", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Ticket", "CodigoC", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Trans_Ventas", "IdProv", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Transacciones", "Codigo_C", $Codigo1, $Codigo2);
+      Cambio_De_Codigo("Prestamos", "Cuenta_No", $Codigo1, $Codigo2);
+
+      return array('rps' => true, "mensaje" =>"Proceso Terminado", "codigoCliente" =>$Codigo2);
+    }
+  }
+    
+  return array('rps' => false, "mensaje" =>"Cliente no encontrado", "codigoCliente" =>$CodigoCliente);
+}
+
 ?>

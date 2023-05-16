@@ -88,6 +88,13 @@ if(isset($_GET['FInfoErrorEliminarTablaTemporal']))
    echo json_encode($controlador->EliminarTablaTemporal());
    die();
 }
+
+if(isset($_GET['ActualizarDocumentoCliente']))
+{
+	echo json_encode($controlador->ActualizarDocumentoCliente($_POST));
+	exit();
+}
+
 /**
  * 
  */
@@ -404,6 +411,12 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
 	function EliminarTablaTemporal(){
 		return $this->modelo->EliminarTablaTemporal();
+	}
+
+	function ActualizarDocumentoCliente($parametros)
+	{
+		extract($parametros);
+		return Procesar_Renumerar_CIRUC_JuntaAgua($CodigoC, $NewDocument);
 	}
 }
 ?>

@@ -228,9 +228,10 @@
             $('#myModal_espera').modal('show');
           },    
           success: function(response)
-          {
-            $('#myModal_espera').modal('hide');  
+          { 
             if(response.rps){
+              
+              if(response.data.TD=="P" || response.data.TD=="" || response.data.TD=="."){mostrarModalActualizarDocumento(response.data.Codigo)}
               $("#NameUsuario").val(response.data.Cliente);
               $("#codigoCliente").val(response.data.Codigo);
               $("#FechaUltimaLectura").text(response.data.fechaUltimaMedida);
@@ -251,7 +252,8 @@
             }else{
               Swal.fire('¡Oops!', response.mensaje, 'warning')
               $("#ConsumoActual").text("");
-            }        
+            }
+            $('#myModal_espera').modal('hide');         
           },
           error: function () {
             $('#myModal_espera').modal('hide');
@@ -369,5 +371,59 @@
       });
     }
 
+  }
+
+  function mostrarModalActualizarDocumento(CodigoC) {
+    Swal.fire({
+      title: 'Actualizar Documento del Cliente '+$("#NameUsuario").val(),
+      showCancelButton: true,
+      cancelButtonText: 'Cerrar',
+      confirmButtonText: 'Actualizar',
+      html:
+        '<label for="NewDocument">Numero de documento:</label>' +
+        '<input type="tel" id="NewDocument" class="swal2-input" required>' +
+        '<span id="error1" style="color: red;"></span><br>',
+      focusConfirm: false,
+      preConfirm: () => {
+        const NewDocument = document.getElementById('NewDocument').value;
+        if(NewDocument!="" && NewDocument!="."){
+          return [NewDocument];
+        }else{
+          Swal.getPopup().querySelector('#error1').textContent = 'Debe ingresar un valor para actualizar';
+          return false
+        }
+        
+      }
+    }).then((result) => {
+      if (result.value) {
+        const [NewDocument] = result.value;
+        if(NewDocument!="" && NewDocument!="."){
+          $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '../controlador/modalesC.php?ActualizarDocumentoCliente=true',
+            data: {'NewDocument' : NewDocument , 'CodigoC' : CodigoC},
+            beforeSend: function () {   
+              $('#myModal_espera').modal('show');
+            },    
+            success: function(response)
+            { 
+              if(response.rps){
+                Swal.fire('¡Bien!', response.mensaje, 'success')
+                $("#codigoCliente").val(response.codigoCliente);
+              }else{
+                Swal.fire('¡Oops!', response.mensaje, 'warning')
+              }
+              $("#Lectura").focus();
+              $('#myModal_espera').modal('hide');        
+            },
+            error: function () {
+              $('#myModal_espera').modal('hide');
+              alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+            }
+          });
+        }
+      }
+    });
   }
 </script>
