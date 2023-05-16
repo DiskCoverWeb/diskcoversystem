@@ -231,11 +231,13 @@
           { 
             if(response.rps){
               
-              if(response.data.TD=="P" || response.data.TD=="" || response.data.TD=="."){mostrarModalActualizarDocumento(response.data.Codigo)}
               $("#NameUsuario").val(response.data.Cliente);
               $("#codigoCliente").val(response.data.Codigo);
               $("#FechaUltimaLectura").text(response.data.fechaUltimaMedida);
               $("#UltimaLectura").text(response.data.ultimaMedida);
+
+              if(response.data.TD=="P" || response.data.TD=="" || response.data.TD=="."){mostrarModalActualizarDocumento(response.data.Codigo)}
+                
               $("#Lectura").val("");
               $("#Lectura").focus();
               $(".labelUltimaLectura").removeClass('no-visible')
