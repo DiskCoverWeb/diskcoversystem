@@ -397,23 +397,28 @@ class lista_facturasC
     $empresaGeneral = array_map(array($this, 'encode1'), $this->empresaGeneral);
 
   	$nueva_Clave = generate_clave(8);
-  	$datos[0]['campo']='Clave';
-  	$datos[0]['dato']=$nueva_Clave;
+  	// $datos[0]['campo']='Clave';
+  	// $datos[0]['dato']=$nueva_Clave;
 
-  	$where[0]['campo'] = 'Codigo';
-  	$where[0]['valor'] = $parametros['ci'];
-  	$where[0]['tipo'] = 'string';
+  	// $where[0]['campo'] = 'Codigo';
+  	// $where[0]['valor'] = $parametros['ci'];
+  	// $where[0]['tipo'] = 'string';
 
   	$email_conexion = $empresaGeneral[0]['Email_Conexion'];
     $email_pass =  $empresaGeneral[0]['Email_Contraseña'];
-    // print_r($empresaGeneral[0]);die();
   	$correo_apooyo="info@diskcoversystem.com"; //correo que saldra ala do del emisor
   	$cuerpo_correo = 'Se a generado una clave temporar para que usted pueda ingresar:'. $nueva_Clave;
   	$titulo_correo = 'EMAIL DE RECUPERACION DE CLAVE';
   	$archivos = false;
   	$correo = $parametros['ema'];
+
+
+  	SetAdoAddNew("Clientes");
+		SetAdoFields("Clave", nueva_Clave); 
+		SetAdoFieldsWhere("Codigo",$parametros['ci']);
+		$resp = SetAdoUpdateGeneric();
+		
   	// print_r($correo);die();
-  	$resp = $this->modelo->ingresar_update($datos,'Clientes',$where);  	
   	
   	if($resp==1)
   	{
@@ -493,50 +498,29 @@ class lista_facturasC
     function anular($parametros)
     {
     	 // print_r($parametros);die();
-    	 $datos[0]['campo'] = 'T';
-    	 $datos[0]['dato'] = 'A';
-    	 $datos[1]['campo'] = 'Nota';
-    	 $datos[1]['dato'] = 'Anulción de Factura No.'.$parametros['factura'].'.';
+	   	SetAdoAddNew("Facturas");
+      SetAdoFields("T","A");
+      SetAdoFields("Nota",'Anulción de Factura No.'.$parametros['factura'].'.');
 
-    	 $campoWhere[0]['campo'] = 'Serie';
-    	 $campoWhere[0]['valor'] = $parametros['serie'];
-    	 $campoWhere[0]['tipo'] =  'string';
-    	 $campoWhere[1]['campo'] = 'Factura';
-    	 $campoWhere[1]['valor'] = $parametros['factura'];
-    	 $campoWhere[2]['campo'] = 'CodigoC';
-    	 $campoWhere[2]['valor'] = $parametros['codigo'];
-    	 $campoWhere[2]['tipo'] =  'string';    	 
-    	 $campoWhere[3]['campo'] = 'Item';
-    	 $campoWhere[3]['valor'] = $_SESSION['INGRESO']['item'];
-    	 $campoWhere[3]['tipo'] =  'string';
-    	 $campoWhere[4]['campo'] = 'Periodo';
-    	 $campoWhere[4]['valor'] = $_SESSION['INGRESO']['periodo'];
+    	SetAdoFieldsWhere('Serie',$parametros['serie']);
+    	SetAdoFieldsWhere('Factura',$parametros['factura']);
+    	SetAdoFieldsWhere('CodigoC',$parametros['codigo']);
+    	SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
+    	SetAdoFieldsWhere('Periodo',$_SESSION['INGRESO']['periodo']);
+			SetAdoUpdateGeneric();
 
-    	 $tabla = 'Facturas';
-    	 $this->modelo->ingresar_update($datos,$tabla,$campoWhere);
-
-
-    	 $datos1[0]['campo'] = 'T';
-    	 $datos1[0]['dato'] = 'A';
+			//actualiza en detalle facturas    	 
+	   	SetAdoAddNew("Detalle_Factura");
+    	SetAdoFields("T","A");
     	
-    	 $campoWhere1[0]['campo'] = 'Serie';
-    	 $campoWhere1[0]['valor'] = $parametros['serie'];
-    	 $campoWhere1[0]['tipo'] =  'string';
-    	 $campoWhere1[1]['campo'] = 'Factura';
-    	 $campoWhere1[1]['valor'] = $parametros['factura'];
-    	 $campoWhere1[2]['campo'] = 'CodigoC';
-    	 $campoWhere1[2]['valor'] = $parametros['codigo'];
-    	 $campoWhere1[2]['tipo'] =  'string';
-    	 $campoWhere1[3]['campo'] = 'Item';
-    	 $campoWhere1[3]['valor'] = $_SESSION['INGRESO']['item'];
-    	 $campoWhere1[3]['tipo'] =  'string';
-    	 $campoWhere1[4]['campo'] = 'Periodo';
-    	 $campoWhere1[4]['valor'] = $_SESSION['INGRESO']['periodo'];
+    	SetAdoFieldsWhere('Serie',$parametros['serie']);
+    	SetAdoFieldsWhere('Factura',$parametros['factura']);
+    	SetAdoFieldsWhere('CodigoC',$parametros['codigo']);
+    	SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
+    	SetAdoFieldsWhere('Periodo',$_SESSION['INGRESO']['periodo']);
+			SetAdoUpdateGeneric();
 
-    	 $tabla1 = 'Detalle_Factura';
-    	 $this->modelo->ingresar_update($datos1,$tabla1,$campoWhere1);
-
-    	 return $this->modelo->eliminar_abonos($parametros);
+    	return $this->modelo->eliminar_abonos($parametros);
     }
 
     function enviar_email_detalle($parametros)
