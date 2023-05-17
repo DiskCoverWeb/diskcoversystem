@@ -12073,4 +12073,9 @@ function Procesar_Renumerar_CIRUC_JuntaAgua($CodigoCliente, $CI_RUC_Actual) {
   return array('rps' => false, "mensaje" =>"Cliente no encontrado", "codigoCliente" =>$CodigoCliente);
 }
 
+function calcularValorRango($valor1, $valor2)
+{
+  return abs($valor1 - $valor2) + 1;
+}
+
 ?>

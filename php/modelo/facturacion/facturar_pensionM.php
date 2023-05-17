@@ -599,7 +599,7 @@ class facturar_pensionM
     $sql="SELECT Item, Desde, Hasta, Valor, X, ID
           FROM   Catalogo_Cyber_Tiempo
           WHERE  (Item = '" . $_SESSION['INGRESO']['item'] . "')
-          ORDER BY Desde DESC";
+          ORDER BY Desde ASC";
     return $this->db->datos($sql);
   }
 

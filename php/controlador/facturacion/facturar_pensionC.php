@@ -1103,7 +1103,7 @@ class facturar_pensionC
       if(count($rangoValores)<=0){
         return (array("rps" => false , "mensaje" => "No se ha configurado los rangos de valores para el calculo del excedente."));
       }
-      $valorMinimo = ($rangoValores[array_key_last($rangoValores)]['Desde'])-1;
+      $valorMinimo = ($rangoValores[0]['Desde'])-1;
       $excedente = (($consumoActual>$valorMinimo)?$consumoActual-$valorMinimo:0);
       $productos = $this->catalogoProductosModel->TVCatalogo("JG","P");
 
@@ -1123,14 +1123,20 @@ class facturar_pensionC
         return (array("rps" => false , "mensaje" => "Ya se registro la lectura para Febrero/2022"));
       }
 
+      $montoExcedente = 0;
       if($excedente>0){
         foreach ($rangoValores as $key => $rango) {
-          if($consumoActual>= $rango['Desde'] && $consumoActual<= $rango['Hasta']){
-            $montoExcedente = $excedente*$rango['Valor'];
+          $valorRango = calcularValorRango($rango['Desde'], $rango['Hasta']);
+          if(($excedente-$valorRango) <= 0){
+            $montoExcedente += $excedente*$rango['Valor'];
             break;
+          }else{
+            $excedente -= $valorRango;
+            $montoExcedente += $valorRango*$rango['Valor'];
           }
         }
       }
+
       //insert consumo
       $clave = array_search(JG01, array_column($productos, "Codigo_Inv"));
       if ($clave !== false) {
@@ -1145,7 +1151,7 @@ class facturar_pensionC
         }
 
         //insert excedente
-        if($excedente>0){
+        if($montoExcedente>0){
           $this->facturacion->insertClientes_FacturacionProductoClienteAnioMes($codigoCliente, JG03, $montoExcedente, G_NINGUNO, $NoMes, $Anio, $Mifecha, 0, 0,G_NINGUNO,$CMedidor);
         }
         return (array("rps" => true , "mensaje" => "Consumo registrado con exito."));
