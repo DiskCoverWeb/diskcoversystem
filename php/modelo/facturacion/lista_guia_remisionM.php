@@ -169,30 +169,47 @@ $Autorizacion_GR=false,$remision=false,$serie_gr=false)
     return $stmt;
   }
 
-	function cargarLineas($guia){
+	function cargarLineas($guia,$codigoL=false){
     $sql = "SELECT Codigo,Cantidad as 'CANTIDAD',Producto,Precio AS 'PRECIO',Total,ID
             FROM Detalle_Factura
             WHERE Item = '".$_SESSION['INGRESO']['item']."' 
             AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
             AND TC = 'GR'
-            AND Factura = '".$guia."'
-            ORDER BY ID Desc ";
+            AND Factura = '".$guia."'";
+            if($codigoL)
+            {
+            	$sql.="AND CodigoL = '".$codigoL."'";
+            }
+            $sql.="ORDER BY ID Desc ";
             $botones[0] = array('boton'=>'Eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'ID' );
            $datos = $this->db->datos($sql);
            $stmt =  grilla_generica_new($sql,'Asiento_F','tbl_lineas',false,$botones,false,false,1,1,0,$tamaño_tabla=250,4);
      return array('tbl'=>$stmt,'datos'=>$datos);
   }
 
-  function limpiarGrid($cod=false){
+  function limpiarGrid($cod=false,$factura=false,$codigoL=false,$auto=false){
     $sql = "DELETE
           FROM Detalle_Factura
           WHERE Item = '".$_SESSION['INGRESO']['item']."' 
           AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
           AND CodigoU = '". $_SESSION['INGRESO']['CodigoU'] ."' 
+          AND TC = 'GR'
           AND LEN(Autorizacion)<=13 ";
           if($cod)
           {
             $sql.=" AND ID = '".$cod."'";
+          }
+          if($factura)
+          {
+          	$sql.="AND Factura = '".$factura."'";
+          }
+          if($codigoL)
+          {
+          	$sql.="AND CodigoL = '".$codigoL."'";
+          }
+          if($auto)
+          {
+          	$sql.="AND Autorizacion = '".$auto."'";
           }
     $stmt = $this->db->String_Sql($sql);
     return $stmt;

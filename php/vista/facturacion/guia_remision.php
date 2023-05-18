@@ -6,7 +6,7 @@
   $(document).ready(function() {
     // limpiar_grid();
     $('#MBoxFechaGRE').select();
-    autocomplete_cliente()
+      autocomplete_cliente()
       DCCiudadI()
       DCCiudadF()
       autocomplete_cliente();
@@ -14,6 +14,7 @@
       DCEmpresaEntrega()
       cargar_grilla()
       productos()
+
 
  $('#cliente').on('select2:select', function (e) {
       var data = e.params.data.data;
@@ -75,6 +76,25 @@
       }
     });
   }
+
+
+ function eliminar_lineas()
+ {
+    parametros = {
+        'guia':$('#LblGuiaR_').val(),
+        'serie':$('#DCSerieGR').val(),
+        'auto':$('#LblAutGuiaRem_').val(),
+    }
+     $.ajax({
+        type: "POST",
+        url: '../controlador/facturacion/lista_guia_remisionC.php?eliminar_lineas=true',
+        data:{parametros:parametros}, 
+        dataType: 'json',
+        success: function(data) {
+            
+        }
+    });
+ }
 
   function AdoPersonas() {
     $('#DCRazonSocial').select2({
@@ -149,6 +169,7 @@ function DCCiudadF() {
 
 function MBoxFechaGRE_LostFocus()
 {
+
     fechaEmision =  $('#MBoxFechaGRE').val()
     fechaVencimiento =  $('#MBoxFechaGRE').val()
     $.ajax({
@@ -228,12 +249,14 @@ function MBoxFechaGRE_LostFocus() {
                 //llenarComboList(data, 'DCSerieGR');
                 $('#LblGuiaR_').val(data['Guia']);
                 $('#LblAutGuiaRem_').val(data['Auto']);
+                eliminar_lineas();
            
         }
         // success: function(response) {
         //     console.log(response);
         //     $('#LblGuiaR_').val(response[0]['Guia']);
         // }
+
     })
 
 }
@@ -403,6 +426,7 @@ function aceptar(){
     parametros = 
     {
         'guia':$('#LblGuiaR_').val(),
+        'serie':$('#DCSerieGR').val(),
     }
     $.ajax({
       type: "POST",
