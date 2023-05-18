@@ -143,6 +143,7 @@
       saldoFavor(data.codigo);
       saldoPendiente(data.codigo);
       clienteMatricula(data.codigo);
+      ListarMedidoresHeader($("#CMedidorFiltro"),data.codigo, true)
 
       //Actualizar cliente
       tempRepresentante = $('#persona').val()
@@ -173,6 +174,10 @@
         }
       })
     });
+
+    $("#CMedidorFiltro").on('change', function () {
+      catalogoProductos($('#codigo').val(), $("#CMedidorFiltro").val());
+    })
   });
 
   function usar_cliente(nombre, ruc, codigocliente, email, T, grupo) {
@@ -234,12 +239,12 @@
     $("#myModal").modal();
   }
 
-  function catalogoProductos(codigoCliente){
+  function catalogoProductos(codigoCliente, CMedidor="."){
     $('#myModal_espera').modal('show');
     $.ajax({
       type: "POST",                 
       url: '../controlador/facturacion/facturar_pensionC.php?catalogoProducto=true',
-      data: {'codigoCliente' : codigoCliente }, 
+      data: {'codigoCliente' : codigoCliente, 'CMedidor' : CMedidor }, 
       dataType:'json', 
       success: function(data)
       {
@@ -276,9 +281,11 @@
         }else{
           console.log("No tiene datos");
         }            
+      },
+      complete: function (argument) {
+        $('#myModal_espera').modal('hide');
       }
     });
-    $('#myModal_espera').modal('hide');
   }
 
   function historiaCliente(){
@@ -1328,12 +1335,19 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
               <div class="col-xs-12 col-md-3 text-right  padding-all">
                 <label class="text-right">Cliente/Alumno (<span class="spanNIC"></span>)</label>
               </div>
-              <div class="col-xs-12 col-md-9 colCliente   padding-all">
+              <div class="col-xs-12  <?php echo ($mostrar_medidor)?'col-md-6':'col-md-9' ?> colCliente   padding-all">
                 <select class="form-control" id="cliente" name="cliente" tabindex="6">
                   <option value="">Seleccione un cliente</option>
                 </select>
                 <input type="hidden" name="codigoCliente" id="codigoCliente">
               </div>
+              <?php if ($mostrar_medidor): ?>
+              <div class="col-xs-12  col-md-3    padding-all">
+                <select class="form-control input-xs" id="CMedidorFiltro" name="CMedidorFiltro">  
+                  <option value="<?php echo G_NINGUNO ?>">Medidores</option>
+                </select>
+              </div>
+              <?php endif ?>
             </div>
 
             <div class="row">

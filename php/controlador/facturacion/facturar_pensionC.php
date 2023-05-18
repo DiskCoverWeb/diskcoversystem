@@ -57,7 +57,7 @@ if(isset($_GET['catalogo']))
 
 if(isset($_GET['catalogoProducto']))
 {
-	$datos = $controlador->getCatalogoProductos();
+	$datos = $controlador->getCatalogoProductosC();
   echo json_encode($datos);
 }
 
@@ -344,9 +344,10 @@ class facturar_pensionC
     return $catalogo;
 	}
 
-	public function getCatalogoProductos(){
-		$codigoCliente = $_POST['codigoCliente'];
-		$datos = $this->facturacion->getCatalogoProductos($codigoCliente);
+	public function getCatalogoProductosC(){
+    $codigoCliente = $_POST['codigoCliente'];
+		$CMedidor = isset($_POST['CMedidor']) ? $_POST['CMedidor'] : G_NINGUNO;
+		$datos = $this->facturacion->getCatalogoProductos($codigoCliente,$CMedidor);
 		$catalogo = [];
 		foreach ($datos as $value) {
 			$catalogo[] = array('mes'=> utf8_encode($value['Mes']),'codigo'=> utf8_encode($value['Codigo_Inv']),'periodo'=> utf8_encode($value['Periodos']),'producto'=>$value['Producto'],'valor'=> utf8_encode($value['Valor']), 'descuento'=> utf8_encode($value['Descuento']),'descuento2'=> utf8_encode($value['Descuento2']),'iva'=> utf8_encode($value['IVA']),'CodigoL'=> utf8_encode($value['Codigo']),'CodigoL'=> utf8_encode($value['Codigo']),'Credito_No'=>$value['Credito_No'],'Codigo_Auto'=>$value['Codigo_Auto']);

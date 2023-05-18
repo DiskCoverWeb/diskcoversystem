@@ -152,7 +152,8 @@ class facturar_pensionM
     return $stmt;
   }
 
-  public function getCatalogoProductos($codigoCliente){
+  public function getCatalogoProductos($codigoCliente, $CMedidor=G_NINGUNO){
+    $Codigo_Auto = ($CMedidor!=G_NINGUNO)?str_pad($CMedidor, 6, "0", STR_PAD_LEFT):G_NINGUNO;
     $sql = "SELECT CF.Mes,CF.Num_Mes,CF.Valor,CF.Descuento,CF.Descuento2,CF.Codigo,CF.Periodo As Periodos,CF.Mensaje,CF.Credito_No, CF.Codigo_Auto ,CP.*
 			FROM Clientes_Facturacion As CF,Catalogo_Productos As CP
 			WHERE CF.Codigo = '".$codigoCliente."'
@@ -161,6 +162,7 @@ class facturar_pensionM
 			AND CF.Mes <> '.'
 			AND CF.Item = CP.Item 
 			AND CF.Codigo_Inv = CP.Codigo_Inv 
+      ".(($Codigo_Auto!=G_NINGUNO)?" AND CF.Codigo_Auto='$Codigo_Auto' ":"")."
 			ORDER BY CF.Periodo,CF.Num_Mes,CF.Codigo_Inv,CF.Credito_No";
     $stmt = $this->db->datos($sql);
     return $stmt;

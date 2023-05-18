@@ -367,7 +367,7 @@ include('../controlador/contabilidad/contabilidad_controller.php');
     return anio + '-' + (mes < 10 ? '0' : '') + mes + '-' + (ultimoDia < 10 ? '0' : '') + ultimoDia;
   }
 
-  function ListarMedidoresHeader(select, codigo, ninguno=false, todos=false)
+  function ListarMedidoresHeader(select, codigo, ninguno=false)
   {
     if(codigo!="" && codigo!="."){
       $.ajax({
@@ -383,13 +383,6 @@ include('../controlador/contabilidad/contabilidad_controller.php');
               select.append($('<option>', {
                 value: '.',
                 text: (opcion.Cuenta_No!=".")?'Selecciona un Medidor':'NINGUNO'
-              }));
-            }
-
-            if(i==0 && todos){
-              select.append($('<option>', {
-                value: 'all',
-                text: 'TODOS'
               }));
             }
 
