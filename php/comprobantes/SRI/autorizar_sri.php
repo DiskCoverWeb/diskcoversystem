@@ -2960,7 +2960,8 @@ function generar_xml_retencion($cabecera,$detalle)
     		 $fecha = date("Y-m-d", strtotime(str_replace('/','-',$fecha_emi)));
     	    }
 			$con = $this->db->conexion();
-			$sql ="UPDATE Facturas SET Autorizacion='".$autorizacion."',Clave_Acceso='".$autorizacion."' WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+			$sql ="UPDATE Facturas SET Autorizacion='".$autorizacion."',Clave_Acceso='".$autorizacion."' 
+			WHERE Item = '".$_SESSION['INGRESO']['item']."' 
             AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 			AND TC = '".$tc."' 
 			AND Serie = '".$serie."' 
@@ -2974,10 +2975,11 @@ function generar_xml_retencion($cabecera,$detalle)
 				 echo "Error en consulta PA.\n";  
 				 die( print_r( sqlsrv_errors(), true));  
 			}
-			$sql="UPDATE Detalle_Factura SET Autorizacion='".$autorizacion."' WHERE Item = '".$_SESSION['INGRESO']['item']."' 
-			 AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-			 AND TC = '".$tc."' 
-			 AND Serie = '".$serie."' 
+			$sql="UPDATE Detalle_Factura SET Autorizacion='".$autorizacion."' 
+			WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+			AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+			AND TC = '".$tc."' 
+			AND Serie = '".$serie."' 
 			AND Autorizacion = '".$autorizacion_ant."' 
 			AND Factura = ".$factura." 
 			AND LEN(Autorizacion) >= 13 
@@ -3155,18 +3157,14 @@ function generar_xml_retencion($cabecera,$detalle)
 	}else
 	{
 		$veri = Digito_verificador($CI_RUC);
-		$datos[0]['campo'] = 'FA';
-		$datos[0]['dato'] = 1;
-		$datos[1]['campo'] = 'CI_RUC';
-		$datos[1]['dato'] = $CI_RUC;
-		$datos[2]['campo'] = 'Cliente';
-		$datos[2]['dato'] = $cliente_xml;
-		$datos[3]['campo'] = 'TD';
-		$datos[3]['dato'] = $veri['Tipo_Beneficiario'];
-		$datos[4]['campo'] = 'Codigo';
-		$datos[4]['dato'] = $veri['Codigo_RUC_CI'];
 		// print_r($datos);die();
-		insert_generico('Clientes',$datos);
+		SetAdoAddNew("Clientes");
+    	SetAdoFields("FA",1);
+    	SetAdoFields("CI_RUC",$CI_RUC);
+    	SetAdoFields("Cliente",$cliente_xml);
+    	SetAdoFields("TD",$veri['Tipo_Beneficiario']);
+    	SetAdoFields("Codigo",$veri['Codigo_RUC_CI']);
+    	SetAdoUpdate();
 		
 		return array('Codigo' =>$veri['Codigo_RUC_CI'],'Fecha'=>$Fecha);
 
@@ -3191,7 +3189,7 @@ function recuperar_xml_a_factura($documento,$autorizacion,$entidad,$empresa)
 	$texto = str_replace('EN PROCESO','nulo', $texto,$remplazado);
 	if($remplazado>0)
 	{
-	return -2;
+		return -2;
 	}
 
 	$texto = str_replace('ï»¿','', $texto);
@@ -3220,7 +3218,7 @@ function recuperar_xml_a_factura($documento,$autorizacion,$entidad,$empresa)
 	$codigoC = $this->datos_cliente($codigo=false,$CI_RUC);
 	if(count($codigoC)==0)
 	{
-	return -1;
+		return -1;
 	}
 	$cliente = Leer_Datos_Cliente_FA($codigoC[0]['Codigo']);
 
@@ -3231,7 +3229,7 @@ function recuperar_xml_a_factura($documento,$autorizacion,$entidad,$empresa)
 	// print_r($CodigoL2);die();
 	if(count($CodigoL2)>0)
 	{
-	$CodigoL = $CodigoL2[0]['Codigo'];
+		$CodigoL = $CodigoL2[0]['Codigo'];
 	}
 
 	$A_No = 0;
@@ -3240,72 +3238,61 @@ function recuperar_xml_a_factura($documento,$autorizacion,$entidad,$empresa)
 
 	if(isset($detalle['detalle']['codigoPrincipal']))
 	{
-
 	//no se hace nada
 	}else
 	{
-	$detalle = $detalle['detalle'];
+		$detalle = $detalle['detalle'];
 	}
-	foreach ($detalle as $key => $value) {
+	foreach ($detalle as $key => $value) 
+	{
 	// print_r($value);die();
-	$producto = Leer_Codigo_Inv($value['codigoPrincipal'],$Fecha,$CodBodega='',$CodMarca='');
-	$Real1 = number_format(floatval($value['cantidad']),2,'.','') * number_format($value['precioUnitario'],6,'.','');
-	if($producto['datos']['IVA']!=0){$Real3 = number_format(($Real1 - $Real2) * $_SESSION['INGRESO']['porc'],
-	2,'.','');}else{$Real3 = 0;}
-	if(!isset($value['descuento'])){$value['descuento'] = 0;}
+		$producto = Leer_Codigo_Inv($value['codigoPrincipal'],$Fecha,$CodBodega='',$CodMarca='');
+		$Real1 = number_format(floatval($value['cantidad']),2,'.','') * number_format($value['precioUnitario'],6,'.','');
+		if($producto['datos']['IVA']!=0)
+		{
+			$Real3 = number_format(($Real1 - $Real2) * $_SESSION['INGRESO']['porc'],2,'.','');
+		}else
+		{
+			$Real3 = 0;
+		}
+		if(!isset($value['descuento']))
+		{
+			$value['descuento'] = 0;
+		}
 
+		// print_r($producto);
+		// print_r($value);
+		// die();
 
+		SetAdoAddNew("Asiento_F");
+		SetAdoFields("CODIGO",$value['codigoPrincipal']);
+		SetAdoFields("CODIGO_L",$CodigoL);
+		SetAdoFields("PRODUCTO",$value['descripcion']);
+		SetAdoFields("Tipo_Hab",'.');
+		SetAdoFields("CANT",number_format(floatval($value['cantidad']),2,'.',''));
+		SetAdoFields("PRECIO",number_format($value['precioUnitario'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
+		SetAdoFields("TOTAL",number_format(floatval($value['cantidad']),2,'.','') * number_format($value['precioUnitario'],6,'.',''));
+		SetAdoFields("Total_IVA",$Real3);
+		SetAdoFields("Item",$empresa);
+		SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+		SetAdoFields("Codigo_Cliente",$cliente['CodigoC']);
+		SetAdoFields("A_No",$A_No+1);
+		SetAdoFields("CodBod",'.');
+		SetAdoFields("COSTO",$producto['datos']['Costo']);
+		SetAdoFields("Total_Desc",$value['descuento']);
+		SetAdoFields("FECHA",$Fecha);
 
-	// print_r($producto);
-	// print_r($value);
-	// die();
-	$datos[0]['campo'] = "CODIGO";
-	$datos[0]['dato'] = $value['codigoPrincipal'];
-	$datos[1]['campo'] = "CODIGO_L";
-	$datos[1]['dato'] = $CodigoL;
-	$datos[2]['campo'] = "PRODUCTO";
-	$datos[2]['dato'] = $value['descripcion'];
-	$datos[3]['campo'] = "Tipo_Hab";
-	$datos[3]['dato'] = '.';
-	$datos[4]['campo'] = "CANT";
-	$datos[4]['dato'] = number_format(floatval($value['cantidad']),2,'.','');
-	$datos[5]['campo'] = "PRECIO";
-	$datos[5]['dato'] = number_format($value['precioUnitario'],6,'.','');
-	$datos[6]['campo'] = "TOTAL";
-	$datos[6]['dato'] = number_format(floatval($value['cantidad']),2,'.','') * number_format($value['precioUnitario'],6,'.','');
-	$datos[7]['campo'] = "Total_IVA";
-	$datos[7]['dato'] = $Real3;
-	$datos[8]['campo'] = "Item";
-	$datos[8]['dato'] = $empresa;
-	$datos[9]['campo'] = "CodigoU";
-	$datos[9]['dato'] = $_SESSION['INGRESO']['CodigoU'];
-	$datos[10]['campo'] = "Codigo_Cliente";
-	$datos[10]['dato'] = $cliente['CodigoC'];
-	$datos[11]['campo'] = "A_No";
-	$datos[11]['dato'] = $A_No+1;
+		if($producto['datos']['Costo']>0)
+		{
+			SetAdoFields("Cta_Inv",$producto['datos']['Cta_Inventario']);
+			SetAdoFields("Cta_Costo",$producto['datos']['Cta_Costo_Venta']);
+		}
+	    
 
-
-	$datos[12]['campo'] = "CodBod";
-	$datos[12]['dato'] ='.';
-	$datos[13]['campo'] = "COSTO";
-	$datos[13]['dato'] = $producto['datos']['Costo'];
-
-	$datos[14]['campo'] = "Total_Desc";
-	$datos[14]['dato'] = $value['descuento'];
-
-	$datos[15]['campo'] = "FECHA";
-	$datos[15]['dato'] = $Fecha;
-	if($producto['datos']['Costo']>0)
-	{
-		$datos[16]['campo'] = "Cta_Inv";
-		$datos[16]['dato'] = $producto['datos']['Cta_Inventario'];
-		$datos[17]['campo'] = "Cta_Costo";
-		$datos[17]['dato'] = $producto['datos']['Cta_Costo_Venta'];
-	}
-	if(insert_generico('Asiento_F',$datos)!=null)
-	{
-		$respuesta = -1;
-	};
+		if(SetAdoUpdate()!=1)
+		{
+			$respuesta = -1;
+		};
 	}
 
 	return $respuesta;
@@ -3317,59 +3304,51 @@ function Actualizar_factura($CI_RUC,$FacturaNo,$serie)
 {
 	$digito = Digito_verificador($CI_RUC);
 	$cli = $this->datos_cliente_todo(false,$CI_RUC);
-
 	// print_r($digito);
 	// print_r($cli);die();
 
 	if(count($cli)>0)
-	{
-	$datosC[0]['campo']='Codigo';
-	$datosC[0]['dato']=$digito['Codigo_RUC_CI'];
-	$datosC[1]['campo']='TD';
-	$datosC[1]['dato']=$digito['Tipo_Beneficiario'];
-	$datosC[2]['campo']='FA';
-	$datosC[2]['dato']=1;
+	{			
+		if($cli[0]['TD']=='' || $cli[0]['TD']=='.' || $cli[0]['Codigo']=='' || $cli[0]['Codigo']=='.')
+		{
+			SetAdoAddNew("Clientes");
+	    	SetAdoFields("Codigo",$digito['Codigo_RUC_CI']);
+	    	SetAdoFields("TD",$digito['Tipo_Beneficiario']);
+	    	SetAdoFields("FA",1);
 
-	$whereC[0]['campo']='CI_RUC';
-	$whereC[0]['valor']=$CI_RUC;
-	$whereC[0]['tipo']='string';
-	if($cli[0]['TD']=='' || $cli[0]['TD']=='.' ||$cli[0]['Codigo']=='' || $cli[0]['Codigo']=='.')
-	{
-		update_generico($datosC,'Clientes',$whereC);
-	}
+			SetAdoFieldsWhere('CI_RUC',$CI_RUC);
+			SetAdoUpdateGeneric();
+		}
+
+		$cliente = Leer_Datos_Cliente_FA($digito['Codigo_RUC_CI']);
+		// print_r($cliente);die();
+		SetAdoAddNew("Facturas");
+		SetAdoFields('CodigoC',$cliente['CodigoC']);
+		SetAdoFields('TB',$cliente['TD']);
+		SetAdoFields('Razon_Social',$cliente['Razon_Social']);
+		SetAdoFields('Direccion_RS',$cliente['DireccionC']);
+		SetAdoFields('Telefono_RS',$cliente['TelefonoC']);
+
+		SetAdoFieldsWhere('Serie',$serie);
+		SetAdoFieldsWhere('Factura',$FacturaNo);
+		SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
+		SetAdoFieldsWhere('Periodo',$_SESSION['INGRESO']['periodo']);
+		SetAdoFieldsWhere('TC','FA');
+		SetAdoUpdateGeneric();
+
+		SetAdoAddNew("Detalle_Factura");
+		SetAdoFields('T',"P");
+		SetAdoFieldsWhere('Serie',$serie);
+		SetAdoFieldsWhere('Factura',$FacturaNo);
+		SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
+		SetAdoFieldsWhere('Periodo',$_SESSION['INGRESO']['periodo']);
+		SetAdoFieldsWhere('TC','FA');
+		SetAdoUpdateGeneric();
 
 
-$cliente = Leer_Datos_Cliente_FA($digito['Codigo_RUC_CI']);
-// print_r($cliente);die();
-$datosF[0]['campo']='CodigoC';
-$datosF[0]['dato']=$cliente['CodigoC'];
-$datosF[1]['campo']='TB';
-$datosF[1]['dato']=$cliente['TD'];
-$datosF[2]['campo']='Razon_Social';
-$datosF[2]['dato']=$cliente['Razon_Social'];
-$datosF[3]['campo']='Direccion_RS';
-$datosF[3]['dato']=$cliente['DireccionC'];
-$datosF[4]['campo']='Telefono_RS';
-$datosF[4]['dato']=$cliente['TelefonoC'];
+		// die();
 
-$whereF[0]['campo']='Serie';
-$whereF[0]['valor']=$serie;
-$whereF[1]['campo']='Factura';
-$whereF[1]['valor']=$FacturaNo;
-$whereF[2]['campo']='Item';
-$whereF[2]['valor']=$_SESSION['INGRESO']['item'];
-$whereF[2]['tipo']='string';
-$whereF[3]['campo']='Periodo';
-$whereF[3]['valor']=$_SESSION['INGRESO']['periodo'];
-$whereF[4]['campo']='TC';
-$whereF[4]['valor']='FA';
-
-// print_r($datosF);
-// print_r($whereF);
-// die();
-update_generico($datosF,'Facturas',$whereF);
-
-return 1;
+		return 1;
 }else
 {
 return -1;
@@ -3428,21 +3407,15 @@ function SRI_Actualizar_Documento_XML($ClaveDeAcceso)
 	        $datos = $this->db->datos($sql);
 	        if(count($datos)<=0)
 	        {
-	        	$datosT[0]['campo'] = 'Item';
-	        	$datosT[0]['dato'] = $_SESSION['INGRESO']['item'];
-	        	$datosT[1]['campo'] = 'Periodo';
-	        	$datosT[1]['dato'] = $_SESSION['INGRESO']['periodo'];
-	        	$datosT[2]['campo'] = 'Clave_Acceso';
-	        	$datosT[2]['dato'] = $ClaveDeAcceso;
-	        	$datosT[3]['campo'] = 'TD';
-	        	$datosT[3]['dato'] = $TD;
-	        	$datosT[4]['campo'] = 'Serie';
-	        	$datosT[4]['dato'] = $SerieF;
-	        	$datosT[5]['campo'] = 'Documento';
-	        	$datosT[5]['dato'] = $Documento;
-	        	$datosT[6]['campo'] = 'Documento_Autorizado';
-	        	$datosT[6]['dato'] = $DatosXMLA;
-	        	insert_generico('Trans_Documentos',$datosT);
+	        	SetAdoAddNew("Trans_Documentos");
+    			SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+    			SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+    			SetAdoFields("Clave_Acceso",$ClaveDeAcceso);
+    			SetAdoFields("TD",$TD);
+    			SetAdoFields("Serie",$SerieF);
+    			SetAdoFields("Documento",$Documento);
+    			SetAdoFields("Documento_Autorizado",$DatosXMLA);
+    			SetAdoUpdate();
 	        }
 	    }
 	 }
