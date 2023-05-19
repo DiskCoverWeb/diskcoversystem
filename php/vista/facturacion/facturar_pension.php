@@ -1031,6 +1031,7 @@
               CheqPorDeposito = "1";
             }
 
+            $('#myModal_espera').modal('show');
             $.ajax({
               type: 'POST',
               dataType: 'json',
@@ -1051,9 +1052,6 @@
                 "Label18" : $("#tdCliente").val(),
                 "CheqPorDeposito" : CheqPorDeposito
               }, 
-              beforeSend: function () {   
-                  $('#myModal_espera').modal('show');
-              },    
               success: function(response)
               {
                 $('#myModal_espera').modal('hide');  
