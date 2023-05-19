@@ -46,6 +46,13 @@
     cargarBancos();
     DCGrupo_No();
 
+    document.addEventListener('click', function(event) {
+      let backdrop = document.querySelector('.modal-backdrop');
+      if (backdrop === event.target) {
+        backdrop.parentNode.removeChild(backdrop);
+      }
+    });
+
     $.ajax({
       type: "POST",                 
       url: '../controlador/facturacion/facturar_pensionC.php?getMBHistorico=true',
@@ -1031,6 +1038,7 @@
               CheqPorDeposito = "1";
             }
 
+            $('#myModal_espera').modal('show');
             $.ajax({
               type: 'POST',
               dataType: 'json',
@@ -1051,9 +1059,6 @@
                 "Label18" : $("#tdCliente").val(),
                 "CheqPorDeposito" : CheqPorDeposito
               }, 
-              beforeSend: function () {   
-                  $('#myModal_espera').modal('show');
-              },    
               success: function(response)
               {
                 $('#myModal_espera').modal('hide');  
