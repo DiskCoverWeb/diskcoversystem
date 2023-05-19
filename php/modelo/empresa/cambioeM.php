@@ -24,7 +24,7 @@ class cambioeM
 
 	}
 
-	function entidad($query=false,$IDempresa,$ciudad=false)
+	function entidad($query=false,$IDempresa="",$ciudad=false)
 	{
 
 		if($ciudad)

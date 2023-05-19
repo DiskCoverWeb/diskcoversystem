@@ -54,5 +54,35 @@ class crear_empresaM
             WHERE Empresa <> '" .$nombre. "' ";
         return  $this->db->datos($sql);
     }
+
+    function generarItem()
+    {
+        $Numero = 0;
+        $sSQL = "SELECT Item
+                 FROM Empresas
+                 WHERE Item <> '000'
+                 ORDER BY Item";
+        $resultado = $this->db->datos($sSQL);
+
+        if (count($resultado) > 0) {
+            foreach ($resultado as $row) {
+                $Numero = intval($row['Item']);
+                for ($i = $Numero; $i <= 999; $i++) {
+                    $found = false;
+                    foreach ($resultado as $row) {
+                        if ($row['Item'] == sprintf("%03d", $i)) {
+                            $found = true;
+                            break;
+                        }
+                    }
+                    if (!$found) {
+                        $Numero = $i;
+                        break;
+                    }
+                }
+            }
+        }
+        return str_pad($Numero, 3, '0', STR_PAD_LEFT);
+    }
 }
 ?>

@@ -215,7 +215,7 @@ class niveles_seguriM
 	  return $this->db->String_Sql($sql,'MY SQL');
 
 	}
-	function delete_modulos($entidad,$empresas=false,$usuario,$modulo=false)
+	function delete_modulos($entidad,$empresas=false,$usuario="",$modulo=false)
 	{
 		$sql = "DELETE FROM acceso_empresas WHERE  ID_Empresa = ".$entidad." ";
 		$sql2 = "DELETE FROM Acceso_Empresa WHERE 1=1 ";
@@ -253,7 +253,7 @@ class niveles_seguriM
 	}
 
 
-	function delete_modulos_mysql($entidad,$empresas=false,$usuario,$modulo=false)
+	function delete_modulos_mysql($entidad,$empresas=false,$usuario="",$modulo=false)
 	{
 		$sql = "DELETE FROM acceso_empresas WHERE  ID_Empresa = ".$entidad." AND Pagina='.' ";
 		if($empresas)

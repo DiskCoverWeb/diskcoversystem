@@ -4,7 +4,6 @@ include(dirname(__DIR__,2).'/modelo/empresa/crear_empresaM.php');
 $controlador = new crear_empresaC();
 
 if(isset($_GET['llamar'])){
-    //print_r ($_POST);die();
     $ll='';
     if(isset($_POST['item']))
     {
@@ -14,19 +13,11 @@ if(isset($_GET['llamar'])){
 }
 if(isset($_GET['guardar_empresa']))
 {
-    //print_r ($_POST);die();
-    // $razon1 = '';
-    // if(isset($_POST['razon1']));
-    // {
-    //     $razon1 = $_POST['razon1'];
-    // }
-    // echo json_encode($controlador->guardardb_empresa($razon1));
     $query = $_POST;
 	echo json_encode($controlador->guardardb_empresas($query));
 }
 if(isset($_GET['delete']))
 {
-    // print_r($_POST);die();
     $id='';
     if(isset($_POST['id']));
     {
@@ -36,48 +27,37 @@ if(isset($_GET['delete']))
 }
 if(isset($_GET['validarCI']))
 {
-    //print_r($_POST);die();
 	$ci =$_POST['ci'] ;
-    //print_r($ci);die();
 	echo json_encode(Digito_verificador($ci));
 }
 if(isset($_GET['validarRUC']))
 {
-    //print_r($_POST);die();
 	$ci =$_POST['txtruc'] ;
-    //print_r($ci);die();
 	echo json_encode(Digito_verificador($ci));
 }
 if(isset($_GET['validarRUConta']))
 {
-    //print_r($_POST);die();
 	$ci =$_POST['txtruconta'] ;
-    //print_r($ci);die();
 	echo json_encode(Digito_verificador($ci));
 }
 if(isset($_GET['subdireccion']))
 {
-    // print_r($_POST);die();
     $query = $_POST['txtsubdi'];
 	echo json_encode($controlador->TextSubDir_LostFocus($query));
 }
 
 if(isset($_GET['naciones']))
 {
-  //echo 'hola';
   echo json_encode(naciones_todas());
-  //print_r(provincia_todas());
 }
 if(isset($_GET['provincias']))
 {
-	//echo 'hola';
   $pais = '';
   if(isset($_POST['pais']))
   {
     $pais = $_POST['pais'];
   }
 	echo json_encode(provincia_todas($pais));
-	//print_r(provincia_todas());
 }
 if(isset($_GET['ciudad']))
 {
@@ -94,7 +74,6 @@ if(isset($_GET['empresas']))
 }
 if(isset($_GET['Copiarempresas']))
 {
-    //print_r($_POST);die();
     $cempresa = '';
     if(isset($_GET['Nomempresa']))
     {
@@ -104,39 +83,25 @@ if(isset($_GET['Copiarempresas']))
 }
 if(isset($_GET['traer_usuario']))
 {	
-    // $dato = '';
-    // if(isset($_GET['q']))
-    // {
-    //     $dato = $_GET['q'];
-    // }
-	// echo json_encode($controlador->lista_usuario($dato));
-    // print_r($_POST);die();
+
     $ll='';
     if(isset($_POST['form']))
     {
         $ll=$_POST['form'];
     }
-    // echo json_encode($controlador->llamardb($ll));
-    // $query = $_POST;
 	echo json_encode($controlador->lista_usuario($ll));	
 }
 if(isset($_GET['informacion_empre']))
 {	
     $para = $_POST['parametros'];
     $res = $controlador->info_empresa($para);
-
-    // echo json_encode($res);
-//    print_r($res);die();
 }
 if(isset($_GET['formulario']))
 {	
-    // $para = $_POST;
     $para = '';
-    // print_r($para);die();
     $res = $controlador->formulario1($para);
 
     echo json_encode($res);
-    //  print_r($res);die();
 }
 class crear_empresaC 
 {
@@ -312,7 +277,6 @@ class crear_empresaC
     }
     function lista_usuario($dato)
     {
-        // print_r($dato);die();
         $datos = $this->modelo->usuario($dato);
         $lis = array();
         foreach ($datos as $key => $value) {
@@ -327,7 +291,6 @@ class crear_empresaC
     function llamardb($l1)
     {
         $datos = $this->modelo->lista_empresas(false,$l1);
-        // print_r($datos);die();
         return $datos;
     }
 
@@ -335,9 +298,7 @@ class crear_empresaC
 function  TextSubDir_LostFocus($query)
 {
     $TextSubDir = TextoValido($query);
-    //print_r($TextSubDir);die();
     $dato = $this->modelo->consulta_empresa();
-    //print_r($TextSubDir);die();
     if(count($dato)>0)
     {
         if($TextSubDir == G_NINGUNO  )
@@ -420,149 +381,101 @@ function  TextSubDir_LostFocus($query)
     //     //     print_r($NumEmpSubDir);die();
     //     // }
     // }
-    function guardardb_empresa($parametro)
-    {
-        //  print_r($parametro);die();
-        $resp = $this->modelo->lista_empresas(trim($parametro['item']));
-        $datos[0]['campo'] = 'Razon_Social'; 
-        $datos[0]['dato'] = $parametro['TxtRazonSocial']; 
-        // // // $datos[1]['campo'] = 'Nombre'; 
-        // // // $datos[1]['dato'] = $parametros['nombre']; 
+    // function guardardb_empresa($parametro)
+    // {//TODO LS 2023-05-19 NO SE ESTA USANDO - SE COMENTA - PARA EN UN FUTURO BORRARLA
+    //     $resp = $this->modelo->lista_empresas(trim($parametro['item']));
+    //     $datos[0]['campo'] = 'Razon_Social'; 
+    //     $datos[0]['dato'] = $parametro['TxtRazonSocial'];  
         
-        if($parametro['TxtItem']!='')
-		{
-			$campoWhere[0]['campo'] = 'Item';
-			$campoWhere[0]['valor'] = $parametro['TxtItem'];
-			$re = update_generico($datos,'Empresa',$campoWhere);
-		}else
-		{
-			print_r($resp);die();
-			if(count($resp)==0)
-		      {
-			    $re = insert_generico('Empresas',$datos); // optimizado pero falta 
-			  }else{
-			  	return 2;
-			  }
-		}
+    //     if($parametro['TxtItem']!='')
+	// 	{
+	// 		$campoWhere[0]['campo'] = 'Item';
+	// 		$campoWhere[0]['valor'] = $parametro['TxtItem'];
+	// 		$re = update_generico($datos,'Empresa',$campoWhere);
+	// 	}else
+	// 	{
+	// 		print_r($resp);die();
+	// 		if(count($resp)==0)
+	// 	      {
+	// 		    $re = insert_generico('Empresas',$datos); // optimizado pero falta 
+	// 		  }else{
+	// 		  	return 2;
+	// 		  }
+	// 	}
 
-        // insert_generico('Empresas',$datos);
-    }
+    //     // insert_generico('Empresas',$datos);
+    // }
     function delete_empresas($id)
 	{
-        // print_r('---'$id);die();
-		// return $this->modelo->delete_empresa($id);
         $Item = $id;
-        // print_r($Item);die();
-       $re =  Eliminar_Empresa_SP($Item);
-       return $this->modelo->delete_empresa($re);
+        $re =  Eliminar_Empresa_SP($Item);
+        return $this->modelo->delete_empresa($re);
 	}
     function guardardb_empresas($parametros)  //para un solo dato string
     {
         $CorreoDiskCover = CorreoDiskCover;
         $ContrasenaDiskCover = ContrasenaDiskCover;
-        // $ci = $parametros["TxtCI"];
-        //print_r($parametros);die();
-        //$datos[0]['campo'] = 'Razon_Social'; 
-        //$datos[0]['dato'] = $razon;
+
         //DATOS PRINCIPALES
-        $datos[0]['dato'] = $parametros['TxtEmpresa']; 
-        $datos[0]['campo'] = 'Empresa'; 
-	    $datos[1]["dato"] = $parametros["TxtRazonSocial"];
-	    $datos[1]["campo"] = 'Razon_Social';
-	    $datos[2]["dato"] = $parametros["TxtNomComercial"];
-	    $datos[2]["campo"] = 'Nombre_Comercial';
-	    $datos[3]["dato"] = $parametros["TxtRuc"];
-	    $datos[3]["campo"] = 'RUC';
-        $datos[4]["dato"] = $parametros["TxtRepresentanteLegal"];
-	    $datos[4]["campo"] = 'Gerente';
-	    $datos[5]["dato"] = $parametros["TxtCI"];
-	    $datos[5]["campo"] = 'CI_Representante';
-	    $datos[6]["dato"] = $parametros["TxtDirMatriz"];
-	    $datos[6]["campo"] = 'Direccion';
-	    $datos[7]["dato"] = $parametros["TxtEsta"];
-	    $datos[7]["campo"] = 'Establecimientos';
-	    $datos[8]["dato"] = $parametros["TxtTelefono"];
-	    $datos[8]["campo"] = 'Telefono1';
-	    $datos[9]["dato"] = $parametros["TxtTelefono2"];
-	    $datos[9]["campo"] = 'Telefono2';
-	    $datos[10]["dato"] = $parametros["TxtFax"];
-	    $datos[10]["campo"] = 'FAX';
-	    $datos[11]["dato"] = $parametros["TxtMoneda"];
-	    $datos[11]["campo"] = 'S_M';
-	    $datos[12]["dato"] = $parametros["TxtNPatro"];
-	    $datos[12]["campo"] = 'No_Patronal';
-	    $datos[13]["dato"] = $parametros["TxtCodBanco"];
-	    $datos[13]["campo"] = 'CodBanco';
-	    $datos[14]["dato"] = $parametros["TxtTipoCar"];
-	    $datos[14]["campo"] = 'Tipo_Carga_Banco';
-	    $datos[15]["dato"] = $parametros["TxtAbrevi"];
-	    $datos[15]["campo"] = 'Abreviatura';
-	    $datos[16]["dato"] = $parametros["TxtEmailEmpre"];
-	    $datos[16]["campo"] = 'Email';
-	    $datos[17]["dato"] = $parametros["TxtEmailConta"];
-	    $datos[17]["campo"] = 'Email_Contabilidad';
-        if($parametros["TxtEmailRespa"]=='')
-        {
-            $datos[18]["dato"] = $CorreoDiskCover;
-            $datos[18]["campo"] = 'Email_Respaldos';
-        }else if($parametros["TxtEmailRespa"]!='')
-        {
-            $datos[18]["dato"] = $parametros["TxtEmailRespa"];
-            $datos[18]["campo"] = 'Email_Respaldos';
-        }
+        SetAdoAddNew("Empresas");
+        SetAdoFields("Empresa", $parametros['TxtEmpresa']);
+        SetAdoFields("Razon_Social", $parametros["TxtRazonSocial"]);
+        SetAdoFields("Nombre_Comercial", $parametros["TxtNomComercial"]);
+        SetAdoFields("RUC", $parametros["TxtRuc"]);
+        SetAdoFields("Gerente", $parametros["TxtRepresentanteLegal"]);
+        SetAdoFields("CI_Representante", $parametros["TxtCI"]);
+        SetAdoFields("Direccion", $parametros["TxtDirMatriz"]);
+        SetAdoFields("Establecimientos", $parametros["TxtEsta"]);
+        SetAdoFields("Telefono1", $parametros["TxtTelefono"]);
+        SetAdoFields("Telefono2", $parametros["TxtTelefono2"]);
+        SetAdoFields("FAX", $parametros['TxtFax']);
+        SetAdoFields("S_M", $parametros["TxtMoneda"]);
+        SetAdoFields("No_Patronal", $parametros["TxtNPatro"]);
+        SetAdoFields("CodBanco", $parametros["TxtCodBanco"]);
+        SetAdoFields("Tipo_Carga_Banco", $parametros["TxtTipoCar"]);
+        SetAdoFields("Abreviatura", $parametros["TxtAbrevi"]);
+        SetAdoFields("Email", $parametros["TxtEmailEmpre"]);
+        SetAdoFields("Email_Contabilidad", $parametros["TxtEmailConta"]);
+        SetAdoFields("Email_Respaldos", ($parametros["TxtEmailRespa"]=='')?$CorreoDiskCover:$parametros["TxtEmailRespa"]);
+
 	    // $datos[18]["dato"] = $parametros["TxtEmailRespa"];
 	    // $datos[18]["campo"] = 'Email_Respaldos';
-	    $datos[19]["dato"] = $parametros["TxtSegDes1"];
-	    $datos[19]["campo"] = 'Seguro';
-	    $datos[20]["dato"] = $parametros["TxtSegDes2"];
-	    $datos[20]["campo"] = 'Seguro2';
-	    $datos[21]["dato"] = $parametros["TxtSubdir"];
-	    $datos[21]["campo"] = 'SubDir';
-	    $datos[22]["dato"] = $parametros["TxtNombConta"];
-	    $datos[22]["campo"] = 'Contador';
-	    $datos[23]["dato"] = $parametros["TxtRucConta"];
-	    $datos[23]["campo"] = 'RUC_Contador';
-	    $datos[24]["dato"] = $parametros["ddl_obli"];
-	    $datos[24]["campo"] = 'Obligado_Conta';
-	    $datos[25]["dato"] = $parametros["ddl_naciones"];
-	    $datos[25]["campo"] = 'CPais';
-	    $datos[26]["dato"] = $parametros["prov"];
-	    $datos[26]["campo"] = 'Prov';
-	    $datos[27]["dato"] = $parametros["ddl_ciudad"];
-	    $datos[27]["campo"] = 'Ciudad';
+	    SetAdoFields("Seguro", $parametros["TxtSegDes1"]);
+        SetAdoFields("Seguro2", $parametros["TxtSegDes2"]);
+        SetAdoFields("SubDir", $parametros["TxtSubdir"]);
+        SetAdoFields("Contador", $parametros["TxtNombConta"]);
+        SetAdoFields("RUC_Contador", $parametros["TxtRucConta"]);
+        SetAdoFields("Obligado_Conta", $parametros["ddl_obli"]);
+        SetAdoFields("CPais", $parametros["ddl_naciones"]);
+        SetAdoFields("Prov", $parametros["prov"]);
+        SetAdoFields("Ciudad", $parametros["ddl_ciudad"]);
+
         //PROCESOS GENERALES        
         if($parametros["ckASDAS"]== 'false')
 		{
-			$datos[28]["dato"] = 0;
-            $datos[28]["campo"]='Det_SubMod';
+            SetAdoFields("Det_SubMod", 0);
 		}else if($parametros["ckASDAS"]== 'true')
         {
-            $datos[28]["dato"] = 1;
-            $datos[28]["campo"] = 'Det_SubMod';
+            SetAdoFields("Det_SubMod", 1);
         }
         
-        $datos[29]["dato"] = $parametros["TxtServidorSMTP"];
-        $datos[29]["campo"] = 'smtp_Servidor';
-	    $datos[30]["dato"] = $parametros["TxtPuerto"];
-	    $datos[30]["campo"] = 'smtp_Puerto';
+        SetAdoFields("smtp_Servidor", $parametros["TxtServidorSMTP"]);
+        SetAdoFields("smtp_Puerto", $parametros["TxtPuerto"]);
+
         if($parametros["TxtPVP"]<=2)
         {
-            $datos[31]["dato"] = 2;
-            $datos[31]["campo"] = 'Dec_PVP';
+            SetAdoFields("Dec_PVP", 2);
         }
         if($parametros["TxtCOSTOS"]<=2)
         {
-            $datos[32]["dato"] = 2;
-            $datos[32]["campo"] = 'Dec_Costo';
+            SetAdoFields("Dec_Costo", 2);
         }
         if($parametros["TxtIVA"]<=2)
         {
-            $datos[33]["dato"] = 2;
-            $datos[33]["campo"] = 'Dec_IVA';
+            SetAdoFields("Dec_IVA", 2);
         }else if ($parametros["TxtIVA"]>=4)
         {
-            $datos[33]["dato"] = 4;
-            $datos[33]["campo"] = 'Dec_IVA';
+            SetAdoFields("Dec_IVA", 4);
         }
 	    // $datos[31]["dato"] = $parametros["TxtPVP"];
 	    // $datos[31]["campo"] = 'Dec_PVP';
@@ -570,316 +483,180 @@ function  TextSubDir_LostFocus($query)
 	    // $datos[32]["campo"] = 'Dec_Costo';
 	    // $datos[33]["dato"] = $parametros["TxtIVA"];
 	    // $datos[33]["campo"] = 'Dec_IVA';
-        $datos[34]["dato"] = $parametros["TxtCantidad"];
-		$datos[34]["campo"] = 'Dec_Cant';
+        SetAdoFields("Dec_Cant", $parametros["TxtCantidad"]);
 
         //COMPROBANTES ELECTRÓNICOS
-		$datos[35]["dato"] = $parametros["TxtContriEspecial"];
-		$datos[35]["campo"] = 'Codigo_Contribuyente_Especial';
+        SetAdoFields("Codigo_Contribuyente_Especial", $parametros["TxtContriEspecial"]);
 
         if($parametros["Ambiente1"]== 'true' && $parametros["Ambiente2"]== 'false')
         {
-            $datos[36]["dato"] = 1;
-            $datos[36]["campo"] = 'Ambiente';
-            $datos[37]["dato"] = $parametros["TxtWebSRIre"];
-            $datos[37]["campo"] = 'Web_SRI_Recepcion';
-            $datos[38]["dato"] = $parametros["TxtWebSRIau"];
-            $datos[38]["campo"] = 'Web_SRI_Autorizado';
+            SetAdoFields("Ambiente", 1);
+            SetAdoFields("Web_SRI_Recepcion", $parametros["TxtWebSRIre"]);
+            SetAdoFields("Web_SRI_Autorizado", $parametros["TxtWebSRIau"]);
         }else if ($parametros["Ambiente1"]== 'false' && $parametros["Ambiente2"]== 'true')
         {
-            $datos[36]["dato"] = 2;
-            $datos[36]["campo"] = 'Ambiente';
-            $datos[37]["dato"] = $parametros["TxtWebSRIre"];
-            $datos[37]["campo"] = 'Web_SRI_Recepcion';
-            $datos[38]["dato"] = $parametros["TxtWebSRIau"];
-            $datos[38]["campo"] = 'Web_SRI_Autorizado';
+            SetAdoFields("Ambiente", 2);
+            SetAdoFields("Web_SRI_Recepcion", $parametros["TxtWebSRIre"]);
+            SetAdoFields("Web_SRI_Autorizado", $parametros["TxtWebSRIau"]);
         }
 		
-		$datos[39]["dato"] = $parametros["TxtEXTP12"];
-		$datos[39]["campo"] = 'Ruta_Certificado';
-        $datos[40]["dato"] = $parametros["TxtContraExtP12"];
-		$datos[40]["campo"] = 'Clave_Certificado';
-        
-        if($parametros["TxtEmailGE"]=='')
-        {
-            $datos[41]["dato"] = $CorreoDiskCover;
-            $datos[41]["campo"] = 'Email_Conexion';
-        }else if($parametros["TxtEmailGE"]!='')
-        {
-            $datos[41]["dato"] = $parametros["TxtEmailGE"];
-            $datos[41]["campo"] = 'Email_Conexion';
-        }
-
-        if($parametros["TxtContraEmailGE"]=='')
-        {
-            $datos[42]["dato"] = $ContrasenaDiskCover;
-            $datos[42]["campo"] = 'Email_Contraseña';
-        }else if($parametros["TxtContraEmailGE"]!='')
-        {
-            $datos[42]["dato"] = $parametros["TxtContraEmailGE"];
-            $datos[42]["campo"] = 'Email_Contraseña';
-        }
-
-		$datos[43]["dato"] = $parametros["TxtEmaiElect"];
-		$datos[43]["campo"] = 'Email_Conexion_CE';
-
-        $datos[44]["dato"] = $parametros["TxtContraEmaiElect"];
-		$datos[44]["campo"] = 'Email_Contraseña_CE';
-		$datos[45]["dato"] = $parametros["TxtCopiaEmai"];
-		$datos[45]["campo"] = 'Email_Procesos';
-        $datos[46]["dato"] = $parametros["TxtRUCOpe"];
-		$datos[46]["campo"] = 'RUC_Operadora';
-		$datos[47]["dato"] = $parametros["txtLeyendaDocumen"];
-		$datos[47]["campo"] = 'LeyendaFA';
-		$datos[48]["dato"] = $parametros["txtLeyendaImpresora"];
-		$datos[48]["campo"] = 'LeyendaFAT';
+        SetAdoFields("Ruta_Certificado", $parametros["TxtEXTP12"]);
+        SetAdoFields("Clave_Certificado", $parametros["TxtContraExtP12"]);
+        SetAdoFields("Email_Conexion", ($parametros["TxtEmailGE"]=='')?$CorreoDiskCover:$parametros["TxtEmailGE"]);
+        SetAdoFields("Email_Contraseña", ($parametros["TxtContraEmailGE"]=='')?$ContrasenaDiskCover:$parametros["TxtContraEmailGE"]);
+        SetAdoFields("Email_Conexion_CE", $parametros["TxtEmaiElect"]);
+        SetAdoFields("Email_Contraseña_CE", $parametros["TxtContraEmaiElect"]);
+        SetAdoFields("Email_Procesos", $parametros["TxtCopiaEmai"]);
+        SetAdoFields("RUC_Operadora", $parametros["TxtRUCOpe"]);
+        SetAdoFields("LeyendaFA", $parametros["txtLeyendaDocumen"]);
+        SetAdoFields("LeyendaFAT", $parametros["txtLeyendaImpresora"]);
 
         if($parametros["ckMFNV"]== 'false')
 		{
-			$datos[49]["dato"] = 0;
-            $datos[49]["campo"]='Mod_Fact';
+            SetAdoFields("Mod_Fact", 0);
 		}else if($parametros["ckMFNV"]== 'true')
         {
-            $datos[49]["dato"] = 1;
-            $datos[49]["campo"] = 'Mod_Fact';
+            SetAdoFields("Mod_Fact", 1);
         }
         
         if($parametros["ckMPVP"]== 'false')
 		{
-			$datos[50]["dato"] = 0;
-            $datos[50]["campo"]='Mod_PVP';
+            SetAdoFields("Mod_PVP", 0);
 		}else if($parametros["ckMPVP"]== 'true')
         {
-            $datos[50]["dato"] = 1;
-            $datos[50]["campo"] = 'Mod_PVP';
+            SetAdoFields("Mod_PVP", 1);
         }
 
         if($parametros["ckIRCF"]== 'false')
 		{
-			$datos[51]["dato"] = 0;
-            $datos[51]["campo"]='Imp_Recibo_Caja';
+            SetAdoFields("Imp_Recibo_Caja", 0);
 		}else if($parametros["ckIRCF"]== 'true')
         {
-            $datos[51]["dato"] = 1;
-            $datos[51]["campo"] = 'Imp_Recibo_Caja';
+            SetAdoFields("Imp_Recibo_Caja", 1);
         }
 
         if($parametros["ckIMR"]== 'false')
 		{
-			$datos[52]["dato"] = 0;
-            $datos[52]["campo"]='Medio_Rol';
+            SetAdoFields("Medio_Rol", 0);
 		}else if($parametros["ckIMR"]== 'true')
         {
-            $datos[52]["dato"] = 1;
-            $datos[52]["campo"] = 'Medio_Rol';
+            SetAdoFields("Medio_Rol", 1);
         }
 
         if($parametros["ckIRIP"]== 'false')
 		{
-			$datos[53]["dato"] = 0;
-            $datos[53]["campo"]='Rol_2_Pagina';
+            SetAdoFields("Rol_2_Pagina", 0);
 		}else if($parametros["ckIRIP"]== 'true')
         {
-            $datos[53]["dato"] = 1;
-            $datos[53]["campo"] = 'Rol_2_Pagina';
+            SetAdoFields("Rol_2_Pagina", 1);
         }
 
         if($parametros["ckPDAC"]== 'false')
 		{
-			$datos[54]["dato"] = 0;
-            $datos[54]["campo"]='Det_Comp';
+            SetAdoFields("Det_Comp", 0);
 		}else if($parametros["ckPDAC"]== 'true')
         {
-            $datos[54]["dato"] = 1;
-            $datos[54]["campo"] = 'Det_Comp';
+            SetAdoFields("Det_Comp", 1);
         }
 
         if($parametros["ckRIAC"]== 'false')
 		{
-			$datos[55]["dato"] = 0;
-            $datos[55]["campo"]='Registrar_IVA';
+            SetAdoFields("Registrar_IVA", 0);
 		}else if($parametros["ckRIAC"]== 'true')
         {
-            $datos[55]["dato"] = 1;
-            $datos[55]["campo"] = 'Registrar_IVA';
+            SetAdoFields("Registrar_IVA", 1);
         }
 
         if($parametros["ckDM"]== 'true' && $parametros["ckDS"]== 'false')
 		{
-			$datos[56]["dato"] = 1;
-            $datos[56]["campo"]='Num_CD';
+            SetAdoFields("Num_CD", 1);
 		}else if($parametros["ckDM"]== 'false' && $parametros["ckDS"]== 'true')
         {
-            $datos[56]["dato"] = 0;
-            $datos[56]["campo"] = 'Num_CD';
+            SetAdoFields("Num_CD", 0);
         }
 
         if($parametros["ckAutenti"]== 'false')
 		{
-			$datos[57]["dato"] = 0;
-            $datos[57]["campo"]='smtp_UseAuntentificacion';
+            SetAdoFields("smtp_UseAuntentificacion", 0);
 		}else if($parametros["ckAutenti"]== 'true')
         {
-            $datos[57]["dato"] = 1;
-            $datos[57]["campo"] = 'smtp_UseAuntentificacion';
+            SetAdoFields("smtp_UseAuntentificacion", 1);
         }
 
         if($parametros["ckSSL"]== 'false')
 		{
-			$datos[58]["dato"] = 0;
-            $datos[58]["campo"]='smtp_SSL';
+            SetAdoFields("smtp_SSL", 0);
 		}else if($parametros["ckSSL"]== 'true')
         {
-            $datos[58]["dato"] = 1;
-            $datos[58]["campo"] = 'smtp_SSL';
+            SetAdoFields("smtp_SSL", 1);
         }
 
         if($parametros["ckSecure"]== 'false')
 		{
-			$datos[59]["dato"] = 0;
-            $datos[59]["campo"]='smtp_Secure';
+            SetAdoFields("smtp_Secure", 0);
 		}else if($parametros["ckSecure"]== 'true')
         {
-            $datos[59]["dato"] = 1;
-            $datos[59]["campo"] = 'smtp_Secure';
+            SetAdoFields("smtp_Secure", 1);
         }
 
         if($parametros["ckIM"]== 'true' && $parametros["ckIS"]== 'false')
 		{
-			$datos[60]["dato"] = 1;
-            $datos[60]["campo"]='Num_CI';
+            SetAdoFields("Num_CI", 1);
 		}else if($parametros["ckIM"]== 'false' && $parametros["ckIS"]== 'true')
         {
-            $datos[60]["dato"] = 0;
-            $datos[60]["campo"] = 'Num_CI';
+            SetAdoFields("Num_CI", 0);
         }
 
         if($parametros["ckEM"]== 'true' && $parametros["ckES"]== 'false')
 		{
-			$datos[61]["dato"] = 1;
-            $datos[61]["campo"]='Num_CE';
+            SetAdoFields("Num_CE", 1);
 		}else if($parametros["ckEM"]== 'false' && $parametros["ckES"]== 'true')
         {
-            $datos[61]["dato"] = 0;
-            $datos[61]["campo"] = 'Num_CE';
+            SetAdoFields("Num_CE", 0);
         }
 
         if($parametros["ckNDM"]== 'true' && $parametros["ckNDS"]== 'false')
 		{
-			$datos[62]["dato"] = 1;
-            $datos[62]["campo"]='Num_ND';
+            SetAdoFields("Num_ND", 1);
 		}else if($parametros["ckNDM"]== 'false' && $parametros["ckNDS"]== 'true')
         {
-            $datos[62]["dato"] = 0;
-            $datos[62]["campo"] = 'Num_ND';
+            SetAdoFields("Num_ND", 0);
         }
 
         if($parametros["ckNCM"]== 'true' && $parametros["ckNCS"]== 'false')
 		{
-			$datos[63]["dato"] = 1;
-            $datos[63]["campo"]='Num_NC';
+            SetAdoFields("Num_NC", 1);
 		}else if($parametros["ckNCM"]== 'false' && $parametros["ckNCS"]== 'true')
         {
-            $datos[63]["dato"] = 0;
-            $datos[63]["campo"] = 'Num_NC';
+            SetAdoFields("Num_NC", 0);
         }
-
-        $datousuario[00]["dato"] = $parametros["TxtCI"];
-	    $datousuario[00]["campo"] = 'Codigo';
-        $datousuario[00]['tipo'] = 'string';
-        $datousuario[01]["dato"] = $parametros["TxtUsuario"];
-	    $datousuario[01]["campo"] = 'Usuario';
-        $datousuario[02]["dato"] = $parametros["TxtClave"];
-	    $datousuario[02]["campo"] = 'Clave';
-        $datousuario[03]["dato"] = $parametros["TxtRepresentanteLegal"];
-	    $datousuario[03]["campo"] = 'Nombre_Completo';
-
-        // print_r($datos);
-        // print_r($datousuario);die();
-        // guardar_usuario()
-
-        // if($parametros["TxtUsuario"]!='' && $parametros["TxtClave"]!='')
-        // {
-        //     $r = insert_generico('Accesos',$datousuario);
-	    // 	if($r==null)
-	    // 	{
-	    // 		return 1;
-	    // 	}else
-	    // 	{
-	    // 		return -1;
-	    // 	}
-        // }
 
         if($parametros['TxtCI']!='' && $parametros['TxtItem']!='')
         {
-            $whe[0]['campo'] = 'Codigo'; 
-            $whe[0]['valor'] = $parametros['TxtCI'];
-            $whe[0]['tipo'] = 'string';
-
-            $where[0]['campo'] = 'Item';
-            $where[0]['valor'] = $parametros['TxtItem'];
-            
-            $upacceso = update_generico($datousuario,'Accesos',$whe);
-            // print_r($upacceso);die();
-            $upempresa = update_generico($datos,'Empresas',$where);
-            $up =  $upacceso+$upempresa;
-            // print_r($up);die();
-            return $up;
-        }else
-        {
-            $nempresa = insert_generico('Empresas',$datos);
-            // print_r($nempresa);die();
-            $naccesos = insert_generico('Accesos',$datousuario);
-            $r = $nempresa+$naccesos;
-            // print_r($ndatos);die();
-            if($r==null)
-            {
-                return 2;
-            }else
-            {
-                return -2;
-            }
+            SetAdoFieldsWhere("Item", $parametros['TxtItem']);
+            SetAdoUpdateGeneric();
+        }else{
+            SetAdoFields("Item", $this->modelo->generarItem());
+            SetAdoUpdate();
         }
 
-        // if($parametros['TxtCI']!='')
-        // {
-        //     $whe[0]['campo'] = 'Codigo'; 
-	    // 	$whe[0]['valor'] = $parametros['TxtCI'];
-	    // 	$whe[0]['tipo'] = 'string';
-	    // 	return update_generico($datousuario,'Accesos',$whe);
-        // }else
-        // {
-        //     $r = insert_generico('Accesos',$datousuario);
-        //     if($r==null)
-        //     {
-        //         return 1;
-        //     }else
-        //     {
-        //         return -1;
-        //     }
-        // }
+        SetAdoAddNew("Accesos");
+        SetAdoFields("Codigo", $parametros["TxtCI"]);
+        SetAdoFields("Usuario", $parametros["TxtUsuario"]);
+        SetAdoFields("Clave", $parametros["TxtClave"]);
+        SetAdoFields("Nombre_Completo", $parametros["TxtRepresentanteLegal"]);
 
-        // if($parametros['TxtItem']!='')
-	    // {
-	    // 	$where[0]['campo'] = 'Item'; 
-	    // 	$where[0]['valor'] = $parametros['TxtItem'];
-	    // 	return update_generico($datos,'Empresas',$where);
-	    // }else
-	    // {
-	    // 	// $resp = $this->modelo->lista_empresas(trim(false,$parametros['TxtItem']));
-		//     // if(count($resp)>0){return -2;}
-		
-	    // 	$r = insert_generico('Empresas',$datos);
-	    // 	if($r==null)
-	    // 	{
-	    // 		return 1;
-	    // 	}else
-	    // 	{
-	    // 		return -1;
-	    // 	}
-	    // }        
+        if($parametros['TxtCI']!='' && $parametros['TxtItem']!='')
+        {
+            SetAdoFieldsWhere("Codigo", $parametros['TxtCI']);
+            SetAdoUpdateGeneric();
+        }else
+        {
+            SetAdoUpdate();
+        }
+
+        return 2;
     }
-
 
 }
 

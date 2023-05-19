@@ -545,7 +545,6 @@ function guardar_empresa()
     var Ambiente1 = $('#optionsRadios1').prop('checked');
     var Ambiente2 = $('#optionsRadios2').prop('checked');
     var datos = $('#formulario').serialize();
-    console.log(datos);
     // guardar_usuario_clave();
     limpiar();
     
