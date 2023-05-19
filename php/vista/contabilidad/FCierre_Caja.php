@@ -48,6 +48,16 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
         </a>
       </div>
     <?php endif ?>
+      <div class="col">
+        <a  href="javascript:void(0)" id="Reactivar" title="Reactivar" class="btn btn-default"  onclick="SolicitarReactivar()">
+          <img src="../../img/png/folder-check.png" width="25" height="30">
+        </a>
+      </div>
+      <div class="col">
+        <a  href="javascript:void(0)" id="IESS" title="I.E.S.S" class="btn btn-default"  onclick="IESS_Cierre_DiarioV()">
+          <img src="../../img/png/iess.png" width="25" height="30">
+        </a>
+      </div>
   </div>
   <div class="col-sm-7 col-xs-12">
     <div class="row">
@@ -84,8 +94,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
   </div>
 </div>
 <!-- <div id="resultado">
-</div>
-<h3 id="TextoImprimio"></h3> -->
+</div>-->
 
 <div class="row">
   <div class="panel panel-primary col-sm-12" style="  margin-bottom: 5px;">
@@ -351,7 +360,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             </div>
             <div class="tab-pane modal-body" id="reporte_auditoria">
               <select style="min-width: 150px;" class="form-control input-xs" name="AdoSRI" id="AdoSRI"  onchange="" >
-              //TODO LS falta cargar data
               </select>
 
               <label id="DGSRICaption"></label>
@@ -711,17 +719,17 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
     $("#LabelDebe1").val(datos.LabelDebe1)
     $("#LabelHaber").val(datos.LabelHaber)
     $("#LabelHaber1").val(datos.LabelHaber1)
-    $("#LblConIVA").val(datos.LblConIVA) //TODO LS 
+    $("#LblConIVA").val(datos.LblConIVA) 
     $("#LblConcepto").val(datos.LblConcepto)
     $("#LblConcepto1").val(datos.LblConcepto1)
-    $("#LblDescuento").val(datos.LblDescuento) //TODO LS 
+    $("#LblDescuento").val(datos.LblDescuento) 
     $("#LblDiferencia").val(datos.LblDiferencia)
     $("#LblDiferencia1").val(datos.LblDiferencia1)
-    $("#LblIVA").val(datos.LblIVA) //TODO LS 
-    $("#LblServicio").val(datos.LblServicio) //TODO LS 
-    $("#LblSinIVA").val(datos.LblSinIVA) //TODO LS 
-    $("#LblTotalFacturado").val(datos.LblTotalFacturado) //TODO LS 
-    $("#TextoImprimio").text(datos.TextoImprimio) //TODO LS definir uso o posicion
+    $("#LblIVA").val(datos.LblIVA) 
+    $("#LblServicio").val(datos.LblServicio) 
+    $("#LblSinIVA").val(datos.LblSinIVA) 
+    $("#LblTotalFacturado").val(datos.LblTotalFacturado) 
+    alert(datos.TextoImprimio);
   }
 
   function redondear(valor, decimales) {
@@ -811,6 +819,100 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             text: fecha
           });
         }
+      }
+    });
+  }
+
+  function IESS_Cierre_DiarioV(){
+    $('#myModal_espera').modal('show');
+    $.ajax({
+      type: "POST",                 
+      url: '../controlador/contabilidad/FCierre_CajaC.php?IESS_Cierre_Diario=true',
+      dataType:'json', 
+      data: {'MBFechaI' : $("#MBFechaI").val() ,
+            'MBFechaF' : $("#MBFechaF").val()},
+      success: function(datos)             
+      {
+        if(datos.rps){
+          Swal.fire({
+            type: 'success',
+            title: datos.mensaje,
+            html: "<a class='btn btn-xs btn-warning' onclick=\"descargarArchivo('"+datos.nombre_archivo+"', '../.."+datos.ruta+"')\"><i class='fa fa-download' aria-hidden='true'></i> Descargar Archivo</a>"
+          });
+        }else{
+          Swal.fire({
+            type: 'warning',
+            title: datos.mensaje
+          });
+        }
+        $('#myModal_espera').modal('hide');
+      },
+      error: function (e) {
+        $('#myModal_espera').modal('hide');
+        alert("error inesperado en IESS_Cierre_DiarioV")
+      }
+    });
+  }
+
+  function SolicitarReactivar()
+  {
+    if($("#MBFechaI").val() !="" && $("#MBFechaF").val()!="")
+    {
+      $('#clave_contador').modal('show');
+      $('#titulo_clave').text('Contador General');
+      $('#TipoSuper').val('Contador');
+    }else
+    {
+      Swal.fire('Seleccione las fechas','','info');
+    }
+  }
+
+  // funcion de respuesta para la clave
+   function resp_clave_ingreso(response)
+   {
+     if(response['respuesta']==1)
+     {
+       ReactivarV()
+     }else{
+        Swal.fire({
+          type: 'warning',
+          title: response['msj']
+        });
+     }
+   }
+
+  function ReactivarV() {
+    $('#myModal_espera').modal('show');
+    $.ajax({
+      type: "POST",                 
+      url: '../controlador/contabilidad/FCierre_CajaC.php?Reactivar=true',
+      dataType:'json', 
+      data: {'MBFechaI' : $("#MBFechaI").val() ,
+            'MBFechaF' : $("#MBFechaF").val()},
+      success: function(datos)             
+      {
+        Swal.fire({
+          type: (datos.rps)?'success':'warning',
+          title: datos.mensaje
+        });
+
+        if(datos.rps){
+          if(datos.CierreDelDia && datos.CierreDelDia.MBFechaI){
+            $("#MBFechaI").val(datos.CierreDelDia.MBFechaI)
+            $("#MBFechaF").val(datos.CierreDelDia.MBFechaF)
+          }
+
+          construirTabla(datos.AdoAsiento, "DGAsiento")  
+          construirTabla(datos.AdoAsiento1, "DGAsiento1")
+          
+        }
+        $("#LabelDebe").val('0')
+        $("#LabelHaber").val('0')
+        $('#myModal_espera').modal('hide');
+      },
+      error: function (e) {
+        $('#myModal_espera').modal('hide');
+        alert("error inesperado en IESS_Cierre_DiarioV")
       }
     });
   }

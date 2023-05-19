@@ -48,6 +48,14 @@ if(isset($_GET['Grabar_Cierre_Diario']))
 if(isset($_GET['FechaValida']))
 {
    echo json_encode(FechaValida($_POST['fecha']));
+}else
+if(isset($_GET['IESS_Cierre_Diario']))
+{
+   echo json_encode($controlador->IESS_Cierre_Diario($_POST));
+}else
+if(isset($_GET['Reactivar']))
+{
+   echo json_encode($controlador->Reactivar($_POST));
 }
 
 class FCierre_CajaC
@@ -82,8 +90,6 @@ class FCierre_CajaC
         $_SESSION['FCierre_Caja']['Co']['Total_Banco'] = 0;
         $_SESSION['FCierre_Caja']['Co']['Item'] = $_SESSION['INGRESO']['item'];
 
-        //TODO LS este co creo que no va aqui
-
         $ModificarComp = false; //TODO LS definir si declarar
         $CopiarComp = false; //TODO LS definir si declarar
         $NuevoComp = true; //TODO LS definir si declarar
@@ -97,7 +103,7 @@ class FCierre_CajaC
             "ORDER BY Codigo ";
         $AdoCtaBanco = $this->CierreCajaM->SelectDB($sSQL);
 
-        $sSQL = "SELECT CONCAT(Nombre_Completo, ' - ', Codigo) As Cajero, Codigo" .
+        $sSQL = "SELECT CONCAT(Nombre_Completo, ' - ', Codigo) As Cajero, Codigo " .
             "FROM Accesos " .
             "WHERE Ok <> 0 " .
             "ORDER BY Nombre_Completo ";
@@ -296,7 +302,7 @@ class FCierre_CajaC
         "AND TA.Cod_Ejec = A.Codigo ";
 
         if ($CheqCajero == 1) {
-            $sSQL .= "AND TA.CodigoU = '" . rtrim($DCBenef) . "' "; //TODO LS validar que llega en $DCBenef
+            $sSQL .= "AND TA.CodigoU = '" . rtrim($DCBenef) . "' ";
         }
 
         if ($CheqOrdDep == 1) {
@@ -516,7 +522,7 @@ class FCierre_CajaC
             foreach ($AdoDBAux as $key => $fields) {
                 if ($Codigo != $fields["Detalle"]) {
                     $Codigo2 = SinEspaciosDer($Codigo);
-                    $Codigo = TrimStrg(MidStrg($Codigo, 1, strlen($Codigo) - strlen($Codigo2)));
+                    $Codigo = trim(MidStrg($Codigo, 1, strlen($Codigo) - strlen($Codigo2)));
                     $Codigo1 = SinEspaciosDer($Codigo);
                     if ($Total_Vaucher > 0) {
                         Insertar_Ctas_Cierre_SP($Codigo1, $Total_Vaucher, $Trans_No);
@@ -528,7 +534,7 @@ class FCierre_CajaC
                 $Total_Vaucher = $Total_Vaucher + $fields["Total_TJ"];
             }
             $Codigo2 = SinEspaciosDer($Codigo);
-            $Codigo = TrimStrg(MidStrg($Codigo, 1, strlen($Codigo) - strlen($Codigo2)));
+            $Codigo = trim(MidStrg($Codigo, 1, strlen($Codigo) - strlen($Codigo2)));
             $Codigo1 = SinEspaciosDer($Codigo);
             if ($Total_Vaucher > 0) {
                 Insertar_Ctas_Cierre_SP($Codigo1, $Total_Vaucher, $Trans_No);
@@ -877,7 +883,7 @@ class FCierre_CajaC
         $FechaComp = $FechaTexto;
         $Nombre_Cajero = null;
 
-        if ($CheqCajero == 1) {//TODO LS $DCBenef debe ser id o nombre???
+        if ($CheqCajero == 1) {//TODO LS $donde se usa $Nombre_Cajero y si se usa falta calcuar el nombre pues llega el el codigo
             $Nombre_Cajero = substr($DCBenef, 0, strlen($DCBenef) - strlen(SinEspaciosDer($DCBenef)) - 1);
         }
 
@@ -1078,10 +1084,157 @@ class FCierre_CajaC
 
         if (count($AdoAux) > 0) {
             $Factura = $AdoAux[0]["Factura"];
-            $MBFechaI = BuscarFecha($AdoAux[0]["Fecha"]);
-            $MBFechaF = BuscarFecha($AdoAux[0]["Fecha"]);
+            $MBFechaI = date('Y-m-d', strtotime(BuscarFecha($AdoAux[0]["Fecha"])));
+            $MBFechaF = date('Y-m-d', strtotime(BuscarFecha($AdoAux[0]["Fecha"])));
         }
 
         return compact('MBFechaI','MBFechaF','Factura');
     }
+
+    function IESS_Cierre_Diario($parametros)
+    {
+        extract($parametros);
+
+        $NumEmpresa = $_SESSION['INGRESO']['item'];
+        $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
+        $CodigoUsuario = $_SESSION['INGRESO']['CodigoU'];
+
+        $sSQL = "DELETE * " .
+            "FROM Asiento_Beneficiarios " .
+            "WHERE Codigo <> '-' ";
+        Ejecutar_SQL_SP($sSQL);
+
+        $sSQL = "UPDATE Clientes " .
+            "SET X = '.' " .
+            "WHERE Codigo <> '-' ";
+        Ejecutar_SQL_SP($sSQL);
+
+        $FechaIni = BuscarFecha($MBFechaI);
+        $FechaFin = BuscarFecha($MBFechaF);
+
+        $sSQL = "UPDATE Clientes " .
+            "SET X = 'I' " .
+            "FROM Clientes As C, Detalle_Factura As DF " .
+            "WHERE DF.Item = '" . $NumEmpresa . "' " .
+            "AND DF.Periodo = '" . $Periodo_Contable . "' " .
+            "AND DF.Fecha BETWEEN #" . $FechaIni . "# and #" . $FechaFin . "# " .
+            "AND C.Codigo = DF.CodigoB ";
+        Ejecutar_SQL_SP($sSQL);
+
+        $sSQL = "INSERT INTO Asiento_Beneficiarios (Codigo, Beneficiario, TD, RUC_CI) " .
+            "SELECT Codigo, Cliente, TD, CI_RUC " .
+            "FROM Clientes " .
+            "WHERE X = 'I' ";
+        Ejecutar_SQL_SP($sSQL);
+
+        if(!file_exists(dirname(__DIR__,3)."/TEMP/EMPRESA_".$NumEmpresa))
+            mkdir(dirname(__DIR__,3)."/TEMP/EMPRESA_".$NumEmpresa, 0777);
+
+        if(!file_exists(dirname(__DIR__,3)."/TEMP/EMPRESA_".$NumEmpresa."/SYSBASES"))
+            mkdir(dirname(__DIR__,3)."/TEMP/EMPRESA_".$NumEmpresa."/SYSBASES", 0777);
+
+        $nombre_archivo = "ARCHIVO_" . str_replace("/", "-", $MBFechaI) . ".txt";
+        $ruta = "/TEMP/EMPRESA_".$NumEmpresa."/SYSBASES/".$nombre_archivo;
+        $RutaGeneraFile = dirname(__DIR__,3).$ruta;
+        $NumFile = fopen($RutaGeneraFile, "w"); // Abre el archivo.
+
+        $sSQL = "SELECT DF.Factura,DF.Fecha,DF.Cantidad,DF.Precio,DF.Precio2,CP.Producto," .
+            "C.Cliente,C.CI_RUC,DF.CodigoB,CP.Codigo_IESS,CP.Marca " .
+            "FROM Detalle_Factura As DF,Clientes As C,Catalogo_Productos As CP " .
+            "WHERE DF.Item = '" . $NumEmpresa . "' " .
+            "AND DF.Periodo = '" . $Periodo_Contable . "' " .
+            "AND DF.Fecha BETWEEN #" . $FechaIni . "# and #" . $FechaFin . "# " .
+            "AND DF.T <> 'A' " .
+            "AND DF.CodigoC = C.Codigo " .
+            "AND DF.Codigo = CP.Codigo_Inv " .
+            "AND DF.Item = CP.Item " .
+            "AND DF.Periodo = CP.Periodo " .
+            "ORDER BY DF.Fecha,DF.Factura ";
+        
+        $sSQL = "SELECT DF.Factura,DF.Fecha,DF.Cantidad,CP.PVP,CP.PVP_2,CP.Producto," .
+            "C.Cliente,C.CI_RUC,AB.Beneficiario,AB.RUC_CI,DF.CodigoB,CP.Codigo_IESS,CP.Marca " .
+            "FROM Detalle_Factura As DF, Clientes As C, Asiento_Beneficiarios As AB, Catalogo_Productos As CP " .
+            "WHERE DF.Item = '" . $NumEmpresa . "' " .
+            "AND DF.Periodo = '" . $Periodo_Contable . "' " .
+            "AND DF.Fecha BETWEEN '" . $FechaIni . "' and '" . $FechaFin . "' " .
+            "AND DF.T <> 'A' " .
+            "AND DF.CodigoC = C.Codigo " .
+            "AND DF.CodigoB = AB.Codigo " .
+            "AND DF.Codigo = CP.Codigo_Inv " .
+            "AND DF.Item = CP.Item " .
+            "AND DF.Periodo = CP.Periodo " .
+            "ORDER BY DF.Fecha,DF.Factura ";
+        $AdoAux  = $this->CierreCajaM->SelectDB($sSQL);
+        if (count($AdoAux) > 0) {
+            foreach ($AdoAux as $key => $fields) {
+                $CI_RUCC = $fields["CI_RUC"];
+                $NombreC = $fields["Cliente"];
+                $Producto = $fields["Producto"] . " (" . $fields["Marca"] . ")";
+                if ($CI_RUCC != $fields["RUC_CI"]) {
+                    $CI_RUCC = $fields["RUC_CI"];
+                    $NombreC = $fields["Beneficiario"];
+                }
+                fwrite($NumFile, str_pad(number_format($fields["CI_RUC"], 0, '', ''), 10, "0", STR_PAD_LEFT));
+                fwrite($NumFile, $fields["Cliente"] . str_pad("", 80 - strlen($fields["Cliente"]), " "));
+                fwrite($NumFile, $CI_RUCC);
+                fwrite($NumFile, $NombreC . str_pad("", 64 - strlen($NombreC), " "));
+                fwrite($NumFile, (is_a($fields["Fecha"], 'DateTime'))?$fields["Fecha"]->format("yyyy-mm-dd"):$fields["Fecha"]);
+                fwrite($NumFile, $fields["Codigo_IESS"] . str_pad("", 40 - strlen($fields["Codigo_IESS"]), " "));
+                fwrite($NumFile, "      ");
+                $Producto = substr($Producto, 0, 80);
+                $Producto = str_replace("/", " ", $Producto);
+                $Producto = trim($Producto);
+                fwrite($NumFile, $Producto . str_pad("", 80 - strlen($Producto), " "));
+                $Cadena = number_format($fields["Cantidad"], 2, ",", "");
+                fwrite($NumFile, str_pad("", 13 - strlen($Cadena), "0") . $Cadena);
+                $Cadena = number_format($fields["PVP"], 4, ",", "");
+                fwrite($NumFile, str_pad("", 18 - strlen($Cadena), "0") . $Cadena);
+                $Cadena = number_format($fields["PVP_2"], 4, ",", "");
+                fwrite($NumFile, str_pad("", 15 - strlen($Cadena), "0") . $Cadena);
+                fwrite($NumFile, str_pad(number_format($fields["Factura"], 0, '', ''), 9, "0", STR_PAD_LEFT));
+
+            }
+            $r = array('rps' => true, "mensaje" =>"ARCHIVO GENERADO", "nombre_archivo"=>$nombre_archivo, "ruta"=>$ruta);
+        }else{
+            $r = array('rps' => false, "mensaje" =>"No hay datos para generar el archivo");
+        }
+
+        fclose($NumFile);
+
+        return $r;
+    }
+
+    function Reactivar($parametros)
+    {
+        extract($parametros);
+
+        $NumEmpresa = $_SESSION['INGRESO']['item'];
+        $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
+        $CodigoUsuario = $_SESSION['INGRESO']['CodigoU'];
+
+        FechaValida($MBFechaI);
+        FechaValida($MBFechaF);
+        $FechaIni = BuscarFecha($MBFechaI);
+        $FechaFin = BuscarFecha($MBFechaF);
+        $sSQL = "UPDATE Trans_Abonos " .
+            "SET C = " . intval(false) . " " .
+            "WHERE Item = '" . $NumEmpresa . "' " .
+            "AND Periodo = '" . $Periodo_Contable . "' " .
+            "AND Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'";
+        Ejecutar_SQL_SP($sSQL);
+
+        $sSQL = "UPDATE Facturas " .
+            "SET C = " . intval(false) . " " .
+            "WHERE Item = '" . $NumEmpresa . "' " .
+            "AND Periodo = '" . $Periodo_Contable . "' " .
+            "AND Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'";
+        Ejecutar_SQL_SP($sSQL);
+
+        $AdoAsiento1 = $this->CierreCajaM->IniciarAsientosDe($Trans_No = 97); // CxC
+        $AdoAsiento = $this->CierreCajaM->IniciarAsientosDe($Trans_No = 96); // Abonos
+
+        return array('rps' => true, 'CierreDelDia' => $this->CierreDelDia(), "AdoAsiento1"=> $AdoAsiento1, "AdoAsiento"=>$AdoAsiento, 'mensaje' =>'Proceso finalizado') ;
+
+    }
+
 }

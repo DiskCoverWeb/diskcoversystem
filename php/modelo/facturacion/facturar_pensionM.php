@@ -646,20 +646,6 @@ class facturar_pensionM
     return $this->db->datos($sSQL);
   }
 
-  function UpdateMedidor($parametros)
-  {
-    extract($parametros);
-        $sSQL = "UPDATE ".
-            " Clientes_Datos_Extras ".
-            "SET Codigo = '" . $Encerar . "' ". //TODO LS pendiente definir que campo
-            "WHERE Codigo = '" . $codigoCliente . "' ".
-            "AND Item = '" . $_SESSION['INGRESO']['item'] . "' ".
-            "AND Cuenta_No = '" . $CMedidor . "' ".
-            "AND Tipo_Dato = 'MEDIDOR' ";
-            echo "<pre>";print_r($sSQL);echo "</pre>";die();
-        //return Ejecutar_SQL_SP($sSQL);
-  }
-
   public function AnyRegistroClientes_FacturacionAnoMes($codigoCliente, $Codigo_Auto="", $Codigo_Inv="", $Anio="", $NoMes=""){
     $Codigo_Auto = ($Codigo_Auto!="")?str_pad($Codigo_Auto, 6, "0", STR_PAD_LEFT):"";
     $sql = "SELECT Top(1) CF.ID

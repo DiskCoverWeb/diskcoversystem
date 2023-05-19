@@ -16,8 +16,7 @@ class FCierre_CajaM
 	function IniciarAsientosDe($Trans_No = 0)
 	{
 		if($Trans_No <= 0){ $Trans_No = 1; }
-  		$Ln_No = 1; //TODO LS definir si se deben declarr como gloales
-  		$BorrarAsientos = true; //TODO LS definir si se deben declarr como gloales
+  		BorrarAsientos($Trans_No,true);
 
 		$SQL2 = "SELECT *
 	        FROM Asiento

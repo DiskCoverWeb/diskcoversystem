@@ -398,6 +398,20 @@ include('../controlador/contabilidad/contabilidad_controller.php');
     }
   }
 
+  function descargarArchivo(nombreArchivo, rutaArchivo) {
+    let elemento = document.createElement('a');
+    elemento.setAttribute('href', rutaArchivo);
+    elemento.setAttribute('download', nombreArchivo);
+
+    elemento.style.display = 'none';
+    document.body.appendChild(elemento);
+
+    elemento.click();
+
+    document.body.removeChild(elemento);
+  }
+
+
   </script>
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

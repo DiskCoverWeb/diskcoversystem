@@ -11791,7 +11791,7 @@ function GrabarComprobante($C1)
                "AND Fecha_Final >= '" . $FechaFin1 . "' " .
                "ORDER BY Porc DESC ";
       $sSQL1 = CompilarSQL($sSQL1);
-      $AdoStrCnn = $conn->datos($sSQL1); ////TODO LS asignar a AdoStrCnn
+      $AdoStrCnn = $conn->datos($sSQL1);
       if(count($AdoStrCnn) > 0){
         $_SESSION['INGRESO']['porc'] = number_format($AdoStrCnn[0]["Porc"] / 100, 2, '.', '');
       }
