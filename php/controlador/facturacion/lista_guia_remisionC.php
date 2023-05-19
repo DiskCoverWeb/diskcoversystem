@@ -75,6 +75,12 @@ if(isset($_GET['limpiar_grid']))
   echo json_encode($datos);
 }
 
+if(isset($_GET['eliminar_lineas']))
+{	
+	$parametros = $_POST['parametros'];
+  echo json_encode($controlador->eliminar_linea($parametros));
+}
+
 
 
 /**
@@ -296,7 +302,7 @@ class lista_guia_remisionC
          $TFA['RUC_CI'] = $cliente[0]['CI_RUC'];
          $TFA['Direccion_RS'] = $cliente[0]['Direccion'];
 
-print_r($TFA);die();
+// print_r($TFA);die();
          	$this->punto_venta->pdf_guia_remision_elec_sin_fac($TFA,$TFA['Autorizacion_GR'],$periodo=false,0,1);
 					return array('resp'=>$respuesta,'clave'=>$ClaveAcceso_GR,'pdf'=>$TFA['Serie_GR'].'-'.generaCeros($TFA['Remision'],7));
   
@@ -499,15 +505,22 @@ QUITO - ECUADOR';
 			SetAdoFields('Autorizacion',$parametros['txt_auto_fac']);			
 			SetAdoFields('Serie',$parametros['txt_serie_fac']);
 			return SetAdoUpdate();
-	      
-	      
-	     // return insert_generico("Detalle_Factura",$dato);
+			
  	}
 
  	function cargaLineas($parametros)
 	{
+			// print_r($parametros);die();
+
 		  $guia = $parametros['guia'];
-	    $reg = $this->modelo->cargarLineas($guia);
+		  $codigoL = false;
+		  if(isset($parametros['serie']) && $parametros['serie']!='')
+		  {
+		  	$serie = explode(' ',$parametros['serie']);
+		  	$codigoL = $serie[4];
+		  }
+		  // print_r($serie);die();
+	    $reg = $this->modelo->cargarLineas($guia,$codigoL);
 	    $total = 0;
 	    foreach ($reg['datos'] as $key => $value) {
 	      $total+=$value['Total'];     
@@ -645,10 +658,17 @@ QUITO - ECUADOR';
     	}
   }
 
-    function limpiar_grid()
+  function limpiar_grid()
  	{
     	return $this->modelo->limpiarGrid();
-  	}
+  }
+
+  function eliminar_linea($parametros)
+  {
+  		$serie = explode(' ',$parametros['serie']);
+  		$codigoL = $serie[4];
+  	 $this->modelo->limpiarGrid($cod=false,$parametros['guia'],$codigoL,$parametros['auto']);
+  }
 }
 
 
