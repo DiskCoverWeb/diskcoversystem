@@ -46,6 +46,13 @@
     cargarBancos();
     DCGrupo_No();
 
+    document.addEventListener('click', function(event) {
+      let backdrop = document.querySelector('.modal-backdrop');
+      if (backdrop === event.target) {
+        backdrop.parentNode.removeChild(backdrop);
+      }
+    });
+
     $.ajax({
       type: "POST",                 
       url: '../controlador/facturacion/facturar_pensionC.php?getMBHistorico=true',
