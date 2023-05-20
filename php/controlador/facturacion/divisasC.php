@@ -12,7 +12,7 @@ $controlador = new divisasC();
 
 if(isset($_GET['guardarLineas']))
 {
-  $controlador->guardarLineas();
+   echo json_encode($controlador->guardarLineas());
 }
 
 if(isset($_GET['guardarFactura']))
@@ -183,7 +183,6 @@ class divisasC
 
  
   public function guardarLineas(){
-    // $this->modelo->deleteAsiento($_POST['codigoCliente']);
     $num = count($this->modelo->getAsiento());
     $datos = array();
     $producto = $_POST['datos'];
@@ -192,49 +191,29 @@ class divisasC
     {
      $precio_nuevo = number_format(($producto['Total'] / $producto['Cantidad']),7,'.','');     
     }
-    //print_r($producto);die();
 
-     // $precio_nuevo = number_format(($producto['Total'] / $producto['Cantidad']),6,'.','');
-      // $totalNuevo = number_format(($producto['Cantidad'] * $precio_nuevo),4,'.','');
-      $totalNuevo = number_format($producto['Total'],2,'.','');
-      $dato[0]['campo']='CODIGO';
-      $dato[0]['dato']= $producto['Codigo'];
-      $dato[1]['campo']='CODIGO_L';
-      $dato[1]['dato']= $producto['CodigoL'];
-      $dato[2]['campo']='PRODUCTO';
-      $dato[2]['dato']= $producto['Producto'] ;
-      $dato[3]['campo']='CANT';
-      $dato[3]['dato']= number_format($producto['Cantidad'],2,'.','');
-      $dato[4]['campo']='PRECIO';
-      $dato[4]['dato']= $precio_nuevo;
-      $dato[5]['campo']='Total_Desc';
-      $dato[5]['dato']= $producto['Total_Desc'] ;
-      $dato[6]['campo']='Total_Desc2';
-      $dato[6]['dato']= $producto['Total_Desc2'] ;
-      $dato[7]['campo']='TOTAL';
-      $dato[7]['dato']= $totalNuevo;
-      $dato[8]['campo']='Total_IVA';
-      $dato[8]['dato']= number_format($producto['Total'] * ($producto['Iva'] / 100),2,'.','');
-      $dato[9]['campo']='Cta';
-      $dato[9]['dato']= 'Cuenta' ;
-      $dato[10]['campo']='Item';
-      $dato[10]['dato']= $_SESSION['INGRESO']['item'];
-      $dato[11]['campo']='Codigo_Cliente';
-      $dato[11]['dato']= $_POST['codigoCliente'];
-      $dato[12]['campo']='HABIT';
-      $dato[12]['dato']= G_PENDIENTE;
-      $dato[13]['campo']='Mes';
-      $dato[13]['dato']= $producto['MiMes'] ;
-      $dato[14]['campo']='TICKET';
-      $dato[14]['dato']= $producto['Periodo'] ;
-      $dato[15]['campo']='CodigoU';
-      $dato[15]['dato']= $_SESSION['INGRESO']['CodigoU'];
-      $dato[16]['campo']='A_No';
-      $dato[16]['dato']= $num+1;
-      $dato[17]['campo']='PRECIO2';
-      $dato[17]['dato']= $producto['Precio'];
-      
-      return insert_generico("Asiento_F",$dato);
+    $totalNuevo = number_format($producto['Total'],2,'.','');
+
+    SetAdoAddNew("Asiento_F");
+    SetAdoFields("CODIGO", $producto['Codigo']);
+    SetAdoFields("CODIGO_L", $producto['CodigoL']);
+    SetAdoFields("PRODUCTO", $producto['Producto']);
+    SetAdoFields("CANT", number_format($producto['Cantidad'], 2, '.', ''));
+    SetAdoFields("PRECIO", $precio_nuevo);
+    SetAdoFields("Total_Desc", $producto['Total_Desc']);
+    SetAdoFields("Total_Desc2", $producto['Total_Desc2']);
+    SetAdoFields("TOTAL", $totalNuevo);
+    SetAdoFields("Total_IVA", number_format($producto['Total'] * ($producto['Iva'] / 100), 2, '.', ''));
+    SetAdoFields("Cta", 'Cuenta');
+    SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+    SetAdoFields("Codigo_Cliente", $_POST['codigoCliente']);
+    SetAdoFields("HABIT", G_PENDIENTE);
+    SetAdoFields("Mes", $producto['MiMes']);
+    SetAdoFields("TICKET", $producto['Periodo']);
+    SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+    SetAdoFields("A_No", $num+1);
+    SetAdoFields("PRECIO2", $producto['Precio']);
+    return SetAdoUpdate();
   }
 
   public function guardarFactura(){

@@ -353,12 +353,6 @@ class lista_liquidacionCompraC
     $empresaGeneral = array_map(array($this, 'encode1'), $this->empresaGeneral);
 
   	$nueva_Clave = generate_clave(8);
-  	$datos[0]['campo']='Clave';
-  	$datos[0]['dato']=$nueva_Clave;
-
-  	$where[0]['campo'] = 'Codigo';
-  	$where[0]['valor'] = $parametros['ci'];
-  	$where[0]['tipo'] = 'string';
 
   	$email_conexion = $empresaGeneral[0]['Email_Conexion'];
     $email_pass =  $empresaGeneral[0]['Email_Contraseña'];
@@ -368,8 +362,13 @@ class lista_liquidacionCompraC
   	$titulo_correo = 'EMAIL DE RECUPERACION DE CLAVE';
   	$archivos = false;
   	$correo = $parametros['ema'];
-  	// print_r($correo);die();
-  	$resp = $this->modelo->ingresar_update($datos,'Clientes',$where);  	
+  	
+  	SetAdoAddNew("Clientes");
+		SetAdoFields("Clave", $nueva_Clave);
+		SetAdoFieldsWhere("Codigo", $parametros['ci']);
+		SetAdoUpdateGeneric();
+
+  	$resp = SetAdoUpdateGeneric();  	
   	
   	if($resp==1)
   	{
@@ -452,37 +451,22 @@ class lista_liquidacionCompraC
 
     function anular($parametros)
     {
-    	 // print_r($parametros);die();
-    	 $datos[0]['campo'] = 'T';
-    	 $datos[0]['dato'] = 'A';
-    	 $datos[1]['campo'] = 'Nota';
-    	 $datos[1]['dato'] = 'Anulción de Factura No.'.$parametros['factura'].'.';
+    	SetAdoAddNew("Facturas");
+			SetAdoFields("T", G_ANULADO);
+			SetAdoFields("Nota", "Anulación de Factura No.".$parametros['factura'].".");
+			SetAdoFieldsWhere("Serie", $parametros['serie']);
+			SetAdoFieldsWhere("Factura", $parametros['factura']);
+			SetAdoFieldsWhere("CodigoC", $parametros['codigo']);
+			SetAdoUpdateGeneric();
 
-    	 $campoWhere[0]['campo'] = 'Serie';
-    	 $campoWhere[0]['valor'] = $parametros['serie'];
-    	 $campoWhere[1]['campo'] = 'Factura';
-    	 $campoWhere[1]['valor'] = $parametros['factura'];
-    	 $campoWhere[2]['campo'] = 'CodigoC';
-    	 $campoWhere[2]['valor'] = $parametros['codigo'];
+    	SetAdoAddNew("Detalle_Factura");
+			SetAdoFields("T", G_ANULADO);
+			SetAdoFieldsWhere("Serie", $parametros['serie']);
+			SetAdoFieldsWhere("Factura", $parametros['factura']);
+			SetAdoFieldsWhere("CodigoC", $parametros['codigo']);
+			SetAdoUpdateGeneric();
 
-    	 $tabla = 'Facturas';
-    	 $this->modelo->ingresar_update($datos,$tabla,$campoWhere);
-
-
-    	 $datos1[0]['campo'] = 'T';
-    	 $datos1[0]['dato'] = 'A';
-    	
-    	 $campoWhere1[0]['campo'] = 'Serie';
-    	 $campoWhere1[0]['valor'] = $parametros['serie'];
-    	 $campoWhere1[1]['campo'] = 'Factura';
-    	 $campoWhere1[1]['valor'] = $parametros['factura'];
-    	 $campoWhere1[2]['campo'] = 'CodigoC';
-    	 $campoWhere1[2]['valor'] = $parametros['codigo'];
-
-    	 $tabla1 = 'Detalle_Factura';
-    	 $this->modelo->ingresar_update($datos1,$tabla1,$campoWhere1);
-
-    	 return $this->modelo->eliminar_abonos($parametros);
+    	return $this->modelo->eliminar_abonos($parametros);
     }
 
     function enviar_email_detalle($parametros)

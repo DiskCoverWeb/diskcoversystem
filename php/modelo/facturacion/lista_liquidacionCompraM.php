@@ -14,20 +14,6 @@ class lista_liquidacionCompraM
 		$this->conn = cone_ajax();
 		$this->db = new db();
 	}
-
-	function ingresar_update($datos,$tabla,$campoWhere=false)
-	{
-		// print_r($datos);die();
-		if ($campoWhere) {
-			$resp = update_generico($datos,$tabla,$campoWhere);			
-		  return $resp;
-			
-		}else{
-	      $resp = insert_generico($tabla,$datos);
-	      return $resp;
-	  }
-	}
-
  
    function facturas_emitidas_excel($codigo,$reporte_Excel=false,$periodo=false)
    {

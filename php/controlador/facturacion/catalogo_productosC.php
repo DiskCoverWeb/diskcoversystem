@@ -148,91 +148,52 @@ class catalogo_productosC
 		// print_r($parametros);die();
 		if(substr($parametros['txt_codigo'],-1)=='.'){ $parametros['txt_codigo'] = substr($parametros['txt_codigo'],0,-1);}
 		$codigoInv = $this->modelo->TVCatalogo($query=false,$TC=false,$len=false,$codigo=$parametros['txt_codigo']);
-	 
-	  	$datos[0]['campo']= 'Codigo_Inv';
-	  	$datos[0]['dato']= $parametros['txt_codigo'];
-	  	$datos[1]['campo']= 'Producto';
-	  	$datos[1]['dato']= $parametros['txt_concepto'];
-	  	$datos[2]['campo']= 'TC';
-	  	$datos[2]['dato']= $parametros['cbx_tipo'];
-	  	$datos[3]['campo']= 'Unidad';
-	  	$datos[3]['dato']= $parametros['txt_unidad'];
-	  	$datos[4]['campo']= 'Maximo';
-	  	$datos[4]['dato']= $parametros['maximo'];
-	  	$datos[5]['campo']= 'Minimo';
-	  	$datos[5]['dato']= $parametros['minimo'];
-	  	$datos[6]['campo']= 'Gramaje';
-	  	$datos[6]['dato']= $parametros['txt_gramaje'];
-	  	$datos[7]['campo']= 'PVP';
-	  	$datos[7]['dato']= $parametros['pvp'];
-	  	$datos[8]['campo']= 'PVP_2';
-	  	$datos[8]['dato']= $parametros['pvp2'];
-	  	$datos[9]['campo']= 'PVP_3';
-	  	$datos[9]['dato']= $parametros['pvp3'];
-	  	$datos[10]['campo']= 'Marca';
-	  	$datos[10]['dato']= $parametros['txt_marca'];
-	  	$datos[11]['campo']= 'Reg_Sanitario';
-	  	$datos[11]['dato']= $parametros['txt_reg_sanitario'];
-	  	$datos[12]['campo']= 'Codigo_IESS';
-	  	$datos[12]['dato']= $parametros['txt_iess'];
-	  	$datos[13]['campo']= 'Codigo_RES';
-	  	$datos[13]['dato']= $parametros['txt_codres'];
-	  	$datos[14]['campo']= 'Codigo_Barra';
-	  	$datos[14]['dato']= $parametros['txt_barras'];
-	  	$datos[15]['campo']= 'Cta_Inventario';
-	  	$datos[15]['dato']= $parametros['cta_inventario'];
-	  	$datos[16]['campo']= 'Cta_Costo_Venta';
-	  	$datos[16]['dato']= $parametros['cta_costo_venta'];
-	  	$datos[17]['campo']= 'Cta_Ventas';
-	  	$datos[17]['dato']= $parametros['cta_venta'];
-	  	$datos[18]['campo']= 'Cta_Ventas_0';
-	  	$datos[18]['dato']= $parametros['cta_tarifa_0'];
-	  	$datos[19]['campo']= 'Cta_Ventas_Ant';
-	  	$datos[19]['dato']= $parametros['cta_venta_anterior'];
-	  	$datos[20]['campo']= 'Cta_Ventas_Anticipadas';
-	  	$datos[20]['dato']= '.'; //revisar
-	  	$datos[21]['campo']= 'Detalle';
-	  	$datos[21]['dato']= '';
-	  	$datos[22]['campo']= 'PX';
-	  	$datos[22]['dato']= $parametros['txt_posx'];
-	  	$datos[23]['campo']= 'PY';
-	  	$datos[23]['dato']= $parametros['txt_posy'];
-	  	$datos[24]['campo']= 'Item_Banco';
-	  	$datos[24]['dato']= $parametros['txt_codbanco'];
-	  	$datos[25]['campo']= 'Desc_Item';
-	  	$datos[25]['dato']= $parametros['txt_descripcion'];
-	  	$datos[26]['campo']= 'Utilidad';
-	  	$datos[26]['dato']= $parametros['txt_utilidad'];
-	  	$datos[27]['campo']= 'Ayuda';
-	  	$datos[27]['dato']= $parametros['txt_formula'];
-	  	$datos[28]['campo']= 'Ubicacion';
-	  	$datos[28]['dato']= $parametros['txt_ubicacion'];
-	  	$datos[29]['campo']= 'Periodo';
-	  	$datos[29]['dato']= $_SESSION['INGRESO']['periodo'];
-	  	$datos[30]['campo']= 'Item';
-	  	$datos[30]['dato']= $_SESSION['INGRESO']['item'];
-	  	$datos[31]['campo']= 'IVA';
-	  	if(isset($parametros['rbl_iva']) && $parametros['rbl_iva'] =='on'){ $datos[31]['dato']= 1; }else{ $datos[31]['dato']= 0;}
-	  	$datos[32]['campo']= 'INV';
-	  	if(isset($parametros['rbl_inv']) && $parametros['rbl_inv'] =='on'){ $datos[32]['dato']= 1; }else{ $datos[32]['dato']= 0;}
-	  	$datos[33]['campo']= 'Div';
-	  	if(isset($parametros['cbx_calcular']) && $parametros['cbx_calcular'] =='div'){ $datos[33]['dato']= 1; }else{ $datos[33]['dato']= 0;}
-	  	$datos[34]['campo']= 'Agrupacion';
-	  	if(isset($parametros['rbl_agrupacion']) && $parametros['rbl_agrupacion'] =='on'){ $datos[34]['dato']= 1; }else{ $datos[34]['dato']= 0;}
-	  	$datos[35]['campo']= 'Por_Reservas';
-	  	if(isset($parametros['rbl_reserva']) && $parametros['rbl_reserva'] =='on'){ $datos[35]['dato']= 1; }else{ $datos[35]['dato']= 0;}
+	 	
+	 	SetAdoAddNew("Catalogo_Productos");
+	 	SetAdoFields("Codigo_Inv", $parametros['txt_codigo']);
+		SetAdoFields("Producto", $parametros['txt_concepto']);
+		SetAdoFields("TC", $parametros['cbx_tipo']);
+		SetAdoFields("Unidad", $parametros['txt_unidad']);
+		SetAdoFields("Maximo", $parametros['maximo']);
+		SetAdoFields("Minimo", $parametros['minimo']);
+		SetAdoFields("Gramaje", $parametros['txt_gramaje']);
+		SetAdoFields("PVP", $parametros['pvp']);
+		SetAdoFields("PVP_2", $parametros['pvp2']);
+		SetAdoFields("PVP_3", $parametros['pvp3']);
+		SetAdoFields("Marca", $parametros['txt_marca']);
+		SetAdoFields("Reg_Sanitario", $parametros['txt_reg_sanitario']);
+		SetAdoFields("Codigo_IESS", $parametros['txt_iess']);
+		SetAdoFields("Codigo_RES", $parametros['txt_codres']);
+		SetAdoFields("Codigo_Barra", $parametros['txt_barras']);
+		SetAdoFields("Cta_Inventario", $parametros['cta_inventario']);
+		SetAdoFields("Cta_Costo_Venta", $parametros['cta_costo_venta']);
+		SetAdoFields("Cta_Ventas", $parametros['cta_venta']);
+		SetAdoFields("Cta_Ventas_0", $parametros['cta_tarifa_0']);
+		SetAdoFields("Cta_Ventas_Ant", $parametros['cta_venta_anterior']);
+		SetAdoFields("Cta_Ventas_Anticipadas", '.');
+		SetAdoFields("Detalle", '');
+		SetAdoFields("PX", $parametros['txt_posx']);
+		SetAdoFields("PY", $parametros['txt_posy']);
+		SetAdoFields("Item_Banco", $parametros['txt_codbanco']);
+		SetAdoFields("Desc_Item", $parametros['txt_descripcion']);
+		SetAdoFields("Utilidad", $parametros['txt_utilidad']);
+		SetAdoFields("Ayuda", $parametros['txt_formula']);
+		SetAdoFields("Ubicacion", $parametros['txt_ubicacion']);
+		SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
+		SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+		SetAdoFields("IVA", isset($parametros['rbl_iva']) && $parametros['rbl_iva'] == 'on' ? 1 : 0);
+		SetAdoFields("INV", isset($parametros['rbl_inv']) && $parametros['rbl_inv'] == 'on' ? 1 : 0);
+		SetAdoFields("Div", isset($parametros['cbx_calcular']) && $parametros['cbx_calcular'] == 'div' ? 1 : 0);
+		SetAdoFields("Agrupacion", isset($parametros['rbl_agrupacion']) && $parametros['rbl_agrupacion'] == 'on' ? 1 : 0);
+		SetAdoFields("Por_Reservas", isset($parametros['rbl_reserva']) && $parametros['rbl_reserva'] == 'on' ? 1 : 0);
 
-
-	  if(count($codigoInv)>0)
+		if(count($codigoInv)>0)
 	  {	  	
-	  	 $where[0]['campo'] ='ID'; 
-	  	 $where[0]['valor'] = $codigoInv[0]['ID'];
-	  	 return update_generico($datos,'Catalogo_Productos',$where);
-	  }else
-	  {
-	  	if(insert_generico('Catalogo_Productos',$datos)==null){	return 1;	}else{return -1;}
-	  }
-		// print_r($parametros);die();
+      SetAdoFieldsWhere("ID", $codigoInv[0]['ID']);
+      return SetAdoUpdateGeneric();
+		}else{
+			return SetAdoUpdate();
+		}
 	}
 
 	function cod_barras($codigo,$cant)

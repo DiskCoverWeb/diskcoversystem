@@ -4053,7 +4053,7 @@ function update_generico($datos,$tabla,$campoWhere) // optimizado javier farinan
    	$wherelist = substr($wherelist,0,-5);
    	$where = " WHERE ".$wherelist;   
    	$sql = $sql.$set.$where;
-    // print_r($sql);die();
+     // print_r($sql);die();
    	return $conn->String_Sql($sql);
 }
 
@@ -4246,8 +4246,8 @@ function insert_generico($tabla=null,$datos=null) // optimizado pero falta
 		$longitud_cad = strlen($sql_v); 
 		$v2 = substr_replace($sql_v,")",$longitud_cad-1,1);
 
-    // print_r($cam2.$v2);
-    // die();
+   // print_r($cam2.$v2);
+   // die();
      $res = $conn->String_Sql($cam2.$v2);
      if($res==1)
      {
@@ -8479,77 +8479,54 @@ function Leer_Datos_Clientes($Codigo_CIRUC_Cliente,$Por_Codigo=true,$Por_CIRUC=f
 
 function  Grabar_Abonos_Retenciones($FTA)
 {
-  // Control_Procesos "P", FTA.Banco & " " & FTA.TP & " No. " & FTA.Serie & "-" & Format$(FTA.Factura, "0000000") & ", Por: " & Format$(FTA.Abono, "#,##0.00")
+  control_procesos("P",$FTA['Banco']." ".$FTA['TP']." No. ".$FTA['Serie']."-".str_pad($FTA['Factura'], 7, '0', STR_PAD_LEFT) ,'Por: '.number_format($FTA['Abono'], 2, ',', '.'));
   if(count($FTA))
-    {
-      if($FTA['Abono'] > 0){
-       if($FTA['T']== "" || $FTA['T'] == G_NINGUNO){ $FTA['T'] = G_NORMAL;}
-       $cuenta = buscar_en_ctas_proceso('Cta_Cobrar');
-       if($FTA['Cta_CxP'] == "" || $FTA['Cta_CxP'] == G_NINGUNO){$FTA['Cta_CxP'] = $cuenta;}
-       if($FTA['CodigoC'] == "" || $FTA['CodigoC'] == G_NINGUNO){$FTA['CodigoC'] = '999999999';}
-       if($FTA['Comprobante'] == ""){$FTA['Comprobante'] = G_NINGUNO;}
-       if($FTA['Codigo_Inv'] == ""){$FTA['Codigo_Inv'] = G_NINGUNO;}
-       if($FTA['Fecha'] == G_NINGUNO){$FTA['Fecha'] = date('Y-m-d');}
-       if($FTA['Serie'] == G_NINGUNO){$FTA['Serie'] = "001001";}
-       if($FTA['Autorizacion'] == G_NINGUNO){$FTA['Autorizacion'] = "1234567890";}
-       if($FTA['Cheque'] == G_NINGUNO && $FTA['DiarioCaja'] > 0 ){ $FTA['Cheque'] = generaCeros($FTA['DiarioCaja'],8);}
-       if($FTA['DiarioCaja'] > 0){$FTA['Recibo_No'] = generaCeros($FTA['DiarioCaja'],10);}else{$FTA['Recibo_No'] = "0000000000";}
-       $cuenta = Leer_Cta_Catalogo($FTA['Cta']);
-        $FTA['Tipo_Cta']  = '.';
-       if(isset( $cuenta['SubCta']))
-       {
-         $FTA['Tipo_Cta'] = $cuenta['SubCta'];
-       }
+  {
+    if($FTA['Abono'] > 0){
+      if($FTA['T']== "" || $FTA['T'] == G_NINGUNO){ $FTA['T'] = G_NORMAL;}
+      $cuenta = buscar_en_ctas_proceso('Cta_Cobrar');
+      if($FTA['Cta_CxP'] == "" || $FTA['Cta_CxP'] == G_NINGUNO){$FTA['Cta_CxP'] = $cuenta;}
+      if($FTA['CodigoC'] == "" || $FTA['CodigoC'] == G_NINGUNO){$FTA['CodigoC'] = '999999999';}
+      if($FTA['Comprobante'] == ""){$FTA['Comprobante'] = G_NINGUNO;}
+      if($FTA['Codigo_Inv'] == ""){$FTA['Codigo_Inv'] = G_NINGUNO;}
+      if($FTA['Fecha'] == G_NINGUNO){$FTA['Fecha'] = date('Y-m-d');}
+      if($FTA['Serie'] == G_NINGUNO){$FTA['Serie'] = "001001";}
+      if($FTA['Autorizacion'] == G_NINGUNO){$FTA['Autorizacion'] = "1234567890";}
+      if($FTA['Cheque'] == G_NINGUNO && $FTA['DiarioCaja'] > 0 ){ $FTA['Cheque'] = generaCeros($FTA['DiarioCaja'],8);}
+      if($FTA['DiarioCaja'] > 0){$FTA['Recibo_No'] = generaCeros($FTA['DiarioCaja'],10);}else{$FTA['Recibo_No'] = "0000000000";}
+      $cuenta = Leer_Cta_Catalogo($FTA['Cta']);
+      $FTA['Tipo_Cta']  = '.';
+      if(isset( $cuenta['SubCta']))
+      {
+        $FTA['Tipo_Cta'] = $cuenta['SubCta'];
+      }
 
-       $datos[0]['campo'] ="T"; 
-       $datos[0]['dato'] =$FTA['T'];
-       $datos[1]['campo'] ="TP"; 
-       $datos[1]['dato'] =$FTA['TP'];
-       $datos[2]['campo'] ="Fecha"; 
-       $datos[2]['dato'] =$FTA['Fecha'];
-       $datos[3]['campo'] ="Recibo_No"; 
-       $datos[3]['dato'] =$FTA['Recibo_No'];
-       $datos[4]['campo'] ="Tipo_Cta"; 
-       $datos[4]['dato'] =$FTA['Tipo_Cta'];
-       $datos[5]['campo'] ="Cta"; 
-       $datos[5]['dato'] =$FTA['Cta'];
-       $datos[6]['campo'] ="Cta_CxP"; 
-       $datos[6]['dato'] =$FTA['Cta_CxP'];
-       $datos[7]['campo'] ="Factura"; 
-       $datos[7]['dato'] =$FTA['Factura'];
-       $datos[8]['campo'] ="CodigoC"; 
-       $datos[8]['dato'] =$FTA['CodigoC'];
-       $datos[9]['campo'] ="Abono"; 
-       $datos[9]['dato'] =$FTA['Abono'];
-       $datos[10]['campo'] ="Banco"; 
-       $datos[10]['dato'] =$FTA['Banco'];
-       $datos[11]['campo'] ="Cheque"; 
-       $datos[11]['dato'] =$FTA['Cheque'];
-       $datos[12]['campo'] ="Codigo_Inv"; 
-       $datos[12]['dato'] =$FTA['Codigo_Inv'];
-       $datos[13]['campo'] ="Comprobante"; 
-       $datos[13]['dato'] =$FTA['AutorizacionR'];
-       $datos[14]['campo'] ="EstabRetencion"; 
-       $datos[14]['dato'] =$FTA['Establecimiento'];
-       $datos[15]['campo'] ="PtoEmiRetencion"; 
-       $datos[15]['dato'] =$FTA['Emision'];
-       $datos[16]['campo'] ="Porc"; 
-       $datos[16]['dato'] =$FTA['Porcentaje'];
-       $datos[17]['campo'] ="Serie"; 
-       $datos[17]['dato'] =$FTA['Serie'];
-       $datos[18]['campo'] ="Autorizacion"; 
-       $datos[18]['dato'] =$FTA['Autorizacion'];
-       $datos[19]['campo'] ="Autorizacion_R"; 
-       $datos[19]['dato'] =$FTA['AutorizacionR'];
-       $datos[20]['campo'] ="CodigoU";
-       $datos[20]['dato'] = $_SESSION['INGRESO']['CodigoU'];
-       $datos[21]['campo'] ="Item";
-       $datos[21]['dato'] = $_SESSION['INGRESO']['item'];
-       // print_r($datos);die();
-       insert_generico("Trans_Abonos",$datos);
-
-   }
- }
+      SetAdoAddNew("Trans_Abonos");
+      SetAdoFields("T", $FTA['T']);
+      SetAdoFields("TP", $FTA['TP']);
+      SetAdoFields("Fecha", $FTA['Fecha']);
+      SetAdoFields("Recibo_No", $FTA['Recibo_No']);
+      SetAdoFields("Tipo_Cta", $FTA['Tipo_Cta']);
+      SetAdoFields("Cta", $FTA['Cta']);
+      SetAdoFields("Cta_CxP", $FTA['Cta_CxP']);
+      SetAdoFields("Factura", $FTA['Factura']);
+      SetAdoFields("CodigoC", $FTA['CodigoC']);
+      SetAdoFields("Abono", $FTA['Abono']);
+      SetAdoFields("Banco", $FTA['Banco']);
+      SetAdoFields("Cheque", $FTA['Cheque']);
+      SetAdoFields("Codigo_Inv", $FTA['Codigo_Inv']);
+      SetAdoFields("Comprobante", $FTA['AutorizacionR']);
+      SetAdoFields("EstabRetencion", $FTA['Establecimiento']);
+      SetAdoFields("PtoEmiRetencion", $FTA['Emision']);
+      SetAdoFields("Porc", $FTA['Porcentaje']);
+      SetAdoFields("Serie", $FTA['Serie']);
+      SetAdoFields("Autorizacion", $FTA['Autorizacion']);
+      SetAdoFields("Autorizacion_R", $FTA['AutorizacionR']);
+      SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+      SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+      SetAdoUpdate();
+    }
+  }
   Actualiza_Estado_Factura($FTA);
 }
 
@@ -10300,7 +10277,7 @@ function SetAdoFields($NombCampo, $ValorCampo) {
           if (is_null($ValorCampo) || empty($ValorCampo)) $ValorCampo = '';
           $ValorCampo = str_replace("'", "`", $ValorCampo);
           $ValorCampo = str_replace("#", "No.", $ValorCampo);
-          if (strlen($ValorCampo) > $DatosTabla[$IndDato]['Ancho']) {
+          if ($DatosTabla[$IndDato]['Ancho'] != -1 && strlen($ValorCampo) > $DatosTabla[$IndDato]['Ancho']) {
             $ValorCampo = trim(substr($ValorCampo, 1, $DatosTabla[$IndDato]['Ancho']));
           }
           if (strlen($ValorCampo) == 0) $ValorCampo = G_NINGUNO;

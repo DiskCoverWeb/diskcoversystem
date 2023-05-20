@@ -290,10 +290,6 @@ class FAbonosC
 	}
 
 function Grabar_abonos($parametro){
-	// print_r($parametro);die();
-	// print_r($_SESSION['SETEOS']);die();
-	// print_r($_SESSION['INGRESO']);die();
-
 	  $TA['Autorizacion'] = $parametro['DCAutorizacion'];
 	  $TA['CodigoC'] = $parametro['CodigoC'];
 	  $TA['Serie'] = $parametro['DCSerie'];	  
@@ -417,8 +413,6 @@ function Grabar_abonos($parametro){
      $TA['Porcentaje'] = $parametro['CBienes'];
      Grabar_Abonos_Retenciones($TA);
 
-     // print_r($parametro);die();
-     
     // 'Abono de Factura Ret IVA Servicio
      $TA['T'] = G_NORMAL;
      $TA['TP'] = $parametro['DCTipo']; //TipoFactura
