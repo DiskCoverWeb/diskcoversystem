@@ -73,24 +73,23 @@ function GuardarPreFactura() {
   }
 
   if(hayproductosMarcados){
+    $('#myModal_espera').modal('show');
     $.ajax({
         type: "POST",                 
         url: '../controlador/facturacion/facturar_pensionC.php?GuardarInsPreFacturas=true',
         data: $("#FInsPreFacturas").serialize(),
         dataType:'json', 
-        beforeSend: function () {   
-            $('#myModal_espera').modal('show');
-        },    
         success: function(response)
         {
           $('#myModal_espera').modal('hide');  
           if(response.rps){
+            Swal.fire('¡Bien!', response.mensaje, 'success')
+            $('#myModalPreFactura').modal('hide');
+
             if($('#persona').val()!=""){
               ClientePreseleccion($('#persona').val());
             }
             
-            Swal.fire('¡Bien!', response.mensaje, 'success')
-            $('#myModalPreFactura').modal('hide');
           }else{
             Swal.fire('¡Oops!', response.mensaje, 'warning')
           }        
@@ -117,29 +116,26 @@ function EliminarPreFactura() {
   }).then((result) => {
     if (result.value) {
 
+      $('#myModal_espera').modal('show');
       $.ajax({
         type: "POST",                 
         url: '../controlador/facturacion/facturar_pensionC.php?EliminarInsPreFacturas=true',
         data: $("#FInsPreFacturas").serialize(),
-        dataType:'json', 
-        beforeSend: function () {   
-            $('#myModal_espera').modal('show');
-        },    
+        dataType:'json',
         success: function(response)
         {
           $('#myModal_espera').modal('hide');  
           if(response.rps){
-            
-            if($('#persona').val()!=""){
-              ClientePreseleccion($('#persona').val());
-            }
-
             if(response.mensaje_extra){
               Swal.fire(response.mensaje, response.mensaje_extra, 'success')
             }else{
               Swal.fire('¡Bien!', response.mensaje, 'success')
             }
             $('#myModalPreFactura').modal('hide');
+            
+            if($('#persona').val()!=""){
+              ClientePreseleccion($('#persona').val());
+            }
           }else{
             Swal.fire('¡Oops!', response.mensaje, 'warning')
           }        
