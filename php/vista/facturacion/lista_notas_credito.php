@@ -368,11 +368,11 @@ function modal_email_nota(nota,serie_nc,factura,autorizacion_nc,emails)
           </div>
           <div class="col-sm-2">
             <b>Desde</b>
-              <input type="date" name="txt_desde" id="txt_desde" class="form-control input-xs">           
+              <input type="date" name="txt_desde" id="txt_desde" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">           
           </div>
           <div class="col-sm-2">
             <b>Hasta</b>
-              <input type="date" name="txt_hasta" id="txt_hasta" class="form-control input-xs">            
+              <input type="date" name="txt_hasta" id="txt_hasta" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">            
           </div>    			
     			<div class="col-sm-2"><br>
     				<button class="btn btn-primary btn-xs" type="button" onclick="cargar_registros();"><i class="fa fa-search"></i> Buscar</button>
