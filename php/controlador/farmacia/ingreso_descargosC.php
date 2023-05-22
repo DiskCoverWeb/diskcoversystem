@@ -649,62 +649,38 @@ class ingreso_descargosC
 				$num_ped+=1;
 				$revisar = $this->modelo->COD_PEDIDO_CLINICA_EXISTENTE_TRANS($num_ped);			
 			}
-			$datos[0]['campo'] = 'Numero';
-			$datos[0]['dato'] = $num_ped+1;
-			$this->modelo->ACTUALIZAR_COD_PEDIDO_CLINICA($datos);
+			SetAdoAddNew("Codigos"); 	
+			SetAdoFields('Numero',$num_ped+1);
+
+			SetAdoFieldsWhere('Concepto','PEDIDO_CLINICA');
+			SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
+			SetAdoFieldsWhere('Periodo',$_SESSION['INGRESO']['periodo']);
+			SetAdoUpdateGeneric();
 		}
-
-		   $datos[0]['campo']='Codigo_Inv';
-		   $datos[0]['dato']=$parametro['codigo'];
-		   $datos[1]['campo']='Producto';
-		   $datos[1]['dato']=$parametro['producto'];
-		   $datos[2]['campo']='UNIDAD'; /**/
-		   $datos[2]['dato']=$parametro['uni']; /**/
-		   $datos[3]['campo']='Salida';
-		   $datos[3]['dato']=$parametro['cant'];
-		   $datos[4]['campo']='Cta_Inv';
-		   $datos[4]['dato']=$parametro['cta_pro'];
-		   $datos[5]['campo']='CodigoL';  /**SUBCTA*/
-		   $datos[5]['dato']=$parametro['rubro'];		   
-		   $datos[6]['campo']='CodigoU';
-		   $datos[6]['dato']=$_SESSION['INGRESO']['Id'];   
-		   $datos[7]['campo']='Item';
-		   $datos[7]['dato']=$_SESSION['INGRESO']['item'];
-		   $datos[8]['campo']='Orden_No';
-		   $datos[8]['dato']=$num_ped; /**/
-		   $datos[9]['campo']='A_No'; /**/
-		   $datos[9]['dato']=$parametro['id']+1;
-		   $datos[10]['campo']='Fecha';
-		   $datos[10]['dato']=date('Y-m-d',strtotime($parametro['fecha']));
-		   $datos[11]['campo']='TC';
-		   $datos[11]['dato']=$parametro['TC'];
-		   $datos[12]['campo']='Valor_Total';
-		   $datos[12]['dato']=round($parametro['total'],2);
-		   $datos[13]['campo']='CANTIDAD';
-		   $datos[13]['dato']=$parametro['cant'];
-		   $datos[14]['campo']='Valor_Unitario';
-		   $datos[14]['dato']=round($parametro['valor'],2);
-		   $datos[15]['campo']='DH';
-		   $datos[15]['dato']=2;
-		   $datos[16]['campo']='Contra_Cta';
-		   $datos[16]['dato']=$parametro['cc'];
-		   $datos[17]['campo']='Descuento';
-		   $datos[17]['dato']=$parametro['descuento'];
-		   $datos[18]['campo']='Codigo_P';
-		   $datos[18]['dato']=$parametro['CodigoP'];
-
-		   $datos[19]['campo']='Detalle';
-		   $datos[19]['dato']=$parametro['pro'];
-
-
-		   $datos[20]['campo']='Centro_Costo';
-		   $datos[20]['dato']=$parametro['area'];
-
-		   $datos[21]['campo']='Codigo_Dr';
-		   $datos[21]['dato']=$parametro['solicitante'];
-
-		   $datos[22]['campo']='Costo';
-		   $datos[22]['dato']=round($parametro['valor'],2);
+		   SetAdoAddNew("Trans_Kardex"); 		
+		   SetAdoFields('Codigo_Inv',$parametro['codigo']);
+		   SetAdoFields('Producto',$parametro['producto']);
+		   SetAdoFields('UNIDAD',$parametro['uni']); /**/
+		   SetAdoFields('Salida',$parametro['cant']);
+		   SetAdoFields('Cta_Inv',$parametro['cta_pro']);
+		   SetAdoFields('CodigoL',$parametro['rubro']);		   
+		   SetAdoFields('CodigoU',$_SESSION['INGRESO']['Id']);   
+		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		   SetAdoFields('Orden_No',$num_ped); /**/
+		   SetAdoFields('A_No',$parametro['id']+1);
+		   SetAdoFields('Fecha',date('Y-m-d',strtotime($parametro['fecha'])));
+		   SetAdoFields('TC',$parametro['TC']);
+		   SetAdoFields('Valor_Total',number_format($parametro['total'],2,'.',''));
+		   SetAdoFields('CANTIDAD',$parametro['cant']);
+		   SetAdoFields('Valor_Unitario',number_format($parametro['valor'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
+		   SetAdoFields('DH',2);
+		   SetAdoFields('Contra_Cta',$parametro['cc']);
+		   SetAdoFields('Descuento',$parametro['descuento']);
+		   SetAdoFields('Codigo_P',$parametro['CodigoP']);
+		   SetAdoFields('Detalle',$parametro['pro']);
+		   SetAdoFields('Centro_Costo',$parametro['area']);
+		   SetAdoFields('Codigo_Dr',$parametro['solicitante']);
+		   SetAdoFields('Costo',number_format($parametro['valor'],2,'.',''));
 
 		   if($parametro['iva']!=0)
 		   {
@@ -712,7 +688,7 @@ class ingreso_descargosC
 		       // $datos[19]['dato']=(round($parametro['total'],2)*1.12)-round($parametro['total'],2);
 		   }
 		   // print_r($datos);die();
-		   $resp = $this->modelo->ingresar_asiento_K($datos);
+		   $resp = SetAdoUpdate();
 		   $num = $num_ped;
 		   return  $respuesta = array('ped'=>$num,'resp'=>$resp);
 		
@@ -730,62 +706,39 @@ class ingreso_descargosC
 				$num_ped+=1;
 				$revisar = $this->modelo->COD_PEDIDO_CLINICA_EXISTENTE_TRANS($num_ped);			
 			}
-			$datos[0]['campo'] = 'Numero';
-			$datos[0]['dato'] = $num_ped+1;
-			$this->modelo->ACTUALIZAR_COD_PEDIDO_CLINICA_BOD($datos);
+			SetAdoAddNew("Codigos"); 	
+			SetAdoFields('Numero',$num_ped+1);
+
+			SetAdoFieldsWhere('Concepto','PEDIDO_CLINICA');
+			SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
+			SetAdoFieldsWhere('Periodo',$_SESSION['INGRESO']['periodo']);
+			SetAdoUpdateGeneric();
 		}
 
-		   $datos[0]['campo']='Codigo_Inv';
-		   $datos[0]['dato']=$parametro['codigo'];
-		   $datos[1]['campo']='Producto';
-		   $datos[1]['dato']=$parametro['producto'];
-		   $datos[2]['campo']='UNIDAD'; /**/
-		   $datos[2]['dato']=$parametro['uni']; /**/
-		   $datos[3]['campo']='Salida';
-		   $datos[3]['dato']=$parametro['cant'];
-		   $datos[4]['campo']='Cta_Inv';
-		   $datos[4]['dato']=$parametro['cta_pro'];
-		   $datos[5]['campo']='CodigoL';  /**SUBCTA*/
-		   $datos[5]['dato']=$parametro['rubro'];		   
-		   $datos[6]['campo']='CodigoU';
-		   $datos[6]['dato']=$_SESSION['INGRESO']['Id'];   
-		   $datos[7]['campo']='Item';
-		   $datos[7]['dato']=$_SESSION['INGRESO']['item'];
-		   $datos[8]['campo']='Orden_No';
-		   $datos[8]['dato']=$num_ped; /**/
-		   $datos[9]['campo']='A_No'; /**/
-		   $datos[9]['dato']=$parametro['id']+1;
-		   $datos[10]['campo']='Fecha';
-		   $datos[10]['dato']=date('Y-m-d',strtotime($parametro['fecha']));
-		   $datos[11]['campo']='TC';
-		   $datos[11]['dato']=$parametro['TC'];
-		   $datos[12]['campo']='Valor_Total';
-		   $datos[12]['dato']=round($parametro['total'],2);
-		   $datos[13]['campo']='CANTIDAD';
-		   $datos[13]['dato']=$parametro['cant'];
-		   $datos[14]['campo']='Valor_Unitario';
-		   $datos[14]['dato']=round($parametro['valor'],2);
-		   $datos[15]['campo']='DH';
-		   $datos[15]['dato']=2;
-		   $datos[16]['campo']='Contra_Cta';
-		   $datos[16]['dato']=$parametro['cc'];
-		   $datos[17]['campo']='Descuento';
-		   $datos[17]['dato']=$parametro['descuento'];
-		   $datos[18]['campo']='Codigo_P';
-		   $datos[18]['dato']=$parametro['CodigoP'];
-
-		   $datos[19]['campo']='Detalle';
-		   $datos[19]['dato']=$parametro['pro'];
-
-
-		   $datos[20]['campo']='Centro_Costo';
-		   $datos[20]['dato']=$parametro['area'];
-
-		   $datos[21]['campo']='Codigo_Dr';
-		   $datos[21]['dato']=$parametro['solicitante'];
-
-		   $datos[22]['campo']='Costo';
-		   $datos[22]['dato']=round($parametro['valor'],2);
+		   SetAdoAddNew("Trans_Kardex"); 	
+		   SetAdoFields('Codigo_Inv',$parametro['codigo']);
+		   SetAdoFields('Producto',$parametro['producto']);
+		   SetAdoFields('UNIDAD',$parametro['uni']); /**/
+		   SetAdoFields('Salida',$parametro['cant']);
+		   SetAdoFields('Cta_Inv',$parametro['cta_pro']);
+		   SetAdoFields('CodigoL',$parametro['rubro']);		   
+		   SetAdoFields('CodigoU',$_SESSION['INGRESO']['Id']);   
+		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		   SetAdoFields('Orden_No',$num_ped); /**/
+		   SetAdoFields('A_No',$parametro['id']+1);
+		   SetAdoFields('Fecha',date('Y-m-d',strtotime($parametro['fecha'])));
+		   SetAdoFields('TC',$parametro['TC']);
+		   SetAdoFields('Valor_Total',round($parametro['total'],2));
+		   SetAdoFields('CANTIDAD',$parametro['cant']);
+		   SetAdoFields('Valor_Unitario',number_format($parametro['valor'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
+		   SetAdoFields('DH',2);
+		   SetAdoFields('Contra_Cta',$parametro['cc']);
+		   SetAdoFields('Descuento',$parametro['descuento']);
+		   SetAdoFields('Codigo_P',$parametro['CodigoP']);
+		   SetAdoFields('Detalle',$parametro['pro']);
+		   SetAdoFields('Centro_Costo',$parametro['area']);
+		   SetAdoFields('Codigo_Dr',$parametro['solicitante']);
+		   SetAdoFields('Costo',round($parametro['valor'],2));
 
 		   if($parametro['iva']!=0)
 		   {
@@ -793,7 +746,8 @@ class ingreso_descargosC
 		       // $datos[19]['dato']=(round($parametro['total'],2)*1.12)-round($parametro['total'],2);
 		   }
 		   // print_r($datos);die();
-		   $resp = $this->modelo->ingresar_asiento_K($datos);
+	
+		   $resp = SetAdoUpdate();
 		   $num = $num_ped;
 		   return  $respuesta = array('ped'=>$num,'resp'=>$resp);
 		

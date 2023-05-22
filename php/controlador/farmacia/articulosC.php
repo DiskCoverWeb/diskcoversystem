@@ -206,7 +206,7 @@ class articulosC
     	$cabecera_tabla = '
     	<div class="table-responsive">
 
-  		<table class="table table-hover" id="tbl_style">
+  		<table class="table table-hover text-sm" id="tbl_style">
   			<thead>
   				<th>ITEM</th>
   				<th>FECHA</th>
@@ -268,8 +268,8 @@ class articulosC
   					<td width="'.$d7.'" class="text-right">'.$value['IVA'].'</td>
   					<td width="'.$d7.'" class="text-right">'.$value['VALOR_TOTAL'].'</td>
   					<td width="10px">
-  						<!-- <button class="btn btn-sm btn-primary" onclick="editar_lin()" title="Editar paciente"><span class="glyphicon glyphicon-floppy-disk"></span></button> -->
-  						<button class="btn btn-sm btn-danger" title="Eliminar paciente"  onclick="eliminar_lin(\''.$value['A_No'].'\',\''.$orden.'\',\''.$prove.'\')" ><span class="glyphicon glyphicon-trash"></span></button>
+  						<!-- <button class="btn btn-xs btn-primary" onclick="editar_lin()" title="Editar paciente"><span class="glyphicon glyphicon-floppy-disk"></span></button> -->
+  						<button class="btn btn-xs btn-danger" title="Eliminar paciente"  onclick="eliminar_lin(\''.$value['A_No'].'\',\''.$orden.'\',\''.$prove.'\')" ><span class="glyphicon glyphicon-trash"></span></button>
   					</td>
   				</tr>';
 			
@@ -410,68 +410,36 @@ class articulosC
 
 
 		$cta_i = explode('-',$parametros['ddl_familia_modal']);
-		$datos[0]['campo']='Periodo';
-		$datos[0]['dato']=$_SESSION['INGRESO']['periodo'];
-		$datos[1]['campo']='TC';
-		$datos[1]['dato']='P';
-		$datos[2]['campo']='Codigo_Inv';
-		$datos[2]['dato']=$cta_i[0].'.'.$parametros['txt_ref'];
-		$datos[3]['campo']='Producto';
-		$datos[3]['dato']=strtoupper($parametros['txt_nombre']);
-		$datos[4]['campo']='Unidad';
-		$datos[4]['dato']=$parametros['txt_uni'];
-		$datos[5]['campo']='Minimo';
-		$datos[5]['dato']=$parametros['txt_min'];
-		$datos[6]['campo']='Maximo';
-		$datos[6]['dato']=$parametros['txt_max'];
-		$datos[7]['campo']='Cta_Costo_Venta';
-		$datos[7]['dato']=$parametros['ddl_cta_CV'];
-		$datos[8]['campo']='INV';
-		$datos[8]['dato']='1';
-		$datos[9]['campo']='Stock_Actual';
-		$datos[9]['dato']=0;
-		$datos[10]['campo']='Item';
-		$datos[10]['dato']=$_SESSION['INGRESO']['item'];
-		$datos[11]['campo']='Cta_Inventario';
-		$datos[11]['dato']=$parametros['ddl_cta_inv']; 
-		$datos[12]['campo']='Reg_Sanitario';
-		$datos[12]['dato']=$parametros['txt_reg_sanitario']; 
-		$datos[13]['campo']='Codigo_Barras';
-		$datos[13]['dato']=$parametros['txt_cod_barras']; 
 
-		$datos[14]['campo']='Cta_Ventas';
-		$datos[14]['dato']= $parametros['ddl_cta_venta']; 
-
-		$datos[15]['campo']='Cta_Ventas_0';
-		$datos[15]['dato']= $parametros['ddl_cta_ventas_0']; 
-
-		$datos[16]['campo']='Cta_Ventas_Anticipadas';
-		$datos[16]['dato']= $parametros['ddl_cta_vnt_anti']; 
-
-		$datos[17]['campo']='T';
-		$datos[17]['dato']='N'; 
+		SetAdoAddNew("Catalogo_Productos"); 
+		SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
+		SetAdoFields('TC','P');
+		SetAdoFields('Codigo_Inv',$cta_i[0].'.'.$parametros['txt_ref']);
+		SetAdoFields('Producto',strtoupper($parametros['txt_nombre']));
+		SetAdoFields('Unidad',$parametros['txt_uni']);
+		SetAdoFields('Minimo',$parametros['txt_min']);
+		SetAdoFields('Maximo',$parametros['txt_max']);
+		SetAdoFields('Cta_Costo_Venta',$parametros['ddl_cta_CV']);
+		SetAdoFields('INV','1');
+		SetAdoFields('Stock_Actual',0);
+		SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		SetAdoFields('Cta_Inventario',$parametros['ddl_cta_inv']); 
+		SetAdoFields('Reg_Sanitario',$parametros['txt_reg_sanitario']); 
+		SetAdoFields('Codigo_Barras',$parametros['txt_cod_barras']); 
+		SetAdoFields('Cta_Ventas',$parametros['ddl_cta_venta']); 
+		SetAdoFields('Cta_Ventas_0',$parametros['ddl_cta_ventas_0']);
+		SetAdoFields('Cta_Ventas_Anticipadas',$parametros['ddl_cta_vnt_anti']); 
+		SetAdoFields('T','N'); 
 
 		// print_r($parametros);die();
 		if(isset($parametros['txt_id']) AND $parametros['txt_id'] !='')
 		{
-			$where[0]['campo'] = 'ID';
-			$where[0]['valor'] = $parametros['txt_id'];
-
-			// print_r($datos);die();
-			$pro = $this->modelo->update('Catalogo_Productos',$datos,$where);
+			SetAdoFieldsWhere('ID',$parametros['txt_id']);
+			SetAdoUpdateGeneric();
 		}else
-		{
-		 $pro = $this->modelo->guardar('Catalogo_Productos',$datos);
+		{   
+			return SetAdoUpdate();
 		}
-		if($pro =='')
-		{
-			return 1;
-		}else
-		{
-			return -1;
-		}
-
-
 
 	}
 	function Ingresar_proveedor($parametros)
@@ -483,45 +451,35 @@ class articulosC
 		$cli = '';
 		if(empty($existe))
 		{
-		    $datos[0]['campo'] = 'FA';
-		    $datos[0]['dato'] = '1';
-		    $datos[1]['campo'] = 'T';
-		    $datos[1]['dato'] = 'N';
-		    $datos[2]['campo'] = 'Codigo';
-		    $datos[2]['dato'] = $codigo['Codigo_RUC_CI'];
-		    $datos[3]['campo'] = 'Cliente';
-		    $datos[3]['dato'] = $parametros['txt_nombre_prove'];
-		    $datos[4]['campo'] = 'CI_RUC';
-		    $datos[4]['dato'] = $parametros['txt_ruc'];
-		    $datos[5]['campo'] = 'Email';
-		    $datos[5]['dato'] = $parametros['txt_email'];
-		    $datos[6]['campo'] = 'Telefono';
-		    $datos[6]['dato'] = $parametros['txt_telefono'];
-		    $datos[7]['campo'] = 'Direccion';
-		    $datos[7]['dato'] = $parametros['txt_direccion'];
-		    $datos[8]['campo'] = 'Fecha';
-		    $datos[8]['dato'] = strval(date('Y-m-d'));
-		    $cli = $this->modelo->guardar('Clientes',$datos);
+		    SetAdoAddNew("Clientes"); 
+		    SetAdoFields('FA','1');
+		    SetAdoFields('T','N');
+		    SetAdoFields('Codigo',$codigo['Codigo_RUC_CI']);
+		    SetAdoFields('Cliente',$parametros['txt_nombre_prove']);
+		    SetAdoFields('CI_RUC',$parametros['txt_ruc']);
+		    SetAdoFields('Email',$parametros['txt_email']);
+		    SetAdoFields('Telefono',$parametros['txt_telefono']);
+		    SetAdoFields('Direccion',$parametros['txt_direccion']);
+		    SetAdoFields('Fecha',strval(date('Y-m-d')));
+		    $cli = SetAdoUpdate();
 		}else{$cli =1;}
 
 		 $exist = $this->modelo->catalogo_Cxcxp($codigo['Codigo_RUC_CI']);
 
 		 if(empty($exist))
 		 {
-		 	$datos1[0]['campo'] = 'Codigo';
-		    $datos1[0]['dato'] = $codigo['Codigo_RUC_CI'];
-		    $datos1[1]['campo'] = 'Cta';
-		    $datos1[1]['dato'] = $this->modelo->buscar_cta_proveedor();
-		    $datos1[2]['campo'] = 'Item';
-		    $datos1[2]['dato'] = $_SESSION['INGRESO']['item'];
-		    $datos1[3]['campo'] = 'Periodo';
-		    $datos1[3]['dato'] = $_SESSION['INGRESO']['periodo'];
-		    $datos1[3]['campo'] = 'TC';
-		    $datos1[3]['dato'] = 'P';
-		    $cta = $this->modelo->guardar('Catalogo_CxCxP',$datos1);
+		    SetAdoAddNew("Catalogo_CxCxP"); 
+		    SetAdoFields('Codigo',$codigo['Codigo_RUC_CI']);
+		    SetAdoFields('Cta',$this->modelo->buscar_cta_proveedor());
+		    SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		    SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
+		    SetAdoFields('TC','P');
+		    $cta = SetAdoUpdate();
 		 }else{$cta = 1;}
 
-		 if($cta == 1 && $cli ==1)
+		 // print_r($cta.'-'.$cli);die();
+
+		 if($cta != 1 && $cli !=1)
 		 {
 		 	return -2;
 		 }else
@@ -537,91 +495,43 @@ class articulosC
 
 		   $val_descto = (($parametro['txt_precio']*$parametro['txt_canti'])*$parametro['txt_descto'])/100;
 		   $pro = $this->modelo->buscar_cta_proveedor();
-		  $producto = explode('_',$parametro['ddl_producto']);
-		  $prove = explode('-', $parametro['ddl_proveedor']);
-		   $datos[0]['campo']='CODIGO_INV';
-		   $datos[0]['dato']=$parametro['txt_referencia'];
-		   $datos[1]['campo']='PRODUCTO';
-		   $datos[1]['dato']=$producto[5];
-		   $datos[2]['campo']='UNIDAD';
-		   $datos[2]['dato']=$parametro['txt_unidad']; 
-		   $datos[3]['campo']='CANT_ES';
-		   $datos[3]['dato']=$parametro['txt_canti'];
-		   $datos[4]['campo']='CTA_INVENTARIO';
-		   $datos[4]['dato']=$producto[4];
-		   $datos[5]['campo']='SUBCTA';
-		   $datos[5]['dato']=$prove[2];		   
-		   $datos[6]['campo']='CodigoU';
-		   $datos[6]['dato']=$_SESSION['INGRESO']['Id'];   
-		   $datos[7]['campo']='Item';
-		   $datos[7]['dato']=$_SESSION['INGRESO']['item'];
-		   $datos[8]['campo']='A_No';
-		   $datos[8]['dato']=$parametro['A_No']+1;
+		   $producto = explode('_',$parametro['ddl_producto']);
+		   
+		   $prove = explode('-', $parametro['ddl_proveedor']);
 
-		   $datos[9]['campo']='Fecha_DUI';
-		   $datos[9]['dato']=$parametro['txt_fecha'];
+		   SetAdoAddNew("Asiento_K"); 
+		   SetAdoFields('CODIGO_INV',$parametro['txt_referencia']);
+		   SetAdoFields('PRODUCTO',$producto[5]);
+		   SetAdoFields('UNIDAD',$parametro['txt_unidad']); 
+		   SetAdoFields('CANT_ES',$parametro['txt_canti']);
+		   SetAdoFields('CTA_INVENTARIO',$producto[4]);
+		   SetAdoFields('SUBCTA',$prove[2]);		   
+		   SetAdoFields('CodigoU',$_SESSION['INGRESO']['Id']);   
+		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		   SetAdoFields('A_No',$parametro['A_No']+1);
 
-		   $datos[10]['campo']='TC';
-		   $datos[10]['dato']='P';
-		   $datos[11]['campo']='VALOR_TOTAL';
-		   $datos[11]['dato']=number_format($parametro['txt_total'],4,'.','');
-		   $datos[12]['campo']='CANTIDAD';
-		   $datos[12]['dato']=$parametro['txt_canti'];
-		   $datos[13]['campo']='VALOR_UNIT';
-		   $datos[13]['dato']= number_format($parametro['txt_precio'],7,'.','');
+		   SetAdoFields('Fecha_DUI',$parametro['txt_fecha']);
+
+		   SetAdoFields('TC','P');
+		   SetAdoFields('VALOR_TOTAL',number_format($parametro['txt_total'],4,'.',''));
+		   SetAdoFields('CANTIDAD',$parametro['txt_canti']);
+		   SetAdoFields('VALOR_UNIT',number_format($parametro['txt_precio'],7,'.',''));
 		   //round($parametro['txt_precio'],2,PHP_ROUND_HALF_DOWN);
-		   $datos[14]['campo']='DH';
-		   $datos[14]['dato']=1;
-		   $datos[15]['campo']='CONTRA_CTA';
-		   $datos[15]['dato']=$pro;
-		   $datos[16]['campo']='ORDEN';
-		   $datos[16]['dato']=$parametro['txt_num_fac'];
-		   $datos[17]['campo']='IVA';
-		   $datos[17]['dato']=number_format($parametro['txt_iva'],4,'.','');
+		   SetAdoFields('DH',1);
+		   SetAdoFields('CONTRA_CTA',$pro);
+		   SetAdoFields('ORDEN',$parametro['txt_num_fac']);
+		   SetAdoFields('IVA',number_format($parametro['txt_iva'],4,'.',''));
+		   SetAdoFields('Fecha_Fab',$parametro['txt_fecha_ela']);		   
+		   SetAdoFields('Fecha_Exp',$parametro['txt_fecha_exp']);		   
+		   SetAdoFields('Reg_Sanitario',$parametro['txt_reg_sani']);		   
+		   SetAdoFields('Lote_No',$parametro['txt_lote']);		   
+		   SetAdoFields('Procedencia',$parametro['txt_procedencia']);		   
+		   SetAdoFields('Serie_No',$parametro['txt_serie']);
+		   SetAdoFields('P_DESC',$val_descto); 
 
-		   $datos[18]['campo']='Fecha_Fab';
-		   $datos[18]['dato']=$parametro['txt_fecha_ela'];
+		   // print_r($datos);die();
 
-		   
-		   $datos[19]['campo']='Fecha_Exp';
-		   $datos[19]['dato']=$parametro['txt_fecha_exp'];
-
-		   
-		   $datos[20]['campo']='Reg_Sanitario';
-		   $datos[20]['dato']=$parametro['txt_reg_sani'];
-
-		   
-		   $datos[21]['campo']='Lote_No';
-		   $datos[21]['dato']=$parametro['txt_lote'];
-
-		   
-		   $datos[22]['campo']='Procedencia';
-		   $datos[22]['dato']=$parametro['txt_procedencia'];
-
-		   
-		   $datos[23]['campo']='Serie_No';
-		   $datos[23]['dato']=$parametro['txt_serie'];
-
-		   $datos[24]['campo']='P_DESC';
-		   $datos[24]['dato']=$val_descto; 
-
-		   // $datos[25]['campo']='UNIDAD';
-		   // $datos[25]['dato']=$parametro['txt_unidad']; 
-
-		   // print_r($parametro);
-
-// print_r($datos);die();
-		   $resp = $this->modelo->ingresar_asiento_K($datos);
-		   // print_r($resp);die();
-		   if($resp ==null)
-		   {
-		   	return 1;
-		   }else
-		   {
-		   	return -1;
-		   }
-	
-	    // print_r($resp);die();
+		   return SetAdoUpdate();
 	}
 
 	function lineas_eli($parametros)
@@ -900,75 +810,39 @@ class articulosC
 		   {
 		   	 $cant = explode(',',$datos_inv[0]['id']);
 		   }
-		   			
-		    $datos[0]['campo'] ='Codigo_Inv';
-		    $datos[0]['dato'] =$value['CODIGO_INV']; 
-		    $datos[1]['campo'] ='Fecha';
-		    $datos[1]['dato'] =$fechaC; 
-		    $datos[2]['campo'] ='Numero';
-		    $datos[2]['dato'] =$comprobante;  
-		    $datos[3]['campo'] ='T';
-		    $datos[3]['dato'] ='N'; 
-		    $datos[4]['campo'] ='TP';
-		    $datos[4]['dato'] ='CD'; 
-		    $datos[5]['campo'] ='Codigo_P';
-		    $datos[5]['dato'] =$_SESSION['INGRESO']['CodigoU']; 
-		    $datos[6]['campo'] ='Cta_Inv';
-		    $datos[6]['dato'] =$value['CTA_INVENTARIO']; 
-		    $datos[7]['campo'] ='Contra_Cta';
-		    $datos[7]['dato'] =$value['CONTRA_CTA']; 
-		    $datos[8]['campo'] ='Periodo';
-		    $datos[8]['dato'] =$_SESSION['INGRESO']['periodo']; 
-		    $datos[9]['campo'] ='Entrada';
-		    $datos[9]['dato'] =$value['CANTIDAD']; 
-		    $datos[10]['campo'] ='Valor_Unitario';
-		    $datos[10]['dato'] =round($value['VALOR_UNIT'],2); 
-		    $datos[11]['campo'] ='Valor_Total';
-		    $datos[11]['dato'] =round($value['VALOR_TOTAL'],2); 
-		    $datos[12]['campo'] ='Costo';
-		    $datos[12]['dato'] =round($value['VALOR_UNIT'],2); 
-		    $datos[13]['campo'] ='Total';
-		    $datos[13]['dato'] =round($value['VALOR_TOTAL'],2);
-		    $datos[14]['campo'] ='Existencia';
-		    $datos[14]['dato'] =round(($cant[2]),2)+intval($value['CANTIDAD']);
-		    $datos[15]['campo'] ='CodigoU';
-		    $datos[15]['dato'] =$_SESSION['INGRESO']['CodigoU'];
-		    $datos[16]['campo'] ='Item';
-		    $datos[16]['dato'] =$_SESSION['INGRESO']['item'];
-		    $datos[17]['campo'] ='CodBodega';
-		    $datos[17]['dato'] ='01';
-		    $datos[18]['campo'] ='CodigoL';
-		    $datos[18]['dato'] =$value['SUBCTA'];
-		    $datos[19]['campo'] ='Detalle';
-		    $datos[19]['dato'] ='Entrada de inventario por '.$nombre.' de la factura '.$orden.' el dia '.$fechaC;
-
-		    $datos[20]['campo'] ='Fecha_Exp';
-		    $datos[20]['dato'] =$value['Fecha_Exp']->format('Y-m-d');
-
-		    $datos[21]['campo'] ='Fecha_Fab';
-		    $datos[21]['dato'] =$value['Fecha_Fab']->format('Y-m-d');
-
-		    $datos[22]['campo'] ='Reg_Sanitario';
-		    $datos[22]['dato'] =$value['Reg_Sanitario'];
-
-		    $datos[23]['campo'] ='Lote_No';
-		    $datos[23]['dato'] =$value['Lote_No'];
-
-		    $datos[24]['campo'] ='Procedencia';
-		    $datos[24]['dato'] =$value['Procedencia'];
-
-		    $datos[25]['campo'] ='Serie_No';
-		    $datos[25]['dato'] =$value['Serie_No'];
-
-		    $datos[26]['campo'] ='Factura';
-		    $datos[26]['dato'] =$value['ORDEN'];
-
-		    $datos[27]['campo'] ='Codigo_Dr';
-		    $datos[27]['dato'] =$value['Codigo_Dr'];
+		   	
+		    SetAdoAddNew("Trans_Kardex"); 		
+		    SetAdoFields('Codigo_Inv',$value['CODIGO_INV']); 
+		    SetAdoFields('Fecha',$fechaC); 
+		    SetAdoFields('Numero',$comprobante);  
+		    SetAdoFields('T','N'); 
+		    SetAdoFields('TP','CD'); 
+		    SetAdoFields('Codigo_P',$_SESSION['INGRESO']['CodigoU']); 
+		    SetAdoFields('Cta_Inv',$value['CTA_INVENTARIO']); 
+		    SetAdoFields('Contra_Cta',$value['CONTRA_CTA']); 
+		    SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']); 
+		    SetAdoFields('Entrada',$value['CANTIDAD']); 
+		    SetAdoFields('Valor_Unitario',number_format($value['VALOR_UNIT'],$_SESSION['INGRESO']['Dec_PVP'],'.','')); 
+		    SetAdoFields('Valor_Total',number_format($value['VALOR_TOTAL'],2)); 
+		    SetAdoFields('Costo',number_format($value['VALOR_UNIT'],2)); 
+		    SetAdoFields('Total',number_format($value['VALOR_TOTAL'],2));
+		    SetAdoFields('Existencia',number_format(($cant[2]),2)+intval($value['CANTIDAD']));
+		    SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);
+		    SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		    SetAdoFields('CodBodega','01');
+		    SetAdoFields('CodigoL',$value['SUBCTA']);
+		    SetAdoFields('Detalle','Entrada de inventario por '.$nombre.' de la factura '.$orden.' el dia '.$fechaC);
+		    SetAdoFields('Fecha_Exp',$value['Fecha_Exp']->format('Y-m-d'));
+		    SetAdoFields('Fecha_Fab',$value['Fecha_Fab']->format('Y-m-d'));
+		    SetAdoFields('Reg_Sanitario',$value['Reg_Sanitario']);
+		    SetAdoFields('Lote_No',$value['Lote_No']);
+		    SetAdoFields('Procedencia',$value['Procedencia']);
+		    SetAdoFields('Serie_No',$value['Serie_No']);
+		    SetAdoFields('Factura',$value['ORDEN']);
+		    SetAdoFields('Codigo_Dr',$value['Codigo_Dr']);
 
 
-		    // print_r($this->ing_descargos->insertar_trans_kardex($datos));die();
-		     if($this->ing_descargos->insertar_trans_kardex($datos)!="")
+		     if(SetAdoUpdate()!=1)
 		     {
 		     	$resp = 0;
 		     } 
@@ -1159,20 +1033,17 @@ function eliminar_factura($parametros)
    		return -3;
    	}
 
-   	 $datos[0]['campo']='Codigo_Inv';
-	 $datos[0]['dato']=$codigo;
-	 $datos[1]['campo']='Producto';
-	 $datos[1]['dato']= strtoupper($nombre);
-	 $datos[2]['campo']='Item';
-	 $datos[2]['dato']=$_SESSION['INGRESO']['item'];
-	 $datos[3]['campo']='Periodo';
-	 $datos[3]['dato']=$_SESSION['INGRESO']['periodo'];
-	 $datos[4]['campo']='TC';
-	 $datos[4]['dato']='I';
-	 $datos[5]['campo']='INV';
-	 $datos[5]['dato']='1';
-	 $datos[6]['campo']='Cta_Inventario';
-	 $datos[6]['dato']='0';
+
+   	 SetAdoAddNew("Catalogo_Productos"); 		
+   	 SetAdoFields('Codigo_Inv',$codigo);
+	 SetAdoFields('Producto', strtoupper($nombre));
+	 SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+	 SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
+	 SetAdoFields('TC','I');
+	 SetAdoFields('INV','1');
+	 SetAdoFields('Cta_Inventario','0');
+
+	 SetAdoUpdate();
 
 	 // print_r($datos);die();
 	 if($this->modelo->guardar($table='Catalogo_Productos',$datos)==null)

@@ -213,10 +213,7 @@ class devoluciones_insumosM
 			$resp = update_generico($datos,'Asiento_K',$campoWhere);			
 		  return $resp;
 			
-		}else{
-	      $resp = insert_generico("Asiento_K",$datos);
-	      return $resp;
-	  }
+		}
 	}
 }
 

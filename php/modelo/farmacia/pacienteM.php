@@ -181,27 +181,7 @@ class pacienteM
 		// print_r($datos);die();
 		return $datos;
 	}
-	function insertar_paciente($datos,$campoWhere=false,$tipo=false)
-	{
-		if($tipo && $tipo == 'E')
-		{
-			// print_r($datos);print_r('expression');print_r($campoWhere);die();
-			return update_generico($datos,'Clientes',$campoWhere);
-		}else if($tipo && $tipo == 'N')
-		{
-			$resp = insert_generico('Clientes',$datos);
-			if($resp=='')
-			{
-				return 1;
-			}
-		}else
-		{
-			// print_r('expression');die();
-		   return update_generico($datos,'Clientes',$campoWhere);
-			
-		}
-
-	}
+	
 	function eliminar_paciente($id)
 	{
 
@@ -302,23 +282,14 @@ class pacienteM
 
 	function CREAR_COD_HISTORIA_CLINICA()
 	{
-		$datos[0]['campo']='Periodo';
-		$datos[0]['dato']='.';
 
-		$datos[1]['campo']='Item';
-		$datos[1]['dato']=$_SESSION['INGRESO']['item'];
+		SetAdoAddNew("Codigo");    
+		SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
+		SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		SetAdoFields('Concepto','HISTORIA_CLINICA');
+		SetAdoFields('Numero',1);
 
-		$datos[2]['campo']='Concepto';
-		$datos[2]['dato']='HISTORIA_CLINICA';
-
-		$datos[3]['campo']='Numero';
-		$datos[3]['dato']=1;
-
-		$resp = insert_generico('Codigo',$datos);
-		if($resp=='')
-		{
-			return 1;
-		}
+		return SetAdoUpdate();
 	}
 
 	function existe_transacciones_subcuenta_abonos_air_compras($cli)
