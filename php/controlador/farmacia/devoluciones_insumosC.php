@@ -179,121 +179,58 @@ class devoluciones_insumosC
     function guardar_devolucion_departamentos($parametro)
 	{
 		// print_r($parametro);die();
+		if($parametro['cc']!='')
+		{
+		   	SetAdoFields('CONTRA_CTA',$parametro['cc']);
+		   	 // $cc = explode('-',$parametro['cc']);
+		}else
+		{
+			$cta = buscar_en_ctas_proceso('Cta_Devoluciones');
+			if($cta!=-1)
+			{
+			 	SetAdoFields('CONTRA_CTA',$cta);
+			}else
+			{
+		   		SetAdoAddNew("Ctas_Proceso"); 	
+		   	 	SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
+		   	 	SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		   	 	SetAdoFields('DC','D');
+		   	 	SetAdoFields('Lst',0);
+		   	 	SetAdoFields('Detalle','Cta_Devoluciones');
+		   	 	SetAdoFields('Codigo','4.4.02.05.02');
+		   	 	SetAdoUpdate();
+		   	 	SetAdoFields('CONTRA_CTA','4.4.02.05.02');
+		   	 }
+	    }
 
 		   $linea = $this->modelo->producto_all_detalle($parametro['codigo']);
 		   // print_r($linea);die();
-		   $datos[0]['campo']='CODIGO_INV';
-		   $datos[0]['dato']=$parametro['codigo'];
-		   $datos[1]['campo']='PRODUCTO';
-		   $datos[1]['dato']=$parametro['producto'];
-		   $datos[2]['campo']='UNIDAD';
-		   $datos[2]['dato']='';
-		   $datos[3]['campo']='CANT_ES';
-		   $datos[3]['dato']=$parametro['cantidad'];
-		   $datos[4]['campo']='CTA_INVENTARIO';
-		   $datos[4]['dato']=$linea[0]['Cta_Inventario'];
-		   $datos[5]['campo']='SUBCTA';
-		   $datos[5]['dato']=$parametro['area'];		   //proveedor cod //area de donde biene
-		   $datos[6]['campo']='CodigoU';
-		   $datos[6]['dato']=$_SESSION['INGRESO']['Id'];   
-		   $datos[7]['campo']='Item';
-		   $datos[7]['dato']=$_SESSION['INGRESO']['item'];
-		   $datos[8]['campo']='A_No';
-		   $datos[8]['dato']=$parametro['linea']+1;
-
-		   $datos[9]['campo']='Fecha_DUI';
-		   $datos[9]['dato']=date('Y-m-d');
-
-		   $datos[10]['campo']='TC';
-		   $datos[10]['dato']='P';
-		   $datos[11]['campo']='VALOR_TOTAL';
-		   $datos[11]['dato']=number_format($parametro['total'],'2');
-		   $datos[12]['campo']='CANTIDAD';
-		   $datos[12]['dato']=$parametro['cantidad'];
-		   $datos[13]['campo']='VALOR_UNIT';
-		   $datos[13]['dato']= number_format($parametro['precio'],2);
-		   //round($parametro['txt_precio'],2,PHP_ROUND_HALF_DOWN);
-		   $datos[14]['campo']='DH';
-		   $datos[14]['dato']=1;
-		   $datos[15]['campo']='CONTRA_CTA';
-		   if($parametro['cc']!='')
-		   {
-		   	 // $cc = explode('-',$parametro['cc']);
-		   	 $datos[15]['dato']=$parametro['cc'];
-		   }else
-		   {
-		   	 $cta = buscar_en_ctas_proceso('Cta_Devoluciones');
-		   	 if($cta!=-1)
-		   	 {
-		   	 	$datos[15]['dato']=$cta; 
-		   	 }else
-		   	 {
-		   	 	$cta[0]['campo'] = 'Periodo'; 
-		   	 	$cta[0]['dato'] = $_SESSION['INGRESO']['periodo'];
-		   	 	$cta[1]['campo'] = 'Item';
-		   	 	$cta[1]['dato'] = $_SESSION['INGRESO']['item'];
-		   	 	$cta[2]['campo'] =	'DC';	   	 	
-		   	 	$cta[2]['dato'] =  'D';
-		   	 	$cta[3]['campo'] =	'Lst';	   	 	
-		   	 	$cta[3]['dato'] =  0;
-		   	 	$cta[4]['campo'] =	'Detalle';	   	 	
-		   	 	$cta[4]['dato'] =  'Cta_Devoluciones';
-		   	 	$cta[5]['campo'] =	'Codigo';	   	 	
-		   	 	$cta[5]['dato'] =  '4.4.02.05.02';
-		   	 	insert_generico('Ctas_Proceso',$cta);
-
-		   	 	$datos[15]['dato']='4.4.02.05.02';  
-
-		   	 }
-
-		   }
-		   $datos[16]['campo']='ORDEN';
-		   $datos[16]['dato']=$parametro['comprobante'];
-
-		   $datos[17]['campo']='Codigo_B';
-		   $datos[17]['dato']=$linea[0]['Codigo_P'];
-
-
-		   // $datos[18]['campo']='Fecha_Fab';
-		   // $datos[18]['dato']=$parametro['txt_fecha_ela'];
-
+		   SetAdoAddNew("Asiento_K"); 	
 		   
-		   // $datos[19]['campo']='Fecha_Exp';
-		   // $datos[19]['dato']=$parametro['txt_fecha_exp'];
+		   SetAdoFields('CODIGO_INV',$parametro['codigo']);
+		   SetAdoFields('PRODUCTO',$parametro['producto']);
+		   SetAdoFields('UNIDAD','');
+		   SetAdoFields('CANT_ES',$parametro['cantidad']);
+		   SetAdoFields('CTA_INVENTARIO',$linea[0]['Cta_Inventario']);
+		   SetAdoFields('SUBCTA',$parametro['area']);		   //proveedor cod //area de donde biene
+		   SetAdoFields('CodigoU',$_SESSION['INGRESO']['Id']);   
+		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		   SetAdoFields('A_No',$parametro['linea']+1);
+		   SetAdoFields('Fecha_DUI',date('Y-m-d'));
+		   SetAdoFields('TC','P');
+		   SetAdoFields('VALOR_TOTAL',number_format($parametro['total'],2,'.',''));
+		   SetAdoFields('CANTIDAD',$parametro['cantidad']);
+		   SetAdoFields('VALOR_UNIT',number_format($parametro['precio'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
+		   SetAdoFields('DH',1);		  
+		   SetAdoFields('ORDEN',$parametro['comprobante']);
+		   SetAdoFields('Codigo_B',$linea[0]['Codigo_P']);		   
+		   SetAdoFields('Procedencia','Devolucion');
+		   SetAdoFields('Codigo_Dr',$parametro['solicitante']);
 
-		   
-		   // $datos[20]['campo']='Reg_Sanitario';
-		   // $datos[20]['dato']=$parametro['txt_reg_sani'];
+		   // print_r($_SESSION['SetAdoAddNew']);die();
+		   // print_r('dddd');die();
 
-		   
-		   // $datos[21]['campo']='Lote_No';
-		   // $datos[21]['dato']=$parametro['txt_lote'];
-
-		   
-		   $datos[18]['campo']='Procedencia';
-		   $datos[18]['dato']='Devolucion';
-
-		   $datos[19]['campo']='Codigo_Dr';
-		   $datos[19]['dato']=$parametro['solicitante'];
-
-		   
-		   // $datos[23]['campo']='Serie_No';
-		   // $datos[23]['dato']=$parametro['txt_serie'];
-
-		   // $datos[24]['campo']='P_DESC';
-		   // $datos[24]['dato']=$val_descto; 
-		   // print_r($parametro);
-
-// print_r($datos);die();
-		   $resp = $this->modelo->ingresar_asiento_K($datos);
-		   // print_r($resp);die();
-		   if($resp ==null)
-		   {
-		   	return 1;
-		   }else
-		   {
-		   	return -1;
-		   }
+		  return SetAdoUpdate();
 	
 	    // print_r($resp);die();
 	}
@@ -305,89 +242,32 @@ class devoluciones_insumosC
 
 		   $linea = $this->modelo->trans_kardex_linea_all($parametro['linea']);
 		   // print_r($linea);die();
-		   $datos[0]['campo']='CODIGO_INV';
-		   $datos[0]['dato']=$parametro['codigo'];
-		   $datos[1]['campo']='PRODUCTO';
-		   $datos[1]['dato']=$parametro['producto'];
-		   $datos[2]['campo']='UNIDAD';
-		   $datos[2]['dato']='';
-		   $datos[3]['campo']='CANT_ES';
-		   $datos[3]['dato']=$parametro['cantidad'];
-		   $datos[4]['campo']='CTA_INVENTARIO';
-		   $datos[4]['dato']=$linea[0]['Cta_Inv'];
-		   $datos[5]['campo']='SUBCTA';
-		   $datos[5]['dato']=$linea[0]['CodigoL'];		   //proveedor cod
-		   $datos[6]['campo']='CodigoU';
-		   $datos[6]['dato']=$_SESSION['INGRESO']['Id'];   
-		   $datos[7]['campo']='Item';
-		   $datos[7]['dato']=$_SESSION['INGRESO']['item'];
-		   $datos[8]['campo']='A_No';
-		   $datos[8]['dato']=$parametro['linea'];
 
-		   $datos[9]['campo']='Fecha_DUI';
-		   $datos[9]['dato']=date('Y-m-d');
+		   SetAdoAddNew("Asiento_K"); 
+		   SetAdoFields('CODIGO_INV',$parametro['codigo']);
+		   SetAdoFields('PRODUCTO',$parametro['producto']);
+		   SetAdoFields('UNIDAD','');
+		   SetAdoFields('CANT_ES',$parametro['cantidad']);
+		   SetAdoFields('CTA_INVENTARIO',$linea[0]['Cta_Inv']);
+		   SetAdoFields('SUBCTA',$linea[0]['CodigoL']);		   //proveedor cod
+		   SetAdoFields('CodigoU',$_SESSION['INGRESO']['Id']);   
+		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		   SetAdoFields('A_No',$parametro['linea']);
+		   SetAdoFields('Fecha_DUI',date('Y-m-d'));
+		   SetAdoFields('TC','P');
+		   SetAdoFields('VALOR_TOTAL',number_format($parametro['total'],2,'.',''));
+		   SetAdoFields('CANTIDAD',$parametro['cantidad']);
+		   SetAdoFields('VALOR_UNIT',number_format($parametro['precio'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
+		   SetAdoFields('DH',1);
+		   SetAdoFields('CONTRA_CTA',$linea[0]['Contra_Cta']);
+		   SetAdoFields('ORDEN',$parametro['comprobante']);
 
-		   $datos[10]['campo']='TC';
-		   $datos[10]['dato']='P';
-		   $datos[11]['campo']='VALOR_TOTAL';
-		   $datos[11]['dato']=number_format($parametro['total'],'2');
-		   $datos[12]['campo']='CANTIDAD';
-		   $datos[12]['dato']=$parametro['cantidad'];
-		   $datos[13]['campo']='VALOR_UNIT';
-		   $datos[13]['dato']= number_format($parametro['precio'],2);
-		   //round($parametro['txt_precio'],2,PHP_ROUND_HALF_DOWN);
-		   $datos[14]['campo']='DH';
-		   $datos[14]['dato']=1;
-		   $datos[15]['campo']='CONTRA_CTA';
-		   $datos[15]['dato']=$linea[0]['Contra_Cta'];
-		   $datos[16]['campo']='ORDEN';
-		   $datos[16]['dato']=$parametro['comprobante'];
+		   SetAdoFields('Codigo_B',$linea[0]['Codigo_P']);
+		   SetAdoFields('Procedencia','Devolucion');
 
-		   $datos[17]['campo']='Codigo_B';
-		   $datos[17]['dato']=$linea[0]['Codigo_P'];
-
-		   // $datos[17]['campo']='IVA';
-		   // $datos[17]['dato']=bcdiv($parametro['txt_iva'],'1',4);
-
-		   // $datos[18]['campo']='Fecha_Fab';
-		   // $datos[18]['dato']=$parametro['txt_fecha_ela'];
-
-		   
-		   // $datos[19]['campo']='Fecha_Exp';
-		   // $datos[19]['dato']=$parametro['txt_fecha_exp'];
-
-		   
-		   // $datos[20]['campo']='Reg_Sanitario';
-		   // $datos[20]['dato']=$parametro['txt_reg_sani'];
-
-		   
-		   // $datos[21]['campo']='Lote_No';
-		   // $datos[21]['dato']=$parametro['txt_lote'];
-
-		   
-		   $datos[18]['campo']='Procedencia';
-		   $datos[18]['dato']='Devolucion';
-
-		   
-		   // $datos[23]['campo']='Serie_No';
-		   // $datos[23]['dato']=$parametro['txt_serie'];
-
-		   // $datos[24]['campo']='P_DESC';
-		   // $datos[24]['dato']=$val_descto; 
-		   // print_r($parametro);
-
+		 
 // print_r($datos);die();
-		   $resp = $this->descargos->ingresar_asiento_K($datos);
-		   // print_r($resp);die();
-		   if($resp ==null)
-		   {
-		   	return 1;
-		   }else
-		   {
-		   	return -1;
-		   }
-	
-	    // print_r($resp);die();
+		   return SetAdoUpdate();
 	}
 
 	function lista_devoluciones($comprobante){

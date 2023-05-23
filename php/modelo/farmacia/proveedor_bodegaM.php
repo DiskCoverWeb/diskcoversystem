@@ -13,15 +13,7 @@ class proveedor_bodegaM
 	   $this->db = new db();
 	}
 
-	function add($tabla,$datos)
-	{
-		return insert_generico($tabla,$datos);
-	}
-	function update($tabla,$datos,$where)
-	{
-		return update_generico($datos,$tabla,$where);
-	}
-
+	
 	function lista_clientes($query=false,$ci=false,$id=false)
 	{
 

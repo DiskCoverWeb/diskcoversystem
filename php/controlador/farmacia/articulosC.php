@@ -977,6 +977,7 @@ function eliminar_factura($parametros)
    {
 
    	$datos = $this->modelo->articulos($id);
+   	// print_r($datos);die();
    	$cta_inv='';
    	if($datos[0]['Cta_Inventario']!='.' && $datos[0]['Cta_Inventario']!='')
    	{
@@ -1000,7 +1001,7 @@ function eliminar_factura($parametros)
    	$cta_VA = '';
    	if($datos[0]['Cta_Ventas_0']!='.' && $datos[0]['Cta_Ventas_0']!='')
    	{
-   		$cta_VA = $this->modelo->catalogo_cuentas($datos[0]['Cta_Ventas_Anticipadas'],$query=false);
+   		$cta_VA = $this->modelo->catalogo_cuentas($datos[0]['Cta_Venta_Anticipada'],$query=false);
    	}
    	$codi = explode('.',$datos[0]['Codigo_Inv']);
    	$partes = count($codi);
