@@ -127,17 +127,14 @@ class ingreso_presupuestoC
 		// print_r($parametros);die();
 		$resp = 1;
 		foreach ($parametros['centro'] as $key => $value) {
-			$datos[0]['campo'] ='Codigo_Inv';
-			$datos[0]['dato'] =$parametros['producto'];
-			$datos[1]['campo'] ='Cta';
-			$datos[1]['dato'] =$value;
-			$datos[2]['campo'] ='Presupuesto';
-			$datos[2]['dato'] =$parametros['cantidad'];
-			$datos[3]['campo'] ='Item';
-			$datos[3]['dato'] = $_SESSION['INGRESO']['item'];
-			$datos[4]['campo'] ='Periodo';
-			$datos[4]['dato'] = $_SESSION['INGRESO']['periodo'];	
-			$res = $this->modelo->add($tabla='Trans_Presupuestos',$datos);
+
+			SetAdoAddNew("Trans_Presupuestos");
+			SetAdoFields('Codigo_Inv',$parametros['producto']);
+			SetAdoFields('Cta',$value);
+			SetAdoFields('Presupuesto',$parametros['cantidad']);
+			SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+			SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);	
+			$res = SetAdoUpdate();
 			if($res==-1){$resp=-1;}		
 		}
 		return $resp;

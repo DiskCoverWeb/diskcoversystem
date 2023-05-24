@@ -289,18 +289,6 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
        return $datos;
 	}
 
-	function ingresar_asiento_K($datos,$campoWhere=false)
-	{
-		// print_r($datos);die();
-		if ($campoWhere) {
-			$resp = update_generico($datos,'Asiento_K',$campoWhere);			
-		  return $resp;
-			
-		}else{
-	      $resp = insert_generico("Asiento_K",$datos);
-	      return $resp;
-	  }
-	}	
    function eliminar($codigo,$po)
 	{
 		 $cid=$this->conn;
@@ -462,12 +450,7 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 	   $datos =  $this->db->datos($sql);
        return $datos;
 	}
-	function insertar_trans_kardex($datos)
-	{
-		$resp = insert_generico("Trans_Kardex",$datos);
-	    return $resp;
-	}
-
+	
 	function stock_kardex($id)
 	{
 		// $cid = $this->conn;

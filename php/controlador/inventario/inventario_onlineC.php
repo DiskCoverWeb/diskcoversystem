@@ -286,113 +286,69 @@ class inventario_onlineC
 		$id =count($this->lista_entrega())+1;
 		if($parametro['id']=='')
 		{
-		   $datos[0]['campo']='CODIGO_INV';
-		   $datos[0]['dato']=$parametro['codigo'];
-		   $datos[1]['campo']='PRODUCTO';
-		   $datos[1]['dato']=$parametro['producto'];
-		   $datos[2]['campo']='UNIDAD';
-		   $datos[2]['dato']=$parametro['uni'];
-		   $datos[3]['campo']='CANT_ES';
-		   $datos[3]['dato']=$parametro['cant'];
-		   $datos[4]['campo']='CTA_INVENTARIO';
-		   $datos[4]['dato']=$parametro['cta_pro'];
-		   $datos[5]['campo']='SUBCTA';
-		   $datos[5]['dato']=$parametro['rubro'];		   
-		   $datos[6]['campo']='CodigoU';
-		   $datos[6]['dato']=$_SESSION['INGRESO']['Id'];   
-		   $datos[7]['campo']='Item';
-		   $datos[7]['dato']=$_SESSION['INGRESO']['item'];
-		   $datos[8]['campo']='Consumos';
-		   $datos[8]['dato']=round($parametro['bajas'],2);
-		   $datos[9]['campo']='Procedencia';
-		   $datos[9]['dato']=$parametro['observacion'];
-		   $datos[10]['campo']='A_No';
-		   $datos[10]['dato']=$id;
-		   $datos[11]['campo']='Fecha_Fab';
-		   $datos[11]['dato']=date('Y-m-d',strtotime($parametro['fecha']));
-		   $datos[12]['campo']='Codigo_Dr';
-		   $datos[12]['dato']=$parametro['bajas_por'];
-		   $datos[13]['campo']='TC';
-		   $datos[13]['dato']=$parametro['TC'];
-		   $datos[14]['campo']='VALOR_TOTAL';
-		   $datos[14]['dato']=round($parametro['total'],2);
-		   $datos[15]['campo']='CANTIDAD';
-		   $datos[15]['dato']=$parametro['cant'];
-		   $datos[16]['campo']='VALOR_UNIT';
-		   $datos[16]['dato']=round($parametro['valor'],2);
-		   $datos[17]['campo']='DH';
-		   $datos[17]['dato']=2;
-		   $datos[18]['campo']='CONTRA_CTA';
-		   $datos[18]['dato']=$parametro['cc'];
-
-		   $datos[19]['campo']='CodMar';
-		   $datos[19]['dato']=$parametro['codma'];
-
-		   // $datos[20]['campo']='CONTRA_CTA';
-		   // $datos[20]['dato']=$parametro['cc'];
-
+			 SetAdoAddNew("Asiento_K");
+		   SetAdoFields('CODIGO_INV',$parametro['codigo']);
+		   SetAdoFields('PRODUCTO',$parametro['producto']);
+		   SetAdoFields('UNIDAD',$parametro['uni']);
+		   SetAdoFields('CANT_ES',$parametro['cant']);
+		   SetAdoFields('CTA_INVENTARIO',$parametro['cta_pro']);
+		   SetAdoFields('SUBCTA',$parametro['rubro']);		   
+		   SetAdoFields('CodigoU',$_SESSION['INGRESO']['Id']);   
+		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		   SetAdoFields('Consumos',number_format($parametro['bajas'],2,'.',''));
+		   SetAdoFields('Procedencia',$parametro['observacion']);
+		   SetAdoFields('A_No',$id);
+		   SetAdoFields('Fecha_Fab',date('Y-m-d',strtotime($parametro['fecha'])));
+		   SetAdoFields('Codigo_Dr',$parametro['bajas_por']);
+		   SetAdoFields('TC',$parametro['TC']);
+		   SetAdoFields('VALOR_TOTAL',number_format($parametro['total'],2,'.',''));
+		   SetAdoFields('CANTIDAD',$parametro['cant']);
+		   SetAdoFields('VALOR_UNIT',number_format($parametro['valor'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
+		   SetAdoFields('DH',2);
+		   SetAdoFields('CONTRA_CTA',$parametro['cc']);
+	   	 SetAdoFields('CodMar',$parametro['codma']);
 		   // print_r($datos);die();
-		   $resp = $this->modelo->ingresar_asiento_K($datos);
+		 		  $resp = SetAdoUpdate();
 
        //actualiza presupuesto
-		   $presu =$this->modelo->actualizar_trans_presupuesto($parametro);
-		   if(count($presu)>0){
-			 $consu = $presu[0]['Total'];
+		  		 $presu =$this->modelo->actualizar_trans_presupuesto($parametro);
+				   if(count($presu)>0){
+						 $consu = $presu[0]['Total'];
 
-		   $datosP[0]['campo']='Total';
-		   $datosP[0]['dato']=$consu+$parametro['cant'];
+						SetAdoAddNew("Trans_Presupuestos");
+						SetAdoFields('Total',$consu+$parametro['cant']);
 
-		   $where[0]['campo']='ID';
-		   $where[0]['valor']=$presu[0]['ID'];
-		   update_generico($datosP,'Trans_Presupuestos',$where);		
-		   }	
-		  return $resp;
-
-
-		   return $resp;
+						SetAdoFieldsWhere('ID', $presu[0]['ID']);
+						return SetAdoUpdateGeneric();
+				   }	
+		 	 return $resp;
 	    }else
 	    {
 	    	// print_r($parametro);die();
-	       $datos[0]['campo']='CODIGO_INV';
-		   $datos[0]['dato']=strval($parametro['codigo']);
-		   $datos[1]['campo']='PRODUCTO';
-		   $datos[1]['dato']=$parametro['producto'];
-		   $datos[2]['campo']='UNIDAD';
-		   $datos[2]['dato']=$parametro['uni'];
-		   $datos[3]['campo']='CANT_ES';
-		   $datos[3]['dato']=$parametro['cant'];
-		   $datos[4]['campo']='CTA_INVENTARIO';
-		   $datos[4]['dato']=$parametro['cta_pro'];
-		   $datos[5]['campo']='SUBCTA';
-		   $datos[5]['dato']=$parametro['rubro'];
-		   $datos[6]['campo']='Consumos';
-		   $datos[6]['dato']=round($parametro['bajas'],2);
-		   $datos[7]['campo']='Procedencia';
-		   $datos[7]['dato']=$parametro['observacion'];
-		   $datos[8]['campo']='Fecha_Fab';
-		   $datos[8]['dato']=date('Y-m-d');
-		   $datos[9]['campo']='Codigo_Dr';
-		   $datos[9]['dato']=$parametro['bajas_por'];
-		   $datos[10]['campo']='TC';
-		   $datos[10]['dato']=$parametro['TC'];
-		   $datos[11]['campo']='VALOR_TOTAL';
-		   $datos[11]['dato']=round($parametro['total'],2);
-		   $datos[12]['campo']='CANTIDAD';
-		   $datos[12]['dato']=$parametro['cant'];
-		   $datos[13]['campo']='VALOR_UNIT';
-		   $datos[13]['dato']=round($parametro['valor'],2);
-		   $datos[14]['campo']='CONTRA_CTA';
-		   $datos[14]['dato']=$parametro['cc'];
+	     SetAdoAddNew("Asiento_K");
+	     SetAdoFields('CODIGO_INV',strval($parametro['codigo']));
+		   SetAdoFields('PRODUCTO',$parametro['producto']);
+		   SetAdoFields('UNIDAD',$parametro['uni']);
+		   SetAdoFields('CANT_ES',$parametro['cant']);
+		   SetAdoFields('CTA_INVENTARIO',$parametro['cta_pro']);
+		   SetAdoFields('SUBCTA',$parametro['rubro']);
+		   SetAdoFields('Consumos',number_format($parametro['bajas'],2,'.',''));
+		   SetAdoFields('Procedencia',$parametro['observacion']);
+		   SetAdoFields('Fecha_Fab',date('Y-m-d'));
+		   SetAdoFields('Codigo_Dr',$parametro['bajas_por']);
+		   SetAdoFields('TC',$parametro['TC']);
+		   SetAdoFields('VALOR_TOTAL',number_format($parametro['total'],2,'.',''));
+		   SetAdoFields('CANTIDAD',$parametro['cant']);
+		   SetAdoFields('VALOR_UNIT',number_format($parametro['valor'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
+		   SetAdoFields('CONTRA_CTA',$parametro['cc']);
 
-		   $where[0]['campo']='CODIGO_INV';
-		   $where[0]['valor']=strval($parametro['ante']);
-		   $where[1]['campo']='Item';
-		   $where[1]['valor']=$_SESSION['INGRESO']['item'];
-		   $where[2]['campo']='A_No';
-		   $where[2]['valor']=$id-1;
+		   SetAdoFieldsWhere('CODIGO_INV',strval($parametro['ante']));
+		   SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
+		   SetAdoFieldsWhere('A_No',$id-1);
 		   // print_r($datos);die();
-		   $resp = $this->modelo->ingresar_asiento_K($datos,$where);
-			 return $resp;
+
+		   SetAdoFieldsWhere('ID', $presu[0]['ID']);
+			 return SetAdoUpdateGeneric();
 	    }
 	    // print_r($resp);die();
 		
@@ -534,52 +490,32 @@ function ingresar_trans_kardex_salidas($comprobante,$fechaC)
 		    $cant = explode(',',$datos_inv[0]['id']);	
 		   }
 		   	 // print_r($datos_inv);
-		   	 
-		    $datos[0]['campo'] ='Codigo_Inv';
-		    $datos[0]['dato'] =$value['CODIGO_INV']; 
-		    $datos[1]['campo'] ='Fecha';
-		    $datos[1]['dato'] =$fechaC; 
-		    $datos[2]['campo'] ='Numero';
-		    $datos[2]['dato'] =$comprobante;  
-		    $datos[3]['campo'] ='T';
-		    $datos[3]['dato'] ='N'; 
-		    $datos[4]['campo'] ='TP';
-		    $datos[4]['dato'] ='CD'; 
-		    $datos[5]['campo'] ='Codigo_P';
-		    $datos[5]['dato'] =$_SESSION['INGRESO']['CodigoU']; 
-		    $datos[6]['campo'] ='Cta_Inv';
-		    $datos[6]['dato'] =$value['CTA_INVENTARIO']; 
-		    $datos[7]['campo'] ='Contra_Cta';
-		    $datos[7]['dato'] =$value['CONTRA_CTA']; 
-		    $datos[8]['campo'] ='Periodo';
-		    $datos[8]['dato'] =$_SESSION['INGRESO']['periodo']; 
-		    $datos[9]['campo'] ='Salida';
-		    $datos[9]['dato'] =$value['CANTIDAD']; 
-		    $datos[10]['campo'] ='Valor_Unitario';
-		    $datos[10]['dato'] =round($value['VALOR_UNIT'],2); 
-		    $datos[11]['campo'] ='Valor_Total';
-		    $datos[11]['dato'] =round($value['VALOR_TOTAL'],2); 
-		    $datos[12]['campo'] ='Costo';
-		    $datos[12]['dato'] =round($value['VALOR_UNIT'],2); 
-		    $datos[13]['campo'] ='Total';
-		    $datos[13]['dato'] =round($value['VALOR_TOTAL'],2);
-		    $datos[14]['campo'] ='Existencia';
-		    $datos[14]['dato'] =intval($cant[2])-intval($value['CANTIDAD']);
-		    $datos[15]['campo'] ='CodigoU';
-		    $datos[15]['dato'] =$_SESSION['INGRESO']['CodigoU'];
-		    $datos[16]['campo'] ='Item';
-		    $datos[16]['dato'] =$_SESSION['INGRESO']['item'];
-		    $datos[17]['campo'] ='CodBodega';
-		    $datos[17]['dato'] ='01';
-		    $datos[18]['campo'] ='CodigoL';
-		    $datos[18]['dato'] =$value['SUBCTA'];		    
-		    $datos[19]['campo'] ='CodMarca';
-		    $datos[19]['dato'] =$value['CodMar'];
 
+	     SetAdoAddNew("Trans_Kardex");		   	 
+		    SetAdoFields('Codigo_Inv',$value['CODIGO_INV']); 
+		    SetAdoFields('Fecha',$fechaC); 
+		    SetAdoFields('Numero',$comprobante);  
+		    SetAdoFields('T','N'); 
+		    SetAdoFields('TP','CD'); 
+		    SetAdoFields('Codigo_P',$_SESSION['INGRESO']['CodigoU']); 
+		    SetAdoFields('Cta_Inv',$value['CTA_INVENTARIO']); 
+		    SetAdoFields('Contra_Cta',$value['CONTRA_CTA']); 
+		    SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']); 
+		    SetAdoFields('Salida',$value['CANTIDAD']); 
+		    SetAdoFields('Valor_Unitario',number_format($value['VALOR_UNIT'],$_SESSION['INGRESO']['Dec_PVP'],'.','')); 
+		    SetAdoFields('Valor_Total',number_format($value['VALOR_TOTAL'],2,'.','')); 
+		    SetAdoFields('Costo',number_format($value['VALOR_UNIT'],2,'.','')); 
+		    SetAdoFields('Total',number_format($value['VALOR_TOTAL'],2,'.',''));
+		    SetAdoFields('Existencia',intval($cant[2])-intval($value['CANTIDAD']));
+		    SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);
+		    SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		    SetAdoFields('CodBodega','01');
+		    SetAdoFields('CodigoL',$value['SUBCTA']);		    
+		    SetAdoFields('CodMarca',$value['CodMar']);
 		    	 // $this->modelo->insertar_trans_kardex($datos);
-		    if($this->modelo->insertar_trans_kardex($datos)!="")
+		    if(SetAdoUpdate()!=1)
 		     {
-		     	$resp = 0;
+		     		$resp = 0;
 		     }
 		
 		}
