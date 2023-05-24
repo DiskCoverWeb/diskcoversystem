@@ -15,7 +15,7 @@ if(isset($_GET['fec']))
 ?>
 <script type="text/javascript">
 </script>
-<script src="../../lib/dist/js/FVentas.js"></script>
+<script src="../../dist/js/FVentas.js"></script>
 <script type="text/javascript">
   $(document).ready(function()
   {    
