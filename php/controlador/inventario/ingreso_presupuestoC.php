@@ -127,13 +127,15 @@ class ingreso_presupuestoC
 		// print_r($parametros);die();
 		$resp = 1;
 		foreach ($parametros['centro'] as $key => $value) {
+
 			SetAdoAddNew("Trans_Presupuestos");
-			SetAdoFields("Codigo_Inv", $parametros['producto']);
-			SetAdoFields("Cta", $value);
-			SetAdoFields("Presupuesto", $parametros['cantidad']);
-			SetAdoFields("Item", $_SESSION['INGRESO']['item']);
-			SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
-			$resp = SetAdoUpdate();
+			SetAdoFields('Codigo_Inv',$parametros['producto']);
+			SetAdoFields('Cta',$value);
+			SetAdoFields('Presupuesto',$parametros['cantidad']);
+			SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+			SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);	
+			$res = SetAdoUpdate();
+			if($res==-1){$resp=-1;}		
 		}
 		return $resp;
 		
