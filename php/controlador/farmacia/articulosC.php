@@ -607,7 +607,7 @@ class articulosC
                     'co'=> $value['CONTRA_CTA'],// codigo de cuenta cc
                     'tip'=>$cuenta[0]['TC'],//tipo de cuenta(CE,CD,..--) biene de catalogo subcuentas TC
                     'tic'=> 2, //debito o credito (1 o 2);
-                    'sub'=> $ruc1, //Codigo se trae catalogo subcuenta o ruc del proveedor en caso de que se este ingresando
+                    'sub'=> $sub[0]['Cod_cliente'], //Codigo se trae catalogo subcuenta o ruc del proveedor en caso de que se este ingresando
                     'sub2'=>$cuenta[0]['Cuenta'],//nombre del beneficiario
                     'fecha_sc'=> $value['Fecha_DUI']->format('Y-m-d'), //fecha 
                     'fac2'=>$orden,
