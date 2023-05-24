@@ -19,18 +19,6 @@ class ingreso_presupuestoM
 	   $this->db = new db();
 	}
 
-	function add($tabla,$datos)
-	{
-		$resp = insert_generico($tabla,$datos);
-		if($resp==null)
-		{
-			return 1;
-		}else
-		{
-			return -1;
-		}
-	}
-
 	function delete($id)
 	{
 		$sql = "DELETE FROM Trans_Presupuestos WHERE ID = '".$id."'";

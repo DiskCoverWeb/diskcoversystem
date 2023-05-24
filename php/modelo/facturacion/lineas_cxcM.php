@@ -13,10 +13,10 @@ class lineas_cxcM
 	    $this->db = new db();
 	}
 
-	function insert($tabla,$datos)
-	{
-		return insert_generico($tabla,$datos);
-	}
+	// function insert($tabla,$datos)
+	// {
+	// 	return insert_generico($tabla,$datos);
+	// }
 
 	function Catalogo_Lineas($id=false)
 	{
@@ -118,7 +118,7 @@ class lineas_cxcM
 	{
 		 $sql = "SELECT Periodo, Item, 'NC' As TC, Serie_NC As Serie_X, MAX(Secuencial_NC) As TC_No 
                  FROM Trans_Abonos 
-                 WHERE Serie_NC = '".$TxtNumSerieUno.$TxtNumSerieDos."' 
+                
                  GROUP BY Periodo, Item, Serie_NC 
                  ORDER BY Periodo, Item, Serie_NC ";
                  return $this->db->datos($sql);
