@@ -128,55 +128,47 @@ class pacienteC
 
 	function insertar_paciente($parametros)
 	{
-		$datos[0]['campo']='Cliente';
-		$datos[0]['dato']=$parametros['nom'];
-		$datos[1]['campo']='CI_RUC';
-		$datos[1]['dato']=$parametros['ruc'];
-		$datos[2]['campo']='Prov';
-		$datos[2]['dato']=$parametros['pro'];
-		$datos[3]['campo']='Ciudad';
-		$datos[3]['dato']=$parametros['loc'];
-		$datos[4]['campo']='Telefono';
-		$datos[4]['dato']=$parametros['tel'];
-		$datos[5]['campo']='Email';
-		$datos[5]['dato']=$parametros['ema'];
-		$datos[6]['campo']='Matricula';
-		$datos[6]['dato']=$parametros['cod'];
+
+		SetAdoAddNew("Clientes");    
+		SetAdoFields('Cliente',$parametros['nom']);
+		SetAdoFields('CI_RUC',$parametros['ruc']);
+		SetAdoFields('Prov',$parametros['pro']);
+		SetAdoFields('Ciudad',$parametros['loc']);
+		SetAdoFields('Telefono',$parametros['tel']);
+		SetAdoFields('Email',$parametros['ema']);
+		SetAdoFields('Matricula',$parametros['cod']);
+
 
 		if($parametros['tip']=='E')
 		{
 		
-		$codig = Digito_Verificador($parametros['ruc']);
-		// print_r($codig);die();
-		if($codig['Tipo_Beneficiario']!='C')
-		{
-			return -2;
-		}
-		$datos[7]['campo'] = 'Codigo';
-		$datos[7]['dato']=$codig['Codigo_RUC_CI'];
-		$datos[8]['campo'] = 'TD';
-		$datos[8]['dato']=$codig['Tipo_Beneficiario'];
+			$codig = Digito_Verificador($parametros['ruc']);
+			// print_r($codig);die();
+			if($codig['Tipo_Beneficiario']!='C')
+			{
+				return -2;
+			}
+			SetAdoFields('Codigo',$codig['Codigo_RUC_CI']);
+			SetAdoFields('TD',$codig['Tipo_Beneficiario']);
 
-			$campoWhere[0]['campo']='ID';
-			$campoWhere[0]['valor']=$parametros['id'];
-			
-			return  $this->modelo->insertar_paciente($datos,$campoWhere,$parametros['tip']);
+			SetAdoFieldsWhere('ID', $parametros['id']);
+			return SetAdoUpdateGeneric();
 		}else
 		{
 		
-		$codig = Digito_Verificador($parametros['ruc']);
-		// print_r($codig);die();
-		if($codig['Tipo_Beneficiario']!='C')
-		{
-			return -2;
-		}
-		$datos[7]['campo'] = 'T';
-		$datos[7]['dato']='N';
-		$datos[8]['campo'] = 'Codigo';
-		$datos[8]['dato']=$codig['Codigo_RUC_CI'];
-		$datos[9]['campo'] = 'TD';
-		$datos[9]['dato']=$codig['Tipo_Beneficiario'];
-			return  $this->modelo->insertar_paciente($datos,false,$parametros['tip']);
+			$codig = Digito_Verificador($parametros['ruc']);
+			// print_r($codig);die();
+			if($codig['Tipo_Beneficiario']!='C')
+			{
+				return -2;
+			}
+			SetAdoFields('T','N');
+			SetAdoFields('Codigo',$codig['Codigo_RUC_CI']);
+			SetAdoFields('TD',$codig['Tipo_Beneficiario']);
+			return SetAdoUpdate();
+			// return  $this->modelo->insertar_paciente($datos,false,$parametros['tip']);
+
+
 		}
 
 	}

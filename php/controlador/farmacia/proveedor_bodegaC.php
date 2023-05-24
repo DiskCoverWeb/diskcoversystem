@@ -83,14 +83,11 @@ class proveedor_bodegaC
 	}
 	function add_clientes($parametros)
 	{
-		$datos[0]['campo']='Cliente';
-		$datos[0]['dato']=$parametros['nombre'];
-		$datos[1]['campo']='CI_RUC';
-		$datos[1]['dato']=$parametros['ci'];
-		$datos[2]['campo']='Telefono';
-		$datos[2]['dato']=$parametros['telefono'];
-		$datos[3]['campo']='Email';
-		$datos[3]['dato']=$parametros['email'];
+		SetAdoAddNew("Clientes"); 
+		SetAdoFields('Cliente',$parametros['nombre']);
+		SetAdoFields('CI_RUC',$parametros['ci']);
+		SetAdoFields('Telefono',$parametros['telefono']);
+		SetAdoFields('Email',$parametros['email']);
 				
 		$codig = Digito_Verificador($parametros['ci']);
 		// print_r($codig);die();
@@ -98,14 +95,10 @@ class proveedor_bodegaC
 		{
 			return -3;
 		}
-		$datos[4]['campo'] = 'T';
-		$datos[4]['dato']='N';
-		$datos[5]['campo'] = 'Codigo';
-		$datos[5]['dato']=$codig['Codigo_RUC_CI'];
-		$datos[6]['campo'] = 'TD';
-		$datos[6]['dato']=$codig['Tipo_Beneficiario'];
-		$datos[7]['campo'] = 'Direccion';
-		$datos[7]['dato']=$parametros['direccion'];
+		SetAdoFields('T','N');
+		SetAdoFields('Codigo',$codig['Codigo_RUC_CI']);
+		SetAdoFields('TD',$codig['Tipo_Beneficiario']);
+		SetAdoFields('Direccion',$parametros['direccion']);
 
 		if($parametros['id']=='')
 		{
@@ -115,20 +108,12 @@ class proveedor_bodegaC
 			 	return -2;
 			 }else
 			 {
-				$res = $this->modelo->add($tabla='Clientes',$datos);
-				if($res==null)
-				{
-					return 1;
-				}else
-				{
-					return -1;
-				}
+				 return SetAdoUpdate();
 			 }
 		}else
 		{
-			$where[0]['campo'] = 'ID';
-			$where[0]['valor'] = $parametros['id'];
-			return  $this->modelo->update($tabla='Clientes',$datos,$where);
+			SetAdoFieldsWhere('ID',$parametros['id']);
+			return SetAdoUpdateGeneric();
 		}
 
 	}
@@ -166,58 +151,29 @@ class proveedor_bodegaC
 
 
 		  // print_r($encontrado);die();
-		 
-		  	$datos[0]['campo'] = 'Item';		  	
-		  	$datos[0]['dato'] = $_SESSION['INGRESO']['item'];
-		  	$datos[1]['campo'] = 'Periodo';		  	
-		  	$datos[1]['dato'] = $_SESSION['INGRESO']['periodo'];
-		  	$datos[2]['campo'] = 'Codigo';		  	
-		  	$datos[2]['dato'] = $codigoCliente;
-		  	$datos[3]['campo'] = 'Cta';		  	
-		  	$datos[3]['dato'] = $Cta_Aux;
-		  	$datos[4]['campo'] = 'TC';		  	
-		  	$datos[4]['dato'] = $parametros['SubCta'];
-		  	$datos[5]['campo'] = 'Importaciones';		  	
-		  	$datos[5]['dato'] = 0;
+		  	SetAdoAddNew("Catalogo_CxCxP"); 		 
+		  	SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		  	SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
+		  	SetAdoFields('Codigo',$codigoCliente);
+		  	SetAdoFields('Cta',$Cta_Aux);
+		  	SetAdoFields('TC',$parametros['SubCta']);
+		  	SetAdoFields('Importaciones',0);
 
-		  	$datos[6]['campo'] = 'Cta_Gasto';		  	
-		  	$datos[6]['dato'] = $CtaGastoCosto;
-		  	$datos[7]['campo'] = 'SubModulo';		  	
-		  	$datos[7]['dato'] = $SubmoduloGastoCosto;
-		  	$datos[8]['campo'] = 'Porc_IVAB';		  	
-		  	$datos[8]['dato'] = ($parametros['TxtRetIVAB']/100);
-		  	$datos[9]['campo'] = 'Porc_IVAS';		  	
-		  	$datos[9]['dato'] = ($parametros['TxtRetIVAS']/100);
-		  	$datos[10]['campo'] = 'Cod_Ret';		  	
-		  	$datos[10]['dato'] = $parametros['TxtCodRet'];	  		  
+		  	SetAdoFields('Cta_Gasto',$CtaGastoCosto);
+		  	SetAdoFields('SubModulo',$SubmoduloGastoCosto);
+		  	SetAdoFields('Porc_IVAB',($parametros['TxtRetIVAB']/100));
+		  	SetAdoFields('Porc_IVAS',($parametros['TxtRetIVAS']/100));
+		  	SetAdoFields('Cod_Ret',$parametros['TxtCodRet']);	  		  
 
 		  if(count($encontrado)<=0)
 		  {
-		  	 return $this->modelo->add($table='Catalogo_CxCxP',$datos);
+		  	  return SetAdoUpdate();
 		  }else
 		  {
-		  	$where[0]['campo'] = 'ID';
-		  	$where[0]['valor'] = $encontrado[0]['ID'];
-		  	 return $this->modelo->update($table='Catalogo_CxCxP',$datos,$where);
+		  	 SetAdoFieldsWhere('ID',$encontrado[0]['ID']);
+		  	 return SetAdoUpdateGeneric();
 		  }
 
-		  // If AdoCxCxP.Recordset.RecordCount <= 0 Then
-		  //    SetAddNew AdoCxCxP
-		  //    SetFields AdoCxCxP, "Item", NumEmpresa
-		  //    SetFields AdoCxCxP, "Periodo", Periodo_Contable
-		  //    SetFields AdoCxCxP, "Codigo", CodigoCliente
-		  //    SetFields AdoCxCxP, "Cta", Cta_Aux
-		  //    SetFields AdoCxCxP, "TC", SubCta
-		  //    SetFields AdoCxCxP, "Importaciones", 0
-		  // Else
-		  //    SetFields AdoCxCxP, "Cta_Gasto", CtaGastoCosto
-		  //    SetFields AdoCxCxP, "SubModulo", SubmoduloGastoCosto
-		  //    SetFields AdoCxCxP, "Porc_IVAB", Val(TxtRetIVAB) / 100
-		  //    SetFields AdoCxCxP, "Porc_IVAS", Val(TxtRetIVAS) / 100
-		  //    SetFields AdoCxCxP, "Cod_Ret", TxtCodRet
-		  // End If
-		  // SetUpdate AdoCxCxP
-		  // Unload FCxCxP
 	}
 
 	function cliente_proveedor($query)
@@ -246,132 +202,74 @@ class proveedor_bodegaC
 	function guardar_datos($parametros)
 	{
 		// print_r($parametros);die();
-		$datosC[0]["dato"] = ''; // 1756051494
-	    $datosC[0]["campo"] = '';
-	    $datosC[1]["dato"] = $parametros["txt_ci_ruc"]; // 1756051494
-	    $datosC[1]["campo"] = 'CI_RUC';
-	    $datosC[2]["dato"] = $parametros["txt_fax"]; // .
-	    $datosC[2]["campo"] = 'FAX';
-	    $datosC[3]["dato"] = $parametros["txt_telefono"]; // 02282950
-	    $datosC[3]["campo"] = 'Telefono';
-	    $datosC[4]["dato"] = $parametros["txt_celular"]; // .
-	    $datosC[4]["campo"] = 'Celular';
-	    $datosC[5]["dato"] = $parametros["txt_grupo"]; // .
-	    $datosC[5]["campo"] = 'Grupo';
-	    $datosC[6]["dato"] = $parametros["txt_contactos"]; // .
-	    $datosC[6]["campo"] = 'Contacto';
-	    $datosC[7]["dato"] = $parametros["txt_descuento"]; // 0
-	    $datosC[7]["campo"] = 'Descuento';
-	    $datosC[8]["dato"] = $parametros["txt_cliente"]; // ABADIANO SANCHEZ ARIEL SEBASTIAN
-	    $datosC[8]["campo"] = 'Cliente';
-	    $datosC[9]["dato"] = $parametros["CTipoProv"]; // 01
-	    $datosC[9]["campo"] = 'Tipo_Pasaporte';
-	    $datosC[10]["dato"] = $parametros["CParteR"]; // NO
-	    $datosC[10]["campo"] = 'Parte_Relacionada';
-	    $datosC[11]["dato"] = $parametros["rbl_sexo"]; // on
-	    $datosC[11]["campo"] = 'Sexo';
-	    $datosC[12]["dato"] = $parametros["txt_direccion"]; // .
-	    $datosC[12]["campo"] = 'Direccion';
-	    $datosC[13]["dato"] = $parametros["txt_numero"]; // .
-	    $datosC[13]["campo"] = 'DirNumero';
-	    $datosC[14]["dato"] = $parametros["txt_email"]; // comprobantes@clinicasantabarbara.com.ec
-	    $datosC[14]["campo"] = 'Email';
-	    $datosC[15]["dato"] = $parametros["ddl_naciones"]; // 593
-	    $datosC[15]["campo"] = 'Pais';
-	    $datosC[16]["dato"] = $parametros["prov"]; // 17
-	    $datosC[16]["campo"] = 'Prov';
-	    $datosC[17]["dato"] = $parametros["ddl_ciudad"]; // 21701
-	    $datosC[17]["campo"] = 'Ciudad';
-	    $datosC[18]["dato"] = $parametros["MBFecha"]; // 2022-02-14
-	    $datosC[18]["campo"] = 'Fecha';
-	    $datosC[19]["dato"] = $parametros["MBFechaN"]; // 2022-02-14
-	    $datosC[19]["campo"] = 'Fecha_N';
-	    $datosC[20]["dato"] = $parametros["txt_representante"]; // .
-	    $datosC[20]["campo"] = 'Representante';
-	    $datosC[21]["dato"] = $parametros["ddl_estado_civil"]; // S
-	    $datosC[21]["campo"] = 'Est_Civil';
-	    $datosC[22]["dato"] = $parametros["txt_no_dep"]; // 0
-	    $datosC[22]["campo"] = 'No_Dep';
-	    $datosC[23]["dato"] = $parametros["txt_casilla"]; // .
-	    $datosC[23]["campo"] = 'Casilla';
-	    $datosC[24]["dato"] = $parametros["txt_comision"]; // 0
-	    $datosC[24]["campo"] = 'Comision';
-	    $datosC[25]["dato"] = $parametros["ddl_medidor"]; // Seleccione
-	    $datosC[25]["campo"] = 'Medidor'; //ojo no hay
-	    $datosC[26]["dato"] = $parametros["txt_Email2"]; // .
-	    $datosC[26]["campo"] = 'Email2';
-	    $datosC[27]["dato"] = $parametros["txt_afiliacion"]; // .
-	    $datosC[27]["campo"] = 'Plan_Afiliado';
-	    $datosC[28]["dato"] = $parametros["txt_actividad"]; // .
-	    $datosC[28]["campo"] = 'Actividad';
-	    $datosC[29]["dato"] = $parametros["txt_credito"]; // 0
-	    $datosC[29]["campo"] = 'Credito';
-	    $datosC[30]["dato"] = $parametros["txt_profesion"]; // .
-	    $datosC[30]["campo"] = 'Profesion';
-	    $datosC[31]["dato"] = $parametros["txt_lugar_trabajo"]; // .
-	    $datosC[31]["campo"] = 'Lugar_Trabajo';
-	    $datosC[32]["dato"] = $parametros["txt_direccion_tra"]; // .
-	    $datosC[32]["campo"] = 'DireccionT';
-	    $datosC[33]["dato"] = $parametros["txt_califica"]; // .
-	    $datosC[33]["campo"] = 'Calificacion';
-	    $datosC[34]["dato"] = 0;
-		$datosC[34]["campo"] = 'Especial';
-		$datosC[35]["dato"] = 0;
-		$datosC[35]["campo"] = 'RISE';
-		$datosC[36]["dato"] = 0;
-		$datosC[36]["campo"] = 'Asignar_Dr';
+	    $this->guardar_historial($parametros);
 
-		$datosC[37]["dato"] = 'Codigo';
-		$datosC[37]["campo"] = $parametros['TD'];
-		$datosC[38]["dato"] = 'TD';
-		$datosC[38]["campo"] = $parametros['txt_codigo'];
-
+		SetAdoAddNew("Clientes");    
+		
+		SetAdoFields('CI_RUC',$parametros["txt_ci_ruc"]);
+		SetAdoFields('FAX',$parametros["txt_fax"]);
+		SetAdoFields('Telefono',$parametros["txt_telefono"]);
+		SetAdoFields('Celular',$parametros["txt_celular"]);
+		SetAdoFields('Grupo',$parametros["txt_grupo"]);
+		SetAdoFields('Contacto',$parametros["txt_contactos"]);
+		SetAdoFields('Descuento',$parametros["txt_descuento"]);
+		SetAdoFields('Cliente',$parametros["txt_cliente"]);
+		SetAdoFields('Tipo_Pasaporte',$parametros["CTipoProv"]);
+		SetAdoFields('Parte_Relacionada',$parametros["CParteR"]);
+		SetAdoFields('Sexo',$parametros["rbl_sexo"]);
+		SetAdoFields('Direccion',$parametros["txt_direccion"]);
+		SetAdoFields('DirNumero',$parametros["txt_numero"]);
+		SetAdoFields('Email',$parametros["txt_email"]);
+		SetAdoFields('Pais',$parametros["ddl_naciones"]);
+		SetAdoFields('Prov',$parametros["prov"]);
+		SetAdoFields('Ciudad',$parametros["ddl_ciudad"]);
+		SetAdoFields('Fecha',$parametros["MBFecha"]);
+		SetAdoFields('Fecha_N',$parametros["MBFechaN"]);
+		SetAdoFields('Representante',$parametros["txt_representante"]);
+		SetAdoFields('Est_Civil',$parametros["ddl_estado_civil"]);
+		SetAdoFields('No_Dep',$parametros["txt_no_dep"]);
+		SetAdoFields('Casilla',$parametros["txt_casilla"]);
+		SetAdoFields('Comision',$parametros["txt_comision"]);
+		SetAdoFields('Medidor',$parametros["ddl_medidor"]);
+		SetAdoFields('Email2',$parametros["txt_Email2"]);
+		SetAdoFields('Plan_Afiliado',$parametros["txt_afiliacion"]);
+		SetAdoFields('Actividad',$parametros["txt_actividad"]);
+		SetAdoFields('Credito',$parametros["txt_credito"]);
+		SetAdoFields('Profesion',$parametros["txt_profesion"]);
+		SetAdoFields('Lugar_Trabajo',$parametros["txt_lugar_trabajo"]);
+		SetAdoFields('DireccionT',$parametros["txt_direccion_tra"]);
+		SetAdoFields('Calificacion',$parametros["txt_califica"]);
+		SetAdoFields('Especial',0);
+		SetAdoFields('RISE',0);
+		SetAdoFields('Asignar_Dr',0);
+		SetAdoFields('Codigo',$parametros["txt_codigo"]);
+		SetAdoFields('TD',$parametros["TD"]);
 
 	    if(isset($parametros['cbx_ContEsp']))
 	    {
-	    	$datosC[34]["dato"] = 1;
-		    $datosC[34]["campo"] = 'Especial';
+	    	etAdoFields('Especial',1);
 	    }
 	    if(isset($parametros['cbx_rise']))
 	    {
-	    	$datosC[35]["dato"] = 1;
-		    $datosC[35]["campo"] = 'RISE';
+		    SetAdoFields('RISE',1);
 	    }
 	    if(isset($parametros['cbx_dr']))
 	    {
-	    	$datosC[36]["dato"] = 1;
-		    $datosC[36]["campo"] = 'Asignar_Dr';
+	    	SetAdoFields('Asignar_Dr',1);
 	    }
-
-	    $this->guardar_historial($parametros);
 
 	    if($parametros['txt_id']!='')
 	    {
-	    	$where[0]['campo'] = 'ID'; 
-	    	$where[0]['valor'] = $parametros['txt_id'];
-	    	return update_generico($datosC,'Clientes',$where);
+			SetAdoFieldsWhere('ID', $parametros['txt_id']);
+	    	return SetAdoUpdateGeneric();
 	    }else
 	    {
 	    	$resp = $this->modelo->buscar_cliente(trim($parametros['txt_ci_ruc']),false,true);
 		    if(count($resp)>0){return -2;}
-		
-	    	$r = insert_generico('Clientes',$datosC);
-	    	if($r==null)
-	    	{
-	    		return 1;
-	    	}else
-	    	{
-	    		return -1;
-	    	}
+
+		   
+			return SetAdoUpdate();
 	    }
-
-
-
-	    // $datosC[34]["dato"] = $parametros["txt_historial_dir"]; // 
-	    // $datosC[0]["campo"] = '';
-	    // $datosC[34]["dato"] = $parametros["txt_productos_rela"]; // 
-	    // $datosC[0]["campo"] = '';
-	    // $datosC[0]["campo"] = '';
 	    
 
 	}
@@ -408,42 +306,28 @@ class proveedor_bodegaC
 	  if($Si_No){
 	  	// print_r($datos);
   		// print_r($parametros);die();
-	     $datosH[0]['campo'] =  "Fecha_Registro"; 
-	     $datosH[0]['dato'] =  date('Y-m-d');
-	     $datosH[1]['campo'] =  "Codigo"; 
-	     $datosH[1]['dato'] = $parametros["txt_codigo"];
-	     $datosH[2]['campo'] =  "Lugar_Trabajo"; 
-	     $datosH[2]['dato'] = $parametros["txt_lugar_trabajo"];
-	     $datosH[3]['campo'] =  "Direccion"; 
-	     $datosH[3]['dato'] = $parametros["txt_direccion"];
-	     $datosH[4]['campo'] =  "DireccionT"; 
-	     $datosH[4]['dato'] = $parametros["txt_direccion_tra"];
-	     $datosH[5]['campo'] =  "TelefonoT"; 
-	     $datosH[5]['dato'] = $parametros["txt_telefono2"];
-	     $datosH[6]['campo'] =  "Telefono"; 
-	     $datosH[6]['dato'] = $parametros["txt_telefono"] ;
-	     $datosH[7]['campo'] =  "Celular"; 
-	     $datosH[7]['dato'] = $parametros["txt_celular"];
-	     $datosH[8]['campo'] =  "FAX"; 
-	     $datosH[8]['dato'] = $parametros["txt_fax"];
-	     $datosH[9]['campo'] =  "Ciudad"; 
-	     $datosH[9]['dato'] = $parametros["ddl_ciudad"];
-	     $datosH[10]['campo'] =  "Prov"; 
-	     $datosH[10]['dato'] = $parametros["prov"];
-	     $datosH[11]['campo'] =  "Pais"; 
-	     $datosH[11]['dato'] = $parametros["ddl_naciones"];
-	     $datosH[12]['campo'] =  "CodigoU"; 
-	     $datosH[12]['dato'] = $_SESSION['INGRESO']['CodigoU'];
-	     $datosH[13]['campo'] =  "Descuento"; 
-	     $datosH[13]['dato'] = $parametros["txt_descuento"];
-	     $datosH[14]['campo'] =  "Item"; 
-	     $datosH[14]['dato'] = $_SESSION['INGRESO']['item'];
-	     $datosH[15]['campo'] =  "Tipo_Dato"; 
-	     $datosH[15]['dato'] = "DIRECCION1";
+  		 SetAdoAddNew("Clientes_Datos_Extras");    
+		
+		 SetAdoFields('CI_RUC',$parametros["txt_ci_ruc"]);
+	     SetAdoFields("Fecha_Registro",date('Y-m-d'));
+	     SetAdoFields("Codigo",$parametros["txt_codigo"]);
+	     SetAdoFields("Lugar_Trabajo",$parametros["txt_lugar_trabajo"]);
+	     SetAdoFields("Direccion",$parametros["txt_direccion"]);
+	     SetAdoFields("DireccionT",$parametros["txt_direccion_tra"]);
+	     SetAdoFields("TelefonoT",$parametros["txt_telefono2"]);
+	     SetAdoFields("Telefono",$parametros["txt_telefono"]);
+	     SetAdoFields("Celular",$parametros["txt_celular"]);
+	     SetAdoFields("FAX",$parametros["txt_fax"]);
+	     SetAdoFields("Ciudad",$parametros["ddl_ciudad"]);
+	     SetAdoFields("Prov",$parametros["prov"]);
+	     SetAdoFields("Pais",$parametros["ddl_naciones"]);
+	     SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+	     SetAdoFields("Descuento",$parametros["txt_descuento"]);
+	     SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+	     SetAdoFields("Tipo_Dato","DIRECCION1");
+  		// print_r($datosH);die();// 
+	     SetAdoUpdate();
 
-  		// print_r($datosH);die();	     // 
-
-	     $resp = insert_generico('Clientes_Datos_Extras',$datosH);
 	  }
 
 	

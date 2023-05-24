@@ -86,10 +86,7 @@ class ingreso_descargosM
 			$resp = update_generico($datos,'Asiento_K',$campoWhere);			
 		  return $resp;
 			
-		}else{
-	      $resp = insert_generico("Trans_Kardex",$datos);
-	      return $resp;
-	  }
+		}
 	}
 
 
@@ -295,53 +292,26 @@ class ingreso_descargosM
 
 	function CREAR_COD_PEDIDO_CLINICA()
 	{
-		$datos[0]['campo']='Periodo';
-		$datos[0]['dato']='.';
-
-		$datos[1]['campo']='Item';
-		$datos[1]['dato']=$_SESSION['INGRESO']['item'];
-
-		$datos[2]['campo']='Concepto';
-		$datos[2]['dato']='PEDIDO_CLINICA';
-
-		$datos[3]['campo']='Numero';
-		$datos[3]['dato']=1;
-
-		$resp = insert_generico('Codigos',$datos);
-		if($resp=='')
-		{
-			return 1;
-		}
+		SetAdoAddNew("Codigos");
+		SetAdoFields('Periodo','.');
+		SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		SetAdoFields('Concepto','PEDIDO_CLINICA');
+		SetAdoFields('Numero',1);
+		return SetAdoUpdate();
 	}
 
 	function CREAR_COD_PEDIDO_CLINICA_BOD()
 	{
-		$datos[0]['campo']='Periodo';
-		$datos[0]['dato']='.';
 
-		$datos[1]['campo']='Item';
-		$datos[1]['dato']=$_SESSION['INGRESO']['item'];
+		SetAdoAddNew("Codigos");
+		SetAdoFields('Periodo','.');
+		SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		SetAdoFields('Concepto','PEDIDO_BODEGA');
+		SetAdoFields('Numero',1);
 
-		$datos[2]['campo']='Concepto';
-		$datos[2]['dato']='PEDIDO_BODEGA';
-
-		$datos[3]['campo']='Numero';
-		$datos[3]['dato']=1;
-
-		$resp = insert_generico('Codigos',$datos);
-		if($resp=='')
-		{
-			return 1;
-		}
+		return SetAdoUpdate();
 	}
 
-	// function lineas_eli($parametros)
-	// {
-	// 	$sql = "DELETE FROM Asiento_K WHERE ORDEN='".$parametros['ped']."' and A_No ='".$parametros['lin']."'";
-	// 	return $this->conn1->String_Sql($sql);
-		
-
-	// }
 	function lineas_eli($parametros)
 	{
 		$sql = "DELETE FROM Trans_Kardex WHERE Orden_No='".$parametros['ped']."' and ID ='".$parametros['lin']."'";
@@ -989,11 +959,7 @@ class ingreso_descargosM
 		return $this->conn1->datos($sql);
 	
 	}
-	function insertar_trans_kardex($datos)
-	{
-		$resp = insert_generico("Trans_Kardex",$datos);
-	    return $resp;
-	}
+	
 
 	function lista_hijos_id($query)
 	{

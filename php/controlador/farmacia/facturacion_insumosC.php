@@ -316,46 +316,30 @@ class facturacion_insumosC
 
 		// print_r($cliente);
 		// print_r($parametro);die();
-		
-		$datos[0]['campo'] ='CODIGO';
-		$datos[0]['dato'] = $parametros['servicio_cod'];
-		$datos[1]['campo'] ='CANT';
-		$datos[1]['dato'] ='1';
-		$datos[2]['campo'] ='PRODUCTO';
-		$datos[2]['dato'] =$parametros['servicio'];
-		$datos[3]['campo'] ='PRECIO';
-		$datos[3]['dato'] = $parametros['total'];
-		$datos[4]['campo'] ='TOTAL';
-		$datos[4]['dato'] = $parametros['total'];
-		$datos[5]['campo'] ='Codigo_Cliente';
-		$datos[5]['dato'] =$cliente[0]['Codigo'];
-		$datos[6]['campo'] ='CodigoU';
-		$datos[6]['dato'] = $_SESSION['INGRESO']['CodigoU'];
-		$datos[7]['campo'] ='Periodo';
-		$datos[7]['dato'] = $_SESSION['INGRESO']['periodo'];
-		$datos[8]['campo'] ='Item';
-		$datos[8]['dato'] =$_SESSION['INGRESO']['item'];
-	  	$datos[9]['campo']='CODIGO_L';
-      	$datos[9]['dato']= $parametros['servicio_cod'];
+
+
+        SetAdoAddNew("Asiento_F");  		
+		SetAdoFields('CODIGO',$parametros['servicio_cod']);
+		SetAdoFields('CANT','1');
+		SetAdoFields('PRODUCTO',$parametros['servicio']);
+		SetAdoFields('PRECIO',$parametros['total']);
+		SetAdoFields('TOTAL',$parametros['total']);
+		SetAdoFields('Codigo_Cliente',$cliente[0]['Codigo']);
+		SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);
+		SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
+		SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+	  	SetAdoFields('CODIGO_L',$parametros['servicio_cod']);
       
-        $datos[10]['campo']='Cta';
-        $datos[10]['dato']= 'Cuenta' ;
-        $datos[11]['campo']='HABIT';
-        $datos[11]['dato']= G_PENDIENTE;
-        $datos[12]['campo']='Mes';
-        $datos[12]['dato']= '.';
-        $datos[13]['campo']='TICKET';
-        $datos[13]['dato']= date('Y') ;
-        $datos[14]['campo']='A_No';
-        $datos[14]['dato']= 1;
+        SetAdoFields('Cta','Cuenta');
+        SetAdoFields('HABIT',G_PENDIENTE);
+        SetAdoFields('Mes','.');
+        SetAdoFields('TICKET',date('Y'));
+        SetAdoFields('A_No',1);
 
-        // factura_numero($ser);
-
-		$respuesta = insert_generico('Asiento_F',$datos);
+        // factura_numero($ser);  
+		$respuesta = SetAdoUpdate();
 		if ($respuesta==null) {
-
-			// [DCLinea] => FA 001001 1127782029001 1.1.01.05 
-		  
+			// [DCLinea] => FA 001001 1127782029001 1.1.01.05   
 
 
 			$FA['Cliente'] = $cliente[0]['Cliente'];

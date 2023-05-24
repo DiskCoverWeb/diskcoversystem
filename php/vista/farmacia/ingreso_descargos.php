@@ -357,7 +357,7 @@
            success:  function (response) { 
 
             // console.log(response);
-           if(response.resp==null)
+           if(response.resp==1)
            {
             $('#txt_pedido').val(response.ped);
               Swal.fire({

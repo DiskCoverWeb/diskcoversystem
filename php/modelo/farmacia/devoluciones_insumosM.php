@@ -23,7 +23,17 @@ class devoluciones_insumosM
 	{
 		$sql="SELECT Numero,CP.Fecha,Concepto,Monto_Total,Cliente FROM Comprobantes CP 
 		LEFT JOIN Clientes C ON CP.Codigo_B = C.Codigo
-		WHERE 1=1 AND TP='CD' AND CP.T='N' AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."' AND Codigo_B <> '.' AND Numero IN ( SELECT  DISTINCT Numero FROM Trans_Kardex WHERE 1=1 AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."'  AND Entrada = 0 )";
+		WHERE TP='CD' 
+		AND CP.T='N' 
+		AND Item = '".$_SESSION['INGRESO']['item']."' 
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+		AND Codigo_B <> '.' 
+		AND Numero IN ( SELECT  DISTINCT Numero 
+						FROM Trans_Kardex WHERE
+						Item = '".$_SESSION['INGRESO']['item']."' 
+						AND Periodo = '".$_SESSION['INGRESO']['periodo']."'  
+						AND Entrada = 0 
+					  )";
 		if($tipo =='f')
 		{
 			$sql.= " AND CP.Fecha BETWEEN '".$desde."' AND '".$hasta."'";
@@ -32,9 +42,13 @@ class devoluciones_insumosM
 		{
 			$sql.=" AND C.Cliente like '%".$query."%'";
 		}
+
+		$sql.=" ORDER BY CP.ID ";
+
+		// print_r($sql);die();
 		$num_reg = array('0','100','cargar_pedidos()');
 	    $botones[0] = array('boton'=>'Ver detalle','icono'=>'<i class="fa fa-reorder"></i>', 'tipo'=>'primary', 'id'=>'Numero');
-	    $datos = grilla_generica_new($sql,'Comprobantes CP',$id_tabla=false,false,$botones,false,$imagen=false,1,1,1,300,2,$num_reg,false);
+	    $datos = grilla_generica_new($sql,'Comprobantes CP',$id_tabla=false,false,$botones,false,$imagen=false,1,1,1,300,2,$num_reg=false,false);
 	 
 
      
@@ -213,10 +227,7 @@ class devoluciones_insumosM
 			$resp = update_generico($datos,'Asiento_K',$campoWhere);			
 		  return $resp;
 			
-		}else{
-	      $resp = insert_generico("Asiento_K",$datos);
-	      return $resp;
-	  }
+		}
 	}
 }
 

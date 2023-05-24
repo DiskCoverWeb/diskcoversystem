@@ -194,11 +194,6 @@ class articulosM
 
 	}
 
-	function guardar($table,$datos)
-	{
-		$resp = insert_generico($table,$datos);
-		return $resp;
-	}
 	function update($tabla,$datos,$campoWhere=false)
 	{
 			$resp = update_generico($datos,$tabla,$campoWhere);			
@@ -213,10 +208,7 @@ class articulosM
 			$resp = update_generico($datos,'Asiento_K',$campoWhere);			
 		  return $resp;
 			
-		}else{
-	      $resp = insert_generico("Asiento_K",$datos);
-	      return $resp;
-	  }
+		}
 	}
 
 
