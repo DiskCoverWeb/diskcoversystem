@@ -93,6 +93,10 @@
        confirmButtonText: 'Si!'
      }).then((result) => {
        if (result.value==true) {
+       	if($("#CTipo").val()=='')
+       	{
+       		 $("#CTipo").val('FA');
+       	}
       	 guardar()
        }
      })
@@ -302,7 +306,7 @@
 						          <label for="inputEmail3" class="col-sm-5 control-label">TIPO DE DOCUMENTO</label>
 						          <div class="col-sm-7">
 						            <select class="form-control input-xs" id="CTipo" name="CTipo">
-						            	 <option value="FA">FA</option>
+						            	<option value="FA">FA</option>
 											    <option value="NV">NV</option>
 											    <option value="PV">PV</option>
 											    <option value="FT">FT</option>
