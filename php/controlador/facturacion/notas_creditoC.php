@@ -1,6 +1,5 @@
 <?php 
 require(dirname(__DIR__,2).'/modelo/facturacion/notas_creditoM.php');
-require(dirname(__DIR__,2).'/comprobantes/SRI/autorizar_sri.php');
 require_once(dirname(__DIR__,3)."/lib/fpdf/cabecera_pdf.php");
 
 $controlador = new notas_creditoC();
@@ -76,7 +75,6 @@ if(isset($_GET['Detalle_Factura']))
 if(isset($_GET['Lineas_Factura']))
 {
 	$parametros = $_POST['parametros'];
-	// print_r($parametros);die();
 	echo json_encode($controlador->Lineas_Factura($parametros));
 }
 
@@ -275,10 +273,8 @@ class notas_creditoC
      $Ln_No = 0;
      $this->modelo->delete_asiento_nc();
     
-     //LblSaldo.Caption = Format(FA.Saldo_MN, "#,##0.00")
-     //LblTotal.Caption = Format(FA.Total_MN, "#,##0.00")
      $datos = $this->modelo->lineas_factura($parametros['Factura'],$parametros['Serie'],$parametros['TC'],$parametros['Autorizacion']);
-     // print_r($datos);die();     
+      //print_r($datos);die();     
       if(count($datos)  > 0)
       {
           // $FA.Cod_Ejec = .fields("Cod_Ejec")
@@ -289,58 +285,36 @@ class notas_creditoC
           foreach ($datos as $key => $value) 
           {
              $Ok_Inv = Leer_Codigo_Inv($value["Codigo"], $parametros['Fecha']);
-              // print_r($Ok_Inv);
-              // print_r($datos);die();     
-             $datosNC[0]['campo'] =  "CODIGO"; 
-             $datosNC[0]['dato'] = $value[ "Codigo"];
-             $datosNC[1]['campo'] =  "CANT"; 
-             $datosNC[1]['dato'] = $value[ "Cantidad"];
-             $datosNC[2]['campo'] =  "PRODUCTO"; 
-             $datosNC[2]['dato'] = $value[ "Producto"];
-             $datosNC[3]['campo'] =  "SUBTOTAL"; 
-             $datosNC[3]['dato'] = $value[ "Total"];
-             $datosNC[4]['campo'] =  "DESCUENTO"; 
-             $datosNC[4]['dato'] = $value[ "Total_Desc"] + $value["Total_Desc2"];
-             $datosNC[5]['campo'] =  "TOTAL_IVA"; 
-             $datosNC[5]['dato'] = $value[ "Total_IVA"];
-             $datosNC[6]['campo'] =  "CodBod"; 
-             $datosNC[6]['dato'] = $value[ "CodBodega"];
-             $datosNC[7]['campo'] =  "CodMar"; 
-             $datosNC[7]['dato'] = $value[ "CodMarca"];
-             $datosNC[8]['campo'] =  "Codigo_C"; 
-             $datosNC[8]['dato'] =  $parametros['CodigoC'];
-             $datosNC[9]['campo'] =  "Item"; 
-             $datosNC[9]['dato'] =  $_SESSION['INGRESO']['item']; // NumEmpresa
-             $datosNC[10]['campo'] =  "CodigoU"; 
-             $datosNC[10]['dato'] =  $_SESSION['INGRESO']['CodigoU']; // CodigoUsuario
-             $datosNC[11]['campo'] =  "PVP"; 
-             $datosNC[11]['dato'] = $value[ "Precio"];
-             $datosNC[12]['campo'] =  "COSTO";
-             $datosNC[12]['dato'] =  $Ok_Inv['datos']['Costo'];
-             $datosNC[13]['campo'] =  "Cod_Ejec"; 
-             $datosNC[13]['dato'] = $value[ "Cod_Ejec"];
-             $datosNC[14]['campo'] =  "Porc_C"; 
-             $datosNC[14]['dato'] = $value[ "Porc_C"];
-             $datosNC[15]['campo'] =  "Porc_IVA"; 
-             $datosNC[15]['dato'] = $value[ "Porc_IVA"];
-             $datosNC[16]['campo'] =  "Mes_No"; 
-             $datosNC[16]['dato'] = $value[ "Mes_No"];
-             $datosNC[17]['campo'] =  "Mes"; 
-             $datosNC[17]['dato'] = $value[ "Mes"];
-             $datosNC[18]['campo'] =  "Anio"; 
-             $datosNC[18]['dato'] = $value[ "Ticket"];
-             $datosNC[19]['campo'] =  "A_No";
-             $datosNC[19]['dato'] = $Ln_No;           
-             if($Ok_Inv['datos']['Con_Kardex'])
-             {
-               $datosNC[20]['campo'] =  "Ok";
-               $datosNC[20]['dato'] = $Ok_Inv['datos']['Con_Kardex'];
-               $datosNC[21]['campo'] =  "Cta_Inventario"; 
-               $datosNC[21]['dato']  = $Ok_tInv['Cta_Inventario'];
-               $datosNC[22]['campo'] =  "Cta_Costo"; 
-               $datosNC[22]['dato']  = $Ok_tInv['Cta_Costo_Venta'];
-             }
-             insert_generico('Asiento_NC',$datosNC);
+              
+              SetAdoAddNew("Asiento_NC");
+              SetAdoFields("CODIGO", $value["Codigo"]);
+							SetAdoFields("CANT", $value["Cantidad"]);
+							SetAdoFields("PRODUCTO", $value["Producto"]);
+							SetAdoFields("SUBTOTAL", $value["Total"]);
+							SetAdoFields("DESCUENTO", $value["Total_Desc"] + $value["Total_Desc2"]);
+							SetAdoFields("TOTAL_IVA", $value["Total_IVA"]);
+							SetAdoFields("CodBod", $value["CodBodega"]);
+							SetAdoFields("CodMar", $value["CodMarca"]);
+							SetAdoFields("Codigo_C", $parametros["CodigoC"]);
+							SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+							SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+							SetAdoFields("PVP", $value["Precio"]);
+							SetAdoFields("COSTO", $Ok_Inv['datos']['Costo']);
+							SetAdoFields("Cod_Ejec", $value["Cod_Ejec"]);
+							SetAdoFields("Porc_C", $value["Porc_C"]);
+							SetAdoFields("Porc_IVA", $value["Porc_IVA"]);
+							SetAdoFields("Mes_No", $value["Mes_No"]);
+							SetAdoFields("Mes", $value["Mes"]);
+							SetAdoFields("Anio", $value["Ticket"]);
+							SetAdoFields("A_No", $Ln_No);
+
+							if ($Ok_Inv['datos']['Con_Kardex']) {
+							  SetAdoFields("Ok", $Ok_Inv['datos']['Con_Kardex']);
+							  SetAdoFields("Cta_Inventario", $Ok_tInv['Cta_Inventario']);
+							  SetAdoFields("Cta_Costo", $Ok_tInv['Cta_Costo_Venta']);
+							}
+ 							SetAdoUpdate();
+     
              $Ln_No = $Ln_No + 1;
              // DocConInv = DatInv.Con_Kardex
           }
@@ -374,61 +348,36 @@ class notas_creditoC
        $BanIVA = $product['datos']['IVA'];
        if($BanIVA==1 && $parametros['TC'] <> "NV"){ $SubTotalIVA = number_format(($SubTotal-$SubTotalDesc)*$_SESSION['INGRESO']['porc'], 4,'.','');}
        $Total = $SubTotal_NC + $SubTotal + $IVA_NC + $SubTotalIVA - $SubTotalDesc - $Total_Desc;
-       // SetAdoAddNew "Asiento_NC"
-       $datosNC[0]['campo']= "CODIGO";
-       $datosNC[0]['dato'] =  $parametros['productos'];
-       $datosNC[1]['campo']= "CANT";
-       $datosNC[1]['dato'] =  $parametros['TextCant'];
-       $datosNC[2]['campo']= "PRODUCTO";
-       $datosNC[2]['dato'] =  $product['datos']['Producto'];
-       $datosNC[3]['campo']= "SUBTOTAL";
-       $datosNC[3]['dato'] =  $SubTotal;
-       $datosNC[4]['campo']= "DESCUENTO";
-       $datosNC[4]['dato'] =  $SubTotalDesc;
-       $datosNC[5]['campo']= "TOTAL_IVA";
-       $datosNC[5]['dato'] =  $SubTotalIVA;
-       $datosNC[6]['campo']= "CodBod";
-       $datosNC[6]['dato'] =  $parametros['Cod_Bodega'];
-       $datosNC[7]['campo']= "CodMar";
-       $datosNC[7]['dato'] =  $parametros['Cod_Marca'];
-       $datosNC[8]['campo']= "Codigo_C";
-       $datosNC[8]['dato'] =  $parametros['CodigoC'];
-       $datosNC[9]['campo']= "Item";
-       $datosNC[9]['dato'] =  $_SESSION['INGRESO']['item']; 
-       $datosNC[10]['campo']= "CodigoU";
-       $datosNC[10]['dato'] =  $_SESSION['INGRESO']['CodigoU'];
-       $datosNC[11]['campo']= "PVP";
-       $datosNC[11]['dato'] =  number_format($parametros['TextVUnit'],$_SESSION['INGRESO']['Dec_PVP'],'.','');
-       $datosNC[12]['campo']= "COSTO";
-       $datosNC[12]['dato'] =  $product['datos']['Costo'];
-       $datosNC[13]['campo']= "Mes_No";
-       $datosNC[13]['dato'] =  date('m',strtotime($parametros['MBoxFecha']));
-       $datosNC[14]['campo']= "Mes";
-       $datosNC[14]['dato'] =  MesesLetras(date('m',strtotime($parametros['MBoxFecha'])));
-       $datosNC[15]['campo']= "Anio";
-       $datosNC[15]['dato'] =  date('Y',strtotime($parametros['MBoxFecha']));
-       $datosNC[16]['campo']= "Porc_IVA";
-       $datosNC[16]['dato'] =  $_SESSION['INGRESO']['porc'];
-       $datosNC[17]['campo']= "A_No";
-       $datosNC[17]['dato'] = $Ln_No;
-       if($product['datos']['Con_Kardex']){
-         $datosNC[18]['campo']= "Ok";
-         $datosNC[18]['dato'] = $product['datos']['Con_Kardex'];
-         $datosNC[19]['campo']= "Cta_Inventario";
-         $datosNC[19]['dato'] = $product['datos']['Cta_Inventario'];
-         $datosNC[20]['campo']= "Cta_Costo";
-         $datosNC[20]['dato'] = $product['datos']['Cta_Costo_Venta'];
-       }
-       
-       if(insert_generico('Asiento_NC',$datosNC)==null)
-       {
-       	return 1;
-       }
+       SetAdoAddNew("Asiento_NC");
+       SetAdoFields("CODIGO", $parametros["productos"]);
+			 SetAdoFields("CANT", $parametros["TextCant"]);
+			 SetAdoFields("PRODUCTO", $product["datos"]["Producto"]);
+			 SetAdoFields("SUBTOTAL", $SubTotal);
+			 SetAdoFields("DESCUENTO", $SubTotalDesc);
+			 SetAdoFields("TOTAL_IVA", $SubTotalIVA);
+			 SetAdoFields("CodBod", $parametros["Cod_Bodega"]);
+			 SetAdoFields("CodMar", $parametros["Cod_Marca"]);
+			 SetAdoFields("Codigo_C", $parametros["CodigoC"]);
+			 SetAdoFields("Item", $_SESSION["INGRESO"]["item"]);
+			 SetAdoFields("CodigoU", $_SESSION["INGRESO"]["CodigoU"]);
+			 SetAdoFields("PVP", number_format($parametros["TextVUnit"], $_SESSION["INGRESO"]["Dec_PVP"], ".", ""));
+			 SetAdoFields("COSTO", $product["datos"]["Costo"]);
+			 SetAdoFields("Mes_No", date("m", strtotime($parametros["MBoxFecha"])));
+			 SetAdoFields("Mes", MesesLetras(date("m", strtotime($parametros["MBoxFecha"]))));
+			 SetAdoFields("Anio", date("Y", strtotime($parametros["MBoxFecha"])));
+			 SetAdoFields("Porc_IVA", $_SESSION["INGRESO"]["porc"]);
+			 SetAdoFields("A_No", $Ln_No);
+ 
+			 if ($product["datos"]["Con_Kardex"]) {
+			   SetAdoFields("Ok", $product["datos"]["Con_Kardex"]);
+			   SetAdoFields("Cta_Inventario", $product["datos"]["Cta_Inventario"]);
+			   SetAdoFields("Cta_Costo", $product["datos"]["Cta_Costo_Venta"]);
+			 }
+ 			 return SetAdoUpdate();
 		}else
 		{
 			 return -1;
 		}
-		 // print_r($parametros);die();
 	}
 
 	function eliminar_linea($parametros)
@@ -514,139 +463,80 @@ class notas_creditoC
 		        $Cantidad = 0;
 		        if(strlen($FA['Autorizacion_NC']) >= 13 ){ $TMail['TipoDeEnvio'] = "CE"; }
 
-
-
 		        foreach ($Listar_Articulos_Malla  as $key => $value) 
 		        {		        	
-		                $FA['SubTotal_NC'] = $FA['SubTotal_NC']+ $value["SUBTOTAL"];
-		                $FA['Total_IVA_NC'] = $FA['Total_IVA_NC']+ $value["TOTAL_IVA"];
-		                $FA['Descuento_NC'] = $FA['Descuento_NC']+ $value["DESCUENTO"];
-		                $SubTotalCosto = number_format(($value["SUBTOTAL"] / $value["CANT"]), 6,'.','');
-		               // 'SubTotal = Redondear(.Fields("CANT") * SubTotalCosto, 2)
-		                $SubTotal = number_format($value["CANT"] * $value["COSTO"], 2,'.','');
-		                
-		               // 'Grabamos el detalle de la NC
-		               // 'Cta_Devolucion, , Porc_IVA,
-		                // SetAdoAddNew "Detalle_Nota_Credito"
-		                $datosDNC[0]['campo'] = "T"; 
-		                $datosDNC[0]['dato']  = G_NORMAL;
-		                $datosDNC[1]['campo'] = "CodigoC"; 
-		                $datosDNC[1]['dato']  = $value['Codigo_C'];
-		                $datosDNC[2]['campo'] = "Cta_Devolucion"; 
-		                $datosDNC[2]['dato']  = $Contra_Cta;
-		                $datosDNC[3]['campo'] = "Fecha"; 
-		                $datosDNC[3]['dato']  = $FA['Fecha_NC'];
-		                $datosDNC[4]['campo'] = "Serie"; 
-		                $datosDNC[4]['dato']  = $FA['Serie_NC'];
-		                $datosDNC[5]['campo'] = "Secuencial"; 
-		                $datosDNC[5]['dato']  = $FA['Nota_Credito'];
-		                $datosDNC[6]['campo'] = "Autorizacion"; 
-		                $datosDNC[6]['dato']  = $FA['Autorizacion_NC'];
-		                $datosDNC[7]['campo'] = "Codigo_Inv"; 
-		                $datosDNC[7]['dato']  = $value["CODIGO"];
-		                $datosDNC[8]['campo'] = "Cantidad"; 
-		                $datosDNC[8]['dato']  = $value["CANT"];
-		                $datosDNC[9]['campo'] = "Producto"; 
-		                $datosDNC[9]['dato']  = $value["PRODUCTO"];
-		                $datosDNC[10]['campo'] = "CodBodega"; 
-		                $datosDNC[10]['dato']  = $value["CodBod"];
-		                $datosDNC[11]['campo'] = "Total_IVA"; 
-		                $datosDNC[11]['dato']  = $value["TOTAL_IVA"];
-		                $datosDNC[12]['campo'] = "Precio"; 
-		                $datosDNC[12]['dato']  = $value["PVP"];
-		                $datosDNC[13]['campo'] = "Total"; 
-		                $datosDNC[13]['dato']  = $value["SUBTOTAL"];
-		                $datosDNC[14]['campo'] = "CodMar"; 
-		                $datosDNC[14]['dato']  = $value["CodMar"];
-		                $datosDNC[15]['campo'] = "Cod_Ejec"; 
-		                $datosDNC[15]['dato']  = $value["Cod_Ejec"];
-		                $datosDNC[16]['campo'] = "Porc_C"; 
-		                $datosDNC[16]['dato']  = $value["Porc_C"];
-		                $datosDNC[17]['campo'] = "Porc_IVA"; 
-		                $datosDNC[17]['dato']  = $value["Porc_IVA"];
-		                $datosDNC[18]['campo'] = "Mes_No"; 
-		                $datosDNC[18]['dato']  = $value["Mes_No"];
-		                $datosDNC[19]['campo'] = "Mes"; 
-		                $datosDNC[19]['dato']  = $value["Mes"];
-		                $datosDNC[20]['campo'] = "Anio"; 
-		                $datosDNC[20]['dato']  = $value["Anio"];
-		                $datosDNC[21]['campo'] = "TC"; 
-		                $datosDNC[21]['dato']  = $FA['TC'];
-		                $datosDNC[22]['campo'] = "Serie_FA"; 
-		                $datosDNC[22]['dato']  = $FA['Serie'];
-		                $datosDNC[23]['campo'] = "Factura"; 
-		                $datosDNC[23]['dato']  = $FA['Factura'];
-		                $datosDNC[24]['campo'] =  "Item"; 
-		                $datosDNC[24]['dato'] =  $_SESSION['INGRESO']['item'];
-		                $datosDNC[25]['campo'] =  "Periodo"; 
-		                $datosDNC[25]['dato'] =  $_SESSION['INGRESO']['periodo'];
-		                $datosDNC[26]['campo'] =  "CodigoU"; 
-		                $datosDNC[26]['dato'] =  $_SESSION['INGRESO']['CodigoU'];		                    
-		                $datosDNC[27]['campo'] = "A_No"; 
-		                $datosDNC[27]['dato'] = $key+1;
+              $FA['SubTotal_NC'] = $FA['SubTotal_NC']+ $value["SUBTOTAL"];
+              $FA['Total_IVA_NC'] = $FA['Total_IVA_NC']+ $value["TOTAL_IVA"];
+              $FA['Descuento_NC'] = $FA['Descuento_NC']+ $value["DESCUENTO"];
+              $SubTotalCosto = number_format(($value["SUBTOTAL"] / $value["CANT"]), 6,'.','');
+              // 'SubTotal = Redondear(.Fields("CANT") * SubTotalCosto, 2)
+              $SubTotal = number_format($value["CANT"] * $value["COSTO"], 2,'.','');
+              
+              // 'Grabamos el detalle de la NC
+              // 'Cta_Devolucion, , Porc_IVA,
+              SetAdoAddNew("Detalle_Nota_Credito");
+              SetAdoFields("T", G_NORMAL);
+							SetAdoFields("CodigoC", $value["Codigo_C"]);
+							SetAdoFields("Cta_Devolucion", $Contra_Cta);
+							SetAdoFields("Fecha", $FA["Fecha_NC"]);
+							SetAdoFields("Serie", $FA["Serie_NC"]);
+							SetAdoFields("Secuencial", $FA["Nota_Credito"]);
+							SetAdoFields("Autorizacion", $FA["Autorizacion_NC"]);
+							SetAdoFields("Codigo_Inv", $value["CODIGO"]);
+							SetAdoFields("Cantidad", $value["CANT"]);
+							SetAdoFields("Producto", $value["PRODUCTO"]);
+							SetAdoFields("CodBodega", $value["CodBod"]);
+							SetAdoFields("Total_IVA", $value["TOTAL_IVA"]);
+							SetAdoFields("Precio", $value["PVP"]);
+							SetAdoFields("Total", $value["SUBTOTAL"]);
+							SetAdoFields("CodMar", $value["CodMar"]);
+							SetAdoFields("Cod_Ejec", $value["Cod_Ejec"]);
+							SetAdoFields("Porc_C", $value["Porc_C"]);
+							SetAdoFields("Porc_IVA", $value["Porc_IVA"]);
+							SetAdoFields("Mes_No", $value["Mes_No"]);
+							SetAdoFields("Mes", $value["Mes"]);
+							SetAdoFields("Anio", $value["Anio"]);
+							SetAdoFields("TC", $FA["TC"]);
+							SetAdoFields("Serie_FA", $FA["Serie"]);
+							SetAdoFields("Factura", $FA["Factura"]);
+							SetAdoFields("Item", $_SESSION["INGRESO"]["item"]);
+							SetAdoFields("Periodo", $_SESSION["INGRESO"]["periodo"]);
+							SetAdoFields("CodigoU", $_SESSION["INGRESO"]["CodigoU"]);
+							SetAdoFields("A_No", $key + 1);
+								SetAdoUpdate();
 
-
-		                insert_generico('Detalle_Nota_Credito',$datosDNC);
-		                
-		               // 'Grabamos en el Kardex la factura
-		                if($value["Ok"])
-		                {
-		                    // SetAdoAddNew "Trans_Kardex"
-		                    $datosTK[0]['campo'] =  "T"; 
-		                    $datosTK[0]['dato']  =  G_NORMAL;
-		                    $datosTK[1]['campo'] =  "TP"; 
-		                    $datosTK[1]['dato']  =  G_NINGUNO;
-		                    $datosTK[2]['campo'] =  "Numero"; 
-		                    $datosTK[2]['dato']  = '0';
-		                    $datosTK[3]['campo'] =  "TC"; 
-		                    $datosTK[3]['dato']  = $FA['TC'];
-		                    $datosTK[4]['campo'] = "Serie"; 
-		                    $datosTK[4]['dato']  = $FA['Serie'];
-		                    $datosTK[5]['campo'] = "Fecha"; 
-		                    $datosTK[5]['dato']  = $FA['Fecha_NC'];
-		                    $datosTK[6]['campo'] = "Factura"; 
-		                    $datosTK[6]['dato']  = $FA['Factura'];
-		                    $datosTK[7]['campo'] = "Codigo_P"; 
-		                    $datosTK[7]['dato']  = $FA['CodigoC'];
-		                    $datosTK[8]['campo'] =  "CodigoL"; 
-		                    $datosTK[8]['dato'] =  $FA['Cod_CxC'];
-		                    $datosTK[9]['campo'] =  "Codigo_Inv"; 
-		                    $datosTK[9]['dato'] = $value["CODIGO"];
-		                    $datosTK[10]['campo'] =  "Total_IVA";
-		                    $datosTK[10]['dato'] = $value["TOTAL_IVA"];
-		                    $datosTK[11]['campo'] =  "Entrada"; 
-		                    $datosTK[11]['dato'] = $value["CANT"];
-		                    $datosTK[12]['campo'] =  "PVP"; 
-		                    $datosTK[12]['dato'] = $value["PVP"]; //'SubTotalCosto
-		                    $datosTK[13]['campo'] =  "Valor_Unitario"; 
-		                    $datosTK[13]['dato'] = $value["COSTO"]; //'SubTotalCosto
-		                    $datosTK[14]['campo'] =  "Costo"; 
-		                    $datosTK[14]['dato'] = $value["COSTO"];
-		                    $datosTK[15]['campo'] =  "Valor_Total"; 
-		                    $datosTK[15]['dato'] = number_format($value["CANT"]*$value["COSTO"], 2,'.','');
-		                    $datosTK[16]['campo'] =  "Total"; 
-		                    $datosTK[16]['dato'] = number_format($value["CANT"]*$value["COSTO"], 2,'.','');
-		                    $datosTK[17]['campo'] =  "Descuento"; 
-		                    $datosTK[17]['dato'] = $value["DESCUENTO"];
-		                    $datosTK[18]['campo'] =  "Detalle"; 
-		                    $datosTK[18]['dato'] = "NC:".$FA['Serie_NC']."-".generaCeros($FA['Nota_Credito'],9)."-".$FA['Cliente'];
-		                    $datosTK[19]['campo'] =  "Cta_Inv"; 
-		                    $datosTK[19]['dato'] = $value["Cta_Inventario"];
-		                    $datosTK[20]['campo'] =  "Contra_Cta"; 
-		                    $datosTK[20]['dato'] = $value["Cta_Costo"];
-		                    $datosTK[21]['campo'] =  "CodBodega"; 
-		                    $datosTK[21]['dato'] = $value["CodBod"];
-		                    $datosTK[22]['campo'] =  "CodMarca"; 
-		                    $datosTK[22]['dato'] = $value["CodMar"];
-		                    $datosTK[23]['campo'] =  "Item"; 
-		                    $datosTK[23]['dato'] =  $_SESSION['INGRESO']['item'];
-		                    $datosTK[24]['campo'] =  "Periodo"; 
-		                    $datosTK[24]['dato'] =  $_SESSION['INGRESO']['periodo'];
-		                    $datosTK[25]['campo'] =  "CodigoU"; 
-		                    $datosTK[25]['dato'] =  $_SESSION['INGRESO']['CodigoU'];
-		                    insert_generico('Trans_Kardex',$datosDNC);
-		                    // 'MsgBox "Grabado"
-		                }
+             // 'Grabamos en el Kardex la factura
+              if($value["Ok"])
+              {
+              	SetAdoAddNew("Trans_Kardex");
+              	SetAdoFields("T", G_NORMAL);
+								SetAdoFields("TP", G_NINGUNO);
+								SetAdoFields("Numero", '0');
+								SetAdoFields("TC", $FA["TC"]);
+								SetAdoFields("Serie", $FA["Serie"]);
+								SetAdoFields("Fecha", $FA["Fecha_NC"]);
+								SetAdoFields("Factura", $FA["Factura"]);
+								SetAdoFields("Codigo_P", $FA["CodigoC"]);
+								SetAdoFields("CodigoL", $FA["Cod_CxC"]);
+								SetAdoFields("Codigo_Inv", $value["CODIGO"]);
+								SetAdoFields("Total_IVA", $value["TOTAL_IVA"]);
+								SetAdoFields("Entrada", $value["CANT"]);
+								SetAdoFields("PVP", $value["PVP"]);
+								SetAdoFields("Valor_Unitario", $value["COSTO"]);
+								SetAdoFields("Costo", $value["COSTO"]);
+								SetAdoFields("Valor_Total", number_format($value["CANT"] * $value["COSTO"], 2, '.', ''));
+								SetAdoFields("Total", number_format($value["CANT"] * $value["COSTO"], 2, '.', ''));
+								SetAdoFields("Descuento", $value["DESCUENTO"]);
+								SetAdoFields("Detalle", "NC:" . $FA["Serie_NC"] . "-" . generaCeros($FA["Nota_Credito"], 9) . "-" . $FA["Cliente"]);
+								SetAdoFields("Cta_Inv", $value["Cta_Inventario"]);
+								SetAdoFields("Contra_Cta", $value["Cta_Costo"]);
+								SetAdoFields("CodBodega", $value["CodBod"]);
+								SetAdoFields("CodMarca", $value["CodMar"]);
+								SetAdoFields("Item", $_SESSION["INGRESO"]["item"]);
+								SetAdoFields("Periodo", $_SESSION["INGRESO"]["periodo"]);
+								SetAdoFields("CodigoU", $_SESSION["INGRESO"]["CodigoU"]);
+									SetAdoUpdate();
+              }
 		        }
 
 		        $TA['T'] = G_NORMAL;
@@ -694,15 +584,10 @@ class notas_creditoC
 
 		        	  $resp = $this->sri->SRI_Crear_Clave_Acceso_Nota_Credito($FA); 
 
-		        	  // print_r($FA);die();
-
 		        	  // crea pdf
 		        	  $this->modelo->pdf_nota_credito($FA);
 		        	  $clave = $this->sri->Clave_acceso($FA['Fecha_NC'],'04',$FA['Serie_NC'],$FA['Nota_Credito']);		        	 
 		        	 return array('respuesta'=>$resp,'pdf'=>$FA['Serie_NC'].'-'.generaCeros($FA['Nota_Credito'],7),'clave'=>$clave);
-		        	  // return $resp;
-		        	//genera aqui el xml
-		        
 		  			}
 
 			        $Ln_No = 0;

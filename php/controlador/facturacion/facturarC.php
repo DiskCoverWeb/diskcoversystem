@@ -487,20 +487,18 @@ function TextVUnit_LostFocus($parametros)
    // print_r($parametros);die();
    if($parametros['Mod_PVP']==0){$TextVUnit = $parametro['TextVUnit'];}
    if($parametros['DatInv_Serie_No']== ""){$DatInv_Serie_No = G_NINGUNO;}
-	//   'MsgBox TipoFactura & vbCrLf & BanIVA
+
    $Factura_No =$parametros['TextFacturaNo'];
    $TextVUnit = TextoValido($parametros['TextVUnit'],true,false,$_SESSION['INGRESO']['Dec_PVP']);
    $TextCant = TextoValido($parametros['TextCant'],true);
-  // 'TextoValido TextDesc1, True
+
    $SubTotal = 0; $SubTotalDescuento = 0; $SubTotalIVA = 0; $SubTotalPorcComision = 0;
    $NumMeses = 0; $VUnitTemp = 0; $Interes = 0;
    $datosL = $this->modelo->lineas_factura();
-     	// print_r($datosL);die();
+
    if(count($datosL)<=$parametros['Cant_Item_FA'])
    {
    	  if($parametros['TxtDetalle'] <> G_NINGUNO){$Producto = $parametros['TxtDetalle'];}
-        // TxtDetalle.Visible = False //revision
-       // 'Porcentaje por ejecutivo
         if(intval($parametros['TextComision']) > 0){$SubTotalPorcComision = number_format(intval($TextComision) / 100, 2,'.','');}
        // 'SubTotal por producto
         $SubTotal = number_format(floatval($parametros['TextCant']) * floatval($parametros['TextVUnit']), 2,'.','');
@@ -512,125 +510,70 @@ function TextVUnit_LostFocus($parametros)
 
        // 'If TipoFactura = "OP" Then SubTotalIVA = 0
         if(floatval($parametros['TextVUnit']) == 0){$SubTotalIVA = 0;}
-        // LabelVTotal.Caption = Format$(SubTotal, "#,##0.00")
-			// '''        If CheqCom.value = 1 Then FComision.Show 1
-       // 'MsgBox Redondear(CDbl(TextVUnit), Dec_PVP) & " ..." & Redondear(Val(TextVUnit), Dec_PVP)
-
-        	// print_r($parametros);die();
+       
         $Ln_No=count($datosL)+1; 
 
    	if(strlen($parametros['codigo']) > 1 )
    	{
    		$DatInv = $this->modelo->Listar_Productos_all($PatronDeBusqueda=false,$parametros['codigo']);
-         // print_r($DatInv);die();
-           // SetAdoAddNew "Asiento_F"
-           $datos[0]['campo'] = "CODIGO"; 
-           $datos[0]['dato'] = $parametros['codigo'];
-           $datos[1]['campo'] = "CODIGO_L"; 
-           $datos[1]['dato'] = $parametros['CodigoL'];
-           $datos[2]['campo'] = "PRODUCTO"; 
-           $datos[2]['dato'] = $Producto;
-           $datos[3]['campo'] = "REP"; 
-           $datos[3]['dato'] = 0;
-           $datos[4]['campo'] = "CANT"; 
-           $datos[4]['dato'] = $parametros['TextCant'];
-           $datos[5]['campo'] = "PRECIO"; 
-           $datos[5]['dato'] = number_format($parametros['TextVUnit'],$_SESSION['INGRESO']['Dec_PVP'],'.','');
-           $datos[6]['campo'] = "TOTAL"; 
-           $datos[6]['dato'] = $SubTotal;
-           $datos[7]['campo'] = "VALOR_TOTAL"; 
-           $datos[7]['dato'] = $SubTotal - $SubTotalDescuento + $SubTotalIVA;
-           $datos[8]['campo'] = "Total_Desc"; 
-           $datos[8]['dato'] = $SubTotalDescuento;
-           $datos[9]['campo'] = "Total_IVA"; 
-           $datos[9]['dato'] = $SubTotalIVA;
-           $datos[10]['campo'] = "Cta"; 
-           $datos[10]['dato'] = $DatInv[0]['Cta_Ventas'];
-           $datos[11]['campo'] = "Cta_SubMod"; 
-           $datos[11]['dato'] = $parametros['SubCta'];
-           $datos[12]['campo'] = "CodBod"; 
-           $datos[12]['dato'] = $parametros['bodega'];
-           $datos[13]['campo'] = "CodMar"; 
-           $datos[13]['dato'] = $parametros['marca'];
-           $datos[14]['campo'] = "COD_BAR"; 
-           $datos[14]['dato'] = $DatInv[0]['Codigo_Barra'];
-           $datos[15]['campo'] = "Item"; 
-           $datos[15]['dato'] = $_SESSION['INGRESO']['item'];
-           $datos[16]['campo'] = "CodigoU"; 
-           $datos[16]['dato'] = $_SESSION['INGRESO']['CodigoU'];
-           $datos[17]['campo'] = "CORTE"; 
-           $datos[17]['dato'] = $VUnitTemp;
-           $datos[18]['campo'] = "A_No"; 
-           $datos[18]['dato'] = $Ln_No;
-           $datos[19]['campo'] = "Fecha_V"; 
-           $datos[19]['dato'] = $parametros['fechaVGR'];
-           $datos[20]['campo'] = "Cod_Ejec"; 
-           $datos[20]['dato'] = $parametros['Cod_Ejec'];
-           $datos[21]['campo'] = "Porc_C"; 
-           $datos[21]['dato'] = $SubTotalPorcComision;
-           $datos[22]['campo'] = "Serie_No"; 
-           $datos[22]['dato'] = $DatInv_Serie_No;
-           $datos[23]['campo'] = "COSTO"; 
-           $datos[23]['dato'] = $DatInv[0]['Costo'];
-           $datos[24]['campo'] = "Codigo_Cliente"; 
-           $datos[24]['dato'] = $parametros['Cliente'];
-           $pos = count($datos);           
-           if(strlen($parametros['TextComEjec']) > 1){ $datos[$pos]['campo'] = "RUTA";$datos[$pos]['dato'] =$parametros['TextComEjec'];  $pos = $pos+1; }
-           if($DatInv[0]['Por_Reservas']){           	 
-              $datos[$pos]['campo'] = "Fecha_IN"; 
-              $datos[$pos]['dato'] = $parametros['MBFechaIn'];
-              $pos = $pos+1;
-              $datos[$pos]['campo'] = "Fecha_OUT";
-              $datos[$pos]['dato'] = $parametros['MBFechaOut'];
-              $pos = $pos+1;
-              $datos[$pos]['campo'] = "Cant_Hab"; 
-              $datos[$pos]['dato'] = $parametros['TxtCantRooms'];
-              $pos = $pos+1;
-              $datos[$pos]['campo'] = "Tipo_Hab"; 
-              $datos[$pos]['dato'] = $parametros['TxtTipoRooms'];
-              $pos = $pos+1;
-           }
-           if(strlen($parametros['LstOrden']) > 1){
-           	  
-              $datos[$pos]['campo'] = "Lote_No"; 
-              $datos[$pos]['dato'] = $parametros['LstOrden'];
-              $pos = $pos+1;
-              $datos[$pos]['campo'] = "Fecha_Fab"; 
-              $datos[$pos]['dato'] = $DatInv[0]['Fecha_Fab'];
-              $pos = $pos+1;
-              $datos[$pos]['campo'] = "Fecha_Exp"; 
-              $datos[$pos]['dato'] = $DatInv[0]['Fecha_Exp'];
-              $pos = $pos+1;
-              $datos[$pos]['campo'] = "Reg_Sanitario"; 
-              $datos[$pos]['dato'] = $DatInv[0]['Reg_Sanitario'];
-              $pos = $pos+1;
-              $datos[$pos]['campo'] = "Procedencia"; 
-              $datos[$pos]['dato'] = $DatInv[0]['Procedencia'];
-              $pos = $pos+1;
-              $datos[$pos]['campo'] = "Modelo"; 
-              $datos[$pos]['dato'] = $DatInv[0]['Modelo'];
-              $pos = $pos+1;
-              $datos[$pos]['campo'] = "SP"; 
-              $datos[$pos]['dato'] = 0;
-              if($parametros['Sec_Public']==true)
-              {
-                $datos[$pos]['dato'] = 1;
-              }
-               $pos = $pos+1;
-           }
-           if($DatInv[0]['Costo'] > 0){
-           	 
-              $datos[$pos]['campo'] = "Cta_Inv"; 
-              $datos[$pos]['dato'] = $DatInv[0]['Cta_Inventario'];
-              $pos = $pos+1;
-              $datos[$pos]['campo'] = "Cta_Costo"; 
-              $datos[$pos]['dato'] = $DatInv[0]['Cta_Costo_Venta'];
-           }
-           // print_r($datos);die();
-          if(insert_generico('Asiento_F',$datos)==null)
-          {
-          	return 1;
-          }
+
+         SetAdoAddNew("Asiento_F");
+         SetAdoFields("CODIGO", $parametros['codigo']);
+         SetAdoFields("CODIGO_L", $parametros['CodigoL']);
+         SetAdoFields("PRODUCTO", $Producto);
+         SetAdoFields("REP", 0);
+         SetAdoFields("CANT", $parametros['TextCant']);
+         SetAdoFields("PRECIO", number_format($parametros['TextVUnit'], $_SESSION['INGRESO']['Dec_PVP'], '.', ''));
+         SetAdoFields("TOTAL", $SubTotal);
+         SetAdoFields("VALOR_TOTAL", $SubTotal - $SubTotalDescuento + $SubTotalIVA);
+         SetAdoFields("Total_Desc", $SubTotalDescuento);
+         SetAdoFields("Total_IVA", $SubTotalIVA);
+         SetAdoFields("Cta", $DatInv[0]['Cta_Ventas']);
+         SetAdoFields("Cta_SubMod", $parametros['SubCta']);
+         SetAdoFields("CodBod", $parametros['bodega']);
+         SetAdoFields("CodMar", $parametros['marca']);
+         SetAdoFields("COD_BAR", $DatInv[0]['Codigo_Barra']);
+         SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+         SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+         SetAdoFields("CORTE", $VUnitTemp);
+         SetAdoFields("A_No", $Ln_No);
+         SetAdoFields("Fecha_V", $parametros['fechaVGR']);
+         SetAdoFields("Cod_Ejec", $parametros['Cod_Ejec']);
+         SetAdoFields("Porc_C", $SubTotalPorcComision);
+         SetAdoFields("Serie_No", $DatInv_Serie_No);
+         SetAdoFields("COSTO", $DatInv[0]['Costo']);
+         SetAdoFields("Codigo_Cliente", $parametros['Cliente']);
+
+         if (strlen($parametros['TextComEjec']) > 1) {
+             SetAdoFields("RUTA", $parametros['TextComEjec']);
+         }
+
+         if ($DatInv[0]['Por_Reservas']) {
+             SetAdoFields("Fecha_IN", $parametros['MBFechaIn']);
+             SetAdoFields("Fecha_OUT", $parametros['MBFechaOut']);
+             SetAdoFields("Cant_Hab", $parametros['TxtCantRooms']);
+             SetAdoFields("Tipo_Hab", $parametros['TxtTipoRooms']);
+         }
+
+         if (strlen($parametros['LstOrden']) > 1) {
+             SetAdoFields("Lote_No", $parametros['LstOrden']);
+             SetAdoFields("Fecha_Fab", $DatInv[0]['Fecha_Fab']);
+             SetAdoFields("Fecha_Exp", $DatInv[0]['Fecha_Exp']);
+             SetAdoFields("Reg_Sanitario", $DatInv[0]['Reg_Sanitario']);
+             SetAdoFields("Procedencia", $DatInv[0]['Procedencia']);
+             SetAdoFields("Modelo", $DatInv[0]['Modelo']);
+             SetAdoFields("SP", 0);
+             if ($parametros['Sec_Public'] == true) {
+                 SetAdoFields("SP", 1);
+             }
+         }
+
+         if ($DatInv[0]['Costo'] > 0) {
+             SetAdoFields("Cta_Inv", $DatInv[0]['Cta_Inventario']);
+             SetAdoFields("Cta_Costo", $DatInv[0]['Cta_Costo_Venta']);
+         }
+
+         return SetAdoUpdate();
       }
       else{
 
@@ -688,7 +631,7 @@ function delete_asientoF($parametros)
       $fecha2= new DateTime($parametros['MBDesde']);
       $fecha3= new DateTime($parametros['MBHasta']);
       $Saldo = 0; $Diferencia = 0; $Cuota_No = 1;$NumMeses=0;
-      $Opcion = 0;//intval($parametros['MBHasta']); //revisar esto
+      $Opcion = intval(@$parametros['TxtHasta']);
       // print_r($Opcion);die();
       $Mifecha = $parametros['MBDesde'];
       $I = $fecha1->diff($fecha2)->days;
@@ -711,28 +654,19 @@ function delete_asientoF($parametros)
              if($parametros['opc']==' OpcSemestral'){$Mifecha = date("d-m-Y",strtotime($Mifecha."+ 182 days"));}
              if($Opcion < $Cuota_No){$Si_No = false; }Else{$Si_No = True;}
              $Trans_No = 250;
-             $datos[0]['campo'] =  "Sector";
-             $datos[0]['dato']  =  $parametros['TextSector'];
-             $datos[1]['campo'] =  "Ejemplar";
-             $datos[1]['dato']  = $i;
-             $datos[2]['campo'] =  "Fecha";
-             $datos[2]['dato']  = $Mifecha;
-             $datos[3]['campo'] =  "Entregado";
-             $datos[3]['dato']  = $Si_No;
-             $datos[4]['campo'] =  "Comision";
-             $datos[4]['dato']  = 0;
-             $datos[5]['campo'] =  "Capital";
-             $datos[5]['dato']  = $Saldo;
-             $datos[6]['campo'] =  "T_No";
-             $datos[6]['dato']  = $Trans_No;
-             $datos[7]['campo'] =  "Item";
-             $datos[7]['dato']  = $_SESSION['INGRESO']['item'];
-             $datos[8]['campo'] =  "CodigoU";
-             $datos[8]['dato']  = $_SESSION['INGRESO']['CodigoU'];
-             $datos[9]['campo'] =  "Cuotas";
-             $datos[9]['dato']  = $i;
-             insert_generico('Asiento_P',$datos);
 
+             SetAdoAddNew("Asiento_P");
+             SetAdoFields("Sector", $parametros['TextSector']);
+             SetAdoFields("Ejemplar", $i);
+             SetAdoFields("Fecha", $Mifecha);
+             SetAdoFields("Entregado", $Si_No);
+             SetAdoFields("Comision", 0);
+             SetAdoFields("Capital", $Saldo);
+             SetAdoFields("T_No", $Trans_No);
+             SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+             SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+             SetAdoFields("Cuotas", $i);
+             SetAdoUpdate();
         }
       return $NumMeses;
    }
@@ -740,10 +674,6 @@ function delete_asientoF($parametros)
   function Command1_Click($parametros)
   {
 
-   // print_r($parametros);die();
-
-  // DGSuscripcion.Visible = False;
-  // TextoValido TextTipo, , True;
   if($parametros['opc2']=='OpcN'){$TipoProc = "N";}else{$TipoProc = "R";}
   $Opcion = intval($parametros['TxtHasta']);
   if($parametros['opc']=='OpcMensual'){$TipoDoc = "MENS";}
@@ -759,66 +689,42 @@ function delete_asientoF($parametros)
   $Suscripcion = $this->modelo->DGSuscripcion();
   if(count($Suscripcion)>0)
   {
-       $datos[0]['campo'] =  "T";
-       $datos[0]['dato']  = $TipoProc;
-       $datos[1]['campo'] =  "Sector";
-       $datos[1]['dato']  = $parametros['TextSector'];
-       $datos[2]['campo'] =  "TP";
-       $datos[2]['dato']  = $TipoDoc;
-       $datos[3]['campo'] =  "Credito_No";
-       $datos[3]['dato']  = $Credito_No;
-       $datos[4]['campo'] =  "No_Venc";
-       $datos[4]['dato']  = $Opcion;
-       $datos[5]['campo'] =  "Cuenta_No";
-       $datos[5]['dato']  = $parametros['LblClienteCod'];
-       $datos[6]['campo'] =  "Meses";
-       $datos[6]['dato']  = $parametros['txtperiodo'];
-       $datos[7]['campo'] =  "Fecha";
-       $datos[7]['dato']  = $parametros['MBDesde'];
-       $datos[8]['campo'] =  "Fecha_C";
-       $datos[8]['dato']  = $parametros['MBHasta'];
-       $datos[9]['campo'] =  "Capital";
-       $datos[9]['dato']  = $parametros['TextValor'];
-       $datos[10]['campo'] =  "Encaje";
-       $datos[10]['dato']  = number_format(floatval($parametros['TextValor'])*(intval($parametros['TextComisionModal']) / 100),4,'.','');
-       $datos[11]['campo'] =  "Numero";
-       $datos[11]['dato']  = $parametros['TextFact'];
-       $datos[12]['campo'] =  "Atencion";
-       $datos[12]['dato']  = $parametros['TxtAtencion']; ///ojo ver
-       $datos[13]['campo'] =  "Cta";
-       $datos[13]['dato']  = $parametros['DCCtaVenta'];
-       $datos[14]['campo'] =  "Pagos";
-       $datos[14]['dato']  = number_format($Suscripcion[0]["Capital"], 2,'.','');
-       $datos[15]['campo'] =  "Item";
-       $datos[15]['dato']  = $_SESSION['INGRESO']['item'];
-       $datos[16]['campo'] =  "CodigoE";
-       $datos[16]['dato']  = $parametros['DCEjecutivoModal'];
-       $datos[17]['campo'] =  "CodigoU";
-       $datos[17]['dato']  = $_SESSION['INGRESO']['CodigoU'];
-       insert_generico('Prestamos',$datos);
+      SetAdoAddNew("Prestamos");
+      SetAdoFields("T", $TipoProc);
+      SetAdoFields("Sector", $parametros['TextSector']);
+      SetAdoFields("TP", $TipoDoc);
+      SetAdoFields("Credito_No", $Credito_No);
+      SetAdoFields("No_Venc", $Opcion);
+      SetAdoFields("Cuenta_No", $parametros['LblClienteCod']);
+      SetAdoFields("Meses", $parametros['txtperiodo']);
+      SetAdoFields("Fecha", $parametros['MBDesde']);
+      SetAdoFields("Fecha_C", $parametros['MBHasta']);
+      SetAdoFields("Capital", $parametros['TextValor']);
+      SetAdoFields("Encaje", number_format(floatval($parametros['TextValor']) * (intval($parametros['TextComisionModal']) / 100), 4, '.', ''));
+      SetAdoFields("Numero", $parametros['TextFact']);
+      SetAdoFields("Atencion", $parametros['TxtAtencion']);
+      SetAdoFields("Cta", $parametros['DCCtaVenta']);
+      SetAdoFields("Pagos", number_format($Suscripcion[0]["Capital"], 2, '.', ''));
+      SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+      SetAdoFields("CodigoE", $parametros['DCEjecutivoModal']);
+      SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+      SetAdoUpdate();
    }
 
  // // 'Detalle
    if(count($Suscripcion)>0)
    {
       foreach ($Suscripcion as $key => $value) {
-          $datosA[0]['campo'] =  "T";
-          $datosA[0]['dato']  = $TipoProc;
-          $datosA[1]['campo'] =  "AC";
-          $datosA[1]['dato']  = 0;
-          $datosA[2]['campo'] =  "TP";
-          $datosA[2]['dato']  = $TipoDoc;
-          $datosA[3]['campo'] =  "Contrato_No";
-          $datosA[3]['dato']  = $Credito_No;
-          $datosA[4]['campo'] =  "Ent_No";
-          $datosA[4]['dato']  = $value["Ejemplar"];
-          $datosA[5]['campo'] =  "Fecha";
-          $datosA[5]['dato']  = $value["Fecha"]->format('Y-m-d');
-          $datosA[6]['campo'] =  "E";
-          $datosA[6]['dato']  = $value["Entregado"];
-          $datosA[7]['campo'] =  "Item";
-          $datosA[7]['dato']  = $_SESSION['INGRESO']['item'];
-          insert_generico('Trans_Suscripciones',$datosA);         
+         SetAdoAddNew("Trans_Suscripciones");
+         SetAdoFields("T", $TipoProc);
+         SetAdoFields("AC", 0);
+         SetAdoFields("TP", $TipoDoc);
+         SetAdoFields("Contrato_No", $Credito_No);
+         SetAdoFields("Ent_No", $value["Ejemplar"]);
+         SetAdoFields("Fecha", $value["Fecha"]->format('Y-m-d'));
+         SetAdoFields("E", $value["Entregado"]);
+         SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+         SetAdoUpdate();
       }
    }
    return '1';

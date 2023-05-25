@@ -28,7 +28,6 @@
       $('#TextVUnit').val(data.PVP);
       // $('#TextDesc').val(data.);
       // $('#LabelVTotal').val(data.);
-      console.log(data);
     }); 	 
 
 
@@ -139,7 +138,6 @@ function cargar_tabla()
       dataType:'json', 
       success: function(data)
       {
-         console.log(data);
          $('#tbl_datos').html(data.tabla);
 
          $('#TxtConIVA').val(data.TxtConIVA);
