@@ -1031,7 +1031,7 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 		// $cid = $this->conn;
 		if($parametros['t']=='P' OR $parametros['t']=='C')
 		{
-			$sql=" SELECT codigo FROM clientes WHERE CI_RUC='".$parametros['sub']."' ";
+			$sql=" SELECT codigo FROM clientes WHERE Codigo='".$parametros['sub']."' ";
 			$row = $this->conn1->datos($sql);			
 			if(count($row)>0)
 			{

@@ -124,7 +124,7 @@ class lineas_cxcM
                  return $this->db->datos($sql);
 	}
 
-	function NG($TxtNumSerieUno,$TxtNumSerieDos)
+	function GR($TxtNumSerieUno,$TxtNumSerieDos)
 
 	{
 		  $sql = "SELECT Periodo, Item, 'GR' As TC, Serie_GR As Serie_X, MAX(Remision) As TC_No 
