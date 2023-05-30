@@ -476,6 +476,8 @@ class facturarC
     if($_SESSION['INGRESO']['Nombre'] == "Administrador de Red"){
       $command4 = True;
       $TextFacturaNo = True;
+   }else{
+      $command4 = false;
    }
    $Total_Desc = 0;
    $Ln_No = 0;
