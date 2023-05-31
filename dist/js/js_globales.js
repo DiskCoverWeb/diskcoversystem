@@ -211,9 +211,9 @@ function generar_ceros(num,cant)
 	} 
 }
 
-function paginacion(funcion,posicion,inicio=0,numreg=50)
+function paginacion(funcion,posicion,inicio=0,numreg=50,variables=false)
 {
-
+	console.log(variables);
 	$.ajax({
        // data:  {parametros:parametros},
       url:   '../controlador/panel.php?paginacion=true&ini='+inicio+'&numreg='+numreg,
@@ -223,6 +223,27 @@ function paginacion(funcion,posicion,inicio=0,numreg=50)
        
       }
     });
+    var vari = '()';
+    if(variables!=false)
+    {
+    	variables = variables.split(',');
+    	cadena = '';
+    	if(variables.length>1){
+    		variables.forEach(function(item,i){
+    			cadena+="'"+item+"',";
+    		})
+    		cadena = cadena.substr(0,-1);
+    		vari = "("+cadena+")";
+
+    	}else
+    	{
+    		vari = "('"+variables+"')";
+    	}
+    	
+
+    }
+
+    console.log(vari);
 
 	var pag = '<nav aria-label="...">'+
 	  '<ul class="pagination pagination-sm" style="margin: 0px;">'+
@@ -235,17 +256,17 @@ function paginacion(funcion,posicion,inicio=0,numreg=50)
 	    	var ini = i*numreg
 	    	if(pos==i)
 	    	{
-		   		pag+=' <li class="page-item active" onclick="paginacion(\''+funcion+'\',\''+posicion+'\','+ini+','+numreg+');'+funcion+'()"><a class="page-link" href="#">'+(i+1)+'</a></li>'
+		   		pag+=' <li class="page-item active" onclick="paginacion(\''+funcion+'\',\''+posicion+'\','+ini+','+numreg+','+variables+');'+funcion+vari+'"><a class="page-link" href="#">'+(i+1)+'</a></li>'
 			}else
 			{
-				pag+=' <li class="page-item"  onclick="paginacion(\''+funcion+'\',\''+posicion+'\','+ini+','+numreg+');'+funcion+'()"><a class="page-link" href="#">'+(i+1)+'</a></li>'
+				pag+=' <li class="page-item"  onclick="paginacion(\''+funcion+'\',\''+posicion+'\','+ini+','+numreg+','+variables+');'+funcion+vari+'"><a class="page-link" href="#">'+(i+1)+'</a></li>'
 			}
 		}
 	    pag+='<li class="page-item">'+
 	      '<!-- <a class="page-link" href="#">Fin</a> -->'+
 	    '</li>'+
 	  '</ul>'+
-	  '<!-- <select id="ddl_pag" onchange="paginacion(\''+funcion+'\',\''+posicion+'\','+ini+','+numreg+');'+funcion+'()">'+
+	  '<!-- <select id="ddl_pag" onchange="paginacion(\''+funcion+'\',\''+posicion+'\','+ini+','+numreg+','+variables+');'+funcion+vari+'">'+
 	'<option value="50">50</option>'+
 	'<option value="100">100</option>'+
 	'<option value="150">150</option>'+
