@@ -18,6 +18,8 @@
   $(document).ready(function()
   {
     paginacion('cargar_registros','panel_pag');
+    paginacion('cargar_registrosAu','panel_pagAu',0,50,'1');
+    paginacion('cargar_registrosAu','panel_pagNoAu',0,50,'2');
     // fin paginacion
 
     var cartera_usu = '<?php echo $cartera_usu; ?>';
@@ -183,6 +185,51 @@
     });
 
    }
+
+  function cargar_registrosAu(AU)
+   {
+   
+    var per = $('#ddl_periodo').val();
+    var tipo = '<?php echo $tipo; ?>'
+    var parametros = 
+    {
+      'ci':$('#ddl_cliente').val(),
+      'per':per,      
+      'desde':$('#txt_desde').val(),
+      'hasta':$('#txt_hasta').val(),
+      'tipo':tipo,
+      'auto':AU,
+    }
+     $.ajax({
+       data:  {parametros:parametros},
+       url:   '../controlador/facturacion/lista_liquidacionCompraC.php?tabla=true',
+      type:  'post',
+      dataType: 'json',
+      beforeSend: function () {
+         if(AU==1)
+        {         
+          $("#tbl_tablaAu").html('<tr class="text-center"><td colspan="16"><img src="../../img/gif/loader4.1.gif" width="20%">');
+        }else
+        {
+           $("#tbl_tablaNoAu").html('<tr class="text-center"><td colspan="16"><img src="../../img/gif/loader4.1.gif" width="20%">');
+        }
+       
+      },
+       success:  function (response) { 
+        // console.log(response);
+        if(AU==1)
+        {
+          $('#tbl_tablaAu').html(response);
+        }else
+        {
+          $('#tbl_tablaNoAu').html(response);
+        }
+       $('#myModal_espera').modal('hide');
+      }
+    });
+
+   }
+
 
   function Ver_factura(id,serie,ci)
 	{		 
@@ -396,6 +443,8 @@
              {
              	$('#myModal_espera').modal('show');
              	cargar_registros();
+               cargar_registrosAu(1);
+              cargar_registrosAu(2);
              }else
              {
              	Swal.fire('Clave incorrecta.','Asegurese de que su clave sea correcta','error');
@@ -676,6 +725,59 @@ function modal_email_fac(factura,serie,codigoc,emails)
 
   }
 </script>
+ <script type="text/javascript">
+                    function autorizar_blo()
+                    {
+                        Swal.fire({
+                         title: 'Esta seguro de realizar esta accion?',
+                         text: " Esto podria tomar varios munutos!",
+                         type: 'warning',
+                         showCancelButton: true,
+                         confirmButtonColor: '#3085d6',
+                         cancelButtonColor: '#d33',
+                         confirmButtonText: 'Si!'
+                       }).then((result) => {
+                         if (result.value==true) {
+
+                           $('#myModal_espera').modal('show');
+                            autorizar_bloque();
+                         }
+                       })
+                    }
+
+                    function autorizar_bloque()
+                    {
+                      var per = $('#ddl_periodo').val();
+                      var tipo = '<?php echo $tipo; ?>'
+                        var parametros = 
+                        {
+                          'ci':$('#ddl_cliente').val(),
+                          'per':per,      
+                          'desde':$('#txt_desde').val(),
+                          'hasta':$('#txt_hasta').val(),
+                          'tipo':tipo,
+                          'auto':2,
+                        }
+                         $.ajax({
+                           data:  {parametros:parametros},
+                          url:   '../controlador/facturacion/lista_liquidacionCompraC.php?autorizar_bloque=true',
+                          type:  'post',
+                          dataType: 'json',
+                          // beforeSend: function () {                            
+                          //      $("#tbl_tablaNoAu").html('<tr class="text-center"><td colspan="16"><img src="../../img/gif/loader4.1.gif" width="20%">');                           
+                          // },
+                           success:  function (response) { 
+                            // console.log(response);
+
+                           $('#myModal_bloque').modal('show');                           
+                              $('#bloque_resp').html(response);                            
+                           $('#myModal_espera').modal('hide');
+                          }
+                        });
+
+                    }
+
+                  </script>
   <div class="row">
     <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
@@ -750,57 +852,192 @@ function modal_email_fac(factura,serie,codigoc,emails)
         </div>
       </div>      
     </div>
-	<div class="row">
-    <div class="col-sm-12">
-      <h2 style="margin-top: 0px;">Listado de Liquidacion de compras</h2>
+    <br>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="nav-tabs-custom">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Todos</a></li>
+            <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Autorizados</a></li>
+            <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">No Autorizados</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab_1">
+              <div class="row">
+                <div class="col-sm-6">
+                  <h2 style="margin-top: 0px;">Listado de Liquidacion de compras</h2>
+                </div>
+                <div class="col-sm-6 text-right" id="panel_pag">
+                  
+                </div>
+                <div  class="col-sm-12" style="overflow-x: scroll;height: 500px;">    
+                  <table class="table text-sm" style=" white-space: nowrap;">
+                    <thead>
+                      <th></th>
+                      <th>T</th>          
+                      <th>Razon_Social</th>
+                      <th>TC</th>
+                      <th>Serie</th>
+                      <th>Autorizacion</th>
+                      <th>Factura</th>
+                      <th>Fecha</th>
+                      <th>SubTotal</th>
+                      <th>Con_IVA</th>
+                      <th>IVA</th>
+                      <th>Descuento</th>
+                      <th>Total</th>
+                      <th>Saldo</th>
+                      <th>RUC_CI</th>
+                      <th>TB</th>
+                    </thead>
+                    <tbody  id="tbl_tabla">
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+              
+                </div>    
+              </div>
+
+            </div>
+            <div class="tab-pane active" id="tab_2">
+              <div class="row">
+                <div class="col-sm-6">
+                  <h2 style="margin-top: 0px;">Listado de Liquidacion de compras</h2>
+                </div>
+                <div class="col-sm-6 text-right" id="panel_pagAu">
+                  
+                </div>
+                <div  class="col-sm-12" style="overflow-x: scroll;height: 500px;">    
+                  <table class="table text-sm" style=" white-space: nowrap;">
+                    <thead>
+                      <th></th>
+                      <th>T</th>          
+                      <th>Razon_Social</th>
+                      <th>TC</th>
+                      <th>Serie</th>
+                      <th>Autorizacion</th>
+                      <th>Factura</th>
+                      <th>Fecha</th>
+                      <th>SubTotal</th>
+                      <th>Con_IVA</th>
+                      <th>IVA</th>
+                      <th>Descuento</th>
+                      <th>Total</th>
+                      <th>Saldo</th>
+                      <th>RUC_CI</th>
+                      <th>TB</th>
+                    </thead>
+                    <tbody  id="tbl_tablaAu">
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+              
+                </div>    
+              </div>
+            </div>
+            <div class="tab-pane active" id="tab_3">
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="input-group margin">
+                      <div class="input-group-btn open">
+                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Acciones
+                              <span class="fa fa-caret-down"></span>
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li onclick="autorizar_blo()"><a href="#">Autorizar en bloque</a></li>
+                            <li onclick=""><a href="#">Anular en bloque</a></li>
+                            <!-- <li><a href="#">Something else here</a></li> -->
+                          </ul>
+                      </div>
+                  </div>
+                  <h2 style="margin-top: 0px;">Listado de Liquidacion de compras</h2>
+                </div>
+                <div class="col-sm-6 text-right" id="panel_pagNoAu">
+                  
+                </div>
+                <div  class="col-sm-12" style="overflow-x: scroll;height: 500px;">    
+                  <table class="table text-sm" style=" white-space: nowrap;">
+                    <thead>
+                      <th></th>
+                      <th>T</th>          
+                      <th>Razon_Social</th>
+                      <th>TC</th>
+                      <th>Serie</th>
+                      <th>Autorizacion</th>
+                      <th>Factura</th>
+                      <th>Fecha</th>
+                      <th>SubTotal</th>
+                      <th>Con_IVA</th>
+                      <th>IVA</th>
+                      <th>Descuento</th>
+                      <th>Total</th>
+                      <th>Saldo</th>
+                      <th>RUC_CI</th>
+                      <th>TB</th>
+                    </thead>
+                    <tbody  id="tbl_tablaNoAu">
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+              
+                </div>    
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="col-sm-12 text-right" id="panel_pag">
-      
-    </div>
-		<div  class="col-sm-12" style="overflow-x: scroll;height: 500px;">    
-      <table class="table text-sm" style=" white-space: nowrap;">
-        <thead>
-          <th></th>
-          <th>T</th>          
-          <th>Razon_Social</th>
-          <th>TC</th>
-          <th>Serie</th>
-          <th>Autorizacion</th>
-          <th>Factura</th>
-          <th>Fecha</th>
-          <th>SubTotal</th>
-          <th>Con_IVA</th>
-          <th>IVA</th>
-          <th>Descuento</th>
-          <th>Total</th>
-          <th>Saldo</th>
-          <th>RUC_CI</th>
-          <th>TB</th>
-        </thead>
-        <tbody  id="tbl_tabla">
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-	
-		</div>		
-	</div>
   
 </div>
 
@@ -866,6 +1103,30 @@ function modal_email_fac(factura,serie,codigoc,emails)
         </div>
   </div>
 </div>
+
+
+
+<div class="modal fade" id="myModal_bloque" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Respuesta autorizacion en bloque</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row" > 
+                  <div class="col-sm-12" id="bloque_resp" style="height:350px; overflow-y: scroll;">
+                    
+                  </div>
+                    
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+  </div>
+</div>
+
 
 
 
