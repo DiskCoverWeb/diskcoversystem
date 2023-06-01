@@ -552,13 +552,13 @@ class autorizacion_sri
 		if(!isset($TFA['Porc_NC']) || $TFA['Porc_NC'] == 0){
             $TFA['Porc_IVA'] = Validar_Porc_IVA($TFA['Fecha_NC']);
          }else{
-            $TFA['Porc_IVA'] = $TFA['Porc_NC'];
+            $TFA['Porc_IVA'] = number_format($TFA['Porc_NC'],2,'.','');
          }
 
 
 		// print_r($TFA);die();
-		$TFA['TOTAL_SIN_IMPUESTOS'] = $Total_Sin_IVA + $Total_Con_IVA - $Total_Desc;
-		$TFA['VALOR_MODIFICACION'] = $Total_Sin_IVA + $Total_Con_IVA - $Total_Desc + $TFA['Total_IVA_NC'];
+		$TFA['TOTAL_SIN_IMPUESTOS'] = number_format($Total_Sin_IVA + $Total_Con_IVA - $Total_Desc,2,'.','');
+		$TFA['VALOR_MODIFICACION'] = number_format($Total_Sin_IVA + $Total_Con_IVA - $Total_Desc + $TFA['Total_IVA_NC'],2,'.','');
 		$TFA['BASEIMPONIBLE'] = number_format($Total_Con_IVA - $Total_Desc,2,'.','');
 		$TFA['ClaveAcceso_NC'] = $this->Clave_acceso($TFA['Fecha_NC'],'04',$TFA['Serie_NC'],$TFA['Nota_Credito']);
 		$aut = $TFA['ClaveAcceso_NC'];
