@@ -206,7 +206,7 @@ class articulosC
     	$cabecera_tabla = '
     	<div class="table-responsive">
 
-  		<table class="table table-hover text-sm" id="tbl_style">
+  		<table class="table table-hover text-md" id="tbl_style">
   			<thead>
   				<th>ITEM</th>
   				<th>FECHA</th>
@@ -828,7 +828,13 @@ class articulosC
 		    SetAdoFields('Valor_Total',number_format($value['VALOR_TOTAL'],2)); 
 		    SetAdoFields('Costo',number_format($value['VALOR_UNIT'],2)); 
 		    SetAdoFields('Total',number_format($value['VALOR_TOTAL'],2));
-		    SetAdoFields('Existencia',number_format(($cant[2]),2)+intval($value['CANTIDAD']));
+		    if(isset($cant[2]))
+		    {
+		    	SetAdoFields('Existencia',number_format(($cant[2]),2)+intval($value['CANTIDAD']));
+		    }else
+		    {
+		    	SetAdoFields('Existencia',number_format(0,2)+intval($value['CANTIDAD']));
+		    }
 		    SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);
 		    SetAdoFields('Item',$_SESSION['INGRESO']['item']);
 		    SetAdoFields('CodBodega','01');
