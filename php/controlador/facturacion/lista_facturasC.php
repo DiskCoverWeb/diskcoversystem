@@ -15,6 +15,11 @@ if(isset($_GET['tabla']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->tabla_facturas($parametros));
 }
+if(isset($_GET['tablaAu']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->tabla_facturas($parametros));
+}
 if(isset($_GET['perido']))
 {
 	$parametros = $_POST['parametros'];
@@ -90,6 +95,11 @@ if(isset($_GET['re_autorizar']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->autorizar($parametros));
 }
+if(isset($_GET['autorizar_bloque']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->autorizar_bloque($parametros));
+}
 if(isset($_GET['Anular']))
 {
 	$parametros = $_POST['parametros'];
@@ -132,10 +142,11 @@ class lista_facturasC
 
     function tabla_facturas($parametros)
     {
-
+    	$autorizados = false;
+    	if(isset($parametros['auto'])){ $autorizados = $parametros['auto'];}
     	// print_r($parametros);die();
     	$codigo = $parametros['ci'];
-    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['per'],$parametros['desde'],$parametros['hasta'],$parametros['serie']);
+    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['per'],$parametros['desde'],$parametros['hasta'],$parametros['serie'],$autorizados);
     	$tr='';
     	foreach ($tbl as $key => $value) {
     		 $exis = $this->modelo->catalogo_lineas($value['TC'],$value['Serie']);
@@ -482,7 +493,7 @@ class lista_facturasC
        $imp = '';
        if($rep==1)
        {
-       		return array('respuesta'=>$rep,'pdf'=>$imp);
+       		return array('respuesta'=>$rep,'pdf'=>$imp,'clave'=>$clave);
        }else{ 
        		try {
        			if(json_encode($rep)==false){ //si retorna false puede ser por la codificación debido a caracteres especiales, como tildes.
@@ -493,6 +504,57 @@ class lista_facturasC
        }
 
     	// return $res;
+    }
+
+    function autorizar_bloque($parametros)
+    {
+    	// print_r($parametros);die();
+
+    	$codigo = $parametros['ci'];
+    	$datos = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['per'],$parametros['desde'],$parametros['hasta'],$parametros['serie'],$parametros['auto']);
+
+
+    	foreach ($datos as $key => $value) {
+    		// print_r($value);die();
+    		$parametros2 = array('TC'=>$value['TC'],'FacturaNo'=>$value['Factura'],'serie'=>$value['Serie'],'Fecha'=>$value['Fecha']->format('Y-m-d'));
+    		$resp[$value['Factura']] = $this->autorizar($parametros2);
+    	}
+
+    	$tabla = '<table><tr>
+    			<td>Factura</td>
+    			<td>Numero de Autorizacion</td>
+    			<td>Estado</td>
+    			<td>Detalle</td>
+    		</tr>';
+    	foreach ($resp as $key => $value) {
+    		if($value['respuesta']!=1)
+    		{
+    			$deta = $this->sri->error_sri($value['clave']);
+    			if($deta['adicional']!='')
+    			{
+    				$sms = $deta['adicional'];
+    			}else{
+    				$sms = $deta['mensaje'];
+    			}
+	    		$tabla.='<tr>
+	    			<td>'.$key.'</td>
+	    			<td>'.$value['clave'].'</td>
+	    			<td>Rechazado</td>
+	    			<td>'.$sms.'</td>
+	    		</tr>';
+	    	}else
+	    	{
+	    	$tabla.='<tr>
+	    			<td>'.$key.'</td>
+	    			<td>'.$value['clave'].'</td>
+	    			<td>Autorizado</td>
+	    			<td></td>
+	    		</tr>';
+	    	}
+    	}
+    	$tabla.= '</table>';
+
+    	return $tabla;
     }
 
     function anular($parametros)

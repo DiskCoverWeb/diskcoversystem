@@ -165,16 +165,6 @@ class incomM
 	   return $result;
 	}
 
-	function insertar_ingresos($datos)
-	{
-		$resp = insert_generico('Asiento_B',$datos);
-		return $resp;
-	}
-	function insertar_ingresos_tabla($tabla,$datos)
-	{
-		$resp = insert_generico($tabla,$datos);
-		return $resp;
-	}
 
 	function delete_asientoB($cta,$cheq)
 	{

@@ -346,6 +346,7 @@ class autorizacion_sri
 		AND Serie = '".$serie."' 
 		AND Factura = ".$fact." 
 		AND LEN(Autorizacion) = 13 AND T <> 'A' ";
+		// print_r($sql);die();
 		$datos = $this->db->datos($sql);
 		return $datos;
 	}
@@ -551,13 +552,13 @@ class autorizacion_sri
 		if(!isset($TFA['Porc_NC']) || $TFA['Porc_NC'] == 0){
             $TFA['Porc_IVA'] = Validar_Porc_IVA($TFA['Fecha_NC']);
          }else{
-            $TFA['Porc_IVA'] = $TFA['Porc_NC'];
+            $TFA['Porc_IVA'] = number_format($TFA['Porc_NC'],2,'.','');
          }
 
 
 		// print_r($TFA);die();
-		$TFA['TOTAL_SIN_IMPUESTOS'] = $Total_Sin_IVA + $Total_Con_IVA - $Total_Desc;
-		$TFA['VALOR_MODIFICACION'] = $Total_Sin_IVA + $Total_Con_IVA - $Total_Desc + $TFA['Total_IVA_NC'];
+		$TFA['TOTAL_SIN_IMPUESTOS'] = number_format($Total_Sin_IVA + $Total_Con_IVA - $Total_Desc,2,'.','');
+		$TFA['VALOR_MODIFICACION'] = number_format($Total_Sin_IVA + $Total_Con_IVA - $Total_Desc + $TFA['Total_IVA_NC'],2,'.','');
 		$TFA['BASEIMPONIBLE'] = number_format($Total_Con_IVA - $Total_Desc,2,'.','');
 		$TFA['ClaveAcceso_NC'] = $this->Clave_acceso($TFA['Fecha_NC'],'04',$TFA['Serie_NC'],$TFA['Nota_Credito']);
 		$aut = $TFA['ClaveAcceso_NC'];
@@ -2812,6 +2813,7 @@ function generar_xml_retencion($cabecera,$detalle)
 
 	        	exec("java -jar ".$firmador." ".$nom_doc.".xml ".$url_generados." ".$url_firmados." ".$certificado_1." ".$p12." ".$pass, $f);
 
+	        	// print_r($f);die();
 	        	if(count($f)<6 && !empty($f))
 		 		{
 		 			return 1;		 		
@@ -2852,7 +2854,7 @@ function generar_xml_retencion($cabecera,$detalle)
     	$comprobar_sri = dirname(__DIR__).'/SRI/firmar/sri_comprobar.jar';
     	$url_autorizado=dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Autorizados/';
  	    $url_No_autorizados =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/No_autorizados/';
-
+ 	   
     	// print_r("java -jar ".$comprobar_sri." ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion);die();
    		 exec("java -jar ".$comprobar_sri." ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion,$f);   	
    		 // print_r($f);
@@ -2869,6 +2871,10 @@ function generar_xml_retencion($cabecera,$detalle)
    		 if(count($resp)>1)
    		 {
    		 	$resp[1] = trim($resp[1]);
+   		 	if(!isset($resp[1]) && $resp[0]=='Error al validar el comprobante estado NO AUTORIZADO')
+	   		{
+	   			return -1;
+	   		}
    		 	// print_r($resp[1]);
    		 	//cuando null NO PROCESADO es liquidacion de compras
 	   		 if(isset($resp[1]) && $resp[1]=='FACTURA NO PROCESADO' || isset($resp[1]) && $resp[1]=='LIQUIDACION DE COMPRAS NO PROCESADO' || $resp[1] == 'COMPROBANTE DE RETENCION NO PROCESADO' || $resp[1]=='GUIA DE REMISION NO PROCESADO' || isset($resp[1]) && $resp[1]=='NOTA DE CREDITO NO PROCESADO')
@@ -2908,6 +2914,7 @@ function generar_xml_retencion($cabecera,$detalle)
     	}
     	 // print_r("java -jar ".$enviar_sri." ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion);die();
    		 exec("java -jar ".$enviar_sri." ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion,$f);
+   		 // print_r($f);die();
    		 if(count($f)>0)
    		 {
 	   		 $resp = explode('-',$f[0]);
@@ -3568,6 +3575,59 @@ function actualizar_datos_CER($autorizacion,$tc,$serie,$retencion,$entidad,$auto
  		}
  	}
  }
+
+
+function error_sri($clave)
+{
+	$clave = $clave.'.xml';
+	$entidad = generaCeros($_SESSION['INGRESO']['IDEntidad'],3);
+	$carpeta_entidad = dirname(__DIR__,2)."/comprobantes/entidades/entidad_".$entidad;
+	$carpeta_comprobantes = $carpeta_entidad.'/CE'.generaCeros($_SESSION['INGRESO']['item'],3);
+	$carpeta_no_autori = $carpeta_comprobantes."/No_autorizados";
+	$carpeta_rechazados = $carpeta_comprobantes."/Rechazados";
+			  
+	    
+
+	$ruta1 = $carpeta_no_autori.'/'.$clave;
+	$ruta2 = $carpeta_rechazados.'/'.$clave;
+
+	// print_r($ruta1);print_r($ruta2);die();
+	if(file_exists($ruta1))
+	{
+
+	// print_r($ruta);die();
+		$xml = simplexml_load_file($ruta1);
+		$codigo = $xml->mensajes->mensaje->mensaje->identificador;
+		$mensaje = $xml->mensajes->mensaje->mensaje->mensaje;
+		$adicional = $xml->mensajes->mensaje->mensaje->informacionAdicional;
+		$estado = $xml->estado;
+		$fecha = $xml->fechaAutorizacion;
+		// print_r($mensaje);die();
+		return  array('estado'=>$estado,'codigo'=>$codigo,'mensaje'=>$mensaje,'adicional'=>$adicional,'fecha'=>$fecha);
+	}
+
+	if(file_exists($ruta2))
+	{
+	    // print_r($ruta2);die();
+		$fp = fopen($ruta2, "r");
+		 $linea = '';
+		while (!feof($fp)){
+		    $linea.= fgets($fp);
+		}
+		fclose($fp);
+		$linea = str_replace('ns2:','', $linea);
+		$xml = simplexml_load_string($linea);
+
+		$codigo = $xml->respuestaSolicitud->comprobantes->comprobante->mensajes->mensaje->identificador;
+		$mensaje = $xml->respuestaSolicitud->comprobantes->comprobante->mensajes->mensaje->mensaje;
+		$adicional = $xml->respuestaSolicitud->comprobantes->comprobante->mensajes->mensaje->informacionAdicional;
+		$estado = $xml->respuestaSolicitud->estado;
+		$fecha = '';
+		// print_r($mensaje);die();
+		return  array('estado'=>$estado,'codigo'=>$codigo,'mensaje'=>$mensaje,'adicional'=>$adicional,'fecha'=>$fecha);
+
+	}
+}
 
 
 

@@ -955,13 +955,6 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 
 	}
 
-
-	function insertar_trans_kardex($datos)
-	{
-		$resp = insert_generico("Trans_Kardex",$datos);
-	    return $resp;
-	}
-
 	function actualizo_trans_kardex($lista)
 	{
 		// $cid = $this->conn;

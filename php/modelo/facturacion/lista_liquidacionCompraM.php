@@ -71,7 +71,7 @@ class lista_liquidacionCompraM
 
    }
 
-    function facturas_emitidas_tabla($codigo,$periodo=false,$desde=false,$hasta=false)
+    function facturas_emitidas_tabla($codigo,$periodo=false,$desde=false,$hasta=false,$serie=false,$autorizados=false)
    {
    	$cid = $this->conn;
 		
@@ -88,6 +88,22 @@ class lista_liquidacionCompraM
         {
        		 $sql.= " AND Fecha BETWEEN '".$desde."' AND '".$hasta."'";
         }
+        if($serie)
+		{
+			// si el codigo es T se refiere a todos
+		   $sql.=" AND Serie ='".$serie."'";
+		}
+		if($autorizados)
+		{
+			// print_r($autorizados);die();
+			if($autorizados==1)
+			{
+				$sql.=" AND Len(Autorizacion)>13";
+			}else
+			{
+				$sql.=" AND Len(Autorizacion)=13";
+			}
+		} 
 
        $sql.="ORDER BY ID DESC "; 
 	$sql.=" OFFSET ".$_SESSION['INGRESO']['paginacionIni']." ROWS FETCH NEXT ".$_SESSION['INGRESO']['numreg']." ROWS ONLY;";   

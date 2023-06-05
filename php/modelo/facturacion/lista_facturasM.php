@@ -14,20 +14,6 @@ class lista_facturasM
 		$this->conn = cone_ajax();
 		$this->db = new db();
 	}
-
-	// function ingresar_update($datos,$tabla,$campoWhere=false)
-	// {
-	// 	// print_r($datos);die();
-	// 	if ($campoWhere) {
-	// 		$resp = update_generico($datos,$tabla,$campoWhere);			
-	// 	  return $resp;
-			
-	// 	}else{
-	//       $resp = insert_generico($tabla,$datos);
-	//       return $resp;
-	//   }
-	// }
-
  
    function facturas_emitidas_excel($codigo,$reporte_Excel=false,$periodo=false)
    {
@@ -85,7 +71,7 @@ class lista_facturasM
 
    }
 
-   function facturas_emitidas_tabla($codigo,$periodo=false,$desde=false,$hasta=false,$serie=false)
+   function facturas_emitidas_tabla($codigo,$periodo=false,$desde=false,$hasta=false,$serie=false,$autorizados = false)
    {
    	$cid = $this->conn;
 
@@ -113,6 +99,17 @@ class lista_facturasM
 		{
 			// si el codigo es T se refiere a todos
 		   $sql.=" AND Serie ='".$serie."'";
+		}
+		if($autorizados)
+		{
+			// print_r($autorizados);die();
+			if($autorizados==1)
+			{
+				$sql.=" AND Len(Autorizacion)>13";
+			}else
+			{
+				$sql.=" AND Len(Autorizacion)=13";
+			}
 		} 
         // if($periodo && $periodo!='.' && $periodo!='')
         // {
