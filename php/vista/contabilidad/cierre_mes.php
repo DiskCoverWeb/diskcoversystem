@@ -136,7 +136,7 @@
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Cierre de perido</h4>
+        <h4 class="modal-title">Cierre de mes</h4>
       </div>
       <div class="modal-body">
          <div class="row">
