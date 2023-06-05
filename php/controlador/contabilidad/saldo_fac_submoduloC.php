@@ -292,65 +292,49 @@ class Saldo_fac_sub_M
 		
   	    	        //$dias = $parametros['fechafin']-$parametros['fechaini'];
   	    	        $dias = $date1->diff($date2)->days;
-  	    	        $dato[0]['campo']='Fecha_Venc';
-					        $dato[0]['dato']=$fechafin;
-					        $dato[1]['campo']='Numero';
-					        $dato[1]['dato']=$value['Factura'];
-					        $dato[2]['campo']='Comprobante';
-					        $dato[2]['dato']=$value['Cliente'];
-					        $dato[3]['campo']='T';
-					        $dato[3]['dato']='N';
-					        $dato[4]['campo']='Fecha';
-					        $dato[4]['dato']=$fechaini;
-					        $dato[5]['campo']='Dato_Aux1';
-					        $dato[5]['dato']=$value['Cuenta'];
-					        $dato[6]['campo']='Total';
-					        $dato[6]['dato']=$value['Saldo'];
-					        $dato[7]['campo']='Saldo_Actual';
-					        $dato[7]['dato']=$value['Saldo'];
-					        $dato[8]['campo']="Item";
-					        $dato[8]['dato']=$_SESSION['INGRESO']['item'];
-					        $dato[9]['campo']="CodigoU";
-					        $dato[9]['dato']=$_SESSION['INGRESO']['CodigoU'];
-					        $dato[10]['campo']="TP";
-					        $dato[10]['dato']="CCXP";
+  	    	        SetAdoAddNew("Saldo_Diarios");       
+ 									SetAdoFields('Fecha_Venc',$fechafin);
+					        SetAdoFields('Numero',$value['Factura']);
+					        SetAdoFields('Comprobante',$value['Cliente']);
+					        SetAdoFields('T','N');
+					        SetAdoFields('Fecha',$fechaini);
+					        SetAdoFields('Dato_Aux1',$value['Cuenta']);
+					        SetAdoFields('Total',$value['Saldo']);
+					        SetAdoFields('Saldo_Actual',$value['Saldo']);
+					        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+					        SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+					        SetAdoFields("TP","CCXP");
 					       // print_r($dias);
 					        if($dias > 0 && $dias < 8)
 					        {
-						        $dato[11]['campo']='Ven_1_a_7';
-				            $dato[11]['dato']=$value['Saldo'];
+						        SetAdoFields('Ven_1_a_7',$value['Saldo']);
 
 					        }else if($dias > 8 && $dias < 31)
 					        {
-						        $dato[11]['campo']='Ven_8_a_30';
-				            $dato[11]['dato']=$value['Saldo'];
+						        SetAdoFields('Ven_8_a_30',$value['Saldo']);
 
 					        }else if($dias >30 && $dias < 61)
 					        {
-						        $dato[11]['campo']='Ven_31_a_60';
-				            $dato[11]['dato']=$value['Saldo'];
+						        SetAdoFields('Ven_31_a_60',$value['Saldo']);
 
 					        }else if($dias >60 && $dias < 91)
 					        {
-						        $dato[11]['campo']='Ven_61_a_90';
-					          $dato[11]['dato']=$value['Saldo'];
+						        SetAdoFields('Ven_61_a_90',$value['Saldo']);
 
 					        }else if($dias > 90 && $dias < 181)
 					        {
-						        $dato[11]['campo']='Ven_91_a_180';
-					          $dato[11]['dato']=$value['Saldo'];
+						        SetAdoFields('Ven_91_a_180',$value['Saldo']);
 
 					        }else if($dias >180 && $dias < 361)
 					        {
-						        $dato[11]['campo']='Ven_181_a_360';
-					          $dato[11]['dato']=$value['Saldo'];
+						        SetAdoFields('Ven_181_a_360',$value['Saldo']);
 
 					        }else if($dias > 360)
 					        {
-						        $dato[11]['campo']='Ven_mas_de_360';
-					          $dato[11]['dato']=$value['Saldo'];
+						        SetAdoFields('Ven_mas_de_360',$value['Saldo']);
 					        }
-			        		insert_generico("Saldo_Diarios",$dato);
+			        		SetAdoUpdate(); 
+  	    	        
 
 // print_r($key.'-');
   	    	  }
@@ -375,64 +359,48 @@ class Saldo_fac_sub_M
 		
   	    	        //$dias = $parametros['fechafin']-$parametros['fechaini'];
   	    	        $dias = $date1->diff($date2)->days;
-  	    	        $dato[0]['campo']='Fecha_Venc';
-			        $dato[0]['dato']=$fechaini;			        
-			        $dato[1]['campo']='Comprobante';
-			        $dato[1]['dato']=$value['Sub_Modulos'];
-			        $dato[2]['campo']='T';
-			        $dato[2]['dato']='N';
-			        $dato[3]['campo']='Fecha';
-			        $dato[3]['dato']=$fechaini;
-			        $dato[4]['campo']='Dato_Aux1';
-			        $dato[4]['dato']=$value['Cuenta'];
-			        $dato[5]['campo']='Total';
-			        $dato[5]['dato']=$value['Total'];
-			        $dato[6]['campo']='Saldo_Actual';
-			        $dato[6]['dato']= $saldo+$value['Total'];
-			        $dato[7]['campo']="Item";
-			        $dato[7]['dato']=$_SESSION['INGRESO']['item'];
-			        $dato[8]['campo']="CodigoU";
-			        $dato[8]['dato']=$_SESSION['INGRESO']['CodigoU'];
-			        $dato[9]['campo']="TP";
-			        $dato[9]['dato']="CCXP";
-			       // print_r($dias);
-			        if($dias > 0 && $dias < 8)
-			        {
-				        $dato[10]['campo']='Ven_1_a_7';
-			            $dato[10]['dato']=$value['Total']+$saldo;
 
-			        }else if($dias > 8 && $dias < 31)
-			        {
-				        $dato[10]['campo']='Ven_8_a_30';
-			            $dato[10]['dato']=$value['Total']+$saldo;
+  	    	        SetAdoAddNew("Saldo_Diarios");       
+  	    	        SetAdoFields('Fecha_Venc',$fechaini);			        
+					        SetAdoFields('Comprobante',$value['Sub_Modulos']);
+					        SetAdoFields('T','N');
+					        SetAdoFields('Fecha',$fechaini);
+					        SetAdoFields('Dato_Aux1',$value['Cuenta']);
+					        SetAdoFields('Total',$value['Total']);
+					        SetAdoFields('Saldo_Actual', $saldo+$value['Total']);
+					        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+					        SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+					        SetAdoFields("TP","CCXP");
+				       // print_r($dias);
+				        if($dias > 0 && $dias < 8)
+				        {
+					        SetAdoFields('Ven_1_a_7',$value['Total']+$saldo);
 
-			        }else if($dias >30 && $dias < 61)
-			        {
-				        $dato[10]['campo']='Ven_31_a_60';
-			            $dato[10]['dato']=$value['Total']+$saldo;
+				        }else if($dias > 8 && $dias < 31)
+				        {
+					        SetAdoFields('Ven_8_a_30',$value['Total']+$saldo);
 
-			        }else if($dias >60 && $dias < 91)
-			        {
-				        $dato[10]['campo']='Ven_61_a_90';
-			            $dato[10]['dato']=$value['Total']+$saldo;
+				        }else if($dias >30 && $dias < 61)
+				        {
+					        SetAdoFields('Ven_31_a_60',$value['Total']+$saldo);
 
-			        }else if($dias > 90 && $dias < 181)
-			        {
-				        $dato[10]['campo']='Ven_91_a_180';
-			            $dato[10]['dato']=$value['Total']+$saldo;
+				        }else if($dias >60 && $dias < 91)
+				        {
+					        SetAdoFields('Ven_61_a_90',$value['Total']+$saldo);
 
-			        }else if($dias >180 && $dias < 361)
-			        {
-				        $dato[10]['campo']='Ven_181_a_360';
-			            $dato[10]['dato']=$value['Total']+$saldo;
+				        }else if($dias > 90 && $dias < 181)
+				        {
+					        SetAdoFields('Ven_91_a_180',$value['Total']+$saldo);
 
-			        }else if($dias > 360)
-			        {
-				        $dato[10]['campo']='Ven_mas_de_360';
-			            $dato[10]['dato']=$value['Total']+$saldo;
-			        }
+				        }else if($dias >180 && $dias < 361)
+				        {
+					        SetAdoFields('Ven_181_a_360',$value['Total']+$saldo);
 
-			       insert_generico("Saldo_Diarios",$dato);
+				        }else if($dias > 360)
+				        {
+					        SetAdoFields('Ven_mas_de_360',$value['Total']+$saldo);
+				        }
+				       SetAdoUpdate(); 
 
   	        }
   	      }

@@ -201,7 +201,7 @@ class generar_comprobante
 
 	}
 
-		function ingresar_trans_kardex_salidas($orden,$comprobante,$fechaC,$area,$ruc,$nombre,$negativos)
+	function ingresar_trans_kardex_salidas($orden,$comprobante,$fechaC,$area,$ruc,$nombre,$negativos)
     {
 		$datos_K = $this->modelo->cargar_pedidos($orden,$area,$fechaC,$negativos);
 		// print_r($datos_K);
@@ -210,7 +210,8 @@ class generar_comprobante
 		$comprobante = $comprobante;
 		$resp = 1;
 		$lista = '';
-		foreach ($datos_K as $key => $value) {
+		foreach ($datos_K as $key => $value) 
+		{
 		   $datos_inv = $this->modelo->lista_hijos_id($value['CODIGO_INV']);
 		   // print_r($datos_inv.'-'.$datos_inv[0]['id']);die();
 		    $cant[2] = 0;
@@ -218,65 +219,45 @@ class generar_comprobante
 		   {
 		   	 $cant = explode(',',$datos_inv[0]['id']);
 		   }
-		    $datos[0]['campo'] ='Codigo_Inv';
-		    $datos[0]['dato'] =$value['CODIGO_INV']; 
-		    $datos[1]['campo'] ='Fecha';
-		    $datos[1]['dato'] =$fechaC; 
-		    $datos[2]['campo'] ='Numero';
-		    $datos[2]['dato'] =$comprobante;  
-		    $datos[3]['campo'] ='T';
-		    $datos[3]['dato'] ='N'; 
-		    $datos[4]['campo'] ='TP';
-		    $datos[4]['dato'] ='CD'; 
-		    $datos[5]['campo'] ='Codigo_P';
-		    $datos[5]['dato'] =$ruc; 
-		    $datos[6]['campo'] ='Cta_Inv';
-		    $datos[6]['dato'] =$value['CTA_INVENTARIO']; 
-		    $datos[7]['campo'] ='Contra_Cta';
-		    $datos[7]['dato'] =$value['CONTRA_CTA']; 
-		    $datos[8]['campo'] ='Periodo';
-		    $datos[8]['dato'] =$_SESSION['INGRESO']['periodo']; 
-		    $datos[9]['campo'] ='Salida';
-		    $datos[9]['dato'] =$value['CANTIDAD']; 
-		    $datos[10]['campo'] ='Valor_Unitario';
-		    $datos[10]['dato'] =round($value['VALOR_UNIT'],2); 
-		    $datos[11]['campo'] ='Valor_Total';
-		    $datos[11]['dato'] =round($value['VALOR_TOTAL'],2); 
-		    $datos[12]['campo'] ='Costo';
-		    $datos[12]['dato'] =round($value['VALOR_UNIT'],2); 
-		    $datos[13]['campo'] ='Total';
-		    $datos[13]['dato'] =round($value['VALOR_TOTAL'],2);
-		    $datos[14]['campo'] ='Existencia';
-		    $datos[14]['dato'] =round(($cant[2]),2)-round(($value['CANTIDAD']),2);
-		    $datos[15]['campo'] ='CodigoU';
-		    $datos[15]['dato'] =$_SESSION['INGRESO']['CodigoU'];
-		    $datos[16]['campo'] ='Item';
-		    $datos[16]['dato'] =$_SESSION['INGRESO']['item'];
-		    $datos[17]['campo'] ='CodBodega';
-		    $datos[17]['dato'] ='01';
-		    $datos[18]['campo'] ='CodigoL';
-		    $datos[18]['dato'] =$value['SUBCTA'];
 
-		    $datos[19]['campo'] ='Detalle';
-		    $datos[19]['dato'] ='Salida de inventario para '.$nombre.' con CI: '.$ruc.' el dia '.$fechaC;
-		    $datos[20]['campo'] ='Orden_No';
-		    $datos[20]['dato'] =$orden;
+		   	SetAdoAddNew("Trans_Kardex");
+		    SetAdoFields('Codigo_Inv',$value['CODIGO_INV']); 
+		    SetAdoFields('Fecha',$fechaC); 
+		    SetAdoFields('Numero',$comprobante);  
+		    SetAdoFields('T','N'); 
+		    SetAdoFields('TP','CD'); 
+		    SetAdoFields('Codigo_P',$ruc); 
+		    SetAdoFields('Cta_Inv',$value['CTA_INVENTARIO']); 
+		    SetAdoFields('Contra_Cta',$value['CONTRA_CTA']); 
+		    SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']); 
+		    SetAdoFields('Salida',$value['CANTIDAD']); 
+		    SetAdoFields('Valor_Unitario',round($value['VALOR_UNIT'],2)); 
+		    SetAdoFields('Valor_Total',round($value['VALOR_TOTAL'],2)); 
+		    SetAdoFields('Costo',round($value['VALOR_UNIT'],2)); 
+		    SetAdoFields('Total',round($value['VALOR_TOTAL'],2));
+		    SetAdoFields('Existencia',round(($cant[2]),2)-round(($value['CANTIDAD']),2));
+		    SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);
+		    SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		    SetAdoFields('CodBodega','01');
+		    SetAdoFields('CodigoL',$value['SUBCTA']);
+	    	SetAdoFields('Detalle','Salida de inventario para '.$nombre.' con CI: '.$ruc.' el dia '.$fechaC);
+		    SetAdoFields('Orden_No',$orden);
 
 		    // print_r($datos);
-		     if($this->modelo->insertar_trans_kardex($datos)!="")
+		     if(SetAdoUpdate()!=1)
 		     {
 		     	$resp = 0;
 		     }
 		     $lista.="'".$value['CODIGO_INV']."',"; 
-	}
-	$lista = substr($lista,0,-1);
-	if($this->modelo->actualizo_trans_kardex($lista) == -1)
-	{
-		$resp = 0;
-	}
-                		// print_r($resp);die();
-	return $resp;
+		}
+		$lista = substr($lista,0,-1);
+		if($this->modelo->actualizo_trans_kardex($lista) == -1)
+		{
+			$resp = 0;
+		}
+	    // print_r($resp);die();
+		return $resp;
 
-}
+	}
 }
 ?>

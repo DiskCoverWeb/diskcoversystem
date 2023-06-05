@@ -102,20 +102,16 @@ class Subcta_proyectosC
     {
     	// print_r($parametros);die();
 
-    	$datos[0]['campo'] ='Cta';
-    	$datos[0]['dato'] = $parametros['cta'];
-    	$datos[1]['campo'] ='Codigo';
-    	$datos[1]['dato'] = $parametros['codigo'];
-    	$datos[2]['campo'] ='Item';
-    	$datos[2]['dato'] = $_SESSION['INGRESO']['item'];
-    	$datos[3]['campo'] ='Periodo';
-    	$datos[3]['dato'] = $_SESSION['INGRESO']['periodo'];
 
+    	SetAdoAddNew("Trans_Presupuestos");
+    	SetAdoFields('Cta',$parametros['cta']);
+    	SetAdoFields('Codigo',$parametros['codigo']);
+    	SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+    	SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
     	$e = $this->modelo->existe($parametros['cta'],$parametros['codigo']);
-
     	if($e==false)
     	{
-    	 return insert_generico('Trans_Presupuestos',$datos);
+			return SetAdoUpdate();
     	}else
     	{
     		return 2;

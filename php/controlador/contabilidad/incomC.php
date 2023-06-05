@@ -337,34 +337,18 @@ class incomC
 	{
 		// print_r($parametros);die();
 		// $datos = $this->modelo->cargar_asientosB();
-        $datos[0]['campo']= "ME";
-        $datos[1]['campo']= "CTA_BANCO"; 
-        $datos[2]['campo']= "BANCO";
-        $datos[3]['campo']= "CHEQ_DEP";
-        $datos[4]['campo']= "EFECTIVIZAR";
-        $datos[5]['campo']= "VALOR";
-        $datos[6]['campo']= "T_No"; 
-        $datos[7]['campo']= "Item";
-        $datos[8]['campo']= "CodigoU";
+		SetAdoAddNew("Asiento_B");
+        SetAdoFields("ME",0);
+        SetAdoFields("CTA_BANCO",$parametros['banco']);
+        SetAdoFields("BANCO",$parametros['bancoC']);
+        SetAdoFields("CHEQ_DEP",$parametros['cheque']);
+        SetAdoFields("EFECTIVIZAR",$parametros['fecha']);
+        SetAdoFields("VALOR",$parametros['valor']);
+        SetAdoFields("T_No",1); 
+        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+        SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
 		
-		$datos[0]['dato']= 0;
-		$datos[1]['dato']= $parametros['banco']; 
-		$datos[2]['dato']= $parametros['bancoC']; 
-		$datos[3]['dato']= $parametros['cheque']; 
-		$datos[4]['dato']= $parametros['fecha']; 
-		$datos[5]['dato']= $parametros['valor']; 
-		$datos[6]['dato']= 1;  
-		$datos[7]['dato']= $_SESSION['INGRESO']['item'];
-		$datos[8]['dato']= $_SESSION['INGRESO']['CodigoU'];
-
-		$resp = $this->modelo->insertar_ingresos($datos);
-        if($resp == '')
-        {
-    	    return 1;
-        }else
-        {
-    	    return -1;
-        }
+		return SetAdoUpdate();
 	}
 
 	function delete_asientoB($parametros)
@@ -769,52 +753,36 @@ class incomC
                 $Cta_Cobrar = trim($value["Cta"]);
                 if($Valor <> 0 || $Valor_ME <> 0)
                 {
-                    $datos[0]['campo']="T";
-                    $datos[0]['dato']=  $T;
-                    $datos[1]['campo']="TP";
-                    $datos[1]['dato']=  $TP;
-                    $datos[2]['campo']="Numero";
-                    $datos[2]['dato']=  $Numero;
-                    $datos[3]['campo']="Fecha";
-                    $datos[3]['dato']=  $Fecha;
-                    $datos[4]['campo']="Item";
-                    $datos[4]['dato']=  $_SESSION['INGRESO']['item'];
-                    $datos[5]['campo']="TC";
-                    $datos[5]['dato']=  $TipoCta;
-                    $datos[6]['campo']="Cta";
-                    $datos[6]['dato']=  $Cta_Cobrar;
-                    $datos[7]['campo']="Codigo";
-                    $datos[7]['dato']=  $Codigo;
-                    $datos[8]['campo']="Fecha_V";
-                    $datos[8]['dato']=  $Fecha_Vence->format('Y-m-d');
-                    $datos[9]['campo']="Factura";
-                    $datos[9]['dato']=  $Factura_No;
-                    $datos[10]['campo']="Detalle_SubCta";
-                    $datos[10]['dato']=  $value["Detalle_SubCta"];
-                    $datos[11]['campo']="Prima";
-                    $datos[11]['dato']=  $value["Prima"];
+                	SetAdoAddNew("Trans_SubCtas");
+                    SetAdoFields("T",$T);
+                    SetAdoFields("TP",$TP);
+                    SetAdoFields("Numero",$Numero);
+                    SetAdoFields("Fecha",$Fecha);
+                    SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+                    SetAdoFields("TC",$TipoCta);
+                    SetAdoFields("Cta",$Cta_Cobrar);
+                    SetAdoFields("Codigo",$Codigo);
+                    SetAdoFields("Fecha_V",$Fecha_Vence->format('Y-m-d'));
+                    SetAdoFields("Factura",$Factura_No);
+                    SetAdoFields("Detalle_SubCta",$value["Detalle_SubCta"]);
+                    SetAdoFields("Prima",$value["Prima"]);
                     if($OpcDH == 1)
                     {
-                    	$datos[12]['campo']="Debitos";
-                    	$datos[12]['dato']= $Valor;
-                    	$datos[13]['campo']="Parcial_ME";
-                    	$datos[13]['dato']= $Valor_ME;
+                    	SetAdoFields("Debitos",$Valor);
+                    	SetAdoFields("Parcial_ME",$Valor_ME);
                     }else
                     {
-                        $datos[12]['campo']="Creditos";
-                        $datos[12]['dato']= $Valor;
-                        $datos[13]['campo']="Parcial_ME";
-                        $datos[13]['dato']= '-'.$Valor_ME;
+                        SetAdoFields("Creditos",$Valor);
+                        SetAdoFields("Parcial_ME",'-'.$Valor_ME);
                     }
 
-                    $datos[14]['campo']="CodigoU";
-                    $datos[14]['dato']= $_SESSION['INGRESO']['CodigoU'];
+                    SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
                     // $NumTrans = $NumTrans + 1;
                     //funcion para actualizar o ingresar aqui
-
                      // print_r($datos);die();
                 }
-          	 $resp = $this->modelo->insertar_ingresos_tabla("Trans_SubCtas",$datos);
+
+          	 $resp = SetAdoUpdate();
           	}
           }
 
@@ -830,118 +798,63 @@ class incomC
           		// 'Generacion de la Retencion si es Electronica
                 $FechaTexto = $value["FechaRegistro"]->format('Y-m-d');
                 $CodSustento = generaCeros($value["CodSustento"],2);
-                // SetAdoAddNew "Trans_Compras"
-                $datosC[0]['campo']= "IdProv"; 
-                $datosC[0]['dato']= $CodigoB;
-                $datosC[1]['campo']= "DevIva"; 
-                $datosC[1]['dato']= $value["DevIva"];
-                $datosC[2]['campo']= "CodSustento"; 
-                $datosC[2]['dato']= $value["CodSustento"];
-                $datosC[3]['campo']= "TipoComprobante"; 
-                $datosC[3]['dato']= $value["TipoComprobante"];
-                $datosC[4]['campo']= "Establecimiento"; 
-                $datosC[4]['dato']= $value["Establecimiento"];
-                $datosC[5]['campo']= "PuntoEmision"; 
-                $datosC[5]['dato']= $value["PuntoEmision"];
-                $datosC[6]['campo']= "Secuencial"; 
-                $datosC[6]['dato']= $value["Secuencial"];
-                $datosC[7]['campo']= "Autorizacion"; 
-                $datosC[7]['dato']= $value["Autorizacion"];
-                $datosC[8]['campo']= "FechaEmision"; 
-                $datosC[8]['dato']= $value["FechaEmision"]->format('Y-m-d');
-                $datosC[9]['campo']= "FechaRegistro"; 
-                $datosC[9]['dato']= $value["FechaRegistro"]->format('Y-m-d');;
-                $datosC[10]['campo']= "FechaCaducidad"; 
-                $datosC[10]['dato']= $value["FechaCaducidad"]->format('Y-m-d');;
-                $datosC[11]['campo']= "BaseNoObjIVA"; 
-                $datosC[11]['dato']= number_format($value["BaseNoObjIVA"],2,'.','');
-                $datosC[12]['campo']= "BaseImponible"; 
-                $datosC[12]['dato']= number_format($value["BaseImponible"],2,'.','');
-                $datosC[13]['campo']= "BaseImpGrav"; 
-                $datosC[13]['dato']= number_format($value["BaseImpGrav"],2,'.','');
-                $datosC[14]['campo']= "PorcentajeIva"; 
-                $datosC[14]['dato']= $value["PorcentajeIva"];
-                $datosC[15]['campo']= "MontoIva"; 
-                $datosC[15]['dato']= number_format($value["MontoIva"],2,'.','');
-                $datosC[16]['campo']= "BaseImpIce"; 
-                $datosC[16]['dato']= number_format($value["BaseImpIce"],2,'.','');
-                $datosC[17]['campo']= "PorcentajeIce"; 
-                $datosC[17]['dato']= $value["PorcentajeIce"];
-                $datosC[18]['campo']= "MontoIce"; 
-                $datosC[18]['dato']= number_format($value["MontoIce"],2,'.','');
-                $datosC[19]['campo']= "MontoIvaBienes"; 
-                $datosC[19]['dato']= number_format($value["MontoIvaBienes"],2,'.','');
-                $datosC[20]['campo']= "PorRetBienes"; 
-                $datosC[20]['dato']= number_format($value["PorRetBienes"],2,'.','');
-                $datosC[21]['campo']= "ValorRetBienes"; 
-                $datosC[21]['dato']= number_format($value["ValorRetBienes"],2,'.','');
-                $datosC[22]['campo']= "MontoIvaServicios"; 
-                $datosC[22]['dato']= number_format($value["MontoIvaServicios"],2,'.','');
-                $datosC[23]['campo']= "PorRetServicios"; 
-                $datosC[23]['dato']= $value["PorRetServicios"];
-                $datosC[24]['campo']= "ValorRetServicios"; 
-                $datosC[24]['dato']= $value["ValorRetServicios"];
-                $datosC[25]['campo']= "Porc_Bienes"; 
-                $datosC[25]['dato']= $value["Porc_Bienes"];
-                $datosC[26]['campo']= "Porc_Servicios"; 
-                $datosC[26]['dato']= $value["Porc_Servicios"];
-                $datosC[27]['campo']= "Cta_Servicio"; 
-                $datosC[27]['dato']= $value["Cta_Servicio"];
-                $datosC[28]['campo']= "Cta_Bienes"; 
-                $datosC[28]['dato']= $value["Cta_Bienes"];
-                $datosC[29]['campo']= "Linea_SRI"; 
-                $datosC[29]['dato']= 0;
-                $datosC[30]['campo']= "DocModificado"; 
-                $datosC[30]['dato']= $value["DocModificado"];
-                $datosC[31]['campo']= "FechaEmiModificado"; 
-                $datosC[31]['dato']= $value["FechaEmiModificado"]->format('Y-m-d');
-                $datosC[32]['campo']= "EstabModificado"; 
-                $datosC[32]['dato']= $value["EstabModificado"];
-                $datosC[33]['campo']= "PtoEmiModificado"; 
-                $datosC[33]['dato']= $value["PtoEmiModificado"];
-                $datosC[34]['campo']= "SecModificado"; 
-                $datosC[34]['dato']= $value["SecModificado"];
-                $datosC[35]['campo']= "AutModificado"; 
-                $datosC[35]['dato']= $value["AutModificado"];
-                $datosC[36]['campo']= "ContratoPartidoPolitico"; 
-                $datosC[36]['dato']= $value["ContratoPartidoPolitico"];
-                $datosC[37]['campo']= "MontoTituloOneroso"; 
-                $datosC[37]['dato']= number_format($value["MontoTituloOneroso"],2,'.','');
-                $datosC[38]['campo']= "MontoTituloGratuito"; 
-                $datosC[38]['dato']= number_format($value["MontoTituloGratuito"],2,'.','');
-                $datosC[39]['campo']= "PagoLocExt"; 
-                $datosC[39]['dato']= $value["PagoLocExt"];
-                $datosC[40]['campo']= "PaisEfecPago"; 
-                $datosC[40]['dato']= $value["PaisEfecPago"];
-                $datosC[41]['campo']= "AplicConvDobTrib"; 
-                $datosC[41]['dato']= $value["AplicConvDobTrib"];
-                $datosC[42]['campo']= "PagExtSujRetNorLeg"; 
-                $datosC[42]['dato']= $value["PagExtSujRetNorLeg"];
-                $datosC[43]['campo']= "FormaPago"; 
-                $datosC[43]['dato']= $value["FormaPago"];
-                $datosC[44]['campo']= "Serie_Retencion"; 
-                $datosC[44]['dato']= $Serie_R;
-                $datosC[45]['campo']= "SecRetencion"; 
-                $datosC[45]['dato']= $Retencion;
-                $datosC[46]['campo']= "AutRetencion"; 
-                $datosC[46]['dato']= $Autorizacion_R;
-                $datosC[47]['campo']= "Clave_Acceso"; 
-                $datosC[47]['dato']= G_NINGUNO;
-                $datosC[48]['campo']= "T"; 
-                $datosC[48]['dato']= G_NORMAL;
-                $datosC[49]['campo']= "TP"; 
-                $datosC[49]['dato']= $TP;
-                $datosC[50]['campo']= "Numero"; 
-                $datosC[50]['dato']= $Numero;
-                $datosC[51]['campo']= "Fecha"; 
-                $datosC[51]['dato']= $Fecha;
-                $datosC[52]['campo']= "Item"; 
-                $datosC[52]['dato']= $_SESSION['INGRESO']['item'];
-                $datosC[53]['campo']= "CodigoU"; 
-                $datosC[53]['dato']= $_SESSION['INGRESO']['CodigoU'];
-
-                // print_r($datosC);die();
-           $resp = $this->modelo->insertar_ingresos_tabla("Trans_Compras",$datosC);
+                SetAdoAddNew("Trans_Compras");
+                SetAdoFields("IdProv",$CodigoB);
+                SetAdoFields("DevIva",$value["DevIva"]);
+                SetAdoFields("CodSustento",$value["CodSustento"]);
+                SetAdoFields("TipoComprobante",$value["TipoComprobante"]);
+                SetAdoFields("Establecimiento",$value["Establecimiento"]);
+                SetAdoFields("PuntoEmision",$value["PuntoEmision"]);
+                SetAdoFields("Secuencial",$value["Secuencial"]);
+                SetAdoFields("Autorizacion",$value["Autorizacion"]);
+                SetAdoFields("FechaEmision",$value["FechaEmision"]->format('Y-m-d'));
+                SetAdoFields("FechaRegistro",$value["FechaRegistro"]->format('Y-m-d'));
+                SetAdoFields("FechaCaducidad",$value["FechaCaducidad"]->format('Y-m-d'));
+                SetAdoFields("BaseNoObjIVA",number_format($value["BaseNoObjIVA"],2,'.',''));
+                SetAdoFields("BaseImponible",number_format($value["BaseImponible"],2,'.',''));
+                SetAdoFields("BaseImpGrav",number_format($value["BaseImpGrav"],2,'.',''));
+                SetAdoFields("PorcentajeIva",$value["PorcentajeIva"]);
+                SetAdoFields("MontoIva",number_format($value["MontoIva"],2,'.',''));
+                SetAdoFields("BaseImpIce",number_format($value["BaseImpIce"],2,'.',''));
+                SetAdoFields("PorcentajeIce",$value["PorcentajeIce"]);
+                SetAdoFields("MontoIce",number_format($value["MontoIce"],2,'.',''));
+                SetAdoFields("MontoIvaBienes",number_format($value["MontoIvaBienes"],2,'.',''));
+                SetAdoFields("PorRetBienes",number_format($value["PorRetBienes"],2,'.',''));
+                SetAdoFields("ValorRetBienes",number_format($value["ValorRetBienes"],2,'.',''));
+                SetAdoFields("MontoIvaServicios",number_format($value["MontoIvaServicios"],2,'.',''));
+                SetAdoFields("PorRetServicios",$value["PorRetServicios"]);
+                SetAdoFields("ValorRetServicios",$value["ValorRetServicios"]);
+                SetAdoFields("Porc_Bienes",$value["Porc_Bienes"]);
+                SetAdoFields("Porc_Servicios",$value["Porc_Servicios"]);
+                SetAdoFields("Cta_Servicio",$value["Cta_Servicio"]);
+                SetAdoFields("Cta_Bienes",$value["Cta_Bienes"]);
+                SetAdoFields("Linea_SRI",0);
+                SetAdoFields("DocModificado",$value["DocModificado"]);
+                SetAdoFields("FechaEmiModificado",$value["FechaEmiModificado"]->format('Y-m-d'));
+                SetAdoFields("EstabModificado",$value["EstabModificado"]);
+                SetAdoFields("PtoEmiModificado",$value["PtoEmiModificado"]);
+                SetAdoFields("SecModificado",$value["SecModificado"]);
+                SetAdoFields("AutModificado",$value["AutModificado"]);
+                SetAdoFields("ContratoPartidoPolitico",$value["ContratoPartidoPolitico"]);
+                SetAdoFields("MontoTituloOneroso",number_format($value["MontoTituloOneroso"],2,'.',''));
+                SetAdoFields("MontoTituloGratuito",number_format($value["MontoTituloGratuito"],2,'.',''));
+                SetAdoFields("PagoLocExt",$value["PagoLocExt"]);
+                SetAdoFields("PaisEfecPago",$value["PaisEfecPago"]);
+                SetAdoFields("AplicConvDobTrib",$value["AplicConvDobTrib"]);
+                SetAdoFields("PagExtSujRetNorLeg",$value["PagExtSujRetNorLeg"]);
+                SetAdoFields("FormaPago",$value["FormaPago"]);
+                SetAdoFields("Serie_Retencion",$Serie_R);
+                SetAdoFields("SecRetencion",$Retencion);
+                SetAdoFields("AutRetencion",$Autorizacion_R);
+                SetAdoFields("Clave_Acceso",G_NINGUNO);
+                SetAdoFields("T",G_NORMAL);
+                SetAdoFields("TP",$TP);
+                SetAdoFields("Numero",$Numero);
+                SetAdoFields("Fecha",$Fecha);
+                SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+                SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+               // print($datosC);die();
+          		 $resp = SetAdoUpdate();
                 // SetAdoUpdate
           	}
           }
@@ -956,84 +869,48 @@ class incomC
           {
           	foreach ($rv as $key => $value) {
           		$FechaTexto = $value["FechaRegistro"]->format('Y-m-d');
-                // SetAdoAddNew "Trans_Ventas"
-                $datosV[0]['campo']= "IdProv"; 
-                $datosV[0]['dato']=$CodigoB;
-                $datosV[1]['campo']= "TipoComprobante"; 
-                $datosV[1]['dato']=$value["TipoComprobante"];
-                $datosV[2]['campo']= "FechaRegistro"; 
-                $datosV[2]['dato']=$value["FechaRegistro"];
-                $datosV[3]['campo']= "FechaEmision"; 
-                $datosV[3]['dato']=$value["FechaEmision"];
-                $datosV[4]['campo']= "Establecimiento"; 
-                $datosV[4]['dato']=$value["Establecimiento"];
-                $datosV[5]['campo']= "PuntoEmision"; 
-                $datosV[5]['dato']=$value["PuntoEmision"];
-                $datosV[6]['campo']= "Secuencial"; 
-                $datosV[6]['dato']=$value["Secuencial"];
-                $datosV[7]['campo']= "NumeroComprobantes"; 
-                $datosV[7]['dato']=$value["NumeroComprobantes"];
-                $datosV[8]['campo']= "BaseImponible"; 
-                $datosV[8]['dato']=$value["BaseImponible"];
-                $datosV[9]['campo']= "IvaPresuntivo"; 
-                $datosV[9]['dato']=$value["IvaPresuntivo"];
-                $datosV[10]['campo']= "BaseImpGrav"; 
-                $datosV[10]['dato']=$value["BaseImpGrav"];
-                $datosV[11]['campo']= "PorcentajeIva"; 
-                $datosV[11]['dato']=$value["PorcentajeIva"];
-                $datosV[12]['campo']= "MontoIva"; 
-                $datosV[12]['dato']=$value["MontoIva"];
-                $datosV[13]['campo']= "BaseImpIce"; 
-                $datosV[13]['dato']=$value["BaseImpIce"];
-                $datosV[14]['campo']= "PorcentajeIce"; 
-                $datosV[14]['dato']=$value["PorcentajeIce"];
-                $datosV[15]['campo']= "MontoIce"; 
-                $datosV[15]['dato']=$value["MontoIce"];
-                $datosV[16]['campo']= "MontoIvaBienes"; 
-                $datosV[16]['dato']=$value["MontoIvaBienes"];
-                $datosV[17]['campo']= "PorRetBienes"; 
-                $datosV[17]['dato']=$value["PorRetBienes"];
-                $datosV[18]['campo']= "ValorRetBienes"; 
-                $datosV[18]['dato']=$value["ValorRetBienes"];
-                $datosV[19]['campo']= "MontoIvaServicios"; 
-                $datosV[19]['dato']=$value["MontoIvaServicios"];
-                $datosV[20]['campo']= "PorRetServicios"; 
-                $datosV[20]['dato']=$value["PorRetServicios"];
-                $datosV[21]['campo']= "ValorRetServicios"; 
-                $datosV[21]['dato']=$value["ValorRetServicios"];
-                $datosV[22]['campo']= "RetPresuntiva"; 
-                $datosV[22]['dato']=$value["RetPresuntiva"];
-                $datosV[23]['campo']= "Porc_Bienes"; 
-                $datosV[23]['dato']=$value["Porc_Bienes"];
-                $datosV[24]['campo']= "Porc_Servicios"; 
-                $datosV[24]['dato']=$value["Porc_Servicios"];
-                $datosV[25]['campo']= "Cta_Servicio"; 
-                $datosV[25]['dato']=$value["Cta_Servicio"];
-                $datosV[26]['campo']= "Cta_Bienes"; 
-                $datosV[26]['dato']=$value["Cta_Bienes"];
-                $datosV[27]['campo']= "Tipo_Pago"; 
-                $datosV[27]['dato']=$value["Tipo_Pago"];
-                $datosV[28]['campo']= "Linea_SRI"; 
-                $datosV[28]['dato']=0;
-                $datosV[29]['campo']= "T"; 
-                $datosV[29]['dato']=G_NORMAL;
-                $datosV[30]['campo']= "TP"; 
-                $datosV[30]['dato']=$TP;
-                $datosV[31]['campo']= "Numero"; 
-                $datosV[31]['dato']=$Numero;
-                $datosV[32]['campo']= "Fecha"; 
-                $datosV[32]['dato']=$Fecha;
-               // 'Razon Social
-               // 'MsgBox C1.Beneficiario
-                $datosV[33]['campo']= "RUC_CI"; 
-                $datosV[33]['dato']=$RUC_CI;
-                $datosV[34]['campo']= "IB"; 
-                $datosV[34]['dato']=$TD;
-                $datosV[35]['campo']= "Razon_Social"; 
-                $datosV[35]['dato']=$Beneficiario;
+                SetAdoAddNew("Trans_Ventas");
+                SetAdoFields("IdProv",$CodigoB);
+                SetAdoFields("TipoComprobante",$value["TipoComprobante"]);
+                SetAdoFields("FechaRegistro",$value["FechaRegistro"]);
+                SetAdoFields("FechaEmision",$value["FechaEmision"]);
+                SetAdoFields("Establecimiento",$value["Establecimiento"]);
+                SetAdoFields("PuntoEmision",$value["PuntoEmision"]);
+                SetAdoFields("Secuencial",$value["Secuencial"]);
+                SetAdoFields("NumeroComprobantes",$value["NumeroComprobantes"]);
+                SetAdoFields("BaseImponible",$value["BaseImponible"]);
+                SetAdoFields("IvaPresuntivo",$value["IvaPresuntivo"]);
+                SetAdoFields("BaseImpGrav",$value["BaseImpGrav"]);
+                SetAdoFields("PorcentajeIva",$value["PorcentajeIva"]);
+                SetAdoFields("MontoIva",$value["MontoIva"]);
+                SetAdoFields("BaseImpIce",$value["BaseImpIce"]);
+                SetAdoFields("PorcentajeIce",$value["PorcentajeIce"]);
+                SetAdoFields("MontoIce",$value["MontoIce"]);
+                SetAdoFields("MontoIvaBienes",$value["MontoIvaBienes"]);
+                SetAdoFields("PorRetBienes",$value["PorRetBienes"]);
+                SetAdoFields("ValorRetBienes",$value["ValorRetBienes"]);
+                SetAdoFields("MontoIvaServicios",$value["MontoIvaServicios"]);
+                SetAdoFields("PorRetServicios",$value["PorRetServicios"]);
+                SetAdoFields("ValorRetServicios",$value["ValorRetServicios"]);
+                SetAdoFields("RetPresuntiva",$value["RetPresuntiva"]);
+                SetAdoFields("Porc_Bienes",$value["Porc_Bienes"]);
+                SetAdoFields("Porc_Servicios",$value["Porc_Servicios"]);
+                SetAdoFields("Cta_Servicio",$value["Cta_Servicio"]);
+                SetAdoFields("Cta_Bienes",$value["Cta_Bienes"]);
+                SetAdoFields("Tipo_Pago",$value["Tipo_Pago"]);
+                SetAdoFields("Linea_SRI",0);
+                SetAdoFields("T",G_NORMAL);
+                SetAdoFields("TP",$TP);
+                SetAdoFields("Numero",$Numero);
+                SetAdoFields("Fecha",$Fecha);
+               // 'Razonocial
+               // 'MsgBoC1.Beneficiario
+                SetAdoFields("RUC_CI",$RUC_CI);
+                SetAdoFields("IB",$TD);
+                SetAdoFields("Razon_Social",$Beneficiario);
                 // SetAdoUpdate          	
           	}
-          	 $resp = $this->modelo->insertar_ingresos_tabla("Trans_Ventas",$datosV);
+          	 $resp = SetAdoUpdate();
           }
 
           // ' RETENCIONES EXPORTACION
@@ -1044,63 +921,37 @@ class incomC
           if(count($re)>0)
           {
           	foreach ($re as $key => $value) {
-          		 // SetAdoAddNew "Trans_Exportaciones"
-                 $datosE[0]['campo']= "Codigo"; 
-                 $datosE[0]['dato']=$value["Codigo"];
-                 $datosE[0]['campo']= "CtasxCobrar"; 
-                 $datosE[0]['dato']=$value["CtasxCobrar"];
-                 $datosE[0]['campo']= "ExportacionDe"; 
-                 $datosE[0]['dato']=$value["ExportacionDe"];
-                 $datosE[0]['campo']= "TipoComprobante"; 
-                 $datosE[0]['dato']=$value["TipoComprobante"];
-                 $datosE[0]['campo']= "FechaEmbarque"; 
-                 $datosE[0]['dato']=$value["FechaEmbarque"];
-                 $datosE[0]['campo']= "NumeroDctoTransporte"; 
-                 $datosE[0]['dato']=$value["NumeroDctoTransporte"];
-                 $datosE[0]['campo']= "IdFiscalProv"; 
-                 $datosE[0]['dato']=$CodigoB;
-                 $datosE[0]['campo']= "ValorFOB"; 
-                 $datosE[0]['dato']=$value["ValorFOB"];
-                 $datosE[0]['campo']= "DevIva"; 
-                 $datosE[0]['dato']=$value["DevIva"];
-                 $datosE[0]['campo']= "FacturaExportacion"; 
-                 $datosE[0]['dato']=$value["FacturaExportacion"];
-                 $datosE[0]['campo']= "ValorFOBComprobante"; 
-                 $datosE[0]['dato']=$value["ValorFOBComprobante"];
-                 $datosE[0]['campo']= "DistAduanero"; 
-                 $datosE[0]['dato']=$value["DistAduanero"];
-                 $datosE[0]['campo']= "Anio"; 
-                 $datosE[0]['dato']=$value["Anio"];
-                 $datosE[0]['campo']= "Regimen"; 
-                 $datosE[0]['dato']=$value["Regimen"];
-                 $datosE[0]['campo']= "Correlativo"; 
-                 $datosE[0]['dato']=$value["Correlativo"];
-                 $datosE[0]['campo']= "Verificador"; $datosE[0]['dato']=$value["Verificador"];
-                 $datosE[0]['campo']= "Establecimiento"; 
-                 $datosE[0]['dato']=$value["Establecimiento"];
-                 $datosE[0]['campo']= "PuntoEmision"; 
-                 $datosE[0]['dato']=$value["PuntoEmision"];
-                 $datosE[0]['campo']= "Secuencial"; 
-                 $datosE[0]['dato']=$value["Secuencial"];
-                 $datosE[0]['campo']= "Autorizacion"; 
-                 $datosE[0]['dato']=$value["Autorizacion"];
-                 $datosE[0]['campo']= "FechaEmision"; 
-                 $datosE[0]['dato']=$value["FechaEmision"];
-                 $datosE[0]['campo']= "FechaRegistro"; 
-                 $datosE[0]['dato']=$value["FechaRegistro"];
-                 $datosE[0]['campo']= "Linea_SRI"; 
-                 $datosE[0]['dato']=0;
-                 $datosE[0]['campo']= "T"; 
-                 $datosE[0]['dato']=G_NORMAL;
-                 $datosE[0]['campo']= "TP"; 
-                 $datosE[0]['dato']=$TP;
-                 $datosE[0]['campo']= "Numero"; 
-                 $datosE[0]['dato']=$Numero;
-                 $datosE[0]['campo']= "Fecha"; 
-                 $datosE[0]['dato']=$Fecha;
+          		 SetAdoAddNew("Trans_Exportaciones");
+                 SetAdoFields("Codigo",$value["Codigo"]);
+                 SetAdoFields("CtasxCobrar",$value["CtasxCobrar"]);
+                 SetAdoFields("ExportacionDe",$value["ExportacionDe"]);
+                 SetAdoFields("TipoComprobante",$value["TipoComprobante"]);
+                 SetAdoFields("FechaEmbarque",$value["FechaEmbarque"]);
+                 SetAdoFields("NumeroDctoTransporte",$value["NumeroDctoTransporte"]);
+                 SetAdoFields("IdFiscalProv",$CodigoB);
+                 SetAdoFields("ValorFOB",$value["ValorFOB"]);
+                 SetAdoFields("DevIva",$value["DevIva"]);
+                 SetAdoFields("FacturaExportacion",$value["FacturaExportacion"]);
+                 SetAdoFields("ValorFOBComprobante",$value["ValorFOBComprobante"]);
+                 SetAdoFields("DistAduanero",$value["DistAduanero"]);
+                 SetAdoFields("Anio",$value["Anio"]);
+                 SetAdoFields("Regimen",$value["Regimen"]);
+                 SetAdoFields("Correlativo",$value["Correlativo"]);
+                 SetAdoFields("Verificador",$value["Verificador"]);
+                 SetAdoFields("Establecimiento",$value["Establecimiento"]);
+                 SetAdoFields("PuntoEmision",$value["PuntoEmision"]);
+                 SetAdoFields("Secuencial",$value["Secuencial"]);
+                 SetAdoFields("Autorizacion",$value["Autorizacion"]);
+                 SetAdoFields("FechaEmision",$value["FechaEmision"]);
+                 SetAdoFields("FechaRegistro",$value["FechaRegistro"]);
+                 SetAdoFields("Linea_SRI",0);
+                 SetAdoFields("T",G_NORMAL);
+                 SetAdoFields("TP",$TP);
+                 SetAdoFields("Numero",$Numero);
+                 SetAdoFields("Fecha",$Fecha);
                  // SetAdoUpdate
           	}          	
-          	 $resp = $this->modelo->insertar_ingresos_tabla("Trans_Exportaciones",$datosE);
+          	 $resp = SetAdoUpdate();
           }
 
           // ' RETENCIONES IMPORTACIONES
@@ -1112,57 +963,34 @@ class incomC
           {
           	foreach ($ri as $key => $value) {
           		 $FechaTexto = $value["FechaLiquidacion"]->format('Y-m-d');
-                 // SetAdoAddNew "Trans_Importaciones"
-                 $datosI[0]['campo']= "CodSustento"; 
-                 $datosI[0]['dato']= $value["CodSustento"];
-                 $datosI[0]['campo']= "ImportacionDe"; 
-                 $datosI[0]['dato']= $value["ImportacionDe"];
-                 $datosI[0]['campo']= "FechaLiquidacion"; 
-                 $datosI[0]['dato']= $value["FechaLiquidacion"];
-                 $datosI[0]['campo']= "TipoComprobante"; 
-                 $datosI[0]['dato']= $value["TipoComprobante"];
-                 $datosI[0]['campo']= "DistAduanero"; 
-                 $datosI[0]['dato']= $value["DistAduanero"];
-                 $datosI[0]['campo']= "Anio"; 
-                 $datosI[0]['dato']= $value["Anio"];
-                 $datosI[0]['campo']= "Regimen"; 
-                 $datosI[0]['dato']= $value["Regimen"];
-                 $datosI[0]['campo']= "Correlativo"; 
-                 $datosI[0]['dato']= $value["Correlativo"];
-                 $datosI[0]['campo']= "Verificador"; 
-                 $datosI[0]['dato']= $value["Verificador"];
-                 $datosI[0]['campo']= "IdFiscalProv"; 
-                 $datosI[0]['dato']= $CodigoB;
-                 $datosI[0]['campo']= "ValorCIF"; 
-                 $datosI[0]['dato']= $value["ValorCIF"];
-                 $datosI[0]['campo']= "BaseImponible"; 
-                 $datosI[0]['dato']= $value["BaseImponible"];
-                 $datosI[0]['campo']= "BaseImpGrav"; 
-                 $datosI[0]['dato']= $value["BaseImpGrav"];
-                 $datosI[0]['campo']= "PorcentajeIva"; 
-                 $datosI[0]['dato']= $value["PorcentajeIva"];
-                 $datosI[0]['campo']= "MontoIva"; 
-                 $datosI[0]['dato']= $value["MontoIva"];
-                 $datosI[0]['campo']= "BaseImpIce"; 
-                 $datosI[0]['dato']= $value["BaseImpIce"];
-                 $datosI[0]['campo']= "PorcentajeIce"; 
-                 $datosI[0]['dato']= $value["PorcentajeIce"];
-                 $datosI[0]['campo']= "MontoIce"; 
-                 $datosI[0]['dato']= $value["MontoIce"];
-                 $datosI[0]['campo']= "Linea_SRI"; 
-                 $datosI[0]['dato']= 0;
-                 $datosI[0]['campo']= "T"; 
-                 $datosI[0]['dato']= G_NORMAL;
-                 $datosI[0]['campo']= "TP"; 
-                 $datosI[0]['dato']= $TP;
-                 $datosI[0]['campo']= "Numero"; 
-                 $datosI[0]['dato']= $Numero;
-                 $datosI[0]['campo']= "Fecha"; 
-                 $datosI[0]['dato']= $Fecha;
+                 SetAdoAddNew("Trans_Importaciones");
+                 SetAdoFields("CodSustento",$value["CodSustento"]);
+                 SetAdoFields("ImportacionDe",$value["ImportacionDe"]);
+                 SetAdoFields("FechaLiquidacion",$value["FechaLiquidacion"]);
+                 SetAdoFields("TipoComprobante",$value["TipoComprobante"]);
+                 SetAdoFields("DistAduanero",$value["DistAduanero"]);
+                 SetAdoFields("Anio",$value["Anio"]);
+                 SetAdoFields("Regimen",$value["Regimen"]);
+                 SetAdoFields("Correlativo",$value["Correlativo"]);
+                 SetAdoFields("Verificador",$value["Verificador"]);
+                 SetAdoFields("IdFiscalProv",$CodigoB);
+                 SetAdoFields("ValorCIF",$value["ValorCIF"]);
+                 SetAdoFields("BaseImponible",$value["BaseImponible"]);
+                 SetAdoFields("BaseImpGrav",$value["BaseImpGrav"]);
+                 SetAdoFields("PorcentajeIva",$value["PorcentajeIva"]);
+                 SetAdoFields("MontoIva",$value["MontoIva"]);
+                 SetAdoFields("BaseImpIce",$value["BaseImpIce"]);
+                 SetAdoFields("PorcentajeIce",$value["PorcentajeIce"]);
+                 SetAdoFields("MontoIce",$value["MontoIce"]);
+                 SetAdoFields("Linea_SRI",0);
+                 SetAdoFields("T",G_NORMAL);
+                 SetAdoFields("TP",$TP);
+                 SetAdoFields("Numero",$Numero);
+                 SetAdoFields("Fecha",$Fecha);
                  // SetAdoUpdate
           	}
 
-          	 $resp = $this->modelo->insertar_ingresos_tabla("Trans_Importaciones",$datosI);
+          	  $resp = SetAdoUpdate();
           }
 
           // ' RETENCIONES AIR
@@ -1172,52 +1000,31 @@ class incomC
           if(count($ra)>0)
           {
           	foreach ($ra as $key => $value) {
-          		  // SetAdoAddNew "Trans_Air"
-                  $datosA[0]['campo']=  "CodRet"; 
-                  $datosA[0]['dato']= $value["CodRet"];
-                  $datosA[1]['campo']=  "BaseImp"; 
-                  $datosA[1]['dato']= $value["BaseImp"];
-                  $datosA[2]['campo']=  "Porcentaje"; 
-                  $datosA[2]['dato']= number_format($value["Porcentaje"],2);
-                  $datosA[3]['campo']=  "ValRet";
-                  $datosA[3]['dato']= $value["ValRet"];
-                  $datosA[4]['campo']=  "EstabRetencion"; 
-                  $datosA[4]['dato']= $value["EstabRetencion"];
-                  $datosA[5]['campo']=  "PtoEmiRetencion"; 
-                  $datosA[5]['dato']= $value["PtoEmiRetencion"];
-                  $datosA[6]['campo']=  "Tipo_Trans"; 
-                  $datosA[6]['dato']= $value["Tipo_Trans"];
-                  $datosA[7]['campo']=  "IdProv"; 
-                  $datosA[7]['dato']= $CodigoB;
-                  $datosA[8]['campo']=  "Cta_Retencion"; 
-                  $datosA[8]['dato']= $value["Cta_Retencion"];
-                  $datosA[9]['campo']=  "EstabFactura";
-                  $datosA[9]['dato']= $value["EstabFactura"];
-                  $datosA[10]['campo']=  "PuntoEmiFactura"; 
-                  $datosA[10]['dato']= $value["PuntoEmiFactura"];
-                  $datosA[11]['campo']=  "Factura_No"; 
-                  $datosA[11]['dato']= $value["Factura_No"];
-                  $datosA[12]['campo']=  "Linea_SRI"; 
-                  $datosA[12]['dato']= 0;
-                  $datosA[13]['campo']=  "T"; 
-                  $datosA[13]['dato']= G_NORMAL;
-                  $datosA[14]['campo']=  "TP"; 
-                  $datosA[14]['dato']= $TP;
-                  $datosA[15]['campo']=  "Numero"; 
-                  $datosA[15]['dato']= $Numero;
-                  $datosA[16]['campo']=  "Fecha"; 
-                  $datosA[16]['dato']= $Fecha;
-                  $datosA[17]['campo']=  "SecRetencion"; 
-                  $datosA[17]['dato']= $Retencion;
-                  $datosA[18]['campo']=  "AutRetencion"; 
-                  $datosA[18]['dato']= $Autorizacion_R;                  
-                  $datosA[19]['campo']=  "Item"; 
-                  $datosA[19]['dato']= $_SESSION['INGRESO']['item'];
-                  $datosA[20]['campo']=  "CodigoU"; 
-                  $datosA[20]['dato']= $_SESSION['INGRESO']['CodigoU'];
+          		  SetAdoAddNew("Trans_Air");
+                  SetAdoFields("CodRet",$value["CodRet"]);
+                  SetAdoFields("BaseImp",$value["BaseImp"]);
+                  SetAdoFields("Porcentaje",number_format($value["Porcentaje"],2));
+                  SetAdoFields("ValRet",$value["ValRet"]);
+                  SetAdoFields("EstabRetencion",$value["EstabRetencion"]);
+                  SetAdoFields("PtoEmiRetencion",$value["PtoEmiRetencion"]);
+                  SetAdoFields("Tipo_Trans",$value["Tipo_Trans"]);
+                  SetAdoFields("IdProv",$CodigoB);
+                  SetAdoFields("Cta_Retencion",$value["Cta_Retencion"]);
+                  SetAdoFields("EstabFactura",$value["EstabFactura"]);
+                  SetAdoFields("PuntoEmiFactura",$value["PuntoEmiFactura"]);
+                  SetAdoFields("Factura_No",$value["Factura_No"]);
+                  SetAdoFields("Linea_SRI",0);
+                  SetAdoFields("T",G_NORMAL);
+                  SetAdoFields("TP",$TP);
+                  SetAdoFields("Numero",$Numero);
+                  SetAdoFields("Fecha",$Fecha);
+                  SetAdoFields("SecRetencion",$Retencion);
+                  SetAdoFields("AutRetencion",$Autorizacion_R);                  
+                  SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+                  SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
                   // SetAdoUpdate
                   // NumTrans = NumTrans + 1
-             $resp = $this->modelo->insertar_ingresos_tabla("Trans_Air",$datosA);
+             $resp = SetAdoUpdate();
 
              // print_r($resp);die();
 
@@ -1232,31 +1039,24 @@ class incomC
 
           if(count($rp['res'])>0)
           {
+          	 SetAdoAddNew("Trans_Rol_Pagos");
           	foreach ($rp['res'] as $key => $value) {
           		$count = 1;
           		foreach ($rp['smtp'] as $key1 => $value1) {
-          			$datosP[$count]['campo']= "'".$value1['COLUMN_NAME']."'"; 
-                    $datosP[$count]['dato']= "'".$value1['COLUMN_NAME']."'";           			
+          			SetAdoFields("'".$value1['COLUMN_NAME']."'","'".$value1['COLUMN_NAME']."'");           			
           		}
           		//buscar en  el array para remplazar en estos
-                 $datosP[0]['campo']=  "CodigoU"; 
-                 $datosP[0]['dato']= $CodigoUsuario;
-                 $datosP[0]['campo']=  "Item"; 
-                 $datosP[0]['dato']= $_SESSION['INGRESO']['item'];
-                 $datosP[0]['campo']=  "Fecha"; 
-                 $datosP[0]['dato']= $Fecha;
-                 $datosP[0]['campo']=  "T"; 
-                 $datosP[0]['dato']= $Normal;
-                 $datosP[0]['campo']=  "TP"; 
-                 $datosP[0]['dato']= $TP;
-                 $datosP[0]['campo']=  "Numero"; 
-                 $datosP[0]['dato']= $Numero;
-                 $datosP[0]['campo']=  "Codigo"; 
-                 $datosP[0]['dato']= $CodigoB;
+                 SetAdoFields("CodigoU",$CodigoUsuario);
+                 SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+                 SetAdoFields("Fecha",$Fecha);
+                 SetAdoFields("T",$Normal);
+                 SetAdoFields("TP",$TP);
+                 SetAdoFields("Numero",$Numero);
+                 SetAdoFields("Codigo",$CodigoB);
                 //  SetAdoUpdate
                 // .MoveNext
           	}
-          	 $resp = $this->modelo->insertar_ingresos_tabla("Trans_Rol_Pagos",$datosP);
+          	 $resp = SetAdoUpdate();
           }
 
 
@@ -1269,91 +1069,56 @@ class incomC
           {
           	foreach ($gi as $key => $value) {
           		// ' Asiento de Inventario
-                // SetAdoAddNew "Trans_Kardex"
-                $datosGI[0]['campo']=   "T"; 
-                $datosGI[0]['dato']=  G_NORMAL;
-                $datosGI[0]['campo']=   "TP"; 
-                $datosGI[0]['dato']=  $TP;
-                $datosGI[0]['campo']=   "Numero"; 
-                $datosGI[0]['dato']=  $Numero;
-                $datosGI[0]['campo']=   "Fecha"; 
-                $datosGI[0]['dato']=  $Fecha;
-                $datosGI[0]['campo']=   "Codigo_Dr"; 
-                $datosGI[0]['dato']=  $value["Codigo_Dr"];// ' C1.CodigoDr
-                $datosGI[0]['campo']=   "Codigo_Tra"; 
-                $datosGI[0]['dato']=  $value["Codigo_Tra"]; // ' C1.CodigoDr
-                $datosGI[0]['campo']=   "Codigo_Inv"; 
-                $datosGI[0]['dato']=  $value["CODIGO_INV"];
-                $datosGI[0]['campo']=   "Codigo_P"; 
-                $datosGI[0]['dato']=  $value["Codigo_B"];
-                $datosGI[0]['campo']=   "Descuento"; 
-                $datosGI[0]['dato']=  $value["P_DESC"];
-                $datosGI[0]['campo']=   "Descuento1"; 
-                $datosGI[0]['dato']=  $value["P_DESC1"];
-                $datosGI[0]['campo']=   "Valor_Total"; 
-                $datosGI[0]['dato']=  $value["VALOR_TOTAL"];
-                $datosGI[0]['campo']=   "Existencia"; 
-                $datosGI[0]['dato']=  $value["CANTIDAD"];
-                $datosGI[0]['campo']=   "Valor_Unitario"; 
-                $datosGI[0]['dato']=  $value["VALOR_UNIT"];
-                $datosGI[0]['campo']=   "Total"; 
-                $datosGI[0]['dato']=  $value["SALDO"];
-                $datosGI[0]['campo']=   "Cta_Inv"; 
-                $datosGI[0]['dato']=  $value["CTA_INVENTARIO"];
-                $datosGI[0]['campo']=   "Contra_Cta"; 
-                $datosGI[0]['dato']=  $value["CONTRA_CTA"];
-                $datosGI[0]['campo']=   "Orden_No"; 
-                $datosGI[0]['dato']=  $value["ORDEN"];
-                $datosGI[0]['campo']=   "CodBodega"; 
-                $datosGI[0]['dato']=  $value["CodBod"];
-                $datosGI[0]['campo']=   "CodMarca"; 
-                $datosGI[0]['dato']=  $value["CodMar"];
-                $datosGI[0]['campo']=   "Codigo_Barra"; 
-                $datosGI[0]['dato']=  $value["COD_BAR"];
-                $datosGI[0]['campo']=   "Costo"; 
-                $datosGI[0]['dato']=  $value["VALOR_UNIT"];
-                $datosGI[0]['campo']=   "PVP"; 
-                $datosGI[0]['dato']=  $value["PVP"];
-                $datosGI[0]['campo']=   "No_Refrendo"; 
-                $datosGI[0]['dato']=  $value["No_Refrendo"];
-                $datosGI[0]['campo']=   "Lote_No"; 
-                $datosGI[0]['dato']=  $value["Lote_No"];
-                $datosGI[0]['campo']=   "Fecha_Fab"; 
-                $datosGI[0]['dato']=  $value["Fecha_Fab"];
-                $datosGI[0]['campo']=   "Fecha_Exp"; 
-                $datosGI[0]['dato']=  $value["Fecha_Exp"];
-                $datosGI[0]['campo']=   "Modelo"; 
-                $datosGI[0]['dato']=  $value["Modelo"];
-                $datosGI[0]['campo']=   "Serie_No"; 
-                $datosGI[0]['dato']=  $value["Serie_No"];
-                $datosGI[0]['campo']=   "Procedencia"; 
-                $datosGI[0]['dato']=  $value["Procedencia"];
+                SetAdoAddNew("Trans_Kardex");
+                SetAdoFields("T",G_NORMAL);
+                SetAdoFields("TP",$TP);
+                SetAdoFields("Numero",$Numero);
+                SetAdoFields("Fecha",$Fecha);
+                SetAdoFields("Codigo_Dr",$value["Codigo_Dr"]);// ' C1.CodigoDr
+                SetAdoFields("Codigo_Tra",$value["Codigo_Tra"]); // ' C1.CodigoDr
+                SetAdoFields("Codigo_Inv",$value["CODIGO_INV"]);
+                SetAdoFields("Codigo_P",$value["Codigo_B"]);
+                SetAdoFields("Descuento",$value["P_DESC"]);
+                SetAdoFields("Descuento1",$value["P_DESC1"]);
+                SetAdoFields("Valor_Total",$value["VALOR_TOTAL"]);
+                SetAdoFields("Existencia",$value["CANTIDAD"]);
+                SetAdoFields("Valor_Unitario",$value["VALOR_UNIT"]);
+                SetAdoFields("Total",$value["SALDO"]);
+                SetAdoFields("Cta_Inv",$value["CTA_INVENTARIO"]);
+                SetAdoFields("Contra_Cta",$value["CONTRA_CTA"]);
+                SetAdoFields("Orden_No",$value["ORDEN"]);
+                SetAdoFields("CodBodega",$value["CodBod"]);
+                SetAdoFields("CodMarca",$value["CodMar"]);
+                SetAdoFields("Codigo_Barra",$value["COD_BAR"]);
+                SetAdoFields("Costo",$value["VALOR_UNIT"]);
+                SetAdoFields("PVP",$value["PVP"]);
+                SetAdoFields("No_Refrendo",$value["No_Refrendo"]);
+                SetAdoFields("Lote_No",$value["Lote_No"]);
+                SetAdoFields("Fecha_Fab",$value["Fecha_Fab"]);
+                SetAdoFields("Fecha_Exp",$value["Fecha_Exp"]);
+                SetAdoFields("Modelo",$value["Modelo"]);
+                SetAdoFields("Serie_No",$value["Serie_No"]);
+                SetAdoFields("Procedencia",$value["Procedencia"]);
                 if($Inv_Promedio){
                    $Cantidad = $value["CANTIDAD"];
                    $Saldo = $value["SALDO"];
                    if($Cantidad <= 0){$Cantidad = 1;}
-                   $datosGI[0]['campo']= "Costo";
-                   $datosGI[0]['dato'] = number_format($Saldo / $Cantidad,2);
+                   SetAdoFields("Costo", number_format($Saldo / $Cantidad,2,'.',''));
                 }
                 if($value["DH"] == 1){
-                   $datosGI[0]['campo']=   "Entrada";
-                   $datosGI[0]['dato']=   $value["CANT_ES"];
+                   SetAdoFields("Entrada",$value["CANT_ES"]);
                 }else{
-                   $datosGI[0]['campo']=   "Salida";
-                   $datosGI[0]['dato']=  $value["CANT_ES"];
+                   SetAdoFields("Salida",$value["CANT_ES"]);
                    $Si_No = False;
                 }
-                $datosGI[0]['campo']=   "CodigoU"; 
-                $datosGI[0]['dato']= $_SESSION['INGRESO']['CodigoU'];
-                $datosGI[0]['campo']=   "Item"; 
-                $datosGI[0]['dato']=  $_SESSION['INGRESO']['item'];
+                SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+                SetAdoFields("Item",$_SESSION['INGRESO']['item']);
                 // SetAdoUpdate
-                // AdoTemp.MoveNext
-                
+                // AdoTemp.MoveNext                
                 $NumTrans = $NumTrans + 1;
 
           	}          	
-          	 $resp = $this->modelo->insertar_ingresos_tabla("Trans_Kardex",$datosGI);
+          	 $resp = SetAdoUpdate();
           }
 
 
@@ -1368,35 +1133,22 @@ class incomC
              $TotalInteres = 0;
           	foreach ($gp as $key => $value) {
           		if( $value["Cuotas"] > 0 ){
-                    // SetAdoAddNew "Trans_Prestamos"
-                    $datosCu[0]['campo']= "T"; 
-                    $datosCu[0]['dato']="P";
-                    $datosCu[0]['campo']= "Fecha"; 
-                    $datosCu[0]['dato']=$value["Fecha"];
-                    $datosCu[0]['campo']= "TP"; 
-                    $datosCu[0]['dato']=$TP;
-                    $datosCu[0]['campo']= "Credito_No"; 
-                    $datosCu[0]['dato']=$_SESSION['INGRESO']['item'].''.generaCeros($Numero,7);
-                    $datosCu[0]['campo']= "Cta"; 
-                    $datosCu[0]['dato']=$Cta;
-                    $datosCu[0]['campo']= "Cuenta_No"; 
-                    $datosCu[0]['dato']=$CodigoB;
-                    $datosCu[0]['campo']= "Cuota_No"; 
-                    $datosCu[0]['dato']=$value["Cuotas"];
-                    $datosCu[0]['campo']= "Interes"; 
-                    $datosCu[0]['dato']=$value["Interes"];
-                    $datosCu[0]['campo']= "Capital"; 
-                    $datosCu[0]['dato']=$value["Capital"];
-                    $datosCu[0]['campo']= "Pagos"; 
-                    $datosCu[0]['dato']=$value["Pagos"];
-                    $datosCu[0]['campo']= "Saldo"; 
-                    $datosCu[0]['dato']=$value["Saldo"];
-                    $datosCu[0]['campo']= "CodigoU"; 
-                    $datosCu[0]['dato']=$value["CodigoU"];
-                    $datosCu[0]['campo']= "Item"; 
-                    $datosCu[0]['dato']=$_SESSION['INGRESO']['item'];
+                    SetAdoAddNew("Trans_Prestamos");
+                    SetAdoFields("T","P");
+                    SetAdoFields("Fecha",$value["Fecha"]);
+                    SetAdoFields("TP",$TP);
+                    SetAdoFields("Credito_No",$_SESSION['INGRESO']['item'].''.generaCeros($Numero,7));
+                    SetAdoFields("Cta",$Cta);
+                    SetAdoFields("Cuenta_No",$CodigoB);
+                    SetAdoFields("Cuota_No",$value["Cuotas"]);
+                    SetAdoFields("Interes",$value["Interes"]);
+                    SetAdoFields("Capital",$value["Capital"]);
+                    SetAdoFields("Pagos",$value["Pagos"]);
+                    SetAdoFields("Saldo",$value["Saldo"]);
+                    SetAdoFields("CodigoU",$value["CodigoU"]);
+                    SetAdoFields("Item",$_SESSION['INGRESO']['item']);
                     // SetAdoUpdate//actualiza
-                    $resp = $this->modelo->insertar_ingresos_tabla("Trans_Prestamos",$datosCu);
+                    $resp = SetAdoUpdate();
                 }
                 $TotalCapital = $TotalCapital + $value["Capital"];
                 $TotalInteres = $TotalInteres + $value["Interes"];
@@ -1405,35 +1157,22 @@ class incomC
                 $NumMeses = $value["Cuotas"];
                 // AdoTemp.MoveNext
           	}
-          	 // SetAdoAddNew "Prestamos"
-             $datosPr[0]['campo']= "T"; 
-             $datosPr[0]['dato']="P";
-             $datosPr[0]['campo']= "Fecha"; 
-             $datosPr[0]['dato']=$Fecha;
-             $datosPr[0]['campo']= "TP"; 
-             $datosPr[0]['dato']=$TP;
-             $datosPr[0]['campo']= "Credito_No"; 
-             $datosPr[0]['dato']= $_SESSION['INGRESO']['item'].''.generaCeros($Numero,7);
-             $datosPr[0]['campo']= "Cta"; 
-             $datosPr[0]['dato']=$Cta;
-             $datosPr[0]['campo']= "Cuenta_No"; 
-             $datosPr[0]['dato']=$CodigoB;
-             $datosPr[0]['campo']= "Meses"; 
-             $datosPr[0]['dato']=NumMeses;
-             $datosPr[0]['campo']= "Tasa"; 
-             $datosPr[0]['dato']=number_format(($TotalInteres * 12) / ($TotalCapital * $NumMeses),4);
-             $datosPr[0]['campo']= "Interes"; 
-             $datosPr[0]['dato']=$TotalInteres;
-             $datosPr[0]['campo']= "Capital"; 
-             $datosPr[0]['dato']=$TotalCapital;
-             $datosPr[0]['campo']= "Pagos"; 
-             $datosPr[0]['dato']=$TotalAbonos;
-             $datosPr[0]['campo']= "Saldo_Pendiente"; 
-             $datosPr[0]['dato']=$TotalCapital;
-             $datosPr[0]['campo']= "Item"; 
-             $datosPr[0]['dato']=$_SESSION['INGRESO']['item'];
+          	 SetAdoAddNew("Prestamos");
+             SetAdoFields("T","P");
+             SetAdoFields("Fecha",$Fecha);
+             SetAdoFields("TP",$TP);
+             SetAdoFields("Credito_No",$_SESSION['INGRESO']['item'].''.generaCeros($Numero,7));
+             SetAdoFields("Cta",$Cta);
+             SetAdoFields("Cuenta_No",$CodigoB);
+             SetAdoFields("Meses",NumMeses);
+             SetAdoFields("Tasa",number_format(($TotalInteres * 12) / ($TotalCapital * $NumMeses),4,'.',''));
+             SetAdoFields("Interes",$TotalInteres);
+             SetAdoFields("Capital",$TotalCapital);
+             SetAdoFields("Pagos",$TotalAbonos);
+             SetAdoFields("Saldo_Pendiente",$TotalCapital);
+             SetAdoFields("Item",$_SESSION['INGRESO']['item']);
 
-             $resp = $this->modelo->insertar_ingresos_tabla("Prestamos",$datosPr);
+             $resp = SetAdoUpdate();
              // SetAdoUpdate ingresa creo
 
           }
@@ -1465,41 +1204,23 @@ class incomC
                 if (stristr($Ctas_Modificar, $Cta) === false) {  $Ctas_Modificar.= $Ctas_Modificar.''.$Cta.",";}
                 // if (InStr(C1.Ctas_Modificar, $Cta) == 0){ C1.Ctas_Modificar == C1.Ctas_Modificar.''.$Cta.",";}
                 if(($Debe + $Haber) > 0){
-                   // SetAdoAddNew "Transacciones"
-
-                   $datosGT[0]['campo']= "T"; 
-                   $datosGT[0]['dato']=$T;
-                   $datosGT[1]['campo']= "Fecha"; 
-                   $datosGT[1]['dato']=$Fecha;
-                   $datosGT[2]['campo']= "TP"; 
-                   $datosGT[2]['dato']=$TP;
-                   $datosGT[3]['campo']= "Numero"; 
-                   $datosGT[3]['dato']=$Numero;
-                   $datosGT[4]['campo']= "Cta"; 
-                   $datosGT[4]['dato']=$Cta;
-                   $datosGT[5]['campo']= "Parcial_ME"; 
-                   $datosGT[5]['dato']=$Parcial;
-                   $datosGT[6]['campo']= "Debe"; 
-                   $datosGT[6]['dato']=$Debe;
-                   $datosGT[7]['campo']= "Haber"; 
-                   $datosGT[7]['dato']=$Haber;
-                   // $datosGT[8]['campo']= "Parcial_ME"; 
-                   // $datosGT[8]['dato']=$Parcial;
-                   $datosGT[8]['campo']= "Cheq_Dep"; 
-                   $datosGT[8]['dato']=$NoCheque;
-                   $datosGT[9]['campo']= "Fecha_Efec"; 
-                   $datosGT[9]['dato']=$Fecha_Vence->format('Y-m-d');
-                   $datosGT[10]['campo']= "Detalle"; 
-                   $datosGT[10]['dato']=$DetalleComp;
-                   $datosGT[11]['campo']= "Codigo_C"; 
-                   $datosGT[11]['dato']=$CodigoP;
-                   $datosGT[12]['campo']= "C_Costo"; 
-                   $datosGT[12]['dato']=$CodigoCC;
-                   $datosGT[13]['campo']= "Item"; 
-                   $datosGT[13]['dato']=$_SESSION['INGRESO']['item'];
-                   // SetAdoFields "C", True
-                   $datosGT[14]['campo']= "Procesado";
-                   $datosGT[14]['dato']=0;
+                   SetAdoAddNew("Transacciones");
+                   SetAdoFields("T",$T);
+                   SetAdoFields("Fecha",$Fecha);
+                   SetAdoFields("TP",$TP);
+                   SetAdoFields("Numero",$Numero);
+                   SetAdoFields("Cta",$Cta);
+                   SetAdoFields("Parcial_ME",$Parcial);
+                   SetAdoFields("Debe",$Debe);
+                   SetAdoFields("Haber",$Haber);
+                   SetAdoFields("Cheq_Dep",$NoCheque);
+                   SetAdoFields("Fecha_Efec",$Fecha_Vence->format('Y-m-d'));
+                   SetAdoFields("Detalle",$DetalleComp);
+                   SetAdoFields("Codigo_C",$CodigoP);
+                   SetAdoFields("C_Costo",$CodigoCC);
+                   SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+                   // SetAdoelds "C", True
+                   SetAdoFields("Procesado",0);
                    // $datosGT[16]['campo']= "Pagar";
                    // $datosGT[16]['dato']=0;
                   //  SetAdoUpdate
@@ -1508,7 +1229,7 @@ class incomC
           	     // print_r($datosGT);die();
                 }                
           	     if(isset($datosGT)){
-          	     	$resp = $this->modelo->insertar_ingresos_tabla("Transacciones",$datosGT);
+          	     	$resp = SetAdoUpdate();
           	     }
           	}
           }
@@ -1607,56 +1328,35 @@ class incomC
         if(count($air)>0)
         {
             foreach ($air as $key => $value) {
-                $datos[0]['campo'] = 'CodRet';
-                $datos[1]['campo'] = 'Detalle';
-                $datos[2]['campo'] = 'BaseImp';
-                $datos[3]['campo'] = 'Porcentaje';
-                $datos[4]['campo'] = 'ValRet';
-                $datos[5]['campo'] = 'EstabRetencion';
-                $datos[6]['campo'] = 'PtoEmiRetencion';
-                $datos[7]['campo'] = 'SecRetencion';
-                $datos[8]['campo'] = 'AutRetencion';
-                $datos[9]['campo'] = 'FechaEmiRet';
-                $datos[10]['campo'] = 'Cta_Retencion';
-                $datos[11]['campo'] = 'EstabFactura';
-                $datos[12]['campo'] = 'PuntoEmiFactura';
-                $datos[13]['campo'] = 'Factura_No';
-                $datos[14]['campo'] = 'IdProv';
-                $datos[15]['campo'] = 'Item';
-                $datos[16]['campo'] = 'CodigoU';
-                $datos[17]['campo'] = 'A_No';
-                $datos[18]['campo'] = 'T_No';
-                $datos[19]['campo'] = 'Tipo_Trans';
-                $datos[20]['campo'] = 'T';
-                $datos[21]['campo'] = 'Numero';
-                $datos[22]['campo'] = 'TP';
+            	SetAdoAddNew("Trans_Air");
+                SetAdoFields('CodRet',$value['CodRet']);
+                SetAdoFields('Detalle',$value['Detalle']);
+                SetAdoFields('BaseImp',$value['BaseImp']);
+                SetAdoFields('Porcentaje',$value['Porcentaje']);
+                SetAdoFields('ValRet',$value['ValRet']);
+                SetAdoFields('EstabRetencion',$value['EstabRetencion']);
+                SetAdoFields('PtoEmiRetencion',$value['PtoEmiRetencion']);
+                SetAdoFields('SecRetencion',$value['SecRetencion']);
+                SetAdoFields('AutRetencion',$value['AutRetencion']);
+                SetAdoFields('FechaEmiRet',$value['FechaEmiRet']->format('Y-m-d'));
+                SetAdoFields('Cta_Retencion',$value['Cta_Retencion']);
+                SetAdoFields('EstabFactura',$value['EstabFactura']);
+                SetAdoFields('PuntoEmiFactura',$value['PuntoEmiFactura']);
+                SetAdoFields('Factura_No',value['Factura_No']);
+                SetAdoFields('IdProv',$value['IdProv']);
+                SetAdoFields('Item',$value['Item']);
+                SetAdoFields('CodigoU',$value['CodigoU']);
+                SetAdoFields('A_No',$value['A_No']);
+                SetAdoFields('T_No',$value['T_No']);
+                SetAdoFields('Tipo_Trans',$value['Tipo_Trans']);
+                SetAdoFields('T','N');
+                SetAdoFields('Numero',$numero);
+                SetAdoFields('TP',$tipo);
 
-                $datos[0]['dato'] =$value['CodRet'];
-                $datos[1]['dato'] =$value['Detalle'];
-                $datos[2]['dato'] =$value['BaseImp'];
-                $datos[3]['dato'] =$value['Porcentaje'];
-                $datos[4]['dato'] =$value['ValRet'];
-                $datos[5]['dato'] =$value['EstabRetencion'];
-                $datos[6]['dato'] =$value['PtoEmiRetencion'];
-                $datos[7]['dato'] =$value['SecRetencion'];
-                $datos[8]['dato'] =$value['AutRetencion'];
-                $datos[9]['dato'] =$value['FechaEmiRet']->format('Y-m-d');
-                $datos[10]['dato'] =$value['Cta_Retencion'];
-                $datos[11]['dato'] =$value['EstabFactura'];
-                $datos[12]['dato'] =$value['PuntoEmiFactura'];
-                $datos[13]['dato'] =$value['Factura_No'];
-                $datos[14]['dato'] =$value['IdProv'];
-                $datos[15]['dato'] =$value['Item'];
-                $datos[16]['dato'] =$value['CodigoU'];
-                $datos[17]['dato'] =$value['A_No'];
-                $datos[18]['dato'] =$value['T_No'];
-                $datos[19]['dato'] =$value['Tipo_Trans'];
-                $datos[20]['dato'] ='N';
-                $datos[21]['dato'] =$numero;
-                $datos[22]['dato'] =$tipo;
+            
             }
-           $resp = $this->modelo->insertar_ingresos_tabla('Trans_Air',$datos);
-           if($resp !='')
+           $resp = SetAdoUpdate(); 
+           if($resp ==-1)
            {
              $fallo = true;
            }
@@ -1722,161 +1422,7 @@ class incomC
        return $this->modelo->eliminar_registros($tabla,$Codigo);
      }
 
-     // function SRI_Crear_Clave_Acceso_Retencines($parametros)
-     // {
-
-     //    $datos = $this->modelo->retencion_compras($parametros['Numero'],$parametros['TP']);
-     //    // print_r($datos);die();
-     //    if(count($datos)>0)
-     //    {
-     //      $TFA[0]["Serie_R"] = $datos[0]["Serie_Retencion"];
-     //      $TFA[0]["Retencion"] = $datos[0]["SecRetencion"];
-     //      $TFA[0]["Autorizacion_R"] = $datos[0]["AutRetencion"];
-     //      $TFA[0]["Autorizacion"] = $datos[0]["Autorizacion"];
-     //      $TFA[0]["Fecha"] = $datos[0]["FechaEmision"];
-     //      $TFA[0]["Vencimiento"] = $datos[0]["FechaRegistro"];
-     //      $TFA[0]["Serie"] = $datos[0]["Establecimiento"].$datos[0]["PuntoEmision"];
-     //      $TFA[0]["Factura"] = $datos[0]["Secuencial"];
-     //      $TFA[0]["Hora"] = date('H:m:s');
-     //      $TFA[0]["Cliente"] = $datos[0]["Cliente"];
-     //      $TFA[0]["CI_RUC"] = $datos[0]["CI_RUC"];
-     //      $TFA[0]["TD"] = $datos[0]["TD"];
-     //      $TFA[0]["DireccionC"] = $datos[0]["Direccion"];
-     //      $TFA[0]["TelefonoC"] = $datos[0]["Telefono"];
-     //      $TFA[0]["EmailC"] = $datos[0]["Email"];
-     //      $CodSustento = $datos[0]["CodSustento"];
-
-     //      $TFA[0]["Ruc"] = $datos[0]["CI_RUC"];
-     //      $TFA[0]["TP"] = $parametros['TP'];
-     //      $TFA[0]["Numero"] = $parametros['Numero'];
-     //      $TFA[0]["TipoComprobante"] = '0'.$datos[0]["TipoComprobante"];
-
-     //      // Validar_Porc_IVA $TFA[0]["Fecha"];
-          
-        
-     //       $aut = $this->sri->Clave_acceso($TFA[0]['Fecha']->format('Y-m-d'),'07',$TFA[0]["Serie_R"],$rete);
-     //       $TFA[0]["ClaveAcceso"]  = $aut;
-
-     //       // print_r( $TFA[0]["ClaveAcceso"]);die();
-
-     //      // $TFA[0]["ClaveAcceso"] = date("dmY", strtotime($TFA[0]['Fecha']->format('Y-m-d')))."07".$_SESSION['INGRESO']['RUC'].$_SESSION['INGRESO']['Ambiente'].$TFA[0]["Serie_R"].$rete."123456781";
-     //      // $TFA[0]["ClaveAcceso"] = str_replace('.','1', $TFA[0]['ClaveAcceso']);
-
-     //      // generamos el xmlo de la retencion
-     //      $xml = $this->sri->generar_xml_retencion($TFA,$datos);
-     //      $linkSriAutorizacion = $_SESSION['INGRESO']['Web_SRI_Autorizado'];
- 	 //      $linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion'];
-	 //           if($xml==1)
-	 //           {
-	 //           	 $firma = $this->sri->firmar_documento(
-	 //           	 	$aut,
-	 //           	 	generaCeros($_SESSION['INGRESO']['IDEntidad'],3),
-	 //           	 	$_SESSION['INGRESO']['item'],
-	 //           	 	$_SESSION['INGRESO']['Clave_Certificado'],
-	 //           	 	$_SESSION['INGRESO']['Ruta_Certificado']);
-	 //           	 // print($firma);die();
-	 //           	 if($firma==1)
-	 //           	 {
-	 //           	 	$validar_autorizado = $this->sri->comprobar_xml_sri(
-	 //           	 		$aut,
-	 //           	 		$linkSriAutorizacion);
-	 //           	 	if($validar_autorizado == -1)
-	// 		   		 {
-	// 		   		 	$enviar_sri = $this->sri->enviar_xml_sri(
-	// 		   		 		$aut,
-	// 		   		 		$linkSriRecepcion);
-	// 		   		 	if($enviar_sri==1)
-	// 		   		 	{
-	// 		   		 		//una vez enviado comprobamos el estado de la factura
-	// 		   		 		$resp =  $this->sri->comprobar_xml_sri($aut,$linkSriAutorizacion);
-	// 		   		 		if($resp==1)
-	// 		   		 		{
-	// 		   		 			$resp = $this->actualizar_datos_CER($aut,$parametros['TP'],$TFA[0]["Serie_R"],$rete,generaCeros($_SESSION['INGRESO']['IDEntidad'],3),$TFA[0]["Autorizacion_R"]);
-	// 		   		 			return  $resp;
-	// 		   		 		}else
-	// 		   		 		{
-	// 		   		 			return $resp;
-	// 		   		 		}
-	// 		   		 		// print_r($resp);die();
-	// 		   		 	}else
-	// 		   		 	{
-	// 		   		 		return $enviar_sri;
-	// 		   		 	}
-
-	// 		   		 }else 
-	// 		   		 {
-	// 		   		 	// $resp = $this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion']);
-	// 		   		 	// RETORNA SI YA ESTA AUTORIZADO O SI FALL LA REVISIO EN EL SRI
-	// 		   			return $validar_autorizado;
-	// 		   		 }
-	 //           	 }else
-	 //           	 {
-	 //           	 	//RETORNA SI FALLA AL FIRMAR EL XML
-	 //           	 	return $firma;
-	 //           	 }
-	 //           }else
-	 //           {
-	 //           	//RETORNA SI FALLA EL GENERAR EL XML
-	 //           	return $xml;
-	 //           }
-
-
-
-           // autorizar sri
-
-          // print_r($respuesta);die();
-         /* $num_res = count($respuesta);
-          if($num_res>=2)
-	           {
-	           	// print_r($respuesta);die();
-	           	if($num_res!=2)
-	           	{
-	           	 $estado = explode(' ', $respuesta[2]);
-	           	 if($estado[1].' '.$estado[2]=='FACTURA AUTORIZADO')
-	           	 {
-	           	 	$respuesta = $this->actualizar_datos_CE(trim($estado[0]),$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['item'],$cabecera['Autorizacion']);
-	           	 	if($respuesta==1)
-	           	 	{
-	           	 	  return array('respuesta'=>1);
-	           	 	}
-	           	 }else
-	           	 {
-
-	           	   $compro = explode('COMPROBANTE', $respuesta[2]);
-	           	   $entidad= $_SESSION['INGRESO']['item'];
-	           	   $url_No_autorizados ='../comprobantes/entidades/entidad_'.$entidad."/CE".$entidad.'/No_autorizados/';
-	           	   $resp = array('respuesta'=>2,'ar'=>trim($compro[0]).'.xml','url'=>$url_No_autorizados);
-	           	 	return $resp;
-	           	 }
-	           	}else
-	           	{
-	           	 $estado = explode(' ', $respuesta[1]);
-	           	 if($estado[1].' '.$estado[2]=='FACTURA AUTORIZADO')
-	           	 {
-	           	 	$respuesta = $this->actualizar_datos_CE(trim($estado[0]),$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['item'],$cabecera['Autorizacion']);
-	           	 	if($respuesta==1)
-	           	 	{
-	           	 	  return array('respuesta'=>1);
-	           	 	}
-	           	 }
-
-	           	}
-
-	           }else
-	           {
-	           	if($respuesta[1]=='Autorizado')
-	           	{
-	           		return array('respuesta'=>3);
-
-	           	}else{
-	           		$resp = utf8_encode($respuesta[1]);
-	           		return $resp;
-	           	}
-	           }*/
-     //    }
-
-     // }
-
+    
 
      function actualizar_datos_CER($autorizacion,$tc,$serie,$retencion,$entidad,$autorizacion_ant)
      {
@@ -2001,37 +1547,24 @@ class incomC
      		foreach ($AdoRegistros as $key => $value) {
      		 $Si_No = 0;
              if($value["Parcial_ME"] <> 0){$Si_No = 1;}
-             $datos[0]['campo'] =  "CODIGO";
-             $datos[0]['dato'] =  $value["Cta"];
-             $datos[1]['campo'] =  "CUENTA";
-             $datos[1]['dato'] =  $value["Cuenta"];
-             $datos[2]['campo'] =  "PARCIAL_ME";
-             $datos[2]['dato'] =  $value["Parcial_ME"];
-             $datos[3]['campo'] =  "DEBE";
-             $datos[3]['dato'] =  $value["Debe"];
-             $datos[4]['campo'] =  "HABER";
-             $datos[4]['dato'] =  $value["Haber"];
-             $datos[5]['campo'] =  "ME";
-             $datos[5]['dato'] =  $Si_No;
-             $datos[6]['campo'] =  "CHEQ_DEP";
-             $datos[6]['dato'] =  $value["Cheq_Dep"];
-             $datos[7]['campo'] =  "EFECTIVIZAR";
-             $datos[7]['dato'] =  $value["Fecha_Efec"]->format('Y-m-d');
-             $datos[8]['campo'] =  "DETALLE";
-             $datos[8]['dato'] =  str_replace(',','',$value["Detalle"]);
-             $datos[9]['campo'] =  "CODIGO_C";
-             $datos[9]['dato'] =  $value["Codigo_C"];
-             $datos[10]['campo'] =  "T_No";
-             $datos[10]['dato'] =  $Trans_No;
-             $datos[11]['campo'] =  "Item";
-             $datos[11]['dato'] =  $C1_Item;
-             $datos[12]['campo'] =  "CodigoU";
-             $datos[12]['dato'] =  $_SESSION['INGRESO']['CodigoU'];
-             $datos[13]['campo'] =  "A_No";
-             $datos[13]['dato'] =  $Ln_No;
+             SetAdoAddNew("Asiento");
+             SetAdoFields("CODIGO",$value["Cta"]);
+             SetAdoFields("CUENTA",$value["Cuenta"]);
+             SetAdoFields("PARCIAL_ME",$value["Parcial_ME"]);
+             SetAdoFields("DEBE",$value["Debe"]);
+             SetAdoFields("HABER",$value["Haber"]);
+             SetAdoFields("ME",$Si_No);
+             SetAdoFields("CHEQ_DEP",$value["Cheq_Dep"]);
+             SetAdoFields("EFECTIVIZAR",$value["Fecha_Efec"]->format('Y-m-d'));
+             SetAdoFields("DETALLE",str_replace(',','',$value["Detalle"]));
+             SetAdoFields("CODIGO_C",$value["Codigo_C"]);
+             SetAdoFields("T_No",$Trans_No);
+             SetAdoFields("Item",$C1_Item);
+             SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+             SetAdoFields("A_No",$Ln_No);
 
              // print_r($datos);die();
-             $resp = $this->modelo->insertar_ingresos_tabla('Asiento',$datos);
+             $resp = SetAdoUpdate();
              $pos = strpos($C1_Ctas_Modificar, $value["Cta"]);
              if ($pos === false) {
              	 $C1_Ctas_Modificar = $C1_Ctas_Modificar.$value["Cta"].",";
@@ -2049,27 +1582,19 @@ class incomC
      			if($value["Cheq_Dep"] <> G_NINGUNO){
                     $Si_No = 0;
                     if($value["Parcial_ME"] <> 0){$Si_No = 1;}
-                       $datos[0]['campo']= "CTA_BANCO";
-                       $datos[0]['dato'] = $value["Cta"];
-                       $datos[1]['campo']= "BANCO";
-                       $datos[1]['dato'] = $value["Cuenta"];
-                       $datos[2]['campo']= "CHEQ_DEP";
-                       $datos[2]['dato'] = $value["Cheq_Dep"];
-                       $datos[3]['campo']= "EFECTIVIZAR";
-                       $datos[3]['dato'] = $value["Fecha_Efec"]->format('Y-m-d');
-                       $datos[4]['campo']= "VALOR";
-                       $datos[4]['dato'] = abs($value["Debe"]-$value["Haber"]);
-                       $datos[5]['campo']= "ME"; 
-                       $datos[5]['dato'] = $Si_No;
-                       $datos[6]['campo']= "T_No"; 
-                       $datos[6]['dato'] = $Trans_No;
-                       $datos[7]['campo']= "Item"; 
-                       $datos[7]['dato'] = $C1_Item;
-                       $datos[8]['campo']= "CodigoU"; 
-                       $datos[8]['dato'] = $_SESSION['INGRESO']['CodigoU'];
+                       SetAdoAddNew("Asiento_B");
+                       SetAdoFields("CTA_BANCO",$value["Cta"]);
+                       SetAdoFields("BANCO",$value["Cuenta"]);
+                       SetAdoFields("CHEQ_DEP",$value["Cheq_Dep"]);
+                       SetAdoFields("EFECTIVIZAR",$value["Fecha_Efec"]->format('Y-m-d'));
+                       SetAdoFields("VALOR",abs($value["Debe"]-$value["Haber"]));
+                       SetAdoFields("ME",$Si_No);
+                       SetAdoFields("T_No",$Trans_No);
+                       SetAdoFields("Item",$C1_Item);
+                       SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
 
      	              // print_r($datos);die();
-                      $resp = $this->modelo->insertar_ingresos_tabla('Asiento_B',$datos);
+                      $resp = SetAdoUpdate();
      			}    			
      		}
      	}
@@ -2082,8 +1607,8 @@ class incomC
         if(count($AdoRegistros['respuesta'])>0)
         {       	
      		$datos = array();
+     		SetAdoAddNew("Asiento_Air");
         	foreach ($AdoRegistros['respuesta'] as $key => $value) {
-
              $K = sqlsrv_field_metadata($AdoRegistros['stmt']); 
              $count = 0;         
 
@@ -2091,33 +1616,19 @@ class incomC
         			// print_r($value);die();
         			if($value1['Name']!='CodigoU' && $value1['Name']!='T_No' && $value1['Name']!='Item' && $value1['Name']!='A_No')
         			{
-          			$datos[$count]['campo']= $value1['Name'];
-          			if(is_object($value[$value1['Name']])) 
-          			{
-                    $datos[$count]['dato']= $value[$value1['Name']]->format('Y-m-d');  
-
-          			}else
-          			{
-                    $datos[$count]['dato']= $value[$value1['Name']];  
-
-          			}   
-                    $count = $count+1; 
+        				SetAdoFields($value1['Name'],$value[$value1['Name']]);
                     }     			
           		}
 
-             $datos[$count]['campo']= "CodigoU";
-             $datos[$count]['dato'] =  $_SESSION['INGRESO']['CodigoU'];
-             $datos[$count+1]['campo']= "T_No";
-             $datos[$count+1]['dato'] =  $Trans_No;
-             $datos[$count+2]['campo']= "Item";
-             $datos[$count+2]['dato'] =  $C1_Item;
-             $datos[$count+3]['campo']= "A_No";
-             $datos[$count+3]['dato'] =  $Ret_No;
+             SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+             SetAdoFields("T_No",$Trans_No);
+             SetAdoFields("Item",$C1_Item);
+             SetAdoFields("A_No",$Ret_No);
 
-     	// print_r($datos);die();
+     		// print_r($datos);die();
             
              $Ret_No = $Ret_No + 1;
-             $resp = $this->modelo->insertar_ingresos_tabla('Asiento_Air',$datos);
+             $resp =  SetAdoUpdate();
         	}
 
         }
@@ -2137,40 +1648,38 @@ class incomC
         		}
         		$count = 1;
         		 $K = sqlsrv_field_metadata($AdoRegistros['stmt']); 
-                 $count = 0;         
+                 $count = 0; 
 
+
+                 SetAdoAddNew("Asiento_Compras");        
         		foreach ($K as $key1 => $value1) {
         			// print_r($value);die();
         			if($value1['Name']!='CodigoU' && $value1['Name']!='T_No' && $value1['Name']!='Item' && $value1['Name']!='A_No')
         			{
-          			$datos[$count]['campo']= $value1['Name'];
-          			if(is_object($value[$value1['Name']])) 
-          			{
-                    $datos[$count]['dato']= $value[$value1['Name']]->format('Y-m-d');  
+	          			if(is_object($value[$value1['Name']])) 
+	          			{
+	          				 SetAdoFields($value1['Name'], $value[$value1['Name']]->format('Y-m-d'));
 
-          			}else
-          			{
-                    $datos[$count]['dato']= $value[$value1['Name']];  
-
-          			}   
-                    $count = $count+1; 
+	          			}else
+	          			{
+	          				SetAdoFields($value1['Name'],$value[$value1['Name']]);
+          				}   
+                    	$count = $count+1; 
                     }     			
           		}
         		 // For K = 0 To .Fields.Count - 1
             //     SetAdoFields .Fields(K).Name, .Fields(K)
             // Next K
 
-                $datos[$count]['campo']= "CodigoU";
-                $datos[$count]['dato'] =  $_SESSION['INGRESO']['CodigoU'];
-                $datos[$count+1]['campo']= "T_No";
-                $datos[$count+1]['dato'] =  $Trans_No;
-                $datos[$count+2]['campo']= "Item";
-                $datos[$count+2]['dato'] =  $C1_Item;
-                $datos[$count+3]['campo']= "A_No";
-                $datos[$count+3]['dato'] =  $Ret_No;
+          		SetAdoFields($value1['Name'],$value[$value1['Name']]);
+
+                SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+                SetAdoFields("T_No",$Trans_No);
+                SetAdoFields("Item",$C1_Item);
+                SetAdoFields("A_No",$Ret_No);
                 // print_r($datos);die();
                 $Ret_No = $Ret_No + 1;                
-                $resp = $this->modelo->insertar_ingresos_tabla('Asiento_Compras',$datos);
+                $resp = SetAdoUpdate();
 
         	}
         }
@@ -2184,38 +1693,33 @@ class incomC
         	foreach ($AdoRegistros['respuesta'] as $key => $value) {        		
         		$count = 1;
         		 $K = sqlsrv_field_metadata($AdoRegistros['stmt']); 
-                 $count = 0;         
+                 $count = 0; 
 
+                 SetAdoAddNew("Asiento_Ventas");      
         		foreach ($K as $key1 => $value1) {
         			// print_r($value);die();
         			if($value1['Name']!='CodigoU' && $value1['Name']!='T_No' && $value1['Name']!='Item' && $value1['Name']!='A_No')
         			{
-          			$datos[$count]['campo']= $value1['Name'];
-          			if(is_object($value[$value1['Name']])) 
-          			{
-                    $datos[$count]['dato']= $value[$value1['Name']]->format('Y-m-d');  
+	          			if(is_object($value[$value1['Name']])) 
+	          			{
+	          				 SetAdoFields($value1['Name'], $value[$value1['Name']]->format('Y-m-d'));
 
-          			}else
-          			{
-                    $datos[$count]['dato']= $value[$value1['Name']];  
-
-          			}   
-                    $count = $count+1; 
+	          			}else
+	          			{
+	          				SetAdoFields($value1['Name'],$value[$value1['Name']]);
+          				}   
+                    	$count = $count+1; 
                     }     			
           		}
            //  For K = 0 To .Fields.Count - 1
            //    SetAdoFields .Fields(K).Name, .Fields(K)
            //  Next K
-                $datos[$count]['campo']= "CodigoU";
-                $datos[$count]['dato'] = $_SESSION['INGRESO']['CodigoU'];
-                $datos[$count+1]['campo']= "T_No";
-                $datos[$count+1]['dato'] = $Trans_No;
-                $datos[$count+2]['campo']= "Item";
-                $datos[$count+2]['dato'] = $C1_Item;
-                $datos[$count+3]['campo']= "A_No";
-                $datos[$count+3]['dato'] = $Ret_No;
+                SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+                SetAdoFields("T_No",$Trans_No);
+                SetAdoFields("Item",$C1_Item);
+                SetAdoFields("A_No",$Ret_No);
                 $Ret_No = $Ret_No + 1;
-                $resp = $this->modelo->insertar_ingresos_tabla('Asiento_Ventas',$datos);
+                $resp = SetAdoUpdate();
         	}
 
         }
@@ -2228,6 +1732,7 @@ class incomC
         if(count($AdoRegistros['respuesta'])>0)
         {
      		$datos = array();
+     		SetAdoAddNew("Asiento_Importaciones");
         	foreach ($AdoRegistros as $key => $value) {
         		$count = 1;
         		 $K = sqlsrv_field_metadata($AdoRegistros['stmt']); 
@@ -2237,29 +1742,23 @@ class incomC
         			// print_r($value);die();
         			if($value1['Name']!='CodigoU' && $value1['Name']!='T_No' && $value1['Name']!='Item' && $value1['Name']!='A_No')
         			{
-          			$datos[$count]['campo']= $value1['Name'];
           			if(is_object($value[$value1['Name']])) 
-          			{
-                    $datos[$count]['dato']= $value[$value1['Name']]->format('Y-m-d');  
+	          			{
+	          				 SetAdoFields($value1['Name'], $value[$value1['Name']]->format('Y-m-d'));
 
-          			}else
-          			{
-                    $datos[$count]['dato']= $value[$value1['Name']];  
-
-          			}   
-                    $count = $count+1; 
+	          			}else
+	          			{
+	          				SetAdoFields($value1['Name'],$value[$value1['Name']]);
+          				}   
+                    	$count = $count+1; 
                     }     			
           		}
-        		$datos[$count]['campo']= "CodigoU";
-        		$datos[$count]['dato'] = $_SESSION['INGRESO']['CodigoU'];
-                $datos[$count+1]['campo']= "T_No";
-                $datos[$count+1]['dato'] = $Trans_No;
-                $datos[$count+2]['campo']= "Item";
-                $datos[$count+2]['dato'] = $C1_Item;
-                $datos[$count+3]['campo']= "A_No";
-                $datos[$count+3]['dato'] = $Ret_No;
+        		SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+                SetAdoFields("T_No",$Trans_No);
+                SetAdoFields("Item",$C1_Item);
+                SetAdoFields("A_No",$Ret_No);
                 $Ret_No = $Ret_No + 1;                
-                $resp = $this->modelo->insertar_ingresos_tabla('Asiento_Importaciones',$datos);
+                $resp = SetAdoUpdate();
         		
         	}
         }
@@ -2270,6 +1769,7 @@ class incomC
         $AdoRegistros = $this->modelo->Listar_las_Compras($parametros['TP'],$parametros['Numero'],$parametros['Item']);
         if(count($AdoRegistros['respuesta'])>0)
         {
+        	SetAdoAddNew("Asiento_Exportaciones");
         	foreach ($AdoRegistros as $key => $value) {
         		$count = 1;
         		 $K = sqlsrv_field_metadata($AdoRegistros['stmt']); 
@@ -2279,29 +1779,23 @@ class incomC
         			// print_r($value);die();
         			if($value1['Name']!='CodigoU' && $value1['Name']!='T_No' && $value1['Name']!='Item' && $value1['Name']!='A_No')
         			{
-          			$datos[$count]['campo']= $value1['Name'];
-          			if(is_object($value[$value1['Name']])) 
-          			{
-                    $datos[$count]['dato']= $value[$value1['Name']]->format('Y-m-d');  
+          				if(is_object($value[$value1['Name']])) 
+	          			{
+	          				 SetAdoFields($value1['Name'], $value[$value1['Name']]->format('Y-m-d'));
 
-          			}else
-          			{
-                    $datos[$count]['dato']= $value[$value1['Name']];  
-
-          			}   
-                    $count = $count+1; 
+	          			}else
+	          			{
+	          				SetAdoFields($value1['Name'],$value[$value1['Name']]);
+          				}   
+                    	$count = $count+1; 
                     }     			
           		}
-        	    $datos[$count]['campo']= "CodigoU";
-        	    $datos[$count]['dato'] = $_SESSION['INGRESO']['CodigoU'];
-                $datos[$count+1]['campo']= "T_No";
-                $datos[$count+1]['dato'] = $Trans_No;
-                $datos[$count+2]['campo']= "Item";
-                $datos[$count+2]['dato'] = $C1_Item;
-                $datos[$count+3]['campo']= "A_No";
-                $datos[$count+3]['dato'] = $Ret_No;
+        	    SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+                SetAdoFields("T_No",$Trans_No);
+                SetAdoFields("Item",$C1_Item);
+                SetAdoFields("A_No",$Ret_No);
                 $Ret_No = $Ret_No + 1;
-                $resp = $this->modelo->insertar_ingresos_tabla('Asiento_Exportaciones',$datos);        		
+                $resp = SetAdoUpdate();  		
         	}
         }
      
@@ -2309,50 +1803,33 @@ class incomC
         $AdoRegistros =  $this->modelo->Llenar_SubCuentas($parametros['TP'],$parametros['Numero'],$parametros['Item']);
        if(count($AdoRegistros)>0)
        {
+       	  SetAdoAddNew("Asiento_SC");
     	 foreach ($AdoRegistros as $key => $value) {
-                $datos[0]['campo']= "FECHA_V";
-                $datos[0]['dato'] = $value["Fecha_V"]->format('Y-m-d');
-                $datos[1]['campo']= "TC";
-                $datos[1]['dato'] = $value["TC"];
-                $datos[2]['campo']= "Codigo";
-                $datos[2]['dato'] = $value["Codigo"];
-                $datos[3]['campo']= "Beneficiario";
-                $datos[3]['dato'] = $value["Detalle"];
-                $datos[4]['campo']= "Factura";
-                $datos[4]['dato'] = $value["Factura"];
-                $datos[5]['campo']= "Prima";
-                $datos[5]['dato'] = $value["Prima"];
-                $datos[6]['campo']= "Valor";
-                $datos[6]['dato'] = Abs($value["VALOR"]);
-                $datos[7]['campo']= "Valor_Me";
-                $datos[7]['dato'] = abs($value["Parcial_ME"]);
-                $datos[8]['campo']= "Detalle_SubCta";
-                $datos[8]['dato'] = $value["Detalle_SubCta"];
-                $datos[9]['campo']= "Cta";
-                $datos[9]['dato'] = $value["Cta"];
-                $datos[10]['campo']= "TM";
-                $datos[10]['dato'] = "1";
-                $datos[11]['campo']= "DH";
-                $datos[11]['dato'] = "1";
+                SetAdoFields("FECHA_V",$value["Fecha_V"]->format('Y-m-d'));
+                SetAdoFields("TC",$value["TC"]);
+                SetAdoFields("Codigo",$value["Codigo"]);
+                SetAdoFields("Beneficiario",$value["Detalle"]);
+                SetAdoFields("Factura",$value["Factura"]);
+                SetAdoFields("Prima",$value["Prima"]);
+                SetAdoFields("Valor",number_format($value["VALOR"],2,'.',''));
+                SetAdoFields("Valor_Me",number_format($value["Parcial_ME"],2,'.',''));
+                SetAdoFields("Detalle_SubCta",$value["Detalle_SubCta"]);
+                SetAdoFields("Cta",$value["Cta"]);
+                SetAdoFields("TM","1");
+                SetAdoFields("DH","1");
                 if($value["Parcial_ME"] > 0){
-                    $datos[12]['campo']= "TM";
-                    $datos[12]['dato'] = "2";
+                    SetAdoFields("TM","2");
                 }
                 if($value["VALOR"] < 0 ){                    
-                	$datos[13]['campo']= "DH";
-                	$datos[13]['dato'] = "2";
+                	SetAdoFields("DH","2");
                 }
-                $datos[14]['campo']= "T_No";
-                $datos[14]['dato'] = $Trans_No;
-                $datos[15]['campo']= "Item";
-                $datos[15]['dato'] = $C1_Item;
-                $datos[16]['campo']= "SC_No";
-                $datos[16]['dato'] = $LnSC_No;
-                $datos[17]['campo']= "CodigoU";
-                $datos[17]['dato'] = $_SESSION['INGRESO']['CodigoU'];
+                SetAdoFields("T_No",$Trans_No);
+                SetAdoFields("Item",$C1_Item);
+                SetAdoFields("SC_No",$LnSC_No);
+                SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
                 $LnSC_No = $LnSC_No + 1;
 
-                $resp = $this->modelo->insertar_ingresos_tabla('Asiento_SC',$datos);  
+                $resp = SetAdoUpdate();
     		
     	    }
        }     
@@ -2363,55 +1840,37 @@ class incomC
          // print_r($AdoRegistros);die();
        if(count($AdoRegistros)>0)
        {
+       		  SetAdoAddNew("Asiento_SC");
     	foreach ($AdoRegistros as $key => $value) {
-              $datos[0]['campo']= "FECHA_V";
-              $datos[0]['dato'] =$value["Fecha_V"]->format('Y-m-d');
-              $datos[1]['campo']= "TC";
-              $datos[1]['dato'] =$value["TC"];
-              $datos[2]['campo']= "Codigo";
-              $datos[2]['dato'] =$value["Codigo"];
-              $datos[3]['campo']= "Beneficiario";
-              $datos[3]['dato'] =$value["Detalle"];
-              $datos[4]['campo']= "Factura";
-              $datos[4]['dato'] =$value["Factura"];
-              $datos[5]['campo']= "Prima";
-              $datos[5]['dato'] =$value["Prima"];
-              $datos[6]['campo']= "Valor";
-              $datos[6]['dato'] =abs($value["VALOR"]);
-              $datos[7]['campo']= "Valor_Me";
-              $datos[7]['dato'] =abs($value["Parcial_ME"]);
-              $datos[8]['campo']= "Detalle_SubCta";
-              $datos[8]['dato'] =$value["Detalle_SubCta"];
-              $datos[9]['campo']= "Cta";
-              $datos[9]['dato'] =$value["Cta"];             
-              $datos[10]['campo']= "T_No";
-              $datos[10]['dato'] = $Trans_No;
-              $datos[11]['campo']= "Item";
-              $datos[11]['dato'] = $C1_Item;
-              $datos[12]['campo']= "SC_No";
-              $datos[12]['dato'] = $LnSC_No;
-              $datos[13]['campo']= "CodigoU";
-              $datos[13]['dato'] = $_SESSION['INGRESO']['CodigoU'];
+              SetAdoFields("FECHA_V",$value["Fecha_V"]->format('Y-m-d'));
+              SetAdoFields("TC",$value["TC"]);
+              SetAdoFields("Codigo",$value["Codigo"]);
+              SetAdoFields("Beneficiario",$value["Detalle"]);
+              SetAdoFields("Factura",$value["Factura"]);
+              SetAdoFields("Prima",$value["Prima"]);
+              SetAdoFields("Valor",number_format($value["VALOR"],2,'.',''));
+              SetAdoFields("Valor_Me",number_format($value["Parcial_ME"],2,'.',''));
+              SetAdoFields("Detalle_SubCta",$value["Detalle_SubCta"]);
+              SetAdoFields("Cta",$value["Cta"]);             
+              SetAdoFields("T_No", $Trans_No);
+              SetAdoFields("Item",$C1_Item);
+              SetAdoFields("SC_No",$LnSC_No);
+              SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
               if($value["Parcial_ME"] > 0){
-                  $datos[14]['campo']= "TM";
-                  $datos[14]['dato'] ="2";
+                  SetAdoFields("TM","2");
               }else
               {
-
-               $datos[14]['campo']= "TM";
-               $datos[14]['dato'] ="1";
+               SetAdoFields("TM","1");
               }
               if($value["VALOR"] < 0){
-                  $datos[15]['campo']= "DH";
-                  $datos[15]['dato'] = "2";
+                  SetAdoFields("DH", "2");
               }else
               {
-                $datos[15]['campo']= "DH";
-                $datos[15]['dato'] ="1"; 
+                SetAdoFields("DH","1"); 
               }
 
               $LnSC_No = $LnSC_No + 1;
-    		  $resp = $this->modelo->insertar_ingresos_tabla('Asiento_SC',$datos);  
+    		  $resp = SetAdoUpdate();
     	}
        }
    }

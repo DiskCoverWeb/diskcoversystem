@@ -840,8 +840,7 @@ class registro_esC
      }
      if($parametros['BaseImp']>0)
      {
-      SetAdoAddNew("Clientes");  
-
+       SetAdoAddNew("Asiento_Air");  
        SetAdoFields("CodRet" ,$parametros["CodRet"]);
        SetAdoFields("Detalle",$parametros["Detalle"]);
        SetAdoFields("BaseImp",number_format($parametros["BaseImp"],2,'.',''));

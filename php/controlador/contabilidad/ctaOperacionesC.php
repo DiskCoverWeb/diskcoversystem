@@ -76,28 +76,18 @@ function datos_cuenta($cod)
 function presupuesto_ing($parametro)
 {
 	$m = nombre_X_mes($parametro['mes1']);
-	$datos[0]['campo']='Periodo';
-	$datos[0]['dato']=$_SESSION['INGRESO']['periodo'];
-	$datos[1]['campo']='Cta';
-	$datos[1]['dato']=substr($parametro['Cta'],0,-1);
-	$datos[2]['campo']='Presupuesto';
-	$datos[2]['dato']=$parametro['valor'];
-	$datos[3]['campo']='Item';
-	$datos[3]['dato']=$_SESSION['INGRESO']['item'];
-	$datos[4]['campo']='Mes_No';
-	$datos[4]['dato']=date('Y').'-'.$m.'-01';
-	$datos[5]['campo']='Mes';
-	$datos[5]['dato']=$parametro['mes'];
-	$datos[6]['campo']='Codigo';
-	$datos[6]['dato']=G_NINGUNO;
-	$this->modelo->buscar_trans_presu($datos[1]['dato'],$datos[6]['dato'],$datos[4]['dato']);
-	if(insert_generico('Trans_Presupuestos',$datos)=='')
-	{
-		return 1;
-	}else
-	{
-		return -1;
-	}
+	$cta=substr($parametro['Cta'],0,-1);
+	$fecha = date('Y').'-'.$m.'-01';
+	SetAdoAddNew("Trans_Presupuestos");   
+	SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
+	SetAdoFields('Cta',$cta);
+	SetAdoFields('Presupuesto',$parametro['valor']);
+	SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+	SetAdoFields('Mes_No',$fecha);
+	SetAdoFields('Mes',$parametro['mes']);
+	SetAdoFields('Codigo',G_NINGUNO);
+	$this->modelo->buscar_trans_presu($cta,G_NINGUNO,$fecha);
+	return SetAdoUpdate();
 }
 
 
@@ -489,8 +479,7 @@ function grabar_cuenta($parametros)
              }
   	}else
   	{
-  		$dato[17]['campo']='Codigo';
-        $dato[17]['dato']=strval($Codigo1);
+  		SetAdoFields('Codigo',strval($Codigo1));
         if($parametros['OpcD'] == 'true')
            {
                 $Numero = ReadSetDataNum("Numero Cuenta",True,True);
@@ -499,8 +488,7 @@ function grabar_cuenta($parametros)
     }
   }else
   {
-  	$dato[17]['campo']='Codigo';
-    $dato[17]['dato']=$Codigo1;
+  	SetAdoFields('Codigo',strval($Codigo1));
 
     if($parametros['OpcD'] == 'true')
     {
@@ -516,106 +504,63 @@ function grabar_cuenta($parametros)
     // }  
   	 
   }
+
+   	SetAdoAddNew("Catalogo_Cuentas");
  
      // ' MsgBox TipoCta'
-      $dato[0]['campo']='Clave';
-      $dato[0]['dato']=$Numero;
-      $dato[1]['campo']='DG';
-      $dato[1]['dato']=$TipoDoc;
-      $dato[2]['campo']='TC';
-      $dato[2]['dato']=$TipoCta;
-      $dato[3]['campo']='ME';
-      $dato[3]['dato']= (int)($parametros['CheqUS'] === 'true');
-      $dato[4]['campo']='Listar';
-      $dato[4]['dato']=(int)($parametros['CheqFE'] === 'true');
-      $dato[5]['campo']='Mod_Gastos';
-      $dato[5]['dato']=(int)($parametros['CheqModGastos']=== 'true');
-      $dato[6]['campo']='Cuenta';
-      $dato[6]['dato']=$TextConcepto;
-      $dato[7]['campo']='Presupuesto';
-      $dato[7]['dato']=$TextPresupuesto;
-      $dato[8]['campo']='Procesado';
-      $dato[8]['dato']=True;
-      $dato[9]['campo']='Periodo_Contable';
-      $dato[9]['dato']=$_SESSION['INGRESO']['periodo'];
-      $dato[10]['campo']='Item';
-      $dato[10]['dato']=$_SESSION['INGRESO']['item'];
-      $dato[11]['campo']='Codigo_Ext';
-      $dato[11]['dato']=$parametros['TxtCodExt'];
-      $dato[12]['campo']='Cta_Acreditar';
-      $dato[12]['dato']=$parametros['MBoxCtaAcreditar'];
-      $dato[13]['campo']='Tipo_Pago';
-      $dato[13]['dato']=$FA_Tipo_Pago;
+      SetAdoFields('Clave',$Numero);
+      SetAdoFields('DG',$TipoDoc);
+      SetAdoFields('TC',$TipoCta);
+      SetAdoFields('ME',(int)($parametros['CheqUS'] === 'true'));
+      SetAdoFields('Listar',(int)($parametros['CheqFE'] === 'true'));
+      SetAdoFields('Mod_Gastos',(int)($parametros['CheqModGastos']=== 'true'));
+      SetAdoFields('Cuenta',$TextConcepto);
+      SetAdoFields('Presupuesto',$TextPresupuesto);
+      SetAdoFields('Procesado',True);
+      SetAdoFields('Periodo_Contable',$_SESSION['INGRESO']['periodo']);
+      SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+      SetAdoFields('Codigo_Ext',$parametros['TxtCodExt']);
+      SetAdoFields('Cta_Acreditar',$parametros['MBoxCtaAcreditar']);
+      SetAdoFields('Tipo_Pago',$FA_Tipo_Pago);
 
      if($parametros['OpcNoAplica'] == 'true')
      {
-        $dato[14]['campo']='I_E_Emp';
-        $dato[14]['dato']= G_NINGUNO;
-        $dato[15]['campo']='Con_IESS';
-        $dato[15]['dato']= (int)('false' === 'true');;
-        $dato[16]['campo']='Cod_Rol_Pago';
-        $dato[16]['dato']= G_NINGUNO;
+        SetAdoFields('I_E_Emp', G_NINGUNO);
+        SetAdoFields('Con_IESS',(int)('false' === 'true'));
+        SetAdoFields('Cod_Rol_Pago',G_NINGUNO);
 
       }else
      {
-         $dato[16]['campo']='Cod_Rol_Pago';
-         $dato[16]['dato']= Rubro_Rol_Pago($TextConcepto);
+         SetAdoFields('Cod_Rol_Pago',Rubro_Rol_Pago($TextConcepto));
          // print_R(Rubro_Rol_Pago($TextConcepto));
          // die();
      	   if($parametros['OpcIEmp']=='true')
      	   {
-     		$dato[14]['campo']='I_E_Emp';
-     		$dato[14]['dato']= 'I';
+     		SetAdoFields('I_E_Emp','I');
      		if($parametros['CheqConIESS'] != 'false')
      		{
-     			$dato[15]['campo']='Con_IESS';
-     			$dato[15]['dato']=(int)('true'=== 'true');;
+     			SetAdoFields('Con_IESS',(int)('true'=== 'true'));
      		}else
      		{
-     			$dato[15]['campo']='Con_IESS';
-     			$dato[15]['dato']= (int)('false'=== 'true');
+     			SetAdoFields('Con_IESS',(int)('false'=== 'true'));
      		}
      	   }else
      	   {
-     	   	$dato[14]['campo']='I_E_Emp';
-     	    $dato[14]['dato']='E';     		
+     	   	SetAdoFields('I_E_Emp','E');     		
      	   }
      } 
+      SetAdoFields('CC',$parametros['TxtCodExt']);
 
-      $dato[18]['campo']='CC';
-      $dato[18]['dato']=$parametros['TxtCodExt'];
-
-
-      // print_r($dato);
-      // print_r((int)('true' === 'true'));
-      // print_r('-');
-      // print_r((int)('false' === 'true'));
-      // die();     
       
       if($editar == true)
       {
       	
-      	$where[0]['campo']='ID';
-      	$where[0]['valor']=strval($ID);
-      	if(update_generico($dato,'Catalogo_Cuentas',$where) == 1)
-      	{
-      		return 1;
-      	}else
-      	{
-      		return -1;
-      	}
-
-
+      	SetAdoFieldsWhere('ID',strval($ID));
+      	return  SetAdoUpdateGeneric();
+      	
       }else
       {
-      	if(insert_generico('Catalogo_Cuentas',$dato) == null)
-      	{
-      		return 1;
-      	}else
-      	{
-      		return -1;
-      	}
-
+      	return  SetAdoUpdate();
       }
 }
 

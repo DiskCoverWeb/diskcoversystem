@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<liquidacionCompra id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
+    <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
+    <ruc>0702164179001</ruc>
+    <claveAcceso>2802202303070216417900110010020000000171234567811</claveAcceso>
+    <codDoc>03</codDoc>
+    <estab>001</estab>
+    <ptoEmi>002</ptoEmi>
+    <secuencial>000000017</secuencial>
+    <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
+    <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
+  </infoTributaria>
+  <infoLiquidacionCompra>
+    <fechaEmision>28/02/2023</fechaEmision>
+    <dirEstablecimiento>direccion prueba</dirEstablecimiento>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <tipoIdentificacionProveedor>05</tipoIdentificacionProveedor>
+    <razonSocialProveedor>JAVIER FAJARDO</razonSocialProveedor>
+    <identificacionProveedor>1723324206</identificacionProveedor>
+    <totalSinImpuestos>6.60</totalSinImpuestos>
+    <totalDescuento>0.00</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0.00</descuentoAdicional>
+        <baseImponible>6.60</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <importeTotal>6.60</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>6.60</total>
+      </pago>
+    </pagos>
+  </infoLiquidacionCompra>
+  <detalles/>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">COOP 30 DE JULIO</campoAdicional>
+    <campoAdicional nombre="Telefono">0994526451</campoAdicional>
+    <campoAdicional nombre="Email">victorfapi@hotmailcom</campoAdicional>
+    <campoAdicional nombre="seriePuntoEmision">001002</campoAdicional>
+    <campoAdicional nombre="socioRazonSocial">Nombre establecimiento</campoAdicional>
+    <campoAdicional nombre="socioRUC">123456789</campoAdicional>
+    <campoAdicional nombre="socioDireccion">direccion prueba</campoAdicional>
+    <campoAdicional nombre="socioTelefono">022222222</campoAdicional>
+    <campoAdicional nombre="socioEmail">eample@establecimeinto.com</campoAdicional>
+    <campoAdicional nombre="PlacaVehiculo">.</campoAdicional>
+    <campoAdicional nombre="CtaEstablecimiento">.</campoAdicional>
+  </infoAdicional>
+</liquidacionCompra>
