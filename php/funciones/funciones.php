@@ -6600,6 +6600,12 @@ function  Leer_Datos_Cliente_FA($Codigo_CIRUC_Cliente)
 
 function Grabar_Factura1($TFA,$VerFactura = false, $NoRegTrans = false)
 {
+  $LCxC = Lineas_De_CxC($TFA);
+  if(isset($LCxC['TFA'])){
+    $clavesFaltantes = array_diff_key($LCxC['TFA'], $TFA);
+    $TFA = array_merge($TFA, $clavesFaltantes);
+  }
+
    // print_r($TFA);die();
    $FA = variables_tipo_factura();
    $TFA = array_merge($FA,$TFA);
@@ -6628,7 +6634,10 @@ function Grabar_Factura1($TFA,$VerFactura = false, $NoRegTrans = false)
   $TFA['Descuento_0'] = 0;
   $TFA['Descuento_X'] = 0;
   $TFA['Servicio'] = 0;
-  $TFA['Cta_CxP_Anterior']='0';
+  if(!isset($TFA['Cta_CxP_Anterior'])){
+    $TFA['Cta_CxP_Anterior'] = '0';
+  }
+  
   if(strlen($TFA['Autorizacion']) >= 13){  $TMail['TipoDeEnvio'] = "CE";}
   // if($TFA['DireccionC'] <> $FA['DireccionS'] And strlen($TFA['DireccionS']) > 1 ){$TFA['DireccionC'] = $FA['DireccionS'];}
   if($TFA['TC'] =="PV")
@@ -7819,25 +7828,32 @@ function Lineas_De_CxC($TFA)
   $TFA['Cta_Venta'] = G_NINGUNO;
   if($TFA['Fecha']==''){$TFA['Fecha']=date('Y-m-d');}
   if(!isset($TFA['Fecha_NC']) || $TFA['Fecha_NC']==''){$TFA['Fecha_NC']=date('Y-m-d');}
- // 'MsgBox LineaCxC
-  $sql = "SELECT * 
-        FROM Catalogo_Lineas 
-        WHERE Item = '".$_SESSION['INGRESO']['item']."' 
-        AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
-        AND '".$TFA['Cod_CxC']."' IN (Concepto, Codigo, CxC) ";
+  // 'MsgBox LineaCxC
+  $sSQL = "SELECT Concepto, Logo_Factura, Largo, Ancho, Espacios, Pos_Factura, Fact_Pag, Pos_Y_Fact, Serie, Autorizacion, Vencimiento, Fecha, Secuencial, " .
+      "ItemsxFA, Codigo, Fact, CxC, Cta_Venta, CxC_Anterior, Imp_Mes, Nombre_Establecimiento, Direccion_Establecimiento, Telefono_Estab, Logo_Tipo_Estab " .
+      "FROM Catalogo_Lineas " .
+      "WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' " .
+      "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' ";
+  if (strlen($TFA['TC']) == 2) $sSQL .= "AND Fact = '" . $TFA['TC'] . "' ";
+  if (strlen($TFA['Cod_CxC']) > 1) {
+    $sSQL .= "AND '" . $TFA['Cod_CxC'] . "' IN (Concepto, Codigo, CxC) ";
+  } elseif (strlen($TFA['Serie']) == 6) {
+    $sSQL .= "AND Serie = '" . $TFA['Serie'] . "' ";
+  } elseif (strlen($TFA['Autorizacion']) >= 6) {
+    $sSQL .= "AND Autorizacion = '" . $TFA['Autorizacion'] . "' ";
+  }
 
   if($TFA['TC'] == "NC"){
-     $sql.= " AND Fecha <= '".BuscarFecha($TFA['Fecha_NC'])."' 
+     $sSQL.= " AND Fecha <= '".BuscarFecha($TFA['Fecha_NC'])."' 
            AND Vencimiento >= '".BuscarFecha($TFA['Fecha_NC'])."'";
   }else{
-     $sql.= " AND Fecha <= '".BuscarFecha($TFA['Fecha'])."' 
+     $sSQL.= " AND Fecha <= '".BuscarFecha($TFA['Fecha'])."' 
            AND Vencimiento >= '".BuscarFecha($TFA['Fecha'])."' ";
   }
-  $datos = array();
-  $sql.=' ORDER BY Codigo';
+  $sSQL.=' ORDER BY Codigo';
 
-  $datos = $conn->datos($sql);
-  // print_r($sql);die();
+  $datos = $conn->datos($sSQL);
+   // print_r($sSQL);die();
   if(count($datos)>0)
   {   
       $TFA['CxC_Clientes'] = $datos[0]["Concepto"];

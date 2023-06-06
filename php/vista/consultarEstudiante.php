@@ -1,8 +1,14 @@
 <?php
 $studentId  = (isset($_GET['id']))?$_GET['id']:"";
-$token  = (isset($_GET['t']))?$_GET['t']:"";
-$data = ConsultarDataEstudianteIdukay($studentId, $token);
+$file  = (isset($_GET['file']))?$_GET['file']:die('Parametro file obligatorio');
 
+$archivo = $file.'.key';
+$token = file_get_contents($archivo);
+if ($token == false) {
+  die('Error al obtener token.');
+}
+
+$data = ConsultarDataEstudianteIdukay($studentId, $token);
 function ConsultarDataEstudianteIdukay($studentId, $token)
 {
   $curl = curl_init();
@@ -29,13 +35,13 @@ function ConsultarDataEstudianteIdukay($studentId, $token)
   curl_close($curl);
 
   if ($response === false) {
-    return false;
+    die(json_encode(['response'=> false, 'httpCode'=>$httpCode]));
   } else {
     if ($httpCode == 200) {
         $json = json_decode($response, true);
         return (count($json["response"])>0)?$json["response"][0]:false;
     } else {
-        return false;
+      die(json_encode(['response'=> false, 'httpCode'=>$httpCode]));
     }
   }
 }

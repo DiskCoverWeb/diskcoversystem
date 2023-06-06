@@ -707,6 +707,18 @@ class facturar_pensionC
     if(count($datos)<=0){
       return (array('respuesta'=>-1,'text'=>"No se encontraron asientos para procesar."));
     }
+
+    $cliente = Leer_Datos_Cliente_FA($codigoCliente);
+    $TFA = Calculos_Totales_Factura($codigoCliente);
+    if(isset($cliente['Razon_Social']) && $cliente['Razon_Social']=='CONSUMIDOR FINAL'){
+      $Con_IVA_ = number_format($TFA['Con_IVA'], 2,'.','');
+      $Sin_IVA_ = number_format($TFA['Sin_IVA'], 2,'.','');
+      $SubTotal_ = $Sin_IVA_ + $Con_IVA_ - $TFA['Descuento'] - $TFA['Descuento2'];
+      if($SubTotal_>MONTO_MAXIMO_FACTURACION){
+        return (array('respuesta'=>-1,'text'=>"Por Ley no se puede emitir una facturar por mas de ".MONTO_MAXIMO_FACTURACION));
+      }
+    }
+    
     foreach ($datos as $key => $value) {
        
        $Valor = $value["TOTAL"];
@@ -734,7 +746,6 @@ class facturar_pensionC
           }
     }
     foreach ($datos as $key => $value) {
-		  $TFA = Calculos_Totales_Factura($codigoCliente);
       $FA['CodigoC'] = $codigoCliente;
       $FA['Tipo_PRN'] = "FM";
       $FA['FacturaNo'] = $TextFacturaNo;
@@ -875,7 +886,7 @@ class facturar_pensionC
         if($rep==1)
         {
           $resultado = array('respuesta'=>$rep, 'auto'=>$dataFac['Autorizacion'], 'per' => $dataFac['Periodo']);
-        }else{ $resultado = array('respuesta'=>-1,'text'=>utf8_encode($rep), 'auto'=>$dataFac['Autorizacion'], 'per' => $dataFac['Periodo']);}
+        }else{ $resultado = array('respuesta'=>-1,'text'=>((!is_null($rep))?utf8_encode($rep):$rep), 'auto'=>$dataFac['Autorizacion'], 'per' => $dataFac['Periodo']);}
       } catch (Exception $e) {
         $resultado = array('respuesta'=>-1,'text'=>$e->getMessage());
       }

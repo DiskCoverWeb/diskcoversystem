@@ -682,7 +682,8 @@
           update = false;
         }
         TextRepresentante = $("#persona").val();
-        DCLinea = $("#DCLinea").val();
+        DCLinea = $("#DCLinea option:selected").val();
+        Cod_CxC = $("#DCLinea option:selected").text();
         TxtDireccion = $("#direccion").val();
         TxtTelefono = $("#telefono").val();
         TextFacturaNo = $("#factura").val();
@@ -737,6 +738,7 @@
             data: {
               'update' : update,
               'DCLinea' : DCLinea,
+              'Cod_CxC' : Cod_CxC,
               'Total' : Total,
               'Descuento' : Descuento,
               'Descuento2' : Descuento2,
@@ -1143,6 +1145,26 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
     min-width: 150px !important;
   }
 
+.colDCLinea{
+    width: 80% !important;
+  }
+
+@media (max-width: 1541px) {
+ 
+  .colDCLinea{
+    width: 92% !important;
+  }
+  
+}
+
+@media (max-width: 1332px) {
+ 
+  .colDCLinea{
+    width: 98% !important;
+  }
+  
+}
+
 @media (max-width: 1325px) {
  
   .min-width-150{
@@ -1233,7 +1255,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
     min-width: 100% !important;
   }
   .colDCLinea{
-    width: 98% !important;
     margin: 5px 0px;
   }
 
