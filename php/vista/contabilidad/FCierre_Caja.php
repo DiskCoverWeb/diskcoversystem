@@ -21,6 +21,10 @@ switch ($_SESSION['INGRESO']['modulo_']) {
 .table-responsive {
   box-shadow: 5px 5px 6px rgba(0, 0, 0, 0.6);
 }
+.table-sm td{
+  white-space: nowrap;
+  padding: 0px 5px;
+}
 #swal2-content{
     font-size: 13px;
     font-weight: 500;
@@ -147,10 +151,19 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                       <tr>
                         <th>TC</th>
                         <th>Fecha</th>
-                        <th>Cta_CxP</th>
-                        <th>Factura</th>
                         <th>Cliente</th>
+                        <th>Serie</th>
+                        <th>Autorizacion</th>
+                        <th>Factura</th>
+                        <th>Total_IVA</th>
+                        <th>Descuento</th>
+                        <th>Descuento2</th>
+                        <th>Servicio</th>
+                        <th>Propina</th>
                         <th>Total_MN</th>
+                        <th>Saldo_MN</th>
+                        <th>Cta_CxP</th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody id="DGVentasBody">
@@ -184,7 +197,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                       <tr>
                         <th>TP</th>
                         <th>Fecha</th>
-                        <th>Orden_No</th>
                         <th>COD_BANCO</th>
                         <th>Cliente</th>
                         <th>Serie</th>
@@ -194,11 +206,11 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                         <th>Cheque</th>
                         <th>Abono</th>
                         <th>Comprobante</th>
+                        <th>Orden_No</th>
                         <th>Cta</th>
                         <th>Cta_CxP</th>
                         <th>CodigoC</th>
                         <th>Ciudad</th>
-                        <th>Sectorizacion</th>
                         <th>Ejecutivo</th>
                       </tr>
                     </thead>
@@ -273,6 +285,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                           <th>CANTIDADES</th>
                           <th>SUBTOTALES</th>
                           <th>SUBTOTAL_IVA</th>
+                          <th>Cta_Venta</th>
                         </tr>
                       </thead>
                       <tbody id="DGProductosBody">
@@ -290,9 +303,13 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                   <table id="DGAsiento" class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
-                        <th>A_No</th>
-                        <th>BENEFICIARIO</th>
+                        <th>CODIGO</th>
                         <th>CUENTA</th>
+                        <th>PARCIAL_ME</th>
+                        <th>DEBE</th>
+                        <th>HABER</th>
+                        <th>CHEQ_DEP</th>
+                        <th>DETALLE</th>
                       </tr>
                     </thead>
                     <tbody id="DGAsientoBody">
@@ -314,9 +331,13 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                   <table id="DGAsiento1" class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
-                        <th>A_No</th>
-                        <th>BENEFICIARIO</th>
+                        <th>CODIGO</th>
                         <th>CUENTA</th>
+                        <th>PARCIAL_ME</th>
+                        <th>DEBE</th>
+                        <th>HABER</th>
+                        <th>CHEQ_DEP</th>
+                        <th>DETALLE</th>
                       </tr>
                     </thead>
                     <tbody id="DGAsiento1Body">
@@ -379,6 +400,11 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                         <th>Autorizacion</th>
                         <th>Serie</th>
                         <th>Secuencial</th>
+                        <th>Base_12</th>
+                        <th>Base_0</th>
+                        <th>Descuento</th>
+                        <th>Descuento2</th>
+                        <th>TOTAL</th>
                       </tr>
                     </thead>
                     <tbody id="DGSRIBody">
@@ -729,7 +755,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
     $("#LblServicio").val(datos.LblServicio) 
     $("#LblSinIVA").val(datos.LblSinIVA) 
     $("#LblTotalFacturado").val(datos.LblTotalFacturado) 
-    alert(datos.TextoImprimio);
   }
 
   function redondear(valor, decimales) {

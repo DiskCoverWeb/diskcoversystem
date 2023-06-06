@@ -289,7 +289,7 @@ class FCierre_CajaC
 
         //"Verificando Cuentas involucradas"
         //Listado de los tipos de abonos
-        $sSQL = "SELECT TA.TP,TA.Fecha,C.CI_RUC As COD_BANCO,C.Cliente,TA.Serie,TA.Autorizacion,TA.Factura,TA.Banco,TA.Cheque,TA.Abono," .
+        $sSQL = "SELECT TA.TP,FORMAT(TA.Fecha, 'yyyy-MM-dd')  AS Fecha,C.CI_RUC As COD_BANCO,C.Cliente,TA.Serie,TA.Autorizacion,TA.Factura,TA.Banco,TA.Cheque,TA.Abono," .
         "TA.Comprobante,TA.Cta,TA.Cta_CxP,TA.CodigoC,C.Ciudad,C.Plan_Afiliado As Sectorizacion," .
         "A.Nombre_Completo As Ejecutivo,Recibo_No As Orden_No " .
         "FROM Trans_Abonos As TA, Clientes C, Accesos As A " .
@@ -314,7 +314,7 @@ class FCierre_CajaC
         $AdoCxC = $this->CierreCajaM->SelectDB($sSQL);
 
         // Listado de las CxC Clientes
-        $sSQL = "SELECT F.TC,F.Fecha,C.Cliente,F.Serie,F.Autorizacion,F.Factura,F.IVA As Total_IVA,F.Descuento," .
+        $sSQL = "SELECT F.TC,FORMAT(F.Fecha, 'yyyy-MM-dd')  AS Fecha,C.Cliente,F.Serie,F.Autorizacion,F.Factura,F.IVA As Total_IVA,F.Descuento," .
                 "F.Descuento2,F.Servicio,F.Propina,F.Total_MN,F.Saldo_MN,F.Cta_CxP,C.Ciudad,C.Plan_Afiliado As Sectorizacion," .
                 "A.Nombre_Completo As Ejecutivo " .
                 "FROM Facturas F,Clientes C,Accesos As A " .
