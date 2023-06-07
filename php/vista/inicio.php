@@ -258,9 +258,9 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("aguaPotable/ingreso_consumo_agua.php");
 			}
-			if ($_SESSION['INGRESO']['accion']=='correccion_captacion') 
+			if ($_SESSION['INGRESO']['accion']=='reporte_consumo_agua') 
 			{
-				require_once("aguaPotable/correccion_captacion.php");
+				require_once("aguaPotable/reporte_consumo_agua.php");
 			}
 //empresa
 

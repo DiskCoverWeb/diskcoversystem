@@ -12,6 +12,16 @@ if(!class_exists('cabecera_pdf'))
 }
 
 $controlador = new facturar_pensionC();
+if(isset($_GET["ExcelReporteConsumo"])){
+  echo json_decode($controlador->generarExcelReporteConsumoAgua($_GET));
+  exit();
+}
+
+if(isset($_GET["PdfReporteConsumo"])){
+  echo json_decode($controlador->generarPdfReporteConsumoAgua($_GET));
+  exit();
+}
+
 if(isset($_GET['cliente']))
 {
 	$query = '';
@@ -246,6 +256,12 @@ if(isset($_GET['GuardarCambiosMedidorAgua']))
   echo json_encode($controlador->GuardarCambiosMedidorAgua($_POST));
   exit();
 }
+
+if(isset($_GET["TablaReporteConsumo"])){
+  echo json_encode($controlador->TablaReporteConsumo($_POST));
+  exit();
+}
+
 class facturar_pensionC
 {
   private $facturacion;
@@ -1212,6 +1228,171 @@ class facturar_pensionC
   public function validarExisteLecturaREgistradaAnoMes($cMedidor, $codigoCliente, $Anio, $NoMes, $Codigo_Inv )
   {
     return ($this->facturacion->AnyRegistroClientes_FacturacionAnoMes($codigoCliente, $cMedidor, $Codigo_Inv, $Anio, $NoMes))?true:    $this->facturacion->AnyRegistroDetalleFacturaAnoMes($codigoCliente, $cMedidor, $Codigo_Inv, $Anio, $NoMes);
+  }
+
+  public function TablaReporteConsumo($parametros)
+  {
+    extract($parametros);
+    $sql = $this->getSqlReporteConsumoAgua($parametros);
+    $tabla='';
+    $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-144;
+    $tabla = grilla_generica_new($sql,(($Tipo=='1')?'Clientes_Facturacion':'Detalle_Factura'),$id_tabla=false,"Reporte Consumo de Agua",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+    return $tabla;
+  }
+
+  public function getSqlReporteConsumoAgua($parametros){
+    extract($parametros);
+    $Codigo_Auto = ($CMedidorFiltro!=G_NINGUNO)?str_pad($CMedidorFiltro, 6, "0", STR_PAD_LEFT):G_NINGUNO;
+    
+    switch ($Tipo) {
+      case '2': //Facturado
+        $sql = "SELECT DF.Mes, DF.Ticket As Periodo,DF.Factura, F.Razon_Social, DF.Producto, DF.Tipo_Hab As Medidor, ROUND(Df.Corte,0) As Lectura,      Df.Total As Valor, DF.Serie
+                FROM Detalle_Factura As DF, Facturas As F
+                WHERE DF.Item = '".$_SESSION['INGRESO']['item']."'
+                AND DF.Factura = F.Factura
+                And DF.CodigoC = F.CodigoC
+                AND DF.Tipo_Hab <> '.'
+                AND DF.Codigo LIKE 'JG.%'
+                ".(($codigoCliente!="" && $codigoCliente!=G_NINGUNO)?" AND DF.CodigoC = '".$codigoCliente."'":"")."
+
+                ".(($fechai!="" && $fechai!=G_NINGUNO)?" AND DF.Fecha >= '".$fechai."'":"")."
+
+                ".(($fechaf!="" && $fechaf!=G_NINGUNO)?" AND DF.Fecha <= '".$fechaf."'":"")."
+
+                ".(($serie!="")?" AND DF.Serie = '".$serie."'":"")."
+
+                ".(($Codigo_Auto!=G_NINGUNO)?" AND DF.Tipo_Hab='$Codigo_Auto' ":"")."";
+        break;
+      
+      default:
+        $sql = "SELECT CF.Mes,CF.Periodo, C.Cliente, CP.Producto, CF.Codigo_Auto as Medidor, CF.Credito_No as Lectura,CF.Valor
+          FROM Clientes_Facturacion As CF,Clientes As C, Catalogo_Productos As CP
+          WHERE CF.Item = '".$_SESSION['INGRESO']['item']."'
+          AND CF.Mes <> '.'
+          AND CF.Codigo_Auto <> '.'
+          AND CF.Codigo = C.Codigo
+          AND CF.Codigo_Inv = CP.Codigo_Inv 
+          AND CP.Codigo_Inv LIKE 'JG.%'
+          ".(($codigoCliente!="" && $codigoCliente!=G_NINGUNO)?" AND CF.Codigo = '".$codigoCliente."'":"")."
+
+          ".(($fechai!="" && $fechai!=G_NINGUNO)?" AND CF.Fecha >= '".$fechai."'":"")."
+
+          ".(($fechaf!="" && $fechaf!=G_NINGUNO)?" AND CF.Fecha <= '".$fechaf."'":"")."
+
+          ".(($Codigo_Auto!=G_NINGUNO)?" AND CF.Codigo_Auto='$Codigo_Auto' ":"")."
+
+          ORDER BY CF.Periodo,CF.Num_Mes,CF.Codigo_Inv,CF.Credito_No";
+        break;
+    }
+    return $sql;
+  }
+
+  public function generarExcelReporteConsumoAgua($parametros){
+    $sql = $this->getSqlReporteConsumoAgua($parametros);
+    extract($parametros);
+    $result = $this->facturacion->SelectDatos($sql);
+    $he = array();
+    $medidas = array();
+    foreach ($result[0] as $key => $value) {
+      array_push($he,$key);
+      array_push($medidas,strlen($key)*4);
+    }
+
+    $tablaHTML =array();
+    $tablaHTML[0]['medidas']=$medidas;
+    $tablaHTML[0]['datos']=$he;
+    $tablaHTML[0]['tipo'] ='C';
+    $pos = 1;
+    foreach ($result as $key => $value) {
+      $tablaHTML[$pos]['medidas']=$medidas;
+      $va = array();
+      foreach ($he as $key1 => $value1) {
+        array_push($va,$value[$value1]);        
+      }
+      $tablaHTML[$pos]['datos']= $va;
+      $tablaHTML[$pos]['tipo'] ='N';
+      $pos+=1;
+    }
+    return excel_generico("Reporte Consumo de Agua - ".(($Tipo=='2')?'Facturado':'Prefacturas'),$tablaHTML);
+  }
+
+  public function generarPdfReporteConsumoAgua($parametros){
+    $sql = $this->getSqlReporteConsumoAgua($parametros);
+    extract($parametros);
+    $result = $this->facturacion->SelectDatos($sql);
+    $campos = array();
+    foreach ($result[0] as $key => $value) {
+      array_push($campos,$key);
+    }
+    $ali =array();
+    $medi =array();
+    foreach ($campos as $key => $value) {
+      switch ($value) {
+        case 'Mes':
+          $ali[$key] = 'L';
+          $medi[$key] =18;
+          break;
+        case 'Periodo':
+          $ali[$key] = 'L';
+          $medi[$key] =15;
+          break;
+        case 'Cliente':
+          $ali[$key] = 'L';
+          $medi[$key] =55;
+          break;
+        case 'Razon_Social':
+          $ali[$key] = 'L';
+          $medi[$key] =45;
+          break;
+        case 'Producto':
+          $ali[$key] = 'L';
+          $medi[$key] =40;
+          break;
+        
+        default:
+          $val =  strlen(trim($value));
+          if($val != 2){
+            $ali[$key] = is_numeric($val) ? 'R':'L';
+            $medi[$key] = $val*2.5;
+          }else{
+            $ali[$key] = is_numeric($val) ? 'R':'L';
+            $medi[$key] = $val*4;
+          }
+          break;
+      }
+    }
+
+    $pdf = new cabecera_pdf();  
+    $titulo = "Reporte Consumo de Agua - ".(($Tipo=='2')?'Facturado':'Prefacturas');
+    $mostrar = true;
+    $sizetable =8;
+    $tablaHTML = array();
+    $tablaHTML[0]['medidas']=$medi;
+    $tablaHTML[0]['alineado']=$ali;
+    $tablaHTML[0]['datos']=$campos;
+    $tablaHTML[0]['estilo']='BI';
+    $tablaHTML[0]['borde'] = '1';
+    $pos = 1;
+    foreach ($result as $key => $value) {
+      $datos = array();
+      foreach ($value as $key1 => $valu) {
+        if($key1=="Lectura" && $valu!=G_NINGUNO){
+          array_push($datos, number_format($valu, 0, '.', ''));
+        }else
+        if ( $key1!="Medidor" && $key1!="Lectura" && $key1!="Periodo" && $key1!="Factura" && $key1!="Serie" && (is_int($valu) || is_numeric($valu))) {
+          array_push($datos, number_format($valu, 2, '.', ''));
+        } else {
+          array_push($datos, $valu);
+        }
+      }
+      $tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+      $tablaHTML[$pos]['alineado']=$tablaHTML[0]['alineado'];
+      $tablaHTML[$pos]['datos']=$datos;
+      $tablaHTML[$pos]['estilo']='I';
+      $tablaHTML[$pos]['borde'] = '1';
+      $pos = $pos+1;
+    }
+    $pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$fechai,$fechaf,$sizetable,$mostrar);
   }
 }
 ?>

@@ -212,7 +212,7 @@ class cabecera_pdf
 		if ($download) {	
 		 if($mostrar==true)
 	       {
-		    $this->pdftable->Output();
+		    $this->pdftable->Output('',$titulo.'.pdf');
 
 	       }else
 	       {

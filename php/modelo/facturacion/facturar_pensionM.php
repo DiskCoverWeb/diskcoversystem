@@ -11,6 +11,11 @@ class facturar_pensionM
     $this->db = new db();
   }
 	
+  function SelectDatos($sSQL)
+  {
+    return $this->db->datos($sSQL);
+  }
+
   public function getclienteBasic($query){
     $sql="  SELECT Codigo, Cliente
             FROM Clientes 
