@@ -1357,7 +1357,7 @@ function Command8_Click() {
                     onblur="calcular()">
             </div>
             <div class="col-sm-1" style="padding-right:0px">
-                <b>Dcto Val</b>
+                <b>Dcto_Val</b>
                 <input type="text" name="TextVDescto" id="TextVDescto" class="form-control input-xs" value="0">
             </div> 
             <div class="col-sm-1" style="padding-right:0px;display:none;" id="campo_servicio">
