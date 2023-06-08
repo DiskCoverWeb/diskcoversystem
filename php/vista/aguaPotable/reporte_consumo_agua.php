@@ -27,13 +27,13 @@
               </select>
               <input type="hidden" name="codigoCliente" id="codigoCliente">
             </div>
-            <div class="col-xs-4 col-md-3 col-lg-2">
+            <div class="col-xs-4 col-md-3 col-lg-1" style="min-width: 145px;max-width: 160px">
               <b>Medidor</b> <br>
               <select class="form-control input-xs" id="CMedidorFiltro" name="CMedidorFiltro" tabindex="2">  
                 <option value="<?php echo G_NINGUNO ?>">Medidores</option>
               </select>
             </div>
-            <div class="col-xs-4 col-md-3 col-lg-2">
+            <div class="col-xs-4 col-md-3 col-lg-2" style="max-width:150px">
               <b>Tipo</b> <br>
               <select class="form-control input-xs" id="Tipo" name="Tipo" tabindex="2" 
               onchange="document.getElementById('div_serie').style.display = (this.value === '2') ? 'block' : 'none';">  
@@ -41,7 +41,7 @@
                 <option value="2">Facturado</option>
               </select>
             </div>
-            <div class="col-xs-4 col-md-3 col-lg-2 " id="div_serie" style="display:none">
+            <div class="col-xs-4 col-md-3 col-lg-1 " id="div_serie" style="min-width: 95px;max-width: 150px;display:none">
               <b>Serie</b> <br>
                <input type="tel" class="form-control pull-right input-xs" id="serie" name="serie" >
             </div>
@@ -114,7 +114,7 @@
     $('#cliente').select2({
       placeholder: 'Seleccione un cliente',
       ajax: {
-        url:   '../controlador/facturacion/facturar_pensionC.php?cliente=true',
+        url:   '../controlador/facturacion/facturar_pensionC.php?cliente=true&all=true',
         dataType: 'json',
         delay: 250,
         processResults: function (data) {

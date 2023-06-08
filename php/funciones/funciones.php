@@ -1177,6 +1177,59 @@ function Digito_Verificador_SP($NumeroRUC)
 
 
 //excel
+function exportar_excel_generico_SQl($titulo,$sql)
+{
+  $db = new db();
+  $result = $db->datos($sql);
+  $campos = array();
+  $medidas = array();
+  foreach ($result[0] as $key => $value) {
+    array_push($campos,$key);
+    array_push($medidas,strlen($key)*4);
+  }
+  $tablaHTML =array();
+  $tablaHTML[0]['medidas']=$medidas;
+  $tablaHTML[0]['datos']=$campos;
+  $tablaHTML[0]['tipo'] ='C';
+  if(count($campos)<3){
+    if(count($campos)==1){
+      $tablaHTML[0]['unir'] =array('ABC');
+    }else if(count($campos)==2){
+      $tablaHTML[0]['unir'] =array('A','BC');
+    }
+    $tablaHTML[0]['col-total'] =3;
+  }
+  $pos = 1;
+  foreach ($result as $key => $value) {
+
+    if(count($campos)<3){
+      if(count($campos)==1){
+        $medidas = [30];
+        $tablaHTML[$pos]['unir'] =array('ABC');
+      }else if(count($campos)==2){
+        $tablaHTML[$pos]['unir'] =array('A','BC');
+      }
+    }else{
+      $indice = 0;
+      foreach ($value as $contenido) {
+        if($medidas[$indice]<strlen($contenido) ){
+          $medidas[$indice] = strlen($contenido);
+        }
+        $indice++;
+      }
+    }
+    $tablaHTML[$pos]['medidas']=$medidas;
+    $va = array();
+    foreach ($campos as $key1 => $value1) {
+      array_push($va,$value[$value1]);        
+    }
+    $tablaHTML[$pos]['datos']= $va;
+    $tablaHTML[$pos]['tipo'] ='N';
+    $pos+=1;
+  }
+  return excel_generico($titulo,$tablaHTML); 
+}
+
 function exportar_excel_generico($stmt,$ti=null,$camne=null,$b=null,$base=null)
 {
   excel_file($stmt,$ti,$camne,$b,$base); 

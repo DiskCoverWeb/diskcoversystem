@@ -43,6 +43,11 @@
     });
   }
 
+  function GenerarExcel() {
+    var url = '../controlador/modalesC.php?ExcelFInfoError=true';
+      window.open(url, '_blank');
+  }
+
 </script>		
 
 <style type="text/css">
@@ -61,17 +66,16 @@
         </a>
       </div>
       <div class="col">
-        <a  href="javascript:void(0)" title="Excel" class="btn btn-default" onclick="Diario_Caja()">
+        <a  href="javascript:void(0)" title="Excel" class="btn btn-default" onclick="GenerarExcel()">
           <img src="../../img/png/excel.png" width="25" height="30">
-          <!-- <br>Excel -->
         </a>
       </div>
-      <div class="col">
+      <!-- <div class="col">
         <a  href="javascript:void(0)" title="Imprimir" class="btn btn-default" onclick="Diario_Caja()">
           <img src="../../img/png/impresora.png" width="25" height="30">
           <!-- <br>Imprimir -->
         </a>
-      </div>
+      </div> -->
     </div><br>
     <div class="col-xs-12">
       <div class="table-responsive" style="overflow-y: scroll; min-height: 50px;max-height:75vh; width: auto;">

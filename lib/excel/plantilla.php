@@ -170,7 +170,8 @@ function excel_generico($titulo,$datos=false,$url=false)
 		$red->getFont()->setSize(7);
 
 		//---------------------nombre de la empresa central---------------
-	    $sheet->getStyle('B1')->getAlignment()->setWrapText(true);	
+	    $sheet->getStyle('B1')->getAlignment()->setWrapText(true);
+	    $sheet->getColumnDimension('B')->setWidth(40);	
 		$sheet->getStyle('B1')->getFont()->getColor()->setARGB(Color::COLOR_WHITE);
 	    if($_SESSION['INGRESO']['Razon_Social']!=$_SESSION['INGRESO']['noempr'])
 		{
@@ -212,8 +213,9 @@ function excel_generico($titulo,$datos=false,$url=false)
 				$sheet->getStyle($le.'1')->getAlignment()->setWrapText(true);		
 				$sheet->setCellValue($le.'1',$richText1);
 				$drawing->setCoordinates($le.'1');
-
-				$sheet->mergeCells('B1:'.$ti.'1');
+				if($ti!='A' && $ti!='B'){
+					$sheet->mergeCells('B1:'.$ti.'1');
+				}
 				$spreadsheet->getActiveSheet()->getStyle($let.'1:'.$le.'1')->getFill()->getStartColor()->setARGB('436BEE');
 
 

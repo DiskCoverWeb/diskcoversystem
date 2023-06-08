@@ -312,7 +312,7 @@ function DLCxCxP($SubCta,$query=false)
 
 	
 	
-	function FInfoError()
+	function FInfoError($ejecutar = true)
 	{
 		$cSQL = "SELECT Texto
 				FROM Tabla_Temporal
@@ -320,6 +320,9 @@ function DLCxCxP($SubCta,$query=false)
 				AND Modulo = '" . $_SESSION['INGRESO']['modulo_'] . "'
 				AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'
 				ORDER BY ID";
+		if(!$ejecutar){
+			return $cSQL;
+		}
 		return $this->db->datos($cSQL);
 	}
 	

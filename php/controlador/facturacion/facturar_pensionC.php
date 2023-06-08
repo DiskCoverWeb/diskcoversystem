@@ -31,10 +31,8 @@ if(isset($_GET['cliente']))
 	}
   if (isset($_GET['total'])) {
     $datos = $controlador->totalClientes();
-  }else{
-    $datos = $controlador->getClientes($query);
   }
-  echo json_encode($controlador->getClientes($query));
+  echo json_encode($controlador->getClientes($query, false, @$_GET['all']));
 }
 if(isset($_GET['clienteBasic']))
 {
@@ -290,10 +288,13 @@ class facturar_pensionC
     return $clientes;
   }
 
-	public function getClientes($query, $ruc=false){
+	public function getClientes($query, $ruc=false, $all=false){
     // Leer_Datos_Cliente_SP($codigo)
 		$datos = $this->facturacion->getClientes($query,$ruc);
 		$clientes = [];
+    if($all){
+      $clientes[] = array('id'=>G_NINGUNO,'text'=>'TODOS','data'=>array('codigo' =>G_NINGUNO));
+    }
 		foreach ($datos as $value) {
 			$clientes[] = array('id'=>$value['Cliente'],'text'=>$value['Cliente'],'data'=>array('email'=> $value['Email'],'direccion' => $value['Direccion'],'direccion1'=>$value['DireccionT'], 'telefono' =>$value['Telefono'], 'ci_ruc' => $value['CI_RUC'], 'codigo' => $value['Codigo'], 'cliente' => $value['Cliente'], 'grupo' => $value['Grupo'], 'tdCliente' => $value['TD'], 'Archivo_Foto'=> $value['Archivo_Foto'], 'Archivo_Foto_Url'=> BuscarArchivo_Foto_Estudiante($value['Archivo_Foto']), 'RUC_CI_Rep' => $value['CI_RUC_R'])); //,'dataMatricula'=>$matricula);
 		}
@@ -1290,30 +1291,7 @@ class facturar_pensionC
   public function generarExcelReporteConsumoAgua($parametros){
     $sql = $this->getSqlReporteConsumoAgua($parametros);
     extract($parametros);
-    $result = $this->facturacion->SelectDatos($sql);
-    $he = array();
-    $medidas = array();
-    foreach ($result[0] as $key => $value) {
-      array_push($he,$key);
-      array_push($medidas,strlen($key)*4);
-    }
-
-    $tablaHTML =array();
-    $tablaHTML[0]['medidas']=$medidas;
-    $tablaHTML[0]['datos']=$he;
-    $tablaHTML[0]['tipo'] ='C';
-    $pos = 1;
-    foreach ($result as $key => $value) {
-      $tablaHTML[$pos]['medidas']=$medidas;
-      $va = array();
-      foreach ($he as $key1 => $value1) {
-        array_push($va,$value[$value1]);        
-      }
-      $tablaHTML[$pos]['datos']= $va;
-      $tablaHTML[$pos]['tipo'] ='N';
-      $pos+=1;
-    }
-    return excel_generico("Reporte Consumo de Agua - ".(($Tipo=='2')?'Facturado':'Prefacturas'),$tablaHTML);
+    return exportar_excel_generico_SQl("Reporte Consumo de Agua - ".(($Tipo=='2')?'Facturado':'Prefacturas'),$sql);
   }
 
   public function generarPdfReporteConsumoAgua($parametros){

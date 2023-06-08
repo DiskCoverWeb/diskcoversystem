@@ -94,6 +94,11 @@ if(isset($_GET['ActualizarDocumentoCliente']))
 	echo json_encode($controlador->ActualizarDocumentoCliente($_POST));
 	exit();
 }
+if(isset($_GET['ExcelFInfoError']))
+{
+	echo json_encode($controlador->GenerarExcelFInfoError());
+	exit();
+}
 
 /**
  * 
@@ -443,6 +448,12 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	{
 		extract($parametros);
 		return Procesar_Renumerar_CIRUC_JuntaAgua($CodigoC, $NewDocument);
+	}
+
+	function GenerarExcelFInfoError()
+	{
+		$sql = $this->modelo->FInfoError(false);
+		return exportar_excel_generico_SQl("FORMULARIO DE INFORME DE ERRORES",$sql);
 	}
 }
 ?>
