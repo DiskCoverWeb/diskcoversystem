@@ -109,10 +109,99 @@ class cambioeC
 		$CI = '.';
 		if(count($datos)>0)
 		{
+			$empresaSQL = '';
+			if($datos[0]['IP_VPN_RUTA']!='.' && $datos[0]['Base_Datos'] !='.' && $datos[0]['Usuario_DB']!='.' && $datos[0]['Contrasena_DB']!='.' && $datos[0]['Tipo_Base']!='.')
+			{
+				$datosEmp = $this->modelo->datos_sql_terceros($datos[0],$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
+				if($datosEmp!='-2' && $datosEmp!='-1')
+				{
+						// print_r($datosEmp);die();
+						$empresaSQL = '<!--------------------------seccion com´probante------------------->
+						<div class="col-sm-12">
+		                    <label>|Firma Electrónica|</label>
+		                </div>';
+		                if($datosEmp[0]['Ambiente']==1)
+		                {                                
+			                 $empresaSQL.='<div class="col-sm-4">                                    
+			                   <label> <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="" onclick="AmbientePrueba()" checked>
+			                    Ambiente de Prueba</label>
+			                </div>
+			                <div class="col-sm-4">
+			                    <label><input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onclick="AmbienteProduccion()">
+			                    Ambiente de Producción</label>
+			                </div>';
+		            	}else
+		            	{
+		            		 $empresaSQL.='<div class="col-sm-4">                                    
+		                    <label><input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="" onclick="AmbientePrueba()">
+		                    Ambiente de Prueba</label>
+		                </div>
+		                <div class="col-sm-4">
+		                    <label><input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onclick="AmbienteProduccion()" checked>
+		                    Ambiente de Producción</label>
+		                </div>';
+		            	}
+		                $empresaSQL.='<div class="col-sm-2">
+		                    CONTRIBUYENTE ESPECIAL          
+		                </div>
+		                <div class="col-sm-2">
+		                    <input type="text" name="TxtContriEspecial" id="TxtContriEspecial" class="form-control input-xs" value="'.$datosEmp[0]['Codigo_Contribuyente_Especial'].'">
+		                </div>
+		                 <div class="col-sm-12">
+		                    <label>WEBSERVICE SRI RECEPCION</label>
+		                    <input type="text" name="TxtWebSRIre" id="TxtWebSRIre" class="form-control input-xs" value="'.$datosEmp[0]['Web_SRI_Recepcion'].'">
+		                </div>
+		                <div class="col-sm-12">
+		                    <label>WEBSERVICE SRI AUTORIZACIÓN</label>
+		                        <input type="text" name="TxtWebSRIau" id="TxtWebSRIau" class="form-control input-xs" value="'.$datosEmp[0]['Web_SRI_Autorizado'].'">
+		                </div>           
+		                <div class="col-sm-10">
+		                    <label>CERTIFICADO FIRMA ELECTRONICA (DEBE SER EN FORMATO DE EXTENSION P12</label>
+		                    <input type="text" name="TxtEXTP12" id="TxtEXTP12" class="form-control input-xs" value="'.$datosEmp[0]['Ruta_Certificado'].'">
+		                </div>
+		                <div class="col-sm-2">
+		                    <label>CONTRASEÑA:</label>
+		                    <input type="text" name="TxtContraExtP12" id="TxtContraExtP12" class="form-control input-xs" value="'.$datosEmp[0]['Clave_Certificado'].'">
+		                </div>
+		                <div class="col-sm-10">
+		                    <label>EMAIL PARA PROCESOS GENERALES:</label>
+		                    <input type="text" name="TxtEmailGE" id="TxtEmailGE" class="form-control input-xs" value="'.$datosEmp[0]['Email_Conexion'].'">
+		                </div>
+		                <div class="col-sm-2">
+		                    <label>CONTRASEÑA:</label>
+		                    <input type="text" name="TxtContraEmailGE" id="TxtContraEmailGE" class="form-control input-xs" value="'.$datosEmp[0]['Email_Contraseña'].'">
+		                </div>
+		                <div class="col-sm-10">
+		                    <label>EMAIL PARA DOCUMENTOS ELECTRONICOS:</label>
+		                    <input type="text" name="TxtEmaiElect" id="TxtEmaiElect" class="form-control input-xs" value="'.$datosEmp[0]['Email_Conexion_CE'].'">
+		                </div>
+		                <div class="col-sm-2">
+		                    <label>CONTRASEÑA:</label>
+		                    <input type="text" name="TxtContraEmaiElect" id="TxtContraEmaiElect" class="form-control input-xs" value="'.$datosEmp[0]['Email_Contraseña_CE'].'">
+		                </div>
+		                <div class="col-sm-10">
+		                    <label><input type="checkbox">Enviar Copia de Email</label>                                        
+		                    <input type="text" name="TxtCopiaEmai" id="TxtCopiaEmai" class="form-control input-xs" value="'.$datosEmp[0]['Email_Procesos'].'">
+		                </div>
+		                <div class="col-sm-2">
+		                    <label>RUC Operadora</label>
+		                    <input type="text" name="TxtRUCOpe" id="TxtRUCOpe" class="form-control input-xs" value="'.$datosEmp[0]['RUC_Operadora'].'">
+		                </div>
+		                <div class="col-sm-12">                            
+		                        <label>LEYENDA AL FINAL DE LOS DOCUMENTOS ELECTRONICOS</label>
+		                        <textarea name="txtLeyendaDocumen" id="txtLeyendaDocumen"class="form-control" rows="2" resize="none">'.$datosEmp[0]['LeyendaFA'].'</textarea>                            
+		                </div>
+		                <div class="col-sm-12">
+		                    <label>LEYENDA AL FINAL DE LA IMPRESION EN LA IMPRESORA DE PUNTO DE VENTA DE DOCUMENTOS ELECTRÓNICOS</label><br>                            
+		                    <textarea name="txtLeyendaImpresora" id="txtLeyendaImpresora"class="form-control" rows="2" resize="none">'.$datosEmp[0]['LeyendaFAT'].'</textarea>
+		                </div>';
+		        }
+			}
 
 		$CI = $datos[0]['RUC_CI_NIC'];
 			foreach ($datos as $key => $value) 
-			{					
+			{				
+				// print_r($value);die();
 			$op ='<div class="col-md-3">
 					<div class="form-group">
 					    <label for="Estado">Estado</label>
@@ -215,12 +304,11 @@ class cambioeC
 					   if($sms!=''){ $op.= $sms;}else{ $op.= $value['Mensaje'];} 
 					   $op.='">
 					</div>
-				</div>			
-				
-				</div>';
-
-			//echo '<div id="alerta" class="alert alert-success visible">'.$filas['Empresa'].'</div>';
-			
+				</div>
+				'.$empresaSQL.'		
+			</div>               
+                    ';
+			//echo '<div id="alerta" class="alert alert-success visible">'.$filas['Empresa'].'</div>';			
 		}
 		}else
 		{

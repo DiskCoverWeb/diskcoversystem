@@ -55,6 +55,13 @@ class cambioeM
 		  WHERE ID = '".$ID."';";
 		return $this->db->datos($sql,'MYSQL');
 	}
+	function datos_empresa_sqlserver()
+	{		
+		$sql = "SELECT *
+		  FROM lista_empresas
+		  WHERE ID = '".$ID."';";
+		return $this->db->datos($sql);
+	}
 	function estado()
 	{
 		$sql = 'SELECT Estado,Descripcion FROM lista_estados';
@@ -81,7 +88,7 @@ class cambioeM
 	    Tipo_Plan='".$parametros['Plan']."' 
 	    WHERE ID='".$parametros['empresas']."' ";
 
-	    // print_r($sql);die();
+	    // print_r($parametros);die();
 
 	    $em = $this->datos_empresa($parametros['empresas']);
 	    if(count($em)>0)
@@ -96,8 +103,29 @@ class cambioeM
 	            	$sql2 = "UPDATE Catalogo_Lineas 
 		    		SET Vencimiento = '".$parametros['Fecha']."',Fecha = '".$fe."' 
 		    		WHERE Item = '".$em[0]['Item']."' AND Periodo = '.'  AND TL <> 0 AND len(Autorizacion)>=13";
+		    		$ambiente = 1;
+		    		if($parametros['optionsRadios']=='option2')
+		    		{
+		    			$ambiente = 2;
+		    		}
 
-		    		$sql3 = "UPDATE Empresas SET Fecha_CE = '".$parametros['Fecha']."',Estado = '".$parametros['Estado']."' WHERE Item='".$em[0]['Item']."'";
+		    		$sql3 = "UPDATE Empresas SET Fecha_CE = '".$parametros['Fecha']."',
+		    		Estado = '".$parametros['Estado']."',
+		    		Codigo_Contribuyente_Especial = '".$parametros['TxtContriEspecial']."',
+		    		Web_SRI_Recepcion = '".$parametros['TxtWebSRIre']."',
+		    		Web_SRI_Autorizado = '".$parametros['TxtWebSRIau']."',
+		    		Ruta_Certificado = '".$parametros['TxtEXTP12']."',
+		    		Clave_Certificado = '".$parametros['TxtContraExtP12']."',
+		    		Email_Conexion = '".$parametros['TxtEmailGE']."',
+		    		Email_Contraseña = '".$parametros['TxtContraEmailGE']."',
+		    		Email_Conexion_CE = '".$parametros['TxtEmaiElect']."',
+		    		Email_Contraseña_CE = '".$parametros['TxtContraEmaiElect']."',
+		    		Email_Procesos = '".$parametros['TxtCopiaEmai']."',
+		    		RUC_Operadora = '".$parametros['TxtRUCOpe']."',
+		    		LeyendaFA = '".$parametros['txtLeyendaDocumen']."',
+		    		LeyendaFAT = '".$parametros['txtLeyendaImpresora']."',
+		    		Ambiente = '".$ambiente."'
+		    		WHERE Item='".$em[0]['Item']."'";
 
 		    		// print_r($sql3);
 		    		// print_r($sql2);
@@ -197,6 +225,14 @@ class cambioeM
 	{
 		$sql = "SELECT ID,CodMenu,descripcionMenu FROM menu_modulos WHERE codMenu like '".$modulo.".%' AND LENGTH(codMenu)>4 ORDER BY descripcionMenu ASC";
 		return $this->db->datos($sql,'MYSQL');
+	}
+
+	function datos_sql_terceros($parametros,$host,$user,$pass,$base,$Puerto)
+	{
+		// print_r($parametros);die();
+		$sql = "SELECT * FROM Empresas WHERE Item = '".$parametros['Item']."' AND RUC = '".$parametros['RUC_CI_NIC']."'";
+		// print_r($sql);die();
+		return  $this->db->consulta_datos_db_sql_terceros($sql,$host,$user,$pass,$base,$Puerto);
 	}
 
 
