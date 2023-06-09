@@ -13,6 +13,14 @@
    tipo_pago();
    copy_empresa();
 
+    $(document).keyup(function(e){  
+      if(e.keyCode==46)
+      {
+        eliminar_cuenta();
+      }
+     })
+
+
    $('#MBoxCta').keyup(function(e){ 
     if(e.keyCode != 46 && e.keyCode !=8)
     {
@@ -181,6 +189,10 @@
           // console.log(item);
           empresas+='<option value="'+item.Item+'">'+item.Empresa+'</option>';
         }); 
+      if(response.length==0)
+      {
+        $('#btn_copiar_cata').attr('disabled',true);
+      }
       $('#DLEmpresa').html(empresas);
     }
 
@@ -207,6 +219,7 @@
           empresas+='<option value="'+item.Codigo+'">'+item.Ctas+'</option>';
         }); 
       $('#DLEmpresa_').html(empresas);
+     
       $('#myModal_espera').modal('hide');  
     }
 
@@ -487,13 +500,22 @@ function cargar_datos_cuenta(cod)
       {
         $('#CheqFE').prop('checked',false);
       }
-      if(response[0].Tipo_Pago != 0)
-      {        
-        $('#CheqTipoPago').prop('checked',true);
-        forma_pago();
-        $("#DCTipoPago option[value='"+response[0].Tipo_Pago+"']").attr("selected", true); 
+      if(response[0].Tipo_Pago!='.')
+      {
+        if(response[0].Tipo_Pago!='00')
+        {        
+          $('#CheqTipoPago').prop('checked',true);
+          forma_pago();
+          $("#DCTipoPago option[value='"+response[0].Tipo_Pago+"']").attr("selected", true); 
+        }else
+        {
+
+          $('#CheqTipoPago').prop('checked',true);
+          forma_pago();
+        }
       }else
       {
+        console.log('entra');
         $('#CheqTipoPago').prop('checked',false);
         forma_pago();
         $("#DCTipoPago option[value='']").attr("selected", true); 
@@ -521,7 +543,8 @@ function cargar_datos_cuenta(cod)
 
       $('#TxtCodExt').val(response[0].Codigo_Ext);
      
-      $("#LstSubMod option[value='"+response[0].TC+"']").attr("selected", true);   
+      // $("#LstSubMod option[value='"+response[0].TC+"']").attr("selected", true);   
+      $("#LstSubMod").val(response[0].TC);
       presupuesto_act($('#LstSubMod').val());  
   }
  }
@@ -545,12 +568,65 @@ function validar_cambiar()
   'question')
   }
 }
+
+function eliminar_cuenta()
+{
+  cuenta = $('#MBoxCta').val();
+  nombre = $('#TextConcepto').val();
+  if(cuenta=='')
+  {
+     return false;
+  }
+    Swal.fire({
+         title: 'Esta seguro de eliminar?',
+         text: cuenta+" "+nombre+" y sus grupos",
+         type: 'warning',
+         showCancelButton: true,
+         confirmButtonColor: '#3085d6',
+         cancelButtonColor: '#d33',
+         confirmButtonText: 'Si!'
+    }).then((result) => {
+       if (result.value==true) {
+          validar_eliminar();       
+        } 
+    })
+}
+function validar_eliminar()
+{
+  $('#myModal_espera').modal('show');
+  codigo = $('#MBoxCta').val();
+  if(codigo!='')
+  {
+     parametros = 
+     {
+       'codigo':codigo,
+     }
+     $.ajax({
+      data:  {parametros:parametros},
+      url:   '../controlador/contabilidad/ctaOperacionesC.php?eliminar_cuentas=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        if(response==1)
+        {
+          cargar_cuentas();
+        }else{
+          $('#myModal_espera').modal('hide');
+          $('#movimientos_cta').modal('show');
+          $('#lista_transacciones').html(response);       
+        } 
+      }
+
+    })
+
+  }
+}
 </script>
 <div class="container-lg">
   <div class="row">
     <div class="col-lg-4 col-sm-4 col-md-4 col-xs-9">
       <div class="col-xs-2 col-md-2 col-sm-2">
-       <a  href="./contabilidad.php?mod=contabilidad#" title="Salir de modulo" class="btn btn-default">
+       <a href="inicio.php?mod=<?php echo $_SESSION['INGRESO']['modulo_']; ?>" title="Salir de modulo" class="btn btn-default">
          <img src="../../img/png/salire.png">
        </a>
      </div>
@@ -625,10 +701,10 @@ function validar_cambiar()
          <div class="col-sm-3">
            <b>Tipo de cuenta</b><br>
            <select class="form-control input-sm" id="LstSubMod" onchange="presupuesto_act($('#LstSubMod').val())">
-             <option value="N">Seleccione tipo de cuenta</option>
+             <option value="">Seleccione tipo de cuenta</option>
              <option value='N'>General/Normal</option>
-             <option value='CtaCaja'>Cuenta de Caja</option>
-             <option value='CtaBancos'>Cuenta de Bancos</option>
+             <option value='CJ'>Cuenta de Caja</option>
+             <option value='BA'>Cuenta de Bancos</option>
              <option value='C'>Modulo de CxC</option>
              <option value='P'>Modulo de CxP</option>
              <option value='I'>Modulo de Ingresos</option>
@@ -750,7 +826,7 @@ function validar_cambiar()
           <div class="col-md-3 text-center">
             <div class="row">
               <div class="col-md-12 col-sm-6 col-xs-2">                
-                 <button type="button" class="btn btn-default" title="Copiar Catalogo" data-toggle="modal" data-target="#modal_copiar" onclick="copiar_op('false')">
+                 <button type="button" class="btn btn-default" id="btn_copiar_cata" title="Copiar Catalogo" data-toggle="modal" data-target="#modal_copiar" onclick="copiar_op('false')">
                   <img src="../../img/png/agregar.png"><br>
                   Aceptar
                 </button>
@@ -833,6 +909,29 @@ function validar_cambiar()
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
         <button type="button" class="btn btn-primary" onclick="ingresar_presu()">Ingresar</button>
       </div> -->
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade bd-example-modal" id="movimientos_cta" tabindex="-1" role="dialog" aria-labelledby="modal_cambiar" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle"><b>No se pueden borrar esta(s) cuenta(s) </b></h5>
+      </div>
+      <div class="modal-body">       
+        <div class="row" >
+          <div class="col-sm-12" id="lista_transacciones" style="height:200px; overflow-y: scroll;">
+            
+          </div>         
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <!-- <button type="button" class="btn btn-primary" onclick="ingresar_presu()">Ingresar</button> -->
+      </div>
     </div>
   </div>
 </div>

@@ -58,6 +58,10 @@ if(isset($_GET['cambiar_op']))
 {
 	echo json_encode($controlador->cambiar_cuenta($_POST['parametros']));
 }
+if(isset($_GET['eliminar_cuentas']))
+{
+	echo json_encode($controlador->eliminar_cuentas($_POST['parametros']));
+}
 class ctaOperacionesC
 {
 	private $modelo;
@@ -228,7 +232,7 @@ function meses_presu()
   $tabla = '';
   $tablatemp = '';
 
-  // print_r($nivel[0]);die();
+  // print_r($nivel);die();
   
 $temporar = array();
 // C.C.CC.CC.CC.CCC
@@ -238,6 +242,7 @@ for ($i=$niveles; $i >0; $i--){
 		$le=strlen($p[$i]);
 	   foreach ($nivel[$i] as $key => $value) {		
 	   	  	$ni = substr($value['Codigo'], 0, (-1*$le)-1);
+	   	  	// print_r($ni);
 	   	  	if($nom_nivel == '')
 	   	  	{
 	   	  		$nombretemp = $ni;
@@ -462,6 +467,7 @@ function grabar_cuenta($parametros)
   //        No. [".$Codigo."] - " & TextConcepto.Text
   // Titulo = "Pregunta de grabación"
 
+   	SetAdoAddNew("Catalogo_Cuentas");
 
   $cuenta_exist = $this->modelo->cta_existente();
   if(count($cuenta_exist)!=0)
@@ -505,7 +511,6 @@ function grabar_cuenta($parametros)
   	 
   }
 
-   	SetAdoAddNew("Catalogo_Cuentas");
  
      // ' MsgBox TipoCta'
       SetAdoFields('Clave',$Numero);
@@ -713,7 +718,26 @@ function cambiar_cuenta($parametros)
 	}
 	// print_r('expression');die();
 }
+	function eliminar_cuentas($parametros)
+	{
+		$datos = $this->modelo->transacciones_cta($parametros['codigo']);
+		$lista='';
+		if(count($datos)>0)
+		{
+			foreach ($datos as $key => $value) {			
+				$lista.= '<li>'.$value['Cta'].' - Cantidad de movimientos:'.$value['Cant_Cta'].'</li>';
+			}
+		}else
+		{
+          return $this->modelo->eliminar_cta($parametros['codigo']);                     
+		}
 
+		return $lista;
+
+		print_r($datos);die();
+	}
+
+	
 }
 ?>
 

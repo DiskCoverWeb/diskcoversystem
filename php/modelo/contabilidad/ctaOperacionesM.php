@@ -23,6 +23,7 @@ class ctaOperacionesM
   	       Item='".$_SESSION['INGRESO']['item']."' AND 
   	       Periodo='".$_SESSION['INGRESO']['periodo']."' AND Len(Codigo)=".$leng."";
   	     $sql.="  ORDER BY Codigo ASC";
+  	     // print_r($sql);die();
   	    return $this->db->datos($sql);
   	    // print_r($sql);
   //       $stmt = sqlsrv_query($cid, $sql);
@@ -298,17 +299,39 @@ class ctaOperacionesM
 	function cambiar_datos_cuenta($sql)
 	{
 		 return $this->db->String_Sql($sql);
-		// print_r($_SESSION);die();
-		// $cid = $this->conn;
-  //       $stmt = sqlsrv_query($cid, $sql);
-	 //   if($stmt === false)
-	 //   {
-	 //   	return -1;
-	 //   }else
-	 //   {
-	 //   	return 1;
-	 //   }
+	}
 
+	function transacciones_cta($cadena)
+	{
+		 $sql = "SELECT Cta,Count(Cta) As Cant_Cta 
+     FROM Transacciones 
+     WHERE SUBSTRING(Cta,1,".strlen($cadena).") = '".$cadena."' 
+     AND Item = '".$_SESSION['INGRESO']['item']."' 
+     AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+     GROUP BY Cta 
+     ORDER BY Cta ";
+     // print_r($sql);die();
+     return $this->db->datos($sql);
+	}
+
+	function eliminar_cta($cadena)
+	{
+		$cadena = substr($cadena, 0,-1);
+		  $sql = "DELETE 
+            FROM Trans_Presupuestos 
+            WHERE Cta like '".$cadena."%' 
+            AND Item =  '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."';";
+       $sql.="DELETE  Catalogo_Cuentas
+       			 WHERE Codigo like '".$cadena."%' 
+            AND Item =  '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+       $sql.="DELETE  Catalogo_Cuentas
+       			 WHERE Codigo = '".$cadena."%' 
+            AND Item =  '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+            // print_r($sql);die();
+    		 return $this->db->String_Sql($sql);
 	}
 }
 ?>
