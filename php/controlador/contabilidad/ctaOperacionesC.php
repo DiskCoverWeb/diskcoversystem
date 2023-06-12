@@ -201,6 +201,11 @@ function meses_presu()
    
 	function cuentas()
 	{
+
+		//generar nivels cta 
+
+
+		// fin de generar niveles cta
 		// print_r();
 
 		$p = explode('.',$_SESSION['INGRESO']['Formato_Cuentas']);
@@ -242,7 +247,6 @@ for ($i=$niveles; $i >0; $i--){
 		$le=strlen($p[$i]);
 	   foreach ($nivel[$i] as $key => $value) {		
 	   	  	$ni = substr($value['Codigo'], 0, (-1*$le)-1);
-	   	  	// print_r($ni);
 	   	  	if($nom_nivel == '')
 	   	  	{
 	   	  		$nombretemp = $ni;
@@ -274,6 +278,8 @@ for ($i=$niveles; $i >0; $i--){
 
 }
 
+
+// print_r($tabla);die();  
 // print_r($temporar);die();
 
 $corte ='';
@@ -354,10 +360,11 @@ foreach ($datos as $key => $value) {
 			// print_r($key);
 			// print_r($tablatemp);
 			$parte_tabla = explode('</li fin>', $tablatemp);
-			
+
+			// print_r($parte_tabla);die();			
 			$tablatemp = '';
 			foreach ($parte_tabla as $key1 => $value1) {
-				if($key == $key1)
+				if($key-1 == $key1)
 				{
 
 				// print_r($parte_tabla[$key]);die();

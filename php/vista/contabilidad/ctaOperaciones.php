@@ -38,20 +38,21 @@
  });
 
   function cargar_cuentas()
-  {
+  {    
+      // $('#myModal_espera').modal('hide');   
+     // $('#myModal_espera').modal('show');   
     $.ajax({
    // data:  {parametros:parametros},
    url:   '../controlador/contabilidad/ctaOperacionesC.php?cuentas=true',
    type:  'post',
    dataType: 'json',
-   beforeSend: function () {   
-     $('#myModal_espera').modal('show');   
-   },
+   // beforeSend: function () {   
+   // },
    success:  function (response) { 
     if(response)
     {
       $('#tabla').html(response);
-      $('#myModal_espera').modal('hide');   
+      // $('#myModal_espera').modal('hide');   
     }
 
   }
@@ -179,9 +180,9 @@
    url:   '../controlador/contabilidad/ctaOperacionesC.php?copy_empresa=true',
    type:  'post',
    dataType: 'json',
-   beforeSend: function () {   
-     $('#myModal_espera').modal('show');   
-   },
+   // beforeSend: function () {   
+   //   // $('#myModal_espera').modal('show');   
+   // },
    success:  function (response) { 
     if(response)
     {
@@ -331,6 +332,8 @@
 
   function grabar()
   {
+
+    $('#myModal_espera').modal('show');
     var acre = $('#MBoxCtaAcreditar').val();
     if(acre == ''){acre = 0;}
 
@@ -362,6 +365,7 @@
      dataType: 'json',
      data:{parametros:parametros} ,     
      success:  function (response) { 
+      $('#myModal_espera').modal('hide');
       if(response == 1)
       {
        cargar_cuentas();
@@ -607,6 +611,8 @@ function validar_eliminar()
       type:  'post',
       dataType: 'json',
       success:  function (response) { 
+
+        $('#myModal_espera').modal('hide');
         if(response==1)
         {
           cargar_cuentas();
