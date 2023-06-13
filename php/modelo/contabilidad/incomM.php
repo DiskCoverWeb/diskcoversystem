@@ -118,7 +118,7 @@ class incomM
 	   return $result;
 	}
 
-	function cuentas_todos($query,$tipo,$tipocta)
+	function cuentas_todos($query=false,$codigo=false,$clave=false,$tipocta=false)
 	{
 		$sql="SELECT Codigo+Space(19-LEN(Codigo))+'   '+TC+Space(3-LEN(TC))+'   '+cast( Clave as varchar(5))+'  '
 					+Space(5-LEN(cast( Clave as varchar(5))))+'  -'+
@@ -127,28 +127,24 @@ class incomM
 			   WHERE DG = 'D' 
 			   AND Cuenta <> '".$_SESSION['INGRESO']['ninguno']."' AND Item = '".$_SESSION['INGRESO']['item']."'
 			   AND Periodo = '".$_SESSION['INGRESO']['periodo']."'  ";
-			   if($query && $tipo =='')
-			   	{			   		
-			   		$sql.="AND Codigo+Space(19-LEN(Codigo))+' '+TC+Space(3-LEN(TC))+' '+cast( Clave as varchar(5))+' '+Space(5-LEN(cast( Clave as varchar(5))))+' '+Cuenta LIKE '%".$query."%'";			   		
-			   	}else
-			   	{
-			   		if(strpos($query,'.')==false && $query!='') 
-			   		{
-
-			   			$sql.=" AND Clave = '".$query."'";
-
-			   		}else
-			   		{
-			   			$sql.="AND Codigo+Space(19-LEN(Codigo))+' '+TC+Space(3-LEN(TC))+' '+cast( Clave as varchar(5))+' '
-								+Space(5-LEN(cast( Clave as varchar(5))))+' '+Cuenta LIKE '".$query."%' ";
-			   		}
-			   		
-			   	}
-			   	if($tipocta)
-			   	{
-			   		$sql.=" AND TC = '".$tipocta."'";
-			   	}
-			   	$sql.="ORDER BY Codigo";
+			   if($query)
+			   {
+			   	$sql.="AND Codigo+Space(19-LEN(Codigo))+' '+TC+Space(3-LEN(TC))+' '+cast( Clave as varchar(5))+' '+Space(5-LEN(cast( Clave as varchar(5))))+' '+Cuenta LIKE '%".$query."%'";			
+			   }
+			   if($codigo)
+			   {
+			   	$sql.=" AND Codigo like '".$codigo."%'";
+			   }
+			   if($clave)
+			   {
+			   	$sql.=" AND Clave = '".$clave."'";
+			   }
+		  
+		   	if($tipocta)
+		   	{
+		   		$sql.=" AND TC = '".$tipocta."'";
+		   	}
+		   	$sql.="ORDER BY Codigo ASC";
 			   	// print_r($query);print_r($tipo);print_r($tipocta);
 		// print_r($sql);die();
 		 $result = $this->conn->datos($sql);
