@@ -41,9 +41,10 @@
                 <option value="2">Facturado</option>
               </select>
             </div>
-            <div class="col-xs-4 col-md-3 col-lg-1 " id="div_serie" style="min-width: 95px;max-width: 150px;display:none">
+            <div class="col-xs-4 col-md-3 col-lg-2 " id="div_serie" style="min-width: 105px;max-width: 150px;display:none">
               <b>Serie</b> <br>
-               <input type="tel" class="form-control pull-right input-xs" id="serie" name="serie" >
+                <select class="form-control input-xs" name="serie" id="serie">
+                </select>
             </div>
             <div class="col-xs-4 col-md-3 col-lg-2">
               <b>Desde:</b>
@@ -76,6 +77,7 @@
   {
     autocomplete_cliente();
     cargarTablaReporteConsumo();
+    Series()
 
     $('#imprimir_excel').click(function(){
       var url = '../controlador/facturacion/facturar_pensionC.php?ExcelReporteConsumo=true&'+$("#FormReporteConsumoAgua").serialize();
@@ -123,6 +125,27 @@
           };
         },
         cache: true
+      }
+    });
+  }
+
+  function Series(){
+    var series = $("#serie");
+    $.ajax({
+      type: "POST",                 
+      url: '../controlador/facturacion/facturar_pensionC.php?SeriesFacturaConsumo=true',
+      data: $("#FormReporteConsumoAgua").serialize(),     
+      dataType:'json', 
+      success: function(data)             
+      {
+        if (data) {
+          datos = data;
+          series.find('option').remove();
+          series.append('<option value="ALL">TODOS</option>');
+          for (var indice in datos) {
+            series.append('<option value="' + datos[indice].Serie+ '">' + datos[indice].Serie + '</option>');
+          }
+        }            
       }
     });
   }

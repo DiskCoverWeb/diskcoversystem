@@ -260,6 +260,11 @@ if(isset($_GET["TablaReporteConsumo"])){
   exit();
 }
 
+if(isset($_GET["SeriesFacturaConsumo"])){
+  echo json_encode($controlador->SeriesFacturaConsumo($_POST));
+  exit();
+}
+
 class facturar_pensionC
 {
   private $facturacion;
@@ -1247,7 +1252,7 @@ class facturar_pensionC
     
     switch ($Tipo) {
       case '2': //Facturado
-        $sql = "SELECT DF.Mes, DF.Ticket As Periodo,DF.Factura, F.Razon_Social, DF.Producto, DF.Tipo_Hab As Medidor, ROUND(Df.Corte,0) As Lectura,      Df.Total As Valor, DF.Serie
+        $sql = "SELECT DF.Mes, DF.Ticket As Periodo, DF.Factura, DF.Serie, F.Razon_Social, DF.Producto, DF.Tipo_Hab As Medidor, ROUND(Df.Corte,0) As Lectura, Df.Total As Valor
                 FROM Detalle_Factura As DF, Facturas As F
                 WHERE DF.Item = '".$_SESSION['INGRESO']['item']."'
                 AND DF.Factura = F.Factura
@@ -1260,7 +1265,7 @@ class facturar_pensionC
 
                 ".(($fechaf!="" && $fechaf!=G_NINGUNO)?" AND DF.Fecha <= '".$fechaf."'":"")."
 
-                ".(($serie!="")?" AND DF.Serie = '".$serie."'":"")."
+                ".(($serie!="ALL")?" AND DF.Serie = '".$serie."'":"")."
 
                 ".(($Codigo_Auto!=G_NINGUNO)?" AND DF.Tipo_Hab='$Codigo_Auto' ":"")."";
         break;
@@ -1371,6 +1376,17 @@ class facturar_pensionC
       $pos = $pos+1;
     }
     $pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$fechai,$fechaf,$sizetable,$mostrar);
+  }
+
+  public function SeriesFacturaConsumo($parametros)
+  {
+    $sql ="SELECT DF.Serie
+            FROM Detalle_Factura As DF
+            WHERE DF.Item = '".$_SESSION['INGRESO']['item']."'
+            AND DF.Tipo_Hab <> '.'
+            AND DF.Codigo LIKE 'JG.%'
+            Group by DF.Serie";
+    return $this->facturacion->SelectDatos($sql);
   }
 }
 ?>

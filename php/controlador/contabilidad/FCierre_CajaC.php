@@ -56,6 +56,10 @@ if(isset($_GET['IESS_Cierre_Diario']))
 if(isset($_GET['Reactivar']))
 {
    echo json_encode($controlador->Reactivar($_POST));
+}else
+if(isset($_GET['ExcelResultadoCierreCaja']))
+{
+   echo json_encode($controlador->ExcelResultadoCierreCaja($_GET));
 }
 
 class FCierre_CajaC
@@ -75,6 +79,7 @@ class FCierre_CajaC
 
         $AdoAsiento1 = $this->CierreCajaM->IniciarAsientosDe($Trans_No = 97); // CxC
         $AdoAsiento = $this->CierreCajaM->IniciarAsientosDe($Trans_No = 96); // Abonos
+
         $_SESSION['FCierre_Caja']['AdoAsiento1'] = $AdoAsiento1 ;
         $_SESSION['FCierre_Caja']['AdoAsiento'] = $AdoAsiento ;
         
@@ -175,13 +180,13 @@ class FCierre_CajaC
         $CodigoUsuario = $_SESSION['INGRESO']['CodigoU'];
         Presenta_Errores_Facturacion_SP($MBFechaI, $MBFechaF);
         $Trans_No = 96;
-        $SQL2 = "SELECT * " .
+        $SQL1 = "SELECT * " .
                 "FROM Asiento " .
                 "WHERE Item = '" . $NumEmpresa . "' " .
                 "AND T_No = " . $Trans_No . " " .
                 "AND CodigoU = '" . $CodigoUsuario . "' " .
                 "ORDER BY A_No ";
-        $AdoAsiento = $this->CierreCajaM->SelectDB($SQL2);
+        $AdoAsiento = $this->CierreCajaM->SelectDB($SQL1);
 
         $Trans_No = 97;
         $SQL2 = "SELECT * " .
@@ -194,6 +199,8 @@ class FCierre_CajaC
 
         $_SESSION['FCierre_Caja']['AdoAsiento1'] = $AdoAsiento1 ;
         $_SESSION['FCierre_Caja']['AdoAsiento'] = $AdoAsiento ;
+        $_SESSION['FCierre_Caja']['AdoAsiento1T'] = $SQL2;
+        $_SESSION['FCierre_Caja']['AdoAsientoT'] = $SQL1;
 
         return compact('AdoAsiento','AdoAsiento1');
 
@@ -208,14 +215,14 @@ class FCierre_CajaC
         $FechaIni = BuscarFecha($MBFechaI);
         $FechaFin = BuscarFecha($MBFechaF);
 
-        $sSQL = "SELECT FORMAT(Fecha, 'yyyy-MM-dd')  AS Fecha " .
+        $sSQL1 = "SELECT Fecha " .
                 "FROM Facturas " .
                 "WHERE Item = '" . $NumEmpresa . "' " .
                 "AND Periodo = '" . $Periodo_Contable . "' " .
                 "AND TC <> 'OP' " .
                 "AND Fecha BETWEEN '" . $FechaIni . "' and '" . $FechaFin . "' " .
                 "UNION " .
-                "SELECT FORMAT(Fecha, 'yyyy-MM-dd')  AS Fecha " .
+                "SELECT Fecha " .
                 "FROM Trans_Abonos " .
                 "WHERE Item = '" . $NumEmpresa . "' " .
                 "AND Periodo = '" . $Periodo_Contable . "' " .
@@ -223,7 +230,7 @@ class FCierre_CajaC
                 "AND Fecha BETWEEN '" . $FechaIni . "' and '" . $FechaFin . "' " .
                 "GROUP BY Fecha " .
                 "ORDER BY Fecha ";
-                $AdoCierres = $this->CierreCajaM->SelectDB($sSQL);
+            //$AdoCierres = $this->CierreCajaM->SelectDB($sSQL);
 
                 // Resumen de abonos anticipados de Clientes
         $sSQL = "SELECT CC.Cuenta, C.Cliente, TS.Fecha, TS.TP, TS.Numero, TS.Creditos, T.Cta AS Contra_Cta, TS.Cta " .
@@ -244,7 +251,12 @@ class FCierre_CajaC
                 "AND TS.Codigo = C.Codigo " .
                 "AND TS.Cta <> T.Cta " .
                 "ORDER BY T.Cta, C.Cliente, TS.Fecha, TS.TP, TS.Numero ";
-                $AdoAnticipos = $this->CierreCajaM->SelectDB($sSQL);
+                $_SESSION['FCierre_Caja']['AdoAnticipos'] = $sSQL;
+
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-144;
+        $AdoAnticipos = grilla_generica_new($sSQL,'Trans_SubCtas',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+
+        $AdoCierres = grilla_generica_new($sSQL1,'Facturas',$id_tabla=false,"Dias Cierres",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
 
         return compact('AdoCierres','AdoAnticipos');
     }
@@ -289,7 +301,7 @@ class FCierre_CajaC
 
         //"Verificando Cuentas involucradas"
         //Listado de los tipos de abonos
-        $sSQL = "SELECT TA.TP,FORMAT(TA.Fecha, 'yyyy-MM-dd')  AS Fecha,C.CI_RUC As COD_BANCO,C.Cliente,TA.Serie,TA.Autorizacion,TA.Factura,TA.Banco,TA.Cheque,TA.Abono," .
+        $sSQL = "SELECT TA.TP,TA.Fecha,C.CI_RUC As COD_BANCO,C.Cliente,TA.Serie,TA.Autorizacion,TA.Factura,TA.Banco,TA.Cheque,TA.Abono," .
         "TA.Comprobante,TA.Cta,TA.Cta_CxP,TA.CodigoC,C.Ciudad,C.Plan_Afiliado As Sectorizacion," .
         "A.Nombre_Completo As Ejecutivo,Recibo_No As Orden_No " .
         "FROM Trans_Abonos As TA, Clientes C, Accesos As A " .
@@ -312,9 +324,10 @@ class FCierre_CajaC
         }
 
         $AdoCxC = $this->CierreCajaM->SelectDB($sSQL);
+        $_SESSION['FCierre_Caja']['AdoCxCT'] = $sSQL;
 
         // Listado de las CxC Clientes
-        $sSQL = "SELECT F.TC,FORMAT(F.Fecha, 'yyyy-MM-dd')  AS Fecha,C.Cliente,F.Serie,F.Autorizacion,F.Factura,F.IVA As Total_IVA,F.Descuento," .
+        $sSQL = "SELECT F.TC,F.Fecha,C.Cliente,F.Serie,F.Autorizacion,F.Factura,F.IVA As Total_IVA,F.Descuento," .
                 "F.Descuento2,F.Servicio,F.Propina,F.Total_MN,F.Saldo_MN,F.Cta_CxP,C.Ciudad,C.Plan_Afiliado As Sectorizacion," .
                 "A.Nombre_Completo As Ejecutivo " .
                 "FROM Facturas F,Clientes C,Accesos As A " .
@@ -333,6 +346,11 @@ class FCierre_CajaC
         $sSQL .= "ORDER BY F.TC,F.Fecha,F.Cta_CxP,F.Factura,C.Cliente ";
 
         $AdoVentas = $this->CierreCajaM->SelectDB($sSQL);
+        $_SESSION['FCierre_Caja']['AdoVentasT'] = $sSQL;
+
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-144;
+
+        $DGVentas = grilla_generica_new($_SESSION['FCierre_Caja']['AdoVentasT'],'Facturas',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
 
         $Combos = G_NINGUNO; //TODO LS donde USO
         $FechaFinal = BuscarFecha("31/12/" .date('Y', strtotime($MBFechaF))); //TODO LS donde se usa
@@ -667,14 +685,15 @@ class FCierre_CajaC
         $Debe = 0;
         $Haber = 0;
         $Ln_No = 0;
-        $SQL2 = "SELECT CODIGO, CUENTA, PARCIAL_ME, DEBE, HABER, CHEQ_DEP, DETALLE, EFECTIVIZAR, CODIGO_C, CODIGO_CC, T_No, A_No, TC, ID "
+        $SQL1 = "SELECT CODIGO, CUENTA, PARCIAL_ME, DEBE, HABER, CHEQ_DEP, DETALLE, EFECTIVIZAR, CODIGO_C, CODIGO_CC, T_No, A_No, TC, ID "
                . "FROM Asiento "
                . "WHERE Item = '" . $NumEmpresa . "' "
                . "AND T_No = " . $Trans_No . " "
                . "AND CodigoU = '" . $CodigoUsuario . "' "
                . "ORDER BY CODIGO,DEBE DESC,HABER ";
-        $DGAsiento  = $AdoAsiento= $this->CierreCajaM->SelectDB($SQL2);
+        $DGAsiento  = $AdoAsiento= $this->CierreCajaM->SelectDB($SQL1);
         $_SESSION['FCierre_Caja']['AdoAsiento'] = $AdoAsiento ;
+        $_SESSION['FCierre_Caja']['AdoAsientoT'] = $SQL1;
 
         if (count($DGAsiento) > 0) {
             foreach ($DGAsiento as $key => $fields) {
@@ -699,6 +718,7 @@ class FCierre_CajaC
                  ORDER BY CODIGO,DEBE DESC,HABER ";
         $AdoAsiento1  = $this->CierreCajaM->SelectDB($SQL2);
         $_SESSION['FCierre_Caja']['AdoAsiento1'] = $AdoAsiento1 ;
+        $_SESSION['FCierre_Caja']['AdoAsiento1T'] = $SQL2;
 
         if (count($AdoAsiento1) > 0) {
             foreach ($AdoAsiento1 as $key => $fields) {
@@ -734,7 +754,8 @@ class FCierre_CajaC
         }
         $sql .= "AND F.CodigoC = C.Codigo 
                  ORDER BY F.TC,F.Fecha,F.Cta_CxP,C.Cliente,F.Factura";
-        $AdoFactAnul  = $this->CierreCajaM->SelectDB($sql); //tdl asignar a DGFactAnul
+        //$AdoFactAnul  = $this->CierreCajaM->SelectDB($sql);
+        $_SESSION['FCierre_Caja']['AdoFactAnul'] = $sql;
         // REPORTES DE AUDITORIA TRANSACCIONALES (S.R.I.)
         if ($MBFechaI == $MBFechaF) {//TODO LS de donde sale la variable $Autorizacion
             $DGSRI = "Autorización No. {$Autorizacion}, Listado de Facturas del {$MBFechaI}";
@@ -759,6 +780,7 @@ class FCierre_CajaC
         }
         $sSQL .= "ORDER BY F.Factura,F.TC,F.Fecha,F.Cta_CxP,C.Cliente ";
         $AdoSRI  = $this->CierreCajaM->SelectDB($sSQL);
+        $_SESSION['FCierre_Caja']['AdoSRIT'] = $sSQL;
 
         $Total_Con_IVA = 0;
         $Total_Sin_IVA = 0;
@@ -806,7 +828,8 @@ class FCierre_CajaC
                 "AND T <> '" . G_ANULADO . "' " .
                 "ORDER BY Codigo, Producto ";
 
-        $AdoProductos = $this->CierreCajaM->SelectDB($sSQL);
+        //$AdoProductos = $this->CierreCajaM->SelectDB($sSQL);
+        $_SESSION['FCierre_Caja']['AdoProductos'] = $sSQL;
 
         $sSQL = "SELECT TK.TC As Doc, TK.Codigo_Inv, CP.Producto, 0 As Entradas, SUM(TK.Salida) As Salidas, AVG(TK.Costo) As Costos, " .
         "(SUM(TK.Salida) * AVG(TK.Costo)) As Totales, TK.Cta_Inv, TK.Contra_Cta, TK.CodBodega, CP.Unidad, COUNT(TK.TC) As Cant_Doc " .
@@ -846,13 +869,32 @@ class FCierre_CajaC
                "GROUP BY TK.Codigo_Inv, CP.Producto, TK.Cta_Inv, TK.Contra_Cta, TK.CodBodega, CP.Unidad " .
                "ORDER BY Doc, TK.Codigo_Inv, CP.Producto, TK.Cta_Inv, TK.Contra_Cta, TK.CodBodega, CP.Unidad ";
         //$SQLDec = "Costos " . strval($Dec_Costo) . "|."; //TODO LS no se que signifca este fragmentp
-        $AdoInv = $this->CierreCajaM->SelectDB($sSQL);
+        //$AdoInv = $this->CierreCajaM->SelectDB($sSQL);
+        $_SESSION['FCierre_Caja']['AdoInv'] = $sSQL;
 
         //podria retornarse pero parce no ser necesario
         /*
             $AdoDBAux
         */
-        return compact('error','AdoCxC','AdoVentas', 'AdoAsiento','AdoAsiento1','AdoFactAnul','AdoProductos','AdoInv','TextoImprimio','LabelDebe', 'LabelHaber', 'LblDiferencia','LabelDebe1','LabelHaber1','LblDiferencia1','LblConcepto','LblConcepto1','DGSRI', 'AdoSRI', 'LblConIVA', 'LblSinIVA', 'LblDescuento', 'LblIVA', 'LblServicio', 'LblTotalFacturado','LabelCheque', 'LabelAbonos' ) ;
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-144;
+
+        $DGVentas = grilla_generica_new($_SESSION['FCierre_Caja']['AdoVentasT'],'Facturas',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+
+        $AdoAsiento1 = grilla_generica_new($_SESSION['FCierre_Caja']['AdoAsiento1T'],'Asiento',$id_tabla=false,$LblConcepto1,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
+
+        $AdoAsiento = grilla_generica_new($_SESSION['FCierre_Caja']['AdoAsientoT'],'Asiento',$id_tabla=false,$LblConcepto,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
+
+        $DGCxC = grilla_generica_new($_SESSION['FCierre_Caja']['AdoCxCT'],'Trans_Abonos',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+
+        $DGInv = grilla_generica_new($_SESSION['FCierre_Caja']['AdoInv'],'Trans_Kardex',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+
+        $DGProductos = grilla_generica_new($_SESSION['FCierre_Caja']['AdoProductos'],'Detalle_Factura',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+
+        $DGFactAnul = grilla_generica_new($_SESSION['FCierre_Caja']['AdoFactAnul'],'Facturas',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+       
+        $DGSRI = grilla_generica_new($_SESSION['FCierre_Caja']['AdoSRIT'],'Facturas',$id_tabla=false,$DGSRI,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
+
+        return compact('error','AdoCxC','DGCxC','AdoVentas', 'DGVentas','AdoAsiento','AdoAsiento1','DGFactAnul','DGInv','DGProductos','TextoImprimio','LabelDebe', 'LabelHaber', 'LblDiferencia','LabelDebe1','LabelHaber1','LblDiferencia1','LblConcepto','LblConcepto1','DGSRI', 'AdoSRI', 'LblConIVA', 'LblSinIVA', 'LblDescuento', 'LblIVA', 'LblServicio', 'LblTotalFacturado','LabelCheque', 'LabelAbonos' ) ;
     }
 
     function Grabar_Cierre_Diario($parametros)
@@ -927,11 +969,7 @@ class FCierre_CajaC
             $DiarioCaja = $NumComp;
             $FechaIni = BuscarFecha($MBFechaI);
             $FechaFin = BuscarFecha($MBFechaF);
-            // if ($FormaCierre) {//TODO LS definir variables de impresion
-            //     Imprimir_Diario_Caja($AdoVentas, $AdoCxC, $AdoInv, $AdoProductos, $AdoAnticipos, $MBFechaI, $MBFechaF);
-            // } else {
-            //     Imprimir_Diario_Caja_Resumen($AdoVentas, $AdoCxC, $AdoInv, $AdoProductos, $AdoAnticipos, $MBFechaI, $MBFechaF);
-            // }
+
             // Grabacion del Comprobante de CxC
             if (count($AdoAsiento1) > 0) {
                 $Trans_No = 97;
@@ -1237,4 +1275,18 @@ class FCierre_CajaC
 
     }
 
+    public function ExcelResultadoCierreCaja($parametros)
+    {
+        extract($parametros);
+
+        if(!isset($_SESSION['FCierre_Caja'][$Tabs]) || $_SESSION['FCierre_Caja'][$Tabs]==""){
+            return 'Sin datos';
+        }
+
+        $medidas = array();
+        if($Tabs == "AdoVentasT"){
+            $medidas = array(8,15,28,15,50,18,15,15,15,15,15,15,15,15,18,40,30);
+        }
+        return exportar_excel_generico_SQl("Cierre de Caja ".$Titulo,$_SESSION['FCierre_Caja'][$Tabs], $medidas);
+    }
 }

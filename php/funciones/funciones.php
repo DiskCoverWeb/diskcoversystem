@@ -1177,15 +1177,22 @@ function Digito_Verificador_SP($NumeroRUC)
 
 
 //excel
-function exportar_excel_generico_SQl($titulo,$sql)
+function exportar_excel_generico_SQl($titulo,$sql, $medidas = array(), $campos = array())
 {
   $db = new db();
   $result = $db->datos($sql);
-  $campos = array();
-  $medidas = array();
-  foreach ($result[0] as $key => $value) {
-    array_push($campos,$key);
-    array_push($medidas,strlen($key)*4);
+  $buscar_campos = count($campos)==0;
+  $buscar_medidas = count($medidas)==0;
+
+  if( $buscar_campos || $buscar_medidas){
+    foreach ($result[0] as $key => $value) {
+      if($buscar_campos){
+        array_push($campos,$key);
+      }
+      if($buscar_medidas){
+        array_push($medidas,strlen($key)*4);
+      }
+    }
   }
   $tablaHTML =array();
   $tablaHTML[0]['medidas']=$medidas;
@@ -1212,7 +1219,7 @@ function exportar_excel_generico_SQl($titulo,$sql)
     }else{
       $indice = 0;
       foreach ($value as $contenido) {
-        if($medidas[$indice]<strlen($contenido) ){
+        if(!($contenido instanceof DateTime) && $medidas[$indice]<strlen($contenido) ){
           $medidas[$indice] = strlen($contenido);
         }
         $indice++;
@@ -5842,7 +5849,7 @@ function costo_venta($codigo_inv)  // optimizado
     return $resultado[0];
   }
 
-function grilla_generica_new($sql,$tabla,$id_tabla=false,$titulo=false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$tamaño_tabla=300,$num_decimales=2,$num_reg=false,$paginacion_view= false,$estilo=1)
+function grilla_generica_new($sql,$tabla,$id_tabla=false,$titulo=false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$tamaño_tabla=300,$num_decimales=2,$num_reg=false,$paginacion_view= false,$estilo=1, $class_titulo='text-center')
 {  
   $conn = new db();
 
@@ -5985,7 +5992,7 @@ if ($pos === false) {
 if($titulo)
  {
   // $num = count($columnas_uti);
-   $tbl.="<div class='text-center'><b>".$titulo."</b></div>";
+   $tbl.="<div class='$class_titulo'><b>".$titulo."</b></div>";
  }
 
  $tbl.= '<div class="table-responsive" style="overflow-x: scroll;">

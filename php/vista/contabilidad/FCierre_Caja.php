@@ -62,6 +62,11 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
           <img src="../../img/png/iess.png" width="25" height="30">
         </a>
       </div>
+      <div class="col">
+        <a  href="javascript:void(0)" id="Excel" title="Enviar a Excel los resultados" class="btn btn-default" onclick="GenerarExcelResultadoCierreCaja()">
+          <img src="../../img/png/excel.png" width="25" height="30">
+        </a>
+      </div>
   </div>
   <div class="col-sm-7 col-xs-12">
     <div class="row">
@@ -106,29 +111,29 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
       <div class="col-sm-12">
         <ul class="nav nav-tabs">
            <li class="nav-item active">
-             <a class="nav-link" data-toggle="tab" href="#ventas">1 VENTAS</a>
+             <a class="nav-link" data-toggle="tab" href="#AdoVentasT">1 VENTAS</a>
            </li>
            <li class="nav-item ">
-             <a class="nav-link" data-toggle="tab" href="#abonos">2 ABONOS</a>
+             <a class="nav-link" data-toggle="tab" href="#AdoCxCT">2 ABONOS</a>
            </li>
            <li class="nav-item ">
-             <a class="nav-link" data-toggle="tab" href="#inventario">3 INVENTARIO</a>
+             <a class="nav-link" data-toggle="tab" href="#AdoInv">3 INVENTARIO</a>
            </li>
            <li class="nav-item ">
-             <a class="nav-link" data-toggle="tab" href="#contabilidad">4 CONTABILIDAD</a>
+             <a class="nav-link" data-toggle="tab" href="#AdoAsientoT">4 CONTABILIDAD</a>
            </li>
            <li class="nav-item ">
-             <a class="nav-link" data-toggle="tab" href="#anuladas">5 ANULADAS</a>
+             <a class="nav-link" data-toggle="tab" href="#AdoFactAnul">5 ANULADAS</a>
            </li>
            <li class="nav-item ">
-             <a class="nav-link" data-toggle="tab" href="#reporte_auditoria">6 REPORTE DE AUDITORIA</a>
+             <a class="nav-link" data-toggle="tab" href="#AdoSRIT">6 REPORTE DE AUDITORIA</a>
            </li>
            <li class="nav-item ">
-             <a class="nav-link" data-toggle="tab" href="#reporte_banco">7 REPORTE DEL BANCO</a>
+             <a class="nav-link" data-toggle="tab" href="#AdoBanco">7 REPORTE DEL BANCO</a>
            </li>
          </ul>
          <div class="tab-content">
-            <div class="tab-pane modal-body active" id="ventas">
+            <div class="tab-pane modal-body active" id="AdoVentasT">
               <div class="row">
                 <div class="form-group col-xs-6 padding-all margin-b-1">
                   <label for="LabelAbonos" class="col control-label">TOTAL</label>
@@ -147,7 +152,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
               <div class="table-responsive DGVentas-container" style="overflow-y: scroll; min-height: 50px;width: auto;">
                 <div class="sombra" style>
                   <table id="DGVentas" class="table-sm" style="width: -webkit-fill-available;">
-                    <thead>
+                   <thead>
                       <tr>
                         <th>TC</th>
                         <th>Fecha</th>
@@ -165,14 +170,12 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                         <th>Cta_CxP</th>
                         <th></th>
                       </tr>
-                    </thead>
-                    <tbody id="DGVentasBody">
-                    </tbody>
+                    </thead> 
                   </table>          
                 </div>
               </div>
             </div>
-            <div class="tab-pane modal-body" id="abonos">
+            <div class="tab-pane modal-body" id="AdoCxCT">
 
               <div class="row">
                 <div class="form-group col-xs-6 padding-all margin-b-1">
@@ -214,8 +217,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                         <th>Ejecutivo</th>
                       </tr>
                     </thead>
-                    <tbody id="DGCxCBody">
-                    </tbody>
                   </table>          
                 </div>
               </div>
@@ -235,29 +236,20 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                         <th>Cta</th>
                       </tr>
                     </thead>
-                    <tbody id="DGAnticiposBody">
-                    </tbody>
                   </table>          
                 </div>
               </div>
 
             </div>
-            <div class="tab-pane modal-body" id="inventario">
+            <div class="tab-pane modal-body" id="AdoInv">
               <div class="col-md-2">
-                <label class="text-center">Dias Cierres</label>
-                <div class="table-responsive DGCierres-container" style="overflow-y: scroll; min-height: 50px; width: auto;">
-                  <div class="sombra" style>
-                    <table id="DGCierres" class="table-sm tablaHeight" style="width: -webkit-fill-available;">
+                <table id="DGCierres" class="table-sm tablaHeight" style="width: -webkit-fill-available;">
                       <thead>
                         <tr>
                           <th>Fecha</th>
                         </tr>
                       </thead>
-                      <tbody id="DGCierresBody">
-                      </tbody>
-                    </table>          
-                  </div>
-                </div>
+                    </table>
               </div>
               <div class="col-md-10">
                 <div class="table-responsive" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;margin-bottom: 15px;">
@@ -270,8 +262,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                           <th>Entradas</th>
                         </tr>
                       </thead>
-                      <tbody id="DGInvBody">
-                      </tbody>
                     </table>          
                   </div>
                 </div>
@@ -288,16 +278,13 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                           <th>Cta_Venta</th>
                         </tr>
                       </thead>
-                      <tbody id="DGProductosBody">
-                      </tbody>
                     </table>          
                   </div>
                 </div>
               </div>
             </div>
-            <div class="tab-pane modal-body" id="contabilidad">
+            <div class="tab-pane modal-body" id="AdoAsientoT">
 
-              <input class="form-control" id="LblConcepto"></input>
               <div class="table-responsive" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;margin-bottom: 1px;">
                 <div class="sombra" style>
                   <table id="DGAsiento" class="table-sm" style="width: -webkit-fill-available;">
@@ -312,8 +299,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                         <th>DETALLE</th>
                       </tr>
                     </thead>
-                    <tbody id="DGAsientoBody">
-                    </tbody>
                   </table>          
                 </div>
               </div>
@@ -325,7 +310,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                 <input id="LabelDebe"></input>
                 <input id="LabelHaber"></input>
               </div>
-              <input class="form-control" id="LblConcepto1"></input>
               <div class="table-responsive" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;margin-bottom: 10px;">
                 <div class="sombra" style>
                   <table id="DGAsiento1" class="table-sm" style="width: -webkit-fill-available;">
@@ -340,8 +324,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                         <th>DETALLE</th>
                       </tr>
                     </thead>
-                    <tbody id="DGAsiento1Body">
-                    </tbody>
                   </table>          
                 </div>
               </div>
@@ -355,7 +337,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
               </div>
 
             </div>
-            <div class="tab-pane modal-body" id="anuladas">
+            <div class="tab-pane modal-body" id="AdoFactAnul">
 
               <div class="table-responsive DGFactAnul-container" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;">
                 <div class="sombra" style>
@@ -372,18 +354,14 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                         <th>Cta_CxP</th>
                       </tr>
                     </thead>
-                    <tbody id="DGFactAnulBody">
-                    </tbody>
                   </table>          
                 </div>
               </div>
 
             </div>
-            <div class="tab-pane modal-body" id="reporte_auditoria">
+            <div class="tab-pane modal-body" id="AdoSRIT">
               <select style="min-width: 150px;" class="form-control input-xs" name="AdoSRI" id="AdoSRI"  onchange="" >
               </select>
-
-              <label id="DGSRICaption"></label>
               <div class="table-responsive" style="overflow-y: scroll; min-height: 80px;max-height:285px; width: auto;margin-bottom: 15px;">
                 <div class="sombra" style>
                   <table id="DGSRI" class="table-sm" style="width: -webkit-fill-available;">
@@ -407,40 +385,38 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                         <th>TOTAL</th>
                       </tr>
                     </thead>
-                    <tbody id="DGSRIBody">
-                    </tbody>
                   </table>          
                 </div>
               </div>
 
               <div class="row">
                 <div class="col-xs-6 col-md-2">
-                  <label>CON I.V.A.</label>
+                  <label>CON I.V.A.</label><br>
                   <input id="LblConIVA"></input>
                 </div>
                 <div class="col-xs-6 col-md-2">
-                  <label>SIN I.V.A.</label>
+                  <label>SIN I.V.A.</label><br>
                   <input id="LblSinIVA"></input>
                 </div>
                 <div class="col-xs-6 col-md-2">
-                  <label>DESCUENTO</label>
+                  <label>DESCUENTO</label><br>
                   <input id="LblDescuento"></input>
                 </div>
                 <div class="col-xs-6 col-md-2">
-                  <label>TOTAL  I.V.A.</label>
+                  <label>TOTAL  I.V.A.</label><br>
                   <input id="LblIVA"></input>
                 </div>
                 <div class="col-xs-6 col-md-2">
-                  <label>TOTAL  SERVICIO</label>
+                  <label>TOTAL  SERVICIO</label><br>
                   <input id="LblServicio"></input>
                 </div>
                 <div class="col-xs-6 col-md-2">
-                  <label> T O T A L</label>
+                  <label> T O T A L</label><br>
                   <input id="LblTotalFacturado"></input>
                 </div>
               </div>
             </div>
-            <div class="tab-pane modal-body" id="reporte_banco">
+            <div class="tab-pane modal-body" id="AdoBanco">
               <select style="min-width: 150px;" class="form-control input-xs" name="DCBanco" id="DCBanco"  onchange="" >
               </select>
 
@@ -506,8 +482,8 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
       dataType:'json', 
       success: function(data)             
       {
-        construirTabla(data.AdoAsiento, "DGAsiento")  
-        construirTabla(data.AdoAsiento1, "DGAsiento1") 
+        // construirTabla(data.AdoAsiento, "DGAsiento")  
+        // construirTabla(data.AdoAsiento1, "DGAsiento1") 
 
         var DCBanco = $("#DCBanco");
         for (var indice in data.AdoCtaBanco) {
@@ -524,30 +500,31 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
 
   // construye la tabla con los datos procesados
   function construirTabla(datos, tablaId) {
+    $('#'+tablaId).html(datos);
     // obtiene el encabezado de la tabla
-    var encabezado = $("#" + tablaId + " thead tr th");
+    // var encabezado = $("#" + tablaId + " thead tr th");
 
-    // cuenta el número de columnas en el encabezado
-    var numColumnas = encabezado.length;
+    // // cuenta el número de columnas en el encabezado
+    // var numColumnas = encabezado.length;
 
-    // crea las filas con los datos
-    var tbody = $("#" + tablaId + " tbody");
-    tbody.empty();
-    for (var i = 0; i < datos.length; i++) {
-        var fila = $("<tr>");
-        for (var j = 0; j < numColumnas; j++) {
-            var nombreColumna = encabezado.eq(j).text();
-            let valor = datos[i][nombreColumna];           
-            if(valor !== null && typeof valor === 'object'){
-              valor = valor.date;
-              if (valor.endsWith(".000000")) {
-                valor = valor.slice(0, -7); // Obtiene los primeros 6 caracteres del final
-              }
-            }
-            fila.append($("<td>").text(valor));
-        }
-        tbody.append(fila);
-    }
+    // // crea las filas con los datos
+    // var tbody = $("#" + tablaId + " tbody");
+    // tbody.empty();
+    // for (var i = 0; i < datos.length; i++) {
+    //     var fila = $("<tr>");
+    //     for (var j = 0; j < numColumnas; j++) {
+    //         var nombreColumna = encabezado.eq(j).text();
+    //         let valor = datos[i][nombreColumna];           
+    //         if(valor !== null && typeof valor === 'object'){
+    //           valor = valor.date;
+    //           if (valor.endsWith(".000000")) {
+    //             valor = valor.slice(0, -7); // Obtiene los primeros 6 caracteres del final
+    //           }
+    //         }
+    //         fila.append($("<td>").text(valor));
+    //     }
+    //     tbody.append(fila);
+    // }
   }
 
   function Diario_Caja() {
@@ -562,8 +539,8 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
       data: {'MBFechaI' : $("#MBFechaI").val() ,'MBFechaF' : $("#MBFechaF").val() },
       success: function(datos)             
       {
-        construirTabla(datos.AdoAsiento, "DGAsiento")  
-        construirTabla(datos.AdoAsiento1, "DGAsiento1") 
+        // construirTabla(datos.AdoAsiento, "DGAsiento")  
+        // construirTabla(datos.AdoAsiento1, "DGAsiento1") 
         $("#Bar_espera_progress").css('width','20%')
         $("#Bar_espera_progress .txt_progress").text('Actualizando Productos')
         $.ajax({
@@ -633,9 +610,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                                 data: {'MBFechaI' : $("#MBFechaI").val() ,'MBFechaF' : $("#MBFechaF").val() },
                                 success: function(datos7)             
                                 {
-                                  construirTabla(datos7.AdoAsiento, "DGAsiento")  
-                                  construirTabla(datos7.AdoAsiento1, "DGAsiento1")
-
                                   $("#Bar_espera_progress").css('width','95%')
                                   $("#Bar_espera_progress .txt_progress").text('Fechas de Cierres')
                                   $.ajax({
@@ -712,7 +686,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
   }
 
   function CargarDataResponseGrabar_Asientos_Facturacion(datos) {
-    construirTabla(datos.AdoCxC, "DGCxC")
+    construirTabla(datos.DGCxC, "DGCxC")
 
     var AdoCxC = $("#AdoCxC");
         for (var indice in datos.AdoCxC) { //TODO LS que valor se asigna al select??
@@ -721,18 +695,17 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
 
     construirTabla(datos.AdoAsiento, "DGAsiento")  
     construirTabla(datos.AdoAsiento1, "DGAsiento1")
-    construirTabla(datos.AdoFactAnul, "DGFactAnul")
-    construirTabla(datos.AdoInv, "DGInv")
-    construirTabla(datos.AdoProductos, "DGProductos")
-    construirTabla(datos.AdoVentas, "DGVentas")
+    construirTabla(datos.DGFactAnul, "DGFactAnul")
+    construirTabla(datos.DGInv, "DGInv")
+    construirTabla(datos.DGProductos, "DGProductos")
+    construirTabla(datos.DGVentas, "DGVentas")
 
     var AdoVentas = $("#AdoVentas");
         for (var indice in datos.AdoVentas) { //TODO LS que valor se asigna al select??
           AdoVentas.append('<option value="' + datos.AdoVentas[indice].Factura+ ' ">' + datos.AdoVentas[indice].Factura + ' - '+datos.AdoVentas[indice].Total_MN+'</option>');
         }
 
-    $("#DGSRICaption").text(datos.DGSRI);
-    construirTabla(datos.AdoSRI, "DGSRI")
+    construirTabla(datos.DGSRI, "DGSRI")
 
     var AdoSRI = $("#AdoSRI");
         for (var indice in datos.AdoSRI) { //TODO LS que valor se asigna al select??
@@ -746,8 +719,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
     $("#LabelHaber").val(datos.LabelHaber)
     $("#LabelHaber1").val(datos.LabelHaber1)
     $("#LblConIVA").val(datos.LblConIVA) 
-    $("#LblConcepto").val(datos.LblConcepto)
-    $("#LblConcepto1").val(datos.LblConcepto1)
     $("#LblDescuento").val(datos.LblDescuento) 
     $("#LblDiferencia").val(datos.LblDiferencia)
     $("#LblDiferencia1").val(datos.LblDiferencia1)
@@ -942,4 +913,55 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
     });
   }
 
+  function GenerarExcelResultadoCierreCaja() {
+    var activeTabHref = $('.nav-tabs .nav-item.active a').attr('href');
+    var activeTabTitle = $('.nav-tabs .nav-item.active a').text();
+    var activeTabName = activeTabHref.substring(1);
+    var url, tabName, secondTabUrl;
+    var Titulo;
+
+    switch (activeTabName) {
+      case "AdoCxCT":
+        secondTabUrl = "AdoAnticipos&Titulo=Anticipos";
+        Titulo = "Anticipos";
+        break;
+
+      case "AdoInv":
+        secondTabUrl = "AdoProductos&Titulo=Productos";
+        Titulo = "Productos";
+        break;
+
+      case "AdoAsientoT":
+        secondTabUrl = "AdoAsiento1T&Titulo=Caja de CxC";
+        Titulo = "Caja de CxC";
+        break;
+    }
+
+    url = `../controlador/contabilidad/FCierre_CajaC.php?ExcelResultadoCierreCaja=true&Tabs=${activeTabName}&Titulo=${activeTabTitle}`;
+    console.log(url);
+    window.open(url, '_blank');
+
+    if (secondTabUrl) {
+        url = `../controlador/contabilidad/FCierre_CajaC.php?ExcelResultadoCierreCaja=true&Tabs=${secondTabUrl}`;
+        console.log(url);
+        
+        $.ajax({
+        url: url,
+        method: 'GET',
+        xhrFields: {
+          responseType: 'blob' // Especificamos que la respuesta será un Blob
+        },
+        success: function(response) {console.log(response)
+          // Crear un enlace para descargar el archivo
+          const downloadLink = document.createElement('a');
+          downloadLink.href = URL.createObjectURL(response);
+          downloadLink.download = 'Cierre de Caja '+Titulo+' .xlsx'; // Nombre del archivo a descargar
+          downloadLink.click();
+        },
+        error: function(xhr, status, error) {
+          console.error('Error al descargar el archivo:', error);
+        }
+      });
+    }
+  }
 </script> 
