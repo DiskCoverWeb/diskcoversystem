@@ -102,7 +102,7 @@
     
      $("#btn_acep").blur(function () { if($('#modal_cuenta').hasClass('in')){if($('#txt_efectiv').is(':visible')){$('#txt_efectiv').trigger( "focus" );}else{$('#txt_moneda').trigger( "focus" );}}});
 
-
+/*
     $("#codigo").autocomplete({
       source: function( request, response ) {
                 
@@ -131,7 +131,7 @@
             return false;
         },
     });
-
+*/
 
 
     // $('#txt_tipo').on('blur',function(){
@@ -321,7 +321,7 @@
         placeholder: 'Seleccione cuenta',
         ajax: {
           url:   '../controlador/contabilidad/incomC.php?cuentasTodos=true',
-          data: function (term, page) { return {q: term,  tip:$('#codigo').val() ,  page_limit: 10 }},
+          data: function (term, page) { return {q: term,  tip:$('#codigo').val()}},
           dataType: 'json',
           delay: 250,          
           processResults: function (data) {
@@ -911,14 +911,10 @@
            $('#modal_subcuentas').modal('show');
 
           break;
+          default:
+             $('#cuentar').select2('open');
+          break;
     }
-
-    if(cod!='AC' && cod!='AV' && cod!='AI' && cod!='AE')
-    {
-      // $('#cuentar').select2('open');
-    }
-
-    // $('#cuentar').select();
   }
 
   function validar_comprobante()

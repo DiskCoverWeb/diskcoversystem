@@ -58,28 +58,34 @@ if(isset($_GET['cuentas_banco']))
 if(isset($_GET['cuentasTodos']))
 {
 	$query = '';
-    $ti='';
-    $tipo = '';
-	if(isset($_GET['q']))
-	{
-		$query = $_GET['q'];
-         if(count($query)>1)
-        {
-            $query = $query['term'];
-            if($query =='*')
-            {
-                $query = '';
-            }
-        }else{$query ='';}
-
-        $ti = $_GET['tip'];
-	}
-    if(isset($_GET['q1']))
+    $clave='';
+    $tc = '';
+    $codigo = '';
+    if(isset($_GET['q']['term']))
     {
-        $query = $_GET['q1'];
-        $tipo = '1';
+    	$query  = $_GET['q']['term'];
     }
-	echo json_encode($controlador->cuentas_Todos($query,$tipo,$ti));
+    $cta = $_GET['tip'];
+	// print_r($cta);die();
+	if(is_numeric($cta))
+	{
+		if(strpos($cta,'.')!==false )
+    	{
+    		$codigo = $cta;
+    	}else{
+			$clave = $cta;
+		}
+	}else if(ctype_alpha($cta))
+	{
+		// tipo de cuenta
+		$tc = $cta;
+	}else
+	{
+		$codigo = $cta;
+	}
+
+    $parametros = array('query'=>$query,'codigo'=>$codigo,'clave'=>$clave,'tc'=>$tc);
+	echo json_encode($controlador->cuentas_Todos($parametros));
 }
 
 if(isset($_GET['asientoB']))
@@ -315,19 +321,21 @@ class incomC
 
 	}
 
-	function cuentas_Todos($query,$tipo,$tipoCta)
+	function cuentas_Todos($parametros)
 	{
-		$datos = $this->modelo->cuentas_todos($query,$tipo,$tipoCta);
+		// print_r($parametros);die();
+		// $datos = $this->modelo->cuentas_todos($query,$tipo,$tipoCta);
+		$datos = $this->modelo->cuentas_todos($parametros['query'],$parametros['codigo'],$parametros['clave'],$parametros['tc']);
 		$cuenta = array();
 		foreach ($datos as $key => $value) {
-            if($tipo=='')
-            {
+            // if($tipo=='')
+            // {
                 $cuenta[] = array('id'=>$value['Codigo'],'text'=>$value['Nombre_Cuenta']);
 			// $cuenta[] = array('id'=>$value['Codigo'],'text'=>$value['Nombre_Cuenta']);//para produccion
-            }else
-            {                
-                $cuenta[] = array('value'=>$value['Codigo'],'label'=>$value['Nombre_Cuenta']);
-            }
+            // }else
+            // {                
+            //     $cuenta[] = array('value'=>$value['Codigo'],'label'=>$value['Nombre_Cuenta']);
+            // }
 		}
 		return $cuenta;
 
