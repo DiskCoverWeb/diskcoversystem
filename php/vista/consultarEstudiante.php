@@ -53,7 +53,9 @@ function ConsultarDataEstudianteIdukay($studentId, $token)
       $json = json_decode($response, true);
 			if(count($json["response"])>0){
 				ksort($json["response"][0]);
-				return $json["response"][0];
+				return $json["response"][0]; //responde con <li name="_id">
+				//print_r($json["response"][0]);die(); // responde array
+				//echo json_encode($json["response"][0]);die(); //responde json
 			}else{
 				return false;
 			}
