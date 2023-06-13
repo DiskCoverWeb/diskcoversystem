@@ -1,11 +1,23 @@
 <?php
-$studentId  = (isset($_GET['id']))?$_GET['id']:"";
-$file  = (isset($_GET['file']))?$_GET['file']:die('Parametro file obligatorio');
 
-$archivo = $file.'.key';
-$token = file_get_contents($archivo);
-if ($token == false) {
-  die('Error al obtener token.');
+require_once(dirname(__DIR__,2)."/php/funciones/funciones.php");
+
+if(!isset($_GET['id'])){
+	die('Parametro obligatorio');
+}else if(strlen($_GET['id']) != 26){
+	die('Parametro con formato incorrecto');
+}
+
+$id_ruc_item = $_GET['id'];
+$studentId  = substr($id_ruc_item, 0, 10);
+$ruc = substr($id_ruc_item, 10, 13);
+$item = substr($id_ruc_item, -3);
+
+$token = getTokenEmpresa($ruc, $item);
+if(count($token)==0){
+	die('Institución no asignada');
+}else{
+	$token = $token[0]['Token'];
 }
 
 $data = ConsultarDataEstudianteIdukay($studentId, $token);
@@ -48,24 +60,31 @@ function ConsultarDataEstudianteIdukay($studentId, $token)
 
 function pintarNodo($nodo,$keyS, $echo, $bucle=0)
 {
-	// if($bucle>15){
-	// 	die('bluceeeee');
-	// }
-	//echo "<pre>llego";print_r($nodo);echo "</pre>";
-	//echo "<pre>keyS";print_r($keyS);echo "</pre>";
 	if (is_array($nodo)){
-		//echo "<pre>SI es array</pre>";
 		$echo .="<ul id='nodo-$keyS'>";
+		if($keyS =='relational_data' && isset($nodo['years'])){
+			$years = $nodo['years'];
+			$nodo['years'] = end($years);
+		}
 			foreach ($nodo as $key2 => $nodo2){
-				//echo "<pre>HACEMOS LLAMAD pintarNodo $key2";print_r($nodo2);echo "</pre>";
 				$echo .= pintarNodo($nodo2,$key2, "",$bucle++);
 			}
 		$echo .="</ul>";
 	}else{
-	//echo "<pre>no es array pintamos ";print_r($nodo);echo "</pre>";
 		$echo ="<li name='$keyS'>$nodo</li>";
 	}
 	return $echo;
+}
+
+function getTokenEmpresa($ruc, $item)
+{
+	$conn = new db();
+	$sql = "SELECT Token
+					FROM lista_empresas
+					WHERE RUC_CI_NIC=$ruc
+					AND Item=$item
+					AND LENGTH(Token)>1";
+	return $conn->datos($sql,'MYSQL');
 }
 ?>
 <!DOCTYPE html>
