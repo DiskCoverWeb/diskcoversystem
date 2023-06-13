@@ -181,7 +181,7 @@ class punto_ventaC
 	{
 		$datos = $this->modelo->DCBodega();
 		// print_r($datos);die();
-		$resp = array();
+		$res = array();
 		foreach ($datos as $key => $value) {
 			$res[] = array('codigo'=>$value['CodBod'],'nombre'=>$value['Bodega']);
 		}

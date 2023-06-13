@@ -58,6 +58,10 @@ if(isset($_GET['cambiar_op']))
 {
 	echo json_encode($controlador->cambiar_cuenta($_POST['parametros']));
 }
+if(isset($_GET['eliminar_cuentas']))
+{
+	echo json_encode($controlador->eliminar_cuentas($_POST['parametros']));
+}
 class ctaOperacionesC
 {
 	private $modelo;
@@ -197,6 +201,11 @@ function meses_presu()
    
 	function cuentas()
 	{
+
+		//generar nivels cta 
+
+
+		// fin de generar niveles cta
 		// print_r();
 
 		$p = explode('.',$_SESSION['INGRESO']['Formato_Cuentas']);
@@ -228,7 +237,7 @@ function meses_presu()
   $tabla = '';
   $tablatemp = '';
 
-  // print_r($nivel[0]);die();
+  // print_r($nivel);die();
   
 $temporar = array();
 // C.C.CC.CC.CC.CCC
@@ -269,6 +278,8 @@ for ($i=$niveles; $i >0; $i--){
 
 }
 
+
+// print_r($tabla);die();  
 // print_r($temporar);die();
 
 $corte ='';
@@ -349,10 +360,11 @@ foreach ($datos as $key => $value) {
 			// print_r($key);
 			// print_r($tablatemp);
 			$parte_tabla = explode('</li fin>', $tablatemp);
-			
+
+			// print_r($parte_tabla);die();			
 			$tablatemp = '';
 			foreach ($parte_tabla as $key1 => $value1) {
-				if($key == $key1)
+				if($key-1 == $key1)
 				{
 
 				// print_r($parte_tabla[$key]);die();
@@ -462,6 +474,7 @@ function grabar_cuenta($parametros)
   //        No. [".$Codigo."] - " & TextConcepto.Text
   // Titulo = "Pregunta de grabación"
 
+   	SetAdoAddNew("Catalogo_Cuentas");
 
   $cuenta_exist = $this->modelo->cta_existente();
   if(count($cuenta_exist)!=0)
@@ -505,7 +518,6 @@ function grabar_cuenta($parametros)
   	 
   }
 
-   	SetAdoAddNew("Catalogo_Cuentas");
  
      // ' MsgBox TipoCta'
       SetAdoFields('Clave',$Numero);
@@ -713,7 +725,26 @@ function cambiar_cuenta($parametros)
 	}
 	// print_r('expression');die();
 }
+	function eliminar_cuentas($parametros)
+	{
+		$datos = $this->modelo->transacciones_cta($parametros['codigo']);
+		$lista='';
+		if(count($datos)>0)
+		{
+			foreach ($datos as $key => $value) {			
+				$lista.= '<li>'.$value['Cta'].' - Cantidad de movimientos:'.$value['Cant_Cta'].'</li>';
+			}
+		}else
+		{
+          return $this->modelo->eliminar_cta($parametros['codigo']);                     
+		}
 
+		return $lista;
+
+		print_r($datos);die();
+	}
+
+	
 }
 ?>
 
