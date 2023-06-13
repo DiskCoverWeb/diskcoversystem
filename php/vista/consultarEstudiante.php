@@ -50,8 +50,13 @@ function ConsultarDataEstudianteIdukay($studentId, $token)
     die(json_encode(['response'=> false, 'httpCode'=>$httpCode]));
   } else {
     if ($httpCode == 200) {
-        $json = json_decode($response, true);
-        return (count($json["response"])>0)?$json["response"][0]:false;
+      $json = json_decode($response, true);
+			if(count($json["response"])>0){
+				ksort($json["response"][0]);
+				return $json["response"][0];
+			}else{
+				return false;
+			}
     } else {
       die(json_encode(['response'=> false, 'httpCode'=>$httpCode]));
     }
