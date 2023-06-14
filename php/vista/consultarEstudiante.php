@@ -51,11 +51,32 @@ function ConsultarDataEstudianteIdukay($studentId, $token)
   } else {
     if ($httpCode == 200) {
       $json = json_decode($response, true);
+      $respuesta = array("relational_data"=>[], 'user'=>[], 'relatives'=>[], 'years'=>'');
 			if(count($json["response"])>0){
-				ksort($json["response"][0]);
-				return $json["response"][0]; //responde con <li name="_id">
-				//print_r($json["response"][0]);die(); // responde array
-				//echo json_encode($json["response"][0]);die(); //responde json
+
+				$unix_timestamp = $json["response"][0]["user"]["birthday"];
+				$date = date("Y-m-d", $unix_timestamp);
+
+				$relational_data["relational_data"] = $json["response"][0]["relational_data"];
+				$relational_data["relational_data"] = end($relational_data["relational_data"]['years']);
+				$respuesta["relational_data"]['years']['grade'] = $relational_data["relational_data"]['grade'];
+				$respuesta['user']['_id']= $json["response"][0]['user']['_id'];
+				$respuesta['user']['id_card']= $json["response"][0]['user']['id_card'];
+				$respuesta['user']['birthday']= $date;
+				$respuesta['user']['gender']= $json["response"][0]['user']['gender'];
+				$respuesta['user']['name']= $json["response"][0]['user']['name'];
+				$respuesta['user']['second_name']= $json["response"][0]['user']['second_name'];
+				$respuesta['user']['surname']= $json["response"][0]['user']['surname'];
+				$respuesta['user']['second_surname']= $json["response"][0]['user']['second_surname'];
+
+				$respuesta["relatives"][0]["parent"]= $json["response"][0]["relatives"][0]["parent"];
+				$respuesta["years"]= $json["response"][0]["years"][3];
+				ksort($respuesta);
+
+
+				return $respuesta; //responde con <li name="_id">
+				// print_r($respuesta);die(); // responde array
+				//echo json_encode($respuesta);die(); //responde json
 			}else{
 				return false;
 			}
