@@ -51,7 +51,7 @@ function ConsultarDataEstudianteIdukay($studentId, $token)
   } else {
     if ($httpCode == 200) {
       $json = json_decode($response, true);
-      $respuesta = array("relational_data"=>[], 'user'=>[], 'relatives'=>[], 'years'=>'');
+      $respuesta = array("relational_data"=>[], 'user'=>[], 'relatives'=>[], 'years'=>[]);
 			if(count($json["response"])>0){
 
 				$unix_timestamp = @$json["response"][0]["user"]["birthday"];
