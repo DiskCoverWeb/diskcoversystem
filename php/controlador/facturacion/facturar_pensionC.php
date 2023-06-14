@@ -725,11 +725,9 @@ class facturar_pensionC
     $FA['Cta_CxP'] = $resultado[3];
 		//Procedemos a grabar la factura
   	$datos = $this->facturacion->getAsiento();
-    $Total_Abonos = $FA['TxtEfectivo']+$FA['TextCheque']+$FA['TxtNCVal']+$FA['saldoFavor'];
     if(count($datos)<=0){
       return (array('respuesta'=>-1,'text'=>"No se encontraron asientos para procesar."));
     }
-
     $cliente = Leer_Datos_Cliente_FA($codigoCliente);
     $TFA = Calculos_Totales_Factura($codigoCliente);
     if(isset($cliente['Razon_Social']) && $cliente['Razon_Social']=='CONSUMIDOR FINAL'){
@@ -740,16 +738,16 @@ class facturar_pensionC
         return (array('respuesta'=>-1,'text'=>"Por Ley no se puede emitir una facturar por mas de ".MONTO_MAXIMO_FACTURACION));
       }
     }
-    
+    $SaldoPendiente = 0;
+    $Total_Abonos = $FA['TxtEfectivo']+$FA['TextCheque']+$FA['TxtNCVal']+$FA['saldoFavor'];
     foreach ($datos as $key => $value) {
-       
        $Valor = $value["TOTAL"];
        $Total_Desc = $value["Total_Desc"]+$value["Total_Desc2"];
        $ValorDH = $Valor - $Total_Desc;
        $Codigo = $value["Codigo_Cliente"];
        $Codigo1 = $value["CODIGO"];
        $Codigo2 = $value["Mes"];
-       $Codigo3 = $value["HABIT"];
+       $Codigo3 = (substr($value["CODIGO"], 0, 3) === "JG." && $value["CORTE"]!=0)?$value["CORTE"]:$value["HABIT"];
        $Anio1 = $value["TICKET"];
        $ID_Reg = $value["A_No"];
        $Total_Abonos = $Total_Abonos - $ValorDH;
@@ -767,6 +765,7 @@ class facturar_pensionC
             }
           }
     }
+
     foreach ($datos as $key => $value) {
       $FA['CodigoC'] = $codigoCliente;
       $FA['Tipo_PRN'] = "FM";
@@ -778,7 +777,7 @@ class facturar_pensionC
       if (Existe_Factura($FA)) {
         
       }
-      $SaldoPendiente = 0;
+      
       $DiarioCaja = ReadSetDataNum("Recibo_No", True, True);
       if ($FA['Nuevo_Doc']) {
         $FA['Factura'] = ReadSetDataNum($FA['TC']."_SERIE_".$FA['Serie'], True, True);
@@ -1154,7 +1153,7 @@ class facturar_pensionC
       }
 
       if($dataCliente["fechaUltimaMedida"]==mes_X_nombre($NoMes)."/$Anio" || @$this->validarExisteLecturaREgistradaAnoMes($CMedidor, $codigoCliente, $Anio, $NoMes, JG01 )){
-        return (array("rps" => false , "mensaje" => "Ya se registro la lectura para Febrero/2022"));
+        return (array("rps" => false , "mensaje" => "Ya se registro la lectura para ".mes_X_nombre($NoMes)."/$Anio"));
       }
 
       $montoExcedente = 0;
