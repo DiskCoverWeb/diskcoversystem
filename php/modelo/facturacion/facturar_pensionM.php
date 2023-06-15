@@ -544,7 +544,7 @@ class facturar_pensionM
     SetAdoAddNew("Clientes_Matriculas");
     SetAdoFields("T", G_NORMAL);
     SetAdoFields("Grupo_No", $data['Grupo_No']);
-    SetAdoFields("Lugar_Trabajo_R", $data['TxtDireccion']);
+    SetAdoFields("Lugar_Trabajo_R", $data['TxtDirS']);
     SetAdoFields("Email_R", $data['TxtEmail']);
     SetAdoFields("Representante", $data['TextRepresentante']);
     SetAdoFields("Cedula_R", $data['TextCI']);

@@ -634,6 +634,11 @@ class facturar_pensionC
       exit();
     }
     
+    if($_POST['saldoTotal']<0){
+      echo json_encode(array('respuesta'=>6,'text'=>"El total de abonos supera el total de la factura."));
+      exit();
+    }
+
     if($_POST['saldoTotal']>0){//Significa que es un pago parcial
       $datos = $this->facturacion->getAsiento();
       if(count($datos)>0){
@@ -1140,16 +1145,14 @@ class facturar_pensionC
       $excedente = (($consumoActual>$valorMinimo)?$consumoActual-$valorMinimo:0);
       $productos = $this->catalogoProductosModel->TVCatalogo("JG","P");
 
-      $Mifecha = PrimerDiaMes(date('Ymd'),'Ymd');;
-
       $periodo = $this->facturacion->getPeriodoAbierto();
       if(count($periodo)>0){
         $dataperiodo = explode(" ", $periodo[0]['Detalle']);
         $NoMes = nombre_X_mes($dataperiodo[1]);
         $Anio = $dataperiodo[0];
+        $Mifecha = "$Anio-$NoMes-01";
       }else{
-        $NoMes = ObtenerMesFecha($Mifecha,'YmdHis');
-        $Anio = ObtenerAnioFecha($Mifecha,'YmdHis');
+        return (array("rps" => false , "mensaje" => "Debe activar el mes a procesar."));
       }
 
       if($dataCliente["fechaUltimaMedida"]==mes_X_nombre($NoMes)."/$Anio" || @$this->validarExisteLecturaREgistradaAnoMes($CMedidor, $codigoCliente, $Anio, $NoMes, JG01 )){
