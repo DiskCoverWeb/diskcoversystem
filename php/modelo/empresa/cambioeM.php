@@ -108,6 +108,11 @@ class cambioeM
 		    		{
 		    			$ambiente = 2;
 		    		}
+		    		$copia = 0;
+		    		if(isset($parametros['rbl_copia']))
+		    		{
+		    			$copia = 1;
+		    		}
 
 		    		$sql3 = "UPDATE Empresas SET Fecha_CE = '".$parametros['Fecha']."',
 		    		Estado = '".$parametros['Estado']."',
@@ -124,7 +129,8 @@ class cambioeM
 		    		RUC_Operadora = '".$parametros['TxtRUCOpe']."',
 		    		LeyendaFA = '".$parametros['txtLeyendaDocumen']."',
 		    		LeyendaFAT = '".$parametros['txtLeyendaImpresora']."',
-		    		Ambiente = '".$ambiente."'
+		    		Ambiente = '".$ambiente."',
+		    		Email_CE_Copia = ".$copia."
 		    		WHERE Item='".$em[0]['Item']."'";
 
 		    		// print_r($sql3);

@@ -117,38 +117,33 @@ class cambioeC
 				{
 						// print_r($datosEmp);die();
 						$empresaSQL = '<!--------------------------seccion com´probante------------------->
-						<div class="col-sm-12">
-		                    <label>|Firma Electrónica|</label>
-		                </div>';
+						<div class="col-sm-3"><label>WEBSERVICE SRI RECEPCION</label></div>';
 		                if($datosEmp[0]['Ambiente']==1)
 		                {                                
-			                 $empresaSQL.='<div class="col-sm-4">                                    
+			                 $empresaSQL.='<div class="col-sm-2">                                    
 			                   <label> <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="" onclick="AmbientePrueba()" checked>
 			                    Ambiente de Prueba</label>
 			                </div>
-			                <div class="col-sm-4">
+			                <div class="col-sm-3">
 			                    <label><input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onclick="AmbienteProduccion()">
 			                    Ambiente de Producción</label>
 			                </div>';
 		            	}else
 		            	{
-		            		 $empresaSQL.='<div class="col-sm-4">                                    
+		            		 $empresaSQL.='<div class="col-sm-2">                                    
 		                    <label><input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="" onclick="AmbientePrueba()">
 		                    Ambiente de Prueba</label>
 		                </div>
-		                <div class="col-sm-4">
+		                <div class="col-sm-3">
 		                    <label><input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onclick="AmbienteProduccion()" checked>
 		                    Ambiente de Producción</label>
 		                </div>';
 		            	}
-		                $empresaSQL.='<div class="col-sm-2">
-		                    CONTRIBUYENTE ESPECIAL          
-		                </div>
+		                $empresaSQL.='<div class="col-sm-2">Contribuyente Especial</div>
 		                <div class="col-sm-2">
 		                    <input type="text" name="TxtContriEspecial" id="TxtContriEspecial" class="form-control input-xs" value="'.$datosEmp[0]['Codigo_Contribuyente_Especial'].'">
 		                </div>
 		                 <div class="col-sm-12">
-		                    <label>WEBSERVICE SRI RECEPCION</label>
 		                    <input type="text" name="TxtWebSRIre" id="TxtWebSRIre" class="form-control input-xs" value="'.$datosEmp[0]['Web_SRI_Recepcion'].'">
 		                </div>
 		                <div class="col-sm-12">
@@ -179,9 +174,16 @@ class cambioeC
 		                    <label>CONTRASEÑA:</label>
 		                    <input type="text" name="TxtContraEmaiElect" id="TxtContraEmaiElect" class="form-control input-xs" value="'.$datosEmp[0]['Email_Contraseña_CE'].'">
 		                </div>
-		                <div class="col-sm-10">
-		                    <label><input type="checkbox">Enviar Copia de Email</label>                                        
-		                    <input type="text" name="TxtCopiaEmai" id="TxtCopiaEmai" class="form-control input-xs" value="'.$datosEmp[0]['Email_Procesos'].'">
+		                <div class="col-sm-10">';
+		                if($datosEmp[0]['Email_CE_Copia']==1 && $datosEmp[0]['Email_Procesos']!='')
+		                {
+		                	$empresaSQL.='<label><input type="checkbox" checked id="rbl_copia" name="rbl_copia">Enviar Copia de Email</label>';
+		                }else
+		                {
+		                	$empresaSQL.='<label><input type="checkbox" id="rbl_copia" name="rbl_copia">Enviar Copia de Email</label>';		                	
+		                }
+
+		                $empresaSQL.='<input type="text" name="TxtCopiaEmai" id="TxtCopiaEmai" class="form-control input-xs" value="'.$datosEmp[0]['Email_Procesos'].'">
 		                </div>
 		                <div class="col-sm-2">
 		                    <label>RUC Operadora</label>
