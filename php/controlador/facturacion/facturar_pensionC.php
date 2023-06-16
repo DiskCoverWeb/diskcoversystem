@@ -634,6 +634,11 @@ class facturar_pensionC
       exit();
     }
     
+    if($_POST['saldoTotal']<0){
+      echo json_encode(array('respuesta'=>6,'text'=>"El total de abonos supera el total de la factura."));
+      exit();
+    }
+
     if($_POST['saldoTotal']>0){//Significa que es un pago parcial
       $datos = $this->facturacion->getAsiento();
       if(count($datos)>0){
@@ -750,13 +755,14 @@ class facturar_pensionC
        $Codigo3 = (substr($value["CODIGO"], 0, 3) === "JG." && $value["CORTE"]!=0)?$value["CORTE"]:$value["HABIT"];
        $Anio1 = $value["TICKET"];
        $ID_Reg = $value["A_No"];
+       $Medidor_Asiento = $value["Tipo_Hab"];
        $Total_Abonos = $Total_Abonos - $ValorDH;
           if($Total_Abonos >= 0){
-            $this->facturacion->actualizar_Clientes_Facturacion($Valor,$Anio1,$Codigo,$Codigo1,$Codigo2,$Codigo3);
+            $this->facturacion->actualizar_Clientes_Facturacion($Valor,$Anio1,$Codigo,$Codigo1,$Codigo2,$Codigo3, $Medidor_Asiento);
           }else{
             $Valor = $Valor + $Total_Abonos;
             if($Valor > 0){
-              $this->facturacion->actualizar_Clientes_Facturacion2($Total_Abonos,$Total_Desc,$Anio1,$Codigo,$Codigo1,$Codigo2,$Codigo3);
+              $this->facturacion->actualizar_Clientes_Facturacion2($Total_Abonos,$Total_Desc,$Anio1,$Codigo,$Codigo1,$Codigo2,$Codigo3, $Medidor_Asiento);
               $Total_Abonos = $Total_Abonos + $Total_Desc;
               $Valor = $Valor - $Total_Desc;
               $this->facturacion->actualizar_asiento_F($Valor,$ID_Reg);
@@ -1140,16 +1146,14 @@ class facturar_pensionC
       $excedente = (($consumoActual>$valorMinimo)?$consumoActual-$valorMinimo:0);
       $productos = $this->catalogoProductosModel->TVCatalogo("JG","P");
 
-      $Mifecha = PrimerDiaMes(date('Ymd'),'Ymd');;
-
       $periodo = $this->facturacion->getPeriodoAbierto();
       if(count($periodo)>0){
         $dataperiodo = explode(" ", $periodo[0]['Detalle']);
         $NoMes = nombre_X_mes($dataperiodo[1]);
         $Anio = $dataperiodo[0];
+        $Mifecha = "$Anio-$NoMes-01";
       }else{
-        $NoMes = ObtenerMesFecha($Mifecha,'YmdHis');
-        $Anio = ObtenerAnioFecha($Mifecha,'YmdHis');
+        return (array("rps" => false , "mensaje" => "Debe activar el mes a procesar."));
       }
 
       if($dataCliente["fechaUltimaMedida"]==mes_X_nombre($NoMes)."/$Anio" || @$this->validarExisteLecturaREgistradaAnoMes($CMedidor, $codigoCliente, $Anio, $NoMes, JG01 )){

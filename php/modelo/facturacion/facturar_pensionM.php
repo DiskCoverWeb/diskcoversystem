@@ -329,8 +329,9 @@ class facturar_pensionM
     return $stmt;
   }
 
-  public function actualizar_Clientes_Facturacion($Valor,$Anio1,$Codigo,$Codigo1,$Codigo2,$Codigo3)
+  public function actualizar_Clientes_Facturacion($Valor,$Anio1,$Codigo,$Codigo1,$Codigo2,$Codigo3, $Codigo_Auto="")
   {
+    $Codigo_Auto = ($Codigo_Auto!="" && is_numeric($Codigo_Auto))?str_pad($Codigo_Auto, 6, "0", STR_PAD_LEFT):$Codigo_Auto;
     $sql="UPDATE Clientes_Facturacion
           SET Valor = Valor - ".$Valor." 
           WHERE Item = '".$_SESSION['INGRESO']['item']."' 
@@ -338,17 +339,16 @@ class facturar_pensionM
           AND Codigo_Inv = '".$Codigo1."' 
           AND Codigo = '".$Codigo."' 
           AND Credito_No = '".$Codigo3."' 
+          ".(($Codigo_Auto!="")?" AND Codigo_Auto = '".$Codigo_Auto."'":"")."
           AND Mes = '".$Codigo2."' ";
     $stmt = $this->db->String_Sql($sql);
     return $stmt;
 
   }
 
-   public function actualizar_Clientes_Facturacion2($Total_Abonos,$Total_Desc,$Anio1,$Codigo,$Codigo1,$Codigo2,$Codigo3)
+   public function actualizar_Clientes_Facturacion2($Total_Abonos,$Total_Desc,$Anio1,$Codigo,$Codigo1,$Codigo2,$Codigo3, $Codigo_Auto="")
   {
-
-          // print_r($Total_Abonos);
-          // print_r($Total_Desc); die();
+    $Codigo_Auto = ($Codigo_Auto!="" && is_numeric($Codigo_Auto))?str_pad($Codigo_Auto, 6, "0", STR_PAD_LEFT):$Codigo_Auto;
     $sql="UPDATE Clientes_Facturacion
           SET Valor = ".((-1*$Total_Abonos) + $Total_Desc)."
           WHERE Item = '".$_SESSION['INGRESO']['item']."' 
@@ -356,8 +356,8 @@ class facturar_pensionM
           AND Codigo_Inv = '".$Codigo1."' 
           AND Codigo = '".$Codigo."' 
           AND Credito_No = '".$Codigo3."' 
+          ".(($Codigo_Auto!="")?" AND Codigo_Auto = '".$Codigo_Auto."'":"")."
           AND Mes = '".$Codigo2."' ";
-          // print_r($sql);die();
     $stmt = $this->db->String_Sql($sql);
     return $stmt;
 
@@ -544,7 +544,7 @@ class facturar_pensionM
     SetAdoAddNew("Clientes_Matriculas");
     SetAdoFields("T", G_NORMAL);
     SetAdoFields("Grupo_No", $data['Grupo_No']);
-    SetAdoFields("Lugar_Trabajo_R", $data['TxtDireccion']);
+    SetAdoFields("Lugar_Trabajo_R", $data['TxtDirS']);
     SetAdoFields("Email_R", $data['TxtEmail']);
     SetAdoFields("Representante", $data['TextRepresentante']);
     SetAdoFields("Cedula_R", $data['TextCI']);
