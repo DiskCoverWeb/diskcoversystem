@@ -2565,7 +2565,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(270,155,100));
 	
-	$arr=array('<b>Dirección: '.$datos[0]['Direccion_RS'],'','<b>Motivo de traslado:VENTA');//mio
+	$arr=array('<b>Dirección: '.$datos[0]['Direccion_RS'],'','');//mio
 	$pdf->Row($arr,10);
 	$pdf->SetWidths(array(270,155,100));
 	// print_r($datos);die();	
@@ -2574,12 +2574,18 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	'<b>Factura No: '.$datos[0]['Serie'].'-'.generaCeros($datos[0]['Factura'],9)
 	,'<b>Fecha emison: '.$datos[0]['Fecha']->format('Y-m-d'));
 	$pdf->Row($arr,10);
-	if($datos[0]['Nota']!='.' && $datos[0]['Nota']!='')
-	{
-	$pdf->SetWidths(array(525));
-	$arr=array('Nota: '.$datos[0]['Nota']);
+
+	// print_r($datos[0]);die();
+	$pdf->SetWidths(array(270,10,270));
+	$arr=array('<b>Motivo de traslado: '.$datos[0]['Observacion'],'','<b>Nota Auxiliar: '.$datos[0]['Nota']);
 	$pdf->Row($arr,10);
-    }
+
+	// if($datos[0]['Nota']!='.' && $datos[0]['Nota']!='')
+	// {
+	// $pdf->SetWidths(array(525));
+	// $arr=array('Nota: '.$datos[0]['Nota']);
+	// $pdf->Row($arr,10);
+    // }
 
     $yfin = $pdf->GetY();	
 	$xfin = $pdf->GetX();

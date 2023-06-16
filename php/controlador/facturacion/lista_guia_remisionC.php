@@ -338,6 +338,10 @@ class lista_guia_remisionC
 				$TFA['CodigoC'] = $FA[0]['CodigoC']; 
 				$TFA['Remision'] = $FA[0]['Remision']; 
 				$TFA['Entrega'] = $FA[0]['Entrega']; 
+				$TFA['Nota'] = $FA[0]['Declaracion'];
+				$TFA['Observacion'] = $FA[0]['Definitivo'];
+
+				// print_r($FA);die();
 
 				$this->punto_venta->pdf_guia_remision_elec_sin_fac($TFA,$nombre_archivo=false,$periodo=false,$aprobado=false,$descargar=false);
 			}
@@ -578,6 +582,10 @@ QUITO - ECUADOR';
 			SetAdoFields('Autorizacion_GR',$parametros['LblAutGuiaRem_']);
 			SetAdoFields('Clave_Acceso_GR',$parametros['LblAutGuiaRem_']);
 			SetAdoFields('Lugar_Entrega',$parametros['TxtLugarEntrega']);	
+
+			SetAdoFields('Declaracion',substr($parametros['txt_nota'],0,20));				//nota 
+			SetAdoFields('Definitivo',substr($parametros['txt_observacion'],0,20));	//motivo
+
 			SetAdoUpdate();
 
 // die();

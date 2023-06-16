@@ -902,6 +902,14 @@ function Eliminar(cod)
       <b>Lugar entrega</b>
       <input type="text" name="TxtLugarEntrega" id="TxtLugarEntrega" class="form-control input-xs">
   </div>
+    <div class="col-sm-6">
+        <b>Motivo del traslado</b>
+        <input type="text" name="txt_observacion" id="txt_observacion" class="form-control input-xs">
+    </div>
+    <div class="col-sm-6">
+        <b>Nota Auxiliar</b>
+        <input type="text" name="txt_nota" id="txt_nota" class="form-control input-xs">
+    </div>
 </form>
 </div>
 
@@ -933,16 +941,7 @@ function Eliminar(cod)
 </div>
 
 -->
-<div class="row">
-    <div class="col-sm-6">
-        <b>Motivo del traslado</b>
-        <input type="text" name="txt_observacion" id="txt_observacion" class="form-control input-xs">
-    </div>
-    <div class="col-sm-6">
-        <b>Nota Auxiliar</b>
-        <input type="text" name="txt_nota" id="txt_nota" class="form-control input-xs">
-    </div>
-</div>
+
 <div class="row">
   <div class="col-sm-6">
     <label>PRODUCTO</label>

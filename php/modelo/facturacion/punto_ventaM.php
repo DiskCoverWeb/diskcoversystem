@@ -395,6 +395,8 @@ class punto_ventaM
        $AdoDBFA[0]['Nota'] = '';
        $AdoDBFA[0]['Direccion_RS'] = $TFA['Direccion_RS'];
        $AdoDBFA[0]['Imp_Mes'] = '.';
+       $AdoDBFA[0]['Nota'] = $TFA['Nota'];
+       $AdoDBFA[0]['Observacion'] = $TFA['Observacion'];
 
       $tipo_con = Tipo_Contribuyente_SP_MYSQL($_SESSION['INGRESO']['RUC']);
 
