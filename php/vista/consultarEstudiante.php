@@ -20,7 +20,7 @@ if(count($token)==0){
 	$token = $token[0]['Token'];
 }
 
-$data = ConsultarDataEstudianteIdukay($studentId, $token);
+echo ConsultarDataEstudianteIdukay($studentId, $token);
 function ConsultarDataEstudianteIdukay($studentId, $token)
 {
   $curl = curl_init();
@@ -57,7 +57,7 @@ function ConsultarDataEstudianteIdukay($studentId, $token)
 				$unix_timestamp = @$json["response"][0]["user"]["birthday"];
 				$date = date("Y-m-d", $unix_timestamp);
 
-				if(isset($relational_data["relational_data"]['years'])){
+				if(isset($json["response"][0]["relational_data"]['years'])){
 					$relational_data["relational_data"] = @$json["response"][0]["relational_data"];
 					$relational_data["relational_data"] = end($relational_data["relational_data"]['years']);
 					$respuesta["relational_data"]['years']['grade'] = @$relational_data["relational_data"]['grade'];
@@ -73,14 +73,12 @@ function ConsultarDataEstudianteIdukay($studentId, $token)
 					$respuesta['user']['second_surname']= @$json["response"][0]['user']['second_surname'];
 				}
 
-				$respuesta["relatives"][0]["parent"]= @$json["response"][0]["relatives"][0]["parent"];
+				$respuesta["relatives"]["parent"]= @$json["response"][0]["relatives"][0]["parent"];
 				if(isset($json["response"][0]["years"])){
 					$respuesta["years"]= end($json["response"][0]["years"]);
 				}
 				ksort($respuesta);
-				return $respuesta; //responde con <li name="_id">
-				// print_r($respuesta);die(); // responde array
-				//echo json_encode($respuesta);die(); //responde json
+				return formatObject($respuesta);
 			}else{
 				return false;
 			}
@@ -118,27 +116,39 @@ function getTokenEmpresa($ruc, $item)
 					AND LENGTH(Token)>1";
 	return $conn->datos($sql,'MYSQL');
 }
-?>
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>DiskCover System login</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<link rel="stylesheet" href="../../bower_components/bootstrap/dist/css/bootstrap.min.css">
-		<style type="text/css">
-			li{
-				list-style: none;
-			}
-		</style>
-	</head>
-	<body>
-		<?php if ($data){ ?>
-			<?php foreach ($data as $keyP => $nodoP): ?>
-				<?php echo 	pintarNodo($nodoP,$keyP, "") ?>
-			<?php endforeach ?>
-		<?php }else{echo "false";} ?>
+function formatObject($objeto) {
+    $result = '{ ';
+    $firstProperty = true;
 
-	</body>
-</html>
+    foreach ($objeto as $key => $value) {
+        if (!$firstProperty) {
+            $result .= ', ';
+        }
+
+        if (is_array($value)) {
+            $result .= $key . ': ' . formatArray($value);
+        } elseif (is_bool($value)) {
+            $result .= $key . ': ' . ($value ? 'true' : 'false');
+        } elseif (is_numeric($value)) {
+            $result .= $key . ': ' . $value;
+        } else {
+            $result .= $key . ': \'' . $value . '\'';
+        }
+
+        $firstProperty = false;
+    }
+
+    $result .= ' }';
+    return $result;
+}
+
+// Función para formatear un arreglo como una cadena
+function formatArray($array) {
+    $result = '[';
+    $firstItem = true;
+    $result .=formatObject($array);
+    $result .= ']';
+    return $result;
+}
+
+?>
