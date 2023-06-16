@@ -845,13 +845,13 @@ function Eliminar(cod)
 	  <b>AUTORIZACION GUIA DE REMISION</b>
 	  <input type="text" name="LblAutGuiaRem_" id="LblAutGuiaRem_" class="form-control input-xs" value="0">
 	</div>
-  <div class="col-sm-6">
-      <b class="col-sm-6 control-label" style="padding: 0px">Iniciacion del traslados</b>
-      <div class="col-sm-6" style="padding: 0px">
-          <input type="date" name="MBoxFechaGRI" id="MBoxFechaGRI" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">
+  <div class="col-sm-3">
+      <b class="col-sm-7 control-label" style="padding: 0px">Iniciacion traslados</b>
+      <div class="col-sm-5" style="padding: 0px">
+          <input type="date" name="MBoxFechaGRI" id="MBoxFechaGRI" class="form-control input-xs" style="padding: 3px;" value="<?php echo date('Y-m-d'); ?>">
       </div>
   </div>
-  <div class="col-sm-6">
+  <div class="col-sm-3">
       <b class="col-sm-3 control-label" style="padding: 0px">Ciudad</b>
       <div class="col-sm-9" style="padding: 0px">
           <select class="form-control input-xs" id="DCCiudadI" name="DCCiudadI" style="width:100%">
@@ -859,15 +859,14 @@ function Eliminar(cod)
           </select>
       </div>
   </div>
-  <div class="col-sm-6">
-      <b class="col-sm-6 control-label" style="padding: 0px">Finalizacion del traslados</b>
-      <div class="col-sm-6" style="padding: 0px">
-          <input type="date" name="MBoxFechaGRF" id="MBoxFechaGRF" class="form-control input-xs"
-              value="<?php echo date('Y-m-d'); ?>">
+  <div class="col-sm-3">
+      <b class="col-sm-7 control-label" style="padding: 0px">Finalizacion traslados</b>
+      <div class="col-sm-5" style="padding: 0px">
+          <input type="date" name="MBoxFechaGRF" id="MBoxFechaGRF" class="form-control input-xs" style="padding: 3px;" value="<?php echo date('Y-m-d'); ?>">
       </div>
   </div>
-  <div class="col-sm-6">
-      <b class="col-sm-3 control-label" style="padding: 0px">ciudad</b>
+  <div class="col-sm-3">
+      <b class="col-sm-3 control-label" style="padding: 0px">Ciudad</b>
       <div class="col-sm-9" style="padding: 0px">
           <select class="form-control input-xs" id="DCCiudadF" name="DCCiudadF" style="width:100%">
               <option value=""></option>
@@ -936,12 +935,12 @@ function Eliminar(cod)
 -->
 <div class="row">
     <div class="col-sm-6">
-        Motivo del traslado
-        <input type="text" name="" class="form-control input-sm">
+        <b>Motivo del traslado</b>
+        <input type="text" name="txt_observacion" id="txt_observacion" class="form-control input-xs">
     </div>
     <div class="col-sm-6">
-        Motivo del traslado
-        <input type="text" name="" class="form-control input-sm">
+        <b>Nota Auxiliar</b>
+        <input type="text" name="txt_nota" id="txt_nota" class="form-control input-xs">
     </div>
 </div>
 <div class="row">
