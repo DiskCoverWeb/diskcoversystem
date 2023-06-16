@@ -391,7 +391,7 @@ class punto_ventaM
        $AdoDBFA[0]['Factura_Aut']=$TFA['Autorizacion']; 
        $AdoDBFA[0]['Razon_Social']= $TFA['Razon_Social']; 
        $AdoDBFA[0]['RUC_CI']= $TFA['RUC_CI']; 
-       $AdoDBFA[0]['Lugar_Entrega']= $TFA['Entrega']; 
+       $AdoDBFA[0]['Lugar_Entrega']= $TFA['Lugar_Entrega']; 
        $AdoDBFA[0]['Nota'] = '';
        $AdoDBFA[0]['Direccion_RS'] = $TFA['Direccion_RS'];
        $AdoDBFA[0]['Imp_Mes'] = '.';

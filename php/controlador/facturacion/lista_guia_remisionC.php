@@ -213,7 +213,8 @@ class lista_guia_remisionC
 	      $TFA['RUC_CI'] = $cliente[0]['CI_RUC'];
 	      $TFA['Direccion_RS'] = $cliente[0]['Direccion'];
 	      $TFA['Nota'] = $TFA['Declaracion'];
-	      $TFA['Observacion'] =$TFA['Definitivo'];
+	      $TFA['Observacion'] =$TFA['Definitivo'];	      
+				// $TFA['Lugar_Entrega'] = $GR[0]['Lugar_Entrega'];
     		
     		// print_r($TFA);die();
     		$ClaveAcceso_GR = $this->sri->Clave_acceso($TFA['FechaGRE']->format('Y-m-d'),'06',$TFA['Serie_GR'],$TFA['Remision']);
@@ -341,7 +342,8 @@ class lista_guia_remisionC
 				$TFA['Remision'] = $FA[0]['Remision']; 
 				$TFA['Entrega'] = $FA[0]['Entrega']; 
 				$TFA['Nota'] = $FA[0]['Declaracion'];
-				$TFA['Observacion'] = $FA[0]['Definitivo'];
+				$TFA['Observacion'] = $FA[0]['Definitivo'];				
+				$TFA['Lugar_Entrega'] = $FA[0]['Lugar_Entrega'];
 
 				// print_r($FA);die();
 
@@ -617,6 +619,7 @@ QUITO - ECUADOR';
 				$TFA['CiudadGRF'] = $parametros['DCCiudadF'];
 				$TFA['Serie_GR'] = $codig_l[1];
 				$TFA['Remision'] = $parametros['LblGuiaR_'];
+				$TFA['Lugar_Entrega'] = $GR[0]['Lugar_Entrega'];
 
 				$TFA['Nota'] = $GR[0]['Declaracion'];
 				$TFA['Observacion'] = $GR[0]['Definitivo'];

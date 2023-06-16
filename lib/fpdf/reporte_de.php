@@ -2644,6 +2644,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(525));
 	
+	// print_r($datos[0]);die();
 	$arr=array('Destino: De '.$datos[0]['CiudadGRI'].' a '.$datos[0]['CiudadGRF'].', '.$datos[0]['Lugar_Entrega']);
 	$pdf->Row($arr,10);
 	$pdf->ln(10);
