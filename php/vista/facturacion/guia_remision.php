@@ -728,6 +728,8 @@ function Eliminar(cod)
                   type: 'error',
                   title: 'XML NO AUTORIZADO',
                   allowOutsideClick: false,
+                }).then(function(){
+                  location.reload();
                 })
               }              
         }
