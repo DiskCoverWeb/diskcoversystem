@@ -212,6 +212,8 @@ class lista_guia_remisionC
 				$TFA['Razon_Social'] = $cliente[0]['Cliente'];
 	      $TFA['RUC_CI'] = $cliente[0]['CI_RUC'];
 	      $TFA['Direccion_RS'] = $cliente[0]['Direccion'];
+	      $TFA['Nota'] = $TFA['Declaracion'];
+	      $TFA['Observacion'] =$TFA['Definitivo'];
     		
     		// print_r($TFA);die();
     		$ClaveAcceso_GR = $this->sri->Clave_acceso($TFA['FechaGRE']->format('Y-m-d'),'06',$TFA['Serie_GR'],$TFA['Remision']);
