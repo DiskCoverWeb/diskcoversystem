@@ -435,6 +435,7 @@ function aceptar(){
       dataType: 'json',
       success: function(data)
       {
+        console.log(data);
         $('#tbl_divisas').html(data.tbl);   
         $("#total0").val(parseFloat(data.total).toFixed(2));
         $("#totalFac").val(parseFloat(data.total).toFixed(2));
@@ -934,6 +935,16 @@ function Eliminar(cod)
 
 -->
 <div class="row">
+    <div class="col-sm-6">
+        Motivo del traslado
+        <input type="text" name="" class="form-control input-sm">
+    </div>
+    <div class="col-sm-6">
+        Motivo del traslado
+        <input type="text" name="" class="form-control input-sm">
+    </div>
+</div>
+<div class="row">
   <div class="col-sm-6">
     <label>PRODUCTO</label>
     <select class="form-control input-xs" id="producto" onchange="Articulo_Seleccionado();">
@@ -964,7 +975,7 @@ function Eliminar(cod)
 
 <br>
 <div class="row">         
-  <div class="col-sm-9" id="tbl_divisas" style="height:300px">
+  <div class="col-sm-9" id="tbl_divisas" style="height:300px; overflow-y:scroll;">
    
   </div>
   <div class="col-sm-3">
