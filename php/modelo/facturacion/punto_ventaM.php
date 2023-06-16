@@ -350,6 +350,7 @@ class punto_ventaM
 
     function pdf_guia_remision_elec_sin_fac($TFA,$nombre_archivo,$periodo=false,$aprobado=false,$descargar=false)
    {
+    
     $res = 1;    
         $sql = "SELECT DF.*,CP.Reg_Sanitario,CP.Marca
         FROM Detalle_Factura As DF, Catalogo_Productos As CP
@@ -357,9 +358,16 @@ class punto_ventaM
         AND DF.Periodo =  '".$_SESSION['INGRESO']['periodo']."'
         AND DF.TC = '".$TFA['TC']."'
         AND DF.Serie = '".$TFA['Serie']."'
-        AND DF.Autorizacion = '".$TFA['Autorizacion']."'
-        AND DF.Factura = ".$TFA['Factura']."
-        AND LEN(DF.Autorizacion) >= 4
+        AND DF.Autorizacion = '".$TFA['Autorizacion']."'";
+        if($TFA['TC']=='GR')
+          {
+            $sql.=" AND DF.Factura = ".$TFA['Remision'];
+          }else
+          {
+            $sql.=" AND DF.Factura = ".$TFA['Factura'];
+          }
+       
+        $sql.=" AND LEN(DF.Autorizacion) >= 4
         AND LEN(DF.Autorizacion) <= 49
         AND DF.T <> 'A'
         AND DF.Item = CP.Item

@@ -1266,7 +1266,25 @@ class autorizacion_sri
         	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['EmailC']);
         	 $xml_campoAdicional->setAttribute( "nombre", "Email");
         	$xml_infoAdicional->appendChild($xml_campoAdicional);
+        	}         
+
+         if(isset($cabecera['Observacion'])){
+        	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['Observacion']);
+        	 $xml_campoAdicional->setAttribute( "nombre", "motivoTraslado");
+        	 $xml_infoAdicional->appendChild($xml_campoAdicional);
         	}
+        if(isset($cabecera['Nota'])){
+        	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['Nota']);
+        	 $xml_campoAdicional->setAttribute( "nombre", "notaAuxiliar");
+        	 $xml_infoAdicional->appendChild($xml_campoAdicional);
+        	}
+         if(isset($cabecera['Lugar_Entrega'])){
+        	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['Lugar_Entrega']);
+        	 $xml_campoAdicional->setAttribute( "nombre", "lugarEntrega");
+        	 $xml_infoAdicional->appendChild($xml_campoAdicional);
+        	}
+
+
         	$xml_inicio->appendChild($xml_infoAdicional);
         	$xml->appendChild($xml_inicio);
 
