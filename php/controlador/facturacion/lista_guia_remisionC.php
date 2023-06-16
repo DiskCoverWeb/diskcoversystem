@@ -505,7 +505,7 @@ QUITO - ECUADOR';
 			SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU'] );
 			SetAdoFields('A_No',$num+1);
 			SetAdoFields('Precio2',$linea['Precio']);
-			SetAdoFields('Factura',$parametros['txt_num_fac']);
+			SetAdoFields('Factura',$parametros['LblGuiaR_']);
 			SetAdoFields('Autorizacion',$parametros['txt_auto_fac']);			
 			SetAdoFields('Serie',$parametros['txt_serie_fac']);
 			return SetAdoUpdate();
@@ -615,6 +615,9 @@ QUITO - ECUADOR';
 				$TFA['CiudadGRF'] = $parametros['DCCiudadF'];
 				$TFA['Serie_GR'] = $codig_l[1];
 				$TFA['Remision'] = $parametros['LblGuiaR_'];
+
+				$TFA['Nota'] = $GR[0]['Declaracion'];
+				$TFA['Observacion'] = $GR[0]['Definitivo'];
 
 
 

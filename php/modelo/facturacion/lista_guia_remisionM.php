@@ -173,14 +173,16 @@ $Autorizacion_GR=false,$remision=false,$serie_gr=false)
     $sql = "SELECT Codigo,Cantidad as 'CANTIDAD',Producto,Precio AS 'PRECIO',Total,ID
             FROM Detalle_Factura
             WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
             AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
             AND TC = 'GR'
             AND Factura = '".$guia."'";
             if($codigoL)
             {
-            	$sql.="AND CodigoL = '".$codigoL."'";
+            	$sql.=" AND CodigoL = '".$codigoL."'";
             }
-            $sql.="ORDER BY ID Desc ";
+            $sql.=" ORDER BY ID Desc ";
+            // print_r($sql);die();
             $botones[0] = array('boton'=>'Eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'ID' );
            $datos = $this->db->datos($sql);
            $stmt =  grilla_generica_new($sql,'Asiento_F','tbl_lineas',false,$botones,false,false,1,1,0,$tamaño_tabla=250,4);

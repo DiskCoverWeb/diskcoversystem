@@ -629,6 +629,7 @@ class autorizacion_sri
 	//inicio guia remision
 	function SRI_Crear_Clave_Acceso_Guia_Remision($TFA)
 	{
+		// print_r($TFA);die();
 		$fecha_igualar = Leer_Campo_Empresa('Fecha_Igualar');
 
 		$Autorizar_XML = True;
@@ -641,6 +642,8 @@ class autorizacion_sri
 	   // 'Averiguamos si la Factura esta a nombre del Representante
 	    $TBeneficiario = Leer_Datos_Clientes($TFA['CodigoC'],$codigo=1);
 	   // 'MsgBox TBeneficiario.RUC_CI_Rep & vbCrLf & TBeneficiario.Representante & vbCrLf & TBeneficiario.TD_Rep
+
+	  
 	    
 	    $TFA['Cliente'] = $TBeneficiario['Representante'];
 	    $TFA['TD'] = $TBeneficiario['TD_R'];
@@ -845,7 +848,7 @@ class autorizacion_sri
         AND DF.TC = '".$TFA['TC']."'
         AND DF.Serie = '".$TFA['Serie']."'
         AND DF.Autorizacion = '".$TFA['Autorizacion']."'
-        AND DF.Factura = ".$TFA['Factura']."
+        AND DF.Factura = ".$TFA['Remision']."
         AND DF.Item = CP.Item
         AND DF.Periodo = CP.Periodo
         AND DF.Codigo = CP.Codigo_Inv
