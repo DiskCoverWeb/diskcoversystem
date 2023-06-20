@@ -20,7 +20,8 @@ if(count($token)==0){
 	$token = $token[0]['Token'];
 }
 
-echo ConsultarDataEstudianteIdukay($studentId, $token);
+$data = ConsultarDataEstudianteIdukay($studentId, $token);
+echo json_encode(formatearDatos($data));
 function ConsultarDataEstudianteIdukay($studentId, $token)
 {
   $curl = curl_init();
@@ -60,7 +61,7 @@ function ConsultarDataEstudianteIdukay($studentId, $token)
 				if(isset($json["response"][0]["relational_data"]['years'])){
 					$relational_data["relational_data"] = @$json["response"][0]["relational_data"];
 					$relational_data["relational_data"] = end($relational_data["relational_data"]['years']);
-					$respuesta["relational_data"]['years']['grade'] = @$relational_data["relational_data"]['grade'];
+					$respuesta["relational_data"]['years'] = @$relational_data["relational_data"];
 				}
 				if(isset($json["response"][0]['user'])){
 					$respuesta['user']['_id']= @$json["response"][0]['user']['_id'];
@@ -78,33 +79,50 @@ function ConsultarDataEstudianteIdukay($studentId, $token)
 					$respuesta["years"]= end($json["response"][0]["years"]);
 				}
 				ksort($respuesta);
-				return formatObject($respuesta);
+				return $respuesta;
 			}else{
-				return false;
+				die(json_encode(['response'=> 'false', 'httpCode'=>$httpCode]));
 			}
     } else {
-      die(json_encode(['response'=> false, 'httpCode'=>$httpCode]));
+      die(json_encode(['response'=> 'false', 'httpCode'=>$httpCode]));
     }
   }
 }
 
-function pintarNodo($nodo,$keyS, $echo, $bucle=0)
+function formatearDatos($datos)
 {
-	if (is_array($nodo)){
-		$echo .="<ul id='nodo-$keyS'>";
-		if($keyS =='relational_data' && isset($nodo['years'])){
-			$years = $nodo['years'];
-			$nodo['years'] = end($years);
-		}
-			foreach ($nodo as $key2 => $nodo2){
-				$echo .= pintarNodo($nodo2,$key2, "",$bucle++);
-			}
-		$echo .="</ul>";
-	}else{
-		$echo ="<li name='$keyS'>$nodo</li>";
-	}
-	return $echo;
+	foreach ($datos as $key => &$valor) {
+        if (is_array($valor)) {
+        	if(count($valor)>0){
+            	$valor = formatearDatos($valor);
+        	}else{
+        		$valor = ".";
+        	}
+        } else {
+            if (is_string($valor)) {
+                $valor = ($valor=="")?".":$valor;
+            } else {
+                $valor = var_export($valor, true);
+            }
+        }
+    }
+    return $datos;
 }
+
+
+
+// function formatearDatos($datos)
+// {
+// 	$new_array = [];
+// 	foreach ($datos as $key => $nodo) {
+// 		if (is_array($nodo)){
+// 			$new_array = formatearDatos($nodo);
+// 		}else{
+// 			$new_array[$key] = var_export($nodo, true);
+// 		}
+// 	}
+// 	return $new_array;
+// }
 
 function getTokenEmpresa($ruc, $item)
 {
@@ -116,39 +134,4 @@ function getTokenEmpresa($ruc, $item)
 					AND LENGTH(Token)>1";
 	return $conn->datos($sql,'MYSQL');
 }
-function formatObject($objeto) {
-    $result = '{ ';
-    $firstProperty = true;
-
-    foreach ($objeto as $key => $value) {
-        if (!$firstProperty) {
-            $result .= ', ';
-        }
-
-        if (is_array($value)) {
-            $result .= $key . ': ' . formatArray($value);
-        } elseif (is_bool($value)) {
-            $result .= $key . ': ' . ($value ? 'true' : 'false');
-        } elseif (is_numeric($value)) {
-            $result .= $key . ': ' . $value;
-        } else {
-            $result .= $key . ': \'' . $value . '\'';
-        }
-
-        $firstProperty = false;
-    }
-
-    $result .= ' }';
-    return $result;
-}
-
-// Función para formatear un arreglo como una cadena
-function formatArray($array) {
-    $result = '[';
-    $firstItem = true;
-    $result .=formatObject($array);
-    $result .= ']';
-    return $result;
-}
-
 ?>
