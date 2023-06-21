@@ -217,6 +217,22 @@ $Autorizacion_GR=false,$remision=false,$serie_gr=false)
     return $stmt;
   }
 
+  function AdoPersonas($query)
+  {             
+      $sql = "SELECT Cliente,CI_RUC,TD,Direccion,Codigo 
+          FROM Clientes 
+          WHERE TD IN ('C','R') 
+          AND LEN(CI_RUC)>=13";
+         if($query)
+          {
+            $sql.=" and Cliente like '%".$query."%'";
+          } 
+         $sql.="ORDER BY Cliente OFFSET 0 ROWS FETCH NEXT 30 ROWS ONLY;";
+     $respuest  = $this->db->datos($sql);
+     return $respuest;
+     
+  }
+
 }
 
 

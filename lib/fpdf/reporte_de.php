@@ -2617,7 +2617,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	
 	$arr=array('<b>Punto de Partida: ','<b>Fecha Inicio: ','<b>Fecha fin: ','<b>Placa: ');//mio
 	$pdf->Row($arr,10);
-	$arr=array($educativo[0]['Direccion_tras'],$datos[0]['FechaGRI']->format('Y-m-d'),$datos[0]['FechaGRF']->format('Y-m-d'),$datos[0]['Placa_Vehiculo']);//mio
+	$arr=array($datos[0]['FechaGRI']->format('Y-m-d').'        '.$datos[0]['CiudadGRI'],$datos[0]['FechaGRI']->format('Y-m-d'),$datos[0]['FechaGRF']->format('Y-m-d'),$datos[0]['Placa_Vehiculo']);//mio
 	$pdf->Row($arr,10);
     $yfin = $pdf->GetY();	
 	$xfin = $pdf->GetX();

@@ -37,7 +37,7 @@
         text: nuevo,
         selected: true
     }));
-    $('#stock').focus();
+    $('#cantidad').focus();
 
     $('#cambiar_nombre').modal('hide');
 
@@ -100,7 +100,7 @@
     $('#DCRazonSocial').select2({
         placeholder: 'Seleccione un Grupo',
         ajax: {
-            url: '../controlador/facturacion/facturarC.php?AdoPersonas=true',
+            url: '../controlador/facturacion/lista_guia_remisionC.php?AdoPersonas=true',
             dataType: 'json',
             delay: 250,
             processResults: function(data) {
@@ -117,7 +117,7 @@ function DCEmpresaEntrega() {
     $('#DCEmpresaEntrega').select2({
         placeholder: 'Seleccione la Empresa',
         ajax: {
-            url: '../controlador/facturacion/facturarC.php?DCEmpresaEntrega=true',
+            url: '../controlador/facturacion/lista_guia_remisionC.php?DCEmpresaEntrega=true',
             dataType: 'json',
             delay: 250,
             processResults: function(data) {
@@ -415,6 +415,7 @@ function aceptar(){
       data: {lineas:lineas}, 
       success: function(data)
       {
+        $('#producto').empty();
         cargar_grilla();
       }
     });
