@@ -253,7 +253,7 @@ class FCierre_CajaC
                 "ORDER BY T.Cta, C.Cliente, TS.Fecha, TS.TP, TS.Numero ";
                 $_SESSION['FCierre_Caja']['AdoAnticipos'] = $sSQL;
 
-        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-144;
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-200;
         $AdoAnticipos = grilla_generica_new($sSQL,'Trans_SubCtas',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
 
         $AdoCierres = grilla_generica_new($sSQL1,'Facturas',$id_tabla=false,"Dias Cierres",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
@@ -880,19 +880,19 @@ class FCierre_CajaC
 
         $DGVentas = grilla_generica_new($_SESSION['FCierre_Caja']['AdoVentasT'],'Facturas',"TBLVentas","",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-170,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
 
-        $AdoAsiento1 = grilla_generica_new($_SESSION['FCierre_Caja']['AdoAsiento1T'],'Asiento',$id_tabla=false,$LblConcepto1,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
+        $AdoAsiento1 = grilla_generica_new($_SESSION['FCierre_Caja']['AdoAsiento1T'],'Asiento',"TBLAsiento1",$LblConcepto1,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-150,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
 
-        $AdoAsiento = grilla_generica_new($_SESSION['FCierre_Caja']['AdoAsientoT'],'Asiento',$id_tabla=false,$LblConcepto,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
+        $AdoAsiento = grilla_generica_new($_SESSION['FCierre_Caja']['AdoAsientoT'],'Asiento',"TBLAsiento",$LblConcepto,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-150,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
 
-        $DGCxC = grilla_generica_new($_SESSION['FCierre_Caja']['AdoCxCT'],'Trans_Abonos',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+        $DGCxC = grilla_generica_new($_SESSION['FCierre_Caja']['AdoCxCT'],'Trans_Abonos',"TBLDGCxC","",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-230,$num_decimales=2);
 
-        $DGInv = grilla_generica_new($_SESSION['FCierre_Caja']['AdoInv'],'Trans_Kardex',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+        $DGInv = grilla_generica_new($_SESSION['FCierre_Caja']['AdoInv'],'Trans_Kardex',"TBLDGInv","",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-230,$num_decimales=2);
 
-        $DGProductos = grilla_generica_new($_SESSION['FCierre_Caja']['AdoProductos'],'Detalle_Factura',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+        $DGProductos = grilla_generica_new($_SESSION['FCierre_Caja']['AdoProductos'],'Detalle_Factura',"TBLDGProductos","",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-200,$num_decimales=2);
 
-        $DGFactAnul = grilla_generica_new($_SESSION['FCierre_Caja']['AdoFactAnul'],'Facturas',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+        $DGFactAnul = grilla_generica_new($_SESSION['FCierre_Caja']['AdoFactAnul'],'Facturas',"TBLDGFactAnul","",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-150,$num_decimales=2);
        
-        $DGSRI = grilla_generica_new($_SESSION['FCierre_Caja']['AdoSRIT'],'Facturas',$id_tabla=false,$DGSRI,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
+        $DGSRI = grilla_generica_new($_SESSION['FCierre_Caja']['AdoSRIT'],'Facturas',"TBLDGSRI",$DGSRI,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-150,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
 
         return compact('error','AdoCxC','DGCxC','AdoVentas', 'DGVentas','AdoAsiento','AdoAsiento1','DGFactAnul','DGInv','DGProductos','TextoImprimio','LabelDebe', 'LabelHaber', 'LblDiferencia','LabelDebe1','LabelHaber1','LblDiferencia1','LblConcepto','LblConcepto1','DGSRI', 'AdoSRI', 'LblConIVA', 'LblSinIVA', 'LblDescuento', 'LblIVA', 'LblServicio', 'LblTotalFacturado','LabelCheque', 'LabelAbonos' ) ;
     }

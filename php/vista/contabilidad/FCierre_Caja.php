@@ -139,8 +139,8 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                 </div>
               </div>
               <div class="row"   >
-                <div class="col-sm-12" id="DGVentas">
-                  <table id="DGVentas">
+                <div class="col-sm-12" id="DGVentas" style="min-height: 80px;">
+                  <table>
                    <thead><tr><th class="text-left" style="width:40px">TC</th><th class="text-left" style="width:80px">Fecha</th><th class="text-left" style="width:300px">Cliente</th><th class="text-left" style="width:136px">Serie</th><th class="text-left" style="width:392px">Autorizacion</th><th class="text-right" style="width:136px">Factura</th><th class="text-right" style="width:112px">Total_IVA</th><th class="text-right" style="width:112px">Descuento</th><th class="text-right" style="width:112px">Descuento2</th><th class="text-right" style="width:112px">Servicio</th><th class="text-right" style="width:112px">Propina</th><th class="text-right" style="width:112px">Total_MN</th><th class="text-right" style="width:112px">Saldo_MN</th><th class="text-left" style="width:144px">Cta_CxP</th><th class="text-left" style="width:280px">Ciudad</th><th class="text-left" style="width:240px">Sectorizacion</th><th class="text-left" style="width:300px">Ejecutivo</th></tr></thead> 
                   </table>          
                 </div>
@@ -164,9 +164,9 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                 </div>
               </div>
 
-              <div class="table-responsive " style="overflow-y: scroll; min-height: 50px;max-height: 200px; width: auto;margin-bottom: 10px;">
-                <div class="sombra" style>
-                  <table id="DGCxC" class="table-sm" style="width: -webkit-fill-available;">
+              <div class="row">
+                <div class="col-sm-12 mb-3" id="DGCxC" style="min-height: 80px;">
+                  <table class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
                         <th>TP</th>
@@ -191,10 +191,10 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                   </table>          
                 </div>
               </div>
-
-              <div class="table-responsive" style="overflow-y: scroll; min-height: 80px;max-height:200px; width: auto;">
-                <div class="sombra" style>
-                  <table id="DGAnticipos" class="table-sm" style="width: -webkit-fill-available;">
+              <hr>
+              <div class="row">
+                <div class="col-sm-12" id="DGAnticipos" style="min-height: 80px;">
+                  <table class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
                         <th>TP</th>
@@ -213,19 +213,19 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
 
             </div>
             <div class="tab-pane modal-body" id="AdoInv">
-              <div class="col-md-2">
-                <table id="DGCierres" class="table-sm tablaHeight" style="width: -webkit-fill-available;">
-                      <thead>
-                        <tr>
-                          <th>Fecha</th>
-                        </tr>
-                      </thead>
-                    </table>
-              </div>
-              <div class="col-md-10">
-                <div class="table-responsive" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;margin-bottom: 15px;">
-                  <div class="sombra" style>
-                    <table id="DGInv" class="table-sm" style="width: -webkit-fill-available;">
+                <div class="col-md-2" id="DGCierres" style="min-height: 80px;">
+                  <table class="table-sm tablaHeight" style="width: -webkit-fill-available;">
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                      </tr>
+                    </thead>
+                  </table>
+                </div>
+              
+                <div class="col-md-10">
+                  <div id="DGInv" style="min-height: 80px;">
+                    <table class="table-sm" style="width: -webkit-fill-available;">
                       <thead>
                         <tr>
                           <th>Codigo_Inv</th>
@@ -235,10 +235,8 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                       </thead>
                     </table>          
                   </div>
-                </div>
-                <div class="table-responsive" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;">
-                  <div class="sombra" style>
-                    <table id="DGProductos" class="table-sm" style="width: -webkit-fill-available;">
+                  <div id="DGProductos" style="min-height: 80px;">
+                    <table id="" class="table-sm" style="width: -webkit-fill-available;">
                       <thead>
                         <tr>
                           <th>Codigo</th>
@@ -252,13 +250,12 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                     </table>          
                   </div>
                 </div>
-              </div>
             </div>
             <div class="tab-pane modal-body" id="AdoAsientoT">
 
-              <div class="table-responsive" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;margin-bottom: 1px;">
-                <div class="sombra" style>
-                  <table id="DGAsiento" class="table-sm" style="width: -webkit-fill-available;">
+              <div class="row">
+                <div class="col-sm-12" id="DGAsiento" style="min-height: 80px;">
+                  <table class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
                         <th>CODIGO</th>
@@ -281,9 +278,9 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                 <input id="LabelDebe"></input>
                 <input id="LabelHaber"></input>
               </div>
-              <div class="table-responsive" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;margin-bottom: 10px;">
-                <div class="sombra" style>
-                  <table id="DGAsiento1" class="table-sm" style="width: -webkit-fill-available;">
+              <div class="row">
+                <div class="col-sm-12" id="DGAsiento1" style="min-height: 80px;">
+                  <table class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
                         <th>CODIGO</th>
@@ -310,8 +307,9 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             </div>
             <div class="tab-pane modal-body" id="AdoFactAnul">
 
-              <div class="table-responsive DGFactAnul-container" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;">
-                  <table id="DGFactAnul" class="table-sm" style="width: -webkit-fill-available;">
+              <div class="row">
+                <div class="col-sm-12" id="DGFactAnul" style="min-height: 80px;">
+                  <table class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
                         <th>T</th>
@@ -325,15 +323,16 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                       </tr>
                     </thead>
                   </table>          
+                </div>
               </div>
 
             </div>
             <div class="tab-pane modal-body" id="AdoSRIT">
               <select style="min-width: 150px;" class="form-control input-xs" name="AdoSRI" id="AdoSRI"  onchange="" >
               </select>
-              <div class="table-responsive" style="overflow-y: scroll; min-height: 80px;max-height:285px; width: auto;margin-bottom: 15px;">
-                <div class="sombra" style>
-                  <table id="DGSRI" class="table-sm" style="width: -webkit-fill-available;">
+              <div class="row">
+                <div class="col-sm-12" id="DGSRI" style="min-height: 80px;">
+                  <table class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
                         <th>TC</th>
@@ -389,10 +388,10 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
               <select style="min-width: 150px;" class="form-control input-xs" name="DCBanco" id="DCBanco"  onchange="" >
               </select>
 
-              <div class="table-responsive DGBanco-container" style="overflow-y: scroll; min-height: 50px; width: auto;">
-                <div class="sombra" style>
+              <div class="row">
+                <div class="col-sm-12" id="DGBanco" style="min-height: 80px;">
                   <!-- //TODO LS cuando se llena esta tabla -->
-                  <table id="DGBanco" class="table-sm" style="width: -webkit-fill-available;">
+                  <table class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
                         <th>T</th>
