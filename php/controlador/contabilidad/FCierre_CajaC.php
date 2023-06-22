@@ -393,7 +393,7 @@ class FCierre_CajaC
                 $Total = $Total + number_format($fields["TAbono"], 2, '.', '');
             }
         }
-        $LabelCheque = number_format($Total, 2, '.', ',');
+        $LabelCheque = number_format($Total, 2, '.', '');
         $ContSC = 1;
 
         $sSQL = "SELECT TA.Cta,TA.Tipo_Cta,C.Cliente,TA.CodigoC,TA.Fecha,TA.TP,TA.Serie,TA.Factura,TA.Abono 
@@ -630,7 +630,7 @@ class FCierre_CajaC
             $total = $total + number_format($fields["T_Total_MN"], 2, '.', '');
           }
         }
-        $LabelAbonos = number_format($total, 2, '.', ',');
+        $LabelAbonos = number_format($total, 2, '.', '');
         // Abrimos espacios para el asiento
         $Total = 0;
         $TotalIngreso = 0;
@@ -704,9 +704,9 @@ class FCierre_CajaC
                 //$DGAsiento->UpdateBatch(); //TODO LS esto significa wue toca hacer un update en Asiento de A_No??
             }
         }
-        $LabelDebe = number_format($Debe, 2, '.', ',');
-        $LabelHaber = number_format($Haber, 2, '.', ',');
-        $LblDiferencia = number_format(($Debe - $Haber), 2, '.', ',');
+        $LabelDebe = number_format($Debe, 2, '.', '');
+        $LabelHaber = number_format($Haber, 2, '.', '');
+        $LblDiferencia = number_format(($Debe - $Haber), 2, '.', '');
 
         $Trans_No = 97;
         $Debe = 0; $Haber = 0; $Ln_No = 0;
@@ -729,9 +729,9 @@ class FCierre_CajaC
             //$AdoAsiento1->Recordset->UpdateBatch(); //TODO LS que se supone que se actualiza aqui
         }
 
-        $LabelDebe1 = number_format($Debe, 2, ',', '.');
-        $LabelHaber1 = number_format($Haber, 2, ',', '.');
-        $LblDiferencia1 = number_format($Debe - $Haber, 2, ',', '.');
+        $LabelDebe1 = number_format($Debe, 2, '.', '');
+        $LabelHaber1 = number_format($Haber, 2, '.', '');
+        $LblDiferencia1 = number_format($Debe - $Haber, 2, '.', '');
         if ($MBFechaI == $MBFechaF) {
             $LblConcepto = "Cierre Diario de Caja de Abonos del " . $MBFechaI . ", Diario No. ?";
             $LblConcepto1 = "Cierre Diario de Caja de CxC del " . $MBFechaI . ", Diario No. ?";
@@ -804,12 +804,12 @@ class FCierre_CajaC
         }
 
         // Convert numeric values to a string formatted with commas and two decimal places
-        $LblConIVA = number_format($Total_Con_IVA, 2, '.', ',');
-        $LblSinIVA = number_format($Total_Sin_IVA, 2, '.', ',');
-        $LblDescuento = number_format($Total_Desc + $Total_Desc2, 2, '.', ',');
-        $LblIVA = number_format($Total_IVA, 2, '.', ',');
-        $LblServicio = number_format($Total_Servicio, 2, '.', ',');
-        $LblTotalFacturado = number_format($Total, 2, '.', ',');
+        $LblConIVA = number_format($Total_Con_IVA, 2, '.', '');
+        $LblSinIVA = number_format($Total_Sin_IVA, 2, '.', '');
+        $LblDescuento = number_format($Total_Desc + $Total_Desc2, 2, '.', '');
+        $LblIVA = number_format($Total_IVA, 2, '.', '');
+        $LblServicio = number_format($Total_Servicio, 2, '.', '');
+        $LblTotalFacturado = number_format($Total, 2, '.', '');
 
         // SQL query to retrieve data from database and display in a grid
         $sSQL = "SELECT Codigo, Producto, SUM(Cantidad) AS CANTIDADES, SUM(Total) AS SUBTOTALES, SUM(Total_IVA) AS SUBTOTAL_IVA, Cta_Venta " .
@@ -957,9 +957,9 @@ class FCierre_CajaC
           }
         }
 
-        $LabelDebe = number_format($Debe, 2, '.', ',');
-        $LabelHaber = number_format($Haber, 2, '.', ',');
-        $LblDiferencia = number_format($Debe - $Haber, 2, '.', ',');
+        $LabelDebe = number_format($Debe, 2, '.', '');
+        $LabelHaber = number_format($Haber, 2, '.', '');
+        $LblDiferencia = number_format($Debe - $Haber, 2, '.', '');
 
         if ($_SESSION['FCierre_Caja']['NuevoDiario'] && round($Debe - $Haber, 2) == 0) {
             $FechaTexto = $MBFechaF;
@@ -1068,8 +1068,8 @@ class FCierre_CajaC
               $AdoAsiento = $this->CierreCajaM->IniciarAsientosDe($Trans_No);
             }
 
-            $LabelDebe = number_format(0, 2, ',', '.');
-            $LabelHaber = number_format(0, 2, ',', '.');
+            $LabelDebe = number_format(0, 2, '.', '');
+            $LabelHaber = number_format(0, 2, '.', '');
     
             $Mifecha = BuscarFecha($FechaSistema);
             $sSQL = "UPDATE Trans_Abonos " .

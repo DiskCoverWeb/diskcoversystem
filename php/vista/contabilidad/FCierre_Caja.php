@@ -568,15 +568,15 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
 
                                       $("#Bar_espera_progress").css('width','99%')
                                       $("#Bar_espera_progress .txt_progress").text('Finalizando Proceso')
-                                      if (redondear(datos6.LabelDebe1 - datos6.LabelHaber1, 2) !== 0) {
-                                        $('#myModal_espera_progress').modal('hide');
+                                      if (esDiferenteDeCero(redondear(datos6.LabelDebe1 - datos6.LabelHaber1, 2)) ||  esDiferenteDeCero(redondear(datos6.LabelDebe - datos6.LabelHaber, 2))) {
+                                        
                                         Swal.fire({
                                           type: 'warning',
                                           text: '',
                                           title: "Las Transacciones no cuadran, verifique las facturas emitidas o los abonos del día."
                                         });
                                       }
-
+                                      $('#myModal_espera_progress').modal('hide');
                                       ShowFInfoErrorShowView()
                                     },
                                     error: function (e) {
@@ -656,20 +656,20 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
           AdoSRI.append('<option value="' + datos.AdoSRI[indice].RUC_CI+ ' ">' + datos.AdoSRI[indice].RUC_CI + ' - '+datos.AdoSRI[indice].Razon_Social+'</option>');
         }
 
-    $("#LabelAbonos").val(datos.LabelAbonos)
-    $("#LabelCheque").val(datos.LabelCheque)
-    $("#LabelDebe").val(datos.LabelDebe)
-    $("#LabelDebe1").val(datos.LabelDebe1)
-    $("#LabelHaber").val(datos.LabelHaber)
-    $("#LabelHaber1").val(datos.LabelHaber1)
-    $("#LblConIVA").val(datos.LblConIVA) 
-    $("#LblDescuento").val(datos.LblDescuento) 
-    $("#LblDiferencia").val(datos.LblDiferencia)
-    $("#LblDiferencia1").val(datos.LblDiferencia1)
-    $("#LblIVA").val(datos.LblIVA) 
-    $("#LblServicio").val(datos.LblServicio) 
-    $("#LblSinIVA").val(datos.LblSinIVA) 
-    $("#LblTotalFacturado").val(datos.LblTotalFacturado) 
+    $("#LabelAbonos").val(formatearNumero(datos.LabelAbonos))
+    $("#LabelCheque").val(formatearNumero(datos.LabelCheque))
+    $("#LabelDebe").val(formatearNumero(datos.LabelDebe))
+    $("#LabelDebe1").val(formatearNumero(datos.LabelDebe1))
+    $("#LabelHaber").val(formatearNumero(datos.LabelHaber))
+    $("#LabelHaber1").val(formatearNumero(datos.LabelHaber1))
+    $("#LblConIVA").val(formatearNumero(datos.LblConIVA)) 
+    $("#LblDescuento").val(formatearNumero(datos.LblDescuento)) 
+    $("#LblDiferencia").val(formatearNumero(datos.LblDiferencia))
+    $("#LblDiferencia1").val(formatearNumero(datos.LblDiferencia1))
+    $("#LblIVA").val(formatearNumero(datos.LblIVA)) 
+    $("#LblServicio").val(formatearNumero(datos.LblServicio)) 
+    $("#LblSinIVA").val(formatearNumero(datos.LblSinIVA)) 
+    $("#LblTotalFacturado").val(formatearNumero(datos.LblTotalFacturado)) 
   }
 
   function redondear(valor, decimales) {
