@@ -14,17 +14,6 @@ switch ($_SESSION['INGRESO']['modulo_']) {
 .padding-all{
   padding: 2px !important;
 }
-.table-responsive thead {
-  position: sticky;
-  top: 0;
-}
-.table-responsive {
-  box-shadow: 5px 5px 6px rgba(0, 0, 0, 0.6);
-}
-.table-sm td{
-  white-space: nowrap;
-  padding: 0px 5px;
-}
 #swal2-content{
     font-size: 13px;
     font-weight: 500;
@@ -75,10 +64,10 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
           <label for="inputEmail3" class="col control-label" style="font-size: 13px;">Periodo de Cierre</label>
         </div>
         <div class="col-xs-6">
-          <input tabindex="43" type="date" name="MBFechaI" id="MBFechaI" class="form-control input-xs validateDate" onchange="" title="Fecha Inicial">
+          <input tabindex="43" type="date" name="MBFechaI" id="MBFechaI" class="form-control input-xs validateDate" onchange="" title="Fecha Inicial" value="<?php echo date("Y-m-d") ?>">
         </div>
         <div class="col-xs-6">
-          <input tabindex="44" type="date" name="MBFechaF" id="MBFechaF" class="form-control input-xs validateDate" onchange="" title="Fecha Final">
+          <input tabindex="44" type="date" name="MBFechaF" id="MBFechaF" class="form-control input-xs validateDate" onchange="" title="Fecha Final" value="<?php echo date("Y-m-d") ?>">
         </div>
       </div>
       <div class="form-group col-xs-12 col-md-6  padding-all margin-b-1">
@@ -106,8 +95,8 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
 </div>-->
 
 <div class="row">
-  <div class="panel panel-primary col-sm-12" style="  margin-bottom: 5px;">
-    <div class="panel-body" style=" padding-top: 5px;">
+  <div class="panel panel-primary col-sm-12" style="  margin-bottom: 3px;">
+    <div class="panel-body" style=" padding-top: 5px;padding-bottom: 0px;">
       <div class="col-sm-12">
         <ul class="nav nav-tabs">
            <li class="nav-item active">
@@ -149,28 +138,10 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                   </div>
                 </div>
               </div>
-              <div class="table-responsive DGVentas-container" style="overflow-y: scroll; min-height: 50px;width: auto;">
-                <div class="sombra" style>
-                  <table id="DGVentas" class="table-sm" style="width: -webkit-fill-available;">
-                   <thead>
-                      <tr>
-                        <th>TC</th>
-                        <th>Fecha</th>
-                        <th>Cliente</th>
-                        <th>Serie</th>
-                        <th>Autorizacion</th>
-                        <th>Factura</th>
-                        <th>Total_IVA</th>
-                        <th>Descuento</th>
-                        <th>Descuento2</th>
-                        <th>Servicio</th>
-                        <th>Propina</th>
-                        <th>Total_MN</th>
-                        <th>Saldo_MN</th>
-                        <th>Cta_CxP</th>
-                        <th></th>
-                      </tr>
-                    </thead> 
+              <div class="row"   >
+                <div class="col-sm-12" id="DGVentas">
+                  <table id="DGVentas">
+                   <thead><tr><th class="text-left" style="width:40px">TC</th><th class="text-left" style="width:80px">Fecha</th><th class="text-left" style="width:300px">Cliente</th><th class="text-left" style="width:136px">Serie</th><th class="text-left" style="width:392px">Autorizacion</th><th class="text-right" style="width:136px">Factura</th><th class="text-right" style="width:112px">Total_IVA</th><th class="text-right" style="width:112px">Descuento</th><th class="text-right" style="width:112px">Descuento2</th><th class="text-right" style="width:112px">Servicio</th><th class="text-right" style="width:112px">Propina</th><th class="text-right" style="width:112px">Total_MN</th><th class="text-right" style="width:112px">Saldo_MN</th><th class="text-left" style="width:144px">Cta_CxP</th><th class="text-left" style="width:280px">Ciudad</th><th class="text-left" style="width:240px">Sectorizacion</th><th class="text-left" style="width:300px">Ejecutivo</th></tr></thead> 
                   </table>          
                 </div>
               </div>
@@ -340,7 +311,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             <div class="tab-pane modal-body" id="AdoFactAnul">
 
               <div class="table-responsive DGFactAnul-container" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;">
-                <div class="sombra" style>
                   <table id="DGFactAnul" class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
@@ -355,7 +325,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                       </tr>
                     </thead>
                   </table>          
-                </div>
               </div>
 
             </div>
@@ -501,30 +470,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
   // construye la tabla con los datos procesados
   function construirTabla(datos, tablaId) {
     $('#'+tablaId).html(datos);
-    // obtiene el encabezado de la tabla
-    // var encabezado = $("#" + tablaId + " thead tr th");
-
-    // // cuenta el número de columnas en el encabezado
-    // var numColumnas = encabezado.length;
-
-    // // crea las filas con los datos
-    // var tbody = $("#" + tablaId + " tbody");
-    // tbody.empty();
-    // for (var i = 0; i < datos.length; i++) {
-    //     var fila = $("<tr>");
-    //     for (var j = 0; j < numColumnas; j++) {
-    //         var nombreColumna = encabezado.eq(j).text();
-    //         let valor = datos[i][nombreColumna];           
-    //         if(valor !== null && typeof valor === 'object'){
-    //           valor = valor.date;
-    //           if (valor.endsWith(".000000")) {
-    //             valor = valor.slice(0, -7); // Obtiene los primeros 6 caracteres del final
-    //           }
-    //         }
-    //         fila.append($("<td>").text(valor));
-    //     }
-    //     tbody.append(fila);
-    // }
   }
 
   function Diario_Caja() {

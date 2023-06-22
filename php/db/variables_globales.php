@@ -59,5 +59,6 @@ DEFINE('JG03',"JG.03"); //Excedente
 DEFINE('JG04',"JG.04"); //Reinicio del Medidor
 //-------------------------------------
 DEFINE('MONTO_MAXIMO_FACTURACION',"50"); //este es el valor maximo por el cual se puede emitir una factura (USD)
+DEFINE('MascaraCodigoK',"CC.CC.CCC.CCCCCC");
 //-------------------------------------
 ?>

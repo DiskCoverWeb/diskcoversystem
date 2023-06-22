@@ -11662,4 +11662,45 @@ function calcularValorRango($valor1, $valor2)
   return abs($valor1 - $valor2) + 1;
 }
 
+function FormatoCodigoKardex($Cta) {
+  $Ctas = $Cta;
+  $Strg = "";
+  $ch = "";
+  if (strlen($Ctas) <= strlen(MascaraCodigoK)) {
+      for ($I = 1; $I <= strlen(MascaraCodigoK); $I++) {
+          $ch = substr(MascaraCodigoK, $I - 1, 1);
+          if ($ch == "C") {
+              $Strg .= " ";
+          } else {
+              $Strg .= ".";
+          }
+      }
+      $Cadena = $Ctas . substr($Strg, strlen($Ctas), strlen($Strg) - strlen($Ctas));
+  } else {
+      $Cadena = $Ctas;
+  }
+  return $Cadena;
+}
+
+function CambioCodigoKardex($Codigo) {
+  $Codigo = trim($Codigo);
+  $Bandera = true;
+  $LongCta = strlen($Codigo);
+  
+  while ($LongCta > 0 && $Bandera) {
+    if ($Codigo[$LongCta - 1] !== "." && $Codigo[$LongCta - 1] !== " ") {
+      $Bandera = false;
+    }
+    $LongCta--;
+  }
+  
+  $LongCta++;
+  
+  if ($LongCta < 1) {
+    $LongCta = 1;
+  }
+  
+  return substr($Codigo, 0, $LongCta);
+}
+
 ?>

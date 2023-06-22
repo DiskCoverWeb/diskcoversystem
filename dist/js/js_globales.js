@@ -312,3 +312,12 @@ function fecha_actual()
       }
     });
   }
+
+ function asignarHeightPantalla(elemento, input) {
+	var distanciaHastaElBordeInferior = $(window).height() - (elemento.offset().top + elemento.outerHeight());
+	input.val(distanciaHastaElBordeInferior-elemento.outerHeight(true));
+	$(window).resize(function() {
+    var distanciaHastaElBordeInferior = $(window).height() - (elemento.offset().top + elemento.outerHeight());
+    input.val(distanciaHastaElBordeInferior-elemento.outerHeight(true));
+  });
+ }

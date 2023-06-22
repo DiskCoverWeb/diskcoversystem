@@ -348,9 +348,9 @@ class FCierre_CajaC
         $AdoVentas = $this->CierreCajaM->SelectDB($sSQL);
         $_SESSION['FCierre_Caja']['AdoVentasT'] = $sSQL;
 
-        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-144;
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-150;
 
-        $DGVentas = grilla_generica_new($_SESSION['FCierre_Caja']['AdoVentasT'],'Facturas',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+        $DGVentas = grilla_generica_new($_SESSION['FCierre_Caja']['AdoVentasT'],'Facturas',"TBLVentas","",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
 
         $Combos = G_NINGUNO; //TODO LS donde USO
         $FechaFinal = BuscarFecha("31/12/" .date('Y', strtotime($MBFechaF))); //TODO LS donde se usa
@@ -876,9 +876,9 @@ class FCierre_CajaC
         /*
             $AdoDBAux
         */
-        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-144;
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla']);
 
-        $DGVentas = grilla_generica_new($_SESSION['FCierre_Caja']['AdoVentasT'],'Facturas',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+        $DGVentas = grilla_generica_new($_SESSION['FCierre_Caja']['AdoVentasT'],'Facturas',"TBLVentas","",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-170,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
 
         $AdoAsiento1 = grilla_generica_new($_SESSION['FCierre_Caja']['AdoAsiento1T'],'Asiento',$id_tabla=false,$LblConcepto1,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
 

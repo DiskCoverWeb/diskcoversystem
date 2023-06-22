@@ -379,6 +379,10 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			}
 
 		//inventario
+			if ($_SESSION['INGRESO']['accion']=='CatalogoCtas') 
+			{
+				require_once("inventario/Catalogo.php");
+			}
 			if ($_SESSION['INGRESO']['accion']=='inventario_online') 
 			{
 				require_once("inventario/inventario_online.php");
