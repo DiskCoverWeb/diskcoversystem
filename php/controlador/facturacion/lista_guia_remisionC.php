@@ -81,6 +81,28 @@ if(isset($_GET['eliminar_lineas']))
   echo json_encode($controlador->eliminar_linea($parametros));
 }
 
+if(isset($_GET['AdoPersonas']))
+{
+   //$parametros = $_POST['parametros'];
+   $query = '';
+   if(isset($_GET['q']))
+   {
+      $query = $_GET['q'];
+   }
+   echo json_encode($controlador->AdoPersonas($query));
+}
+
+if(isset($_GET['DCEmpresaEntrega']))
+{
+   //$parametros = $_POST['parametros'];
+   $query = '';
+   if(isset($_GET['q']))
+   {
+      $query = $_GET['q'];
+   }
+   echo json_encode($controlador->DCEmpresaEntrega($query));
+}
+
 
 
 /**
@@ -535,6 +557,26 @@ QUITO - ECUADOR';
 	    }
 	    return array('tbl'=>$reg['tbl'],'total'=>$total);
 	}
+	function AdoPersonas($query)
+  {  
+    $datos = $this->modelo->AdoPersonas($query);
+    $lista[] =array();
+     foreach ($datos as $key => $value) {
+          $lista[] = array('id'=>$value['CI_RUC'].'_'.$value['Direccion'],'text'=>$value['Cliente']);
+       }     
+       return $lista;
+     
+  }
+  function DCEmpresaEntrega($query)
+  {  
+    $datos = $this->modelo->AdoPersonas($query);
+    $lista[] =array();
+     foreach ($datos as $key => $value) {
+          $lista[] = array('id'=>$value['Codigo'],'text'=>$value['Cliente']);
+       }     
+       return $lista;
+     
+  }
 
 	function Eliminar($codigo)
   	{
@@ -672,6 +714,10 @@ QUITO - ECUADOR';
 
  				return array('resp'=>$respuesta,'clave'=>$ClaveAcceso_GR,'pdf'=>$TFA['Serie_GR'].'-'.generaCeros($TFA['Remision'],7));
     	}
+    	// else
+    	// {
+    	// 	print_r('ssss');die();
+    	// }
   }
 
   function limpiar_grid()
