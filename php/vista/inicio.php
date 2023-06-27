@@ -383,6 +383,15 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			}
 
 		//inventario
+			if (strcasecmp($_SESSION['INGRESO']['accion'], 'CatalogoCtas') === 0) 
+			{
+				require_once("inventario/Catalogo.php");
+			}
+			//kardex
+			if ($_SESSION['INGRESO']['accion']=='kardex') 
+			{
+				require_once("inventario/kardex.php");
+			}
 			if ($_SESSION['INGRESO']['accion']=='inventario_online') 
 			{
 				require_once("inventario/inventario_online.php");
@@ -394,11 +403,6 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			if ($_SESSION['INGRESO']['accion']=='articulos') 
 			{
 				require_once("farmacia/articulos.php");
-			}
-			//kardex
-			if ($_SESSION['INGRESO']['accion']=='kardex') 
-			{
-				require_once("inventario/kardex.php");
 			}
 			//ingreso de presusupuestos
 			if ($_SESSION['INGRESO']['accion']=='ingreso_presupuesto') 

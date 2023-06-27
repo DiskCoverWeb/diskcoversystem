@@ -253,7 +253,7 @@ class FCierre_CajaC
                 "ORDER BY T.Cta, C.Cliente, TS.Fecha, TS.TP, TS.Numero ";
                 $_SESSION['FCierre_Caja']['AdoAnticipos'] = $sSQL;
 
-        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-144;
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-200;
         $AdoAnticipos = grilla_generica_new($sSQL,'Trans_SubCtas',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
 
         $AdoCierres = grilla_generica_new($sSQL1,'Facturas',$id_tabla=false,"Dias Cierres",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
@@ -348,9 +348,9 @@ class FCierre_CajaC
         $AdoVentas = $this->CierreCajaM->SelectDB($sSQL);
         $_SESSION['FCierre_Caja']['AdoVentasT'] = $sSQL;
 
-        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-144;
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-150;
 
-        $DGVentas = grilla_generica_new($_SESSION['FCierre_Caja']['AdoVentasT'],'Facturas',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+        $DGVentas = grilla_generica_new($_SESSION['FCierre_Caja']['AdoVentasT'],'Facturas',"TBLVentas","",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
 
         $Combos = G_NINGUNO; //TODO LS donde USO
         $FechaFinal = BuscarFecha("31/12/" .date('Y', strtotime($MBFechaF))); //TODO LS donde se usa
@@ -393,7 +393,7 @@ class FCierre_CajaC
                 $Total = $Total + number_format($fields["TAbono"], 2, '.', '');
             }
         }
-        $LabelCheque = number_format($Total, 2, '.', ',');
+        $LabelCheque = number_format($Total, 2, '.', '');
         $ContSC = 1;
 
         $sSQL = "SELECT TA.Cta,TA.Tipo_Cta,C.Cliente,TA.CodigoC,TA.Fecha,TA.TP,TA.Serie,TA.Factura,TA.Abono 
@@ -630,7 +630,7 @@ class FCierre_CajaC
             $total = $total + number_format($fields["T_Total_MN"], 2, '.', '');
           }
         }
-        $LabelAbonos = number_format($total, 2, '.', ',');
+        $LabelAbonos = number_format($total, 2, '.', '');
         // Abrimos espacios para el asiento
         $Total = 0;
         $TotalIngreso = 0;
@@ -704,9 +704,9 @@ class FCierre_CajaC
                 //$DGAsiento->UpdateBatch(); //TODO LS esto significa wue toca hacer un update en Asiento de A_No??
             }
         }
-        $LabelDebe = number_format($Debe, 2, '.', ',');
-        $LabelHaber = number_format($Haber, 2, '.', ',');
-        $LblDiferencia = number_format(($Debe - $Haber), 2, '.', ',');
+        $LabelDebe = number_format($Debe, 2, '.', '');
+        $LabelHaber = number_format($Haber, 2, '.', '');
+        $LblDiferencia = number_format(($Debe - $Haber), 2, '.', '');
 
         $Trans_No = 97;
         $Debe = 0; $Haber = 0; $Ln_No = 0;
@@ -729,9 +729,9 @@ class FCierre_CajaC
             //$AdoAsiento1->Recordset->UpdateBatch(); //TODO LS que se supone que se actualiza aqui
         }
 
-        $LabelDebe1 = number_format($Debe, 2, ',', '.');
-        $LabelHaber1 = number_format($Haber, 2, ',', '.');
-        $LblDiferencia1 = number_format($Debe - $Haber, 2, ',', '.');
+        $LabelDebe1 = number_format($Debe, 2, '.', '');
+        $LabelHaber1 = number_format($Haber, 2, '.', '');
+        $LblDiferencia1 = number_format($Debe - $Haber, 2, '.', '');
         if ($MBFechaI == $MBFechaF) {
             $LblConcepto = "Cierre Diario de Caja de Abonos del " . $MBFechaI . ", Diario No. ?";
             $LblConcepto1 = "Cierre Diario de Caja de CxC del " . $MBFechaI . ", Diario No. ?";
@@ -804,12 +804,12 @@ class FCierre_CajaC
         }
 
         // Convert numeric values to a string formatted with commas and two decimal places
-        $LblConIVA = number_format($Total_Con_IVA, 2, '.', ',');
-        $LblSinIVA = number_format($Total_Sin_IVA, 2, '.', ',');
-        $LblDescuento = number_format($Total_Desc + $Total_Desc2, 2, '.', ',');
-        $LblIVA = number_format($Total_IVA, 2, '.', ',');
-        $LblServicio = number_format($Total_Servicio, 2, '.', ',');
-        $LblTotalFacturado = number_format($Total, 2, '.', ',');
+        $LblConIVA = number_format($Total_Con_IVA, 2, '.', '');
+        $LblSinIVA = number_format($Total_Sin_IVA, 2, '.', '');
+        $LblDescuento = number_format($Total_Desc + $Total_Desc2, 2, '.', '');
+        $LblIVA = number_format($Total_IVA, 2, '.', '');
+        $LblServicio = number_format($Total_Servicio, 2, '.', '');
+        $LblTotalFacturado = number_format($Total, 2, '.', '');
 
         // SQL query to retrieve data from database and display in a grid
         $sSQL = "SELECT Codigo, Producto, SUM(Cantidad) AS CANTIDADES, SUM(Total) AS SUBTOTALES, SUM(Total_IVA) AS SUBTOTAL_IVA, Cta_Venta " .
@@ -876,23 +876,23 @@ class FCierre_CajaC
         /*
             $AdoDBAux
         */
-        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-144;
+        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla']);
 
-        $DGVentas = grilla_generica_new($_SESSION['FCierre_Caja']['AdoVentasT'],'Facturas',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+        $DGVentas = grilla_generica_new($_SESSION['FCierre_Caja']['AdoVentasT'],'Facturas',"TBLVentas","",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-170,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
 
-        $AdoAsiento1 = grilla_generica_new($_SESSION['FCierre_Caja']['AdoAsiento1T'],'Asiento',$id_tabla=false,$LblConcepto1,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
+        $AdoAsiento1 = grilla_generica_new($_SESSION['FCierre_Caja']['AdoAsiento1T'],'Asiento',"TBLAsiento1",$LblConcepto1,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-150,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
 
-        $AdoAsiento = grilla_generica_new($_SESSION['FCierre_Caja']['AdoAsientoT'],'Asiento',$id_tabla=false,$LblConcepto,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
+        $AdoAsiento = grilla_generica_new($_SESSION['FCierre_Caja']['AdoAsientoT'],'Asiento',"TBLAsiento",$LblConcepto,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-150,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
 
-        $DGCxC = grilla_generica_new($_SESSION['FCierre_Caja']['AdoCxCT'],'Trans_Abonos',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+        $DGCxC = grilla_generica_new($_SESSION['FCierre_Caja']['AdoCxCT'],'Trans_Abonos',"TBLDGCxC","",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-230,$num_decimales=2);
 
-        $DGInv = grilla_generica_new($_SESSION['FCierre_Caja']['AdoInv'],'Trans_Kardex',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+        $DGInv = grilla_generica_new($_SESSION['FCierre_Caja']['AdoInv'],'Trans_Kardex',"TBLDGInv","",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-230,$num_decimales=2);
 
-        $DGProductos = grilla_generica_new($_SESSION['FCierre_Caja']['AdoProductos'],'Detalle_Factura',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+        $DGProductos = grilla_generica_new($_SESSION['FCierre_Caja']['AdoProductos'],'Detalle_Factura',"TBLDGProductos","",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-200,$num_decimales=2);
 
-        $DGFactAnul = grilla_generica_new($_SESSION['FCierre_Caja']['AdoFactAnul'],'Facturas',$id_tabla=false,"",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+        $DGFactAnul = grilla_generica_new($_SESSION['FCierre_Caja']['AdoFactAnul'],'Facturas',"TBLDGFactAnul","",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-150,$num_decimales=2);
        
-        $DGSRI = grilla_generica_new($_SESSION['FCierre_Caja']['AdoSRIT'],'Facturas',$id_tabla=false,$DGSRI,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
+        $DGSRI = grilla_generica_new($_SESSION['FCierre_Caja']['AdoSRIT'],'Facturas',"TBLDGSRI",$DGSRI,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida-150,$num_decimales=2,false,$paginacion_view= false,$estilo=1, $class_titulo='text-left');
 
         return compact('error','AdoCxC','DGCxC','AdoVentas', 'DGVentas','AdoAsiento','AdoAsiento1','DGFactAnul','DGInv','DGProductos','TextoImprimio','LabelDebe', 'LabelHaber', 'LblDiferencia','LabelDebe1','LabelHaber1','LblDiferencia1','LblConcepto','LblConcepto1','DGSRI', 'AdoSRI', 'LblConIVA', 'LblSinIVA', 'LblDescuento', 'LblIVA', 'LblServicio', 'LblTotalFacturado','LabelCheque', 'LabelAbonos' ) ;
     }
@@ -957,9 +957,9 @@ class FCierre_CajaC
           }
         }
 
-        $LabelDebe = number_format($Debe, 2, '.', ',');
-        $LabelHaber = number_format($Haber, 2, '.', ',');
-        $LblDiferencia = number_format($Debe - $Haber, 2, '.', ',');
+        $LabelDebe = number_format($Debe, 2, '.', '');
+        $LabelHaber = number_format($Haber, 2, '.', '');
+        $LblDiferencia = number_format($Debe - $Haber, 2, '.', '');
 
         if ($_SESSION['FCierre_Caja']['NuevoDiario'] && round($Debe - $Haber, 2) == 0) {
             $FechaTexto = $MBFechaF;
@@ -1068,8 +1068,8 @@ class FCierre_CajaC
               $AdoAsiento = $this->CierreCajaM->IniciarAsientosDe($Trans_No);
             }
 
-            $LabelDebe = number_format(0, 2, ',', '.');
-            $LabelHaber = number_format(0, 2, ',', '.');
+            $LabelDebe = number_format(0, 2, '.', '');
+            $LabelHaber = number_format(0, 2, '.', '');
     
             $Mifecha = BuscarFecha($FechaSistema);
             $sSQL = "UPDATE Trans_Abonos " .

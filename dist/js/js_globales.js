@@ -312,3 +312,32 @@ function fecha_actual()
       }
     });
   }
+
+ function asignarHeightPantalla(elemento, input) {
+	var distanciaHastaElBordeInferior = $(window).height() - (elemento.offset().top + elemento.outerHeight());
+	input.val(distanciaHastaElBordeInferior-elemento.outerHeight(true));
+	$(window).resize(function() {
+    var distanciaHastaElBordeInferior = $(window).height() - (elemento.offset().top + elemento.outerHeight());
+    input.val(distanciaHastaElBordeInferior-elemento.outerHeight(true));
+  });
+ }
+
+function esDiferenteDeCero(numero) {
+  return parseFloat(numero) !== 0 && parseFloat(numero).toFixed(3) !== "0.000";
+}
+
+function formatearNumero(numero, decimales, separadorDecimal, separadorMiles) {
+    decimales = isNaN(decimales = Math.abs(decimales)) ? 2 : decimales;
+    separadorDecimal = separadorDecimal === undefined ? "." : separadorDecimal;
+    separadorMiles = separadorMiles === undefined ? "," : separadorMiles;
+  
+    var signo = numero < 0 ? "-" : "";
+    var parteEntera = parseInt(numero = Math.abs(+numero || 0).toFixed(decimales), 10) + "";
+  
+    var longitud = parteEntera.length > 3 ? parteEntera.length % 3 : 0;
+  
+    return signo +
+      (longitud ? parteEntera.substr(0, longitud) + separadorMiles : "") +
+      parteEntera.substr(longitud).replace(/(\d{3})(?=\d)/g, "$1" + separadorMiles) +
+      (decimales ? separadorDecimal + Math.abs(numero - parteEntera).toFixed(decimales).slice(2) : "");
+}

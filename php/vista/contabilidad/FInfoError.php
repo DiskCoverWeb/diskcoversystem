@@ -11,6 +11,9 @@
       success: function(datos)             
       {
         var tbody = $("#DGInfoError tbody");
+        if(datos.length<=0){
+          window.parent.$("#myModalInfoError").modal("hide");
+        }
         for (var i = 0; i < datos.length; i++) {
             var fila = $("<tr>");
             fila.append($("<td>").text(datos[i]['Texto']));

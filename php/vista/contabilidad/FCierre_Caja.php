@@ -14,17 +14,6 @@ switch ($_SESSION['INGRESO']['modulo_']) {
 .padding-all{
   padding: 2px !important;
 }
-.table-responsive thead {
-  position: sticky;
-  top: 0;
-}
-.table-responsive {
-  box-shadow: 5px 5px 6px rgba(0, 0, 0, 0.6);
-}
-.table-sm td{
-  white-space: nowrap;
-  padding: 0px 5px;
-}
 #swal2-content{
     font-size: 13px;
     font-weight: 500;
@@ -75,10 +64,10 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
           <label for="inputEmail3" class="col control-label" style="font-size: 13px;">Periodo de Cierre</label>
         </div>
         <div class="col-xs-6">
-          <input tabindex="43" type="date" name="MBFechaI" id="MBFechaI" class="form-control input-xs validateDate" onchange="" title="Fecha Inicial">
+          <input tabindex="43" type="date" name="MBFechaI" id="MBFechaI" class="form-control input-xs validateDate" onchange="" title="Fecha Inicial" value="<?php echo date("Y-m-d") ?>">
         </div>
         <div class="col-xs-6">
-          <input tabindex="44" type="date" name="MBFechaF" id="MBFechaF" class="form-control input-xs validateDate" onchange="" title="Fecha Final">
+          <input tabindex="44" type="date" name="MBFechaF" id="MBFechaF" class="form-control input-xs validateDate" onchange="" title="Fecha Final" value="<?php echo date("Y-m-d") ?>">
         </div>
       </div>
       <div class="form-group col-xs-12 col-md-6  padding-all margin-b-1">
@@ -106,8 +95,8 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
 </div>-->
 
 <div class="row">
-  <div class="panel panel-primary col-sm-12" style="  margin-bottom: 5px;">
-    <div class="panel-body" style=" padding-top: 5px;">
+  <div class="panel panel-primary col-sm-12" style="  margin-bottom: 3px;">
+    <div class="panel-body" style=" padding-top: 5px;padding-bottom: 0px;">
       <div class="col-sm-12">
         <ul class="nav nav-tabs">
            <li class="nav-item active">
@@ -149,28 +138,10 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                   </div>
                 </div>
               </div>
-              <div class="table-responsive DGVentas-container" style="overflow-y: scroll; min-height: 50px;width: auto;">
-                <div class="sombra" style>
-                  <table id="DGVentas" class="table-sm" style="width: -webkit-fill-available;">
-                   <thead>
-                      <tr>
-                        <th>TC</th>
-                        <th>Fecha</th>
-                        <th>Cliente</th>
-                        <th>Serie</th>
-                        <th>Autorizacion</th>
-                        <th>Factura</th>
-                        <th>Total_IVA</th>
-                        <th>Descuento</th>
-                        <th>Descuento2</th>
-                        <th>Servicio</th>
-                        <th>Propina</th>
-                        <th>Total_MN</th>
-                        <th>Saldo_MN</th>
-                        <th>Cta_CxP</th>
-                        <th></th>
-                      </tr>
-                    </thead> 
+              <div class="row"   >
+                <div class="col-sm-12" id="DGVentas" style="min-height: 80px;">
+                  <table>
+                   <thead><tr><th class="text-left" style="width:40px">TC</th><th class="text-left" style="width:80px">Fecha</th><th class="text-left" style="width:300px">Cliente</th><th class="text-left" style="width:136px">Serie</th><th class="text-left" style="width:392px">Autorizacion</th><th class="text-right" style="width:136px">Factura</th><th class="text-right" style="width:112px">Total_IVA</th><th class="text-right" style="width:112px">Descuento</th><th class="text-right" style="width:112px">Descuento2</th><th class="text-right" style="width:112px">Servicio</th><th class="text-right" style="width:112px">Propina</th><th class="text-right" style="width:112px">Total_MN</th><th class="text-right" style="width:112px">Saldo_MN</th><th class="text-left" style="width:144px">Cta_CxP</th><th class="text-left" style="width:280px">Ciudad</th><th class="text-left" style="width:240px">Sectorizacion</th><th class="text-left" style="width:300px">Ejecutivo</th></tr></thead> 
                   </table>          
                 </div>
               </div>
@@ -193,9 +164,9 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                 </div>
               </div>
 
-              <div class="table-responsive " style="overflow-y: scroll; min-height: 50px;max-height: 200px; width: auto;margin-bottom: 10px;">
-                <div class="sombra" style>
-                  <table id="DGCxC" class="table-sm" style="width: -webkit-fill-available;">
+              <div class="row">
+                <div class="col-sm-12 mb-3" id="DGCxC" style="min-height: 80px;">
+                  <table class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
                         <th>TP</th>
@@ -220,10 +191,10 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                   </table>          
                 </div>
               </div>
-
-              <div class="table-responsive" style="overflow-y: scroll; min-height: 80px;max-height:200px; width: auto;">
-                <div class="sombra" style>
-                  <table id="DGAnticipos" class="table-sm" style="width: -webkit-fill-available;">
+              <hr>
+              <div class="row">
+                <div class="col-sm-12" id="DGAnticipos" style="min-height: 80px;">
+                  <table class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
                         <th>TP</th>
@@ -242,19 +213,19 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
 
             </div>
             <div class="tab-pane modal-body" id="AdoInv">
-              <div class="col-md-2">
-                <table id="DGCierres" class="table-sm tablaHeight" style="width: -webkit-fill-available;">
-                      <thead>
-                        <tr>
-                          <th>Fecha</th>
-                        </tr>
-                      </thead>
-                    </table>
-              </div>
-              <div class="col-md-10">
-                <div class="table-responsive" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;margin-bottom: 15px;">
-                  <div class="sombra" style>
-                    <table id="DGInv" class="table-sm" style="width: -webkit-fill-available;">
+                <div class="col-md-2" id="DGCierres" style="min-height: 80px;">
+                  <table class="table-sm tablaHeight" style="width: -webkit-fill-available;">
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                      </tr>
+                    </thead>
+                  </table>
+                </div>
+              
+                <div class="col-md-10">
+                  <div id="DGInv" style="min-height: 80px;">
+                    <table class="table-sm" style="width: -webkit-fill-available;">
                       <thead>
                         <tr>
                           <th>Codigo_Inv</th>
@@ -264,10 +235,8 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                       </thead>
                     </table>          
                   </div>
-                </div>
-                <div class="table-responsive" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;">
-                  <div class="sombra" style>
-                    <table id="DGProductos" class="table-sm" style="width: -webkit-fill-available;">
+                  <div id="DGProductos" style="min-height: 80px;">
+                    <table id="" class="table-sm" style="width: -webkit-fill-available;">
                       <thead>
                         <tr>
                           <th>Codigo</th>
@@ -281,13 +250,12 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                     </table>          
                   </div>
                 </div>
-              </div>
             </div>
             <div class="tab-pane modal-body" id="AdoAsientoT">
 
-              <div class="table-responsive" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;margin-bottom: 1px;">
-                <div class="sombra" style>
-                  <table id="DGAsiento" class="table-sm" style="width: -webkit-fill-available;">
+              <div class="row">
+                <div class="col-sm-12" id="DGAsiento" style="min-height: 80px;">
+                  <table class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
                         <th>CODIGO</th>
@@ -310,9 +278,9 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                 <input id="LabelDebe"></input>
                 <input id="LabelHaber"></input>
               </div>
-              <div class="table-responsive" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;margin-bottom: 10px;">
-                <div class="sombra" style>
-                  <table id="DGAsiento1" class="table-sm" style="width: -webkit-fill-available;">
+              <div class="row">
+                <div class="col-sm-12" id="DGAsiento1" style="min-height: 80px;">
+                  <table class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
                         <th>CODIGO</th>
@@ -339,9 +307,9 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             </div>
             <div class="tab-pane modal-body" id="AdoFactAnul">
 
-              <div class="table-responsive DGFactAnul-container" style="overflow-y: scroll; min-height: 50px;max-height:200px; width: auto;">
-                <div class="sombra" style>
-                  <table id="DGFactAnul" class="table-sm" style="width: -webkit-fill-available;">
+              <div class="row">
+                <div class="col-sm-12" id="DGFactAnul" style="min-height: 80px;">
+                  <table class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
                         <th>T</th>
@@ -362,9 +330,9 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             <div class="tab-pane modal-body" id="AdoSRIT">
               <select style="min-width: 150px;" class="form-control input-xs" name="AdoSRI" id="AdoSRI"  onchange="" >
               </select>
-              <div class="table-responsive" style="overflow-y: scroll; min-height: 80px;max-height:285px; width: auto;margin-bottom: 15px;">
-                <div class="sombra" style>
-                  <table id="DGSRI" class="table-sm" style="width: -webkit-fill-available;">
+              <div class="row">
+                <div class="col-sm-12" id="DGSRI" style="min-height: 80px;">
+                  <table class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
                         <th>TC</th>
@@ -420,10 +388,10 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
               <select style="min-width: 150px;" class="form-control input-xs" name="DCBanco" id="DCBanco"  onchange="" >
               </select>
 
-              <div class="table-responsive DGBanco-container" style="overflow-y: scroll; min-height: 50px; width: auto;">
-                <div class="sombra" style>
+              <div class="row">
+                <div class="col-sm-12" id="DGBanco" style="min-height: 80px;">
                   <!-- //TODO LS cuando se llena esta tabla -->
-                  <table id="DGBanco" class="table-sm" style="width: -webkit-fill-available;">
+                  <table class="table-sm" style="width: -webkit-fill-available;">
                     <thead>
                       <tr>
                         <th>T</th>
@@ -501,30 +469,6 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
   // construye la tabla con los datos procesados
   function construirTabla(datos, tablaId) {
     $('#'+tablaId).html(datos);
-    // obtiene el encabezado de la tabla
-    // var encabezado = $("#" + tablaId + " thead tr th");
-
-    // // cuenta el número de columnas en el encabezado
-    // var numColumnas = encabezado.length;
-
-    // // crea las filas con los datos
-    // var tbody = $("#" + tablaId + " tbody");
-    // tbody.empty();
-    // for (var i = 0; i < datos.length; i++) {
-    //     var fila = $("<tr>");
-    //     for (var j = 0; j < numColumnas; j++) {
-    //         var nombreColumna = encabezado.eq(j).text();
-    //         let valor = datos[i][nombreColumna];           
-    //         if(valor !== null && typeof valor === 'object'){
-    //           valor = valor.date;
-    //           if (valor.endsWith(".000000")) {
-    //             valor = valor.slice(0, -7); // Obtiene los primeros 6 caracteres del final
-    //           }
-    //         }
-    //         fila.append($("<td>").text(valor));
-    //     }
-    //     tbody.append(fila);
-    // }
   }
 
   function Diario_Caja() {
@@ -624,15 +568,15 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
 
                                       $("#Bar_espera_progress").css('width','99%')
                                       $("#Bar_espera_progress .txt_progress").text('Finalizando Proceso')
-                                      if (redondear(datos6.LabelDebe1 - datos6.LabelHaber1, 2) !== 0) {
-                                        $('#myModal_espera_progress').modal('hide');
+                                      if (esDiferenteDeCero(redondear(datos6.LabelDebe1 - datos6.LabelHaber1, 2)) ||  esDiferenteDeCero(redondear(datos6.LabelDebe - datos6.LabelHaber, 2))) {
+                                        
                                         Swal.fire({
                                           type: 'warning',
                                           text: '',
                                           title: "Las Transacciones no cuadran, verifique las facturas emitidas o los abonos del día."
                                         });
                                       }
-
+                                      $('#myModal_espera_progress').modal('hide');
                                       ShowFInfoErrorShowView()
                                     },
                                     error: function (e) {
@@ -712,20 +656,20 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
           AdoSRI.append('<option value="' + datos.AdoSRI[indice].RUC_CI+ ' ">' + datos.AdoSRI[indice].RUC_CI + ' - '+datos.AdoSRI[indice].Razon_Social+'</option>');
         }
 
-    $("#LabelAbonos").val(datos.LabelAbonos)
-    $("#LabelCheque").val(datos.LabelCheque)
-    $("#LabelDebe").val(datos.LabelDebe)
-    $("#LabelDebe1").val(datos.LabelDebe1)
-    $("#LabelHaber").val(datos.LabelHaber)
-    $("#LabelHaber1").val(datos.LabelHaber1)
-    $("#LblConIVA").val(datos.LblConIVA) 
-    $("#LblDescuento").val(datos.LblDescuento) 
-    $("#LblDiferencia").val(datos.LblDiferencia)
-    $("#LblDiferencia1").val(datos.LblDiferencia1)
-    $("#LblIVA").val(datos.LblIVA) 
-    $("#LblServicio").val(datos.LblServicio) 
-    $("#LblSinIVA").val(datos.LblSinIVA) 
-    $("#LblTotalFacturado").val(datos.LblTotalFacturado) 
+    $("#LabelAbonos").val(formatearNumero(datos.LabelAbonos))
+    $("#LabelCheque").val(formatearNumero(datos.LabelCheque))
+    $("#LabelDebe").val(formatearNumero(datos.LabelDebe))
+    $("#LabelDebe1").val(formatearNumero(datos.LabelDebe1))
+    $("#LabelHaber").val(formatearNumero(datos.LabelHaber))
+    $("#LabelHaber1").val(formatearNumero(datos.LabelHaber1))
+    $("#LblConIVA").val(formatearNumero(datos.LblConIVA)) 
+    $("#LblDescuento").val(formatearNumero(datos.LblDescuento)) 
+    $("#LblDiferencia").val(formatearNumero(datos.LblDiferencia))
+    $("#LblDiferencia1").val(formatearNumero(datos.LblDiferencia1))
+    $("#LblIVA").val(formatearNumero(datos.LblIVA)) 
+    $("#LblServicio").val(formatearNumero(datos.LblServicio)) 
+    $("#LblSinIVA").val(formatearNumero(datos.LblSinIVA)) 
+    $("#LblTotalFacturado").val(formatearNumero(datos.LblTotalFacturado)) 
   }
 
   function redondear(valor, decimales) {
