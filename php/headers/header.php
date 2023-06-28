@@ -108,7 +108,7 @@ include('../controlador/contabilidad/contabilidad_controller.php');
   <link rel="stylesheet" href="../../dist/css/style_acordeon.css">
   <link rel="stylesheet" href="../../dist/css/jquery-ui.css">
   <link rel="stylesheet" href="../../dist/css/sweetalert2.min.css">
-  <link rel="stylesheet" href="../../dist/css/creados.css?<?php echo date('m') ?>">
+  <link rel="stylesheet" href="../../dist/css/creados.css?<?php echo date('md') ?>">
   <link rel="stylesheet" href="../../dist/css/email.css" type="text/css">
 
   <!-- bootstrap wysihtml5 - text editor -->

@@ -7,7 +7,7 @@ include(dirname(__DIR__,2).'/funciones/funciones.php');
 class FCierre_CajaM
 {	
 		
-    private $conn ;
+    private $db ;
 	function __construct()
 	{
 	   $this->db = new db();

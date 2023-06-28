@@ -5849,7 +5849,7 @@ function costo_venta($codigo_inv)  // optimizado
     return $resultado[0];
   }
 
-function grilla_generica_new($sql,$tabla,$id_tabla=false,$titulo=false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$tamaño_tabla=300,$num_decimales=2,$num_reg=false,$paginacion_view= false,$estilo=1, $class_titulo='text-center')
+function grilla_generica_new($sql,$tabla,$id_tabla=false,$titulo=false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$tamaño_tabla=300,$num_decimales=2,$num_reg=false,$paginacion_view= false,$estilo=1, $class_titulo='text-center', $med_b=G_NINGUNO)
 {  
   $conn = new db();
 
@@ -6059,7 +6059,9 @@ if($titulo)
   //cabecera de la consulta sql//
  if($botones)
   {
-    $med_b = count($botones)*42;
+    if($med_b==G_NINGUNO){
+      $med_b = count($botones)*42;
+    }
     $tbl.='<th style="width:'.$med_b.'px"></th>';
   }
   if($check)
@@ -6232,7 +6234,9 @@ if($titulo)
      //crea botones
        if($botones)
         {
-          $med_b = count($botones)*42;
+          if($med_b==G_NINGUNO){
+            $med_b = count($botones)*42;
+          }
           $tbl.='<td style="width:'.$med_b.'px">';
           foreach ($botones as $key3 => $value3) {
             $valor = '';

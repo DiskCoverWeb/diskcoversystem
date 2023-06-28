@@ -4,56 +4,83 @@ require_once(dirname(__DIR__,2)."/funciones/funciones.php");
 
 class kardexM
 {
- 	private $db;
-  private $dbs;
-  public function __construct(){
-    //conexion mysql
-    $this->db1= new db();
-    //conexion sql server
-    $this->dbs= $this->db1->conexion('MYSQL');
-    $this->db= $this->db1->conexion();
-  }
- 
+   	private $db ;
+    public $NumEmpresa;
+    public $Periodo_Contable;
+    function __construct()
+    {
+       $this->db = new db();
+       $this->NumEmpresa = $_SESSION['INGRESO']['item'];
+        $this->Periodo_Contable = $_SESSION['INGRESO']['periodo'];
+    }
 
-  public function productos($tipo,$codigoProducto){
-    $sql="SELECT Codigo_Inv, Producto As NomProd , Minimo, Maximo, Unidad
-            FROM Catalogo_Productos 
-            WHERE Item = '".$_SESSION['INGRESO']['item']."'
-            AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
-            AND TC = '".$tipo."'";
-    if ($tipo == "I") {
-      $sql .= "AND X = 'M' ";
+
+
+  function ExecuteDB($sSQL)
+  {
+       return $this->db->String_Sql($sSQL);
+  }
+
+  function SelectDB($sSQL)
+  {
+       return $this->db->datos($sSQL);
+  }
+  
+  public function ListarProductos($tipo,$codigoProducto){
+    $Codigo = trim($codigoProducto);
+    $sSQL = "SELECT Producto, Codigo_Inv, Unidad, Minimo, Maximo, Codigo_Inv + '  ' + Producto AS NomProd "
+        . "FROM Catalogo_Productos "
+        . "WHERE Item = '" . $this->NumEmpresa. "' "
+        . "AND Periodo = '" . $this->Periodo_Contable . "' "
+        . (($Codigo!="")?"AND substr(Codigo_Inv, 1, " . strlen($Codigo) . ") = '" . $Codigo . "' ":"")
+        . "AND X = 'M' "
+        . "AND TC = '$tipo' ";
+
+    switch ($tipo) {
+      case "I":
+          break;
+
+      case "P":
+          $sSQL .= " AND Cta_Inventario <> '.' "
+              . "AND Cta_Inventario <> '0' ";
+          break;  
     }
-    if ($codigoProducto != '') {
-      $sql .= " AND Codigo_Inv LIKE '".$codigoProducto."%'";
-    }
-    $sql .= " ORDER BY Codigo_Inv";
-    $stmt = sqlsrv_query( $this->dbs, $sql);
+
+    $sSQL .= "ORDER BY Producto, Codigo_Inv ";
+
+    $stmt = $this->db->datos($sSQL);
     return $stmt;
   }
+
+  function Listar_Articulos($SoActivos = false) {
+    $sSQL = "SELECT Codigo_Inv, Producto, Unidad, Bodega, Minimo, Maximo, Cta_Inventario, Cta_Costo_Venta "
+        . "FROM Catalogo_Productos "
+        . "WHERE Item = '" . $this->NumEmpresa . "' "
+        . "AND Periodo = '" . $this->Periodo_Contable . "' ";
+    
+    if ($SoActivos) {
+        $sSQL .= "AND T = 'N' ";
+    }
+    
+    $sSQL .= "AND TC = 'P' "
+        . "AND INV <> " . intval(adFalse) . " "
+        . "AND LEN(Cta_Inventario) > 1 "
+        . "AND LEN(Cta_Costo_Venta) > 1 "
+        . "ORDER BY Codigo_Inv ";
+    
+    //TODO LS   aquien se le asigna??
+    return $this->db->datos($sSQL);
+    //SelectDB_Combo($DCArt, $AdoArt, $sSQL, "Producto");
+}
+
 
   public function bodegas(){
     $sql="SELECT Bodega, CodBod
           FROM Catalogo_Bodegas 
-          WHERE Item = '".$_SESSION['INGRESO']['item']."'
-          AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+          WHERE Item = '".$this->NumEmpresa."'
+          AND Periodo = '".$this->Periodo_Contable."'
           ORDER BY CodBod";
-    $stmt = sqlsrv_query( $this->dbs, $sql);
-    return $stmt;
-  }
-
-  public function consulta_kardex_producto($desde,$hasta,$codigo){
-    $sql= "SELECT CodBodega As Bodega,Fecha,TP,Numero As Comp_No,TC,Serie,Factura,Detalle,
-          Entrada,Salida,Existencia As Stock,Costo,Total As Saldo, Valor_Unitario, Valor_Total, Serie_No, Codigo_Barra, ID 
-          FROM Trans_Kardex 
-          WHERE Fecha BETWEEN '".$desde."' AND '".$hasta."'
-          AND Codigo_Inv = '".$codigo."'
-          AND T = '".G_NORMAL."' 
-          AND Item = '".$_SESSION['INGRESO']['item']."' 
-          AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
-    $stmt = sqlsrv_query( $this->dbs, $sql);
-    $tabla = grilla_generica_new($sql,'Trans_Kardex','myTable','',false,false,false,1,1,1,100);
-    return $tabla;
+    return $this->db->datos($sql);
   }
 
   public function funcionInicio(){
@@ -61,7 +88,7 @@ class kardexM
             SET X = '.' 
             WHERE Item = '".$_SESSION['INGRESO']['item']."' 
             AND Periodo = '".$_SESSION['INGRESO']['periodo']."'"; 
-    $stmt = sqlsrv_query( $this->dbs, $sql);
+    $stmt = $this->db->datos($sql);
 
     $sql = "UPDATE Catalogo_Productos 
             SET X = 'M' 
@@ -71,7 +98,7 @@ class kardexM
             AND CP.Item = TK.Item 
             AND CP.Periodo = TK.Periodo 
             AND CP.Codigo_Inv = TK.Codigo_Inv" ;
-    $stmt = sqlsrv_query( $this->dbs, $sql);
+    $stmt = $this->db->datos($sql);
 
     $sql = "SELECT Codigo_Inv 
             FROM Catalogo_Productos 
@@ -81,7 +108,7 @@ class kardexM
             AND X = 'M' 
             GROUP BY Codigo_Inv 
             ORDER BY Codigo_Inv";
-    $datos = sqlsrv_query( $this->dbs, $sql);
+    $datos = $this->db->datos($sql);
     $primeravez = true;
 
     while ($value = sqlsrv_fetch_array( $datos, SQLSRV_FETCH_ASSOC)) {
@@ -96,7 +123,7 @@ class kardexM
                       AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
                       AND X <> 'M' 
                       AND Codigo_Inv = '".$Codigo."'";     
-            $stmt = sqlsrv_query( $this->dbs, $sSQL);
+            $stmt = sqlsrv_query( $this->db, $sSQL);
             $Codigo = CodigoCuentaSup($Codigo);
           }
         }
@@ -104,30 +131,7 @@ class kardexM
 
   }
 
-  public function consulta_kardex($desde,$hasta,$codigo,$cbBodega,$bodega){
-    $sql =  "SELECT K.Codigo_Inv, K.Codigo_Barra, SUM(Entrada-Salida) As Stock_Kardex 
-            FROM Trans_Kardex As K, Comprobantes As C 
-            WHERE K.Fecha BETWEEN '".$desde."' AND '".$hasta."' 
-            AND K.Codigo_Inv = '".$codigo."'
-            AND K.T = '".G_NORMAL."' 
-            AND K.Item = '".$_SESSION['INGRESO']['item']."' 
-            AND K.Periodo = '".$_SESSION['INGRESO']['periodo']."'";
-    if ($cbBodega) {
-      $sql .= "AND K.CodBodega = '".$bodega."' ";
-    }
-    $sql .= "AND K.TP = C.TP 
-            AND K.Fecha = C.Fecha 
-            AND K.Numero = C.Numero 
-            AND K.Item = C.Item 
-            AND K.Periodo = C.Periodo 
-            GROUP BY K.Codigo_Inv, K.Codigo_Barra
-            HAVING SUM(Entrada-Salida) >=1 
-            ORDER BY K.Codigo_Inv, K.Codigo_Barra ";
-    $tabla = grilla_generica_new($sql,'Trans_Kardex As K, Comprobantes As C','myTable','',false,false,false,1,1,1,100);
-    return $tabla;
-  }
-
-  public function kardex_total($desde,$hasta,$codigo,$cbBodega,$bodega){
+  public function kardex_total($desde,$hasta,$codigo,$CheqBod,$bodega){
     $sql =  "UPDATE Trans_Kardex 
             SET Centro_Costo = SUBSTRING(C.Cliente,1,50) 
             FROM Trans_Kardex As TK, Clientes As C 
@@ -136,7 +140,7 @@ class kardexM
             AND TK.Codigo_P <> '.'
             AND TK.Fecha BETWEEN '".$desde."' AND '".$hasta."'
             AND TK.Codigo_P = C.Codigo ";
-    sqlsrv_query( $this->dbs, $sql);
+    $this->db->datos($sql);
     $sql =  "UPDATE Trans_Kardex 
             SET Centro_Costo = SUBSTRING(CS.Detalle,1,50) 
             FROM Trans_Kardex As TK, Catalogo_SubCtas As CS 
@@ -147,7 +151,7 @@ class kardexM
             AND TK.Item = CS.Item 
             AND TK.Periodo = CS.Periodo 
             AND TK.Codigo_P = CS.Codigo ";
-    sqlsrv_query( $this->dbs, $sql);
+    $this->db->datos($sql);
 
     $sql =  "UPDATE Trans_Kardex 
             SET Centro_Costo = SUBSTRING(CS.Detalle,1,50) 
@@ -159,12 +163,12 @@ class kardexM
             AND TK.Item = CS.Item 
             AND TK.Periodo = CS.Periodo 
             AND TK.CodigoL = CS.Codigo ";
-    sqlsrv_query( $this->dbs, $sql);
+    $this->db->datos($sql);
   
     $sql =  "UPDATE Trans_Kardex 
             SET Centro_Costo = '.' 
             WHERE Centro_Costo IS NULL ";
-    sqlsrv_query( $this->dbs, $sql);
+    $this->db->datos($sql);
 
     $sql =  "SELECT TK.Codigo_Inv, CP.Producto, TK.CodBodega As Bodega, TK.Fecha,TK.Entrada, TK.Salida, TK.Existencia, 
             TK.Valor_Unitario, TK.Valor_Total, TK.Costo, TK.Total, TK.TP, TK.Numero As Comp_No, TK.TC, TK.Serie, 
@@ -177,7 +181,7 @@ class kardexM
     if ($codigo != "*") {
       $sql .= "AND TK.Codigo_Inv LIKE '".$codigo."%' ";
     }
-    if ($cbBodega) {
+    if ($CheqBod) {
       $sql .= "AND TK.CodBodega = '".$bodega."'";
     }
     $sql .=  "AND TK.Item = CP.Item 
@@ -185,7 +189,7 @@ class kardexM
             AND TK.Codigo_Inv = CP.Codigo_Inv 
             AND TK.Codigo_P = C.Codigo 
             ORDER BY TK.Codigo_Inv, TK.Fecha, TK.Entrada DESC, TK.Salida, TK.TP, TK.Numero, TK.ID ";
-    $stmt = sqlsrv_query( $this->dbs, $sql);
+    $stmt = $this->db->datos($sql);
     $tabla = grilla_generica_new($sql,'Trans_Kardex','myTable','',false,false,false,1,1,1,100);
     return $tabla;
   }
