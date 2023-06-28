@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<guiaRemision id="comprobante" version="1.0.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
+    <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
+    <ruc>0702164179001</ruc>
+    <claveAcceso>2106202306070216417900110010020000001301234567819</claveAcceso>
+    <codDoc>06</codDoc>
+    <estab>001</estab>
+    <ptoEmi>002</ptoEmi>
+    <secuencial>000000130</secuencial>
+    <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
+    <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
+  </infoTributaria>
+  <infoGuiaRemision>
+    <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
+    <dirPartida>24 DE MAYO</dirPartida>
+    <razonSocialTransportista>ABAD HENRY</razonSocialTransportista>
+    <tipoIdentificacionTransportista>05</tipoIdentificacionTransportista>
+    <rucTransportista>0916682032</rucTransportista>
+    <rise>000</rise>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <fechaIniTransporte>21/06/2023</fechaIniTransporte>
+    <fechaFinTransporte>21/06/2023</fechaFinTransporte>
+    <placa>XXX-999</placa>
+  </infoGuiaRemision>
+  <destinatarios>
+    <destinatario>
+      <identificacionDestinatario>0300232345</identificacionDestinatario>
+      <razonSocialDestinatario>ABAD CABRERA IVAN</razonSocialDestinatario>
+      <dirDestinatario>ATAHUALPA</dirDestinatario>
+      <motivoTraslado>Translado de mercaderia</motivoTraslado>
+      <ruta>De 24 DE MAYO a ATAHUALPA</ruta>
+      <codDocSustento>00</codDocSustento>
+      <numDocSustento>001-110-000000001</numDocSustento>
+      <numAutDocSustento>0702164179001</numAutDocSustento>
+      <fechaEmisionDocSustento>21/06/2023</fechaEmisionDocSustento>
+      <detalles>
+        <detalle>
+          <codigoInterno>98.24</codigoInterno>
+          <descripcion>6 LINEAS, 2023: 0606</descripcion>
+          <cantidad>1.0000</cantidad>
+        </detalle>
+      </detalles>
+    </destinatario>
+  </destinatarios>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">SD</campoAdicional>
+    <campoAdicional nombre="Telefono">000000000</campoAdicional>
+    <campoAdicional nombre="Email">diskcoversystem@msn.com</campoAdicional>
+    <campoAdicional nombre="motivoTraslado">.</campoAdicional>
+    <campoAdicional nombre="notaAuxiliar">.</campoAdicional>
+    <campoAdicional nombre="lugarEntrega">plazoleta americas</campoAdicional>
+  </infoAdicional>
+</guiaRemision>

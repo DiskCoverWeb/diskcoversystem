@@ -1103,6 +1103,7 @@ function Digito_verificador($CI_RUC)
   $sri = new autorizacion_sri();
   $CI_RUC = $sri->quitar_carac($CI_RUC);
   // 'SP que determinar que tipo de contribuyente es y el codigo si es pasaporte
+  // print_r($CI_RUC);die();
    $datos = Digito_Verificador_SP($CI_RUC);
    // print_r($datos);die();
    if($datos['Tipo_Beneficiario'] <> "R" && strlen($datos['RUC_CI']) == 13){
@@ -1167,12 +1168,15 @@ function Digito_Verificador_SP($NumeroRUC)
     array(&$Tipo_Beneficiario, SQLSRV_PARAM_INOUT),
     array(&$RUC_Natural, SQLSRV_PARAM_INOUT),
   );
+  // print_r($parametros);die();
   $sql = "EXEC sp_Digito_Verificador @NumeroRUC=?, @Item=?, @RUCCI=?, @CodigoRUCCI=?, @DigitoVerificador=?, @TipoBeneficiario=?, @RUCNatural=?";
   $exec = $conn->ejecutar_procesos_almacenados($sql,$parametros);
 
   if($Tipo_Beneficiario != "R") {$TipoSRI_Existe  = false; };
-
-  return compact('RUC_CI', 'Codigo_RUC_CI', 'Digito_Verificador', 'Tipo_Beneficiario', 'RUC_Natural', 'TipoSRI_Existe'); 
+// print_r($exec);die();
+  $datos = compact('RUC_CI', 'Codigo_RUC_CI', 'Digito_Verificador', 'Tipo_Beneficiario', 'RUC_Natural', 'TipoSRI_Existe'); 
+  // print_r($datos);die();
+  return $datos;
 }
 
 
@@ -11213,7 +11217,7 @@ function GrabarComprobante($C1)
 
   // INICIO CIERRE DE CAJA
   
-  function Insertar_Ctas_Cierre_SP($InsCta, $Valor, $Trans_No)
+  function Insertar_Ctas_Cierre_SP($InsCta, $Valor, $Trans_No=false)
   {
     if (strlen($InsCta) > 1 && $Valor != 0) {
       $conn = new db();
@@ -11665,6 +11669,43 @@ function calcularValorRango($valor1, $valor2)
 {
   return abs($valor1 - $valor2) + 1;
 }
+
+
+
+function SRI_Mensaje_Error($ClaveAcceso)
+{ 
+    $Result = "";
+    $url = dirname(__DIR__)."/comprobantes/entidades/entidad_".generaCeros($_SESSION['INGRESO']['IDEntidad'],3)."/CE".generaCeros($_SESSION['INGRESO']['item'],3)."/No_autorizados/";
+    $Mensaje = Leer_Archivo_Texto($url.$ClaveAcceso.".xml");
+    // print_r($Mensaje);die();
+    if(strlen($Mensaje) > 1){
+       // $Mensaje = str_replace($Mensaje, "  ", "");
+       $SI = strpos($Mensaje, "<mensajes>");
+       $SF = strpos($Mensaje, "</mensajes>");
+       if($SI > 0 And $SF > 0 ){
+          $SI = $SI + 12;
+          // print_r("expression");die();
+          $Result = trim(substr($Mensaje,$SI, $SF-$SI));
+       }
+    }
+    return $Result;
+  }
+
+function Leer_Archivo_Texto($RutaFile)
+{
+  $TextFile = "";
+  // print_r($RutaFile);die();
+  if(strlen($RutaFile) > 1){
+     $Results = file_exists($RutaFile);
+     // print_r($Results);die();
+     if($Results){
+        $TextFile = file_get_contents($RutaFile);     
+     }
+  }
+  return  trim($TextFile);
+}
+
+
 
 function FormatoCodigoKardex($Cta) {
   $Ctas = $Cta;

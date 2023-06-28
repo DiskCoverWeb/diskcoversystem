@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<guiaRemision id="comprobante" version="1.0.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
+    <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
+    <ruc>0702164179001</ruc>
+    <claveAcceso>2106202306070216417900110010030000000301234567813</claveAcceso>
+    <codDoc>06</codDoc>
+    <estab>001</estab>
+    <ptoEmi>003</ptoEmi>
+    <secuencial>000000030</secuencial>
+    <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
+    <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
+  </infoTributaria>
+  <infoGuiaRemision>
+    <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
+    <dirPartida>ALAUSI</dirPartida>
+    <razonSocialTransportista>ABAD MOSQUERA EDITHSON MARCELO</razonSocialTransportista>
+    <tipoIdentificacionTransportista>05</tipoIdentificacionTransportista>
+    <rucTransportista>0701520546</rucTransportista>
+    <rise>000</rise>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <fechaIniTransporte>21/06/2023</fechaIniTransporte>
+    <fechaFinTransporte>21/06/2023</fechaFinTransporte>
+    <placa>XXX-999</placa>
+  </infoGuiaRemision>
+  <destinatarios>
+    <destinatario>
+      <identificacionDestinatario>0902435429</identificacionDestinatario>
+      <razonSocialDestinatario>ABAD VERDUGA CARMEN</razonSocialDestinatario>
+      <dirDestinatario>CAMILO PONCE ENRIQUEZ</dirDestinatario>
+      <motivoTraslado>Translado de mercaderia</motivoTraslado>
+      <ruta>De ALAUSI a CAMILO PONCE ENRIQUEZ</ruta>
+      <codDocSustento>00</codDocSustento>
+      <numDocSustento>001-001-000000130</numDocSustento>
+      <numAutDocSustento>0702164179001</numAutDocSustento>
+      <fechaEmisionDocSustento>21/06/2023</fechaEmisionDocSustento>
+      <detalles>
+        <detalle>
+          <codigoInterno>98.24</codigoInterno>
+          <descripcion>6 LINEAS, 2023: 0606</descripcion>
+          <cantidad>1.0000</cantidad>
+        </detalle>
+      </detalles>
+    </destinatario>
+  </destinatarios>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">SD</campoAdicional>
+    <campoAdicional nombre="Telefono">000000000</campoAdicional>
+    <campoAdicional nombre="Email">diskcoversystem@msn.com</campoAdicional>
+    <campoAdicional nombre="motivoTraslado">.</campoAdicional>
+    <campoAdicional nombre="notaAuxiliar">.</campoAdicional>
+    <campoAdicional nombre="lugarEntrega">plazoleta americas</campoAdicional>
+  </infoAdicional>
+</guiaRemision>
