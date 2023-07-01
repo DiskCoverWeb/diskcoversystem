@@ -82,7 +82,7 @@ class kardexC
 		$datos = $this->modelo->ListarProductos($tipo,$codigoProducto);
     $productos = [];
 		foreach ($datos as $key => $value) {
-			$productos[] = array('LabelCodigo'=>$value['Codigo_Inv']."/".$value['Minimo']."/".$value['Maximo']."/".$value['Unidad'],'nombre'=>utf8_encode($value['Codigo_Inv'])." ".utf8_encode($value['NomProd']));
+			$productos[] = array('LabelCodigo'=>$value['Codigo_Inv']."/".$value['Minimo']."/".$value['Maximo']."/".$value['Unidad']."/".$value['Producto'],'nombre'=>utf8_encode($value['NomProd']));
 		}
 		if(count($productos)<=0){
 			$productos[0] = array('LabelCodigo'=>'','nombre'=>'No existen datos.');
@@ -119,6 +119,10 @@ class kardexC
 	$GrupoInv = "";
     $Debe = 0;
     $Haber = 0;
+    if(@$DCTInv!=""){
+        $DCTInv = explode("/",$DCTInv);
+        $DCTInv = $DCTInv[0];
+    }
     $GrupoInv = trim($DCTInv);
     $Codigo = $LabelCodigo;
     $Codigo1 = trim($DCBodega);
@@ -350,8 +354,8 @@ class kardexC
             extract($parametros);
             $titulo = 'Kardex del '.BuscarFecha($MBoxFechaI).' al '. BuscarFecha($MBoxFechaF);
             $sSQL   = $_SESSION['DGKardex']['sSQL'];
-            $medidas = array(12,30,15,12,18,12,15,15,15,15,15,15,15,15,10,20,20,15,15,20,25,15,15,15,30,25,15,15,15);
-            return exportar_excel_generico_SQl($titulo,$sSQL, $medidas);
+            $medidas = array(12,30,15,12,18,9,12,12,12,12,12,15,15,15,10,20,20,15,15,20,25,15,15,20,25,25,15,15,9);
+            return exportar_excel_generico_SQl($titulo,$sSQL, $medidas, fecha_sin_hora:true);
         }else{
             die("Primero debe cargar la informacion");
         }
@@ -382,16 +386,35 @@ class kardexC
         $medip =array(8,17,9,28,90,13,12,23,18,15,19,18);
 
         $pdf = new cabecera_pdf();  
-        $titulo = "EXISTENCIA DE INVENTARIO";
+        $titulo = "CONTROL DE EXISTENCIAS";
         $mostrar = true;
         $sizetable =8;
         $tablaHTML = array();
-        $tablaHTML[0]['medidas']=$medi;
-        $tablaHTML[0]['alineado']=array('L','C','C','R','L','R','R','R','R','R','R','R');
-        $tablaHTML[0]['datos']=$campos;
-        $tablaHTML[0]['estilo']='BI';
-        $tablaHTML[0]['borde'] = '1';
-        $pos = 1;
+
+        $tablaHTML[0]['medidas']=array(30, 30);
+        $tablaHTML[0]['alineado']=array('L', 'L');
+        $tablaHTML[0]['datos']=array($LabelCodigo,$LabelUnidad);
+        $tablaHTML[0]['estilo']='I';
+        $tablaHTML[0]['borde'] = '0';
+
+        $tablaHTML[1]['medidas']=array(150);
+        $tablaHTML[1]['alineado']=array('L');
+        $tablaHTML[1]['datos']=array($NombreProducto);
+        $tablaHTML[1]['estilo']='I';
+        $tablaHTML[1]['borde'] = '0';
+
+        $tablaHTML[2]['medidas']=array(100);
+        $tablaHTML[2]['alineado']=array('L');
+        $tablaHTML[2]['datos']=array("");
+        $tablaHTML[2]['estilo']='I';
+        $tablaHTML[2]['borde'] = '0';
+
+        $tablaHTML[3]['medidas']=$medi;
+        $tablaHTML[3]['alineado']=array('L','C','C','R','L','R','R','R','R','R','R','R');
+        $tablaHTML[3]['datos']=$campos;
+        $tablaHTML[3]['estilo']='B';
+        $tablaHTML[3]['borde'] = 'B';
+        $pos = 4;
 
         $TipoDoc = "";
         $Numero = "";
@@ -400,15 +423,15 @@ class kardexC
 
         foreach ($result as $key => $value) {
 
-            $Entrada = number_format($value["Entrada"], 2, '.', '');
-            $Salida = number_format($value["Salida"], 2, '.', '');
-            $Stock = number_format($value["Cantidad"], 2, '.', '');
-            $Valor_Unitario = number_format($value["Valor_Unitario"], 2, '.', '');
-            $Valor_Total = number_format($value["Valor_Total"], 2, '.', '');
-            $Costo = number_format($value["Costo_Prom"], 2, '.', '');
+            $Entrada = ($value["Entrada"]!=0)? number_format($value["Entrada"], 2, '.', ''):"";
+            $Salida = ($value["Salida"]!=0)? number_format($value["Salida"], 2, '.', ''):"";
+            $Stock = ($value["Cantidad"]!=0)? number_format($value["Cantidad"], 2, '.', ''):"";
+            $Valor_Unitario = ($value["Valor_Unitario"]!=0)? number_format($value["Valor_Unitario"], 2, '.', ''):"";
+            $Valor_Total = ($value["Valor_Total"]!=0)? number_format($value["Valor_Total"], 2, '.', ''):"";
+            $Costo = ($value["Costo_Prom"]!=0)? number_format($value["Costo_Prom"], 2, '.', ''):"";
             $Saldo = number_format($value["Saldo_Total"], 2, '.', '');
             
-            $data = array($value["Bod"],$value["Fecha"]->format('Y-m-d'),"",$value['Numero'],"",($Entrada!=0)?$Entrada:"", $Salida, $Valor_Unitario, $Valor_Total, $Stock, $Costo, $Saldo);
+            $data = array($value["Bod"],$value["Fecha"]->format('Y-m-d'),"",$value['Numero'],"",$Entrada, $Salida, $Valor_Unitario, $Valor_Total, $Stock, $Costo, $Saldo);
             if($TipoDoc!=$value['TP'] || $Numero != $value['Numero']){
                 $TipoDoc = $value['TP'];
                 $Numero = $value['Numero'];
@@ -416,8 +439,8 @@ class kardexC
                 $data[4] = $value['Detalle'];
             }
 
-            $tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
-            $tablaHTML[$pos]['alineado']=$tablaHTML[0]['alineado'];
+            $tablaHTML[$pos]['medidas']=$tablaHTML[3]['medidas'];
+            $tablaHTML[$pos]['alineado']=$tablaHTML[3]['alineado'];
             $tablaHTML[$pos]['datos']=$data;
             $tablaHTML[$pos]['estilo']='I';
             $tablaHTML[$pos]['borde'] = 'LR';

@@ -32,7 +32,7 @@ class kardexM
         . "FROM Catalogo_Productos "
         . "WHERE Item = '" . $this->NumEmpresa. "' "
         . "AND Periodo = '" . $this->Periodo_Contable . "' "
-        . (($Codigo!="")?"AND substr(Codigo_Inv, 1, " . strlen($Codigo) . ") = '" . $Codigo . "' ":"")
+        . (($Codigo!="")?"AND SUBSTRING(Codigo_Inv, 1, " . strlen($Codigo) . ") = '" . $Codigo . "' ":"")
         . "AND X = 'M' "
         . "AND TC = '$tipo' ";
 
@@ -47,7 +47,6 @@ class kardexM
     }
 
     $sSQL .= "ORDER BY Producto, Codigo_Inv ";
-
     $stmt = $this->db->datos($sSQL);
     return $stmt;
   }

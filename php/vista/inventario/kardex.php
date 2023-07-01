@@ -150,6 +150,7 @@ $kardex = new kardexC();
           <div class="col-sm-4 padding-all" style="max-width:   125px;">
             <input type="text" class="form-control input-sm" tabindex="9" id="LabelMaximo" name="LabelMaximo" readonly>
             <input type="hidden" id="heightDisponible" name="heightDisponible" value="100">    
+            <input type="hidden" id="NombreProducto" name="NombreProducto">    
           </div>
         </div>
       </div>
@@ -243,11 +244,13 @@ $kardex = new kardexC();
     LabelMinimo = producto[1];
     LabelMaximo = producto[2];
     LabelUnidad = producto[3];
+    NombreProducto = producto[4];
     $("#LabelCodigo").val(LabelCodigo);
     $("#LabelUnidad").val(LabelUnidad);
     $("#LabelMinimo").val(formatearNumero(LabelMinimo));
     $("#LabelMaximo").val(formatearNumero(LabelMaximo));
     $("#LabelExitencia").val('0.00');
+    $("#NombreProducto").val(NombreProducto);
   }
 
   function Consultar_Tipo_Kardex(EsKardexIndividual){//revisada

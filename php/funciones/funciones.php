@@ -1181,7 +1181,7 @@ function Digito_Verificador_SP($NumeroRUC)
 
 
 //excel
-function exportar_excel_generico_SQl($titulo,$sql, $medidas = array(), $campos = array())
+function exportar_excel_generico_SQl($titulo,$sql, $medidas = array(), $campos = array(), $fecha_sin_hora=false)
 {
   $db = new db();
   $result = $db->datos($sql);
@@ -1232,7 +1232,12 @@ function exportar_excel_generico_SQl($titulo,$sql, $medidas = array(), $campos =
     $tablaHTML[$pos]['medidas']=$medidas;
     $va = array();
     foreach ($campos as $key1 => $value1) {
-      array_push($va,$value[$value1]);        
+
+        if($fecha_sin_hora && ($value[$value1] instanceof DateTime) ){
+          array_push($va,$value[$value1]->format("Y-m-d"));
+        }else{
+          array_push($va,$value[$value1]);
+        }        
     }
     $tablaHTML[$pos]['datos']= $va;
     $tablaHTML[$pos]['tipo'] ='N';
