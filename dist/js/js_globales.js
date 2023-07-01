@@ -315,11 +315,13 @@ function fecha_actual()
 
  function asignarHeightPantalla(elemento, input) {
 	var distanciaHastaElBordeInferior = $(window).height() - (elemento.offset().top + elemento.outerHeight());
-	input.val(distanciaHastaElBordeInferior-elemento.outerHeight(true));
+	let disponible = distanciaHastaElBordeInferior-elemento.outerHeight(true);
+	input.val(((disponible>100)?disponible:100));
 	$(window).resize(function() {
-    var distanciaHastaElBordeInferior = $(window).height() - (elemento.offset().top + elemento.outerHeight());
-    input.val(distanciaHastaElBordeInferior-elemento.outerHeight(true));
-  });
+	    var distanciaHastaElBordeInferior = $(window).height() - (elemento.offset().top + elemento.outerHeight());
+		let disponible = distanciaHastaElBordeInferior-elemento.outerHeight(true);
+		input.val(((disponible>100)?disponible:100));
+	});
  }
 
 function esDiferenteDeCero(numero) {

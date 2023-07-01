@@ -52,8 +52,8 @@ class kardexM
     return $stmt;
   }
 
-  function Listar_Articulos($SoActivos = false) {
-    $sSQL = "SELECT Codigo_Inv, Producto, Unidad, Bodega, Minimo, Maximo, Cta_Inventario, Cta_Costo_Venta "
+  function Listar_Articulos($SoActivos = false, $ejecutar=false) {
+    $sSQL = "SELECT Codigo_Inv as codigo, Producto as nombre "
         . "FROM Catalogo_Productos "
         . "WHERE Item = '" . $this->NumEmpresa . "' "
         . "AND Periodo = '" . $this->Periodo_Contable . "' ";
@@ -63,14 +63,16 @@ class kardexM
     }
     
     $sSQL .= "AND TC = 'P' "
-        . "AND INV <> " . intval(adFalse) . " "
+        . "AND INV <> " . intval(0) . " "
         . "AND LEN(Cta_Inventario) > 1 "
         . "AND LEN(Cta_Costo_Venta) > 1 "
         . "ORDER BY Codigo_Inv ";
     
-    //TODO LS   aquien se le asigna??
-    return $this->db->datos($sSQL);
-    //SelectDB_Combo($DCArt, $AdoArt, $sSQL, "Producto");
+    if($ejecutar){
+        return $this->db->datos($sSQL);
+    }else{
+        return $sSQL;
+    }
 }
 
 

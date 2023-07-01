@@ -118,7 +118,7 @@ include('../controlador/contabilidad/contabilidad_controller.php');
   <script src="../../bower_components/select2/dist/js/select2.js"></script>
   <script src="../../dist/js/jquery-ui.js"></script>
   <script src="../../dist/js/sweetalert2.js"></script>
-  <script src="../../dist/js/js_globales.js?<?php echo date('mm') ?>"></script>
+  <script src="../../dist/js/js_globales.js?<?php echo date('my') ?>"></script>
 
   <script type="text/javascript">
 

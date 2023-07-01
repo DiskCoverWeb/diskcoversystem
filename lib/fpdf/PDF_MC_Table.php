@@ -129,6 +129,7 @@ class PDF_MC_Table extends FPDF
 			// }
 			//Print the text
 			//$this->SetTextColor(0,0,0);
+			$this->SetTextColor(0,0,0);
 			if( is_numeric($data[$i]))
 			{
 			  if(is_float($data[$i]))

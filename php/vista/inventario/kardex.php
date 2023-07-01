@@ -10,6 +10,11 @@ $kardex = new kardexC();
 .padding-all{
   padding: 2px !important;
 }
+
+#swal2-content{
+  font-weight: 600;
+    font-size: 12px;
+}
 </style>
 
 <div class="container-fluid">
@@ -20,7 +25,7 @@ $kardex = new kardexC();
     </a>
   </div>  
   <div class="col">
-    <a href="#" id="Consultar" class="btn btn-default" onclick="Consultar_Tipo_Kardex(true);" title="Consulta el kardex de un producto">
+    <a href="#" id="Consultar" class="btn btn-default"  onclick="Consultar_Tipo_Kardex(true);" title="Consulta el kardex de un producto">
       <img src="../../img/png/archivo1.png">
     </a>
   </div>
@@ -34,23 +39,23 @@ $kardex = new kardexC();
       <img src="../../img/png/archivo3.png" >
     </a>
   </div>
-  <<!-- div class="col">
+  <div class="col">
     <a href="#" id="Imprimir_Kardex"  class="btn btn-default" title="Descargar PDF Kardex de un Producto" onclick="generarPDF();">
       <img src="../../img/png/pdf.png">
     </a>                           
-  </div> 
+  </div>
   <div class="col">
-    <a href="#" id="Excel"  class="btn btn-default" title="Descargar Excel" onclick="generarExcel();">
+    <a href="#" id="Excel"  class="btn btn-default" title="Descargar Excel" onclick="generarExcelKardex();">
       <img src="../../img/png/table_excel.png">
     </a>                           
-  </div> -->
+  </div>
 </div>
 
-  <div class="row">
+  <div class="row div_filtro">
     <form id="FormKardex">
       <div class="col-sm-6">
         <div class="row">
-          <select class="form-control input-sm mb-1" id="DCTInv" name="DCTInv" onchange="cambiarProducto();">
+          <select class="form-control input-sm mb-1" tabindex="0" id="DCTInv" name="DCTInv" onchange="cambiarProducto();">
             <option value=''>** Seleccionar **</option>
             <?php
             $productosI = $kardex->ListarProductos('I','');
@@ -61,7 +66,7 @@ $kardex = new kardexC();
           </select>
         </div>
         <div class="row">
-          <select class="form-control input-sm" id="DCInv" name="DCInv" onchange="productoFinal();">
+          <select class="form-control input-sm" tabindex="1" id="DCInv" name="DCInv" onchange="productoFinal();">
             <option value=''>** Seleccionar **</option>
             <?php
             $productosI = $kardex->ListarProductos('P','');
@@ -76,11 +81,11 @@ $kardex = new kardexC();
       <div class="col-sm-5">
         <div class="row">
           <div class="col-sm-3 padding-all" style="max-width:   80px;">
-            <label><input id="CheqBod" name="CheqBod" value="1" type="checkbox"><b>Bodega:</b></label>           
+            <label><input id="CheqBod" name="CheqBod" tabindex="2" value="1" type="checkbox"><b>Bodega:</b></label>           
           </div>
           <div class="col-sm-9 padding-all" style="max-width: 330px;">
-            <select class="form-control input-sm" id="DCBodega" name="DCBodega">
-              <option value=''>** Seleccionar **</option>
+            <select class="form-control input-sm" tabindex="3" id="DCBodega" name="DCBodega">
+              <option value=''>** Seleccionar Bodega**</option>
               <?php
               $bodegas = $kardex->bodegas();
               foreach ($bodegas as $value) {
@@ -95,13 +100,13 @@ $kardex = new kardexC();
             <b>Desde:</b>
           </div>
           <div class="col-sm-4 padding-all" style="max-width:   125px;">
-            <input type="date" name="MBoxFechaI" id="MBoxFechaI" class="form-control input-sm"  value="<?php echo date("Y-m-d");?>" onblur="validar_year_menor(this.id);" onkeyup="validar_year_mayor(this.id)">
+            <input type="date" name="MBoxFechaI" id="MBoxFechaI" tabindex="5" class="form-control input-sm"  value="<?php echo date("Y-m-d");?>" onblur="validar_year_menor(this.id);" onkeyup="validar_year_mayor(this.id)">
           </div>
           <div class="col-sm-2 padding-all" style="max-width:   80px;">
             <b>Hasta:</b>
           </div>
           <div class="col-sm-4 padding-all" style="max-width:   125px;">
-            <input type="date" name="MBoxFechaF" id="MBoxFechaF"  class="form-control input-sm"  value="<?php echo date("Y-m-d");?>" onblur="validar_year_menor(this.id);" onkeyup="validar_year_mayor(this.id)">
+            <input type="date" name="MBoxFechaF" id="MBoxFechaF" tabindex="7" class="form-control input-sm"  value="<?php echo date("Y-m-d");?>" onblur="validar_year_menor(this.id);" onkeyup="validar_year_mayor(this.id)">
           </div>
         </div>
         <div class="row">
@@ -109,13 +114,13 @@ $kardex = new kardexC();
             <b>Código:</b>
           </div>
           <div class="col-sm-4 padding-all" style="max-width:   125px;">
-            <input type="text" class="form-control input-sm" id="LabelCodigo" name="LabelCodigo" readonly>
+            <input type="text" class="form-control input-sm" tabindex="14" id="LabelCodigo" name="LabelCodigo" readonly>
           </div>
           <div class="col-sm-2 padding-all" style="max-width:   80px;">
             <b>Mínimo:</b>
           </div>
           <div class="col-sm-4 padding-all" style="max-width:   125px;">
-            <input type="text" class="form-control input-sm" id="LabelMinimo" name="LabelMinimo" readonly>
+            <input type="text" class="form-control input-sm" tabindex="11" id="LabelMinimo" name="LabelMinimo" readonly>
           </div>
         </div>
         <div class="row">
@@ -123,13 +128,13 @@ $kardex = new kardexC();
             <b>Unidad:</b>
           </div>
           <div class="col-sm-4 padding-all" style="max-width:   125px;">
-            <input type="text" class="form-control input-sm" id="LabelUnidad" name="LabelUnidad" readonly>
+            <input type="text" class="form-control input-sm" tabindex="13" id="LabelUnidad" name="LabelUnidad" readonly>
           </div>
           <div class="col-sm-2 padding-all" style="max-width:   80px;">
             <b>Existe:</b>
           </div>
           <div class="col-sm-4 padding-all" style="max-width:   125px;">
-            <input type="text" class="form-control input-sm" id="LabelExitencia" name="LabelExitencia" readonly style="color:red">
+            <input type="text" class="form-control input-sm" tabindex="10" id="LabelExitencia" name="LabelExitencia" readonly style="color:red">
           </div>
         </div>
         <div class="row">
@@ -137,44 +142,68 @@ $kardex = new kardexC();
             <b>Bodega:</b>
           </div>
           <div class="col-sm-4 padding-all" style="max-width:   125px;">
-            <input type="text" class="form-control input-sm" id="LabelBodega" name="LabelBodega" value="0" readonly>
+            <input type="text" class="form-control input-sm" tabindex="12" id="LabelBodega" name="LabelBodega" value="0" readonly>
           </div>
           <div class="col-sm-2 padding-all" style="max-width:   80px;">
             <b>Máximo:</b>
           </div>
           <div class="col-sm-4 padding-all" style="max-width:   125px;">
-            <input type="text" class="form-control input-sm" id="LabelMaximo" name="LabelMaximo" readonly>
+            <input type="text" class="form-control input-sm" tabindex="9" id="LabelMaximo" name="LabelMaximo" readonly>
+            <input type="hidden" id="heightDisponible" name="heightDisponible" value="100">    
           </div>
         </div>
       </div>
     </form>
   </div>
 
-
-  <br>
   <div class="row">
-    <div class="col-md-12" id="DGKardex">
+    <div class="col-md-12" id="DGKardex"  tabindex="8">
 
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="miModal" tabindex="-1" role="dialog" aria-labelledby="miModalLabel" aria-hidden="true">
+    <div class="modal fade" id="FrmProductos" tabindex="-1" role="dialog" aria-labelledby="FrmProductosLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="miModalLabel">| CAMBIO DE PRODUCTOS |</h5>
+            <h5 class="modal-title" id="FrmProductosLabel">| CAMBIO DE PRODUCTOS |</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <!-- Contenido del modal -->
-            <div id="modalContenido"></div>
+            <form id="FormCambiarProducto">
+              <div class="row mb-3">
+                <div class="col-sm-12">
+                  <input type="text" class="form-control input-sm" title="Producto anterior" tabindex="27" id="LblProducto" name="LblProducto" readonly>
+                  <input type="hidden" id="ID_Reg" name="ID_Reg">
+                  <input type="hidden" id="TC" name="TC">
+                  <input type="hidden" id="Serie" name="Serie">
+                  <input type="hidden" id="Factura" name="Factura">
+                  <input type="hidden" id="CodigoInv" name="CodigoInv">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <select class="form-control input-sm" tabindex="26" id="DCArt" name="DCArt">
+                    <option value=''>** Seleccionar Nuevo**</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+              
+            <button class="btn btn-success" id="Command1" title="Aceptar" onclick="AceptarCambio()">
+              <img  src="../../img/png/grabar.png" width="25" height="30" tabindex="24">
+            </button>
+            <button class="btn btn-warning" id="Command3" title="Salir" data-dismiss="modal">
+              <img  src="../../img/png/salire.png" width="25" height="30" tabindex="25">
+            </button>
           </div>
         </div>
       </div>
     </div>
-
 
   </div>
 </div>
@@ -182,6 +211,7 @@ $kardex = new kardexC();
 <script type="text/javascript">
   $(document).ready(function()
   {
+    asignarHeightPantalla($("#LabelBodega"), $("#heightDisponible"))
     document.title = "Diskcover | EXISTENCIA DE INVENTARIO";
     // cambiarProducto();
     // productoFinal();
@@ -271,39 +301,12 @@ $kardex = new kardexC();
   }
 
   function generarPDF(){
-    MBoxFechaI = $("#MBoxFechaI").val();
-    MBoxFechaF = $("#MBoxFechaF").val();
-    DCInv = $("#LabelCodigo").val();
-    DCBodega = $("#DCBodega").val();
-    url = '../controlador/inventario/kardexC.php?generarPDF=true&MBoxFechaI='+MBoxFechaI+'&MBoxFechaF='+MBoxFechaF+'&LabelCodigo='+DCInv;
+    url = '../controlador/inventario/kardexC.php?generarPDF=true&'+$("#FormKardex").serialize();
     window.open(url, '_blank');
   }
 
-  function generarExcel(){
-    console.log("entra");
-    var titulo = Array.prototype.slice.call(document.getElementById("myTable").getElementsByTagName("th"));
-    array_titulo = [];
-    cont_titulo = 0;
-    for(var i in titulo){
-      array_titulo[cont_titulo] = titulo[i].innerHTML;
-      cont_titulo ++;
-    }
-    array_datos = [];
-    array_aux = [];
-    cont_datos = 0;
-    cont_aux = 0;
-    var cells = Array.prototype.slice.call(document.getElementById("myTable").getElementsByTagName("td"));
-    for(var j in cells){
-      array_datos[cont_aux] = cells[j].innerHTML;
-      cont_aux++;
-      if (cont_titulo == cont_aux) {
-        array_aux[cont_datos] = array_datos;
-        cont_aux = 0;
-        cont_datos++;
-        array_datos = [];
-      } 
-    }
-    url = '../controlador/inventario/kardexC.php?generarExcel=true&array_titulo='+array_titulo+'&array_datos='+array_aux;
+  function generarExcelKardex(){ //revisada
+    url = '../controlador/inventario/kardexC.php?generarExcelKardex=true&'+$("#FormKardex").serialize();
     window.open(url, '_blank');
   }
 
@@ -311,7 +314,7 @@ $kardex = new kardexC();
     alert(' no programado');
   }
 
-  function Cambia_la_Serie(Producto, ID_Reg, TC, Serie, Factura, CodigoInv) {
+  function Cambia_la_Serie(Producto, ID_Reg, TC, Serie, Factura, CodigoInv) {//revisada
     Swal.fire({
       title: 'INGRESE LA SERIE DE ESTE PRODUCTO: '+Producto,
       showCancelButton: true,
@@ -362,4 +365,125 @@ $kardex = new kardexC();
     });
   }
 
+  function Cambia_Codigo_de_Barra(Producto, ID_Reg, TC, Serie, Factura, CodigoInv) {
+    Swal.fire({
+      title: 'INGRESE EL CODIGO DE BARRAS DE ESTE PRODUCTO: '+Producto,
+      showCancelButton: true,
+      cancelButtonText: 'Cerrar',
+      confirmButtonText: 'Actualizar',
+      html:
+        '<label for="CodigoB">INGRESO DE CODIGO DE BARRAS:</label>' +
+        '<input type="tel" id="CodigoB" class="swal2-input" required>' +
+        '<span id="error1" style="color: red;"></span><br>',
+      focusConfirm: false,
+      preConfirm: () => {
+        const CodigoB = document.getElementById('CodigoB').value;
+        if(CodigoB!="" && CodigoB!="."){
+          return [CodigoB];
+        }else{
+          Swal.getPopup().querySelector('#error1').textContent = 'Debe ingresar una serie para actualizar';
+          return false
+        }
+      }
+    }).then((result) => {
+      if (result.value) {
+        const [CodigoB] = result.value;
+        if(CodigoB!="" && CodigoB!="."){
+          $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '../controlador/inventario/kardexC.php?CambiaCodigodeBarra=true',
+            data: {'CodigoB' : CodigoB, 'ID_Reg':ID_Reg, 'TC':TC, 'Serie':Serie, 'Factura':Factura, 'CodigoInv':CodigoInv },
+            beforeSend: function () {   
+              $('#myModal_espera').modal('show');
+            },    
+            success: function(response)
+            { 
+              if(response.rps){
+                Swal.fire('¡Bien!', response.mensaje, 'success')
+              }else{
+                Swal.fire('¡Oops!', response.mensaje, 'warning')
+              }
+              $('#myModal_espera').modal('hide');        
+            },
+            error: function () {
+              $('#myModal_espera').modal('hide');
+              alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+            }
+          });
+        }
+      }
+    });
+  }
+
+  function Cambiar_Articulo(Producto, ID_Reg, TC, Serie, Factura, CodigoInv) {
+    $.ajax({
+      type: 'POST',
+      dataType: 'json',
+      url: '../controlador/inventario/kardexC.php?ListarArticulos=true',
+      beforeSend: function () {   
+        $('#myModal_espera').modal('show');
+      },    
+      success: function(response)
+      { 
+        if(response.rps){
+          $('#myModal_espera').modal('hide');
+          $("#LblProducto").val(Producto) 
+          $("#ID_Reg").val(ID_Reg) 
+          $("#TC").val(TC) 
+          $("#Serie").val(Serie) 
+          $("#Factura").val(Factura) 
+          $("#CodigoInv").val(CodigoInv) 
+          $('#FrmProductos').modal('show');
+          llenarComboList(response.DCArt,'DCArt')
+          $("#DCArt").focus();
+        }else{
+          $('#myModal_espera').modal('hide');
+          Swal.fire('¡Oops!', response.mensaje, 'warning')
+        }
+      },
+      error: function () {
+        $('#myModal_espera').modal('hide');
+        alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+      }
+    });
+  }
+  function AceptarCambio() {
+    Swal.fire({
+      title: 'PREGUNTA DE ACTUALIZACION',
+      showCancelButton: true,
+      cancelButtonText: 'Cerrar',
+      confirmButtonText: 'Actualizar',
+      html:
+        '<label for="">Esta seguro de cambiar: '+$("#LblProducto").val()+'</label>' +
+        '<label for="">por el Producto:'+$('#DCArt option:selected').text()+'</label>',
+      focusConfirm: false,
+    }).then((result) => {
+      if (result.value) {
+        $.ajax({
+          type: 'POST',
+          dataType: 'json',
+          url: '../controlador/inventario/kardexC.php?ConfirmarCambiar_Articulo=true',
+          data: $("#FormCambiarProducto").serialize(),
+          beforeSend: function () {   
+            $('#myModal_espera').modal('show');
+          },    
+          success: function(response)
+          { 
+            $('#myModal_espera').modal('hide'); 
+            if(response.rps){
+              $('#FrmProductos').modal('hide');
+              Swal.fire('¡Bien!', response.mensaje, 'success')
+            }else{
+              Swal.fire('¡Oops!', response.mensaje, 'warning')
+            }       
+          },
+          error: function () {
+            $('#myModal_espera').modal('hide');
+            alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+          }
+        });
+      }
+    });
+  }
 </script>
