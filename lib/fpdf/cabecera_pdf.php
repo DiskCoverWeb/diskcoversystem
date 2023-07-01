@@ -880,7 +880,7 @@ class PDF_MC extends PDF_MC_Table
 		if($this->fechaini !='' && $this->fechaini != null  && $this->fechafin !='' && $this->fechafin != null){
 		   $this->SetFont('Arial','b',10);
 		   $this->Ln(5);		
-		   $this->Cell(0,3,'DESDE: '.$this->fechaini.' HASTA:'.$this->fechafin,0,0,'C');
+		   $this->Cell(0,6,'DESDE: '.$this->fechaini.' HASTA:'.$this->fechafin,0,0,'C');
 		   $this->Ln(10);	
 		}
 
