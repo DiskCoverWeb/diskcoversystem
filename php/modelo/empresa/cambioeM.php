@@ -114,6 +114,22 @@ class cambioeM
 		    			$copia = 1;
 		    		}
 
+		    		$ASDAS = 0; $MFNV = 0; $MPVP = 0; $IRCF = 0; $IMR = 0; $IRIP = 0; $PDAC = 0; $RIAC = 0;
+		    		if(isset($parametros['ASDAS'])){ $ASDAS = 1; }
+		    		if(isset($parametros['MFNV'])){ $MFNV = 1; }
+		    		if(isset($parametros['MPVP'])){ $MPVP = 1; }
+		    		if(isset($parametros['IRCF'])){ $IRCF = 1; }
+		    		if(isset($parametros['IMR'])){ $IMR = 1; }
+		    		if(isset($parametros['IRIP'])){ $IRIP = 1; }
+		    		if(isset($parametros['PDAC'])){ $PDAC = 1; }
+		    		if(isset($parametros['RIAC'])){ $RIAC = 1; }
+
+		    		$Autenti = 0; $SSL=0; $Secure=0;
+		    		if(isset($parametros['Autenti'])){ $Autenti = 1; }
+		    		if(isset($parametros['SSL'])){ $SSL = 1; }
+		    		if(isset($parametros['Secure'])){ $Secure = 1; }
+
+
 		    		$sql3 = "UPDATE Empresas SET Fecha_CE = '".$parametros['Fecha']."',
 		    		Estado = '".$parametros['Estado']."',
 		    		Codigo_Contribuyente_Especial = '".$parametros['TxtContriEspecial']."',
@@ -130,10 +146,56 @@ class cambioeM
 		    		LeyendaFA = '".$parametros['txtLeyendaDocumen']."',
 		    		LeyendaFAT = '".$parametros['txtLeyendaImpresora']."',
 		    		Ambiente = '".$ambiente."',
-		    		Email_CE_Copia = ".$copia."
+		    		Email_CE_Copia = '".$copia."',
+
+		    		Empresa = '".$parametros['TxtEmpresa']."',
+		    		Item = '".$parametros['TxtItem']."',
+		    		Razon_Social = '".$parametros['TxtRazonSocial']."',
+		    		Nombre_Comercial = '".$parametros['TxtNomComercial']."',
+		    		RUC = '".$parametros['TxtRuc']."',
+		    		Obligado_Conta = '".$parametros['ddl_obli']."',
+		    		Gerente = '".$parametros['TxtRepresentanteLegal']."',
+		    		CI_Representante = '".$parametros['TxtCI']."',
+		    		CPais = '".$parametros['ddl_naciones']."',
+		    		CProv = '".$parametros['prov']."',
+		    		Ciudad = '".$parametros['ciu']."',
+		    		Direccion = '".$parametros['TxtDirMatriz']."',
+		    		Establecimientos = '".$parametros['TxtEsta']."',
+		    		Telefono1 = '".$parametros['TxtTelefono']."',
+		    		Telefono2 = '".$parametros['TxtTelefono2']."',
+		    		FAX = '".$parametros['TxtFax']."',
+		    		No_Patronal = '".$parametros['TxtNPatro']."',
+		    		CodBanco = '".$parametros['TxtCodBanco']."',
+		    		Tipo_Carga_Banco = '".$parametros['TxtTipoCar']."',
+		    		Abreviatura = '".$parametros['TxtAbrevi']."',
+		    		Email = '".$parametros['TxtEmailEmpre']."',
+		    		Email_Contabilidad = '".$parametros['TxtEmailConta']."',
+		    		Email_Respaldos = '".$parametros['TxtEmailRespa']."',
+		    		Seguro = '".$parametros['TxtSegDes1']."',
+		    		Seguro2 = '".$parametros['TxtSegDes2']."',
+		    		SubDir = '".$parametros['TxtSubdir']."',
+		    		Contador = '".$parametros['TxtNombConta']."',
+		    		RUC_Contador = '".$parametros['TxtRucConta']."',
+		    		Det_SubMod = '".$ASDAS."',
+		    		Mod_Fact = '".$MFNV."',
+		    		Mod_PVP = '".$MPVP."',
+		    		Imp_Recibo_Caja = '".$IRCF."',
+		    		Medio_Rol = '".$IMR."',
+		    		Rol_2_Pagina = '".$IRIP."',
+		    		Det_Comp = '".$PDAC."',
+		    		Registrar_IVA = '".$RIAC."',
+		    		smtp_Servidor = '".$parametros['TxtServidorSMTP']."',
+		    		smtp_Puerto = '".$parametros['TxtPuerto']."',
+		    		Dec_PVP = '".$parametros['TxtPVP']."',
+		    		Dec_Costo = '".$parametros['TxtCOSTOS']."',
+		    		Dec_IVA = '".$parametros['TxtIVA']."',
+		    		Dec_Cant = '".$parametros['TxtCantidad']."',
+		    		smtp_UseAuntentificacion = '".$Autenti."',
+		    		smtp_SSL = '".$SSL."',
+		    		smtp_Secure = '".$Secure."'
 		    		WHERE Item='".$em[0]['Item']."'";
 
-		    		// print_r($sql3);
+		    		// print_r($sql3);die();
 		    		// print_r($sql2);
 
 	            	$r = $this->db->ejecutar_sql_terceros($sql2,$em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
