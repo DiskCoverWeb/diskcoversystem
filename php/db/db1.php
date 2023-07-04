@@ -23,9 +23,26 @@ class db
 		{
 			mkdir(dirname(__DIR__).'/db/ipconfig.ini');
 			//escribir local host adentro de ipconfig.ini
+		}else
+		{			
+	    $p = file_get_contents(dirname(__DIR__).'/db/ipconfig.ini');
+		  $this->ipconfig = $p;
 		}
-    $p = file_get_contents(dirname(__DIR__).'/db/ipconfig.ini');
-	  $this->ipconfig = $p;
+
+	  if(!file_exists(dirname(__DIR__).'/db/ipconfigMYSQL.ini'))
+		{
+			mkdir(dirname(__DIR__).'/db/ipconfigMYSQL.ini');
+			//escribir local host adentro de ipconfig.ini
+		}else{
+    	$dbMysql = file_get_contents(dirname(__DIR__).'/db/ipconfigMYSQL.ini');
+    	$dbMysql= explode("\n", $dbMysql);
+    	$this->usuario = trim($dbMysql[0]);
+	    $this->password =  trim($dbMysql[1]);
+	    $this->servidor = trim($this->ipconfig);
+	    $this->database = trim($dbMysql[2]);
+	    $this->puerto = trim($dbMysql[3]);
+  	}
+	   
 	}
 
 	function conexion($tipo='')
@@ -76,11 +93,6 @@ class db
 
 	function MySQL()
 	{
-			$this->usuario = 'diskcover';
-	    $this->password =  'disk2017@Cover';  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
-	    $this->servidor = $this->ipconfig;
-	    $this->database = 'diskcover_empresas';
-	    $this->puerto = 13306;
 		$conn =  new mysqli($this->servidor, $this->usuario, $this->password,$this->database,$this->puerto);
 		$conn->set_charset("utf8");
 		if (!$conn) 
