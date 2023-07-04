@@ -108,7 +108,7 @@ include('../controlador/contabilidad/contabilidad_controller.php');
   <link rel="stylesheet" href="../../dist/css/style_acordeon.css">
   <link rel="stylesheet" href="../../dist/css/jquery-ui.css">
   <link rel="stylesheet" href="../../dist/css/sweetalert2.min.css">
-  <link rel="stylesheet" href="../../dist/css/creados.css?<?php echo date('m') ?>">
+  <link rel="stylesheet" href="../../dist/css/creados.css?<?php echo date('md') ?>">
   <link rel="stylesheet" href="../../dist/css/email.css" type="text/css">
 
   <!-- bootstrap wysihtml5 - text editor -->
@@ -118,7 +118,7 @@ include('../controlador/contabilidad/contabilidad_controller.php');
   <script src="../../bower_components/select2/dist/js/select2.js"></script>
   <script src="../../dist/js/jquery-ui.js"></script>
   <script src="../../dist/js/sweetalert2.js"></script>
-  <script src="../../dist/js/js_globales.js?<?php echo date('mm') ?>"></script>
+  <script src="../../dist/js/js_globales.js?<?php echo date('my') ?>"></script>
 
   <script type="text/javascript">
 

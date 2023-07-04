@@ -108,7 +108,7 @@ class cabecera_pdf
 
 	}
  
- function cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$sal_hea_body=15,$orientacion='P',$download = true, $repetirCabecera=null)
+ function cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$sal_hea_body=15,$orientacion='P',$download = true, $repetirCabecera=null, $mostrar_cero=false)
 	{	
 
 	    $this->pdftable->fechaini = $fechaini; 
@@ -183,7 +183,7 @@ class cabecera_pdf
 			   	$repetirCabecera['row']['medidas'] = $value['medidas'];
 			   	$repetirCabecera['row']['alineado'] = $value['alineado'];
 			   }
-			   $this->pdftable->Row($arr,4,$borde,$estiloRow,null,false,$repetirCabecera);		    	
+			   $this->pdftable->Row($arr,4,$borde,$estiloRow,null,$mostrar_cero,$repetirCabecera);		    	
 		    }
 		
 
@@ -880,7 +880,7 @@ class PDF_MC extends PDF_MC_Table
 		if($this->fechaini !='' && $this->fechaini != null  && $this->fechafin !='' && $this->fechafin != null){
 		   $this->SetFont('Arial','b',10);
 		   $this->Ln(5);		
-		   $this->Cell(0,3,'DESDE: '.$this->fechaini.' HASTA:'.$this->fechafin,0,0,'C');
+		   $this->Cell(0,6,'DESDE: '.$this->fechaini.' HASTA:'.$this->fechafin,0,0,'C');
 		   $this->Ln(10);	
 		}
 

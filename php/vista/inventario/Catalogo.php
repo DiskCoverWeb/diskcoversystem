@@ -1,3 +1,5 @@
+<?php $MascaraCodigoK = (isset($_SESSION['INGRESO']['Formato_Inventario']))?$_SESSION['INGRESO']['Formato_Inventario']:MascaraCodigoK;
+?>
 <div class="row mb-3">          
 	<div class="col-xs-12">
 			<div class="col">
@@ -31,13 +33,13 @@
 					<b>Cuenta inicial:</b>
 					<br>
 					<input type="text" name="MBoxCtaI" id="MBoxCtaI" class="form-control input-xs" placeholder="<?php 
-					echo MascaraCodigoK ?>">
+					echo $MascaraCodigoK ?>">
 				</div>
 				<div class="col-xs-6">
 					<b> Cuenta final:</b>
 					<br>
 					<input type="text" name="MBoxCtaF" id="MBoxCtaF" class="form-control input-xs" placeholder="<?php 
-					echo MascaraCodigoK ?>"> 
+					echo $MascaraCodigoK ?>"> 
 				</div>       	
 			</div>             	
 		</div>
@@ -64,6 +66,21 @@
 <script type="text/javascript">
 	$(document).ready(function()
   {
+
+	 	$('#MBoxCtaI').keyup(function(e){ 
+			if(e.keyCode != 46 && e.keyCode !=8)
+			{
+				validar_cuenta_inv(this);
+			}
+		})
+
+	 	$('#MBoxCtaF').keyup(function(e){ 
+			if(e.keyCode != 46 && e.keyCode !=8)
+			{
+				validar_cuenta_inv(this);
+			}
+		})
+
   	asignarHeightPantalla($(".div_filtro"), $("#heightDisponible"))
 		$('#imprimir_excel').click(function(){
       var url = '../controlador/inventario/CatalogoC.php?ExcelListarCatalogoInventario=true&'+$("#FormCatalogoCtas").serialize();

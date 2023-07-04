@@ -1181,7 +1181,7 @@ function Digito_Verificador_SP($NumeroRUC)
 
 
 //excel
-function exportar_excel_generico_SQl($titulo,$sql, $medidas = array(), $campos = array())
+function exportar_excel_generico_SQl($titulo,$sql, $medidas = array(), $campos = array(), $fecha_sin_hora=false)
 {
   $db = new db();
   $result = $db->datos($sql);
@@ -1232,7 +1232,12 @@ function exportar_excel_generico_SQl($titulo,$sql, $medidas = array(), $campos =
     $tablaHTML[$pos]['medidas']=$medidas;
     $va = array();
     foreach ($campos as $key1 => $value1) {
-      array_push($va,$value[$value1]);        
+
+        if($fecha_sin_hora && ($value[$value1] instanceof DateTime) ){
+          array_push($va,$value[$value1]->format("Y-m-d"));
+        }else{
+          array_push($va,$value[$value1]);
+        }        
     }
     $tablaHTML[$pos]['datos']= $va;
     $tablaHTML[$pos]['tipo'] ='N';
@@ -5853,7 +5858,7 @@ function costo_venta($codigo_inv)  // optimizado
     return $resultado[0];
   }
 
-function grilla_generica_new($sql,$tabla,$id_tabla=false,$titulo=false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$tamaño_tabla=300,$num_decimales=2,$num_reg=false,$paginacion_view= false,$estilo=1, $class_titulo='text-center')
+function grilla_generica_new($sql,$tabla,$id_tabla=false,$titulo=false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$tamaño_tabla=300,$num_decimales=2,$num_reg=false,$paginacion_view= false,$estilo=1, $class_titulo='text-center', $med_b=G_NINGUNO)
 {  
   $conn = new db();
 
@@ -6063,7 +6068,9 @@ if($titulo)
   //cabecera de la consulta sql//
  if($botones)
   {
-    $med_b = count($botones)*42;
+    if($med_b==G_NINGUNO){
+      $med_b = count($botones)*42;
+    }
     $tbl.='<th style="width:'.$med_b.'px"></th>';
   }
   if($check)
@@ -6236,7 +6243,9 @@ if($titulo)
      //crea botones
        if($botones)
         {
-          $med_b = count($botones)*42;
+          if($med_b==G_NINGUNO){
+            $med_b = count($botones)*42;
+          }
           $tbl.='<td style="width:'.$med_b.'px">';
           foreach ($botones as $key3 => $value3) {
             $valor = '';
@@ -11707,9 +11716,10 @@ function FormatoCodigoKardex($Cta) {
   $Ctas = $Cta;
   $Strg = "";
   $ch = "";
-  if (strlen($Ctas) <= strlen(MascaraCodigoK)) {
-      for ($I = 1; $I <= strlen(MascaraCodigoK); $I++) {
-          $ch = substr(MascaraCodigoK, $I - 1, 1);
+  $MascaraCodigoK = (isset($_SESSION['INGRESO']['Formato_Inventario']))?$_SESSION['INGRESO']['Formato_Inventario']:MascaraCodigoK;
+  if (strlen($Ctas) <= strlen($MascaraCodigoK)) {
+      for ($I = 1; $I <= strlen($MascaraCodigoK); $I++) {
+          $ch = substr($MascaraCodigoK, $I - 1, 1);
           if ($ch == "C") {
               $Strg .= " ";
           } else {
