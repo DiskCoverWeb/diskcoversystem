@@ -81,7 +81,7 @@ $kardex = new kardexC();
       <div class="col-sm-5">
         <div class="row">
           <div class="col-sm-3 padding-all" style="max-width:   80px;">
-            <label><input id="CheqBod" name="CheqBod" tabindex="2" value="1" type="checkbox"><b>Bodega:</b></label>           
+            <label><input id="CheqBod" name="CheqBod" tabindex="2" value="1" type="checkbox"><b>Bodega:</b></label>    
           </div>
           <div class="col-sm-9 padding-all" style="max-width: 330px;">
             <select class="form-control input-sm" tabindex="3" id="DCBodega" name="DCBodega">
@@ -214,8 +214,6 @@ $kardex = new kardexC();
   {
     asignarHeightPantalla($("#LabelBodega"), $("#heightDisponible"))
     document.title = "Diskcover | EXISTENCIA DE INVENTARIO";
-    // cambiarProducto();
-    // productoFinal();
   });
 
   function cambiarProducto(){

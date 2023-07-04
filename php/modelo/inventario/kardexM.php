@@ -46,7 +46,7 @@ class kardexM
           break;  
     }
 
-    $sSQL .= "ORDER BY Producto, Codigo_Inv ";
+    $sSQL .= "ORDER BY Codigo_Inv, Producto ";
     $stmt = $this->db->datos($sSQL);
     return $stmt;
   }

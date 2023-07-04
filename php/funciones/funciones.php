@@ -11716,9 +11716,10 @@ function FormatoCodigoKardex($Cta) {
   $Ctas = $Cta;
   $Strg = "";
   $ch = "";
-  if (strlen($Ctas) <= strlen(MascaraCodigoK)) {
-      for ($I = 1; $I <= strlen(MascaraCodigoK); $I++) {
-          $ch = substr(MascaraCodigoK, $I - 1, 1);
+  $MascaraCodigoK = (isset($_SESSION['INGRESO']['Formato_Inventario']))?$_SESSION['INGRESO']['Formato_Inventario']:MascaraCodigoK;
+  if (strlen($Ctas) <= strlen($MascaraCodigoK)) {
+      for ($I = 1; $I <= strlen($MascaraCodigoK); $I++) {
+          $ch = substr($MascaraCodigoK, $I - 1, 1);
           if ($ch == "C") {
               $Strg .= " ";
           } else {
