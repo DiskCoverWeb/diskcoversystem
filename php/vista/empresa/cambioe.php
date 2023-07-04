@@ -23,6 +23,127 @@
 
   });
 
+  function provincias(pais)
+  {
+   var option ="<option value=''>Seleccione Provincia</option>"; 
+     $.ajax({
+      url: '../controlador/empresa/cambioeC.php?provincias=true',
+      type:'post',
+      dataType:'json',
+     data:{pais:pais},
+      beforeSend: function () {
+                   $("#ddl_ciudad").html("<option value=''>Seleccione provincia</option>");
+             },
+      success: function(response){
+      response.forEach(function(data,index){
+        option+="<option value='"+data.Codigo+"'>"+data.Descripcion_Rubro+"</option>";
+      });
+        $('#prov').html(option); 
+      console.log(response);
+    }
+    });
+  }
+
+
+  function subdireccion()
+{
+    var txtsubdi = $('#TxtSubdir').val();
+    $.ajax
+    ({
+        data:  {txtsubdi:txtsubdi},
+        url:   '../controlador/empresa/crear_empresaC.php?subdireccion=true',
+        type:  'post',
+        dataType: 'json',
+        success:  function (response) 
+        { 
+            if(response == null)
+            {
+                Swal.fire('Este directorio ya existe seleccione otro','','error');
+                $('#TxtSubdir').val('');
+            }
+            else{
+                console.log(response);
+            $('#TxtSubdir').val(response);
+            }
+        }
+    });
+}
+
+function MostrarUsuClave() 
+{
+    if($('#AsigUsuClave').prop('checked'))
+    {
+        $('#TxtUsuario').css('display','block');
+        $('#lblUsuario').css('display','block');
+        $('#TxtClave').css('display','block');
+        $('#lblClave').css('display','block');
+        TraerUsuClave();
+    }else
+    {
+        $('#TxtUsuario').css('display','none');
+        $('#lblUsuario').css('display','none');
+        $('#TxtClave').css('display','none');
+        $('#lblClave').css('display','none');
+    }
+}
+function TraerUsuClave()
+{
+    var form = $('#TxtCI').val();
+        $.ajax({
+            data:{form:form},//son los datos que se van a enviar por $_POST
+            url: '../controlador/empresa/crear_empresaC.php?traer_usuario=true',//los datos hacia donde se van a enviar el envio por url es por GET
+            type:'post',//envio por post
+            dataType:'json',
+            success: function(response){
+                console.log(response);
+                $('#TxtUsuario').val(response[0]['Usuario']);
+                $('#TxtClave').val(response[0]['Clave']);
+            }
+        });
+}
+
+function autocompletarCempresa(){
+        $('#ListaCopiaEmpresa').select2({
+        placeholder: 'Seleccionar copia empresa',
+        ajax: {
+            url: '../controlador/empresa/crear_empresaC.php?Copiarempresas=true',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            },
+            cache: true
+        }
+    });
+}
+
+  function ciudad_l(idpro)
+	{
+		// console.log(idpro);
+		var option ="<option value=''>Seleccione Ciudad</option>"; 
+		if(idpro !='')
+		{
+		   $.ajax({
+			  url: '../controlador/empresa/cambioeC.php?ciudad2=true',
+			  type:'post',
+			  dataType:'json',
+			  data:{idpro:idpro},
+			  success: function(response){
+				response.forEach(function(data,index){
+					option+="<option value='"+data.Codigo+"'>"+data.Descripcion_Rubro+"</option>";
+				});
+	            $('#ddl_ciudad').html(option);
+	            $('#ddl_ciudad').val(21701);
+				console.log(response);
+			}
+		  });
+		 } 
+
+	}
+
+
  function autocmpletar_entidad()
  {
 	$('#entidad').select2({
@@ -112,7 +233,11 @@
 function cambiarEmpresa()
 {
 	$('#myModal_espera').modal('show');
+	var ciu = $('#ddl_ciudad option:selected').text();
 	var parametros = $('#form_empresa').serialize();
+	var parametros = parametros+'&ciu='+ciu;
+	console.log(ciu)
+	console.log(parametros);
 	$.ajax({
 		type: "POST",
 		 url: '../controlador/empresa/cambioeC.php?editar_datos_empresa=true',
