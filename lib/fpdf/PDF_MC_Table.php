@@ -188,12 +188,12 @@ class PDF_MC_Table extends FPDF
 			  if($estiloRow != '')
 			  {
 			  	$this->SetFont('Arial',$estiloRow);
-			    $this->MultiCell($w,$h1,utf8_decode($data[$i]),$b1,$a);
+			    $this->MultiCell($w,$h1,mb_convert_encoding($data[$i],'ISO-8859-1','UTF-8'),$b1,$a);
 			  }else
 			  {
 			  	$this->SetFont('Arial','');
 				//str_replace('<b>','', $data[$i]);
-			    $this->MultiCell($w,$h1,utf8_decode($data[$i]),$b1,$a);
+			    $this->MultiCell($w,$h1,mb_convert_encoding($data[$i],'ISO-8859-1','UTF-8'),$b1,$a);
 			  }		
 				
 			}else
@@ -203,12 +203,12 @@ class PDF_MC_Table extends FPDF
 				if($estilo1[0]=='B' || $estilo1[0]=='I' || $estilo1[0]=='U'  || $estilo1[0]=='BI' || $estilo1[0]=='IU' || $estilo1[0]=='UB' || $estilo1[0]=='b' || $estilo1[0]=='i' || $estilo1[0]=='u'  || $estilo1[0]=='bi' || $estilo1[0]=='iu' || $estilo1[0]=='ub' )
 				{
 				$this->SetFont('',$estilo1[0]);		
-			    $this->MultiCell($w,$h1,str_replace('<'.$estilo1[0].'>','', utf8_decode($data[$i])),$b1,$a);
+			    $this->MultiCell($w,$h1,str_replace('<'.$estilo1[0].'>','', mb_convert_encoding($data[$i],'ISO-8859-1','UTF-8')),$b1,$a);
 			    }else
 			    {
 			    	$this->SetFont('Arial','');
 					//str_replace('<b>','', $data[$i]);
-				    $this->MultiCell($w,$h1,utf8_decode($data[$i]),$b1,$a);
+				    $this->MultiCell($w,$h1,mb_convert_encoding($data[$i],'UTF-8'),$b1,$a);
 			    }
 			}
 			// $this->MultiCell($w,$h1,$data[$i],$b1,$a);
@@ -352,7 +352,7 @@ class PDF_MC_Table extends FPDF
 		// Color del texto en gris
 		$this->SetTextColor(128);
 		// Número de página
-		$this->Cell(0,10,utf8_decode('Página ').$this->PageNo(),0,0,'C');
+		$this->Cell(0,10,mb_convert_encoding('Página ','ISO-8859-1','UTF-8').$this->PageNo(),0,0,'C');
 	}
 	function ChapterTitle($num, $label)
 	{
@@ -661,7 +661,7 @@ class PDF_MC_Table extends FPDF
         foreach($cabecera as $fila)
         {
             $this->RoundedRect($ejeX, $sy, $anc, $alt, $cur, $letra);
-            $this->CellFitSpace($anc,$altl, utf8_decode($fila),0, 0 , 'C');
+            $this->CellFitSpace($anc,$altl, mb_convert_encoding($fila,'ISO-8859-1','UTF-8'),0, 0 , 'C');
             $ejeX = $ejeX + $anc;
         }
     }

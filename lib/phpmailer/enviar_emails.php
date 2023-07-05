@@ -17,6 +17,7 @@ if(!class_exists('db'))
 class enviar_emails
 {
 	// private $mail;
+  private $db;
 	function __construct()
 	{
 		 $this->db  = new db();

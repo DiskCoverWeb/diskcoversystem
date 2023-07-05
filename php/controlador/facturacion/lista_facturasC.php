@@ -125,10 +125,13 @@ if(isset($_GET['descargar_xml']))
 
 class lista_facturasC
 {
-	private $modelo;
+		private $modelo;
     private $email;
     public $pdf;
     private $punto_venta;
+    private $empresaGeneral;
+    private $sri;
+	
 	public function __construct(){
     $this->modelo = new lista_facturasM();
 		$this->pdf = new cabecera_pdf();

@@ -98,9 +98,19 @@ protected $B;
 protected $I;
 protected $U;
 protected $HREF;
-protected $fontList;
+protected $fontlist;
 protected $issetfont;
 protected $issetcolor;
+
+protected $tableborder;
+protected $tableborder1;
+protected $tdbegin;
+protected $tdwidth;
+protected $tdheight;
+protected $tdalign;
+protected $tdbgcolor;
+protected $oldx;
+protected $oldy;
 
 /*******************************************************************************
 *                               Public methods                                 *
