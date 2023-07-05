@@ -17,30 +17,19 @@ class db
 	function __construct()
 	{
 
-		// print_r(dirname(__DIR__));die();
-
-		if(!file_exists(dirname(__DIR__).'/db/ipconfig.ini'))
-		{
-			mkdir(dirname(__DIR__).'/db/ipconfig.ini');
-			//escribir local host adentro de ipconfig.ini
-		}else
-		{			
-	    $p = file_get_contents(dirname(__DIR__).'/db/ipconfig.ini');
-		  $this->ipconfig = $p;
-		}
-
+	
 	  if(!file_exists(dirname(__DIR__).'/db/ipconfigMYSQL.ini'))
 		{
 			mkdir(dirname(__DIR__).'/db/ipconfigMYSQL.ini');
 			//escribir local host adentro de ipconfig.ini
 		}else{
     	$dbMysql = file_get_contents(dirname(__DIR__).'/db/ipconfigMYSQL.ini');
-    	$dbMysql= explode("\n", $dbMysql);
-    	$this->usuario = trim($dbMysql[0]);
-	    $this->password =  trim($dbMysql[1]);
-	    $this->servidor = trim($this->ipconfig);
-	    $this->database = trim($dbMysql[2]);
-	    $this->puerto = trim($dbMysql[3]);
+    	$dbMysql= explode("\n", $dbMysql);    	
+    	$this->servidor = trim($dbMysql[0]);
+    	$this->usuario = trim($dbMysql[1]);
+	    $this->password =  trim($dbMysql[2]);
+	    $this->database = trim($dbMysql[3]);
+	    $this->puerto = trim($dbMysql[4]);
   	}
 	   
 	}
@@ -65,11 +54,7 @@ class db
 		// print_r($_SESSION['INGRESO']);die();
 			$this->usuario = $_SESSION['INGRESO']['Usuario_DB'];
 	    $this->password = $_SESSION['INGRESO']['Password_DB'];  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
-	    $this->servidor = $_SESSION['INGRESO']['IP_VPN_RUTA'];
-	    if($_SESSION['INGRESO']['IP_VPN_RUTA']=='tcp:mysql.diskcoversystem.com' &&  $this->ipconfig=='localhost')
-	    {
-	    	$this->servidor = $this->ipconfig;
-	    }
+	    $this->servidor = $_SESSION['INGRESO']['IP_VPN_RUTA'];	   
 	    $this->database = $_SESSION['INGRESO']['Base_Datos'];
 	    $this->puerto = $_SESSION['INGRESO']['Puerto'];
 		// print_r($_SESSION);die();
@@ -93,7 +78,7 @@ class db
 
 	function MySQL()
 	{
-		$conn =  new mysqli($this->servidor, $this->usuario, $this->password,$this->database,$this->puerto);
+		$conn =  new mysqli($this->servidor.':'.$this->puerto, $this->usuario, $this->password,$this->database);
 		$conn->set_charset("utf8");
 		if (!$conn) 
 		{
