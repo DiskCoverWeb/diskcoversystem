@@ -9,6 +9,7 @@ class punto_ventaM
 {
 	private $db;
   private $email;
+  private $pdf;
 
 	public function __construct(){
 

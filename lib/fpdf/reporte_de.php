@@ -2223,14 +2223,14 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	if(strlen($_SESSION['INGRESO']['Telefono1'])>1)
 	{
 	 $pdf->SetWidths(array($margen_med));
-	 $arr=array(utf8_decode($_SESSION['INGRESO']['Telefono1']));//mio
+	 $arr=array($_SESSION['INGRESO']['Telefono1']);//mio
 	 $pdf->Row($arr,10);
 	 $pdf->ln(10);;
 	}
 	if(strlen($_SESSION['INGRESO']['Email'])>1)
 	{
 	 $pdf->SetWidths(array($margen_med));
-	 $arr=array(utf8_decode($_SESSION['INGRESO']['Email']));//mio
+	 $arr=array($_SESSION['INGRESO']['Email']);//mio
 	 $pdf->Row($arr,10);
 	 $pdf->ln(10);;
 	}
@@ -2560,7 +2560,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(370,90,65));
-	$arr=array(utf8_decode($datos[0]['Razon_Social']),'',$datos[0]['RUC_CI']);//mio
+	$arr=array(mb_convert_encoding($datos[0]['Razon_Social'],'ISO-8859-1','UTF-8'),'',$datos[0]['RUC_CI']);//mio
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(270,155,100));
@@ -2610,7 +2610,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(370,90,65));
-	$arr=array(utf8_decode($datos[0]['Comercial']),'',$datos[0]['CIRUC_Comercial']);
+	$arr=array(mb_convert_encoding($datos[0]['Comercial'],'ISO-8859-1','UTF-8'),'',$datos[0]['CIRUC_Comercial']);
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(270,100,100,55));
@@ -2639,7 +2639,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(370,85,80));
-	$arr=array(utf8_decode($datos[0]['Entrega']),'',$datos[0]['CIRUC_Entrega']);//mio
+	$arr=array(mb_convert_encoding($datos[0]['Entrega'],'ISO-8859-1','UTF-8'),'',$datos[0]['CIRUC_Entrega']);//mio
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(525));
@@ -2980,13 +2980,13 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	if(strlen($_SESSION['INGRESO']['Telefono1'])>1)
 	{
 	 $pdf->SetWidths(array($margen_med));
-	 $arr=array(utf8_decode($_SESSION['INGRESO']['Telefono1']));//mio
+	 $arr=array(mb_convert_encoding($_SESSION['INGRESO']['Telefono1'],'UTF-8'));//mio
 	 $pdf->Row($arr,10);
 	}
 	if(strlen($_SESSION['INGRESO']['Email'])>1)
 	{
 	 $pdf->SetWidths(array($margen_med));
-	 $arr=array(utf8_decode($_SESSION['INGRESO']['Email']));//mio
+	 $arr=array(mb_convert_encoding($_SESSION['INGRESO']['Email'],'UTF-8'));//mio
 	 $pdf->Row($arr,10);
 	}
 
@@ -3321,7 +3321,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(370,85,80));
-	$arr=array(utf8_decode($datos[0]['Razon_Social']),$datos[0]['RUC_CI'],$datos[0]['Telefono_RS']);//mio
+	$arr=array(mb_convert_encoding($datos[0]['Razon_Social'],'ISO-8859-1','UTF-8'),$datos[0]['RUC_CI'],$datos[0]['Telefono_RS']);//mio
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(270,155,100));
@@ -3605,7 +3605,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	// print_r($sucursal);die();
 
 
-	if(count($sucursal)>0 && $punto!='001' && $suc=='001' && strlen($sucursal[0]['RUC_Establecimiento'])==13)
+	if( count($sucursal)>0 && $punto!='001' && $suc=='001' && strlen($sucursal[0]['RUC_Establecimiento'])==13)
 	{
 
 		$arr=array('Punto Emision: '.$datos[0]['Serie']);
@@ -4206,7 +4206,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$pdf->SetFont('Arial','B',9);
 		$pdf->SetXY($x, $posy);
 		$pdf->SetWidths(array(240));
-		$arr=array(utf8_decode($_SESSION['INGRESO']['Razon_Social']));//mio
+		$arr=array(mb_convert_encoding($_SESSION['INGRESO']['Razon_Social'],'iso-8859-1','UTF-8'));//mio
 		$pdf->Row($arr,10);
 
 	}else{
@@ -4214,14 +4214,14 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$pdf->SetFont('Arial','B',9);
 		$pdf->SetXY($x, $posy);
 		$pdf->SetWidths(array(240));
-		$arr=array(utf8_decode($_SESSION['INGRESO']['Razon_Social']));//mio
+		$arr=array(mb_convert_encoding($_SESSION['INGRESO']['Razon_Social'],'iso-8859-1','UTF-8'));//mio
 		$pdf->Row($arr,8);
 		
 		//nombre comercial
 		$pdf->SetFont('Arial','B',9);
 		$pdf->SetXY($x,$posy+12);
 		$pdf->SetWidths(array(240));
-		$arr=array(utf8_decode($_SESSION['INGRESO']['Nombre_Comercial']));//mio
+		$arr=array(mb_convert_encoding($_SESSION['INGRESO']['Nombre_Comercial'],'iso-8859-1','UTF-8'));//mio
 		$pdf->Row($arr,8);
 	//print_r($datos);
 		
@@ -4240,7 +4240,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->SetFont('Arial','',7);
 	$pdf->SetXY($x, $pdf->GetY());
 	$pdf->SetWidths(array(240));
-	$arr=array(utf8_decode($_SESSION['INGRESO']['Direccion']));//mio
+	$arr=array(mb_convert_encoding($_SESSION['INGRESO']['Direccion'],'iso-8859-1','UTF-8'));//mio
 	$pdf->Row($arr,10);
 
 	// print_r($_SESSION['INGRESO']);die();
@@ -4256,13 +4256,13 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	if(strlen($_SESSION['INGRESO']['Telefono1'])>1)
 	{
 	 $pdf->SetWidths(array(240));
-	 $arr=array(utf8_decode($_SESSION['INGRESO']['Telefono1']));//mio
+	 $arr=array($_SESSION['INGRESO']['Telefono1']);//mio
 	 $pdf->Row($arr,10);
 	}
 	if(strlen($_SESSION['INGRESO']['Email'])>1)
 	{
 	 $pdf->SetWidths(array(240));
-	 $arr=array(utf8_decode($_SESSION['INGRESO']['Email']));//mio
+	 $arr=array($_SESSION['INGRESO']['Email']);//mio
 	 $pdf->Row($arr,10);
 	}
 
@@ -4364,7 +4364,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(270,185,80));
-	$arr=array(utf8_decode($datos[0]['Razon_Social']),'',$datos[0]['RUC_CI']);//mio
+	$arr=array(mb_convert_encoding($datos[0]['Razon_Social'],'ISO-8859-1','UTF-8'),'',$datos[0]['RUC_CI']);//mio
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(270,155,100));
@@ -4930,14 +4930,14 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	if(strlen($_SESSION['INGRESO']['Telefono1'])>1)
 	{
 	 $pdf->SetWidths(array($margen_med));
-	 $arr=array(utf8_decode($_SESSION['INGRESO']['Telefono1']));//mio
+	 $arr=array($_SESSION['INGRESO']['Telefono1']);//mio
 	 $pdf->Row($arr,10);
 	 $pdf->ln(10);
 	}
 	if(strlen($_SESSION['INGRESO']['Email'])>1)
 	{
 	 $pdf->SetWidths(array($margen_med));
-	 $arr=array(utf8_decode($_SESSION['INGRESO']['Email']));//mio
+	 $arr=array($_SESSION['INGRESO']['Email']);//mio
 	 $pdf->Row($arr,10);
 	 $pdf->ln(10);
 	}
@@ -5262,7 +5262,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(380,165));
-	$arr=array(utf8_decode($cliente[0]['Cliente']),$cliente[0]['CI_RUC']);//mio
+	$arr=array(mb_convert_encoding($cliente[0]['Cliente'],'ISO-8859-1','UTF-8'),$cliente[0]['CI_RUC']);//mio
 	$pdf->Row($arr,10);
 
 	$pdf->SetFont('Arial','',6);
@@ -5947,7 +5947,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$pdf->SetFont('Arial','B',9);
 		$pdf->SetXY($x, $posy);
 		$pdf->SetWidths(array(280));
-		$arr=array(utf8_decode($_SESSION['INGRESO']['Razon_Social']));//mio
+		$arr=array(mb_convert_encoding($_SESSION['INGRESO']['Razon_Social'],'ISO-8859-1','UTF-8'));//mio
 		$pdf->Row($arr,10);
 		$pdf->ln(10);
 
@@ -5956,7 +5956,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$pdf->SetFont('Arial','B',9);
 		$pdf->SetXY($x, $posy);
 		$pdf->SetWidths(array(280));
-		$arr=array(utf8_decode($_SESSION['INGRESO']['Razon_Social']));//mio
+		$arr=array(mb_convert_encoding($_SESSION['INGRESO']['Razon_Social'],'ISO-8859-1','UTF-8'));//mio
 		$pdf->Row($arr,10);
 		$pdf->ln(10);
 		
@@ -5964,7 +5964,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		$pdf->SetFont('Arial','B',9);
 		$pdf->SetXY($x,$posy+12);
 		$pdf->SetWidths(array(280));
-		$arr=array(utf8_decode($_SESSION['INGRESO']['Nombre_Comercial']));//mio
+		$arr=array(mb_convert_encoding($_SESSION['INGRESO']['Nombre_Comercial'],'ISO-8859-1','UTF-8'));//mio
 		$pdf->Row($arr,10);
 		$pdf->ln(10);
 	//print_r($datos);
@@ -5986,7 +5986,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->SetFont('Arial','',7);
 	$pdf->SetXY($x, $pdf->GetY());
 	$pdf->SetWidths(array(280));
-	$arr=array(utf8_decode($_SESSION['INGRESO']['Direccion']));//mio
+	$arr=array(mb_convert_encoding($_SESSION['INGRESO']['Direccion'],'ISO-8859-1','UTF-8'));//mio
 	$pdf->Row($arr,10);
 	$pdf->ln(10);
 	
@@ -6000,7 +6000,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->SetFont('Arial','',7);
 	$pdf->SetXY($x, $pdf->GetY());
 	$pdf->SetWidths(array(280));
-	$arr=array(utf8_decode($_SESSION['INGRESO']['Direccion']));//mio
+	$arr=array(mb_convert_encoding($_SESSION['INGRESO']['Direccion'],'ISO-8859-1','UTF-8'));//mio
 	$pdf->Row($arr,10);
 	$pdf->ln(10);
 	
@@ -6050,7 +6050,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(270,185,80));
-	$arr=array(utf8_decode($datos[0]['Cliente']),'',$datos[0]['CI_RUC']);//mio
+	$arr=array(mb_convert_encoding($datos[0]['Cliente'],'ISO-8859-1','UTF-8'),'',$datos[0]['CI_RUC']);//mio
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(270,155,100));

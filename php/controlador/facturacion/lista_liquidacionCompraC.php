@@ -117,8 +117,11 @@ if(isset($_GET['descargar_xml']))
 class lista_liquidacionCompraC
 {
 	private $modelo;
-    private $email;
-    private $pdf;
+  private $email;
+  private $pdf;
+ 	private $empresaGeneral;
+ 	private $sri;
+	
 	public function __construct(){
     $this->modelo = new lista_liquidacionCompraM();
 		$this->pdf = new cabecera_pdf();

@@ -1,86 +1,87 @@
-<?xml version="1.0" encoding="UTF-8"?><guiaRemision id="comprobante" version="1.0.0">
+<?xml version="1.0" encoding="UTF-8"?><liquidacionCompra id="comprobante" version="1.1.0">
   <infoTributaria>
     <ambiente>1</ambiente>
     <tipoEmision>1</tipoEmision>
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>2106202306070216417900110010030000000301234567813</claveAcceso>
-    <codDoc>06</codDoc>
+    <claveAcceso>2802202303070216417900110010020000000221234567819</claveAcceso>
+    <codDoc>03</codDoc>
     <estab>001</estab>
-    <ptoEmi>003</ptoEmi>
-    <secuencial>000000030</secuencial>
+    <ptoEmi>002</ptoEmi>
+    <secuencial>000000022</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
-  <infoGuiaRemision>
-    <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
-    <dirPartida>ALAUSI</dirPartida>
-    <razonSocialTransportista>ABAD MOSQUERA EDITHSON MARCELO</razonSocialTransportista>
-    <tipoIdentificacionTransportista>05</tipoIdentificacionTransportista>
-    <rucTransportista>0701520546</rucTransportista>
-    <rise>000</rise>
+  <infoLiquidacionCompra>
+    <fechaEmision>28/02/2023</fechaEmision>
+    <dirEstablecimiento>direccion prueba</dirEstablecimiento>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <fechaIniTransporte>21/06/2023</fechaIniTransporte>
-    <fechaFinTransporte>21/06/2023</fechaFinTransporte>
-    <placa>XXX-999</placa>
-  </infoGuiaRemision>
-  <destinatarios>
-    <destinatario>
-      <identificacionDestinatario>0902435429</identificacionDestinatario>
-      <razonSocialDestinatario>ABAD VERDUGA CARMEN</razonSocialDestinatario>
-      <dirDestinatario>CAMILO PONCE ENRIQUEZ</dirDestinatario>
-      <motivoTraslado>Translado de mercaderia</motivoTraslado>
-      <ruta>De ALAUSI a CAMILO PONCE ENRIQUEZ</ruta>
-      <codDocSustento>00</codDocSustento>
-      <numDocSustento>001-001-000000130</numDocSustento>
-      <numAutDocSustento>0702164179001</numAutDocSustento>
-      <fechaEmisionDocSustento>21/06/2023</fechaEmisionDocSustento>
-      <detalles>
-        <detalle>
-          <codigoInterno>98.24</codigoInterno>
-          <descripcion>6 LINEAS, 2023: 0606</descripcion>
-          <cantidad>1.0000</cantidad>
-        </detalle>
-      </detalles>
-    </destinatario>
-  </destinatarios>
+    <tipoIdentificacionProveedor>05</tipoIdentificacionProveedor>
+    <razonSocialProveedor>ALAVA BAZURTO STALYN JAVIER</razonSocialProveedor>
+    <identificacionProveedor>0919044693</identificacionProveedor>
+    <totalSinImpuestos>20.00</totalSinImpuestos>
+    <totalDescuento>0.00</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0.00</descuentoAdicional>
+        <baseImponible>20.00</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <importeTotal>20.00</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>20.00</total>
+      </pago>
+    </pagos>
+  </infoLiquidacionCompra>
+  <detalles/>
   <infoAdicional>
     <campoAdicional nombre="Direccion">SD</campoAdicional>
-    <campoAdicional nombre="Telefono">000000000</campoAdicional>
-    <campoAdicional nombre="Email">diskcoversystem@msn.com</campoAdicional>
-    <campoAdicional nombre="motivoTraslado">.</campoAdicional>
-    <campoAdicional nombre="notaAuxiliar">.</campoAdicional>
-    <campoAdicional nombre="lugarEntrega">plazoleta americas</campoAdicional>
+    <campoAdicional nombre="Telefono">022000000</campoAdicional>
+    <campoAdicional nombre="Email">javierfarinango92@gmailcom</campoAdicional>
+    <campoAdicional nombre="seriePuntoEmision">001002</campoAdicional>
+    <campoAdicional nombre="socioRazonSocial">Nombre establecimiento</campoAdicional>
+    <campoAdicional nombre="socioRUC">123456789</campoAdicional>
+    <campoAdicional nombre="socioDireccion">direccion prueba</campoAdicional>
+    <campoAdicional nombre="socioTelefono">022222222</campoAdicional>
+    <campoAdicional nombre="socioEmail">eample@establecimeinto.com</campoAdicional>
+    <campoAdicional nombre="PlacaVehiculo">.</campoAdicional>
+    <campoAdicional nombre="CtaEstablecimiento">.</campoAdicional>
   </infoAdicional>
-<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature679680">
-<ds:SignedInfo Id="Signature-SignedInfo957356">
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature720522">
+<ds:SignedInfo Id="Signature-SignedInfo680236">
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-<ds:Reference Id="SignedPropertiesID726496" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature679680-SignedProperties229964">
+<ds:Reference Id="SignedPropertiesID325079" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature720522-SignedProperties76896">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>Hx2SBB2VPfk+g8zRjzH/w9t0XfA=</ds:DigestValue>
+<ds:DigestValue>neCj/QXImxMUc1zm/mtDwUQ45N4=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference URI="#Certificate1147342">
+<ds:Reference URI="#Certificate1882700">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>NCNVe5Jy9LHocSVXgIPdft2F8d0=</ds:DigestValue>
+<ds:DigestValue>2S094po43fXcikd8DZjGu0ZJBiQ=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference Id="Reference-ID-339649" URI="#comprobante">
+<ds:Reference Id="Reference-ID-94204" URI="#comprobante">
 <ds:Transforms>
 <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>UreOTLuP7rnPJCdQBLIArpRw+R0=</ds:DigestValue>
+<ds:DigestValue>ZdzRltHHwB89QVETnyq9Zc0pbA4=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue Id="SignatureValue878400">
-T7/Y2q/8WVFXj21dkAoEmpgAHdOf5E/o2/SwKczyvaQKdkQ/0iaQWuPltIRsD6QS1xQPgFeL16ul
-n4k+LrVpz84g29N2l8kNTuzdixYnJQCZUojeKHjGq6TVBDNuf3kRKy1Kmre8khoHoIzvd4lNhYWT
-MlVHYk9hzuc/aGchegQP8gkYlcE+TGtx4NdSn4jkQ+o76q1Gwjt6OkrBEqT0R2umCZC0Ti/p+C2J
-vGmIpW/+L/FJ/Q1G6S5HY1DOW5KKLi7u0CH5pGH0Q9Ioy/FTZt9XNZJoPc3rU9Ep84qsX93GHMkW
-6htZSNQvRHP6i0p3J5CJlMwy9KWerzL0slLvwA==
+<ds:SignatureValue Id="SignatureValue536529">
+Lu9uvtD+bAVUhiXxHv2BM1k3PKXnAcdg1/uiSNKvzufJ8s0VZP1KpswtBeWsDZlYQBRuwGOvYBF5
+mdqinJsB62Oe3Ro/O8reP30pNweAVdCNHb4E47wW8uCBg8EQbVRjjGx3rhrNRHeny2GdBomJgGiR
+7ICMHASNi0vttGHy39NCiyVo+JhF5EXnfzBIfd/DE2yhOm3ESU0/hVwIs/x6bfVReYwkkvm5QByw
+oSx1EDCAhcObpKi2YSTOlCgqBYEb04sPrVe/d8KNk5qYfNnlAF0d9S/RdMMmnlzzWpsgdvsndnnC
+hCk55mtJwPbU9ETf8DnsKf2uDPpZ30FfvrP8Eg==
 </ds:SignatureValue>
-<ds:KeyInfo Id="Certificate1147342">
+<ds:KeyInfo Id="Certificate1882700">
 <ds:X509Data>
 <ds:X509Certificate>
 MIILkjCCCXqgAwIBAgIEXDrIAjANBgkqhkiG9w0BAQsFADCBmTELMAkGA1UEBhMCRUMxHTAbBgNV
@@ -151,4 +152,19 @@ LRuAVSyi58qyAD0Eu1zLMc3KhEUXoxF7aA8P0w==
 </ds:RSAKeyValue>
 </ds:KeyValue>
 </ds:KeyInfo>
-<ds:Object Id="Signature679680-Object543127"><etsi:QualifyingProperties Target="#Signature679680"><etsi:SignedProperties Id="Signature679680-SignedProperties229964"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-06-21T16:39:36-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-339649"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></guiaRemision>
+<ds:Object Id="Signature720522-Object306160"><etsi:QualifyingProperties Target="#Signature720522"><etsi:SignedProperties Id="Signature720522-SignedProperties76896"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-07-05T15:44:06-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-94204"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature><ns2:respuestaSolicitud xmlns:ns2="http://ec.gob.sri.ws.recepcion">
+    <estado>DEVUELTA</estado>
+    <comprobantes>
+        <comprobante>
+            <claveAcceso>2802202303070216417900110010020000000221234567819</claveAcceso>
+            <mensajes>
+                <mensaje>
+                    <identificador>65</identificador>
+                    <mensaje>FECHA EMISIÓN EXTEMPORANEA</mensaje>
+                    <informacionAdicional>La fecha de emisión está fuera del rango de tolerancia [129600 minutos], o es mayor a la fecha del servidor</informacionAdicional>
+                    <tipo>ERROR</tipo>
+                </mensaje>
+            </mensajes>
+        </comprobante>
+    </comprobantes>
+</ns2:respuestaSolicitud></liquidacionCompra>

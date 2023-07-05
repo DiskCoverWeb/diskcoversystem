@@ -24,6 +24,11 @@ class cabecera_pdf
 	private $conn;
 	private $header_cuerpo;
 	private $pdf_sin_cabecera;
+	private $fpdf;
+	private $pdftable;
+	private $fechafin;
+	private $fechaini;
+	private $sizetable;
 
 	function __construct()
 	{

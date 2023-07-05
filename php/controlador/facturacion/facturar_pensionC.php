@@ -271,6 +271,8 @@ class facturar_pensionC
 	private $catalogoProductosModel;
   private $pdf;
   private $facturas;
+  private $email;
+  private $autorizar_sri;
 
 
 	public function __construct(){
@@ -361,7 +363,7 @@ class facturar_pensionC
 
     $catalogo = [];
     foreach ($datos as $value) {
-      $catalogo[] = array('id'=>$value['Fact']." ".$value['Serie']." ".$value['Autorizacion']." ".$value['CxC']." ".$value['Codigo'] ,'text'=>utf8_encode($value['Concepto']));
+      $catalogo[] = array('id'=>$value['Fact']." ".$value['Serie']." ".$value['Autorizacion']." ".$value['CxC']." ".$value['Codigo'] ,'text'=>mb_convert_encoding($value['Concepto'],'UTF-8'));
     }    
     return $catalogo;
 	}

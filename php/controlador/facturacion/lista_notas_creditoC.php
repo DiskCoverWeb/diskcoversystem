@@ -58,6 +58,9 @@ class lista_notas_creditoC
     private $email;
     public $pdf;
     private $punto_venta;
+    private $empresaGeneral;
+    private $sri;
+    private $notas_credito;
     
 	public function __construct(){
     	$this->modelo = new lista_notas_creditoM();

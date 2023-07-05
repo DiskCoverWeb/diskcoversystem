@@ -10,6 +10,7 @@ require_once(dirname(__DIR__,3)."/lib/phpmailer/enviar_emails.php");
 class notas_creditoM
 {
 	private $db;
+	private $pdf;
 	function __construct()
 	{		
       $this->db = new db();

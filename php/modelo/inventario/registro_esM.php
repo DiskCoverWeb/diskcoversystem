@@ -11,6 +11,7 @@ class registro_esM
 {
 	
 	private $conn ;
+	private $db;
 	function __construct()
 	{
 	   $this->conn = cone_ajax();
@@ -919,7 +920,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		$datos[]=['Codigo'=>$row['Codigo'],'CTipoPago'=>utf8_encode($row['CTipoPago'])];	
+		$datos[]=['Codigo'=>$row['Codigo'],'CTipoPago'=>mb_convert_encoding($row['CTipoPago'],'UTF-8')];	
 		 // $datos[] = $row;
 	   }
        return $datos;

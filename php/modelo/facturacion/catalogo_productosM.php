@@ -7,7 +7,7 @@ require_once(dirname(__DIR__,2)."/funciones/funciones.php");
  */
 class catalogo_productosM
 {
-	
+	private $db;	
 	function __construct()
 	{
 	    $this->db = new db();
