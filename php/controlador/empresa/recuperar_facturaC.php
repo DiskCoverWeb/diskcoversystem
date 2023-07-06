@@ -31,6 +31,7 @@ if(isset($_GET['empresas']))
 class recuperar_facturaC 
 {
     private $modelo;
+    private $sri;
     function __construct()
 	{
         $this->modelo = new recuperar_facturaM();

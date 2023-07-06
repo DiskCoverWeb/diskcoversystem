@@ -374,7 +374,7 @@ class facturar_pensionC
 		$datos = $this->facturacion->getCatalogoProductos($codigoCliente,$CMedidor);
 		$catalogo = [];
 		foreach ($datos as $value) {
-			$catalogo[] = array('mes'=> utf8_encode($value['Mes']),'codigo'=> utf8_encode($value['Codigo_Inv']),'periodo'=> utf8_encode($value['Periodos']),'producto'=>$value['Producto'],'valor'=> utf8_encode($value['Valor']), 'descuento'=> utf8_encode($value['Descuento']),'descuento2'=> utf8_encode($value['Descuento2']),'iva'=> utf8_encode($value['IVA']),'CodigoL'=> utf8_encode($value['Codigo']),'CodigoL'=> utf8_encode($value['Codigo']),'Credito_No'=>$value['Credito_No'],'Codigo_Auto'=>$value['Codigo_Auto']);
+			$catalogo[] = array('mes'=> mb_convert_encoding($value['Mes'], 'UTF-8'),'codigo'=> mb_convert_encoding($value['Codigo_Inv'], 'UTF-8'),'periodo'=> mb_convert_encoding($value['Periodos'], 'UTF-8'),'producto'=>$value['Producto'],'valor'=> mb_convert_encoding($value['Valor'], 'UTF-8'), 'descuento'=> mb_convert_encoding($value['Descuento'], 'UTF-8'),'descuento2'=> mb_convert_encoding($value['Descuento2'], 'UTF-8'),'iva'=> mb_convert_encoding($value['IVA'], 'UTF-8'),'CodigoL'=> mb_convert_encoding($value['Codigo'], 'UTF-8'),'CodigoL'=> mb_convert_encoding($value['Codigo'], 'UTF-8'),'Credito_No'=>$value['Credito_No'],'Codigo_Auto'=>$value['Codigo_Auto']);
 		}
     return $catalogo;
 	}
@@ -387,7 +387,7 @@ class facturar_pensionC
     $datos = $this->facturacion->historiaCliente($codigoCliente);
     $historia = [];
     foreach ($datos as $value) {
-      $historia[] = array('TD'=> utf8_encode($value['TD']),'Fecha'=> utf8_encode($value['Fecha']->format('Y-m-d')),'Serie'=> utf8_encode($value['Serie']),'Factura'=> utf8_encode($value['Factura']),'Detalle'=> $value['Detalle'], 'Anio'=> utf8_encode($value['Anio']),'Mes'=> utf8_encode($value['Mes']),'Total'=> utf8_encode($value['Total']),'Abonos'=> utf8_encode($value['Abonos']),'Mes_No'=> utf8_encode($value['Mes_No']),'No'=> utf8_encode($value['No']) );
+      $historia[] = array('TD'=> mb_convert_encoding($value['TD'], 'UTF-8'),'Fecha'=> mb_convert_encoding($value['Fecha']->format('Y-m-d'), 'UTF-8'),'Serie'=> mb_convert_encoding($value['Serie'], 'UTF-8'),'Factura'=> mb_convert_encoding($value['Factura'], 'UTF-8'),'Detalle'=> $value['Detalle'], 'Anio'=> mb_convert_encoding($value['Anio'], 'UTF-8'),'Mes'=> mb_convert_encoding($value['Mes'], 'UTF-8'),'Total'=> mb_convert_encoding($value['Total'], 'UTF-8'),'Abonos'=> mb_convert_encoding($value['Abonos'], 'UTF-8'),'Mes_No'=> mb_convert_encoding($value['Mes_No'], 'UTF-8'),'No'=> mb_convert_encoding($value['No'], 'UTF-8') );
     }
     echo json_encode($historia);
     exit();
@@ -915,7 +915,7 @@ class facturar_pensionC
         if($rep==1)
         {
           $resultado = array('respuesta'=>$rep, 'auto'=>$dataFac['Autorizacion'], 'per' => $dataFac['Periodo']);
-        }else{ $resultado = array('respuesta'=>-1,'text'=>((!is_null($rep))?utf8_encode($rep):$rep), 'auto'=>$dataFac['Autorizacion'], 'per' => $dataFac['Periodo']);}
+        }else{ $resultado = array('respuesta'=>-1,'text'=>((!is_null($rep))?mb_convert_encoding($rep, 'UTF-8'):$rep), 'auto'=>$dataFac['Autorizacion'], 'per' => $dataFac['Periodo']);}
       } catch (Exception $e) {
         $resultado = array('respuesta'=>-1,'text'=>$e->getMessage());
       }

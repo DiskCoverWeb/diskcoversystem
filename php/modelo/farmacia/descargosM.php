@@ -13,6 +13,7 @@ class descargosM
 {
 	
 	private $conn ;
+	private $conn1 ;
 	function __construct()
 	{
 	   $this->conn = cone_ajax();

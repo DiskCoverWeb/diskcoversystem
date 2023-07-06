@@ -11,6 +11,7 @@ include(dirname(__DIR__,3).'/lib/fpdf/reporte_de.php');
 class detalle_estudianteM
 {
 	private $conn;	
+	private $pdf;	
 	function __construct()
 	{
 		$this->conn = new db();

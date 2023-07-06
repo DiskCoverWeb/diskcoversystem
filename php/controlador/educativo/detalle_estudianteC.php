@@ -165,6 +165,7 @@ class detalle_estudianteC
 	private $empresaGeneral;
   private $email;
   private $sri;
+  private $pdf;
 	
 	function __construct()
 	{
@@ -235,24 +236,21 @@ class detalle_estudianteC
          	if (!file_exists('../../img/img_estudiantes/'.$value)) 
          	{
          		$value='';
-        		//$new[utf8_encode($key)] = utf8_encode($value);
-				$new[utf8_encode($key)] = $value;
+				$new[mb_convert_encoding($key, 'UTF-8')] = $value;
          	} 
          } 
 
          if($value == '.')
          {
 
-         $new[utf8_encode($key)] = '';
+         $new[mb_convert_encoding($key, 'UTF-8')] = '';
          }else{
 
-          //$new[utf8_encode($key)] = utf8_encode($value);
-          $new[utf8_encode($key)] = $value;
+          $new[mb_convert_encoding($key, 'UTF-8')] = $value;
          }
         }else
         {
-        	//print_r($value);
-          $new[utf8_encode($key)] = $value->format('Y-m-d');        	
+          $new[mb_convert_encoding($key, 'UTF-8')] = $value->format('Y-m-d');        	
         }
 
      }
@@ -585,7 +583,7 @@ class detalle_estudianteC
     }
   	$tablaHtml='<table><tr><td></td></tr><tr><td><td></tr></table>';
   	$texto = 'La '.utf8_decode($this->empresa[0]['Institucion1']).' '.utf8_decode($this->empresa[0]['Institucion2']).' De Conformidad con el Reglamento a la Ley Orgánica de Educación Intercultural, registra la matricula  de '.$genero.' estudiante:';
-  	$texto2 ='El infrascrito, representante de '.$genero.' estudiante matriculad'.$genero1.', declara que se encuentra conforme con los datos que <br>anteceden y firma sometiéndose a las disposiciones del citado reglamento.<br>Lugar y Fecha: '.utf8_encode($fecha);
+  	$texto2 ='El infrascrito, representante de '.$genero.' estudiante matriculad'.$genero1.', declara que se encuentra conforme con los datos que <br>anteceden y firma sometiéndose a las disposiciones del citado reglamento.<br>Lugar y Fecha: '.mb_convert_encoding($fecha, 'UTF-8');
   	//print_r($datos[0]['Fecha_N']->format('Y-m-d'));
      $nombre = $datos[0]['Cliente'];
      $nom_ma = '&nbsp;';
@@ -680,10 +678,10 @@ class detalle_estudianteC
 	<tr><td width="350" ALIGN="RIGHT"><b>EL ALUMNO(A):</b></td><td width="350">'.strtoupper($datos[0]['Cliente']).'</td></tr>
 	<tr><td height="150" width="150"><b>CURSO</b></td><td height="150"  width="500">'.$datos[0]['Direccion'].'</td></tr>
 	<tr><td height="150" width="150"><b>CICLO</b></td><td height="150">'.$this->empresa[0]['Anio_Lectivo'].'</td></tr>
-	<tr><td height="150" width="150"><b>Nivel de estudio</b></td><td height="150">'.utf8_encode($datos[0]['Curso_Superior']).'</td></tr>
+	<tr><td height="150" width="150"><b>Nivel de estudio</b></td><td height="150">'.mb_convert_encoding($datos[0]['Curso_Superior'], 'UTF-8').'</td></tr>
 	<tr><td height="150" width="150"><b>MATRICULA No</b></td><td height="150">'.$datos[0]['Matricula_No'].'</td></tr>
 	<tr><td height="150" width="150"><b>FOLIO No</b></td><td height="150">'.$datos[0]['Folio_No'].'</td></tr>
-	<tr><td height="150" width="300">'.utf8_encode($fecha).'</td></tr>
+	<tr><td height="150" width="300">'.mb_convert_encoding($fecha, 'UTF-8').'</td></tr>
 </table>
 <table>
 	<tr><td height="160" width="350">&nbsp;</td><td height="160" width="350">&nbsp;</td></tr>
@@ -739,7 +737,7 @@ if($datos[0]['Archivo_Foto'] !='.' && $datos[0]['Archivo_Foto'] !='')
 	$tablaHtml.='<tr><td width="200" height=""><b>AÑO</b></td><td width="550">'.$this->empresa[0]['Anio_Lectivo'].'</td></tr>
 	<tr><td width="200" height=""><b>SECCION</b></td><td width="550">'.$datos[0]['Seccion'].'</td></tr>
 	<tr><td width="200" height=""><b>NIVEL DE ESTUDIO</b></td><td width="550">'.$datos[0]['Curso_Superior'].'</td></tr>
-	<tr><td width="200" height=""><b>CURSO - GRADO</b></td><td width="550">'.utf8_encode($datos[0]['Grupo']).' '.$datos[0]['Direccion'].'</td></tr>
+	<tr><td width="200" height=""><b>CURSO - GRADO</b></td><td width="550">'.mb_convert_encoding($datos[0]['Grupo'], 'UTF-8').' '.$datos[0]['Direccion'].'</td></tr>
 	<tr><td height="20" width="550">&nbsp;</td></tr>
 	<tr><td width="200" height=""><b><u>DATOS PERSONALES</u></b></td><td width="" height=""></td></tr>
 	<tr><td width="200" height=""><b>NOMBRES Y APELLIDOS</b></td><td width="550">'.$datos[0]['Cliente'].'</td></tr>
@@ -895,7 +893,6 @@ if (!file_exists('../../img/img_estudiantes/'.$datos[0]['Archivo_Foto']))
           if (!file_exists('../../img/img_estudiantes/'.$value)) 
           {
             $value='';
-            //$new[utf8_encode($key)] = utf8_encode($value);
             $new[$key] = $value;
           } 
          } 
@@ -906,7 +903,6 @@ if (!file_exists('../../img/img_estudiantes/'.$datos[0]['Archivo_Foto']))
          $new[$key] = '';
          }else{
 
-          //$new[utf8_encode($key)] = utf8_encode($value);
           $new[$key] = $value;
          }
         }else

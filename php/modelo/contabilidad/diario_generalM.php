@@ -11,7 +11,7 @@ include(dirname(__DIR__,2).'/db/variables_globales.php');//
  */
 class diario_generalM
 {
-	private $conn;
+	private $db;
 	
 	function __construct()
 	{     

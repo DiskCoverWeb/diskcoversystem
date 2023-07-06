@@ -57,6 +57,7 @@ class reportes_descargos_procesadosC
 {
 	private $modelo;
 	private $paciente;
+	private $pdf;
 	function __construct()
 	{
 		$this->modelo = new reportes_descargos_procesadosM();

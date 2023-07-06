@@ -99,7 +99,7 @@ class anexos_transC
     {
        $carpeta = "AT".$_SESSION['INGRESO']['item'];
        $archivo ='AT'.date('m',strtotime($FechaIni)).''.date('Y',strtotime($FechaIni)).'.xml';
-       $url = array('url'=> utf8_encode(dirname(__DIR__)."/vista/TEMP/".$carpeta.'/'.$archivo),'archivo'=>$archivo);
+       $url = array('url'=> mb_convert_encoding(dirname(__DIR__)."/vista/TEMP/".$carpeta.'/'.$archivo, 'UTF-8'),'archivo'=>$archivo);
        return $url;
     }else
     {

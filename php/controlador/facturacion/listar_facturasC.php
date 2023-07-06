@@ -41,7 +41,7 @@ class listar_facturasC
     $formatos[0] = array('codigo'=>'','nombre'=>'No existen datos.');
     $i = 0;
     foreach ($datos as $value) {
-      $formatos[$i] = array('TC'=>utf8_encode($value['TC']));
+      $formatos[$i] = array('TC'=>mb_convert_encoding($value['TC'], 'UTF-8'));
       $i++;
     }
     return $formatos;
@@ -66,7 +66,7 @@ class listar_facturasC
     $datos = $this->modelo->numeroSecuencial($tc,$serie);
     $secuencial = [];
     foreach ($datos as $value) {
-      $secuencial[] = array('nombre' => $value['Factura'], 'codigo' => utf8_encode($value['Autorizacion']."/".$value['Clave_Acceso']."/".$value['CodigoC']."/".$value['Razon_Social']."/".$value['Factura']));
+      $secuencial[] = array('nombre' => $value['Factura'], 'codigo' => mb_convert_encoding($value['Autorizacion']."/".$value['Clave_Acceso']."/".$value['CodigoC']."/".$value['Razon_Social']."/".$value['Factura'], 'UTF-8'));
     }
     return $secuencial;
   }
