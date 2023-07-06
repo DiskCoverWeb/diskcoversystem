@@ -582,7 +582,7 @@ class detalle_estudianteC
     $genero1 = 'o';
     }
   	$tablaHtml='<table><tr><td></td></tr><tr><td><td></tr></table>';
-  	$texto = 'La '.utf8_decode($this->empresa[0]['Institucion1']).' '.utf8_decode($this->empresa[0]['Institucion2']).' De Conformidad con el Reglamento a la Ley Orgánica de Educación Intercultural, registra la matricula  de '.$genero.' estudiante:';
+  	$texto = 'La '.mb_convert_encoding($this->empresa[0]['Institucion1'], 'ISO-8859-1','UTF-8').' '.mb_convert_encoding($this->empresa[0]['Institucion2'], 'ISO-8859-1','UTF-8').' De Conformidad con el Reglamento a la Ley Orgánica de Educación Intercultural, registra la matricula  de '.$genero.' estudiante:';
   	$texto2 ='El infrascrito, representante de '.$genero.' estudiante matriculad'.$genero1.', declara que se encuentra conforme con los datos que <br>anteceden y firma sometiéndose a las disposiciones del citado reglamento.<br>Lugar y Fecha: '.mb_convert_encoding($fecha, 'UTF-8');
   	//print_r($datos[0]['Fecha_N']->format('Y-m-d'));
      $nombre = $datos[0]['Cliente'];
@@ -654,15 +654,15 @@ class detalle_estudianteC
 		//posicion = button-table  / top-table
         $image=false;
 		$contenido[0]['tipo'] ='texto';
-		$contenido[0]['valor'] = utf8_decode($texto);
+		$contenido[0]['valor'] = mb_convert_encoding($texto, 'ISO-8859-1','UTF-8');
 		$contenido[0]['posicion'] ='top-tabla';
 		$contenido[1]['tipo'] ='titulo';
-		$contenido[1]['valor'] = utf8_decode($nombre);
+		$contenido[1]['valor'] = mb_convert_encoding($nombre, 'ISO-8859-1','UTF-8');
 		$contenido[1]['posicion'] ='top-tabla';
 		
 
 
-		$this->pdf->cabecera_reporte_colegio($_SESSION['INGRESO']['item'].'_ACTA_DE_MATRICULA_'.$usu,'ACTA DE MATRICULA',utf8_decode($tablaHtml),$contenido,$image,'','',8,false,$email);
+		$this->pdf->cabecera_reporte_colegio($_SESSION['INGRESO']['item'].'_ACTA_DE_MATRICULA_'.$usu,'ACTA DE MATRICULA',mb_convert_encoding($tablaHtml, 'ISO-8859-1','UTF-8'),$contenido,$image,'','',8,false,$email);
 		//$this->pdf_registro($usu,$pass,$nuevo);
 		//$this->pdf_matricula($usu,$pass,$nuevo);
 		
@@ -712,7 +712,7 @@ if($datos[0]['Archivo_Foto'] !='.' && $datos[0]['Archivo_Foto'] !='')
 		$image[0]['width']=40;
 		$image[0]['height']=40;
 
-  	$this->pdf->cabecera_reporte_colegio($_SESSION['INGRESO']['item'].'_HOJA_DE_REGISTRO_'.$usu,'HOJA DE REGISTRO',utf8_decode($tablaHtml),$contenido,$image,'','',10,false,$email);
+  	$this->pdf->cabecera_reporte_colegio($_SESSION['INGRESO']['item'].'_HOJA_DE_REGISTRO_'.$usu,'HOJA DE REGISTRO',mb_convert_encoding($tablaHtml, 'ISO-8859-1','UTF-8'),$contenido,$image,'','',10,false,$email);
 
 
   }
@@ -792,7 +792,7 @@ if (!file_exists('../../img/img_estudiantes/'.$datos[0]['Archivo_Foto']))
 		$image[0]['width']=40;
 		$image[0]['height']=40;
 
-    $this->pdf->cabecera_reporte_colegio($_SESSION['INGRESO']['item'].'_HOJA_DE_MATRICULA_'.$usu,'HOJA DE MATRICULA',utf8_decode($tablaHtml),$contenido,$image,'','',10,false,$email);
+    $this->pdf->cabecera_reporte_colegio($_SESSION['INGRESO']['item'].'_HOJA_DE_MATRICULA_'.$usu,'HOJA DE MATRICULA',mb_convert_encoding($tablaHtml, 'ISO-8859-1','UTF-8'),$contenido,$image,'','',10,false,$email);
 
   }
 
@@ -820,7 +820,7 @@ if (!file_exists('../../img/img_estudiantes/'.$datos[0]['Archivo_Foto']))
     }
    // $tablaHtml.='';
 
-    $this->pdf->cabecera_reporte_colegio('Facturas_emitidas','Factura Emitida',utf8_decode($tablaHtml),$contenido,$image,'','',7,$mostrar,$email);
+    $this->pdf->cabecera_reporte_colegio('Facturas_emitidas','Factura Emitida',mb_convert_encoding($tablaHtml, 'ISO-8859-1','UTF-8'),$contenido,$image,'','',7,$mostrar,$email);
 
   }
 

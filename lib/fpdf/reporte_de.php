@@ -757,8 +757,7 @@ function imprimirDocElPF($stmt,$id=null,$formato=null,$nombre_archivo=null,$va=n
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(270,185,80));
 	
-	//$arr=array(utf8_encode($param[0]['nombrec']),'',etiqueta_xml($resultado,"<identificacionComprador>"));
-	$arr=array(utf8_encode($cli),'',utf8_encode($param[0]['ruc']));
+	$arr=array(mb_convert_encoding($cli, 'UTF-8'),'',mb_convert_encoding($param[0]['ruc'], 'UTF-8'));
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',6);
 	$pdf->SetWidths(array(270,155,100));

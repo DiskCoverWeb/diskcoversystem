@@ -554,7 +554,7 @@ class facturar_pensionC
     $titulo_correo = 'Historial de cliente';
     $nombre = 'DiskCover System';
     $cuerpo_correo = 'Estimado (a) ha recibido su historial en formato PDF y EXCEL';
-    $cuerpo_correo .= '<br>'.utf8_decode('
+    $cuerpo_correo .= '<br>'.mb_convert_encoding('
     <pre>
       -----------------------------------
       SERVIRLES ES NUESTRO COMPROMISO, DISFRUTARLO ES EL SUYO.
@@ -570,7 +570,7 @@ class facturar_pensionC
       Emails: prisma_net@hotmail.es/diskcover@msn.com.
 
       www.diskcoversystem.com
-      QUITO - ECUADOR</pre>');
+      QUITO - ECUADOR</pre>', 'ISO-8859-1','UTF-8');
     $this->email->enviar_historial($archivos,$to_correo,$cuerpo_correo,$titulo_correo,$nombre);
     exit();
     
