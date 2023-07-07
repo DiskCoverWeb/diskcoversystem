@@ -7908,6 +7908,7 @@ function Lineas_De_CxC($TFA)
       "WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' " .
       "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' ";
   if (strlen($TFA['TC']) == 2) $sSQL .= "AND Fact = '" . $TFA['TC'] . "' ";
+  $TFA['Cod_CxC'] = '';
   if (strlen($TFA['Cod_CxC']) > 1) {
     $sSQL .= "AND '" . $TFA['Cod_CxC'] . "' IN (Concepto, Codigo, CxC) ";
   } elseif (strlen($TFA['Serie']) == 6) {
