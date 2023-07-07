@@ -226,7 +226,7 @@ class kardexC
                 GROUP BY K.Codigo_Inv, K.Codigo_Barra
                 HAVING SUM(Entrada-Salida) >=1 
                 ORDER BY K.Codigo_Inv, K.Codigo_Barra ";
-        $_SESSION['DGKardex']['sSQL'] = $sSQL ;
+        //$_SESSION['DGKardex']['sSQL'] = $sSQL ;
         if($heightDisponible>135){
             $heightDisponible-=35;
         }

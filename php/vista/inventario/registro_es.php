@@ -140,7 +140,7 @@ function contracuenta()
         {
         $.each(response,function(i,item){
           //  console.log(item);
-             option+='<option value="'+item.CodMar+'">'+item.Marca+'</option';
+             option+='<option value="'+item.CodBod+'">'+item.CodBod+' '+item.Bodega+'</option';
            });
            $('#DCBodega').html(option); 
         }         

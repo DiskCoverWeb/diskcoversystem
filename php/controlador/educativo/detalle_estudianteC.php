@@ -671,8 +671,11 @@ class detalle_estudianteC
   function pdf_registro($usu,$pass,$nuevo,$email)
   {
     $contenido=false;
-    setlocale(LC_ALL,"es_ES@euro","es_ES","esp");
-    $fecha=strftime("%A %d de %B del %Y");
+
+    $fecha = new DateTime();
+    $fecha->setTimezone(new DateTimeZone('America/Guayaquil'));
+    setlocale(LC_ALL, 'es_ES.utf8');
+    $fecha = $fecha->format('l d \d\e F \d\e\l Y');
   	$datos = $this->modelo->login($usu,$pass,$nuevo);
   	$tablaHtml='<table>
 	<tr><td width="350" ALIGN="RIGHT"><b>EL ALUMNO(A):</b></td><td width="350">'.strtoupper($datos[0]['Cliente']).'</td></tr>
@@ -695,14 +698,14 @@ if($datos[0]['Archivo_Foto'] !='.' && $datos[0]['Archivo_Foto'] !='')
 {
     if (!file_exists('../../img/img_estudiantes/'.$datos[0]['Archivo_Foto'])) 
     {
-    	$url='../../img/jpg/sinimagen.jpg';
+    	$url='../../../img/jpg/sinimagen.jpg';
     }else
     {
     	$url='../../img/img_estudiantes/'.$datos[0]['Archivo_Foto'];
     }
   }else
    {
-    	$url='../../img/jpg/sinimagen.jpg';
+    	$url='../../../img/jpg/sinimagen.jpg';
 
    }
 
@@ -720,7 +723,7 @@ if($datos[0]['Archivo_Foto'] !='.' && $datos[0]['Archivo_Foto'] !='')
   function pdf_matricula($usu,$pass,$nuevo,$email)
   {
   	$contenido=false;
-  	$image = false;
+  	$image = null;
   	$datos = $this->modelo->login($usu,$pass,$nuevo);
   
   	$tablaHtml='<table>
@@ -776,17 +779,17 @@ if($datos[0]['Archivo_Foto'] !='.' && $datos[0]['Archivo_Foto'] !='')
 {
 if (!file_exists('../../img/img_estudiantes/'.$datos[0]['Archivo_Foto'])) 
     {
-    	$url='../../img/jpg/sinimagen.jpg';
+    	$url='../../../img/jpg/sinimagen.jpg';
     }else
     {
     	$url='../../img/img_estudiantes/'.$datos[0]['Archivo_Foto'];
     }
    }else
    {
-    	$url='../../img/jpg/sinimagen.jpg';
+    	$url='../../../img/jpg/sinimagen.jpg';
 
    }
-        $image[0]['url']=$url;
+    $image[0]['url']=$url;
 		$image[0]['x']=150;
 		$image[0]['y']= 50;
 		$image[0]['width']=40;

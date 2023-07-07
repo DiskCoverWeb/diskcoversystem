@@ -226,7 +226,7 @@ class registro_esC
 	}
 	function producto($fami,$query)
 	{
-	 	$opciones = $this->ReadSetDataNum("PorCodigo", True, False); 
+	 	$opciones = ReadSetDataNum("PorCodigo", True, False); 
 		$datos = $this->modelo->Producto($fami,$query,$opciones);
 		return $datos;
 	}
@@ -238,7 +238,7 @@ class registro_esC
   }
   function producto_detalle($parametros)
   {
-    $opciones = $this->ReadSetDataNum("PorCodigo", True, False); 
+    $opciones = ReadSetDataNum("PorCodigo", True, False); 
     $CodigoInv ='';
     $porc_iva=0;
     $fami = $parametros['fami'];
