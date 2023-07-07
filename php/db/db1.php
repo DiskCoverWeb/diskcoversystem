@@ -101,6 +101,7 @@ class db
 		{
 			// print_r($sql);die();
 			$conn = $this->MySQL();
+			
 			$resultado = mysqli_query($conn, $sql);
 			if(!$resultado)
 			{
