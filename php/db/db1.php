@@ -16,9 +16,7 @@ class db
 	
 	function __construct()
 	{
-
-	
-	  if(!file_exists(dirname(__DIR__).'/db/ipconfigMYSQL.ini'))
+		 if(!file_exists(dirname(__DIR__).'/db/ipconfigMYSQL.ini'))
 		{
 			mkdir(dirname(__DIR__).'/db/ipconfigMYSQL.ini');
 			//escribir local host adentro de ipconfig.ini
@@ -31,8 +29,24 @@ class db
 	    $this->database = trim($dbMysql[3]);
 	    $this->puerto = trim($dbMysql[4]);
   	}
-	   
 	}
+
+	function SetearMSQL()
+  {
+  	 if(!file_exists(dirname(__DIR__).'/db/ipconfigMYSQL.ini'))
+		{
+			mkdir(dirname(__DIR__).'/db/ipconfigMYSQL.ini');
+			//escribir local host adentro de ipconfig.ini
+		}else{
+    	$dbMysql = file_get_contents(dirname(__DIR__).'/db/ipconfigMYSQL.ini');
+    	$dbMysql= explode("\n", $dbMysql);    	
+    	$this->servidor = trim($dbMysql[0]);
+    	$this->usuario = trim($dbMysql[1]);
+	    $this->password =  trim($dbMysql[2]);
+	    $this->database = trim($dbMysql[3]);
+	    $this->puerto = trim($dbMysql[4]);
+  	}
+  }
 
 	function conexion($tipo='')
 	{
@@ -78,11 +92,12 @@ class db
 
 	function MySQL()
 	{
+		$this->SetearMSQL();  
 		$conn =  new mysqli($this->servidor.':'.$this->puerto, $this->usuario, $this->password,$this->database);
 		$conn->set_charset("utf8");
 		if (!$conn) 
 		{
-			echo  mysqli_connect_error();
+			echo   mysqli_error($conn);
 			return false;
 		}else
 		{
@@ -440,5 +455,7 @@ function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
     $conn->String_Sql($sql,'MYSQL');
 
   }
+
+ 
 }
 ?>
