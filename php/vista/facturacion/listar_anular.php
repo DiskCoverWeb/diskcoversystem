@@ -192,7 +192,6 @@ function contabilizacion()
 
 function resultado_sri()
  {
-
  	$('#FrmTotalAsiento').css('display','none');
  	 parametros = {
         'TC':$('#DCTipo').val(),
@@ -211,15 +210,169 @@ function resultado_sri()
     });
  }
 
+ function anular_factura()
+ {
+ 				parametros = {
+		        'TC':$('#DCTipo').val(),
+		        'Serie':$('#DCSerie').val(),
+		        'Factura':$('#DCFact option:selected').text(),
+		        'Autorizacion':$('#DCFact').val(),
+		    }
+		     $.ajax({
+		        type: "POST",
+		        url: '../controlador/facturacion/listar_anularC.php?anular_factura=true',
+		        data:{parametros:parametros}, 
+		        dataType: 'json',
+		        success: function(data) {
+		        	if(data==1)
+		        	{		        	
+						 		$('#TipoSuper_MYSQL').val('Auxiliar');
+						 		$('#BuscarEn').val('SQL');
+						 		$('#clave_supervisor').modal('show');
+						 	}else
+						 	{
+						 		 Swal.fire('Esta Factura ya esta anulada','','info');
+						 	}
+		        }
+		    });
+
+ }
+
+ function resp_clave_ingreso(response)
+ {
+ 		if(response.respuesta==1)
+ 			{
+ 				$('#clave_supervisor').modal('hide');
+ 				$('#myModal_anular').modal('show');
+ 			}
+ 		
+ }
+
 </script>
 <div class="row">
-	<div class="col-lg-4 col-sm-8 col-md-8 col-xs-12">
-		<div class="col-xs-2 col-md-2 col-sm-2">
+	<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+		<div class="col">
 			 <a  href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0].'#');?>" title="Salir de modulo" class="btn btn-default">
     		<img src="../../img/png/salire.png">
     	</a>
-    	</div>
-   </div>
+    </div>    
+  <div class="col">
+    <button type="button" class="btn btn-default"  data-toggle="dropdown" title="Descargar PDF" style="padding: 6px;">
+      <img src="../../img/png/impresora.png">
+      <!-- <span class="fa fa-caret-down"></span> -->
+    </button>
+      <ul class="dropdown-menu">
+        <li><a href="#" id="imprimir_pdf">Factura Individual</a></li>
+        <li><a href="#" id="imprimir_pdf_2">Facturas en Bloque</a></li> <li><a href="#" id="imprimir_pdf_2">Imprime en impresora P.V.</a></li>
+       	<li><a href="#" id="imprimir_pdf_2">Nota de Crédito</a></li>
+       	<li><a href="#" id="imprimir_pdf_2">Recibos en Bloque</a></li>
+        <li><a href="#" id="imprimir_pdf_2">Guia de Remision</a></li>
+     
+      </ul>
+  </div>
+  <div class="col">
+    <button type="button" class="btn btn-default"  data-toggle="dropdown" title="Descargar PDF" style="padding: 6px;">
+      <img src="../../img/png/email.png">
+      <!-- <span class="fa fa-caret-down"></span> -->
+    </button>
+      <ul class="dropdown-menu">
+        <li><a href="#" id="imprimir_pdf">Enviar Email Factura</a></li>
+        <li><a href="#" id="imprimir_pdf_2">Enviar Email Nota de Credito</a></li>
+        <li><a href="#" id="imprimir_pdf_2">Enviar Email Guia de Remision</a></li>
+      </ul>
+  </div>
+  <div class="col">
+    <button type="button" class="btn btn-default"  data-toggle="dropdown" title="Descargar PDF" style="padding: 6px;">
+      <img src="../../img/png/pdf.png">
+      <!-- <span class="fa fa-caret-down"></span> -->
+    </button>
+      <ul class="dropdown-menu">
+        <li><a href="#" id="imprimir_pdf">PDF Factura</a></li>
+        <li><a href="#" id="imprimir_pdf_2">PDF Liquidacion de Compra</a></li>
+        <li><a href="#" id="imprimir_pdf">PDF Nota de credito</a></li>
+        <li><a href="#" id="imprimir_pdf_2">PDF Guia de Remision</a></li>
+        <li><a href="#" id="imprimir_pdf">PDF Orden de Produccion</a></li>
+        <li><a href="#" id="imprimir_pdf_2">PDF Donaciones</a></li>
+      
+      </ul>
+  </div>
+   <div class="col">
+    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);" style="padding: 6px;">
+    		<img src="../../img/png/mes.png" >
+    	</button>
+    </div>		
+    <div class="col">
+    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);" style="padding: 6px;">
+    		<img src="../../img/png/calendario.png" >
+    	</button>
+    </div>		   
+    <div class="col">
+    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);" style="padding: 6px;">
+    		<img src="../../img/png/edit_file.png" >
+    	</button>
+    </div>
+     <div class="col">
+    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);" style="padding: 6px;">
+    		<img src="../../img/png/change_number.png" >
+    	</button>
+    </div>		
+    <div class="col">
+    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);" style="padding: 6px;">
+    		<img src="../../img/png/saldos.png" >
+    	</button>
+    </div>		
+    <div class="col">
+    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
+    		<img src="../../img/png/resumen.png" >
+    	</button>
+    </div>				
+    <div class="col">
+    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
+    		<img src="../../img/png/cambiar.jpeg" >
+    	</button>
+    	</div>		
+    <div class="col">
+    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
+    		<img src="../../img/png/users.png" >
+    	</button>
+    	</div>		
+    <div class="col">
+    	<button title="Anular Factura"  data-toggle="tooltip" class="btn btn-default" onclick="anular_factura();">
+    		<img src="../../img/png/bloqueo.png" >
+    	</button>
+    	</div>		
+    <div class="col">
+    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
+    		<img src="../../img/png/anular.png" >
+    	</button>
+    	</div>		
+    <div class="col">
+    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
+    		<img src="../../img/png/sri_azul.jpg" >
+    	</button>
+    	</div>		
+    <div class="col">
+    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
+    		<img src="../../img/png/sri_blanco.jpg" >
+    	</button>
+    	</div>		
+    <div class="col">
+    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
+    		<img src="../../img/png/ejecutivo.png" >
+    	</button>
+    	</div>		
+    <div class="col">
+    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
+    		<img src="../../img/png/update_kardex.png" >
+    	</button>
+    	</div>		
+    <div class="col">
+    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
+    		<img src="../../img/png/excel2.png" >
+    	</button>
+    	</div>		
+           
+  </div>
 </div>
 <form id="form_nc">
 
@@ -522,3 +675,20 @@ function resultado_sri()
 </div>
 
 </form>
+
+
+<div id="myModal_anular" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Anulacion de factura</h4>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

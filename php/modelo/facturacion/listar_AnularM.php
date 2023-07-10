@@ -5,8 +5,8 @@ require_once(dirname(__DIR__,2)."/funciones/funciones.php");
 
 class listar_AnularM
 {
-	private $db;
-	public function __construct(){
+  private $db;
+  public function __construct(){
     //base de datos
     $this->db = new db();
   }
@@ -216,6 +216,18 @@ class listar_AnularM
      {   // print_r($sql);die();
          return $this->db->datos($sql);
      }
+  }
+  function anular_factura($FA)
+  {
+     $sql = "SELECT T
+            FROM Facturas
+            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+            AND TC = '".$FA['TC']."'
+            AND Serie = '".$FA['Serie']."'
+            AND Autorizacion = '".$FA['Autorizacion']."'
+            AND Factura = ".$FA['Factura']." ";
+      return $this->db->datos($sql);
   }      
 }
 
