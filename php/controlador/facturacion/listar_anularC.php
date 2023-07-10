@@ -45,6 +45,11 @@ if(isset($_GET['resultado_sri']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->resultado_sri($parametros));
 }
+if(isset($_GET['anular_factura']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->anular_factura($parametros));
+}
 
 class listar_anularC
 {
@@ -220,6 +225,36 @@ class listar_anularC
           }
        }
        return $TxtXML;
+	}
+
+	function anular_factura($parametros)
+	{
+		// print_r($parametros);die();
+		$datos = $this->modelo->anular_factura($parametros);
+		if(count($datos)>0)
+		{
+			if($datos[0]['T']=='A')
+			{
+				return -1;
+			}else
+			{
+				return 1;				
+			}
+		}
+		print_r($datos);die();
+		/*
+		 
+        With AdoFactura.Recordset
+         If .RecordCount > 0 Then
+             If .fields("T") = "A" Then
+                 MsgBox "Esta Factura ya esta anulada"
+             ElseIf ClaveAuxiliar Then
+                 Si_No = False
+                 FAnulacion.Show
+             End If
+         End If
+        End With
+		*/
 	}
 }
 ?>

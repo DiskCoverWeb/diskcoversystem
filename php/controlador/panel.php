@@ -132,9 +132,9 @@ function IngClaves_MYSQL($parametros)
 		}else if($parametros['intentos']>=3)
 		{
 			$mensaje = "Sr(a). ".$_SESSION['INGRESO']['Nombre'].": \n 
-             Usted no está autorizado \n
-             a ingresar a esta opción.";
-      $intentos= $parametros['intentos']+1;
+                   Usted no está autorizado \n
+                   a ingresar a esta opción.";
+                  $intentos= $parametros['intentos']+1;
 
 		}else
 		{

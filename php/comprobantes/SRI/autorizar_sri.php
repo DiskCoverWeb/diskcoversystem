@@ -346,7 +346,7 @@ class autorizacion_sri
 		AND Serie = '".$serie."' 
 		AND Factura = ".$fact." 
 		AND LEN(Autorizacion) = 13 AND T <> 'A' ";
-		// print_r($sql);die();
+		print_r($sql);die();
 		$datos = $this->db->datos($sql);
 		return $datos;
 	}

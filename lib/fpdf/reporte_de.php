@@ -3792,7 +3792,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	 foreach ($detalle as $key => $value) {
      	
      	// print_r($value);
-     	 	if(number_format($value['Total_IVA'],2,'.','') != 0)
+     	 	if(number_format($value['Total_IVA'],2,'.','') != '0.00')
      	 	{
      	 		// print_r($value['Total_IVA'].'-'.$value['Total']);
      	 		$sub_con_iva+=$value['Total'];
@@ -3809,9 +3809,9 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$vimp0=0;
 	$vimp1=$datos[0]['IVA'];
 	$descu = $datos[0]['Descuento']+$datos[0]['Descuento2'];
-	//print_r($datos);
+	print_r($bai.'-'.$ba0);
 
-	//die();
+	die();
 	$margen_med4 = 210;
 
 	$pdf->SetFont('Arial','B',7);
