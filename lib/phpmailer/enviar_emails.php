@@ -20,7 +20,7 @@ class enviar_emails
   private $db;
 	function __construct()
 	{
-		 $this->db  = new db();
+		 $this->db=new db();
 	}
 
 

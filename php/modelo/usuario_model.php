@@ -728,16 +728,31 @@ class usuario_model{
 	{
 
     $ClaveGeneral = '';
-	  $IngClaves_Caption  = '';
-		$sql = "SELECT * 
-		FROM acceso_usuarios
-		WHERE Usuario = '".$parametros['tipo']."' ";
-		
-		$datos = $this->db1->datos($sql,'MY SQL');
+	  $IngClaves_Caption  = '';		
+		// print_r($sql);die();
+		if($parametros['buscaren']=='MYSQ'){
+				$sql = "SELECT * 
+				FROM acceso_usuarios
+				WHERE Usuario = '".$parametros['tipo']."' ";
+				$datos = $this->db1->datos($sql,'MY SQL');
+		}else
+		{
+				$sql = "SELECT * 
+				FROM Accesos
+				WHERE Usuario = '".$parametros['tipo']."' ";
+				$datos = $this->db1->datos($sql);
+		}
 		if(count($datos)>0)
 		{
+			if($parametros['buscaren']=='MYSQ')
+			{
 			 $ClaveGeneral = $datos[0]["Clave"];
 	   	 $IngClaves_Caption = $datos[0]["Nombre_Usuario"];
+	   	}else
+	   	{
+	   		$ClaveGeneral = $datos[0]["Clave"];
+	   	  $IngClaves_Caption = $datos[0]["Usuario"];
+	   	}
 		}
 	   return array('clave'=>$ClaveGeneral,'nombre'=>$IngClaves_Caption);
 	}

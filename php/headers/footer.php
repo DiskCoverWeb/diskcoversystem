@@ -281,6 +281,7 @@
               <div class="modal-body text-center">
                   <div class="row">
                       <div class="col-sm-7">
+                          <input type="hidden" name="BuscarEn" id="BuscarEn" value="MYSQL">
                           <input type="hidden" name="TipoSuper_MYSQL" id="TipoSuper_MYSQL"><br>
                           <input type="hidden" name="intentos_MYSQL" id="intentos_MYSQL" value="1">
                           <input type="password" name="txt_IngClave_MYSQL" id="txt_IngClave_MYSQL"
@@ -397,6 +398,7 @@ function IngresoClave_MYSQL() {
         'tipo': $('#TipoSuper_MYSQL').val(),
         'intentos': $('#intentos_MYSQL').val(),
         'pass': $('#txt_IngClave_MYSQL').val(),
+        'buscaren': $('#BuscarEn').val(),
     }
     var opcion = '';
     $.ajax({
