@@ -80,7 +80,7 @@ class kardexC
 
 	public function ListarProductos($tipo,$codigoProducto){
 		$datos = $this->modelo->ListarProductos($tipo,$codigoProducto);
-    $productos = [];
+        $productos = [];
 		foreach ($datos as $key => $value) {
 			$productos[] = array('LabelCodigo'=>$value['Codigo_Inv']."/".$value['Minimo']."/".$value['Maximo']."/".$value['Unidad']."/".$value['Producto'],'nombre'=>mb_convert_encoding($value['NomProd'], 'UTF-8'));
 		}

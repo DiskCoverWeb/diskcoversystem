@@ -1,6 +1,8 @@
 <?php
 include "../controlador/inventario/kardexC.php";
+include "../controlador/inventario/ResumenKC.php";
 $kardex = new kardexC();
+$ResumenKC = new ResumenKC();
 ?>
 
 <style type="text/css">
@@ -80,10 +82,10 @@ input[type="checkbox"], input[type="radio"]{
         </div>
         <div class="form-group col margin-b-1">
           <div class="col" style="max-width:80px;">
-            <label><input id="CheqMonto" name="CheqMonto" tabindex="" value="1" type="checkbox"><b>Monto</b></label>   
+            <label><input id="CheqMonto" name="CheqMonto" tabindex="" value="1" type="checkbox"  onchange="var selectElement = document.getElementById('TxtMonto'); selectElement.style.visibility = (this.checked) ? 'visible' : 'hidden';(this.checked) ? selectElement.focus() : '';"><b>Monto</b></label>   
           </div>
           <div class="col padding-all" style="max-width: 330px;">
-            <input type="tel" tabindex="" name="TxtMonto" id="TxtMonto" class="form-control input-xs mw115" placeholder="0.00">
+            <input type="tel" tabindex="" name="TxtMonto" id="TxtMonto" class="form-control input-xs mw115" placeholder="0.00" style="visibility: hidden;">
           </div>
         </div>
         <div class="form-group col margin-b-1">
@@ -96,10 +98,10 @@ input[type="checkbox"], input[type="radio"]{
       
       <div class="row">
         <div class="col-sm-3 padding-all" style="max-width: 140px;">
-          <label><input id="CheqBod" name="CheqBod" tabindex="2" value="1" type="checkbox"><b>BODEGA</b></label>   
+          <label><input id="CheqBod" name="CheqBod" tabindex="2" value="1" type="checkbox" onchange="var selectElement = document.getElementById('DCBodega'); selectElement.style.visibility = (this.checked) ? 'visible' : 'hidden';(this.checked) ? selectElement.focus() : '';"><b>BODEGA</b></label>   
         </div>
         <div class="col padding-all" style="max-width: 330px;">
-          <select class="form-control input-sm" tabindex="3" id="DCBodega" name="DCBodega">
+          <select class="form-control input-sm" tabindex="3" id="DCBodega" name="DCBodega" style="visibility: hidden;">
             <option value=''>** Seleccionar Bodega**</option>
             <?php
             $bodegas = $kardex->bodegas();
@@ -110,13 +112,16 @@ input[type="checkbox"], input[type="radio"]{
           </select>
         </div>
         <div class="col padding-all" style="max-width: 160px;">
-          <label><input id="CheqGrupo" name="CheqGrupo" tabindex="2" value="1" type="checkbox"><b>TIPO GRUPO</b></label>   
+          <label><input id="CheqGrupo" name="CheqGrupo" tabindex="2" value="1" type="checkbox"  onchange="var selectElement = document.getElementById('DCTInv'); selectElement.style.visibility = (this.checked) ? 'visible' : 'hidden';(this.checked) ? selectElement.focus() : '';"><b>TIPO GRUPO</b></label>   
         </div>
         <div class="col padding-all" >
-          <select class="form-control input-sm" tabindex="3" id="DCTInv" name="DCTInv" onchange="Listar_X_Producto()">
+          <select class="form-control input-sm" tabindex="3" id="DCTInv" name="DCTInv" onchange="Listar_X_Producto()"  style="visibility: hidden;">
             <option value=''>** Seleccionar Grupo**</option>
             <?php
-            
+              $dcinv = $ResumenKC->ListarProductosResumenK();
+            foreach ($dcinv as $value) {
+              echo "<option value='".$value['Codigo_Inv']."'>".$value['Codigo_Inv']." ".$value['Producto']."</option>";
+            }
             ?>
           </select>
         </div>
@@ -125,15 +130,17 @@ input[type="checkbox"], input[type="radio"]{
 
       <div class="row">
         <div class="col-sm-3 padding-all" style="max-width: 140px;">
-          <label><input id="CheqProducto" name="CheqProducto" tabindex="2" value="1" type="checkbox"><b>PRODUCTO</b></label>   
+          <label><input id="CheqProducto" name="CheqProducto" tabindex="2" value="1" type="checkbox"
+            onchange="let selectElement = $('.FrmProducto'); selectElement.css('visibility',(this.checked) ? 'visible' : 'hidden');(this.checked) ? $('#OpcProducto').focus() : '';"
+            ><b>PRODUCTO</b></label>   
         </div>
-        <div class="col padding-all" >
+        <div class="col padding-all FrmProducto"  style="visibility: hidden;">
           <label><input id="OpcProducto" name="ProductoPor" checked tabindex="" value="1" type="radio"><b>Producto</b></label>   
           <label><input id="OpcBarra" name="ProductoPor" tabindex="" value="1" type="radio"><b>Codigo Barra</b></label>   
           <label><input id="OpcMarca" name="ProductoPor" tabindex="" value="1" type="radio"><b>Marca</b></label>   
           <label><input id="OpcLote" name="ProductoPor" tabindex="" value="1" type="radio"><b>Lote</b></label>   
         </div>
-        <div class="col padding-all" >
+        <div class="col padding-all FrmProducto"  style="visibility: hidden;">
           <select class="form-control input-sm" tabindex="" id="DCTipoBusqueda" name="DCTipoBusqueda">
             <option value=''>** Seleccionar**</option>
             <?php
@@ -146,13 +153,15 @@ input[type="checkbox"], input[type="radio"]{
 
       <div class="row">
         <div class="col-sm-3 padding-all" style="max-width: 140px;">
-          <label><input id="CheqCtaInv" name="CheqCtaInv" tabindex="2" value="1" type="checkbox"><b>TIPO DE CTA.</b></label>   
+          <label><input id="CheqCtaInv" name="CheqCtaInv" tabindex="2" value="1" type="checkbox"
+            onchange="let selectElement = $('.FrmCuenta'); selectElement.css('visibility',(this.checked) ? 'visible' : 'hidden');(this.checked) ? $('#OpcInv').focus() : '';"
+            ><b>TIPO DE CTA.</b></label>   
         </div>
-        <div class="col padding-all" >
+        <div class="col padding-all FrmCuenta" style="visibility: hidden;">
           <label><input id="OpcInv" name="TipoCuentaDe" checked tabindex="" value="1" type="radio"><b>Inventario</b></label>   
           <label><input id="OpcCosto" name="TipoCuentaDe" tabindex="" value="1" type="radio"><b>Costo</b></label>   
         </div>
-        <div class="col padding-all" >
+        <div class="col padding-all FrmCuenta" style="visibility: hidden;">
           <select class="form-control input-sm" tabindex="" id="DCCtaInv" name="DCCtaInv">
             <option value=''>** Seleccionar Cuenta**</option>
             <?php
@@ -165,13 +174,15 @@ input[type="checkbox"], input[type="radio"]{
 
       <div class="row">
         <div class="col-sm-3 padding-all" style="max-width: 140px;">
-          <label><input id="CheqSubMod" name="CheqSubMod" tabindex="2" value="1" type="checkbox"><b>POR SUBMODULO</b></label>   
+          <label><input id="CheqSubMod" name="CheqSubMod" tabindex="2" value="1" type="checkbox"
+            onchange="let selectElement = $('.FrmSubModulo'); selectElement.css('visibility',(this.checked) ? 'visible' : 'hidden');(this.checked) ? $('#OpcGasto').focus() : '';"
+            ><b>POR SUBMODULO</b></label>   
         </div>
-        <div class="col padding-all" >
+        <div class="col padding-all FrmSubModulo" style="visibility: hidden;">
           <label><input id="OpcGasto" name="SuModeloDe" checked tabindex="" value="1" type="radio"><b>Centro de Costo</b></label>   
           <label><input id="OpcCxP" name="SuModeloDe" tabindex="" value="1" type="radio"><b>CxP/Proveedores</b></label>   
         </div>
-        <div class="col padding-all" >
+        <div class="col padding-all FrmSubModulo" style="visibility: hidden;">
           <select class="form-control input-sm" tabindex="" id="DCSubModulo" name="DCSubModulo">
             <option value=''>** Seleccionar Modulo**</option>
             <?php
@@ -219,6 +230,20 @@ input[type="checkbox"], input[type="radio"]{
     asignarHeightPantalla($("#DCSubModulo"), $("#heightDisponible"))
     document.title = "Diskcover | RESUMEN DE EXISTENCIAS";
     Listar_X_Producto()
+    Listar_X_Tipo_SubModulo()
+    Listar_X_Tipo_Cta()
+    $('#myModal_espera').modal('show');
+    $.ajax({
+      type: "POST",                 
+      url: '../controlador/inventario/ResumenKC.php?Form_Activate=true',
+      dataType: 'json',
+      data: $("#FormResumenK").serialize(), 
+      success: function(data)             
+      {
+        $('#DGQuery').html(data.DGQuery);   
+        $('#myModal_espera').modal('hide');     
+      }
+    });
   });
 
   function ConsultarStock(StockSuperior) {
@@ -264,6 +289,60 @@ input[type="checkbox"], input[type="radio"]{
           $('#myModal_espera').modal('hide');
           llenarComboList(response.DCTipoBusqueda,'DCTipoBusqueda')
           $("#DCTipoBusqueda").focus();
+        }else{
+          $('#myModal_espera').modal('hide');
+          Swal.fire('¡Oops!', response.mensaje, 'warning')
+        }
+      },
+      error: function () {
+        $('#myModal_espera').modal('hide');
+        alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+      }
+    });
+  }
+
+  function Listar_X_Tipo_SubModulo() {
+    $.ajax({
+      type: 'POST',
+      dataType: 'json',
+      url: '../controlador/inventario/ResumenKC.php?Listar_Por_Tipo_SubModulo=true',
+      data: $("#FormResumenK").serialize(), 
+      beforeSend: function () {   
+        $('#myModal_espera').modal('show');
+      },    
+      success: function(response)
+      { 
+        if(response.rps){
+          $('#myModal_espera').modal('hide');
+          llenarComboList(response.DCSubModulo,'DCSubModulo')
+          $("#DCSubModulo").focus();
+        }else{
+          $('#myModal_espera').modal('hide');
+          Swal.fire('¡Oops!', response.mensaje, 'warning')
+        }
+      },
+      error: function () {
+        $('#myModal_espera').modal('hide');
+        alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+      }
+    });
+  }
+
+  function Listar_X_Tipo_Cta() {
+    $.ajax({
+      type: 'POST',
+      dataType: 'json',
+      url: '../controlador/inventario/ResumenKC.php?Listar_Por_Tipo_Cta=true',
+      data: $("#FormResumenK").serialize(), 
+      beforeSend: function () {   
+        $('#myModal_espera').modal('show');
+      },    
+      success: function(response)
+      { 
+        if(response.rps){
+          $('#myModal_espera').modal('hide');
+          llenarComboList(response.DCCtaInv,'DCCtaInv')
+          $("#DCCtaInv").focus();
         }else{
           $('#myModal_espera').modal('hide');
           Swal.fire('¡Oops!', response.mensaje, 'warning')

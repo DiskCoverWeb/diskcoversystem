@@ -24,6 +24,10 @@ if(isset($_GET['Imprimir_ResumenK']))
     $controlador->ImprimirPdf($_GET);
     exit();
 }
+elseif(isset($_GET['Form_Activate']))
+{
+    echo json_encode($controlador->Form_Activate($_POST));
+}
 elseif(isset($_GET['ConsultarStock']))
 {
     echo json_encode($controlador->Stock( $_POST,$_GET['StockSuperior']));
@@ -36,6 +40,18 @@ elseif(isset($_GET['Listar_Por_Producto']))
     $OpcLote = (isset($OpcLote) && $OpcLote);
     $DCTInv = (isset($DCTInv) && $DCTInv!="")?$DCTInv:G_NINGUNO;
     echo json_encode(array("DCTipoBusqueda"=>$controlador->Listar_Por_Producto($OpcMarca, $OpcBarra, $OpcLote, $DCTInv)));
+}
+elseif(isset($_GET['Listar_Por_Tipo_SubModulo']))
+{ 
+    extract($_POST);
+    $OpcGasto = (isset($OpcGasto) && $OpcGasto);
+    echo json_encode(array("DCSubModulo"=>$controlador->Listar_Por_Tipo_SubModulo($OpcGasto)));
+}
+elseif(isset($_GET['Listar_Por_Tipo_Cta']))
+{ 
+    extract($_POST);
+    $OpcInv = (isset($OpcInv) && $OpcInv);
+    echo json_encode(array("DCCtaInv"=>$controlador->Listar_Por_Tipo_Cta($OpcInv)));
 }
 
 class ResumenKC
@@ -301,7 +317,7 @@ class ResumenKC
 
     public function Listar_Por_Producto($OpcMarca, $OpcBarra, $OpcLote, $DCTInv)
     {
-        $sSQL = $controlador->Listar_Por_ProductoSQL($OpcMarca, $OpcBarra, $OpcLote, $DCTInv);
+        $sSQL = $this->Listar_Por_ProductoSQL($OpcMarca, $OpcBarra, $OpcLote, $DCTInv);
         return $this->modelo->SelectDB($sSQL);
     }
 
@@ -341,6 +357,84 @@ class ResumenKC
         return $sSQL;
     }
 
+    function Listar_Por_Tipo_SubModulo($OpcGasto) {
+        if ($OpcGasto) {
+            $sSQL = "SELECT TC, Codigo, Detalle AS SubModulo " .
+                    "FROM Catalogo_SubCtas " .
+                    "WHERE Item = '" . $this->NumEmpresa . "' " .
+                    "AND Periodo = '" . $this->Periodo_Contable . "' " .
+                    "AND Detalle <> '" . G_NINGUNO . "' " .
+                    "ORDER BY TC, Detalle";
+        } else {
+            $sSQL = "SELECT CP.TC, CP.Codigo, CP.Cta, (C.Cliente + REPLICATE(' ', 60 - LEN(C.Cliente)) + CP.Cta) AS SubModulo " .
+                    "FROM Catalogo_CxCxP AS CP, Clientes AS C " .
+                    "WHERE CP.Item = '" . $this->NumEmpresa . "' " .
+                    "AND CP.Periodo = '" . $this->Periodo_Contable . "' " .
+                    "AND C.Cliente <> '" . G_NINGUNO . "' " .
+                    "AND CP.TC = 'P' " .
+                    "AND CP.Codigo = C.Codigo " .
+                    "ORDER BY C.Cliente, CP.Cta";
+        }
+        return $this->modelo->SelectDB($sSQL);
+    }
+
+    function Listar_Por_Tipo_Cta($OpcInv) {
+        if ($OpcInv) {
+            $sSQL = "SELECT CC.Cuenta, TK.Cta_Inv " .
+                    "FROM Catalogo_Cuentas AS CC, Trans_Kardex AS TK " .
+                    "WHERE CC.Item = '" . $this->NumEmpresa . "' " .
+                    "AND CC.Periodo = '" . $this->Periodo_Contable . "' " .
+                    "AND LENGTH(TK.Cta_Inv) > 1 " .
+                    "AND CC.Codigo = TK.Cta_Inv " .
+                    "AND CC.Item = TK.Item " .
+                    "AND CC.Periodo = TK.Periodo " .
+                    "GROUP BY CC.Cuenta, TK.Cta_Inv " .
+                    "ORDER BY CC.Cuenta, TK.Cta_Inv";
+        } else {
+            $sSQL = "SELECT CC.Cuenta, TK.Contra_Cta " .
+                    "FROM Catalogo_Cuentas AS CC, Trans_Kardex AS TK " .
+                    "WHERE CC.Item = '" . $this->NumEmpresa . "' " .
+                    "AND CC.Periodo = '" . $this->Periodo_Contable . "' " .
+                    "AND LENGTH(TK.Contra_Cta) > 1 " .
+                    "AND CC.Codigo = TK.Contra_Cta " .
+                    "AND CC.Item = TK.Item " .
+                    "AND CC.Periodo = TK.Periodo " .
+                    "GROUP BY CC.Cuenta, TK.Contra_Cta " .
+                    "ORDER BY CC.Cuenta, TK.Contra_Cta";
+        }
+        return $this->modelo->SelectDB($sSQL);
+    }
+
+
+    public function ListarProductosResumenK(){
+        $sSQL = "SELECT Codigo_Inv, Producto " .
+            "FROM Catalogo_Productos " .
+            "WHERE Item = '" . $this->NumEmpresa . "' " .
+            "AND Periodo = '" . $this->Periodo_Contable . "' " .
+            "AND TC = 'I' " .
+            "AND INV <> 0 " .
+            "ORDER BY Codigo_Inv";
+        return $this->modelo->SelectDB($sSQL);
+    }
+
+    public function Form_Activate($parametros)
+    {
+        extract($parametros);
+        mayorizar_inventario_sp(false, modulo_reemplazar:false);
+
+        $sSQL = "SELECT Codigo_Inv, Producto " .
+            "FROM Catalogo_Productos " .
+            "WHERE Item = '" . $this->NumEmpresa . "' " .
+            "AND Periodo = '" . $this->Periodo_Contable . "' " .
+            "AND TC = 'I' " .
+            "AND INV <> 0 " .
+            "ORDER BY Codigo_Inv";
+        return $this->modelo->SelectDB($sSQL);
+        $heightDispo = ($heightDisponible>150)?$heightDisponible-45:$heightDisponible;
+        $_SESSION['ResumenKC']['AdoDetKardex'] = $sSQL;
+        $DGQuery = grilla_generica_new($sSQL,$tabla,'myTableDGQuery','',false,false,false,1,1,1,$heightDispo);
+        return compact('DGQuery');
+    }
 }
 
 ?>

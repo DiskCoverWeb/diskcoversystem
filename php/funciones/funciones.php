@@ -5688,7 +5688,7 @@ function generar_comprobantes($parametros) //revision parece repetida
   //    //  return $respuesta;   
   // }
  
-  function mayorizar_inventario_sp($fecha=false) // optimizado
+  function mayorizar_inventario_sp($fecha=false, $modulo_reemplazar = true) // optimizado
   {
     // set_time_limit(1024);
     // ini_set("memory_limit", "-1");
@@ -5700,7 +5700,10 @@ function generar_comprobantes($parametros) //revision parece repetida
       {
         $fecha_corte = $fecha;  
       }
-      $_SESSION['INGRESO']['modulo_']='01';
+      if($modulo_reemplazar){
+        $_SESSION['INGRESO']['modulo_']='01';
+      }
+      //echo "<pre>";print_r($_SESSION['INGRESO']['modulo_']);echo "</pre>";die();
       $conn = new db();
       $parametros = array(
       array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
