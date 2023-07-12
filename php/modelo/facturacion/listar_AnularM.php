@@ -5,8 +5,8 @@ require_once(dirname(__DIR__,2)."/funciones/funciones.php");
 
 class listar_AnularM
 {
-	private $db;
-	public function __construct(){
+  private $db;
+  public function __construct(){
     //base de datos
     $this->db = new db();
   }
