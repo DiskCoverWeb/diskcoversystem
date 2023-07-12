@@ -3072,7 +3072,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$arr=array('',$Serie.'-'.$ptoEmi.'-'.generaCeros($datos[0]['Factura'],9));//mio
 	$pdf->Row($arr,10);
 	$pdf->SetTextColor(0);
-    // print_r($datos);
+    // print_r($datos);die();
 	// fecha y hora
 
 
@@ -3809,9 +3809,9 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$vimp0=0;
 	$vimp1=$datos[0]['IVA'];
 	$descu = $datos[0]['Descuento']+$datos[0]['Descuento2'];
-	print_r($bai.'-'.$ba0);
+	// print_r($bai.'-'.$ba0);
 
-	die();
+	// die();
 	$margen_med4 = 210;
 
 	$pdf->SetFont('Arial','B',7);
