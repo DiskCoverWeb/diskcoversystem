@@ -3809,9 +3809,9 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$vimp0=0;
 	$vimp1=$datos[0]['IVA'];
 	$descu = $datos[0]['Descuento']+$datos[0]['Descuento2'];
-	print_r($bai.'-'.$ba0);
+	// print_r($bai.'-'.$ba0);
 
-	die();
+	// die();
 	$margen_med4 = 210;
 
 	$pdf->SetFont('Arial','B',7);
