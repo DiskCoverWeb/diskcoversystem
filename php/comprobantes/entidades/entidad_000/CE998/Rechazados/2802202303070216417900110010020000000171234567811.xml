@@ -54,19 +54,19 @@
     <campoAdicional nombre="PlacaVehiculo">.</campoAdicional>
     <campoAdicional nombre="CtaEstablecimiento">.</campoAdicional>
   </infoAdicional>
-<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature778197">
-<ds:SignedInfo Id="Signature-SignedInfo914312">
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature203733">
+<ds:SignedInfo Id="Signature-SignedInfo413866">
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-<ds:Reference Id="SignedPropertiesID176597" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature778197-SignedProperties579270">
+<ds:Reference Id="SignedPropertiesID37437" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature203733-SignedProperties242079">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>ZXee6eKdoRKNPDPBLLbjmU+WDdk=</ds:DigestValue>
+<ds:DigestValue>ECflxwRQKDffOm1w4qQxt/01aHw=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference URI="#Certificate1518490">
+<ds:Reference URI="#Certificate1819484">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>GeLi2RjVXnkrtO+AznJxB+rM56A=</ds:DigestValue>
+<ds:DigestValue>CUfcE905Tf32tJj1k01J4vvLy9c=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference Id="Reference-ID-885040" URI="#comprobante">
+<ds:Reference Id="Reference-ID-519401" URI="#comprobante">
 <ds:Transforms>
 <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
 </ds:Transforms>
@@ -74,14 +74,14 @@
 <ds:DigestValue>OUXbg8fSQpTjbPIwsfW1H8PyX14=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue Id="SignatureValue242044">
-QjHj6easscMVgr0cYZvnjnNIEMh64fwk5KSv2wP4S+y+JBTJUS67XfKiCZrnIM+WgiQBDDmOUZYm
-nKTi9K8PPK0SAB2x3aG73X7J7y/z2F3AEoNXAyVSIQWp7QaB6piWV/zSTQuWt2qt2QlLieYfN/8C
-BwkA8Kerr2L5sOqt49KQVn9RhmK9Ze1DSz7WWKLpn1Cj5pYR6kYs6FJN3e29wBgiQcy18o2tAQ4l
-5nZmKyohndnLFyoUXHZOFyMhcrdOOFEYb2CqJ6EHsWcdtZ4pyEJtHBsKZ0WuRnYNXvrW/YmtbcBa
-tahVHOTBL2cG4mfTyAK9bpcRoL+S68iPJEDeQw==
+<ds:SignatureValue Id="SignatureValue996496">
+Nwp2Rkt4ufAntafwYxAOJtBddhZlom19m5iidfWDAuosnMZ9m29Hzr0UE3L6dMGhG+qU3XL0Ugao
+mBGQzZb+EXyYN5owrJJ+yZRx5yM373vX2iNKyPnuVupj34gkS2zPZksoGedOqqkh7eua1L3pRPAX
+QLphkVc4cxTRamK0hrL8AyVxwbwopDl7mkx+MXhRHMl4WLY9iSJbdE1FZ0kNXHRKLxMt0RJ0Y/t7
+F29sgnS15fW4eyjYoiHAS76oSgMkrAX4adrFiatOx682xo8Q8hOol6ouMWxNuWJ4XiG0Oegbx9+y
+0SIJ6EZ4OsCCt761TYlZ/w8w2xHCUFXbjTdW3w==
 </ds:SignatureValue>
-<ds:KeyInfo Id="Certificate1518490">
+<ds:KeyInfo Id="Certificate1819484">
 <ds:X509Data>
 <ds:X509Certificate>
 MIILkjCCCXqgAwIBAgIEXDrIAjANBgkqhkiG9w0BAQsFADCBmTELMAkGA1UEBhMCRUMxHTAbBgNV
@@ -152,7 +152,7 @@ LRuAVSyi58qyAD0Eu1zLMc3KhEUXoxF7aA8P0w==
 </ds:RSAKeyValue>
 </ds:KeyValue>
 </ds:KeyInfo>
-<ds:Object Id="Signature778197-Object847045"><etsi:QualifyingProperties Target="#Signature778197"><etsi:SignedProperties Id="Signature778197-SignedProperties579270"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-07-06T16:19:49-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-885040"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature><ns2:respuestaSolicitud xmlns:ns2="http://ec.gob.sri.ws.recepcion">
+<ds:Object Id="Signature203733-Object902037"><etsi:QualifyingProperties Target="#Signature203733"><etsi:SignedProperties Id="Signature203733-SignedProperties242079"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-07-07T15:00:55-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-519401"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature><ns2:respuestaSolicitud xmlns:ns2="http://ec.gob.sri.ws.recepcion">
     <estado>DEVUELTA</estado>
     <comprobantes>
         <comprobante>

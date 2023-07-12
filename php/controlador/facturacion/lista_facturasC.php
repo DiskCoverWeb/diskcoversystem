@@ -27,6 +27,7 @@ if(isset($_GET['perido']))
 }
 if(isset($_GET['ver_fac']))
 {
+	// print_r('sss');die();
   $controlador->ver_fac_pdf($_GET['codigo'],$_GET['ser'],$_GET['ci'],$_GET['per'],$_GET['auto']);
 }
 if(isset($_GET['imprimir_pdf']))
@@ -480,9 +481,11 @@ class lista_facturasC
     	{
     		return -1;
     	}
+    	$TC = '01';
+    	if(isset($parametros['tc']) && $parametros['tc']=='LC'){$TC = '03';}
     	// print_r('ss');die();
     	$rep= $this->sri->Autorizar_factura_o_liquidacion($parametros);
-    	$clave = $this->sri->Clave_acceso($parametros['Fecha'],'01', $parametros['serie'],$parametros['FacturaNo']);
+    	$clave = $this->sri->Clave_acceso($parametros['Fecha'],$TC, $parametros['serie'],$parametros['FacturaNo']);
        $imp = '';
        if($rep==1)
        {
