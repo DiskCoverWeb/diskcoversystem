@@ -11,6 +11,7 @@ class registro_esM
 {
 	
 	private $conn ;
+	private $db;
 	function __construct()
 	{
 	   $this->conn = cone_ajax();
@@ -40,7 +41,7 @@ class registro_esM
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		$datos[]=['id'=>$row['Codigo_Inv'],'text'=>utf8_encode($row['NomProd'])];	
+		$datos[]=['id'=>$row['Codigo_Inv'],'text'=>mb_convert_encoding($row['NomProd'], 'UTF-8')];	
 	   }
        return $datos;
 
@@ -79,7 +80,7 @@ class registro_esM
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		$datos[]=['id'=>$row['Codigo_Inv'],'text'=>utf8_encode($row['NomProd'])];	
+		$datos[]=['id'=>$row['Codigo_Inv'],'text'=>mb_convert_encoding($row['NomProd'], 'UTF-8')];	
 	   }
        return $datos;
 
@@ -281,7 +282,7 @@ class registro_esM
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
 		//$datos[]=$row;			
-		$datos[]=['id'=>$row['Codigo'],'text'=>utf8_encode($row['Nomb_Cta'])];	
+		$datos[]=['id'=>$row['Codigo'],'text'=>mb_convert_encoding($row['Nomb_Cta'], 'UTF-8')];	
 		//$datos[]=['id'=>$row['Codigo'],'text'=>$row['Nomb_Cta']];	
 	   }
        return $datos;
@@ -316,7 +317,7 @@ class registro_esM
                while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
                	{
                		$datos[]=$row;
-               		//$datos=['id'=>$row['Codigo'],'text'=>utf8_encode($row['Nomb_Cta'])];	
+               		//$datos=['id'=>$row['Codigo'],'text'=>mb_convert_encoding($row['Nomb_Cta'], 'UTF-8')];	
                		//$datos[]=['id'=>$row['Codigo'],'text'=>$row['Nomb_Cta']];	
                	}
        }
@@ -397,7 +398,7 @@ class registro_esM
                while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
                	{
                		//$datos[]=$row;
-               		$datos[]=['id'=>$row['Codigo'],'text'=>utf8_encode($row['Cliente']),'CICLIENTE'=>utf8_encode($row['CI_RUC']),'grupo_no'=>$row['Grupo'],'tipodoc'=>$row['TD'],'TipoBenef'=>$row['TD'],'cod_benef'=>$row['TipoBenef'],'InvImp'=>$row['Importaciones']];	
+               		$datos[]=['id'=>$row['Codigo'],'text'=>mb_convert_encoding($row['Cliente'], 'UTF-8'),'CICLIENTE'=>mb_convert_encoding($row['CI_RUC'], 'UTF-8'),'grupo_no'=>$row['Grupo'],'tipodoc'=>$row['TD'],'TipoBenef'=>$row['TD'],'cod_benef'=>$row['TipoBenef'],'InvImp'=>$row['Importaciones']];	
                		//$datos[]=['id'=>$row['Codigo'],'text'=>$row['Nomb_Cta']];	
                	}
 
@@ -786,7 +787,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>utf8_encode($row['Cuentas'])];
+		$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>mb_convert_encoding($row['Cuentas'], 'UTF-8')];
 		// $datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>$row['Cuentas']];	
 		// $datos[] = $row;
 	   }
@@ -817,7 +818,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>utf8_encode($row['Cuentas'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>mb_convert_encoding($row['Cuentas'], 'UTF-8')];	
 		 $datos[] = $row;
 	   }
        return $datos;
@@ -841,7 +842,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>utf8_encode($row['Cuentas'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>mb_convert_encoding($row['Cuentas'], 'UTF-8')];	
 		 $datos[] = $row;
 	   }
        return $datos;
@@ -868,7 +869,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>utf8_encode($row['Cuentas'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>mb_convert_encoding($row['Cuentas'], 'UTF-8')];	
 		 $datos[] = $row;
 	   }
        return $datos;
@@ -895,7 +896,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>utf8_encode($row['Cuentas'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>mb_convert_encoding($row['Cuentas'], 'UTF-8')];	
 		 $datos[] = $row;
 	   }
        return $datos;
@@ -919,7 +920,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		$datos[]=['Codigo'=>$row['Codigo'],'CTipoPago'=>utf8_encode($row['CTipoPago'])];	
+		$datos[]=['Codigo'=>$row['Codigo'],'CTipoPago'=>mb_convert_encoding($row['CTipoPago'],'UTF-8')];	
 		 // $datos[] = $row;
 	   }
        return $datos;
@@ -945,7 +946,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>utf8_encode($row['Cuentas'])];	
+		$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>mb_convert_encoding($row['Cuentas'], 'UTF-8')];	
 		  // $datos[] = $row;
 	   }
        return $datos;
@@ -972,7 +973,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>utf8_encode($row['Detalle_Conceptos']),'Porc'=>$row['Porcentaje']];	
+		$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>mb_convert_encoding($row['Detalle_Conceptos'], 'UTF-8'),'Porc'=>$row['Porcentaje']];	
 		 // $datos[] = $row;
 	   }
        return $datos;
@@ -995,7 +996,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>utf8_encode($row['Cuentas'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>mb_convert_encoding($row['Cuentas'], 'UTF-8')];	
 		  $datos[] = $row;
 	   }
        return $datos;
@@ -1031,7 +1032,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>utf8_encode($row['Detalle_Conceptos'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>mb_convert_encoding($row['Detalle_Conceptos'], 'UTF-8')];	
 		  $datos[] = $row;
 	   }
        return $datos;
@@ -1053,7 +1054,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>utf8_encode($row['Detalle_Conceptos'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>mb_convert_encoding($row['Detalle_Conceptos'], 'UTF-8')];	
 		  $datos[] = $row;
 	   }
        return $datos;
@@ -1089,7 +1090,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>utf8_encode($row['Detalle_Conceptos'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>mb_convert_encoding($row['Detalle_Conceptos'], 'UTF-8')];	
 		  $datos[] = $row;
 	   }
        return $datos;
@@ -1116,7 +1117,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>utf8_encode($row['Detalle_Conceptos'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>mb_convert_encoding($row['Detalle_Conceptos'], 'UTF-8')];	
 		  $datos[] = $row;
 	   }
 	   if(count($datos)>0)
@@ -1153,7 +1154,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>utf8_encode($row['Detalle_Conceptos'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>mb_convert_encoding($row['Detalle_Conceptos'], 'UTF-8')];	
 		  $datos[] = $row;
 	   }
 	   $botones[0] = array('boton'=>'eliminar linea Retencion', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'A_No,CodRet' );
@@ -1179,7 +1180,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>utf8_encode($row['Detalle_Conceptos'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>mb_convert_encoding($row['Detalle_Conceptos'], 'UTF-8')];	
 		  $datos[] = $row;
 	   }
 
@@ -1192,7 +1193,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row2 = sqlsrv_fetch_array( $stmt2, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>utf8_encode($row['Detalle_Conceptos'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>mb_convert_encoding($row['Detalle_Conceptos'], 'UTF-8')];	
 		  $datos2[] = $row2;
 	   }
 
@@ -1222,7 +1223,7 @@ function dtaAsiento_sc($Trans_No){
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>utf8_encode($row['Detalle_Conceptos'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>mb_convert_encoding($row['Detalle_Conceptos'], 'UTF-8')];	
 		  $datos[] = $row;
 	   }
 	   return $datos;
@@ -1270,7 +1271,7 @@ function Documento_Modificado($codUsuario)
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>utf8_encode($row['Detalle_Conceptos'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>mb_convert_encoding($row['Detalle_Conceptos'], 'UTF-8')];	
 		  $datos[] = $row;
 	   }
 	   return $datos;

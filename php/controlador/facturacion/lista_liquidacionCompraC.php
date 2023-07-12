@@ -117,8 +117,11 @@ if(isset($_GET['descargar_xml']))
 class lista_liquidacionCompraC
 {
 	private $modelo;
-    private $email;
-    private $pdf;
+  private $email;
+  private $pdf;
+ 	private $empresaGeneral;
+ 	private $sri;
+	
 	public function __construct(){
     $this->modelo = new lista_liquidacionCompraM();
 		$this->pdf = new cabecera_pdf();
@@ -447,9 +450,12 @@ class lista_liquidacionCompraC
     	 // $this->modelo->ingresar_update($datos,'Facturas',$campoWhere);
 
     	// $clave = $this->sri->Clave_acceso($parametros['Fecha'],'01', $parametros['serie'],$parametros['FacturaNo']);
+
+    	$TC = '03';
+    	if(isset($parametros['tc']) && $parametros['tc']=='FA'){$TC = '01';}
     	if(isset($parametros['tc']) && $parametros['tc']=='LC' || isset($parametros['TC']) && $parametros['TC']=='LC')
     	{
-    		$clave = $this->sri->Clave_acceso($parametros['Fecha'],'03', $parametros['serie'],$parametros['FacturaNo']);
+    		$clave = $this->sri->Clave_acceso($parametros['Fecha'],$TC, $parametros['serie'],$parametros['FacturaNo']);
     	}
     	$rep= $this->sri->Autorizar_factura_o_liquidacion($parametros);
        $imp = '';

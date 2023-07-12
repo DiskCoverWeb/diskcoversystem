@@ -91,6 +91,7 @@ class devoluciones_insumosC
 {
 	private $modelo;
 	private $paciente;
+	private $pdf;
 	private $descargos;
 	function __construct()
 	{

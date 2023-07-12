@@ -106,6 +106,7 @@ if(isset($_GET['ExcelFInfoError']))
 class modalesC
 {
 	private $modelo;	
+	private $sri;	
 	function __construct()
 	{
 		$this->sri = new autorizacion_sri();
@@ -326,7 +327,7 @@ function li2Array($html,$elemento="li"){
 
 
 
-            $tbl =strval('<table class="table">'.utf8_encode($res2).'</table>');
+            $tbl =strval('<table class="table">'.mb_convert_encoding($res2, 'UTF-8').'</table>');
             $r = array('res'=>1,'tbl'=>$tbl);
            }
 		// print_r($tbl);die();

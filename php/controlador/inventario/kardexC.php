@@ -82,7 +82,7 @@ class kardexC
 		$datos = $this->modelo->ListarProductos($tipo,$codigoProducto);
     $productos = [];
 		foreach ($datos as $key => $value) {
-			$productos[] = array('LabelCodigo'=>$value['Codigo_Inv']."/".$value['Minimo']."/".$value['Maximo']."/".$value['Unidad']."/".$value['Producto'],'nombre'=>utf8_encode($value['NomProd']));
+			$productos[] = array('LabelCodigo'=>$value['Codigo_Inv']."/".$value['Minimo']."/".$value['Maximo']."/".$value['Unidad']."/".$value['Producto'],'nombre'=>mb_convert_encoding($value['NomProd'], 'UTF-8'));
 		}
 		if(count($productos)<=0){
 			$productos[0] = array('LabelCodigo'=>'','nombre'=>'No existen datos.');
@@ -94,7 +94,7 @@ class kardexC
 		$datos = $this->modelo->bodegas();
 		$bodegas = [];
 		foreach ($datos as $key => $value) {
-			$bodegas[] = array('LabelCodigo'=>$value['CodBod'],'nombre'=>utf8_encode($value['CodBod'])." - ".utf8_encode($value['Bodega']));
+			$bodegas[] = array('LabelCodigo'=>$value['CodBod'],'nombre'=>mb_convert_encoding($value['CodBod'], 'UTF-8')." - ".mb_convert_encoding($value['Bodega'], 'UTF-8'));
 		}
 		if(count($bodegas)<=0){
 			$bodegas[0] = array('LabelCodigo'=>'','nombre'=>'No existen datos.');
@@ -226,7 +226,7 @@ class kardexC
                 GROUP BY K.Codigo_Inv, K.Codigo_Barra
                 HAVING SUM(Entrada-Salida) >=1 
                 ORDER BY K.Codigo_Inv, K.Codigo_Barra ";
-        $_SESSION['DGKardex']['sSQL'] = $sSQL ;
+        //$_SESSION['DGKardex']['sSQL'] = $sSQL ;
         if($heightDisponible>135){
             $heightDisponible-=35;
         }

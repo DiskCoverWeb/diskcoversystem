@@ -1219,7 +1219,7 @@ function listar_tipo_balanceSQl_pdf($mes,$tipo_ba,$tipo_p,$imprimir=False)
 function SQL_Tipo_Balance($TipoBalance,$TipoPyGCC)
 {
 
-	  $conn = new Conectar();
+	  $conn = new db();
       $cid=$conn->conexion();
    $CantCtas = 0;
    $sql='';

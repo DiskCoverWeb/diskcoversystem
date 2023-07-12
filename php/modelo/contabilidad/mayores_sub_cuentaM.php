@@ -7,7 +7,7 @@ include(dirname(__DIR__,2).'/funciones/funciones.php');
 class mayores_sub_cuentaM
 {	
 		
-    private $conn ;
+    private $db ;
 	function __construct()
 	{
 	   $this->db = new db();

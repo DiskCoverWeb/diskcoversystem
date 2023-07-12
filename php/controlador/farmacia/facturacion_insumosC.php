@@ -55,6 +55,7 @@ class facturacion_insumosC
 {
 	private $descargos_procesados;
 	private $paciente;
+	private $pdf;
 	function __construct()
 	{
 		$this->descargos_procesados = new reportes_descargos_procesadosM();

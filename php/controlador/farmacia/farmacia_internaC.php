@@ -164,6 +164,9 @@ class farmacia_internaC
 			$tra = $this->modelo->costo_producto_comprobante($value['Codigo']);
 			if(count($tra)>0)
 			{
+				if ($value['Valor_Unit'] === null) {
+					$value['Valor_Unit'] = 0;
+				}
 			$tr.='<tr>
 			<td>'.$value['Codigo'].'</td>
 			<td>'.$value['Producto'].'</td>

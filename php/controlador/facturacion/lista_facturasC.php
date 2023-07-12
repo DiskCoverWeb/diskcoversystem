@@ -27,6 +27,7 @@ if(isset($_GET['perido']))
 }
 if(isset($_GET['ver_fac']))
 {
+	// print_r('sss');die();
   $controlador->ver_fac_pdf($_GET['codigo'],$_GET['ser'],$_GET['ci'],$_GET['per'],$_GET['auto']);
 }
 if(isset($_GET['imprimir_pdf']))
@@ -125,10 +126,13 @@ if(isset($_GET['descargar_xml']))
 
 class lista_facturasC
 {
-	private $modelo;
+		private $modelo;
     private $email;
     public $pdf;
     private $punto_venta;
+    private $empresaGeneral;
+    private $sri;
+	
 	public function __construct(){
     $this->modelo = new lista_facturasM();
 		$this->pdf = new cabecera_pdf();
@@ -251,20 +255,10 @@ class lista_facturasC
     {
     	// print_r($parametros);die();
     	$serie = explode(' ',$parametros['DCLinea']);
-    	$serie = $serie[1];
+    	$serie = (isset($serie[1]))?$serie[1]:false;
     	$codigo = $parametros['ddl_cliente'];
     	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['ddl_periodo'],$parametros['txt_desde'],$parametros['txt_hasta'],$serie);
-    	// print_r($tbl);die();
-
-  // 	    $desde = str_replace('-','',$parametros['txt_desde']);
-		// $hasta = str_replace('-','',$parametros['txt_hasta']);
-		// $empresa = explode('_', $parametros['ddl_entidad']);
-		// $parametros['ddl_entidad'] = $empresa[0];
-
-		// print_r($parametros);die();
-
-		// $datos = $this->modelo->pedido_paciente_distintos(false,$parametros['rbl_buscar'],$parametros['txt_query'],$parametros['txt_desde'],$parametros['txt_hasta'],$parametros['txt_tipo_filtro']);
-
+    
 
 		$titulo = 'L I S T A  D E  F A C T U R A S';
 		$sizetable =7;
@@ -456,7 +450,7 @@ class lista_facturasC
       			if (!file_exists('../../img/img_estudiantes/'.$value)) 
       				{
       					$value='';
-      					//$new[utf8_encode($key)] = utf8_encode($value);
+      					//$new[mb_convert_encoding($key, 'UTF-8')] = mb_convert_encoding($value, 'UTF-8');
       					$new[$key] = $value;
       				}
       		} 
@@ -464,7 +458,7 @@ class lista_facturasC
          {
          	$new[$key] = '';
          }else{
-         	//$new[utf8_encode($key)] = utf8_encode($value);
+         	//$new[mb_convert_encoding($key, 'UTF-8')] = mb_convert_encoding($value, 'UTF-8');
          	$new[$key] = $value;
          }
       }else
@@ -487,9 +481,11 @@ class lista_facturasC
     	{
     		return -1;
     	}
+    	$TC = '01';
+    	if(isset($parametros['tc']) && $parametros['tc']=='LC'){$TC = '03';}
     	// print_r('ss');die();
     	$rep= $this->sri->Autorizar_factura_o_liquidacion($parametros);
-    	$clave = $this->sri->Clave_acceso($parametros['Fecha'],'01', $parametros['serie'],$parametros['FacturaNo']);
+    	$clave = $this->sri->Clave_acceso($parametros['Fecha'],$TC, $parametros['serie'],$parametros['FacturaNo']);
        $imp = '';
        if($rep==1)
        {
@@ -497,7 +493,7 @@ class lista_facturasC
        }else{ 
        		try {
        			if(json_encode($rep)==false){ //si retorna false puede ser por la codificación debido a caracteres especiales, como tildes.
-	       			$rep = utf8_encode($rep);
+	       			$rep = mb_convert_encoding($rep, 'UTF-8');
 	       		}
        		} catch (Exception $e) { }
        	return array('respuesta'=>-1,'pdf'=>$imp,'text'=>$rep,'clave'=>$clave);

@@ -62,7 +62,7 @@ class FVentasM
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>utf8_encode($row['Cuentas'])];	
+		$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>mb_convert_encoding($row['Cuentas'], 'UTF-8')];	
 		// $datos[] = $row;
 	   }
        return $datos;
@@ -88,7 +88,7 @@ class FVentasM
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>utf8_encode($row['Cuentas'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>mb_convert_encoding($row['Cuentas'], 'UTF-8')];	
 		 $datos[] = $row;
 	   }
        return $datos;
@@ -115,7 +115,7 @@ class FVentasM
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		//$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>utf8_encode($row['Cuentas'])];	
+		//$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>mb_convert_encoding($row['Cuentas'], 'UTF-8')];	
 		 $datos[] = $row;
 	   }
        return $datos;
@@ -143,7 +143,7 @@ class FVentasM
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>utf8_encode($row['Cuentas'])];	
+		$datos[]=['Codigo'=>$row['Codigo'],'Cuentas'=>mb_convert_encoding($row['Cuentas'], 'UTF-8')];	
 		  // $datos[] = $row;
 	   }
        return $datos;
@@ -169,7 +169,7 @@ class FVentasM
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>utf8_encode($row['Detalle_Conceptos']),'Porc'=>$row['Porcentaje']];	
+		$datos[]=['Codigo'=>$row['Codigo'],'Detalle_Conceptos'=>mb_convert_encoding($row['Detalle_Conceptos'], 'UTF-8'),'Porc'=>$row['Porcentaje']];	
 		 // $datos[] = $row;
 	   }
        return $datos;
@@ -194,7 +194,7 @@ class FVentasM
 	   }
 	    while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
 	   {
-		$datos[]=['Codigo'=>$row['Codigo'],'CTipoPago'=>utf8_encode($row['CTipoPago'])];	
+		$datos[]=['Codigo'=>$row['Codigo'],'CTipoPago'=>mb_convert_encoding($row['CTipoPago'], 'UTF-8')];	
 		 // $datos[] = $row;
 	   }
        return $datos;

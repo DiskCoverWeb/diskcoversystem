@@ -58,6 +58,9 @@ class lista_retencionesC
     private $email;
     public $pdf;
     private $punto_venta;
+    private $empresaGeneral;
+	private $sri;
+	private $incom;
     
 	public function __construct(){
     	$this->modelo = new lista_retencionesM();
