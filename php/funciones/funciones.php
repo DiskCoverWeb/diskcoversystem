@@ -5688,7 +5688,7 @@ function generar_comprobantes($parametros) //revision parece repetida
   //    //  return $respuesta;   
   // }
  
-  function mayorizar_inventario_sp($fecha=false) // optimizado
+  function mayorizar_inventario_sp($fecha=false, $modulo_reemplazar = true) // optimizado
   {
     // set_time_limit(1024);
     // ini_set("memory_limit", "-1");
@@ -5700,7 +5700,9 @@ function generar_comprobantes($parametros) //revision parece repetida
       {
         $fecha_corte = $fecha;  
       }
-      $_SESSION['INGRESO']['modulo_']='01';
+      if($modulo_reemplazar){
+        $_SESSION['INGRESO']['modulo_']='01';
+      }
       $conn = new db();
       $parametros = array(
       array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
@@ -6172,7 +6174,6 @@ if($titulo)
         break;
       } 
   //fin de alineacion        
-
     $tbl.='<th class="'.$alineado.'" style="width:'.$medida.'">'.$value['COLUMN_NAME'].'</th>'; 
     // print_r($tbl);die();
     array_push($medida_body, $medida);
@@ -6219,6 +6220,7 @@ if($titulo)
            // $medida1 = explode('p',$medida);
            // $medida1  = ($medida1[0]-6).'px';
            // // $medida1 = $medida1.'px'; 
+           $medida = ((intval(preg_replace("/[^0-9]/", "", $medida))<strlen($value6['Name'])*8)?(strlen($value6['Name'])*8)."px":$medida);
            $tbl.='<th class="'.$alineado.'" style="width:'.$medida.'">'.$value6['Name'].'</th>'; 
            array_push($medida_body, $medida);
            array_push($alinea_body, $alineado);
@@ -7908,6 +7910,7 @@ function Lineas_De_CxC($TFA)
       "WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' " .
       "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' ";
   if (strlen($TFA['TC']) == 2) $sSQL .= "AND Fact = '" . $TFA['TC'] . "' ";
+  $TFA['Cod_CxC'] = '';
   if (strlen($TFA['Cod_CxC']) > 1) {
     $sSQL .= "AND '" . $TFA['Cod_CxC'] . "' IN (Concepto, Codigo, CxC) ";
   } elseif (strlen($TFA['Serie']) == 6) {
@@ -11752,6 +11755,24 @@ function CambioCodigoKardex($Codigo) {
   }
   
   return substr($Codigo, 0, $LongCta);
+}
+function Reporte_Resumen_Existencias_SP($MBFechaInicial, $MBFechaFinal, $CodigoBodega)
+{
+  $FechaIniSP = BuscarFecha($MBFechaInicial);
+  $FechaFinSP = BuscarFecha($MBFechaFinal);
+
+  if($FechaIniSP<=$FechaFinSP){
+    $conn = new db();
+    $parametros = array(
+      array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+      array(&$FechaIniSP, SQLSRV_PARAM_IN),
+      array(&$FechaFinSP, SQLSRV_PARAM_IN),
+      array(&$CodigoBodega, SQLSRV_PARAM_IN),
+    );
+    $sql = "EXEC sp_Reporte_Resumen_Existencias @Item=?, @Periodo=?,@FechaInicial=?, @FechaFinal=?, @CodBod=?";
+    return $conn->ejecutar_procesos_almacenados($sql,$parametros);
+  }
 }
 
 ?>

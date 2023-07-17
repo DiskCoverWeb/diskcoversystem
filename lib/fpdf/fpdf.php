@@ -74,6 +74,7 @@ protected $underline;          // underlining flag
 protected $CurrentFont;        // current font info
 protected $FontSizePt;         // current font size in points
 protected $FontSize;           // current font size in user unit
+protected $tsize;              // 
 protected $DrawColor;          // commands for drawing color
 protected $FillColor;          // commands for filling color
 protected $TextColor;          // commands for text color
@@ -98,9 +99,19 @@ protected $B;
 protected $I;
 protected $U;
 protected $HREF;
-protected $fontList;
+protected $fontlist;
 protected $issetfont;
 protected $issetcolor;
+
+protected $tableborder;
+protected $tableborder1;
+protected $tdbegin;
+protected $tdwidth;
+protected $tdheight;
+protected $tdalign;
+protected $tdbgcolor;
+protected $oldx;
+protected $oldy;
 
 /*******************************************************************************
 *                               Public methods                                 *
@@ -290,31 +301,31 @@ function SetCompression($compress)
 function SetTitle($title, $isUTF8=false)
 {
 	// Title of document
-	$this->metadata['Title'] = $isUTF8 ? $title : utf8_encode($title);
+	$this->metadata['Title'] = $isUTF8 ? $title : mb_convert_encoding($title, 'UTF-8');
 }
 
 function SetAuthor($author, $isUTF8=false)
 {
 	// Author of document
-	$this->metadata['Author'] = $isUTF8 ? $author : utf8_encode($author);
+	$this->metadata['Author'] = $isUTF8 ? $author : mb_convert_encoding($author, 'UTF-8');
 }
 
 function SetSubject($subject, $isUTF8=false)
 {
 	// Subject of document
-	$this->metadata['Subject'] = $isUTF8 ? $subject : utf8_encode($subject);
+	$this->metadata['Subject'] = $isUTF8 ? $subject : mb_convert_encoding($subject, 'UTF-8');
 }
 
 function SetKeywords($keywords, $isUTF8=false)
 {
 	// Keywords of document
-	$this->metadata['Keywords'] = $isUTF8 ? $keywords : utf8_encode($keywords);
+	$this->metadata['Keywords'] = $isUTF8 ? $keywords : mb_convert_encoding($keywords, 'UTF-8');
 }
 
 function SetCreator($creator, $isUTF8=false)
 {
 	// Creator of document
-	$this->metadata['Creator'] = $isUTF8 ? $creator : utf8_encode($creator);
+	$this->metadata['Creator'] = $isUTF8 ? $creator : mb_convert_encoding($creator, 'UTF-8');
 }
 
 function AliasNbPages($alias='{nb}')
@@ -1228,7 +1239,7 @@ protected function _httpencode($param, $value, $isUTF8)
 	if($this->_isascii($value))
 		return $param.'="'.$value.'"';
 	if(!$isUTF8)
-		$value = utf8_encode($value);
+		$value = mb_convert_encoding($value, 'UTF-8');
 	if(strpos($_SERVER['HTTP_USER_AGENT'],'MSIE')!==false)
 		return $param.'="'.rawurlencode($value).'"';
 	else
@@ -2360,6 +2371,59 @@ function PutLink($URL, $txt)
     $this->SetTextColor(0);
 }
 
+function NbLines($w, $txt)
+    {
+    	// print_r($w.'-'.$txt);die();
+        // Compute the number of lines a MultiCell of width w will take
+        if(!isset($this->CurrentFont))
+            $this->Error('No font has been set');
+        $cw = $this->CurrentFont['cw'];
+        if($w==0)
+            $w = $this->w-$this->rMargin-$this->x;
+        $wmax = ($w-2*$this->cMargin)*1000/$this->FontSize;
+        $s = str_replace("\r",'',(string)$txt);
+        $nb = strlen($s);
+        if($nb>0 && $s[$nb-1]=="\n")
+            $nb--;
+        $sep = -1;
+        $i = 0;
+        $j = 0;
+        $l = 0;
+        $nl = 1;
+        while($i<$nb)
+        {
+            $c = $s[$i];
+            if($c=="\n")
+            {
+                $i++;
+                $sep = -1;
+                $j = $i;
+                $l = 0;
+                $nl++;
+                continue;
+            }
+            if($c==' ')
+                $sep = $i;
+            $l += $cw[$c];
+            if($l>$wmax)
+            {
+                if($sep==-1)
+                {
+                    if($i==$j)
+                        $i++;
+                }
+                else
+                    $i = $sep+1;
+                $sep = -1;
+                $j = $i;
+                $l = 0;
+                $nl++;
+            }
+            else
+                $i++;
+        }
+        return $nl;
+    }
 
 
 }//end of class

@@ -99,7 +99,7 @@ class anexos_transC
     {
        $carpeta = "AT".$_SESSION['INGRESO']['item'];
        $archivo ='AT'.date('m',strtotime($FechaIni)).''.date('Y',strtotime($FechaIni)).'.xml';
-       $url = array('url'=> utf8_encode(dirname(__DIR__)."/vista/TEMP/".$carpeta.'/'.$archivo),'archivo'=>$archivo);
+       $url = array('url'=> mb_convert_encoding(dirname(__DIR__)."/vista/TEMP/".$carpeta.'/'.$archivo, 'UTF-8'),'archivo'=>$archivo);
        return $url;
     }else
     {
@@ -982,7 +982,7 @@ return 1;
     $this->pdf->SetXY(4,35);   
     $this->pdf->SetFont('Arial','',10);
     $this->pdf->SetTextColor(0, 0, 0);
-    $this->pdf->MultiCell(0,5,utf8_decode('Certifico que la información contenida en el medio magnético adjunto al presente Anexo Transaccional para el período '.date('m',strtotime($FechaIni)).'-'.date('Y',strtotime($FechaIni)).' es fiel reflejo del siguiente reporte:'),0,'L');
+    $this->pdf->MultiCell(0,5,mb_convert_encoding('Certifico que la información contenida en el medio magnético adjunto al presente Anexo Transaccional para el período '.date('m',strtotime($FechaIni)).'-'.date('Y',strtotime($FechaIni)).' es fiel reflejo del siguiente reporte:', 'ISO-8859-1','UTF-8'),0,'L');
 
 
     // 'COMPRAS
@@ -998,11 +998,11 @@ return 1;
              $count = 1;
              $tablacompras[0]['medidas']=array(10,105,20,20,20,20);
              $tablacompras[0]['alineado']=array('L','L','L','L','L','L');
-             $tablacompras[0]['datos']=array(utf8_decode("Cód"),utf8_decode("Transacción"),"No. Reg.","BI tarifa 0%","BI tarifa 12%","Valor IVA");           
+             $tablacompras[0]['datos']=array(mb_convert_encoding("Cód", 'ISO-8859-1','UTF-8'),mb_convert_encoding("Transacción", 'ISO-8859-1','UTF-8'),"No. Reg.","BI tarifa 0%","BI tarifa 12%","Valor IVA");           
           foreach ($compras as $key => $value) {
              $tablacompras[$count]['medidas']=$tablacompras[0]['medidas'];
              $tablacompras[$count]['alineado']=$tablacompras[0]['alineado'];
-             $tablacompras[$count]['datos']=array($value["TipoComprobante"],utf8_decode($value["Descripcion"]),$value["Cant"],$value["BI"],$value["BIG"],$value["MI"]);
+             $tablacompras[$count]['datos']=array($value["TipoComprobante"],mb_convert_encoding($value["Descripcion"], 'ISO-8859-1','UTF-8'),$value["Cant"],$value["BI"],$value["BIG"],$value["MI"]);
              if($value["TipoComprobante"] == 4)
              {
               $Real1 = $Real1 - $value["BI"];
@@ -1046,11 +1046,11 @@ return 1;
           
          $this->pdf->SetXY(5,$this->pdf->GetY()+5);
          $this->pdf->SetFont('Arial','',10);
-         $this->pdf->Cell(0,3,utf8_decode("Se verificará con los casilleros asignados en la declaración de IVA (form.104) de acuerdo al siguiente esquema:"),0,0,'L');
+         $this->pdf->Cell(0,3,mb_convert_encoding("Se verificará con los casilleros asignados en la declaración de IVA (form.104) de acuerdo al siguiente esquema:", 'ISO-8859-1','UTF-8'),0,0,'L');
          $this->pdf->SetXY(5,$this->pdf->GetY()+3);
          $tablacompras1[0]['medidas']=array(115,30,30,30);
          $tablacompras1[0]['alineado']=array('L','L','L','L');
-         $tablacompras1[0]['datos']=array(utf8_decode("<u>Sustento Crédito Tributario"),utf8_decode("Casilleros"),"Base","Impuesto"); 
+         $tablacompras1[0]['datos']=array(mb_convert_encoding("<u>Sustento Crédito Tributario", 'ISO-8859-1','UTF-8'),mb_convert_encoding("Casilleros", 'ISO-8859-1','UTF-8'),"Base","Impuesto"); 
           $compras1 = $this->modelo-> transacciones_compras($FechaIni,$FechaFin);
           $Real1 = 0;    // Base Imp 12%
           $Real2 = 0;    // IVA 12%
@@ -1073,19 +1073,19 @@ return 1;
           }
            $tablacompras1[1]['medidas']=$tablacompras1[0]['medidas'];
            $tablacompras1[1]['alineado']= $tablacompras1[0]['alineado'];
-           $tablacompras1[1]['datos']=array(utf8_decode("Compras Netas (12/14)% -Sustento de crédito tributario corresponde a los códigos 1,3 y 6"),"631+633+635",$Real1,$Real2);
+           $tablacompras1[1]['datos']=array(mb_convert_encoding("Compras Netas (12/14)% -Sustento de crédito tributario corresponde a los códigos 1,3 y 6", 'ISO-8859-1','UTF-8'),"631+633+635",$Real1,$Real2);
 
            $tablacompras1[2]['medidas']=$tablacompras1[0]['medidas'];
            $tablacompras1[2]['alineado']= $tablacompras1[0]['alineado'];
-           $tablacompras1[2]['datos']=array(utf8_decode("Compras Netas 0% -Sustento de crédito tributario corresponde a los códigos 1,3 y 6"),"601+603+605",$Real3,""); 
+           $tablacompras1[2]['datos']=array(mb_convert_encoding("Compras Netas 0% -Sustento de crédito tributario corresponde a los códigos 1,3 y 6", 'ISO-8859-1','UTF-8'),"601+603+605",$Real3,""); 
 
            $tablacompras1[3]['medidas']=$tablacompras1[0]['medidas'];
            $tablacompras1[3]['alineado']= $tablacompras1[0]['alineado'];
-           $tablacompras1[3]['datos']=array(utf8_decode("Pago por Reembolso de gastos (12/14)% -Corresponde a los códigos 8 y 9"),"637",$Real4,$Real5); 
+           $tablacompras1[3]['datos']=array(mb_convert_encoding("Pago por Reembolso de gastos (12/14)% -Corresponde a los códigos 8 y 9", 'ISO-8859-1','UTF-8'),"637",$Real4,$Real5); 
 
            $tablacompras1[4]['medidas']=$tablacompras1[0]['medidas'];
            $tablacompras1[4]['alineado']= $tablacompras1[0]['alineado'];
-           $tablacompras1[4]['datos']=array(utf8_decode( "Pago por Reembolso de gastos 0% -Corresponde a los códigos 8 y 9"),"607",$Real6,"");   
+           $tablacompras1[4]['datos']=array(mb_convert_encoding( "Pago por Reembolso de gastos 0% -Corresponde a los códigos 8 y 9", 'ISO-8859-1','UTF-8'),"607",$Real6,"");   
          
           foreach ($tablacompras1 as $key => $value){
           $this->pdf->SetFont('Arial','',8);
@@ -1112,11 +1112,11 @@ return 1;
              $count = 1;
              $tablaVentas[0]['medidas']=array(10,105,20,20,20,20);
              $tablaVentas[0]['alineado']=array('L','L','L','L','L','L');
-             $tablaVentas[0]['datos']=array(utf8_decode("Cód"),utf8_decode("Transacción"),"No. Reg.","BI tarifa 0%","BI tarifa 12%","Valor IVA");           
+             $tablaVentas[0]['datos']=array(mb_convert_encoding("Cód", 'ISO-8859-1','UTF-8'),mb_convert_encoding("Transacción", 'ISO-8859-1','UTF-8'),"No. Reg.","BI tarifa 0%","BI tarifa 12%","Valor IVA");           
           foreach ($ventas as $key => $value) {
              $tablaVentas[$count]['medidas']=$tablaVentas[0]['medidas'];
              $tablaVentas[$count]['alineado']=$tablaVentas[0]['alineado'];
-             $tablaVentas[$count]['datos']=array($value["TipoComprobante"],utf8_decode($value["Descripcion"]),$value["Cant"],$value["BI"],$value["BIG"],$value["MI"]);
+             $tablaVentas[$count]['datos']=array($value["TipoComprobante"],mb_convert_encoding($value["Descripcion"], 'ISO-8859-1','UTF-8'),$value["Cant"],$value["BI"],$value["BIG"],$value["MI"]);
              if($value["TipoComprobante"] == 4)
              {
               $Real1 = $Real1 - $value["BI"];
@@ -1160,11 +1160,11 @@ return 1;
           
          $this->pdf->SetXY(5,$this->pdf->GetY()+5);
          $this->pdf->SetFont('Arial','',10);
-         $this->pdf->Cell(0,3,utf8_decode("Se verificará con los casilleros asignados en la declaración de IVA (form.104) de acuerdo al siguiente esquema:"),0,0,'L');
+         $this->pdf->Cell(0,3,mb_convert_encoding("Se verificará con los casilleros asignados en la declaración de IVA (form.104) de acuerdo al siguiente esquema:", 'ISO-8859-1','UTF-8'),0,0,'L');
          $this->pdf->SetXY(5,$this->pdf->GetY()+3);
          $tablaVentas1[0]['medidas']=array(115,30,30,30);
          $tablaVentas1[0]['alineado']=array('L','L','L','L');
-         $tablaVentas1[0]['datos']=array(utf8_decode("<u>Sustento Crédito Tributario"),utf8_decode("Casilleros"),"Base","Impuesto"); 
+         $tablaVentas1[0]['datos']=array(mb_convert_encoding("<u>Sustento Crédito Tributario", 'ISO-8859-1','UTF-8'),mb_convert_encoding("Casilleros", 'ISO-8859-1','UTF-8'),"Base","Impuesto"); 
           $ventas1 = $this->modelo->base_imponible($FechaIni,$FechaFin);
           $Real1 = 0;    // Base Imp 12%
           $Real2 = 0;    // IVA 12%
@@ -1182,16 +1182,16 @@ return 1;
           }
            $tablaVentas1[1]['medidas']=$tablaVentas1[0]['medidas'];
            $tablaVentas1[1]['alineado']= $tablaVentas1[0]['alineado'];
-           $tablaVentas1[1]['datos']=array(utf8_decode("Ventas Netas Base Imponible 12%"),"531+533+535+537",$Real1,$Real2);
+           $tablaVentas1[1]['datos']=array(mb_convert_encoding("Ventas Netas Base Imponible 12%", 'ISO-8859-1','UTF-8'),"531+533+535+537",$Real1,$Real2);
            $tablaVentas1[2]['medidas']=$tablaVentas1[0]['medidas'];
            $tablaVentas1[2]['alineado']= $tablaVentas1[0]['alineado'];
-           $tablaVentas1[2]['datos']=array(utf8_decode("Ventas Netas Base Imponible 0%"),"501+503+505+507",$Real3,""); 
+           $tablaVentas1[2]['datos']=array(mb_convert_encoding("Ventas Netas Base Imponible 0%", 'ISO-8859-1','UTF-8'),"501+503+505+507",$Real3,""); 
            $tablaVentas1[3]['medidas']=$tablaVentas1[0]['medidas'];
            $tablaVentas1[3]['alineado']= $tablaVentas1[0]['alineado'];
-           $tablaVentas1[3]['datos']=array(utf8_decode("Ingresos por Reembolso de Gastos Tarifa 12%"),"593",$Real4,$Real5); 
+           $tablaVentas1[3]['datos']=array(mb_convert_encoding("Ingresos por Reembolso de Gastos Tarifa 12%", 'ISO-8859-1','UTF-8'),"593",$Real4,$Real5); 
            $tablaVentas1[4]['medidas']=$tablaVentas1[0]['medidas'];
            $tablaVentas1[4]['alineado']= $tablaVentas1[0]['alineado'];
-           $tablaVentas1[4]['datos']=array(utf8_decode( "Ingresos por Reembolso de Gastos Tarifa0%"),"509",$Real6,"");   
+           $tablaVentas1[4]['datos']=array(mb_convert_encoding( "Ingresos por Reembolso de Gastos Tarifa0%", 'ISO-8859-1','UTF-8'),"509",$Real6,"");   
          
           foreach ($tablaVentas1 as $key => $value){
           $this->pdf->SetFont('Arial','',8);
@@ -1220,7 +1220,7 @@ return 1;
              }
              $tablaAnulados[0]['medidas']=array(150,25,25);
              $tablaAnulados[0]['alineado']=array('L','L','R');
-             $tablaAnulados[0]['datos']=array(utf8_decode("Total de Comprobantes Anulados en el período informado(no incluye los dados de baja)"), "SUMATORIA",$total_A);
+             $tablaAnulados[0]['datos']=array(mb_convert_encoding("Total de Comprobantes Anulados en el período informado(no incluye los dados de baja)", 'ISO-8859-1','UTF-8'), "SUMATORIA",$total_A);
     
 
         foreach ($tablaAnulados as $key => $value){
@@ -1244,11 +1244,11 @@ return 1;
               $Real1 = 0; $Real2 = 0; $Real3 = 0; $Real4 = 0; $Real5 = 0; $Total = 0; 
              $tabla_RE_FU[0]['medidas']=array(20,120,20,20,20);
              $tabla_RE_FU[0]['alineado']=array('L','L','L','L','L','L');
-             $tabla_RE_FU[0]['datos']=array(utf8_decode("Cod"),utf8_decode("Concepto de Retención en la Fuente de Impuesto a la Renta"),"No. Reg.","BaseI","Valor");
+             $tabla_RE_FU[0]['datos']=array(mb_convert_encoding("Cod", 'ISO-8859-1','UTF-8'),mb_convert_encoding("Concepto de Retención en la Fuente de Impuesto a la Renta", 'ISO-8859-1','UTF-8'),"No. Reg.","BaseI","Valor");
             foreach ($retencion_in as $key => $value) {
                $tabla_RE_FU[$count]['medidas']=array(20,120,20,20,20);
                $tabla_RE_FU[$count]['alineado']= $tabla_RE_FU[0]['alineado'];
-               $tabla_RE_FU[$count]['datos']=array($value["CodRet"],utf8_decode($value["Concepto"]),$value['Cant'],$value["BI"],$value["VR"]);
+               $tabla_RE_FU[$count]['datos']=array($value["CodRet"],mb_convert_encoding($value["Concepto"], 'ISO-8859-1','UTF-8'),$value['Cant'],$value["BI"],$value["VR"]);
                     $Total = $Total + $value["VR"];
                     $Real5 = $Real5 + $value["BI"]; 
                $count = $count +1;  
@@ -1288,19 +1288,19 @@ return 1;
               $Real1 = 0; $Real2 = 0; $Real3 = 0; $Real4 = 0; $Real5 = 0; $Total = 0; 
              $tabla_RE_FU[0]['medidas']=array(40,80,25,15,20,15);
              $tabla_RE_FU[0]['alineado']=array('L','L','L','L','L','L');
-             $tabla_RE_FU[0]['datos']=array(utf8_decode("Operación: COMPRAS"),utf8_decode("Concepto de Retención en la Fuente del IVA"),"No. Reg.","BaseI","% Ret.","Valor");
+             $tabla_RE_FU[0]['datos']=array(mb_convert_encoding("Operación: COMPRAS", 'ISO-8859-1','UTF-8'),mb_convert_encoding("Concepto de Retención en la Fuente del IVA", 'ISO-8859-1','UTF-8'),"No. Reg.","BaseI","% Ret.","Valor");
             foreach ($retencion_fu['compras'] as $key => $value) {
                $tabla_RE_FU[$count]['medidas']=array(20,100,25,15,20,15);
                $tabla_RE_FU[$count]['alineado']=$tabla_RE_FU[0]['alineado'];
                switch ($value["PorRetBienes"]) {
                  case '1':
-                    $tabla_RE_FU[$count]['datos']=array("",utf8_decode ("Retención en Bienes"),$value['Cant'],$value["BIB"],"30%",$value["VRB"]);
+                    $tabla_RE_FU[$count]['datos']=array("",mb_convert_encoding("Retención en Bienes", 'ISO-8859-1','UTF-8'),$value['Cant'],$value["BIB"],"30%",$value["VRB"]);
                     $Total = $Total + $value["VRB"];
                     $Real5 = $Real5 + $value["BIB"];
                    break;
                  
                  case '3':
-                    $tabla_RE_FU[$count]['datos']=array("",utf8_decode("Retención en Bienes"),$value['Cant'],$value["BIB"],"100%",$value["VRB"]); 
+                    $tabla_RE_FU[$count]['datos']=array("",mb_convert_encoding("Retención en Bienes", 'ISO-8859-1','UTF-8'),$value['Cant'],$value["BIB"],"100%",$value["VRB"]); 
                     $Total = $Total + $value["VRB"];
                     $Real5 = $Real5 + $value["BIB"];            
                    break;
@@ -1308,18 +1308,18 @@ return 1;
 
                switch ($value["PorRetServicios"]) {
                  case '2':
-                    $tabla_RE_FU[$count]['datos']=array("",utf8_decode("Retención en Servicios"),$value['Cant'],$value["BIS"],"70%",$value["VRS"]);
+                    $tabla_RE_FU[$count]['datos']=array("",mb_convert_encoding("Retención en Servicios", 'ISO-8859-1','UTF-8'),$value['Cant'],$value["BIS"],"70%",$value["VRS"]);
                     $Total = $Total + $value["VRS"];
                     $Real5 = $Real5 + $value["BIS"];
                    break;
                  
                  case '4':
-                    $tabla_RE_FU[$count]['datos']=array("",utf8_decode("Retención en Servicios"),$value['Cant'],$value["BIS"],"70%",$value["VRS"]);
+                    $tabla_RE_FU[$count]['datos']=array("",mb_convert_encoding("Retención en Servicios", 'ISO-8859-1','UTF-8'),$value['Cant'],$value["BIS"],"70%",$value["VRS"]);
                     $Total = $Total + $value["VRS"];
                     $Real5 = $Real5 + $value["BIS"];
                    break;
                  case '3':
-                    $tabla_RE_FU[$count]['datos']=array("",utf8_decode("Retención en Servicios"),$value['Cant'],$value["BIS"],"100%",$value["VRS"]);  
+                    $tabla_RE_FU[$count]['datos']=array("",mb_convert_encoding("Retención en Servicios", 'ISO-8859-1','UTF-8'),$value['Cant'],$value["BIS"],"100%",$value["VRS"]);  
                     $Total = $Total + $value["VRS"];   
                     $Real5 = $Real5 + $value["BIS"];      
                    break;
@@ -1358,19 +1358,19 @@ return 1;
               $Real1 = 0; $Real2 = 0; $Real3 = 0; $Real4 = 0; $Real5 = 0; $Total = 0; 
              $tabla_RE_FU[0]['medidas']=array(40,80,25,15,20,15);
              $tabla_RE_FU[0]['alineado']=array('L','L','L','L','L','L');
-             $tabla_RE_FU[0]['datos']=array(utf8_decode("Operación: VENTAS"),utf8_decode("Resumen de Retenciones que le efectuaron en el Periodo"),"No. Reg.","BaseI","% Ret.","Valor");
+             $tabla_RE_FU[0]['datos']=array(mb_convert_encoding("Operación: VENTAS", 'ISO-8859-1','UTF-8'),mb_convert_encoding("Resumen de Retenciones que le efectuaron en el Periodo", 'ISO-8859-1','UTF-8'),"No. Reg.","BaseI","% Ret.","Valor");
             foreach ($retencion_fu['ventas'] as $key => $value) {
                $tabla_RE_FU[$count]['medidas']=array(20,100,25,15,20,15);
                $tabla_RE_FU[$count]['alineado']=$tablaHTML[0]['alineado'];
                switch ($value["PorRetBienes"]) {
                  case '1':
-                    $tabla_RE_FU[$count]['datos']=array("",utf8_decode ("Retención en Bienes"),$value['Cant'],$value["BIB"],"30%",$value["VRB"]);
+                    $tabla_RE_FU[$count]['datos']=array("",mb_convert_encoding("Retención en Bienes", 'ISO-8859-1','UTF-8'),$value['Cant'],$value["BIB"],"30%",$value["VRB"]);
                     $Total = $Total + $value["VRB"];
                     $Real5 = $Real5 + $value["BIB"];
                    break;
                  
                  case '3':
-                    $tabla_RE_FU[$count]['datos']=array("",utf8_decode("Retención en Bienes"),$value['Cant'],$value["BIB"],"100%",$value["VRB"]); 
+                    $tabla_RE_FU[$count]['datos']=array("",mb_convert_encoding("Retención en Bienes", 'ISO-8859-1','UTF-8'),$value['Cant'],$value["BIB"],"100%",$value["VRB"]); 
                     $Total = $Total + $value["VRB"];
                     $Real5 = $Real5 + $value["BIB"];            
                    break;
@@ -1378,18 +1378,18 @@ return 1;
 
                switch ($value["PorRetServicios"]) {
                  case '2':
-                    $tabla_RE_FU[$count]['datos']=array("",utf8_decode("Retención en Servicios"),$value['Cant'],$value["BIS"],"70%",$value["VRS"]);
+                    $tabla_RE_FU[$count]['datos']=array("",mb_convert_encoding("Retención en Servicios", 'ISO-8859-1','UTF-8'),$value['Cant'],$value["BIS"],"70%",$value["VRS"]);
                     $Total = $Total + $value["VRS"];
                     $Real5 = $Real5 + $value["BIS"];
                    break;
                  
                  case '4':
-                    $tabla_RE_FU[$count]['datos']=array("",utf8_decode("Retención en Servicios"),$value['Cant'],$value["BIS"],"70%",$value["VRS"]);
+                    $tabla_RE_FU[$count]['datos']=array("",mb_convert_encoding("Retención en Servicios", 'ISO-8859-1','UTF-8'),$value['Cant'],$value["BIS"],"70%",$value["VRS"]);
                     $Total = $Total + $value["VRS"];
                     $Real5 = $Real5 + $value["BIS"];
                    break;
                  case '3':
-                    $tabla_RE_FU[$count]['datos']=array("",utf8_decode("Retención en Servicios"),$value['Cant'],$value["BIS"],"100%",$value["VRS"]);  
+                    $tabla_RE_FU[$count]['datos']=array("",mb_convert_encoding("Retención en Servicios", 'ISO-8859-1','UTF-8'),$value['Cant'],$value["BIS"],"100%",$value["VRS"]);  
                     $Total = $Total + $value["VRS"];   
                     $Real5 = $Real5 + $value["BIS"];      
                    break;
@@ -1431,12 +1431,12 @@ return 1;
              $Real1 = 0; $Real2 = 0; $Real3 = 0; $Real4 = 0; $Real5 = 0; $Total = 0; 
              $tabla_RE_FU[0]['medidas']=array(15,100,20,20,20,20);
              $tabla_RE_FU[0]['alineado']=array('L','L','L','L','L','L');
-             $tabla_RE_FU[0]['datos']=array(utf8_decode("Codigo"),utf8_decode("Concepto de Retención efectuadas en Ventas"),"No. Reg.","BaseI","% Ret.","Valor");
+             $tabla_RE_FU[0]['datos']=array(mb_convert_encoding("Codigo", 'ISO-8859-1','UTF-8'),mb_convert_encoding("Concepto de Retención efectuadas en Ventas", 'ISO-8859-1','UTF-8'),"No. Reg.","BaseI","% Ret.","Valor");
              foreach ($retencion_fu['retencion'] as $key => $value) 
              {
                $tabla_RE_FU[$count]['medidas']=array(20,100,20,20,20,20);
                $tabla_RE_FU[$count]['alineado']= $tabla_RE_FU[0]['alineado'];
-               $tabla_RE_FU[$count]['datos']=array($value["CodRet"],utf8_decode ($value["Concepto"]),$value['Cant'],$value["BI"],$value["Porcentaje"]."%",$value["VR"]);
+               $tabla_RE_FU[$count]['datos']=array($value["CodRet"],mb_convert_encoding($value["Concepto"], 'ISO-8859-1','UTF-8'),$value['Cant'],$value["BI"],$value["Porcentaje"]."%",$value["VR"]);
                $Total = $Total + $value["VR"];
                $Real5 = $Real5 + $value["BI"]; 
                $count = $count +1;  
@@ -1492,12 +1492,12 @@ return 1;
              $count = 1;
              $tablaimpor[0]['medidas']=array(10,125,20,20,20);
              $tablaimpor[0]['alineado']=array('L','L','L','L','L');
-             $tablaimpor[0]['datos']=array(utf8_decode("Cód"),utf8_decode("Transacción"),"No. Reg.","Valor CIF%","Valor IVA");           
+             $tablaimpor[0]['datos']=array(mb_convert_encoding("Cód", 'ISO-8859-1','UTF-8'),mb_convert_encoding("Transacción", 'ISO-8859-1','UTF-8'),"No. Reg.","Valor CIF%","Valor IVA");           
              foreach ($importaciones as $key => $value) 
              {
                 $tablaimpor[$count]['medidas']=$tablaimpor[0]['medidas'];
                 $tablaimpor[$count]['alineado']=$tablaimpor[0]['alineado'];
-                $tablaimpor[$count]['datos']=array($value["TipoComprobante"],utf8_decode($value["Descripcion"]),$value["Cant"],$value["VC"],$value["MI"]);
+                $tablaimpor[$count]['datos']=array($value["TipoComprobante"],mb_convert_encoding($value["Descripcion"], 'ISO-8859-1','UTF-8'),$value["Cant"],$value["VC"],$value["MI"]);
             
                 $Real1 = $Real1 - $value["VC"];
                 $Real2 = $Real2 - $value["MI"];
@@ -1541,7 +1541,7 @@ return 1;
                  $this->pdf->SetXY(5,$this->pdf->GetY()+5);
                  $tablacompras1[0]['medidas']=array(115,30,30,30);
                  $tablacompras1[0]['alineado']=array('L','L','L','L');
-                 $tablacompras1[0]['datos']=array(utf8_decode("Sustento Crédito Tributario"),utf8_decode("Casilleros"),"Base","Impuesto"); 
+                 $tablacompras1[0]['datos']=array(mb_convert_encoding("Sustento Crédito Tributario", 'ISO-8859-1','UTF-8'),mb_convert_encoding("Casilleros", 'ISO-8859-1','UTF-8'),"Base","Impuesto"); 
                  $Real1 = 0;    // Base Imp 12%
                  $Real2 = 0;    // IVA 12%
                  $Real3 = 0;    // 0%
@@ -1556,11 +1556,11 @@ return 1;
                  }
                  $tablacompras1[1]['medidas']=$tablacompras1[0]['medidas'];
                  $tablacompras1[1]['alineado']= $tablacompras1[0]['alineado'];
-                 $tablacompras1[1]['datos']=array(utf8_decode("Importaciones Netas 12% -Sustento de crédito tributario corresponde a los códigos 1,3 y 6"),"639+641+643+645",$Real1,$Real2);
+                 $tablacompras1[1]['datos']=array(mb_convert_encoding("Importaciones Netas 12% -Sustento de crédito tributario corresponde a los códigos 1,3 y 6", 'ISO-8859-1','UTF-8'),"639+641+643+645",$Real1,$Real2);
 
                  $tablacompras1[2]['medidas']=$tablacompras1[0]['medidas'];
                  $tablacompras1[2]['alineado']= $tablacompras1[0]['alineado'];
-                 $tablacompras1[2]['datos']=array(utf8_decode("Importaciones Netas 0% -Sustento de crédito tributario corresponde a los códigos 1,3 y 6"),"609+611+613",$Real3,"");
+                 $tablacompras1[2]['datos']=array(mb_convert_encoding("Importaciones Netas 0% -Sustento de crédito tributario corresponde a los códigos 1,3 y 6", 'ISO-8859-1','UTF-8'),"609+611+613",$Real3,"");
 
                  foreach ($tablacompras1 as $key => $value)
                    {
@@ -1587,12 +1587,12 @@ return 1;
              $count = 1;
              $tablaexpor[0]['medidas']=array(10,145,20,20);
              $tablaexpor[0]['alineado']=array('L','L','L','L','L');
-             $tablaexpor[0]['datos']=array(utf8_decode("Cód"),utf8_decode("Transacción"),"No. Reg.","Valor FOB");           
+             $tablaexpor[0]['datos']=array(mb_convert_encoding("Cód", 'ISO-8859-1','UTF-8'),mb_convert_encoding("Transacción", 'ISO-8859-1','UTF-8'),"No. Reg.","Valor FOB");           
              foreach ($importaciones as $key => $value) 
              {
                 $tablaimpor[$count]['medidas']=$tablaexpor[0]['medidas'];
                 $tablaimpor[$count]['alineado']=$tablaexpor[0]['alineado'];
-                $tablaimpor[$count]['datos']=array($value["TipoComprobante"],utf8_decode($value["Descripcion"]),$value["Cant"],$value["VF"]);
+                $tablaimpor[$count]['datos']=array($value["TipoComprobante"],mb_convert_encoding($value["Descripcion"], 'ISO-8859-1','UTF-8'),$value["Cant"],$value["VF"]);
             
                 $Real1 = $Real1 + $value["VF"];             
                 $count = $count+1;
@@ -1634,7 +1634,7 @@ return 1;
                  $this->pdf->SetXY(5,$this->pdf->GetY()+5);
                  $tablacompras1[0]['medidas']=array(115,30,30,30);
                  $tablacompras1[0]['alineado']=array('L','L','L','L');
-                 $tablacompras1[0]['datos']=array(utf8_decode("Sustento Crédito Tributario"),utf8_decode("Casilleros"),"Base","Impuesto"); 
+                 $tablacompras1[0]['datos']=array(mb_convert_encoding("Sustento Crédito Tributario", 'ISO-8859-1','UTF-8'),mb_convert_encoding("Casilleros", 'ISO-8859-1','UTF-8'),"Base","Impuesto"); 
                  $Real1 = 0;    // Base Imp 12%
                  foreach ($expor1 as $key => $value) 
                  {                   
@@ -1642,7 +1642,7 @@ return 1;
                  }
                  $tablacompras1[1]['medidas']=$tablacompras1[0]['medidas'];
                  $tablacompras1[1]['alineado']= $tablacompras1[0]['alineado'];
-                 $tablacompras1[1]['datos']=array(utf8_decode("Exportaciones Netas"),"511+513",$Real1,"");
+                 $tablacompras1[1]['datos']=array(mb_convert_encoding("Exportaciones Netas", 'ISO-8859-1','UTF-8'),"511+513",$Real1,"");
 
 
                  foreach ($tablacompras1 as $key => $value)
@@ -1658,7 +1658,7 @@ return 1;
         }
 
     $this->pdf->SetXY(5,$this->pdf->GetY()); 
-    $this->pdf->MultiCell(0,5,utf8_decode("Declaro que los datos contenidos en este anexo son verdaderos, por lo que asumo la responsabilidad correspondiente, de acuerdo a lo establecido en el Art.101 de la Codificación de la Ley de Régimen Tributario Interno"),0,'L');
+    $this->pdf->MultiCell(0,5,mb_convert_encoding("Declaro que los datos contenidos en este anexo son verdaderos, por lo que asumo la responsabilidad correspondiente, de acuerdo a lo establecido en el Art.101 de la Codificación de la Ley de Régimen Tributario Interno", 'ISO-8859-1','UTF-8'),0,'L');
     $this->pdf->SetXY(5,$this->pdf->GetY()+15);
              $tablaFinal[0]['medidas']=array(100,100);
              $tablaFinal[0]['alineado']=array('C','C');

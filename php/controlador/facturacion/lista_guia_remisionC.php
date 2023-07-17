@@ -114,6 +114,8 @@ class lista_guia_remisionC
     private $email;
     public $pdf;
     private $punto_venta;
+    private $empresaGeneral;
+	private $sri;
     
 	public function __construct(){
     	$this->modelo = new lista_guia_remisionM();

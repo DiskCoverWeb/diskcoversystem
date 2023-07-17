@@ -147,7 +147,7 @@ class ingreso_descargosC
 {
 	private $modelo;
 	private $paciente;
-	private $decargos;
+	private $descargos;
 	public $cods_negativos = '';
 	function __construct()
 	{

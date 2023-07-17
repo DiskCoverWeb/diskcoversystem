@@ -68,6 +68,7 @@ class ingreso_descargosC
 {
 	private $modelo;
 	private $paciente;
+	private $pdf;
 	function __construct()
 	{
 		$this->modelo = new descargosM();

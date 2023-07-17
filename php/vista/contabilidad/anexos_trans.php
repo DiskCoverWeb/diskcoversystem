@@ -1,4 +1,10 @@
 <?php  
+  $formatter = new IntlDateFormatter('es_ES', IntlDateFormatter::FULL, IntlDateFormatter::NONE); 
+  $fecha = new DateTime();
+  $mes = $fecha->format('n');
+  $formatter->setPattern('MMMM');
+  $mesEspanol = $formatter->format($fecha);
+
 // require_once("panel.php");
 ?>
 <script type="text/javascript">
@@ -175,7 +181,9 @@
  </div>
 </div>
 <div class="row">
-  <input type="hidden" name="" value="<?php setlocale(LC_ALL,"es_ES@euro","es_ES","esp"); echo $fecha=strftime("%B");?>" id="txt_mes">
+
+ 
+  <input type="hidden" name="" value=" <?php echo $mesEspanol; ?>" id="txt_mes">
   <input type="hidden" name="" value="<?php echo date('Y');?>" id="txt_year">
       
   <div class="container-lg" style="padding: 20px">

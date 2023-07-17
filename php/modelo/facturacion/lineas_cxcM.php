@@ -7,7 +7,7 @@ require_once(dirname(__DIR__,2)."/funciones/funciones.php");
  */
 class lineas_cxcM
 {
-	
+	private $db;
 	function __construct()
 	{
 	    $this->db = new db();

@@ -22,10 +22,10 @@ function verificar_cuenta()
           if(response== -1)
           {
             Swal.fire('','Genere una cuenta llamada "Cta_Desperdicio" para desperdicios.','info');
-           window.location = "../vista/inventario.php?mod=Inventario&cuenta=-1";
+           window.location = "../vista/inventario.php?mod=03&cuenta=-1";
           }else if(response == -2)
           {           
-            window.location = "../vista/inventario.php?mod=Inventario&cuenta=-2";
+            window.location = "../vista/inventario.php?mod=03&cuenta=-2";
           }else
           {
             console.log(mar+'-'+pro);
@@ -790,7 +790,7 @@ function cc_cod(id,pos,subcta)
 //             allowOutsideClick: false,
 //           }).then((result) => {
 //             if (result.value) {
-//                location.href='../vista/inventario.php?mod=Inventario&acc=inventario_online&acc1=Inventario%20online&b=1&po=subcu'
+//                location.href='../vista/inventario.php?mod=03&acc=inventario_online&acc1=Inventario%20online&b=1&po=subcu'
 //             }
 //           })
 
@@ -1452,7 +1452,7 @@ function mayorizar_inventario()
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary btn-sm" onclick="generar_proyecto()">Aceptar</button> 
-        <a href="../vista/inventario.php?mod=Inventario" class="btn btn-default">Cerrar</a>
+        <a href="../vista/inventario.php?mod=03" class="btn btn-default">Cerrar</a>
       </div>
     </div>
 

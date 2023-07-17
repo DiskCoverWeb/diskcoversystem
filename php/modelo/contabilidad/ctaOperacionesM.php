@@ -9,6 +9,7 @@ class ctaOperacionesM
 {
 	
 	 private $conn ;
+	 private $db ;
 	function __construct()
 	{
 	   $this->conn = cone_ajax();

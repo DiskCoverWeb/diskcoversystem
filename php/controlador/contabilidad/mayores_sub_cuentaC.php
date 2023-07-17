@@ -63,6 +63,7 @@ if(isset($_GET['Consultar_Un_Submodulo']))
 class mayores_sub_cuentaC
 {
 	private $modelo;
+	private $pdf;
 	function __construct()
 	{
 		$this->modelo = new mayores_sub_cuentaM();

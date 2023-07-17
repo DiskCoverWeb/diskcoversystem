@@ -906,7 +906,7 @@ A este usuario se asigno las siguientes Entidades:
 <tr><td width="30%"><b>Codigo</b></td><td width="50%"><b>Entidad</b></td></tr>
 ';
 foreach ($datos0 as $value) {
-	$cuerpo_correo .= '<tr><td>'.$value['id'].'</td><td>'.utf8_decode($value['text']).'</td></tr>';
+	$cuerpo_correo .= '<tr><td>'.$value['id'].'</td><td>'.mb_convert_encoding($value['text'], 'ISO-8859-1','UTF-8').'</td></tr>';
 }
 $cuerpo_correo.='</table><br>';
 $cuerpo_correo .= ' 

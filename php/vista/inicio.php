@@ -392,6 +392,11 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("inventario/kardex.php");
 			}
+			//kardex
+			if ($_SESSION['INGRESO']['accion']=='ResumenKardex') 
+			{
+				require_once("inventario/ResumenK.php");
+			}
 			if ($_SESSION['INGRESO']['accion']=='inventario_online') 
 			{
 				require_once("inventario/inventario_online.php");

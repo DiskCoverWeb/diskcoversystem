@@ -125,6 +125,8 @@ class divisasC
 {
 	private $modelo;
   private $pdf;
+  private $email;
+  private $autorizar_sri;
 
 	public function __construct(){
     $this->modelo = new divisasM();

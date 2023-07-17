@@ -153,6 +153,7 @@ class articulosC
 {
 	private $modelo;
 	private $ing_descargos;
+	private $paciente;
 	function __construct()
 	{
 		$this->modelo = new articulosM();

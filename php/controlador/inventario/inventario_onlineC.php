@@ -188,7 +188,7 @@ class inventario_onlineC
 		foreach ($debe as $key => $value) {
 			// print_r($value);die();
 			$cuenta = $this->modelo->catalogo_cuentas($value['cuenta']);
-			// $d = array('valor'=>$value['total'],'dconcepto1'=>utf8_encode($cuenta[0]['Cuenta']),'codigo'=>$value['cuenta'],'cuenta'=>utf8_encode($cuenta[0]['Cuenta']),'tipo_cue'=>1,'fecha'=>$value['fecha']->format('Y-m-d'));
+			// $d = array('valor'=>$value['total'],'dconcepto1'=>mb_convert_encoding($cuenta[0]['Cuenta'], 'UTF-8'),'codigo'=>$value['cuenta'],'cuenta'=>mb_convert_encoding($cuenta[0]['Cuenta'], 'UTF-8'),'tipo_cue'=>1,'fecha'=>$value['fecha']->format('Y-m-d'));
 
 			$d = array('valor'=>round($value['total'],2),'dconcepto1'=>$cuenta[0]['Cuenta'],'codigo'=>$value['cuenta'],'cuenta'=>$cuenta[0]['Cuenta'],'tipo_cue'=>1,'fecha'=>$value['fecha']->format('Y-m-d'));
 			array_push($datos1, $d);
@@ -201,7 +201,7 @@ class inventario_onlineC
 		$tot = 0;
 		foreach ($desperdicios_debe as $key => $value) {
 			$tot =$tot+ $value['TOTAL'];
-			// $d = array('valor'=>$value['total'],'dconcepto1'=>utf8_encode($cuenta[0]['Cuenta']),'codigo'=>$value['cuenta'],'cuenta'=>utf8_encode($cuenta[0]['Cuenta']),'tipo_cue'=>1,'fecha'=>$value['fecha']->format('Y-m-d'))
+			// $d = array('valor'=>$value['total'],'dconcepto1'=>mb_convert_encoding($cuenta[0]['Cuenta'], 'UTF-8'),'codigo'=>$value['cuenta'],'cuenta'=>mb_convert_encoding($cuenta[0]['Cuenta'], 'UTF-8'),'tipo_cue'=>1,'fecha'=>$value['fecha']->format('Y-m-d'))
 		}
 		$d1 = array('valor'=>round($tot,2),'dconcepto1'=>$cuenta1[0]['Cuenta'],'codigo'=>$_SESSION['INGRESO']['CTA_DESPERDICIO'],'cuenta'=>$cuenta1[0]['Cuenta'],'tipo_cue'=>1,'fecha'=>$value['fecha']->format('Y-m-d'));
 			array_push($datos1, $d1);
@@ -209,7 +209,7 @@ class inventario_onlineC
 
 		foreach ($haber as $key => $value) {
 			$cuenta = $this->modelo->catalogo_cuentas($value['cuenta']);
-			// $h = array('valor'=>$value['total'],'dconcepto1'=>utf8_encode($cuenta[0]['Cuenta']),'codigo'=>$value['cuenta'],'cuenta'=>utf8_encode($cuenta[0]['Cuenta']),'tipo_cue'=>2,'fecha'=>$value['fecha']->format('Y-m-d'));
+			// $h = array('valor'=>$value['total'],'dconcepto1'=>mb_convert_encoding($cuenta[0]['Cuenta'], 'UTF-8'),'codigo'=>$value['cuenta'],'cuenta'=>mb_convert_encoding($cuenta[0]['Cuenta'], 'UTF-8'),'tipo_cue'=>2,'fecha'=>$value['fecha']->format('Y-m-d'));
 			// array_push($datos2,$h);
 
 			$h = array('valor'=>round($value['total'],2),'dconcepto1'=>$cuenta[0]['Cuenta'],'codigo'=>$value['cuenta'],'cuenta'=>$cuenta[0]['Cuenta'],'tipo_cue'=>2,'fecha'=>$value['fecha']->format('Y-m-d'));
@@ -218,7 +218,7 @@ class inventario_onlineC
 		}
 		foreach ($desperdicios_haber as $key => $value) {
 			$cuenta = $this->modelo->catalogo_cuentas($value['CTA_INVENTARIO']);
-			// $h = array('valor'=>$value['total'],'dconcepto1'=>utf8_encode($cuenta[0]['Cuenta']),'codigo'=>$value['cuenta'],'cuenta'=>utf8_encode($cuenta[0]['Cuenta']),'tipo_cue'=>2,'fecha'=>$value['fecha']->format('Y-m-d'));
+			// $h = array('valor'=>$value['total'],'dconcepto1'=>mb_convert_encoding($cuenta[0]['Cuenta'], 'UTF-8'),'codigo'=>$value['cuenta'],'cuenta'=>mb_convert_encoding($cuenta[0]['Cuenta'], 'UTF-8'),'tipo_cue'=>2,'fecha'=>$value['fecha']->format('Y-m-d'));
 			// array_push($datos2,$h);
 
 			$h = array('valor'=>round($value['TOTAL'],2),'dconcepto1'=>$cuenta[0]['Cuenta'],'codigo'=>$value['CTA_INVENTARIO'],'cuenta'=>$cuenta[0]['Cuenta'],'tipo_cue'=>2,'fecha'=>$value['fecha']->format('Y-m-d'));
@@ -238,7 +238,7 @@ class inventario_onlineC
 			//print_r($cuenta);die();
 			$sub = $this->modelo->catalogo_subcuentas($value['SUBCTA']);
 			// print_r($sub);die();
-			// $SC = array('benericiario'=>$cuenta[0]['Cuenta'],'ruc'=>'','Codigo'=>$value['CONTRA_CTA'],'tipo'=>$cuenta[0]['TC'],'tic'=>1,'sub'=>$value['SUBCTA'],'fecha'=>$value['Fecha_Fab']->format('Y-m-d'),'fac2'=>0,'valorn'=>$value['total'],'moneda'=>1,'Trans'=>utf8_encode($sub[0]['Detalle']),'T_N'=>60,'t'=>$value['SUBCTA']);
+			// $SC = array('benericiario'=>$cuenta[0]['Cuenta'],'ruc'=>'','Codigo'=>$value['CONTRA_CTA'],'tipo'=>$cuenta[0]['TC'],'tic'=>1,'sub'=>$value['SUBCTA'],'fecha'=>$value['Fecha_Fab']->format('Y-m-d'),'fac2'=>0,'valorn'=>$value['total'],'moneda'=>1,'Trans'=>mb_convert_encoding($sub[0]['Detalle'], 'UTF-8'),'T_N'=>60,'t'=>$value['SUBCTA']);
 			// array_push($datos, $SC);
 				$SC = array('benericiario'=>$cuenta[0]['Cuenta'],'ruc'=>'','Codigo'=>$value['CONTRA_CTA'],'tipo'=>$cuenta[0]['TC'],'tic'=>1,'sub'=>$value['SUBCTA'],'fecha'=>$value['Fecha_Fab']->format('Y-m-d'),'fac2'=>0,'valorn'=>round($value['total'],2),'moneda'=>1,'Trans'=>$sub[0]['Detalle'],'T_N'=>60,'t'=>$value['SUBCTA']);
 			array_push($datos, $SC);
@@ -266,7 +266,7 @@ class inventario_onlineC
          $new[$key] = '';
          }else{
 
-          $new[utf8_encode($key)] = utf8_encode($value);
+          $new[mb_convert_encoding($key, 'UTF-8')] = mb_convert_encoding($value, 'UTF-8');
           // $new[$key] = $value;
          }
         }else
