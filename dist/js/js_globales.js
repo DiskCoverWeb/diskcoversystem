@@ -343,3 +343,16 @@ function formatearNumero(numero, decimales, separadorDecimal, separadorMiles) {
       parteEntera.substr(longitud).replace(/(\d{3})(?=\d)/g, "$1" + separadorMiles) +
       (decimales ? separadorDecimal + Math.abs(numero - parteEntera).toFixed(decimales).slice(2) : "");
 }
+
+function agregarOpcionPorDefecto(selectId) {
+  var select = $('#' + selectId);
+
+  // Verificar si el select no tiene opciones
+  if (select.find('option').length === 0) {
+    // Agregar una opción por defecto
+    select.append($('<option>', {
+      value: '',
+      text: 'Sin data'
+    }));
+  }
+}

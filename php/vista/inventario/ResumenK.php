@@ -49,7 +49,7 @@ input[type="checkbox"], input[type="radio"]{
     </a>
   </div>
   <div class="col">
-    <a href="#" id="Lote" title="Resumen de Existencia por Lotes" onclick="" class="btn btn-default" >
+    <a href="#" id="Lote" title="Resumen de Existencia por Lotes" onclick="ConsultarResumen_Lote()" class="btn btn-default" >
       <img src="../../img/png/archivo3.png" >
     </a>
   </div>
@@ -135,10 +135,10 @@ input[type="checkbox"], input[type="radio"]{
             ><b>PRODUCTO</b></label>   
         </div>
         <div class="col padding-all FrmProducto"  style="visibility: hidden;">
-          <label><input id="OpcProducto" name="ProductoPor" checked tabindex="" value="1" type="radio"><b>Producto</b></label>   
-          <label><input id="OpcBarra" name="ProductoPor" tabindex="" value="1" type="radio"><b>Codigo Barra</b></label>   
-          <label><input id="OpcMarca" name="ProductoPor" tabindex="" value="1" type="radio"><b>Marca</b></label>   
-          <label><input id="OpcLote" name="ProductoPor" tabindex="" value="1" type="radio"><b>Lote</b></label>   
+          <label><input id="OpcProducto" name="ProductoPor" checked tabindex="" value="OpcProducto" type="radio"><b>Producto</b></label>   
+          <label><input id="OpcBarra" name="ProductoPor" tabindex="" value="OpcBarra" type="radio"><b>Codigo Barra</b></label>   
+          <label><input id="OpcMarca" name="ProductoPor" tabindex="" value="OpcMarca" type="radio"><b>Marca</b></label>   
+          <label><input id="OpcLote" name="ProductoPor" tabindex="" value="OpcLote" type="radio"><b>Lote</b></label>   
         </div>
         <div class="col padding-all FrmProducto"  style="visibility: hidden;">
           <select class="form-control input-sm" tabindex="" id="DCTipoBusqueda" name="DCTipoBusqueda">
@@ -158,8 +158,8 @@ input[type="checkbox"], input[type="radio"]{
             ><b>TIPO DE CTA.</b></label>   
         </div>
         <div class="col padding-all FrmCuenta" style="visibility: hidden;">
-          <label><input id="OpcInv" name="TipoCuentaDe" checked tabindex="" value="1" type="radio"><b>Inventario</b></label>   
-          <label><input id="OpcCosto" name="TipoCuentaDe" tabindex="" value="1" type="radio"><b>Costo</b></label>   
+          <label><input id="OpcInv" name="TipoCuentaDe" checked tabindex="" value="OpcInv" type="radio"><b>Inventario</b></label>   
+          <label><input id="OpcCosto" name="TipoCuentaDe" tabindex="" value="OpcCosto" type="radio"><b>Costo</b></label>   
         </div>
         <div class="col padding-all FrmCuenta" style="visibility: hidden;">
           <select class="form-control input-sm" tabindex="" id="DCCtaInv" name="DCCtaInv">
@@ -179,8 +179,8 @@ input[type="checkbox"], input[type="radio"]{
             ><b>POR SUBMODULO</b></label>   
         </div>
         <div class="col padding-all FrmSubModulo" style="visibility: hidden;">
-          <label><input id="OpcGasto" name="SuModeloDe" checked tabindex="" value="1" type="radio"><b>Centro de Costo</b></label>   
-          <label><input id="OpcCxP" name="SuModeloDe" tabindex="" value="1" type="radio"><b>CxP/Proveedores</b></label>   
+          <label><input id="OpcGasto" name="SuModeloDe" checked tabindex="" value="OpcGasto" type="radio"><b>Centro de Costo</b></label>   
+          <label><input id="OpcCxP" name="SuModeloDe" tabindex="" value="OpcCxP" type="radio"><b>CxP/Proveedores</b></label>   
         </div>
         <div class="col padding-all FrmSubModulo" style="visibility: hidden;">
           <select class="form-control input-sm" tabindex="" id="DCSubModulo" name="DCSubModulo">
@@ -244,6 +244,7 @@ input[type="checkbox"], input[type="radio"]{
         $('#myModal_espera').modal('hide');     
       }
     });
+    $("#MBoxFechaI").focus()
   });
 
   function ConsultarStock(StockSuperior) {
@@ -285,9 +286,10 @@ input[type="checkbox"], input[type="radio"]{
       },    
       success: function(response)
       { 
-        if(response.rps){
+        if(response.DCTipoBusqueda){
           $('#myModal_espera').modal('hide');
           llenarComboList(response.DCTipoBusqueda,'DCTipoBusqueda')
+          agregarOpcionPorDefecto('DCTipoBusqueda');
           $("#DCTipoBusqueda").focus();
         }else{
           $('#myModal_espera').modal('hide');
@@ -312,9 +314,10 @@ input[type="checkbox"], input[type="radio"]{
       },    
       success: function(response)
       { 
-        if(response.rps){
+        if(response.DCSubModulo){
           $('#myModal_espera').modal('hide');
           llenarComboList(response.DCSubModulo,'DCSubModulo')
+          agregarOpcionPorDefecto('DCSubModulo');
           $("#DCSubModulo").focus();
         }else{
           $('#myModal_espera').modal('hide');
@@ -339,9 +342,10 @@ input[type="checkbox"], input[type="radio"]{
       },    
       success: function(response)
       { 
-        if(response.rps){
+        if(response.DCCtaInv){
           $('#myModal_espera').modal('hide');
           llenarComboList(response.DCCtaInv,'DCCtaInv')
+          agregarOpcionPorDefecto('DCCtaInv');
           $("#DCCtaInv").focus();
         }else{
           $('#myModal_espera').modal('hide');
@@ -351,6 +355,22 @@ input[type="checkbox"], input[type="radio"]{
       error: function () {
         $('#myModal_espera').modal('hide');
         alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+      }
+    });
+  }
+
+  function ConsultarResumen_Lote() {
+    $('#myModal_espera').modal('show');
+    $.ajax({
+      type: "POST",                 
+      url: '../controlador/inventario/ResumenKC.php?Resumen_Lote=true',
+      dataType: 'json',
+      data: $("#FormResumenK").serialize(), 
+      success: function(data)             
+      {
+        $('#DGQuery').html(data.DGQuery);   
+        $('#LabelStock').val(data.LabelStock); 
+        $('#myModal_espera').modal('hide');     
       }
     });
   }

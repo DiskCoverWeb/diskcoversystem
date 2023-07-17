@@ -5703,7 +5703,6 @@ function generar_comprobantes($parametros) //revision parece repetida
       if($modulo_reemplazar){
         $_SESSION['INGRESO']['modulo_']='01';
       }
-      //echo "<pre>";print_r($_SESSION['INGRESO']['modulo_']);echo "</pre>";die();
       $conn = new db();
       $parametros = array(
       array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
