@@ -6,16 +6,9 @@ if(!class_exists('cabecera_pdf'))
     require(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
 }
 
-
-$_SESSION['ResumenKC']['QTipoInv'] = false;
-$_SESSION['ResumenKC']['CNivel_1'] = false;
-$_SESSION['ResumenKC']['GrupoInv'] = "";
-$_SESSION['ResumenKC']['AdoDetKardex'] = "";
-$_SESSION['ResumenKC']['Opcion'] = 2;
-
 $controlador = new ResumenKC();
-if(isset($_GET["generarExcelKardex"])){
-    echo json_decode($controlador->generarExcelKardex($_GET));
+if(isset($_GET["generarExcelResumenK"])){
+    echo json_decode($controlador->generarExcelResumen($_GET));
     exit();
 }else
 
@@ -35,6 +28,10 @@ elseif(isset($_GET['ConsultarStock']))
 elseif(isset($_GET['Resumen_Lote']))
 {
     echo json_encode($controlador->Resumen_Lote( $_POST));
+}
+elseif(isset($_GET['Resumen_Barras']))
+{
+    echo json_encode($controlador->Resumen_Barras( $_POST));
 }
 elseif(isset($_GET['Listar_Por_Producto']))
 { 
@@ -74,11 +71,11 @@ class ResumenKC
         $this->CodigoUsuario = $_SESSION['INGRESO']['CodigoU'];
     }
 
-    public function generarExcelKardex($parametros){//pendiente
-        if(isset($_SESSION['DGKardex']['sSQL'])){
+    public function generarExcelResumen($parametros){
+        if(isset($_SESSION['ResumenKC']['AdoDetKardex'])){
             extract($parametros);
-            $titulo = 'Kardex del '.BuscarFecha($MBoxFechaI).' al '. BuscarFecha($MBoxFechaF);
-            $sSQL   = $_SESSION['DGKardex']['sSQL'];
+            $titulo = 'Existencia '.BuscarFecha($MBoxFechaI).' al '. BuscarFecha($MBoxFechaF);
+            $sSQL   = $_SESSION['ResumenKC']['AdoDetKardex'];
             $medidas = array(12,30,15,12,18,9,12,12,12,12,12,15,15,15,10,20,20,15,15,20,25,15,15,20,25,25,15,15,9);
             return exportar_excel_generico_SQl($titulo,$sSQL, $medidas, fecha_sin_hora:true);
         }else{
@@ -105,89 +102,62 @@ class ResumenKC
         }
 
         $titulo = "R E S U M E N    D E    E X I S T E N C I A S ".$SQLMsg1 ;
-        if($_SESSION['ResumenKC']['Opcion']==1){
+        $query = $_SESSION['ResumenKC']['AdoDetKardex'];
 
-        }
-
-        $query = $_SESSION['DGKardex']['sSQL'];
         $pattern = "/SELECT(.*?)FROM/s";
         $matches = [];
         preg_match($pattern, $query, $matches);
         $sectionToReplace = $matches[1];
+        $ali =array("C","L","L","R","R","R","R","R","R","R","R","R","R","R","R");
+        $medi =array(8,18,65,15,23,20,20,20,19,18,18,15,18);
+        if($_SESSION['ResumenKC']['Opcion']==11){
+            $newSection = " TK.Codigo_Inv, CP.Producto, TK.CodBodega as Bod, TK.Lote_No, TK.Fecha_Fab, TK.Fecha_Exp, TK.Procedencia, TK.Serie_No, SUM(TK.Entrada) As Entradas, SUM(TK.Salida) As Salidas, " .
+              "SUM(TK.Entrada-TK.Salida) As Stock, AVG(Valor_Unitario) As Valor_Unit, " .
+              "(SUM(TK.Entrada-TK.Salida) * AVG(Valor_Unitario)) As Total_Inv " ;
+            $replacedQuery = str_replace($sectionToReplace, $newSection, $query);
+            $medi =array(18,80,10,15,18,18,23,15,17,17,15,18,15);
+        }else if($_SESSION['ResumenKC']['Opcion']==22){
+            $newSection = " TK.Codigo_Inv, CP.Producto, TK.CodBodega AS Bod, TK.Codigo_Barra, SUM(TK.Entrada) As Entradas, SUM(TK.Salida) As Salidas, SUM(TK.Entrada-TK.Salida) As Stock_Lote, AVG(TK.Valor_Unitario) As Valor_Unit, ((SUM(TK.Entrada)-SUM(TK.Salida)) * AVG(TK.Valor_Unitario)) As Total_Inventario ";
+            $replacedQuery = str_replace($sectionToReplace, $newSection, $query);
+            $medi =array(22,115,10,25,18,18,23,21,25);
+        }else{
+            $replacedQuery = $query;
+        }
 
-        $newSection = " TK.CodBodega AS Bod, TK.Fecha, TK.TP, TK.Numero, TK.Detalle, TK.Entrada, TK.Salida, TK.Valor_Unitario, TK.Valor_Total, TK.Existencia AS Cantidad, TK.Costo as Costo_Prom, TK.Total AS Saldo_Total ";
-        $replacedQuery = str_replace($sectionToReplace, $newSection, $query);
         $result = $this->modelo->SelectDB($replacedQuery);
         $campos = array();
         foreach ($result[0] as $key => $value) {
-            array_push($campos,$key);
+          array_push($campos,$key);
         }
-        $medi =array(8,17,9,28,90,13,12,23,18,15,19,18);
-        $medip =array(8,17,9,28,90,13,12,23,18,15,19,18);
-
+       
         $pdf = new cabecera_pdf();  
         $mostrar = true;
         $sizetable =8;
         $tablaHTML = array();
-
-        $tablaHTML[0]['medidas']=array(30, 30);
-        $tablaHTML[0]['alineado']=array('L', 'L');
-        $tablaHTML[0]['datos']=array($LabelCodigo,$LabelUnidad);
-        $tablaHTML[0]['estilo']='I';
-        $tablaHTML[0]['borde'] = '0';
-
-        $tablaHTML[1]['medidas']=array(150);
-        $tablaHTML[1]['alineado']=array('L');
-        $tablaHTML[1]['datos']=array($NombreProducto);
-        $tablaHTML[1]['estilo']='I';
-        $tablaHTML[1]['borde'] = '0';
-
-        $tablaHTML[2]['medidas']=array(100);
-        $tablaHTML[2]['alineado']=array('L');
-        $tablaHTML[2]['datos']=array("");
-        $tablaHTML[2]['estilo']='I';
-        $tablaHTML[2]['borde'] = '0';
-
-        $tablaHTML[3]['medidas']=$medi;
-        $tablaHTML[3]['alineado']=array('L','C','C','R','L','R','R','R','R','R','R','R');
-        $tablaHTML[3]['datos']=$campos;
-        $tablaHTML[3]['estilo']='B';
-        $tablaHTML[3]['borde'] = 'B';
-        $pos = 4;
-
-        $TipoDoc = "";
-        $Numero = "";
-        $Detalle = "";
-        $MiFecha = "";
-
+        $tablaHTML[0]['medidas']=$medi;
+        $tablaHTML[0]['alineado']=$ali;
+        $tablaHTML[0]['datos']=$campos;
+        $tablaHTML[0]['estilo']='BI';
+        $tablaHTML[0]['borde'] = '1';
+        $pos = 1;
         foreach ($result as $key => $value) {
-
-            $Entrada = ($value["Entrada"]!=0)? number_format($value["Entrada"], 2, '.', ''):"";
-            $Salida = ($value["Salida"]!=0)? number_format($value["Salida"], 2, '.', ''):"";
-            $Stock = ($value["Cantidad"]!=0)? number_format($value["Cantidad"], 2, '.', ''):"";
-            $Valor_Unitario = ($value["Valor_Unitario"]!=0)? number_format($value["Valor_Unitario"], 2, '.', ''):"";
-            $Valor_Total = ($value["Valor_Total"]!=0)? number_format($value["Valor_Total"], 2, '.', ''):"";
-            $Costo = ($value["Costo_Prom"]!=0)? number_format($value["Costo_Prom"], 2, '.', ''):"";
-            $Saldo = number_format($value["Saldo_Total"], 2, '.', '');
-
-            $data = array($value["Bod"],$value["Fecha"]->format('Y-m-d'),"",$value['Numero'],"",$Entrada, $Salida, $Valor_Unitario, $Valor_Total, $Stock, $Costo, $Saldo);
-            if($TipoDoc!=$value['TP'] || $Numero != $value['Numero']){
-                $TipoDoc = $value['TP'];
-                $Numero = $value['Numero'];
-                $data[2] = $TipoDoc;
-                $data[4] = $value['Detalle'];
+          $datos = array();
+          foreach ($value as $key1 => $valu) {
+            if($valu instanceof DateTime){
+                array_push($datos,$valu->format('Y-m-d'));
+            }else if ( (is_int($valu) || is_numeric($valu))) {
+              array_push($datos, number_format($valu, 2, '.', ''));
+            } else { 
+              array_push($datos,$valu);
             }
-
-            $tablaHTML[$pos]['medidas']=$tablaHTML[3]['medidas'];
-            $tablaHTML[$pos]['alineado']=$tablaHTML[3]['alineado'];
-            $tablaHTML[$pos]['datos']=$data;
-            $tablaHTML[$pos]['estilo']='I';
-            $tablaHTML[$pos]['borde'] = 'LR';
-            $pos = $pos+1;
-            $Detalle = $value['Detalle'];
-            $MiFecha = $value["Fecha"]->format('Y-m-d');
+          }
+          $tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+          $tablaHTML[$pos]['alineado']=$tablaHTML[0]['alineado'];
+          $tablaHTML[$pos]['datos']=$datos;
+          $tablaHTML[$pos]['estilo']='I';
+          $tablaHTML[$pos]['borde'] = '1';
+          $pos = $pos+1;
         }
-        $tablaHTML[$pos-1]['borde'] = 'LRB';
         $pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$MBoxFechaI,$MBoxFechaF,$sizetable,$mostrar, orientacion: 'L', mostrar_cero:true);
     }
 
@@ -217,7 +187,6 @@ class ResumenKC
         $FechaIni = BuscarFecha($MBoxFechaI);
         $FechaFin = BuscarFecha($MBoxFechaF);
 
-        $_SESSION['ResumenKC']['QTipoInv'] = false;
         control_procesos("I", "Proceso Stock de Inventario, del $MBoxFechaI al $MBoxFechaF");
         
         if (isset($CheqProducto) && $CheqProducto ==1) {
@@ -237,7 +206,7 @@ class ResumenKC
                 $sSQL .= " AND Saldo_Actual <> 0 ";
             }
             $Codigo3 = "Todos";////TODO LS de donde sale sta variale
-            if (isset($OpcProducto) && $OpcProducto == 1 && $Codigo3 != "Todos") {
+            if ($OpcProducto == 1 && $Codigo3 != "Todos") {
                 $sSQL .= " AND Recibo = '$Codigo3' ";
             }
             
@@ -253,7 +222,7 @@ class ResumenKC
             //INICIO SQL_Tipo_Busqueda
               $BSQL = " ";
               $CodigoInv = G_NINGUNO;
-              if ($OpcProducto) {
+              if ($CheqProducto) {
                 $CodigoInv = $DCTipoBusqueda;
               }
               
@@ -294,7 +263,7 @@ class ResumenKC
             
             $sSQL .= "ORDER BY Codigo_Inv ";
         }
-        
+        $_SESSION['ResumenKC']['AdoDetKardex'] = $sSQL;
         $AdoDetKardex =  $this->modelo->SelectDB($sSQL);
         
         $Total = 0;
@@ -327,28 +296,28 @@ class ResumenKC
 
     function Listar_Por_ProductoSQL($OpcMarca, $OpcBarra, $OpcLote, $DCTInv) {
         if ($OpcMarca) {
-            $sSQL = "SELECT CodMar As Codigo, Marca As Producto " .
+            $sSQL = "SELECT CodMar As codigo, Marca As nombre " .
                     "FROM Catalogo_Marcas " .
                     "WHERE Item = '".$this->NumEmpresa."' " .
                     "AND Periodo = '".$this->Periodo_Contable."' " .
                     "AND CodMar <> '.' " .
                     "ORDER BY Marca";
         } elseif ($OpcBarra) {
-            $sSQL = "SELECT Codigo_Barra As Codigo, Codigo_Barra As Producto " .
+            $sSQL = "SELECT Codigo_Barra As codigo, Codigo_Barra As nombre " .
                     "FROM Trans_Kardex " .
                     "WHERE Item = '".$this->NumEmpresa."' " .
                     "AND Periodo = '".$this->Periodo_Contable."' " .
                     "GROUP BY Codigo_Barra " .
                     "ORDER BY Codigo_Barra";
         } elseif ($OpcLote) {
-            $sSQL = "SELECT Lote_No As Codigo, Lote_No As Producto " .
+            $sSQL = "SELECT Lote_No As codigo, Lote_No As nombre " .
                     "FROM Trans_Kardex " .
                     "WHERE Item = '".$this->NumEmpresa."' " .
                     "AND Periodo = '".$this->Periodo_Contable."' " .
                     "GROUP BY Lote_No " .
                     "ORDER BY Lote_No";
         } else {
-            $sSQL = "SELECT Codigo_Inv As Codigo, Producto " .
+            $sSQL = "SELECT Codigo_Inv As codigo, Producto As nombre " .
                     "FROM Catalogo_Productos " .
                     "WHERE Item = '".$this->NumEmpresa."' " .
                     "AND Periodo = '".$this->Periodo_Contable."' " .
@@ -435,7 +404,6 @@ class ResumenKC
             "ORDER BY Codigo_Inv";
         return $this->modelo->SelectDB($sSQL);
         $heightDispo = ($heightDisponible>150)?$heightDisponible-45:$heightDisponible;
-        $_SESSION['ResumenKC']['AdoDetKardex'] = $sSQL;
         $DGQuery = grilla_generica_new($sSQL,$tabla,'myTableDGQuery','',false,false,false,1,1,1,$heightDispo);
         return compact('DGQuery');
     }
@@ -446,13 +414,24 @@ class ResumenKC
         $Creditos = 0;
         $Stock_Inv = 0;
 
+        $OpcMarca = (isset($ProductoPor) && $ProductoPor=="OpcMarca");
+        $OpcBarra = (isset($ProductoPor) && $ProductoPor=="OpcBarra");
+        $OpcLote = (isset($ProductoPor) && $ProductoPor=="OpcLote");
+        $OpcProducto = (isset($ProductoPor) && $ProductoPor=="OpcProducto");
+        $CheqProducto = (isset($CheqProducto) && $CheqProducto);
+        $CheqBod = (isset($CheqBod) && $CheqBod);
+        $CheqMonto = (isset($CheqMonto) && $CheqMonto);
+        $CheqExist = (isset($CheqExist) && $CheqExist);
+        $DCTInv = (isset($DCTInv) && $DCTInv!="")?$DCTInv:G_NINGUNO;
+        $Cod_Bodega = (isset($Cod_Bodega) && $Cod_Bodega!="")?$Cod_Bodega:G_NINGUNO;
+
         $FechaIni = BuscarFecha($MBoxFechaI);
         $FechaFin = BuscarFecha($MBoxFechaF);
 
         //INICIO SQL_Tipo_Busqueda
           $BSQL = " ";
           $CodigoInv = G_NINGUNO;
-          if ($OpcProducto) {
+          if ($CheqProducto) {
             $CodigoInv = $DCTipoBusqueda;
           }
           
@@ -496,6 +475,7 @@ class ResumenKC
               "ORDER BY TK.Codigo_Inv, TK.Lote_No";
 
         $AdoDetKardex = $this->modelo->SelectDB($sSQL);
+        $_SESSION['ResumenKC']['Opcion']=11;
         $_SESSION['ResumenKC']['AdoDetKardex'] = $sSQL;
 
         if(count($AdoDetKardex)>0){
@@ -508,7 +488,92 @@ class ResumenKC
         
         $LabelStock = number_format($Stock_Inv, 2,'.','');
         $heightDispo = ($heightDisponible>150)?$heightDisponible-45:$heightDisponible;
-        $DGQuery = grilla_generica_new($sSQL,$tabla,'myTableDGQuery','',false,false,false,1,1,1,$heightDispo);
+        $DGQuery = grilla_generica_new($sSQL,"Catalogo_Productos",'myTableDGQuery','',false,false,false,1,1,1,$heightDispo);
+        return compact('DGQuery','LabelStock');
+    }
+
+    public function Resumen_Barras($parametros) {
+        extract($parametros);
+
+        $Debitos = 0;
+        $Creditos = 0;
+        $Stock_Inv = 0;
+
+        $OpcMarca = (isset($ProductoPor) && $ProductoPor=="OpcMarca");
+        $OpcBarra = (isset($ProductoPor) && $ProductoPor=="OpcBarra");
+        $OpcLote = (isset($ProductoPor) && $ProductoPor=="OpcLote");
+        $OpcProducto = (isset($ProductoPor) && $ProductoPor=="OpcProducto");
+        $CheqProducto = (isset($CheqProducto) && $CheqProducto);
+        $CheqBod = (isset($CheqBod) && $CheqBod);
+        $CheqMonto = (isset($CheqMonto) && $CheqMonto);
+        $CheqExist = (isset($CheqExist) && $CheqExist);
+        $DCTInv = (isset($DCTInv) && $DCTInv!="")?$DCTInv:G_NINGUNO;
+        $Cod_Bodega = (isset($Cod_Bodega) && $Cod_Bodega!="")?$Cod_Bodega:G_NINGUNO;
+
+        $FechaIni = BuscarFecha($MBoxFechaI);
+        $FechaFin = BuscarFecha($MBoxFechaF);
+
+        //INICIO SQL_Tipo_Busqueda
+        $BSQL = " ";
+        $CodigoInv = G_NINGUNO;
+        if ($CheqProducto) {
+            $CodigoInv = $DCTipoBusqueda;
+        }
+
+        if ($CheqBod) {
+            $BSQL .= " AND TK.CodBodega = '$Cod_Bodega' ";
+        }
+
+        if ($CheqProducto) {
+            if ($ProductoPor=="OpcBarra") {
+                $BSQL .= " AND TK.Codigo_Barra = '$CodigoInv' ";
+            } elseif ($ProductoPor=="OpcLote") {
+                $BSQL .= " AND TK.Lote_No = '$CodigoInv' ";
+            } else {
+                $BSQL .= " AND TK.Codigo_Inv = '$CodigoInv' ";
+            }
+        }
+
+        if ($CheqMonto) {
+            $BSQL .= " AND CP.Stock_Actual = " . (float)$TxtMonto;
+        }
+
+        if ($CheqExist == 0) {
+            $BSQL .= " AND CP.Valor_Total <> 0 ";
+        }
+        //FIN SQL_Tipo_Busqueda
+
+        $sSQL = "SELECT TK.Codigo_Inv, CP.Producto, TK.CodBodega, TK.Codigo_Barra, CP.Reg_Sanitario, ".
+        "SUM(TK.Entrada) As Entradas, SUM(TK.Salida) As Salidas, ".
+        "SUM(TK.Entrada-TK.Salida) As Stock_Lote, AVG(TK.Valor_Unitario) As Valor_Unit, ".
+        "((SUM(TK.Entrada)-SUM(TK.Salida)) * AVG(TK.Valor_Unitario)) As Total_Inventario ".
+        "FROM Catalogo_Productos As CP, Trans_Kardex As TK ".
+        "WHERE CP.Item = '". $this->NumEmpresa . "' ".
+        "AND CP.Periodo = '". $this->Periodo_Contable . "' ".
+        "AND TK.Fecha BETWEEN '". $FechaIni . "' and '". $FechaFin . "' ".
+        $BSQL .
+        "AND CP.Item = TK.Item ".
+        "AND CP.Periodo = TK.Periodo ".
+        "AND CP.Codigo_Inv = TK.Codigo_Inv ".
+        "GROUP BY TK.Codigo_Inv, CP.Producto, TK.CodBodega, TK.Codigo_Barra, CP.Reg_Sanitario ".
+        "HAVING SUM(TK.Entrada-TK.Salida) <> 0 ".
+        "ORDER BY TK.Codigo_Inv, TK.Codigo_Barra ";
+
+        $AdoDetKardex = $this->modelo->SelectDB($sSQL);
+        $_SESSION['ResumenKC']['Opcion']=22;
+        $_SESSION['ResumenKC']['AdoDetKardex'] = $sSQL;
+
+        if(count($AdoDetKardex)>0){
+            foreach ($AdoDetKardex as $key => $Fields) {
+                $Debitos += number_format($Fields["Entradas"], 2,'.','');
+                $Creditos += number_format($Fields["Salidas"], 2,'.','');
+                $Stock_Inv += number_format($Fields["Stock_Lote"], 2,'.','');
+            }
+        }
+
+        $LabelStock = number_format($Stock_Inv, 2,'.','');
+        $heightDispo = ($heightDisponible>150)?$heightDisponible-45:$heightDisponible;
+        $DGQuery = grilla_generica_new($sSQL,"Catalogo_Productos",'myTableDGQuery','',false,false,false,1,1,1,$heightDispo);
         return compact('DGQuery','LabelStock');
     }
 }

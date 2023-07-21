@@ -29,37 +29,37 @@ input[type="checkbox"], input[type="radio"]{
 <div class="container-fluid">
 <div class="row mb-3">
   <div class="col">
-    <a href="./inventario.php?mod=inventario#" title="Salir de modulo" class="btn btn-default">
+    <a href="./inventario.php?mod=<?php echo @$_GET['mod']; ?>" title="Salir de modulo" class="btn btn-default">
       <img src="../../img/png/salire.png">
     </a>
-  </div>  
+  </div> 
+  <div class="col">
+    <a href="#" id="Stock" class="btn btn-default"  onclick="ConsultarStock(true)" title="Resumen de Existecia">
+      <img src="../../img/png/archivo1.png">
+    </a>
+  </div>
+  <!-- <div class="col">
+    <a href="#" id="Stock_1"  class="btn btn-default" onclick="ConsultarStock(false)" title="Resumen de Existencia Agrupado">
+      <img src="../../img/png/archivo2.png">
+    </a>
+  </div> -->
+  <div class="col">
+    <a href="#" id="Lote" title="Resumen de Existencia por Lotes" onclick="ConsultarResumen_Lote()" class="btn btn-default" >
+      <img src="../../img/png/archivo2.png" >
+    </a>
+  </div>
+  <div class="col">
+    <a href="#" id="Barras" title="Resumen en Codigos de Barra" onclick="ConsultarResumen_Barras()" class="btn btn-default" >
+      <img src="../../img/png/archivo3.png" >
+    </a>
+  </div> 
   <div class="col">
     <a href="#" id="Imprimir"  class="btn btn-default" title="Imprime Resultado" onclick="Imprimir_ResumenK()">
       <img src="../../img/png/pdf.png">
     </a>                           
   </div>
   <div class="col">
-    <a href="#" id="Stock" class="btn btn-default"  onclick="ConsultarStock(true)" title="Resumen de Existecia">
-      <img src="../../img/png/archivo1.png">
-    </a>
-  </div>
-  <div class="col">
-    <a href="#" id="Stock_1"  class="btn btn-default" onclick="ConsultarStock(false)" title="Resumen de Existencia Agrupado">
-      <img src="../../img/png/archivo2.png">
-    </a>
-  </div>
-  <div class="col">
-    <a href="#" id="Lote" title="Resumen de Existencia por Lotes" onclick="ConsultarResumen_Lote()" class="btn btn-default" >
-      <img src="../../img/png/archivo3.png" >
-    </a>
-  </div>
-  <div class="col">
-    <a href="#" id="Barras" title="Resumen en Codigos de Barra" onclick="" class="btn btn-default" >
-      <img src="../../img/png/archivo3.png" >
-    </a>
-  </div>
-  <div class="col">
-    <a href="#" id="Excel"  class="btn btn-default" title="Enviar a Excel el resultado" onclick="">
+    <a href="#" id="Excel"  class="btn btn-default" title="Enviar a Excel el resultado" onclick="generarExcelResumenK()">
       <img src="../../img/png/table_excel.png">
     </a>                           
   </div>
@@ -244,6 +244,19 @@ input[type="checkbox"], input[type="radio"]{
         $('#myModal_espera').modal('hide');     
       }
     });
+
+    $('input[name="ProductoPor"]').change(function() {
+      Listar_X_Producto()
+    });
+
+    $('input[name="TipoCuentaDe"]').change(function() {
+      Listar_X_Tipo_Cta()
+    });
+
+    $('input[name="SuModeloDe"]').change(function() {
+      Listar_X_Tipo_SubModulo()
+    });
+
     $("#MBoxFechaI").focus()
   });
 
@@ -272,6 +285,11 @@ input[type="checkbox"], input[type="radio"]{
   }
   function Imprimir_ResumenK() {
     url = '../controlador/inventario/ResumenKC.php?Imprimir_ResumenK=true&'+$("#FormResumenK").serialize();
+    window.open(url, '_blank');
+  }
+
+  function generarExcelResumenK(){
+    url = '../controlador/inventario/ResumenKC.php?generarExcelResumenK=true&'+$("#FormResumenK").serialize();
     window.open(url, '_blank');
   }
 
@@ -364,6 +382,22 @@ input[type="checkbox"], input[type="radio"]{
     $.ajax({
       type: "POST",                 
       url: '../controlador/inventario/ResumenKC.php?Resumen_Lote=true',
+      dataType: 'json',
+      data: $("#FormResumenK").serialize(), 
+      success: function(data)             
+      {
+        $('#DGQuery').html(data.DGQuery);   
+        $('#LabelStock').val(data.LabelStock); 
+        $('#myModal_espera').modal('hide');     
+      }
+    });
+  }
+
+  function ConsultarResumen_Barras() {
+    $('#myModal_espera').modal('show');
+    $.ajax({
+      type: "POST",                 
+      url: '../controlador/inventario/ResumenKC.php?Resumen_Barras=true',
       dataType: 'json',
       data: $("#FormResumenK").serialize(), 
       success: function(data)             

@@ -1069,7 +1069,7 @@ function Output($dest='', $name='', $isUTF8=false)
 			if(PHP_SAPI!='cli')
 			{
 				// We send to a browser
-				header('Content-Type: application/pdf');
+				header('Content-Type: application/pdf; charset=utf-8');
 				header('Content-Disposition: inline; '.$this->_httpencode('filename',$name,$isUTF8));
 				header('Cache-Control: private, max-age=0, must-revalidate');
 				header('Pragma: public');
