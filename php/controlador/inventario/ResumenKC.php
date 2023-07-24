@@ -24,18 +24,38 @@ if(isset($_GET['Imprimir_ResumenK']))
     $controlador->ImprimirPdf($_GET);
     exit();
 }
+elseif(isset($_GET['Form_Activate']))
+{
+    echo json_encode($controlador->Form_Activate($_POST));
+}
 elseif(isset($_GET['ConsultarStock']))
 {
     echo json_encode($controlador->Stock( $_POST,$_GET['StockSuperior']));
 }
+elseif(isset($_GET['Resumen_Lote']))
+{
+    echo json_encode($controlador->Resumen_Lote( $_POST));
+}
 elseif(isset($_GET['Listar_Por_Producto']))
 { 
     extract($_POST);
-    $OpcMarca = (isset($OpcMarca) && $OpcMarca);
-    $OpcBarra = (isset($OpcBarra) && $OpcBarra);
-    $OpcLote = (isset($OpcLote) && $OpcLote);
+    $OpcMarca = (isset($ProductoPor) && $ProductoPor=="OpcMarca");
+    $OpcBarra = (isset($ProductoPor) && $ProductoPor=="OpcBarra");
+    $OpcLote = (isset($ProductoPor) && $ProductoPor=="OpcLote");
     $DCTInv = (isset($DCTInv) && $DCTInv!="")?$DCTInv:G_NINGUNO;
     echo json_encode(array("DCTipoBusqueda"=>$controlador->Listar_Por_Producto($OpcMarca, $OpcBarra, $OpcLote, $DCTInv)));
+}
+elseif(isset($_GET['Listar_Por_Tipo_SubModulo']))
+{ 
+    extract($_POST);
+    $OpcGasto = (isset($SuModeloDe) && $SuModeloDe=="OpcGasto");
+    echo json_encode(array("DCSubModulo"=>$controlador->Listar_Por_Tipo_SubModulo($OpcGasto)));
+}
+elseif(isset($_GET['Listar_Por_Tipo_Cta']))
+{ 
+    extract($_POST);
+    $OpcInv = (isset($TipoCuentaDe) && $TipoCuentaDe=="OpcInv");
+    echo json_encode(array("DCCtaInv"=>$controlador->Listar_Por_Tipo_Cta($OpcInv)));
 }
 
 class ResumenKC
@@ -175,10 +195,10 @@ class ResumenKC
     {
         extract($parametros);
         $error = false;
-        $OpcMarca = (isset($OpcMarca) && $OpcMarca);
-        $OpcBarra = (isset($OpcBarra) && $OpcBarra);
-        $OpcLote = (isset($OpcLote) && $OpcLote);
-        $OpcProducto = (isset($OpcProducto) && $OpcProducto);
+        $OpcMarca = (isset($ProductoPor) && $ProductoPor=="OpcMarca");
+        $OpcBarra = (isset($ProductoPor) && $ProductoPor=="OpcBarra");
+        $OpcLote = (isset($ProductoPor) && $ProductoPor=="OpcLote");
+        $OpcProducto = (isset($ProductoPor) && $ProductoPor=="OpcProducto");
         $CheqProducto = (isset($CheqProducto) && $CheqProducto);
         $CheqBod = (isset($CheqBod) && $CheqBod);
         $CheqMonto = (isset($CheqMonto) && $CheqMonto);
@@ -212,20 +232,20 @@ class ResumenKC
                     "AND TP = 'INVE' ";
                     
             if (isset($CheqMonto) && $CheqMonto == 1) {
-                $sSQL .= "AND Saldo_Actual = " . $TxtMonto . " ";
+                $sSQL .= " AND Saldo_Actual = " . (float)$TxtMonto . " ";
             } else {
-                $sSQL .= "AND Saldo_Actual <> 0 ";
+                $sSQL .= " AND Saldo_Actual <> 0 ";
             }
             $Codigo3 = "Todos";////TODO LS de donde sale sta variale
             if (isset($OpcProducto) && $OpcProducto == 1 && $Codigo3 != "Todos") {
-                $sSQL .= "AND Recibo = '$Codigo3' ";
+                $sSQL .= " AND Recibo = '$Codigo3' ";
             }
             
             if (isset($CheqExist) && $CheqExist == 1) {
-                $sSQL .= "AND Saldo_Actual <> 0 ";
+                $sSQL .= " AND Saldo_Actual <> 0 ";
             }
             
-            $sSQL .= "ORDER BY Numero ";
+            $sSQL .= " ORDER BY Numero ";
         } else {
             $_SESSION['ResumenKC']['Opcion'] = 1;
             Reporte_Resumen_Existencias_SP($MBoxFechaI, $MBoxFechaF, $Cod_Bodega);
@@ -238,25 +258,25 @@ class ResumenKC
               }
               
               if ($CheqBod) {
-                  $BSQL .= "AND TK.CodBodega = '$Cod_Bodega' ";
+                  $BSQL .= " AND TK.CodBodega = '$Cod_Bodega' ";
               }
               
               if ($CheqProducto) {
-                  if ($OpcBarra) {
-                      $BSQL .= "AND TK.Codigo_Barra = '$CodigoInv' ";
-                  } elseif ($OpcLote) {
-                      $BSQL .= "AND TK.Lote_No = '$CodigoInv' ";
+                  if ($ProductoPor=="OpcBarra") {
+                      $BSQL .= " AND TK.Codigo_Barra = '$CodigoInv' ";
+                  } elseif ($ProductoPor=="OpcLote") {
+                      $BSQL .= " AND TK.Lote_No = '$CodigoInv' ";
                   } else {
-                      $BSQL .= "AND TK.Codigo_Inv = '$CodigoInv' ";
+                      $BSQL .= " AND TK.Codigo_Inv = '$CodigoInv' ";
                   }
               }
               
               if ($CheqMonto) {
-                $BSQL .= "AND CP.Stock_Actual = " . $TxtMonto;
+                $BSQL .= " AND CP.Stock_Actual = " . (float)$TxtMonto;
               }
               
               if ($CheqExist == 0) {
-                $BSQL .= "AND CP.Valor_Total <> 0 ";
+                $BSQL .= " AND CP.Valor_Total <> 0 ";
               }
             //FIN SQL_Tipo_Busqueda
 
@@ -269,7 +289,7 @@ class ResumenKC
                     . $BSQL;
             
             if (isset($CheqGrupo) && $CheqGrupo <> 0) {
-                $sSQL .= "AND Codigo_Inv LIKE '".$DCTInv."%' ";
+                $sSQL .= " AND Codigo_Inv LIKE '".$DCTInv."%' ";
             }
             
             $sSQL .= "ORDER BY Codigo_Inv ";
@@ -280,7 +300,7 @@ class ResumenKC
         $Total = 0;
         $Debitos = 0;
         $Creditos = 0;
-        
+
         if(count($AdoDetKardex)>0){
             foreach ($AdoDetKardex as $key => $Fields) {
                 if (!isset($OpcProducto) || $OpcProducto != 1) {
@@ -301,7 +321,7 @@ class ResumenKC
 
     public function Listar_Por_Producto($OpcMarca, $OpcBarra, $OpcLote, $DCTInv)
     {
-        $sSQL = $controlador->Listar_Por_ProductoSQL($OpcMarca, $OpcBarra, $OpcLote, $DCTInv);
+        $sSQL = $this->Listar_Por_ProductoSQL($OpcMarca, $OpcBarra, $OpcLote, $DCTInv);
         return $this->modelo->SelectDB($sSQL);
     }
 
@@ -341,6 +361,156 @@ class ResumenKC
         return $sSQL;
     }
 
+    function Listar_Por_Tipo_SubModulo($OpcGasto) {
+        if ($OpcGasto) {
+            $sSQL = "SELECT TC, Codigo as codigo, Detalle AS nombre " .
+                    "FROM Catalogo_SubCtas " .
+                    "WHERE Item = '" . $this->NumEmpresa . "' " .
+                    "AND Periodo = '" . $this->Periodo_Contable . "' " .
+                    "AND Detalle <> '" . G_NINGUNO . "' " .
+                    "ORDER BY TC, Detalle";
+        } else {
+            $sSQL = "SELECT CP.TC, CP.Codigo as codigo, CP.Cta, (C.Cliente + REPLICATE(' ', 60 - LEN(C.Cliente)) + CP.Cta) AS nombre " .
+                    "FROM Catalogo_CxCxP AS CP, Clientes AS C " .
+                    "WHERE CP.Item = '" . $this->NumEmpresa . "' " .
+                    "AND CP.Periodo = '" . $this->Periodo_Contable . "' " .
+                    "AND C.Cliente <> '" . G_NINGUNO . "' " .
+                    "AND CP.TC = 'P' " .
+                    "AND CP.Codigo = C.Codigo " .
+                    "ORDER BY C.Cliente, CP.Cta";
+        }
+        return $this->modelo->SelectDB($sSQL);
+    }
+
+    function Listar_Por_Tipo_Cta($OpcInv) {
+        if ($OpcInv) {
+            $sSQL = "SELECT CC.Cuenta as codigo, TK.Cta_Inv as nombre " .
+                    "FROM Catalogo_Cuentas AS CC, Trans_Kardex AS TK " .
+                    "WHERE CC.Item = '" . $this->NumEmpresa . "' " .
+                    "AND CC.Periodo = '" . $this->Periodo_Contable . "' " .
+                    "AND LEN(TK.Cta_Inv) > 1 " .
+                    "AND CC.Codigo = TK.Cta_Inv " .
+                    "AND CC.Item = TK.Item " .
+                    "AND CC.Periodo = TK.Periodo " .
+                    "GROUP BY CC.Cuenta, TK.Cta_Inv " .
+                    "ORDER BY CC.Cuenta, TK.Cta_Inv";
+        } else {
+            $sSQL = "SELECT CC.Cuenta as codigo, TK.Contra_Cta as nombre " .
+                    "FROM Catalogo_Cuentas AS CC, Trans_Kardex AS TK " .
+                    "WHERE CC.Item = '" . $this->NumEmpresa . "' " .
+                    "AND CC.Periodo = '" . $this->Periodo_Contable . "' " .
+                    "AND LEN(TK.Contra_Cta) > 1 " .
+                    "AND CC.Codigo = TK.Contra_Cta " .
+                    "AND CC.Item = TK.Item " .
+                    "AND CC.Periodo = TK.Periodo " .
+                    "GROUP BY CC.Cuenta, TK.Contra_Cta " .
+                    "ORDER BY CC.Cuenta, TK.Contra_Cta";
+        }
+        return $this->modelo->SelectDB($sSQL);
+    }
+
+
+    public function ListarProductosResumenK(){
+        $sSQL = "SELECT Codigo_Inv, Producto " .
+            "FROM Catalogo_Productos " .
+            "WHERE Item = '" . $this->NumEmpresa . "' " .
+            "AND Periodo = '" . $this->Periodo_Contable . "' " .
+            "AND TC = 'I' " .
+            "AND INV <> 0 " .
+            "ORDER BY Codigo_Inv";
+        return $this->modelo->SelectDB($sSQL);
+    }
+
+    public function Form_Activate($parametros)
+    {
+        extract($parametros);
+        mayorizar_inventario_sp(false, modulo_reemplazar:false);
+
+        $sSQL = "SELECT Codigo_Inv, Producto " .
+            "FROM Catalogo_Productos " .
+            "WHERE Item = '" . $this->NumEmpresa . "' " .
+            "AND Periodo = '" . $this->Periodo_Contable . "' " .
+            "AND TC = 'I' " .
+            "AND INV <> 0 " .
+            "ORDER BY Codigo_Inv";
+        return $this->modelo->SelectDB($sSQL);
+        $heightDispo = ($heightDisponible>150)?$heightDisponible-45:$heightDisponible;
+        $_SESSION['ResumenKC']['AdoDetKardex'] = $sSQL;
+        $DGQuery = grilla_generica_new($sSQL,$tabla,'myTableDGQuery','',false,false,false,1,1,1,$heightDispo);
+        return compact('DGQuery');
+    }
+
+    public function Resumen_Lote($parametros) {
+        extract($parametros);
+        $Debitos = 0;
+        $Creditos = 0;
+        $Stock_Inv = 0;
+
+        $FechaIni = BuscarFecha($MBoxFechaI);
+        $FechaFin = BuscarFecha($MBoxFechaF);
+
+        //INICIO SQL_Tipo_Busqueda
+          $BSQL = " ";
+          $CodigoInv = G_NINGUNO;
+          if ($OpcProducto) {
+            $CodigoInv = $DCTipoBusqueda;
+          }
+          
+          if ($CheqBod) {
+              $BSQL .= " AND TK.CodBodega = '$Cod_Bodega' ";
+          }
+          
+          if ($CheqProducto) {
+              if ($ProductoPor=="OpcBarra") {
+                  $BSQL .= " AND TK.Codigo_Barra = '$CodigoInv' ";
+              } elseif ($ProductoPor=="OpcLote") {
+                  $BSQL .= " AND TK.Lote_No = '$CodigoInv' ";
+              } else {
+                  $BSQL .= " AND TK.Codigo_Inv = '$CodigoInv' ";
+              }
+          }
+          
+          if ($CheqMonto) {
+            $BSQL .= " AND CP.Stock_Actual = " . (float)$TxtMonto;
+          }
+          
+          if ($CheqExist == 0) {
+            $BSQL .= " AND CP.Valor_Total <> 0 ";
+          }
+        //FIN SQL_Tipo_Busqueda
+
+        $sSQL = "SELECT TK.Codigo_Inv, CP.Producto, TK.CodBodega, TK.Lote_No, TK.Fecha_Fab, TK.Fecha_Exp, CP.Reg_Sanitario, " .
+              "TK.Modelo, TK.Procedencia, TK.Serie_No, SUM(TK.Entrada) As Entradas, SUM(TK.Salida) As Salidas, " .
+              "SUM(TK.Entrada-TK.Salida) As Stock_Lote, AVG(Valor_Unitario) As Valor_Unit, " .
+              "(SUM(TK.Entrada-TK.Salida) * AVG(Valor_Unitario)) As Total_Inventario " .
+              "FROM Catalogo_Productos As CP, Trans_Kardex As TK " .
+              "WHERE CP.Item = '" . $this->NumEmpresa . "' " .
+              "AND CP.Periodo = '" . $this->Periodo_Contable . "' " .
+              "AND TK.Fecha BETWEEN '" . $FechaIni . "' and '" . $FechaFin . "' " .
+              $BSQL .
+              "AND CP.Item = TK.Item " .
+              "AND CP.Periodo = TK.Periodo " .
+              "AND CP.Codigo_Inv = TK.Codigo_Inv " .
+              "GROUP BY TK.Codigo_Inv, CP.Producto, TK.CodBodega, TK.Lote_No, TK.Fecha_Fab, TK.Fecha_Exp, CP.Reg_Sanitario, " .
+              "TK.Modelo, TK.Procedencia, TK.Serie_No " .
+              "ORDER BY TK.Codigo_Inv, TK.Lote_No";
+
+        $AdoDetKardex = $this->modelo->SelectDB($sSQL);
+        $_SESSION['ResumenKC']['AdoDetKardex'] = $sSQL;
+
+        if(count($AdoDetKardex)>0){
+            foreach ($AdoDetKardex as $key => $Fields) {
+                $Debitos += number_format($Fields["Entradas"], 2,'.','');
+                $Creditos += number_format($Fields["Salidas"], 2,'.','');
+                $Stock_Inv += number_format($Fields["Stock_Lote"], 2,'.','');
+            }
+        }
+        
+        $LabelStock = number_format($Stock_Inv, 2,'.','');
+        $heightDispo = ($heightDisponible>150)?$heightDisponible-45:$heightDisponible;
+        $DGQuery = grilla_generica_new($sSQL,$tabla,'myTableDGQuery','',false,false,false,1,1,1,$heightDispo);
+        return compact('DGQuery','LabelStock');
+    }
 }
 
 ?>
