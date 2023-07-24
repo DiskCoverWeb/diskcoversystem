@@ -953,41 +953,40 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 		//llenamos los detalles 
 		$ii=0;
 		$subc=array();
-		while( $row1 = sqlsrv_fetch_array( $stmt6, SQLSRV_FETCH_NUMERIC) ) 
+		foreach ($stmt6 as $key => $value)
 		{
-			$subc[$ii]['cta']=$row1[0];
-			$subc[$ii]['cliente']=$row1[3];
-			$subc[$ii]['Fechav']=$row1[7];
-			$subc[$ii]['debe']=$row1[5];
-			$subc[$ii]['haber']=$row1[6];
-			$subc[$ii]['No']=$row1[2];
-			$subc[$ii]['vp']=$row1[9];
-			
+			$subc[$ii]['cta']= $value['Cta']; //$row1[0];
+			$subc[$ii]['cliente']= $value['Cliente']; //$row1[3];
+			$subc[$ii]['Fechav']= $value['Fecha_V']; //$row1[7];
+			$subc[$ii]['debe']= $value['Debitos']; //$row1[5];
+			$subc[$ii]['haber']= $value['Creditos']; //$row1[6];
+			$subc[$ii]['No']= $value['Factura']; //$row1[2];
+			$subc[$ii]['vp']= $value['Prima']; //$row1[9];
 			$ii++;
 		}
-		while( $row1 = sqlsrv_fetch_array( $stmt2, SQLSRV_FETCH_NUMERIC) ) 
+		foreach ($stmt2 as $key => $row1)
 		{
-			$cta[$i] = $row1[0];
-			$conc[$i] = $row1[1];
+			$cta[$i] = $row1['Cta'];
+			$conc[$i] = $row1['Cuenta'];
 			$parc[$i]='';
 			$debe[$i]='';
 			$haber[$i]='';
-			if($row1[2]!=0 and $row1[2]!='0.00')
+			if($row1['Parcial_ME']!=0 and $row1['Parcial_ME']!='0.00')
 			{
-				$parc[$i] = number_format($row1[2],2, '.', ',');
+				$parc[$i] = number_format($row1['Parcial_ME'],2, '.', ',');
 			}
-			if($row1[3]!=0 and $row1[3]!='0.00')
+			if($row1['Debe']!=0 and $row1['Debe']!='0.00')
 			{
-				$sumdb=$sumdb+$row1[3];
-				$debe[$i] = number_format($row1[3],2, '.', ',');
+				$sumdb=$sumdb+$row1['Debe'];
+				$debe[$i] = number_format($row1['Debe'],2, '.', ',');
 			}
-			if($row1[4]!=0 and $row1[4]!='0.00')
+			if($row1['Haber']!=0 and $row1['Haber']!='0.00')
 			{
-				$sumcr=$sumcr+$row1[4];
-				$haber[$i] = number_format($row1[4],2, '.', ',');
+				$sumcr=$sumcr+$row1['Haber'];
+				$haber[$i] = number_format($row1['Haber'],2, '.', ',');
 			}
-			$detalle[$i] = $row1[5];
-			$status[$i] = $row1[13];
+			$detalle[$i] = $row1['Detalle'];
+			$status[$i] = $row1['T'];
 			
 			$i++;
 		}
@@ -1087,7 +1086,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 			}
 			for($j=$j1;$j<$limite;$j++)
 			{
-				if(count($cta)==$j)
+				if(count($cta)<=$j)
 				{
 					break;
 				}
