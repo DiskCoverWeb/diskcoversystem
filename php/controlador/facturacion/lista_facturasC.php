@@ -15,6 +15,11 @@ if(isset($_GET['tabla']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->tabla_facturas($parametros));
 }
+if(isset($_GET['tabla_lineas']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->tabla_facturas_lineas($parametros));
+}
 if(isset($_GET['tablaAu']))
 {
 	$parametros = $_POST['parametros'];
@@ -35,6 +40,11 @@ if(isset($_GET['imprimir_pdf']))
 	$parametros= $_GET;
      $controlador->imprimir_pdf($parametros);
 }
+if(isset($_GET['imprimir_pdf_lineas']))
+{
+	$parametros= $_GET;
+     $controlador->imprimir_pdf_lineas($parametros);
+}
 if(isset($_GET['imprimir_excel']))
 {   
 	$parametros= $_GET;
@@ -44,6 +54,11 @@ if(isset($_GET['imprimir_excel_fac']))
 {   
 	$parametros= $_GET;
 	$controlador->imprimir_excel_fac($parametros);	
+}
+if(isset($_GET['imprimir_excel_fac_line']))
+{   
+	$parametros= $_GET;
+	$controlador->imprimir_excel_fac_line($parametros);	
 }
 if(isset($_GET['grupos']))
 {
@@ -150,7 +165,8 @@ class lista_facturasC
     	if(isset($parametros['auto'])){ $autorizados = $parametros['auto'];}
     	// print_r($parametros);die();
     	$codigo = $parametros['ci'];
-    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['per'],$parametros['desde'],$parametros['hasta'],$parametros['serie'],$autorizados);
+    	
+    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['per'],$parametros['desde'],$parametros['hasta'],$parametros['serie'],$autorizados);    	
     	$tr='';
     	foreach ($tbl as $key => $value) {
     		 $exis = $this->modelo->catalogo_lineas($value['TC'],$value['Serie']);
@@ -206,7 +222,7 @@ class lista_facturasC
             <td>'.$value['Serie'].'</td>
             <td>'.$value['Autorizacion'].'</td>
             <td>'.$value['Factura'].'</td>
-            <td>'.$value['Fecha']->format('Y-m-d').'</td>
+            <td>'.$value['Fecha']->format('Y-m-d').'</td>           
             <td class="text-right">'.$value['SubTotal'].'</td>
             <td class="text-right">'.$value['Con_IVA'].'</td>
             <td class="text-right">'.$value['IVA'].'</td>
@@ -216,6 +232,44 @@ class lista_facturasC
             <td>'.$value['RUC_CI'].'</td>
             <td>'.$value['TB'].'</td>
           </tr>';
+    	}
+
+    	// print_r($tr);die();
+
+    	return $tr;
+    }
+
+     function tabla_facturas_lineas($parametros)
+    {
+    	$autorizados = false;
+    	if(isset($parametros['auto'])){ $autorizados = $parametros['auto'];}
+    	// print_r($parametros);die();
+    	$codigo = $parametros['ci'];
+    	
+    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['per'],$parametros['desde'],$parametros['hasta'],$parametros['serie'],$autorizados);   
+    	$tr='';
+    	foreach ($tbl as $key => $value) {
+    		 
+    		 $line = $this->modelo->facturas_lineas_emitidas_tabla($value['CodigoC'],$value['Serie'],false,$value['Factura']);
+    		 foreach ($line as $key => $value2) {
+	    		 	$tr.='<tr>            
+	            <td>'.$value2['T'].'</td>
+	            <td>'.$value2['Producto'].'</td>
+	            <td>'.$value2['TC'].'</td>
+	            <td>'.$value2['Serie'].'</td>
+	            <td>'.$value2['Autorizacion'].'</td>
+	            <td>'.$value2['Factura'].'</td>
+	            <td>'.$value2['Fecha']->format('Y-m-d').'</td>    
+	            <td>'.$value2['Mes'].'</td>    
+	            <td>'.$value2['Ticket'].'</td>           
+	            <td class="text-right">'.$value2['Total_IVA'].'</td>
+	            <td class="text-right">'.$value2['Total_Desc'].'</td>
+	            <td class="text-right">'.$value2['Total'].'</td>
+	            <td>'.$value2['CodigoC'].'</td>
+	          </tr>';
+    		 }
+    		 // print_r($tr);die();
+    		
     	}
 
     	// print_r($tr);die();
@@ -290,6 +344,49 @@ class lista_facturasC
 		$this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$Fechaini=false,$Fechafin=false,$sizetable,$mostrar,15,'H');
   }
 
+  function imprimir_pdf_lineas($parametros)
+    {
+    	// print_r($parametros);die();
+    	$serie = explode(' ',$parametros['DCLinea']);
+    	$serie = (isset($serie[1]))?$serie[1]:false;
+    	$codigo = $parametros['ddl_cliente'];
+    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['ddl_periodo'],$parametros['txt_desde'],$parametros['txt_hasta'],$serie);
+    
+
+		$titulo = 'L I N E A S  D E  F A C T U R A S';
+		$sizetable =7;
+		$mostrar = TRUE;
+		// $Fechaini = $parametros['txt_desde'] ;//str_replace('-','',$parametros['Fechaini']);
+		// $Fechafin = $parametros['txt_hasta']; //str_replace('-','',$parametros['Fechafin']);
+		$tablaHTML= array();		
+		$pos = 0;
+		$borde = 1;
+		// print_r($datos);die();
+		$pos=1;
+		$tablaHTML[0]['medidas']=array(6,50,9,15,75,12,18,20,12,12,20,12,20);
+	  $tablaHTML[0]['datos']=array('T','Producto','TC','Serie','Autorizacion','Factura','Fecha','Mes','Año','IVA','Descuentos','Total','RUC_CI');
+		$tablaHTML[0]['alineado']=array('L','L','L','L','L','L','L','L','R','R','R','L','L','L','L');		
+		$tablaHTML[0]['borde'] =$borde;
+		$tablaHTML[0]['estilo'] ='b';
+
+		$datos = $tbl;
+		
+		foreach ($datos as $key => $value) {
+		 		$line = $this->modelo->facturas_lineas_emitidas_tabla($value['CodigoC'],$value['Serie'],false,$value['Factura']);
+    		 foreach ($line as $key => $value2) {
+    		 		$tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+    		 		 $tablaHTML[$pos]['alineado']=$tablaHTML[0]['alineado'];
+    		 		$tablaHTML[$pos]['datos']=array($value2['T'],$value2['Producto'],$value2['TC'],$value2['Serie'],$value2['Autorizacion'],$value2['Factura'],$value2['Fecha']->format('Y-m-d'),$value2['Mes'],$value2['Ticket'],$value2['Total_IVA'],$value2['Total_Desc'],$value2['Total'],$value2['CodigoC']);
+    		 		$tablaHTML[$pos]['borde'] =$borde;
+						$pos+=1; 		 	
+    		 }     
+		 
+		}
+	   
+		$this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$Fechaini=false,$Fechafin=false,$sizetable,$mostrar,15,'H');
+  }
+
+
   function imprimir_excel_fac($parametros)
   {
   		$serie = explode(' ',$parametros['DCLinea']);
@@ -313,6 +410,38 @@ class lista_facturasC
 	          $tablaHTML[$pos]['datos']=array($value['T'],$value['TC'],$value['Serie'],$value['Autorizacion'],$value['Factura'],$value['Fecha']->format('Y-m-d'),$value['SubTotal'],$value['Con_IVA'],$value['IVA'],$value['Descuentos'],$value['Total'],$value['Saldo'],$value['RUC_CI'],$value['TB'],$value['Razon_Social']);
 	          $tablaHTML[$pos]['tipo'] ='N';          
 	          $pos+=1;
+	    }
+      excel_generico($titulo,$tablaHTML);  
+
+  }
+
+   function imprimir_excel_fac_line($parametros)
+  {
+  		$serie = explode(' ',$parametros['DCLinea']);
+    	$serie = $serie[1];
+    	$codigo = $parametros['ddl_cliente'];
+    	$tbl = $this->modelo->facturas_emitidas_tabla($codigo,$parametros['ddl_periodo'],$parametros['txt_desde'],$parametros['txt_hasta'],$serie);
+
+    	 $b = 1;
+	   	 $titulo='F A C T U R A S  L I N E A S';
+	   	
+	     $tablaHTML =array();
+	     $tablaHTML[0]['medidas']=array(6,20,13,25,15,23,18,12,12,12,12,12,12,20);
+	     $tablaHTML[0]['datos']=array('T','Producto','TC','Serie','Autorizacion','Factura','Fecha','Mes','Año','IVA','Descuentos','Total','RUC_CI');
+	     $tablaHTML[0]['tipo'] ='C';
+	     $pos = 1;
+	     $compro1='';
+	    foreach ($tbl as $key => $value) {
+
+	    	 $line = $this->modelo->facturas_lineas_emitidas_tabla($value['CodigoC'],$value['Serie'],false,$value['Factura']);
+    		 foreach ($line as $key => $value2) {
+    		 		$tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+    		 		$tablaHTML[$pos]['datos']=array($value2['T'],$value2['Producto'],$value2['TC'],$value2['Serie'],$value2['Autorizacion'],$value2['Factura'],$value2['Fecha']->format('Y-m-d'),$value2['Mes'],$value2['Ticket'],$value2['Total_IVA'],$value2['Total_Desc'],$value2['Total'],$value2['CodigoC']);
+    		 		$tablaHTML[$pos]['tipo'] ='N';          
+	          $pos+=1;	    		 	
+    		 }         
+	          
+	          
 	    }
       excel_generico($titulo,$tablaHTML);  
 
