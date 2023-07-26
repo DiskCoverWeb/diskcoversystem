@@ -3071,7 +3071,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$arr=array('',$Serie.'-'.$ptoEmi.'-'.generaCeros($datos[0]['Factura'],9));//mio
 	$pdf->Row($arr,10);
 	$pdf->SetTextColor(0);
-    // print_r($datos);
+    // print_r($datos);die();
 	// fecha y hora
 
 
