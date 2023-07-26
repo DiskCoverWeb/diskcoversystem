@@ -303,7 +303,8 @@ class facturar_pensionC
       $clientes[] = array('id'=>G_NINGUNO,'text'=>'TODOS','data'=>array('codigo' =>G_NINGUNO));
     }
 		foreach ($datos as $value) {
-			$clientes[] = array('id'=>$value['Cliente'],'text'=>$value['Cliente'],'data'=>array('email'=> $value['Email'],'direccion' => $value['Direccion'],'direccion1'=>$value['DireccionT'], 'telefono' =>$value['Telefono'], 'ci_ruc' => $value['CI_RUC'], 'codigo' => $value['Codigo'], 'cliente' => $value['Cliente'], 'grupo' => $value['Grupo'], 'tdCliente' => $value['TD'], 'Archivo_Foto'=> $value['Archivo_Foto'], 'Archivo_Foto_Url'=> BuscarArchivo_Foto_Estudiante($value['Archivo_Foto']), 'RUC_CI_Rep' => $value['CI_RUC_R'])); //,'dataMatricula'=>$matricula);
+			$clientes[] = array('id'=>$value['Cliente'],'text'=>$value['Cliente'],'data'=>array('email'=> $value['Email'],'direccion' => $value['Direccion'],'direccion1'=>$value['DireccionT'], 'telefono' =>$value['Telefono'], 'ci_ruc' => $value['CI_RUC'], 'codigo' => $value['Codigo'], 'cliente' => $value['Cliente'], 'grupo' => $value['Grupo'], 'tdCliente' => $value['TD'], 'Archivo_Foto'=> $value['Archivo_Foto'], 'Archivo_Foto_Url'=> BuscarArchivo_Foto_Estudiante($value['Archivo_Foto']), 'RUC_CI_Rep' => $value['CI_RUC_R'] 
+      , 'Representante' => $value['Representante'], 'Telefono_R' => $value['Telefono_R'], 'EmailR' => $value['EmailR'], 'TD_R' => $value['TD_R'])); //,'dataMatricula'=>$matricula);
 		}
     return $clientes;
 	}
