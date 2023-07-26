@@ -1592,7 +1592,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 		$pdf->SetWidths(array(488));
 		$pdf->SetAligns(array("L"));
 		//$arr=array($arr1[$i]);
-		$arr=array(utf8_decode($Concepto));
+		$arr=array(mb_convert_encoding($Concepto, 'UTF-8'));
 		$pdf->Row($arr,10);
 		//titulo
 		$y=$y+30;
@@ -2162,7 +2162,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 			$pdf->SetWidths(array(468));
 			$pdf->SetAligns(array("L"));
 			//$arr=array($arr1[$i]);
-			$arr=array(utf8_decode($Concepto));
+			$arr=array(mb_convert_encoding($Concepto, 'UTF-8'));
 			$pdf->Row($arr,10);
 			//titulo
 			$y=$y+30;
