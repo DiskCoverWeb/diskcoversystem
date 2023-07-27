@@ -275,8 +275,7 @@ class login_controller
 	function enviar_email($parametros)
   	{
   		$empresaGeneral = $this->modelo->Empresa_data($parametros['ruc']);
-  		// print_r($empresaGeneral);die();
-  		// print_r($empresaGeneral);die();
+  		if($empresaGeneral==-1){return 2;}
 	    $datos = $this->modelo->entidades_usuario($parametros['CI_usuario']);
 	    if($parametros['cartera']==1)
 	    {
@@ -285,8 +284,6 @@ class login_controller
 	    	$datos[0]['Clave'] = $parametros['clave']; 
 	    	$datos[0]['Email'] = $parametros['email'];
 	    }
-
-	    // print_r($datos);die();
 
 	  	$email_conexion = 'info@diskcoversystem.com'; 
 	    $email_pass =  'info2021DiskCover'; 	   
@@ -350,21 +347,11 @@ Esta direccion de correo electronico no admite respuestas. En caso de requerir a
 	  	$titulo_correo = 'Credenciales de acceso al sistema DiskCover System';
 	  	$archivos = false;
 	  	$correo = $parametros['email'];
-	  	// print_r($correo);die();
-	  	// $resp = $this->modelo->ingresar_update($datos,'Clientes',$where);  	
-	  	
-	  	// if($resp==1)
-	  	// {
 	  	if($this->email->enviar_credenciales($archivos,$correo,$cuerpo_correo,$titulo_correo,$correo_apooyo,'Credenciales de acceso al sistema DiskCover System',$email_conexion,$email_pass,$html=1,$empresaGeneral)==1){
 	  		return 1;
 	  	}else{
-	  		// echo json_encode(-1);
 	  		return -1;
 	  	}
-	  	// }else
-	  	// {
-	  		// return -1;
-	  	// }
   	}
 
 

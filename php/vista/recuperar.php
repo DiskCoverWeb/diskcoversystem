@@ -41,37 +41,83 @@
          $('#tabla_').html(spiner);
       },*/
         success:  function (response) { 
-        	// console.log(response);
-        if(response.respuesta == 1)
+        	if(response==-2)
+         {
+	         	$('#alerta').css('display','none');        	
+	        	$('#res').val('');
+	        	Swal.fire('Error Entidad!','"La entidad que ingresaste no tiene el formato correcto.','error');
+         }
+        if(response.length==1)
         {
-        	
-
-        	$('#txt_cartera').val('1');
-        	// $('#form_cartera').css('display','block');
-        	// $('#form_login').css('display','none');
-        	$('#correo').val(response.cartera_usu);
-					$('#contra').val(response.cartera_pass);
         	$('#alerta').css('display','block');
-        	$('#alerta').html(response.Nombre+'<br> <u>Cartera de Cliente</u>');
-        	$('#res').val(response.entidad);
+        	$('#txt_item').val(response[0].Item);
+        	if(response[0].Nombre == response[0].Razon_Social)
+					{
+        		$('#alerta').html(response[0].Nombre);
+        	}else
+        	{
+        		$('#alerta').html(response[0].Razon_Social+'<br>'+response[0].Nombre);   
+        		$('#alerta').css('font-size','10px');        		
+        	}
+        	$('#img_logo').attr('src',response[0].Logo);
+        	$('#img_logo').css('width','35%');
+        	$('#img_logo').css('border-radius','5px');
+        	$('#res').val(response[0].entidad);
+        	$('#txt_cartera').val('0');
 
-        }else if(response.respuesta==-1)
+
+        }else if(response.length>1)
         {
-        	$('#alerta').css('display','none');    
-        	$('#res').val('');    	
-        	Swal.fire('Error Entidad!','No se a encontrado la entidad.','error');
-
+        	let item = response[0]
+        	 seleccionar_empresa(item.Nombre,item.Razon_Social,item.Logo,item.entidad,item.Item);
         }else
-        { 
-        	$('#alerta').css('display','none');        	
-        	$('#res').val('');
-        	Swal.fire('Error Entidad!','"La entidad que ingresaste no tiene el formato correcto.','error');
-        }        
+        {
+        		$('#alerta').css('display','none');    
+        		$('#res').val('');    	
+        		Swal.fire('Error Entidad!','No se a encontrado la entidad.','error');
+        }       
       }
     });
-
   }
 
+  function seleccionar_empresa(Nombre,Razon_Social,Logo,entidad,item)
+  {
+  	  $('#mis_empresas').modal('hide');
+
+  	 	$('#txt_item').val(item);
+  	 	$('#alerta').css('display','block');
+	  	if(Nombre == Razon_Social)
+			{
+	  		$('#alerta').html(Nombre);
+	  	}else
+	  	{
+	  		$('#alerta').html(Razon_Social+'<br>'+Nombre);   
+	  		$('#alerta').css('font-size','10px');        		
+	  	}
+	  	$('#img_logo').attr('src',Logo);
+	  	$('#img_logo').css('width','35%');
+	  	$('#img_logo').css('border-radius','5px');
+	  	$('#res').val(entidad);
+	  	$('#txt_cartera').val('0');
+	  	$('#correo').focus();
+	  	var parametros = 
+	  	{
+	  		'empresa':Nombre,
+	  		'item_cartera':item,
+	  	}
+
+	  	 $.ajax({
+	      data:  {parametros:parametros},
+	      url:   '../controlador/login_controller.php?setear_empresa=true',
+	      type:  'post',
+	      dataType: 'json',
+	        success:  function (response) { 
+	        
+	      }
+	    });
+
+
+  }
    function validar_usuario()
   { 
 
@@ -150,12 +196,15 @@
       },*/
         success:  function (response) { 
         	console.log(response);
-        if(response.respuesta==-1)
+        if(response==-1 || response.respuesta==-1)
         {
         	Swal.fire('Usuario invalidos!','No se pudo recuperar.','error');
         }else if(response.respuesta==-2)
         {        	
         	Swal.fire('Clave o usuario de cartera invalidos!','No se pudo acceder.','error');
+        }else if(response.respuesta==2)
+        {        	
+        	Swal.fire('¡Disculpe!','No fue posible enviar el correo. No se pudo obtener la información de las empresas','error');
         }
         else
         {      	
@@ -219,4 +268,29 @@
     </div>
 </body>
 
+     <div id="mis_empresas" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static" style="border-radius: 10px;">
+      <div class="modal-dialog modal-dialog-centered modal-md">
+          <div class="modal-content" style=" background: rgba(201, 223, 241,0.7); border-radius: 10px;">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Empreas asociadas a <label id="lbl_ruc"></label></h4>
+              </div>
+              <div class="modal-body" style="height:300px; overflow-y:scroll;">
+              	<table class="table table-hover">
+              		<thead>
+              			<th style="width: 35%;"></th>
+              			<th>Empresa</th>
+              		</thead>
+              		<tbody id="tbl_empresas">
+              		</tbody>
+              	</table>
+
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-default" onclick="location.reload()">Cerrar</button>
+              </div>
+          </div>
+
+      </div>
+  </div>
 </html>
