@@ -1200,7 +1200,7 @@ function modal_email_fac(factura,serie,codigoc,emails)
                 </div>    
               </div>
             </div>
-            <div class="tab-pane active" id="tab_4">
+            <div class="tab-pane" id="tab_4">
               <div class="row">
                 <div class="col-sm-6">
                   <h2 style="margin-top: 0px;">Listado de facturas</h2>
