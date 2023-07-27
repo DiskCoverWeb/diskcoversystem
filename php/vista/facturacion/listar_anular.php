@@ -105,6 +105,14 @@ function detalle_factura()
         	$('#TxtObs').val(data.FA.Observacion)
         	$('#LabelTransp').val(data.FA.Nota)
 
+
+        	$('#Cod_CxC').val(data.FA.Cod_CxC)        	
+        	$('#Cta_CxP').val(data.FA.Cta_CxP)
+        	
+        	$('#TextFHasta').val($('#DCFact option:selected').text())
+					$('#TextFDesde').val($('#DCFact option:selected').text())
+
+
         	$('#tbl_detalle').html(data.detalle);
 
         	
@@ -117,7 +125,14 @@ function detalle_factura()
         	$('#LabelTotal').val(data.FA.Total_MN)
         	$('#LabelSaldoAct').val(data.FA.Saldo_MN)
 
-        	$('#myModal_espera').modal('hide');
+
+        	//en anular
+        		$('#LblSubTotal').val(data.FA.SubTotal - data.FA.Descuento - data.FA.Descuento2);
+		 				$('#LblIVA').val(data.FA.Total_IVA);
+		 				$('#LblTotal').val(data.FA.Total_MN);
+		 				$('#LblSaldo').val(data.FA.Saldo_Actual); 
+
+        		$('#myModal_espera').modal('hide');
 
 
         console.log(data);         
@@ -212,30 +227,29 @@ function resultado_sri()
 
  function anular_factura()
  {
- 				parametros = {
-		        'TC':$('#DCTipo').val(),
-		        'Serie':$('#DCSerie').val(),
-		        'Factura':$('#DCFact option:selected').text(),
-		        'Autorizacion':$('#DCFact').val(),
-		    }
-		     $.ajax({
-		        type: "POST",
-		        url: '../controlador/facturacion/listar_anularC.php?anular_factura=true',
-		        data:{parametros:parametros}, 
-		        dataType: 'json',
-		        success: function(data) {
-		        	if(data==1)
-		        	{		        	
-						 		$('#TipoSuper_MYSQL').val('Auxiliar');
-						 		$('#BuscarEn').val('SQL');
-						 		$('#clave_supervisor').modal('show');
-						 	}else
-						 	{
-						 		 Swal.fire('Esta Factura ya esta anulada','','info');
-						 	}
-		        }
-		    });
-
+		parametros = {
+        'TC':$('#DCTipo').val(),
+        'Serie':$('#DCSerie').val(),
+        'Factura':$('#DCFact option:selected').text(),
+        'Autorizacion':$('#DCFact').val(),
+    }
+     $.ajax({
+        type: "POST",
+        url: '../controlador/facturacion/listar_anularC.php?anular_factura=true',
+        data:{parametros:parametros}, 
+        dataType: 'json',
+        success: function(data) {
+        	if(data==1)
+        	{		        	
+				 		$('#TipoSuper_MYSQL').val('Auxiliar');
+				 		$('#BuscarEn').val('SQL');
+				 		$('#clave_supervisor').modal('show');
+				 	}else
+				 	{
+				 		 Swal.fire('Esta Factura ya esta anulada','','info');
+				 	}
+        }
+    });
  }
 
  function resp_clave_ingreso(response)
@@ -244,33 +258,179 @@ function resultado_sri()
  			{
  				$('#clave_supervisor').modal('hide');
  				$('#myModal_anular').modal('show');
+
+ 				$('#Label1').val($('#LabelCliente').val());
+ 				$('#MBoxFecha').val();
+ 				var tc = $('#DCTipo').val();
+
+ 				switch(tc)
+ 				{
+ 					case 'PV':
+ 						tc = " Punto de Venta No."+$('#TxtAutorizacion').val()+'-'+$('#DCSerie').val()+'-';
+ 						break;
+ 					case 'NV':
+ 					 	tc = " Nota de Venta No. "+$('#TxtAutorizacion').val()+'-'+$('#DCSerie').val()+'-';
+ 						break;
+ 					default:
+ 						tc = " Factura No. "+$('#TxtAutorizacion').val()+'-'+$('#DCSerie').val()+'-';
+ 						break;
+ 				}
+ 				$('#Label3').val(tc);
+ 				$('#Label2').val($('#DCFact option:selected').text());
+ 				$('#LblAnular').val("SI YA REALIZO EL CIERRE DE CAJA, AL ANULAR ESTA FACTURA TENDRA QUE"+
+ 				 									"\n VOLVER A REALIZAR EL CIERRE DEL DIA DE EMISION DE LA FACTURA."+
+ 				 									"\n SOLO SE PUEDE ANULAR FACTURAS SI SE TIENE PRESENTE LA FACTURA ORIGINAL Y COPIA,"+
+ 				 									"\n SI ES ELECTRONICA SE DEBE COMUNICAR AL CLIENTE DE LA ANULACION.");
  			}
  		
+ }
+ function anular()
+ {
+ 		if($('#MBoxFecha').val()=='')
+ 		{
+ 			Swal.fire('Ingrese una fecha valida','','info');
+ 			 return false;
+ 		}
+ 		 Swal.fire({
+       title: 'Esta seguro?',
+       text: "Esta seguro que desea proceder, \n con la Factura No. "+$('#DCFact option:selected').text(),
+       type: 'warning',
+       showCancelButton: true,
+       confirmButtonColor: '#3085d6',
+       cancelButtonColor: '#d33',
+       confirmButtonText: 'Si!'
+     }).then((result) => {
+       if (result.value==true) {
+
+     		 $('#myModal_espera').modal('show');
+
+       		parametros = {
+			        'TC':$('#DCTipo').val(),
+			        'Serie':$('#DCSerie').val(),
+			        'Factura':$('#DCFact option:selected').text(),
+			        'Autorizacion':$('#DCFact').val(),
+			        'MBoxFecha':$('#MBoxFecha').val(),
+			    }
+			     $.ajax({
+			        type: "POST",
+			        url: '../controlador/facturacion/listar_anularC.php?anular=true',
+			        data:{parametros:parametros}, 
+			        dataType: 'json',
+			        success: function(data) {
+			        	if(data==1)
+			        	{		        								 		
+			        		 $('#myModal_espera').modal('hide');
+			        		 $('#myModal_anular').modal('hide');
+							 		 Swal.fire('comprobante anulada','','success');
+							 	}
+			        },
+			      error: function () {
+			        $('#myModal_espera').modal('hide');
+			        alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+			      }
+			    });
+       
+       }
+     })
+ }
+
+ function Anular_en_masa()
+ {
+ 		// $('#TipoSuper_MYSQL').val('Auxiliar');
+		// $('#BuscarEn').val('SQL');
+		// $('#clave_supervisor').modal('show');
+  	$('#myModal_espera').modal('show');	
+ 		parametros = {
+        'TC':$('#DCTipo').val(),
+        'Serie':$('#DCSerie').val(),
+        'Factura':$('#DCFact option:selected').text(),
+        'Autorizacion':$('#DCFact').val(),
+        'TextFHasta':$('#TextFHasta').val(),
+        'TextFDesde':$('#TextFDesde').val(),
+        'Cod_CxC':$('#Cod_CxC').val(),
+        'Cta_CxP':$('#Cta_CxP').val(),
+    }
+     $.ajax({
+        type: "POST",
+        url: '../controlador/facturacion/listar_anularC.php?Anular_en_masa=true',
+        data:{parametros:parametros}, 
+        dataType: 'json',
+        success: function(data) {
+        	if(data==1)
+        	{		        								 		
+        		 $('#myModal_espera').modal('hide');
+        		 $('#myModal_anular').modal('hide');
+				 		 Swal.fire('comprobantes anulados','','success');
+				 	}else
+				 	{
+				 		 Swal.fire('Rango incorrecto','','info');				 		
+				 	}
+        },
+      error: function () {
+        $('#myModal_espera').modal('hide');
+        alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+      }
+    });
+ }
+
+ function Volver_Autorizar()
+ {
+ 		parametros = {
+        'TC':$('#DCTipo').val(),
+        'Serie':$('#DCSerie').val(),
+        'Factura':$('#DCFact option:selected').text(),
+        'Autorizacion':$('#DCFact').val(),
+        'MBFecha':$('#MBFecha').val(),
+    }
+    $('#myModal_espera').modal('show');
+     $.ajax({
+        type: "POST",
+        url: '../controlador/facturacion/listar_anularC.php?Volver_Autorizar=true',
+        data:{parametros:parametros}, 
+        dataType: 'json',
+        success: function(data) {
+             $('#myModal_espera').modal('hide');
+            console.log(data);
+        	if(data==1)
+        	{		        								 		
+		        $('#myModal_espera').modal('hide');
+		 		Swal.fire('Esta Factura ya esta autorizada','','success');
+		 	}
+        },
+      error: function () {
+        $('#myModal_espera').modal('hide');
+        alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+      }
+    });
  }
 
 </script>
 <div class="row">
 	<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
 		<div class="col">
-			 <a  href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0].'#');?>" title="Salir de modulo" class="btn btn-default">
-    		<img src="../../img/png/salire.png">
-    	</a>
+			<div class="col-sm-1" style="padding: 0px;">
+			  <a  href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0].'#');?>" title="Salir de modulo" class="btn btn-default">
+    			<img src="../../img/png/salire.png">
+    	 	</a>
+    	</div>
     </div>    
   <div class="col">
-    <button type="button" class="btn btn-default"  data-toggle="dropdown" title="Descargar PDF" style="padding: 6px;">
-      <img src="../../img/png/impresora.png">
-      <!-- <span class="fa fa-caret-down"></span> -->
-    </button>
-      <ul class="dropdown-menu">
-        <li><a href="#" id="imprimir_pdf">Factura Individual</a></li>
-        <li><a href="#" id="imprimir_pdf_2">Facturas en Bloque</a></li> <li><a href="#" id="imprimir_pdf_2">Imprime en impresora P.V.</a></li>
-       	<li><a href="#" id="imprimir_pdf_2">Nota de Crédito</a></li>
-       	<li><a href="#" id="imprimir_pdf_2">Recibos en Bloque</a></li>
-        <li><a href="#" id="imprimir_pdf_2">Guia de Remision</a></li>
-     
-      </ul>
+  	<div class="col-sm-1" style="padding: 0px;">
+	    <button type="button" class="btn btn-default"  data-toggle="dropdown" title="Descargar PDF" style="padding: 6px;">
+	      <img src="../../img/png/impresora.png">
+	      <!-- <span class="fa fa-caret-down"></span> -->
+	    </button>
+	      <ul class="dropdown-menu">
+	        <li><a href="#" id="imprimir_pdf">Factura Individual</a></li>
+	        <li><a href="#" id="imprimir_pdf_2">Facturas en Bloque</a></li> <li><a href="#" id="imprimir_pdf_2">Imprime en impresora P.V.</a></li>
+	       	<li><a href="#" id="imprimir_pdf_2">Nota de Crédito</a></li>
+	       	<li><a href="#" id="imprimir_pdf_2">Recibos en Bloque</a></li>
+	        <li><a href="#" id="imprimir_pdf_2">Guia de Remision</a></li>     
+	      </ul>
+	    </div>
   </div>
   <div class="col">
+  	<div class="col-sm-1" style="padding: 0px;">
     <button type="button" class="btn btn-default"  data-toggle="dropdown" title="Descargar PDF" style="padding: 6px;">
       <img src="../../img/png/email.png">
       <!-- <span class="fa fa-caret-down"></span> -->
@@ -280,8 +440,10 @@ function resultado_sri()
         <li><a href="#" id="imprimir_pdf_2">Enviar Email Nota de Credito</a></li>
         <li><a href="#" id="imprimir_pdf_2">Enviar Email Guia de Remision</a></li>
       </ul>
+      </div>
   </div>
   <div class="col">
+  	<div class="col-sm-1" style="padding: 0px;">
     <button type="button" class="btn btn-default"  data-toggle="dropdown" title="Descargar PDF" style="padding: 6px;">
       <img src="../../img/png/pdf.png">
       <!-- <span class="fa fa-caret-down"></span> -->
@@ -292,9 +454,9 @@ function resultado_sri()
         <li><a href="#" id="imprimir_pdf">PDF Nota de credito</a></li>
         <li><a href="#" id="imprimir_pdf_2">PDF Guia de Remision</a></li>
         <li><a href="#" id="imprimir_pdf">PDF Orden de Produccion</a></li>
-        <li><a href="#" id="imprimir_pdf_2">PDF Donaciones</a></li>
-      
+        <li><a href="#" id="imprimir_pdf_2">PDF Donaciones</a></li>      
       </ul>
+    </div>
   </div>
    <div class="col">
     	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);" style="padding: 6px;">
@@ -337,20 +499,32 @@ function resultado_sri()
     	</button>
     	</div>		
     <div class="col">
-    	<button title="Anular Factura"  data-toggle="tooltip" class="btn btn-default" onclick="anular_factura();">
-    		<img src="../../img/png/bloqueo.png" >
-    	</button>
-    	</div>		
+    	 	<div class="col-sm-1" style="padding: 0px;">
+		    	<button title="Anular Factura"  data-toggle="tooltip" class="btn btn-default" onclick="anular_factura();">
+		    		<img src="../../img/png/bloqueo.png" >
+		    	</button>
+		    </div>
+		</div>		
     <div class="col">
-    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
-    		<img src="../../img/png/anular.png" >
-    	</button>
-    	</div>		
+     	<div class="col-sm-1" style="padding: 0px;">
+	    	<button title="Anular en masa"  data-toggle="tooltip" class="btn btn-default" onclick="Anular_en_masa()">
+	    		<img src="../../img/png/anular.png" >
+	    	</button>
+	    </div>
+	  </div>		
     <div class="col">
-    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
-    		<img src="../../img/png/sri_azul.jpg" >
-    	</button>
-    	</div>		
+     	<div class="col-sm-1" style="padding: 0px;">
+	    	<button title="Consultar Mayores auxiliares" data-toggle="dropdown" class="btn btn-default">
+	    		<img src="../../img/png/sri_azul.jpg" >
+	    	</button>
+				<ul class="dropdown-menu">
+	        <li><a href="#" id="" onclick="Volver_Autorizar()">Factura Actual</a></li>
+	        <li><a href="#" id="imprimir_pdf">Nota de credito</a></li>
+	        <li><a href="#" id="imprimir_pdf_2">Facturas pendientes</a></li>
+	        <li><a href="#" id="imprimir_pdf">Guia de Remision</a></li>  
+	      </ul>
+	    </div>
+    </div>		
     <div class="col">
     	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
     		<img src="../../img/png/sri_blanco.jpg" >
@@ -375,7 +549,8 @@ function resultado_sri()
   </div>
 </div>
 <form id="form_nc">
-
+	<input type="hidden" name="Cod_CxC" id="Cod_CxC" value="">
+	<input type="hidden" name="Cta_CxP" id="Cta_CxP" value="">
 <div class="row">
 	<div class="col-sm-12">
 		
@@ -468,7 +643,7 @@ function resultado_sri()
             </div>
           </div>
            <div class="col-sm-2">   
-           		<input type="date" name="MBFecha" id="MBFecha" class="form-control input-xs" value="">
+           		<input type="date" name="MBFecha" id="MBFecha" class="form-control input-xs" value="<?php echo date('Y-m-d') ?>">
           </div>
           <div class="col-sm-1" style="padding:0px">   
            		<label><input type="checkbox" name="CheqSoloCopia" id="CheqSoloCopia"> Imprimir solo copia</label>
@@ -685,10 +860,68 @@ function resultado_sri()
         <h4 class="modal-title">Anulacion de factura</h4>
       </div>
       <div class="modal-body">
+      	<div class="row">
+      		<div class="col-sm-10">
+      			<div class=" row">
+      				<div class="col-sm-8">
+      						<input type="" class="form-control input-xs" readonly name="Label1" id="Label1"> 
+      				</div>
+      				<div class="col-sm-4" style="padding-left:0px">
+      					<div class="input-group">
+									<span class="input-group-addon input-xs" style="padding: 5px 4px;">Fecha</span>
+									<input type="date" class="form-control input-xs" style="width: 88%; padding: 5px;" name="MBoxFecha" id="MBoxFecha">
+								</div>
+      				</div>      				
+      			</div>   
+      			<div class=" row">
+      				<div class="col-sm-9">
+      						<input type="" class="form-control input-xs text-right" readonly name="Label3" id="Label3" value="Factura No.">
+      				</div>
+      				<div class="col-sm-3">
+      						<input readonly type="" class="form-control input-xs" name="Label2" style="color: coral;" id="Label2">      				
+      				</div>      				
+      			</div>   
+      			<div class=" row">
+      				<div class="col-sm-3">
+      					<b>subTotal</b>
+      						<input readonly type="" class="form-control input-xs" name="LblSubTotal" id="LblSubTotal" value="0.00">
+      				</div>
+      				<div class="col-sm-3">
+      					<b>I.V.A</b>
+      						<input readonly type="" class="form-control input-xs" name="LblIVA" id="LblIVA" value="0.00">
+      				</div>      		
+      				<div class="col-sm-3">
+      					<b>Total</b>
+      						<input readonly type="" class="form-control input-xs" name="LblTotal" id="LblTotal" value="0.00">
+      				</div>
+      				<div class="col-sm-3">
+      					<b style="font-size: 13px;">Saldo pendiente</b>
+      						<input readonly type="" class="form-control input-xs" name="LblSaldo" id="LblSaldo" value="0.00">
+      				</div>      				
+      			</div> 
+      			<div class="row">
+      				<div class="col-sm-12">
+      					<textarea readonly style="resize: none; font-size: 11px; color: coral;" rows="4" name="LblAnular" id="LblAnular" class="form-control"></textarea>
+      				</div>      				
+      			</div>     			
+      		</div>
+      		<div class="col-sm-2">
+			      <button  class="btn btn-default" onclick="anular()"style="padding: 6px;">
+			    		<img src="../../img/png/grabar.png" >
+			    		<br>
+			    		Anulacion
+			    	</button>
+			    	<button  data-dismiss="modal" class="btn btn-default"  style="padding: 6px;">
+			    		<img src="../../img/png/salire.png">
+			    		<br>
+			    		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Salir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			    	</button>
+      		</div>      		
+      	</div>
       </div>
-      <div class="modal-footer">
+      <!-- <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>
