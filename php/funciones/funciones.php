@@ -9711,6 +9711,7 @@ function BuscarImagen($nombre, $ruta)
 
 function CFechaLong($CFecha)
 {
+  // print_r($CFecha);
   if (strlen($CFecha) == 10) {
     if ($CFecha == "00/00/0000") $CFecha = date('Y-m-d');
   } else {
@@ -9720,6 +9721,11 @@ function CFechaLong($CFecha)
   return strtotime($CFecha);
 }
 
+function IsDate($fecha)
+{
+  $dateTime = DateTime::createFromFormat('Y-m-d', $fecha);
+  return $dateTime && $dateTime->format('Y-m-d') === $fecha;
+}
 function setObjectOrArray($value)
 {
   return json_decode(json_encode($value), false);
@@ -11773,6 +11779,74 @@ function Reporte_Resumen_Existencias_SP($MBFechaInicial, $MBFechaFinal, $CodigoB
     $sql = "EXEC sp_Reporte_Resumen_Existencias @Item=?, @Periodo=?,@FechaInicial=?, @FechaFinal=?, @CodBod=?";
     return $conn->ejecutar_procesos_almacenados($sql,$parametros);
   }
+}
+function Actualizar_Razon_Social($FechaIniAut=false)
+{
+    $db = new db();
+    $FechaDeAut = $FechaIniAut;
+    $RutaXMLRechazado =dirname(__DIR__,1).'/comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3).'/CE'.generaCeros($_SESSION['INGRESO']['item'],3)."/No_autorizados/*.xml";    
+    if(file_exists($RutaXMLRechazado)){ return -1;}
+    $FechaIni = date('Y-m-d');
+    $FechaFin = date('Y-m-d');
+    $sql = "SELECT Autorizacion, MIN(Fecha) As Fecha_Min, MAX(Fecha) As Fecha_Max 
+            FROM Facturas 
+            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+            AND T <> '".G_ANULADO."' 
+            AND LEN(Autorizacion) = 13 
+            GROUP BY Autorizacion ";
+
+    $AdoFA = $db->datos($sql);
+    if(count($AdoFA)>0)
+    {
+       $FechaIni = $AdoFA[0]["Fecha_Min"]->format('Y-m-d');
+       $FechaFin = $AdoFA[0]["Fecha_Max"]->format('Y-m-d');
+    }
+    
+    if(IsDate($FechaDeAut) && CFechaLong($FechaDeAut) < CFechaLong($FechaFin)){ $FechaIni = $FechaDeAut;}
+    $FechaIni = BuscarFecha($FechaIni);
+    $FechaFin = BuscarFecha($FechaFin);
+    for($Idx = 1; $Idx<=12;$Idx++)
+    {
+        if($_SESSION['INGRESO']['Tipo_Base']=='SQL SERVER')
+        {
+           $sql = "UPDATE Facturas 
+                SET RUC_CI = C.CI_RUC, Razon_Social = C.Cliente, TB = C.TD 
+                FROM Facturas As F, Clientes As C ";
+        }Else{
+           $sql = "UPDATE Facturas As F, Clientes As C 
+                SET F.RUC_CI = C.CI_RUC, F.Razon_Social = C.Cliente, F.TB = C.TD ";
+        }
+        $sql.=" WHERE F.Fecha BETWEEN '".$FechaIni."' and '".$FechaFin."' 
+               AND F.Item = '".$_SESSION['INGRESO']['item']."' 
+               AND F.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+               AND LEN(F.Autorizacion) = 13 
+               AND C.TD IN ('C','R','P') 
+               AND MONTH(F.Fecha) = ".$Idx." 
+               AND F.CodigoC = C.Codigo ";
+        // print_r($sql);
+        $db->String_Sql($sql);
+        
+        if( $_SESSION['INGRESO']['Tipo_Base']=='SQL SERVER' )
+        {
+           $sql = "UPDATE Facturas 
+                  SET RUC_CI = CM.Cedula_R, Razon_Social = CM.Representante, TB = CM.TD 
+                  FROM Facturas As F, Clientes_Matriculas As CM ";
+        }else{
+           $sql = "UPDATE Facturas As F, Clientes_Matriculas As CM 
+                SET RUC_CI = CM.Cedula_R, F.Razon_Social = CM.Representante, F.TB = CM.TD ";
+        }
+        $sql.=" WHERE F.Fecha BETWEEN '".$FechaIni."' and '".$FechaFin."'
+                AND F.Item = '".$_SESSION['INGRESO']['item']."'
+                AND F.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+                AND LEN(F.Autorizacion) = 13
+                AND CM.TD IN ('C','R','P')
+                AND MONTH(F.Fecha) = ".$Idx."
+                AND F.Item = CM.Item
+                AND F.Periodo = CM.Periodo
+                AND F.CodigoC = CM.Codigo ";
+        $db->String_Sql($sql);
+    }
 }
 
 ?>
