@@ -570,6 +570,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
  function imprimirCD($stmt, $stmt2, $stmt4, $stmt5, $stmt6, $stmt1, $id=null,$formato=null,$nombre_archivo=null,$va=null,$imp1=null,
  $stmt2_count=null,$stmt4_count=null,$stmt5_count=null,$stmt6_count=null)
 {
+
 	$pdf = new PDF('P','pt','LETTER');
 	$pdf->AliasNbPages('TPAG');
 	$pdf->SetTopMargin(5);
@@ -643,8 +644,8 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 	$sumdb=0;
 	$sumcr=0;
 	$cantidad_reg=$stmt2_count+$stmt6_count;
-	if($cantidad_reg<35)
-	{
+	// if($cantidad_reg<35)
+	// {
 		//para sacar parte del header
 		$i=0;
 		$pag=1;
@@ -719,39 +720,15 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 		$pdf->Cell(86,15,'','1',1,'Q');
 		$pdf->SetXY($x+97+189+97+86, $y);
 		$pdf->Cell(86,15,'','1',1,'Q');
-		$pdf->SetXY($x+2, $y+2);
+		$pdf->SetXY($x, $y+2);
 		$pdf->SetWidths(array(97,189,97,86,86));
 		$pdf->SetAligns(array("C","C","C","C","C"));
 		//$arr=array($arr1[$i]);
 		$arr=array("CODIGO", "CONCEPTO", "PARCIAL M/E", "DEBE", "HABER");
-		$pdf->Row($arr,10);
-		//detalle comprobante
-		$y=$y+15;
-		$pdf->SetXY($x, $y);
-		if($cantidad_reg<=10)
-		{
-			$cantidad_reg1=15*10;
-			$pdf->Cell(97,150,'','1',1,'Q');
-			$pdf->SetXY($x+97, $y);
-			$pdf->Cell(189,150,'','1',1,'Q');
-			$pdf->SetXY($x+189+97, $y);
-			$pdf->Cell(97,150,'','1',1,'Q');
-			$pdf->SetXY($x+97+189+97, $y);
-			$pdf->Cell(86,150,'','1',1,'Q');
-			$pdf->SetXY($x+97+189+97+86, $y);
-			$pdf->Cell(86,150,'','1',1,'Q');
-		}
-		else
-		{
-			//$cantidad_reg1=$cantidad_reg*10;
-			$x1=$x;
-			$y1=$y;
-			
-		}
-		//$pdf->SetFont('Arial','',9);
-		//llenamos los detalles 
-		$ii=0;
-		$subc=array();
+		$pdf->Row($arr,10);		
+		//------------------------------puede ser pa otro tipo de comprobante ------------------
+		// print_r($stmt6);die();
+		$ii = 0;
 		foreach ($stmt6 as $key => $value) {
 
 			$subc[$ii]['cta']= $value['Cta']; //$row1[0];
@@ -764,103 +741,65 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 			
 			$ii++;
 		}
-		$pdf->SetXY($x+2, $y+2);
+		//-------------------------------------------------------------------------------------
+		$pdf->SetXY($x, $pdf->GetY()+6);		
+		$y_detalle = $pdf->GetY();
+		$x_detalle = $pdf->GetX();
+
 		$status ='';		
-		if(count($stmt2)>0){
-			$pdf->SetX($x+2);
-			$pdf->SetFont('Arial','',9);
-			$cta = $stmt2[0]['Cta'];//$row1[0];
-			$conc = $stmt2[0]['Cuenta'];//$row1[1];
-			$parc='';
-			$debe='';
-			$haber='';
-			if($stmt2[0]['Parcial_ME']!=0 and $stmt2[0]['Parcial_ME']!='0.00')
-			{
-				$parc = number_format($stmt2[0]['Parcial_ME'],2, '.', ',');
-			}
-			if($stmt2[0]['Debe']!=0 and $stmt2[0]['Debe']!='0.00')
-			{
-				$sumdb=$sumdb+$stmt2[0]['Debe'];
-				$debe = number_format($stmt2[0]['Debe'],2, '.', ',');
-			}
-			if($stmt2[0]['Haber']!=0 and $stmt2[0]['Haber']!='0.00')
-			{
-				$sumcr=$sumcr+$stmt2[0]['Haber'];
-				$haber = number_format($stmt2[0]['Haber'],2, '.', ',');
-			}
-			$detalle =$stmt2[0]['Detalle'];
-			$status = $stmt2[0]['T'];		
-			$pdf->SetWidths(array(97,189,95,84,84));
-			$pdf->SetAligns(array("L","L","R","R","R"));
-			//$arr=array($arr1[$i]);
-			$arr=array($cta, $conc, $parc, $debe,$haber);
-			$pdf->Row($arr,10);
-			$y=$y+10;
-			if($detalle<>'.')
-			{
-				$pdf->SetFont('Arial','',8);
-				//$pdf->SetXY($x+2, $y+2);
-				$pdf->SetWidths(array(97,180,95,84,84));
-				$pdf->SetAligns(array("L","L","R","R","R"));
-				//$arr=array($arr1[$i]);
-				$arr=array('', $detalle, '', '', '');
-				$pdf->Row($arr,10);
-				$y=$y+10;
-			}
-			//verificamos si hay mas detalles
-			for($ii=0;$ii<count($subc);$ii++)
-			{
-				if($cta==$subc[$ii]['cta'])
-				{
-					$cliente = $subc[$ii]['cliente'];
-					$Fechav = $subc[$ii]['Fechav']->format('Y-m-d');
-					$debe='';
-					$haber='';
-					if($subc[$ii]['debe']!=0 and $subc[$ii]['debe']!='0.00')
-					{
-						$debe = number_format($subc[$ii]['debe'],2, '.', ',');
-					}
-					if($subc[$ii]['haber']!=0 and $subc[$ii]['haber']!='0.00')
-					{
-						$haber = number_format($subc[$ii]['haber'],2, '.', ',');
-					}
-					$pdf->SetX($x+2);
-					$pdf->SetFont('Arial','I',7);
-					//echo " aqui ";
-					//	die();
-					//$pdf->SetXY($x+2, $y+2);
-					$pdf->SetWidths(array(97,94,94,48, 48,85,84));
-					$pdf->SetAligns(array("L","L","L","R","R","R","R"));
-					//$arr=array($arr1[$i]);
-					if($subc[$ii]['No']<>'.')
-					{
-						$arr=array('', $cliente, 'No. '.$pdf->generaCeros($subc[$ii]['No'],7), $debe, $haber, '', '');
-					}
-					else
-					{
-						if($subc[$ii]['vp']<>0)
-						{
-							$arr=array('', $cliente, 'Valor Prima ', $subc[$ii]['vp'], $haber, '', '');
-						}
-						else
-						{
-							$arr=array('', $cliente, 'Venc. '.$Fechav, $debe, $haber, '', '');
-						}
-					}
-					
-					$pdf->Row($arr,10);
-					$y=$y+10;
-				}
-			}
-		}
-		//detalle sub cuenta
-		if($cantidad_reg>10)
+		if(count($stmt2)>0)
 		{
-			$y=$y+20;
+			foreach ($stmt2 as $key => $value) {
+				$parc='';$debe='-';$haber='-';
+				$arr=array();
+				if($value['Parcial_ME']!=0 and $value['Parcial_ME']!='0.00')
+				{
+					$parc = number_format($value['Parcial_ME'],2, '.', ',');
+				}
+				if($value['Debe']!=0 and $value['Debe']!='0.00')
+				{
+					$sumdb=$sumdb+$value['Debe'];
+					$debe = number_format($value['Debe'],2, '.', '');
+				}
+				if($value['Haber']!=0 and $value['Haber']!='0.00')
+				{
+					$sumcr=$sumcr+$value['Haber'];
+					$haber = number_format($value['Haber'],2, '.', '');
+				}
+				$pdf->SetAligns(array("L","L","R","R","R"));
+				$arr=array($value['Cta'], $value['Cuenta'], $parc,$debe,$haber);
+				$pdf->Row($arr,10,'LR');
+				$pdf->SetXY($x, $pdf->GetY());	
+				//en caso de haber sub modulos se agrega
+				if($value['Detalle']!='.' && $value['Detalle']!='')
+				{
+
+					$pdf->SetFont('Arial','',8);
+					$arr=array("",$value['Detalle'],'','','');
+					$pdf->Row($arr,10,'LR');
+					$pdf->SetXY($x, $pdf->GetY());	
+					$pdf->SetFont('Arial','',10);
+				}				
+				// print_r($pdf->GetPageHeight());
+				
+
+			}
+			 
 		}
-		$y=$y+10;
-		//$pdf->SetXY($x+2, ($pdf->GetY($y)-80));
-		
+
+		$y_detalle_fin = $pdf->GetY();
+		// $pdf->SetXY($x_detalle-2, $y_detalle-3);	
+		// $pdf->Cell(97,$y_detalle_fin-$y_detalle+5,'',1);
+		// $pdf->Cell(189,$y_detalle_fin-$y_detalle+5,'',1);
+		// $pdf->Cell(97,$y_detalle_fin-$y_detalle+5,'',1);
+		// $pdf->Cell(86,$y_detalle_fin-$y_detalle+5,'',1);		
+		// $pdf->Cell(86,$y_detalle_fin-$y_detalle+5,'',1);
+
+
+		$pdf->SetXY($x+2, $y_detalle_fin+6);	
+		$y_total = $pdf->GetY();
+		$x_total = $pdf->GetX();
+
 		//si esta anulado imprimir
 		if($status=='A')
 		{
@@ -881,60 +820,29 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 			$pdf->Row($arr,15);
 			//$y=$y+15;
 		}
-		if($cantidad_reg>10)
-		{
-			$pdf->SetXY($x1, $y1);
-			//echo $pdf->GetY($y);
-			//die();
-			$cantidad_reg1=$cantidad_reg*10+($pdf->GetY($y)-80);
-			$pdf->Cell(97,$cantidad_reg1,'','1',1,'Q');
-			$pdf->SetXY($x1+97, $y1);
-			$pdf->Cell(189,$cantidad_reg1,'','1',1,'Q');
-			$pdf->SetXY($x1+189+97, $y1);
-			$pdf->Cell(97,$cantidad_reg1,'','1',1,'Q');
-			$pdf->SetXY($x1+97+189+97, $y1);
-			$pdf->Cell(86,$cantidad_reg1,'','1',1,'Q');
-			$pdf->SetXY($x1+97+189+97+86, $y1);
-			$pdf->Cell(86,$cantidad_reg1,'','1',1,'Q');
-			$pos=$cantidad_reg1-$cantidad_reg*10;
-		}
-		else
-		{
-			$pos=$cantidad_reg1-10;
-		}
-		//totales
-		
-		//echo $y.' '.$pos.' '.$pdf->GetY($y);
-		//die();
-		if($cantidad_reg>10)
-		{
-			$y=$y+$pos-30;
-		}
-		else
-		{
-			$y=$y+$pos-10;
-			$y=300;
-		}
-		
-		$pdf->SetXY($x, $y);
-		$pdf->Cell(383,15,'','1',1,'Q');
-		$pdf->SetXY($x+97+189+97, $y);
-		$pdf->Cell(86,15,'','1',1,'Q');
-		$pdf->SetXY($x+97+189+97+86, $y);
-		$pdf->Cell(86,15,'','1',1,'Q');
-		$pdf->SetFont('Arial','',9);
-		$pdf->SetXY($x+2, $y+2);
+
 		$pdf->SetWidths(array(383,84,84));
 		$pdf->SetAligns(array("R","R","R"));
 		//$arr=array($arr1[$i]);
 		$arr=array('TOTALES',  number_format($sumdb,2, '.', ','), number_format($sumcr,2, '.', ','));
 		$pdf->Row($arr,10);
-		$y=$y+15;
-		$pdf->Footer1($pdf,$usuario,$x, $y);
+		$y_totales_fin = $pdf->GetY();
+		//------------------------------marcos total ----------------
+		$pdf->SetXY($x_detalle, $y_total-4);	
+		$pdf->Cell(97,$y_totales_fin-$y_total+5,'',1);
+		$pdf->Cell(189,$y_totales_fin-$y_total+5,'',1);
+		$pdf->Cell(97,$y_totales_fin-$y_total+5,'',1);
+		$pdf->Cell(86,$y_totales_fin-$y_total+5,'',1);		
+		$pdf->Cell(86,$y_totales_fin-$y_total+5,'',1);
+		//-----------------------------------------------------------
+
+		$pdf->SetXY($x+2, $y_totales_fin);	
+		$pdf->Footer1($pdf,$usuario,$x, $y_totales_fin);
 		
-	}
+	/*}
 	else
 	{
+		// print_r('expression');die();
 		//varias paginas
 		//select * from lista_empresas where RUC_CI_NIC='1791863798001'
 		//delete from lista_empresas where ID=175
@@ -991,7 +899,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 			$i++;
 		}
 		/*****agregar a funcion***********/
-		$pag=1;
+	/*	$pag=1;
 		for($i=0;$i<$pagi-1;$i++)
 		{
 			//echo $i.'<br>';
@@ -1042,7 +950,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 			$pdf->Row($arr,10);
 			/*****agregar a funcion***********/
 			//cabecera de tabla
-			$y=$y+15;
+		/*	$y=$y+15;
 			$pdf->SetXY($x, $y);
 			$pdf->Cell(97,15,'','1',1,'Q');
 			$pdf->SetXY($x+97, $y);
@@ -1167,7 +1075,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 			//die();
 			//$y=$y+$pos-10;
 			
-			if($i<($pagi-2))
+		/*	if($i<($pagi-2))
 			{
 				$y=510-10+160;
 				$pdf->SetXY($x+2, $y+2);
@@ -1220,17 +1128,17 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 		$y=$y+15;
 		$pdf->Footer1($pdf,$usuario,$x, $y);
 		//die();
-	}
+	}*/
 	//$pdf->AddPage();
 	//datos cliente
 	/******************/
 	/******************/
 	/**************110****/
 	//$pdf->cabeceraHorizontal(array(' '),20,185,574,90,20,5);
-	$pdf->SetFont('Arial','B',6);
-	$pdf->SetXY(41, 149);
-	//para posicion automatica
-	$y=35;
+	// $pdf->SetFont('Arial','B',6);
+	// $pdf->SetXY(41, 149);
+	// //para posicion automatica
+	// $y=35;
 	
 	if($imp1==null or $imp1==1)
 	{
