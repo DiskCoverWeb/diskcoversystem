@@ -577,46 +577,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 	$pdf->SetLeftMargin(41);
 	$pdf->SetRightMargin(20);
 	$pdf->AddPage();
-	// while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
-	// {
-	// 	$TipoComp = $row[2];
-	// 	$Numero =$row[3];
-	// 	$Fecha = $row[4]->format('Y-m-d');
-	// 	$Concepto=$row[7];
-	// }
-	/*while( $row1 = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
-	{
-		$t = $row1['T'];
-		$Fecha = $row1['Fecha']->format('Y-m-d');
-		$codigoB = $row1['Codigo_B'];
-		$beneficiario = $row1['Cliente'];
-		$concepto1 = $row1['Concepto'];
-		$efectivo = number_format($row1['Efectivo'],2, ',', '.');
-		$est="Normal";
-		if($t == 'A')
-		{
-			$est="Anulado";
-		}
-		$usuario= $row1['Nombre_Completo'];
-		//echo $t.' '.$Fecha.' '.$codigoB.' '.$beneficiario.' '.$concepto.' '.$efectivo.' '.$est.' '.$usuario;
-	}*/
-	//cabecera y pie de pagina
-	// while( $row1 = sqlsrv_fetch_array( $stmt1, SQLSRV_FETCH_NUMERIC) ) 
-	// {
-	// 	$t = $row1[2];
-	// 	$Fecha = $row1[5]->format('Y-m-d');
-	// 	$codigoB = $row1[6];
-	// 	$beneficiario = $row1[26];
-	// 	$concepto1 = $row1[8];
-	// 	$efectivo = number_format($row1[10],2, '.', ',');
-	// 	$est="Normal";
-	// 	if($t == 'A')
-	// 	{
-	// 		$est="ANULADO";
-	// 	}
-	// 	$usuario= $row1[20];
-	// 	//echo $t.' '.$Fecha.' '.$codigoB.' '.$beneficiario.' '.$concepto.' '.$efectivo.' '.$est.' '.$usuario;
-	// }
+	
 
 	   $TipoComp =  $stmt[0]['TP']; // $row[2];
 		$Numero = $stmt[0]['Numero']; // $row[3];
