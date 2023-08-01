@@ -174,7 +174,7 @@ $mostrar_medidor = false;
 	{
     if(validar()==true)
     {
-      swal.fire('Lene todos los campos','','info')
+      swal.fire('Llene todos los campos','','info')
       return false;
     }
     var rbl = $('#rbl_facturar').prop('checked');

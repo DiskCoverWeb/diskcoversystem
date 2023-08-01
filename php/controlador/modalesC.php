@@ -217,6 +217,10 @@ function li2Array($html,$elemento="li"){
 
 		// print_r($parametro);die();
 		$resp = $this->modelo->buscar_cliente(trim($parametro['ruc']));
+		if(count($resp)==0)
+		{
+			$resp =  $this->modelo->buscar_cliente(false,trim($parametro['nombrec']));
+		}
 
 		 SetAdoAddNew("Clientes");
 	    SetAdoFields("T", G_NORMAL);
@@ -250,29 +254,7 @@ function li2Array($html,$elemento="li"){
 		{
 			// print_r($resp);die();
 			if(count($resp)==0)
-		    {
-		    	 /*SetAdoAddNew("Clientes");
-			    SetAdoFields("T", G_NORMAL);
-			    SetAdoFields("Cliente", $parametro['nombrec']);
-			    SetAdoFields("CI_RUC", $this->sri->quitar_carac($parametro['ruc']));
-			    SetAdoFields("Codigo",$parametro['codigoc']);
-			    SetAdoFields("Direccion", $parametro['direccion']);
-			    SetAdoFields("Telefono", $parametro['telefono']);
-			    SetAdoFields("DirNumero", $parametro['nv']);
-			    SetAdoFields("Email", $parametro['email']);
-			    SetAdoFields("TD", $parametro['TD']);
-			    SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
-			    SetAdoFields("Prov", $parametro['prov']);
-			    SetAdoFields("Pais", "593");
-			    SetAdoFields("Grupo", $parametro['grupo']);
-			    SetAdoFields("Ciudad", $parametro['ciu']);
-			    if($parametro['rbl']=='false')
-			    {
-				    SetAdoFields("FA", 0);
-			    }else
-			    {
-			    	SetAdoFields("FA", 1);    	
-			    }    */
+		    {		    	
 			    $re = SetAdoUpdate();		    	
 			  }else{
 			  	return 2;
