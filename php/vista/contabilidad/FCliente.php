@@ -200,6 +200,9 @@ $mostrar_medidor = false;
         }else if(response==2)
         {
           swal.fire('Este CI / RUC ya esta registrado','','info');
+        }else if(response==3)
+        {
+           swal.fire('El Nombre ya esta registrado','','info');
         }
       }
     });

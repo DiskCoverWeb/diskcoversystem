@@ -3270,6 +3270,7 @@ function sp_Reporte_Analitico_Mensual($tipo,$desde,$hasta)
              AND T.Periodo = Ca.Periodo 
              AND T.Cta = Ca.Codigo 
              ORDER BY T.ID,Debe DESC,T.Cta ";
+             // print_r($sql);die();
              $result = $this->db_->datos($sql);
              $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-94;
              $tbl = grilla_generica_new($sql,'Transacciones As T, Catalogo_Cuentas As Ca ',$id_tabla='cont_tbl',$titulo=false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida);
