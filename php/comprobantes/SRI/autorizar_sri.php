@@ -51,6 +51,10 @@ class autorizacion_sri
 	function Clave_acceso($fecha,$tipo_com,$serie,$numfac)
 	{
 		// print_r($fecha);die();
+		if(is_object($fecha))
+		{
+			$fecha = $fecha->format('Y-m-d');
+		}
 		$ambiente = $_SESSION['INGRESO']['Ambiente'];
 	    $Fecha1 = explode("-",$fecha);
 		$fechaem=$Fecha1[2].'/'.$Fecha1[1].'/'.$Fecha1[0];
@@ -73,6 +77,7 @@ class autorizacion_sri
 		// 1 para autorizados
 	    //-1 para no autorizados y devueltas
 	    // 2 para devueltas
+	    //-2 no existe la factura
 	    // texto del erro en forma de matris
 		$cabecera['ambiente']=$_SESSION['INGRESO']['Ambiente'];
 	    $cabecera['ruta_ce']=$_SESSION['INGRESO']['Ruta_Certificado'];
@@ -148,6 +153,10 @@ class autorizacion_sri
 		 }
 				//datos de factura
 	    		$datos_fac = $this->datos_factura($cabecera['serie'],$cabecera['factura'],$cabecera['tc']);
+	    		if(count($datos_fac)==0)
+	    		{
+	    			return -2;
+	    		}
 	    		// print_r($datos_fac);die();
 	    	    $cabecera['RUC_CI']=$this->quitar_carac($datos_fac[0]['RUC_CI']);
 				$cabecera['Fecha']=$datos_fac[0]['Fecha']->format('Y-m-d');

@@ -17,12 +17,12 @@
 <div class="row">
 	<div class="col-sm-5">
 	   <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1" style=" width: fit-content;padding: 0px;">
-	     <a class="btn btn-default" title="Salir del modulo" href="./contabilidad.php?mod=contabilidad#">
+	     <a class="btn btn-default" title="Salir del modulo" href="./contabilidad.php?mod=<?php echo $_SESSION['INGRESO']['modulo_']; ?>">
 	         <img src="../../img/png/salire.png">
 	     </a>
 	   </div>    
 	   <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1" style="width: fit-content;padding: 0px;">
-	       <a id='l7' class="btn btn-default" title="Exportar Excel"	href="descarga.php?mod=contabilidad&acc=bacsg&acc1=Balance de Comprobacion/Situación/General&ti=<?php echo $_SESSION['INGRESO']['ti']; ?>&Opcb=6&Opcen=0&b=0&ex=1" onclick='modificar1();' target="_blank"><img src="../../img/png/table_excel.png"></a>	      
+	       <a id='l7' class="btn btn-default" title="Exportar Excel"	href="descarga.php?mod=<?php echo $_SESSION['INGRESO']['modulo_'];?>&acc=bacsg&acc1=Balance de Comprobacion/Situación/General&ti=<?php echo $_SESSION['INGRESO']['ti']; ?>&Opcb=6&Opcen=0&b=0&ex=1" onclick='modificar1();' target="_blank"><img src="../../img/png/table_excel.png"></a>	      
 	   </div>
 	   <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1" style="width: fit-content;padding: 0px;">                 
 	    <button class="btn btn-default" title="Modificar el comprobante" onclick="modificar_comprobante()">
@@ -30,7 +30,7 @@
 	     </button>		   
 	  </div>
 	  <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1" style="width: fit-content;padding: 0px;">
-	      <a id='l2' class="btn btn-default" title="Anular comprobante"	href="contabilidad.php?mod=contabilidad&acc=compro&acc1=Comprobantes Procesados&b=1"><img src="../../img/png/anular.png" >
+	      <a id='l2' class="btn btn-default" title="Anular comprobante"	href="contabilidad.php?mod=<?php echo $_SESSION['INGRESO']['modulo_'];?>&acc=compro&acc1=Comprobantes Procesados&b=1"><img src="../../img/png/anular.png" >
 				</a>
 	  </div>
 	  <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1" style="width: fit-content;padding: 0px;">
@@ -39,12 +39,12 @@
 				</a>
 	  </div>
 	  <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1" style="width: fit-content;padding: 0px;">
-	      <a id='l4' class="btn btn-default" title="Realizar una copia al comprobante" href="contabilidad.php?mod=contabilidad&acc=bacsg&acc1=Presenta balance de Comprobación&ti=BALANCE DE COMPROBACIÓN&Opcb=1&Opcen=0&b=1">
+	      <a id='l4' class="btn btn-default" title="Realizar una copia al comprobante" href="contabilidad.php?mod=<?php echo $_SESSION['INGRESO']['modulo_'];?>&acc=bacsg&acc1=Presenta balance de Comprobación&ti=BALANCE DE COMPROBACIÓN&Opcb=1&Opcen=0&b=1">
 					<img src="../../img/png/copiar.png" > 
 				             </a>
 	  </div>
 	  <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1" style="width: fit-content;padding: 0px;">
-	     <a id='l5' class="btn btn-default" title="Copiar a otra empresa el comprobante" href="contabilidad.php?mod=contabilidad&acc=bacsg&acc1=Presenta estado de situación (general)&ti=ESTADO SITUACIÓN&Opcb=5&Opcen=1&b=0">
+	     <a id='l5' class="btn btn-default" title="Copiar a otra empresa el comprobante" href="contabilidad.php?mod=<?php echo $_SESSION['INGRESO']['modulo_'];?>&acc=bacsg&acc1=Presenta estado de situación (general)&ti=ESTADO SITUACIÓN&Opcb=5&Opcen=1&b=0">
 					<img src="../../img/png/copiare.png" > 
 				</a>		
 	  </div>   	
@@ -666,6 +666,7 @@
 	 	var be = $('#beneficiario').val(); 
 	 	var co = $('#ddl_comprobantes').val();
 	 	var va = $('#Co').val();
+	 	var mod = '<?php echo $_SESSION['INGRESO']['modulo_']; ?>';
 	 	 Swal.fire({
                  title: 'Esta seguro que quiere modificar el comprobante '+ti+ 'No. '+co+' de '+be,
                  text: "Esta usted seguro de que quiere modificar!",
@@ -676,7 +677,7 @@
                  confirmButtonText: 'Si!'
                }).then((result) => {
                  if (result.value==true) {
-                 	location.href='../vista/contabilidad.php?mod=contabilidad&acc=incom&acc1=Ingresar%20Comprobantes&b=1&modificar=1&variables='+va+'#';
+                 	location.href='../vista/contabilidad.php?mod='+mod+'&acc=incom&acc1=Ingresar%20Comprobantes&b=1&modificar=1&variables='+va+'#';
                  }
                })
 	 }

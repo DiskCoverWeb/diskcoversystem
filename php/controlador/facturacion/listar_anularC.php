@@ -1,5 +1,6 @@
 <?php 
 require_once(dirname(__DIR__,2)."/modelo/facturacion/listar_anularM.php");
+require_once(dirname(__DIR__,2)."/comprobantes/SRI/autorizar_sri.php");
 
 /**
  * 
@@ -50,14 +51,31 @@ if(isset($_GET['anular_factura']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->anular_factura($parametros));
 }
+if(isset($_GET['anular']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->anular($parametros));
+}
+if(isset($_GET['Anular_en_masa']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->Anular_en_masa($parametros));
+}
+if(isset($_GET['Volver_Autorizar']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->Volver_Autorizar($parametros));
+}
 
 class listar_anularC
 {
 	private $modelo;
+	private $sri;
 	
 	function __construct()
 	{
 		$this->modelo = new listar_anularM();
+		$this->sri = new autorizacion_sri();
 	}
 
 	function DCTipo()
@@ -241,20 +259,170 @@ class listar_anularC
 				return 1;				
 			}
 		}
-		print_r($datos);die();
-		/*
-		 
-        With AdoFactura.Recordset
-         If .RecordCount > 0 Then
-             If .fields("T") = "A" Then
-                 MsgBox "Esta Factura ya esta anulada"
-             ElseIf ClaveAuxiliar Then
-                 Si_No = False
-                 FAnulacion.Show
-             End If
-         End If
-        End With
-		*/
 	}
+
+	function anular($parametros)
+	{
+		// print_r($parametros);die();
+		$TFA = $this->modelo->Listar_Factura_NotaVentas_all($parametros['TC'],$parametros['Serie'],$parametros['Factura'],$parametros['Autorizacion']);
+		$FA = $TFA[0];
+		// print_r($TFA);die();
+	 	$FA = Leer_Datos_FA_NV($FA);
+	
+  		$fecha = FechaValida($parametros['MBoxFecha']);
+  		$NC['Serie'] = '';$NC['Autorizacion'] = '';
+  		$Total_Saldos_ME = 0;
+  		$NombreCliente = $FA['Cliente'];
+  		if($FA['Factura'] > 0)
+  		{
+		    $FA['Fecha_NC'] = $parametros['MBoxFecha'];
+		    $FA['Serie_NC'] =$NC['Serie'];
+		    $FA['Autorizacion_NC'] = $NC['Autorizacion'];
+		    //------- descomentar cuando este la funcion de procesos)
+        	Control_Procesos("A", "Anulación de ".$FA['TC']."-".$FA['Serie']." No. ".generaCeros($FA['Factura'],9));
+        	$ConceptoComp = "Anulación de la ".$FA['TC']."-".$FA['Serie']." No. ".$FA['Factura'].", del Cliente: ".$NombreCliente;
+
+        	$this->modelo->delete_trans_abonos($FA);      
+           
+       // 'Borramos las facturas del kardex de anulacion
+       		$this->modelo->delete_Trans_kardex($FA);
+           
+       		$this->modelo->actualizar_factura($FA,$parametros['MBoxFecha'],$ConceptoComp,$Total_Saldos_ME);
+
+        	$this->modelo->actualizar_detalle_factura($FA);
+        	return 1;
+  		}
+  	}
+  	function Anular_en_masa($parametros)
+  	{
+  		// print_r($parametros);die();
+  		/*
+		Dim IdFact As Long
+  		If ClaveAdministrador Then*/
+
+     if(intval($parametros['TextFDesde']) <= 0){$TextFDesde = "0"; }
+     if(intval($parametros['TextFHasta']) <= 0){$TextFHasta = "0"; }
+     $TextFDesde = TextoValido($parametros['TextFDesde']);
+     $TextFHasta = TextoValido($parametros['TextFHasta']);
+     $Factura_Desde = intval($TextFDesde);
+     $Factura_Hasta = intval($TextFHasta);
+     $MBFecha = date('Y-m-d');
+     $FA['Cod_CxC'] = $parametros['Cod_CxC'];
+	 $FA['Cta_CxP'] = $parametros['Cta_CxP'];
+
+
+     Control_Procesos("F", "Anulacion de Facturas en masa desde ".$Factura_Desde." a la ".$Factura_Hasta);
+     //Progreso_Barra.Mensaje_Box = "Anulacion de Facturas en masa"
+     // Progreso_Iniciar
+     if(($Factura_Hasta - $Factura_Desde) >= 0)
+     {
+     	$IdFact = $Factura_Desde;
+        for($i = $IdFact;$i <=$Factura_Hasta;$i++)
+        {
+           // Progreso_Barra.Mensaje_Box = "Anular Factura No. " & Format(IdFact, "000000000")
+        	$FA['TC'] = $parametros['TC'];
+        	$FA['Serie'] = $parametros['Serie'];          
+        	$FA['Autorizacion'] = $parametros['Autorizacion'];
+            $FA['Factura'] = $IdFact;
+
+            $this->modelo->delete_factura($FA);
+            
+            $this->modelo->delete_detalle_factura($FA);
+            
+            $this->modelo->delete_trans_abonos($FA);
+            
+            SetAdoAddNew("Facturas");
+            SetAdoFields("T", "A");
+            SetAdoFields("CodigoC", "9999999999");
+            SetAdoFields("Razon_Social", "CONSUMIDOR FINAL");
+            SetAdoFields("RUC_CI", "9999999999999");
+            SetAdoFields("TB", "R");
+            SetAdoFields("Fecha", $MBFecha);
+            SetAdoFields("Fecha_C", $MBFecha);
+            SetAdoFields("Fecha_V", $MBFecha);
+            SetAdoFields("TC", $FA['TC']);
+            SetAdoFields("Cod_CxC", $FA['Cod_CxC']);
+            SetAdoFields("Cta_CxP", $FA['Cta_CxP']);
+            SetAdoFields("Factura",$FA['Factura']);
+            SetAdoFields("Serie", $FA['Serie']);
+            SetAdoFields("Autorizacion", $FA['Autorizacion']);
+            SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+            SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
+            SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+            SetAdoUpdate();
+        }
+        return 1;
+     }else{ return -1;}
+	}
+
+
+	function Volver_Autorizar($parametros)
+	{
+		$TFA = $this->modelo->Listar_Factura_NotaVentas_all($parametros['TC'],$parametros['Serie'],$parametros['Factura'],$parametros['Autorizacion']);
+		$FA = $TFA[0];
+		$FA = Leer_Datos_FA_NV($FA);
+		if(date('Y-m-d') <= $_SESSION['INGRESO']['Fecha_ce'])
+		  {
+		    Actualizar_Razon_Social($parametros['MBFecha']);
+		    $TxtXML = "";
+		    // print_r($FA);die();
+		    if(strlen($FA['Autorizacion']) == 13 && $FA['Estado_SRI'] <> "OK")
+		    {
+		    	$FA['FacturaNo'] = $FA['Factura'];		    	
+		    	$clave = $this->sri->Clave_acceso($FA['Fecha']->format('Y-m-d'),'01', $FA['Serie'],$FA['Factura']); 
+		    	$ArrayAutorizacion = $this->sri->Autorizar_factura_o_liquidacion($FA);			    	
+		    	$imp = $FA['Serie'].'-'.generaCeros($FA['Factura'],7);
+
+           		$res= array('respuesta'=>$ArrayAutorizacion,'pdf'=>$imp,'clave'=>$clave,'rodillo'=>$_SESSION['INGRESO']['Impresora_Rodillo']);	       		
+		        if($ArrayAutorizacion == 1){ 
+		        	$this->modelo->pdf_factura_elec($FA['Factura'],$FA['Serie'],$FA['codigoCliente'],$imp,$clave,$periodo=false,1,1);
+		        	return $res; 
+		        }
+		        //dr devolvio sin autorizad
+		       
+		    }else{
+		       // 'Pagina de Conexion con el SRI
+		       // Progreso_Barra.Mensaje_Box = "Actualizando XML"
+		       $URLAutorizacion = Leer_Campo_Empresa("Web_SRI_Autorizado");
+		       // print_r($URLAutorizacion);die();
+		       $SRI_Autorizacion['Clave_De_Acceso'] = $FA['ClaveAcceso'];
+		       $SRI_Autorizacion['Estado_SRI'] = "CF";
+		       $SRI_Autorizacion['Error_SRI'] = "";
+		       $RutaXMLAutorizado = dirname(__DIR__,1).'/comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3).'/CE'.generaCeros($_SESSION['INGRESO']['item'],3)."/Autorizados/".$FA['ClaveAcceso'].".xml";
+
+		       $RutaXMLRechazado =dirname(__DIR__,1).'/comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3).'/CE'.generaCeros($_SESSION['INGRESO']['item'],3)."/No_autorizados/".$FA['ClaveAcceso'].".xml";
+		       for($Tiempo_Espera = 1;$Tiempo_Espera<=3; $Tiempo_Espera++)
+		       {
+		       	// print_r($FA);die();
+		       		$ArrayAutorizacion = $this->sri->Autorizar_factura_o_liquidacion($FA);		       		
+		           if($ArrayAutorizacion == 1){ return 1; break;}
+		       }
+		      // 'Ok Documento Firmado y Autorizado
+		       if($ArrayAutorizacion == 1 /*1 es igual a "AUTORIZADO"*/ )
+		       {
+		          // Progreso_Barra.Mensaje_Box = "[Ok] " & "Actualizando " & FA.TC _
+		          //                            & " No. " & FA.Serie & "-" & Format(FA.Factura, "000000000")
+		          // Progreso_Esperar True
+		          // SRI_Autorizacion.Estado_SRI = "OK"
+		          // SRI_Autorizacion.Error_SRI = "OK"
+		          // SRI_Autorizacion.Autorizacion = ArrayAutorizacion(1)
+		          // SRI_Autorizacion.Fecha_Autorizacion = Format$(MidStrg(ArrayAutorizacion(2), 1, 10), "dd/MM/yyyy")
+		          // SRI_Autorizacion.Hora_Autorizacion = MidStrg(ArrayAutorizacion(2), 12, 8)
+		          // SRI_Autorizacion.Documento_XML = Leer_Archivo_Texto(RutaXMLAutorizado)
+		          // SRI_Actualizar_Autorizacion_Factura FA, SRI_Autorizacion
+		       }else{
+		          // SRI_Autorizacion.Error_SRI = ArrayAutorizacion(0) & " " & ArrayAutorizacion(1)
+		       }
+		       return 1;
+		       // MsgBox "Esta Factura ya esta autorizada"
+		       
+		    }
+		  }else{
+		  	return -1;
+		   /* RatonNormal
+		    MsgBox MensajeNoAutorizarCE*/
+		  }
+	}
+
 }
 ?>

@@ -80,6 +80,8 @@ class listar_AnularM
               $sql.=" AND Cod_Ejec = '".$_SESSION['INGRESO']['CodigoU']."' ";
             }
     $sql.=" ORDER BY Factura ";          
+
+    // print_r($sql);die();
     return $this->db->datos($sql);
   }
 
@@ -228,7 +230,84 @@ class listar_AnularM
             AND Autorizacion = '".$FA['Autorizacion']."'
             AND Factura = ".$FA['Factura']." ";
       return $this->db->datos($sql);
-  }      
+  }
+
+  function delete_factura($FA)
+  {
+    $sql="DELETE 
+        FROM Facturas
+        WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+        AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+        AND TC = '".$FA['TC']."'
+        AND Serie = '".$FA['Serie']."'
+        AND Factura = '".$FA['Factura']."'
+        AND Autorizacion = '".$FA['Autorizacion']."' ";
+    return $this->db->datos($sql);
+  }
+
+  function delete_detalle_factura($FA)
+  {
+      $sql= "DELETE           
+           FROM Detalle_Factura
+           WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+           AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+           AND TC = '".$FA['TC']."'
+           AND Serie = '".$FA['Serie']."'
+           AND Factura = '".$FA['Factura']."'
+           AND Autorizacion = '".$FA['Autorizacion']."' ";
+
+    return $this->db->datos($sql);
+  }
+  function delete_trans_abonos($FA)
+  {
+      $sql = "DELETE 
+             FROM Trans_Abonos
+             WHERE Factura = ".$FA['Factura']."
+             AND TP = '".$FA['TC']."'
+             AND Serie = '".$FA['Serie']."'
+             AND Autorizacion = '".$FA['Autorizacion']."'
+             AND Item = '".$_SESSION['INGRESO']['item']."'
+             AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+      return $this->db->String_Sql($sql);
+  }
+  function delete_Trans_kardex($FA)
+  {
+     $sql = "DELETE 
+            FROM Trans_Kardex 
+            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+            AND TC = '".$FA['TC']."' 
+            AND Serie = '".$FA['Serie']."' 
+            AND Factura = ".$FA['Factura']." ";
+      return $this->db->String_Sql($sql);
+  }
+  function actualizar_factura($FA,$fecha,$ConceptoComp,$Total_Saldos_ME)
+  {
+     $sql = "UPDATE Facturas 
+             SET T = 'A', Nota = '".$ConceptoComp."',
+             Fecha_C = '".BuscarFecha($fecha) ."',
+             Saldo_MN = ".$Total_Saldos_ME." 
+             WHERE Factura = ".$FA['Factura']." 
+             AND TC = '".$FA['TC']."' 
+             AND Serie = '".$FA['Serie']."' 
+             AND Autorizacion = '".$FA['Autorizacion']."' 
+             AND Item = '".$_SESSION['INGRESO']['item']."' 
+             AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+      return $this->db->String_Sql($sql);
+  }
+  function actualizar_detalle_factura($FA)
+  {
+    $sql = "UPDATE Detalle_Factura 
+            SET T = 'A' 
+            WHERE Factura = " .$FA['Factura']." 
+            AND TC = '" .$FA['TC']."' 
+            AND Serie = '" .$FA['Serie']."' 
+            AND Autorizacion = '" .$FA['Autorizacion']."' 
+            AND Item = '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+      return $this->db->String_Sql($sql);
+  }
+
 }
 
 ?>

@@ -804,6 +804,7 @@
         titulos(tipo);
         var src ="../vista/modales.php?FSubCtas=true&mod=&tipo_subcta="+tipo+"&OpcDH="+deha+"&OpcTM="+moneda+"&cta="+cta+"&tipoc="+tipoc+"#";
         $('#modal_subcuentas').modal('show');
+         adjustIframeHeight();
         $('#titulo_frame').text('Ingreso de sub cuenta por cobras');
         $('#frame').attr('src',src).show();
       }else if(tipo=="CC")
@@ -873,7 +874,9 @@
            var src ="../vista/modales.php?FCompras=true&mod=&prv="+prv+"&ben="+ben+"&fec="+fec+"&opc_mult="+opc_mult+"#";
            $('#frame').attr('src',src).show();
 
-           $('#frame').css('height','550px').show();
+           // $('#frame').css('height','100%').show();
+           adjustIframeHeight();
+
            $('#modal_subcuentas').modal('show');
           break;
         case 'AV':
@@ -889,7 +892,8 @@
            var src ="../vista/modales.php?FVentas=true&mod=&prv="+prv+"&ben="+ben+"&fec="+fec+"#";
            $('#frame').attr('src',src).show();
 
-           $('#frame').css('height','575px').show();
+           // $('#frame').css('height','100%').show();
+           adjustIframeHeight();
 
            $('#titulo_frame').text("VENTAS");
            $('#modal_subcuentas').modal('show');
@@ -898,7 +902,8 @@
           case 'ai':
            var src ="../vista/modales.php?FImportaciones#";
            $('#frame').attr('src',src).show();
-           $('#frame').css('height','450px').show();
+           // $('#frame').css('height','450px').show();
+            adjustIframeHeight(); 
            $('#titulo_frame').text("IMPORTACIONES");
            $('#modal_subcuentas').modal('show');
           break;
@@ -906,7 +911,9 @@
           case 'ae':
           var src ="../vista/modales.php?FExportaciones#";
            $('#frame').attr('src',src).show();
-           $('#frame').css('height','500px').show();
+           // $('#frame').css('height','500px').show();
+
+            adjustIframeHeight();
            $('#titulo_frame').text("EXPORTACIONES");
            $('#modal_subcuentas').modal('show');
 
@@ -1238,6 +1245,14 @@
       subcuenta_frame();
     }
   }
+
+  function adjustIframeHeight() {
+    var iframe = window.parent.document.getElementById('frame'); // Reemplaza 'miIframe' con el ID de tu iframe
+    if (iframe) {
+      iframe.style.height = (document.documentElement.scrollHeight-300) + 'px';
+    }
+  }
+
 
 </script>
 
@@ -1695,16 +1710,16 @@
       </div>
       <div class="modal-body" style="padding-top: 0px;">
         <!-- <div class="container-fluid"> -->
-          <iframe  id="frame" width="100%" height="350px" marginheight="0" frameborder="0"></iframe>
+          <iframe  id="frame" width="100%" marginheight="0" frameborder="0"></iframe>
           
         <!-- </div> -->
         <!-- <iframe src="../vista/contabilidad/FSubCtas.php"></iframe> -->
         
       </div>
-      <!-- <div class="modal-footer">
-          <button type="button" class="btn btn-primary" onclick="cambia_foco();">Guardar</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-        </div> -->
+      <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-primary" onclick="cambia_foco();">Guardar</button> -->
+          <button style="display: none;" id="btn_salir" type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        </div>
     </div>
   </div>
 </div>

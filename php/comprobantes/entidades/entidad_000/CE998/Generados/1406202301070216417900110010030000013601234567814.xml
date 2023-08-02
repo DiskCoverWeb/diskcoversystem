@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<factura id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
+    <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
+    <ruc>0702164179001</ruc>
+    <claveAcceso>1406202301070216417900110010030000013601234567814</claveAcceso>
+    <codDoc>01</codDoc>
+    <estab>001</estab>
+    <ptoEmi>003</ptoEmi>
+    <secuencial>000001360</secuencial>
+    <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
+    <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
+  </infoTributaria>
+  <infoFactura>
+    <fechaEmision>14/06/2023</fechaEmision>
+    <dirEstablecimiento>direccion de empresa xyz</dirEstablecimiento>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <tipoIdentificacionComprador>06</tipoIdentificacionComprador>
+    <razonSocialComprador>AALAURA ASE</razonSocialComprador>
+    <identificacionComprador>1122334455</identificacionComprador>
+    <totalSinImpuestos>10.70</totalSinImpuestos>
+    <totalDescuento>0.00</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0.00</descuentoAdicional>
+        <baseImponible>10.70</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>0.00</propina>
+    <importeTotal>10.70</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>10.70</total>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>JG.01</codigoPrincipal>
+      <descripcion>Consumos  000032, 2023: Julio </descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.000000</cantidad>
+      <precioUnitario>3.500000</precioUnitario>
+      <descuento>0.00</descuento>
+      <precioTotalSinImpuesto>3.50</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
+          <baseImponible>3.50</baseImponible>
+          <valor>0.00</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+    <detalle>
+      <codigoPrincipal>JG.02</codigoPrincipal>
+      <descripcion>Alcantarillado  000032, 2023: Julio </descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.000000</cantidad>
+      <precioUnitario>0.200000</precioUnitario>
+      <descuento>0.00</descuento>
+      <precioTotalSinImpuesto>0.20</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
+          <baseImponible>0.20</baseImponible>
+          <valor>0.00</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+    <detalle>
+      <codigoPrincipal>JG.03</codigoPrincipal>
+      <descripcion>Excedente  000032, 2023: Julio </descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.000000</cantidad>
+      <precioUnitario>7.000000</precioUnitario>
+      <descuento>0.00</descuento>
+      <precioTotalSinImpuesto>7.00</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
+          <baseImponible>7.00</baseImponible>
+          <valor>0.00</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">AALAURA CINCO PRUEBA2</campoAdicional>
+    <campoAdicional nombre="Telefono">232323232</campoAdicional>
+    <campoAdicional nombre="Email">AALAURA5@GMAILCOM</campoAdicional>
+    <campoAdicional nombre="seriePuntoEmision">001003</campoAdicional>
+    <campoAdicional nombre="socioRazonSocial">Empresa xyz</campoAdicional>
+    <campoAdicional nombre="socioDireccion">direccion de empresa xyz</campoAdicional>
+    <campoAdicional nombre="PlacaVehiculo">.</campoAdicional>
+    <campoAdicional nombre="CtaEstablecimiento">.</campoAdicional>
+  </infoAdicional>
+</factura>

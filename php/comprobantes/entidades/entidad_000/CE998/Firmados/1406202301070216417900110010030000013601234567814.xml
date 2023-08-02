@@ -1,87 +1,140 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><liquidacionCompra id="comprobante" version="1.1.0">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><factura id="comprobante" version="1.1.0">
   <infoTributaria>
     <ambiente>1</ambiente>
     <tipoEmision>1</tipoEmision>
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>2802202303070216417900110010020000000171234567811</claveAcceso>
-    <codDoc>03</codDoc>
+    <claveAcceso>1406202301070216417900110010030000013601234567814</claveAcceso>
+    <codDoc>01</codDoc>
     <estab>001</estab>
-    <ptoEmi>002</ptoEmi>
-    <secuencial>000000017</secuencial>
+    <ptoEmi>003</ptoEmi>
+    <secuencial>000001360</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
-  <infoLiquidacionCompra>
-    <fechaEmision>28/02/2023</fechaEmision>
-    <dirEstablecimiento>direccion prueba</dirEstablecimiento>
+  <infoFactura>
+    <fechaEmision>14/06/2023</fechaEmision>
+    <dirEstablecimiento>direccion de empresa xyz</dirEstablecimiento>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <tipoIdentificacionProveedor>05</tipoIdentificacionProveedor>
-    <razonSocialProveedor>JAVIER FAJARDO</razonSocialProveedor>
-    <identificacionProveedor>1723324206</identificacionProveedor>
-    <totalSinImpuestos>6.60</totalSinImpuestos>
+    <tipoIdentificacionComprador>06</tipoIdentificacionComprador>
+    <razonSocialComprador>AALAURA ASE</razonSocialComprador>
+    <identificacionComprador>1122334455</identificacionComprador>
+    <totalSinImpuestos>10.70</totalSinImpuestos>
     <totalDescuento>0.00</totalDescuento>
     <totalConImpuestos>
       <totalImpuesto>
         <codigo>2</codigo>
         <codigoPorcentaje>0</codigoPorcentaje>
         <descuentoAdicional>0.00</descuentoAdicional>
-        <baseImponible>6.60</baseImponible>
+        <baseImponible>10.70</baseImponible>
         <valor>0.00</valor>
       </totalImpuesto>
     </totalConImpuestos>
-    <importeTotal>6.60</importeTotal>
+    <propina>0.00</propina>
+    <importeTotal>10.70</importeTotal>
     <moneda>DOLAR</moneda>
     <pagos>
       <pago>
         <formaPago>01</formaPago>
-        <total>6.60</total>
+        <total>10.70</total>
       </pago>
     </pagos>
-  </infoLiquidacionCompra>
-  <detalles/>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>JG.01</codigoPrincipal>
+      <descripcion>Consumos  000032, 2023: Julio </descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.000000</cantidad>
+      <precioUnitario>3.500000</precioUnitario>
+      <descuento>0.00</descuento>
+      <precioTotalSinImpuesto>3.50</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
+          <baseImponible>3.50</baseImponible>
+          <valor>0.00</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+    <detalle>
+      <codigoPrincipal>JG.02</codigoPrincipal>
+      <descripcion>Alcantarillado  000032, 2023: Julio </descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.000000</cantidad>
+      <precioUnitario>0.200000</precioUnitario>
+      <descuento>0.00</descuento>
+      <precioTotalSinImpuesto>0.20</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
+          <baseImponible>0.20</baseImponible>
+          <valor>0.00</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+    <detalle>
+      <codigoPrincipal>JG.03</codigoPrincipal>
+      <descripcion>Excedente  000032, 2023: Julio </descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.000000</cantidad>
+      <precioUnitario>7.000000</precioUnitario>
+      <descuento>0.00</descuento>
+      <precioTotalSinImpuesto>7.00</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>0</codigoPorcentaje>
+          <tarifa>0</tarifa>
+          <baseImponible>7.00</baseImponible>
+          <valor>0.00</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
   <infoAdicional>
-    <campoAdicional nombre="Direccion">COOP 30 DE JULIO</campoAdicional>
-    <campoAdicional nombre="Telefono">0994526451</campoAdicional>
-    <campoAdicional nombre="Email">victorfapi@hotmailcom</campoAdicional>
-    <campoAdicional nombre="seriePuntoEmision">001002</campoAdicional>
-    <campoAdicional nombre="socioRazonSocial">Nombre establecimiento</campoAdicional>
-    <campoAdicional nombre="socioRUC">123456789</campoAdicional>
-    <campoAdicional nombre="socioDireccion">direccion prueba</campoAdicional>
-    <campoAdicional nombre="socioTelefono">022222222</campoAdicional>
-    <campoAdicional nombre="socioEmail">eample@establecimeinto.com</campoAdicional>
+    <campoAdicional nombre="Direccion">AALAURA CINCO PRUEBA2</campoAdicional>
+    <campoAdicional nombre="Telefono">232323232</campoAdicional>
+    <campoAdicional nombre="Email">AALAURA5@GMAILCOM</campoAdicional>
+    <campoAdicional nombre="seriePuntoEmision">001003</campoAdicional>
+    <campoAdicional nombre="socioRazonSocial">Empresa xyz</campoAdicional>
+    <campoAdicional nombre="socioDireccion">direccion de empresa xyz</campoAdicional>
     <campoAdicional nombre="PlacaVehiculo">.</campoAdicional>
     <campoAdicional nombre="CtaEstablecimiento">.</campoAdicional>
   </infoAdicional>
-<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature203733">
-<ds:SignedInfo Id="Signature-SignedInfo413866">
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature907346">
+<ds:SignedInfo Id="Signature-SignedInfo134931">
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-<ds:Reference Id="SignedPropertiesID37437" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature203733-SignedProperties242079">
+<ds:Reference Id="SignedPropertiesID435662" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature907346-SignedProperties928268">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>ECflxwRQKDffOm1w4qQxt/01aHw=</ds:DigestValue>
+<ds:DigestValue>k0yAN/U8pCe2aQsDzWkyFaI0j/s=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference URI="#Certificate1819484">
+<ds:Reference URI="#Certificate1376845">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>CUfcE905Tf32tJj1k01J4vvLy9c=</ds:DigestValue>
+<ds:DigestValue>lKp2rT5QyiB+ycswXRamIxDzQ2U=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference Id="Reference-ID-519401" URI="#comprobante">
+<ds:Reference Id="Reference-ID-208122" URI="#comprobante">
 <ds:Transforms>
 <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>OUXbg8fSQpTjbPIwsfW1H8PyX14=</ds:DigestValue>
+<ds:DigestValue>Udb/uP/2NKeBofU1DY8DeCKR740=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue Id="SignatureValue996496">
-Nwp2Rkt4ufAntafwYxAOJtBddhZlom19m5iidfWDAuosnMZ9m29Hzr0UE3L6dMGhG+qU3XL0Ugao
-mBGQzZb+EXyYN5owrJJ+yZRx5yM373vX2iNKyPnuVupj34gkS2zPZksoGedOqqkh7eua1L3pRPAX
-QLphkVc4cxTRamK0hrL8AyVxwbwopDl7mkx+MXhRHMl4WLY9iSJbdE1FZ0kNXHRKLxMt0RJ0Y/t7
-F29sgnS15fW4eyjYoiHAS76oSgMkrAX4adrFiatOx682xo8Q8hOol6ouMWxNuWJ4XiG0Oegbx9+y
-0SIJ6EZ4OsCCt761TYlZ/w8w2xHCUFXbjTdW3w==
+<ds:SignatureValue Id="SignatureValue385811">
+Rp1yr3FiOCYbtIAYXY09Ve+6S3jo0qvUn3HOc+fxo2F8TuJBpkVtIPnD4hE4nBk9g4NKBmmua/Q7
+ITcyIIveOWYf4htpeeCsQn1GwcrxkiNT9GiyOgr77Ob5zkea116v4OEJ954erLCiTFn4TMpCNh5s
+giUPDfVoW7XZogWJW9dKPio+Wj5U2rSmxEoNPiPBgMAHQbFeYvQPlT0miTPlUx67Nk9l1n+bMY8D
+svLOVH/Nua7X3cWxHnoUDkykYgKAfnPgXt0R6km7kIS5qkS22XdNXIy1q5VpF0nNiqo4TNVAxv84
+1KtwfJpj0BOw05WaSW44OXTome7VAQGEg47czA==
 </ds:SignatureValue>
-<ds:KeyInfo Id="Certificate1819484">
+<ds:KeyInfo Id="Certificate1376845">
 <ds:X509Data>
 <ds:X509Certificate>
 MIILkjCCCXqgAwIBAgIEXDrIAjANBgkqhkiG9w0BAQsFADCBmTELMAkGA1UEBhMCRUMxHTAbBgNV
@@ -152,4 +205,4 @@ LRuAVSyi58qyAD0Eu1zLMc3KhEUXoxF7aA8P0w==
 </ds:RSAKeyValue>
 </ds:KeyValue>
 </ds:KeyInfo>
-<ds:Object Id="Signature203733-Object902037"><etsi:QualifyingProperties Target="#Signature203733"><etsi:SignedProperties Id="Signature203733-SignedProperties242079"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-07-07T15:00:55-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-519401"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></liquidacionCompra>
+<ds:Object Id="Signature907346-Object461468"><etsi:QualifyingProperties Target="#Signature907346"><etsi:SignedProperties Id="Signature907346-SignedProperties928268"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-07-27T16:41:56-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-208122"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></factura>
