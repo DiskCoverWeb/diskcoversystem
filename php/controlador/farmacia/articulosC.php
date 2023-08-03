@@ -601,7 +601,7 @@ class articulosC
 			 $sub = $this->modelo->proveedores($query=false,$value['SUBCTA']);
 
 			 // print_r($sub);die();
-			 if(count($sub)==0){$sub[0]['Cliente']='.';}
+			 if(count($sub)==0){$sub[0]['Cliente']='.';$sub[0]['Codigo']='.';}
 			 $nombre=$sub[0]['Cliente'];
 			 // print_r($sub);die();
 			$parametros = array(
