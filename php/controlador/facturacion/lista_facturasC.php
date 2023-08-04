@@ -716,7 +716,8 @@ class lista_facturasC
     	$cuerpo_correo = $parametros['cuerpo'];
     	$titulo_correo = $parametros['titulo'];
 
-    	$this->modelo->pdf_factura_descarga($parametros['fac'],$parametros['serie'],$parametros['codigoc']);
+    	$this->modelo->pdf_factura_descarga($parametros['fac'],$parametros['serie'],$parametros['codigoc'],false,1);
+
 
     	$archivos[0] =$parametros['serie'].'-'.generaCeros($parametros['fac'],7).'.pdf';
 

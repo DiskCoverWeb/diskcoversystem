@@ -2859,6 +2859,10 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
  function imprimirDocEle_fac($datos,$detalle,$educativo,$matri=false,$nombre="",$formato=null,$nombre_archivo=null,$va=null,$imp1=false,$abonos=false,$sucursal=array())
 {
 
+	// print_r($va);
+	// print_r($imp1);
+	// die();
+
 	// print_r($_SESSION['INGRESO']);die();
 	// print_r($sucursal);die();
 	$pdf = new PDF('P','pt','LETTER');
@@ -3604,7 +3608,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	// print_r($sucursal);die();
 
 
-	if( count($sucursal)>0 && $punto!='001' && $suc=='001' && strlen($sucursal[0]['RUC_Establecimiento'])==13)
+	if(!empty($sucursal) && count($sucursal)>0 && $punto!='001' && $suc=='001' && strlen($sucursal[0]['RUC_Establecimiento'])==13)
 	{
 
 		$arr=array('Punto Emision: '.$datos[0]['Serie']);
@@ -3657,7 +3661,7 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 
 	///----------------------  infomrmacion adicional cuan establecimiento es diferente de 001 ----------------------
 
-    if(count($sucursal)>0 && $suc!='001' && strlen($sucursal[0]['RUC_Establecimiento'])==13)
+    if(!empty($sucursal) && count($sucursal)>0 && $suc!='001' && strlen($sucursal[0]['RUC_Establecimiento'])==13)
 	{
 		$arr=array('Establecimiento: '.$datos[0]['Serie']);
 		$pdf->Row($arr,10);
@@ -3728,7 +3732,8 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 		}
 		//================================Inicio INFORMACION DE ABONOS=======================
 			$fechas_abonos= $detalle_abonos = $monto_abonos = "";
-			if($abonos)
+			// print_r($abonos);die();
+			if(!empty($abonos) && $abonos && is_object($abonos))
 			{
 				foreach ($abonos as $key => $value) {
 					$fechas_abonos .= $value['Fecha']->format('Y-m-d'). PHP_EOL;
@@ -3979,8 +3984,6 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	//========================================= fin cuadro totales======================================
 
 	
-
-
 
 	if($imp1==false || $imp1==0)
 	{

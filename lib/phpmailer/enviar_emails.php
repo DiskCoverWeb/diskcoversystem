@@ -30,7 +30,18 @@ function enviar_email($archivos=false,$to_correo="",$cuerpo_correo="",$titulo_co
 
   // print_r('ingresa');die();
   $empresaGeneral = $this->Empresa_data();
+  $server_externo = 0;
 
+  if($empresaGeneral[0]["smtp_Servidor"]=="relay.dnsexit.com" ||  
+     $empresaGeneral[0]["smtp_Servidor"] =="mail.diskcoversystem.com")
+  {
+    $server_externo = 1;
+    $empresaGeneral[0]['smtp_Servidor'] = "relay.dnsexit.com";
+    $empresaGeneral[0]['Email_Conexion'] = "diskcoversystem";   
+    $empresaGeneral[0]['Email_Contraseña'] = "Dlcjvl1210@"; 
+    $empresaGeneral[0]['smtp_SSL'] = 0;
+    $server_externo = 0; 
+  }
 
   $res = 1;
   // print_r($empresaGeneral);die();
@@ -63,8 +74,10 @@ function enviar_email($archivos=false,$to_correo="",$cuerpo_correo="",$titulo_co
                 $mail->Host       = $empresaGeneral[0]['smtp_Servidor'];    //Set the SMTP server to send through
                 $mail->SMTPAuth   = true;           //Enable SMTP authentication
                 $mail->Username   = $empresaGeneral[0]['Email_Conexion'];          //SMTP username
-                $mail->Password   = $empresaGeneral[0]['Email_Contraseña'];                 //SMTP password
-                if($empresaGeneral[0]['smtp_SSL']==1)
+                $mail->Password   = $empresaGeneral[0]['Email_Contraseña'];  
+                if($server_externo==0)               //SMTP password
+                {
+                  if($empresaGeneral[0]['smtp_SSL']==1)
                    {
                      $mail->SMTPSecure = 'ssl';       
                      $mail->Port     =465;
@@ -73,10 +86,14 @@ function enviar_email($archivos=false,$to_correo="",$cuerpo_correo="",$titulo_co
                      $mail->SMTPSecure ='tls';      
                      $mail->Port     =587;          
                    }
+                }else{ 
+                  if($empresaGeneral[0]['smtp_SSL']==1){$mail->SMTPSecure = 'ssl'; }else{$mail->SMTPSecure ='tls';}
+                  $mail->Port =  $empresaGeneral[0]['smtp_Puerto'];
+                }
 
-                $mail->setFrom($empresaGeneral[0]['Email_Conexion'], 'DiskCover System');
+                $mail->setFrom('electronicos@diskcoversystem.com', 'DiskCover System');
                 $mail->addAddress($value);     //Add a recipient
-                $mail->addReplyTo($empresaGeneral[0]['Email_Conexion'], 'Informacion');
+                $mail->addReplyTo('electronicos@diskcoversystem.com', 'Informacion');
                 //$mail->addCC('cc@example.com');
                 //$mail->addBCC('bcc@example.com');
 
@@ -128,9 +145,9 @@ function enviar_email($archivos=false,$to_correo="",$cuerpo_correo="",$titulo_co
                 }
                 
             } catch (Exception $e) {
-              // print_r($mail);
+              print_r($mail);
               // print_r($e);
-              // die();
+              die();
                 return -1;
             }
 	        

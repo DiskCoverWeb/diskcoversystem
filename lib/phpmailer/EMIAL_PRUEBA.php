@@ -10,7 +10,6 @@ require 'vendor/autoload.php';
 
 //Instantiation and passing `true` enables exceptions
 $mail = new PHPMailer(true);
-
  $mail->SMTPOptions = array(
         'ssl' => array(
             'verify_peer' => false,
@@ -25,10 +24,10 @@ $mail = new PHPMailer(true);
     //Server settings
     $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
     $mail->isSMTP();                                            //Send using SMTP
-    $mail->Host       = 'mail.diskcoversystem.com';                     //Set the SMTP server to send through
+    $mail->Host       = 'relay.dnsexit.com';                     //Set the SMTP server to send through
     $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-    $mail->Username   = 'electronicos@diskcoversystem.com';                     //SMTP username
-    $mail->Password   = 'Electronicos2022@';                               //SMTP password
+    $mail->Username   = 'diskcoversystem';                     //SMTP username
+    $mail->Password   = 'Dlcjvl1210@';                               //SMTP password
     $mail->SMTPSecure = 'tls';//PHPMailer::ENCRYPTION_STARTTLS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
     $mail->Port       = 587;                                    //TCP port to connect to, use 465 for PHPMailer::ENCRYPTION_SMTPS` above
 

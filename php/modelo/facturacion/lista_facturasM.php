@@ -316,7 +316,7 @@ class lista_facturasM
 
    }
 
-   function pdf_factura_descarga($cod,$ser,$ci,$periodo=false)
+   function pdf_factura_descarga($cod,$ser,$ci,$periodo=false,$imp=1)
    {
    	$id='factura_'.$ci;
    	$cid = $this->conn;
@@ -365,13 +365,15 @@ class lista_facturasM
 
     $datos_cli_edu=$this->cliente_matri($ci);
     $sucursal = $this->catalogo_lineas('FA',$ser);
+    // print_r($imp);die();
 	   if($datos_cli_edu != '' && !empty($datos_cli_edu))
 	   {
-	   	    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,'matr',$id,null,'factura',null,null,1,false,$sucursal);
+	   	  // print_r($imp."aaa");die();
+	   	    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,'matr',$id,null,'factura',null,$imp,false,false,$sucursal);
 	   }else
 	   {
 		    $datos_cli_edu=$this->Cliente($ci);
-		    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$id,null,'factura',null,null,1,false,$sucursal);
+		    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$id,null,'factura',null,null,$imp,false,$sucursal);
 	   }
 
    }
