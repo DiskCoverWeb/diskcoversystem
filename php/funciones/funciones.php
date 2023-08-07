@@ -10529,6 +10529,7 @@ function GrabarComprobante($C1)
 
   // RatonReloj
   // ' Encabezado del Comprobante
+  // print_r($C1);die();
    if(count($C1)==0){
        if($C1['T'] == ""){ $C1['T'] = G_NORMAL;}
        if($C1['Fecha'] == ''){ $C1['Fecha'] = date('Y-m-d');}

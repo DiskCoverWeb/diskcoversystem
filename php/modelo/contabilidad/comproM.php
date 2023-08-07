@@ -15,12 +15,13 @@ class comproM
 		
 	}
 
-	function Listar_el_Comprobante($comprobante){
+	function Listar_el_Comprobante($comprobante,$tp){
 	$sql="SELECT  Periodo, T, TP, Numero, Fecha, Codigo_B, Presupuesto, Concepto, Cotizacion, Efectivo, Monto_Total,CodigoU, Autorizado, Item, Si_Existe, Hora, CEj, X, ID 
        FROM Comprobantes
        WHERE Item = '".$_SESSION['INGRESO']['item']."' 
        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
        AND Numero = '".$comprobante."'
+       AND TP = '".$tp."'
        ORDER BY Numero ";
        return $this->db->datos($sql);
 	}

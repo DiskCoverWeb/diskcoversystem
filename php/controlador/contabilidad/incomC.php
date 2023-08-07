@@ -598,6 +598,7 @@ class incomC
           $Co['CodigoB'] = $bene[0]['Codigo'];
           $Co['RetSecuencial'] = $parametros['Retencion'];
           $Co['TP'] = $parametros['tip'];
+          $Co['TC'] = $parametros['tip'];
           $Co['Cotizacion'] = $parametros['TextCotiza'];
           $Co['T'] = G_NORMAL;
           $Co['Fecha'] =$FechaTexto;

@@ -155,7 +155,7 @@
           dataType: 'json',
           delay: 250,
           processResults: function (data) {
-            console.log(data);
+            // console.log(data);
             return {
               results: data
             };
@@ -325,7 +325,7 @@
           dataType: 'json',
           delay: 250,          
           processResults: function (data) {
-            console.log(data);
+            // console.log(data);
             return {
               results: data
             };
@@ -472,7 +472,7 @@
       var banco = $('#conceptob').val();
       let nom_banco = $('#conceptob option:selected').text();
       nombre = nom_banco.replace(banco,'');
-      console.log(nombre);
+      // console.log(nombre);
       var parametros = 
       {
         'banco':banco,
@@ -680,7 +680,7 @@
           dataType: 'json',
             success:  function (response) {    
             $('#retenciones').html(response.b+response.r);
-            console.log(response.datos[0]);
+            // console.log(response.datos[0]);
             if (response.datos[0]) {
               $('#Autorizacion_R').val(response.datos[0].AutRetencion); 
               $('#Serie_R').val(response.datos[0].PtoEmiRetencion+''+response.datos[0].PuntoEmiFactura); 
@@ -716,7 +716,7 @@
           dataType: 'json',
             success:  function (response) { 
 
-            console.log(response);     
+            // console.log(response);     
             $('#txt_diferencia').val(response.diferencia.toFixed(2));  
             $('#txt_debe').val(response.debe.toFixed(2));  
             $('#txt_haber').val(response.haber.toFixed(2));  
@@ -769,7 +769,7 @@
       // },
       success:  function (response) {
 
-        console.log(response.resp);
+        // console.log(response.resp);
         if(response.resp==1)
         {
          cargar_tablas_contabilidad();
@@ -969,6 +969,9 @@
       'TextCotiza':$("#cotizacion").val(),
       'NuevoComp':modificar,
     }
+
+    // console.log(parametros);
+    // return false;
     Swal.fire({
       title: "Esta seguro de Grabar el "+$('#num_com').text(),
       text: "con fecha: "+$('#fecha1').val(),
@@ -1003,7 +1006,7 @@
           dataType: 'json',
             success:  function (response) {
                $('#myModal_espera').modal('hide');
-        console.log(response);
+        // console.log(response);
         if(response.respuesta == '3')
         {
           Swal.fire('Este documento electronico ya esta autorizado','','error');
@@ -1062,7 +1065,7 @@
        //    </a>
       var url1 = url+archivo;
 
-      console.log(url1);
+      // console.log(url1);
             var link = document.createElement("a");
             link.download = archivo;
             link.href =url1;
@@ -1167,7 +1170,7 @@
           dataType: 'json',
             success:  function (response) { 
 
-             console.log(response);     
+             // console.log(response);     
             $('#div_tabla').html(response);  
           }
         });
@@ -1182,7 +1185,7 @@
           type:  'post',
           dataType: 'json',
             success:  function (response) { 
-              console.log(response);
+              // console.log(response);
               $('#beneficiario1').append($('<option>',{value: response.CodigoB, text:response.beneficiario,selected: true }));
               $('#ruc').val(response.RUC_CI);
               $('#concepto').val(response.Concepto);
@@ -1219,7 +1222,7 @@
           dataType: 'json',
             success:  function (response) { 
 
-             console.log(response);     
+             // console.log(response);     
             $('#div_tabla').html(response);  
           }
         });
