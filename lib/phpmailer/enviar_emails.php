@@ -145,9 +145,9 @@ function enviar_email($archivos=false,$to_correo="",$cuerpo_correo="",$titulo_co
                 }
                 
             } catch (Exception $e) {
-              print_r($mail);
+              // print_r($mail);
               // print_r($e);
-              die();
+              // die();
                 return -1;
             }
 	        
