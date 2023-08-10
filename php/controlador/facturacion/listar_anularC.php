@@ -66,6 +66,22 @@ if(isset($_GET['Volver_Autorizar']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->Volver_Autorizar($parametros));
 }
+if(isset($_GET['exportar_excel_validador']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->exportar_excel_validador($parametros));
+}
+if(isset($_GET['excel_exportar']))
+{
+	$parametros = $_GET;
+	echo json_encode($controlador->excel_exportar($parametros));
+}
+if(isset($_GET['actualizar_kardex']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->actualizar_kardex($parametros));
+}
+
 
 class listar_anularC
 {
@@ -422,6 +438,170 @@ class listar_anularC
 		   /* RatonNormal
 		    MsgBox MensajeNoAutorizarCE*/
 		  }
+	}
+
+	function exportar_excel_validador($parametros)
+	{
+		$FA = $this->modelo->Listar_Factura_NotaVentas_all($parametros['TC'],$parametros['Serie'],$parametros['Factura'],$parametros['Autorizacion']);
+		$detalles = $this->modelo->detalle_factura($FA[0]);
+		if(count($detalles)>0)
+		{
+			return 1;
+		}else
+		{
+			return -1;
+		}
+		// print_r($detalles);die();
+	}
+
+	function excel_exportar($parametros)
+	{
+		// falta de estructurar
+		$FA = $this->modelo->Listar_Factura_NotaVentas_all($parametros['TC'],$parametros['Serie'],$parametros['Factura'],$parametros['Autorizacion']);
+		$detalles = $this->modelo->detalle_factura($FA[0]);
+
+
+		$head = array();
+		$head_size = array();
+		foreach ($detalles as $key => $value) {
+			foreach ($value as $key2 => $value2) {
+				array_push($head, $key2);
+				array_push($head_size,strlen($key2)*5);
+			}			
+		}
+
+		// print_r($head);die();
+
+		 $tablaHTML =array();
+	   	 $tablaHTML[0]['medidas']=$head_size;
+         $tablaHTML[0]['datos']=$head;
+         $tablaHTML[0]['tipo'] ='C';
+         $pos = 1;
+		foreach ($detalles as $key => $value) {
+			$line = array();
+			foreach ($head as $key2 => $value2) {				
+				array_push($line, $value[$value2]);
+			}
+			 $tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+	         $tablaHTML[$pos]['datos']=$line;
+	         $tablaHTML[$pos]['tipo'] ='N';
+	         $pos+=1;
+		}
+	    excel_generico($titulo='DETALLE FACTURA',$tablaHTML);
+
+	}
+
+	function actualizar_kardex($parametros)
+	{
+		// print_r($parametros);die();
+		$TFA = $this->modelo->Listar_Factura_NotaVentas_all($parametros['TC'],$parametros['Serie'],$parametros['Factura'],$parametros['Autorizacion']);
+		$FA = $TFA[0];
+		$detalles = $this->modelo->detalle_factura($FA);
+        // print_r($detalles);die();
+         if(count($detalles)>0)
+         {
+         	$this->modelo->delete_trans_kardex2($FA);
+            
+            foreach ($detalles as $key => $value) {
+            	$DatInv =  Leer_Codigo_Inv($value["Codigo"], $FA['Fecha']->format('Y-m-d'), $value["CodBodega"], $value["CodMarca"]);
+            	// print_r($DatInv);die();
+                if($DatInv['respueta']==1)
+                {
+                	$DatInv = $DatInv['datos'];
+                   if($DatInv['Costo'] > 0)
+                   {
+                      SetAdoAddNew("Trans_Kardex");
+                      SetAdoFields("T", G_NORMAL);
+                      SetAdoFields("TC", $FA['TC']);
+                      SetAdoFields("Serie", $FA['Serie']);
+                      SetAdoFields("Fecha", $FA['Fecha']);
+                      SetAdoFields("Factura", $FA['Factura']);
+                      SetAdoFields("Codigo_P", $FA['CodigoC']);
+                      SetAdoFields("CodBodega", $value["CodBodega"]);
+                      SetAdoFields("CodMarca", $value["CodMarca"]);
+                      SetAdoFields("Codigo_Inv", $value["Codigo"]);
+                      SetAdoFields("CodigoL", $FA['Cod_CxC']);
+                      SetAdoFields("Lote_No", $value["Lote_No"]);
+                      SetAdoFields("Fecha_Fab", $DatInv['Fecha_Fab']);
+                      SetAdoFields("Fecha_Exp", $DatInv['Fecha_Exp']);
+                      SetAdoFields("Procedencia", $value["Procedencia"]);
+                      SetAdoFields("Modelo", $value["Modelo"]);
+                      SetAdoFields("Serie_No", $value["Serie_No"]);
+                      SetAdoFields("Total_IVA", $value["Total_IVA"]);
+                      SetAdoFields("Porc_C", $FA['Porc_C']);
+                      SetAdoFields("Salida", $value["Cantidad"]);
+                      SetAdoFields("PVP", $value["Precio"]);
+                      SetAdoFields("Valor_Unitario", $value["Precio"]);
+                      SetAdoFields("Costo", $DatInv['Costo']);
+                      SetAdoFields("Valor_Total", number_format($value["Cantidad"] * $value["Precio"],2,'.',''));
+                      SetAdoFields("Total", number_format($value["Cantidad"] * $DatInv['Costo'], 2,'.',''));
+                      SetAdoFields("Detalle",substr("FA: ".$FA['Cliente'],0, 100));
+                      SetAdoFields("Codigo_Barra", $DatInv['Codigo_Barra']);
+                     // 'SetAdoFields "Orden_No", $value["Numero"]
+                      SetAdoFields("Cta_Inv",$DatInv['Cta_Inventario']);
+                      SetAdoFields("Contra_Cta",$DatInv['Cta_Costo_Venta']);
+                      SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+                      SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+                      SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+                      SetAdoUpdate();
+                   }
+                   
+                }
+               // 'Salida si es por recetas
+                $AdoDBReceta = $this->modelo->Catalogo_Recetas($value["Codigo"]);
+               
+                if(count($AdoDBReceta)> 0)
+                {
+                	foreach ($AdoDBReceta as $key2 => $value2) 
+                	{                	
+                		$DatInv =  Leer_Codigo_Inv($value2["Codigo_Receta"],date('Y-m-d'), $value["CodBodega"], $value["CodMarca"]);
+                      if($DatInv['respueta']==1)
+                      {
+                      	$DatInv = $DatInv['datos'];
+                         if($DatInv['Costo'] > 0)
+                         {
+                            $CantidadAnt = $value["Cantidad"] * $value2["Cantidad"];
+                            $ValorTotal = number_format($CantidadAnt * $DatInv['Costo'], 2,'.','');
+                            SetAdoAddNew("Trans_Kardex");
+                            SetAdoFields("T", G_NORMAL);
+                            SetAdoFields("TC", $FA['TC']);
+                            SetAdoFields("Serie", $FA['Serie']);
+                            SetAdoFields("Fecha", $FA['Fecha']);
+                            SetAdoFields("Factura", $FA['Factura']);
+                            SetAdoFields("Codigo_P", $FA['CodigoC']);
+                            SetAdoFields("CodBodega",$value["CodBodega"]);
+                            SetAdoFields("CodMarca", $value["CodMarca"]);
+                            SetAdoFields("Codigo_Inv", $value2["Codigo_Receta"]);
+                            //      SetAdoFields "CodigoL", FA.Cod_CxC
+                            //      SetAdoFields "Lote_No", .fields("Lote_No")
+                            //      SetAdoFields "Fecha_Fab", .fields("Fecha_Fab")
+                            //      SetAdoFields "Fecha_Exp", .fields("Fecha_Exp")
+                            //      SetAdoFields "Procedencia", .fields("Procedencia")
+                            //      SetAdoFields "Modelo", .fields("Modelo")
+                            //      SetAdoFields "Serie_No", .fields("Serie_No")
+                            //      SetAdoFields "Porc_C", .fields("Porc_C")
+                            SetAdoFields( "PVP", $DatInv['Costo']);
+                            SetAdoFields( "Valor_Unitario", $DatInv['Costo']);
+                            SetAdoFields( "Salida", $CantidadAnt);
+                            SetAdoFields( "Valor_Total", $ValorTotal);
+                            SetAdoFields( "Costo", $DatInv['Costo']);
+                            SetAdoFields( "Total", $ValorTotal);
+                            SetAdoFields( "Detalle", substr("FA: RE-".$FA['Cliente'],0, 100));
+                            SetAdoFields( "Cta_Inv", $DatInv['Cta_Inventario']);
+                            SetAdoFields( "Contra_Cta", $DatInv['Cta_Costo_Venta']);
+                            SetAdoFields( "Item", $_SESSION['INGRESO']['item']);
+                            SetAdoFields( "Periodo", $_SESSION['INGRESO']['periodo']);
+                            SetAdoFields( "CodigoU", $_SESSION['INGRESO']['CodigoU']);
+                            SetAdoUpdate();
+                        }
+                      }
+                    }
+                }
+            }//fin de primer ofreach
+        }//fin del primer if
+
+        return 1;
+        // MsgBox "Proceso Terminado"
 	}
 
 }

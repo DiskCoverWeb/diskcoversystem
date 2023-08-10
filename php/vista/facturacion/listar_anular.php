@@ -403,6 +403,103 @@ function resultado_sri()
       }
     });
  }
+ function exportar_excel()
+ {
+    var tc = $('#DCTipo').val();
+    var serie = $('#DCSerie').val();
+    var Aut = $('#DCFact').val();
+    if(tc=='' || serie=='' || Aut=='')
+    {
+        Swal.fire('No existe datos para exportar','','error');
+        return false;
+    }
+
+
+    var parametros = {
+        'TC':$('#DCTipo').val(),
+        'Serie':$('#DCSerie').val(),
+        'Factura':$('#DCFact option:selected').text(),
+        'Autorizacion':$('#DCFact').val(),
+        'MBFecha':$('#MBFecha').val(),
+    }
+    $.ajax({
+        type: "POST",
+        url: '../controlador/facturacion/listar_anularC.php?exportar_excel_validador=true',
+        data:{parametros:parametros}, 
+        dataType: 'json',
+        success: function(data) {
+        if(data==-1)
+        {
+            Swal.fire('No existe datos para exportar','','error');
+        }else
+        {
+            var url = '../controlador/facturacion/listar_anularC.php?excel_exportar=true&TC='+$('#DCTipo').val()+'&Serie='+$('#DCSerie').val()+'&Factura='+$('#DCFact option:selected').text()+'&Autorizacion='+$('#DCFact').val()+'&MBFecha='+$('#MBFecha').val();
+            window.open(url, '_blank');
+        }
+    },
+      error: function () {
+        $('#myModal_espera').modal('hide');
+        alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+      }
+    });
+ }
+ function actualizar_kardex()
+ {
+    var tc = $('#DCTipo').val();
+    var serie = $('#DCSerie').val();
+    var factura = $('#DCFact option:selected').text();
+    var fac = $('#DCFact').val();
+     var parametros = {
+        'TC':$('#DCTipo').val(),
+        'Serie':$('#DCSerie').val(),
+        'Factura':$('#DCFact option:selected').text(),
+        'Autorizacion':$('#DCFact').val(),
+        'MBFecha':$('#MBFecha').val(),
+    }
+
+    if(tc=='' || serie=='' || fac == '')
+    {
+        Swal.fire('Seleccione un Documento','','info');
+        return false;
+    }
+
+     Swal.fire({
+       title: "Esta Seguro que desea re-activar kardex del \n Documento No. "+tc+': '+serie+'-'+factura,
+       text: 'FORMULARIO DE RE-ACTIVACION',
+       type: 'info',
+       showCancelButton: true,
+       confirmButtonColor: '#3085d6',
+       cancelButtonColor: '#d33',
+       cancelButtonText: 'No',
+       confirmButtonText: 'Si!'
+     }).then((result) => {
+       if (result.value==true) { 
+           
+            $.ajax({
+                type: "POST",
+                url: '../controlador/facturacion/listar_anularC.php?actualizar_kardex=true',
+                data:{parametros:parametros}, 
+                dataType: 'json',
+                success: function(data) {
+                    if(data==1)
+                    {
+                        Swal.fire("Proceso Terminado","",'success');
+                    }
+                    console.log(data);
+               
+                },
+                  error: function () {
+                    $('#myModal_espera').modal('hide');
+                    alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+                  }
+                });
+
+
+       }
+     });
+ }
+
+
 
 </script>
 <div class="row">
@@ -513,7 +610,7 @@ function resultado_sri()
 	    </div>
 	  </div>		
     <div class="col">
-     	<div class="col-sm-1" style="padding: 0px;">
+     	<!-- <div class="col-sm-1" style="padding: 0px;"> -->
 	    	<button title="Consultar Mayores auxiliares" data-toggle="dropdown" class="btn btn-default">
 	    		<img src="../../img/png/sri_azul.jpg" >
 	    	</button>
@@ -523,7 +620,7 @@ function resultado_sri()
 	        <li><a href="#" id="imprimir_pdf_2">Facturas pendientes</a></li>
 	        <li><a href="#" id="imprimir_pdf">Guia de Remision</a></li>  
 	      </ul>
-	    </div>
+	    <!-- </div> -->
     </div>		
     <div class="col">
     	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
@@ -536,16 +633,19 @@ function resultado_sri()
     	</button>
     	</div>		
     <div class="col">
-    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
-    		<img src="../../img/png/update_kardex.png" >
-    	</button>
-    	</div>		
+        <div class="col-sm-1" style="padding:0px">
+    	   <button title="Actualizar Kardex"  data-toggle="tooltip" class="btn btn-default" onclick="actualizar_kardex();">
+    	       	<img src="../../img/png/update_kardex.png" >
+    	   </button>
+    	</div>
+    </div>		
     <div class="col">
-    	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
-    		<img src="../../img/png/excel2.png" >
-    	</button>
-    	</div>		
-           
+        <div class="col-sm-1" style="padding:0px">
+            <button title="Excel"  data-toggle="tooltip" class="btn btn-default" id="" onclick="exportar_excel()">
+                <img src="../../img/png/excel2.png" >
+            </button>
+        </div>    	
+    </div> 
   </div>
 </div>
 <form id="form_nc">

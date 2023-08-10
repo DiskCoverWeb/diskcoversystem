@@ -308,6 +308,31 @@ class listar_AnularM
       return $this->db->String_Sql($sql);
   }
 
+  function delete_trans_kardex2($FA)
+  {
+     $sql ="DELETE 
+            FROM Trans_Kardex 
+            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+            AND TC = '" .$FA['TC']."' 
+            AND Serie = '" .$FA['Serie']."' 
+            AND Factura =  " .$FA['Factura']." 
+            AND SUBSTRING(Detalle, 1, 3) = 'FA:' " ;
+      return $this->db->String_Sql($sql);
+  }
+
+  function Catalogo_Recetas($Codigo)
+  {
+    $sql = "SELECT Codigo_Receta, Cantidad, Costo, ID 
+            FROM Catalogo_Recetas 
+            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+            AND Codigo_PP = '".$Codigo."' 
+            AND TC = 'P'
+            ORDER BY Codigo_Receta ";
+    return $this->db->datos($sql);
+  }
+
 }
 
 ?>
