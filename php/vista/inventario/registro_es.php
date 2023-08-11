@@ -6,6 +6,355 @@
 th {
   padding: 8px;
 }
+.contenedor-envcorreo{
+    background-color: white;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, -150%);
+    /*outline: 1px solid black;*/
+    border-radius: 10px;
+    height: 160px;
+    width: 420px;
+    box-shadow: 2px 2px 10px 1px rgba(0, 0, 0, 0.2);
+    transition: 0.5s transform;
+    z-index: 100;
+}
+
+.cont-ec-open{
+    transform: translate(-50%, 8%);
+}
+
+.bg-envcorreo{
+    background-color: #009df9;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    height: 65%;
+    width: 100%;
+}
+
+.bg-envcorreo img{
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+}
+
+.text-envcorreo{
+    margin: 5px 10px;
+}
+
+.success-checkmark {
+  transform: scale(70%,70%);
+  width: 80px;
+  height: 115px;
+  margin: 0 auto;
+  
+  .check-icon {
+      width: 80px;
+      height: 80px;
+      position: relative;
+      border-radius: 50%;
+      box-sizing: content-box;
+      border: 4px solid #fff;
+      
+      &::before {
+          top: 3px;
+          left: -2px;
+          width: 30px;
+          transform-origin: 100% 50%;
+          border-radius: 100px 0 0 100px;
+      }
+      
+      &::after {
+          top: 0;
+          left: 30px;
+          width: 60px;
+          transform-origin: 0 50%;
+          border-radius: 0 100px 100px 0;
+          animation: rotate-circle 4.25s ease-in;
+      }
+      
+      &::before, &::after {
+          content: '';
+          height: 100px;
+          position: absolute;
+          background: #009df9;
+          transform: rotate(-45deg);
+      }
+      
+      .icon-line {
+          height: 5px;
+          background-color: #fff;
+          display: block;
+          border-radius: 2px;
+          position: absolute;
+          z-index: 10;
+          
+          &.line-tip {
+              top: 46px;
+              left: 14px;
+              width: 25px;
+              transform: rotate(45deg);
+              animation: icon-line-tip 0.75s;
+          }
+          
+          &.line-long {
+              top: 38px;
+              right: 8px;
+              width: 47px;
+              transform: rotate(-45deg);
+              animation: icon-line-long 0.75s;
+          }
+      }
+      
+      .icon-circle {
+          top: -4px;
+          left: -4px;
+          z-index: 10;
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          position: absolute;
+          box-sizing: content-box;
+          border: 4px solid rgba(255, 255, 255, .5);
+      }
+      
+      .icon-fix {
+          top: 8px;
+          width: 5px;
+          left: 26px;
+          z-index: 1;
+          height: 85px;
+          position: absolute;
+          transform: rotate(-45deg);
+          background-color: #009df9;
+      }
+  }
+}
+
+@keyframes rotate-circle {
+    0% {
+        transform: rotate(-45deg);
+    }
+    5% {
+        transform: rotate(-45deg);
+    }
+    12% {
+        transform: rotate(-405deg);
+    }
+    100% {
+        transform: rotate(-405deg);
+    }
+}
+
+@keyframes icon-line-tip {
+    0% {
+        width: 0;
+        left: 1px;
+        top: 19px;
+    }
+    54% {
+        width: 0;
+        left: 1px;
+        top: 19px;
+    }
+    70% {
+        width: 50px;
+        left: -8px;
+        top: 37px;
+    }
+    84% {
+        width: 17px;
+        left: 21px;
+        top: 48px;
+    }
+    100% {
+        width: 25px;
+        left: 14px;
+        top: 45px;
+    }
+}
+
+@keyframes icon-line-long {
+    0% {
+        width: 0;
+        right: 46px;
+        top: 54px;
+    }
+    65% {
+        width: 0;
+        right: 46px;
+        top: 54px;
+    }
+    84% {
+        width: 55px;
+        right: 0px;
+        top: 35px;
+    }
+    100% {
+        width: 47px;
+        right: 8px;
+        top: 38px;
+    }
+}
+
+.sa {
+  transform: scale(70%,70%);
+  width: 100%;
+  height: 140px;
+  padding: 0;
+  /*background-color: #fff;*/
+  }
+
+  .sa-error {
+  border-radius: 50%;
+  border: 4px solid #fff;
+  box-sizing: content-box;
+  height: 80px;
+  padding: 0;
+  margin: 0 auto;
+  position: relative;
+  background-color: #F27474;
+  width: 80px;
+  animation: animateErrorIcon .5s;
+  }
+
+  .sa-error:after,
+  .sa-error:before {
+  background: #F27474;
+  content: '';
+  height: 120px;
+  position: absolute;
+  transform: rotate(45deg);
+  width: 60px;
+  }
+
+  .sa-error:before {
+  border-radius: 40px 0 0 40px;
+  width: 26px;
+  height: 80px;
+  top: -17px;
+  left: 5px;
+  transform-origin: 60px 60px;
+  transform: rotate(-45deg);
+  }
+
+  .sa-error:after {
+  border-radius: 0 120px 120px 0;
+  left: 30px;
+  top: -11px;
+  transform-origin: 0 60px;
+  transform: rotate(-45deg);
+  animation: rotatePlaceholder 4.25s ease-in;
+  }
+
+  .sa-error-x {
+  display: block;
+  position: relative;
+  z-index: 2;
+  }
+
+  .sa-error-placeholder {
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.644);
+  box-sizing: content-box;
+  height: 80px;
+  left: -4px;
+  position: absolute;
+  top: -4px;
+  width: 80px;
+  z-index: 2;
+  }
+
+  .sa-error-fix {
+  background-color: #F27474;
+  height: 90px;
+  left: 28px;
+  position: absolute;
+  top: 8px;
+  transform: rotate(-45deg);
+  width: 5px;
+  z-index: 1;
+  }
+
+  .sa-error-left,
+  .sa-error-right {
+  border-radius: 2px;
+  display: block;
+  height: 5px;
+  position: absolute;
+  z-index: 2;
+  background-color: #fff;
+  top: 37px;
+  width: 47px;
+  }
+
+  .sa-error-left {
+  left: 17px;
+  transform: rotate(45deg);
+  animation: animateXLeft .75s;
+  }
+
+  .sa-error-right {
+  right: 16px;
+  transform: rotate(-45deg);
+  animation: animateXRight .75s;
+  }
+
+  @keyframes rotatePlaceholder {
+  0%, 5% {
+      transform: rotate(-45deg);
+  }
+  100%,12% {
+      transform: rotate(-405deg);
+  }
+  }
+
+  @keyframes animateErrorIcon {
+  0% {
+      transform: rotateX(100deg);
+      opacity: 0;
+  }
+  100% {
+      transform: rotateX(0deg);
+      opacity: 1;
+  }
+  }
+
+  @keyframes animateXLeft {
+  0%, 65% {
+      left: 82px;
+      top: 95px;
+      width: 0;
+  }
+  84% {
+      left: 14px;
+      top: 33px;
+      width: 47px;
+  }
+  100% {
+      left: 17px;
+      top: 37px;
+      width: 47px;
+  }
+  }
+
+  @keyframes animateXRight {
+  0%, 65% {
+      right: 82px;
+      top: 95px;
+      width: 0;
+  }
+  84% {
+      right: 14px;
+      top: 33px;
+      width: 47px;
+  }
+  100% {
+      right: 16px;
+      top: 37px;
+      width: 47px;
+  }
+  }
 </style>
 <script type="text/javascript">
 
@@ -271,8 +620,65 @@ function contracuenta()
     $('#myModal').modal('hide');
     cancelar();
   }
-</script>
+  function enviar_correo()
+  {
+    let htmlLoading = "<div class='bg-envcorreo' id='bg-envcorreo'><img id='load-gif' src='../../img/gif/correo_fin.gif' alt='Enviando correo'></div><div class='text-envcorreo' id='text-envcorreo'>Estimado usuario, su correo está siendo procesado para ser envíado...</div>"
+    let htmlSuccess = "<div class='success-checkmark'><div class='check-icon'><span class='icon-line line-tip'></span><span class='icon-line line-long'></span><div class='icon-circle'></div><div class='icon-fix'></div></div></div>";
+    let htmlError = "<div class='sa'><div class='sa-error'><div class='sa-error-x'><div class='sa-error-left'></div><div class='sa-error-right'></div></div><div class='sa-error-placeholder'></div><div class='sa-error-fix'></div></div></div>";
 
+    document.getElementById("contenedor-envcorreo").innerHTML = htmlLoading;
+    document.getElementById("contenedor-envcorreo").style.backgroundColor = "#fff";
+
+    let advEnvCorreo = document.getElementById("contenedor-envcorreo");
+    let bannerEC = document.getElementById("bg-envcorreo");
+    let txtEC = document.getElementById("text-envcorreo");
+
+    const datosCorreo = {
+      'subject': "Prueba de Correo",
+      'de': "electronicos@diskcoversystem.com",
+      'mensaje': "Prueba de Envio de Correos",
+      'adjunto': "",
+      'credito_no': '',
+      'tipoDeEnvio': '',
+      'listaMail': null,
+      'para': 'tedalemorvel@gmail.com;'
+    };
+
+    advEnvCorreo.classList.add("cont-ec-open");
+    $.ajax({
+        data:  {'data': datosCorreo},
+        url:   './inventario/sv_envio_correo.php',
+        type:  'post',
+    })
+    .done(msg => {
+        if(msg == "success"){
+          bannerEC.innerHTML = htmlSuccess;
+          advEnvCorreo.style.backgroundColor = "#009df9";
+          txtEC.innerText = "El correo ha sido enviado con exito";
+        }else{
+          bannerEC.innerHTML = htmlError;
+          bannerEC.style.backgroundColor = "#F27474";
+          advEnvCorreo.style.backgroundColor = "#F27474";
+          txtEC.innerText = "Ocurrió un error al envíar el correo";
+        }
+        txtEC.style.color = "#fff";
+        txtEC.style.textAlign = "center";
+        txtEC.style.fontWeight = "700";
+        
+        setTimeout(function() {
+          advEnvCorreo.classList.remove("cont-ec-open");
+        }, 3000);
+
+    });
+
+  }
+</script>
+<div id="contenedor-envcorreo" class="contenedor-envcorreo">
+  <div class="bg-envcorreo" id="bg-envcorreo">
+    <img id="load-gif" src="../../img/gif/correo_fin.gif" alt="Enviando correo">
+  </div>
+  <div class="text-envcorreo" id="text-envcorreo">Estimado usuario, su correo está siendo procesado para ser envíado...</div>
+</div>
 <div class="container-lg">
   <div class="row">
     <div class="col-lg-6 col-sm-10 col-md-6 col-xs-12">
@@ -295,7 +701,12 @@ function contracuenta()
           <button title="Guardar"  class="btn btn-default" onclick="">
             <img src="../../img/png/grabar.png" >
           </button>
-        </div>     
+        </div> 
+        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
+          <button title="Enviar"  class="btn btn-default" id="enviar_btn" onclick="enviar_correo()">
+            <img src="../../img/png/send_email.png" style="height:32px; width:32px">
+          </button>
+        </div>    
  </div>
 </div>
 <div class="container">
