@@ -2,7 +2,7 @@ var lib = window.lib || { }
 
 lib.EmailsInput = (function(utils) {
   'use strict'
-  const keycode = { comma: 44, enter: 13, backspace: 8 }
+  const keycode = { comma: 44, dotcomma: 59, enter: 13, backspace: 8 }
 
   const EmailsInput = function(inputContainerNode, options) {
     this._options = buildOptions(options)
@@ -68,8 +68,9 @@ console.log(email);
 
   function buildOptions(givenOptions) {
     const options = givenOptions || { }
+    // console.log(givenOptions)
     options.placeholder = options.placeholder || 'añadir email ...'
-    options.triggerKeyCodes = options.triggerKeyCodes || [keycode.enter, keycode.comma]
+    options.triggerKeyCodes = options.triggerKeyCodes || [keycode.enter, keycode.comma, keycode.dotcomma]
     options.pasteSplitPattern = options.pasteSplitPattern || /(?:,| )+/
     return options
   }
@@ -104,6 +105,7 @@ console.log(email);
   }
     
   function setEventListeners(inputContainerNode, options) {
+    // console.log(options)
     const factory = utils.dom.makeEventListenerFactory(inputContainerNode)
     const addEventListener = factory.addEventListener
 
@@ -153,6 +155,7 @@ console.log(email);
     })
 
     addEventListener('keypress', function(event) {
+      // console.log(event.keyCode);
       if (options.triggerKeyCodes.indexOf(event.keyCode) < 0)
         return
       event.preventDefault()
@@ -160,6 +163,7 @@ console.log(email);
     })
 
     addEventListener('keydown', function(event) {
+      // console.log(event.keyCode);
       if (event.keyCode === keycode.backspace && !event.target.value) {
         const chips = getChips(inputContainerNode)
         if (!chips.length) return

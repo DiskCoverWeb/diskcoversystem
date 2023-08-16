@@ -81,6 +81,11 @@ if(isset($_GET['actualizar_kardex']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->actualizar_kardex($parametros));
 }
+if(isset($_GET['validar_existencia']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->validar_existencia($parametros));
+}
 
 
 class listar_anularC
@@ -602,6 +607,11 @@ class listar_anularC
 
         return 1;
         // MsgBox "Proceso Terminado"
+	}
+
+	function validar_existencia($parametros)
+	{
+		print_r($parametros);die();
 	}
 
 }

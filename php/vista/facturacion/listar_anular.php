@@ -499,6 +499,64 @@ function resultado_sri()
      });
  }
 
+ function imprimir()
+ {
+    var tc = $('#DCTipo').val();
+    var serie = $('#DCSerie').val();
+    var factura = $('#DCFact option:selected').text();
+    var auto = $('#DCFact').val();
+    var ci = $('#LabelCodigo').val();
+    var parametros = {'TC':tc,'Serie':serie,'Factura':factura,'auto':auto}
+    if(tc=='' || serie=='' || auto == '')
+    {
+        Swal.fire('Seleccione un Documento','','info');
+        return false;
+    }
+
+    switch(tc) {
+    case 'FA':
+     src = '../controlador/facturacion/lista_facturasC.php?ver_fac=true&codigo='+factura+'&ser='+serie+'&ci='+ci+'&auto='+auto+'&per=.';     
+    break;
+    case 'LC':
+     src = '../controlador/facturacion/lista_liquidacionCompraC.php?ver_fac=true&codigo='+factura+'&ser='+serie+'&ci='+ci+'&per=.';       
+    break;
+    case 'NC':
+        var url = '../controlador/facturacion/lista_notas_creditoC.php?Ver_nota_credito=true&nota='+factura+'&serie='+serie;  
+    break;
+    case 'GR':
+     src = '../controlador/facturacion/lista_guia_remisionC.php?Ver_guia_remision=true&tc='+tc+'&factura='+factura+'&serie='+serie+'&Auto='+auto+'&AutoGR='+auto;   
+    break;
+    case 'OP':
+    // code block
+    break;
+      default:
+        // code block
+    }
+
+    $.ajax({
+        type: "POST",
+        url: '../controlador/facturacion/listar_anularC.php?validar_existencia=true',
+        data:{parametros:parametros}, 
+        dataType: 'json',
+        success: function(data) {
+            if(data==1)
+            {
+                Swal.fire("Proceso Terminado","",'success');
+            }
+            console.log(data);
+       
+        },
+        error: function () {
+            $('#myModal_espera').modal('hide');
+            alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+        }
+    });
+
+
+
+    window.open(src, '_blank');
+ }
+
 
 
 </script>
@@ -546,12 +604,12 @@ function resultado_sri()
       <!-- <span class="fa fa-caret-down"></span> -->
     </button>
       <ul class="dropdown-menu">
-        <li><a href="#" id="imprimir_pdf">PDF Factura</a></li>
-        <li><a href="#" id="imprimir_pdf_2">PDF Liquidacion de Compra</a></li>
-        <li><a href="#" id="imprimir_pdf">PDF Nota de credito</a></li>
-        <li><a href="#" id="imprimir_pdf_2">PDF Guia de Remision</a></li>
-        <li><a href="#" id="imprimir_pdf">PDF Orden de Produccion</a></li>
-        <li><a href="#" id="imprimir_pdf_2">PDF Donaciones</a></li>      
+        <li><a href="#" id="imprimir_FA" onclick="imprimir()">PDF Factura</a></li>
+        <li><a href="#" id="imprimir_LC" onclick="imprimir()">PDF Liquidacion de Compra</a></li>
+        <li><a href="#" id="imprimir_NC" onclick="imprimir()">PDF Nota de credito</a></li>
+        <li><a href="#" id="imprimir_GR" onclick="imprimir()">PDF Guia de Remision</a></li>
+        <li><a href="#" id="imprimir_OP" onclick="imprimir()">PDF Orden de Produccion</a></li>
+        <li><a href="#" id="imprimir_DO" onclick="imprimir()">PDF Donaciones</a></li>      
       </ul>
     </div>
   </div>

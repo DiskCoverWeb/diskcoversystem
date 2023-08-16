@@ -286,8 +286,8 @@ class db
            	// echo "<script type='text/javascript'>alert('Estructura procesco almacenado')</script>";
            	// die();
            	// echo "Error en consulta PA.\n";  
-           	// $respuesta = -1;
-           	die( print_r("<script type='text/javascript'>alert('Estructura procesco almacenado')</script>", true));  
+           	$respuesta = -1;
+           	// die( print_r("<script type='text/javascript'>alert('Estructura procesco almacenado')</script>", true));  
            }else{
 				   sqlsrv_close($conn);
 				   // if($retorna)
