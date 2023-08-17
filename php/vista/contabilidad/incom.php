@@ -141,6 +141,21 @@
     //   }
     // });
 
+     window.addEventListener("message", function(event) {
+        if (event.data === "closeModal") {
+            $('#modal_subcuentas').modal('hide');
+        }
+    });
+     window.addEventListener("message", function(event) {
+        if (event.data === "closeModalG") {
+            $('#modal_subcuentas').modal('hide');
+            cargar_tablas_contabilidad();
+            cargar_totales_aseintos();
+// cargar_tablas_sc()
+// cargar_tablas_retenciones()
+// cargar_tablas_tab4()
+        }
+    });
 
 
 
@@ -165,16 +180,25 @@
       });
     }
 
-    function benefeciario_selec()
+    function benefeciario_edit()
     {
-      var valor = $('#beneficiario1').val();
-      parte = valor.split('-');
-      let url = window.location.href;
-       // url =  url.toString().slice(0,url.length-1);
-       url = url.split('b=1');
-      // var url ="../vista/contabilidad.php?mod=contabilidad&acc=incom&acc1=Ingresar%20Comprobantes&b=1";
-      // console.log(data);
-      window.location.href= url[0]+"b=1&cliente="+parte[0];
+      var bene = $("#beneficiario1").val();
+      var parametros = 
+      {
+        'beneficiario' : bene,
+      }
+      $.ajax({
+        data:  {parametros:parametros},
+         url:   '../controlador/contabilidad/incomC.php?edit_beneficiario=true',
+        type:  'post',
+        dataType: 'json',
+          success:  function (response) {
+            bene = bene.split('-');
+            $('#ruc').val(bene[0]);
+            $('#email').val(bene[1]);
+
+        }
+      });       
     }
 
     function cargar_beneficiario(ci)
@@ -729,6 +753,7 @@
     function ingresar_asiento()
     {
     var partes= $('#cuentar option:selected').text();
+    var bene = $('#beneficiario1').val();
     var partes = partes.split('-');
     var dconcepto1 = partes[1].trim();
     var codigo = $("#codigo").val();
@@ -757,6 +782,7 @@
         "cotizacion" : cotizacion,
         "con" : con,
         "t_no" : '1',
+        "bene":bene,
         "ajax_page": 'ing1',                        
       };
     $.ajax({
@@ -804,9 +830,9 @@
         titulos(tipo);
         var src ="../vista/modales.php?FSubCtas=true&mod=&tipo_subcta="+tipo+"&OpcDH="+deha+"&OpcTM="+moneda+"&cta="+cta+"&tipoc="+tipoc+"#";
         $('#modal_subcuentas').modal('show');
-         adjustIframeHeight();
         $('#titulo_frame').text('Ingreso de sub cuenta por cobras');
         $('#frame').attr('src',src).show();
+         adjustIframeHeight(300);
       }else if(tipo=="CC")
       {
          
@@ -871,7 +897,7 @@
           
            var fec = $('#fecha1').val();
            var opc_mult = $('#con').val();
-           var src ="../vista/modales.php?FCompras=true&mod=&prv="+prv+"&ben="+ben+"&fec="+fec+"&opc_mult="+opc_mult+"#";
+           var src ="../vista/modales.php?FCompras=true&mod=&prv="+prv+"&ben="+ben+"&fec="+fec+"&opc_mult="+opc_mult+"&tipo=";
            $('#frame').attr('src',src).show();
 
            // $('#frame').css('height','100%').show();
@@ -1249,10 +1275,15 @@
     }
   }
 
-  function adjustIframeHeight() {
+  function adjustIframeHeight(medida=false) {
     var iframe = window.parent.document.getElementById('frame'); // Reemplaza 'miIframe' con el ID de tu iframe
+    menos = 200;
+    if(medida)
+    {
+       menos = medida;
+    }
     if (iframe) {
-      iframe.style.height = (document.documentElement.scrollHeight-300) + 'px';
+      iframe.style.height = (document.documentElement.scrollHeight-menos) + 'px';
     }
   }
 
@@ -1318,7 +1349,7 @@
                                  <div class="input-group-addon input-xs">
                                    <b>BENEFICIARIO:</b>
                                  </div>                        
-                              <select id="beneficiario1" name='beneficiario1' class='form-control' onchange="benefeciario_selec()">
+                              <select id="beneficiario1" name='beneficiario1' class='form-control' onchange="benefeciario_edit()">
                                 <option value="">Seleccione beneficiario</option>                                
                               </select>
                               <input type="hidden" name="beneficiario2" id="beneficiario2" value='' />
@@ -1721,8 +1752,8 @@
       </div>
       <div class="modal-footer">
           <!-- <button type="button" class="btn btn-primary" onclick="cambia_foco();">Guardar</button> -->
-          <button style="display: none;" id="btn_salir" type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-        </div>
+          <button style="display: none;" id="btn_salir" id="btn_cerrar_sub" type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
     </div>
   </div>
 </div>

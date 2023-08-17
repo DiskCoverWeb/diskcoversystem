@@ -248,6 +248,11 @@ if(isset($_GET['eliminar_asientos']))
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->eliminar_asientos($parametros));
 }
+if(isset($_GET['edit_beneficiario']))
+{
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->edit_beneficiario($parametros));
+}
 
 
 
@@ -1912,6 +1917,8 @@ function ingresar_asiento($parametros)
 		$dconcepto1 = $parametros['dconcepto1'];
 		$codigo = $parametros['codigo'];
 		$cuenta = $parametros['cuenta'];
+		$bene = explode('-', $parametros['bene']);
+		$bene = $bene[0];
 		if(isset($parametros['t_no']))
 		{
 			$t_no = $parametros['t_no'];
@@ -2019,7 +2026,7 @@ function ingresar_asiento($parametros)
 		if($i==0)
 		{
 			
-			$res = $this->modelo->insertar_aseinto($codigo,$cuenta,$parcial,$debe,$haber,$chq_as,$dconcepto1,$efectivo_as,$t_no,$A_No);
+			$res = $this->modelo->insertar_aseinto($codigo,$cuenta,$parcial,$debe,$haber,$chq_as,$dconcepto1,$efectivo_as,$t_no,$A_No,$bene);
 			if($res==-1)  
 			{  
 				 return array('resp'=>-1,'tbl'=>'','totales'=>'','obs'=>'no se pudo insertar en asiento');  
@@ -2047,6 +2054,27 @@ function eliminar_asientos($parametros)
 	return $this->modelo->BorrarAsientos($Trans_No,true);
 }
 
+
+function edit_beneficiario($parametros)
+{
+	$bene =  explode('-',$parametros['beneficiario']);
+	$bene = $bene[0];
+
+	$datos = $this->modelo->asientos();
+	if(count($datos)>0)
+	{
+		SetAdoAddNew("Asiento");          
+        SetAdoFields("BENEFICIARIO",$bene);
+
+        SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
+        SetAdoFieldsWhere('CodigoU',$_SESSION['INGRESO']['CodigoU']);
+        SetAdoFieldsWhere('T_No',$_SESSION['INGRESO']['modulo_']);
+        SetAdoUpdateGeneric();
+	}
+
+	// print_r($datos);die();
+	// print_r($parametros);die();
+}
 
 }
 ?>

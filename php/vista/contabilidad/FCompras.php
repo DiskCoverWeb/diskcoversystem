@@ -365,11 +365,8 @@ function contracuenta()
   }
   function limpiar_retencaion()
   {
-    // console.log('entra');
-    //$('#rbl_retencion').prop('checked',false);
     $('#modal_cuenta').modal('hide');
-    parent.location.reload();
-    // cancelar();
+     window.parent.postMessage('closeModal', '*');
   }
 
 

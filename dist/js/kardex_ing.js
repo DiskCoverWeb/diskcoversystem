@@ -513,7 +513,7 @@ function mostra_select()
 
 function grabacion()
 {
-    // $('#myModal_espera').modal('show');
+    $('#myModal_espera').modal('show');
   var  parametros= 
   {
     "IdProv":$('#DCProveedor').val(), 
@@ -578,6 +578,9 @@ function grabacion()
      "AutRetencion": $('#TxtNumUnoAutComRet').val(),
 
   }
+
+  // console.log(parametros);
+  // return false;
    $.ajax({
       data:  {parametros:parametros},
       url:   '../controlador/inventario/registro_esC.php?grabacion=true',
@@ -586,16 +589,13 @@ function grabacion()
         success:  function (response) {
           if(response==1) 
             {
-              if(tipo2!='')
+              if(tipo2='')
               {
                  grabar_comprobante()
               }else
               {
                 $('#myModal_espera').modal('hide');
-                Swal.fire( 'Retenciones ingresadas','','success');              
-                parent.location.reload();
-                $('#iframe').css('display','none');
-                $('#myModal_espera').modal('hide');
+                 window.parent.postMessage('closeModalG', '*');
               }
                
             }
