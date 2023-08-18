@@ -151,11 +151,23 @@
             $('#modal_subcuentas').modal('hide');
             cargar_tablas_contabilidad();
             cargar_totales_aseintos();
-// cargar_tablas_sc()
-// cargar_tablas_retenciones()
-// cargar_tablas_tab4()
+            $("#codigo").val('');            
+            $("#cuentar").empty();
         }
     });
+
+     //subcuenta
+   window.addEventListener("message", function(event) {
+        if (event.data === "closeModalSubCta") {
+            $('#modal_subcuentas').modal('hide');
+             cargar_tablas_contabilidad();
+             cargar_totales_aseintos();
+            $("#codigo").val('');
+            $("#cuentar").empty();
+        }
+    });
+
+
 
 
 
@@ -1032,30 +1044,26 @@
           dataType: 'json',
             success:  function (response) {
                $('#myModal_espera').modal('hide');
-        // console.log(response);
+        console.log(response);
         if(response.respuesta == '3')
         {
           Swal.fire('Este documento electronico ya esta autorizado','','error');
 
-          }else if(response.respuesta == 1 || response==1)
+          }else if(response.respuesta == 1)
           {
             // Swal.fire('Este documento electronico autorizado','','success');
              eliminar_ac();
-                Swal.fire({
-                   title: 'Comprobante Generado',
-                   text: "",
-                   type: 'success',
-                   showCancelButton: false,
-                   confirmButtonColor: '#3085d6',
-                   cancelButtonColor: '#d33',
-                   confirmButtonText: 'OK!'
-                 }).then((result) => {
-                   if (result.value==true) { 
-                    var url = location.href; 
-                    location.reload(url+'&reload=1');
-                   }
-                 });
-          
+             Swal.fire("Comprobante Generado","","success").then(function(){ eliminar_todo_asisntoB();
+             cargar_tablas_contabilidad();
+             cargar_tablas_tab4();
+             cargar_tablas_retenciones();
+             cargar_tablas_sc();
+             numero_comprobante();
+             url = "../controlador/contabilidad/comproC.php?reporte&comprobante="+response.NumCom+"&TP="+parametros['tip'];
+             window.open(url,"_blank");
+
+             });
+                         
           }else if(response.respuesta == '2')
           {
             Swal.fire('XML devuelto','','info',);
@@ -1070,15 +1078,18 @@
             Swal.fire('Error por: '+response.respuesta,'','info');
           }
 
-          if(response.respuesta==1 || response==1)
-          {
-             Swal.fire('Retencion ingresada','','success');
-             eliminar_todo_asisntoB();
-             cargar_tablas_contabilidad();
-             cargar_tablas_tab4();
-             cargar_tablas_retenciones();
-             cargar_tablas_sc();
-          }           
+          // if(response.respuesta==1 || response==1)
+          // {
+          //    Swal.fire('Retencion ingresada','','success');
+          //    eliminar_todo_asisntoB();
+          //    cargar_tablas_contabilidad();
+          //    cargar_tablas_tab4();
+          //    cargar_tablas_retenciones();
+          //    cargar_tablas_sc();
+          //    numero_comprobante();
+          //    url = "../controlador/contabilidad/comproC.php?reporte&comprobante=1000195&TP=CD";
+          //    window.open(url,"_blank");
+          // }           
 
           }
         });
@@ -1287,6 +1298,16 @@
     }
   }
 
+  function validar_fecha()
+  {
+    if($('#beneficiario1').val()=='')
+      {
+        $('#beneficiario1').select2('open');
+      }
+
+    numero_comprobante();
+  }
+
 
 </script>
 
@@ -1339,7 +1360,7 @@
                                  <div class="input-group-addon input-xs">
                                    <b>FECHA:</b>
                                  </div>
-                                 <input type="date" class="form-control input-xs" id="fecha1" placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="if($('#beneficiario1').val()==''){$('#beneficiario1').select2('open');}">
+                                 <input type="date" class="form-control input-xs" id="fecha1" placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="validar_fecha()">
                                </div>
                           <!-- </div> -->
                         </div>

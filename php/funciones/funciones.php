@@ -489,12 +489,12 @@ function Rubro_Rol_Pago($Detalle_Rol)
 
 
 
-function ReadSetDataNum($SQLs,$ParaEmpresa =false,$Incrementar = false) // optimizado por javier farinango // pendiente a revicion repetida
+function ReadSetDataNum($SQLs,$ParaEmpresa =false,$Incrementar = false,$Fecha=false) // optimizado por javier farinango // pendiente a revicion repetida
 {
   $result = '';
   $NumCodigo = 0;
   $NuevoNumero = False;
-  $FechaComp = '';
+  $FechaComp = $Fecha;
   $Si_MesComp = false;
   if(strlen($FechaComp) < 10 || $FechaComp == '00/00/0000')
   {
@@ -521,7 +521,7 @@ function ReadSetDataNum($SQLs,$ParaEmpresa =false,$Incrementar = false) // optim
     $MesComp = '';
     if(strlen($FechaComp) >= 10)
     {
-    	$MesComp = date('m');;
+      $MesComp = date("m", strtotime($FechaComp));
     }
     if($MesComp == '')
     {

@@ -589,7 +589,7 @@ function grabacion()
         success:  function (response) {
           if(response==1) 
             {
-              if(tipo2='')
+              if(tipo2!='')
               {
                  grabar_comprobante()
               }else

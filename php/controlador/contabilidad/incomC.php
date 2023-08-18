@@ -589,12 +589,14 @@ class incomC
   		if(count($AdoAsientos)> 0)
   		{
           if($parametros['NuevoComp']){
-             If($parametros['tip']=='CD'){ $NumComp = ReadSetDataNum("Diario", True, True);}
-             If($parametros['tip']=='CI'){ $NumComp = ReadSetDataNum("Ingresos", True, True);}
-             If($parametros['tip']=='CE'){ $NumComp = ReadSetDataNum("Egresos", True, True);}
-             If($parametros['tip']=='ND'){ $NumComp = ReadSetDataNum("NotaDebito", True, True);}
-             If($parametros['tip']=='NC'){ $NumComp = ReadSetDataNum("NotaCredito", True, True);}
+             If($parametros['tip']=='CD'){ $NumComp = ReadSetDataNum("Diario", True, True,$parametros['fecha']);}
+             If($parametros['tip']=='CI'){ $NumComp = ReadSetDataNum("Ingresos", True, True,$parametros['fecha']);}
+             If($parametros['tip']=='CE'){ $NumComp = ReadSetDataNum("Egresos", True, True,$parametros['fecha']);}
+             If($parametros['tip']=='ND'){ $NumComp = ReadSetDataNum("NotaDebito", True, True,$parametros['fecha']);}
+             If($parametros['tip']=='NC'){ $NumComp = ReadSetDataNum("NotaCredito", True, True,$parametros['fecha']);}
           }
+
+          // print_r($NumComp);die();
 
           $FechaTexto = $parametros['fecha'];
           $Co = datos_Co();
@@ -626,25 +628,24 @@ class incomC
           // ImprimirComprobantesDe False, Co
           // If CheqCopia.value Then ImprimirComprobantesDe False, Co
           BorrarAsientos($Trans_No,true);
-          $NumComp = $NumComp + 1;
-          $Co['Numero'] = $NumComp;
+          $Co['Numero'] = $NumComp + 1;
           if($ModificarComp){
              // ModificarComp = False
              $CopiarComp = False;
              // NuevoComp = True
              // Unload FComprobantes
              // Exit Sub
-             return 1;
+             return array('respuesta'=> 1,'NumCom'=>$NumComp);
           }else{
              // ModificarComp = False
              // CopiarComp = False
              $NuevoComp = True;
              // Tipo_De_Comprobante_No Co
              // MBoxFecha.SetFocus
-             return 1;
+             return array('respuesta'=> 1,'NumCom'=>$NumComp);
           }
        }else{
-       	return -2;
+       	return  array('respuesta'=>-2,'NumCom'=>$NumComp);
           // MsgBox "Warning: Falta de Ingresar datos."
           // DGAsientos.Visible = True
           // TextCodigo.SetFocus

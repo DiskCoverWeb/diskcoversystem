@@ -187,8 +187,9 @@ if(isset($_GET['tipoc']))
             success:  function (response) { 
               if(response==1)
               {
-                Swal.fire('Registrado','','success');
-                parent.location.reload();
+                // Swal.fire('Registrado','','success');                
+                 window.parent.postMessage('closeModalSubCta', '*');
+                // parent.location.reload();
                 $('#iframe').css('display','none');
               }
           }
