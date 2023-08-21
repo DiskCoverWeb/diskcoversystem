@@ -30,8 +30,8 @@
 	     </button>		   
 	  </div>
 	  <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1" style="width: fit-content;padding: 0px;">
-	      <a id='l2' class="btn btn-default" title="Anular comprobante"	href="contabilidad.php?mod=<?php echo $_SESSION['INGRESO']['modulo_'];?>&acc=compro&acc1=Comprobantes Procesados&b=1"><img src="../../img/png/anular.png" >
-				</a>
+	      <button type="button" id='l2' class="btn btn-default" title="Anular comprobante" onclick="anular_comprobante()"><img src="../../img/png/anular.png" >
+				</button>
 	  </div>
 	  <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1" style="width: fit-content;padding: 0px;">
 	    <a id='l3' class="btn btn-default" title="Autorizar comprobante autorizado">
@@ -94,8 +94,8 @@
 		<input type="hidden" name="" id="TP" value="CD">
 		<input type="hidden" name="" id="beneficiario" value="">
 		<input type="hidden" name="" id="Co" value="">
-		<input type="hidden" name="" id="" value="">
-		<input type="hidden" name="" id="" value="">
+		<input type="hidden" name="" id="FechaComp" value="">
+		<input type="hidden" name="" id="Concepto" value="">
 			<div class="col-sm-12">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
                    <li class="nav-item active">
@@ -333,6 +333,10 @@
         		$('#txt_saldo').val(response.saldo);
         		$('#beneficiario').val(response.beneficiario);
         		$('#Co').val(response.Co);
+        		$('#FechaComp').val(response.Co.fecha);
+        		$('#Concepto').val(response.Co.Concepto);
+
+        		console.log(response.Co);
 
         	}
             $('#myModal_espera').modal('hide');
@@ -405,18 +409,53 @@
 	 	var va = $('#Co').val();
 	 	var mod = '<?php echo $_SESSION['INGRESO']['modulo_']; ?>';
 	 	 Swal.fire({
-                 title: 'Esta seguro que quiere modificar el comprobante '+ti+ 'No. '+co+' de '+be,
-                 text: "Esta usted seguro de que quiere modificar!",
-                 type: 'warning',
-                 showCancelButton: true,
-                 confirmButtonColor: '#3085d6',
-                 cancelButtonColor: '#d33',
-                 confirmButtonText: 'Si!'
-               }).then((result) => {
-                 if (result.value==true) {
-                 	location.href='../vista/contabilidad.php?mod='+mod+'&acc=incom&acc1=Ingresar%20Comprobantes&b=1&modificar=1&variables='+va+'#';
-                 }
-               })
+         title: 'Esta seguro que quiere modificar el comprobante '+ti+ 'No. '+co+' de '+be,
+         text: "Esta usted seguro de que quiere modificar!",
+         type: 'warning',
+         showCancelButton: true,
+         confirmButtonColor: '#3085d6',
+         cancelButtonColor: '#d33',
+         confirmButtonText: 'Si!'
+       }).then((result) => {
+         if (result.value==true) {
+         	location.href='../vista/contabilidad.php?mod='+mod+'&acc=incom&acc1=Ingresar%20Comprobantes&b=1&modificar=1&variables='+va+'#';
+         }
+       })
+	 }
+
+	 function anular_comprobante()
+	 {
+
+	 	Swal.fire({
+			  title: 'Seguro de Anular El Comprobante No. '+$('#tipoc').val()+' - '+$('#ddl_comprobantes').val(),
+			  // text: "You won't be able to revert this!",
+			  type: 'warning',
+			  showCancelButton: true,
+			  confirmButtonColor: '#3085d6',
+			  cancelButtonColor: '#d33',
+			  confirmButtonText: 'Yes, delete it!'
+			}).then((result) => {
+			  if (result.value) {
+			  	$('#myModal_espera').modal('show');
+			    var parametros = 
+						{	
+							'numero':$('#ddl_comprobantes').val(),
+							'item':$('#txt_empresa').val(),
+							'TP':$('#tipoc').val(),		
+							'Fecha':$('#FechaComp').val(),
+							'Concepto':$('#Concepto').val(),
+						}
+						 $.ajax({
+				      data:  {parametros:parametros},
+				       url:   '../controlador/contabilidad/comproC.php?anular_comprobante=true',
+				      type:  'post',
+				      dataType: 'json',
+				        success:  function (response) {
+				        	$('#myModal_espera').modal('hide');
+				      }
+				    }); 
+			  }
+			})			
 	 }
 
 </script>

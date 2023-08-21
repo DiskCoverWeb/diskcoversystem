@@ -162,5 +162,105 @@ class comproM
 			$sql=$sql."ORDER BY T.Cta,T.Codigo,T.Fecha_V,T.Factura ";
 		return $this->db->datos($sql);		
 	}
+
+	function Actualizamos_Comprobante($Contra_Cta,$AnularComprobanteDe)
+	{
+		 $sql = "UPDATE Comprobantes 
+		        SET T = '".G_ANULADO."', Concepto = '".$Contra_Cta."' ".$AnularComprobanteDe;
+		return $this->db->String_Sql($sql);
+	}
+
+	function Actualizar_Transacciones($AnularComprobanteDe){
+		$sql = "UPDATE Transacciones 
+		        SET T = '".G_ANULADO."',Debe = 0,Haber = 0,Saldo = 0 ".$AnularComprobanteDe;
+		return $this->db->String_Sql($sql);
+	}
+	function Actualizar_Trans_SubCtas($AnularComprobanteDe){
+		$sql = "UPDATE Trans_SubCtas 
+		        SET T = '".G_ANULADO."',Debitos = 0,Creditos = 0,Saldo_MN = 0,Saldo_ME = 0,Prima = 0 ".$AnularComprobanteDe;
+	    return $this->db->String_Sql($sql);
+	}
+
+	function Actualizar_Retencion($AnularComprobanteDe)
+	{
+		 $sql = "DELETE
+	        FROM Trans_Air ".$AnularComprobanteDe;
+	      $this->db->String_Sql($sql);
+	      $sql = "DELETE  
+	        FROM Trans_Compras ".$AnularComprobanteDe;
+	      $this->db->String_Sql($sql);
+	      $sql = "DELETE  
+	        FROM Trans_Ventas ".$AnularComprobanteDe;
+	      $this->db->String_Sql($sql);
+	      $sql = "DELETE  
+	        FROM Trans_Exportaciones ".$AnularComprobanteDe;
+	      $this->db->String_Sql($sql);
+	      $sql = "DELETE  
+	        FROM Trans_Importaciones ".$AnularComprobanteDe;
+	      $this->db->String_Sql($sql);
+	}
+
+	function Rol_de_Pagos($AnularComprobanteDe)
+	{
+		$sql = "DELETE 
+		       FROM Trans_Rol_de_Pagos ".$AnularComprobanteDe;
+		 $this->db->String_Sql($sql);
+	}
+	function Trans_Kardex($AnularComprobanteDe)
+	{
+		$sql = "SELECT Codigo_Inv 
+				FROM Trans_Kardex ".$AnularComprobanteDe;
+		return $this->db->datos($sql);
+	}
+
+	function Trans_Kardex_update($Item,$codigo)
+	{
+		$sql = "UPDATE Trans_Kardex 
+             	SET Procesado = 0 
+             	WHERE Item = '".$Item."' 
+             	AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+             	AND Codigo_Inv = '".$codigo."' ";
+        $this->db->String_Sql($sql);
+	}
+
+	function Trans_Kardex_update_cierre($AnularComprobanteDe,$FechaIni,$FechaFin)
+	{
+		$sql = "UPDATE Trans_Kardex 
+              SET Procesado = 0, TP = '.', Numero = 0 
+              & AnularComprobanteDe
+              AND Fecha BETWEEN '".$FechaIni."' and '".$FechaFin."' 
+              AND LEN(Serie) > 1 
+              AND Factura <> 0 ";
+        $this->db->String_Sql($sql);
+	}
+
+	function Trans_Kardex_delete($AnularComprobanteDe)
+	{
+		$sql = "DELETE 	FROM Trans_Kardex ".$AnularComprobanteDe.
+               "AND TC = '".G_NINGUNO."' 
+              	AND Serie = '".G_NINGUNO."' 
+              	AND Factura = 0 ";
+        $this->db->String_Sql($sql);
+	}
+
+	function Transacciones($AnularComprobanteDe)
+	{
+      $sql = "SELECT Cta 
+           FROM Transacciones ".
+           $AnularComprobanteDe.
+           "GROUP BY Cta 
+           ORDER BY Cta ";
+       	return $this->db->datos($sql);
+	}
+
+	function Transacciones_update($SubCta)
+	{
+		 $sql = "UPDATE Transacciones 
+           		SET Procesado = 0
+           		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+           		AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+           		AND Cta = '".$SubCta."' ";	
+        $this->db->String_Sql($sql);	     	
+	}
 }
 ?>

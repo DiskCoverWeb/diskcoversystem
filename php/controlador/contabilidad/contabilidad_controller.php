@@ -968,9 +968,9 @@ function listar_comprobantes($parametros)
          $tbl2_2 = $modelo->ventas_comprobantes($parametros['TP'],$parametros['numero'],$parametros['item'],$Fecha);
 
          $Co =array('T'=>$T,'fecha'=>$Fecha,'CodigoB'=>$CodigoB,'beneficiario'=>$Beneficiario,'Concepto'=>$Concepto,'Efectivo'=>$Efectivo,'Cheque'=>$Cheque,'Cta_Banco'=>$Cta_Banco,'TP'=>$parametros['TP'],'Numero'=>$parametros['numero'],'Item'=>$parametros['item']);
-         $Co = serialize($Co);
-         $Co = base64_encode($Co);
-         $Co = urlencode($Co);
+         // $Co = serialize($Co);
+         // $Co = base64_encode($Co);
+         // $Co = urlencode($Co);
 		return array('tbl1'=>$tr['tbl'],'tbl4'=>$in['tbl'],'tbl3'=>$tbl3,'tbl2'=>$tbl2,'tbl2_1'=>$tbl2_1,'tbl2_2'=>$tbl2_2,'Debe'=>number_format($SumaDebe,2),'haber'=>number_format($SumaHaber,2),'total'=>number_format($Total,2),'saldo'=>number_format($Saldo,2),'beneficiario'=>$Beneficiario,'Co'=>$Co);	
 	}
 }
