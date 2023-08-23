@@ -1080,6 +1080,7 @@ class incomM
        AND C.Item = '".$parametros['Item']."'
        AND C.Periodo = '".$_SESSION['INGRESO']['periodo']."'
        AND C.Codigo_B = Cl.Codigo ";
+       // print_r($sql);die();
 		  $result = $this->conn->datos($sql);
 	   return $result;
    }

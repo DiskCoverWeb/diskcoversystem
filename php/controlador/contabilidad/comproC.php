@@ -168,14 +168,14 @@ class comproC
 		      if(strpos($Co['Concepto'], "(ANULADO)") !== false){
 		         $Contra_Cta = $Co['Concepto'];
 		      }else{
-		         $MotivoAnulacion =  strtoupper("FORMULARIO DE ANULACION");
+		         $MotivoAnulacion =  $parametros['Motivo_Anular'];
 		         $Contra_Cta = "(ANULADO) ";
 		         if($MotivoAnulacion <> ""){
 		         	$Contra_Cta = $Contra_Cta." [MOTIVO: ".$MotivoAnulacion."], ";
 		         	$Contra_Cta = $Contra_Cta.$Co['Concepto'];
 		         }
 		      }
-		        $Contra_Cta = substr($Contra_Cta, 1, 120);
+		        $Contra_Cta = substr($Contra_Cta, 0, 120);
 				//'Actualizamos Comprobante
 		      	$this->modelo->Actualizamos_Comprobante($Contra_Cta,$AnularComprobanteDe);
 		     	// 'Actualizar Transacciones

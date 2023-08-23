@@ -11,7 +11,7 @@
     $variables_mod = '';
     $NuevoComp = 1;
     $load = 0;
-    if(isset($_GET["modificar"])){ $variables_mod=$_GET["variables"]; $NuevoComp=0;}
+    if(isset($_GET["modificar"])){ $variables_mod=$_GET["TP"].'-'.$_GET["com"]; $NuevoComp=0;}
     if(isset($_GET["num_load"])){$load = 1;}
 ?>
 <style>
@@ -73,14 +73,15 @@
        listar_comprobante();
        let url = window.location.href; 
        // console.log(url);
-       urln =  url.toString().slice(0,url.length-1);
+       // urln =  url.toString().slice(0,url.length-1);
        // console.log(url);
-       window.location.href= urln+"&num_load=1#";
+       window.location.href= url+"&num_load=1#";
       }
       Tipo_De_Comprobante_No();
       if(cli=='')
       {
        Llenar_Encabezado_Comprobante();
+       // cargar_totales_aseintos();
       }
     }else
     {
@@ -222,6 +223,7 @@
       type:  'get',
       dataType: 'json',
         success:  function (response) {
+          console.log(response);
           var valor = response[0].id;
           var parte = valor.split('-');
            $('#ruc').val(parte[0]);
@@ -977,7 +979,7 @@
     // var comprobante = com.split('.');
     if((debe != haber) || (debe==0 && haber==0) )
     {
-      Swal.fire( 'Las transacciones no cuadran correctamente  corrija los resultados de las cuentas','','info');
+      Swal.fire( 'Las transacciones no cuadran correctamente corrija los resultados de las cuentas','','info');
       return false;
     }
     if(ben =='')

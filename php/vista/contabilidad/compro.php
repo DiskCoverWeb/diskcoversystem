@@ -89,13 +89,70 @@
   	</div>		
 	</div>
 </div>
+<br>
+<div class="row">	
+		<div class="col-sm-3">    
+       <div class="input-group">
+         <div class="input-group-addon input-xs">
+           <b>FECHA:</b>
+         </div>
+         <input type="date" class="form-control input-xs" id="MBFecha" placeholder="01/01/2019" value="2023-08-23" maxlength="10" size="15" onblur="validar_fecha()">
+       </div>
+	  </div>
+		<div class="col-sm-6 text-center">
+			<div class="input-group">
+         <div class="input-group-addon input-xs">
+           <b id="LabelEst">Normal</b>
+         </div>       
+       </div>
+
+       	<!-- <label>Normal</label> -->
+		</div>
+		<div class="col-sm-3">    
+       <div class="input-group">
+         <div class="input-group-addon input-xs">
+           <b>CANTIDAD:</b>
+         </div>
+         <input type="" class="form-control input-xs" id="LabelCantidad">
+       </div>
+	  </div>
+</div>
+<div class="row">
+	<div class="col-sm-9">    
+       <div class="input-group">
+         <div class="input-group-addon input-xs">
+           <b>PAGADO A:</b>
+         </div>
+         <input type="text" class="form-control input-xs" id="LabelRecibi">
+       </div>
+	  </div>	
+	  <div class="col-sm-3">    
+       <div class="input-group">
+         <div class="input-group-addon input-xs">
+           <b>EFECTIVO:</b>
+         </div>
+         <input type="text" class="form-control input-xs" id="LabelFormaPago" >
+       </div>
+	  </div>	
+</div>
+<div class="row">
+	<div class="col-sm-12">    
+       <div class="input-group">
+         <div class="input-group-addon input-xs">
+           <b>POR CONCEPTO DE :</b>
+         </div>
+         <!-- <input type="text" class="form-control input-xs" id="LabelFormaPago" > -->
+         <textarea id="LabelConcepto" class="form-control input-xs"></textarea>
+       </div>
+	  </div>		
+</div>
 <div class="row">
 		<input type="hidden" name="" id="txt_empresa" value="<?php echo $_SESSION['INGRESO']['item'];?>">
 		<input type="hidden" name="" id="TP" value="CD">
-		<input type="hidden" name="" id="beneficiario" value="">
+		<!-- <input type="hidden" name="" id="beneficiario" value=""> -->
 		<input type="hidden" name="" id="Co" value="">
 		<input type="hidden" name="" id="FechaComp" value="">
-		<input type="hidden" name="" id="Concepto" value="">
+		<!-- <input type="hidden" name="" id="Concepto" value=""> -->
 			<div class="col-sm-12">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
                    <li class="nav-item active">
@@ -176,22 +233,46 @@
 			</div>			
 </div>
 <div class="row">
-			<div class="col-sm-2">
-			  <b>Elaborador por</b>				
-			</div>
-			<div class="col-sm-4">
-			  <input type="text" name="" readonly="" class="form-control input-sm">		
-			</div>
-			<div class="col-sm-2">
-			  <b>Totales</b>				
-			</div>
-			<div class="col-sm-2">			  				
-			  <input type="text" name="txt_debe" readonly="" class="form-control input-sm" id="txt_debe">
-			</div>			
-			<div class="col-sm-2">
-			  <input type="text" name="txt_haber" readonly="" class="form-control input-sm" id="txt_haber">				
-			</div>
-		</div>
+	<div class="col-sm-2">
+	  <b>Elaborador por</b>				
+	</div>
+	<div class="col-sm-4">
+	  <input type="text" name="" readonly="" class="form-control input-sm">		
+	</div>
+	<div class="col-sm-2">
+	  <b>Totales</b>				
+	</div>
+	<div class="col-sm-2">			  				
+	  <input type="text" name="txt_debe" readonly="" class="form-control input-sm" id="txt_debe">
+	</div>			
+	<div class="col-sm-2">
+	  <input type="text" name="txt_haber" readonly="" class="form-control input-sm" id="txt_haber">				
+	</div>
+</div>
+
+<div id="myModal_anular" class="modal fade myModalNuevoCliente" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Formulario de Anulacion</h4>
+            </div>
+            <div class="modal-body">
+            	<div class="row">
+            		<div class="col-sm-12">
+            			<b>Motivo de la anulacion</b>
+            			<input type="" name="" id="txt_motivo_anulacion" class="form-control input-sm">
+            		</div>
+            	</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="anular_comprobante_procesar()">Aceptar</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
 
 
 <script>
@@ -331,12 +412,20 @@
         		$('#txt_haber').val(response.haber);        		
         		$('#txt_total').val(response.total);
         		$('#txt_saldo').val(response.saldo);
-        		$('#beneficiario').val(response.beneficiario);
+        		$('#LabelRecibi').val(response.beneficiario);
         		$('#Co').val(response.Co);
         		$('#FechaComp').val(response.Co.fecha);
-        		$('#Concepto').val(response.Co.Concepto);
-
-        		console.log(response.Co);
+        		$('#LabelConcepto').val(response.Co.Concepto);
+        		$('#LabelCantidad').val(response.Debe);
+        		$('#LabelFormaPago').val(response.Co.Efectivo);
+        		if(response.Co.T=='A')
+        		{
+        			$('#LabelEst').text('ANULADO');
+        		}else
+        		{
+        			$('#LabelEst').text('NORMAL');
+        		}
+        		console.log(response);
 
         	}
             $('#myModal_espera').modal('hide');
@@ -418,14 +507,14 @@
          confirmButtonText: 'Si!'
        }).then((result) => {
          if (result.value==true) {
-         	location.href='../vista/contabilidad.php?mod='+mod+'&acc=incom&acc1=Ingresar%20Comprobantes&b=1&modificar=1&variables='+va+'#';
+         	// location.href='../vista/contabilidad.php?mod='+mod+'&acc=incom&acc1=Ingresar%20Comprobantes&b=1&modificar=1&variables='+va+'#';
+         	location.href='../vista/contabilidad.php?mod='+mod+'&acc=incom&acc1=Ingresar%20Comprobantes&b=1&modificar=1&TP='+ti+'&com='+co;
          }
        })
 	 }
 
 	 function anular_comprobante()
 	 {
-
 	 	Swal.fire({
 			  title: 'Seguro de Anular El Comprobante No. '+$('#tipoc').val()+' - '+$('#ddl_comprobantes').val(),
 			  // text: "You won't be able to revert this!",
@@ -433,29 +522,37 @@
 			  showCancelButton: true,
 			  confirmButtonColor: '#3085d6',
 			  cancelButtonColor: '#d33',
-			  confirmButtonText: 'Yes, delete it!'
+			  confirmButtonText: 'SI'
 			}).then((result) => {
 			  if (result.value) {
-			  	$('#myModal_espera').modal('show');
-			    var parametros = 
-						{	
-							'numero':$('#ddl_comprobantes').val(),
-							'item':$('#txt_empresa').val(),
-							'TP':$('#tipoc').val(),		
-							'Fecha':$('#FechaComp').val(),
-							'Concepto':$('#Concepto').val(),
-						}
-						 $.ajax({
-				      data:  {parametros:parametros},
-				       url:   '../controlador/contabilidad/comproC.php?anular_comprobante=true',
-				      type:  'post',
-				      dataType: 'json',
-				        success:  function (response) {
-				        	$('#myModal_espera').modal('hide');
-				      }
-				    }); 
+			  	$('#myModal_anular').modal('show');			  	
 			  }
 			})			
+	 }
+
+	 function anular_comprobante_procesar()
+	 {
+	 		$('#myModal_espera').modal('show');
+	    var parametros = 
+				{	
+					'numero':$('#ddl_comprobantes').val(),
+					'item':$('#txt_empresa').val(),
+					'TP':$('#tipoc').val(),		
+					'Fecha':$('#FechaComp').val(),
+					'Concepto':$('#LabelConcepto').val(),
+					'Motivo_Anular':$('#txt_motivo_anulacion').val(),
+				}
+				 $.ajax({
+		      data:  {parametros:parametros},
+		       url:   '../controlador/contabilidad/comproC.php?anular_comprobante=true',
+		      type:  'post',
+		      dataType: 'json',
+		        success:  function (response) {
+		        	$('#myModal_espera').modal('hide');
+		        	$('#myModal_anular').modal('hide');	
+		        	setTimeout(listar_comprobante, 2000);
+		      }
+		    }); 
 	 }
 
 </script>

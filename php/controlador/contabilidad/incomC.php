@@ -594,6 +594,9 @@ class incomC
              If($parametros['tip']=='CE'){ $NumComp = ReadSetDataNum("Egresos", True, True,$parametros['fecha']);}
              If($parametros['tip']=='ND'){ $NumComp = ReadSetDataNum("NotaDebito", True, True,$parametros['fecha']);}
              If($parametros['tip']=='NC'){ $NumComp = ReadSetDataNum("NotaCredito", True, True,$parametros['fecha']);}
+          }else{
+          	$NumComp = explode('-', $parametros['num_com']);
+          	$NumComp = trim($NumComp[1]);
           }
 
           // print_r($NumComp);die();
@@ -1496,9 +1499,10 @@ class incomC
 
     function listar_comprobante($parametros)
     {
-
-    $parametros = base64_decode($parametros);
-    $parametros = unserialize($parametros);
+    	$dato = explode('-',$parametros);
+    	$parametros = array('TP'=>$dato[0],'Numero'=>$dato[1],'Item'=>$_SESSION['INGRESO']['item']);
+    // $parametros = base64_decode($parametros);
+    // $parametros = unserialize($parametros);
     // print_r($parametros);die();
 
     $Trans_No = 0;
@@ -1893,21 +1897,24 @@ class incomC
 
 function Tipo_De_Comprobante_No($parametros)
 {
-	$parametros = base64_decode($parametros);
-    $parametros = unserialize($parametros);
-    $y = explode('-',$parametros['fecha']);
+    $y = explode('-',$parametros);
+     if($y[0]=='CD'){ $tp = "Diario";}
+     if($y[0]=='CI'){ $tp = "Ingresos";}
+     if($y[0]=='CE'){ $tp = "Egresos";}
+     if($y[0]=='ND'){ $tp = "NotaDebito";}
+     if($y[0]=='NC'){ $tp = "NotaCredito";}
 
-	return $ret = 'Comprobante de '.$parametros['TP'].' No. '.$y[0].'-'.generaCeros($parametros['Numero'],8);
+	return $ret = 'Comprobante de '.$tp.' No. '.$y[0].'-'.generaCeros($y[1],8);
 }
 function Llenar_Encabezado_Comprobante($parametros)
 {
-	$parametros = base64_decode($parametros);
-    $parametros = unserialize($parametros);
-    $bene = $this->modelo->beneficiarios($parametros['beneficiario']);
-    // print_r($bene);
-    // print_r($parametros); die();
-
-    return  array('beneficiario'=>$parametros['beneficiario'],'RUC_CI'=>$bene[0]['id'],'email'=>$bene[0]['email'],'Concepto'=>$parametros['Concepto'],'CodigoB'=>$bene[0]['Codigo'],'fecha'=>$parametros['fecha']);  
+	$dato = explode('-',$parametros);
+	$tp = $dato[0];$com = $dato[1];
+	$parametros = array('TP'=>$tp,'Numero'=>$com,'Item'=>$_SESSION['INGRESO']['item']);
+	$comprobante = $this->modelo->Encabezado_Comprobante($parametros);
+	// print_r($comprobante);die();
+	
+     return  array('beneficiario'=>$comprobante[0]['Cliente'],'RUC_CI'=>$comprobante[0]['CI_RUC'],'email'=>$comprobante[0]['Email'],'Concepto'=>$comprobante[0]['Concepto'],'CodigoB'=>$comprobante[0]['Codigo_B'],'fecha'=>$comprobante[0]['Fecha']->format('Y-m-d'));  
 }
 
 function ingresar_asiento($parametros)
