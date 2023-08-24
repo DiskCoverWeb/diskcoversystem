@@ -550,7 +550,7 @@
 		        success:  function (response) {
 		        	$('#myModal_espera').modal('hide');
 		        	$('#myModal_anular').modal('hide');	
-		        	setTimeout(listar_comprobante, 2000);
+		        	setTimeout(listar_comprobante, 1000);
 		      }
 		    }); 
 	 }
