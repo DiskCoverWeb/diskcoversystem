@@ -533,7 +533,7 @@ function resultado_sri()
         // code block
     }
 
-    $.ajax({
+  /*  $.ajax({
         type: "POST",
         url: '../controlador/facturacion/listar_anularC.php?validar_existencia=true',
         data:{parametros:parametros}, 
@@ -551,7 +551,7 @@ function resultado_sri()
             alert("Ocurrio un error inesperado, por favor contacte a soporte.");
         }
     });
-
+*/
 
 
     window.open(src, '_blank');
@@ -599,18 +599,18 @@ function resultado_sri()
   </div>
   <div class="col">
   	<div class="col-sm-1" style="padding: 0px;">
-    <button type="button" class="btn btn-default"  data-toggle="dropdown" title="Descargar PDF" style="padding: 6px;">
+    <button type="button" class="btn btn-default" onclick="imprimir()" title="Descargar PDF" style="padding: 6px;">
       <img src="../../img/png/pdf.png">
       <!-- <span class="fa fa-caret-down"></span> -->
     </button>
-      <ul class="dropdown-menu">
+     <!--  <ul class="dropdown-menu">
         <li><a href="#" id="imprimir_FA" onclick="imprimir()">PDF Factura</a></li>
         <li><a href="#" id="imprimir_LC" onclick="imprimir()">PDF Liquidacion de Compra</a></li>
         <li><a href="#" id="imprimir_NC" onclick="imprimir()">PDF Nota de credito</a></li>
         <li><a href="#" id="imprimir_GR" onclick="imprimir()">PDF Guia de Remision</a></li>
         <li><a href="#" id="imprimir_OP" onclick="imprimir()">PDF Orden de Produccion</a></li>
         <li><a href="#" id="imprimir_DO" onclick="imprimir()">PDF Donaciones</a></li>      
-      </ul>
+      </ul> -->
     </div>
   </div>
    <div class="col">

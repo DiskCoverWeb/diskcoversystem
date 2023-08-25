@@ -450,8 +450,7 @@ class articulosC
 		// print_r($codigo);die();
 		$existe = $this->modelo->clientes_all(false,$codigo['Codigo_RUC_CI']);
 		$cli = '';
-		if(empty($existe))
-		{
+		
 		    SetAdoAddNew("Clientes"); 
 		    SetAdoFields('FA','1');
 		    SetAdoFields('T','N');
@@ -461,9 +460,16 @@ class articulosC
 		    SetAdoFields('Email',$parametros['txt_email']);
 		    SetAdoFields('Telefono',$parametros['txt_telefono']);
 		    SetAdoFields('Direccion',$parametros['txt_direccion']);
+		    SetAdoFields('Actividad',$parametros['txt_actividad']);
+		    SetAdoFields('Cod_Ejec',$parametros['txt_ejec']);
+		if(empty($existe))
+		{			
 		    SetAdoFields('Fecha',strval(date('Y-m-d')));
 		    $cli = SetAdoUpdate();
-		}else{$cli =1;}
+		}else{
+			SetAdoFieldsWhere('ID',$parametros['txt_id_prove']);
+			$cli =  SetAdoUpdateGeneric();
+		}
 
 		 $exist = $this->modelo->catalogo_Cxcxp($codigo['Codigo_RUC_CI']);
 
@@ -972,7 +978,7 @@ function eliminar_factura($parametros)
 		// print_r($datos);die();
 		$result = array();
 		foreach ($datos as $key => $value) {
-			 $result[] = array("value"=>$value['ID'],"label"=>$value['Cliente'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'CI'=>$value['CI_RUC']);
+			 $result[] = array("value"=>$value['ID'],"label"=>$value['Cliente'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'CI'=>$value['CI_RUC'],'Actividad'=>$value['Actividad'],'Cod_Ejec'=>$value['Cod_Ejec']);
 		}
 		return $result;
 	}

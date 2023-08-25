@@ -320,8 +320,32 @@
         </div>
     </div>
   </div>
+  <div id="myModal_provedor" class="modal fade myModalNuevoCliente" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Proveedor Nuevo</h4>
+            </div>
+            <div class="modal-body">
+                <iframe id="FProveedor" width="100%" height="260px" marginheight="0" frameborder="0" src="../vista/modales.php?FProveedores=true"></iframe>
+            </div>
+           <!--  <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div> -->
+        </div>
+    </div>
+  </div>
 
   <script type="text/javascript">
+    $(document).ready(function(){ 
+        window.addEventListener("message", function(event) {
+            if (event.data === "closeModal") {
+                $('#myModal_provedor').modal('hide');
+            }
+        });         
+    })
 function datos_cliente() {
     var frame = document.getElementById('FCliente');
     var ruc = frame.contentWindow.document.getElementById('ruc').value;
@@ -441,6 +465,7 @@ if(isset($_SESSION['INGRESO']['Mail']) && isset($_SESSION['INGRESO']['Clave']) &
       if (isset($resp["mensaje"]) && $resp["mensaje"]!="" && $_SESSION['INGRESO']['msjMora']) {
         $_SESSION['INGRESO']['msjMora'] = false; //indica que ya se mostro el msj en esta sesion
         echo '<script>$(document).ready(function(){ 
+
           Swal.fire({
             type: "warning",
             html: `<div style="width: 100%; color:black;font-weight: 400;">

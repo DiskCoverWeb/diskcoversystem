@@ -611,7 +611,7 @@ class listar_anularC
 
 	function validar_existencia($parametros)
 	{
-		print_r($parametros);die();
+		// print_r($parametros);die();
 	}
 
 }
