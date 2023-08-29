@@ -107,7 +107,7 @@ function limpiar_t()
 	    </div>
 	    <div class="row">
 	    	<div class="col-sm-3 col-xs-3">
-	    		<b>Codigo</b>
+	    		<b>Abreviado</b>
 	    		<input type="" name="txt_ejec" id="txt_ejec" class="form-control input-sm">
 	    	</div>
 	    	<div class="col-sm-9 col-xs-9">

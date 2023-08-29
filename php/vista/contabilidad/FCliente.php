@@ -63,6 +63,8 @@ $mostrar_medidor = false;
                 }
                 $('#ciu').val(response[0].ciudad); // save selected id to input
                 $('#TD').val(response[0].TD); // save selected id to input
+                $('#txt_ejec').val(response[0].Cod_Ejec); // save selected id to input
+                $('#txt_actividad').val(response[0].Actividad); // save selected id to input
                 if(response[0].FA==1){ $('#rbl_facturar').prop('checked',true); }else{ $('#rbl_facturar').prop('checked',false);}
                 MostrarOcultarBtnAddMedidor()
              }else
@@ -500,6 +502,16 @@ $mostrar_medidor = false;
             <label for="email" class="control-label"><span style="color: red;">*</span>Email Principal</label>
             <input type="email" class="form-control input-sm" id="email" name="email" placeholder="Email" tabindex="0" onblur="validador_correo('email')">            
               <span class="help-block" id='e_email' style='display:none;color: red;'> debe agregar un email</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4">
+            <b>Abreviado</b>
+            <input type="" name="txt_ejec" id="txt_ejec" class="form-control input-sm">
+          </div>
+          <div class="col-sm-8">
+          <b>Tipo de proveedor</b>            
+            <input type="" name="txt_actividad" id="txt_actividad" class="form-control input-sm">
           </div>
         </div>
 				

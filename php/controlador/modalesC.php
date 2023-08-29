@@ -140,6 +140,8 @@ class modalesC
 			    'ciudad'=>$value['Ciudad'],
 			    'FA'=>$value['FA'],
 			    'TD'=>$value['TD'],
+			    'Cod_Ejec'=>$value['Cod_Ejec'],
+			    'Actividad'=>$value['Actividad'],
 			);
 		}	
 		return $datos;
@@ -232,6 +234,8 @@ function li2Array($html,$elemento="li"){
 	    SetAdoFields("Pais", "593");
 	    SetAdoFields("Grupo", $parametro['grupo']);
 	    SetAdoFields("Ciudad", $parametro['ciu']);
+	    SetAdoFields("Cod_Ejec", $parametro['txt_ejec']);
+	    SetAdoFields("Actividad", $parametro['txt_actividad']);
 	    if($parametro['rbl']=='false')
 	    {
 		    SetAdoFields("FA", 0);

@@ -256,6 +256,10 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			if ($_SESSION['INGRESO']['accion']=='catalogoBodega') 
 			{
 				require_once("facturacion/catalogo_bodega.php");
+			}	
+			if ($_SESSION['INGRESO']['accion']=='transCorreos') 
+			{
+				require_once("facturacion/trans_correos.php");
 			}							
 //Agua Potable
 			if ($_SESSION['INGRESO']['accion']=='ingresar_usuario') 

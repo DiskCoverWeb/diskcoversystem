@@ -16,7 +16,7 @@ class modalesM
 
 	function buscar_cliente($ci=false,$nombre=false,$id=false,$exacto=false)
 	{
-		$sql="SELECT ID,Cliente AS nombre, CI_RUC as id,TD, email,Direccion,Telefono,Codigo,Grupo,Ciudad,Prov,DirNumero,ID,FA
+		$sql="SELECT ID,Cliente AS nombre, CI_RUC as id,TD, email,Direccion,Telefono,Codigo,Grupo,Ciudad,Prov,DirNumero,ID,FA,Cod_Ejec,Actividad
 		    FROM Clientes  C
 		    WHERE T <> '.' ";
 
