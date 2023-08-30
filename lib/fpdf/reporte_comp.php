@@ -105,7 +105,7 @@ class PDF extends PDF_MC_Table
 		$pdf->SetAligns(array("C",));
 		//$arr=array($arr1[$i]);
 		$pdf->SetFont('Arial','B',10);
-		$arr=array('R.U.C '.$_SESSION['INGRESO']["RUCEnt"]);
+		$arr=array('R.U.C '.$_SESSION['INGRESO']["RUC"]);
 		$pdf->Row($arr,10);
 		$y=$y+10;
 		$pdf->SetXY(180, $y);
@@ -296,7 +296,7 @@ class PDF extends PDF_MC_Table
 		$pdf->SetAligns(array("C",));
 		//$arr=array($arr1[$i]);
 		$pdf->SetFont('Arial','B',10);
-		$arr=array('R.U.C '.$_SESSION['INGRESO']["RUCEnt"]);
+		$arr=array('R.U.C '.$_SESSION['INGRESO']["RUC"]);
 		$pdf->Row($arr,10);
 		$y=$y+10;
 		$pdf->SetXY(180, $y);
@@ -595,6 +595,8 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 		$efectivo = number_format($stmt1[0]['Efectivo'],2, '.', ',');
 		$est="Normal";
 		$cliente = $stmt1[0]['Cliente'];    // $row1[26];
+
+		// print_r($stmt1);die();
 		$ruc_ci = $stmt1[0]['CI_RUC'];    // $row1[21];
 		if($t == 'A')
 		{
