@@ -5,7 +5,7 @@ require_once(dirname(__DIR__,2)."/funciones/funciones.php");
 /**
  * 
  */
-class trans_correosM
+class alimentos_recibidosM
 {
 	private $db;
 	function __construct()
@@ -32,19 +32,37 @@ class trans_correosM
 			// print_r($sql);die();
 		return $this->db->datos($sql);
 	}
-	function detalle_ingreso($query=false)
+	function detalle_ingreso($cod=false,$query=false,$ci=false)
 	{
-		$sql="SELECT C.ID,C.Cliente,C.Codigo,C.CI_RUC,C.TD,C.Grupo 
+		$sql="SELECT C.ID,C.Cliente,C.Codigo,C.CI_RUC,C.TD,C.Grupo,C.Actividad,C.Cod_Ejec 
         FROM Clientes As C,Catalogo_CxCxP As CP 
         WHERE CP.TC = 'P' 
         AND CP.Item = '".$_SESSION['INGRESO']['item']."' 
         AND CP.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
         AND C.Codigo<>'.'
-        AND LEN(C.Cod_Eje)>=5
-        AND C.Codigo = CP.Codigo 
-        GROUP BY C.ID,C.Cliente,C.Codigo,C.CI_RUC,C.TD,C.Grupo 
+        AND LEN(C.Cod_Ejec)=5
+        AND C.Codigo = CP.Codigo";
+        if($cod)
+        {
+        	$sql.=" AND C.Codigo = '".$cod."'";
+        } 
+        if($ci)
+        {
+        	$sql.=" AND C.CI_RUC = '".$ci."'";
+        } 
+        $sql.=" GROUP BY C.ID,C.Cliente,C.Codigo,C.CI_RUC,C.TD,C.Grupo,C.Actividad,C.Cod_Ejec   
         ORDER BY C.Cliente";
         // print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+
+	function buscar_transCorreos($cod)
+	{
+		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec 
+		from Trans_Correos TC
+		inner join Clientes C on TC.CodigoP = C.Codigo 
+		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
+		where Envio_No  like  '%".$cod."%'";
 		return $this->db->datos($sql);
 	}
 

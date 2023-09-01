@@ -257,10 +257,7 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("facturacion/catalogo_bodega.php");
 			}	
-			if ($_SESSION['INGRESO']['accion']=='transCorreos') 
-			{
-				require_once("facturacion/trans_correos.php");
-			}							
+									
 //Agua Potable
 			if ($_SESSION['INGRESO']['accion']=='ingresar_usuario') 
 			{
@@ -417,6 +414,14 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("farmacia/articulos.php");
 			}
+			if ($_SESSION['INGRESO']['accion']=='alimentosRec') 
+			{
+				require_once("inventario/alimentos_recibidos.php");
+			}	
+			if ($_SESSION['INGRESO']['accion']=='alimentosRec2') 
+			{
+				require_once("inventario/alimentos_recibidos2.php");
+			}	
 			//ingreso de presusupuestos
 			if ($_SESSION['INGRESO']['accion']=='ingreso_presupuesto') 
 			{
@@ -425,6 +430,10 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			if ($_SESSION['INGRESO']['accion']=='catalogoPro') 
 			{
 				require_once("inventario/catalogo_producto.php");
+			}
+			if ($_SESSION['INGRESO']['accion']=='ingreso_articulos') 
+			{
+				require_once("inventario/ingreso_articulo.php");
 			}
 		//auditoria
 			if ($_SESSION['INGRESO']['accion']=='auditoria') 

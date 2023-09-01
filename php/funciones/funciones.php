@@ -489,7 +489,7 @@ function Rubro_Rol_Pago($Detalle_Rol)
 
 
 
-function ReadSetDataNum($SQLs,$ParaEmpresa =false,$Incrementar = false,$Fecha=false) // optimizado por javier farinango // pendiente a revicion repetida
+function ReadSetDataNum($SQLs,$ParaEmpresa=false,$Incrementar = false,$Fecha=false) // optimizado por javier farinango // pendiente a revicion repetida
 {
   $result = '';
   $NumCodigo = 0;
