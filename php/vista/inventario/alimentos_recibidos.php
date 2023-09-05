@@ -193,7 +193,7 @@ function autocoplet_ingreso()
 								 <b>Fecha de Ingreso:</b>
 							</div>
 							<div class="col-sm-6">
-		                         <input type="date" class="form-control input-xs" id="txt_fecha" name="txt_fecha" onblur="generar_codigo()">		
+		              <input type="date" class="form-control input-xs" id="txt_fecha" name="txt_fecha" onblur="generar_codigo()" value="<?php echo date('Y-m-d'); ?>">		
 							</div>
 						</div>
 						<div class="row">

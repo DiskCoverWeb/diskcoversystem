@@ -63,9 +63,9 @@ function limpiar_t()
    {
      abre = $('#txt_ejec').val();
      console.log(abre);
-     if(abre.length >5 || abre=='.' || abre=='')
+     if(abre.length >5 || abre=='.' || abre=='' || abre.length <2)
      {
-         Swal.fire('Abreviatura incorrecta ','Asgurese de colocar una abreviatura no mayor a 5 digitos y diferente de punto (.)','info')
+         Swal.fire('Abreviatura incorrecta ','Asegurese de colocar una abreviatura mayor a 2 digitos y menor o igual 5 digitos y diferente de punto (.)','info')
         return false;
      }
      
@@ -129,7 +129,7 @@ function limpiar_t()
 	    		<input type="" name="txt_ejec" id="txt_ejec" class="form-control input-sm" onkeyup="mayusculasevent(this)">
 	    	</div>
 	    	<div class="col-sm-9 col-xs-9">
-	    		<b>Tipo de proveedor</b>
+	    		<b>Tipo de proveedor / Donante</b>
 	    		<input type="" name="txt_actividad" id="txt_actividad" class="form-control input-sm"  onkeyup="mayusculasevent(this)">
 	    	</div>	    	
 	    </div>

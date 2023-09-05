@@ -193,6 +193,12 @@ function autocoplet_ingreso()
   }
   function show_panel()
   {
+  	 var id = $('#txt_id').val();
+  	 if(id=='')
+  	 {
+  	 		Swal.fire('Seleccione un registro','','info');
+  	 		return false;
+  	 }
   	 var panel = $('#panel_add_articulos').is(':visible');
   	 console.log(panel);
   	 if (panel==false){
@@ -228,10 +234,10 @@ function autocoplet_ingreso()
 	<div class="col-sm-12">		
 		<div class="box">
 			<form id="form_correos">
-			<div class="box-body">					
+			<div class="box-body" style="background: antiquewhite;">					
 				<div class="row">					
 					<div class="col-sm-4">
-						<div class="row">
+						<div class="row" style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
 								 <b>Fecha de Ingreso:</b>
 							</div>
@@ -240,7 +246,7 @@ function autocoplet_ingreso()
 		              <input type="date" class="form-control input-xs" id="txt_fecha" name="txt_fecha" onblur="generar_codigo()" readonly>	
 							</div>
 						</div>
-						<div class="row">
+						<div class="row"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
                  		<b>Codigo de Ingreso:</b>
                	</div>							
@@ -249,7 +255,7 @@ function autocoplet_ingreso()
                 </div>
 						</div>
 						
-						<div class="row">
+						<div class="row"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
 								 <b>RUC / CI</b>
 							</div>
@@ -257,7 +263,7 @@ function autocoplet_ingreso()
 	                         	<input type="" class="form-control input-xs" id="txt_ci" name="txt_ci" readonly>								
 							</div>
 						</div>
-						<div class="row">
+						<div class="row"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
 	                           <b>PROVEEDOR / DONANTE</b>								
 							</div>
@@ -265,7 +271,7 @@ function autocoplet_ingreso()
 								<input type="" class="form-control input-xs" id="txt_donante" name="txt_donante" readonly>
 							</div>
 						</div>
-						<div class="row">
+						<div class="row"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
 								 <b>TIPO DONANTE:</b>								
 							</div>
@@ -275,17 +281,17 @@ function autocoplet_ingreso()
 						</div>
 					</div>
 					<div class="col-sm-4">
-						<div class="row">
+						<div class="row"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
 								<b>ALIMENTO RECIBIDO:</b>
 							</div>
 							<div class="col-sm-6">
-								<select class=" form-control input-xs form-select" id="ddl_alimento" name="ddl_alimento" readonly>
+								<select class=" form-control input-xs form-select" id="ddl_alimento" name="ddl_alimento" disabled>
                		<option value="">Seleccione Alimento</option>
                	</select>								
 							</div>
 						</div>
-						<div class="row">
+						<div class="row"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
 								 <b>CANTIDAD:</b>
 							</div>
@@ -293,12 +299,28 @@ function autocoplet_ingreso()
 	                        	 <input type="" class="form-control input-xs" id="txt_cant" name="txt_cant" readonly>	
 							</div>
 						</div>
-						<div class="row">
+						<div class="row"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
 								<b>COMENTARIO:</b>
 							</div>
 							<div class="col-sm-6">
 	                <input type="" class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly>
+							</div>
+						</div>
+						<div class="row" id="panel_serie"  style="padding-top: 5px;">
+							<div class="col-sm-6 text-right">
+								<b>SERIE:</b>
+							</div>
+							<div class="col-sm-6">
+	                <input type="text" name="txt_serie" id="txt_serie" class="form-control input-xs" onkeyup="num_caracteres('txt_serie',6)">
+							</div>
+						</div>
+						<div class="row" id="panel_factura"  style="padding-top: 5px;">
+							<div class="col-sm-6 text-right">
+								<b>NUMERO FACTURA:</b>
+							</div>
+							<div class="col-sm-6">
+						      <input type="text" name="txt_num_fac" id="txt_num_fac" class="form-control input-xs">  
 							</div>
 						</div>
 					</div>
@@ -310,8 +332,8 @@ function autocoplet_ingreso()
 							</div>
 							<div class="col-sm-6">
 									<!-- <b>Evaluacion</b><br> -->
-									<label><input type="radio" name="cbx_evaluacion" checked value="R"> Rojo</label>		
-									<label><input type="radio" name="cbx_evaluacion"  value="V"> Verde</label>								
+									<label style="color:red"><input type="radio" name="cbx_evaluacion" checked value="R"> Rojo</label>		
+									<label style="color:green"><input type="radio" name="cbx_evaluacion"  value="V"> Verde</label>								
 							</div>
 							<div class="col-sm-12">
 									<b>comentario de ingreso</b>
@@ -561,49 +583,42 @@ function eliminar_lin(num)
 <div class="row" id="panel_add_articulos" style="display:none;">
 	<div class="col-sm-12">
 		<div class="box">
-			<div class="card_body">
+			<div class="card_body" style="background:antiquewhite;">
 					<div class="row">
 						  <div class="col-sm-12">
 						     <div class="panel panel-primary">
-						      <div class="panel-heading">
+						      <!-- <div class="panel-heading">
 						        <div class="row">
 						         <div class="col-sm-6 text-right"><b>INGRESAR ARTICULOS</b></div>         
 						         <div class="col-sm-6 text-right"> No. COMPROBANTE  <u id="num"></u></div>        
 						        </div>
-						      </div>
+						      </div> -->
 						      <div class="panel-body">
 						        <form id="form_add_producto">
 						          <div class="row">
-						            <div class="col-sm-4">
+						            <!-- <div class="col-sm-4">
 						              <b>Alimentos Recibidos:</b>
-						              <!-- <div class="input-group">  -->
+						               <div class="input-group">  
 						                  <select class="form-control input-sm" id="ddl_proveedor" name="ddl_proveedor" onchange="cargar_datos_prov()">
 						                     <option value="">Seleccione un proveedor</option>
 						                  </select>             
-						                   <!-- <span class="input-group-addon bg-green" title="Buscar" data-toggle="modal" data-target="#myModal_provedor"><i class="fa fa-plus"></i></span> -->
-						              <!-- </div> -->
-						            </div>            
-						            <div class="col-sm-3">
+						                    <span class="input-group-addon bg-green" title="Buscar" data-toggle="modal" data-target="#myModal_provedor"><i class="fa fa-plus"></i></span>
+						             </div> 
+						            </div>         -->    
+						           <!--  <div class="col-sm-3">
 						              <b>Nombre comercial</b><br>
 						              <label id="lbl_nom_comercial"></label>
-						            </div> 
-						            <div class="col-sm-1">
-						              <b>Serie</b>
-						              <input type="text" name="txt_serie" id="txt_serie" class="form-control input-sm" onkeyup="num_caracteres('txt_serie',6)">            
-						            </div>
-						            <div class="col-sm-2">
-						              <b>Numero de factura</b>
-						              <input type="text" name="txt_num_fac" id="txt_num_fac" class="form-control input-sm">            
-						            </div>           
-						             <div class="col-sm-2">
+						            </div>  -->
+						                 
+						             <!-- <div class="col-sm-2">
 						              <b>Fecha:</b>
 						              <input type="date" name="txt_fecha" id="txt_fecha" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" onblur="num_comprobante()">
-						           </div>
+						           </div> -->
 						          </div>
 						        <div class="row">
 						           <div class="col-md-2">
 						              <b>Referencia:</b>
-						              <input type="text" name="txt_referencia" id="txt_referencia" class="form-control input-sm" readonly="">
+						              <input type="text" name="txt_referencia" id="txt_referencia" class="form-control input-xs" readonly="">
 						           </div>
 						           <div class="col-sm-5">
 						              <b>Producto:</b><br>
@@ -612,16 +627,24 @@ function eliminar_lin(num)
 						              </select>
 						           </div>
 						          
-						           <div class=" col-sm-3">
+						         <!--   <div class=" col-sm-3">
 						              <b>Familia:</b>
 						                <select class="form-control input-sm" id="ddl_familia" name="ddl_familia" disabled="">
 						                  <option>Seleccione una familia</option>
 						                </select>     
-						           </div>
-						           <div class="col-sm-1">
+						           </div> -->
+						          <!--  <div class="col-sm-1">
 						            <b>Unidad</b>
 						            <input type="" name="txt_unidad" id="txt_unidad" class="form-control form-control-sm">             
-						           </div>
+						           </div> -->
+						           <div class="col-sm-2">
+						               <b>Existente</b>
+						                  <input type="text" name="txt_existencias" id="txt_existencias" class="form-control input-xs" readonly="">
+						            </div>
+ 												<div class="col-sm-2">
+						               <b>Fecha Caducidad</b>
+						                <input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input-xs" >
+						            </div>
 						           <div class="col-sm-1" style="padding: 0px;">
 						              <b>Lleva iva</b><br>
 						              <label class="online-radio"><input type="radio" name="rbl_radio" id="rbl_no" checked="" onchange="calculos()"> No</label>
@@ -629,19 +652,13 @@ function eliminar_lin(num)
 						            </div>   
 						        </div>
 						        <div class="row">
-						            <div class="col-sm-2">
-						               <b>Existente</b>
-						                  <input type="text" name="txt_existencias" id="txt_existencias" class="form-control input-sm" readonly="">
-						            </div>
-						            <div class="col-sm-2">
+						            
+						           <!--  <div class="col-sm-2">
 						               <b>Fecha Elab</b>
 						                  <input type="date" name="txt_fecha_ela" id="txt_fecha_ela" class="form-control input-sm" >
-						            </div>
-						            <div class="col-sm-2">
-						               <b>Fecha Exp</b>
-						                  <input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input-sm" >
-						            </div>
-						            <div class="col-sm-2">
+						            </div> -->
+						           
+						           <!--  <div class="col-sm-2">
 						               <b>Reg. Sanitario</b>
 						                  <input type="text" name="txt_reg_sani" id="txt_reg_sani" class="form-control input-sm" readonly="" value=".">
 						            </div>
@@ -652,58 +669,54 @@ function eliminar_lin(num)
 						            <div class="col-sm-2">
 						               <b>Lote</b>
 						                  <input type="text" name="txt_lote" id="txt_lote" class="form-control input-sm">
-						            </div>              
+						            </div>              --> 
 						        </div>
 						        <div class="row">
 						          <div class="col-sm-1">
 						               <b>Max</b>
-						                  <input type="text" name="txt_max_in" id="txt_max_in" class="form-control input-sm" readonly="">
+						                  <input type="text" name="txt_max_in" id="txt_max_in" class="form-control input-xs" readonly="">
 						            </div>
 						            <div class="col-sm-1">
 						               <b>Min</b>
-						                  <input type="text" name="txt_min_in" id="txt_min_in" class="form-control input-sm" readonly="">
+						                  <input type="text" name="txt_min_in" id="txt_min_in" class="form-control input-xs" readonly="">
 						            </div>
-						              <div class="col-sm-2">
+						              <!-- <div class="col-sm-2">
 						               <b>Ubicacion</b>
-						               <input type="text" name="txt_ubicacion" id="txt_ubicacion" class="form-control input-sm" readonly="">
-						            </div>       
+						               <input type="text" name="txt_ubicacion" id="txt_ubicacion" class="form-control input-xs" readonly="">
+						            </div>        -->
 						          <div class="col-sm-1">
 						               <b>Cantidad</b>
-						                  <input type="text" name="txt_canti" id="txt_canti" class="form-control input-sm"  value="1" onblur="calculos()">
+						                  <input type="text" name="txt_canti" id="txt_canti" class="form-control input-xs"  value="1" onblur="calculos()">
 						            </div>
 						            <div class="col-sm-1">
 						               <b>Precio</b>
-						                  <input type="text" name="txt_precio" id="txt_precio" class="form-control input-sm"  value="0" onblur="calculos()">
+						                  <input type="text" name="txt_precio" id="txt_precio" class="form-control input-xs"  value="0" onblur="calculos()">
 						            </div>
 						            <div class="col-sm-1">
 						               <b>Pvp Ref</b>
-						                  <input type="text" name="txt_precio_ref" id="txt_precio_ref" class="form-control input-sm"  value="0" readonly="">
+						                  <input type="text" name="txt_precio_ref" id="txt_precio_ref" class="form-control input-xs"  value="0" readonly="">
 						            </div>
-						            <div class="col-sm-1">
+						          <!--   <div class="col-sm-1">
 						               <b>% descto</b>
-						                  <input type="text" name="txt_descto" id="txt_descto" class="form-control input-sm"  value="0" onblur="calculos()">
-						            </div>             
+						                  <input type="text" name="txt_descto" id="txt_descto" class="form-control input-xs"  value="0" onblur="calculos()">
+						            </div>      -->        
 						            <div class="col-sm-1">
 						               <b>Subtotal</b>
-						                  <input type="text" name="txt_subtotal" id="txt_subtotal" class="form-control input-sm" readonly="" value="0">
+						                  <input type="text" name="txt_subtotal" id="txt_subtotal" class="form-control input-xs" readonly="" value="0">
 						            </div>
 						            <div class="col-sm-1">
 						               <b>Iva</b>
-						                  <input type="text" name="txt_iva" id="txt_iva" class="form-control input-sm" readonly="" value="0">
+						                  <input type="text" name="txt_iva" id="txt_iva" class="form-control input-xs" readonly="" value="0">
 						            </div>  
 						            <div class="col-sm-1">
 						               <b>Total</b>
-						                  <input type="text" name="txt_total" id="txt_total" class="form-control input-sm" readonly="" value="0">
-						            </div>          
-						        </div>
-						        <div class="row">
-						          <div class="col-sm-7">
-						            
-						          </div>
-						          <div class="col-sm-5 text-right" style="padding-left: 0px"><br>
-						               <button type="button" class="btn btn-primary" onclick="agregar()"><i class="fa fa-plus"></i> Agregar a ingreso</button>
+						                  <input type="text" name="txt_total" id="txt_total" class="form-control input-xs" readonly="" value="0">
+						            </div> 
+						            <div class="col-sm-4 text-right">
+						            		<br>
+						            	 <button type="button" class="btn btn-primary" onclick="agregar()"><i class="fa fa-plus"></i> Agregar a ingreso</button>
 						                <button type="button" class="btn btn-default" onclick="limpiar()"><i class="fa fa-paint-brush"></i> Limpiar</button>
-						            </div>
+						            </div>         
 						        </div>
 						        <input type="hidden" id="A_No" name ="A_No" value="0">
 						        </form>       
