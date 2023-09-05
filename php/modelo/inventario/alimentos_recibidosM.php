@@ -65,6 +65,35 @@ class alimentos_recibidosM
 		where Envio_No  like  '%".$cod."%'";
 		return $this->db->datos($sql);
 	}
+	//------------------viene de trasnkardex--------------------
+
+	function cargar_pedidos_trans($orden,$fecha=false)
+	{
+    // 'LISTA DE CODIGO DE ANEXOS
+     $sql = "SELECT T.*,P.Producto 
+     FROM Trans_Kardex  T ,Catalogo_Productos P
+     WHERE Orden_No = '".$orden."' ";
+     // AND T.CodigoL = '".$SUBCTA."'
+     // AND T.Codigo_P = '".$paciente."'
+     $sql.="AND Numero =0
+     AND T.Item = P.Item
+     AND T.Periodo = P.Periodo
+	 AND T.Codigo_Inv = P.Codigo_Inv";
+     if($fecha)
+     {
+     	$sql.=" AND T.Fecha = '".$fecha."'";
+     }     
+     $sql.=" ORDER BY T.ID DESC";
+     // print_r($sql);die();
+
+     return $this->db->datos($sql);
+       
+	}
+	function lineas_eli($parametros)
+	{
+		$sql = "DELETE FROM Trans_Kardex WHERE Orden_No='".$parametros['ped']."' and ID ='".$parametros['lin']."'";
+		return $this->db->String_Sql($sql);
+	}
 
 
 }

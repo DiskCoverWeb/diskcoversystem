@@ -146,7 +146,17 @@ if(isset($_GET['familia_new']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->familia_new($parametros));
 }
-
+if(isset($_GET['guardar_recibido']))
+{
+	$parametros = $_POST;
+	echo json_encode($controlador->guardar_recibido($parametros));
+}
+if(isset($_GET['pedido']))
+{
+	$parametros = $_POST['parametros'];
+		// print_r('ddd');die();
+	echo json_encode($controlador->cargar_pedidos($parametros));
+}
 
 
 class articulosC 
@@ -498,7 +508,7 @@ class articulosC
 
 	function agreagar_producto($parametro)
 	{
-		// print_r($parametro);die();
+		   print_r($parametro);die();
 
 		   $val_descto = (($parametro['txt_precio']*$parametro['txt_canti'])*$parametro['txt_descto'])/100;
 		   $pro = $this->modelo->buscar_cta_proveedor();
@@ -1068,6 +1078,114 @@ function eliminar_factura($parametros)
 	 }	   
 
    }
+
+   //guardado pa donacion de alimentos
+   function guardar_recibido($parametro)
+	{
+		$producto = explode('_',$parametro['ddl_producto']);
+		$num_ped = 99999;
+		// print_r($producto);
+		// print_r($parametro);die();
+		
+		   SetAdoAddNew("Trans_Kardex"); 		
+		   SetAdoFields('Codigo_Inv',$parametro['txt_referencia']);
+		   SetAdoFields('Producto',$producto[5]);
+		   SetAdoFields('UNIDAD',$producto[6]); /**/
+		   SetAdoFields('Salida',$parametro['txt_canti']);
+		   SetAdoFields('Cta_Inv',$producto[4]);
+		   // SetAdoFields('CodigoL',$parametro['rubro']);		   
+		   SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);   
+		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+		   SetAdoFields('Orden_No',$num_ped); 
+		   SetAdoFields('A_No',$parametro['A_No']+1);
+		   SetAdoFields('Fecha',date('Y-m-d',strtotime($parametro['txt_fecha'])));
+		   // SetAdoFields('TC',$parametro['TC']);
+		   SetAdoFields('Valor_Total',number_format($parametro['txt_total'],2,'.',''));
+		   SetAdoFields('CANTIDAD',$parametro['txt_canti']);
+		   SetAdoFields('Valor_Unitario',number_format($parametro['txt_precio'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
+		   SetAdoFields('DH',2);
+		   // SetAdoFields('Contra_Cta',$parametro['cc']);
+		   // SetAdoFields('Descuento',$parametro['descuento']);
+		   // SetAdoFields('Codigo_P',$parametro['CodigoP']);
+		   // SetAdoFields('Detalle',$parametro['pro']);
+		   // SetAdoFields('Centro_Costo',$parametro['area']);
+		   // SetAdoFields('Codigo_Dr',$parametro['solicitante']);
+		   // SetAdoFields('Costo',number_format($parametro['valor'],2,'.',''));
+
+		   // if($parametro['iva']!=0)
+		   // {
+		   	   // $datos[19]['campo']='IVA';
+		       // $datos[19]['dato']=(round($parametro['total'],2)*1.12)-round($parametro['total'],2);
+		   // }
+		   // print_r($datos);die();
+		   $resp = SetAdoUpdate();
+		   // $num = $num_ped;
+		   return  $respuesta = array('ped'=>$num_ped,'resp'=>$resp);		
+	}
+
+	function cargar_pedidos($parametros)
+    {
+    	print_r($parametros);die();
+    	// $ordenes = $this->modelo->cargar_pedidos_fecha_trans($parametros['num_ped'],$parametros['area']);
+    	// print_r($ordenes);die();
+    	$datos1 = $this->modelo->cargar_pedidos_trans($parametros['num_ped'],$parametros['area'],false,false,$parametros['paciente']);
+    	 $neg = false;
+    	 $num = 0;
+    	 $procedimiento = '';
+         $tab='<ul class="nav nav-tabs">';
+         $content = '<div class="tab-content">';
+    	foreach ($ordenes as $key => $value) {
+    		if($value['SUBCTA']!='.')
+    		{
+
+    		if($key==0)
+    		{
+
+    		    $content.='<input type="hidden" id="txt_f"  value="'.$value['Fecha']->format('Y-m-d').'"><div id="'.$value['SUBCTA'].'-'.$value['Fecha']->format('Y-m-d').'" class="tab-pane fade in active">';
+    			$tab.='<li class="active"><a data-toggle="tab" href="#'.$value['SUBCTA'].'-'.$value['Fecha']->format('Y-m-d').'">'.'Fecha: '.$value['Fecha']->format('Y-m-d').'</a></li>';
+    		}else
+    		{
+
+    		    $content.='<div id="'.$value['SUBCTA'].'-'.$value['Fecha']->format('Y-m-d').'" class="tab-pane fade">';
+    			$tab.='<li><a data-toggle="tab" href="#'.$value['SUBCTA'].'-'.$value['Fecha']->format('Y-m-d').'">'.'Fecha: '.$value['Fecha']->format('Y-m-d').'</a></li>';
+    		}
+    		  $datos =  $this->cargar_pedidos_tab($value['ORDEN'],$value['SUBCTA'],$value['Fecha']->format('Y-m-d'),$parametros['paciente']);
+    		  // print_r($datos);die();
+
+    		  $num = $datos['num_lin'];
+    		  if($datos['neg']==true)
+    		  {
+    		  	$neg = $datos['neg'];
+    		  }
+    		  $procedimiento = $datos['detalle'];
+    		  // print_r($datos);die();
+    		  $ruc = $datos['ruc'];
+    		  // print_r($datos['tabla']);die();
+
+    		$content.= $datos['tabla'];
+    		$content.='</div>';
+    	  }
+    	}
+    	$tab.='</ul>';
+    	$content.='</div>';
+    	$tabs_tabla = $tab.$content;
+    	if(!isset($datos1[0]['A_No']))
+    	{
+    		$datos1[0]['A_No'] = 0;
+    	}
+    	$or = count($ordenes);
+    	if($or==0)
+    	{
+    		$tabla = array('num_lin'=>0,'tabla'=>'<tr><td colspan="7" class="text-center"><b><i>Sin registros...<i></b></td></tr>','item'=>0,'neg'=>$neg,'detalle'=>$procedimiento);
+			return $tabla;		
+    	}
+
+    	$tabla = array('num_lin'=>$num,'tabla'=> $tabs_tabla,'ruc'=>$ruc,'item'=>$num,'neg'=>$neg,'detalle'=>$procedimiento);
+
+			// print_r($tabla);die();
+		return $tabla;		
+    }
+
 
 
 }

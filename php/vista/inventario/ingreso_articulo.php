@@ -541,9 +541,9 @@
 
    }
 
-   function agregar()
+  /* function agregar()
    {
-    if($('#ddl_producto').val()=='' || $('#ddl_proveedor').val()=='' || $('#ddl_familia').val()=='' || $('#txt_precio').val()=='' || $('#txt_canti').val()=='' || $('#txt_serie').val()=='' || $('#txt_num_fac').val()=='' || $('#txt_fecha_ela').val()=='' || $('#txt_fecha_exp').val()=='' || $('#txt_reg_sani').val()=='' || $('#txt_procedencia').val()=='' || $('#txt_lote').val()==''|| $('#txt_descto').val()=='' )
+    /*if($('#ddl_producto').val()=='' || $('#ddl_proveedor').val()=='' || $('#ddl_familia').val()=='' || $('#txt_precio').val()=='' || $('#txt_canti').val()=='' || $('#txt_serie').val()=='' || $('#txt_num_fac').val()=='' || $('#txt_fecha_ela').val()=='' || $('#txt_fecha_exp').val()=='' || $('#txt_reg_sani').val()=='' || $('#txt_procedencia').val()=='' || $('#txt_lote').val()==''|| $('#txt_descto').val()=='' )
     {
       Swal.fire('Llene todo los campos.','','info');   
       return false;
@@ -558,14 +558,14 @@
         console.log(response);
         if(response==1)
         {
-          // $('#Nuevo_proveedor').modal('hide');
+          $('#Nuevo_proveedor').modal('hide');
           Swal.fire('Producto agregado.','','success');   
           $('#txt_descto').val(0)
           cargar_productos();         
         }
       }
     });
-   }
+   }*/
 
    function eliminar_lin(linea,orden,pro)
    { 
@@ -715,6 +715,89 @@
    {
      $('#Nuevo_producto').modal('show');
    }
+
+  function agregar()
+  {
+    var parametros = $("#form_add_producto").serialize();
+       $.ajax({
+         data:  parametros,
+         url:   '../controlador/farmacia/articulosC.php?guardar_recibido=true',
+         type:  'post',
+         dataType: 'json',
+           success:  function (response) { 
+
+            // console.log(response);
+           if(response.resp==1)
+           {
+            $('#txt_pedido').val(response.ped);
+              Swal.fire({
+                type:'success',
+                title: 'Agregado a pedido',
+                text :'',
+              }).then( function() {
+                   cargar_pedido();
+                });
+
+            // Swal.fire('','Agregado a pedido.','success');
+            limpiar();
+            // location.reload();
+           }else
+           {
+            Swal.fire('','Algo extraño a pasado.','error');
+           }           
+         }
+       });    
+  }
+
+   function cargar_pedido()
+  {
+    var num_ped ='99999';
+    var parametros=
+    {
+      'num_ped':num_ped,
+    }
+     $.ajax({
+      data:  {parametros:parametros},
+      url:   '../controlador/farmacia/articulosC.php?pedido=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) {
+        console.log(response);
+        // num_ped = $('#txt_pedido').val();
+        // if(num_ped=='')
+        // {
+        //    $('#tabla').html(response.tabla);
+        // }else{
+        //   var ped = reload_();
+        //   if(ped==-1)
+        //   {
+        //     num_ped = $('#txt_pedido').val();
+        //     mod = '<?php echo $_GET["mod"]; ?>';
+        //     var url="../vista/farmacia.php?mod="+mod+"&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+num_ped+"&cod="+num_his+"#";
+        //     $(location).attr('href',url);
+        //   }else
+        //   {
+
+        //      $('#txt_num_lin').val(response.num_lin);
+        //     $('#txt_num_item').val(response.item);
+        //     $('#tabla').html(response.tabla);
+        //     $('#txt_neg').val(response.neg);
+        //     $('#txt_sub_tot').val(response.subtotal);
+        //     $('#txt_tot_iva').val(response.iva);
+        //     $('#txt_pre_tot').val(response.total);
+        //     $('#txt_procedimiento').val(response.detalle);
+        //     if($('#txt_num_lin').val()!=0 && $('#txt_num_lin').val()!='')
+        //     {
+        //       $('#btn_comprobante').css('display','block');
+        //     }
+
+        //   }
+        // }
+      }
+    });
+  }
+
+
 </script>
   <div class="row">
     <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
@@ -758,7 +841,7 @@
         <form id="form_add_producto">
           <div class="row">
             <div class="col-sm-4">
-              <b>Proveedor:</b>
+              <b>Alimentos Recibidos:</b>
               <!-- <div class="input-group">  -->
                   <select class="form-control input-sm" id="ddl_proveedor" name="ddl_proveedor" onchange="cargar_datos_prov()">
                      <option value="">Seleccione un proveedor</option>
