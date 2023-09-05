@@ -196,6 +196,9 @@ function mayusculas(campo,valor)
 {
     $('#'+campo).val(valor.ucwords());
 }
+function mayusculasevent(e) {
+    e.value = e.value.toUpperCase();
+}
 
 function generar_ceros(num,cant)
 {

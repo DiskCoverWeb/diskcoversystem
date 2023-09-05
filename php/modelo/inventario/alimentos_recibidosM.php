@@ -40,7 +40,7 @@ class alimentos_recibidosM
         AND CP.Item = '".$_SESSION['INGRESO']['item']."' 
         AND CP.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
         AND C.Codigo<>'.'
-        AND LEN(C.Cod_Ejec)=5
+        AND LEN(C.Cod_Ejec)<=5
         AND C.Codigo = CP.Codigo";
         if($cod)
         {

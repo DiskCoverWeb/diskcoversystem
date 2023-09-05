@@ -61,6 +61,15 @@ function limpiar_t()
 
   function guardar_proveedor()
    {
+     abre = $('#txt_ejec').val();
+     console.log(abre);
+     if(abre.length >5 || abre=='.' || abre=='')
+     {
+         Swal.fire('Abreviatura incorrecta ','Asgurese de colocar una abreviatura no mayor a 5 digitos y diferente de punto (.)','info')
+        return false;
+     }
+     
+     $('#myModal_espera').modal('show');
      var datos =  $("#form_nuevo_proveedor").serialize();
      $.ajax({
       data:  datos,
@@ -68,7 +77,8 @@ function limpiar_t()
       type:  'post',
       dataType: 'json',
       success:  function (response) { 
-        console.log(response);
+         $('#myModal_espera').modal('hide');
+        // console.log(response);
         if(response==1)
         {
            $('#txt_nombre_prove').val('');  
@@ -80,7 +90,14 @@ function limpiar_t()
         {
           Swal.fire('El numero de Cedula o ruc ingresado ya esta en uso.','','info');  
         }
-      }
+      }, 
+        error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');
+            // $('#lbl_mensaje').text(xhr.statusText);
+            // alert(xhr.statusText);
+            // alert(textStatus);
+            // alert(error);
+        }
     });
 
      // console.log(datos);
@@ -91,6 +108,7 @@ function limpiar_t()
      window.parent.postMessage('closeModal', '*');
   }
 
+
  </script>
  <!-- <div class="box box-info"> -->
 	 <form id="form_nuevo_proveedor">
@@ -98,7 +116,7 @@ function limpiar_t()
 	      <div class="col-sm-8 col-xs-8">
 	        <b>Nombre de proveedor</b>
 	        <input type="hidden" id="txt_id_prove" name="txt_id_prove" class="form-control input-sm">  
-	        <input type="text" id="txt_nombre_prove" name="txt_nombre_prove" class="form-control input-sm" onkeyup="limpiar_t()" onblur="nombres(this.value)">  
+	        <input type="text" id="txt_nombre_prove" name="txt_nombre_prove" class="form-control input-sm" onkeyup="limpiar_t();mayusculasevent(this)" onblur="nombres(this.value)">  
 	      </div> 
 	      <div class="col-sm-4 col-xs-4">
 	        <b>CI / RUC</b>
@@ -108,17 +126,17 @@ function limpiar_t()
 	    <div class="row">
 	    	<div class="col-sm-3 col-xs-3">
 	    		<b>Abreviado</b>
-	    		<input type="" name="txt_ejec" id="txt_ejec" class="form-control input-sm">
+	    		<input type="" name="txt_ejec" id="txt_ejec" class="form-control input-sm" onkeyup="mayusculasevent(this)">
 	    	</div>
 	    	<div class="col-sm-9 col-xs-9">
 	    		<b>Tipo de proveedor</b>
-	    		<input type="" name="txt_actividad" id="txt_actividad" class="form-control input-sm">
+	    		<input type="" name="txt_actividad" id="txt_actividad" class="form-control input-sm"  onkeyup="mayusculasevent(this)">
 	    	</div>	    	
 	    </div>
 	    <div class="row">
 	      <div class="col-sm-12 col-xs-12">
 	        <b>Direccion</b>
-	        <input type="text" id="txt_direccion" name="txt_direccion" class="form-control input-sm">  
+	        <input type="text" id="txt_direccion" name="txt_direccion" class="form-control input-sm"  onkeyup="mayusculasevent(this)">  
 	      </div>        
 	    </div>
 	    <div class="row">
@@ -128,7 +146,7 @@ function limpiar_t()
 	      </div> 
 	      <div class="col-sm-4 col-xs-4">
 	        <b>Telefono</b>
-	        <input type="txt_telefono" id="txt_telefono" name="txt_telefono" class="form-control input-sm">              
+	        <input type="txt_telefono" id="txt_telefono" name="txt_telefono" class="form-control input-sm" >              
 	      </div> 
 	    </div>
 	    <div class="row">
