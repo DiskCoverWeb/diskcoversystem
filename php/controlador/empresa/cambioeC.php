@@ -522,7 +522,9 @@ class cambioeC
                         </div>
                     </div>
                     <div class="col-md-4">                                        
-                        <label>LOGO TIPO</label>
+                        <label>LOGO TIPO </label>
+                        <!-- llenar con contenuido de la carpeta logotipos -->
+
                         <input type="text" name="TxtXXXX" id="TxtXXXX" class="form-control input-xs" value="XXXXXXXXXX">
                         <div class="form-group" rows="11">                                        
                             <select multiple="" class="form-control" >
@@ -710,7 +712,7 @@ class cambioeC
         <div class="tab-content">
         	<div class="tab-pane active" id="tab_0">
         		<div class="row">
-	        		<div class="col-md-3">
+	        		<div class="col-md-4">
 						<div class="form-group">
 						    <label for="Estado">Estado</label>
 						    <select class="form-control input-sm" name="Estado" id="Estado" >
@@ -720,39 +722,39 @@ class cambioeC
 						$op.='</select>
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-2">
 						<div class="form-group">
-						  <label for="FechaR">Fecha Renovación(dia-mes-año)</label>
+						  <label for="FechaR">Fecha Renovación</label>
 						   
 						  <input type="date" class="form-control input-sm" id="FechaR" name="FechaR" placeholder="FechaR" 
 						  value='.$value['Fecha'].' 
 						  onKeyPress="return soloNumeros(event)"  maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-2">
 						<div class="form-group">
-						  <label for="Fecha">Fecha Comp. Electronico(dia-mes-año)</label>
+						  <label for="Fecha">Fecha Comp. Electronico</label>
 						   
 						  <input type="date" class="form-control input-sm" id="Fecha" name="Fecha" placeholder="Fecha" 
 						  value="'.$value['Fecha_CE'].'" onKeyPress="return soloNumeros(event)" 
 						  maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-2" style="display:none">
 						<div class="form-group">
-						  <label for="Fecha">Fecha VPN(dia-mes-año)</label>
+						  <label for="Fecha">Fecha VPN</label>
 						   
 						  <input type="date" class="form-control input-sm" id="FechaV" name="FechaV" placeholder="FechaV" 
 						  value="'.$value['Fecha_VPN'].'"   onKeyPress="return soloNumeros(event)" maxlength="10"onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-2">
 						<div class="form-group">
 						  <label for="Fecha_DB">Fecha BD</label>
 						  <input type="date" class="form-control input-sm" id="FechaDB" name="FechaDB" value="'.$value['Fecha_DB'].'">
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-2">
 						<div class="form-group">
 						  <label for="Fecha_P12">Fecha P12</label>
 						  <input type="date" class="form-control input-sm" id="FechaP12" name="FechaP12" value="'.$value['Fecha_P12'].'">

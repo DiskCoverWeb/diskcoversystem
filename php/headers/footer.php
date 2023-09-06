@@ -323,12 +323,12 @@
   <div id="myModal_provedor" class="modal fade myModalNuevoCliente" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Proveedor Nuevo</h4>
             </div>
-            <div class="modal-body">
-                <iframe id="FProveedor" width="100%" height="260px" marginheight="0" frameborder="0" src="../vista/modales.php?FProveedores=true"></iframe>
+            <div class="modal-body" style="background: antiquewhite;">
+                <iframe id="FProveedor" width="100%" height="320px" marginheight="0" frameborder="0" src="../vista/modales.php?FProveedores=true"></iframe>
             </div>
            <!--  <div class="modal-footer">
                 <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button>

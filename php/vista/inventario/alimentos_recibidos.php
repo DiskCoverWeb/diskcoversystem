@@ -87,7 +87,9 @@ function autocoplet_ingreso()
 
   function nuevo_proveedor()
   {
-  	$('#myModal_provedor').modal('show');
+  	 $('#myModal_provedor').modal('show');
+  	 $('#FProveedor').contents().find('body').css('background-color', 'antiquewhite');
+
   }
   function option_select()
   {
@@ -179,7 +181,7 @@ function autocoplet_ingreso()
 	<div class="col-sm-12">		
 		<div class="box">
 			<form id="form_correos">
-			<div class="box-body">					
+			<div class="box-body" style="background:antiquewhite;">					
 				<div class="row">
 					<div class="col-sm-6">
 						<b>Detalle de ingreso</b>
@@ -188,7 +190,7 @@ function autocoplet_ingreso()
                          </select>
 					</div>
 					<div class="col-sm-6">
-						<div class="row">
+						<div class="row" style="padding-top:5px">
 							<div class="col-sm-6 text-right">
 								 <b>Fecha de Ingreso:</b>
 							</div>
@@ -196,7 +198,7 @@ function autocoplet_ingreso()
 		              <input type="date" class="form-control input-xs" id="txt_fecha" name="txt_fecha" onblur="generar_codigo()" value="<?php echo date('Y-m-d'); ?>">		
 							</div>
 						</div>
-						<div class="row">
+						<div class="row" style="padding-top:5px">
 							<div class="col-sm-6 text-right">
                            		<b>Codigo de Ingreso:</b>
                          	</div>							
@@ -205,7 +207,7 @@ function autocoplet_ingreso()
 	                        </div>
 						</div>
 						
-						<div class="row">
+						<div class="row" style="padding-top:5px">
 							<div class="col-sm-6 text-right">
 								 <b>RUC / CI</b>
 							</div>
@@ -213,7 +215,7 @@ function autocoplet_ingreso()
 	                         	<input type="" class="form-control input-xs" id="txt_ci" name="txt_ci" readonly>								
 							</div>
 						</div>
-						<div class="row">
+						<div class="row" style="padding-top:5px">
 							<div class="col-sm-6 text-right">
 	                           <b>PROVEEDOR / DONANTE</b>								
 							</div>
@@ -221,7 +223,7 @@ function autocoplet_ingreso()
 								<input type="" class="form-control input-xs" id="txt_donante" name="txt_donante" readonly>
 							</div>
 						</div>
-						<div class="row">
+						<div class="row" style="padding-top:5px">
 							<div class="col-sm-6 text-right">
 								 <b>TIPO DONANTE:</b>								
 							</div>
@@ -229,7 +231,7 @@ function autocoplet_ingreso()
 								<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
 							</div>
 						</div>
-						<div class="row">
+						<div class="row" style="padding-top:5px">
 							<div class="col-sm-6 text-right">
 								<b>ALIMENTO RECIBIDO:</b>
 							</div>
@@ -239,7 +241,7 @@ function autocoplet_ingreso()
 	                         	</select>								
 							</div>
 						</div>
-						<div class="row">
+						<div class="row" style="padding-top:5px">
 							<div class="col-sm-6 text-right">
 								 <b>CANTIDAD:</b>
 							</div>
@@ -247,7 +249,7 @@ function autocoplet_ingreso()
 	                        	 <input type="" class="form-control input-xs" id="txt_cant" name="txt_cant">	
 							</div>
 						</div>
-						<div class="row">
+						<div class="row" style="padding-top:5px">
 							<div class="col-sm-6 text-right">
 								<b>COMENTARIO:</b>
 							</div>

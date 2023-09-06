@@ -95,6 +95,18 @@ class alimentos_recibidosM
 		$sql = "DELETE FROM Trans_Kardex WHERE Orden_No='".$parametros['ped']."' and ID ='".$parametros['lin']."'";
 		return $this->db->String_Sql($sql);
 	}
+	function catalogo_productos($codigo)
+	{
+		$sql = "SELECT * 
+		FROM Catalogo_Productos
+		WHERE Item = '".$_SESSION['INGRESO']['item']."'
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+		if($codigo)
+		{
+			$sql.=" AND Codigo_Inv='".$codigo."'";
+		}
+		return $this->db->datos($sql);
+	}
 
 
 }

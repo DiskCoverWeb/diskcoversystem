@@ -174,17 +174,19 @@ class alimentos_recibidosC
 	}
 	function guardar_recibido($parametro)
 	{
-		$producto = explode('_',$parametro['ddl_producto']);
+		// $producto = explode('_',$parametro['ddl_producto']);
+		$producto = $this->modelo->catalogo_productos($parametro['txt_referencia']);
 		$num_ped = 99999;
 		// print_r($producto);
-		// print_r($parametro);die();
+		// print_r($parametro);
+		// die();
 		
 		   SetAdoAddNew("Trans_Kardex"); 		
 		   SetAdoFields('Codigo_Inv',$parametro['txt_referencia']);
-		   SetAdoFields('Producto',$producto[5]);
-		   SetAdoFields('UNIDAD',$producto[6]); /**/
+		   SetAdoFields('Producto',$producto[0]['Producto']);
+		   SetAdoFields('UNIDAD',$producto[0]['Unidad']); /**/
 		   SetAdoFields('Salida',$parametro['txt_canti']);
-		   SetAdoFields('Cta_Inv',$producto[4]);
+		   SetAdoFields('Cta_Inv',$producto[0]['Cta_Inventario']);
 		   // SetAdoFields('CodigoL',$parametro['rubro']);		   
 		   SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);   
 		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);
@@ -196,6 +198,7 @@ class alimentos_recibidosC
 		   SetAdoFields('CANTIDAD',$parametro['txt_canti']);
 		   SetAdoFields('Valor_Unitario',number_format($parametro['txt_precio'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
 		   SetAdoFields('DH',2);
+		   SetAdoFields('Codigo_Barra',$parametro['txt_codigo'].'-'.$producto[0]['Item_Banco']);
 		   // SetAdoFields('Contra_Cta',$parametro['cc']);
 		   // SetAdoFields('Descuento',$parametro['descuento']);
 		   // SetAdoFields('Codigo_P',$parametro['CodigoP']);
@@ -238,26 +241,15 @@ class alimentos_recibidosC
 			$iva+=number_format($value['Total_IVA'],2);
 			// print_r($value['VALOR_UNIT']);
 			$sub = $value['Valor_Unitario']*$value['Salida'];
-			// print_r($sub);die();
-			// if(is_float($sub))
-			// {
-			// 	$subtotal+=number_format($sub,2);
-			// }else
-			// {
-			  $subtotal+=$sub;
-			// }
-			  $procedimiento=$value['Detalle'];
+			$subtotal+=$sub;
+			$procedimiento=$value['Detalle'];
 
 			$total+=$value['Valor_Total'];
 
 			$FechaInventario = $value['Fecha']->format('Y-m-d');
  	 		$CodBodega = '01';
 			$costo_existencias =  Leer_Codigo_Inv($value['Codigo_Inv'],$FechaInventario,$CodBodega,$CodMarca='');
-
-
-			// $costo =  $this->modelo->costo_producto($value['Codigo_Inv']);
-			// $existencias =  $this->modelo->costo_venta($value['Codigo_Inv']);
-
+		
 			if($costo_existencias['respueta']!=1){$costo_existencias['datos']['Stock'] = 0; $costo_existencias['datos']['Costo'] = 0;}
 			else{
 				$exis = number_format($costo_existencias['datos']['Stock']-$value['Salida'],2);
@@ -268,19 +260,7 @@ class alimentos_recibidosC
 				}
 			}
 			$nega = 0;			
-			// if(empty($costo))
-			// {
-			// 	$costo[0]['Costo'] = 0;
-			// 	// $costo[0]['Existencia'] = 0;
-			// }else
-			// {
-			// 	$exis = number_format($existencias[0]['Existencia']-$value['Salida'],2);
-			// 	if($exis<0)
-			// 	{
-			// 		$nega = $exis;
-			// 		$negativos = true;
-			// 	}
-			// }
+			
 
 			if($d=='')
 			{
@@ -312,6 +292,9 @@ class alimentos_recibidosC
   					</td>
   					<td width="'.$d7.'">
   					     <input type="text" class="form-control input-sm" id="txt_negarivo_'.$value['ID'].'" value="'.$nega.'" readonly="" />
+  					</td>
+  					<td width="'.$d7.'">
+  					    '.$value['Codigo_Barra'].'
   					</td>
   					<td width="90px">
   					<!--	<button class="btn btn-sm btn-primary" onclick="editar_lin(\''.$value['ID'].'\')" title="Editar linea"><span class="glyphicon glyphicon-floppy-disk"></span></button> -->

@@ -442,7 +442,7 @@ function autocoplet_ingreso()
    {
      let cant = parseFloat($('#txt_canti').val());
      let pre = parseFloat($('#txt_precio').val());
-     let des = parseFloat($('#txt_descto').val());
+     let des = 0; //parseFloat($('#txt_descto').val());
      if($('#rbl_si').prop('checked'))
      {
        let subtotal = pre*cant;
@@ -484,9 +484,10 @@ function autocoplet_ingreso()
    }
    function agregar()
   {
-    var parametros = $("#form_add_producto").serialize();
+    var parametros = $("#form_add_producto").serialize();    
+    var parametros2 = $("#form_correos").serialize();
        $.ajax({
-         data:  parametros,
+         data:  parametros+'&'+parametros2,
          url:   '../controlador/inventario/alimentos_recibidosC.php?guardar_recibido=true',
          type:  'post',
          dataType: 'json',
@@ -736,7 +737,8 @@ function eliminar_lin(num)
 				          <!-- <th>DCTO %</th> -->
 				          <th class="text-right">IVA</th>
 				          <th class="text-right">IMPORTE</th>
-				          <th>Stock(-)</th>
+				          <th>Stock(-)</th>				          
+				          <th>Codigo de barras</th>
 				        </thead>
 				        <tbody id="tbl_body"></tbody>
 

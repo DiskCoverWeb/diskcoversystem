@@ -18,6 +18,18 @@ if(isset($_GET['search']))
 	echo json_encode($controlador->autocompletar($query));
 
 }
+if(isset($_GET['searchAbre']))
+{
+	$query = $_POST['search'];
+	echo json_encode($controlador->autocompletarAbre($query));
+}
+if(isset($_GET['validar_abre']))
+{
+	$query = $_POST['parametros'];
+	// print_r($query);die();
+	echo json_encode($controlador->validar_abreviatura($query));
+
+}
 if(isset($_GET['familias']))
 {
 	$query = '';
@@ -468,6 +480,7 @@ class articulosC
 		    SetAdoFields('Cliente',$parametros['txt_nombre_prove']);
 		    SetAdoFields('CI_RUC',$parametros['txt_ruc']);
 		    SetAdoFields('Email',$parametros['txt_email']);
+		    SetAdoFields('Email2',$parametros['txt_email2']);
 		    SetAdoFields('Telefono',$parametros['txt_telefono']);
 		    SetAdoFields('Direccion',$parametros['txt_direccion']);
 		    SetAdoFields('Actividad',$parametros['txt_actividad']);
@@ -988,10 +1001,45 @@ function eliminar_factura($parametros)
 		// print_r($datos);die();
 		$result = array();
 		foreach ($datos as $key => $value) {
-			 $result[] = array("value"=>$value['ID'],"label"=>$value['Cliente'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'CI'=>$value['CI_RUC'],'Actividad'=>$value['Actividad'],'Cod_Ejec'=>$value['Cod_Ejec']);
+			 $result[] = array("value"=>$value['ID'],"label"=>$value['Cliente'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'email2'=>$value['Email2'],'CI'=>$value['CI_RUC'],'Actividad'=>$value['Actividad'],'Cod_Ejec'=>$value['Cod_Ejec']);
 		}
 		return $result;
 	}
+
+  	function autocompletarAbre($query)
+	{
+
+	$datos = $this->modelo->clientes_all(false,false,$query);
+	// print_r($datos);die();
+	$result = array();
+	foreach ($datos as $key => $value) {
+		 $result[] = array("value"=>$value['ID'],"Cliente"=>$value['Cliente'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'CI'=>$value['CI_RUC'],'Actividad'=>$value['Actividad'],'label'=>$value['Cod_Ejec']);
+	}
+	return $result;
+	}
+
+	function validar_abreviatura($parametros)
+	{
+		$datos = $this->modelo->clientes_all(false,false,$parametros['abre']);
+		if(count($datos)>0)
+		{
+			// print_r($datos);
+			// print_r($parametros);die();
+
+			if($parametros['id']==$datos[0]['ID'])
+			{
+				return -1;
+			}else{
+				return 1;
+			}
+		}else
+		{
+			return -1;
+		}
+	// print_r($datos);die();
+	}
+
+
 
    function eliminar_articulos($id)
    {

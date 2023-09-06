@@ -371,7 +371,7 @@ class articulosM
 
 	}
 
-	function clientes_all($query=false,$codigo = false)
+	function clientes_all($query=false,$codigo = false,$abreviado=false)
 	{
 		$cid = $this->conn;
 		$sql="SELECT  *
@@ -384,6 +384,10 @@ class articulosM
 		if($codigo)
 		{
 			$sql.="AND Codigo ='".$codigo."'";
+		}
+		if($abreviado)
+		{
+			$sql.="AND Cod_Ejec LIKE'%".$abreviado."%'";
 		}
 			$sql.= "ORDER BY C.Cliente OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
 		
