@@ -1,7 +1,9 @@
 <?php  date_default_timezone_set('America/Guayaquil');  //print_r($_SESSION);die();//print_r($_SESSION['INGRESO']);die();?>
 <script type="text/javascript">
-  $(document).ready(function () {
-  	 $('#ciudad').select2();
+  $(document).ready(function () 
+  {
+
+  	$('#ciudad').select2();
   	autocmpletar_entidad(); 
 
   	 $('#entidad').on('select2:select', function (e) {
@@ -18,10 +20,124 @@
       $('#lbl_enti').html(item);
      
       console.log(data);
-    });
+    });	
 
 
-  });
+});
+
+  function subir_img()
+  {
+     var fileInput = $('#file_img').get(0).files[0];    
+      if(fileInput=='')
+      {
+        Swal.fire('','Seleccione una imagen','warning');
+        return false;
+      }
+      $('#myModal_espera').modal('show');
+      var formData = new FormData(document.getElementById("form_empresa"));
+         $.ajax({
+            url: '../controlador/empresa/cambioeC.php?cargar_imagen=true',
+            type: 'post',
+            data: formData,
+            contentType: false,
+            processData: false,
+            dataType:'json',
+            success: function(response) {
+               if(response==-1)
+               {
+                 Swal.fire(
+                  '',
+                  'Algo extraño a pasado intente mas tarde.',
+                  'error')
+
+               }else if(response ==-2)
+               {
+                  Swal.fire(
+                  '',
+                  'Asegurese que el archivo subido sea una imagen.',
+                  'error')
+               }else if(response==-3)
+               {
+               	 Swal.fire(
+                  'El nombre del logo es muy extenso',
+                  '',
+                  'error');
+
+               }else
+               {
+                cargar_tb2();
+               } 
+               $('#myModal_espera').modal('hide');
+            }
+        });
+
+  }
+
+   function subir_firma()
+  {
+     var fileInput = $('#file_firma').get(0).files[0];    
+      if(fileInput=='')
+      {
+        Swal.fire('','Seleccione una imagen','warning');
+        return false;
+      }
+      $('#myModal_espera').modal('show');
+      var formData = new FormData(document.getElementById("form_empresa"));
+         $.ajax({
+            url: '../controlador/empresa/cambioeC.php?cargar_firma=true',
+            type: 'post',
+            data: formData,
+            contentType: false,
+            processData: false,
+            dataType:'json',
+            success: function(response) {
+               if(response==-1)
+               {
+                 Swal.fire(
+                  '',
+                  'Algo extraño a pasado intente mas tarde.',
+                  'error')
+
+               }else if(response ==-2)
+               {
+                  Swal.fire(
+                  '',
+                  'Asegurese que el archivo subido sea certificado (.p12) valido')
+               }else
+               {
+                cargar_tb3();
+               } 
+            }
+        });
+
+  }
+
+  async function cargar_tb2()
+  {
+  	$('#myModal_espera').modal('show');
+	  	await datos_empresa();
+	  	setTimeout(setear_Tab2, 2000);	  
+  	$('#myModal_espera').modal('hide');	
+  }
+  async function cargar_tb3()
+  {
+  	$('#myModal_espera').modal('show');
+	  	await datos_empresa();
+	  	setTimeout(setear_Tab3, 2000);	  
+  	$('#myModal_espera').modal('hide');	
+  }
+  function setear_Tab2()
+  {
+  		$(".active").removeClass("active");
+	    $('.nav-tabs li').find('a[href="#tab_2"]').parent('li').addClass('active'); 
+	    $('#tab_2').addClass("active");
+  }
+  function setear_Tab3()
+  {
+  		$(".active").removeClass("active");
+	    $('.nav-tabs li').find('a[href="#tab_3"]').parent('li').addClass('active'); 
+	    $('#tab_3').addClass("active");
+  }
 
   function provincias(pais)
   {
@@ -200,7 +316,7 @@ function autocompletarCempresa(){
 	});
  }
 
- function datos_empresa()
+ async function datos_empresa()
   {
   	var sms = !!document.getElementById("Mensaje");
   	if(sms==false)
@@ -224,8 +340,6 @@ function autocompletarCempresa(){
 		{
 			$('#datos_empresa').html(data.datos);
 			$('#ci_ruc').val(data.ci);
-
-			console.log(data);
 		}
 	});
   }
@@ -444,6 +558,11 @@ function AmbienteProduccion()
     $('#TxtWebSRIau').val('https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl');
 }
 
+function cargar_img()
+{
+	var img  = $('#ddl_img').val();
+	$('#img_logo').prop('src','../../img/logotipos/'+img)
+}
 </script>
 
   <div class="row">

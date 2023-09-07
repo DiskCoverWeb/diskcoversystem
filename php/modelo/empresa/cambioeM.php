@@ -303,6 +303,18 @@ class cambioeM
 		return  $this->db->consulta_datos_db_sql_terceros($sql,$host,$user,$pass,$base,$Puerto);
 	}
 
+	function actualizar_firma($firma,$ruc,$em)
+	{
+		$sql = "UPDATE Empresas SET Ruta_Certificado = '".$firma."' WHERE RUC='".$ruc."'";
+		return $this->db->ejecutar_sql_terceros($sql,$em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
+	}
+	function actualizar_foto($foto,$ruc,$em)
+	{
+		$sql = "UPDATE Empresas SET Logo_Tipo = '".$foto."' WHERE RUC='".$ruc."'";
+		// print_r($sql);die();
+		return $this->db->ejecutar_sql_terceros($sql,$em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
+	}
+
 
 
 }
