@@ -521,7 +521,7 @@ class articulosC
 
 	function agreagar_producto($parametro)
 	{
-		   print_r($parametro);die();
+		   // print_r($parametro);die();
 
 		   $val_descto = (($parametro['txt_precio']*$parametro['txt_canti'])*$parametro['txt_descto'])/100;
 		   $pro = $this->modelo->buscar_cta_proveedor();
