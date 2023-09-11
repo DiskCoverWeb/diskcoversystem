@@ -1218,7 +1218,7 @@ class autorizacion_sri
 	    	 			  	$xml_codigo = $xml->createElement('codigoInterno',$value["Codigo"]);
 	    	 			  	$xml_detalle->appendChild($xml_codigo);
 
-	    	 			  	$xml_codigo = $xml->createElement('descripcion',$Producto);
+	    	 			  	$xml_codigo = $xml->createElement('descripcion',$this->quitar_carac($Producto));
 	    	 			  	$xml_detalle->appendChild($xml_codigo);
 
 
