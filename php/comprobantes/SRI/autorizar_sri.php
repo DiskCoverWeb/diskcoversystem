@@ -1199,7 +1199,7 @@ class autorizacion_sri
 	    	 			$xml_detalle = $xml->createElement( "detalle");
 
 	    	 			$Producto = trim($value["Producto"]);
-	    	 			if($cabecera['Imp_Mes']){
+	    	 			if(isset($cabecera['Imp_Mes']) && $cabecera['Imp_Mes']){
 		                       if(strlen($value["Ticket"]) > 1){ $Producto = $Producto.", ".$value["Ticket"];}
 		                       if(strlen($value["Mes"]) > 1){ $Producto = $Producto.": ".$value["Mes"];}
                     	}
