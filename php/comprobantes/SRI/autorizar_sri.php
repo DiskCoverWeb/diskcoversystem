@@ -741,7 +741,8 @@ class autorizacion_sri
 	            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 	            AND TC = '" .$TFA['TC']."' 
 	            AND Serie = '" .$TFA['Serie']."' 
-	            AND Factura = " .$TFA['Factura']." 
+	            AND Factura = " .$TFA['Factura']."
+	            AND Remision = " .$TFA['Remision']."  
 	            AND CodigoC = '" .$TFA['CodigoC']."' 
 	            AND Autorizacion = '" .$TFA['Autorizacion']."' ";
 	         	$this->db->String_Sql($sql);
@@ -916,6 +917,7 @@ class autorizacion_sri
 	            AND TC = '" .$TFA['TC']."' 
 	            AND Serie = '" .$TFA['Serie']."' 
 	            AND Factura = " .$TFA['Factura']." 
+	            AND Remision = " .$TFA['Remision']." 
 	            AND CodigoC = '" .$TFA['CodigoC']."' 
 	            AND Autorizacion = '" .$TFA['Autorizacion']."' ";
 	         	$this->db->String_Sql($sql);
@@ -1276,12 +1278,12 @@ class autorizacion_sri
         	$xml_infoAdicional->appendChild($xml_campoAdicional);
         	}         
 
-         if(isset($cabecera['Observacion'])){
+         if(isset($cabecera['Observacion']) && $cabecera['Observacion']!='.'){
         	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['Observacion']);
         	 $xml_campoAdicional->setAttribute( "nombre", "motivoTraslado");
         	 $xml_infoAdicional->appendChild($xml_campoAdicional);
         	}
-        if(isset($cabecera['Nota'])){
+        if(isset($cabecera['Nota']) && $cabecera['Nota']!='.'){
         	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['Nota']);
         	 $xml_campoAdicional->setAttribute( "nombre", "notaAuxiliar");
         	 $xml_infoAdicional->appendChild($xml_campoAdicional);
@@ -2982,6 +2984,7 @@ function generar_xml_retencion($cabecera,$detalle)
 	        AND TC = '".$TFA['TC']."'
 	        AND Serie = '".$TFA['Serie']."'
 	        AND Factura = ".$TFA['Factura']."
+	        AND Remision = " .$TFA['Remision']." 
 	        AND CodigoC = '".$TFA['CodigoC']."'
 	        AND Autorizacion = '".$TFA['Autorizacion']."' ";
 	    return    $this->db->String_Sql($sql);

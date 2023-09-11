@@ -375,8 +375,8 @@ class lista_guia_remisionC
 			}
 
 			// print_r($FA);die();
-			$TFA['CodigoC'] = $FA[0]['CodigoC']; 
-    	$TFA['TC'] = $tc;
+			$TFA['CodigoC'] = $FA[0]['CodigoC']; 			
+    		$TFA['TC'] = 'FA';
 			$TFA['Serie'] = $serie;
 			$TFA['Autorizacion'] = $Auto;
 			$TFA['Factura'] = $factura;

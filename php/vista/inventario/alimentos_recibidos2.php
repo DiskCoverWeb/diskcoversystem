@@ -370,7 +370,7 @@ function autocoplet_ingreso()
   {
     var parametros=
     {
-      'num_ped':99999,
+      'num_ped':$('#txt_codigo').val(),
     }
      $.ajax({
       data:  {parametros:parametros},

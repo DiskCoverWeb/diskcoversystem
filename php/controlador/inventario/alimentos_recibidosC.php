@@ -176,7 +176,7 @@ class alimentos_recibidosC
 	{
 		// $producto = explode('_',$parametro['ddl_producto']);
 		$producto = $this->modelo->catalogo_productos($parametro['txt_referencia']);
-		$num_ped = 99999;
+		$num_ped = $parametro['txt_codigo'];
 		// print_r($producto);
 		// print_r($parametro);
 		// die();

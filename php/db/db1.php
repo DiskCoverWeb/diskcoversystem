@@ -239,6 +239,7 @@ class db
 
 	function ejecutar_procesos_almacenados($sql,$parametros,$retorna=false,$tipo=false)
 	{
+		// print_r($tipo);die();
 		if($tipo=='MY SQL' || $tipo =='MYSQL' || $tipo=='My SQL' || $tipo=='My sql')
 		{
 			$conn = $this->MySQL();
@@ -281,12 +282,12 @@ class db
            $stmt = sqlsrv_prepare($conn, $sql, $parametros);
 		       // print_r('expression');die();
            $res = sqlsrv_execute($stmt);
+           // print_r($res);die();
            if ($res === false) 
            {
-           	// echo "<script type='text/javascript'>alert('Estructura procesco almacenado')</script>";
-           	// die();
-           	// echo "Error en consulta PA.\n";  
-           	$respuesta = -1;
+            echo "Error en consulta PA.\n";  
+					  die( print_r( sqlsrv_errors(), true));  
+           	return -1;
            	// die( print_r("<script type='text/javascript'>alert('Estructura procesco almacenado')</script>", true));  
            }else{
 				   sqlsrv_close($conn);

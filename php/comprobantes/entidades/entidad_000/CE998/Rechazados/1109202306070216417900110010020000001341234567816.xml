@@ -5,79 +5,86 @@
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>0509202306070216417900110010020000001321234567811</claveAcceso>
+    <claveAcceso>1109202306070216417900110010020000001341234567816</claveAcceso>
     <codDoc>06</codDoc>
     <estab>001</estab>
     <ptoEmi>002</ptoEmi>
-    <secuencial>000000132</secuencial>
+    <secuencial>000000134</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
   <infoGuiaRemision>
     <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
     <dirPartida>AGUARICO</dirPartida>
-    <razonSocialTransportista>ABAD SUAREZ MARIA</razonSocialTransportista>
+    <razonSocialTransportista>ABAD VALVERDE ANDREE</razonSocialTransportista>
     <tipoIdentificacionTransportista>05</tipoIdentificacionTransportista>
-    <rucTransportista>0923458798</rucTransportista>
+    <rucTransportista>0914152822</rucTransportista>
     <rise>000</rise>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <fechaIniTransporte>05/09/2023</fechaIniTransporte>
-    <fechaFinTransporte>05/09/2023</fechaFinTransporte>
+    <fechaIniTransporte>11/09/2023</fechaIniTransporte>
+    <fechaFinTransporte>11/12/2023</fechaFinTransporte>
     <placa>XXX-999</placa>
   </infoGuiaRemision>
   <destinatarios>
     <destinatario>
-      <identificacionDestinatario>0917911588</identificacionDestinatario>
-      <razonSocialDestinatario>ABAD MARIA AUXILIADORA</razonSocialDestinatario>
-      <dirDestinatario>BALSAS</dirDestinatario>
+      <identificacionDestinatario>1719894733</identificacionDestinatario>
+      <razonSocialDestinatario>ABARCA HENRY</razonSocialDestinatario>
+      <dirDestinatario>ALAUSI</dirDestinatario>
       <motivoTraslado>Translado de mercaderia</motivoTraslado>
-      <ruta>De AGUARICO a BALSAS</ruta>
+      <ruta>De AGUARICO a ALAUSI</ruta>
       <codDocSustento>01</codDocSustento>
-      <numDocSustento>001-003-000001383</numDocSustento>
-      <numAutDocSustento>0509202301070216417900110010030000013831234567811</numAutDocSustento>
-      <fechaEmisionDocSustento>05/09/2023</fechaEmisionDocSustento>
+      <numDocSustento>001-003-000001385</numDocSustento>
+      <numAutDocSustento>1109202301070216417900110010030000013851234567816</numAutDocSustento>
+      <fechaEmisionDocSustento>11/09/2023</fechaEmisionDocSustento>
       <detalles>
         <detalle>
-          <codigoInterno>MS.03</codigoInterno>
-          <descripcion>A Barril 1: Septiembre</descripcion>
+          <codigoInterno>98.24</codigoInterno>
+          <descripcion>6 LINEAS: Septiembre</descripcion>
+          <cantidad>1.0000</cantidad>
+        </detalle>
+        <detalle>
+          <codigoInterno>98.40</codigoInterno>
+          <descripcion>7 LINEAS: Septiembre</descripcion>
           <cantidad>1.0000</cantidad>
         </detalle>
       </detalles>
     </destinatario>
   </destinatarios>
   <infoAdicional>
-    <campoAdicional nombre="Telefono">0983277109</campoAdicional>
-    <campoAdicional nombre="Email">bubblegummersrecreo@bataecuador.com.ec</campoAdicional>
+    <campoAdicional nombre="Telefono">2476257</campoAdicional>
+    <campoAdicional nombre="Email">enriqueviracocha@hotmail.com</campoAdicional>
+    <campoAdicional nombre="motivoTraslado"/>
+    <campoAdicional nombre="notaAuxiliar"/>
     <campoAdicional nombre="lugarEntrega">plazoleta americas</campoAdicional>
   </infoAdicional>
-<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature315625">
-<ds:SignedInfo Id="Signature-SignedInfo884204">
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature44583">
+<ds:SignedInfo Id="Signature-SignedInfo410776">
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-<ds:Reference Id="SignedPropertiesID1043339" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature315625-SignedProperties940620">
+<ds:Reference Id="SignedPropertiesID282986" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature44583-SignedProperties91595">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>JGNK38kuvs70yNPJZ+mKxKJczLA=</ds:DigestValue>
+<ds:DigestValue>R/qMzUZl3BC2VXCNH2GvsmDt/oA=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference URI="#Certificate1614715">
+<ds:Reference URI="#Certificate1817157">
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>BpiXOjjl1F70VRwLoC4nSTQReQo=</ds:DigestValue>
+<ds:DigestValue>jmdJsKUqCQqVum2wa4fXuHT4fMk=</ds:DigestValue>
 </ds:Reference>
-<ds:Reference Id="Reference-ID-77776" URI="#comprobante">
+<ds:Reference Id="Reference-ID-935461" URI="#comprobante">
 <ds:Transforms>
 <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>Fy2Qk6KoIZLxDhS2/hb3vVwWo7s=</ds:DigestValue>
+<ds:DigestValue>Ge0GfL8t0xIlVNVdhkXiC30F5KI=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue Id="SignatureValue309746">
-RJP7RhW2nMWooNirl9qW2lC3DePkLwlE//ghBVpNilNlmYeTtv00nx+rSie8IysI0O1PQ82Q2/hv
-vU3X1y4Sz3hBJh/k4H2eH4zfbn+RzV2XgfHwx3by3qPCz354ixWdCSF85uGHt97+7lI1vC2SFfDe
-vCUUzSW/ldFmPDanFbytbJ/r2ZaIjoJPyRqXZAhLcfBQQn8bPIGQpSxwbIkq9j1+Vg8ZYgGtFS3d
-b9F7rSGZhUcVjUhdIAGrXd6x/KxPEbby71CrW2xqXWoEEf7kg7O+bMBXTSb7afRPY//qEs1e3Gfa
-07IyvifKFv2B8t0m1x19FvAhXZL/jZQHpccoKQ==
+<ds:SignatureValue Id="SignatureValue708490">
+HDn4mPHZUHa2/B1LslBZ7gjPG7QcXkATvYTCkSQ4de2eLEoKOEW6vO2818CtNdViGe1XK0AOCFGW
+sfYh9kAxv2f0J9TUQmWEnaOHMvtGVwYUMlFtsWQAgcvsuGXWtexNBuaW3buYoP/+aRa92eNOxSp4
+uajw2eJj4xcO5n+TIRRrtRZS2ouYsUVyNMMh7di08MxrmMzsYQ/nmKg+BynyYeNxi+ZD9a9u/kok
+R4hrDJlBz/Y1LfM6cbN2OjCsrp25HbcHsFYMQ22BTAk8es6abvgl/4dgxMUFJJTU14SbzBwIbqNh
+jTBkPoqjkMd1uR0A4mGQAI15SPndXQmFiO1Qgw==
 </ds:SignatureValue>
-<ds:KeyInfo Id="Certificate1614715">
+<ds:KeyInfo Id="Certificate1817157">
 <ds:X509Data>
 <ds:X509Certificate>
 MIILkjCCCXqgAwIBAgIEXDrIAjANBgkqhkiG9w0BAQsFADCBmTELMAkGA1UEBhMCRUMxHTAbBgNV
@@ -148,4 +155,19 @@ LRuAVSyi58qyAD0Eu1zLMc3KhEUXoxF7aA8P0w==
 </ds:RSAKeyValue>
 </ds:KeyValue>
 </ds:KeyInfo>
-<ds:Object Id="Signature315625-Object1035439"><etsi:QualifyingProperties Target="#Signature315625"><etsi:SignedProperties Id="Signature315625-SignedProperties940620"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-09-11T15:51:09-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-77776"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature></guiaRemision>
+<ds:Object Id="Signature44583-Object973712"><etsi:QualifyingProperties Target="#Signature44583"><etsi:SignedProperties Id="Signature44583-SignedProperties91595"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-09-11T15:53:50-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>m8okW/lbE8bTuXKKJc3pO5HpQGc=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-1 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 1,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1547356162</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-935461"><etsi:Description>contenido comprobante</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties></etsi:QualifyingProperties></ds:Object></ds:Signature><ns2:respuestaSolicitud xmlns:ns2="http://ec.gob.sri.ws.recepcion">
+    <estado>DEVUELTA</estado>
+    <comprobantes>
+        <comprobante>
+            <claveAcceso>1109202306070216417900110010020000001341234567816</claveAcceso>
+            <mensajes>
+                <mensaje>
+                    <identificador>35</identificador>
+                    <mensaje>ARCHIVO NO CUMPLE ESTRUCTURA XML</mensaje>
+                    <informacionAdicional>Se encontró el siguiente error en la estructura del comprobante: cvc-minLength-valid: Value '' with length = '0' is not facet-valid with respect to minLength '1' for type 'campoAdicional'..</informacionAdicional>
+                    <tipo>ERROR</tipo>
+                </mensaje>
+            </mensajes>
+        </comprobante>
+    </comprobantes>
+</ns2:respuestaSolicitud></guiaRemision>

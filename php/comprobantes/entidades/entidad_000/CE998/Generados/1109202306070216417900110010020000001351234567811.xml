@@ -6,37 +6,37 @@
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>0509202306070216417900110010020000001321234567811</claveAcceso>
+    <claveAcceso>1109202306070216417900110010020000001351234567811</claveAcceso>
     <codDoc>06</codDoc>
     <estab>001</estab>
     <ptoEmi>002</ptoEmi>
-    <secuencial>000000132</secuencial>
+    <secuencial>000000135</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
   <infoGuiaRemision>
     <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
-    <dirPartida>AGUARICO</dirPartida>
-    <razonSocialTransportista>ABAD SUAREZ MARIA</razonSocialTransportista>
+    <dirPartida>BIBLIAN</dirPartida>
+    <razonSocialTransportista>ABAD MOSQUERA EDITHSON MARCELO</razonSocialTransportista>
     <tipoIdentificacionTransportista>05</tipoIdentificacionTransportista>
-    <rucTransportista>0923458798</rucTransportista>
+    <rucTransportista>0701520546</rucTransportista>
     <rise>000</rise>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <fechaIniTransporte>05/09/2023</fechaIniTransporte>
-    <fechaFinTransporte>05/09/2023</fechaFinTransporte>
+    <fechaIniTransporte>11/09/2023</fechaIniTransporte>
+    <fechaFinTransporte>11/09/2023</fechaFinTransporte>
     <placa>XXX-999</placa>
   </infoGuiaRemision>
   <destinatarios>
     <destinatario>
-      <identificacionDestinatario>0917911588</identificacionDestinatario>
-      <razonSocialDestinatario>ABAD MARIA AUXILIADORA</razonSocialDestinatario>
-      <dirDestinatario>BALSAS</dirDestinatario>
+      <identificacionDestinatario>0914152822</identificacionDestinatario>
+      <razonSocialDestinatario>ABAD VALVERDE ANDREE</razonSocialDestinatario>
+      <dirDestinatario>BALZAR</dirDestinatario>
       <motivoTraslado>Translado de mercaderia</motivoTraslado>
-      <ruta>De AGUARICO a BALSAS</ruta>
+      <ruta>De BIBLIAN a BALZAR</ruta>
       <codDocSustento>01</codDocSustento>
-      <numDocSustento>001-003-000001383</numDocSustento>
-      <numAutDocSustento>0509202301070216417900110010030000013831234567811</numAutDocSustento>
-      <fechaEmisionDocSustento>05/09/2023</fechaEmisionDocSustento>
+      <numDocSustento>001-003-000001386</numDocSustento>
+      <numAutDocSustento>1109202301070216417900110010030000013861234567811</numAutDocSustento>
+      <fechaEmisionDocSustento>11/09/2023</fechaEmisionDocSustento>
       <detalles>
         <detalle>
           <codigoInterno>MS.03</codigoInterno>
@@ -49,6 +49,8 @@
   <infoAdicional>
     <campoAdicional nombre="Telefono">0983277109</campoAdicional>
     <campoAdicional nombre="Email">bubblegummersrecreo@bataecuador.com.ec</campoAdicional>
+    <campoAdicional nombre="motivoTraslado"/>
+    <campoAdicional nombre="notaAuxiliar"/>
     <campoAdicional nombre="lugarEntrega">plazoleta americas</campoAdicional>
   </infoAdicional>
 </guiaRemision>

@@ -251,6 +251,23 @@ function autocoplet_ingreso()
 						</div>
 						<div class="row" style="padding-top:5px">
 							<div class="col-sm-6 text-right">
+								 <b>TEMPERATURA DE RECEPCION °C:</b>
+							</div>
+							<div class="col-sm-6">
+	                <input type="" class="form-control input-xs" id="txt_temperatura" name="txt_temperatura">	
+							</div>
+						</div>
+						<div class="row" style="padding-top:5px">
+							<div class="col-sm-6 text-right">
+								 <b>ESTADO DE TRANSPORTE:</b>
+							</div>
+							<div class="col-sm-6 text-center">
+	                <label><input type="radio" name="cbx_estado_tran"><br><i class="fa fa-check-circle" style="color: green;"></i> BUENO</label>
+	                <label><input type="radio" name="cbx_estado_tran"><br><i class="fa  fa-times-circle" style="color: red;"></i> MALO</label>
+							</div>
+						</div>
+						<div class="row" style="padding-top:5px">
+							<div class="col-sm-6 text-right">
 								<b>COMENTARIO:</b>
 							</div>
 							<div class="col-sm-6">

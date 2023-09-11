@@ -55,7 +55,10 @@ if(isset($_GET['datos_balance_excel']))
 		'balMes' => $_GET['balMes'],
 		'nom' => $_GET['nom'],
 		'imp' => $_GET['imp']);
-	echo json_decode(sp_proceso_balance($parametros));
+
+	// print_r($parametros);die();
+	$res = sp_proceso_balance($parametros);
+	echo json_decode(1);
 	// echo json_decode($l='ss');
 }
 
@@ -537,10 +540,13 @@ function sp_proceso_balance($parametros)
 	// print_r($parametros);die();
 	if($parametros['check']=='false'){
 		 $balance=$modelo->sp_procesar_balance_SQL($fechaini,$fechafin,$parametros['coop'],$parametros['sucur'],$parametros['balMes'],$parametros['ext']);
+
+		 // print_r('sss'.$balance);die();
     }else
     {
     	$balance=$modelo->sp_procesar_balance_ext();
     }
+    // print_r($balance);
     // print_r($parametros);die();
 	if($balance == 1)
 	{

@@ -6,49 +6,56 @@
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>0509202306070216417900110010020000001321234567811</claveAcceso>
+    <claveAcceso>1109202306070216417900110010020000001341234567816</claveAcceso>
     <codDoc>06</codDoc>
     <estab>001</estab>
     <ptoEmi>002</ptoEmi>
-    <secuencial>000000132</secuencial>
+    <secuencial>000000134</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
   <infoGuiaRemision>
     <dirEstablecimiento>DESARROLLO PARA PROGRAMACION DE DISKCOVER SYSTEM</dirEstablecimiento>
     <dirPartida>AGUARICO</dirPartida>
-    <razonSocialTransportista>ABAD SUAREZ MARIA</razonSocialTransportista>
+    <razonSocialTransportista>ABAD VALVERDE ANDREE</razonSocialTransportista>
     <tipoIdentificacionTransportista>05</tipoIdentificacionTransportista>
-    <rucTransportista>0923458798</rucTransportista>
+    <rucTransportista>0914152822</rucTransportista>
     <rise>000</rise>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <fechaIniTransporte>05/09/2023</fechaIniTransporte>
-    <fechaFinTransporte>05/09/2023</fechaFinTransporte>
+    <fechaIniTransporte>11/09/2023</fechaIniTransporte>
+    <fechaFinTransporte>11/12/2023</fechaFinTransporte>
     <placa>XXX-999</placa>
   </infoGuiaRemision>
   <destinatarios>
     <destinatario>
-      <identificacionDestinatario>0917911588</identificacionDestinatario>
-      <razonSocialDestinatario>ABAD MARIA AUXILIADORA</razonSocialDestinatario>
-      <dirDestinatario>BALSAS</dirDestinatario>
+      <identificacionDestinatario>1719894733</identificacionDestinatario>
+      <razonSocialDestinatario>ABARCA HENRY</razonSocialDestinatario>
+      <dirDestinatario>ALAUSI</dirDestinatario>
       <motivoTraslado>Translado de mercaderia</motivoTraslado>
-      <ruta>De AGUARICO a BALSAS</ruta>
+      <ruta>De AGUARICO a ALAUSI</ruta>
       <codDocSustento>01</codDocSustento>
-      <numDocSustento>001-003-000001383</numDocSustento>
-      <numAutDocSustento>0509202301070216417900110010030000013831234567811</numAutDocSustento>
-      <fechaEmisionDocSustento>05/09/2023</fechaEmisionDocSustento>
+      <numDocSustento>001-003-000001385</numDocSustento>
+      <numAutDocSustento>1109202301070216417900110010030000013851234567816</numAutDocSustento>
+      <fechaEmisionDocSustento>11/09/2023</fechaEmisionDocSustento>
       <detalles>
         <detalle>
-          <codigoInterno>MS.03</codigoInterno>
-          <descripcion>A Barril 1: Septiembre</descripcion>
+          <codigoInterno>98.24</codigoInterno>
+          <descripcion>6 LINEAS: Septiembre</descripcion>
+          <cantidad>1.0000</cantidad>
+        </detalle>
+        <detalle>
+          <codigoInterno>98.40</codigoInterno>
+          <descripcion>7 LINEAS: Septiembre</descripcion>
           <cantidad>1.0000</cantidad>
         </detalle>
       </detalles>
     </destinatario>
   </destinatarios>
   <infoAdicional>
-    <campoAdicional nombre="Telefono">0983277109</campoAdicional>
-    <campoAdicional nombre="Email">bubblegummersrecreo@bataecuador.com.ec</campoAdicional>
+    <campoAdicional nombre="Telefono">2476257</campoAdicional>
+    <campoAdicional nombre="Email">enriqueviracocha@hotmail.com</campoAdicional>
+    <campoAdicional nombre="motivoTraslado"/>
+    <campoAdicional nombre="notaAuxiliar"/>
     <campoAdicional nombre="lugarEntrega">plazoleta americas</campoAdicional>
   </infoAdicional>
 </guiaRemision>

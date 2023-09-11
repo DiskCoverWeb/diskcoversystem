@@ -2869,8 +2869,7 @@ function SQL_Tipo_Balance($TipoBalance,$TipoPyGCC)
       array(&$hasta, SQLSRV_PARAM_IN),
       array(&$EsCoop, SQLSRV_PARAM_IN),
       array(&$sucursal, SQLSRV_PARAM_IN),
-      array(&$balanceMes, SQLSRV_PARAM_IN),
-      array(&$cc, SQLSRV_PARAM_IN)
+      array(&$balanceMes, SQLSRV_PARAM_IN)
       );
       //compos del SP de la base 
 
@@ -2878,7 +2877,7 @@ function SQL_Tipo_Balance($TipoBalance,$TipoPyGCC)
 
       // $sql = "{call sp_Procesar_Balance('003','.','20191028','20191124',0,0,0,'00') }";
       // $stmt = sqlsrv_prepare($cid, $sql);
-     $sql="EXEC sp_Procesar_Balance @Item=?, @Periodo=?, @FechaDesde=?, @FechaHasta=?, @EsCoop=?, @ConSucursal=?, @EsBalanceMes=?, @CentroCostos=? ";
+     $sql="EXEC sp_Procesar_Balance @Item=?, @Periodo=?, @FechaDesde=?, @FechaHasta=?, @EsCoop=?, @ConSucursal=?, @EsBalanceMes=?";
      return  $this->db_->ejecutar_procesos_almacenados($sql,$parametros);
 
      //  $stmt = sqlsrv_prepare($cid, $sql,$parametros);
