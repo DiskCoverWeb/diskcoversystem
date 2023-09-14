@@ -257,6 +257,7 @@
   		Ingresar();
   	}
   }
+  
 
   function Ingresar()
   { 
@@ -296,6 +297,8 @@
 				}
 			}
 
+			
+
 		 var parametros = 
 		 {
 		 	 'usuario':usuario,
@@ -327,14 +330,15 @@
         	Swal.fire('Clave o usuario de cartera invalidos!','No se pudo acceder.','error');
         }
         else
-        {      	
+        {     	
         	// console.log(response); return false;
         	window.location.href = response;
         }     
       }
     });
 
-  }	
+  }
+  	
 	  </script>
 	
 </head>
