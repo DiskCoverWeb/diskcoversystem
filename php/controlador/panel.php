@@ -980,21 +980,20 @@ function validar_estado_all()
     //     $Cadena = $_SESSION['INGRESO']['Nombre_Completo'] . " su equipo se encuentra en LISTA NEGRA, ingreso no autorizado, comuniquese con el Administrador del Sistema";
     //     return array('rps' => 'noActivo', "mensaje" => $Cadena, "titulo" => 'ACCESO DEL PC DENEGADO');
     // }
-    // echo '<script>';
-    // echo 'console.log("DEBUG Estado Usuario: ' . $rps_estado['@EstadoUsuario'] . '");';
-    // echo '</script>';
-    // if (!$rps_estado['@EstadoUsuario']) {
-    //     $Cadena = $_SESSION['INGRESO']['Nombre_Completo'] . " su ingreso no esta autorizado, comuniquese con el Administrador del Sistema";
-    //     return array('rps' => 'noAuto', "mensaje" => $Cadena, "titulo" => 'ACCESO AL SISTEMA DENEGADO');
-    // }
+    echo '<script>';
+    echo 'console.log("DEBUG Estado Usuario: ' . $rps_estado['@EstadoUsuario'] . '");';
+    echo '</script>';
+    if (!$rps_estado['@EstadoUsuario']) {
+        $Cadena = $_SESSION['INGRESO']['Nombre_Completo'] . " su ingreso no esta autorizado, comuniquese con el Administrador del Sistema";
+        return array('rps' => 'noAuto', "mensaje" => $Cadena, "titulo" => 'ACCESO AL SISTEMA DENEGADO');
+    }
 
-    // $ListaFacturas = "";
-    // $titulo = "";
-    // $rps = "";
-    // if ($rps_estado['@TotCartera'] != 0 && $rps_estado['@CantFA'] != 0) {
-    //     $ListaFacturas = "ESTIMADO " . strtoupper($_SESSION['INGRESO']['noempr']) . ", SE LE COMUNICA QUE USTED MANTIENE UNA CARTERA VENCIDA DE USD " . number_format($Cartera, 2, '.', ',') . ", EQUIVALENTE A " . $Cant_FA . " FACTURA(S) EMITIDA(S) A USTED." . PHP_EOL;
-    // }
-    //fin de comentado por javier
+    $ListaFacturas = "";
+    $titulo = "";
+    $rps = "";
+    if ($rps_estado['@TotCartera'] != 0 && $rps_estado['@CantFA'] != 0) {
+        $ListaFacturas = "ESTIMADO " . strtoupper($_SESSION['INGRESO']['noempr']) . ", SE LE COMUNICA QUE USTED MANTIENE UNA CARTERA VENCIDA DE USD " . number_format($Cartera, 2, '.', ',') . ", EQUIVALENTE A " . $Cant_FA . " FACTURA(S) EMITIDA(S) A USTED." . PHP_EOL;
+    }
 
     switch ($rps_estado['@EstadoEmpresa']) {
         case "VEN30":
