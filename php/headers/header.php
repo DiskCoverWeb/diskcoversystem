@@ -97,7 +97,7 @@ $cuentas = SeteosCtas();
   <link rel="stylesheet" href="../../dist/css/skins/_all-skins.min.css">
   <link rel="stylesheet" href="../../dist/css/style_acordeon.css">
   <link rel="stylesheet" href="../../dist/css/jquery-ui.css">
-  <link rel="stylesheet" href="../../dist/css/sweetalert2.min.css">
+  <!--<link rel="stylesheet" href="../../dist/css/sweetalert2.min.css">-->
   <link rel="stylesheet" href="../../dist/css/creados.css?<?php echo date('md') ?>">
   <link rel="stylesheet" href="../../dist/css/email.css" type="text/css">
 
@@ -107,7 +107,7 @@ $cuentas = SeteosCtas();
   <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
   <script src="../../bower_components/select2/dist/js/select2.js"></script>
   <script src="../../dist/js/jquery-ui.js"></script>
-  <script src="../../dist/js/sweetalert2.js"></script>
+  <!--<script src="../../dist/js/sweetalert2.js"></script>-->
   <script src="../../dist/js/js_globales.js?<?php echo date('mmy') ?>"></script>
 
   <script type="text/javascript">

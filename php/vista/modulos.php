@@ -1,5 +1,13 @@
 <?php include('../headers/header.php'); //print_r($_SESSION['INGRESO']);die(); ?>
 <!-- Content Wrapper. Contains page content -->
+
+<head>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="../../dist/js/sweetalert2.min.js"></script>
+	<link rel="stylesheet" href="../../dist/css/sweetalert2.min.css">
+
+
+</head>
 <div class="content-wrapper">
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
@@ -31,6 +39,7 @@
 			}
 
 
+
 			/**
 			 * Analiza el estado de la empresa
 			 */
@@ -42,7 +51,13 @@
 				$mensaje = $response['mensaje'];
 				$mensaje_js = str_replace("\n", "\\n", $mensaje);
 				$titulo = $response['titulo'];
-				$icon = "'info'";
+				//$icon = "'info'";
+				$css =
+					'<style>
+				body {
+					font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif; 
+				  }
+					</style>';
 				$toLogin =
 					'
 				function logout()
@@ -60,29 +75,40 @@
 					}
 				  });
 				}
-				Swal.fire(
-					 "' . $titulo . '",
-					 "' . $mensaje_js . '",
-					 ' . $icon . '
-				).then(function() {
-					logout();
+				Swal.fire({
+					title: "<strong>' . $titulo . '</strong>",
+					html: "' . $mensaje_js . '",
+					focusConfirm: false,
+					icon: "error"
+				}).then((result) => {
+					if (result.isConfirmed) {
+						Swal.fire(
+							"ENVIO DE CORREO POR IMPLEMENTAR",
+							"TESTTTTT",
+							"success"
+						).then(function() {
+							logout();
+						});
+					}
 				});';
 				$continue =
 					'Swal.fire(
 					 "' . $titulo . '",
 					 "' . $mensaje_js . '",
-					 ' . $icon . '
+					 "info"
 					 
 				);';
 				if ($rps == 'BLOQ' || $rps == 'MAS360' || $rps == 'VEN360' || $rps == 'noAuto' || $rps == 'noActivo') {
 					echo
 						'
+					' . $css . '
 					<script>
 					' . $toLogin . '
 					</script>';
 				} else {
 					echo
-					'
+						'
+					' . $css . '
 					<script>
 					' . $continue . '
 					</script>';

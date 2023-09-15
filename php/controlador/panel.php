@@ -991,43 +991,43 @@ function validar_estado_all()
 
     switch ($rps_estado['@EstadoEmpresa']) {
         case "VEN30":
-            $ListaFacturas .= "PRIMER COMUNICADO DE ADVERTENCIA: SU EMPRESA ESTA POR SER BLOQUEADA POR CARTERA DE 30 DIAS DE VENCIMIENTO, ";
-            $titulo .= "CARTERA VENCIDA POR 30 DIAS";
+            $ListaFacturas .= "<strong>PRIMER COMUNICADO DE ADVERTENCIA:</strong> Su empresa está por ser bloqueada por cartera de 30 días de vencimiento,<br>";
+            $titulo .= "CARTERA VENCIDA POR 30 DÍAS";
             $rps .= "VEN30";
             break;
         case "VEN60":
-            $ListaFacturas .= "SEGUNDO COMUNICADO DE ADVERTENCIA: SU EMPRESA ESTA POR SER BLOQUEADA POR CARTERA DE 60 DIAS DE VENCIMIENTO, ";
-            $titulo .= "CARTERA VENCIDA POR 60 DIAS";
+            $ListaFacturas .= "<strong>SEGUNDO COMUNICADO DE ADVERTENCIA:</strong> Su empresa está por ser bloqueada por cartera de 60 días de vencimiento,<br>";
+            $titulo .= "CARTERA VENCIDA POR 60 DÍAS";
             $rps .= "VEN60";
             break;
         case "VEN90":
-            $ListaFacturas .= "TERCER COMUNICADO DE ADVERTENCIA: SU EMPRESA ESTA POR SER BLOQUEADA POR CARTERA DE 90 DIAS DE VENCIMIENTO, ";
-            $titulo .= "CARTERA VENCIDA POR 90 DIAS";
+            $ListaFacturas .= "<strong>TERCER COMUNICADO DE ADVERTENCIA:</strong> Su empresa está por ser bloqueada por cartera de 90 días de vencimiento,<br>";
+            $titulo .= "CARTERA VENCIDA POR 90 DÍAS";
             $rps .= "VEN90";
             break;
         case "VEN360":
-            $ListaFacturas .= "SU EMPRESA ESTA BLOQUEADA POR CARTERA DE 360 DIAS DE VENCIMIENTO, ";
-            $titulo .= "EMPRESA BLOQUEADA POR CARTERA DE 360 DIAS DE VENCIMIENTO";
+            $ListaFacturas .= "  ";
+            $titulo .= "EMPRESA BLOQUEADA POR CARTERA DE 360 DÍAS DE VENCIMIENTO";
             $rps .= "VEN360";
             break;
         case "VEN180":
         case "MAS360":
-            $ListaFacturas .= "LO SENTIMOS, SU EMPRESA ESTA SUSPENDIDA EN EL SISTEMA, ";
+            $ListaFacturas .= "Lo sentimos, su empresa está <strong>SUSPENDIDA</strong> en el sistema.<br>";
             $titulo .= "EMPRESA BLOQUEADA";
             $rps .= "MAS360";
             break;
         case "BLOQ":
-            $ListaFacturas .= "LO SENTIMOS, SU EMPRESA NO ESTA ACTIVA EN EL SISTEMA,\n";
-            $titulo .= "EMPRESA NO ACTIVA EN EL SISTEMA";
+            $ListaFacturas .= "<strong>  </strong>";
+            $titulo .= "LO SENTIMOS, SU EMPRESA NO ESTÁ ACTIVA EN EL SISTEMA";
             $rps .= "BLOQ";
             break;
     }
 
 
     if (strlen(trim($ListaFacturas)) > 1) {
-        $ListaFacturas .= "COMUNIQUESE CON SERVICIO AL CLIENTE DE DISKCOVER SYSTEM A LOS TELEFONOS: 098-910-5300/098-652-4396/099-965-4196,\n";
-        $ListaFacturas .= "O ENVIE UN MAIL A carteraclientes@diskcoversystem.com; CON EL COMPROBANTE DE DEPOSITO Y ASI PROCEDER A REALIZAR\n";
-        $ListaFacturas .= "LA ACTUALIZACION DE LA JUSTIFICACION EN EL SISTEMA.";
+        $ListaFacturas .= "<p style='color:#595259'>Comuniquese con servicio al cliente de Diskcover System a los telefonos: <strong>098-910-5300/098-652-4396/099-965-4196</strong>.<br> ";
+        $ListaFacturas .= "O envie un email a<a> carteraclientes@diskcoversystem.com</a>; con el comprobante de deposito y asi proceder a realizar<br>";
+        $ListaFacturas .= "la actualización de la justificación en el sistema.</p>";
 
         return array('rps' => $rps, "mensaje" => $ListaFacturas, "titulo" => $titulo);
     }
