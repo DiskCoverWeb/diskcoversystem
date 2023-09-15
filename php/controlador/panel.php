@@ -970,7 +970,9 @@ function validar_estado_all()
     echo '<script>';
     echo 'console.log("DEBUG SP1CantFA  ' . $rps_estado['@CantFA'] . '");';
     echo '</script>';*/
-    if (!$rps_estado['@pActivo']) {
+
+    // print_r($rps_estado);die();
+    if (!$rps_estado['@pActivo'] || $rps_estado['@pActivo']!=1) {
         $Cadena = $_SESSION['INGRESO']['Nombre_Completo'] . " su equipo se encuentra en LISTA NEGRA, ingreso no autorizado, comuniquese con el Administrador del Sistema";
         return array('rps' => 'noActivo', "mensaje" => $Cadena, "titulo" => 'ACCESO DEL PC DENEGADO');
     }
