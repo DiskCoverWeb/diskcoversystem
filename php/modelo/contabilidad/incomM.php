@@ -603,6 +603,7 @@ class incomM
          AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
          AND T_No = ".$_SESSION['INGRESO']['modulo_']."
          ORDER BY A_No ";
+         // print_r($sql);die();
          $result = $this->conn->datos($sql);
 	   return $result;
  

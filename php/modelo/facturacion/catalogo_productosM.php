@@ -64,7 +64,7 @@ class catalogo_productosM
        	}
        	if($codigo)
        	{
-       		$sql.=" AND CodBod = '".$codigo."'";
+       		$sql.=" AND CodBod >= '".$codigo."'";
        	}
        	$sql.=" ORDER BY CodBod";
        	// print_r($sql);die();

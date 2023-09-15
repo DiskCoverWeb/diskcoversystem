@@ -1350,7 +1350,6 @@ function cuentas_todos($query)
 
    function numero_autorizacion($serie1,$serie2,$fechaReg)
    {
-
    		$cid = $this->conn;
    	    $sql = "SELECT TOP 1 AutRetencion 
         FROM Trans_Air 
@@ -1376,6 +1375,23 @@ function cuentas_todos($query)
 		 }
 		  return $result;
    }
+
+ function  numero_autorizacion_tc($serie1,$serie2,$fechaReg,$cod=false)
+ {    $res = '';
+    if($cod == 4)
+    {
+        $sql = "SELECT TOP 1 * 
+        FROM Trans_Compras 
+        WHERE TipoComprobante = ".$cod." 
+        AND Establecimiento = '".$serie1."' 
+        AND PuntoEmision = '".$serie2."' 
+        AND Item = '".$_SESSION['INGRESO']['item']. "' 
+        ORDER BY Fecha DESC,Secuencial DESC ";
+
+     $res =  $this->db->datos($sql);
+    }
+    return $res;
+}
 
    function validar_factura($CodigoCliente,$uno,$dos,$tres,$auto)
    {

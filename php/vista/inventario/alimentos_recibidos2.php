@@ -1,4 +1,5 @@
 <?php date_default_timezone_set('America/Guayaquil'); ?>
+  <link rel="stylesheet" href="../../dist/css/style_calendar.css">
 <script type="text/javascript">
   $(document).ready(function () {
   	 window.addEventListener("message", function(event) {
@@ -209,6 +210,11 @@ function autocoplet_ingreso()
 		 }
   }
 
+  function show_calendar()
+  {
+  	$('#modal_calendar').modal('show');
+  }
+
 </script>
 
  <div class="row">
@@ -251,7 +257,7 @@ function autocoplet_ingreso()
                  		<b>Codigo de Ingreso:</b>
                	</div>							
                	<div class="col-sm-6">
-                   <input type="" class="form-control input-xs" id="txt_codigo" name="txt_codigo">
+                   <input type="" class="form-control input-xs" id="txt_codigo" name="txt_codigo" style="z-index: auto;" >
                 </div>
 						</div>
 						
@@ -331,9 +337,17 @@ function autocoplet_ingreso()
 									<label><input type="checkbox" name="rbl_recibido" id="rbl_recivido"> <b>Recibido</b></label>
 							</div>
 							<div class="col-sm-6">
+								<div class="row">
+									<div class="col-sm-6">
+										<label style="color:red"><input type="radio" name="cbx_evaluacion" checked value="R">  <img src="../../img/png/sad.png"> </label>											
+									</div>
+									<div class="col-sm-6">
+										<label style="color:green"><input type="radio" name="cbx_evaluacion"  value="V"> <img src="../../img/png/smile.png"></label>											
+									</div>
+								</div>
 									<!-- <b>Evaluacion</b><br> -->
-									<label style="color:red"><input type="radio" name="cbx_evaluacion" checked value="R"> Rojo</label>		
-									<label style="color:green"><input type="radio" name="cbx_evaluacion"  value="V"> Verde</label>								
+										
+														
 							</div>
 							<div class="col-sm-12">
 									<b>comentario de ingreso</b>
@@ -350,6 +364,78 @@ function autocoplet_ingreso()
 				<div class="row">
 					<div class="col-sm-12 text-right">
 						<button type="button" class="btn btn-primary btn-sm" onclick="show_panel()" ><i class="fa fa-archive"></i>Agregar Articulos</button>
+					</div>
+				</div>
+				<hr>
+
+				<div class="row">
+					<div class="col-sm-8">
+						<div class="row">
+							<div class="col-sm-3">
+									<button type="button" class="btn btn-default"><img src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo de producto</b></button>							
+							</div>
+							<div class="col-sm-7">
+								<b>Producto</b>
+								<input type="text" name="" id="" class="form-control">
+							</div>
+							<div class="col-sm-2">
+								<b>Grupo</b>
+								<input type="text" name="" id="" class="form-control">
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<div class="rows">
+							<div class="col-sm-6">
+								<br>
+								<b>Fecha de Clasificacion</b>
+							</div>
+							<div class="col-sm-6">
+								<br>
+								<input type="date" name="" value="<?php echo date('Y-m-d'); ?>" class="form-control" readonly>
+							</div>
+						</div>						
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="row">
+							<div class="col-sm-5">
+									<button type="button" class="btn btn-default"><img src="../../img/png/expiracion.png"  onclick="show_calendar()" /> <br> <b>Fecha de Expiracion</b></button>	
+							</div>
+							<div class="col-sm-7">
+								<br>
+								<input type="date" name="" id="" class="form-control input" readonly>
+							</div>							
+						</div>
+					</div>
+					<div class="col-sm-5">
+						<div class="rows">
+							<div class="col-sm-3">
+								<button type="button" class="btn btn-default">
+										<img src="../../img/png/kilo.png" />		
+										<br>
+										<b>Cantidad</b>					
+								</button>								
+							</div>
+							<div class="col-sm-9">
+								<div class="row">
+									<div class="col-sm-6">
+										<b>Cantidad</b>
+										<input type="" name="" id="" readonly class="form-control input-sm">										
+									</div>
+									<div class="col-sm-6">
+										<b>Unidad</b>
+										<input type="" name="" id="" readonly class="form-control input-sm">													
+									</div>
+								</div>
+							</div>
+						</div>						
+					</div>
+					<div class="col-sm-3 text-right">
+						<br>
+						<button class="btn btn-primary">AGREGAR A INGRESO</button>
+						<button class="btn btn-primary">BORRAR</button>
 					</div>
 				</div>
 			</div>
@@ -581,7 +667,7 @@ function eliminar_lin(num)
 
 
 
-<div class="row" id="panel_add_articulos" style="display:none;">
+<div class="row" id="panel_add_articulos">
 	<div class="col-sm-12">
 		<div class="box">
 			<div class="card_body" style="background:antiquewhite;">
@@ -749,3 +835,52 @@ function eliminar_lin(num)
 		</div>
 	</div>
 </div>
+
+<div id="modal_calendar" class="modal fade myModalNuevoCliente" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Proveedor Nuevo</h4>
+            </div>
+            <div class="modal-body" style="background: antiquewhite;">
+
+
+            	<div id="app">
+							  <div class="container">
+							    <div class="controls">
+							      <button @click="date = prevMonth">{{ prevMonth.toLocaleString({ month: 'long' }) }}</button>
+							      <input type="date" v-model="dateString">
+							      <button @click="date = nextMonth">{{ nextMonth.toLocaleString({ month: 'long' }) }}</button>
+							    </div>
+							    <calendar v-model="date"></calendar>
+							  </div>
+							</div>
+
+							<script type="text/x-template" id="calendar-template">
+							  <div class="calendar">
+							    <table>
+							      <tr>
+							        <th v-for="day in days">{{ day }}</th>
+							      </tr>
+							      <tr v-for="(weekDays, week) in calendar">
+							        <td v-for="(date, dayInWeek) in weekDays" :class="classes(date)" @click="select(date)">
+							          {{ date.day }}
+							        </td>
+							      </tr>
+							    </table>
+							  </div>
+							</script>   
+
+<script src='../../dist/js/vue.js'></script>
+<script src='../../dist/js/luxon.js'></script>             
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button> -->
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+<script src="../../dist/js/script_calendar.js"></script>

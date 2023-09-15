@@ -156,7 +156,7 @@ class catalogo_productosC
 		$cuenta  = $_SESSION['INGRESO']['Formato_Inventario'];
 		$partes = explode('.',$cuenta);
 		$len = strlen($partes[0]);
-		$productos = $this->modelo->TVCatalogo_Bodega(false,'I',$len);
+		$productos = $this->modelo->TVCatalogo_Bodega(false,'N',$len);
 
 		$h = '';
 		if($codigo=='false')

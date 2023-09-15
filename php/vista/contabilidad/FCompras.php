@@ -540,7 +540,7 @@ function contracuenta()
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <b>Tipo de sustento Tributario</b>
-                                        <select class="" style="width:100%" id="DCSustento" onchange="ddl_DCTipoComprobante('<?php echo $fec?>');ddl_DCDctoModif();" onblur="cambiar_fecha_sus()">
+                                        <select class="" style="width:100%" id="DCSustento" onchange="ddl_DCTipoComprobante('<?php echo $fec?>');ddl_DCDctoModif();" onblur="cambiar_fecha_sus();ddl_DCTipoComprobante('<?php echo $fec?>') ">
                                             <option value="">seleccione sustento </option>
                                         </select>
                                     </div>                                    

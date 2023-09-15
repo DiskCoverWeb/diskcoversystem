@@ -975,8 +975,9 @@ function autocompletar_serie_num_fac(id)
     }
     $('#'+id).val(v);
   }
-  var serie = $('#TxtNumUnoComRet').val()+''+$('#TxtNumDosComRet').val();
-  serie_ultima(serie)
+  var serie = $('#TxtNumSerieUno').val()+''+$('#TxtNumSerieDos').val();
+  tc = $('#DCTipoComprobante').val();
+  serie_ultima_tc(serie,tc)
 }
 
 function autocompletar_serie_num(id)
@@ -1000,7 +1001,7 @@ function autocompletar_serie_num(id)
   }
 }
 
-function serie_ultima(serie)
+function serie_ultima(serie,tc=false)
 {
    var parametros =
     {
@@ -1013,11 +1014,56 @@ function serie_ultima(serie)
       type:  'post',
       dataType: 'json',
         success:  function (response) {
+          // console.log(response);
+          if(tc!=false)
+          {
+             $('#TxtNumSerietres').val(response.numero);
+              if(response.autorizacion!='')
+              {
+                $('#TxtNumAutor').val(response.autorizacion);
+              }   
+
+          }else{
             $('#TxtNumTresComRet').val(response.numero);
             if(response.autorizacion!='')
             {
               $('#TxtNumUnoAutComRet').val(response.autorizacion);
-            }         
+            }   
+          }      
+      }
+    });  
+}
+
+function serie_ultima_tc(serie,tc=false)
+{
+   var parametros =
+    {
+        'serie':serie,
+        'fechaReg':$('#MBFechaRegis').val(),
+        'TC':tc,
+    }
+    $.ajax({
+      data:  {parametros:parametros},
+      url:   '../controlador/inventario/registro_esC.php?serie_ultima_tc=true',
+      type:  'post',
+      dataType: 'json',
+        success:  function (response) {
+          // console.log(response);
+          if(tc!=false)
+          {
+             $('#TxtNumSerietres').val(response.numero);
+              if(response.autorizacion!='')
+              {
+                $('#TxtNumAutor').val(response.autorizacion);
+              }   
+
+          }else{
+            $('#TxtNumTresComRet').val(response.numero);
+            if(response.autorizacion!='')
+            {
+              $('#TxtNumUnoAutComRet').val(response.autorizacion);
+            }   
+          }      
       }
     });  
 

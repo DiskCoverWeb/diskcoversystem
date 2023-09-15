@@ -196,6 +196,12 @@ if(isset($_GET['serie_ultima']))
    echo  json_encode($controlador->serie_ultima($parametros));
 
 }
+if(isset($_GET['serie_ultima_tc']))
+{  
+   $parametros = $_POST['parametros'];
+   echo  json_encode($controlador->serie_ultima_tc($parametros));
+
+}
 if(isset($_GET['validar_factura']))
 {  
    $parametros = $_POST['parametros'];
@@ -1023,27 +1029,75 @@ class registro_esC
       }
      }
 
-     function serie_ultima($parametros)
+     function serie_ultima_tc($parametros)
      {
+      // print_r($parametros);die();
         $serie1 = substr($parametros['serie'],0,3);
         $serie2 = substr($parametros['serie'],3,6);
         $numero = 1;
         if($parametros['serie']!='')
         {
-          $numero =ReadSetDataNum("RE_SERIE_".$parametros['serie'],True,false);
+          switch ($parametros['TC']) {
+            case '3':
+              $numero =ReadSetDataNum("LC_SERIE_".$parametros['serie'],True,false);
+              break;
+            
+            default:
+              $numero = G_NINGUNO;
+              break;
+          }
+        }
+        $datos_auto = $this->modelo->numero_autorizacion_tc($serie1,$serie2,$parametros['fechaReg'],$parametros['TC']);
+
+        // print_r($datos_auto);die();
+        if(!empty($datos_auto)){
+          if(strlen($datos_auto[0]['AutRetencion'])>=13)
+          {
+            $autori = $_SESSION['INGRESO']['RUC'];
+
+          }else
+          {
+            $autori = $datos_auto[0]['AutRetencion'];
+          }
+        }else
+        {
+          $autori=1;
+        }
+
+        $datos = array('numero'=>$numero,'autorizacion'=>$autori);
+        return $datos;
+     }
+
+     function serie_ultima($parametros)
+     {
+      // print_r($parametros);die();
+        $serie1 = substr($parametros['serie'],0,3);
+        $serie2 = substr($parametros['serie'],3,6);
+        $numero = 1;
+        if($parametros['serie']!='')
+        {
+          // switch ($parametros['TC']) {
+          //   case '3':
+          //     $numero =ReadSetDataNum("LC_SERIE_".$parametros['serie'],True,false);
+          //     break;
+            
+          //   default:
+              $numero =ReadSetDataNum("RE_SERIE_".$parametros['serie'],True,false);
+              // break;
+          // }
         }
         $datos_auto = $this->modelo->numero_autorizacion($serie1,$serie2,$parametros['fechaReg']);
 
         // print_r($datos_auto);die();
         if(!empty($datos_auto)){
-        if(strlen($datos_auto[0]['AutRetencion'])>=13)
-        {
-          $autori = $_SESSION['INGRESO']['RUC'];
+          if(strlen($datos_auto[0]['AutRetencion'])>=13)
+          {
+            $autori = $_SESSION['INGRESO']['RUC'];
 
-        }else
-        {
-          $autori = $datos_auto[0]['AutRetencion'];
-        }
+          }else
+          {
+            $autori = $datos_auto[0]['AutRetencion'];
+          }
         }else
         {
           $autori=1;
