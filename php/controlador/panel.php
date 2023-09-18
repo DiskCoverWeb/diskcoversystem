@@ -1066,4 +1066,90 @@ function ConfirmacionComunicado($NumModulo=0, $SeguirMostrando = true) {
 
       return array('rps'=> true);
 }
+
+function validar_estado_all()
+{
+
+    $rps_estado = Estado_Empresa_SP_MySQL();
+    echo '<script>';
+    echo 'console.log("DEBUG Estado Activo: ' . $rps_estado['@pActivo'] . '");';
+    echo '</script>';
+    echo '<script>';
+    echo 'console.log("DEBUG SP1Estado Empresa: ' . $rps_estado['@EstadoEmpresa'] . '");';
+    echo '</script>';
+    echo '<script>';
+    echo 'console.log("DEBUG SP1TotCart  ' . $rps_estado['@TotCartera'] . '");';
+    echo '</script>';
+    echo '<script>';
+    echo 'console.log("DEBUG SP1CantFA  ' . $rps_estado['@CantFA'] . '");';
+    echo '</script>';
+
+    if ($rps_estado['@pActivo'] == false) {
+        $Cadena = $_SESSION['INGRESO']['Nombre_Completo'] . " su equipo se encuentra en LISTA NEGRA, ingreso no autorizado, comuniquese con el Administrador del Sistema";
+        return array('rps' => 'noActivo', "mensaje" => $Cadena, "titulo" => 'ACCESO DEL PC DENEGADO');
+    }
+    echo '<script>';
+    echo 'console.log("DEBUG Estado Usuario: ' . $rps_estado['@EstadoUsuario'] . '");';
+    echo '</script>';
+    if ($rps_estado['@EstadoUsuario'] == false) {
+        $Cadena = $_SESSION['INGRESO']['Nombre_Completo'] . " su ingreso no esta autorizado, comuniquese con el Administrador del Sistema";
+        return array('rps' => 'noAuto', "mensaje" => $Cadena, "titulo" => 'ACCESO AL SISTEMA DENEGADO');
+    }
+
+    $ListaFacturas = "";
+    $titulo = "";
+    $rps = "";
+    $Cartera = $rps_estado['@TotCartera'];
+    $Cant_FA = $rps_estado['@CantFA'];
+    if ($rps_estado['@TotCartera'] != 0 && $rps_estado['@CantFA'] != 0) {
+        $ListaFacturas = "ESTIMADO " . strtoupper($_SESSION['INGRESO']['noempr']) . ", SE LE COMUNICA QUE USTED MANTIENE UNA CARTERA VENCIDA DE USD " . number_format($Cartera, 2, '.', ',') . ", EQUIVALENTE A " . $Cant_FA . " FACTURA(S) EMITIDA(S) A USTED." . PHP_EOL;
+    }
+
+    switch ($rps_estado['@EstadoEmpresa']) {
+        case "VEN30":
+            $ListaFacturas .= "PRIMER COMUNICADO DE ADVERTENCIA: SU EMPRESA ESTA POR SER BLOQUEADA POR CARTERA DE 30 DIAS DE VENCIMIENTO, ";
+            $titulo .= "CARTERA VENCIDA POR 30 DIAS";
+            $rps .= "VEN30";
+            break;
+        case "VEN60":
+            $ListaFacturas .= "SEGUNDO COMUNICADO DE ADVERTENCIA: SU EMPRESA ESTA POR SER BLOQUEADA POR CARTERA DE 60 DIAS DE VENCIMIENTO, ";
+            $titulo .= "CARTERA VENCIDA POR 60 DIAS";
+            $rps .= "VEN60";
+            break;
+        case "VEN90":
+            $ListaFacturas .= "TERCER COMUNICADO DE ADVERTENCIA: SU EMPRESA ESTA POR SER BLOQUEADA POR CARTERA DE 90 DIAS DE VENCIMIENTO, ";
+            $titulo .= "CARTERA VENCIDA POR 90 DIAS";
+            $rps .= "VEN90";
+            break;
+        case "VEN360":
+            $ListaFacturas .= "SU EMPRESA ESTA BLOQUEADA POR CARTERA DE 360 DIAS DE VENCIMIENTO, ";
+            $titulo .= "EMPRESA BLOQUEADA POR CARTERA DE 360 DIAS DE VENCIMIENTO";
+            $rps .= "VEN360";
+            break;
+        case "VEN180":
+        case "MAS360":
+            $ListaFacturas .= "LO SENTIMOS, SU EMPRESA ESTA SUSPENDIDA EN EL SISTEMA, ";
+            $titulo .= "EMPRESA BLOQUEADA";
+            $rps .= "MAS360";
+            break;
+        case "BLOQ":
+            $ListaFacturas .= "LO SENTIMOS, SU EMPRESA NO ESTA ACTIVA EN EL SISTEMA,\n";
+            $titulo .= "EMPRESA NO ACTIVA EN EL SISTEMA";
+            $rps .= "BLOQ";
+            break;
+    }
+
+
+    if (strlen(trim($ListaFacturas)) > 1) {
+        $ListaFacturas .= "COMUNIQUESE CON SERVICIO AL CLIENTE DE DISKCOVER SYSTEM A LOS TELEFONOS: 098-910-5300/098-652-4396/099-965-4196,\n";
+        $ListaFacturas .= "O ENVIE UN MAIL A carteraclientes@diskcoversystem.com; CON EL COMPROBANTE DE DEPOSITO Y ASI PROCEDER A REALIZAR\n";
+        $ListaFacturas .= "LA ACTUALIZACION DE LA JUSTIFICACION EN EL SISTEMA.";
+
+        return array('rps' => $rps, "mensaje" => $ListaFacturas, "titulo" => $titulo);
+    }
+
+    return array('rps' => 'ok');
+}
+
+
 ?>
