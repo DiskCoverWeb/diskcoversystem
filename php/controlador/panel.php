@@ -1070,28 +1070,65 @@ function ConfirmacionComunicado($NumModulo=0, $SeguirMostrando = true) {
 function validar_estado_all()
 {
 
-    $rps_estado = Estado_Empresa_SP_MySQL();
+    $conn = new db();
+      $sSQL = "SELECT " . Full_Fields("Empresas") . " "
+      . "FROM Empresas "
+      . "WHERE Empresa = '" . $_SESSION['INGRESO']['noempr'] . "' ";//definido en panel.php
+      $empresa = $conn->datos($sSQL);
+
+      $sSQL = "SELECT " . Full_Fields("Accesos") . " "
+      . "FROM Accesos "
+      . "WHERE UPPER(Usuario) = '" . $_SESSION['INGRESO']['usuario'] . "' " //definido en loginController.php
+      . "AND UPPER(Clave) = '" . $_SESSION['INGRESO']['pass'] . "' "; //definido en loginController.php
+      $dataUser = $conn->datos($sSQL);
+
+      global $Fecha_CO, $Fecha_CE, $Fecha_VPN, $Fecha_DB, $Fecha_P12, $AgenteRetencion, $MicroEmpresa, 
+      $EstadoEmpresa, $DescripcionEstado, $NombreEntidad, $RepresentanteLegal, $MensajeEmpresa, 
+      $ComunicadoEntidad, $SerieFE, $Cartera, $Cant_FA, $TipoPlan, $PCActivo, $EstadoUsuario, 
+      $ConexionConMySQL;
+
+      //llamada al SP de MySql
+      Datos_Iniciales_Entidad_SP_MySQL($empresa[0],$dataUser[0]);
+      
+      if ($ConexionConMySQL) {
+            if ($empresa[0]["Estado"] != $EstadoEmpresa || $empresa[0]["Cartera"] != $Cartera || 
+            $empresa[0]["Cant_FA"] != $Cant_FA || $empresa[0]["Fecha_CE"]->format("Y-m-d") != $Fecha_CE || 
+            $empresa[0]["Fecha_P12"]->format("Y-m-d") != $Fecha_P12 || $empresa[0]["Tipo_Plan"] != $TipoPlan || 
+            $empresa[0]["Serie_FA"] != $SerieFE) {
+                  $sql = "UPDATE Empresas
+                  SET Cartera = '$Cartera',
+                  Cant_FA = '$Cant_FA', 
+                  Fecha_CE = '$Fecha_CE', 
+                  Fecha_P12 = '$Fecha_P12', 
+                  Tipo_Plan = '$TipoPlan', 
+                  Estado = '$EstadoEmpresa', 
+                  Serie_FA = '$SerieFE'
+                  WHERE ID = '".$empresa[0]["ID"]."'";
+                  $conn->String_Sql($sql);
+            }
+      }
+
     echo '<script>';
-    echo 'console.log("DEBUG Estado Activo: ' . $rps_estado['@pActivo'] . '");';
+    echo 'console.log("DEBUG Estado Activo: ' . $PCActivo . '");';
     echo '</script>';
     echo '<script>';
-    echo 'console.log("DEBUG SP1Estado Empresa: ' . $rps_estado['@EstadoEmpresa'] . '");';
+    echo 'console.log("DEBUG SP1Estado Empresa: ' . $EstadoEmpresa . '");';
     echo '</script>';
     echo '<script>';
-    echo 'console.log("DEBUG SP1TotCart  ' . $rps_estado['@TotCartera'] . '");';
+    echo 'console.log("DEBUG SP1TotCart  ' . $Cartera . '");';
     echo '</script>';
     echo '<script>';
-    echo 'console.log("DEBUG SP1CantFA  ' . $rps_estado['@CantFA'] . '");';
+    echo 'console.log("DEBUG SP1CantFA  ' . $Cant_FA . '");';
     echo '</script>';
 
-    if ($rps_estado['@pActivo'] == false) {
+    if ($PCActivo == false) {
         $Cadena = $_SESSION['INGRESO']['Nombre_Completo'] . " su equipo se encuentra en LISTA NEGRA, ingreso no autorizado, comuniquese con el Administrador del Sistema";
         return array('rps' => 'noActivo', "mensaje" => $Cadena, "titulo" => 'ACCESO DEL PC DENEGADO');
     }
     echo '<script>';
-    echo 'console.log("DEBUG Estado Usuario: ' . $rps_estado['@EstadoUsuario'] . '");';
+    echo 'console.log("DEBUG Estado Usuario: ' . $EstadoUsuario . '");';
     echo '</script>';
-    if ($rps_estado['@EstadoUsuario'] == false) {
+    if ($EstadoUsuario == false) {
         $Cadena = $_SESSION['INGRESO']['Nombre_Completo'] . " su ingreso no esta autorizado, comuniquese con el Administrador del Sistema";
         return array('rps' => 'noAuto', "mensaje" => $Cadena, "titulo" => 'ACCESO AL SISTEMA DENEGADO');
     }
@@ -1099,13 +1136,12 @@ function validar_estado_all()
     $ListaFacturas = "";
     $titulo = "";
     $rps = "";
-    $Cartera = $rps_estado['@TotCartera'];
-    $Cant_FA = $rps_estado['@CantFA'];
-    if ($rps_estado['@TotCartera'] != 0 && $rps_estado['@CantFA'] != 0) {
+
+    if ($Cartera != 0 && $Cant_FA!= 0) {
         $ListaFacturas = "ESTIMADO " . strtoupper($_SESSION['INGRESO']['noempr']) . ", SE LE COMUNICA QUE USTED MANTIENE UNA CARTERA VENCIDA DE USD " . number_format($Cartera, 2, '.', ',') . ", EQUIVALENTE A " . $Cant_FA . " FACTURA(S) EMITIDA(S) A USTED." . PHP_EOL;
     }
 
-    switch ($rps_estado['@EstadoEmpresa']) {
+    switch ($EstadoEmpresa) {
         case "VEN30":
             $ListaFacturas .= "PRIMER COMUNICADO DE ADVERTENCIA: SU EMPRESA ESTA POR SER BLOQUEADA POR CARTERA DE 30 DIAS DE VENCIMIENTO, ";
             $titulo .= "CARTERA VENCIDA POR 30 DIAS";

@@ -146,6 +146,10 @@ class login_controller
 		// print_r($parametro);
 		// print_r($datos);
 		// die();
+
+		$_SESSION['INGRESO']['usuario'] = $parametro['usuario'];
+		$_SESSION['INGRESO']['pass'] = $parametro['pass'];
+
 		$_SESSION['INGRESO']['msjMora'] = true; //indica que se debe mostrado el msj de mora en caso de existir.
 		$_SESSION['INGRESO']['IP_Local'] = !empty($parametro['localIp'])?$parametro['localIp']:"."; 
 		
