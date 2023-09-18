@@ -1212,7 +1212,8 @@ class FCierre_CajaC
                     $CI_RUCC = $fields["RUC_CI"];
                     $NombreC = $fields["Beneficiario"];
                 }
-                fwrite($NumFile, str_pad(number_format($fields["CI_RUC"], 0, '', ''), 10, "0", STR_PAD_LEFT));
+                $CI_R = is_numeric($fields["CI_RUC"])?number_format($fields["CI_RUC"], 0, '', ''):'';
+                fwrite($NumFile, str_pad($CI_R, 10, "0", STR_PAD_LEFT));
                 fwrite($NumFile, $fields["Cliente"] . str_pad("", 80 - strlen($fields["Cliente"]), " "));
                 fwrite($NumFile, $CI_RUCC);
                 fwrite($NumFile, $NombreC . str_pad("", 64 - strlen($NombreC), " "));

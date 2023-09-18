@@ -195,7 +195,9 @@ class divisasM
     // $cid = Conectar::conexion('MYSQL');
     $sql = "SELECT * FROM lista_tipo_contribuyente WHERE RUC ='".$_SESSION['INGRESO']['RUC']."'";
       // print_r($sql);die();
-    return $this->db->datos($sql,'MySQL');
+    $datos = $this->db->datos($sql,'MySQL');
+    // print_r($datos);die();
+    return $datos;
   }
 
   public function limpiarGrid($cod=false){

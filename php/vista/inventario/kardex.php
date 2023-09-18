@@ -20,7 +20,7 @@ $kardex = new kardexC();
 <div class="container-fluid">
 <div class="row mb-3">
   <div class="col">
-    <a href="./inventario.php?mod=inventario#" title="Salir de modulo" class="btn btn-default">
+    <a href="./inventario.php?mod=<?php echo @$_GET['mod']; ?>" title="Salir de modulo" class="btn btn-default">
       <img src="../../img/png/salire.png">
     </a>
   </div>  

@@ -1,6 +1,9 @@
 <?php
 include(dirname(__DIR__,2).'/modelo/empresa/recuperar_facturaM.php');
-include(dirname(__DIR__,2).'/comprobantes/SRI/autorizar_sri.php');
+if(!class_exists('autorizacion_sri'))
+{
+    include(dirname(__DIR__,2).'/comprobantes/SRI/autorizar_sri.php');
+}
 
 $controlador = new recuperar_facturaC();
 
@@ -31,6 +34,7 @@ if(isset($_GET['empresas']))
 class recuperar_facturaC 
 {
     private $modelo;
+    private $sri;
     function __construct()
 	{
         $this->modelo = new recuperar_facturaM();

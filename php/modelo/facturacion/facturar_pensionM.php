@@ -40,7 +40,7 @@ class facturar_pensionM
   }
   
 	public function getClientes($query,$ruc=false){
-    $sql="  SELECT C.Email,C.T,C.Codigo,C.Cliente,C.Direccion,C.Grupo,C.Telefono,C.CI_RUC,C.TD,SUM(CF.Valor) As Deuda_Total,DireccionT , C.Archivo_Foto, C.CI_RUC_R
+    $sql="  SELECT C.Email,C.T,C.Codigo,C.Cliente,C.Direccion,C.Grupo,C.Telefono,C.CI_RUC,C.TD,SUM(CF.Valor) As Deuda_Total,DireccionT , C.Archivo_Foto, C.CI_RUC_R, C.Representante, C.Telefono_R, C.EmailR, C.TD_R 
             FROM Clientes As C, Clientes_Facturacion As CF 
             WHERE C.T = 'N'
             AND CF.Item = '".$_SESSION['INGRESO']['item']."' 
@@ -59,7 +59,7 @@ class facturar_pensionM
     {
        $sql.=" AND C.CI_RUC LIKE '".$query."%'";
     }
-    $sql.=" GROUP BY C.Email, C.T,C.Codigo,C.Cliente,C.Direccion,C.Grupo,C.Telefono,C.CI_RUC,C.TD,DireccionT, C.Archivo_Foto, C.CI_RUC_R ORDER BY C.Cliente";
+    $sql.=" GROUP BY C.Email, C.T,C.Codigo,C.Cliente,C.Direccion,C.Grupo,C.Telefono,C.CI_RUC,C.TD,DireccionT, C.Archivo_Foto, C.CI_RUC_R, C.Representante, C.Telefono_R, C.EmailR, C.TD_R ORDER BY C.Cliente";
     if ($query != 'total') {
       $sql .= " OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY";
     }

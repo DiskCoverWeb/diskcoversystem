@@ -114,6 +114,8 @@ class lista_guia_remisionC
     private $email;
     public $pdf;
     private $punto_venta;
+    private $empresaGeneral;
+	private $sri;
     
 	public function __construct(){
     	$this->modelo = new lista_guia_remisionM();
@@ -373,8 +375,8 @@ class lista_guia_remisionC
 			}
 
 			// print_r($FA);die();
-			$TFA['CodigoC'] = $FA[0]['CodigoC']; 
-    	$TFA['TC'] = $tc;
+			$TFA['CodigoC'] = $FA[0]['CodigoC']; 			
+    		$TFA['TC'] = 'FA';
 			$TFA['Serie'] = $serie;
 			$TFA['Autorizacion'] = $Auto;
 			$TFA['Factura'] = $factura;

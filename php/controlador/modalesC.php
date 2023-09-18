@@ -106,6 +106,7 @@ if(isset($_GET['ExcelFInfoError']))
 class modalesC
 {
 	private $modelo;	
+	private $sri;	
 	function __construct()
 	{
 		$this->sri = new autorizacion_sri();
@@ -114,7 +115,7 @@ class modalesC
 
 	function busca_cliente($query)
 	{
-		$resp = $this->modelo->buscar_cliente($query);
+		$resp = $this->modelo->buscar_cliente($query,false,false,1);
 		// print_r($resp);die();	
 		if(count($resp)>0)
 		{
@@ -139,6 +140,8 @@ class modalesC
 			    'ciudad'=>$value['Ciudad'],
 			    'FA'=>$value['FA'],
 			    'TD'=>$value['TD'],
+			    'Cod_Ejec'=>$value['Cod_Ejec'],
+			    'Actividad'=>$value['Actividad'],
 			);
 		}	
 		return $datos;
@@ -212,11 +215,10 @@ function li2Array($html,$elemento="li"){
 }
 
 	function guardar_cliente($parametro)
-	{
+	{		
 
-		// print_r($parametro);die();
-		$resp = $this->modelo->buscar_cliente(trim($parametro['ruc']));
-
+		 $cli = $this->modelo->buscar_cliente($ci=false,false,$parametro['txt_id']);	
+		 
 		 SetAdoAddNew("Clientes");
 	    SetAdoFields("T", G_NORMAL);
 	    SetAdoFields("Cliente", $parametro['nombrec']);
@@ -232,6 +234,8 @@ function li2Array($html,$elemento="li"){
 	    SetAdoFields("Pais", "593");
 	    SetAdoFields("Grupo", $parametro['grupo']);
 	    SetAdoFields("Ciudad", $parametro['ciu']);
+	    SetAdoFields("Cod_Ejec", $parametro['txt_ejec']);
+	    SetAdoFields("Actividad", $parametro['txt_actividad']);
 	    if($parametro['rbl']=='false')
 	    {
 		    SetAdoFields("FA", 0);
@@ -241,41 +245,33 @@ function li2Array($html,$elemento="li"){
 	    }    
 
 		if($parametro['txt_id']!='')
-		{			
-			// $re = $this->modelo->editar_cliente($parametro);
-			SetAdoFieldsWhere("ID", $parametro['txt_id']);
-   		$re = SetAdoUpdateGeneric();
-		}else
 		{
-			// print_r($resp);die();
-			if(count($resp)==0)
-		    {
-		    	 /*SetAdoAddNew("Clientes");
-			    SetAdoFields("T", G_NORMAL);
-			    SetAdoFields("Cliente", $parametro['nombrec']);
-			    SetAdoFields("CI_RUC", $this->sri->quitar_carac($parametro['ruc']));
-			    SetAdoFields("Codigo",$parametro['codigoc']);
-			    SetAdoFields("Direccion", $parametro['direccion']);
-			    SetAdoFields("Telefono", $parametro['telefono']);
-			    SetAdoFields("DirNumero", $parametro['nv']);
-			    SetAdoFields("Email", $parametro['email']);
-			    SetAdoFields("TD", $parametro['TD']);
-			    SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
-			    SetAdoFields("Prov", $parametro['prov']);
-			    SetAdoFields("Pais", "593");
-			    SetAdoFields("Grupo", $parametro['grupo']);
-			    SetAdoFields("Ciudad", $parametro['ciu']);
-			    if($parametro['rbl']=='false')
-			    {
-				    SetAdoFields("FA", 0);
-			    }else
-			    {
-			    	SetAdoFields("FA", 1);    	
-			    }    */
-			    $re = SetAdoUpdate();		    	
-			  }else{
-			  	return 2;
-			  }
+			$nom = $this->modelo->buscar_cliente($ci=false,$parametro['nombrec'],$id=false,1);	
+			if(count($nom)==0)
+			{
+				// el nombre no existe y se podra editar el registro
+				SetAdoFieldsWhere("ID", $parametro['txt_id']);
+   			$re = SetAdoUpdateGeneric();  
+
+			}else
+			{
+				// nombre si existe
+				if($nom[0]['ID']==$parametro['txt_id'])
+				{
+					//entra aqui cuando solo se edita otras partes que no sea el nombre
+					SetAdoFieldsWhere("ID", $parametro['txt_id']);
+   				$re = SetAdoUpdateGeneric();  
+				}else
+				{
+					// en el caso de que el nombre exista pero no es del registro ya establecido sino otros 
+					return 3;
+				}
+
+
+			}			
+		}else
+		{			
+			 $re = SetAdoUpdate();	
 		}
 
 		if(isset($parametro['cxp']) && $parametro['cxp']==1)
@@ -326,7 +322,7 @@ function li2Array($html,$elemento="li"){
 
 
 
-            $tbl =strval('<table class="table">'.utf8_encode($res2).'</table>');
+            $tbl =strval('<table class="table">'.mb_convert_encoding($res2, 'UTF-8').'</table>');
             $r = array('res'=>1,'tbl'=>$tbl);
            }
 		// print_r($tbl);die();

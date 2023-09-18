@@ -73,6 +73,14 @@ if(isset($_GET['ciudad2']))
 {
 	echo json_encode(todas_ciudad($_POST['idpro']));
 }
+if(isset($_GET['cargar_imagen']))
+{
+	echo json_encode($controlador->guardar_foto($_FILES,$_POST));
+}
+if(isset($_GET['cargar_firma']))
+{
+	echo json_encode($controlador->guardar_firma($_FILES,$_POST));
+}
 
 class cambioeC 
 {
@@ -203,7 +211,13 @@ class cambioeC
 		                </div>           
 		                <div class="col-sm-10">
 		                    <label>CERTIFICADO FIRMA ELECTRONICA (DEBE SER EN FORMATO DE EXTENSION P12</label>
-		                    <input type="text" name="TxtEXTP12" id="TxtEXTP12" class="form-control input-xs" value="'.$datosEmp[0]['Ruta_Certificado'].'">
+		                    <div class="input-group">
+		                    	<input type="text" name="TxtEXTP12" id="TxtEXTP12" class="form-control input-sm" value="'.$datosEmp[0]['Ruta_Certificado'].'">
+		                    	<span class="input-group-addon input-xs"><input type="file"  id="file_firma" name="file_firma" /></span>
+		                    	<span class="input-group-btn">
+									<button type="button" class="btn btn-info btn-flat btn-sm" onclick="subir_firma()">Subir firma</button>
+								</span>
+		                    </div>
 		                </div>
 		                <div class="col-sm-2">
 		                    <label>CONTRASEÑA:</label>
@@ -522,32 +536,51 @@ class cambioeC
                         </div>
                     </div>
                     <div class="col-md-4">                                        
-                        <label>LOGO TIPO</label>
+                        <label>LOGO TIPO </label>
+                        <!-- llenar con contenuido de la carpeta logotipos -->
+
                         <input type="text" name="TxtXXXX" id="TxtXXXX" class="form-control input-xs" value="XXXXXXXXXX">
                         <div class="form-group" rows="11">                                        
-                            <select multiple="" class="form-control" >
-                                <option>ADDSCCES.DLL</option>
-                                <option>ADDSCCUS.DLL</option>
-                                <option>BIBLIO.MDB</option>
-                                <option>C2.EXE</option>
-                                <option>CVPACK.EXE</option>
-                                <option>DATAVIEW.DLL</option>
-                                <option>INSTALL.HTM</option>
-                                <option>LINK.EXE</option>
-                                <option>MSDIS110.DLL</option>
-                                <option>MSPDB60.DLL</option>                                                    
-                            </select>                                                
+                            <select class="form-control" onchange="cargar_img()" id="ddl_img" name="ddl_img" row="11" multiple>';
+
+                            $directorio = dirname(__DIR__,3).'/img/logotipos'; 
+                            // print_r($directorio);die();
+							$archivos = scandir($directorio);
+							foreach ($archivos as $archivo) {
+							    $rutaArchivo = $directorio . '/' . $archivo;
+							    if (is_file($rutaArchivo) && pathinfo($rutaArchivo, PATHINFO_EXTENSION) === 'png') {
+							    	$empresaSQL3.='<option value="'.$archivo.'">'.$archivo.'</option>';
+							    }
+							}                                                                         
+                          $empresaSQL3.='</select>                                                
                         </div>
+                        <div class="row">
+                        	<div class="col-sm-10">
+                        	    <input type="file" id="file_img" name="file_img" />
+                        	</div>
+                        	<div class="col-sm-2">
+                        	    <button type="button" class="btn btn-primary btn-sm" id="subir_imagen" onclick="subir_img()" >Cargar</button>                        	
+                        	</div>
+                        </div>
+                        
                     </div>
-                    <style type="text/css">
-                        textarea {
-                            resize : none;
-                        }
-                    </style>
                     <div class="col-md-4">                                        
-                        <div class="box-body">
-                            <textarea class="form-control" rows="11" resize="none" placeholder=""></textarea>
-                        </div>                                        
+                        <div class="box-body">';
+                        if($datosEmp[0]['Logo_Tipo']=='' || $datosEmp[0]['Logo_Tipo']=='.')
+                        {
+                        	$empresaSQL3.='<img src="../../img/logotipos/sin_img.jpg" id="img_logo" name="img_logo" style="width:100%;border:1px solid"/>';
+                        }else{
+                        	$url = dirname(__DIR__,3)."/img/logotipos/".$datosEmp[0]['Logo_Tipo'].".png";
+                        	// print_r($url);die();
+                        	if(file_exists($url))
+                        	{
+                        	$empresaSQL3.='<img src="../../img/logotipos/'.$datosEmp[0]['Logo_Tipo'].'.png" id="img_logo" name="img_logo" style="width:100%;border:1px solid"/>';
+                        	}else
+                        	{
+                        		$empresaSQL3.='<img src="../../img/logotipos/sin_img.jpg" id="img_logo" name="img_logo" style="width:100%;border:1px solid"/>';
+                        	}
+                        }
+                       $empresaSQL3.='</div>                                        
                     </div>
                 </div>
                 <div class="row">
@@ -701,7 +734,7 @@ class cambioeC
 			$op = '          
 <div class="col-md-12">
     <div class="nav-tabs-custom">
-        <ul class="nav nav-tabs">
+        <ul class="nav nav-tabs" id="myTabs">
             <li class="active"><a href="#tab_0" data-toggle="tab">Datos Principales</a></li>
             <li><a href="#tab_1" data-toggle="tab">Datos Principales</a></li>
             <li><a href="#tab_2" data-toggle="tab">Procesos Generales</a></li>
@@ -710,7 +743,7 @@ class cambioeC
         <div class="tab-content">
         	<div class="tab-pane active" id="tab_0">
         		<div class="row">
-	        		<div class="col-md-3">
+	        		<div class="col-md-4">
 						<div class="form-group">
 						    <label for="Estado">Estado</label>
 						    <select class="form-control input-sm" name="Estado" id="Estado" >
@@ -720,39 +753,39 @@ class cambioeC
 						$op.='</select>
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-2">
 						<div class="form-group">
-						  <label for="FechaR">Fecha Renovación(dia-mes-año)</label>
+						  <label for="FechaR">Renovación</label>
 						   
 						  <input type="date" class="form-control input-sm" id="FechaR" name="FechaR" placeholder="FechaR" 
 						  value='.$value['Fecha'].' 
 						  onKeyPress="return soloNumeros(event)"  maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-2">
 						<div class="form-group">
-						  <label for="Fecha">Fecha Comp. Electronico(dia-mes-año)</label>
+						  <label for="Fecha">Comp. Electronico</label>
 						   
 						  <input type="date" class="form-control input-sm" id="Fecha" name="Fecha" placeholder="Fecha" 
 						  value="'.$value['Fecha_CE'].'" onKeyPress="return soloNumeros(event)" 
 						  maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-2" style="display:none">
 						<div class="form-group">
-						  <label for="Fecha">Fecha VPN(dia-mes-año)</label>
+						  <label for="Fecha">Fecha VPN</label>
 						   
 						  <input type="date" class="form-control input-sm" id="FechaV" name="FechaV" placeholder="FechaV" 
 						  value="'.$value['Fecha_VPN'].'"   onKeyPress="return soloNumeros(event)" maxlength="10"onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-2">
 						<div class="form-group">
-						  <label for="Fecha_DB">Fecha BD</label>
+						  <label for="Fecha_DB">BD</label>
 						  <input type="date" class="form-control input-sm" id="FechaDB" name="FechaDB" value="'.$value['Fecha_DB'].'">
 						</div>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-2">
 						<div class="form-group">
 						  <label for="Fecha_P12">Fecha P12</label>
 						  <input type="date" class="form-control input-sm" id="FechaP12" name="FechaP12" value="'.$value['Fecha_P12'].'">
@@ -888,6 +921,110 @@ class cambioeC
 	{
 		// print_r($parametros);die();
 		return $this->modelo->asignar_clave($parametros);
+	}
+	function guardar_foto($file,$post)
+	{
+	    $ruta= dirname(__DIR__,3).'/img/logotipos/';//ruta carpeta donde queremos copiar las imágenes
+	    if (!file_exists($ruta)) {
+	       mkdir($ruta, 0777, true);
+	    }
+	    if($this->validar_formato_img($file)==1)
+	    {
+	         $uploadfile_temporal=$file['file_img']['tmp_name'];
+	         // $tipo = explode('/', $file['file_img']['type']);
+	         $nombre = $file['file_img']['full_path'];
+	         $name = explode('.',$nombre);
+	         $nuevo_nom=$ruta.$nombre;
+	         if (is_uploaded_file($uploadfile_temporal))
+	         {
+	         	$em[0]['IP_VPN_RUTA'] = $post['Servidor'];
+	         	$em[0]['Usuario_DB'] = $post['Usuario'];
+	         	$em[0]['Contrasena_DB']= $post['Clave'];
+	         	$em[0]['Base_Datos']= $post['Base'];
+	         	$em[0]['Puerto']= $post['Puerto'];
+	         	$r = $this->modelo->actualizar_foto($name[0],$post['ci_ruc'],$em);
+	         	// print_r($r);die();
+	         	if($r==1)
+	         	{
+	         		move_uploaded_file($uploadfile_temporal,$nuevo_nom);
+	                return 1;
+	         	}else
+	         	{
+	         		return -3;
+	         	}	           
+	         }
+	         else
+	         {
+	           return -1;
+	         } 
+	     }else
+	     {
+	      return -2;
+	     }
+
+	}
+	function guardar_firma($file,$post)
+	{
+		// print_r($file);die();
+		// print_r($post);die();
+	    $ruta= dirname(__DIR__,2).'/comprobantes/certificados/';//ruta carpeta donde queremos copiar las imágenes
+	    if (!file_exists($ruta)) {
+	       mkdir($ruta, 0777, true);
+	    }
+	    if($this->validar_formato_firma($file)==1)
+	    {
+	         $uploadfile_temporal=$file['file_firma']['tmp_name'];
+	         // $tipo = explode('/', $file['file_img']['type']);
+	         $nombre = str_replace(' ','_', $file['file_firma']['full_path']);
+	         $nuevo_nom=$ruta.$nombre;
+	         if (is_uploaded_file($uploadfile_temporal))
+	         {
+	         	$em[0]['IP_VPN_RUTA'] = $post['Servidor'];
+	         	$em[0]['Usuario_DB'] = $post['Usuario'];
+	         	$em[0]['Contrasena_DB']= $post['Clave'];
+	         	$em[0]['Base_Datos']= $post['Base'];
+	         	$em[0]['Puerto']= $post['Puerto'];
+	         	$this->modelo->actualizar_firma($nombre,$post['ci_ruc'],$em);
+	           move_uploaded_file($uploadfile_temporal,$nuevo_nom);
+	          
+	           return 1;
+	         }
+	         else
+	         {
+	           return -1;
+	         } 
+	     }else
+	     {
+	      return -2;
+	     }
+
+	}
+	function validar_formato_img($file)
+	{
+	    switch ($file['file_img']['type']) {
+	      case 'image/jpeg':
+	      case 'image/pjpeg':
+	      case 'image/gif':
+	      case 'image/png':
+	         return 1;
+	        break;      
+	      default:
+	        return -1;
+	        break;
+	    }
+
+	}
+	function validar_formato_firma($file)
+	{
+	    switch ($file['file_firma']['type']) {
+	      case 'application/x-pkcs12':
+	         return 1;
+	        break;      
+	      default:
+	        return -1;
+	        break;
+	    }
+
 	}
 
 }

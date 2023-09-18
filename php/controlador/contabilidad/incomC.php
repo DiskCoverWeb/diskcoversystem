@@ -248,6 +248,11 @@ if(isset($_GET['eliminar_asientos']))
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->eliminar_asientos($parametros));
 }
+if(isset($_GET['edit_beneficiario']))
+{
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->edit_beneficiario($parametros));
+}
 
 
 
@@ -584,12 +589,17 @@ class incomC
   		if(count($AdoAsientos)> 0)
   		{
           if($parametros['NuevoComp']){
-             If($parametros['tip']=='CD'){ $NumComp = ReadSetDataNum("Diario", True, True);}
-             If($parametros['tip']=='CI'){ $NumComp = ReadSetDataNum("Ingresos", True, True);}
-             If($parametros['tip']=='CE'){ $NumComp = ReadSetDataNum("Egresos", True, True);}
-             If($parametros['tip']=='ND'){ $NumComp = ReadSetDataNum("NotaDebito", True, True);}
-             If($parametros['tip']=='NC'){ $NumComp = ReadSetDataNum("NotaCredito", True, True);}
+             If($parametros['tip']=='CD'){ $NumComp = ReadSetDataNum("Diario", True, True,$parametros['fecha']);}
+             If($parametros['tip']=='CI'){ $NumComp = ReadSetDataNum("Ingresos", True, True,$parametros['fecha']);}
+             If($parametros['tip']=='CE'){ $NumComp = ReadSetDataNum("Egresos", True, True,$parametros['fecha']);}
+             If($parametros['tip']=='ND'){ $NumComp = ReadSetDataNum("NotaDebito", True, True,$parametros['fecha']);}
+             If($parametros['tip']=='NC'){ $NumComp = ReadSetDataNum("NotaCredito", True, True,$parametros['fecha']);}
+          }else{
+          	$NumComp = explode('-', $parametros['num_com']);
+          	$NumComp = trim($NumComp[1]);
           }
+
+          // print_r($NumComp);die();
 
           $FechaTexto = $parametros['fecha'];
           $Co = datos_Co();
@@ -598,6 +608,7 @@ class incomC
           $Co['CodigoB'] = $bene[0]['Codigo'];
           $Co['RetSecuencial'] = $parametros['Retencion'];
           $Co['TP'] = $parametros['tip'];
+          $Co['TC'] = $parametros['tip'];
           $Co['Cotizacion'] = $parametros['TextCotiza'];
           $Co['T'] = G_NORMAL;
           $Co['Fecha'] =$FechaTexto;
@@ -620,25 +631,24 @@ class incomC
           // ImprimirComprobantesDe False, Co
           // If CheqCopia.value Then ImprimirComprobantesDe False, Co
           BorrarAsientos($Trans_No,true);
-          $NumComp = $NumComp + 1;
-          $Co['Numero'] = $NumComp;
+          $Co['Numero'] = $NumComp + 1;
           if($ModificarComp){
              // ModificarComp = False
              $CopiarComp = False;
              // NuevoComp = True
              // Unload FComprobantes
              // Exit Sub
-             return 1;
+             return array('respuesta'=> 1,'NumCom'=>$NumComp);
           }else{
              // ModificarComp = False
              // CopiarComp = False
              $NuevoComp = True;
              // Tipo_De_Comprobante_No Co
              // MBoxFecha.SetFocus
-             return 1;
+             return array('respuesta'=> 1,'NumCom'=>$NumComp);
           }
        }else{
-       	return -2;
+       	return  array('respuesta'=>-2,'NumCom'=>$NumComp);
           // MsgBox "Warning: Falta de Ingresar datos."
           // DGAsientos.Visible = True
           // TextCodigo.SetFocus
@@ -1489,9 +1499,10 @@ class incomC
 
     function listar_comprobante($parametros)
     {
-
-    $parametros = base64_decode($parametros);
-    $parametros = unserialize($parametros);
+    	$dato = explode('-',$parametros);
+    	$parametros = array('TP'=>$dato[0],'Numero'=>$dato[1],'Item'=>$_SESSION['INGRESO']['item']);
+    // $parametros = base64_decode($parametros);
+    // $parametros = unserialize($parametros);
     // print_r($parametros);die();
 
     $Trans_No = 0;
@@ -1886,21 +1897,24 @@ class incomC
 
 function Tipo_De_Comprobante_No($parametros)
 {
-	$parametros = base64_decode($parametros);
-    $parametros = unserialize($parametros);
-    $y = explode('-',$parametros['fecha']);
+    $y = explode('-',$parametros);
+     if($y[0]=='CD'){ $tp = "Diario";}
+     if($y[0]=='CI'){ $tp = "Ingresos";}
+     if($y[0]=='CE'){ $tp = "Egresos";}
+     if($y[0]=='ND'){ $tp = "NotaDebito";}
+     if($y[0]=='NC'){ $tp = "NotaCredito";}
 
-	return $ret = 'Comprobante de '.$parametros['TP'].' No. '.$y[0].'-'.generaCeros($parametros['Numero'],8);
+	return $ret = 'Comprobante de '.$tp.' No. '.$y[0].'-'.generaCeros($y[1],8);
 }
 function Llenar_Encabezado_Comprobante($parametros)
 {
-	$parametros = base64_decode($parametros);
-    $parametros = unserialize($parametros);
-    $bene = $this->modelo->beneficiarios($parametros['beneficiario']);
-    // print_r($bene);
-    // print_r($parametros); die();
-
-    return  array('beneficiario'=>$parametros['beneficiario'],'RUC_CI'=>$bene[0]['id'],'email'=>$bene[0]['email'],'Concepto'=>$parametros['Concepto'],'CodigoB'=>$bene[0]['Codigo'],'fecha'=>$parametros['fecha']);  
+	$dato = explode('-',$parametros);
+	$tp = $dato[0];$com = $dato[1];
+	$parametros = array('TP'=>$tp,'Numero'=>$com,'Item'=>$_SESSION['INGRESO']['item']);
+	$comprobante = $this->modelo->Encabezado_Comprobante($parametros);
+	// print_r($comprobante);die();
+	
+     return  array('beneficiario'=>$comprobante[0]['Cliente'],'RUC_CI'=>$comprobante[0]['CI_RUC'],'email'=>$comprobante[0]['Email'],'Concepto'=>$comprobante[0]['Concepto'],'CodigoB'=>$comprobante[0]['Codigo_B'],'fecha'=>$comprobante[0]['Fecha']->format('Y-m-d'));  
 }
 
 function ingresar_asiento($parametros)
@@ -1911,6 +1925,8 @@ function ingresar_asiento($parametros)
 		$dconcepto1 = $parametros['dconcepto1'];
 		$codigo = $parametros['codigo'];
 		$cuenta = $parametros['cuenta'];
+		$bene = explode('-', $parametros['bene']);
+		$bene = $bene[0];
 		if(isset($parametros['t_no']))
 		{
 			$t_no = $parametros['t_no'];
@@ -2018,7 +2034,7 @@ function ingresar_asiento($parametros)
 		if($i==0)
 		{
 			
-			$res = $this->modelo->insertar_aseinto($codigo,$cuenta,$parcial,$debe,$haber,$chq_as,$dconcepto1,$efectivo_as,$t_no,$A_No);
+			$res = $this->modelo->insertar_aseinto($codigo,$cuenta,$parcial,$debe,$haber,$chq_as,$dconcepto1,$efectivo_as,$t_no,$A_No,$bene);
 			if($res==-1)  
 			{  
 				 return array('resp'=>-1,'tbl'=>'','totales'=>'','obs'=>'no se pudo insertar en asiento');  
@@ -2046,6 +2062,27 @@ function eliminar_asientos($parametros)
 	return $this->modelo->BorrarAsientos($Trans_No,true);
 }
 
+
+function edit_beneficiario($parametros)
+{
+	$bene =  explode('-',$parametros['beneficiario']);
+	$bene = $bene[0];
+
+	$datos = $this->modelo->asientos();
+	if(count($datos)>0)
+	{
+		SetAdoAddNew("Asiento");          
+        SetAdoFields("BENEFICIARIO",$bene);
+
+        SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
+        SetAdoFieldsWhere('CodigoU',$_SESSION['INGRESO']['CodigoU']);
+        SetAdoFieldsWhere('T_No',$_SESSION['INGRESO']['modulo_']);
+        SetAdoUpdateGeneric();
+	}
+
+	// print_r($datos);die();
+	// print_r($parametros);die();
+}
 
 }
 ?>

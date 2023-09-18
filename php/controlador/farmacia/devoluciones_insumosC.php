@@ -91,6 +91,7 @@ class devoluciones_insumosC
 {
 	private $modelo;
 	private $paciente;
+	private $pdf;
 	private $descargos;
 	function __construct()
 	{
@@ -181,16 +182,13 @@ class devoluciones_insumosC
 		// print_r($parametro);die();
 		if($parametro['cc']!='')
 		{
-		   	SetAdoFields('CONTRA_CTA',$parametro['cc']);
+		   	$cta = $parametro['cc'];
 		   	 // $cc = explode('-',$parametro['cc']);
 		}else
 		{
 			$cta = buscar_en_ctas_proceso('Cta_Devoluciones');
-			if($cta!=-1)
-			{
-			 	SetAdoFields('CONTRA_CTA',$cta);
-			}else
-			{
+			if($cta==-1)
+			{			 	
 		   		SetAdoAddNew("Ctas_Proceso"); 	
 		   	 	SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
 		   	 	SetAdoFields('Item',$_SESSION['INGRESO']['item']);
@@ -199,7 +197,8 @@ class devoluciones_insumosC
 		   	 	SetAdoFields('Detalle','Cta_Devoluciones');
 		   	 	SetAdoFields('Codigo','4.4.02.05.02');
 		   	 	SetAdoUpdate();
-		   	 	SetAdoFields('CONTRA_CTA','4.4.02.05.02');
+		   	 	$cta = '4.4.02.05.02';
+		   	 	// SetAdoFields('CONTRA_CTA','4.4.02.05.02');
 		   	 }
 	    }
 
@@ -213,6 +212,7 @@ class devoluciones_insumosC
 		   SetAdoFields('CANT_ES',$parametro['cantidad']);
 		   SetAdoFields('CTA_INVENTARIO',$linea[0]['Cta_Inventario']);
 		   SetAdoFields('SUBCTA',$parametro['area']);		   //proveedor cod //area de donde biene
+		   SetAdoFields('CONTRA_CTA',$cta);
 		   SetAdoFields('CodigoU',$_SESSION['INGRESO']['Id']);   
 		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);
 		   SetAdoFields('A_No',$parametro['linea']+1);

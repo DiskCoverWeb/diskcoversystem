@@ -79,8 +79,8 @@ class lista_facturasM
 		
 		$sql ="SELECT T,TC,Serie,Autorizacion,Factura,Fecha,SubTotal,Con_IVA,IVA,Descuento+Descuento2 as Descuentos,Total_MN as Total,Saldo_MN as Saldo,RUC_CI,TB,Razon_Social,CodigoC,ID 
 		FROM Facturas 
-		WHERE Item = '".$_SESSION['INGRESO']['item']."' ";
-
+		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+		AND TC = 'FA' ";
 		if($_SESSION['INGRESO']['periodo']=='.')
 		{
 			$sql.=" AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
@@ -119,6 +119,119 @@ class lista_facturasM
        {
        	 $sql.= " AND Fecha BETWEEN   '".$desde."' AND '".$hasta."' ";
        }
+
+       $sql.=" ORDER BY Serie,Factura DESC "; 
+	$sql.=" OFFSET ".$_SESSION['INGRESO']['paginacionIni']." ROWS FETCH NEXT ".$_SESSION['INGRESO']['numreg']." ROWS ONLY;";   
+    // print_r($_SESSION['INGRESO']);
+	// print_r($sql);die();    
+	return $this->db->datos($sql);
+
+       // return $datos;
+   }
+
+   function facturas_lineas_emitidas_tabla($codigo=false,$serie=false,$autorizados=false,$factura=false)
+   {
+   	$cid = $this->conn;
+
+   			// print_r($codigo);die();		
+		$sql ="SELECT *
+		FROM Detalle_Factura
+		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+		AND TC = 'FA' ";
+		if($_SESSION['INGRESO']['periodo']=='.')
+		{
+			$sql.=" AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+		}else
+		{
+			$year =  $dateNew = DateTime::createFromFormat('d/m/Y', $_SESSION['INGRESO']['periodo'])->format('Y');
+			// print_r($year);die();
+			$sql.=" AND Periodo BETWEEN '01/01/".$year."' AND '".$_SESSION['INGRESO']['periodo']."'";
+		}
+		if($codigo!='T' && $codigo!='')
+		{
+			// si el codigo es T se refiere a todos
+		   $sql.=" AND CodigoC ='".$codigo."'";
+		} 
+		if($serie)
+		{
+			// si el codigo es T se refiere a todos
+		   $sql.=" AND Serie ='".$serie."'";
+		}
+		if($autorizados)
+		{
+			// print_r($autorizados);die();
+			if($autorizados==1)
+			{
+				$sql.=" AND Len(Autorizacion)>13";
+			}else
+			{
+				$sql.=" AND Len(Autorizacion)=13";
+			}
+		} 
+        if($factura)
+        {
+       	 $sql.= " AND Factura = '".$factura."'";
+        }
+       
+       $sql.=" ORDER BY Serie,Factura DESC "; 
+	// $sql.=" OFFSET ".$_SESSION['INGRESO']['paginacionIni']." ROWS FETCH NEXT ".$_SESSION['INGRESO']['numreg']." ROWS ONLY;";   
+    // print_r($_SESSION['INGRESO']);
+	// print_r($sql);die();    
+	return $this->db->datos($sql);
+
+       // return $datos;
+   }
+
+    function facturas_emitidas_tabla_op1($codigo,$periodo=false,$desde=false,$hasta=false,$serie=false,$autorizados = false)
+   {
+   	$cid = $this->conn;
+
+   			// print_r($codigo);die();
+		
+		$sql ="SELECT F.T,F.TC,F.Serie,F.Autorizacion,F.Factura,F.Fecha,Mes,Ticket,SubTotal,Con_IVA,IVA,Descuento+Descuento2 as Descuentos,Total_MN as Total,Saldo_MN as Saldo,RUC_CI,TB,Razon_Social,F.CodigoC,F.ID 
+		FROM Facturas F
+		INNER JOIN detalle_Factura  DF on F.Factura = DF.Factura
+		WHERE F.Item = '".$_SESSION['INGRESO']['item']."' 
+		AND F.TC = 'FA' ";
+		if($_SESSION['INGRESO']['periodo']=='.')
+		{
+			$sql.=" AND F.Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+		}else
+		{
+			$year =  $dateNew = DateTime::createFromFormat('d/m/Y', $_SESSION['INGRESO']['periodo'])->format('Y');
+			// print_r($year);die();
+			$sql.=" AND F.Periodo BETWEEN '01/01/".$year."' AND '".$_SESSION['INGRESO']['periodo']."'";
+		}
+		if($codigo!='T' && $codigo!='')
+		{
+			// si el codigo es T se refiere a todos
+		   $sql.=" AND F.CodigoC ='".$codigo."'";
+		} 
+		if($serie)
+		{
+			// si el codigo es T se refiere a todos
+		   $sql.=" AND F.Serie ='".$serie."'";
+		}
+		if($autorizados)
+		{
+			// print_r($autorizados);die();
+			if($autorizados==1)
+			{
+				$sql.=" AND Len(F.Autorizacion)>13";
+			}else
+			{
+				$sql.=" AND Len(F.Autorizacion)=13";
+			}
+		} 
+        // if($periodo && $periodo!='.' && $periodo!='')
+        // {
+       	//  $sql.= " AND Fecha BETWEEN '".$desde."' AND '".$hasta."'";
+        // }
+        if($desde!='' && $hasta!='')
+       {
+       	 $sql.= " AND F.Fecha BETWEEN   '".$desde."' AND '".$hasta."' ";
+       }
+       $sql.="group by F.T,F.TC,F.Serie,F.Autorizacion,F.Factura,F.Fecha,Mes,Ticket,SubTotal,Con_IVA,IVA,Descuento+Descuento2,Total_MN,Saldo_MN,RUC_CI,TB,Razon_Social,F.CodigoC,F.ID";
 
        $sql.=" ORDER BY Serie,Factura DESC "; 
 	$sql.=" OFFSET ".$_SESSION['INGRESO']['paginacionIni']." ROWS FETCH NEXT ".$_SESSION['INGRESO']['numreg']." ROWS ONLY;";   
@@ -203,7 +316,7 @@ class lista_facturasM
 
    }
 
-   function pdf_factura_descarga($cod,$ser,$ci,$periodo=false)
+   function pdf_factura_descarga($cod,$ser,$ci,$periodo=false,$imp=1)
    {
    	$id='factura_'.$ci;
    	$cid = $this->conn;
@@ -252,13 +365,15 @@ class lista_facturasM
 
     $datos_cli_edu=$this->cliente_matri($ci);
     $sucursal = $this->catalogo_lineas('FA',$ser);
+    // print_r($imp);die();
 	   if($datos_cli_edu != '' && !empty($datos_cli_edu))
 	   {
-	   	    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,'matr',$id,null,'factura',null,null,1,false,$sucursal);
+	   	  // print_r($imp."aaa");die();
+	   	    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,'matr',$id,null,'factura',null,$imp,false,false,$sucursal);
 	   }else
 	   {
 		    $datos_cli_edu=$this->Cliente($ci);
-		    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$id,null,'factura',null,null,1,false,$sucursal);
+		    imprimirDocEle_fac($datos_fac,$detalle_fac,$datos_cli_edu,$id,null,'factura',null,null,$imp,false,$sucursal);
 	   }
 
    }
@@ -310,8 +425,9 @@ class lista_facturasM
 
    function Cliente_facturas($cod,$grupo = false,$query=false,$clave=false)
    {
-	   $sql = "SELECT CodigoC as 'Codigo',C.Cliente as 'Cliente',C.CI_RUC,C.Email FROM Facturas F
-INNER JOIN Clientes C ON F.CodigoC = C.Codigo WHERE 1=1 ";
+	   $sql = "SELECT CodigoC as 'Codigo',C.Cliente as 'Cliente',C.CI_RUC,C.Email,C.Direccion,C.Telefono  
+	   FROM Facturas F
+	   INNER JOIN Clientes C ON F.CodigoC = C.Codigo WHERE 1=1 ";
 	   if($cod){
 	   	$sql.=" and C.Codigo= '".$cod."'";
 	   }
@@ -328,7 +444,7 @@ INNER JOIN Clientes C ON F.CodigoC = C.Codigo WHERE 1=1 ";
 	   	$sql.=" and C.Clave= '".$clave."'";
 	   }
 
-	   $sql.=" GROUP BY CodigoC,C.Cliente,C.CI_RUC,C.Email";
+	   $sql.=" GROUP BY CodigoC,C.Cliente,C.CI_RUC,C.Email,C.Direccion,C.Telefono ";
 	   $sql.=" ORDER BY C.Cliente OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
 	   
 	   // print_r($sql);die();

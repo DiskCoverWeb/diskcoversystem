@@ -9,6 +9,7 @@ class punto_ventaM
 {
 	private $db;
   private $email;
+  private $pdf;
 
 	public function __construct(){
 
@@ -277,9 +278,7 @@ class punto_ventaM
         AND F.T <> 'A' 
         AND F.Item = GR.Item 
         AND F.Periodo = GR.Periodo 
-        AND F.TC = GR.TC
         AND F.Serie = GR.Serie 
-        AND F.Autorizacion = GR.Autorizacion 
         AND F.Factura = GR.Factura ";
         // print_r($sql2);die();
       $AdoDBFA = $this->db->datos($sql2);

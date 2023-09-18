@@ -32,6 +32,10 @@ if(isset($_GET['FCliente']))
 {
 	require_once('contabilidad/FCliente.php');
 }
+if(isset($_GET['FProveedores']))
+{
+	require_once('contabilidad/FProveedores.php');
+}
 if(isset($_GET['FAbonos']))
 {
 	require_once('contabilidad/FAbonos.php');

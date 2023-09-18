@@ -109,17 +109,17 @@
       var data = e.params.data.data;
       // var dataM = e.params.data.dataMatricula;
 
-      $('#email').val(data.email);
+      $('#email').val(data.EmailR);
       $('#direccion').val(data.direccion);
       $('#direccion1').val(data.direccion1);
-      $('#telefono').val(data.telefono);
+      $('#telefono').val(data.Telefono_R);
       $('#codigo').val(data.codigo);
       $('#ci_ruc').val(data.ci_ruc);
-      $('#persona').val(data.cliente);
+      $('#persona').val(data.Representante);
       $('#chequeNo').val(data.grupo);
       $('#codigoCliente').val(data.codigo);
       $('#tdCliente').val(data.tdCliente);
-      $('.spanNIC').text(data.tdCliente);
+      $('.spanNIC').text(data.TD_R);
       $('#TextCI').val(data.RUC_CI_Rep);
       $('#codigoB').val("Código del banco: "+data.ci_ruc);
       $("#total12").val(parseFloat(0.00).toFixed(2));

@@ -61,6 +61,8 @@ if(isset($_GET['imprimir_excel']))
 class mayor_auxiliarC
 {
 	private $modelo;
+	private $pdf;
+	private $cataCta;
 	function __construct()
 	{
 		$this->modelo = new mayor_auxiliarM();

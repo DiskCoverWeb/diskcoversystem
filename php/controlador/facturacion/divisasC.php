@@ -125,6 +125,8 @@ class divisasC
 {
 	private $modelo;
   private $pdf;
+  private $email;
+  private $autorizar_sri;
 
 	public function __construct(){
     $this->modelo = new divisasM();
@@ -420,9 +422,11 @@ class divisasC
       'saldo' => $saldo);
     $datos_pre  ="";
     $datos_pre =  $this->modelo->datos_factura($parametros);
+    // print_r($datos_pre);die();
     $datos_empre =  $this->modelo->datos_empresa();
+    if(isset($datos_pre['lineas'][0]['Factura'])){
     $datos_pre['lineas'][0]['Factura'] = generaCeros($datos_pre['lineas'][0]['Factura'],9);
-
+    }
 $cabe = '<pre>
 Transaccion ('.$TC.'): No. '.$datos_pre['lineas'][0]['Serie'].'-'.$datos_pre['lineas'][0]['Factura'].'
 Autorizacion:

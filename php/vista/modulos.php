@@ -1,5 +1,13 @@
 <?php include('../headers/header.php'); //print_r($_SESSION['INGRESO']);die(); ?>
 <!-- Content Wrapper. Contains page content -->
+
+<head>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="../../dist/js/sweetalert2.min.js"></script>
+	<link rel="stylesheet" href="../../dist/css/sweetalert2.min.css">
+
+
+</head>
 <div class="content-wrapper">
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
@@ -14,66 +22,45 @@
 		</ol>
 	</section>
 
-	<!-- Main content -->
-	<section class="content">
-		<?php //print_r($_SESSION['INGRESO']);?>
-		<?php
-		// nuevo contruccion javier               
-		if (!isset($_GET['mod'])) {
-			$_SESSION['INGRESO']['modulo_'] = '';
-			$_SESSION['INGRESO']['modulo'] = modulos_habiliatados();
-			$todo = false;
-			foreach ($_SESSION['INGRESO']['modulo'] as $key => $value) {
-				if ($value['modulo'] == 'TO') {
-					$todo = true;
-					break;
+    <!-- Main content -->
+    <section class="content">
+    	<?php //print_r($_SESSION['INGRESO']);?>
+     <?php 
+     // nuevo contruccion javier               
+               if(!isset($_GET['mod']))
+               { 
+               	$_SESSION['INGRESO']['modulo_']='';
+               	$_SESSION['INGRESO']['modulo']=modulos_habiliatados();
+				$todo = false;
+				foreach ($_SESSION['INGRESO']['modulo'] as  $key => $value) {
+					if($value['modulo']=='TO')
+					{
+						$todo = true;
+						break;
+					}					
 				}
+				
+
+				if($todo == true)
+				  {
+				  	if(!isset($_SESSION['INGRESO']['modulo_']) || $_SESSION['INGRESO']['modulo_']==""){
+				  	echo '<div class="row">'.contruir_todos_modulos().'</div>';
+				    }
+					
+				   }else
+					{
+						// print_r($_SESSION);die();
+						if(!isset($_SESSION['INGRESO']['modulo_']) || $_SESSION['INGRESO']['modulo_']==""){
+				         echo $l ='<div class="row">'.contruir_modulos($_SESSION['INGRESO']['modulo']).'</div>';
+				       }
+
+					}
 			}
-
-			/**
-			 * Analiza el estado de la empresa
-			 */
-
-			include('val_estado.php');
-
-			val_estado();
-
-
-			if ($todo == true) {
-				if (!isset($_SESSION['INGRESO']['modulo_']) || $_SESSION['INGRESO']['modulo_'] == "") {
-					echo '<div class="row">' . contruir_todos_modulos() . '</div>';
-				}
-
-			} else {
-				// print_r($_SESSION);die();
-				if (!isset($_SESSION['INGRESO']['modulo_']) || $_SESSION['INGRESO']['modulo_'] == "") {
-					echo $l = '<div class="row">' . contruir_modulos($_SESSION['INGRESO']['modulo']) . '</div>';
-				}
-			}
-		}
 
 		?>
 
 
-	</section>
-	<script>
-		function ejecutarValEstado() {
-			// Realizar una solicitud AJAX para ejecutar la función val_estado
-			var xhr = new XMLHttpRequest();
-			xhr.open("GET", "val_estado.php", true); // 
-
-			xhr.onreadystatechange = function () {
-				if (xhr.readyState === 4 && xhr.status === 200) {
-					console.log("Función val_estado ejecutada con éxito:", xhr.responseText);
-				}
-			};
-
-			xhr.send();
-		}
-
-		//ejecutarValEstado();
-		//setInterval(ejecutarValEstado, 1 * 60 * 1000);
-	</script>
-	<!-- /.content -->
-</div>
-<?php include('../headers/footer.php'); ?>
+    </section>
+    <!-- /.content -->
+  </div>
+<?php  include('../headers/footer.php');?>

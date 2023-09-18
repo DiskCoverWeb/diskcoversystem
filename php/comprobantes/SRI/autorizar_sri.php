@@ -51,6 +51,10 @@ class autorizacion_sri
 	function Clave_acceso($fecha,$tipo_com,$serie,$numfac)
 	{
 		// print_r($fecha);die();
+		if(is_object($fecha))
+		{
+			$fecha = $fecha->format('Y-m-d');
+		}
 		$ambiente = $_SESSION['INGRESO']['Ambiente'];
 	    $Fecha1 = explode("-",$fecha);
 		$fechaem=$Fecha1[2].'/'.$Fecha1[1].'/'.$Fecha1[0];
@@ -73,6 +77,7 @@ class autorizacion_sri
 		// 1 para autorizados
 	    //-1 para no autorizados y devueltas
 	    // 2 para devueltas
+	    //-2 no existe la factura
 	    // texto del erro en forma de matris
 		$cabecera['ambiente']=$_SESSION['INGRESO']['Ambiente'];
 	    $cabecera['ruta_ce']=$_SESSION['INGRESO']['Ruta_Certificado'];
@@ -148,6 +153,10 @@ class autorizacion_sri
 		 }
 				//datos de factura
 	    		$datos_fac = $this->datos_factura($cabecera['serie'],$cabecera['factura'],$cabecera['tc']);
+	    		if(count($datos_fac)==0)
+	    		{
+	    			return -2;
+	    		}
 	    		// print_r($datos_fac);die();
 	    	    $cabecera['RUC_CI']=$this->quitar_carac($datos_fac[0]['RUC_CI']);
 				$cabecera['Fecha']=$datos_fac[0]['Fecha']->format('Y-m-d');
@@ -346,7 +355,6 @@ class autorizacion_sri
 		AND Serie = '".$serie."' 
 		AND Factura = ".$fact." 
 		AND LEN(Autorizacion) = 13 AND T <> 'A' ";
-		// print_r($sql);die();
 		$datos = $this->db->datos($sql);
 		return $datos;
 	}
@@ -733,7 +741,8 @@ class autorizacion_sri
 	            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 	            AND TC = '" .$TFA['TC']."' 
 	            AND Serie = '" .$TFA['Serie']."' 
-	            AND Factura = " .$TFA['Factura']." 
+	            AND Factura = " .$TFA['Factura']."
+	            AND Remision = " .$TFA['Remision']."  
 	            AND CodigoC = '" .$TFA['CodigoC']."' 
 	            AND Autorizacion = '" .$TFA['Autorizacion']."' ";
 	         	$this->db->String_Sql($sql);
@@ -908,6 +917,7 @@ class autorizacion_sri
 	            AND TC = '" .$TFA['TC']."' 
 	            AND Serie = '" .$TFA['Serie']."' 
 	            AND Factura = " .$TFA['Factura']." 
+	            AND Remision = " .$TFA['Remision']." 
 	            AND CodigoC = '" .$TFA['CodigoC']."' 
 	            AND Autorizacion = '" .$TFA['Autorizacion']."' ";
 	         	$this->db->String_Sql($sql);
@@ -1191,7 +1201,7 @@ class autorizacion_sri
 	    	 			$xml_detalle = $xml->createElement( "detalle");
 
 	    	 			$Producto = trim($value["Producto"]);
-	    	 			if($cabecera['Imp_Mes']){
+	    	 			if(isset($cabecera['Imp_Mes']) && $cabecera['Imp_Mes']){
 		                       if(strlen($value["Ticket"]) > 1){ $Producto = $Producto.", ".$value["Ticket"];}
 		                       if(strlen($value["Mes"]) > 1){ $Producto = $Producto.": ".$value["Mes"];}
                     	}
@@ -1210,7 +1220,7 @@ class autorizacion_sri
 	    	 			  	$xml_codigo = $xml->createElement('codigoInterno',$value["Codigo"]);
 	    	 			  	$xml_detalle->appendChild($xml_codigo);
 
-	    	 			  	$xml_codigo = $xml->createElement('descripcion',$Producto);
+	    	 			  	$xml_codigo = $xml->createElement('descripcion',$this->quitar_carac($Producto));
 	    	 			  	$xml_detalle->appendChild($xml_codigo);
 
 
@@ -1268,12 +1278,12 @@ class autorizacion_sri
         	$xml_infoAdicional->appendChild($xml_campoAdicional);
         	}         
 
-         if(isset($cabecera['Observacion'])){
+         if(isset($cabecera['Observacion']) && $cabecera['Observacion']!='.'){
         	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['Observacion']);
         	 $xml_campoAdicional->setAttribute( "nombre", "motivoTraslado");
         	 $xml_infoAdicional->appendChild($xml_campoAdicional);
         	}
-        if(isset($cabecera['Nota'])){
+        if(isset($cabecera['Nota']) && $cabecera['Nota']!='.'){
         	 $xml_campoAdicional = $xml->createElement("campoAdicional",$cabecera['Nota']);
         	 $xml_campoAdicional->setAttribute( "nombre", "notaAuxiliar");
         	 $xml_infoAdicional->appendChild($xml_campoAdicional);
@@ -2974,6 +2984,7 @@ function generar_xml_retencion($cabecera,$detalle)
 	        AND TC = '".$TFA['TC']."'
 	        AND Serie = '".$TFA['Serie']."'
 	        AND Factura = ".$TFA['Factura']."
+	        AND Remision = " .$TFA['Remision']." 
 	        AND CodigoC = '".$TFA['CodigoC']."'
 	        AND Autorizacion = '".$TFA['Autorizacion']."' ";
 	    return    $this->db->String_Sql($sql);

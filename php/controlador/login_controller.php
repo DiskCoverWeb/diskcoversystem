@@ -3,55 +3,46 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 require_once("../modelo/usuario_model.php");
-require_once(dirname(__DIR__,2).'/lib/phpmailer/enviar_emails.php');
+require_once(dirname(__DIR__, 2) . '/lib/phpmailer/enviar_emails.php');
 $login = new login_controller();
-if(isset($_GET['Entidad']))
-{
+if (isset($_GET['Entidad'])) {
 	$entidad = $_POST['entidad'];
 	$_SESSION['INGRESO']['Height_pantalla'] = $_GET['pantalla'];
 	echo json_encode($login->validar_entidad($entidad));
 }
 
-if(isset($_GET['base_actual_']))
-{
+if (isset($_GET['base_actual_'])) {
 	echo json_encode($_SESSION['INGRESO']['base_actual']);
 }
 
-if(isset($_GET['Cartera_Entidad']))
-{
+if (isset($_GET['Cartera_Entidad'])) {
 	$entidad = $_POST['entidad'];
 	$_SESSION['INGRESO']['Height_pantalla'] = $_GET['pantalla'];
 	echo json_encode($login->validar_entidad_cartera($entidad));
-} 
-if(isset($_GET['Usuario']))
-{
+}
+if (isset($_GET['Usuario'])) {
 	$parametro = $_POST['parametros'];
 	echo json_encode($login->validar_usuario($parametro));
 }
-if(isset($_GET['Ingresar']))
-{
+if (isset($_GET['Ingresar'])) {
 	$parametro = $_POST['parametros'];
 	echo json_encode($login->login($parametro));
 }
-if(isset($_GET['Ingresar_cartera']))
-{
+if (isset($_GET['Ingresar_cartera'])) {
 	$parametro = $_POST['parametros'];
 	echo json_encode($login->login_cartera($parametro));
 }
-if(isset($_GET['recuperar']))
-{
+if (isset($_GET['recuperar'])) {
 	$parametro = $_POST['parametros'];
 	echo json_encode($login->recuperar_clave($parametro));
 }
-if(isset($_GET['setear_empresa']))
-{
+if (isset($_GET['setear_empresa'])) {
 	$parametro = $_POST['parametros'];
 	$_SESSION['INGRESO']['CARTERA_ITEM'] = $parametro['item_cartera'];
 
 	// print_r($parametro);die();
 }
-if(isset($_GET['logout']))
-{
+if (isset($_GET['logout'])) {
 	echo json_encode($login->logout());
 }
 
@@ -64,8 +55,8 @@ class login_controller
 	private $email;
 	function __construct()
 	{
-		$this->modelo = new  usuario_model();
-		$this->email = new enviar_emails();	
+		$this->modelo = new usuario_model();
+		$this->email = new enviar_emails();
 	}
 
 	function validar_entidad($entidad)
@@ -93,7 +84,7 @@ class login_controller
 		// 		$datos['entidad'] = '';
 		// 		$datos['Nombre'] = '';
 		// 	}
-			
+
 		// }
 		return $datos;
 		// print_r($datos);die();
@@ -101,41 +92,37 @@ class login_controller
 
 	function validar_entidad_cartera($entidad)
 	{
-		if(is_numeric($entidad) && strlen($entidad)==10 || is_numeric($entidad) && strlen($entidad)==13)
-		{
-		
+		if (is_numeric($entidad) && strlen($entidad) == 10 || is_numeric($entidad) && strlen($entidad) == 13) {
+
 			$datos = $this->modelo->empresa_cartera($entidad);
 			// print_r($datos);die();
 			$datos1 = array();
-			if(count($datos)>0)
-			{
+			if (count($datos) > 0) {
 				foreach ($datos as $key => $value) {
 
-					 $url = '../../img/jpg/logo.jpg'; 
-		            $tipo_img = array('jpg','gif','png','jpeg');
-		              foreach ($tipo_img as $key2 => $value2) {
-		                if(file_exists( dirname(__DIR__,2). '/img/logotipos/'.$value['Logo_Tipo'].'.'.$value2))
-		                {                   
-		                  $url='../../img/logotipos/'.$value['Logo_Tipo'].'.'.$value2;
-		                  break;
-		                }
-		              }
-					$datos1[] = array('entidad'=>$value['ID_Empresa'],'Nombre'=>$value['Empresa'],'Razon_Social'=>$value['Razon_Social'],'Item'=>$value['Item'],'Logo'=>$url);					
-						
+					$url = '../../img/jpg/logo.jpg';
+					$tipo_img = array('jpg', 'gif', 'png', 'jpeg');
+					foreach ($tipo_img as $key2 => $value2) {
+						if (file_exists(dirname(__DIR__, 2) . '/img/logotipos/' . $value['Logo_Tipo'] . '.' . $value2)) {
+							$url = '../../img/logotipos/' . $value['Logo_Tipo'] . '.' . $value2;
+							break;
+						}
+					}
+					$datos1[] = array('entidad' => $value['ID_Empresa'], 'Nombre' => $value['Empresa'], 'Razon_Social' => $value['Razon_Social'], 'Item' => $value['Item'], 'Logo' => $url);
+
 				}
 			}
-			
+
 			return $datos1;
-		}else
-		{
-			return -2; 
+		} else {
+			return -2;
 		}
 		// print_r($datos);die();
 	}
 
 	function validar_usuario($parametro)
 	{
-		$datos = $this->modelo->ValidarUser1($parametro['usuario'],$parametro['entidad'],$parametro['item']);
+		$datos = $this->modelo->ValidarUser1($parametro['usuario'], $parametro['entidad'], $parametro['item']);
 		$datos['cartera_usu'] = 'Cartera';
 		$datos['cartera_pass'] = '999999';
 		return $datos;
@@ -143,37 +130,36 @@ class login_controller
 	function login($parametro)
 	{
 		// session_destroy();		
-		// print_r($parametro);
+		//print_r($parametro);
 		// print_r($datos);
 		// die();
 
 		$_SESSION['INGRESO']['usuario'] = $parametro['usuario'];
 		$_SESSION['INGRESO']['pass'] = $parametro['pass'];
 
+		$_SESSION['INGRESO']['usuario'] = $parametro['usuario'];
+		$_SESSION['INGRESO']['pass'] = $parametro['pass'];
+
 		$_SESSION['INGRESO']['msjMora'] = true; //indica que se debe mostrado el msj de mora en caso de existir.
-		$_SESSION['INGRESO']['IP_Local'] = !empty($parametro['localIp'])?$parametro['localIp']:"."; 
-		
-		if($parametro['cartera']==1)
-		{
-			$datos = $this->modelo->Ingresar($parametro['cartera_usu'],$parametro['cartera_pass'],$parametro['entidad'],$parametro['item']);
+		$_SESSION['INGRESO']['IP_Local'] = !empty($parametro['localIp']) ? $parametro['localIp'] : ".";
+
+		if ($parametro['cartera'] == 1) {
+			$datos = $this->modelo->Ingresar($parametro['cartera_usu'], $parametro['cartera_pass'], $parametro['entidad'], $parametro['item']);
 			// validar cliente en cartera
-			$empresa = $this->modelo->empresa_cartera($parametro['empresa'],$parametro['entidad']);
+			$empresa = $this->modelo->empresa_cartera($parametro['empresa'], $parametro['entidad']);
 			// print_r($empresa);die();
-			$cliente = $this->modelo->buscar_cliente_cartera($parametro['usuario'],$parametro['pass'],$empresa);
-			if(count($cliente)==0)
-			{
+			$cliente = $this->modelo->buscar_cliente_cartera($parametro['usuario'], $parametro['pass'], $empresa);
+			if (count($cliente) == 0) {
 				return -2;
-			}else
-			{
+			} else {
 				$_SESSION['INGRESO']['CARTERA_USUARIO'] = $parametro['usuario'];
 				$_SESSION['INGRESO']['CARTERA_PASS'] = $parametro['pass'];
 			}
 
 			// print_r($cliente);die();
 			// print_r($empresa);print_r($cliente);die();
-		}else
-		{
-			$datos = $this->modelo->Ingresar($parametro['usuario'],$parametro['pass'],$parametro['entidad'],$parametro['item']);
+		} else {
+			$datos = $this->modelo->Ingresar($parametro['usuario'], $parametro['pass'], $parametro['entidad'], $parametro['item']);
 		}
 
 
@@ -181,22 +167,19 @@ class login_controller
 	}
 	function login_cartera($parametro)
 	{
-		$datos = $this->modelo->Ingresar($parametro['usuario'],$parametro['pass'],$parametro['entidad']);
+		$datos = $this->modelo->Ingresar($parametro['usuario'], $parametro['pass'], $parametro['entidad']);
 
 		// print_r($parametro);
 		// print_r($datos);
 		// die();
-		if($parametro['cartera']==1)
-		{
+		if ($parametro['cartera'] == 1) {
 			// validar cliente en cartera
-			$empresa = $this->modelo->empresa_cartera($parametro['empresa'],$parametro['entidad']);
+			$empresa = $this->modelo->empresa_cartera($parametro['empresa'], $parametro['entidad']);
 			// print_r($empresa);die();
-			$cliente = $this->modelo->buscar_cliente_cartera($parametro['cartera_usu'],$parametro['cartera_pass'],$empresa);
-			if(count($cliente)==0)
-			{
+			$cliente = $this->modelo->buscar_cliente_cartera($parametro['cartera_usu'], $parametro['cartera_pass'], $empresa);
+			if (count($cliente) == 0) {
 				return -2;
-			}else
-			{
+			} else {
 				$_SESSION['INGRESO']['CARTERA_USUARIO'] = $parametro['cartera_usu'];
 				$_SESSION['INGRESO']['CARTERA_PASS'] = $parametro['cartera_pass'];
 			}
@@ -211,7 +194,7 @@ class login_controller
 
 	function logout()
 	{
-		session_destroy(); 
+		session_destroy();
 		return 1;
 	}
 
@@ -220,54 +203,48 @@ class login_controller
 	{
 		// print_r($parametro);die();
 		//entra a buscar en cartera
-		if(is_numeric($parametro['usuario']))
-		{
-			$empresa = $this->modelo->empresa_cartera($parametro['empresa'],$parametro['entidad']);
+		if (is_numeric($parametro['usuario'])) {
+			$empresa = $this->modelo->empresa_cartera($parametro['empresa'], $parametro['entidad']);
 			// print_r($empresa);die();
-			$datos = $this->modelo->buscar_cliente_cartera($parametro['usuario'],false,$empresa);
+			$datos = $this->modelo->buscar_cliente_cartera($parametro['usuario'], false, $empresa);
 			// print_r($datos);die();
-			if(count($datos)>0)
-			{
+			if (count($datos) > 0) {
 				$datos_email = array(
-					 'nick'=>$datos[0]['CI_RUC'],
-				    'clave'=>$datos[0]['Clave'],
-				    'email'=>$datos[0]['Email'],
-				    'entidad'=>$empresa[0]['Razon_Social'],
-				    'ruc'=>$parametro['empresa'],
-				    'usuario'=>$datos[0]['Cliente'], 
-				    'CI_usuario'=>$datos[0]['CI_RUC'],
-				    'cartera'=>1,
+					'nick' => $datos[0]['CI_RUC'],
+					'clave' => $datos[0]['Clave'],
+					'email' => $datos[0]['Email'],
+					'entidad' => $empresa[0]['Razon_Social'],
+					'ruc' => $parametro['empresa'],
+					'usuario' => $datos[0]['Cliente'],
+					'CI_usuario' => $datos[0]['CI_RUC'],
+					'cartera' => 1,
 				);
 				// print_r($datos_email);die();
 				$rep = $this->enviar_email($datos_email);
-				return array('respuesta'=>$rep,'email'=>$datos_email['email']);
-			}else
-			{
+				return array('respuesta' => $rep, 'email' => $datos_email['email']);
+			} else {
 				return -1;
 			}
-		}else
-		{
+		} else {
 			//entra a buscar en usuarios de sistema
 			// print_r($parametro);die();
-			$datos = $this->modelo->datos_usuario_mysql($usuario=false,$entidad=false,$parametro['usuario']);
+			$datos = $this->modelo->datos_usuario_mysql($usuario = false, $entidad = false, $parametro['usuario']);
 			// print_r($datos);die();
-			if(count($datos)>0)
-			{
+			if (count($datos) > 0) {
 				$datos_email = array(
-					'nick'=>$datos[0]['Usuario'],
-				    'clave'=>$datos[0]['Clave'],
-				    'email'=>$datos[0]['Email'],
-				    'entidad'=>'',
-				    'ruc'=>$parametro['empresa'],
-				    'usuario'=>$datos[0]['Nombre_Usuario'], 
-				    'CI_usuario'=>$datos[0]['CI_NIC'],
-				    'cartera'=>0,
+					'nick' => $datos[0]['Usuario'],
+					'clave' => $datos[0]['Clave'],
+					'email' => $datos[0]['Email'],
+					'entidad' => '',
+					'ruc' => $parametro['empresa'],
+					'usuario' => $datos[0]['Nombre_Usuario'],
+					'CI_usuario' => $datos[0]['CI_NIC'],
+					'cartera' => 0,
 				);
 				// print_r($datos_email);die();
-				$rep =  $this->enviar_email($datos_email);
-				return array('respuesta'=>$rep,'email'=>$datos_email['email']);
-			}else
-			{
+				$rep = $this->enviar_email($datos_email);
+				return array('respuesta' => $rep, 'email' => $datos_email['email']);
+			} else {
 				return -1;
 			}
 
@@ -277,54 +254,50 @@ class login_controller
 	}
 
 	function enviar_email($parametros)
-  	{
-  		$empresaGeneral = $this->modelo->Empresa_data($parametros['ruc']);
-  		// print_r($empresaGeneral);die();
-  		// print_r($empresaGeneral);die();
-	    $datos = $this->modelo->entidades_usuario($parametros['CI_usuario']);
-	    if($parametros['cartera']==1)
-	    {
-	    	$datos[0]['Nombre_Usuario'] = $parametros['usuario'];
-	    	$datos[0]['Usuario'] = $parametros['nick'];
-	    	$datos[0]['Clave'] = $parametros['clave']; 
-	    	$datos[0]['Email'] = $parametros['email'];
-	    }
+	{
+		$empresaGeneral = $this->modelo->Empresa_data($parametros['ruc']);
+		if ($empresaGeneral == -1) {
+			return 2;
+		}
+		$datos = $this->modelo->entidades_usuario($parametros['CI_usuario']);
+		if ($parametros['cartera'] == 1) {
+			$datos[0]['Nombre_Usuario'] = $parametros['usuario'];
+			$datos[0]['Usuario'] = $parametros['nick'];
+			$datos[0]['Clave'] = $parametros['clave'];
+			$datos[0]['Email'] = $parametros['email'];
+		}
 
-	    // print_r($datos);die();
-
-	  	$email_conexion = 'info@diskcoversystem.com'; 
-	    $email_pass =  'info2021DiskCover'; 	   
-	  	$correo_apooyo="credenciales@diskcoversystem.com"; //correo que saldra ala do del emisor
-	  	$cuerpo_correo = '
+		$email_conexion = 'info@diskcoversystem.com';
+		$email_pass = 'info2021DiskCover';
+		$correo_apooyo = "credenciales@diskcoversystem.com"; //correo que saldra ala do del emisor
+		$cuerpo_correo = '
 <pre>
 Este correo electronico fue generado automaticamente del Sistema Administrativo Financiero Contable DiskCover System a usted porque figura como correo electronico alternativo en nuestra base de datos.
 
-A solicitud de El(a) Sr(a) '.$parametros['usuario'].' se envian sus credenciales de acceso:
+A solicitud de El(a) Sr(a) ' . $parametros['usuario'] . ' se envian sus credenciales de acceso:
 </pre> 
 <br>
 <table>
 <tr><td><b>Link:</b></td><td>https://erp.diskcoversystem.com</td></tr>';
-if($parametros['cartera']==1)
-{
-	$cuerpo_correo.= '<tr><td><b>Entidad:</b></td><td>'.$parametros['entidad'].'</td></tr>
-	<tr><td><b>Ruc:</b></td><td>'.$parametros['ruc'].'</td></tr>';
-}
-$cuerpo_correo.='<tr><td><b>Nombre Usuario:</b></td><td>'.$datos[0]['Nombre_Usuario'].'</td></tr>
-<tr><td><b>Usuario:</b></td><td>'.$datos[0]['Usuario'].'</td></tr>
-<tr><td><b>Clave:</b></td><td>'.$datos[0]['Clave'].'</td></tr>
-<tr><td><b>Email:</b></td><td>'.$datos[0]['Email'].'</td></tr>
+		if ($parametros['cartera'] == 1) {
+			$cuerpo_correo .= '<tr><td><b>Entidad:</b></td><td>' . $parametros['entidad'] . '</td></tr>
+	<tr><td><b>Ruc:</b></td><td>' . $parametros['ruc'] . '</td></tr>';
+		}
+		$cuerpo_correo .= '<tr><td><b>Nombre Usuario:</b></td><td>' . $datos[0]['Nombre_Usuario'] . '</td></tr>
+<tr><td><b>Usuario:</b></td><td>' . $datos[0]['Usuario'] . '</td></tr>
+<tr><td><b>Clave:</b></td><td>' . $datos[0]['Clave'] . '</td></tr>
+<tr><td><b>Email:</b></td><td>' . $datos[0]['Email'] . '</td></tr>
 </table>
 A este usuario se asigno las siguientes Entidades: 
 <br>';
-if($parametros['cartera']==0)
-{
-	$cuerpo_correo.='<table> <tr><td width="30%"><b>Codigo</b></td><td width="50%"><b>Entidad</b></td></tr>';
-	foreach ($datos as $value) {
-		$cuerpo_correo .= '<tr><td>'.$value['id'].'</td><td>'.$value['text'].'</td></tr>';
-	}
-}
-$cuerpo_correo.='</table><br>';
-$cuerpo_correo .= ' 
+		if ($parametros['cartera'] == 0) {
+			$cuerpo_correo .= '<table> <tr><td width="30%"><b>Codigo</b></td><td width="50%"><b>Entidad</b></td></tr>';
+			foreach ($datos as $value) {
+				$cuerpo_correo .= '<tr><td>' . $value['id'] . '</td><td>' . $value['text'] . '</td></tr>';
+			}
+		}
+		$cuerpo_correo .= '</table><br>';
+		$cuerpo_correo .= ' 
 <pre>
 Nosotros respetamos su privacidad y solamente se utiliza este correo electronico para mantenerlo informado sobre nuestras ofertas, promociones, claves de acceso y comunicados. No compartimos, publicamos o vendemos su informacion personal fuera de nuestra empresa.
 
@@ -351,25 +324,15 @@ Esta direccion de correo electronico no admite respuestas. En caso de requerir a
   </table>
 ';
 
-	  	$titulo_correo = 'Credenciales de acceso al sistema DiskCover System';
-	  	$archivos = false;
-	  	$correo = $parametros['email'];
-	  	// print_r($correo);die();
-	  	// $resp = $this->modelo->ingresar_update($datos,'Clientes',$where);  	
-	  	
-	  	// if($resp==1)
-	  	// {
-	  	if($this->email->enviar_credenciales($archivos,$correo,$cuerpo_correo,$titulo_correo,$correo_apooyo,'Credenciales de acceso al sistema DiskCover System',$email_conexion,$email_pass,$html=1,$empresaGeneral)==1){
-	  		return 1;
-	  	}else{
-	  		// echo json_encode(-1);
-	  		return -1;
-	  	}
-	  	// }else
-	  	// {
-	  		// return -1;
-	  	// }
-  	}
+		$titulo_correo = 'Credenciales de acceso al sistema DiskCover System';
+		$archivos = false;
+		$correo = $parametros['email'];
+		if ($this->email->enviar_credenciales($archivos, $correo, $cuerpo_correo, $titulo_correo, $correo_apooyo, 'Credenciales de acceso al sistema DiskCover System', $email_conexion, $email_pass, $html = 1, $empresaGeneral) == 1) {
+			return 1;
+		} else {
+			return -1;
+		}
+	}
 
 
 }

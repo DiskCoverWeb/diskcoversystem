@@ -14,19 +14,35 @@ class modalesM
 		$this->db = new db();
 	}
 
-	function buscar_cliente($ci=false,$nombre=false)
+	function buscar_cliente($ci=false,$nombre=false,$id=false,$exacto=false)
 	{
-		$sql="SELECT Cliente AS nombre, CI_RUC as id,TD, email,Direccion,Telefono,Codigo,Grupo,Ciudad,Prov,DirNumero,ID,FA
+		$sql="SELECT ID,Cliente AS nombre, CI_RUC as id,TD, email,Direccion,Telefono,Codigo,Grupo,Ciudad,Prov,DirNumero,ID,FA,Cod_Ejec,Actividad
 		    FROM Clientes  C
 		    WHERE T <> '.' ";
 
+		    if($id)
+		    {
+		    	$sql.=" AND ID='".$id."'";
+		    }
+
 		    if($nombre)
 		    {
-		    	$sql.=" AND  Cliente LIKE '%".$nombre."%' ";
+		    	if($exacto)
+		    	{
+		    		$sql.=" AND  Cliente = '".$nombre."' ";
+		    	}else
+		    	{
+		    		$sql.=" AND  Cliente LIKE '%".$nombre."%' ";		    		
+		    	}
 		    }
 		    if($ci)
 		    {
-		    	$sql.=" AND CI_RUC LIKE '".$ci."%' ";
+		    	if($exacto)
+		    	{
+		    		$sql.=" AND CI_RUC = '".$ci."' ";
+		    	}else{
+		    		$sql.=" AND CI_RUC LIKE '".$ci."%' ";
+		    	}
 		    }	
 		$sql.=" ORDER BY Cliente OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
 

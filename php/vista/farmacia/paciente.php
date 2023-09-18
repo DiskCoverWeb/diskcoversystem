@@ -132,7 +132,8 @@
         }else if(response==-2)
         {
            Swal.fire('Cedula incorrecta','','error');
-
+        }else if(response==-3){
+           Swal.fire('Nombre Regisrado','','info');
         }else
         {
           Swal.fire('','Existio algun tipo de problema intente mas tarde.','error');

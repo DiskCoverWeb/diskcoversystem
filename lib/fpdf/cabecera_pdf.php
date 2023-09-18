@@ -24,6 +24,11 @@ class cabecera_pdf
 	private $conn;
 	private $header_cuerpo;
 	private $pdf_sin_cabecera;
+	private $fpdf;
+	private $pdftable;
+	private $fechafin;
+	private $fechaini;
+	private $sizetable;
 
 	function __construct()
 	{
@@ -250,7 +255,7 @@ class cabecera_pdf
 		if ($datos_empresa[0]['Agente_Retencion']!='.') 
 		{
 			$pdf->Ln(5);
-			$pdf->Cell(0,0,utf8_encode('Agente Retención: '.$datos_empresa[0]['agente_retencion']));
+			$pdf->Cell(0,0,mb_convert_encoding('Agente Retención: '.$datos_empresa[0]['agente_retencion'], 'UTF-8'));
 		}		
 		$pdf->Ln(5);
 		$pdf->Cell(0,0,'R.U.C/C.I.: '.$datos_pre['cliente']['CI_RUC']);
@@ -259,7 +264,7 @@ class cabecera_pdf
 		$pdf->Ln(5);
 		$pdf->Cell(0,0,'Telefono: '.$datos_pre['cliente']['Telefono']);
 		$pdf->Ln(5);
-		$pdf->Cell(0,0,utf8_decode('Dirección: '.$datos_pre['cliente']['Direccion']));
+		$pdf->Cell(0,0,mb_convert_encoding('Dirección: '.$datos_pre['cliente']['Direccion'], 'ISO-8859-1','UTF-8'));
 		$pdf->Ln(5);
 		$pdf->Cell(0,0,'Producto/Cant x PVP/Total '.$datos_pre['cliente']['Direccion']);
 		$pdf->Ln(5);
@@ -399,7 +404,7 @@ class cabecera_pdf
 		$pdf->Cell(70,0,'Razon Social/Nombres y Apellidos: ');
 		$pdf->SetFont('Arial','',7);
 		$pdf->Ln(5);
-		$pdf->Cell(70,0,utf8_encode( $info['factura'][0]['Razon_Social']));
+		$pdf->Cell(70,0,mb_convert_encoding( $info['factura'][0]['Razon_Social'], 'UTF-8'));
 		$pdf->Ln(3);
 		$pdf->SetFont('Arial','B',7);
 		$pdf->Cell(18,0,'Identificacion: ');
@@ -434,7 +439,7 @@ class cabecera_pdf
 		foreach ($info['lineas'] as $key => $value) {
 			$y = $pdf->GetY();
 			$pdf->Cell(8,2,$value['Cantidad']);
-			$pdf->MultiCell(35,2,utf8_decode($value['Producto']));
+			$pdf->MultiCell(35,2,mb_convert_encoding($value['Producto'], 'ISO-8859-1','UTF-8'));
 			$pdf->SetXY(48,$y);
 			$pdf->Cell(10,2,number_format($value['Precio'],2,'.',''),0,0,'R');
 			$pdf->Cell(10,2,number_format($value['Total'],2,'.',''),0,1,'R');
@@ -585,8 +590,8 @@ class cabecera_pdf
 		    //echo $row[0];
 	      }
 	      //print_r($result[0]);
-	      $_SESSION['INGRESO']['Nombre_Comercial'] =utf8_decode($result[0]['Institucion1']);
-	      $_SESSION['INGRESO']['noempr']=utf8_decode($result[0]['Institucion2']);
+	      $_SESSION['INGRESO']['Nombre_Comercial'] =mb_convert_encoding($result[0]['Institucion1'], 'ISO-8859-1','UTF-8');
+	      $_SESSION['INGRESO']['noempr']=mb_convert_encoding($result[0]['Institucion2'], 'ISO-8859-1','UTF-8');
 	      $_SESSION['INGRESO']['Logo_Tipo'] = $result[0]['Logo_Tipo'];
 	     // return $result;
 //print($result[0]['Logo_Tipo']);

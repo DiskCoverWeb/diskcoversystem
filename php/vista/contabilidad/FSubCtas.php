@@ -187,8 +187,9 @@ if(isset($_GET['tipoc']))
             success:  function (response) { 
               if(response==1)
               {
-                Swal.fire('Registrado','','success');
-                parent.location.reload();
+                // Swal.fire('Registrado','','success');                
+                 window.parent.postMessage('closeModalSubCta', '*');
+                // parent.location.reload();
                 $('#iframe').css('display','none');
               }
           }
@@ -254,7 +255,6 @@ if(isset($_GET['tipoc']))
     }
   }
 </script>
-<div id="iframe">
 <div class="row">
 	<div class="col-sm-4">
 		<b id="titulo">Sub cuenta por cobrar</b>
@@ -298,5 +298,14 @@ if(isset($_GET['tipoc']))
 
 <div class="modal-footer">
   <button type="button" class="btn btn-primary" onclick="generar_asiento();">Continuar</button>
+  <button type="button" class="btn btn-default" onclick="cerrarModal();">Salir</button>
 </div>
-</div>	
+
+<script type="text/javascript">
+  function cerrarModal() {
+       // window.parent.document.getElementById('modal_subcuentas').style.display = 'none';
+       window.parent.document.getElementById('modal_subcuentas').click();
+ 
+    // $('#modal_subcuentas').hide();
+  }
+</script>

@@ -401,7 +401,7 @@ function Ver_Comprobante(comprobante)
 }
 function Ver_detalle(comprobante)
 {
-    url='../vista/farmacia.php?mod=Farmacia&acc=facturacion_insumos&acc1=Utilidad insumos&b=1&po=subcu&comprobante='+comprobante;
+    url='../vista/farmacia.php?mod=28&acc=facturacion_insumos&acc1=Utilidad insumos&b=1&po=subcu&comprobante='+comprobante;
     window.open(url, '_blank');
 }
 

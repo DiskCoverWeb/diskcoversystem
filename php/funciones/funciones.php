@@ -489,12 +489,12 @@ function Rubro_Rol_Pago($Detalle_Rol)
 
 
 
-function ReadSetDataNum($SQLs,$ParaEmpresa =false,$Incrementar = false) // optimizado por javier farinango // pendiente a revicion repetida
+function ReadSetDataNum($SQLs,$ParaEmpresa=false,$Incrementar = false,$Fecha=false) // optimizado por javier farinango // pendiente a revicion repetida
 {
   $result = '';
   $NumCodigo = 0;
   $NuevoNumero = False;
-  $FechaComp = '';
+  $FechaComp = $Fecha;
   $Si_MesComp = false;
   if(strlen($FechaComp) < 10 || $FechaComp == '00/00/0000')
   {
@@ -521,7 +521,7 @@ function ReadSetDataNum($SQLs,$ParaEmpresa =false,$Incrementar = false) // optim
     $MesComp = '';
     if(strlen($FechaComp) >= 10)
     {
-    	$MesComp = date('m');;
+      $MesComp = date("m", strtotime($FechaComp));
     }
     if($MesComp == '')
     {
@@ -5688,7 +5688,7 @@ function generar_comprobantes($parametros) //revision parece repetida
   //    //  return $respuesta;   
   // }
  
-  function mayorizar_inventario_sp($fecha=false) // optimizado
+  function mayorizar_inventario_sp($fecha=false, $modulo_reemplazar = true) // optimizado
   {
     // set_time_limit(1024);
     // ini_set("memory_limit", "-1");
@@ -5700,7 +5700,9 @@ function generar_comprobantes($parametros) //revision parece repetida
       {
         $fecha_corte = $fecha;  
       }
-      $_SESSION['INGRESO']['modulo_']='01';
+      if($modulo_reemplazar){
+        $_SESSION['INGRESO']['modulo_']='01';
+      }
       $conn = new db();
       $parametros = array(
       array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
@@ -6172,7 +6174,6 @@ if($titulo)
         break;
       } 
   //fin de alineacion        
-
     $tbl.='<th class="'.$alineado.'" style="width:'.$medida.'">'.$value['COLUMN_NAME'].'</th>'; 
     // print_r($tbl);die();
     array_push($medida_body, $medida);
@@ -6219,6 +6220,7 @@ if($titulo)
            // $medida1 = explode('p',$medida);
            // $medida1  = ($medida1[0]-6).'px';
            // // $medida1 = $medida1.'px'; 
+           $medida = ((intval(preg_replace("/[^0-9]/", "", $medida))<strlen($value6['Name'])*8)?(strlen($value6['Name'])*8)."px":$medida);
            $tbl.='<th class="'.$alineado.'" style="width:'.$medida.'">'.$value6['Name'].'</th>'; 
            array_push($medida_body, $medida);
            array_push($alinea_body, $alineado);
@@ -7908,6 +7910,7 @@ function Lineas_De_CxC($TFA)
       "WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' " .
       "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' ";
   if (strlen($TFA['TC']) == 2) $sSQL .= "AND Fact = '" . $TFA['TC'] . "' ";
+  $TFA['Cod_CxC'] = '';
   if (strlen($TFA['Cod_CxC']) > 1) {
     $sSQL .= "AND '" . $TFA['Cod_CxC'] . "' IN (Concepto, Codigo, CxC) ";
   } elseif (strlen($TFA['Serie']) == 6) {
@@ -9708,6 +9711,7 @@ function BuscarImagen($nombre, $ruta)
 
 function CFechaLong($CFecha)
 {
+  // print_r($CFecha);
   if (strlen($CFecha) == 10) {
     if ($CFecha == "00/00/0000") $CFecha = date('Y-m-d');
   } else {
@@ -9717,6 +9721,11 @@ function CFechaLong($CFecha)
   return strtotime($CFecha);
 }
 
+function IsDate($fecha)
+{
+  $dateTime = DateTime::createFromFormat('Y-m-d', $fecha);
+  return $dateTime && $dateTime->format('Y-m-d') === $fecha;
+}
 function setObjectOrArray($value)
 {
   return json_decode(json_encode($value), false);
@@ -10520,6 +10529,7 @@ function GrabarComprobante($C1)
 
   // RatonReloj
   // ' Encabezado del Comprobante
+  // print_r($C1);die();
    if(count($C1)==0){
        if($C1['T'] == ""){ $C1['T'] = G_NORMAL;}
        if($C1['Fecha'] == ''){ $C1['Fecha'] = date('Y-m-d');}
@@ -11752,6 +11762,92 @@ function CambioCodigoKardex($Codigo) {
   }
   
   return substr($Codigo, 0, $LongCta);
+}
+function Reporte_Resumen_Existencias_SP($MBFechaInicial, $MBFechaFinal, $CodigoBodega)
+{
+  $FechaIniSP = BuscarFecha($MBFechaInicial);
+  $FechaFinSP = BuscarFecha($MBFechaFinal);
+
+  if($FechaIniSP<=$FechaFinSP){
+    $conn = new db();
+    $parametros = array(
+      array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+      array(&$FechaIniSP, SQLSRV_PARAM_IN),
+      array(&$FechaFinSP, SQLSRV_PARAM_IN),
+      array(&$CodigoBodega, SQLSRV_PARAM_IN),
+    );
+    $sql = "EXEC sp_Reporte_Resumen_Existencias @Item=?, @Periodo=?,@FechaInicial=?, @FechaFinal=?, @CodBod=?";
+    return $conn->ejecutar_procesos_almacenados($sql,$parametros);
+  }
+}
+function Actualizar_Razon_Social($FechaIniAut=false)
+{
+    $db = new db();
+    $FechaDeAut = $FechaIniAut;
+    $RutaXMLRechazado =dirname(__DIR__,1).'/comprobantes/entidades/entidad_'.generaCeros($_SESSION['INGRESO']['IDEntidad'],3).'/CE'.generaCeros($_SESSION['INGRESO']['item'],3)."/No_autorizados/*.xml";    
+    if(file_exists($RutaXMLRechazado)){ return -1;}
+    $FechaIni = date('Y-m-d');
+    $FechaFin = date('Y-m-d');
+    $sql = "SELECT Autorizacion, MIN(Fecha) As Fecha_Min, MAX(Fecha) As Fecha_Max 
+            FROM Facturas 
+            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+            AND T <> '".G_ANULADO."' 
+            AND LEN(Autorizacion) = 13 
+            GROUP BY Autorizacion ";
+
+    $AdoFA = $db->datos($sql);
+    if(count($AdoFA)>0)
+    {
+       $FechaIni = $AdoFA[0]["Fecha_Min"]->format('Y-m-d');
+       $FechaFin = $AdoFA[0]["Fecha_Max"]->format('Y-m-d');
+    }
+    
+    if(IsDate($FechaDeAut) && CFechaLong($FechaDeAut) < CFechaLong($FechaFin)){ $FechaIni = $FechaDeAut;}
+    $FechaIni = BuscarFecha($FechaIni);
+    $FechaFin = BuscarFecha($FechaFin);
+    for($Idx = 1; $Idx<=12;$Idx++)
+    {
+        if($_SESSION['INGRESO']['Tipo_Base']=='SQL SERVER')
+        {
+           $sql = "UPDATE Facturas 
+                SET RUC_CI = C.CI_RUC, Razon_Social = C.Cliente, TB = C.TD 
+                FROM Facturas As F, Clientes As C ";
+        }Else{
+           $sql = "UPDATE Facturas As F, Clientes As C 
+                SET F.RUC_CI = C.CI_RUC, F.Razon_Social = C.Cliente, F.TB = C.TD ";
+        }
+        $sql.=" WHERE F.Fecha BETWEEN '".$FechaIni."' and '".$FechaFin."' 
+               AND F.Item = '".$_SESSION['INGRESO']['item']."' 
+               AND F.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+               AND LEN(F.Autorizacion) = 13 
+               AND C.TD IN ('C','R','P') 
+               AND MONTH(F.Fecha) = ".$Idx." 
+               AND F.CodigoC = C.Codigo ";
+        // print_r($sql);
+        $db->String_Sql($sql);
+        
+        if( $_SESSION['INGRESO']['Tipo_Base']=='SQL SERVER' )
+        {
+           $sql = "UPDATE Facturas 
+                  SET RUC_CI = CM.Cedula_R, Razon_Social = CM.Representante, TB = CM.TD 
+                  FROM Facturas As F, Clientes_Matriculas As CM ";
+        }else{
+           $sql = "UPDATE Facturas As F, Clientes_Matriculas As CM 
+                SET RUC_CI = CM.Cedula_R, F.Razon_Social = CM.Representante, F.TB = CM.TD ";
+        }
+        $sql.=" WHERE F.Fecha BETWEEN '".$FechaIni."' and '".$FechaFin."'
+                AND F.Item = '".$_SESSION['INGRESO']['item']."'
+                AND F.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+                AND LEN(F.Autorizacion) = 13
+                AND CM.TD IN ('C','R','P')
+                AND MONTH(F.Fecha) = ".$Idx."
+                AND F.Item = CM.Item
+                AND F.Periodo = CM.Periodo
+                AND F.CodigoC = CM.Codigo ";
+        $db->String_Sql($sql);
+    }
 }
 
 ?>

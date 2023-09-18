@@ -138,7 +138,6 @@ class pacienteC
 		SetAdoFields('Email',$parametros['ema']);
 		SetAdoFields('Matricula',$parametros['cod']);
 
-
 		if($parametros['tip']=='E')
 		{
 		
@@ -155,19 +154,35 @@ class pacienteC
 			return SetAdoUpdateGeneric();
 		}else
 		{
-		
-			$codig = Digito_Verificador($parametros['ruc']);
-			// print_r($codig);die();
-			if($codig['Tipo_Beneficiario']!='C')
+			$parametros['codigo'] = $parametros['ruc'];
+			$parametros['query'] = '';
+			$parametros['tipo'] = '';
+			$datos = $this->modelo->cargar_paciente_all($parametros,false,false);
+			if(count($datos)==0)
 			{
-				return -2;
+				$parametros['codigo'] = '';
+				$parametros['query'] = $parametros['nom'];
+				$parametros['tipo'] = 'N1';
+				$datos = $this->modelo->cargar_paciente_all($parametros,false,false);
 			}
-			SetAdoFields('T','N');
-			SetAdoFields('Codigo',$codig['Codigo_RUC_CI']);
-			SetAdoFields('TD',$codig['Tipo_Beneficiario']);
-			return SetAdoUpdate();
-			// return  $this->modelo->insertar_paciente($datos,false,$parametros['tip']);
 
+			if(count($datos)==0)
+			{
+				$codig = Digito_Verificador($parametros['ruc']);
+				// print_r($codig);die();
+				if($codig['Tipo_Beneficiario']!='C')
+				{
+					return -2;
+				}
+				SetAdoFields('T','N');
+				SetAdoFields('Codigo',$codig['Codigo_RUC_CI']);
+				SetAdoFields('TD',$codig['Tipo_Beneficiario']);
+				return SetAdoUpdate();
+			}else
+			{
+				return -3;
+			}
+			// return  $this->modelo->insertar_paciente($datos,false,$parametros['tip']);
 
 		}
 

@@ -110,7 +110,7 @@
 
 
   });
-   function nombres(nombre)
+  function nombres(nombre)
   {
     $('#txt_nombre_prove').val(nombre.ucwords());
   }
@@ -763,7 +763,7 @@
                   <select class="form-control input-sm" id="ddl_proveedor" name="ddl_proveedor" onchange="cargar_datos_prov()">
                      <option value="">Seleccione un proveedor</option>
                   </select>             
-                   <span class="input-group-addon bg-green" title="Buscar" data-toggle="modal" data-target="#Nuevo_proveedor"><i class="fa fa-plus"></i></span>
+                   <span class="input-group-addon bg-green" title="Buscar" data-toggle="modal" data-target="#myModal_provedor"><i class="fa fa-plus"></i></span>
               </div>
             </div>            
             <div class="col-sm-3">

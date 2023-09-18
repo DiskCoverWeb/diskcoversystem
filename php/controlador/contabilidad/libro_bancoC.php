@@ -52,6 +52,8 @@ if(isset($_GET['imprimir_excel']))
 class libro_bancoC
 {
 	private $modelo;
+	private $pdf;
+	private $cataCta;
 	function __construct()
 	{
 		$this->modelo = new libro_bancoM();

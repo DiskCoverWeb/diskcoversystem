@@ -1219,7 +1219,7 @@ function listar_tipo_balanceSQl_pdf($mes,$tipo_ba,$tipo_p,$imprimir=False)
 function SQL_Tipo_Balance($TipoBalance,$TipoPyGCC)
 {
 
-	  $conn = new Conectar();
+	  $conn = new db();
       $cid=$conn->conexion();
    $CantCtas = 0;
    $sql='';
@@ -2869,8 +2869,7 @@ function SQL_Tipo_Balance($TipoBalance,$TipoPyGCC)
       array(&$hasta, SQLSRV_PARAM_IN),
       array(&$EsCoop, SQLSRV_PARAM_IN),
       array(&$sucursal, SQLSRV_PARAM_IN),
-      array(&$balanceMes, SQLSRV_PARAM_IN),
-      array(&$cc, SQLSRV_PARAM_IN)
+      array(&$balanceMes, SQLSRV_PARAM_IN)
       );
       //compos del SP de la base 
 
@@ -2878,7 +2877,7 @@ function SQL_Tipo_Balance($TipoBalance,$TipoPyGCC)
 
       // $sql = "{call sp_Procesar_Balance('003','.','20191028','20191124',0,0,0,'00') }";
       // $stmt = sqlsrv_prepare($cid, $sql);
-     $sql="EXEC sp_Procesar_Balance @Item=?, @Periodo=?, @FechaDesde=?, @FechaHasta=?, @EsCoop=?, @ConSucursal=?, @EsBalanceMes=?, @CentroCostos=? ";
+     $sql="EXEC sp_Procesar_Balance @Item=?, @Periodo=?, @FechaDesde=?, @FechaHasta=?, @EsCoop=?, @ConSucursal=?, @EsBalanceMes=?";
      return  $this->db_->ejecutar_procesos_almacenados($sql,$parametros);
 
      //  $stmt = sqlsrv_prepare($cid, $sql,$parametros);
@@ -3270,6 +3269,7 @@ function sp_Reporte_Analitico_Mensual($tipo,$desde,$hasta)
              AND T.Periodo = Ca.Periodo 
              AND T.Cta = Ca.Codigo 
              ORDER BY T.ID,Debe DESC,T.Cta ";
+             // print_r($sql);die();
              $result = $this->db_->datos($sql);
              $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-94;
              $tbl = grilla_generica_new($sql,'Transacciones As T, Catalogo_Cuentas As Ca ',$id_tabla='cont_tbl',$titulo=false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida);

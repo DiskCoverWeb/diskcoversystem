@@ -11,7 +11,7 @@
     $variables_mod = '';
     $NuevoComp = 1;
     $load = 0;
-    if(isset($_GET["modificar"])){ $variables_mod=$_GET["variables"]; $NuevoComp=0;}
+    if(isset($_GET["modificar"])){ $variables_mod=$_GET["TP"].'-'.$_GET["com"]; $NuevoComp=0;}
     if(isset($_GET["num_load"])){$load = 1;}
 ?>
 <style>
@@ -73,14 +73,15 @@
        listar_comprobante();
        let url = window.location.href; 
        // console.log(url);
-       urln =  url.toString().slice(0,url.length-1);
+       // urln =  url.toString().slice(0,url.length-1);
        // console.log(url);
-       window.location.href= urln+"&num_load=1#";
+       window.location.href= url+"&num_load=1#";
       }
       Tipo_De_Comprobante_No();
       if(cli=='')
       {
        Llenar_Encabezado_Comprobante();
+       // cargar_totales_aseintos();
       }
     }else
     {
@@ -141,6 +142,33 @@
     //   }
     // });
 
+     window.addEventListener("message", function(event) {
+        if (event.data === "closeModal") {
+            $('#modal_subcuentas').modal('hide');
+        }
+    });
+     window.addEventListener("message", function(event) {
+        if (event.data === "closeModalG") {
+            $('#modal_subcuentas').modal('hide');
+            cargar_tablas_contabilidad();
+            cargar_totales_aseintos();
+            $("#codigo").val('');            
+            $("#cuentar").empty();
+        }
+    });
+
+     //subcuenta
+   window.addEventListener("message", function(event) {
+        if (event.data === "closeModalSubCta") {
+            $('#modal_subcuentas').modal('hide');
+             cargar_tablas_contabilidad();
+             cargar_totales_aseintos();
+            $("#codigo").val('');
+            $("#cuentar").empty();
+        }
+    });
+
+
 
 
 
@@ -155,7 +183,7 @@
           dataType: 'json',
           delay: 250,
           processResults: function (data) {
-            console.log(data);
+            // console.log(data);
             return {
               results: data
             };
@@ -165,16 +193,25 @@
       });
     }
 
-    function benefeciario_selec()
+    function benefeciario_edit()
     {
-      var valor = $('#beneficiario1').val();
-      parte = valor.split('-');
-      let url = window.location.href;
-       // url =  url.toString().slice(0,url.length-1);
-       url = url.split('b=1');
-      // var url ="../vista/contabilidad.php?mod=contabilidad&acc=incom&acc1=Ingresar%20Comprobantes&b=1";
-      // console.log(data);
-      window.location.href= url[0]+"b=1&cliente="+parte[0];
+      var bene = $("#beneficiario1").val();
+      var parametros = 
+      {
+        'beneficiario' : bene,
+      }
+      $.ajax({
+        data:  {parametros:parametros},
+         url:   '../controlador/contabilidad/incomC.php?edit_beneficiario=true',
+        type:  'post',
+        dataType: 'json',
+          success:  function (response) {
+            bene = bene.split('-');
+            $('#ruc').val(bene[0]);
+            $('#email').val(bene[1]);
+
+        }
+      });       
     }
 
     function cargar_beneficiario(ci)
@@ -186,6 +223,7 @@
       type:  'get',
       dataType: 'json',
         success:  function (response) {
+          console.log(response);
           var valor = response[0].id;
           var parte = valor.split('-');
            $('#ruc').val(parte[0]);
@@ -325,7 +363,7 @@
           dataType: 'json',
           delay: 250,          
           processResults: function (data) {
-            console.log(data);
+            // console.log(data);
             return {
               results: data
             };
@@ -472,7 +510,7 @@
       var banco = $('#conceptob').val();
       let nom_banco = $('#conceptob option:selected').text();
       nombre = nom_banco.replace(banco,'');
-      console.log(nombre);
+      // console.log(nombre);
       var parametros = 
       {
         'banco':banco,
@@ -680,7 +718,7 @@
           dataType: 'json',
             success:  function (response) {    
             $('#retenciones').html(response.b+response.r);
-            console.log(response.datos[0]);
+            // console.log(response.datos[0]);
             if (response.datos[0]) {
               $('#Autorizacion_R').val(response.datos[0].AutRetencion); 
               $('#Serie_R').val(response.datos[0].PtoEmiRetencion+''+response.datos[0].PuntoEmiFactura); 
@@ -716,7 +754,7 @@
           dataType: 'json',
             success:  function (response) { 
 
-            console.log(response);     
+            // console.log(response);     
             $('#txt_diferencia').val(response.diferencia.toFixed(2));  
             $('#txt_debe').val(response.debe.toFixed(2));  
             $('#txt_haber').val(response.haber.toFixed(2));  
@@ -729,6 +767,7 @@
     function ingresar_asiento()
     {
     var partes= $('#cuentar option:selected').text();
+    var bene = $('#beneficiario1').val();
     var partes = partes.split('-');
     var dconcepto1 = partes[1].trim();
     var codigo = $("#codigo").val();
@@ -757,6 +796,7 @@
         "cotizacion" : cotizacion,
         "con" : con,
         "t_no" : '1',
+        "bene":bene,
         "ajax_page": 'ing1',                        
       };
     $.ajax({
@@ -769,7 +809,7 @@
       // },
       success:  function (response) {
 
-        console.log(response.resp);
+        // console.log(response.resp);
         if(response.resp==1)
         {
          cargar_tablas_contabilidad();
@@ -806,6 +846,7 @@
         $('#modal_subcuentas').modal('show');
         $('#titulo_frame').text('Ingreso de sub cuenta por cobras');
         $('#frame').attr('src',src).show();
+         adjustIframeHeight(300);
       }else if(tipo=="CC")
       {
          
@@ -870,10 +911,12 @@
           
            var fec = $('#fecha1').val();
            var opc_mult = $('#con').val();
-           var src ="../vista/modales.php?FCompras=true&mod=&prv="+prv+"&ben="+ben+"&fec="+fec+"&opc_mult="+opc_mult+"#";
+           var src ="../vista/modales.php?FCompras=true&mod=&prv="+prv+"&ben="+ben+"&fec="+fec+"&opc_mult="+opc_mult+"&tipo=";
            $('#frame').attr('src',src).show();
 
-           $('#frame').css('height','550px').show();
+           // $('#frame').css('height','100%').show();
+           adjustIframeHeight();
+
            $('#modal_subcuentas').modal('show');
           break;
         case 'AV':
@@ -889,7 +932,8 @@
            var src ="../vista/modales.php?FVentas=true&mod=&prv="+prv+"&ben="+ben+"&fec="+fec+"#";
            $('#frame').attr('src',src).show();
 
-           $('#frame').css('height','575px').show();
+           // $('#frame').css('height','100%').show();
+           adjustIframeHeight();
 
            $('#titulo_frame').text("VENTAS");
            $('#modal_subcuentas').modal('show');
@@ -898,7 +942,8 @@
           case 'ai':
            var src ="../vista/modales.php?FImportaciones#";
            $('#frame').attr('src',src).show();
-           $('#frame').css('height','450px').show();
+           // $('#frame').css('height','450px').show();
+            adjustIframeHeight(); 
            $('#titulo_frame').text("IMPORTACIONES");
            $('#modal_subcuentas').modal('show');
           break;
@@ -906,7 +951,9 @@
           case 'ae':
           var src ="../vista/modales.php?FExportaciones#";
            $('#frame').attr('src',src).show();
-           $('#frame').css('height','500px').show();
+           // $('#frame').css('height','500px').show();
+
+            adjustIframeHeight();
            $('#titulo_frame').text("EXPORTACIONES");
            $('#modal_subcuentas').modal('show');
 
@@ -932,7 +979,7 @@
     // var comprobante = com.split('.');
     if((debe != haber) || (debe==0 && haber==0) )
     {
-      Swal.fire( 'Las transacciones no cuadran correctamente  corrija los resultados de las cuentas','','info');
+      Swal.fire( 'Las transacciones no cuadran correctamente corrija los resultados de las cuentas','','info');
       return false;
     }
     if(ben =='')
@@ -962,6 +1009,9 @@
       'TextCotiza':$("#cotizacion").val(),
       'NuevoComp':modificar,
     }
+
+    // console.log(parametros);
+    // return false;
     Swal.fire({
       title: "Esta seguro de Grabar el "+$('#num_com').text(),
       text: "con fecha: "+$('#fecha1').val(),
@@ -1001,25 +1051,21 @@
         {
           Swal.fire('Este documento electronico ya esta autorizado','','error');
 
-          }else if(response.respuesta == 1 || response==1)
+          }else if(response.respuesta == 1)
           {
             // Swal.fire('Este documento electronico autorizado','','success');
              eliminar_ac();
-                Swal.fire({
-                   title: 'Comprobante Generado',
-                   text: "",
-                   type: 'success',
-                   showCancelButton: false,
-                   confirmButtonColor: '#3085d6',
-                   cancelButtonColor: '#d33',
-                   confirmButtonText: 'OK!'
-                 }).then((result) => {
-                   if (result.value==true) { 
-                    var url = location.href; 
-                    location.reload(url+'&reload=1');
-                   }
-                 });
-          
+             Swal.fire("Comprobante Generado","","success").then(function(){ eliminar_todo_asisntoB();
+             cargar_tablas_contabilidad();
+             cargar_tablas_tab4();
+             cargar_tablas_retenciones();
+             cargar_tablas_sc();
+             numero_comprobante();
+             url = "../controlador/contabilidad/comproC.php?reporte&comprobante="+response.NumCom+"&TP="+parametros['tip'];
+             window.open(url,"_blank");
+
+             });
+                         
           }else if(response.respuesta == '2')
           {
             Swal.fire('XML devuelto','','info',);
@@ -1034,15 +1080,18 @@
             Swal.fire('Error por: '+response.respuesta,'','info');
           }
 
-          if(response.respuesta==1 || response==1)
-          {
-             Swal.fire('Retencion ingresada','','success');
-             eliminar_todo_asisntoB();
-             cargar_tablas_contabilidad();
-             cargar_tablas_tab4();
-             cargar_tablas_retenciones();
-             cargar_tablas_sc();
-          }           
+          // if(response.respuesta==1 || response==1)
+          // {
+          //    Swal.fire('Retencion ingresada','','success');
+          //    eliminar_todo_asisntoB();
+          //    cargar_tablas_contabilidad();
+          //    cargar_tablas_tab4();
+          //    cargar_tablas_retenciones();
+          //    cargar_tablas_sc();
+          //    numero_comprobante();
+          //    url = "../controlador/contabilidad/comproC.php?reporte&comprobante=1000195&TP=CD";
+          //    window.open(url,"_blank");
+          // }           
 
           }
         });
@@ -1055,7 +1104,7 @@
        //    </a>
       var url1 = url+archivo;
 
-      console.log(url1);
+      // console.log(url1);
             var link = document.createElement("a");
             link.download = archivo;
             link.href =url1;
@@ -1160,7 +1209,7 @@
           dataType: 'json',
             success:  function (response) { 
 
-             console.log(response);     
+             // console.log(response);     
             $('#div_tabla').html(response);  
           }
         });
@@ -1175,7 +1224,7 @@
           type:  'post',
           dataType: 'json',
             success:  function (response) { 
-              console.log(response);
+              // console.log(response);
               $('#beneficiario1').append($('<option>',{value: response.CodigoB, text:response.beneficiario,selected: true }));
               $('#ruc').val(response.RUC_CI);
               $('#concepto').val(response.Concepto);
@@ -1212,7 +1261,7 @@
           dataType: 'json',
             success:  function (response) { 
 
-             console.log(response);     
+             // console.log(response);     
             $('#div_tabla').html(response);  
           }
         });
@@ -1238,6 +1287,29 @@
       subcuenta_frame();
     }
   }
+
+  function adjustIframeHeight(medida=false) {
+    var iframe = window.parent.document.getElementById('frame'); // Reemplaza 'miIframe' con el ID de tu iframe
+    menos = 200;
+    if(medida)
+    {
+       menos = medida;
+    }
+    if (iframe) {
+      iframe.style.height = (document.documentElement.scrollHeight-menos) + 'px';
+    }
+  }
+
+  function validar_fecha()
+  {
+    if($('#beneficiario1').val()=='')
+      {
+        $('#beneficiario1').select2('open');
+      }
+
+    numero_comprobante();
+  }
+
 
 </script>
 
@@ -1290,7 +1362,7 @@
                                  <div class="input-group-addon input-xs">
                                    <b>FECHA:</b>
                                  </div>
-                                 <input type="date" class="form-control input-xs" id="fecha1" placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="if($('#beneficiario1').val()==''){$('#beneficiario1').select2('open');}">
+                                 <input type="date" class="form-control input-xs" id="fecha1" placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="validar_fecha()">
                                </div>
                           <!-- </div> -->
                         </div>
@@ -1300,7 +1372,7 @@
                                  <div class="input-group-addon input-xs">
                                    <b>BENEFICIARIO:</b>
                                  </div>                        
-                              <select id="beneficiario1" name='beneficiario1' class='form-control' onchange="benefeciario_selec()">
+                              <select id="beneficiario1" name='beneficiario1' class='form-control' onchange="benefeciario_edit()">
                                 <option value="">Seleccione beneficiario</option>                                
                               </select>
                               <input type="hidden" name="beneficiario2" id="beneficiario2" value='' />
@@ -1695,16 +1767,16 @@
       </div>
       <div class="modal-body" style="padding-top: 0px;">
         <!-- <div class="container-fluid"> -->
-          <iframe  id="frame" width="100%" height="350px" marginheight="0" frameborder="0"></iframe>
+          <iframe  id="frame" width="100%" marginheight="0" frameborder="0"></iframe>
           
         <!-- </div> -->
         <!-- <iframe src="../vista/contabilidad/FSubCtas.php"></iframe> -->
         
       </div>
-      <!-- <div class="modal-footer">
-          <button type="button" class="btn btn-primary" onclick="cambia_foco();">Guardar</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-        </div> -->
+      <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-primary" onclick="cambia_foco();">Guardar</button> -->
+          <button style="display: none;" id="btn_salir" id="btn_cerrar_sub" type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
     </div>
   </div>
 </div>
