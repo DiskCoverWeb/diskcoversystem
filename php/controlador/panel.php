@@ -1186,13 +1186,68 @@ function validar_estado_all()
         $ListaFacturas .= "COMUNIQUESE CON SERVICIO AL CLIENTE DE DISKCOVER SYSTEM A LOS TELEFONOS: 098-910-5300/098-652-4396/099-965-4196,\n";
         $ListaFacturas .= "O ENVIE UN MAIL A carteraclientes@diskcoversystem.com; CON EL COMPROBANTE DE DEPOSITO Y ASI PROCEDER A REALIZAR\n";
         $ListaFacturas .= "LA ACTUALIZACION DE LA JUSTIFICACION EN EL SISTEMA.";
+        enviarCorreo($empresa, $titulo, $ListaFacturas);
+        echo '<script>';
+        echo 'console.log("correo enviado?? test");';
 
+        echo '</script>';
         return array('rps' => $rps, "mensaje" => $ListaFacturas, "titulo" => $titulo);
     }
 
     return array('rps' => 'ok');
 }
 
+function enviarCorreo($empresa, $titulo, $mensaje)
+{
+    $Lista_De_Correos = array();
+    for ($i = 0; $i < 7; $i++) {
+        $Lista_De_Correos[$i] = array(
+            'Correo_Electronico' => CorreoDiskCover,
+            'Contraseña' => ContrasenaDiskCover
+        );
+    }
+
+    if (strlen($empresa[0]["Email_Conexion"]) > 1 && strlen($empresa[0]["Email_Contraseña"]) > 1) {
+        $Lista_De_Correos[0]['Correo_Electronico'] = 'mail';
+        $Lista_De_Correos[0]['Contraseña'] = '****';
+    }
+
+    if (strlen($empresa[0]["Email_Conexion_CE"]) > 1 && strlen($empresa[0]["Email_Contraseña_CE"]) > 1) {
+        $Lista_De_Correos[4]['Correo_Electronico'] = 'mail';
+        $Lista_De_Correos[4]['Contraseña'] = '****';
+    }
+
+    $Lista_De_Correos[6]['Correo_Electronico'] = 'mail';
+    $Lista_De_Correos[6]['Contraseña'] = '****';
+
+    for ($i = 0; $i < 7; $i++) {
+        echo '<script>';
+        echo 'console.log("DEBUG Estado Activo: ' . $Lista_De_Correos[$i]['Correo_Electronico'] . '");';
+        echo 'console.log("DEBUG Estado Activo: ' . $Lista_De_Correos[$i]['Contraseña'] . '");';
+        echo '</script>';
+    }
+
+    $EmailEmpresa = 'lrsunigagarcia@gmail.com';
+    $EmailContador = $empresa[0]["Email_Contabilidad"];
+    $EmailProcesos = $empresa[0]["Email_Procesos"];
+    $Email_CE_Copia = (bool) $empresa[0]["Email_CE_Copia"];
+
+    $TMail = new stdClass();
+    $TMail->de = CorreoDiskCover;
+    $TMail->Subject = $titulo;
+    $TMail->Mensaje = $mensaje;
+    $TMail->Adjunto = "";
+    $TMail->Credito_No = "";
+    $TMail->para = "";
+    $TMail->para = Insertar_Mail($TMail->para, $EmailEmpresa);
+   // $TMail->para = Insertar_Mail($TMail->para, $EmailContador);
+    //if ($Email_CE_Copia) {
+      //  $TMail->para = Insertar_Mail($TMail->para, $EmailProcesos);
+    //}
+    $email = new enviar_emails();
+    $email->FEnviarCorreos($TMail, $Lista_De_Correos, $empresa[0]["Item"]);
+
+}
 
 
 
