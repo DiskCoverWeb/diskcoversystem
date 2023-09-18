@@ -1,13 +1,7 @@
 <?php include('../headers/header.php'); //print_r($_SESSION['INGRESO']);die(); ?>
 <!-- Content Wrapper. Contains page content -->
 
-<head>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-	<script src="../../dist/js/sweetalert2.min.js"></script>
-	<link rel="stylesheet" href="../../dist/css/sweetalert2.min.css">
 
-
-</head>
 <div class="content-wrapper">
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
@@ -39,6 +33,9 @@
 						break;
 					}					
 				}
+
+				include('val_estado.php');
+				val_estado();
 				
 
 				if($todo == true)
