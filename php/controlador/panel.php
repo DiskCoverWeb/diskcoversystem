@@ -1131,14 +1131,14 @@ function validar_estado_all()
 
     if ($PCActivo == false) {
         $Cadena = $_SESSION['INGRESO']['Nombre_Completo'] . " su equipo se encuentra en LISTA NEGRA, ingreso no autorizado, comuniquese con el Administrador del Sistema";
-        return array('rps' => 'noActivo', "mensaje" => $Cadena, "titulo" => 'ACCESO DEL PC DENEGADO');
+        return json_encode(array('rps' => 'noActivo', "mensaje" => $Cadena, "titulo" => 'ACCESO DEL PC DENEGADO'));
     }
     echo '<script>';
     echo 'console.log("DEBUG Estado Usuario: ' . $EstadoUsuario . '");';
     echo '</script>';
     if ($EstadoUsuario == false) {
         $Cadena = $_SESSION['INGRESO']['Nombre_Completo'] . " su ingreso no esta autorizado, comuniquese con el Administrador del Sistema";
-        return array('rps' => 'noAuto', "mensaje" => $Cadena, "titulo" => 'ACCESO AL SISTEMA DENEGADO');
+        return json_encode(array('rps' => 'noAuto', "mensaje" => $Cadena, "titulo" => 'ACCESO AL SISTEMA DENEGADO'));
     }
 
     $ListaFacturas = "";
@@ -1188,17 +1188,14 @@ function validar_estado_all()
         $ListaFacturas .= "COMUNIQUESE CON SERVICIO AL CLIENTE DE DISKCOVER SYSTEM A LOS TELEFONOS: 098-910-5300/098-652-4396/099-965-4196,\n";
         $ListaFacturas .= "O ENVIE UN MAIL A carteraclientes@diskcoversystem.com; CON EL COMPROBANTE DE DEPOSITO Y ASI PROCEDER A REALIZAR\n";
         $ListaFacturas .= "LA ACTUALIZACION DE LA JUSTIFICACION EN EL SISTEMA.";
+        
+        
+        //enviarCorreo($empresa, $titulo, $ListaFacturas);
 
-
-        /*echo '<script>';
-        echo 'console.log("MESSAGE: ' . strlen($ListaFacturas) . '");';
-        echo '</script>';*/
-        enviarCorreo($empresa, $titulo, $ListaFacturas);
-
-        return array('rps' => $rps, "mensaje" => $ListaFacturas, "titulo" => $titulo);
+        return json_encode(array('rps' => $rps, "mensaje" => $ListaFacturas, "titulo" => $titulo));
     }
 
-    return array('rps' => 'ok');
+    return json_encode(array('rps' => 'ok'));
 }
 
 function enviarCorreo($empresa, $titulo, $mensaje)
@@ -1243,15 +1240,15 @@ function enviarCorreo($empresa, $titulo, $mensaje)
     $TMail->Adjunto = "";
     $TMail->Credito_No = "";
     $TMail->para = "";
-    //$TMail->para = Insertar_Mail($TMail->para, $EmailEmpresa);
+    $TMail->para = Insertar_Mail($TMail->para, $EmailEmpresa);
     $TMail->para = Insertar_Mail($TMail->para, "dayavan38@gmail.com");
-    // $TMail->para = Insertar_Mail($TMail->para, $EmailContador);
-    //if ($Email_CE_Copia) {
-    //  $TMail->para = Insertar_Mail($TMail->para, $EmailProcesos);
-    //}
+    $TMail->para = Insertar_Mail($TMail->para, $EmailContador);
+    if ($Email_CE_Copia) {
+      $TMail->para = Insertar_Mail($TMail->para, $EmailProcesos);
+    }
     $email = new enviar_emails();
 
-    $rps = $email->FEnviarCorreos2($TMail, $Lista_De_Correos, $empresa[0]["Item"]);
+    $rps = $email->FEnviarCorreos($TMail, $Lista_De_Correos);
 
     echo '<script>';
 

@@ -323,10 +323,17 @@ class enviar_emails
   {
     $Si_Enviar = false;
     if ($TMail->de == CorreoDiskCover) {
-      $TMail->Usuario = 'taller3mdr@gmail.com';
-      $TMail->PassWord = 'contrataller123';
-      $TMail->servidor = "mail.diskcoversystem.com";
+
+      //$TMail->Usuario = 'c16a0e373e6a95';
+      //$TMail->PassWord = '8945dda5de5381';
+      //$TMail->servidor = 'sandbox.smtp.mailtrap.io';
+      //$TMail->puerto = 2525;
+
+      $TMail->Usuario = CorreoDiskCover;
+      $TMail->PassWord = ContrasenaDiskCover;
+      $TMail->servidor = 'mail.diskcoversystem.com';
       $TMail->puerto = 465;
+
       $TMail->UseAuntentificacion = true;
       $TMail->ssl = true;
       $Si_Enviar = true;
@@ -385,7 +392,6 @@ class enviar_emails
       $TMail->Subject = "Sin asunto";
     }
     if ($Si_Enviar) {
-
       $mail = new PHPMailer(true);
       $mail->SMTPOptions = array(
         'ssl' => array(
@@ -411,6 +417,7 @@ class enviar_emails
         echo '</script>';
       }
 
+      $recipients = explode(";", $TMail->para);
       $rps = [];
       foreach ($recipients as $recipient) {
         if (strpos($recipient, '@') !== false) {
@@ -421,11 +428,12 @@ class enviar_emails
             $mail->SMTPAuth = $TMail->UseAuntentificacion;
             $mail->Username = $TMail->Usuario;
             $mail->Password = $TMail->PassWord;
-            if ($TMail->ssl)
+            $mail->Port = $TMail->puerto;
+            /*if ($TMail->ssl)
               $mail->SMTPSecure = 'ssl';
             else
               $mail->SMTPSecure = 'tls';
-            $mail->Port = $TMail->puerto;
+            $mail->Port = $TMail->puerto;*/
 
             $mail->setFrom($TMail->de, 'DiskCover System');
             $mail->addAddress($recipient);
@@ -442,34 +450,31 @@ class enviar_emails
             $mail->Subject = $TMail->Subject;
             $mail->Body = $TMail->Mensaje;
 
-            echo '<script>';
-            echo 'console.log("HOST: ' . $mail->Host . '");';
-            echo '</script>';
+            /*echo '<script>';
+              echo 'console.log("HOST: ' . $mail->Host . '");';
+              echo '</script>';
 
-            echo '<script>';
-            echo 'console.log("USER AUTH: ' . $mail->SMTPAuth . '");';
-            echo '</script>';
+              echo '<script>';
+              echo 'console.log("USER AUTH: ' . $mail->SMTPAuth . '");';
+              echo '</script>';
 
-            echo '<script>';
-            echo 'console.log("USER: ' . $mail->Username . '");';
-            echo '</script>';
+              echo '<script>';
+              echo 'console.log("USER: ' . $mail->Username . '");';
+              echo '</script>';
 
-            echo '<script>';
-            echo 'console.log("PASS: ' . $mail->Password . '");';
-            echo '</script>';
+              echo '<script>';
+              echo 'console.log("PASS: ' . $mail->Password . '");';
+              echo '</script>';
 
-            echo '<script>';
-            echo 'console.log("TITLE: ' . $mail->Subject . '");';
-            echo '</script>';
+              echo '<script>';
+              echo 'console.log("TITLE: ' . $mail->Subject . '");';
+              echo '</script>';
 
-            echo '<script>';
-            echo 'console.log("MESSAGE: ' . strlen($mail->Body) . '");';
-            echo '</script>';
-
-
-
+              echo '<script>';
+              echo 'console.log("MESSAGE: ' . $mail->Body . '");';
+              echo '</script>';
+            */
             $a = $mail->send();
-
             $rps[] = array('para' => $recipient, 'rps' => $a);
 
           } catch (Exception $e) {
@@ -480,108 +485,6 @@ class enviar_emails
       return $rps;
     }
   }
-
-  function FEnviarCorreos2($TMail, $Lista_De_Correos = null, $itemEmpresa = '')
-  {
-    $Si_Enviar = false;
-    if ($TMail->de == CorreoDiskCover) {
-      $TMail->Usuario = 'taller3mdr@gmail.com';
-      $TMail->PassWord = 'contrataller123';
-      $TMail->servidor = "mail.diskcoversystem.com";
-      $TMail->puerto = 465;
-      $TMail->UseAuntentificacion = true;
-      $TMail->ssl = true;
-      $Si_Enviar = true;
-    } 
-
-    if ($Si_Enviar) {
-      $mail = new PHPMailer(true);
-      $mail->SMTPOptions = array(
-        'ssl' => array(
-          'verify_peer' => false,
-          'verify_peer_name' => false,
-          'allow_self_signed' => true
-        )
-      );
-
-      $recipients = explode(";", $TMail->para);
-
-      echo '<script>';
-      echo 'console.log("De: ' . $TMail->de . '");';
-      echo '</script>';
-
-      echo '<script>';
-      echo 'console.log("Para:");';
-      echo '</script>';
-
-      foreach ($recipients as $recipient) {
-        echo '<script>';
-        echo 'console.log("' . $recipient . '");';
-        echo '</script>';
-      }
-
-      $rps = [];
-      foreach ($recipients as $recipient) {
-        if (strpos($recipient, '@') !== false) {
-          try {
-            //$mail->SMTPDebug = SMTP::DEBUG_SERVER;
-            $mail->isSMTP();
-            $mail->Host = $TMail->servidor;
-            $mail->SMTPAuth = $TMail->UseAuntentificacion;
-            $mail->Username = $TMail->Usuario;
-            $mail->Password = $TMail->PassWord;
-            if ($TMail->ssl)
-              $mail->SMTPSecure = 'ssl';
-            else
-              $mail->SMTPSecure = 'tls';
-            $mail->Port = $TMail->puerto;
-
-            $mail->setFrom($TMail->de, 'DiskCover System');
-            $mail->addAddress($recipient);
-            $mail->addReplyTo($TMail->de, 'Informacion');
-
-            $mail->isHTML(true);
-            $mail->Subject = $TMail->Subject;
-            $mail->Body = $TMail->Mensaje;
-
-            echo '<script>';
-            echo 'console.log("HOST: ' . $mail->Host . '");';
-            echo '</script>';
-
-            echo '<script>';
-            echo 'console.log("USER AUTH: ' . $mail->SMTPAuth . '");';
-            echo '</script>';
-
-            echo '<script>';
-            echo 'console.log("USER: ' . $mail->Username . '");';
-            echo '</script>';
-
-            echo '<script>';
-            echo 'console.log("PASS: ' . $mail->Password . '");';
-            echo '</script>';
-
-            echo '<script>';
-            echo 'console.log("TITLE: ' . $mail->Subject . '");';
-            echo '</script>';
-
-            echo '<script>';
-            echo 'console.log("MESSAGE: ' . strlen($mail->Body) . '");';
-            echo '</script>';
-
-
-
-            $a = $mail->send();
-
-            $rps[] = array('para' => $recipient, 'rps' => $a);
-
-          } catch (Exception $e) {
-            $rps[] = array('para' => $recipient, 'rps' => false);
-          }
-        }
-      }
-      return $rps;
-    }
-  }
-
 }
+
 ?>

@@ -16,48 +16,47 @@
 		</ol>
 	</section>
 
-    <!-- Main content -->
-    <section class="content">
-    	<?php //print_r($_SESSION['INGRESO']);?>
-     <?php 
-     // nuevo contruccion javier               
-               if(!isset($_GET['mod']))
-               { 
-               	$_SESSION['INGRESO']['modulo_']='';
-               	$_SESSION['INGRESO']['modulo']=modulos_habiliatados();
-				$todo = false;
-				foreach ($_SESSION['INGRESO']['modulo'] as  $key => $value) {
-					if($value['modulo']=='TO')
-					{
-						$todo = true;
-						break;
-					}					
+	<!-- Main content -->
+	<section class="content">
+		<?php //print_r($_SESSION['INGRESO']);?>
+		<?php
+		// nuevo contruccion javier               
+		if (!isset($_GET['mod'])) {
+			$_SESSION['INGRESO']['modulo_'] = '';
+			$_SESSION['INGRESO']['modulo'] = modulos_habiliatados();
+			$todo = false;
+			foreach ($_SESSION['INGRESO']['modulo'] as $key => $value) {
+				if ($value['modulo'] == 'TO') {
+					$todo = true;
+					break;
+				}
+			}
+
+			include('val_estado.php');
+			$minutos = 6;
+			val_estado($minutos);
+			
+
+
+			if ($todo == true) {
+				if (!isset($_SESSION['INGRESO']['modulo_']) || $_SESSION['INGRESO']['modulo_'] == "") {
+					echo '<div class="row">' . contruir_todos_modulos() . '</div>';
 				}
 
-				include('val_estado.php');
-				val_estado();
-				
+			} else {
+				// print_r($_SESSION);die();
+				if (!isset($_SESSION['INGRESO']['modulo_']) || $_SESSION['INGRESO']['modulo_'] == "") {
+					echo $l = '<div class="row">' . contruir_modulos($_SESSION['INGRESO']['modulo']) . '</div>';
+				}
 
-				if($todo == true)
-				  {
-				  	if(!isset($_SESSION['INGRESO']['modulo_']) || $_SESSION['INGRESO']['modulo_']==""){
-				  	echo '<div class="row">'.contruir_todos_modulos().'</div>';
-				    }
-					
-				   }else
-					{
-						// print_r($_SESSION);die();
-						if(!isset($_SESSION['INGRESO']['modulo_']) || $_SESSION['INGRESO']['modulo_']==""){
-				         echo $l ='<div class="row">'.contruir_modulos($_SESSION['INGRESO']['modulo']).'</div>';
-				       }
-
-					}
 			}
+		}
 
 		?>
 
 
-    </section>
-    <!-- /.content -->
-  </div>
-<?php  include('../headers/footer.php');?>
+	</section>
+	
+	<!-- /.content -->
+</div>
+<?php include('../headers/footer.php'); ?>
