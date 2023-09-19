@@ -392,17 +392,17 @@ function autocoplet_ingreso()
 							<div class="col-sm-6">
 								<div class="row">
 									<div class="col-sm-6">
-										<label style="color:red" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" value="R">  <img src="../../img/png/sad.png"> </label>											
+										<label style="color:red" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" value="R" checked>  <img src="../../img/png/sad.png"> </label>											
 									</div>
 									<div class="col-sm-6">
-										<label style="color:green" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion"  value="V" checked> <img src="../../img/png/smile.png"></label>											
+										<label style="color:green" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion"  value="V" > <img src="../../img/png/smile.png"></label>											
 									</div>
 								</div>
 									<!-- <b>Evaluacion</b><br> -->
 										
 														
 							</div>
-							<div class="col-sm-12" id="pnl_comentario" style="display:none">
+							<div class="col-sm-12" id="pnl_comentario">
 									<b>comentario de ingreso</b>
 									<textarea class="form-control input-sm" rows="3" id="txt_comentario2" name="txt_comentario2"></textarea>								
 							</div>
