@@ -939,7 +939,7 @@ function validacionAcceso($nombreEmpresa, $Usuario, $Clave)
             $TMail->para = Insertar_Mail($TMail->para, $EmailProcesos);
         }
         $email = new enviar_emails();
-        $email->FEnviarCorreos($TMail, $Lista_De_Correos, $empresa[0]["Item"]);
+        //$email->FEnviarCorreos($TMail, $Lista_De_Correos, $empresa[0]["Item"]);
         return array('rps' => !$Evaluar, "mensaje" => $ListaFacturas);
     }
 
@@ -1033,7 +1033,7 @@ function ConfirmacionComunicado($NumModulo = 0, $SeguirMostrando = true)
                 $TMail->para = Insertar_Mail($TMail->para, $_SESSION['INGRESO']['EmailContador']);
 
                 $email = new enviar_emails();
-                $email->FEnviarCorreos($TMail, null, $NumEmpresa);
+                //$email->FEnviarCorreos($TMail, null, $NumEmpresa);
 
                 $sSQL = "UPDATE entidad "
                     . "SET Comunicado = '.' "
@@ -1077,31 +1077,33 @@ function validar_estado_all()
 {
 
     $conn = new db();
-      $sSQL = "SELECT " . Full_Fields("Empresas") . " "
-      . "FROM Empresas "
-      . "WHERE Empresa = '" . $_SESSION['INGRESO']['noempr'] . "' ";//definido en panel.php
-      $empresa = $conn->datos($sSQL);
+    $sSQL = "SELECT " . Full_Fields("Empresas") . " "
+        . "FROM Empresas "
+        . "WHERE Empresa = '" . $_SESSION['INGRESO']['noempr'] . "' "; //definido en panel.php
+    $empresa = $conn->datos($sSQL);
 
-      $sSQL = "SELECT " . Full_Fields("Accesos") . " "
-      . "FROM Accesos "
-      . "WHERE UPPER(Usuario) = '" . $_SESSION['INGRESO']['usuario'] . "' " //definido en loginController.php
-      . "AND UPPER(Clave) = '" . $_SESSION['INGRESO']['pass'] . "' "; //definido en loginController.php
-      $dataUser = $conn->datos($sSQL);
+    $sSQL = "SELECT " . Full_Fields("Accesos") . " "
+        . "FROM Accesos "
+        . "WHERE UPPER(Usuario) = '" . $_SESSION['INGRESO']['usuario'] . "' " //definido en loginController.php
+        . "AND UPPER(Clave) = '" . $_SESSION['INGRESO']['pass'] . "' "; //definido en loginController.php
+    $dataUser = $conn->datos($sSQL);
 
-      global $Fecha_CO, $Fecha_CE, $Fecha_VPN, $Fecha_DB, $Fecha_P12, $AgenteRetencion, $MicroEmpresa, 
-      $EstadoEmpresa, $DescripcionEstado, $NombreEntidad, $RepresentanteLegal, $MensajeEmpresa, 
-      $ComunicadoEntidad, $SerieFE, $Cartera, $Cant_FA, $TipoPlan, $PCActivo, $EstadoUsuario, 
-      $ConexionConMySQL;
+    global $Fecha_CO, $Fecha_CE, $Fecha_VPN, $Fecha_DB, $Fecha_P12, $AgenteRetencion, $MicroEmpresa,
+    $EstadoEmpresa, $DescripcionEstado, $NombreEntidad, $RepresentanteLegal, $MensajeEmpresa,
+    $ComunicadoEntidad, $SerieFE, $Cartera, $Cant_FA, $TipoPlan, $PCActivo, $EstadoUsuario,
+    $ConexionConMySQL;
 
-      //llamada al SP de MySql
-      Datos_Iniciales_Entidad_SP_MySQL($empresa[0],$dataUser[0]);
-      
-      if ($ConexionConMySQL) {
-            if ($empresa[0]["Estado"] != $EstadoEmpresa || $empresa[0]["Cartera"] != $Cartera || 
-            $empresa[0]["Cant_FA"] != $Cant_FA || $empresa[0]["Fecha_CE"]->format("Y-m-d") != $Fecha_CE || 
-            $empresa[0]["Fecha_P12"]->format("Y-m-d") != $Fecha_P12 || $empresa[0]["Tipo_Plan"] != $TipoPlan || 
-            $empresa[0]["Serie_FA"] != $SerieFE) {
-                  $sql = "UPDATE Empresas
+    //llamada al SP de MySql
+    Datos_Iniciales_Entidad_SP_MySQL($empresa[0], $dataUser[0]);
+
+    if ($ConexionConMySQL) {
+        if (
+            $empresa[0]["Estado"] != $EstadoEmpresa || $empresa[0]["Cartera"] != $Cartera ||
+            $empresa[0]["Cant_FA"] != $Cant_FA || $empresa[0]["Fecha_CE"]->format("Y-m-d") != $Fecha_CE ||
+            $empresa[0]["Fecha_P12"]->format("Y-m-d") != $Fecha_P12 || $empresa[0]["Tipo_Plan"] != $TipoPlan ||
+            $empresa[0]["Serie_FA"] != $SerieFE
+        ) {
+            $sql = "UPDATE Empresas
                   SET Cartera = '$Cartera',
                   Cant_FA = '$Cant_FA', 
                   Fecha_CE = '$Fecha_CE', 
@@ -1109,10 +1111,10 @@ function validar_estado_all()
                   Tipo_Plan = '$TipoPlan', 
                   Estado = '$EstadoEmpresa', 
                   Serie_FA = '$SerieFE'
-                  WHERE ID = '".$empresa[0]["ID"]."'";
-                  $conn->String_Sql($sql);
-            }
-      }
+                  WHERE ID = '" . $empresa[0]["ID"] . "'";
+            $conn->String_Sql($sql);
+        }
+    }
 
     echo '<script>';
     echo 'console.log("DEBUG Estado Activo: ' . $PCActivo . '");';
@@ -1143,7 +1145,7 @@ function validar_estado_all()
     $titulo = "";
     $rps = "";
 
-    if ($Cartera != 0 && $Cant_FA!= 0) {
+    if ($Cartera != 0 && $Cant_FA != 0) {
         $ListaFacturas = "ESTIMADO " . strtoupper($_SESSION['INGRESO']['noempr']) . ", SE LE COMUNICA QUE USTED MANTIENE UNA CARTERA VENCIDA DE USD " . number_format($Cartera, 2, '.', ',') . ", EQUIVALENTE A " . $Cant_FA . " FACTURA(S) EMITIDA(S) A USTED." . PHP_EOL;
     }
 
@@ -1186,11 +1188,13 @@ function validar_estado_all()
         $ListaFacturas .= "COMUNIQUESE CON SERVICIO AL CLIENTE DE DISKCOVER SYSTEM A LOS TELEFONOS: 098-910-5300/098-652-4396/099-965-4196,\n";
         $ListaFacturas .= "O ENVIE UN MAIL A carteraclientes@diskcoversystem.com; CON EL COMPROBANTE DE DEPOSITO Y ASI PROCEDER A REALIZAR\n";
         $ListaFacturas .= "LA ACTUALIZACION DE LA JUSTIFICACION EN EL SISTEMA.";
-        enviarCorreo($empresa, $titulo, $ListaFacturas);
-        echo '<script>';
-        echo 'console.log("correo enviado?? test");';
 
-        echo '</script>';
+
+        /*echo '<script>';
+        echo 'console.log("MESSAGE: ' . strlen($ListaFacturas) . '");';
+        echo '</script>';*/
+        enviarCorreo($empresa, $titulo, $ListaFacturas);
+
         return array('rps' => $rps, "mensaje" => $ListaFacturas, "titulo" => $titulo);
     }
 
@@ -1208,26 +1212,26 @@ function enviarCorreo($empresa, $titulo, $mensaje)
     }
 
     if (strlen($empresa[0]["Email_Conexion"]) > 1 && strlen($empresa[0]["Email_Contraseña"]) > 1) {
-        $Lista_De_Correos[0]['Correo_Electronico'] = 'mail';
-        $Lista_De_Correos[0]['Contraseña'] = '****';
+        $Lista_De_Correos[0]['Correo_Electronico'] = $empresa[0]["Email_Conexion"];
+        $Lista_De_Correos[0]['Contraseña'] = $empresa[0]["Email_Contraseña"];
     }
 
     if (strlen($empresa[0]["Email_Conexion_CE"]) > 1 && strlen($empresa[0]["Email_Contraseña_CE"]) > 1) {
-        $Lista_De_Correos[4]['Correo_Electronico'] = 'mail';
-        $Lista_De_Correos[4]['Contraseña'] = '****';
+        $Lista_De_Correos[4]['Correo_Electronico'] = $empresa[0]["Email_Conexion_CE"];
+        $Lista_De_Correos[4]['Contraseña'] = $empresa[0]["Email_Contraseña_CE"];
     }
 
-    $Lista_De_Correos[6]['Correo_Electronico'] = 'mail';
-    $Lista_De_Correos[6]['Contraseña'] = '****';
+    $Lista_De_Correos[6]['Correo_Electronico'] = 'credenciales@diskcoversystem.com';
+    $Lista_De_Correos[6]['Contraseña'] = 'Dlcjvl1210@Credenciales';
 
-    for ($i = 0; $i < 7; $i++) {
+    /*for ($i = 0; $i < 7; $i++) {
         echo '<script>';
         echo 'console.log("DEBUG Estado Activo: ' . $Lista_De_Correos[$i]['Correo_Electronico'] . '");';
         echo 'console.log("DEBUG Estado Activo: ' . $Lista_De_Correos[$i]['Contraseña'] . '");';
         echo '</script>';
-    }
+    }*/
 
-    $EmailEmpresa = 'lrsunigagarcia@gmail.com';
+    $EmailEmpresa = $empresa[0]["Email"];
     $EmailContador = $empresa[0]["Email_Contabilidad"];
     $EmailProcesos = $empresa[0]["Email_Procesos"];
     $Email_CE_Copia = (bool) $empresa[0]["Email_CE_Copia"];
@@ -1239,18 +1243,33 @@ function enviarCorreo($empresa, $titulo, $mensaje)
     $TMail->Adjunto = "";
     $TMail->Credito_No = "";
     $TMail->para = "";
-    $TMail->para = Insertar_Mail($TMail->para, $EmailEmpresa);
-   // $TMail->para = Insertar_Mail($TMail->para, $EmailContador);
+    //$TMail->para = Insertar_Mail($TMail->para, $EmailEmpresa);
+    $TMail->para = Insertar_Mail($TMail->para, "dayavan38@gmail.com");
+    // $TMail->para = Insertar_Mail($TMail->para, $EmailContador);
     //if ($Email_CE_Copia) {
-      //  $TMail->para = Insertar_Mail($TMail->para, $EmailProcesos);
+    //  $TMail->para = Insertar_Mail($TMail->para, $EmailProcesos);
     //}
     $email = new enviar_emails();
-    $email->FEnviarCorreos($TMail, $Lista_De_Correos, $empresa[0]["Item"]);
 
+    $rps = $email->FEnviarCorreos2($TMail, $Lista_De_Correos, $empresa[0]["Item"]);
+
+    echo '<script>';
+
+    if (!empty($rps)) {
+        foreach ($rps as $result) {
+            if (isset($result['error'])) {
+                echo 'console.log("' . $result['mensaje'] . '");';
+            } elseif (isset($result['rps'])) {
+                if ($result['rps'] == true) {
+                    echo 'console.log("Correo enviado con éxito a: ' . $result['para'] . '");';
+                } else {
+                    echo 'console.log("Ocurrió un problema en el envío del correo a: ' . $result['para'] . '");';
+                }
+            }
+        }
+    } else {
+        echo 'console.log("Ocurrió un error al recibir datos de la función");';
+    }
+    echo '</script>';
 }
-
-
-
-
-
 ?>
