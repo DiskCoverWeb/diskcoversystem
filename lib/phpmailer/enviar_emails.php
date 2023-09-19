@@ -324,15 +324,15 @@ class enviar_emails
     $Si_Enviar = false;
     if ($TMail->de == CorreoDiskCover) {
 
-      //$TMail->Usuario = 'c16a0e373e6a95';
-      //$TMail->PassWord = '8945dda5de5381';
-      //$TMail->servidor = 'sandbox.smtp.mailtrap.io';
-      //$TMail->puerto = 2525;
+      $TMail->Usuario = 'c16a0e373e6a95';
+      $TMail->PassWord = '8945dda5de5381';
+      $TMail->servidor = 'sandbox.smtp.mailtrap.io';
+      $TMail->puerto = 2525;
 
-      $TMail->Usuario = CorreoDiskCover;
-      $TMail->PassWord = ContrasenaDiskCover;
-      $TMail->servidor = 'mail.diskcoversystem.com';
-      $TMail->puerto = 465;
+      // $TMail->Usuario = CorreoDiskCover;
+      // $TMail->PassWord = ContrasenaDiskCover;
+      // $TMail->servidor = 'mail.diskcoversystem.com';
+      // $TMail->puerto = 465;
 
       $TMail->UseAuntentificacion = true;
       $TMail->ssl = true;

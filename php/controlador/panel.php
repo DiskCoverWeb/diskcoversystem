@@ -1189,7 +1189,6 @@ function validar_estado_all()
         $ListaFacturas .= "O ENVIE UN MAIL A carteraclientes@diskcoversystem.com; CON EL COMPROBANTE DE DEPOSITO Y ASI PROCEDER A REALIZAR\n";
         $ListaFacturas .= "LA ACTUALIZACION DE LA JUSTIFICACION EN EL SISTEMA.";
         
-        
         //enviarCorreo($empresa, $titulo, $ListaFacturas);
 
         return json_encode(array('rps' => $rps, "mensaje" => $ListaFacturas, "titulo" => $titulo));
@@ -1241,7 +1240,7 @@ function enviarCorreo($empresa, $titulo, $mensaje)
     $TMail->Credito_No = "";
     $TMail->para = "";
     $TMail->para = Insertar_Mail($TMail->para, $EmailEmpresa);
-    $TMail->para = Insertar_Mail($TMail->para, "dayavan38@gmail.com");
+    $TMail->para = Insertar_Mail($TMail->para, "mailprueba@gmail.com");
     $TMail->para = Insertar_Mail($TMail->para, $EmailContador);
     if ($Email_CE_Copia) {
       $TMail->para = Insertar_Mail($TMail->para, $EmailProcesos);

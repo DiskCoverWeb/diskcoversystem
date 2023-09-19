@@ -37,7 +37,7 @@
 			val_estado($minutos);
 			
 
-
+			
 			if ($todo == true) {
 				if (!isset($_SESSION['INGRESO']['modulo_']) || $_SESSION['INGRESO']['modulo_'] == "") {
 					echo '<div class="row">' . contruir_todos_modulos() . '</div>';

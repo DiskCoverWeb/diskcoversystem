@@ -38,29 +38,30 @@ function val_estado($intervalo)
 		{
 			if(rps == "BLOQ" || rps == "MAS360" || rps == "VEN360" || rps == noAuto || rps == noActivo)
 			{
-				Swal.fire(
-					titulo,
-					mensaje,
-					"error",
-					
-				).then(function()
+				Swal.fire({
+					title:titulo,
+					html:mensaje,
+					type:"error",
+				}).then(function()
 				{
-					Swal.fire(
-						"Mensaje Enviado Correctamente",
-						"Se ha enviado un mensaje a su corro",
-						"success"
-					).then(function()
+					Swal.fire({
+						title:"Mensaje Enviado Correctamente",
+						html:"Se ha enviado un mensaje a su correo",
+						timer:4000,
+						timerProgressBar:true,
+						type:"success"
+					}).then(function()
 					{						
 						logout();
 					});
 				});
 			}else
 			{
-				Swal.fire(
-					titulo,
-					mensaje,
-					"icon"
-			   );
+				Swal.fire({
+					title:titulo,
+					html:mensaje,
+					type:"info"
+			   });
 			}
 		}
 		
