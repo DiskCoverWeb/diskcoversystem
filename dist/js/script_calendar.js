@@ -35,6 +35,8 @@ Vue.component('calendar', {
     select(date) {
       this.selected = date;
       this.$emit('input', date);
+      $('#txt_fecha_exp').val(formatoDate(date))
+      $('#modal_calendar').modal('hide')
     },
     classes(date) {
       return {

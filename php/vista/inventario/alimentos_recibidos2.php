@@ -46,6 +46,17 @@
             },
         });
 
+  	$('#ddl_producto').on('select2:select', function (e) {
+      var data = e.params.data.data;
+      $('#txt_unidad').val(data[0].Unidad);
+      $('#txt_referencia').val(data[0].Codigo_Inv);
+      $('#txt_producto').val(data[0].Producto);
+      $('#txt_grupo').val(data[0].Item_Banco);
+      $('#modal_producto').modal('hide');
+      console.log(data);
+    });
+
+
 
   })
 
@@ -70,7 +81,7 @@
  function autocoplet_alimento(){
   $('#ddl_alimento').select2({
     placeholder: 'Seleccione una beneficiario',
-    // width:'90%',
+    width:'100%',
     ajax: {
       url:   '../controlador/inventario/alimentos_recibidosC.php?alimentos=true',
       dataType: 'json',
@@ -213,6 +224,21 @@ function autocoplet_ingreso()
   function show_calendar()
   {
   	$('#modal_calendar').modal('show');
+  }
+    function show_producto()
+  {
+  	$('#modal_producto').modal('show');
+  }
+    function show_cantidad()
+  {
+  	$('#modal_cantidad').modal('show');
+  }
+
+  function cambiar_cantidad()
+  {
+  	var can = $('#txt_cantidad2').val();
+  	$('#txt_cantidad').val(can);
+  	$('#modal_cantidad').modal('hide');
   }
 
 </script>
@@ -371,26 +397,26 @@ function autocoplet_ingreso()
 				<div class="row">
 					<div class="col-sm-8">
 						<div class="row">
-							<div class="col-sm-3">
-									<button type="button" class="btn btn-default"><img src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo de producto</b></button>							
+							<div class="col-sm-4 col-md-3">
+									<button type="button" class="btn btn-default" onclick="show_producto()"><img src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo de producto</b></button>							
 							</div>
-							<div class="col-sm-7">
+							<div class="col-sm-6 col-md-7">
 								<b>Producto</b>
-								<input type="text" name="" id="" class="form-control">
+								<input type="text" name="txt_producto" id="txt_producto" class="form-control" readonly>
 							</div>
-							<div class="col-sm-2">
+							<div class="col-sm-2 col-md-2">
 								<b>Grupo</b>
-								<input type="text" name="" id="" class="form-control">
+								<input type="text" name="txt_grupo" id="txt_grupo" class="form-control" readonly>
 							</div>
 						</div>
 					</div>
 					<div class="col-sm-4">
 						<div class="rows">
-							<div class="col-sm-6">
+							<div class="col-sm-6 col-md-6">
 								<br>
 								<b>Fecha de Clasificacion</b>
 							</div>
-							<div class="col-sm-6">
+							<div class="col-sm-6 col-md-6">
 								<br>
 								<input type="date" name="" value="<?php echo date('Y-m-d'); ?>" class="form-control" readonly>
 							</div>
@@ -398,41 +424,41 @@ function autocoplet_ingreso()
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-4">
+					<div class="col-sm-6 col-md-4">
 						<div class="row">
-							<div class="col-sm-5">
-									<button type="button" class="btn btn-default"><img src="../../img/png/expiracion.png"  onclick="show_calendar()" /> <br> <b>Fecha de Expiracion</b></button>	
+							<div class="col-sm-6 col-md-6">
+									<button type="button" class="btn btn-default" onclick="show_calendar()"><img src="../../img/png/expiracion.png" /> <br> <b>Fecha de Expiracion</b></button>	
 							</div>
-							<div class="col-sm-7">
+							<div class="col-sm-6 col-md-6">
 								<br>
-								<input type="date" name="" id="" class="form-control input" readonly>
+								<input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input" readonly>
 							</div>							
 						</div>
 					</div>
-					<div class="col-sm-5">
+					<div class="col-sm-6 col-md-5">
 						<div class="rows">
-							<div class="col-sm-3">
-								<button type="button" class="btn btn-default">
+							<div class="col-sm-4 col-md-3">
+								<button type="button" class="btn btn-default" onclick="show_cantidad()">
 										<img src="../../img/png/kilo.png" />		
 										<br>
 										<b>Cantidad</b>					
 								</button>								
 							</div>
-							<div class="col-sm-9">
+							<div class="col-sm-8">
 								<div class="row">
-									<div class="col-sm-6">
+									<div class="col-sm-6 col-md-6">
 										<b>Cantidad</b>
-										<input type="" name="" id="" readonly class="form-control input-sm">										
+										<input type="" name="txt_cantidad" id="txt_cantidad" readonly class="form-control input-sm">										
 									</div>
-									<div class="col-sm-6">
+									<div class="col-sm-6 col-md-6">
 										<b>Unidad</b>
-										<input type="" name="" id="" readonly class="form-control input-sm">													
+										<input type="" name="txt_unidad" id="txt_unidad" readonly class="form-control input-sm">													
 									</div>
 								</div>
 							</div>
 						</div>						
 					</div>
-					<div class="col-sm-3 text-right">
+					<div class="col-sm-12 col-md-3 text-right">
 						<br>
 						<button class="btn btn-primary">AGREGAR A INGRESO</button>
 						<button class="btn btn-primary">BORRAR</button>
@@ -500,30 +526,30 @@ function autocoplet_ingreso()
     });
   }
 
-   function cargar_detalles()
-   {
-     var id = $('#ddl_producto').val();
-     console.log(id);
-     var datos = id.split('_');
-      $('#ddl_familia').append($('<option>',{value: datos[1], text:datos[0],selected: true }));
-      $('#txt_referencia').val(datos[2]);
-      $('#txt_existencias').val(datos[9]);
-      $('#txt_ubicacion').val(datos[7]);
-      $('#txt_precio_ref').val(datos[3]);
-      $('#txt_unidad').val(datos[6]);
-      if(datos[8]==0)
-      {
-        $('#rbl_no').prop('checked',true);
-      }else
-      {        
-        $('#rbl_si').prop('checked',true);
-      }
-      $('#txt_reg_sani').val(datos[10]);
-      $('#txt_max_in').val(datos[11]);
-      $('#txt_min_in').val(datos[12]);
+   // function cargar_detalles()
+   // {
+   //   var id = $('#ddl_producto').val();
+   //   console.log(id);
+   //   var datos = id.split('_');
+   //    $('#ddl_familia').append($('<option>',{value: datos[1], text:datos[0],selected: true }));
+   //    $('#txt_referencia').val(datos[2]);
+   //    $('#txt_existencias').val(datos[9]);
+   //    $('#txt_ubicacion').val(datos[7]);
+   //    $('#txt_precio_ref').val(datos[3]);
+   //    $('#txt_unidad').val(datos[6]);
+   //    if(datos[8]==0)
+   //    {
+   //      $('#rbl_no').prop('checked',true);
+   //    }else
+   //    {        
+   //      $('#rbl_si').prop('checked',true);
+   //    }
+   //    $('#txt_reg_sani').val(datos[10]);
+   //    $('#txt_max_in').val(datos[11]);
+   //    $('#txt_min_in').val(datos[12]);
           
-     // console.log(datos);
-   }
+   //   console.log(datos);
+   // }
  function calculos()
    {
      let cant = parseFloat($('#txt_canti').val());
@@ -612,9 +638,8 @@ function autocoplet_ingreso()
   function autocoplet_pro(){
 	  $('#ddl_producto').select2({
 	    placeholder: 'Seleccione una producto',
-	    width:'100%',
 	    ajax: {
-	      url:   '../controlador/farmacia/articulosC.php?autocom_pro=true',
+	      url:   '../controlador/inventario/alimentos_recibidosC.php?autocom_pro=true',
 	      dataType: 'json',
 	      delay: 250,
 	      processResults: function (data) {
@@ -703,7 +728,7 @@ function eliminar_lin(num)
 						           </div> -->
 						          </div>
 						        <div class="row">
-						           <div class="col-md-2">
+						           <!-- <div class="col-md-2">
 						              <b>Referencia:</b>
 						              <input type="text" name="txt_referencia" id="txt_referencia" class="form-control input-xs" readonly="">
 						           </div>
@@ -712,7 +737,7 @@ function eliminar_lin(num)
 						              <select class="form-control input-sm" id="ddl_producto" name="ddl_producto" onchange="cargar_detalles()">
 						                <option value="">Seleccione una producto</option>
 						              </select>
-						           </div>
+						           </div> -->
 						          
 						         <!--   <div class=" col-sm-3">
 						              <b>Familia:</b>
@@ -730,7 +755,7 @@ function eliminar_lin(num)
 						            </div>
  												<div class="col-sm-2">
 						               <b>Fecha Caducidad</b>
-						                <input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input-xs" >
+						                <!-- <input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input-xs" > -->
 						            </div>
 						           <div class="col-sm-1" style="padding: 0px;">
 						              <b>Lleva iva</b><br>
@@ -836,7 +861,57 @@ function eliminar_lin(num)
 	</div>
 </div>
 
-<div id="modal_calendar" class="modal fade myModalNuevoCliente" role="dialog">
+<div id="modal_producto" class="modal fade myModalNuevoCliente" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Producto</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          	<div class="row">
+		           <div class="col-md-3">
+		              <b>Referencia:</b>
+		              <input type="text" name="txt_referencia" id="txt_referencia" class="form-control input-sm" readonly="">
+		           </div>
+		           <div class="col-sm-9">
+		              <b>Producto:</b><br>
+		              <select class="form-control" id="ddl_producto" name="ddl_producto"style="width: 100%;">
+		                <option value="">Seleccione una producto</option>
+		              </select>
+		           </div>        
+		        </div>  
+					
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <!-- <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button> -->
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div id="modal_cantidad" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Cantidad</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          <b>Cantidad</b>
+          <input type="" name="txt_catidad2" id="txt_catidad2" class="form-control" placeholder="0" onblur="cambiar_cantidad()">        					
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <!-- <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button> -->
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+<div id="modal_calendar" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary">
@@ -871,11 +946,11 @@ function eliminar_lin(num)
 							    </table>
 							  </div>
 							</script>   
+							<script src='../../dist/js/vue.js'></script>
+							<script src='../../dist/js/luxon.js'></script>   
 
-<script src='../../dist/js/vue.js'></script>
-<script src='../../dist/js/luxon.js'></script>             
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" style="background-color:antiquewhite;">
                 <!-- <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button> -->
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>

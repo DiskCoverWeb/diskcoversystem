@@ -74,6 +74,15 @@ if(isset($_GET['lin_eli']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->lineas_eli($parametros));
 }
+if(isset($_GET['autocom_pro']))
+{
+	$query = '';
+	if(isset($_GET['q']))
+	{
+		$query = $_GET['q'];
+	}
+	echo json_encode($controlador->autocomplet_producto($query));
+}
 /**
  * 
  */
@@ -322,6 +331,41 @@ class alimentos_recibidosC
 		$resp = $this->modelo->lineas_eli($parametros);
 		return $resp;
 
+	}
+	function autocomplet_producto($query)
+	{
+		$datos = $this->modelo->cargar_productos($query);
+		// print_r($datos);die();
+		$productos = array();
+		foreach ($datos as $key => $value) {			
+			$Familia = $this->modelo->familia_pro(substr($value['Codigo_Inv'],0,5));
+			// $costo =  $this->ing_descargos->costo_venta($value['Codigo_Inv']);
+			// $costoTrans = $this->ing_descargos->costo_producto($value['Codigo_Inv']);
+
+			$FechaInventario = date('Y-m-d');
+		 	$CodBodega = '01';
+		 	$costo_existencias = Leer_Codigo_Inv($value['Codigo_Inv'],$FechaInventario,$CodBodega,$CodMarca='');
+
+			if(empty($Familia))
+			{
+				$Familia[0]['Producto'] = '-';
+				$Familia[0]['Codigo_Inv'] = '.';
+			}
+			if($costo_existencias['respueta']!=1)
+			{
+				$costo[0]['Existencia'] = 0;
+				$costoTrans[0]['Costo'] = 0;				
+			}else
+			{
+				$costo[0]['Existencia'] = $costo_existencias['datos']['Stock'];
+				$costoTrans[0]['Costo'] = $costo_existencias['datos']['Costo'];		
+			}			
+
+			$productos[] = array('id'=>$Familia[0]['Codigo_Inv'],'text'=>$value['Producto'],'data'=>$Familia);
+
+		}
+		return $productos;
+		// print_r($productos);die();
 	}
 
 
