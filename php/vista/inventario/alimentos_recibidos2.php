@@ -37,6 +37,7 @@
                 $('#txt_comentario').val(ui.item.mensaje); // save selected id to input
                 $('#txt_ejec').val(ui.item.Cod_Ejec); // save selected id to input
                 $('#ddl_alimento').append($('<option>',{value: ui.item.Cod_C, text:ui.item.Proceso,selected: true }));
+                cargar_pedido();
                 return false;
             },
             focus: function(event, ui){
@@ -206,19 +207,30 @@ function autocoplet_ingreso()
   function show_panel()
   {
   	 var id = $('#txt_id').val();
+  	 var cant_suge = $('#txt_cant').val();
+  	 var cant_ing = $('#txt_cantidad').val();
+  	 var cant_total = $('#txt_cant_total').val();
+
+  	 var producto = $('#txt_producto').val();
+  	 var fe_exp = $('#txt_fecha_exp').val();
+  	 if(producto=='' || fe_exp=='' || cant_ing=='' || cant_ing==0)
+  	 {
+  	 	Swal.fire('Ingrese todo los datos','','info');
+  	 		return false
+  	 }
+  	 if((parseFloat(cant_ing)+parseFloat(cant_total))>parseFloat(cant_suge))
+  	 {
+  	 		Swal.fire('La cantidad Ingresada supera a la cantidad registrada','','info');
+  	 		return false
+  	 }
   	 if(id=='')
   	 {
   	 		Swal.fire('Seleccione un registro','','info');
   	 		return false;
+  	 }else
+  	 {
+  	 		agregar();
   	 }
-  	 var panel = $('#panel_add_articulos').is(':visible');
-  	 console.log(panel);
-  	 if (panel==false){
-		   $('#panel_add_articulos').css('display','block');
-		 }
-		else   {
-		   $('#panel_add_articulos').css('display','none');
-		 }
   }
 
   function show_calendar()
@@ -239,6 +251,20 @@ function autocoplet_ingreso()
   	var can = $('#txt_cantidad2').val();
   	$('#txt_cantidad').val(can);
   	$('#modal_cantidad').modal('hide');
+  }
+
+  function ocultar_comentario()
+  {
+
+  	 var cbx = $('input[type=radio][name=cbx_evaluacion]:checked').val();
+  	 if(cbx=='R')
+  	 {
+  	 	 $('#pnl_comentario').css('display','block');
+  	 }else
+  	 {
+  	 	 $('#pnl_comentario').css('display','none');
+  	 }
+  	 console.log(cbx);
   }
 
 </script>
@@ -341,20 +367,21 @@ function autocoplet_ingreso()
 						</div>
 						<div class="row" id="panel_serie"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
-								<b>SERIE:</b>
+								<b>TEMPERATURA DE RECEPCION °C</b>
 							</div>
 							<div class="col-sm-6">
-	                <input type="text" name="txt_serie" id="txt_serie" class="form-control input-xs" onkeyup="num_caracteres('txt_serie',6)">
+	                <input type="text" name="txt_serie" id="txt_serie" class="form-control input-xs"  readonly>
 							</div>
 						</div>
-						<div class="row" id="panel_factura"  style="padding-top: 5px;">
+						<div class="row" id="panel_serie"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
-								<b>NUMERO FACTURA:</b>
+								<b>ESTADO DE TRANSPORTE</b>
 							</div>
 							<div class="col-sm-6">
-						      <input type="text" name="txt_num_fac" id="txt_num_fac" class="form-control input-xs">  
+	                <input type="text" name="txt_serie" id="txt_serie" class="form-control input-xs"  readonly>
 							</div>
 						</div>
+					
 					</div>
 					<div class="col-sm-4">
 						<div class="row">
@@ -365,17 +392,17 @@ function autocoplet_ingreso()
 							<div class="col-sm-6">
 								<div class="row">
 									<div class="col-sm-6">
-										<label style="color:red"><input type="radio" name="cbx_evaluacion" checked value="R">  <img src="../../img/png/sad.png"> </label>											
+										<label style="color:red" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" value="R">  <img src="../../img/png/sad.png"> </label>											
 									</div>
 									<div class="col-sm-6">
-										<label style="color:green"><input type="radio" name="cbx_evaluacion"  value="V"> <img src="../../img/png/smile.png"></label>											
+										<label style="color:green" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion"  value="V" checked> <img src="../../img/png/smile.png"></label>											
 									</div>
 								</div>
 									<!-- <b>Evaluacion</b><br> -->
 										
 														
 							</div>
-							<div class="col-sm-12">
+							<div class="col-sm-12" id="pnl_comentario" style="display:none">
 									<b>comentario de ingreso</b>
 									<textarea class="form-control input-sm" rows="3" id="txt_comentario2" name="txt_comentario2"></textarea>								
 							</div>
@@ -385,11 +412,6 @@ function autocoplet_ingreso()
 					<!-- 	<select class=" form-control input-xs form-select" id="ddl_ingreso" name="ddl_ingreso" size="7" onchange="option_select()">
                          	<option value="">Seleccione</option>
                          </select> -->
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-sm-12 text-right">
-						<button type="button" class="btn btn-primary btn-sm" onclick="show_panel()" ><i class="fa fa-archive"></i>Agregar Articulos</button>
 					</div>
 				</div>
 				<hr>
@@ -418,7 +440,7 @@ function autocoplet_ingreso()
 							</div>
 							<div class="col-sm-6 col-md-6">
 								<br>
-								<input type="date" name="" value="<?php echo date('Y-m-d'); ?>" class="form-control" readonly>
+								<input type="date" name="txt_fecha_cla" id="txt_fecha_cla" value="<?php echo date('Y-m-d'); ?>" class="form-control" readonly>
 							</div>
 						</div>						
 					</div>
@@ -460,8 +482,10 @@ function autocoplet_ingreso()
 					</div>
 					<div class="col-sm-12 col-md-3 text-right">
 						<br>
-						<button class="btn btn-primary">AGREGAR A INGRESO</button>
-						<button class="btn btn-primary">BORRAR</button>
+						<button type="button" class="btn btn-primary" onclick="show_panel()" >AGREGAR A INGRESO</button>
+						<button type="button" class="btn btn-primary">BORRAR</button>
+						<input type="hidden" id="A_No" name ="A_No" value="0">
+						<input type="hidden" id="txt_cant_total" name ="txt_cant_total" value="0">
 					</div>
 				</div>
 			</div>
@@ -492,64 +516,12 @@ function autocoplet_ingreso()
       success:  function (response) {
         console.log(response);
         $('#tbl_body').html(response.tabla);
-        /*num_ped = $('#txt_pedido').val();
-        if(num_ped=='')
-        {
-           $('#tabla').html(response.tabla);
-        }else{
-          var ped = reload_();
-          if(ped==-1)
-          {
-            num_ped = $('#txt_pedido').val();
-            mod = '<?php echo $_GET["mod"]; ?>';
-            var url="../vista/farmacia.php?mod="+mod+"&acc=ingresar_descargos&acc1=Ingresar%20Descargos&b=1&po=subcu&area="+area+"-"+pro+"&num_ped="+num_ped+"&cod="+num_his+"#";
-            $(location).attr('href',url);
-          }else
-          {
-
-             $('#txt_num_lin').val(response.num_lin);
-            $('#txt_num_item').val(response.item);
-            $('#tabla').html(response.tabla);
-            $('#txt_neg').val(response.neg);
-            $('#txt_sub_tot').val(response.subtotal);
-            $('#txt_tot_iva').val(response.iva);
-            $('#txt_pre_tot').val(response.total);
-            $('#txt_procedimiento').val(response.detalle);
-            if($('#txt_num_lin').val()!=0 && $('#txt_num_lin').val()!='')
-            {
-              $('#btn_comprobante').css('display','block');
-            }
-
-          }
-        }*/
+        $('#txt_cant_total').val(response.cant_total);
+       
       }
     });
   }
 
-   // function cargar_detalles()
-   // {
-   //   var id = $('#ddl_producto').val();
-   //   console.log(id);
-   //   var datos = id.split('_');
-   //    $('#ddl_familia').append($('<option>',{value: datos[1], text:datos[0],selected: true }));
-   //    $('#txt_referencia').val(datos[2]);
-   //    $('#txt_existencias').val(datos[9]);
-   //    $('#txt_ubicacion').val(datos[7]);
-   //    $('#txt_precio_ref').val(datos[3]);
-   //    $('#txt_unidad').val(datos[6]);
-   //    if(datos[8]==0)
-   //    {
-   //      $('#rbl_no').prop('checked',true);
-   //    }else
-   //    {        
-   //      $('#rbl_si').prop('checked',true);
-   //    }
-   //    $('#txt_reg_sani').val(datos[10]);
-   //    $('#txt_max_in').val(datos[11]);
-   //    $('#txt_min_in').val(datos[12]);
-          
-   //   console.log(datos);
-   // }
  function calculos()
    {
      let cant = parseFloat($('#txt_canti').val());
@@ -594,12 +566,13 @@ function autocoplet_ingreso()
      $('#txt_reg_sanitario').val('');
      $('#txt_cod_barras').val('');
    }
+
    function agregar()
   {
     var parametros = $("#form_add_producto").serialize();    
     var parametros2 = $("#form_correos").serialize();
        $.ajax({
-         data:  parametros+'&'+parametros2,
+         data:  parametros2+'&txt_referencia='+$('#txt_referencia').val(),
          url:   '../controlador/inventario/alimentos_recibidosC.php?guardar_recibido=true',
          type:  'post',
          dataType: 'json',
@@ -652,6 +625,7 @@ function autocoplet_ingreso()
 	    }
 	  });
   }
+
 function eliminar_lin(num)
   {
     var ruc = $('#txt_ruc').val();
@@ -670,7 +644,6 @@ function eliminar_lin(num)
             var parametros=
             {
               'lin':num,
-              'ped':'99999',
             }
              $.ajax({
               data:  {parametros:parametros},
@@ -696,160 +669,17 @@ function eliminar_lin(num)
 	<div class="col-sm-12">
 		<div class="box">
 			<div class="card_body" style="background:antiquewhite;">
-					<div class="row">
-						  <div class="col-sm-12">
-						     <div class="panel panel-primary">
-						      <!-- <div class="panel-heading">
-						        <div class="row">
-						         <div class="col-sm-6 text-right"><b>INGRESAR ARTICULOS</b></div>         
-						         <div class="col-sm-6 text-right"> No. COMPROBANTE  <u id="num"></u></div>        
-						        </div>
-						      </div> -->
-						      <div class="panel-body">
-						        <form id="form_add_producto">
-						          <div class="row">
-						            <!-- <div class="col-sm-4">
-						              <b>Alimentos Recibidos:</b>
-						               <div class="input-group">  
-						                  <select class="form-control input-sm" id="ddl_proveedor" name="ddl_proveedor" onchange="cargar_datos_prov()">
-						                     <option value="">Seleccione un proveedor</option>
-						                  </select>             
-						                    <span class="input-group-addon bg-green" title="Buscar" data-toggle="modal" data-target="#myModal_provedor"><i class="fa fa-plus"></i></span>
-						             </div> 
-						            </div>         -->    
-						           <!--  <div class="col-sm-3">
-						              <b>Nombre comercial</b><br>
-						              <label id="lbl_nom_comercial"></label>
-						            </div>  -->
-						                 
-						             <!-- <div class="col-sm-2">
-						              <b>Fecha:</b>
-						              <input type="date" name="txt_fecha" id="txt_fecha" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" onblur="num_comprobante()">
-						           </div> -->
-						          </div>
-						        <div class="row">
-						           <!-- <div class="col-md-2">
-						              <b>Referencia:</b>
-						              <input type="text" name="txt_referencia" id="txt_referencia" class="form-control input-xs" readonly="">
-						           </div>
-						           <div class="col-sm-5">
-						              <b>Producto:</b><br>
-						              <select class="form-control input-sm" id="ddl_producto" name="ddl_producto" onchange="cargar_detalles()">
-						                <option value="">Seleccione una producto</option>
-						              </select>
-						           </div> -->
-						          
-						         <!--   <div class=" col-sm-3">
-						              <b>Familia:</b>
-						                <select class="form-control input-sm" id="ddl_familia" name="ddl_familia" disabled="">
-						                  <option>Seleccione una familia</option>
-						                </select>     
-						           </div> -->
-						          <!--  <div class="col-sm-1">
-						            <b>Unidad</b>
-						            <input type="" name="txt_unidad" id="txt_unidad" class="form-control form-control-sm">             
-						           </div> -->
-						           <div class="col-sm-2">
-						               <b>Existente</b>
-						                  <input type="text" name="txt_existencias" id="txt_existencias" class="form-control input-xs" readonly="">
-						            </div>
- 												<div class="col-sm-2">
-						               <b>Fecha Caducidad</b>
-						                <!-- <input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input-xs" > -->
-						            </div>
-						           <div class="col-sm-1" style="padding: 0px;">
-						              <b>Lleva iva</b><br>
-						              <label class="online-radio"><input type="radio" name="rbl_radio" id="rbl_no" checked="" onchange="calculos()"> No</label>
-						              <label class="online-radio"><input type="radio" name="rbl_radio" id="rbl_si" onchange="calculos()"> Si</label>            
-						            </div>   
-						        </div>
-						        <div class="row">
-						            
-						           <!--  <div class="col-sm-2">
-						               <b>Fecha Elab</b>
-						                  <input type="date" name="txt_fecha_ela" id="txt_fecha_ela" class="form-control input-sm" >
-						            </div> -->
-						           
-						           <!--  <div class="col-sm-2">
-						               <b>Reg. Sanitario</b>
-						                  <input type="text" name="txt_reg_sani" id="txt_reg_sani" class="form-control input-sm" readonly="" value=".">
-						            </div>
-						            <div class="col-sm-2">
-						               <b>Procedencia</b>
-						                  <input type="text" name="txt_procedencia" id="txt_procedencia" class="form-control input-sm">
-						            </div>
-						            <div class="col-sm-2">
-						               <b>Lote</b>
-						                  <input type="text" name="txt_lote" id="txt_lote" class="form-control input-sm">
-						            </div>              --> 
-						        </div>
-						        <div class="row">
-						          <div class="col-sm-1">
-						               <b>Max</b>
-						                  <input type="text" name="txt_max_in" id="txt_max_in" class="form-control input-xs" readonly="">
-						            </div>
-						            <div class="col-sm-1">
-						               <b>Min</b>
-						                  <input type="text" name="txt_min_in" id="txt_min_in" class="form-control input-xs" readonly="">
-						            </div>
-						              <!-- <div class="col-sm-2">
-						               <b>Ubicacion</b>
-						               <input type="text" name="txt_ubicacion" id="txt_ubicacion" class="form-control input-xs" readonly="">
-						            </div>        -->
-						          <div class="col-sm-1">
-						               <b>Cantidad</b>
-						                  <input type="text" name="txt_canti" id="txt_canti" class="form-control input-xs"  value="1" onblur="calculos()">
-						            </div>
-						            <div class="col-sm-1">
-						               <b>Precio</b>
-						                  <input type="text" name="txt_precio" id="txt_precio" class="form-control input-xs"  value="0" onblur="calculos()">
-						            </div>
-						            <div class="col-sm-1">
-						               <b>Pvp Ref</b>
-						                  <input type="text" name="txt_precio_ref" id="txt_precio_ref" class="form-control input-xs"  value="0" readonly="">
-						            </div>
-						          <!--   <div class="col-sm-1">
-						               <b>% descto</b>
-						                  <input type="text" name="txt_descto" id="txt_descto" class="form-control input-xs"  value="0" onblur="calculos()">
-						            </div>      -->        
-						            <div class="col-sm-1">
-						               <b>Subtotal</b>
-						                  <input type="text" name="txt_subtotal" id="txt_subtotal" class="form-control input-xs" readonly="" value="0">
-						            </div>
-						            <div class="col-sm-1">
-						               <b>Iva</b>
-						                  <input type="text" name="txt_iva" id="txt_iva" class="form-control input-xs" readonly="" value="0">
-						            </div>  
-						            <div class="col-sm-1">
-						               <b>Total</b>
-						                  <input type="text" name="txt_total" id="txt_total" class="form-control input-xs" readonly="" value="0">
-						            </div> 
-						            <div class="col-sm-4 text-right">
-						            		<br>
-						            	 <button type="button" class="btn btn-primary" onclick="agregar()"><i class="fa fa-plus"></i> Agregar a ingreso</button>
-						                <button type="button" class="btn btn-default" onclick="limpiar()"><i class="fa fa-paint-brush"></i> Limpiar</button>
-						            </div>         
-						        </div>
-						        <input type="hidden" id="A_No" name ="A_No" value="0">
-						        </form>       
-						      </div>
-						      </div>
-						  </div>						 
+					<div class="row"> 
 						  <div  class="col-sm-12">
 						  	<table class="table-sm table-hover" style="width:100%">
 				        <thead>
 				          <th>ITEM</th>
-				          <th>FECHA</th>
-				          <th>REFERENCIA</th>
+				          <th>FECHA DE CLASIFICACION</th>
+				          <th>FECHA DE EXPIRACION</th>
 				          <th>DESCRIPCION</th>
-				          <th class="text-right">CANTIDAD</th>
-				          <th class="text-right">COSTO</th>
-				          <!-- <th>PVP</th> -->
-				          <!-- <th>DCTO %</th> -->
-				          <th class="text-right">IVA</th>
-				          <th class="text-right">IMPORTE</th>
-				          <th>Stock(-)</th>				          
-				          <th>Codigo de barras</th>
+				          <th>CANTIDAD</th>
+				          <!-- <th>UNIDAD</th> -->
+				          <th></th>
 				        </thead>
 				        <tbody id="tbl_body"></tbody>
 
@@ -900,10 +730,10 @@ function eliminar_lin(num)
           </div>
           <div class="modal-body" style="background: antiquewhite;">
           <b>Cantidad</b>
-          <input type="" name="txt_catidad2" id="txt_catidad2" class="form-control" placeholder="0" onblur="cambiar_cantidad()">        					
+          <input type="" name="txt_cantidad2" id="txt_cantidad2" class="form-control" placeholder="0" onblur="cambiar_cantidad()">        					
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
-              <!-- <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button> -->
+              <button type="button" class="btn btn-primary" onclick="cambiar_cantidad()">OK</button>
               <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
           </div>
       </div>

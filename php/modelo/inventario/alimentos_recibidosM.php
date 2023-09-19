@@ -92,7 +92,7 @@ class alimentos_recibidosM
 	}
 	function lineas_eli($parametros)
 	{
-		$sql = "DELETE FROM Trans_Kardex WHERE Orden_No='".$parametros['ped']."' and ID ='".$parametros['lin']."'";
+		$sql = "DELETE FROM Trans_Kardex WHERE  ID ='".$parametros['lin']."'";
 		return $this->db->String_Sql($sql);
 	}
 	function catalogo_productos($codigo)

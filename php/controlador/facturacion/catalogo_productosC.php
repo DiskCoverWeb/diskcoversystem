@@ -312,7 +312,7 @@ class catalogo_productosC
 	 	SetAdoAddNew("Catalogo_Bodegas");
 	 	SetAdoFields("CodBod", $parametros['txt_codigo']);
 		SetAdoFields("Bodega", $parametros['txt_concepto']);
-		SetAdoFields("TC", $parametros['cbx_tipo']);
+		SetAdoFields("TC", 'N');
 		/*SetAdoFields("Unidad", $parametros['txt_unidad']);
 		SetAdoFields("Maximo", $parametros['maximo']);
 		SetAdoFields("Minimo", $parametros['minimo']);

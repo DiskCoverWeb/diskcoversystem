@@ -352,42 +352,7 @@
 		<input type="text" name="txt_concepto" id="txt_concepto" class="form-control input-xs">
 	</div>
 </div>
-<div class="row">
-	<div class="col-sm-10">		
-		<i>Tipo de Producto</i>
-		<div class="row">
-			<div class="col-sm-2" style="padding-right:0px">
-				<label>Tipo de Inventario <input type="radio" name="cbx_tipo" id="cbx_inv" value="I"></label>
-			</div>
-			<div class="col-sm-2">
-				<label>Producto final <input type="radio" name="cbx_tipo" id="cbx_final" value="P"></label>
-			</div>
-			<!-- <div class="col-sm-2">
-				<label><input type="checkbox" name="rbl_iva" id="rbl_iva"> Factura con IVA</label>
-			</div> -->
-			<!-- <div class="col-sm-3" style="padding-right:0px">
-				<label><input type="checkbox" name="rbl_inv" id="rbl_inv"> Producto para facturar</label>
-			</div>
-			<div class="col-sm-1" style="padding:0px">
-				<label><input type="checkbox" name="rbl_agrupacion" id="rbl_agrupacion"> Agrupar</label>
-			</div>
-			<div class="col-sm-2">
-				<label><input type="checkbox" name="rbl_reserva" id="rbl_reserva"> Por Reservas</label>
-			</div> -->
-		</div>
-	</div>
-	<!-- <div class="col-sm-2">
-		<i>Calcular Divisas</i>
-		<div class="row">
-			<div class="col-sm-5" style="padding: 0px;">
-				<label>Dividir <input type="radio" name="cbx_calcular" id="cbx_dividir" value="div" ></label>
-			</div>
-			<div class="col-sm-7" style="padding: 0px;">
-				<label>Multiplicar <input type="radio" name="cbx_calcular" id="cbx_multiplicar" value="mul" ></label>
-			</div>
-		</div>
-	</div> -->
-</div>
+
 <!-- <div class="row">
 	<div class="col-sm-3">
 		<div class="form-group">

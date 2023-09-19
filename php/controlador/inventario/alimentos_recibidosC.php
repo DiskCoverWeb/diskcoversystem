@@ -194,18 +194,18 @@ class alimentos_recibidosC
 		   SetAdoFields('Codigo_Inv',$parametro['txt_referencia']);
 		   SetAdoFields('Producto',$producto[0]['Producto']);
 		   SetAdoFields('UNIDAD',$producto[0]['Unidad']); /**/
-		   SetAdoFields('Salida',$parametro['txt_canti']);
+		   SetAdoFields('Salida',$parametro['txt_cantidad']);
 		   SetAdoFields('Cta_Inv',$producto[0]['Cta_Inventario']);
-		   // SetAdoFields('CodigoL',$parametro['rubro']);		   
+		   SetAdoFields('Fecha_Fab',$parametro['txt_fecha_cla']);	
+		   SetAdoFields('Fecha_Exp',$parametro['txt_fecha_exp']);	   
 		   SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);   
 		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);
 		   SetAdoFields('Orden_No',$num_ped); 
 		   SetAdoFields('A_No',$parametro['A_No']+1);
 		   SetAdoFields('Fecha',date('Y-m-d',strtotime($parametro['txt_fecha'])));
-		   // SetAdoFields('TC',$parametro['TC']);
-		   SetAdoFields('Valor_Total',number_format($parametro['txt_total'],2,'.',''));
-		   SetAdoFields('CANTIDAD',$parametro['txt_canti']);
-		   SetAdoFields('Valor_Unitario',number_format($parametro['txt_precio'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
+		   SetAdoFields('Valor_Total',number_format($producto[0]['PVP']*$parametro['txt_cantidad'],2,'.',''));
+		   SetAdoFields('CANTIDAD',$parametro['txt_cantidad']);
+		   SetAdoFields('Valor_Unitario',number_format($producto[0]['PVP'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
 		   SetAdoFields('DH',2);
 		   SetAdoFields('Codigo_Barra',$parametro['txt_codigo'].'-'.$producto[0]['Item_Banco']);
 		   // SetAdoFields('Contra_Cta',$parametro['cc']);
@@ -224,7 +224,7 @@ class alimentos_recibidosC
 		   // print_r($datos);die();
 		   $resp = SetAdoUpdate();
 		   // $num = $num_ped;
-		   return  $respuesta = array('ped'=>$num_ped,'resp'=>$resp);		
+		   return  $respuesta = array('ped'=>$num_ped,'resp'=>$resp,'total_add'=>'1');		
 	}
 	function cargar_productos($parametros)
     {
@@ -244,9 +244,12 @@ class alimentos_recibidosC
         </tbody>
       </table>';
       $d='';
+      $canti = 0;
 		foreach ($datos as $key => $value) 
 		{
 			// print_r($value);die();
+
+      		$canti = $canti+$value['Salida'];
 			$iva+=number_format($value['Total_IVA'],2);
 			// print_r($value['VALOR_UNIT']);
 			$sub = $value['Valor_Unitario']*$value['Salida'];
@@ -274,37 +277,17 @@ class alimentos_recibidosC
 			if($d=='')
 			{
 			$d =  dimenciones_tabl(strlen($value['ID']));
-			$d1 =  dimenciones_tabl(strlen($value['Fecha']->format('Y-m-d')));
-			$d2 =  dimenciones_tabl(strlen($value['Codigo_Inv']));
+			$d1 =  dimenciones_tabl(strlen($value['Fecha_Exp']->format('Y-m-d')));
+			$d2 =  dimenciones_tabl(strlen($value['Fecha_Fab']->format('Y-m-d')));
 			$d3 =  dimenciones_tabl(strlen($value['Producto']));
 			$d4 =  dimenciones_tabl(strlen($value['Salida']));
-			$d5 =  dimenciones_tabl(strlen($value['Valor_Unitario']));
-			$d6 =  dimenciones_tabl(strlen($value['Total_IVA']));
-			$d7 =  dimenciones_tabl(strlen($value['Valor_Total']));
 		  }
 			$tr.='<tr>
-  					<td width="'.$d.'">'.$key.'</td>
-  					<td width="'.$d1.'">'.$value['Fecha']->format('Y-m-d').'</td>
-  					<td width="'.$d2.'">'.$value['Codigo_Inv'].'</td>
+  					<td width="'.$d.'">'.($key+1).'</td>
+  					<td width="'.$d1.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
+  					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
-  					<td width="'.$d4.'" class="text-right">
-  					     <input type="text" class=" text-right form-control input-sm" id="txt_can_lin_'.$value['ID'].'" value="'.$value['Salida'].'" onblur="calcular_totales(\''.$value['ID'].'\');" readonly />
-  					</td>
-  					<td width="'.$d5.'">
-  					     <input type="text" onblur="calcular_totales(\''.$value['ID'].'\');" class="text-right form-control input-sm" id="txt_pre_lin_'.$value['ID'].'" value="'.number_format($value['Valor_Unitario'],2).'" readonly=""/>
-  					</td>
-  					<td width="'.$d6.'">
-  					     <input type="text" onblur="calcular_totales(\''.$value['ID'].'\');" class="text-right form-control input-sm" id="txt_iva_lin_'.$value['ID'].'" value="'.number_format($value['Total_IVA'],4).'" readonly=""/>
-  					</td>
-  					<td width="'.$d7.'">
-  					     <input type="text" class="text-right form-control input-sm" id="txt_tot_lin_'.$value['ID'].'" value="'.number_format($value['Valor_Total'],4).'" readonly="" />
-  					</td>
-  					<td width="'.$d7.'">
-  					     <input type="text" class="form-control input-sm" id="txt_negarivo_'.$value['ID'].'" value="'.$nega.'" readonly="" />
-  					</td>
-  					<td width="'.$d7.'">
-  					    '.$value['Codigo_Barra'].'
-  					</td>
+  					<td width="'.$d4.'">'.$value['Salida'].'</td>
   					<td width="90px">
   					<!--	<button class="btn btn-sm btn-primary" onclick="editar_lin(\''.$value['ID'].'\')" title="Editar linea"><span class="glyphicon glyphicon-floppy-disk"></span></button> -->
   						<button class="btn btn-sm btn-danger" title="Eliminar linea"  onclick="eliminar_lin(\''.$value['ID'].'\')" ><span class="glyphicon glyphicon-trash"></span></button>
@@ -312,16 +295,20 @@ class alimentos_recibidosC
   				</tr>';
 			
 		}
-		// $tr.='<tr><td colspan="2"><button type="button" class="btn btn-primary" onclick="generar_factura(\''.$FechaInventario.'\')" id="btn_comprobante"><i class="fa fa-file-text-o"></i> Generar comprobante</button></td><td colspan="4"></td><td class="text-right">Total:</td><td><input type="text" class="form-control input-sm" value="'.$subtotal.'"></td><td colspan="2"></td></tr>';
-		// print_r($datos);die();
+		$tr.='<tr>
+  				<td colspan="4"><b>TOTALES</b></td>	
+  				<td>'.$canti.'</td>	
+  				<td></td>		
+  			</tr>';
+
 		if($num!=0)
 		{
 			// print_r($tr);die();
-			$tabla = array('num_lin'=>$num,'tabla'=>$tr,'item'=>$num,'subtotal'=>$subtotal,'iva'=>$iva,'total'=>$total+$iva,'detalle'=>$procedimiento);	
+			$tabla = array('num_lin'=>$num,'tabla'=>$tr,'item'=>$num,'cant_total'=>$canti);	
 			return $tabla;		
 		}else
 		{
-			$tabla = array('num_lin'=>0,'tabla'=>'<tr><td colspan="9" class="text-center"><b><i>Sin registros...<i></b></td></tr>','item'=>0,'subtotal'=>$subtotal,'iva'=>$iva,'total'=>$total+$iva,'detalle'=>$procedimiento);
+			$tabla = array('num_lin'=>0,'tabla'=>'<tr><td colspan="9" class="text-center"><b><i>Sin registros...<i></b></td></tr>','item'=>0,'cant_total'=>0);
 			return $tabla;		
 		}
 		
@@ -342,24 +329,24 @@ class alimentos_recibidosC
 			// $costo =  $this->ing_descargos->costo_venta($value['Codigo_Inv']);
 			// $costoTrans = $this->ing_descargos->costo_producto($value['Codigo_Inv']);
 
-			$FechaInventario = date('Y-m-d');
-		 	$CodBodega = '01';
-		 	$costo_existencias = Leer_Codigo_Inv($value['Codigo_Inv'],$FechaInventario,$CodBodega,$CodMarca='');
+			// $FechaInventario = date('Y-m-d');
+		 	// $CodBodega = '01';
+		 	// $costo_existencias = Leer_Codigo_Inv($value['Codigo_Inv'],$FechaInventario,$CodBodega,$CodMarca='');
 
-			if(empty($Familia))
-			{
-				$Familia[0]['Producto'] = '-';
-				$Familia[0]['Codigo_Inv'] = '.';
-			}
-			if($costo_existencias['respueta']!=1)
-			{
-				$costo[0]['Existencia'] = 0;
-				$costoTrans[0]['Costo'] = 0;				
-			}else
-			{
-				$costo[0]['Existencia'] = $costo_existencias['datos']['Stock'];
-				$costoTrans[0]['Costo'] = $costo_existencias['datos']['Costo'];		
-			}			
+			// if(empty($Familia))
+			// {
+			// 	$Familia[0]['Producto'] = '-';
+			// 	$Familia[0]['Codigo_Inv'] = '.';
+			// }
+			// if($costo_existencias['respueta']!=1)
+			// {
+			// 	$costo[0]['Existencia'] = 0;
+			// 	$costoTrans[0]['Costo'] = 0;				
+			// }else
+			// {
+			// 	$costo[0]['Existencia'] = $costo_existencias['datos']['Stock'];
+			// 	$costoTrans[0]['Costo'] = $costo_existencias['datos']['Costo'];		
+			// }			
 
 			$productos[] = array('id'=>$Familia[0]['Codigo_Inv'],'text'=>$value['Producto'],'data'=>$Familia);
 
