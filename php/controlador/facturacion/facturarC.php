@@ -423,6 +423,7 @@ class facturarC
 		        $Producto = $respuesta['datos']["Producto"];
 		        $Cta_Ventas = $respuesta['datos']["Cta_Ventas"];		       
 		        $TextVUnit= number_format($respuesta['datos']["PVP"],4,'.','');
+              $reserva = $respuesta['datos']["Por_Reservas"];
 		        $NumStrg = $TextVUnit;
 		       if($respuesta['datos']["IVA"]){ $NumStrg = number_format($respuesta['datos']["PVP"] + ($respuesta['datos']["PVP"] * $_SESSION['INGRESO']["porc"]),$_SESSION['INGRESO']['Dec_Costo'],'.','');}
 		       $LabelStockArt = " P R O D U C T O 	--- ".$_SESSION['INGRESO']['S_M']."   ".$NumStrg;
@@ -445,7 +446,7 @@ class facturarC
 		          $TxtDetalle_Visible = True;
 		          // 'TxtDetalle.SetFocus
       		}
-      		return $respuesta = array('codigos'=>$Codigos,'producto'=>$Producto,'cta_venta'=>$Cta_Ventas,'labelstock'=>$LabelStock,'baniva'=>$BanIVA,'TextVUnit'=>$TextVUnit,'VUnitAnterior'=>$VUnitAnterior,'CodigoInv1'=>$CodigoInv1,'LabelStockArt'=>$LabelStockArt,'TextComEjec'=>$TextComEjec,'TxtDetalle'=>$TxtDetalle);
+      		return $respuesta = array('codigos'=>$Codigos,'producto'=>$Producto,'cta_venta'=>$Cta_Ventas,'labelstock'=>$LabelStock,'baniva'=>$BanIVA,'TextVUnit'=>$TextVUnit,'VUnitAnterior'=>$VUnitAnterior,'CodigoInv1'=>$CodigoInv1,'LabelStockArt'=>$LabelStockArt,'TextComEjec'=>$TextComEjec,'TxtDetalle'=>$TxtDetalle, 'por_reserva' => $reserva);
 
     	}else
     	{

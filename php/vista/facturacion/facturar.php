@@ -10,6 +10,7 @@
 	$(document).ready(function () {
 		var tipo = "<?php echo $_GET['tipo']; ?>";
 		$('#TipoFactura').val(tipo);
+		$('#btnReserva').prop('disabled', true);//Por defecto el btn de reserva no se puede dar clic
 		Eliminar_linea('', '');
 		// lineas_factura();
 		numero_factura();
@@ -446,6 +447,8 @@
 				$('#TextComEjec').val(data.TextComEjec);
 				$('#TxtDetalle').val(data.TxtDetalle);
 				$('#BanIVA').val(data.baniva);
+				console.log("TEST RESERVA", data.por_reserva);
+				if(data.por_reserva == true){$('#btnReserva').prop('disabled', false);}
 				// $('#DCArticulos').focus();
 				// $('#cambiar_nombre').modal('show');
 
@@ -869,7 +872,8 @@
 
 	}
 	function boton3() {
-		Listar_Ordenes();
+		$('#myModal_ordenesProd').modal('show');
+		//Listar_Ordenes();
 	}
 	function boton4() {
 		$('#myModal_guia').modal('show');
@@ -939,8 +943,7 @@
 						cell.innerHTML = data[i][0]; // "Orden No. XXXXXXXXX - Nombre del Cliente"						
 					}
 
-					// Abre el diálogo modal
-					$('#ordenModal').modal('show');
+					$('#myModal_ordenesProd').modal('show');
 				} else {
 					Swal.fire('No existen órdenes para procesar', '', 'info');
 				}
@@ -1186,7 +1189,7 @@
 					src="../../img/png/file2.png"></button>
 		</div>
 		<div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-			<button type="button" class="btn btn-default" title="Asignar reserva" onclick="boton6()"><img
+			<button id="btnReserva" type="button" class="btn btn-default" title="Asignar reserva" onclick="boton6()"><img
 					src="../../img/png/archivero2.png"></button>
 		</div>
 		<!-- <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
@@ -1933,9 +1936,9 @@
 			</div>
 
 			<div class="modal-footer">
-				<button class="btn btn-primary" onclick="">Imprimir Detalle Orden</button>
-				<button class="btn btn-primary" onclick="">Procesar Selección</button>
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+				<button class="btn btn-primary btn-block" onclick="">Imprimir Detalle Orden</button>
+				<button class="btn btn-primary btn-block" onclick="">Procesar Selección</button>
+				<button type="button" class="btn btn-default btn-block" data-dismiss="modal">Cancelar</button>
 			</div>
 		</div>
 	</div>
