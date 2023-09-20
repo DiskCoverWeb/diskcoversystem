@@ -929,12 +929,21 @@
 			dataType: 'json',
 			success: function (data) {
 				if (data.length > 0) {
+					var ordenTableBody = document.getElementById("ordenTableBody");
+					ordenTableBody.innerHTML = "";
 
-					//llena un alista
+					for (var i = 0; i < data.length; i++) {
+						var row = ordenTableBody.insertRow();
+						var cell = row.insertCell(0);
+
+						cell.innerHTML = data[i][0]; // "Orden No. XXXXXXXXX - Nombre del Cliente"						
+					}
+
+					// Abre el diálogo modal
+					$('#ordenModal').modal('show');
 				} else {
-					Swal.fire('No existe Ordenes para procesar', '', 'info');
+					Swal.fire('No existen órdenes para procesar', '', 'info');
 				}
-
 			}
 		})
 
@@ -1528,7 +1537,7 @@
 								value="<?php echo date('Y-m-d'); ?>" onblur="MBoxFechaGRE_LostFocus()">
 						</div>
 					</div>
-					<div class="col-sm-12">
+					<div class="col-sm-12" style="padding-top:5px">
 						<b class="col-sm-6 control-label" style="padding: 0px">Guia de remision No.</b>
 						<div class="col-sm-3" style="padding: 0px">
 							<select class="form-control input-xs" id="DCSerieGR" name="DCSerieGR"
@@ -1546,45 +1555,47 @@
 						<input type="text" name="LblAutGuiaRem" id="LblAutGuiaRem" class="form-control input-xs"
 							value="0">
 					</div>
-					<div class="col-sm-12">
+					<div class="col-sm-12" style="padding-top:5px">
 						<b class="col-sm-6 control-label" style="padding: 0px">Iniciacion del traslados</b>
 						<div class="col-sm-6" style="padding: 0px">
 							<input type="date" name="MBoxFechaGRI" id="MBoxFechaGRI" class="form-control input-xs"
 								value="<?php echo date('Y-m-d'); ?>">
 						</div>
 					</div>
-					<div class="col-sm-12">
+					<div class="col-sm-12" style="padding-top:5px">
 						<b class="col-sm-3 control-label" style="padding: 0px">Ciudad</b>
 						<div class="col-sm-9" style="padding: 0px">
-							<select class="form-control input-xs" id="DCCiudadI" name="DCCiudadI">
+							<select class="form-control input-xs" style="width:100%" id="DCCiudadI" name="DCCiudadI">
 								<option value=""></option>
 							</select>
 						</div>
 					</div>
-					<div class="col-sm-12">
+					<div class="col-sm-12" style="padding-top:5px">
 						<b class="col-sm-6 control-label" style="padding: 0px">Finalizacion del traslados</b>
 						<div class="col-sm-6" style="padding: 0px">
 							<input type="date" name="MBoxFechaGRF" id="MBoxFechaGRF" class="form-control input-xs"
 								value="<?php echo date('Y-m-d'); ?>">
 						</div>
 					</div>
-					<div class="col-sm-12">
-						<b class="col-sm-3 control-label" style="padding: 0px">ciudad</b>
+					<div class="col-sm-12" style="padding-top:5px">
+						<b class="col-sm-3 control-label" style="padding: 0px">Ciudad</b>
 						<div class="col-sm-9" style="padding: 0px">
-							<select class="form-control input-xs" id="DCCiudadF" name="DCCiudadF">
+							<select class="form-control input-xs" style="width:100%" id="DCCiudadF" name="DCCiudadF">
 								<option value=""></option>
 							</select>
 						</div>
 					</div>
-					<div class="col-sm-12">
-						<b>Nombre o razon socila (Transportista)</b>
-						<select class="form-control input-xs" id="DCRazonSocial" name="DCRazonSocial">
+					<div class="col-sm-12" style="padding-top:5px">
+						<b>Nombre o razón social (Transportista)</b>
+						<select class="form-control input-xs" style="width:100%" id="DCRazonSocial"
+							name="DCRazonSocial">
 							<option value=""></option>
 						</select>
 					</div>
-					<div class="col-sm-12">
+					<div class="col-sm-12" style="padding-top:5px">
 						<b>Empresa de Transporte</b>
-						<select class="form-control input-xs" id="DCEmpresaEntrega" name="DCEmpresaEntrega">
+						<select class="form-control input-xs" style="width:100%" id="DCEmpresaEntrega"
+							name="DCEmpresaEntrega">
 							<option value=""></option>
 						</select>
 					</div>
@@ -1869,19 +1880,19 @@
 					<div class="col-sm-4">
 						<b>Entrada</b>
 						<input type="date" name="ResvEntrada" id="ResvEntrada" class="form-control input-xs"
-							style="font-size: 12px; padding: 2px;" value="<?php echo date('Y-m-d') ?>">
+							style="font-size: 12px;" value="<?php echo date('Y-m-d') ?>">
 					</div>
 					<div class="col-sm-4">
 						<b>Salida</b>
 						<input type="date" name="ResvSalida" id="ResvSalida" class="form-control input-xs"
-							style="font-size: 12px; padding: 2px;" value="<?php echo date('Y-m-d') ?>">
+							style="font-size: 12px;" value="<?php echo date('Y-m-d') ?>">
 					</div>
 					<div class="col-sm-4">
 						<b>Noches</b>
 						<input type="text" name="cantNoches" id="cantNoches" class="form-control input-xs" value="0">
 					</div>
 				</div>
-				<div class="row">
+				<div class="row" style="padding-top:5px">
 					<div class="col-sm-6">
 						<b>Cantidad de Habitaciones</b>
 						<input type="text" name="TxtCantHab" id="TxtCantHab" class="form-control input-xs" value="0">
@@ -1901,6 +1912,34 @@
 	</div>
 </div>
 
+<!-- Modal ordenes produccion -->
+<div id="myModal_ordenesProd" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+	<div class="modal-dialog modal-md" style="width: 30%;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Ordenes de Producción</h4>
+			</div>
+			<div class="modal-body">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Orden</th>
+						</tr>
+					</thead>
+					<tbody id="ordenTableBody">
+					</tbody>
+				</table>
+			</div>
+
+			<div class="modal-footer">
+				<button class="btn btn-primary" onclick="">Imprimir Detalle Orden</button>
+				<button class="btn btn-primary" onclick="">Procesar Selección</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 <div id="myModal_Abonos" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
 	<div class="modal-dialog modal-lg">
