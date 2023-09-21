@@ -7,6 +7,8 @@
 	let Modificar = false;
 	let Bandera = true;
 	var PorCodigo = false;
+	let producto = "";
+	let detalle = "";
 	$(document).ready(function () {
 		var tipo = "<?php echo $_GET['tipo']; ?>";
 		$('#TipoFactura').val(tipo);
@@ -447,7 +449,9 @@
 				$('#TxtDetalle').val(data.TxtDetalle);
 				$('#BanIVA').val(data.baniva);
 				console.log("TEST RESERVA", data.por_reserva);
-				if(data.por_reserva == true){$('#btnReserva').prop('disabled', false);}
+				producto = data.producto;
+				detalle = data.TxtDetalle;
+				data.por_reserva ? $('#btnReserva').prop('disabled', false) : $('#btnReserva').prop('disabled', true);
 				// $('#DCArticulos').focus();
 				// $('#cambiar_nombre').modal('show');
 
@@ -897,6 +901,7 @@
 
 
 
+
 		// src ="../vista/modales.php?FAbonos=true";
 		// $('#frame').attr('src',src).show();
 		// $('#myModal_Abonos').modal('show');
@@ -1188,8 +1193,8 @@
 					src="../../img/png/file2.png"></button>
 		</div>
 		<div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-			<button id="btnReserva" type="button" class="btn btn-default" title="Asignar reserva" onclick="boton6()"><img
-					src="../../img/png/archivero2.png"></button>
+			<button id="btnReserva" type="button" class="btn btn-default" title="Asignar reserva"
+				onclick="boton6()"><img src="../../img/png/archivero2.png"></button>
 		</div>
 		<!-- <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
 			<a href="#" class="btn btn-default" title="Asignar reserva" onclick="Autorizar_Factura_Actual2();" target="_blank" ><img src="../../img/png/archivero2.png"></a>
@@ -1633,7 +1638,7 @@
 <script type="text/javascript">
 	function Command8_Click() {
 		if ($('#DCCiudadI').val() == '' || $('#DCCiudadF').val() == '' || $('#DCRazonSocial').val() == '' || $('#DCEmpresaEntrega').val() == '') {
-			swal.fire('Llene todo lso campos', '', 'info');
+			swal.fire('Llene todo los campos', '', 'info');
 			return false;
 		}
 		$('#ClaveAcceso_GR').val('.');
@@ -1907,12 +1912,48 @@
 			</div>
 
 			<div class="modal-footer">
-				<button class="btn btn-primary" onclick="Command8_Click();">Aceptar</button>
+				<button class="btn btn-primary" onclick="abrirDetalle()">Aceptar</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
 			</div>
 		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="divTxtDetalleReserva" role="dialog" data-keyboard="false" data-backdrop="static"
+	tabindex="-1">
+	<div class="modal-dialog modal-dialog modal-dialog-centered modal-sm"
+		style="margin-left: 300px; margin-top: 345px;">
+		<div class="modal-content">
+			<div class="modal-body text-center">
+				<textarea class="form-control" style="resize: none;" rows="4" id="TxtDetalleReserva" name="TxtDetalle"
+					onblur="txtDetalleLostFocus()"></textarea>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	function abrirDetalle() {
+		$('#divTxtDetalleReserva').on('shown.bs.modal', function () {
+			$('#TxtDetalleReserva').focus();
+		})
+		$('#divTxtDetalleReserva').modal('show', function () {
+			$('#TxtDetalleReserva').focus();
+		})
+
+		$('#myModal_reserva').modal('hide');
+		var noches = $('#cantNoches').val();
+		$('#TextCant').val(noches);
+		$('#TxtDetalleReserva').val(producto);
+		if(detalle.length > 3){
+			$('#TxtDetalleReserva').val($('#TxtDetalleReserva').val() + '\n' + detalle);
+		}
+	}
+
+	function txtDetalleLostFocus() {
+		$('#divTxtDetalleReserva').modal('hide');
+	}
+</script>
 
 <!-- Modal ordenes produccion -->
 <div id="myModal_ordenesProd" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
