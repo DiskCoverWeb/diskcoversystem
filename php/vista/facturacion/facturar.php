@@ -225,9 +225,62 @@
 					Tipo_De_Facturacion(data.TFA);
 					$('#Cant_Item').val(data.TFA.Cant_Item_FA); //FA
 				}
-
 			}
 		});
+	}
+
+	function Command8_Click() {
+		if ($('#DCCiudadI').val() == '' || $('#DCCiudadF').val() == '' || $('#DCRazonSocial').val() == '' || $('#DCEmpresaEntrega').val() == '') {
+			swal.fire('Llene todo lso campos', '', 'info');
+			return false;
+		}
+		$('#ClaveAcceso_GR').val('.');
+		$('#Autorizacion_GR').val($('#LblAutGuiaRem').val());
+		var DCserie = $('#DCSerieGR').val();
+		if (DCserie == '') { DCserie = '0_0'; }
+		var serie = DCserie.split('_');
+		$('#Serie_GR').val(serie[1]);
+		$('#Remision').val($('#LblGuiaR').val());
+		$('#FechaGRE').val($('#MBoxFechaGRE').val());
+		$('#FechaGRI').val($('#MBoxFechaGRI').val());
+		$('#FechaGRF').val($('#MBoxFechaGRF').val());
+		$('#Placa_Vehiculo').val($('#TxtPlaca').val());
+		$('#Lugar_Entrega').val($('#TxtLugarEntrega').val());
+		$('#Zona').val($('#TxtZona').val());
+		$('#CiudadGRI').val($('#DCCiudadI option:selected').text());
+		$('#CiudadGRF').val($('#DCCiudadF option:selected').text());
+
+		var nom = $('#DCRazonSocial').val();
+		ci = nom.split('_');
+		$('#Comercial').val($('#DCRazonSocial option:selected').text());
+		$('#CIRUCComercial').val(ci[0]);
+		var nom1 = $('#DCEmpresaEntrega').val();
+		ci1 = nom1.split('_');
+		$('#Entrega').val($('#DCEmpresaEntrega option:selected').text());
+		$('#CIRUCEntrega').val(ci1[0]);
+		$('#Dir_EntregaGR').val(ci1[1]);
+		sms = "Guia de Remision: " + serie[1] + "-" + $('#LblGuiaR').val() + "  Autorizacion: " + $('#LblAutGuiaRem').val();
+		$('#LblGuia').val(sms);
+		$('#myModal_guia').modal('hide');
+
+		console.log('ClaveAcceso_GR:', '.');
+		console.log('Autorizacion_GR:', $('#LblAutGuiaRem').val());
+		console.log('Serie_GR:', serie[1]);
+		console.log('Remision:', $('#LblGuiaR').val());
+		console.log('FechaGRE:', $('#MBoxFechaGRE').val());
+		console.log('FechaGRI:', $('#MBoxFechaGRI').val());
+		console.log('FechaGRF:', $('#MBoxFechaGRF').val());
+		console.log('Placa_Vehiculo:', $('#TxtPlaca').val());
+		console.log('Lugar_Entrega:', $('#TxtLugarEntrega').val());
+		console.log('Zona:', $('#TxtZona').val());
+		console.log('CiudadGRI:', $('#DCCiudadI option:selected').text());
+		console.log('CiudadGRF:', $('#DCCiudadF option:selected').text());
+		console.log('Comercial:', $('#DCRazonSocial option:selected').text());
+		console.log('CIRUCComercial:', ci[0]);
+		console.log('Entrega:', $('#DCEmpresaEntrega option:selected').text());
+		console.log('CIRUCEntrega:', ci1[0]);
+		console.log('Dir_EntregaGR:', ci1[1]);
+		console.log('LblGuia:', sms);
 
 	}
 
@@ -447,7 +500,7 @@
 				$('#TxtDetalle').val(data.TxtDetalle);
 				$('#BanIVA').val(data.baniva);
 				console.log("TEST RESERVA", data.por_reserva);
-				if(data.por_reserva == true){$('#btnReserva').prop('disabled', false);}
+				if (data.por_reserva == true) { $('#btnReserva').prop('disabled', false); }
 				// $('#DCArticulos').focus();
 				// $('#cambiar_nombre').modal('show');
 
@@ -1188,8 +1241,8 @@
 					src="../../img/png/file2.png"></button>
 		</div>
 		<div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-			<button id="btnReserva" type="button" class="btn btn-default" title="Asignar reserva" onclick="boton6()"><img
-					src="../../img/png/archivero2.png"></button>
+			<button id="btnReserva" type="button" class="btn btn-default" title="Asignar reserva"
+				onclick="boton6()"><img src="../../img/png/archivero2.png"></button>
 		</div>
 		<!-- <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
 			<a href="#" class="btn btn-default" title="Asignar reserva" onclick="Autorizar_Factura_Actual2();" target="_blank" ><img src="../../img/png/archivero2.png"></a>
@@ -1528,19 +1581,19 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Datos de guia de remision</h4>
+				<h4 class="modal-title">DATOS DE GUIA DE REMISION</h4>
 			</div>
 			<div class="modal-body">
 				<div class="row">
 					<div class="col-sm-12">
-						<b class="col-sm-6 control-label" style="padding: 0px">Fecha de emision de guia</b>
+						<b class="col-sm-6 control-label" style="padding: 0px">Fecha de emisión de guía</b>
 						<div class="col-sm-6" style="padding: 0px">
 							<input type="date" name="MBoxFechaGRE" id="MBoxFechaGRE" class="form-control input-xs"
 								value="<?php echo date('Y-m-d'); ?>" onblur="MBoxFechaGRE_LostFocus()">
 						</div>
 					</div>
 					<div class="col-sm-12" style="padding-top:5px">
-						<b class="col-sm-6 control-label" style="padding: 0px">Guia de remision No.</b>
+						<b class="col-sm-6 control-label" style="padding: 0px">Guía de remisión No.</b>
 						<div class="col-sm-3" style="padding: 0px">
 							<select class="form-control input-xs" id="DCSerieGR" name="DCSerieGR"
 								onchange="DCSerieGR_LostFocus()">
@@ -1558,7 +1611,7 @@
 							value="0">
 					</div>
 					<div class="col-sm-12" style="padding-top:5px">
-						<b class="col-sm-6 control-label" style="padding: 0px">Iniciacion del traslados</b>
+						<b class="col-sm-6 control-label" style="padding: 0px">Iniciación del traslados</b>
 						<div class="col-sm-6" style="padding: 0px">
 							<input type="date" name="MBoxFechaGRI" id="MBoxFechaGRI" class="form-control input-xs"
 								value="<?php echo date('Y-m-d'); ?>">
@@ -1573,7 +1626,7 @@
 						</div>
 					</div>
 					<div class="col-sm-12" style="padding-top:5px">
-						<b class="col-sm-6 control-label" style="padding: 0px">Finalizacion del traslados</b>
+						<b class="col-sm-6 control-label" style="padding: 0px">Finalización del traslados</b>
 						<div class="col-sm-6" style="padding: 0px">
 							<input type="date" name="MBoxFechaGRF" id="MBoxFechaGRF" class="form-control input-xs"
 								value="<?php echo date('Y-m-d'); ?>">
@@ -1622,15 +1675,15 @@
 
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-primary" onclick="Command8_Click();">Aceptar</button>
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				<button class="btn btn-primary btn-block" onclick="Command8_Click();">Aceptar</button>
+				<button type="button" class="btn btn-default btn-block" data-dismiss="modal">Cerrar</button>
 			</div>
 		</div>
 
 	</div>
 </div>
 
-<script type="text/javascript">
+<!--script type="text/javascript">
 	function Command8_Click() {
 		if ($('#DCCiudadI').val() == '' || $('#DCCiudadF').val() == '' || $('#DCRazonSocial').val() == '' || $('#DCEmpresaEntrega').val() == '') {
 			swal.fire('Llene todo lso campos', '', 'info');
@@ -1666,7 +1719,7 @@
 		$('#myModal_guia').modal('hide');
 
 	}
-</script>
+</script-->
 
 <div id="myModal_suscripcion" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
 	<div class="modal-dialog modal-md" style="width: 55%;">
@@ -1749,6 +1802,7 @@
 												class="form-control input-xs">
 										</div>
 									</div>
+
 								</div>
 								<div class="col-sm-4">
 									<div class="row">
@@ -1804,60 +1858,76 @@
 											</div>
 										</div>
 									</div>
-									<!-- checks -->
 								</div>
 								<div class="col-sm-12">
 									<div class="row">
-										<div class="col-sm-6">
-											<b> Ejecutivo de Venta</b>
-											<select class="form-control input-xs" id="DCEjecutivoModal"
-												name="DCEjecutivoModal">
-												<option value="">Seleccione</option>
-											</select>
-										</div>
-										<div class="col-sm-3">
-											<b>Comision %</b>
-											<input type="" name="TextComisionModal" id="TextComisionModal"
-												class="form-control input-xs" onblur="TextComision_LostFocus()">
-										</div>
-										<div class="col-sm-3">
-											<div class="checkbox">
-												<label style="padding: 0px;">
-													<input type="radio" name="opc2" value='OpcN' id="OpcN" checked>
-													Nuevo
-												</label>
-											</div>
-											<div class="checkbox">
-												<label style="padding: 0px;">
-													<input type="radio" name="opc2" value='OpcR' id="OpcR"> Renovacion
-												</label>
+										<div class="col-sm-8">
+											<div class="row">
+												<div class="col-sm-6">
+													<b>Ejecutivo de Venta</b>
+													<select class="form-control input-xs" id="DCEjecutivoModal"
+														name="DCEjecutivoModal">
+														<option value="">Seleccione</option>
+													</select>
+												</div>
+												<div class="col-sm-6">
+													<b>Comisión %</b>
+													<input type="text" name="TextComisionModal" id="TextComisionModal"
+														class="form-control input-xs" onblur="TextComision_LostFocus()">
+												</div>
 											</div>
 										</div>
-
+										<div class="col-sm-4">
+											<div class="row">
+												<div class="col-sm-6" style="padding: 0px;">
+													<div class="checkbox">
+														<label style="padding: 0px;">
+															<input type="radio" name="opc2" value='OpcN' id="OpcN"
+																checked>
+															Nuevo
+														</label>
+													</div>
+												</div>
+												<div class="col-sm-6" style="padding: 0px;">
+													<div class="checkbox">
+														<label style="padding: 0px;">
+															<input type="radio" name="opc2" value='OpcR' id="OpcR">
+															Renovación
+														</label>
+													</div>
+												</div>
+											</div>
+										</div>
 									</div>
-
 								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 text-center" id="tbl_suscripcion" style="height:170px">
+								<div class="col-sm-12" style="padding-top: 5px;">
+									<div class="row">
+										<div class="col-sm-12 text-center" id="tbl_suscripcion" style="height:170px">
+										</div>
+										<br>
+										<div class="col-sm-12">
+											<label>Periodo:<input type="texto" name="txtperiodo"
+													id="txtperiodo"></label>
+										</div>
+									</div>
 								</div>
-								<br>
-								<label>Periodo:<input type="texto" name="txtperiodo" id="txtperiodo"></label>
 							</div>
 						</form>
 					</div>
 					<div class="col-sm-2">
 						<div class="row">
 							<div class="col-sm-12">
-								<button class="btn btn-default" id="btn_g"> <img src="../../img/png/grabar.png"
-										onclick="Command1();"><br> Guardar</button>
+								<button class="btn btn-default btn-block" id="btn_g">
+									<img src="../../img/png/grabar.png" onclick="Command1();"><br> Guardar
+								</button>
 							</div>
-							<div class="col-sm-12">
-								<button class="btn btn-default" data-dismiss="modal" onclick="delete_asientoP();"><img
-										src="../../img/png/bloqueo.png"><br> Cancelar</button>
+							<div class="col-sm-12" style="padding-top: 5px;">
+								<button class="btn btn-default btn-block" data-dismiss="modal"
+									onclick="delete_asientoP();">
+									<img src="../../img/png/bloqueo.png"><br> Cancelar
+								</button>
 							</div>
 						</div>
-
 					</div>
 				</div>
 			</div>
