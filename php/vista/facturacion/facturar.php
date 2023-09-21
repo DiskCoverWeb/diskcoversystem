@@ -383,7 +383,7 @@
 		var cod_marca = $('#DCMarca').val();
 		// console.log(grupo);
 		$('#DCArticulos').select2({
-			placeholder: 'Seleccione un cliente',
+			placeholder: 'Producto',
 			ajax: {
 				url: '../controlador/facturacion/facturarC.php?DCArticulos=true&marca=' + marca + '&codMarca=' + cod_marca,
 				dataType: 'json',
@@ -418,8 +418,7 @@
 			// data: {parametros: parametros},
 			dataType: 'json',
 			success: function (data) {
-				$('#CheqSPFrom').css('display', 'initial');
-
+				data.CheqSP == true ? $('#CheqSPFrom').css('display', 'initial') : $('#CheqSPFrom').css('display', 'none');
 				console.log(data);
 			}
 		});
@@ -1262,7 +1261,7 @@
 		<input type="hidden" name="TipoFactura" id="TipoFactura">
 		<div class="row">
 			<div class="col-sm-2">
-				<label><input type="checkbox" name="Check1" id="Check1"> Factura en MN</label>
+				<label><input type="checkbox" name="Check1" id="Check1"> Factura en ME</label>
 			</div>
 			<div class="col-sm-2" id="CheqSPFrom" style="display: none;">
 				<label><input type="checkbox" name="CheqSP" id="CheqSP"> Sector publico</label>
