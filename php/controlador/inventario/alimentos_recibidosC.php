@@ -228,7 +228,7 @@ class alimentos_recibidosC
 		   SetAdoFields('Codigo_Inv',$parametro['txt_referencia']);
 		   SetAdoFields('Producto',$producto[0]['Producto']);
 		   SetAdoFields('UNIDAD',$producto[0]['Unidad']); /**/
-		   SetAdoFields('Salida',$parametro['txt_cantidad']);
+		   SetAdoFields('Entrada',$parametro['txt_cantidad']);
 		   SetAdoFields('Cta_Inv',$producto[0]['Cta_Inventario']);
 		   SetAdoFields('Fecha_Fab',$parametro['txt_fecha_cla']);	
 		   SetAdoFields('Fecha_Exp',$parametro['txt_fecha_exp']);	   
@@ -240,9 +240,11 @@ class alimentos_recibidosC
 		   SetAdoFields('Valor_Total',number_format($producto[0]['PVP']*$parametro['txt_cantidad'],2,'.',''));
 		   SetAdoFields('CANTIDAD',$parametro['txt_cantidad']);
 		   SetAdoFields('Valor_Unitario',number_format($producto[0]['PVP'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
-		   SetAdoFields('DH',2);
+		   // SetAdoFields('DH',2);
 		   SetAdoFields('Codigo_Barra',$parametro['txt_codigo'].'-'.$producto[0]['Item_Banco']);
-		   // SetAdoFields('Contra_Cta',$parametro['cc']);
+		   SetAdoFields('CodBodega',-1);
+
+
 		   // SetAdoFields('Descuento',$parametro['descuento']);
 		   // SetAdoFields('Codigo_P',$parametro['CodigoP']);
 		   // SetAdoFields('Detalle',$parametro['pro']);
@@ -283,10 +285,10 @@ class alimentos_recibidosC
 		{
 			// print_r($value);die();
 
-      		$canti = $canti+$value['Salida'];
+      		$canti = $canti+$value['Entrada'];
 			$iva+=number_format($value['Total_IVA'],2);
 			// print_r($value['VALOR_UNIT']);
-			$sub = $value['Valor_Unitario']*$value['Salida'];
+			$sub = $value['Valor_Unitario']*$value['Entrada'];
 			$subtotal+=$sub;
 			$procedimiento=$value['Detalle'];
 
@@ -298,7 +300,7 @@ class alimentos_recibidosC
 		
 			if($costo_existencias['respueta']!=1){$costo_existencias['datos']['Stock'] = 0; $costo_existencias['datos']['Costo'] = 0;}
 			else{
-				$exis = number_format($costo_existencias['datos']['Stock']-$value['Salida'],2);
+				$exis = number_format($costo_existencias['datos']['Stock']-$value['Entrada'],2);
 				if($exis<0)
 				{
 					$nega = $exis;
@@ -314,14 +316,14 @@ class alimentos_recibidosC
 			$d1 =  dimenciones_tabl(strlen($value['Fecha_Exp']->format('Y-m-d')));
 			$d2 =  dimenciones_tabl(strlen($value['Fecha_Fab']->format('Y-m-d')));
 			$d3 =  dimenciones_tabl(strlen($value['Producto']));
-			$d4 =  dimenciones_tabl(strlen($value['Salida']));
+			$d4 =  dimenciones_tabl(strlen($value['Entrada']));
 		  }
 			$tr.='<tr>
   					<td width="'.$d.'">'.($key+1).'</td>
   					<td width="'.$d1.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
   					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
-  					<td width="'.$d4.'">'.$value['Salida'].'</td>
+  					<td width="'.$d4.'">'.$value['Entrada'].'</td>
   					<td width="90px">
   					<!--	<button class="btn btn-sm btn-primary" onclick="editar_lin(\''.$value['ID'].'\')" title="Editar linea"><span class="glyphicon glyphicon-floppy-disk"></span></button> -->
   						<button class="btn btn-sm btn-danger" title="Eliminar linea"  onclick="eliminar_lin(\''.$value['ID'].'\')" ><span class="glyphicon glyphicon-trash"></span></button>
