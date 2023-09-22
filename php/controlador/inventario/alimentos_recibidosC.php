@@ -125,7 +125,10 @@ class alimentos_recibidosC
 		SetAdoFields('Fecha_P',$parametros['txt_fecha']);
 		SetAdoFields('CodigoP',$parametros['ddl_ingreso']);
 		SetAdoFields('Cod_C',$parametros['ddl_alimento']);
+		SetAdoFields('Porc_C',$parametros['txt_temperatura']);
+		SetAdoFields('Cod_R',$parametros['cbx_estado_tran']);
 		SetAdoFields('TOTAL',$parametros['txt_cant']);
+
 		SetAdoFields('Envio_No',substr($parametros['txt_codigo'],0,-4).generaCeros(ReadSetDataNum('Ingresos_Recibidos',false,true,$parametros['txt_fecha']),4));
 		return SetAdoUpdate();
 
@@ -191,7 +194,7 @@ class alimentos_recibidosC
 		$datos = $this->modelo->buscar_transCorreos($cod);
 		$result = array();
 		foreach ($datos as $key => $value) {
-		 $result[] = array("value"=>$value['ID'],"label"=>$value['Envio_No'],'Fecha'=>$value['Fecha_P']->format('Y-m-d'),'mensaje'=>$value['Mensaje'],'Codigo_P'=>$value['CodigoP'],'Total'=>$value['TOTAL'],'Cod_C'=>$value['Cod_C'],'CI_RUC'=>$value['CI_RUC'],'Cod_Ejec'=>$value['Cod_Ejec'],'Cliente'=>$value['Cliente'],'Proceso'=>$value['Proceso']);
+		 $result[] = array("value"=>$value['ID'],"label"=>$value['Envio_No'],'Fecha'=>$value['Fecha_P']->format('Y-m-d'),'mensaje'=>$value['Mensaje'],'Codigo_P'=>$value['CodigoP'],'Total'=>$value['TOTAL'],'Cod_C'=>$value['Cod_C'],'CI_RUC'=>$value['CI_RUC'],'Cod_Ejec'=>$value['Cod_Ejec'],'Cliente'=>$value['Cliente'],'Proceso'=>$value['Proceso'],'Porc_C'=>$value['Porc_C'],'Cod_R'=>$value['Cod_R']);
 		}
 		return $result;
 	}
@@ -474,7 +477,7 @@ class alimentos_recibidosC
 					<td>'.$value['Proceso'].'</td>
 					<td>'.$value['TOTAL'].'</td>
 				<!--	<td>'.$value['Envio_No'].'</td> -->
-					<td>'.$value['TOTAL'].'</td>
+					<td>'.$value['Porc_C'].'</td>
 
 				  </tr>';
 		}
