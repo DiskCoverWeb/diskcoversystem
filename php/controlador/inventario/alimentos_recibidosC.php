@@ -376,7 +376,7 @@ class alimentos_recibidosC
 			// print_r($value);die();
 
 
-      		$canti = $canti+$value['Salida'];	
+      		$canti = $canti+$value['Entrada'];	
       		$PVP = $PVP+$value['Valor_Unitario'];	
       		$total = $total+$value['Valor_Total'];	
 
@@ -386,14 +386,14 @@ class alimentos_recibidosC
 			$d1 =  dimenciones_tabl(strlen($value['Fecha_Exp']->format('Y-m-d')));
 			$d2 =  dimenciones_tabl(strlen($value['Fecha_Fab']->format('Y-m-d')));
 			$d3 =  dimenciones_tabl(strlen($value['Producto']));
-			$d4 =  dimenciones_tabl(strlen($value['Salida']));
+			$d4 =  dimenciones_tabl(strlen($value['Entrada']));
 		  }
 			$tr.='<tr>
   					<td width="'.$d.'">'.($key+1).'</td>
   					<td width="'.$d1.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
   					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
-  					<td width="'.$d4.'">'.$value['Salida'].'</td>
+  					<td width="'.$d4.'">'.$value['Entrada'].'</td>
   					<td width="'.$d4.'">'.$value['Valor_Unitario'].'</td>
   					<td width="'.$d4.'">'.$value['Valor_Total'].'</td>
   					<td width="90px">
