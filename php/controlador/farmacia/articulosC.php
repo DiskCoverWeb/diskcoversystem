@@ -483,8 +483,10 @@ class articulosC
 		    SetAdoFields('Email2',$parametros['txt_email2']);
 		    SetAdoFields('Telefono',$parametros['txt_telefono']);
 		    SetAdoFields('Direccion',$parametros['txt_direccion']);
-		    SetAdoFields('Actividad',$parametros['txt_actividad']);
+		    SetAdoFields('Actividad',$parametros['actividad']);
 		    SetAdoFields('Cod_Ejec',$parametros['txt_ejec']);
+		    SetAdoFields('Tipo_Pasaporte',$parametros['CTipoProv']);
+		    SetAdoFields('Parte_Relacionada',$parametros['CParteR']);
 		if(empty($existe))
 		{			
 		    SetAdoFields('Fecha',strval(date('Y-m-d')));

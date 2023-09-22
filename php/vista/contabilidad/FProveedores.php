@@ -111,6 +111,7 @@ function limpiar_t()
      
      $('#myModal_espera').modal('show');
      var datos =  $("#form_nuevo_proveedor").serialize();
+     datos = datos+'&actividad='+$('#txt_actividad option:selected').text()
      $.ajax({
       data:  datos,
       url:   '../controlador/farmacia/articulosC.php?proveedor_nuevo=true',
@@ -157,7 +158,7 @@ function limpiar_t()
             op+="<option value="+item.ID+">"+item.Proceso+"</option>";
         })
 
-        $('#ddl_tipo_prove').html(op);
+        $('#txt_actividad').html(op);
         console.log(response);
         
       }, 
@@ -253,7 +254,7 @@ function limpiar_t()
                     </div>
                     <div class="col-sm-9 col-xs-6">
                         <b>Tipo de proveedor / Donante</b>
-                        <select class="form-control input-xs" id="ddl_tipo_prove">
+                        <select class="form-control input-xs" id="txt_actividad" name="txt_actividad">
                             <option value="">Seleccione</option>
                         </select>
                         <!-- <input type="" name="txt_actividad" id="txt_actividad" class="form-control input-sm form-select"  onkeyup="mayusculasevent(this)"> -->
@@ -284,7 +285,7 @@ function limpiar_t()
                     <b>Tipo Prov. Y Parte Relac.</b> 
                     <div class="row">
                         <div class="col-sm-9">
-                            <select class="form-control input-xs">
+                            <select class="form-control input-xs" id="CTipoProv" name="CTipoProv">
                                 <option value="">Seleccione</option>
                                 <option value="00">OTROS</option>
                                 <option value="01">PERSONA NATURAL</option>
@@ -292,7 +293,7 @@ function limpiar_t()
                             </select>
                         </div>
                         <div class="col-sm-3">
-                            <select class="form-control input-xs">
+                            <select class="form-control input-xs" id="CParteR" name="CParteR">
                                 <option value="NO">NO</option>
                                 <option value="SI">SI</option>
                             </select>
