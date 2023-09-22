@@ -43,6 +43,10 @@ class alimentos_recibidosM
         AND LEN(C.Cod_Ejec)<=5
         AND C.Cod_Ejec <> '.'
         AND C.Codigo = CP.Codigo";
+        if($query)
+        {
+        	$sql.=" AND C.Cliente like '%".$query."%'";
+        } 
         if($cod)
         {
         	$sql.=" AND C.Codigo = '".$cod."'";
@@ -57,13 +61,22 @@ class alimentos_recibidosM
 		return $this->db->datos($sql);
 	}
 
-	function buscar_transCorreos($cod)
+	function buscar_transCorreos($cod=false,$fecha=false)
 	{
-		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec 
+		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec 
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
-		where Envio_No  like  '%".$cod."%'";
+		where Item = '".$_SESSION['INGRESO']['item']."'
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+		if($cod)
+		{
+			$sql.= " AND Envio_No  like  '%".$cod."%'";
+		}
+		if($fecha)
+		{
+			$sql.= " AND TC.Fecha_P =  '".$fecha."'";
+		}
 		return $this->db->datos($sql);
 	}
 	//------------------viene de trasnkardex--------------------

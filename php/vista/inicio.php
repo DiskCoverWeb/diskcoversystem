@@ -422,6 +422,10 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("inventario/alimentos_recibidos2.php");
 			}	
+			if ($_SESSION['INGRESO']['accion']=='alimentosRec3') 
+			{
+				require_once("inventario/alimentos_recibidos_cheking.php");
+			}	
 			//ingreso de presusupuestos
 			if ($_SESSION['INGRESO']['accion']=='ingreso_presupuesto') 
 			{
