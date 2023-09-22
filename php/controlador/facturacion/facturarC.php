@@ -105,6 +105,11 @@ if(isset($_GET['Listar_Ordenes']))
    echo json_encode($controlador->Listar_Ordenes());
 }
 //----------------fin lista orden---------
+if(isset($_GET['Detalle_Impresion']))
+{
+   //$parametros = $_POST['parametros'];
+   echo json_encode($controlador->Detalle_Impresion());
+}
 //------------guia--------------
 
 if(isset($_GET['DCCiudadF']))
@@ -813,6 +818,34 @@ function delete_asientoF($parametros)
     return $lista;
   }
   // ----------------fin Listar_Ordenes---------
+
+  function Detalle_impresion()
+   {
+      $OrdenNo = $_POST['OrdenNo'];
+      $datos = $this->modelo->Detalle_impresion($OrdenNo);
+      $mensajes = "Imprimir Orden de Trabajo";
+      $Titulo = "IMPRESION";
+      //$Cuadricula = true;
+      $lista = array();
+
+      if (count($datos) > 0) {
+         foreach ($datos as $value) {
+               $mensajeEncabData = "LISTA DE ORDEN DE TRABAJO No. " . generaCeros($OrdenNo, 6);
+               $SQLMsg1 = "Cliente: " . $value["DCCliente"];
+
+               $detalleImpresion = array(
+                  'mensajes' => $mensajes,
+                  'Titulo' => $Titulo,
+                  //'Cuadricula' => $Cuadricula,
+                  'mensajeEncabData' => $mensajeEncabData,
+                  //'SQLMsg1' => $SQLMsg1
+               );
+               $lista[] = $detalleImpresion;
+         }
+      }
+      return $lista;
+   }
+
 
   function Grabar_Factura_Actual($FA,$parametros)
   {

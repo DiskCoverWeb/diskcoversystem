@@ -1,4 +1,6 @@
-<?php date_default_timezone_set('America/Guayaquil'); //print_r($_SESSION);die();//print_r($_SESSION['INGRESO']);die();?>
+<?php date_default_timezone_set('America/Guayaquil'); //print_r($_SESSION);die();//print_r($_SESSION['INGRESO']);die();
+//require('../../lib/fpdf/fpdf.php');
+?>
 <script type="text/javascript">
 	window.closeModal = function () {
 		$('#myModal_Abonos').modal('hide');
@@ -884,6 +886,8 @@
 
 	}
 
+
+
 	function Grabar_Abonos() {
 		var FA = $("#FA").serialize();
 		var parametros = {
@@ -1006,12 +1010,74 @@
 				}
 			}
 		})
+	}
+	//---------------fin Listar_Ordenes()--------
 
+	function CommandButton1_Click() {
+		//$('#dialog_impresion').modal('show');		
+		var ordenNoString = document.getElementById("valOrden").value;
+		var ordenNo = parseFloat(ordenNoString);
+
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/facturarC.php?Detalle_impresion=true',
+			data: { OrdenNo: ordenNo },
+			dataType: 'json',
+			success: function (data) {
+				if (data.length > 0) {
+					generarPDFtest();
+					//generarPDF(data[0].AdoAux, data[0].mensajeEncabData);
+				} else {
+					Swal.fire("No se encontraron datos para generar el PDF.", '', 'info');
+				}
+			}
+		})
+	}
+	/*
+	class PDF extends FPDF {
+		private $titulo; 
+
+		function __construct($titulo) {
+			parent::__construct();
+			$this->titulo = $titulo;
+		}
+
+		function Header() {		
+			$this -> Image('../../img/logotipos/DiskCover.gif', 10, 8, 33);
+			$this -> SetFont('Arial', 'B', 15);
+			$this -> Cell(80);
+			$this -> Cell(30, 10, $this->titulo 1, 0, 'C');
+			$this -> Ln(20);
+		}
+
+		function Footer() {
+			$this -> SetY(-15);
+			$this -> SetFont('Arial', 'I', 8);
+			$this -> Cell(0, 10, 'Página '.$this -> PageNo(), 0, 0, 'C');
+		}
 	}
 
-	//---------------fin Listar_Ordenes()--------
-	//------------------ guia-------------
+	function generarPDF($datos, $titulo) {
+		$pdf = new PDF($titulo);
+		$pdf -> AddPage();
+		foreach($datos as $value) {
+			$pdf -> Cell(0, 10, "Fecha: ".$value['Titulo'], 0, 1);
+			$pdf -> Cell(0, 10, "Producto: ".$value['mensajes'], 0, 1);			
+		}
+		$pdf -> Output('orden_de_trabajo.pdf', 'D');
+	}
 
+	function generarPDFtest() {
+		$pdf = new PDF("ORDEN DE TRABAJO");
+		$pdf -> AddPage();
+		//foreach($datos as $value) {
+		//	$pdf -> Cell(0, 10, "Fecha: ".$value['Titulo'], 0, 1);
+		//	$pdf -> Cell(0, 10, "Producto: ".$value['mensajes'], 0, 1);			
+		//}
+		$pdf -> Output('orden_de_trabajo.pdf', 'D');
+	}*/
+
+	//------------------ guia-------------
 	function DCCiudadI() {
 		$('#DCCiudadI').select2({
 			placeholder: 'Seleccione un cliente',
@@ -2015,7 +2081,7 @@
 		var noches = $('#cantNoches').val();
 		$('#TextCant').val(noches);
 		$('#TxtDetalleReserva').val(producto);
-		if(detalle.length > 3){
+		if (detalle.length > 3) {
 			$('#TxtDetalleReserva').val($('#TxtDetalleReserva').val() + '\n' + detalle);
 		}
 	}
@@ -2046,9 +2112,32 @@
 			</div>
 
 			<div class="modal-footer">
-				<button class="btn btn-primary btn-block" onclick="">Imprimir Detalle Orden</button>
+				<button class="btn btn-primary btn-block" onclick="CommandButton1_Click()">Imprimir Detalle
+					Orden</button>
 				<button class="btn btn-primary btn-block" onclick="">Procesar Selección</button>
 				<button type="button" class="btn btn-default btn-block" data-dismiss="modal">Cancelar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="dialog_impresion" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+	<div class="modal-dialog modal-md" style="width: 25%;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">IMPRESION DE ORDEN DE TRABAJO</h4>
+			</div>
+			<div class="modal-body" style="text-align: center;">
+				<form>
+					<label for="">Imprimir el detalle</label>
+					<input type="number" id="valOrden" name="valOrden" min="1" max="">
+					<label for="">de la orden no.</label>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" onclick="">Aceptar</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
 			</div>
 		</div>
 	</div>
