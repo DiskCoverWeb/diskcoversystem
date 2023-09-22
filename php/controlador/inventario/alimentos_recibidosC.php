@@ -40,6 +40,15 @@ if(isset($_GET['detalle_ingreso']))
 	}
 	echo json_encode($controlador->detalle_ingreso($query));
 }
+if(isset($_GET['detalle_ingreso2']))
+{
+	$query = '';
+	if(isset($_GET['q']))
+	{
+		$query = $_GET['q'];
+	}
+	echo json_encode($controlador->detalle_ingreso2($query));
+}
 if(isset($_GET['datos_ingreso']))
 {
 	$id = $_POST['id'];
@@ -69,6 +78,11 @@ if(isset($_GET['pedido']))
 	$parametros= $_POST['parametros'];	
 	echo json_encode($controlador->cargar_productos($parametros));
 }
+if(isset($_GET['pedido_checking']))
+{
+	$parametros= $_POST['parametros'];	
+	echo json_encode($controlador->cargar_productos_checking($parametros));
+}
 if(isset($_GET['lin_eli']))
 {
 	$parametros = $_POST['parametros'];
@@ -83,6 +97,13 @@ if(isset($_GET['autocom_pro']))
 	}
 	echo json_encode($controlador->autocomplet_producto($query));
 }
+
+if(isset($_GET['cargar_datos']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->cargar_datos($parametros));
+}
+
 /**
  * 
  */
@@ -97,6 +118,7 @@ class alimentos_recibidosC
 
 	function guardar($parametros)
 	{
+		// print_r($parametros);die();
 		SetAdoAddNew('Trans_Correos');
 		SetAdoFields('T','N');
 		SetAdoFields('Mensaje',$parametros['txt_comentario']);
@@ -148,6 +170,15 @@ class alimentos_recibidosC
 		// 	// $bene[] = array('id'=>$value['id'].'-'.$value['email'],'text'=>$value['nombre']);//para produccion
 		// }
 		return $datos;
+	}
+	function detalle_ingreso2($query)
+	{
+		$datos = $this->modelo->detalle_ingreso(false,$query);
+		$bene = array();
+		foreach ($datos as $key => $value) {
+			$bene[] = array('id'=>$value['Codigo'],'text'=>$value['Cliente'],'data'=>$datos);
+		}
+		return $bene;
 	}
 	function datos_ingreso($cod)
 	{
@@ -310,9 +341,83 @@ class alimentos_recibidosC
 		{
 			$tabla = array('num_lin'=>0,'tabla'=>'<tr><td colspan="9" class="text-center"><b><i>Sin registros...<i></b></td></tr>','item'=>0,'cant_total'=>0);
 			return $tabla;		
-		}
-		
+		}		
     }
+
+
+    function cargar_productos_checking($parametros)
+    {
+    	// print_r($parametros);die();
+    	// print_r($ordenes);die();
+    	$datos = $this->modelo->cargar_pedidos_trans($parametros['num_ped'],false);
+
+		// print_r($datos);die();
+		$num = count($datos);
+
+		$tr = '';
+		$iva = 0;$subtotal=0;$total=0;
+		$negativos = false;
+		$procedimiento = '';
+		$cabecera = '';
+        $pie = ' 
+        </tbody>
+      </table>';
+      $d='';
+      $canti = 0;
+      $PVP = 0;      
+      $total = 0;
+		foreach ($datos as $key => $value) 
+		{
+			// print_r($value);die();
+
+
+      		$canti = $canti+$value['Salida'];	
+      		$PVP = $PVP+$value['Valor_Unitario'];	
+      		$total = $total+$value['Valor_Total'];	
+
+			if($d=='')
+			{
+			$d =  dimenciones_tabl(strlen($value['ID']));
+			$d1 =  dimenciones_tabl(strlen($value['Fecha_Exp']->format('Y-m-d')));
+			$d2 =  dimenciones_tabl(strlen($value['Fecha_Fab']->format('Y-m-d')));
+			$d3 =  dimenciones_tabl(strlen($value['Producto']));
+			$d4 =  dimenciones_tabl(strlen($value['Salida']));
+		  }
+			$tr.='<tr>
+  					<td width="'.$d.'">'.($key+1).'</td>
+  					<td width="'.$d1.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
+  					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
+  					<td width="'.$d3.'">'.$value['Producto'].'</td>
+  					<td width="'.$d4.'">'.$value['Salida'].'</td>
+  					<td width="'.$d4.'">'.$value['Valor_Unitario'].'</td>
+  					<td width="'.$d4.'">'.$value['Valor_Total'].'</td>
+  					<td width="90px">
+  					<input type="checkbox" class="rbl_conta" name="rbl_conta" id="rbl_conta_'.$value['ID'].'" value="'.$value['ID'].'" />
+  					</td>
+  				</tr>';
+			
+		}
+		$tr.='<tr>
+  				<td colspan="4"><b>TOTALES</b></td>	
+  				<td>'.$canti.'</td>	
+  				<td>'.$PVP.'</td>	
+  				<td>'.$total.'</td>	
+  				<td></td>		
+  			</tr>';
+
+		if($num!=0)
+		{
+			// print_r($tr);die();
+			$tabla = array('num_lin'=>$num,'tabla'=>$tr,'item'=>$num,'cant_total'=>$canti);	
+			return $tabla;		
+		}else
+		{
+			$tabla = array('num_lin'=>0,'tabla'=>'<tr><td colspan="9" class="text-center"><b><i>Sin registros...<i></b></td></tr>','item'=>0,'cant_total'=>0);
+			return $tabla;		
+		}		
+    }
+
+
    function lineas_eli($parametros)
 	{
 		$resp = $this->modelo->lineas_eli($parametros);
@@ -353,6 +458,29 @@ class alimentos_recibidosC
 		}
 		return $productos;
 		// print_r($productos);die();
+	}
+
+	function cargar_datos($parametros)
+	{
+		$query = $parametros['query'];
+		$fecha = $parametros['fecha'];
+
+		$datos = $this->modelo->buscar_transCorreos($query,$fecha);
+		$tr= '';
+		foreach ($datos as $key => $value) {
+			$tr.='<tr>
+					<td>'.$value['Fecha_P']->format('Y-m-d').'</td>
+					<td>'.$value['Cliente'].'</td>
+					<td>'.$value['Proceso'].'</td>
+					<td>'.$value['TOTAL'].'</td>
+				<!--	<td>'.$value['Envio_No'].'</td> -->
+					<td>'.$value['TOTAL'].'</td>
+
+				  </tr>';
+		}
+
+		return $tr;
+		print_r($datos);die();
 	}
 
 

@@ -8,11 +8,24 @@
         });    
   	autocoplet_alimento();
   	autocoplet_ingreso();
+  	cargar_datos();
   })
 
   function guardar()
   {
+  	var donante = $('#txt_donante').val();
+  	var tempe = $('#txt_temperatura').val();
+  	var tipo = $('#ddl_alimento_text').val();
+  	var can = $('#txt_cant').val();
+  	var cod = $('#txt_codigo').val();
+  	if(donante=='' || tempe=='' || tipo=='' || can =='' || cod=='')
+  	{
+  		Swal.fire('Ingrese todos los datos','','info')
+  		return false;
+  	}
+
   	 var parametros = $('#form_correos').serialize();
+  	 parametros+='&ddl_ingreso='+$('#ddl_ingreso').val();
   	  $.ajax({
 	      type: "POST",
 	      url: '../controlador/inventario/alimentos_recibidosC.php?guardar=true',
@@ -22,36 +35,41 @@
 	      {
 	      	if(data==1)
 	      	{
-	      		Swal.fire('Alimento Recibido Guardado','','success');
+	      		Swal.fire('Alimento Recibido Guardado','','success').then(function()
+	      			{
+	      				limpiar();
+	      				cargar_datos();
+	      			});
 	      	}
 	      
 	      }
 	  });
   }
- function autocoplet_alimento(){
-  $('#ddl_alimento').select2({
-    placeholder: 'Seleccione una beneficiario',
-    // width:'90%',
-    ajax: {
-      url:   '../controlador/inventario/alimentos_recibidosC.php?alimentos=true',
-      dataType: 'json',
-      delay: 250,
-      processResults: function (data) {
-        // console.log(data);
-        return {
-          results: data
-        };
-      },
-      cache: true
-    }
-  });
-}
-function autocoplet_ingreso()
+
+
+  function limpiar()
+  {
+  	$('#txt_donante').val('');
+  	$('#txt_tipo').val('');
+  	$('#txt_temperatura').val('');
+  	$('#ddl_alimento_text').val('');
+  	$('#txt_cant').val('');
+  	$('#txt_codigo').val('');
+  	$('#txt_ci').val('');
+  	$('#txt_comentario').val('');
+
+  	// modales
+  	$('#ddl_ingreso').val('').trigger('change');
+  	$('#txt_temperatura2').val('');
+  	$('#txt_cantidad2').val();
+  }
+
+  function autocoplet_alimento()
   {
   	 // var parametros = $('#form_correos').serialize();
   	  $.ajax({
 	    type: "POST",
-      	url:   '../controlador/inventario/alimentos_recibidosC.php?detalle_ingreso=true',
+       url:   '../controlador/inventario/alimentos_recibidosC.php?alimentos=true',
 	    // data:{parametros:parametros},
         dataType:'json',
 	    success: function(data)
@@ -59,19 +77,24 @@ function autocoplet_ingreso()
 	    	console.log(data);
 	    	option = '';
 	    	data.forEach(function(item,i){
-	    		console.log(item);
-	    		option+='<option value="'+item.Codigo+'">'+item.Cliente+'</option>';
+	    		// console.log(item);
+	    		option+= '<div class="col-md-6 col-sm-6">'+
+											'<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/canasta.png" onclick="cambiar_tipo_alimento(\''+item.id+'\',\''+item.text+'\')"></button><br>'+
+											'<b>'+item.text+'</b>'+
+										'</div>';
+	    		// option+='<option value="'+item.Codigo+'">'+item.Cliente+'</option>';
 	    	})	 
-	    	$('#ddl_ingreso').html(option);     
+	    	$('#pnl_tipo_alimento').html(option);     
 	    }
 	});
   }
-// function autocoplet_ingreso(){
-//   $('#ddl_ingreso').select2({
-//     placeholder: 'Seleccione',
+
+//  function autocoplet_alimento(){
+//   $('#ddl_alimento').select2({
+//     placeholder: 'Seleccione una beneficiario',
 //     // width:'90%',
 //     ajax: {
-//       url:   '../controlador/inventario/alimentos_recibidosC.php?donante=true',
+//       url:   '../controlador/inventario/alimentos_recibidosC.php?alimentos=true',
 //       dataType: 'json',
 //       delay: 250,
 //       processResults: function (data) {
@@ -84,6 +107,46 @@ function autocoplet_ingreso()
 //     }
 //   });
 // }
+
+// function autocoplet_ingreso()
+//   {
+//   	 // var parametros = $('#form_correos').serialize();
+//   	  $.ajax({
+// 	    type: "POST",
+//       	url:   '../controlador/inventario/alimentos_recibidosC.php?detalle_ingreso=true',
+// 	    // data:{parametros:parametros},
+//         dataType:'json',
+// 	    success: function(data)
+// 	    {
+// 	    	console.log(data);
+// 	    	option = '';
+// 	    	data.forEach(function(item,i){
+// 	    		console.log(item);
+// 	    		option+='<option value="'+item.Codigo+'">'+item.Cliente+'</option>';
+// 	    	})	 
+// 	    	$('#ddl_ingreso').html(option);     
+// 	    }
+// 	});
+//   }
+
+function autocoplet_ingreso(){
+  $('#ddl_ingreso').select2({
+    placeholder: 'Seleccione',
+    width:'100%',
+    ajax: {
+     url:   '../controlador/inventario/alimentos_recibidosC.php?detalle_ingreso2=true',
+      dataType: 'json',
+      delay: 250,
+      processResults: function (data) {
+        // console.log(data);
+        return {
+          results: data
+        };
+      },
+      cache: true
+    }
+  });
+}
 
   function nuevo_proveedor()
   {
@@ -106,6 +169,8 @@ function autocoplet_ingreso()
 		    	$('#txt_ci').val(data.CI_RUC)
 		    	$('#txt_donante').val(data.Cliente)
 		    	$('#txt_tipo').val(data.Actividad)
+		    	$('#modal_proveedor').modal('hide');
+		    	generar_codigo();
 		    }
 		});  	
   }
@@ -156,6 +221,79 @@ function autocoplet_ingreso()
 		});  	
   }
 
+  function cargar_datos(){
+  		parametros = 
+  		{
+  			'fecha':$('#txt_fecha_b').val(),
+  			'query':$('#txt_query').val(),
+  		}
+	  	$.ajax({
+		    type: "POST",
+	      	url:   '../controlador/inventario/alimentos_recibidosC.php?cargar_datos=true',
+		    data:{parametros:parametros},
+	        dataType:'json',
+		    success: function(data)
+		    {
+		    	$('#tbl_body').html(data);
+		    	console.log(data);
+		    	// var cod = $('#txt_codigo').val();
+		    	// $('#txt_codigo').val(cod+'-'+data)
+		    	
+		    }
+		});  	
+  }
+
+  function show_proveedor()
+  {
+  	$('#modal_proveedor').modal('show');
+  }
+  function show_cantidad()
+  {
+  	$('#modal_cantidad').modal('show');
+  }
+  function show_temperatura()
+  {
+  	$('#modal_temperatura').modal('show');
+  }
+
+  function show_tipo_donacion()
+  {
+  	$('#modal_tipo_donacion').modal('show');
+  }
+   function ocultar_comentario()
+  {
+
+  	 var cbx = $('input[type=radio][name=cbx_estado_tran]:checked').val();
+  	 if(cbx=='0')
+  	 {
+  	 	 $('#pnl_comentario').css('display','block');
+  	 }else
+  	 {
+  	 	 $('#pnl_comentario').css('display','none');
+  	 }
+  	 console.log(cbx);
+  }
+  function cambiar_cantidad()
+  {
+  	var can = $('#txt_cantidad2').val();
+  	$('#txt_cant').val(can);
+  	$('#modal_cantidad').modal('hide');
+  }
+  function cambiar_temperatura()
+  {
+  	var can = $('#txt_temperatura2').val();
+  	$('#txt_temperatura').val(can);
+  	$('#modal_temperatura').modal('hide');
+  }
+
+  function cambiar_tipo_alimento(cod,texto)
+  {
+
+  	$('#ddl_alimento_text').val(texto);
+  	$('#ddl_alimento').val(cod);
+  	$('#modal_tipo_donacion').modal('hide');
+  }
+
 </script>
 
  <div class="row">
@@ -183,101 +321,244 @@ function autocoplet_ingreso()
 			<form id="form_correos">
 			<div class="box-body" style="background:antiquewhite;">					
 				<div class="row">
-					<div class="col-sm-6">
+					<div class="col-sm-12 col-md-8">
 						<b>Detalle de ingreso</b>
-						<select class=" form-control input-xs form-select" id="ddl_ingreso" name="ddl_ingreso" size="7" onchange="option_select()">
-                         	<option value="">Seleccione</option>
-                         </select>
+							<div class="row">
+								<div class="col-sm-8">
+									<div class="input-group">
+											<span class="input-group-btn" style="padding-right: 10px;">
+													<button type="button" class="btn btn-default btn-sm btn btn-flat" onclick="show_proveedor()"><img src="../../img/png/donacion2.png"></button>
+											</span>
+											<b>PROVEEDOR / DONANTE</b>	
+											<div class="form-group">
+												<div class="col-sm-9">													
+													<input type="" class="form-control input-xs" id="txt_donante" name="txt_donante" readonly>
+												</div>
+												<div class="col-sm-3">
+													<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
+												</div>
+											</div>
+
+									</div>
+								</div>
+								<div class="col-sm-4">
+									<div class="input-group">
+											<span class="input-group-btn" style="padding-right: 10px;">
+												<button type="button" class="btn btn-default btn-sm" onclick="show_temperatura()"><img src="../../img/png/temperatura2.png"></button>
+											</span>
+											 <b>TEMPERATURA DE RECEPCION °C:</b>	
+											 <div class="input-group">
+				                	<input type="" class="form-control input-sm" id="txt_temperatura" name="txt_temperatura" readonly>	
+													<span class="input-group-addon">°C</span>
+											 </div>
+
+									</div>
+								</div>								
+							</div>
+							<div class="row">
+								<div class="col-sm-8">									
+									<div class="input-group">
+											<span class="input-group-btn" style="padding-right: 10px;">
+													<button type="button" class="btn btn-default btn-sm" onclick="show_tipo_donacion()"><img src="../../img/png/tipo_donacion.png"></button>
+											</span>
+												<b>ALIMENTO RECIBIDO:</b>												
+												<input type="" class="form-control input-xs" id="ddl_alimento_text" name="ddl_alimento_text" readonly>
+												<input type="hidden" class="form-control input-xs" id="ddl_alimento" name="ddl_alimento" readonly>
+									</div>
+								</div>
+								<div class="col-sm-4">									
+									<div class="input-group">
+											<span class="input-group-btn" style="padding-right: 10px;">
+													<button type="button" class="btn btn-default btn-sm" onclick="show_cantidad()"><img src="../../img/png/kilo2.png"></button>
+											</span>
+												<b>CANTIDAD:</b>
+												<input type="" class="form-control input-xs" id="txt_cant" name="txt_cant" readonly>	
+									</div>
+								</div>								
+							</div>						
 					</div>
-					<div class="col-sm-6">
-						<div class="row" style="padding-top:5px">
-							<div class="col-sm-6 text-right">
-								 <b>Fecha de Ingreso:</b>
-							</div>
-							<div class="col-sm-6">
-		              <input type="date" class="form-control input-xs" id="txt_fecha" name="txt_fecha" onblur="generar_codigo()" value="<?php echo date('Y-m-d'); ?>">		
-							</div>
+					<div class="col-sm-12 col-md-4">
+						<div class="col-sm-6 col-md-12">
+							<div class="form-group">
+									<label for="inputEmail3" class="col-sm-6 control-label">Fecha de Ingreso</label>
+									<div class="col-sm-6">
+										<input type="date" class="form-control input-xs" id="txt_fecha" name="txt_fecha" value="<?php echo date('Y-m-d'); ?>" readonly>		
+									</div>
+							</div>		
 						</div>
-						<div class="row" style="padding-top:5px">
-							<div class="col-sm-6 text-right">
-                           		<b>Codigo de Ingreso:</b>
-                         	</div>							
-                         	<div class="col-sm-6">
-		                         <input type="" class="form-control input-xs" id="txt_codigo" name="txt_codigo" readonly>
-	                        </div>
+						<div class="col-sm-6 col-md-12">
+								<div class="form-group">
+								<label for="inputEmail4" class="col-sm-6 control-label">Codigo de Ingreso</label>
+									<div class="col-sm-6">									
+	                 	<input type="" class="form-control input-xs" id="txt_codigo" name="txt_codigo" readonly>
+									</div>
+								</div>
 						</div>
-						
-						<div class="row" style="padding-top:5px">
-							<div class="col-sm-6 text-right">
-								 <b>RUC / CI</b>
+						<div class="col-sm-6 col-md-12">							
+							<div class="form-group">
+									<label for="inputEmail3" class="col-sm-6 control-label">RUC / CI</label>
+									<div class="col-sm-6">									
+	                		<input type="" class="form-control input-xs" id="txt_ci" name="txt_ci" readonly>
+									</div>
 							</div>
-							<div class="col-sm-6">
-	                         	<input type="" class="form-control input-xs" id="txt_ci" name="txt_ci" readonly>								
-							</div>
+						</div>						
+						<div class="col-sm-6 col-md-12">							
+								<div class="form-group">
+										<label for="inputEmail3" class="col-sm-6 control-label">ESTADO DE TRANSPORTE</label>
+										<div class="col-sm-6 text-center">									
+		                		 <label style="padding-right: 10px;"><img src="../../img/png/bueno2.png" onclick="ocultar_comentario()"><input type="radio" name="cbx_estado_tran" onclick="ocultar_comentario()" checked value="1"></label>		
+		                		 <label style="padding-left: 10px;"><img src="../../img/png/close.png" onclick="ocultar_comentario()"><input type="radio" name="cbx_estado_tran" onclick="ocultar_comentario()" value="0"></label>					
+										</div>
+								</div>	
 						</div>
-						<div class="row" style="padding-top:5px">
-							<div class="col-sm-6 text-right">
-	                           <b>PROVEEDOR / DONANTE</b>								
+							<div class="col-sm-12 col-md-12" style="padding-top:5px;display: none;" id="pnl_comentario">
+								<div class="form-group">
+										<label for="inputEmail3" class="col-sm-3 col-md-6 control-label">COMENTARIO</label>
+										<div class="col-sm-9 col-md-6">
+										<textarea rows="4" class="form-control" style="resize:none;" id="txt_comentario" name="txt_comentario"></textarea>								
+										</div>
+								</div>	
 							</div>
-							<div class="col-sm-6">
-								<input type="" class="form-control input-xs" id="txt_donante" name="txt_donante" readonly>
-							</div>
+						</div>	
+					</div>
+
+					<hr>
+					<div class="row">
+						<div class="col-sm-4" style="display:none;">
+							<b>Codigo de orden</b>
+							<input type="" name="txt_query" id="txt_query" class="form-control input-xs">
 						</div>
-						<div class="row" style="padding-top:5px">
-							<div class="col-sm-6 text-right">
-								 <b>TIPO DONANTE:</b>								
-							</div>
-							<div class="col-sm-6">
-								<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
-							</div>
+						<div class="col-sm-2">							
+							<b>Fecha</b>
+							<input type="date" name="txt_fecha_b" id="txt_fecha_b" class="form-control input-xs">
 						</div>
-						<div class="row" style="padding-top:5px">
-							<div class="col-sm-6 text-right">
-								<b>ALIMENTO RECIBIDO:</b>
-							</div>
-							<div class="col-sm-6">
-								<select class=" form-control input-xs form-select" id="ddl_alimento" name="ddl_alimento">
-	                         		<option value="">Seleccione Alimento</option>
-	                         	</select>								
-							</div>
+						<div class="col-sm-10 text-right">							
+							<br>
+							<button type="button" class="btn-sm btn-primary btn" id="" name="" onclick="cargar_datos()"><i class="fa fa-search"></i> Buscar</button>
 						</div>
-						<div class="row" style="padding-top:5px">
-							<div class="col-sm-6 text-right">
-								 <b>CANTIDAD:</b>
-							</div>
-							<div class="col-sm-6">
-	                        	 <input type="" class="form-control input-xs" id="txt_cant" name="txt_cant">	
-							</div>
-						</div>
-						<div class="row" style="padding-top:5px">
-							<div class="col-sm-6 text-right">
-								 <b>TEMPERATURA DE RECEPCION °C:</b>
-							</div>
-							<div class="col-sm-6">
-	                <input type="" class="form-control input-xs" id="txt_temperatura" name="txt_temperatura">	
-							</div>
-						</div>
-						<div class="row" style="padding-top:5px">
-							<div class="col-sm-6 text-right">
-								 <b>ESTADO DE TRANSPORTE:</b>
-							</div>
-							<div class="col-sm-6 text-center">
-	                <label><input type="radio" name="cbx_estado_tran"><br><i class="fa fa-check-circle" style="color: green;"></i> BUENO</label>
-	                <label><input type="radio" name="cbx_estado_tran"><br><i class="fa  fa-times-circle" style="color: red;"></i> MALO</label>
-							</div>
-						</div>
-						<div class="row" style="padding-top:5px">
-							<div class="col-sm-6 text-right">
-								<b>COMENTARIO:</b>
-							</div>
-							<div class="col-sm-6">
-	                         	<input type="" class="form-control input-xs" id="txt_comentario" name="txt_comentario">
-							</div>
-						</div>
+					</div> 
+					<br>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="table-responsive">
+								<table class="table table-hover">
+									<thead>
+										<th>Fecha de ingreso</th>
+										<th>Donante</th>
+										<th>Alimento Recibido </th>
+										<th>Cantidad</th>
+										<th>Temperatura de ingreso</th>
+									</thead>
+									<tbody id="tbl_body">
+										<tr></tr>
+									</tbody>
+								</table>
+							</div>							
+						</div>						
 					</div>
 				</div>
 			</div>
 			</form>
 		</div>	
 	</div>
+</div>
+
+
+<div id="modal_tipo_donacion" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Tipo de donacion</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          	<div class="row text-center" id="pnl_tipo_alimento">
+          		<div class="col-md-6 col-sm-6">
+									<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/canasta.png"></button><br>
+									<b>COMPRAS</b>
+							</div>	
+          		<div class="col-md-6 col-sm-6">
+								<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/salvar.png"></button><br>
+								<b>RESCATE</b>
+							</div>
+          		<div class="col-md-6 col-sm-6">
+									<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/donacion3.png"></button><br>
+									<b>DONACIÓN</b>
+								</div>
+          			<div class="col-md-6 col-sm-6">
+									<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/produccion.png"></button><br>
+									<b>RESCATE PRODUCCIÓN</b>
+								</div>
+          	</div>
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <!-- <button type="button" class="btn btn-primary" onclick="cambiar_cantidad()">OK</button> -->
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+<div id="modal_proveedor" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Proveedor</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+	          <select class=" form-control input-xs form-select" id="ddl_ingreso" name="ddl_ingreso" onchange="option_select()">
+	           		<option value="">Seleccione</option>
+	           </select>   					
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <!-- <button type="button" class="btn btn-primary" onclick="cambiar_cantidad()">OK</button> -->
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+<div id="modal_temperatura" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Temperatura</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          <b>Temperatura</b>
+          <div class="input-group">
+						<input type="text" class="form-control" id="txt_temperatura2" name="txt_temperatura2" onblur="cambiar_temperatura()">
+						<span class="input-group-addon">°C</span>
+					</div>    					
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-primary" onclick="cambiar_temperatura()">OK</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+<div id="modal_cantidad" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Cantidad</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          <b>Cantidad</b>
+          <input type="" name="txt_cantidad2" id="txt_cantidad2" class="form-control" placeholder="0" onblur="cambiar_cantidad()">        					
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-primary" onclick="cambiar_cantidad()">OK</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
 </div>
