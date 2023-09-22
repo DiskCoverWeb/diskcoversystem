@@ -7,8 +7,11 @@
 	let Modificar = false;
 	let Bandera = true;
 	var PorCodigo = false;
-	let producto = "";
-	let detalle = "";
+	let producto = ""; //para reserva
+	let detalle = ""; //para reserva
+
+	var listOrden = [];//para procesar seleccion del modal ordenes de produccion
+	var dataInv = [];//datos del SP.
 	$(document).ready(function () {
 		var tipo = "<?php echo $_GET['tipo']; ?>";
 		$('#TipoFactura').val(tipo);
@@ -59,6 +62,18 @@
 		})
 
 	});
+
+	function fechaSistema() {
+		var fecha = new Date();
+		var año = fecha.getFullYear();
+		var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Sumamos 1 al mes porque en JavaScript los meses van de 0 a 11
+		var dia = ('0' + fecha.getDate()).slice(-2);
+
+		// Formatear la fecha como 'YYYY-MM-DD'
+		var fechaFormateada = año + '-' + mes + '-' + dia;
+
+		return fechaFormateada;
+	}
 
 	function DCTipoPago() {
 
@@ -504,6 +519,8 @@
 				console.log("TEST RESERVA", data.por_reserva);
 				producto = data.producto;
 				detalle = data.TxtDetalle;
+				dataInv = data;
+				console.log("TEST DATA INV: ", dataInv);
 				data.por_reserva ? $('#btnReserva').prop('disabled', false) : $('#btnReserva').prop('disabled', true);
 				// $('#DCArticulos').focus();
 				// $('#cambiar_nombre').modal('show');
@@ -929,6 +946,14 @@
 	}
 	function boton3() {
 		$('#myModal_ordenesProd').modal('show');
+		var selectOrden = document.getElementById("selectOrden");
+		var dataTest = ["Orden1", "Orden2", "Orden3"];
+		dataTest.forEach(function (orden) {
+			var option = document.createElement("option");
+			option.value = orden;
+			option.text = orden;
+			selectOrden.appendChild(option);
+		});
 		//Listar_Ordenes();
 	}
 	function boton4() {
@@ -990,15 +1015,25 @@
 			dataType: 'json',
 			success: function (data) {
 				if (data.length > 0) {
-					var ordenTableBody = document.getElementById("ordenTableBody");
-					ordenTableBody.innerHTML = "";
+					// var ordenTableBody = document.getElementById("ordenTableBody");
+					// ordenTableBody.innerHTML = "";
 
-					for (var i = 0; i < data.length; i++) {
-						var row = ordenTableBody.insertRow();
-						var cell = row.insertCell(0);
+					var selectOrden = document.getElementById("selectOrden");
+					//var dataTest = ["Orden1", "Orden2", "Orden3"];
+					data.forEach(function (orden) {
+						var option = document.createElement("option");
+						option.value = orden;
+						option.text = orden;
+						selectOrden.appendChild(option);
+					});
 
-						cell.innerHTML = data[i][0]; // "Orden No. XXXXXXXXX - Nombre del Cliente"						
-					}
+					listOrden = data; // se asigna lo retornado a la lista
+					// for (var i = 0; i < data.length; i++) {
+					// 	var row = ordenTableBody.insertRow();
+					// 	var cell = row.insertCell(0);
+
+					// 	cell.innerHTML = data[i][0]; // "Orden No. XXXXXXXXX - Nombre del Cliente"						
+					// }
 
 					$('#myModal_ordenesProd').modal('show');
 				} else {
@@ -2015,7 +2050,7 @@
 		var noches = $('#cantNoches').val();
 		$('#TextCant').val(noches);
 		$('#TxtDetalleReserva').val(producto);
-		if(detalle.length > 3){
+		if (detalle.length > 3) {
 			$('#TxtDetalleReserva').val($('#TxtDetalleReserva').val() + '\n' + detalle);
 		}
 	}
@@ -2028,31 +2063,69 @@
 <!-- Modal ordenes produccion -->
 <div id="myModal_ordenesProd" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
 	<div class="modal-dialog modal-md" style="width: 30%;">
-		<div class="modal-content">
+		<div class="modal-content">.
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">Ordenes de Producción</h4>
 			</div>
 			<div class="modal-body">
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<th>Orden</th>
-						</tr>
-					</thead>
-					<tbody id="ordenTableBody">
-					</tbody>
-				</table>
+				<select id="selectOrden" form="form-control">
+				</select>
 			</div>
 
 			<div class="modal-footer">
 				<button class="btn btn-primary btn-block" onclick="">Imprimir Detalle Orden</button>
-				<button class="btn btn-primary btn-block" onclick="">Procesar Selección</button>
+				<button class="btn btn-primary btn-block" onclick="llenarOrden()">Procesar Selección</button>
 				<button type="button" class="btn btn-default btn-block" data-dismiss="modal">Cancelar</button>
 			</div>
 		</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+	function procesar() {
+		$('#myModal_ordenesProd').modal('hide');
+		$('#TextComEjec').val();
+
+	}
+
+	function sinEspaciosDer(texto) {
+		var palabras = texto.split(" ");
+
+		var ultimaPalabra = palabras[palabras.length - 1];
+		var resultado = ultimaPalabra.trimRight();
+
+		return resultado;
+	}
+
+	function llenarOrden() {
+		var LstOrdenP = document.getElementById("selectOrden");
+		var selectedOptions = LstOrdenP.selectedOptions;
+		var ordenSeleccionadaText = "";
+		for (var i = 0; i < selectedOptions.length; i++) {
+			var option = selectedOptions[i];
+			ordenSeleccionadaText = option.value;
+			switch (ordenSeleccionadaText.substring(0, 4)) {
+				case "Lote":
+					dataInv.Fecha_Exp = fechaSistema();
+					dataInv.Fecha_Fab = fechaSistema();
+					dataInv.Modelo = "Ninguno";
+
+					let stockLote = 0;
+
+					let lote_no = sinEspaciosDer(ordenSeleccionadaText);
+					break;
+				case "Orde":
+					break;
+			}
+
+			console.log("Opcion seleccionada: ", ordenSeleccionadaText);
+		}
+
+
+
+	}
+</script>
 
 <div id="myModal_Abonos" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
 	<div class="modal-dialog modal-lg">
