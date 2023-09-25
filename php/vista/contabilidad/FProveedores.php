@@ -1,5 +1,6 @@
  <script type="text/javascript">
  	  $( document ).ready(function() {
+        tipo_proveedor();
 
  	  $( "#txt_nombre_prove" ).autocomplete({
             source: function( request, response ) {
@@ -110,6 +111,7 @@ function limpiar_t()
      
      $('#myModal_espera').modal('show');
      var datos =  $("#form_nuevo_proveedor").serialize();
+     datos = datos+'&actividad='+$('#txt_actividad option:selected').text()
      $.ajax({
       data:  datos,
       url:   '../controlador/farmacia/articulosC.php?proveedor_nuevo=true',
@@ -137,6 +139,32 @@ function limpiar_t()
             // alert(textStatus);
             // alert(error);
         }
+    });
+
+     // console.log(datos);
+   }
+
+    function tipo_proveedor()
+    {
+     
+     $.ajax({
+      // data:  datos,
+      url:   '../controlador/modalesC.php?tipo_proveedor=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+         var op = '<option value="">Seleccione</option>';
+        response.forEach(function(item,i){
+            op+="<option value="+item.ID+">"+item.Proceso+"</option>";
+        })
+
+        $('#txt_actividad').html(op);
+        console.log(response);
+        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
     });
 
      // console.log(datos);
@@ -181,65 +209,109 @@ function limpiar_t()
      }
 
   }
+  
+  function validar_sri()
+  {
+    var ci = $('#txt_ruc').val();
+    if(ci!='')
+    {
+      url = 'https://srienlinea.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos2.jspa?accion=siguiente&ruc='+ci
+      window.open(url, "_blank");
+    }else
+    {
+       Swal.fire('Coloque un numero de CI / RUC','','info')
+    }    
+  }
+
 
 
  </script>
  <!-- <div class="box box-info"> -->
 	 <form id="form_nuevo_proveedor">
-	    <div class="row">
-	      <div class="col-sm-8 col-xs-8">
-	        <b>Nombre de proveedor</b>
-	        <input type="hidden" id="txt_id_prove" name="txt_id_prove" class="form-control input-sm">  
-	        <input type="text"  style="z-index:auto"  id="txt_nombre_prove" name="txt_nombre_prove" class="form-control input-sm" onkeyup="limpiar_t();mayusculasevent(this)" onblur="nombres(this.value)">  
-	      </div> 
-	      <div class="col-sm-4 col-xs-4">
-	        <b>CI / RUC</b>
-	        <input type="text" id="txt_ruc" name="txt_ruc" class="form-control input-sm">              
-	      </div>           
-	    </div>
-	    <div class="row">
-	    	<div class="col-sm-3 col-xs-3">
-	    		<b>Abreviado</b>
-	    		<input type="" style="z-index:auto" name="txt_ejec" id="txt_ejec" class="form-control input-sm" onkeyup="mayusculasevent(this)" onblur="validar_abrev()">
-	    	</div>
-	    	<div class="col-sm-9 col-xs-9">
-	    		<b>Tipo de proveedor / Donante</b>
-	    		<input type="" name="txt_actividad" id="txt_actividad" class="form-control input-sm"  onkeyup="mayusculasevent(this)">
-	    	</div>	    	
-	    </div>
-	    <div class="row">
-	      <div class="col-sm-12 col-xs-12">
-	        <b>Direccion</b>
-	        <input type="text" id="txt_direccion" name="txt_direccion" class="form-control input-sm"  onkeyup="mayusculasevent(this)">  
-	      </div>        
-	    </div>
-	    <div class="row">
-	      <div class="col-sm-8 col-xs-8">
-	        <b>Email</b>
-	        <input type="text" id="txt_email" name="txt_email" class="form-control input-sm">  
-	      </div> 
-	      <div class="col-sm-4 col-xs-4">
-	        <b>Telefono</b>
-	        <input type="txt_telefono" id="txt_telefono" name="txt_telefono" class="form-control input-sm" >              
-	      </div> 
-	    </div>
-        <div class="row">
-          <div class="col-sm-8 col-xs-8">
-            <b>Email 2</b>
-            <input type="text" id="txt_email2" name="txt_email2" class="form-control input-sm">  
-          </div> 
-         <!--  <div class="col-sm-4 col-xs-4">
-            <b>Telefono</b>
-            <input type="txt_telefono" id="txt_telefono" name="txt_telefono" class="form-control input-sm" >              
-          </div>  -->
+        <div class="panel">
+            <div class="panel-body" style="background-color:antiquewhite;">
+                <div class="row">
+                    <div class="col-sm-4 col-xs-4">
+                        <b>CI / RUC</b>
+                        <input type="text" id="txt_ruc" name="txt_ruc" class="form-control input-sm">              
+                      </div>
+                      <div class="col-xs-2 col-sm-1">
+                        <br>
+                        <button type="button" class="btn btn-sm" onclick="validar_sri()">
+                          <img src="../../img/png/SRI.jpg" style="width: 100%">
+                        </button>                    
+                      </div>        
+                      <div class="col-xs-6 col-sm-7">
+                        <b>Nombre de proveedor</b>
+                        <input type="hidden" id="txt_id_prove" name="txt_id_prove" class="form-control input-sm">  
+                        <input type="text"  style="z-index:auto"  id="txt_nombre_prove" name="txt_nombre_prove" class="form-control input-sm" onkeyup="limpiar_t();mayusculasevent(this)" onblur="nombres(this.value)">  
+                      </div>                      
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-xs-6">
+                        <b>Abreviado del donante</b>
+                        <input type="" style="z-index:auto" name="txt_ejec" id="txt_ejec" class="form-control input-sm" onkeyup="mayusculasevent(this)" onblur="validar_abrev()">
+                    </div>
+                    <div class="col-sm-9 col-xs-6">
+                        <b>Tipo de proveedor / Donante</b>
+                        <select class="form-control input-xs" id="txt_actividad" name="txt_actividad">
+                            <option value="">Seleccione</option>
+                        </select>
+                        <!-- <input type="" name="txt_actividad" id="txt_actividad" class="form-control input-sm form-select"  onkeyup="mayusculasevent(this)"> -->
+                    </div>          
+                </div>
+                <div class="row">
+                  <div class="col-sm-12 col-xs-12">
+                    <b>Direccion</b>
+                    <input type="text" id="txt_direccion" name="txt_direccion" class="form-control input-sm"  onkeyup="mayusculasevent(this)">  
+                  </div>        
+                </div>
+                <div class="row">
+                  <div class="col-sm-8 col-xs-8">
+                    <b>Email</b>
+                    <input type="text" id="txt_email" name="txt_email" class="form-control input-sm">  
+                  </div> 
+                  <div class="col-sm-4 col-xs-4">
+                    <b>Telefono</b>
+                    <input type="txt_telefono" id="txt_telefono" name="txt_telefono" class="form-control input-sm" >              
+                  </div> 
+                </div>
+                <div class="row">
+                  <div class="col-sm-8 col-xs-8">
+                    <b>Email 2</b>
+                    <input type="text" id="txt_email2" name="txt_email2" class="form-control input-sm">  
+                  </div> 
+                  <div class="col-sm-4 col-xs-4">
+                    <b>Tipo Prov. Y Parte Relac.</b> 
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <select class="form-control input-xs" id="CTipoProv" name="CTipoProv">
+                                <option value="">Seleccione</option>
+                                <option value="00">OTROS</option>
+                                <option value="01">PERSONA NATURAL</option>
+                                <option value="02">SOCIENDAD</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <select class="form-control input-xs" id="CParteR" name="CParteR">
+                                <option value="NO">NO</option>
+                                <option value="SI">SI</option>
+                            </select>
+                        </div>
+                    </div>         
+                  </div> 
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 text-right">
+                        <br>
+                        <button type="button" class="btn btn-primary" onclick="guardar_proveedor()">Guardar</button>
+                        <button type="button" class="btn btn-default" onclick="cerrar()">Cerrar</button>
+                    </div>
+                </div>
+
+
+            </div>
         </div>
-	    <div class="row">
-			<div class="col-sm-12 text-right">
-				<br>
-				<button type="button" class="btn btn-primary" onclick="guardar_proveedor()">Guardar</button>
-				<button type="button" class="btn btn-default" onclick="cerrar()">Cerrar</button>
-			</div>
-		</div>
 	</form>
 	
 <!-- </div> -->

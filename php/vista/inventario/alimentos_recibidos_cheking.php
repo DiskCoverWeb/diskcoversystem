@@ -36,6 +36,16 @@
                 $('#txt_cant').val(ui.item.Total); // save selected id to input
                 $('#txt_comentario').val(ui.item.mensaje); // save selected id to input
                 $('#txt_ejec').val(ui.item.Cod_Ejec); // save selected id to input
+                if(ui.item.Cod_R=='0')
+                {
+                	$('#img_estado').attr('src','../../img/png/bloqueo.png');
+                }else
+                {
+
+                	$('#img_estado').attr('src','../../img/png/aprobar.png');
+                }
+                $('#txt_temperatura').val(ui.item.Porc_C); // save selected id to input
+
                 $('#ddl_alimento').append($('<option>',{value: ui.item.Cod_C, text:ui.item.Proceso,selected: true }));
                 if(ui.item.Proceso.toUpperCase() =='COMPRAS' || ui.item.Proceso.toUpperCase() =='COMPRA')
                 {
@@ -398,15 +408,15 @@ function autocoplet_ingreso()
 								<b>TEMPERATURA DE RECEPCION °C</b>
 							</div>
 							<div class="col-sm-6">
-	                <input type="text" name="txt_serie" id="txt_serie" class="form-control input-xs"  readonly>
+	                <input type="text" name="txt_temperatura" id="txt_temperatura" class="form-control input-xs"  readonly>
 							</div>
 						</div>
 						<div class="row" id="panel_serie"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
 								<b>ESTADO DE TRANSPORTE</b>
 							</div>
-							<div class="col-sm-6">
-	                <input type="text" name="txt_serie" id="txt_serie" class="form-control input-xs"  readonly>
+							<div class="col-sm-6 text-center">
+									<img src="" id="img_estado">
 							</div>
 						</div>
 					

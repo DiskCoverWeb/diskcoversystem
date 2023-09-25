@@ -328,7 +328,7 @@
                 <h4 class="modal-title">Proveedor Nuevo</h4>
             </div>
             <div class="modal-body" style="background: antiquewhite;">
-                <iframe id="FProveedor" width="100%" height="320px" marginheight="0" frameborder="0" src="../vista/modales.php?FProveedores=true"></iframe>
+                <iframe id="FProveedor" width="100%" height="390px" marginheight="0" frameborder="0" src="../vista/modales.php?FProveedores=true"></iframe>
             </div>
            <!--  <div class="modal-footer">
                 <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button>

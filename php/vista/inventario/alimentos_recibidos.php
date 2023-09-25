@@ -59,9 +59,9 @@
   	$('#txt_comentario').val('');
 
   	// modales
-  	$('#ddl_ingreso').val('').trigger('change');
+  	$('#ddl_ingreso').val(null).trigger('change');
   	$('#txt_temperatura2').val('');
-  	$('#txt_cantidad2').val();
+  	$('#txt_cantidad2').val('');
   }
 
   function autocoplet_alimento()
