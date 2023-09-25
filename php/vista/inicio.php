@@ -156,6 +156,10 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 		{
 			include("contabilidad/FCliente.php");
 		}
+		if ($_SESSION['INGRESO']['accion']=='Proveedores') 
+		{
+			include("contabilidad/FProveedores.php");
+		}
 		if ($_SESSION['INGRESO']['accion']=='subcta_proyectos') 
 		{
 			require_once("contabilidad/Subcta_proyectos.php");

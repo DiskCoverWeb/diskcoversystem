@@ -99,6 +99,10 @@ if(isset($_GET['ExcelFInfoError']))
 	echo json_encode($controlador->GenerarExcelFInfoError());
 	exit();
 }
+if(isset($_GET['tipo_proveedor']))
+{
+	echo json_encode($controlador->tipo_proveedor());
+}
 
 /**
  * 
@@ -430,6 +434,12 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	function Listar_Medidores($codigo)
 	{
 		return $this->modelo->Listar_Medidores($codigo);
+	}
+
+	function  tipo_proveedor()
+	{
+		$datos = $this->modelo-> tipo_proveedor();
+		return $datos;
 	}
 
 	function FInfoErrorShow(){

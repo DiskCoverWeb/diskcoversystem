@@ -350,5 +350,16 @@ function DLCxCxP($SubCta,$query=false)
 			AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'";
     	return Ejecutar_SQL_SP($sSQL);
 	}
+
+	function tipo_proveedor()
+	{
+		$sql = "SELECT TP, Proceso,ID
+				FROM Catalogo_Proceso
+				WHERE Item ='".$_SESSION['INGRESO']['item']."' 
+				AND Nivel = 98
+				ORDER BY Proceso";
+
+		return $this->db->datos($sql);
+	}
 }
 ?>
