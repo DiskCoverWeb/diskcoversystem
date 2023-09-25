@@ -10,7 +10,7 @@
 	let producto = ""; //para reserva
 	let detalle = ""; //para reserva
 
-	var listOrden = [];//para procesar seleccion del modal ordenes de produccion
+
 	var dataInv = [];//datos del SP.
 	$(document).ready(function () {
 		var tipo = "<?php echo $_GET['tipo']; ?>";
@@ -1027,7 +1027,6 @@
 						selectOrden.appendChild(option);
 					});
 
-					listOrden = data; // se asigna lo retornado a la lista
 					// for (var i = 0; i < data.length; i++) {
 					// 	var row = ordenTableBody.insertRow();
 					// 	var cell = row.insertCell(0);
@@ -2104,18 +2103,59 @@
 		var ordenSeleccionadaText = "";
 		for (var i = 0; i < selectedOptions.length; i++) {
 			var option = selectedOptions[i];
-			ordenSeleccionadaText = option.value;
+			ordenSeleccionadaText = option.text;
 			switch (ordenSeleccionadaText.substring(0, 4)) {
 				case "Lote":
-					dataInv.Fecha_Exp = fechaSistema();
-					dataInv.Fecha_Fab = fechaSistema();
-					dataInv.Modelo = "Ninguno";
+					dataInv.fecha_exp = fechaSistema();
+					dataInv.fecha_fab = fechaSistema();
+					dataInv.modelo = "Ninguno";
 
 					let stockLote = 0;
 
-					let lote_no = sinEspaciosDer(ordenSeleccionadaText);
+					var parametros = {
+						"lote_no": ordenSeleccionadaText
+					};
+
+					$.ajax({
+						type: "POST",
+						url: '../controlador/facturacion/facturarC.php?case_lote=true',
+						data: { parametros: parametros },
+						dataType: 'json',
+						success: function (data) {
+							// console.log(data);
+							if (data.length > 0) {
+								dataInv.procedencia = data['procedencia'];
+								dataInv.modelo = data['modelo'];
+								dataInv.serie_no = data['serie_no'];
+								dataInv.fecha_exp = data['fecha_exp'];
+								dataInv.fecha_fab = data['fecha_fab'];
+								stockLote = data['totStock'];
+							}
+						}
+					});
 					break;
 				case "Orde":
+					let cantOrdenes = 0;
+
+					let cadena = ordenSeleccionadaText;
+					var parametros = {
+						'cadena': cadena,
+						'cod_cxc': document.getElementById("Cod_CxC"),
+						'cta': document.getElementById("Cta_CxP")
+					};
+
+					$.ajax({
+						type: "POST",
+						url: '../controlador/facturacion/facturarC.php?case_orde=true',
+						data: {parametros: parametros},
+						dataType: 'json',
+						success: function (data) {
+							// console.log(data);
+							if (data.length > 0) {
+								
+							}
+						}
+					});
 					break;
 			}
 
