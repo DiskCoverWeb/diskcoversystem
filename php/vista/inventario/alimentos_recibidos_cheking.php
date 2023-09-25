@@ -9,62 +9,63 @@
         });    
   	autocoplet_alimento();
   	autocoplet_ingreso();
+  	pedidos();
 
-  	$( "#txt_codigo" ).autocomplete({
-            source: function( request, response ) {
+  	// $( "#txt_codigo" ).autocomplete({
+    //         source: function( request, response ) {
                 
-                $.ajax({
-                		url:   '../controlador/inventario/alimentos_recibidosC.php?search=true',          
-                    type: 'post',
-                    dataType: "json",
-                    data: {
-                        search: request.term
-                    },
-                    success: function( data ) {
-                      console.log(data);
-                        response( data );
-                    }
-                });
-            },
-            select: function (event, ui) {
-              console.log(ui.item);
-                $('#txt_id').val(ui.item.value); // display the selected text
-                $('#txt_fecha').val(ui.item.Fecha); // display the selected text
-                $('#txt_ci').val(ui.item.CI_RUC); // save selected id to input
-                $('#txt_donante').val(ui.item.Cliente); // save selected id to input
-                $('#txt_tipo').val(ui.item.Cod_Ejec); // save selected id to input
-                $('#txt_cant').val(ui.item.Total); // save selected id to input
-                $('#txt_comentario').val(ui.item.mensaje); // save selected id to input
-                $('#txt_ejec').val(ui.item.Cod_Ejec); // save selected id to input
-                if(ui.item.Cod_R=='0')
-                {
-                	$('#img_estado').attr('src','../../img/png/bloqueo.png');
-                }else
-                {
+    //             $.ajax({
+    //             		url:   '../controlador/inventario/alimentos_recibidosC.php?search=true',          
+    //                 type: 'post',
+    //                 dataType: "json",
+    //                 data: {
+    //                     search: request.term
+    //                 },
+    //                 success: function( data ) {
+    //                   console.log(data);
+    //                     response( data );
+    //                 }
+    //             });
+    //         },
+    //         select: function (event, ui) {
+    //           console.log(ui.item);
+    //             $('#txt_id').val(ui.item.value); // display the selected text
+    //             $('#txt_fecha').val(ui.item.Fecha); // display the selected text
+    //             $('#txt_ci').val(ui.item.CI_RUC); // save selected id to input
+    //             $('#txt_donante').val(ui.item.Cliente); // save selected id to input
+    //             $('#txt_tipo').val(ui.item.Cod_Ejec); // save selected id to input
+    //             $('#txt_cant').val(ui.item.Total); // save selected id to input
+    //             $('#txt_comentario').val(ui.item.mensaje); // save selected id to input
+    //             $('#txt_ejec').val(ui.item.Cod_Ejec); // save selected id to input
+    //             if(ui.item.Cod_R=='0')
+    //             {
+    //             	$('#img_estado').attr('src','../../img/png/bloqueo.png');
+    //             }else
+    //             {
 
-                	$('#img_estado').attr('src','../../img/png/aprobar.png');
-                }
-                $('#txt_temperatura').val(ui.item.Porc_C); // save selected id to input
+    //             	$('#img_estado').attr('src','../../img/png/aprobar.png');
+    //             }
+    //             $('#txt_temperatura').val(ui.item.Porc_C); // save selected id to input
 
-                $('#ddl_alimento').append($('<option>',{value: ui.item.Cod_C, text:ui.item.Proceso,selected: true }));
-                if(ui.item.Proceso.toUpperCase() =='COMPRAS' || ui.item.Proceso.toUpperCase() =='COMPRA')
-                {
-                	$('#pnl_factura').css('display','block');
-                }else
-                {
+    //             $('#ddl_alimento').append($('<option>',{value: ui.item.Cod_C, text:ui.item.Proceso,selected: true }));
+    //             if(ui.item.Proceso.toUpperCase() =='COMPRAS' || ui.item.Proceso.toUpperCase() =='COMPRA')
+    //             {
+    //             	$('#pnl_factura').css('display','block');
+    //             }else
+    //             {
 
-                	$('#pnl_factura').css('display','none');
-                }
-                console.log(ui.item.Proceso.toUpperCase())
-                cargar_pedido();
-                return false;
-            },
-            focus: function(event, ui){
-                 $('#txt_codigo').val(ui.item.label); // display the selected text
+    //             	$('#pnl_factura').css('display','none');
+    //             }
+    //             console.log(ui.item.Proceso.toUpperCase())
+    //             cargar_pedido();
+    //             return false;
+    //         },
+    //         focus: function(event, ui){
+    //              $('#txt_codigo').val(ui.item.label); // display the selected text
                 
-                return false;
-            },
-        });
+    //             return false;
+    //         },
+    //     });
 
   	$('#ddl_producto').on('select2:select', function (e) {
       var data = e.params.data.data;
@@ -77,8 +78,57 @@
     });
 
 
+      $('#txt_codigo').on('select2:select', function (e) {
+		      var data = e.params.data.data;
+
+		      $('#txt_id').val(data.ID); // display the selected text
+		      $('#txt_fecha').val(formatoDate(data.Fecha_P.date)); // display the selected text
+		      $('#txt_ci').val(data.CI_RUC); // save selected id to input
+		      $('#txt_donante').val(data.Cliente); // save selected id to input
+		      $('#txt_tipo').val(data.Cod_Ejec); // save selected id to input
+		      $('#txt_cant').val(data.TOTAL); // save selected id to input
+		      $('#txt_comentario').val(data.Mensaje); // save selected id to input
+		      $('#txt_ejec').val(data.Cod_Ejec); // save selected id to input
+
+		      $('#txt_contra_cta').val(data.Cta_Haber); // save selected id to input
+		      $('#txt_cta_inv').val(data.Cta_Debe); // save selected id to input
+
+		      $('#txt_codigo_p').val(data.CodigoP)
+		      if(data.Cod_R=='0')
+		      {
+		      	$('#img_estado').attr('src','../../img/png/bloqueo.png');
+		      }else
+		      {
+
+		      	$('#img_estado').attr('src','../../img/png/aprobar.png');
+		      }
+		      $('#txt_temperatura').val(data.Porc_C); // save selected id to input
+		      $('#ddl_alimento').append($('<option>',{value: data.Cod_C, text:data.Proceso,selected: true }));
+   		 		cargar_pedido();
+   		});
+
 
   })
+
+    function pedidos(){
+  $('#txt_codigo').select2({
+    placeholder: 'Seleccione una beneficiario',
+    // width:'90%',
+    ajax: {
+      url:   '../controlador/inventario/alimentos_recibidosC.php?pedidos_proce=true',          
+      dataType: 'json',
+      delay: 250,
+      processResults: function (data) {
+        // console.log(data);
+        return {
+          results: data
+        };
+      },
+      cache: true
+    }
+  });
+}
+
 
   function guardar()
   {
@@ -305,6 +355,81 @@ function autocoplet_ingreso()
   	 console.log(cbx);
   }
 
+  function recalcular(id)
+  {
+  	var cant =  $('#txt_cant_ped_'+id).text();
+  	var pvp =  $('#txt_pvp_linea_'+id).val();
+  	var total = parseFloat(cant)* parseFloat(pvp);
+  	$('#txt_total_linea_'+id).val(total.toFixed(4));
+  	console.log(total);
+  }
+
+  function editar_precio(id)
+  {
+  		parametros = 
+  		{
+  			'id':id,
+  			'pvp':$('#txt_pvp_linea_'+id).val(),
+  			'total':$('#txt_total_linea_'+id).val(),
+  		}
+	  	$.ajax({
+		    type: "POST",
+	      	url:   '../controlador/inventario/alimentos_recibidosC.php?editar_precio=true',
+		    data:{parametros:parametros},
+	        dataType:'json',
+		    success: function(data)
+		    {
+		    	cargar_pedido();
+		    	
+		    }
+		});  	
+
+  }
+
+  function guardar_check()
+  {
+  	var checked = '';
+  	var no_checked = '';
+  	 $('.rbl_conta').each(function() {
+		    const checkbox = $(this);
+		    const isChecked = checkbox.prop('checked'); 
+		    if (isChecked) {
+		       checked+=checkbox[0].defaultValue+',';
+		    }else
+		    {
+		    	no_checked+=checkbox[0].defaultValue+',';
+		    }
+			});
+  	 // if(checked=='')
+  	 // {
+  	 // 	Swal.fire('No se ha seleccionado ningun item','','info');
+  	 // 	return false;
+  	 // }
+
+  	 parametros = 
+  		{
+  			'check':checked,
+  			'no_check':no_checked,
+  		}
+	  	$.ajax({
+		    type: "POST",
+	      	url:   '../controlador/inventario/alimentos_recibidosC.php?editar_checked=true',
+		    data:{parametros:parametros},
+	        dataType:'json',
+		    success: function(data)
+		    {
+		    	if(data==1)
+		    	{
+		    		Swal.fire('Items Seleccionado Gaurdados','','success');
+		    	}
+		    	
+		    }
+		});  	
+
+  	 // console.log(checked)
+
+  }
+
 </script>
 
  <div class="row">
@@ -314,11 +439,16 @@ function autocoplet_ingreso()
               <img src="../../img/png/salire.png">
             </a>
         </div>
+         <div class="col-xs-2 col-md-2 col-sm-2">
+					<button class="btn btn-default" title="Guardar" onclick="guardar_check()">
+						<img src="../../img/png/check.png">
+					</button>
+				</div>  
         <div class="col-xs-2 col-md-2 col-sm-2">
-			<button class="btn btn-default" title="Guardar" onclick="guardar()">
-				<img src="../../img/png/grabar.png">
-			</button>
-		</div>  
+					<button class="btn btn-default" title="Guardar" onclick="guardar()">
+						<img src="../../img/png/grabar.png">
+					</button>
+				</div>  
 		<!-- <div class="col-xs-2 col-md-2 col-sm-2">
 			<button class="btn btn-default" title="Guardar" onclick="nuevo_proveedor()">
 				<img src="../../img/png/mostrar.png">
@@ -347,7 +477,10 @@ function autocoplet_ingreso()
                  		<b>Codigo de Ingreso:</b>
                	</div>							
                	<div class="col-sm-6">
-                   <input type="" class="form-control input-xs" id="txt_codigo" name="txt_codigo" style="z-index: auto;" >
+                  	<input type="hidden" class="form-control input-xs" id="txt_codigo_p" name="txt_codigo_p" readonly>
+                   <select class="form-control input-xs" id="txt_codigo" name="txt_codigo">
+                   	<option>Seleccione</option>
+                   </select>
                 </div>
 						</div>
 						
@@ -430,17 +563,18 @@ function autocoplet_ingreso()
 							<div class="col-sm-6">
 								<div class="row">
 									<div class="col-sm-6">
-										<label style="color:red" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" value="R" checked>  <img src="../../img/png/sad.png"> </label>											
+										<label style="color:green" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion"  value="V" checked > <img src="../../img/png/smile.png"></label>											
 									</div>
 									<div class="col-sm-6">
-										<label style="color:green" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion"  value="V" > <img src="../../img/png/smile.png"></label>											
+										<label style="color:red" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" value="R" >  <img src="../../img/png/sad.png"> </label>											
 									</div>
+									
 								</div>
 									<!-- <b>Evaluacion</b><br> -->
 										
 														
 							</div>
-							<div class="col-sm-12" id="pnl_comentario">
+							<div class="col-sm-12" id="pnl_comentario" style="display:none;">
 									<b>comentario de ingreso</b>
 									<textarea class="form-control input-sm" rows="3" id="txt_comentario2" name="txt_comentario2"></textarea>								
 							</div>

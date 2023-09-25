@@ -1,5 +1,6 @@
 <?php 
 require_once(dirname(__DIR__,2)."/modelo/inventario/alimentos_recibidosM.php");
+require_once(dirname(__DIR__,2)."/funciones/funciones.php");
 
 
 $controlador = new alimentos_recibidosC();
@@ -21,6 +22,11 @@ if(isset($_GET['guardar2']))
 {
 	$parametros = $_POST;
 	echo json_decode($controlador->guardar2($parametros));
+}
+if(isset($_GET['eliminar_pedido']))
+{
+	$parametros = $_POST;
+	echo json_decode($controlador->eliminar_pedido($parametros));
 }
 if(isset($_GET['alimentos']))
 {
@@ -64,8 +70,22 @@ if(isset($_GET['autoincrementable']))
 }
 if(isset($_GET['search']))
 {
-	$query = $_POST['search'];
+	$query = '';
+	if(isset($_GET['q']))
+	{
+		$query = $_GET['q'];
+	}
 	echo json_encode($controlador->buscar($query));
+
+}
+if(isset($_GET['pedidos_proce']))
+{
+	$query = '';
+	if(isset($_GET['q']))
+	{
+		$query = $_GET['q'];
+	}
+	echo json_encode($controlador->buscar_procesado($query));
 
 }
 if(isset($_GET['guardar_recibido']))
@@ -104,6 +124,22 @@ if(isset($_GET['cargar_datos']))
 	echo json_encode($controlador->cargar_datos($parametros));
 }
 
+if(isset($_GET['producto_costo']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->producto_costo($parametros));
+}
+if(isset($_GET['editar_precio']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->editar_precio($parametros));
+}
+if(isset($_GET['editar_checked']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->editar_checked($parametros));
+}
+
 /**
  * 
  */
@@ -138,8 +174,15 @@ class alimentos_recibidosC
 	{
 		// print_r($parametros);die();
 		SetAdoAddNew('Trans_Correos');
-		SetAdoFields('T','N');		
+		SetAdoFields('T','P');		
 		SetAdoFields('Llamadas',$parametros['txt_comentario2']);
+		if($parametros['cbx_evaluacion']=='V')
+		{			
+			SetAdoFields('CI',1);
+		}else
+		{
+			SetAdoFields('CI',0);
+		}
 		if(isset($parametros['rbl_recibido']))
 		{
 			SetAdoFields('C',1);
@@ -194,7 +237,17 @@ class alimentos_recibidosC
 		$datos = $this->modelo->buscar_transCorreos($cod);
 		$result = array();
 		foreach ($datos as $key => $value) {
-		 $result[] = array("value"=>$value['ID'],"label"=>$value['Envio_No'],'Fecha'=>$value['Fecha_P']->format('Y-m-d'),'mensaje'=>$value['Mensaje'],'Codigo_P'=>$value['CodigoP'],'Total'=>$value['TOTAL'],'Cod_C'=>$value['Cod_C'],'CI_RUC'=>$value['CI_RUC'],'Cod_Ejec'=>$value['Cod_Ejec'],'Cliente'=>$value['Cliente'],'Proceso'=>$value['Proceso'],'Porc_C'=>$value['Porc_C'],'Cod_R'=>$value['Cod_R']);
+		 $result[] = array("id"=>$value['Envio_No'],"text"=>$value['Envio_No'],'data'=>$value);
+		}
+		return $result;
+	}
+
+	function buscar_procesado($cod)
+	{
+		$datos = $this->modelo->buscar_transCorreos_procesados($cod);
+		$result = array();
+		foreach ($datos as $key => $value) {
+		 $result[] = array("id"=>$value['Envio_No'],"text"=>$value['Envio_No'],'data'=>$value);
 		}
 		return $result;
 	}
@@ -244,10 +297,10 @@ class alimentos_recibidosC
 		   SetAdoFields('Codigo_Barra',$parametro['txt_codigo'].'-'.$producto[0]['Item_Banco']);
 		   SetAdoFields('CodBodega',-1);
 
+		   SetAdoFields('Cta_Inv',$parametro['txt_cta_inv']);
+		   SetAdoFields('Contra_Cta',$parametro['txt_contra_cta']);
+		   SetAdoFields('Codigo_P',$parametro['txt_codigo_p']);
 
-		   // SetAdoFields('Descuento',$parametro['descuento']);
-		   // SetAdoFields('Codigo_P',$parametro['CodigoP']);
-		   // SetAdoFields('Detalle',$parametro['pro']);
 		   // SetAdoFields('Centro_Costo',$parametro['area']);
 		   // SetAdoFields('Codigo_Dr',$parametro['solicitante']);
 		   // SetAdoFields('Costo',number_format($parametro['valor'],2,'.',''));
@@ -393,11 +446,20 @@ class alimentos_recibidosC
   					<td width="'.$d1.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
   					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
-  					<td width="'.$d4.'">'.$value['Entrada'].'</td>
-  					<td width="'.$d4.'">'.$value['Valor_Unitario'].'</td>
-  					<td width="'.$d4.'">'.$value['Valor_Total'].'</td>
-  					<td width="90px">
-  					<input type="checkbox" class="rbl_conta" name="rbl_conta" id="rbl_conta_'.$value['ID'].'" value="'.$value['ID'].'" />
+  					<td width="'.$d4.'" id="txt_cant_ped_'.$value['ID'].'">'.$value['Entrada'].'</td>
+  					<td width="'.$d4.'"><input class="form-control" id="txt_pvp_linea_'.$value['ID'].'" name="txt_pvp_linea_'.$value['ID'].'" onblur="recalcular('.$value['ID'].')" input-sm" value="'.$value['Valor_Unitario'].'"></td>
+  					<td width="'.$d4.'"><input class="form-control" id="txt_total_linea_'.$value['ID'].'" name="txt_total_linea_'.$value['ID'].'"  input-sm" value="'.$value['Valor_Total'].'" readonly></td>
+  					<td width="90px">';
+  					if($value['T']=='C')
+  					{
+  					  $tr.='<input type="checkbox" class="rbl_conta" name="rbl_conta" id="rbl_conta_'.$value['ID'].'" value="'.$value['ID'].'" checked  />';
+  					}else
+  					{
+  						$tr.='<input type="checkbox" class="rbl_conta" name="rbl_conta" id="rbl_conta_'.$value['ID'].'" value="'.$value['ID'].'" />';
+  					}
+  					$tr.='</td>
+  					<td>
+  						<button class="btn btn-sm btn-primary" onclick="editar_precio('.$value['ID'].')"><i class="fa fa-save"></i></button>
   					</td>
   				</tr>';
 			
@@ -436,32 +498,18 @@ class alimentos_recibidosC
 		$productos = array();
 		foreach ($datos as $key => $value) {			
 			$Familia = $this->modelo->familia_pro(substr($value['Codigo_Inv'],0,5));
-			// $costo =  $this->ing_descargos->costo_venta($value['Codigo_Inv']);
-			// $costoTrans = $this->ing_descargos->costo_producto($value['Codigo_Inv']);
-
-			// $FechaInventario = date('Y-m-d');
-		 	// $CodBodega = '01';
-		 	// $costo_existencias = Leer_Codigo_Inv($value['Codigo_Inv'],$FechaInventario,$CodBodega,$CodMarca='');
-
-			// if(empty($Familia))
-			// {
-			// 	$Familia[0]['Producto'] = '-';
-			// 	$Familia[0]['Codigo_Inv'] = '.';
-			// }
-			// if($costo_existencias['respueta']!=1)
-			// {
-			// 	$costo[0]['Existencia'] = 0;
-			// 	$costoTrans[0]['Costo'] = 0;				
-			// }else
-			// {
-			// 	$costo[0]['Existencia'] = $costo_existencias['datos']['Stock'];
-			// 	$costoTrans[0]['Costo'] = $costo_existencias['datos']['Costo'];		
-			// }			
-
 			$productos[] = array('id'=>$Familia[0]['Codigo_Inv'],'text'=>$value['Producto'],'data'=>$Familia);
 
 		}
 		return $productos;
+		// print_r($productos);die();
+	}
+
+	function producto_costo($parametros)
+	{
+		$query = $parametros['cta_inv'];
+		$productos  = Leer_Codigo_Inv($query,date('Y-m-d'));
+		return $productos['datos'];
 		// print_r($productos);die();
 	}
 
@@ -474,12 +522,13 @@ class alimentos_recibidosC
 		$tr= '';
 		foreach ($datos as $key => $value) {
 			$tr.='<tr>
+					<td>'.$value['Envio_No'].'</td>
 					<td>'.$value['Fecha_P']->format('Y-m-d').'</td>
 					<td>'.$value['Cliente'].'</td>
 					<td>'.$value['Proceso'].'</td>
 					<td>'.$value['TOTAL'].'</td>
-				<!--	<td>'.$value['Envio_No'].'</td> -->
 					<td>'.$value['Porc_C'].'</td>
+					<td><button type="button" class="btn-sm btn-danger btn" onclick="eliminar_pedido(\''.$value['ID'].'\')"><i class="fa fa-trash"></i></button></td>
 
 				  </tr>';
 		}
@@ -488,8 +537,58 @@ class alimentos_recibidosC
 		print_r($datos);die();
 	}
 
+	function eliminar_pedido($data)
+	{
+		$id = $data['ID'];
+		return $this->modelo->eliminar_pedido($id);
+	} 
+	function editar_precio($parametros)
+	{
+		// print_r($parametros);die();
+		SetAdoAddNew('Trans_Kardex');
+		SetAdoFields('Valor_Unitario',$parametros['pvp']);		
+		SetAdoFields('Valor_Total',$parametros['total']);
+		SetAdoFieldsWhere('ID',$parametros['id']);
+		return SetAdoUpdateGeneric();
 
-	  
+	}
+
+	function editar_checked($parametros)
+	{
+		// print_r($parametros);die();
+		$op =  substr($parametros['check'],0,-1);
+		$op = explode(',', $op);
+
+		$no_op =  substr($parametros['no_check'],0,-1);
+		$no_op = explode(',', $no_op);
+
+
+
+		foreach ($op as $key => $value) {
+			
+			SetAdoAddNew('Trans_Kardex');
+			SetAdoFields('T','C');		
+			SetAdoFieldsWhere('ID',$value);
+			SetAdoUpdateGeneric();
+
+		}
+		foreach ($no_op as $key => $value) {
+			
+			SetAdoAddNew('Trans_Kardex');
+			SetAdoFields('T','.');		
+			SetAdoFieldsWhere('ID',$value);
+			SetAdoUpdateGeneric();
+
+		}
+
+		return 1;
+
+		// SetAdoAddNew('Trans_Kardex');
+		// SetAdoFields('T','C');		
+		// SetAdoFieldsWhere('ID',$parametros['id']);
+		// return SetAdoUpdateGeneric();
+
+	}
 
 
 }
