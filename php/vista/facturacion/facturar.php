@@ -945,16 +945,15 @@
 
 	}
 	function boton3() {
-		$('#myModal_ordenesProd').modal('show');
-		var selectOrden = document.getElementById("selectOrden");
+		/*var selectOrden = document.getElementById("selectOrden");
 		var dataTest = ["Orden1", "Orden2", "Orden3"];
 		dataTest.forEach(function (orden) {
 			var option = document.createElement("option");
 			option.value = orden;
 			option.text = orden;
 			selectOrden.appendChild(option);
-		});
-		//Listar_Ordenes();
+		});*/
+		Listar_Ordenes();
 	}
 	function boton4() {
 		$('#myModal_guia').modal('show');
@@ -1015,6 +1014,7 @@
 			dataType: 'json',
 			success: function (data) {
 				if (data.length > 0) {
+					$('#myModal_ordenesProd').modal('show');
 					// var ordenTableBody = document.getElementById("ordenTableBody");
 					// ordenTableBody.innerHTML = "";
 
@@ -1034,7 +1034,6 @@
 					// 	cell.innerHTML = data[i][0]; // "Orden No. XXXXXXXXX - Nombre del Cliente"						
 					// }
 
-					$('#myModal_ordenesProd').modal('show');
 				} else {
 					Swal.fire('No existen órdenes para procesar', '', 'info');
 				}
@@ -2082,87 +2081,78 @@
 </div>
 
 <script type="text/javascript">
-	function procesar() {
-		$('#myModal_ordenesProd').modal('hide');
-		$('#TextComEjec').val();
-
-	}
-
-	function sinEspaciosDer(texto) {
-		var palabras = texto.split(" ");
-
-		var ultimaPalabra = palabras[palabras.length - 1];
-		var resultado = ultimaPalabra.trimRight();
-
-		return resultado;
-	}
 
 	function llenarOrden() {
 		var LstOrdenP = document.getElementById("selectOrden");
-		var selectedOptions = LstOrdenP.selectedOptions;
-		var ordenSeleccionadaText = "";
-		for (var i = 0; i < selectedOptions.length; i++) {
-			var option = selectedOptions[i];
-			ordenSeleccionadaText = option.text;
-			switch (ordenSeleccionadaText.substring(0, 4)) {
-				case "Lote":
-					dataInv.fecha_exp = fechaSistema();
-					dataInv.fecha_fab = fechaSistema();
-					dataInv.modelo = "Ninguno";
+		if (LstOrdenP.length > 0) {
+			var selectedOptions = LstOrdenP.selectedOptions;
+			var ordenSeleccionadaText = "";
+			let cantOrdenes = LstOrden.length;
+			for (var i = 0; i < selectedOptions.length; i++) {
+				var option = selectedOptions[i];
+				ordenSeleccionadaText = option.text;
+				switch (ordenSeleccionadaText.substring(0, 4)) {
+					case "Lote":
+						dataInv.fecha_exp = fechaSistema();
+						dataInv.fecha_fab = fechaSistema();
+						dataInv.modelo = "Ninguno";
 
-					let stockLote = 0;
+						let stockLote = 0;
 
-					var parametros = {
-						"lote_no": ordenSeleccionadaText
-					};
+						var parametros = {
+							"lote_no": ordenSeleccionadaText
+						};
 
-					$.ajax({
-						type: "POST",
-						url: '../controlador/facturacion/facturarC.php?case_lote=true',
-						data: { parametros: parametros },
-						dataType: 'json',
-						success: function (data) {
-							// console.log(data);
-							if (data.length > 0) {
-								dataInv.procedencia = data['procedencia'];
-								dataInv.modelo = data['modelo'];
-								dataInv.serie_no = data['serie_no'];
-								dataInv.fecha_exp = data['fecha_exp'];
-								dataInv.fecha_fab = data['fecha_fab'];
-								stockLote = data['totStock'];
+						$.ajax({
+							type: "POST",
+							url: '../controlador/facturacion/facturarC.php?case_lote=true',
+							data: { parametros: parametros },
+							dataType: 'json',
+							success: function (data) {
+								// console.log(data);
+								if (data.length > 0) {
+									dataInv.procedencia = data['procedencia'];
+									dataInv.modelo = data['modelo'];
+									dataInv.serie_no = data['serie_no'];
+									dataInv.fecha_exp = data['fecha_exp'];
+									dataInv.fecha_fab = data['fecha_fab'];
+									stockLote = data['totStock'];
+								}
 							}
-						}
-					});
-					break;
-				case "Orde":
-					let cantOrdenes = 0;
+						});
+						break;
+					case "Orde":
 
-					let cadena = ordenSeleccionadaText;
-					var parametros = {
-						'cadena': cadena,
-						'cod_cxc': document.getElementById("Cod_CxC"),
-						'cta': document.getElementById("Cta_CxP")
-					};
+						let cadena = ordenSeleccionadaText;
+						var parametros = {
+							'cadena': cadena,
+							'cod_cxc': document.getElementById("Cod_CxC"),
+							'cta': document.getElementById("Cta_CxP")
+						};
 
-					$.ajax({
-						type: "POST",
-						url: '../controlador/facturacion/facturarC.php?case_orde=true',
-						data: {parametros: parametros},
-						dataType: 'json',
-						success: function (data) {
-							// console.log(data);
-							if (data.length > 0) {
-								
+						$.ajax({
+							type: "POST",
+							url: '../controlador/facturacion/facturarC.php?case_orde=true',
+							data: { parametros: parametros },
+							dataType: 'json',
+							success: function (data) {
+								// console.log(data);
+								if (data != '1') {
+									Swal.fire('Se han procesado las ordenes', '', 'info');
+								}else{
+									Swal.fire('No existen órdenes para procesar', '', 'error');
+								}
 							}
-						}
-					});
-					break;
+						});
+						break;
+				}
+
+				console.log("Opcion seleccionada: ", ordenSeleccionadaText);
 			}
+		}else{
 
-			console.log("Opcion seleccionada: ", ordenSeleccionadaText);
+			lineas_factura();
 		}
-
-
 
 	}
 </script>

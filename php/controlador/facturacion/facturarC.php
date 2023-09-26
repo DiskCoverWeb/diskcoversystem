@@ -300,35 +300,41 @@ class facturarC
     function case_orde($parametros){
       $datos = $this -> modelo -> case_orde($parametros['cadena']);
 
-      $sep = MidStrg($parametros['cadena'], 11, strlen($parametros['cadena']));
-      $ordenP = intval(SinEspaciosIzq($sep));
+      if($datos[0] == '1'){
+         $sep = MidStrg($parametros['cadena'], 11, strlen($parametros['cadena']));
+         $ordenP = intval(SinEspaciosIzq($sep));
 
-      $Ln_No = count($datos) + 1;
+         $Ln_No = 0;
       
-      foreach($datos as $key => $value){
-         SetAdoAddNew("Asiento_F");
-         SetAdoFields("CODIGO", $value['Codigo']);
-         SetAdoFields("CODIGO_L", $parametros['cod_cxc']);
-         SetAdoFields("PRODUCTO", $value['Producto']);
-         SetAdoFields("CANT", $value['Cantidad']);
-         SetAdoFields("PRECIO", $value['Precio']);
-         SetAdoFields("TOTAL", $value['Total']);
-         SetAdoFields("Total_Desc", $value['Total_Desc']);
-         SetAdoFields("Total_IVA", $value['Total_IVA']);
-         SetAdoFields("Serie_No", $value['Serie_No']);
-         SetAdoFields("CodBod", $value['CodBodega']);
-         SetAdoFields("Costo", $value['Costo']);
-         SetAdoFields("Cta", $parametros['cta']);
-         SetAdoFields("Item", $_SESSION['INGRESO']['item']);
-         SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU'] );
-         SetAdoFields("A_No", $Ln_No);
-         SetAdoFields("Numero", $ordenP);
-         SetAdoUpdate();
-         $Ln_No++;
+         foreach($datos[1] as $key => $value){
+            SetAdoAddNew("Asiento_F");
+            SetAdoFields("CODIGO", $value['Codigo']);
+            SetAdoFields("CODIGO_L", $parametros['cod_cxc']);
+            SetAdoFields("PRODUCTO", $value['Producto']);
+            SetAdoFields("CANT", $value['Cantidad']);
+            SetAdoFields("PRECIO", $value['Precio']);
+            SetAdoFields("TOTAL", $value['Total']);
+            SetAdoFields("Total_Desc", $value['Total_Desc']);
+            SetAdoFields("Total_IVA", $value['Total_IVA']);
+            SetAdoFields("Serie_No", $value['Serie_No']);
+            SetAdoFields("CodBod", $value['CodBodega']);
+            SetAdoFields("Costo", $value['Costo']);
+            SetAdoFields("Cta", $parametros['cta']);
+            SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+            SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU'] );
+            SetAdoFields("A_No", $Ln_No);
+            SetAdoFields("Numero", $ordenP);
+            SetAdoUpdate();
+            $Ln_No = $Ln_No + 1;
+            
+         }
+
+         return '1';
       }
-      
-    }
 
+      return '0';
+
+    }
     function lineas_facturas()
     {
     	// $codigoCliente = $parametro['codigoCliente'];

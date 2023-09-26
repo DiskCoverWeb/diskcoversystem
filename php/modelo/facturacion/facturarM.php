@@ -39,11 +39,9 @@ class facturarM
 
     $data = $this->db->datos($sql);
 
-    if (count($data) > 0) {
-      return $data; // Si se encuentra en Asiento_F, retornar los datos.
-    }
+    if (count($data) <= 0) {
 
-    $sql2 = "SELECT * 
+      $sql2 = "SELECT * 
              FROM Detalle_Factura
              WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
              AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
@@ -52,9 +50,15 @@ class facturarM
              AND Factura = '" . $ordenP . "'
              ORDER BY ID,Codigo";
 
-    $data2 = $this->db->datos($sql2);
+      $data2 = $this->db->datos($sql2);
 
-    return $data2; // Si no se encuentra en Asiento_F, retornar los datos de Detalle_Factura.
+      if (count($data2) > 0) {
+        return ['1', $data];
+      }
+      
+    }
+
+    return ['0', $data2];
 
   }
 

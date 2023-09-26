@@ -297,8 +297,8 @@
 				}
 			}
 
+		
 			
-
 		 var parametros = 
 		 {
 		 	 'usuario':usuario,
