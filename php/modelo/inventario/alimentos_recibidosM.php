@@ -63,12 +63,35 @@ class alimentos_recibidosM
 
 	function buscar_transCorreos($cod=false,$fecha=false)
 	{
+		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber  
+		from Trans_Correos TC
+		inner join Clientes C on TC.CodigoP = C.Codigo 
+		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
+		where Item = '".$_SESSION['INGRESO']['item']."'
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND TC.T = 'N' ";
+		if($cod)
+		{
+			$sql.= " AND Envio_No  like  '%".$cod."%'";
+		}
+		if($fecha)
+		{
+			$sql.= " AND TC.Fecha_P =  '".$fecha."'";
+		}
+
+		// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+
+	function buscar_transCorreos_procesados($cod=false,$fecha=false)
+	{
 		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R 
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
 		where Item = '".$_SESSION['INGRESO']['item']."'
-		AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND TC.T = 'P' ";
 		if($cod)
 		{
 			$sql.= " AND Envio_No  like  '%".$cod."%'";
@@ -126,23 +149,32 @@ class alimentos_recibidosM
 		{
 			$pag = 0;
 		}
-		$sql = "SELECT ID,Codigo_Inv,Producto,TC,Minimo,Maximo,Cta_Inventario,Unidad,Ubicacion,IVA,Reg_Sanitario FROM Catalogo_Productos  WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' AND item='".$_SESSION['INGRESO']['item']."'  AND TC='P' AND LEN(Cta_Inventario)>3 AND LEN(Cta_Costo_Venta)>3 ";
+		$sql = "SELECT ID,Codigo_Inv,Producto,TC,Minimo,Maximo,Cta_Inventario,Unidad,Ubicacion,IVA,Reg_Sanitario,PVP 
+		FROM Catalogo_Productos  
+		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+		AND item='".$_SESSION['INGRESO']['item']."'  
+		AND TC='P' 
+		AND LEN(Cta_Inventario)>3 
+		AND LEN(Cta_Costo_Venta)>3 
+		AND LEN(Item_Banco)>= 2 
+		AND LEN(Item_Banco)<= 5 ";
 		if($query) 
 		{
 			$sql.=" AND Codigo_Inv+' '+Producto LIKE '%".$query."%'";
 		}
 		$sql.=" ORDER BY ID OFFSET ".$pag." ROWS FETCH NEXT 25 ROWS ONLY;";
 		
+		// print_r($sql);die();
 		$datos = $this->db->datos($sql);
        return $datos;
 	}
 	function familia_pro($Codigo=false,$query= false,$exacto=false)
 	{
-		$sql = "SELECT ID,Codigo_Inv,Producto,TC,Minimo,Maximo,Cta_Inventario,Unidad,Item_Banco 
+		$sql = "SELECT ID,Codigo_Inv,Producto,TC,Minimo,Maximo,Cta_Inventario,Unidad,Item_Banco,PVP 
 		        FROM Catalogo_Productos  
 		        WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 		        AND item='".$_SESSION['INGRESO']['item']."'  
-		        AND TC='I' 
+		        AND TC='P' 
 		        AND INV='1'";
 		if($Codigo)
 		{
@@ -162,6 +194,12 @@ class alimentos_recibidosM
 		// print_r($sql);die();
 		return $this->db->datos($sql);
 
+	}
+
+	function eliminar_pedido($id)
+	{
+		$sql = "DELETE FROM Trans_Correos WHERE ID = '".$id."'";
+		return $this->db->String_Sql($sql);
 	}
 
 
