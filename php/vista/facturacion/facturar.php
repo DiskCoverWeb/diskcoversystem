@@ -1,4 +1,6 @@
 <?php date_default_timezone_set('America/Guayaquil'); //print_r($_SESSION);die();//print_r($_SESSION['INGRESO']);die();
+
+//include('../../lib/fpdf/cabecera_pdf.php');
 //require('../../lib/fpdf/fpdf.php');
 ?>
 <script type="text/javascript">
@@ -1014,7 +1016,9 @@
 	//---------------fin Listar_Ordenes()--------
 
 	function CommandButton1_Click() {
-		//$('#dialog_impresion').modal('show');		
+
+		generarPDFtest();
+		/*$('#dialog_impresion').modal('show');		
 		var ordenNoString = document.getElementById("valOrden").value;
 		var ordenNo = parseFloat(ordenNoString);
 
@@ -1025,56 +1029,53 @@
 			dataType: 'json',
 			success: function (data) {
 				if (data.length > 0) {
-					generarPDFtest();
+					generarPDFtest(data[0].mensajes, data[0].mensajeEncabData);
 					//generarPDF(data[0].AdoAux, data[0].mensajeEncabData);
 				} else {
 					Swal.fire("No se encontraron datos para generar el PDF.", '', 'info');
 				}
 			}
-		})
-	}
-	/*
-	class PDF extends FPDF {
-		private $titulo; 
-
-		function __construct($titulo) {
-			parent::__construct();
-			$this->titulo = $titulo;
-		}
-
-		function Header() {		
-			$this -> Image('../../img/logotipos/DiskCover.gif', 10, 8, 33);
-			$this -> SetFont('Arial', 'B', 15);
-			$this -> Cell(80);
-			$this -> Cell(30, 10, $this->titulo 1, 0, 'C');
-			$this -> Ln(20);
-		}
-
-		function Footer() {
-			$this -> SetY(-15);
-			$this -> SetFont('Arial', 'I', 8);
-			$this -> Cell(0, 10, 'Página '.$this -> PageNo(), 0, 0, 'C');
-		}
-	}
-
-	function generarPDF($datos, $titulo) {
-		$pdf = new PDF($titulo);
-		$pdf -> AddPage();
-		foreach($datos as $value) {
-			$pdf -> Cell(0, 10, "Fecha: ".$value['Titulo'], 0, 1);
-			$pdf -> Cell(0, 10, "Producto: ".$value['mensajes'], 0, 1);			
-		}
-		$pdf -> Output('orden_de_trabajo.pdf', 'D');
+		})*/
 	}
 
 	function generarPDFtest() {
-		$pdf = new PDF("ORDEN DE TRABAJO");
-		$pdf -> AddPage();
-		//foreach($datos as $value) {
-		//	$pdf -> Cell(0, 10, "Fecha: ".$value['Titulo'], 0, 1);
-		//	$pdf -> Cell(0, 10, "Producto: ".$value['mensajes'], 0, 1);			
-		//}
-		$pdf -> Output('orden_de_trabajo.pdf', 'D');
+		var parametros = {
+			titulo: 'Titulo del PDF',	
+		};
+		$.ajax({
+			type: 'POST',
+			url: '../controlador/facturacion/facturarC.php?generar_detalle_test=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function(data) {
+				if (data.status == 200) {
+                console.log("SOLICITUD CORRECTA");                
+                /*var pdfData = atob(data.pdf);
+                var blob = new Blob([base64ToArrayBuffer(pdfData)], { type: 'application/pdf' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = data.filename;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);*/
+				console.log(data.filename);
+            } else {
+                console.error('Error al generar el PDF.');
+            }			
+			}
+		});
+	}
+
+	/*function base64ToArrayBuffer(base64) {
+		var binaryString = atob(base64);
+		var len = binaryString.length;
+		var bytes = new Uint8Array(len);
+		for (var i = 0; i < len; ++i) {
+			bytes[i] = binaryString.charCodeAt(i);
+		}
+		return bytes.buffer;
 	}*/
 
 	//------------------ guia-------------

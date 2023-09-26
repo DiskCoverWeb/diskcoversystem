@@ -9,7 +9,6 @@ if (!class_exists('FPDF')) {
    require('fpdf.php');
 }
 
-
 //include(dirname(__DIR__,2)."/php/db/db.php");
 //echo dirname(__DIR__,1);
 
@@ -42,6 +41,24 @@ class cabecera_pdf
 		$this->conn = cone_ajax();
 		
 	}	
+
+	function generarDetalleTest($parametros)
+	{		
+		$pdf = new PDFdetalle($parametros['titulo']);
+		$pdf->AddPage();		
+		$pdf->SetFont('Times','',12);
+
+		//ob_start();
+		$pdf->Output('D'); 
+		//$pdfData = ob_get_clean();
+
+		return array(
+			'status' => 200,
+			//'pdf' => base64_encode($pdfData),
+			'filename' => 'orden_de_trabajo.pdf'
+		);
+	}
+
 
 	function cabecera_reporte($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$sal_hea_body=30,$orientacion='P')
 	{	
@@ -810,9 +827,30 @@ class PDFv extends FPDF
 		$this->Ln($this->salto_header_cuerpo);
 
 	}
-
  }
+}
 
+class PDFdetalle extends FPDF {
+	private $titulo; 
+
+	function __construct($titulo) {
+		parent::__construct();
+		$this->titulo = $titulo;
+	}
+
+	function Header() {		
+		$this -> Image('../../img/logotipos/DiskCover.gif', 10, 8, 33);
+		$this -> SetFont('Arial', 'B', 15);
+		$this -> Cell(80);
+		$this -> Cell(30, 10, $this->titulo, 1, 0, 'C');
+		$this -> Ln(20);
+	}
+
+	function Footer() {
+		$this -> SetY(-15);
+		$this -> SetFont('Arial', 'I', 8);
+		$this -> Cell(0, 10, 'Página '.$this -> PageNo(), 0, 0, 'C');
+	}
 }
 
 class PDF_MC extends PDF_MC_Table

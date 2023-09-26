@@ -271,6 +271,12 @@ if(isset($_GET['imprimir_factura']))
    $parametros = $_POST['parametros'];
    echo json_encode($controlador->imprimir_factura($FA,$parametros));
 }
+if(isset($_GET['generar_detalle_test']))
+{
+   $parametros = $_POST['parametros'];
+   echo json_encode($controlador->generar_detalle_test($parametros));
+}
+
 
 
 class facturarC
@@ -846,6 +852,19 @@ function delete_asientoF($parametros)
       return $lista;
    }
 
+   function generar_detalle_test($parametros){
+      
+      /*return array(
+          'status' => 200,
+          'params' => $parametros
+      );*/
+
+      return $this->pdf->generarDetalleTest($parametros);
+  }
+  
+  
+   
+
 
   function Grabar_Factura_Actual($FA,$parametros)
   {
@@ -1161,7 +1180,6 @@ function delete_asientoF($parametros)
 
 
   }
-
     
 }
 ?>
