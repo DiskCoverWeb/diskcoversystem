@@ -42,21 +42,16 @@ class cabecera_pdf
 		
 	}	
 
-	function generarDetalleTest($parametros)
-	{		
-		$pdf = new PDFdetalle($parametros['titulo']);
-		$pdf->AddPage();		
-		$pdf->SetFont('Times','',12);
+	function generarDetalle($parametros)
+	{
+		$titulo = $parametros['titulo'];
+		$datos = $parametros['datos'];
 
-		//ob_start();
-		$pdf->Output('D'); 
-		//$pdfData = ob_get_clean();
+		$pdf = new PDFdetalle($titulo, $datos);
+		$pdf->AddPage();
+		$pdf->SetFont('Times', '', 12);
 
-		return array(
-			'status' => 200,
-			//'pdf' => base64_encode($pdfData),
-			'filename' => 'orden_de_trabajo.pdf'
-		);
+		$pdf->generarPDF();
 	}
 
 
@@ -832,24 +827,48 @@ class PDFv extends FPDF
 
 class PDFdetalle extends FPDF {
 	private $titulo; 
+	private $datos; 
 
-	function __construct($titulo) {
+	function __construct($titulo, $datos) {
 		parent::__construct();
 		$this->titulo = $titulo;
+		$this->datos = $datos;
 	}
 
-	function Header() {		
-		$this -> Image('../../img/logotipos/DiskCover.gif', 10, 8, 33);
+	function Headerd() {			
+		$this -> Image(dirname(__DIR__,2).'/img/logotipos/DiskCove.jpg', 10, 8, 33);
 		$this -> SetFont('Arial', 'B', 15);
 		$this -> Cell(80);
-		$this -> Cell(30, 10, $this->titulo, 1, 0, 'C');
+		$this -> Cell(0, 3, $this->titulo, 0, 0, 'C');
 		$this -> Ln(20);
 	}
 
 	function Footer() {
 		$this -> SetY(-15);
 		$this -> SetFont('Arial', 'I', 8);
-		$this -> Cell(0, 10, 'Página '.$this -> PageNo(), 0, 0, 'C');
+		$this -> Cell(0, 10, $this -> PageNo(), 0, 0, 'C');
+	}	
+	
+	public function generarPDF() {
+		$this->Headerd();
+	
+		if (empty($this->datos)) {
+			$this->SetFont('Arial', 'B', 12);
+			$this->Cell(0, 10, 'No hay datos disponibles para mostrar en el PDF.', 0, 1);
+		} else {
+			foreach ($this->datos as $row) {
+				$this->Cell(0, 10, 'Fecha: ' . $row['Fecha'], 0, 1);
+				$this->Cell(0, 10, 'Producto: ' . $row['Producto'], 0, 1);
+				$this->Cell(0, 10, 'Cantidad: ' . $row['Cantidad'], 0, 1);
+				$this->Cell(0, 10, 'Precio: ' . $row['Precio'], 0, 1);
+				$this->Cell(0, 10, 'A: ' . $row['A'], 0, 1);
+				$this->Cell(0, 10, 'S: ' . $row['S'], 0, 1);
+				$this->Ln(10);
+			}
+		}
+	
+		$this->Footer(); 
+		$this->Output('I', 'orden_de_trabajo.pdf');
 	}
 }
 

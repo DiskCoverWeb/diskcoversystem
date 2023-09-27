@@ -1016,67 +1016,55 @@
 	//---------------fin Listar_Ordenes()--------
 
 	function CommandButton1_Click() {
+		$('#myModal_ordenesProd').modal('hide');
+		$('#dialog_impresion').modal('show');				
+	}
 
-		generarPDFtest();
-		/*$('#dialog_impresion').modal('show');		
+	function aceptarimprimir(){
 		var ordenNoString = document.getElementById("valOrden").value;
 		var ordenNo = parseFloat(ordenNoString);
+		var option="";
+		var LstCliente = document.getElementById("DCCliente");
+		var selectedOptions = LstCliente.selectedOptions;
+		for (var i = 0; i < selectedOptions.length; i++) 
+		{
+			option = selectedOptions[i].text;
+		}
+		var parametros={
+			OrdenNo: ordenNo,
+			Option: option,
+		};
+		console.log("facturar " + parametros['Option']);
+		console.log(parametros['OrdenNo'])
 
 		$.ajax({
 			type: "POST",
 			url: '../controlador/facturacion/facturarC.php?Detalle_impresion=true',
-			data: { OrdenNo: ordenNo },
-			dataType: 'json',
-			success: function (data) {
-				if (data.length > 0) {
-					generarPDFtest(data[0].mensajes, data[0].mensajeEncabData);
-					//generarPDF(data[0].AdoAux, data[0].mensajeEncabData);
-				} else {
-					Swal.fire("No se encontraron datos para generar el PDF.", '', 'info');
-				}
-			}
-		})*/
-	}
-
-	function generarPDFtest() {
-		var parametros = {
-			titulo: 'Titulo del PDF',	
-		};
-		$.ajax({
-			type: 'POST',
-			url: '../controlador/facturacion/facturarC.php?generar_detalle_test=true',
 			data: { parametros: parametros },
 			dataType: 'json',
-			success: function(data) {
-				if (data.status == 200) {
-                console.log("SOLICITUD CORRECTA");                
-                /*var pdfData = atob(data.pdf);
-                var blob = new Blob([base64ToArrayBuffer(pdfData)], { type: 'application/pdf' });
-                var url = URL.createObjectURL(blob);
-                var a = document.createElement('a');
-                a.href = url;
-                a.download = data.filename;
-                a.style.display = 'none';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);*/
-				console.log(data.filename);
-            } else {
-                console.error('Error al generar el PDF.');
-            }			
+			success: function (data) {					
+				if (data.status==200) {
+					console.log("facturarC " +data.mensajeEncabData)	
+					generarPDF(data.mensajeEncabData, data.datos)				
+				}else{
+					console.log("facturarC " +data.dccliente + "" + data.ordenno)
+					$('#dialog_impresion').modal('hide');					
+					swal.fire("No se pudo generar el pdf", '', 'info');
+					//generarPDF("no hay datos que mostrar",[])
+				}			
 			}
 		});
 	}
 
-	/*function base64ToArrayBuffer(base64) {
-		var binaryString = atob(base64);
-		var len = binaryString.length;
-		var bytes = new Uint8Array(len);
-		for (var i = 0; i < len; ++i) {
-			bytes[i] = binaryString.charCodeAt(i);
-		}
-		return bytes.buffer;
-	}*/
+	function generarPDF(titulo,datos) {		
+		var url = '../controlador/facturacion/facturarC.php?generar_detalle=true&titulo=' + titulo;
+    
+		var datosJSON = JSON.stringify(datos);
+		var datosCodificados = encodeURIComponent(datosJSON);
+
+		url += '&datos=' + datosCodificados;
+		window.open(url, '_blank');
+	}
 
 	//------------------ guia-------------
 	function DCCiudadI() {
@@ -2137,7 +2125,7 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-primary" onclick="">Aceptar</button>
+				<button class="btn btn-primary" onclick="aceptarimprimir()">Aceptar</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
 			</div>
 		</div>

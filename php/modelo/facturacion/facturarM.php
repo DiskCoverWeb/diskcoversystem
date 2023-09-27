@@ -444,7 +444,8 @@ class facturarM
   //--------------fin Listar_Ordenes--------------
 
   function Detalle_impresion($OrdenNo){   
-    $sql = "SELECT Fecha,Producto,Cantidad,Precio,A,L,S
+    //$sql = "SELECT Fecha,Producto,Cantidad,Precio,A,L,S   //error no existe columna L en la tabla Trans_Ticket
+    $sql = "SELECT Fecha,Producto,Cantidad,Precio,A,S
           FROM Trans_Ticket
           WHERE Item = '".$_SESSION['INGRESO']['item']."'
           AND Periodo = '".$_SESSION['INGRESO']['periodo']."'

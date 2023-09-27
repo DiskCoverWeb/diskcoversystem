@@ -105,10 +105,10 @@ if(isset($_GET['Listar_Ordenes']))
    echo json_encode($controlador->Listar_Ordenes());
 }
 //----------------fin lista orden---------
-if(isset($_GET['Detalle_Impresion']))
+if(isset($_GET['Detalle_impresion']))
 {
-   //$parametros = $_POST['parametros'];
-   echo json_encode($controlador->Detalle_Impresion());
+   $parametros = $_POST['parametros'];
+   echo json_encode($controlador->Detalle_impresion($parametros));
 }
 //------------guia--------------
 
@@ -271,11 +271,17 @@ if(isset($_GET['imprimir_factura']))
    $parametros = $_POST['parametros'];
    echo json_encode($controlador->imprimir_factura($FA,$parametros));
 }
-if(isset($_GET['generar_detalle_test']))
+if(isset($_GET['generar_detalle']))
 {
-   $parametros = $_POST['parametros'];
-   echo json_encode($controlador->generar_detalle_test($parametros));
+   $titulo = $_GET['titulo'];
+   $datos = json_decode(urldecode($_GET['datos']), true);
+   $parametros = array(
+		'titulo' => $titulo,
+      'datos' => $datos
+   );
+   $controlador->generar_detalle($parametros);
 }
+
 
 
 
@@ -825,46 +831,42 @@ function delete_asientoF($parametros)
   }
   // ----------------fin Listar_Ordenes---------
 
-  function Detalle_impresion()
+  function Detalle_impresion($parametros)
    {
-      $OrdenNo = $_POST['OrdenNo'];
-      $datos = $this->modelo->Detalle_impresion($OrdenNo);
-      $mensajes = "Imprimir Orden de Trabajo";
-      $Titulo = "IMPRESION";
-      //$Cuadricula = true;
-      $lista = array();
+      $OrdenNo = $parametros['OrdenNo'];
+      $DCCliente= $parametros['Option'];    
+      
+      $datos = $this->modelo->Detalle_impresion($OrdenNo);  
 
-      if (count($datos) > 0) {
-         foreach ($datos as $value) {
-               $mensajeEncabData = "LISTA DE ORDEN DE TRABAJO No. " . generaCeros($OrdenNo, 6);
-               $SQLMsg1 = "Cliente: " . $value["DCCliente"];
+      //$detalleImpresion = array();      
+      if (count($datos) > 0) { 
+         $mensajes = "Imprimir Orden de Trabajo";
+         $Titulo = "IMPRESION";           
+         $Cuadricula = true;     
+         $mensajeEncabData = "LISTA DE ORDEN DE TRABAJO No. " . generaCeros($OrdenNo, 6);
+         $SQLMsg1 = "Cliente: " . $DCCliente;
 
-               $detalleImpresion = array(
-                  'mensajes' => $mensajes,
-                  'Titulo' => $Titulo,
-                  //'Cuadricula' => $Cuadricula,
-                  'mensajeEncabData' => $mensajeEncabData,
-                  //'SQLMsg1' => $SQLMsg1
-               );
-               $lista[] = $detalleImpresion;
-         }
+         return array(
+            'status' => 200,
+            'mensajes' => $mensajes,
+            'Titulo' => $Titulo,
+            'Cuadricula' => $Cuadricula,
+            'mensajeEncabData' => $mensajeEncabData,
+            'SQLMsg1' => $SQLMsg1,
+            'datos' => $datos,
+         );          
       }
-      return $lista;
+
+      return array(
+         'status' => 400,
+         'ordenno' => $OrdenNo,
+         'dccliente' => $DCCliente,
+     );         
    }
 
-   function generar_detalle_test($parametros){
-      
-      /*return array(
-          'status' => 200,
-          'params' => $parametros
-      );*/
-
-      return $this->pdf->generarDetalleTest($parametros);
-  }
-  
-  
-   
-
+   function generar_detalle($parametros){
+      $this->pdf->generarDetalle($parametros);     
+   } 
 
   function Grabar_Factura_Actual($FA,$parametros)
   {
