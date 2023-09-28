@@ -18,7 +18,7 @@
   	var tipo = $('#ddl_alimento_text').val();
   	var can = $('#txt_cant').val();
   	var cod = $('#txt_codigo').val();
-  	if(donante=='' || tempe=='' || tipo=='' || can =='' || cod=='')
+  	if(donante=='' || tempe=='' || tipo=='' || can =='' || cod=='' || can ==0)
   	{
   		Swal.fire('Ingrese todos los datos','','info')
   		return false;
@@ -293,6 +293,43 @@ function autocoplet_ingreso(){
   	$('#ddl_alimento').val(cod);
   	$('#modal_tipo_donacion').modal('hide');
   }
+  function eliminar_pedido(ID)
+  {
+  	 Swal.fire({
+       title: 'Esta seguro?',
+       text: "Esta usted seguro de que quiere eliminar este registro!",
+       type: 'warning',
+       showCancelButton: true,
+       confirmButtonColor: '#3085d6',
+       cancelButtonColor: '#d33',
+       confirmButtonText: 'Si!'
+     }).then((result) => {
+       if (result.value==true) {
+        eliminar(ID);
+       }
+     })
+
+  }
+
+  function eliminar(ID)
+  {
+  	
+	  	$.ajax({
+		    type: "POST",
+	      	url:   '../controlador/inventario/alimentos_recibidosC.php?eliminar_pedido=true',
+		      data:{ID:ID},
+	        dataType:'json',
+		    success: function(data)
+		    {
+		    	if(data ==1)
+		    	{
+		    		Swal.fire('Registro eliminado','','info');
+		    		cargar_datos();
+		    	}    	
+		    }
+		});  	
+
+  }
 
 </script>
 
@@ -443,11 +480,13 @@ function autocoplet_ingreso(){
 							<div class="table-responsive">
 								<table class="table table-hover">
 									<thead>
+										<th>Codigo</th>
 										<th>Fecha de ingreso</th>
-										<th>Donante</th>
+										<th>Donante / Proveedor</th>
 										<th>Alimento Recibido </th>
 										<th>Cantidad</th>
 										<th>Temperatura de ingreso</th>
+										<th></th>
 									</thead>
 									<tbody id="tbl_body">
 										<tr></tr>
