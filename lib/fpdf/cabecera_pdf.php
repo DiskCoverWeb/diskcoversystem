@@ -9,6 +9,7 @@ if (!class_exists('FPDF')) {
    require('fpdf.php');
 }
 
+
 //include(dirname(__DIR__,2)."/php/db/db.php");
 //echo dirname(__DIR__,1);
 
@@ -41,19 +42,6 @@ class cabecera_pdf
 		$this->conn = cone_ajax();
 		
 	}	
-
-	function generarDetalle($parametros)
-	{
-		$titulo = $parametros['titulo'];
-		$datos = $parametros['datos'];
-
-		$pdf = new PDFdetalle($titulo, $datos);
-		$pdf->AddPage();
-		$pdf->SetFont('Times', '', 12);
-
-		$pdf->generarPDF();
-	}
-
 
 	function cabecera_reporte($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$sal_hea_body=30,$orientacion='P')
 	{	
@@ -822,54 +810,9 @@ class PDFv extends FPDF
 		$this->Ln($this->salto_header_cuerpo);
 
 	}
+
  }
-}
 
-class PDFdetalle extends FPDF {
-	private $titulo; 
-	private $datos; 
-
-	function __construct($titulo, $datos) {
-		parent::__construct();
-		$this->titulo = $titulo;
-		$this->datos = $datos;
-	}
-
-	function Headerd() {			
-		$this -> Image(dirname(__DIR__,2).'/img/logotipos/DiskCove.jpg', 10, 8, 33);
-		$this -> SetFont('Arial', 'B', 15);
-		$this -> Cell(80);
-		$this -> Cell(0, 3, $this->titulo, 0, 0, 'C');
-		$this -> Ln(20);
-	}
-
-	function Footer() {
-		$this -> SetY(-15);
-		$this -> SetFont('Arial', 'I', 8);
-		$this -> Cell(0, 10, $this -> PageNo(), 0, 0, 'C');
-	}	
-	
-	public function generarPDF() {
-		$this->Headerd();
-	
-		if (empty($this->datos)) {
-			$this->SetFont('Arial', 'B', 12);
-			$this->Cell(0, 10, 'No hay datos disponibles para mostrar en el PDF.', 0, 1);
-		} else {
-			foreach ($this->datos as $row) {
-				$this->Cell(0, 10, 'Fecha: ' . $row['Fecha'], 0, 1);
-				$this->Cell(0, 10, 'Producto: ' . $row['Producto'], 0, 1);
-				$this->Cell(0, 10, 'Cantidad: ' . $row['Cantidad'], 0, 1);
-				$this->Cell(0, 10, 'Precio: ' . $row['Precio'], 0, 1);
-				$this->Cell(0, 10, 'A: ' . $row['A'], 0, 1);
-				$this->Cell(0, 10, 'S: ' . $row['S'], 0, 1);
-				$this->Ln(10);
-			}
-		}
-	
-		$this->Footer(); 
-		$this->Output('I', 'orden_de_trabajo.pdf');
-	}
 }
 
 class PDF_MC extends PDF_MC_Table
