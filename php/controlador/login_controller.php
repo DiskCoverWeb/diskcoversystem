@@ -130,12 +130,9 @@ class login_controller
 	function login($parametro)
 	{
 		// session_destroy();		
-		//print_r($parametro);
+		// print_r($parametro);
 		// print_r($datos);
 		// die();
-
-		$_SESSION['INGRESO']['usuario'] = $parametro['usuario'];
-		$_SESSION['INGRESO']['pass'] = $parametro['pass'];
 
 		$_SESSION['INGRESO']['usuario'] = $parametro['usuario'];
 		$_SESSION['INGRESO']['pass'] = $parametro['pass'];
@@ -144,6 +141,9 @@ class login_controller
 		$_SESSION['INGRESO']['IP_Local'] = !empty($parametro['localIp']) ? $parametro['localIp'] : ".";
 
 		if ($parametro['cartera'] == 1) {
+			
+			$_SESSION['INGRESO']['usuario'] = $parametro['cartera_usu'];
+			$_SESSION['INGRESO']['pass'] = $parametro['cartera_pass'];
 			$datos = $this->modelo->Ingresar($parametro['cartera_usu'], $parametro['cartera_pass'], $parametro['entidad'], $parametro['item']);
 			// validar cliente en cartera
 			$empresa = $this->modelo->empresa_cartera($parametro['empresa'], $parametro['entidad']);

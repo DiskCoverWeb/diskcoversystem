@@ -1079,8 +1079,14 @@ function validar_estado_all()
     $conn = new db();
     $sSQL = "SELECT " . Full_Fields("Empresas") . " "
         . "FROM Empresas "
-        . "WHERE Empresa = '" . $_SESSION['INGRESO']['noempr'] . "' "; //definido en panel.php
+        . "WHERE Item = '".$_SESSION['INGRESO']['item']."'"
+        ." AND RUC = '".$_SESSION['INGRESO']['RUC']."' "; //definido en panel.php
+
+        // print_r($_SESSION['INGRESO']);
+        // print_r($sSQL);die();
     $empresa = $conn->datos($sSQL);
+
+    // print_r($empresa);die();
 
     $sSQL = "SELECT " . Full_Fields("Accesos") . " "
         . "FROM Accesos "
@@ -1088,6 +1094,7 @@ function validar_estado_all()
         . "AND UPPER(Clave) = '" . $_SESSION['INGRESO']['pass'] . "' "; //definido en loginController.php
     $dataUser = $conn->datos($sSQL);
 
+    // print_r($dataUser);die();
     global $Fecha_CO, $Fecha_CE, $Fecha_VPN, $Fecha_DB, $Fecha_P12, $AgenteRetencion, $MicroEmpresa,
     $EstadoEmpresa, $DescripcionEstado, $NombreEntidad, $RepresentanteLegal, $MensajeEmpresa,
     $ComunicadoEntidad, $SerieFE, $Cartera, $Cant_FA, $TipoPlan, $PCActivo, $EstadoUsuario,
