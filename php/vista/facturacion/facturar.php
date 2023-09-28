@@ -851,11 +851,13 @@
 			if (result.value == true) {
 
 				if (FA == "OP") {
-					// la otra opcion
+					src = "../vista/modales.php?FAbonoAnticipado=true";
+					$('#frame_anticipado').attr('src', src).show();
+					$('#my_modal_abono_anticipado').modal('show');
 				} else {
 					src = "../vista/modales.php?FAbonos=true";
 					$('#frame').attr('src', src).show();
-					$('#myModal_Abonos').modal('show');
+					$('#my_modal_abonos').modal('show');
 					// Autorizar_Factura_Actual();
 				}
 			} else {
@@ -953,9 +955,9 @@
 	function boton3() {
 		//$('#myModal_ordenesProd').modal('show');
 		//Listar_Ordenes();
-		src = "../vista/modales.php?FAbonos=true";
-		$('#frame').attr('src', src).show();
-		$('#myModal_Abonos').modal('show');
+		src = "../vista/modales.php?FAbonoAnticipado=true";
+		$('#frame_anticipado').attr('src', src).show();
+		$('#my_modal_abono_anticipado').modal('show');
 	}
 	function boton4() {
 		$('#myModal_guia').modal('show');
@@ -2208,7 +2210,7 @@
 	}
 </script>
 
-<div id="myModal_Abonos" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+<div id="my_modal_abonos" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header" style="padding: 6px 0px 6px 15px;">
@@ -2217,6 +2219,24 @@
 			</div>
 			<div class="modal-body">
 				<iframe src="" id="frame" width="100%" height="560px" marginheight="0" frameborder="0"></iframe>
+			</div>
+			<div class="modal-footer">
+				<!-- <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button> -->
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<div id="my_modal_abono_anticipado" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header" style="padding: 6px 0px 6px 15px;">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">INGRESO DE ABONOS ANTICIPADOS</h4>
+			</div>
+			<div class="modal-body">
+				<iframe src="" id="frame_anticipado" width="100%" height="560px" marginheight="0" frameborder="0"></iframe>
 			</div>
 			<div class="modal-footer">
 				<!-- <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button> -->
