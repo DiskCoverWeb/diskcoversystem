@@ -8,6 +8,7 @@
         });    
   	autocoplet_alimento();
   	autocoplet_ingreso();
+  	autocoplet_ingreso_donante();
   	cargar_datos();
   })
 
@@ -25,7 +26,7 @@
   	}
 
   	 var parametros = $('#form_correos').serialize();
-  	 parametros+='&ddl_ingreso='+$('#ddl_ingreso').val();
+  	 parametros+='&ddl_ingreso='+$('#txt_donante').val();
   	  $.ajax({
 	      type: "POST",
 	      url: '../controlador/inventario/alimentos_recibidosC.php?guardar=true',
@@ -76,15 +77,18 @@
 	    {
 	    	console.log(data);
 	    	option = '';
+	    	opt = '<option>Tipo de donacion</option>';
 	    	data.forEach(function(item,i){
 	    		// console.log(item);
 	    		option+= '<div class="col-md-6 col-sm-6">'+
-											'<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/canasta.png" onclick="cambiar_tipo_alimento(\''+item.id+'\',\''+item.text+'\')"></button><br>'+
+											'<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/'+item.picture+'.png" onclick="cambiar_tipo_alimento(\''+item.id+'\',\''+item.text+'\')"></button><br>'+
 											'<b>'+item.text+'</b>'+
 										'</div>';
 	    		// option+='<option value="'+item.Codigo+'">'+item.Cliente+'</option>';
+					opt+='<option value="'+item.id+'">'+item.text+'</option>';
 	    	})	 
-	    	$('#pnl_tipo_alimento').html(option);     
+	    	$('#pnl_tipo_alimento').html(option);   
+	    	$('#ddl_tipo_alimento').html(opt);     
 	    }
 	});
   }
@@ -147,6 +151,24 @@ function autocoplet_ingreso(){
     }
   });
 }
+function autocoplet_ingreso_donante(){
+  $('#txt_donante').select2({
+    placeholder: 'Seleccione',
+    // width:'100%',
+    ajax: {
+     url:   '../controlador/inventario/alimentos_recibidosC.php?detalle_ingreso2=true',
+      dataType: 'json',
+      delay: 250,
+      processResults: function (data) {
+        // console.log(data);
+        return {
+          results: data
+        };
+      },
+      cache: true
+    }
+  });
+}
 
   function nuevo_proveedor()
   {
@@ -157,6 +179,10 @@ function autocoplet_ingreso(){
   function option_select()
   {
 	  	var id = $('#ddl_ingreso').val();
+	  	if(id==null || id=='')
+	  	{
+	  		return false;
+	  	}
 	  	$.ajax({
 		    type: "POST",
 	      	url:   '../controlador/inventario/alimentos_recibidosC.php?datos_ingreso=true',
@@ -164,10 +190,41 @@ function autocoplet_ingreso(){
 	        dataType:'json',
 		    success: function(data)
 		    {
-		    	console.log(data);
+
+      		$('#txt_donante').append($('<option>',{value: data.Codigo, text:data.Cliente,selected: true }));
+      		$('#txt_donante').prop('disabled',true);
+		    	// console.log(data);
 		    	$('#txt_codigo').val(data.Cod_Ejec)
 		    	$('#txt_ci').val(data.CI_RUC)
-		    	$('#txt_donante').val(data.Cliente)
+		    	// $('#txt_donante').val(data.Cliente)
+		    	$('#txt_tipo').val(data.Actividad)
+		    	$('#modal_proveedor').modal('hide');
+		    	generar_codigo();
+		    }
+		});  	
+  }
+
+  function option_select2()
+  {
+	  	var id = $('#txt_donante').val();
+	  	if(id==null || id=='')
+	  	{
+	  		return false;
+	  	}
+	  	$.ajax({
+		    type: "POST",
+	      	url:   '../controlador/inventario/alimentos_recibidosC.php?datos_ingreso=true',
+		    data:{id:id},
+	        dataType:'json',
+		    success: function(data)
+		    {
+
+      		$('#txt_donante').append($('<option>',{value: data.Codigo, text:data.Cliente,selected: true }));
+      		$('#txt_donante').prop('disabled',true);
+		    	// console.log(data);
+		    	$('#txt_codigo').val(data.Cod_Ejec)
+		    	$('#txt_ci').val(data.CI_RUC)
+		    	// $('#txt_donante').val(data.Cliente)
 		    	$('#txt_tipo').val(data.Actividad)
 		    	$('#modal_proveedor').modal('hide');
 		    	generar_codigo();
@@ -291,6 +348,7 @@ function autocoplet_ingreso(){
 
   	$('#ddl_alimento_text').val(texto);
   	$('#ddl_alimento').val(cod);
+  	$('#ddl_tipo_alimento').val(cod)
   	$('#modal_tipo_donacion').modal('hide');
   }
   function eliminar_pedido(ID)
@@ -331,6 +389,22 @@ function autocoplet_ingreso(){
 
   }
 
+  function limpiar_donante()
+  {  	
+  	$('#ddl_ingreso').val(null).trigger('change');
+  	$('#txt_donante').val(null).trigger('change');
+  	$('#txt_donante').prop('disabled',false);
+  }
+
+  function tipo_seleccion()
+  {
+  	 var nom = $('#ddl_tipo_alimento option:selected').text();
+  	 var cod = $('#ddl_tipo_alimento').val();
+
+  	$('#ddl_alimento_text').val(nom);
+  	$('#ddl_alimento').val(cod);
+  }
+
 </script>
 
  <div class="row">
@@ -368,8 +442,19 @@ function autocoplet_ingreso(){
 											</span>
 											<b>PROVEEDOR / DONANTE</b>	
 											<div class="form-group">
-												<div class="col-sm-9">													
-													<input type="" class="form-control input-xs" id="txt_donante" name="txt_donante" readonly>
+												<div class="col-sm-9">	
+												<div class="input-group" style="display:flex;">
+				                	<select class=" form-control input-xs form-select" id="txt_donante" name="txt_donante" onchange="option_select2()">
+								           		<option value="">Seleccione</option>
+								           </select>   	
+													<span class="input-group-btn">
+														<button type="button" class="btn btn-default btn-xs btn-flat" onclick="limpiar_donante()"><i class="fa fa-close"></i></button>
+													</span>
+											 </div>
+
+																	
+
+													<!-- <input type="" class="form-control input-xs" id="txt_donante" name="txt_donante" readonly> -->
 												</div>
 												<div class="col-sm-3">
 													<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
@@ -385,7 +470,7 @@ function autocoplet_ingreso(){
 											</span>
 											 <b>TEMPERATURA DE RECEPCION °C:</b>	
 											 <div class="input-group">
-				                	<input type="" class="form-control input-sm" id="txt_temperatura" name="txt_temperatura" readonly>	
+				                	<input type="" class="form-control input-sm" id="txt_temperatura" name="txt_temperatura">	
 													<span class="input-group-addon">°C</span>
 											 </div>
 
@@ -398,8 +483,11 @@ function autocoplet_ingreso(){
 											<span class="input-group-btn" style="padding-right: 10px;">
 													<button type="button" class="btn btn-default btn-sm" onclick="show_tipo_donacion()"><img src="../../img/png/tipo_donacion.png"></button>
 											</span>
-												<b>ALIMENTO RECIBIDO:</b>												
-												<input type="" class="form-control input-xs" id="ddl_alimento_text" name="ddl_alimento_text" readonly>
+												<b>ALIMENTO RECIBIDO:</b>
+												<select class="form-control input-sm" id="ddl_tipo_alimento" name="ddl_tipo_alimento" onchange="tipo_seleccion()">
+													<option value="">Tipo donacion</option>
+												</select>												
+												<input type="hidden" class="form-control input-xs" id="ddl_alimento_text" name="ddl_alimento_text" readonly>
 												<input type="hidden" class="form-control input-xs" id="ddl_alimento" name="ddl_alimento" readonly>
 									</div>
 								</div>
@@ -409,7 +497,7 @@ function autocoplet_ingreso(){
 													<button type="button" class="btn btn-default btn-sm" onclick="show_cantidad()"><img src="../../img/png/kilo2.png"></button>
 											</span>
 												<b>CANTIDAD:</b>
-												<input type="" class="form-control input-xs" id="txt_cant" name="txt_cant" readonly>	
+												<input type="" class="form-control input-xs" id="txt_cant" name="txt_cant">	
 									</div>
 								</div>								
 							</div>						
