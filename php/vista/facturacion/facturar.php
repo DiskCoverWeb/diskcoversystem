@@ -945,15 +945,11 @@
 
 	}
 	function boton3() {
-		/*var selectOrden = document.getElementById("selectOrden");
-		var dataTest = ["Orden1", "Orden2", "Orden3"];
-		dataTest.forEach(function (orden) {
-			var option = document.createElement("option");
-			option.value = orden;
-			option.text = orden;
-			selectOrden.appendChild(option);
-		});*/
-		Listar_Ordenes();
+		//$('#myModal_ordenesProd').modal('show');
+		//Listar_Ordenes();
+		src = "../vista/modales.php?FAbonos=true";
+		$('#frame').attr('src', src).show();
+		$('#myModal_Abonos').modal('show');
 	}
 	function boton4() {
 		$('#myModal_guia').modal('show');
