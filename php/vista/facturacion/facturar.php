@@ -934,8 +934,11 @@
 
 	}
 	function boton3() {
-		$('#myModal_ordenesProd').modal('show');
+		//$('#myModal_ordenesProd').modal('show');
 		//Listar_Ordenes();
+		src = "../vista/modales.php?FAbonos=true";
+		$('#frame').attr('src', src).show();
+		$('#myModal_Abonos').modal('show');
 	}
 	function boton4() {
 		$('#myModal_guia').modal('show');
