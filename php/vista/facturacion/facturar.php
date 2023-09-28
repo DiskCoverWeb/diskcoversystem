@@ -2123,13 +2123,90 @@
 			</div>
 
 			<div class="modal-footer">
-				<button class="btn btn-primary btn-block" onclick="">Imprimir Detalle Orden</button>
-				<button class="btn btn-primary btn-block" onclick="">Procesar Selección</button>
+				<button class="btn btn-primary btn-block" onclick="CommandButton1_Click()">Imprimir Detalle Orden</button>
+				<button class="btn btn-primary btn-block" onclick="llenarOrden()">Procesar Selección</button>
 				<button type="button" class="btn btn-default btn-block" data-dismiss="modal">Cancelar</button>
 			</div>
 		</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+
+	function llenarOrden() {
+		var LstOrdenP = document.getElementById("selectOrden");
+		if (LstOrdenP.length > 0) {
+			var selectedOptions = LstOrdenP.selectedOptions;
+			var ordenSeleccionadaText = "";
+			let cantOrdenes = LstOrden.length;
+			for (var i = 0; i < selectedOptions.length; i++) {
+				var option = selectedOptions[i];
+				ordenSeleccionadaText = option.text;
+				switch (ordenSeleccionadaText.substring(0, 4)) {
+					case "Lote":
+						dataInv.fecha_exp = fechaSistema();
+						dataInv.fecha_fab = fechaSistema();
+						dataInv.modelo = "Ninguno";
+
+						let stockLote = 0;
+
+						var parametros = {
+							"lote_no": ordenSeleccionadaText
+						};
+
+						$.ajax({
+							type: "POST",
+							url: '../controlador/facturacion/facturarC.php?case_lote=true',
+							data: { parametros: parametros },
+							dataType: 'json',
+							success: function (data) {
+								// console.log(data);
+								if (data.length > 0) {
+									dataInv.procedencia = data['procedencia'];
+									dataInv.modelo = data['modelo'];
+									dataInv.serie_no = data['serie_no'];
+									dataInv.fecha_exp = data['fecha_exp'];
+									dataInv.fecha_fab = data['fecha_fab'];
+									stockLote = data['totStock'];
+								}
+							}
+						});
+						break;
+					case "Orde":
+
+						let cadena = ordenSeleccionadaText;
+						var parametros = {
+							'cadena': cadena,
+							'cod_cxc': document.getElementById("Cod_CxC"),
+							'cta': document.getElementById("Cta_CxP")
+						};
+
+						$.ajax({
+							type: "POST",
+							url: '../controlador/facturacion/facturarC.php?case_orde=true',
+							data: { parametros: parametros },
+							dataType: 'json',
+							success: function (data) {
+								// console.log(data);
+								if (data != '1') {
+									Swal.fire('Se han procesado las ordenes', '', 'info');
+								} else {
+									Swal.fire('No existen Ã³rdenes para procesar', '', 'error');
+								}
+							}
+						});
+						break;
+				}
+
+				console.log("Opcion seleccionada: ", ordenSeleccionadaText);
+			}
+		} else {
+
+			lineas_factura();
+		}
+
+	}
+</script>
 
 <div id="myModal_Abonos" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
 	<div class="modal-dialog modal-lg">
