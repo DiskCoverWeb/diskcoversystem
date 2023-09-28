@@ -490,10 +490,20 @@ class facturarM
     $respuest = $this->db->datos($sql);
     return $respuest;
   }
-
-
   //--------------fin Listar_Ordenes--------------
 
+  function Detalle_impresion($OrdenNo){   
+    //$sql = "SELECT Fecha,Producto,Cantidad,Precio,A,L,S   //error no existe columna L en la tabla Trans_Ticket
+    $sql = "SELECT Fecha,Producto,Cantidad,Precio,A,S
+          FROM Trans_Ticket
+          WHERE Item = '".$_SESSION['INGRESO']['item']."'
+          AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+          AND Ticket= $OrdenNo 
+          AND TC = 'OP'       
+          ORDER BY Producto ";
+          $respuest  = $this->db->datos($sql);
+          return $respuest;
+   }
 
 
   function actualizar_Facturas_Auxiliares($FA)

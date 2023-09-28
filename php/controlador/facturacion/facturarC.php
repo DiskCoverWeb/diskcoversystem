@@ -105,6 +105,11 @@ if(isset($_GET['Listar_Ordenes']))
    echo json_encode($controlador->Listar_Ordenes());
 }
 //----------------fin lista orden---------
+if(isset($_GET['Detalle_impresion']))
+{
+   $parametros = $_POST['parametros'];
+   echo json_encode($controlador->Detalle_impresion($parametros));
+}
 //------------guia--------------
 
 if(isset($_GET['DCCiudadF']))
@@ -266,6 +271,18 @@ if(isset($_GET['imprimir_factura']))
    $parametros = $_POST['parametros'];
    echo json_encode($controlador->imprimir_factura($FA,$parametros));
 }
+if(isset($_GET['generar_detalle']))
+{
+   $titulo = $_GET['titulo'];
+   $datos = json_decode(urldecode($_GET['datos']), true);
+   $parametros = array(
+		'titulo' => $titulo,
+      'datos' => $datos
+   );
+   $controlador->generar_detalle($parametros);
+}
+
+
 
 if(isset($_GET['case_lote'])){
    $parametros = $_POST['parametros'];
@@ -870,6 +887,43 @@ function delete_asientoF($parametros)
   }
   // ----------------fin Listar_Ordenes---------
 
+  function Detalle_impresion($parametros)
+   {
+      $OrdenNo = $parametros['OrdenNo'];
+      $DCCliente= $parametros['Option'];    
+      
+      $datos = $this->modelo->Detalle_impresion($OrdenNo);  
+
+      //$detalleImpresion = array();      
+      if (count($datos) > 0) { 
+         $mensajes = "Imprimir Orden de Trabajo";
+         $Titulo = "IMPRESION";           
+         $Cuadricula = true;     
+         $mensajeEncabData = "LISTA DE ORDEN DE TRABAJO No. " . generaCeros($OrdenNo, 6);
+         $SQLMsg1 = "Cliente: " . $DCCliente;
+
+         return array(
+            'status' => 200,
+            'mensajes' => $mensajes,
+            'Titulo' => $Titulo,
+            'Cuadricula' => $Cuadricula,
+            'mensajeEncabData' => $mensajeEncabData,
+            'SQLMsg1' => $SQLMsg1,
+            'datos' => $datos,
+         );          
+      }
+
+      return array(
+         'status' => 400,
+         'ordenno' => $OrdenNo,
+         'dccliente' => $DCCliente,
+     );         
+   }
+
+   function generar_detalle($parametros){
+      $this->pdf->generarDetalle($parametros);     
+   } 
+
   function Grabar_Factura_Actual($FA,$parametros)
   {
 
@@ -1184,7 +1238,6 @@ function delete_asientoF($parametros)
 
 
   }
-
     
 }
 ?>

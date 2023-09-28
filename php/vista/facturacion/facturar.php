@@ -1,4 +1,8 @@
-<?php date_default_timezone_set('America/Guayaquil'); //print_r($_SESSION);die();//print_r($_SESSION['INGRESO']);die();?>
+<?php date_default_timezone_set('America/Guayaquil'); //print_r($_SESSION);die();//print_r($_SESSION['INGRESO']);die();
+
+//include('../../lib/fpdf/cabecera_pdf.php');
+//require('../../lib/fpdf/fpdf.php');
+?>
 <script type="text/javascript">
 	window.closeModal = function () {
 		$('#myModal_Abonos').modal('hide');
@@ -901,6 +905,8 @@
 
 	}
 
+
+
 	function Grabar_Abonos() {
 		var FA = $("#FA").serialize();
 		var parametros = {
@@ -1035,12 +1041,61 @@
 				}
 			}
 		})
+	}
+	//---------------fin Listar_Ordenes()--------
 
+	function CommandButton1_Click() {
+		$('#myModal_ordenesProd').modal('hide');
+		$('#dialog_impresion').modal('show');				
 	}
 
-	//---------------fin Listar_Ordenes()--------
-	//------------------ guia-------------
+	function aceptarimprimir(){
+		var ordenNoString = document.getElementById("valOrden").value;
+		var ordenNo = parseFloat(ordenNoString);
+		var option="";
+		var LstCliente = document.getElementById("DCCliente");
+		var selectedOptions = LstCliente.selectedOptions;
+		for (var i = 0; i < selectedOptions.length; i++) 
+		{
+			option = selectedOptions[i].text;
+		}
+		var parametros={
+			OrdenNo: ordenNo,
+			Option: option,
+		};
+		console.log("facturar " + parametros['Option']);
+		console.log(parametros['OrdenNo'])
 
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/facturarC.php?Detalle_impresion=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {					
+				if (data.status==200) {
+					console.log("facturarC " +data.mensajeEncabData)	
+					generarPDF(data.mensajeEncabData, data.datos)				
+				}else{
+					console.log("facturarC " +data.dccliente + "" + data.ordenno)
+					$('#dialog_impresion').modal('hide');					
+					swal.fire("No se pudo generar el pdf", '', 'info');
+					//generarPDF("no hay datos que mostrar",[])
+				}			
+			}
+		});
+	}
+
+	function generarPDF(titulo,datos) {		
+		var url = '../controlador/facturacion/facturarC.php?generar_detalle=true&titulo=' + titulo;
+    
+		var datosJSON = JSON.stringify(datos);
+		var datosCodificados = encodeURIComponent(datosJSON);
+
+		url += '&datos=' + datosCodificados;
+		window.open(url, '_blank');
+	}
+
+	//------------------ guia-------------
 	function DCCiudadI() {
 		$('#DCCiudadI').select2({
 			placeholder: 'Seleccione un cliente',
@@ -2044,7 +2099,7 @@
 		var noches = $('#cantNoches').val();
 		$('#TextCant').val(noches);
 		$('#TxtDetalleReserva').val(producto);
-		if (detalle.length > 3) {
+		if  (detalle.length > 3)  {
 			$('#TxtDetalleReserva').val($('#TxtDetalleReserva').val() + '\n' + detalle);
 		}
 	}
@@ -2069,89 +2124,12 @@
 
 			<div class="modal-footer">
 				<button class="btn btn-primary btn-block" onclick="">Imprimir Detalle Orden</button>
-				<button class="btn btn-primary btn-block" onclick="llenarOrden()">Procesar Selección</button>
+				<button class="btn btn-primary btn-block" onclick="">Procesar Selección</button>
 				<button type="button" class="btn btn-default btn-block" data-dismiss="modal">Cancelar</button>
 			</div>
 		</div>
 	</div>
 </div>
-
-<script type="text/javascript">
-
-	function llenarOrden() {
-		var LstOrdenP = document.getElementById("selectOrden");
-		if (LstOrdenP.length > 0) {
-			var selectedOptions = LstOrdenP.selectedOptions;
-			var ordenSeleccionadaText = "";
-			let cantOrdenes = LstOrden.length;
-			for (var i = 0; i < selectedOptions.length; i++) {
-				var option = selectedOptions[i];
-				ordenSeleccionadaText = option.text;
-				switch (ordenSeleccionadaText.substring(0, 4)) {
-					case "Lote":
-						dataInv.fecha_exp = fechaSistema();
-						dataInv.fecha_fab = fechaSistema();
-						dataInv.modelo = "Ninguno";
-
-						let stockLote = 0;
-
-						var parametros = {
-							"lote_no": ordenSeleccionadaText
-						};
-
-						$.ajax({
-							type: "POST",
-							url: '../controlador/facturacion/facturarC.php?case_lote=true',
-							data: { parametros: parametros },
-							dataType: 'json',
-							success: function (data) {
-								// console.log(data);
-								if (data.length > 0) {
-									dataInv.procedencia = data['procedencia'];
-									dataInv.modelo = data['modelo'];
-									dataInv.serie_no = data['serie_no'];
-									dataInv.fecha_exp = data['fecha_exp'];
-									dataInv.fecha_fab = data['fecha_fab'];
-									stockLote = data['totStock'];
-								}
-							}
-						});
-						break;
-					case "Orde":
-
-						let cadena = ordenSeleccionadaText;
-						var parametros = {
-							'cadena': cadena,
-							'cod_cxc': document.getElementById("Cod_CxC"),
-							'cta': document.getElementById("Cta_CxP")
-						};
-
-						$.ajax({
-							type: "POST",
-							url: '../controlador/facturacion/facturarC.php?case_orde=true',
-							data: { parametros: parametros },
-							dataType: 'json',
-							success: function (data) {
-								// console.log(data);
-								if (data != '1') {
-									Swal.fire('Se han procesado las ordenes', '', 'info');
-								}else{
-									Swal.fire('No existen órdenes para procesar', '', 'error');
-								}
-							}
-						});
-						break;
-				}
-
-				console.log("Opcion seleccionada: ", ordenSeleccionadaText);
-			}
-		}else{
-
-			lineas_factura();
-		}
-
-	}
-</script>
 
 <div id="myModal_Abonos" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
 	<div class="modal-dialog modal-lg">
