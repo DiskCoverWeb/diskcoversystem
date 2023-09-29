@@ -1,7 +1,4 @@
 <?php date_default_timezone_set('America/Guayaquil'); //print_r($_SESSION);die();//print_r($_SESSION['INGRESO']);die();
-
-//include('../../lib/fpdf/cabecera_pdf.php');
-//require('../../lib/fpdf/fpdf.php');
 ?>
 <script type="text/javascript">
 	window.closeModal = function () {
@@ -284,7 +281,7 @@
 		$('#LblGuia').val(sms);
 		$('#myModal_guia').modal('hide');
 
-		console.log('ClaveAcceso_GR:', '.');
+		/*console.log('ClaveAcceso_GR:', '.');
 		console.log('Autorizacion_GR:', $('#LblAutGuiaRem').val());
 		console.log('Serie_GR:', serie[1]);
 		console.log('Remision:', $('#LblGuiaR').val());
@@ -301,7 +298,7 @@
 		console.log('Entrega:', $('#DCEmpresaEntrega option:selected').text());
 		console.log('CIRUCEntrega:', ci1[0]);
 		console.log('Dir_EntregaGR:', ci1[1]);
-		console.log('LblGuia:', sms);
+		console.log('LblGuia:', sms);*/
 
 	}
 
@@ -2231,20 +2228,18 @@
 <div id="my_modal_abono_anticipado" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
-			<div class="modal-header" style="padding: 6px 0px 6px 15px;">
+			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">INGRESO DE ABONOS ANTICIPADOS</h4>
 			</div>
 			<div class="modal-body">
-				<iframe src="" id="frame_anticipado" width="100%" height="560px" marginheight="0" frameborder="0"></iframe>
+			<iframe src="" id="frame_anticipado" width="100%"  height="500px" marginheight="0" frameborder="0"></iframe>
 			</div>
-			<div class="modal-footer">
-				<!-- <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button> -->
-			</div>
+			<div class="modal-footer"> </div>
 		</div>
-
 	</div>
 </div>
+
 
 
 
