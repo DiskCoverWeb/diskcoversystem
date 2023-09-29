@@ -20,7 +20,7 @@ class alimentos_recibidosM
 
 	function cta_procesos($query=false)
 	{
-		$sql="SELECT  TP, Proceso, Cta_Debe, Cta_Haber, ID
+		$sql="SELECT  TP, Proceso, Cta_Debe, Cta_Haber, ID,Picture
 			FROM         Catalogo_Proceso
 			WHERE  Item = '".$_SESSION['INGRESO']['item']."' 
 			AND Nivel = 99";
