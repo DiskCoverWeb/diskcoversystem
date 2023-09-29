@@ -397,6 +397,7 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
     if (count($empresa) > 0) {
         $empresa[0]['Servicio'] = 0;
         //datos base de mysql
+        $_SESSION['INGRESO']['PATCH'] = ''; ///solo sirve para colocar la ruta actual de la pagina que se visita
         $_SESSION['INGRESO']['RUCEnt'] = $empresa[0]['RUC_CI_NIC']; //ruc de la entidad
         $_SESSION['INGRESO']['Entidad'] = $empresa[0]['Nombre_Entidad'];
         $_SESSION['INGRESO']['IP_VPN_RUTA'] = $empresa[0]['IP_VPN_RUTA'];
