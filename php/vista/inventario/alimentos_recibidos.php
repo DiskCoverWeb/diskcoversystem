@@ -16,7 +16,7 @@
   {
   	var donante = $('#txt_donante').val();
   	var tempe = $('#txt_temperatura').val();
-  	var tipo = $('#ddl_alimento_text').val();
+  	var tipo = $('#ddl_tipo_alimento').val();
   	var can = $('#txt_cant').val();
   	var cod = $('#txt_codigo').val();
   	if(donante=='' || tempe=='' || tipo=='' || can =='' || cod=='' || can ==0)
@@ -58,6 +58,11 @@
   	$('#txt_codigo').val('');
   	$('#txt_ci').val('');
   	$('#txt_comentario').val('');
+  	$('#ddl_tipo_alimento').val('');
+  	$('#txt_donante').val(null).trigger('change');
+
+  	$('#ddl_tipo_alimento').prop('disabled',false);
+  	$('#txt_donante').prop('disabled',false);
 
   	// modales
   	$('#ddl_ingreso').val(null).trigger('change');
@@ -77,7 +82,7 @@
 	    {
 	    	console.log(data);
 	    	option = '';
-	    	opt = '<option>Tipo de donacion</option>';
+	    	opt = '<option value="">Tipo de donacion</option>';
 	    	data.forEach(function(item,i){
 	    		// console.log(item);
 	    		option+= '<div class="col-md-6 col-sm-6">'+
@@ -349,6 +354,7 @@ function autocoplet_ingreso_donante(){
   	$('#ddl_alimento_text').val(texto);
   	$('#ddl_alimento').val(cod);
   	$('#ddl_tipo_alimento').val(cod)
+  	$('#ddl_tipo_alimento').prop('disabled',true);
   	$('#modal_tipo_donacion').modal('hide');
   }
   function eliminar_pedido(ID)
@@ -403,6 +409,16 @@ function autocoplet_ingreso_donante(){
 
   	$('#ddl_alimento_text').val(nom);
   	$('#ddl_alimento').val(cod);
+
+  	$('#ddl_tipo_alimento').prop('disabled',true);
+  }
+
+  function limpiar_alimento_rec()
+  {
+  	autocoplet_alimento();
+  	$('#ddl_tipo_alimento').prop('disabled',false);
+  	$('#ddl_alimento_text').value('');
+		$('#ddl_alimento').value('');
   }
 
 </script>
@@ -484,9 +500,14 @@ function autocoplet_ingreso_donante(){
 													<button type="button" class="btn btn-default btn-sm" onclick="show_tipo_donacion()"><img src="../../img/png/tipo_donacion.png"></button>
 											</span>
 												<b>ALIMENTO RECIBIDO:</b>
-												<select class="form-control input-sm" id="ddl_tipo_alimento" name="ddl_tipo_alimento" onchange="tipo_seleccion()">
+													<div class="input-group" style="display:flex;">
+												<select class="form-control input-xs" id="ddl_tipo_alimento" name="ddl_tipo_alimento" onchange="tipo_seleccion()">
 													<option value="">Tipo donacion</option>
-												</select>												
+												</select>	
+												<span class="input-group-btn">
+														<button type="button" class="btn btn-default btn-xs btn-flat" onclick="limpiar_alimento_rec()"><i class="fa fa-close"></i></button>
+													</span>
+												</div>											
 												<input type="hidden" class="form-control input-xs" id="ddl_alimento_text" name="ddl_alimento_text" readonly>
 												<input type="hidden" class="form-control input-xs" id="ddl_alimento" name="ddl_alimento" readonly>
 									</div>
@@ -600,7 +621,7 @@ function autocoplet_ingreso_donante(){
           </div>
           <div class="modal-body" style="background: antiquewhite;">
           	<div class="row text-center" id="pnl_tipo_alimento">
-          		<div class="col-md-6 col-sm-6">
+          		<!-- <div class="col-md-6 col-sm-6">
 									<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/canasta.png"></button><br>
 									<b>COMPRAS</b>
 							</div>	
@@ -616,7 +637,7 @@ function autocoplet_ingreso_donante(){
 									<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/produccion.png"></button><br>
 									<b>RESCATE PRODUCCIÓN</b>
 								</div>
-          	</div>
+          	</div> -->
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
               <!-- <button type="button" class="btn btn-primary" onclick="cambiar_cantidad()">OK</button> -->
