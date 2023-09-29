@@ -951,10 +951,10 @@
 	}
 	function boton3() {
 		//$('#myModal_ordenesProd').modal('show');
-		//Listar_Ordenes();
-		src = "../vista/modales.php?FAbonoAnticipado=true";
-		$('#frame_anticipado').attr('src', src).show();
-		$('#my_modal_abono_anticipado').modal('show');
+		Listar_Ordenes();
+		//src = "../vista/modales.php?FAbonoAnticipado=true";
+		//$('#frame_anticipado').attr('src', src).show();
+		//$('#my_modal_abono_anticipado').modal('show');
 	}
 	function boton4() {
 		$('#myModal_guia').modal('show');

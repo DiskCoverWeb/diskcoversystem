@@ -91,7 +91,7 @@
         </form>
     </div>
     <div class="col-sm-2">
-        <button class="btn btn-default btn-block" id="btn_g" onclick="">
+        <button class="btn btn-default btn-block" id="btn_g" onclick="Command1_Click()">
             <img src="../../img/png/grabar.png"><br>&nbsp;Guardar&nbsp;
         </button>
         <button class="btn btn-default btn-block" onclick="cerrar_modal()">

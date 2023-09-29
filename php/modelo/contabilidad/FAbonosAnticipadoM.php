@@ -69,5 +69,20 @@ class FAbonosAnticipadoM
                 AND TC = 'P' ";
         return $this->db->datos($sql);
     }
+
+    function Select_AsientoSC($codigo_usuario, $sub_cta_gen, $trans_no)
+    {
+        $sql = "SELECT *
+            FROM Asiento_SC
+            WHERE TC = 'P'
+            AND Cta = '" . $sub_cta_gen . "'
+            AND DH = '2'
+            AND TM= '1'
+            AND T_No = '" . $trans_no . "'
+            AND Item = '" . $_SESSION['INGRESO']['item'] . "'
+            AND CodigoU = '" . $codigo_usuario . "' ";
+        return $this->db->datos($sql);
+    }
+
 }
 ?>
