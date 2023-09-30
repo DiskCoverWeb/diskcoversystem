@@ -70,7 +70,7 @@ class FAbonosAnticipadoM
         return $this->db->datos($sql);
     }
 
-    function Select_AsientoSC($codigo_usuario, $sub_cta_gen, $trans_no)
+    function Select_Adodc_AdoIngCaja_Asiento_SC($sub_cta_gen, $trans_no)
     {
         $sql = "SELECT *
             FROM Asiento_SC
@@ -80,7 +80,17 @@ class FAbonosAnticipadoM
             AND TM= '1'
             AND T_No = '" . $trans_no . "'
             AND Item = '" . $_SESSION['INGRESO']['item'] . "'
-            AND CodigoU = '" . $codigo_usuario . "' ";
+            AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "' ";
+        return $this->db->datos($sql);
+    }
+
+    function Select_Adocdc_AdoIngCaja_Asiento($trans_no)
+    {
+        $sql = "SELECT *
+                FROM Asiento
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'
+                AND T_No = '" . $trans_no . "'";
         return $this->db->datos($sql);
     }
 
