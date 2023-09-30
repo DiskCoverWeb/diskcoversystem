@@ -78,10 +78,10 @@
                 <div class="form-group">
                     <label for="TextCajaMN" class="col-sm-5 control-label">Caja MN.</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="TextCajaMN" placeholder="00000000" value="0.00">
+                        <input type="number" class="form-control" id="TextCajaMN" placeholder="00000000" value="0.00" pattern="\d*">
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="idLabelPend">
                     <label for="LabelPend" class="col-sm-5 control-label">Saldo Actual</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="LabelPend" placeholder="00000000" value="0.00">
