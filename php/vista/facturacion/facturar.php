@@ -1313,22 +1313,22 @@
 		</div>
 
 		<?php
-		function createButton($title, $imagePath, $onclickFunction, $id)
+		function createButton($title, $imagePath, $onclickFunction)
 		{
 			echo '<div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-                    <button type="button" class="btn btn-default" id="'.$id.'" title="' . $title . '" onclick="' . $onclickFunction . '">
+                    <button type="button" class="btn btn-default" title="' . $title . '" onclick="' . $onclickFunction . '">
                         <img src="' . $imagePath . '">
                     </button>
                 </div>';
 		}
 		?>
 
-		<?php createButton("Grabar factura", "../../img/png/grabar.png", "boton1()","btnGrabar"); ?>
-		<?php createButton("Actualizar Productos, Marcas y Bodegas", "../../img/png/update.png", "boton2()","btnActualizar"); ?>
-		<?php createButton("Asignar orden de trabajo", "../../img/png/taskboard.png", "boton3()","btnOrden"); ?>
-		<?php createButton("Asignar guía de remisión", "../../img/png/ats.png", "boton4()","btnGuia"); ?>
-		<?php createButton("Asignar suscripción/contrato", "../../img/png/file2.png", "boton5()","btnSuscripcion"); ?>
-		<?php createButton("Asignar reserva", "../../img/png/archivero2.png", "boton6()", "btnReserva"); ?>
+		<?php createButton("Grabar factura", "../../img/png/grabar.png", "boton1()"); ?>
+		<?php createButton("Actualizar Productos, Marcas y Bodegas", "../../img/png/update.png", "boton2()"); ?>
+		<?php createButton("Asignar orden de trabajo", "../../img/png/taskboard.png", "boton3()"); ?>
+		<?php createButton("Asignar guía de remisión", "../../img/png/ats.png", "boton4()"); ?>
+		<?php createButton("Asignar suscripción/contrato", "../../img/png/file2.png", "boton5()"); ?>
+		<?php createButton("Asignar reserva", "../../img/png/archivero2.png", "boton6()"); ?>
 
 		<!-- Example of a commented-out button
 		<div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
