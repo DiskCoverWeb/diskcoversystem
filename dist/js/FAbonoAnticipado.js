@@ -1,5 +1,5 @@
 // Espera a que el DOM esté listo
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 
     var cheqRecibo = document.getElementById("CheqRecibo");
     var txtRecibo = document.getElementById("TxtRecibo");
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var labelPend = document.getElementById("LabelPend");
 
     // Función clic en el botón "Aceptar"
-    window.Command1_Click = function() {
+    window.Command1_Click = function () {
         Swal.fire({
             title: 'Formulario de Grabación',
             text: 'Está Seguro que desea grabar Abono.',
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Función para grabar abonos
     function Grabar_abonos() {
-        
+
         if (cheqRecibo.checked) {
             console.log("El checkbox está seleccionado al hacer clic en Aceptar");
         } else {
@@ -38,4 +38,40 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         // Resto de la lógica de Grabar_abonos
     }
+
+    DCBanco();
+
+
 });
+
+/*
+Método conectado con el controlador para obtener todos los tipos de DCBanco existentes
+en la base de datos. Si la data retornada contiene 'status' quiere decir que no hay datos
+y se rellena el select con un 'No existen datos'.
+Con el for llenamos el select de todos los datos que hayamos encontrado de la consulta SQL.
+*/
+function DCBanco() {
+    $.ajax({
+        type: "POST",
+        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCBanco=true',
+        // data: {parametros: parametros},
+        dataType: 'json',
+        success: function (data) {
+            var selectBanco = document.getElementById("DCBanco");
+            if ('status' in data) {
+                selectBanco.innerHTML = 'No existen datos';
+            } else {
+                selectBanco.innerHTML = '';
+                for (var i = 0; i < data.length; i++) {
+                    var option = document.createElement("option");
+                    option.value = data[i].NomCuenta;
+                    option.text = data[i].NomCuenta;
+                    selectBanco.appendChild(option);
+                }
+            }
+
+
+        }
+    });
+
+}
