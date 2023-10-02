@@ -79,7 +79,7 @@
       $('#txt_ci').val(data.CI_RUC); // save selected id to input
       $('#txt_donante').val(data.Cliente); // save selected id to input
       $('#txt_tipo').val(data.Cod_Ejec); // save selected id to input
-      $('#txt_cant').val(data.TOTAL); // save selected id to input
+      $('#txt_cant').val(parseFloat(data.TOTAL).toFixed(2)); // save selected id to input
       $('#txt_comentario').val(data.Mensaje); // save selected id to input
       $('#txt_ejec').val(data.Cod_Ejec); // save selected id to input
 
@@ -479,15 +479,15 @@ function autocoplet_ingreso()
 						<div class="row">
 							<div class="col-sm-6">
 								<!-- <br> -->
-									<label><input type="checkbox" name="rbl_recibido" id="rbl_recivido"> <b>Recibido</b></label>
+									<!-- <label><input type="checkbox" name="rbl_recibido" id="rbl_recivido"> <b>Recibido</b></label> -->
 							</div>
 							<div class="col-sm-6">
 								<div class="row">
 									<div class="col-sm-6">
-										<label style="color:green" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" checked  value="V" > <img src="../../img/png/smile.png"></label>											
+										<label style="color:green" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" checked  value="V" > <img src="../../img/png/smile.png"><br> Conforme</label>											
 									</div>
 									<div class="col-sm-6">
-										<label style="color:red" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" value="R">  <img src="../../img/png/sad.png"> </label>											
+										<label style="color:red" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" value="R">  <img src="../../img/png/sad.png"><br> Inconforme </label>											
 									</div>									
 								</div>
 									<!-- <b>Evaluacion</b><br> -->										

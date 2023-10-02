@@ -228,6 +228,21 @@ $cuentas = SeteosCtas();
       }
     }
 
+    function cambiar_patch(patch){
+      parametros = {
+        'patch':patch,
+      }
+      $.ajax({
+        data:  {parametros:parametros},
+        url: '../controlador/login_controller.php?patch=true',
+        type: 'post',
+        dataType: 'json',       
+        success: function (response) {
+         
+        }
+      });
+    }
+
     function logout() {
 
       $.ajax({
@@ -544,7 +559,7 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
             <ul class="nav navbar-nav">
               <!-- Messages: style can be found in dropdown.less-->
               <li class="dropdown messages-menu">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <!-- <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-size: medium;">
                   <i class="fa fa-dashboard"></i>
                   <b>
                     <?php
@@ -565,6 +580,18 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
                   if (isset($_SESSION['INGRESO']['accion1'])) {
                     echo $_SESSION['INGRESO']['accion1'];
                   } ?>
+                </a> -->
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-size: medium;">
+                  <i class="fa fa-dashboard"></i>
+                  <b>
+                    <?php echo $modulo_header; ?>
+                  </b>
+                  <?php
+                  if(isset($_SESSION['INGRESO']['PATCH'])  && $_SESSION['INGRESO']['PATCH']!='')
+                  {
+                    echo "> ".$_SESSION['INGRESO']['PATCH'];
+                  }
+                  ?>
                 </a>
               </li>
             </ul>
@@ -685,6 +712,8 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
                </a></li>';
                 echo $m;
               } else {
+
+                //entra aqui cuando no tiene restricciones por pagina
                 foreach ($menu as $item_menu) {
                   if (count(explode(".", $item_menu['codMenu'])) == 2) {
                     $item = strtolower($item_menu['descripcionMenu']);
@@ -738,7 +767,7 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
                             $ico = '<small class="label pull-right bg-yellow">(' . $item_nivel['accesoRapido'] . ')</small>';
                             $acceso = 'Acceso Rapido (' . $item_nivel['accesoRapido'] . ')';
                           }
-                          echo '<li title="' . $acceso . '"><a href="' . $item_nivel['rutaProceso'] . '">' . $item_nivel['descripcionMenu'] . $ico;
+                          echo '<li title="' . $acceso . '"><a href="' . $item_nivel['rutaProceso'] . '" onclick="cambiar_patch(\''.$item .' > '. $item_nivel['descripcionMenu'].'\')" >' . $item_nivel['descripcionMenu'] . $ico;
                           echo '</a></li>';
                         }
                       }
@@ -748,7 +777,7 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
                     echo '</li>';
                   }
                 }
-                echo '<li><a href="../vista/modulos.php" class="active treeview">
+                echo '<li><a href="../vista/modulos.php" class="active treeview" onclick="cambiar_patch(\'\')">
                  <i class="fa fa-th"></i> <span>Salir a modulos</span>
                </a></li>';
               }
