@@ -459,7 +459,7 @@ class alimentos_recibidosC
   					}
   					$tr.='</td>
   					<td>
-  						<button class="btn btn-sm btn-primary" onclick="editar_precio('.$value['ID'].')"><i class="fa fa-save"></i></button>
+  						<button class="btn btn-sm btn-primary" onclick="editar_precio('.$value['ID'].');guardar_check()"><i class="fa fa-save"></i></button>
   					</td>
   				</tr>';
 			

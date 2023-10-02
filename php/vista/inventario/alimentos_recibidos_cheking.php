@@ -428,7 +428,7 @@ function autocoplet_ingreso()
 		    {
 		    	if(data==1)
 		    	{
-		    		Swal.fire('Items Seleccionado Gaurdados','','success');
+		    		Swal.fire('Items Seleccionados Guardados','','success');
 		    	}
 		    	
 		    }

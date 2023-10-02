@@ -636,8 +636,8 @@ function autocoplet_ingreso_donante(){
           			<div class="col-md-6 col-sm-6">
 									<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/produccion.png"></button><br>
 									<b>RESCATE PRODUCCIÓN</b>
-								</div>
-          	</div> -->
+								</div> -->
+          	</div>
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
               <!-- <button type="button" class="btn btn-primary" onclick="cambiar_cantidad()">OK</button> -->
