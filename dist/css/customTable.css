@@ -1,0 +1,135 @@
+table {
+    width: 100%;
+    background: white;
+    margin-bottom: 1.25em;
+    border: solid 1px #dddddd;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+table tr th,
+table tr td {
+    padding: 0.5625em 0.625em;
+    font-size: 0.875em;
+    color: #222222;
+    border: 1px solid #dddddd;
+}
+
+table tr.even,
+table tr.alt,
+table tr:nth-of-type(even) {
+    background: #f9f9f9;
+}
+
+@media only screen and (max-width: 768px) {
+
+    table.resp,
+    .resp thead,
+    .resp tbody,
+    .resp tr,
+    .resp th,
+    .resp td,
+    .resp caption {
+        display: block;
+    }
+
+    table.resp {
+        border: none
+    }
+
+    .resp thead tr {
+        display: none;
+    }
+
+    .resp tbody tr {
+        margin: 1em 0;
+        border: 1px solid #2ba6cb;
+    }
+
+    .resp td {
+        border: none;
+        border-bottom: 1px solid #dddddd;
+        position: relative;
+        padding-left: 45%;
+        text-align: left;
+    }
+
+    .resp tr td:last-child {
+        border-bottom: 1px double #dddddd;
+    }
+
+    .resp tr:last-child td:last-child {
+        border: none;
+    }
+
+    .resp td:before {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    td:nth-of-type(1):before {
+        content: "T";
+    }
+
+    td:nth-of-type(2):before {
+        content: "Razón Social";
+    }
+
+    td:nth-of-type(3):before {
+        content: "TC";
+    }
+
+    td:nth-of-type(4):before {
+        content: "Serie";
+    }
+
+    td:nth-of-type(5):before {
+        content: "Autorización";
+    }
+
+    td:nth-of-type(6):before {
+        content: "Factura";
+    }
+
+    td:nth-of-type(7):before {
+        content: "Fecha";
+    }
+
+    td:nth-of-type(8):before {
+        content: "SubTotal";
+    }
+
+    td:nth-of-type(9):before {
+        content: "Con_IVA";
+    }
+
+    td:nth-of-type(10):before {
+        content: "IVA";
+    }
+
+    td:nth-of-type(11):before {
+        content: "Descuento";
+    }
+
+    td:nth-of-type(12):before {
+        content: "Total";
+    }
+
+    td:nth-of-type(13):before {
+        content: "SALDO";
+    }
+
+    td:nth-of-type(14):before {
+        content: "RUC_CI";
+    }
+
+    td:nth-of-type(15):before {
+        content: "TB";
+    }
+}
