@@ -4,7 +4,8 @@ $(document).ready(function () {
 
 });
 
-function Buscar() {
+$('#btnBuscar').click(function () {
+    //$('#modalEditar').modal('show');
     var selectedOption = $('#selectOption').val();
 
     $.ajax({
@@ -15,15 +16,16 @@ function Buscar() {
             if (data.status == 200) {
                 mostrarTabla(data.datos);
             } else {
+                mostrarTabla(data.datos);
                 //console.log("no se encontraron datos en la base");
-                Swal.fire("No se encontraron datos en la base","",'error');
-            }            
+                //Swal.fire("No se encontraron datos en la base","",'error');
+            }
         },
         error: function (error) {
             console.error('Error en la solicitud AJAX:', error);
         }
     });
-}
+});
 
 function mostrarTabla(data) {
 
@@ -67,10 +69,51 @@ function mostrarTabla(data) {
             body += '<td>' + data[j][columns[k]] + '</td>';
         }
 
-        body += '<td><button class="btn btn-primary" onclick="editarFila(' + j + ')">Editar</button></td>';
-        body += '<td><button class="btn btn-danger" onclick="eliminarFila(' + j + ')">Eliminar</button></td>';
+        //body += '<td><button class="btn btn-primary" onclick="editarFila(' + j + ')">Editar</button></td>';
+        body += '<td><a href="#" class="btn btn-primary btn-md" onclick="editarFila(' + j + ')"><span class="glyphicon glyphicon-edit"></span> Editar</a></td>';
+        body += '<td><a href="#" class="btn btn-danger btn-md" onclick="eliminarFila(' + j + ')"><span class="glyphicon glyphicon-trash"></span> Eliminar</a></td>';
+
         body += '</tr>';
     }
     body += '</tbody>';
     $('#idTabla').append(body);
 }
+
+function eliminarFila(index) {
+    $('#idTabla tbody tr:eq(' + index + ')').hide();
+}
+
+
+function editarFila(index) {
+    var rowData = obtenerDatosFila(index);
+    llenarModal(rowData);
+    $('#modalEditar').modal('show');
+}
+
+function obtenerDatosFila(index) {
+    return data[index];
+}
+
+function llenarModal(rowData) {
+    $('#ID').val(rowData['ID']);
+}
+
+$('#btnAceptarEditar').click(function () {
+    //logica guardar
+    $('#myModal').modal('hide');
+});
+
+$('#btnAgregar').click(function () {
+    $('#modalAgregar').modal('show');
+});
+
+$('#btnAceptarAgregar').click(function () {
+    //logica añadir categoria
+    $('#myModal').modal('hide');
+});
+
+
+
+
+
+
