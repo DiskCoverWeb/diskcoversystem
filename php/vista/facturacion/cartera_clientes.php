@@ -13,11 +13,18 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
 }
 
 ?>
+<link rel="stylesheet" href="../../dist/css/customTable.css">
 <script type="text/javascript">
 
+    $(document).ready(function () {
+    });
+
+    function open_email() {
+        $('#myModal_email').modal('show');
+    }
 
 </script>
-<link rel="stylesheet" href="../../dist/css/customTable.css">
+
 <div class="row">
     <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
@@ -35,17 +42,17 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
                     src="../../img/png/table_excel.png"></button>
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-            <button type="button" class="btn btn-default" title="Enviar Email" onclick=""><img
+            <button type="button" class="btn btn-default" title="Enviar Email" onclick="open_email()"><img
                     src="../../img/png/email.png"></button>
         </div>
     </div>
 </div>
-<div class="row">
-    <form id="filtros" class="form-inline">
+<div class="row" style="margin-right: 5px">
+    <form id="filtros" class="form-row">
         <div class="col-sm-12">
             <div class="row">
                 <div class="col-sm-2">
-                    <label>ESTADO</label>
+                    <label style="padding: 0px">ESTADO</label>
                     <select class="form-control input-xs" id="ddl_grupo" name="ddl_grupo" onchange="">
                         <option value="P">Pendientes</option>
                         <option value="C">Canceladas</option>
@@ -53,110 +60,111 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
                     </select>
                     <!-- <input type="text" name="txt_grupo" id="txt_grupo" class="form-control input-sm"> -->
                 </div>
-                <div class="col-sm-5">
-                    <label>CI / RUC</label>
+                <div class="col-sm-4">
+                    <label style="padding: 0px">CI / RUC</label>
                     <select class="form-control input-xs" id="ddl_cliente" name="ddl_cliente" onchange="">
                         <option value="">Seleccione Cliente</option>
                     </select>
                 </div>
-                <div class="col-sm-1" style="padding: 0px;">
-                    <label>Serie</label>
+                <div class="col-sm-1">
+                    <label style="padding: 0px">Serie</label>
                     <select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="1"
                         style="padding-left:8px">
                         <option value=""></option>
                     </select>
                 </div>
-                <div class="col-sm-2" style="display:none;">
-                    <label>Periodo</label>
-                    <select class="form-control input-xs" id="ddl_periodo" name="ddl_periodo" onchange="rangos()">
-                        <option value=".">Seleccione perido</option>
-                    </select>
-                </div>
                 <div class="col-sm-2">
-                    <label>Desde</label>
+                    <label style="padding: 0px">Desde</label>
                     <input type="date" name="txt_desde" id="txt_desde" class="form-control input-xs"
                         value="<?php echo date('Y-m-d') ?>">
                 </div>
                 <div class="col-sm-2">
-                    <label>Hasta</label>
+                    <label style="padding: 0px">Hasta</label>
                     <input type="date" name="txt_hasta" id="txt_hasta" class="form-control input-xs"
                         value="<?php echo date('Y-m-d') ?>">
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6 text-right">
-                    <button class="btn btn-primary btn-xs" type="button" onclick="validar()"><i
-                            class="fa fa-search"></i> Buscar
+                <div class="col-sm-1">
+                    <br>
+                    <button class="btn btn-primary" type="button" onclick="validar()"><i class="fa fa-search"></i>
+                        Buscar
                     </button>
                 </div>
-
             </div>
-            <div></div>
         </div>
     </form>
 
 </div>
 <br>
-<div class="row">
+<div class="row panel panel-default" style="margin-left: 1px; margin-right: 1px">
     <div class="col-sm-12">
-        <div class="nav-tabs-custom">
-            <ul class="nav nav-tabs">
-                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Todos</a></li>
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane active" id="tab_1">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <h2 style="margin-top: 0px;">Listado de Facturas</h2>
-                        </div>
-                        <div class="col-sm-6 text-right" id="panel_pag">
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab_1">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h2 style="margin-top: 10px;">Listado de Facturas</h2>
+                    </div>
+                    <div class="col-sm-12" style="overflow-x: scroll;height: 500px;">
+                        <table class="resp" style=" white-space: nowrap;">
+                            <thead id="cabecera">
+                                <th scope="col">T</th>
+                                <th scope="col">Razon_Social</th>
+                                <th scope="col">TC</th>
+                                <th scope="col">Serie</th>
+                                <th scope="col">Autorizacion</th>
+                                <th scope="col">Factura</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">SubTotal</th>
+                                <th scope="col">Con_IVA</th>
+                                <th scope="col">IVA</th>
+                                <th scope="col">Descuento</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Saldo</th>
+                                <th scope="col">RUC_CI</th>
+                                <th scope="col">TB</th>
+                            </thead>
+                            <tbody id="tbl_tabla">
+                                <tr>
+                                    <td>TEST</td>
+                                    <td>TEST</td>
+                                    <td>TEST</td>
+                                    <td>TEST</td>
+                                    <td>TEST</td>
+                                    <td>TEST</td>
+                                    <td>TEST</td>
+                                    <td>TEST</td>
+                                    <td>TEST</td>
+                                    <td>TEST</td>
+                                    <td>TEST</td>
+                                    <td>TEST</td>
+                                    <td>TEST</td>
+                                    <td>TEST</td>
+                                    <td>TEST</td>
+                                </tr>
+                                <tr>
+                                    <td>TEST2</td>
+                                    <td>TEST2</td>
+                                    <td>TEST2</td>
+                                    <td>TEST2</td>
+                                    <td>TEST2</td>
+                                    <td>TEST2</td>
+                                    <td>TEST2</td>
+                                    <td>TEST2</td>
+                                    <td>TEST2</td>
+                                    <td>TEST2</td>
+                                    <td>TEST2</td>
+                                    <td>TEST2</td>
+                                    <td>TEST2</td>
+                                    <td>TEST2</td>
+                                    <td>TEST2</td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                        </div>
-                        <div class="col-sm-12" style="overflow-x: scroll;height: 500px;">
-                            <table class="resp " style=" white-space: nowrap;">
-                                <thead>
-                                    <th scope="col">T</th>
-                                    <th scope="col">Razon_Social</th>
-                                    <th scope="col">TC</th>
-                                    <th scope="col">Serie</th>
-                                    <th scope="col">Autorizacion</th>
-                                    <th scope="col">Factura</th>
-                                    <th scope="col">Fecha</th>
-                                    <th scope="col">SubTotal</th>
-                                    <th scope="col">Con_IVA</th>
-                                    <th scope="col">IVA</th>
-                                    <th scope="col">Descuento</th>
-                                    <th scope="col">Total</th>
-                                    <th scope="col">Saldo</th>
-                                    <th scope="col">RUC_CI</th>
-                                    <th scope="col">TB</th>
-                                </thead>
-                                <tbody id="tbl_tabla">
-                                    <tr>
-                                        <td>TESTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTYYYYYYYYYYYYYYYYYYYYYYYYYY</td>
-                                        <td>TEST</td>
-                                        <td>TEST</td>
-                                        <td>TEST</td>
-                                        <td>TEST</td>
-                                        <td>TEST</td>
-                                        <td>TEST</td>
-                                        <td>TEST</td>
-                                        <td>TEST</td>
-                                        <td>TEST</td>
-                                        <td>TEST</td>
-                                        <td>TEST</td>
-                                        <td>TEST</td>
-                                        <td>TEST</td>
-                                        <td>TEST</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 </div>
@@ -222,7 +230,7 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="enviar_email()">Enviar</button>
+                <button type="button" class="btn btn-primary" onclick="">Enviar</button>
             </div>
         </div>
     </div>
@@ -255,6 +263,6 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
 
 
 
-<script src="../../dist/js/utils.js"></script>
+<!--<script src="../../dist/js/utils.js"></script>
 <script src="../../dist/js/emails-input.js"></script>
-<script src="../../dist/js/multiple_email.js"></script>
+<script src="../../dist/js/multiple_email.js"></script>-->
