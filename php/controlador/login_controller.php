@@ -45,6 +45,10 @@ if (isset($_GET['setear_empresa'])) {
 if (isset($_GET['logout'])) {
 	echo json_encode($login->logout());
 }
+if (isset($_GET['patch'])) {
+	$parametro = $_POST['parametros'];
+	$_SESSION['INGRESO']['PATCH'] = strtoupper($parametro['patch']);
+}
 
 /**
  * 

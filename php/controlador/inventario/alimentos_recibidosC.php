@@ -200,7 +200,7 @@ class alimentos_recibidosC
 		$datos = $this->modelo->cta_procesos($query);
 		$bene = array();
 		foreach ($datos as $key => $value) {
-			$bene[] = array('id'=>$value['TP'],'text'=>$value['Proceso']);
+			$bene[] = array('id'=>$value['TP'],'text'=>$value['Proceso'],'picture'=>$value['Picture']);
 			// $bene[] = array('id'=>$value['id'].'-'.$value['email'],'text'=>$value['nombre']);//para produccion
 		}
 		return $bene;
@@ -376,7 +376,7 @@ class alimentos_recibidosC
   					<td width="'.$d1.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
   					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
-  					<td width="'.$d4.'">'.$value['Entrada'].'</td>
+  					<td width="'.$d4.'">'.number_format($value['Entrada'],2,'.','').'</td>
   					<td width="90px">
   					<!--	<button class="btn btn-sm btn-primary" onclick="editar_lin(\''.$value['ID'].'\')" title="Editar linea"><span class="glyphicon glyphicon-floppy-disk"></span></button> -->
   						<button class="btn btn-sm btn-danger" title="Eliminar linea"  onclick="eliminar_lin(\''.$value['ID'].'\')" ><span class="glyphicon glyphicon-trash"></span></button>
@@ -446,7 +446,7 @@ class alimentos_recibidosC
   					<td width="'.$d1.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
   					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
-  					<td width="'.$d4.'" id="txt_cant_ped_'.$value['ID'].'">'.$value['Entrada'].'</td>
+  					<td width="'.$d4.'" id="txt_cant_ped_'.$value['ID'].'">'.number_format($value['Entrada'],2,'.','').'</td>
   					<td width="'.$d4.'"><input class="form-control" id="txt_pvp_linea_'.$value['ID'].'" name="txt_pvp_linea_'.$value['ID'].'" onblur="recalcular('.$value['ID'].')" input-sm" value="'.$value['Valor_Unitario'].'"></td>
   					<td width="'.$d4.'"><input class="form-control" id="txt_total_linea_'.$value['ID'].'" name="txt_total_linea_'.$value['ID'].'"  input-sm" value="'.$value['Valor_Total'].'" readonly></td>
   					<td width="90px">';
@@ -459,7 +459,7 @@ class alimentos_recibidosC
   					}
   					$tr.='</td>
   					<td>
-  						<button class="btn btn-sm btn-primary" onclick="editar_precio('.$value['ID'].')"><i class="fa fa-save"></i></button>
+  						<button class="btn btn-sm btn-primary" onclick="editar_precio('.$value['ID'].');guardar_check()"><i class="fa fa-save"></i></button>
   					</td>
   				</tr>';
 			
@@ -526,7 +526,7 @@ class alimentos_recibidosC
 					<td>'.$value['Fecha_P']->format('Y-m-d').'</td>
 					<td>'.$value['Cliente'].'</td>
 					<td>'.$value['Proceso'].'</td>
-					<td>'.$value['TOTAL'].'</td>
+					<td>'.number_format($value['TOTAL'],2,'.','').'</td>
 					<td>'.$value['Porc_C'].'</td>
 					<td><button type="button" class="btn-sm btn-danger btn" onclick="eliminar_pedido(\''.$value['ID'].'\')"><i class="fa fa-trash"></i></button></td>
 

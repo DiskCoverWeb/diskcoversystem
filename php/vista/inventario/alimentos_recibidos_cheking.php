@@ -104,6 +104,14 @@
 		      }
 		      $('#txt_temperatura').val(data.Porc_C); // save selected id to input
 		      $('#ddl_alimento').append($('<option>',{value: data.Cod_C, text:data.Proceso,selected: true }));
+		      if(data.Proceso.toUpperCase() =='COMPRAS' || data.Proceso.toUpperCase() =='COMPRA')
+            {
+            	$('#pnl_factura').css('display','block');
+            }else
+            {
+
+            	$('#pnl_factura').css('display','none');
+            }
    		 		cargar_pedido();
    		});
 
@@ -420,7 +428,7 @@ function autocoplet_ingreso()
 		    {
 		    	if(data==1)
 		    	{
-		    		Swal.fire('Items Seleccionado Gaurdados','','success');
+		    		Swal.fire('Items Seleccionados Guardados','','success');
 		    	}
 		    	
 		    }
@@ -558,15 +566,15 @@ function autocoplet_ingreso()
 						<div class="row">
 							<div class="col-sm-6">
 								<!-- <br> -->
-									<label><input type="checkbox" name="rbl_recibido" id="rbl_recivido"> <b>Recibido</b></label>
+									<!-- <label><input type="checkbox" name="rbl_recibido" id="rbl_recivido"> <b>Recibido</b></label> -->
 							</div>
 							<div class="col-sm-6">
 								<div class="row">
 									<div class="col-sm-6">
-										<label style="color:green" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion"  value="V" checked > <img src="../../img/png/smile.png"></label>											
+										<label style="color:green" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion"  value="V" checked > <img src="../../img/png/smile.png"><br> Conforme </label>											
 									</div>
 									<div class="col-sm-6">
-										<label style="color:red" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" value="R" >  <img src="../../img/png/sad.png"> </label>											
+										<label style="color:red" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" value="R" >  <img src="../../img/png/sad.png"><br> Inconforme</label>											
 									</div>
 									
 								</div>
