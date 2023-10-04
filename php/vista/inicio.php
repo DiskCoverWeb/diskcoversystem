@@ -260,6 +260,10 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			if ($_SESSION['INGRESO']['accion']=='catalogoBodega') 
 			{
 				require_once("facturacion/catalogo_bodega.php");
+			}	
+			if ($_SESSION['INGRESO']['accion']=='Almacenamiento_Bod') 
+			{
+				require_once("inventario/almacenameinto_bodega.php");
 			}
 			
 									

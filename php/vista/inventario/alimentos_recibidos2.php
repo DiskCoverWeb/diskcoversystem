@@ -150,6 +150,13 @@
 
   function guardar()
   {
+  		var ingresados = $('#txt_cant_total').val();
+  		var total = $('#txt_cant').val();
+  		if(parseFloat(ingresados)< parseFloat(total))
+  		{
+  			 Swal.fire('No se ha completa todo el pedido ','Asegurese de que el pedido este completo','info');
+  			 return false;
+  		}
   	 var parametros = $('#form_correos').serialize();
   	  $.ajax({
 	      type: "POST",
