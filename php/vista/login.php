@@ -1,3 +1,5 @@
+
+<?php  print_r('esto es php'); ?>
 <!DOCTYPE html>
 <html>
 <head>
