@@ -224,7 +224,19 @@ class lista_facturasC
 
 	function tabla_factura_electronica($parametros)
 	{ //By Leo
-		$tbl = $this->modelo->Cliente_facturas_electronicas($parametros['desde'], $parametros['hasta'], $parametros['estado']);
+		$codigoC = '';
+		$serie = '';
+		if($parametros['ci'] != 'T'){
+			$codigoC = $parametros['ci'];
+		}
+		if($parametros['serie'] != ''){
+			$serie = $parametros['serie'];
+		}
+		$desde = $parametros['desde'];
+		$hasta = $parametros['hasta'];
+		$estado = $parametros['estado'];
+		//print_r($parametros);die();
+		$tbl = $this->modelo->Cliente_facturas_electronicas($desde, $hasta, $estado, $codigoC, $serie);
 		//die();
 		$tr = '';
 		foreach ($tbl as $key => $value) {
@@ -373,10 +385,20 @@ class lista_facturasC
 	function imprimir_pdf_factura_electronica($parametros)
 	{ //By Leo
 		//print_r($parametros);die();
+
+		$codigoC = '';
+		$serie = '';
+		if($parametros['codigoC'] != 'T'){
+			$codigoC = $parametros['codigoC'];
+		}
+		if($parametros['serie'] != ''){
+			$serie = $parametros['serie'];
+		}
+		$desde = $parametros['desde'];
+		$hasta = $parametros['hasta'];
 		$estado = $parametros['estado'];
-		$desde = $parametros['txt_desde'];
-		$hasta = $parametros['txt_hasta'];
-		$tbl = $this->modelo->Cliente_facturas_electronicas($desde, $hasta, $estado);
+		
+		$tbl = $this->modelo->Cliente_facturas_electronicas($desde, $hasta, $estado, $codigoC, $serie);
 		//print_r($tbl);die();
 
 		$titulo = 'L I S T A  D E  F A C T U R A S';
@@ -542,10 +564,19 @@ class lista_facturasC
 
 	function imprimir_excel_factura_electronica($parametros) //By Leo
 	{
+		$codigoC = '';
+		$serie = '';
+		if($parametros['codigoC'] != 'T'){
+			$codigoC = $parametros['codigoC'];
+		}
+		if($parametros['serie'] != ''){
+			$serie = $parametros['serie'];
+		}
+		$desde = $parametros['desde'];
+		$hasta = $parametros['hasta'];
 		$estado = $parametros['estado'];
-		$desde = $parametros['txt_desde'];
-		$hasta = $parametros['txt_hasta'];
-		$tbl = $this->modelo->Cliente_facturas_electronicas($desde, $hasta, $estado);
+		//print_r($parametros);die();
+		$tbl = $this->modelo->Cliente_facturas_electronicas($desde, $hasta, $estado, $codigoC, $serie);
 
 		$b = 1;
 		$titulo = 'F A C T U R A S   E M I T I D A S';

@@ -3,13 +3,13 @@ date_default_timezone_set('America/Guayaquil'); //print_r($_SESSION['INGRESO']);
 $cartera_usu = '';
 $cartera_pass = '';
 if (isset($_SESSION['INGRESO']['CARTERA_USUARIO'])) {
-    $cartera_usu = $_SESSION['INGRESO']['CARTERA_USUARIO'];
-    $cartera_pass = $_SESSION['INGRESO']['CARTERA_PASS'];
+  $cartera_usu = $_SESSION['INGRESO']['CARTERA_USUARIO'];
+  $cartera_pass = $_SESSION['INGRESO']['CARTERA_PASS'];
 }
 $tipo = '';
 
 if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
-    $tipo = 2;
+  $tipo = 2;
 }
 
 ?>
@@ -443,26 +443,26 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
 
 
   function reporte_pdf() {
-    var cli = $('#ddl_cliente').val();
-    var datos = $("#filtros").serialize();
+    var codigoC = $('#ddl_cliente').val();
+    var desde = $('#txt_desde').val();
+    var hasta = $('#txt_hasta').val();
     var estado = $('#ddl_estado').val();
-    if ($('#tab_4_').hasClass('active')) {
-      var url = '../controlador/facturacion/lista_facturasC.php?imprimir_pdf_lineas=true&ddl_cliente=' + cli + '&';
-    } else {
-      var url = '../controlador/facturacion/lista_facturasC.php?imprimir_pdf_factura_electronica=true&ddl_cliente=' + cli + '&' + datos + '& estado=' + estado;
-    }
+    var serie = $('#DCLinea').val();
+    
+    var url = '../controlador/facturacion/lista_facturasC.php?imprimir_pdf_factura_electronica=true&codigoC='
+    + codigoC + '&desde=' + desde + '&hasta=' + hasta + '&estado=' + estado + '&serie=' + serie;
+    
     window.open(url, '_blank');
   }
   function generar_excel() {//Arreglado por Leo
-    var cli = $('#ddl_cliente').val();
-    var datos = $("#filtros").serialize();
+    var codigoC = $('#ddl_cliente').val();
+    var desde = $('#txt_desde').val();
+    var hasta = $('#txt_hasta').val();
     var estado = $('#ddl_estado').val();
-    if ($('#tab_4_').hasClass('active')) {
-      var url = '../controlador/facturacion/lista_facturasC.php?imprimir_excel_factura_electronica=true&ddl_cliente=' + cli + '&' + datos;
+    var serie = $('#DCLinea').val();
+    var url = '../controlador/facturacion/lista_facturasC.php?imprimir_excel_factura_electronica=true&codigoC='
+     + codigoC + '&desde=' + desde + '&hasta=' + hasta + '&estado=' + estado + '&serie=' + serie;
 
-    } else {
-      var url = '../controlador/facturacion/lista_facturasC.php?imprimir_excel_factura_electronica=true&ddl_cliente=' + cli + '&' + datos + '& estado=' + estado;
-    }
     window.open(url);
 
 
@@ -536,7 +536,7 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
     });
   }
 
-  function validar_neo(){//By Leo
+  function validar_neo() {//By Leo
     var cli = $('#ddl_cliente').val();
     var cla = $('#txt_clave').val();
     var tip = '<?php echo $tipo; ?>';
@@ -604,7 +604,7 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
     });
   }
 
-  function cargar_facturas_tabla(){//By Leo
+  function cargar_facturas_tabla() {//By Leo
     var per = $('#ddl_periodo').val();
     var serie = $('#DCLinea').val();
     var estado = $('#ddl_estado').val();
@@ -625,6 +625,7 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
       'serie': serie,
       'estado': estado
     }
+    console.log("PARAMETROS", parametros);
     $.ajax({
       data: { parametros: parametros },
       url: '../controlador/facturacion/lista_facturasC.php?tabla_factura_electronica=true',
@@ -960,8 +961,7 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
   <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
     <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
       <a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
-      print_r($ruta[0] . '#'); ?>" title="Salir de modulo"
-        class="btn btn-default">
+      print_r($ruta[0] . '#'); ?>" title="Salir de modulo" class="btn btn-default">
         <img src="../../img/png/salire.png">
       </a>
     </div>
@@ -973,85 +973,87 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
       <button type="button" class="btn btn-default" title="Generar Excel" onclick="generar_excel()"><img
           src="../../img/png/table_excel.png"></button>
     </div>
-    <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-            <button type="button" class="btn btn-default" title="Enviar Email" onclick="modal_email_fac()"><img
-                    src="../../img/png/email.png"></button>
+    <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2" style="display: none;">
+      <button type="button" class="btn btn-default" title="Enviar Email" onclick="modal_email_fac()"><img
+          src="../../img/png/email.png"></button>
     </div>
 
 
   </div>
 </div>
-<div class="row" style="margin-right: 5px">
-  <form id="filtros" class="form-row">
-    <div class="col-sm-12">
-      <div class="row">
-        <div class="col-sm-2" style="display:none;">
-          <b>GRUPO</b>
-          <select class="form-control input-xs" id="ddl_grupo" name="ddl_grupo" onchange="autocmpletar_cliente()">
-            <option value=".">TODOS</option>
-          </select>
-          <!-- <input type="text" name="txt_grupo" id="txt_grupo" class="form-control input-sm"> -->
-        </div>
-        <div class="col-sm-2" id="campo_estado">
-          <b>Estado</b>
-          <select class="form-control input-xs" name="DCLinea" id="ddl_estado" tabindex="1" style="padding-left:8px">
-            <option value="P">Pendiente</option>
-            <option value="C">Cancelado</option>
-            <option value="A">Anulado</option>
-          </select>
-        </div>
-        <div class="col-sm-5">
-          <b>CI / RUC</b>
-          <select class="form-control input-xs" id="ddl_cliente" name="ddl_cliente"
-            onchange="periodos(this.value);rangos();">
-            <option value="">Seleccione Cliente</option>
-          </select>
-        </div>
-        <div class="col-sm-1" style="padding: 0px;">
-          <b>Serie</b>
-          <select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="1" style="padding-left:8px">
-            <option value=""></option>
-          </select>
-        </div>
-        <div class="col-sm-2" id="campo_clave" >
-          <b>CLAVE</b>
-          <input type="password" name="txt_clave" id="txt_clave" class="form-control input-xs">
-          <a href="#" onclick="recuperar_clave()"><i class="fa fa-key"></i> Recupera clave</a>
-        </div>
-        <div class="col-sm-2" style="display:none;">
-          <b>Periodo</b>
-          <select class="form-control input-xs" id="ddl_periodo" name="ddl_periodo" onchange="rangos()">
-            <option value=".">Seleccione perido</option>
-          </select>
-        </div>
-        <div class="col-sm-2">
-          <b>Desde</b>
-          <input type="date" name="txt_desde" id="txt_desde" class="form-control input-xs"
-            value="<?php echo date('Y-m-d') ?>">
-        </div>
-        <div class="col-sm-2">
-          <b>Hasta</b>
-          <input type="date" name="txt_hasta" id="txt_hasta" class="form-control input-xs"
-            value="<?php echo date('Y-m-d') ?>">
-        </div>
-        
-      </div>
-      <div class="row">
-        <div class="col-sm-6 text-right">
-        </div>
-        <div class="col-sm-6 text-right" >
-          <button class="btn btn-primary btn-xs" type="button" onclick="validar_neo()"><i class="fa fa-search"></i>
-            Buscar</button>
-        
-        </div>
-        
 
+<div class="row"></div>
+<div class="row">
+  <div class="col-sm-12">
+    <div class="panel panel-primary">
+      <div class="panel-body">
+        <form id="filtros">
+          <div class="row">
+            <div class="col-sm-2" style="display:none;">
+              <b>GRUPO</b>
+              <select class="form-control input-xs" id="ddl_grupo" name="ddl_grupo" onchange="autocmpletar_cliente()">
+                <option value=".">TODOS</option>
+              </select>
+              <!-- <input type="text" name="txt_grupo" id="txt_grupo" class="form-control input-sm"> -->
+            </div>
+            <div class="col-sm-2" id="campo_estado">
+              <b>Estado</b>
+              <select class="form-control input-xs" name="DCLinea" id="ddl_estado" tabindex="1"
+                style="padding-left:8px">
+                <option value="P">Pendiente</option>
+                <option value="C">Cancelado</option>
+                <option value="A">Anulado</option>
+              </select>
+            </div>
+            <div class="col-sm-5">
+              <b>CI / RUC</b>
+              <select class="form-control input-xs" id="ddl_cliente" name="ddl_cliente"
+                onchange="periodos(this.value);rangos();">
+                <option value="">Seleccione Cliente</option>
+              </select>
+            </div>
+            <div class="col-sm-1" style="padding: 0px;">
+              <b>Serie</b>
+              <select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="1" style="padding-left:8px">
+                <option value=""></option>
+              </select>
+            </div>
+            <div class="col-sm-2" id="campo_clave">
+              <b>CLAVE</b>
+              <input type="password" name="txt_clave" id="txt_clave" class="form-control input-xs">
+              <a href="#" onclick="recuperar_clave()"><i class="fa fa-key"></i> Recupera clave</a>
+            </div>
+            <div class="col-sm-2" style="display:none;">
+              <b>Periodo</b>
+              <select class="form-control input-xs" id="ddl_periodo" name="ddl_periodo" onchange="rangos()">
+                <option value=".">Seleccione perido</option>
+              </select>
+            </div>
+            <div class="col-sm-2">
+              <b>Desde</b>
+              <input type="date" name="txt_desde" id="txt_desde" class="form-control input-xs"
+                value="<?php echo date('Y-m-d') ?>">
+            </div>
+            <div class="col-sm-2">
+              <b>Hasta</b>
+              <input type="date" name="txt_hasta" id="txt_hasta" class="form-control input-xs"
+                value="<?php echo date('Y-m-d') ?>">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6 text-right">
+            </div>
+            <div class="col-sm-6 text-right">
+              <button class="btn btn-primary btn-xs" type="button" onclick="validar_neo()"><i class="fa fa-search"></i>
+                Buscar</button>
+            </div>
+          </div>
+        </form>
       </div>
-      <div></div>
     </div>
-  </form>
-
+  </div>
 </div>
+
 <div class="panel" id="panel_datos" style="display:none;margin-bottom: 1px;">
   <div class="row">
     <div class="col-sm-4">
@@ -1077,8 +1079,10 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
     <div class="nav-tabs-custom">
       <ul class="nav nav-tabs">
         <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true" style="display:none;">Todos</a></li>
-        <li class="" id="tab_2_"><a href="#tab_2" data-toggle="tab" aria-expanded="false" style="display:none;">Autorizados</a></li>
-        <li class="" id="tab_3_"><a href="#tab_3" data-toggle="tab" aria-expanded="false" style="display:none;">No Autorizados</a></li>
+        <li class="" id="tab_2_"><a href="#tab_2" data-toggle="tab" aria-expanded="false"
+            style="display:none;">Autorizados</a></li>
+        <li class="" id="tab_3_"><a href="#tab_3" data-toggle="tab" aria-expanded="false" style="display:none;">No
+            Autorizados</a></li>
         <li class="" id="tab_4_" onclick="cargar_lineas()"><a href="#tab_4" data-toggle="tab"
             aria-expanded="false">Detalle Factura</a></li>
       </ul>
