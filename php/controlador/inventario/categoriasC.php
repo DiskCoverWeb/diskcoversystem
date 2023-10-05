@@ -1,5 +1,5 @@
 <?php
-include('../vista/dayaM.php');
+include(dirname(__DIR__,2).'/modelo/inventario/categoriasM.php');
 
 $controlador = new dayaC();
 

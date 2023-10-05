@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__DIR__, 1) . "/db/db1.php");
+include(dirname(__DIR__,2).'/funciones/funciones.php');
 @session_start();
 
 class dayaM

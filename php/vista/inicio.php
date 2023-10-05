@@ -418,9 +418,9 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("inventario/registro_es.php");
 			}
-			if ($_SESSION['INGRESO']['accion']=='articulos') 
+			if ($_SESSION['INGRESO']['accion']=='articulos_inventario') 
 			{
-				require_once("farmacia/articulos.php");
+				require_once("inventario/categorias.php");
 			}
 			if ($_SESSION['INGRESO']['accion']=='alimentosRec') 
 			{

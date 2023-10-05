@@ -1,5 +1,9 @@
 $(document).ready(function () {
     buscarDatos();
+
+   /* $(".visible-xs").click(function () {
+        $(".col-xs-2").toggle();
+    });*/
 });
 
 $('#selectOption').change(function () {
@@ -11,7 +15,7 @@ function buscarDatos() {
 
     $.ajax({
         type: 'POST',
-        url: '../vista/dayaC.php?MostrarTabla=true',
+        url: '../controlador/inventario/categoriasC.php?MostrarTabla=true',
         data: { option: selectedOption },
         success: function (data) {
             var data = JSON.parse(data);
@@ -39,6 +43,8 @@ function mostrarLabel() {
 
 function mostrarTabla(data) {
 
+    console.log(data);
+
     $('#alertNoData').css('display', 'none');
     $('#idTabla').css('display', 'table');
     $('#idTabla').empty();
@@ -46,7 +52,7 @@ function mostrarTabla(data) {
     var columns;
     //var query;
 
-    switch ($('#selectOption').val()) {
+    /*switch ($('#selectOption').val()) {
         case 'CAT_GFN':
             columns = ['TP', 'Proceso', 'Cmds'];
             //query = 'SELECT TP, Proceso, Cmds, ID FROM Catalogo_Proceso WHERE Item = \'999\' AND Nivel = 0 AND TP = \'CAT_GFN\'';
@@ -60,7 +66,11 @@ function mostrarTabla(data) {
         default:
             console.error('Opción no reconocida');
             return;
-    }
+    }*/
+
+    var columns = Object.keys(data[0]).filter(function(column) {
+        return column !== 'ID'; 
+    });
 
     // Titulo
     var headerRow = '<thead class="table-primary"><tr>';
@@ -94,8 +104,6 @@ function mostrarTabla(data) {
     }
     body += '</tbody>';
     $('#idTabla').append(body);
-
-
 }
 
 function eliminarFila(id) {
@@ -103,25 +111,35 @@ function eliminarFila(id) {
     Swal.fire({
         title: 'Está seguro que desea eliminar?',
         text: 'No podrás revertir esto.!',
-        icon: 'warning',
+        type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, eliminar!',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
-        if (result.isConfirmed) {
+        if (result.value == true) {
             $.ajax({
                 type: 'POST',
-                url: '../vista/dayaC.php?AceptarEliminar=true',
+                url: '../controlador/inventario/categoriasC.php?AceptarEliminar=true',
                 data: { id: id },
                 success: function (data) {
                     var data = JSON.parse(data);
                     if (data.status == 200) {
-                        Swal.fire("Éxito!, los datos se eliminaron correctamente.", "", 'success');
+                        Swal.fire({
+                            title: 'Éxito!, los datos se eliminaron correctamente.',
+                            type: 'error',
+                            timer: 1000, 
+                            showConfirmButton: false 
+                        });                         
                         buscarDatos();
                     } else {
-                        Swal.fire("Error, no se pudieron eliminar los datos.", "", 'error');
+                        Swal.fire({
+                            title: 'Error, no se pudieron eliminar los datos.',
+                            type: 'error',
+                            timer: 1000, 
+                            showConfirmButton: false 
+                        });                          
                     }
                 },
                 error: function (error) {
@@ -136,7 +154,7 @@ function eliminarFila(id) {
 function editarFila(id) {
     $.ajax({
         type: 'POST',
-        url: '../vista/dayaC.php?MostrarDatosPorId=true',
+        url: '../controlador/inventario/categoriasC.php?MostrarDatosPorId=true',
         data: { id: id },
         success: function (data) {
             var data = JSON.parse(data);
@@ -177,27 +195,37 @@ $('#btnAceptarEditar').click(function () {
 
     Swal.fire({
         title: 'Está seguro?',
-        icon: 'warning',
+        type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, actualizar!',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
-        if (result.isConfirmed) {
+        if (result.value == true) {
             $.ajax({
                 type: 'POST',
-                url: '../vista/dayaC.php?AceptarEditar=true',
+                url: '../controlador/inventario/categoriasC.php?AceptarEditar=true',
                 data: { parametros: parametros },
                 success: function (data) {
                     var data = JSON.parse(data);
                     if (data['status'] == 200) {
-                        Swal.fire("Éxito!, se actualizo correctamente.", "", 'success');
+                        Swal.fire({
+                            title: 'Éxito!, se actualizó correctamente.',
+                            type: 'success',
+                            timer: 1000, 
+                            showConfirmButton: false 
+                        });                        
                         $('#beneficiarioE').val('');
                         $('#codigoE').val('');
                         buscarDatos();
                     } else {
-                        Swal.fire("Error, no se actualizo.", "", 'error');
+                        Swal.fire({
+                            title: 'Error, no se actualizó.',
+                            type: 'error',
+                            timer: 1000, 
+                            showConfirmButton: false 
+                        });                        
                     }
                 },
                 error: function (error) {
@@ -210,6 +238,14 @@ $('#btnAceptarEditar').click(function () {
 });
 
 $('#btnAgregar').click(function () {
+    var selectedOptionLbl = $('#selectOption option:selected').text();
+    $('#selectedOptionLabel').text(selectedOptionLbl);
+
+    $('#modalAgregar').modal('show');
+});
+
+$('#btnAgregarCollapse').click(function () {
+    event.preventDefault();
     var selectedOptionLbl = $('#selectOption option:selected').text();
     $('#selectedOptionLabel').text(selectedOptionLbl);
 
@@ -229,28 +265,38 @@ $('#btnAceptarAgregar').click(function () {
 
     Swal.fire({
         title: 'Está seguro que desea guardar?',
-        icon: 'warning',
+        type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, guardar!',
         cancelButtonText: 'Cancelar'
-        }).then((result) => {
-        if (result.isConfirmed) {
+    }).then((result) => {
+        if (result.value == true) {
             $.ajax({
                 type: 'POST',
-                url: '../vista/dayaC.php?AceptarAgregar=true',
+                url: '../controlador/inventario/categoriasC.php?AceptarAgregar=true',
                 data: { parametros: parametros },
                 success: function (data) {
 
                     var data = JSON.parse(data);
                     if (data['status'] == 200) {
-                        Swal.fire("Éxito!, se registro correctamente.", "", 'success');
+                        Swal.fire({
+                            title: "Éxito!, se registro correctamente.",
+                            type: 'success',
+                            timer: 1000, 
+                            showConfirmButton: false 
+                        });                        
                         $('#beneficiarioA').val('');
                         $('#codigoA').val('');
                         buscarDatos();
                     } else {
-                        Swal.fire("Error, no se registro.", "", 'error');
+                        Swal.fire({
+                            title: 'Error, no se registró.',
+                            type: 'error',
+                            timer: 1000, 
+                            showConfirmButton: false 
+                        });
                     }
                 },
                 error: function (error) {

@@ -644,8 +644,7 @@
 	}
 
 	function boton1() {
-		window.location.href = "daya.php";
-		/*var TC = $('#TipoFactura').val();
+		var TC = $('#TipoFactura').val();
 		var FAC = $('#TextFacturaNo').val();
 		if (TC == 'OP') {
 			Mensajes = "La Orden de Producción No. " + FAC;
@@ -664,8 +663,7 @@
 			if (result.value == true) {
 				Grabar_Factura_Actual();
 			}
-		})*/
-
+		})
 	}
 
 	function Grabar_Factura_Actual() {
