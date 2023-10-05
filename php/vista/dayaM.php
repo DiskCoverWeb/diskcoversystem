@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__DIR__, 2) . "/db/db1.php");
+require_once(dirname(__DIR__, 1) . "/db/db1.php");
 @session_start();
 
 class dayaM
@@ -11,17 +11,7 @@ class dayaM
         $this->db = new db();
     }
 
-    function ConsultaCategoriaGFN($option)
-    {
-        $sql = "SELECT TP, Proceso, Cmds, ID 
-                FROM Catalogo_Proceso 
-                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
-                AND Nivel = 0 
-                AND TP = ' " . $option . " ' ";
-        return $this->db->datos($sql);
-    }
-
-    function ConsultaCategoriaBPMAlergenos($option)
+    function ConsultarCategoriaClientesDatosExtras($option)
     {
         $sql = "SELECT Tipo_Dato, Codigo, Beneficiario, ID 
                 FROM Clientes_Datos_Extras 
@@ -29,11 +19,13 @@ class dayaM
         return $this->db->datos($sql);
     }
 
-    function ConsultaCategoriaBPMTemperatura($option)
+    function ConsultaCategoriaGFN($option)
     {
-        $sql = "SELECT Tipo_Dato, Codigo, Beneficiario, ID 
-                FROM Clientes_Datos_Extras 
-                WHERE Tipo_Dato = '" . $option . "'";
+        $sql = "SELECT TP, Proceso, Cmds, ID 
+                FROM Catalogo_Proceso 
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND Nivel = 0 
+                AND TP = ' " . $option . " ' ";
         return $this->db->datos($sql);
     }
 
@@ -47,14 +39,6 @@ class dayaM
         return $this->db->datos($sql);
     }
 
-    function ConsultarIndicadorNutricional($option)
-    {
-        $sql = "SELECT Tipo_Dato, Codigo, Beneficiario, ID 
-                FROM Clientes_Datos_Extras 
-                WHERE Tipo_Dato = '" . $option . "'";
-        return $this->db->datos($sql);
-    }
-
     function ConsultarCatalogoBodega($option)
     {
         $sql = "SELECT CodBod, Bodega, Item, Periodo, X, ID 
@@ -65,5 +49,44 @@ class dayaM
         return $this->db->datos($sql);
     }
 
+    function AgregarCategoriaClientesDatosExtras($parametros)
+    {
+        $sql = "INSERT INTO Clientes_Datos_Extras (Tipo_Dato, Codigo, Beneficiario) 
+                VALUES ('" . $parametros['tipo'] . "', '" . $parametros['codigo'] . "', '" . $parametros['beneficiario'] . "')";
+        return $this->db->datos($sql);
+    }
+
+    function AgregarCategoriaGFN($parametros)
+    {
+        $sql = "INSERT INTO Catalogo_Proceso (TP, Proceso, Cmds) 
+                VALUES ('" . $parametros['tp'] . "', '" . $parametros['proceso'] . "', '" . $parametros['cmds'] . "')";
+        return $this->db->datos($sql);
+    }
+
+    function MostrarDatosPorId($id)
+    {
+        $sql = "SELECT Tipo_Dato, Codigo, Beneficiario, ID 
+                FROM Clientes_Datos_Extras 
+                WHERE ID = '" . $id . "' ";
+        return $this->db->datos($sql);
+    }
+
+    function EditarCategoriaClientesDatosExtrasPorId($parametros)
+    {
+        $sql = "UPDATE Clientes_Datos_Extras 
+                SET Tipo_Dato = '" . $parametros['tipo'] . "', 
+                    Codigo = '" . $parametros['codigo'] . "', 
+                    Beneficiario = '" . $parametros['beneficiario'] . "' 
+                WHERE ID = '" . $parametros['id'] . "'";
+        return $this->db->datos($sql);
+    }
+
+    function EliminarCategoriaClientesDatosExtrasPorId($id)
+    {
+        $sql = "DELETE
+                FROM Clientes_Datos_Extras 
+                WHERE ID = '" . $id . "' ";
+        return $this->db->datos($sql);
+    }
 }
 ?>

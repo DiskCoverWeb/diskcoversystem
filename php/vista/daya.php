@@ -10,31 +10,33 @@
 
 <body>
     <div class="container">
-        <form class="row" style="margin-top: 20px;">
-            <div class="col-xs-12">
-                <div class="col-xs-10 form-inline">
-                    <label for="selectOption">Selecciona una opción:</label>
-                    <select class="form-control" id="selectOption" name="selectOption">
-                        <option value="CAT_GFN">Categoría GFN</option>
-                        <option value="CATEG_BPM">Categoría BPM_ALERGENOS</option>
-                        <option value="CATEG_BPMT">Categoría BPM TEMPERATURA</option>
-                    </select>
-                    <a href="#" class="btn btn-info btn-md" id="btnBuscar">
-                        <span class="glyphicon glyphicon-search"></span> Buscar
-                    </a>
-                </div>
-
-                <div class="col-xs-2 text-right">
-                    <a href="#" class="btn btn-info btn-md" id="btnAgregar">
-                        <span class="glyphicon glyphicon-plus"></span> Agregar Nuevo
-                    </a>
-                </div>
+        <div class="form-inline" style="margin:20px">
+            <div class="">
+                <label for="selectOption">Selecciona una categoría:</label>
+                <select class="form-control" id="selectOption" name="selectOption">
+                    <option value="INDIC_NUT">Indicador Nutricional</option>
+                    <option value="CATEG_BPM">BPM Alergenos</option>
+                    <option value="CATEG_BPMT">BPM Temperatura</option>
+                </select>
+                <!--a href="#" class="btn btn-info btn-md" id="btnBuscar">
+                    <span class="glyphicon glyphicon-search"></span> Buscar
+                </a-->
             </div>
-        </form>
 
+            <div class="text-right">
+                <a href="#" class="btn btn-info btn-md" id="btnAgregar">
+                    <span class="glyphicon glyphicon-plus"></span> Agregar Nuevo
+                </a>
+            </div>
 
-        <table class="table table-responsive table-bordered table-striped" style="margin-top: 20px;" id="idTabla">
-        </table>
+            <div class="alert alert-warning" id="alertNoData" style="display: none; margin-top:10px">
+                No se encontraron datos que mostrar.
+            </div>
+
+            <table class="table table-responsive table-bordered table-striped table-hover" style="margin-top: 20px;" id="idTabla"
+                type="hidden">
+            </table>
+        </div>
     </div>
 
     <div class="modal" id="modalEditar">
@@ -43,14 +45,21 @@
 
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Editar Fila</h4>
-
+                    <h4 class="modal-title">Editar <span id="selectedOptionLabelE"> </span> </h4>
                 </div>
 
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="ID">ID:</label>
-                        <input type="text" class="form-control" id="ID">
+                    <div class="form-group">                                                
+                        <input type="text" class="form-control" id="idE" maxlength="10" style="display: none;">
+
+                        <label for="codigoE">Tipo de dato:</label>
+                        <input type="text" class="form-control" id="tipoE" maxlength="10" readonly>
+
+                        <label for="codigoE">Código:</label>
+                        <input type="text" class="form-control" id="codigoE" maxlength="10">
+
+                        <label for="beneficiarioE">Beneficiario:</label>
+                        <input type="text" class="form-control" id="beneficiarioE" maxlength="60">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -68,13 +77,16 @@
 
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Agregar Categoría</h4>
+                    <h4 class="modal-title">Agregar <span id="selectedOptionLabel"> </span> </h4>
                 </div>
 
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="ID">ID:</label>
-                        <input type="text" class="form-control" id="ID">
+                        <label for="codigoA">Código:</label>
+                        <input type="text" class="form-control" id="codigoA" maxlength="10">
+
+                        <label for="beneficiarioA">Beneficiario:</label>
+                        <input type="text" class="form-control" id="beneficiarioA" maxlength="60">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -86,10 +98,6 @@
         </div>
     </div>
     </div>
-
-
-
-
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
