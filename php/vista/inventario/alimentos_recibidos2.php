@@ -11,67 +11,58 @@
   	autocoplet_ingreso();
   	pedidos();
 
-  	// $( "#txt_codigo" ).autocomplete({
-    //         source: function( request, response ) {
-                
-    //             $.ajax({
-    //             		url:   '../controlador/inventario/alimentos_recibidosC.php?search=true',          
-    //                 type: 'post',
-    //                 dataType: "json",
-    //                 data: {
-    //                     search: request.term
-    //                 },
-    //                 success: function( data ) {
-    //                   console.log(data);
-    //                     response( data );
-    //                 }
-    //             });
-    //         },
-    //         select: function (event, ui) {
-    //           console.log(ui.item);
-    //             $('#txt_id').val(ui.item.value); // display the selected text
-    //             $('#txt_fecha').val(ui.item.Fecha); // display the selected text
-    //             $('#txt_ci').val(ui.item.CI_RUC); // save selected id to input
-    //             $('#txt_donante').val(ui.item.Cliente); // save selected id to input
-    //             $('#txt_tipo').val(ui.item.Cod_Ejec); // save selected id to input
-    //             $('#txt_cant').val(ui.item.Total); // save selected id to input
-    //             $('#txt_comentario').val(ui.item.mensaje); // save selected id to input
-    //             $('#txt_ejec').val(ui.item.Cod_Ejec); // save selected id to input
-    //             if(ui.item.Cod_R=='0')
-    //             {
-    //             	$('#img_estado').attr('src','../../img/png/bloqueo.png');
-    //             }else
-    //             {
-
-    //             	$('#img_estado').attr('src','../../img/png/aprobar.png');
-    //             }
-    //             $('#txt_temperatura').val(ui.item.Porc_C); // save selected id to input
-    //             $('#ddl_alimento').append($('<option>',{value: ui.item.Cod_C, text:ui.item.Proceso,selected: true }));
-    //             cargar_pedido();
-    //             return false;
-    //         },
-    //         focus: function(event, ui){
-    //              $('#txt_codigo').val(ui.item.label); // display the selected text
-                
-    //             return false;
-    //         },
-    //     });
-
+  	
   	$('#ddl_producto').on('select2:select', function (e) {
       var data = e.params.data.data;
       $('#txt_unidad').val(data[0].Unidad);
+      $('#txt_producto').append($('<option>',{value: data[0].Codigo_Inv, text:data[0].Producto,selected: true }));
+      
       $('#txt_referencia').val(data[0].Codigo_Inv);
-      $('#txt_producto').val(data[0].Producto);
       $('#txt_grupo').val(data[0].Item_Banco);
       $('#txt_costo').val(data[0].PVP);
       $('#txt_cta_inv').val(data[0].Cta_Inventario);
+      $('#txt_TipoSubMod').val(data[0].TDP);
+      $('#txt_producto').prop('disabled',true);
       $('#modal_producto').modal('hide');
 
+      if(data[0].TDP=='R')
+      {
+	      setTimeout(() => {  
+	      		$('#txt_titulo_mod').text(data[0].Producto);
+			      $('#modal_producto_2').modal('show');
+	    	}, 1000);     	
+	      
+      }
       costeo(data[0].Codigo_Inv);
-      console.log(data);
+    });
+
+   $('#txt_producto').on('select2:select', function (e) {
+      var data = e.params.data.data;
+      $('#txt_unidad').val(data[0].Unidad);
+      $('#txt_producto').append($('<option>',{value: data[0].Codigo_Inv, text:data[0].Producto,selected: true }));
+      
+      $('#txt_referencia').val(data[0].Codigo_Inv);
+      $('#txt_grupo').val(data[0].Item_Banco);
+      $('#txt_costo').val(data[0].PVP);
+      $('#txt_cta_inv').val(data[0].Cta_Inventario);
+      $('#txt_TipoSubMod').val(data[0].TDP);
+      $('#txt_producto').prop('disabled',true);
+      $('#modal_producto').modal('hide');
+
+      if(data[0].TDP=='R')
+      {
+	      setTimeout(() => {  
+	      		$('#txt_titulo_mod').text(data[0].Producto);
+			      $('#modal_producto_2').modal('show');
+	    	}, 1000);     	
+	      
+      }
+      costeo(data[0].Codigo_Inv);
     });
 
     $('#txt_codigo').on('select2:select', function (e) {
+    	limpiar();
+    	limpiar_reciclaje();
       var data = e.params.data.data;
 
       $('#txt_id').val(data.ID); // display the selected text
@@ -86,7 +77,19 @@
       $('#txt_contra_cta').val(data.Cta_Haber); // save selected id to input
       $('#txt_cta_inv').val(data.Cta_Debe); // save selected id to input
 
-      $('#txt_codigo_p').val(data.CodigoP)
+      $('#txt_codigo_p').val(data.CodigoP)      
+      $('#txt_TipoSubMod').val(data.Giro_No)
+      if(data.Giro_No!='R')
+      {
+      	$('#btn_cantidad').prop('disabled',false);
+      	$('#txt_producto').prop('disabled',false);
+      }else
+      {
+      	$('#btn_cantidad').prop('disabled',true);
+      	$('#txt_producto').prop('disabled',true);
+      	$('#modal_producto_2').modal('show');
+      }
+
       if(data.Cod_R=='0')
       {
       	$('#img_estado').attr('src','../../img/png/bloqueo.png');
@@ -97,7 +100,12 @@
       }
       $('#txt_temperatura').val(data.Porc_C); // save selected id to input
       $('#ddl_alimento').append($('<option>',{value: data.Cod_C, text:data.Proceso,selected: true }));
-      cargar_pedido();
+      
+      	cargar_pedido();
+   
+      	 // $('#pnl_normal').css('display','none');
+      	 cargar_pedido2();
+     
       // console.log(data);
     });
 
@@ -170,6 +178,40 @@
 	      		Swal.fire('Registro Guardado','','success').then(function(){
 	      			location.reload();
 	      		});
+	      	}
+	      
+	      }
+	  });
+  }
+
+  function guardar_pedido()
+  {
+  		var cant_total = $('#txt_cant_total_pedido').val();  		
+  		var cant = $('#txt_cantidad_pedido').val();
+  		var cant_suge = $('#txt_cant').val();
+
+  		if(cant==0 || cant=='')
+  		{
+  			Swal.fire('Ingrese una cantidad valida','','info')
+  			return false;
+  		}  	
+  	 if((parseFloat(cant)+parseFloat(cant_total))>parseFloat(cant_suge))
+  	 {
+  	 		Swal.fire('La cantidad Ingresada supera a la cantidad registrada','','info');
+  	 		return false
+  	 }
+  	  var parametros = $('#form_correos').serialize();
+  	  $.ajax({
+	      type: "POST",
+	      url: '../controlador/inventario/alimentos_recibidosC.php?guardar_pedido=true',
+	      data:parametros+'&producto_pedido='+$('#ddl_producto2').val()+'&cantidad_pedido='+$('#txt_cantidad_pedido').val()+'&total_pedido='+$('#txt_cant_total_pedido').val(),
+          dataType:'json',
+	      success: function(data)
+	      {
+	      	if(data==1)
+	      	{
+	      		cargar_pedido2();	
+	      		cargar_pedido();	      	
 	      	}
 	      
 	      }
@@ -306,14 +348,17 @@ function autocoplet_ingreso()
   	 var cant_suge = $('#txt_cant').val();
   	 var cant_ing = $('#txt_cantidad').val();
   	 var cant_total = $('#txt_cant_total').val();
-
-  	 var producto = $('#txt_producto').val();
   	 var fe_exp = $('#txt_fecha_exp').val();
-  	 if(producto=='' || fe_exp=='' || cant_ing=='' || cant_ing==0)
-  	 {
-  	 	Swal.fire('Ingrese todo los datos','','info');
-  	 		return false
-  	 }
+  	
+
+	  	 var producto = $('#txt_producto').val();
+	  	 // console.log(producto);
+		   	if(producto=='' || fe_exp=='' || cant_ing=='' || cant_ing==0)
+		  	 {
+		  	 	Swal.fire('Ingrese todo los datos','','info');
+		  	 		return false
+		  	 }
+	   
   	 if((parseFloat(cant_ing)+parseFloat(cant_total))>parseFloat(cant_suge))
   	 {
   	 		Swal.fire('La cantidad Ingresada supera a la cantidad registrada','','info');
@@ -333,9 +378,14 @@ function autocoplet_ingreso()
   {
   	$('#modal_calendar').modal('show');
   }
-    function show_producto()
+  function show_producto()
   {
-  	$('#modal_producto').modal('show');
+  	if($('#txt_TipoSubMod').val()=='R')
+  	{
+  		$('#modal_producto_2').modal('show');
+  	}else{
+  		$('#modal_producto').modal('show');
+  	}
   }
     function show_cantidad()
   {
@@ -362,6 +412,35 @@ function autocoplet_ingreso()
   	 }
   	 console.log(cbx);
   }
+
+  function limpiar_reciclaje()
+  {  	
+  	$('#txt_producto').val(null).trigger('change');
+  	$('#ddl_producto').val(null).trigger('change');
+  	$('#txt_producto').attr('readonly',false);
+  	$('#txt_referencia').val('');
+
+  	$('#btn_cantidad').prop('disabled',false)
+
+
+  	$('#txt_TipoSubMod').val('');
+  	$('#txt_grupo').val('');
+  	$('#txt_unidad').val('');
+
+  	//reciclaje
+  	$('#txt_producto2').val(null).trigger('change');
+  	$('#txt_referencia2').val('');
+  }
+
+  function limpiar_reciclaje2()
+  {  	
+  	$('#txt_producto2').val(null).trigger('change');
+  	$('#ddl_producto2').val(null).trigger('change');
+  	$('#txt_producto2').attr('readonly',false);
+  	$('#txt_referencia2').val('');
+  }
+
+
 
 </script>
 
@@ -522,11 +601,19 @@ function autocoplet_ingreso()
 							</div>
 							<div class="col-sm-6 col-md-7">
 								<b>Producto</b>
-								<input type="text" name="txt_producto" id="txt_producto" class="form-control" readonly>
+								<div class="input-group" style="display:flex;" id="pnl_normal">
+	                	<select class="form-control input-xs" name="txt_producto" id="txt_producto">
+											<option value="">Seleccione producto</option>
+										</select>
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-default btn-xs btn-flat" onclick="limpiar_reciclaje()"><i class="fa fa-close"></i></button>
+										</span>
+								 </div>
 							</div>
 							<div class="col-sm-2 col-md-2">
 								<b>Grupo</b>
 								<input type="text" name="txt_grupo" id="txt_grupo" class="form-control" readonly>
+								<input type="hidden" name="txt_TipoSubMod" id="txt_TipoSubMod" class="form-control" readonly>
 							</div>
 						</div>
 					</div>
@@ -558,7 +645,7 @@ function autocoplet_ingreso()
 					<div class="col-sm-6 col-md-5">
 						<div class="rows">
 							<div class="col-sm-4 col-md-3">
-								<button type="button" class="btn btn-default" onclick="show_cantidad()">
+								<button type="button" class="btn btn-default" onclick="show_cantidad()" id="btn_cantidad">
 										<img src="../../img/png/kilo.png" />		
 										<br>
 										<b>Cantidad</b>					
@@ -601,6 +688,8 @@ function autocoplet_ingreso()
 		cargar_pedido();
     // cargar_productos();
     autocoplet_pro();
+    autocoplet_producto();
+    autocoplet_pro2();
   })
 	 
 	function cargar_pedido()
@@ -618,6 +707,26 @@ function autocoplet_ingreso()
         console.log(response);
         $('#tbl_body').html(response.tabla);
         $('#txt_cant_total').val(response.cant_total);
+       
+      }
+    });
+  }
+
+  function cargar_pedido2()
+  {
+    var parametros=
+    {
+      'num_ped':$('#txt_codigo').val(),
+    }
+     $.ajax({
+      data:  {parametros:parametros},
+      url:   '../controlador/inventario/alimentos_recibidosC.php?pedido_trans=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) {
+        console.log(response);
+        $('#tbl_body_pedido').html(response.tabla);
+        $('#txt_cant_total_pedido').val(response.cant_total);
        
       }
     });
@@ -668,12 +777,32 @@ function autocoplet_ingreso()
      $('#txt_cod_barras').val('');
    }
 
-   function agregar()
+  function agregar()
   {
-    var parametros = $("#form_add_producto").serialize();    
+  	var reci = $('#txt_TipoSubMod').val();
+  	if(reci=='R')
+  	{
+  		  // Swal.fire({
+        //    title: 'Esta seguro?',
+        //    text: "Esta usted seguro de que quiere Cambiar a !",
+        //    type: 'warning',
+        //    showCancelButton: true,
+        //    confirmButtonColor: '#3085d6',
+        //    cancelButtonColor: '#d33',
+        //    confirmButtonText: 'Si!'
+        //  }).then((result) => {
+        //    if (result.value!=true) {
+           	
+        //    	return false; 
+        //    }
+        //  })
+  	}
+
+
+  	var parametros = $("#form_add_producto").serialize();    
     var parametros2 = $("#form_correos").serialize();
        $.ajax({
-         data:  parametros2+'&txt_referencia='+$('#txt_referencia').val(),
+         data:  parametros2+'&txt_referencia='+$('#txt_referencia').val()+'&txt_referencia2='+$('#txt_referencia2').val(),
          url:   '../controlador/inventario/alimentos_recibidosC.php?guardar_recibido=true',
          type:  'post',
          dataType: 'json',
@@ -687,9 +816,9 @@ function autocoplet_ingreso()
                 type:'success',
                 title: 'Agregado a pedido',
                 text :'',
-              }).then( function() {
-                   cargar_pedido();
-                });
+              }).then( function() {              		
+                   cargar_pedido();              		
+              });
 
             // Swal.fire('','Agregado a pedido.','success');
             limpiar();
@@ -700,25 +829,39 @@ function autocoplet_ingreso()
            }           
          }
        });    
+
+    
   }
 
 
   function limpiar()
   {
-      $("#txt_producto").val('');
-      $("#txt_fecha_exp").val('');
-      $("#txt_cantidad").val('');
+  	 var tpd = $('#txt_TipoSubMod').val();
+  	  $("#txt_cantidad").val('');
       $("#txt_unidad").val('');
       $("#txt_grupo").val('');
+      $("#txt_fecha_exp").val('');
 
+
+  	 if(tpd=='R')
+  	 {
+
+      $("#txt_referencia2").val('');
+      $("#txt_producto2").val(null).trigger('change');
+      $("#ddl_producto2").val(null).trigger('change');
+      $("#txt_producto2").prop('disabled',false);
+
+  	 }else{
+      $("#txt_producto").val('');
+    
       $("#txt_cantidad2").val('');
       $("#txt_referencia").val('');
       $("#ddl_producto").val(null).trigger('change');
-
-
-
-
+      $("#txt_producto").prop('disabled',false);
+    }
   }
+
+
   function autocoplet_pro(){
 	  $('#ddl_producto').select2({
 	    placeholder: 'Seleccione una producto',
@@ -737,7 +880,115 @@ function autocoplet_ingreso()
 	  });
   }
 
-function eliminar_lin(num)
+   function autocoplet_producto(){
+	  $('#txt_producto').select2({
+	    placeholder: 'Seleccione una producto',
+	    ajax: {
+	      url:   '../controlador/inventario/alimentos_recibidosC.php?autocom_pro=true',
+	      dataType: 'json',
+	      delay: 250,
+	      processResults: function (data) {
+	        // console.log(data);
+	          return {
+	            results: data
+	          };
+	      },
+	      cache: true
+	    }
+	  });
+  }
+
+  function autocoplet_pro2(){
+	  $('#ddl_producto2').select2({
+	    placeholder: 'Seleccione una producto',
+	    ajax: {
+	      url:   '../controlador/inventario/alimentos_recibidosC.php?autocom_pro2=true',
+	      dataType: 'json',
+	      delay: 250,
+	      processResults: function (data) {
+	        // console.log(data);
+	          return {
+	            results: data
+	          };
+	      },
+	      cache: true
+	    }
+	  });
+  }
+
+function eliminar_lin(num,tipo)
+{
+  pedido = $('#txt_codigo').val();
+  // console.log(cli);
+
+	  if(tipo=='R')
+	  {
+		  Swal.fire({
+		    title: 'Quiere eliminar este registro?',
+		    text: "Al eliminar este registro se borrara tambien los productos ligados a este item!",
+		    type: 'warning',
+		    showCancelButton: true,
+		    confirmButtonColor: '#3085d6',
+		    cancelButtonColor: '#d33',
+		    confirmButtonText: 'Si'
+		  }).then((result) => {
+		      if (result.value) {
+		      	eliminar_all_pedido(pedido);
+		      	eliminar_linea_trans(num);
+		      	$('#txt_TipoSubMod').val('');		
+		      	$('#btn_cantidad').prop('disabled',false);		
+		      	limpiar();
+		      	limpiar_reciclaje();         
+		      }
+		    });
+		}else{
+		eliminar_linea_trans(num);
+	}
+}
+
+function eliminar_linea_trans(num)
+{
+	 var parametros=
+    {
+      'lin':num,
+    }
+     $.ajax({
+      data:  {parametros:parametros},
+      url:   '../controlador/inventario/alimentos_recibidosC.php?lin_eli=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        if(response==1)
+        {
+          cargar_pedido();
+        }
+      }
+    });
+}
+
+
+function eliminar_all_pedido(pedido)
+{
+		var parametros=
+      {
+        'pedido':pedido,
+      }
+       $.ajax({
+        data:  {parametros:parametros},
+        url:   '../controlador/inventario/alimentos_recibidosC.php?eli_all_pedido=true',
+        type:  'post',
+        dataType: 'json',
+        success:  function (response) { 
+          if(response==1)
+          {
+            cargar_pedido2();
+          }
+        }
+      });
+
+}
+
+  function eliminar_lin_pedido(num)
   {
     var ruc = $('#txt_ruc').val();
     var cli = $('#ddl_paciente').text();
@@ -758,18 +1009,52 @@ function eliminar_lin(num)
             }
              $.ajax({
               data:  {parametros:parametros},
-              url:   '../controlador/inventario/alimentos_recibidosC.php?lin_eli=true',
+              url:   '../controlador/inventario/alimentos_recibidosC.php?lin_eli_pedido=true',
               type:  'post',
               dataType: 'json',
               success:  function (response) { 
                 if(response==1)
                 {
-                  cargar_pedido();
+                  cargar_pedido2();
                 }
               }
             });
         }
       });
+  }
+
+  function terminar_pedido()
+  {
+  	pro = $('#txt_producto option:selected').text();
+  	if($('#txt_cant_total').val()==0)
+  	{
+  		Swal.fire('No se olvide de agregar: '+pro,'','info')
+  	}
+  	 total = $('#txt_cant_total_pedido').val();
+  	 cargar_pedido();	
+  	 $('#txt_cantidad').val(total);
+  	 $('#btn_cantidad').prop('disabled',true);
+  	 $('#modal_producto_2').modal('hide');
+
+  	  var parametros=
+        {
+        	'txt_codigo':$('#txt_codigo').val(),
+          'total_cantidad':$('#txt_cant_total_pedido').val(),
+        }
+         $.ajax({
+          data:  {parametros:parametros},
+          url:   '../controlador/inventario/alimentos_recibidosC.php?actualizar_trans_kardex=true',
+          type:  'post',
+          dataType: 'json',
+          success:  function (response) { 
+            if(response==1)
+            {
+              cargar_pedido2();
+              cargar_pedido();
+            }
+          }
+        });
+
   }
 
 </script>
@@ -793,6 +1078,7 @@ function eliminar_lin(num)
 				          <th></th>
 				        </thead>
 				        <tbody id="tbl_body"></tbody>
+				      </table>
 
 						  </div>
 						</div>
@@ -827,6 +1113,67 @@ function eliminar_lin(num)
           <div class="modal-footer" style="background-color:antiquewhite;">
               <!-- <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button> -->
               <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+<div id="modal_producto_2" class="modal fade myModalNuevoCliente" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title" id="txt_titulo_mod"></h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          	<div class="row">
+		          <!--  <div class="col-sm-3">
+		              <b>Referencia:</b>
+		              <input type="text" name="txt_referencia2" id="txt_referencia2" class="form-control input-sm" readonly="">
+		           </div> -->
+		           <div class="col-sm-9">
+		              <b>Producto:</b><br>
+		              <select class="form-control" id="ddl_producto2" name="ddl_producto2"style="width: 100%;">
+		                <option value="">Seleccione una producto</option>
+		              </select>
+		           </div>
+		           <div class="col-sm-3">
+			           	<b>Cantidad</b>
+			           	<input type="text" name="txt_cantidad_pedido" id="txt_cantidad_pedido" class="form-control input-sm" />
+		           </div> 
+		         </div>
+		         <div class="row">
+		           
+		           <div class="col-sm-12 text-right">
+		           	<br>
+		           		<button type="button" class="btn btn-primary btn-sm" onclick="guardar_pedido()"><i class="fa fa-plus"></i>Agregar</button>
+		           </div>
+		         </div>
+		         <div class="row">
+		           <div class="col-sm-12">
+		           	<br>
+		           	 <input type="hidden" id="txt_cant_total_pedido" name ="txt_cant_total_pedido" value="0">
+			        	 <div class="table-responsive">
+			        	 	 <table class="table">
+			        	 	 	<thead>		        	 	 		
+					        	 	 	<th>N°</th>
+					        	 	 	<th>Producto</th>
+					        	 	 	<th>Cantidad</th>
+					        	 	 	<th></th>
+			        	 	 	</thead>
+			        	 	 	<tbody id="tbl_body_pedido">
+			        	 	 		<tr><td colspan="4">Sin registros</td></tr>			        	 	 		
+			        	 	 	</tbody>
+			        	 	 </table>
+			        	 </div>
+		           </div>       
+		        </div>					
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <!-- <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button> -->
+              <button type="button" class="btn btn-primary" onclick="terminar_pedido()">Terminar</button>
+              <button type="button" class="btn btn-default"  data-dismiss="modal">Cerrar</button>
           </div>
       </div>
   </div>
