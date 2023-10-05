@@ -445,21 +445,23 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
   function reporte_pdf() {
     var cli = $('#ddl_cliente').val();
     var datos = $("#filtros").serialize();
+    var estado = $('#ddl_estado').val();
     if ($('#tab_4_').hasClass('active')) {
       var url = '../controlador/facturacion/lista_facturasC.php?imprimir_pdf_lineas=true&ddl_cliente=' + cli + '&';
     } else {
-      var url = '../controlador/facturacion/lista_facturasC.php?imprimir_pdf=true&ddl_cliente=' + cli + '&';
+      var url = '../controlador/facturacion/lista_facturasC.php?imprimir_pdf_factura_electronica=true&ddl_cliente=' + cli + '&' + datos + '& estado=' + estado;
     }
-    window.open(url + datos, '_blank');
+    window.open(url, '_blank');
   }
-  function generar_excel() {
+  function generar_excel() {//Arreglado por Leo
     var cli = $('#ddl_cliente').val();
     var datos = $("#filtros").serialize();
+    var estado = $('#ddl_estado').val();
     if ($('#tab_4_').hasClass('active')) {
-      var url = '../controlador/facturacion/lista_facturasC.php?imprimir_excel_fac_line=true&ddl_cliente=' + cli + '&' + datos;
+      var url = '../controlador/facturacion/lista_facturasC.php?imprimir_excel_factura_electronica=true&ddl_cliente=' + cli + '&' + datos;
 
     } else {
-      var url = '../controlador/facturacion/lista_facturasC.php?imprimir_excel_fac=true&ddl_cliente=' + cli + '&' + datos;
+      var url = '../controlador/facturacion/lista_facturasC.php?imprimir_excel_factura_electronica=true&ddl_cliente=' + cli + '&' + datos + '& estado=' + estado;
     }
     window.open(url);
 
@@ -964,11 +966,11 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
       </a>
     </div>
     <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-      <button type="button" class="btn btn-default" title="Generar pdf" onclick="reporte_pdf()"><img
+      <button type="button" class="btn btn-default" title="Generar Pdf" onclick="reporte_pdf()"><img
           src="../../img/png/pdf.png"></button>
     </div>
     <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-      <button type="button" class="btn btn-default" title="Generar pdf" onclick="generar_excel()"><img
+      <button type="button" class="btn btn-default" title="Generar Excel" onclick="generar_excel()"><img
           src="../../img/png/table_excel.png"></button>
     </div>
     <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">

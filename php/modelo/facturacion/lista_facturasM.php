@@ -458,7 +458,7 @@ class lista_facturasM
 	   $sql = "SELECT F.T,F.Razon_Social,C.Cliente,F.Fecha,F.Fecha_V,F.TC,F.Serie,F.Factura,
 	   F.Total_MN,F.Abonos_MN,F.Saldo_MN,F.Total_ME,F.Saldo_ME,F.Autorizacion,
 	   F.RUC_CI As RUC_CI_SRI,C.CI_RUC,F.Forma_Pago,C.Telefono,C.Celular,C.Ciudad,
-	   C.Direccion,C.DireccionT,C.Email,C.Grupo,DATEDIFF(day,'20231004',F.Fecha_V) As Dias_De_Mora,
+	   C.Direccion,C.DireccionT,C.Email,C.Grupo,DATEDIFF(day,'" .date('Y-m-d'). "',F.Fecha_V) As Dias_De_Mora,
 	   A.Nombre_Completo As Ejecutivo,C.Plan_Afiliado As Sectorizacion,A.Cod_Ejec,F.Chq_Posf 
 	   FROM Facturas As F,Clientes As C,Accesos As A 
 	   WHERE F.Fecha BETWEEN '" . $fecha_inicio . "'
