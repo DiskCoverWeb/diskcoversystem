@@ -505,11 +505,11 @@ $mostrar_medidor = false;
           </div>
         </div>
         <div class="row">
-          <div class="col-sm-4">
+          <div class="col-sm-4 col-xs-4">
             <b>Abreviado</b>
             <input type="" name="txt_ejec" id="txt_ejec" class="form-control input-sm">
           </div>
-          <div class="col-sm-8">
+          <div class="col-sm-8 col-xs-8">
           <b>Tipo de proveedor</b>            
             <input type="" name="txt_actividad" id="txt_actividad" class="form-control input-sm">
           </div>
