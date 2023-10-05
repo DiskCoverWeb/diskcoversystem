@@ -15,6 +15,11 @@ if(isset($_GET['tabla']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->tabla_facturas($parametros));
 }
+if(isset($_GET['tabla_factura_electronica']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->tabla_factura_electronica($parametros));
+}
 if(isset($_GET['tabla_lineas']))
 {
 	$parametros = $_POST['parametros'];
@@ -238,6 +243,49 @@ class lista_facturasC
 
     	return $tr;
     }
+
+	function tabla_factura_electronica($parametros){ //By Leo
+    	$tbl = $this->modelo->Cliente_facturas_electronicas($parametros['desde'], $parametros['hasta'], $parametros['estado']);    	
+    	//die();
+		$tr='';
+    	foreach ($tbl as $key => $value) {
+    		$tr.='<tr>
+            <td>'.$value['T'].'</td>
+            <td>'.$value['Razon_Social'].'</td>
+            <td>'.$value['Cliente'].'</td>
+            <td>'.$value['Fecha']->format('Y-m-d').'</td>
+            <td>'.$value['Fecha_V']->format('Y-m-d').'</td>
+            <td>'.$value['TC'].'</td>
+            <td>'.$value['Serie'].'</td>           
+            <td>'.$value['Factura'].'</td>
+            <td class="text-right">'.$value['Total_MN'].'</td>
+            <td class="text-right">'.$value['Abonos_MN'].'</td>
+            <td class="text-right">'.$value['Saldo_MN'].'</td>
+            <td class="text-right">'.$value['Total_ME'].'</td>
+            <td class="text-right">'.$value['Saldo_ME'].'</td>
+			<td>'.$value['Autorizacion'].'</td>
+            <td>'.$value['RUC_CI_SRI'].'</td>
+            <td>'.$value['CI_RUC'].'</td>
+			<td>'.$value['Forma_Pago'].'</td>
+			<td>'.$value['Telefono'].'</td>
+			<td>'.$value['Celular'].'</td>
+			<td>'.$value['Ciudad'].'</td>
+			<td>'.$value['Direccion'].'</td>
+			<td>'.$value['DireccionT'].'</td>
+			<td>'.$value['Email'].'</td>
+			<td>'.$value['Grupo'].'</td>
+			<td>'.$value['Dias_De_Mora'].'</td>
+			<td>'.$value['Ejecutivo'].'</td>
+			<td>'.$value['Sectorizacion'].'</td>
+			<td>'.$value['Cod_Ejec'].'</td>
+			<td>'.$value['Chq_Posf'].'</td>
+          </tr>';
+    	}
+
+    	// print_r($tr);die();
+
+    	return $tr;
+	}
 
      function tabla_facturas_lineas($parametros)
     {

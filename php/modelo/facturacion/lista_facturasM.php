@@ -451,6 +451,30 @@ class lista_facturasM
 		$result = $this->db->datos($sql);
 	   return $result;
    }
+
+   //Gerencia -> Cartera Clientes -> btn Buscar
+   function Cliente_facturas_electronicas($fecha_inicio, $fecha_fin, $estado)
+   { //By Leo
+	   $sql = "SELECT F.T,F.Razon_Social,C.Cliente,F.Fecha,F.Fecha_V,F.TC,F.Serie,F.Factura,
+	   F.Total_MN,F.Abonos_MN,F.Saldo_MN,F.Total_ME,F.Saldo_ME,F.Autorizacion,
+	   F.RUC_CI As RUC_CI_SRI,C.CI_RUC,F.Forma_Pago,C.Telefono,C.Celular,C.Ciudad,
+	   C.Direccion,C.DireccionT,C.Email,C.Grupo,DATEDIFF(day,'20231004',F.Fecha_V) As Dias_De_Mora,
+	   A.Nombre_Completo As Ejecutivo,C.Plan_Afiliado As Sectorizacion,A.Cod_Ejec,F.Chq_Posf 
+	   FROM Facturas As F,Clientes As C,Accesos As A 
+	   WHERE F.Fecha BETWEEN '" . $fecha_inicio . "'
+	   AND '" . $fecha_fin . "'
+	   AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+	   AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+	   AND F.T = '" . $estado ."'
+	   AND C.Codigo = F.CodigoC
+	   AND A.Codigo = F.Cod_Ejec 
+	   AND F.TC NOT IN ('C','P') 
+	   ORDER BY C.Cliente,F.Razon_Social,F.TC,F.Serie,F.Fecha,F.Factura 
+	   ";
+	   $result = $this -> db -> datos($sql);
+	   //print_r($result);
+	   return $result;
+   }
    
 
    

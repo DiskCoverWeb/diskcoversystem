@@ -1,6 +1,6 @@
 table {
     width: 100%;
-    background: white;
+    background: #b4b2b2;
     margin-bottom: 1.25em;
     border: solid 1px #dddddd;
     border-collapse: collapse;
@@ -13,7 +13,14 @@ table tr td {
     font-size: 0.875em;
     color: #222222;
     border: 1px solid #dddddd;
+    
 }
+
+th{
+    text-align: center;
+}
+
+
 
 table tr.even,
 table tr.alt,
@@ -21,6 +28,11 @@ table tr:nth-of-type(even) {
     background: #f9f9f9;
 }
 
+tbody tr:nth-child(even):hover {  background: none;}
+tbody tr:nth-child(odd):hover {  background: none;}
+
+tbody { box-shadow: none; }
+thead { box-shadow: none;} 
 @media only screen and (max-width: 768px) {
 
     table.resp,
@@ -52,6 +64,8 @@ table tr:nth-of-type(even) {
         position: relative;
         padding-left: 45%;
         text-align: left;
+        max-width: 768px;
+        word-wrap: break-word;
     }
 
     .resp tr td:last-child {
@@ -63,6 +77,7 @@ table tr:nth-of-type(even) {
     }
 
     .resp td:before {
+        content: attr(data-label);
         position: absolute;
         top: 6px;
         left: 6px;
@@ -78,58 +93,115 @@ table tr:nth-of-type(even) {
     }
 
     td:nth-of-type(2):before {
-        content: "Razón Social";
+        content: "Razon_Social";
     }
 
     td:nth-of-type(3):before {
-        content: "TC";
+        content: "Cliente";
     }
 
     td:nth-of-type(4):before {
-        content: "Serie";
-    }
-
-    td:nth-of-type(5):before {
-        content: "Autorización";
-    }
-
-    td:nth-of-type(6):before {
-        content: "Factura";
-    }
-
-    td:nth-of-type(7):before {
         content: "Fecha";
     }
 
+    td:nth-of-type(5):before {
+        content: "Fecha_V";
+    }
+
+    td:nth-of-type(6):before {
+        content: "TC";
+    }
+
+    td:nth-of-type(7):before {
+        content: "Serie";
+    }
+
     td:nth-of-type(8):before {
-        content: "SubTotal";
+        content: "Factura";
     }
 
     td:nth-of-type(9):before {
-        content: "Con_IVA";
+        content: "Total_MN";
     }
 
     td:nth-of-type(10):before {
-        content: "IVA";
+        content: "Abonos_MN";
     }
 
     td:nth-of-type(11):before {
-        content: "Descuento";
+        content: "Saldo_MN";
     }
 
     td:nth-of-type(12):before {
-        content: "Total";
+        content: "Total_ME";
     }
 
     td:nth-of-type(13):before {
-        content: "SALDO";
+        content: "Saldo_ME";
     }
 
     td:nth-of-type(14):before {
-        content: "RUC_CI";
+        content: "Autorizacion";
     }
 
     td:nth-of-type(15):before {
-        content: "TB";
+        content: "RUC_CI_SRI";
     }
+
+    td:nth-of-type(16):before {
+        content: "CI_RUC";
+    }
+
+    td:nth-of-type(17):before {
+        content: "Forma_Pago";
+    }
+
+    td:nth-of-type(18):before {
+        content: "Telefono";
+    }
+
+    td:nth-of-type(19):before {
+        content: "Celular";
+    }
+
+    td:nth-of-type(20):before {
+        content: "Ciudad";
+    }
+
+    td:nth-of-type(21):before {
+        content: "Direccion";
+    }
+
+    td:nth-of-type(22):before {
+        content: "DireccionT";
+    }
+
+    td:nth-of-type(23):before {
+        content: "Email";
+    }
+
+    td:nth-of-type(24):before {
+        content: "Grupo";
+    }
+
+    td:nth-of-type(25):before {
+        content: "Dias_De_Mora";
+    }
+
+    td:nth-of-type(26):before {
+        content: "Ejecutivo";
+    }
+
+    td:nth-of-type(27):before {
+        content: "Sectorizacion";
+    }
+
+    td:nth-of-type(28):before {
+        content: "Cod_Eject";
+    }
+    td:nth-of-type(29):before {
+        content: "Chq_Posf";
+    }
+
+    
 }
