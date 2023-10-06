@@ -664,7 +664,6 @@
 				Grabar_Factura_Actual();
 			}
 		})
-
 	}
 
 	function Grabar_Factura_Actual() {
