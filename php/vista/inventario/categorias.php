@@ -117,8 +117,8 @@
             </div>
 
             <!-- Tabla para mostrar datos -->
-            <table class="table table-responsive table-bordered table-striped table-hover" style="margin-top: 20px;"
-                id="idTabla" type="hidden">
+            <table class="table responsive-table table-bordered table-striped table-hover" style="margin-top: 20px;"
+                id="idTabla" type="hidden"></table>
         </div>
     </div>
 
