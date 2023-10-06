@@ -77,7 +77,7 @@ thead { box-shadow: none;}
     }
 
     .resp td:before {
-        content: attr(data-label);
+        
         position: absolute;
         top: 6px;
         left: 6px;
@@ -88,7 +88,7 @@ thead { box-shadow: none;}
         font-weight: bold;
     }
 
-    td:nth-of-type(1):before {
+    /*td:nth-of-type(1):before {
         content: "T";
     }
 
@@ -201,7 +201,7 @@ thead { box-shadow: none;}
     }
     td:nth-of-type(29):before {
         content: "Chq_Posf";
-    }
+    }*/
 
     
 }

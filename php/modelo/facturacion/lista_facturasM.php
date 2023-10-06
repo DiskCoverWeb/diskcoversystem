@@ -480,7 +480,7 @@ class lista_facturasM
 	   ORDER BY C.Cliente,F.Razon_Social,F.TC,F.Serie,F.Fecha,F.Factura 
 	   ";
 	   $result = $this -> db -> datos($sql);
-	   //print_r($result);
+	   //print_r($result);die();
 	   return $result;
    }
    

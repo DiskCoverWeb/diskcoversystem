@@ -51,11 +51,11 @@ if (isset($_GET['imprimir_excel_fac'])) {
 }
 if (isset($_GET['imprimir_excel_factura_electronica'])) {
 	$parametros = $_GET;
-	$controlador->imprimir_excel_factura_electronica($parametros);//By Leo
+	$controlador->imprimir_excel_factura_electronica($parametros); //By Leo
 }
 if (isset($_GET['imprimir_pdf_factura_electronica'])) {
 	$parametros = $_GET;
-	$controlador->imprimir_pdf_factura_electronica($parametros);//By Leo
+	$controlador->imprimir_pdf_factura_electronica($parametros); //By Leo
 }
 if (isset($_GET['imprimir_excel_fac_line'])) {
 	$parametros = $_GET;
@@ -224,58 +224,54 @@ class lista_facturasC
 
 	function tabla_factura_electronica($parametros)
 	{ //By Leo
-		$codigoC = '';
-		$serie = '';
-		if($parametros['ci'] != 'T'){
-			$codigoC = $parametros['ci'];
-		}
-		if($parametros['serie'] != ''){
-			$serie = $parametros['serie'];
-		}
+		$codigoC = $parametros['ci'] != 'T' ? $parametros['ci'] : ''; //if de una linea.
+		$serie = $parametros['serie'] != '' ? $parametros['serie'] : '';
 		$desde = $parametros['desde'];
 		$hasta = $parametros['hasta'];
 		$estado = $parametros['estado'];
 		//print_r($parametros);die();
-		$tbl = $this->modelo->Cliente_facturas_electronicas($desde, $hasta, $estado, $codigoC, $serie);
+		$resultado = $this->modelo->Cliente_facturas_electronicas($desde, $hasta, $estado, $codigoC, $serie);
 		//die();
-		$tr = '';
-		foreach ($tbl as $key => $value) {
-			$tr .= '<tr>
-            <td>' . $value['T'] . '</td>
-            <td>' . $value['Razon_Social'] . '</td>
-            <td>' . $value['Cliente'] . '</td>
-            <td>' . $value['Fecha']->format('Y-m-d') . '</td>
-            <td>' . $value['Fecha_V']->format('Y-m-d') . '</td>
-            <td>' . $value['TC'] . '</td>
-            <td>' . $value['Serie'] . '</td>           
-            <td>' . $value['Factura'] . '</td>
-            <td class="text-right">' . $value['Total_MN'] . '</td>
-            <td class="text-right">' . $value['Abonos_MN'] . '</td>
-            <td class="text-right">' . $value['Saldo_MN'] . '</td>
-            <td class="text-right">' . $value['Total_ME'] . '</td>
-            <td class="text-right">' . $value['Saldo_ME'] . '</td>
-			<td>' . $value['Autorizacion'] . '</td>
-            <td>' . $value['RUC_CI_SRI'] . '</td>
-            <td>' . $value['CI_RUC'] . '</td>
-			<td>' . $value['Forma_Pago'] . '</td>
-			<td>' . $value['Telefono'] . '</td>
-			<td>' . $value['Celular'] . '</td>
-			<td>' . $value['Ciudad'] . '</td>
-			<td>' . $value['Direccion'] . '</td>
-			<td>' . $value['DireccionT'] . '</td>
-			<td>' . $value['Email'] . '</td>
-			<td>' . $value['Grupo'] . '</td>
-			<td>' . $value['Dias_De_Mora'] . '</td>
-			<td>' . $value['Ejecutivo'] . '</td>
-			<td>' . $value['Sectorizacion'] . '</td>
-			<td>' . $value['Cod_Ejec'] . '</td>
-			<td>' . $value['Chq_Posf'] . '</td>
-          </tr>';
+
+		if (empty($resultado)) {
+			return '0';
 		}
 
-		// print_r($tr);die();
+		$tablaHtml = '
+		<table>
+			<thead id="cabecera">
+				<tr>';
 
-		return $tr;
+		$columnas = array_keys($resultado[0]); //Obtenemos cuantas columnas hay que mostrar a partir del primer resultado
+
+		foreach ($columnas as $columna) {
+			$tablaHtml .= '<th>' . $columna . '</th>'; //Generamos las columnas con la respectiva etiqueta
+		}
+
+		$tablaHtml .= '
+				</tr>
+			</thead>
+			<tbody>';
+
+		foreach ($resultado as $fila) {
+			$tablaHtml .= '<tr>';
+			foreach ($columnas as $columna) {
+				$valor = $fila[$columna];
+				$clase = '';
+				if (is_numeric($valor)) {
+					$clase = "text-right";
+				} elseif ($valor instanceof DateTime) {
+					$valor = $valor->format('Y-m-d');
+				}
+				$tablaHtml .= '<td class="' . $clase . '">' . $valor . '</td>';
+			}
+			$tablaHtml .= '</tr>';
+		}
+		$tablaHtml .= '
+			</tbody>
+		</table>';
+
+		return $tablaHtml;
 	}
 
 	function tabla_facturas_lineas($parametros)
@@ -386,106 +382,60 @@ class lista_facturasC
 	{ //By Leo
 		//print_r($parametros);die();
 
-		$codigoC = '';
-		$serie = '';
-		if($parametros['codigoC'] != 'T'){
-			$codigoC = $parametros['codigoC'];
-		}
-		if($parametros['serie'] != ''){
-			$serie = $parametros['serie'];
-		}
+		$codigoC = $parametros['codigoC'] != 'T' ? $parametros['codigoC'] : '';
+		$serie = $parametros['serie'] != '' ? $parametros['serie'] : '';
 		$desde = $parametros['desde'];
 		$hasta = $parametros['hasta'];
 		$estado = $parametros['estado'];
-		
+
 		$tbl = $this->modelo->Cliente_facturas_electronicas($desde, $hasta, $estado, $codigoC, $serie);
 		//print_r($tbl);die();
+
 
 		$titulo = 'L I S T A  D E  F A C T U R A S';
 		$sizetable = 7;
 		$mostrar = TRUE;
-		// $Fechaini = $parametros['txt_desde'] ;//str_replace('-','',$parametros['Fechaini']);
-		// $Fechafin = $parametros['txt_hasta']; //str_replace('-','',$parametros['Fechafin']);
+
+		$cantidadDatos = count($tbl[0]); //Obtenemos cuantas columnas necesitamos
+		$columnas = array_keys($tbl[0]); //Obtenemos las columnas
+
 		$tablaHTML = array();
-		$pos = 0;
-		$borde = 1;
-		// print_r($datos);die();
-		$pos = 1;
-		$tablaHTML[0]['medidas'] = array(7, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,7, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 7, 10);
-		$tablaHTML[0]['alineado'] = array('L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'L', 'L', 'L', 'L', 'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'L', 'L', 'L');
-		$tablaHTML[0]['datos'] = array(
-			'T',
-			'Razon_Social',
-			'Cliente',
-			'Fecha',
-			'Fecha_V',
-			'TC',
-			'Serie',
-			'Factura',
-			'Total_MN',
-			'Abonos_MN',
-			'Saldo_MN',
-			'Total_ME',
-			'Saldo_ME',
-			'Autorizacion',
-			'RUC_CI_SRI',
-			'CI_RUC',
-			'Forma_Pago',
-			'Telefono',
-			'Celular',
-			'Ciudad',
-			'Direccion',
-			'DireccionT',
-			'Email',
-			'Grupo',
-			'Dias_De_Mora',
-			'Ejecutivo',
-			'Sectorizacion',
-			'Cod_Eject',
-			'Chq_Posf'
-		);
-		$tablaHTML[0]['borde'] = $borde;
+		$medidas = array();
+		$alineado = array();
+		
+		for ($i = 1; $i <= $cantidadDatos; $i++) {
+			$medidas[] = 10;
+			$alineado[] = 'L';
+		}
+
+		$tablaHTML[0]['medidas'] = $medidas;
+		$tablaHTML[0]['alineado'] = $alineado;
+		$tablaHTML[0]['datos'] = $columnas; // Columnas a mostrar
+		$tablaHTML[0]['borde'] = 1;
 		$tablaHTML[0]['estilo'] = 'b';
 
 		$datos = $tbl;
 
 		foreach ($datos as $key => $value) {
+			$tmp = array();
 
-			$tablaHTML[$pos]['medidas'] = $tablaHTML[0]['medidas'];
-			$tablaHTML[$pos]['alineado'] = $tablaHTML[0]['alineado'];
-			$tablaHTML[$pos]['datos'] = array(
-				$value['T'],
-				$value['Razon_Social'],
-				$value['Cliente'],
-				$value['Fecha']->format('Y-m-d'),
-				$value['Fecha_V']->format('Y-m-d'),
-				$value['TC'],
-				$value['Serie'],
-				$value['Factura'],
-				$value['Total_MN'],
-				$value['Abonos_MN'],
-				$value['Saldo_MN'],
-				$value['Total_ME'],
-				$value['Saldo_ME'],
-				$value['Autorizacion'],
-				$value['RUC_CI_SRI'],
-				$value['CI_RUC'],
-				$value['Forma_Pago'],
-				$value['Telefono'],
-				$value['Celular'],
-				$value['Ciudad'],
-				$value['Direccion'],
-				$value['DireccionT'],
-				$value['Email'],
-				$value['Grupo'],
-				$value['Dias_De_Mora'],
-				$value['Ejecutivo'],
-				$value['Sectorizacion'],
-				$value['Cod_Ejec'],
-				$value['Chq_Posf']
+			foreach ($columnas as $columna) {
+				$valor = $value[$columna];
+
+				if ($valor instanceof DateTime) {
+					$valor = $valor->format('Y-m-d');
+				}
+
+				$tmp[] = $valor;
+			}
+
+			$tablaHTML[] = array(
+				'medidas' => $medidas,
+				'alineado' => $alineado,
+				'datos' => $tmp,
+				'borde' => 1
 			);
-			$tablaHTML[$pos]['borde'] = $borde;
-			$pos += 1;
+
 		}
 
 		$this->pdf->cabecera_reporte_MC($titulo, $tablaHTML, $contenido = false, $image = false, $Fechaini = false, $Fechafin = false, $sizetable, $mostrar, 15, 'H');
@@ -564,14 +514,8 @@ class lista_facturasC
 
 	function imprimir_excel_factura_electronica($parametros) //By Leo
 	{
-		$codigoC = '';
-		$serie = '';
-		if($parametros['codigoC'] != 'T'){
-			$codigoC = $parametros['codigoC'];
-		}
-		if($parametros['serie'] != ''){
-			$serie = $parametros['serie'];
-		}
+		$codigoC = $parametros['codigoC'] != 'T' ? $parametros['codigoC'] : '';
+		$serie = $parametros['serie'] != '' ? $parametros['serie'] : '';
 		$desde = $parametros['desde'];
 		$hasta = $parametros['hasta'];
 		$estado = $parametros['estado'];
@@ -580,77 +524,38 @@ class lista_facturasC
 
 		$b = 1;
 		$titulo = 'F A C T U R A S   E M I T I D A S';
+
+		$cantidadDatos = count($tbl[0]); //Obtenemos cuantas columnas necesitamos
+		$columnas = array_keys($tbl[0]); //Obtenemos las columnas 
 		$tablaHTML = array();
-		$tablaHTML[0]['medidas'] = array(6, 6, 13, 25, 15, 23, 18, 12, 12, 12, 12, 12, 12, 6, 20, 6, 15, 6, 15, 20, 6, 12, 12, 6, 15, 23, 6, 20, 12);
-		$tablaHTML[0]['datos'] = array(
-			'T',
-			'Razon_Social',
-			'Cliente',
-			'Fecha',
-			'Fecha_V',
-			'TC',
-			'Serie',
-			'Factura',
-			'Total_MN',
-			'Abonos_MN',
-			'Saldo_MN',
-			'Total_ME',
-			'Saldo_ME',
-			'Autorizacion',
-			'RUC_CI_SRI',
-			'CI_RUC',
-			'Forma_Pago',
-			'Telefono',
-			'Celular',
-			'Ciudad',
-			'Direccion',
-			'DireccionT',
-			'Email',
-			'Grupo',
-			'Dias_De_Mora',
-			'Ejecutivo',
-			'Sectorizacion',
-			'Cod_Eject',
-			'Chq_Posf'
-		);
+		$medidas = array();
+
+		for ($i = 1; $i <= $cantidadDatos; $i++) {
+			$medidas[] = 10;
+		}
+
+		$tablaHTML[0]['medidas'] = $medidas;
+		$tablaHTML[0]['datos'] = $columnas;
 		$tablaHTML[0]['tipo'] = 'C';
-		$pos = 1;
-		$compro1 = '';
 		foreach ($tbl as $key => $value) {
-			$tablaHTML[$pos]['medidas'] = $tablaHTML[0]['medidas'];
-			$tablaHTML[$pos]['datos'] = array(
-				$value['T'],
-				$value['Razon_Social'],
-				$value['Cliente'],
-				$value['Fecha']->format('Y-m-d'),
-				$value['Fecha_V']->format('Y-m-d'),
-				$value['TC'],
-				$value['Serie'],
-				$value['Factura'],
-				$value['Total_MN'],
-				$value['Abonos_MN'],
-				$value['Saldo_MN'],
-				$value['Total_ME'],
-				$value['Saldo_ME'],
-				$value['Autorizacion'],
-				$value['RUC_CI_SRI'],
-				$value['CI_RUC'],
-				$value['Forma_Pago'],
-				$value['Telefono'],
-				$value['Celular'],
-				$value['Ciudad'],
-				$value['Direccion'],
-				$value['DireccionT'],
-				$value['Email'],
-				$value['Grupo'],
-				$value['Dias_De_Mora'],
-				$value['Ejecutivo'],
-				$value['Sectorizacion'],
-				$value['Cod_Ejec'],
-				$value['Chq_Posf']
+			
+			$tmp = array();
+
+			foreach ($columnas as $columna) {
+				$valor = $value[$columna];
+
+				if ($valor instanceof DateTime) {
+					$valor = $valor->format('Y-m-d');
+				}
+
+				$tmp[] = $valor;
+			}
+
+			$tablaHTML[] = array(
+				'medidas' => $medidas,
+				'datos' => $tmp,
+				'tipo' => 'N'
 			);
-			$tablaHTML[$pos]['tipo'] = 'N';
-			$pos += 1;
 		}
 		excel_generico($titulo, $tablaHTML);
 

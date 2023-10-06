@@ -51,7 +51,49 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
     //paginacion('cargar_registrosAu', 'panel_pagAu', 0, 50, '1');
     //paginacion('cargar_registrosAu', 'panel_pagNoAu', 0, 50, '2');
 
+    
+    $('#btnPDF').prop("disabled", true);
+    $('#btnExcel').prop("disabled", true);
+    
+    
   });
+
+  
+  
+  function cambioTamanio(){
+    var cabecera = document.getElementById('cabecera');
+    var style = document.getElementById('dynamic-style');
+
+    if(cabecera != null && window.innerWidth < 768){
+      var thElements = cabecera.querySelectorAll('th');
+      var numeroDeColumnas = thElements.length;
+      var cssColumnas = '';
+      for(var i = 1; i <= numeroDeColumnas; i++){
+        cssColumnas +=`
+          td:nth-of-type(${i}):before{
+            content: "${thElements[i-1].textContent}";
+          }
+        `;
+      }
+
+      if(style){
+        style.remove();
+      }
+
+      style = document.createElement('style');
+      style.id = 'dynamic-style';
+      style.innerHTML = cssColumnas;
+      document.head.appendChild(style);
+    }else {
+      if(style){
+        style.remove();
+      }
+    }
+    
+  }
+
+  window.addEventListener('resize', cambioTamanio);//Automatizacion de tabla con css by Leonardo
+  cambioTamanio();
 
 
   function periodos(codigo) {
@@ -448,7 +490,7 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
     var hasta = $('#txt_hasta').val();
     var estado = $('#ddl_estado').val();
     var serie = $('#DCLinea').val();
-    
+
     var url = '../controlador/facturacion/lista_facturasC.php?imprimir_pdf_factura_electronica=true&codigoC='
     + codigoC + '&desde=' + desde + '&hasta=' + hasta + '&estado=' + estado + '&serie=' + serie;
     
@@ -632,12 +674,23 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
       type: 'post',
       dataType: 'json',
       beforeSend: function () {
-        $("#tbl_tabla").html('<tr class="text-center"><td colspan="20"><img src="../../img/gif/loader4.1.gif" width="20%">');
+        $("#tablaContenedor").html('<tr class="text-center"><td colspan="20"><img src="../../img/gif/loader4.1.gif" width="20%">');
       },
       success: function (response) {
         // console.log(response);
-        $('#tbl_tabla').html(response);
-        $('#myModal_espera').modal('hide');
+        if(response != '0'){
+          $('#btnPDF').prop("disabled", false);
+          $('#btnExcel').prop("disabled", false);
+          $('#tablaContenedor').html(response);
+          $('#myModal_espera').modal('hide');
+        }else{
+          Swal.fire('No se han encontrado datos.', '', 'warning');
+          $('#btnPDF').prop("disabled", true);
+          $('#btnExcel').prop("disabled", true);
+          $('#myModal_espera').modal('hide');
+          $("#tablaContenedor").html('');
+        }
+        
       }
     });
   }
@@ -966,11 +1019,11 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
       </a>
     </div>
     <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-      <button type="button" class="btn btn-default" title="Generar Pdf" onclick="reporte_pdf()"><img
+      <button type="button" class="btn btn-default" title="Generar Pdf" onclick="reporte_pdf()" id="btnPDF"><img
           src="../../img/png/pdf.png"></button>
     </div>
     <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-      <button type="button" class="btn btn-default" title="Generar Excel" onclick="generar_excel()"><img
+      <button type="button" class="btn btn-default" title="Generar Excel" onclick="generar_excel()" id="btnExcel"><img
           src="../../img/png/table_excel.png"></button>
     </div>
     <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2" style="display: none;">
@@ -1096,8 +1149,8 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
 
             </div>
             <div class="col-sm-12" style="overflow-x: scroll;height: 500px;">
-              <table class="resp" style="white-space: nowrap;">
-                <thead>
+              <table class="resp" style="white-space: nowrap;" id="tablaContenedor">
+                <!--<thead>
                   <th>T</th>
                   <th>Razon_Social</th>
                   <th>Cliente</th>
@@ -1160,7 +1213,7 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
                     <td></td>
                     <td></td>
                   </tr>
-                </tbody>
+                </tbody>-->
               </table>
 
             </div>
