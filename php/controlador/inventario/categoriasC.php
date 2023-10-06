@@ -42,7 +42,7 @@ class dayaC
     {        
         try {
             $datos = $this->modelo->ConsultarCategoriaClientesDatosExtras($option); 
-            return $datos;
+            return array('status' => '200', 'datos' => $datos);
         } catch (Exception $e) {
             return array('status' => '400', 'error' => 'No hay datos que mostrar.');
         }      
@@ -51,7 +51,8 @@ class dayaC
     function AceptarAgregar($parametros)
     {    
         try {
-            $datos = $this->modelo->AgregarCategoriaClientesDatosExtras($parametros);             
+            $datos = $this->modelo->AgregarCategoriaClientesDatosExtras($parametros); 
+            Eliminar_Nulos_SP("Clientes_Datos_Extras");            
             return array('status' => '200', 'datos' => $datos);
         } catch (Exception $e) {
             return array('status' => '400', 'error' => 'No se pudieron agregar los datos.');
@@ -87,5 +88,4 @@ class dayaC
         }
     }
 }
-
 ?>

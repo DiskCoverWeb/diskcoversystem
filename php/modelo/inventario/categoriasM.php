@@ -15,7 +15,8 @@ class dayaM
     {
         $sql = "SELECT Tipo_Dato, Codigo, Beneficiario, ID 
                 FROM Clientes_Datos_Extras 
-                WHERE Tipo_Dato = '" . $option . "' ";
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND Tipo_Dato = '" . $option . "' ";
         return $this->db->datos($sql);
     }
 
@@ -51,8 +52,8 @@ class dayaM
 
     function AgregarCategoriaClientesDatosExtras($parametros)
     {
-        $sql = "INSERT INTO Clientes_Datos_Extras (Tipo_Dato, Codigo, Beneficiario) 
-                VALUES ('" . $parametros['tipo'] . "', '" . $parametros['codigo'] . "', '" . $parametros['beneficiario'] . "')";
+        $sql = "INSERT INTO Clientes_Datos_Extras (Tipo_Dato, Codigo, Beneficiario, Item) 
+                VALUES ('" . $parametros['tipo'] . "', '" . $parametros['codigo'] . "', '" . $parametros['beneficiario'] . "', '" . $_SESSION['INGRESO']['item'] . "')";
         return $this->db->datos($sql);
     }
 
@@ -67,7 +68,8 @@ class dayaM
     {
         $sql = "SELECT Tipo_Dato, Codigo, Beneficiario, ID 
                 FROM Clientes_Datos_Extras 
-                WHERE ID = '" . $id . "' ";
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND ID = '" . $id . "' ";
         return $this->db->datos($sql);
     }
 
@@ -77,7 +79,8 @@ class dayaM
                 SET Tipo_Dato = '" . $parametros['tipo'] . "', 
                     Codigo = '" . $parametros['codigo'] . "', 
                     Beneficiario = '" . $parametros['beneficiario'] . "' 
-                WHERE ID = '" . $parametros['id'] . "'";
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND ID = '" . $parametros['id'] . "'";
         return $this->db->datos($sql);
     }
 
@@ -85,7 +88,8 @@ class dayaM
     {
         $sql = "DELETE
                 FROM Clientes_Datos_Extras 
-                WHERE ID = '" . $id . "' ";
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND ID = '" . $id . "' ";
         return $this->db->datos($sql);
     }
 }
