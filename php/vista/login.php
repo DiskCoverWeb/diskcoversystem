@@ -298,8 +298,8 @@
 				}
 			}
 
+		
 			
-
 		 var parametros = 
 		 {
 		 	 'usuario':usuario,

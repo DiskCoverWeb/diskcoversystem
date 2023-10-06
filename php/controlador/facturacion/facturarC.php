@@ -105,6 +105,11 @@ if(isset($_GET['Listar_Ordenes']))
    echo json_encode($controlador->Listar_Ordenes());
 }
 //----------------fin lista orden---------
+if(isset($_GET['Detalle_impresion']))
+{
+   $parametros = $_POST['parametros'];
+   echo json_encode($controlador->Detalle_impresion($parametros));
+}
 //------------guia--------------
 
 if(isset($_GET['DCCiudadF']))
@@ -266,6 +271,28 @@ if(isset($_GET['imprimir_factura']))
    $parametros = $_POST['parametros'];
    echo json_encode($controlador->imprimir_factura($FA,$parametros));
 }
+if(isset($_GET['generar_detalle']))
+{
+   $titulo = $_GET['titulo'];
+   $datos = json_decode(urldecode($_GET['datos']), true);
+   $parametros = array(
+		'titulo' => $titulo,
+      'datos' => $datos
+   );
+   $controlador->generar_detalle($parametros);
+}
+
+
+
+if(isset($_GET['case_lote'])){
+   $parametros = $_POST['parametros'];
+   echo json_encode($controlador->case_lote($parametros));
+}
+
+if(isset($_GET['case_orde'])){
+   $parametros = $_POST['parametros'];
+   echo json_encode($controlador->case_orde($parametros));
+}
 
 
 class facturarC
@@ -280,6 +307,51 @@ class facturarC
         $this->pdf = new cabecera_pdf();
     }
 
+    function case_lote($parametros){
+      $datos = $this -> modelo -> case_lote($parametros['lote_no']);
+      return array('procedencia' => $datos['Procedencia'], 'modelo' => $datos['Modelo'], 
+                  'serie_no' => $datos['Serie_no'], 'fecha_exp' => $datos['Fecha_Exp'],
+                  'fecha_fab' => $datos['Fecha_Fab'], 'stockLote' => $datos['TotStock']);
+    }
+
+    function case_orde($parametros){
+      $datos = $this -> modelo -> case_orde($parametros['cadena']);
+
+      if($datos[0] == '1'){
+         $sep = MidStrg($parametros['cadena'], 11, strlen($parametros['cadena']));
+         $ordenP = intval(SinEspaciosIzq($sep));
+
+         $Ln_No = 0;
+      
+         foreach($datos[1] as $key => $value){
+            SetAdoAddNew("Asiento_F");
+            SetAdoFields("CODIGO", $value['Codigo']);
+            SetAdoFields("CODIGO_L", $parametros['cod_cxc']);
+            SetAdoFields("PRODUCTO", $value['Producto']);
+            SetAdoFields("CANT", $value['Cantidad']);
+            SetAdoFields("PRECIO", $value['Precio']);
+            SetAdoFields("TOTAL", $value['Total']);
+            SetAdoFields("Total_Desc", $value['Total_Desc']);
+            SetAdoFields("Total_IVA", $value['Total_IVA']);
+            SetAdoFields("Serie_No", $value['Serie_No']);
+            SetAdoFields("CodBod", $value['CodBodega']);
+            SetAdoFields("Costo", $value['Costo']);
+            SetAdoFields("Cta", $parametros['cta']);
+            SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+            SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU'] );
+            SetAdoFields("A_No", $Ln_No);
+            SetAdoFields("Numero", $ordenP);
+            SetAdoUpdate();
+            $Ln_No = $Ln_No + 1;
+            
+         }
+
+         return '1';
+      }
+
+      return '0';
+
+    }
     function lineas_facturas()
     {
     	// $codigoCliente = $parametro['codigoCliente'];
@@ -424,6 +496,7 @@ class facturarC
 		        $Cta_Ventas = $respuesta['datos']["Cta_Ventas"];		       
 		        $TextVUnit= number_format($respuesta['datos']["PVP"],4,'.','');
               $reserva = $respuesta['datos']["Por_Reservas"];
+              $regSanitario = $respuesta['datos']["Reg_Sanitario"];
 		        $NumStrg = $TextVUnit;
 		       if($respuesta['datos']["IVA"]){ $NumStrg = number_format($respuesta['datos']["PVP"] + ($respuesta['datos']["PVP"] * $_SESSION['INGRESO']["porc"]),$_SESSION['INGRESO']['Dec_Costo'],'.','');}
 		       $LabelStockArt = " P R O D U C T O 	--- ".$_SESSION['INGRESO']['S_M']."   ".$NumStrg;
@@ -446,7 +519,7 @@ class facturarC
 		          $TxtDetalle_Visible = True;
 		          // 'TxtDetalle.SetFocus
       		}
-      		return $respuesta = array('codigos'=>$Codigos,'producto'=>$Producto,'cta_venta'=>$Cta_Ventas,'labelstock'=>$LabelStock,'baniva'=>$BanIVA,'TextVUnit'=>$TextVUnit,'VUnitAnterior'=>$VUnitAnterior,'CodigoInv1'=>$CodigoInv1,'LabelStockArt'=>$LabelStockArt,'TextComEjec'=>$TextComEjec,'TxtDetalle'=>$TxtDetalle, 'por_reserva' => $reserva);
+      		return $respuesta = array('codigos'=>$Codigos,'producto'=>$Producto,'cta_venta'=>$Cta_Ventas,'labelstock'=>$LabelStock,'baniva'=>$BanIVA,'TextVUnit'=>$TextVUnit,'VUnitAnterior'=>$VUnitAnterior,'CodigoInv1'=>$CodigoInv1,'LabelStockArt'=>$LabelStockArt,'TextComEjec'=>$TextComEjec,'TxtDetalle'=>$TxtDetalle, 'por_reserva' => $reserva, 'reg_sanitario' => $regSanitario);
 
     	}else
     	{
@@ -814,6 +887,43 @@ function delete_asientoF($parametros)
   }
   // ----------------fin Listar_Ordenes---------
 
+  function Detalle_impresion($parametros)
+   {
+      $OrdenNo = $parametros['OrdenNo'];
+      $DCCliente= $parametros['Option'];    
+      
+      $datos = $this->modelo->Detalle_impresion($OrdenNo);  
+
+      //$detalleImpresion = array();      
+      if (count($datos) > 0) { 
+         $mensajes = "Imprimir Orden de Trabajo";
+         $Titulo = "IMPRESION";           
+         $Cuadricula = true;     
+         $mensajeEncabData = "LISTA DE ORDEN DE TRABAJO No. " . generaCeros($OrdenNo, 6);
+         $SQLMsg1 = "Cliente: " . $DCCliente;
+
+         return array(
+            'status' => 200,
+            'mensajes' => $mensajes,
+            'Titulo' => $Titulo,
+            'Cuadricula' => $Cuadricula,
+            'mensajeEncabData' => $mensajeEncabData,
+            'SQLMsg1' => $SQLMsg1,
+            'datos' => $datos,
+         );          
+      }
+
+      return array(
+         'status' => 400,
+         'ordenno' => $OrdenNo,
+         'dccliente' => $DCCliente,
+     );         
+   }
+
+   function generar_detalle($parametros){
+      $this->pdf->generarDetalle($parametros);     
+   } 
+
   function Grabar_Factura_Actual($FA,$parametros)
   {
 
@@ -1128,7 +1238,6 @@ function delete_asientoF($parametros)
 
 
   }
-
     
 }
 ?>

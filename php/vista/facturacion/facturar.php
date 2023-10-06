@@ -1,4 +1,5 @@
-<?php date_default_timezone_set('America/Guayaquil'); //print_r($_SESSION);die();//print_r($_SESSION['INGRESO']);die();?>
+<?php date_default_timezone_set('America/Guayaquil'); //print_r($_SESSION);die();//print_r($_SESSION['INGRESO']);die();
+?>
 <script type="text/javascript">
 	window.closeModal = function () {
 		$('#myModal_Abonos').modal('hide');
@@ -7,6 +8,11 @@
 	let Modificar = false;
 	let Bandera = true;
 	var PorCodigo = false;
+	let producto = ""; //para reserva
+	let detalle = ""; //para reserva
+
+
+	var dataInv = [];//datos del SP.
 	$(document).ready(function () {
 		var tipo = "<?php echo $_GET['tipo']; ?>";
 		$('#TipoFactura').val(tipo);
@@ -57,6 +63,18 @@
 		})
 
 	});
+
+	function fechaSistema() {
+		var fecha = new Date();
+		var año = fecha.getFullYear();
+		var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Sumamos 1 al mes porque en JavaScript los meses van de 0 a 11
+		var dia = ('0' + fecha.getDate()).slice(-2);
+
+		// Formatear la fecha como 'YYYY-MM-DD'
+		var fechaFormateada = año + '-' + mes + '-' + dia;
+
+		return fechaFormateada;
+	}
 
 	function DCTipoPago() {
 
@@ -225,9 +243,62 @@
 					Tipo_De_Facturacion(data.TFA);
 					$('#Cant_Item').val(data.TFA.Cant_Item_FA); //FA
 				}
-
 			}
 		});
+	}
+
+	function Command8_Click() {
+		if ($('#DCCiudadI').val() == '' || $('#DCCiudadF').val() == '' || $('#DCRazonSocial').val() == '' || $('#DCEmpresaEntrega').val() == '') {
+			swal.fire('Llene todo lso campos', '', 'info');
+			return false;
+		}
+		$('#ClaveAcceso_GR').val('.');
+		$('#Autorizacion_GR').val($('#LblAutGuiaRem').val());
+		var DCserie = $('#DCSerieGR').val();
+		if (DCserie == '') { DCserie = '0_0'; }
+		var serie = DCserie.split('_');
+		$('#Serie_GR').val(serie[1]);
+		$('#Remision').val($('#LblGuiaR').val());
+		$('#FechaGRE').val($('#MBoxFechaGRE').val());
+		$('#FechaGRI').val($('#MBoxFechaGRI').val());
+		$('#FechaGRF').val($('#MBoxFechaGRF').val());
+		$('#Placa_Vehiculo').val($('#TxtPlaca').val());
+		$('#Lugar_Entrega').val($('#TxtLugarEntrega').val());
+		$('#Zona').val($('#TxtZona').val());
+		$('#CiudadGRI').val($('#DCCiudadI option:selected').text());
+		$('#CiudadGRF').val($('#DCCiudadF option:selected').text());
+
+		var nom = $('#DCRazonSocial').val();
+		ci = nom.split('_');
+		$('#Comercial').val($('#DCRazonSocial option:selected').text());
+		$('#CIRUCComercial').val(ci[0]);
+		var nom1 = $('#DCEmpresaEntrega').val();
+		ci1 = nom1.split('_');
+		$('#Entrega').val($('#DCEmpresaEntrega option:selected').text());
+		$('#CIRUCEntrega').val(ci1[0]);
+		$('#Dir_EntregaGR').val(ci1[1]);
+		sms = "Guia de Remision: " + serie[1] + "-" + $('#LblGuiaR').val() + "  Autorizacion: " + $('#LblAutGuiaRem').val();
+		$('#LblGuia').val(sms);
+		$('#myModal_guia').modal('hide');
+
+		/*console.log('ClaveAcceso_GR:', '.');
+		console.log('Autorizacion_GR:', $('#LblAutGuiaRem').val());
+		console.log('Serie_GR:', serie[1]);
+		console.log('Remision:', $('#LblGuiaR').val());
+		console.log('FechaGRE:', $('#MBoxFechaGRE').val());
+		console.log('FechaGRI:', $('#MBoxFechaGRI').val());
+		console.log('FechaGRF:', $('#MBoxFechaGRF').val());
+		console.log('Placa_Vehiculo:', $('#TxtPlaca').val());
+		console.log('Lugar_Entrega:', $('#TxtLugarEntrega').val());
+		console.log('Zona:', $('#TxtZona').val());
+		console.log('CiudadGRI:', $('#DCCiudadI option:selected').text());
+		console.log('CiudadGRF:', $('#DCCiudadF option:selected').text());
+		console.log('Comercial:', $('#DCRazonSocial option:selected').text());
+		console.log('CIRUCComercial:', ci[0]);
+		console.log('Entrega:', $('#DCEmpresaEntrega option:selected').text());
+		console.log('CIRUCEntrega:', ci1[0]);
+		console.log('Dir_EntregaGR:', ci1[1]);
+		console.log('LblGuia:', sms);*/
 
 	}
 
@@ -447,7 +518,11 @@
 				$('#TxtDetalle').val(data.TxtDetalle);
 				$('#BanIVA').val(data.baniva);
 				console.log("TEST RESERVA", data.por_reserva);
-				if(data.por_reserva == true){$('#btnReserva').prop('disabled', false);}
+				producto = data.producto;
+				detalle = data.TxtDetalle;
+				dataInv = data;
+				console.log("TEST DATA INV: ", dataInv);
+				data.por_reserva ? $('#btnReserva').prop('disabled', false) : $('#btnReserva').prop('disabled', true);
 				// $('#DCArticulos').focus();
 				// $('#cambiar_nombre').modal('show');
 
@@ -773,11 +848,13 @@
 			if (result.value == true) {
 
 				if (FA == "OP") {
-					// la otra opcion
+					src = "../vista/modales.php?FAbonoAnticipado=true";
+					$('#frame_anticipado').attr('src', src).show();
+					$('#my_modal_abono_anticipado').modal('show');
 				} else {
 					src = "../vista/modales.php?FAbonos=true";
 					$('#frame').attr('src', src).show();
-					$('#myModal_Abonos').modal('show');
+					$('#my_modal_abonos').modal('show');
 					// Autorizar_Factura_Actual();
 				}
 			} else {
@@ -827,6 +904,8 @@
 
 	}
 
+
+
 	function Grabar_Abonos() {
 		var FA = $("#FA").serialize();
 		var parametros = {
@@ -871,8 +950,11 @@
 
 	}
 	function boton3() {
-		$('#myModal_ordenesProd').modal('show');
+		//$('#myModal_ordenesProd').modal('show');
 		//Listar_Ordenes();
+		src = "../vista/modales.php?FAbonoAnticipado=true";
+		$('#frame_anticipado').attr('src', src).show();
+		$('#my_modal_abono_anticipado').modal('show');
 	}
 	function boton4() {
 		$('#myModal_guia').modal('show');
@@ -894,6 +976,7 @@
 	}
 	function boton6() {
 		$('#myModal_reserva').modal('show');
+
 
 
 
@@ -932,28 +1015,85 @@
 			dataType: 'json',
 			success: function (data) {
 				if (data.length > 0) {
-					var ordenTableBody = document.getElementById("ordenTableBody");
-					ordenTableBody.innerHTML = "";
-
-					for (var i = 0; i < data.length; i++) {
-						var row = ordenTableBody.insertRow();
-						var cell = row.insertCell(0);
-
-						cell.innerHTML = data[i][0]; // "Orden No. XXXXXXXXX - Nombre del Cliente"						
-					}
-
 					$('#myModal_ordenesProd').modal('show');
+					// var ordenTableBody = document.getElementById("ordenTableBody");
+					// ordenTableBody.innerHTML = "";
+
+					var selectOrden = document.getElementById("selectOrden");
+					//var dataTest = ["Orden1", "Orden2", "Orden3"];
+					data.forEach(function (orden) {
+						var option = document.createElement("option");
+						option.value = orden;
+						option.text = orden;
+						selectOrden.appendChild(option);
+					});
+
+					// for (var i = 0; i < data.length; i++) {
+					// 	var row = ordenTableBody.insertRow();
+					// 	var cell = row.insertCell(0);
+
+					// 	cell.innerHTML = data[i][0]; // "Orden No. XXXXXXXXX - Nombre del Cliente"						
+					// }
+
 				} else {
 					Swal.fire('No existen órdenes para procesar', '', 'info');
 				}
 			}
 		})
+	}
+	//---------------fin Listar_Ordenes()--------
 
+	function CommandButton1_Click() {
+		$('#myModal_ordenesProd').modal('hide');
+		$('#dialog_impresion').modal('show');
 	}
 
-	//---------------fin Listar_Ordenes()--------
-	//------------------ guia-------------
+	function aceptarimprimir() {
+		var ordenNoString = document.getElementById("valOrden").value;
+		var ordenNo = parseFloat(ordenNoString);
+		var option = "";
+		var LstCliente = document.getElementById("DCCliente");
+		var selectedOptions = LstCliente.selectedOptions;
+		for (var i = 0; i < selectedOptions.length; i++) {
+			option = selectedOptions[i].text;
+		}
+		var parametros = {
+			OrdenNo: ordenNo,
+			Option: option,
+		};
+		console.log("facturar " + parametros['Option']);
+		console.log(parametros['OrdenNo'])
 
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/facturarC.php?Detalle_impresion=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				if (data.status == 200) {
+					console.log("facturarC " + data.mensajeEncabData)
+					generarPDF(data.mensajeEncabData, data.datos)
+				} else {
+					console.log("facturarC " + data.dccliente + "" + data.ordenno)
+					$('#dialog_impresion').modal('hide');
+					swal.fire("No se pudo generar el pdf", '', 'info');
+					//generarPDF("no hay datos que mostrar",[])
+				}
+			}
+		});
+	}
+
+	function generarPDF(titulo, datos) {
+		var url = '../controlador/facturacion/facturarC.php?generar_detalle=true&titulo=' + titulo;
+
+		var datosJSON = JSON.stringify(datos);
+		var datosCodificados = encodeURIComponent(datosJSON);
+
+		url += '&datos=' + datosCodificados;
+		window.open(url, '_blank');
+	}
+
+	//------------------ guia-------------
 	function DCCiudadI() {
 		$('#DCCiudadI').select2({
 			placeholder: 'Seleccione un cliente',
@@ -1167,6 +1307,26 @@
 				<img src="../../img/png/salire.png">
 			</a>
 		</div>
+
+		<?php
+		function createButton($title, $imagePath, $onclickFunction, $id)
+		{
+			echo '<div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
+                    <button type="button" class="btn btn-default" id="' . $id . '" title="' . $title . '" onclick="' . $onclickFunction . '">
+                        <img src="' . $imagePath . '">
+                    </button>
+                </div>';
+		}
+		?>
+		
+		<?php createButton("Grabar factura", "../../img/png/grabar.png", "boton1()", "btnGrabar"); ?>
+		<?php createButton("Actualizar Productos, Marcas y Bodegas", "../../img/png/update.png", "boton2()", "btnActualizar"); ?>
+		<?php createButton("Asignar orden de trabajo", "../../img/png/taskboard.png", "boton3()", "btnOrden"); ?>
+		<?php createButton("Asignar guía de remisión", "../../img/png/ats.png", "boton4()", "btnGuia"); ?>
+		<?php createButton("Asignar suscripción/contrato", "../../img/png/file2.png", "boton5()", "btnSuscripcion"); ?>
+		<?php createButton("Asignar reserva", "../../img/png/archivero2.png", "boton6()", "btnReserva"); ?>
+
+		<!-- Example of a commented-out button
 		<div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
 			<button type="button" class="btn btn-default" title="Grabar factura" onclick="boton1()"><img
 					src="../../img/png/grabar.png"></button>
@@ -1188,328 +1348,333 @@
 					src="../../img/png/file2.png"></button>
 		</div>
 		<div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-			<button id="btnReserva" type="button" class="btn btn-default" title="Asignar reserva" onclick="boton6()"><img
-					src="../../img/png/archivero2.png"></button>
+			<button id="btnReserva" type="button" class="btn btn-default" title="Asignar reserva"
+				onclick="boton6()"><img src="../../img/png/archivero2.png"></button>
 		</div>
-		<!-- <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
+		 <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
 			<a href="#" class="btn btn-default" title="Asignar reserva" onclick="Autorizar_Factura_Actual2();" target="_blank" ><img src="../../img/png/archivero2.png"></a>
 		</div> -->
 	</div>
 </div>
-<div class="row">
-	<div class="col-sm-12">
-		<!-- //valiable  -->
-		<input type="hidden" name="Mod_PVP" id="Mod_PVP" value="0">
-		<input type="hidden" name="DatInv_Serie_No" id="DatInv_Serie_No" value="">
-		<input type="hidden" name="BanIVA" id="BanIVA">
-		<input type="hidden" name="Reprocesar" id="Reprocesar"=value="0">
 
-		<form id="FA" style="display:none;">
+<div style="margin:10px">
+	<div class="row">
+		<div class="col-sm-12">
+			<!-- //valiable  -->
+			<input type="hidden" name="Mod_PVP" id="Mod_PVP" value="0">
+			<input type="hidden" name="DatInv_Serie_No" id="DatInv_Serie_No" value="">
+			<input type="hidden" name="BanIVA" id="BanIVA">
+			<input type="hidden" name="Reprocesar" id="Reprocesar"=value="0">
 
-			<input type="text" name="TC" id="TC" value="">
-			<input type="text" name="Cant_Item" id="Cant_Item">
+			<form id="FA" style="display:none;">
 
-			<input type="text" name="Autorizacion" id="Autorizacion">
-			<input type="text" name="CantFact" id="CantFact">
-			<!-- <input type="text" name="Cant_Item" id="Cant_Item"> -->
-			<input type="text" name="Cod_CxC" id="Cod_CxC">
-			<input type="text" name="Cta_CxP" id="Cta_CxP">
-			<input type="text" name="Cta_CxP_Anterior" id="Cta_CxP_Anterior">
-			<input type="text" name="Cta_Venta" id="Cta_Venta">
-			<input type="text" name="CxC_Clientes" id="CxC_Clientes">
+				<input type="text" name="TC" id="TC" value="">
+				<input type="text" name="Cant_Item" id="Cant_Item">
 
-			<input type="text" name="DireccionEstab" id="DireccionEstab">
-			<input type="text" name="Fecha" id="Fecha" value="">
-			<input type="text" name="Fecha_Aut" id="Fecha_Aut">
-			<input type="text" name="Fecha_NC" id="Fecha_NC">
-			<input type="text" name="Imp_Mes" id="Imp_Mes">
+				<input type="text" name="Autorizacion" id="Autorizacion">
+				<input type="text" name="CantFact" id="CantFact">
+				<!-- <input type="text" name="Cant_Item" id="Cant_Item"> -->
+				<input type="text" name="Cod_CxC" id="Cod_CxC">
+				<input type="text" name="Cta_CxP" id="Cta_CxP">
+				<input type="text" name="Cta_CxP_Anterior" id="Cta_CxP_Anterior">
+				<input type="text" name="Cta_Venta" id="Cta_Venta">
+				<input type="text" name="CxC_Clientes" id="CxC_Clientes">
 
-
-			<input type="text" name="NoFactura" id="NoFactura">
-			<input type="text" name="NombreEstab" id="NombreEstab">
-			<input type="text" name="Porc_IVA" id="Porc_IVA">
-			<input type="text" name="Porc_Serv" id="Porc_Serv">
-			<input type="text" name="Pos_Copia" id="Pos_Copia">
-			<input type="text" name="Pos_Factura" id="Pos_Factura">
-			<input type="text" name="Serie" id="Serie">
-			<input type="text" name="TelefonoEstab" id="TelefonoEstab">
-			<input type="text" name="Vencimiento" id="Vencimiento">
-
-			<!-- guia -->
-			<input type="text" name="ClaveAcceso_GR" id="ClaveAcceso_GR" value="">
-			<input type="text" name="Autorizacion_GR" id="Autorizacion_GR" value="">
-			<input type="text" name="Serie_GR" id="Serie_GR" value="">
-			<input type="text" name="Remision" id="Remision" value="">
-			<input type="text" name="FechaGRE" id="FechaGRE" value="">
-			<input type="text" name="FechaGRI" id="FechaGRI" value="">
-			<input type="text" name="FechaGRF" id="FechaGRF" value="">
-			<input type="text" name="Placa_Vehiculo" id="Placa_Vehiculo" value="">
-			<input type="text" name="Lugar_Entrega" id="Lugar_Entrega" value="">
-			<input type="text" name="Zona" id="Zona" value="">
-			<input type="text" name="CiudadGRI" id="CiudadGRI" value="">
-			<input type="text" name="CiudadGRF" id="CiudadGRF" value="">
-			<input type="text" name="Comercial" id="Comercial" value="">
-			<input type="text" name="CIRUCComercial" id="CIRUCComercial" value="">
-			<input type="text" name="Entrega" id="Entrega" value="">
-			<input type="text" name="CIRUCEntrega" id="CIRUCEntrega" value="">
-			<input type="text" name="Dir_EntregaGR" id="Dir_EntregaGR" value="">
-			<!-- fin guia -->
-		</form>
+				<input type="text" name="DireccionEstab" id="DireccionEstab">
+				<input type="text" name="Fecha" id="Fecha" value="">
+				<input type="text" name="Fecha_Aut" id="Fecha_Aut">
+				<input type="text" name="Fecha_NC" id="Fecha_NC">
+				<input type="text" name="Imp_Mes" id="Imp_Mes">
 
 
-		<!-- //fin de variables -->
-		<input type="hidden" name="TipoFactura" id="TipoFactura">
-		<div class="row">
-			<div class="col-sm-2">
-				<label><input type="checkbox" name="Check1" id="Check1"> Factura en ME</label>
-			</div>
-			<div class="col-sm-2" id="CheqSPFrom" style="display: none;">
-				<label><input type="checkbox" name="CheqSP" id="CheqSP"> Sector publico</label>
-			</div>
-			<div class="col-sm-4">
-				<b class="col-sm-4 control-label" style="padding: 0px">Orden Compra No</b>
-				<div class="col-sm-8">
-					<input type="" name="TxtCompra" id="TxtCompra" class="form-control input-xs" value="0">
+				<input type="text" name="NoFactura" id="NoFactura">
+				<input type="text" name="NombreEstab" id="NombreEstab">
+				<input type="text" name="Porc_IVA" id="Porc_IVA">
+				<input type="text" name="Porc_Serv" id="Porc_Serv">
+				<input type="text" name="Pos_Copia" id="Pos_Copia">
+				<input type="text" name="Pos_Factura" id="Pos_Factura">
+				<input type="text" name="Serie" id="Serie">
+				<input type="text" name="TelefonoEstab" id="TelefonoEstab">
+				<input type="text" name="Vencimiento" id="Vencimiento">
+
+				<!-- guia -->
+				<input type="text" name="ClaveAcceso_GR" id="ClaveAcceso_GR" value="">
+				<input type="text" name="Autorizacion_GR" id="Autorizacion_GR" value="">
+				<input type="text" name="Serie_GR" id="Serie_GR" value="">
+				<input type="text" name="Remision" id="Remision" value="">
+				<input type="text" name="FechaGRE" id="FechaGRE" value="">
+				<input type="text" name="FechaGRI" id="FechaGRI" value="">
+				<input type="text" name="FechaGRF" id="FechaGRF" value="">
+				<input type="text" name="Placa_Vehiculo" id="Placa_Vehiculo" value="">
+				<input type="text" name="Lugar_Entrega" id="Lugar_Entrega" value="">
+				<input type="text" name="Zona" id="Zona" value="">
+				<input type="text" name="CiudadGRI" id="CiudadGRI" value="">
+				<input type="text" name="CiudadGRF" id="CiudadGRF" value="">
+				<input type="text" name="Comercial" id="Comercial" value="">
+				<input type="text" name="CIRUCComercial" id="CIRUCComercial" value="">
+				<input type="text" name="Entrega" id="Entrega" value="">
+				<input type="text" name="CIRUCEntrega" id="CIRUCEntrega" value="">
+				<input type="text" name="Dir_EntregaGR" id="Dir_EntregaGR" value="">
+				<!-- fin guia -->
+			</form>
+
+
+			<!-- //fin de variables -->
+			<input type="hidden" name="TipoFactura" id="TipoFactura">
+			<div class="row">
+				<div class="col-sm-2">
+					<label><input type="checkbox" name="Check1" id="Check1"> Factura en ME</label>
 				</div>
-			</div>
-			<div class="col-sm-4">
-				<select class="form-control input-xs" id="DCMod" name="DCMod">
-					<option value="">Seleccione</option>
-				</select>
-			</div>
-			<div class="col-sm-2">
-				<input type="text" name="LabelCodigo" id="LabelCodigo" class="form-control input-xs" readonly=""
-					value=".">
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-4">
-				<b class="col-sm-4 control-label" style="padding: 0px">Cuenta x Cobrar</b>
-				<div class="col-sm-8" style="padding: 0px">
-					<select class="form-control input-xs" id="DCLineas" name="DCLineas" onchange="DCLinea_LostFocus()">
-						<option value="">Seleccione</option>
-					</select>
-
-					<input type="hidden" name="DCLineasV" id="DCLineasV">
+				<div class="col-sm-2" id="CheqSPFrom" style="display: none;">
+					<label><input type="checkbox" name="CheqSP" id="CheqSP"> Sector publico</label>
 				</div>
-			</div>
-			<div class="col-sm-4">
-				<div class="row">
-					<div class="col-sm-9" style="padding-right: 0px;">
-						<b style="color:red" id="label2">0000000000000 NOTA DE VENTA No. 001001-</b>
-					</div>
-					<div class="col-sm-3" style="padding-left: 0px;">
-						<input type="text" name="TextFacturaNo" id="TextFacturaNo" class="form-control input-xs"
-							value="0">
+				<div class="col-sm-4">
+					<b class="col-sm-4 control-label" style="padding: 0px">Orden Compra No</b>
+					<div class="col-sm-8">
+						<input type="" name="TxtCompra" id="TxtCompra" class="form-control input-xs" value="0">
 					</div>
 				</div>
-			</div>
-			<div class="col-sm-4">
-				<b class="col-sm-4 control-label" style="padding: 0px">Saldo pendiente</b>
-				<div class="col-sm-6">
-					<input type="text" name="LblSaldo" id="LblSaldo" class="form-control input-xs" value="0.00">
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-3">
-				<b class="col-sm-5 control-label" style="padding: 0px">Fecha Emision</b>
-				<div class="col-sm-7" style="padding: 0px">
-					<input type="date" name="MBoxFecha" id="MBoxFecha" class="form-control input-xs"
-						value="<?php echo date('Y-m-d'); ?>">
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<b class="col-sm-6 control-label" style="padding: 0px">Fecha Vencimiento</b>
-				<div class="col-sm-6" style="padding: 0px">
-					<input type="date" name="MBoxFechaV" id="MBoxFechaV" class="form-control input-xs">
-				</div>
-			</div>
-			<div class="col-sm-5">
-				<b class="col-sm-3 control-label" style="padding: 0px">Tipo de pago</b>
-				<div class="col-sm-8">
-					<select class="form-control input-xs" id="DCTipoPago" name="DCTipoPago">
+				<div class="col-sm-4">
+					<select class="form-control input-xs" id="DCMod" name="DCMod">
 						<option value="">Seleccione</option>
 					</select>
 				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">
-				<b>Grupo</b>
-				<select class="form-control input-xs" id="DCGrupo_No" name="DCGrupo_No"
-					onchange="autocomplete_cliente()">
-					<option value="">Seleccione</option>
-				</select>
-			</div>
-			<div class="col-sm-3">
-				<b>Cliente</b>
-				<div class="input-group">
-					<select class="form-control input-xs" id="DCCliente" name="DCCliente">
-						<option value="">Seleccione</option>
-					</select>
-					<span class="input-group-btn">
-						<button type="button" class="btn btn-info btn-flat btn-xs" onclick="addCliente();"><i
-								class="fa fa-plus"></i></button>
-					</span>
+				<div class="col-sm-2">
+					<input type="text" name="LabelCodigo" id="LabelCodigo" class="form-control input-xs" readonly=""
+						value=".">
 				</div>
 			</div>
-			<div class="col-sm-2">
-				<b id="Label13">C.I / R.U.C</b>
-				<input type="text" name="LabelRUC" id="LabelRUC" class="form-control input-xs" readonly="" value=".">
+			<div class="row">
+				<div class="col-sm-4">
+					<b class="col-sm-4 control-label" style="padding: 0px">Cuenta x Cobrar</b>
+					<div class="col-sm-8" style="padding: 0px">
+						<select class="form-control input-xs" id="DCLineas" name="DCLineas"
+							onchange="DCLinea_LostFocus()">
+							<option value="">Seleccione</option>
+						</select>
+
+						<input type="hidden" name="DCLineasV" id="DCLineasV">
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="row">
+						<div class="col-sm-9" style="padding-right: 0px;">
+							<b style="color:red" id="label2">0000000000000 NOTA DE VENTA No. 001001-</b>
+						</div>
+						<div class="col-sm-3" style="padding-left: 0px;">
+							<input type="text" name="TextFacturaNo" id="TextFacturaNo" class="form-control input-xs"
+								value="0">
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<b class="col-sm-4 control-label" style="padding: 0px">Saldo pendiente</b>
+					<div class="col-sm-6">
+						<input type="text" name="LblSaldo" id="LblSaldo" class="form-control input-xs" value="0.00">
+					</div>
+				</div>
 			</div>
-			<div class="col-sm-2">
-				<b>Telefono</b>
-				<input type="text" name="LabelTelefono" id="LabelTelefono" class="form-control input-xs" readonly=""
-					value=".">
-			</div>
-			<div class="col-sm-3">
-				<b>ACTUALICE SU CORREO ELECTRONICO</b>
-				<input type="text" name="TxtEmail" id="TxtEmail" class="form-control input-xs">
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-4">
-				<b>Direccion</b>
-				<input type="text" name="Label24" id="Label24" class="form-control input-xs" value="" readonly="">
-			</div>
-			<div class="col-sm-4">
-				<b>No</b>
-				<input type="text" name="Label21" id="Label21" class="form-control input-xs" value="" readonly="">
-			</div>
-			<div class="col-sm-4"> <br>
-				<select class="form-control input-xs" id="DCMedico" name="DCMedico">
-					<option value="">Seleccione</option>
-				</select>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-6">
-				<div id="DCEjecutivoFrom">
-					<b class="col-sm-3 control-label" style="padding: 0px"><input type="checkbox" name=""> Ejecutivo de
-						venta</b>
-					<div class="col-sm-9">
-						<select class="form-control input-xs" name="DCEjecutivo" id="DCEjecutivo">
+			<div class="row">
+				<div class="col-sm-3">
+					<b class="col-sm-5 control-label" style="padding: 0px">Fecha Emision</b>
+					<div class="col-sm-7" style="padding: 0px">
+						<input type="date" name="MBoxFecha" id="MBoxFecha" class="form-control input-xs"
+							value="<?php echo date('Y-m-d'); ?>">
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<b class="col-sm-6 control-label" style="padding: 0px">Fecha Vencimiento</b>
+					<div class="col-sm-6" style="padding: 0px">
+						<input type="date" name="MBoxFechaV" id="MBoxFechaV" class="form-control input-xs">
+					</div>
+				</div>
+				<div class="col-sm-5">
+					<b class="col-sm-3 control-label" style="padding: 0px">Tipo de pago</b>
+					<div class="col-sm-8">
+						<select class="form-control input-xs" id="DCTipoPago" name="DCTipoPago">
 							<option value="">Seleccione</option>
 						</select>
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-2">
-				<div id="TextComisionForm" style="display:none;">
-					<b class="col-sm-4 control-label" style="padding: 0px">comision%</b>
-					<div class="col-sm-8">
-						<input type="text" name="TextComision" id="TextComision" value="0"
-							class="form-control input-xs">
+			<div class="row">
+				<div class="col-sm-2">
+					<b>Grupo</b>
+					<select class="form-control input-xs" id="DCGrupo_No" name="DCGrupo_No"
+						onchange="autocomplete_cliente()">
+						<option value="">Seleccione</option>
+					</select>
+				</div>
+				<div class="col-sm-3">
+					<b>Cliente</b>
+					<div class="input-group">
+						<select class="form-control input-xs" id="DCCliente" name="DCCliente">
+							<option value="">Seleccione</option>
+						</select>
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-info btn-flat btn-xs" onclick="addCliente();"><i
+									class="fa fa-plus"></i></button>
+						</span>
 					</div>
 				</div>
+				<div class="col-sm-2">
+					<b id="Label13">C.I / R.U.C</b>
+					<input type="text" name="LabelRUC" id="LabelRUC" class="form-control input-xs" readonly=""
+						value=".">
+				</div>
+				<div class="col-sm-2">
+					<b>Telefono</b>
+					<input type="text" name="LabelTelefono" id="LabelTelefono" class="form-control input-xs" readonly=""
+						value=".">
+				</div>
+				<div class="col-sm-3">
+					<b>ACTUALICE SU CORREO ELECTRONICO</b>
+					<input type="text" name="TxtEmail" id="TxtEmail" class="form-control input-xs">
+				</div>
 			</div>
-			<div class="col-sm-4">
-				<b class="col-sm-2 control-label" style="padding: 0px">Bodega</b>
-				<div class="col-sm-9">
-					<select class="form-control input-xs" name="DCBodega" id="DCBodega">
+			<div class="row">
+				<div class="col-sm-4">
+					<b>Direccion</b>
+					<input type="text" name="Label24" id="Label24" class="form-control input-xs" value="" readonly="">
+				</div>
+				<div class="col-sm-4">
+					<b>No</b>
+					<input type="text" name="Label21" id="Label21" class="form-control input-xs" value="" readonly="">
+				</div>
+				<div class="col-sm-4"> <br>
+					<select class="form-control input-xs" id="DCMedico" name="DCMedico">
 						<option value="">Seleccione</option>
 					</select>
 				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-6">
-				<b>Observacion</b>
-				<input type="text" name="TextObs" id="TextObs" class="form-control input-xs">
+			<div class="row">
+				<div class="col-sm-6">
+					<div id="DCEjecutivoFrom">
+						<b class="col-sm-3 control-label" style="padding: 0px"><input type="checkbox" name=""> Ejecutivo
+							de
+							venta</b>
+						<div class="col-sm-9">
+							<select class="form-control input-xs" name="DCEjecutivo" id="DCEjecutivo">
+								<option value="">Seleccione</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-2">
+					<div id="TextComisionForm" style="display:none;">
+						<b class="col-sm-4 control-label" style="padding: 0px">comision%</b>
+						<div class="col-sm-8">
+							<input type="text" name="TextComision" id="TextComision" value="0"
+								class="form-control input-xs">
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<b class="col-sm-2 control-label" style="padding: 0px">Bodega</b>
+					<div class="col-sm-9">
+						<select class="form-control input-xs" name="DCBodega" id="DCBodega">
+							<option value="">Seleccione</option>
+						</select>
+					</div>
+				</div>
 			</div>
-			<div class="col-sm-6">
-				<b>Nota</b>
-				<input type="text" name="TextNota" id="TextNota" class="form-control input-xs">
+			<div class="row">
+				<div class="col-sm-6">
+					<b>Observacion</b>
+					<input type="text" name="TextObs" id="TextObs" class="form-control input-xs">
+				</div>
+				<div class="col-sm-6">
+					<b>Nota</b>
+					<input type="text" name="TextNota" id="TextNota" class="form-control input-xs">
+				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2">
-				<b>Marca</b>
-				<select class="form-control input-xs" id="DCMarca" name="DCMarca">
-					<option value="">Seleccione</option>
-				</select>
+			<div class="row">
+				<div class="col-sm-2">
+					<b>Marca</b>
+					<select class="form-control input-xs" id="DCMarca" name="DCMarca">
+						<option value="">Seleccione</option>
+					</select>
+				</div>
+				<div class="col-sm-4">
+					<b id="LabelStockArt">Producto</b>
+					<select class="form-control input-xs" name="DCArticulos" id="DCArticulos"
+						onchange="DCArticulo_LostFocus()">
+						<option value="">Seleccione</option>
+					</select>
+				</div>
+				<div class="col-sm-1">
+					<b>Stock</b>
+					<input type="text" name="LabelStock" id="LabelStock" class="form-control input-xs" readonly="">
+				</div>
+				<div class="col-sm-1">
+					<b>Ord./lote</b>
+					<input type="text" name="TextComEjec" id="TextComEjec" class="form-control input-xs">
+				</div>
+				<div class="col-sm-1">
+					<b>Desc%</b>
+					<select class="form-control input-xs" id="CDesc1" name="CDesc1">
+						<option value="">Seleccione</option>
+					</select>
+				</div>
+				<div class="col-sm-1">
+					<b>Cantidad</b>
+					<input type="text" name="TextCant" id="TextCant" class="form-control input-xs"
+						onblur="TextCant_Change()" value="0">
+				</div>
+				<div class="col-sm-1">
+					<b>P.V.P</b>
+					<input type="text" name="TextVUnit" id="TextVUnit" class="form-control input-xs"
+						onblur="TextVUnit_LostFocus()" value="0">
+				</div>
+				<div class="col-sm-1">
+					<b>TOTAL</b>
+					<input type="text" name="LabelVTotal" id="LabelVTotal" class="form-control input-xs" readonly=""
+						value="0">
+				</div>
 			</div>
-			<div class="col-sm-4">
-				<b id="LabelStockArt">Producto</b>
-				<select class="form-control input-xs" name="DCArticulos" id="DCArticulos"
-					onchange="DCArticulo_LostFocus()">
-					<option value="">Seleccione</option>
-				</select>
-			</div>
-			<div class="col-sm-1">
-				<b>Stock</b>
-				<input type="text" name="LabelStock" id="LabelStock" class="form-control input-xs" readonly="">
-			</div>
-			<div class="col-sm-1">
-				<b>Ord./lote</b>
-				<input type="text" name="TextComEjec" id="TextComEjec" class="form-control input-xs">
-			</div>
-			<div class="col-sm-1">
-				<b>Desc%</b>
-				<select class="form-control input-xs" id="CDesc1" name="CDesc1">
-					<option value="">Seleccione</option>
-				</select>
-			</div>
-			<div class="col-sm-1">
-				<b>Cantidad</b>
-				<input type="text" name="TextCant" id="TextCant" class="form-control input-xs"
-					onblur="TextCant_Change()" value="0">
-			</div>
-			<div class="col-sm-1">
-				<b>P.V.P</b>
-				<input type="text" name="TextVUnit" id="TextVUnit" class="form-control input-xs"
-					onblur="TextVUnit_LostFocus()" value="0">
-			</div>
-			<div class="col-sm-1">
-				<b>TOTAL</b>
-				<input type="text" name="LabelVTotal" id="LabelVTotal" class="form-control input-xs" readonly=""
-					value="0">
-			</div>
-		</div>
-		<div class="row"><br>
-			<div class="col-sm-12 text-center">
-				<div id="tbl">
+			<div class="row"><br>
+				<div class="col-sm-12 text-center">
+					<div id="tbl">
+
+					</div>
 
 				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-1">
+					<b>Total sin Iva</b>
+					<input type="text" name="LabelSubTotal" id="LabelSubTotal" class="form-control input-xs">
+				</div>
+				<div class="col-sm-1" style="padding: 2px;">
+					<b>Total con IVA</b>
+					<input type="text" name="LabelConIVA" id="LabelConIVA" class="form-control input-xs">
+				</div>
+				<div class="col-sm-1" style="padding: 2px;">
+					<b>Total Desc</b>
+					<input type="text" name="TextDesc" id="TextDesc" class="form-control input-xs">
+				</div>
+				<div class="col-sm-1" style="padding: 2px;">
+					<b id="label36">Serv. 0.00%</b>
+					<input type="text" name="LabelServ" id="LabelServ" class="form-control input-xs">
+				</div>
+				<div class="col-sm-1" style="padding: 2px;">
+					<b id="label3">I.V.A 12.00%</b>
+					<input type="text" name="LabelIVA" id="LabelIVA" class="form-control input-xs">
+				</div>
+				<div class="col-sm-2" style="padding: 2px;">
+					<b>Total Facturado</b>
+					<input type="text" name="LabelTotal" id="LabelTotal" class="form-control input-xs">
+				</div>
+				<div class="col-sm-5">
+					<!-- <b>P.V.P</b> -->
+					<br>
+					<input type="text" name="LblGuia" id="LblGuia" class="form-control input-xs" readonly>
+				</div>
+			</div>
 
-			</div>
 		</div>
-		<div class="row">
-			<div class="col-sm-1" style="padding: 2px;">
-				<b>Total sin Iva</b>
-				<input type="text" name="LabelSubTotal" id="LabelSubTotal" class="form-control input-xs">
-			</div>
-			<div class="col-sm-1" style="padding: 2px;">
-				<b>Total con IVA</b>
-				<input type="text" name="LabelConIVA" id="LabelConIVA" class="form-control input-xs">
-			</div>
-			<div class="col-sm-1" style="padding: 2px;">
-				<b>Total Desc</b>
-				<input type="text" name="TextDesc" id="TextDesc" class="form-control input-xs">
-			</div>
-			<div class="col-sm-1" style="padding: 2px;">
-				<b id="label36">Serv. 0.00%</b>
-				<input type="text" name="LabelServ" id="LabelServ" class="form-control input-xs">
-			</div>
-			<div class="col-sm-1" style="padding: 2px;">
-				<b id="label3">I.V.A 12.00%</b>
-				<input type="text" name="LabelIVA" id="LabelIVA" class="form-control input-xs">
-			</div>
-			<div class="col-sm-2" style="padding: 2px;">
-				<b>Total Facturado</b>
-				<input type="text" name="LabelTotal" id="LabelTotal" class="form-control input-xs">
-			</div>
-			<div class="col-sm-5">
-				<!-- <b>P.V.P</b> -->
-				<br>
-				<input type="text" name="LblGuia" id="LblGuia" class="form-control input-xs" readonly>
-			</div>
-		</div>
-
 	</div>
 </div>
-
 <div class="modal fade" id="cambiar_nombre" role="dialog" data-keyboard="false" data-backdrop="static" tabindex="-1">
 	<div class="modal-dialog modal-dialog modal-dialog-centered modal-sm"
 		style="margin-left: 300px; margin-top: 345px;">
@@ -1528,19 +1693,19 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Datos de guia de remision</h4>
+				<h4 class="modal-title">DATOS DE GUIA DE REMISION</h4>
 			</div>
 			<div class="modal-body">
 				<div class="row">
 					<div class="col-sm-12">
-						<b class="col-sm-6 control-label" style="padding: 0px">Fecha de emision de guia</b>
+						<b class="col-sm-6 control-label" style="padding: 0px">Fecha de emisión de guía</b>
 						<div class="col-sm-6" style="padding: 0px">
 							<input type="date" name="MBoxFechaGRE" id="MBoxFechaGRE" class="form-control input-xs"
 								value="<?php echo date('Y-m-d'); ?>" onblur="MBoxFechaGRE_LostFocus()">
 						</div>
 					</div>
 					<div class="col-sm-12" style="padding-top:5px">
-						<b class="col-sm-6 control-label" style="padding: 0px">Guia de remision No.</b>
+						<b class="col-sm-6 control-label" style="padding: 0px">Guía de remisión No.</b>
 						<div class="col-sm-3" style="padding: 0px">
 							<select class="form-control input-xs" id="DCSerieGR" name="DCSerieGR"
 								onchange="DCSerieGR_LostFocus()">
@@ -1558,7 +1723,7 @@
 							value="0">
 					</div>
 					<div class="col-sm-12" style="padding-top:5px">
-						<b class="col-sm-6 control-label" style="padding: 0px">Iniciacion del traslados</b>
+						<b class="col-sm-6 control-label" style="padding: 0px">Iniciación del traslados</b>
 						<div class="col-sm-6" style="padding: 0px">
 							<input type="date" name="MBoxFechaGRI" id="MBoxFechaGRI" class="form-control input-xs"
 								value="<?php echo date('Y-m-d'); ?>">
@@ -1573,7 +1738,7 @@
 						</div>
 					</div>
 					<div class="col-sm-12" style="padding-top:5px">
-						<b class="col-sm-6 control-label" style="padding: 0px">Finalizacion del traslados</b>
+						<b class="col-sm-6 control-label" style="padding: 0px">Finalización del traslados</b>
 						<div class="col-sm-6" style="padding: 0px">
 							<input type="date" name="MBoxFechaGRF" id="MBoxFechaGRF" class="form-control input-xs"
 								value="<?php echo date('Y-m-d'); ?>">
@@ -1622,18 +1787,18 @@
 
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-primary" onclick="Command8_Click();">Aceptar</button>
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				<button class="btn btn-primary btn-block" onclick="Command8_Click();">Aceptar</button>
+				<button type="button" class="btn btn-default btn-block" data-dismiss="modal">Cerrar</button>
 			</div>
 		</div>
 
 	</div>
 </div>
 
-<script type="text/javascript">
+<!--script type="text/javascript">
 	function Command8_Click() {
 		if ($('#DCCiudadI').val() == '' || $('#DCCiudadF').val() == '' || $('#DCRazonSocial').val() == '' || $('#DCEmpresaEntrega').val() == '') {
-			swal.fire('Llene todo lso campos', '', 'info');
+			swal.fire('Llene todo los campos', '', 'info');
 			return false;
 		}
 		$('#ClaveAcceso_GR').val('.');
@@ -1666,7 +1831,7 @@
 		$('#myModal_guia').modal('hide');
 
 	}
-</script>
+</script-->
 
 <div id="myModal_suscripcion" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
 	<div class="modal-dialog modal-md" style="width: 55%;">
@@ -1749,6 +1914,7 @@
 												class="form-control input-xs">
 										</div>
 									</div>
+
 								</div>
 								<div class="col-sm-4">
 									<div class="row">
@@ -1804,60 +1970,76 @@
 											</div>
 										</div>
 									</div>
-									<!-- checks -->
 								</div>
 								<div class="col-sm-12">
 									<div class="row">
-										<div class="col-sm-6">
-											<b> Ejecutivo de Venta</b>
-											<select class="form-control input-xs" id="DCEjecutivoModal"
-												name="DCEjecutivoModal">
-												<option value="">Seleccione</option>
-											</select>
-										</div>
-										<div class="col-sm-3">
-											<b>Comision %</b>
-											<input type="" name="TextComisionModal" id="TextComisionModal"
-												class="form-control input-xs" onblur="TextComision_LostFocus()">
-										</div>
-										<div class="col-sm-3">
-											<div class="checkbox">
-												<label style="padding: 0px;">
-													<input type="radio" name="opc2" value='OpcN' id="OpcN" checked>
-													Nuevo
-												</label>
-											</div>
-											<div class="checkbox">
-												<label style="padding: 0px;">
-													<input type="radio" name="opc2" value='OpcR' id="OpcR"> Renovacion
-												</label>
+										<div class="col-sm-8">
+											<div class="row">
+												<div class="col-sm-6">
+													<b>Ejecutivo de Venta</b>
+													<select class="form-control input-xs" id="DCEjecutivoModal"
+														name="DCEjecutivoModal">
+														<option value="">Seleccione</option>
+													</select>
+												</div>
+												<div class="col-sm-6">
+													<b>Comisión %</b>
+													<input type="text" name="TextComisionModal" id="TextComisionModal"
+														class="form-control input-xs" onblur="TextComision_LostFocus()">
+												</div>
 											</div>
 										</div>
-
+										<div class="col-sm-4">
+											<div class="row">
+												<div class="col-sm-6" style="padding: 0px;">
+													<div class="checkbox">
+														<label style="padding: 0px;">
+															<input type="radio" name="opc2" value='OpcN' id="OpcN"
+																checked>
+															Nuevo
+														</label>
+													</div>
+												</div>
+												<div class="col-sm-6" style="padding: 0px;">
+													<div class="checkbox">
+														<label style="padding: 0px;">
+															<input type="radio" name="opc2" value='OpcR' id="OpcR">
+															Renovación
+														</label>
+													</div>
+												</div>
+											</div>
+										</div>
 									</div>
-
 								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 text-center" id="tbl_suscripcion" style="height:170px">
+								<div class="col-sm-12" style="padding-top: 5px;">
+									<div class="row">
+										<div class="col-sm-12 text-center" id="tbl_suscripcion" style="height:170px">
+										</div>
+										<br>
+										<div class="col-sm-12">
+											<label>Periodo:<input type="texto" name="txtperiodo"
+													id="txtperiodo"></label>
+										</div>
+									</div>
 								</div>
-								<br>
-								<label>Periodo:<input type="texto" name="txtperiodo" id="txtperiodo"></label>
 							</div>
 						</form>
 					</div>
 					<div class="col-sm-2">
 						<div class="row">
 							<div class="col-sm-12">
-								<button class="btn btn-default" id="btn_g"> <img src="../../img/png/grabar.png"
-										onclick="Command1();"><br> Guardar</button>
+								<button class="btn btn-default btn-block" id="btn_g">
+									<img src="../../img/png/grabar.png" onclick="Command1();"><br> Guardar
+								</button>
 							</div>
-							<div class="col-sm-12">
-								<button class="btn btn-default" data-dismiss="modal" onclick="delete_asientoP();"><img
-										src="../../img/png/bloqueo.png"><br> Cancelar</button>
+							<div class="col-sm-12" style="padding-top: 5px;">
+								<button class="btn btn-default btn-block" data-dismiss="modal"
+									onclick="delete_asientoP();">
+									<img src="../../img/png/bloqueo.png"><br> Cancelar
+								</button>
 							</div>
 						</div>
-
 					</div>
 				</div>
 			</div>
@@ -1907,43 +2089,150 @@
 			</div>
 
 			<div class="modal-footer">
-				<button class="btn btn-primary" onclick="Command8_Click();">Aceptar</button>
+				<button class="btn btn-primary" onclick="abrirDetalle()">Aceptar</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
 			</div>
 		</div>
 	</div>
 </div>
 
+<div class="modal fade" id="divTxtDetalleReserva" role="dialog" data-keyboard="false" data-backdrop="static"
+	tabindex="-1">
+	<div class="modal-dialog modal-dialog modal-dialog-centered modal-sm"
+		style="margin-left: 300px; margin-top: 345px;">
+		<div class="modal-content">
+			<div class="modal-body text-center">
+				<textarea class="form-control" style="resize: none;" rows="4" id="TxtDetalleReserva" name="TxtDetalle"
+					onblur="txtDetalleLostFocus()"></textarea>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	function abrirDetalle() {
+		$('#divTxtDetalleReserva').on('shown.bs.modal', function () {
+			$('#TxtDetalleReserva').focus();
+		})
+		$('#divTxtDetalleReserva').modal('show', function () {
+			$('#TxtDetalleReserva').focus();
+		})
+
+		$('#myModal_reserva').modal('hide');
+		var noches = $('#cantNoches').val();
+		$('#TextCant').val(noches);
+		$('#TxtDetalleReserva').val(producto);
+		if (detalle.length > 3) {
+			$('#TxtDetalleReserva').val($('#TxtDetalleReserva').val() + '\n' + detalle);
+		}
+	}
+
+	function txtDetalleLostFocus() {
+		$('#divTxtDetalleReserva').modal('hide');
+	}
+</script>
+
 <!-- Modal ordenes produccion -->
 <div id="myModal_ordenesProd" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
 	<div class="modal-dialog modal-md" style="width: 30%;">
-		<div class="modal-content">
+		<div class="modal-content">.
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">Ordenes de Producción</h4>
 			</div>
 			<div class="modal-body">
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<th>Orden</th>
-						</tr>
-					</thead>
-					<tbody id="ordenTableBody">
-					</tbody>
-				</table>
+				<select id="selectOrden" form="form-control">
+				</select>
 			</div>
 
 			<div class="modal-footer">
-				<button class="btn btn-primary btn-block" onclick="">Imprimir Detalle Orden</button>
-				<button class="btn btn-primary btn-block" onclick="">Procesar Selección</button>
+				<button class="btn btn-primary btn-block" onclick="CommandButton1_Click()">Imprimir Detalle
+					Orden</button>
+				<button class="btn btn-primary btn-block" onclick="llenarOrden()">Procesar Selección</button>
 				<button type="button" class="btn btn-default btn-block" data-dismiss="modal">Cancelar</button>
 			</div>
 		</div>
 	</div>
 </div>
 
-<div id="myModal_Abonos" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+<script type="text/javascript">
+
+	function llenarOrden() {
+		var LstOrdenP = document.getElementById("selectOrden");
+		if (LstOrdenP.length > 0) {
+			var selectedOptions = LstOrdenP.selectedOptions;
+			var ordenSeleccionadaText = "";
+			let cantOrdenes = LstOrden.length;
+			for (var i = 0; i < selectedOptions.length; i++) {
+				var option = selectedOptions[i];
+				ordenSeleccionadaText = option.text;
+				switch (ordenSeleccionadaText.substring(0, 4)) {
+					case "Lote":
+						dataInv.fecha_exp = fechaSistema();
+						dataInv.fecha_fab = fechaSistema();
+						dataInv.modelo = "Ninguno";
+
+						let stockLote = 0;
+
+						var parametros = {
+							"lote_no": ordenSeleccionadaText
+						};
+
+						$.ajax({
+							type: "POST",
+							url: '../controlador/facturacion/facturarC.php?case_lote=true',
+							data: { parametros: parametros },
+							dataType: 'json',
+							success: function (data) {
+								// console.log(data);
+								if (data.length > 0) {
+									dataInv.procedencia = data['procedencia'];
+									dataInv.modelo = data['modelo'];
+									dataInv.serie_no = data['serie_no'];
+									dataInv.fecha_exp = data['fecha_exp'];
+									dataInv.fecha_fab = data['fecha_fab'];
+									stockLote = data['totStock'];
+								}
+							}
+						});
+						break;
+					case "Orde":
+
+						let cadena = ordenSeleccionadaText;
+						var parametros = {
+							'cadena': cadena,
+							'cod_cxc': document.getElementById("Cod_CxC"),
+							'cta': document.getElementById("Cta_CxP")
+						};
+
+						$.ajax({
+							type: "POST",
+							url: '../controlador/facturacion/facturarC.php?case_orde=true',
+							data: { parametros: parametros },
+							dataType: 'json',
+							success: function (data) {
+								// console.log(data);
+								if (data != '1') {
+									Swal.fire('Se han procesado las ordenes', '', 'info');
+								} else {
+									Swal.fire('No existen Ã³rdenes para procesar', '', 'error');
+								}
+							}
+						});
+						break;
+				}
+
+				console.log("Opcion seleccionada: ", ordenSeleccionadaText);
+			}
+		} else {
+
+			lineas_factura();
+		}
+
+	}
+</script>
+
+<div id="my_modal_abonos" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header" style="padding: 6px 0px 6px 15px;">
@@ -1960,6 +2249,23 @@
 
 	</div>
 </div>
+
+<div id="my_modal_abono_anticipado" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">INGRESO DE ABONOS ANTICIPADOS</h4>
+			</div>
+			<div class="modal-body">
+				<iframe src="" id="frame_anticipado" width="100%" height="500px" marginheight="0"
+					frameborder="0"></iframe>
+			</div>
+			<div class="modal-footer"> </div>
+		</div>
+	</div>
+</div>
+
 
 
 
