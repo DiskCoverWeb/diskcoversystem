@@ -18,9 +18,18 @@ function listarDatos() {
         success: function (data) {
             var data = JSON.parse(data);
             if (data['status'] == 200) {
-                mostrarTabla(data['datos']);
-            } else {
-                mostrarLabel();
+                if (data['datos'].length > 0) {
+                    mostrarTabla(data['datos']);
+                } else {
+                    mostrarLabel();
+                }
+            }else {
+                Swal.fire({
+                    title: 'Error, no hay datos que mostrar.',
+                    type: 'error',
+                    timer: 1000,
+                    showConfirmButton: false
+                });
             }
         },
         error: function (error) {
