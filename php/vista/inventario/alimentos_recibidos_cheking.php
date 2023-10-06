@@ -448,7 +448,7 @@ function autocoplet_ingreso()
             </a>
         </div>
          <div class="col-xs-2 col-md-2 col-sm-2">
-					<button class="btn btn-default" title="Guardar" onclick="guardar_check()">
+					<button class="btn btn-default" title="Guardar checks temporalmente" onclick="guardar_check()">
 						<img src="../../img/png/check.png">
 					</button>
 				</div>  
