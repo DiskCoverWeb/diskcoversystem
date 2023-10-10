@@ -1,0 +1,207 @@
+table {
+    width: 100%;
+    background: #b4b2b2;
+    margin-bottom: 1.25em;
+    border: solid 1px #dddddd;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+table tr th,
+table tr td {
+    padding: 0.5625em 0.625em;
+    font-size: 0.875em;
+    color: #222222;
+    border: 1px solid #dddddd;
+    
+}
+
+th{
+    text-align: center;
+}
+
+
+
+table tr.even,
+table tr.alt,
+table tr:nth-of-type(even) {
+    background: #f9f9f9;
+}
+
+tbody tr:nth-child(even):hover {  background: none;}
+tbody tr:nth-child(odd):hover {  background: none;}
+
+tbody { box-shadow: none; }
+thead { box-shadow: none;} 
+@media only screen and (max-width: 768px) {
+
+    table.resp,
+    .resp thead,
+    .resp tbody,
+    .resp tr,
+    .resp th,
+    .resp td,
+    .resp caption {
+        display: block;
+    }
+
+    table.resp {
+        border: none
+    }
+
+    .resp thead tr {
+        display: none;
+    }
+
+    .resp tbody tr {
+        margin: 1em 0;
+        border: 1px solid #2ba6cb;
+    }
+
+    .resp td {
+        border: none;
+        border-bottom: 1px solid #dddddd;
+        position: relative;
+        padding-left: 45%;
+        text-align: left;
+        max-width: 768px;
+        word-wrap: break-word;
+    }
+
+    .resp tr td:last-child {
+        border-bottom: 1px double #dddddd;
+    }
+
+    .resp tr:last-child td:last-child {
+        border: none;
+    }
+
+    .resp td:before {
+        
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    /*td:nth-of-type(1):before {
+        content: "T";
+    }
+
+    td:nth-of-type(2):before {
+        content: "Razon_Social";
+    }
+
+    td:nth-of-type(3):before {
+        content: "Cliente";
+    }
+
+    td:nth-of-type(4):before {
+        content: "Fecha";
+    }
+
+    td:nth-of-type(5):before {
+        content: "Fecha_V";
+    }
+
+    td:nth-of-type(6):before {
+        content: "TC";
+    }
+
+    td:nth-of-type(7):before {
+        content: "Serie";
+    }
+
+    td:nth-of-type(8):before {
+        content: "Factura";
+    }
+
+    td:nth-of-type(9):before {
+        content: "Total_MN";
+    }
+
+    td:nth-of-type(10):before {
+        content: "Abonos_MN";
+    }
+
+    td:nth-of-type(11):before {
+        content: "Saldo_MN";
+    }
+
+    td:nth-of-type(12):before {
+        content: "Total_ME";
+    }
+
+    td:nth-of-type(13):before {
+        content: "Saldo_ME";
+    }
+
+    td:nth-of-type(14):before {
+        content: "Autorizacion";
+    }
+
+    td:nth-of-type(15):before {
+        content: "RUC_CI_SRI";
+    }
+
+    td:nth-of-type(16):before {
+        content: "CI_RUC";
+    }
+
+    td:nth-of-type(17):before {
+        content: "Forma_Pago";
+    }
+
+    td:nth-of-type(18):before {
+        content: "Telefono";
+    }
+
+    td:nth-of-type(19):before {
+        content: "Celular";
+    }
+
+    td:nth-of-type(20):before {
+        content: "Ciudad";
+    }
+
+    td:nth-of-type(21):before {
+        content: "Direccion";
+    }
+
+    td:nth-of-type(22):before {
+        content: "DireccionT";
+    }
+
+    td:nth-of-type(23):before {
+        content: "Email";
+    }
+
+    td:nth-of-type(24):before {
+        content: "Grupo";
+    }
+
+    td:nth-of-type(25):before {
+        content: "Dias_De_Mora";
+    }
+
+    td:nth-of-type(26):before {
+        content: "Ejecutivo";
+    }
+
+    td:nth-of-type(27):before {
+        content: "Sectorizacion";
+    }
+
+    td:nth-of-type(28):before {
+        content: "Cod_Eject";
+    }
+    td:nth-of-type(29):before {
+        content: "Chq_Posf";
+    }*/
+
+    
+}
