@@ -443,11 +443,42 @@ class lista_facturasM
 	   {
 	   	$sql.=" and C.Clave= '".$clave."'";
 	   }
-
 	   $sql.=" GROUP BY CodigoC,C.Cliente,C.CI_RUC,C.Email,C.Direccion,C.Telefono ";
 	   $sql.=" ORDER BY C.Cliente OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
 	   
 	   // print_r($sql);die();
+		$result = $this->db->datos($sql);
+	   return $result;
+   }
+
+   function Cliente_facturas_estado($cod,$grupo = false,$query=false, $estado)
+   {
+	   $sql = "SELECT CodigoC as 'Codigo',C.Cliente as 'Cliente',C.CI_RUC,C.Email,C.Direccion,C.Telefono  
+	   FROM Facturas F
+	   INNER JOIN Clientes C ON F.CodigoC = C.Codigo  
+	   AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+	   AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'   
+	   ";
+	   if($cod){
+	   	$sql.=" and C.Codigo= '".$cod."'";
+	   }
+	   if($grupo)
+	   {
+	   	$sql.=" and C.Grupo= '".$grupo."'";
+	   }
+	   if($query)
+	   {
+	   	$sql.=" and C.Cliente +' '+ C.CI_RUC like '%".$query."%'";
+	   }
+	   /*if($clave)
+	   {
+	   	$sql.=" and C.Clave= '".$clave."'";
+	   }*/
+	   $sql.=" AND F.T = '".$estado."' ";
+	   $sql.=" GROUP BY CodigoC,C.Cliente,C.CI_RUC,C.Email,C.Direccion,C.Telefono ";
+	   $sql.=" ORDER BY C.Cliente OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
+	   
+		//print_r($sql);
 		$result = $this->db->datos($sql);
 	   return $result;
    }
