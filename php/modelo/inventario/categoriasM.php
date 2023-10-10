@@ -20,15 +20,23 @@ class dayaM
         return $this->db->datos($sql);
     }
 
-    function ConsultaCategoriaGFN($option)
+    function ListarCategorias()
     {
         $sql = "SELECT TP, Proceso, Cmds, ID 
                 FROM Catalogo_Proceso 
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Nivel = 0 
-                AND TP = ' " . $option . " ' ";
+                AND TP = 'CATE' ";
         return $this->db->datos($sql);
     }
+
+    function AsignarCategoria($parametros)
+    {
+        $sql = "INSERT INTO Catalogo_Proceso (TP, Proceso, Cmds, Item) 
+                VALUES ('" . $parametros['tipo'] . "', '" . $parametros['proceso'] . "', '" . $parametros['cmds'] . "', '" . $_SESSION['INGRESO']['item'] . "')";
+        return $this->db->datos($sql);
+    }
+
 
     function ConsultarTipoIngreso()
     {

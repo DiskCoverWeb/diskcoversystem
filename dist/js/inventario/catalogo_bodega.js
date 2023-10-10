@@ -1,46 +1,12 @@
 // Se ejecuta cuando el documento está listo
 $(document).ready(function () {
     listarDatos();
-    llenarSelect();
 });
 
-// Se ejecuta cuando cambia la opción en el select con id 'selectOption'
-$('#selectOption').change(function () {
-    listarDatos();
-});
 
 // Función para realizar una solicitud AJAX y mostrar los resultados en una tabla
 function listarDatos() {
-    var selectedOption = $('#selectOption').val();
-    $.ajax({
-        type: 'POST',
-        url: '../controlador/inventario/categoriasC.php?MostrarTabla=true',
-        data: { option: selectedOption },
-        success: function (data) {
-            var data = JSON.parse(data);
-            if (data['status'] == 200) {
-                if (data['datos'].length > 0) {
-                    mostrarTabla(data['datos']);                    
-                } else {
-                    mostrarLabel();
-                }
-            }else {
-                Swal.fire({
-                    title: 'Error, no hay datos que mostrar.',
-                    type: 'error',
-                    timer: 1000,
-                    showConfirmButton: false
-                });
-            }
-        },
-        error: function (error) {
-            console.error('Error en la solicitud AJAX:', error);
-        }
-    });
-}
-
-function llenarSelect() {
-    console.log("llenar categorias ");
+    //var selectedOption = $('#selectOption').val();
     $.ajax({
         type: 'POST',
         url: '../controlador/inventario/categoriasC.php?ListarCategorias=true',
@@ -49,13 +15,7 @@ function llenarSelect() {
             var data = JSON.parse(data);
             if (data['status'] == 200) {
                 if (data['datos'].length > 0) {
-                    var $select = $('#selectOption'); // Obtener el elemento select
-                    $select.empty(); // Limpiar opciones existentes
-
-                    // Iterar sobre los datos y agregar opciones al select
-                    $.each(data['datos'], function (index, categoria) {
-                        $select.append('<option value="' + categoria['Cmds'] + '">' + categoria['Proceso'] + '</option>');
-                    });
+                    mostrarTabla(data['datos']);
                 } else {
                     mostrarLabel();
                 }
@@ -142,7 +102,7 @@ function eliminarFila(id) {
         if (result.value == true) {
             $.ajax({
                 type: 'POST',
-                url: '../controlador/inventario/categoriasC.php?AceptarEliminar=true',
+                url: '../controlador/inventario/categoriasC.php?EliminarCategoria=true',
                 data: { id: id },
                 success: function (data) {
                     var data = JSON.parse(data);
@@ -176,7 +136,7 @@ function eliminarFila(id) {
 function editarFila(id) {
     $.ajax({
         type: 'POST',
-        url: '../controlador/inventario/categoriasC.php?MostrarDatosPorId=true',
+        url: '../controlador/inventario/categoriasC.php?EditarCategoriaPorId=true',
         data: { id: id },
         success: function (data) {
             var data = JSON.parse(data);
@@ -194,13 +154,13 @@ function editarFila(id) {
 
 // Función para llenar campos en el Modal Editar
 function llenarCampos(data) {
-    var selectedOptionLblE = $('#selectOption option:selected').text();
+    /*var selectedOptionLblE = $('#selectOption option:selected').text();
     $('#selectedOptionLabelE').text(selectedOptionLblE);
     $('#tipoE').val(data[0].Tipo_Dato);
     $('#idE').val(data[0].ID);
     $('#beneficiarioE').val(data[0].Beneficiario);
     $('#codigoE').val(data[0].Codigo);
-    $('#modalEditar').modal('show');
+    $('#modalEditar').modal('show');*/
 }
 
 // Manejador de evento al hacer clic en el botón de aceptar para editar datos
@@ -261,9 +221,7 @@ $('#btnAceptarEditar').click(function () {
 
 // Manejador de evento al hacer clic en el botón de agregar
 $('#btnAgregar').click(function () {
-    var selectedOptionLbl = $('#selectOption option:selected').text();
-    $('#selectedOptionLabel').text(selectedOptionLbl);
-    $('#codigoA').val(generarCodigoRandom(5));
+    $('#tipoA').val('CATE');
     $('#modalAgregar').modal('show');
 });
 
@@ -272,19 +230,26 @@ $('#btnAgregarCollapse').click(function () {
     event.preventDefault();
     var selectedOptionLbl = $('#selectOption option:selected').text();
     $('#selectedOptionLabel').text(selectedOptionLbl);
-    $('#codigoA').val(generarCodigoRandom(5));
+    $('#tipoA').val('CATE');
     $('#modalAgregar').modal('show');
 });
 
+$('#procesoA').on('input', function () {
+    var cmdsA = $(this).val();
+    $('#cmdsA').val(cmdsA.substring(0, 4));
+});
+
+
 // Manejador de evento al hacer clic en el botón de aceptar para agregar datos
 $('#btnAceptarAgregar').click(function () {
-    var selectOptionA = $('#selectOption').val();
-    var beneficiarioA = $('#beneficiarioA').val();
-    var codigoA = $('#codigoA').val();
+    //var selectOptionA = $('#selectOption').val();
+    var procesoA = $('#procesoA').val();
+    var tipoA = $('#tipoA').val();
+    var cmdsA = $('#cmdsA').val();
     var parametros = {
-        "tipo": selectOptionA,
-        "beneficiario": beneficiarioA,
-        "codigo": codigoA
+        "tipo": tipoA,
+        "proceso": procesoA,
+        "cmds": cmdsA
     };
     Swal.fire({
         title: 'Está seguro que desea guardar?',
@@ -298,7 +263,7 @@ $('#btnAceptarAgregar').click(function () {
         if (result.value == true) {
             $.ajax({
                 type: 'POST',
-                url: '../controlador/inventario/categoriasC.php?AceptarAgregar=true',
+                url: '../controlador/inventario/categoriasC.php?AsignarCategoria=true',
                 data: { parametros: parametros },
                 success: function (data) {
 
@@ -331,12 +296,4 @@ $('#btnAceptarAgregar').click(function () {
     });
 });
 
-// Función para generar un código alfanumérico de longitud dada
-function generarCodigoRandom(length) {
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var result = '';
-    for (var i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
-}
+

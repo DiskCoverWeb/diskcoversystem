@@ -422,6 +422,10 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("inventario/categorias.php");
 			}
+			if ($_SESSION['INGRESO']['accion']=='catalogo_bodega') 
+			{
+				require_once("inventario/catalogo_bodega.php");
+			}	
 			if ($_SESSION['INGRESO']['accion']=='alimentosRec') 
 			{
 				require_once("inventario/alimentos_recibidos.php");

@@ -62,8 +62,8 @@
                                 </li>
                                 <li role="separator" class="divider"></li>
                                 <li>
-                                    <a href="" id="btnAgregarCollapse" onclick="event.preventDefault();">Ingresar
-                                        nuevo</a>
+                                    <a href="" id="btnAgregarCollapse" onclick="event.preventDefault();">Asignar
+                                        Categoría</a>
                                 </li>
                             </ul>
                         </div>
@@ -89,7 +89,7 @@
                             </button>';
                         }
                         ?>
-                        <?php createButton("Ingresar nuevo", "../../img/png/add_articulo.png", "", "btnAgregar"); ?>
+                        <?php createButton("Asignar Categoría", "../../img/png/add_articulo.png", "", "btnAgregar"); ?>
                         <!-- otros botones -->
 
                     </div>
@@ -101,16 +101,6 @@
     <!-- Formulario y Tabla -->
     <div class="panel panel-primary" style="margin-top:20px">
         <div class="form-inline" style="margin:20px">
-            <div class="">
-                <!-- Lista desplegable -->
-                <label for="selectOption">Selecciona una categoría:</label>
-                <!--select class="form-control " id="selectOption" name="selectOption">
-                    <option value="INDIC_NUT">Indicador Nutricional</option>
-                    <option value="CATEG_BPM">BPM Alergenos</option>
-                    <option value="CATEG_BPMT">BPM Temperatura</option>
-                </select-->
-                <select id="selectOption"></select>
-            </div>
 
             <!-- Mensaje de alerta si no hay datos -->
             <div class="alert alert-warning" id="alertNoData" style="display: none; margin-top:10px">
@@ -169,11 +159,14 @@
                 <!-- Contenido de la ventana modal para agregar -->
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="codigoA">Código:</label>
-                        <input type="text" class="form-control" id="codigoA" maxlength="10" readonly>
+                        <label for="tipoA">Tipo:</label>
+                        <input type="text" class="form-control" id="tipoA" maxlength="4" readonly>
 
-                        <label for="beneficiarioA">Detalle:</label>
-                        <input type="text" class="form-control" id="beneficiarioA" maxlength="60">
+                        <label for="procesoA">Detalle:</label>
+                        <input type="text" class="form-control" id="procesoA" maxlength="60">
+
+                        <label for="cmdsA">Tipo Detalle:</label>
+                        <input type="text" class="form-control" id="cmdsA" maxlength="4">
                     </div>
                 </div>
                 <!-- Pie de la ventana modal para agregar -->
@@ -188,7 +181,7 @@
     </div>
 
     <!-- Script JavaScript para manipular la página -->
-    <script src="../../dist/js/inventario/categorias.js"></script>
+    <script src="../../dist/js/inventario/catalogo_bodega.js"></script>
 </body>
 
 </html>

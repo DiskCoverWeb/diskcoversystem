@@ -28,6 +28,15 @@ if (isset($_GET['AceptarEliminar'])) {
     echo json_encode($controlador->EliminarPorId($id));
 }
 
+if (isset($_GET['AsignarCategoria'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->AsignarCategoria($parametros));
+}
+
+if (isset($_GET['ListarCategorias'])) {
+    echo json_encode($controlador->ListarCategorias());
+}
+
 
 class dayaC
 {
@@ -86,6 +95,27 @@ class dayaC
         } catch (Exception $e) {
             return array('status' => '400', 'error' => 'No se pudieron eliminar los datos.');
         }
+    }
+
+    function AsignarCategoria($parametros)
+    {    
+        try {
+            $datos = $this->modelo->AsignarCategoria($parametros); 
+            Eliminar_Nulos_SP("Catalogo_Proceso");            
+            return array('status' => '200', 'datos' => $datos);
+        } catch (Exception $e) {
+            return array('status' => '400', 'error' => 'No se pudieron agregar los datos.');
+        }                     
+    }
+
+    function ListarCategorias()
+    {        
+        try {
+            $datos = $this->modelo->ListarCategorias(); 
+            return array('status' => '200', 'datos' => $datos);
+        } catch (Exception $e) {
+            return array('status' => '400', 'error' => 'No hay datos que mostrar.');
+        }      
     }
 }
 ?>
