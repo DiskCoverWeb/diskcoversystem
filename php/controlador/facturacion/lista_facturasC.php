@@ -558,7 +558,8 @@ class lista_facturasC
 				'tipo' => 'N'
 			);
 		}
-		excel_generico($titulo, $tablaHTML);
+
+		excel_generico(str_replace(' ','',$titulo), $tablaHTML);
 
 	}
 
