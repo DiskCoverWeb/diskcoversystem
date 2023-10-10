@@ -817,6 +817,92 @@ class autorizacion_sri
          
     }
 
+	function SRI_Crear_Clave_Acceso_Facturas($TFA){
+
+		// print_r($TFA);die();
+		$fecha_igualar = Leer_Campo_Empresa('Fecha_Igualar');
+
+		$Autorizar_XML = True;
+	    if(strlen($fecha_igualar) == 10){
+	       // if(CFechaLong(TFA.Fecha) < CFechaLong(Fecha_Igualar)){$Autorizar_XML = False;}
+	    }
+	    $TextoXML = "";
+	    
+	    // If Autorizar_XML Then
+	   // 'Averiguamos si la Factura esta a nombre del Representante
+	    $TBeneficiario = Leer_Datos_Clientes($TFA['CodigoC'],$codigo=1);
+	   // 'MsgBox TBeneficiario.RUC_CI_Rep & vbCrLf & TBeneficiario.Representante & vbCrLf & TBeneficiario.TD_Rep
+
+	  
+	    
+	    $TFA['Cliente'] = $TBeneficiario['Representante'];
+	    $TFA['TD'] = $TBeneficiario['TD_R'];
+	    $TFA['CI_RUC'] = $TBeneficiario['CI_RUC_R'];
+	    $TFA['TelefonoC'] = $TBeneficiario['Telefono_R'];
+	    $TFA['DireccionC'] = $TBeneficiario['DireccionT'];
+	    $TFA['Curso'] = $TBeneficiario['Direccion'];
+	    $TFA['Grupo'] = $TBeneficiario['Grupo'];
+	    $TFA['EmailC'] = $TBeneficiario['Email'];
+	    $TFA['EmailR'] = $TBeneficiario['Email2'];
+   		// 'Detalle de descuentos
+  	  	$sql = "SELECT DF.*,CP.Reg_Sanitario,CP.Marca
+        FROM Detalle_Factura As DF, Catalogo_Productos As CP
+        WHERE DF.Item = '".$_SESSION['INGRESO']['item']."'
+        AND DF.Periodo =  '".$_SESSION['INGRESO']['periodo']."'
+        AND DF.TC = '".$TFA['TC']."'
+        AND DF.Serie = '".$TFA['Serie']."'
+        AND DF.Autorizacion = '".$TFA['Autorizacion']."'
+        AND DF.Factura = ".$TFA['Factura']."
+        AND LEN(DF.Autorizacion) >= 13
+        AND DF.T <> 'A'
+        AND DF.Item = CP.Item
+        AND DF.Periodo = CP.Periodo
+        AND DF.Codigo = CP.Codigo_Inv
+        ORDER BY DF.ID,DF.Codigo ";
+   		$AdoDBDet = $this->db->datos($sql);$fecha_igualar = Leer_Campo_Empresa('Fecha_Igualar');
+
+		$Autorizar_XML = True;
+
+		//Encabezado de la factura
+		$sql2 = "SELECT T, SP, Porc_IVA, Imp_Mes, Fecha, Vencimiento, SubTotal, Sin_IVA, 
+		Con_IVA, IVA, Total_MN, Razon_Social, RUC_CI, TB, Descuento, Descuento2, Servicio
+		FROM Facturas
+		WHERE Item = '" .$_SESSION['INGRESO']['item']. "'
+		AND Periodo =  '" .$_SESSION['INGRESO']['periodo']. "'
+		AND TC = '" .$TFA['TC']. "'
+		AND Serie = '" .$TFA['Serie']. "'
+		AND Autorizacion = '" .$TFA['Autorizacion']. "'
+		AND Factura = '".$TFA['Factura']."'
+		AND LEN(Autorizacion) = 13
+		AND T <> 'A'";
+
+		$AdoDBFA = $this->db->datos($sql2);
+
+		if(count($AdoDBFA) > 0){
+			$Autorizar_XML = True;
+			$TFA['T'] = $AdoDBFA[0]['T'];
+			$TFA['SP'] = $AdoDBFA[0]['SP'];
+			$TFA['Porc_IVA'] = $AdoDBFA[0]['Porc_IVA'];
+			$TFA['Imp_Mes'] = $AdoDBFA[0]['Imp_Mes'];
+			$TFA['Fecha'] = $AdoDBFA[0]['Fecha'];
+			$TFA['Vencimiento'] = $AdoDBFA[0]['Vencimiento'];
+			$TFA['SubTotal'] = $AdoDBFA[0]['SubTotal'];
+			$TFA['Sin_IVA'] = $AdoDBFA[0]['Sin_IVA'];
+			$TFA['Con_IVA'] = $AdoDBFA[0]['Con_IVA'];
+			$TFA['Total_IVA'] = $AdoDBFA[0]['IVA'];
+			$TFA['Servicio'] = $AdoDBFA[0]['Servicio'];
+			$TFA['Total_MN'] = $AdoDBFA[0]['Total_MN'];
+			$TFA['Razon_Social'] = $AdoDBFA[0]['Razon_Social'];
+			$TFA['RUC_CI'] = $AdoDBFA[0]['RUC_CI'];
+			$TFA['TB'] = $AdoDBFA[0]['TB'];
+			$TFA['Descuento'] = $AdoDBFA[0]['Descuento'];
+			$TFA['Descuento2'] = $AdoDBFA[0]['Descuento2'];
+			$TFA['Total_Descuento'] = $AdoDBFA[0]['Descuento'] + $AdoDBFA[0]['Descuento2'];
+
+			Validar_Porc_IVA($TFA['Fecha']->format('Y-m-d'));
+		}
+	}
+
     function SRI_Crear_Clave_Acceso_Guia_Remision_sin_factura($TFA)
 	{
 		$fecha_igualar = Leer_Campo_Empresa('Fecha_Igualar');
