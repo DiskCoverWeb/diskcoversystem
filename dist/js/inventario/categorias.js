@@ -125,8 +125,6 @@ function mostrarTabla(data) {
     $('#idTabla').append(body);
 }
 
-/*/ Agregar diseño responsivo para pantallas pequeñas
-**/
 // Manejador de evento al hacer clic en el botón de eliminar
 function eliminarFila(id) {
     Swal.fire({

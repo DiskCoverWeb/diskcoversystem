@@ -91,7 +91,6 @@
                         ?>
                         <?php createButton("Asignar Categoría", "../../img/png/add_articulo.png", "", "btnAgregar"); ?>
                         <!-- otros botones -->
-
                     </div>
                 </div>
             </div>
@@ -120,21 +119,21 @@
                 <!-- Encabezado de la ventana modal para editar -->
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Editar <strong><span id="selectedOptionLabelE"></strong> </h4>
+                    <h4 class="modal-title">Editar Categoría</h4>
                 </div>
                 <!-- Contenido de la ventana modal para editar -->
                 <div class="modal-body">
                     <div class="form-group">
                         <input type="text" class="form-control" id="idE" maxlength="10" style="display: none;">
 
-                        <label for="codigoE">Tipo de dato:</label>
-                        <input type="text" class="form-control" id="tipoE" maxlength="10" readonly>
+                        <label for="tipoE">Tipo de dato:</label>
+                        <input type="text" class="form-control" id="tipoE" maxlength="10" readonly>                        
 
-                        <label for="codigoE">Código:</label>
-                        <input type="text" class="form-control" id="codigoE" maxlength="10" readonly>
+                        <label for="procesoE">Detalle:</label>
+                        <input type="text" class="form-control" id="procesoE" maxlength="60">
 
-                        <label for="beneficiarioE">Detalle:</label>
-                        <input type="text" class="form-control" id="beneficiarioE" maxlength="60">
+                        <label for="cmdsE">Tipo Detalle:</label>
+                        <input type="text" class="form-control" id="cmdsE" maxlength="4">
                     </div>
                 </div>
                 <!-- Pie de la ventana modal para editar -->
@@ -142,7 +141,6 @@
                     <button type="button" class="btn btn-success" id="btnAceptarEditar">Aceptar</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                 </div>
-
             </div>
         </div>
     </div>
@@ -174,10 +172,8 @@
                     <button type="button" class="btn btn-success" id="btnAceptarAgregar">Aceptar</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                 </div>
-
             </div>
         </div>
-    </div>
     </div>
 
     <!-- Script JavaScript para manipular la página -->

@@ -6,7 +6,6 @@ $(document).ready(function () {
 
 // Función para realizar una solicitud AJAX y mostrar los resultados en una tabla
 function listarDatos() {
-    //var selectedOption = $('#selectOption').val();
     $.ajax({
         type: 'POST',
         url: '../controlador/inventario/categoriasC.php?ListarCategorias=true',
@@ -85,8 +84,6 @@ function mostrarTabla(data) {
     $('#idTabla').append(body);
 }
 
-/*/ Agregar diseño responsivo para pantallas pequeñas
-**/
 // Manejador de evento al hacer clic en el botón de eliminar
 function eliminarFila(id) {
     Swal.fire({
@@ -154,25 +151,30 @@ function editarFila(id) {
 
 // Función para llenar campos en el Modal Editar
 function llenarCampos(data) {
-    /*var selectedOptionLblE = $('#selectOption option:selected').text();
-    $('#selectedOptionLabelE').text(selectedOptionLblE);
-    $('#tipoE').val(data[0].Tipo_Dato);
+    //var selectedOptionLblE = $('#selectOption option:selected').text();
+    $('#selectedOptionLabelE').text("hola mundo");
+    $('#tipoE').val(data[0].TP);
     $('#idE').val(data[0].ID);
-    $('#beneficiarioE').val(data[0].Beneficiario);
-    $('#codigoE').val(data[0].Codigo);
-    $('#modalEditar').modal('show');*/
+    $('#procesoE').val(data[0].Proceso);
+    $('#cmdsE').val(data[0].Cmds);
+    $('#modalEditar').modal('show');
 }
+
+$('#procesoE').on('input', function () {
+    var cmdsE = $(this).val();
+    $('#cmdsE').val(cmdsE.substring(0, 4).toUpperCase());
+});
 
 // Manejador de evento al hacer clic en el botón de aceptar para editar datos
 $('#btnAceptarEditar').click(function () {
-    var selectOptionE = $('#tipoE').val();
-    var beneficiarioE = $('#beneficiarioE').val()
-    var codigoE = $('#codigoE').val()
+    var procesoE = $('#procesoE').val()
+    var cmdsE = $('#cmdsE').val()
     var idE = $('#idE').val()
+    var tipoE = $('#tipoE').val()
     var parametros = {
-        "tipo": selectOptionE,
-        "beneficiario": beneficiarioE,
-        "codigo": codigoE,
+        "tipo": tipoE,
+        "proceso": procesoE,
+        "cmds": cmdsE,
         "id": idE
     };
     Swal.fire({
@@ -187,7 +189,7 @@ $('#btnAceptarEditar').click(function () {
         if (result.value == true) {
             $.ajax({
                 type: 'POST',
-                url: '../controlador/inventario/categoriasC.php?AceptarEditar=true',
+                url: '../controlador/inventario/categoriasC.php?AceptarEditarCategoria=true',
                 data: { parametros: parametros },
                 success: function (data) {
                     var data = JSON.parse(data);
@@ -236,7 +238,7 @@ $('#btnAgregarCollapse').click(function () {
 
 $('#procesoA').on('input', function () {
     var cmdsA = $(this).val();
-    $('#cmdsA').val(cmdsA.substring(0, 4));
+    $('#cmdsA').val(cmdsA.substring(0, 4).toUpperCase());
 });
 
 
@@ -295,5 +297,4 @@ $('#btnAceptarAgregar').click(function () {
         }
     });
 });
-
 

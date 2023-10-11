@@ -109,7 +109,7 @@
                     <option value="CATEG_BPM">BPM Alergenos</option>
                     <option value="CATEG_BPMT">BPM Temperatura</option>
                 </select-->
-                <select id="selectOption"></select>
+                <select id="selectOption" class="select2" ></select>
             </div>
 
             <!-- Mensaje de alerta si no hay datos -->
