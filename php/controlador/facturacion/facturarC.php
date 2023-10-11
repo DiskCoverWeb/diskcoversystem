@@ -1204,21 +1204,14 @@ class facturarC
          $Numero = $Factura_No;
 
 
-         $respuseta = '';
+         $respuesta = '';
          $respuesta2 = '';
 
 
          // 'Autorizamos la factura y/o Guia de Remision
          if (strlen($FA['Autorizacion']) == 13) {
-            /* genera xml al sri*/
-            $FAA['serie'] = $FA['Serie'];
-            $FAA['num_fac'] = $FA['FacturaNo'];
-            $FAA['tc'] = $FA['TC'];
-            $FAA['cod_doc'] = '01';
-            $respuesta = $this->sri->detalle_factura($FA['serie'],  $FA['num_fac'],
-             $FA['Autorizacion'], $FA['TC']);
-            // SRI_Crear_Clave_Acceso_Facturas($FA, False, True);
-            //  
+            $respuesta = $this->sri->SRI_Crear_Clave_Acceso_Facturas($FA);
+            
          }
 
          if (strlen($FA['Autorizacion_GR']) == 13) {

@@ -900,6 +900,103 @@ class autorizacion_sri
 			$TFA['Total_Descuento'] = $AdoDBFA[0]['Descuento'] + $AdoDBFA[0]['Descuento2'];
 
 			Validar_Porc_IVA($TFA['Fecha']->format('Y-m-d'));
+
+			if(strlen($TFA['Autorizacion']) >= 13){
+				$TFA['Fecha'] = is_object($TFA['Fecha']) ? $TFA['Fecha'] -> format('Y-m-d') : $TFA['Fecha'];
+				$TFA['ClaveAcceso'] = $this->Clave_acceso($TFA['Fecha'],'01',$TFA['Serie'],$TFA['Factura']);
+			}else{
+				$TFA['ClaveAcceso'] = G_NINGUNO;
+			}
+			$TipoIdent = "P";
+			switch($TFA['TB']){
+				case "R":
+					$TipoIdent = $TFA['CI_RUC'] == str_repeat("9",13) ? "07" : "04";
+					break;
+				case "C":
+					$TipoIdent = "05";
+					break;
+				case "P":
+					$TipoIdent = "06";
+					break;
+				default:
+					$TipoIdent = "07";
+					break;
+			}
+
+			$TipoProveReemb = substr($TFA['CI_RUC'], 2, 1) == "9" ? "02" : "01";
+
+			$sql3 = "UPDATE Facturas 
+			SET Clave_Acceso = '" .$TFA['ClaveAcceso']."' 
+			WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+			AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+			AND TC = '" .$TFA['TC']."' 
+			AND Serie = '" .$TFA['Serie']."' 
+			AND Factura = " .$TFA['Factura']."
+			AND Remision = " .$TFA['Remision']."  
+			AND CodigoC = '" .$TFA['CodigoC']."' 
+			AND Autorizacion = '" .$TFA['Autorizacion']."' ";
+			$this->db->String_Sql($sql3);
+
+			$xml = $this->generar_xml($TFA,$AdoDBDet);
+			if($xml==1)
+	           {
+	           	 $firma = $this->firmar_documento(
+	           	 	$TFA['ClaveAcceso'],
+	           	 	 generaCeros($_SESSION['INGRESO']['IDEntidad'],3),
+	           	 	$_SESSION['INGRESO']['item'],
+	           	 	$_SESSION['INGRESO']['Clave_Certificado'],
+	           	 	$_SESSION['INGRESO']['Ruta_Certificado']);
+	           	 // print($firma);die();
+	           	 if($firma==1)
+	           	 {
+	           	 	$validar_autorizado = $this->comprobar_xml_sri(
+	           	 		$TFA['ClaveAcceso'],
+	           	 		$this->linkSriAutorizacion);
+	           	 	// print_r($validar_autorizado);die();
+	           	 	if($validar_autorizado == -1)
+			   		 {
+			   		 	$enviar_sri = $this->enviar_xml_sri(
+			   		 		$TFA['ClaveAcceso'],
+			   		 		$this->linkSriRecepcion);
+			   		 	if($enviar_sri==1)
+			   		 	{
+			   		 		//una vez enviado comprobamos el estado de la factura
+			   		 		$resp =  $this->comprobar_xml_sri($TFA['ClaveAcceso'],$this->linkSriAutorizacion);
+			   		 		if($resp==1)
+			   		 		{
+			   		 			// print('dd');
+			   		 			$resp = $this->actualizar_datos_GR($TFA);
+			   		 			return  $resp;
+			   		 		}
+			   		 		// print_r($resp);die();
+			   		 	}else
+			   		 	{
+			   		 		return $enviar_sri;
+			   		 	}
+
+			   		 }else 
+			   		 {
+			   		 	// print_r('expressiondd');die();
+			   		 	if($validar_autorizado==1)
+			   		 	{
+			   		 		return $this->actualizar_datos_GR($TFA);
+			   		 	}
+			   		 	// RETORNA SI YA ESTA AUTORIZADO O SI FALL LA REVISIO EN EL SRI
+			   			return $validar_autorizado;
+			   		 }
+	           	 }else
+	           	 {
+	           	 	//RETORNA SI FALLA AL FIRMAR EL XML
+	           	 	return $firma;
+	           	 }
+	           }else
+	           {
+	           	//RETORNA SI FALLA EL GENERAR EL XML o si ya esta en la carpeta de autorizados
+	            $resp = $this->actualizar_datos_GR($TFA);
+	           	return $xml;
+	           }
+		}else{
+			return -1;
 		}
 	}
 

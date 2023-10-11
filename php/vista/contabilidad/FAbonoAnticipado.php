@@ -20,7 +20,90 @@
                 </div>
             </div>
 
-            <div class="col-sm-12" style="padding-top: 5px;">
+            <div class="col-sm-12" style="padding-top: 5px; display: none;" id="Frame1">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="input-group">
+                                    <label class="input-group-addon" for="DCTipo" style="color: red;">TIPO</label>
+                                    <select class="form-control" id="DCTipo" name="DCTipo" style="width: 100%;">
+                                        <option value="">Seleccione</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="input-group">
+                                    <label class="input-group-addon" for="DCFactura">Factura No.</label>
+                                    <select class="form-control" id="DCFactura" name="DCFactura" style="width: 100%;">
+                                        <option value="">Factura</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding: 5px;"></div>
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <div class="form-control">
+                                    <label  id="Label4">FECHA DE EMISION</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">                               
+                                <div class="form-control">
+                                    <label  id="Label8"></label>
+                                </div>                              
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-control" style="background-color: red;">
+                                    <label id="Label1" ></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding: 5px;"></div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-control">
+                                    <label id="Label3"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding: 5px;"></div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-control">
+                                    <label id="Label6">Saldo Pendiente</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-control">
+                                    <label id="LabelSaldo"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding: 5px;"></div>
+                        <div class="row">
+                            <div class="col-sm-12" >
+                                <div class="form-control " style="padding-bottom: 50px;">
+                                    <label id="LblObs" style="color: violet;">Observacion</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding: 5px;"></div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-control " style="padding-bottom: 50px;">
+                                    <label id="LblNota" style="color: violet;">Nota</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-12" style="padding-top: 5px;" id="Frame2">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">Abono Anticipado</h3>
