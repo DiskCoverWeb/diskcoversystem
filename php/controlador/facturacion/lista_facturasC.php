@@ -82,7 +82,8 @@ if (isset($_GET['clientes2'])) {
 	if (isset($_GET['q'])) {
 		$query = $_GET['q'];
 	}
-	echo json_encode($controlador->clientes2_x_grupo($query, $grupo));
+	$estado = $_GET['estado'];
+	echo json_encode($controlador->clientes2_x_grupo($query, $grupo, $estado));
 }
 if (isset($_GET['clientes_datos'])) {
 	$parametros = $_POST['parametros'];
@@ -557,7 +558,8 @@ class lista_facturasC
 				'tipo' => 'N'
 			);
 		}
-		excel_generico($titulo, $tablaHTML);
+
+		excel_generico(str_replace(' ','',$titulo), $tablaHTML);
 
 	}
 
@@ -627,20 +629,20 @@ class lista_facturasC
 		}
 		$cod = '';
 		$datos = $this->modelo->Cliente_facturas($cod, $grupo, $query);
-		$res = array();
+		$res[0] = array('id' => 'T', 'text' => 'Todos', 'email' => '', 'data' => '');
 		foreach ($datos as $key => $value) {
 			$res[] = array('id' => $value['Codigo'], 'text' => $value['Cliente'] . '  CI:' . $value['CI_RUC'], 'email' => $value['Email'], 'data' => $value);
 		}
 		return $res;
 	}
 
-	function clientes2_x_grupo($query, $grupo)
+	function clientes2_x_grupo($query, $grupo, $estado)
 	{
 		if ($grupo == '.') {
 			$grupo = '';
 		}
 		$cod = '';
-		$datos = $this->modelo->Cliente_facturas($cod, $grupo, $query);
+		$datos = $this->modelo->Cliente_facturas_estado($cod, $grupo, $query, $estado);
 		$res[0] = array('id' => 'T', 'text' => 'Todos', 'email' => '', 'data' => '');
 		foreach ($datos as $key => $value) {
 			$res[] = array('id' => $value['Codigo'], 'text' => $value['Cliente'] . '  CI:' . $value['CI_RUC'], 'email' => $value['Email'], 'data' => $value);

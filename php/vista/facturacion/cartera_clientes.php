@@ -156,12 +156,14 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
 
   function autocmpletar_cliente_tipo2() {
     var g = $('#ddl_grupo').val();
+    var estado = $('#ddl_estado').val();
+    console.log(estado);
     $('#ddl_cliente').select2({
       placeholder: 'Seleccione Cliente',
       width: 'resolve',
       // minimumResultsForSearch: Infinity,
       ajax: {
-        url: '../controlador/facturacion/lista_facturasC.php?clientes2=true&g=' + g,
+        url: '../controlador/facturacion/lista_facturasC.php?clientes2=true&g=' + g + '&estado=' + estado,
         dataType: 'json',
         delay: 250,
         processResults: function (data) {
@@ -172,6 +174,10 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
         cache: true
       }
     });
+  }
+
+  function changeEstado(){
+    autocmpletar_cliente_tipo2();
   }
 
 
@@ -1052,7 +1058,7 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
             <div class="col-sm-2" id="campo_estado">
               <b>Estado</b>
               <select class="form-control input-xs" name="DCLinea" id="ddl_estado" tabindex="1"
-                style="padding-left:8px">
+                style="padding-left:8px" onchange="autocmpletar_cliente_tipo2()">
                 <option value="P">Pendiente</option>
                 <option value="C">Cancelado</option>
                 <option value="A">Anulado</option>
