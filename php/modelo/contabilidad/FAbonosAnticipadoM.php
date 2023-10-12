@@ -45,7 +45,7 @@ class FAbonosAnticipadoM
                 AND TC = 'OP'
                 AND Factura = '" . $fa_factura . "'
                 GROUP BY TC
-                GROUP BY DESC";
+                ORDER BY TC DESC";
         return $this->db->datos($sql);
     }
 

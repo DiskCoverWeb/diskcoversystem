@@ -3,7 +3,7 @@ include(dirname(__DIR__, 2) . '/modelo/contabilidad/FAbonosAnticipadoM.php');
 
 $controlador = new FAbonoAnticipadoC();
 
-if (isset($_GET['DCCliente'])) {
+if (isset($_GET['DCClientes'])) {
     echo json_encode($controlador->DCCliente());
 }
 
@@ -15,17 +15,17 @@ if (isset($_GET['DCCtaAnt'])) {
     echo json_encode($controlador->DCCtaAnt());
 }
 
-if(isset($_GET['AdoIngCaja_Asiento_SC'])){
+if (isset($_GET['AdoIngCaja_Asiento_SC'])) {
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->AdoIngCaja_Asiento_SC($parametros['sub_cta_gen'], $parametros['trans_no']));
 }
 
-if(isset($_GET['AdoIngCaja_Asiento'])){
+if (isset($_GET['AdoIngCaja_Asiento'])) {
     $trans_no = $_POST['trans_no'];
     echo json_encode($controlador->AdoIngCaja_Asiento($trans_no));
 }
 
-if(isset($_GET['AdoIngCaja_Asiento'])){
+if (isset($_GET['AdoIngCaja_Asiento'])) {
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->AdoIngCaja_Catalogo_CxCxP($parametros['codigo_cliente'], $parametros['sub_cta_gen']));
 }
@@ -50,7 +50,6 @@ class FAbonoAnticipadoC
         if (count($datos) > 0) { //Caso cuando encuentre datos, se añadio el "status" para manejar los datos en la vista
             foreach ($datos as $key => $value) {
                 $list[] = array(
-                    'Status' => '1',
                     'Grupo' => $value['Grupo'],
                     'Cliente' => $value['Cliente'],
                     'Email' => $value['Email'],
@@ -59,7 +58,7 @@ class FAbonoAnticipadoC
             }
             return $list;
         }
-        return array('Status' => '0', 'msj' => 'Datos no encontrados'); //Caso de que no encuentre datos
+        return $list; //Caso de que no encuentre datos
     }
 
     /*
@@ -76,7 +75,7 @@ class FAbonoAnticipadoC
             }
             return $list;
         }
-        return array('Status' => '0', 'msj' => 'Datos no encontrados'); //Caso de que no encuentre datos
+        return $list; //Caso de que no encuentre datos
     }
 
     /*
@@ -85,15 +84,20 @@ class FAbonoAnticipadoC
     */
     function DCCtaAnt()
     {
+        $SubCtaGen = Leer_Seteos_Ctas('Cta_Anticipos_Clientes');
         $datos = $this->modelo->SelectDB_Combo_DCCtaAnt();
+        //print_r($datos);die();
         $list = array();
         if (count($datos) > 0) {
             foreach ($datos as $key => $value) {
-                $list[] = array('NomCuenta' => $value['NomCuenta']);
+                //If Not .EOF Then DCCtaAnt.Text = .fields("NomCuenta")
+                if (strpos($value['NomCuenta'], $SubCtaGen) !== false) {
+                    $list[] = array('NomCuenta' => $value['NomCuenta']);
+                }
             }
             return $list;
         }
-        return array('Status' => '0', 'msj' => 'Datos no encontrados'); //Caso de que no encuentre datos
+        return $list; //Caso de que no encuentre datos
     }
 
 
@@ -106,25 +110,37 @@ class FAbonoAnticipadoC
         if (count($datos) > 0) {
             return $datos;
         }
-        return array('Status' => '0', 'msj' => 'Datos no encontrados'); //Caso de que no encuentre datos
+        return $datos; //Caso de que no encuentre datos
     }
 
     function AdoIngCaja_Asiento($trans_no)
     {
         $datos = $this->modelo->Select_Adocdc_AdoIngCaja_Asiento($trans_no);
-        if(count($datos) > 0){
+        if (count($datos) > 0) {
             return $datos;
         }
-        return array('Status' => '0', 'msj' => 'Datos no encontrados'); //Caso de que no encuentre datos
+        return $datos; //Caso de que no encuentre datos
     }
 
     function AdoIngCaja_Catalogo_CxCxP($codigo_cliente, $sub_cta_gen)
     {
         $datos = $this->modelo->Select_Adodc_AdoIngCaja_Catalogo_CxCxp($codigo_cliente, $sub_cta_gen);
-        if(count($datos) > 0){
+        if (count($datos) > 0) {
             return $datos;
         }
-        return array('Status' => '0', 'msj' => 'Datos no encontrados'); //Caso de que no encuentre datos
+        return $datos; //Caso de que no encuentre datos
+    }
+
+    function DCTipo($fa_factura){
+        $datos = $this->modelo->SelectDB_Combo_DCTipo($fa_factura);
+        $list = array();
+        if (count($datos) > 0) {
+            foreach ($datos as $key => $value) {
+                $list[] = array('TC' => $value['TC']);
+            }
+            return $list;
+        }
+        return $list; //Caso de que no encuentre datos
     }
 
 

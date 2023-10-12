@@ -950,7 +950,7 @@
 	}
 	function boton3() {
 		//Listar_Ordenes();
-		src = "../vista/modales.php?FAbonoAnticipado=true";
+		src = "../vista/modales.php?FAbonoAnticipado=true&tipo=FA";
 		$('#frame_anticipado').attr('src', src).show();
 		$('#my_modal_abono_anticipado').modal('show');
 	}

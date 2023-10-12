@@ -1,10 +1,26 @@
 // Espera a que el DOM esté listo
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 
     var txtCajaMN = document.getElementById("TextCajaMN");
-    var subCtaGen = "Cta_Anticipos_Clientes" //Se tiene que realizar "Leer_Seteos_Ctas" en el controlador
     DCCtaAnt();//Hay que enviar el subCtaGen como parametro.
+    DCBanco();
+    var url = window.location.href;
+    var urlParams = new URLSearchParams(url.split('?')[1]);
+    var TipoFactura = urlParams.get('tipo');
 
+    if (TipoFactura == "OP") {
+        document.getElementById("LabelPend").style.display = 'block';
+        document.getElementById("Label10").style.display = 'block';
+        document.getElementById("Frame1").style.display = 'block';
+        document.getElementById("Frame2").style.display = 'none';
+        DCTipo();
+    } else {
+        document.getElementById("LabelPend").style.display = 'none';
+        document.getElementById("Label10").style.display = 'none';
+        document.getElementById("Frame1").style.display = 'none';
+        document.getElementById("Frame2").style.display = 'block';
+        //DCClientes();
+    }
     var cheqRecibo = document.getElementById("CheqRecibo");
     var txtRecibo = document.getElementById("TxtRecibo");
     var mbFecha = document.getElementById("MBFecha");
@@ -12,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var txtConcepto = document.getElementById("TxtConcepto");
     var selectBanco = document.getElementById("DCBanco");
     var selectCtaAnt = document.getElementById("DCCtaAnt");
-    
+
     var labelPend = document.getElementById("LabelPend");
 
     // Función clic en el botón "Aceptar"
@@ -42,10 +58,30 @@ document.addEventListener("DOMContentLoaded", function() {
         // Resto de la lógica de Grabar_abonos
     }
 
-    DCBanco();
+
 
 
 });
+
+function llenarSelect(data, idSelect, dataName) {
+    var select = document.getElementById(idSelect);
+    if (data.length == 0) {
+        select.innerHTML = '';
+        var option = document.createElement("option");
+        option.text = "No existen datos";
+        option.value = "";
+        select.appendChild(option);
+    } else {
+        select.innerHTML = '';
+        console.log(data[0]);
+        for (var i = 0; i < data.length; i++) {
+            var option = document.createElement("option");
+            option.value = data[i][dataName];
+            option.text = data[i][dataName];
+            select.appendChild(option);
+        }
+    }
+}
 
 /*
 Método conectado con el controlador para obtener todos los tipos de DCBanco existentes
@@ -60,46 +96,45 @@ function DCBanco() {
         // data: {parametros: parametros},
         dataType: 'json',
         success: function (data) {
-            var selectBanco = document.getElementById("DCBanco");
-            if ('status' in data) {
-                selectBanco.innerHTML = 'No existen datos';
-            } else {
-                selectBanco.innerHTML = '';
-                for (var i = 0; i < data.length; i++) {
-                    var option = document.createElement("option");
-                    option.value = data[i].NomCuenta;
-                    option.text = data[i].NomCuenta;
-                    selectBanco.appendChild(option);
-                }
-            }
-
-
+            llenarSelect(data, "DCBanco", "NomCuenta")
         }
     });
-
 }
 
-function DCCtaAnt(){
+
+
+function DCCtaAnt() {
     $.ajax({
         type: "POST",
         url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCCtaAnt=true',
-        // data: {parametros: parametros},
+        //data: {parametros: parametros},
         dataType: 'json',
         success: function (data) {
-            var select = document.getElementById("DCCtaAnt");
-            if ('status' in data) {
-                select.innerHTML = 'No existen datos';
-            } else {
-                select.innerHTML = '';
-                for (var i = 0; i < data.length; i++) {
-                    var option = document.createElement("option");
-                    option.value = data[i].NomCuenta;
-                    option.text = data[i].NomCuenta;
-                    select.appendChild(option);
-                }
-            }
+            llenarSelect(data, "DCCtaAnt", "NomCuenta");
+        }
+    });
+}
 
+function DCTipo() {
+    $.ajax({
+        type: "POST",
+        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCTipo=true',
+        //data: {parametros: parametros},
+        dataType: 'json',
+        success: function (data) {
+            llenarSelect(data, "DCTipo", "TC");
+        }
+    });
+}
 
+function DCClientes(){
+    $.ajax({
+        type: "POST",
+        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCClientes=true',
+        //data: {parametros: parametros},
+        dataType: 'json',
+        success: function (data) {
+            llenarSelect(data, "DCClientes", "Cliente");
         }
     });
 }
