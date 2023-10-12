@@ -127,19 +127,27 @@
                         <input type="text" class="form-control" id="idE" maxlength="10" style="display: none;">
 
                         <label for="tipoE">Tipo de dato:</label>
-                        <input type="text" class="form-control" id="tipoE" maxlength="10" readonly>                        
+                        <input type="text" class="form-control" id="tipoE" maxlength="10" readonly>
 
                         <label for="procesoE">Detalle:</label>
                         <input type="text" class="form-control" id="procesoE" maxlength="60">
 
                         <label for="cmdsE">Tipo Detalle:</label>
                         <input type="text" class="form-control" id="cmdsE" maxlength="4">
+
+                        <div class="alert alert-light" id="alertUseE"
+                            style="display: none; margin-top:5px; padding:2px;">
+
+                            <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+                            <span class="text-danger">El tipo de detalle ya se encuentra utilizado.</span>
+
+                        </div>
                     </div>
                 </div>
                 <!-- Pie de la ventana modal para editar -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" id="btnAceptarEditar">Aceptar</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" >Cancelar</button>
                 </div>
             </div>
         </div>
@@ -152,7 +160,8 @@
                 <!-- Encabezado de la ventana modal para agregar -->
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Agregar <strong><span id="selectedOptionLabel"></strong> </span> </h4>
+                    <h4 class="modal-title">Agregar Categoría <strong><span id="selectedOptionLabel"></strong> </span>
+                    </h4>
                 </div>
                 <!-- Contenido de la ventana modal para agregar -->
                 <div class="modal-body">
@@ -165,6 +174,14 @@
 
                         <label for="cmdsA">Tipo Detalle:</label>
                         <input type="text" class="form-control" id="cmdsA" maxlength="4">
+
+                        <div class="alert alert-light" id="alertUse"
+                            style="display: none; margin-top:5px; padding:2px;">
+
+                            <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+                            <span class="text-danger">El tipo de detalle ya se encuentra utilizado.</span>
+
+                        </div>
                     </div>
                 </div>
                 <!-- Pie de la ventana modal para agregar -->

@@ -3,7 +3,6 @@ $(document).ready(function () {
     listarDatos();
 });
 
-
 // Función para realizar una solicitud AJAX y mostrar los resultados en una tabla
 function listarDatos() {
     $.ajax({
@@ -124,7 +123,6 @@ function eliminarFila(id) {
                     console.error('Error en la solicitud AJAX:', error);
                 }
             });
-
         }
     });
 }
@@ -149,6 +147,8 @@ function editarFila(id) {
     });
 }
 
+var valorCmdsE = '';
+
 // Función para llenar campos en el Modal Editar
 function llenarCampos(data) {
     //var selectedOptionLblE = $('#selectOption option:selected').text();
@@ -157,6 +157,7 @@ function llenarCampos(data) {
     $('#idE').val(data[0].ID);
     $('#procesoE').val(data[0].Proceso);
     $('#cmdsE').val(data[0].Cmds);
+    valorCmdsE = $('#cmdsE').val();
     $('#modalEditar').modal('show');
 }
 
@@ -167,18 +168,39 @@ $('#procesoE').on('input', function () {
 
 // Manejador de evento al hacer clic en el botón de aceptar para editar datos
 $('#btnAceptarEditar').click(function () {
-    var procesoE = $('#procesoE').val()
-    var cmdsE = $('#cmdsE').val()
-    var idE = $('#idE').val()
-    var tipoE = $('#tipoE').val()
+    var cmdsE = $('#cmdsE').val();
+
+    // Verifica si cmdsE ha cambiado
+    if (cmdsE !== valorCmdsE) {
+        verificarCmdsAEnBaseDatos(cmdsE, function (cmdExists) {
+            if (cmdExists) { // ya existe el valor en la base
+                mostrarLabelUsoE();
+            } else {
+                ocultarLabelUsoE();
+                ejecutarActualizacion(); // Ejecuta la actualización si cmdsE no existe en la base
+            }
+        });
+    } else {
+        ocultarLabelUsoE();
+        ejecutarActualizacion(); // Ejecuta la actualización si cmdsE no ha cambiado
+    }
+});
+
+function ejecutarActualizacion() {
+    var procesoE = $('#procesoE').val();
+    var cmdsE = $('#cmdsE').val();
+    var idE = $('#idE').val();
+    var tipoE = $('#tipoE').val();
+
     var parametros = {
         "tipo": tipoE,
         "proceso": procesoE,
         "cmds": cmdsE,
         "id": idE
     };
+
     Swal.fire({
-        title: 'Está seguro?',
+        title: '¿Está seguro?',
         type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -186,7 +208,7 @@ $('#btnAceptarEditar').click(function () {
         confirmButtonText: 'Sí, actualizar!',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
-        if (result.value == true) {
+        if (result.value) {
             $.ajax({
                 type: 'POST',
                 url: '../controlador/inventario/categoriasC.php?AceptarEditarCategoria=true',
@@ -195,13 +217,13 @@ $('#btnAceptarEditar').click(function () {
                     var data = JSON.parse(data);
                     if (data['status'] == 200) {
                         Swal.fire({
-                            title: 'Éxito!, se actualizó correctamente.',
+                            title: '¡Éxito!, se actualizó correctamente.',
                             type: 'success',
                             timer: 1000,
                             showConfirmButton: false
                         });
-                        $('#beneficiarioE').val('');
-                        $('#codigoE').val('');
+                        $('#procesoE').val('');
+                        $('#cmdsE').val('');
                         listarDatos();
                     } else {
                         Swal.fire({
@@ -219,7 +241,7 @@ $('#btnAceptarEditar').click(function () {
             $('#modalEditar').modal('hide');
         }
     });
-});
+}
 
 // Manejador de evento al hacer clic en el botón de agregar
 $('#btnAgregar').click(function () {
@@ -230,8 +252,6 @@ $('#btnAgregar').click(function () {
 // Manejador de evento al hacer clic en el botón de agregar en el menú colapsable
 $('#btnAgregarCollapse').click(function () {
     event.preventDefault();
-    var selectedOptionLbl = $('#selectOption option:selected').text();
-    $('#selectedOptionLabel').text(selectedOptionLbl);
     $('#tipoA').val('CATE');
     $('#modalAgregar').modal('show');
 });
@@ -241,59 +261,119 @@ $('#procesoA').on('input', function () {
     $('#cmdsA').val(cmdsA.substring(0, 4).toUpperCase());
 });
 
+function mostrarLabelUso() {
+    $('#alertUse').css('display', 'block');
+}
+
+function ocultarLabelUso() {
+    $('#alertUse').css('display', 'none');
+}
+
+function mostrarLabelUsoE() {
+    $('#alertUseE').css('display', 'block');
+}
+
+function ocultarLabelUsoE() {
+    $('#alertUseE').css('display', 'none');
+}
+
+function verificarCmdsAEnBaseDatos(cmds, callback) {
+    $.ajax({
+        type: 'POST',
+        url: '../controlador/inventario/categoriasC.php?ListarCategorias=true',
+        data: {},
+        success: function (data) {
+            var data = JSON.parse(data);
+            if (data['status'] == 200 && data['datos'].length > 0) {
+                for (var i = 0; i < data['datos'].length; i++) {
+                    if (data['datos'][i].Cmds === cmds) {
+                        if (callback) {
+                            callback(true);
+                        }
+                        return;
+                    }
+                }
+                if (callback) {
+                    callback(false);
+                }
+            }
+        },
+        error: function (error) {
+            console.error('Error en la solicitud AJAX:', error);
+        }
+    });
+}
+
+$('#modalAgregar').on('hidden.bs.modal', function () {
+    $('#cmdsA').val('');
+    $('#procesoA').val('');
+    ocultarLabelUso();
+});
+
+$('#modalEditar').on('hidden.bs.modal', function () {
+    $('#cmdsE').val('');
+    $('#procesoE').val('');
+    ocultarLabelUsoE();
+});
 
 // Manejador de evento al hacer clic en el botón de aceptar para agregar datos
 $('#btnAceptarAgregar').click(function () {
-    //var selectOptionA = $('#selectOption').val();
     var procesoA = $('#procesoA').val();
     var tipoA = $('#tipoA').val();
     var cmdsA = $('#cmdsA').val();
-    var parametros = {
-        "tipo": tipoA,
-        "proceso": procesoA,
-        "cmds": cmdsA
-    };
-    Swal.fire({
-        title: 'Está seguro que desea guardar?',
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, guardar!',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.value == true) {
-            $.ajax({
-                type: 'POST',
-                url: '../controlador/inventario/categoriasC.php?AsignarCategoria=true',
-                data: { parametros: parametros },
-                success: function (data) {
 
-                    var data = JSON.parse(data);
-                    if (data['status'] == 200) {
-                        Swal.fire({
-                            title: "Éxito!, se registro correctamente.",
-                            type: 'success',
-                            timer: 1000,
-                            showConfirmButton: false
-                        });
-                        $('#beneficiarioA').val('');
-                        $('#codigoA').val('');
-                        listarDatos();
-                    } else {
-                        Swal.fire({
-                            title: 'Error, no se registró.',
-                            type: 'error',
-                            timer: 1000,
-                            showConfirmButton: false
-                        });
-                    }
-                },
-                error: function (error) {
-                    console.error('Error en la solicitud AJAX:', error);
+    verificarCmdsAEnBaseDatos(cmdsA, function (cmdExists) {
+        if (cmdExists) { //ya existe el valor de cmds en la base
+            mostrarLabelUso();
+        } else {
+            ocultarLabelUso();
+            var parametros = {
+                "tipo": tipoA,
+                "proceso": procesoA,
+                "cmds": cmdsA
+            };
+            Swal.fire({
+                title: 'Está seguro que desea guardar?',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, guardar!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '../controlador/inventario/categoriasC.php?AsignarCategoria=true',
+                        data: { parametros: parametros },
+                        success: function (data) {
+                            var data = JSON.parse(data);
+                            if (data['status'] == 200) {
+                                Swal.fire({
+                                    title: "Éxito!, se registró correctamente.",
+                                    type: 'success',
+                                    timer: 1000,
+                                    showConfirmButton: false
+                                });
+                                $('#procesoA').val('');
+                                $('#cmdsA').val('');
+                                listarDatos();
+                            } else {
+                                Swal.fire({
+                                    title: 'Error, no se registró.',
+                                    type: 'error',
+                                    timer: 1000,
+                                    showConfirmButton: false
+                                });
+                            }
+                        },
+                        error: function (error) {
+                            console.error('Error en la solicitud AJAX:', error);
+                        }
+                    });
+                    $('#modalAgregar').modal('hide');
                 }
             });
-            $('#modalAgregar').modal('hide');
         }
     });
 });
