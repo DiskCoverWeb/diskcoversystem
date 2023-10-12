@@ -427,7 +427,10 @@ class lista_facturasM
    {
 	   $sql = "SELECT CodigoC as 'Codigo',C.Cliente as 'Cliente',C.CI_RUC,C.Email,C.Direccion,C.Telefono  
 	   FROM Facturas F
-	   INNER JOIN Clientes C ON F.CodigoC = C.Codigo WHERE 1=1 ";
+	   INNER JOIN Clientes C ON F.CodigoC = C.Codigo 
+	   AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+	   AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+	    ";
 	   if($cod){
 	   	$sql.=" and C.Codigo= '".$cod."'";
 	   }
@@ -443,12 +446,75 @@ class lista_facturasM
 	   {
 	   	$sql.=" and C.Clave= '".$clave."'";
 	   }
-
 	   $sql.=" GROUP BY CodigoC,C.Cliente,C.CI_RUC,C.Email,C.Direccion,C.Telefono ";
 	   $sql.=" ORDER BY C.Cliente OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
 	   
 	   // print_r($sql);die();
 		$result = $this->db->datos($sql);
+	   return $result;
+   }
+
+   function Cliente_facturas_estado($cod,$grupo = false,$query=false, $estado)
+   {
+	   $sql = "SELECT CodigoC as 'Codigo',C.Cliente as 'Cliente',C.CI_RUC,C.Email,C.Direccion,C.Telefono  
+	   FROM Facturas F
+	   INNER JOIN Clientes C ON F.CodigoC = C.Codigo  
+	   AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+	   AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'   
+	   ";
+	   if($cod){
+	   	$sql.=" and C.Codigo= '".$cod."'";
+	   }
+	   if($grupo)
+	   {
+	   	$sql.=" and C.Grupo= '".$grupo."'";
+	   }
+	   if($query)
+	   {
+	   	$sql.=" and C.Cliente +' '+ C.CI_RUC like '%".$query."%'";
+	   }
+	   /*if($clave)
+	   {
+	   	$sql.=" and C.Clave= '".$clave."'";
+	   }*/
+	   $sql.=" AND F.T = '".$estado."' ";
+	   $sql.=" GROUP BY CodigoC,C.Cliente,C.CI_RUC,C.Email,C.Direccion,C.Telefono ";
+	   $sql.=" ORDER BY C.Cliente OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
+	   
+		//print_r($sql);
+		$result = $this->db->datos($sql);
+	   return $result;
+   }
+
+   //Gerencia -> Cartera Clientes -> btn Buscar
+   function Cliente_facturas_electronicas($fecha_inicio, $fecha_fin, $estado, $codigoC = false, $serie = false)
+   { //By Leo
+	   $sql = "SELECT F.T,F.Razon_Social,C.Cliente,F.Fecha,F.Fecha_V,F.TC,F.Serie,F.Factura,
+	   F.Total_MN,F.Abonos_MN,F.Saldo_MN,F.Total_ME,F.Saldo_ME,F.Autorizacion,
+	   F.RUC_CI As RUC_CI_SRI,C.CI_RUC,F.Forma_Pago,C.Telefono,C.Celular,C.Ciudad,
+	   C.Direccion,C.DireccionT,C.Email,C.Grupo,DATEDIFF(day,'" .date('Y-m-d'). "',F.Fecha_V) As Dias_De_Mora,
+	   A.Nombre_Completo As Ejecutivo,C.Plan_Afiliado As Sectorizacion,A.Cod_Ejec,F.Chq_Posf 
+	   FROM Facturas As F,Clientes As C,Accesos As A 
+	   WHERE F.Fecha BETWEEN '" . $fecha_inicio . "' AND '" . $fecha_fin . "'
+	   AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+	   AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+	   AND F.T = '" . $estado ."' ";
+
+	   if($codigoC){
+			$sql .= "AND F.CodigoC = '".$codigoC."'";
+	   }
+
+	   if($serie){
+			$sql .= "AND F.Serie = '".$serie."'";
+	   }
+	   
+	   $sql .= "AND C.Codigo = F.CodigoC
+	   AND A.Codigo = F.Cod_Ejec 
+	   AND F.TC NOT IN ('C','P') 
+	   ORDER BY C.Cliente,F.Razon_Social,F.TC,F.Serie,F.Fecha,F.Factura 
+	   ";
+	   $result = $this -> db -> datos($sql);
+	   //print_r($result);die();
 	   return $result;
    }
    

@@ -93,6 +93,16 @@ if(isset($_GET['pedidos_proce']))
 	echo json_encode($controlador->buscar_procesado($query));
 
 }
+if(isset($_GET['search_contabilizado']))
+{
+	$query = '';
+	if(isset($_GET['q']))
+	{
+		$query = $_GET['q'];
+	}
+	echo json_encode($controlador->buscar_contabilizado($query));
+
+}
 if(isset($_GET['guardar_recibido']))
 {
 	$parametros = $_POST;
@@ -173,6 +183,16 @@ if(isset($_GET['eli_all_pedido']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->eli_all_pedido($parametros));
 }
+if(isset($_GET['contabilizar']))
+{
+	$parametros = $_POST;
+	echo json_encode($controlador->contabilizar($parametros));
+}
+if(isset($_GET['lista_bodegas_arbol']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->lista_bodegas_arbol($parametros));
+}
 
 /**
  * 
@@ -190,7 +210,7 @@ class alimentos_recibidosC
 	{
 		// print_r($parametros);die();
 		SetAdoAddNew('Trans_Correos');
-		SetAdoFields('T','N');
+		SetAdoFields('T','I');
 		SetAdoFields('Mensaje',$parametros['txt_comentario']);
 		SetAdoFields('Fecha_P',$parametros['txt_fecha']);
 		SetAdoFields('CodigoP',$parametros['ddl_ingreso']);
@@ -275,6 +295,16 @@ class alimentos_recibidosC
 		}
 		return $result;
 	}
+	function buscar_contabilizado($cod)
+	{
+		$datos = $this->modelo->buscar_transCorreos_contabilizadios($cod);
+		$result = array();
+		foreach ($datos as $key => $value) {
+		 $result[] = array("id"=>$value['Envio_No'],"text"=>$value['Envio_No'],'data'=>$value);
+		}
+		return $result;
+	}
+
 
 	function buscar_procesado($cod)
 	{
@@ -550,6 +580,7 @@ class alimentos_recibidosC
     	// print_r($parametros);die();
     	// print_r($ordenes);die();
     	$datos = $this->modelo->cargar_pedidos_trans($parametros['num_ped'],false);
+    	// $pedido = $this->modelo->
 
 		// print_r($datos);die();
 		$num = count($datos);
@@ -590,7 +621,7 @@ class alimentos_recibidosC
   					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
   					<td width="'.$d4.'" id="txt_cant_ped_'.$value['ID'].'">'.number_format($value['Entrada'],2,'.','').'</td>
-  					<td width="'.$d4.'"><input class="form-control" id="txt_pvp_linea_'.$value['ID'].'" name="txt_pvp_linea_'.$value['ID'].'" onblur="recalcular('.$value['ID'].')" input-sm" value="'.$value['Valor_Unitario'].'"></td>
+  					<td width="'.$d4.'"><input class="form-control"  id="txt_pvp_linea_'.$value['ID'].'" name="txt_pvp_linea_'.$value['ID'].'" onblur="recalcular('.$value['ID'].')" input-sm" value="'.$value['Valor_Unitario'].'"></td>
   					<td width="'.$d4.'"><input class="form-control" id="txt_total_linea_'.$value['ID'].'" name="txt_total_linea_'.$value['ID'].'"  input-sm" value="'.$value['Valor_Total'].'" readonly></td>
   					<td width="90px">';
   					if($value['T']=='C')
@@ -760,6 +791,185 @@ class alimentos_recibidosC
 		// SetAdoFieldsWhere('ID',$parametros['id']);
 		// return SetAdoUpdateGeneric();
 
+	}
+
+	function contabilizar($parametros)
+	{
+		SetAdoAddNew('Trans_Correos');
+		SetAdoFields('T','N');		
+		SetAdoFieldsWhere('ID',$parametros['txt_id']);
+		return SetAdoUpdateGeneric();
+	}
+
+	function lista_bodegas_arbol($parametros)
+	{
+		// print_r($parametros);die();
+		$nivel_solicitado = $parametros['nivel'];
+		$padre = str_replace('_','.',$parametros['padre']);
+		$datos = $this->modelo->bodegas();
+
+		// analiza cuantos niveles tiene
+		$niveles = 0;
+		foreach ($datos as $key => $value) {
+			$niv = explode('.', $value['CodBod']);
+			if(count($niv)>$niveles)
+			{
+				$niveles = count($niv);
+			}
+		}
+		
+		//separa los niveles en grupos
+		$grupo_nivel = array();
+		for ($i=1; $i <= $niveles ; $i++) { 
+			$grupo_nivel[$i] = array();
+			foreach ($datos as $key => $value) {
+				$niv = explode('.', $value['CodBod']);
+				if(count($niv)==$i)
+				{
+					array_push($grupo_nivel[$i], $value);
+				}
+			}
+		}
+
+		// print_r($grupo_nivel[4]);die();
+
+
+		$hijos = 0;
+		$html = '';
+		foreach ($grupo_nivel[$nivel_solicitado] as $key => $value) {
+			if($padre=='')
+			{
+				$prefijo = $value['CodBod'];
+				foreach ($grupo_nivel[$nivel_solicitado+1] as $key2 => $value2) {
+					if (substr($value2['CodBod'], 0, strlen($prefijo)) === $prefijo) {
+						$hijos = 1;
+						break;
+					} 
+				}
+				if($hijos==1)
+				{
+					$html.='<li>
+						       <input type="checkbox" id="c'.$prefijo.'" />
+						       <label class="tree_bod_label" for="c'.$prefijo.'" onclick="cargar_bodegas(\''.($nivel_solicitado+1).'\',\''.$prefijo.'\')">'.$value['Bodega'].'</label>
+						       	<ul id="h'.$prefijo.'">
+						       	</ul>
+					       	</li>';
+					$hijos=0;
+				}else
+				{
+					$html.='<li><span class="tree_bod_label">'.$value['Bodega'].'</span></li>';
+				}
+			}else{
+				//cuando viene con padre
+
+					$prefijo = $value['CodBod'];
+					if(isset($grupo_nivel[$nivel_solicitado+1]))
+					{
+
+						foreach ($grupo_nivel[$nivel_solicitado+1] as $key2 => $value2) {
+							if (substr($value2['CodBod'], 0, strlen($padre)) === $padre) {
+								$hijos = 1;
+								break;
+							} 
+						}
+					}
+					// else{
+					// 	foreach ($grupo_nivel[$nivel_solicitado] as $key2 => $value2) {
+					// 		if (substr($value2['CodBod'], 0, strlen($prefijo)) === $prefijo) {
+					// 			$hijos = 0;
+					// 			break;
+					// 		} 
+					// 	}
+					// }
+					if (substr($value['CodBod'], 0, strlen($padre)) === $padre) {
+						// print_r('padre');die();
+					if($hijos==1)
+					{
+						// print_r($value2['CodBod'].'-'.$value['Bodega']);die();
+						$html.='<li>
+							       <input type="checkbox" id="c'.str_replace('.','_',$prefijo).'" />
+							       <label class="tree_bod_label" for="c'.str_replace('.','_',$prefijo).'" onclick="cargar_bodegas(\''.($nivel_solicitado+1).'\',\''.str_replace('.','_',$prefijo).'\')">'.$value['Bodega'].'</label>
+							       	<ul id="h'.str_replace('.','_',$prefijo).'">
+							       	</ul>
+						       	</li>';
+						$hijos=0;
+					}else
+					{
+						$html.='<li><span class="tree_bod_label">'.$value['Bodega'].'</span></li>';
+					}
+				}
+				
+
+			}
+			
+		}
+
+		return $html;
+
+	}
+
+
+	function lista_bodegas_arbol2($parametros)
+	{
+		// print_r($parametros);die();
+		$datos = $this->modelo->bodegas();
+
+		// analiza cuantos niveles tiene
+		$niveles = 0;
+		foreach ($datos as $key => $value) {
+			$niv = explode('.', $value['CodBod']);
+			if(count($niv)>$niveles)
+			{
+				$niveles = count($niv);
+			}
+		}
+
+		//separa los niveles en grupos
+		$grupo_nivel = array();
+		for ($i=1; $i <= $niveles ; $i++) { 
+			$grupo_nivel[$i] = array();
+			foreach ($datos as $key => $value) {
+				$niv = explode('.', $value['CodBod']);
+				if(count($niv)==$i)
+				{
+					array_push($grupo_nivel[$i], $value);
+				}
+			}
+		}
+
+		//cracion del arbol desde el ultimo nivel hasta el primero
+		$detalle = '';
+		$grupo = '';
+		for ($i=$niveles; $i >=1  ; $i--) { 
+			foreach ($grupo_nivel[$i] as $key => $value) {
+
+				//averiguo el nivel superior
+				$niv = explode('.', $value['CodBod']);
+				array_splice($niv, $niveles-1, 1);
+				$nivel_grupo = '';
+				foreach ($niv as $key2 => $value2) {
+					$nivel_grupo.=$value2.'.';
+				}
+				$nivel_grupo = substr($nivel_grupo,0,-1);
+
+				//agrego os detalles al grupo
+				$grupo = '';
+				foreach ($grupo_nivel[$i]  as $key3 => $value3) {
+					if (strpos($value3['CodBod'], $nivel_grupo ) !== false) {
+						$detalle.= '<li><span class="tree_bod_label">'.$value['Bodega'].'</span></li>';		
+					}
+				}
+
+
+				print_r($nivel_grupo);die();
+			}
+
+			print_r($grupo_nivel[$i]);die();
+
+		}
+
+
+		print_r($grupo_nivel);die();
 	}
 
 

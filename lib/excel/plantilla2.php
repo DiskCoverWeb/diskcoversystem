@@ -252,7 +252,6 @@ function excel_generico($titulo,$datos=false)
 	    $write = new Xlsx($spreadsheet);
 	    if($titulo!='')
 	    {
-
 	    	$write->save(dirname(__DIR__,2).'/php/vista/TEMP/'.$titulo.'.xlsx');
 	        download_file(dirname(__DIR__,2).'/php/vista/TEMP/'.$titulo.".xlsx");
 

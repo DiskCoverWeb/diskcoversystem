@@ -261,10 +261,11 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			{
 				require_once("facturacion/catalogo_bodega.php");
 			}	
-			if ($_SESSION['INGRESO']['accion']=='Almacenamiento_Bod') 
+			if ($_SESSION['INGRESO']['accion']=='almacenamiento_bod') 
 			{
-				require_once("inventario/almacenameinto_bodega.php");
-			}	
+				require_once("inventario/almacenamiento_bodega.php");
+			}
+			
 									
 //Agua Potable
 			if ($_SESSION['INGRESO']['accion']=='ingresar_usuario') 
@@ -485,6 +486,12 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			if($_SESSION['INGRESO']['accion']=='FAbonos')
 			{
 				require_once('contabilidad/FAbonos.php');
+			}
+
+			//Gerencia -> Reportes -> Listado de Facturas
+			if ($_SESSION['INGRESO']['accion']=='listadoFacturasElectronicas') 
+			{
+				require_once("facturacion/cartera_clientes.php");
 			}
 
 	}else

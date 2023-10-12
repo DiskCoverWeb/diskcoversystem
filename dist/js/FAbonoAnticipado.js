@@ -1,6 +1,10 @@
 // Espera a que el DOM esté listo
 document.addEventListener("DOMContentLoaded", function() {
 
+    var txtCajaMN = document.getElementById("TextCajaMN");
+    var subCtaGen = "Cta_Anticipos_Clientes" //Se tiene que realizar "Leer_Seteos_Ctas" en el controlador
+    DCCtaAnt();//Hay que enviar el subCtaGen como parametro.
+
     var cheqRecibo = document.getElementById("CheqRecibo");
     var txtRecibo = document.getElementById("TxtRecibo");
     var mbFecha = document.getElementById("MBFecha");
@@ -8,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var txtConcepto = document.getElementById("TxtConcepto");
     var selectBanco = document.getElementById("DCBanco");
     var selectCtaAnt = document.getElementById("DCCtaAnt");
-    var txtCajaMN = document.getElementById("TextCajaMN");
+    
     var labelPend = document.getElementById("LabelPend");
 
     // Función clic en el botón "Aceptar"
@@ -73,4 +77,29 @@ function DCBanco() {
         }
     });
 
+}
+
+function DCCtaAnt(){
+    $.ajax({
+        type: "POST",
+        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCCtaAnt=true',
+        // data: {parametros: parametros},
+        dataType: 'json',
+        success: function (data) {
+            var select = document.getElementById("DCCtaAnt");
+            if ('status' in data) {
+                select.innerHTML = 'No existen datos';
+            } else {
+                select.innerHTML = '';
+                for (var i = 0; i < data.length; i++) {
+                    var option = document.createElement("option");
+                    option.value = data[i].NomCuenta;
+                    option.text = data[i].NomCuenta;
+                    select.appendChild(option);
+                }
+            }
+
+
+        }
+    });
 }

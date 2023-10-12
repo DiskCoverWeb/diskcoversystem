@@ -67,16 +67,7 @@
     //         },
     //     });
 
-  	$('#ddl_producto').on('select2:select', function (e) {
-      var data = e.params.data.data;
-      $('#txt_unidad').val(data[0].Unidad);
-      $('#txt_referencia').val(data[0].Codigo_Inv);
-      $('#txt_producto').val(data[0].Producto);
-      $('#txt_grupo').val(data[0].Item_Banco);
-      $('#modal_producto').modal('hide');
-      console.log(data);
-    });
-
+  
 
       $('#txt_codigo').on('select2:select', function (e) {
 		      var data = e.params.data.data;
@@ -153,28 +144,12 @@
   	{
   		Swal.fire('Asegurese de que todos los productos esten seleccionados','','info');
   		return false;
+  	}else
+  	{
+  		contabilizar();
   	}
-
-
-
-
-
-  	 // var parametros = $('#form_correos').serialize();
-  	 //  $.ajax({
-	 //      type: "POST",
-	 //      url: '../controlador/inventario/alimentos_recibidosC.php?guardar2=true',
-	 //      data:parametros,
-     //      dataType:'json',
-	 //      success: function(data)
-	 //      {
-	 //      	if(data==1)
-	 //      	{
-	 //      		Swal.fire('Registro Guardado','','success');
-	 //      	}
-	      
-	 //      }
-	 //  });
   }
+
  function autocoplet_alimento(){
   $('#ddl_alimento').select2({
     placeholder: 'Seleccione una beneficiario',
@@ -300,34 +275,7 @@ function autocoplet_ingreso()
 		    }
 		});  	
   }
-  function show_panel()
-  {
-  	 var id = $('#txt_id').val();
-  	 var cant_suge = $('#txt_cant').val();
-  	 var cant_ing = $('#txt_cantidad').val();
-  	 var cant_total = $('#txt_cant_total').val();
-
-  	 var producto = $('#txt_producto').val();
-  	 var fe_exp = $('#txt_fecha_exp').val();
-  	 if(producto=='' || fe_exp=='' || cant_ing=='' || cant_ing==0)
-  	 {
-  	 	Swal.fire('Ingrese todo los datos','','info');
-  	 		return false
-  	 }
-  	 if((parseFloat(cant_ing)+parseFloat(cant_total))>parseFloat(cant_suge))
-  	 {
-  	 		Swal.fire('La cantidad Ingresada supera a la cantidad registrada','','info');
-  	 		return false
-  	 }
-  	 if(id=='')
-  	 {
-  	 		Swal.fire('Seleccione un registro','','info');
-  	 		return false;
-  	 }else
-  	 {
-  	 		agregar();
-  	 }
-  }
+  
 
   function show_calendar()
   {
@@ -358,7 +306,7 @@ function autocoplet_ingreso()
   	 	 $('#pnl_comentario').css('display','block');
   	 }else
   	 {
-  	 	 $('#pnl_comentario').css('display','none');
+  	 	 // $('#pnl_comentario').css('display','none');
   	 }
   	 console.log(cbx);
   }
@@ -582,8 +530,8 @@ function autocoplet_ingreso()
 										
 														
 							</div>
-							<div class="col-sm-12" id="pnl_comentario" style="display:none;">
-									<b>comentario de ingreso</b>
+							<div class="col-sm-12" id="pnl_comentario">
+									<b>COMENTARIO DE CHECKING</b>
 									<textarea class="form-control input-sm" rows="3" id="txt_comentario2" name="txt_comentario2"></textarea>								
 							</div>
 						</div>
@@ -722,32 +670,26 @@ function autocoplet_ingreso()
      $('#txt_cod_barras').val('');
    }
 
-   function agregar()
-  {
-    var parametros = $("#form_add_producto").serialize();    
+  function contabilizar()
+  { 
     var parametros2 = $("#form_correos").serialize();
        $.ajax({
-         data:  parametros2+'&txt_referencia='+$('#txt_referencia').val(),
-         url:   '../controlador/inventario/alimentos_recibidosC.php?guardar_recibido=true',
+         data:  parametros2,
+         url:   '../controlador/inventario/alimentos_recibidosC.php?contabilizar=true',
          type:  'post',
          dataType: 'json',
            success:  function (response) { 
 
             // console.log(response);
-           if(response.resp==1)
+           if(response==1)
            {
-            $('#txt_pedido').val(response.ped);
               Swal.fire({
                 type:'success',
-                title: 'Agregado a pedido',
+                title: 'Pedido contabilizado',
                 text :'',
               }).then( function() {
-                   cargar_pedido();
+              			location.reload();
                 });
-
-            // Swal.fire('','Agregado a pedido.','success');
-            limpiar();
-            // location.reload();
            }else
            {
             Swal.fire('','Algo extraño a pasado.','error');

@@ -949,7 +949,6 @@
 
 	}
 	function boton3() {
-		//$('#myModal_ordenesProd').modal('show');
 		//Listar_Ordenes();
 		src = "../vista/modales.php?FAbonoAnticipado=true";
 		$('#frame_anticipado').attr('src', src).show();

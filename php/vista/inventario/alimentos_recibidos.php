@@ -331,7 +331,7 @@ function autocoplet_ingreso_donante(){
   	 	 $('#pnl_comentario').css('display','block');
   	 }else
   	 {
-  	 	 $('#pnl_comentario').css('display','none');
+  	 	 // $('#pnl_comentario').css('display','none');
   	 }
   	 console.log(cbx);
   }
@@ -557,12 +557,12 @@ function autocoplet_ingreso_donante(){
 										</div>
 								</div>	
 						</div>
-							<div class="col-sm-12 col-md-12" style="padding-top:5px;display: none;" id="pnl_comentario">
+							<div class="col-sm-12 col-md-12" style="padding-top:5px;" id="pnl_comentario">
 								<div class="form-group">
-										<label for="inputEmail3" class="col-sm-3 col-md-6 control-label">COMENTARIO</label>
-										<div class="col-sm-9 col-md-6">
-										<textarea rows="4" class="form-control" style="resize:none;" id="txt_comentario" name="txt_comentario"></textarea>								
-										</div>
+										<b>COMENTARIO</b>
+										<!-- <div class="col-sm-9 col-md-6"> -->
+										<textarea rows="3" class="form-control"  id="txt_comentario" name="txt_comentario"></textarea>								
+										<!-- </div> -->
 								</div>	
 							</div>
 						</div>	
