@@ -408,7 +408,7 @@ function autocoplet_ingreso()
   	 	 $('#pnl_comentario').css('display','block');
   	 }else
   	 {
-  	 	 $('#pnl_comentario').css('display','none');
+  	 	 // $('#pnl_comentario').css('display','none');
   	 }
   	 console.log(cbx);
   }
@@ -516,7 +516,7 @@ function autocoplet_ingreso()
 							</div>
 						</div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-sm-5">
 						<div class="row"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
 								<b>ALIMENTO RECIBIDO:</b>
@@ -532,7 +532,17 @@ function autocoplet_ingreso()
 								 <b>CANTIDAD:</b>
 							</div>
 							<div class="col-sm-6">
-	                        	 <input type="" class="form-control input-xs" id="txt_cant" name="txt_cant" readonly>	
+								<div class="row">
+									<div class="col-sm-6" style="padding-right:1px">
+										  <input type="" class="form-control input-xs" id="txt_cant" name="txt_cant" readonly value="0">	
+									</div>
+									<div class="col-sm-6" style="padding-left: 1px;">
+										<div class="input-group">
+										  <input type="" class="form-control input-xs" id="txt_faltante" name="txt_faltante" readonly>
+										  <span class="input-group-addon input-xs">Dif</span>											
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 						<div class="row"  style="padding-top: 5px;">
@@ -561,13 +571,9 @@ function autocoplet_ingreso()
 						</div>
 					
 					</div>
-					<div class="col-sm-4">
-						<div class="row">
-							<div class="col-sm-6">
-								<!-- <br> -->
-									<!-- <label><input type="checkbox" name="rbl_recibido" id="rbl_recivido"> <b>Recibido</b></label> -->
-							</div>
-							<div class="col-sm-6">
+					<div class="col-sm-3">
+						<div class="row">							
+							<div class="col-sm-12">
 								<div class="row">
 									<div class="col-sm-6">
 										<label style="color:green" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" checked  value="V" > <img src="../../img/png/smile.png"><br> Conforme</label>											
@@ -579,8 +585,8 @@ function autocoplet_ingreso()
 									<!-- <b>Evaluacion</b><br> -->										
 														
 							</div>
-							<div class="col-sm-12" id="pnl_comentario" style="display: none;">
-									<b>comentario de ingreso</b>
+							<div class="col-sm-12" id="pnl_comentario">
+									<b>COMENTARIO DE INGRESO</b>
 									<textarea class="form-control input-sm" rows="3" id="txt_comentario2" name="txt_comentario2"></textarea>								
 							</div>
 						</div>
@@ -638,7 +644,7 @@ function autocoplet_ingreso()
 							</div>
 							<div class="col-sm-6 col-md-6">
 								<br>
-								<input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input" readonly>
+								<input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input">
 							</div>							
 						</div>
 					</div>
@@ -655,14 +661,15 @@ function autocoplet_ingreso()
 								<div class="row">
 									<div class="col-sm-6 col-md-6">
 										<b>Cantidad</b>
-										<input type="" name="txt_cantidad" id="txt_cantidad" readonly class="form-control input-sm">	
+										<input type="" name="txt_cantidad" id="txt_cantidad" class="form-control input-sm" value="0">	
 										<input type="hidden" name="txt_costo" id="txt_costo" readonly class="form-control input-sm">	
 										<input type="hidden" name="txt_cta_inv" id="txt_cta_inv" readonly class="form-control input-sm">	
 										<input type="hidden" name="txt_contra_cta" id="txt_contra_cta" readonly class="form-control input-sm">										
 									</div>
 									<div class="col-sm-6 col-md-6">
 										<b>Unidad</b>
-										<input type="" name="txt_unidad" id="txt_unidad" readonly class="form-control input-sm">													
+										<input type="" name="txt_unidad" id="txt_unidad" readonly class="form-control input-sm">	
+										<input type="hidden" id="txt_cant_total" name ="txt_cant_total" value="0">
 									</div>
 								</div>
 							</div>
@@ -673,7 +680,6 @@ function autocoplet_ingreso()
 						<button type="button" class="btn btn-primary" onclick="show_panel()" >AGREGAR A INGRESO</button>
 						<button type="button" class="btn btn-primary">Limpiar</button>
 						<input type="hidden" id="A_No" name ="A_No" value="0">
-						<input type="hidden" id="txt_cant_total" name ="txt_cant_total" value="0">
 					</div>
 				</div>
 			</div>
@@ -707,7 +713,10 @@ function autocoplet_ingreso()
         console.log(response);
         $('#tbl_body').html(response.tabla);
         $('#txt_cant_total').val(response.cant_total);
-       
+        var total = $('#txt_cant').val();
+        var fal = parseFloat(total)- parseFloat(response.cant_total);
+
+        $('#txt_faltante').val(fal.toFixed(2));
       }
     });
   }
@@ -1034,6 +1043,7 @@ function eliminar_all_pedido(pedido)
   	 cargar_pedido();	
   	 $('#txt_cantidad').val(total);
   	 $('#btn_cantidad').prop('disabled',true);
+  	 $('#txt_cantidad').prop('disabled',true);
   	 $('#modal_producto_2').modal('hide');
 
   	  var parametros=
