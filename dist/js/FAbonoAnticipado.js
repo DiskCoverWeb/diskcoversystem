@@ -80,7 +80,6 @@ function DCBanco() {
 }
 
 function DCCtaAnt(){
-    console.log("TEST CTAANT");
     $.ajax({
         type: "POST",
         url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCCtaAnt=true',
