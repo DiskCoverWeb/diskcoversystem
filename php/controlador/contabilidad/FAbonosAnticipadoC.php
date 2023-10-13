@@ -1,10 +1,15 @@
 <?php
 include(dirname(__DIR__, 2) . '/modelo/contabilidad/FAbonosAnticipadoM.php');
+require_once(dirname(__DIR__, 2) . "/funciones/funciones.php");
 
 $controlador = new FAbonoAnticipadoC();
 
 if (isset($_GET['DCClientes'])) {
-    echo json_encode($controlador->DCCliente());
+    $grupo = G_NINGUNO;
+    if (isset($_GET['grupo']) != '') {
+        $grupo = $_GET['grupo'];
+     }
+    echo json_encode($controlador->DCCliente($grupo));
 }
 
 if (isset($_GET['DCBanco'])) {
@@ -25,9 +30,26 @@ if (isset($_GET['AdoIngCaja_Asiento'])) {
     echo json_encode($controlador->AdoIngCaja_Asiento($trans_no));
 }
 
-if (isset($_GET['AdoIngCaja_Asiento'])) {
+if (isset($_GET['AdoIngCaja_Catalogo_CxCxP'])) {
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->AdoIngCaja_Catalogo_CxCxP($parametros['codigo_cliente'], $parametros['sub_cta_gen']));
+}
+if(isset($_GET['ReadSetDataNum'])){
+    $SQLs = $_POST['SQLs'];
+    $ParaEmpresa = $_POST['ParaEmpresa'];
+    $Incrementar = $_POST['Incrementar'];
+    echo json_encode($controlador->ReadSetDataNum($SQLs, $ParaEmpresa, $Incrementar));
+}
+
+if (isset($_GET['DCTipo'])) {
+    $faFactura = $_POST['fafactura'];
+    echo json_encode($controlador->DCTipo($faFactura));
+}
+
+if (isset($_GET['DCFactura'])) {
+    $TipoFactura = $_POST['TipoFactura'];
+    $faFactura = $_POST['fafactura'];
+    echo json_encode($controlador->DCFactura($TipoFactura, $faFactura));
 }
 
 class FAbonoAnticipadoC
@@ -43,9 +65,9 @@ class FAbonoAnticipadoC
     Conexión del controlador con el modelo para la consulta del select con id "DCCliente"
     -Se implemento la variable "status" cuando no hay datos para el manejo en la vista
     */
-    function DCCliente()
+    function DCCliente($grupo)
     {
-        $datos = $this->modelo->SelectDB_Combo_DCClientes();
+        $datos = $this->modelo->SelectDB_Combo_DCClientes($grupo);
         $list = array();
         if (count($datos) > 0) { //Caso cuando encuentre datos, se añadio el "status" para manejar los datos en la vista
             foreach ($datos as $key => $value) {
@@ -142,6 +164,20 @@ class FAbonoAnticipadoC
         }
         return $list; //Caso de que no encuentre datos
     }
+
+    function ReadSetDataNum($SQLs, $ParaEmpresa, $Incrementar){
+        return ReadSetDataNum($SQLs, $ParaEmpresa, $Incrementar);
+    }
+
+    function DCFactura($TipoFactura, $fa_factura){
+        $datos = $this->modelo->SelectDB_Combo_DCFactura_AdoFactura($TipoFactura, $fa_factura);
+        if (count($datos) > 0) {
+            return $datos;
+        }
+        return $datos;
+    }
+
+    
 
 
 

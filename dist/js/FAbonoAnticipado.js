@@ -7,29 +7,43 @@ document.addEventListener("DOMContentLoaded", function () {
     var url = window.location.href;
     var urlParams = new URLSearchParams(url.split('?')[1]);
     var TipoFactura = urlParams.get('tipo');
+    var grupo = urlParams.get('grupo');
+    var faFactura = urlParams.get('faFactura');
+
 
     if (TipoFactura == "OP") {
         document.getElementById("LabelPend").style.display = 'block';
         document.getElementById("Label10").style.display = 'block';
         document.getElementById("Frame1").style.display = 'block';
         document.getElementById("Frame2").style.display = 'none';
-        DCTipo();
+        DCTipo(faFactura);
     } else {
         document.getElementById("LabelPend").style.display = 'none';
         document.getElementById("Label10").style.display = 'none';
         document.getElementById("Frame1").style.display = 'none';
         document.getElementById("Frame2").style.display = 'block';
-        //DCClientes();
+        DCClientes(grupo);
     }
-    var cheqRecibo = document.getElementById("CheqRecibo");
+    var CheqRecibo = document.getElementById("CheqRecibo");
     var txtRecibo = document.getElementById("TxtRecibo");
-    var mbFecha = document.getElementById("MBFecha");
-    var selectCliente = document.getElementById("DCCliente");
-    var txtConcepto = document.getElementById("TxtConcepto");
-    var selectBanco = document.getElementById("DCBanco");
-    var selectCtaAnt = document.getElementById("DCCtaAnt");
+    ReadSetDataNum("Recibo_No", true, false)
+        .then(function (data) {
+            // Aquí puedes trabajar con los datos
+            if (CheqRecibo.checked) {
+                txtRecibo.value = data.toString().padStart(7, '0');
+                console.log(txtRecibo.textContent);
+            } else {
+                txtRecibo.value = "";
+            }
+        })
+        .catch(function (error) {
+            // Manejo de errores si la solicitud Ajax falla
+            txtRecibo.value = "";
+            console.error("Error en la solicitud Ajax", error);
+        });
 
-    var labelPend = document.getElementById("LabelPend");
+
+    
 
     // Función clic en el botón "Aceptar"
     window.Command1_Click = function () {
@@ -48,20 +62,65 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     };
 
-    // Función para grabar abonos
-    function Grabar_abonos() {
-        if (cheqRecibo.checked) {
-            console.log("El checkbox está seleccionado al hacer clic en Aceptar");
-        } else {
-            console.log("El checkbox no está seleccionado al hacer clic en Aceptar");
-        }
-        // Resto de la lógica de Grabar_abonos
-    }
+    
 
 
 
 
 });
+
+// Función para grabar abonos
+function Grabar_abonos() {
+
+    var mbFecha = document.getElementById("MBFecha");
+    var selectCliente = document.getElementById("DCCliente");
+    var txtConcepto = document.getElementById("TxtConcepto");
+    var selectBanco = document.getElementById("DCBanco");
+    var selectCtaAnt = document.getElementById("DCCtaAnt");
+    var labelPend = document.getElementById("LabelPend");
+    var CodigoCli = $('#DCClientes').val();
+    var SubCtaGen = $('#DCCtaAnt').val();
+    var parametros = { 
+        'sub_cta_gen':SubCtaGen,
+        'trans_no': 200
+    };
+    $.ajax({
+        type: "POST",
+        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?AdoIngCaja_Asiento_SC=true',
+        data: {parametros: parametros},
+        dataType: 'json',
+        success: function (data) {
+            
+        }
+    });
+
+    $.ajax({
+        type: "POST",
+        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?AdoIngCaja_Asiento=true',
+        data: {parametros: parametros},
+        dataType: 'json',
+        success: function (data) {
+            
+        }
+    });
+
+    if(document.getElementById("Frame2").style.display == 'block'){
+        var Cta_Aux = $('#DCBanco').val();
+        
+    }
+
+    $.ajax({
+        type: "POST",
+        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?AdoIngCaja_Catalogo_CxCxP=true',
+        data: {parametros: parametros},
+        dataType: 'json',
+        success: function (data) {
+            
+        }
+    });
+
+
+}
 
 function llenarSelect(data, idSelect, dataName) {
     var select = document.getElementById(idSelect);
@@ -73,7 +132,6 @@ function llenarSelect(data, idSelect, dataName) {
         select.appendChild(option);
     } else {
         select.innerHTML = '';
-        console.log(data[0]);
         for (var i = 0; i < data.length; i++) {
             var option = document.createElement("option");
             option.value = data[i][dataName];
@@ -115,11 +173,11 @@ function DCCtaAnt() {
     });
 }
 
-function DCTipo() {
+function DCTipo(faFactura) {
     $.ajax({
         type: "POST",
         url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCTipo=true',
-        //data: {parametros: parametros},
+        data: { 'fafactura': faFactura },
         dataType: 'json',
         success: function (data) {
             llenarSelect(data, "DCTipo", "TC");
@@ -127,10 +185,10 @@ function DCTipo() {
     });
 }
 
-function DCClientes(){
+function DCClientes(grupo) {
     $.ajax({
         type: "POST",
-        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCClientes=true',
+        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCClientes=true&grupo=' + grupo,
         //data: {parametros: parametros},
         dataType: 'json',
         success: function (data) {
@@ -138,3 +196,52 @@ function DCClientes(){
         }
     });
 }
+
+function ReadSetDataNum(SQLs, ParaEmpresa, Incrementar) {
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            type: "POST",
+            url: '../controlador/contabilidad/FAbonosAnticipadoC.php?ReadSetDataNum=true',
+            data: {
+                'SQLs': SQLs,
+                'ParaEmpresa': ParaEmpresa,
+                'Incrementar': Incrementar
+            },
+            dataType: 'json',
+            success: function (data) {
+                resolve(data); // Resolvemos la promesa con los datos
+            },
+            error: function (error) {
+                reject(error); // Rechazamos la promesa en caso de error
+            }
+        });
+    });
+}
+
+
+function cerrar_modal() {
+    window.parent.closeModal();
+}
+
+function Listar_Facturas_Pendientes() {
+    //console.log("TIPO FACTURA LOST FOCUS", TipoFactura);
+    var url = window.location.href;
+    var urlParams = new URLSearchParams(url.split('?')[1]);
+    var TipoFactura = urlParams.get('tipo');
+    var faFactura = urlParams.get('faFactura');
+    $.ajax({
+        type: "POST",
+        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCClientes=true&grupo=' + grupo,
+        data: {
+            'TipoFactura': TipoFactura,
+            'FaFactura': faFactura
+        },
+        dataType: 'json',
+        success: function (data) {
+            llenarSelect(data, "DCFactura", "Factura");
+        }
+    });
+}
+
+
+

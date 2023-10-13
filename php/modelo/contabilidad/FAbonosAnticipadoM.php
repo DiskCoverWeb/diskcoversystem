@@ -49,12 +49,15 @@ class FAbonosAnticipadoM
         return $this->db->datos($sql);
     }
 
-    function SelectDB_Combo_DCClientes()
+    function SelectDB_Combo_DCClientes($grupo = G_NINGUNO)
     {
         $sql = "SELECT Grupo,Codigo,Cliente,Email,Email2
                 FROM Clientes
-                WHERE FA <> '0' 
-                ORDER BY Cliente"; // <> adFalse linea 56
+                WHERE FA <> '0'";
+        if($grupo <> G_NINGUNO){
+            $sql .= "AND GRUPO = '" . $grupo . "'";
+        } 
+            $sql .= "ORDER BY Cliente"; // <> adFalse linea 56
         return $this->db->datos($sql);
     }
 
@@ -92,6 +95,24 @@ class FAbonosAnticipadoM
                 AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'
                 AND T_No = '" . $trans_no . "'";
         return $this->db->datos($sql);
+    }
+
+    function SelectDB_Combo_DCFactura_AdoFactura($TipoFactura, $fa_factura = false){
+        $sql = "SELECT F.TC,F.Factura,F.CodigoC,F.Fecha,F.Fecha_V,F.Saldo_MN,
+        F.Cta_CxP,F.Nota,F.Observacion,C.Cliente,C.Direccion,C.CI_RUC,C.Telefono,
+        C.Grupo
+        FROM Facturas As F, Clientes As C
+        WHERE F.T = 'P'
+        AND F.Item = '".$_SESSION['INGRESO']['item']."'
+        AND F.TC = '" . $TipoFactura . "'
+        AND F.Periodo =  '".$_SESSION['INGRESO']['periodo']."'";
+        if($TipoFactura == "OP"){
+            $sql .= "AND F.Factura = '" . $fa_factura . "'";
+        }
+        $sql .= "AND F.CodigoC = C.Codigo
+                 ORDER BY F.TC,F.Factura";
+        return $this->db->datos($sql);
+
     }
 
 }
