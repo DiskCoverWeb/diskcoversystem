@@ -278,7 +278,7 @@ class lista_liquidacionCompraM
    function Cliente_facturas($cod,$grupo = false,$query=false,$clave=false)
    {
 	   $sql = "SELECT CodigoC as 'Codigo',C.Cliente as 'Cliente',C.CI_RUC,C.Email FROM Facturas F
-INNER JOIN Clientes C ON F.CodigoC = C.Codigo WHERE 1=1 ";
+		INNER JOIN Clientes C ON F.CodigoC = C.Codigo WHERE C.T='N' ";
 	   if($cod){
 	   	$sql.=" and C.Codigo= '".$cod."'";
 	   }

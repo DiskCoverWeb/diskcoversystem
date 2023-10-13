@@ -32,7 +32,7 @@ class incomM
 	{
 		$sql="SELECT TOP 50 Cliente AS nombre, CI_RUC as id, email,Codigo
 		   FROM Clientes 
-		   WHERE 1=1";
+		   WHERE  T='N'";
 		   if($query != '' and !is_numeric($query))
 		   {
 		   	$sql.=" AND Cliente LIKE '%".$query."%'";

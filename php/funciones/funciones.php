@@ -80,7 +80,7 @@ function Empresa_data()
  {
    $conn = new db();
    $cid= $conn->conexion();
-   $sql = "SELECT * from Clientes WHERE 1=1";
+   $sql = "SELECT * from Clientes WHERE  T='N'";
    if($cod){
     $sql.=" and Codigo= '".$cod."'";
    }
@@ -8076,7 +8076,7 @@ function Leer_Datos_Clientes($Codigo_CIRUC_Cliente,$Por_Codigo=true,$Por_CIRUC=f
           Telefono,Telefono_R,TelefonoT,Grupo,Contacto,Calificacion,Plan_Afiliado,Actividad,Credito,Representante,CI_RUC_R,TD_R,Tipo_Cta,Cod_Banco,
           Cta_Numero,Fecha_Cad,Asignar_Dr,Saldo_Pendiente 
           FROM Clientes 
-          WHERE 1=1 ";
+          WHERE  T='N' ";
           if($Por_Codigo)
           {
             $sql.="AND Codigo = '".$TBenef_Codigo. "' ";

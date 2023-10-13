@@ -218,7 +218,7 @@ class niveles_seguriM
 	function delete_modulos($entidad,$empresas=false,$usuario="",$modulo=false)
 	{
 		$sql = "DELETE FROM acceso_empresas WHERE  ID_Empresa = ".$entidad." ";
-		$sql2 = "DELETE FROM Acceso_Empresa WHERE 1=1 ";
+		$sql2 = "DELETE FROM Acceso_Empresa WHERE X='.' ";
 		if($empresas)
 		{
 			$sql.=" AND Item='".$empresas."'";

@@ -857,11 +857,10 @@ class alimentos_recibidosC
 					$hijos=0;
 				}else
 				{
-					$html.='<li><span class="tree_bod_label">'.$value['Bodega'].'</span></li>';
+					$html.='<li><span class="tree_bod_label" onclick="alert(\'2222\')">'.$value['Bodega'].'</span></li>';
 				}
 			}else{
 				//cuando viene con padre
-
 					$prefijo = $value['CodBod'];
 					if(isset($grupo_nivel[$nivel_solicitado+1]))
 					{
@@ -873,14 +872,7 @@ class alimentos_recibidosC
 							} 
 						}
 					}
-					// else{
-					// 	foreach ($grupo_nivel[$nivel_solicitado] as $key2 => $value2) {
-					// 		if (substr($value2['CodBod'], 0, strlen($prefijo)) === $prefijo) {
-					// 			$hijos = 0;
-					// 			break;
-					// 		} 
-					// 	}
-					// }
+					
 					if (substr($value['CodBod'], 0, strlen($padre)) === $padre) {
 						// print_r('padre');die();
 					if($hijos==1)
@@ -895,7 +887,7 @@ class alimentos_recibidosC
 						$hijos=0;
 					}else
 					{
-						$html.='<li><span class="tree_bod_label">'.$value['Bodega'].'</span></li>';
+						$html.='<li><span class="tree_bod_label" onclick="alert(\'2222\')">'.$value['Bodega'].'</span></li>';
 					}
 				}
 				

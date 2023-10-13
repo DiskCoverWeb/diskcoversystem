@@ -350,7 +350,7 @@ class notas_creditoM
 
   function Cliente($cod,$grupo = false,$query=false,$clave=false)
    {
-     $sql = "SELECT * from Clientes WHERE 1=1 ";
+     $sql = "SELECT * from Clientes WHERE T='N' ";
      if($cod){
       $sql.=" and Codigo= '".$cod."'";
      }

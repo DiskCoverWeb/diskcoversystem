@@ -58,21 +58,17 @@ class devoluciones_insumosM
 
 	function cargar_comprobantes_datos($query=false,$desde='',$hasta='',$tipo='',$numero=false)
 	{
-		// $sql="SELECT Numero,CP.Fecha,Concepto,Monto_Total,Cliente,Codigo FROM Comprobantes CP 
-		// LEFT JOIN Clientes C ON CP.Codigo_B = C.Codigo
-		// WHERE 1=1 AND TP='CD' AND CP.T='N' AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."' AND Codigo_B <> '.' AND Numero IN ( SELECT  DISTINCT Numero FROM Trans_Kardex WHERE 1=1 AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."'  AND Entrada = 0 )";
-
+		
 
 		$sql = "SELECT DISTINCT CP.Numero,CP.Fecha,Concepto,Monto_Total,Cliente,TK.CodigoL FROM Comprobantes CP 
 		LEFT JOIN Clientes C ON CP.Codigo_B = C.Codigo
 		LEFT JOIN Trans_Kardex TK ON CP.Numero = TK.Numero
-		WHERE 1=1 
-		AND CP.TP='CD' 
+		WHERE CP.TP='CD' 
 		AND CP.T='N' 
 		AND CP.Item = '".$_SESSION['INGRESO']['item']."'  
 		AND CP.Periodo = '".$_SESSION['INGRESO']['periodo']."'  
 		AND Codigo_B <> '.' 
-		AND CP.Numero IN ( SELECT  DISTINCT Numero FROM Trans_Kardex T WHERE 1=1 AND Item = '".$_SESSION['INGRESO']['item']."' AND  Periodo = '".$_SESSION['INGRESO']['periodo']."'    AND Entrada = 0 )";
+		AND CP.Numero IN ( SELECT  DISTINCT Numero FROM Trans_Kardex T WHERE Item = '".$_SESSION['INGRESO']['item']."' AND  Periodo = '".$_SESSION['INGRESO']['periodo']."'    AND Entrada = 0 )";
 		if($tipo =='f')
 		{
 			$sql.= " AND CP.Fecha BETWEEN '".$desde."' AND '".$hasta."'";
@@ -96,7 +92,7 @@ class devoluciones_insumosM
 	function trans_kardex($numero)
 	{
 
-		$sql="SELECT  Codigo_Inv,Salida,Valor_Unitario,Valor_Total  FROM Trans_Kardex WHERE 1=1 AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."' AND Entrada = 0 AND Numero = '".$numero."' ";
+		$sql="SELECT  Codigo_Inv,Salida,Valor_Unitario,Valor_Total  FROM Trans_Kardex WHERE Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."' AND Entrada = 0 AND Numero = '".$numero."' ";
 		$datos = $this->conn->datos($sql);
         return $datos;
 
@@ -105,7 +101,7 @@ class devoluciones_insumosM
 	function trans_kardex_linea_all($id)
 	{
 
-		$sql="SELECT *  FROM Trans_Kardex WHERE 1=1 AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."' AND Entrada = 0 AND ID = '".$id."' ";
+		$sql="SELECT *  FROM Trans_Kardex WHERE Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."' AND Entrada = 0 AND ID = '".$id."' ";
 		$datos = $this->conn->datos($sql);
         return $datos;
 
@@ -114,7 +110,7 @@ class devoluciones_insumosM
 	function trans_kardex_linea_devolucion($Codigo_Inv,$factura)
 	{
 
-		$sql="SELECT *  FROM Trans_Kardex WHERE 1=1 AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."' AND  Factura = '".$factura."' and Codigo_Inv = '".$Codigo_Inv."' ";
+		$sql="SELECT *  FROM Trans_Kardex WHERE Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."' AND  Factura = '".$factura."' and Codigo_Inv = '".$Codigo_Inv."' ";
 		// print_r($sql);die();
 		$datos = $this->conn->datos($sql);
         return $datos;
@@ -148,7 +144,7 @@ class devoluciones_insumosM
 		$sql="SELECT  T.Codigo_Inv,Salida,Valor_Unitario,T.Valor_Total,C.Producto,T.ID,T.Utilidad,C.Utilidad as 'utilidad_C'  
 		FROM Trans_Kardex T
        INNER JOIN Catalogo_Productos C ON T.Codigo_Inv = C.Codigo_Inv 
-		WHERE 1=1 AND C.Item = '".$_SESSION['INGRESO']['item']."' 
+		WHERE C.Item = '".$_SESSION['INGRESO']['item']."' 
 		AND C.Periodo ='".$_SESSION['INGRESO']['periodo']."' 
 		AND Entrada = 0 
 		AND Numero = '".$numero."' ";
@@ -166,8 +162,7 @@ class devoluciones_insumosM
 	{
 		$sql ="SELECT DISTINCT SUBSTRING(Codigo_Inv,0,6) as 'familia'
 		      FROM Trans_Kardex 
-		      WHERE 1=1 
-		      AND Item = '".$_SESSION['INGRESO']['item']."' 
+		      WHERE Item = '".$_SESSION['INGRESO']['item']."' 
 		      AND Periodo ='".$_SESSION['INGRESO']['periodo']."' 
 		      AND Entrada = 0 
 		      AND Numero = '".$numero."' ";
