@@ -245,6 +245,7 @@ class alimentos_recibidosC
 			SetAdoFields('C',0);
 		}
 		SetAdoFields('SucIng',$parametros['cbx_evaluacion']);
+		SetAdoFields('Cod_B',$parametros['ddl_sucursales']);
 		SetAdoFieldsWhere('ID',$parametros['txt_id']);
 		return SetAdoUpdateGeneric();
 

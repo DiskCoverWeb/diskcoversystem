@@ -2,10 +2,10 @@
 <script type="text/javascript">
   $(document).ready(function () {
   	 window.addEventListener("message", function(event) {
-            if (event.data === "closeModal") {
-                autocoplet_ingreso();
-            }
-        });    
+          if (event.data === "closeModal") {
+              autocoplet_ingreso();
+          }
+      });    
   	autocoplet_alimento();
   	autocoplet_ingreso();
   	autocoplet_ingreso_donante();
@@ -176,7 +176,7 @@ function autocoplet_ingreso_donante(){
 }
 
   function nuevo_proveedor()
-  {
+  {  	   
   	 $('#myModal_provedor').modal('show');
   	 $('#FProveedor').contents().find('body').css('background-color', 'antiquewhite');
 

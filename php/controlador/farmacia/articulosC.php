@@ -18,6 +18,12 @@ if(isset($_GET['search']))
 	echo json_encode($controlador->autocompletar($query));
 
 }
+if(isset($_GET['search_ruc']))
+{
+	$query = $_POST['search'];
+	echo json_encode($controlador->autocompletar_busqueda_ruc($query));
+
+}
 if(isset($_GET['searchAbre']))
 {
 	$query = $_POST['search'];
@@ -1004,6 +1010,17 @@ function eliminar_factura($parametros)
 		$result = array();
 		foreach ($datos as $key => $value) {
 			 $result[] = array("value"=>$value['ID'],"label"=>$value['Cliente'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'email2'=>$value['Email2'],'CI'=>$value['CI_RUC'],'Actividad'=>$value['Actividad'],'Cod_Ejec'=>$value['Cod_Ejec']);
+		}
+		return $result;
+	}
+	function autocompletar_busqueda_ruc($query)
+	{
+
+		$datos = $this->modelo->clientes_all(false,false,false,$query);
+		// print_r($datos);die();
+		$result = array();
+		foreach ($datos as $key => $value) {
+			 $result[] = array("value"=>$value['ID'],"label"=>$value['CI_RUC'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'email2'=>$value['Email2'],'Nombre'=>$value['Cliente'],'Actividad'=>$value['Actividad'],'Cod_Ejec'=>$value['Cod_Ejec']);
 		}
 		return $result;
 	}
