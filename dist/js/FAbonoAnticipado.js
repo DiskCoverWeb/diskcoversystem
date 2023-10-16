@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
 
-    
+
 
     // Función clic en el botón "Aceptar"
     window.Command1_Click = function () {
@@ -62,8 +62,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     };
 
-    
-
 
 
 
@@ -72,54 +70,28 @@ document.addEventListener("DOMContentLoaded", function () {
 // Función para grabar abonos
 function Grabar_abonos() {
 
-    var mbFecha = document.getElementById("MBFecha");
-    var selectCliente = document.getElementById("DCCliente");
-    var txtConcepto = document.getElementById("TxtConcepto");
-    var selectBanco = document.getElementById("DCBanco");
-    var selectCtaAnt = document.getElementById("DCCtaAnt");
-    var labelPend = document.getElementById("LabelPend");
-    var CodigoCli = $('#DCClientes').val();
-    var SubCtaGen = $('#DCCtaAnt').val();
-    var parametros = { 
-        'sub_cta_gen':SubCtaGen,
-        'trans_no': 200
+    insertAsientoSC();
+    let Total = $('#TextCajaMN').val();
+    insertarAsiento(0,Total,0);
+    insertarAsiento(0,0,Total);
+
+    var parametros = {
+        'codigo_cliente': $('#DCClientes').val(),
+        'sub_cta_gen': $('#DCCtaAnt').val()
     };
     $.ajax({
         type: "POST",
-        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?AdoIngCaja_Asiento_SC=true',
-        data: {parametros: parametros},
-        dataType: 'json',
-        success: function (data) {
-            
-        }
-    });
-
-    $.ajax({
-        type: "POST",
-        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?AdoIngCaja_Asiento=true',
-        data: {parametros: parametros},
-        dataType: 'json',
-        success: function (data) {
-            
-        }
-    });
-
-    if(document.getElementById("Frame2").style.display == 'block'){
-        var Cta_Aux = $('#DCBanco').val();
-        
-    }
-
-    $.ajax({
-        type: "POST",
         url: '../controlador/contabilidad/FAbonosAnticipadoC.php?AdoIngCaja_Catalogo_CxCxP=true',
-        data: {parametros: parametros},
+        data: { parametros: parametros },
         dataType: 'json',
         success: function (data) {
-            
+            return data;
         }
     });
 
+    GrabarComprobante();
 
+    EnviarEmail();
 }
 
 function llenarSelect(data, idSelect, dataName) {
@@ -192,7 +164,22 @@ function DCClientes(grupo) {
         //data: {parametros: parametros},
         dataType: 'json',
         success: function (data) {
-            llenarSelect(data, "DCClientes", "Cliente");
+            var select = document.getElementById("DCClientes");
+            if (data.length == 0) {
+                select.innerHTML = '';
+                var option = document.createElement("option");
+                option.text = "No existen datos";
+                option.value = "";
+                select.appendChild(option);
+            } else {
+                select.innerHTML = '';
+                for (var i = 0; i < data.length; i++) {
+                    var option = document.createElement("option");
+                    option.value = data[i]['Codigo'];
+                    option.text = data[i]['Cliente'];
+                    select.appendChild(option);
+                }
+            }
         }
     });
 }
@@ -231,7 +218,7 @@ function Listar_Facturas_Pendientes() {
     var faFactura = urlParams.get('faFactura');
     $.ajax({
         type: "POST",
-        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCClientes=true&grupo=' + grupo,
+        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCFactura=true',
         data: {
             'TipoFactura': TipoFactura,
             'FaFactura': faFactura
@@ -239,6 +226,114 @@ function Listar_Facturas_Pendientes() {
         dataType: 'json',
         success: function (data) {
             llenarSelect(data, "DCFactura", "Factura");
+        }
+    });
+}
+
+function insertAsientoSC() {
+    var parametros = {
+        'Fecha_V': $('#MBFecha').val(),
+        'CodigoC': $('#DCClientes').val(),
+        'NombreC': $('#DCClientes').find("option:selected").text(),
+        'SubCtaGen': $('#DCCtaAnt').val(),
+        'Total': $('#TextCajaMN').val(),
+        'Trans_No': 200
+    };
+
+    $.ajax({
+        type: "POST",
+        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?AdoIngCaja_Asiento_SC=true',
+        data: { parametros: parametros },
+        dataType: 'json',
+        success: function (data) {
+            return data;
+        }
+    });
+}
+
+function insertarAsiento(Parcial_MEs, Debes, Habers){
+    if (document.getElementById("Frame2").style.display == 'block') {
+        var Cta_Aux = $('#DCBanco').val();
+        if(Cta_Aux.length <= 1)
+            Cta_Aux = '0';//Cta_CajaG
+    }else{
+        Cta_Aux = '0';
+    }
+    var parametros = {
+        'trans_no': 200,
+        'CodCta': Cta_Aux,
+        'Parcial_MEs':Parcial_MEs,
+        'Debes': Debes,
+        'Habers': Habers,
+        'CodigoCli': $('#DCClientes').val() 
+    };
+    $.ajax({
+        type: "POST",
+        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?AdoIngCaja_Asiento=true',
+        data: { parametros: parametros },
+        dataType: 'json',
+        success: function (data) {
+            return data;
+        }
+    });
+}
+
+function GrabarComprobante(){
+    var url = window.location.href;
+    var urlParams = new URLSearchParams(url.split('?')[1]);
+    var TipoFactura = urlParams.get('tipo');
+    var faFactura = urlParams.get('faFactura');
+    var grupo = urlParams.get('grupo');
+    var parametros = {
+        'Fecha': $('#MBFecha').val(),
+        'Total': $('#TextCajaMN').val(),
+        'TipoFactura': TipoFactura,
+        'NombreC': $('#DCClientes').find("option:selected").text(),
+        'Factura': faFactura,
+        'Grupo': grupo,
+        'TxtConcepto': $('#TxtConcepto').val(),
+        'CodigoCli': $('#DCClientes').val(),
+        'Trans_No': 200
+    };
+    //console.log(parametros);
+    /*$.ajax({
+        type: "POST",
+        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?GrabarComprobante=true',
+        data: { parametros: parametros },
+        dataType: 'json',
+        success: function (data) {
+            return data;
+        }
+    });*/
+
+}
+
+function EnviarEmail(){
+    var parametros = {
+        'CodigoCli': $('#DCClientes').val(),
+    };
+
+    $.ajax({
+        type: "POST",
+        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?EnviarEmail=true',
+        data: { parametros: parametros },
+        dataType: 'json',
+        success: function (data) {
+            if(data>0){
+                Swal.fire({
+                    title: data.title,
+                    text: data.Mensaje,
+                    type: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si!'
+                }).then((result) => {
+                    if (result.value == true) {
+                        console.log("ENVIAR CORREO BLA BLA", data);
+                    }
+                });
+            }
         }
     });
 }
