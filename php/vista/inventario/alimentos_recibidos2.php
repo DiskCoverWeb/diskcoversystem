@@ -100,7 +100,7 @@
       }
       $('#txt_temperatura').val(data.Porc_C); // save selected id to input
       $('#ddl_alimento').append($('<option>',{value: data.Cod_C, text:data.Proceso,selected: true }));
-      
+      	cargar_sucursales();      
       	cargar_pedido();
    
       	 // $('#pnl_normal').css('display','none');
@@ -160,6 +160,12 @@
   {
   		var ingresados = $('#txt_cant_total').val();
   		var total = $('#txt_cant').val();
+  		var sucur = $('#ddl_sucursales').val();
+  		if($("#pnl_sucursal").is(":visible")==true && sucur=='')
+  		{
+  			 Swal.fire('Seleccione una sucursal ','','info');
+  			 return false;
+  		}
   		if(parseFloat(ingresados)< parseFloat(total))
   		{
   			 Swal.fire('No se ha completa todo el pedido ','Asegurese de que el pedido este completo','info');
@@ -398,6 +404,12 @@ function autocoplet_ingreso()
   	$('#txt_cantidad').val(can);
   	$('#modal_cantidad').modal('hide');
   }
+   function cambiar_sucursal()
+  {
+  	var can = $('#ddl_sucursales2').val();
+  	$('#ddl_sucursales').val(can);
+  	$('#modal_sucursal').modal('hide');
+  }
 
   function ocultar_comentario()
   {
@@ -408,7 +420,7 @@ function autocoplet_ingreso()
   	 	 $('#pnl_comentario').css('display','block');
   	 }else
   	 {
-  	 	 $('#pnl_comentario').css('display','none');
+  	 	 // $('#pnl_comentario').css('display','none');
   	 }
   	 console.log(cbx);
   }
@@ -439,9 +451,83 @@ function autocoplet_ingreso()
   	$('#txt_producto2').attr('readonly',false);
   	$('#txt_referencia2').val('');
   }
+  function cargar_sucursales()
+ 	{    
+    var parametros = {
+        'ruc':$('#txt_ci').val(),
+    }
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/modalesC.php?sucursales=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        op = '<option value="">Seleccione sucursal</option>';
+        var sucursal = 0;
+        response.forEach(function(item,i){
+            sucursal = 1;
+            op+="<option value=\""+item.Codigo+"\">"+item.Direccion+"</option>";
+        })
 
+        if(sucursal==1)
+        {
+            $('#pnl_sucursal').css('display','block');
+        }else{            
+            $('#pnl_sucursal').css('display','none');
+        }
 
+        $('#ddl_sucursales').html(op);
+        console.log(response);
+        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
 
+ }
+
+  function cargar_sucursales2()
+ 	{    
+    var parametros = {
+        'ruc':$('#txt_ci').val(),
+    }
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/modalesC.php?sucursales=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        op = '<option value="">Seleccione sucursal</option>';
+        var sucursal = 0;
+        response.forEach(function(item,i){
+            sucursal = 1;
+            op+="<option value=\""+item.Codigo+"\">"+item.Direccion+"</option>";
+        })
+
+        if(sucursal==1)
+        {
+            $('#pnl_sucursal').css('display','block');
+        }else{            
+            $('#pnl_sucursal').css('display','none');
+        }
+
+        $('#ddl_sucursales2').html(op);
+        console.log(response);
+        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
+
+ }
+
+ function show_sucursal()
+ {
+ 		cargar_sucursales2();
+ 	 $('#modal_sucursal').modal('show');
+ }
 </script>
 
  <div class="row">
@@ -515,8 +601,19 @@ function autocoplet_ingreso()
 								<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
 							</div>
 						</div>
+						<div class="row"  style="padding-top: 5px; display: none;" id="pnl_sucursal">
+							<div class="col-sm-3 text-right">
+								<button type="button" class="btn btn-default" onclick="show_sucursal()"><img src="../../img/png/sucursal.png" /></button>
+							</div>
+							<div class="col-sm-9">
+								<b>SUCURSAL</b>
+								<select class="form-control input-xs" id="ddl_sucursales" name="ddl_sucursales">
+									<option value="">Seleccione sucursal</option>
+								</select>
+							</div>
+						</div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-sm-5">
 						<div class="row"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
 								<b>ALIMENTO RECIBIDO:</b>
@@ -532,7 +629,17 @@ function autocoplet_ingreso()
 								 <b>CANTIDAD:</b>
 							</div>
 							<div class="col-sm-6">
-	                        	 <input type="" class="form-control input-xs" id="txt_cant" name="txt_cant" readonly>	
+								<div class="row">
+									<div class="col-sm-6" style="padding-right:1px">
+										  <input type="" class="form-control input-xs" id="txt_cant" name="txt_cant" readonly value="0">	
+									</div>
+									<div class="col-sm-6" style="padding-left: 1px;">
+										<div class="input-group">
+										  <span class="input-group-addon input-xs">Dif</span>											
+										  <input type="" class="form-control input-xs" id="txt_faltante" name="txt_faltante" readonly>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 						<div class="row"  style="padding-top: 5px;">
@@ -561,13 +668,9 @@ function autocoplet_ingreso()
 						</div>
 					
 					</div>
-					<div class="col-sm-4">
-						<div class="row">
-							<div class="col-sm-6">
-								<!-- <br> -->
-									<!-- <label><input type="checkbox" name="rbl_recibido" id="rbl_recivido"> <b>Recibido</b></label> -->
-							</div>
-							<div class="col-sm-6">
+					<div class="col-sm-3">
+						<div class="row">							
+							<div class="col-sm-12">
 								<div class="row">
 									<div class="col-sm-6">
 										<label style="color:green" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" checked  value="V" > <img src="../../img/png/smile.png"><br> Conforme</label>											
@@ -579,8 +682,8 @@ function autocoplet_ingreso()
 									<!-- <b>Evaluacion</b><br> -->										
 														
 							</div>
-							<div class="col-sm-12" id="pnl_comentario" style="display: none;">
-									<b>comentario de ingreso</b>
+							<div class="col-sm-12" id="pnl_comentario">
+									<b>COMENTARIO DE INGRESO</b>
 									<textarea class="form-control input-sm" rows="3" id="txt_comentario2" name="txt_comentario2"></textarea>								
 							</div>
 						</div>
@@ -638,7 +741,7 @@ function autocoplet_ingreso()
 							</div>
 							<div class="col-sm-6 col-md-6">
 								<br>
-								<input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input" readonly>
+								<input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input">
 							</div>							
 						</div>
 					</div>
@@ -655,14 +758,15 @@ function autocoplet_ingreso()
 								<div class="row">
 									<div class="col-sm-6 col-md-6">
 										<b>Cantidad</b>
-										<input type="" name="txt_cantidad" id="txt_cantidad" readonly class="form-control input-sm">	
+										<input type="" name="txt_cantidad" id="txt_cantidad" class="form-control input-sm" value="0">	
 										<input type="hidden" name="txt_costo" id="txt_costo" readonly class="form-control input-sm">	
 										<input type="hidden" name="txt_cta_inv" id="txt_cta_inv" readonly class="form-control input-sm">	
 										<input type="hidden" name="txt_contra_cta" id="txt_contra_cta" readonly class="form-control input-sm">										
 									</div>
 									<div class="col-sm-6 col-md-6">
 										<b>Unidad</b>
-										<input type="" name="txt_unidad" id="txt_unidad" readonly class="form-control input-sm">													
+										<input type="" name="txt_unidad" id="txt_unidad" readonly class="form-control input-sm">	
+										<input type="hidden" id="txt_cant_total" name ="txt_cant_total" value="0">
 									</div>
 								</div>
 							</div>
@@ -673,7 +777,6 @@ function autocoplet_ingreso()
 						<button type="button" class="btn btn-primary" onclick="show_panel()" >AGREGAR A INGRESO</button>
 						<button type="button" class="btn btn-primary">Limpiar</button>
 						<input type="hidden" id="A_No" name ="A_No" value="0">
-						<input type="hidden" id="txt_cant_total" name ="txt_cant_total" value="0">
 					</div>
 				</div>
 			</div>
@@ -707,7 +810,10 @@ function autocoplet_ingreso()
         console.log(response);
         $('#tbl_body').html(response.tabla);
         $('#txt_cant_total').val(response.cant_total);
-       
+        var total = $('#txt_cant').val();
+        var fal = parseFloat(total)- parseFloat(response.cant_total);
+
+        $('#txt_faltante').val(fal.toFixed(2));
       }
     });
   }
@@ -1034,6 +1140,7 @@ function eliminar_all_pedido(pedido)
   	 cargar_pedido();	
   	 $('#txt_cantidad').val(total);
   	 $('#btn_cantidad').prop('disabled',true);
+  	 $('#txt_cantidad').prop('disabled',true);
   	 $('#modal_producto_2').modal('hide');
 
   	  var parametros=
@@ -1192,6 +1299,27 @@ function eliminar_all_pedido(pedido)
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
               <button type="button" class="btn btn-primary" onclick="cambiar_cantidad()">OK</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div id="modal_sucursal" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Sucursal</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          <b>Sucursal</b>
+	         <select class="form-control input-sm" id="ddl_sucursales2" name="ddl_sucursales2" onchange="cambiar_sucursal()">
+	         		<option value="">Seleccione Sucursal</option>
+	         </select>        					
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-primary" onclick="cambiar_sucursal()">OK</button>
               <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
           </div>
       </div>

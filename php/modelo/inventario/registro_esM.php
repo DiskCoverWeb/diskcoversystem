@@ -376,7 +376,7 @@ class registro_esM
 			default:
 			      $sql = "SELECT Cliente,Codigo,CI_RUC,Grupo,Direccion,Telefono,TD,'.' As Cta,0 As Importaciones,'X' As TipoBenef
                   FROM Clientes
-                  WHERE  1=1";
+                  WHERE  T='N'";
                    if($query)
                       {
                   	    $sql.=" AND Cliente LIKE '%".$query."%' ";

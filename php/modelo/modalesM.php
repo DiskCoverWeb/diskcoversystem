@@ -361,5 +361,25 @@ function DLCxCxP($SubCta,$query=false)
 
 		return $this->db->datos($sql);
 	}
+	function sucursales($query = false,$codigo=false)
+	{
+		$sql = "SELECT ID,Codigo, Direccion, TP
+			FROM Clientes_Datos_Extras 
+			WHERE Item = '".$_SESSION['INGRESO']['item']."'";
+			if($codigo)
+			{  
+				$sql.=" AND Codigo = '".$codigo."' ";
+			} 
+			$sql.=" AND Tipo_Dato = 'TIPO_PROV' 
+			ORDER BY Direccion, Fecha_Registro DESC";
+
+		return $this->db->datos($sql);
+
+	}
+	function delete_sucursal($id)
+	{
+		$sql = "DELETE FROM Clientes_Datos_Extras WHERE ID ='".$id."'";
+		return $this->db->String_Sql($sql);
+	}
 }
 ?>

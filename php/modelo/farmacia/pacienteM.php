@@ -21,7 +21,7 @@ class pacienteM
 			$pag = 0;
 		}
 		$cid = $this->conn;
-		$sql="SELECT * FROM Clientes WHERE 1=1 AND Matricula<>0";
+		$sql="SELECT * FROM Clientes WHERE Matricula<>0";
 
 		if($parametros['codigo']!='')
 		{
@@ -75,7 +75,7 @@ class pacienteM
 			$pag = 0;
 		}
 		$cid = $this->conn;
-		$sql="SELECT * FROM Clientes WHERE 1=1  ";
+		$sql="SELECT * FROM Clientes WHERE T='N'  ";
 		if($sin_con)
 		{
 			$sql.=" AND Matricula<>'0' ";
@@ -135,7 +135,7 @@ class pacienteM
 			$pag = 0;
 		}
 		$cid = $this->conn;
-		$sql="SELECT * FROM Clientes WHERE 1=1 ";
+		$sql="SELECT * FROM Clientes WHERE T='N' ";
 
 		
 		if($parametros['codigo']!='')

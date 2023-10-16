@@ -69,7 +69,7 @@ class alimentos_recibidosM
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
 		where Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
-		AND TC.T = 'N' ";
+		AND TC.T = 'I' ";
 		if($cod)
 		{
 			$sql.= " AND Envio_No  like  '%".$cod."%'";
@@ -92,6 +92,25 @@ class alimentos_recibidosM
 		where Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC.T = 'P' ";
+		if($cod)
+		{
+			$sql.= " AND Envio_No  like  '%".$cod."%'";
+		}
+		if($fecha)
+		{
+			$sql.= " AND TC.Fecha_P =  '".$fecha."'";
+		}
+		return $this->db->datos($sql);
+	}
+	function buscar_transCorreos_contabilizadios($cod=false,$fecha=false)
+	{
+		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R 
+		from Trans_Correos TC
+		inner join Clientes C on TC.CodigoP = C.Codigo 
+		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
+		where Item = '".$_SESSION['INGRESO']['item']."'
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND TC.T = 'N' ";
 		if($cod)
 		{
 			$sql.= " AND Envio_No  like  '%".$cod."%'";
@@ -291,6 +310,16 @@ class alimentos_recibidosM
 	{
 		$sql = "DELETE FROM Trans_Correos WHERE ID = '".$id."'";
 		return $this->db->String_Sql($sql);
+	}
+
+	function bodegas($nivel=false)
+	{
+		$sql = "SELECT TC, CodBod, Bodega, Item, Periodo, X, ID
+		FROM Catalogo_Bodegas
+		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+
+		return $this->db->datos($sql);
 	}
 
 

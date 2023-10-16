@@ -121,7 +121,7 @@ class usuario_model{
 	function buscar_cliente_cartera($cartera_usu=false,$cartera_pass=false,$empresa=[])
 	{
 		// print_r($empresa);die();
-		$sql="SELECT Clave,Codigo,* FROM Clientes WHERE 1=1 ";
+		$sql="SELECT Clave,Codigo,* FROM Clientes WHERE T='N' ";
 		if($cartera_pass)
 			{
 				$sql.=" AND Clave = '".$cartera_pass."' ";

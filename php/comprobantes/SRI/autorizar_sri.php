@@ -382,7 +382,7 @@ class autorizacion_sri
 	{
 
 		// $con = $this->conn->conexion();
-		$sql = "SELECT * From Clientes WHERE 1=1";
+		$sql = "SELECT * From Clientes WHERE  T='N'";
 		if($codigo)
 			{
 				$sql.=" And Codigo = '".$codigo."'";
@@ -412,7 +412,7 @@ class autorizacion_sri
 
 	function datos_cliente_todo($codigo=false,$ci_ruc=false)
 	{
-		$sql = "SELECT * From Clientes WHERE 1=1 ";
+		$sql = "SELECT * From Clientes WHERE T='N' ";
 
 		if($codigo)
 		{
