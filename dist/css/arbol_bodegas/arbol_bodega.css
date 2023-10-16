@@ -91,6 +91,7 @@ label.tree_bod_label:before {
   border-left: 1px solid #777;
   border-radius: 0 0 0 .3em;
   content: '';
+  font-style: italic;
   }
 
 label.tree_bod_label:after { border-bottom: 0; }

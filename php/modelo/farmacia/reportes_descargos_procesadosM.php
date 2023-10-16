@@ -25,14 +25,14 @@ class reportes_descargos_procesadosM
 		$sql="SELECT TOP 100 CP.Numero,CP.Fecha,Concepto,Monto_Total,Cliente,TK.Centro_Costo as 'Area' FROM Comprobantes CP 
 		LEFT JOIN Clientes C ON CP.Codigo_B = C.Codigo
 		LEFT JOIN Trans_Kardex TK ON CP.Numero = TK.Numero 
-		WHERE 1=1 AND CP.TP='CD' 
+		WHERE CP.TP='CD' 
 		AND CP.T='N' 
 		AND CP.Item = '".$_SESSION['INGRESO']['item']."' 
 		AND CP.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 		AND Codigo_B <> '.' 
 		AND CP.Item = TK.Item 
 		AND CP.Periodo = TK.Periodo 
-		AND CP.Numero IN ( SELECT  DISTINCT Numero FROM Trans_Kardex WHERE 1=1 AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."'  AND Entrada = 0 )";
+		AND CP.Numero IN ( SELECT  DISTINCT Numero FROM Trans_Kardex WHERE Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."'  AND Entrada = 0 )";
 		if($area)
 		{
 			$sql.="	AND TK.CodigoL = '".$area."' ";
@@ -70,14 +70,14 @@ class reportes_descargos_procesadosM
 		FROM Comprobantes CP 
 		LEFT JOIN Clientes C ON CP.Codigo_B = C.Codigo
 		LEFT JOIN Trans_Kardex TK ON CP.Numero = TK.Numero 
-		WHERE 1=1 AND CP.TP='CD' 
+		WHERE CP.TP='CD' 
 		AND CP.T='N' 
 		AND CP.Item = '".$_SESSION['INGRESO']['item']."' 
 		AND CP.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 		AND Codigo_B <> '.' 
 		AND CP.Item = TK.Item 
 		AND CP.Periodo = TK.Periodo 
-		AND CP.Numero IN ( SELECT  DISTINCT Numero FROM Trans_Kardex WHERE 1=1 AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."'  AND Entrada = 0 )";
+		AND CP.Numero IN ( SELECT  DISTINCT Numero FROM Trans_Kardex WHERE Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."'  AND Entrada = 0 )";
 
 		if($tipo =='f')
 		{
@@ -110,7 +110,7 @@ class reportes_descargos_procesadosM
 	function trans_kardex_linea_devolucion($Codigo_Inv,$factura)
 	{
 
-		$sql="SELECT *  FROM Trans_Kardex WHERE 1=1 AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."' AND  Factura = '".$factura."' and Codigo_Inv = '".$Codigo_Inv."' ";
+		$sql="SELECT *  FROM Trans_Kardex WHERE Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."' AND  Factura = '".$factura."' and Codigo_Inv = '".$Codigo_Inv."' ";
 		// print_r($sql);die();
 		$datos = $this->conn->datos($sql);
         return $datos;
@@ -123,7 +123,7 @@ class reportes_descargos_procesadosM
 
 		$sql="SELECT T.Codigo_Inv,Salida,Valor_Unitario,T.Valor_Total,C.Producto
 			FROM Trans_Kardex T, Catalogo_Productos C 
-			WHERE 1=1 AND T.Item = '".$_SESSION['INGRESO']['item']."'
+			WHERE T.Item = '".$_SESSION['INGRESO']['item']."'
 			AND T.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 			AND T.Periodo = C.Periodo
 			AND T.Codigo_Inv = C.Codigo_Inv
@@ -156,7 +156,7 @@ class reportes_descargos_procesadosM
 		$sql="SELECT  T.Codigo_Inv,Salida,Valor_Unitario,T.Valor_Total,C.Producto,T.ID,T.Utilidad,C.Utilidad as 'utilidad_C'  
 		FROM Trans_Kardex T
        INNER JOIN Catalogo_Productos C ON T.Codigo_Inv = C.Codigo_Inv 
-		WHERE 1=1 AND C.Item = '".$_SESSION['INGRESO']['item']."' 
+		WHERE C.Item = '".$_SESSION['INGRESO']['item']."' 
 		AND C.Periodo ='".$_SESSION['INGRESO']['periodo']."' 
 		AND Entrada = 0 
 		AND Numero = '".$numero."' ";
@@ -169,24 +169,13 @@ class reportes_descargos_procesadosM
 	{
 		$sql ="SELECT DISTINCT SUBSTRING(Codigo_Inv,0,6) as 'familia'
 		      FROM Trans_Kardex 
-		      WHERE 1=1 
-		      AND Item = '".$_SESSION['INGRESO']['item']."' 
+		      WHERE Item = '".$_SESSION['INGRESO']['item']."' 
 		      AND Periodo ='".$_SESSION['INGRESO']['periodo']."' 
 		      AND Entrada = 0 
 		      AND Numero = '".$numero."' ";
 		      $datos = $this->conn->datos($sql);
         return $datos;
 	}
-
-	// function trans_kardex_linea_devolucion($Codigo_Inv,$factura)
-	// {
-
-	// 	$sql="SELECT *  FROM Trans_Kardex WHERE 1=1 AND Item = '".$_SESSION['INGRESO']['item']."' AND Periodo = '".$_SESSION['INGRESO']['periodo']."' AND  Factura = '".$factura."' and Codigo_Inv = '".$Codigo_Inv."' ";
-	// 	// print_r($sql);die();
-	// 	$datos = $this->conn->datos($sql);
- //        return $datos;
-
-	// }
 
 	function servicios()
 	{

@@ -119,13 +119,8 @@ function cargar_bodegas(nivel=1,padre='')
 			<button class="btn btn-default" title="Guardar" onclick="guardar()">
 				<img src="../../img/png/grabar.png">
 			</button>
-		</div>  
-		<!-- <div class="col-xs-2 col-md-2 col-sm-2">
-			<button class="btn btn-default" title="Guardar" onclick="nuevo_proveedor()">
-				<img src="../../img/png/mostrar.png">
-			</button>
-		</div>    -->
-    </div>
+		</div>  	
+  </div>
 </div>
 <div class="row">
 	<div class="col-sm-12">		
@@ -136,50 +131,8 @@ function cargar_bodegas(nivel=1,padre='')
 					<div class="col-sm-4" id="">
 						<ul class="tree_bod" id="arbol_bodegas">
 						</ul>
+					</div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-					</div>				
 					<div class="col-sm-4">
 						<div class="row" style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
@@ -223,6 +176,14 @@ function cargar_bodegas(nivel=1,padre='')
 							</div>
 							<div class="col-sm-6">
 								<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
+							</div>
+						</div>
+						<div class="row"  style="padding-top: 5px;">
+							<div class="col-sm-6 text-right">
+								 <b>Bodega seleccionada:</b>								
+							</div>
+							<div class="col-sm-6">
+								<input type="" class="form-control input-xs" id="txt_bodega" name="txt_bodega" readonly>
 							</div>
 						</div>
 					</div>

@@ -371,16 +371,20 @@ class articulosM
 
 	}
 
-	function clientes_all($query=false,$codigo = false,$abreviado=false)
+	function clientes_all($query=false,$codigo = false,$abreviado=false,$ruc=false)
 	{
 		$cid = $this->conn;
 		$sql="SELECT  *
 		FROM Clientes C
 		WHERE  LEN(Cliente)>1  ";
+		if($ruc)
+		{
+			$sql.= " AND C.CI_RUC like '".$ruc."%'";
+		}
 		if($query)
-			{
-				$sql.="AND Cliente LIKE '%".$query."%'";
-			}
+		{
+			$sql.="AND Cliente LIKE '%".$query."%'";
+		}
 		if($codigo)
 		{
 			$sql.="AND Codigo ='".$codigo."'";
@@ -391,7 +395,7 @@ class articulosM
 		}
 			$sql.= "ORDER BY C.Cliente OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
 		
-		
+		// print_r($sql);die();
 	 $datos = $this->conn->datos($sql);
        return $datos;
 	}
