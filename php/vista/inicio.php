@@ -72,194 +72,144 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 	if (isset($_SESSION['INGRESO']['accion'])) 
 	{
 		echo '<section class="content">';
-
-
-		//cambio de clave
-		if ($_SESSION['INGRESO']['accion']=='cambioc') 
-		{
-			require_once("contabilidad/cambioc.php");
-		}
-		//ingreso catalogo de cuenta
-		if ($_SESSION['INGRESO']['accion']=='incc') 
-		{
-			require_once("contabilidad/inccu.php");
-		}
-		//Mayorización
-		if ($_SESSION['INGRESO']['accion']=='macom') 
-		{
-			require_once("contabilidad/macom.php");
-		}
-		//Balance de Comprobacion/Situación/General
-		if ($_SESSION['INGRESO']['accion']=='bacsg') 
-		{
-			require_once("contabilidad/bacsg1.php");
-		}
-		//herramientas conexion oracle
-		if ($_SESSION['INGRESO']['accion']=='hco') 
-		{
-			require_once("contabilidad/hco.php");
-		}
-		//comprobantes procesados
-		if ($_SESSION['INGRESO']['accion']=='compro') 
-		{
-			require_once("contabilidad/compro.php");
-		}
-		//cambio de periodo
-		if ($_SESSION['INGRESO']['accion']=='campe') 
-		{
-			require_once("contabilidad/campe.php");
-		}
-		//Ingresar Comprobantes (Crtl+f5)
-		if ($_SESSION['INGRESO']['accion']=='incom') 
-		{
-			require_once("contabilidad/incom.php");
-		}
-		//saldo de factura submodulo
-		if ($_SESSION['INGRESO']['accion']=='saldo_fac_submodulo') 
-		{
-			require_once("contabilidad/saldo_fac_submodulo.php");
-		}
-		if ($_SESSION['INGRESO']['accion']=='catalogo_cuentas') 
-		{
-			include("contabilidad/catalogoCta.php");
-		}
-		if ($_SESSION['INGRESO']['accion']=='diario_general') 
-		{
-
-			include("contabilidad/diario_general.php");
-		}
-		if ($_SESSION['INGRESO']['accion']=='mayor_auxiliar') 
-		{			
-			require_once("contabilidad/mayor_auxiliar.php");
-		}
-		if ($_SESSION['INGRESO']['accion']=='libro_banco') 
-		{
-			require_once("contabilidad/libro_banco.php");
-		}
-		if ($_SESSION['INGRESO']['accion']=='ctaOperaciones') 
-		{
-			require_once("contabilidad/ctaOperaciones.php");
-		}
-		if ($_SESSION['INGRESO']['accion']=='anexos_trans') 
-		{
-			require_once("contabilidad/anexos_trans.php");
-		}
-		if ($_SESSION['INGRESO']['accion']=='bamup') 
-		{
-			require_once("contabilidad/bamup.php");
-		}
-		if ($_SESSION['INGRESO']['accion']=='reportes') 
-		{
-			require_once("contabilidad/resumen_retenciones.php");
-		}
-		if ($_SESSION['INGRESO']['accion']=='Clientes') 
-		{
-			include("contabilidad/FCliente.php");
-		}
-		if ($_SESSION['INGRESO']['accion']=='Proveedores') 
-		{
-			include("contabilidad/FProveedores.php");
-		}
-		if ($_SESSION['INGRESO']['accion']=='subcta_proyectos') 
-		{
-			require_once("contabilidad/Subcta_proyectos.php");
-		}
-		if ($_SESSION['INGRESO']['accion']=='CierreMes') 
-		{
-			require_once("contabilidad/cierre_mes.php");
-		}
-		if ($_SESSION['INGRESO']['accion']=='cierre_caja') 
-		{
-			require_once("contabilidad/FCierre_Caja.php");
-		}
-		if ($_SESSION['INGRESO']['accion']=='MayoresSubCta') 
-		{
-			require_once("contabilidad/mayores_sub_cuenta.php");
-		}
-		if ($_SESSION['INGRESO']['accion']=='InfoError') 
-		{
-			include("contabilidad/FInfoError.php");
-		}
-//facturacion
-
-			//facturar pension
-			if ($_SESSION['INGRESO']['accion']=='facturarPension') 
-			{
+		switch ($_SESSION['INGRESO']['accion']) {
+		/*  
+			MODULO DE CONTABILIDAD
+		*/
+			case 'cambioc': 			//cambio de clave
+				require_once("contabilidad/cambioc.php");
+				break;
+			case 'incc': 				//ingreso catalogo de cuenta
+				require_once("contabilidad/inccu.php");
+				break;
+			case 'macom': 				//Mayorización
+				require_once("contabilidad/macom.php");
+				break;
+			case 'bacsg': 				//Balance de Comprobacion/Situación/General
+				require_once("contabilidad/bacsg1.php");
+				break;
+			case 'hco':					//herramientas conexion oracle
+				require_once("contabilidad/hco.php");
+				break;
+			case 'compro':				//comprobantes procesados
+				require_once("contabilidad/compro.php");
+				break;
+			case 'campe':				//cambio de periodo
+				require_once("contabilidad/campe.php");
+				break;
+			case 'incom':				//Ingresar Comprobantes (Crtl+f5)
+				require_once("contabilidad/incom.php");
+				break;
+			case 'saldo_fac_submodulo':	//saldo de factura submodulo
+				require_once("contabilidad/saldo_fac_submodulo.php");
+				break;
+			case 'catalogo_cuentas':
+				//include
+				require_once("contabilidad/catalogoCta.php");
+				break;
+			case 'diario_general':
+				//include
+				require_once("contabilidad/diario_general.php");
+				break;
+			case 'mayor_auxiliar':
+				require_once("contabilidad/mayor_auxiliar.php");
+				break;
+			case 'libro_banco':
+				require_once("contabilidad/libro_banco.php");
+				break;
+			case 'ctaOperaciones':
+				require_once("contabilidad/ctaOperaciones.php");
+				break;
+			case 'anexos_trans':
+				require_once("contabilidad/anexos_trans.php");
+				break;
+			case 'bamup':
+				require_once("contabilidad/bamup.php");
+				break;
+			case 'reportes':
+				require_once("contabilidad/resumen_retenciones.php");
+				break;
+			case 'Clientes':
+				include("contabilidad/FCliente.php");
+				break;
+			case 'Proveedores':
+				include("contabilidad/FProveedores.php");
+				break;
+			case 'subcta_proyectos':
+				require_once("contabilidad/Subcta_proyectos.php");
+				break;
+			case 'CierreMes':
+				require_once("contabilidad/cierre_mes.php");
+				break;
+			case 'cierre_caja':
+				require_once("contabilidad/FCierre_Caja.php");
+				break;
+			case 'MayoresSubCta':
+				require_once("contabilidad/mayores_sub_cuenta.php");
+				break;
+			case 'InfoError':
+				include("contabilidad/FInfoError.php");
+				break;
+		/*  
+			MODULO DE FACTURACION
+		*/	
+			case 'facturarPension':		//facturar pension
 				require_once("facturacion/facturar_pension.php");
-			}
-			//compra / venta divisas
-			if ($_SESSION['INGRESO']['accion']=='divisas') 
-			{
+				break;
+			case 'divisas':				//compra / venta divisas
 				require_once("facturacion/divisas.php");
-			}
-			//listar y anular facturas 
-			if ($_SESSION['INGRESO']['accion']=='listarFactura') 
-			{
+				break;
+			case 'listarFactura':		//listar y anular facturas
 				require_once("facturacion/listar_facturas.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='facturarLista') 
-			{
+				break;
+			case 'facturarLista':
 				require_once("facturacion/lista_facturas.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='facturar') 
-			{
+				break;
+			case 'facturar':
 				require_once("facturacion/facturar.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='punto_venta') 
-			{
+				break;
+			case 'punto_venta':
 				require_once("facturacion/punto_venta.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='factura_elec') 
-			{
+				break;
+			case 'factura_elec':
 				require_once("facturacion/facturacion_elec.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='catalogoPro') 
-			{
+				break;
+			case 'catalogoPro':
 				require_once("inventario/catalogo_producto.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='lineas_cxc') 
-			{
+				break;
+			case 'lineas_cxc':
 				require_once("facturacion/lineas_cxc.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='cierre_diario') 
-			{
+				break;
+			case 'cierre_diario':
 				require_once("facturacion/cierre_diario_caja.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='listarLiquidaciones') 
-			{
+				break;
+			case 'listarLiquidaciones':
 				require_once("facturacion/lista_liquidacionCompra.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='notascredito') 
-			{
+				break;
+			case 'notascredito':
 				require_once("facturacion/notas_credito.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='lista_retenciones') 
-			{
+				break;
+			case 'lista_retenciones':
 				require_once("facturacion/lista_retenciones.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='lista_notas_credito') 
-			{
+				break;
+			case 'lista_notas_credito':
 				require_once("facturacion/lista_notas_credito.php");
-			}	
-			if ($_SESSION['INGRESO']['accion']=='lista_guias') 
-			{
+				break;
+			case 'lista_guias':
 				require_once("facturacion/lista_guia_remision.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='liquidacioncompra') 
-			{
+				break;
+			case 'liquidacioncompra':
 				require_once("facturacion/liquidacion_compra.php");
-			}	
-			if ($_SESSION['INGRESO']['accion']=='guiaremision') 
-			{
+				break;
+			case 'guiaremision':
 				require_once("facturacion/guia_remision.php");
-			}	
-			if ($_SESSION['INGRESO']['accion']=='listar_anular') 
-			{
+				break;
+			case 'listar_anular':
 				require_once("facturacion/listar_anular.php");
-			}	
-			if ($_SESSION['INGRESO']['accion']=='catalogoBodega') 
-			{
+				break;
+			case 'catalogoBodega':
 				require_once("facturacion/catalogo_bodega.php");
+<<<<<<< HEAD
 			}	
 			if ($_SESSION['INGRESO']['accion']=='almacenamiento_bod') 
 			{
@@ -270,154 +220,130 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 //Agua Potable
 			if ($_SESSION['INGRESO']['accion']=='ingresar_usuario') 
 			{
+=======
+				break;
+		/*  
+			MODULO DE AGUA POTABLE
+		*/	
+			case 'ingresar_usuario':
+>>>>>>> develope1
 				require_once("aguaPotable/ingresar_usuario.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='ingreso_consumo_agua') 
-			{
+				break;
+			case 'ingreso_consumo_agua':
 				require_once("aguaPotable/ingreso_consumo_agua.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='reporte_consumo_agua') 
-			{
+				break;
+			case 'reporte_consumo_agua':
 				require_once("aguaPotable/reporte_consumo_agua.php");
-			}
-//empresa
-
-			if ($_SESSION['INGRESO']['accion']=='cambioe') 
-			{
+				break;
+		/*
+			MODULO DE EMPRESAS
+		*/	
+			case 'cambioe':
 				require_once("empresa/cambioe.php");
-			}
-			//adminis. usuario
-			if ($_SESSION['INGRESO']['accion']=='cambiou') 
-			{
+				break;
+			case 'cambiou':				//adminis. usuario
 				require_once("empresa/cambiou.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='niveles_seguri') 
-			{
+				break;
+			case 'niveles_seguri':
 				require_once("empresa/niveles_seguri.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='mostrar_venci') 
-			{
+				break;
+			case 'mostrar_venci':
 				require_once("empresa/mostrar_venci.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='crear_empresa') 
-			{
+				break;
+			case 'crear_empresa':
 				require_once("empresa/crear_empresa.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='recuperar_fac') 
-			{
+				break;
+			case 'recuperar_fac':
 				require_once("empresa/recuperar_factura.php");
-			}
-//farmacia
-				if ($_SESSION['INGRESO']['accion']=='ingresar_proveedor') 
-			{
+				break;
+		/*
+			MODULO DE FARMACIA
+		*/
+			case 'ingresar_proveedor':
 				require_once("farmacia/ingresar_proveedor.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='ingresar_paciente') 
-			{
+				break;
+			case 'ingresar_paciente':
 				require_once("farmacia/ingresar_paciente.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='ingresar_descargos') 
-			{
+				break;
+			case 'ingresar_descargos':
 				require_once("farmacia/ingreso_descargos.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='ingresar_factura') 
-			{
+				break;
+			case 'ingresar_factura':
 				require_once("farmacia/ingresar_factura.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='articulos') 
-			{
+				break;
+			case 'articulos':
 				require_once("farmacia/articulos.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='pacientes') 
-			{
+				break;
+			case 'pacientes':
 				require_once("farmacia/paciente.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='vis_descargos') 
-			{
+				break;
+			case 'vis_descargos':
 				require_once("farmacia/descargos.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='descargos_procesados') 
-			{
+				break;
+			case 'descargos_procesados':
 				require_once("farmacia/reporte_descargos_procesados.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='facturacion_insumos') 
-			{
+				break;
+			case 'facturacion_insumos':
 				require_once("farmacia/facturacion_insumos.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='farmacia_interna') 
-			{
+				break;
+			case 'farmacia_interna':
 				require_once("farmacia/farmacia_interna.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='devoluciones_insumos') 
-			{
+				break;
+			case 'devoluciones_insumos':
 				require_once("farmacia/devoluciones_insumos.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='devoluciones_detalle') 
-			{
+				break;
+			case 'devoluciones_detalle':
 				require_once("farmacia/devoluciones_detalle.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='devoluciones_departamento') 
-			{
+				break;
+			case 'devoluciones_departamento':
 				require_once("farmacia/devoluciones_x_departamento.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='farmacia_interna_detalle') 
-			{
+				break;
+			case 'farmacia_interna_detalle':
 				require_once("farmacia/farmacia_interna_detalle.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='prove_bodega') 
-			{
+				break;
+			case 'prove_bodega':
 				require_once("farmacia/proveedor_bodega.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='cliente_proveedor') 
-			{
+				break;
+			case 'cliente_proveedor':
 				require_once("farmacia/cliente_prove_bodega.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='descargos_bodega') 
-			{
+				break;
+			case 'descargos_bodega':
 				require_once("farmacia/descargos_bodega.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='factura_bodega') 
-			{
+				break;
+			case 'factura_bodega':
 				require_once("farmacia/ingreso_factura_bodega.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='articulos_bodega') 
-			{
+				break;
+			case 'articulos_bodega':
 				require_once("farmacia/articulos_bodega.php");
-				// echo 'entro';
-			}
-		//educativo
-			if ($_SESSION['INGRESO']['accion']=='detalle_estudiante') 
-			{
+				break;
+		/*
+			MODULO EDUCATIVO
+		*/
+			case 'detalle_estudiante':
 				require_once("educativo/detalle_estudiante.php");
-			}
-		//cliente proveedor
-			if ($_SESSION['INGRESO']['accion']=='facturarLista') 
-			{
+				break;
+			case 'facturarLista':		//cliente proveedor
 				require_once("facturacion/lista_facturas.php");
-			}
-
-		//inventario
-			if (strcasecmp($_SESSION['INGRESO']['accion'], 'CatalogoCtas') === 0) 
-			{
+				break;
+		/*
+			MODULO DE INVENTARIO
+		*/
+			case 'CatalogoCtas':
+				// if (strcasecmp($_SESSION['INGRESO']['accion'], 'CatalogoCtas') === 0) 
 				require_once("inventario/Catalogo.php");
-			}
-			//kardex
-			if ($_SESSION['INGRESO']['accion']=='kardex') 
-			{
+				break;
+			case 'kardex':				//kardex
 				require_once("inventario/kardex.php");
-			}
-			//kardex
-			if ($_SESSION['INGRESO']['accion']=='ResumenKardex') 
-			{
+				break;
+			case 'ResumenKardex':		//kardex
 				require_once("inventario/ResumenK.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='inventario_online') 
-			{
+				break;
+			case 'inventario_online':
 				require_once("inventario/inventario_online.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='registro_es') 
-			{
+				break;
+			case 'registro_es':
 				require_once("inventario/registro_es.php");
+<<<<<<< HEAD
 			}
 			if ($_SESSION['INGRESO']['accion']=='articulos_inventario') 
 			{
@@ -425,63 +351,60 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			}
 			if ($_SESSION['INGRESO']['accion']=='alimentosRec') 
 			{
+=======
+				break;
+			case 'articulos':
+				require_once("farmacia/articulos.php");
+				break;
+			case 'alimentosRec':
+>>>>>>> develope1
 				require_once("inventario/alimentos_recibidos.php");
-			}	
-			if ($_SESSION['INGRESO']['accion']=='alimentosRec2') 
-			{
+				break;
+			case 'alimentosRec2':
 				require_once("inventario/alimentos_recibidos2.php");
-			}	
-			if ($_SESSION['INGRESO']['accion']=='alimentosRec3') 
-			{
+				break;
+			case 'alimentosRec3':
 				require_once("inventario/alimentos_recibidos_cheking.php");
-			}	
-			//ingreso de presusupuestos
-			if ($_SESSION['INGRESO']['accion']=='ingreso_presupuesto') 
-			{
+				break;
+			case 'ingreso_presupuesto':	//ingreso de presusupuestos
 				require_once("inventario/ingreso_presupuesto.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='catalogoPro') 
-			{
+				break;
+			case 'catalogoPro':
 				require_once("inventario/catalogo_producto.php");
-			}
-			if ($_SESSION['INGRESO']['accion']=='ingreso_articulos') 
-			{
+				break;
+			case 'ingreso_articulos':
 				require_once("inventario/ingreso_articulo.php");
-			}
-		//auditoria
-			if ($_SESSION['INGRESO']['accion']=='auditoria') 
-			{
+				break;
+		/*
+			MODULO DE AUDITORIA
+		*/
+			case 'auditoria':
 				require_once("auditoria/modulo_auditoria.php");
-			}
-
-		//modales
-			if($_SESSION['INGRESO']['accion']=='FSubCtas')
-			{
+				break;
+		/*
+			MODALES
+		*/
+			case 'FSubCtas':
 				require_once('contabilidad/FSubCtas.php');
-			}
-			if($_SESSION['INGRESO']['accion']=='FCompras')
-			{
+				break;
+			case 'FCompras':
 				require_once('contabilidad/FCompras.php');
-			}
-			if($_SESSION['INGRESO']['accion']=='FExportaciones')
-			{
+				break;
+			case 'FExportaciones':
 				require_once('contabilidad/FExportaciones.php');
-			}
-			if($_SESSION['INGRESO']['accion']=='FImportaciones')
-			{
+				break;
+			case 'FImportaciones':
 				require_once('contabilidad/FImportaciones.php');
-			}
-			if($_SESSION['INGRESO']['accion']=='FVentas')
-			{
+				break;
+			case 'FVentas':
 				require_once('contabilidad/FVentas.php');
-			}
-			if($_SESSION['INGRESO']['accion']=='FCliente')
-			{
+				break;
+			case 'FCliente':
 				require_once('contabilidad/FCliente.php');
-			}
-			if($_SESSION['INGRESO']['accion']=='FAbonos')
-			{
+				break;
+			case 'FAbonos':
 				require_once('contabilidad/FAbonos.php');
+<<<<<<< HEAD
 			}
 
 			//Gerencia -> Reportes -> Listado de Facturas
@@ -491,45 +414,54 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 			}
 
 	}else
+=======
+				break;
+			case '':
+				break;
+			case '':
+				break;				
+		}
+	}
+	else
+>>>>>>> develope1
 	{		
 		switch ($_SESSION['INGRESO']['modulo_']) {
 			case '01':
 				echo "<div class='box-body'><img src='../../img/modulo_contable.gif' width='100%'></div>";
 				break;
-			case '28':
-				echo "<div class='box-body'><img src='../../img/modulo_farmacia.png' width='100%'></div>";
-				break;
 			case '02':
 				echo "<div class='box-body'><img src='../../img/modulo_facturacion.png' width='100%'></div>";
 				break;
+			case '03':
+				echo "<div class='box-body'><img src='../../img/modulo_inventario1.gif' width='100%'></div>";
+				break;				
 			case '09':
 				echo "<div class='box-body'><img src='../../img/modulo_electronicos.png' width='100%'></div>";
 				break;
 			case '10':
 				echo "<div class='box-body'><img src='../../img/modulo_comprobantes.png' width='100%'></div>";
 				break;
-			case '99':
-				echo "<div class='box-body'><img src='../../img/modulo_empresa.png' width='100%' heigth='500px'></div>";
-				break;			
 			case '10':
 				echo "<div class='box-body'><img src='../../img/modulo_cliente_pro.png' width='100%'></div>";
 				break;
 			case '11':
 				echo "<div class='box-body'><img src='../../img/modulo_educativo.png' width='100%' heigth='500px'></div>";
 				break;
-			case '03':
-				echo "<div class='box-body'><img src='../../img/modulo_inventario1.gif' width='100%'></div>";
+			case '28':
+				echo "<div class='box-body'><img src='../../img/modulo_farmacia.png' width='100%'></div>";
+				break;				
+			case '99':
+				echo "<div class='box-body'><img src='../../img/modulo_empresa.png' width='100%' heigth='500px'></div>";
 				break;
-			
 			default:
 				$titulo = "<div class='box-body' style='position:absolute'>
-				<img src='../../img/fondo.png' width='100%;' style='min-height: 400px;'>
-				<div class='div_img_modulo'>
-					<img src='".$modulo_logo."' width='100%;'>
-				</div>
-				<div class='div_titulo_modulo'>
-				<b>MÓDULO ".((isset($_GET['mod']))?$modulo_header:'')."</b>
-				</div>";
+						   <img src='../../img/fondo.png' width='100%;' style='min-height: 400px;'>
+						   <div class='div_img_modulo'>
+						   		<img src='".$modulo_logo."' width='100%;'>
+						   </div>
+						   <div class='div_titulo_modulo'>
+								<b>MÓDULO ".((isset($_GET['mod']))?$modulo_header:'')."</b>
+						   </div>";
 				// if(isset($_GET['mod']))
 				// {					
 				// 	$text = explode(' ',$modulo_header);
@@ -548,7 +480,6 @@ if(isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Base
 	}
 
 ?>
-
     </section>
 </div>
-<?php	require_once("../headers/footer.php"); ?>
+<?php require_once("../headers/footer.php"); ?>
