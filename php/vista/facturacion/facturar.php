@@ -700,6 +700,16 @@
 					alerta_reprocesar('Formulario de Confirmación', data.men);
 				} else if (data.res == 1) {
 					Abonos();
+				} else if (data.res == -1) {
+					Swal.fire({
+						title: 'Algo salió mal',
+						text: data.men,
+						type: 'error',
+						showCancelButton: true,
+						confirmButtonColor: '#3085d6',
+						cancelButtonColor: '#d33',
+						confirmButtonText: 'Ok'
+					})
 				}
 
 			}
@@ -1320,7 +1330,7 @@
                 </div>';
 		}
 		?>
-		
+
 		<?php createButton("Grabar factura", "../../img/png/grabar.png", "boton1()", "btnGrabar"); ?>
 		<?php createButton("Actualizar Productos, Marcas y Bodegas", "../../img/png/update.png", "boton2()", "btnActualizar"); ?>
 		<?php createButton("Asignar orden de trabajo", "../../img/png/taskboard.png", "boton3()", "btnOrden"); ?>

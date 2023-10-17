@@ -9008,6 +9008,91 @@ function  Imprimir_Punto_Venta_Grafico_datos($TFA)
  
 }
 
+function  Imprimir_Punto_Venta_datos($TFA)
+{
+
+  // print_r($TFA);die();
+   $conn = new db();
+   $ContEspec = Leer_Campo_Empresa("Codigo_Contribuyente_Especial");
+   $Obligado_Conta = Leer_Campo_Empresa("Obligado_Conta");
+   $SetNombrePRN = Leer_Campo_Empresa("Impresora_Defecto");
+   $Ambiente = '';
+  
+   // $SubTotal = 0: $Total = 0: $Total_IVA = 0: $Total_Desc = 0: $Cant_Ln = 0
+   $sql='';
+   if($TFA['TC'] == "PV"){
+         $sql = "SELECT F.*,C.Cliente,C.CI_RUC,C.Telefono,C.Direccion,C.Ciudad,C.Grupo,C.Email 
+           FROM Trans_Ticket As F,Clientes As C 
+           WHERE F.Ticket = ".$TFA['Factura']." 
+           AND F.TC = '".$TFA['TC']."' 
+           AND F.Periodo = '".$_SESSION['INGRESO']['periodo']. "' 
+           AND F.Item = '".$_SESSION['INGRESO']['item']."' 
+           AND C.Codigo = F.CodigoC ";
+   }else{
+         $sql = "SELECT F.*,C.Cliente,C.CI_RUC,C.Telefono,C.Direccion,C.Ciudad,C.Grupo,C.Email
+           FROM Facturas As F,Clientes As C
+           WHERE F.Factura = ".$TFA['Factura']."
+           AND F.TC = '".$TFA['TC']."'
+           AND F.Serie = '".$TFA['Serie']."'
+           AND F.Periodo = '".$_SESSION['INGRESO']['periodo']. "'
+           AND F.Item = '".$_SESSION['INGRESO']['item']."'
+           AND C.Codigo = F.CodigoC ";
+   }
+
+   // print_r($sql);
+   $datos = $conn->datos($sql);
+   // print_r($datos);die();
+   if(is_numeric($TFA['Autorizacion'])){
+      $Ambiente = substr($datos[0]['Clave_Acceso'], 23, 1);
+     // 'Generacion Codigo de Barras
+      // PathCodigoBarra = RutaSysBases & "\TEMP" & TFA.ClaveAcceso & ".jpg";
+  }
+
+
+ // 'Datos Iniciales
+ // 'Comenzamos a recoger los detalles de la factura
+  if($TFA['TC'] == "PV"){
+     $sql = "SELECT DF.*,CP.Detalle,CP.Codigo_Barra
+          FROM Trans_Ticket As DF,Catalogo_Productos As CP
+          WHERE DF.Ticket = ".$TFA['Factura']."
+          AND DF.TC = '".$TFA['TC']."'
+          AND DF.Item = '".$_SESSION['INGRESO']['item']."'
+          AND DF.Periodo = '".$_SESSION['INGRESO']['periodo']. "'
+          AND DF.Item = CP.Item
+          AND DF.Periodo = CP.Periodo
+          AND DF.Codigo_Inv = CP.Codigo_Inv
+          ORDER BY DF.D_No ";
+  }else{
+     $sql = "SELECT DF.*,CP.Detalle,CP.Codigo_Barra 
+        FROM Detalle_Factura As DF,Catalogo_Productos As CP 
+        WHERE DF.Factura = ".$TFA['Factura']." 
+        AND DF.TC = '".$TFA['TC']."' 
+        AND DF.Serie = '".$TFA['Serie']."' 
+        AND DF.Item = '".$_SESSION['INGRESO']['item']."' 
+        AND DF.Periodo = '".$_SESSION['INGRESO']['periodo']. "' 
+        AND DF.Item = CP.Item 
+        AND DF.Periodo = CP.Periodo 
+        AND DF.Codigo = CP.Codigo_Inv 
+        ORDER BY DF.Codigo ";
+  }
+  $datos1 = $conn->datos($sql);
+
+  return array('factura'=>$datos,'lineas'=>$datos1,'especial'=>$ContEspec,'conta'=>$Obligado_Conta,'ambiente'=>$Ambiente);
+
+  // print_r($datos);
+  // print_r($datos1);
+  // print_r($ContEspec);
+  // print_r($Obligado_Conta);
+  // print_r($Ambiente);
+  // die();
+  
+ 
+}
+
+function Imprimir_Guia_Remision($AdoFactura, $AdoAsientoF, $FA){
+
+}
+
 function CalculosSaldoAnt($TipoCod,$TDebe,$THaber,$TSaldo)
 {
 

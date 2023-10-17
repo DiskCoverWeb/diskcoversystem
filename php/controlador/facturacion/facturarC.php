@@ -960,6 +960,7 @@ class facturarC
    {
 
       $asientoF = $this->modelo->lineas_factura();
+      print_r($parametros);die();
       if (count($asientoF) > 0) {
          $TFA = Calculos_Totales_Factura();
          foreach ($TFA as $key => $value) {
@@ -1092,7 +1093,9 @@ class facturarC
 
 
       } else {
-         return -1;
+         return array('res' => -1, 'men' => "No se procedio a grabar el documento 
+         '" . $parametros['TC'] . "' No. '" . $parametros['Serie'] . "' - '" . $parametros['FacturaNo'] . "' 
+         , revise los datos ingresados y vuelva a intentar" );
       }
    }
 
@@ -1244,9 +1247,11 @@ class facturarC
                   $this->pdf->Imprimir_Punto_Venta_Grafico($info);
                   $imp = $FA['Serie'] . '-' . generaCeros($FA['Factura'], 7);
                } else {
-                  Imprimir_Punto_Venta($FA);
+                  $info = Imprimir_Punto_Venta_datos($FA);
+                  $this ->pdf->Imprimir_Punto_Venta($info);
                }
             } else {
+               //Falta manejar la impresion multiple
                return array('AU' => 'multiple');
             }
             $this->modelo->Facturas_Impresas($FA);
