@@ -319,6 +319,7 @@ function limpiar_t()
     var parametros = {
         'ruc':$('#txt_ruc').val(),
         'direccion':$('#txt_sucursal_dir').val(),
+        'tp':$('#txt_cod_sucursal').val(),
     }
      $.ajax({
       data:  {parametros,parametros},
@@ -457,11 +458,16 @@ function limpiar_t()
                     <hr>
                         <h3>Sucursales</h3>
                     </div>
-                    <div class=" col-xs-8 col-sm-4 col-md-6">
+                     <div class=" col-xs-3 col-sm-4 col-md-3">
+                        <b>Codigo Sucursal</b>
+                        <input type="" name="txt_cod_sucursal" id="txt_cod_sucursal" class="form-control input-sm">
+                    </div>
+                    <div class=" col-xs-6 col-sm-4 col-md-7">
                         <b>Direccion</b>
                         <input type="" name="txt_sucursal_dir" id="txt_sucursal_dir" class="form-control input-sm">
                     </div>
-                    <div class=" col-xs-4 col-sm-2 col-md-6 text-right">
+                   
+                    <div class=" col-xs-3 col-sm-2 col-md-2 text-right">
                         <br>
                         <button type="button"  class="btn btn-primary" onclick="add_sucursal()">Guardar sucursal</button> 
                     </div> 
