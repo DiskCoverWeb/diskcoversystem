@@ -5989,7 +5989,7 @@ if ($pos === false) {
 
  if($head_fijo)
  {
- $tbl.='#'.$id_tabla.' tbody { display:block; height:'.$tamaño_tabla.'px; width:auto; overflow-y:scroll;}
+ $tbl.='#'.$id_tabla.' tbody { display:block; height:auto; width:auto; overflow-y:scroll;}
   #'.$id_tabla.' thead,tbody tr {    display:table;  width:100%;  table-layout:fixed; } 
   #'.$id_tabla.' thead { width: calc( 100% - 1.2em )/* scrollbar is average 1em/16px width, remove it from thead width */}
   /*thead tr {    display:table;  width:98.5%;  table-layout:fixed;  }*/ ';
