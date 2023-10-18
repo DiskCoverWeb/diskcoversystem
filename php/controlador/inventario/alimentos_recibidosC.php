@@ -373,14 +373,18 @@ class alimentos_recibidosC
 	{
 		// print_r($parametro);die();
 		$num_ped = $parametro['txt_codigo'];
-		$lines_kardex = $this->modelo->cargar_pedidos_trans($num_ped);
-			if(count($lines_kardex)>0)
-			{
+		if($parametro['id']=='')
+		{
+			$lines_kardex = $this->modelo->cargar_pedidos_trans($num_ped,false,$parametro['producto']);
+			$parametro['id'] = $lines_kardex[0]['ID'];
+		}
+			// if(count($lines_kardex)>0)
+			// {
 				SetAdoAddNew('Trans_Kardex');
 				SetAdoFields('Entrada',number_format($parametro['total_cantidad'],2,'.',''));		
-				SetAdoFieldsWhere('ID',$lines_kardex[0]['ID']);
+				SetAdoFieldsWhere('ID',$parametro['id']);
 				SetAdoUpdateGeneric();
-			}
+			// }
 			return 1;
 	}
 
@@ -486,7 +490,7 @@ class alimentos_recibidosC
   					<td width="90px" class="text-right">';
   					if($art!='.')
   					{
-  						$tr.='<button class="btn btn-sm btn-primary" title="Agregar a '.$value['Producto'].'"  onclick=" show_producto2()" ><i class=" fa fa-list"></i></button>';
+  						$tr.='<button class="btn btn-sm btn-primary" title="Agregar a '.$value['Producto'].'"  onclick=" show_producto2(\''.$value['ID'].'\')" ><i class=" fa fa-list"></i></button>';
   						$primeravez = 1;
   						$canti2 = $canti2+$value['Entrada'];
   					}

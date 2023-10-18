@@ -123,7 +123,7 @@ class alimentos_recibidosM
 	}
 	//------------------viene de trasnkardex--------------------
 
-	function cargar_pedidos_trans($orden,$fecha=false)
+	function cargar_pedidos_trans($orden,$fecha=false,$nombre=false)
 	{
     // 'LISTA DE CODIGO DE ANEXOS
      $sql = "SELECT T.*,P.Producto 
@@ -140,6 +140,10 @@ class alimentos_recibidosM
      if($fecha)
      {
      	$sql.=" AND T.Fecha = '".$fecha."'";
+     }   
+     if($nombre)
+     {
+     	$sql.=" AND P.Producto = '".$nombre."'";
      }     
      $sql.=" ORDER BY T.ID DESC";
      // print_r($sql);die();
