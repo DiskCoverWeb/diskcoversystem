@@ -313,7 +313,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
               </div>
             </div>
 
-            <div class="text-right" style="margin-bottom: 15px;">
+            <div class="text-right" style="margin-bottom: 15px; margin-top: 15px;">
               <label for="LblDiferencia">Diferencia</label>
               <input id="LblDiferencia"></input>
               <label>TOTALES</label>
@@ -339,7 +339,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
               </div>
             </div>
 
-            <div class="text-right">
+            <div class="text-right" style="margin-top: 15px;">
               <label for="LblDiferencia">Diferencia</label>
               <input id="LblDiferencia1"></input>
               <label>TOTALES</label>
@@ -402,10 +402,10 @@ switch ($_SESSION['INGRESO']['modulo_']) {
               </div>
             </div>
 
-            <div class="row">
+            <div class="row" style="margin-top: 15px;">
               <div class="col-xs-6 col-md-2">
                 <label>CON I.V.A.</label><br>
-                <input id="LblConIVA" />
+                <input style="margin-top: 0px;" id="LblConIVA" />
               </div>
               <div class="col-xs-6 col-md-2">
                 <label>SIN I.V.A.</label><br>
