@@ -800,13 +800,28 @@
 
 				} else if (data.AU.respuesta == 3) {
 					Swal.fire('Factura Autorizada', '', 'success');
+				} else if(data.AU == 'multiple'){
+					Swal.fire({
+						type: 'info',
+						title: 'IMPRESION',
+						text: 'Facturación Multiple',
+						confirmButtonText: 'Ok!',
+						allowOutsideClick: false,
+					}).then((result) => {
+						/* Read more about isConfirmed, isDenied below */
+						if (result.value) {
+							imprimir_multiple_CxC();
+						}else{
+							imprimir_facturas();
+						}
+					})
 				}
 			}
 		})
 	}
 
 
-	function imprimir_multiple() {
+	function imprimir_multiple_CxC() {
 		var FA = $("#FA").serialize();
 		var parametros = {
 			'TextObs': $('#TextObs').val(),
@@ -829,14 +844,26 @@
 		}
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/facturarC.php?imprimir_factura=true&' + FA,
+			url: '../controlador/facturacion/facturarC.php?imprimir_factura_multiple=true&' + FA,
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
-				if (data.AU.respuesta == 1) {
+				if (data.res == 1) {
 					Swal.fire('Factura Autorizada', '', 'success');
-					console.log(data);
-					imprimir();
+				}
+			}
+		})
+	}
+
+	function imprimir_facturas(){
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/facturarC.php?imprimir_facturas=true&' + FA,
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				if (data.res == 1) {
+					Swal.fire('Factura Autorizada', '', 'success');
 				}
 			}
 		})
@@ -858,7 +885,7 @@
 
 				if (FA == "OP") {
 					var grupo = $('#DCGrupo_No').val();
-					var faFactura = $('#NoFactura').val();
+					var faFactura = $('#TextFacturaNo').val();
 					src = "../vista/modales.php?FAbonoAnticipado=true&tipo=FA&grupo=" + grupo + "&faFactura=" + faFactura;
 					$('#frame_anticipado').attr('src', src).show();
 					$('#my_modal_abono_anticipado').modal('show');
@@ -961,12 +988,7 @@
 
 	}
 	function boton3() {
-		//Listar_Ordenes();
-		var grupo = $('#DCGrupo_No').val();
-		var faFactura = $('#NoFactura').val();
-		src = "../vista/modales.php?FAbonoAnticipado=true&tipo=FA&grupo=" + grupo + "&faFactura=" + faFactura;
-		$('#frame_anticipado').attr('src', src).show();
-		$('#my_modal_abono_anticipado').modal('show');
+		Listar_Ordenes();
 	}
 	function boton4() {
 		$('#myModal_guia').modal('show');
