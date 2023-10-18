@@ -20,7 +20,7 @@
                 </div>
             </div>
 
-            <div class="col-sm-12" style="padding-top: 5px; display: none;" id="Frame1">
+            <div class="col-sm-12" style="padding-top: 5px;" id="Frame1">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                     </div>
@@ -30,7 +30,7 @@
                             <div class="col-sm-6">
                                 <div class="input-group">
                                     <label class="input-group-addon" for="DCTipo" style="color: red;">TIPO</label>
-                                    <select class="form-control" id="DCTipo" name="DCTipo" style="width: 100%;">
+                                    <select class="form-control" id="DCTipo" name="DCTipo" style="width: 100%;" onchange="Listar_Facturas_Pendientes()">
                                         <option value="">Seleccione</option>
                                     </select>
                                 </div>
@@ -114,7 +114,7 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <label for="DCCliente">Cliente</label>
-                                    <select class="form-select form-select-sm" id="DCCliente" name="DCCliente"
+                                    <select class="form-select form-select-sm" id="DCClientes" name="DCCliente"
                                         style="width: 100%;">
                                         <option value="">Seleccione</option>
                                     </select>
@@ -165,7 +165,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="LabelPend" class="col-sm-5 control-label">Saldo Actual</label>
+                    <label for="LabelPend" class="col-sm-5 control-label" id="Label10">Saldo Actual</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="LabelPend" placeholder="00000000" value="0.00">
                     </div>
@@ -177,7 +177,7 @@
         <button class="btn btn-default btn-block" id="btn_g" onclick="Command1_Click()">
             <img src="../../img/png/grabar.png"><br>&nbsp;Guardar&nbsp;
         </button>
-        <button class="btn btn-default btn-block" onclick="cerrar_modal()">
+        <button class="btn btn-default btn-block" onclick="close()">
             <img src="../../img/png/bloqueo.png"><br>Cancelar
         </button>
     </div>

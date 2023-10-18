@@ -847,7 +847,9 @@
 			if (result.value == true) {
 
 				if (FA == "OP") {
-					src = "../vista/modales.php?FAbonoAnticipado=true";
+					var grupo = $('#DCGrupo_No').val();
+					var faFactura = $('#NoFactura').val();
+					src = "../vista/modales.php?FAbonoAnticipado=true&tipo=FA&grupo=" + grupo + "&faFactura=" + faFactura;
 					$('#frame_anticipado').attr('src', src).show();
 					$('#my_modal_abono_anticipado').modal('show');
 				} else {
@@ -950,7 +952,9 @@
 	}
 	function boton3() {
 		//Listar_Ordenes();
-		src = "../vista/modales.php?FAbonoAnticipado=true";
+		var grupo = $('#DCGrupo_No').val();
+		var faFactura = $('#NoFactura').val();
+		src = "../vista/modales.php?FAbonoAnticipado=true&tipo=FA&grupo=" + grupo + "&faFactura=" + faFactura;
 		$('#frame_anticipado').attr('src', src).show();
 		$('#my_modal_abono_anticipado').modal('show');
 	}
