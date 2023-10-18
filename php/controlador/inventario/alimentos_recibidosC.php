@@ -434,6 +434,8 @@ class alimentos_recibidosC
       </table>';
       $d='';
       $canti = 0;
+      $canti2 = 0;
+      $primeravez = 0;
 		foreach ($datos as $key => $value) 
 		{
 			// print_r($value);die();
@@ -441,7 +443,8 @@ class alimentos_recibidosC
 			$prod = $this->modelo->catalogo_productos($value['Codigo_Inv']);
 			$art = $prod[0]['TDP'];
 
-      		$canti = $canti+$value['Entrada'];
+      		$canti = $canti+$value['Entrada'];      
+
 			$iva+=number_format($value['Total_IVA'],2);
 			// print_r($value['VALOR_UNIT']);
 			$sub = $value['Valor_Unitario']*$value['Entrada'];
@@ -480,8 +483,15 @@ class alimentos_recibidosC
   					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
   					<td width="'.$d4.'">'.number_format($value['Entrada'],2,'.','').'</td>
-  					<td width="90px">
-  						<button class="btn btn-sm btn-danger" title="Eliminar linea"  onclick="eliminar_lin(\''.$value['ID'].'\',\''.$art.'\')" ><span class="glyphicon glyphicon-trash"></span></button>
+  					<td width="90px" class="text-right">';
+  					if($art!='.')
+  					{
+  						$tr.='<button class="btn btn-sm btn-primary" title="Agregar a '.$value['Producto'].'"  onclick=" show_producto2()" ><i class=" fa fa-list"></i></button>';
+  						$primeravez = 1;
+  						$canti2 = $canti2+$value['Entrada'];
+  					}
+
+  					$tr.='<button class="btn btn-sm btn-danger" title="Eliminar linea"  onclick="eliminar_lin(\''.$value['ID'].'\',\''.$art.'\')" ><span class="glyphicon glyphicon-trash"></span></button>
   					</td>
   				</tr>';
 			
@@ -495,11 +505,11 @@ class alimentos_recibidosC
 		if($num!=0)
 		{
 			// print_r($tr);die();
-			$tabla = array('num_lin'=>$num,'tabla'=>$tr,'item'=>$num,'cant_total'=>$canti,'reciclaje'=>$reciclaje);	
+			$tabla = array('num_lin'=>$num,'tabla'=>$tr,'item'=>$num,'cant_total'=>$canti,'reciclaje'=>$canti2,'primera_vez'=>$primeravez);	
 			return $tabla;		
 		}else
 		{
-			$tabla = array('num_lin'=>0,'tabla'=>'<tr><td colspan="9" class="text-center"><b><i>Sin registros...<i></b></td></tr>','item'=>0,'cant_total'=>0);
+			$tabla = array('num_lin'=>0,'tabla'=>'<tr><td colspan="9" class="text-center"><b><i>Sin registros...<i></b></td></tr>','item'=>0,'cant_total'=>0,'reciclaje'=>0);
 			return $tabla;		
 		}		
     }
@@ -662,12 +672,22 @@ class alimentos_recibidosC
 
    function lineas_eli($parametros)
 	{
+		// print_r($parametros);die();
 		$resp = $this->modelo->lineas_eli($parametros);
+		// if($parametros['TPD']==1)
+		// {
+		// 	SetAdoAddNew('Trans_Correos');	
+		// SetAdoFields('Giro_No','.');
+		// SetAdoFieldsWhere('Envio_No',$id);
+		// SetAdoUpdateGeneric();
+
+		// }
 		return $resp;
 
 	}
 	function lineas_eli_pedido($parametros)
 	{
+		// print_r($parametros);die();
 		$resp = $this->modelo->lineas_eli_pedido($parametros);
 		return $resp;
 

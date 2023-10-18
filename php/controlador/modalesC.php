@@ -499,6 +499,7 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		{
 			 SetAdoAddNew("Clientes_Datos_Extras");
 		    SetAdoFields("Codigo",$cli[0]['Codigo']);
+		    SetAdoFields("TP",$parametros['tp']);
 		    SetAdoFields("Direccion", $parametros['direccion']);
 		    SetAdoFields("Tipo_Dato",'TIPO_PROV');
 	 		return SetAdoUpdate();	
