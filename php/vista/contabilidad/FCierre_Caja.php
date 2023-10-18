@@ -405,7 +405,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
             <div class="row" style="margin-top: 15px;">
               <div class="col-xs-6 col-md-2">
                 <label>CON I.V.A.</label><br>
-                <input style="margin-top: 0px;" id="LblConIVA" />
+                <input style="margin-top: 20px;" id="LblConIVA" />
               </div>
               <div class="col-xs-6 col-md-2">
                 <label>SIN I.V.A.</label><br>

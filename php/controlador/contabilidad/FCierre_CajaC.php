@@ -352,7 +352,7 @@ class FCierre_CajaC
 
         $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-150;
 
-        $DGVentas = grilla_generica_new($_SESSION['FCierre_Caja']['AdoVentasT'],'Facturas',"TBLVentas","",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+        //$DGVentas = grilla_generica_new($_SESSION['FCierre_Caja']['AdoVentasT'],'Facturas',"TBLVentas","",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
 
         $Combos = G_NINGUNO; //TODO LS donde USO
         $FechaFinal = BuscarFecha("31/12/" .date('Y', strtotime($MBFechaF))); //TODO LS donde se usa
