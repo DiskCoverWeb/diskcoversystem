@@ -1,46 +1,10 @@
 // Se ejecuta cuando el documento está listo
 $(document).ready(function () {
     listarDatos();
-    llenarSelect();
-});
-
-// Se ejecuta cuando cambia la opción en el select con id 'selectOption'
-$('#selectOption').change(function () {
-    listarDatos();
 });
 
 // Función para realizar una solicitud AJAX y mostrar los resultados en una tabla
 function listarDatos() {
-    var selectedOption = $('#selectOption').val();
-    $.ajax({
-        type: 'POST',
-        url: '../controlador/inventario/categoriasC.php?MostrarTabla=true',
-        data: { option: selectedOption },
-        success: function (data) {
-            var data = JSON.parse(data);
-            if (data['status'] == 200) {
-                if (data['datos'].length > 0) {
-                    mostrarTabla(data['datos']);                    
-                } else {
-                    mostrarLabel();
-                }
-            }else {
-                Swal.fire({
-                    title: 'Error, no hay datos que mostrar.',
-                    type: 'error',
-                    timer: 1000,
-                    showConfirmButton: false
-                });
-            }
-        },
-        error: function (error) {
-            console.error('Error en la solicitud AJAX:', error);
-        }
-    });
-}
-
-function llenarSelect() {
-    console.log("llenar categorias ");
     $.ajax({
         type: 'POST',
         url: '../controlador/inventario/categoriasC.php?ListarCategorias=true',
@@ -49,13 +13,7 @@ function llenarSelect() {
             var data = JSON.parse(data);
             if (data['status'] == 200) {
                 if (data['datos'].length > 0) {
-                    var $select = $('#selectOption'); // Obtener el elemento select
-                    $select.empty(); // Limpiar opciones existentes
-
-                    // Iterar sobre los datos y agregar opciones al select
-                    $.each(data['datos'], function (index, categoria) {
-                        $select.append('<option value="' + categoria['Cmds'] + '">' + categoria['Proceso'] + '</option>');
-                    });
+                    mostrarTabla(data['datos']);
                 } else {
                     mostrarLabel();
                 }
@@ -140,7 +98,7 @@ function eliminarFila(id) {
         if (result.value == true) {
             $.ajax({
                 type: 'POST',
-                url: '../controlador/inventario/categoriasC.php?AceptarEliminar=true',
+                url: '../controlador/inventario/categoriasC.php?EliminarCategoria=true',
                 data: { id: id },
                 success: function (data) {
                     var data = JSON.parse(data);
@@ -165,7 +123,6 @@ function eliminarFila(id) {
                     console.error('Error en la solicitud AJAX:', error);
                 }
             });
-
         }
     });
 }
@@ -174,7 +131,7 @@ function eliminarFila(id) {
 function editarFila(id) {
     $.ajax({
         type: 'POST',
-        url: '../controlador/inventario/categoriasC.php?MostrarDatosPorId=true',
+        url: '../controlador/inventario/categoriasC.php?EditarCategoriaPorId=true',
         data: { id: id },
         success: function (data) {
             var data = JSON.parse(data);
@@ -190,31 +147,60 @@ function editarFila(id) {
     });
 }
 
+var valorCmdsE = '';
+
 // Función para llenar campos en el Modal Editar
 function llenarCampos(data) {
-    var selectedOptionLblE = $('#selectOption option:selected').text();
-    $('#selectedOptionLabelE').text(selectedOptionLblE);
-    $('#tipoE').val(data[0].Tipo_Dato);
+    //var selectedOptionLblE = $('#selectOption option:selected').text();
+    $('#selectedOptionLabelE').text("hola mundo");
+    $('#tipoE').val(data[0].TP);
     $('#idE').val(data[0].ID);
-    $('#beneficiarioE').val(data[0].Beneficiario);
-    $('#codigoE').val(data[0].Codigo);
+    $('#procesoE').val(data[0].Proceso);
+    $('#cmdsE').val(data[0].Cmds);
+    valorCmdsE = $('#cmdsE').val();
     $('#modalEditar').modal('show');
 }
 
+$('#procesoE').on('input', function () {
+    var cmdsE = $(this).val();
+    $('#cmdsE').val(cmdsE.substring(0, 4).toUpperCase());
+});
+
 // Manejador de evento al hacer clic en el botón de aceptar para editar datos
 $('#btnAceptarEditar').click(function () {
-    var selectOptionE = $('#tipoE').val();
-    var beneficiarioE = $('#beneficiarioE').val()
-    var codigoE = $('#codigoE').val()
-    var idE = $('#idE').val()
+    var cmdsE = $('#cmdsE').val();
+
+    // Verifica si cmdsE ha cambiado
+    if (cmdsE !== valorCmdsE) {
+        verificarCmdsAEnBaseDatos(cmdsE, function (cmdExists) {
+            if (cmdExists) { // ya existe el valor en la base
+                mostrarLabelUsoE();
+            } else {
+                ocultarLabelUsoE();
+                ejecutarActualizacion(); // Ejecuta la actualización si cmdsE no existe en la base
+            }
+        });
+    } else {
+        ocultarLabelUsoE();
+        ejecutarActualizacion(); // Ejecuta la actualización si cmdsE no ha cambiado
+    }
+});
+
+function ejecutarActualizacion() {
+    var procesoE = $('#procesoE').val();
+    var cmdsE = $('#cmdsE').val();
+    var idE = $('#idE').val();
+    var tipoE = $('#tipoE').val();
+
     var parametros = {
-        "tipo": selectOptionE,
-        "beneficiario": beneficiarioE,
-        "codigo": codigoE,
+        "tipo": tipoE,
+        "proceso": procesoE,
+        "cmds": cmdsE,
         "id": idE
     };
+
     Swal.fire({
-        title: 'Está seguro?',
+        title: '¿Está seguro?',
         type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -222,22 +208,22 @@ $('#btnAceptarEditar').click(function () {
         confirmButtonText: 'Sí, actualizar!',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
-        if (result.value == true) {
+        if (result.value) {
             $.ajax({
                 type: 'POST',
-                url: '../controlador/inventario/categoriasC.php?AceptarEditar=true',
+                url: '../controlador/inventario/categoriasC.php?AceptarEditarCategoria=true',
                 data: { parametros: parametros },
                 success: function (data) {
                     var data = JSON.parse(data);
                     if (data['status'] == 200) {
                         Swal.fire({
-                            title: 'Éxito!, se actualizó correctamente.',
+                            title: '¡Éxito!, se actualizó correctamente.',
                             type: 'success',
                             timer: 1000,
                             showConfirmButton: false
                         });
-                        $('#beneficiarioE').val('');
-                        $('#codigoE').val('');
+                        $('#procesoE').val('');
+                        $('#cmdsE').val('');
                         listarDatos();
                     } else {
                         Swal.fire({
@@ -255,86 +241,140 @@ $('#btnAceptarEditar').click(function () {
             $('#modalEditar').modal('hide');
         }
     });
-});
+}
 
 // Manejador de evento al hacer clic en el botón de agregar
 $('#btnAgregar').click(function () {
-    var selectedOptionLbl = $('#selectOption option:selected').text();
-    $('#selectedOptionLabel').text(selectedOptionLbl);
-    $('#codigoA').val(generarCodigoRandom(5));
+    $('#tipoA').val('CATE');
     $('#modalAgregar').modal('show');
 });
 
 // Manejador de evento al hacer clic en el botón de agregar en el menú colapsable
 $('#btnAgregarCollapse').click(function () {
     event.preventDefault();
-    var selectedOptionLbl = $('#selectOption option:selected').text();
-    $('#selectedOptionLabel').text(selectedOptionLbl);
-    $('#codigoA').val(generarCodigoRandom(5));
+    $('#tipoA').val('CATE');
     $('#modalAgregar').modal('show');
+});
+
+$('#procesoA').on('input', function () {
+    var cmdsA = $(this).val();
+    $('#cmdsA').val(cmdsA.substring(0, 4).toUpperCase());
+});
+
+function mostrarLabelUso() {
+    $('#alertUse').css('display', 'block');
+}
+
+function ocultarLabelUso() {
+    $('#alertUse').css('display', 'none');
+}
+
+function mostrarLabelUsoE() {
+    $('#alertUseE').css('display', 'block');
+}
+
+function ocultarLabelUsoE() {
+    $('#alertUseE').css('display', 'none');
+}
+
+function verificarCmdsAEnBaseDatos(cmds, callback) {
+    $.ajax({
+        type: 'POST',
+        url: '../controlador/inventario/categoriasC.php?ListarCategorias=true',
+        data: {},
+        success: function (data) {
+            var data = JSON.parse(data);
+            if (data['status'] == 200 && data['datos'].length > 0) {
+                for (var i = 0; i < data['datos'].length; i++) {
+                    if (data['datos'][i].Cmds === cmds) {
+                        if (callback) {
+                            callback(true);
+                        }
+                        return;
+                    }
+                }
+                if (callback) {
+                    callback(false);
+                }
+            }
+        },
+        error: function (error) {
+            console.error('Error en la solicitud AJAX:', error);
+        }
+    });
+}
+
+$('#modalAgregar').on('hidden.bs.modal', function () {
+    $('#cmdsA').val('');
+    $('#procesoA').val('');
+    ocultarLabelUso();
+});
+
+$('#modalEditar').on('hidden.bs.modal', function () {
+    $('#cmdsE').val('');
+    $('#procesoE').val('');
+    ocultarLabelUsoE();
 });
 
 // Manejador de evento al hacer clic en el botón de aceptar para agregar datos
 $('#btnAceptarAgregar').click(function () {
-    var selectOptionA = $('#selectOption').val();
-    var beneficiarioA = $('#beneficiarioA').val();
-    var codigoA = $('#codigoA').val();
-    var parametros = {
-        "tipo": selectOptionA,
-        "beneficiario": beneficiarioA,
-        "codigo": codigoA
-    };
-    Swal.fire({
-        title: 'Está seguro que desea guardar?',
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, guardar!',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.value == true) {
-            $.ajax({
-                type: 'POST',
-                url: '../controlador/inventario/categoriasC.php?AceptarAgregar=true',
-                data: { parametros: parametros },
-                success: function (data) {
+    var procesoA = $('#procesoA').val();
+    var tipoA = $('#tipoA').val();
+    var cmdsA = $('#cmdsA').val();
 
-                    var data = JSON.parse(data);
-                    if (data['status'] == 200) {
-                        Swal.fire({
-                            title: "Éxito!, se registro correctamente.",
-                            type: 'success',
-                            timer: 1000,
-                            showConfirmButton: false
-                        });
-                        $('#beneficiarioA').val('');
-                        $('#codigoA').val('');
-                        listarDatos();
-                    } else {
-                        Swal.fire({
-                            title: 'Error, no se registró.',
-                            type: 'error',
-                            timer: 1000,
-                            showConfirmButton: false
-                        });
-                    }
-                },
-                error: function (error) {
-                    console.error('Error en la solicitud AJAX:', error);
+    verificarCmdsAEnBaseDatos(cmdsA, function (cmdExists) {
+        if (cmdExists) { //ya existe el valor de cmds en la base
+            mostrarLabelUso();
+        } else {
+            ocultarLabelUso();
+            var parametros = {
+                "tipo": tipoA,
+                "proceso": procesoA,
+                "cmds": cmdsA
+            };
+            Swal.fire({
+                title: 'Está seguro que desea guardar?',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, guardar!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '../controlador/inventario/categoriasC.php?AsignarCategoria=true',
+                        data: { parametros: parametros },
+                        success: function (data) {
+                            var data = JSON.parse(data);
+                            if (data['status'] == 200) {
+                                Swal.fire({
+                                    title: "Éxito!, se registró correctamente.",
+                                    type: 'success',
+                                    timer: 1000,
+                                    showConfirmButton: false
+                                });
+                                $('#procesoA').val('');
+                                $('#cmdsA').val('');
+                                listarDatos();
+                            } else {
+                                Swal.fire({
+                                    title: 'Error, no se registró.',
+                                    type: 'error',
+                                    timer: 1000,
+                                    showConfirmButton: false
+                                });
+                            }
+                        },
+                        error: function (error) {
+                            console.error('Error en la solicitud AJAX:', error);
+                        }
+                    });
+                    $('#modalAgregar').modal('hide');
                 }
             });
-            $('#modalAgregar').modal('hide');
         }
     });
 });
 
-// Función para generar un código alfanumérico de longitud dada
-function generarCodigoRandom(length) {
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var result = '';
-    for (var i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
-}

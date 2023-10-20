@@ -323,7 +323,9 @@ class FCierre_CajaC
             $sSQL .= "ORDER BY TA.Fecha,TA.TP,TA.Cta,C.Cliente,TA.Banco,TA.Factura ";
         }
 
-        $AdoCxC = $this->CierreCajaM->SelectDB($sSQL);
+        $AdoCxC = $this->CierreCajaM->SelectDB($sSQL);        
+        
+        //print_r($AdoCxC); die();
         $_SESSION['FCierre_Caja']['AdoCxCT'] = $sSQL;
 
         // Listado de las CxC Clientes

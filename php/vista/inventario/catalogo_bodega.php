@@ -62,8 +62,8 @@
                                 </li>
                                 <li role="separator" class="divider"></li>
                                 <li>
-                                    <a href="" id="btnAgregarCollapse" onclick="event.preventDefault();">Ingresar
-                                        nuevo</a>
+                                    <a href="" id="btnAgregarCollapse" onclick="event.preventDefault();">Asignar
+                                        Categoría</a>
                                 </li>
                             </ul>
                         </div>
@@ -89,9 +89,8 @@
                             </button>';
                         }
                         ?>
-                        <?php createButton("Ingresar nuevo", "../../img/png/add_articulo.png", "", "btnAgregar"); ?>
+                        <?php createButton("Asignar Categoría", "../../img/png/add_articulo.png", "", "btnAgregar"); ?>
                         <!-- otros botones -->
-
                     </div>
                 </div>
             </div>
@@ -101,16 +100,6 @@
     <!-- Formulario y Tabla -->
     <div class="panel panel-primary" style="margin-top:20px">
         <div class="form-inline" style="margin:20px">
-            <div class="">
-                <!-- Lista desplegable -->
-                <label for="selectOption">Selecciona una categoría:</label>
-                <!--select class="form-control " id="selectOption" name="selectOption">
-                    <option value="INDIC_NUT">Indicador Nutricional</option>
-                    <option value="CATEG_BPM">BPM Alergenos</option>
-                    <option value="CATEG_BPMT">BPM Temperatura</option>
-                </select-->
-                <select id="selectOption" class="select2" ></select>
-            </div>
 
             <!-- Mensaje de alerta si no hay datos -->
             <div class="alert alert-warning" id="alertNoData" style="display: none; margin-top:10px">
@@ -130,29 +119,36 @@
                 <!-- Encabezado de la ventana modal para editar -->
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Editar <strong><span id="selectedOptionLabelE"></strong> </h4>
+                    <h4 class="modal-title">Editar Categoría</h4>
                 </div>
                 <!-- Contenido de la ventana modal para editar -->
                 <div class="modal-body">
                     <div class="form-group">
                         <input type="text" class="form-control" id="idE" maxlength="10" style="display: none;">
 
-                        <label for="codigoE">Tipo de dato:</label>
+                        <label for="tipoE">Tipo de dato:</label>
                         <input type="text" class="form-control" id="tipoE" maxlength="10" readonly>
 
-                        <label for="codigoE">Código:</label>
-                        <input type="text" class="form-control" id="codigoE" maxlength="10" readonly>
+                        <label for="procesoE">Detalle:</label>
+                        <input type="text" class="form-control" id="procesoE" maxlength="60">
 
-                        <label for="beneficiarioE">Detalle:</label>
-                        <input type="text" class="form-control" id="beneficiarioE" maxlength="60">
+                        <label for="cmdsE">Tipo Detalle:</label>
+                        <input type="text" class="form-control" id="cmdsE" maxlength="4">
+
+                        <div class="alert alert-light" id="alertUseE"
+                            style="display: none; margin-top:5px; padding:2px;">
+
+                            <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+                            <span class="text-danger">El tipo de detalle ya se encuentra utilizado.</span>
+
+                        </div>
                     </div>
                 </div>
                 <!-- Pie de la ventana modal para editar -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" id="btnAceptarEditar">Aceptar</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" >Cancelar</button>
                 </div>
-
             </div>
         </div>
     </div>
@@ -164,16 +160,28 @@
                 <!-- Encabezado de la ventana modal para agregar -->
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Agregar <strong><span id="selectedOptionLabel"></strong> </span> </h4>
+                    <h4 class="modal-title">Agregar Categoría <strong><span id="selectedOptionLabel"></strong> </span>
+                    </h4>
                 </div>
                 <!-- Contenido de la ventana modal para agregar -->
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="codigoA">Código:</label>
-                        <input type="text" class="form-control" id="codigoA" maxlength="10" readonly>
+                        <label for="tipoA">Tipo:</label>
+                        <input type="text" class="form-control" id="tipoA" maxlength="4" readonly>
 
-                        <label for="beneficiarioA">Detalle:</label>
-                        <input type="text" class="form-control" id="beneficiarioA" maxlength="60">
+                        <label for="procesoA">Detalle:</label>
+                        <input type="text" class="form-control" id="procesoA" maxlength="60">
+
+                        <label for="cmdsA">Tipo Detalle:</label>
+                        <input type="text" class="form-control" id="cmdsA" maxlength="4">
+
+                        <div class="alert alert-light" id="alertUse"
+                            style="display: none; margin-top:5px; padding:2px;">
+
+                            <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+                            <span class="text-danger">El tipo de detalle ya se encuentra utilizado.</span>
+
+                        </div>
                     </div>
                 </div>
                 <!-- Pie de la ventana modal para agregar -->
@@ -181,14 +189,12 @@
                     <button type="button" class="btn btn-success" id="btnAceptarAgregar">Aceptar</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                 </div>
-
             </div>
         </div>
     </div>
-    </div>
 
     <!-- Script JavaScript para manipular la página -->
-    <script src="../../dist/js/inventario/categorias.js"></script>
+    <script src="../../dist/js/inventario/catalogo_bodega.js"></script>
 </body>
 
 </html>
