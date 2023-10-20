@@ -144,7 +144,7 @@
      var g = $('#ddl_grupo').val();
      $.ajax({
        // data:  {parametros:parametros},
-      url: '../controlador/facturacion/lista_facturasC.php?clientes=true&q='+ci_ruc+'&g='+g,         
+      url: '../controlador/facturacion/lista_facturasC.php?clientes=true&q='+ci_ruc+'&g='+g+'&cartera=1',         
       type:  'post',
       dataType: 'json',
        success:  function (response) { 
