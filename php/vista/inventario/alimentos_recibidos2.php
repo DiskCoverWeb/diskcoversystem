@@ -106,7 +106,7 @@
       // 	$('#modal_producto_2').modal('show');
       // }
 
-      if(data.Cod_R=='0')
+      if(data.Cod_R=='0' || data.Cod_R=='.')
       {
       	$('#img_estado').attr('src','../../img/png/bloqueo.png');
       }else
@@ -438,6 +438,7 @@ function autocoplet_ingreso()
     function show_cantidad()
   {
   	$('#modal_cantidad').modal('show');
+    $('#txt_cantidad2').trigger( "focus");
   }
 
   function cambiar_cantidad()
@@ -679,8 +680,8 @@ function autocoplet_ingreso()
 									</div>
 									<div class="col-sm-6" style="padding-left: 1px;">
 										<div class="input-group">
-										  <span class="input-group-addon input-xs">Dif</span>											
-										  <input type="" class="form-control input-xs" id="txt_faltante" name="txt_faltante" readonly>
+										  <span class="input-group-addon input-xs"><b style="font-size: 14px;">Dif</b></span>											
+										  <b><input type="" class="form-control input-xs" id="txt_faltante" style="font-size:14px;" name="txt_faltante" readonly></b>
 										</div>
 									</div>
 								</div>

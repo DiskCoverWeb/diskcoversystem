@@ -312,6 +312,8 @@ function autocoplet_ingreso_donante(){
   function show_cantidad()
   {
   	$('#modal_cantidad').modal('show');
+
+    $('#txt_cantidad2').focus();
   }
   function show_temperatura()
   {
@@ -552,8 +554,12 @@ function autocoplet_ingreso_donante(){
 								<div class="form-group">
 										<label for="inputEmail3" class="col-sm-6 control-label">ESTADO DE TRANSPORTE</label>
 										<div class="col-sm-6 text-center">									
-		                		 <label style="padding-right: 10px;"><img src="../../img/png/bueno2.png" onclick="ocultar_comentario()"><input type="radio" name="cbx_estado_tran" onclick="ocultar_comentario()" checked value="1"></label>		
-		                		 <label style="padding-left: 10px;"><img src="../../img/png/close.png" onclick="ocultar_comentario()"><input type="radio" name="cbx_estado_tran" onclick="ocultar_comentario()" value="0"></label>					
+		                		 <label style="padding-right: 10px;">
+		                		 		<img src="../../img/png/bueno2.png" onclick="ocultar_comentario()">
+		                		 		<input type="radio" name="cbx_estado_tran" onclick="ocultar_comentario()" checked value="1"></label>		
+		                		 <label style="padding-left: 10px;">
+		                		 		<img src="../../img/png/close.png" onclick="ocultar_comentario()">
+		                		 		<input type="radio" name="cbx_estado_tran" onclick="ocultar_comentario()" value="0"></label>					
 										</div>
 								</div>	
 						</div>
