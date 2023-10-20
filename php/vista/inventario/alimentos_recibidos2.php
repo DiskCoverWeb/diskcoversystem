@@ -25,11 +25,18 @@
       $('#txt_producto').prop('disabled',true);
       $('#modal_producto').modal('hide');
 
+      primera_vez = $('#txt_primera_vez').val();
+
       if(data[0].TDP=='R')
       {
 	      setTimeout(() => {  
 	      		$('#txt_titulo_mod').text(data[0].Producto);
-			      $('#modal_producto_2').modal('show');
+	      		if(primera_vez!=1)
+	      		{
+			      	$('#modal_calendar').modal('show');
+			      }else{
+			      	$('#modal_producto_2').modal('show');
+			      }
 	    	}, 1000);     	
 	      
       }else{
@@ -51,11 +58,18 @@
       $('#txt_producto').prop('disabled',true);
       $('#modal_producto').modal('hide');
 
+      primera_vez = $('#txt_primera_vez').val();
+
       if(data[0].TDP=='R')
       {
 	      setTimeout(() => {  
 	      		$('#txt_titulo_mod').text(data[0].Producto);
-			      $('#modal_producto_2').modal('show');
+			      if(primera_vez!=1)
+	      		{
+			      	$('#modal_calendar').modal('show');
+			      }else{
+			      	$('#modal_producto_2').modal('show');
+			      }
 	    	}, 1000);     	
 	      
       }
@@ -194,11 +208,12 @@
 
   function guardar_pedido()
   {
-  		var cant_total = $('#txt_cant_total_pedido').val();
-  		var cant_total_kardex = $('#txt_cant_total').val();  		
+  		var total_ingresado_pedido = $('#txt_cant_total_pedido').val();
+  		var total_ingresado_kardex = $('#txt_cant_total').val(); 
+  		var total_recibir = $('#txt_cant').val();
+
 
   		var cant = $('#txt_cantidad_pedido').val();
-  		var cant_suge = $('#txt_cant').val();
 
 
   		var produc = $('#ddl_producto2').val();
@@ -215,8 +230,8 @@
   			return false;
   		}  	
 
-  		total_final = parseFloat(cant)+parseFloat(cant_total_kardex)-parseFloat(cant_total);
-  		cant_suge = parseFloat(cant_suge);
+  		total_final = parseFloat(cant)+parseFloat(total_ingresado_kardex)+parseFloat(total_ingresado_pedido);
+  		cant_suge = parseFloat(total_recibir);
   		
 
 
@@ -234,13 +249,8 @@
 	      data:parametros+'&producto_pedido='+$('#ddl_producto2').val()+'&cantidad_pedido='+$('#txt_cantidad_pedido').val()+'&total_pedido='+$('#txt_cant_total_pedido').val(),
           dataType:'json',
 	      success: function(data)
-	      {
-	      	if(data==1)
-	      	{
+	      {	      	
 	      		cargar_pedido2();	
-	      		cargar_pedido();	      	
-	      	}
-	      
 	      }
 	  });
   }
@@ -418,8 +428,9 @@ function autocoplet_ingreso()
   {  	
   		$('#modal_producto').modal('show');
   }
-  function show_producto2()
+  function show_producto2(id)
   {
+  	$('#txt_id_linea_pedido').val(id);
   	$('#modal_producto_2').modal('show');
   }
     function show_cantidad()
@@ -839,15 +850,21 @@ function autocoplet_ingreso()
       type:  'post',
       dataType: 'json',
       success:  function (response) {
-        console.log(response);
         $('#tbl_body').html(response.tabla);
-        $('#txt_cant_total').val(parseFloat(response.cant_total)-parseFloat(response.reciclaje));
+        var diff = parseFloat(response.cant_total)-parseFloat(response.reciclaje);
+        if(diff < 0)
+        {
+        	diff = diff*(-1);
+        }
         $('#txt_primera_vez').val(response.primera_vez);
-        var cant_pedido =  $('#txt_cant_total_pedido').val();
-        var total = $('#txt_cant').val();
-        var fal = parseFloat(total)-(parseFloat(response.cant_total)+parseFloat(response.reciclaje));
 
-        $('#txt_faltante').val(fal.toFixed(2));
+        var ingresados_en_pedidos =  $('#txt_cant_total_pedido').val(response.reciclaje);
+        var ingresados_en_kardex =  $('#txt_cant_total').val(diff);
+        var total_pedido = $('#txt_cant').val();
+        var faltantes = parseFloat(total_pedido)-parseFloat(response.cant_total);
+
+
+        $('#txt_faltante').val(faltantes.toFixed(2));
       }
     });
   }
@@ -866,8 +883,7 @@ function autocoplet_ingreso()
       success:  function (response) {
         console.log(response);
         $('#tbl_body_pedido').html(response.tabla);
-        $('#txt_cant_total_pedido').val(response.cant_total);
-       
+        $('#txt_cant_total_pedido').val(response.cant_total);       
       }
     });
   }
@@ -1155,39 +1171,41 @@ function eliminar_all_pedido(pedido)
   function terminar_pedido()
   {
   	pro = $('#txt_producto option:selected').text();
-  	if($('#txt_cant_total').val()==0 || $('#txt_cant_total').val()=='')
-  	{
-  		Swal.fire('No se olvide de agregar: '+pro,'','info')
-  		return false;
-  	}
+  	var id = $('#txt_id_linea_pedido').val(); 
+  	
   	if($('#txt_cant_total_pedido').val()==0 || $('#txt_cant_total_pedido').val()=='')
   	{
   		Swal.fire('Agrege productos para terminar','','info')
   		return false;
   	}
+
+  	primera_vez = $('#txt_primera_vez').val();
+
+  	if(primera_vez==0 || primera_vez==''){
+  		$('#txt_cantidad').val($('#txt_cant_total_pedido').val());
+  		// $('#btn_cantidad').prop('disabled',true);
+  		if($('#txt_cantidad').val()==0 || $('#txt_cantidad').val()=='')
+	  	{
+	  		Swal.fire('No se olvide de agregar: '+pro,'','info')
+	  		return false;
+	  	}
+	  	show_panel();
+	  	limpiar();
+
+  			 $('#modal_producto_2').modal('hide');
+  	}else{
+
+  			 $('#modal_producto_2').modal('hide');
+  			  Swal.fire('Cantidad Modificada automaticamente','','success');
+
   	 total = $('#txt_cant_total_pedido').val();
-  	 cargar_pedido();	
-  	 $('#txt_cantidad').val(total);
-  	 $('#btn_cantidad').prop('readonly',true);
-  	 $('#txt_cantidad').prop('readonly',true);
-  	 $('#btn_cantidad').prop('disabled',true);
-  	 $('#modal_producto_2').modal('hide');
-
-  	 if($('#txt_primera_vez').val()==0)
-  	 {
-  	 	setTimeout(() => {  
-  	 		 	 $('#modal_calendar').modal('show');
-	    	}, 900);     	
-  	 }else
-  	 {
-  	 	 Swal.fire('Cantidad Modificada automaticamente','','success');
-  	 	 limpiar();
-  	 }
-
+  	
   	  var parametros=
         {
         	'txt_codigo':$('#txt_codigo').val(),
           'total_cantidad':$('#txt_cant_total_pedido').val(),
+          'id':id,
+          'producto': $('#txt_producto option:selected').text(),
         }
          $.ajax({
           data:  {parametros:parametros},
@@ -1197,11 +1215,19 @@ function eliminar_all_pedido(pedido)
           success:  function (response) { 
             if(response==1)
             {
-              cargar_pedido2();
               cargar_pedido();
+              cargar_pedido2();
             }
           }
         });
+
+  	 	    limpiar();
+  	}
+
+
+
+
+
 
   }
 
@@ -1289,6 +1315,7 @@ function eliminar_all_pedido(pedido)
 		           <div class="col-sm-3">
 			           	<b>Cantidad</b>
 			           	<input type="text" name="txt_cantidad_pedido" id="txt_cantidad_pedido" class="form-control input-sm" />
+			           	<input type="hidden" name="txt_id_linea_pedido" id="txt_id_linea_pedido">
 		           </div> 
 		         </div>
 		         <div class="row">
