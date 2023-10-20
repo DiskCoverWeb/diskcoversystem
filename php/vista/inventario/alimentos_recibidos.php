@@ -10,6 +10,7 @@
   	autocoplet_ingreso();
   	autocoplet_ingreso_donante();
   	cargar_datos();
+
   })
 
   function guardar()
@@ -311,9 +312,9 @@ function autocoplet_ingreso_donante(){
   }
   function show_cantidad()
   {
+  	
+  	$("#txt_cantidad2").focus();
   	$('#modal_cantidad').modal('show');
-
-    $('#txt_cantidad2').focus();
   }
   function show_temperatura()
   {
@@ -517,7 +518,7 @@ function autocoplet_ingreso_donante(){
 								<div class="col-sm-4">									
 									<div class="input-group">
 											<span class="input-group-btn" style="padding-right: 10px;">
-													<button type="button" class="btn btn-default btn-sm" onclick="show_cantidad()"><img src="../../img/png/kilo2.png"></button>
+													<button type="button" class="btn btn-default btn-sm" id="btn_cantidad" onclick="show_cantidad()"><img src="../../img/png/kilo2.png"></button>
 											</span>
 												<b>CANTIDAD:</b>
 												<input type="" class="form-control input-xs" id="txt_cant" name="txt_cant">	
@@ -528,7 +529,7 @@ function autocoplet_ingreso_donante(){
 					<div class="col-sm-12 col-md-4">
 						<div class="col-sm-6 col-md-12">
 							<div class="form-group">
-									<label for="inputEmail3" class="col-sm-6 control-label">Fecha de Ingreso</label>
+									<label class="col-sm-6 control-label">Fecha de Ingreso</label>
 									<div class="col-sm-6">
 										<input type="date" class="form-control input-xs" id="txt_fecha" name="txt_fecha" value="<?php echo date('Y-m-d'); ?>" readonly>		
 									</div>
@@ -536,7 +537,7 @@ function autocoplet_ingreso_donante(){
 						</div>
 						<div class="col-sm-6 col-md-12">
 								<div class="form-group">
-								<label for="inputEmail4" class="col-sm-6 control-label">Codigo de Ingreso</label>
+								<label  class="col-sm-6 control-label">Codigo de Ingreso</label>
 									<div class="col-sm-6">									
 	                 	<input type="" class="form-control input-xs" id="txt_codigo" name="txt_codigo" readonly>
 									</div>
@@ -544,7 +545,7 @@ function autocoplet_ingreso_donante(){
 						</div>
 						<div class="col-sm-6 col-md-12">							
 							<div class="form-group">
-									<label for="inputEmail3" class="col-sm-6 control-label">RUC / CI</label>
+									<label class="col-sm-6 control-label">RUC / CI</label>
 									<div class="col-sm-6">									
 	                		<input type="" class="form-control input-xs" id="txt_ci" name="txt_ci" readonly>
 									</div>
@@ -552,7 +553,7 @@ function autocoplet_ingreso_donante(){
 						</div>						
 						<div class="col-sm-6 col-md-12">							
 								<div class="form-group">
-										<label for="inputEmail3" class="col-sm-6 control-label">ESTADO DE TRANSPORTE</label>
+										<label  class="col-sm-6 control-label">ESTADO DE TRANSPORTE</label>
 										<div class="col-sm-6 text-center">									
 		                		 <label style="padding-right: 10px;">
 		                		 		<img src="../../img/png/bueno2.png" onclick="ocultar_comentario()">

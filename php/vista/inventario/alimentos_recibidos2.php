@@ -125,7 +125,6 @@
       // console.log(data);
     });
 
-
   })
 
    function pedidos(){
@@ -435,10 +434,11 @@ function autocoplet_ingreso()
   	$('#txt_id_linea_pedido').val(id);
   	$('#modal_producto_2').modal('show');
   }
-    function show_cantidad()
+  function show_cantidad()
   {
   	$('#modal_cantidad').modal('show');
-    $('#txt_cantidad2').trigger( "focus");
+    $("#modal_cantidad #txt_cantidad2").focus();
+    // $('#txt_cantidad2').trigger( "focus");
   }
 
   function cambiar_cantidad()
@@ -692,7 +692,7 @@ function autocoplet_ingreso()
 								<b>COMENTARIO:</b>
 							</div>
 							<div class="col-sm-6">
-	                <input type="" class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly>
+                 <textarea id="txt_comentario" name="txt_comentario"disabled class="form-control input-sm"></textarea>
 							</div>
 						</div>
 						<div class="row" id="panel_serie"  style="padding-top: 5px;">
