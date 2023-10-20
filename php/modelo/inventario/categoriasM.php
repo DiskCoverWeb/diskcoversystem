@@ -2,7 +2,7 @@
 include(dirname(__DIR__, 2) . '/funciones/funciones.php');
 @session_start();
 
-class dayaM
+class categoriasM
 {
     private $db;
 

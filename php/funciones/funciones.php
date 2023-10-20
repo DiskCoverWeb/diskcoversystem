@@ -17,7 +17,6 @@ require_once(dirname(__DIR__,1)."/db/db1.php");
 require_once(dirname(__DIR__,1)."/db/variables_globales.php");
 require_once(dirname(__DIR__,1)."/comprobantes/SRI/autorizar_sri.php");
 
-
 if(isset($_POST['RUC']) AND !isset($_POST['submitweb'])) 
 {
 	$pag=$_POST['vista'];
@@ -5989,7 +5988,7 @@ if ($pos === false) {
 
  if($head_fijo)
  {
- $tbl.='#'.$id_tabla.' tbody { display:block; height:calc(auto + 70px); width:auto; overflow-y:scroll;}
+ $tbl.='#'.$id_tabla.' tbody { display:block; height:'.$tamaño_tabla.'px; width:auto; overflow-y:scroll;}
   #'.$id_tabla.' thead,tbody tr {    display:table;  width:100%;  table-layout:fixed; } 
   #'.$id_tabla.' thead { width: calc( 100% - 1.2em )/* scrollbar is average 1em/16px width, remove it from thead width */}
   /*thead tr {    display:table;  width:98.5%;  table-layout:fixed;  }*/ ';
@@ -6374,6 +6373,50 @@ if($titulo)
 
     return $tbl;
 
+}
+
+function tablaGenerica($data){
+  $tablaHtml = '
+  <table>
+    <thead>
+      <tr>';
+  
+  if (empty($data)) {
+    $tablaHtml .= '<th>NO HAY DATOS QUE MOSTRAR</th>';
+    $tablaHtml .= '
+        </tr>
+      </thead>
+    </table>';
+    return $tablaHtml;
+  }
+  
+  $columnas = array_keys($data[0]); 
+
+  foreach ($columnas as $columna) {
+    $tablaHtml .= '<th>' . $columna . '</th>'; 
+  }
+
+  $tablaHtml .= '
+      </tr>
+    </thead>
+    <tbody>';
+
+  foreach ($data as $fila) {
+    $tablaHtml .= '<tr>';
+    foreach ($columnas as $columna) {
+      $valor = $fila[$columna];
+      if ($valor instanceof DateTime) {
+        $valor = $valor->format('Y-m-d');
+      }
+      $tablaHtml .= '<td data-label="' . $columna . '" >' . $valor . '</td>';
+    }
+    $tablaHtml .= '</tr>';
+  }
+  $tablaHtml .= '
+    </tbody>
+  </table>';
+
+  return $tablaHtml;
 }
 
 function determinaAnchoTipos($tipo,$EsCorto=false,$size=false,$namecol=false)
