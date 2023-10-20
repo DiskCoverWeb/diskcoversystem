@@ -307,7 +307,7 @@
 		// console.log(data.Autorizacion);
 		// console.log(data.Serie);
 		// console.log(data.Porc_IVA);
-		var TC = $('#TipoFactura').val();
+		var TC = data.TC;
 		if (TC == "NV") {
 			// Facturas.Caption = "INGRESAR NOTA DE VENTA"
 			$('#label2').text(data.Autorizacion + " NOTA DE VENTA No. " + data.Serie + "-");
@@ -687,6 +687,9 @@
 			'Reprocesar': $('#Reprocesar').val(),
 			'Cliente': $('#DCCliente').val(),
 			'Total': $('#LabelTotal').val(),
+			'TC':$('#TC').val(),
+			'Serie':$('#Serie').val(),
+			'Autorizacion':$('#Autorizacion').val()
 		}
 		$.ajax({
 			type: "POST",
@@ -811,9 +814,9 @@
 					}).then((result) => {
 						/* Read more about isConfirmed, isDenied below */
 						if (result.value) {
-							imprimir_multiple_CxC();
+							imprimir_multiple_CxC(data.data);
 						} else {
-							imprimir_facturas();
+							imprimir_facturas(data.data);
 						}
 					})
 				}
@@ -822,7 +825,7 @@
 	}
 
 
-	function imprimir_multiple_CxC() {
+	function imprimir_multiple_CxC(FAc) {
 		var FA = $("#FA").serialize();
 		var parametros = {
 			'TextObs': $('#TextObs').val(),
@@ -846,7 +849,7 @@
 		$.ajax({
 			type: "POST",
 			url: '../controlador/facturacion/facturarC.php?imprimir_factura_multiple=true&' + FA,
-			data: { parametros: parametros },
+			data: { parametros: FAc },
 			dataType: 'json',
 			success: function (data) {
 				if (data.res == 1) {
@@ -856,11 +859,11 @@
 		})
 	}
 
-	function imprimir_facturas() {
+	function imprimir_facturas(FA) {
 		$.ajax({
 			type: "POST",
 			url: '../controlador/facturacion/facturarC.php?imprimir_facturas=true&' + FA,
-			data: { parametros: parametros },
+			data: { parametros: FA },
 			dataType: 'json',
 			success: function (data) {
 				if (data.res == 1) {

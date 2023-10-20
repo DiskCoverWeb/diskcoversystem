@@ -1105,7 +1105,7 @@ class facturarC
          return array(
             'res' => -1,
             'men' => "No se procedio a grabar el documento 
-         '" . $FA['TC'] . "' No. '" . $FA['Serie'] . "' - '" . $FA['Factura'] . "' 
+         '" . $parametros['TC'] . "' No. '" . $parametros['Serie'] . "' - '" . $parametros['TextFacturaNo'] . "' 
          , revise los datos ingresados y vuelva a intentar"
          );
       }
@@ -1285,7 +1285,7 @@ class facturarC
          //Encerar Factura, deberia existir una variable $_SESSION['FA'] que maneje todo lo de FA.
 
 
-         return array('AU' => $respuesta, 'GR' => $respuesta2, 'pdf' => $imp, 'multiple' => $preguntaMultiple);
+         return array('AU' => $respuesta, 'GR' => $respuesta2, 'pdf' => $imp, 'multiple' => $preguntaMultiple, 'data' => $FA);
       //} else {
       //   return -1;
       //}
@@ -1302,6 +1302,7 @@ class facturarC
    {
       $FacturaDesde = $parametros['TextFacturaNo'];
       $FacturaHasta = $parametros['TextFacturaNo'];
+      $FA = $parametros;
       $FA['Tipo_PRN'] = 'FM';
       //Falta realizar el metodo Imprimir_Facturas_CxC
       return array('res' => 1);
@@ -1322,6 +1323,7 @@ class facturarC
 
    function imprimir_facturas($parametros)
    {
+      $FA = $parametros;
       $FA['Tipo_PRN'] = 'FM';
       //Falta realizar el metodo Imprimir_facturas($FA)
       return array('res' => 1);

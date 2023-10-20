@@ -208,6 +208,7 @@ class FAbonoAnticipadoC
     function GrabarComprobante($parametros)
     {
         $NumComp = ReadSetDataNum("Ingresos", True, True);
+        $Co = datos_Co();
         $Co['TP'] = G_COMPINGRESO;
         $Co['T'] = G_NORMAL;
         $Co['Fecha'] = $parametros['Fecha'];
@@ -231,7 +232,7 @@ class FAbonoAnticipadoC
         $Co['Item'] = $_SESSION['INGRESO']['item'];
         $Co['Usuario'] = $_SESSION['INGRESO']['CodigoU'];
         $Co['T_No'] = $parametros['Trans_No'];
-        //GrabarComprobante($Co);
+        GrabarComprobante($Co);
         return $Co;
     }
 
