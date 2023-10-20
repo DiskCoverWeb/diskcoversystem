@@ -174,7 +174,9 @@
 
   function guardar()
   {
-  		var ingresados = $('#txt_cant_total').val();
+  		var ingresados_kardex = $('#txt_cant_total').val();
+  		var ingresados_pedido = $('#txt_cant_total_pedido').val();
+
   		var total = $('#txt_cant').val();
   		var sucur = $('#ddl_sucursales').val();
   		if($("#pnl_sucursal").is(":visible")==true && sucur=='')
@@ -182,7 +184,7 @@
   			 Swal.fire('Seleccione una sucursal ','','info');
   			 return false;
   		}
-  		if(parseFloat(ingresados)< parseFloat(total))
+  		if((parseFloat(ingresados_kardex)+parseFloat(ingresados_pedido))< parseFloat(total))
   		{
   			 Swal.fire('No se ha completa todo el pedido ','Asegurese de que el pedido este completo','info');
   			 return false;

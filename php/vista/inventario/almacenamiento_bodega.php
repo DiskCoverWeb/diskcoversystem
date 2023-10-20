@@ -6,6 +6,7 @@
   $(document).ready(function () {
   	cargar_bodegas()
   	pedidos();
+  	lineas_pedidos();
   
 
 
@@ -48,7 +49,12 @@
       }
       $('#txt_temperatura').val(data.Porc_C); // save selected id to input
       $('#ddl_alimento').append($('<option>',{value: data.Cod_C, text:data.Proceso,selected: true }));
-      
+
+      lineas_pedidos();
+      if($('#txt_cod_bodega').val()!='.' && $('#txt_cod_bodega').val()!='')
+      {
+	    	contenido_bodega();
+      }
       
       // console.log(data);
     });
@@ -56,12 +62,28 @@
 
   })
 
-   function pedidos(){
+  function cargar_nombre_bodega(nombre,cod,nivel)
+  {
+  	if(nivel==1)
+  	{
+  		$('#txt_bodega_title').text('Ruta: ')  		
+  	}
+  	ruta = $('#txt_bodega_title').text();
+  	nombre = ruta+'/'+nombre;
+  	$('#txt_bodega_title').text(nombre);
+  	$('#txt_cod_bodega').val(cod);
+  	if(cod!='.')
+  	{
+  		contenido_bodega();
+  	}
+  }
+
+  function pedidos(){
   $('#txt_codigo').select2({
     placeholder: 'Seleccione una beneficiario',
     // width:'90%',
     ajax: {
-      url:   '../controlador/inventario/alimentos_recibidosC.php?search_contabilizado=true',          
+      url:   '../controlador/inventario/almacenamiento_bodegaC.php?search_contabilizado=true',          
       dataType: 'json',
       delay: 250,
       processResults: function (data) {
@@ -75,6 +97,25 @@
   });
 }
 
+function lineas_pedidos()
+{
+	var parametros = {
+		'num_ped':$('#txt_codigo').val(),
+	}
+ 	$.ajax({
+	    type: "POST",
+       url:   '../controlador/inventario/almacenamiento_bodegaC.php?lineas_pedido=true',
+	     data:{parametros:parametros},
+       dataType:'json',
+	    success: function(data)
+	    {
+	    	$('#lista_pedido').html(data);
+	    }
+	});
+
+  
+}
+
 
 function cargar_bodegas(nivel=1,padre='')
 {
@@ -84,7 +125,7 @@ function cargar_bodegas(nivel=1,padre='')
 	}
  	$.ajax({
 	    type: "POST",
-       url:   '../controlador/inventario/alimentos_recibidosC.php?lista_bodegas_arbol=true',
+       url:   '../controlador/inventario/almacenamiento_bodegaC.php?lista_bodegas_arbol=true',
 	     data:{parametros:parametros},
        dataType:'json',
 	    success: function(data)
@@ -101,6 +142,109 @@ function cargar_bodegas(nivel=1,padre='')
 	});
 
   
+}
+
+function asignar_bodega()
+{
+	 id = '';
+	 $('.rbl_pedido').each(function() {
+	    const checkbox = $(this);
+	    const isChecked = checkbox.prop('checked'); 
+	    if (isChecked) {
+	        id+= checkbox.val()+',';
+	    }
+	});
+
+	 bodega = $('#txt_cod_bodega').val();
+
+	if(bodega=='.' || bodega =='')
+	{
+		Swal.fire('Seleccione una bodega','','info');
+		return false;
+	}
+	if(id=='')
+	{
+		Swal.fire('Seleccione un pedido','','info');
+		return false;
+	}
+
+	var parametros = {
+		'id':id,
+		'bodegas':bodega,
+	}
+	$.ajax({
+	    type: "POST",
+       url:   '../controlador/inventario/almacenamiento_bodegaC.php?asignar_bodega=true',
+	     data:{parametros:parametros},
+       dataType:'json',
+	    success: function(data)
+	    {
+	    	lineas_pedidos()   	
+	    	contenido_bodega();
+	    }
+	});
+	
+}
+
+function desasignar_bodega()
+{
+	 id = '';
+	 $('.rbl_pedido_des').each(function() {
+	    const checkbox = $(this);
+	    const isChecked = checkbox.prop('checked'); 
+	    if (isChecked) {
+	        id+= checkbox.val()+',';
+	    }
+	});
+
+	 bodega = $('#txt_cod_bodega').val();
+
+	if(bodega=='.' || bodega =='')
+	{
+		Swal.fire('Seleccione una bodega','','info');
+		return false;
+	}
+	if(id=='')
+	{
+		Swal.fire('Seleccione un pedido','','info');
+		return false;
+	}
+
+	var parametros = {
+		'id':id,
+		'bodegas':bodega,
+	}
+	$.ajax({
+	    type: "POST",
+       url:   '../controlador/inventario/almacenamiento_bodegaC.php?desasignar_bodega=true',
+	     data:{parametros:parametros},
+       dataType:'json',
+	    success: function(data)
+	    {
+	    	lineas_pedidos()   	
+	    	contenido_bodega();
+	    }
+	});
+	
+}
+
+function contenido_bodega()
+{
+	var parametros = {
+		'num_ped':$('#txt_codigo').val(),
+		'bodega':$('#txt_cod_bodega').val(),
+	}
+ 	$.ajax({
+	    type: "POST",
+       url:   '../controlador/inventario/almacenamiento_bodegaC.php?contenido_bodega=true',
+	     data:{parametros:parametros},
+       dataType:'json',
+	    success: function(data)
+	    {
+	    	$('#contenido_bodega').html(data);
+	    }
+	});
+
 }
 
 
@@ -127,111 +271,79 @@ function cargar_bodegas(nivel=1,padre='')
 		<div class="box">
 			<form id="form_correos">
 			<div class="box-body" style="background: antiquewhite;">					
-				<div class="row">	
-					<div class="col-sm-4" id="">
+				<div class="row">						
+					<div class="col-sm-2">					
+							<b>Fecha de Ingreso:</b>
+							<input type="hidden" name="txt_id" id="txt_id">
+		          <input type="date" class="form-control input-xs" id="txt_fecha" name="txt_fecha" readonly>		
+		      </div>						
+					<div class="col-sm-3">
+			       	<b>Codigo de Ingreso:</b>
+			       	<input type="hidden" class="form-control input-xs" id="txt_codigo_p" name="txt_codigo_p" readonly>
+			        <select class="form-control input-xs" id="txt_codigo" name="txt_codigo">
+			           	<option>Seleccione</option>
+			        </select>
+			    </div>
+					<div class="col-sm-4">
+	            <b>PROVEEDOR / DONANTE</b>								
+								<input type="" class="form-control input-xs" id="txt_donante" name="txt_donante" readonly>
+					</div>
+					<div class="col-sm-3 text-right">
+						 	<b>CANTIDAD:</b>
+             	<input type="" class="form-control input-xs" id="txt_cant" name="txt_cant" readonly>	
+					</div>
+					<!-- <div class="col-sm-12 text-right">
+						<div class="row">
+							<div class="col-sm-10"></div>
+								<div class="col-sm-2">
+										<b>ALIMENTO RECIBIDO:</b>
+										<select class=" form-control input-xs form-select" id="ddl_alimento" name="ddl_alimento" disabled>
+		               		<option value="">Seleccione Alimento</option>
+		               	</select>										
+								</div>
+						</div>								
+						
+					</div> -->
+				</div>
+				<hr>
+				<div class="row">
+					<div class="col-sm-4">
 						<ul class="tree_bod" id="arbol_bodegas">
 						</ul>
 					</div>
-
-					<div class="col-sm-4">
-						<div class="row" style="padding-top: 5px;">
-							<div class="col-sm-6 text-right">
-								 <b>Fecha de Ingreso:</b>
+					<div class="col-sm-8">
+						<div class="row">
+							<div class="text-center col-sm-12">
 							</div>
-							<div class="col-sm-6">
-								<input type="hidden" name="txt_id" id="txt_id">
-		            			<input type="date" class="form-control input-xs" id="txt_fecha" name="txt_fecha" onblur="generar_codigo()" readonly>	
+							<div class="col-sm-5">
+								<div class="box box-success">
+										<div class="box-header">
+											<h3 class="box-title">Articulos de pedido</h3>
+										</div>
+										<div class="box-body">
+												<ul class="nav nav-pills nav-stacked" id="lista_pedido"></ul>											
+										</div>
+									</div>
 							</div>
-						</div>
-						<div class="row"  style="padding-top: 5px;">
-							<div class="col-sm-6 text-right">
-			                 	<b>Codigo de Ingreso:</b>
-			               	</div>							
-			               	<div class="col-sm-6">
-				                	<input type="hidden" class="form-control input-xs" id="txt_codigo_p" name="txt_codigo_p" readonly>
-			                   <select class="form-control input-xs" id="txt_codigo" name="txt_codigo">
-			                   	<option>Seleccione</option>
-			                   </select>
-			                </div>
-						</div>						
-						<div class="row"  style="padding-top: 5px;">
-							<div class="col-sm-6 text-right">
-								 <b>RUC / CI</b>
+							<div class="col-sm-2 text-center">
+								<button class="btn btn-primary" type="button" onclick="asignar_bodega()"><i class="fa fa-arrow-right"></i></button>	
+								<br>
+								<button class="btn btn-primary" type="button" onclick="desasignar_bodega()"><i class="fa fa-arrow-left"></i></button>								
 							</div>
-							<div class="col-sm-6">
-	                         	<input type="" class="form-control input-xs" id="txt_ci" name="txt_ci" readonly>								
-							</div>
-						</div>
-						<div class="row"  style="padding-top: 5px;">
-							<div class="col-sm-6 text-right">
-	                           <b>PROVEEDOR / DONANTE</b>								
-							</div>
-							<div class="col-sm-6">
-								<input type="" class="form-control input-xs" id="txt_donante" name="txt_donante" readonly>
+							<div class="col-sm-5">
+								<div class="box box-success">
+										<div class="box-header">
+											<h3 class="box-title" id="txt_bodega_title">Ruta: </h3>
+											<input type="hidden" class="form-control input-xs" id="txt_cod_bodega" name="txt_cod_bodega" readonly>
+										</div>
+										<div class="box-body">
+											<ul class="nav nav-pills nav-stacked" id="contenido_bodega"></ul>						
+										</div>
+									</div>								
 							</div>
 						</div>
-						<div class="row"  style="padding-top: 5px;">
-							<div class="col-sm-6 text-right">
-								 <b>TIPO DONANTE:</b>								
-							</div>
-							<div class="col-sm-6">
-								<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
-							</div>
-						</div>
-						<div class="row"  style="padding-top: 5px;">
-							<div class="col-sm-6 text-right">
-								 <b>Bodega seleccionada:</b>								
-							</div>
-							<div class="col-sm-6">
-								<input type="" class="form-control input-xs" id="txt_bodega" name="txt_bodega" readonly>
-							</div>
-						</div>
+						
 					</div>
-					<div class="col-sm-4">
-						<div class="row"  style="padding-top: 5px;">
-							<div class="col-sm-6 text-right">
-								<b>ALIMENTO RECIBIDO:</b>
-							</div>
-							<div class="col-sm-6">
-								<select class=" form-control input-xs form-select" id="ddl_alimento" name="ddl_alimento" disabled>
-               		<option value="">Seleccione Alimento</option>
-               	</select>								
-							</div>
-						</div>
-						<div class="row"  style="padding-top: 5px;">
-							<div class="col-sm-6 text-right">
-								 <b>CANTIDAD:</b>
-							</div>
-							<div class="col-sm-6">
-	                        	 <input type="" class="form-control input-xs" id="txt_cant" name="txt_cant" readonly>	
-							</div>
-						</div>
-						<div class="row"  style="padding-top: 5px;">
-							<div class="col-sm-6 text-right">
-								<b>COMENTARIO:</b>
-							</div>
-							<div class="col-sm-6">
-	                <input type="" class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly>
-							</div>
-						</div>
-						<div class="row" id="panel_serie"  style="padding-top: 5px;">
-							<div class="col-sm-6 text-right">
-								<b>TEMPERATURA DE RECEPCION °C</b>
-							</div>
-							<div class="col-sm-6">
-	                <input type="text" name="txt_temperatura" id="txt_temperatura" class="form-control input-xs"  readonly>
-							</div>
-						</div>
-						<div class="row" id="panel_serie"  style="padding-top: 5px;">
-							<div class="col-sm-6 text-right">
-								<b>ESTADO DE TRANSPORTE</b>
-							</div>
-							<div class="col-sm-6 text-center">
-								<img src="" id="img_estado">
-							</div>
-						</div>
-					
-					</div>					
 				</div>
 			</div>
 			</form>
@@ -241,44 +353,3 @@ function cargar_bodegas(nivel=1,padre='')
 
 
  <script src="../../dist/js/arbol_bodegas/arbol_bodega.js"></script>
-<script type="text/javascript">
-	
-
-  function agregar()
-  {
-  	
-  	var parametros = $("#form_add_producto").serialize();    
-    var parametros2 = $("#form_correos").serialize();
-       $.ajax({
-         data:  parametros2+'&txt_referencia='+$('#txt_referencia').val()+'&txt_referencia2='+$('#txt_referencia2').val(),
-         url:   '../controlador/inventario/alimentos_recibidosC.php?guardar_recibido=true',
-         type:  'post',
-         dataType: 'json',
-           success:  function (response) { 
-
-            // console.log(response);
-           if(response.resp==1)
-           {
-            $('#txt_pedido').val(response.ped);
-              Swal.fire({
-                type:'success',
-                title: 'Agregado a pedido',
-                text :'',
-              }).then( function() {              		
-                   cargar_pedido();              		
-              });
-
-            // Swal.fire('','Agregado a pedido.','success');
-            limpiar();
-            // location.reload();
-           }else
-           {
-            Swal.fire('','Algo extraño a pasado.','error');
-           }           
-         }
-       });    
-
-    
-  }
-
-</script>
