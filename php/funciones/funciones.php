@@ -11715,6 +11715,8 @@ function SetAdoUpdateGeneric(){
 
   $DatosSelect = CompilarSQL($DatosSelect);
   unset($_SESSION['SetAdoAddNew']['SetAdoWhere']);
+
+  // print_r($DatosSelect);die();
   return Ejecutar_SQL_SP($DatosSelect);
 }
 

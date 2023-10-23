@@ -106,7 +106,7 @@
       // 	$('#modal_producto_2').modal('show');
       // }
 
-      if(data.Cod_R=='0')
+      if(data.Cod_R=='0' || data.Cod_R=='.')
       {
       	$('#img_estado').attr('src','../../img/png/bloqueo.png');
       }else
@@ -124,7 +124,6 @@
      
       // console.log(data);
     });
-
 
   })
 
@@ -174,7 +173,9 @@
 
   function guardar()
   {
-  		var ingresados = $('#txt_cant_total').val();
+  		var ingresados_kardex = $('#txt_cant_total').val();
+  		var ingresados_pedido = $('#txt_cant_total_pedido').val();
+
   		var total = $('#txt_cant').val();
   		var sucur = $('#ddl_sucursales').val();
   		if($("#pnl_sucursal").is(":visible")==true && sucur=='')
@@ -182,7 +183,7 @@
   			 Swal.fire('Seleccione una sucursal ','','info');
   			 return false;
   		}
-  		if(parseFloat(ingresados)< parseFloat(total))
+  		if((parseFloat(ingresados_kardex)+parseFloat(ingresados_pedido))< parseFloat(total))
   		{
   			 Swal.fire('No se ha completa todo el pedido ','Asegurese de que el pedido este completo','info');
   			 return false;
@@ -433,9 +434,11 @@ function autocoplet_ingreso()
   	$('#txt_id_linea_pedido').val(id);
   	$('#modal_producto_2').modal('show');
   }
-    function show_cantidad()
+  function show_cantidad()
   {
   	$('#modal_cantidad').modal('show');
+    $("#modal_cantidad #txt_cantidad2").focus();
+    // $('#txt_cantidad2').trigger( "focus");
   }
 
   function cambiar_cantidad()
@@ -677,8 +680,8 @@ function autocoplet_ingreso()
 									</div>
 									<div class="col-sm-6" style="padding-left: 1px;">
 										<div class="input-group">
-										  <span class="input-group-addon input-xs">Dif</span>											
-										  <input type="" class="form-control input-xs" id="txt_faltante" name="txt_faltante" readonly>
+										  <span class="input-group-addon input-xs"><b style="font-size: 14px;">Dif</b></span>											
+										  <b><input type="" class="form-control input-xs" id="txt_faltante" style="font-size:14px;" name="txt_faltante" readonly></b>
 										</div>
 									</div>
 								</div>
@@ -689,7 +692,7 @@ function autocoplet_ingreso()
 								<b>COMENTARIO:</b>
 							</div>
 							<div class="col-sm-6">
-	                <input type="" class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly>
+                 <textarea id="txt_comentario" name="txt_comentario"disabled class="form-control input-sm"></textarea>
 							</div>
 						</div>
 						<div class="row" id="panel_serie"  style="padding-top: 5px;">
