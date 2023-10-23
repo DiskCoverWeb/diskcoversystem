@@ -22,7 +22,7 @@
 
   <script src="../../dist/js/adminlte.min.js"></script>
   <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-  <script src="../../dist/js/pages/dashboard.js"></script>
+  <!-- <script src="../../dist/js/pages/dashboard.js"></script> -->
   <!-- AdminLTE for demo purposes -->
   <script src="../../dist/js/demo.js"></script>
   <script src="../../dist/js/js_globales.js?<?php echo date('y') ?>"></script>
