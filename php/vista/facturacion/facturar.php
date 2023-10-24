@@ -160,7 +160,7 @@
 			success: function (data) {
 				llenarComboList(data, 'DCLineas');
 				$('#Cod_CxC').val(data[0].nombre);  //FA
-				Lineas_De_CxC();
+				//Lineas_De_CxC();
 			}
 		});
 	}
@@ -192,9 +192,10 @@
 		{
 			'TC': TC,
 			'Fecha': $('#MBoxFecha').val(),
-			'Cod_CxC': cod_CXC,
+			'Cod_CxC': $('#DCLineas option:selected').text(),
 			'Vencimiento': $('#MBoxFechaV').val(),
 		}
+		//console.log(parametros['Cod_CxC']);
 
 		$.ajax({
 			type: "POST",
@@ -202,7 +203,7 @@
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
-				console.log(data.TFA);
+				console.log(data.TFA.NoFactura);
 				$("#TC").val(data.TFA.TC);   //FA
 				$("#Autorizacion").val(data.TFA.Autorizacion);   //FA
 				$("#CantFact").val(data.TFA.CantFact);   //FA
@@ -306,7 +307,7 @@
 		// console.log(data.Autorizacion);
 		// console.log(data.Serie);
 		// console.log(data.Porc_IVA);
-		var TC = $('#TipoFactura').val();
+		var TC = data.TC;
 		if (TC == "NV") {
 			// Facturas.Caption = "INGRESAR NOTA DE VENTA"
 			$('#label2').text(data.Autorizacion + " NOTA DE VENTA No. " + data.Serie + "-");
@@ -686,6 +687,9 @@
 			'Reprocesar': $('#Reprocesar').val(),
 			'Cliente': $('#DCCliente').val(),
 			'Total': $('#LabelTotal').val(),
+			'TC':$('#TC').val(),
+			'Serie':$('#Serie').val(),
+			'Autorizacion':$('#Autorizacion').val()
 		}
 		$.ajax({
 			type: "POST",
@@ -699,7 +703,17 @@
 				} else if (data.res == -3) {
 					alerta_reprocesar('Formulario de Confirmación', data.men);
 				} else if (data.res == 1) {
-					Abonos();
+					Abonos(data.data);
+				} else if (data.res == -1) {
+					Swal.fire({
+						title: 'Algo salió mal',
+						text: data.men,
+						type: 'error',
+						showCancelButton: true,
+						confirmButtonColor: '#3085d6',
+						cancelButtonColor: '#d33',
+						confirmButtonText: 'Ok'
+					})
 				}
 
 			}
@@ -743,7 +757,7 @@
 	}
 
 
-	function Autorizar_Factura_Actual() {
+	function Autorizar_Factura_Actual(FAc) {
 		$('#myModal_espera').modal('show');
 		var FA = $("#FA").serialize();
 		var parametros = {
@@ -768,7 +782,7 @@
 		$.ajax({
 			type: "POST",
 			url: '../controlador/facturacion/facturarC.php?Autorizar_Factura_Actual=true&' + FA,
-			data: { parametros: parametros },
+			data: { parametros: FAc },
 			dataType: 'json',
 			success: function (data) {
 
@@ -790,13 +804,28 @@
 
 				} else if (data.AU.respuesta == 3) {
 					Swal.fire('Factura Autorizada', '', 'success');
+				} else if (data.multiple == 'multiple') {
+					Swal.fire({
+						type: 'info',
+						title: 'IMPRESION',
+						text: 'Facturación Multiple',
+						confirmButtonText: 'Ok!',
+						allowOutsideClick: false,
+					}).then((result) => {
+						/* Read more about isConfirmed, isDenied below */
+						if (result.value) {
+							imprimir_multiple_CxC(data.data);
+						} else {
+							imprimir_facturas(data.data);
+						}
+					})
 				}
 			}
 		})
 	}
 
 
-	function imprimir_multiple() {
+	function imprimir_multiple_CxC(FAc) {
 		var FA = $("#FA").serialize();
 		var parametros = {
 			'TextObs': $('#TextObs').val(),
@@ -819,14 +848,26 @@
 		}
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/facturarC.php?imprimir_factura=true&' + FA,
-			data: { parametros: parametros },
+			url: '../controlador/facturacion/facturarC.php?imprimir_factura_multiple=true&' + FA,
+			data: { parametros: FAc },
 			dataType: 'json',
 			success: function (data) {
-				if (data.AU.respuesta == 1) {
+				if (data.res == 1) {
 					Swal.fire('Factura Autorizada', '', 'success');
-					console.log(data);
-					imprimir();
+				}
+			}
+		})
+	}
+
+	function imprimir_facturas(FA) {
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/facturarC.php?imprimir_facturas=true&' + FA,
+			data: { parametros: FA },
+			dataType: 'json',
+			success: function (data) {
+				if (data.res == 1) {
+					Swal.fire('Factura Autorizada', '', 'success');
 				}
 			}
 		})
@@ -845,22 +886,40 @@
 			confirmButtonText: 'Si!'
 		}).then((result) => {
 			if (result.value == true) {
-
-				if (FA == "OP") {
-					var grupo = $('#DCGrupo_No').val();
-					var faFactura = $('#NoFactura').val();
-					src = "../vista/modales.php?FAbonoAnticipado=true&tipo=FA&grupo=" + grupo + "&faFactura=" + faFactura;
-					$('#frame_anticipado').attr('src', src).show();
-					$('#my_modal_abono_anticipado').modal('show');
+				if (FA['TC'] == "OP") {
+					Swal.fire({
+						title: 'Formulario de Grabación',
+						text: 'Anticipo de Abono',
+						type: 'info',
+						showCancelButton: true,
+						confirmButtonText: 'Si!'
+					}).then((result) => {
+						if (result.value == true) {
+							var grupo = $('#DCGrupo_No').val();
+							var faFactura = $('#TextFacturaNo').val();
+							src = "../vista/modales.php?FAbonoAnticipado=true&tipo=FA&grupo=" + grupo + "&faFactura=" + faFactura;
+							$('#frame_anticipado').attr('src', src).show();
+							$('#my_modal_abono_anticipado').modal('show');
+						}
+					})
 				} else {
-					src = "../vista/modales.php?FAbonos=true";
-					$('#frame').attr('src', src).show();
-					$('#my_modal_abonos').modal('show');
-					// Autorizar_Factura_Actual();
+					Swal.fire({
+						title: 'Formulario de Grabación',
+						text: 'Pago al Contado',
+						type: 'info',
+						showCancelButton: true,
+						confirmButtonText: 'Si!'
+					}).then((result) => {
+						if (result.value == true) {
+							src = "../vista/modales.php?FAbonos=true";
+							$('#frame').attr('src', src).show();
+							$('#my_modal_abonos').modal('show');
+						}
+					})
 				}
-			} else {
-				Autorizar_Factura_Actual();
 			}
+			Autorizar_Factura_Actual(FA);
+
 		})
 	}
 
@@ -951,12 +1010,7 @@
 
 	}
 	function boton3() {
-		//Listar_Ordenes();
-		var grupo = $('#DCGrupo_No').val();
-		var faFactura = $('#NoFactura').val();
-		src = "../vista/modales.php?FAbonoAnticipado=true&tipo=FA&grupo=" + grupo + "&faFactura=" + faFactura;
-		$('#frame_anticipado').attr('src', src).show();
-		$('#my_modal_abono_anticipado').modal('show');
+		Listar_Ordenes();
 	}
 	function boton4() {
 		$('#myModal_guia').modal('show');
@@ -1320,7 +1374,7 @@
                 </div>';
 		}
 		?>
-		
+
 		<?php createButton("Grabar factura", "../../img/png/grabar.png", "boton1()", "btnGrabar"); ?>
 		<?php createButton("Actualizar Productos, Marcas y Bodegas", "../../img/png/update.png", "boton2()", "btnActualizar"); ?>
 		<?php createButton("Asignar orden de trabajo", "../../img/png/taskboard.png", "boton3()", "btnOrden"); ?>

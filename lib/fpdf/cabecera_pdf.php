@@ -518,6 +518,189 @@ class cabecera_pdf
 		// $this->pdftable->Output();
 	}
 
+	function Imprimir_Punto_Venta($info,$descagar=true)
+	{	
+		// print_r($info);die();
+		// print_r($_SESSION['INGRESO']);
+		// $orientation='P',$unit='mm', array(45,350)
+		if(isset($_SESSION['INGRESO']['Logo_Tipo']))
+		   {
+		   	$logo=$_SESSION['INGRESO']['Logo_Tipo'];
+		   	//si es jpg
+		   	$src = dirname(__DIR__,2).'/img/logotipos/'.$logo.'.jpg'; 
+		   	if(!file_exists($src))
+		   	{
+		   		$src = dirname(__DIR__,2).'/img/logotipos/'.$logo.'.gif'; 
+		   		if(!file_exists($src))
+		   		{
+		   			$src = dirname(__DIR__,2).'/img/logotipos/'.$logo.'.png'; 
+		   			if(!file_exists($src))
+		   			{
+		   				$logo="diskcover_web";
+		                $src= dirname(__DIR__,2).'/img/logotipos/'.$logo.'.gif';
+
+		   			}
+
+		   		}
+
+		   	}
+		  }
+
+
+		$pdf = new FPDF();
+		$pdf->setMargins(2,5);
+		$pdf->SetFont('Arial','B',8);
+		$pdf->AddPage('P');
+		// print_r($info);die();
+		
+        $pdf->Image($src,5,5,25,10); 
+
+		$pdf->SetX(45);
+		$pdf->Cell(25,5,'R.U.C',0,1);
+		$pdf->SetX(40);
+		$pdf->Cell(25,5,$_SESSION['INGRESO']['RUC'],0,1);		
+		$pdf->SetX(40);
+		$pdf->Cell(0,0,'Telefono: '.$_SESSION['INGRESO']['Telefono1'],'',1);
+		$pdf->Ln(5);	
+		if($_SESSION['INGRESO']['Nombre_Comercial']==$_SESSION['INGRESO']['Razon_Social'])
+		{
+			$pdf->Cell(70,0,$_SESSION['INGRESO']['Razon_Social'],0,1,'C');
+			$pdf->Ln(5);
+		}else{
+			$pdf->Cell(70,0,$_SESSION['INGRESO']['Razon_Social'],0,1,'C');
+			$pdf->Ln(5);
+			$pdf->Cell(70,0,$_SESSION['INGRESO']['Nombre_Comercial'],0,1,'C');
+			$pdf->Ln(5);
+		}
+		$pdf->SetFont('Arial','B',7);
+		$pdf->Cell(0,0,'Direccion Matriz:');
+		$pdf->Ln(5);		
+		$pdf->SetFont('Arial','',7);
+		$pdf->Cell(0,0,$_SESSION['INGRESO']['Direccion']);
+		$pdf->SetFont('Arial','B',7);
+		$pdf->Ln(5);
+		$pdf->Cell(0,0,'FECHA DE EMISION: '.$info['factura'][0]['Fecha']->format('Y-m-d'),0,1);
+		$pdf->Ln(3);		
+		$pdf->Cell(0,0,'DOCUMENTO DE FA No. '.$info['factura'][0]['Serie'].'-'.generaCeros($info['factura'][0]['Factura'],7),0,1);
+		$pdf->Ln(3);
+		$amb = 'PRUEBA';
+		if($_SESSION['INGRESO']['Ambiente']==2){$amb='PRODUCCION';}
+		$pdf->Cell(0,0,'AMBIENTE:'.$amb,0,1);
+		$pdf->Ln(3);
+		$pdf->Cell(0,0,'CLAVE DE ACCESO:',0,1);
+		$pdf->Ln(3);
+		$pdf->Cell(0,0,$info['CLAVE'],0,1);
+		$pdf->Ln(3);
+		$pdf->SetFont('Arial','',7);
+		$l = $pdf->GetY();
+		$pdf->Line(0,$l,70,$l);
+		$pdf->SetFont('Arial','B',7);
+		$pdf->Ln(5);
+		$pdf->Cell(70,0,'Razon Social/Nombres y Apellidos: ');
+		$pdf->SetFont('Arial','',7);
+		$pdf->Ln(5);
+		$pdf->Cell(70,0,mb_convert_encoding( $info['factura'][0]['Razon_Social'], 'UTF-8'));
+		$pdf->Ln(3);
+		$pdf->SetFont('Arial','B',7);
+		$pdf->Cell(18,0,'Identificacion: ');
+		$pdf->SetFont('Arial','',7);
+		$pdf->Cell(20,0,$info['factura'][0]['RUC_CI']);
+		$pdf->SetFont('Arial','B',7);
+		$pdf->Cell(15,0,'Telef.:');
+		$pdf->SetFont('Arial','',7);
+		$pdf->Cell(17,0,$info['factura'][0]['Telefono']);
+		$pdf->Ln(3);
+		$pdf->SetFont('Arial','B',7);
+		$pdf->Cell(70,0,'Correo Electronico:');
+		$pdf->Ln(3);		
+		$pdf->SetFont('Arial','',7);
+		$pdf->Cell(70,0,$info['factura'][0]['Email']);
+		$pdf->Ln(5);		
+		$l = $pdf->GetY();
+		$pdf->Line(0,$l,70,$l);
+		$pdf->Ln(3);
+		$pdf->SetFont('Arial','B',6);
+		$pdf->Cell(8,0,'Cant.');
+		$pdf->Cell(39,0,'P R O D U C T O');
+		$pdf->Cell(10,0,'P.V.P.',0,0,'R');
+		$pdf->Cell(10,0,'TOTAL',0,1,'R');
+		$pdf->Ln(3);		
+		$pdf->SetFont('Arial','',7);
+		$l = $pdf->GetY();
+		$pdf->Line(0,$l,70,$l);
+		$pdf->Ln(3);
+		$pdf->SetFont('Arial','',6);
+
+		foreach ($info['lineas'] as $key => $value) {
+			$y = $pdf->GetY();
+			$pdf->Cell(8,2,$value['Cantidad']);
+			$pdf->MultiCell(35,2,mb_convert_encoding($value['Producto'], 'ISO-8859-1','UTF-8'));
+			$pdf->SetXY(48,$y);
+			$pdf->Cell(10,2,number_format($value['Precio'],2,'.',''),0,0,'R');
+			$pdf->Cell(10,2,number_format($value['Total'],2,'.',''),0,1,'R');
+			$pdf->Ln(3);
+			// $pdf->Row($value,null,1);
+    	}
+
+		$l = $pdf->GetY();
+		$pdf->Line(0,$l,70,$l);
+
+		$pdf->Ln(5);
+		$pdf->Cell(36,0,'Cajero: 0702X79');
+		$pdf->SetFont('Arial','B',7);
+		$pdf->Cell(20,0,'SUBTOTAL.');		
+		$pdf->SetFont('Arial','',7);
+		$pdf->Cell(10,0,number_format($info['factura'][0]['SubTotal'],2,'.',''),0,0,'R');
+		$pdf->Ln(3);
+
+		$pdf->Cell(36,0,'');
+		$pdf->SetFont('Arial','B',7);
+		$pdf->Cell(20,0,'DESCUENTO');		
+		$pdf->SetFont('Arial','',7);
+		$pdf->Cell(10,0,number_format($info['factura'][0]['Descuento'],2,'.',''),0,0,'R');
+		$pdf->Ln(3);
+
+		$pdf->SetFont('Arial','B',7);
+		$pdf->Cell(36,0,'');
+		$pdf->Cell(20,0,'I.V.A. 12%');
+		$pdf->SetFont('Arial','',7);
+		$pdf->Cell(10,0,number_format($info['factura'][0]['IVA'],2,'.',''),0,0,'R');
+		$pdf->Ln(3);
+
+		$pdf->SetFont('Arial','B',7);
+		$pdf->Cell(36,0,'');
+		$pdf->Cell(20,0,'T O T A L');		
+		$pdf->SetFont('Arial','',7);
+		$pdf->Cell(10,0,number_format($info['factura'][0]['Total_MN'],2,'.',''),0,0,'R');
+		$pdf->Ln(5);
+		$l = $pdf->GetY();
+		$pdf->Line(0,$l,70,$l);
+		$pdf->Ln(5);
+
+		$pdf->SetFont('Arial','',11);
+		$pdf->Cell(70,0,'GRACIAS POR SU COLABORACION',0,1,'C');
+		$pdf->SetFont('Arial','',7);
+		$pdf->Ln(3);
+		$pdf->Cell(70,0,'www.diskcoversystem.com',0,1,'C');
+
+
+
+		if($descagar)
+		{
+			$pdf->Output('F',dirname(__DIR__,2).'/TEMP/'.$info['factura'][0]['Serie'].'-'.generaCeros($info['factura'][0]['Factura'],7).'.pdf');
+		}else
+		{
+     		$pdf->Output();
+		}
+		
+		// $this->FPDF->AddPage('P');
+ 	//  	$this->pdftable->SetFont('Arial','',18);
+ 	//  	$this->pdftable->Cell(0,3,'Prueba',0,0,'C');
+ 	//  	$this->pdftable->Ln(5);
+		// //$this->pdftable->WriteHTML($HTML);
+		// $this->pdftable->Output();
+	}
+
 
 	function DeudapendientePensionesPDF($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$sal_hea_body=30,$orientacion='P',$download=true)
 	{	
