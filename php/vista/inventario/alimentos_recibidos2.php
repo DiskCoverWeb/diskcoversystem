@@ -675,13 +675,13 @@ function autocoplet_ingreso()
 							</div>
 							<div class="col-sm-6">
 								<div class="row">
-									<div class="col-sm-6" style="padding-right:1px">
-										  <input type="" class="form-control input-xs" id="txt_cant" name="txt_cant" readonly value="0">	
+									<div class="col-sm-5" style="padding-right:1px">
+										  <input type="" class="form-control" id="txt_cant" style="font-size:20px; padding: 3px;" name="txt_cant" readonly value="0">	
 									</div>
-									<div class="col-sm-6" style="padding-left: 1px;">
+									<div class="col-sm-7" style="padding-left: 1px;">
 										<div class="input-group">
-										  <span class="input-group-addon input-xs"><b style="font-size: 14px;">Dif</b></span>											
-										  <b><input type="" class="form-control input-xs" id="txt_faltante" style="font-size:14px;" name="txt_faltante" readonly></b>
+										  <span class="input-group-addon input-xs"><b style="font-size: 18px;">Dif</b></span>											
+										  <b><input type="" class="form-control" id="txt_faltante" style="font-size:20px; padding: 3px;" name="txt_faltante" readonly></b>
 										</div>
 									</div>
 								</div>

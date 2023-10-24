@@ -208,121 +208,20 @@ class almacenamiento_bodegaM
 		// print_r($sql);die();
 		return $this->db->datos($sql);
 	}
-	// function cargar_productos($query=false,$pag=false)
-	// {
-	// 	if($pag==false)
-	// 	{
-	// 		$pag = 0;
-	// 	}
-	// 	$sql = "SELECT ID,Codigo_Inv,Producto,TC,Minimo,Maximo,Cta_Inventario,Unidad,Ubicacion,IVA,Reg_Sanitario,PVP,TDP 
-	// 	FROM Catalogo_Productos  
-	// 	WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-	// 	AND item='".$_SESSION['INGRESO']['item']."'  
-	// 	AND TC='P' 
-	// 	AND LEN(Cta_Inventario)>3 
-	// 	AND LEN(Cta_Costo_Venta)>3 
-	// 	AND LEN(Item_Banco)>= 2 
-	// 	AND LEN(Item_Banco)<= 5 ";
-	// 	if($query) 
-	// 	{
-	// 		$sql.=" AND Codigo_Inv+' '+Producto LIKE '%".$query."%'";
-	// 	}
-	// 	$sql.=" ORDER BY ID OFFSET ".$pag." ROWS FETCH NEXT 25 ROWS ONLY;";
-		
-	// 	// print_r($sql);die();
-	// 	$datos = $this->db->datos($sql);
-    //    return $datos;
-	// }
-	// function familia_pro($Codigo=false,$query= false,$exacto=false)
-	// {
-	// 	$sql = "SELECT ID,Codigo_Inv,Producto,TC,Minimo,Maximo,Cta_Inventario,Unidad,Item_Banco,PVP,TDP 
-	// 	        FROM Catalogo_Productos  
-	// 	        WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-	// 	        AND item='".$_SESSION['INGRESO']['item']."'  
-	// 	        AND TC='P' 
-	// 	        AND INV='1'";
-	// 	if($Codigo)
-	// 	{
-	// 		$sql.="	 AND Codigo_Inv ='".$Codigo."'"; 
-	// 	}
-	// 	if($query)
-	// 	{
-	// 		if($exacto)
-	// 		{
-	// 			$sql.= " and Producto = '".$query."'";
-	// 		}else
-	// 		{
-	// 			$sql.= " and Producto LIKE '%".$query."%'";
-	// 		}
-	// 	}
-	// 	$sql.= " ORDER BY Producto";
-	// 	// print_r($sql);die();
-	// 	return $this->db->datos($sql);
-
-	// }
-
-	// function cargar_productos2($query=false,$pag=false)
-	// {
-	// 	if($pag==false)
-	// 	{
-	// 		$pag = 0;
-	// 	}
-	// 	$sql = "SELECT ID,Codigo_Inv,Producto,TC,Minimo,Maximo,Cta_Inventario,Unidad,Ubicacion,IVA,Reg_Sanitario,PVP,TDP 
-	// 	FROM Catalogo_Productos  
-	// 	WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-	// 	AND item='".$_SESSION['INGRESO']['item']."'  
-	// 	AND TC='P' 
-	// 	AND TDP <> 'R'
-	// 	AND LEN(Cta_Inventario)>3 
-	// 	AND LEN(Cta_Costo_Venta)>3 
-	// 	AND LEN(Item_Banco)>= 2 
-	// 	AND LEN(Item_Banco)<= 5 ";
-	// 	if($query) 
-	// 	{
-	// 		$sql.=" AND Codigo_Inv+' '+Producto LIKE '%".$query."%'";
-	// 	}
-	// 	$sql.=" ORDER BY ID OFFSET ".$pag." ROWS FETCH NEXT 25 ROWS ONLY;";
-		
-	// 	// print_r($sql);die();
-	// 	$datos = $this->db->datos($sql);
-    //    return $datos;
-	// }
-	// function familia_pro2($Codigo=false,$query= false,$exacto=false)
-	// {
-	// 	$sql = "SELECT ID,Codigo_Inv,Producto,TC,Minimo,Maximo,Cta_Inventario,Unidad,Item_Banco,PVP,TDP 
-	// 	        FROM Catalogo_Productos  
-	// 	        WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-	// 	        AND item='".$_SESSION['INGRESO']['item']."'  
-	// 	        AND TC='P' 
-	// 	        AND TDP <> 'R'
-	// 	        AND INV='1'";
-	// 	if($Codigo)
-	// 	{
-	// 		$sql.="	 AND Codigo_Inv ='".$Codigo."'"; 
-	// 	}
-	// 	if($query)
-	// 	{
-	// 		if($exacto)
-	// 		{
-	// 			$sql.= " and Producto = '".$query."'";
-	// 		}else
-	// 		{
-	// 			$sql.= " and Producto LIKE '%".$query."%'";
-	// 		}
-	// 	}
-	// 	$sql.= " ORDER BY Producto";
-	// 	// print_r($sql);die();
-	// 	return $this->db->datos($sql);
-
-	// }
 
 
 
-	// function eliminar_pedido($id)
-	// {
-	// 	$sql = "DELETE FROM Trans_Correos WHERE ID = '".$id."'";
-	// 	return $this->db->String_Sql($sql);
-	// }
+	function ruta_bodega_select($ruta)
+	{
+		$sql = "SELECT TC, CodBod, Bodega, Item, Periodo, X, ID
+		FROM Catalogo_Bodegas
+		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND CodBod in (".$ruta.")
+		order by CodBod ASC ";
+
+		return $this->db->datos($sql);
+	}
 
 	function bodegas($nivel=false)
 	{
