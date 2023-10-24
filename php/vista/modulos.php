@@ -36,6 +36,12 @@
 			$minutos = 6;
 			val_estado($minutos);
 
+			echo '<script>
+			console.log("IPWAN", " '. $_SESSION['INGRESO']['IP_Wan_TEST'] .' ");
+			console.log("IPLOCAL","' . $_SESSION['INGRESO']['IP_Local_TEST'] . '");
+			console.log("PCNAME","' . $_SESSION['INGRESO']['PC_NAME_TEST'] . '");
+			</script>';
+
 
 
 			if ($todo == true) {
@@ -71,9 +77,7 @@
 			}
 		});
 	}
-	var test = '<php? echo $_SERVER["HTTP_X_FORWARDED_FOR"]; ?>';
-	console.log("IP CON PHP",test);
 
-	getInfo();
+	//getInfo();
 </script>
 <?php include('../headers/footer.php'); ?>
