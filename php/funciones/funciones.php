@@ -9051,6 +9051,91 @@ function  Imprimir_Punto_Venta_Grafico_datos($TFA)
  
 }
 
+function  Imprimir_Punto_Venta_datos($TFA)
+{
+
+  // print_r($TFA);die();
+   $conn = new db();
+   $ContEspec = Leer_Campo_Empresa("Codigo_Contribuyente_Especial");
+   $Obligado_Conta = Leer_Campo_Empresa("Obligado_Conta");
+   $SetNombrePRN = Leer_Campo_Empresa("Impresora_Defecto");
+   $Ambiente = '';
+  
+   // $SubTotal = 0: $Total = 0: $Total_IVA = 0: $Total_Desc = 0: $Cant_Ln = 0
+   $sql='';
+   if($TFA['TC'] == "PV"){
+         $sql = "SELECT F.*,C.Cliente,C.CI_RUC,C.Telefono,C.Direccion,C.Ciudad,C.Grupo,C.Email 
+           FROM Trans_Ticket As F,Clientes As C 
+           WHERE F.Ticket = ".$TFA['Factura']." 
+           AND F.TC = '".$TFA['TC']."' 
+           AND F.Periodo = '".$_SESSION['INGRESO']['periodo']. "' 
+           AND F.Item = '".$_SESSION['INGRESO']['item']."' 
+           AND C.Codigo = F.CodigoC ";
+   }else{
+         $sql = "SELECT F.*,C.Cliente,C.CI_RUC,C.Telefono,C.Direccion,C.Ciudad,C.Grupo,C.Email
+           FROM Facturas As F,Clientes As C
+           WHERE F.Factura = ".$TFA['Factura']."
+           AND F.TC = '".$TFA['TC']."'
+           AND F.Serie = '".$TFA['Serie']."'
+           AND F.Periodo = '".$_SESSION['INGRESO']['periodo']. "'
+           AND F.Item = '".$_SESSION['INGRESO']['item']."'
+           AND C.Codigo = F.CodigoC ";
+   }
+
+   // print_r($sql);
+   $datos = $conn->datos($sql);
+   // print_r($datos);die();
+   if(is_numeric($TFA['Autorizacion'])){
+      $Ambiente = substr($datos[0]['Clave_Acceso'], 23, 1);
+     // 'Generacion Codigo de Barras
+      // PathCodigoBarra = RutaSysBases & "\TEMP" & TFA.ClaveAcceso & ".jpg";
+  }
+
+
+ // 'Datos Iniciales
+ // 'Comenzamos a recoger los detalles de la factura
+  if($TFA['TC'] == "PV"){
+     $sql = "SELECT DF.*,CP.Detalle,CP.Codigo_Barra
+          FROM Trans_Ticket As DF,Catalogo_Productos As CP
+          WHERE DF.Ticket = ".$TFA['Factura']."
+          AND DF.TC = '".$TFA['TC']."'
+          AND DF.Item = '".$_SESSION['INGRESO']['item']."'
+          AND DF.Periodo = '".$_SESSION['INGRESO']['periodo']. "'
+          AND DF.Item = CP.Item
+          AND DF.Periodo = CP.Periodo
+          AND DF.Codigo_Inv = CP.Codigo_Inv
+          ORDER BY DF.D_No ";
+  }else{
+     $sql = "SELECT DF.*,CP.Detalle,CP.Codigo_Barra 
+        FROM Detalle_Factura As DF,Catalogo_Productos As CP 
+        WHERE DF.Factura = ".$TFA['Factura']." 
+        AND DF.TC = '".$TFA['TC']."' 
+        AND DF.Serie = '".$TFA['Serie']."' 
+        AND DF.Item = '".$_SESSION['INGRESO']['item']."' 
+        AND DF.Periodo = '".$_SESSION['INGRESO']['periodo']. "' 
+        AND DF.Item = CP.Item 
+        AND DF.Periodo = CP.Periodo 
+        AND DF.Codigo = CP.Codigo_Inv 
+        ORDER BY DF.Codigo ";
+  }
+  $datos1 = $conn->datos($sql);
+
+  return array('factura'=>$datos,'lineas'=>$datos1,'especial'=>$ContEspec,'conta'=>$Obligado_Conta,'ambiente'=>$Ambiente);
+
+  // print_r($datos);
+  // print_r($datos1);
+  // print_r($ContEspec);
+  // print_r($Obligado_Conta);
+  // print_r($Ambiente);
+  // die();
+  
+ 
+}
+
+function Imprimir_Guia_Remision($AdoFactura, $AdoAsientoF, $FA){
+
+}
+
 function CalculosSaldoAnt($TipoCod,$TDebe,$THaber,$TSaldo)
 {
 
@@ -9455,6 +9540,121 @@ function variables_tipo_factura()
    return $FA;
 }
 
+function Encerar_Factura($TFA)
+{
+
+   $TFA['SP'] = '0';
+   $TFA['Si_Existe_Doc'] = '0';
+   $TFA['C'] = '0';
+   $TFA['p'] = '0';
+   $TFA['ME_'] = '0';
+   $TFA['Com_Pag'] = '0';
+   $TFA['T'] = G_NORMAL;
+   $TFA['CodigoC'] = G_NINGUNO;
+   $TFA['CodigoB'] = G_NINGUNO;
+   $TFA['CodigoU'] = G_NINGUNO;
+   $TFA['Codigo_T'] = G_NINGUNO;
+   $TFA['Cliente'] = G_NINGUNO;
+   $TFA['Contacto'] = G_NINGUNO;
+   $TFA['CI_RUC'] = G_NINGUNO;
+   $TFA['Razon_Social'] = G_NINGUNO;
+   $TFA['RUC_CI'] = G_NINGUNO;
+   $TFA['TB'] = G_NINGUNO;
+   $TFA['DirNumero'] = G_NINGUNO;
+   $TFA['DireccionC'] = G_NINGUNO;
+   $TFA['DireccionS'] = G_NINGUNO;
+   $TFA['CiudadC'] = G_NINGUNO;
+   $TFA['EmailR'] = G_NINGUNO;
+   $TFA['Curso'] = G_NINGUNO;
+   $TFA['Grupo'] = G_NINGUNO;
+   $TFA['Cod_Eject'] = G_NINGUNO;
+   $TFA['Forma_Pago'] = G_NINGUNO;
+   $TFA['Imp_Mes'] = '0';
+   $TFA['Fecha'] = date('Y-m-d');
+   $TFA['Fecha_V'] = date('Y-m-d');
+   $TFA['Fecha_C'] = date('Y-m-d');
+   $TFA['Fecha_Aut'] = date('Y-m-d');
+   $TFA['Vencimiento'] = date('Y-m-d');
+   $TFA['Hora'] = '00:00:00';
+   $TFA['Tipo_Pago'] = '0';
+   $TFA['Tipo_Pago_Det'] = G_NINGUNO;
+   $TFA['Cod_CxC'] = G_NINGUNO;
+   $TFA['Nivel'] = G_NINGUNO;
+   $TFA['Nota'] = G_NINGUNO;
+   $TFA['Observacion'] = G_NINGUNO;
+   $TFA['Definitivo'] = G_NINGUNO;
+   $TFA['Declaracion'] = G_NINGUNO;
+   $TFA['SubCta'] = G_NINGUNO;
+   $TFA['Factura'] = '0';
+   $TFA['Total_Sin_No_IVA'] = '0';
+   $TFA['Descuento'] = '0';
+   $TFA['Descuento2'] = '0';
+   $TFA['Total_Descuento'] = '0';
+   $TFA['SubTotal'] = '0';
+   $TFA['Total_IVA'] = '0';
+   $TFA['Con_IVA'] = '0';
+   $TFA['Sin_IVA'] = '0';
+   $TFA['Total_MN'] = '0';
+   $TFA['Saldo_MN'] = '0';
+   $TFA['Comision'] = '0';
+   $TFA['Servicio'] = '0';
+   $TFA['Total_ME'] = '0';
+   $TFA['Saldo_ME'] = '0';
+   $TFA['Cantidad'] = '0';
+   $TFA['Kilos'] = '0';
+   $TFA['Saldo_Actual'] = '0';
+   $TFA['Efectivo'] = '0';
+   $TFA['Saldo_Pend'] = '0';
+   $TFA['Saldo_Pend_MN'] = '0';
+   $TFA['Saldo_Pend_ME'] = '0';
+   $TFA['Ret_Fuente'] = '0';
+   $TFA['Ret_IVA'] = '0';
+   $TFA['Porc_C'] = '0';
+   $TFA['Cotizacion'] = '0';
+   $TFA['DAU'] = '0';
+   $TFA['FUE'] = '0';
+   $TFA['Solicitud'] = '0';
+   $TFA['Retencion'] = '0';
+   $TFA['ClaveAcceso_GR'] = G_NINGUNO;
+   $TFA['Autorizacion_GR'] = G_NINGUNO;
+   $TFA['Serie_GR'] = G_NINGUNO;
+   $TFA['Remision'] = '0';
+   $TFA['Comercial'] = G_NINGUNO;
+   $TFA['CIRUCComercial'] = G_NINGUNO;
+   $TFA['Entrega'] = G_NINGUNO;
+   $TFA['CIRUCEntrega'] = G_NINGUNO;
+   $TFA['CiudadGRI'] = G_NINGUNO;
+   $TFA['CiudadGRF'] = G_NINGUNO;
+   $TFA['Placa_Vehiculo'] = G_NINGUNO;
+   $TFA['FechaGRE'] = date('Y-m-d');
+   $TFA['FechaGRI'] = date('Y-m-d');
+   $TFA['FechaGRF'] = date('Y-m-d');
+   $TFA['Pedido'] = G_NINGUNO;
+   $TFA['Zona'] = G_NINGUNO;
+   $TFA['Orden_Compra'] = '0';
+   $TFA['Serie_GR'] = G_NINGUNO;
+   $TFA['Digitador'] = G_NINGUNO;
+   $TFA['Error_SRI'] = G_NINGUNO;
+   $TFA['Estado_SRI'] = G_NINGUNO;
+   $TFA['Dir_PartidaGR'] = G_NINGUNO;
+   $TFA['Dir_EntregaGR'] = G_NINGUNO;
+   $TFA['CxC_Clientes'] = G_NINGUNO;
+   $TFA['Cta_Venta'] = G_NINGUNO;
+   $TFA['LogoFactura'] = G_NINGUNO;
+   $TFA['LogoNotaCredito'] = G_NINGUNO;
+   $TFA['AltoFactura'] = '0';
+   $TFA['AnchoFactura'] = '0';
+   $TFA['EspacioFactura'] = '0';
+   $TFA['Pos_Factura'] = '0';
+   $TFA['DireccionEstab'] = G_NINGUNO;
+   $TFA['NombreEstab'] = G_NINGUNO;
+   $TFA['TelefonoEstab'] = G_NINGUNO;
+   $TFA['LogoTipoEstab'] = G_NINGUNO;
+   $TFA['Autorizacion_R'] = G_NINGUNO;
+   $TFA['Serie_R'] = '001001';
+   $TFA['Fecha_Tours'] = G_NINGUNO;
+   return $TFA;
+}
 
 function datos_Co()
 {

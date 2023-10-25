@@ -4,95 +4,7 @@ require_once(dirname(__DIR__,2)."/funciones/funciones.php");
 
 
 $controlador = new almacenamiento_bodegaC();
-// if(isset($_GET['proveedores']))
-// {
-// 	$query = '';
-// 	if(isset($_GET['q']))
-// 	{
-// 		$query = $_GET['q'];
-// 	}
-// 	echo json_encode($controlador->proveedores($query));
-// }
-// if(isset($_GET['guardar']))
-// {
-// 	$parametros = $_POST;
-// 	echo json_decode($controlador->guardar($parametros));
-// }
-// if(isset($_GET['guardar2']))
-// {
-// 	$parametros = $_POST;
-// 	echo json_decode($controlador->guardar2($parametros));
-// }
-// if(isset($_GET['guardar_pedido']))
-// {
-// 	$parametros = $_POST;
-// 	echo json_encode($controlador->guardar_pedido($parametros));
-// }
-// if(isset($_GET['eliminar_pedido']))
-// {
-// 	$parametros = $_POST;
-// 	echo json_decode($controlador->eliminar_pedido($parametros));
-// }
-// if(isset($_GET['alimentos']))
-// {
-// 	$query = '';
-// 	if(isset($_GET['q']))
-// 	{
-// 		$query = $_GET['q'];
-// 	}
-// 	echo json_encode($controlador->cta_procesos($query));
-// }
-// if(isset($_GET['detalle_ingreso']))
-// {
-// 	$query = '';
-// 	if(isset($_GET['q']))
-// 	{
-// 		$query = $_GET['q'];
-// 	}
-// 	echo json_encode($controlador->detalle_ingreso($query));
-// }
-// if(isset($_GET['detalle_ingreso2']))
-// {
-// 	$query = '';
-// 	if(isset($_GET['q']))
-// 	{
-// 		$query = $_GET['q'];
-// 	}
-// 	echo json_encode($controlador->detalle_ingreso2($query));
-// }
-// if(isset($_GET['datos_ingreso']))
-// {
-// 	$id = $_POST['id'];
-// 	echo json_encode($controlador->datos_ingreso($id));
-// }
 
-// if(isset($_GET['autoincrementable']))
-// {
-// 	$parametros = $_POST['parametros'];
-// 	$num = ReadSetDataNum('Ingresos_Recibidos',false,false,$parametros['fecha']);
-// 	$num = generaCeros($num,4);
-// 	echo json_encode($num);
-// }
-// if(isset($_GET['search']))
-// {
-// 	$query = '';
-// 	if(isset($_GET['q']))
-// 	{
-// 		$query = $_GET['q'];
-// 	}
-// 	echo json_encode($controlador->buscar($query));
-
-// }
-// if(isset($_GET['pedidos_proce']))
-// {
-// 	$query = '';
-// 	if(isset($_GET['q']))
-// 	{
-// 		$query = $_GET['q'];
-// 	}
-// 	echo json_encode($controlador->buscar_procesado($query));
-
-// }
 if(isset($_GET['search_contabilizado']))
 {
 	$query = '';
@@ -123,16 +35,16 @@ if(isset($_GET['contenido_bodega']))
 	$parametros= $_POST['parametros'];	
 	echo json_encode($controlador->contenido_bodega($parametros));
 }
-// if(isset($_GET['pedido_checking']))
-// {
-// 	$parametros= $_POST['parametros'];	
-// 	echo json_encode($controlador->cargar_productos_checking($parametros));
-// }
-// if(isset($_GET['lin_eli']))
-// {
-// 	$parametros = $_POST['parametros'];
-// 	echo json_encode($controlador->lineas_eli($parametros));
-// }
+if(isset($_GET['productos_asignados']))
+{
+	$parametros= $_POST['parametros'];	
+	echo json_encode($controlador->productos_asignados($parametros));
+}
+if(isset($_GET['eliminar_bodega']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->eliminar_bodega($parametros));
+}
 // if(isset($_GET['lin_eli_pedido']))
 // {
 // 	$parametros = $_POST['parametros'];
@@ -229,15 +141,14 @@ class almacenamiento_bodegaC
     	// print_r($parametros);die();
     	// print_r($ordenes);die();
     	$datos = $this->modelo->cargar_pedidos_trans($parametros['num_ped'],false);
-    	// print_r($datos);die();
     	$ls='';
 		foreach ($datos as $key => $value) 
 		{
 			$prod = $this->modelo->catalogo_productos($value['Codigo_Inv']);
 			$art = $prod[0]['TDP'];
-			if($art=='R')
+			if($art=='R' && $value['CodBodega']=='-1')
 			{
-				$ls.= '<li><a href="#" style="padding:0px"><label><i class="fa fa-sort-down"></i> '.$value['Producto'].'</label><span class="label label-primary pull-right">'.$value['Entrada'].'</span></a>
+				$ls.= '<li><a href="#" style="padding:0px"><label><input type="checkbox" class="rbl_pedido" value="'.$value['ID'].'">'.$value['Producto'].'</label><span class="label label-primary pull-right">'.$value['Entrada'].'</span></a>
 						<ul class="nav nav-pills nav-stacked" style="padding-left: 20px;">';
 						$ls.= $this->cargar_productos_trans_pedidos($parametros);
 						$ls.='</ul></li>';
@@ -245,8 +156,6 @@ class almacenamiento_bodegaC
 				if($value['CodBodega']=='.' || $value['CodBodega']=='-1')
 				{
 					$ls.= '<li><a href="#" style="padding:0px"><label><input type="checkbox" class="rbl_pedido" value="'.$value['ID'].'">  '.$value['Producto'].'</label><span class="label label-primary pull-right">'.$value['Entrada'].'</span></a></li>';
-				}else{
-					$ls.= '<li><a href="#" style="padding:0px"><label><input type="checkbox" checked disabled class="rbl_pedido" value="'.$value['ID'].'">  '.$value['Producto'].'</label><span class="label label-primary pull-right">'.$value['Entrada'].'</span></a></li>';
 				}
 			}
       }	
@@ -264,9 +173,9 @@ class almacenamiento_bodegaC
 		{
 			if($value['Codigo_Sup']=='.')
 			{
-				$ls.= '<li><a href="#" style="padding-right:0px"><label><input type="checkbox" class="rbl_pedido" value="'.$value['ID'].'-R" >  '.$value['Producto'].'</label><span class="label label-danger pull-right">'.$value['Cantidad'].'</span></a></li>';
+				$ls.= '<li><a href="#" style="padding-right:0px"><label> <!-- <input type="checkbox" class="rbl_pedido" value="'.$value['ID'].'-R" > --> '.$value['Producto'].'</label><span class="label label-danger pull-right">'.$value['Cantidad'].'</span></a></li>';
 			}else{
-				$ls.= '<li><a href="#" style="padding-right:0px"><label><input type="checkbox" checked disabled class="rbl_pedido" value="'.$value['ID'].'-R" >  '.$value['Producto'].'</label><span class="label label-danger pull-right">'.$value['Cantidad'].'</span></a></li>';
+				$ls.= '<li><a href="#" style="padding-right:0px"><label><!-- <input type="checkbox" checked disabled class="rbl_pedido" value="'.$value['ID'].'-R" > -->  '.$value['Producto'].'</label><span class="label label-danger pull-right">'.$value['Cantidad'].'</span></a></li>';
 			}
 		}
 		
@@ -293,6 +202,32 @@ class almacenamiento_bodegaC
       }	
 
       	return $ls;	
+    }
+
+    function productos_asignados($parametros)
+    {
+    	// print_r($parametros);die();
+    	// print_r($ordenes);die();
+    	$datos = $this->modelo->cargar_pedidos_trans($parametros['num_ped'],false);
+    	$ls='';		
+		foreach ($datos as $key => $value) 
+		{
+			if($value['CodBodega']!='.' && $value['CodBodega']!='-1')
+			{
+				$ruta = $this->ruta_bodega($value['CodBodega']);
+				$ls.= '<tr>
+					<td>'.$value['Producto'].'</td>
+					<td>'.$ruta.'</td>
+					<td>
+						<button type="button" onclick="eliminar_bodega(\''.$value['ID'].'\')" class="btn btn-danger btn-sm" title="Eliminar Bodega"><i class="fa fa-trash"></i></button>
+						<button type="button" onclick="$(\'#txt_cod_bodega\').val(\''.$value['CodBodega'].'\');$(\'#txt_bodega_title\').text(\''.$ruta.'\');contenido_bodega()" class="btn btn-primary btn-sm" title="Ver Bodega" ><i class="fa fa-eye"></i></button>
+					</td>
+				</tr>';	
+
+			}
+		}
+		
+		return $ls;
     }
 
   
@@ -346,6 +281,14 @@ class almacenamiento_bodegaC
 		}
 		return 1;
 	}
+	function eliminar_bodega($parametros)
+	{
+
+		SetAdoAddNew('Trans_Kardex');
+		SetAdoFields('CodBodega','-1');		
+		SetAdoFieldsWhere('ID',$parametros['id']);
+		return SetAdoUpdateGeneric();
+	}
 
 
 	function lista_bodegas_arbol($parametros)
@@ -378,8 +321,8 @@ class almacenamiento_bodegaC
 			}
 		}
 
-		// print_r($nivel_solicitado);die();
 
+		// print_r($nivel_solicitado);die();
 
 		$hijos = 0;
 		$html = '';
@@ -393,18 +336,19 @@ class almacenamiento_bodegaC
 						break;
 					} 
 				}
+				$ruta = $this->ruta_bodega($prefijo);
 				if($hijos==1)
 				{
 					$html.='<li>
 						       <input type="checkbox" id="c'.$prefijo.'" />
-						       <label class="tree_bod_label" for="c'.$prefijo.'" onclick="cargar_bodegas(\''.($nivel_solicitado+1).'\',\''.$prefijo.'\');cargar_nombre_bodega(\''.$value['Bodega'].'\',\'.\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</label>
+						       <label class="tree_bod_label" for="c'.$prefijo.'" onclick="cargar_bodegas(\''.($nivel_solicitado+1).'\',\''.$prefijo.'\');cargar_nombre_bodega(\''.$ruta.'\',\'.\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</label>
 						       	<ul id="h'.$prefijo.'">
 						       	</ul>
 					       	</li>';
 					$hijos=0;
 				}else
 				{
-					$html.='<li><span class="tree_bod_label" onclick="cargar_nombre_bodega(\''.$value['Bodega'].'\',\''.$value['CodBod'].'\')">'.$value['Bodega'].'</span></li>';
+					$html.='<li><span class="tree_bod_label" onclick="cargar_nombre_bodega(\''.$ruta.'\',\''.$value['CodBod'].'\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</span></li>';
 				}
 			}else{
 				//cuando viene con padre
@@ -419,6 +363,7 @@ class almacenamiento_bodegaC
 							} 
 						}
 					}
+					$ruta = $this->ruta_bodega($prefijo);
 					
 					if (substr($value['CodBod'], 0, strlen($padre)) === $padre) {
 						// print_r('padre');die();
@@ -427,14 +372,14 @@ class almacenamiento_bodegaC
 						// print_r($value2['CodBod'].'-'.$value['Bodega']);die();
 						$html.='<li>
 							       <input type="checkbox" id="c'.str_replace('.','_',$prefijo).'" />
-							       <label class="tree_bod_label" for="c'.str_replace('.','_',$prefijo).'" onclick="cargar_bodegas(\''.($nivel_solicitado+1).'\',\''.str_replace('.','_',$prefijo).'\');cargar_nombre_bodega(\''.$value['Bodega'].'\',\'.\')">'.$value['Bodega'].'</label>
+							       <label class="tree_bod_label" for="c'.str_replace('.','_',$prefijo).'" onclick="cargar_bodegas(\''.($nivel_solicitado+1).'\',\''.str_replace('.','_',$prefijo).'\');cargar_nombre_bodega(\''.$ruta.'\',\'.\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</label>
 							       	<ul id="h'.str_replace('.','_',$prefijo).'">
 							       	</ul>
 						       	</li>';
 						$hijos=0;
 					}else
 					{
-						$html.='<li><span class="tree_bod_label" onclick="cargar_nombre_bodega(\''.$value['Bodega'].'\',\''.$value['CodBod'].'\')">'.$value['Bodega'].'</span></li>';
+						$html.='<li><span class="tree_bod_label" onclick="cargar_nombre_bodega(\''.$ruta.'\',\''.$value['CodBod'].'\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</span></li>';
 					}
 				}
 				
@@ -447,69 +392,27 @@ class almacenamiento_bodegaC
 
 	}
 
+	function ruta_bodega($padre)
+	{
+		$datos = explode('.',$padre);
+		$camino = '';
+		$buscar = '';
+		foreach ($datos as $key => $value) {
+			$camino.= $value.'.';
+			$buscar.= "'".substr($camino, 0,-1)."',";
+		}
 
-// 	function lista_bodegas_arbol2($parametros)
-// 	{
-// 		// print_r($parametros);die();
-// 		$datos = $this->modelo->bodegas();
-
-// 		// analiza cuantos niveles tiene
-// 		$niveles = 0;
-// 		foreach ($datos as $key => $value) {
-// 			$niv = explode('.', $value['CodBod']);
-// 			if(count($niv)>$niveles)
-// 			{
-// 				$niveles = count($niv);
-// 			}
-// 		}
-
-// 		//separa los niveles en grupos
-// 		$grupo_nivel = array();
-// 		for ($i=1; $i <= $niveles ; $i++) { 
-// 			$grupo_nivel[$i] = array();
-// 			foreach ($datos as $key => $value) {
-// 				$niv = explode('.', $value['CodBod']);
-// 				if(count($niv)==$i)
-// 				{
-// 					array_push($grupo_nivel[$i], $value);
-// 				}
-// 			}
-// 		}
-
-// 		//cracion del arbol desde el ultimo nivel hasta el primero
-// 		$detalle = '';
-// 		$grupo = '';
-// 		for ($i=$niveles; $i >=1  ; $i--) { 
-// 			foreach ($grupo_nivel[$i] as $key => $value) {
-
-// 				//averiguo el nivel superior
-// 				$niv = explode('.', $value['CodBod']);
-// 				array_splice($niv, $niveles-1, 1);
-// 				$nivel_grupo = '';
-// 				foreach ($niv as $key2 => $value2) {
-// 					$nivel_grupo.=$value2.'.';
-// 				}
-// 				$nivel_grupo = substr($nivel_grupo,0,-1);
-
-// 				//agrego os detalles al grupo
-// 				$grupo = '';
-// 				foreach ($grupo_nivel[$i]  as $key3 => $value3) {
-// 					if (strpos($value3['CodBod'], $nivel_grupo ) !== false) {
-// 						$detalle.= '<li><span class="tree_bod_label">'.$value['Bodega'].'</span></li>';		
-// 					}
-// 				}
+		$buscar = substr($buscar, 0,-1);
+		$pasos = $this->modelo->ruta_bodega_select($buscar);
+		$ruta = '';
+		foreach ($pasos as $key => $value) {
+			$ruta.=$value['Bodega'].'/';			
+		}
+		$ruta = substr($ruta,0,-1);
+		return $ruta;
+	}
 
 
-// 				print_r($nivel_grupo);die();
-// 			}
-
-// 			print_r($grupo_nivel[$i]);die();
-
-// 		}
-
-
-// 		print_r($grupo_nivel);die();
-// 	}
 
 
 }

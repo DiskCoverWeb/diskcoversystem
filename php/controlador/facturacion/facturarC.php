@@ -208,20 +208,27 @@ if (isset($_GET['numFactura'])) {
    echo json_encode($controlador->numFactura($parametros));
 }
 if (isset($_GET['Grabar_Factura_Actual'])) {
-   $FA = $_GET;
+   //$FA = $_GET;
    $parametros = $_POST['parametros'];
-   echo json_encode($controlador->Grabar_Factura_Actual($FA, $parametros));
+   echo json_encode($controlador->Grabar_Factura_Actual($parametros));
 }
 if (isset($_GET['Autorizar_Factura_Actual'])) {
+   //$FA = $_GET;
+   $parametros = $_POST['parametros'];
+   echo json_encode($controlador->Autorizar_Factura_Actual($FA));
+}
+if (isset($_GET['imprimir_factura_multiple'])) {
    $FA = $_GET;
    $parametros = $_POST['parametros'];
-   echo json_encode($controlador->Autorizar_Factura_Actual($FA, $parametros));
+   echo json_encode($controlador->imprimir_multiple($parametros));
 }
-if (isset($_GET['imprimir_factura'])) {
+
+if (isset($_GET['imprimir_facturas'])) {
    $FA = $_GET;
    $parametros = $_POST['parametros'];
-   echo json_encode($controlador->imprimir_factura($FA, $parametros));
+   echo json_encode($controlador->imprimir_facturas($parametros));
 }
+
 if (isset($_GET['generar_detalle'])) {
    $titulo = $_GET['titulo'];
    $datos = json_decode(urldecode($_GET['datos']), true);
@@ -426,7 +433,10 @@ class facturarC
    function Lineas_De_CxC($parametros)
    {
       // print_r($parametros);die();
-      $resp = Lineas_De_CxC($parametros);
+      $FA = variables_tipo_factura();
+      $TFA = Encerar_Factura($FA);
+      $TFA['Cod_CxC'] = $parametros['Cod_CxC'];
+      $resp = Lineas_De_CxC($TFA);
       // print_r($resp);die();
       $factura = ReadSetDataNum($parametros['TC'] . "_SERIE_" . $resp['TFA']['Serie'], True, False);
       $resp['TFA']['NoFactura'] = $factura;
@@ -956,10 +966,12 @@ class facturarC
       $this->pdf->generarDetalle($parametros);
    }
 
-   function Grabar_Factura_Actual($FA, $parametros)
+   function Grabar_Factura_Actual($parametros)
    {
-
+      $FA = variables_tipo_factura();
       $asientoF = $this->modelo->lineas_factura();
+      //print_r($FA);die();
+
       if (count($asientoF) > 0) {
          $TFA = Calculos_Totales_Factura();
          foreach ($TFA as $key => $value) {
@@ -1019,8 +1031,6 @@ class facturarC
          $FA['Nuevo_Doc'] = True;
          $FA['Factura'] = intval($parametros['TextFacturaNo']);
 
-         // print_r($FA);
-         // print_r($parametros);die();
          if (Existe_Factura($FA)) {
             if ($parametros['Reprocesar'] == 1) {
                $FA['Numero_Doc'] = 0;
@@ -1059,7 +1069,7 @@ class facturarC
          $FA['Cliente'] = $cliente['Cliente'];
          $FA['TextCI'] = $cliente['CI_RUC'];
          $FA['TxtEmail'] = $cliente['Email'];
-         $FA['codigoCliente'] = $cliente['Codigo'];
+         $FA['CodigoC'] = $cliente['Codigo'];
          $FA['FacturaNo'] = $parametros['TextFacturaNo'];
          $FA['me'] = $parametros['TextFacturaNo']; //cambiar viene de abonos
          $FA['Total'] = $FA['Total_MN'];
@@ -1073,9 +1083,9 @@ class facturarC
          // print_r($parametros);
          // die();
          // 'Grabamos el numero de factura
-         // print_r(Grabar_Factura($FA));
-         if (Grabar_Factura($FA) == 2) {
-            return array('res' => 1, 'men' => "");
+         //print_r(Grabar_Factura1($FA));
+         if (Grabar_Factura1($FA) == 1) {
+            return array('res' => 1, 'men' => "", 'data' => $FA);
          } else {
             array('res' => -1, 'men' => "Algo salio mal");
             ;
@@ -1092,17 +1102,22 @@ class facturarC
 
 
       } else {
-         return -1;
+         return array(
+            'res' => -1,
+            'men' => "No se procedio a grabar el documento 
+         '" . $parametros['TC'] . "' No. '" . $parametros['Serie'] . "' - '" . $parametros['TextFacturaNo'] . "' 
+         , revise los datos ingresados y vuelva a intentar"
+         );
       }
    }
 
 
-   function Autorizar_Factura_Actual($FA, $parametros)
+   function Autorizar_Factura_Actual($FA)
    {
       // print_r($parametros);die();
-      $asientoF = $this->modelo->lineas_factura();
-      if (count($asientoF) > 0) {
-         $TFA = Calculos_Totales_Factura();
+      //$asientoF = $this->modelo->lineas_factura();
+      //if (count($asientoF) > 0) {
+         /*$TFA = Calculos_Totales_Factura();
          foreach ($TFA as $key => $value) {
             $FA[$key] = $value;
          }
@@ -1201,7 +1216,7 @@ class facturarC
          $Evaluar = True;
          $FechaTexto = $FA['Fecha'];
          $Factura_No = $FA['Factura'];
-         $Numero = $Factura_No;
+         $Numero = $Factura_No;*/
 
 
          $respuesta = '';
@@ -1211,13 +1226,13 @@ class facturarC
          // 'Autorizamos la factura y/o Guia de Remision
          if (strlen($FA['Autorizacion']) == 13) {
             $respuesta = $this->sri->SRI_Crear_Clave_Acceso_Facturas($FA);
-            
+
          }
 
          if (strlen($FA['Autorizacion_GR']) == 13) {
             /* genera xml al sri*/
             $FAA['serie'] = $FA['Serie'];
-            $FAA['num_fac'] = $FA['FacturaNo'];
+            $FAA['num_fac'] = $FA['Factura'];
             $FAA['tc'] = $FA['TC'];
             $FAA['cod_doc'] = '01';
             $respuesta2 = $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision($FAA);
@@ -1231,8 +1246,9 @@ class facturarC
          $TA['Serie'] = $FA['Serie'];
          $TA['Factura'] = $FA['Factura'];
          $TA['Autorizacion'] = $FA['Autorizacion'];
-         $TA['CodigoC'] = $FA['codigoCliente'];
-         Actualiza_Estado_Factura($TA);
+         $TA['CodigoC'] = $FA['CodigoC'];
+         //Actualiza_Estado_Factura($TA);
+         sp_Actualizar_Saldos_Facturas($TA['TP'], $TA['Serie'], $TA['Factura']);
 
          $Grafico_PV = Leer_Campo_Empresa("Grafico_PV");
          $imp = '';
@@ -1244,19 +1260,35 @@ class facturarC
                   $this->pdf->Imprimir_Punto_Venta_Grafico($info);
                   $imp = $FA['Serie'] . '-' . generaCeros($FA['Factura'], 7);
                } else {
-                  Imprimir_Punto_Venta($FA);
+                  $info = Imprimir_Punto_Venta_datos($FA);
+                  $this->pdf->Imprimir_Punto_Venta($info);
                }
             } else {
-               return array('AU' => 'multiple');
+               //Se va a retornar esta variable para manejar en la vista si se imprime multiple o no.
+               $preguntaMultiple = 'multiple';
             }
             $this->modelo->Facturas_Impresas($FA);
          }
 
+         if ($FA['TC'] <> "OP") {
+            if ($FA['Remision'] > 0) {
+               if (strlen($FA['Autorizacion']) < 13) {
+                  //Imprimir_Guia_Remision
+                  $data = '';
+               } else if (strlen($FA['Autorizacion']) >= 13) {
+                  //SRI_Generar_PDF_GR($FA, True)
+                  $data = '';
+               }
+            }
+         }
+         //SRI_Generar_PDF_FA($FA, True)
+         //Encerar Factura, deberia existir una variable $_SESSION['FA'] que maneje todo lo de FA.
 
-         return array('AU' => $respuesta, 'GR' => $respuesta2, 'pdf' => $imp);
-      } else {
-         return -1;
-      }
+
+         return array('AU' => $respuesta, 'GR' => $respuesta2, 'pdf' => $imp, 'multiple' => $preguntaMultiple, 'data' => $FA);
+      //} else {
+      //   return -1;
+      //}
    }
 
 
@@ -1268,9 +1300,12 @@ class facturarC
 
    function imprimir_multiple($parametros)
    {
-
-      print_r($parametros);
-      die();
+      $FacturaDesde = $parametros['TextFacturaNo'];
+      $FacturaHasta = $parametros['TextFacturaNo'];
+      $FA = $parametros;
+      $FA['Tipo_PRN'] = 'FM';
+      //Falta realizar el metodo Imprimir_Facturas_CxC
+      return array('res' => 1);
       // Titulo = "IMPRESION"
       //          Mensajes = "Facturacion Multiple"
       //          If BoxMensaje = vbYes Then
@@ -1284,6 +1319,14 @@ class facturarC
       //          End If
 
 
+   }
+
+   function imprimir_facturas($parametros)
+   {
+      $FA = $parametros;
+      $FA['Tipo_PRN'] = 'FM';
+      //Falta realizar el metodo Imprimir_facturas($FA)
+      return array('res' => 1);
    }
 
 }

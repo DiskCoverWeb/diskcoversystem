@@ -51,6 +51,7 @@
       $('#ddl_alimento').append($('<option>',{value: data.Cod_C, text:data.Proceso,selected: true }));
 
       lineas_pedidos();
+      productos_asignados();
       if($('#txt_cod_bodega').val()!='.' && $('#txt_cod_bodega').val()!='')
       {
 	    	contenido_bodega();
@@ -62,20 +63,18 @@
 
   })
 
-  function cargar_nombre_bodega(nombre,cod,nivel)
+  function cargar_nombre_bodega(nombre,cod)
   {
-  	if(nivel==1)
-  	{
-  		$('#txt_bodega_title').text('Ruta: ')  		
-  	}
-  	ruta = $('#txt_bodega_title').text();
-  	nombre = ruta+'/'+nombre;
+
+  	$('#txt_bodega_title').text();
   	$('#txt_bodega_title').text(nombre);
   	$('#txt_cod_bodega').val(cod);
   	if(cod!='.')
   	{
   		contenido_bodega();
   	}
+
+  	// console.log(nombre)
   }
 
   function pedidos(){
@@ -130,7 +129,7 @@ function cargar_bodegas(nivel=1,padre='')
        dataType:'json',
 	    success: function(data)
 	    {
-	    	console.log(data);
+	    	// console.log(data);
 	    	if(nivel==1)
 	    	{
 	    	 $('#arbol_bodegas').html(data);
@@ -181,6 +180,7 @@ function asignar_bodega()
 	    {
 	    	lineas_pedidos()   	
 	    	contenido_bodega();
+	    	productos_asignados();
 	    }
 	});
 	
@@ -222,7 +222,8 @@ function desasignar_bodega()
 	    success: function(data)
 	    {
 	    	lineas_pedidos()   	
-	    	contenido_bodega();
+	    	contenido_bodega();	    	
+	    	productos_asignados();
 	    }
 	});
 	
@@ -242,6 +243,46 @@ function contenido_bodega()
 	    success: function(data)
 	    {
 	    	$('#contenido_bodega').html(data);
+	    }
+	});
+
+}
+
+function productos_asignados()
+{
+	var parametros = {
+		'num_ped':$('#txt_codigo').val(),
+	}
+ 	$.ajax({
+	    type: "POST",
+       url:   '../controlador/inventario/almacenamiento_bodegaC.php?productos_asignados=true',
+	     data:{parametros:parametros},
+       dataType:'json',
+	    success: function(data)
+	    {
+	    	$('#tbl_asignados').html(data);
+	    }
+	});
+
+}
+
+function  eliminar_bodega(id)
+{
+	var parametros = {
+		'id':id,
+	}
+	$.ajax({
+	    type: "POST",
+       url:   '../controlador/inventario/almacenamiento_bodegaC.php?eliminar_bodega=true',
+	     data:{parametros:parametros},
+       dataType:'json',
+	    success: function(data)
+	    {
+	    	lineas_pedidos()   	 	
+	    	productos_asignados();
+	    	$('#contenido_bodega').html('');
+	    	$('#txt_cod_bodega').val('.');
+	    	$('#txt_bodega_title').text('Ruta: ');
 	    }
 	});
 
@@ -344,6 +385,22 @@ function contenido_bodega()
 						</div>
 						
 					</div>
+				</div>
+				<div class="row">
+						<div class="col-sm-12">
+							<table class="table-sm table-hover table">
+								<thead>
+									<th><b>Producto</b></th>
+									<th><b>Ruta</b></th>
+									<th></th>
+								</thead>
+								<tbody id="tbl_asignados">
+									<tr>
+										<td colspan="3">Productos asignados</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>					
 				</div>
 			</div>
 			</form>

@@ -35,9 +35,16 @@
 			include('val_estado.php');
 			$minutos = 6;
 			val_estado($minutos);
-			
 
-			
+			echo '<script>
+			console.log("IPWAN", " '. $_SESSION['INGRESO']['IP_Wan_TEST'] .' ");
+			console.log("IPLOCAL","' . $_SESSION['INGRESO']['IP_Local_TEST'] . '");
+			console.log("PCNAME","' . $_SESSION['INGRESO']['PC_NAME_TEST'] . '");
+			console.log("PCNAME2","' . $_SESSION['INGRESO']['PC_NAME_TEST2'] . '");
+			</script>';
+
+
+
 			if ($todo == true) {
 				if (!isset($_SESSION['INGRESO']['modulo_']) || $_SESSION['INGRESO']['modulo_'] == "") {
 					echo '<div class="row">' . contruir_todos_modulos() . '</div>';
@@ -56,7 +63,22 @@
 
 
 	</section>
-	
+
 	<!-- /.content -->
+
 </div>
+<script>
+	function getInfo() {
+		$.ajax({
+			url: 'http://localhost:5000/get_data',
+			type: 'get',
+			dataType: 'json',
+			success: function (response) {
+				console.log("DATA PC", response);
+			}
+		});
+	}
+
+	//getInfo();
+</script>
 <?php include('../headers/footer.php'); ?>

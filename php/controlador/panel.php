@@ -1124,26 +1124,12 @@ function validar_estado_all()
         }
     }
 
-    echo '<script>';
-    echo 'console.log("DEBUG Estado Activo: ' . $PCActivo . '");';
-    echo '</script>';
-    echo '<script>';
-    echo 'console.log("DEBUG SP1Estado Empresa: ' . $EstadoEmpresa . '");';
-    echo '</script>';
-    echo '<script>';
-    echo 'console.log("DEBUG SP1TotCart  ' . $Cartera . '");';
-    echo '</script>';
-    echo '<script>';
-    echo 'console.log("DEBUG SP1CantFA  ' . $Cant_FA . '");';
-    echo '</script>';
 
     if ($PCActivo == false) {
         $Cadena = $_SESSION['INGRESO']['Nombre_Completo'] . " su equipo se encuentra en LISTA NEGRA, ingreso no autorizado, comuniquese con el Administrador del Sistema";
         return json_encode(array('rps' => 'noActivo', "mensaje" => $Cadena, "titulo" => 'ACCESO DEL PC DENEGADO'));
     }
-    echo '<script>';
-    echo 'console.log("DEBUG Estado Usuario: ' . $EstadoUsuario . '");';
-    echo '</script>';
+    
     if ($EstadoUsuario == false) {
         $Cadena = $_SESSION['INGRESO']['Nombre_Completo'] . " su ingreso no esta autorizado, comuniquese con el Administrador del Sistema";
         return json_encode(array('rps' => 'noAuto', "mensaje" => $Cadena, "titulo" => 'ACCESO AL SISTEMA DENEGADO'));

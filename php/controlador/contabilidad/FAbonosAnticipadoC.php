@@ -1,6 +1,7 @@
 <?php
 include(dirname(__DIR__, 2) . '/modelo/contabilidad/FAbonosAnticipadoM.php');
 require_once(dirname(__DIR__, 2) . "/funciones/funciones.php");
+include(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
 
 $controlador = new FAbonoAnticipadoC();
 
@@ -8,7 +9,7 @@ if (isset($_GET['DCClientes'])) {
     $grupo = G_NINGUNO;
     if (isset($_GET['grupo']) != '') {
         $grupo = $_GET['grupo'];
-     }
+    }
     echo json_encode($controlador->DCCliente($grupo));
 }
 
@@ -34,7 +35,7 @@ if (isset($_GET['AdoIngCaja_Catalogo_CxCxP'])) {
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->AdoIngCaja_Catalogo_CxCxP($parametros['codigo_cliente'], $parametros['sub_cta_gen']));
 }
-if(isset($_GET['ReadSetDataNum'])){
+if (isset($_GET['ReadSetDataNum'])) {
     $SQLs = $_POST['SQLs'];
     $ParaEmpresa = $_POST['ParaEmpresa'];
     $Incrementar = $_POST['Incrementar'];
@@ -62,13 +63,20 @@ if (isset($_GET['EnviarEmail'])) {
     echo json_encode($controlador->EnviarEmail($parametros));
 }
 
+if (isset($_GET['EnviarEmailAccept'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->EnviarEmailAccept($parametros));
+}
+
 class FAbonoAnticipadoC
 {
     private $modelo;
+    private $email;
 
     function __construct()
     {
         $this->modelo = new FAbonosAnticipadoM();
+        $this->email = new enviar_emails();
     }
 
     /*
@@ -140,17 +148,22 @@ class FAbonoAnticipadoC
     function AdoIngCaja_Asiento_SC($parametros)
     {
         $res = $this->modelo->Select_Adodc_AdoIngCaja_Asiento_SC($parametros);
-        if($res == 1){
+        if ($res == 1) {
             Eliminar_Nulos_SP("Asiento_SC");
         }
-        return $res;//retorna 1 o -1
+        return $res; //retorna 1 o -1
     }
 
     function AdoIngCaja_Asiento($parametros)
     {
-        $res = $this->modelo->InsertarAsientos($parametros['CodCta'],$parametros['Parcial_MEs'],
-                                                $parametros['Debes'],$parametros['Habers'],$parametros['CodigoCli']);
-        if($res == 1){
+        $res = $this->modelo->InsertarAsientos(
+            $parametros['CodCta'],
+            $parametros['Parcial_MEs'],
+            $parametros['Debes'],
+            $parametros['Habers'],
+            $parametros['CodigoCli']
+        );
+        if ($res == 1) {
             Eliminar_Nulos_SP('Asiento');
         }
         return $res;
@@ -165,7 +178,8 @@ class FAbonoAnticipadoC
         return $datos; //Caso de que no encuentre datos
     }
 
-    function DCTipo($fa_factura){
+    function DCTipo($fa_factura)
+    {
         $datos = $this->modelo->SelectDB_Combo_DCTipo($fa_factura);
         $list = array();
         if (count($datos) > 0) {
@@ -177,11 +191,13 @@ class FAbonoAnticipadoC
         return $list; //Caso de que no encuentre datos
     }
 
-    function ReadSetDataNum($SQLs, $ParaEmpresa, $Incrementar){
+    function ReadSetDataNum($SQLs, $ParaEmpresa, $Incrementar)
+    {
         return ReadSetDataNum($SQLs, $ParaEmpresa, $Incrementar);
     }
 
-    function DCFactura($TipoFactura, $fa_factura){
+    function DCFactura($TipoFactura, $fa_factura)
+    {
         $datos = $this->modelo->SelectDB_Combo_DCFactura_AdoFactura($TipoFactura, $fa_factura);
         if (count($datos) > 0) {
             return $datos;
@@ -189,59 +205,70 @@ class FAbonoAnticipadoC
         return $datos;
     }
 
-    function GrabarComprobante($parametros){
+    function GrabarComprobante($parametros)
+    {
         $NumComp = ReadSetDataNum("Ingresos", True, True);
-        $_SESSION['FCierre_Caja']['Co']['TP'] = G_COMPINGRESO;
-        $_SESSION['FCierre_Caja']['Co']['T'] = G_NORMAL;
-        $_SESSION['FCierre_Caja']['Co']['Fecha'] = $parametros['Fecha'];
-        $_SESSION['FCierre_Caja']['Co']['Numero'] = $NumComp;
-        $_SESSION['FCierre_Caja']['Co']['Monto_Total'] = $parametros['Total'];
-        if($parametros['TipoFactura'] == "OP"){
-            $_SESSION['FCierre_Caja']['Co']['Concepto'] = "Abotono Anticipado de
+        $Co = datos_Co();
+        $Co['TP'] = G_COMPINGRESO;
+        $Co['T'] = G_NORMAL;
+        $Co['Fecha'] = $parametros['Fecha'];
+        $Co['Numero'] = $NumComp;
+        $Co['Monto_Total'] = $parametros['Total'];
+        if ($parametros['TipoFactura'] == "OP") {
+            $Co['Concepto'] = "Abotono Anticipado de
              " . strtoupper($parametros['NombreC']) . ", Orden No. " . $parametros['Factura'];
-        }else{
-            $_SESSION['FCierre_Caja']['Co']['Concepto'] = "Abono Anticipado de 
+        } else {
+            $Co['Concepto'] = "Abono Anticipado de 
             " . strtoupper($parametros['NombreC']);
-            if(strlen($parametros['Grupo']) > 1)
-                $_SESSION['FCierre_Caja']['Co']['Concepto'] = $_SESSION['FCierre_Caja']['Co']['Concepto'] . ", Grupo: " . $parametros['Grupo'];
+            if (strlen($parametros['Grupo']) > 1)
+                $Co['Concepto'] = $Co['Concepto'] . ", Grupo: " . $parametros['Grupo'];
         }
-        if(strlen($parametros['TxtConcepto']) > 1){
-            $_SESSION['FCierre_Caja']['Co']['Concepto'] = $_SESSION['FCierre_Caja']['Co']['Concepto'] . ", " . $parametros['TxtConcepto'];
+        if (strlen($parametros['TxtConcepto']) > 1) {
+            $Co['Concepto'] = $Co['Concepto'] . ", " . $parametros['TxtConcepto'];
         }
-        $_SESSION['FCierre_Caja']['Co']['CodigoB'] = $parametros['CodigoCli'];
-        $_SESSION['FCierre_Caja']['Co']['Efectivo'] = $parametros['Total'];
-        $_SESSION['FCierre_Caja']['Co']['Cotizacion'] = 0;
-        $_SESSION['FCierre_Caja']['Co']['Item'] = $_SESSION['INGRESO']['item'];
-        $_SESSION['FCierre_Caja']['Co']['Usuario'] = $_SESSION['INGRESO']['CodigoU'];
-        $_SESSION['FCierre_Caja']['Co']['T_No'] = $parametros['Trans_No'];
-        GrabarComprobante($_SESSION['FCierre_Caja']['Co']);
+        $Co['CodigoB'] = $parametros['CodigoCli'];
+        $Co['Efectivo'] = $parametros['Total'];
+        $Co['Cotizacion'] = 0;
+        $Co['Item'] = $_SESSION['INGRESO']['item'];
+        $Co['Usuario'] = $_SESSION['INGRESO']['CodigoU'];
+        $Co['T_No'] = $parametros['Trans_No'];
+        GrabarComprobante($Co);
+        return $Co;
     }
 
-    function EnviarEmail($parametros){
-        $datos = Leer_Datos_Clientes($parametros['CodigoCli']);
-        if(strlen($datos['Email']) > 3){
-            $Titulo = "Formulario de envio por email";
-            $Mensaje = "Enviar por email el recibo";
-            $MailAsunto = "RECIBO ABONO ANTICIPADO No. " . date("Y", strtotime($_SESSION['FCierre_Caja']['Co']['Fecha'])) . "-" . 
-                $_SESSION['FCierre_Caja']['Co']['TP'] . "-" . sprintf("%09d", 
-                $_SESSION['FCierre_Caja']['Co']['Numero']);
-            $MailMensaje = "Beneficiario: " . $_SESSION['FCierre_Caja']['Co']['Beneficiario']
-                . "Fecha del Abono: " . $_SESSION['FCierre_Caja']['Co']['Fecha']
-                . "Abono Anticipado por USD " . number_format($_SESSION['FCierre_Caja']['Co']['Efectivo'],2,'.',',');
+    function EnviarEmail($parametros)
+    {
+        $datos = Leer_Datos_Clientes($parametros['CodigoB']);
+        if (strlen($datos['Email']) > 3) {
+            $Titulo = "Envio de Email";
+            $Mensaje = "¿Enviar por email el recibo?";
+            $MailAsunto = "RECIBO ABONO ANTICIPADO No. " . date("Y", strtotime($parametros['Fecha'])) . "-" .
+                $parametros['TP'] . "-" . sprintf(
+                "%09d",
+                $parametros['Numero']
+            );
+            $MailMensaje = "Beneficiario: " . $datos['Cliente']
+                . " Fecha del Abono: " . $parametros['Fecha']
+                . " Abono Anticipado por USD " . number_format($parametros['Efectivo'], 2, '.', ',');
             return array(
+                'res' => 1,
                 'Titulo' => $Titulo,
+                'Email' => 'lrsunigagarcia@gmail.com',//Cambiar por $datos['Email']
                 'Mensaje' => $Mensaje,
                 'MailAsunto' => $MailAsunto,
                 'MailMensaje' => $MailMensaje
-            ); 
+            );
         }
-        return array();
-        
+        return array('res' => -1);
+    }
+
+    function EnviarEmailAccept($parametros){
+        return $this->email->enviar_email(false,$parametros['Email'],$parametros['MailMensaje'],$parametros['MailAsunto']);
     }
 
 
 
-    
+
 
 
 

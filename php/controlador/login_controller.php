@@ -138,6 +138,17 @@ class login_controller
 		// print_r($datos);
 		// die();
 
+		$response = file_get_contents('https://api.ipify.org?format=json');
+		$data = json_decode($response, true);
+		$ip_wan = $data['ip'];
+		$ip_local = $_SERVER['REMOTE_ADDR'];
+		$pc_name = gethostname();
+		$pc_name2 = gethostbyaddr($ip_local);
+		$_SESSION['INGRESO']['IP_Wan_TEST'] = $ip_wan;
+		$_SESSION['INGRESO']['IP_Local_TEST'] = $ip_local;
+		$_SESSION['INGRESO']['PC_NAME_TEST'] = $pc_name;
+		$_SESSION['INGRESO']['PC_NAME_TEST2'] = $pc_name2;
+
 		$_SESSION['INGRESO']['usuario'] = $parametro['usuario'];
 		$_SESSION['INGRESO']['pass'] = $parametro['pass'];
 
