@@ -1,7 +1,7 @@
 <?php
 include(dirname(__DIR__,2).'/modelo/inventario/categoriasM.php');
 
-$controlador = new dayaC();
+$controlador = new categoriasC();
 
 if (isset($_GET['MostrarTabla'])) {
     $option = $_POST['option'];
@@ -53,13 +53,13 @@ if (isset($_GET['EliminarCategoria'])) {
 }
 
 
-class dayaC
+class categoriasC
 {
     private $modelo;
 
     function __construct()
     {
-        $this->modelo = new dayaM();
+        $this->modelo = new categoriasM();
     }
 
     function MostrarTabla($option)
