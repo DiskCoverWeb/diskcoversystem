@@ -538,14 +538,13 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 				require_once('contabilidad/FAbonos.php');
 				break;
 
-			//Gerencia -> Reportes
-			case 'listadoFacturasElectronicas':
-				//Listado de Facturas
+			//Gerencia -> Reportes -> Listado de Facturas
+			case 'listadoFacturasElectronicas':				
 				require_once("facturacion/cartera_clientes.php");
 				break;
 
 			default:
-
+				echo "<div class='box-body'><img src='../../img/404.png' width='100%'></div>";
 				break;
 		}
 	} else {
@@ -590,9 +589,7 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 				break;
 		}
 	}
-
 	?>
-
 	</section>
 </div>
 <?php require_once("../headers/footer.php"); ?>
