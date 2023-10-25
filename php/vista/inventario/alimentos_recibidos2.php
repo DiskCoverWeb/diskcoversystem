@@ -121,7 +121,10 @@
    
       	 // $('#pnl_normal').css('display','none');
       	 cargar_pedido2();
-     
+
+         setInterval(function() {
+            cargar_pedido();
+          }, 5000); 
       // console.log(data);
     });
 
@@ -177,17 +180,18 @@
   		var ingresados_pedido = $('#txt_cant_total_pedido').val();
 
   		var total = $('#txt_cant').val();
-  		var sucur = $('#ddl_sucursales').val();
-  		if($("#pnl_sucursal").is(":visible")==true && sucur=='')
-  		{
-  			 Swal.fire('Seleccione una sucursal ','','info');
-  			 return false;
-  		}
+      var faltantes = $('#txt_faltante').val();
+  		
   		if((parseFloat(ingresados_kardex)+parseFloat(ingresados_pedido))< parseFloat(total))
   		{
   			 Swal.fire('No se ha completa todo el pedido ','Asegurese de que el pedido este completo','info');
   			 return false;
   		}
+      if(parseFloat(faltantes)<0)
+      {
+         Swal.fire('No se pudo guardar ','El ingreso realizado necesita de revision y correccion en sus valores la diferencia debe ser 0','error');
+         return false;
+      }
   	 var parametros = $('#form_correos').serialize();
   	  $.ajax({
 	      type: "POST",
@@ -407,10 +411,18 @@ function autocoplet_ingreso()
 	   {
   	 	if(total_final >cant_suge)
   	 	{
+        console.log(total_final+'-'+cant_suge);
   	 			Swal.fire('La cantidad Ingresada supera a la cantidad registrada','','info');
   	 			return false
   	 	}
   	 }
+
+      var sucur = $('#ddl_sucursales').val();
+     if($("#pnl_sucursal").is(":visible")==true && sucur=='')
+      {
+         Swal.fire('Seleccione una sucursal ','','info');
+         return false;
+      }
   	 if(id=='')
   	 {
   	 		Swal.fire('Seleccione un registro','','info');
@@ -644,19 +656,16 @@ function autocoplet_ingreso()
 							</div>
 							<div class="col-sm-6">
 								<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
-							</div>
+							</div>              
 						</div>
-						<div class="row"  style="padding-top: 5px; display: none;" id="pnl_sucursal">
-							<div class="col-sm-3 text-right">
-								<button type="button" class="btn btn-default" onclick="show_sucursal()"><img src="../../img/png/sucursal.png" /></button>
-							</div>
-							<div class="col-sm-9">
-								<b>SUCURSAL</b>
-								<select class="form-control input-xs" id="ddl_sucursales" name="ddl_sucursales">
-									<option value="">Seleccione sucursal</option>
-								</select>
-							</div>
-						</div>
+            <div class="row">
+              <div class="col-sm-6" style="padding-top:5px">
+                <b>Fecha de Clasificacion</b>                
+              </div>
+              <div class="col-sm-6">
+                <input type="date" name="txt_fecha_cla" id="txt_fecha_cla" value="<?php echo date('Y-m-d'); ?>" class="form-control input-xs" readonly>
+              </div>
+            </div>						
 					</div>
 					<div class="col-sm-5">
 						<div class="row"  style="padding-top: 5px;">
@@ -697,7 +706,7 @@ function autocoplet_ingreso()
 						</div>
 						<div class="row" id="panel_serie"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
-								<b>TEMPERATURA DE RECEPCION °C</b>
+								<b>TEMPERATURA RECEPCION °C</b>
 							</div>
 							<div class="col-sm-6">
 	                <input type="text" name="txt_temperatura" id="txt_temperatura" class="form-control input-xs"  readonly>
@@ -742,7 +751,7 @@ function autocoplet_ingreso()
 				<hr>
 
 				<div class="row">
-					<div class="col-sm-8">
+					<div class="col-sm-7">
 						<div class="row">
 							<div class="col-sm-4 col-md-3">
 									<button type="button" class="btn btn-default" onclick="show_producto()"><img src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo de producto</b></button>							
@@ -760,41 +769,40 @@ function autocoplet_ingreso()
 							</div>
 							<div class="col-sm-2 col-md-2">
 								<b>Grupo</b>
-								<input type="text" name="txt_grupo" id="txt_grupo" class="form-control" readonly>
+								<input type="text" name="txt_grupo" id="txt_grupo" class="form-control input-xs" readonly>
 								<input type="hidden" name="txt_TipoSubMod" id="txt_TipoSubMod" class="form-control" readonly>
 								<input type="hidden" name="txt_primera_vez" id="txt_primera_vez" class="form-control" readonly value="0">
 							</div>
 						</div>
 					</div>
-					<div class="col-sm-4">
-						<div class="rows">
-							<div class="col-sm-6 col-md-6">
-								<br>
-								<b>Fecha de Clasificacion</b>
-							</div>
-							<div class="col-sm-6 col-md-6">
-								<br>
-								<input type="date" name="txt_fecha_cla" id="txt_fecha_cla" value="<?php echo date('Y-m-d'); ?>" class="form-control" readonly>
-							</div>
-						</div>						
-					</div>
+          <div class="col-sm-4">
+            <div class="row">
+              <div class="col-sm-6 col-md-6">
+                  <button type="button" style="width: initial;" class="btn btn-default" onclick="show_calendar()"><img src="../../img/png/expiracion.png" /> <br> <b>Fecha de Expiracion</b></button> 
+              </div>
+              <div class="col-sm-6 col-md-6">
+                <br>
+                <input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input">
+              </div>              
+            </div>
+          </div>					
 				</div>
 				<div class="row">
-					<div class="col-sm-6 col-md-4">
+					<!-- <div class="col-sm-6 col-md-4">
 						<div class="row">
 							<div class="col-sm-6 col-md-6">
-									<button type="button" class="btn btn-default" onclick="show_calendar()"><img src="../../img/png/expiracion.png" /> <br> <b>Fecha de Expiracion</b></button>	
+									<button type="button" style="width: -webkit-fill-available;" class="btn btn-default" onclick="show_calendar()"><img src="../../img/png/expiracion.png" /> <br> <b>Fecha Expiracion</b></button>	
 							</div>
 							<div class="col-sm-6 col-md-6">
 								<br>
 								<input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input">
 							</div>							
 						</div>
-					</div>
+					</div> -->
 					<div class="col-sm-6 col-md-5">
 						<div class="rows">
 							<div class="col-sm-4 col-md-3">
-								<button type="button" class="btn btn-default" onclick="show_cantidad()" id="btn_cantidad">
+								<button type="button" style="width: initial;" class="btn btn-default" onclick="show_cantidad()" id="btn_cantidad">
 										<img src="../../img/png/kilo.png" />		
 										<br>
 										<b>Cantidad</b>					
@@ -818,13 +826,27 @@ function autocoplet_ingreso()
 							</div>
 						</div>						
 					</div>
+          <div class="col-md-4">
+            <div class="row"  style="display: none;" id="pnl_sucursal">
+              <div class="col-sm-3">
+                <button type="button" class="btn btn-default" onclick="show_sucursal()"><img src="../../img/png/sucursal.png" />
+                </button>
+              </div>
+              <div class="col-sm-9">
+                <b>SUCURSAL</b>
+                <select class="form-control input-xs" id="ddl_sucursales" name="ddl_sucursales">
+                  <option value="">Seleccione sucursal</option>
+                </select>
+              </div>
+            </div>
+          </div>
 					<div class="col-sm-12 col-md-3 text-right">
 						<br>
 						<button type="button" class="btn btn-primary" onclick="show_panel()" >AGREGAR A INGRESO</button>
 						<button type="button" class="btn btn-primary">Limpiar</button>
 						<input type="hidden" id="A_No" name ="A_No" value="0">
 					</div>
-				</div>
+				</div>        
 			</div>
 			</form>
 		</div>	
@@ -1244,15 +1266,15 @@ function eliminar_all_pedido(pedido)
 			<div class="card_body" style="background:antiquewhite;">
 					<div class="row"> 
 						  <div  class="col-sm-12">
-						  	<table class="table-sm table-hover" style="width:100%">
+						  	<table class="table table-hover" style="width:100%">
 				        <thead>
 				          <th>ITEM</th>
 				          <th>FECHA DE CLASIFICACION</th>
 				          <th>FECHA DE EXPIRACION</th>
 				          <th>DESCRIPCION</th>
 				          <th>CANTIDAD</th>
-				          <!-- <th>UNIDAD</th> -->
-				          <th></th>
+				          <th>CODIGO USUARIO</th>
+				          <th width="8%"></th>
 				        </thead>
 				        <tbody id="tbl_body"></tbody>
 				      </table>
