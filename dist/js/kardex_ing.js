@@ -676,7 +676,10 @@ function grabar_comprobante()
       }else
       {
         Swal.fire('XML devuelto por:'+data.text,'','error');  
-      }         
+      }        
+
+
+        $('#myModal_espera').modal('hide');
 
           }
         });
