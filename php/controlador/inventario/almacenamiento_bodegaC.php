@@ -148,14 +148,33 @@ class almacenamiento_bodegaC
 			$art = $prod[0]['TDP'];
 			if($art=='R' && $value['CodBodega']=='-1')
 			{
-				$ls.= '<li><a href="#" style="padding:0px"><label><input type="checkbox" class="rbl_pedido" value="'.$value['ID'].'">'.$value['Producto'].'</label><span class="label label-primary pull-right">'.$value['Entrada'].'</span></a>
-						<ul class="nav nav-pills nav-stacked" style="padding-left: 20px;">';
-						$ls.= $this->cargar_productos_trans_pedidos($parametros);
-						$ls.='</ul></li>';
+				 $ls.= '<li class="list-group-item"><a href="#" style="padding:0px"><label><input type="checkbox" class="rbl_pedido" value="'.$value['ID'].'">'.$value['Producto'].'</label>
+				 		<div class="btn-group pull-right">
+				 				<span class="label-primary btn-sm btn">'.$value['Entrada'].'</span>
+								<button type="button" class="btn btn-sm" data-toggle="tooltip" title="" data-widget="chat-pane-toggle">
+				 					<i class="fa fa-info-circle"></i>
+				 			</button>							
+				 		</div>
+				 </a>
+				 <ul style="padding: 20px;">';
+				 		 $ls.= $this->cargar_productos_trans_pedidos($parametros);
+				 		$ls.='</ul> 
+				 </li>';
+				
+
 			}else{
 				if($value['CodBodega']=='.' || $value['CodBodega']=='-1')
 				{
-					$ls.= '<li><a href="#" style="padding:0px"><label><input type="checkbox" class="rbl_pedido" value="'.$value['ID'].'">  '.$value['Producto'].'</label><span class="label label-primary pull-right">'.$value['Entrada'].'</span></a></li>';
+					$ls.= '<li class="list-group-item"><a href="#" style="padding:0px"><label><input type="checkbox" class="rbl_pedido" value="'.$value['ID'].'">  '.$value['Producto'].'</label>
+								<div class="btn-group pull-right">
+										<span class="label-primary btn-sm btn">'.$value['Entrada'].'</span>
+										<button type="button" class="btn btn-sm" data-toggle="tooltip" title="" data-widget="chat-pane-toggle">
+											<i class="fa fa-info-circle"></i>
+									</button>
+									
+								</div>
+
+					</a></li>';
 				}
 			}
       }	
