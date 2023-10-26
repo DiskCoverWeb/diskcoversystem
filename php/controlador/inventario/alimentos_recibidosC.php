@@ -69,7 +69,7 @@ if(isset($_GET['datos_ingreso']))
 if(isset($_GET['autoincrementable']))
 {
 	$parametros = $_POST['parametros'];
-	$num = ReadSetDataNum('Ingresos_Recibidos',false,false,$parametros['fecha']);
+	$num = $controlador->autoincrementable($parametros);
 	$num = generaCeros($num,4);
 	echo json_encode($num);
 }
@@ -209,6 +209,8 @@ class alimentos_recibidosC
 	function guardar($parametros)
 	{
 		// print_r($parametros);die();
+		$parametros['fecha'] = $parametros['txt_fecha'];
+		// print_r($parametros);die();
 		SetAdoAddNew('Trans_Correos');
 		SetAdoFields('T','I');
 		SetAdoFields('Mensaje',$parametros['txt_comentario']);
@@ -219,7 +221,7 @@ class alimentos_recibidosC
 		SetAdoFields('Cod_R',$parametros['cbx_estado_tran']);
 		SetAdoFields('TOTAL',$parametros['txt_cant']);
 
-		SetAdoFields('Envio_No',substr($parametros['txt_codigo'],0,-4).generaCeros(ReadSetDataNum('Ingresos_Recibidos',false,true,$parametros['txt_fecha']),4));
+		SetAdoFields('Envio_No',substr($parametros['txt_codigo'],0,-4).generaCeros($this->autoincrementable($parametros),4));
 		return SetAdoUpdate();
 
 	}
@@ -338,6 +340,8 @@ class alimentos_recibidosC
 		
 	   // SetAdoAddNew("Trans_Kardex");
 
+		// print_r($parametro);die();
+
 
 	   $num_ped = $parametro['txt_codigo']; 	
 	   $producto = $this->modelo->catalogo_productos($parametro['txt_referencia']);
@@ -365,6 +369,7 @@ class alimentos_recibidosC
 	   SetAdoFields('Cta_Inv',$parametro['txt_cta_inv']);
 	   SetAdoFields('Contra_Cta',$parametro['txt_contra_cta']);
 	   SetAdoFields('Codigo_P',$parametro['txt_codigo_p']);
+	   SetAdoFields('Codigo_Dr',$parametro['ddl_sucursales']);
 	   $resp = SetAdoUpdate();
 	   return  $respuesta = array('ped'=>$num_ped,'resp'=>$resp,'total_add'=>'1');		
 	}
@@ -487,15 +492,16 @@ class alimentos_recibidosC
   					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
   					<td width="'.$d4.'">'.number_format($value['Entrada'],2,'.','').'</td>
-  					<td width="90px" class="text-right">';
+  					<td width="'.$d4.'">'.$value['CodigoU'].'</td>
+  					<td>';
   					if($art!='.')
   					{
-  						$tr.='<button class="btn btn-sm btn-primary" title="Agregar a '.$value['Producto'].'"  onclick=" show_producto2(\''.$value['ID'].'\')" ><i class=" fa fa-list"></i></button>';
+  						$tr.='<button class="btn btn-xs btn-primary" title="Agregar a '.$value['Producto'].'"  onclick=" show_producto2(\''.$value['ID'].'\')" ><i class=" fa fa-list"></i></button>';
   						$primeravez = 1;
   						$canti2 = $canti2+$value['Entrada'];
   					}
 
-  					$tr.='<button class="btn btn-sm btn-danger" title="Eliminar linea"  onclick="eliminar_lin(\''.$value['ID'].'\',\''.$art.'\')" ><span class="glyphicon glyphicon-trash"></span></button>
+  					$tr.='<button class="btn btn-xs btn-danger" title="Eliminar linea"  onclick="eliminar_lin(\''.$value['ID'].'\',\''.$art.'\')" ><span class="glyphicon glyphicon-trash"></span></button>
   					</td>
   				</tr>';
 			
@@ -925,6 +931,13 @@ class alimentos_recibidosC
 
 	}
 
+	function autoincrementable($parametros)
+	{
+		$fecha = $parametros['fecha'];
+		$datos = $this->modelo->autoincrementable($fecha);
+		return ($datos[0]['cant']+1);
+	}
+
 
 	function lista_bodegas_arbol2($parametros)
 	{
@@ -978,15 +991,15 @@ class alimentos_recibidosC
 				}
 
 
-				print_r($nivel_grupo);die();
+				// print_r($nivel_grupo);die();
 			}
 
-			print_r($grupo_nivel[$i]);die();
+			// print_r($grupo_nivel[$i]);die();
 
 		}
 
 
-		print_r($grupo_nivel);die();
+		// print_r($grupo_nivel);die();
 	}
 
 

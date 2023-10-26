@@ -451,7 +451,7 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         $_SESSION['INGRESO']['Email'] = $empresa[0]['Email'];
         $_SESSION['INGRESO']['RUC'] = $empresa[0]['RUC'];
         $_SESSION['INGRESO']['Gerente'] = $empresa[0]['Gerente'];
-        ;
+        
         $_SESSION['INGRESO']['Det_Comp'] = $empresa[0]['Det_Comp'];
         $_SESSION['INGRESO']['Signo_Dec'] = $empresa[0]['Signo_Dec'];
         $_SESSION['INGRESO']['Signo_Mil'] = $empresa[0]['Signo_Mil'];
@@ -471,7 +471,7 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         }
         // print_r($empresa_d);die();
         $_SESSION['INGRESO']['Ciudad'] = $empresa[0]['Ciudad'];
-        ;
+        
         $_SESSION['INGRESO']['accesoe'] = '0';
         $_SESSION['INGRESO']['Email_Conexion'] = $empresa[0]['Email_Conexion'];
         $_SESSION['INGRESO']['Email_Procesos'] = $empresa[0]['Email_Procesos'];

@@ -326,6 +326,17 @@ class alimentos_recibidosM
 		return $this->db->datos($sql);
 	}
 
+	function autoincrementable($fecha){
+		
+		$sql = "SELECT count(*) as cant 
+		FROM Trans_Correos 
+		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND Fecha_P =  '".$fecha."'";
+
+		// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+
 
 }
 ?>

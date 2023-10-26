@@ -7,6 +7,9 @@ switch ($_SESSION['INGRESO']['modulo_']) {
     break;
 }
 ?>
+
+<link rel="stylesheet" href="../../dist/css/estilostabla.css">
+
 <style type="text/css">
   .col {
     display: inline-block;
@@ -71,8 +74,9 @@ switch ($_SESSION['INGRESO']['modulo_']) {
   </div>
   <div class="col-sm-7 col-xs-12">
     <div class="row">
-      <div class="form-group col-xs-12 col-md-6  padding-all margin-b-1">
-        <div class="col-xs-12  text-center">
+      <!-- Periodo de Cierre -->
+      <div class="form-group col-xs-12 col-md-6 padding-all margin-b-1">
+        <div class="col-xs-12">
           <label for="inputEmail3" class="col control-label" style="font-size: 13px;">Periodo de Cierre</label>
         </div>
         <div class="col-xs-6">
@@ -84,23 +88,24 @@ switch ($_SESSION['INGRESO']['modulo_']) {
             onchange="" title="Fecha Final" value="<?php echo date("Y-m-d") ?>">
         </div>
       </div>
-      <div class="form-group col-xs-12 col-md-6  padding-all margin-b-1">
-        <div class="col-xs-8 padding-all">
+
+      <!-- Checkboxes and Select -->
+      <div class="form-group col-xs-12 col-md-6 padding-all margin-b-1">
+        <div class="col-xs-7 padding-all">
           <div class="col-xs-12">
             <label for="CheqCajero" class="col control-label" style="font-size: 13px;">
-              <input style="margin-top: 0px;margin-right: 2px;" tabindex="47" type="checkbox" name="CheqCajero"
+              <input style="margin-top: 0px; margin-right: 2px;" tabindex="47" type="checkbox" name="CheqCajero"
                 id="CheqCajero"> Por Cajero
             </label>
           </div>
           <div class="col-xs-12">
             <select style="display:none" class="form-control input-xs" name="DCBenef" id="DCBenef" tabindex="46"
-              onchange="">
-            </select>
+              onchange=""></select>
           </div>
         </div>
-        <div class="col-xs-4 padding-all">
+        <div class="col-xs-5 padding-all">
           <label for="CheqOrdDep" class="col control-label" style="font-size: 13px;">
-            <input style="margin-top: 0px;margin-right: 2px;" tabindex="48" type="checkbox" name="CheqOrdDep"
+            <input style="margin-top: 0px; margin-right: 2px;" tabindex="48" type="checkbox" name="CheqOrdDep"
               id="CheqOrdDep"> Ordenar Por Depósito
           </label>
         </div>
@@ -112,7 +117,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
 </div>-->
 
 <div class="row">
-  <div class="panel panel-primary col-sm-12" style="  margin-bottom: 3px;">
+  <div class="panel panel-primary col-sm-12" style="  margin-bottom: 3px; height:700px">
     <div class="panel-body" style=" padding-top: 5px;padding-bottom: 0px;">
       <div class="col-sm-12">
         <ul class="nav nav-tabs">
@@ -158,9 +163,9 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                 </div>
               </div>
             </div>
-            <div class="row">
+            <!--div class="row">
               <div class="col-sm-12" id="DGVentas" style="min-height: 80px;">
-                <table>
+                <table class="responsive-table">
                   <thead>
                     <tr>
                       <th class="text-left" style="width:40px">TC</th>
@@ -184,12 +189,17 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                   </thead>
                 </table>
               </div>
+            </div-->
+
+            <div class="col-sm-12" style="overflow-x: scroll; height:500px">
+              <table class="blue-table" style="white-space: nowrap;" id="TblDGVentas">
+              </table>
             </div>
           </div>
 
           <!--ABONOS-->
           <div class="tab-pane modal-body" id="AdoCxCT">
-            <div class="row">
+            <div class="row" height:100px>
               <div class="form-group col-xs-6 padding-all margin-b-1">
                 <label for="LabelCheque" class="col control-label">TOTAL</label>
                 <div class="col">
@@ -205,7 +215,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
               </div>
             </div>
             <div class="row">
-              <div class="col-sm-12 mb-3" id="DGCxC" style="min-height: 80px;">
+              <!--div class="col-sm-12 mb-3" id="DGCxC" style="min-height: 80px;">
                 <table class="table-sm" style="width: -webkit-fill-available;">
                   <thead>
                     <tr>
@@ -229,11 +239,15 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                     </tr>
                   </thead>
                 </table>
+              </div-->
+              <div class="col-sm-12" style="overflow-x: scroll; height:250px">
+                <table class="blue-table" style="white-space: nowrap;" id="TblDGCxC">
+                </table>
               </div>
             </div>
             <hr>
             <div class="row">
-              <div class="col-sm-12" id="DGAnticipos" style="min-height: 80px;">
+              <!--div class="col-sm-12" id="DGAnticipos" style="min-height: 80px;">
                 <table class="table-sm" style="width: -webkit-fill-available;">
                   <thead>
                     <tr>
@@ -248,13 +262,17 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                     </tr>
                   </thead>
                 </table>
+              </div-->
+              <div class="col-sm-12" style="overflow-x: scroll; height:250px">
+                <table class="blue-table" style="white-space: nowrap;" id="TblDGAnticipos">
+                </table>
               </div>
             </div>
           </div>
 
           <!--INVENTARIO-->
           <div class="tab-pane modal-body" id="AdoInv">
-            <div class="col-md-2" id="DGCierres" style="min-height: 80px;">
+            <!--div class="col-md-2" id="DGCierres" style="min-height: 80px;">
               <table class="table-sm tablaHeight" style="width: -webkit-fill-available;">
                 <thead>
                   <tr>
@@ -262,10 +280,14 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                   </tr>
                 </thead>
               </table>
+            </div-->
+            <div class="col-md-2" style="overflow-x: scroll; height:610px">
+              <table class="blue-table" style="white-space: nowrap;" id="TblDGCierres">
+              </table>
             </div>
 
             <div class="col-md-10">
-              <div id="DGInv" style="min-height: 80px;">
+              <!--div id="DGInv" style="min-height: 80px;">
                 <table class="table-sm" style="width: -webkit-fill-available;">
                   <thead>
                     <tr>
@@ -275,8 +297,13 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                     </tr>
                   </thead>
                 </table>
+              </div-->
+              <div class="col-sm-12" style="overflow-x: scroll; height:300px">
+                <table class="blue-table" style="white-space: nowrap;" id="TblDGInv">
+                </table>
               </div>
-              <div id="DGProductos" style="min-height: 80px;">
+
+              <!--div id="DGProductos" style="min-height: 80px;">
                 <table id="" class="table-sm" style="width: -webkit-fill-available;">
                   <thead>
                     <tr>
@@ -288,6 +315,10 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                       <th>Cta_Venta</th>
                     </tr>
                   </thead>
+                </table>              
+              </div-->
+              <div class="col-sm-12" style="overflow-x: scroll; height:300px; margin-top:10px">
+                <table class="blue-table" style="white-space: nowrap;" id="TblDGProductos">
                 </table>
               </div>
             </div>
@@ -296,7 +327,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
           <!--CONTABILIDAD-->
           <div class="tab-pane modal-body" id="AdoAsientoT">
             <div class="row">
-              <div class="col-sm-12" id="DGAsiento" style="min-height: 80px;">
+              <!--div class="col-sm-12" id="DGAsiento" style="min-height: 80px;">
                 <table class="table-sm" style="width: -webkit-fill-available;">
                   <thead>
                     <tr>
@@ -308,12 +339,15 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                       <th>CHEQ_DEP</th>
                       <th>DETALLE</th>
                     </tr>
-                  </thead>
+                  </thead>                
+              </div-->
+              <div class="col-sm-12" style="overflow-x: scroll; height:200px">
+                <table class="blue-table" style="white-space: nowrap;" id="TblDGAsiento">
                 </table>
               </div>
             </div>
 
-            <div class="text-right" style="margin-bottom: 15px; margin-top: 15px;">
+            <div class="text-right" style="margin-bottom: 10px; margin-top: 15px; height:100px">
               <label for="LblDiferencia">Diferencia</label>
               <input id="LblDiferencia"></input>
               <label>TOTALES</label>
@@ -322,7 +356,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
             </div>
 
             <div class="row">
-              <div class="col-sm-12" id="DGAsiento1" style="min-height: 80px;">
+              <!--div class="col-sm-12" id="DGAsiento1" style="min-height: 80px;">
                 <table class="table-sm" style="width: -webkit-fill-available;">
                   <thead>
                     <tr>
@@ -336,10 +370,14 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                     </tr>
                   </thead>
                 </table>
+              </div-->
+              <div class="col-sm-12" style="overflow-x: scroll; height:200px">
+                <table class="blue-table" style="white-space: nowrap;" id="TblDGAsiento1">
+                </table>
               </div>
             </div>
 
-            <div class="text-right" style="margin-top: 15px;">
+            <div class="text-right" style="margin-top: 15px; height:100px">
               <label for="LblDiferencia">Diferencia</label>
               <input id="LblDiferencia1"></input>
               <label>TOTALES</label>
@@ -351,7 +389,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
           <!--ANULADAS-->
           <div class="tab-pane modal-body" id="AdoFactAnul">
             <div class="row">
-              <div class="col-sm-12" id="DGFactAnul" style="min-height: 80px;">
+              <!--div class="col-sm-12" id="DGFactAnul" style="min-height: 80px;">
                 <table class="table-sm" style="width: -webkit-fill-available;">
                   <thead>
                     <tr>
@@ -365,6 +403,10 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                       <th>Cta_CxP</th>
                     </tr>
                   </thead>
+                </table>                
+              </div-->
+              <div class="col-sm-12" style="overflow-x: scroll; height:600px">
+                <table class="blue-table" style="white-space: nowrap;" id="TblDGFactAnul">
                 </table>
               </div>
             </div>
@@ -372,11 +414,11 @@ switch ($_SESSION['INGRESO']['modulo_']) {
 
           <!--REPORTE ADITORIA-->
           <div class="tab-pane modal-body" id="AdoSRIT">
-            <select style="min-width: 150px; margin-bottom:15px" class="form-control input-xs" name="AdoSRI" id="AdoSRI"
-              onchange=""></select>
+            <select style="min-width: 150px; margin-bottom:15px;" class="form-control input-xs" name="AdoSRI"
+              id="AdoSRI" onchange=""></select>
 
             <div class="row">
-              <div class="col-sm-12" id="DGSRI" style="min-height: 80px;">
+              <!--div class="col-sm-12" id="DGSRI" style="white-space: nowrap;">
                 <table class="table-sm" style="width: -webkit-fill-available;">
                   <thead>
                     <tr>
@@ -399,13 +441,17 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                     </tr>
                   </thead>
                 </table>
+              </div-->
+              <div class="col-sm-12" style="overflow-x: scroll; height:500px">
+                <table class="blue-table" style="white-space: nowrap;" id="TblDGSRI">
+                </table>
               </div>
             </div>
 
             <div class="row" style="margin-top: 15px;">
               <div class="col-xs-6 col-md-2">
                 <label>CON I.V.A.</label><br>
-                <input style="margin-top: 0px;" id="LblConIVA" />
+                <input id="LblConIVA" />
               </div>
               <div class="col-xs-6 col-md-2">
                 <label>SIN I.V.A.</label><br>
@@ -432,12 +478,12 @@ switch ($_SESSION['INGRESO']['modulo_']) {
 
           <!--REPORTE BANCO-->
           <div class="tab-pane modal-body" id="AdoBanco">
-            <select style="min-width: 150px; margin-bottom:15px" class="form-control input-xs" name="DCBanco"
+            <select style="min-width: 150px; margin-bottom:15px;" class="form-control input-xs" name="DCBanco"
               id="DCBanco" onchange=""></select>
 
+            <!-- //TODO LS cuando se llena esta tabla -->
             <div class="row">
-              <div class="col-sm-12" id="DGBanco" style="min-height: 80px;">
-                <!-- //TODO LS cuando se llena esta tabla -->
+              <!--div class="col-sm-12" id="DGBanco" style="min-height: 80px;">                
                 <table class="table-sm" style="width: -webkit-fill-available;">
                   <thead>
                     <tr>
@@ -445,6 +491,10 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                     </tr>
                   </thead>
                   <tbody id="DGBancoBody"></tbody>
+                </table>
+              </div-->
+              <div class="col-sm-12" style="overflow-x: scroll; height:550px">
+                <table class="blue-table" style="white-space: nowrap;" id="TblDGBanco">
                 </table>
               </div>
             </div>
@@ -458,7 +508,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
 <script type="text/javascript">
   $(document).ready(function () {
     Form_Activate();
-    ajustarAlturaTabla();
+    //ajustarAlturaTabla();
 
     $('#CheqCajero').click(function () {
       $('#DCBenef').toggle($(this).is(':checked'));
@@ -506,11 +556,6 @@ switch ($_SESSION['INGRESO']['modulo_']) {
         }
       }
     });
-  }
-
-  // construye la tabla con los datos procesados
-  function construirTabla(datos, tablaId) {
-    $('#' + tablaId).html(datos);
   }
 
   function Diario_Caja() {
@@ -571,6 +616,9 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                             'CheqOrdDep': ($('#CheqOrdDep').prop('checked')) ? 1 : 0,
                             'DCBenef': $("#DCBenef").val()
                           },
+                          beforeSend: function () {
+                            $("#tblDGVentas").html('<tr class="text-center"><td colspan="20"><img src="../../img/gif/loader4.1.gif" width="20%">');
+                          },
                           success: function (datos6) {
                             if (datos6.error) {
                               $('#myModal_espera_progress').modal('hide');
@@ -598,8 +646,8 @@ switch ($_SESSION['INGRESO']['modulo_']) {
                                     dataType: 'json',
                                     data: { 'MBFechaI': $("#MBFechaI").val(), 'MBFechaF': $("#MBFechaF").val() },
                                     success: function (datos8) {
-                                      construirTabla(datos8.AdoCierres, "DGCierres")
-                                      construirTabla(datos8.AdoAnticipos, "DGAnticipos")
+                                      construirTabla(datos8.AdoCierres, "TblDGCierres")
+                                      construirTabla(datos8.AdoAnticipos, "TblDGAnticipos")
 
                                       $("#Bar_espera_progress").css('width', '99%')
                                       $("#Bar_espera_progress .txt_progress").text('Finalizando Proceso')
@@ -664,27 +712,32 @@ switch ($_SESSION['INGRESO']['modulo_']) {
     });
   }
 
+  // construye la tabla con los datos procesados
+  function construirTabla(datos, tablaId) {
+    $('#' + tablaId).html(datos);
+  }
+
   function CargarDataResponseGrabar_Asientos_Facturacion(datos) {
-    construirTabla(datos.DGCxC, "DGCxC")
+    construirTabla(datos.DGCxC, "TblDGCxC")
 
     var AdoCxC = $("#AdoCxC");
     for (var indice in datos.AdoCxC) { //TODO LS que valor se asigna al select??
       AdoCxC.append('<option value="' + datos.AdoCxC[indice].Orden_No + ' ">' + datos.AdoCxC[indice].Orden_No + '</option>');
     }
 
-    construirTabla(datos.AdoAsiento, "DGAsiento")
-    construirTabla(datos.AdoAsiento1, "DGAsiento1")
-    construirTabla(datos.DGFactAnul, "DGFactAnul")
-    construirTabla(datos.DGInv, "DGInv")
-    construirTabla(datos.DGProductos, "DGProductos")
-    construirTabla(datos.DGVentas, "DGVentas")
+    construirTabla(datos.AdoAsiento, "TblDGAsiento")
+    construirTabla(datos.AdoAsiento1, "TblDGAsiento1")
+    construirTabla(datos.DGFactAnul, "TblDGFactAnul")
+    construirTabla(datos.DGInv, "TblDGInv")
+    construirTabla(datos.DGProductos, "TblDGProductos")
+    construirTabla(datos.DGVentas, "TblDGVentas")
 
     var AdoVentas = $("#AdoVentas");
     for (var indice in datos.AdoVentas) { //TODO LS que valor se asigna al select??
       AdoVentas.append('<option value="' + datos.AdoVentas[indice].Factura + ' ">' + datos.AdoVentas[indice].Factura + ' - ' + datos.AdoVentas[indice].Total_MN + '</option>');
     }
 
-    construirTabla(datos.DGSRI, "DGSRI")
+    construirTabla(datos.DGSRI, "TblDGSRI")
 
     var AdoSRI = $("#AdoSRI");
     for (var indice in datos.AdoSRI) { //TODO LS que valor se asigna al select??
@@ -874,8 +927,8 @@ switch ($_SESSION['INGRESO']['modulo_']) {
             $("#MBFechaF").val(datos.CierreDelDia.MBFechaF)
           }
 
-          construirTabla(datos.AdoAsiento, "DGAsiento")
-          construirTabla(datos.AdoAsiento1, "DGAsiento1")
+          //construirTabla(datos.AdoAsiento, "TblDGAsiento")
+          //construirTabla(datos.AdoAsiento1, "TblDGAsiento1")
 
         }
         $("#LabelDebe").val('0')

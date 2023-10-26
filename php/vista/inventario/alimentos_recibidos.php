@@ -461,7 +461,7 @@ function autocoplet_ingreso_donante(){
 											</span>
 											<b>PROVEEDOR / DONANTE</b>	
 											<div class="form-group">
-												<div class="col-sm-9">	
+												<div class="col-sm-12">	
 												<div class="input-group" style="display:flex;">
 				                	<select class=" form-control input-xs form-select" id="txt_donante" name="txt_donante" onchange="option_select2()">
 								           		<option value="">Seleccione</option>
@@ -469,15 +469,10 @@ function autocoplet_ingreso_donante(){
 													<span class="input-group-btn">
 														<button type="button" class="btn btn-default btn-xs btn-flat" onclick="limpiar_donante()"><i class="fa fa-close"></i></button>
 													</span>
-											 </div>
-
-																	
-
-													<!-- <input type="" class="form-control input-xs" id="txt_donante" name="txt_donante" readonly> -->
-												</div>
-												<div class="col-sm-3">
+											 </div>											 
 													<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
 												</div>
+												
 											</div>
 
 									</div>
@@ -526,11 +521,11 @@ function autocoplet_ingreso_donante(){
 								</div>								
 							</div>						
 					</div>
-					<div class="col-sm-12 col-md-4">
+					<div class="col-sm-12 col-md-4" style="padding:0px">
 						<div class="col-sm-6 col-md-12">
 							<div class="form-group">
 									<label class="col-sm-6 control-label">Fecha de Ingreso</label>
-									<div class="col-sm-6">
+									<div class="col-sm-6" style="padding: 0px;">
 										<input type="date" class="form-control input-xs" id="txt_fecha" name="txt_fecha" value="<?php echo date('Y-m-d'); ?>" readonly>		
 									</div>
 							</div>		
@@ -538,7 +533,7 @@ function autocoplet_ingreso_donante(){
 						<div class="col-sm-6 col-md-12">
 								<div class="form-group">
 								<label  class="col-sm-6 control-label">Codigo de Ingreso</label>
-									<div class="col-sm-6">									
+									<div class="col-sm-6" style="padding: 0px;">									
 	                 	<input type="" class="form-control input-xs" id="txt_codigo" name="txt_codigo" readonly>
 									</div>
 								</div>
@@ -546,7 +541,7 @@ function autocoplet_ingreso_donante(){
 						<div class="col-sm-6 col-md-12">							
 							<div class="form-group">
 									<label class="col-sm-6 control-label">RUC / CI</label>
-									<div class="col-sm-6">									
+									<div class="col-sm-6" style="padding: 0px;">									
 	                		<input type="" class="form-control input-xs" id="txt_ci" name="txt_ci" readonly>
 									</div>
 							</div>
