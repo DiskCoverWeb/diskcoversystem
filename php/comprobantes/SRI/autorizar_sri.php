@@ -2669,16 +2669,17 @@ function generar_xml_retencion($cabecera,$detalle)
 
         if(count($RIMPE)>0)
 		{
-			if($RIMPE['@micro']!='.' && $RIMPE['@micro']!='' && $RIMPE['@micro']=='CONTRIBUYENTE RÉGIMEN RIMPE' )
-			{
-				$xml_contribuyenteRimpe = $xml->createElement( "contribuyenteRimpe",$RIMPE['@micro']);
-				$xml_infotributaria->appendChild( $xml_contribuyenteRimpe);
-			}
 			if($RIMPE['@Agente']!='.' && $RIMPE['@Agente']!='')
 			{
 				$xml_agenteRetencion = $xml->createElement( "agenteRetencion",'1');
 				$xml_infotributaria->appendChild( $xml_agenteRetencion);
 			}
+			if($RIMPE['@micro']!='.' && $RIMPE['@micro']!='' && $RIMPE['@micro']=='CONTRIBUYENTE RÉGIMEN RIMPE' )
+			{
+				$xml_contribuyenteRimpe = $xml->createElement( "contribuyenteRimpe",$RIMPE['@micro']);
+				$xml_infotributaria->appendChild( $xml_contribuyenteRimpe);
+			}
+			
 		}
 
         // $xml->appendChild($xml_infotributaria);
