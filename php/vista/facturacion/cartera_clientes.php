@@ -141,7 +141,7 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
       width: 'resolve',
       // minimumResultsForSearch: Infinity,
       ajax: {
-        url: '../controlador/facturacion/lista_facturasC.php?clientes=true&g=' + g,
+        url: '../controlador/facturacion/lista_facturasC.php?clientes2=true&g=' + g,
         dataType: 'json',
         delay: 250,
         processResults: function (data) {
@@ -163,7 +163,7 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
       width: 'resolve',
       // minimumResultsForSearch: Infinity,
       ajax: {
-        url: '../controlador/facturacion/lista_facturasC.php?clientes2=true&g=' + g + '&estado=' + estado,
+        url: '../controlador/facturacion/lista_facturasC.php?clientes=true&g=' + g + '&estado=' + estado,
         dataType: 'json',
         delay: 250,
         processResults: function (data) {

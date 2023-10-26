@@ -75,19 +75,28 @@ if (isset($_GET['clientes'])) {
 	if (isset($_GET['q'])) {
 		$query = $_GET['q'];
 	}
-	if (isset($_GET['cartera'])) {
-		$cartera = $_GET['cartera'];
-	}
-	echo json_encode($controlador->clientes_x_grupo($query, $grupo,$cartera));
+	$estado = $_GET['estado'];
+	echo json_encode($controlador->clientes2_x_grupo($query, $grupo, $estado));
+
+	// if (isset($_GET['cartera'])) {
+	// 	$cartera = $_GET['cartera'];
+	// }
+	// echo json_encode($controlador->clientes_x_grupo($query, $grupo,$cartera));
 }
+
 if (isset($_GET['clientes2'])) {
 	$query = '';
 	$grupo = $_GET['g'];
 	if (isset($_GET['q'])) {
 		$query = $_GET['q'];
+	}	
+	$cartera = 0;
+	if (isset($_GET['cartera'])) {
+		$cartera = $_GET['cartera'];
 	}
-	$estado = $_GET['estado'];
-	echo json_encode($controlador->clientes2_x_grupo($query, $grupo, $estado));
+	echo json_encode($controlador->clientes_x_grupo($query, $grupo,$cartera));
+	// $estado = $_GET['estado'];
+	// echo json_encode($controlador->clientes2_x_grupo($query, $grupo, $estado));
 }
 if (isset($_GET['clientes_datos'])) {
 	$parametros = $_POST['parametros'];
