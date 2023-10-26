@@ -50,6 +50,33 @@ function ip()
 
 }
 
+function getInfoIPS(){
+  $conn = new db();
+  $cid= $conn->conexion();
+  $sql = "SELECT TOP 1 c.client_net_address, c.local_net_address, s.host_name
+  FROM sys.dm_exec_connections AS c JOIN sys.dm_exec_sessions AS s 
+  ON c.session_id = s.session_id 
+  WHERE c.client_net_address = '" . $_SESSION['INGRESO']['IP_Wan_TEST'] . "' ";
+
+  $data = array(
+    'client_net_address' => $_SESSION['INGRESO']['IP_Wan_TEST'],
+    'local_net_address' => '',
+    'host_name' => '');//Siempre retorna la ip wan
+  $stmt = sqlsrv_query($cid, $sql);
+  if( $stmt === false)  
+      {  
+       return $data;//si no existe, solo retorna la ip wan con los demas vacios.
+      }
+      $result = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC);
+      if ($result) {
+        // Si hay resultados, agregamos más campos a $data
+        $data['local_net_address'] = $result['local_net_address'];
+        $data['host_name'] = $result['host_name'];
+    }
+    return $data;
+
+}
+
 function Empresa_data()
  {
   $conn = new db();

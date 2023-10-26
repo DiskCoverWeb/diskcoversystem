@@ -38,9 +38,8 @@
 
 			echo '<script>
 			console.log("IPWAN", " '. $_SESSION['INGRESO']['IP_Wan_TEST'] .' ");
-			console.log("IPLOCAL","' . $_SESSION['INGRESO']['IP_Local_TEST'] . '");
-			console.log("PCNAME","' . $_SESSION['INGRESO']['PC_NAME_TEST'] . '");
-			console.log("PCNAME2","' . $_SESSION['INGRESO']['PC_NAME_TEST2'] . '");
+			console.log("IPLocal", " '. $_SESSION['INGRESO']['IP_Local_TEST'] .' ");
+			console.log("HOSTNAME", " '. $_SESSION['INGRESO']['HOST_NAME'] .' ");
 			</script>';
 
 
