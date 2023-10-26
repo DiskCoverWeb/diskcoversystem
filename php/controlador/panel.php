@@ -412,6 +412,9 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         $_SESSION['INGRESO']['Razon_Social'] = $empresa[0]['Razon_Social'];
         $_SESSION['INGRESO']['Fecha_ce'] = $empresa[0]['Fecha_CE'];
         $_SESSION['INGRESO']['Porc_Serv'] = round($empresa[0]['Servicio'] / 100, 2);
+        $datos = getInfoIPS();
+        $_SESSION['INGRESO']['IP_Local_TEST'] = $datos['local_net_address'] == '' ? "." : $datos['local_net_address'];
+        $_SESSION['INGRESO']['HOST_NAME'] = $datos['host_name'] == '' ? "." : $datos['host_name'];
 
         //datos de empresa seleccionada
         $empresa = getEmpresasDE($_SESSION['INGRESO']['item'], $_SESSION['INGRESO']['noempr']);
