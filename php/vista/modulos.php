@@ -36,11 +36,7 @@
 			$minutos = 6;
 			val_estado($minutos);
 
-			echo '<script>
-			console.log("IPWAN", " '. $_SESSION['INGRESO']['IP_Wan_TEST'] .' ");
-			console.log("IPLocal", " '. $_SESSION['INGRESO']['IP_Local_TEST'] .' ");
-			console.log("HOSTNAME", " '. $_SESSION['INGRESO']['HOST_NAME'] .' ");
-			</script>';
+			
 
 
 
@@ -67,17 +63,6 @@
 
 </div>
 <script>
-	function getInfo() {
-		$.ajax({
-			url: 'http://localhost:5000/get_data',
-			type: 'get',
-			dataType: 'json',
-			success: function (response) {
-				console.log("DATA PC", response);
-			}
-		});
-	}
-
-	//getInfo();
+	
 </script>
 <?php include('../headers/footer.php'); ?>

@@ -1,41 +1,50 @@
-"""
-Toca subir la version de python, aunque sea a 3.3
-pip install flask
-pip install flask-cors
-"""
-from flask import Flask, jsonify, request
 import requests
 import socket
-from flask_cors import CORS
-
-app = Flask(__name__)
-CORS(app, resources={r"/get_data": {"origins": ["https://erp.diskcoversystem.com","https://erp.diskcoversystem.com/~diskcover","http://localhost"]}}) 
-
+import json
+import platform
+import subprocess
+ 
 def getWanIP():
-    response = requests.get("https://api.ipify.org?format=json")
-    data = response.json()
-    wan_ip = data['ip']
-    return wan_ip
+    return requests.get('https://api.ipify.org').text
     
 def getLocalIP():
-    return request.remote_addr
-    
+    return socket.gethostbyname(socket.gethostname())
     
 def getPcName():
     return socket.gethostname()
+
+def getMac():
+    sistema_operativo = platform.system()
+    if sistema_operativo == "Windows":
+        try:
+            result = subprocess.check_output(["getmac"])
+            result = result.decode("utf-8", errors="ignore")
+            mac_adress = result.split("\n")[3].split()[0]
+            return mac_adress
+        except Exception as e:
+            return str(e)
+    elif sistema_operativo == "Linux":
+        try:
+            result = subprocess.check_output(["ifconfig"])
+            result = result.decode("utf-8", errors="ignore")
+            mac_adress = (result.split("HWaddr")[1]).split("\n")[0]
+            return mac_adress
+        except Exception as e:
+            return str(e)
+    else:
+        return "Sistema Operativo no Compatible"
+            
+            
     
 
-@app.route('/get_data', methods=['GET'])
 def get_data():
     #request_url = request.url
     data = {
         'wan_ip': getWanIP(),
         'local_ip': getLocalIP(),
-        'pc_name': getPcName()
+        'pc_name': getPcName(),
+        'mac': getMac() 
     }
-    return jsonify(data)
+    return data
 
-    
-
-if __name__ == '__main__':
-    app.run()
+print(get_data())

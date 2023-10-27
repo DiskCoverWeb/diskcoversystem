@@ -138,13 +138,13 @@ class login_controller
 		// print_r($datos);
 		// die();
 
-		$_SESSION['INGRESO']['IP_Wan_TEST'] = $parametro['ipWAN'];
+		$_SESSION['INGRESO']['IP_Wan'] = $parametro['ipWAN'];
 
 		$_SESSION['INGRESO']['usuario'] = $parametro['usuario'];
 		$_SESSION['INGRESO']['pass'] = $parametro['pass'];
 
 		$_SESSION['INGRESO']['msjMora'] = true; //indica que se debe mostrado el msj de mora en caso de existir.
-		$_SESSION['INGRESO']['IP_Local'] = !empty($parametro['localIp']) ? $parametro['localIp'] : ".";
+		//$_SESSION['INGRESO']['IP_Local'] = !empty($parametro['localIp']) ? $parametro['localIp'] : ".";
 
 		if ($parametro['cartera'] == 1) {
 			

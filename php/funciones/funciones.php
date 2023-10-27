@@ -56,10 +56,10 @@ function getInfoIPS(){
   $sql = "SELECT TOP 1 c.client_net_address, c.local_net_address, s.host_name
   FROM sys.dm_exec_connections AS c JOIN sys.dm_exec_sessions AS s 
   ON c.session_id = s.session_id 
-  WHERE c.client_net_address = '" . $_SESSION['INGRESO']['IP_Wan_TEST'] . "' ";
+  WHERE c.client_net_address = '" . $_SESSION['INGRESO']['IP_Wan'] . "' ";
 
   $data = array(
-    'client_net_address' => $_SESSION['INGRESO']['IP_Wan_TEST'],
+    'client_net_address' => $_SESSION['INGRESO']['IP_Wan'],
     'local_net_address' => '',
     'host_name' => '');//Siempre retorna la ip wan
   $stmt = sqlsrv_query($cid, $sql);
@@ -10528,8 +10528,8 @@ function Datos_Iniciales_Entidad_SP_MySQL($empresa, $usuario)
   $EmailUsuario = $usuario['EmailUsuario'];
   $NivelesDeAccesos = $CadenaParcial;
   $IP_Local = @$_SESSION['INGRESO']['IP_Local'];
-  $IP_WAN = ip();
-  $PC_Nombre = G_NINGUNO;
+  $IP_WAN = @$_SESSION['INGRESO']['IP_Wan'];
+  $PC_Nombre = @$_SESSION['INGRESO']['HOST_NAME'];
   $PC_MAC = G_NINGUNO;
 
   $conn = new db();
@@ -10657,9 +10657,9 @@ function Estado_Empresa_SP_MySQL()
   $ItemEmpresa = $_SESSION['INGRESO']['item'];
   $CodigoUsuario = $_SESSION['INGRESO']['CodigoU'];
   $RUCEmpresa = $_SESSION['INGRESO']['RUC'];
-  $IP_WAN = ip();
+  $IP_WAN = @$_SESSION['INGRESO']['IP_Wan'];
   $IP_Local = @$_SESSION['INGRESO']['IP_Local'];
-  $PC_Nombre = G_NINGUNO;
+  $PC_Nombre = @$_SESSION['INGRESO']['HOST_NAME'];
   $PC_MAC = G_NINGUNO;
   //Parametros de entrada y de salida
   $parametros = array(
