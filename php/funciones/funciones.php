@@ -10700,7 +10700,7 @@ function Actualiza_Procesado_Kardex($CodigoInv)
     $conn = new db();
     if(strlen($CodigoInv) > 2 )
     {
-       $SQLKardex = "UPDATE Trans_Kardex
+       $sql = "UPDATE Trans_Kardex
                 SET Procesado = 0
                 WHERE Item = '".$_SESSION['INGRESO']['item']."'
                 AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
