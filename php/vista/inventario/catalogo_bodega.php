@@ -4,39 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <style>
+        .panel-body{
+            margin-left: 15px;
+        }
+        .panel-body:hover {
+            color: blue;
+            cursor: pointer;            
+        }
+
+        .icono {
+            margin-right: 5px;
+        }
+
+        #accordion {
+        max-height: 400px; 
+        overflow-y: auto; 
+    }
+    </style>
 </head>
 
 <body>
-    <div class="row">
-        <div class="col-sm-8">
-            <div class="panel-group" id="accordion">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                                <span class="glyphicon glyphicon-folder-open text-success"></span> Pay by Credit Card
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="collapseOne" class="panel-collapse collapse in">
-                        <div class="panel-body">first</div>
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                                <span class="glyphicon glyphicon-folder-open text-info"></span> Pay by PayPal
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="collapseTwo" class="panel-collapse collapse">
-                        <div class="panel-body">Pay Pal</div>
-                    </div>
-                </div>
+    <div class="row" style="margin:10px">
+        <div class="col-sm-6 panel panel-info">
+            <div class="panel-group" id="accordion"  style="margin-top:20px">>
+                <!-- Los paneles del acordeón se llenarán aquí dinámicamente -->
+            </div>
+
+            <div class="alert alert-warning" id="alertNoData" style="display: none; margin-top:10px">
+                No se encontraron datos que mostrar.
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-6">
             <div class="row">
                 <div class="col-sm-12">
                     <a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
@@ -46,13 +46,16 @@
                     <button class="btn btn-default" data-toggle="tooltip" title="Grabar" id="btnGuardar">
                         <img src="../../img/png/grabar.png">
                     </button>
+                    <button class="btn btn-default" data-toggle="tooltip" title="Eliminar" id="btnEliminar">
+                        <img src="../../img/png/eliminar.png">
+                    </button>
                 </div>
             </div>
             <form style="margin-top:20px" id="miFormulario">
                 <div class="row">
                     <div class="col-sm-6">
                         <label for="codigoP">Código del producto</label>
-                        <input type="text" class="form-control" id="codigoP"
+                        <input type="text" class="form-control" maxlength="5" id="codigoP"
                             placeholder="<?php echo $_SESSION['INGRESO']['Formato_Inventario']; ?>">
                     </div>
                     <div class="col-sm-6">
@@ -69,14 +72,19 @@
                         </label>
                     </div>
                     <div class="form-check col-sm-6">
-                        <input class="form-check-input" type="radio" name="cbxProdc" id="cbxDet" value='D'
-                            checked>
+                        <input class="form-check-input" type="radio" name="cbxProdc" id="cbxDet" value='D' checked>
                         <label class="form-check-label" for="cbxDet">
                             Detalle
                         </label>
                     </div>
                 </div>
+
+                <div class="alert alert-light" id="alertUse" style="display: none; margin-top: 5px; padding: 2px;">
+                    <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+                </div>
+
             </form>
+
         </div>
     </div>
 
