@@ -10530,7 +10530,7 @@ function Datos_Iniciales_Entidad_SP_MySQL($empresa, $usuario)
   $IP_Local = @$_SESSION['INGRESO']['IP_Local'];
   $IP_WAN = @$_SESSION['INGRESO']['IP_Wan'];
   $PC_Nombre = @$_SESSION['INGRESO']['HOST_NAME'];
-  $PC_MAC = G_NINGUNO;
+  $PC_MAC = @$_SESSION['INGRESO']['PC_MAC'];
 
   $conn = new db();
   //Enviamos los parametro de solo entrada al SP
@@ -10660,7 +10660,7 @@ function Estado_Empresa_SP_MySQL()
   $IP_WAN = @$_SESSION['INGRESO']['IP_Wan'];
   $IP_Local = @$_SESSION['INGRESO']['IP_Local'];
   $PC_Nombre = @$_SESSION['INGRESO']['HOST_NAME'];
-  $PC_MAC = G_NINGUNO;
+  $PC_MAC =@$_SESSION['INGRESO']['PC_MAC'];
   //Parametros de entrada y de salida
   $parametros = array(
     array($ItemEmpresa,'IN'),

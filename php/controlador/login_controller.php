@@ -139,6 +139,7 @@ class login_controller
 		// die();
 
 		$_SESSION['INGRESO']['IP_Wan'] = $parametro['ipWAN'];
+		$_SESSION['INGRESO']['PC_MAC'] = "00:00:00:00:00:00";
 
 		$_SESSION['INGRESO']['usuario'] = $parametro['usuario'];
 		$_SESSION['INGRESO']['pass'] = $parametro['pass'];
