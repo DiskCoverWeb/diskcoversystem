@@ -45,11 +45,11 @@ if(isset($_GET['eliminar_bodega']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->eliminar_bodega($parametros));
 }
-// if(isset($_GET['lin_eli_pedido']))
-// {
-// 	$parametros = $_POST['parametros'];
-// 	echo json_encode($controlador->lineas_eli_pedido($parametros));
-// }
+if(isset($_GET['cargar_info']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->cargar_info($parametros));
+}
 // if(isset($_GET['autocom_pro']))
 // {
 // 	$query = '';
@@ -168,7 +168,7 @@ class almacenamiento_bodegaC
 					$ls.= '<li class="list-group-item"><a href="#" style="padding:0px"><label><input type="checkbox" class="rbl_pedido" value="'.$value['ID'].'">  '.$value['Producto'].'</label>
 								<div class="btn-group pull-right">
 										<span class="label-primary btn-sm btn">'.$value['Entrada'].'</span>
-										<button type="button" class="btn btn-sm" data-toggle="tooltip" title="" data-widget="chat-pane-toggle">
+										<button type="button" onclick="cargar_info(\''.$value['Codigo_Inv'].'\')" class="btn btn-sm" data-toggle="tooltip" title="" data-widget="chat-pane-toggle">
 											<i class="fa fa-info-circle"></i>
 									</button>
 									
@@ -429,6 +429,30 @@ class almacenamiento_bodegaC
 		}
 		$ruta = substr($ruta,0,-1);
 		return $ruta;
+	}
+
+	function cargar_info($parametros)
+	{
+		$datos = $this->modelo->catalogo_productos($parametros['codigo']);
+		$li = '';
+		if(count($datos)>0)
+		{
+			$categorias = $datos[0]['Categorias'];
+			$datos = $this->modelo->cargar_categorias($categorias);
+			foreach ($datos as $key => $value) {
+				if($value['DC']=='C')
+				{
+					$li.="<li><u>".$value['Proceso']."</u></li>";
+				}else
+				{					
+					$li.="<li><i class='fa fa-arrow-right'></i>  ".$value['Proceso']."</li>";
+				}
+				// print_r($value);die();
+			}
+		}
+
+		return $li;
+		print_r($datos);die();
 	}
 
 

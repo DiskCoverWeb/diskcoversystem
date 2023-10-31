@@ -233,6 +233,19 @@ class almacenamiento_bodegaM
 		return $this->db->datos($sql);
 	}
 
+	function cargar_categorias($cmds)
+	{
+		$sql = "SELECT Cmds,DC, Proceso
+			FROM Catalogo_Proceso
+			WHERE Item = '001'
+			AND TP = 'CATEGORI'
+			AND Nivel = 0
+			AND Cmds IN ( ".$cmds." )
+			ORDER BY Cmds";
+			
+		return $this->db->datos($sql);
+	}
+
 
 }
 ?>
