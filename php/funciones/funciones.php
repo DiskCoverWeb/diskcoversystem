@@ -12122,4 +12122,207 @@ function Actualizar_Razon_Social($FechaIniAut=false)
     }
 }
 
+function Imprimir_Facturas_CxC($TFA, $EsMatricula = false, $PorOrdenFactura = false, $Imprimir_Asc = false, $CheqSinCodigo = false){
+  $db = new db();
+
+  $Posicion = 0;
+  $Salto_de_Factura = "";
+  $Imp_No_Facturas = "";
+  $Cad_Tipo_Pago = "";
+  $AND_BETWEEN_Facturas = "";
+
+  if($TFA['Fecha_Desde'] < $TFA['Fecha_Hasta']){
+      $Imp_No_Facturas = "Desde la " . $TFA['Fecha_Desde'] . " hasta la " . $TFA['Fecha_Hasta'];
+      if($TFA['TC'] == "PV"){
+        $AND_BETWEEN_Facturas = "AND F.Ticket BETWEEN " . $TFA['Fecha_Desde'] . " AND " . $TFA['Fecha_Hasta'];
+      }else{
+        $AND_BETWEEN_Facturas = "AND F.Facturas BETWEEN " . $TFA['Fecha_Desde'] . " AND " . $TFA['Fecha_Hasta'];
+      }
+  }
+  $Salto_de_Factura = $TFA['AltoFactura'] + $TFA['EspacioFactura'];
+  if($Salto_de_Factura <= 0){
+      $Salto_de_Factura = 0;
+  }
+  $Mensajes = "Imprimir Facturas" . $Imp_No_Facturas;
+  $Titulo = "IMPRESION";
+  $Bandera = False;
+  if($TFA['LogoFactura'] == "MATRICIA"){
+      $sSQL = "UPDATE Formato_Propio
+              SET Texto ='CLIENTE:'
+              WHERE TP = 'IF'
+              AND Num = 2";
+      Ejecutar_SQL_SP($sSQL);
+      $sSQL2 = "UPDATE Formato_Propio
+              SET Texto = 'ALUMNA:'
+              WHERE TP = 'IF'
+              AND Num = 6";
+      Ejecutar_SQL_SP($sSQL2);
+  }
+  $Cadenal = "FACTURACION:  Ingreso de Facturas";
+  $Imp_No_Facturas = $TFA['TC'] . "/" . $TFA['Serie'] . "/" . $TFA['Autorizacion'] . "/" . $Imp_No_Facturas;
+  /*switch ($TFA['Tipo_PRN']){
+         case "CP":
+         case "FM":
+            $CEConLineas = ProcesarSeteos();//que devuelve procesar seteos?
+            break;
+         case "OP":
+            break;
+         default:
+            break;
+      }*/
+      //No hace falta preguntar si quiere imprimir con copia.
+  control_procesos("F", $Imp_No_Facturas);
+  $sSQL = "";
+  $Pagina = 1;
+  $PosLinea = 0.01;
+  $PosColumna = 0.01;
+  if($TFA['TC'] == "PV"){
+    $sSQL = "SELECT F.*, C.Cliente,C.CI_RUC,C.Telefono,C.Direccion,C.Ciudad,C.Grupo,C.Email
+             FROM Trans_Ticket As F,Clientes As C
+             WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+             AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+             AND F.TC = '" . $TFA['TC'] . "'
+             " .$AND_BETWEEN_Facturas . "
+             AND C.Codigo = F.CodigoC";
+    if($PorOrdenFactura){
+      if($Imprimir_Asc){//$data[1] == imprimir_asc
+        $sSQL .= "ORDER BY F.Ticket, C.Grupo, C.Cliente";
+      }else{
+        $sSQL .= "ORDER BY F.Ticket DESC, C.Grupo, C.Cliente";
+      }
+    }else{
+      $sSQL .= "ORDER BY C.Grupo, C.Cliente, F.Ticket";
+    }       
+ }else{
+    $sSQL = "SELECT F.*,C.Cliente,C.CI_RUC,C.Telefono,C.TelefonoT,C.Direccion,C.DireccionT,
+             C.Grupo,C.Codigo,C.Ciudad,C.Email,C.TD,C.DirNumero
+             FROM Facturas As F,Clientes As C
+             WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+             AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+             AND F.TC = '" . $TFA['TC'] . "'
+             AND F.Serie = '" . $TFA['Serie'] . "'
+             " .$AND_BETWEEN_Facturas . "
+             AND C.Codigo = F.CodigoC";
+    if($PorOrdenFactura){
+      if($Imprimir_Asc){//$data[1] == imprimir_asc
+        $sSQL .= "ORDER BY F.Factura, C.Grupo, C.Cliente";
+      }else{
+        $sSQL .= "ORDER BY F.Factura DESC, C.Grupo, C.Cliente";
+      }
+    }else{
+      $sSQL .= "ORDER BY C.Grupo, C.Cliente, F.Factura";
+    }   
+ }
+ $AdoDbFac = $db -> datos($sSQL);
+ if(count($AdoDbFac) > 0){
+    foreach($AdoDbFac as $key => $value){
+      $TFA['Fecha'] = $value['Fecha'];
+      $TFA['Cta_CxP'] = $value['Cta_CxP'];
+      $TFA['Cod_CxC'] = $value['Cod_CxC'];
+      $TFA['Vencimiento'] = $value['Vencimiento'];
+      $TFA['Fecha_Aut'] = $value['Fecha_Aut'];
+      $TFA['Serie'] = $value['Serie'];
+      $TFA['Autorizacion'] = $value['Autorizacion'];
+      $TFA['Factura'] = $value['Factura'];
+      $TFA['CodigoC'] = $value['CodigoC'];
+      $TFA['Saldo_Pend'] = $value['Saldo_Pend'];
+      $TFA['Imp_Mes'] = $value['Imp_Mes'];
+      $TFA['Tipo_Pago'] = $value['Tipo_Pago'];
+      $Cad_Tipo_Pago = G_NINGUNO;
+      Leer_Datos_FA_NV($TFA);
+      if($TFA['Autorizacion'] >= 13){
+        //Imprimir_FA_NV_Electronica(TFA) 
+        $tmp = '';
+      }else{
+        $sSQL = "SELECT * 
+                 FROM Tabla_Referenciales_SRI
+                 WHERE Tipo_Referencia = 'FORMA DE PAGO'
+                 AND CODIGO = '" . $TFA['Tipo_Pago'] . "'";
+        $AdoDBAux = $db -> datos($sSQL);
+        if(count($AdoDBAux) > 0) $Cad_Tipo_Pago = $AdoDBAux[0]['Descripcion'];
+        $TextoBanco = G_NINGUNO;
+        $TextoCheque = G_NINGUNO;
+        $TextoFormaPago = "";
+        $TFA['Educativo'] = False;
+        $sSQL = "SELECT CC.TC,CC.Cuenta,TA.Fecha,TA.CodigoC,TA.Abono,TA.Banco,TA.Cheque
+                 FROM Catalogo_Cuentas CC, Trans_Abonos As TA
+                 WHERE CC.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                 AND CC.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                 AND TA.TP = '" . $TFA['TC'] . "'
+                 AND TA.Serie = '" . $TFA['Serie'] . "'
+                 AND TA.CodigoC = '" . $TFA['CodigoC'] . "'
+                 AND TA.Factura = " . $TFA['Factura'] . "
+                 AND TA.Fecha >= '" . BuscarFecha($TFA['Fecha']) . "'
+                 AND CC.Codigo = TA.Cta
+                 AND CC.Item = TA.Item
+                 AND CC.Periodo = TA.Periodo
+                 ORDER BY CC.Codigo";
+        $AdoDBAux2 = $db -> datos($sSQL);
+        if(count($AdoDBAux2) > 0){
+          foreach($AdoDBAux2 as $key => $value) {
+            $TextoFormaPago .= $value['Fecha'] . " " . $value['Banco'] . " ";
+            if($value['TC'] == "BA"){
+              $TextoBanco = $value['Banco'];
+              $TextoCheque = $value['Cheque'];
+            }
+          }
+        }
+        $SaldoPendiente = 0;
+        if($EsMatricula == False){
+          $sSQL = "SELECT CodigoC, SUM(Saldo_MN) As Pendiente
+                   FROM Facturas
+                   WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                   AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                   AND CondigoC = '" . $TFA['CodigoC'] . "'
+                   AND TC = '" . $TFA['TC'] . "'
+                   AND T <> 'A'
+                   GROUP BY CodigoC";
+          $AdoDBAux3 = $db -> datos($sSQL);
+          if(count($AdoDBAux3) > 0) $SaldoPendiente = $AdoDBAux3[0]['Pendiente'];
+          
+        }
+        if($SaldoPendiente <= 0) $SaldoPendiente = $value['Total_MN'];
+        $Diferencia = $SaldoPendiente - $value['Total_MN'];
+        if($Diferencia < 0 ) $Diferencia = 0;
+        $sSQL = "SELECT *
+                 FROM Detalle_Factura
+                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                 AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                 AND Fecha >= '" . BuscarFecha($TFA['Fecha']) . "'
+                 AND TC = '" . $TFA['TC'] . "'
+                 AND Serie = '" . $TFA['Serie'] . "'
+                 AND Factura = " . $TFA['Factura'] . "
+                 ORDER BY ID, Codigo";
+        $AdoDBDet = $db -> datos($sSQL);
+
+        Imprimir_FAM($TFA, $PosColumna, $PosLinea, $AdoDbFac, $AdoDBDet, $Cad_Tipo_Pago, false ,$CheqSinCodigo);
+
+        $PosColumna = 0.01;
+        $Pagina = $Pagina + 1;
+        if($TFA['CantFact'] == 1){
+          $Pagina = 1;
+          $PosLinea = 0.01;
+        }else{
+          $PosLinea = $PosLinea + $Salto_de_Factura;
+        }
+
+        $sSQL = "UPDATE Facturas
+                 SET P = 1
+                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                 AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                 AND Factura = " . $TFA['Factura'] . "
+                 AND TC = '" . $TFA['TC'] . "'
+                 AND Serie = '" . $TFA['Serie'] . "'
+                 AND Autorizacion = '" . $TFA['Autorizacion'] . "'
+                 ";
+        Ejecutar_SQL_SP($sSQL);
+      }
+    }
+ }
+}
+
+function Imprimir_FAM($TFA, $PosInic, $PosLineal, $DtaF, $DtaD, $Tipo_Pago, $ReImp = false, $Solo_Copia = false, $CheqSinCodigo = false){
+  return '';
+}
+
 ?>

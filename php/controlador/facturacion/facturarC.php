@@ -1302,8 +1302,10 @@ class facturarC
    {
       $FacturaDesde = $parametros['TextFacturaNo'];
       $FacturaHasta = $parametros['TextFacturaNo'];
-      $FA = $parametros;
-      $FA['Tipo_PRN'] = 'FM';
+      $TFA = $parametros;
+      $TFA['Tipo_PRN'] = 'FM';
+
+
       //Falta realizar el metodo Imprimir_Facturas_CxC
       return array('res' => 1);
       // Titulo = "IMPRESION"
