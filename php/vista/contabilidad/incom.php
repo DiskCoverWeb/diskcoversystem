@@ -150,6 +150,7 @@
      window.addEventListener("message", function(event) {
         if (event.data === "closeModalG") {
             $('#modal_subcuentas').modal('hide');
+            cargar_tablas_retenciones();
             cargar_tablas_contabilidad();
             cargar_totales_aseintos();
             $("#codigo").val('');            
@@ -721,7 +722,7 @@
             // console.log(response.datos[0]);
             if (response.datos[0]) {
               $('#Autorizacion_R').val(response.datos[0].AutRetencion); 
-              $('#Serie_R').val(response.datos[0].PtoEmiRetencion+''+response.datos[0].PuntoEmiFactura); 
+              $('#Serie_R').val(response.datos[0].EstabRetencion+''+response.datos[0].PtoEmiRetencion); 
               $('#Retencion').val(response.datos[0].SecRetencion);      
             }
           }
@@ -1038,7 +1039,7 @@
       Swal.fire('seleccione un beneficiario','','info')
       return false;
     }    
-        $('#myModal_espera').modal('show');  
+        // $('#myModal_espera').modal('show');  
       $.ajax({
           data:  {parametros:parametros},
           url:   '../controlador/contabilidad/incomC.php?generar_comprobante=true',
@@ -1055,7 +1056,10 @@
           {
             // Swal.fire('Este documento electronico autorizado','','success');
              eliminar_ac();
-             Swal.fire("Comprobante Generado","","success").then(function(){ eliminar_todo_asisntoB();
+             if(response.aut_res==1){var texto = ' y Documento electronico Autorizado'; var tipo ='success'; }
+             if (response.aut_res==2) { tipo_error_sri(response.clave); var texto = ' y Documento electronico No autorizado'; var tipo = 'warning';}
+             Swal.fire("Comprobante Generado"+texto,"",tipo).then(function(){ 
+             eliminar_todo_asisntoB();
              cargar_tablas_contabilidad();
              cargar_tablas_tab4();
              cargar_tablas_retenciones();
