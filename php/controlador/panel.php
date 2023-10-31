@@ -436,11 +436,11 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         $_SESSION['INGRESO']['Opc'] = $empresa[0]['Opc'];
         $_SESSION['INGRESO']['noempr'] = $empresa[0]['Empresa'];
         $_SESSION['INGRESO']['S_M'] = $empresa[0]['S_M'];
-        $_SESSION['INGRESO']['Num_CD'] = $empresa[0]['Num_CD'];
-        $_SESSION['INGRESO']['Num_CE'] = $empresa[0]['Num_CE'];
-        $_SESSION['INGRESO']['Num_CI'] = $empresa[0]['Num_CI'];
-        $_SESSION['INGRESO']['Num_ND'] = $empresa[0]['Num_ND'];
-        $_SESSION['INGRESO']['Num_NC'] = $empresa[0]['Num_NC'];
+        $_SESSION['INGRESO']['Num_Meses_CD'] = $empresa[0]['Num_CD'];
+        $_SESSION['INGRESO']['Num_Meses_CE'] = $empresa[0]['Num_CE'];
+        $_SESSION['INGRESO']['Num_Meses_CI'] = $empresa[0]['Num_CI'];
+        $_SESSION['INGRESO']['Num_Meses_ND'] = $empresa[0]['Num_ND'];
+        $_SESSION['INGRESO']['Num_Meses_NC'] = $empresa[0]['Num_NC'];
         $_SESSION['INGRESO']['Email_Conexion_CE'] = $empresa[0]['Email_Conexion_CE'];
         $_SESSION['INGRESO']['Formato_Cuentas'] = $empresa[0]['Formato_Cuentas'];
         $_SESSION['INGRESO']['Formato_Inventario'] = $empresa[0]['Formato_Inventario'];
