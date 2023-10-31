@@ -60,8 +60,8 @@ function getInfoIPS(){
 
   $data = array(
     'client_net_address' => $_SESSION['INGRESO']['IP_Wan'],
-    'local_net_address' => '',
-    'host_name' => '');//Siempre retorna la ip wan
+    'local_net_address' => '127.0.0.1',
+    'host_name' => 'PC-NO-DEFINIDO');//Siempre retorna la ip wan
   $stmt = sqlsrv_query($cid, $sql);
   if( $stmt === false)  
       {  

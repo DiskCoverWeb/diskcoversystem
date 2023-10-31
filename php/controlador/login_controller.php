@@ -138,7 +138,7 @@ class login_controller
 		// print_r($datos);
 		// die();
 
-		$_SESSION['INGRESO']['IP_Wan'] = $parametro['ipWAN'];
+		$_SESSION['INGRESO']['IP_Wan'] = $_SERVER['REMOTE_ADDR'];
 		$_SESSION['INGRESO']['PC_MAC'] = "00:00:00:00:00:00";
 
 		$_SESSION['INGRESO']['usuario'] = $parametro['usuario'];
