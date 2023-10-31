@@ -722,7 +722,7 @@
             // console.log(response.datos[0]);
             if (response.datos[0]) {
               $('#Autorizacion_R').val(response.datos[0].AutRetencion); 
-              $('#Serie_R').val(response.datos[0].EstabRetencion+''+response.datos[0].PtoEmiRetencion); 
+              $('#Serie_R').val(response.datos[0].EstabRetencion+''+response.datos[0].PtoEmiRetencion; 
               $('#Retencion').val(response.datos[0].SecRetencion);      
             }
           }
@@ -1039,7 +1039,7 @@
       Swal.fire('seleccione un beneficiario','','info')
       return false;
     }    
-        // $('#myModal_espera').modal('show');  
+        $('#myModal_espera').modal('show');  
       $.ajax({
           data:  {parametros:parametros},
           url:   '../controlador/contabilidad/incomC.php?generar_comprobante=true',
