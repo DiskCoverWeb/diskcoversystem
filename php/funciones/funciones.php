@@ -4476,6 +4476,7 @@ function dimenciones_tabl($len)
            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
            AND Item = '".$_SESSION['INGRESO']['item']."' ";
     $Result = $conn->datos($sql);
+    // print_r($sql);die();
       if(count($Result)>0)
       {
         $NumCodigo = $Result[0]['Numero'];
@@ -4512,208 +4513,208 @@ function dimenciones_tabl($len)
   
   }
 
-  function numero_comprobante($parametros) // por revisar repetida
-  {
-    $conn = new Conectar();
-    $cid=$conn->conexion();
-    if(isset($parametros['fecha']))
-    {
-      if($parametros['fecha']=='')
-      {
-        $fecha_actual = date("Y-m-d"); 
-      }
-      else
-      {
-        $fecha_actual = $parametros['fecha']; 
-      }
-    }
-    else
-    {
-      $fecha_actual = date("Y-m-d"); 
-    }
-    $ot = explode("-",$fecha_actual);
-    if($parametros['tip']=='CD')
-    {
-      if($_SESSION['INGRESO']['Num_CD']==1)
-      {
-        $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
-        FROM            Codigos
-        WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
-        AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
-        AND (Concepto = '".$ot[1]."Diario')";
-        $stmt = sqlsrv_query( $cid, $sql);
-        if( $stmt === false)  
-        {  
-           echo "Error en consulta PA.\n";  
-           die( print_r( sqlsrv_errors(), true));  
-        }
-        $row_count=0;
-        $i=0;
-        $Result = array();
-        while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
-        {
+  // function numero_comprobante($parametros) // por revisar repetida
+  // {
+  //   $conn = new Conectar();
+  //   $cid=$conn->conexion();
+  //   if(isset($parametros['fecha']))
+  //   {
+  //     if($parametros['fecha']=='')
+  //     {
+  //       $fecha_actual = date("Y-m-d"); 
+  //     }
+  //     else
+  //     {
+  //       $fecha_actual = $parametros['fecha']; 
+  //     }
+  //   }
+  //   else
+  //   {
+  //     $fecha_actual = date("Y-m-d"); 
+  //   }
+  //   $ot = explode("-",$fecha_actual);
+  //   if($parametros['tip']=='CD')
+  //   {
+  //     if($_SESSION['INGRESO']['Num_CD']==1)
+  //     {
+  //       $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
+  //       FROM            Codigos
+  //       WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
+  //       AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
+  //       AND (Concepto = '".$ot[1]."Diario')";
+  //       $stmt = sqlsrv_query( $cid, $sql);
+  //       if( $stmt === false)  
+  //       {  
+  //          echo "Error en consulta PA.\n";  
+  //          die( print_r( sqlsrv_errors(), true));  
+  //       }
+  //       $row_count=0;
+  //       $i=0;
+  //       $Result = array();
+  //       while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
+  //       {
           
-          $Result[$i]['Numero'] = $row[3];
+  //         $Result[$i]['Numero'] = $row[3];
           
-          //echo $Result[$i]['nombre'];
-          $i++;
-        }
-        $codigo=$Result[0]['Numero']++;
+  //         //echo $Result[$i]['nombre'];
+  //         $i++;
+  //       }
+  //       $codigo=$Result[0]['Numero']++;
 
-        if($i==0)
-        {
-          return -1;
-        }else
-        {
-          return "Comprobante de Ingreso No. ".$ot[0].'-'.$codigo;
-        }
-      }
-    }
-    if($parametros['tip']=='CI')
-    {
-      if($_SESSION['INGRESO']['Num_CI']==1)
-      {
-        $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
-        FROM            Codigos
-        WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
-        AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
-        AND (Concepto = '".$ot[1]."Ingresos')";
+  //       if($i==0)
+  //       {
+  //         return -1;
+  //       }else
+  //       {
+  //         return "Comprobante de Ingreso No. ".$ot[0].'-'.$codigo;
+  //       }
+  //     }
+  //   }
+  //   if($parametros['tip']=='CI')
+  //   {
+  //     if($_SESSION['INGRESO']['Num_CI']==1)
+  //     {
+  //       $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
+  //       FROM            Codigos
+  //       WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
+  //       AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
+  //       AND (Concepto = '".$ot[1]."Ingresos')";
         
-        $stmt = sqlsrv_query( $cid, $sql);
-        if( $stmt === false)  
-        {  
-           echo "Error en consulta PA.\n";  
-           die( print_r( sqlsrv_errors(), true));  
-        }
-        $row_count=0;
-        $i=0;
-        $Result = array();
-        while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
-        {
+  //       $stmt = sqlsrv_query( $cid, $sql);
+  //       if( $stmt === false)  
+  //       {  
+  //          echo "Error en consulta PA.\n";  
+  //          die( print_r( sqlsrv_errors(), true));  
+  //       }
+  //       $row_count=0;
+  //       $i=0;
+  //       $Result = array();
+  //       while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
+  //       {
           
-          $Result[$i]['Numero'] = $row[3];
+  //         $Result[$i]['Numero'] = $row[3];
           
-          //echo $Result[$i]['nombre'];
-          $i++;
-        }
-        $codigo=$Result[0]['Numero']++;
-        echo "Comprobante de Ingreso No. ".$ot[0].'-'.$codigo;
-        if($i==0)
-        {
-          echo 'no existe registro';
-          //echo json_encode($Result);
-        }
-      }
-    }
-    if($parametros['tip']=='CE')
-    {
-      if($_SESSION['INGRESO']['Num_CE']==1)
-      {
-        $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
-        FROM            Codigos
-        WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
-        AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
-        AND (Concepto = '".$ot[1]."Egresos')";
+  //         //echo $Result[$i]['nombre'];
+  //         $i++;
+  //       }
+  //       $codigo=$Result[0]['Numero']++;
+  //       echo "Comprobante de Ingreso No. ".$ot[0].'-'.$codigo;
+  //       if($i==0)
+  //       {
+  //         echo 'no existe registro';
+  //         //echo json_encode($Result);
+  //       }
+  //     }
+  //   }
+  //   if($parametros['tip']=='CE')
+  //   {
+  //     if($_SESSION['INGRESO']['Num_CE']==1)
+  //     {
+  //       $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
+  //       FROM            Codigos
+  //       WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
+  //       AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
+  //       AND (Concepto = '".$ot[1]."Egresos')";
         
-        $stmt = sqlsrv_query( $cid, $sql);
-        if( $stmt === false)  
-        {  
-           echo "Error en consulta PA.\n";  
-           die( print_r( sqlsrv_errors(), true));  
-        }
-        $row_count=0;
-        $i=0;
-        $Result = array();
-        while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
-        {
+  //       $stmt = sqlsrv_query( $cid, $sql);
+  //       if( $stmt === false)  
+  //       {  
+  //          echo "Error en consulta PA.\n";  
+  //          die( print_r( sqlsrv_errors(), true));  
+  //       }
+  //       $row_count=0;
+  //       $i=0;
+  //       $Result = array();
+  //       while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
+  //       {
           
-          $Result[$i]['Numero'] = $row[3];
+  //         $Result[$i]['Numero'] = $row[3];
           
-          //echo $Result[$i]['nombre'];
-          $i++;
-        }
-        $codigo=$Result[0]['Numero']++;
-        echo "Comprobante de Egreso No. ".$ot[0].'-'.$codigo;
-        if($i==0)
-        {
-          echo 'no existe registro';
-          //echo json_encode($Result);
-        }
-      }
-    }
-    if($parametros['tip']=='NC')
-    {
-      if($_SESSION['INGRESO']['Num_NC']==1)
-      {
-        $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
-        FROM            Codigos
-        WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
-        AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
-        AND (Concepto = '".$ot[1]."NotaCredito')";
+  //         //echo $Result[$i]['nombre'];
+  //         $i++;
+  //       }
+  //       $codigo=$Result[0]['Numero']++;
+  //       echo "Comprobante de Egreso No. ".$ot[0].'-'.$codigo;
+  //       if($i==0)
+  //       {
+  //         echo 'no existe registro';
+  //         //echo json_encode($Result);
+  //       }
+  //     }
+  //   }
+  //   if($parametros['tip']=='NC')
+  //   {
+  //     if($_SESSION['INGRESO']['Num_NC']==1)
+  //     {
+  //       $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
+  //       FROM            Codigos
+  //       WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
+  //       AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
+  //       AND (Concepto = '".$ot[1]."NotaCredito')";
         
-        $stmt = sqlsrv_query( $cid, $sql);
-        if( $stmt === false)  
-        {  
-           echo "Error en consulta PA.\n";  
-           die( print_r( sqlsrv_errors(), true));  
-        }
-        $row_count=0;
-        $i=0;
-        $Result = array();
-        while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
-        {
+  //       $stmt = sqlsrv_query( $cid, $sql);
+  //       if( $stmt === false)  
+  //       {  
+  //          echo "Error en consulta PA.\n";  
+  //          die( print_r( sqlsrv_errors(), true));  
+  //       }
+  //       $row_count=0;
+  //       $i=0;
+  //       $Result = array();
+  //       while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
+  //       {
           
-          $Result[$i]['Numero'] = $row[3];
+  //         $Result[$i]['Numero'] = $row[3];
           
-          //echo $Result[$i]['nombre'];
-          $i++;
-        }
-        $codigo=$Result[0]['Numero']++;
-        echo "Comprobante de Nota de Credito No. ".$ot[0].'-'.$codigo;
-        if($i==0)
-        {
-          echo 'no existe registro';
-          //echo json_encode($Result);
-        }
-      }
-    }
-    if($parametros['tip']=='ND')
-    {
-      if($_SESSION['INGRESO']['Num_ND']==1)
-      {
-        $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
-        FROM            Codigos
-        WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
-        AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
-        AND (Concepto = '".$ot[1]."NotaDebito')";
+  //         //echo $Result[$i]['nombre'];
+  //         $i++;
+  //       }
+  //       $codigo=$Result[0]['Numero']++;
+  //       echo "Comprobante de Nota de Credito No. ".$ot[0].'-'.$codigo;
+  //       if($i==0)
+  //       {
+  //         echo 'no existe registro';
+  //         //echo json_encode($Result);
+  //       }
+  //     }
+  //   }
+  //   if($parametros['tip']=='ND')
+  //   {
+  //     if($_SESSION['INGRESO']['Num_ND']==1)
+  //     {
+  //       $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
+  //       FROM            Codigos
+  //       WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
+  //       AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
+  //       AND (Concepto = '".$ot[1]."NotaDebito')";
         
-        $stmt = sqlsrv_query( $cid, $sql);
-        if( $stmt === false)  
-        {  
-           echo "Error en consulta PA.\n";  
-           die( print_r( sqlsrv_errors(), true));  
-        }
-        $row_count=0;
-        $i=0;
-        $Result = array();
-        while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
-        {
+  //       $stmt = sqlsrv_query( $cid, $sql);
+  //       if( $stmt === false)  
+  //       {  
+  //          echo "Error en consulta PA.\n";  
+  //          die( print_r( sqlsrv_errors(), true));  
+  //       }
+  //       $row_count=0;
+  //       $i=0;
+  //       $Result = array();
+  //       while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
+  //       {
           
-          $Result[$i]['Numero'] = $row[3];
+  //         $Result[$i]['Numero'] = $row[3];
           
-          //echo $Result[$i]['nombre'];
-          $i++;
-        }
-        $codigo=$Result[0]['Numero']++;
-        echo "Comprobante de Nota de Debito No. ".$ot[0].'-'.$codigo;
-        if($i==0)
-        {
-          echo 'no existe registro';
-          //echo json_encode($Result);
-        }
-      }
-    } 
-  }
+  //         //echo $Result[$i]['nombre'];
+  //         $i++;
+  //       }
+  //       $codigo=$Result[0]['Numero']++;
+  //       echo "Comprobante de Nota de Debito No. ".$ot[0].'-'.$codigo;
+  //       if($i==0)
+  //       {
+  //         echo 'no existe registro';
+  //         //echo json_encode($Result);
+  //       }
+  //     }
+  //   } 
+  // }
 
 function ingresar_asientos_SC($parametros)  //revision parece repetida
 {
@@ -11404,10 +11405,38 @@ function GrabarComprobante($C1)
   $FA["Autorizacion_R"] = $C1["Autorizacion_R"];
   $FA["Retencion"] = $C1["Retencion"];
   $FA["Serie_R"] = $C1["Serie_R"];
-  if(strlen($FA["Autorizacion_R"]) >= 13){ //Autorizar_retencion($FA); //SRI_Crear_Clave_Acceso_Retenciones($FA, True);
+  $FA["TP"] = $C1["TP"];
+  $FA["Fecha"] = $C1["Fecha"];
+  $FA['Numero']=$C1['Numero'];
+  $FA['ruc']=$C1['CodigoB'];
+  if(strlen($FA["Autorizacion_R"]) >= 13){ 
+
+      $sri = new autorizacion_sri();
+
+      $res = '0';
+      $res = $sri->Autorizar_retencion($FA);
+
+              // $res = $this->SRI_Crear_Clave_Acceso_Retencines($parametros_xml); //function xml
+              // print_r($res);die();
+        $aut = $sri->Clave_acceso($C1["Fecha"],'07',$FA["Serie_R"],generaCeros($FA["Retencion"],9));
+        $pdf = 'RE_'.$FA["Serie_R"].'-'.generaCeros($FA["Retencion"],7); 
+        // $this->modelo->reporte_retencion($Numero,$TP,$Retencion,$Serie_R,$imp=1);
+
+            // print_r($parametros);die();
+        // if($res==1)
+        // {
+           // $Trans_No = $C1["T_No"];
+          // $this->modelo->BorrarAsientos($Trans_No,true);
+        // }
+                 // print_r(array('respuesta'=>$res,'pdf'=>$pdf,'text'=>$res,'clave'=>$aut));die();
+        return array('proceso'=>1,'aut'=>$res,'pdf'=>$pdf,'text'=>$res,'clave'=>$aut);
+                
+
+      //Autorizar_retencion($FA); //SRI_Crear_Clave_Acceso_Retenciones($FA, True);
   }
+  return array('proceso'=>1,'aut'=>'','pdf'=>'','text'=>'','clave'=>'');
  // 'Eliminamos Asientos contables
-  $Trans_No = $C1["T_No"];
+  // $Trans_No = $C1["T_No"];
   // BorrarAsientos('',True);
   // Control_Procesos Normal, "Grabar Comprobante de: " & $C1["TP & " No. " & $C1["Numero"]
 }

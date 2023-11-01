@@ -288,6 +288,24 @@ function  eliminar_bodega(id)
 
 }
 
+function cargar_info(codigo)
+{
+	var parametros = {
+		'codigo':codigo,
+	}
+	$.ajax({
+	    type: "POST",
+       url:   '../controlador/inventario/almacenamiento_bodegaC.php?cargar_info=true',
+	     data:{parametros:parametros},
+       dataType:'json',
+	    success: function(data)
+	    {
+	    	$('#pnl_contenido').html(data)
+	    }
+	});
+
+}
+
 
   
  
@@ -348,25 +366,40 @@ function  eliminar_bodega(id)
 				</div>
 				<hr>
 				<div class="row">
-					<div class="col-sm-4">
+					<div class="col-sm-3">
 						<ul class="tree_bod" id="arbol_bodegas">
 						</ul>
 					</div>
-					<div class="col-sm-8">
+					<div class="col-sm-9">
 						<div class="row">
 							<div class="text-center col-sm-12">
 							</div>
-							<div class="col-sm-5">
-								<div class="box box-success">
+							<div class="col-md-6">
+
+								<div class="box box-primary direct-chat direct-chat-primary">	
 										<div class="box-header">
-											<h3 class="box-title">Articulos de pedido</h3>
-										</div>
+													<h3 class="box-title">Articulos de pedido</h3>
+										</div>									
 										<div class="box-body">
-												<!-- <ul class="nav nav-pills nav-stacked" id="lista_pedido"></ul>											 -->
+												<div class="direct-chat-messages">	
+													<ul class="list-group list-group-flush" id="lista_pedido"></ul>											
+												</div>
+												<div class="direct-chat-contacts">
+													
+													<ul class="contacts-list">
+														<button type="button" class="btn btn-box-tool pull-right" data-toggle="tooltip" title="" data-widget="chat-pane-toggle">
+																	<i class="fa fa-times"></i>
+															</button>
+															<li id="pnl_contenido">
+													  		 ssssss
+															</li>
+													</ul>
+												</div>
+
 										</div>
-									</div>
-							</div>
-							<div class="col-sm-2 text-center">
+								</div>
+						</div>
+							<div class="col-sm-1 text-center">
 								<button class="btn btn-primary" type="button" onclick="asignar_bodega()"><i class="fa fa-arrow-right"></i></button>	
 								<br>
 								<button class="btn btn-primary" type="button" onclick="desasignar_bodega()"><i class="fa fa-arrow-left"></i></button>								
@@ -383,59 +416,7 @@ function  eliminar_bodega(id)
 									</div>								
 							</div>
 						</div>
-						<div class="col-md-9">
-
-								<div class="box box-primary direct-chat direct-chat-primary">	
-										<div class="box-header">
-													<h3 class="box-title">Articulos de pedido</h3>
-										</div>									
-										<div class="box-body">
-												<div class="direct-chat-messages">	
-
-													<ul class="list-group list-group-flush" id="lista_pedido">
-													  <li class="list-group-item">Cras justo odio</li>
-													  <li class="list-group-item">Dapibus ac facilisis in</li>
-													  <li class="list-group-item">Morbi leo risus</li>
-													  <li class="list-group-item">Porta ac consectetur ac</li>
-													  <li class="list-group-item">Vestibulum at eros</li>
-													</ul>
-
-														<!-- <ul class="nav nav-pills nav-stacked" id="lista_pedido"></ul>											 -->
-
-												<!-- <ul class="nav nav-pills nav-stacked">		
-													<li>
-														<a href="#" style="padding:0px">
-																<label>
-																	<input type="checkbox" class="rbl_pedido_des" value="12-R">Producto
-																</label>
-																<div class="btn-group pull-right">
-																		<span class="label-primary btn-sm btn">3</span>
-																		<button type="button" class="btn btn-sm" data-toggle="tooltip" title="" data-widget="chat-pane-toggle">
-																			<i class="fa fa-info-circle"></i>
-																	</button>
-																	
-																</div>
-																
-														</a>
-
-														</li>	
-														</ul>			 -->
-												</div>
-												<div class="direct-chat-contacts">
-													
-													<ul class="contacts-list">
-														<button type="button" class="btn btn-box-tool pull-right" data-toggle="tooltip" title="" data-widget="chat-pane-toggle">
-																	<i class="fa fa-times"></i>
-															</button>
-															<li>
-													  		 ssssss
-															</li>
-													</ul>
-												</div>
-
-										</div>
-								</div>
-						</div>
+						
 						
 					</div>
 				</div>

@@ -372,6 +372,7 @@ class autorizacion_sri
 		AND LEN(TC.AutRetencion) = 13 
 		AND TC.IdProv = C.Codigo 
 		ORDER BY Serie_Retencion,SecRetencion";
+		// print_r($sql);die();
 
          $result = $this->db->datos($sql);
 	     return $result;
