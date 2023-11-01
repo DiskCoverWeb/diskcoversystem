@@ -14,7 +14,7 @@ class catalogo_bodegaM
     function GuardarProducto($parametros)
     {
         $sql = "INSERT INTO Catalogo_Proceso(DC, Cmds, Proceso, TP, Nivel, Item) 
-                VALUES ('" . $parametros['tipo'] . "', '" . $parametros['codigo'] . "', '" . $parametros['concepto'] . "', 'CATE', '0', '" . $_SESSION['INGRESO']['item'] . "')";
+                VALUES ('" . $parametros['tipo'] . "', '" . $parametros['codigo'] . "', '" . $parametros['concepto'] . "', 'CATEGORI', '0', '" . $_SESSION['INGRESO']['item'] . "')";
         return $this->db->datos($sql);
     }
     
@@ -23,7 +23,7 @@ class catalogo_bodegaM
         $sql = "SELECT DC, Cmds, Proceso, TP, Nivel, Item, ID
                 FROM Catalogo_Proceso
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
-                AND TP = 'CATE'
+                AND TP = 'CATEGORI'
                 AND Nivel = '0'
                 ORDER BY Cmds";
         return $this->db->datos($sql);
@@ -38,7 +38,7 @@ class catalogo_bodegaM
             $sqlEliminar = "DELETE FROM Catalogo_Proceso 
                         WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                         AND ID = '$id'
-                        AND TP = 'CATE'
+                        AND TP = 'CATEGORI'
                         AND Nivel = '0'";
             $this->db->datos($sqlEliminar);
         }
@@ -51,7 +51,7 @@ class catalogo_bodegaM
                 FROM Catalogo_Proceso
                 WHERE Cmds LIKE '" . $parametros['codigo'] . "%'
                 AND Item = '" . $_SESSION['INGRESO']['item'] . "'
-                AND TP = 'CATE'
+                AND TP = 'CATEGORI'
                 AND Nivel = '0'";
         return $this->db->datos($sql);
     }
@@ -64,7 +64,7 @@ class catalogo_bodegaM
                     Proceso = '" . $parametros['concepto'] . "' 
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND ID = '" . $parametros['id'] . "'
-                AND TP = 'CATE'
+                AND TP = 'CATEGORI'
                 AND Nivel = '0'";
         return $this->db->datos($sql);
     }
