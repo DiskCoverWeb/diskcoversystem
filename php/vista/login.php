@@ -249,20 +249,20 @@
            confirmButtonText: 'Si!'
          }).then((result) => {
            if (result.value==true) {
-			//Ingresar();
-            IngresarIP();
+			Ingresar();
+            
            }
          })
 
   	}else
   	{
-		//Ingresar();	
-		IngresarIP();
+		Ingresar();	
+		
   	}
   }
   
 
-  function Ingresar(ip)
+  function Ingresar()
   { 
 
 		 var usuario = $("#correo").val();
@@ -313,7 +313,7 @@
 		 	 'cartera_usu':cartera_usu,
 		 	 'cartera_pass':cartera_pass,
 		 	 'localIp':localIp,
-			 'ipWAN': ip
+			 'ipWAN': ""
 		 }
 
      $.ajax({
@@ -342,16 +342,6 @@
     });
 
   }
-  	function IngresarIP(){
-		$(function() {
-			$.getJSON("https://api.ipify.org?format=jsonp&callback=?",
-				function(json) {
-					var ip = json.ip;
-					Ingresar(ip);
-				}
-			);
-		});
-	}
 	  </script>
 	
 </head>
