@@ -4445,23 +4445,25 @@ function dimenciones_tabl($len)
         $MesComp = '01';
       }
 
-      if($_SESSION['INGRESO']['Num_CD'] and $query=='Diario')
+      // print_r($_SESSION['INGRESO']);die();
+
+      if($_SESSION['INGRESO']['Num_Meses_CD'] and $query=='Diario')
       {
         $query = $MesComp.''.$query;
       }
-       if($_SESSION['INGRESO']['Num_CI'] and $query=='Ingresos')
+       if($_SESSION['INGRESO']['Num_Meses_CI'] and $query=='Ingresos')
       {
         $query = $MesComp.''.$query;
       }
-       if($_SESSION['INGRESO']['Num_CE'] and $query=='Egresos')
+       if($_SESSION['INGRESO']['Num_Meses_CE'] and $query=='Egresos')
       {
         $query = $MesComp.''.$query;
       }
-       if($_SESSION['INGRESO']['Num_ND'] and $query=='NotaDebito')
+       if($_SESSION['INGRESO']['Num_Meses_ND'] and $query=='NotaDebito')
       {
         $query = $MesComp.''.$query;
       }
-       if($_SESSION['INGRESO']['Num_NC'] and $query=='NotaCredito')
+       if($_SESSION['INGRESO']['Num_Meses_NC'] and $query=='NotaCredito')
       {
         $query = $MesComp.''.$query;
       }       
