@@ -69,11 +69,11 @@ if(isset($_GET['cargar_info']))
 // 	echo json_encode($controlador->autocomplet_producto2($query));
 // }
 
-// if(isset($_GET['cargar_datos']))
-// {
-// 	$parametros = $_POST['parametros'];
-// 	echo json_encode($controlador->cargar_datos($parametros));
-// }
+if(isset($_GET['cargar_lugar']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->cargar_lugar($parametros));
+}
 
 // if(isset($_GET['producto_costo']))
 // {
@@ -360,14 +360,14 @@ class almacenamiento_bodegaC
 				{
 					$html.='<li>
 						       <input type="checkbox" id="c'.$prefijo.'" />
-						       <label class="tree_bod_label" for="c'.$prefijo.'" onclick="cargar_bodegas(\''.($nivel_solicitado+1).'\',\''.$prefijo.'\');cargar_nombre_bodega(\''.$ruta.'\',\'.\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</label>
+						       <label class="tree_bod_label" for="c'.$prefijo.'" id="c_'.$prefijo.'" onclick="cargar_bodegas(\''.($nivel_solicitado+1).'\',\''.$prefijo.'\');cargar_nombre_bodega(\''.$ruta.'\',\'.\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</label>
 						       	<ul id="h'.$prefijo.'">
 						       	</ul>
 					       	</li>';
 					$hijos=0;
 				}else
 				{
-					$html.='<li><span class="tree_bod_label" onclick="cargar_nombre_bodega(\''.$ruta.'\',\''.$value['CodBod'].'\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</span></li>';
+					$html.='<li><span class="tree_bod_label" id="c_'.str_replace('.','_',$prefijo).'" onclick="cargar_nombre_bodega(\''.$ruta.'\',\''.$value['CodBod'].'\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</span></li>';
 				}
 			}else{
 				//cuando viene con padre
@@ -391,14 +391,14 @@ class almacenamiento_bodegaC
 						// print_r($value2['CodBod'].'-'.$value['Bodega']);die();
 						$html.='<li>
 							       <input type="checkbox" id="c'.str_replace('.','_',$prefijo).'" />
-							       <label class="tree_bod_label" for="c'.str_replace('.','_',$prefijo).'" onclick="cargar_bodegas(\''.($nivel_solicitado+1).'\',\''.str_replace('.','_',$prefijo).'\');cargar_nombre_bodega(\''.$ruta.'\',\'.\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</label>
+							       <label class="tree_bod_label" for="c'.str_replace('.','_',$prefijo).'" id="c_'.str_replace('.','_',$prefijo).'" onclick="cargar_bodegas(\''.($nivel_solicitado+1).'\',\''.str_replace('.','_',$prefijo).'\');cargar_nombre_bodega(\''.$ruta.'\',\'.\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</label>
 							       	<ul id="h'.str_replace('.','_',$prefijo).'">
 							       	</ul>
 						       	</li>';
 						$hijos=0;
 					}else
 					{
-						$html.='<li><span class="tree_bod_label" onclick="cargar_nombre_bodega(\''.$ruta.'\',\''.$value['CodBod'].'\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</span></li>';
+						$html.='<li><span class="tree_bod_label" id="c_'.str_replace('.','_',$prefijo).'" onclick="cargar_nombre_bodega(\''.$ruta.'\',\''.$value['CodBod'].'\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</span></li>';
 					}
 				}
 				
@@ -445,7 +445,7 @@ class almacenamiento_bodegaC
 					$li.="<li><u>".$value['Proceso']."</u></li>";
 				}else
 				{					
-					$li.="<li><i class='fa fa-arrow-right'></i>  ".$value['Proceso']."</li>";
+					$li.="<li><i class='fa fa-arrow-right'></i> ".$value['Proceso']."</li>";
 				}
 				// print_r($value);die();
 			}
@@ -455,9 +455,26 @@ class almacenamiento_bodegaC
 		print_r($datos);die();
 	}
 
-
-
-
+	function cargar_lugar($parametros)
+	{
+		// print_r($parametros);die();
+		$codigo = explode('.',$parametros['codigo']);
+		$ruta = '';
+		$pasos = '';
+		foreach ($codigo as $key => $value) {
+			$pasos.=$value.'.';
+			$pasos2 = substr($pasos,0,-1);
+			$ruta.= "'".$pasos2."',";
+		}
+		$ruta = substr($ruta,0,-1);
+		$patch = $this->modelo->ruta_bodega_select($ruta);
+		$url = '';
+		foreach ($patch as $key => $value) {
+			$url.=$value['Bodega'].'/';
+		}
+		$url = substr($url,0,-1);
+		return $url;
+	}
 }
 
 ?>

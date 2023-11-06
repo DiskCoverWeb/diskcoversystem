@@ -19,7 +19,18 @@
       $('#txt_ci').val(data.CI_RUC); // save selected id to input
       $('#txt_donante').val(data.Cliente); // save selected id to input
       $('#txt_tipo').val(data.Cod_Ejec); // save selected id to input
-      $('#txt_cant').val(parseFloat(data.TOTAL).toFixed(2)); // save selected id to input
+      var cantidad = parseFloat(data.TOTAL).toFixed(2)
+      $('#txt_cant').val(cantidad); // save selected id to input
+      if(cantidad>=500)
+      {
+      	 $('#pnl_alertas').css('display','initial');
+      	 $('#txt_cant').css('color','green');
+      	 $('#img_alto_stock').attr('src','../../img/gif/alto_stock_titi.gif');
+      }else
+      {
+      	$('#txt_cant').css('color','#000000');
+      	 $('#img_alto_stock').attr('src','../../img/png/alto_stock.png');
+      }
       $('#txt_comentario').val(data.Mensaje); // save selected id to input
       $('#txt_ejec').val(data.Cod_Ejec); // save selected id to input
 
@@ -306,6 +317,46 @@ function cargar_info(codigo)
 
 }
 
+async function buscar_ruta()
+{  
+	// if($('#txt_cod_bodega').val()!='' && $('#txt_cod_bodega').val()!='.' ){cargar_bodegas();}
+
+	 codigo = $('#txt_cod_lugar').val();
+	 pasos = codigo.split('.');	 
+	 let ruta = '';
+	 let bodega = '';
+	 for (var i=0 ; i <= pasos.length ; i++) {
+	 		bodega+=pasos[i]+'_';
+			let pasos2 = bodega.substring(0 ,bodega.length-1);
+			$('#c'+pasos2).prop('checked',false);
+    	$('#c_'+pasos2).click();
+			await sleep(3000);
+			console.log('espera');
+	 }
+	// await pasos.forEach(function(item,i){
+	// 		bodega+=item+'_';
+	// 		let pasos2 = bodega.substring(0 ,bodega.length-1);
+  //   	$('#c_'+pasos2).click();
+	// 		await sleep(7000);
+	// 		console.log('espera');
+	//  })
+	 // var parametros = {
+	// 		'codigo':codigo,
+	// 	}
+	// 	$.ajax({
+	// 	    type: "POST",
+	 //       url:   '../controlador/inventario/almacenamiento_bodegaC.php?cargar_lugar=true',
+	// 	     data:{parametros:parametros},
+	 //       dataType:'json',
+	// 	    success: function(data)
+	// 	    {
+	// 	    	$('#txt_bodega_title').text('Ruta:'+data);
+	// 	    	$('#txt_cod_bodega').val(codigo);
+
+	// 	    }
+	// 	});
+}
+
 
   
  
@@ -343,13 +394,17 @@ function cargar_info(codigo)
 			           	<option>Seleccione</option>
 			        </select>
 			    </div>
-					<div class="col-sm-4">
+					<div class="col-sm-3">
 	            <b>PROVEEDOR / DONANTE</b>								
 								<input type="" class="form-control input-xs" id="txt_donante" name="txt_donante" readonly>
 					</div>
-					<div class="col-sm-3 text-right">
+					<div class="col-sm-2 text-right">
 						 	<b>CANTIDAD:</b>
              	<input type="" class="form-control input-xs" id="txt_cant" name="txt_cant" readonly>	
+					</div>
+					<div class="col-sm-2 text-right">
+						 	<b>FECHA EXPIRACION:</b>
+             	<input type="date" class="form-control input-xs" id="txt_fecha_exp" name="txt_fecha_exp" readonly>	
 					</div>
 					<!-- <div class="col-sm-12 text-right">
 						<div class="row">
@@ -363,6 +418,25 @@ function cargar_info(codigo)
 						</div>								
 						
 					</div> -->
+				</div>
+				<div class="row">
+					<div class="col-sm-9">
+						Codigo de paquete
+						<input type="" class="form-control input-xs" id="txt_paquete" name="txt_paquete" readonly>	
+
+					</div>
+					<div class="col-sm-3 text-right" id="pnl_alertas" style="display:none;">
+						<button class="btn btn-default" type="button">
+							<img id="img_alto_stock"  src="../../img/gif/alto_stock_titi.gif" style="width:48px">
+							<br>
+							Alto Stock
+						</button>
+					<button class="btn btn-default" type="button">
+							<img id="img_por_expirar" src="../../img/gif/expired_titi.gif" style="width:48px">
+							<br>
+							Por Expirar
+						</button>
+					</div>
 				</div>
 				<hr>
 				<div class="row">
@@ -405,6 +479,8 @@ function cargar_info(codigo)
 								<button class="btn btn-primary" type="button" onclick="desasignar_bodega()"><i class="fa fa-arrow-left"></i></button>								
 							</div>
 							<div class="col-sm-5">
+								Codigo de lugar
+								<input type="" class="form-control input-xs" id="txt_cod_lugar" name="txt_cod_lugar" onblur="buscar_ruta()">	
 								<div class="box box-success">
 										<div class="box-header">
 											<h3 class="box-title" id="txt_bodega_title">Ruta: </h3>
