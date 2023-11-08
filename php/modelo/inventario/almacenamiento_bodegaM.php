@@ -83,25 +83,30 @@ class almacenamiento_bodegaM
 	// 	return $this->db->datos($sql);
 	// }
 
-	// function buscar_transCorreos_procesados($cod=false,$fecha=false)
-	// {
-	// 	$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R 
-	// 	from Trans_Correos TC
-	// 	inner join Clientes C on TC.CodigoP = C.Codigo 
-	// 	INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
-	// 	where Item = '".$_SESSION['INGRESO']['item']."'
-	// 	AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
-	// 	AND TC.T = 'P' ";
-	// 	if($cod)
-	// 	{
-	// 		$sql.= " AND Envio_No  like  '%".$cod."%'";
-	// 	}
-	// 	if($fecha)
-	// 	{
-	// 		$sql.= " AND TC.Fecha_P =  '".$fecha."'";
-	// 	}
-	// 	return $this->db->datos($sql);
-	// }
+	function Buscar_productos_ingresados($id=false,$cod=false)
+	{
+		$sql = "SELECT ".Full_Fields("Trans_Kardex")." 
+		FROM Trans_Kardex 
+		WHERE Orden_No in(select TC.Envio_No
+						from Trans_Correos TC
+						inner join Clientes C on TC.CodigoP = C.Codigo 
+						INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
+						where Item = '".$_SESSION['INGRESO']['item']."'
+						AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+						AND TC.T = 'N') 
+		AND CodBodega = '-1'";
+		if($id)
+		{
+			$sql.= " AND ID  = '".$id."'";
+		}
+		if($cod)
+		{
+			$sql.= " AND Codigo_Barra  like  '%".$cod."%'";
+		}
+
+		// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
 	function buscar_transCorreos_contabilizadios($cod=false,$fecha=false)
 	{
 		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R 
@@ -237,11 +242,12 @@ class almacenamiento_bodegaM
 	{
 		$sql = "SELECT Cmds,DC, Proceso
 			FROM Catalogo_Proceso
-			WHERE Item = '001'
+			WHERE Item = '".$_SESSION['INGRESO']['item']."'
 			AND TP = 'CATEGORI'
 			AND Nivel = 0
 			AND Cmds IN ( ".$cmds." )
 			ORDER BY Cmds";
+			// print_r($sql);die();
 			
 		return $this->db->datos($sql);
 	}

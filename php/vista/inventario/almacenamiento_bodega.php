@@ -14,61 +14,42 @@
     $('#txt_codigo').on('select2:select', function (e) {
       var data = e.params.data.data;
 
-      $('#txt_id').val(data.ID); // display the selected text
-      $('#txt_fecha').val(formatoDate(data.Fecha_P.date)); // display the selected text
-      $('#txt_ci').val(data.CI_RUC); // save selected id to input
-      $('#txt_donante').val(data.Cliente); // save selected id to input
-      $('#txt_tipo').val(data.Cod_Ejec); // save selected id to input
-      var cantidad = parseFloat(data.TOTAL).toFixed(2)
+    	$('#txt_id').val(data.ID); 
+      $('#txt_fecha_exp').val(formatoDate(data.Fecha_Exp.date));
+      $('#txt_fecha').val(formatoDate(data.Fecha.date));
+      $('#txt_donante').val(data.Centro_Costo);
+
+      var cantidad = parseFloat(data.Entrada).toFixed(2)
       $('#txt_cant').val(cantidad); // save selected id to input
       if(cantidad>=500)
       {
-      	 $('#pnl_alertas').css('display','initial');
+      	 $('#btn_alto_stock').css('display','initial');
       	 $('#txt_cant').css('color','green');
       	 $('#img_alto_stock').attr('src','../../img/gif/alto_stock_titi.gif');
       }else
       {
-      	$('#txt_cant').css('color','#000000');
+
+      	 $('#btn_alto_stock').css('display','none');
+      	 $('#txt_cant').css('color','#000000');
       	 $('#img_alto_stock').attr('src','../../img/png/alto_stock.png');
       }
-      $('#txt_comentario').val(data.Mensaje); // save selected id to input
-      $('#txt_ejec').val(data.Cod_Ejec); // save selected id to input
 
-      $('#txt_contra_cta').val(data.Cta_Haber); // save selected id to input
-      $('#txt_cta_inv').val(data.Cta_Debe); // save selected id to input
-
-      $('#txt_codigo_p').val(data.CodigoP)      
-      $('#txt_TipoSubMod').val(data.Giro_No)
-      if(data.Giro_No!='R')
+			var fecha1 = new Date(formatoDate(Date()));
+      var fecha2 = new Date(formatoDate(data.Fecha_Exp.date));
+			var diferenciaEnMilisegundos = fecha2 - fecha1;
+			var diferenciaEnDias = diferenciaEnMilisegundos / 86400000;
+			if(diferenciaEnDias<=10 && diferenciaEnDias>=0)
       {
-      	$('#btn_cantidad').prop('disabled',false);
-      	$('#txt_producto').prop('disabled',false);
+      	 $('#btn_expired').css('display','initial');
+      	 $('#txt_fecha_exp').css('color','red');
+      	 $('#img_por_expirar').attr('src','../../img/gif/expired_titi.gif');
       }else
       {
-      	$('#btn_cantidad').prop('disabled',true);
-      	$('#txt_producto').prop('disabled',true);
-      	$('#modal_producto_2').modal('show');
+      	 $('#btn_expired').css('display','none');
+      	 $('#txt_fecha_exp').css('color','#000000');
+      	 $('#img_por_expirar').attr('src','../../img/png/expired.png');
       }
 
-      if(data.Cod_R=='0')
-      {
-      	$('#img_estado').attr('src','../../img/png/bloqueo.png');
-      }else
-      {
-
-      	$('#img_estado').attr('src','../../img/png/aprobar.png');
-      }
-      $('#txt_temperatura').val(data.Porc_C); // save selected id to input
-      $('#ddl_alimento').append($('<option>',{value: data.Cod_C, text:data.Proceso,selected: true }));
-
-      lineas_pedidos();
-      productos_asignados();
-      if($('#txt_cod_bodega').val()!='.' && $('#txt_cod_bodega').val()!='')
-      {
-	    	contenido_bodega();
-      }
-      
-      // console.log(data);
     });
 
 
@@ -317,22 +298,27 @@ function cargar_info(codigo)
 
 }
 
+function abrir_modal_bodegas()
+{
+	 $('#myModal_arbol_bodegas').modal('show');
+}
+
 async function buscar_ruta()
 {  
 	// if($('#txt_cod_bodega').val()!='' && $('#txt_cod_bodega').val()!='.' ){cargar_bodegas();}
 
 	 codigo = $('#txt_cod_lugar').val();
-	 pasos = codigo.split('.');	 
-	 let ruta = '';
-	 let bodega = '';
-	 for (var i=0 ; i <= pasos.length ; i++) {
-	 		bodega+=pasos[i]+'_';
-			let pasos2 = bodega.substring(0 ,bodega.length-1);
-			$('#c'+pasos2).prop('checked',false);
-    	$('#c_'+pasos2).click();
-			await sleep(3000);
-			console.log('espera');
-	 }
+	 // pasos = codigo.split('.');	 
+	 // let ruta = '';
+	 // let bodega = '';
+	 // for (var i=0 ; i <= pasos.length ; i++) {
+	 // 		bodega+=pasos[i]+'_';
+	// 		let pasos2 = bodega.substring(0 ,bodega.length-1);
+	// 		$('#c'+pasos2).prop('checked',false);
+   //  	$('#c_'+pasos2).click();
+	// 		await sleep(3000);
+	// 		console.log('espera');
+	 // }
 	// await pasos.forEach(function(item,i){
 	// 		bodega+=item+'_';
 	// 		let pasos2 = bodega.substring(0 ,bodega.length-1);
@@ -340,21 +326,21 @@ async function buscar_ruta()
 	// 		await sleep(7000);
 	// 		console.log('espera');
 	//  })
-	 // var parametros = {
-	// 		'codigo':codigo,
-	// 	}
-	// 	$.ajax({
-	// 	    type: "POST",
-	 //       url:   '../controlador/inventario/almacenamiento_bodegaC.php?cargar_lugar=true',
-	// 	     data:{parametros:parametros},
-	 //       dataType:'json',
-	// 	    success: function(data)
-	// 	    {
-	// 	    	$('#txt_bodega_title').text('Ruta:'+data);
-	// 	    	$('#txt_cod_bodega').val(codigo);
+	 var parametros = {
+			'codigo':codigo,
+		}
+		$.ajax({
+		    type: "POST",
+	       url:   '../controlador/inventario/almacenamiento_bodegaC.php?cargar_lugar=true',
+		     data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+		    	$('#txt_bodega_title').text('Ruta:'+data);
+		    	$('#txt_cod_bodega').val(codigo);
 
-	// 	    }
-	// 	});
+		    }
+		});
 }
 
 
@@ -425,13 +411,13 @@ async function buscar_ruta()
 						<input type="" class="form-control input-xs" id="txt_paquete" name="txt_paquete" readonly>	
 
 					</div>
-					<div class="col-sm-3 text-right" id="pnl_alertas" style="display:none;">
-						<button class="btn btn-default" type="button">
+					<div class="col-sm-3 text-right" id="pnl_alertas">
+						<button class="btn btn-default" type="button" id="btn_alto_stock" style="display:none;">
 							<img id="img_alto_stock"  src="../../img/gif/alto_stock_titi.gif" style="width:48px">
 							<br>
 							Alto Stock
 						</button>
-					<button class="btn btn-default" type="button">
+						<button class="btn btn-default" type="button" id="btn_expired" style="display:none;">
 							<img id="img_por_expirar" src="../../img/gif/expired_titi.gif" style="width:48px">
 							<br>
 							Por Expirar
@@ -439,16 +425,10 @@ async function buscar_ruta()
 					</div>
 				</div>
 				<hr>
-				<div class="row">
-					<div class="col-sm-3">
-						<ul class="tree_bod" id="arbol_bodegas">
-						</ul>
-					</div>
-					<div class="col-sm-9">
-						<div class="row">
-							<div class="text-center col-sm-12">
-							</div>
-							<div class="col-md-6">
+				<div class="row">					
+					<div class="col-sm-12">
+						<div class="row">							
+							<div class="col-md-5">
 
 								<div class="box box-primary direct-chat direct-chat-primary">	
 										<div class="box-header">
@@ -458,18 +438,6 @@ async function buscar_ruta()
 												<div class="direct-chat-messages">	
 													<ul class="list-group list-group-flush" id="lista_pedido"></ul>											
 												</div>
-												<div class="direct-chat-contacts">
-													
-													<ul class="contacts-list">
-														<button type="button" class="btn btn-box-tool pull-right" data-toggle="tooltip" title="" data-widget="chat-pane-toggle">
-																	<i class="fa fa-times"></i>
-															</button>
-															<li id="pnl_contenido">
-													  		 ssssss
-															</li>
-													</ul>
-												</div>
-
 										</div>
 								</div>
 						</div>
@@ -479,8 +447,13 @@ async function buscar_ruta()
 								<button class="btn btn-primary" type="button" onclick="desasignar_bodega()"><i class="fa fa-arrow-left"></i></button>								
 							</div>
 							<div class="col-sm-5">
-								Codigo de lugar
-								<input type="" class="form-control input-xs" id="txt_cod_lugar" name="txt_cod_lugar" onblur="buscar_ruta()">	
+								<b>Codigo de lugar</b>
+								<div class="input-group input-group-sm">
+										<input type="" class="form-control input-xs" id="txt_cod_lugar" name="txt_cod_lugar" onblur="buscar_ruta()">	
+										<span class="input-group-btn">
+												<button type="button" class="btn btn-info btn-flat" onclick="abrir_modal_bodegas()"><i class="fa fa-map-marker"></i></button>
+										</span>
+								</div>
 								<div class="box box-success">
 										<div class="box-header">
 											<h3 class="box-title" id="txt_bodega_title">Ruta: </h3>
@@ -518,5 +491,24 @@ async function buscar_ruta()
 	</div>
 </div>
 
+
+
+<div id="myModal_arbol_bodegas" class="modal fade myModalNuevoCliente" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Seleccion manual de bodegas</h4>
+            </div>
+            <div class="modal-body" id="contenido_prov" style="background: antiquewhite;">
+            		<ul class="tree_bod" id="arbol_bodegas">
+								</ul>               
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div> 
+        </div>
+    </div>
+  </div>
 
  <script src="../../dist/js/arbol_bodegas/arbol_bodega.js"></script>
