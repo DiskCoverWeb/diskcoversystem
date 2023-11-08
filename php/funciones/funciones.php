@@ -4537,7 +4537,7 @@ function dimenciones_tabl($len)
   //   $ot = explode("-",$fecha_actual);
   //   if($parametros['tip']=='CD')
   //   {
-  //     if($_SESSION['INGRESO']['Num_CD']==1)
+  //     if($_SESSION['INGRESO']['Num_Meses_CD']==1)
   //     {
   //       $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
   //       FROM            Codigos
@@ -5546,7 +5546,7 @@ function generar_comprobantes($parametros) //revision parece repetida
           }
         }
         //incrementamos el secuencial
-        if($_SESSION['INGRESO']['Num_CD']==1)
+        if($_SESSION['INGRESO']['Num_Meses_CD']==1)
         {
           //para variable en html
           $num1=$num_com[1];
