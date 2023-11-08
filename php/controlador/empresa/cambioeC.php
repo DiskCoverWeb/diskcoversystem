@@ -268,6 +268,7 @@ class cambioeC
 		                $empresaSQL2='<div class="row">
                     <div class="col-sm-2">
                         <label>EMPRESA:</label>
+                        <label>'.$datosEmp[0]['Item'].'</label>
                     </div>
                     <div class="col-sm-10">                                
                         <input type="text" name="TxtEmpresa" id="TxtEmpresa" class="form-control input-xs" value="'.$datosEmp[0]['Empresa'].'">
@@ -893,6 +894,7 @@ class cambioeC
 
 	function editar_datos_empresa($parametros)
 	{
+		// print_r($parametros);die();
 		return $this->modelo->editar_datos_empresa($parametros);
 
 	}
