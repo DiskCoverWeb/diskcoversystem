@@ -849,6 +849,7 @@ class articulosC
 		   if(count($datos_inv)>0)
 		   {
 		   	 $cant = explode(',',$datos_inv[0]['id']);
+		   	 $cant[2] = $cant[2];
 		   }
 		   	
 		    SetAdoAddNew("Trans_Kardex"); 		
@@ -868,7 +869,9 @@ class articulosC
 		    SetAdoFields('Total',number_format($value['VALOR_TOTAL'],2));
 		    if(isset($cant[2]))
 		    {
-		    	SetAdoFields('Existencia',number_format(($cant[2]),2)+intval($value['CANTIDAD']));
+		    	if(!is_numeric($cant[2])){$cant = 0;}
+		    	SetAdoFields('Existencia',number_format($cant[2],2)+intval($value['CANTIDAD']));
+		    	// print_r($cant[2]);
 		    }else
 		    {
 		    	SetAdoFields('Existencia',number_format(0,2)+intval($value['CANTIDAD']));
