@@ -337,6 +337,20 @@ class alimentos_recibidosM
 		return $this->db->datos($sql);
 	}
 
+	function numeracion_dia_categoria($fecha,$categoria)
+	{
+		$sql = "SELECT Codigo_Barra
+				FROM Trans_Kardex
+				WHERE (CodBodega = '-1') 
+				AND (Codigo_Barra LIKE '%".$categoria."-%') 
+				AND (Fecha_Fab = '".$fecha."')
+				AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND Item = '".$_SESSION['INGRESO']['item']."' 
+				ORDER BY ID DESC";
+				// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+
 
 }
 ?>

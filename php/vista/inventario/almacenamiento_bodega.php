@@ -6,7 +6,7 @@
   $(document).ready(function () {
   	cargar_bodegas()
   	pedidos();
-  	lineas_pedidos();
+  	productos_asignados();
   
 
 
@@ -49,6 +49,8 @@
       	 $('#txt_fecha_exp').css('color','#000000');
       	 $('#img_por_expirar').attr('src','../../img/png/expired.png');
       }
+      
+  	lineas_pedidos();
 
     });
 
@@ -137,6 +139,7 @@ function cargar_bodegas(nivel=1,padre='')
 
 function asignar_bodega()
 {
+
 	 id = '';
 	 $('.rbl_pedido').each(function() {
 	    const checkbox = $(this);
@@ -158,6 +161,7 @@ function asignar_bodega()
 		Swal.fire('Seleccione un pedido','','info');
 		return false;
 	}
+	$('#myModal_espera').modal('show');
 
 	var parametros = {
 		'id':id,
@@ -170,6 +174,8 @@ function asignar_bodega()
        dataType:'json',
 	    success: function(data)
 	    {
+
+				$('#myModal_espera').modal('hide');
 	    	lineas_pedidos()   	
 	    	contenido_bodega();
 	    	productos_asignados();

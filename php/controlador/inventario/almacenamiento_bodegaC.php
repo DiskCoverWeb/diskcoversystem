@@ -211,7 +211,9 @@ class almacenamiento_bodegaC
     {
     	// print_r($parametros);die();
     	// print_r($ordenes);die();
-    	$datos = $this->modelo->cargar_pedidos_trans($parametros['num_ped'],false);
+    	$fecha = date('Y-m-d');
+    	$datos = $this->modelo->cargar_agregado_en_bodega(false,$fecha);
+    	// print_r($datos);die();
     	$ls='';		
 		foreach ($datos as $key => $value) 
 		{
@@ -252,7 +254,8 @@ class almacenamiento_bodegaC
 				// a transkardex
 				// print_r($value);die();
 				SetAdoAddNew('Trans_Kardex');
-				SetAdoFields('CodBodega',$parametros['bodegas']);		
+				SetAdoFields('CodBodega',$parametros['bodegas']);	
+				SetAdoFields('Fecha_DUI',date('Y-m-d'));		
 				SetAdoFieldsWhere('ID',$value);
 				SetAdoUpdateGeneric();
 			}

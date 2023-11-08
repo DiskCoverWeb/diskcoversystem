@@ -345,6 +345,14 @@ class alimentos_recibidosC
 
 	   $num_ped = $parametro['txt_codigo']; 	
 	   $producto = $this->modelo->catalogo_productos($parametro['txt_referencia']);
+	   $fecha = date('Y-m-d');
+	   $numeracion = $this->modelo->numeracion_dia_categoria($fecha,$producto[0]['Item_Banco']);
+	   // print_r($numeracion);die();
+	   $num = 1;
+	   if(count($numeracion)>0){
+	   		$num = substr($numeracion[0]['Codigo_Barra'],strlen($numeracion[0]['Codigo_Barra'])-4,strlen($numeracion[0]['Codigo_Barra']));
+	   		$num = intval($num)+1;
+	   	}
 	   $referencia = $parametro['txt_referencia'];
 	   SetAdoAddNew("Trans_Kardex"); 		
 	   SetAdoFields('Codigo_Inv',$referencia);
@@ -363,7 +371,7 @@ class alimentos_recibidosC
 	   SetAdoFields('CANTIDAD',$parametro['txt_cantidad']);
 	   SetAdoFields('Valor_Unitario',number_format($producto[0]['PVP'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
 	   // SetAdoFields('DH',2);
-	   SetAdoFields('Codigo_Barra',$parametro['txt_codigo'].'-'.$producto[0]['Item_Banco']);
+	   SetAdoFields('Codigo_Barra',$parametro['txt_codigo'].'-'.$producto[0]['Item_Banco'].'-'.generaCeros($num,4));
 	   SetAdoFields('CodBodega',-1);
 
 	   SetAdoFields('Cta_Inv',$parametro['txt_cta_inv']);
@@ -493,6 +501,7 @@ class alimentos_recibidosC
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
   					<td width="'.$d4.'">'.number_format($value['Entrada'],2,'.','').'</td>
   					<td width="'.$d4.'">'.$value['CodigoU'].'</td>
+  					<td width="'.$d4.'">'.$value['Codigo_Barra'].'</td>
   					<td>';
   					if($art!='.')
   					{

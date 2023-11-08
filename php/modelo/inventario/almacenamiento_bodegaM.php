@@ -128,23 +128,60 @@ class almacenamiento_bodegaM
 	}
 	//------------------viene de trasnkardex--------------------
 
-	function cargar_pedidos_trans($orden,$fecha=false,$nombre=false,$bodega=false)
+	function cargar_pedidos_trans($orden=false,$fecha=false,$nombre=false,$bodega=false)
 	{
 	     // 'LISTA DE CODIGO DE ANEXOS
 	     $sql = "SELECT T.*,P.Producto 
 	     FROM Trans_Kardex  T ,Catalogo_Productos P     
 	     WHERE T.Item = '".$_SESSION['INGRESO']['item']."' 
 	     AND T.Periodo = '".$_SESSION['INGRESO']['periodo']."'
-	     AND Orden_No = '".$orden."' ";
-	     // AND T.CodigoL = '".$SUBCTA."'
-	     // AND T.Codigo_P = '".$paciente."'
-	     $sql.="AND Numero =0
+	     AND Numero =0
 	     AND T.Item = P.Item
 	     AND T.Periodo = P.Periodo
 		 AND T.Codigo_Inv = P.Codigo_Inv";
+		 if($orden)
+		 {
+	     	$sql.=" AND Orden_No = '".$orden."' ";
+	     }
 	     if($fecha)
 	     {
 	     	$sql.=" AND T.Fecha = '".$fecha."'";
+	     }   
+	     if($nombre)
+	     {
+	     	$sql.=" AND P.Producto = '".$nombre."'";
+	     }     
+	     if($bodega)
+	     {
+	     	$sql.=" AND T.CodBodega = '".$bodega."'";
+	     }  
+	     $sql.=" ORDER BY T.ID DESC";
+	     // print_r($sql);die();
+
+	     return $this->db->datos($sql);
+       
+	}
+
+	function cargar_agregado_en_bodega($orden=false,$fecha=false,$nombre=false,$bodega=false)
+	{
+	     // 'LISTA DE CODIGO DE ANEXOS
+	     $sql = "SELECT T.*,P.Producto 
+	     FROM Trans_Kardex  T ,Catalogo_Productos P     
+	     WHERE T.Item = '".$_SESSION['INGRESO']['item']."' 
+	     AND T.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+	     AND Numero =0
+	     AND T.Item = P.Item
+	     AND T.Periodo = P.Periodo
+		 AND T.Codigo_Inv = P.Codigo_Inv
+		 AND CodBodega <> '-1'
+		 AND Orden_No <> '0'";
+		 if($orden)
+		 {
+	     	$sql.=" AND Orden_No = '".$orden."' ";
+	     }
+	     if($fecha)
+	     {
+	     	$sql.=" AND T.Fecha_DUI = '".$fecha."'";
 	     }   
 	     if($nombre)
 	     {
