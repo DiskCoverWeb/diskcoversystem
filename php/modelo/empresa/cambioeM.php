@@ -41,7 +41,7 @@ class cambioeM
 		}
 		if($query)
 		{
-			$sql.=" and Empresa like '".$query."%' ";
+			$sql.=" and Empresa like '%".$query."%' ";
 		}
 
 		$sql.='ORDER BY Empresa;';		

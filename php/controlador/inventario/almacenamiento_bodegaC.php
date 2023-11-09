@@ -126,10 +126,10 @@ class almacenamiento_bodegaC
 
 	function buscar_contabilizado($cod)
 	{
-		$datos = $this->modelo->buscar_transCorreos_contabilizadios($cod);
+		$datos = $this->modelo->Buscar_productos_ingresados($cod);
 		$result = array();
 		foreach ($datos as $key => $value) {
-		 $result[] = array("id"=>$value['Envio_No'],"text"=>$value['Envio_No'],'data'=>$value);
+		 $result[] = array("id"=>$value['ID'],"text"=>$value['Codigo_Barra'],'data'=>$value);
 		}
 		return $result;
 	}
@@ -140,43 +140,27 @@ class almacenamiento_bodegaC
     {
     	// print_r($parametros);die();
     	// print_r($ordenes);die();
-    	$datos = $this->modelo->cargar_pedidos_trans($parametros['num_ped'],false);
+    	$datos = $this->modelo->Buscar_productos_ingresados($parametros['num_ped']);
+
+    	// print_r($datos);die();
     	$ls='';
 		foreach ($datos as $key => $value) 
 		{
+			$parametros['codigo'] = $value['Codigo_Inv'];
 			$prod = $this->modelo->catalogo_productos($value['Codigo_Inv']);
-			$art = $prod[0]['TDP'];
-			if($art=='R' && $value['CodBodega']=='-1')
-			{
-				 $ls.= '<li class="list-group-item"><a href="#" style="padding:0px"><label><input type="checkbox" class="rbl_pedido" value="'.$value['ID'].'">'.$value['Producto'].'</label>
+			if(count($prod)>0){
+
+				 $ls.= '<li class="list-group-item"><a href="#" style="padding:0px"><label><input type="checkbox" class="rbl_pedido" value="'.$value['ID'].'">'.$prod[0]['Producto'].'</label>
 				 		<div class="btn-group pull-right">
-				 				<span class="label-primary btn-sm btn">'.$value['Entrada'].'</span>
-								<button type="button" class="btn btn-sm" data-toggle="tooltip" title="" data-widget="chat-pane-toggle">
-				 					<i class="fa fa-info-circle"></i>
-				 			</button>							
+				 				<span class="label-primary btn-sm btn">'.$value['Entrada'].'</span>				
 				 		</div>
 				 </a>
 				 <ul style="padding: 20px;">';
-				 		 $ls.= $this->cargar_productos_trans_pedidos($parametros);
-				 		$ls.='</ul> 
+				 		 $ls.= $this->cargar_info($parametros);
+				 	$ls.='</ul> 
 				 </li>';
-				
-
-			}else{
-				if($value['CodBodega']=='.' || $value['CodBodega']=='-1')
-				{
-					$ls.= '<li class="list-group-item"><a href="#" style="padding:0px"><label><input type="checkbox" class="rbl_pedido" value="'.$value['ID'].'">  '.$value['Producto'].'</label>
-								<div class="btn-group pull-right">
-										<span class="label-primary btn-sm btn">'.$value['Entrada'].'</span>
-										<button type="button" onclick="cargar_info(\''.$value['Codigo_Inv'].'\')" class="btn btn-sm" data-toggle="tooltip" title="" data-widget="chat-pane-toggle">
-											<i class="fa fa-info-circle"></i>
-									</button>
-									
-								</div>
-
-					</a></li>';
-				}
 			}
+			
       }	
 
       	return $ls;	
@@ -227,7 +211,9 @@ class almacenamiento_bodegaC
     {
     	// print_r($parametros);die();
     	// print_r($ordenes);die();
-    	$datos = $this->modelo->cargar_pedidos_trans($parametros['num_ped'],false);
+    	$fecha = date('Y-m-d');
+    	$datos = $this->modelo->cargar_agregado_en_bodega(false,$fecha);
+    	// print_r($datos);die();
     	$ls='';		
 		foreach ($datos as $key => $value) 
 		{
@@ -268,7 +254,8 @@ class almacenamiento_bodegaC
 				// a transkardex
 				// print_r($value);die();
 				SetAdoAddNew('Trans_Kardex');
-				SetAdoFields('CodBodega',$parametros['bodegas']);		
+				SetAdoFields('CodBodega',$parametros['bodegas']);	
+				SetAdoFields('Fecha_DUI',date('Y-m-d'));		
 				SetAdoFieldsWhere('ID',$value);
 				SetAdoUpdateGeneric();
 			}
@@ -434,25 +421,32 @@ class almacenamiento_bodegaC
 	function cargar_info($parametros)
 	{
 		$datos = $this->modelo->catalogo_productos($parametros['codigo']);
+		// print_r($datos);die();
 		$li = '';
 		if(count($datos)>0)
 		{
 			$categorias = $datos[0]['Categorias'];
-			$datos = $this->modelo->cargar_categorias($categorias);
-			foreach ($datos as $key => $value) {
-				if($value['DC']=='C')
-				{
-					$li.="<li><u>".$value['Proceso']."</u></li>";
-				}else
-				{					
-					$li.="<li><i class='fa fa-arrow-right'></i> ".$value['Proceso']."</li>";
+			if($categorias!='.')
+			{
+				$datos = $this->modelo->cargar_categorias($categorias);
+				foreach ($datos as $key => $value) {
+					if($value['DC']=='C')
+					{
+						$li.="<li><u>".$value['Proceso']."</u></li>";
+					}else
+					{					
+						$li.="<li><i class='fa fa-arrow-right'></i> ".$value['Proceso']."</li>";
+					}
+					// print_r($value);die();
 				}
-				// print_r($value);die();
+			}else
+			{
+				$li.="<li><i class='fa fa-circle-info'></i> Sin categorias asignadas</li>";
 			}
 		}
 
 		return $li;
-		print_r($datos);die();
+		// print_r($datos);die();
 	}
 
 	function cargar_lugar($parametros)

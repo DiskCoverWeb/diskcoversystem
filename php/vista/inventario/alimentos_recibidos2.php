@@ -1274,6 +1274,7 @@ function eliminar_all_pedido(pedido)
 				          <th>DESCRIPCION</th>
 				          <th>CANTIDAD</th>
 				          <th>CODIGO USUARIO</th>
+                  <th>CODIGO DE BARRAS</th>
 				          <th width="8%"></th>
 				        </thead>
 				        <tbody id="tbl_body"></tbody>
