@@ -505,6 +505,7 @@ Email: ".$datos_pre['cliente']['Email']."
     $TC = $_GET['TC'];
     $efectivo = $_GET['efectivo'];
     $saldo = $_GET['saldo'];
+    $totalFA = $_GET['totalFA'];
     $parametros = array('tipo'=>'FA','ci'=>$ci,'serie'=>$serie,'factura'=>$fac,'TC' => $TC,'efectivo' => $efectivo,
       'saldo' => $saldo);
     $datos_pre  ="";
@@ -538,7 +539,10 @@ $lineas.="<table style='width: 284px;'>
       $lineas.='<td>'.$value['Producto'].'</td>';
       $lineas.='<td>'.number_format($value['Cantidad'],2,'.','').'</td>';
       $lineas.='<td>'.number_format($value['Precio'],2,'.','').'</td>';
-      $lineas.='<td>'.number_format($value['Total'],2,'.','').'</td>';
+      if($_SESSION['INGRESO']['Servicio'] != 0){
+        $lineas.='<td>'.number_format($_SESSION['INGRESO']['Servicio'] ,2,'.','').'</td>';
+      }
+      $lineas.='<td>'.number_format($value['Total'] + $_SESSION['INGRESO']['Servicio']  ,2,'.','').'</td>';
     $lineas.="<tr>";
  }
  $lineas.="</table>";
@@ -550,9 +554,17 @@ $lineas.="<table style='width: 284px;'>
    </tr>
    <tr>
       <td style='width: 155px;'></td><td> I.V.A 12%:</td> <td>".number_format($datos_pre['iva'],2,'.','')."</td>
-   </tr>
-   <tr>
-      <td style='width: 155px;'></td><td> TOTAL FACTURA:</td> <td>".number_format($datos_pre['tota'],2,'.','')."</td>
+   </tr>";
+   
+   if($_SESSION['INGRESO']['Servicio'] != 0){
+      $lineas .= "<tr>
+                    <td style='width: 155px;'></td><td> SERVICIO:</td> <td>".number_format($_SESSION['INGRESO']['Servicio'],2,'.','')."</td>
+                  </tr>";
+   }
+
+   $lineas .=
+   "<tr>
+      <td style='width: 155px;'></td><td> TOTAL FACTURA:</td> <td>".number_format($totalFA,2,'.','')."</td>
    </tr>
    <tr>
       <td style='width: 155px;'></td><td> EFECTIVO:</td> <td>".number_format($efectivo,2,'.','')."</td>
