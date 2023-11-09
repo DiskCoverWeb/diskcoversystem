@@ -542,7 +542,7 @@ $lineas.="<table style='width: 284px;'>
       if($_SESSION['INGRESO']['Servicio'] != 0){
         $lineas.='<td>'.number_format($_SESSION['INGRESO']['Servicio'] ,2,'.','').'</td>';
       }
-      $lineas.='<td>'.number_format($value['Total'] + $_SESSION['INGRESO']['Servicio']  ,2,'.','').'</td>';
+      $lineas.='<td>'.number_format($value['Total'] + ($_SESSION['INGRESO']['Servicio']/100)  ,2,'.','').'</td>';
     $lineas.="<tr>";
  }
  $lineas.="</table>";
