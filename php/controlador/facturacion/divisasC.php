@@ -531,8 +531,11 @@ $lineas.="<table style='width: 284px;'>
 <tr>
 <td>PRODUCTO</td>
 <td>CANT</td>
-<td>PVP</td>
-<td>TOTAL</td>
+<td>PVP</td>";
+if($_SESSION['INGRESO']['Servicio'] != 0){
+  $lineas.="<td>SERVICIO</td>";
+}
+$lineas .= "<td>TOTAL</td>
 </tr>";
   foreach ($datos_pre['lineas'] as $key => $value) {
     $lineas.="<tr style='font-size: 11px;'>";   
@@ -540,9 +543,9 @@ $lineas.="<table style='width: 284px;'>
       $lineas.='<td>'.number_format($value['Cantidad'],2,'.','').'</td>';
       $lineas.='<td>'.number_format($value['Precio'],2,'.','').'</td>';
       if($_SESSION['INGRESO']['Servicio'] != 0){
-        $lineas.='<td>'.number_format($_SESSION['INGRESO']['Servicio'] ,2,'.','').'</td>';
+        $lineas.='<td>'.number_format($value['Total'] * ($_SESSION['INGRESO']['Servicio']/100) ,2,'.','').'</td>';
       }
-      $lineas.='<td>'.number_format($value['Total'] + ($_SESSION['INGRESO']['Servicio']/100)  ,2,'.','').'</td>';
+      $lineas.='<td>'.number_format($value['Total'] + ($value['Total'] * ($_SESSION['INGRESO']['Servicio']/100))  ,2,'.','').'</td>';
     $lineas.="<tr>";
  }
  $lineas.="</table>";
@@ -555,10 +558,10 @@ $lineas.="<table style='width: 284px;'>
    <tr>
       <td style='width: 155px;'></td><td> I.V.A 12%:</td> <td>".number_format($datos_pre['iva'],2,'.','')."</td>
    </tr>";
-   
+   $tmp = $datos_pre['tota'] * ($_SESSION['INGRESO']['Servicio']/100);
    if($_SESSION['INGRESO']['Servicio'] != 0){
       $lineas .= "<tr>
-                    <td style='width: 155px;'></td><td> SERVICIO:</td> <td>".number_format($_SESSION['INGRESO']['Servicio'],2,'.','')."</td>
+                    <td style='width: 155px;'></td><td> SERVICIO '".$_SESSION['INGRESO']['Servicio']."%':</td> <td>".number_format($tmp,2,'.','')."</td>
                   </tr>";
    }
 
