@@ -523,7 +523,7 @@ function autocoplet_ingreso()
         var sucursal = 0;
         response.forEach(function(item,i){
             sucursal = 1;
-            op+="<option value=\""+item.Codigo+"\">"+item.Direccion+"</option>";
+            op+="<option value=\""+item.ID+"\">"+item.Direccion+"</option>";
         })
 
         if(sucursal==1)
@@ -1275,6 +1275,7 @@ function eliminar_all_pedido(pedido)
 				          <th>CANTIDAD</th>
 				          <th>CODIGO USUARIO</th>
                   <th>CODIGO DE BARRAS</th>
+                  <th>SUCURSAL</th>
 				          <th width="8%"></th>
 				        </thead>
 				        <tbody id="tbl_body"></tbody>
