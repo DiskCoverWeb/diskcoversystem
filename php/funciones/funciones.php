@@ -12356,4 +12356,143 @@ function Imprimir_FAM($TFA, $PosInic, $PosLineal, $DtaF, $DtaD, $Tipo_Pago, $ReI
   return '';
 }
 
+
+function Actualiza_Fecha_Tabla($Tabla, $Fecha) {
+    if (strtotime($Fecha)) {
+        $sSQL = "UPDATE $Tabla " .
+            "SET Fecha = '" . date('Y-m-d', strtotime($Fecha)) . "' " .
+            "WHERE Item = '".$_SESSION['INGRESO']['item']."' " .
+            "AND Periodo = '".$_SESSION['INGRESO']['periodo']."' " .
+            "AND TP = '{$_SESSION['Co']['TP']}' " .
+            "AND Numero = '{$_SESSION['Co']['Numero']}' ";
+        Ejecutar_SQL_SP($sSQL);
+    }
+}
+
+function Actualiza_Procesado_Tabla($Tabla, $ConTP = false, $Cuenta = '', $Valor = '') {
+    $sSQL = "UPDATE $Tabla " .
+        "SET Procesado = 0 " .
+        "WHERE Item = '".$_SESSION['INGRESO']['item']."' " .
+        "AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+    
+    if ($ConTP) {
+        $sSQL .= "AND TP = '{$_SESSION['Co']['TP']}' " .
+                 "AND Numero = '{$_SESSION['Co']['Numero']}' ";
+    }
+    
+    if (strlen($Cuenta) > 1 && strlen($Valor) > 1) {
+        $sSQL .= "AND $Cuenta = '$Valor' ";
+    }
+    
+    Ejecutar_SQL_SP($sSQL);
+}
+
+function FechaSistema($format = 'Y-m-d')
+{
+  return date($format);
+}
+
+function Listar_Comprobante_SP($C1, $Trans_No=0, $Ln_No=0, $Ret_No=0, $LnSC_No=0)
+{
+  $conn = new db();
+  $ExisteComp = false;
+  $sSQLAux = '';
+  $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
+  // Determinamos espacios de memoria para grabar
+  if ($Trans_No <= 0) $Trans_No = 1;
+  if ($Ln_No <= 0) $Ln_No = 1;
+  if ($LnSC_No <= 0) $LnSC_No = 1;
+  if ($Ret_No <= 0) $Ret_No = 1;
+
+  // Encabezado del Comprobante
+  $sSQL = "SELECT C.Fecha, C.Codigo_B, C.Concepto, C.Cotizacion, C.Monto_Total, C.Efectivo, Cl.CI_RUC, Cl.Cliente, Cl.Email, Cl.TD, " .
+      "Cl.Direccion, Cl.Telefono, Cl.Grupo, Cl.RISE, Cl.Especial " .
+      "FROM Comprobantes As C, Clientes As Cl " .
+      "WHERE C.Item = '$C1[Item]' " .
+      "AND C.Periodo = '$Periodo_Contable' " .
+      "AND C.TP = '$C1[TP]' " .
+      "AND C.Numero = $C1[Numero] " .
+      "AND C.Codigo_B = Cl.Codigo ";
+  $AdoRegistros = $conn->datos($sSQL);
+  if (count($AdoRegistros) > 0) {
+    foreach ($AdoRegistros as $key => $Fields) {
+      $C1['CodigoB'] = $Fields["Codigo_B"];
+      $C1['Beneficiario'] = $Fields["Cliente"];
+      $C1['Email'] = $Fields["Email"];
+      $C1['Concepto'] = $Fields["Concepto"];
+      $C1['Cotizacion'] = $Fields["Cotizacion"];
+      $C1['Monto_Total'] = $Fields["Monto_Total"];
+      $C1['Efectivo'] = $Fields["Efectivo"];
+      $C1['RUC_CI'] = $Fields["CI_RUC"];
+      $C1['TD'] = $Fields["TD"];
+      $C1['Fecha'] = $Fields["Fecha"]->format("Y-m-d");
+      $C1['Direccion'] = $Fields["Direccion"];
+      $C1['Telefono'] = $Fields["Telefono"];
+      $C1['Grupo'] = $Fields["Grupo"];
+      if ($Fields["RISE"]) $C1['TipoContribuyente'] = $C1['TipoContribuyente'] . " RISE";
+      if ($Fields["Especial"]) $C1['TipoContribuyente'] = $C1['TipoContribuyente'] . " Contribuyente especial";
+
+      if (strlen($C1['RUC_CI']) == 13) {
+        $data = Tipo_Contribuyente_SP_MYSQL($C1['RUC_CI']);
+        $TipoSRI['MicroEmpresa'] = $data['@micro'];
+        $TipoSRI['AgenteRetencion'] = $data['@Agente'];
+      }
+
+      switch ($C1['TD']) {
+          case 'C':
+              $TipoSRI['Estado'] = 'CEDULA';
+              break;
+          case 'P':
+              $TipoSRI['Estado'] = 'PASAPORTE';
+              break;
+          case 'R':
+              $TipoSRI['Estado'] = 'RUC ACTIVO';
+              break;
+      }
+
+      @$C1['AgenteRetencion'] = $TipoSRI['AgenteRetencion'];
+      @$C1['MicroEmpresa'] = $TipoSRI['MicroEmpresa'];
+      @$C1['Estado'] = $TipoSRI['Estado'];
+      $ExisteComp = true;
+    }
+
+    if ($ExisteComp) {
+      $C1TP = "";
+      $C1Numero = "";
+      $C1RetNueva = "";
+      $C1Serie_R = "";
+      $C1Retencion = "";
+      $C1Autorizacion_R = "";
+      $C1Ctas_Modificar = "";
+      $C1CodigoInvModificar = "";
+
+      $parametros = array(
+        array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+        array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+        array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
+        array(&$Trans_No, SQLSRV_PARAM_IN),
+        array(&$C1['TP'], SQLSRV_PARAM_IN),
+        array(&$C1['Numero'], SQLSRV_PARAM_IN),
+        array(&$C1RetNueva, SQLSRV_PARAM_OUT),
+        array(&$C1Serie_R, SQLSRV_PARAM_OUT),
+        array(&$C1Retencion, SQLSRV_PARAM_OUT),
+        array(&$C1Autorizacion_R, SQLSRV_PARAM_OUT),
+        array(&$C1Ctas_Modificar, SQLSRV_PARAM_OUT),
+        array(&$C1CodigoInvModificar, SQLSRV_PARAM_OUT),
+        array(&$Ln_No, SQLSRV_PARAM_OUT),
+        array(&$LnSC_No, SQLSRV_PARAM_OUT),
+      );
+      $sql = "EXEC sp_Listar_Comprobante @Item=?, @Periodo=?,@CodigoUsuario=?, @TransNo=?, @TP=? ,@Numero=? , @RetNueva=?, @SerieR=?, @Retencion=?, @AutorizacionR=?, @CtasModificar=?, @CodigoInvModificar=?, @LnNo=?, @LnSCNo=?" ;
+      $data= $conn->ejecutar_procesos_almacenados($sql,$parametros);
+
+      $C1['RetNueva'] = $C1RetNueva;
+      $C1['Serie_R'] = $C1Serie_R;
+      $C1['Retencion'] = $C1Retencion;
+      $C1['Autorizacion_R'] = $C1Autorizacion_R;
+      $C1['Ctas_Modificar'] = $C1Ctas_Modificar;
+      $C1['CodigoInvModificar'] = $C1CodigoInvModificar;
+    }
+    return array('C1'=>$C1, 'Trans_No'=>$Trans_No, 'Ln_No'=>$Ln_No, 'Ret_No'=>$Ret_No, 'LnSC_No'=>$LnSC_No);
+  }
+}
 ?>
