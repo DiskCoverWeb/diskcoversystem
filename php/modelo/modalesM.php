@@ -361,7 +361,7 @@ function DLCxCxP($SubCta,$query=false)
 
 		return $this->db->datos($sql);
 	}
-	function sucursales($query = false,$codigo=false)
+	function sucursales($query = false,$codigo=false,$id=false)
 	{
 		$sql = "SELECT ID,Codigo, Direccion, TP
 			FROM Clientes_Datos_Extras 
@@ -370,6 +370,10 @@ function DLCxCxP($SubCta,$query=false)
 			{  
 				$sql.=" AND Codigo = '".$codigo."' ";
 			} 
+			if($id)
+			{
+				$sql.= " AND ID = '".$id."' ";
+			}
 			$sql.=" AND Tipo_Dato = 'TIPO_PROV' 
 			ORDER BY Direccion, Fecha_Registro DESC";
 

@@ -1,5 +1,6 @@
 <?php 
 require_once(dirname(__DIR__,2)."/modelo/inventario/alimentos_recibidosM.php");
+require_once(dirname(__DIR__,2)."/modelo/modalesM.php");
 require_once(dirname(__DIR__,2)."/funciones/funciones.php");
 
 
@@ -201,9 +202,11 @@ class alimentos_recibidosC
 {
 	private $modelo;
 	private $barras;
+	private $modales;
 	function __construct()
 	{
 		$this->modelo = new alimentos_recibidosM();
+		$this->modales = new modalesM();
 	}
 
 	function guardar($parametros)
@@ -456,6 +459,13 @@ class alimentos_recibidosC
 		foreach ($datos as $key => $value) 
 		{
 			// print_r($value);die();
+			$sucursal = '.';
+			if($value['Codigo_Dr']!='.')
+			{
+				$dato_sucursal = $this->modales-> sucursales($query = false,$codigo=false,$value['Codigo_Dr']);
+				print_r($dato_sucursal);die();
+				$sucursal = '---';
+			} 
 
 			$prod = $this->modelo->catalogo_productos($value['Codigo_Inv']);
 			$art = $prod[0]['TDP'];
@@ -502,6 +512,7 @@ class alimentos_recibidosC
   					<td width="'.$d4.'">'.number_format($value['Entrada'],2,'.','').'</td>
   					<td width="'.$d4.'">'.$value['CodigoU'].'</td>
   					<td width="'.$d4.'">'.$value['Codigo_Barra'].'</td>
+  					<td width="'.$d4.'">'.$sucursal.'</td>
   					<td>';
   					if($art!='.')
   					{
