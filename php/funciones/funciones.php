@@ -16,6 +16,7 @@ require_once(dirname(__DIR__,2)."/lib/excel/plantilla.php");
 require_once(dirname(__DIR__,1)."/db/db1.php");
 require_once(dirname(__DIR__,1)."/db/variables_globales.php");
 require_once(dirname(__DIR__,1)."/comprobantes/SRI/autorizar_sri.php");
+//require_once("../../lib/fpdf/fpdf.php");
 
 if(isset($_POST['RUC']) AND !isset($_POST['submitweb'])) 
 {
@@ -26,6 +27,7 @@ if(isset($_POST['RUC']) AND !isset($_POST['submitweb']))
   Digito_verificador($ruc);
 }
 
+$SetD = array();
 function ip()
 {
   // print_r($_SESSION);die();
@@ -6641,7 +6643,7 @@ function datos_tabla($tabla,$campo=false)
     $TFA['Sin_IVA'] = round($TFA['Sin_IVA'],2);
     $TFA['SubTotal'] = $TFA['Sin_IVA'] + $TFA['Con_IVA'] - $TFA['Descuento'] - $TFA['Descuento2'];
     $TFA['Total_MN'] = $TFA['Sin_IVA'] + $TFA['Con_IVA'] - $TFA['Descuento'] - $TFA['Descuento2'] + $TFA['Total_IVA'] + $TFA['Servicio'];
-    // print_r($TFA);die();
+    //print_r($TFA);die();
 
     return $TFA;
   }
@@ -8566,438 +8568,363 @@ function FechaStrg($Fechas,$FormatoFechas = "dd/mm/yyyy") {
 }
 
 function  Imprimir_Facturas($TFA){
-// Dim AdoDBDetalle As ADODB.Recordset
-// Dim CadenaMoneda As String
-// Dim Numero_Letras As String
-// Dim NombUusuario As String
-// Dim Cad_Tipo_Pago As String
-// Dim PVP_Desc As Currency
-// Dim Orden_No_S As String
-// Dim PFilT As Single
-// Dim PFilTemp As Single
-// Dim Desc_Sin_IVA As Currency
-// Dim Desc_Con_IVA As Currency
+  require_once("../../lib/fpdf/fpdf.php");
+  $pdf = new FPDF();
 
-// 'Establecemos Espacios y seteos de impresion
-// On Error GoTo Errorhandler
-//   'MsgBox TipoFact
-//    CEConLineas = ProcesarSeteos(TFA.TC)
-// CantFils = 0
-// Mensajes = "Imprmir Factura No. " & TFA.Factura
-// Titulo = "IMPRESION"
-// Bandera = False
-// SetPrinters.Show 1
-// If PonImpresoraDefecto(SetNombrePRN) Then
-   
-//    tPrint.TipoImpresion = Es_Printer
-//    tPrint.NombreArchivo = TFA.TC & "-" & TFA.Serie & "-" & Format(TFA.Factura, "000000000")
-//    tPrint.TituloArchivo = TFA.TC & "-" & TFA.Serie & "-" & Format(TFA.Factura, "000000000")
-//    tPrint.TipoLetra = TipoCourier ' TipoArialNarrow
-//    tPrint.OrientacionPagina = Orientacion_Pagina
-//    tPrint.PaginaA4 = True
-//    tPrint.EsCampoCorto = False
-//    tPrint.VerDocumento = True
-//    Set cPrint = New cImpresion
-//    cPrint.iniciaImpresion
-//    RatonReloj
-//    Orden_No_S = ""
-//    cPrint.tipoDeLetra = TipoCourier ' TipoArialNarrow
-//    cPrint.tipoNegrilla = True
-//    Leer_Datos_FA_NV TFA
-//    Set AdoDBDetalle = Leer_Datos_FA_NV_Detalle(TFA)
-//    With AdoDBDetalle
-//     If .RecordCount > 0 Then
-//         Orden_No = .Fields("Orden_No")
-//         Do While (Not .EOF)
-//            If Orden_No <> TFA.Orden_Compra And TFA.Orden_Compra > 0 Then
-//               Orden_No_S = Orden_No_S & CStr(Orden_No) & " "
-//               Orden_No = TFA.Orden_Compra
-//            End If
-//           .MoveNext
-//         Loop
-//         Orden_No_S = Orden_No_S & CStr(Orden_No) & " "
-//        .MoveFirst
-//     End If
-//    End With
-//   'MsgBox FA.Si_Existe_Doc
-//    If FA.Si_Existe_Doc Then
-//      '--------------------------------------------------------------------------------------------------------
-//      'Encabezado de la factura
-//      '--------------------------------------------------------------------------------------------------------
-//      'Imagen de la factura
-//       If TFA.LogoFactura <> "NINGUNO" And TFA.AnchoFactura > 0 And TFA.AltoFactura > 0 Then
-//          If SetD(1).PosX > 0 And SetD(1).PosY > 0 Then
-//             Codigo4 = Format$(TFA.Factura, "000000000")
-//             If TFA.LogoFactura = "MATRICIA" Then
-//                Imprimir_Formato_Propio "IF", SetD(1).PosX, SetD(1).PosY
-//             Else
-//                Cadena = RutaSistema & "\FORMATOS\" & TFA.LogoFactura & ".gif"
-//                cPrint.printImagen Cadena, SetD(1).PosX, SetD(1).PosY, TFA.AnchoFactura, TFA.AltoFactura
-//                cPrint.printImagen LogoTipo, SetD(34).PosX, SetD(34).PosY, 2.5, 1.25
-//             End If
-//          End If
-//       End If
-//       If SetD(2).PosX > 0 And SetD(2).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(2).Tamaño
-//          cPrint.printTexto SetD(2).PosX, SetD(2).PosY, TFA.Serie & "-" & Format$(TFA.Factura, "000000000")
-//       End If
-//       If SetD(8).PosX > 0 And SetD(8).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(8).Tamaño
-//          If TFA.Razon_Social = TFA.Cliente Then Cadena = TFA.Cliente Else Cadena = TFA.Razon_Social
-//          cPrint.printTexto SetD(8).PosX, SetD(8).PosY, Cadena
-//       End If
-//       If SetD(64).PosX > 0 And SetD(64).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(64).Tamaño
-//          If TFA.Razon_Social <> TFA.Cliente Then
-//             cPrint.printTexto SetD(64).PosX, SetD(64).PosY, TFA.Cliente
-//          End If
-//       End If
-//       If SetD(11).PosX > 0 And SetD(11).PosY > 0 Then
-//          DireccionCli = TFA.DireccionC
-//          If Len(TFA.DirNumero) > 1 And TFA.DirNumero <> Ninguno Then
-//             If TFA.DirNumero <> "S/N" Then DireccionCli = DireccionCli & " (" & TFA.DirNumero & ")"
-//          End If
-//          cPrint.PorteDeLetra = SetD(11).Tamaño
-//          cPrint.printTexto SetD(11).PosX, SetD(11).PosY, DireccionCli
-//       End If
-//       If SetD(10).PosX > 0 And SetD(10).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(10).Tamaño
-//          cPrint.printTexto SetD(10).PosX, SetD(10).PosY, TFA.Grupo
-//       End If
-//      'Codigo abreviado del Usuario
-//       If SetD(18).PosX > 0 And SetD(18).PosY > 0 Then
-//          NombUusuario = TFA.Digitador
-//          Cadena = Cambio_Usuario_Inicial(NombUusuario)
-//          cPrint.PorteDeLetra = SetD(18).Tamaño
-//          cPrint.printTexto SetD(18).PosX, SetD(18).PosY, Cadena
-//       End If
-//       If SetD(21).PosX > 0 And SetD(21).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(21).Tamaño
-//          cPrint.printTexto SetD(21).PosX, SetD(21).PosY, TFA.Ejecutivo_Venta
-//       End If
-//       If SetD(3).PosX > 0 And SetD(3).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(3).Tamaño
-//          cPrint.printTexto SetD(3).PosX, SetD(3).PosY, FechaStrgCorta(TFA.Fecha)
-//       End If
-//       If SetD(4).PosX > 0 And SetD(4).PosY > 0 Then
-//          Cadena = FechaDia(TFA.Fecha) & Space(10) & FechaMes(TFA.Fecha) & Space(10) & FechaAnio(TFA.Fecha)
-//          cPrint.PorteDeLetra = SetD(4).Tamaño
-//          cPrint.printTexto SetD(4).PosX, SetD(4).PosY, Cadena
-//       End If
-//       If SetD(7).PosX > 0 And SetD(7).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(7).Tamaño
-//          cPrint.printTexto SetD(7).PosX, SetD(7).PosY, FechaStrgCiudad(TFA.Fecha)
-//       End If
-//       If SetD(5).PosX > 0 And SetD(5).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(5).Tamaño
-//          cPrint.printTexto SetD(5).PosX, SetD(5).PosY, FechaStrgCorta(TFA.Fecha_V)
-//       End If
-//       If SetD(6).PosX > 0 And SetD(6).PosY > 0 Then
-//          Cadena = FechaDia(TFA.Fecha_V) & Space(10) & FechaMes(TFA.Fecha_V) & Space(10) & FechaAnio(TFA.Fecha_V)
-//          cPrint.PorteDeLetra = SetD(6).Tamaño
-//          cPrint.printTexto SetD(6).PosX, SetD(6).PosY, Cadena
-//       End If
-//       If SetD(14).PosX > 0 And SetD(14).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(14).Tamaño
-//          cPrint.printTexto SetD(14).PosX, SetD(14).PosY, TFA.TelefonoC
-//       End If
-//       If SetD(12).PosX > 0 And SetD(12).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(12).Tamaño
-//          cPrint.printTexto SetD(12).PosX, SetD(12).PosY, TFA.CiudadC
-//       End If
-//       If SetD(13).PosX > 0 And SetD(13).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(13).Tamaño
-//          cPrint.printTexto SetD(13).PosX, SetD(13).PosY, TFA.CI_RUC
-//       End If
-//       If SetD(15).PosX > 0 And SetD(15).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(15).Tamaño
-//          cPrint.printTexto SetD(15).PosX, SetD(15).PosY, TFA.EmailC
-//       End If
-//       If SetD(51).PosX > 0 And SetD(71).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(51).Tamaño
-//          cPrint.printTexto SetD(51).PosX, SetD(51).PosY, TFA.DAU
-//       End If
-//       If SetD(52).PosX > 0 And SetD(52).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(52).Tamaño
-//          cPrint.printTexto SetD(52).PosX, SetD(52).PosY, TFA.FUE
-//       End If
-//       If SetD(53).PosX > 0 And SetD(53).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(53).Tamaño
-//          cPrint.printTexto SetD(53).PosX, SetD(53).PosY, TFA.Declaracion
-//       End If
-//       If SetD(54).PosX > 0 And SetD(54).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(54).Tamaño
-//          cPrint.printTexto SetD(54).PosX, SetD(54).PosY, TFA.Remision
-//       End If
-//       If SetD(55).PosX > 0 And SetD(55).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(55).Tamaño
-//          cPrint.printTexto SetD(55).PosX, SetD(55).PosY, TFA.Comercial
-//       End If
-//       If SetD(56).PosX > 0 And SetD(56).PosY > 0 Then
-//         cPrint.PorteDeLetra = SetD(56).Tamaño
-//         cPrint.printTexto SetD(56).PosX, SetD(56).PosY, TFA.Solicitud
-//       End If
-//       If SetD(57).PosX > 0 And SetD(57).PosY > 0 Then
-//         cPrint.PorteDeLetra = SetD(57).Tamaño
-//         cPrint.printTexto SetD(57).PosX, SetD(57).PosY, TFA.Cantidad
-//       End If
-//       If SetD(58).PosX > 0 And SetD(58).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(58).Tamaño
-//          cPrint.printTexto SetD(58).PosX, SetD(58).PosY, TFA.Kilos
-//       End If
-//       If SetD(60).PosX > 0 And SetD(60).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(60).Tamaño
-//          cPrint.printTexto SetD(60).PosX, SetD(60).PosY, Format$(Day(TFA.Fecha), "00")
-//       End If
-//       If SetD(61).PosX > 0 And SetD(61).PosY > 0 Then
-//          Cadena = UCaseStrg(MidStrg(MesesLetras(CInt(Month(TFA.Fecha))), 1, 3))
-//          cPrint.PorteDeLetra = SetD(61).Tamaño
-//          cPrint.printTexto SetD(61).PosX, SetD(61).PosY, Cadena
-//       End If
-//       If SetD(62).PosX > 0 And SetD(62).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(62).Tamaño
-//          cPrint.printTexto SetD(62).PosX, SetD(62).PosY, Format$(Year(TFA.Fecha), "0000")
-//       End If
-//       If SetD(67).PosX > 0 And SetD(67).PosY > 0 Then
-//         cPrint.PorteDeLetra = SetD(67).Tamaño
-//         cPrint.printTexto SetD(67).PosX, SetD(67).PosY, FechaStrgCorta(TFA.Fecha_C)
-//       End If
-//       If SetD(16).PosX > 0 And SetD(16).PosY > 0 Then
-//         cPrint.PorteDeLetra = SetD(16).Tamaño
-//         NumeroLineas = cPrint.printTextoMultiple(SetD(16).PosX, SetD(16).PosY, TFA.Observacion, SetD(26).PosX)
-//       End If
-//       If SetD(17).PosX > 0 And SetD(17).PosY > 0 Then
-//         cPrint.PorteDeLetra = SetD(17).Tamaño
-//         NumeroLineas = cPrint.printTextoMultiple(SetD(17).PosX, SetD(17).PosY, TFA.Nota, SetD(26).PosX)
-//       End If
-//      '--------------------------------------------------------------------------------------------------------
-//      'Pie de factura
-//      '--------------------------------------------------------------------------------------------------------
-//       cPrint.tipoNegrilla = True
-//       Total = Redondear(TFA.Total_MN, 2)
-//       Total_ME = Redondear(TFA.Total_ME, 2)
-//      'Porcentaje Con IVA
-//       If SetD(39).PosX > 0 And SetD(39).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(39).Tamaño
-//          cPrint.printTexto SetD(39).PosX, SetD(39).PosY, CStr(TFA.Porc_IVA * 100)
-//       End If
-//      'Sin IVA
-//       If SetD(37).PosX > 0 And SetD(37).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(37).Tamaño
-//          Diferencia = TFA.Sin_IVA - TFA.Descuento_0
-//          cPrint.printVariable SetD(37).PosX, SetD(37).PosY, Diferencia
-//       End If
-//      'Con IVA
-//       If SetD(38).PosX > 0 And SetD(38).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(38).Tamaño
-//          Diferencia = TFA.Con_IVA - TFA.Descuento_X
-//          cPrint.printVariable SetD(38).PosX, SetD(38).PosY, Diferencia
-//       End If
-//      'Descuento palabra
-//       If SetD(43).PosX > 0 And SetD(43).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(43).Tamaño
-//          cPrint.printTexto SetD(43).PosX, SetD(43).PosY, "Descuento"
-//       End If
-//      'Total Descuento
-//       If SetD(42).PosX > 0 And SetD(42).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(42).Tamaño
-//          cPrint.printVariable SetD(42).PosX, SetD(42).PosY, TFA.Total_Descuento
-//       End If
-//      'Total Comision
-//       If SetD(48).PosX > 0 And SetD(48).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(48).Tamaño
-//          cPrint.printVariable SetD(48).PosX, SetD(48).PosY, TFA.Comision
-//       End If
-//      'Total Servicio
-//       If SetD(49).PosX > 0 And SetD(49).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(49).Tamaño
-//          cPrint.printVariable SetD(49).PosX, SetD(49).PosY, TFA.Servicio
-//       End If
-//      'IVA Porcentaje
-//       If SetD(41).PosX > 0 And SetD(41).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(41).Tamaño
-//          cPrint.printTexto SetD(41).PosX, SetD(41).PosY, CStr(TFA.Porc_IVA * 100) & " "
-//       End If
-//      'Total IVA
-//       If SetD(40).PosX > 0 And SetD(40).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(40).Tamaño
-//          cPrint.printVariable SetD(40).PosX, SetD(40).PosY, TFA.Total_IVA
-//       End If
-//      'SubTotal
-//       If SetD(36).PosX > 0 And SetD(36).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(36).Tamaño
-//          cPrint.printVariable SetD(36).PosX, SetD(36).PosY, TFA.SubTotal
-//       End If
-//      'SubTotal - Descuentos
-//       If SetD(66).PosX > 0 And SetD(66).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(66).Tamaño
-//          cPrint.printVariable SetD(66).PosX, SetD(66).PosY, TFA.SubTotal - TFA.Total_Descuento
-//       End If
-//      'Total Facturado
-//       If SetD(44).PosX > 0 And SetD(44).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(44).Tamaño
-//          cPrint.printVariable SetD(44).PosX, SetD(44).PosY, TFA.Total_MN
-//       End If
-//      'Total Facturado en letras
-//       If SetD(45).PosX > 0 And SetD(45).PosY > 0 Then
-//          Numero_Letras = Cambio_Letras(TFA.Total_MN, 2)
-//          cPrint.PorteDeLetra = SetD(45).Tamaño
-//          PrinterLineas SetD(45).PosX, SetD(45).PosY, Numero_Letras, 11.5
-//       End If
-//      'CxC Clientes: Linea de Produccion
-//       If SetD(50).PosX > 0 And SetD(50).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(50).Tamaño
-//          cPrint.printTexto SetD(50).PosX, SetD(50).PosY, TFA.CxC_Clientes
-//       End If
-//      'Hora de Proceso
-//       If SetD(63).PosX > 0 And SetD(63).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(63).Tamaño
-//          cPrint.printTexto SetD(63).PosX, SetD(63).PosY, TFA.Hora
-//       End If
-//       If SetD(68).PosX > 0 And SetD(68).PosY > 0 Then
-//          cPrint.PorteDeLetra = SetD(68).Tamaño
-//          cPrint.printTexto SetD(68).PosX, SetD(68).PosY, TrimStrg(Orden_No_S)
-//       End If
-//      'Tipo_Pago
-//       If Len(TFA.Tipo_Pago_Det) > 1 Then
-//          If SetD(79).PosX > 0 And SetD(79).PosY > 0 Then
-//             cPrint.PorteDeLetra = SetD(79).Tamaño
-//             cPrint.printVariable SetD(79).PosX, SetD(79).PosY, TFA.Fecha_V
-//          End If
-//          If SetD(78).PosX > 0 And SetD(78).PosY > 0 Then
-//             cPrint.PorteDeLetra = SetD(78).Tamaño
-//             cPrint.printVariable SetD(78).PosX, SetD(78).PosY, TFA.Total_MN
-//          End If
-//          If SetD(77).PosX > 0 And SetD(77).PosY > 0 Then
-//             RutaOrigen = RutaSistema & "\ICONOS\Vistofp.jpg"
-//             cPrint.printImagen RutaOrigen, SetD(77).PosX, SetD(77).PosY, SetD(77).Tamaño, SetD(77).Tamaño
-//          End If
-//          If SetD(76).PosX > 0 And SetD(76).PosY > 0 Then
-//             cPrint.PorteDeLetra = SetD(76).Tamaño
-//             cPrint.printTexto SetD(76).PosX, SetD(76).PosY, "TIPO PAGO:"
-//          End If
-//          If SetD(75).PosX > 0 And SetD(75).PosY > 0 Then
-//             cPrint.PorteDeLetra = SetD(75).Tamaño
-//             cPrint.printTexto SetD(75).PosX, SetD(75).PosY, TrimStrg(MidStrg(TFA.Tipo_Pago_Det, 15, Len(TFA.Tipo_Pago_Det)))
-//          End If
-//       End If
-//      'MsgBox Orden_No_S & " ...."
-//    End If
-//   'Printer.FontName = TipoConsola
-//    SaldoInic = 0: SaldoFinal = 0
-//    Orden_No_S = ""
-//    cPrint.tipoNegrilla = False
-//   'Comenzamos a recoger los detalles de la factura
-//    sSQL = "SELECT DF.*,CP.Detalle,CP.Codigo_Barra,CP.Unidad,CP.Reg_Sanitario,CM.Marca " _
-//         & "FROM Detalle_Factura As DF,Catalogo_Productos As CP,Catalogo_Marcas As CM " _
-//         & "WHERE DF.Factura = " & TFA.Factura & " " _
-//         & "AND DF.TC = '" & TFA.TC & "' " _
-//         & "AND DF.Serie = '" & TFA.Serie & "' " _
-//         & "AND DF.Item = '" & NumEmpresa & "' " _
-//         & "AND DF.Periodo = '" & Periodo_Contable & "' " _
-//         & "AND DF.Periodo = CP.Periodo " _
-//         & "AND DF.Periodo = CM.Periodo " _
-//         & "AND DF.Item = CP.Item " _
-//         & "AND DF.Item = CM.Item " _
-//         & "AND DF.Codigo = CP.Codigo_Inv " _
-//         & "AND DF.CodMarca = CM.CodMar " _
-//         & "ORDER BY DF.ID,DF.Codigo "
-//    Select_AdoDB AdoDBDetalle, sSQL
-//    With AdoDBDetalle
-//     If .RecordCount > 0 Then
-//         PFil = SetD(22).PosY
-//         Orden_No = .Fields("Orden_No")
-//         Do While (Not .EOF)
-//           'MsgBox .RecordCount
-//            SaldoInic = SaldoInic + .Fields("Cantidad")
-//            SaldoFinal = SaldoFinal + .Fields("Tonelaje")
-//            cPrint.PorteDeLetra = SetD(23).Tamaño
-//            cPrint.printFields SetD(23).PosX, PFil, .Fields("Codigo")
-//            cPrint.PorteDeLetra = SetD(30).Tamaño
-//            cPrint.printFields SetD(30).PosX, PFil, .Fields("Codigo_Barra")
-//            If .Fields("CodMarca") <> Ninguno Then
-//                cPrint.PorteDeLetra = SetD(31).Tamaño
-//                cPrint.printTexto SetD(31).PosX, PFil, "(" & TrimStrg(MidStrg(.Fields("Marca"), 1, 3)) & ")"
-//            End If
-//            cPrint.PorteDeLetra = SetD(33).Tamaño
-//            cPrint.printFields SetD(33).PosX, PFil, .Fields("Ruta")
-//            cPrint.PorteDeLetra = SetD(32).Tamaño
-//            cPrint.printFields SetD(32).PosX, PFil, .Fields("Unidad")
-//            If .Fields("Cant_Hab") > 0 And Len(.Fields("Tipo_Hab")) > 1 Then
-//                cPrint.PorteDeLetra = SetD(70).Tamaño
-//                cPrint.printFields SetD(70).PosX, PFil, .Fields("Fecha_IN")
-//                cPrint.PorteDeLetra = SetD(71).Tamaño
-//                cPrint.printFields SetD(71).PosX, PFil, .Fields("Fecha_OUT")
-//                cPrint.PorteDeLetra = SetD(72).Tamaño
-//                cPrint.printFields SetD(72).PosX, PFil, .Fields("Cant_Hab")
-//                cPrint.PorteDeLetra = SetD(73).Tamaño
-//                cPrint.printFields SetD(73).PosX, PFil, .Fields("Tipo_Hab")
-//            End If
-//            If SetD(24).PosX <= SetD(25).PosX Then
-//               cPrint.PorteDeLetra = SetD(24).Tamaño
-//               cPrint.printTexto SetD(24).PosX, PFil, " " & CStr(.Fields("Cantidad"))
-//            End If
-//            cPrint.PorteDeLetra = SetD(25).Tamaño
-//            PFilTemp = PFil
-//            PFilT = PrinterLineasTexto(SetD(25).PosX, PFil - 0.2, .Fields("Producto"), SetD(26).PosX)
-//            If PVP_Al_Inicio Then PFil = PFilTemp Else PFil = PFilT
-//            If Len(.Fields("Lote_No")) > 1 And Len(.Fields("Reg_Sanitario")) > 1 Then
-//               PFil = PFil + Printer.TextHeight("H")
-//               Cadena = "-LOTE No. " & .Fields("Lote_No") _
-//                      & ", REG. SANITARIO: " & .Fields("Reg_Sanitario")
-//               'cPrint.printTexto SetD(25).PosX, PFil, Cadena
-//               PFilT = PrinterLineasTexto(SetD(25).PosX, PFil, Cadena, SetD(26).PosX)
-//               PFil = PFil + Printer.TextHeight("H")
-//               Cadena = UCaseStrg("-FAB: " & Format(.Fields("Fecha_Fab"), "MMM-yyyy") & ", EXP: " & Format(.Fields("Fecha_Exp"), "MMM-yyyy"))
-//               'cPrint.printTexto SetD(25).PosX, PFil, Cadena
-//               PFilT = PrinterLineasTexto(SetD(25).PosX, PFil, Cadena, SetD(26).PosX)
-//            End If
-//            PFil = PFil + 0.2
-//            If SetD(24).PosX > SetD(25).PosX Then
-//               cPrint.PorteDeLetra = SetD(24).Tamaño
-//               cPrint.printTexto SetD(24).PosX, PFil, " " & CStr(.Fields("Cantidad"))
-//            End If
-//            cPrint.PorteDeLetra = SetD(29).Tamaño
-//            cPrint.printFields SetD(29).PosX, PFil, .Fields("Total")
-//            PVP_Desc = .Fields("Total") - .Fields("Total_Desc") - .Fields("Total_Desc2")
-//            cPrint.PorteDeLetra = SetD(69).Tamaño
-//            cPrint.printVariable SetD(69).PosX, PFil, PVP_Desc
-//            cPrint.PorteDeLetra = SetD(28).Tamaño
-//            cPrint.printFields SetD(28).PosX, PFil, .Fields("Precio"), , , , Dec_PVP
-//            cPrint.PorteDeLetra = SetD(27).Tamaño
-//            If .Fields("Precio") > 0 And .Fields("Cantidad") > 0 Then
-//                cPrint.printTexto SetD(27).PosX, PFil, Format$(.Fields("Total_Desc") / (.Fields("Cantidad") * .Fields("Precio")), "00.00%")
-//            End If
-//            cPrint.PorteDeLetra = SetD(34).Tamaño
-//            cPrint.printTexto SetD(34).PosX, PFil, Format$(.Fields("Tonelaje"), "#,##0.00")
-//           'Descuentos en Ventas
-//            If .Fields("Total_IVA") > 0 Then
-//                Desc_Con_IVA = Desc_Con_IVA + .Fields("Total_Desc")
-//            Else
-//                Desc_Sin_IVA = Desc_Sin_IVA + .Fields("Total_Desc")
-//            End If
-//            If PVP_Al_Inicio Then PFil = PFilT
-//            PFil = PFil + Printer.TextHeight("H")
-//            If Orden_No <> TFA.Orden_Compra And TFA.Orden_Compra > 0 Then
-//               Orden_No_S = Orden_No_S & CStr(Orden_No) & " "
-//               Orden_No = TFA.Orden_Compra
-//            End If
-//           .MoveNext
-//         Loop
-//         Orden_No_S = Orden_No_S & CStr(Orden_No) & " "
-//     End If
-//    End With
-//    cPrint.finalizaImpresion
-// End If
-// 'Printer.FontName = LetraAnterior
-// MensajeEncabData = ""
-// RatonNormal
-// Exit Sub
-// Errorhandler:
-//     RatonNormal
-//     ErrorDeImpresion
-//     Exit Sub
-// End Sub
+  $AdoDbDetalle = array();
+  $CadenaMoneda = "";
+  $Numero_Letras = "";
+  $NomUusuario = "";
+  $Cad_Tipo_Pago = "";
+  $PVP_Desc = 0.0000;
+  $Orden_No_S = "";
+  $PFilT = "";
+  $PFilTemp = "";
+  $Desc_Sin_IVA = 0.0000;
+  $Desc_Con_IVA = 0.0000;
+
+  $pdf = new FPDF();
+  $pdf->AddPage();
+  $CantFils = 0;
+  $Mensajes = "Imprimir Factura No. " . $TFA['Factura'];
+  $Titulo = "IMPRESION";
+  $Bandera = False;
+  $NombreArchivo = $TFA['TC'] . "-" . $TFA['Serie'] . str_pad($TFA['Factura'], 9, 0, STR_PAD_LEFT);
+  $TituloArchivo = $TFA['TC'] . "-" . $TFA['Serie'] . str_pad($TFA['Factura'], 9, 0, STR_PAD_LEFT);
+  $TipoLetra = "TipoCourier";
+  $OrientacionPagina = "L"; // Orientacion horizontal 
+  $PaginaA4 = True;
+  $EsCampoCorto = False;
+  $VerDocumento = True;
+
+  $pdf->SetFont($TipoLetra, 'B', 16);
+
+  //iniciamos la creacion del pdf.
+  $Orden_No_S = "";
+  Leer_Datos_FA_NV($TFA);
+  $AdoDbDetalle = Leer_Datos_FA_NV_Detalle($TFA);
+  if(count($AdoDbDetalle) > 0){
+    foreach($AdoDbDetalle as $key => $value){
+      $Orden_No = $value['Orden_No'];
+      if($Orden_No <> $TFA['Orden_Compra'] && $TFA['Orden_Compra'] > 0){
+        $Orden_No_S = $Orden_No . strval($Orden_No) . " ";
+        $Orden_No = $TFA['Orden_Compra'];
+      }
+      $Orden_No_S .= strval($Orden_No) . " ";
+    }
+  }
+  if($TFA['Si_Existe_Doc']){
+    //Encabezado de la factura
+    if($TFA['LogoFactura'] <> "NINGUNO" && $TFA['AnchoFactura'] > 0 && $TFA['AltoFactura'] > 0){
+      $Codigo4 = str_pad($TFA['Factura'], 7, '0', STR_PAD_LEFT);
+      if($TFA['LogoFactura'] == "MATRICIA"){
+        Imprimir_Formato_Propio("IF", 0, 0, $pdf);
+      }else{
+        $Cadena = '../../img/logotipos/' . $TFA['LogoFactura'] . '.gif';
+        $LogoTipo = get_logo_empresa();
+        //Imprimir el logo y la cadena.
+      }
+    }
+  }
+
+}
+
+function Imprimir_Formato_Propio($Tipo_Formato, $Inicio_Xo, $Inicio_Yo, $pdf){//Definimos un parametro adicional para manejar la instancia de fpdf
+  
+  $db = new db();
+  
+  //Hay que tomar en cuenta que FPDF maneja mm como sistema de unidad.
+
+  $AdoFormatoP = array();
+  $FP_Vertical = False;
+
+  $SQLFormatoP = "";
+  $FP_RGB = "";
+  $FP_Texto = "";
+  $FP_TextFile = "";
+  $FP_PathDibujo = "";
+
+  $FP_R = 0;
+  $FP_G = 0;
+  $FP_B = 0;
+
+  $FP_NumFile = 0;
+  $FP_Color = 0;
+
+  $FP_Radio = 0.0;
+  $FP_Pos_Xo = 0.0;
+  $FP_Pos_Yo = 0.0;
+  $FP_Pos_Xf = 0.0;
+  $FP_Pos_Yf = 0.0;
+  $Inicio_X = 0.0;
+  $Inicio_Y = 0.0;
+  $FP_Tamanio = 0.0;
+  $FP_PosL_Yo = 0.0;
+  $FP_PosL_Yf = 0.0;
+  $FP_CentrarTextoW = 0.0;
+
+  //Variables para impresion con fpdf
+  $FontName = "";
+
+  #Establecemos los inicios por default
+  $Inicio_X = $Inicio_Xo;
+  $Inicio_Y = $Inicio_Yo;
+  if($Inicio_X < 0) $Inicio_X = 0;
+  if($Inicio_Y < 0) $Inicio_Y = 0;
+  if($Tipo_Formato == "") $Tipo_Formato = G_NINGUNO;
+  #Establecemos Espacios y seteos de impresion
+  $SQLFormatoP = "SELECT * 
+                  FROM Formato_Propio
+                  WHERE TP = '".$Tipo_Formato."'
+                  AND Item = '000'
+                  ORDER BY Num,Tipo_Objeto,Codigo,Texto,Pos_Xo,Pos_Yo,Pos_Xf,Pos_Yf ";
+  $AdoFormatoP = $db->datos($SQLFormatoP);
+  if(count($AdoFormatoP) > 0){
+    if($Inicio_X > 0 && $Inicio_Y > 0){
+      foreach($AdoFormatoP as $key => $value){
+        if($value['Tipo_Letra'] <> G_NINGUNO){
+          $FontName = $value['Tipo_Letra'];
+        }else{
+          $FontName = 'Arial';
+        }
+        $FP_Radio = $value['Radio'];
+        $FP_Pos_Xo = $value['Pos_Xo'];
+        $FP_Pos_Yo = $value['Pos_Yo'];
+        $FP_Pos_Xf = $value['Pos_Xf'];
+        $FP_Pos_Yf = $value['Pos_Yf'];
+        if($FP_Pos_Xo > 0 && $FP_Pos_Yo > 0){
+          switch(strtoupper($value['Color'])){
+            case "NEGRO":
+              $FP_Color = array(0,0,0); //fpdf acepta colores en RGB
+              break;
+            case "AZUL":
+              $FP_Color = array(0,0,255); //fpdf acepta colores en RGB
+              break;
+            case "VERDE":
+              $FP_Color = array(0,255,0); //fpdf acepta colores en RGB
+              break;
+            case "AGUAMARINA":
+              $FP_Color = array(159,213,209); //fpdf acepta colores en RGB
+              break;
+            case "ROJO":
+              $FP_Color = array(255,0,0); //fpdf acepta colores en RGB
+              break;
+            case "FUCSIA":
+              $FP_Color = array(227,0,82); //fpdf acepta colores en RGB
+              break;
+            case "AMARILLO":
+              $FP_Color = array(255,255,0); //fpdf acepta colores en RGB
+              break;
+            case "BLANCO":
+              $FP_Color = array(255,255,255); //fpdf acepta colores en RGB
+              break;
+            case "GRIS":
+              $FP_Color = array(96,96,96); //fpdf acepta colores en RGB
+              break;
+            case "AZUL_CLARO":
+              $FP_Color = array(0,108,159); //fpdf acepta colores en RGB
+              break;
+            case "VERDE_CLARO":
+              $FP_Color = array(194,247,50); //fpdf acepta colores en RGB
+              break;
+            case "MAGENTA":
+              $FP_Color = array(255,128,255); //fpdf acepta colores en RGB
+              break;
+            case "ROJO_CLARO":
+              $FP_Color = array(243,70,74); //fpdf acepta colores en RGB
+              break;
+            case "FUCSIA_CLARO":
+              $FP_Color = array(232,51,117); //fpdf acepta colores en RGB
+              break;
+            case "AMARILLO_CLARO":
+              $FP_Color = array(253,218,102); //fpdf acepta colores en RGB
+              break;
+            case "BLANCO_BRILLANTE":
+              $FP_Color = array(246,246,246); //fpdf acepta colores en RGB
+              break;
+            default:
+              $FP_RGB = $value['Color'];
+              list($r, $g, $b) = explode(" ", $FP_RGB);
+              $FP_R = intval($r);
+              $FP_G = intval($g);
+              $FP_B = intval($b);
+              if($FP_R + $FP_G + $FP_B === 0){
+                $FP_Color = array(255, 255, 255);//blanco
+              }else{
+                $FP_Color = array($FP_R, $FP_G, $FP_B);
+              }
+              break;
+          }
+          if($value['Negrilla']){
+            $pdf->SetFont($FontName, 'B');
+          }else{
+            $pdf->SetFont($FontName);
+          }
+          switch($value['Tipo_Objeto']){
+            case "DATO_EMP": 
+              $FP_Texto = $_SESSION['INGRESO']['empresa'];
+              break;
+            case "DATO_COMP":
+              $FP_Texto = $_SESSION['INGRESO']['Nombre_Comercial'];
+              break;
+            case "DATO_DIR":
+              $FP_Texto = $_SESSION['INGRESO']['Direccion'] . " * Telef. " . $_SESSION['INGRESO']['Telefono1'] . "*";
+              break;
+            case "DATO_TEL":
+              $FP_Texto = $_SESSION['INGRESO']['Telefono1'];
+              break;
+            case "DATO_RUC":
+              $FP_Texto = "R.U.C " . $_SESSION['INGRESO']['RUC'];
+              break;
+            case "DATO_PAI":
+              $FP_Texto =$_SESSION['INGRESO']['Ciudad'];
+              break;
+            default:
+              $FP_Texto = $value['Texto'];
+          }
+          $FP_Vertical = $value['Vertical'];
+          $FP_Tamanio = $value['Tamaño'];
+          if($FP_Tamanio <= 0) $FP_Tamanio = 1;
+          $FP_CentrarTextoW = $FP_Pos_Xf - $FP_Pos_Xo;
+          if($FP_CentrarTextoW < 0) $FP_CentrarTextoW = 0;
+          if($FP_CentrarTextoW > $pdf->GetStringWidth($FP_Texto) * 10){//Multiplicamos por 10 por sistema de unidades.
+            $FP_CentrarTextoW = $FP_Pos_Xo + ($FP_CentrarTextoW / 2) - (($pdf->GetStringWidth($FP_Texto) * 10) / 2);
+          }else{
+            $FP_CentrarTextoW = $FP_Pos_Xo;
+          }
+          #Imprimir el Tipo de Objeto
+          switch($value['Tipo_Objeto']){
+            case "LINEA":
+              $pdf->SetLineWidth($FP_Tamanio);
+              $pdf->SetDrawColor($FP_Color[0], $FP_Color[1], $FP_Color[2]);
+              $pdf->Line(($Inicio_X + $FP_Pos_Xo) * 10, //startX
+                         ($Inicio_Y + $FP_Pos_Yo) * 10, //startY
+                         ($Inicio_X + $FP_Pos_Xf) * 10, //endX
+                         ($Inicio_Y + $FP_Pos_Yf) * 10);//endY
+              break;
+            case "CUADRO":
+              $pdf->SetLineWidth($FP_Tamanio);
+              $pdf->SetDrawColor($FP_Color[0], $FP_Color[1], $FP_Color[2]);
+              $pdf->Line(($Inicio_X + $FP_Pos_Xo) * 10, //startX
+                         ($Inicio_Y + $FP_Pos_Yo) * 10, //startY
+                         ($Inicio_X + $FP_Pos_Xf) * 10, //endX
+                         ($Inicio_Y + $FP_Pos_Yf) * 10);//endY
+              $pdf->SetDrawColor(0, 0, 0);
+              $pdf->Line(($Inicio_X + $FP_Pos_Xo) * 10, //startX
+                         ($Inicio_Y + $FP_Pos_Yo) * 10, //startY
+                         ($Inicio_X + $FP_Pos_Xf) * 10, //endX
+                         ($Inicio_Y + $FP_Pos_Yf) * 10);//endY
+              break;
+              case "TEXTO":
+                if($FP_Texto === G_NINGUNO) $FP_Texto = " ";
+                $pdf->SetFontSize($FP_Tamanio);
+                $pdf->SetDrawColor($FP_Color[0], $FP_Color[1], $FP_Color[2]);
+                if($value['Centrar']){
+                  $pdf->SetX($Inicio_X + $FP_CentrarTextoW);
+                }else{
+                  $pdf->SetX($Inicio_X + $FP_Pos_Xo);
+                }
+                $pdf->SetY($Inicio_Y + $FP_Pos_Yo);
+                $pdf->Cell(50, 10, $FP_Texto, 0);
+                break;
+              case "TEXTOS":
+                $pdf->SetFontSize($FP_Tamanio);
+                $pdf->SetDrawColor($FP_Color[0], $FP_Color[1], $FP_Color[2]);
+                $pdf->MultiCell(50, 10, $FP_Texto);//Por defecta ya se justifica
+                break;
+              /*case "ARCHIVO": //NO EXISTE LA CARPETA DOCUMENT.
+                if($FP_Texto <> G_NINGUNO){
+                  $pdf->SetDrawColor($FP_Color[0], $FP_Color[1], $FP_Color[2]);
+                  $FP_PathDibujo = 
+                }*/
+              case "GRAFICO":
+                $FP_PathDibujo = G_NINGUNO;
+                if($FP_Texto <> G_NINGUNO){
+                  $FP_PathDibujo = get_logo_empresa();
+                }
+                if($FP_PathDibujo <> G_NINGUNO){
+                  $pdf->Image($FP_PathDibujo,
+                              ($Inicio_X + $FP_Pos_Xf) * 10,
+                              ($Inicio_Y + $FP_Pos_Yf) * 10);
+                }
+                break;
+          }
+        }
+      }
+    }
+  }
+}
+
+function get_logo_empresa(){
+  $src = dirname(__DIR__,2).'/img/logotipos/DEFAULT.jpg';
+	if(isset($_SESSION['INGRESO']['Logo_Tipo']))
+	   {
+	   	$logo=$_SESSION['INGRESO']['Logo_Tipo'];
+	   	//si es jpg
+	   	$src = dirname(__DIR__,2).'/img/logotipos/'.$logo.'.jpg'; 
+	   	if(!file_exists($src))
+	   	{
+	   		$src = dirname(__DIR__,2).'/img/logotipos/'.$logo.'.gif'; 
+	   		if(!file_exists($src))
+	   		{
+	   			$src = dirname(__DIR__,2).'/img/logotipos/'.$logo.'.png'; 
+	   			if(!file_exists($src))
+	   			{
+	   				$logo="diskcover_web";
+	                $src= dirname(__DIR__,2).'/img/logotipos/'.$logo.'.gif';
+	   			}
+	   		}
+	   	}
+	  }
+	  return $src;
+}
+
+function ProcesarSeteos($BTP){
+  $conn = new db();
+  $Items = 0;
+
+  $MaxVect = 80;//Variable global
+
+  global $SetD;
+  for($i = 0; $i < $MaxVect; $i++){
+    $SetD[$i] = array(
+      'PosX' => 0,
+      'PosY' => 0,
+      'Tamaño' => 9,
+      'Encabezado' => '.'
+    );
+  }
+  $ConLineas = False;
+  $SQLSet = "SELECT * 
+             FROM Formato
+             WHERE TP = '".$BTP."'
+             AND Item = '".$_SESSION['INGRESO']['item']."'";
+  $result = $conn->datos($SQLSet);
+  if(count($result) > 0) $ConLineas = $result['Lineas'];
+  $SQLSet = "SELECT * 
+             FROM Seteos_Documentos";
+  if($ConLineas){
+    $SQLSet .= "WHERE TP = '".$BTP."'
+                AND Item = '000'";
+  }else{
+    $SQLSet .= "WHERE TP = 'P".$BTP."'
+                AND Item = '".$_SESSION['INGRESO']['item']."'";
+  }
+  $SQLSet .= "ORDER BY Campo";
+  $result2 = $conn->datos($SQLSet);
+  if(count($result2) > 0){
+    $i = count($result2) + 1;
+    foreach($result2 as $key => $value){
+      $Items = $value['Campo'];
+      $SetD[$Items]['PosX'] = round($value['Pos_X'], 4);
+      $SetD[$Items]['PosY'] = round($value['Pos_Y'], 4);
+      $SetD[$Items]['Tamaño'] = round($value['Tamaño'], 2);
+      $SetD[$Items]['Encabezado'] = round($value['Tamaño'], 2);
+      if($SetD[$Items]['Encabezado'] == "") $SetD[$i]['Encabezado'] = G_NINGUNO;
+      if($SetD[$Items]['Tamaño'] <= 0) $SetD[$Items]['Tamaño'] = 8;
+    }
+  }
+  return $ConLineas;
 }
 
 function  Imprimir_Punto_Venta_Grafico_datos($TFA)
@@ -9162,8 +9089,17 @@ function  Imprimir_Punto_Venta_datos($TFA)
  
 }
 
-function Imprimir_Guia_Remision($AdoFactura, $AdoAsientoF, $FA){
-
+function Imprimir_Guia_Remision($DtaFactura, $DtaDetalle, $TFA){
+  $CadenaMoneda = "";
+  $Numero_Letras = "";
+  $CxC_Clientes = "";
+  $CantFils = 0;
+  $Mensajes = "IMPRIMIR GUIA DE REMISION DE LA FACTURA No. " . str_pad($TFA['Factura'], 7, '0', STR_PAD_LEFT);
+  $Titulo = "IMPRESION";
+  //Inicio impresion
+  $FontName = "TipoCourier";
+  $FontBold = True;
+  $CxC_Clientes = G_NINGUNO;
 }
 
 function CalculosSaldoAnt($TipoCod,$TDebe,$THaber,$TSaldo)
@@ -9940,6 +9876,27 @@ function Leer_Datos_FA_NV($TFA)
 
          return $TFA;
           
+
+}
+
+function Leer_Datos_FA_NV_Detalle($TFA){
+  $conn = new db();
+  $sSQL = "SELECT DF.*,CP.Detalle,CP.Codigo_Barra,CP.Unidad,CM.Marca
+           FROM Detalle_Factura As DF,Catalogo_Productos As CP,Catalogo_Marcas As CM
+           WHERE DF.Item = '" . $_SESSION['INGRESO']['item'] . "'
+           AND DF.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+           AND DF.TC = '" . $TFA['TC'] . "'
+           AND DF.Serie = '" . $TFA['Serie'] . "'
+           AND DF.Autorizacion = '" . $TFA['Autorizacion'] . "'
+           AND DF.Factura = '" . $TFA['Factura'] . "'
+           AND DF.Periodo = CP.Periodo
+           AND DF.Periodo = CM.Periodo
+           AND DF.Item = CP.Item
+           AND DF.Item = CM.Item
+           AND DF.Codigo = CP.Codigo_INV
+           AND DF.CodMarca = CM.CodMar
+           ORDER BY DF.Codigo,DF.Ticket,DF.Mes,DF.ID";
+  return $conn->datos($sSQL);
 
 }
 
@@ -12177,6 +12134,9 @@ function Imprimir_Facturas_CxC($TFA, $EsMatricula = false, $PorOrdenFactura = fa
   $Mensajes = "Imprimir Facturas" . $Imp_No_Facturas;
   $Titulo = "IMPRESION";
   $Bandera = False;
+  $pdf = new FPDF();
+  $pdf->AddPage();
+  #RutaOrigen = RutaSistema & "\FORMATOS\" & TFA.LogoFactura & ".GIF" Donde se utiliza esto?
   if($TFA['LogoFactura'] == "MATRICIA"){
       $sSQL = "UPDATE Formato_Propio
               SET Texto ='CLIENTE:'
@@ -12191,18 +12151,21 @@ function Imprimir_Facturas_CxC($TFA, $EsMatricula = false, $PorOrdenFactura = fa
   }
   $Cadenal = "FACTURACION:  Ingreso de Facturas";
   $Imp_No_Facturas = $TFA['TC'] . "/" . $TFA['Serie'] . "/" . $TFA['Autorizacion'] . "/" . $Imp_No_Facturas;
-  /*switch ($TFA['Tipo_PRN']){
+  global $SetD;//Nos aseguramos que $SetD esta disponible para su uso posterior
+  switch ($TFA['Tipo_PRN']){
          case "CP":
          case "FM":
-            $CEConLineas = ProcesarSeteos();//que devuelve procesar seteos?
-            break;
+          $CEConLineas = ProcesarSeteos("FM");
+          break;
          case "OP":
-            break;
+          $CEConLineas = ProcesarSeteos("OP");
+          break;
          default:
-            break;
-      }*/
-      //No hace falta preguntar si quiere imprimir con copia.
+          $CEConLineas = ProcesarSeteos("FA");
+          break;
+      }
   control_procesos("F", $Imp_No_Facturas);
+  //No hace falta preguntar si quiere imprimir con copia.
   $sSQL = "";
   $Pagina = 1;
   $PosLinea = 0.01;
@@ -12244,6 +12207,7 @@ function Imprimir_Facturas_CxC($TFA, $EsMatricula = false, $PorOrdenFactura = fa
       $sSQL .= "ORDER BY C.Grupo, C.Cliente, F.Factura";
     }   
  }
+ $pdf->SetFont('Arial', '', 9);
  $AdoDbFac = $db -> datos($sSQL);
  if(count($AdoDbFac) > 0){
     foreach($AdoDbFac as $key => $value){
@@ -12262,8 +12226,7 @@ function Imprimir_Facturas_CxC($TFA, $EsMatricula = false, $PorOrdenFactura = fa
       $Cad_Tipo_Pago = G_NINGUNO;
       Leer_Datos_FA_NV($TFA);
       if($TFA['Autorizacion'] >= 13){
-        //Imprimir_FA_NV_Electronica(TFA) 
-        $tmp = '';
+        Imprimir_FA_NV_Electronica($TFA);
       }else{
         $sSQL = "SELECT * 
                  FROM Tabla_Referenciales_SRI
@@ -12325,8 +12288,21 @@ function Imprimir_Facturas_CxC($TFA, $EsMatricula = false, $PorOrdenFactura = fa
                  AND Factura = " . $TFA['Factura'] . "
                  ORDER BY ID, Codigo";
         $AdoDBDet = $db -> datos($sSQL);
+        if($TFA['Hasta'] - $TFA['Desde'] <= 0){
+          if($SetD[35]['PosY'] > 0) $PosLinea = $PosLinea + $SetD[35]['PosY'];
+          if($SetD[35]['PosX'] > 0) $PosColumna = $PosColumna + $SetD[35]['PosX'];
+        }
 
-        Imprimir_FAM($TFA, $PosColumna, $PosLinea, $AdoDbFac, $AdoDBDet, $Cad_Tipo_Pago, false ,$CheqSinCodigo);
+        if($Pagina > $TFA['CantFact'] && ($TFA['CantFact'] > 1)){
+          //Printer.NewPage
+          $Pagina = 1;
+          $PosLinea = 0.01;
+          $PosColumna = 0.01;
+        }
+
+        //el if del CopiarComp ya no va porque no es necesario preguntar si necesita imprimir una copia.
+
+        Imprimir_FAM($TFA, $PosColumna, $PosLinea, $AdoDbFac, $AdoDBDet, $Cad_Tipo_Pago, $pdf, false, false ,$CheqSinCodigo);
 
         $PosColumna = 0.01;
         $Pagina = $Pagina + 1;
@@ -12336,23 +12312,365 @@ function Imprimir_Facturas_CxC($TFA, $EsMatricula = false, $PorOrdenFactura = fa
         }else{
           $PosLinea = $PosLinea + $Salto_de_Factura;
         }
-
-        $sSQL = "UPDATE Facturas
-                 SET P = 1
-                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
-                 AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
-                 AND Factura = " . $TFA['Factura'] . "
-                 AND TC = '" . $TFA['TC'] . "'
-                 AND Serie = '" . $TFA['Serie'] . "'
-                 AND Autorizacion = '" . $TFA['Autorizacion'] . "'
-                 ";
-        Ejecutar_SQL_SP($sSQL);
       }
+        $sSQL = "UPDATE Facturas
+                  SET P = 1
+                  WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                  AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                  AND Factura = " . $TFA['Factura'] . "
+                  AND TC = '" . $TFA['TC'] . "'
+                  AND Serie = '" . $TFA['Serie'] . "'
+                  AND Autorizacion = '" . $TFA['Autorizacion'] . "'
+                  ";
+        Ejecutar_SQL_SP($sSQL);
     }
  }
+ $pdf->Output();
 }
 
-function Imprimir_FAM($TFA, $PosInic, $PosLineal, $DtaF, $DtaD, $Tipo_Pago, $ReImp = false, $Solo_Copia = false, $CheqSinCodigo = false){
+function Imprimir_FAM($TFA, $PosInic, $PosLineal, $DtaF, $DtaD, $Tipo_Pago, $pdf, $ReImp = false, $Solo_Copia = false, $CheqSinCodigo = false){
+  $PFil1 = 0.0;
+  $PPFil1 = 0.0;
+  $PAncho = 0.0;
+  $LineasNo = 0;
+  $AltoLetras = 0.0;
+  $SubTotal_Desc = 0.00;
+  $ValorUnit2 = 0.00;
+  $TamañoAnt = 0;
+  $YaEstaMes = False;
+  $MesFact = "";
+  $MesFactV = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+  $ProductoAux = "";
+  $IDMes = 0;
+  $CI_RUC_SRI = "";
+  $RAZON_SOCIAL_SRI = "";
+  $DIRECCION_SRI = "";
+  $Imp_Mes = False;
+
+  global $SetD;//Nos aseguramos que $SetD esta disponible para su uso posterior
+  #'MsgBox TFA.LogoFactura
+  if($TFA['LogoFactura'] == "MATRICIA"){
+    Imprimir_Formato_Propio("IF", $PosInic, $PosLineal, $pdf);
+  }elseif($TFA['LogoFactura'] <> "NINGUNO" && $TFA['AnchoFactura'] > 0 && $TFA['AltoFactura'] > 0){
+    $RutaOrigen = dirname(__DIR__,2) . "/FORMATOS/" . $TFA['LogoFactura'] . ".gif"; //va a dar error porque no existe la carpeta FORMATOS
+    $pdf->Image($RutaOrigen, ($PosInic + $SetD[38]['PosX']) * 10,
+                             ($PosLineal + $SetD[38]['PosY']) * 10,
+                              $TFA['AnchoFactura'] * 10,
+                              $TFA['AltoFactura'] * 10);
+  }
+  $pdf->SetFont('Arial', 'B');
+  $Codigo4 = str_pad($DtaF['Factura'], 9, "0", STR_PAD_LEFT);
+  if($SetD[1]['PosX'] > 0 && $SetD[1]['PosY'] > 0){
+    $TamañoAnt = $pdf->FontSize;
+    $pdf->SetFontSize($SetD[1]['Tamaño']);
+    $LogoTipo = get_logo_empresa();
+    $pdf->Image($LogoTipo, ($PosInic + $SetD[38]['PosX'] + 0.05) * 10,
+                           ($PosLineal + $SetD[38]['PosY'] + 0.05) * 10,
+                            3 * 10,
+                            1.5 * 10);
+    if($_SESSION['INGRESO']['noempr'] === $_SESSION['INGRESO']['Nombre_Comercial']){
+      $pdf->SetFontSize(11);
+      $pdf->SetXY(($PosInic + $SetD[1]['PosX']) * 10, ($PosLineal + 0.4) * 10);
+      $pdf->Cell(0, 0, $_SESSION['INGRESO']['noempr'], 0);
+    }else{
+      $pdf->SetFontSize(10);
+      $pdf->SetXY(($PosInic + $SetD[1]['PosX']) * 10, ($PosLineal + 0.1) * 10);
+      $pdf->Cell(0, 0, $_SESSION['INGRESO']['noempr'], 0);
+      $pdf->SetFontSize(9);
+      $pdf->SetXY(($PosInic + $SetD[1]['PosX']) * 10, ($PosLineal + 0.55) * 10);
+      $pdf->Cell(0, 0, $_SESSION['INGRESO']['Nombre_Comercial'], 0);
+    }
+    $pdf->SetFontSize(8);
+    $pdf->SetXY(($PosInic + $SetD[1]['PosX']) * 10, ($PosLineal + 0.95) * 10);
+    $pdf->Cell(0, 0, "R.U.C " . $_SESSION['INGRESO']['RUC'], 0);
+    $pdf->SetXY(($PosInic + $SetD[1]['PosX']) * 10, ($PosLineal + 1.3) * 10);
+    $pdf->Cell(0, 0, "Dirección: " . $_SESSION['INGRESO']['Direccion'], 0);
+    $pdf->SetXY(($PosInic + $SetD[1]['PosX']) * 10, ($PosLineal + 1.65) * 10);
+    $pdf->Cell(0, 0, "Telefono: " . $_SESSION['INGRESO']['Telefono1'], 0);
+    if($TFA['LogoFactura'] === "RECIBOS"){
+      $Codigo4 = "RECIBO DE PAGO No. " . str_pad($DtaF['Factura'], 9, "0", STR_PAD_LEFT);
+    }else{
+      //Donde se define SerieFactura?
+      #$Codigo4 = substr($SerieFactura, 1, 3) . "-" . substr($SerieFactura, 4, 3) . "-" . str_pad($DtaF['Factura'], 9, "0", STR_PAD_LEFT);
+    }
+    if($SetD[28]['PosX'] > 0 && $SetD[28]['PosY'] > 0){
+      $pdf->SetFontSize($SetD[28]['Tamaño']);
+      $Cuenta = "Autorización otorgada por el S.R.I. para imprimir por medios Computarizados Facturas, Autorización No. ";//. $Autorizacion; Donde se define autorizacion
+      $pdf->SetXY(($PosInic + $SetD[28]['PosX']) * 10, ($PosLineal + $SetD[28]['PosY']) * 10);
+      $pdf->Cell(0, 0, $Cuenta, 0);
+      $Cuenta = "Autorizado el ..."; //Fecha_Autorizacion y Fecha_Vence donde se definen?
+      if($DtaF['T'] === "A"){
+        $Cuenta .= " - ANULADA";
+      }elseif($ReImp){
+        $Cuenta .= " - REIMPRESION";
+      }
+      if($Solo_Copia){
+        $Cuenta .= " - COPIA EMISOR";
+      }else{
+        if(($SetD[63]['PosX'] + $SetD[63]['PosY']) > 0){
+          if($ReImp){
+            $Cuenta .= " - ORIGINAL ADQUIRIENTE";
+          }else{
+            $Cuenta .= " - ORIGINAL ADQUIRIENTE/COPIA EMISOR";
+          }
+        }else{
+          if($PosInic > 0.01){
+            $Cuenta .= " - COPIA EMISOR";
+          }else{
+            $Cuenta .= " - ORIGINAL ADQUIRIENTE";
+          }
+        }
+      }
+      $pdf->SetXY(($PosInic + $SetD[28]['PosX']) * 10, ($PosLineal + $SetD[28]['PosY'] + 0.3) * 10);
+      $pdf->Cell(0, 0, $Cuenta, 0);
+      $pdf->SetStyle('B', true);
+    }
+    $pdf->SetFontSize($TamañoAnt);
+  }
+  $pdf->SetFont('Arial');
+  $Imp_Mes = $DtaF['Imp_Mes'];
+  if($SetD[2]['PosX'] > 0){
+    if($TFA['LogoFactura'] === "RECIBOS"){
+      $pdf->SetFontSize(14);
+      $pdf->SetXY(($PosInic + 2.5) * 10, ($PosLineal + 1.6) * 10);
+      $pdf->Cell(0, 0, $Codigo4, 0);
+    }else{
+      $pdf->SetFontSize($SetD[2]['Tamaño']);
+      $pdf->SetXY(($PosInic + $SetD[2]['PosX']) * 10, ($PosLineal + $SetD[2]['PosY']) * 10);
+      $pdf->Cell(0, 0, $Codigo4, 0);
+    }
+  }
+  if($SetD[3]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[3]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[3]['PosX']) * 10, ($PosLineal + $SetD[3]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['Fecha']->format("Y-m-d"), 0);
+  }
+  if($SetD[4]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[4]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[4]['PosX']) * 10, ($PosLineal + $SetD[4]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['Fecha_V']->format("Y-m-d"), 0);
+  }
+  if($SetD[10]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[10]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[10]['PosX']) * 10, ($PosLineal + $SetD[10]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['Ciudad'], 0);
+  }
+  if($SetD[62]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[62]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[62]['PosX']) * 10, ($PosLineal + $SetD[62]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['Nota'], 0);
+  }
+  if($SetD[65]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[3]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[65]['PosX']) * 10, ($PosLineal + $SetD[65]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['Observacion'], 0);
+  }
+  $NivelNo = SinEspaciosIzq($DtaF['Direccion']);
+  if($NivelNo === "") $NivelNo = G_NINGUNO;
+  if($SetD[29]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[29]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[29]['PosX']) * 10, ($PosLineal + $SetD[29]['PosY']) * 10);
+    $pdf->Cell(0, 0, $NivelNo, 0);
+  }
+  $NivelNo = substr($NivelNo, strlen($NivelNo) + 1, strlen($DtaF['Direccion']) - strlen($NivelNo) + 1);
+  if($NivelNo === "") $NivelNo = G_NINGUNO;
+  if($SetD[30]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[30]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[30]['PosX']) * 10, ($PosLineal + $SetD[30]['PosY']) * 10);
+    $pdf->Cell(0, 0, $NivelNo, 0);
+  }
+  if($DtaF['Razon_Social'] === $DtaF['Cliente']){
+    $pdf->SetFontSize($SetD[5]['Tamaño']);
+    if($SetD[5]['PosX'] > 0){
+      $pdf->SetXY(($PosInic + $SetD[5]['PosX']) * 10, ($PosLineal + $SetD[5]['PosY']) * 10);
+      $pdf->Cell(0, 0, $DtaF['Cliente'], 0);
+    }
+    $pdf->SetFontSize($SetD[8]['Tamaño']);
+    if($SetD[8]['PosX'] > 0){
+      $pdf->SetXY(($PosInic + $SetD[8]['PosX']) * 10, ($PosLineal + $SetD[8]['PosY']) * 10);
+      $pdf->Cell(0, 0, $DtaF['Direccion'], 0);
+    }
+    $pdf->SetFontSize($SetD[11]['Tamaño']);
+    if($SetD[11]['PosX'] > 0){
+      $pdf->SetXY(($PosInic + $SetD[11]['PosX']) * 10, ($PosLineal + $SetD[11]['PosY']) * 10);
+      $pdf->Cell(0, 0, $DtaF['Direccion'], 0);
+    }
+  }else{
+    switch($DtaF['TB']){
+      case "C":
+      case "P":
+      case "R":
+        $CI_RUC_SRI = $DtaF['RUC_CI'];
+        $RAZON_SOCIAL_SRI = $DtaF['Razon_Social'];
+        $DIRECCION_SRI = $DtaF['DireccionT'];
+        break;
+      default:
+        $CI_RUC_SRI = "9999999999999";
+        $RAZON_SOCIAL_SRI = "CONSUMIDOR FINAL";
+        $DIRECCION_SRI = "SD";
+        break;
+    }
+    $pdf->SetFontSize($SetD[5]['Tamaño']);
+    if($SetD[5]['PosX'] > 0){
+      $pdf->SetXY(($PosInic + $SetD[5]['PosX']) * 10, ($PosLineal + $SetD[5]['PosY']) * 10);
+      $pdf->Cell(0, 0, $RAZON_SOCIAL_SRI, 0);
+    }
+    $pdf->SetFontSize($SetD[41]['Tamaño']);
+    if($SetD[41]['PosX'] > 0){
+      $pdf->SetXY(($PosInic + $SetD[41]['PosX']) * 10, ($PosLineal + $SetD[41]['PosY']) * 10);
+      $pdf->Cell(0, 0, $DIRECCION_SRI, 0);
+    }
+    $pdf->SetFontSize($SetD[36]['Tamaño']);
+    if($SetD[41]['PosX'] > 0){
+      $pdf->SetXY(($PosInic + $SetD[36]['PosX']) * 10, ($PosLineal + $SetD[36]['PosY']) * 10);
+      $pdf->Cell(0, 0, $CI_RUC_SRI, 0);
+    }
+    $pdf->SetFontSize($SetD[64]['Tamaño']);
+    if($SetD[64]['PosX'] > 0){
+      $pdf->SetXY(($PosInic + $SetD[64]['PosX']) * 10, ($PosLineal + $SetD[64]['PosY']) * 10);
+      $pdf->Cell(0, 0, $DtaF['Cliente'], 0);
+    }
+    $pdf->SetFontSize($SetD[64]['Tamaño']);
+    if($SetD[64]['PosX'] > 0){
+      $pdf->SetXY(($PosInic + $SetD[64]['PosX']) * 10, ($PosLineal + $SetD[64]['PosY']) * 10);
+      $pdf->Cell(0, 0, $DtaF['Cliente'], 0);
+    }
+    $pdf->SetFontSize($SetD[8]['Tamaño']);
+    if($SetD[8]['PosX'] > 0){
+      $pdf->SetXY(($PosInic + $SetD[8]['PosX']) * 10, ($PosLineal + $SetD[8]['PosY']) * 10);
+      $pdf->Cell(0, 0, $DtaF['Direccion'], 0);
+    }
+    $pdf->SetFontSize($SetD[11]['Tamaño']);
+    if($SetD[11]['PosX'] > 0){
+      $pdf->SetXY(($PosInic + $SetD[11]['PosX']) * 10, ($PosLineal + $SetD[11]['PosY']) * 10);
+      $pdf->Cell(0, 0, $DtaF['CI_RUC'], 0);
+    }
+  }
+  if($SetD[9]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[9]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[9]['PosX']) * 10, ($PosLineal + $SetD[9]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['Telefono'], 0);
+  }
+  if($SetD[45]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[45]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[45]['PosX']) * 10, ($PosLineal + $SetD[45]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['TelefonoT'], 0);
+  }
+  if($SetD[6]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[6]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[6]['PosX']) * 10, ($PosLineal + $SetD[6]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['Codigo'], 0);
+  }
+  if($SetD[7]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[7]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[7]['PosX']) * 10, ($PosLineal + $SetD[7]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['TelefonoT'], 0);
+  }
+  if($SetD[13]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[13]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[13]['PosX']) * 10, ($PosLineal + $SetD[13]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['Email'], 0);
+  }
+  #Pie de factura
+  if($SetD[22]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[22]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[22]['PosX']) * 10, ($PosLineal + $SetD[22]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['SubTotal'], 0);
+  }
+  if($SetD[23]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[23]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[23]['PosX']) * 10, ($PosLineal + $SetD[23]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['Con_IVA'], 0);
+  }
+  if($SetD[24]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[24]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[24]['PosX']) * 10, ($PosLineal + $SetD[24]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['Sin_IVA'], 0);
+  }
+  if($SetD[39]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[39]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[39]['PosX']) * 10, ($PosLineal + $SetD[39]['PosY']) * 10);
+    $pdf->Cell(0, 0, strval($DtaF['Descuento'] + $DtaF['Descuento2']), 0);
+  }
+  if($SetD[25]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[25]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[25]['PosX']) * 10, ($PosLineal + $SetD[25]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['IVA'], 0);
+  }
+  if($SetD[26]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[26]['Tamaño']);
+    if($DtaF['TC'] === "NV"){
+      $pdf->SetXY(($PosInic + $SetD[26]['PosX']) * 10, ($PosLineal + $SetD[26]['PosY']) * 10);
+      $pdf->Cell(0, 0, "0", 0);
+    }else{
+      $pdf->SetXY(($PosInic + $SetD[26]['PosX']) * 10, ($PosLineal + $SetD[26]['PosY']) * 10);
+      $pdf->Cell(0, 0, (int)(12*100), 0);
+    }
+  }
+  if($SetD[27]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[27]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[27]['PosX']) * 10, ($PosLineal + $SetD[27]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['Total_MN'], 0);
+  }
+  if($SetD[33]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[33]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[33]['PosX']) * 10, ($PosLineal + $SetD[33]['PosY']) * 10);
+    $pdf->Cell(0, 0, "Diferencia", 0); //Donde se define la variable Diferencia?
+  }
+  if($SetD[34]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[34]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[34]['PosX']) * 10, ($PosLineal + $SetD[34]['PosY']) * 10);
+    $pdf->Cell(0, 0, "SaldoPendiente", 0); //Donde se define la variable SaldoPendiente?
+    if($CheqSinCodigo){
+      $pdf->SetXY(($PosInic + 2) * 10, ($PosLineal + $SetD[34]['PosY']) * 10);
+      $pdf->Cell(0, 0, "P A G A R   E N  C O L E C T U R I A", 0);
+    }
+  }
+  if($SetD[37]['PosX'] > 0){
+    if(!$CheqSinCodigo){
+      $pdf->SetFontSize($SetD[37]['Tamaño']);
+      $pdf->SetXY(($PosInic + $SetD[37]['PosX']) * 10, ($PosLineal + $SetD[37]['PosY']) * 10);
+      $pdf->Cell(0, 0, "CodigoDelBanco", 0);//Donde se define la variable CodigoDelBanco?
+    }
+  }
+  if($SetD[40]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[40]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[40]['PosX']) * 10, ($PosLineal + $SetD[40]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['Hora'], 0);
+  }
+  if($SetD[42]['PosX'] > 0){
+    $SubTotal_Desc = $DtaF['SubTotal'] - $DtaF['Descuento'];
+    $pdf->SetFontSize($SetD[42]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[42]['PosX']) * 10, ($PosLineal + $SetD[42]['PosY']) * 10);
+    $pdf->Cell(0, 0, $SubTotal_Desc, 0);
+  }
+  if($SetD[43]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[43]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[43]['PosX']) * 10, ($PosLineal + $SetD[43]['PosY']) * 10);
+    $pdf->Cell(0, 0, "Descuento", 0);
+  }
+  if($SetD[44]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[44]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[44]['PosX']) * 10, ($PosLineal + $SetD[44]['PosY']) * 10);
+    $pdf->Cell(0, 0, $_SESSION['INGRESO']['Ciudad'] . ", ". $DtaF['Fecha']->format("Y-m-d"), 0);
+  }
+  if($SetD[46]['PosX'] > 0){
+    $pdf->SetFontSize($SetD[46]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[46]['PosX']) * 10, ($PosLineal + $SetD[46]['PosY']) * 10);
+    $pdf->Cell(0, 0, $DtaF['DirNumero'], 0);
+  }
+  if($SetD[66]['PosX'] > 0 && $SetD[66]['PosY'] > 0){
+    $pdf->SetFontSize($SetD[66]['Tamaño']);
+    $pdf->SetXY(($PosInic + $SetD[66]['PosX']) * 10, ($PosLineal + $SetD[66]['PosY']) * 10);
+    $pdf->Cell(0, 0, "TextoFormaPago", 0);
+  }
+
+  
+
+  return '';
+}
+
+function Imprimir_FA_NV_Electronica($TFA){
   return '';
 }
 
