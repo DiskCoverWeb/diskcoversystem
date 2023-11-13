@@ -542,10 +542,7 @@ $lineas .= "<td>TOTAL</td>
       $lineas.='<td>'.$value['Producto'].'</td>';
       $lineas.='<td>'.number_format($value['Cantidad'],2,'.','').'</td>';
       $lineas.='<td>'.number_format($value['Precio'],2,'.','').'</td>';
-      if($_SESSION['INGRESO']['Servicio'] != 0){
-        $lineas.='<td>'.number_format($value['Total'] * ($_SESSION['INGRESO']['Servicio']/100) ,2,'.','').'</td>';
-      }
-      $lineas.='<td>'.number_format($value['Total'] + ($value['Total'] * ($_SESSION['INGRESO']['Servicio']/100))  ,2,'.','').'</td>';
+      $lineas.='<td>'.number_format($value['Total'] + ($value['Total'] + ($_SESSION['INGRESO']['Servicio']/100))  ,2,'.','').'</td>';
     $lineas.="<tr>";
  }
  $lineas.="</table>";
@@ -557,16 +554,8 @@ $lineas .= "<td>TOTAL</td>
    </tr>
    <tr>
       <td style='width: 155px;'></td><td> I.V.A 12%:</td> <td>".number_format($datos_pre['iva'],2,'.','')."</td>
-   </tr>";
-   $tmp = $datos_pre['tota'] * ($_SESSION['INGRESO']['Servicio']/100);
-   if($_SESSION['INGRESO']['Servicio'] != 0){
-      $lineas .= "<tr>
-                    <td style='width: 155px;'></td><td> SERVICIO '".$_SESSION['INGRESO']['Servicio']."%':</td> <td>".number_format($tmp,2,'.','')."</td>
-                  </tr>";
-   }
-
-   $lineas .=
-   "<tr>
+   </tr>
+   <tr>
       <td style='width: 155px;'></td><td> TOTAL FACTURA:</td> <td>".number_format($totalFA,2,'.','')."</td>
    </tr>
    <tr>
