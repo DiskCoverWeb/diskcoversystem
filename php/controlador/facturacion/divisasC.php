@@ -542,7 +542,9 @@ $lineas .= "<td>TOTAL</td>
       $lineas.='<td>'.$value['Producto'].'</td>';
       $lineas.='<td>'.number_format($value['Cantidad'],2,'.','').'</td>';
       $lineas.='<td>'.number_format($value['Precio'],2,'.','').'</td>';
-      $lineas.='<td>'.number_format($value['Total'] + ($value['Total'] + ($_SESSION['INGRESO']['Servicio']/100))  ,2,'.','').'</td>';
+      $lineas.='<td>'.number_format(($value['Total'] * $value['Cantidad'])
+                                  + (($value['Total'] * $value['Cantidad'])
+                                  * ($_SESSION['INGRESO']['Servicio']/100))  ,2,'.','').'</td>';
     $lineas.="<tr>";
  }
  $lineas.="</table>";
