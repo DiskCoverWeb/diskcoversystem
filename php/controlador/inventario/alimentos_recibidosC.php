@@ -1,6 +1,5 @@
 <?php 
 require_once(dirname(__DIR__,2)."/modelo/inventario/alimentos_recibidosM.php");
-require_once(dirname(__DIR__,2)."/modelo/modalesM.php");
 require_once(dirname(__DIR__,2)."/funciones/funciones.php");
 
 
@@ -119,6 +118,11 @@ if(isset($_GET['pedido_trans']))
 	$parametros= $_POST['parametros'];	
 	echo json_encode($controlador->cargar_productos_trans_pedidos($parametros));
 }
+if(isset($_GET['pedido_trans_datos']))
+{
+	$parametros= $_POST['parametros'];	
+	echo json_encode($controlador->cargar_productos_trans_pedidos_datos($parametros));
+}
 if(isset($_GET['pedido_checking']))
 {
 	$parametros= $_POST['parametros'];	
@@ -206,7 +210,6 @@ class alimentos_recibidosC
 	function __construct()
 	{
 		$this->modelo = new alimentos_recibidosM();
-		$this->modales = new modalesM();
 	}
 
 	function guardar($parametros)
@@ -462,9 +465,9 @@ class alimentos_recibidosC
 			$sucursal = '.';
 			if($value['Codigo_Dr']!='.')
 			{
-				$dato_sucursal = $this->modales-> sucursales($query = false,$codigo=false,$value['Codigo_Dr']);
-				print_r($dato_sucursal);die();
-				$sucursal = '---';
+				$dato_sucursal = $this->modelo->sucursales($query = false,$codigo=false,$value['Codigo_Dr']);
+				// print_r($dato_sucursal);die();
+				$sucursal = $dato_sucursal[0]['Direccion']; 
 			} 
 
 			$prod = $this->modelo->catalogo_productos($value['Codigo_Inv']);
@@ -542,6 +545,12 @@ class alimentos_recibidosC
 			$tabla = array('num_lin'=>0,'tabla'=>'<tr><td colspan="9" class="text-center"><b><i>Sin registros...<i></b></td></tr>','item'=>0,'cant_total'=>0,'reciclaje'=>0);
 			return $tabla;		
 		}		
+    }
+
+    function cargar_productos_trans_pedidos_datos($parametros)
+    {
+    	$datos = $this->modelo->cargar_pedidos_trans_pedidos($parametros['num_ped'],false);
+    	return $datos;
     }
 
     function cargar_productos_trans_pedidos($parametros)
@@ -641,7 +650,7 @@ class alimentos_recibidosC
       $reciclaje = 0;
 		foreach ($datos as $key => $value) 
 		{
-			// print_r($value);die();
+			// print_r($datos);die();
 
 
       		$canti = $canti+$value['Entrada'];	
@@ -664,6 +673,8 @@ class alimentos_recibidosC
   					<td width="'.$d4.'" id="txt_cant_ped_'.$value['ID'].'">'.number_format($value['Entrada'],2,'.','').'</td>
   					<td width="'.$d4.'"><input class="form-control"  id="txt_pvp_linea_'.$value['ID'].'" name="txt_pvp_linea_'.$value['ID'].'" onblur="recalcular('.$value['ID'].')" input-sm" value="'.$value['Valor_Unitario'].'"></td>
   					<td width="'.$d4.'"><input class="form-control" id="txt_total_linea_'.$value['ID'].'" name="txt_total_linea_'.$value['ID'].'"  input-sm" value="'.$value['Valor_Total'].'" readonly></td>
+
+  					<td width="'.$d3.'">'.$value['CodigoU'].'</td>
   					<td width="90px">';
   					if($value['T']=='C')
   					{
@@ -674,8 +685,12 @@ class alimentos_recibidosC
   					}
   					$tr.='</td>
   					<td>
-  						<button class="btn btn-sm btn-primary" onclick="editar_precio('.$value['ID'].');guardar_check()"><i class="fa fa-save"></i></button>
-  					</td>
+  						<button class="btn btn-sm btn-primary" onclick="editar_precio('.$value['ID'].');guardar_check()"><i class="fa fa-save"></i></button>';
+  						if($value['TDP']=='R')
+  						{
+  							$tr.='<button class="btn btn-sm btn-warning" onclick="cargar_tras_pedidos(\''.$value['Producto'].'\',\''.$parametros['num_ped'].'\')"><i class="fa fa-list"></i></button>';
+  						}
+  					$tr.='</td>
   				</tr>';
 			
 		}

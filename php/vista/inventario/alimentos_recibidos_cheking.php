@@ -109,7 +109,7 @@
 
   })
 
-    function pedidos(){
+  function pedidos(){
   $('#txt_codigo').select2({
     placeholder: 'Seleccione una beneficiario',
     // width:'90%',
@@ -386,6 +386,32 @@ function autocoplet_ingreso()
 
   }
 
+  function cargar_tras_pedidos(nombre,pedido)
+  {
+  	$('#lbl_titulo').text(nombre)
+  	 var parametros=
+    {
+      'num_ped':pedido,
+    }
+     $.ajax({
+      data:  {parametros:parametros},
+      url:   '../controlador/inventario/alimentos_recibidosC.php?pedido_trans_datos=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) {
+        console.log(response);
+        var lista = '';
+        response.forEach(function(item,i){
+        	lista+='<li><a href="#" style="padding-right:0px"><label>'+item.Producto+'</label><span class="label label-danger pull-right">'+item.Cantidad+'</span></a></li>';
+        })
+        $('#lista_pedido').html(lista);    
+      }
+    });
+
+  	$('#myModal_trans_pedido').modal('show');
+
+  }
+
 </script>
 
  <div class="row">
@@ -584,7 +610,7 @@ function autocoplet_ingreso()
 				          <th>CANTIDAD</th>
 				          <th>PRECIO O COSTO</th>
 				          <th>COSTO TOTAL</th>
-				          <!-- <th>UNIDAD</th> -->
+				          <th>USUARIO</th>
 				          <th>PARA CONTABILIZAR</th>
 				        </thead>
 				        <tbody id="tbl_body"></tbody>
@@ -596,6 +622,27 @@ function autocoplet_ingreso()
 		</div>
 	</div>
 </div>
+
+<div id="myModal_trans_pedido" class="modal fade myModalNuevoCliente" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="lbl_titulo"></h4>
+            </div>
+            <div class="modal-body" style="background: antiquewhite;">
+            	<div class="direct-chat-messages">	
+									<ul class="list-group list-group-flush" id="lista_pedido"></ul>											
+							</div>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button> -->
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
 
 
 <script type="text/javascript">

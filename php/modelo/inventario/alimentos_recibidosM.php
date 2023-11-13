@@ -78,6 +78,7 @@ class alimentos_recibidosM
 		{
 			$sql.= " AND TC.Fecha_P =  '".$fecha."'";
 		}
+		$sql.=" ORDER BY ID desc";  
 
 		// print_r($sql);die();
 		return $this->db->datos($sql);
@@ -126,7 +127,7 @@ class alimentos_recibidosM
 	function cargar_pedidos_trans($orden,$fecha=false,$nombre=false)
 	{
     // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT T.*,P.Producto 
+     $sql = "SELECT T.*,P.Producto,P.TDP 
      FROM Trans_Kardex  T ,Catalogo_Productos P     
      WHERE T.Item = '".$_SESSION['INGRESO']['item']."' 
      AND T.Periodo = '".$_SESSION['INGRESO']['periodo']."'
@@ -151,7 +152,7 @@ class alimentos_recibidosM
      return $this->db->datos($sql);
        
 	}
-	function cargar_pedidos_trans_pedidos($orden,$fecha=false)
+	function cargar_pedidos_trans_pedidos($orden,$fecha=false,$codigo_inv=false)
 	{
     // 'LISTA DE CODIGO DE ANEXOS
      $sql = "SELECT T.*,P.Producto 
@@ -165,9 +166,14 @@ class alimentos_recibidosM
      if($fecha)
      {
      	$sql.=" AND T.Fecha = '".$fecha."'";
+     }    
+     if($codigo_inv)
+     {
+     	$sql.=" AND T.Codigo_Inv = '".$codigo_inv."'";
      }     
      $sql.=" ORDER BY T.ID DESC";
-     // print_r($sql);die();
+     // print_r($sql);
+     // die();
 
      return $this->db->datos($sql);
        
@@ -349,6 +355,26 @@ class alimentos_recibidosM
 				ORDER BY ID DESC";
 				// print_r($sql);die();
 		return $this->db->datos($sql);
+	}
+
+	function sucursales($query = false,$codigo=false,$id=false)
+	{
+		$sql = "SELECT ID,Codigo, Direccion, TP
+			FROM Clientes_Datos_Extras 
+			WHERE Item = '".$_SESSION['INGRESO']['item']."'";
+			if($codigo)
+			{  
+				$sql.=" AND Codigo = '".$codigo."' ";
+			} 
+			if($id)
+			{
+				$sql.= " AND ID = '".$id."' ";
+			}
+			$sql.=" AND Tipo_Dato = 'TIPO_PROV' 
+			ORDER BY Direccion, Fecha_Registro DESC";
+
+		return $this->db->datos($sql);
+
 	}
 
 

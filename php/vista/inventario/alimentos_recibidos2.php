@@ -2,6 +2,13 @@
   <link rel="stylesheet" href="../../dist/css/style_calendar.css">
 <script type="text/javascript">
   $(document).ready(function () {
+    // on first focus (bubbles up to document), open the menu
+    $('#txt_fecha').focus();
+
+    $(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
+      $(this).closest(".select2-container").siblings('select:enabled').select2('open');
+    });
+
   	 window.addEventListener("message", function(event) {
             if (event.data === "closeModal") {
                 autocoplet_ingreso();
@@ -10,6 +17,22 @@
   	autocoplet_alimento();
   	autocoplet_ingreso();
   	pedidos();
+
+    $('#modal_cantidad').on('shown.bs.modal', function () {
+        $('#txt_cantidad2').focus();
+    })  
+
+     $('#modal_producto').on('shown.bs.modal', function () {
+           $('#txt_referencia').focus();
+    })  
+     $('#txt_cantidad2').keydown( function(e) { 
+          var keyCode1 = e.keyCode || e.which; 
+          if (keyCode1 == 13) { 
+             cambiar_cantidad();
+             $('#txt_cantidad').focus();
+          }
+      });
+
 
   	
   	$('#ddl_producto').on('select2:select', function (e) {
@@ -43,6 +66,7 @@
       	$('#txt_TipoSubMod').val('.')
       }
       costeo(data[0].Codigo_Inv);
+      $('#txt_grupo').focus();
     });
 
    $('#txt_producto').on('select2:select', function (e) {
@@ -458,6 +482,7 @@ function autocoplet_ingreso()
   	var can = $('#txt_cantidad2').val();
   	$('#txt_cantidad').val(can);
   	$('#modal_cantidad').modal('hide');
+    $('#txt_cantidad').focus();
   }
    function cambiar_sucursal()
   {
@@ -595,7 +620,7 @@ function autocoplet_ingreso()
             </a>
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2">
-			<button class="btn btn-default" title="Guardar" onclick="guardar()">
+			<button class="btn btn-default" title="Guardar" onclick="guardar()" id="btn_guardar">
 				<img src="../../img/png/grabar.png">
 			</button>
 		</div>  

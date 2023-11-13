@@ -1,6 +1,10 @@
 <?php date_default_timezone_set('America/Guayaquil'); ?>
 <script type="text/javascript">
   $(document).ready(function () {
+  	$('#btn_guardar').focus();
+  	 $(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
+      $(this).closest(".select2-container").siblings('select:enabled').select2('open');
+    });
   	 window.addEventListener("message", function(event) {
           if (event.data === "closeModal") {
               autocoplet_ingreso();
@@ -10,6 +14,40 @@
   	autocoplet_ingreso();
   	autocoplet_ingreso_donante();
   	cargar_datos();
+
+  	 $('#txt_cantidad2').keydown( function(e) { 
+          var keyCode1 = e.keyCode || e.which; 
+          if (keyCode1 == 13) { 
+          	 cambiar_cantidad();
+          	 $('#txt_cant').focus();
+          }
+      });
+
+
+  	 $('#txt_temperatura2').keydown( function(e) { 
+          var keyCode1 = e.keyCode || e.which; 
+          if (keyCode1 == 13) { 
+          	cambiar_temperatura();
+          	 $('#txt_temperatura').focus();
+          }
+      });
+
+
+  	$('#modal_cantidad').on('shown.bs.modal', function () {
+		    $('#txt_cantidad2').focus();
+		})  
+
+		$('#modal_temperatura').on('shown.bs.modal', function () {
+		    $('#txt_temperatura2').focus();
+		})  
+		$('#modal_proveedor').on('shown.bs.modal', function () {
+		    $('#ddl_ingreso').focus();
+		})  
+	
+
+
+
+
 
   })
 
@@ -81,7 +119,7 @@
         dataType:'json',
 	    success: function(data)
 	    {
-	    	console.log(data);
+	    	// console.log(data);
 	    	option = '';
 	    	opt = '<option value="">Tipo de donacion</option>';
 	    	data.forEach(function(item,i){
@@ -204,6 +242,7 @@ function autocoplet_ingreso_donante(){
 		    	$('#txt_ci').val(data.CI_RUC)
 		    	// $('#txt_donante').val(data.Cliente)
 		    	$('#txt_tipo').val(data.Actividad)
+		    	$('#txt_tipo').focus();
 		    	$('#modal_proveedor').modal('hide');
 		    	generar_codigo();
 		    }
@@ -298,7 +337,7 @@ function autocoplet_ingreso_donante(){
 		    success: function(data)
 		    {
 		    	$('#tbl_body').html(data);
-		    	console.log(data);
+		    	// console.log(data);
 		    	// var cod = $('#txt_codigo').val();
 		    	// $('#txt_codigo').val(cod+'-'+data)
 		    	
@@ -312,8 +351,6 @@ function autocoplet_ingreso_donante(){
   }
   function show_cantidad()
   {
-  	
-  	$("#txt_cantidad2").focus();
   	$('#modal_cantidad').modal('show');
   }
   function show_temperatura()
@@ -343,12 +380,14 @@ function autocoplet_ingreso_donante(){
   	var can = $('#txt_cantidad2').val();
   	$('#txt_cant').val(can);
   	$('#modal_cantidad').modal('hide');
+  	$('#txt_cant').focus();
   }
   function cambiar_temperatura()
   {
   	var can = $('#txt_temperatura2').val();
   	$('#txt_temperatura').val(can);
   	$('#modal_temperatura').modal('hide');
+  	$('#txt_temperatura').focus();
   }
 
   function cambiar_tipo_alimento(cod,texto)
@@ -359,6 +398,7 @@ function autocoplet_ingreso_donante(){
   	$('#ddl_tipo_alimento').val(cod)
   	$('#ddl_tipo_alimento').prop('disabled',true);
   	$('#modal_tipo_donacion').modal('hide');
+  	$('#btn_cantidad').focus();
   }
   function eliminar_pedido(ID)
   {
@@ -434,7 +474,7 @@ function autocoplet_ingreso_donante(){
             </a>
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2">
-			<button class="btn btn-default" title="Guardar" onclick="guardar()">
+			<button class="btn btn-default" title="Guardar" onclick="guardar()" id="btn_guardar">
 				<img src="../../img/png/grabar.png">
 			</button>
 		</div>  
@@ -703,7 +743,7 @@ function autocoplet_ingreso_donante(){
           </div>
           <div class="modal-body" style="background: antiquewhite;">
           <b>Cantidad</b>
-          <input type="" name="txt_cantidad2" id="txt_cantidad2" class="form-control" placeholder="0" onblur="cambiar_cantidad()">        					
+          <input type="text" name="txt_cantidad2" id="txt_cantidad2" class="form-control" placeholder="0"  onblur="cambiar_cantidad()">        					
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
               <button type="button" class="btn btn-primary" onclick="cambiar_cantidad()">OK</button>
