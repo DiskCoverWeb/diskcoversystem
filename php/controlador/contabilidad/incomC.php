@@ -253,6 +253,10 @@ if(isset($_GET['edit_beneficiario']))
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->edit_beneficiario($parametros));
 }
+if(isset($_GET['CallListar_Comprobante_SP']))
+{
+    echo json_encode($controlador->CallListar_Comprobante_SP($_POST));
+}
 
 
 
@@ -1437,6 +1441,10 @@ class incomC
                # code...
                break;
        }
+
+       if(isset($parametros['ID'])){
+       	$Codigo .= ' AND ID='.$parametros['ID'].' ';
+       }
        return $this->modelo->eliminar_registros($tabla,$Codigo);
      }
 
@@ -1927,6 +1935,10 @@ function ingresar_asiento($parametros)
 		$cuenta = $parametros['cuenta'];
 		$bene = explode('-', $parametros['bene']);
 		$bene = $bene[0];
+
+		if(!is_numeric($va) || $va<=0){
+			return array('resp'=>-3,'tbl'=>'','totales'=>'','obs'=>'Valor debe ser mayor a cero');
+		}
 		if(isset($parametros['t_no']))
 		{
 			$t_no = $parametros['t_no'];
@@ -1997,7 +2009,7 @@ function ingresar_asiento($parametros)
 			}
 		}
 		//verificar si ya existe en ese modulo ese registro
-		  $stmt = $this->modelo->verificar_existente($codigo,$va);
+		  $stmt = []; // 202311-14 Se quita validacion a peticion de walter $this->modelo->verificar_existente($codigo,$va);
 		
 		//print_r($sql);die();
 		
@@ -2084,5 +2096,37 @@ function edit_beneficiario($parametros)
 	// print_r($parametros);die();
 }
 
+function CallListar_Comprobante_SP($parametros)
+{
+	extract($parametros);
+	$CodigoCC = G_NINGUNO;
+    $_SESSION['Trans_No'] = 1;
+    $_SESSION['Ln_No'] = 1;
+    $_SESSION['Ret_No'] = 1;
+    $_SESSION['LnSC_No'] = 1;
+
+    BorrarAsientos($_SESSION['Trans_No'],true);
+
+	$Co = datos_Co();
+	$Co['CodigoInvModificar'] = "";
+	$Co['TP'] = addslashes($TP);
+	$Co['Numero'] = addslashes($NumeroComp);
+
+	if (strlen(@$Co['TP']) < 2) {
+        $Co['TP'] = G_COMPDIARIO;
+    }
+
+    Control_Procesos(G_NORMAL, "Modificar Comprobante de: " . $Co['TP'] . " No. " . $Co['Numero']);
+    $data = Listar_Comprobante_SP($Co, $_SESSION['Trans_No'], $_SESSION['Ln_No'], $_SESSION['Ret_No'], $_SESSION['LnSC_No']);
+    $Co = $data['C1'];
+    $_SESSION['Trans_No'] = $data['Trans_No'];
+    $_SESSION['Ln_No'] = $data['Ln_No'];
+    $_SESSION['Ret_No'] = $data['Ret_No'];
+    $_SESSION['LnSC_No'] = $data['LnSC_No'];
+
+	$NumComp_format = str_pad($Co['Numero'], 8, "0", STR_PAD_LEFT);
+	$_SESSION['Co'] = $Co;
+	return array('Co' => $Co, 'NumComp_format'=>$NumComp_format);
+}
 }
 ?>

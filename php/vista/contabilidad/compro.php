@@ -93,10 +93,10 @@
 <div class="row">	
 		<div class="col-sm-3">    
        <div class="input-group">
-         <div class="input-group-addon input-xs">
+         <div class="input-group-addon input-xs btn btn-info" onclick="BtnFechaClick()" style="background-color:#00c0ef">
            <b>FECHA:</b>
          </div>
-         <input type="date" class="form-control input-xs" id="MBFecha" placeholder="01/01/2019" value="2023-08-23" maxlength="10" size="15" onblur="validar_fecha()">
+         <input type="date" class="form-control input-xs" id="MBFecha" placeholder="01/01/2019" value="<?php echo date("Y-m-d") ?>" maxlength="10" size="15" disabled onblur="MBFecha_LostFocus()">
        </div>
 	  </div>
 		<div class="col-sm-6 text-center">
@@ -151,7 +151,6 @@
 		<input type="hidden" name="" id="TP" value="CD">
 		<!-- <input type="hidden" name="" id="beneficiario" value=""> -->
 		<input type="hidden" name="" id="Co" value="">
-		<input type="hidden" name="" id="FechaComp" value="">
 		<!-- <input type="hidden" name="" id="Concepto" value=""> -->
 			<div class="col-sm-12">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -237,7 +236,7 @@
 	  <b>Elaborador por</b>				
 	</div>
 	<div class="col-sm-4">
-	  <input type="text" name="" readonly="" class="form-control input-sm">		
+	  <input type="text" id="LabelUsuario" name="LabelUsuario" readonly="" class="form-control input-sm">		
 	</div>
 	<div class="col-sm-2">
 	  <b>Totales</b>				
@@ -414,10 +413,11 @@
         		$('#txt_saldo').val(response.saldo);
         		$('#LabelRecibi').val(response.beneficiario);
         		$('#Co').val(response.Co);
-        		$('#FechaComp').val(response.Co.fecha);
+        		$('#MBFecha').val(response.Co.fecha);
         		$('#LabelConcepto').val(response.Co.Concepto);
         		$('#LabelCantidad').val(response.Debe);
         		$('#LabelFormaPago').val(response.Co.Efectivo);
+        		$('#LabelUsuario').val(response.Nombre_Completo);
         		if(response.Co.T=='A')
         		{
         			$('#LabelEst').text('ANULADO');
@@ -493,12 +493,12 @@
 	 function confirmar_edicion(response)
 	 {
 	 	var ti = $('#tipoc').val();
-	 	var be = $('#beneficiario').val(); 
+	 	var be = $('#LabelRecibi').val(); 
 	 	var co = $('#ddl_comprobantes').val();
 	 	var va = $('#Co').val();
 	 	var mod = '<?php echo $_SESSION['INGRESO']['modulo_']; ?>';
 	 	 Swal.fire({
-         title: 'Esta seguro que quiere modificar el comprobante '+ti+ 'No. '+co+' de '+be,
+         title: 'Esta seguro que quiere modificar el comprobante '+ti+' No. '+co+' de '+be,
          text: "Esta usted seguro de que quiere modificar!",
          type: 'warning',
          showCancelButton: true,
@@ -508,7 +508,7 @@
        }).then((result) => {
          if (result.value==true) {
          	// location.href='../vista/contabilidad.php?mod='+mod+'&acc=incom&acc1=Ingresar%20Comprobantes&b=1&modificar=1&variables='+va+'#';
-         	location.href='../vista/contabilidad.php?mod='+mod+'&acc=incom&acc1=Ingresar%20Comprobantes&b=1&modificar=1&TP='+ti+'&com='+co;
+         	location.href='../vista/contabilidad.php?mod='+mod+'&acc=incom&acc1=Ingresar%20Comprobantes&b=1&modificar=1&TP='+ti+'&com='+co+'&num_load=1#';
          }
        })
 	 }
@@ -538,7 +538,7 @@
 					'numero':$('#ddl_comprobantes').val(),
 					'item':$('#txt_empresa').val(),
 					'TP':$('#tipoc').val(),		
-					'Fecha':$('#FechaComp').val(),
+					'Fecha':$('#MBFecha').val(),
 					'Concepto':$('#LabelConcepto').val(),
 					'Motivo_Anular':$('#txt_motivo_anulacion').val(),
 				}
@@ -554,5 +554,61 @@
 		      }
 		    }); 
 	 }
+
+	 function BtnFechaClick(){
+      Swal.fire({
+        title: 'PREGUNTA DE MODIFICACION',
+        text: "Seguro desea cambiar la Fecha del Comprobante",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'SI'
+      }).then((result) => {
+        if (result.value) {
+          $('#MBFecha').removeAttr('disabled');
+          FechaTemp = $('#MBFecha').val();
+          $('#MBFecha').focus();          
+        }else{
+          $('#MBFecha').attr('disabled','disabled');
+        }
+      })  
+   }
+
+   function MBFecha_LostFocus() {
+      if(FechaTemp != $('#MBFecha').val()){
+        Swal.fire({
+          title: 'PREGUNTA DE MODIFICACION',
+          text: "Seguro de realizar el cambio",
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'SI'
+        }).then((result) => {
+          if (result.value) {
+            $('#myModal_espera').modal('show');
+            $.ajax({
+              url:   '../controlador/contabilidad/comproC.php?ActualizarFechaComprobante=true',
+              type:  'post',
+              data: {
+                'MBFecha': $("#MBFecha").val(),
+                'Numero': $("#ddl_comprobantes").val(),
+                'TP': $('input[name="options"]:checked').val(),
+              },
+              dataType: 'json',
+              success:  function (response) {
+                Swal.fire('Proceso terminado con exito, vuelva a listar el comprobante','','info');
+                $('#MBFecha').attr('disabled','disabled');
+                $('#myModal_espera').modal('hide');
+              }
+            }); 
+
+          }else{
+            $('#MBFecha').focus();
+          }
+        })
+      }
+   }
 
 </script>
