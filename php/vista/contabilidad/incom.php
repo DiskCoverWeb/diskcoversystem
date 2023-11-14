@@ -68,79 +68,31 @@
     {
       // console.log(load);
       $('#NuevoComp').val(modificar);
-      if(load==0)
-      {
-       listar_comprobante();
-       let url = window.location.href; 
-       // console.log(url);
-       // urln =  url.toString().slice(0,url.length-1);
-       // console.log(url);
-       window.location.href= url+"&num_load=1#";
-      }
-      Tipo_De_Comprobante_No();
-      if(cli=='')
-      {
-       Llenar_Encabezado_Comprobante();
-       // cargar_totales_aseintos();
-      }
+      $.ajax({
+        url:   '../controlador/contabilidad/incomC.php?CallListar_Comprobante_SP=true',
+        type:  'post',
+        data: {
+          'NumeroComp': '<?php echo @$_GET["com"] ?>',
+          'TP': '<?php echo @$_GET["TP"] ?>',
+        },
+        dataType: 'json',
+        success:  function (response) {
+          Tipo_De_Comprobante_No();
+          if(cli=='')
+          {
+           Llenar_Encabezado_Comprobante();
+          }
+          FormActivate()
+        }
+      });
     }else
     {
       numero_comprobante();
+      FormActivate()
     }
-    $('#tit_sel').html('<i class="fa  fa-trash"></i>');
-    $('#fecha1').focus();
-    // numero_comprobante();
-    cargar_totales_aseintos();
-    autocoplet_bene();
-    cargar_cuenta_efectivo();
-    cargar_cuenta_banco();
-    cargar_cuenta();
-    cargar_tablas_contabilidad();
-    // cargar_tablas_tab4();
-    cargar_tablas_retenciones();
-    // cargar_tablas_sc();
-    ListarAsientoB();
     
      $("#btn_acep").blur(function () { if($('#modal_cuenta').hasClass('in')){if($('#txt_efectiv').is(':visible')){$('#txt_efectiv').trigger( "focus" );}else{$('#txt_moneda').trigger( "focus" );}}});
 
-/*
-    $("#codigo").autocomplete({
-      source: function( request, response ) {
-                
-            $.ajax({
-                url: '../controlador/contabilidad/incomC.php?cuentasTodos=true',
-                type: 'get',
-                dataType: "json",
-                data: {
-                    q1: request.term
-                },
-                success: function( data ) {
-                  // console.log(data);
-                    response( data );
-                }
-            });
-        },
-        select: function (event, ui) {
-            $('#codigo').val(ui.item.value); // display the selected text
-            // $('#cuentar'). (ui.item.value); // save selected id to input
-            $('#cuentar').append($('<option>',{value: ui.item.value, text:ui.item.label,selected: true }));
-            abrir_modal_cuenta();
-            return false;
-        },
-        focus: function(event, ui){
-            $( "#codigo").val(ui.item.value);
-            return false;
-        },
-    });
-*/
-
-
-    // $('#txt_tipo').on('blur',function(){
-    //   if($('txt_tipo').val()=='')
-    //   {
-    //      $('#txt_moneda').select();
-    //   }
-    // });
 
      window.addEventListener("message", function(event) {
         if (event.data === "closeModal") {
@@ -164,17 +116,30 @@
             $('#modal_subcuentas').modal('hide');
              cargar_tablas_contabilidad();
              cargar_totales_aseintos();
+             cargar_tablas_sc();
             $("#codigo").val('');
             $("#cuentar").empty();
         }
     });
 
-
-
-
-
   });
 
+
+function FormActivate() {
+  $('#tit_sel').html('<i class="fa  fa-trash"></i>');
+    $('#fecha1').focus();
+    // numero_comprobante();
+    cargar_totales_aseintos();
+    autocoplet_bene();
+    cargar_cuenta_efectivo();
+    cargar_cuenta_banco();
+    cargar_cuenta();
+    cargar_tablas_contabilidad();
+    // cargar_tablas_tab4();
+    cargar_tablas_retenciones();
+    // cargar_tablas_sc();
+    ListarAsientoB();
+}
    function autocoplet_bene(){
       $('#beneficiario1').select2({
         placeholder: 'Seleccione una beneficiario',
@@ -822,6 +787,9 @@
         }else if(response.resp==-2)
         {
           Swal.fire('Puede ser que ya exista un registro','','info');
+        } else if(response.resp==-3)
+        {
+          Swal.fire(response.obs,'','warning');
         }                 
       }
     });
@@ -1047,7 +1015,6 @@
           dataType: 'json',
             success:  function (response) {
                $('#myModal_espera').modal('hide');
-        console.log(response);
         if(response.respuesta == '3')
         {
           Swal.fire('Este documento electronico ya esta autorizado','','error');
@@ -1056,9 +1023,11 @@
           {
             // Swal.fire('Este documento electronico autorizado','','success');
              eliminar_ac();
-             if(response.aut_res==1){var texto = ' y Documento electronico Autorizado'; var tipo ='success'; }
-             if (response.aut_res==2) { tipo_error_sri(response.clave); var texto = ' y Documento electronico No autorizado'; var tipo = 'warning';}
-             Swal.fire("Comprobante Generado"+texto,"",tipo).then(function(){ 
+             var texto ="";
+             var tipo ="success";
+             if(response.aut_res==1){texto = ' y Documento electronico Autorizado'; tipo ='success'; }
+             if (response.aut_res==2) { tipo_error_sri(response.clave); texto = ' y Documento electronico No autorizado'; tipo = 'warning';}
+             Swal.fire( ((parametros.NuevoComp==0)?'Comprobante Modificado '+texto: "Comprobante Generado "+texto),"",tipo).then(function(){ 
              eliminar_todo_asisntoB();
              cargar_tablas_contabilidad();
              cargar_tablas_tab4();
@@ -1164,12 +1133,13 @@
 
 
 
-  function eliminar(codigo,tabla)
+  function eliminar(codigo,tabla,ID)
   {
      var parametros = 
     {
       'tabla':tabla,
       'Codigo':codigo,
+      'ID':ID,
     }
 
     Swal.fire({
@@ -1307,13 +1277,16 @@
   function validar_fecha()
   {
     if($('#beneficiario1').val()=='')
-      {
-        $('#beneficiario1').select2('open');
-      }
+    {
+      $('#beneficiario1').select2('open');
+    }
 
-    numero_comprobante();
+    var modificar = '<?php echo @$variables_mod; ?>';
+    if(modificar=='')
+    {
+      numero_comprobante();
+    }
   }
-
 
 </script>
 
@@ -1366,7 +1339,7 @@
                                  <div class="input-group-addon input-xs">
                                    <b>FECHA:</b>
                                  </div>
-                                 <input type="date" class="form-control input-xs" id="fecha1" placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="validar_fecha()">
+                                 <input type="date" class="form-control input-xs" id="fecha1" placeholder="01/01/2019" readonly value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="validar_fecha()">
                                </div>
                           <!-- </div> -->
                         </div>

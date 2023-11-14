@@ -227,7 +227,7 @@ class comproM
 	{
 		$sql = "UPDATE Trans_Kardex 
               SET Procesado = 0, TP = '.', Numero = 0 
-              & AnularComprobanteDe
+              $AnularComprobanteDe
               AND Fecha BETWEEN '".$FechaIni."' and '".$FechaFin."' 
               AND LEN(Serie) > 1 
               AND Factura <> 0 ";

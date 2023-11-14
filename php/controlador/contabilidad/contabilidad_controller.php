@@ -911,6 +911,7 @@ function listar_comprobantes($parametros)
        $FA_ClaveAcceso = '';
        $FA_Estado_SRI = '';
        $FA_Autorizacion_R ='';
+			 $Nombre_Completo = "";
 
 	if(count($datos)>0)
 	{
@@ -921,6 +922,7 @@ function listar_comprobantes($parametros)
        $Beneficiario = $datos[0]["Cliente"];
        $Concepto = $datos[0]["Concepto"];
        $Efectivo = $datos[0]["Efectivo"];
+   		 $Nombre_Completo = $datos[0]["Nombre_Completo"];
        if($T == 'Anulado'){ $titulo = "Anulado";}
        // LabelFecha.Caption = Format(Co.Fecha, FormatoFechas)
        // LabelRecibi.Caption = Co.Beneficiario
@@ -977,7 +979,7 @@ function listar_comprobantes($parametros)
          // $Co = serialize($Co);
          // $Co = base64_encode($Co);
          // $Co = urlencode($Co);
-		return array('tbl1'=>$tr['tbl'],'tbl4'=>$in['tbl'],'tbl3'=>$tbl3,'tbl2'=>$tbl2,'tbl2_1'=>$tbl2_1,'tbl2_2'=>$tbl2_2,'Debe'=>number_format($SumaDebe,2),'haber'=>number_format($SumaHaber,2),'total'=>number_format($Total,2),'saldo'=>number_format($Saldo,2),'beneficiario'=>$Beneficiario,'Co'=>$Co);	
+		return array('tbl1'=>$tr['tbl'],'tbl4'=>$in['tbl'],'tbl3'=>$tbl3,'tbl2'=>$tbl2,'tbl2_1'=>$tbl2_1,'tbl2_2'=>$tbl2_2,'Debe'=>number_format($SumaDebe,2),'haber'=>number_format($SumaHaber,2),'total'=>number_format($Total,2),'saldo'=>number_format($Saldo,2),'beneficiario'=>$Beneficiario,'Co'=>$Co, 'Nombre_Completo' => $Nombre_Completo);	
 	}
 }
 function comprobantes_procesados($parametros)
