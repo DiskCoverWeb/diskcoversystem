@@ -34,15 +34,15 @@ ORDER BY Acceso_Sucursales.Item,Empresa";
   {
   	$sql = "SELECT (Nombre_Completo +'  '+ Codigo) As CodUsuario,Codigo
             FROM Comprobantes, Accesos
-            where Item ='001'
-            and Periodo='.'
+            where Item ='".$_SESSION['INGRESO']['item']."'
+            and Periodo='".$_SESSION['INGRESO']['periodo']."'
             AND Comprobantes.CodigoU = Accesos.Codigo
             group by (Nombre_Completo +'  '+ Codigo) ,Codigo
             union 
             SELECT (Nombre_Completo +'  '+ Codigo) As CodUsuario,Codigo
             FROM Facturas,Accesos
-            where Item ='001'
-            and Periodo='.'
+            where Item ='".$_SESSION['INGRESO']['item']."'
+            and Periodo='".$_SESSION['INGRESO']['periodo']."'
             AND Facturas.CodigoU = Accesos.Codigo
             group by (Nombre_Completo +'  '+ Codigo),Codigo
             order by Codigo";
