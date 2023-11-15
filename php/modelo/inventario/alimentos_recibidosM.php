@@ -84,6 +84,61 @@ class alimentos_recibidosM
 		return $this->db->datos($sql);
 	}
 
+	function buscar_transCorreos_procesados_all($cod=false,$fecha=false,$id=false)
+	{
+		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No  
+		from Trans_Correos TC
+		inner join Clientes C on TC.CodigoP = C.Codigo 
+		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
+		where Item = '".$_SESSION['INGRESO']['item']."'
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND TC.T = 'P' OR  TC.T = 'N' ";
+		if($cod)
+		{
+			$sql.= " AND Envio_No  like  '%".$cod."%'";
+		}
+		if($fecha)
+		{
+			$sql.= " AND TC.Fecha_P =  '".$fecha."'";
+		}
+		if($id)
+		{
+			$sql.= " AND TC.ID =  '".$id."'";
+		}
+		$sql.=" ORDER BY ID desc";  
+
+		// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+
+	function buscar_transCorreos_all($cod=false,$fecha=false,$id=false)
+	{
+		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No  
+		from Trans_Correos TC
+		inner join Clientes C on TC.CodigoP = C.Codigo 
+		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
+		where Item = '".$_SESSION['INGRESO']['item']."'
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		";
+		if($cod)
+		{
+			$sql.= " AND Envio_No  like  '%".$cod."%'";
+		}
+		if($fecha)
+		{
+			$sql.= " AND TC.Fecha_P =  '".$fecha."'";
+		}
+		if($id)
+		{
+			$sql.= " AND TC.ID =  '".$id."'";
+		}
+		$sql.=" ORDER BY ID desc";  
+
+		// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+
+
 	function buscar_transCorreos_procesados($cod=false,$fecha=false)
 	{
 		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R 
@@ -373,6 +428,27 @@ class alimentos_recibidosM
 			$sql.=" AND Tipo_Dato = 'TIPO_PROV' 
 			ORDER BY Direccion, Fecha_Registro DESC";
 
+		return $this->db->datos($sql);
+
+	}
+
+
+	function clientes($query = false,$codigo=false,$id=false)
+	{
+		$sql = "SELECT ".Full_Fields('Clientes')."
+			FROM Clientes 
+			WHERE Cliente like '%".$query."%'";
+			if($codigo)
+			{  
+				$sql.=" AND Codigo = '".$codigo."' ";
+			} 
+			if($id)
+			{
+				$sql.= " AND ID = '".$id."' ";
+			}
+
+			// print_r($sql);die();
+			
 		return $this->db->datos($sql);
 
 	}

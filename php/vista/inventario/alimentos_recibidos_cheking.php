@@ -72,6 +72,7 @@
       $('#txt_codigo').on('select2:select', function (e) {
 		      var data = e.params.data.data;
 
+console.log(data);
 		      $('#txt_id').val(data.ID); // display the selected text
 		      $('#txt_fecha').val(formatoDate(data.Fecha_P.date)); // display the selected text
 		      $('#txt_ci').val(data.CI_RUC); // save selected id to input
@@ -512,10 +513,20 @@ function autocoplet_ingreso()
 						</div>
 						<div class="row"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
-								<b>COMENTARIO:</b>
+								<b>COMENTARIO DE RECEPCION:</b>
 							</div>
 							<div class="col-sm-6">
-	                <input type="" class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly>
+								<textarea class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly rows="1">
+								</textarea>
+							</div>
+						</div>
+						<div class="row"  style="padding-top: 5px;">
+							<div class="col-sm-6 text-right">
+								<b>COMENTARIO DE CLASIFICACION:</b>
+							</div>
+							<div class="col-sm-6">
+								<textarea class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly rows="1">
+								</textarea>
 							</div>
 						</div>
 						<div class="row" id="panel_serie"  style="padding-top: 5px;">
