@@ -63,7 +63,7 @@ class alimentos_recibidosM
 
 	function buscar_transCorreos($cod=false,$fecha=false)
 	{
-		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No  
+		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas  
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
@@ -86,7 +86,7 @@ class alimentos_recibidosM
 
 	function buscar_transCorreos_procesados_all($cod=false,$fecha=false,$id=false)
 	{
-		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No  
+		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas    
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
@@ -113,7 +113,7 @@ class alimentos_recibidosM
 
 	function buscar_transCorreos_all($cod=false,$fecha=false,$id=false)
 	{
-		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No  
+		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas    
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
@@ -141,7 +141,7 @@ class alimentos_recibidosM
 
 	function buscar_transCorreos_procesados($cod=false,$fecha=false)
 	{
-		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R 
+		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,C.Actividad,TC.Llamadas   
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
@@ -160,7 +160,7 @@ class alimentos_recibidosM
 	}
 	function buscar_transCorreos_contabilizadios($cod=false,$fecha=false)
 	{
-		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R 
+		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,C.Actividad,TC.Llamadas   
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
@@ -182,8 +182,8 @@ class alimentos_recibidosM
 	function cargar_pedidos_trans($orden,$fecha=false,$nombre=false)
 	{
     // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT T.*,P.Producto,P.TDP 
-     FROM Trans_Kardex  T ,Catalogo_Productos P     
+     $sql = "SELECT T.*,P.Producto,P.TDP,A.Nombre_Completo 
+     FROM Trans_Kardex  T ,Catalogo_Productos P, Accesos A        
      WHERE T.Item = '".$_SESSION['INGRESO']['item']."' 
      AND T.Periodo = '".$_SESSION['INGRESO']['periodo']."'
      AND Orden_No = '".$orden."' ";
@@ -192,7 +192,8 @@ class alimentos_recibidosM
      $sql.="AND Numero =0
      AND T.Item = P.Item
      AND T.Periodo = P.Periodo
-	 AND T.Codigo_Inv = P.Codigo_Inv";
+	 AND T.Codigo_Inv = P.Codigo_Inv
+	 AND T.CodigoU = A.Codigo ";
      if($fecha)
      {
      	$sql.=" AND T.Fecha = '".$fecha."'";
@@ -210,14 +211,15 @@ class alimentos_recibidosM
 	function cargar_pedidos_trans_pedidos($orden,$fecha=false,$codigo_inv=false)
 	{
     // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT T.*,P.Producto 
-     FROM Trans_Pedidos  T ,Catalogo_Productos P
+     $sql = "SELECT T.*,P.Producto ,A.Nombre_Completo 
+     FROM Trans_Pedidos  T ,Catalogo_Productos P, Accesos A    
      WHERE T.Item = '".$_SESSION['INGRESO']['item']."' 
      AND T.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
      AND Orden_No = '".$orden."'
      AND T.Item = P.Item
      AND T.Periodo = P.Periodo
-	 AND T.Codigo_Inv = P.Codigo_Inv";
+	 AND T.Codigo_Inv = P.Codigo_Inv
+	 AND T.CodigoU = A.Codigo ";
      if($fecha)
      {
      	$sql.=" AND T.Fecha = '".$fecha."'";

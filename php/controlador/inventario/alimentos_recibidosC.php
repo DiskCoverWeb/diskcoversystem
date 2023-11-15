@@ -215,6 +215,12 @@ if(isset($_GET['lista_bodegas_arbol']))
 	echo json_encode($controlador->lista_bodegas_arbol($parametros));
 }
 
+if(isset($_GET['notificar_clasificacion']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->notificar_clasificacion($parametros));
+}
+
 /**
  * 
  */
@@ -529,7 +535,7 @@ class alimentos_recibidosC
   					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
   					<td width="'.$d4.'">'.number_format($value['Entrada'],2,'.','').'</td>
-  					<td width="'.$d4.'">'.$value['CodigoU'].'</td>
+  					<td width="'.$d4.'">'.$value['Nombre_Completo'].'</td>
   					<td width="'.$d4.'">'.$value['Codigo_Barra'].'</td>
   					<td width="'.$d4.'">'.$sucursal.'</td>
   					<td>';
@@ -690,7 +696,7 @@ class alimentos_recibidosC
   					<td width="'.$d4.'"><input class="form-control"  id="txt_pvp_linea_'.$value['ID'].'" name="txt_pvp_linea_'.$value['ID'].'" onblur="recalcular('.$value['ID'].')" input-sm" value="'.$value['Valor_Unitario'].'"></td>
   					<td width="'.$d4.'"><input class="form-control" id="txt_total_linea_'.$value['ID'].'" name="txt_total_linea_'.$value['ID'].'"  input-sm" value="'.$value['Valor_Total'].'" readonly></td>
 
-  					<td width="'.$d3.'">'.$value['CodigoU'].'</td>
+  					<td width="'.$d3.'">'.$value['Nombre_Completo'].'</td>
   					<td width="90px">';
   					if($value['T']=='C')
   					{
@@ -803,7 +809,9 @@ class alimentos_recibidosC
 					<td>'.$value['Proceso'].'</td>
 					<td>'.number_format($value['TOTAL'],2,'.','').'</td>
 					<td>'.$value['Porc_C'].'</td>
-					<td><button type="button" class="btn-sm btn-danger btn" onclick="eliminar_pedido(\''.$value['ID'].'\')"><i class="fa fa-trash"></i></button></td>
+					<td>
+					<button type="button" class="btn-sm btn-primary btn" onclick="editar_pedido(\''.$value['ID'].'\')"><i class="fa fa-pencil"></i></button>
+					<button type="button" class="btn-sm btn-danger btn" onclick="eliminar_pedido(\''.$value['ID'].'\')"><i class="fa fa-trash"></i></button></td>
 
 				  </tr>';
 		}
@@ -1082,6 +1090,15 @@ class alimentos_recibidosC
 			$datos[0]['ingresados'] = $cant_ing;
 		}
 		return $datos;
+	}
+
+	function notificar_clasificacion($parametros)
+	{
+		// print_r($parametros);die();
+		SetAdoFields('Llamadas',$parametros['notificar']);
+		SetAdoFieldsWhere('ID',$parametros['id']);
+		return SetAdoUpdateGeneric();
+
 	}
 
 

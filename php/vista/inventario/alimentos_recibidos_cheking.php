@@ -80,6 +80,7 @@ console.log(data);
 		      $('#txt_tipo').val(data.Cod_Ejec); // save selected id to input
 		      $('#txt_cant').val(data.TOTAL); // save selected id to input
 		      $('#txt_comentario').val(data.Mensaje); // save selected id to input
+		      $('#txt_comentario_clas').val(data.Llamadas); // save selected id to input
 		      $('#txt_ejec').val(data.Cod_Ejec); // save selected id to input
 
 		      $('#txt_contra_cta').val(data.Cta_Haber); // save selected id to input
@@ -403,7 +404,7 @@ function autocoplet_ingreso()
         console.log(response);
         var lista = '';
         response.forEach(function(item,i){
-        	lista+='<li><a href="#" style="padding-right:0px"><label>'+item.Producto+'</label><span class="label label-danger pull-right">'+item.Cantidad+'</span></a></li>';
+        	lista+='<li style="font-size: large;"><a href="#" style="padding-right:0px"><label>'+item.Producto+'</label><span class="label label-danger pull-right">'+item.Cantidad+'</span></a></li>';
         })
         $('#lista_pedido').html(lista);    
       }
@@ -525,7 +526,7 @@ function autocoplet_ingreso()
 								<b>COMENTARIO DE CLASIFICACION:</b>
 							</div>
 							<div class="col-sm-6">
-								<textarea class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly rows="1">
+								<textarea class="form-control input-xs" id="txt_comentario_clas" name="txt_comentario_clas" readonly rows="1">
 								</textarea>
 							</div>
 						</div>

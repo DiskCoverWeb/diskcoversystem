@@ -544,13 +544,16 @@ function autocoplet_ingreso_donante(){
 		      data:datos,
 	        dataType:'json',
 		    success: function(data)
-		    {		    	
-		    	$('#modal_editar_pedido').modal('hide');
-		    	cargar_datos_procesados();
+		    {		    	    	
 		    	if(data==1)
 		    	{
-		    		Swal.fire('Pedido Editado','','success');
+		    		Swal.fire('Pedido Editado','','success').then(function(){
+				    		cargar_datos_procesados();
+				    		cargar_datos();
+		    		});
 		    	}
+		    	
+		    	$('#modal_editar_pedido').modal('hide');		
 		    }
 		});  	
 
