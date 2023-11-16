@@ -12813,4 +12813,39 @@ function Listar_Comprobante_SP($C1, $Trans_No=0, $Ln_No=0, $Ret_No=0, $LnSC_No=0
     return array('C1'=>$C1, 'Trans_No'=>$Trans_No, 'Ln_No'=>$Ln_No, 'Ret_No'=>$Ret_No, 'LnSC_No'=>$LnSC_No);
   }
 }
+
+function Elimina_Cuenta_Tabla($Tabla, $Cuenta, $Valor, $IDTemp = 0) {
+    $sSQL = "DELETE FROM $Tabla " .
+            "WHERE Item = '".$_SESSION['INGRESO']['item']."'  " .
+            "AND Periodo = '".$_SESSION['INGRESO']['periodo']."' " .
+            "AND TP = '{$_SESSION['Co']['TP']}' " .
+            "AND Numero = '{$_SESSION['Co']['Numero']}' " .
+            "AND $Cuenta = '$Valor' ";
+
+    if ($IDTemp > 0) {
+        $sSQL .= " AND ID = $IDTemp ";
+    }
+
+    Ejecutar_SQL_SP($sSQL);
+}
+
+function Actualiza_Cuenta_Tabla($Tabla, $Campo, $CtaOld, $CtaNew, $ConTP = false, $IDTemp = 0) {
+    $sSQL = "UPDATE $Tabla " .
+            "SET $Campo = '$CtaNew' " .
+            "WHERE Item = '".$_SESSION['INGRESO']['item']."'" .
+            "AND Periodo = '".$_SESSION['INGRESO']['periodo']."' " .
+            "AND $Campo = '$CtaOld' ";
+
+    if ($IDTemp > 0) {
+        $sSQL .= " AND ID = $IDTemp ";
+    }
+
+    if ($ConTP) {
+        $sSQL .= " AND TP = '{$_SESSION['Co']['TP']}' " .
+                 " AND Numero = '{$_SESSION['Co']['Numero']}' ";
+    }
+
+    Ejecutar_SQL_SP($sSQL);
+}
+
 ?>
