@@ -5,6 +5,7 @@
 <script type="text/javascript">
   $(document).ready(function () {
   	cargar_bodegas()
+  	cargar_paquetes()
   	pedidos();
   	productos_asignados();
   
@@ -136,6 +137,27 @@ function cargar_bodegas(nivel=1,padre='')
 
   
 }
+function cargar_paquetes()
+{
+	
+ 	$.ajax({
+	    type: "POST",
+       url:   '../controlador/inventario/almacenamiento_bodegaC.php?cargar_empaques=true',
+	     // data:{parametros:parametros},
+       dataType:'json',
+	    success: function(data)
+	    {
+	    	var op = '<option value="">Seleccione empaque</option>';
+	    	data.forEach(function(item,i){
+	    		 op+='<option value="'+item.ID+'">'+item.Proceso+'</option>';
+	    	})
+
+	    	$('#txt_paquetes').html(op);	    	
+	    }
+	});
+
+  
+}
 
 function asignar_bodega()
 {
@@ -150,10 +172,17 @@ function asignar_bodega()
 	});
 
 	 bodega = $('#txt_cod_bodega').val();
+	 paquete = $('#txt_paquetes').val();
 
 	if(bodega=='.' || bodega =='')
 	{
 		Swal.fire('Seleccione una bodega','','info');
+		return false;
+	}
+
+	if(paquete=='.' || paquete =='')
+	{
+		Swal.fire('Seleccione Paquete','','info');
 		return false;
 	}
 	if(id=='')
@@ -367,6 +396,7 @@ async function buscar_ruta()
 			</button>
 		</div>  	
   </div>
+  
 </div>
 <div class="row">
 	<div class="col-sm-12">		
@@ -412,10 +442,11 @@ async function buscar_ruta()
 					</div> -->
 				</div>
 				<div class="row">
-					<div class="col-sm-9">
-						Codigo de paquete
-						<input type="" class="form-control input-xs" id="txt_paquete" name="txt_paquete" readonly>	
-
+					<div class="col-sm-5">
+						Tipo de Empaque
+						<select class="form-control input-xs" id="txt_paquetes" name="txt_paquetes">
+							<option value="">Seleccione Empaque</option>
+						</select>
 					</div>
 					<div class="col-sm-3 text-right" id="pnl_alertas">
 						<button class="btn btn-default" type="button" id="btn_alto_stock" style="display:none;">

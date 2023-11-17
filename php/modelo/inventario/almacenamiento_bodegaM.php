@@ -289,6 +289,23 @@ class almacenamiento_bodegaM
 		return $this->db->datos($sql);
 	}
 
+	function cargar_empaques($query=false)
+	{
+		$sql = "SELECT      Proceso, ID
+		FROM         Catalogo_Proceso
+		WHERE  Item = '".$_SESSION['INGRESO']['item']."'
+		AND Nivel = 97";
+		if($query)
+		{
+			$sql.=" AND Proceso like '%".$query."%'";
+		}
+		$sql.=" AND TP = 'EMPAQUE'
+		ORDER BY Cmds, Proceso";
+			// print_r($sql);die();
+			
+		return $this->db->datos($sql);
+	}
+
 
 }
 ?>
