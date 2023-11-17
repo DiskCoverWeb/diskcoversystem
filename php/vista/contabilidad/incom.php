@@ -1339,7 +1339,7 @@ function FormActivate() {
                                  <div class="input-group-addon input-xs">
                                    <b>FECHA:</b>
                                  </div>
-                                 <input type="date" class="form-control input-xs" id="fecha1" placeholder="01/01/2019" readonly value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="validar_fecha()">
+                                 <input type="date" class="form-control input-xs" id="fecha1" placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="validar_fecha()">
                                </div>
                           <!-- </div> -->
                         </div>
@@ -1648,7 +1648,7 @@ function FormActivate() {
                         <div class="row ">
                           <div class="col-sm-6">
                              <button type="button"  class="btn btn-primary" id='grabar1' onclick="validar_comprobante()">Guardar</button>
-                             <a  href="./contabilidad.php?mod=contabilidad" title="Salir de modulo" class="btn btn-danger">
+                             <a  href="./inicio.php?mod=<?php echo @$_GET['mod']; ?>" title="Salir de modulo" class="btn btn-danger">
                                 Cancelar
                               </a>
                              <!-- 
