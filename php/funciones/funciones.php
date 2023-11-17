@@ -7985,7 +7985,7 @@ function Lineas_De_CxC($TFA)
       "WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' " .
       "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' ";
   if (strlen($TFA['TC']) == 2) $sSQL .= "AND Fact = '" . $TFA['TC'] . "' ";
-  $TFA['Cod_CxC'] = '';
+  //$TFA['Cod_CxC'] = '';
   if (strlen($TFA['Cod_CxC']) > 1) {
     $sSQL .= "AND '" . $TFA['Cod_CxC'] . "' IN (Concepto, Codigo, CxC) ";
   } elseif (strlen($TFA['Serie']) == 6) {
@@ -12307,6 +12307,7 @@ function Imprimir_Facturas_CxC($TFA, $EsMatricula = false, $PorOrdenFactura = fa
         $PosColumna = 0.01;
         $Pagina = $Pagina + 1;
         if($TFA['CantFact'] == 1){
+          $pdf->AddPage();
           $Pagina = 1;
           $PosLinea = 0.01;
         }else{
@@ -12329,8 +12330,8 @@ function Imprimir_Facturas_CxC($TFA, $EsMatricula = false, $PorOrdenFactura = fa
 }
 
 function Imprimir_FAM($TFA, $PosInic, $PosLineal, $DtaF, $DtaD, $Tipo_Pago, $pdf, $ReImp = false, $Solo_Copia = false, $CheqSinCodigo = false){
-  $PFil1 = 0.0;
-  $PPFil1 = 0.0;
+  $PFill = 0.0;
+  $PPFill = 0.0;
   $PAncho = 0.0;
   $LineasNo = 0;
   $AltoLetras = 0.0;
@@ -12662,15 +12663,259 @@ function Imprimir_FAM($TFA, $PosInic, $PosLineal, $DtaF, $DtaD, $Tipo_Pago, $pdf
   if($SetD[66]['PosX'] > 0 && $SetD[66]['PosY'] > 0){
     $pdf->SetFontSize($SetD[66]['Tamaño']);
     $pdf->SetXY(($PosInic + $SetD[66]['PosX']) * 10, ($PosLineal + $SetD[66]['PosY']) * 10);
-    $pdf->Cell(0, 0, "TextoFormaPago", 0);
+    $pdf->Cell(0, 0, "TextoFormaPago", 0);//Donde se define la variable TextoFormaPago?
   }
+  #Tipo_Pago
+  if(strlen($Tipo_Pago) > 1){
+    if($SetD[79]['PosX'] > 0 && $SetD[79]['PosY'] > 0){
+      $pdf->SetFontSize($SetD[79]['Tamaño']);
+      $pdf->SetXY(($PosInic + $SetD[79]['PosX']) * 10, ($PosLineal + $SetD[79]['PosY']) * 10);
+      $pdf->Cell(0, 0, $DtaF['Fecha_V'], 0);
+    }
+    if($SetD[78]['PosX'] > 0 && $SetD[78]['PosY'] > 0){
+      $pdf->SetFontSize($SetD[78]['Tamaño']);
+      $pdf->SetXY(($PosInic + $SetD[78]['PosX']) * 10, ($PosLineal + $SetD[78]['PosY']) * 10);
+      $pdf->Cell(0, 0, $DtaF['Total_MN'], 0);
+    }
+    if($SetD[77]['PosX'] > 0 && $SetD[77]['PosY'] > 0){
+      $RutaOrigen = dirname(__DIR__,2) . "/FORMATOS/Vistofp.jpg";
+      $pdf->Image($RutaOrigen, ($PosInic + $SetD[77]['PosX'] + 0.05) * 10,
+                               ($PosLineal + $SetD[77]['PosY'] + 0.05) * 10,
+                                $SetD[77]['Tamaño'] * 10,
+                                $SetD[77]['Tamaño'] * 10);
+    }
+    if($SetD[76]['PosX'] > 0 && $SetD[76]['PosY'] > 0){
+      $pdf->SetFontSize($SetD[76]['Tamaño']);
+      $pdf->SetXY(($PosInic + $SetD[76]['PosX']) * 10, ($PosLineal + $SetD[76]['PosY']) * 10);
+      $pdf->Cell(0, 0, "TIPO PAGO:", 0);
+    }
+    if($SetD[75]['PosX'] > 0 && $SetD[75]['PosY'] > 0){
+      $pdf->SetFontSize($SetD[75]['Tamaño']);
+      $pdf->SetXY(($PosInic + $SetD[75]['PosX']) * 10, ($PosLineal + $SetD[75]['PosY']) * 10);
+      $pdf->Cell(0, 0, $Tipo_Pago, 0);
+    }
+  }
+  $pdf->SetFont('Arial');
+  $AltoLetras = 0.4;
+  $pdf->SetFontSize($SetD[17]['Tamaño']);
 
-  
+  if(count($DtaD) > 0){
+    $pdf->SetFontSize($SetD[14]['Tamaño']);
+    $AltoLetras = round(getCharacterHeight("H", $pdf), 2);
+    $PFill = $PosLineal + $SetD[14]['PosY'];
+    $PAncho = $SetD[18]['PosX'];
+    if(count($DtaD) > 0){
+      $Producto = $DtaD['Producto'] . " ";
+      $ProductoAux = $DtaD['Producto'];
+      $CodigoInv = $DtaD['Codigo'];
+      $ValorUnit = $DtaD['Precio'];
+      $ValorUnit2 = $DtaD['Precio2'];
+      $CodigoP = "";
+      $Cantidad = 0;
+      $SubTotal = 0;
+      $SubTotal_IVA = 0;
+      foreach($DtaD as $key => $value){
+        for($i = 0; $i < 11; $i++){
+          $YaEstaMes = False;
+          $MesFact = $value['Mes'];
+          if($MesFactV[$i] == $MesFact){
+            $YaEstaMes = True;
+            break;
+          }
+        }
+        //El YaEstaMes === False no hace falta ya que MesFactV Siempre tiene valores.
+        if($CodigoInv <> $value['Codigo'] || $ValorUnit <> $value['Precio'] || $ProductoAux <> $value['Producto']){
+          if(strlen($CodigoP) > 1) $CodigoP = substr($CodigoP, 1, strlen($CodigoP) - 2);
+          $Producto .= $CodigoP . " ";
+          if($SetD[16]['PosX'] > 0){
+            $pdf->SetFontSize($SetD[16]['Tamaño']);
+            $pdf->SetXY(($PosInic + $SetD[16]['PosX']) * 10, ($PFill) * 10);
+            $pdf->Cell(0, 0, $Cantidad, 0);
+          }
+          if($SetD[15]['PosX'] > 0){
+            $pdf->SetFontSize($SetD[15]['Tamaño']);
+            $pdf->SetXY(($PosInic + $SetD[15]['PosX']) * 10, ($PFill) * 10);
+            $pdf->Cell(0, 0, $CodigoInv, 0);
+          }
+          if($SetD[17]['PosX'] > 0){
+            $pdf->SetFontSize($SetD[17]['Tamaño']);
+            list($r1, $r2) = PrinterLineasMayor($PosInic + $SetD[17]['PosX'], $PFill, $Producto, $PAncho, $pdf);
+            $LineasNo = $r2;
+            $PFill = $r1;
+            $PPFill = $PFill;
+          }
+          if($SetD[20]['PosX'] > 0){
+            $pdf->SetFontSize($SetD[20]['Tamaño']);
+            $pdf->SetXY(($PosInic + $SetD[20]['PosX']) * 10, ($PFill) * 10);
+            $pdf->Cell(0, 0, $SubTotal, 0);
+          }
+          if($SetD[19]['PosX'] > 0){
+            $pdf->SetFontSize($SetD[19]['Tamaño']);
+            $pdf->SetXY(($PosInic + $SetD[19]['PosX']) * 10, ($PFill) * 10);
+            $pdf->Cell(0, 0, $ValorUnit, 0);
+          }
+          if($SetD[47]['PosX'] > 0){
+            $pdf->SetFontSize($SetD[47]['Tamaño']);
+            $pdf->SetXY(($PosInic + $SetD[47]['PosX']) * 10, ($PFill) * 10);
+            $pdf->Cell(0, 0, $ValorUnit2, 0);
+          }
+          $Producto = $value['Producto'] . " ";
+          $ProductoAux = $value['Producto'];
+          $CodigoInv = $value['Codigo'];
+          $ValorUnit = $value['Precio'];
+          $ValorUnit2 = $value['Precio2'];
+          $PFill = $PFill + $AltoLetras;
+          $CodigoP = "";
+          $Cantidad = 0;
+          $SubTotal = 0;
+          $SubTotal_IVA = 0;
+        }
+        $SubTotal = $SubTotal + $value['Total'];
+        $Cantidad = $Cantidad + $value['Cantidad'];
+        if($Imp_Mes){
+          if($value['Mes'] <> G_NINGUNO) $CodigoP = $CodigoP . substr($value['Mes'], 1, 3);
+          if($value['Ticket'] <> G_NINGUNO) $CodigoP = $CodigoP . "-" . $value['Ticket'];
+          $CodigoP = $CodigoP . ", ";
+        }
+      }
+      if(strlen($CodigoP) > 1) $CodigoP = substr($CodigoP, 1, strlen($CodigoP) - 2);
+      $Producto .= $CodigoP . " ";
+      if($SetD[16]['PosX'] > 0){
+        $pdf->SetFontSize($SetD[16]['Tamaño']);
+        $pdf->SetXY(($PosInic + $SetD[16]['PosX']) * 10, ($PFill) * 10);
+        $pdf->Cell(0, 0, $Cantidad, 0);
+      }
+      if($SetD[15]['PosX'] > 0){
+        $pdf->SetFontSize($SetD[15]['Tamaño']);
+        $pdf->SetXY(($PosInic + $SetD[15]['PosX']) * 10, ($PFill) * 10);
+        $pdf->Cell(0, 0, $CodigoInv, 0);
+      }
+      if($SetD[17]['PosX'] > 0){
+        $pdf->SetFontSize($SetD[17]['Tamaño']);
+        $LineasNo = 0;
+        list($r1, $r2) = PrinterLineasMayor($PosInic + $SetD[17]['PosX'], $PFill, $Producto, $PAncho, $pdf);
+        $LineasNo = $r2;
+        $PFill = $r1;//PosLinea_Aux
+      }
+      if($SetD[20]['PosX'] > 0){
+        $pdf->SetFontSize($SetD[20]['Tamaño']);
+        $pdf->SetXY(($PosInic + $SetD[20]['PosX']) * 10, ($PFill) * 10);
+        $pdf->Cell(0, 0, $SubTotal, 0);
+      }
+      if($SetD[19]['PosX'] > 0){
+        $pdf->SetFontSize($SetD[19]['Tamaño']);
+        $pdf->SetXY(($PosInic + $SetD[19]['PosX']) * 10, ($PFill) * 10);
+        $pdf->Cell(0, 0, $ValorUnit, 0);
+      }
+      if($SetD[47]['PosX'] > 0){
+        $pdf->SetFontSize($SetD[47]['Tamaño']);
+        $pdf->SetXY(($PosInic + $SetD[47]['PosX']) * 10, ($PFill) * 10);
+        $pdf->Cell(0, 0, $ValorUnit2, 0);
+      }
+      if($SetD[31]['PosX'] > 0){
+        $MesFact = "";
+        for($i = 0; $i < 11; $i++){
+          if($MesFactV[$i] <> "") $MesFact = $MesFact . $MesFactV[$i] . ", ";
+        }
+        $MesFact = trim($MesFact);
+        $MesFact = substr($MesFact, 1, strlen($MesFact) - 1);
+        $pdf->SetFontSize($SetD[31]['Tamaño']);
+        $pdf->SetXY(($PosInic + $SetD[31]['PosX']) * 10, ($PosLineal + $SetD[31]['PosY']) * 10);
+        $pdf->Cell(0, 0, $MesFact, 0);
+      }
+    }
+  }
+}
 
-  return '';
+function PrinterLineasMayor($Xo, $Yo, $Strg, $anchoTexto, $pdf, $AltoLinea = null){
+  $AnchoStrg = 0;
+  $PY = 0;
+  $PX = 0;
+  $AltoCaracter = 0;
+  $PStrg = "";
+  $PStrgTemp = "";
+  $CStrg = "";
+  $NoLineas = 0;
+  $BlancoLetras = False;
+  $Inicio = 0;
+  $Final = 0;
+
+  $PY = $Yo;
+  if($anchoTexto <= 0) $anchoTexto = 2;
+  if($Strg <> G_NINGUNO) $CStrg = $Strg;
+  if($AltoLinea > 0){
+    $AltoCaracter = $AltoLinea;
+  }else{
+    $AltoCaracter = 0.4;
+  }
+  if($Yo > 0){
+    while(strlen($CStrg) >= 1){
+      $Inicio = 1;
+      $Final = 0;
+      $AnchoStrg = 0;
+      while(($AnchoStrg < $anchoTexto) && ($Final <= strlen($CStrg))){
+        $Final++;
+        $AnchoStrg = getCharacterWidth(substr($CStrg, 1, $Final), $pdf);
+      }
+      $PStrgTemp = substr($CStrg, 1, $Final);
+      $BlancoLetras = True;
+      $NoLetras = 0;
+      while($BlancoLetras && ($Final > 1)){
+        $Final--;
+        $NoLetras++;
+        if(substr($CStrg, $Final, 1) === " ") $BlancoLetras = False;
+        if($NoLetras >= 20) $BlancoLetras = False;
+      }
+      if(getCharacterWidth($PStrgTemp, $pdf) < $anchoTexto){
+        $PStrg = $PStrgTemp;
+        $CStrg = "";
+      }else{
+        if($Final > 1){
+          if(substr($CStrg, $Final, 1) === " "){
+            $PStrg = substr($CStrg, 1, $Final);
+            $CStrg = substr($CStrg, $Final, strlen($CStrg));
+          }else{
+            $PStrg = substr($CStrg, 1, $Final - 1);
+            $CStrg = substr($CStrg, $Final - 1, strlen($CStrg));
+          }
+        }
+      }
+      $PX = $anchoTexto;
+      $pdf->SetLineWidth(0.5);
+      $pdf->Line($Xo * 10, $PY * 10, ($Xo + $PX) * 10, ($PY + 0.4) * 10);
+      $pdf->SetXY(($Xo + 0.1) * 10, $PY * 10);
+      $pdf->Cell(0, 0, trim($PStrg), 0);
+      $PY = $PY + $AltoCaracter;
+      $NoLineas++;
+    }
+  }
+  if($NoLineas >= 1) $PY = $PY - $AltoCaracter;
+  $PosLinea_Aux = round($PY,2);
+  return array($PosLinea_Aux, $NoLineas);
+}
+
+function getCharacterWidth($character, $pdf){
+  $box = imagettfbbox($pdf->FontSize, 0, $pdf->FontFamily."ttf", $character);
+  return abs($box[2] - $box[0]);
+}
+
+function getCharacterHeight($character, $pdf){
+  $box = imagettfbbox($pdf->FontSize, 0, $pdf->FontFamily.".ttf", $character);
+  return abs($box[7] - $box[1]);
 }
 
 function Imprimir_FA_NV_Electronica($TFA){
+  //TODO:FALTA REALIZAR
+  $AdoDBFactura = array();
+  $AdoDBDetalle = array();
+  $CadenaMoneda = "";
+  $Numero_Letras = "";
+  $Tipo_Letras = "";
+  $Cant_Ln = 0;
+  $Una_Copia = False;
+  $PathCodigoBarra = "";
+  
+  
   return '';
 }
 

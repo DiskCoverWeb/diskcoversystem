@@ -1,6 +1,8 @@
 <?php date_default_timezone_set('America/Guayaquil'); //print_r($_SESSION);die();//print_r($_SESSION['INGRESO']);die();
+$servicio = $_SESSION['INGRESO']['Servicio'];
 ?>
 <script type="text/javascript">
+	let FAGlobal = {};
 	window.closeModal = function () {
 		$('#myModal_Abonos').modal('hide');
 		Autorizar_Factura_Actual();
@@ -61,6 +63,13 @@
 				$('#TextComEjec').focus();
 			}
 		})
+
+		var servicio = '<?php echo $servicio; ?>';
+		if(servicio != '0'){
+			$('#label36').text(`Servicio ${servicio}%`);
+		}else{
+			$('#label36').text("Servicio");
+		}
 
 	});
 
@@ -229,7 +238,8 @@
 				$("#Pos_Factura").val(data.TFA.Pos_Factura);   //FA
 				$("#Serie").val(data.TFA.Serie);   //FA
 				$("#TelefonoEstab").val(data.TFA.TelefonoEstab);   //FA
-				$("#Vencimiento").val(data.TFA.Vencimiento.date);   //FA
+				$("#Vencimiento").val(data.TFA.Vencimiento.date);
+				FAGlobal = data.TFA;
 
 				if (data.respuesta == 1) {
 					console.log(data.TFA);
@@ -324,7 +334,7 @@
 			$('#TextFacturaNo').val(data.NoFactura);
 		}
 		// 'Facturas.Caption = Facturas.Caption & " (" & FA.TC & ")"
-		$('#label36').text("Serv. " + (data.Porc_Serv * 100).toFixed(2) + "%")
+		//$('#label36').text("Servicio " + (data.Porc_Serv * 100).toFixed(2) + "%")
 	}
 
 	function DCEjecutivo() {
@@ -371,10 +381,16 @@
 					$('#TextFacturaNo').attr('readonly', true);
 				}
 
+				var servicio = '<?php echo $servicio; ?>';
+				var tot_sinIva = data.totales.Sin_IVA;
+				var desc = data.totales.Descuento;
+				var tot_serv = (tot_sinIva - desc) * (servicio / 100)
+				
+
 				$('#LabelSubTotal').val(parseFloat(data.totales.Sin_IVA).toFixed(2));
 				$('#LabelConIVA').val(parseFloat(data.totales.Con_IVA).toFixed(2));
 				$('#TextDesc').val(parseFloat(data.totales.Descuento).toFixed(2));
-				$('#LabelServ').val(parseFloat(data.totales.Servicio).toFixed(2));
+				$('#LabelServ').val(parseFloat(tot_serv).toFixed(2));
 				$('#LabelIVA').val(parseFloat(data.totales.Total_IVA).toFixed(2));
 				$('#LabelTotal').val(parseFloat(data.totales.Total_MN).toFixed(2));
 
@@ -689,15 +705,16 @@
 			'Total': $('#LabelTotal').val(),
 			'TC':$('#TC').val(),
 			'Serie':$('#Serie').val(),
-			'Autorizacion':$('#Autorizacion').val()
+			'Autorizacion':$('#Autorizacion').val(),
+			'FA':FAGlobal
 		}
 		$.ajax({
 			type: "POST",
 			url: '../controlador/facturacion/facturarC.php?Grabar_Factura_Actual=true&' + FA,
 			data: { parametros: parametros },
 			dataType: 'json',
+			
 			success: function (data) {
-				console.log(data);
 				if (data.res == -2) {
 					alerta_reprocesar('ADVERTENCIA', data.men);
 				} else if (data.res == -3) {
@@ -709,10 +726,7 @@
 						title: 'Algo salió mal',
 						text: data.men,
 						type: 'error',
-						showCancelButton: true,
-						confirmButtonColor: '#3085d6',
-						cancelButtonColor: '#d33',
-						confirmButtonText: 'Ok'
+						confirmButtonText: 'Ok!',
 					})
 				}
 
@@ -778,11 +792,12 @@
 			'Reprocesar': $('#Reprocesar').val(),
 			'Cliente': $('#DCCliente').val(),
 			'Total': $('#LabelTotal').val(),
+			'FA': FAc
 		}
 		$.ajax({
 			type: "POST",
 			url: '../controlador/facturacion/facturarC.php?Autorizar_Factura_Actual=true&' + FA,
-			data: { parametros: FAc },
+			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
 
@@ -790,89 +805,22 @@
 				if (data.AU.respuesta == 1) {
 					var url = '../../TEMP/' + data.pdf + '.pdf';
 					window.open(url, '_blank');
+					Swal.fire('Factura Autorizada', '', 'success');
+					Eliminar_linea('', '');
+				} else if (data.AU.respuesta == 3 || data.multiple == 'multiple') {
+					Swal.fire('Factura Autorizada', '', 'success');
+					Eliminar_linea('', '');
+				} else {
 					Swal.fire({
-						type: 'success',
-						title: 'Factura Autorizada',
-						confirmButtonText: 'Ok!',
-						allowOutsideClick: false,
-					}).then((result) => {
-						/* Read more about isConfirmed, isDenied below */
-						if (result.value) {
-							location.reload();
-						}
-					})
-
-				} else if (data.AU.respuesta == 3) {
-					Swal.fire('Factura Autorizada', '', 'success');
-				} else if (data.multiple == 'multiple') {
-					Swal.fire({
-						type: 'info',
-						title: 'IMPRESION',
-						text: 'Facturación Multiple',
-						confirmButtonText: 'Ok!',
-						allowOutsideClick: false,
-					}).then((result) => {
-						/* Read more about isConfirmed, isDenied below */
-						if (result.value) {
-							imprimir_multiple_CxC(data.data);
-						} else {
-							imprimir_facturas(data.data);
-						}
-					})
+						title: 'Algo salió mal',
+						type: 'error',
+						confirmButtonText: 'Ok!'
+					});
+					Eliminar_linea('', '');
 				}
 			}
 		})
 	}
-
-
-	function imprimir_multiple_CxC(FAc) {
-		var FA = $("#FA").serialize();
-		var parametros = {
-			'TextObs': $('#TextObs').val(),
-			'TextNota': $('#TextNota').val(),
-			'TxtCompra': $('#TxtCompra').val(),
-			'TxtPedido': $('#TxtPedido').val(),
-			'TxtZona': $('#TxtZona').val(),
-			'TxtLugarEntrega': $('#TxtLugarEntrega').val(),
-			'TextComision': $('#TextComision').val(),
-			'MBoxFechaV': $('#MBoxFechaV').val(),
-			'Check1': $('#Check1').prop('checked'),
-			'CheqSP': $('#CheqSP').prop('checked'),
-			// 'DCTipoPago':$('#DCTipoPago option:selected').text(),
-			'DCTipoPago': $('#DCTipoPago').val(),
-			'TextFacturaNo': $('#TextFacturaNo').val(),
-			'DCMod': $('#DCMod').val(),
-			'Reprocesar': $('#Reprocesar').val(),
-			'Cliente': $('#DCCliente').val(),
-			'Total': $('#LabelTotal').val(),
-		}
-		$.ajax({
-			type: "POST",
-			url: '../controlador/facturacion/facturarC.php?imprimir_factura_multiple=true&' + FA,
-			data: { parametros: FAc },
-			dataType: 'json',
-			success: function (data) {
-				if (data.res == 1) {
-					Swal.fire('Factura Autorizada', '', 'success');
-				}
-			}
-		})
-	}
-
-	function imprimir_facturas(FA) {
-		$.ajax({
-			type: "POST",
-			url: '../controlador/facturacion/facturarC.php?imprimir_facturas=true&' + FA,
-			data: { parametros: FA },
-			dataType: 'json',
-			success: function (data) {
-				if (data.res == 1) {
-					Swal.fire('Factura Autorizada', '', 'success');
-				}
-			}
-		})
-	}
-
 
 
 	function Abonos(FA) {
@@ -880,10 +828,10 @@
 			title: 'PAGO AL CONTADO',
 			text: '',
 			type: 'warning',
+			confirmButtonText: 'Sí!',
 			showCancelButton: true,
-			confirmButtonColor: '#3085d6',
-			cancelButtonColor: '#d33',
-			confirmButtonText: 'Si!'
+			allowOutsideClick: false,
+			cancelButtonText: 'No!'
 		}).then((result) => {
 			if (result.value == true) {
 				if (FA['TC'] == "OP") {
@@ -891,8 +839,10 @@
 						title: 'Formulario de Grabación',
 						text: 'Anticipo de Abono',
 						type: 'info',
+						confirmButtonText: 'Sí!',
 						showCancelButton: true,
-						confirmButtonText: 'Si!'
+						allowOutsideClick: false,
+						cancelButtonText: 'No!'
 					}).then((result) => {
 						if (result.value == true) {
 							var grupo = $('#DCGrupo_No').val();
@@ -907,8 +857,10 @@
 						title: 'Formulario de Grabación',
 						text: 'Pago al Contado',
 						type: 'info',
+						confirmButtonText: 'Sí!',
 						showCancelButton: true,
-						confirmButtonText: 'Si!'
+						allowOutsideClick: false,
+						cancelButtonText: 'No!'
 					}).then((result) => {
 						if (result.value == true) {
 							src = "../vista/modales.php?FAbonos=true";
@@ -929,10 +881,10 @@
 			title: tit,
 			text: mensaje,
 			type: 'warning',
+			confirmButtonText: 'Sí!',
 			showCancelButton: true,
-			confirmButtonColor: '#3085d6',
-			cancelButtonColor: '#d33',
-			confirmButtonText: 'Si!'
+			allowOutsideClick: false,
+			cancelButtonText: 'No!'
 		}).then((result) => {
 			if (result.value == true) {
 				$('#Reprocesar').val(1)
@@ -1675,12 +1627,12 @@
 				<div class="col-sm-1">
 					<b>Cantidad</b>
 					<input type="text" name="TextCant" id="TextCant" class="form-control input-xs"
-						onblur="TextCant_Change()" value="0">
+						onblur="" value="0">
 				</div>
 				<div class="col-sm-1">
 					<b>P.V.P</b>
 					<input type="text" name="TextVUnit" id="TextVUnit" class="form-control input-xs"
-						onblur="TextVUnit_LostFocus()" value="0">
+						onblur="TextVUnit_LostFocus(); TextCant_Change();" value="0">
 				</div>
 				<div class="col-sm-1">
 					<b>TOTAL</b>
@@ -1697,8 +1649,8 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-sm-1">
-					<b>Total sin Iva</b>
+				<div class="col-sm-1" style="padding: 2px;">
+					<b style="letter-spacing: -1.0px;">Total sin Iva</b>
 					<input type="text" name="LabelSubTotal" id="LabelSubTotal" class="form-control input-xs">
 				</div>
 				<div class="col-sm-1" style="padding: 2px;">
@@ -1710,7 +1662,7 @@
 					<input type="text" name="TextDesc" id="TextDesc" class="form-control input-xs">
 				</div>
 				<div class="col-sm-1" style="padding: 2px;">
-					<b id="label36">Serv. 0.00%</b>
+					<b id="label36"></b>
 					<input type="text" name="LabelServ" id="LabelServ" class="form-control input-xs">
 				</div>
 				<div class="col-sm-1" style="padding: 2px;">
