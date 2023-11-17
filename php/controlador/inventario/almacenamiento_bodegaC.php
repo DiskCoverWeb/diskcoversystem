@@ -75,11 +75,11 @@ if(isset($_GET['cargar_lugar']))
 	echo json_encode($controlador->cargar_lugar($parametros));
 }
 
-// if(isset($_GET['producto_costo']))
-// {
-// 	$parametros = $_POST['parametros'];
-// 	echo json_encode($controlador->producto_costo($parametros));
-// }
+if(isset($_GET['cargar_empaques']))
+{
+	// $parametros = $_POST['parametros'];
+	echo json_encode($controlador->cargar_empaques());
+}
 // if(isset($_GET['editar_precio']))
 // {
 // 	$parametros = $_POST['parametros'];
@@ -468,6 +468,12 @@ class almacenamiento_bodegaC
 		}
 		$url = substr($url,0,-1);
 		return $url;
+	}
+
+	function cargar_empaques()
+	{
+		$datos = $this->modelo->cargar_empaques();
+		return $datos;
 	}
 }
 
