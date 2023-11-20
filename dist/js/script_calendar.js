@@ -37,6 +37,7 @@ Vue.component('calendar', {
       this.$emit('input', date);
       $('#txt_fecha_exp').val(formatoDate(date))
       $('#modal_calendar').modal('hide')
+      $('#txt_fecha_exp').focus();
       if($('#txt_primera_vez').val()==0 || $('#txt_primera_vez').val()=='')
       {        
         if($('#txt_TipoSubMod').val()=='R')

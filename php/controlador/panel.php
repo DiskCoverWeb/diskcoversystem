@@ -418,6 +418,9 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
 
         //datos de empresa seleccionada
         $empresa = getEmpresasDE($_SESSION['INGRESO']['item'], $_SESSION['INGRESO']['noempr']);
+        if(count($empresa)<1 || (!isset($empresa[0]['Razon_Social']) || !isset($empresa[0]['Email']) || !isset($empresa[0]['RUC']) )){
+            return array('rps'=> false, 'mensaje' => "Empresa no encontrada, por favor comuníquese con el Administrador del Sistema.");
+        }
         SeteosCtas();
 
         //print_r($empresa);die();

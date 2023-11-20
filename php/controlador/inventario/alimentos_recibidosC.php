@@ -1,6 +1,5 @@
 <?php 
 require_once(dirname(__DIR__,2)."/modelo/inventario/alimentos_recibidosM.php");
-require_once(dirname(__DIR__,2)."/modelo/modalesM.php");
 require_once(dirname(__DIR__,2)."/funciones/funciones.php");
 
 
@@ -33,6 +32,11 @@ if(isset($_GET['eliminar_pedido']))
 {
 	$parametros = $_POST;
 	echo json_decode($controlador->eliminar_pedido($parametros));
+}
+if(isset($_GET['datos_pedido_edi']))
+{
+	$parametros = $_POST;
+	echo json_encode($controlador->datos_pedido_edi($parametros));
 }
 if(isset($_GET['alimentos']))
 {
@@ -119,6 +123,11 @@ if(isset($_GET['pedido_trans']))
 	$parametros= $_POST['parametros'];	
 	echo json_encode($controlador->cargar_productos_trans_pedidos($parametros));
 }
+if(isset($_GET['pedido_trans_datos']))
+{
+	$parametros= $_POST['parametros'];	
+	echo json_encode($controlador->cargar_productos_trans_pedidos_datos($parametros));
+}
 if(isset($_GET['pedido_checking']))
 {
 	$parametros= $_POST['parametros'];	
@@ -159,6 +168,12 @@ if(isset($_GET['cargar_datos']))
 	echo json_encode($controlador->cargar_datos($parametros));
 }
 
+if(isset($_GET['cargar_datos_procesados']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->cargar_datos_procesados($parametros));
+}
+
 if(isset($_GET['producto_costo']))
 {
 	$parametros = $_POST['parametros'];
@@ -168,6 +183,11 @@ if(isset($_GET['editar_precio']))
 {
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->editar_precio($parametros));
+}
+if(isset($_GET['editar_pedido']))
+{
+	$parametros = $_POST;
+	echo json_encode($controlador->editar_pedido($parametros));
 }
 if(isset($_GET['editar_checked']))
 {
@@ -195,6 +215,12 @@ if(isset($_GET['lista_bodegas_arbol']))
 	echo json_encode($controlador->lista_bodegas_arbol($parametros));
 }
 
+if(isset($_GET['notificar_clasificacion']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->notificar_clasificacion($parametros));
+}
+
 /**
  * 
  */
@@ -206,7 +232,6 @@ class alimentos_recibidosC
 	function __construct()
 	{
 		$this->modelo = new alimentos_recibidosM();
-		$this->modales = new modalesM();
 	}
 
 	function guardar($parametros)
@@ -462,9 +487,9 @@ class alimentos_recibidosC
 			$sucursal = '.';
 			if($value['Codigo_Dr']!='.')
 			{
-				$dato_sucursal = $this->modales-> sucursales($query = false,$codigo=false,$value['Codigo_Dr']);
-				print_r($dato_sucursal);die();
-				$sucursal = '---';
+				$dato_sucursal = $this->modelo->sucursales($query = false,$codigo=false,$value['Codigo_Dr']);
+				// print_r($dato_sucursal);die();
+				$sucursal = $dato_sucursal[0]['Direccion']; 
 			} 
 
 			$prod = $this->modelo->catalogo_productos($value['Codigo_Inv']);
@@ -510,7 +535,7 @@ class alimentos_recibidosC
   					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
   					<td width="'.$d4.'">'.number_format($value['Entrada'],2,'.','').'</td>
-  					<td width="'.$d4.'">'.$value['CodigoU'].'</td>
+  					<td width="'.$d4.'">'.$value['Nombre_Completo'].'</td>
   					<td width="'.$d4.'">'.$value['Codigo_Barra'].'</td>
   					<td width="'.$d4.'">'.$sucursal.'</td>
   					<td>';
@@ -542,6 +567,12 @@ class alimentos_recibidosC
 			$tabla = array('num_lin'=>0,'tabla'=>'<tr><td colspan="9" class="text-center"><b><i>Sin registros...<i></b></td></tr>','item'=>0,'cant_total'=>0,'reciclaje'=>0);
 			return $tabla;		
 		}		
+    }
+
+    function cargar_productos_trans_pedidos_datos($parametros)
+    {
+    	$datos = $this->modelo->cargar_pedidos_trans_pedidos($parametros['num_ped'],false);
+    	return $datos;
     }
 
     function cargar_productos_trans_pedidos($parametros)
@@ -641,7 +672,7 @@ class alimentos_recibidosC
       $reciclaje = 0;
 		foreach ($datos as $key => $value) 
 		{
-			// print_r($value);die();
+			// print_r($datos);die();
 
 
       		$canti = $canti+$value['Entrada'];	
@@ -664,6 +695,8 @@ class alimentos_recibidosC
   					<td width="'.$d4.'" id="txt_cant_ped_'.$value['ID'].'">'.number_format($value['Entrada'],2,'.','').'</td>
   					<td width="'.$d4.'"><input class="form-control"  id="txt_pvp_linea_'.$value['ID'].'" name="txt_pvp_linea_'.$value['ID'].'" onblur="recalcular('.$value['ID'].')" input-sm" value="'.$value['Valor_Unitario'].'"></td>
   					<td width="'.$d4.'"><input class="form-control" id="txt_total_linea_'.$value['ID'].'" name="txt_total_linea_'.$value['ID'].'"  input-sm" value="'.$value['Valor_Total'].'" readonly></td>
+
+  					<td width="'.$d3.'">'.$value['Nombre_Completo'].'</td>
   					<td width="90px">';
   					if($value['T']=='C')
   					{
@@ -674,8 +707,12 @@ class alimentos_recibidosC
   					}
   					$tr.='</td>
   					<td>
-  						<button class="btn btn-sm btn-primary" onclick="editar_precio('.$value['ID'].');guardar_check()"><i class="fa fa-save"></i></button>
-  					</td>
+  						<button class="btn btn-sm btn-primary" onclick="editar_precio('.$value['ID'].');guardar_check()"><i class="fa fa-save"></i></button>';
+  						if($value['TDP']=='R')
+  						{
+  							$tr.='<button class="btn btn-sm btn-warning" onclick="cargar_tras_pedidos(\''.$value['Producto'].'\',\''.$parametros['num_ped'].'\')"><i class="fa fa-list"></i></button>';
+  						}
+  					$tr.='</td>
   				</tr>';
 			
 		}
@@ -772,7 +809,9 @@ class alimentos_recibidosC
 					<td>'.$value['Proceso'].'</td>
 					<td>'.number_format($value['TOTAL'],2,'.','').'</td>
 					<td>'.$value['Porc_C'].'</td>
-					<td><button type="button" class="btn-sm btn-danger btn" onclick="eliminar_pedido(\''.$value['ID'].'\')"><i class="fa fa-trash"></i></button></td>
+					<td>
+					<button type="button" class="btn-sm btn-primary btn" onclick="editar_pedido(\''.$value['ID'].'\')"><i class="fa fa-pencil"></i></button>
+					<button type="button" class="btn-sm btn-danger btn" onclick="eliminar_pedido(\''.$value['ID'].'\')"><i class="fa fa-trash"></i></button></td>
 
 				  </tr>';
 		}
@@ -780,6 +819,34 @@ class alimentos_recibidosC
 		return $tr;
 		print_r($datos);die();
 	}
+
+	function cargar_datos_procesados($parametros)
+	{
+		$query = $parametros['query'];
+		$fecha = $parametros['fecha'];
+
+		$datos = $this->modelo->buscar_transCorreos_procesados_all($query,$fecha);
+		$tr= '';
+		foreach ($datos as $key => $value) {
+			$proceso = 'Clasificacion';
+			if($value['T']=='P'){$proceso = 'Checking';}
+			$tr.='<tr>
+					<td>'.$value['Envio_No'].'</td>
+					<td>'.$value['Fecha_P']->format('Y-m-d').'</td>
+					<td>'.$value['Cliente'].'</td>
+					<td>'.$value['Proceso'].'</td>
+					<td>'.number_format($value['TOTAL'],2,'.','').'</td>
+					<td>'.$value['Porc_C'].'</td>
+					<td>'.$proceso.'</td>
+					<td><button type="button" class="btn-sm btn-primary btn" onclick="editar_pedido(\''.$value['ID'].'\')"><i class="fa fa-pencil"></i></button></td>
+
+				  </tr>';
+		}
+
+		return $tr;
+		print_r($datos);die();
+	}
+
 
 	function eliminar_pedido($data)
 	{
@@ -806,6 +873,57 @@ class alimentos_recibidosC
 		return SetAdoUpdateGeneric();
 
 	}
+
+
+	function editar_pedido($parametros)
+	{
+		// print_r($parametros);die();
+		$cliente = $this->modelo->clientes(false,$parametros['ddl_ingreso_edi'],false);
+
+		$codigo = explode('-', $parametros['txt_codigo_edi']);
+		$new_cod = $cliente[0]['Cod_Ejec'];
+		foreach ($codigo as $key => $value) {
+			if($key!=0)
+			{
+				$new_cod.='-'.$value;
+			}
+		}
+
+		$lineas_kardex = $this->modelo->cargar_pedidos_trans($parametros['txt_codigo_edi']);
+		$lineas_pedidos = $this->modelo->cargar_pedidos_trans_pedidos($parametros['txt_codigo_edi']);
+
+		foreach ($lineas_kardex as $key => $value) {
+
+			$cod_barras = str_replace($parametros['txt_codigo_edi'],$new_cod,$value['Codigo_Barra']);
+
+			SetAdoAddNew('Trans_Kardex');
+			SetAdoFields('Codigo_Barra',$cod_barras);
+			SetAdoFields('Orden_No',$new_cod);
+			SetAdoFieldsWhere('ID',$value['ID']);
+			SetAdoUpdateGeneric();
+		
+		}
+
+		foreach ($lineas_pedidos as $key => $value) {
+			SetAdoAddNew('Trans_Pedidos');
+			SetAdoFields('Orden_No',$new_cod);
+			SetAdoFieldsWhere('ID',$value['ID']);
+			SetAdoUpdateGeneric();
+		}
+
+
+		SetAdoAddNew('Trans_Correos');
+		SetAdoFields('CodigoP',$parametros['ddl_ingreso_edi']);
+		SetAdoFields('Cod_C',$parametros['ddl_tipo_alimento_edi']);
+		SetAdoFields('Porc_C',$parametros['txt_temperatura_edi']);
+		SetAdoFields('TOTAL',$parametros['txt_cant_edi']);
+
+		SetAdoFields('Envio_No',$new_cod);
+		SetAdoFieldsWhere('ID',$parametros['txt_id_edi']);
+		return SetAdoUpdateGeneric();
+
+	}
+
 
 	function editar_checked($parametros)
 	{
@@ -956,6 +1074,31 @@ class alimentos_recibidosC
 		$fecha = $parametros['fecha'];
 		$datos = $this->modelo->autoincrementable($fecha);
 		return ($datos[0]['cant']+1);
+	}
+
+
+	function datos_pedido_edi($parametros)
+	{
+		$datos = $this->modelo->buscar_transCorreos_all(false,false,$parametros['ID']);
+		if(count($datos)>0)
+		{
+			$ingresados = $this->modelo->cargar_pedidos_trans($datos[0]['Envio_No'],false,false);
+			$cant_ing = 0;
+			foreach ($ingresados as $key => $value) {
+				$cant_ing+=$value['Entrada'];
+			}
+			$datos[0]['ingresados'] = $cant_ing;
+		}
+		return $datos;
+	}
+
+	function notificar_clasificacion($parametros)
+	{
+		// print_r($parametros);die();
+		SetAdoFields('Llamadas',$parametros['notificar']);
+		SetAdoFieldsWhere('ID',$parametros['id']);
+		return SetAdoUpdateGeneric();
+
 	}
 
 

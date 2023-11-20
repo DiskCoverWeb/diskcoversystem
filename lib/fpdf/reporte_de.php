@@ -3956,7 +3956,11 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	$pdf->SetXY(365, ($y+1));
 	$pdf->SetWidths(array(170));
 	$pdf->SetAligns(array("L"));
-	$arr=array("PROPINA:");
+	if($_SESSION['INGRESO']['Servicio'] != 0){
+		$arr=array("SERVICIO ".$_SESSION['INGRESO']['Servicio']."%:");
+	}else{
+		$arr=array("SERVICIO:");
+	}
 	$pdf->Row($arr,10);
 	$pdf->SetFont('Arial','',7);
 	$pdf->SetXY(528, ($y+1));

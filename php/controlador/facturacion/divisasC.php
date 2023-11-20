@@ -531,15 +531,20 @@ $lineas.="<table style='width: 284px;'>
 <tr>
 <td>PRODUCTO</td>
 <td>CANT</td>
-<td>PVP</td>
-<td>TOTAL</td>
+<td>PVP</td>";
+if($_SESSION['INGRESO']['Servicio'] != 0){
+  $lineas.="<td>SERVICIO</td>";
+}
+$lineas .= "<td>TOTAL</td>
 </tr>";
   foreach ($datos_pre['lineas'] as $key => $value) {
     $lineas.="<tr style='font-size: 11px;'>";   
       $lineas.='<td>'.$value['Producto'].'</td>';
       $lineas.='<td>'.number_format($value['Cantidad'],2,'.','').'</td>';
       $lineas.='<td>'.number_format($value['Precio'],2,'.','').'</td>';
-      $lineas.='<td>'.number_format($value['Total'] + ($value['Total'] + ($_SESSION['INGRESO']['Servicio']/100))  ,2,'.','').'</td>';
+      $lineas.='<td>'.number_format(($value['Total'] * $value['Cantidad'])
+                                  + (($value['Total'] * $value['Cantidad'])
+                                  * ($_SESSION['INGRESO']['Servicio']/100))  ,2,'.','').'</td>';
     $lineas.="<tr>";
  }
  $lineas.="</table>";

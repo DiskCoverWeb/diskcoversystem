@@ -17,8 +17,8 @@ $(document).ready(function() {
     if(servicio!=0)
     {
         $('#campo_servicio').css('display','block');
-        $('#textoServicio').text("Total Servici " + servicio + "%");
         $('#campo_totalServicio').css('display','block');
+        $('#textoServicio').text(`Total Servicio ${servicio}%`);
     }
 
     if (operadora != '.') {
@@ -1454,7 +1454,7 @@ function Command8_Click() {
         </div>
         <div class="row" id="campo_totalServicio" style="display:none;">
             <div class="col-sm-6">
-                <b id="textoServicio">Total Servicio</b>
+                <b id="textoServicio" style="letter-spacing: -0.5px;"></b>
             </div>
             <div class="col-sm-6">
                 <input type="text" name="LabelServicio" id="LabelServicio" class="form-control input-xs text-right"

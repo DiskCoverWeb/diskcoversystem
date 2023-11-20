@@ -15,6 +15,11 @@ if(isset($_GET['anular_comprobante']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->anular_comprobante($parametros));
 }
+if(isset($_GET['ActualizarFechaComprobante']))
+{
+	echo json_encode($controlador->ActualizarFechaComprobante($_POST));
+}
+
 class comproC 
 {
 	private $modelo;
@@ -126,90 +131,112 @@ class comproC
 	{
 		$datos_com = $this->modelo->Listar_el_Comprobante($parametros['numero'],$parametros['TP']);
 		$Co = $datos_com[0];
-		// print_r($Co);die();
-		// var $ClaveSupervisor = $parametros[''];
-		// if($ClaveSupervisor)
-		// {
-		   $CompCierre = false;
-		  // 'Co = ObtenerNumeroDeComp
-		   $FechaInicial = $Co['Fecha'];
-		   $FechaFinal = $Co['Fecha'];
-		   if(strpos($Co['Concepto'], "Cierre de Caja de") !== false){ $CompCierre = True; }
-		   if($CompCierre){
-		      // If InStr(Co.Concepto, "Cierre de Caja de Cuentas por Cobrar") > 0 Then EsCxC = True Else EsCxC = False
-		      // UnaFecha = True
-		      // For IdF = 1 To Len(Co.Concepto)
-		      //     Mifecha = MidStrg(Co.Concepto, IdF, 10)
-		      //     If IsDate(Mifecha) Then
-		      //        If Year(Mifecha) >= 1900 Then
-		      //           If UnaFecha Then
-		      //              FechaInicial = Mifecha
-		      //              FechaFinal = Mifecha
-		      //              UnaFecha = False
-		      //              IdF = IdF + 10
-		      //           Else
-		      //              FechaFinal = Mifecha
-		      //              IdF = IdF + 10
-		      //           End If
-		      //        End If
-		      //     End If
-		      // Next IdF
+
+		$CompCierre = false;
+		// 'Co = ObtenerNumeroDeComp
+		$FechaInicial = $Co['Fecha'];
+		$FechaFinal = $Co['Fecha'];
+		if(strpos($Co['Concepto'], "Cierre de Caja de") !== false){ $CompCierre = true; }
+
+		if ($CompCierre) {
+			if (strpos($Co['Concepto'], "Cierre de Caja de Cuentas por Cobrar") !== false) {
+				$EsCxC = true;
+			} else {
+				$EsCxC = false;
 			}
-		    $FechaIni = BuscarFecha($FechaInicial);
-		    $FechaFin = BuscarFecha($FechaFinal);
-		   	$AnularComprobanteDe = "WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-		                       AND Item = '".$Co['Item']."' 
-		                       AND TP = '".$Co['TP']."' 
-		                       AND Numero = ".$Co['Numero']." ";
 
-		                       // print_r($datos_com);die();
-		 
-		//       Control_Procesos "A", "Anulo Comprobante de: " & Co.TP & " No. " & Co.Numero
-		      if(strpos($Co['Concepto'], "(ANULADO)") !== false){
-		         $Contra_Cta = $Co['Concepto'];
-		      }else{
-		         $MotivoAnulacion =  $parametros['Motivo_Anular'];
-		         $Contra_Cta = "(ANULADO) ";
-		         if($MotivoAnulacion <> ""){
-		         	$Contra_Cta = $Contra_Cta." [MOTIVO: ".$MotivoAnulacion."], ";
-		         	$Contra_Cta = $Contra_Cta.$Co['Concepto'];
-		         }
-		      }
-		        $Contra_Cta = substr($Contra_Cta, 0, 120);
-				//'Actualizamos Comprobante
-		      	$this->modelo->Actualizamos_Comprobante($Contra_Cta,$AnularComprobanteDe);
-		     	// 'Actualizar Transacciones
-		        $this->modelo->Actualizar_Transacciones($AnularComprobanteDe);		     
-		     	// 'Actualizar Trans_SubCtas
-		     	$this->modelo->Actualizar_Trans_SubCtas($AnularComprobanteDe);
+			$UnaFecha = true;
+			for ($IdF = 1; $IdF <= strlen($Co['Concepto']); $IdF++) {
+				$Mifecha = trim(substr($Co['Concepto'], $IdF, 10));
+				if (strtotime($Mifecha) !== false && strlen($Mifecha)==10) {
+					if (date('Y', strtotime($Mifecha)) >= 1900) {
+						if ($UnaFecha) {
+							$FechaInicial = $Mifecha;
+							$FechaFinal = $Mifecha;
+							$UnaFecha = false;
+							$IdF = $IdF + 10;
+						} else {
+							$FechaFinal = $Mifecha;
+							$IdF = $IdF + 10;
+						}
+					}
+				}
+			}
+		}
 
-		     	// 'Actualizar Retencion
-		     	$this->modelo->Actualizar_Retencion($AnularComprobanteDe);		     
-		     
-				//'Eliminamos el Rol de Pagos
-		   		$this->modelo->Rol_de_Pagos($AnularComprobanteDe);
-				//'Actualizar Kardex
-			    if($CompCierre){
-			          $this->modelo->Trans_Kardex_update_cierre($AnularComprobanteDe,$FechaIni,$FechaFin);
-			        // 'MsgBox "CompCierre" & vbCrLf & sSQL
-			    }else{
-			      	 $datos = $this->modelo->Trans_Kardex($AnularComprobanteDe);
-			      	 foreach ($datos as $key => $value) {
-			      	 	$Codigo = $value["Codigo_Inv"];
-			            $this->modelo->Trans_Kardex_update($Co['Item'],$Codigo);
-			      	 }			        		         
-			        $this->modelo->Trans_Kardex_delete($AnularComprobanteDe);
-			    }
-		     
-				//'Actualizar las Ctas a mayoriazar
-		     	$datos = $this->modelo->Transacciones($AnularComprobanteDe);
-		     	foreach ($datos as $key => $value) {
-		     		// 'Determinamos que la cuenta ya fue mayorizada
-		              $SubCta = $value["Cta"];
-		             $this->modelo->Transacciones_update($SubCta);	
-		     	}
+		$FechaIni = BuscarFecha($FechaInicial);
+		$FechaFin = BuscarFecha($FechaFinal);
+		$AnularComprobanteDe = "WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+		AND Item = '".$Co['Item']."' 
+		AND TP = '".$Co['TP']."' 
+		AND Numero = ".$Co['Numero']." ";
 
+		Control_Procesos("A", "Anulo Comprobante de: " .$Co['TP']. " No. " .$Co['Numero']);
+		if(strpos($Co['Concepto'], "(ANULADO)") !== false){
+			$Contra_Cta = $Co['Concepto'];
+		}else{
+			$MotivoAnulacion =  $parametros['Motivo_Anular'];
+			$Contra_Cta = "(ANULADO) ";
+			if($MotivoAnulacion <> ""){
+				$Contra_Cta = $Contra_Cta." [MOTIVO: ".$MotivoAnulacion."], ";
+				$Contra_Cta = $Contra_Cta.$Co['Concepto'];
+			}
+		}
+		$Contra_Cta = substr($Contra_Cta, 0, 120);
+		//'Actualizamos Comprobante
+		$this->modelo->Actualizamos_Comprobante($Contra_Cta,$AnularComprobanteDe);
+		// 'Actualizar Transacciones
+		$this->modelo->Actualizar_Transacciones($AnularComprobanteDe);		     
+		// 'Actualizar Trans_SubCtas
+		$this->modelo->Actualizar_Trans_SubCtas($AnularComprobanteDe);
+
+		// 'Actualizar Retencion
+		$this->modelo->Actualizar_Retencion($AnularComprobanteDe);		     
+
+		//'Eliminamos el Rol de Pagos
+		$this->modelo->Rol_de_Pagos($AnularComprobanteDe);
+		//'Actualizar Kardex
+		if($CompCierre){
+			$this->modelo->Trans_Kardex_update_cierre($AnularComprobanteDe,$FechaIni,$FechaFin);
+		}else{
+			$datos = $this->modelo->Trans_Kardex($AnularComprobanteDe);
+			foreach ($datos as $key => $value) {
+				$Codigo = $value["Codigo_Inv"];
+				$this->modelo->Trans_Kardex_update($Co['Item'],$Codigo);
+			}			        		         
+			$this->modelo->Trans_Kardex_delete($AnularComprobanteDe);
+		}
+
+		//'Actualizar las Ctas a mayoriazar
+		$datos = $this->modelo->Transacciones($AnularComprobanteDe);
+		foreach ($datos as $key => $value) {
+			// 'Determinamos que la cuenta ya fue mayorizada
+			$SubCta = $value["Cta"];
+			$this->modelo->Transacciones_update($SubCta);	
+		}
 	}
 
+	function ActualizarFechaComprobante($parametros)
+	{
+		extract($parametros);
+
+		$_SESSION['Co']['TP'] = $TP;
+		$_SESSION['Co']['Numero'] = $Numero;
+
+		Actualiza_Fecha_Tabla("Comprobantes", $MBFecha);
+        Actualiza_Fecha_Tabla("Trans_Air", $MBFecha);
+        Actualiza_Fecha_Tabla("Trans_Compras", $MBFecha);
+        Actualiza_Fecha_Tabla("Trans_Exportaciones", $MBFecha);
+        Actualiza_Fecha_Tabla("Trans_Importaciones", $MBFecha);
+        Actualiza_Fecha_Tabla("Trans_Kardex", $MBFecha);
+        Actualiza_Fecha_Tabla("Trans_Rol_Pagos", $MBFecha);
+        Actualiza_Fecha_Tabla("Trans_SubCtas", $MBFecha);
+        Actualiza_Fecha_Tabla("Trans_Ventas", $MBFecha);
+        Actualiza_Fecha_Tabla("Transacciones", $MBFecha);
+
+        Actualiza_Procesado_Tabla("Transacciones", true);
+        Actualiza_Procesado_Tabla("Trans_SubCtas", true);
+        Actualiza_Procesado_Tabla("Trans_Kardex", true);
+	}
 }
 ?>

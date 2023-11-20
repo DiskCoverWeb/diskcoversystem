@@ -2,6 +2,13 @@
   <link rel="stylesheet" href="../../dist/css/style_calendar.css">
 <script type="text/javascript">
   $(document).ready(function () {
+    // on first focus (bubbles up to document), open the menu
+    $('#txt_fecha').focus();
+
+    $(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
+      $(this).closest(".select2-container").siblings('select:enabled').select2('open');
+    });
+
   	 window.addEventListener("message", function(event) {
             if (event.data === "closeModal") {
                 autocoplet_ingreso();
@@ -11,9 +18,26 @@
   	autocoplet_ingreso();
   	pedidos();
 
+    $('#modal_cantidad').on('shown.bs.modal', function () {
+        $('#txt_cantidad2').focus();
+    })  
+
+     $('#modal_producto').on('shown.bs.modal', function () {
+           $('#txt_referencia').focus();
+    })  
+     $('#txt_cantidad2').keydown( function(e) { 
+          var keyCode1 = e.keyCode || e.which; 
+          if (keyCode1 == 13) { 
+             cambiar_cantidad();
+             $('#txt_cantidad').focus();
+          }
+      });
+
+
   	
   	$('#ddl_producto').on('select2:select', function (e) {
       var data = e.params.data.data;
+      cargar_pedido2();
       $('#txt_unidad').val(data[0].Unidad);
       $('#txt_producto').append($('<option>',{value: data[0].Codigo_Inv, text:data[0].Producto,selected: true }));
       
@@ -43,6 +67,7 @@
       	$('#txt_TipoSubMod').val('.')
       }
       costeo(data[0].Codigo_Inv);
+      $('#txt_grupo').focus();
     });
 
    $('#txt_producto').on('select2:select', function (e) {
@@ -59,6 +84,8 @@
       $('#modal_producto').modal('hide');
 
       primera_vez = $('#txt_primera_vez').val();
+
+      cargar_pedido2();
 
       if(data[0].TDP=='R')
       {
@@ -85,7 +112,7 @@
       $('#txt_fecha').val(formatoDate(data.Fecha_P.date)); // display the selected text
       $('#txt_ci').val(data.CI_RUC); // save selected id to input
       $('#txt_donante').val(data.Cliente); // save selected id to input
-      $('#txt_tipo').val(data.Cod_Ejec); // save selected id to input
+      $('#txt_tipo').val(data.Actividad); // save selected id to input
       $('#txt_cant').val(parseFloat(data.TOTAL).toFixed(2)); // save selected id to input
       $('#txt_comentario').val(data.Mensaje); // save selected id to input
       $('#txt_ejec').val(data.Cod_Ejec); // save selected id to input
@@ -117,15 +144,15 @@
       $('#txt_temperatura').val(data.Porc_C); // save selected id to input
       $('#ddl_alimento').append($('<option>',{value: data.Cod_C, text:data.Proceso,selected: true }));
       	cargar_sucursales();      
-      	cargar_pedido();
+      	// cargar_pedido();
    
       	 // $('#pnl_normal').css('display','none');
-      	 cargar_pedido2();
+        
+            cargar_pedido();
 
          setInterval(function() {
-            cargar_pedido();
+         cargar_pedido2();
           }, 5000); 
-      // console.log(data);
     });
 
   })
@@ -458,6 +485,7 @@ function autocoplet_ingreso()
   	var can = $('#txt_cantidad2').val();
   	$('#txt_cantidad').val(can);
   	$('#modal_cantidad').modal('hide');
+    $('#txt_cantidad').focus();
   }
    function cambiar_sucursal()
   {
@@ -585,6 +613,36 @@ function autocoplet_ingreso()
  		cargar_sucursales2();
  	 $('#modal_sucursal').modal('show');
  }
+
+ function notificar()
+ {
+   var codigo = $('#txt_codigo').val();
+   console.log(codigo);
+    if(codigo=='')
+    {
+       Swal.fire("Seleccione un pedido","","info");
+       return false;
+    }
+
+    var parametros = {
+        'notificar':$('#txt_comentario2').val(),
+        'id':$('#txt_id').val(),
+    }
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/inventario/alimentos_recibidosC.php?notificar_clasificacion=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        
+        console.log(response);
+        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
+ }
 </script>
 
  <div class="row">
@@ -595,7 +653,7 @@ function autocoplet_ingreso()
             </a>
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2">
-			<button class="btn btn-default" title="Guardar" onclick="guardar()">
+			<button class="btn btn-default" title="Guardar" onclick="guardar()" id="btn_guardar">
 				<img src="../../img/png/grabar.png">
 			</button>
 		</div>  
@@ -629,7 +687,7 @@ function autocoplet_ingreso()
                	<div class="col-sm-6">
 	                	<input type="hidden" class="form-control input-xs" id="txt_codigo_p" name="txt_codigo_p" readonly>
                    <select class="form-control input-xs" id="txt_codigo" name="txt_codigo">
-                   	<option>Seleccione</option>
+                   	<option value="">Seleccione</option>
                    </select>
                 </div>
 						</div>
@@ -738,7 +796,10 @@ function autocoplet_ingreso()
 							</div>
 							<div class="col-sm-12" id="pnl_comentario">
 									<b>COMENTARIO DE INGRESO</b>
-									<textarea class="form-control input-sm" rows="3" id="txt_comentario2" name="txt_comentario2"></textarea>								
+									<textarea class="form-control input-sm" rows="3" id="txt_comentario2" name="txt_comentario2"></textarea>
+                  <div class="text-right">
+                  <button type="button" class="btn btn-primary btn-sm" onclick="notificar()">Notificar</button>		
+                  </div>						
 							</div>
 						</div>
 
@@ -856,7 +917,7 @@ function autocoplet_ingreso()
 
 <script type="text/javascript">
 	$( document ).ready(function() {
-		cargar_pedido();
+		// cargar_pedido();
     // cargar_productos();
     autocoplet_pro();
     autocoplet_producto();

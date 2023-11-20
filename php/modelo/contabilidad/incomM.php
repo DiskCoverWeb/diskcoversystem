@@ -261,7 +261,7 @@ class incomM
        WHERE Item = '".$_SESSION['INGRESO']['item']. "'
        AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
        AND T_No = ".$_SESSION['INGRESO']['modulo_']." ";
-       $botones[0] = array('boton'=>'eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'CODIGO,asiento' );
+       $botones[0] = array('boton'=>'eliminar', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'CODIGO,asiento,ID' );
 
         $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-307; //el numero es el espacio ya ocupado por los otros componenetes
 	   $tbl = grilla_generica_new($sql,'Asiento','',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,$medida);

@@ -533,7 +533,7 @@ class facturarM
           AND TC = '" . $TFA['TC'] . "' 
           AND Serie = '" . $TFA['Serie'] . "' 
           AND P = 0 ";
-    if (isset($TFA['Desde']) and isset($TFA['Hasta']) and ($TFA['Desde'] <= $TFA['Hasta'])) {
+    if (($TFA['Desde'] + $TFA['Hasta']) > 0 && ($TFA['Desde'] <= $TFA['Hasta'])) {
       $sql .= " AND Factura BETWEEN " . $TFA['Desde'] . " and " . $TFA['Hasta'] . " ";
     } else {
       $sql .= " AND Factura = " . $TFA['Factura'] . " ";

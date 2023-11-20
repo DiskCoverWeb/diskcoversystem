@@ -1,6 +1,11 @@
 <?php date_default_timezone_set('America/Guayaquil'); ?>
 <script type="text/javascript">
   $(document).ready(function () {
+  	cargar_datos_procesados();
+  	$('#btn_guardar').focus();
+  	 $(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
+      $(this).closest(".select2-container").siblings('select:enabled').select2('open');
+    });
   	 window.addEventListener("message", function(event) {
           if (event.data === "closeModal") {
               autocoplet_ingreso();
@@ -10,6 +15,40 @@
   	autocoplet_ingreso();
   	autocoplet_ingreso_donante();
   	cargar_datos();
+
+  	 $('#txt_cantidad2').keydown( function(e) { 
+          var keyCode1 = e.keyCode || e.which; 
+          if (keyCode1 == 13) { 
+          	 cambiar_cantidad();
+          	 $('#txt_cant').focus();
+          }
+      });
+
+
+  	 $('#txt_temperatura2').keydown( function(e) { 
+          var keyCode1 = e.keyCode || e.which; 
+          if (keyCode1 == 13) { 
+          	cambiar_temperatura();
+          	 $('#txt_temperatura').focus();
+          }
+      });
+
+
+  	$('#modal_cantidad').on('shown.bs.modal', function () {
+		    $('#txt_cantidad2').focus();
+		})  
+
+		$('#modal_temperatura').on('shown.bs.modal', function () {
+		    $('#txt_temperatura2').focus();
+		})  
+		$('#modal_proveedor').on('shown.bs.modal', function () {
+		    $('#ddl_ingreso').focus();
+		})  
+	
+
+
+
+
 
   })
 
@@ -81,7 +120,7 @@
         dataType:'json',
 	    success: function(data)
 	    {
-	    	console.log(data);
+	    	// console.log(data);
 	    	option = '';
 	    	opt = '<option value="">Tipo de donacion</option>';
 	    	data.forEach(function(item,i){
@@ -95,6 +134,7 @@
 	    	})	 
 	    	$('#pnl_tipo_alimento').html(option);   
 	    	$('#ddl_tipo_alimento').html(opt);     
+	    	$('#ddl_tipo_alimento_edi').html(opt);     
 	    }
 	});
   }
@@ -141,6 +181,25 @@
 
 function autocoplet_ingreso(){
   $('#ddl_ingreso').select2({
+    placeholder: 'Seleccione',
+    width:'100%',
+    ajax: {
+     url:   '../controlador/inventario/alimentos_recibidosC.php?detalle_ingreso2=true',
+      dataType: 'json',
+      delay: 250,
+      processResults: function (data) {
+        // console.log(data);
+        return {
+          results: data
+        };
+      },
+      cache: true
+    }
+  });
+}
+
+function autocoplet_ingreso(){
+  $('#ddl_ingreso_edi').select2({
     placeholder: 'Seleccione',
     width:'100%',
     ajax: {
@@ -204,6 +263,7 @@ function autocoplet_ingreso_donante(){
 		    	$('#txt_ci').val(data.CI_RUC)
 		    	// $('#txt_donante').val(data.Cliente)
 		    	$('#txt_tipo').val(data.Actividad)
+		    	$('#txt_tipo').focus();
 		    	$('#modal_proveedor').modal('hide');
 		    	generar_codigo();
 		    }
@@ -298,7 +358,29 @@ function autocoplet_ingreso_donante(){
 		    success: function(data)
 		    {
 		    	$('#tbl_body').html(data);
-		    	console.log(data);
+		    	// console.log(data);
+		    	// var cod = $('#txt_codigo').val();
+		    	// $('#txt_codigo').val(cod+'-'+data)
+		    	
+		    }
+		});  	
+  }
+
+   function cargar_datos_procesados(){
+  		parametros = 
+  		{
+  			'fecha':$('#txt_fecha_b').val(),
+  			'query':$('#txt_query').val(),
+  		}
+	  	$.ajax({
+		    type: "POST",
+	      	url:   '../controlador/inventario/alimentos_recibidosC.php?cargar_datos_procesados=true',
+		    data:{parametros:parametros},
+	        dataType:'json',
+		    success: function(data)
+		    {
+		    	$('#tbl_body_procesados').html(data);
+		    	// console.log(data);
 		    	// var cod = $('#txt_codigo').val();
 		    	// $('#txt_codigo').val(cod+'-'+data)
 		    	
@@ -312,8 +394,6 @@ function autocoplet_ingreso_donante(){
   }
   function show_cantidad()
   {
-  	
-  	$("#txt_cantidad2").focus();
   	$('#modal_cantidad').modal('show');
   }
   function show_temperatura()
@@ -343,12 +423,14 @@ function autocoplet_ingreso_donante(){
   	var can = $('#txt_cantidad2').val();
   	$('#txt_cant').val(can);
   	$('#modal_cantidad').modal('hide');
+  	$('#txt_cant').focus();
   }
   function cambiar_temperatura()
   {
   	var can = $('#txt_temperatura2').val();
   	$('#txt_temperatura').val(can);
   	$('#modal_temperatura').modal('hide');
+  	$('#txt_temperatura').focus();
   }
 
   function cambiar_tipo_alimento(cod,texto)
@@ -359,6 +441,7 @@ function autocoplet_ingreso_donante(){
   	$('#ddl_tipo_alimento').val(cod)
   	$('#ddl_tipo_alimento').prop('disabled',true);
   	$('#modal_tipo_donacion').modal('hide');
+  	$('#btn_cantidad').focus();
   }
   function eliminar_pedido(ID)
   {
@@ -424,6 +507,71 @@ function autocoplet_ingreso_donante(){
 		$('#ddl_alimento').value('');
   }
 
+  function editar_pedido(ID)
+  {
+
+	  	$.ajax({
+		    type: "POST",
+	      	url:   '../controlador/inventario/alimentos_recibidosC.php?datos_pedido_edi=true',
+		      data:{ID:ID},
+	        dataType:'json',
+		    success: function(data)
+		    {
+		    	if(data.length>0)
+		    	{
+		    		data = data[0];
+		    		console.log(data);
+		    		$('#txt_id_edi').val(data.ID);
+						$('#ddl_ingreso_edi').append($('<option>',{value: data.CodigoP, text:data.Cliente,selected: true }));
+						$('#txt_codigo_edi').val(data.Envio_No);
+						$('#ddl_tipo_alimento_edi').val(data.Cod_C);
+						$('#txt_cant_edi').val(data.TOTAL);
+						$('#txt_cant_veri').val(data.ingresados);
+						$('#txt_temperatura_edi').val(data.Porc_C);
+		    		$('#modal_editar_pedido').modal('show'); 	
+		    	}
+		    }
+		});  	
+
+  }
+
+  function guardar_edicion()
+  {
+  	datos = $("#form_editar").serialize();
+  	$.ajax({
+		    type: "POST",
+	      	url:   '../controlador/inventario/alimentos_recibidosC.php?editar_pedido=true',
+		      data:datos,
+	        dataType:'json',
+		    success: function(data)
+		    {		    	    	
+		    	if(data==1)
+		    	{
+		    		Swal.fire('Pedido Editado','','success').then(function(){
+				    		cargar_datos_procesados();
+				    		cargar_datos();
+		    		});
+		    	}
+		    	
+		    	$('#modal_editar_pedido').modal('hide');		
+		    }
+		});  	
+
+
+  }
+
+  function validar_cantidad()
+  {
+  	 can = $('#txt_cant_edi').val();
+  	 ing = $('#txt_cant_veri').val();
+  	 if(parseFloat(can)<parseFloat(ing))
+  	 {
+  	 		Swal.fire("No se puede Cambiar la cantidad","Los articulos ingresados son "+ing,"error").then(function(){
+  	 			$('#txt_cant_edi').val(ing);
+  	 		})
+  	 }
+  }
+
 </script>
 
  <div class="row">
@@ -434,7 +582,7 @@ function autocoplet_ingreso_donante(){
             </a>
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2">
-			<button class="btn btn-default" title="Guardar" onclick="guardar()">
+			<button class="btn btn-default" title="Guardar" onclick="guardar()" id="btn_guardar">
 				<img src="../../img/png/grabar.png">
 			</button>
 		</div>  
@@ -588,24 +736,63 @@ function autocoplet_ingreso_donante(){
 					<br>
 					<div class="row">
 						<div class="col-sm-12">
-							<div class="table-responsive">
-								<table class="table table-hover">
-									<thead>
-										<th>Codigo</th>
-										<th>Fecha de ingreso</th>
-										<th>Donante / Proveedor</th>
-										<th>Alimento Recibido </th>
-										<th>Cantidad</th>
-										<th>Temperatura de ingreso</th>
-										<th></th>
-									</thead>
-									<tbody id="tbl_body">
-										<tr></tr>
-									</tbody>
-								</table>
-							</div>							
-						</div>						
+							<ul class="nav nav-tabs">
+							  <li class="active"><a data-toggle="tab" href="#home">Registrados</a></li>
+							  <li><a data-toggle="tab" href="#menu1">En Proceso</a></li>
+							</ul>
+
+							<div class="tab-content">
+							  <div id="home" class="tab-pane fade in active">
+							    <div class="row">
+							    	<br>
+							    	<div class="col-sm-12">
+							    		<div class="table-responsive">
+												<table class="table table-hover">
+													<thead>
+														<th>Codigo</th>
+														<th>Fecha de ingreso</th>
+														<th>Donante / Proveedor</th>
+														<th>Alimento Recibido </th>
+														<th>Cantidad</th>
+														<th>Temperatura de ingreso</th>
+														<th></th>
+													</thead>
+													<tbody id="tbl_body">
+														<tr></tr>
+													</tbody>
+												</table>
+											</div>									    		
+							    	</div>
+							    </div>
+							  </div>
+							  <div id="menu1" class="tab-pane fade">
+							    <div class="row">
+							    	<br>
+							    	<div class="col-sm-12">
+							    		<div class="table-responsive">
+												<table class="table table-hover">
+													<thead>
+														<th>Codigo</th>
+														<th>Fecha de ingreso</th>
+														<th>Donante / Proveedor</th>
+														<th>Alimento Recibido </th>
+														<th>Cantidad</th>
+														<th>Temperatura de ingreso</th>
+														<th>Proceso</th>
+														<th></th>
+													</thead>
+													<tbody id="tbl_body_procesados">
+														<tr></tr>
+													</tbody>
+												</table>
+											</div>									    		
+							    	</div>
+							    </div>
+							  </div>							 
+							</div>
+						</div>
 					</div>
+					
 				</div>
 			</div>
 			</form>
@@ -671,6 +858,8 @@ function autocoplet_ingreso_donante(){
 </div>
 
 
+
+
 <div id="modal_temperatura" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog modal-sm">
       <div class="modal-content">
@@ -703,10 +892,64 @@ function autocoplet_ingreso_donante(){
           </div>
           <div class="modal-body" style="background: antiquewhite;">
           <b>Cantidad</b>
-          <input type="" name="txt_cantidad2" id="txt_cantidad2" class="form-control" placeholder="0" onblur="cambiar_cantidad()">        					
+          <input type="text" name="txt_cantidad2" id="txt_cantidad2" class="form-control" placeholder="0"  onblur="cambiar_cantidad()">        					
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
               <button type="button" class="btn btn-primary" onclick="cambiar_cantidad()">OK</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+<div id="modal_editar_pedido" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Editar pedido</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          	<div class="row">
+          		<form id="form_editar">
+          		<div class="col-sm-8">
+          			<b>Proveedor</b>
+
+	              <input type="hidden" id="txt_id_edi" name="txt_id_edi" class="form-control input-xs">
+			          <select class=" form-control input-xs form-select" id="ddl_ingreso_edi" name="ddl_ingreso_edi" onchange="option_select()">
+			           		<option value="">Seleccione</option>
+			           </select>            			
+          		</div>
+          		<div class="col-sm-4">
+          			<b>Codigo</b>          			
+	              <input type="text" id="txt_codigo_edi" name="txt_codigo_edi" class="form-control input-xs" readonly>
+          		</div>
+          		<div class="col-sm-12">
+          			<b>Alimento Recibido</b> 
+		           <select class=" form-control input-xs form-select" id="ddl_tipo_alimento_edi" name="ddl_tipo_alimento_edi" onchange="option_select()">
+		           		<option value="">Seleccione</option>
+		           </select>            			
+          		</div>
+
+          		<div class="col-sm-6">
+	              <b>Cantidad</b>	
+	              <input type="text" id="txt_cant_edi" name="txt_cant_edi" class="form-control input-xs" onblur="validar_cantidad()">
+	              <input type="hidden" id="txt_cant_veri" name="txt_cant_veri" class="form-control input-xs">
+          			
+          		</div>
+
+          		<div class="col-sm-6">
+          			<b>Temperatura</b>
+          			<input type="text" id="txt_temperatura_edi" name="txt_temperatura_edi" class="form-control input-xs">
+          			
+          		</div>
+          		</form>
+          	</div>
+          					
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-primary" onclick="guardar_edicion()">Editar</button>
               <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
           </div>
       </div>
