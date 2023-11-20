@@ -94,7 +94,7 @@
         width:'resolve',
 	    // minimumResultsForSearch: Infinity,
         ajax: {
-          url: '../controlador/facturacion/lista_liquidacionCompraC.php?clientes=true&g='+g,
+          url: '../controlador/facturacion/lista_liquidacionCompraC.php?clientes2=true&g='+g,
           dataType: 'json',
           delay: 250,
           processResults: function (data) {           

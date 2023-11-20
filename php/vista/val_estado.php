@@ -28,7 +28,6 @@ function val_estado($intervalo)
 
 	function loadData()
 	{
-		console.log("CONTADOR TEST");
 		var response = ' . validar_estado_all() . '
 		var rps = response[' . $rps . '];
 		var mensaje = response[' . $mensaje .'];

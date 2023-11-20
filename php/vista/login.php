@@ -249,13 +249,15 @@
            confirmButtonText: 'Si!'
          }).then((result) => {
            if (result.value==true) {
-            Ingresar();
+			Ingresar();
+            
            }
          })
 
   	}else
   	{
-  		Ingresar();
+		Ingresar();	
+		
   	}
   }
   
@@ -310,7 +312,8 @@
 		 	 'cartera':cartera,
 		 	 'cartera_usu':cartera_usu,
 		 	 'cartera_pass':cartera_pass,
-		 	 'localIp':localIp
+		 	 'localIp':localIp,
+			 'ipWAN': ""
 		 }
 
      $.ajax({
@@ -339,7 +342,6 @@
     });
 
   }
-  	
 	  </script>
 	
 </head>

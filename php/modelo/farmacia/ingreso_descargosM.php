@@ -862,7 +862,7 @@ class ingreso_descargosM
 				}
 				
 				//incrementamos el secuencial
-				if($_SESSION['INGRESO']['Num_CD']==1)
+				if($_SESSION['INGRESO']['Num_Meses_CD']==1)
 				{
 					//para variable en html
 					$num1=$num_com[1];

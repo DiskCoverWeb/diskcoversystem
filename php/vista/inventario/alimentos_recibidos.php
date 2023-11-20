@@ -2,14 +2,15 @@
 <script type="text/javascript">
   $(document).ready(function () {
   	 window.addEventListener("message", function(event) {
-            if (event.data === "closeModal") {
-                autocoplet_ingreso();
-            }
-        });    
+          if (event.data === "closeModal") {
+              autocoplet_ingreso();
+          }
+      });    
   	autocoplet_alimento();
   	autocoplet_ingreso();
   	autocoplet_ingreso_donante();
   	cargar_datos();
+
   })
 
   function guardar()
@@ -176,7 +177,7 @@ function autocoplet_ingreso_donante(){
 }
 
   function nuevo_proveedor()
-  {
+  {  	   
   	 $('#myModal_provedor').modal('show');
   	 $('#FProveedor').contents().find('body').css('background-color', 'antiquewhite');
 
@@ -311,6 +312,8 @@ function autocoplet_ingreso_donante(){
   }
   function show_cantidad()
   {
+  	
+  	$("#txt_cantidad2").focus();
   	$('#modal_cantidad').modal('show');
   }
   function show_temperatura()
@@ -458,7 +461,7 @@ function autocoplet_ingreso_donante(){
 											</span>
 											<b>PROVEEDOR / DONANTE</b>	
 											<div class="form-group">
-												<div class="col-sm-9">	
+												<div class="col-sm-12">	
 												<div class="input-group" style="display:flex;">
 				                	<select class=" form-control input-xs form-select" id="txt_donante" name="txt_donante" onchange="option_select2()">
 								           		<option value="">Seleccione</option>
@@ -466,15 +469,10 @@ function autocoplet_ingreso_donante(){
 													<span class="input-group-btn">
 														<button type="button" class="btn btn-default btn-xs btn-flat" onclick="limpiar_donante()"><i class="fa fa-close"></i></button>
 													</span>
-											 </div>
-
-																	
-
-													<!-- <input type="" class="form-control input-xs" id="txt_donante" name="txt_donante" readonly> -->
-												</div>
-												<div class="col-sm-3">
+											 </div>											 
 													<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
 												</div>
+												
 											</div>
 
 									</div>
@@ -515,7 +513,7 @@ function autocoplet_ingreso_donante(){
 								<div class="col-sm-4">									
 									<div class="input-group">
 											<span class="input-group-btn" style="padding-right: 10px;">
-													<button type="button" class="btn btn-default btn-sm" onclick="show_cantidad()"><img src="../../img/png/kilo2.png"></button>
+													<button type="button" class="btn btn-default btn-sm" id="btn_cantidad" onclick="show_cantidad()"><img src="../../img/png/kilo2.png"></button>
 											</span>
 												<b>CANTIDAD:</b>
 												<input type="" class="form-control input-xs" id="txt_cant" name="txt_cant">	
@@ -523,37 +521,41 @@ function autocoplet_ingreso_donante(){
 								</div>								
 							</div>						
 					</div>
-					<div class="col-sm-12 col-md-4">
+					<div class="col-sm-12 col-md-4" style="padding:0px">
 						<div class="col-sm-6 col-md-12">
 							<div class="form-group">
-									<label for="inputEmail3" class="col-sm-6 control-label">Fecha de Ingreso</label>
-									<div class="col-sm-6">
+									<label class="col-sm-6 control-label">Fecha de Ingreso</label>
+									<div class="col-sm-6" style="padding: 0px;">
 										<input type="date" class="form-control input-xs" id="txt_fecha" name="txt_fecha" value="<?php echo date('Y-m-d'); ?>" readonly>		
 									</div>
 							</div>		
 						</div>
 						<div class="col-sm-6 col-md-12">
 								<div class="form-group">
-								<label for="inputEmail4" class="col-sm-6 control-label">Codigo de Ingreso</label>
-									<div class="col-sm-6">									
+								<label  class="col-sm-6 control-label">Codigo de Ingreso</label>
+									<div class="col-sm-6" style="padding: 0px;">									
 	                 	<input type="" class="form-control input-xs" id="txt_codigo" name="txt_codigo" readonly>
 									</div>
 								</div>
 						</div>
 						<div class="col-sm-6 col-md-12">							
 							<div class="form-group">
-									<label for="inputEmail3" class="col-sm-6 control-label">RUC / CI</label>
-									<div class="col-sm-6">									
+									<label class="col-sm-6 control-label">RUC / CI</label>
+									<div class="col-sm-6" style="padding: 0px;">									
 	                		<input type="" class="form-control input-xs" id="txt_ci" name="txt_ci" readonly>
 									</div>
 							</div>
 						</div>						
 						<div class="col-sm-6 col-md-12">							
 								<div class="form-group">
-										<label for="inputEmail3" class="col-sm-6 control-label">ESTADO DE TRANSPORTE</label>
+										<label  class="col-sm-6 control-label">ESTADO DE TRANSPORTE</label>
 										<div class="col-sm-6 text-center">									
-		                		 <label style="padding-right: 10px;"><img src="../../img/png/bueno2.png" onclick="ocultar_comentario()"><input type="radio" name="cbx_estado_tran" onclick="ocultar_comentario()" checked value="1"></label>		
-		                		 <label style="padding-left: 10px;"><img src="../../img/png/close.png" onclick="ocultar_comentario()"><input type="radio" name="cbx_estado_tran" onclick="ocultar_comentario()" value="0"></label>					
+		                		 <label style="padding-right: 10px;">
+		                		 		<img src="../../img/png/bueno2.png" onclick="ocultar_comentario()">
+		                		 		<input type="radio" name="cbx_estado_tran" onclick="ocultar_comentario()" checked value="1"></label>		
+		                		 <label style="padding-left: 10px;">
+		                		 		<img src="../../img/png/close.png" onclick="ocultar_comentario()">
+		                		 		<input type="radio" name="cbx_estado_tran" onclick="ocultar_comentario()" value="0"></label>					
 										</div>
 								</div>	
 						</div>

@@ -25,13 +25,22 @@
       $('#txt_producto').prop('disabled',true);
       $('#modal_producto').modal('hide');
 
+      primera_vez = $('#txt_primera_vez').val();
+
       if(data[0].TDP=='R')
       {
 	      setTimeout(() => {  
 	      		$('#txt_titulo_mod').text(data[0].Producto);
-			      $('#modal_producto_2').modal('show');
+	      		if(primera_vez!=1)
+	      		{
+			      	$('#modal_calendar').modal('show');
+			      }else{
+			      	$('#modal_producto_2').modal('show');
+			      }
 	    	}, 1000);     	
 	      
+      }else{
+      	$('#txt_TipoSubMod').val('.')
       }
       costeo(data[0].Codigo_Inv);
     });
@@ -49,11 +58,18 @@
       $('#txt_producto').prop('disabled',true);
       $('#modal_producto').modal('hide');
 
+      primera_vez = $('#txt_primera_vez').val();
+
       if(data[0].TDP=='R')
       {
 	      setTimeout(() => {  
 	      		$('#txt_titulo_mod').text(data[0].Producto);
-			      $('#modal_producto_2').modal('show');
+			      if(primera_vez!=1)
+	      		{
+			      	$('#modal_calendar').modal('show');
+			      }else{
+			      	$('#modal_producto_2').modal('show');
+			      }
 	    	}, 1000);     	
 	      
       }
@@ -79,18 +95,18 @@
 
       $('#txt_codigo_p').val(data.CodigoP)      
       $('#txt_TipoSubMod').val(data.Giro_No)
-      if(data.Giro_No!='R')
-      {
-      	$('#btn_cantidad').prop('disabled',false);
-      	$('#txt_producto').prop('disabled',false);
-      }else
-      {
-      	$('#btn_cantidad').prop('disabled',true);
-      	$('#txt_producto').prop('disabled',true);
-      	$('#modal_producto_2').modal('show');
-      }
+      // if(data.Giro_No!='R')
+      // {
+      // 	$('#btn_cantidad').prop('disabled',false);
+      // 	$('#txt_producto').prop('disabled',false);
+      // }else
+      // {
+      // 	$('#btn_cantidad').prop('disabled',true);
+      // 	$('#txt_producto').prop('disabled',true);
+      // 	$('#modal_producto_2').modal('show');
+      // }
 
-      if(data.Cod_R=='0')
+      if(data.Cod_R=='0' || data.Cod_R=='.')
       {
       	$('#img_estado').attr('src','../../img/png/bloqueo.png');
       }else
@@ -100,15 +116,17 @@
       }
       $('#txt_temperatura').val(data.Porc_C); // save selected id to input
       $('#ddl_alimento').append($('<option>',{value: data.Cod_C, text:data.Proceso,selected: true }));
-      
+      	cargar_sucursales();      
       	cargar_pedido();
    
       	 // $('#pnl_normal').css('display','none');
       	 cargar_pedido2();
-     
+
+         setInterval(function() {
+            cargar_pedido();
+          }, 5000); 
       // console.log(data);
     });
-
 
   })
 
@@ -158,13 +176,22 @@
 
   function guardar()
   {
-  		var ingresados = $('#txt_cant_total').val();
+  		var ingresados_kardex = $('#txt_cant_total').val();
+  		var ingresados_pedido = $('#txt_cant_total_pedido').val();
+
   		var total = $('#txt_cant').val();
-  		if(parseFloat(ingresados)< parseFloat(total))
+      var faltantes = $('#txt_faltante').val();
+  		
+  		if((parseFloat(ingresados_kardex)+parseFloat(ingresados_pedido))< parseFloat(total))
   		{
   			 Swal.fire('No se ha completa todo el pedido ','Asegurese de que el pedido este completo','info');
   			 return false;
   		}
+      if(parseFloat(faltantes)<0)
+      {
+         Swal.fire('No se pudo guardar ','El ingreso realizado necesita de revision y correccion en sus valores la diferencia debe ser 0','error');
+         return false;
+      }
   	 var parametros = $('#form_correos').serialize();
   	  $.ajax({
 	      type: "POST",
@@ -186,17 +213,37 @@
 
   function guardar_pedido()
   {
-  		var cant_total = $('#txt_cant_total_pedido').val();  		
+  		var total_ingresado_pedido = $('#txt_cant_total_pedido').val();
+  		var total_ingresado_kardex = $('#txt_cant_total').val(); 
+  		var total_recibir = $('#txt_cant').val();
+
+
   		var cant = $('#txt_cantidad_pedido').val();
-  		var cant_suge = $('#txt_cant').val();
+
+
+  		var produc = $('#ddl_producto2').val();
+
 
   		if(cant==0 || cant=='')
   		{
   			Swal.fire('Ingrese una cantidad valida','','info')
   			return false;
   		}  	
-  	 if((parseFloat(cant)+parseFloat(cant_total))>parseFloat(cant_suge))
+  		if(produc==null || produc=='')
+  		{
+  			Swal.fire('Seleccione un producto','','info')
+  			return false;
+  		}  	
+
+  		total_final = parseFloat(cant)+parseFloat(total_ingresado_kardex)+parseFloat(total_ingresado_pedido);
+  		cant_suge = parseFloat(total_recibir);
+  		
+
+
+  	 if(total_final>cant_suge)
   	 {
+  	 	console.log(total_final);
+  	 	console.log(cant_suge);
   	 		Swal.fire('La cantidad Ingresada supera a la cantidad registrada','','info');
   	 		return false
   	 }
@@ -207,13 +254,8 @@
 	      data:parametros+'&producto_pedido='+$('#ddl_producto2').val()+'&cantidad_pedido='+$('#txt_cantidad_pedido').val()+'&total_pedido='+$('#txt_cant_total_pedido').val(),
           dataType:'json',
 	      success: function(data)
-	      {
-	      	if(data==1)
-	      	{
+	      {	      	
 	      		cargar_pedido2();	
-	      		cargar_pedido();	      	
-	      	}
-	      
 	      }
 	  });
   }
@@ -349,7 +391,10 @@ function autocoplet_ingreso()
   	 var cant_ing = $('#txt_cantidad').val();
   	 var cant_total = $('#txt_cant_total').val();
   	 var fe_exp = $('#txt_fecha_exp').val();
-  	
+
+
+  	 	var cant_total = $('#txt_cant_total_pedido').val();
+  		var cant_total_kardex = $('#txt_cant_total').val();  		
 
 	  	 var producto = $('#txt_producto').val();
 	  	 // console.log(producto);
@@ -358,12 +403,26 @@ function autocoplet_ingreso()
 		  	 	Swal.fire('Ingrese todo los datos','','info');
 		  	 		return false
 		  	 }
-	   
-  	 if((parseFloat(cant_ing)+parseFloat(cant_total))>parseFloat(cant_suge))
-  	 {
-  	 		Swal.fire('La cantidad Ingresada supera a la cantidad registrada','','info');
-  	 		return false
+
+
+  		total_final = (parseFloat(cant_ing)+parseFloat(cant_total_kardex)+parseFloat(cant_total));
+  		cant_suge = parseFloat(cant_suge);
+	   if($('#txt_TipoSubMod').val()!='R')
+	   {
+  	 	if(total_final >cant_suge)
+  	 	{
+        console.log(total_final+'-'+cant_suge);
+  	 			Swal.fire('La cantidad Ingresada supera a la cantidad registrada','','info');
+  	 			return false
+  	 	}
   	 }
+
+      var sucur = $('#ddl_sucursales').val();
+     if($("#pnl_sucursal").is(":visible")==true && sucur=='')
+      {
+         Swal.fire('Seleccione una sucursal ','','info');
+         return false;
+      }
   	 if(id=='')
   	 {
   	 		Swal.fire('Seleccione un registro','','info');
@@ -379,17 +438,19 @@ function autocoplet_ingreso()
   	$('#modal_calendar').modal('show');
   }
   function show_producto()
-  {
-  	if($('#txt_TipoSubMod').val()=='R')
-  	{
-  		$('#modal_producto_2').modal('show');
-  	}else{
+  {  	
   		$('#modal_producto').modal('show');
-  	}
   }
-    function show_cantidad()
+  function show_producto2(id)
+  {
+  	$('#txt_id_linea_pedido').val(id);
+  	$('#modal_producto_2').modal('show');
+  }
+  function show_cantidad()
   {
   	$('#modal_cantidad').modal('show');
+    $("#modal_cantidad #txt_cantidad2").focus();
+    // $('#txt_cantidad2').trigger( "focus");
   }
 
   function cambiar_cantidad()
@@ -397,6 +458,12 @@ function autocoplet_ingreso()
   	var can = $('#txt_cantidad2').val();
   	$('#txt_cantidad').val(can);
   	$('#modal_cantidad').modal('hide');
+  }
+   function cambiar_sucursal()
+  {
+  	var can = $('#ddl_sucursales2').val();
+  	$('#ddl_sucursales').val(can);
+  	$('#modal_sucursal').modal('hide');
   }
 
   function ocultar_comentario()
@@ -415,15 +482,17 @@ function autocoplet_ingreso()
 
   function limpiar_reciclaje()
   {  	
+
   	$('#txt_producto').val(null).trigger('change');
   	$('#ddl_producto').val(null).trigger('change');
   	$('#txt_producto').attr('readonly',false);
   	$('#txt_referencia').val('');
 
-  	$('#btn_cantidad').prop('disabled',false)
+  	$('#btn_cantidad').prop('disabled',false)  	
+  	$('#txt_producto').prop('disabled',false)
 
 
-  	$('#txt_TipoSubMod').val('');
+  	$('#txt_TipoSubMod').val('.');
   	$('#txt_grupo').val('');
   	$('#txt_unidad').val('');
 
@@ -439,9 +508,83 @@ function autocoplet_ingreso()
   	$('#txt_producto2').attr('readonly',false);
   	$('#txt_referencia2').val('');
   }
+  function cargar_sucursales()
+ 	{    
+    var parametros = {
+        'ruc':$('#txt_ci').val(),
+    }
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/modalesC.php?sucursales=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        op = '<option value="">Seleccione sucursal</option>';
+        var sucursal = 0;
+        response.forEach(function(item,i){
+            sucursal = 1;
+            op+="<option value=\""+item.ID+"\">"+item.Direccion+"</option>";
+        })
 
+        if(sucursal==1)
+        {
+            $('#pnl_sucursal').css('display','block');
+        }else{            
+            $('#pnl_sucursal').css('display','none');
+        }
 
+        $('#ddl_sucursales').html(op);
+        console.log(response);
+        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
 
+ }
+
+  function cargar_sucursales2()
+ 	{    
+    var parametros = {
+        'ruc':$('#txt_ci').val(),
+    }
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/modalesC.php?sucursales=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        op = '<option value="">Seleccione sucursal</option>';
+        var sucursal = 0;
+        response.forEach(function(item,i){
+            sucursal = 1;
+            op+="<option value=\""+item.Codigo+"\">"+item.Direccion+"</option>";
+        })
+
+        if(sucursal==1)
+        {
+            $('#pnl_sucursal').css('display','block');
+        }else{            
+            $('#pnl_sucursal').css('display','none');
+        }
+
+        $('#ddl_sucursales2').html(op);
+        console.log(response);
+        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
+
+ }
+
+ function show_sucursal()
+ {
+ 		cargar_sucursales2();
+ 	 $('#modal_sucursal').modal('show');
+ }
 </script>
 
  <div class="row">
@@ -513,8 +656,16 @@ function autocoplet_ingreso()
 							</div>
 							<div class="col-sm-6">
 								<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
-							</div>
+							</div>              
 						</div>
+            <div class="row">
+              <div class="col-sm-6" style="padding-top:5px">
+                <b>Fecha de Clasificacion</b>                
+              </div>
+              <div class="col-sm-6">
+                <input type="date" name="txt_fecha_cla" id="txt_fecha_cla" value="<?php echo date('Y-m-d'); ?>" class="form-control input-xs" readonly>
+              </div>
+            </div>						
 					</div>
 					<div class="col-sm-5">
 						<div class="row"  style="padding-top: 5px;">
@@ -533,13 +684,13 @@ function autocoplet_ingreso()
 							</div>
 							<div class="col-sm-6">
 								<div class="row">
-									<div class="col-sm-6" style="padding-right:1px">
-										  <input type="" class="form-control input-xs" id="txt_cant" name="txt_cant" readonly value="0">	
+									<div class="col-sm-5" style="padding-right:1px">
+										  <input type="" class="form-control" id="txt_cant" style="font-size:20px; padding: 3px;" name="txt_cant" readonly value="0">	
 									</div>
-									<div class="col-sm-6" style="padding-left: 1px;">
+									<div class="col-sm-7" style="padding-left: 1px;">
 										<div class="input-group">
-										  <input type="" class="form-control input-xs" id="txt_faltante" name="txt_faltante" readonly>
-										  <span class="input-group-addon input-xs">Dif</span>											
+										  <span class="input-group-addon input-xs"><b style="font-size: 18px;">Dif</b></span>											
+										  <b><input type="" class="form-control" id="txt_faltante" style="font-size:20px; padding: 3px;" name="txt_faltante" readonly></b>
 										</div>
 									</div>
 								</div>
@@ -550,12 +701,12 @@ function autocoplet_ingreso()
 								<b>COMENTARIO:</b>
 							</div>
 							<div class="col-sm-6">
-	                <input type="" class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly>
+                 <textarea id="txt_comentario" name="txt_comentario"disabled class="form-control input-sm"></textarea>
 							</div>
 						</div>
 						<div class="row" id="panel_serie"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
-								<b>TEMPERATURA DE RECEPCION °C</b>
+								<b>TEMPERATURA RECEPCION °C</b>
 							</div>
 							<div class="col-sm-6">
 	                <input type="text" name="txt_temperatura" id="txt_temperatura" class="form-control input-xs"  readonly>
@@ -600,7 +751,7 @@ function autocoplet_ingreso()
 				<hr>
 
 				<div class="row">
-					<div class="col-sm-8">
+					<div class="col-sm-7">
 						<div class="row">
 							<div class="col-sm-4 col-md-3">
 									<button type="button" class="btn btn-default" onclick="show_producto()"><img src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo de producto</b></button>							
@@ -618,40 +769,40 @@ function autocoplet_ingreso()
 							</div>
 							<div class="col-sm-2 col-md-2">
 								<b>Grupo</b>
-								<input type="text" name="txt_grupo" id="txt_grupo" class="form-control" readonly>
+								<input type="text" name="txt_grupo" id="txt_grupo" class="form-control input-xs" readonly>
 								<input type="hidden" name="txt_TipoSubMod" id="txt_TipoSubMod" class="form-control" readonly>
+								<input type="hidden" name="txt_primera_vez" id="txt_primera_vez" class="form-control" readonly value="0">
 							</div>
 						</div>
 					</div>
-					<div class="col-sm-4">
-						<div class="rows">
-							<div class="col-sm-6 col-md-6">
-								<br>
-								<b>Fecha de Clasificacion</b>
-							</div>
-							<div class="col-sm-6 col-md-6">
-								<br>
-								<input type="date" name="txt_fecha_cla" id="txt_fecha_cla" value="<?php echo date('Y-m-d'); ?>" class="form-control" readonly>
-							</div>
-						</div>						
-					</div>
+          <div class="col-sm-4">
+            <div class="row">
+              <div class="col-sm-6 col-md-6">
+                  <button type="button" style="width: initial;" class="btn btn-default" onclick="show_calendar()"><img src="../../img/png/expiracion.png" /> <br> <b>Fecha de Expiracion</b></button> 
+              </div>
+              <div class="col-sm-6 col-md-6">
+                <br>
+                <input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input">
+              </div>              
+            </div>
+          </div>					
 				</div>
 				<div class="row">
-					<div class="col-sm-6 col-md-4">
+					<!-- <div class="col-sm-6 col-md-4">
 						<div class="row">
 							<div class="col-sm-6 col-md-6">
-									<button type="button" class="btn btn-default" onclick="show_calendar()"><img src="../../img/png/expiracion.png" /> <br> <b>Fecha de Expiracion</b></button>	
+									<button type="button" style="width: -webkit-fill-available;" class="btn btn-default" onclick="show_calendar()"><img src="../../img/png/expiracion.png" /> <br> <b>Fecha Expiracion</b></button>	
 							</div>
 							<div class="col-sm-6 col-md-6">
 								<br>
 								<input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input">
 							</div>							
 						</div>
-					</div>
+					</div> -->
 					<div class="col-sm-6 col-md-5">
 						<div class="rows">
 							<div class="col-sm-4 col-md-3">
-								<button type="button" class="btn btn-default" onclick="show_cantidad()" id="btn_cantidad">
+								<button type="button" style="width: initial;" class="btn btn-default" onclick="show_cantidad()" id="btn_cantidad">
 										<img src="../../img/png/kilo.png" />		
 										<br>
 										<b>Cantidad</b>					
@@ -675,13 +826,27 @@ function autocoplet_ingreso()
 							</div>
 						</div>						
 					</div>
+          <div class="col-md-4">
+            <div class="row"  style="display: none;" id="pnl_sucursal">
+              <div class="col-sm-3">
+                <button type="button" class="btn btn-default" onclick="show_sucursal()"><img src="../../img/png/sucursal.png" />
+                </button>
+              </div>
+              <div class="col-sm-9">
+                <b>SUCURSAL</b>
+                <select class="form-control input-xs" id="ddl_sucursales" name="ddl_sucursales">
+                  <option value="">Seleccione sucursal</option>
+                </select>
+              </div>
+            </div>
+          </div>
 					<div class="col-sm-12 col-md-3 text-right">
 						<br>
 						<button type="button" class="btn btn-primary" onclick="show_panel()" >AGREGAR A INGRESO</button>
 						<button type="button" class="btn btn-primary">Limpiar</button>
 						<input type="hidden" id="A_No" name ="A_No" value="0">
 					</div>
-				</div>
+				</div>        
 			</div>
 			</form>
 		</div>	
@@ -710,13 +875,21 @@ function autocoplet_ingreso()
       type:  'post',
       dataType: 'json',
       success:  function (response) {
-        console.log(response);
         $('#tbl_body').html(response.tabla);
-        $('#txt_cant_total').val(response.cant_total);
-        var total = $('#txt_cant').val();
-        var fal = parseFloat(total)- parseFloat(response.cant_total);
+        var diff = parseFloat(response.cant_total)-parseFloat(response.reciclaje);
+        if(diff < 0)
+        {
+        	diff = diff*(-1);
+        }
+        $('#txt_primera_vez').val(response.primera_vez);
 
-        $('#txt_faltante').val(fal.toFixed(2));
+        var ingresados_en_pedidos =  $('#txt_cant_total_pedido').val(response.reciclaje);
+        var ingresados_en_kardex =  $('#txt_cant_total').val(diff);
+        var total_pedido = $('#txt_cant').val();
+        var faltantes = parseFloat(total_pedido)-parseFloat(response.cant_total);
+
+
+        $('#txt_faltante').val(faltantes.toFixed(2));
       }
     });
   }
@@ -735,8 +908,7 @@ function autocoplet_ingreso()
       success:  function (response) {
         console.log(response);
         $('#tbl_body_pedido').html(response.tabla);
-        $('#txt_cant_total_pedido').val(response.cant_total);
-       
+        $('#txt_cant_total_pedido').val(response.cant_total);       
       }
     });
   }
@@ -789,25 +961,7 @@ function autocoplet_ingreso()
   function agregar()
   {
   	var reci = $('#txt_TipoSubMod').val();
-  	if(reci=='R')
-  	{
-  		  // Swal.fire({
-        //    title: 'Esta seguro?',
-        //    text: "Esta usted seguro de que quiere Cambiar a !",
-        //    type: 'warning',
-        //    showCancelButton: true,
-        //    confirmButtonColor: '#3085d6',
-        //    cancelButtonColor: '#d33',
-        //    confirmButtonText: 'Si!'
-        //  }).then((result) => {
-        //    if (result.value!=true) {
-           	
-        //    	return false; 
-        //    }
-        //  })
-  	}
-
-
+  	
   	var parametros = $("#form_add_producto").serialize();    
     var parametros2 = $("#form_correos").serialize();
        $.ajax({
@@ -860,13 +1014,18 @@ function autocoplet_ingreso()
       $("#ddl_producto2").val(null).trigger('change');
       $("#txt_producto2").prop('disabled',false);
 
+      $("#txt_producto").prop('disabled',false);      
+      $("#txt_producto").val(null).trigger('change');
+
   	 }else{
       $("#txt_producto").val('');
     
       $("#txt_cantidad2").val('');
       $("#txt_referencia").val('');
       $("#ddl_producto").val(null).trigger('change');
-      $("#txt_producto").prop('disabled',false);
+      $("#txt_producto").prop('disabled',false);      
+      $("#txt_producto").val(null).trigger('change');
+      
     }
   }
 
@@ -943,8 +1102,8 @@ function eliminar_lin(num,tipo)
 		  }).then((result) => {
 		      if (result.value) {
 		      	eliminar_all_pedido(pedido);
-		      	eliminar_linea_trans(num);
-		      	$('#txt_TipoSubMod').val('');		
+		      	eliminar_linea_trans(num,'1');
+		      	$('#txt_TipoSubMod').val('.');		
 		      	$('#btn_cantidad').prop('disabled',false);		
 		      	limpiar();
 		      	limpiar_reciclaje();         
@@ -955,11 +1114,12 @@ function eliminar_lin(num,tipo)
 	}
 }
 
-function eliminar_linea_trans(num)
+function eliminar_linea_trans(num,tpd=0)
 {
 	 var parametros=
     {
       'lin':num,
+      'TPD':tpd,
     }
      $.ajax({
       data:  {parametros:parametros},
@@ -970,6 +1130,7 @@ function eliminar_linea_trans(num)
         if(response==1)
         {
           cargar_pedido();
+          cargar_pedido2();
         }
       }
     });
@@ -1035,21 +1196,41 @@ function eliminar_all_pedido(pedido)
   function terminar_pedido()
   {
   	pro = $('#txt_producto option:selected').text();
-  	if($('#txt_cant_total').val()==0)
+  	var id = $('#txt_id_linea_pedido').val(); 
+  	
+  	if($('#txt_cant_total_pedido').val()==0 || $('#txt_cant_total_pedido').val()=='')
   	{
-  		Swal.fire('No se olvide de agregar: '+pro,'','info')
+  		Swal.fire('Agrege productos para terminar','','info')
+  		return false;
   	}
-  	 total = $('#txt_cant_total_pedido').val();
-  	 cargar_pedido();	
-  	 $('#txt_cantidad').val(total);
-  	 $('#btn_cantidad').prop('disabled',true);
-  	 $('#txt_cantidad').prop('disabled',true);
-  	 $('#modal_producto_2').modal('hide');
 
+  	primera_vez = $('#txt_primera_vez').val();
+
+  	if(primera_vez==0 || primera_vez==''){
+  		$('#txt_cantidad').val($('#txt_cant_total_pedido').val());
+  		// $('#btn_cantidad').prop('disabled',true);
+  		if($('#txt_cantidad').val()==0 || $('#txt_cantidad').val()=='')
+	  	{
+	  		Swal.fire('No se olvide de agregar: '+pro,'','info')
+	  		return false;
+	  	}
+	  	show_panel();
+	  	limpiar();
+
+  			 $('#modal_producto_2').modal('hide');
+  	}else{
+
+  			 $('#modal_producto_2').modal('hide');
+  			  Swal.fire('Cantidad Modificada automaticamente','','success');
+
+  	 total = $('#txt_cant_total_pedido').val();
+  	
   	  var parametros=
         {
         	'txt_codigo':$('#txt_codigo').val(),
           'total_cantidad':$('#txt_cant_total_pedido').val(),
+          'id':id,
+          'producto': $('#txt_producto option:selected').text(),
         }
          $.ajax({
           data:  {parametros:parametros},
@@ -1059,11 +1240,19 @@ function eliminar_all_pedido(pedido)
           success:  function (response) { 
             if(response==1)
             {
-              cargar_pedido2();
               cargar_pedido();
+              cargar_pedido2();
             }
           }
         });
+
+  	 	    limpiar();
+  	}
+
+
+
+
+
 
   }
 
@@ -1077,15 +1266,17 @@ function eliminar_all_pedido(pedido)
 			<div class="card_body" style="background:antiquewhite;">
 					<div class="row"> 
 						  <div  class="col-sm-12">
-						  	<table class="table-sm table-hover" style="width:100%">
+						  	<table class="table table-hover" style="width:100%">
 				        <thead>
 				          <th>ITEM</th>
 				          <th>FECHA DE CLASIFICACION</th>
 				          <th>FECHA DE EXPIRACION</th>
 				          <th>DESCRIPCION</th>
 				          <th>CANTIDAD</th>
-				          <!-- <th>UNIDAD</th> -->
-				          <th></th>
+				          <th>CODIGO USUARIO</th>
+                  <th>CODIGO DE BARRAS</th>
+                  <th>SUCURSAL</th>
+				          <th width="8%"></th>
 				        </thead>
 				        <tbody id="tbl_body"></tbody>
 				      </table>
@@ -1151,13 +1342,14 @@ function eliminar_all_pedido(pedido)
 		           <div class="col-sm-3">
 			           	<b>Cantidad</b>
 			           	<input type="text" name="txt_cantidad_pedido" id="txt_cantidad_pedido" class="form-control input-sm" />
+			           	<input type="hidden" name="txt_id_linea_pedido" id="txt_id_linea_pedido">
 		           </div> 
 		         </div>
 		         <div class="row">
 		           
 		           <div class="col-sm-12 text-right">
 		           	<br>
-		           		<button type="button" class="btn btn-primary btn-sm" onclick="guardar_pedido()"><i class="fa fa-plus"></i>Agregar</button>
+		           		<button type="button" class="btn btn-primary btn-sm" onclick="guardar_pedido()"><i class="bx bx-plus"></i>Agregar</button>
 		           </div>
 		         </div>
 		         <div class="row">
@@ -1208,13 +1400,34 @@ function eliminar_all_pedido(pedido)
   </div>
 </div>
 
+<div id="modal_sucursal" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Sucursal</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          <b>Sucursal</b>
+	         <select class="form-control input-sm" id="ddl_sucursales2" name="ddl_sucursales2" onchange="cambiar_sucursal()">
+	         		<option value="">Seleccione Sucursal</option>
+	         </select>        					
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-primary" onclick="cambiar_sucursal()">OK</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+
 
 <div id="modal_calendar" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Proveedor Nuevo</h4>
+                <h4 class="modal-title">Fecha de vencimiento</h4>
             </div>
             <div class="modal-body" style="background: antiquewhite;">
 

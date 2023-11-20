@@ -412,6 +412,9 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         $_SESSION['INGRESO']['Razon_Social'] = $empresa[0]['Razon_Social'];
         $_SESSION['INGRESO']['Fecha_ce'] = $empresa[0]['Fecha_CE'];
         $_SESSION['INGRESO']['Porc_Serv'] = round($empresa[0]['Servicio'] / 100, 2);
+        $datos = getInfoIPS();
+        $_SESSION['INGRESO']['IP_Local'] = $datos['local_net_address'];
+        $_SESSION['INGRESO']['HOST_NAME'] = $datos['host_name'];
 
         //datos de empresa seleccionada
         $empresa = getEmpresasDE($_SESSION['INGRESO']['item'], $_SESSION['INGRESO']['noempr']);
@@ -433,11 +436,11 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         $_SESSION['INGRESO']['Opc'] = $empresa[0]['Opc'];
         $_SESSION['INGRESO']['noempr'] = $empresa[0]['Empresa'];
         $_SESSION['INGRESO']['S_M'] = $empresa[0]['S_M'];
-        $_SESSION['INGRESO']['Num_CD'] = $empresa[0]['Num_CD'];
-        $_SESSION['INGRESO']['Num_CE'] = $empresa[0]['Num_CE'];
-        $_SESSION['INGRESO']['Num_CI'] = $empresa[0]['Num_CI'];
-        $_SESSION['INGRESO']['Num_ND'] = $empresa[0]['Num_ND'];
-        $_SESSION['INGRESO']['Num_NC'] = $empresa[0]['Num_NC'];
+        $_SESSION['INGRESO']['Num_Meses_CD'] = $empresa[0]['Num_CD'];
+        $_SESSION['INGRESO']['Num_Meses_CE'] = $empresa[0]['Num_CE'];
+        $_SESSION['INGRESO']['Num_Meses_CI'] = $empresa[0]['Num_CI'];
+        $_SESSION['INGRESO']['Num_Meses_ND'] = $empresa[0]['Num_ND'];
+        $_SESSION['INGRESO']['Num_Meses_NC'] = $empresa[0]['Num_NC'];
         $_SESSION['INGRESO']['Email_Conexion_CE'] = $empresa[0]['Email_Conexion_CE'];
         $_SESSION['INGRESO']['Formato_Cuentas'] = $empresa[0]['Formato_Cuentas'];
         $_SESSION['INGRESO']['Formato_Inventario'] = $empresa[0]['Formato_Inventario'];
@@ -448,7 +451,7 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         $_SESSION['INGRESO']['Email'] = $empresa[0]['Email'];
         $_SESSION['INGRESO']['RUC'] = $empresa[0]['RUC'];
         $_SESSION['INGRESO']['Gerente'] = $empresa[0]['Gerente'];
-        ;
+        
         $_SESSION['INGRESO']['Det_Comp'] = $empresa[0]['Det_Comp'];
         $_SESSION['INGRESO']['Signo_Dec'] = $empresa[0]['Signo_Dec'];
         $_SESSION['INGRESO']['Signo_Mil'] = $empresa[0]['Signo_Mil'];
@@ -468,7 +471,7 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         }
         // print_r($empresa_d);die();
         $_SESSION['INGRESO']['Ciudad'] = $empresa[0]['Ciudad'];
-        ;
+        
         $_SESSION['INGRESO']['accesoe'] = '0';
         $_SESSION['INGRESO']['Email_Conexion'] = $empresa[0]['Email_Conexion'];
         $_SESSION['INGRESO']['Email_Procesos'] = $empresa[0]['Email_Procesos'];
@@ -1124,26 +1127,12 @@ function validar_estado_all()
         }
     }
 
-    echo '<script>';
-    echo 'console.log("DEBUG Estado Activo: ' . $PCActivo . '");';
-    echo '</script>';
-    echo '<script>';
-    echo 'console.log("DEBUG SP1Estado Empresa: ' . $EstadoEmpresa . '");';
-    echo '</script>';
-    echo '<script>';
-    echo 'console.log("DEBUG SP1TotCart  ' . $Cartera . '");';
-    echo '</script>';
-    echo '<script>';
-    echo 'console.log("DEBUG SP1CantFA  ' . $Cant_FA . '");';
-    echo '</script>';
 
     if ($PCActivo == false) {
         $Cadena = $_SESSION['INGRESO']['Nombre_Completo'] . " su equipo se encuentra en LISTA NEGRA, ingreso no autorizado, comuniquese con el Administrador del Sistema";
         return json_encode(array('rps' => 'noActivo', "mensaje" => $Cadena, "titulo" => 'ACCESO DEL PC DENEGADO'));
     }
-    echo '<script>';
-    echo 'console.log("DEBUG Estado Usuario: ' . $EstadoUsuario . '");';
-    echo '</script>';
+    
     if ($EstadoUsuario == false) {
         $Cadena = $_SESSION['INGRESO']['Nombre_Completo'] . " su ingreso no esta autorizado, comuniquese con el Administrador del Sistema";
         return json_encode(array('rps' => 'noAuto', "mensaje" => $Cadena, "titulo" => 'ACCESO AL SISTEMA DENEGADO'));

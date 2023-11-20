@@ -139,7 +139,7 @@ class divisasM
   public function getClientes($query){
     $sql="SELECT C.Email,C.T,C.Codigo,C.Cliente,C.Direccion,C.Grupo,C.Telefono,C.CI_RUC,C.TD 
           FROM Clientes As C
-          WHERE 1=1 ";
+          WHERE T='N' ";
           if(!is_numeric($query))
           {
             $sql.=" AND Cliente LIKE '%".$query."%' ";

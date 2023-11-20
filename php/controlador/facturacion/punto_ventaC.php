@@ -506,10 +506,10 @@ class punto_ventaC
 		if(isset($parametros['electronico'])){$electronico = $parametros['electronico'];}
 		
 	  // FechaValida MBFecha
-	  $FechaTexto = $parametros['MBFecha'];
-	  $FA = Calculos_Totales_Factura();
-	  	    $datos = $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie'],$FechaTexto,$FechaTexto,$electronico);
-	  	    if(count($datos)>0)
+	  	$FechaTexto = $parametros['MBFecha'];
+	  	$FA = Calculos_Totales_Factura();
+	  	$datos = $this->modelo->catalogo_lineas($parametros['TC'],$parametros['Serie'],$FechaTexto,$FechaTexto,$electronico);
+	  	if(count($datos)>0)
 	  	    {
 	  	    // print_r($datos);die();
 	        $FA['Nota'] = $parametros['TxtNota'];

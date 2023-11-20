@@ -17,6 +17,7 @@ $(document).ready(function() {
     if(servicio!=0)
     {
         $('#campo_servicio').css('display','block');
+        $('#textoServicio').text("Total Servici " + servicio + "%");
         $('#campo_totalServicio').css('display','block');
     }
 
@@ -364,15 +365,24 @@ function calcular() {
             $('#TextVUnit').select()
         })
     }
+    var serv = '<?php echo $servicio; ?>';
+    if(serv!=0)
+    {
+        var cant = $('#TextCant').val();
+        var pvp = $('#TextVUnit').val();
+        $('#TextServicios').val(cant * pvp * (serv/100));
+    }
+
     var Cant = $('#TextCant').val();
     var OpcMult = $('#OpcMult').prop('checked');
     var ban = $('#TextCheque').val()
+    var servi = $('#TextServicios').val();
     if (is_numeric(VUnit) && is_numeric(Cant)) {
         if (VUnit == 0) {
             VUnit = "0.01";
         }
         if (OpcMult) {
-            Real1 = parseFloat(Cant) * parseFloat(VUnit);
+            Real1 = parseFloat(Cant) * parseFloat(VUnit) + parseFloat(servi);
         } else {
             Real1 = parseFloat(Cant) / parseFloat(VUnit);
         }
@@ -570,7 +580,7 @@ function generar() {
     var banco = parseFloat($('#TextCheque').val()).toFixed(4);
     Swal.fire({
         allowOutsideClick: false,
-        title: 'Esta Seguro que desea grabar: \n Recibo  No. ' + $('#TextFacturaNo').val(),
+        title: 'Esta Seguro que desea grabar: \n Factura  No. ' + $('#TextFacturaNo').val(),
         text: '',
         type: 'warning',
         showCancelButton: true,
@@ -904,7 +914,8 @@ function generar_factura() {
 
 function Re_imprimir(fac,serie,ci,tc)
   {
- var url = '../controlador/facturacion/divisasC.php?ticketPDF_fac=true&fac='+fac+'&serie='+serie+'&CI='+ci+'&TC='+tc+'&efectivo=0.0000&saldo=0.00&pdf=no';
+    var totalFA = $('#LabelTotal').val();
+ var url = '../controlador/facturacion/divisasC.php?ticketPDF_fac=true&fac='+fac+'&serie='+serie+'&CI='+ci+'&TC='+tc+'&efectivo=0.0000&saldo=0.00&pdf=no'+"&totalFA="+totalFA;
      var html='<iframe style="width:100%; height:50vw;" src="'+url+'&pdf=no" frameborder="0" allowfullscreen id="re_ticket"></iframe>';
     $('#re_frame').html(html);
      Swal.fire({
@@ -1443,7 +1454,7 @@ function Command8_Click() {
         </div>
         <div class="row" id="campo_totalServicio" style="display:none;">
             <div class="col-sm-6">
-                <b>Total Servicio</b>
+                <b id="textoServicio">Total Servicio</b>
             </div>
             <div class="col-sm-6">
                 <input type="text" name="LabelServicio" id="LabelServicio" class="form-control input-xs text-right"

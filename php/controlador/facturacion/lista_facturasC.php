@@ -71,19 +71,32 @@ if (isset($_GET['grupos'])) {
 if (isset($_GET['clientes'])) {
 	$query = '';
 	$grupo = $_GET['g'];
-	if (isset($_GET['q'])) {
-		$query = $_GET['q'];
-	}
-	echo json_encode($controlador->clientes_x_grupo($query, $grupo));
-}
-if (isset($_GET['clientes2'])) {
-	$query = '';
-	$grupo = $_GET['g'];
+	$cartera = 0;
 	if (isset($_GET['q'])) {
 		$query = $_GET['q'];
 	}
 	$estado = $_GET['estado'];
 	echo json_encode($controlador->clientes2_x_grupo($query, $grupo, $estado));
+
+	// if (isset($_GET['cartera'])) {
+	// 	$cartera = $_GET['cartera'];
+	// }
+	// echo json_encode($controlador->clientes_x_grupo($query, $grupo,$cartera));
+}
+
+if (isset($_GET['clientes2'])) {
+	$query = '';
+	$grupo = $_GET['g'];
+	if (isset($_GET['q'])) {
+		$query = $_GET['q'];
+	}	
+	$cartera = 0;
+	if (isset($_GET['cartera'])) {
+		$cartera = $_GET['cartera'];
+	}
+	echo json_encode($controlador->clientes_x_grupo($query, $grupo,$cartera));
+	// $estado = $_GET['estado'];
+	// echo json_encode($controlador->clientes2_x_grupo($query, $grupo, $estado));
 }
 if (isset($_GET['clientes_datos'])) {
 	$parametros = $_POST['parametros'];
@@ -622,14 +635,17 @@ class lista_facturasC
 		return $res;
 	}
 
-	function clientes_x_grupo($query, $grupo)
+	function clientes_x_grupo($query, $grupo,$cartera=false)
 	{
 		if ($grupo == '.') {
 			$grupo = '';
 		}
 		$cod = '';
 		$datos = $this->modelo->Cliente_facturas($cod, $grupo, $query);
-		$res[0] = array('id' => 'T', 'text' => 'Todos', 'email' => '', 'data' => '');
+		if(!$cartera)
+		{
+			$res[0] = array('id' => 'T', 'text' => 'Todos', 'email' => '', 'data' => '');
+		}
 		foreach ($datos as $key => $value) {
 			$res[] = array('id' => $value['Codigo'], 'text' => $value['Cliente'] . '  CI:' . $value['CI_RUC'], 'email' => $value['Email'], 'data' => $value);
 		}

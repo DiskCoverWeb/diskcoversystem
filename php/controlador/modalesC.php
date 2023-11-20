@@ -103,6 +103,26 @@ if(isset($_GET['tipo_proveedor']))
 {
 	echo json_encode($controlador->tipo_proveedor());
 }
+if(isset($_GET['sucursales']))
+{
+	// print_r($_POST);die();
+	$query = $_POST['parametros'];
+	echo json_encode($controlador->sucursales($query));
+}
+
+if(isset($_GET['add_sucursal']))
+{
+	// print_r($_POST);die();
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->add_sucursal($parametros));
+}
+if(isset($_GET['delete_sucursal']))
+{
+	// print_r($_POST);die();
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->delete_sucursal($parametros));
+}
+
 
 /**
  * 
@@ -460,6 +480,34 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	{
 		$sql = $this->modelo->FInfoError(false);
 		return exportar_excel_generico_SQl("FORMULARIO DE INFORME DE ERRORES",$sql);
+	}
+	function sucursales($parametros)
+	{
+		$cli = $this->modelo->buscar_cliente($parametros['ruc'],$nombre=false,$id=false,1);
+		$datos = array();
+		if(count($cli)>0)
+		{
+			$datos = $this->modelo->sucursales(false,$cli[0]['Codigo']);
+		}
+		return $datos;
+	}
+	function add_sucursal($parametros)
+	{
+		$cli = $this->modelo->buscar_cliente($parametros['ruc'],$nombre=false,$id=false,1);
+		$datos = array();
+		if(count($cli)>0)
+		{
+			 SetAdoAddNew("Clientes_Datos_Extras");
+		    SetAdoFields("Codigo",$cli[0]['Codigo']);
+		    SetAdoFields("TP",$parametros['tp']);
+		    SetAdoFields("Direccion", $parametros['direccion']);
+		    SetAdoFields("Tipo_Dato",'TIPO_PROV');
+	 		return SetAdoUpdate();	
+		}
+	}
+	function delete_sucursal($parametros)
+	{
+		return $this->modelo->delete_sucursal($parametros['id']);
 	}
 }
 ?>

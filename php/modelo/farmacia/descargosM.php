@@ -29,7 +29,7 @@ class descargosM
 			FROM Trans_Kardex A
 			LEFT JOIN Clientes C ON C.Codigo = A.Codigo_P 
 			LEFT JOIN Catalogo_SubCtas CS ON CS.Codigo = A.CodigoL
-			WHERE 1=1 AND Numero= 0 AND Orden_No <> '.'
+			WHERE Numero= 0 AND Orden_No <> '.'
 			AND A.Item = '".$_SESSION['INGRESO']['item']."' AND A.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 			AND CS.Item = A.Item
 			AND CS.Periodo = A.Periodo";
@@ -122,100 +122,6 @@ class descargosM
        return $datos;
 	}
 
-	// function pedido_paciente($codigo_b=false,$tipo=false,$query=false,$desde=false,$hasta =false,$busfe=false)
-	// {
-
-	// 	$cid = $this->conn;
-	// 	$sql = "SELECT SUM(VALOR_TOTAL) as 'importe',ORDEN,Codigo_B,Fecha_Fab,C.Cliente as 'nombre',A.SUBCTA as 'area',CS.Detalle as 'subcta',C.Matricula as 'his',A.Detalle as 'Detalle'
-	// 		FROM Asiento_K A
-	// 		LEFT JOIN Clientes C ON C.CI_RUC = A.Codigo_B  
-	// 		LEFT JOIN Catalogo_SubCtas CS ON CS.Codigo = A.SUBCTA
-	// 		WHERE DH='2' ";
-	// 	if($codigo_b)
-	// 	{
-	// 		$sql.=" AND Codigo_B = '".$codigo_b."' ";
-	// 	}
-	// 	if($tipo=='P' AND $query!='')
-	// 	{
-	// 		$sql.=" AND ORDEN = '".$query."' ";
-	// 	}
-	// 	if($tipo=='C' AND $query!='')
-	// 	{
-	// 		$sql.=" AND Codigo_B LIKE '".$query."%' ";
-	// 	}
-	// 	if ($tipo=='N' AND $query!='') 
-	// 	{
-	// 		$sql.=" AND Cliente LIKE '%".$query."%'";
-	// 	}
-	// 	if($busfe)
-	// 	{		
-	// 		  $sql.=" AND Fecha_Fab BETWEEN '".$desde."' and '".$hasta."'";
-	// 	}
-
-	// 	$sql.=" GROUP BY ORDEN ,Codigo_B,Fecha_Fab,C.Cliente,A.SUBCTA,CS.Detalle,C.Matricula,A.Detalle ORDER BY Fecha_Fab DESC";
-	// 	$sql.=" OFFSET 0 ROWS FETCH NEXT 50 ROWS ONLY;";
-		
-	// 	//print_r($sql);die();
-	// 	$stmt = sqlsrv_query($cid, $sql);
- //        $datos =  array();
-	//    if( $stmt === false)  
-	//    {  
-	// 	 echo "Error en consulta PA.\n";  
-	// 	 return '';
-	// 	 die( print_r( sqlsrv_errors(), true));  
-	//    }
-	//     while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
-	//    {
- //            $datos[]=$row;
-	//    }
- //       return $datos;
-	// }
-
-	// function productos_procesados($codigo_b=false,$tipo=false,$query=false,$desde=false,$hasta =false,$busfe=false)
-	// {
-
-	// 	$cid = $this->conn;
-	// 	$sql = "SELECT DISTINCT A.CODIGO_INV,CANTIDAD
-	// 		FROM Asiento_K  A
-	// 		LEFT JOIN Clientes C ON A.Codigo_B = C.CI_RUC 
-	// 		LEFT JOIN Catalogo_SubCtas CS ON CS.Codigo = A.SUBCTA
-	// 		WHERE 1=1  AND DH='2' ";
-	// 	if($codigo_b)
-	// 	{
-	// 		$sql.=" AND Codigo_B = '".$codigo_b."' ";
-	// 	}
-	// 	if($tipo=='P' AND $query!='')
-	// 	{
-	// 		$sql.=" AND ORDEN = '".$query."' ";
-	// 	}
-	// 	if($tipo=='C' AND $query!='')
-	// 	{
-	// 		$sql.=" AND Codigo_B LIKE '".$query."%' ";
-	// 	}
-	// 	if ($tipo=='N' AND $query!='') 
-	// 	{
-	// 		$sql.=" AND Cliente LIKE '%".$query."%'";
-	// 	}
-	// 	if($busfe)
-	// 	{		
-	// 		  $sql.=" AND Fecha_Fab BETWEEN '".$desde."' and '".$hasta."'";
-	// 	}
-
-	// 	// print_r($sql);die();
-	// 	$stmt = sqlsrv_query($cid, $sql);
- //        $datos =  array();
-	//    if( $stmt === false)  
-	//    {  
-	// 	 echo "Error en consulta PA.\n";  
-	// 	 return '';
-	// 	 die( print_r( sqlsrv_errors(), true));  
-	//    }
-	//     while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
-	//    {
- //            $datos[]=$row;
-	//    }
- //       return $datos;
-	// }
 
 	function productos_procesados($codigo_b=false,$tipo=false,$query=false,$desde=false,$hasta =false,$busfe=false)
 	{
@@ -225,8 +131,7 @@ class descargosM
 		FROM Trans_Kardex A 
 		LEFT JOIN Clientes C ON A.Codigo_P = C.CI_RUC 
 		LEFT JOIN Catalogo_SubCtas CS ON CS.Codigo = A.CodigoL
-		WHERE 1=1
-		AND A.Item = CS.Item
+		WHERE A.Item = CS.Item
 		AND A.Periodo = CS.Periodo
 		AND A.Item = CS.Item
 		AND A.Numero =0
@@ -268,56 +173,6 @@ class descargosM
        return $datos;
 	}
 
-	// function ordenes_producto_nega($codigo_b=false,$tipo=false,$query=false,$desde=false,$hasta =false,$busfe=false,$negativos=false)
-	// {
-
-	// 	$cid = $this->conn;
-	// 	$sql = "SELECT DISTINCT ORDEN
-	// 		FROM Asiento_K  A
-	// 		LEFT JOIN Clientes C ON A.Codigo_B = C.CI_RUC 
-	// 		LEFT JOIN Catalogo_SubCtas CS ON CS.Codigo = A.SUBCTA
-	// 		WHERE 1=1  AND DH='2' ";
-	// 	if($codigo_b)
-	// 	{
-	// 		$sql.=" AND Codigo_B = '".$codigo_b."' ";
-	// 	}
-	// 	if($tipo=='P' AND $query!='')
-	// 	{
-	// 		$sql.=" AND ORDEN = '".$query."' ";
-	// 	}
-	// 	if($tipo=='C' AND $query!='')
-	// 	{
-	// 		$sql.=" AND Codigo_B LIKE '".$query."%' ";
-	// 	}
-	// 	if ($tipo=='N' AND $query!='') 
-	// 	{
-	// 		$sql.=" AND Cliente LIKE '%".$query."%'";
-	// 	}
-	// 	if($busfe)
-	// 	{		
-	// 		  $sql.=" AND Fecha_Fab BETWEEN '".$desde."' and '".$hasta."'";
-	// 	}
-	// 	if($negativos)
-	// 	{
-	// 		$sql.= " AND CODIGO_INV IN (".$negativos.")";
-	// 	}
-		
-	// 	// print_r($sql);die();
-	// 	$stmt = sqlsrv_query($cid, $sql);
- //        $datos =  array();
-	//    if( $stmt === false)  
-	//    {  
-	// 	 echo "Error en consulta PA.\n";  
-	// 	 return '';
-	// 	 die( print_r( sqlsrv_errors(), true));  
-	//    }
-	//     while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
-	//    {
- //            $datos[]=$row;
-	//    }
- //       return $datos;
-	// }
-
 
 	function ordenes_producto_nega($codigo_b=false,$tipo=false,$query=false,$desde=false,$hasta =false,$busfe=false,$negativos=false)
 	{
@@ -327,8 +182,7 @@ class descargosM
 		FROM Trans_Kardex A 
 		LEFT JOIN Clientes C ON A.Codigo_P = C.CI_RUC 
 		LEFT JOIN Catalogo_SubCtas CS ON CS.Codigo = A.CodigoL 
-		WHERE 1=1 
-		AND A.Item = CS.Item
+		WHERE A.Item = CS.Item
 		AND A.Periodo = CS.Periodo 
 		AND A.Numero = 0 ";
 		if($codigo_b)
@@ -380,8 +234,7 @@ class descargosM
 			FROM Trans_Kardex A
 			LEFT JOIN Clientes C ON A.Codigo_P = C.CI_RUC 
 			LEFT JOIN Catalogo_SubCtas CS ON CS.Codigo = A.CodigoL 
-			WHERE 1=1
-			AND A.Item = '".$_SESSION['INGRESO']['item']."'
+			WHERE A.Item = '".$_SESSION['INGRESO']['item']."'
 			AND A.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 			AND A.Item = CS.Item
 			AND A.Periodo = CS.Periodo
@@ -434,52 +287,7 @@ class descargosM
 	}
 
 
-	// function pedido_paciente_distintos($codigo_b=false,$tipo=false,$query=false,$desde=false,$hasta =false,$busfe=false)
-	// {
-
-	// 	$cid = $this->conn;
-	// 	$sql = "SELECT DISTINCT ORDEN,Codigo_B,C.Cliente as 'nombre',A.SUBCTA as 'area',CS.Detalle as 'subcta',C.Matricula as 'his',A.Detalle as 'Detalle'
-	// 		FROM Asiento_K  A
-	// 		LEFT JOIN Clientes C ON A.Codigo_B = C.CI_RUC 
-	// 		LEFT JOIN Catalogo_SubCtas CS ON CS.Codigo = A.SUBCTA
-	// 		WHERE 1=1  AND DH='2' ";
-	// 	if($codigo_b)
-	// 	{
-	// 		$sql.=" AND Codigo_B = '".$codigo_b."' ";
-	// 	}
-	// 	if($tipo=='P' AND $query!='')
-	// 	{
-	// 		$sql.=" AND ORDEN = '".$query."' ";
-	// 	}
-	// 	if($tipo=='C' AND $query!='')
-	// 	{
-	// 		$sql.=" AND Codigo_B LIKE '".$query."%' ";
-	// 	}
-	// 	if ($tipo=='N' AND $query!='') 
-	// 	{
-	// 		$sql.=" AND Cliente LIKE '%".$query."%'";
-	// 	}
-	// 	if($busfe)
-	// 	{		
-	// 		  $sql.=" AND Fecha_Fab BETWEEN '".$desde."' and '".$hasta."'";
-	// 	}
-
-	// 	$sql.=" GROUP BY ORDEN ,Codigo_B,C.Cliente,A.SUBCTA,CS.Detalle,C.Matricula,A.Detalle ORDER BY ORDEN DESC";
-	// 	// print_r($sql);die();
-	// 	$stmt = sqlsrv_query($cid, $sql);
- //        $datos =  array();
-	//    if( $stmt === false)  
-	//    {  
-	// 	 echo "Error en consulta PA.\n";  
-	// 	 return '';
-	// 	 die( print_r( sqlsrv_errors(), true));  
-	//    }
-	//     while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) 
-	//    {
- //            $datos[]=$row;
-	//    }
- //       return $datos;
-	// }
+	
 
 
 	function area_descargo($query = false,$codigo = false)

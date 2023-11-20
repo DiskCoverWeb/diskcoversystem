@@ -123,7 +123,7 @@ class alimentos_recibidosM
 	}
 	//------------------viene de trasnkardex--------------------
 
-	function cargar_pedidos_trans($orden,$fecha=false)
+	function cargar_pedidos_trans($orden,$fecha=false,$nombre=false)
 	{
     // 'LISTA DE CODIGO DE ANEXOS
      $sql = "SELECT T.*,P.Producto 
@@ -140,6 +140,10 @@ class alimentos_recibidosM
      if($fecha)
      {
      	$sql.=" AND T.Fecha = '".$fecha."'";
+     }   
+     if($nombre)
+     {
+     	$sql.=" AND P.Producto = '".$nombre."'";
      }     
      $sql.=" ORDER BY T.ID DESC";
      // print_r($sql);die();
@@ -319,6 +323,31 @@ class alimentos_recibidosM
 		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
 
+		return $this->db->datos($sql);
+	}
+
+	function autoincrementable($fecha){
+		
+		$sql = "SELECT count(*) as cant 
+		FROM Trans_Correos 
+		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND Fecha_P =  '".$fecha."'";
+
+		// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+
+	function numeracion_dia_categoria($fecha,$categoria)
+	{
+		$sql = "SELECT Codigo_Barra
+				FROM Trans_Kardex
+				WHERE (CodBodega = '-1') 
+				AND (Codigo_Barra LIKE '%".$categoria."-%') 
+				AND (Fecha_Fab = '".$fecha."')
+				AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND Item = '".$_SESSION['INGRESO']['item']."' 
+				ORDER BY ID DESC";
+				// print_r($sql);die();
 		return $this->db->datos($sql);
 	}
 

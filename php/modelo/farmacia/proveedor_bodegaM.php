@@ -18,7 +18,7 @@ class proveedor_bodegaM
 	{
 
        $sql= "SELECT TOP 100 *
-        FROM Clientes WHERE 1=1 ";
+        FROM Clientes WHERE T='N' ";
 
 		// 02 es facturacion
 		if($_SESSION['INGRESO']['modulo_']=='02')

@@ -372,6 +372,7 @@ class autorizacion_sri
 		AND LEN(TC.AutRetencion) = 13 
 		AND TC.IdProv = C.Codigo 
 		ORDER BY Serie_Retencion,SecRetencion";
+		// print_r($sql);die();
 
          $result = $this->db->datos($sql);
 	     return $result;
@@ -382,7 +383,7 @@ class autorizacion_sri
 	{
 
 		// $con = $this->conn->conexion();
-		$sql = "SELECT * From Clientes WHERE 1=1";
+		$sql = "SELECT * From Clientes WHERE  T='N'";
 		if($codigo)
 			{
 				$sql.=" And Codigo = '".$codigo."'";
@@ -412,7 +413,7 @@ class autorizacion_sri
 
 	function datos_cliente_todo($codigo=false,$ci_ruc=false)
 	{
-		$sql = "SELECT * From Clientes WHERE 1=1 ";
+		$sql = "SELECT * From Clientes WHERE T='N' ";
 
 		if($codigo)
 		{
@@ -2669,16 +2670,17 @@ function generar_xml_retencion($cabecera,$detalle)
 
         if(count($RIMPE)>0)
 		{
-			if($RIMPE['@micro']!='.' && $RIMPE['@micro']!='' && $RIMPE['@micro']=='CONTRIBUYENTE RÉGIMEN RIMPE' )
-			{
-				$xml_contribuyenteRimpe = $xml->createElement( "contribuyenteRimpe",$RIMPE['@micro']);
-				$xml_infotributaria->appendChild( $xml_contribuyenteRimpe);
-			}
 			if($RIMPE['@Agente']!='.' && $RIMPE['@Agente']!='')
 			{
 				$xml_agenteRetencion = $xml->createElement( "agenteRetencion",'1');
 				$xml_infotributaria->appendChild( $xml_agenteRetencion);
 			}
+			if($RIMPE['@micro']!='.' && $RIMPE['@micro']!='' && $RIMPE['@micro']=='CONTRIBUYENTE RÉGIMEN RIMPE' )
+			{
+				$xml_contribuyenteRimpe = $xml->createElement( "contribuyenteRimpe",$RIMPE['@micro']);
+				$xml_infotributaria->appendChild( $xml_contribuyenteRimpe);
+			}
+			
 		}
 
         // $xml->appendChild($xml_infotributaria);

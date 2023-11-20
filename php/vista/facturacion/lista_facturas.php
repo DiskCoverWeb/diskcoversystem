@@ -105,7 +105,7 @@
         width:'resolve',
 	    // minimumResultsForSearch: Infinity,
         ajax: {
-          url: '../controlador/facturacion/lista_facturasC.php?clientes=true&g='+g,
+          url: '../controlador/facturacion/lista_facturasC.php?clientes2=true&g='+g,
           dataType: 'json',
           delay: 250,
           processResults: function (data) {           
@@ -125,7 +125,7 @@
         width:'resolve',
       // minimumResultsForSearch: Infinity,
         ajax: {
-          url: '../controlador/facturacion/lista_facturasC.php?clientes=true&g='+g,
+          url: '../controlador/facturacion/lista_facturasC.php?clientes2=true&g='+g,
           dataType: 'json',
           delay: 250,
           processResults: function (data) {           
@@ -144,7 +144,7 @@
      var g = $('#ddl_grupo').val();
      $.ajax({
        // data:  {parametros:parametros},
-      url: '../controlador/facturacion/lista_facturasC.php?clientes=true&q='+ci_ruc+'&g='+g,         
+      url: '../controlador/facturacion/lista_facturasC.php?clientes2=true&q='+ci_ruc+'&g='+g+'&cartera=1',         
       type:  'post',
       dataType: 'json',
        success:  function (response) { 

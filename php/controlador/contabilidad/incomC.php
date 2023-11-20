@@ -624,7 +624,7 @@ class incomC
           // print_r($parametros);
           // print_r($Co);die();
          // 'Grabamos el Comprobante
-          GrabarComprobante($Co);
+          $resp = GrabarComprobante($Co);
         // ' Seteamos para el siguiente comprobante
         //  DGAsientosB.Visible = False
          // RatonNormal
@@ -645,7 +645,7 @@ class incomC
              $NuevoComp = True;
              // Tipo_De_Comprobante_No Co
              // MBoxFecha.SetFocus
-             return array('respuesta'=> 1,'NumCom'=>$NumComp);
+             return array('respuesta'=> 1,'NumCom'=>$NumComp,'aut_res'=>$resp['aut'],'clave'=>$resp['clave']);
           }
        }else{
        	return  array('respuesta'=>-2,'NumCom'=>$NumComp);
@@ -657,7 +657,7 @@ class incomC
 
      function generar_comprobante2($parametros)
      {
-     	
+     	// print_r($parametros);die();
      	$Autorizacion_LC=''; //revisar
      	$T_No='01';
          if($parametros['tip']=='CD'){$tip = 'Diario';}
@@ -666,7 +666,7 @@ class incomC
          else if($parametros['tip']=='ND'){$tip = 'NotaDebito';}
          else if($parametros['tip']=='NC'){$tip= 'NotaCredito';}
 
-         if($parametros['modificado']==0)
+         if(isset($parametros['modificado']) && $parametros['modificado']==0)
          {
          	if($parametros['tip']!='Diario' &&  $parametros['tip'] != 'Ingresos' && $parametros['tip']!='Egresos' && $parametros['tip']!='NotaDebito'&& $parametros['tip']!='NotaCredito')
          	{

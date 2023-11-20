@@ -1,8 +1,8 @@
 <?php
-include(dirname(__DIR__,2).'/funciones/funciones.php');
+include(dirname(__DIR__, 2) . '/funciones/funciones.php');
 @session_start();
 
-class dayaM
+class categoriasM
 {
     private $db;
 
@@ -20,13 +20,51 @@ class dayaM
         return $this->db->datos($sql);
     }
 
-    function ConsultaCategoriaGFN($option)
+    function ListarCategorias()
     {
         $sql = "SELECT TP, Proceso, Cmds, ID 
                 FROM Catalogo_Proceso 
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Nivel = 0 
-                AND TP = ' " . $option . " ' ";
+                AND TP = 'CATE' ";
+        return $this->db->datos($sql);
+    }
+
+    function AsignarCategoria($parametros)
+    {
+        $sql = "INSERT INTO Catalogo_Proceso (TP, Proceso, Cmds, Item) 
+                VALUES ('" . $parametros['tipo'] . "', '" . $parametros['proceso'] . "', '" . $parametros['cmds'] . "', '" . $_SESSION['INGRESO']['item'] . "')";
+        return $this->db->datos($sql);
+    }
+
+    function EditarCategoriaPorId($id)
+    {
+        $sql = "SELECT TP, Proceso, Cmds, ID 
+                FROM Catalogo_Proceso 
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND Nivel = 0 
+                AND TP = 'CATE' 
+                AND ID = '" . $id . "' ";
+        return $this->db->datos($sql);
+    }
+
+    function EditarCategoriaCatalogoProcesoPorId($parametros)
+    {
+        $sql = "UPDATE Catalogo_Proceso 
+                SET TP = '" . $parametros['tipo'] . "', 
+                    Cmds = '" . $parametros['cmds'] . "', 
+                    Proceso = '" . $parametros['proceso'] . "' 
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND ID = '" . $parametros['id'] . "'";
+        return $this->db->datos($sql);
+    }
+
+    function EliminarCategoriaCatalogoProcesosPorId($id)
+    {
+        $sql = "DELETE
+                FROM Catalogo_Proceso 
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND ID = '" . $id . "' ";
         return $this->db->datos($sql);
     }
 

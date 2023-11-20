@@ -141,7 +141,7 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
       width: 'resolve',
       // minimumResultsForSearch: Infinity,
       ajax: {
-        url: '../controlador/facturacion/lista_facturasC.php?clientes=true&g=' + g,
+        url: '../controlador/facturacion/lista_facturasC.php?clientes2=true&g=' + g,
         dataType: 'json',
         delay: 250,
         processResults: function (data) {
@@ -163,7 +163,7 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
       width: 'resolve',
       // minimumResultsForSearch: Infinity,
       ajax: {
-        url: '../controlador/facturacion/lista_facturasC.php?clientes2=true&g=' + g + '&estado=' + estado,
+        url: '../controlador/facturacion/lista_facturasC.php?clientes=true&g=' + g + '&estado=' + estado,
         dataType: 'json',
         delay: 250,
         processResults: function (data) {
@@ -496,6 +496,12 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
     var hasta = $('#txt_hasta').val();
     var estado = $('#ddl_estado').val();
     var serie = $('#DCLinea').val();
+    if (serie != '' && serie != '.') {
+      var serie = serie.split(' ');
+      var serie = serie[1];
+    } else {
+      serie = '';
+    }
 
     var url = '../controlador/facturacion/lista_facturasC.php?imprimir_pdf_factura_electronica=true&codigoC='
     + codigoC + '&desde=' + desde + '&hasta=' + hasta + '&estado=' + estado + '&serie=' + serie;
@@ -508,6 +514,12 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
     var hasta = $('#txt_hasta').val();
     var estado = $('#ddl_estado').val();
     var serie = $('#DCLinea').val();
+    if (serie != '' && serie != '.') {
+      var serie = serie.split(' ');
+      var serie = serie[1];
+    } else {
+      serie = '';
+    }
     var url = '../controlador/facturacion/lista_facturasC.php?imprimir_excel_factura_electronica=true&codigoC='
      + codigoC + '&desde=' + desde + '&hasta=' + hasta + '&estado=' + estado + '&serie=' + serie;
 

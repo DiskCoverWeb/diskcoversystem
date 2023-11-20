@@ -23,6 +23,12 @@
     });	
 
 
+  	 $('#empresas').on('select2:select', function (e) {
+  	 	  var data = e.params.data.data;
+  	 	  console.log(data);
+  	 })
+
+
 });
 
   function subir_img()

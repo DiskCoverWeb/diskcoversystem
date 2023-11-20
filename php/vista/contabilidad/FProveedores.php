@@ -29,10 +29,48 @@
                 $('#txt_email2').val(ui.item.email2); // save selected id to input
                 $('#txt_actividad').val(ui.item.Actividad); // save selected id to input
                 $('#txt_ejec').val(ui.item.Cod_Ejec); // save selected id to input
+                cargar_sucursales();
                 return false;
             },
             focus: function(event, ui){
                  $('#txt_nombre_prove').val(ui.item.label); // display the selected text
+                
+                return false;
+            },
+        });
+
+        $( "#txt_ruc" ).autocomplete({
+            source: function( request, response ) {
+                
+                $.ajax({
+                     url:   '../controlador/farmacia/articulosC.php?search_ruc=true',           
+                    type: 'post',
+                    dataType: "json",
+                    data: {
+                        search: request.term
+                    },
+                    success: function( data ) {
+                      console.log(data);
+                        response( data );
+                    }
+                });
+            },
+            select: function (event, ui) {
+              console.log(ui.item);
+                $('#txt_id_prove').val(ui.item.value); // display the selected text
+                $('#txt_nombre_prove').val(ui.item.Nombre); // display the selected text
+                $('#txt_ruc').val(ui.item.label); // save selected id to input
+                $('#txt_direccion').val(ui.item.dir); // save selected id to input
+                $('#txt_telefono').val(ui.item.tel); // save selected id to input
+                $('#txt_email').val(ui.item.email); // save selected id to input
+                $('#txt_email2').val(ui.item.email2); // save selected id to input
+                $('#txt_actividad').val(ui.item.Actividad); // save selected id to input
+                $('#txt_ejec').val(ui.item.Cod_Ejec); // save selected id to input
+                cargar_sucursales();
+                return false;
+            },
+            focus: function(event, ui){
+                 $('#txt_ruc').val(ui.item.label); // display the selected text
                 
                 return false;
             },
@@ -78,10 +116,63 @@
 
 
   });
-	function nombres(nombre)
-	{
-	   $('#txt_nombre_prove').val(nombre.ucwords());
-	}
+
+ function mostrar_ingreso_sucursal()
+ {
+    if($('#txt_id_prove').val()=='')
+    {
+        Swal.fire('Seleccione un proveedor','','info');
+        return false;
+    }
+    $('#pnl_sucursal').css('display','block');
+ }
+
+ function cargar_sucursales()
+ {
+    if($('#txt_id_prove').val()=='')
+    {
+        Swal.fire('Seleccione un proveedor','','info');
+        return  false;
+    }
+
+    var parametros = {
+        'ruc':$('#txt_ruc').val(),
+    }
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/modalesC.php?sucursales=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        op = '';
+        var sucursal = 0;
+        response.forEach(function(item,i){
+            sucursal = 1;
+            op+="<tr><td>"+item.Direccion+"</td><td>"+item.TP+"</td><td><button class='btn btn-danger btn-xs' type='button' onclick='eliminar_sucursal(\""+item.ID+"\")'><i class='fa fa-trash'></i></button></td></tr>";
+        })
+
+        if(sucursal==1)
+        {
+            $('#pnl_sucursal').css('display','block');
+        }else{            
+            $('#pnl_sucursal').css('display','none');
+        }
+
+        $('#tbl_sucursales').html(op);
+        console.log(response);
+        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
+
+ }
+
+function nombres(nombre)
+{
+   $('#txt_nombre_prove').val(nombre.ucwords());
+}
 function limpiar_t()
    {
      var nom = $('#txt_nombre_prove').val();
@@ -223,6 +314,54 @@ function limpiar_t()
     }    
   }
 
+  function add_sucursal()
+  {
+    var parametros = {
+        'ruc':$('#txt_ruc').val(),
+        'direccion':$('#txt_sucursal_dir').val(),
+        'tp':$('#txt_cod_sucursal').val(),
+    }
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/modalesC.php?add_sucursal=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+       if(response==1)
+       {
+        $('#txt_sucursal_dir').val('');
+        cargar_sucursales();
+       }        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
+
+  }
+
+  function eliminar_sucursal(id)
+  {
+    var parametros = {
+        'id':id,
+    }
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/modalesC.php?delete_sucursal=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+       if(response==1)
+       {
+        cargar_sucursales();
+       }        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
+  }
+
 
 
  </script>
@@ -233,7 +372,7 @@ function limpiar_t()
                 <div class="row">
                     <div class="col-sm-4 col-xs-4">
                         <b>CI / RUC</b>
-                        <input type="text" id="txt_ruc" name="txt_ruc" class="form-control input-sm">              
+                        <input type="text" id="txt_ruc" name="txt_ruc"  style="z-index:auto" class="form-control input-sm">              
                       </div>
                       <div class="col-xs-2 col-sm-1">
                         <br>
@@ -244,7 +383,13 @@ function limpiar_t()
                       <div class="col-xs-6 col-sm-7">
                         <b>Nombre de proveedor</b>
                         <input type="hidden" id="txt_id_prove" name="txt_id_prove" class="form-control input-sm">  
-                        <input type="text"  style="z-index:auto"  id="txt_nombre_prove" name="txt_nombre_prove" class="form-control input-sm" onkeyup="limpiar_t();mayusculasevent(this)" onblur="nombres(this.value)">  
+                        <div class="input-group">
+                             <input type="text"  style="z-index:auto"  id="txt_nombre_prove" name="txt_nombre_prove" class="form-control input-sm" onkeyup="limpiar_t();mayusculasevent(this)" onblur="nombres(this.value)">
+                             <span class="input-group-btn">
+                                <button type="button" class="btn btn-info btn-flat btn-sm" title="Sucursales" onclick="mostrar_ingreso_sucursal()"><i class="fa fa-building-o"></i>&nbsp;<i class="fa fa-plus"></i></button>
+                            </span>
+                        </div>
+                       
                       </div>                      
                 </div>
                 <div class="row">
@@ -263,7 +408,7 @@ function limpiar_t()
                 <div class="row">
                   <div class="col-sm-12 col-xs-12">
                     <b>Direccion</b>
-                    <input type="text" id="txt_direccion" name="txt_direccion" class="form-control input-sm"  onkeyup="mayusculasevent(this)">  
+                    <input type="text" id="txt_direccion" name="txt_direccion" class="form-control input-xs"  onkeyup="mayusculasevent(this)">  
                   </div>        
                 </div>
                 <div class="row">
@@ -300,13 +445,45 @@ function limpiar_t()
                         </div>
                     </div>         
                   </div> 
-                </div>
+                </div>                
                 <div class="row">
                     <div class="col-sm-12 text-right">
                         <br>
-                        <button type="button" class="btn btn-primary" onclick="guardar_proveedor()">Guardar</button>
-                        <button type="button" class="btn btn-default" onclick="cerrar()">Cerrar</button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="guardar_proveedor()">Guardar</button>
+                        <button type="button" class="btn btn-sm btn-default" onclick="cerrar()">Cerrar</button>
                     </div>
+                </div>
+                <div class="row" id="pnl_sucursal" style="display:none">
+                    <div class="col-sm-12">                        
+                    <hr>
+                        <h3>Sucursales</h3>
+                    </div>
+                     <div class=" col-xs-3 col-sm-4 col-md-3">
+                        <b>Codigo Sucursal</b>
+                        <input type="" name="txt_cod_sucursal" id="txt_cod_sucursal" class="form-control input-sm">
+                    </div>
+                    <div class=" col-xs-6 col-sm-4 col-md-7">
+                        <b>Direccion</b>
+                        <input type="" name="txt_sucursal_dir" id="txt_sucursal_dir" class="form-control input-sm">
+                    </div>
+                   
+                    <div class=" col-xs-3 col-sm-2 col-md-2 text-right">
+                        <br>
+                        <button type="button"  class="btn btn-primary" onclick="add_sucursal()">Guardar sucursal</button> 
+                    </div> 
+                    <div class="col-sm-12 col-xs-12">
+
+                        <table class="table table-hover text-sm">
+                            <thead>
+                                <th>Direccion</th>
+                                <th>TP</th>
+                                <th></th>
+                            </thead>
+                            <tbody id="tbl_sucursales">
+                                
+                            </tbody>
+                        </table>
+                    </div>                 
                 </div>
 
 

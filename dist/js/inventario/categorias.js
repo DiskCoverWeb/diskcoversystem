@@ -1,6 +1,7 @@
 // Se ejecuta cuando el documento está listo
 $(document).ready(function () {
     listarDatos();
+    llenarSelect();
 });
 
 // Se ejecuta cuando cambia la opción en el select con id 'selectOption'
@@ -19,11 +20,46 @@ function listarDatos() {
             var data = JSON.parse(data);
             if (data['status'] == 200) {
                 if (data['datos'].length > 0) {
-                    mostrarTabla(data['datos']);
+                    mostrarTabla(data['datos']);                    
                 } else {
                     mostrarLabel();
                 }
             }else {
+                Swal.fire({
+                    title: 'Error, no hay datos que mostrar.',
+                    type: 'error',
+                    timer: 1000,
+                    showConfirmButton: false
+                });
+            }
+        },
+        error: function (error) {
+            console.error('Error en la solicitud AJAX:', error);
+        }
+    });
+}
+
+function llenarSelect() {
+    console.log("llenar categorias ");
+    $.ajax({
+        type: 'POST',
+        url: '../controlador/inventario/categoriasC.php?ListarCategorias=true',
+        data: {},
+        success: function (data) {
+            var data = JSON.parse(data);
+            if (data['status'] == 200) {
+                if (data['datos'].length > 0) {
+                    var $select = $('#selectOption'); // Obtener el elemento select
+                    $select.empty(); // Limpiar opciones existentes
+
+                    // Iterar sobre los datos y agregar opciones al select
+                    $.each(data['datos'], function (index, categoria) {
+                        $select.append('<option value="' + categoria['Cmds'] + '">' + categoria['Proceso'] + '</option>');
+                    });
+                } else {
+                    mostrarLabel();
+                }
+            } else {
                 Swal.fire({
                     title: 'Error, no hay datos que mostrar.',
                     type: 'error',
@@ -89,8 +125,6 @@ function mostrarTabla(data) {
     $('#idTabla').append(body);
 }
 
-/*/ Agregar diseño responsivo para pantallas pequeñas
-**/
 // Manejador de evento al hacer clic en el botón de eliminar
 function eliminarFila(id) {
     Swal.fire({

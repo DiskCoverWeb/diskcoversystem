@@ -104,11 +104,12 @@
             <div class="">
                 <!-- Lista desplegable -->
                 <label for="selectOption">Selecciona una categoría:</label>
-                <select class="form-control " id="selectOption" name="selectOption">
+                <!--select class="form-control " id="selectOption" name="selectOption">
                     <option value="INDIC_NUT">Indicador Nutricional</option>
                     <option value="CATEG_BPM">BPM Alergenos</option>
                     <option value="CATEG_BPMT">BPM Temperatura</option>
-                </select>
+                </select-->
+                <select id="selectOption" class="select2" ></select>
             </div>
 
             <!-- Mensaje de alerta si no hay datos -->

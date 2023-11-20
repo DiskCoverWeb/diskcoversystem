@@ -22,7 +22,7 @@
 
   <script src="../../dist/js/adminlte.min.js"></script>
   <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-  <script src="../../dist/js/pages/dashboard.js"></script>
+  <!-- <script src="../../dist/js/pages/dashboard.js"></script> -->
   <!-- AdminLTE for demo purposes -->
   <script src="../../dist/js/demo.js"></script>
   <script src="../../dist/js/js_globales.js?<?php echo date('y') ?>"></script>
@@ -327,7 +327,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Proveedor Nuevo</h4>
             </div>
-            <div class="modal-body" style="background: antiquewhite;">
+            <div class="modal-body" id="contenido_prov" style="background: antiquewhite;">
                 <iframe id="FProveedor" width="100%" height="390px" marginheight="0" frameborder="0" src="../vista/modales.php?FProveedores=true"></iframe>
             </div>
            <!--  <div class="modal-footer">

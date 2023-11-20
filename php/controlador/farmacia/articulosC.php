@@ -18,6 +18,12 @@ if(isset($_GET['search']))
 	echo json_encode($controlador->autocompletar($query));
 
 }
+if(isset($_GET['search_ruc']))
+{
+	$query = $_POST['search'];
+	echo json_encode($controlador->autocompletar_busqueda_ruc($query));
+
+}
 if(isset($_GET['searchAbre']))
 {
 	$query = $_POST['search'];
@@ -843,6 +849,7 @@ class articulosC
 		   if(count($datos_inv)>0)
 		   {
 		   	 $cant = explode(',',$datos_inv[0]['id']);
+		   	 $cant[2] = $cant[2];
 		   }
 		   	
 		    SetAdoAddNew("Trans_Kardex"); 		
@@ -862,7 +869,9 @@ class articulosC
 		    SetAdoFields('Total',number_format($value['VALOR_TOTAL'],2));
 		    if(isset($cant[2]))
 		    {
-		    	SetAdoFields('Existencia',number_format(($cant[2]),2)+intval($value['CANTIDAD']));
+		    	if(!is_numeric($cant[2])){$cant = 0;}
+		    	SetAdoFields('Existencia',number_format($cant[2],2)+intval($value['CANTIDAD']));
+		    	// print_r($cant[2]);
 		    }else
 		    {
 		    	SetAdoFields('Existencia',number_format(0,2)+intval($value['CANTIDAD']));
@@ -1004,6 +1013,17 @@ function eliminar_factura($parametros)
 		$result = array();
 		foreach ($datos as $key => $value) {
 			 $result[] = array("value"=>$value['ID'],"label"=>$value['Cliente'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'email2'=>$value['Email2'],'CI'=>$value['CI_RUC'],'Actividad'=>$value['Actividad'],'Cod_Ejec'=>$value['Cod_Ejec']);
+		}
+		return $result;
+	}
+	function autocompletar_busqueda_ruc($query)
+	{
+
+		$datos = $this->modelo->clientes_all(false,false,false,$query);
+		// print_r($datos);die();
+		$result = array();
+		foreach ($datos as $key => $value) {
+			 $result[] = array("value"=>$value['ID'],"label"=>$value['CI_RUC'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'email2'=>$value['Email2'],'Nombre'=>$value['Cliente'],'Actividad'=>$value['Actividad'],'Cod_Ejec'=>$value['Cod_Ejec']);
 		}
 		return $result;
 	}

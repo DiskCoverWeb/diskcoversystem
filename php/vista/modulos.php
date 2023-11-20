@@ -35,9 +35,16 @@
 			include('val_estado.php');
 			$minutos = 6;
 			val_estado($minutos);
-			
 
-			
+			echo '<script>
+			console.log("IP LOCAL: ", "' . $_SESSION['INGRESO']['IP_Local'] . '");
+			console.log("HOST NAME: ", "' . $_SESSION['INGRESO']['HOST_NAME'] . '");
+			console.log("IP WAN: ", "' . $_SESSION['INGRESO']['IP_Wan'] . '");
+			console.log("MAC: ", "' . $_SESSION['INGRESO']['PC_MAC'] . '");
+			</script>';
+
+
+
 			if ($todo == true) {
 				if (!isset($_SESSION['INGRESO']['modulo_']) || $_SESSION['INGRESO']['modulo_'] == "") {
 					echo '<div class="row">' . contruir_todos_modulos() . '</div>';
@@ -56,7 +63,11 @@
 
 
 	</section>
-	
+
 	<!-- /.content -->
+
 </div>
+<script>
+	
+</script>
 <?php include('../headers/footer.php'); ?>

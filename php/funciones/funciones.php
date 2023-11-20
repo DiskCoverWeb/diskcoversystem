@@ -17,7 +17,6 @@ require_once(dirname(__DIR__,1)."/db/db1.php");
 require_once(dirname(__DIR__,1)."/db/variables_globales.php");
 require_once(dirname(__DIR__,1)."/comprobantes/SRI/autorizar_sri.php");
 
-
 if(isset($_POST['RUC']) AND !isset($_POST['submitweb'])) 
 {
 	$pag=$_POST['vista'];
@@ -51,6 +50,33 @@ function ip()
 
 }
 
+function getInfoIPS(){
+  $conn = new db();
+  $cid= $conn->conexion();
+  $sql = "SELECT TOP 1 c.client_net_address, c.local_net_address, s.host_name
+  FROM sys.dm_exec_connections AS c JOIN sys.dm_exec_sessions AS s 
+  ON c.session_id = s.session_id 
+  WHERE c.client_net_address = '" . $_SESSION['INGRESO']['IP_Wan'] . "' ";
+
+  $data = array(
+    'client_net_address' => $_SESSION['INGRESO']['IP_Wan'],
+    'local_net_address' => '127.0.0.1',
+    'host_name' => 'PC-NO-DEFINIDO');//Siempre retorna la ip wan
+  $stmt = sqlsrv_query($cid, $sql);
+  if( $stmt === false)  
+      {  
+       return $data;//si no existe, solo retorna la ip wan con los demas vacios.
+      }
+      $result = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC);
+      if ($result) {
+        // Si hay resultados, agregamos más campos a $data
+        $data['local_net_address'] = $result['local_net_address'];
+        $data['host_name'] = $result['host_name'];
+    }
+    return $data;
+
+}
+
 function Empresa_data()
  {
   $conn = new db();
@@ -80,7 +106,7 @@ function Empresa_data()
  {
    $conn = new db();
    $cid= $conn->conexion();
-   $sql = "SELECT * from Clientes WHERE 1=1";
+   $sql = "SELECT * from Clientes WHERE  T='N'";
    if($cod){
     $sql.=" and Codigo= '".$cod."'";
    }
@@ -4419,23 +4445,25 @@ function dimenciones_tabl($len)
         $MesComp = '01';
       }
 
-      if($_SESSION['INGRESO']['Num_CD'] and $query=='Diario')
+      // print_r($_SESSION['INGRESO']);die();
+
+      if($_SESSION['INGRESO']['Num_Meses_CD'] and $query=='Diario')
       {
         $query = $MesComp.''.$query;
       }
-       if($_SESSION['INGRESO']['Num_CI'] and $query=='Ingresos')
+       if($_SESSION['INGRESO']['Num_Meses_CI'] and $query=='Ingresos')
       {
         $query = $MesComp.''.$query;
       }
-       if($_SESSION['INGRESO']['Num_CE'] and $query=='Egresos')
+       if($_SESSION['INGRESO']['Num_Meses_CE'] and $query=='Egresos')
       {
         $query = $MesComp.''.$query;
       }
-       if($_SESSION['INGRESO']['Num_ND'] and $query=='NotaDebito')
+       if($_SESSION['INGRESO']['Num_Meses_ND'] and $query=='NotaDebito')
       {
         $query = $MesComp.''.$query;
       }
-       if($_SESSION['INGRESO']['Num_NC'] and $query=='NotaCredito')
+       if($_SESSION['INGRESO']['Num_Meses_NC'] and $query=='NotaCredito')
       {
         $query = $MesComp.''.$query;
       }       
@@ -4450,6 +4478,7 @@ function dimenciones_tabl($len)
            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
            AND Item = '".$_SESSION['INGRESO']['item']."' ";
     $Result = $conn->datos($sql);
+    // print_r($sql);die();
       if(count($Result)>0)
       {
         $NumCodigo = $Result[0]['Numero'];
@@ -4486,208 +4515,208 @@ function dimenciones_tabl($len)
   
   }
 
-  function numero_comprobante($parametros) // por revisar repetida
-  {
-    $conn = new Conectar();
-    $cid=$conn->conexion();
-    if(isset($parametros['fecha']))
-    {
-      if($parametros['fecha']=='')
-      {
-        $fecha_actual = date("Y-m-d"); 
-      }
-      else
-      {
-        $fecha_actual = $parametros['fecha']; 
-      }
-    }
-    else
-    {
-      $fecha_actual = date("Y-m-d"); 
-    }
-    $ot = explode("-",$fecha_actual);
-    if($parametros['tip']=='CD')
-    {
-      if($_SESSION['INGRESO']['Num_CD']==1)
-      {
-        $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
-        FROM            Codigos
-        WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
-        AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
-        AND (Concepto = '".$ot[1]."Diario')";
-        $stmt = sqlsrv_query( $cid, $sql);
-        if( $stmt === false)  
-        {  
-           echo "Error en consulta PA.\n";  
-           die( print_r( sqlsrv_errors(), true));  
-        }
-        $row_count=0;
-        $i=0;
-        $Result = array();
-        while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
-        {
+  // function numero_comprobante($parametros) // por revisar repetida
+  // {
+  //   $conn = new Conectar();
+  //   $cid=$conn->conexion();
+  //   if(isset($parametros['fecha']))
+  //   {
+  //     if($parametros['fecha']=='')
+  //     {
+  //       $fecha_actual = date("Y-m-d"); 
+  //     }
+  //     else
+  //     {
+  //       $fecha_actual = $parametros['fecha']; 
+  //     }
+  //   }
+  //   else
+  //   {
+  //     $fecha_actual = date("Y-m-d"); 
+  //   }
+  //   $ot = explode("-",$fecha_actual);
+  //   if($parametros['tip']=='CD')
+  //   {
+  //     if($_SESSION['INGRESO']['Num_Meses_CD']==1)
+  //     {
+  //       $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
+  //       FROM            Codigos
+  //       WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
+  //       AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
+  //       AND (Concepto = '".$ot[1]."Diario')";
+  //       $stmt = sqlsrv_query( $cid, $sql);
+  //       if( $stmt === false)  
+  //       {  
+  //          echo "Error en consulta PA.\n";  
+  //          die( print_r( sqlsrv_errors(), true));  
+  //       }
+  //       $row_count=0;
+  //       $i=0;
+  //       $Result = array();
+  //       while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
+  //       {
           
-          $Result[$i]['Numero'] = $row[3];
+  //         $Result[$i]['Numero'] = $row[3];
           
-          //echo $Result[$i]['nombre'];
-          $i++;
-        }
-        $codigo=$Result[0]['Numero']++;
+  //         //echo $Result[$i]['nombre'];
+  //         $i++;
+  //       }
+  //       $codigo=$Result[0]['Numero']++;
 
-        if($i==0)
-        {
-          return -1;
-        }else
-        {
-          return "Comprobante de Ingreso No. ".$ot[0].'-'.$codigo;
-        }
-      }
-    }
-    if($parametros['tip']=='CI')
-    {
-      if($_SESSION['INGRESO']['Num_CI']==1)
-      {
-        $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
-        FROM            Codigos
-        WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
-        AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
-        AND (Concepto = '".$ot[1]."Ingresos')";
+  //       if($i==0)
+  //       {
+  //         return -1;
+  //       }else
+  //       {
+  //         return "Comprobante de Ingreso No. ".$ot[0].'-'.$codigo;
+  //       }
+  //     }
+  //   }
+  //   if($parametros['tip']=='CI')
+  //   {
+  //     if($_SESSION['INGRESO']['Num_CI']==1)
+  //     {
+  //       $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
+  //       FROM            Codigos
+  //       WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
+  //       AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
+  //       AND (Concepto = '".$ot[1]."Ingresos')";
         
-        $stmt = sqlsrv_query( $cid, $sql);
-        if( $stmt === false)  
-        {  
-           echo "Error en consulta PA.\n";  
-           die( print_r( sqlsrv_errors(), true));  
-        }
-        $row_count=0;
-        $i=0;
-        $Result = array();
-        while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
-        {
+  //       $stmt = sqlsrv_query( $cid, $sql);
+  //       if( $stmt === false)  
+  //       {  
+  //          echo "Error en consulta PA.\n";  
+  //          die( print_r( sqlsrv_errors(), true));  
+  //       }
+  //       $row_count=0;
+  //       $i=0;
+  //       $Result = array();
+  //       while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
+  //       {
           
-          $Result[$i]['Numero'] = $row[3];
+  //         $Result[$i]['Numero'] = $row[3];
           
-          //echo $Result[$i]['nombre'];
-          $i++;
-        }
-        $codigo=$Result[0]['Numero']++;
-        echo "Comprobante de Ingreso No. ".$ot[0].'-'.$codigo;
-        if($i==0)
-        {
-          echo 'no existe registro';
-          //echo json_encode($Result);
-        }
-      }
-    }
-    if($parametros['tip']=='CE')
-    {
-      if($_SESSION['INGRESO']['Num_CE']==1)
-      {
-        $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
-        FROM            Codigos
-        WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
-        AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
-        AND (Concepto = '".$ot[1]."Egresos')";
+  //         //echo $Result[$i]['nombre'];
+  //         $i++;
+  //       }
+  //       $codigo=$Result[0]['Numero']++;
+  //       echo "Comprobante de Ingreso No. ".$ot[0].'-'.$codigo;
+  //       if($i==0)
+  //       {
+  //         echo 'no existe registro';
+  //         //echo json_encode($Result);
+  //       }
+  //     }
+  //   }
+  //   if($parametros['tip']=='CE')
+  //   {
+  //     if($_SESSION['INGRESO']['Num_CE']==1)
+  //     {
+  //       $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
+  //       FROM            Codigos
+  //       WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
+  //       AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
+  //       AND (Concepto = '".$ot[1]."Egresos')";
         
-        $stmt = sqlsrv_query( $cid, $sql);
-        if( $stmt === false)  
-        {  
-           echo "Error en consulta PA.\n";  
-           die( print_r( sqlsrv_errors(), true));  
-        }
-        $row_count=0;
-        $i=0;
-        $Result = array();
-        while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
-        {
+  //       $stmt = sqlsrv_query( $cid, $sql);
+  //       if( $stmt === false)  
+  //       {  
+  //          echo "Error en consulta PA.\n";  
+  //          die( print_r( sqlsrv_errors(), true));  
+  //       }
+  //       $row_count=0;
+  //       $i=0;
+  //       $Result = array();
+  //       while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
+  //       {
           
-          $Result[$i]['Numero'] = $row[3];
+  //         $Result[$i]['Numero'] = $row[3];
           
-          //echo $Result[$i]['nombre'];
-          $i++;
-        }
-        $codigo=$Result[0]['Numero']++;
-        echo "Comprobante de Egreso No. ".$ot[0].'-'.$codigo;
-        if($i==0)
-        {
-          echo 'no existe registro';
-          //echo json_encode($Result);
-        }
-      }
-    }
-    if($parametros['tip']=='NC')
-    {
-      if($_SESSION['INGRESO']['Num_NC']==1)
-      {
-        $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
-        FROM            Codigos
-        WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
-        AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
-        AND (Concepto = '".$ot[1]."NotaCredito')";
+  //         //echo $Result[$i]['nombre'];
+  //         $i++;
+  //       }
+  //       $codigo=$Result[0]['Numero']++;
+  //       echo "Comprobante de Egreso No. ".$ot[0].'-'.$codigo;
+  //       if($i==0)
+  //       {
+  //         echo 'no existe registro';
+  //         //echo json_encode($Result);
+  //       }
+  //     }
+  //   }
+  //   if($parametros['tip']=='NC')
+  //   {
+  //     if($_SESSION['INGRESO']['Num_NC']==1)
+  //     {
+  //       $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
+  //       FROM            Codigos
+  //       WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
+  //       AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
+  //       AND (Concepto = '".$ot[1]."NotaCredito')";
         
-        $stmt = sqlsrv_query( $cid, $sql);
-        if( $stmt === false)  
-        {  
-           echo "Error en consulta PA.\n";  
-           die( print_r( sqlsrv_errors(), true));  
-        }
-        $row_count=0;
-        $i=0;
-        $Result = array();
-        while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
-        {
+  //       $stmt = sqlsrv_query( $cid, $sql);
+  //       if( $stmt === false)  
+  //       {  
+  //          echo "Error en consulta PA.\n";  
+  //          die( print_r( sqlsrv_errors(), true));  
+  //       }
+  //       $row_count=0;
+  //       $i=0;
+  //       $Result = array();
+  //       while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
+  //       {
           
-          $Result[$i]['Numero'] = $row[3];
+  //         $Result[$i]['Numero'] = $row[3];
           
-          //echo $Result[$i]['nombre'];
-          $i++;
-        }
-        $codigo=$Result[0]['Numero']++;
-        echo "Comprobante de Nota de Credito No. ".$ot[0].'-'.$codigo;
-        if($i==0)
-        {
-          echo 'no existe registro';
-          //echo json_encode($Result);
-        }
-      }
-    }
-    if($parametros['tip']=='ND')
-    {
-      if($_SESSION['INGRESO']['Num_ND']==1)
-      {
-        $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
-        FROM            Codigos
-        WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
-        AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
-        AND (Concepto = '".$ot[1]."NotaDebito')";
+  //         //echo $Result[$i]['nombre'];
+  //         $i++;
+  //       }
+  //       $codigo=$Result[0]['Numero']++;
+  //       echo "Comprobante de Nota de Credito No. ".$ot[0].'-'.$codigo;
+  //       if($i==0)
+  //       {
+  //         echo 'no existe registro';
+  //         //echo json_encode($Result);
+  //       }
+  //     }
+  //   }
+  //   if($parametros['tip']=='ND')
+  //   {
+  //     if($_SESSION['INGRESO']['Num_ND']==1)
+  //     {
+  //       $sql ="SELECT        Periodo, Item, Concepto, Numero, ID
+  //       FROM            Codigos
+  //       WHERE        (Item = '".$_SESSION['INGRESO']['item']."') 
+  //       AND (Periodo = '".$_SESSION['INGRESO']['periodo']."') 
+  //       AND (Concepto = '".$ot[1]."NotaDebito')";
         
-        $stmt = sqlsrv_query( $cid, $sql);
-        if( $stmt === false)  
-        {  
-           echo "Error en consulta PA.\n";  
-           die( print_r( sqlsrv_errors(), true));  
-        }
-        $row_count=0;
-        $i=0;
-        $Result = array();
-        while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
-        {
+  //       $stmt = sqlsrv_query( $cid, $sql);
+  //       if( $stmt === false)  
+  //       {  
+  //          echo "Error en consulta PA.\n";  
+  //          die( print_r( sqlsrv_errors(), true));  
+  //       }
+  //       $row_count=0;
+  //       $i=0;
+  //       $Result = array();
+  //       while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
+  //       {
           
-          $Result[$i]['Numero'] = $row[3];
+  //         $Result[$i]['Numero'] = $row[3];
           
-          //echo $Result[$i]['nombre'];
-          $i++;
-        }
-        $codigo=$Result[0]['Numero']++;
-        echo "Comprobante de Nota de Debito No. ".$ot[0].'-'.$codigo;
-        if($i==0)
-        {
-          echo 'no existe registro';
-          //echo json_encode($Result);
-        }
-      }
-    } 
-  }
+  //         //echo $Result[$i]['nombre'];
+  //         $i++;
+  //       }
+  //       $codigo=$Result[0]['Numero']++;
+  //       echo "Comprobante de Nota de Debito No. ".$ot[0].'-'.$codigo;
+  //       if($i==0)
+  //       {
+  //         echo 'no existe registro';
+  //         //echo json_encode($Result);
+  //       }
+  //     }
+  //   } 
+  // }
 
 function ingresar_asientos_SC($parametros)  //revision parece repetida
 {
@@ -5517,7 +5546,7 @@ function generar_comprobantes($parametros) //revision parece repetida
           }
         }
         //incrementamos el secuencial
-        if($_SESSION['INGRESO']['Num_CD']==1)
+        if($_SESSION['INGRESO']['Num_Meses_CD']==1)
         {
           //para variable en html
           $num1=$num_com[1];
@@ -6374,6 +6403,50 @@ if($titulo)
 
     return $tbl;
 
+}
+
+function tablaGenerica($data){
+  $tablaHtml = '
+  <table>
+    <thead>
+      <tr>';
+  
+  if (empty($data)) {
+    $tablaHtml .= '<th>NO HAY DATOS QUE MOSTRAR</th>';
+    $tablaHtml .= '
+        </tr>
+      </thead>
+    </table>';
+    return $tablaHtml;
+  }
+  
+  $columnas = array_keys($data[0]); 
+
+  foreach ($columnas as $columna) {
+    $tablaHtml .= '<th>' . $columna . '</th>'; 
+  }
+
+  $tablaHtml .= '
+      </tr>
+    </thead>
+    <tbody>';
+
+  foreach ($data as $fila) {
+    $tablaHtml .= '<tr>';
+    foreach ($columnas as $columna) {
+      $valor = $fila[$columna];
+      if ($valor instanceof DateTime) {
+        $valor = $valor->format('Y-m-d');
+      }
+      $tablaHtml .= '<td data-label="' . $columna . '" >' . $valor . '</td>';
+    }
+    $tablaHtml .= '</tr>';
+  }
+  $tablaHtml .= '
+    </tbody>
+  </table>';
+
+  return $tablaHtml;
 }
 
 function determinaAnchoTipos($tipo,$EsCorto=false,$size=false,$namecol=false)
@@ -8076,7 +8149,7 @@ function Leer_Datos_Clientes($Codigo_CIRUC_Cliente,$Por_Codigo=true,$Por_CIRUC=f
           Telefono,Telefono_R,TelefonoT,Grupo,Contacto,Calificacion,Plan_Afiliado,Actividad,Credito,Representante,CI_RUC_R,TD_R,Tipo_Cta,Cod_Banco,
           Cta_Numero,Fecha_Cad,Asignar_Dr,Saldo_Pendiente 
           FROM Clientes 
-          WHERE 1=1 ";
+          WHERE  T='N' ";
           if($Por_Codigo)
           {
             $sql.="AND Codigo = '".$TBenef_Codigo. "' ";
@@ -9008,6 +9081,91 @@ function  Imprimir_Punto_Venta_Grafico_datos($TFA)
  
 }
 
+function  Imprimir_Punto_Venta_datos($TFA)
+{
+
+  // print_r($TFA);die();
+   $conn = new db();
+   $ContEspec = Leer_Campo_Empresa("Codigo_Contribuyente_Especial");
+   $Obligado_Conta = Leer_Campo_Empresa("Obligado_Conta");
+   $SetNombrePRN = Leer_Campo_Empresa("Impresora_Defecto");
+   $Ambiente = '';
+  
+   // $SubTotal = 0: $Total = 0: $Total_IVA = 0: $Total_Desc = 0: $Cant_Ln = 0
+   $sql='';
+   if($TFA['TC'] == "PV"){
+         $sql = "SELECT F.*,C.Cliente,C.CI_RUC,C.Telefono,C.Direccion,C.Ciudad,C.Grupo,C.Email 
+           FROM Trans_Ticket As F,Clientes As C 
+           WHERE F.Ticket = ".$TFA['Factura']." 
+           AND F.TC = '".$TFA['TC']."' 
+           AND F.Periodo = '".$_SESSION['INGRESO']['periodo']. "' 
+           AND F.Item = '".$_SESSION['INGRESO']['item']."' 
+           AND C.Codigo = F.CodigoC ";
+   }else{
+         $sql = "SELECT F.*,C.Cliente,C.CI_RUC,C.Telefono,C.Direccion,C.Ciudad,C.Grupo,C.Email
+           FROM Facturas As F,Clientes As C
+           WHERE F.Factura = ".$TFA['Factura']."
+           AND F.TC = '".$TFA['TC']."'
+           AND F.Serie = '".$TFA['Serie']."'
+           AND F.Periodo = '".$_SESSION['INGRESO']['periodo']. "'
+           AND F.Item = '".$_SESSION['INGRESO']['item']."'
+           AND C.Codigo = F.CodigoC ";
+   }
+
+   // print_r($sql);
+   $datos = $conn->datos($sql);
+   // print_r($datos);die();
+   if(is_numeric($TFA['Autorizacion'])){
+      $Ambiente = substr($datos[0]['Clave_Acceso'], 23, 1);
+     // 'Generacion Codigo de Barras
+      // PathCodigoBarra = RutaSysBases & "\TEMP" & TFA.ClaveAcceso & ".jpg";
+  }
+
+
+ // 'Datos Iniciales
+ // 'Comenzamos a recoger los detalles de la factura
+  if($TFA['TC'] == "PV"){
+     $sql = "SELECT DF.*,CP.Detalle,CP.Codigo_Barra
+          FROM Trans_Ticket As DF,Catalogo_Productos As CP
+          WHERE DF.Ticket = ".$TFA['Factura']."
+          AND DF.TC = '".$TFA['TC']."'
+          AND DF.Item = '".$_SESSION['INGRESO']['item']."'
+          AND DF.Periodo = '".$_SESSION['INGRESO']['periodo']. "'
+          AND DF.Item = CP.Item
+          AND DF.Periodo = CP.Periodo
+          AND DF.Codigo_Inv = CP.Codigo_Inv
+          ORDER BY DF.D_No ";
+  }else{
+     $sql = "SELECT DF.*,CP.Detalle,CP.Codigo_Barra 
+        FROM Detalle_Factura As DF,Catalogo_Productos As CP 
+        WHERE DF.Factura = ".$TFA['Factura']." 
+        AND DF.TC = '".$TFA['TC']."' 
+        AND DF.Serie = '".$TFA['Serie']."' 
+        AND DF.Item = '".$_SESSION['INGRESO']['item']."' 
+        AND DF.Periodo = '".$_SESSION['INGRESO']['periodo']. "' 
+        AND DF.Item = CP.Item 
+        AND DF.Periodo = CP.Periodo 
+        AND DF.Codigo = CP.Codigo_Inv 
+        ORDER BY DF.Codigo ";
+  }
+  $datos1 = $conn->datos($sql);
+
+  return array('factura'=>$datos,'lineas'=>$datos1,'especial'=>$ContEspec,'conta'=>$Obligado_Conta,'ambiente'=>$Ambiente);
+
+  // print_r($datos);
+  // print_r($datos1);
+  // print_r($ContEspec);
+  // print_r($Obligado_Conta);
+  // print_r($Ambiente);
+  // die();
+  
+ 
+}
+
+function Imprimir_Guia_Remision($AdoFactura, $AdoAsientoF, $FA){
+
+}
+
 function CalculosSaldoAnt($TipoCod,$TDebe,$THaber,$TSaldo)
 {
 
@@ -9412,6 +9570,121 @@ function variables_tipo_factura()
    return $FA;
 }
 
+function Encerar_Factura($TFA)
+{
+
+   $TFA['SP'] = '0';
+   $TFA['Si_Existe_Doc'] = '0';
+   $TFA['C'] = '0';
+   $TFA['p'] = '0';
+   $TFA['ME_'] = '0';
+   $TFA['Com_Pag'] = '0';
+   $TFA['T'] = G_NORMAL;
+   $TFA['CodigoC'] = G_NINGUNO;
+   $TFA['CodigoB'] = G_NINGUNO;
+   $TFA['CodigoU'] = G_NINGUNO;
+   $TFA['Codigo_T'] = G_NINGUNO;
+   $TFA['Cliente'] = G_NINGUNO;
+   $TFA['Contacto'] = G_NINGUNO;
+   $TFA['CI_RUC'] = G_NINGUNO;
+   $TFA['Razon_Social'] = G_NINGUNO;
+   $TFA['RUC_CI'] = G_NINGUNO;
+   $TFA['TB'] = G_NINGUNO;
+   $TFA['DirNumero'] = G_NINGUNO;
+   $TFA['DireccionC'] = G_NINGUNO;
+   $TFA['DireccionS'] = G_NINGUNO;
+   $TFA['CiudadC'] = G_NINGUNO;
+   $TFA['EmailR'] = G_NINGUNO;
+   $TFA['Curso'] = G_NINGUNO;
+   $TFA['Grupo'] = G_NINGUNO;
+   $TFA['Cod_Eject'] = G_NINGUNO;
+   $TFA['Forma_Pago'] = G_NINGUNO;
+   $TFA['Imp_Mes'] = '0';
+   $TFA['Fecha'] = date('Y-m-d');
+   $TFA['Fecha_V'] = date('Y-m-d');
+   $TFA['Fecha_C'] = date('Y-m-d');
+   $TFA['Fecha_Aut'] = date('Y-m-d');
+   $TFA['Vencimiento'] = date('Y-m-d');
+   $TFA['Hora'] = '00:00:00';
+   $TFA['Tipo_Pago'] = '0';
+   $TFA['Tipo_Pago_Det'] = G_NINGUNO;
+   $TFA['Cod_CxC'] = G_NINGUNO;
+   $TFA['Nivel'] = G_NINGUNO;
+   $TFA['Nota'] = G_NINGUNO;
+   $TFA['Observacion'] = G_NINGUNO;
+   $TFA['Definitivo'] = G_NINGUNO;
+   $TFA['Declaracion'] = G_NINGUNO;
+   $TFA['SubCta'] = G_NINGUNO;
+   $TFA['Factura'] = '0';
+   $TFA['Total_Sin_No_IVA'] = '0';
+   $TFA['Descuento'] = '0';
+   $TFA['Descuento2'] = '0';
+   $TFA['Total_Descuento'] = '0';
+   $TFA['SubTotal'] = '0';
+   $TFA['Total_IVA'] = '0';
+   $TFA['Con_IVA'] = '0';
+   $TFA['Sin_IVA'] = '0';
+   $TFA['Total_MN'] = '0';
+   $TFA['Saldo_MN'] = '0';
+   $TFA['Comision'] = '0';
+   $TFA['Servicio'] = '0';
+   $TFA['Total_ME'] = '0';
+   $TFA['Saldo_ME'] = '0';
+   $TFA['Cantidad'] = '0';
+   $TFA['Kilos'] = '0';
+   $TFA['Saldo_Actual'] = '0';
+   $TFA['Efectivo'] = '0';
+   $TFA['Saldo_Pend'] = '0';
+   $TFA['Saldo_Pend_MN'] = '0';
+   $TFA['Saldo_Pend_ME'] = '0';
+   $TFA['Ret_Fuente'] = '0';
+   $TFA['Ret_IVA'] = '0';
+   $TFA['Porc_C'] = '0';
+   $TFA['Cotizacion'] = '0';
+   $TFA['DAU'] = '0';
+   $TFA['FUE'] = '0';
+   $TFA['Solicitud'] = '0';
+   $TFA['Retencion'] = '0';
+   $TFA['ClaveAcceso_GR'] = G_NINGUNO;
+   $TFA['Autorizacion_GR'] = G_NINGUNO;
+   $TFA['Serie_GR'] = G_NINGUNO;
+   $TFA['Remision'] = '0';
+   $TFA['Comercial'] = G_NINGUNO;
+   $TFA['CIRUCComercial'] = G_NINGUNO;
+   $TFA['Entrega'] = G_NINGUNO;
+   $TFA['CIRUCEntrega'] = G_NINGUNO;
+   $TFA['CiudadGRI'] = G_NINGUNO;
+   $TFA['CiudadGRF'] = G_NINGUNO;
+   $TFA['Placa_Vehiculo'] = G_NINGUNO;
+   $TFA['FechaGRE'] = date('Y-m-d');
+   $TFA['FechaGRI'] = date('Y-m-d');
+   $TFA['FechaGRF'] = date('Y-m-d');
+   $TFA['Pedido'] = G_NINGUNO;
+   $TFA['Zona'] = G_NINGUNO;
+   $TFA['Orden_Compra'] = '0';
+   $TFA['Serie_GR'] = G_NINGUNO;
+   $TFA['Digitador'] = G_NINGUNO;
+   $TFA['Error_SRI'] = G_NINGUNO;
+   $TFA['Estado_SRI'] = G_NINGUNO;
+   $TFA['Dir_PartidaGR'] = G_NINGUNO;
+   $TFA['Dir_EntregaGR'] = G_NINGUNO;
+   $TFA['CxC_Clientes'] = G_NINGUNO;
+   $TFA['Cta_Venta'] = G_NINGUNO;
+   $TFA['LogoFactura'] = G_NINGUNO;
+   $TFA['LogoNotaCredito'] = G_NINGUNO;
+   $TFA['AltoFactura'] = '0';
+   $TFA['AnchoFactura'] = '0';
+   $TFA['EspacioFactura'] = '0';
+   $TFA['Pos_Factura'] = '0';
+   $TFA['DireccionEstab'] = G_NINGUNO;
+   $TFA['NombreEstab'] = G_NINGUNO;
+   $TFA['TelefonoEstab'] = G_NINGUNO;
+   $TFA['LogoTipoEstab'] = G_NINGUNO;
+   $TFA['Autorizacion_R'] = G_NINGUNO;
+   $TFA['Serie_R'] = '001001';
+   $TFA['Fecha_Tours'] = G_NINGUNO;
+   return $TFA;
+}
 
 function datos_Co()
 {
@@ -10258,9 +10531,9 @@ function Datos_Iniciales_Entidad_SP_MySQL($empresa, $usuario)
   $EmailUsuario = $usuario['EmailUsuario'];
   $NivelesDeAccesos = $CadenaParcial;
   $IP_Local = @$_SESSION['INGRESO']['IP_Local'];
-  $IP_WAN = ip();
-  $PC_Nombre = G_NINGUNO;
-  $PC_MAC = G_NINGUNO;
+  $IP_WAN = @$_SESSION['INGRESO']['IP_Wan'];
+  $PC_Nombre = @$_SESSION['INGRESO']['HOST_NAME'];
+  $PC_MAC = @$_SESSION['INGRESO']['PC_MAC'];
 
   $conn = new db();
   //Enviamos los parametro de solo entrada al SP
@@ -10387,10 +10660,10 @@ function Estado_Empresa_SP_MySQL()
   $ItemEmpresa = $_SESSION['INGRESO']['item'];
   $CodigoUsuario = $_SESSION['INGRESO']['CodigoU'];
   $RUCEmpresa = $_SESSION['INGRESO']['RUC'];
-  $IP_WAN = ip();
+  $IP_WAN = @$_SESSION['INGRESO']['IP_Wan'];
   $IP_Local = @$_SESSION['INGRESO']['IP_Local'];
-  $PC_Nombre = G_NINGUNO;
-  $PC_MAC = G_NINGUNO;
+  $PC_Nombre = @$_SESSION['INGRESO']['HOST_NAME'];
+  $PC_MAC =@$_SESSION['INGRESO']['PC_MAC'];
   //Parametros de entrada y de salida
   $parametros = array(
     array($ItemEmpresa,'IN'),
@@ -10430,7 +10703,7 @@ function Actualiza_Procesado_Kardex($CodigoInv)
     $conn = new db();
     if(strlen($CodigoInv) > 2 )
     {
-       $SQLKardex = "UPDATE Trans_Kardex
+       $sql = "UPDATE Trans_Kardex
                 SET Procesado = 0
                 WHERE Item = '".$_SESSION['INGRESO']['item']."'
                 AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
@@ -11134,10 +11407,38 @@ function GrabarComprobante($C1)
   $FA["Autorizacion_R"] = $C1["Autorizacion_R"];
   $FA["Retencion"] = $C1["Retencion"];
   $FA["Serie_R"] = $C1["Serie_R"];
-  if(strlen($FA["Autorizacion_R"]) >= 13){ //Autorizar_retencion($FA); //SRI_Crear_Clave_Acceso_Retenciones($FA, True);
+  $FA["TP"] = $C1["TP"];
+  $FA["Fecha"] = $C1["Fecha"];
+  $FA['Numero']=$C1['Numero'];
+  $FA['ruc']=$C1['CodigoB'];
+  if(strlen($FA["Autorizacion_R"]) >= 13){ 
+
+      $sri = new autorizacion_sri();
+
+      $res = '0';
+      $res = $sri->Autorizar_retencion($FA);
+
+              // $res = $this->SRI_Crear_Clave_Acceso_Retencines($parametros_xml); //function xml
+              // print_r($res);die();
+        $aut = $sri->Clave_acceso($C1["Fecha"],'07',$FA["Serie_R"],generaCeros($FA["Retencion"],9));
+        $pdf = 'RE_'.$FA["Serie_R"].'-'.generaCeros($FA["Retencion"],7); 
+        // $this->modelo->reporte_retencion($Numero,$TP,$Retencion,$Serie_R,$imp=1);
+
+            // print_r($parametros);die();
+        // if($res==1)
+        // {
+           // $Trans_No = $C1["T_No"];
+          // $this->modelo->BorrarAsientos($Trans_No,true);
+        // }
+                 // print_r(array('respuesta'=>$res,'pdf'=>$pdf,'text'=>$res,'clave'=>$aut));die();
+        return array('proceso'=>1,'aut'=>$res,'pdf'=>$pdf,'text'=>$res,'clave'=>$aut);
+                
+
+      //Autorizar_retencion($FA); //SRI_Crear_Clave_Acceso_Retenciones($FA, True);
   }
+  return array('proceso'=>1,'aut'=>'','pdf'=>'','text'=>'','clave'=>'');
  // 'Eliminamos Asientos contables
-  $Trans_No = $C1["T_No"];
+  // $Trans_No = $C1["T_No"];
   // BorrarAsientos('',True);
   // Control_Procesos Normal, "Grabar Comprobante de: " & $C1["TP & " No. " & $C1["Numero"]
 }
@@ -11515,6 +11816,8 @@ function SetAdoUpdateGeneric(){
 
   $DatosSelect = CompilarSQL($DatosSelect);
   unset($_SESSION['SetAdoAddNew']['SetAdoWhere']);
+
+  // print_r($DatosSelect);die();
   return Ejecutar_SQL_SP($DatosSelect);
 }
 
@@ -11850,4 +12153,346 @@ function Actualizar_Razon_Social($FechaIniAut=false)
     }
 }
 
+function Imprimir_Facturas_CxC($TFA, $EsMatricula = false, $PorOrdenFactura = false, $Imprimir_Asc = false, $CheqSinCodigo = false){
+  $db = new db();
+
+  $Posicion = 0;
+  $Salto_de_Factura = "";
+  $Imp_No_Facturas = "";
+  $Cad_Tipo_Pago = "";
+  $AND_BETWEEN_Facturas = "";
+
+  if($TFA['Fecha_Desde'] < $TFA['Fecha_Hasta']){
+      $Imp_No_Facturas = "Desde la " . $TFA['Fecha_Desde'] . " hasta la " . $TFA['Fecha_Hasta'];
+      if($TFA['TC'] == "PV"){
+        $AND_BETWEEN_Facturas = "AND F.Ticket BETWEEN " . $TFA['Fecha_Desde'] . " AND " . $TFA['Fecha_Hasta'];
+      }else{
+        $AND_BETWEEN_Facturas = "AND F.Facturas BETWEEN " . $TFA['Fecha_Desde'] . " AND " . $TFA['Fecha_Hasta'];
+      }
+  }
+  $Salto_de_Factura = $TFA['AltoFactura'] + $TFA['EspacioFactura'];
+  if($Salto_de_Factura <= 0){
+      $Salto_de_Factura = 0;
+  }
+  $Mensajes = "Imprimir Facturas" . $Imp_No_Facturas;
+  $Titulo = "IMPRESION";
+  $Bandera = False;
+  if($TFA['LogoFactura'] == "MATRICIA"){
+      $sSQL = "UPDATE Formato_Propio
+              SET Texto ='CLIENTE:'
+              WHERE TP = 'IF'
+              AND Num = 2";
+      Ejecutar_SQL_SP($sSQL);
+      $sSQL2 = "UPDATE Formato_Propio
+              SET Texto = 'ALUMNA:'
+              WHERE TP = 'IF'
+              AND Num = 6";
+      Ejecutar_SQL_SP($sSQL2);
+  }
+  $Cadenal = "FACTURACION:  Ingreso de Facturas";
+  $Imp_No_Facturas = $TFA['TC'] . "/" . $TFA['Serie'] . "/" . $TFA['Autorizacion'] . "/" . $Imp_No_Facturas;
+  /*switch ($TFA['Tipo_PRN']){
+         case "CP":
+         case "FM":
+            $CEConLineas = ProcesarSeteos();//que devuelve procesar seteos?
+            break;
+         case "OP":
+            break;
+         default:
+            break;
+      }*/
+      //No hace falta preguntar si quiere imprimir con copia.
+  control_procesos("F", $Imp_No_Facturas);
+  $sSQL = "";
+  $Pagina = 1;
+  $PosLinea = 0.01;
+  $PosColumna = 0.01;
+  if($TFA['TC'] == "PV"){
+    $sSQL = "SELECT F.*, C.Cliente,C.CI_RUC,C.Telefono,C.Direccion,C.Ciudad,C.Grupo,C.Email
+             FROM Trans_Ticket As F,Clientes As C
+             WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+             AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+             AND F.TC = '" . $TFA['TC'] . "'
+             " .$AND_BETWEEN_Facturas . "
+             AND C.Codigo = F.CodigoC";
+    if($PorOrdenFactura){
+      if($Imprimir_Asc){//$data[1] == imprimir_asc
+        $sSQL .= "ORDER BY F.Ticket, C.Grupo, C.Cliente";
+      }else{
+        $sSQL .= "ORDER BY F.Ticket DESC, C.Grupo, C.Cliente";
+      }
+    }else{
+      $sSQL .= "ORDER BY C.Grupo, C.Cliente, F.Ticket";
+    }       
+ }else{
+    $sSQL = "SELECT F.*,C.Cliente,C.CI_RUC,C.Telefono,C.TelefonoT,C.Direccion,C.DireccionT,
+             C.Grupo,C.Codigo,C.Ciudad,C.Email,C.TD,C.DirNumero
+             FROM Facturas As F,Clientes As C
+             WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+             AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+             AND F.TC = '" . $TFA['TC'] . "'
+             AND F.Serie = '" . $TFA['Serie'] . "'
+             " .$AND_BETWEEN_Facturas . "
+             AND C.Codigo = F.CodigoC";
+    if($PorOrdenFactura){
+      if($Imprimir_Asc){//$data[1] == imprimir_asc
+        $sSQL .= "ORDER BY F.Factura, C.Grupo, C.Cliente";
+      }else{
+        $sSQL .= "ORDER BY F.Factura DESC, C.Grupo, C.Cliente";
+      }
+    }else{
+      $sSQL .= "ORDER BY C.Grupo, C.Cliente, F.Factura";
+    }   
+ }
+ $AdoDbFac = $db -> datos($sSQL);
+ if(count($AdoDbFac) > 0){
+    foreach($AdoDbFac as $key => $value){
+      $TFA['Fecha'] = $value['Fecha'];
+      $TFA['Cta_CxP'] = $value['Cta_CxP'];
+      $TFA['Cod_CxC'] = $value['Cod_CxC'];
+      $TFA['Vencimiento'] = $value['Vencimiento'];
+      $TFA['Fecha_Aut'] = $value['Fecha_Aut'];
+      $TFA['Serie'] = $value['Serie'];
+      $TFA['Autorizacion'] = $value['Autorizacion'];
+      $TFA['Factura'] = $value['Factura'];
+      $TFA['CodigoC'] = $value['CodigoC'];
+      $TFA['Saldo_Pend'] = $value['Saldo_Pend'];
+      $TFA['Imp_Mes'] = $value['Imp_Mes'];
+      $TFA['Tipo_Pago'] = $value['Tipo_Pago'];
+      $Cad_Tipo_Pago = G_NINGUNO;
+      Leer_Datos_FA_NV($TFA);
+      if($TFA['Autorizacion'] >= 13){
+        //Imprimir_FA_NV_Electronica(TFA) 
+        $tmp = '';
+      }else{
+        $sSQL = "SELECT * 
+                 FROM Tabla_Referenciales_SRI
+                 WHERE Tipo_Referencia = 'FORMA DE PAGO'
+                 AND CODIGO = '" . $TFA['Tipo_Pago'] . "'";
+        $AdoDBAux = $db -> datos($sSQL);
+        if(count($AdoDBAux) > 0) $Cad_Tipo_Pago = $AdoDBAux[0]['Descripcion'];
+        $TextoBanco = G_NINGUNO;
+        $TextoCheque = G_NINGUNO;
+        $TextoFormaPago = "";
+        $TFA['Educativo'] = False;
+        $sSQL = "SELECT CC.TC,CC.Cuenta,TA.Fecha,TA.CodigoC,TA.Abono,TA.Banco,TA.Cheque
+                 FROM Catalogo_Cuentas CC, Trans_Abonos As TA
+                 WHERE CC.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                 AND CC.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                 AND TA.TP = '" . $TFA['TC'] . "'
+                 AND TA.Serie = '" . $TFA['Serie'] . "'
+                 AND TA.CodigoC = '" . $TFA['CodigoC'] . "'
+                 AND TA.Factura = " . $TFA['Factura'] . "
+                 AND TA.Fecha >= '" . BuscarFecha($TFA['Fecha']) . "'
+                 AND CC.Codigo = TA.Cta
+                 AND CC.Item = TA.Item
+                 AND CC.Periodo = TA.Periodo
+                 ORDER BY CC.Codigo";
+        $AdoDBAux2 = $db -> datos($sSQL);
+        if(count($AdoDBAux2) > 0){
+          foreach($AdoDBAux2 as $key => $value) {
+            $TextoFormaPago .= $value['Fecha'] . " " . $value['Banco'] . " ";
+            if($value['TC'] == "BA"){
+              $TextoBanco = $value['Banco'];
+              $TextoCheque = $value['Cheque'];
+            }
+          }
+        }
+        $SaldoPendiente = 0;
+        if($EsMatricula == False){
+          $sSQL = "SELECT CodigoC, SUM(Saldo_MN) As Pendiente
+                   FROM Facturas
+                   WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                   AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                   AND CondigoC = '" . $TFA['CodigoC'] . "'
+                   AND TC = '" . $TFA['TC'] . "'
+                   AND T <> 'A'
+                   GROUP BY CodigoC";
+          $AdoDBAux3 = $db -> datos($sSQL);
+          if(count($AdoDBAux3) > 0) $SaldoPendiente = $AdoDBAux3[0]['Pendiente'];
+          
+        }
+        if($SaldoPendiente <= 0) $SaldoPendiente = $value['Total_MN'];
+        $Diferencia = $SaldoPendiente - $value['Total_MN'];
+        if($Diferencia < 0 ) $Diferencia = 0;
+        $sSQL = "SELECT *
+                 FROM Detalle_Factura
+                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                 AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                 AND Fecha >= '" . BuscarFecha($TFA['Fecha']) . "'
+                 AND TC = '" . $TFA['TC'] . "'
+                 AND Serie = '" . $TFA['Serie'] . "'
+                 AND Factura = " . $TFA['Factura'] . "
+                 ORDER BY ID, Codigo";
+        $AdoDBDet = $db -> datos($sSQL);
+
+        Imprimir_FAM($TFA, $PosColumna, $PosLinea, $AdoDbFac, $AdoDBDet, $Cad_Tipo_Pago, false ,$CheqSinCodigo);
+
+        $PosColumna = 0.01;
+        $Pagina = $Pagina + 1;
+        if($TFA['CantFact'] == 1){
+          $Pagina = 1;
+          $PosLinea = 0.01;
+        }else{
+          $PosLinea = $PosLinea + $Salto_de_Factura;
+        }
+
+        $sSQL = "UPDATE Facturas
+                 SET P = 1
+                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                 AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                 AND Factura = " . $TFA['Factura'] . "
+                 AND TC = '" . $TFA['TC'] . "'
+                 AND Serie = '" . $TFA['Serie'] . "'
+                 AND Autorizacion = '" . $TFA['Autorizacion'] . "'
+                 ";
+        Ejecutar_SQL_SP($sSQL);
+      }
+    }
+ }
+}
+
+function Imprimir_FAM($TFA, $PosInic, $PosLineal, $DtaF, $DtaD, $Tipo_Pago, $ReImp = false, $Solo_Copia = false, $CheqSinCodigo = false){
+  return '';
+}
+
+
+function Actualiza_Fecha_Tabla($Tabla, $Fecha) {
+    if (strtotime($Fecha)) {
+        $sSQL = "UPDATE $Tabla " .
+            "SET Fecha = '" . date('Y-m-d', strtotime($Fecha)) . "' " .
+            "WHERE Item = '".$_SESSION['INGRESO']['item']."' " .
+            "AND Periodo = '".$_SESSION['INGRESO']['periodo']."' " .
+            "AND TP = '{$_SESSION['Co']['TP']}' " .
+            "AND Numero = '{$_SESSION['Co']['Numero']}' ";
+        Ejecutar_SQL_SP($sSQL);
+    }
+}
+
+function Actualiza_Procesado_Tabla($Tabla, $ConTP = false, $Cuenta = '', $Valor = '') {
+    $sSQL = "UPDATE $Tabla " .
+        "SET Procesado = 0 " .
+        "WHERE Item = '".$_SESSION['INGRESO']['item']."' " .
+        "AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+    
+    if ($ConTP) {
+        $sSQL .= "AND TP = '{$_SESSION['Co']['TP']}' " .
+                 "AND Numero = '{$_SESSION['Co']['Numero']}' ";
+    }
+    
+    if (strlen($Cuenta) > 1 && strlen($Valor) > 1) {
+        $sSQL .= "AND $Cuenta = '$Valor' ";
+    }
+    
+    Ejecutar_SQL_SP($sSQL);
+}
+
+function FechaSistema($format = 'Y-m-d')
+{
+  return date($format);
+}
+
+function Listar_Comprobante_SP($C1, $Trans_No=0, $Ln_No=0, $Ret_No=0, $LnSC_No=0)
+{
+  $conn = new db();
+  $ExisteComp = false;
+  $sSQLAux = '';
+  $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
+  // Determinamos espacios de memoria para grabar
+  if ($Trans_No <= 0) $Trans_No = 1;
+  if ($Ln_No <= 0) $Ln_No = 1;
+  if ($LnSC_No <= 0) $LnSC_No = 1;
+  if ($Ret_No <= 0) $Ret_No = 1;
+
+  // Encabezado del Comprobante
+  $sSQL = "SELECT C.Fecha, C.Codigo_B, C.Concepto, C.Cotizacion, C.Monto_Total, C.Efectivo, Cl.CI_RUC, Cl.Cliente, Cl.Email, Cl.TD, " .
+      "Cl.Direccion, Cl.Telefono, Cl.Grupo, Cl.RISE, Cl.Especial " .
+      "FROM Comprobantes As C, Clientes As Cl " .
+      "WHERE C.Item = '$C1[Item]' " .
+      "AND C.Periodo = '$Periodo_Contable' " .
+      "AND C.TP = '$C1[TP]' " .
+      "AND C.Numero = $C1[Numero] " .
+      "AND C.Codigo_B = Cl.Codigo ";
+  $AdoRegistros = $conn->datos($sSQL);
+  if (count($AdoRegistros) > 0) {
+    foreach ($AdoRegistros as $key => $Fields) {
+      $C1['CodigoB'] = $Fields["Codigo_B"];
+      $C1['Beneficiario'] = $Fields["Cliente"];
+      $C1['Email'] = $Fields["Email"];
+      $C1['Concepto'] = $Fields["Concepto"];
+      $C1['Cotizacion'] = $Fields["Cotizacion"];
+      $C1['Monto_Total'] = $Fields["Monto_Total"];
+      $C1['Efectivo'] = $Fields["Efectivo"];
+      $C1['RUC_CI'] = $Fields["CI_RUC"];
+      $C1['TD'] = $Fields["TD"];
+      $C1['Fecha'] = $Fields["Fecha"]->format("Y-m-d");
+      $C1['Direccion'] = $Fields["Direccion"];
+      $C1['Telefono'] = $Fields["Telefono"];
+      $C1['Grupo'] = $Fields["Grupo"];
+      if ($Fields["RISE"]) $C1['TipoContribuyente'] = $C1['TipoContribuyente'] . " RISE";
+      if ($Fields["Especial"]) $C1['TipoContribuyente'] = $C1['TipoContribuyente'] . " Contribuyente especial";
+
+      if (strlen($C1['RUC_CI']) == 13) {
+        $data = Tipo_Contribuyente_SP_MYSQL($C1['RUC_CI']);
+        $TipoSRI['MicroEmpresa'] = $data['@micro'];
+        $TipoSRI['AgenteRetencion'] = $data['@Agente'];
+      }
+
+      switch ($C1['TD']) {
+          case 'C':
+              $TipoSRI['Estado'] = 'CEDULA';
+              break;
+          case 'P':
+              $TipoSRI['Estado'] = 'PASAPORTE';
+              break;
+          case 'R':
+              $TipoSRI['Estado'] = 'RUC ACTIVO';
+              break;
+      }
+
+      @$C1['AgenteRetencion'] = $TipoSRI['AgenteRetencion'];
+      @$C1['MicroEmpresa'] = $TipoSRI['MicroEmpresa'];
+      @$C1['Estado'] = $TipoSRI['Estado'];
+      $ExisteComp = true;
+    }
+
+    if ($ExisteComp) {
+      $C1TP = "";
+      $C1Numero = "";
+      $C1RetNueva = "";
+      $C1Serie_R = "";
+      $C1Retencion = "";
+      $C1Autorizacion_R = "";
+      $C1Ctas_Modificar = "";
+      $C1CodigoInvModificar = "";
+
+      $parametros = array(
+        array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+        array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+        array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
+        array(&$Trans_No, SQLSRV_PARAM_IN),
+        array(&$C1['TP'], SQLSRV_PARAM_IN),
+        array(&$C1['Numero'], SQLSRV_PARAM_IN),
+        array(&$C1RetNueva, SQLSRV_PARAM_OUT),
+        array(&$C1Serie_R, SQLSRV_PARAM_OUT),
+        array(&$C1Retencion, SQLSRV_PARAM_OUT),
+        array(&$C1Autorizacion_R, SQLSRV_PARAM_OUT),
+        array(&$C1Ctas_Modificar, SQLSRV_PARAM_OUT),
+        array(&$C1CodigoInvModificar, SQLSRV_PARAM_OUT),
+        array(&$Ln_No, SQLSRV_PARAM_OUT),
+        array(&$LnSC_No, SQLSRV_PARAM_OUT),
+      );
+      $sql = "EXEC sp_Listar_Comprobante @Item=?, @Periodo=?,@CodigoUsuario=?, @TransNo=?, @TP=? ,@Numero=? , @RetNueva=?, @SerieR=?, @Retencion=?, @AutorizacionR=?, @CtasModificar=?, @CodigoInvModificar=?, @LnNo=?, @LnSCNo=?" ;
+      $data= $conn->ejecutar_procesos_almacenados($sql,$parametros);
+
+      $C1['RetNueva'] = $C1RetNueva;
+      $C1['Serie_R'] = $C1Serie_R;
+      $C1['Retencion'] = $C1Retencion;
+      $C1['Autorizacion_R'] = $C1Autorizacion_R;
+      $C1['Ctas_Modificar'] = $C1Ctas_Modificar;
+      $C1['CodigoInvModificar'] = $C1CodigoInvModificar;
+    }
+    return array('C1'=>$C1, 'Trans_No'=>$Trans_No, 'Ln_No'=>$Ln_No, 'Ret_No'=>$Ret_No, 'LnSC_No'=>$LnSC_No);
+  }
+}
 ?>

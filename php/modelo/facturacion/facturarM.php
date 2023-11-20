@@ -69,8 +69,8 @@ class facturarM
     $sql = "SELECT * 
             FROM Asiento_F 
             WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
-            AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "' ";
-
+            AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "' 
+            ORDER BY A_No";
     if ($tabla) {
       $botones[0] = array('boton' => 'Eliminar linea', 'icono' => '<i class="fa fa-trash"></i>', 'tipo' => 'danger', 'id' => 'A_No,CODIGO');
       $datos = grilla_generica_new($sql, 'Asiento_F', '', $titulo = false, $botones, $check = false, $imagen = false, 1, 1, 1, 100);
