@@ -663,6 +663,7 @@ function autocoplet_ingreso()
 			</button>
 		</div>    -->
     </div>
+   
 </div>
 <div class="row">
 	<div class="col-sm-12">		
@@ -784,12 +785,18 @@ function autocoplet_ingreso()
 						<div class="row">							
 							<div class="col-sm-12">
 								<div class="row">
-									<div class="col-sm-6">
+									<div class="col-sm-4">
 										<label style="color:green" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" checked  value="V" > <img src="../../img/png/smile.png"><br> Conforme</label>											
 									</div>
-									<div class="col-sm-6">
+									<div class="col-sm-4">
 										<label style="color:red" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" value="R">  <img src="../../img/png/sad.png"><br> Inconforme </label>											
-									</div>									
+									</div>
+                  <div class="col-lg-4 text-right">
+      <button class="btn btn-danger" title="Guardar">
+          <img src="../../img/gif/notificacion.gif" style="width:42px;height: 42px;">
+      </button>   
+    </div> 
+
 								</div>
 									<!-- <b>Evaluacion</b><br> -->										
 														
