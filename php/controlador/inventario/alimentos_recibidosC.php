@@ -223,7 +223,7 @@ if(isset($_GET['notificar_clasificacion']))
 
 if(isset($_GET['listar_notificaciones']))
 {
-	echo json_encode($controlador->listar_notificaciones($parametros));
+	echo json_encode($controlador->listar_notificaciones());
 }
 
 /**
@@ -1121,7 +1121,7 @@ class alimentos_recibidosC
 
 	}
 
-	function notificar_clasificacion($parametros)
+	function listar_notificaciones()
 	{
 		// print_r($parametros);die();
 		$notificacion = $this->modelo->listar_notificaciones($_SESSION['INGRESO']['CodigoU'],'P');

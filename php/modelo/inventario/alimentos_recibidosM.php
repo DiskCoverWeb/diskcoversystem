@@ -469,7 +469,8 @@ class alimentos_recibidosM
 				{
 					$sql.=" AND Codigo = '".$codigo."'";
 				}
-				
+
+				print_r($sql);die();
 			
 		return $this->db->datos($sql);
 	}

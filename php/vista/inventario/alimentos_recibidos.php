@@ -578,7 +578,7 @@ function autocoplet_ingreso_donante(){
   	$.ajax({
 		    type: "POST",
 	      	url:   '../controlador/inventario/alimentos_recibidosC.php?listar_notificaciones=true',
-		      data:datos,
+		      // data:datos,
 	        dataType:'json',
 		    success: function(data)
 		    {		    	    	
