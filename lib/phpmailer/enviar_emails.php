@@ -39,7 +39,6 @@ class enviar_emails
       $empresaGeneral[0]['Email_Contraseña'] = "Admin@2023";
       $empresaGeneral[0]['smtp_SSL'] = 0;
       $empresaGeneral[0]['smtp_Puerto'] = 26;
-      $server_externo = 0;
     }
 
     $res = 1;
@@ -81,7 +80,7 @@ class enviar_emails
               $mail->Port = 587;
             }
           } else {
-            if ($empresaGenerPal[0]['smtp_SSL'] == 1) {
+            if ($empresaGeneral[0]['smtp_SSL'] == 1) {
               $mail->SMTPSecure = 'ssl';
             } else {
               $mail->SMTPSecure = 'tls';
