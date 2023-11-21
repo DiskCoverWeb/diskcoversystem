@@ -582,6 +582,19 @@ function autocoplet_ingreso_donante(){
 	        dataType:'json',
 		    success: function(data)
 		    {		    	    	
+		    	if(data.length>0)
+		    	{
+		    		 $('#pnl_notificacion').css('display','block');
+		    		 data.forEach(function(){
+		    		 	mensaje+="";
+		    		 })
+
+		    		 $('#pnl_mensajes').html(mensajes);
+		    	}else
+		    	{
+
+		    		 $('#pnl_notificacion').css('display','none');
+		    	}
 		    	console.log(data);
 		    }
 		});  	
@@ -607,7 +620,7 @@ function autocoplet_ingreso_donante(){
 				<img src="../../img/png/mostrar.png">
 			</button>
 		</div>
-		<div class="col-xs-2 col-md-2 col-sm-2 ">
+		<div class="col-xs-2 col-md-2 col-sm-2" style="display:none;" id="pnl_notificacion">
 			<div class="navbar-custom-menu">
 				<ul class="nav navbar-nav">
 
@@ -618,7 +631,7 @@ function autocoplet_ingreso_donante(){
 							<ul class="dropdown-menu">
 								<li class="header">tienes <b>0</b> mensajes</li>
 								<li>
-									<ul class="menu">
+									<ul class="menu" id="pnl_mensajes">
 										<li>
 											<a href="#">
 												<h4>
