@@ -31,15 +31,14 @@ class enviar_emails
     $empresaGeneral = $this->Empresa_data();
     $server_externo = 0;
 
-    if (
-      $empresaGeneral[0]["smtp_Servidor"] == "relay.dnsexit.com" ||
-      $empresaGeneral[0]["smtp_Servidor"] == "mail.diskcoversystem.com"
-    ) {
+    if ($empresaGeneral[0]["smtp_Servidor"] == "relay.dnsexit.com" ||  $empresaGeneral[0]["smtp_Servidor"] == "mail.diskcoversystem.com") 
+    {
       $server_externo = 1;
-      $empresaGeneral[0]['smtp_Servidor'] = "relay.dnsexit.com";
-      $empresaGeneral[0]['Email_Conexion'] = "diskcoversystem";
-      $empresaGeneral[0]['Email_Contraseña'] = "Dlcjvl1210@";
+      $empresaGeneral[0]['smtp_Servidor'] = "smtp.diskcoversystem.com";
+      $empresaGeneral[0]['Email_Conexion'] = "admin";
+      $empresaGeneral[0]['Email_Contraseña'] = "Admin@2023";
       $empresaGeneral[0]['smtp_SSL'] = 0;
+      $empresaGeneral[0]['smtp_Puerto'] = 26;
       $server_externo = 0;
     }
 
@@ -82,7 +81,7 @@ class enviar_emails
               $mail->Port = 587;
             }
           } else {
-            if ($empresaGeneral[0]['smtp_SSL'] == 1) {
+            if ($empresaGenerPal[0]['smtp_SSL'] == 1) {
               $mail->SMTPSecure = 'ssl';
             } else {
               $mail->SMTPSecure = 'tls';
@@ -90,9 +89,9 @@ class enviar_emails
             $mail->Port = $empresaGeneral[0]['smtp_Puerto'];
           }
 
-          $mail->setFrom('electronicos@diskcoversystem.com', 'DiskCover System');
+          $mail->setFrom($_SESSION['INGRESO']['Email_Conexion_CE'], 'DiskCover System');
           $mail->addAddress($value); //Add a recipient
-          $mail->addReplyTo('electronicos@diskcoversystem.com', 'Informacion');
+          $mail->addReplyTo($_SESSION['INGRESO']['Email_Conexion_CE'], 'Informacion');
           //$mail->addCC('cc@example.com');
           //$mail->addBCC('bcc@example.com');
 
