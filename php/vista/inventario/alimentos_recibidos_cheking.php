@@ -403,15 +403,33 @@ function autocoplet_ingreso()
 
  function editar_comentario(mod)
  {
+
+ 	 id = $('#txt_id').val();
+ 	 if(id=='')
+ 	 {
+ 	 	 Swal.fire("","Seleccione un pedido","info");
+ 	 	return  false;
+ 	 }
  	var texto = '';
  	var asunto = '';
+ 	var enviar = 0;
  	 if(mod)
  	 {
  	 	 if($('#txt_comentario_clas').prop('readonly'))
  	 	 {
  	 	 	$('#txt_comentario_clas').prop('readonly',false)
  	 	 	$('#icon_comentario1').removeClass();
- 	 	 	$('#icon_comentario1').addClass('fa fa-save');
+ 	 	 	$('#icon_comentario1').addClass('fa fa-save'); 	 	 	
+ 	 	 	enviar = 0;
+ 	 	 	// $('#txt_comentario_clas').prop('readonly',true)
+ 	 	 }else{
+
+ 	 	 	$('#txt_comentario_clas').prop('readonly',true)
+ 	 	 	$('#icon_comentario1').removeClass();
+ 	 	 	$('#icon_comentario1').addClass('fa fa-pencil');
+ 	 	 	asunto = 'Clasificacion';
+ 	 	 	texto = $('#txt_comentario_clas').val();
+ 	 	 	enviar = 1;
  	 	 }
  	 }else
  	 {
@@ -419,13 +437,47 @@ function autocoplet_ingreso()
  	 	 {
  	 	 	$('#txt_comentario').prop('readonly',false)
  	 	 	$('#icon_comentario').removeClass();
- 	 	 	$('#icon_comentario').addClass('fa fa-save');
+ 	 	 	$('#icon_comentario').addClass('fa fa-save'); 	 	 
+ 	 	 	enviar = 0;
+ 	 	 	// $('#txt_comentario').prop('readonly',true);
+ 	 	 }else{
+ 	 	 	$('#txt_comentario').prop('readonly',true)
+ 	 	 	$('#icon_comentario').removeClass();
+ 	 	 	$('#icon_comentario').addClass('fa fa-pencil');
+ 	 	 	asunto = 'Recepcion';
+ 	 	 	texto = $('#txt_comentario').val();
+ 	 	 	enviar = 1;
  	 	 }
  	 }
 
- 	
+ 	 if(enviar)
+ 	 {
+ 	 	 	var parametros = {
+        'notificar':texto,
+        'id':$('#txt_id').val(),
+		    'asunto':asunto,
+		    }
+		     $.ajax({
+		      data:  {parametros,parametros},
+		      url:   '../controlador/inventario/alimentos_recibidosC.php?notificar_clasificacion=true',
+		      type:  'post',
+		      dataType: 'json',
+		      success:  function (response) { 
+		        if(response==1)
+		        {
+		          Swal.fire("","Notificacion enviada","success");
+		        }
+		        console.log(response);
+		        
+		      }, 
+		      error: function(xhr, textStatus, error){
+		        $('#myModal_espera').modal('hide');           
+		      }
+		    });
 
- 	 console.log(editar);
+
+		}
+
  }
 
 

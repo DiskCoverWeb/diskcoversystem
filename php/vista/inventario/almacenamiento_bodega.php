@@ -73,20 +73,43 @@
   }
 
   function pedidos(){
-  $('#txt_codigo').select2({
+  // $('#txt_codigo').select2({
+  //   placeholder: 'Seleccione una beneficiario',
+  //   // width:'90%',
+  //   ajax: {
+  //     url:   '../controlador/inventario/almacenamiento_bodegaC.php?search_contabilizado=true',          
+  //     dataType: 'json',
+  //     delay: 250,
+  //     processResults: function (data) {
+  //       // console.log(data);
+  //       return {
+  //         results: data
+  //       };
+  //     },
+  //     cache: true
+  //   }
+  // });
+  	$('#txt_codigo').select2({
     placeholder: 'Seleccione una beneficiario',
-    // width:'90%',
     ajax: {
-      url:   '../controlador/inventario/almacenamiento_bodegaC.php?search_contabilizado=true',          
+      url: '../controlador/inventario/almacenamiento_bodegaC.php?search_contabilizado=true',
       dataType: 'json',
       delay: 250,
       processResults: function (data) {
-        // console.log(data);
         return {
-          results: data
+          results: data.map(function (item) {
+            return {
+              id: item.id,
+              text: '<span style="color: ' + item.color + ';">' + item.text + '</span>',
+              data : item.data,
+            };
+          })
         };
       },
       cache: true
+    },
+    escapeMarkup: function (markup) {
+      return markup;
     }
   });
 }

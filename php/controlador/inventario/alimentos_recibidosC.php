@@ -1120,7 +1120,9 @@ class alimentos_recibidosC
 		   SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
 		   SetAdoFields('Codigo',$pedido[0]['CodigoU']); 
 		   SetAdoFields('Texto_Memo',$parametros['notificar']);
-		   return SetAdoUpdate();
+		   $res =  SetAdoUpdate();		   
+		   $this->editar_comentarios_trans_correos($parametros['id'],$parametros['asunto'],$parametros['notificar']);
+		   return $res;
 	}
 
 	function notificar_usuario($parametros)
@@ -1151,6 +1153,21 @@ class alimentos_recibidosC
 		SetAdoFields('T','N');
 		SetAdoFieldsWhere('ID',$parametros['noti']);
 		return SetAdoUpdateGeneric();
+	}
+
+	function editar_comentarios_trans_correos($pedido,$asunto,$texto)
+	{
+		SetAdoAddNew("Trans_Correos");	
+		switch ($asunto) {
+			case 'Recepcion':
+				SetAdoFields('Mensaje',$texto);
+				break;
+			case 'Clasificacion':
+				SetAdoFields('Llamadas',$texto);
+				break;
+		}
+		SetAdoFieldsWhere('ID',$pedido);
+	    SetAdoUpdateGeneric();
 	}
 
 
