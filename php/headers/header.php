@@ -647,6 +647,9 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
             <p class="text-gray" style="margin:0px">Item:
               <?php echo $_SESSION['INGRESO']['item']; ?>
             </p>
+            <p class="text-gray" style="margin:0px">
+              <?php echo ($_SESSION['INGRESO']['Ambiente'] == "1") ? "AMBIENTE DE PRUEBA" : (($_SESSION['INGRESO']['Ambiente'] == "2") ? "AMBIENTE EN PRODUCCION" : ""); ?>
+            </p>
           </div>
 
           <!-- <div class="pull-left info">

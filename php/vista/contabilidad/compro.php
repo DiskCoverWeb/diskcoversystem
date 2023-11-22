@@ -22,7 +22,7 @@
 	     </a>
 	   </div>    
 	   <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1" style="width: fit-content;padding: 0px;">
-	       <a id='l7' class="btn btn-default" title="Exportar Excel"	href="descarga.php?mod=<?php echo $_SESSION['INGRESO']['modulo_'];?>&acc=bacsg&acc1=Balance de Comprobacion/Situación/General&ti=<?php echo $_SESSION['INGRESO']['ti']; ?>&Opcb=6&Opcen=0&b=0&ex=1" onclick='modificar1();' target="_blank"><img src="../../img/png/table_excel.png"></a>	      
+	       <a class="btn btn-default" title="Exportar Excel"	href="javascript:void(0)" onclick="GenerarExcelResultadoComprobante()" ><img src="../../img/png/table_excel.png"></a>	      
 	   </div>
 	   <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1" style="width: fit-content;padding: 0px;">                 
 	    <button class="btn btn-default" title="Modificar el comprobante" onclick="modificar_comprobante()">
@@ -70,7 +70,7 @@
 		    <input type="radio" name="options" id="NC" value="NC" autocomplete="off" onchange="comprobante();"> N/C
 		  </label>
 	 		<input id="tipoc" name="tipoc" type="hidden" value="CD">					
-	
+		<input type="hidden" name="TipoProcesoLlamadoClave" id="TipoProcesoLlamadoClave">
 		</div>
 	</div>	
 	<div class="col-sm-3">
@@ -273,6 +273,8 @@
   </div>
 
 
+<?php include_once("FChangeCta.php") ?>
+<?php include_once("FChangeValores.php") ?>
 
 <script>
 	$( document ).ready(function() {
@@ -281,6 +283,7 @@
 		// listar_comprobante();
 	
 	});
+
 	//modificar url
 	function modificar(texto){
 		var l1=$('#l1').attr("href");  
@@ -466,6 +469,7 @@
 	function modificar_comprobante()
 	{
 		var com = $('#ddl_comprobantes').val();
+		$("#TipoProcesoLlamadoClave").val("");
 		if(com!='')
 		{
 		 $('#clave_contador').modal('show');
@@ -482,7 +486,13 @@
 	 {
 	 	 if(response['respuesta']==1)
 	 	 {
-	 	 	 confirmar_edicion(response);
+	 	 	 if($("#TipoProcesoLlamadoClave").val() =="ModalChangeCa"){
+	 	 	 		$('#ModalChangeCa').modal('show');
+	 	 	 }else if($("#TipoProcesoLlamadoClave").val() =="ModalChangeValores"){
+					$('#ModalChangeValores').modal('show')
+	 	 	 }else{
+	 	 	 	confirmar_edicion(response);
+	 	 	 }
 	 	 }else
 	 	 {
 
@@ -611,4 +621,68 @@
       }
    }
 
+  function Eliminar_Cuenta(Cta, CuentaBanco, Debe, Haber, Asiento) {
+   	Swal.fire({
+      title: 'PREGUNTA DE ELIMINACION',
+      text: "Esta seguro de eliminar la cuenta: "+Cta+' '+CuentaBanco,
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'SI'
+    }).then((result) => {
+      if (result.value) {
+        $('#myModal_espera').modal('show');
+        $.ajax({
+          url:   '../controlador/contabilidad/comproC.php?Eliminar_Cuenta=true',
+          type:  'post',
+          data: {
+            'Cta': Cta,
+            'Asiento': Asiento,
+            'Numero': $("#ddl_comprobantes").val(),
+            'TP': $('input[name="options"]:checked').val(),
+          },
+          dataType: 'json',
+          success:  function (response) {
+          	$('#myModal_espera').modal('hide');
+            Swal.fire('Proceso terminado con exito, vuelva a listar el comprobante','','info');
+          }
+        }); 
+
+      }else{
+        $('#MBFecha').focus();
+      }
+    })
+  }
+  
+	 function Cambiar_Cuenta(Codigo1, Cuenta, Asiento) {
+  	$("#TipoProcesoLlamadoClave").val("ModalChangeCa");
+  	$('#clave_contador').modal('show');
+		$('#titulo_clave').text('Contador General');
+		$('#TipoSuper').val('Contador');
+
+  	let Codigo3 = Codigo1+' - '+Cuenta;
+  	let Producto = "Transacciones";
+  	let TP = $('#tipoc').val();
+  	let Numero = $('#ddl_comprobantes').val();
+  	Form_Activate_ModalChangeCa(Codigo1, Asiento, Producto, Codigo3, TP, Numero)
+  }
+
+  function Cambiar_Valores(Cta, Cuenta_No, Debe, Haber, NomCtaSup, NoCheque, Asiento) {  	
+  	$("#TipoProcesoLlamadoClave").val("ModalChangeValores");
+  	$('#clave_contador').modal('show');
+		$('#titulo_clave').text('Contador General');
+		$('#TipoSuper').val('Contador');
+  	;
+  	let NomCta = $("#LabelConcepto").val();
+  	let TP = $('#tipoc').val();
+  	let Numero = $('#ddl_comprobantes').val();
+  	let Fecha = $('#MBFecha').val();
+  	Form_Activate_ModalChangeValores(NomCta, Cta, Cuenta_No, Debe, Haber, NomCtaSup, NoCheque, Asiento, TP, Numero, Fecha)
+  }
+
+  function GenerarExcelResultadoComprobante() {
+  	url = '../controlador/contabilidad/comproC.php?ExcelResultadoComprobante=true&Numero='+$('#ddl_comprobantes').val()+'&fecha='+$('#MBFecha').val()+'&concepto='+$("#LabelConcepto").val();
+    window.open(url, '_blank');
+  }
 </script>
