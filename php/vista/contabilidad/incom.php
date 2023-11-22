@@ -1,18 +1,23 @@
 <?php
-    if(!isset($_SESSION)) 
-      session_start();
-    $_SESSION['INGRESO']['ti']='Ingresar Comprobantes (Crtl+f5)';
-    $T_No=1;
-    $SC_No=0;
-    //echo $_SESSION['INGRESO']['Id']; 
-  //datos para consultar
-  //CI_NIC
-  //echo $_SESSION['INGRESO']['Opc'].' '.$_SESSION['INGRESO']['Sucursal'].' '.$_SESSION['INGRESO']['item'].' '.$_SESSION['INGRESO']['periodo'].' ';
-    $variables_mod = '';
-    $NuevoComp = 1;
-    $load = 0;
-    if(isset($_GET["modificar"])){ $variables_mod=$_GET["TP"].'-'.$_GET["com"]; $NuevoComp=0;}
-    if(isset($_GET["num_load"])){$load = 1;}
+if (!isset($_SESSION))
+  session_start();
+$_SESSION['INGRESO']['ti'] = 'Ingresar Comprobantes (Crtl+f5)';
+$T_No = 1;
+$SC_No = 0;
+//echo $_SESSION['INGRESO']['Id']; 
+//datos para consultar
+//CI_NIC
+//echo $_SESSION['INGRESO']['Opc'].' '.$_SESSION['INGRESO']['Sucursal'].' '.$_SESSION['INGRESO']['item'].' '.$_SESSION['INGRESO']['periodo'].' ';
+$variables_mod = '';
+$NuevoComp = 1;
+$load = 0;
+if (isset($_GET["modificar"])) {
+  $variables_mod = $_GET["TP"] . '-' . $_GET["com"];
+  $NuevoComp = 0;
+}
+if (isset($_GET["num_load"])) {
+  $load = 1;
+}
 ?>
 <style>
   .xs {
@@ -52,7 +57,9 @@
 
 
 <script type="text/javascript">
-    var cli = '<?php if(isset($_GET["cliente"])){ echo $_GET["cliente"]; } ?>';    
+    var cli = '<?php if (isset($_GET["cliente"])) {
+      echo $_GET["cliente"];
+    } ?>';    
     // console.log(cli);
     if(cli!='')
     {
@@ -732,7 +739,12 @@ function FormActivate() {
 
     function ingresar_asiento()
     {
-    var partes= $('#cuentar option:selected').text();
+      var partes = '';
+    if($('#cuentar option:selected').text().length > 0){
+      partes = $('#cuentar option:selected').text();
+    }else{
+      partes = $('#aux').val();
+    }
     var bene = $('#beneficiario1').val();
     var partes = partes.split('-');
     var dconcepto1 = partes[1].trim();
@@ -783,7 +795,8 @@ function FormActivate() {
          $('#codigo').val('');      
          $('#cuentar').empty();
          $('#va').val('0.00');  
-         $('#codigo').select();                
+         $('#codigo').select();  
+         $('#aux').val('');              
         }else if(response.resp==-2)
         {
           Swal.fire('Puede ser que ya exista un registro','','info');
@@ -818,7 +831,11 @@ function FormActivate() {
          adjustIframeHeight(300);
       }else if(tipo=="CC")
       {
-         
+        $('#modal_CC').modal('show');
+        $('#titulo_frame_cc').text('Ingresar Subcuentas de Proceso');
+        var tmp = $('#codigo').val();
+        $('#titulo_aux').text('CENTRO DE COSTOS PARA: ' + tmp + " - " + $('#txt_cuenta').val());
+         load_subcuentas();
       }else
       {
         cambia_foco();
@@ -844,9 +861,125 @@ function FormActivate() {
           break;
           case 'PM':
            $('#titulo_frame').text("Ingreso se Subcuenta de Ingreso");
-          break;
+           break;
     }
   }
+
+  function load_subcuentas(){
+    var tmp = $('#cuentar option:selected').text();
+    $('#aux').val(tmp);
+    if ($('#myTable tbody tr').length > 0) {
+        // La tabla ya tiene datos, por lo que no hacemos nada
+        return;
+    }
+    parametros = {
+      'SubCtaGen':$('#codigo').val(),
+      'SubCta':"CC",
+      'OpcTM':$('#txt_moneda').val(),
+      'OpcDH':$('#txt_tipo').val()
+    }
+    $.ajax({
+      data:  {parametros:parametros},
+      url:   '../controlador/contabilidad/incomC.php?load_subcuentas=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (data) {
+         $('#tablaContenedor').html(data);
+         table_lost_focus();
+         get_cell_focus();
+      }
+    });
+  }
+
+  function table_lost_focus(){
+    $('#myTable td[contenteditable="true"]').on('focusout', function(){
+      var suma = 0;
+      $('#myTable td[contenteditable="true"]').each(function() {
+        var valor = parseFloat($(this).text()) || 0; // Convertir el texto a número y asegurar que sea 0 si no es numérico
+        suma += valor;
+      });
+      $('#total_cc').val(suma.toFixed(2));
+    });
+  }
+
+  function get_cell_focus(){
+    $('#myTable').on('focus', 'td[contenteditable="true"]', function() {
+        var $this = $(this);
+        setTimeout(function() {
+            var range = document.createRange();
+            var selection = window.getSelection();
+            range.selectNodeContents($this.get(0));
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }, 1);
+    });
+
+    // Mover el foco a la siguiente celda editable cuando se presiona Tab
+    $('#myTable').on('keydown', 'td[contenteditable="true"]', function(e) {
+        if (e.keyCode === 9) { // Tecla Tab
+            e.preventDefault(); // Prevenir el comportamiento predeterminado
+            var $next = $(this).next('td[contenteditable="true"]');
+            if ($next.length) {
+                $next.focus(); // Mover el foco a la siguiente celda editable
+            } else {
+                // Si es la última celda de la fila, moverse a la primera celda de la siguiente fila
+                var $nextRowFirstCell = $(this).closest('tr').next().find('td[contenteditable="true"]').first();
+                if ($nextRowFirstCell.length) {
+                    $nextRowFirstCell.focus();
+                } else {
+                    // Si es la última celda de la última fila, volver a la primera celda de la tabla
+                    $('#myTable td[contenteditable="true"]').first().focus();
+                }
+            }
+        }
+    });
+  }
+
+  function Commandl_Click(){
+    parametros = {
+      'SubCtaGen':$('#codigo').val(),
+      'SubCta':"CC",
+      'OpcTM':$('#txt_moneda').val(),
+      'OpcDH':$('#txt_tipo').val()
+    }
+    $.ajax({
+      data:  {parametros:parametros},
+      url:   '../controlador/contabilidad/incomC.php?Commandl_Click=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (data) {
+        $('#modal_CC').modal('hide');
+        var SumatoriaSC = $('#total_cc').val();
+        $('#va').val(SumatoriaSC);
+        $('#cuentar').empty();
+        console.log($('#aux').val());
+      }
+    });
+  }
+
+  
+
+  function Command2_Click(){
+    parametros = {
+      'SubCtaGen':$('#codigo').val(),
+      'SubCta':"CC",
+      'OpcTM':$('#txt_moneda').val(),
+      'OpcDH':$('#txt_tipo').val()
+    }
+    $.ajax({
+      data:  {parametros:parametros},
+      url:   '../controlador/contabilidad/incomC.php?Command2_Click=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (data) {
+        $('#modal_CC').modal('hide');
+        $('#cuentar').empty();
+        console.log($('#aux').val());
+      }
+    });
+  }
+
+
 
     function recarar()
     {
@@ -860,6 +993,8 @@ function FormActivate() {
     function cargar_modal()
     {
       var cod = $('#codigo').val();
+      $('#tablaContenedor').html('');
+      $('#total_cc').val('0.00');
       switch(cod) {
         case 'AC':
         case 'ac':
@@ -1584,7 +1719,7 @@ function FormActivate() {
                                  </select>
                                    <!--  <input type="text" class="xs" id="cuenta" name='cuenta' placeholder="cuenta" maxlength='70' size='153'/>
                                     <input type="hidden" id='codigo_cu' name='codigo_cu' value='' />-->
-                                    <input type="hidden" id='TC' name='TC'  value='' />
+                                    <input type="hidden" id='aux' name='TC'  value='' />
                                </div>
                         </div>
                         <div class="col-md-2 col-sm-2 col-xs-2">
@@ -1758,5 +1893,44 @@ function FormActivate() {
   </div>
 </div>
 
+<!-- TODO: Modal CC-->
 
+<div class="modal fade" id="modal_CC" data-backdrop="static" tabindex="-1" role="dialog" style="display: none;">
+  <div class="modal-dialog modal-lg" role="document" style="max-width: 475px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="titulo_frame_cc"></h5>
+      </div>
+      <div class="modal-body">
+        <h5 class="modal-title" id="titulo_aux" style="padding-top: 10px; padding-bottom: 10px;"></h5>
+      <div class="row">
+        <div class="col-sm-12" style="overflow-x: scroll;height: 300px; padding: 10px; ">
+            <div id="tablaContenedor">
+
+            </div>   
+        </div>
+      </div>                     
+        <div class="row">
+          <div class="col-sm-6" style="padding: 10px;">
+            <button type="button" class="btn btn-primary" onclick="Commandl_Click()">Aceptar</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="Command2_Click()">Cancelar</button>
+          </div>
+          <div class="col-sm-6">
+            <div class="col-sm-6" style="padding: 10px;">
+              <b>TOTAL</b>
+            </div>
+            <div class="col-sm-6" style="padding: 10px;">
+              <input type="text" name="total_cc" id="total_cc" class="form-control input-xs text-right" readonly="" value="0.00" wfd-id="id35">
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-primary" onclick="cambia_foco();">Guardar</button> -->
+          <!-- <button style="display: none;" id="btn_salir_cc" id="btn_cerrar_sub_cc" type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>-->
+      </div>
+    </div>
+  </div>
+</div>
 

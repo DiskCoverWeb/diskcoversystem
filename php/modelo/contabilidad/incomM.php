@@ -1413,6 +1413,125 @@ class incomM
 
 	}	
 
+  function load_subcuentas($parametros){
+    $cid = $this->conn;
+	  $sql = "SELECT Codigo, Beneficiario, Valor, DH, TC, Cta, TM, T_No, SC_No, Item, CodigoU
+       FROM Asiento_SC
+       WHERE TC = '".$parametros['SubCta']."'
+       AND Cta = '".$parametros['SubCtaGen']."'
+       AND DH = '".$parametros['OpcDH']."'
+       AND TM = '".$parametros['OpcTM']."'
+       AND T_No = ".$_SESSION['INGRESO']['modulo_']."
+       AND Item = '".$_SESSION['INGRESO']['item']."'
+       AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+       ORDER BY Codigo ";
+    //print_r($sql);die();
+		return $cid->datos($sql);
+  }
+
+  function activate_cc($parametros){
+    $sql = "UPDATE Catalogo_SubCtas
+            SET X = '.' 
+            WHERE Item = '".$_SESSION['INGRESO']['item']."'
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+    Ejecutar_SQL_SP($sql);
+
+    $sql = "UPDATE Catalogo_SubCtas
+            SET X = 'I'
+            FROM Catalogo_SubCtas As CS, Asiento_SC As A
+            WHERE CS.Item = '".$_SESSION['INGRESO']['item']."'
+            AND CS.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+            AND CS.TC = 'CC'
+            AND A.Cta = '".$parametros['SubCtaGen']."'
+            AND A.DH = '".$parametros['OpcDH']."'
+            AND A.TM = '".$parametros['OpcTM']."'
+            AND A.T_No = ".$_SESSION['INGRESO']['modulo_']."
+            AND A.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+            AND CS.Item = A.Item
+            AND CS.Codigo = A.Codigo
+            AND CS.TC = A.TC";
+    Ejecutar_SQL_SP($sql);
+
+    $sql = "DELETE *
+            FROM Asiento_SC
+            WHERE TC = '".$parametros['SubCta']."'
+            AND Cta = '".$parametros['SubCtaGen']."'
+            AND DH = '".$parametros['OpcDH']."'
+            AND TM = '".$parametros['OpcTM']."'
+            AND T_No = ".$_SESSION['INGRESO']['modulo_']."
+            AND Item = '".$_SESSION['INGRESO']['item']."'
+            AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'";
+    Ejecutar_SQL_SP($sql);
+
+    //TODO: En el BuscarFecha va un Co.Fecha, de donde se obtiene?
+    $sql = "INSERT INTO Asiento_SC (Codigo, Beneficiario, FECHA_V, TC, TM, DH, Cta, T_No, Item, CodigoU, Detalle_SubCta, Factura, Prima, Valor, Valor_ME, SC_No, Fecha_D, Fecha_H, Bloquear)
+            SELECT Codigo, Detalle, '" . BuscarFecha(date('Y-m-d')) . "', 'CC' , '" . $parametros['OpcTM']. "', '" . $parametros['OpcDH'] . "', 
+            '" . $parametros['SubCtaGen'] . "', " . $_SESSION['INGRESO']['modulo_'] . ", '".$_SESSION['INGRESO']['item']."', '".$_SESSION['INGRESO']['CodigoU']."', '.', 0, 0, 0, 0, 0, Fecha_D, Fecha_H, Bloquear
+            FROM Catalogo_SubCtas
+            WHERE Item = '".$_SESSION['INGRESO']['item']."'
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+            AND TC = 'CC' 
+            AND X = '.' 
+            AND Agrupacion = 0
+            ORDER BY Codigo, Detalle";
+    Ejecutar_SQL_SP($sql);
+
+     //TODO: En el BuscarFecha va un Co.Fecha, de donde se obtiene?
+    $sql = "DELETE *
+            FROM Asiento_SC
+            WHERE TC = '".$parametros['SubCta']."'
+            AND Cta = '".$parametros['SubCtaGen']."'
+            AND DH = '".$parametros['OpcDH']."'
+            AND TM = '".$parametros['OpcTM']."'
+            AND T_No = ".$_SESSION['INGRESO']['modulo_']." 
+            AND Item = '".$_SESSION['INGRESO']['item']."'
+            AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+            AND Bloquear <> 0
+            AND Fecha_D <= '" . BuscarFecha(date('Y-m-d')) . "'
+            AND Fecha_H >= '" . BuscarFecha(date('Y-m-d')) . "'";
+    Ejecutar_SQL_SP($sql);
+    
+  }
+
+  function commandl_click($parametros){
+
+    $sql = "DELETE * 
+            FROM Asiento_SC 
+            WHERE TC = '".$parametros['SubCta']."' 
+            AND Cta = '".$parametros['SubCtaGen']."' 
+            AND DH = '".$parametros['OpcDH']."' 
+            AND TM = '".$parametros['OpcTM']."' 
+            AND T_No = ".$_SESSION['INGRESO']['modulo_']." 
+            AND Item = '".$_SESSION['INGRESO']['item']."' 
+            AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+            AND Valor = 0";
+    Ejecutar_SQL_SP($sql);
+    $sql = "UPDATE Asiento_SC 
+            SET Valor = ROUND(Valor,2,0) 
+            WHERE TC = '".$parametros['SubCta']."' 
+            AND Cta = '".$parametros['SubCtaGen']."' 
+            AND DH = '".$parametros['OpcDH']."' 
+            AND TM = '".$parametros['OpcTM']."' 
+            AND T_No = ".$_SESSION['INGRESO']['modulo_']." 
+            AND Item = '".$_SESSION['INGRESO']['item']."' 
+            AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'";
+    Ejecutar_SQL_SP($sql);
+  }
+
+  function command2_click($parametros){
+    
+    $sql = "DELETE * 
+            FROM Asiento_SC 
+            WHERE TC = '".$parametros['SubCta']."' 
+            AND Cta = '".$parametros['SubCtaGen']."' 
+            AND DH = '".$parametros['OpcDH']."' 
+            AND TM = '".$parametros['OpcTM']."' 
+            AND T_No = ".$_SESSION['INGRESO']['modulo_']." 
+            AND Item = '".$_SESSION['INGRESO']['item']."' 
+            AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'";
+    Ejecutar_SQL_SP($sql);
+  }
+
 
 }
 ?>
