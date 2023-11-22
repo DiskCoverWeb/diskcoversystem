@@ -134,7 +134,7 @@ class facturarM
 
   function Listar_Tipo_Beneficiarios($query = false, $grupo = G_NINGUNO, $ci = false)
   {
-    $sql = "SELECT Cliente,CI_RUC,Codigo,Cta_CxP,Grupo,Cod_Ejec
+    $sql = "SELECT TOP 50 Cliente,CI_RUC,Codigo,Cta_CxP,Grupo,Cod_Ejec
          FROM Clientes
          WHERE FA <> 0
          AND T = 'N' ";

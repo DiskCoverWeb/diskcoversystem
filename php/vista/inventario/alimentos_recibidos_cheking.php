@@ -11,68 +11,14 @@
   	autocoplet_ingreso();
   	pedidos();
 
-  	// $( "#txt_codigo" ).autocomplete({
-    //         source: function( request, response ) {
-                
-    //             $.ajax({
-    //             		url:   '../controlador/inventario/alimentos_recibidosC.php?search=true',          
-    //                 type: 'post',
-    //                 dataType: "json",
-    //                 data: {
-    //                     search: request.term
-    //                 },
-    //                 success: function( data ) {
-    //                   console.log(data);
-    //                     response( data );
-    //                 }
-    //             });
-    //         },
-    //         select: function (event, ui) {
-    //           console.log(ui.item);
-    //             $('#txt_id').val(ui.item.value); // display the selected text
-    //             $('#txt_fecha').val(ui.item.Fecha); // display the selected text
-    //             $('#txt_ci').val(ui.item.CI_RUC); // save selected id to input
-    //             $('#txt_donante').val(ui.item.Cliente); // save selected id to input
-    //             $('#txt_tipo').val(ui.item.Cod_Ejec); // save selected id to input
-    //             $('#txt_cant').val(ui.item.Total); // save selected id to input
-    //             $('#txt_comentario').val(ui.item.mensaje); // save selected id to input
-    //             $('#txt_ejec').val(ui.item.Cod_Ejec); // save selected id to input
-    //             if(ui.item.Cod_R=='0')
-    //             {
-    //             	$('#img_estado').attr('src','../../img/png/bloqueo.png');
-    //             }else
-    //             {
-
-    //             	$('#img_estado').attr('src','../../img/png/aprobar.png');
-    //             }
-    //             $('#txt_temperatura').val(ui.item.Porc_C); // save selected id to input
-
-    //             $('#ddl_alimento').append($('<option>',{value: ui.item.Cod_C, text:ui.item.Proceso,selected: true }));
-    //             if(ui.item.Proceso.toUpperCase() =='COMPRAS' || ui.item.Proceso.toUpperCase() =='COMPRA')
-    //             {
-    //             	$('#pnl_factura').css('display','block');
-    //             }else
-    //             {
-
-    //             	$('#pnl_factura').css('display','none');
-    //             }
-    //             console.log(ui.item.Proceso.toUpperCase())
-    //             cargar_pedido();
-    //             return false;
-    //         },
-    //         focus: function(event, ui){
-    //              $('#txt_codigo').val(ui.item.label); // display the selected text
-                
-    //             return false;
-    //         },
-    //     });
+  
 
   
 
       $('#txt_codigo').on('select2:select', function (e) {
 		      var data = e.params.data.data;
 
-console.log(data);
+					console.log(data);
 		      $('#txt_id').val(data.ID); // display the selected text
 		      $('#txt_fecha').val(formatoDate(data.Fecha_P.date)); // display the selected text
 		      $('#txt_ci').val(data.CI_RUC); // save selected id to input
@@ -183,7 +129,7 @@ function autocoplet_ingreso()
 	    	console.log(data);
 	    	option = '';
 	    	data.forEach(function(item,i){
-	    		console.log(item);
+	    		// console.log(item);
 	    		option+='<option value="'+item.Codigo+'">'+item.Cliente+'</option>';
 	    	})	 
 	    	$('#ddl_ingreso').html(option);     
@@ -414,6 +360,75 @@ function autocoplet_ingreso()
 
   }
 
+  function abrir_modal_notificar(codigoU)
+  {
+  	$('#txt_codigo_usu').val(codigoU);
+  	$('#myModal_notificar_usuario').modal('show');
+  }
+
+ function notificar2()
+ {
+   var codigo = $('#txt_codigo').val();
+   console.log(codigo);
+    if(codigo=='')
+    {
+       Swal.fire("Seleccione un pedido","","info");
+       return false;
+    }
+
+    var parametros = {
+        'notificar':$('#txt_comentario2').val(),
+        'id':$('#txt_id').val(),
+        'asunto':'Recepcion',
+    }
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/inventario/alimentos_recibidosC.php?notificar_clasificacion=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        if(response==1)
+        {
+          Swal.fire("","Notificacion enviada","success");
+        }
+        console.log(response);
+        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
+ }
+
+
+ function editar_comentario(mod)
+ {
+ 	var texto = '';
+ 	var asunto = '';
+ 	 if(mod)
+ 	 {
+ 	 	 if($('#txt_comentario_clas').prop('readonly'))
+ 	 	 {
+ 	 	 	$('#txt_comentario_clas').prop('readonly',false)
+ 	 	 	$('#icon_comentario1').removeClass();
+ 	 	 	$('#icon_comentario1').addClass('fa fa-save');
+ 	 	 }
+ 	 }else
+ 	 {
+ 	 	 if($('#txt_comentario').prop('readonly'))
+ 	 	 {
+ 	 	 	$('#txt_comentario').prop('readonly',false)
+ 	 	 	$('#icon_comentario').removeClass();
+ 	 	 	$('#icon_comentario').addClass('fa fa-save');
+ 	 	 }
+ 	 }
+
+ 	
+
+ 	 console.log(editar);
+ }
+
+
 </script>
 
  <div class="row">
@@ -517,8 +532,13 @@ function autocoplet_ingreso()
 								<b>COMENTARIO DE RECEPCION:</b>
 							</div>
 							<div class="col-sm-6">
-								<textarea class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly rows="1">
-								</textarea>
+								<div class="input-group input-group-sm">
+										<textarea class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly rows="1">
+																	</textarea>
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-info btn-flat" onclick="editar_comentario()"><i id="icon_comentario" class="fa fa-pencil"></i></button>
+									</span>
+								</div>						
 							</div>
 						</div>
 						<div class="row"  style="padding-top: 5px;">
@@ -526,8 +546,15 @@ function autocoplet_ingreso()
 								<b>COMENTARIO DE CLASIFICACION:</b>
 							</div>
 							<div class="col-sm-6">
-								<textarea class="form-control input-xs" id="txt_comentario_clas" name="txt_comentario_clas" readonly rows="1">
+								<div class="input-group input-group-sm">
+									<textarea class="form-control input-xs" id="txt_comentario_clas" name="txt_comentario_clas" readonly rows="1">
 								</textarea>
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-info btn-flat" onclick="editar_comentario(1)"><i id="icon_comentario1" class="fa fa-pencil"></i></button>
+									</span>
+								</div>
+
+								
 							</div>
 						</div>
 						<div class="row" id="panel_serie"  style="padding-top: 5px;">
@@ -569,14 +596,10 @@ function autocoplet_ingreso()
 														
 							</div>
 							<div class="col-sm-12" id="pnl_comentario">
-									<b>COMENTARIO DE CHECKING</b>
-									<div>
-										<label><input type="radio" name="rbl_"> Recepcion</label>
-										<label><input type="radio" name="rbl_"> Clasificacion</label>
-									</div>
-									<textarea class="form-control input-sm" rows="3" id="txt_comentario2" name="txt_comentario2"></textarea>
+									<b>COMENTARIO DE CHECKING</b>									
+									<textarea class="form-control input-sm" rows="3" id="txt_comentario2" name="txt_comentario2" style="font-size: 16px;"></textarea>
 									<div class="text-right">
-										<button class="btn btn-primary btn-sm" >Notificar</button>
+										<button type="button" class="btn btn-primary btn-sm" onclick="notificar2()">Notificar</button>
 									</div>								
 							</div>
 						</div>
@@ -625,12 +648,13 @@ function autocoplet_ingreso()
 				          <th>ITEM</th>
 				          <th>FECHA DE CLASIFICACION</th>
 				          <th>FECHA DE EXPIRACION</th>
-				          <th>DESCRIPCION</th>
+				          <th width="224px">DESCRIPCION</th>
 				          <th>CANTIDAD</th>
 				          <th>PRECIO O COSTO</th>
 				          <th>COSTO TOTAL</th>
-				          <th>USUARIO</th>
-				          <th>PARA CONTABILIZAR</th>
+				          <th width="200px">USUARIO</th>
+				          <th>PARA CONTABILIZAR</th>				          
+				          <th></th>
 				        </thead>
 				        <tbody id="tbl_body"></tbody>
 
@@ -824,9 +848,58 @@ function eliminar_lin(num)
       });
   }
 
+   function notificar()
+ {
+   
+    var parametros = {
+        'notificar':$('#txt_texto').val(),
+        'usuario':$('#txt_codigo_usu').val(),
+        'asunto':'Clasificacion',
+    }
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/inventario/alimentos_recibidosC.php?notificar_usuario=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        if(response==1)
+        {
+          Swal.fire("","Notificacion enviada","success").then(function(){
+          	$('#myModal_notificar_usuario').modal('hide'); 
+          	$('#txt_texto').val('');   
+          	$('#txt_codigo_usu').val('') 
+          });
+        }
+        console.log(response);
+        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
+ }
+
+
 </script>
 
 
+<div id="myModal_notificar_usuario" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h4 class="modal-title">Notificacion</h4>
+            </div>
+            <div class="modal-body" style="background: antiquewhite;">
+              <input type="hidden" name="txt_codigo_usu" id="txt_codigo_usu">
+                <textarea class="form-control form-control-sm" rows="3" id="txt_texto" name="txt_texto" placeholder="Detalle de notificacion"></textarea>
+            </div>
+             <div class="modal-footer">             	
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="notificar()">Notificar</button>
+            </div>
+        </div>
+    </div>
+  </div>
 
 
 
