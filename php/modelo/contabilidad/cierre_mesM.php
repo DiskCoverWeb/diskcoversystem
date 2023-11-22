@@ -7,7 +7,7 @@ include(dirname(__DIR__,2).'/funciones/funciones.php');
 class cierre_mesM
 {	
 		
-    private $conn ;
+    private $db ;
 	function __construct()
 	{
 	   $this->db = new db();
@@ -48,8 +48,6 @@ class cierre_mesM
               WHERE Item = '" .$_SESSION['INGRESO']['item']."' 
               AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
               AND Detalle = '".$Detalle_Mes."' ";
-
-              // print_r($sql);die();
        return $this->db->datos($sql);
 	}
 
@@ -61,9 +59,6 @@ class cierre_mesM
 	           AND Fecha_Inicial = '".BuscarFecha($Fecha_Mes)."'
 	           AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 	           AND Item = '".$_SESSION['INGRESO']['item']."' ";
-
-	           // print_r($sql);
-
        return $this->db->String_Sql($sql);
 
 	}
