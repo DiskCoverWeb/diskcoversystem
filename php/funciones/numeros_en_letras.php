@@ -54,7 +54,7 @@ class NumerosEnLetras
         'novecientos '
     ];
 
-    public static function convertir($number, $currency = '', $format = false, $decimals = '')
+    public static function convertir($number, $currency = '', $format = false, $decimals = '', $mayusculas = false)
     {
         $base_number = $number;
         $converted = '';
@@ -122,7 +122,7 @@ class NumerosEnLetras
             }
         }
 
-        return $valor_convertido;
+        return ($mayusculas)?strtoupper($valor_convertido):$valor_convertido;
     }
 
     private static function convertGroup($n)

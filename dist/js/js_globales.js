@@ -363,3 +363,51 @@ function agregarOpcionPorDefecto(selectId) {
 async function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+function TextoValido(input, Numero=false, Mayusculas=false, NumeroDecimales=2) {
+	var TextB = $(input)
+    var TextosB = TextB.val();
+
+    if (TextosB === null || TextosB === undefined) {
+        TextosB = "";
+    }
+
+    TextosB = TextosB.replace(/\r|\n/g, "");
+    TextosB = TextosB.trim();
+
+    if (Mayusculas) {
+        TextosB = TextosB.toUpperCase();
+    }
+
+    if (Numero) {
+        if (TextosB === "") {
+            TextosB = "0";
+        }
+
+        if ($.isNumeric(TextosB)) {
+            switch (true) {
+                case NumeroDecimales === 0:
+                    TextosB = Number(TextosB).toFixed(2);
+                    break;
+                case NumeroDecimales > 2:
+                    TextosB = Number(TextosB).toFixed(NumeroDecimales);
+                    break;
+                default:
+                    TextosB = Number(TextosB).toFixed(2);
+                    break;
+            }
+
+            TextB.val(TextosB.trim());
+        } else {
+            TextosB = "0";
+            TextB.val(TextosB);
+            TextB.focus();
+        }
+    } else {
+        if (TextosB === "") {
+            TextosB = ".";
+        }
+
+        TextB.val(TextosB);
+    }
+}

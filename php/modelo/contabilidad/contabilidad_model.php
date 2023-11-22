@@ -3272,7 +3272,15 @@ function sp_Reporte_Analitico_Mensual($tipo,$desde,$hasta)
              // print_r($sql);die();
              $result = $this->db_->datos($sql);
              $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-94;
-             $tbl = grilla_generica_new($sql,'Transacciones As T, Catalogo_Cuentas As Ca ',$id_tabla='cont_tbl',$titulo=false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida);
+
+             $botones[0] = array('boton'=>'Cambiar Cuenta','icono'=>'<i class="fa fa-edit"></i>', 'tipo'=>'warning', 'id'=>'Cta,Cuenta,ID');
+             $botones[1] = array('boton'=>'Cambiar Valores','icono'=>'<i class="fa fa-pencil"></i>', 'tipo'=>'info', 'id'=>'Cta,Cuenta,Debe,Haber,Detalle,Cheq_Dep,ID');
+             $botones[2] = array('boton'=>'Eliminar Cuenta','icono'=>'<i class="fa fa-trash-o"></i>', 'tipo'=>'danger', 
+             	'id' => 'Cta,Cuenta,Debe,Haber,ID'
+            );
+
+             $_SESSION['FListComprobante']['Contabilizacion'] = $sql;
+             $tbl = grilla_generica_new($sql,'Transacciones As T, Catalogo_Cuentas As Ca ',$id_tabla='cont_tbl',$titulo=false,$botones,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida);
 
              return array('tbl'=>$tbl,'datos'=>$result);
 

@@ -5,19 +5,27 @@ include(dirname(__DIR__,3).'/lib/fpdf/reporte_comp.php');
  * 
  */
 $controlador = new comproC();
+if(isset($_GET['ExcelResultadoComprobante']))
+{
+	echo json_encode($controlador->ExcelResultadoComprobante($_GET));
+}else
 if(isset($_GET['reporte']))
 {
 	$parametros = $_GET;
 	echo json_encode($controlador->reporte_com($parametros));
-}
+}else
 if(isset($_GET['anular_comprobante']))
 {
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->anular_comprobante($parametros));
-}
+}else
 if(isset($_GET['ActualizarFechaComprobante']))
 {
 	echo json_encode($controlador->ActualizarFechaComprobante($_POST));
+}else
+if(isset($_GET['Eliminar_Cuenta']))
+{
+	echo json_encode($controlador->Eliminar_Cuenta($_POST));
 }
 
 class comproC 
@@ -88,7 +96,7 @@ class comproC
 				$stmt5_count = count($retencion_fuen);
 				
 				//Llenar SubCtas
-				$subcta = $this->modelo->llenar_SubCta($Numero,$TipoComp);	
+				$subcta = $this->modelo->llenar_SubCta($Numero,$TipoComp);
 				$stmt6_count = count($subcta);
 
 				// print_r($parametro);die();
@@ -237,6 +245,36 @@ class comproC
         Actualiza_Procesado_Tabla("Transacciones", true);
         Actualiza_Procesado_Tabla("Trans_SubCtas", true);
         Actualiza_Procesado_Tabla("Trans_Kardex", true);
+	}
+
+	function Eliminar_Cuenta($parametros)
+	{
+		extract($parametros);
+		$ID_Temp = 0;
+		$_SESSION['Co']['TP'] = $TP;
+		$_SESSION['Co']['Numero'] = $Numero;
+		
+		Actualiza_Procesado_Tabla("Transacciones", true);
+        Actualiza_Procesado_Tabla("Trans_SubCtas", true);
+        Actualiza_Procesado_Tabla("Trans_Kardex", true);
+        
+        Elimina_Cuenta_Tabla("Transacciones", "Cta", $Cta, $ID_Temp);
+        Elimina_Cuenta_Tabla("Trans_SubCtas", "Cta", $Cta);
+        Elimina_Cuenta_Tabla("Trans_Air", "Cta_Retencion", $Cta);
+        Elimina_Cuenta_Tabla("Trans_Compras", "Cta_Servicio", $Cta);
+        Elimina_Cuenta_Tabla("Trans_Compras", "Cta_Bienes", $Cta);
+        Elimina_Cuenta_Tabla("Trans_Kardex", "Cta_Inv", $Cta);
+        Elimina_Cuenta_Tabla("Trans_Kardex", "Contra_Cta", $Cta);
+	}
+
+	function ExcelResultadoComprobante($parametros)
+	{
+		extract($parametros);
+		if (!isset($_SESSION['FListComprobante']['Contabilizacion']) || $_SESSION['FListComprobante']['Contabilizacion'] == "") {
+            return 'Sin datos';
+        }
+        $medidas = array(10, 25, 15, 15, 15, 50, 13, 14, 15, 12, 5, 13, 14, 10);
+        return exportar_excel_generico_SQl("Contabilizacion Comprobante No. ".$Numero." de ".$fecha." - ".$concepto, $_SESSION['FListComprobante']['Contabilizacion'],$medidas,[],true);
 	}
 }
 ?>
