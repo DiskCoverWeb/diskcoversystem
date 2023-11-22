@@ -469,6 +469,7 @@ class alimentos_recibidosM
 				{
 					$sql.=" AND Codigo = '".$codigo."'";
 				}
+			$sql.=" ORDER BY ID DESC";
 
 				// print_r($sql);die();
 			
