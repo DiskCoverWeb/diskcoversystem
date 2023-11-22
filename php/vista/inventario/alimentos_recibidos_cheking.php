@@ -403,17 +403,23 @@ function autocoplet_ingreso()
 
  function editar_comentario(mod)
  {
+ 	var texto = '';
+ 	var asunto = '';
  	 if(mod)
  	 {
  	 	 if($('#txt_comentario_clas').prop('readonly'))
  	 	 {
  	 	 	$('#txt_comentario_clas').prop('readonly',false)
+ 	 	 	$('#icon_comentario1').removeClass();
+ 	 	 	$('#icon_comentario1').addClass('fa fa-save');
  	 	 }
  	 }else
  	 {
  	 	 if($('#txt_comentario').prop('readonly'))
  	 	 {
  	 	 	$('#txt_comentario').prop('readonly',false)
+ 	 	 	$('#icon_comentario').removeClass();
+ 	 	 	$('#icon_comentario').addClass('fa fa-save');
  	 	 }
  	 }
 
@@ -530,7 +536,7 @@ function autocoplet_ingreso()
 										<textarea class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly rows="1">
 																	</textarea>
 									<span class="input-group-btn">
-										<button type="button" class="btn btn-info btn-flat" onclick="editar_comentario()"><i class="fa fa-pencil"></i></button>
+										<button type="button" class="btn btn-info btn-flat" onclick="editar_comentario()"><i id="icon_comentario" class="fa fa-pencil"></i></button>
 									</span>
 								</div>						
 							</div>
@@ -544,7 +550,7 @@ function autocoplet_ingreso()
 									<textarea class="form-control input-xs" id="txt_comentario_clas" name="txt_comentario_clas" readonly rows="1">
 								</textarea>
 									<span class="input-group-btn">
-										<button type="button" class="btn btn-info btn-flat" onclick="editar_comentario(1)"><i class="fa fa-pencil"></i></button>
+										<button type="button" class="btn btn-info btn-flat" onclick="editar_comentario(1)"><i id="icon_comentario1" class="fa fa-pencil"></i></button>
 									</span>
 								</div>
 
