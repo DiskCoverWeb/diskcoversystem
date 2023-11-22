@@ -221,6 +221,11 @@ if(isset($_GET['notificar_clasificacion']))
 	echo json_encode($controlador->notificar_clasificacion($parametros));
 }
 
+if(isset($_GET['listar_notificaciones']))
+{
+	echo json_encode($controlador->listar_notificaciones());
+}
+
 /**
  * 
  */
@@ -1095,10 +1100,32 @@ class alimentos_recibidosC
 	function notificar_clasificacion($parametros)
 	{
 		// print_r($parametros);die();
+		$pedido = $this->modelo-> buscar_transCorreos_all(false,false,$parametros['id']);
+
+		   SetAdoAddNew("Trans_Memos"); 		
+		   SetAdoFields('T','P');
+		   SetAdoFields('Producto',$producto2[0]['Producto']);
+		   SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);   
+		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);  
+		   SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
+		   SetAdoFields('Codigo',$pedido[0]['CodigoU']); 
+		   SetAdoFields('Texto_Memo',$parametros['notificar']);
+		   return SetAdoUpdate();
+
+
+
+		print_r($pedido);die();
 		SetAdoFields('Llamadas',$parametros['notificar']);
 		SetAdoFieldsWhere('ID',$parametros['id']);
 		return SetAdoUpdateGeneric();
 
+	}
+
+	function listar_notificaciones()
+	{
+		// print_r($parametros);die();
+		$notificacion = $this->modelo->listar_notificaciones($_SESSION['INGRESO']['CodigoU'],'P');
+		return $notificacion;
 	}
 
 

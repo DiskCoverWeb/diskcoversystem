@@ -2,6 +2,7 @@
 <script type="text/javascript">
   $(document).ready(function () {
   	cargar_datos_procesados();
+  	notificaciones();
   	$('#btn_guardar').focus();
   	 $(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
       $(this).closest(".select2-container").siblings('select:enabled').select2('open');
@@ -572,6 +573,34 @@ function autocoplet_ingreso_donante(){
   	 }
   }
 
+  function notificaciones()
+  {
+  	$.ajax({
+		    type: "POST",
+	      	url:   '../controlador/inventario/alimentos_recibidosC.php?listar_notificaciones=true',
+		      // data:datos,
+	        dataType:'json',
+		    success: function(data)
+		    {		    	    	
+		    	if(data.length>0)
+		    	{
+		    		 $('#pnl_notificacion').css('display','block');
+		    		 data.forEach(function(){
+		    		 	mensaje+="";
+		    		 })
+
+		    		 $('#pnl_mensajes').html(mensajes);
+		    	}else
+		    	{
+
+		    		 $('#pnl_notificacion').css('display','none');
+		    	}
+		    	console.log(data);
+		    }
+		});  	
+
+  }
+
 </script>
 
  <div class="row">
@@ -590,7 +619,44 @@ function autocoplet_ingreso_donante(){
 			<button class="btn btn-default" title="Guardar" onclick="nuevo_proveedor()">
 				<img src="../../img/png/mostrar.png">
 			</button>
-		</div>   
+		</div>
+		<div class="col-xs-2 col-md-2 col-sm-2" style="display:none;" id="pnl_notificacion">
+			<div class="navbar-custom-menu">
+				<ul class="nav navbar-nav">
+
+						<li class="dropdown messages-menu">
+							<button class="btn btn-danger dropdown-toggle" title="Guardar"  data-toggle="dropdown" aria-expanded="false">
+									<img src="../../img/gif/notificacion.gif" style="width:32px;height: 32px;">
+							</button>  	
+							<ul class="dropdown-menu">
+								<li class="header">tienes <b>0</b> mensajes</li>
+								<li>
+									<ul class="menu" id="pnl_mensajes">
+										<li>
+											<a href="#">
+												<h4>
+													Support Team
+													<small><i class="fa fa-clock-o"></i> 5 mins</small>
+												</h4>
+												<p>Why not buy a new awesome theme?</p>
+											</a>
+										</li>
+										<li>
+											<a href="#">
+												<h4>
+													Reviewers
+													<small><i class="fa fa-clock-o"></i> 2 days</small>
+												</h4>
+												<p>Why not buy a new awesome theme?</p>
+											</a>
+										</li>
+									</ul>
+								</li>
+								<li class="footer"><a href="#">See All Messages</a></li>
+							</ul>
+						</li>
+					</ul>
+			</div>
     </div>
 </div>
 <div class="row">

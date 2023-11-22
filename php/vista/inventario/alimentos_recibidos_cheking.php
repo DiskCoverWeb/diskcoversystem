@@ -77,7 +77,7 @@ console.log(data);
 		      $('#txt_fecha').val(formatoDate(data.Fecha_P.date)); // display the selected text
 		      $('#txt_ci').val(data.CI_RUC); // save selected id to input
 		      $('#txt_donante').val(data.Cliente); // save selected id to input
-		      $('#txt_tipo').val(data.Cod_Ejec); // save selected id to input
+		      $('#txt_tipo').val(data.Actividad); // save selected id to input
 		      $('#txt_cant').val(data.TOTAL); // save selected id to input
 		      $('#txt_comentario').val(data.Mensaje); // save selected id to input
 		      $('#txt_comentario_clas').val(data.Llamadas); // save selected id to input
@@ -570,7 +570,14 @@ function autocoplet_ingreso()
 							</div>
 							<div class="col-sm-12" id="pnl_comentario">
 									<b>COMENTARIO DE CHECKING</b>
-									<textarea class="form-control input-sm" rows="3" id="txt_comentario2" name="txt_comentario2"></textarea>								
+									<div>
+										<label><input type="radio" name="rbl_"> Recepcion</label>
+										<label><input type="radio" name="rbl_"> Clasificacion</label>
+									</div>
+									<textarea class="form-control input-sm" rows="3" id="txt_comentario2" name="txt_comentario2"></textarea>
+									<div class="text-right">
+										<button class="btn btn-primary btn-sm" >Notificar</button>
+									</div>								
 							</div>
 						</div>
 
