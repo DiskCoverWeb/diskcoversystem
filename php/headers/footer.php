@@ -338,6 +338,23 @@
     </div>
   </div>
 
+  <div id="myModal_notificar" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h4 class="modal-title">Notificacion</h4>
+            </div>
+            <div class="modal-body" style="background: antiquewhite;">
+              <input type="hidden" name="txt_id_noti" id="txt_id_noti">
+                <p id="txt_mensaje"></p>
+            </div>
+             <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="cambiar_estado()">OK</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
   <script type="text/javascript">
     $(document).ready(function(){ 
         window.addEventListener("message", function(event) {
