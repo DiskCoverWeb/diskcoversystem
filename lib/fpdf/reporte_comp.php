@@ -1131,42 +1131,39 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 	$pdf->SetLeftMargin(41);
 	$pdf->SetRightMargin(20);
 	$pdf->AddPage();
-	// while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_NUMERIC) ) 
-	// {
-	   // print_r($stmt);die();
-		$TipoComp =  $stmt[0]['TP']; // $row[2];
-		$Numero = $stmt[0]['Numero']; // $row[3];
-		$Fecha =  $stmt[0]['Fecha']->format('Y-m-d'); // $row[4]->format('Y-m-d');
-		$Concepto= $stmt[0]['Concepto']; // $row[7];
-		$efectivo1= $stmt[0]['Efectivo']; // $row[9];
-		$Monto_Total= $stmt[0]['Monto_Total']; // $row[10];
+
+	$TipoComp =  $stmt[0]['TP']; // $row[2];
+	$Numero = $stmt[0]['Numero']; // $row[3];
+	$Fecha =  $stmt[0]['Fecha']->format('Y-m-d'); // $row[4]->format('Y-m-d');
+	$Concepto= $stmt[0]['Concepto']; // $row[7];
+	$efectivo1= $stmt[0]['Efectivo']; // $row[9];
+	$Monto_Total= $stmt[0]['Monto_Total']; // $row[10];
 
 
-		$t = $stmt1[0]['T'];    // $row1[2];
-		$Fecha = $stmt1[0]['Fecha']->format('Y-m-d');    // $row1[5]->format('Y-m-d');
-		$codigoB = $stmt1[0]['Codigo_B'];    // $row1[6];
-		$beneficiario = $stmt1[0]['Cliente'];    // $row1[26];
-		$concepto1 = $stmt1[0]['Concepto'];    // $row1[8];
-		$efectivo = number_format($stmt1[0]['Efectivo'],2, '.', ',');
-		$est="Normal";
-		$cliente = $stmt1[0]['Cliente'];    // $row1[26];
-		$ruc_ci = $stmt1[0]['CI_RUC'];    // $row1[21];
-		if($t == 'A')
-		{
-			$est="ANULADO";
-		}
-		$usuario= $stmt1[0]['Nombre_Completo']; 
-
+	$t = $stmt1[0]['T'];    // $row1[2];
+	$Fecha = $stmt1[0]['Fecha']->format('Y-m-d');    // $row1[5]->format('Y-m-d');
+	$codigoB = $stmt1[0]['Codigo_B'];    // $row1[6];
+	$beneficiario = $stmt1[0]['Cliente'];    // $row1[26];
+	$concepto1 = $stmt1[0]['Concepto'];    // $row1[8];
+	$efectivo = number_format($stmt1[0]['Efectivo'],2, '.', ',');
+	$est="Normal";
+	$cliente = $stmt1[0]['Cliente'];    // $row1[26];
+	$ruc_ci = $stmt1[0]['CI_RUC'];    // $row1[21];
+	if($t == 'A')
+	{
+		$est="ANULADO";
+	}
+	$usuario= $stmt1[0]['Nombre_Completo']; 
 
 	$sumdb=0;
 	$sumcr=0;
 	if($stmt8_count<>0)
 	{
-		$cantidad_reg=$stmt2_count+$stmt6_count+($stmt8_count-1);
+		$cantidad_reg=$stmt2_count+($stmt8_count-1);
 	}
 	else
 	{
-		$cantidad_reg=$stmt2_count+$stmt6_count+4;
+		$cantidad_reg=$stmt2_count+4;
 	}
 	if($cantidad_reg<31)
 	{
@@ -1176,15 +1173,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 		$pdf->Header1($pdf,$Numero,$TipoComp,$Fecha,$pag);
 		//logo
 		$i=0;
-		if($va==1)
-		{
-			//$autorizacion = simplexml_load_file($nombre_archivo);
-		}
-		else
-		{
-			//$stmt = str_replace("﻿", "", $stmt);
-			//$autorizacion =simplexml_load_string($stmt);
-		}
+
 		$x=31;
 		if($_SESSION['INGRESO']['Nombre_Comercial']<>$_SESSION['INGRESO']['Razon_Social'])
 		{
@@ -1196,7 +1185,6 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 		}
 		//imprimir cantidad,cheque depositos
 		
-		//$num = NumerosEnLetras::convertir(1988208.99);
 		//pagado a
 		$pdf->SetXY($x, $y);
 		$pdf->Cell(555,15,'','1',1,'Q');
@@ -1207,7 +1195,6 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 		
 		$pdf->SetWidths(array(65));
 		$pdf->SetAligns(array("L"));
-		//$arr=array($arr1[$i]);
 		$arr=array('Pagado a: ');
 		$pdf->Row($arr,10);
 		
@@ -1241,7 +1228,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 		$arr=array($ruc_ci);
 		$pdf->Row($arr,10);
 		
-		if($stmt8_count<>0)
+		if($stmt8_count<>0 || $Monto_Total>0)
 		{
 			//cantidad a
 			$y=$y+15;
@@ -1255,7 +1242,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 			$pdf->SetWidths(array(75));
 			$pdf->SetAligns(array("L"));
 			//$arr=array($arr1[$i]);
-			$Monto_Total1=$num = NumerosEnLetras::convertir(number_format($Monto_Total,2, '.', ''),'',true,'Centavos');
+			$Monto_Total1=$num = NumerosEnLetras::convertir(number_format($Monto_Total,2, '.', ''),'',true,'Centavos', true);
 			$arr=array('La cantidad de: ');
 			$pdf->Row($arr,10);
 			
@@ -1270,37 +1257,9 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 			$pdf->Row($arr,10);
 			$y=$y+30;
 		}
-		//cheque efectivo deposito
-		/*
-			select cc.TC,t.Cta,cc.Cuenta,t.Cheq_Dep,sum(t.Haber) as monto
-			 from Transacciones as t, Catalogo_Cuentas as cc
-			 where t.Item='001' and t.Periodo='.' 
-			 and t.TP='CE' and t.Numero='5000093'
-			 and cc.TC IN ('BA','CJ')
-			 and t.Haber>0
-			 and t.Item=cc.Item
-			 and t.Periodo=cc.Periodo
-			 and t.Cta=cc.Codigo
-			 group by cc.TC,t.Cta,cc.Cuenta,t.Cheq_Dep
-			 order by cc.TC,t.Cta,cc.Cuenta,t.Cheq_Dep
 
-			 select cc.TC,t.Cta,cc.Cuenta,t.Cheq_Dep,sum(t.Debe) as monto
-			 from Transacciones as t, Catalogo_Cuentas as cc
-			 where t.Item='001' and t.Periodo='.' 
-			 and t.TP='CI' and t.Numero='5000096'
-			 and cc.TC IN ('BA','CJ')
-			 and t.Debe>0
-			 and t.Item=cc.Item
-			 and t.Periodo=cc.Periodo
-			 and t.Cta=cc.Codigo
-			 group by cc.TC,t.Cta,cc.Cuenta,t.Cheq_Dep
-			 order by cc.TC,t.Cta,cc.Cuenta,t.Cheq_Dep
-		*/
-		
 		$i=0;
-		// while( $row1 = sqlsrv_fetch_array( $stmt8, SQLSRV_FETCH_NUMERIC) ) 
-		// {
-		// print_r($stmt8);die();
+
 		if(count($stmt8)>0) {
 			
 			if($stmt8[0]['TC']=='BA')
@@ -1436,7 +1395,6 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 			$y=$y+15;
 			// $i++;
 		}
-	// }
 		
 		/*--------------------------------------------*/
 		
@@ -1476,10 +1434,6 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 		//$arr=array($arr1[$i]);
 		$arr=array('CONTABILIZACION');
 		$pdf->Row($arr,10);
-		//saber si es una o mas pagina
-		//echo ' '.$stmt2_count.' '.$stmt6_count.' ';
-		/*****agregar a funcion***********/
-		//cabecera de tabla
 		$y=$y+15;
 		$pdf->SetXY($x, $y);
 		
@@ -1531,7 +1485,6 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 		}
 		else
 		{
-			//$cantidad_reg1=$cantidad_reg*10;
 			$x1=$x;
 			$y1=$y;
 			
@@ -1539,8 +1492,6 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 		//llenamos los detalles 
 		$ii=0;
 		$subc=array();
-		// while( $row1 = sqlsrv_fetch_array( $stmt6, SQLSRV_FETCH_NUMERIC) ) 
-		// print_r($stmt6);die();
 		foreach ($stmt6 as $key => $value) {
 
 			$subc[$ii]['cta']= $value['Cta']; //$row1[0];
@@ -1553,11 +1504,8 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 			
 			$ii++;
 		}
-		//$pdf->SetFont('Arial','',9);
 		$pdf->SetXY($x+2, $y+2);
-		
-		//while( $row1 = sqlsrv_fetch_array( $stmt2, SQLSRV_FETCH_NUMERIC) ) 
-		// print_r($stmt2);die();
+		$status ='';
 		if(count($stmt2)>0)
 		{
 			
@@ -1597,122 +1545,16 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 				
 
 			}
-			// $pdf->SetX($x+2);
-			// $pdf->SetFont('Arial','',9);
-			// $cta = $stmt2[0]['Cta'];//$row1[0];
-			// $conc = $stmt2[0]['Cuenta'];//$row1[1];
-			// $parc='';
-			// $debe='';
-			// $haber='';
-			// if($stmt2[0]['Parcial_ME']!=0 and $stmt2[0]['Parcial_ME']!='0.00')
-			// {
-			// 	$parc = number_format($stmt2[0]['Parcial_ME'],2, '.', ',');
-			// }
-			// if($stmt2[0]['Debe']!=0 and $stmt2[0]['Debe']!='0.00')
-			// {
-			// 	$sumdb=$sumdb+$stmt2[0]['Debe'];
-			// 	$debe = number_format($stmt2[0]['Debe'],2, '.', ',');
-			// }
-			// if($stmt2[0]['Haber']!=0 and $stmt2[0]['Haber']!='0.00')
-			// {
-			// 	$sumcr=$sumcr+$stmt2[0]['Haber'];
-			// 	$haber = number_format($stmt2[0]['Haber'],2, '.', ',');
-			// }
-			// $detalle =$stmt2[0]['Detalle'];
-			// $status = $stmt2[0]['T'];
 			
-			// $pdf->SetWidths(array(97,189,95,84,84));
-			// $pdf->SetAligns(array("L","L","R","R","R"));
-			// //$arr=array($arr1[$i]);
-			// $arr=array($cta, $conc, $parc, $debe,$haber);
-			// $pdf->Row($arr,10);
-			// $y=$y+10;
-			// if($detalle<>'.')
-			// {
-			// 	$pdf->SetFont('Arial','',8);
-			// 	//$pdf->SetXY($x+2, $y+2);
-			// 	$pdf->SetWidths(array(97,180,95,84,84));
-			// 	$pdf->SetAligns(array("L","L","R","R","R"));
-			// 	//$arr=array($arr1[$i]);
-			// 	$arr=array('', $detalle, '', '', '');
-			// 	$pdf->Row($arr,10);
-			// 	$y=$y+10;
-			// }
-			// //verificamos si hay mas detalles
-			// for($ii=0;$ii<count($subc);$ii++)
-			// {
-			// 	if($cta==$subc[$ii]['cta'])
-			// 	{
-			// 		$cliente = $subc[$ii]['cliente'];
-			// 		$Fechav = $subc[$ii]['Fechav']->format('Y-m-d');
-			// 		$debe='';
-			// 		$haber='';
-			// 		if($subc[$ii]['debe']!=0 and $subc[$ii]['debe']!='0.00')
-			// 		{
-			// 			$debe = number_format($subc[$ii]['debe'],2, '.', ',');
-			// 		}
-			// 		if($subc[$ii]['haber']!=0 and $subc[$ii]['haber']!='0.00')
-			// 		{
-			// 			$haber = number_format($subc[$ii]['haber'],2, '.', ',');
-			// 		}
-			// 		$pdf->SetX($x+2);
-			// 		$pdf->SetFont('Arial','I',7);
-			// 		//echo " aqui ";
-			// 		//	die();
-			// 		//$pdf->SetXY($x+2, $y+2);
-			// 		$pdf->SetWidths(array(97,94,94,48, 48,85,84));
-			// 		$pdf->SetAligns(array("L","L","L","R","R","R","R"));
-			// 		//$arr=array($arr1[$i]);
-			// 		if($subc[$ii]['No']<>'.')
-			// 		{
-			// 			$arr=array('', $cliente, 'No. '.$pdf->generaCeros($subc[$ii]['No'],7), $debe, $haber, '', '');
-			// 		}
-			// 		else
-			// 		{
-			// 			if($subc[$ii]['vp']<>0)
-			// 			{
-			// 				$arr=array('', $cliente, 'Valor Prima ', $subc[$ii]['vp'], $haber, '', '');
-			// 			}
-			// 			else
-			// 			{
-			// 				$arr=array('', $cliente, 'Venc. '.$Fechav, $debe, $haber, '', '');
-			// 			}
-			// 		}
-					
-			// 		$pdf->Row($arr,10);
-			// 		$y=$y+10;
-			// 	}
-			// }
 		}
-		//detalle sub cuenta
-		if($cantidad_reg>10)
-		{
-			$y=$y+20;
-		}
-		$y=$y+10;
-		//$pdf->SetXY($x+2, ($pdf->GetY($y)-80));
-		$pdf->SetXY($x+2, ($pdf->GetY($y)));
 		
 		//si esta anulado imprimir
 		if($status=='A')
 		{
-			$pdf->SetXY($x+8, $y+2);
-			$pdf->SetFont('Arial','B',14);
-			$pdf->SetFillColor(255, 255, 255); 
-			$pdf->Cell(120,25,'','1',1,'Q',TRUE);
-			//$pdf->cabeceraHorizontal(array(' '),$x+8,$y,120,30,20,5);
-			//$pdf->cabeceraHorizontal(array(' '),$x+10,$y+5,115,23,20,5);
-			$pdf->SetXY($x+10, $y+5);
-			$pdf->Cell(115,20,'','1',1,'Q',TRUE);
-			$pdf->SetXY($x+11, $y+7);
-			$pdf->SetWidths(array(120));
-			$pdf->SetAligns(array("C"));
-			//$arr=array($arr1[$i]);
-			//$pdf->cabeceraHorizontal(array(' '),$x,$y,96,15,20,5);
-			$arr=array('ANULADO');
-			$pdf->Row($arr,15);
-			//$y=$y+15;
+			$pdf->Image(__DIR__ . '/../../img/gif/ANULADO.GIF',$x+15,$pdf->GetY()-20,180,45);
 		}
+		$y = $pdf->GetY();
+
 		if($cantidad_reg>10)
 		{
 			$pdf->SetXY($x1, $y1);
@@ -1747,7 +1589,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 			$y=$y+$pos-10;
 			$y=330;
 		}
-		
+		$y = $y+87;
 		$pdf->SetXY($x, $y);
 		$pdf->Cell(383,15,'','1',1,'Q');
 		$pdf->SetXY($x+97+189+97, $y);
@@ -1767,12 +1609,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 	}
 	else
 	{
-		//varias paginas
-		//select * from lista_empresas where RUC_CI_NIC='1791863798001'
-		//delete from lista_empresas where ID=175
 		$pagi=ceil($cantidad_reg/35);
-		//echo ' ddd '.$pagi;
-		//die();
 		//obtenemos los datos
 		$i=0;
 		$cta=array();
@@ -1781,46 +1618,45 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 		$debe=array();
 		$haber=array();
 		$detalle = array();
-		$status = array();
+		$status = "";
 		//llenamos los detalles 
 		$ii=0;
 		$subc=array();
-		while( $row1 = sqlsrv_fetch_array( $stmt6, SQLSRV_FETCH_NUMERIC) ) 
+		foreach ($stmt6 as $key => $row1)
 		{
-			$subc[$ii]['cta']=$row1[0];
-			$subc[$ii]['cliente']=$row1[3];
-			$subc[$ii]['Fechav']=$row1[7];
-			$subc[$ii]['debe']=$row1[5];
-			$subc[$ii]['haber']=$row1[6];
-			$subc[$ii]['No']=$row1[2];
-			$subc[$ii]['vp']=$row1[9];
-			
+			$subc[$ii]['cta']=$row1['Cta']; 
+			$subc[$ii]['cliente']=$row1['Cliente'];
+			$subc[$ii]['Fechav']=$row1['Fecha_V'];
+			$subc[$ii]['debe']=$row1['Debitos'];
+			$subc[$ii]['haber']=$row1['Creditos'];
+			$subc[$ii]['No']=$row1['Factura'];
+			$subc[$ii]['vp']=$row1['Prima'];
+
 			$ii++;
 		}
-		
-		while( $row1 = sqlsrv_fetch_array( $stmt2, SQLSRV_FETCH_NUMERIC) ) 
+		foreach ($stmt2 as $key => $row1)
 		{
-			$cta[$i] = $row1[0];
-			$conc[$i] = $row1[1];
+			$cta[$i] = $row1['Cta'];
+			$conc[$i] = $row1['Cuenta'];
 			$parc[$i]='';
 			$debe[$i]='';
 			$haber[$i]='';
-			if($row1[2]!=0 and $row1[2]!='0.00')
+			if($row1['Parcial_ME']!=0 and $row1['Parcial_ME']!='0.00')
 			{
 				$parc[$i] = number_format($row1[2],2, '.', ',');
 			}
-			if($row1[3]!=0 and $row1[3]!='0.00')
+			if($row1['Debe']!=0 and $row1['Debe']!='0.00')
 			{
-				$sumdb=$sumdb+$row1[3];
+				$sumdb=$sumdb+$row1['Debe'];
 				$debe[$i] = number_format($row1[3],2, '.', ',');
 			}
-			if($row1[4]!=0 and $row1[4]!='0.00')
+			if($row1['Haber']!=0 and $row1['Haber']!='0.00')
 			{
-				$sumcr=$sumcr+$row1[4];
-				$haber[$i] = number_format($row1[4],2, '.', ',');
+				$sumcr=$sumcr+$row1['Haber'];
+				$haber[$i] = number_format($row1['Haber'],2, '.', ',');
 			}
-			$detalle[$i] = $row1[5];
-			$status[$i] = $row1[13];
+			$detalle[$i] = $row1['Detalle'];
+			$status = $row1['T'];
 			
 			$i++;
 		}
@@ -1884,7 +1720,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 			$arr=array($ruc_ci);
 			$pdf->Row($arr,10);
 			
-			if($stmt8_count<>0)
+			if($stmt8_count<>0 || $Monto_Total>0)
 			{
 				//cantidad a
 				$y=$y+15;
@@ -1898,7 +1734,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 				$pdf->SetWidths(array(75));
 				$pdf->SetAligns(array("L"));
 				//$arr=array($arr1[$i]);
-				$Monto_Total1=$num = NumerosEnLetras::convertir(number_format($Monto_Total,2, '.', ''),'',true,'Centavos');
+				$Monto_Total1=$num = NumerosEnLetras::convertir(number_format($Monto_Total,2, '.', ''),'',true,'Centavos', true);
 				$arr=array('La cantidad de: ');
 				$pdf->Row($arr,10);
 				
@@ -1911,13 +1747,12 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 				//$arr=array($arr1[$i]);
 				$arr=array($Monto_Total1);
 				$pdf->Row($arr,10);
-				$y=$y+30;
+				$y=$y+15;
 			}
 			//cheque efectivo deposito
-			$i=0;
-			while( $row1 = sqlsrv_fetch_array( $stmt8, SQLSRV_FETCH_NUMERIC) ) 
+			foreach ($stmt8 as $key => $row1) 
 			{
-				if($row1[0]=='BA')
+				if($row1['TC']=='BA')
 				{
 					$pdf->SetXY($x, $y);
 					$pdf->Cell(555,30,'','1',1,'Q');
@@ -1939,7 +1774,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 					$pdf->SetWidths(array(70));
 					$pdf->SetAligns(array("R"));
 					
-					$arr=array(number_format(($row1[4]),2, '.', ','));
+					$arr=array(number_format(($row1['monto']),2, '.', ','));
 					$pdf->Row($arr,10);
 					
 					$pdf->SetXY($x+2+135, $y+2);
@@ -1959,7 +1794,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 					$pdf->SetWidths(array(190));
 					$pdf->SetAligns(array("L"));
 					//$arr=array($arr1[$i]);
-					$arr=array($row1[2]);
+					$arr=array($row1['Cuenta']);
 					$pdf->Row($arr,10);
 					
 					$pdf->SetXY($x+2+385, $y+2);
@@ -1979,10 +1814,10 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 					$pdf->SetWidths(array(103));
 					$pdf->SetAligns(array("L"));
 					//$arr=array($arr1[$i]);
-					$arr=array($row1[3]);
+					$arr=array($row1['Cheq_Dep']);
 					$pdf->Row($arr,10);
 				}
-				if($row1[0]=='CJ')
+				if($row1['TC']=='CJ')
 				{
 					$pdf->SetXY($x, $y);
 					$pdf->Cell(555,30,'','1',1,'Q');
@@ -2004,7 +1839,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 					$pdf->SetWidths(array(70));
 					$pdf->SetAligns(array("R"));
 					
-					$arr=array(number_format(($row1[4]),2, '.', ','));
+					$arr=array(number_format(($row1['monto']),2, '.', ','));
 					$pdf->Row($arr,10);
 					
 					$pdf->SetXY($x+2+135, $y+2);
@@ -2024,7 +1859,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 					$pdf->SetWidths(array(190));
 					$pdf->SetAligns(array("L"));
 					//$arr=array($arr1[$i]);
-					$arr=array($row1[2]);
+					$arr=array($row1['Cuenta']);
 					$pdf->Row($arr,10);
 					
 					$pdf->SetXY($x+2+385, $y+2);
@@ -2044,13 +1879,13 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 					$pdf->SetWidths(array(103));
 					$pdf->SetAligns(array("L"));
 					//$arr=array($arr1[$i]);
-					$arr=array($row1[3]);
+					$arr=array($row1['Cheq_Dep']);
 					$pdf->Row($arr,10);
 				}			
 				$y=$y+15;
-				$i++;
 			}
 			//concepto
+			$y=$y+15;
 			$pdf->SetXY($x, $y);
 			$pdf->Cell(555,30,'','1',1,'Q');
 			
@@ -2128,92 +1963,80 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 				$j1=$j1+23;
 				$limite=$limite+23;
 			}
-			for($j=$j1;$j<$limite;$j++)
-			{
-				if(count($cta)==$j)
+			if(isset($cta[$j1])){
+				for($j=$j1;$j<$limite;$j++)
 				{
-					break;
-				}
-				$pdf->SetX($x+2);
-				$pdf->SetFont('Arial','',9);
-				$pdf->SetWidths(array(97,189,95,84,84));
-				$pdf->SetAligns(array("L","L","R","R","R"));
-				//$arr=array($arr1[$i]);
-				$arr=array($cta[$j], $conc[$j], $parc[$j], $debe[$j],$haber[$j]);
-				$pdf->Row($arr,10);
-				$y=$y+10;
-				if($detalle[$j]<>'.')
-				{
-					$pdf->SetFont('Arial','',8);
-					//$pdf->SetXY($x+2, $y+2);
-					$pdf->SetWidths(array(97,180,95,84,84));
+					if(count($cta)==$j)
+					{
+						break;
+					}
+					$pdf->SetX($x+2);
+					$pdf->SetFont('Arial','',9);
+					$pdf->SetWidths(array(97,189,95,84,84));
 					$pdf->SetAligns(array("L","L","R","R","R"));
 					//$arr=array($arr1[$i]);
-					$arr=array('', $detalle[$j], '', '', '');
+					$arr=array($cta[$j], $conc[$j], $parc[$j], $debe[$j],$haber[$j]);
 					$pdf->Row($arr,10);
 					$y=$y+10;
-				}
-				//verificamos si hay mas detalles
-				for($ii=0;$ii<count($subc);$ii++)
-				{
-					if($cta==$subc[$ii]['cta'])
+					if($detalle[$j]<>'.')
 					{
-						$cliente = $subc[$ii]['cliente'];
-						$Fechav = $subc[$ii]['Fechav']->format('Y-m-d');
-						$debe='';
-						$haber='';
-						if($subc[$ii]['debe']!=0 and $subc[$ii]['debe']!='0.00')
-						{
-							$debe = number_format($subc[$ii]['debe'],2, '.', ',');
-						}
-						if($subc[$ii]['haber']!=0 and $subc[$ii]['haber']!='0.00')
-						{
-							$haber = number_format($subc[$ii]['haber'],2, '.', ',');
-						}
-						$pdf->SetX($x+2);
-						$pdf->SetFont('Arial','I',7);
-						//echo " aqui ";
-						//	die();
+						$pdf->SetFont('Arial','',8);
 						//$pdf->SetXY($x+2, $y+2);
-						$pdf->SetWidths(array(97,94,94,48, 48,85,84));
-						$pdf->SetAligns(array("L","L","L","R","R","R","R"));
+						$pdf->SetWidths(array(97,180,95,84,84));
+						$pdf->SetAligns(array("L","L","R","R","R"));
 						//$arr=array($arr1[$i]);
-						if($subc[$ii]['No']<>'.')
-						{
-							$arr=array('', $cliente, 'No. '.$pdf->generaCeros($subc[$ii]['No'],7), $debe, $haber, '', '');
-						}
-						else
-						{
-							if($subc[$ii]['vp']<>0)
-							{
-								$arr=array('', $cliente, 'Valor Prima ', $subc[$ii]['vp'], $haber, '', '');
-							}
-							else
-							{
-								$arr=array('', $cliente, 'Venc. '.$Fechav, $debe, $haber, '', '');
-							}
-						}
-						
+						$arr=array('', $detalle[$j], '', '', '');
 						$pdf->Row($arr,10);
 						$y=$y+10;
 					}
+					//verificamos si hay mas detalles
+					for($ii=0;$ii<count($subc);$ii++)
+					{
+						if($cta==$subc[$ii]['cta'])
+						{
+							$cliente = $subc[$ii]['cliente'];
+							$Fechav = $subc[$ii]['Fechav']->format('Y-m-d');
+							$debe='';
+							$haber='';
+							if($subc[$ii]['debe']!=0 and $subc[$ii]['debe']!='0.00')
+							{
+								$debe = number_format($subc[$ii]['debe'],2, '.', ',');
+							}
+							if($subc[$ii]['haber']!=0 and $subc[$ii]['haber']!='0.00')
+							{
+								$haber = number_format($subc[$ii]['haber'],2, '.', ',');
+							}
+							$pdf->SetX($x+2);
+							$pdf->SetFont('Arial','I',7);
+							//$pdf->SetXY($x+2, $y+2);
+							$pdf->SetWidths(array(97,94,94,48, 48,85,84));
+							$pdf->SetAligns(array("L","L","L","R","R","R","R"));
+							//$arr=array($arr1[$i]);
+							if($subc[$ii]['No']<>'.')
+							{
+								$arr=array('', $cliente, 'No. '.$pdf->generaCeros($subc[$ii]['No'],7), $debe, $haber, '', '');
+							}
+							else
+							{
+								if($subc[$ii]['vp']<>0)
+								{
+									$arr=array('', $cliente, 'Valor Prima ', $subc[$ii]['vp'], $haber, '', '');
+								}
+								else
+								{
+									$arr=array('', $cliente, 'Venc. '.$Fechav, $debe, $haber, '', '');
+								}
+							}
+							
+							$pdf->Row($arr,10);
+							$y=$y+10;
+						}
+					}
 				}
 			}
-			/*$pdf->SetWidths(array(97,189,97,86,86));
-			$pdf->SetAligns(array("C","C","C","C","C"));
-			//$arr=array($arr1[$i]);
-			$arr=array('xxx', "CONCEPTO", "PARCIAL M/E", "DEBE", "HABER");
-			$pdf->Row($arr,10);*/
-			//$y=$y+10;
-			//totales
-			//$pos=150-$cantidad_reg*10;
-			//echo $y;
-			//die();
-			//$y=$y+$pos-10;
-			
 			if($i<($pagi-2))
 			{
-				$y=465-10+160;
+				$y=$y+15;
 				$pdf->SetXY($x+2, $y+2);
 				$pdf->SetFont('Arial','I',7);
 				//$pdf->SetXY($x+2, $y+2);
@@ -2225,67 +2048,14 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 				$pdf->AddPage();
 			}
 		}
-		/*$pdf->SetXY($x+2, $y+2);
-		while( $row1 = sqlsrv_fetch_array( $stmt6, SQLSRV_FETCH_NUMERIC) ) 
-		{
-			$cliente = $row1[3];
-			$Fechav = $row1[7]->format('Y-m-d');
-			$debe='';
-			$haber='';
-			if($row1[5]!=0 and $row1[5]!='0.00')
-			{
-				$debe = number_format($row1[5],2, '.', ',');
-			}
-			if($row1[6]!=0 and $row1[6]!='0.00')
-			{
-				$haber = number_format($row1[6],2, '.', ',');
-			}
-			$pdf->SetX($x+2);
-			$pdf->SetFont('Arial','I',7);
-			//$pdf->SetXY($x+2, $y+2);
-			$pdf->SetWidths(array(97,94,94,48, 48,85,84));
-			$pdf->SetAligns(array("L","L","L","R","R","R","R"));
-			//$arr=array($arr1[$i]);
-			if($row1[2]<>'.')
-			{
-				$arr=array('', $cliente, 'No. '.$row1[2], $debe, $haber, '', '');
-			}
-			else
-			{
-				if($row1[9]<>0)
-				{
-					$arr=array('', $cliente, 'Valor Prima ', $debe, $haber, '', '');
-				}
-				else
-				{
-					$arr=array('', $cliente, 'Venc. '.$Fechav, $debe, $haber, '', '');
-				}
-			}
-			//$arr=array('', $cliente, 'Venc. '.$Fechav, $debe, $haber, '', '');
-			$pdf->Row($arr,10);
-			$y=$y+10;
-		}*/
+		
 		//si esta anulado imprimir
 		if($status=='A')
 		{
-			$pdf->SetXY($x+8, $y+2);
-			$pdf->SetFont('Arial','B',14);
-			$pdf->SetFillColor(255, 255, 255); 
-			$pdf->Cell(120,25,'','1',1,'Q',TRUE);
-			//$pdf->cabeceraHorizontal(array(' '),$x+8,$y,120,30,20,5);
-			//$pdf->cabeceraHorizontal(array(' '),$x+10,$y+5,115,23,20,5);
-			$pdf->SetXY($x+10, $y+5);
-			$pdf->Cell(115,20,'','1',1,'Q',TRUE);
-			$pdf->SetXY($x+11, $y+7);
-			$pdf->SetWidths(array(120));
-			$pdf->SetAligns(array("C"));
-			//$arr=array($arr1[$i]);
-			//$pdf->cabeceraHorizontal(array(' '),$x,$y,96,15,20,5);
-			$arr=array('ANULADO');
-			$pdf->Row($arr,15);
-			//$y=$y+15;
+			$pdf->Image(__DIR__ . '/../../img/gif/ANULADO.GIF',$x+15,$pdf->GetY()-20,180,45);
 		}
-		$y=465-10+160;
+
+		$y = $pdf->GetY()+20;
 		$pdf->SetXY($x, $y);
 		$pdf->Cell(383,15,'','1',1,'Q');
 		$pdf->SetXY($x+97+189+97, $y);
@@ -2518,9 +2288,8 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 		// while( $row1 = sqlsrv_fetch_array( $stmt8, SQLSRV_FETCH_NUMERIC) ) 
 		// {
 
-		if(count($stmt8)>0){
-
-		// print_r($stmt8);die();
+				if(count($stmt8)>0) {
+			
 			if($stmt8[0]['TC']=='BA')
 			{
 				$pdf->SetXY($x, $y);
@@ -2543,7 +2312,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 				$pdf->SetWidths(array(70));
 				$pdf->SetAligns(array("R"));
 				
-				$arr=array(number_format(($stmt8[0]['monto']),2, '.', ''));
+				$arr=array(number_format(($stmt8[0]['monto']),2, '.', ','));
 				$pdf->Row($arr,10);
 				
 				$pdf->SetXY($x+2+135, $y+2);
@@ -2652,7 +2421,7 @@ function imprimirDocERRORPDF($stmt,$id=null,$formato=null,$nombre_archivo=null,$
 				$pdf->Row($arr,10);
 			}				
 			$y=$y+15;
-			$i++;
+			// $i++;
 		}
 		/*--------------------------------------------*/
 		
