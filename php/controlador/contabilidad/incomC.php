@@ -258,6 +258,21 @@ if(isset($_GET['CallListar_Comprobante_SP']))
     echo json_encode($controlador->CallListar_Comprobante_SP($_POST));
 }
 
+if(isset($_GET['load_subcuentas'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->load_subcuentas($parametros));
+}
+
+if(isset($_GET['Commandl_Click'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->commandl_click($parametros));
+}
+
+if(isset($_GET['Command2_Click'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->command2_click($parametros));
+}
+
 
 
 class incomC
@@ -542,7 +557,7 @@ class incomC
      }
      function modal_subcta_limpiar($parametros)
      {
-     	$this->modelo->limpiar_asiento_SC($parametros['tc'],$parametros['cta'],$parametros['dh'],$parametros['tm']);
+     	$this->modelo->limpiar_asiento_SC($parametros['tc'],$parametros['cta'],$parametros['dh'],$parametros['tm']); //TODO: Aqui revisar
      }
      function asientos_grabados()
      {
@@ -2128,5 +2143,98 @@ function CallListar_Comprobante_SP($parametros)
 	$_SESSION['Co'] = $Co;
 	return array('Co' => $Co, 'NumComp_format'=>$NumComp_format);
 }
+
+function load_subcuentas($parametros){//TODO: Sumatoria_CC
+    $this->modelo->activate_cc($parametros);
+    $tmp = $this->modelo->load_subcuentas($parametros);
+    if(empty($tmp)){
+        $tablaHtml = '
+        <style>
+        .customT{
+            display:revert;
+        }
+        #myTable {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        </style>
+        <table id="myTable">
+        <thead class="customT">
+            <tr style="display:revert;" class="customT">
+                <th style="width:200px" class="text-center">Beneficiario</th>
+                <th style="width:75px" class="text-center">Valor</th>
+            </tr>
+            </thead>
+        </table>
+        ';
+        return $tablaHtml;
+    }
+
+    $tablaHtml = '
+    <style>
+        .customT{
+            display:revert;
+        }
+        #myTable {
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+		<table id="myTable">
+			<thead id="cabecera" class="customT">
+				<tr>';
+
+    $columnas = array_keys($tmp[0]);
+    $columnasDeseadas = ['Beneficiario', 'Valor'];
+
+    foreach ($columnas as $columna) {
+        if (in_array($columna, $columnasDeseadas)) {
+            $tablaHtml .= '<th>' . $columna . '</th>'; // Añadir solo las columnas deseadas
+        }
+    }
+
+    $tablaHtml .= '
+                 </tr>
+            </thead>
+            <tbody class="customT">';
+
+            foreach ($tmp as $fila) {
+                $tablaHtml .= '<tr class="customT">';
+                foreach ($columnas as $columna) {
+                    // De nuevo, comprobar si la columna actual está en el array de columnas deseadas
+                    if (in_array($columna, $columnasDeseadas)) {
+                        $valor = $fila[$columna];
+                        $clase = '';
+                        $editable = '';
+                
+                        if ($columna === 'Valor') {
+                            $editable = ' contenteditable="true"';
+                            $clase = "text-right"; 
+                            $valor = number_format((float)$valor, 2, '.', '');
+                        }else{
+                            $clase = "text-center";
+                        }
+                
+                        $tablaHtml .= '<td class="' . $clase . '"' . $editable . '>' . $valor . '</td>';
+                    }
+                }
+                $tablaHtml .= '</tr>';
+            }
+		$tablaHtml .= '
+			</tbody>
+		</table>';
+
+    return $tablaHtml;
+}
+
+function commandl_click($parametros){
+    $this->modelo->commandl_click($parametros);
+    
+}
+
+function command2_click($parametros){
+    $this->modelo->command2_click($parametros);
+}
+
 }
 ?>
