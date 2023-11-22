@@ -18,7 +18,7 @@
       $('#txt_codigo').on('select2:select', function (e) {
 		      var data = e.params.data.data;
 
-console.log(data);
+					console.log(data);
 		      $('#txt_id').val(data.ID); // display the selected text
 		      $('#txt_fecha').val(formatoDate(data.Fecha_P.date)); // display the selected text
 		      $('#txt_ci').val(data.CI_RUC); // save selected id to input
@@ -129,7 +129,7 @@ function autocoplet_ingreso()
 	    	console.log(data);
 	    	option = '';
 	    	data.forEach(function(item,i){
-	    		console.log(item);
+	    		// console.log(item);
 	    		option+='<option value="'+item.Codigo+'">'+item.Cliente+'</option>';
 	    	})	 
 	    	$('#ddl_ingreso').html(option);     
@@ -401,6 +401,28 @@ function autocoplet_ingreso()
  }
 
 
+ function editar_comentario(mod)
+ {
+ 	 if(mod)
+ 	 {
+ 	 	 if($('#txt_comentario_clas').prop('readonly'))
+ 	 	 {
+ 	 	 	$('#txt_comentario_clas').prop('readonly',false)
+ 	 	 }
+ 	 }else
+ 	 {
+ 	 	 if($('#txt_comentario').prop('readonly'))
+ 	 	 {
+ 	 	 	$('#txt_comentario').prop('readonly',false)
+ 	 	 }
+ 	 }
+
+ 	
+
+ 	 console.log(editar);
+ }
+
+
 </script>
 
  <div class="row">
@@ -504,8 +526,13 @@ function autocoplet_ingreso()
 								<b>COMENTARIO DE RECEPCION:</b>
 							</div>
 							<div class="col-sm-6">
-								<textarea class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly rows="1">
-								</textarea>
+								<div class="input-group input-group-sm">
+										<textarea class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly rows="1">
+																	</textarea>
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-info btn-flat" onclick="editar_comentario()"><i class="fa fa-pencil"></i></button>
+									</span>
+								</div>						
 							</div>
 						</div>
 						<div class="row"  style="padding-top: 5px;">
@@ -513,8 +540,15 @@ function autocoplet_ingreso()
 								<b>COMENTARIO DE CLASIFICACION:</b>
 							</div>
 							<div class="col-sm-6">
-								<textarea class="form-control input-xs" id="txt_comentario_clas" name="txt_comentario_clas" readonly rows="1">
+								<div class="input-group input-group-sm">
+									<textarea class="form-control input-xs" id="txt_comentario_clas" name="txt_comentario_clas" readonly rows="1">
 								</textarea>
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-info btn-flat" onclick="editar_comentario(1)"><i class="fa fa-pencil"></i></button>
+									</span>
+								</div>
+
+								
 							</div>
 						</div>
 						<div class="row" id="panel_serie"  style="padding-top: 5px;">
