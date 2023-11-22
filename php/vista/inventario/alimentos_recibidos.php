@@ -3,6 +3,9 @@
   $(document).ready(function () {
   	cargar_datos_procesados();
   	notificaciones();
+  	 setInterval(function() {
+         notificaciones();
+          }, 5000); 
   	$('#btn_guardar').focus();
   	 $(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
       $(this).closest(".select2-container").siblings('select:enabled').select2('open');
@@ -584,18 +587,57 @@ function autocoplet_ingreso_donante(){
 		    {		    	    	
 		    	if(data.length>0)
 		    	{
+		    		var mensajes = '';
+		    		var cantidad  = 0;
 		    		 $('#pnl_notificacion').css('display','block');
-		    		 data.forEach(function(){
-		    		 	mensaje+="";
+		    		 data.forEach(function(item,i){
+		    		 	mensajes+='<li>'+
+											'<a href="#" data-toggle="modal" onclick="mostrar_notificacion(\''+item.Texto_Memo+'\',\''+item.ID+'\')">'+
+												'<h4>'+
+													item.Asunto+
+													'<small>'+formatoDate(item.Fecha.date)+' <i class="fa fa-calendar-o"></i></small>'+
+												'</h4>'+
+												'<p>'+item.Texto_Memo.substring(0,15)+'...</p>'+
+											'</a>'+
+										'</li>';
+										cantidad = cantidad+1;
 		    		 })
 
 		    		 $('#pnl_mensajes').html(mensajes);
+		    		 $('#cant_mensajes').text(cantidad);
 		    	}else
 		    	{
 
 		    		 $('#pnl_notificacion').css('display','none');
 		    	}
 		    	console.log(data);
+		    }
+		});  	
+
+  }
+
+  function mostrar_notificacion(text,id)
+  {
+  	$('#myModal_notificar').modal('show');
+  	$('#txt_mensaje').text(text);  	
+  	$('#txt_id_noti').val(id);
+  }
+
+  function cambiar_estado()
+  {
+  	parametros = 
+  	{
+  		'noti':$("#txt_id_noti").val(),
+  	}
+  	$.ajax({
+		    type: "POST",
+	      	url:   '../controlador/inventario/alimentos_recibidosC.php?cambiar_estado=true',
+		      data:{parametros:parametros},
+	        dataType:'json',
+		    success: function(data)
+		    {		    
+		    	$('#myModal_notificar').modal('hide');
+		    	notificaciones();
 		    }
 		});  	
 
@@ -629,30 +671,12 @@ function autocoplet_ingreso_donante(){
 									<img src="../../img/gif/notificacion.gif" style="width:32px;height: 32px;">
 							</button>  	
 							<ul class="dropdown-menu">
-								<li class="header">tienes <b>0</b> mensajes</li>
+								<li class="header">tienes <b id="cant_mensajes">0</b> mensajes</li>
 								<li>
 									<ul class="menu" id="pnl_mensajes">
-										<li>
-											<a href="#">
-												<h4>
-													Support Team
-													<small><i class="fa fa-clock-o"></i> 5 mins</small>
-												</h4>
-												<p>Why not buy a new awesome theme?</p>
-											</a>
-										</li>
-										<li>
-											<a href="#">
-												<h4>
-													Reviewers
-													<small><i class="fa fa-clock-o"></i> 2 days</small>
-												</h4>
-												<p>Why not buy a new awesome theme?</p>
-											</a>
-										</li>
+										
 									</ul>
 								</li>
-								<li class="footer"><a href="#">See All Messages</a></li>
 							</ul>
 						</li>
 					</ul>
@@ -777,7 +801,7 @@ function autocoplet_ingreso_donante(){
 								<div class="form-group">
 										<b>COMENTARIO</b>
 										<!-- <div class="col-sm-9 col-md-6"> -->
-										<textarea rows="3" class="form-control"  id="txt_comentario" name="txt_comentario"></textarea>								
+										<textarea rows="3" class="form-control"  id="txt_comentario" name="txt_comentario" style="font-size: 16px;"></textarea>								
 										<!-- </div> -->
 								</div>	
 							</div>

@@ -2,7 +2,10 @@
   <link rel="stylesheet" href="../../dist/css/style_calendar.css">
 <script type="text/javascript">
   $(document).ready(function () {
-    // on first focus (bubbles up to document), open the menu
+    notificaciones();
+     setInterval(function() {
+         notificaciones();
+          }, 5000); 
     $('#txt_fecha').focus();
 
     $(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
@@ -627,6 +630,7 @@ function autocoplet_ingreso()
     var parametros = {
         'notificar':$('#txt_comentario2').val(),
         'id':$('#txt_id').val(),
+        'asunto':'Recepcion',
     }
      $.ajax({
       data:  {parametros,parametros},
@@ -634,7 +638,10 @@ function autocoplet_ingreso()
       type:  'post',
       dataType: 'json',
       success:  function (response) { 
-        
+        if(response==1)
+        {
+          Swal.fire("","Notificacion enviada","success");
+        }
         console.log(response);
         
       }, 
@@ -643,6 +650,73 @@ function autocoplet_ingreso()
       }
     });
  }
+
+   function notificaciones()
+  {
+    $.ajax({
+        type: "POST",
+          url:   '../controlador/inventario/alimentos_recibidosC.php?listar_notificaciones=true',
+          // data:datos,
+          dataType:'json',
+        success: function(data)
+        {               
+          if(data.length>0)
+          {
+            var mensajes = '';
+            var cantidad  = 0;
+             $('#pnl_notificacion').css('display','block');
+             data.forEach(function(item,i){
+              mensajes+='<li>'+
+                      '<a href="#" data-toggle="modal" onclick="mostrar_notificacion(\''+item.Texto_Memo+'\',\''+item.ID+'\')">'+
+                        '<h4>'+
+                          item.Asunto+
+                          '<small>'+formatoDate(item.Fecha.date)+' <i class="fa fa-calendar-o"></i></small>'+
+                        '</h4>'+
+                        '<p>'+item.Texto_Memo.substring(0,15)+'...</p>'+
+                      '</a>'+
+                    '</li>';
+                    cantidad = cantidad+1;
+             })
+
+             $('#pnl_mensajes').html(mensajes);
+             $('#cant_mensajes').text(cantidad);
+          }else
+          {
+
+             $('#pnl_notificacion').css('display','none');
+          }
+          console.log(data);
+        }
+    });   
+
+  }
+
+  function mostrar_notificacion(text,id)
+  {
+    $('#myModal_notificar').modal('show');
+    $('#txt_mensaje').text(text);   
+    $('#txt_id_noti').val(id);
+  }
+
+  function cambiar_estado()
+  {
+    parametros = 
+    {
+      'noti':$("#txt_id_noti").val(),
+    }
+    $.ajax({
+        type: "POST",
+          url:   '../controlador/inventario/alimentos_recibidosC.php?cambiar_estado=true',
+          data:{parametros:parametros},
+          dataType:'json',
+        success: function(data)
+        {       
+          $('#myModal_notificar').modal('hide');
+          notificaciones();
+        }
+    });   
+
+  }
 </script>
 
  <div class="row">
@@ -653,15 +727,30 @@ function autocoplet_ingreso()
             </a>
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2">
-			<button class="btn btn-default" title="Guardar" onclick="guardar()" id="btn_guardar">
-				<img src="../../img/png/grabar.png">
-			</button>
-		</div>  
-		<!-- <div class="col-xs-2 col-md-2 col-sm-2">
-			<button class="btn btn-default" title="Guardar" onclick="nuevo_proveedor()">
-				<img src="../../img/png/mostrar.png">
-			</button>
-		</div>    -->
+    			<button class="btn btn-default" title="Guardar" onclick="guardar()" id="btn_guardar">
+    				<img src="../../img/png/grabar.png">
+    			</button>
+    		</div>
+        <div class="col-xs-2 col-md-2 col-sm-2" style="display:none;" id="pnl_notificacion">
+        <div class="navbar-custom-menu">
+          <ul class="nav navbar-nav">
+
+              <li class="dropdown messages-menu">
+                <button class="btn btn-danger dropdown-toggle" title="Guardar"  data-toggle="dropdown" aria-expanded="false">
+                    <img src="../../img/gif/notificacion.gif" style="width:32px;height: 32px;">
+                </button>   
+                <ul class="dropdown-menu">
+                  <li class="header">tienes <b id="cant_mensajes">0</b> mensajes</li>
+                  <li>
+                    <ul class="menu" id="pnl_mensajes">
+                      
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+        </div>
+      </div>  
     </div>
    
 </div>
@@ -791,19 +880,14 @@ function autocoplet_ingreso()
 									<div class="col-sm-4">
 										<label style="color:red" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" value="R">  <img src="../../img/png/sad.png"><br> Inconforme </label>											
 									</div>
-                  <div class="col-lg-4 text-right">
-      <button class="btn btn-danger" title="Guardar">
-          <img src="../../img/gif/notificacion.gif" style="width:42px;height: 42px;">
-      </button>   
-    </div> 
-
+                  
 								</div>
 									<!-- <b>Evaluacion</b><br> -->										
 														
 							</div>
 							<div class="col-sm-12" id="pnl_comentario">
 									<b>COMENTARIO DE INGRESO</b>
-									<textarea class="form-control input-sm" rows="3" id="txt_comentario2" name="txt_comentario2"></textarea>
+									<textarea class="form-control input-sm" rows="3" style="font-size:16px" id="txt_comentario2" name="txt_comentario2"></textarea>
                   <div class="text-right">
                   <button type="button" class="btn btn-primary btn-sm" onclick="notificar()">Notificar</button>		
                   </div>						
