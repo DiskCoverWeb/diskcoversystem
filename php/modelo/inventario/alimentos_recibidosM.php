@@ -455,7 +455,7 @@ class alimentos_recibidosM
 
 	}
 
-	function listar_notificaciones($codigo=false,$estado = false)
+	function listar_notificaciones($codigo=false,$estado = false,$id=false,$pedido=false)
 	{
 		$sql = "SELECT * FROM 
 				Trans_Memos 
@@ -468,6 +468,14 @@ class alimentos_recibidosM
 				if($codigo)
 				{
 					$sql.=" AND Codigo = '".$codigo."'";
+				}
+				if($id)
+				{
+					$sql.=" AND ID = '".$id."'";
+				}
+				if($pedido)
+				{
+					$sql.=" AND Atencion = '".$pedido."'";
 				}
 			$sql.=" ORDER BY ID DESC";
 
