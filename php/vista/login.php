@@ -27,6 +27,12 @@
 	  <script type="text/javascript">
 	  $(document).ready(function(){
 
+	  	$('#contra').on('keypress', function(e) {
+                if (e.which === 13) {
+                   /*Ingresar();*/Ingresar_vali();
+                }
+            });
+
 	  });
 
 	function validar_entidad()

@@ -905,13 +905,14 @@ function eliminar_lin(num)
       });
   }
 
-   function notificar()
+ function notificar()
  {
    
     var parametros = {
         'notificar':$('#txt_texto').val(),
         'usuario':$('#txt_codigo_usu').val(),
         'asunto':'Clasificacion',
+        'pedido':$('#txt_codigo').val(),
     }
      $.ajax({
       data:  {parametros,parametros},
@@ -921,11 +922,37 @@ function eliminar_lin(num)
       success:  function (response) { 
         if(response==1)
         {
+        	
+          	cambiar_a_clasificacion();
           Swal.fire("","Notificacion enviada","success").then(function(){
           	$('#myModal_notificar_usuario').modal('hide'); 
           	$('#txt_texto').val('');   
           	$('#txt_codigo_usu').val('') 
           });
+        }
+        console.log(response);
+        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
+ }
+
+ function cambiar_a_clasificacion()
+ {   
+    var parametros = {
+        'pedido':$('#txt_codigo').val(),
+    }
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/inventario/alimentos_recibidosC.php?cambiar_a_clasificacion=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        if(response==1)
+        {
+          location.reload();
         }
         console.log(response);
         

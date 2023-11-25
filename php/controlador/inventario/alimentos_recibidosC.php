@@ -240,6 +240,11 @@ if(isset($_GET['cambiar_estado_solucionado']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->cambiar_estado_solucionado($parametros));
 }
+if(isset($_GET['cambiar_a_clasificacion']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->cambiar_a_clasificacion($parametros));
+}
 
 /**
  * 
@@ -1212,6 +1217,15 @@ class alimentos_recibidosC
 		SetAdoFields('T','N');
 		SetAdoFields('T','N');
 		SetAdoFieldsWhere('ID',$parametros['noti']);
+		return SetAdoUpdateGeneric();
+	}
+
+	function cambiar_a_clasificacion($parametros)
+	{
+		// print_r($parametros);die();
+ 	    SetAdoAddNew("Trans_Correos");	
+		SetAdoFields('T','I');
+		SetAdoFieldsWhere('Envio_No',$parametros['pedido']);
 		return SetAdoUpdateGeneric();
 	}
 
