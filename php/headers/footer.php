@@ -347,9 +347,16 @@
             <div class="modal-body" style="background: antiquewhite;">
               <input type="hidden" name="txt_id_noti" id="txt_id_noti">
                 <p id="txt_mensaje"></p>
+                <hr>
+                <b>Responder</b>
+                <textarea class="form-control" id="txt_respuesta" name="txt_respuesta">.</textarea>
+                <div class="text-right">
+                  <button type="button" class="btn btn-primary" onclick="cambiar_estado()">Responder</button>
+                </div>
             </div>
              <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="cambiar_estado()">OK</button>
+                <button type="button" class="btn btn-primary" onclick="solucionado()">Marcar como solucionando</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>

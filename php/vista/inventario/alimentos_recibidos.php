@@ -5,6 +5,7 @@
   	notificaciones();
   	 setInterval(function() {
          notificaciones();
+         cargar_datos();
           }, 5000); 
   	$('#btn_guardar').focus();
   	 $(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
@@ -625,9 +626,16 @@ function autocoplet_ingreso_donante(){
 
   function cambiar_estado()
   {
+  	respuesta = $('#txt_respuesta').val();
+  	if(respuesta=='' || respuesta=='.')
+  	{
+  		 Swal.fire("Ingrese una respuesta","",'info');
+  		 return false;
+  	}
   	parametros = 
   	{
   		'noti':$("#txt_id_noti").val(),
+  		'respuesta':respuesta,
   	}
   	$.ajax({
 		    type: "POST",
@@ -637,9 +645,31 @@ function autocoplet_ingreso_donante(){
 		    success: function(data)
 		    {		    
 		    	$('#myModal_notificar').modal('hide');
+		    	$('#txt_respuesta').val('');
 		    	notificaciones();
 		    }
 		});  	
+
+  }
+
+   function solucionado()
+  {
+   
+    parametros = 
+    {
+      'noti':$("#txt_id_noti").val(),
+    }
+    $.ajax({
+        type: "POST",
+          url:   '../controlador/inventario/alimentos_recibidosC.php?cambiar_estado_solucionado=true',
+          data:{parametros:parametros},
+          dataType:'json',
+        success: function(data)
+        {       
+          $('#myModal_notificar').modal('hide');
+          notificaciones();
+        }
+    });   
 
   }
 
@@ -845,7 +875,7 @@ function autocoplet_ingreso_donante(){
 														<th>Alimento Recibido </th>
 														<th>Cantidad</th>
 														<th>Temperatura de ingreso</th>
-														<th></th>
+														<th style="width: 8%;"></th>
 													</thead>
 													<tbody id="tbl_body">
 														<tr></tr>

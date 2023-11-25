@@ -632,6 +632,7 @@ function autocoplet_ingreso()
         'notificar':$('#txt_comentario2').val(),
         'id':$('#txt_id').val(),
         'asunto':'Recepcion',
+        'pedido':$('#txt_codigo').val(),
     }
      $.ajax({
       data:  {parametros,parametros},
@@ -701,13 +702,42 @@ function autocoplet_ingreso()
 
   function cambiar_estado()
   {
+    respuesta = $('#txt_respuesta').val();
+    if(respuesta=='' || respuesta=='.')
+    {
+       Swal.fire("Ingrese una respuesta","",'info');
+       return false;
+    }
+    parametros = 
+    {
+      'noti':$("#txt_id_noti").val(),
+      'respuesta':respuesta,
+    }
+    $.ajax({
+        type: "POST",
+          url:   '../controlador/inventario/alimentos_recibidosC.php?cambiar_estado=true',
+          data:{parametros:parametros},
+          dataType:'json',
+        success: function(data)
+        {       
+          $('#myModal_notificar').modal('hide');
+          $('#txt_respuesta').val('');
+          notificaciones();
+        }
+    });   
+
+  }
+
+  function solucionado()
+  {
+   
     parametros = 
     {
       'noti':$("#txt_id_noti").val(),
     }
     $.ajax({
         type: "POST",
-          url:   '../controlador/inventario/alimentos_recibidosC.php?cambiar_estado=true',
+          url:   '../controlador/inventario/alimentos_recibidosC.php?cambiar_estado_solucionado=true',
           data:{parametros:parametros},
           dataType:'json',
         success: function(data)
