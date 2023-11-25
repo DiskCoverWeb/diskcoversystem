@@ -732,9 +732,10 @@ class alimentos_recibidosC
   					<td>	  					
 						'.$value['Nombre_Completo'].'<br>
 						<small class="label label-danger" onclick="abrir_modal_notificar(\''.$value['CodigoU'].'\')" title="Notifica"><i class="fa fa-commenting"></i></small>
-						<small class="label label-danger" onclick="abrir_modal_notificar(\''.$value['CodigoU'].'\')"><i class="fa fa-exclamation-triangle"></i></small>
+						<!--- <small class="label label-danger" onclick="abrir_modal_notificar(\''.$value['CodigoU'].'\')"><i class="fa fa-exclamation-triangle"></i></small>
 						<small class="label label-danger" onclick="abrir_modal_notificar(\''.$value['CodigoU'].'\')"><i class="fa fa-commenting"></i></small>
 						<small class="label label-danger" onclick="abrir_modal_notificar(\''.$value['CodigoU'].'\')"><i class="fa fa-commenting"></i></small>
+						 --->
   					 </td>
   					<td width="90px">';
   					if($value['T']=='C')
