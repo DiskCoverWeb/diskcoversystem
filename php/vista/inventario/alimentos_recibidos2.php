@@ -155,6 +155,7 @@
 
          setInterval(function() {
          cargar_pedido2();
+         cargar_pedido();
           }, 5000); 
     });
 
@@ -1420,7 +1421,7 @@ function eliminar_all_pedido(pedido)
 						  <div  class="col-sm-12">
 						  	<table class="table table-hover" style="width:100%">
 				        <thead>
-				          <th>ITEM</th>
+				          <th style="width:7%;">ITEM</th>
 				          <th>FECHA DE CLASIFICACION</th>
 				          <th>FECHA DE EXPIRACION</th>
 				          <th>DESCRIPCION</th>

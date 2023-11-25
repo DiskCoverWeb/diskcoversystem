@@ -130,7 +130,7 @@
 	    	data.forEach(function(item,i){
 	    		// console.log(item);
 	    		option+= '<div class="col-md-6 col-sm-6">'+
-											'<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/'+item.picture+'.png" onclick="cambiar_tipo_alimento(\''+item.id+'\',\''+item.text+'\')"></button><br>'+
+											'<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/'+item.picture+'.png" onclick="cambiar_tipo_alimento(\''+item.id+'\',\''+item.text+'\')"  style="width: 60px;height: 60px;"></button><br>'+
 											'<b>'+item.text+'</b>'+
 										'</div>';
 	    		// option+='<option value="'+item.Codigo+'">'+item.Cliente+'</option>';
@@ -695,7 +695,7 @@ function autocoplet_ingreso_donante(){
 								<div class="col-sm-8">
 									<div class="input-group">
 											<span class="input-group-btn" style="padding-right: 10px;">
-													<button type="button" class="btn btn-default btn-sm btn btn-flat" onclick="show_proveedor()"><img src="../../img/png/donacion2.png"></button>
+													<button type="button" class="btn btn-default btn-sm btn btn-flat" onclick="show_proveedor()"><img src="../../img/png/donacion2.png" style="width: 60px;height: 60px;"></button>
 											</span>
 											<b>PROVEEDOR / DONANTE</b>	
 											<div class="form-group">
@@ -718,7 +718,7 @@ function autocoplet_ingreso_donante(){
 								<div class="col-sm-4">
 									<div class="input-group">
 											<span class="input-group-btn" style="padding-right: 10px;">
-												<button type="button" class="btn btn-default btn-sm" onclick="show_temperatura()"><img src="../../img/png/temperatura2.png"></button>
+												<button type="button" class="btn btn-default btn-sm" onclick="show_temperatura()"><img src="../../img/png/temperatura2.png"  style="width: 60px;height: 60px;"></button>
 											</span>
 											 <b>TEMPERATURA DE RECEPCION °C:</b>	
 											 <div class="input-group">
@@ -733,7 +733,7 @@ function autocoplet_ingreso_donante(){
 								<div class="col-sm-8">									
 									<div class="input-group">
 											<span class="input-group-btn" style="padding-right: 10px;">
-													<button type="button" class="btn btn-default btn-sm" onclick="show_tipo_donacion()"><img src="../../img/png/tipo_donacion.png"></button>
+													<button type="button" class="btn btn-default btn-sm" onclick="show_tipo_donacion()"><img src="../../img/png/tipo_donacion.png"  style="width: 60px;height: 60px;"></button>
 											</span>
 												<b>ALIMENTO RECIBIDO:</b>
 													<div class="input-group" style="display:flex;">
@@ -751,7 +751,7 @@ function autocoplet_ingreso_donante(){
 								<div class="col-sm-4">									
 									<div class="input-group">
 											<span class="input-group-btn" style="padding-right: 10px;">
-													<button type="button" class="btn btn-default btn-sm" id="btn_cantidad" onclick="show_cantidad()"><img src="../../img/png/kilo2.png"></button>
+													<button type="button" class="btn btn-default btn-sm" id="btn_cantidad" onclick="show_cantidad()"><img src="../../img/png/kilo2.png"  style="width: 60px;height: 60px;"></button>
 											</span>
 												<b>CANTIDAD:</b>
 												<input type="" class="form-control input-xs" id="txt_cant" name="txt_cant">	

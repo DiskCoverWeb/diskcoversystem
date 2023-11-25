@@ -2,6 +2,7 @@
   <link rel="stylesheet" href="../../dist/css/style_calendar.css">
 <script type="text/javascript">
   $(document).ready(function () {
+
   	 window.addEventListener("message", function(event) {
             if (event.data === "closeModal") {
                 autocoplet_ingreso();
@@ -51,7 +52,11 @@
 
             	$('#pnl_factura').css('display','none');
             }
+
+          setInterval(function() {         	
    		 		cargar_pedido();
+          }, 5000); 
+
    		});
 
 
@@ -697,16 +702,16 @@ function autocoplet_ingreso()
 						  <div  class="col-sm-12">
 						  	<table class="table-sm table-hover" style="width:100%">
 				        <thead>
-				          <th>ITEM</th>
-				          <th>FECHA DE CLASIFICACION</th>
-				          <th>FECHA DE EXPIRACION</th>
-				          <th width="224px">DESCRIPCION</th>
-				          <th>CANTIDAD</th>
-				          <th>PRECIO O COSTO</th>
-				          <th>COSTO TOTAL</th>
-				          <th width="200px">USUARIO</th>
-				          <th>PARA CONTABILIZAR</th>				          
-				          <th></th>
+				          <th width="6%">ITEM</th>
+				          <th style="width: 8%;">FECHA DE CLASIFICACION</th>
+				          <th style="width: 8%;">FECHA DE EXPIRACION</th>
+				          <th width="25%">DESCRIPCION</th>
+				          <th width="6%">CANTIDAD</th>
+				          <th width="6%">PRECIO O COSTO</th>
+				          <th width="6%">COSTO TOTAL</th>
+				          <th>USUARIO</th>
+				          <th width="7%">PARA CONTABILIZAR</th>				          
+				          <th width="6%"></th>
 				        </thead>
 				        <tbody id="tbl_body"></tbody>
 

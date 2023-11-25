@@ -75,7 +75,7 @@ if(isset($_GET['autoincrementable']))
 {
 	$parametros = $_POST['parametros'];
 	$num = $controlador->autoincrementable($parametros);
-	$num = generaCeros($num,4);
+	$num = generaCeros($num,3);
 	echo json_encode($num);
 }
 if(isset($_GET['search']))
@@ -264,7 +264,7 @@ class alimentos_recibidosC
 		SetAdoFields('Cod_R',$parametros['cbx_estado_tran']);
 		SetAdoFields('TOTAL',$parametros['txt_cant']);
 
-		SetAdoFields('Envio_No',substr($parametros['txt_codigo'],0,-4).generaCeros($this->autoincrementable($parametros),4));
+		SetAdoFields('Envio_No',substr($parametros['txt_codigo'],0,-3).generaCeros($this->autoincrementable($parametros),3));
 		return SetAdoUpdate();
 
 	}
@@ -388,6 +388,14 @@ class alimentos_recibidosC
 
 	   $num_ped = $parametro['txt_codigo']; 	
 	   $producto = $this->modelo->catalogo_productos($parametro['txt_referencia']);
+	   if($producto[0]['TDP']=='R')
+	   {
+	   	 $prod = $this->modelo->existe_en_transKarder($parametro['txt_codigo'],$producto[0]['Codigo_Inv']);
+	   	 if(count($prod)>0)
+	   	 {
+	   	 	 return  $respuesta = array('ped'=>$num_ped,'resp'=>1,'total_add'=>'1');		
+	   	 }
+	   }
 	   $fecha = date('Y-m-d');
 	   $numeracion = $this->modelo->numeracion_dia_categoria($fecha,$producto[0]['Item_Banco']);
 	   // print_r($numeracion);die();
@@ -414,7 +422,7 @@ class alimentos_recibidosC
 	   SetAdoFields('CANTIDAD',$parametro['txt_cantidad']);
 	   SetAdoFields('Valor_Unitario',number_format($producto[0]['PVP'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
 	   // SetAdoFields('DH',2);
-	   SetAdoFields('Codigo_Barra',$parametro['txt_codigo'].'-'.$producto[0]['Item_Banco'].'-'.generaCeros($num,4));
+	   SetAdoFields('Codigo_Barra',$parametro['txt_codigo'].'-'.$producto[0]['Item_Banco'].'-'.generaCeros($num,3));
 	   SetAdoFields('CodBodega',-1);
 
 	   SetAdoFields('Cta_Inv',$parametro['txt_cta_inv']);
@@ -711,7 +719,13 @@ class alimentos_recibidosC
   					<td width="'.$d4.'"><input class="form-control"  id="txt_pvp_linea_'.$value['ID'].'" name="txt_pvp_linea_'.$value['ID'].'" onblur="recalcular('.$value['ID'].')" input-sm" value="'.$value['Valor_Unitario'].'"></td>
   					<td width="'.$d4.'"><input class="form-control" id="txt_total_linea_'.$value['ID'].'" name="txt_total_linea_'.$value['ID'].'"  input-sm" value="'.$value['Valor_Total'].'" readonly></td>
 
-  					<td width="'.$d3.'">'.$value['Nombre_Completo'].' <small class="label label-danger" onclick="abrir_modal_notificar(\''.$value['CodigoU'].'\')"><i class="fa fa-commenting"></i></small></td>
+  					<td>	  					
+						'.$value['Nombre_Completo'].'<br>
+						<small class="label label-danger" onclick="abrir_modal_notificar(\''.$value['CodigoU'].'\')" title="Notifica"><i class="fa fa-commenting"></i></small>
+						<small class="label label-danger" onclick="abrir_modal_notificar(\''.$value['CodigoU'].'\')"><i class="fa fa-exclamation-triangle"></i></small>
+						<small class="label label-danger" onclick="abrir_modal_notificar(\''.$value['CodigoU'].'\')"><i class="fa fa-commenting"></i></small>
+						<small class="label label-danger" onclick="abrir_modal_notificar(\''.$value['CodigoU'].'\')"><i class="fa fa-commenting"></i></small>
+  					 </td>
   					<td width="90px">';
   					if($value['T']=='C')
   					{

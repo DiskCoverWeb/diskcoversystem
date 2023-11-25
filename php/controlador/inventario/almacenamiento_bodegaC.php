@@ -131,10 +131,15 @@ class almacenamiento_bodegaC
 		$color = 'green';
 		$fecha_now = new DateTime();
 		foreach ($datos as $key => $value) {
-			$fecha_exp = new DateTime($value['Fecha_Exp']->format('Y-m-d'));
-			$dias = $fecha_now->diff($fecha_exp);
-			if($dias->invert==1){ $dias = $dias->days*-1;}else{$dias = $dias->days;}
-		// print_r($dias);
+			// $fecha_exp = new DateTime($value['Fecha_Exp']->format('Y-m-d'));
+			// $dias = $fecha_now->diff($fecha_exp);
+
+			// print_r($dias);die();
+
+		$fecha1 = new DateTime();
+      	$fecha2 = new DateTime($value['Fecha_Exp']->format('Y-m-d'));
+      	$diferenciaEnSegundos = $fecha2->getTimestamp() - $fecha1->getTimestamp();
+		$dias = intval($diferenciaEnSegundos / 86400);
 		if($dias<10){$color = 'red';}else if ($dias==10) { $color = '#e2d035';}else{$color = 'green';}
 		
 		 $result[] = array("id"=>$value['ID'],"text"=>$value['Codigo_Barra'],'data'=>$value,'color'=>$color);

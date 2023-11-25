@@ -35,15 +35,22 @@
       	 $('#img_alto_stock').attr('src','../../img/png/alto_stock.png');
       }
 
-			var fecha1 = new Date(formatoDate(Date()));
+			var fecha1 = new Date();
       var fecha2 = new Date(formatoDate(data.Fecha_Exp.date));
 			var diferenciaEnMilisegundos = fecha2 - fecha1;
-			var diferenciaEnDias = diferenciaEnMilisegundos / 86400000;
-			if(diferenciaEnDias<=10 && diferenciaEnDias>=0)
+			var diferenciaEnDias = ((diferenciaEnMilisegundos/ 1000)/86400);
+			diferenciaEnDias = parseInt(diferenciaEnDias);
+			if(diferenciaEnDias<10)
       {
       	 $('#btn_expired').css('display','initial');
       	 $('#txt_fecha_exp').css('color','red');
+      	 $('#img_por_expirar').attr('src','../../img/gif/expired_titi2.gif');
+      	 $('#btn_titulo').text('Expirado')
+      }else if(diferenciaEnDias==10){
+      	 $('#btn_expired').css('display','initial');
+      	 $('#txt_fecha_exp').css('color','red');
       	 $('#img_por_expirar').attr('src','../../img/gif/expired_titi.gif');
+      	 $('#btn_titulo').text('Por Expirar')
       }else
       {
       	 $('#btn_expired').css('display','none');
@@ -478,9 +485,9 @@ async function buscar_ruta()
 							Alto Stock
 						</button>
 						<button class="btn btn-default" type="button" id="btn_expired" style="display:none;">
+							<b id="btn_titulo">Por Expirar</b><br>
 							<img id="img_por_expirar" src="../../img/gif/expired_titi.gif" style="width:48px">
-							<br>
-							Por Expirar
+							
 						</button>
 					</div>
 				</div>
