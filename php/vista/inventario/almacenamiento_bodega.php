@@ -210,11 +210,11 @@ function asignar_bodega()
 		return false;
 	}
 
-	if(paquete=='.' || paquete =='')
-	{
-		Swal.fire('Seleccione Paquete','','info');
-		return false;
-	}
+	// if(paquete=='.' || paquete =='')
+	// {
+	// 	Swal.fire('Seleccione Paquete','','info');
+	// 	return false;
+	// }
 	if(id=='')
 	{
 		Swal.fire('Seleccione un pedido','','info');
@@ -472,13 +472,13 @@ async function buscar_ruta()
 					</div> -->
 				</div>
 				<div class="row">
-					<div class="col-sm-5">
+					<div class="col-sm-5" style="display:none;">
 						Tipo de Empaque
 						<select class="form-control input-xs" id="txt_paquetes" name="txt_paquetes">
 							<option value="">Seleccione Empaque</option>
 						</select>
 					</div>
-					<div class="col-sm-3 text-right" id="pnl_alertas">
+					<div class="col-sm-3" id="pnl_alertas">
 						<button class="btn btn-default" type="button" id="btn_alto_stock" style="display:none;">
 							<img id="img_alto_stock"  src="../../img/gif/alto_stock_titi.gif" style="width:48px">
 							<br>

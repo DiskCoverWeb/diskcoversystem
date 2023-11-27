@@ -391,6 +391,7 @@ class alimentos_recibidosC
 	function guardar_recibido($parametro)
 	{
 		
+		// print_r($parametro);die();
 	   // SetAdoAddNew("Trans_Kardex");
 
 		// print_r($parametro);die();
@@ -439,6 +440,7 @@ class alimentos_recibidosC
 	   SetAdoFields('Contra_Cta',$parametro['txt_contra_cta']);
 	   SetAdoFields('Codigo_P',$parametro['txt_codigo_p']);
 	   SetAdoFields('Codigo_Dr',$parametro['ddl_sucursales']);
+	   SetAdoFields('Tipo_Empaque',$parametro['txt_paquetes']);
 	   $resp = SetAdoUpdate();
 	   return  $respuesta = array('ped'=>$num_ped,'resp'=>$resp,'total_add'=>'1');		
 	}

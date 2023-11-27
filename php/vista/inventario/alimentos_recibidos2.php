@@ -3,6 +3,7 @@
 <script type="text/javascript">
   $(document).ready(function () {
     notificaciones();
+    cargar_paquetes();
      setInterval(function() {
          notificaciones();
           }, 5000); 
@@ -178,6 +179,29 @@
       cache: true
     }
   });
+}
+
+
+function cargar_paquetes()
+{
+  
+  $.ajax({
+      type: "POST",
+       url:   '../controlador/inventario/almacenamiento_bodegaC.php?cargar_empaques=true',
+       // data:{parametros:parametros},
+       dataType:'json',
+      success: function(data)
+      {
+        var op = '<option value="">Seleccione empaque</option>';
+        data.forEach(function(item,i){
+           op+='<option value="'+item.ID+'">'+item.Proceso+'</option>';
+        })
+
+        $('#txt_paquetes').html(op);        
+      }
+  });
+
+  
 }
 
 
@@ -452,6 +476,13 @@ function autocoplet_ingreso()
      if($("#pnl_sucursal").is(":visible")==true && sucur=='')
       {
          Swal.fire('Seleccione una sucursal ','','info');
+         return false;
+      }
+
+      var tipo_empaque = $('#txt_paquetes').val();
+      if(tipo_empaque=='')
+      {
+         Swal.fire('Seleccione el tipo de empaque ','','info');
          return false;
       }
   	 if(id=='')
@@ -934,7 +965,7 @@ function autocoplet_ingreso()
 				<hr>
 
 				<div class="row">
-					<div class="col-sm-7">
+					<div class="col-sm-6">
 						<div class="row">
 							<div class="col-sm-4 col-md-3">
 									<button type="button" class="btn btn-default" onclick="show_producto()"><img src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo de producto</b></button>							
@@ -949,7 +980,7 @@ function autocoplet_ingreso()
 											<button type="button" class="btn btn-default btn-xs btn-flat" onclick="limpiar_reciclaje()"><i class="fa fa-close"></i></button>
 										</span>
 								 </div>
-							</div>
+							</div>              
 							<div class="col-sm-2 col-md-2">
 								<b>Grupo</b>
 								<input type="text" name="txt_grupo" id="txt_grupo" class="form-control input-xs" readonly>
@@ -958,6 +989,12 @@ function autocoplet_ingreso()
 							</div>
 						</div>
 					</div>
+          <div class="col-sm-2">
+            <b>Tipo de Empaque</b>
+            <select class="form-control input-xs" id="txt_paquetes" name="txt_paquetes">
+              <option value="">Seleccione Empaque</option>
+            </select>
+          </div>
           <div class="col-sm-4">
             <div class="row">
               <div class="col-sm-6 col-md-6">
