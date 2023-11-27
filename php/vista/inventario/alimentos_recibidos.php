@@ -729,20 +729,20 @@ function autocoplet_ingreso_donante(){
 													<button type="button" class="btn btn-default btn-sm btn btn-flat" onclick="show_proveedor()"><img src="../../img/png/donacion2.png" style="width: 60px;height: 60px;"></button>
 											</span>
 											<b>PROVEEDOR / DONANTE</b>	
-											<div class="form-group">
-												<div class="col-sm-12">	
+											<!-- <div class="form-group"> -->
+												<!-- <div class="col-sm-12">	 -->
 												<div class="input-group" style="display:flex;">
-				                	<select class=" form-control input-xs form-select" id="txt_donante" name="txt_donante" onchange="option_select2()">
-								           		<option value="">Seleccione</option>
-								           </select>   	
-													<span class="input-group-btn">
-														<button type="button" class="btn btn-default btn-xs btn-flat" onclick="limpiar_donante()"><i class="fa fa-close"></i></button>
-													</span>
-											 </div>											 
+					                	<select class=" form-control input-xs form-select" id="txt_donante" name="txt_donante" onchange="option_select2()">
+									           		<option value="">Seleccione</option>
+									           </select>   	
+														<span class="input-group-btn">
+															<button type="button" class="btn btn-default btn-xs btn-flat" onclick="limpiar_donante()"><i class="fa fa-close"></i></button>
+														</span>
+												 </div>											 
 													<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
-												</div>
+												<!-- </div> -->
 												
-											</div>
+											<!-- </div> -->
 
 									</div>
 								</div>
