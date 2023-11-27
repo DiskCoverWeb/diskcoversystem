@@ -8,6 +8,7 @@ $(document).ready(function () {
 	DCRetIBienes();
 	DCCodRet();
 	DCTipo();
+	$('#DCTipo').on('change',DCSerie);
 
 });
 
@@ -346,6 +347,7 @@ function Grabar_abonos() {
 function cerrar_modal() {
 	parent.cerrarModal();
 }
+
 
 
 
