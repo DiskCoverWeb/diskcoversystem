@@ -43,24 +43,24 @@
 						style="font-size: 11.5px; padding: 10px 0px 0px 15px; white-space: nowrap;">Tipo de
 						Documento.</b>
 					<div class="col-sm-5 col-xs-4" style="padding: 5px 0px 0px 0px">
-						<select class="form-control input-sm" id="DCTipo" name="DCTipo" onchange="DCSerie()">
+						<select class="form-control input-sm" id="DCTipo" name="DCTipo" >
 							<option value="FA">FA</option>
 						</select>
 					</div>
 				</div>
-				<div class="col-sm-2 col-xs-3" style="padding:0px">
-					<label class="col-sm-6 col-xs-6 control-label" style="padding-top:5px;"> Serie.</label>
-					<div class="col-sm-6 col-xs-6" style="padding-top:5px">
+				<div class="col-sm-3 col-xs-3" style="padding:0px">
+					<label class="col-sm-4 col-xs-6 control-label" style="padding-top:5px;"> Serie.</label>
+					<div class="col-sm-8 col-xs-6" style="padding-top:5px">
 						<select class="form-control input-sm" id="DCSerie" name="DCSerie" onchange="DCFactura_()">
 							<option value="001001">001001</option>
 						</select>
 					</div>
 				</div>
-				<div class="col-sm-4 col-xs-3" style="padding:0px">
-					<b class="col-sm-3 col-xs-3"
+				<div class="col-sm-3 col-xs-3" style="padding:0px">
+					<b class="col-sm-4 col-xs-3"
 						style="font-size: 11.5px; padding-top:10px; white-space: nowrap; margin-left:-15px" id="Label2"
 						name="Label2">No.</b>
-					<div class="col-sm-9 col-xs-9" style="padding-top:5px;">
+					<div class="col-sm-8 col-xs-9" style="padding-top:5px;">
 						<select class="form-control input-sm" id="DCFactura" name="DCFactura"
 							onchange="DCAutorizacionF();DCFactura1()">
 							<option value="00000000">000000000</option>
