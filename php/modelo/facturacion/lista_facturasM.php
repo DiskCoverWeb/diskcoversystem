@@ -500,7 +500,7 @@ class lista_facturasM
 	   // AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
 	   // AND F.T = '" . $estado ."' ";
 	   
-	   $sql = "SELECT F.Razon_Social,F.T,F.Serie,F.Factura,F.Fecha,F.Fecha_V,F.Total_MN,F.Saldo_MN,C.CI_RUC,F.TC
+	   $sql = "SELECT F.Razon_Social,F.T,F.Serie,F.Factura,F.Fecha,F.Fecha_V,F.Total_MN,F.Saldo_MN,C.CI_RUC,F.TC,F.Autorizacion,C.Codigo
 	   FROM Facturas As F,Clientes As C,Accesos As A 
 	   WHERE F.Fecha BETWEEN '" . $fecha_inicio . "' AND '" . $fecha_fin . "'
 	   AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 

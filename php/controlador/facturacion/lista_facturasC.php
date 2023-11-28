@@ -254,7 +254,7 @@ class lista_facturasC
 		$tablaHtml = '
 		<table>
 			<thead id="cabecera">
-				<tr>';
+				<tr><td></td>';
 
 		$columnas = array_keys($resultado[0]); //Obtenemos cuantas columnas hay que mostrar a partir del primer resultado
 
@@ -268,7 +268,8 @@ class lista_facturasC
 			<tbody>';
 
 		foreach ($resultado as $fila) {
-			$tablaHtml .= '<tr>';
+			$i = '';
+			$tablaHtml .= '<tr><td><button type="button" class="btn btn-default btn-xs" onclick="Ver_factura(\''.$fila['Factura'].'\',\''.$fila['Serie'].'\',\''.$fila['Codigo'].'\',\''.$fila['Autorizacion'].'\')"><i class="fa fa-eye"></i></button></td>';
 			foreach ($columnas as $columna) {
 				$valor = $fila[$columna];
 				$clase = '';
@@ -348,6 +349,7 @@ class lista_facturasC
 		if ($_SESSION['INGRESO']['Impresora_Rodillo'] == 0) {
 			$this->punto_venta->pdf_factura_elec($cod, $ser, $ci, $nombre, $auto, $per, $aprobado = false);
 		} else {
+			// print_r('expression');die();
 			$this->punto_venta->pdf_factura_elec_rodillo($cod, $ser, $ci, $nombre, $auto, $per, $aprobado = false);
 		}
 		// $this->modelo->pdf_factura($cod,$ser,$ci,$per);
@@ -418,7 +420,7 @@ class lista_facturasC
 		$alineado = array();
 		
 		for ($i = 1; $i <= $cantidadDatos; $i++) {
-			$medidas[] = 19;
+			$medidas[] = 23;
 			$alineado[] = 'L';
 		}
 
@@ -495,7 +497,7 @@ class lista_facturasC
 		);
 
 
-		$this->pdf->cabecera_reporte_MC($titulo, $tablaHTML, $contenido = false, $image = false, $Fechaini = false, $Fechafin = false, $sizetable, $mostrar, 15, 'P');
+		$this->pdf->cabecera_reporte_MC($titulo, $tablaHTML, $contenido = false, $image = false, $Fechaini = false, $Fechafin = false, $sizetable, $mostrar, 15, 'H');
 	}
 
 	function imprimir_pdf_lineas($parametros)
