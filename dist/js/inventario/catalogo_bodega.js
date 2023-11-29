@@ -9,7 +9,7 @@ var idSeleccionada = null;
 var valproducto = null;
 
 $('#txtConcepto').on('click', function () {
-    
+
 });
 
 $('#txtConcepto').on('blur', function () {
@@ -25,10 +25,11 @@ $("#btnGuardar").click(function () {
     var nivel = $('#selectTipo').val();//nivel
     var tp = $('#tp').val();//tipo de proceso
     var picture = ".";
-    if (nivel === '99'){
+    if (nivel === '99') {
         picture = $('#picture').val();
         tp = codigoP;
-    } 
+        tipoProducto = $("input[name='cbxReqFA']:checked").val();
+    }
 
 
     var mensaje = "";
@@ -99,7 +100,7 @@ function verificarExistenciaCodigo(codigoP) {
         $.ajax({
             type: 'POST',
             url: '../controlador/inventario/catalogo_bodegaC.php?ListaProductos=true',
-            data: {parametros: parametros},
+            data: { parametros: parametros },
             success: function (data) {
                 var responseData = JSON.parse(data);
                 if (responseData['status'] == 200 && responseData['datos'].length > 0) {
@@ -155,7 +156,8 @@ function actualizarProducto(parametros) {
                         $("input[name='cbxProdc']").prop("checked", false);
                         if (parametros.nivel === '99') {
                             $('#picture').val('');
-                            $('#reqFactura').val('');
+                            $('#siFA').prop('checked', false);
+                            $('#noFA').prop('checked', false);
                         }
                         listarDatos();
                     } else {
@@ -205,7 +207,8 @@ function guardarNuevoProducto(parametros) {
                         $("input[name='cbxProdc']").prop("checked", false);
                         if (parametros.nivel === '99') {
                             $('#picture').val('');
-                            $('#reqFactura').val('');
+                            $('#siFA').prop('checked', false);
+                            $('#noFA').prop('checked', false);
                         }
                         listarDatos();
                     } else {
@@ -236,7 +239,7 @@ function listarDatos() {
     $.ajax({
         type: 'POST',
         url: '../controlador/inventario/catalogo_bodegaC.php?ListaProductos=true',
-        data: {parametros: parametros},
+        data: { parametros: parametros },
         success: function (data) {
             var responseData = JSON.parse(data);
             if (responseData['status'] == 200 && responseData['datos'].length > 0) {
@@ -264,9 +267,9 @@ function llenarAcordeon(datos) {
 
     datos.forEach(function (dato) {
         var niveles = "";
-        if(dato.Nivel === 99){
+        if (dato.Nivel === 99) {
             niveles = dato.TP.split('.');
-        }else{
+        } else {
             niveles = dato.Cmds.split('.');
         }
         var nivel1 = niveles[0];
@@ -319,16 +322,16 @@ function clickProducto(dato) {
     ocultarMsjError();
     idSeleccionada = dato.ID;
     valproducto = dato.Proceso;
-    if(dato.Nivel === 99){
+    if (dato.Nivel === 99) {
         $('#codigoP').val(dato.TP);
         $('#picture').val(dato.Picture);
         var reqFact = dato.DC;
-        if(reqFact === 'FA'){
-            $('#reqFactura').val('Sí');
-        }else{
-            $('#reqFactura').val('No');
+        if (reqFact === 'FA') {
+            $('#siFA').prop('checked', true);
+        } else {
+            $('#noFA').prop('checked', true);
         }
-    }else{
+    } else {
         $('#codigoP').val(dato.Cmds);
     }
     $('#txtConcepto').val(dato.Proceso);
@@ -356,11 +359,11 @@ $("#btnEliminar").click(function () {
                     var listaEliminar = responseData['datos'];
                     if (listaEliminar.length > 0) {
                         var textAreaContent;
-                        if(nivel === '99'){
+                        if (nivel === '99') {
                             var textAreaContent = listaEliminar.map(function (registro) {
                                 return registro['TP'] + ' - ' + registro['Proceso'];
                             }).join('\n');
-                        }else{
+                        } else {
                             var textAreaContent = listaEliminar.map(function (registro) {
                                 return registro['Cmds'] + ' - ' + registro['Proceso'];
                             }).join('\n');
@@ -395,7 +398,8 @@ $("#btnEliminar").click(function () {
                                             $("input[name='cbxProdc']").prop("checked", false);
                                             if (parametros.nivel === '99') {
                                                 $('#picture').val('');
-                                                $('#reqFactura').val('');
+                                                $('#siFA').prop('checked', false);
+                                                $('#noFA').prop('checked', false);
                                             }
                                             listarDatos();
                                         } else {
@@ -439,7 +443,7 @@ $("#btnEliminar").click(function () {
     }
 });
 
-function llenarListaTipoProcesosGenerales(){
+function llenarListaTipoProcesosGenerales() {
     $.ajax({
         type: 'POST',
         url: '../controlador/inventario/catalogo_bodegaC.php?ListaTipo=true',
@@ -461,11 +465,11 @@ function llenarListaTipoProcesosGenerales(){
     });
 }
 
-function tipoProceso(){
+function tipoProceso() {
     //de selectTipo se obtiene la opcion seleccionada
     var tipoProceso = $('#selectTipo').val();
     //se verifica que tipo de TP es
-    switch(tipoProceso){
+    switch (tipoProceso) {
         //Tipo de Ingreso
         case '99':
             $('#txtConcepto').attr('placeholder', '');

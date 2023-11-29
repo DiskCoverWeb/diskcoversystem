@@ -100,7 +100,21 @@
                     </div>
                     <div class="col-sm-6" style="display:none" id="reqFacturaContainer">
                         <label for="picture">Requiere Factura?</label>
-                        <input type="text" class="form-control" id="reqFactura" placeholder=" " readonly>
+                        <div class="row">
+                            <div class="form-check col-sm-6">
+                                <input class="form-check-input" type="radio" name="cbxReqFA" id="siFA" value='FA'>
+                                <label class="form-check-label" for="siFA">
+                                    Sí
+                                </label>
+                            </div>
+                            <div class="form-check col-sm-6">
+                                <input class="form-check-input" type="radio" name="cbxReqFA" id="noFA" value='.'
+                                    checked>
+                                <label class="form-check-label" for="noFA">
+                                    No
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
