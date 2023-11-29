@@ -1,14 +1,15 @@
 $(document).ready(function () {
     $("input[name='cbxProdc']").prop("checked", false);
     ocultarMsjError();
-    listarDatos();
+    llenarListaTipoProcesosGenerales();
+    $('#selectTipo').on('change', tipoProceso);
 });
 
 var idSeleccionada = null;
 var valproducto = null;
 
 $('#txtConcepto').on('click', function () {
-    $(this).val('');
+    
 });
 
 $('#txtConcepto').on('blur', function () {
@@ -21,6 +22,14 @@ $("#btnGuardar").click(function () {
     var codigoP = $("#codigoP").val();
     var txtConcepto = $("#txtConcepto").val();
     var tipoProducto = $("input[name='cbxProdc']:checked").val();
+    var nivel = $('#selectTipo').val();//nivel
+    var tp = $('#tp').val();//tipo de proceso
+    var picture = ".";
+    if (nivel === '99'){
+        picture = $('#picture').val();
+        tp = codigoP;
+    } 
+
 
     var mensaje = "";
 
@@ -29,7 +38,8 @@ $("#btnGuardar").click(function () {
     } else if (!txtConcepto.trim()) {
         mensaje = "Ingrese un concepto válido";
     } else if (!tipoProducto) {
-        mensaje = "Seleccione un tipo de producto";
+        tipoProducto = ".";
+        //mensaje = "Seleccione un tipo de producto";
     }
 
     if (mensaje) {
@@ -42,6 +52,9 @@ $("#btnGuardar").click(function () {
         "codigo": codigoP,
         "concepto": txtConcepto,
         "tipo": tipoProducto,
+        "nivel": nivel,
+        "tp": tp,
+        "picture": picture
     };
 
     verificarExistenciaCodigo(codigoP)
@@ -69,15 +82,32 @@ function ocultarMsjError() {
 }
 
 function verificarExistenciaCodigo(codigoP) {
+    var codigoP = $("#codigoP").val();
+    var txtConcepto = $("#txtConcepto").val();
+    var tipoProducto = $("input[name='cbxProdc']:checked").val();
+    var nivel = $('#selectTipo').val();//nivel
+    var tp = $('#tp').val();//tipo de proceso
     return new Promise(function (resolve, reject) {
+        var parametros = {
+            "codigo": codigoP,
+            "concepto": txtConcepto,
+            "tipo": tipoProducto,
+            "nivel": nivel,
+            "tp": tp
+        };
+        console.log(parametros);
         $.ajax({
             type: 'POST',
             url: '../controlador/inventario/catalogo_bodegaC.php?ListaProductos=true',
-            data: {},
+            data: {parametros: parametros},
             success: function (data) {
                 var responseData = JSON.parse(data);
                 if (responseData['status'] == 200 && responseData['datos'].length > 0) {
                     for (var i = 0; i < responseData['datos'].length; i++) {
+                        if (responseData['datos'][i].Nivel === 99 && responseData['datos'][i].TP === codigoP) {
+                            resolve({ existe: true, id: responseData['datos'][i].ID });
+                            return;
+                        }
                         if (responseData['datos'][i].Cmds === codigoP) {
                             resolve({ existe: true, id: responseData['datos'][i].ID });
                             return;
@@ -123,6 +153,10 @@ function actualizarProducto(parametros) {
                         $('#codigoP').val('');
                         $('#txtConcepto').val('');
                         $("input[name='cbxProdc']").prop("checked", false);
+                        if (parametros.nivel === '99') {
+                            $('#picture').val('');
+                            $('#reqFactura').val('');
+                        }
                         listarDatos();
                     } else {
                         Swal.fire({
@@ -169,6 +203,10 @@ function guardarNuevoProducto(parametros) {
                         $('#codigoP').val('');
                         $('#txtConcepto').val('');
                         $("input[name='cbxProdc']").prop("checked", false);
+                        if (parametros.nivel === '99') {
+                            $('#picture').val('');
+                            $('#reqFactura').val('');
+                        }
                         listarDatos();
                     } else {
                         Swal.fire({
@@ -189,10 +227,16 @@ function guardarNuevoProducto(parametros) {
 }
 
 function listarDatos() {
+    var nivel = $('#selectTipo').val();//nivel
+    var tp = $('#tp').val();//tipo de proceso
+    var parametros = {
+        "nivel": nivel,
+        "tp": tp
+    };
     $.ajax({
         type: 'POST',
         url: '../controlador/inventario/catalogo_bodegaC.php?ListaProductos=true',
-        data: {},
+        data: {parametros: parametros},
         success: function (data) {
             var responseData = JSON.parse(data);
             if (responseData['status'] == 200 && responseData['datos'].length > 0) {
@@ -219,7 +263,12 @@ function llenarAcordeon(datos) {
     var grupos = {};
 
     datos.forEach(function (dato) {
-        var niveles = dato.Cmds.split('.');
+        var niveles = "";
+        if(dato.Nivel === 99){
+            niveles = dato.TP.split('.');
+        }else{
+            niveles = dato.Cmds.split('.');
+        }
         var nivel1 = niveles[0];
 
         if (!grupos[nivel1]) {
@@ -270,7 +319,18 @@ function clickProducto(dato) {
     ocultarMsjError();
     idSeleccionada = dato.ID;
     valproducto = dato.Proceso;
-    $('#codigoP').val(dato.Cmds);
+    if(dato.Nivel === 99){
+        $('#codigoP').val(dato.TP);
+        $('#picture').val(dato.Picture);
+        var reqFact = dato.DC;
+        if(reqFact === 'FA'){
+            $('#reqFactura').val('Sí');
+        }else{
+            $('#reqFactura').val('No');
+        }
+    }else{
+        $('#codigoP').val(dato.Cmds);
+    }
     $('#txtConcepto').val(dato.Proceso);
     $("input[name='cbxProdc'][value='" + dato.DC + "']").prop("checked", true);
 }
@@ -278,8 +338,12 @@ function clickProducto(dato) {
 $("#btnEliminar").click(function () {
     if (idSeleccionada != null) {
         var codigoP = $('#codigoP').val();
+        var nivel = $('#selectTipo').val();//nivel
+        var tp = $('#tp').val();//tipo de proceso
         var parametros = {
             "codigo": codigoP,
+            "nivel": nivel,
+            "tp": tp
         };
 
         $.ajax({
@@ -291,10 +355,16 @@ $("#btnEliminar").click(function () {
                 if (responseData['status'] == 200) {
                     var listaEliminar = responseData['datos'];
                     if (listaEliminar.length > 0) {
-                        var textAreaContent = listaEliminar.map(function (registro) {
-                            return registro['Cmds'] + ' - ' + registro['Proceso'];
-                        }).join('\n');
-
+                        var textAreaContent;
+                        if(nivel === '99'){
+                            var textAreaContent = listaEliminar.map(function (registro) {
+                                return registro['TP'] + ' - ' + registro['Proceso'];
+                            }).join('\n');
+                        }else{
+                            var textAreaContent = listaEliminar.map(function (registro) {
+                                return registro['Cmds'] + ' - ' + registro['Proceso'];
+                            }).join('\n');
+                        }
                         Swal.fire({
                             title: 'Está seguro que desea eliminar?',
                             html: 'Se borrará de forma permanente!<br>' +
@@ -323,6 +393,10 @@ $("#btnEliminar").click(function () {
                                             $('#codigoP').val('');
                                             $('#txtConcepto').val('');
                                             $("input[name='cbxProdc']").prop("checked", false);
+                                            if (parametros.nivel === '99') {
+                                                $('#picture').val('');
+                                                $('#reqFactura').val('');
+                                            }
                                             listarDatos();
                                         } else {
                                             Swal.fire({
@@ -364,6 +438,86 @@ $("#btnEliminar").click(function () {
         });
     }
 });
+
+function llenarListaTipoProcesosGenerales(){
+    $.ajax({
+        type: 'POST',
+        url: '../controlador/inventario/catalogo_bodegaC.php?ListaTipo=true',
+        data: {},
+        success: function (data) {
+            var responseData = JSON.parse(data);
+            if (responseData['status'] == '200' && responseData['datos'].length > 0) {
+                var datos = responseData['datos'];
+                var select = $('#selectTipo');
+                select.empty();
+                datos.forEach(function (dato) {
+                    select.append('<option value="' + dato.TP + '">' + dato.Proceso + '</option>');
+                });
+            }
+        },
+        error: function (error) {
+            console.error('Error en la solicitud AJAX:', error);
+        }
+    });
+}
+
+function tipoProceso(){
+    //de selectTipo se obtiene la opcion seleccionada
+    var tipoProceso = $('#selectTipo').val();
+    //se verifica que tipo de TP es
+    switch(tipoProceso){
+        //Tipo de Ingreso
+        case '99':
+            $('#txtConcepto').attr('placeholder', '');
+            $('#tp').val('AR00');
+            $('#pictureContainer').css('display', 'block');
+            $('#reqFacturaContainer').css('display', 'block');
+            $('#checkboxContainer').css('display', 'none');
+            break;
+        //Tipo de Categorias
+        case '00':
+            $('#txtConcepto').attr('placeholder', '');
+            $('#tp').val('CATEGORI');
+            $('#pictureContainer').css('display', 'none');
+            $('#reqFacturaContainer').css('display', 'none');
+            $('#checkboxContainer').css('display', 'block');
+            break;
+        //Tipo de Proveedor
+        case '98':
+            $('#txtConcepto').attr('placeholder', '');
+            $('#tp').val('TIPOPROV');
+            $('#pictureContainer').css('display', 'none');
+            $('#reqFacturaContainer').css('display', 'none');
+            $('#checkboxContainer').css('display', 'none');
+            break;
+        //Tipo de Empaque
+        case '97':
+            $('#txtConcepto').attr('placeholder', '');
+            $('#tp').val('EMPAQUE');
+            $('#pictureContainer').css('display', 'none');
+            $('#reqFacturaContainer').css('display', 'none');
+            $('#checkboxContainer').css('display', 'none');
+            break;
+        //Tipo de Estado de Transporte
+        case '96':
+            $('#txtConcepto').attr('placeholder', '');
+            $('#tp').val('ESTTRANS');
+            $('#pictureContainer').css('display', 'none');
+            $('#reqFacturaContainer').css('display', 'none');
+            $('#checkboxContainer').css('display', 'none');
+            break;
+        default:
+            $('#txtConcepto').attr('placeholder', '');
+            $('#tp').val('CATEGORI');
+            $('#pictureContainer').css('display', 'none');
+            $('#reqFacturaContainer').css('display', 'none');
+            $('#checkboxContainer').css('display', 'none');
+            break;
+    };
+    listarDatos();
+
+}
+
 
 
 

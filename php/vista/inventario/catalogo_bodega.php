@@ -6,12 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <style>
-        .panel-body{
+        .panel-body {
             margin-left: 15px;
         }
+
         .panel-body:hover {
             color: blue;
-            cursor: pointer;            
+            cursor: pointer;
         }
 
         .icono {
@@ -19,16 +20,25 @@
         }
 
         #accordion {
-        max-height: 400px; 
-        overflow-y: auto; 
-    }
+            max-height: 400px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 
 <body>
     <div class="row" style="margin:10px">
         <div class="col-sm-6 panel panel-info">
-            <div class="panel-group" id="accordion"  style="margin-top:20px">>
+            <div style="padding-top:10px">
+                <h4>Tipos de Procesos</h4>
+            </div>
+            <div style="padding-top:10px">
+                <select class="form-control input-xs" id="selectTipo" name="selectTipo">
+                    <option value="">Tipo de Informacion</option>
+                </select>
+                <input type="text" style="display:none" value="" id="tp">
+            </div>
+            <div class="panel-group" id="accordion" style="margin-top:20px">>
                 <!-- Los paneles del acordeón se llenarán aquí dinámicamente -->
             </div>
 
@@ -55,8 +65,12 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <label for="codigoP">Código del producto</label>
+                        <!--
                         <input type="text" class="form-control" maxlength="5" id="codigoP"
                             placeholder="<?php echo $_SESSION['INGRESO']['Formato_Inventario']; ?>">
+                        -->
+                        <input type="text" class="form-control" maxlength="5" id="codigoP" placeholder="CC.CC"
+                            maxlength="5">
                     </div>
                     <div class="col-sm-6">
                         <label for="txtConcepto">Concepto o detalle del producto</label>
@@ -64,7 +78,7 @@
                     </div>
                 </div>
                 <span style="margin-top:5px">Tipo de producto</span>
-                <div class="row">
+                <div class="row" id="checkboxContainer">
                     <div class="form-check col-sm-6">
                         <input class="form-check-input" type="radio" name="cbxProdc" id="cbxCat" value='C'>
                         <label class="form-check-label" for="cbxCat">
@@ -76,6 +90,17 @@
                         <label class="form-check-label" for="cbxDet">
                             Detalle
                         </label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6" style="display:none" id="pictureContainer">
+                        <label for="picture">Picture</label>
+                        <input type="text" class="form-control" id="picture" placeholder=".">
+                    </div>
+                    <div class="col-sm-6" style="display:none" id="reqFacturaContainer">
+                        <label for="picture">Requiere Factura?</label>
+                        <input type="text" class="form-control" id="reqFactura" placeholder=" " readonly>
                     </div>
                 </div>
 

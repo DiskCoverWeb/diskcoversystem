@@ -13,33 +13,56 @@ class catalogo_bodegaM
 
     function GuardarProducto($parametros)
     {
-        $sql = "INSERT INTO Catalogo_Proceso(DC, Cmds, Proceso, TP, Nivel, Item) 
-                VALUES ('" . $parametros['tipo'] . "', '" . $parametros['codigo'] . "', '" . $parametros['concepto'] . "', 'CATEGORI', '0', '" . $_SESSION['INGRESO']['item'] . "')";
+        $sql = "";
+        if($parametros['nivel'] == '99'){
+            $sql = "INSERT INTO Catalogo_Proceso(DC, Cmds, Proceso, TP, Nivel, Item, Picture) 
+                    VALUES ('" . $parametros['tipo'] . "', '0000', '" . $parametros['concepto'] . "', '".$parametros['codigo']."', '".$parametros['nivel']."', '" . $_SESSION['INGRESO']['item'] . "', '".$parametros['picture']."')";
+        }else {
+            $sql = "INSERT INTO Catalogo_Proceso(DC, Cmds, Proceso, TP, Nivel, Item) 
+                    VALUES ('" . $parametros['tipo'] . "', '" . $parametros['codigo'] . "', '" . $parametros['concepto'] . "', '".$parametros['tp']."', '".$parametros['nivel']."', '" . $_SESSION['INGRESO']['item'] . "')";
+        }
         return $this->db->datos($sql);
     }
     
-    function ListaProductos()
+    function ListaProductos($parametros)
     {
-        $sql = "SELECT DC, Cmds, Proceso, TP, Nivel, Item, ID
-                FROM Catalogo_Proceso
-                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
-                AND TP = 'CATEGORI'
-                AND Nivel = '0'
-                ORDER BY Cmds";
+        $sql = "";
+        if($parametros['nivel'] == '99'){
+            $sql = "SELECT DC, Cmds, Proceso, TP, Nivel, Item, ID, Picture
+                    FROM Catalogo_Proceso
+                    WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                    AND Nivel = '".$parametros['nivel']."'
+                    ORDER BY Cmds";
+        }else{
+            $sql = "SELECT DC, Cmds, Proceso, TP, Nivel, Item, ID
+                    FROM Catalogo_Proceso
+                    WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                    AND TP = '".$parametros['tp']."'
+                    AND Nivel = '".$parametros['nivel']."'
+                    ORDER BY Cmds";
+        }
         return $this->db->datos($sql);
     }
 
     function EliminarProducto($parametros)
     {
         //$registrosAEliminar = $this->ListaIDsEliminar($parametros);
-
         foreach ($parametros as $registro) {
             $id = $registro['ID'];
-            $sqlEliminar = "DELETE FROM Catalogo_Proceso 
+            $sqlEliminar = "";
+            if($registro['Nivel'] == '99'){
+                $sqlEliminar = "DELETE FROM Catalogo_Proceso 
                         WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                         AND ID = '$id'
-                        AND TP = 'CATEGORI'
-                        AND Nivel = '0'";
+                        AND TP = '".$registro['TP']."'
+                        AND Nivel = '".$registro['Nivel']."'";
+            }else{
+                $sqlEliminar = "DELETE FROM Catalogo_Proceso 
+                        WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                        AND ID = '$id'
+                        AND TP = '".$registro['TP']."'
+                        AND Nivel = '".$registro['Nivel']."'";
+            }
             $this->db->datos($sqlEliminar);
         }
         return true;
@@ -47,25 +70,59 @@ class catalogo_bodegaM
 
     function ListaEliminar($parametros)
     {
-        $sql = "SELECT ID, Cmds, Proceso 
+        $sql = "";
+        if($parametros['nivel'] == '99'){
+            $sql = "SELECT ID, Cmds, Proceso, TP, Nivel 
+                FROM Catalogo_Proceso
+                WHERE TP LIKE '" . $parametros['codigo'] . "%'
+                AND Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND Nivel = '".$parametros['nivel']."'";
+        }else{
+            $sql = "SELECT ID, Cmds, Proceso, TP, Nivel 
                 FROM Catalogo_Proceso
                 WHERE Cmds LIKE '" . $parametros['codigo'] . "%'
                 AND Item = '" . $_SESSION['INGRESO']['item'] . "'
-                AND TP = 'CATEGORI'
-                AND Nivel = '0'";
+                AND TP = '".$parametros['tp']."'
+                AND Nivel = '".$parametros['nivel']."'";
+        }
         return $this->db->datos($sql);
     }
 
     function EditarProducto($parametros)
     {
-        $sql = "UPDATE Catalogo_Proceso 
+        $sql = "";
+        if($parametros['nivel'] == '99'){
+            //print_r($parametros);die();
+            $sql = "UPDATE Catalogo_Proceso 
+                SET DC = '" . $parametros['tipo'] . "', 
+                    Cmds = '0000', 
+                    Proceso = '" . $parametros['concepto'] . "',
+                    Picture = '".$parametros['picture']."' 
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND ID = '" . $parametros['id'] . "'
+                AND TP = '" . $parametros['codigo'] . "'
+                AND Nivel = '" . $parametros['nivel'] . "'";
+        }else{
+            $sql = "UPDATE Catalogo_Proceso 
                 SET DC = '" . $parametros['tipo'] . "', 
                     Cmds = '" . $parametros['codigo'] . "', 
                     Proceso = '" . $parametros['concepto'] . "' 
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND ID = '" . $parametros['id'] . "'
-                AND TP = 'CATEGORI'
-                AND Nivel = '0'";
+                AND TP = '" . $parametros['tp'] . "'
+                AND Nivel = '" . $parametros['nivel'] . "'";
+        }
+        
+        return $this->db->datos($sql);
+    }
+
+    function ListaTipoProcesosGenerales(){
+        $sql = "SELECT TP, Proceso, DC, ID
+                FROM Catalogo_Proceso
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND Nivel = 00
+                AND DC = '--'
+                ORDER BY TP, Proceso";
         return $this->db->datos($sql);
     }
 }
