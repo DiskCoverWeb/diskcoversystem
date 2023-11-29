@@ -15,8 +15,10 @@ if(isset($_GET['proveedores']))
 }
 if(isset($_GET['guardar']))
 {
-	$parametros = $_POST;
-	echo json_decode($controlador->guardar($parametros));
+	// print_r($_POST);die();
+	parse_str($_POST['parametros'],$parametros);
+	parse_str($_POST['transporte'],$transporte);
+	echo json_decode($controlador->guardar($parametros,$transporte));
 }
 if(isset($_GET['guardar2']))
 {
@@ -245,6 +247,11 @@ if(isset($_GET['cambiar_a_clasificacion']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->cambiar_a_clasificacion($parametros));
 }
+if(isset($_GET['preguntas_transporte']))
+{
+	// $parametros = $_POST['parametros'];
+	echo json_encode($controlador->preguntas_transporte());
+}
 
 /**
  * 
@@ -259,10 +266,15 @@ class alimentos_recibidosC
 		$this->modelo = new alimentos_recibidosM();
 	}
 
-	function guardar($parametros)
+	function guardar($parametros,$transporte)
 	{
-		// print_r($parametros);die();
+		// print_r($parametros);
+		// print_r($transporte);die();
+
+
+
 		$parametros['fecha'] = $parametros['txt_fecha'];
+		$codigo = substr($parametros['txt_codigo'],0,-3).generaCeros($this->autoincrementable($parametros),3);
 		// print_r($parametros);die();
 		SetAdoAddNew('Trans_Correos');
 		SetAdoFields('T','I');
@@ -271,12 +283,24 @@ class alimentos_recibidosC
 		SetAdoFields('CodigoP',$parametros['ddl_ingreso']);
 		SetAdoFields('Cod_C',$parametros['ddl_alimento']);
 		SetAdoFields('Porc_C',$parametros['txt_temperatura']);
-		SetAdoFields('Cod_R',$parametros['cbx_estado_tran']);
+		// SetAdoFields('Cod_R',$parametros['cbx_estado_tran']);
 		SetAdoFields('TOTAL',$parametros['txt_cant']);
 
-		SetAdoFields('Envio_No',substr($parametros['txt_codigo'],0,-3).generaCeros($this->autoincrementable($parametros),3));
-		return SetAdoUpdate();
+		SetAdoFields('Envio_No',$codigo);
+		SetAdoUpdate();
 
+
+		foreach ($transporte as $key => $value) {
+			$Cmds = explode('_', $key);
+			SetAdoAddNew('Trans_Fletes');
+		    SetAdoFields('TP',$Cmds[0]);
+		    SetAdoFields('Referencia',$Cmds[1]);
+		    SetAdoFields('Cumple',$value);
+		    SetAdoFields('Codigo_Inv',$codigo);	
+		    SetAdoUpdate();		
+		}
+
+		return 1;
 	}
 
 	function guardar2($parametros)
@@ -1245,6 +1269,33 @@ class alimentos_recibidosC
 		}
 		SetAdoFieldsWhere('ID',$pedido);
 	    SetAdoUpdateGeneric();
+	}
+
+	function preguntas_transporte()
+	{
+		$datos = $this->modelo->preguntas_transporte();
+		$html='<li class="list-group-item">
+					<a href="#" style="padding:0px">
+							<label></label>
+					 		<div class="btn-group pull-right">
+					 			<span class="label-default btn-sm btn"><img src="../../img/png/bueno2.png" style="width: 14px;"></span>
+					 			<span class="label-default btn-sm btn"><img src="../../img/png/close.png" style="width: 14px;"></span>
+					 		</div>
+				 	</a>
+				</li>';
+		foreach ($datos as $key => $value) {
+			$html.='<li class="list-group-item">
+						<a href="#" style="padding:0px">
+								<label>'.$value['Proceso'].'</label>
+						 		<div class="btn-group pull-right">
+						 			<span class="label-success btn-sm btn"><input type="radio" class="rbl_opciones" name="'.$value['Cmds'].'_'.$value['TP'].'" id="'.$value['Cmds'].'_1" value="1" checked></span>
+						 			<span class="label-danger btn-sm btn"><input type="radio" class="rbl_opciones"  name="'.$value['Cmds'].'_'.$value['TP'].'" id="'.$value['Cmds'].'_0" value="0"></span>
+						 		</div>
+					 	</a>
+					</li>';
+		}
+
+		return $html;
 	}
 
 

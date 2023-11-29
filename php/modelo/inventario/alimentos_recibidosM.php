@@ -505,6 +505,17 @@ class alimentos_recibidosM
 		return $this->db->datos($sql);
 	}
 
+	function preguntas_transporte()
+	{
+		$sql = "SELECT      Proceso, ID,Cmds,TP
+				FROM         Catalogo_Proceso
+				WHERE  Item = '".$_SESSION['INGRESO']['item']."' 
+				AND Nivel = 96
+				AND TP = 'ESTTRANS'
+				ORDER BY Cmds, Proceso";
+		return $this->db->datos($sql);
+	}
+
 
 }
 ?>

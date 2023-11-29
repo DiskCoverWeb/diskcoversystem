@@ -963,7 +963,7 @@ function autocoplet_ingreso()
 							</div>
 							<div class="col-sm-12" id="pnl_comentario">
 									<b>COMENTARIO DE INGRESO</b>
-									<textarea class="form-control input-sm" rows="3" style="font-size:16px" id="txt_comentario2" name="txt_comentario2"></textarea>
+									<textarea class="form-control input-sm" rows="3" style="font-size:16px" id="txt_comentario2" name="txt_comentario2" placeholder="Ingrese un comentario general de clasificacion..."></textarea>
                   <div class="text-right">
                   <button type="button" class="btn btn-primary btn-sm" onclick="notificar()">Notificar</button>		
                   </div>						

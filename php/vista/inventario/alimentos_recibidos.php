@@ -2,6 +2,7 @@
 <script type="text/javascript">
   $(document).ready(function () {
   	cargar_datos_procesados();
+  	preguntas_transporte();
   	notificaciones();
   	 setInterval(function() {
          notificaciones();
@@ -71,11 +72,13 @@
   	}
 
   	 var parametros = $('#form_correos').serialize();
+  	 var estado_trans = $('#form_estado_transporte').serialize();
+  	 // parametros+='&'+estado_trans;
   	 parametros+='&ddl_ingreso='+$('#txt_donante').val();
   	  $.ajax({
 	      type: "POST",
 	      url: '../controlador/inventario/alimentos_recibidosC.php?guardar=true',
-	      data:parametros,
+	      data:{parametros:parametros,transporte:estado_trans},
           dataType:'json',
 	      success: function(data)
 	      {
@@ -85,6 +88,7 @@
 	      			{
 	      				limpiar();
 	      				cargar_datos();
+	      				preguntas_transporte();
 	      			});
 	      	}
 	      
@@ -393,6 +397,20 @@ function autocoplet_ingreso_donante(){
 		});  	
   }
 
+  function preguntas_transporte(){
+  		
+	  	$.ajax({
+		    type: "POST",
+	      	url:   '../controlador/inventario/alimentos_recibidosC.php?preguntas_transporte=true',
+		    // data:{parametros:parametros},
+	        dataType:'json',
+		    success: function(data)
+		    {
+		    	$('#lista_preguntas').html(data);		    	
+		    }
+		});  	
+  }
+
   function show_proveedor()
   {
   	$('#modal_proveedor').modal('show');
@@ -400,6 +418,11 @@ function autocoplet_ingreso_donante(){
   function show_cantidad()
   {
   	$('#modal_cantidad').modal('show');
+  }
+  function show_estado_transporte()
+  {
+  	// preguntas_transporte();
+  	$('#modal_estado_transporte').modal('show');
   }
   function show_temperatura()
   {
@@ -692,6 +715,11 @@ function autocoplet_ingreso_donante(){
 				<img src="../../img/png/mostrar.png">
 			</button>
 		</div>
+		<div class="col-xs-2 col-md-2 col-sm-2">
+			<button class="btn btn-default" title="Guardar" onclick="show_estado_transporte()">
+				<img src="../../img/png/camion.png" style="width:32px; height: :32px;">
+			</button>
+		</div>
 		<div class="col-xs-2 col-md-2 col-sm-2" style="display:none;" id="pnl_notificacion">
 			<div class="navbar-custom-menu">
 				<ul class="nav navbar-nav">
@@ -751,7 +779,7 @@ function autocoplet_ingreso_donante(){
 											<span class="input-group-btn" style="padding-right: 10px;">
 												<button type="button" class="btn btn-default btn-sm" onclick="show_temperatura()"><img src="../../img/png/temperatura2.png"  style="width: 60px;height: 60px;"></button>
 											</span>
-											 <b>TEMPERATURA DE RECEPCION °C:</b>	
+											 <b>TEMPERATURA DE RECEPCION:</b>	
 											 <div class="input-group">
 				                	<input type="" class="form-control input-sm" id="txt_temperatura" name="txt_temperatura">	
 													<span class="input-group-addon">°C</span>
@@ -788,7 +816,7 @@ function autocoplet_ingreso_donante(){
 												<input type="" class="form-control input-xs" id="txt_cant" name="txt_cant">	
 									</div>
 								</div>								
-							</div>						
+							</div>			
 					</div>
 					<div class="col-sm-12 col-md-4" style="padding:0px">
 						<div class="col-sm-6 col-md-12">
@@ -815,10 +843,10 @@ function autocoplet_ingreso_donante(){
 									</div>
 							</div>
 						</div>						
-						<div class="col-sm-6 col-md-12">							
+						<!-- <div class="col-sm-6 col-md-12">							
 								<div class="form-group">
-										<label  class="col-sm-6 control-label">ESTADO DE TRANSPORTE</label>
-										<div class="col-sm-6 text-center">									
+										<label  class="col-sm-12 control-label">ESTADO DE TRANSPORTE</label>
+											 <div class="col-sm-6 text-center">									
 		                		 <label style="padding-right: 10px;">
 		                		 		<img src="../../img/png/bueno2.png" onclick="ocultar_comentario()">
 		                		 		<input type="radio" name="cbx_estado_tran" onclick="ocultar_comentario()" checked value="1"></label>		
@@ -827,14 +855,12 @@ function autocoplet_ingreso_donante(){
 		                		 		<input type="radio" name="cbx_estado_tran" onclick="ocultar_comentario()" value="0"></label>					
 										</div>
 								</div>	
-						</div>
-							<div class="col-sm-12 col-md-12" style="padding-top:5px;" id="pnl_comentario">
-								<div class="form-group">
-										<b>COMENTARIO</b>
-										<!-- <div class="col-sm-9 col-md-6"> -->
-										<textarea rows="3" class="form-control"  id="txt_comentario" name="txt_comentario" style="font-size: 16px;"></textarea>								
-										<!-- </div> -->
-								</div>	
+						</div> -->
+							<div class="col-sm-12 col-md-12" id="pnl_comentario">
+									<div class="col-sm-12">
+										<b>COMENTARIO GENERAL</b>
+											<textarea rows="2" class="form-control"  id="txt_comentario" name="txt_comentario" style="font-size: 16px;" placeholder="Comentario / Observacion de Recepcion"></textarea>	
+									</div>
 							</div>
 						</div>	
 					</div>
@@ -1071,6 +1097,37 @@ function autocoplet_ingreso_donante(){
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
               <button type="button" class="btn btn-primary" onclick="guardar_edicion()">Editar</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+<div id="modal_estado_transporte" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Estado de trasporte</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          	<div class="row">
+          		<form id="form_estado_transporte">
+          			<div class="col-sm-12">
+          				<div class="direct-chat-messages">	
+											<ul class="list-group list-group-flush" id="lista_preguntas">
+												
+											</ul>											
+										</div>
+          			</div>
+          		</form>
+          	</div>
+          					
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
               <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
           </div>
       </div>
