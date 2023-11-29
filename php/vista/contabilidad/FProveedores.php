@@ -250,7 +250,7 @@ function limpiar_t()
         })
 
         $('#txt_actividad').html(op);
-        console.log(response);
+        // console.log(response);
         
       }, 
       error: function(xhr, textStatus, error){

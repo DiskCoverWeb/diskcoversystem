@@ -7,7 +7,7 @@ Vue.component('calendar', {
 
 
   data() {
-    console.log(this.value);
+    // console.log(this.value);
     return {
       selected: this.value,
       days: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'] };

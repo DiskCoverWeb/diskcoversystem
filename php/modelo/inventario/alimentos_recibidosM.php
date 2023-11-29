@@ -63,10 +63,11 @@ class alimentos_recibidosM
 
 	function buscar_transCorreos($cod=false,$fecha=false)
 	{
-		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas  
+		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas,TC.CodigoU,C2.Cliente as 'Responsable'   
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
+		inner join Clientes C2 on TC.CodigoU = C2.Codigo 
 		where Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC.T = 'I' ";

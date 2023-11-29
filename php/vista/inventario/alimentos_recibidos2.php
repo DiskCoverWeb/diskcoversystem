@@ -112,6 +112,8 @@
     	limpiar_reciclaje();
       var data = e.params.data.data;
 
+      console.log(data);
+
       $('#txt_id').val(data.ID); // display the selected text
       $('#txt_fecha').val(formatoDate(data.Fecha_P.date)); // display the selected text
       $('#txt_ci').val(data.CI_RUC); // save selected id to input
@@ -126,6 +128,7 @@
 
       $('#txt_codigo_p').val(data.CodigoP)      
       $('#txt_TipoSubMod').val(data.Giro_No)
+      $('#txt_responsable').val(data.Responsable);
       // if(data.Giro_No!='R')
       // {
       // 	$('#btn_cantidad').prop('disabled',false);
@@ -218,7 +221,7 @@ function cargar_paquetes()
           dataType:'json',
 	      success: function(data)
 	      {
-	      	console.log(data)
+	      	// console.log(data)
 	      	if(parseFloat(data.Costo)!=0)
 	      	{
 	      		$('#txt_costo').val(data.Costo);
@@ -297,8 +300,8 @@ function cargar_paquetes()
 
   	 if(total_final>cant_suge)
   	 {
-  	 	console.log(total_final);
-  	 	console.log(cant_suge);
+  	 	// console.log(total_final);
+  	 	// console.log(cant_suge);
   	 		Swal.fire('La cantidad Ingresada supera a la cantidad registrada','','info');
   	 		return false
   	 }
@@ -342,7 +345,7 @@ function autocoplet_ingreso()
         dataType:'json',
 	    success: function(data)
 	    {
-	    	console.log(data);
+	    	// console.log(data);
 	    	option = '';
 	    	data.forEach(function(item,i){
 	    		// console.log(item);
@@ -385,7 +388,7 @@ function autocoplet_ingreso()
 	        dataType:'json',
 		    success: function(data)
 		    {
-		    	console.log(data);
+		    	// console.log(data);
 		    	$('#txt_codigo').val(data.Cod_Ejec)
 		    	$('#txt_ci').val(data.CI_RUC)
 		    	$('#txt_donante').val(data.Cliente)
@@ -432,7 +435,7 @@ function autocoplet_ingreso()
 	        dataType:'json',
 		    success: function(data)
 		    {
-		    	console.log(data);
+		    	// console.log(data);
 		    	var cod = $('#txt_codigo').val();
 		    	$('#txt_codigo').val(cod+'-'+data)
 		    	
@@ -466,7 +469,7 @@ function autocoplet_ingreso()
 	   {
   	 	if(total_final >cant_suge)
   	 	{
-        console.log(total_final+'-'+cant_suge);
+        // console.log(total_final+'-'+cant_suge);
   	 			Swal.fire('La cantidad Ingresada supera a la cantidad registrada','','info');
   	 			return false
   	 	}
@@ -540,7 +543,7 @@ function autocoplet_ingreso()
   	 {
   	 	 // $('#pnl_comentario').css('display','none');
   	 }
-  	 console.log(cbx);
+  	 // console.log(cbx);
   }
 
   function limpiar_reciclaje()
@@ -597,7 +600,7 @@ function autocoplet_ingreso()
         }
 
         $('#ddl_sucursales').html(op);
-        console.log(response);
+        // console.log(response);
         
       }, 
       error: function(xhr, textStatus, error){
@@ -633,7 +636,7 @@ function autocoplet_ingreso()
         }
 
         $('#ddl_sucursales2').html(op);
-        console.log(response);
+        // console.log(response);
         
       }, 
       error: function(xhr, textStatus, error){
@@ -675,7 +678,7 @@ function autocoplet_ingreso()
         {
           Swal.fire("","Notificacion enviada","success");
         }
-        console.log(response);
+        // console.log(response);
         
       }, 
       error: function(xhr, textStatus, error){
@@ -718,7 +721,7 @@ function autocoplet_ingreso()
 
              $('#pnl_notificacion').css('display','none');
           }
-          console.log(data);
+          // console.log(data);
         }
     });   
 
@@ -875,7 +878,15 @@ function autocoplet_ingreso()
               <div class="col-sm-6">
                 <input type="date" name="txt_fecha_cla" id="txt_fecha_cla" value="<?php echo date('Y-m-d'); ?>" class="form-control input-xs" readonly>
               </div>
-            </div>						
+            </div>
+             <div class="row">
+              <div class="col-sm-6" style="padding-top:5px">
+                <b>Responsable pedido</b>                
+              </div>
+              <div class="col-sm-6">
+                <input type="text" name="txt_responsable" id="txt_responsable" value="" class="form-control input-xs" readonly>
+              </div>
+            </div>    						
 					</div>
 					<div class="col-sm-5">
 						<div class="row"  style="padding-top: 5px;">
@@ -908,7 +919,7 @@ function autocoplet_ingreso()
 						</div>
 						<div class="row"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
-								<b>COMENTARIO:</b>
+								<b>COMENTARIO RECEPCION:</b>
 							</div>
 							<div class="col-sm-6">
                  <textarea id="txt_comentario" name="txt_comentario"disabled class="form-control input-sm"></textarea>
@@ -916,15 +927,18 @@ function autocoplet_ingreso()
 						</div>
 						<div class="row" id="panel_serie"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
-								<b>TEMPERATURA RECEPCION °C</b>
+								<b>TEMPERATURA RECEPCION </b>
 							</div>
-							<div class="col-sm-6">
-	                <input type="text" name="txt_temperatura" id="txt_temperatura" class="form-control input-xs"  readonly>
+							<div class="col-sm-6 ">
+                <div class="input-group">
+                  <input type="text" name="txt_temperatura" id="txt_temperatura" class="form-control input-xs"  readonly>
+                  <span class="input-group-addon input-xs">°C</span>                  
+                </div>
 							</div>
 						</div>
 						<div class="row" id="panel_serie"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
-								<b>ESTADO DE TRANSPORTE</b>
+								<b>ESTADO TRANSPORTE</b>
 							</div>
 							<div class="col-sm-6 text-center">
 								<img src="" id="img_estado">
@@ -1126,7 +1140,7 @@ function autocoplet_ingreso()
       type:  'post',
       dataType: 'json',
       success:  function (response) {
-        console.log(response);
+        // console.log(response);
         $('#tbl_body_pedido').html(response.tabla);
         $('#txt_cant_total_pedido').val(response.cant_total);       
       }

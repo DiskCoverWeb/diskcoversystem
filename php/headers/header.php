@@ -303,7 +303,7 @@ $cuentas = SeteosCtas();
       }
       var y = formattedDate.getFullYear();
       var Fecha = y + "-" + m + "-" + d;
-      console.log(Fecha);
+      // console.log(Fecha);
       return Fecha;
     }
 
