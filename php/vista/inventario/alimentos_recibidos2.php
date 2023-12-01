@@ -129,6 +129,7 @@
       $('#txt_codigo_p').val(data.CodigoP)      
       $('#txt_TipoSubMod').val(data.Giro_No)
       $('#txt_responsable').val(data.Responsable);
+      $('#txt_comentario2').val(data.Llamadas);
       // if(data.Giro_No!='R')
       // {
       // 	$('#btn_cantidad').prop('disabled',false);
@@ -528,8 +529,8 @@ function autocoplet_ingreso()
    function cambiar_sucursal()
   {
   	var can = $('#ddl_sucursales2').val();
-  	$('#ddl_sucursales').val(can);
   	$('#modal_sucursal').modal('hide');
+    $('#ddl_sucursales').val(can);
   }
 
   function ocultar_comentario()
@@ -625,7 +626,7 @@ function autocoplet_ingreso()
         var sucursal = 0;
         response.forEach(function(item,i){
             sucursal = 1;
-            op+="<option value=\""+item.Codigo+"\">"+item.Direccion+"</option>";
+            op+="<option value=\""+item.ID+"\">"+item.Direccion+"</option>";
         })
 
         if(sucursal==1)
@@ -663,7 +664,7 @@ function autocoplet_ingreso()
     }
 
     var parametros = {
-        'notificar':$('#txt_comentario2').val(),
+        'notificar':$('#txt_notificar').val(),
         'id':$('#txt_id').val(),
         'asunto':'Recepcion',
         'pedido':$('#txt_codigo').val(),
@@ -677,6 +678,7 @@ function autocoplet_ingreso()
         if(response==1)
         {
           Swal.fire("","Notificacion enviada","success");
+          $('#modal_notificar').modal('hide');        
         }
         // console.log(response);
         
@@ -686,6 +688,43 @@ function autocoplet_ingreso()
       }
     });
  }
+
+ function comentar()
+ {
+   var codigo = $('#txt_codigo').val();
+   console.log(codigo);
+    if(codigo=='')
+    {
+       Swal.fire("Seleccione un pedido","","info");
+       return false;
+    }
+
+    var parametros = {
+        'notificar':$('#txt_comentario2').val(),
+        'id':$('#txt_id').val(),
+        'asunto':'Recepcion',
+        'pedido':$('#txt_codigo').val(),
+    }
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/inventario/alimentos_recibidosC.php?comentar_clasificacion=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        if(response==1)
+        {
+          Swal.fire("","Comentario guardado","success");
+          $('#modal_notificar').modal('hide');        
+        }
+        // console.log(response);
+        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
+ }
+
 
    function notificaciones()
   {
@@ -782,6 +821,11 @@ function autocoplet_ingreso()
     });   
 
   }
+
+  function nueva_notificacion()
+  {
+    $('#modal_notificar').modal('show');
+  }
 </script>
 
  <div class="row">
@@ -873,20 +917,12 @@ function autocoplet_ingreso()
 						</div>
             <div class="row">
               <div class="col-sm-6" style="padding-top:5px">
-                <b>Fecha de Clasificacion</b>                
+                <b>FECHA CLASIFICACION</b>                
               </div>
               <div class="col-sm-6">
                 <input type="date" name="txt_fecha_cla" id="txt_fecha_cla" value="<?php echo date('Y-m-d'); ?>" class="form-control input-xs" readonly>
               </div>
-            </div>
-             <div class="row">
-              <div class="col-sm-6" style="padding-top:5px">
-                <b>Responsable pedido</b>                
-              </div>
-              <div class="col-sm-6">
-                <input type="text" name="txt_responsable" id="txt_responsable" value="" class="form-control input-xs" readonly>
-              </div>
-            </div>    						
+            </div>             					
 					</div>
 					<div class="col-sm-5">
 						<div class="row"  style="padding-top: 5px;">
@@ -916,15 +952,7 @@ function autocoplet_ingreso()
 									</div>
 								</div>
 							</div>
-						</div>
-						<div class="row"  style="padding-top: 5px;">
-							<div class="col-sm-6 text-right">
-								<b>COMENTARIO RECEPCION:</b>
-							</div>
-							<div class="col-sm-6">
-                 <textarea id="txt_comentario" name="txt_comentario"disabled class="form-control input-sm"></textarea>
-							</div>
-						</div>
+						</div>						
 						<div class="row" id="panel_serie"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
 								<b>TEMPERATURA RECEPCION </b>
@@ -944,47 +972,64 @@ function autocoplet_ingreso()
 								<img src="" id="img_estado">
 							</div>
 						</div>
+            <div class="row"  style="padding-top: 5px;">
+              <div class="col-sm-6 text-right">
+                <b>COMENTARIO RECEPCION:</b>
+              </div>
+              <div class="col-sm-6">
+                 <textarea id="txt_comentario" name="txt_comentario" rows="4" disabled class="form-control input-sm"></textarea>
+              </div>
+            </div>
 					
 					</div>
 					<div class="col-sm-3">
-						<div class="row">							
+						<div class="row">	
+              <div class="col-sm-12">
+                  <b>Responsable recepcion</b><br> 
+                  <div class="input-group">
+                      <input type="text" name="txt_responsable" id="txt_responsable" value="" class="form-control input-xs" readonly>
+                      <span class="input-group-btn">
+                        <button type="button" class="btn btn-warning btn-flat btn-xs" onclick="nueva_notificacion()"><i class="fa fa-exclamation-triangle"></i></button>
+                      </span>
+                  </div>
+              </div>	
+            </div>  
+            <hr style="margin: 5px 0 5px 0;">          
+            <div class="row"> 					
 							<div class="col-sm-12">
-								<div class="row">
-									<div class="col-sm-4">
+								<div class="row text-center">
+									<div class="col-sm-6">
 										<label style="color:green" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" checked  value="V" > <img src="../../img/png/smile.png"><br> Conforme</label>											
 									</div>
-									<div class="col-sm-4">
+									<div class="col-sm-6">
 										<label style="color:red" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" value="R">  <img src="../../img/png/sad.png"><br> Inconforme </label>											
 									</div>
                   
 								</div>
-									<!-- <b>Evaluacion</b><br> -->										
-														
 							</div>
+            </div>            
+            <div class="row"> 
 							<div class="col-sm-12" id="pnl_comentario">
-									<b>COMENTARIO DE INGRESO</b>
-									<textarea class="form-control input-sm" rows="3" style="font-size:16px" id="txt_comentario2" name="txt_comentario2" placeholder="Ingrese un comentario general de clasificacion..."></textarea>
-                  <div class="text-right">
-                  <button type="button" class="btn btn-primary btn-sm" onclick="notificar()">Notificar</button>		
-                  </div>						
+									<b>COMENTARIO DE CLASIFICACION</b>
+                  <div class="input-group">
+                      <textarea class="form-control input-sm" rows="3" style="font-size:16px" id="txt_comentario2" name="txt_comentario2" placeholder="comentario general de clasificacion..."></textarea>
+                      <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="comentar()"><i class="fa fa-save"></i></button>   
+                      </span>
+                  </div>
 							</div>
 						</div>
-
-
-					<!-- 	<select class=" form-control input-xs form-select" id="ddl_ingreso" name="ddl_ingreso" size="7" onchange="option_select()">
-                         	<option value="">Seleccione</option>
-                         </select> -->
-					</div>
+          </div>
 				</div>
 				<hr>
 
 				<div class="row">
-					<div class="col-sm-6">
+					<div class="col-sm-5 col-sm-5">
 						<div class="row">
-							<div class="col-sm-4 col-md-3">
-									<button type="button" class="btn btn-default" onclick="show_producto()"><img src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo de producto</b></button>							
+							<div class="col-sm-4 col-md-4">
+									<button type="button" class="btn btn-default" onclick="show_producto()"><img src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo producto</b></button>							
 							</div>
-							<div class="col-sm-6 col-md-7">
+							<div class="col-sm-6 col-md-8">
 								<b>Producto</b>
 								<div class="input-group" style="display:flex;" id="pnl_normal">
 	                	<select class="form-control input-xs" name="txt_producto" id="txt_producto">
@@ -994,30 +1039,45 @@ function autocoplet_ingreso()
 											<button type="button" class="btn btn-default btn-xs btn-flat" onclick="limpiar_reciclaje()"><i class="fa fa-close"></i></button>
 										</span>
 								 </div>
+                 <div class="row">
+                    <div class="col-sm-6 text-right">
+                        <b>Grupo</b>
+                    </div>
+                      <div class="col-sm-6">
+                        <input type="text" name="txt_grupo" id="txt_grupo" class="form-control input-xs" readonly>
+                        <input type="hidden" name="txt_TipoSubMod" id="txt_TipoSubMod" class="form-control" readonly>
+                        <input type="hidden" name="txt_primera_vez" id="txt_primera_vez" class="form-control" readonly value="0">
+                    </div>                   
+                 </div>
 							</div>              
-							<div class="col-sm-2 col-md-2">
-								<b>Grupo</b>
-								<input type="text" name="txt_grupo" id="txt_grupo" class="form-control input-xs" readonly>
-								<input type="hidden" name="txt_TipoSubMod" id="txt_TipoSubMod" class="form-control" readonly>
-								<input type="hidden" name="txt_primera_vez" id="txt_primera_vez" class="form-control" readonly value="0">
-							</div>
 						</div>
-					</div>
-          <div class="col-sm-2">
-            <b>Tipo de Empaque</b>
-            <select class="form-control input-xs" id="txt_paquetes" name="txt_paquetes">
-              <option value="">Seleccione Empaque</option>
-            </select>
+					</div>          
+          <div class="col-sm-3 col-md-3">
+            <div class="row">
+              <div class="col-sm-4 col-md-4">
+                  <button type="button" style="width: initial;" class="btn btn-default" onclick="show_calendar()"><img src="../../img/png/expiracion.png" width="45px"; height="45px" />
+                    <br>
+
+                  </button> 
+              </div>
+              <div class="col-sm-8 col-md-8">
+                <b>Fecha Expiracion</b>
+                <input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input-xs">
+              </div>              
+            </div>
           </div>
           <div class="col-sm-4">
-            <div class="row">
-              <div class="col-sm-6 col-md-6">
-                  <button type="button" style="width: initial;" class="btn btn-default" onclick="show_calendar()"><img src="../../img/png/expiracion.png" /> <br> <b>Fecha de Expiracion</b></button> 
-              </div>
-              <div class="col-sm-6 col-md-6">
+            <div class="col-sm-3">
+              <button type="button" class="btn btn-default">
+                <img src="../../img/png/empaque.png" width="45px" height="45px">
                 <br>
-                <input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input">
-              </div>              
+              </button>              
+            </div>
+            <div class="col-sm-9">
+               <b>Tipo Empaque</b>
+              <select class="form-control input-xs" id="txt_paquetes" name="txt_paquetes">
+                <option value="">Seleccione Empaque</option>
+              </select>              
             </div>
           </div>					
 				</div>
@@ -1033,6 +1093,9 @@ function autocoplet_ingreso()
 							</div>							
 						</div>
 					</div> -->
+
+          
+
 					<div class="col-sm-6 col-md-5">
 						<div class="rows">
 							<div class="col-sm-4 col-md-3">
@@ -1059,7 +1122,7 @@ function autocoplet_ingreso()
 								</div>
 							</div>
 						</div>						
-					</div>
+					</div>         
           <div class="col-md-4">
             <div class="row"  style="display: none;" id="pnl_sucursal">
               <div class="col-sm-3">
@@ -1074,9 +1137,9 @@ function autocoplet_ingreso()
               </div>
             </div>
           </div>
-					<div class="col-sm-12 col-md-3 text-right">
+					<div class="col-sm-12 col-md-2 text-right" style="padding:0px">
 						<br>
-						<button type="button" class="btn btn-primary" onclick="show_panel()" >AGREGAR A INGRESO</button>
+						<button type="button" class="btn btn-primary" onclick="show_panel()" > AGREGAR</button>
 						<button type="button" class="btn btn-primary">Limpiar</button>
 						<input type="hidden" id="A_No" name ="A_No" value="0">
 					</div>
@@ -1704,3 +1767,22 @@ function eliminar_all_pedido(pedido)
   </div>
 
 <script src="../../dist/js/script_calendar.js"></script>
+
+
+<div id="modal_notificar" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Notificar</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+            <textarea class="form-control input-sm" rows="3" style="font-size:16px" id="txt_notificar" name="txt_notificar" placeholder="Notificacion"></textarea>          
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-primary" onclick="notificar()">Notificar</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>

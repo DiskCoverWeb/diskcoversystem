@@ -222,6 +222,11 @@ if(isset($_GET['notificar_clasificacion']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->notificar_clasificacion($parametros));
 }
+if(isset($_GET['comentar_clasificacion']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->comentar_clasificacion($parametros));
+}
 if(isset($_GET['notificar_usuario']))
 {
 	$parametros = $_POST['parametros'];
@@ -1192,10 +1197,16 @@ class alimentos_recibidosC
 		   SetAdoFields('Texto_Memo',$parametros['notificar'].' (Pedido:'.$parametros['pedido'].')');
 		   SetAdoFields('Codigo',$pedido[0]['CodigoU']); 
 		   SetAdoFields('Atencion',$parametros['pedido']);
-		   $res =  SetAdoUpdate();		   
-		   $this->editar_comentarios_trans_correos($parametros['id'],$parametros['asunto'],$parametros['notificar']);
-		   return $res;
+		   return SetAdoUpdate();		   
+		   
 	}
+
+	function comentar_clasificacion($parametros)
+	{
+		// print_r($parametros);die();
+		return $this->editar_comentarios_trans_correos($parametros['id'],'Clasificacion',$parametros['notificar']);				   
+	}
+
 
 	function notificar_usuario($parametros)
 	{
@@ -1268,7 +1279,7 @@ class alimentos_recibidosC
 				break;
 		}
 		SetAdoFieldsWhere('ID',$pedido);
-	    SetAdoUpdateGeneric();
+	  return  SetAdoUpdateGeneric();
 	}
 
 	function preguntas_transporte()
