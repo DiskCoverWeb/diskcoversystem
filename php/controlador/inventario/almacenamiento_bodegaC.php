@@ -128,7 +128,7 @@ class almacenamiento_bodegaC
 	{
 		$datos = $this->modelo->Buscar_productos_ingresados($cod);
 		$result = array();
-		$color = 'green';
+		$color = '#56a359';
 		$fecha_now = new DateTime();
 		foreach ($datos as $key => $value) {
 			// $fecha_exp = new DateTime($value['Fecha_Exp']->format('Y-m-d'));
@@ -140,7 +140,7 @@ class almacenamiento_bodegaC
       	$fecha2 = new DateTime($value['Fecha_Exp']->format('Y-m-d'));
       	$diferenciaEnSegundos = $fecha2->getTimestamp() - $fecha1->getTimestamp();
 		$dias = intval($diferenciaEnSegundos / 86400);
-		if($dias<10){$color = 'red';}else if ($dias==10) { $color = '#e2d035';}else{$color = 'green';}
+		if($dias<10){$color = 'red';}else if ($dias==10) { $color = '#e2d035';}else{$color = '#56a359';}
 		
 		 $result[] = array("id"=>$value['ID'],"text"=>$value['Codigo_Barra'],'data'=>$value,'color'=>$color);
 		}
