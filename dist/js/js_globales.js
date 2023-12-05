@@ -216,14 +216,13 @@ function generar_ceros(num,cant)
 
 function paginacion(funcion,posicion,inicio=0,numreg=50,variables=false)
 {
-	console.log(variables);
+	// console.log(variables);
 	$.ajax({
        // data:  {parametros:parametros},
       url:   '../controlador/panel.php?paginacion=true&ini='+inicio+'&numreg='+numreg,
       type:  'post',
       dataType: 'json',
        success:  function (response) { 
-       
       }
     });
     var vari = '()';
@@ -246,16 +245,45 @@ function paginacion(funcion,posicion,inicio=0,numreg=50,variables=false)
 
     }
 
-    console.log(vari);
+    // console.log(inicio+'-'+numreg);
+    var j = 0; var k = 10;
+    var pos = (inicio/numreg)+1;
+    var rangos = true;
+    while(rangos==true)
+    {
+    	rangos = false;
+    	if(pos >=j && pos<k)
+    	{
+    		rangos= false;
+    	}else
+    	{
+    		console.log('asd');
+    		j+=9;
+    		k+=10;
+
+    		// rangos= false;
+
+    		console.log(pos);
+    	}
+    }
+
+    // console.log(rangos);
+    // console.log(j);
+    // console.log(k);
+    // console.log(pos);
 
 	var pag = '<nav aria-label="...">'+
 	  '<ul class="pagination pagination-sm" style="margin: 0px;">'+
 	   ' <li class="page-item disabled">'+
 	      '<!-- <a class="page-link" href="#" tabindex="-1">Inicio</a> -->'+
 	   ' </li>'
-	    for (var i = 0; i < 10; i++) {
-	    	var pos = (inicio/numreg);
-	    	console.log(pos);
+	    if(j>=9)
+	   	{
+	    	pag+=' <li class="page-item"  onclick="paginacion(\''+funcion+'\',\''+posicion+'\',0,50,'+variables+');'+funcion+vari+'"><a class="page-link" href="#">1</a></li>'
+	   	}
+	    for (var i = j; i < k; i++) {
+	    	 pos = (inicio/numreg);
+	    	// console.log(pos);
 	    	var ini = i*numreg
 	    	if(pos==i)
 	    	{
