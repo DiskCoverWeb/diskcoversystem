@@ -107,7 +107,7 @@
           results: data.map(function (item) {
             return {
               id: item.id,
-              text: '<span style="color: ' + item.color + ';">' + item.text + '</span>',
+              text: '<span style="color: ' + item.color + '; background:black;">' + item.text + '</span>',
               data : item.data,
             };
           })
