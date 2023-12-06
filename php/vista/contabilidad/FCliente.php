@@ -14,6 +14,7 @@ $mostrar_medidor = false;
   var prove = '<?php if(isset($_GET['proveedor'])){echo 1;}?>'
 	$( document ).ready(function() {
 		 provincias();
+     tipo_proveedor_Cliente()
 
      $("#CMedidor").on('change',function() {
        if($("#CMedidor").val()!="." && $("#CMedidor").val()!=""){
@@ -28,6 +29,7 @@ $mostrar_medidor = false;
 
   function buscar_numero_ci()
   {
+    $('#LblSRI').html('');
        var ci_ruc = $('#ruc').val();
        if(ci_ruc=='' || ci_ruc=='.')
        {
@@ -64,7 +66,15 @@ $mostrar_medidor = false;
                 $('#ciu').val(response[0].ciudad); // save selected id to input
                 $('#TD').val(response[0].TD); // save selected id to input
                 $('#txt_ejec').val(response[0].Cod_Ejec); // save selected id to input
-                $('#txt_actividad').val(response[0].Actividad); // save selected id to input
+
+                // Verificar si ya existe una opción con el mismo valor
+                if ($('#txt_actividadC option[value="' + response[0].Actividad + '"]').length === 0) {
+                    // Si no existe, agregar la nueva opción al final del select
+                    var nuevaOpcion = '<option value="' + response[0].Actividad + '">' + response[0].Actividad + '</option>';
+                    $('#txt_actividadC').append(nuevaOpcion);
+                }
+                $('#txt_actividadC').val(response[0].Actividad); // save selected id to input
+
                 if(response[0].FA==1){ $('#rbl_facturar').prop('checked',true); }else{ $('#rbl_facturar').prop('checked',false);}
                 MostrarOcultarBtnAddMedidor()
              }else
@@ -210,35 +220,51 @@ $mostrar_medidor = false;
     });
 	}
 
-  function validar_sri()
+  function validar_sriC()
   {
     var ci = $('#ruc').val();
-    if(ci!='')
-    {
-      url = 'https://srienlinea.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos2.jspa?accion=siguiente&ruc='+ci
-      window.open(url, "_blank");
-    }else
-    {
-       Swal.fire('Coloque un numero de CI / RUC','','info')
-    }
-    // var ci = $('#ruc').val();
-    //  $.ajax({
-    // data: {ci,ci},
-    // url: '../controlador/modalesC.php?validar_sri=true',
-    // type: 'POST',
-    // dataType: 'json',
-    // success: function(response) {
-    //   if(response.res=='1')
-    //     {
-    //       $('#datos_sri_cliente').modal('show');
-    //       $('#tbl_sri').html(response.tbl);
-    //     }else
-    //     {
-    //       Swal.fire('Ruc no encontrado en el SRI','','info')
-    //     }
+    $('#myModal_espera').modal('show');
+    $.ajax({
+    data: {ci,ci},
+    url: '../controlador/modalesC.php?validar_sri_cliente=true',
+    type: 'POST',
+    dataType: 'json',
+    success: function(response) {
+      $('#myModal_espera').modal('hide');
+      if(response.res=='1')
+        {
+          $('#LblSRI').html(response.tbl).css('background-color','rgb(226 251 255)');
+          if(response.data){
+            if ($('#nombrec').length > 0) {
+              if($('#nombrec').val()!='' && $('#nombrec').val()!=response.data.RazonSocial){
+                Swal.fire({
+                  html: `ESTE RUC ESTA ASIGNADO A:<br>${$('#nombrec').val()}<br>
+                  LA INFORMACION CORRECTA DEL R.U.C. ES:<br>
+                  ${response.data.RazonSocial} <br>
+                  ¿Desea actualizar el campo Apellidos y Nombres?`,
+                  type: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  cancelButtonText: 'No.',
+                  confirmButtonText: 'Si'
+                }).then((result) => {
+                  $('#nombrec').val(response.data.RazonSocial);
+                  $("#BtnGuardarClienteFCliente").focus()
+                })
+              }else{
+                $('#nombrec').val(response.data.RazonSocial);
+              }
+            }
+          }
+        }else
+        {
+          $('#LblSRI').html('');
+          Swal.fire(response.msg,'','info')
+        }
 
-    //   }
-    // });
+      }
+    });
 
   }
 
@@ -436,6 +462,25 @@ $mostrar_medidor = false;
       $("#AddMedidor").addClass("no-visible")
      }
   }
+
+    function tipo_proveedor_Cliente()
+    {
+     $.ajax({
+      url:   '../controlador/modalesC.php?tipo_proveedor=true&TP=TIPOPROV',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+         var op = '<option value=".">Seleccione</option>';
+        response.forEach(function(item,i){console.log(item)
+          op += "<option value='" + item.Proceso + "'>" + item.Proceso + "</option>";
+        })
+        $('#txt_actividadC').html(op);
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
+   }
 </script>		
 
 <style type="text/css">
@@ -445,6 +490,19 @@ $mostrar_medidor = false;
 
 .no-visible{
   visibility: hidden;
+}
+
+#LblSRI{
+  display: inline-grid;
+  max-width: 80%;
+}
+
+#LblSRI p{
+  padding: 0;
+}
+
+#swal2-content{
+  font-weight: 600;
 }
 </style>	
 
@@ -464,7 +522,7 @@ $mostrar_medidor = false;
 					</div>
           <div class="col-xs-2 col-sm-1" style="padding:0px"><br>
             <!-- <iframe src="https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=1722214507001&output=embed"></iframe> -->
-            <button type="button" class="btn btn-sm" onclick="validar_sri()">
+            <button type="button" class="btn btn-sm" onclick="validar_sriC()">
               <img src="../../img/png/SRI.jpg" style="width: 60%">
             </button>
             
@@ -510,8 +568,10 @@ $mostrar_medidor = false;
             <input type="" name="txt_ejec" id="txt_ejec" class="form-control input-sm">
           </div>
           <div class="col-sm-8 col-xs-8">
-          <b>Tipo de proveedor</b>            
-            <input type="" name="txt_actividad" id="txt_actividad" class="form-control input-sm">
+          <b>Tipo de proveedor</b>  
+          <select class="form-control input-sm" id="txt_actividadC" name="txt_actividad">
+              <option value=".">Seleccione</option>
+          </select>          
           </div>
         </div>
 				
@@ -562,36 +622,14 @@ $mostrar_medidor = false;
       </div>
         <!-- /.box-body -->
         <div class="box-footer">
-        	<button type="button" onclick="guardar_cliente()" class="btn btn-primary">Guardar</button>
+        	<button type="button" id="BtnGuardarClienteFCliente" onclick="guardar_cliente()" class="btn btn-primary">Guardar</button>
+          <div id="LblSRI" class="text-left">
+              
+            </div> 
 	      </div>
         <!-- /.box-footer -->
       </form>
     </div>          
 
-  <div class="modal fade" id="datos_sri_cliente" role="dialog" data-keyboard="false" data-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <div class="row">
-            <div class="col-sm-6 col-xs-6">
-                <h5 class="modal-title" id="titulo_clave">Datos de cliente desde SRI</h5>              </div>
-            <div class="col-sm-6 col-xs-6 text-right">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-            </div>
-          </div>      
-      </div>
-        <div class="modal-body text-center">
-          <div class="col-sm-12">
-            <div id="tbl_sri" class="text-left">
-              
-            </div>                      
-          </div>
-        </div>
-         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
  

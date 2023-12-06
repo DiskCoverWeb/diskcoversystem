@@ -9104,12 +9104,8 @@ function Imprimir_Guia_Remision($DtaFactura, $DtaDetalle, $TFA){
 
 function CalculosSaldoAnt($TipoCod,$TDebe,$THaber,$TSaldo)
 {
-
-// print_r(substr($TipoCod ,1,1));die();
-  // print_r($TipoCod);die();
-  $OpcCoop = false;
   $TotSaldoAnt = 0;
-  if($OpcCoop){
+  if($_SESSION['INGRESO']['Opc']){
     switch (substr($TipoCod ,0,1)) {
       case '1':
       case '4':

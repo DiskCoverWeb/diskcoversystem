@@ -120,7 +120,6 @@ function validar_year_mayor(nombre)
 
 	var fecha = $('#'+nombre+'').val();
 	var partes = fecha.split('-');
-	console.log(partes);
 	if(partes[0].length > 4 || partes[0] > 2050)
 	{
 		$('#'+nombre+'').val('2050-'+partes[1]+'-'+partes[2]);
@@ -133,7 +132,6 @@ function validar_year_menor(nombre)
 
 	var fecha = $('#'+nombre+'').val();
 	var partes = fecha.split('-');
-	console.log(partes);
 	if(partes[0] < 2000)
 	{
 		alert('Año seleccionado menor a 1999');
@@ -156,7 +154,6 @@ function num_caracteres(campo,num)
 {
 	var val = $('#'+campo).val();
 	var cant = val.length;
-	console.log(cant+'-'+num);
 
 	if(cant>num)
 	{
