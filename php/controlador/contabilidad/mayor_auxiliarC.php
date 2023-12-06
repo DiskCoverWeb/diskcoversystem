@@ -14,7 +14,7 @@ if(isset($_GET['cuentas']))
 if(isset($_GET['consultar']))
 {	
  $controlador = new mayor_auxiliarC();
-  echo json_encode($controlador->consultar_cuentas($_POST['parametros']));
+  echo json_encode($controlador->consultarListarMayoresAux($_POST['parametros']));
 }
 if(isset($_GET['consultar_tot']))
 {	
@@ -76,7 +76,7 @@ class mayor_auxiliarC
   }
  
 
-  function consultar_cuentas($parametros)
+  function consultarListarMayoresAux($parametros)
   {
   	$desde = str_replace('-','',$parametros['desde']);
     $hasta = str_replace('-','',$parametros['hasta']);		

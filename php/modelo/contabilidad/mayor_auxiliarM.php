@@ -61,18 +61,14 @@ include(dirname(__DIR__,2).'/db/variables_globales.php');//
   }
 
 
- function ListarMayoresAux($OpcUno,$PorConceptos,$Codigo1,$Codigo2,$FechaIni,$FechaFin,$DCCtas,$CheckAgencia,$DCAgencia,$CheckUsuario,$DCUsuario, $soloMayorDatos = false)
+ function ListarMayoresAux($OpcUno,$PorConceptos,$Codigo1,$Codigo2,$FechaIni,$FechaFin,$DCCtas,$CheckAgencia,$DCAgencia,$CheckUsuario,$DCUsuario, $soloMayorDatos = false, $CheqTC='false', $DCTC =G_NINGUNO)
  {
-
  	$Codigo1 = rtrim($Codigo1, ". ");
   $Codigo2 = rtrim($Codigo2, ". ");
 
   $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
   $NumEmpresa = $_SESSION['INGRESO']['item'];
   $ConSucursal = $_SESSION['INGRESO']['Sucursal'];
-
-  //global ,$CheqTC, $DCTC;
-
 
   if ($PorConceptos=='true') {
     $sSQL = "SELECT T.Fecha, T.TP, T.Numero, Cl.Cliente, T.Detalle AS Concepto, T.Cheq_Dep, T.Debe, T.Haber, T.Saldo, " .
@@ -96,7 +92,7 @@ include(dirname(__DIR__,2).'/db/variables_globales.php');//
   }
   $sSQL .= "AND T.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' " .
            "AND T.T = '" . G_NORMAL . "' ";
-$CheqTC='false';//TODO LS NEW FALTA
+  
   if ($CheqTC == 'false') {
     if ($OpcUno == 'true') {
       $sSQL .= "AND T.Cta = '" . $DCCtas . "' ";

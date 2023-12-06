@@ -167,7 +167,7 @@
    	<div class="row">
    		<div class="col-lg-4 col-sm-4 col-md-8 col-xs-12">
    			<div class="col-xs-2 col-md-2 col-sm-2">
-   				<a href="./contabilidad.php?mod=contabilidad#" data-toggle="tooltip" title="Salir de modulo" class="btn btn-default">
+   				<a href="./inicio.php?mod=<?php echo @$_GET['mod']; ?>" data-toggle="tooltip" title="Salir de modulo" class="btn btn-default">
             		<img src="../../img/png/salire.png">
             	</a>
             </div>   
