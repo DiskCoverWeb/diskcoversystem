@@ -63,10 +63,11 @@ class alimentos_recibidosM
 
 	function buscar_transCorreos($cod=false,$fecha=false)
 	{
-		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas  
+		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas,TC.CodigoU,C2.Cliente as 'Responsable'   
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
+		inner join Clientes C2 on TC.CodigoU = C2.Codigo 
 		where Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC.T = 'I' ";
@@ -414,6 +415,26 @@ class alimentos_recibidosM
 		return $this->db->datos($sql);
 	}
 
+	function existe_en_transKarder($orden=false,$codigoInv=false)
+	{
+		$sql = "SELECT Codigo_Barra
+				FROM Trans_Kardex
+				WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND Item = '".$_SESSION['INGRESO']['item']."' ";
+				if($orden)
+				{
+					$sql.=" AND Orden_No = '".$orden."'";
+				}
+				if($codigoInv)
+				{
+					$sql.=" AND Codigo_Inv = '".$codigoInv."'";
+				}
+				$sql.=" ORDER BY ID DESC";
+				// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+
+
 	function sucursales($query = false,$codigo=false,$id=false)
 	{
 		$sql = "SELECT ID,Codigo, Direccion, TP
@@ -455,7 +476,7 @@ class alimentos_recibidosM
 
 	}
 
-	function listar_notificaciones($codigo=false,$estado = false)
+	function listar_notificaciones($codigo=false,$estado = false,$id=false,$pedido=false)
 	{
 		$sql = "SELECT * FROM 
 				Trans_Memos 
@@ -469,10 +490,29 @@ class alimentos_recibidosM
 				{
 					$sql.=" AND Codigo = '".$codigo."'";
 				}
+				if($id)
+				{
+					$sql.=" AND ID = '".$id."'";
+				}
+				if($pedido)
+				{
+					$sql.=" AND Atencion = '".$pedido."'";
+				}
 			$sql.=" ORDER BY ID DESC";
 
 				// print_r($sql);die();
 			
+		return $this->db->datos($sql);
+	}
+
+	function preguntas_transporte()
+	{
+		$sql = "SELECT      Proceso, ID,Cmds,TP
+				FROM         Catalogo_Proceso
+				WHERE  Item = '".$_SESSION['INGRESO']['item']."' 
+				AND Nivel = 96
+				AND TP = 'ESTTRANS'
+				ORDER BY Cmds, Proceso";
 		return $this->db->datos($sql);
 	}
 

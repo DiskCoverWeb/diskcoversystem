@@ -3,6 +3,7 @@
 <script type="text/javascript">
   $(document).ready(function () {
     notificaciones();
+    cargar_paquetes();
      setInterval(function() {
          notificaciones();
           }, 5000); 
@@ -111,6 +112,8 @@
     	limpiar_reciclaje();
       var data = e.params.data.data;
 
+      console.log(data);
+
       $('#txt_id').val(data.ID); // display the selected text
       $('#txt_fecha').val(formatoDate(data.Fecha_P.date)); // display the selected text
       $('#txt_ci').val(data.CI_RUC); // save selected id to input
@@ -125,6 +128,8 @@
 
       $('#txt_codigo_p').val(data.CodigoP)      
       $('#txt_TipoSubMod').val(data.Giro_No)
+      $('#txt_responsable').val(data.Responsable);
+      $('#txt_comentario2').val(data.Llamadas);
       // if(data.Giro_No!='R')
       // {
       // 	$('#btn_cantidad').prop('disabled',false);
@@ -155,6 +160,7 @@
 
          setInterval(function() {
          cargar_pedido2();
+         cargar_pedido();
           }, 5000); 
     });
 
@@ -180,6 +186,29 @@
 }
 
 
+function cargar_paquetes()
+{
+  
+  $.ajax({
+      type: "POST",
+       url:   '../controlador/inventario/almacenamiento_bodegaC.php?cargar_empaques=true',
+       // data:{parametros:parametros},
+       dataType:'json',
+      success: function(data)
+      {
+        var op = '<option value="">Seleccione empaque</option>';
+        data.forEach(function(item,i){
+           op+='<option value="'+item.ID+'">'+item.Proceso+'</option>';
+        })
+
+        $('#txt_paquetes').html(op);        
+      }
+  });
+
+  
+}
+
+
  function costeo(cta_inv)
   {
   	 var parametros = 
@@ -193,7 +222,7 @@
           dataType:'json',
 	      success: function(data)
 	      {
-	      	console.log(data)
+	      	// console.log(data)
 	      	if(parseFloat(data.Costo)!=0)
 	      	{
 	      		$('#txt_costo').val(data.Costo);
@@ -272,8 +301,8 @@
 
   	 if(total_final>cant_suge)
   	 {
-  	 	console.log(total_final);
-  	 	console.log(cant_suge);
+  	 	// console.log(total_final);
+  	 	// console.log(cant_suge);
   	 		Swal.fire('La cantidad Ingresada supera a la cantidad registrada','','info');
   	 		return false
   	 }
@@ -317,7 +346,7 @@ function autocoplet_ingreso()
         dataType:'json',
 	    success: function(data)
 	    {
-	    	console.log(data);
+	    	// console.log(data);
 	    	option = '';
 	    	data.forEach(function(item,i){
 	    		// console.log(item);
@@ -360,7 +389,7 @@ function autocoplet_ingreso()
 	        dataType:'json',
 		    success: function(data)
 		    {
-		    	console.log(data);
+		    	// console.log(data);
 		    	$('#txt_codigo').val(data.Cod_Ejec)
 		    	$('#txt_ci').val(data.CI_RUC)
 		    	$('#txt_donante').val(data.Cliente)
@@ -407,7 +436,7 @@ function autocoplet_ingreso()
 	        dataType:'json',
 		    success: function(data)
 		    {
-		    	console.log(data);
+		    	// console.log(data);
 		    	var cod = $('#txt_codigo').val();
 		    	$('#txt_codigo').val(cod+'-'+data)
 		    	
@@ -441,7 +470,7 @@ function autocoplet_ingreso()
 	   {
   	 	if(total_final >cant_suge)
   	 	{
-        console.log(total_final+'-'+cant_suge);
+        // console.log(total_final+'-'+cant_suge);
   	 			Swal.fire('La cantidad Ingresada supera a la cantidad registrada','','info');
   	 			return false
   	 	}
@@ -451,6 +480,13 @@ function autocoplet_ingreso()
      if($("#pnl_sucursal").is(":visible")==true && sucur=='')
       {
          Swal.fire('Seleccione una sucursal ','','info');
+         return false;
+      }
+
+      var tipo_empaque = $('#txt_paquetes').val();
+      if(tipo_empaque=='')
+      {
+         Swal.fire('Seleccione el tipo de empaque ','','info');
          return false;
       }
   	 if(id=='')
@@ -493,8 +529,8 @@ function autocoplet_ingreso()
    function cambiar_sucursal()
   {
   	var can = $('#ddl_sucursales2').val();
-  	$('#ddl_sucursales').val(can);
   	$('#modal_sucursal').modal('hide');
+    $('#ddl_sucursales').val(can);
   }
 
   function ocultar_comentario()
@@ -508,7 +544,7 @@ function autocoplet_ingreso()
   	 {
   	 	 // $('#pnl_comentario').css('display','none');
   	 }
-  	 console.log(cbx);
+  	 // console.log(cbx);
   }
 
   function limpiar_reciclaje()
@@ -565,7 +601,7 @@ function autocoplet_ingreso()
         }
 
         $('#ddl_sucursales').html(op);
-        console.log(response);
+        // console.log(response);
         
       }, 
       error: function(xhr, textStatus, error){
@@ -590,7 +626,7 @@ function autocoplet_ingreso()
         var sucursal = 0;
         response.forEach(function(item,i){
             sucursal = 1;
-            op+="<option value=\""+item.Codigo+"\">"+item.Direccion+"</option>";
+            op+="<option value=\""+item.ID+"\">"+item.Direccion+"</option>";
         })
 
         if(sucursal==1)
@@ -601,7 +637,7 @@ function autocoplet_ingreso()
         }
 
         $('#ddl_sucursales2').html(op);
-        console.log(response);
+        // console.log(response);
         
       }, 
       error: function(xhr, textStatus, error){
@@ -628,9 +664,10 @@ function autocoplet_ingreso()
     }
 
     var parametros = {
-        'notificar':$('#txt_comentario2').val(),
+        'notificar':$('#txt_notificar').val(),
         'id':$('#txt_id').val(),
         'asunto':'Recepcion',
+        'pedido':$('#txt_codigo').val(),
     }
      $.ajax({
       data:  {parametros,parametros},
@@ -641,8 +678,9 @@ function autocoplet_ingreso()
         if(response==1)
         {
           Swal.fire("","Notificacion enviada","success");
+          $('#modal_notificar').modal('hide');        
         }
-        console.log(response);
+        // console.log(response);
         
       }, 
       error: function(xhr, textStatus, error){
@@ -650,6 +688,43 @@ function autocoplet_ingreso()
       }
     });
  }
+
+ function comentar()
+ {
+   var codigo = $('#txt_codigo').val();
+   console.log(codigo);
+    if(codigo=='')
+    {
+       Swal.fire("Seleccione un pedido","","info");
+       return false;
+    }
+
+    var parametros = {
+        'notificar':$('#txt_comentario2').val(),
+        'id':$('#txt_id').val(),
+        'asunto':'Recepcion',
+        'pedido':$('#txt_codigo').val(),
+    }
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/inventario/alimentos_recibidosC.php?comentar_clasificacion=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        if(response==1)
+        {
+          Swal.fire("","Comentario guardado","success");
+          $('#modal_notificar').modal('hide');        
+        }
+        // console.log(response);
+        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
+ }
+
 
    function notificaciones()
   {
@@ -685,7 +760,7 @@ function autocoplet_ingreso()
 
              $('#pnl_notificacion').css('display','none');
           }
-          console.log(data);
+          // console.log(data);
         }
     });   
 
@@ -700,9 +775,16 @@ function autocoplet_ingreso()
 
   function cambiar_estado()
   {
+    respuesta = $('#txt_respuesta').val();
+    if(respuesta=='' || respuesta=='.')
+    {
+       Swal.fire("Ingrese una respuesta","",'info');
+       return false;
+    }
     parametros = 
     {
       'noti':$("#txt_id_noti").val(),
+      'respuesta':respuesta,
     }
     $.ajax({
         type: "POST",
@@ -712,10 +794,37 @@ function autocoplet_ingreso()
         success: function(data)
         {       
           $('#myModal_notificar').modal('hide');
+          $('#txt_respuesta').val('');
           notificaciones();
         }
     });   
 
+  }
+
+  function solucionado()
+  {
+   
+    parametros = 
+    {
+      'noti':$("#txt_id_noti").val(),
+    }
+    $.ajax({
+        type: "POST",
+          url:   '../controlador/inventario/alimentos_recibidosC.php?cambiar_estado_solucionado=true',
+          data:{parametros:parametros},
+          dataType:'json',
+        success: function(data)
+        {       
+          $('#myModal_notificar').modal('hide');
+          notificaciones();
+        }
+    });   
+
+  }
+
+  function nueva_notificacion()
+  {
+    $('#modal_notificar').modal('show');
   }
 </script>
 
@@ -808,12 +917,12 @@ function autocoplet_ingreso()
 						</div>
             <div class="row">
               <div class="col-sm-6" style="padding-top:5px">
-                <b>Fecha de Clasificacion</b>                
+                <b>FECHA CLASIFICACION</b>                
               </div>
               <div class="col-sm-6">
                 <input type="date" name="txt_fecha_cla" id="txt_fecha_cla" value="<?php echo date('Y-m-d'); ?>" class="form-control input-xs" readonly>
               </div>
-            </div>						
+            </div>             					
 					</div>
 					<div class="col-sm-5">
 						<div class="row"  style="padding-top: 5px;">
@@ -843,72 +952,84 @@ function autocoplet_ingreso()
 									</div>
 								</div>
 							</div>
-						</div>
-						<div class="row"  style="padding-top: 5px;">
+						</div>						
+						<div class="row" id="panel_serie"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
-								<b>COMENTARIO:</b>
+								<b>TEMPERATURA RECEPCION </b>
 							</div>
-							<div class="col-sm-6">
-                 <textarea id="txt_comentario" name="txt_comentario"disabled class="form-control input-sm"></textarea>
+							<div class="col-sm-6 ">
+                <div class="input-group">
+                  <input type="text" name="txt_temperatura" id="txt_temperatura" class="form-control input-xs"  readonly>
+                  <span class="input-group-addon input-xs">°C</span>                  
+                </div>
 							</div>
 						</div>
 						<div class="row" id="panel_serie"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
-								<b>TEMPERATURA RECEPCION °C</b>
-							</div>
-							<div class="col-sm-6">
-	                <input type="text" name="txt_temperatura" id="txt_temperatura" class="form-control input-xs"  readonly>
-							</div>
-						</div>
-						<div class="row" id="panel_serie"  style="padding-top: 5px;">
-							<div class="col-sm-6 text-right">
-								<b>ESTADO DE TRANSPORTE</b>
+								<b>ESTADO TRANSPORTE</b>
 							</div>
 							<div class="col-sm-6 text-center">
 								<img src="" id="img_estado">
 							</div>
 						</div>
+            <div class="row"  style="padding-top: 5px;">
+              <div class="col-sm-6 text-right">
+                <b>COMENTARIO RECEPCION:</b>
+              </div>
+              <div class="col-sm-6">
+                 <textarea id="txt_comentario" name="txt_comentario" rows="4" disabled class="form-control input-sm"></textarea>
+              </div>
+            </div>
 					
 					</div>
 					<div class="col-sm-3">
-						<div class="row">							
+						<div class="row">	
+              <div class="col-sm-12">
+                  <b>Responsable recepcion</b><br> 
+                  <div class="input-group">
+                      <input type="text" name="txt_responsable" id="txt_responsable" value="" class="form-control input-xs" readonly>
+                      <span class="input-group-btn">
+                        <button type="button" class="btn btn-warning btn-flat btn-xs" onclick="nueva_notificacion()"><i class="fa fa-exclamation-triangle"></i></button>
+                      </span>
+                  </div>
+              </div>	
+            </div>  
+            <hr style="margin: 5px 0 5px 0;">          
+            <div class="row"> 					
 							<div class="col-sm-12">
-								<div class="row">
-									<div class="col-sm-4">
+								<div class="row text-center">
+									<div class="col-sm-6">
 										<label style="color:green" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" checked  value="V" > <img src="../../img/png/smile.png"><br> Conforme</label>											
 									</div>
-									<div class="col-sm-4">
+									<div class="col-sm-6">
 										<label style="color:red" onclick="ocultar_comentario()"><input type="radio" name="cbx_evaluacion" value="R">  <img src="../../img/png/sad.png"><br> Inconforme </label>											
 									</div>
                   
 								</div>
-									<!-- <b>Evaluacion</b><br> -->										
-														
 							</div>
+            </div>            
+            <div class="row"> 
 							<div class="col-sm-12" id="pnl_comentario">
-									<b>COMENTARIO DE INGRESO</b>
-									<textarea class="form-control input-sm" rows="3" style="font-size:16px" id="txt_comentario2" name="txt_comentario2"></textarea>
-                  <div class="text-right">
-                  <button type="button" class="btn btn-primary btn-sm" onclick="notificar()">Notificar</button>		
-                  </div>						
+									<b>COMENTARIO DE CLASIFICACION</b>
+                  <div class="input-group">
+                      <textarea class="form-control input-sm" rows="3" style="font-size:16px" id="txt_comentario2" name="txt_comentario2" placeholder="comentario general de clasificacion..."></textarea>
+                      <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="comentar()"><i class="fa fa-save"></i></button>   
+                      </span>
+                  </div>
 							</div>
 						</div>
-
-
-					<!-- 	<select class=" form-control input-xs form-select" id="ddl_ingreso" name="ddl_ingreso" size="7" onchange="option_select()">
-                         	<option value="">Seleccione</option>
-                         </select> -->
-					</div>
+          </div>
 				</div>
 				<hr>
 
 				<div class="row">
-					<div class="col-sm-7">
+					<div class="col-sm-5 col-sm-5">
 						<div class="row">
-							<div class="col-sm-4 col-md-3">
-									<button type="button" class="btn btn-default" onclick="show_producto()"><img src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo de producto</b></button>							
+							<div class="col-sm-4 col-md-4">
+									<button type="button" class="btn btn-default" onclick="show_producto()"><img src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo producto</b></button>							
 							</div>
-							<div class="col-sm-6 col-md-7">
+							<div class="col-sm-6 col-md-8">
 								<b>Producto</b>
 								<div class="input-group" style="display:flex;" id="pnl_normal">
 	                	<select class="form-control input-xs" name="txt_producto" id="txt_producto">
@@ -918,24 +1039,45 @@ function autocoplet_ingreso()
 											<button type="button" class="btn btn-default btn-xs btn-flat" onclick="limpiar_reciclaje()"><i class="fa fa-close"></i></button>
 										</span>
 								 </div>
-							</div>
-							<div class="col-sm-2 col-md-2">
-								<b>Grupo</b>
-								<input type="text" name="txt_grupo" id="txt_grupo" class="form-control input-xs" readonly>
-								<input type="hidden" name="txt_TipoSubMod" id="txt_TipoSubMod" class="form-control" readonly>
-								<input type="hidden" name="txt_primera_vez" id="txt_primera_vez" class="form-control" readonly value="0">
-							</div>
+                 <div class="row">
+                    <div class="col-sm-6 text-right">
+                        <b>Grupo</b>
+                    </div>
+                      <div class="col-sm-6">
+                        <input type="text" name="txt_grupo" id="txt_grupo" class="form-control input-xs" readonly>
+                        <input type="hidden" name="txt_TipoSubMod" id="txt_TipoSubMod" class="form-control" readonly>
+                        <input type="hidden" name="txt_primera_vez" id="txt_primera_vez" class="form-control" readonly value="0">
+                    </div>                   
+                 </div>
+							</div>              
 						</div>
-					</div>
-          <div class="col-sm-4">
+					</div>          
+          <div class="col-sm-3 col-md-3">
             <div class="row">
-              <div class="col-sm-6 col-md-6">
-                  <button type="button" style="width: initial;" class="btn btn-default" onclick="show_calendar()"><img src="../../img/png/expiracion.png" /> <br> <b>Fecha de Expiracion</b></button> 
+              <div class="col-sm-4 col-md-4">
+                  <button type="button" style="width: initial;" class="btn btn-default" onclick="show_calendar()"><img src="../../img/png/expiracion.png" width="45px"; height="45px" />
+                    <br>
+
+                  </button> 
               </div>
-              <div class="col-sm-6 col-md-6">
-                <br>
-                <input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input">
+              <div class="col-sm-8 col-md-8">
+                <b>Fecha Expiracion</b>
+                <input type="date" name="txt_fecha_exp" id="txt_fecha_exp" class="form-control input-xs">
               </div>              
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="col-sm-3">
+              <button type="button" class="btn btn-default">
+                <img src="../../img/png/empaque.png" width="45px" height="45px">
+                <br>
+              </button>              
+            </div>
+            <div class="col-sm-9">
+               <b>Tipo Empaque</b>
+              <select class="form-control input-xs" id="txt_paquetes" name="txt_paquetes">
+                <option value="">Seleccione Empaque</option>
+              </select>              
             </div>
           </div>					
 				</div>
@@ -951,6 +1093,9 @@ function autocoplet_ingreso()
 							</div>							
 						</div>
 					</div> -->
+
+          
+
 					<div class="col-sm-6 col-md-5">
 						<div class="rows">
 							<div class="col-sm-4 col-md-3">
@@ -977,7 +1122,7 @@ function autocoplet_ingreso()
 								</div>
 							</div>
 						</div>						
-					</div>
+					</div>         
           <div class="col-md-4">
             <div class="row"  style="display: none;" id="pnl_sucursal">
               <div class="col-sm-3">
@@ -992,9 +1137,9 @@ function autocoplet_ingreso()
               </div>
             </div>
           </div>
-					<div class="col-sm-12 col-md-3 text-right">
+					<div class="col-sm-12 col-md-2 text-right" style="padding:0px">
 						<br>
-						<button type="button" class="btn btn-primary" onclick="show_panel()" >AGREGAR A INGRESO</button>
+						<button type="button" class="btn btn-primary" onclick="show_panel()" > AGREGAR</button>
 						<button type="button" class="btn btn-primary">Limpiar</button>
 						<input type="hidden" id="A_No" name ="A_No" value="0">
 					</div>
@@ -1058,7 +1203,7 @@ function autocoplet_ingreso()
       type:  'post',
       dataType: 'json',
       success:  function (response) {
-        console.log(response);
+        // console.log(response);
         $('#tbl_body_pedido').html(response.tabla);
         $('#txt_cant_total_pedido').val(response.cant_total);       
       }
@@ -1420,7 +1565,7 @@ function eliminar_all_pedido(pedido)
 						  <div  class="col-sm-12">
 						  	<table class="table table-hover" style="width:100%">
 				        <thead>
-				          <th>ITEM</th>
+				          <th style="width:7%;">ITEM</th>
 				          <th>FECHA DE CLASIFICACION</th>
 				          <th>FECHA DE EXPIRACION</th>
 				          <th>DESCRIPCION</th>
@@ -1622,3 +1767,22 @@ function eliminar_all_pedido(pedido)
   </div>
 
 <script src="../../dist/js/script_calendar.js"></script>
+
+
+<div id="modal_notificar" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Notificar</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+            <textarea class="form-control input-sm" rows="3" style="font-size:16px" id="txt_notificar" name="txt_notificar" placeholder="Notificacion"></textarea>          
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-primary" onclick="notificar()">Notificar</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>

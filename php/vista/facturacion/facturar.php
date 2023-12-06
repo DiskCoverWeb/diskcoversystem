@@ -3,10 +3,10 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 ?>
 <script type="text/javascript">
 	let FAGlobal = {};
-	window.closeModal = function () {
+	/*window.closeModal = function () {
 		$('#myModal_Abonos').modal('hide');
 		Autorizar_Factura_Actual();
-	};
+	};*/
 	let Modificar = false;
 	let Bandera = true;
 	var PorCodigo = false;
@@ -46,8 +46,6 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			$('#TxtEmail').val(data.Email);
 			$('#LblSaldo').val(parseFloat(data.Saldo_Pendiente).toFixed(2));
 			$('#Label13').text('C.I./R.U.C. (' + data.TD + ')');
-
-			console.log(data);
 		});
 
 
@@ -65,9 +63,9 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 		})
 
 		var servicio = '<?php echo $servicio; ?>';
-		if(servicio != '0'){
+		if (servicio != '0') {
 			$('#label36').text(`Servicio ${servicio}%`);
-		}else{
+		} else {
 			$('#label36').text("Servicio");
 		}
 
@@ -212,7 +210,6 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
-				console.log(data.TFA.NoFactura);
 				$("#TC").val(data.TFA.TC);   //FA
 				$("#Autorizacion").val(data.TFA.Autorizacion);   //FA
 				$("#CantFact").val(data.TFA.CantFact);   //FA
@@ -242,7 +239,6 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 				FAGlobal = data.TFA;
 
 				if (data.respuesta == 1) {
-					console.log(data.TFA);
 					Tipo_De_Facturacion(data.TFA);
 					$('#Cant_Item').val(data.TFA.Cant_Item_FA); //FA
 				} else if (data.respuesta == 2) {
@@ -371,7 +367,6 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			dataType: 'json',
 			beforeSend: function () { $('#tbl').html('<img src="../../img/gif/loader4.1.gif" width="40%"> '); },
 			success: function (data) {
-				console.log(data);
 				$('#tbl').html(data.tbl);
 				$('#Mod_PVP').val(data.Mod_PVP);
 				if (data.DCEjecutivo == 0) {
@@ -385,7 +380,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 				var tot_sinIva = data.totales.Sin_IVA;
 				var desc = data.totales.Descuento;
 				var tot_serv = (tot_sinIva - desc) * (servicio / 100)
-				
+
 
 				$('#LabelSubTotal').val(parseFloat(data.totales.Sin_IVA).toFixed(2));
 				$('#LabelConIVA').val(parseFloat(data.totales.Con_IVA).toFixed(2));
@@ -449,7 +444,6 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 
 	function autocomplete_cliente() {
 		var grupo = $('#DCGrupo_No').val();
-		console.log(grupo);
 		$('#DCCliente').select2({
 			placeholder: 'Seleccione un cliente',
 			ajax: {
@@ -493,7 +487,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			// data: {parametros: parametros},
 			dataType: 'json',
 			success: function (data) {
-				console.log(data);
+
 			}
 		});
 
@@ -507,7 +501,6 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			dataType: 'json',
 			success: function (data) {
 				data.CheqSP == true ? $('#CheqSPFrom').css('display', 'initial') : $('#CheqSPFrom').css('display', 'none');
-				console.log(data);
 			}
 		});
 
@@ -534,11 +527,9 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 				$('#TextComEjec').val(data.TextComEjec);
 				$('#TxtDetalle').val(data.TxtDetalle);
 				$('#BanIVA').val(data.baniva);
-				console.log("TEST RESERVA", data.por_reserva);
 				producto = data.producto;
 				detalle = data.TxtDetalle;
 				dataInv = data;
-				console.log("TEST DATA INV: ", dataInv);
 				data.por_reserva ? $('#btnReserva').prop('disabled', false) : $('#btnReserva').prop('disabled', true);
 				// $('#DCArticulos').focus();
 				// $('#cambiar_nombre').modal('show');
@@ -703,17 +694,17 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			'Reprocesar': $('#Reprocesar').val(),
 			'Cliente': $('#DCCliente').val(),
 			'Total': $('#LabelTotal').val(),
-			'TC':$('#TC').val(),
-			'Serie':$('#Serie').val(),
-			'Autorizacion':$('#Autorizacion').val(),
-			'FA':FAGlobal
+			'TC': $('#TC').val(),
+			'Serie': $('#Serie').val(),
+			'Autorizacion': $('#Autorizacion').val(),
+			'FA': FAGlobal
 		}
 		$.ajax({
 			type: "POST",
 			url: '../controlador/facturacion/facturarC.php?Grabar_Factura_Actual=true&' + FA,
 			data: { parametros: parametros },
 			dataType: 'json',
-			
+
 			success: function (data) {
 				if (data.res == -2) {
 					alerta_reprocesar('ADVERTENCIA', data.men);
@@ -849,7 +840,9 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 							var faFactura = $('#TextFacturaNo').val();
 							src = "../vista/modales.php?FAbonoAnticipado=true&tipo=FA&grupo=" + grupo + "&faFactura=" + faFactura;
 							$('#frame_anticipado').attr('src', src).show();
-							$('#my_modal_abono_anticipado').modal('show');
+							$('#my_modal_abono_anticipado').modal('show').on('hidden.bs.modal', function () {
+								Autorizar_Factura_Actual(FA);
+							})
 						}
 					})
 				} else {
@@ -865,15 +858,19 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 						if (result.value == true) {
 							src = "../vista/modales.php?FAbonos=true";
 							$('#frame').attr('src', src).show();
-							$('#my_modal_abonos').modal('show');
+							$('#my_modal_abonos').modal('show').on('hidden.bs.modal', function () {
+								Autorizar_Factura_Actual(FA);
+							})
 						}
 					})
 				}
+			} else {
+				Autorizar_Factura_Actual(FA);
 			}
-			Autorizar_Factura_Actual(FA);
 
 		})
 	}
+
 
 
 	function alerta_reprocesar(tit, mensaje) {
@@ -1303,6 +1300,9 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			}
 		})
 	}
+	function cerrarModal() {
+		$('#my_modal_abonos').modal('hide');
+	}
 	//------------------fin de suscripcion------------------
 
 </script>
@@ -1478,7 +1478,8 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 				<div class="col-sm-4">
 					<b class="col-sm-4 control-label" style="padding: 0px">Saldo pendiente</b>
 					<div class="col-sm-6">
-						<input type="text" name="LblSaldo" id="LblSaldo" class="form-control input-xs" value="0.00">
+						<input type="text" name="LblSaldo" id="LblSaldo" class="form-control input-xs" value="0.00"
+							readonly>
 					</div>
 				</div>
 			</div>
@@ -1493,7 +1494,8 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 				<div class="col-sm-4">
 					<b class="col-sm-6 control-label" style="padding: 0px">Fecha Vencimiento</b>
 					<div class="col-sm-6" style="padding: 0px">
-						<input type="date" name="MBoxFechaV" id="MBoxFechaV" class="form-control input-xs">
+						<input type="date" name="MBoxFechaV" id="MBoxFechaV" class="form-control input-xs"
+							value="<?php echo date('Y-m-d'); ?>">
 					</div>
 				</div>
 				<div class="col-sm-5">
@@ -1626,8 +1628,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 				</div>
 				<div class="col-sm-1">
 					<b>Cantidad</b>
-					<input type="text" name="TextCant" id="TextCant" class="form-control input-xs"
-						onblur="" value="0">
+					<input type="text" name="TextCant" id="TextCant" class="form-control input-xs" onblur="" value="0">
 				</div>
 				<div class="col-sm-1">
 					<b>P.V.P</b>
@@ -2240,7 +2241,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 	}
 </script>
 
-<div id="my_modal_abonos" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+<div id="my_modal_abonos" class="modal" role="dialog" data-keyboard="false" data-backdrop="static">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header" style="padding: 6px 0px 6px 15px;">

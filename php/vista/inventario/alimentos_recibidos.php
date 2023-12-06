@@ -2,9 +2,11 @@
 <script type="text/javascript">
   $(document).ready(function () {
   	cargar_datos_procesados();
+  	preguntas_transporte();
   	notificaciones();
   	 setInterval(function() {
          notificaciones();
+         cargar_datos();
           }, 5000); 
   	$('#btn_guardar').focus();
   	 $(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
@@ -70,11 +72,13 @@
   	}
 
   	 var parametros = $('#form_correos').serialize();
+  	 var estado_trans = $('#form_estado_transporte').serialize();
+  	 // parametros+='&'+estado_trans;
   	 parametros+='&ddl_ingreso='+$('#txt_donante').val();
   	  $.ajax({
 	      type: "POST",
 	      url: '../controlador/inventario/alimentos_recibidosC.php?guardar=true',
-	      data:parametros,
+	      data:{parametros:parametros,transporte:estado_trans},
           dataType:'json',
 	      success: function(data)
 	      {
@@ -84,6 +88,7 @@
 	      			{
 	      				limpiar();
 	      				cargar_datos();
+	      				preguntas_transporte();
 	      			});
 	      	}
 	      
@@ -130,7 +135,7 @@
 	    	data.forEach(function(item,i){
 	    		// console.log(item);
 	    		option+= '<div class="col-md-6 col-sm-6">'+
-											'<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/'+item.picture+'.png" onclick="cambiar_tipo_alimento(\''+item.id+'\',\''+item.text+'\')"></button><br>'+
+											'<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/'+item.picture+'.png" onclick="cambiar_tipo_alimento(\''+item.id+'\',\''+item.text+'\')"  style="width: 60px;height: 60px;"></button><br>'+
 											'<b>'+item.text+'</b>'+
 										'</div>';
 	    		// option+='<option value="'+item.Codigo+'">'+item.Cliente+'</option>';
@@ -392,6 +397,20 @@ function autocoplet_ingreso_donante(){
 		});  	
   }
 
+  function preguntas_transporte(){
+  		
+	  	$.ajax({
+		    type: "POST",
+	      	url:   '../controlador/inventario/alimentos_recibidosC.php?preguntas_transporte=true',
+		    // data:{parametros:parametros},
+	        dataType:'json',
+		    success: function(data)
+		    {
+		    	$('#lista_preguntas').html(data);		    	
+		    }
+		});  	
+  }
+
   function show_proveedor()
   {
   	$('#modal_proveedor').modal('show');
@@ -399,6 +418,11 @@ function autocoplet_ingreso_donante(){
   function show_cantidad()
   {
   	$('#modal_cantidad').modal('show');
+  }
+  function show_estado_transporte()
+  {
+  	// preguntas_transporte();
+  	$('#modal_estado_transporte').modal('show');
   }
   function show_temperatura()
   {
@@ -625,9 +649,16 @@ function autocoplet_ingreso_donante(){
 
   function cambiar_estado()
   {
+  	respuesta = $('#txt_respuesta').val();
+  	if(respuesta=='' || respuesta=='.')
+  	{
+  		 Swal.fire("Ingrese una respuesta","",'info');
+  		 return false;
+  	}
   	parametros = 
   	{
   		'noti':$("#txt_id_noti").val(),
+  		'respuesta':respuesta,
   	}
   	$.ajax({
 		    type: "POST",
@@ -637,9 +668,31 @@ function autocoplet_ingreso_donante(){
 		    success: function(data)
 		    {		    
 		    	$('#myModal_notificar').modal('hide');
+		    	$('#txt_respuesta').val('');
 		    	notificaciones();
 		    }
 		});  	
+
+  }
+
+   function solucionado()
+  {
+   
+    parametros = 
+    {
+      'noti':$("#txt_id_noti").val(),
+    }
+    $.ajax({
+        type: "POST",
+          url:   '../controlador/inventario/alimentos_recibidosC.php?cambiar_estado_solucionado=true',
+          data:{parametros:parametros},
+          dataType:'json',
+        success: function(data)
+        {       
+          $('#myModal_notificar').modal('hide');
+          notificaciones();
+        }
+    });   
 
   }
 
@@ -660,6 +713,11 @@ function autocoplet_ingreso_donante(){
 		<div class="col-xs-2 col-md-2 col-sm-2">
 			<button class="btn btn-default" title="Guardar" onclick="nuevo_proveedor()">
 				<img src="../../img/png/mostrar.png">
+			</button>
+		</div>
+		<div class="col-xs-2 col-md-2 col-sm-2">
+			<button class="btn btn-default" title="Guardar" onclick="show_estado_transporte()">
+				<img src="../../img/png/camion.png" style="width:32px; height: :32px;">
 			</button>
 		</div>
 		<div class="col-xs-2 col-md-2 col-sm-2" style="display:none;" id="pnl_notificacion">
@@ -683,6 +741,7 @@ function autocoplet_ingreso_donante(){
 			</div>
     </div>
 </div>
+</div>
 <div class="row">
 	<div class="col-sm-12">		
 		<div class="box">
@@ -695,32 +754,32 @@ function autocoplet_ingreso_donante(){
 								<div class="col-sm-8">
 									<div class="input-group">
 											<span class="input-group-btn" style="padding-right: 10px;">
-													<button type="button" class="btn btn-default btn-sm btn btn-flat" onclick="show_proveedor()"><img src="../../img/png/donacion2.png"></button>
+													<button type="button" class="btn btn-default btn-sm btn btn-flat" onclick="show_proveedor()"><img src="../../img/png/donacion2.png" style="width: 60px;height: 60px;"></button>
 											</span>
 											<b>PROVEEDOR / DONANTE</b>	
-											<div class="form-group">
-												<div class="col-sm-12">	
+											<!-- <div class="form-group"> -->
+												<!-- <div class="col-sm-12">	 -->
 												<div class="input-group" style="display:flex;">
-				                	<select class=" form-control input-xs form-select" id="txt_donante" name="txt_donante" onchange="option_select2()">
-								           		<option value="">Seleccione</option>
-								           </select>   	
-													<span class="input-group-btn">
-														<button type="button" class="btn btn-default btn-xs btn-flat" onclick="limpiar_donante()"><i class="fa fa-close"></i></button>
-													</span>
-											 </div>											 
+					                	<select class=" form-control input-xs form-select" id="txt_donante" name="txt_donante" onchange="option_select2()">
+									           		<option value="">Seleccione</option>
+									           </select>   	
+														<span class="input-group-btn">
+															<button type="button" class="btn btn-default btn-xs btn-flat" onclick="limpiar_donante()"><i class="fa fa-close"></i></button>
+														</span>
+												 </div>											 
 													<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
-												</div>
+												<!-- </div> -->
 												
-											</div>
+											<!-- </div> -->
 
 									</div>
 								</div>
 								<div class="col-sm-4">
 									<div class="input-group">
 											<span class="input-group-btn" style="padding-right: 10px;">
-												<button type="button" class="btn btn-default btn-sm" onclick="show_temperatura()"><img src="../../img/png/temperatura2.png"></button>
+												<button type="button" class="btn btn-default btn-sm" onclick="show_temperatura()"><img src="../../img/png/temperatura2.png"  style="width: 60px;height: 60px;"></button>
 											</span>
-											 <b>TEMPERATURA DE RECEPCION °C:</b>	
+											 <b>TEMPERATURA DE RECEPCION:</b>	
 											 <div class="input-group">
 				                	<input type="" class="form-control input-sm" id="txt_temperatura" name="txt_temperatura">	
 													<span class="input-group-addon">°C</span>
@@ -733,7 +792,7 @@ function autocoplet_ingreso_donante(){
 								<div class="col-sm-8">									
 									<div class="input-group">
 											<span class="input-group-btn" style="padding-right: 10px;">
-													<button type="button" class="btn btn-default btn-sm" onclick="show_tipo_donacion()"><img src="../../img/png/tipo_donacion.png"></button>
+													<button type="button" class="btn btn-default btn-sm" onclick="show_tipo_donacion()"><img src="../../img/png/tipo_donacion.png"  style="width: 60px;height: 60px;"></button>
 											</span>
 												<b>ALIMENTO RECIBIDO:</b>
 													<div class="input-group" style="display:flex;">
@@ -751,13 +810,13 @@ function autocoplet_ingreso_donante(){
 								<div class="col-sm-4">									
 									<div class="input-group">
 											<span class="input-group-btn" style="padding-right: 10px;">
-													<button type="button" class="btn btn-default btn-sm" id="btn_cantidad" onclick="show_cantidad()"><img src="../../img/png/kilo2.png"></button>
+													<button type="button" class="btn btn-default btn-sm" id="btn_cantidad" onclick="show_cantidad()"><img src="../../img/png/kilo2.png"  style="width: 60px;height: 60px;"></button>
 											</span>
 												<b>CANTIDAD:</b>
 												<input type="" class="form-control input-xs" id="txt_cant" name="txt_cant">	
 									</div>
 								</div>								
-							</div>						
+							</div>			
 					</div>
 					<div class="col-sm-12 col-md-4" style="padding:0px">
 						<div class="col-sm-6 col-md-12">
@@ -784,10 +843,10 @@ function autocoplet_ingreso_donante(){
 									</div>
 							</div>
 						</div>						
-						<div class="col-sm-6 col-md-12">							
+						<!-- <div class="col-sm-6 col-md-12">							
 								<div class="form-group">
-										<label  class="col-sm-6 control-label">ESTADO DE TRANSPORTE</label>
-										<div class="col-sm-6 text-center">									
+										<label  class="col-sm-12 control-label">ESTADO DE TRANSPORTE</label>
+											 <div class="col-sm-6 text-center">									
 		                		 <label style="padding-right: 10px;">
 		                		 		<img src="../../img/png/bueno2.png" onclick="ocultar_comentario()">
 		                		 		<input type="radio" name="cbx_estado_tran" onclick="ocultar_comentario()" checked value="1"></label>		
@@ -796,14 +855,12 @@ function autocoplet_ingreso_donante(){
 		                		 		<input type="radio" name="cbx_estado_tran" onclick="ocultar_comentario()" value="0"></label>					
 										</div>
 								</div>	
-						</div>
-							<div class="col-sm-12 col-md-12" style="padding-top:5px;" id="pnl_comentario">
-								<div class="form-group">
-										<b>COMENTARIO</b>
-										<!-- <div class="col-sm-9 col-md-6"> -->
-										<textarea rows="3" class="form-control"  id="txt_comentario" name="txt_comentario" style="font-size: 16px;"></textarea>								
-										<!-- </div> -->
-								</div>	
+						</div> -->
+							<div class="col-sm-12 col-md-12" id="pnl_comentario">
+									<div class="col-sm-12">
+										<b>COMENTARIO GENERAL</b>
+											<textarea rows="2" class="form-control"  id="txt_comentario" name="txt_comentario" style="font-size: 16px;" placeholder="Comentario / Observacion de Recepcion"></textarea>	
+									</div>
 							</div>
 						</div>	
 					</div>
@@ -845,7 +902,7 @@ function autocoplet_ingreso_donante(){
 														<th>Alimento Recibido </th>
 														<th>Cantidad</th>
 														<th>Temperatura de ingreso</th>
-														<th></th>
+														<th style="width: 8%;"></th>
 													</thead>
 													<tbody id="tbl_body">
 														<tr></tr>
@@ -1040,6 +1097,37 @@ function autocoplet_ingreso_donante(){
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
               <button type="button" class="btn btn-primary" onclick="guardar_edicion()">Editar</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+<div id="modal_estado_transporte" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Estado de trasporte</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          	<div class="row">
+          		<form id="form_estado_transporte">
+          			<div class="col-sm-12">
+          				<div class="direct-chat-messages">	
+											<ul class="list-group list-group-flush" id="lista_preguntas">
+												
+											</ul>											
+										</div>
+          			</div>
+          		</form>
+          	</div>
+          					
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
               <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
           </div>
       </div>

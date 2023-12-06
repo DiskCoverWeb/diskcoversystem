@@ -2,6 +2,7 @@
   <link rel="stylesheet" href="../../dist/css/style_calendar.css">
 <script type="text/javascript">
   $(document).ready(function () {
+
   	 window.addEventListener("message", function(event) {
             if (event.data === "closeModal") {
                 autocoplet_ingreso();
@@ -51,7 +52,11 @@
 
             	$('#pnl_factura').css('display','none');
             }
+
+          setInterval(function() {         	
    		 		cargar_pedido();
+          }, 5000); 
+
    		});
 
 
@@ -403,15 +408,33 @@ function autocoplet_ingreso()
 
  function editar_comentario(mod)
  {
+
+ 	 id = $('#txt_id').val();
+ 	 if(id=='')
+ 	 {
+ 	 	 Swal.fire("","Seleccione un pedido","info");
+ 	 	return  false;
+ 	 }
  	var texto = '';
  	var asunto = '';
+ 	var enviar = 0;
  	 if(mod)
  	 {
  	 	 if($('#txt_comentario_clas').prop('readonly'))
  	 	 {
  	 	 	$('#txt_comentario_clas').prop('readonly',false)
  	 	 	$('#icon_comentario1').removeClass();
- 	 	 	$('#icon_comentario1').addClass('fa fa-save');
+ 	 	 	$('#icon_comentario1').addClass('fa fa-save'); 	 	 	
+ 	 	 	enviar = 0;
+ 	 	 	// $('#txt_comentario_clas').prop('readonly',true)
+ 	 	 }else{
+
+ 	 	 	$('#txt_comentario_clas').prop('readonly',true)
+ 	 	 	$('#icon_comentario1').removeClass();
+ 	 	 	$('#icon_comentario1').addClass('fa fa-pencil');
+ 	 	 	asunto = 'Clasificacion';
+ 	 	 	texto = $('#txt_comentario_clas').val();
+ 	 	 	enviar = 1;
  	 	 }
  	 }else
  	 {
@@ -419,13 +442,47 @@ function autocoplet_ingreso()
  	 	 {
  	 	 	$('#txt_comentario').prop('readonly',false)
  	 	 	$('#icon_comentario').removeClass();
- 	 	 	$('#icon_comentario').addClass('fa fa-save');
+ 	 	 	$('#icon_comentario').addClass('fa fa-save'); 	 	 
+ 	 	 	enviar = 0;
+ 	 	 	// $('#txt_comentario').prop('readonly',true);
+ 	 	 }else{
+ 	 	 	$('#txt_comentario').prop('readonly',true)
+ 	 	 	$('#icon_comentario').removeClass();
+ 	 	 	$('#icon_comentario').addClass('fa fa-pencil');
+ 	 	 	asunto = 'Recepcion';
+ 	 	 	texto = $('#txt_comentario').val();
+ 	 	 	enviar = 1;
  	 	 }
  	 }
 
- 	
+ 	 if(enviar)
+ 	 {
+ 	 	 	var parametros = {
+        'notificar':texto,
+        'id':$('#txt_id').val(),
+		    'asunto':asunto,
+		    }
+		     $.ajax({
+		      data:  {parametros,parametros},
+		      url:   '../controlador/inventario/alimentos_recibidosC.php?notificar_clasificacion=true',
+		      type:  'post',
+		      dataType: 'json',
+		      success:  function (response) { 
+		        if(response==1)
+		        {
+		          Swal.fire("","Notificacion enviada","success");
+		        }
+		        console.log(response);
+		        
+		      }, 
+		      error: function(xhr, textStatus, error){
+		        $('#myModal_espera').modal('hide');           
+		      }
+		    });
 
- 	 console.log(editar);
+
+		}
+
  }
 
 
@@ -645,16 +702,16 @@ function autocoplet_ingreso()
 						  <div  class="col-sm-12">
 						  	<table class="table-sm table-hover" style="width:100%">
 				        <thead>
-				          <th>ITEM</th>
-				          <th>FECHA DE CLASIFICACION</th>
-				          <th>FECHA DE EXPIRACION</th>
-				          <th width="224px">DESCRIPCION</th>
-				          <th>CANTIDAD</th>
-				          <th>PRECIO O COSTO</th>
-				          <th>COSTO TOTAL</th>
-				          <th width="200px">USUARIO</th>
-				          <th>PARA CONTABILIZAR</th>				          
-				          <th></th>
+				          <th width="6%">ITEM</th>
+				          <th style="width: 8%;">FECHA DE CLASIFICACION</th>
+				          <th style="width: 8%;">FECHA DE EXPIRACION</th>
+				          <th width="25%">DESCRIPCION</th>
+				          <th width="6%">CANTIDAD</th>
+				          <th width="6%">PRECIO O COSTO</th>
+				          <th width="6%">COSTO TOTAL</th>
+				          <th>USUARIO</th>
+				          <th width="7%">PARA CONTABILIZAR</th>				          
+				          <th width="6%"></th>
 				        </thead>
 				        <tbody id="tbl_body"></tbody>
 
@@ -848,13 +905,14 @@ function eliminar_lin(num)
       });
   }
 
-   function notificar()
+ function notificar()
  {
    
     var parametros = {
         'notificar':$('#txt_texto').val(),
         'usuario':$('#txt_codigo_usu').val(),
         'asunto':'Clasificacion',
+        'pedido':$('#txt_codigo').val(),
     }
      $.ajax({
       data:  {parametros,parametros},
@@ -864,11 +922,37 @@ function eliminar_lin(num)
       success:  function (response) { 
         if(response==1)
         {
+        	
+          	cambiar_a_clasificacion();
           Swal.fire("","Notificacion enviada","success").then(function(){
           	$('#myModal_notificar_usuario').modal('hide'); 
           	$('#txt_texto').val('');   
           	$('#txt_codigo_usu').val('') 
           });
+        }
+        console.log(response);
+        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
+ }
+
+ function cambiar_a_clasificacion()
+ {   
+    var parametros = {
+        'pedido':$('#txt_codigo').val(),
+    }
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/inventario/alimentos_recibidosC.php?cambiar_a_clasificacion=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        if(response==1)
+        {
+          location.reload();
         }
         console.log(response);
         
