@@ -516,6 +516,20 @@ class alimentos_recibidosM
 		return $this->db->datos($sql);
 	}
 
+	function estado_trasporte($pedido)
+	{
+
+		$sql = "SELECT  TF.ID,Proceso,Cumple
+				FROM         Trans_Fletes TF
+				inner join Catalogo_Proceso CP on CP.Cmds = TF.TP
+				WHERE  TF.Item = '".$_SESSION['INGRESO']['item']."' 
+				AND TF.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND Codigo_Inv= '".$pedido."'";
+				// print_r($sql);die();
+		return $this->db->datos($sql);
+
+	}
+
 
 }
 ?>

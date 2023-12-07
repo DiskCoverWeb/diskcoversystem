@@ -617,7 +617,7 @@ function autocoplet_ingreso_donante(){
 		    		 data.forEach(function(item,i){
 		    		 	mensajes+='<li>'+
 											'<a href="#" data-toggle="modal" onclick="mostrar_notificacion(\''+item.Texto_Memo+'\',\''+item.ID+'\')">'+
-												'<h4>'+
+												'<h4 style="margin:0px">'+
 													item.Asunto+
 													'<small>'+formatoDate(item.Fecha.date)+' <i class="fa fa-calendar-o"></i></small>'+
 												'</h4>'+

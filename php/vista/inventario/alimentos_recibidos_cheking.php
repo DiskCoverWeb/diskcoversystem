@@ -34,6 +34,8 @@
 		      $('#txt_cta_inv').val(data.Cta_Debe); // save selected id to input
 
 		      $('#txt_codigo_p').val(data.CodigoP)
+
+		      $('#btn_estado_trasporte').css('display','block');
 		      if(data.Cod_R=='0')
 		      {
 		      	$('#img_estado').attr('src','../../img/png/bloqueo.png');
@@ -327,10 +329,10 @@ function autocoplet_ingreso()
 	        dataType:'json',
 		    success: function(data)
 		    {
-		    	if(data==1)
-		    	{
-		    		Swal.fire('Items Seleccionados Guardados','','success');
-		    	}
+		    	// if(data==1)
+		    	// {
+		    	// 	Swal.fire('Items Seleccionados Guardados','','success');
+		    	// }
 		    	
 		    }
 		});  	
@@ -485,6 +487,47 @@ function autocoplet_ingreso()
 
  }
 
+ function ver_detalle_trasorte()
+ {
+ 	 codigo = $('#txt_codigo option:selected').text();
+ 	 var parametros = {
+        'pedido':codigo,
+		    }
+		     $.ajax({
+		      data:  {parametros,parametros},
+		      url:   '../controlador/inventario/alimentos_recibidosC.php?estado_trasporte=true',
+		      type:  'post',
+		      dataType: 'json',
+		      success:  function (response) { 
+		      	var test = '';
+		      	response.forEach(function(item,i){
+
+		      		console.log(item);
+
+		      		test+='<li class="list-group-item">'+
+											'<a href="#" style="padding:0px">'+
+													'<label>'+item.Proceso+'</label>'+
+											 		'<div class="btn-group pull-right">';
+											 		if(item.Cumple==1)
+											 		{
+											 			test+='<span class="label-success btn-sm btn">Cumple</span>'
+											 		}else{
+											 			test+='<span class="label-danger btn-sm btn">No cumple</span>'
+											 		}
+											 		test+='</div>'+
+										 	'</a>'+
+										'</li>';
+		      	})
+		      	$('#lista_preguntas').html(test);
+		      	$('#modal_estado_transporte').modal('show');
+		        
+		      }, 
+		      error: function(xhr, textStatus, error){
+		        $('#myModal_espera').modal('hide');           
+		      }
+		    });
+ }
+
 
 </script>
 
@@ -564,8 +607,6 @@ function autocoplet_ingreso()
 								<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
 							</div>
 						</div>
-					</div>
-					<div class="col-sm-4">
 						<div class="row"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
 								<b>ALIMENTO RECIBIDO:</b>
@@ -576,6 +617,9 @@ function autocoplet_ingreso()
                	</select>								
 							</div>
 						</div>
+					</div>
+					<div class="col-sm-4">
+						
 						<div class="row"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
 								 <b>CANTIDAD:</b>
@@ -592,9 +636,9 @@ function autocoplet_ingreso()
 								<div class="input-group input-group-sm">
 										<textarea class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly rows="1">
 																	</textarea>
-									<span class="input-group-btn">
+									<!-- <span class="input-group-btn">
 										<button type="button" class="btn btn-info btn-flat" onclick="editar_comentario()"><i id="icon_comentario" class="fa fa-pencil"></i></button>
-									</span>
+									</span> -->
 								</div>						
 							</div>
 						</div>
@@ -606,9 +650,9 @@ function autocoplet_ingreso()
 								<div class="input-group input-group-sm">
 									<textarea class="form-control input-xs" id="txt_comentario_clas" name="txt_comentario_clas" readonly rows="1">
 								</textarea>
-									<span class="input-group-btn">
+								<!-- 	<span class="input-group-btn">
 										<button type="button" class="btn btn-info btn-flat" onclick="editar_comentario(1)"><i id="icon_comentario1" class="fa fa-pencil"></i></button>
-									</span>
+									</span> -->
 								</div>
 
 								
@@ -626,8 +670,8 @@ function autocoplet_ingreso()
 							<div class="col-sm-6 text-right">
 								<b>ESTADO DE TRANSPORTE</b>
 							</div>
-							<div class="col-sm-6 text-center">
-									<img src="" id="img_estado">
+							<div class="col-sm-6 text-center" >
+								<button type="button" style="display: none;" id="btn_estado_trasporte" class="btn btn-primary btn-xs btn-block" onclick="ver_detalle_trasorte()"> Ver detalle <i class="fa fa-eye"></i></button>
 							</div>
 						</div>
 					
@@ -911,7 +955,7 @@ function eliminar_lin(num)
     var parametros = {
         'notificar':$('#txt_texto').val(),
         'usuario':$('#txt_codigo_usu').val(),
-        'asunto':'Clasificacion',
+        'asunto':'De Checking a Clasificacion',
         'pedido':$('#txt_codigo').val(),
     }
      $.ajax({
@@ -987,3 +1031,32 @@ function eliminar_lin(num)
 
 
 
+
+
+<div id="modal_estado_transporte" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Estado de trasporte</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          	<div class="row">
+          		<form id="form_estado_transporte">
+          			<div class="col-sm-12">
+          				<div class="direct-chat-messages">	
+											<ul class="list-group list-group-flush" id="lista_preguntas">
+												
+											</ul>											
+										</div>
+          			</div>
+          		</form>
+          	</div>
+          					
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>

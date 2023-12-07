@@ -257,6 +257,11 @@ if(isset($_GET['preguntas_transporte']))
 	// $parametros = $_POST['parametros'];
 	echo json_encode($controlador->preguntas_transporte());
 }
+if(isset($_GET['estado_trasporte']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->estado_trasporte($parametros));
+}
 
 /**
  * 
@@ -774,7 +779,7 @@ class alimentos_recibidosC
   					  $tr.='<input type="checkbox" class="rbl_conta" name="rbl_conta" id="rbl_conta_'.$value['ID'].'" value="'.$value['ID'].'" checked  />';
   					}else
   					{
-  						$tr.='<input type="checkbox" class="rbl_conta" name="rbl_conta" id="rbl_conta_'.$value['ID'].'" value="'.$value['ID'].'" />';
+  						$tr.='<input type="checkbox" class="rbl_conta" onclick="guardar_check()" name="rbl_conta" id="rbl_conta_'.$value['ID'].'" value="'.$value['ID'].'" />';
   					}
   					$tr.='</td>
   					<td>
@@ -871,6 +876,7 @@ class alimentos_recibidosC
 		$fecha = $parametros['fecha'];
 
 		$datos = $this->modelo->buscar_transCorreos($query,$fecha);
+		// print_r($datos);die();
 		$tr= '';
 		foreach ($datos as $key => $value) {
 			$noti = $this->modelo->listar_notificaciones($_SESSION['INGRESO']['CodigoU'],'P',false,$value['Envio_No']);
@@ -883,7 +889,8 @@ class alimentos_recibidosC
 						</button>
 						<ul class="dropdown-menu">';
 						foreach ($noti as $key2 => $value2) {
-							$alerta.='<li><a href="#" onclick="mostrar_notificacion(\''.$value2['Texto_Memo'].'\',\''.$value2['ID'].'\')">Notificacion'.($key2+1).'</a></li>';
+							$texto2 = str_replace(array("\r", "\n"), '', $value2['Texto_Memo']);
+							$alerta.='<li><a href="#" onclick="mostrar_notificacion(\''.$texto2.'\',\''.$value2['ID'].'\')">Notificacion'.($key2+1).'</a></li>';
 						}
 						$alerta.='</ul>
 					</div>	';
@@ -1265,6 +1272,12 @@ class alimentos_recibidosC
 		SetAdoFields('T','I');
 		SetAdoFieldsWhere('Envio_No',$parametros['pedido']);
 		return SetAdoUpdateGeneric();
+	}
+
+	function estado_trasporte($parametros)
+	{
+		$codigo = $parametros['pedido'];
+		return $this->modelo->estado_trasporte($codigo);
 	}
 
 	function editar_comentarios_trans_correos($pedido,$asunto,$texto)
