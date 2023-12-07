@@ -7,13 +7,20 @@ if (isset($_GET['tipo'])) {
 <script type="text/javascript">
 	eliminar_linea('', '');
 	$(document).ready(function () {
-		catalogoLineas();
+		//catalogoLineas();
 		autocomplete_cliente();
 		autocomplete_producto();
-		serie();
-		// tipo_documento();
+		//serie();
+		tipo_documento();
 		DCBodega();
 		DGAsientoF();
+		AdoLinea();
+		AdoAuxCatalogoProductos();
+		//DCDireccion();
+		$('#DCDireccion').on('blur', function () {
+			var DireccionAux = $('#DCDireccion').val();
+			DCDireccion(DireccionAux);
+		});
 
 
 		DCBanco();
@@ -40,6 +47,49 @@ if (isset($_GET['tipo'])) {
 
 	});
 
+	function AdoLinea() {
+		var parametros =
+		{
+			'TipoFactura': '<?php echo $TC; ?>'
+		};
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/punto_ventaC.php?AdoLinea=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				if (data.mensaje.length > 0) {
+					Swal.fire({
+						type: 'warning',
+						title: data.mensaje,
+						text: '',
+						allowOutsideClick: false,
+					});
+				}
+				$('#LblSerie').text(data.SerieFactura);
+				$('#TextFacturaNo').val(data.NumComp);
+				$('#Cta_CxP').val(data.Cta_Cobrar);
+				$('#Autorizacion').val(data.Autorizacion);
+				$('#CodigoL').val(data.CodigoL);
+			}
+		});
+	}
+
+	function AdoAuxCatalogoProductos() {
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/punto_ventaC.php?AdoAuxCatalogoProductos=true',
+			dataType: 'json',
+			success: function (data) {
+				if (data.length > 0) {
+					$('#OpcMult').prop('disabled', false);
+					$('#OpcDiv').prop('disabled', false);
+					$('#TextCotiza').prop('readonly', false);
+				}
+			}
+		});
+	}
+
 
 	function usar_cliente(nombre, ruc, codigo, email, t = 'N') {
 		$('#Lblemail').val(email);
@@ -53,12 +103,61 @@ if (isset($_GET['tipo'])) {
 
 	function select() {
 		var seleccionado = $('#DCCliente').select2("data");
-		var data = seleccionado[0].data;
-		// console.log(data);
-		$('#Lblemail').val(data[0].Email);
-		$('#LblRUC').val(data[0].CI_RUC);
-		$('#codigoCliente').val(data[0].Codigo);
-		$('#LblT').val(data[0].T);
+		var SaldoPendiente = 0;
+		var CantSaldoPEndiente = 0;
+		var dataS = seleccionado[0].data;
+		console.log(dataS);
+		$('#Lblemail').val(dataS[0].Email);
+		$('#LblRUC').val(dataS[0].CI_RUC);
+		$('#codigoCliente').val(dataS[0].Codigo);
+		$('#LblT').val(dataS[0].T);
+
+		var parametros = {
+			'CodigoCliente': dataS[0].Codigo,
+		};
+
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/punto_ventaC.php?ClienteDatosExtras=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (res) {
+				if (res.length <= 0) {
+					$('#DCDireccion').empty();
+					var nuevoOption = $('<option>', {
+						value: dataS[0].Direccion,
+						text: dataS[0].Direccion
+					});
+					$('#DCDireccion').append(nuevoOption);
+				} else {
+					$('#DCDireccion').empty();
+					var nuevoOption = $('<option>', {
+						value: res[0].Direccion,
+						text: res[0].Direccion
+					});
+					$('#DCDireccion').append(nuevoOption);
+				}
+			}
+		});
+
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/punto_ventaC.php?ClienteSaldoPendiente=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (res) {
+				if (res.length > 0) {
+					//if is null put 0.00
+					var value = res[0].TSaldo_MN;
+					if (value == null) {
+						value = 0.00;
+					}else{
+						value = parseFloat(res[0].TSaldo_MN);
+					}
+					$('#saldoP').val(value.toFixed(2));
+				}
+			}
+		});
 	}
 
 	function validar_cta() {
@@ -87,12 +186,12 @@ if (isset($_GET['tipo'])) {
 
 	}
 	function tipo_documento() {
-		var tc = $('#DCLinea').val();
-		tc = tc.split(' ');
+		/*var tc = $('#DCLinea').val();
+		tc = tc.split(' ');*/
+		
+		var TipoFactura = '<?php echo $TC; ?>';
 
-		// var TipoFactura = '<?php //echo $TC; ?>';
-
-		var TipoFactura = tc[0];
+		//var TipoFactura = tc[0];
 
 		var Porc_IVA = '<?php echo $_SESSION['INGRESO']['porc']; ?>';
 		var Porc_IVA = parseFloat(Porc_IVA) * 100;
@@ -100,22 +199,27 @@ if (isset($_GET['tipo'])) {
 			// FacturasPV.Caption = "INGRESAR TICKET"
 			$('#Label1').text(" TICKET No.");
 			$('#Label3').text(" I.V.A. " + Porc_IVA.toFixed(2) + "%")
+			$('#title').text('Ticket');
 		} else if (TipoFactura == "CP") {
 			// FacturasPV.Caption = "INGRESAR CHEQUES PROTESTADOS"
 			$('#Label1').text(" COMPROBANTE No.");
 			$('#Label3').text(" I.V.A. 0.00%")
+			$('#title').text('TICKET');
 		} else if (TipoFactura == "NV") {
 			// FacturasPV.Caption = "INGRESAR NOTA DE VENTA"
 			$('#Label1').text(" NOTA DE VENTA No.");
-			$('#Label3').text(" I.V.A. 0.00%")
+			$('#Label3').text(" I.V.A. 0.00%");
+			$('#title').text('Nota de Venta');
 		} else if (TipoFactura == "DO") {
 			// FacturasPV.Caption = "INGRESAR NOTA DE DONACION"
 			$('#Label1').text(" NOTA DE DONACION No.");
-			$('#Label3').text(" I.V.A. 0.00%")
+			$('#Label3').text(" I.V.A. 0.00%");
+			$('#title').text('Donaciones');
 		} else if (TipoFactura == "LC") {
 			// FacturasPV.Caption = "INGRESAR LIQUIDACION DE COMPRAS"
 			$('#Label1').text(" LIQUIDACION DE COMPRAS No.");
 			$('#Label3').text(" I.V.A. 0.00%")
+			$('#title').text('Liquidación de Compras');
 			OpcDiv.value = True
 			// 'If Len(Opc_Grupo_Div) > 1 Then Grupo_Inv = Opc_Grupo_Div
 		} else {
@@ -123,6 +227,7 @@ if (isset($_GET['tipo'])) {
 			$('#Label1').text(" FACTURA No.");
 			$('#Label3').text(" I.V.A. " + Porc_IVA.toFixed(2) + "%")
 			$('#CodDoc').val("01");
+			$('#title').text('Facturas');
 		}
 	}
 
@@ -144,11 +249,82 @@ if (isset($_GET['tipo'])) {
 		});
 	}
 
+	function DCDireccion(dirAux) {
+		var parametros = {
+			'DireccionAux': dirAux.toUpperCase(),
+			'CodigoCliente': $('#codigoCliente').val(),
+		}
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/punto_ventaC.php?DCDireccion=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				if (data.length <= 0) {
+					Swal.fire({
+						type: 'info',
+						title: "Formulario de Grabación",
+						text: `Esta dirección no está registrada: ${parametros['DireccionAux']}, desea registrarla?`,
+						showCancelButton: true,
+						confirmButtonText: 'Sí!',
+						cancelButtonText: 'No!',
+						allowOutsideClick: false,
+					}).then((result) => {
+						if (result.value) {
+							ingresarDir(parametros);
+						} else {
+							$('#TxtNota').focus();
+						}
+					});
+
+				}
+			}
+		});
+	}
+
+	function ingresarDir(parametros) {
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/punto_ventaC.php?ingresarDir=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				if (data == 1) {
+					Swal.fire({
+						type: 'success',
+						title: 'Dirección ingresada correctamente',
+						text: '',
+						allowOutsideClick: false,
+					});
+				} else {
+					Swal.fire({
+						type: 'error',
+						title: 'Error al ingresar la dirección',
+						text: '',
+						allowOutsideClick: false,
+					});
+				}
+			}
+		});
+	}
+
+	function Command2_Click() {
+		$('#myModal_boletos').modal('hide');
+		$('#LabelSubTotal').focus();
+	}
+
+	function TarifaLostFocus(){
+		var value = $('#LabelSubTotal').val();
+		$('#TxtEfectivo').val(value);
+	}
+
+
+
 
 	function autocomplete_producto() {
 		var parametros = '&TC=' + '<?php echo $TC; ?>';
 		$('#DCArticulo').select2({
-			placeholder: 'Seleccione un cliente',
+			placeholder: 'Seleccione un producto',
 			ajax: {
 				url: '../controlador/facturacion/punto_ventaC.php?DCArticulo=true' + parametros,
 				dataType: 'json',
@@ -166,12 +342,13 @@ if (isset($_GET['tipo'])) {
 	function DCBanco() {
 		// alert('das');
 		$('#DCBanco').select2({
-			placeholder: 'Seleccione un cliente',
+			placeholder: 'Seleccione un banco',
 			ajax: {
 				url: '../controlador/facturacion/punto_ventaC.php?DCBanco=true',
 				dataType: 'json',
 				delay: 250,
 				processResults: function (data) {
+
 					return {
 						results: data
 					};
@@ -296,20 +473,35 @@ if (isset($_GET['tipo'])) {
 		}
 	}
 
+	function checkModal() {
+		/*var tc = $('#DCLinea').val();
+		tc = tc.split(' ');*/
+		var TipoFactura = '<?php echo $TC; ?>';
+		if (TipoFactura === 'PV') {
+			$('#myModal_boletos').modal('show');
+			$('#myModal_boletos').on('hidden.bs.modal', function () {
+				ingresar();
+			});
+		} else {
+			ingresar();
+		}
+	}
+
 	function ingresar() {
 		var cli = $('#DCCliente').val();
 		if (cli == '') {
 			Swal.fire('Seleccione un cliente', '', 'info');
 			return false;
 		}
-		var tc = $('#DCLinea').val();
-		tc = tc.split(' ');
+		/*var tc = $('#DCLinea').val();
+		tc = tc.split(' ');*/
+		var tc = '<?php echo $TC; ?>';
 		var parametros =
 		{
 			'opc': $('input[name="radio_conve"]:checked').val(),
 			'TextVUnit': $('#TextVUnit').val(),
 			'TextCant': $('#TextCant').val(),
-			'TC': tc[0],
+			'TC': tc,
 			'TxtDocumentos': $('#TxtDocumentos').val(),
 			'Codigo': $('#DCArticulo').val(),
 			'fecha': $('#MBFecha').val(),
@@ -319,6 +511,8 @@ if (isset($_GET['tipo'])) {
 			'TxtRifaH': $('#TxtRifaH').val(),
 			'Serie': $('#LblSerie').text(),
 			'CodigoCliente': $('#codigoCliente').val(),
+			'TextServicios': '.',
+			'TextVDescto': 0
 		}
 		$.ajax({
 			type: "POST",
@@ -328,7 +522,7 @@ if (isset($_GET['tipo'])) {
 			success: function (data) {
 				if (data == 2) {
 					Swal.fire('Ya no puede ingresar mas productos', '', 'info');
-				} else if (data == null) {
+				} else if (data == 1) {
 					DGAsientoF();
 					Calculos_Totales_Factura();
 				} else {
@@ -446,7 +640,7 @@ if (isset($_GET['tipo'])) {
 		var banco = parseFloat($('#TextCheque').val()).toFixed(4);
 		Swal.fire({
 			allowOutsideClick: false,
-			title: 'Esta Seguro que desea grabar: \n Recibo  No. ' + $('#TextFacturaNo').val(),
+			title: 'Esta Seguro que desea grabar: \n Comprobante  No. ' + $('#TextFacturaNo').val(),
 			text: '',
 			type: 'warning',
 			showCancelButton: true,
@@ -466,9 +660,10 @@ if (isset($_GET['tipo'])) {
 
 	function generar_factura() {
 		$('#myModal_espera').modal('show');
-		var tc = $('#DCLinea').val();
-		tc = tc.split(' ');
+		/*var tc = $('#DCLinea').val();
+		tc = tc.split(' ');*/
 
+		var tc = '<?php echo $TC; ?>';
 		var parametros =
 		{
 			'MBFecha': $('#MBFecha').val(),
@@ -476,23 +671,24 @@ if (isset($_GET['tipo'])) {
 			'TextFacturaNo': $('#TextFacturaNo').val(),
 			'TxtNota': $('#TxtNota').val(),
 			'TxtObservacion': $('#TxtObservacion').val(),
-			'TipoFactura': tc[0],
+			'TipoFactura': tc,	
 			'TxtGavetas': $('#TxtGavetas').val(),
 			'CodigoCliente': $('#codigoCliente').val(),
 			'email': $('#Lblemail').val(),
 			'CI': $('#LblRUC').val(),
 			'NombreCliente': $('#DCCliente option:selected').text(),
-			'TC': tc[0],
+			'TC': tc,
 			'Serie': $('#LblSerie').text(),
 			'DCBancoN': $('#DCBanco option:selected').text(),
 			'DCBancoC': $('#DCBanco').val(),
 			'T': $('#LblT').val(),
 			'TextBanco': $('#TextBanco').val(),
 			'TextCheqNo': $('#TextCheqNo').val(),
-			'TextBanco': $('#TextBanco').val(),
-			'TextCheqNo': $('#TextCheqNo').val(),
 			'CodDoc': $('#CodDoc').val(),
 			'valorBan': $('#TextCheque').val(),
+			'Cta_Cobrar': $('#Cta_CxP').val(),
+			'Autorizacion': $('#Autorizacion').val(),
+			'CodigoL': $('#CodigoL').val()
 		}
 		$.ajax({
 			type: "POST",
@@ -505,17 +701,23 @@ if (isset($_GET['tipo'])) {
 				if (data.respuesta == 1) {
 					Swal.fire({
 						type: 'success',
-						title: 'Factura Procesada y Autorizada',
+						title: 'Factura Creada',
 						confirmButtonText: 'Ok!',
 						allowOutsideClick: false,
 					}).then(function () {
 						var url = '../../TEMP/' + data.pdf + '.pdf';
 						window.open(url, '_blank');
-						location.reload();
+						AdoLinea();
+						eliminar_linea('', '');
 
 					})
 				} else if (data.respuesta == -1) {
-					Swal.fire(data.text, '', 'error').then(function () { var url = '../../TEMP/' + data.pdf + '.pdf'; window.open(url, '_blank'); location.reload(); });
+					Swal.fire(data.text, '', 'error').then(function () {
+						var url = '../../TEMP/' + data.pdf + '.pdf';
+						window.open(url, '_blank');
+						AdoLinea();
+						eliminar_linea('', '');
+					});
 				} else if (data.respuesta == 2) {
 					Swal.fire('XML devuelto', '', 'error');
 				}
@@ -538,9 +740,17 @@ if (isset($_GET['tipo'])) {
 		var Total_Factura2 = parseFloat($('#LabelTotal').val());
 		var Total_banco = parseFloat($('#TextCheque').val());
 		if (cotizacion > 0) {
-			if (parseFloat(efectivo) > 0) { var ca = efectivo - Total_Factura + Total_banco; $('#LblCambio').val(ca.toFixed(2)); }
+			if (parseFloat(efectivo) > 0) {
+				var ca = efectivo - Total_Factura + Total_banco;
+				$('#LblCambio').val(ca.toFixed(2));
+				$('#btn_g').focus();
+			}
 		} else {
-			if (efectivo > 0 || Total_banco > 0) { var ca = efectivo - Total_Factura2 + Total_banco; $('#LblCambio').val(ca.toFixed(2)) }
+			if (efectivo > 0 || Total_banco > 0) {
+				var ca = efectivo - Total_Factura2 + Total_banco;
+				$('#LblCambio').val(ca.toFixed(2));
+				$('#btn_g').focus();
+			}
 		}
 
 	}
@@ -586,7 +796,7 @@ if (isset($_GET['tipo'])) {
 				}
 
 				tipo_documento();
-				numeroFactura();
+				//numeroFactura();
 			}
 		});
 		$('#myModal_espera').modal('hide');
@@ -605,8 +815,7 @@ if (isset($_GET['tipo'])) {
 	<div class="col-lg-6 col-sm-10 col-md-6 col-xs-12">
 		<div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
 			<a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
-			print_r($ruta[0] . '#'); ?>"
-				title="Salir de modulo" class="btn btn-default">
+			print_r($ruta[0] . '#'); ?>" title="Salir de modulo" class="btn btn-default">
 				<img src="../../img/png/salire.png">
 			</a>
 		</div>
@@ -617,9 +826,10 @@ if (isset($_GET['tipo'])) {
 	<div class="col-sm-2">
 		<input type="hidden" id="Autorizacion">
 		<input type="hidden" id="Cta_CxP">
+		<input type="hidden" id="CodigoL">
+		<b id="title" style="display:none"></b>
 		<select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="1"
-			onchange="numeroFactura(); tipo_documento();"></select>
-
+			onchange="numeroFactura(); tipo_documento();" style="display:none"></select>
 		<b>Fecha</b>
 		<input type="date" name="MBFecha" id="MBFecha" class="form-control input-xs"
 			value="<?php echo date('Y-m-d'); ?>">
@@ -628,7 +838,7 @@ if (isset($_GET['tipo'])) {
 		<b>Nombre del cliente</b>
 		<div class="input-group" id="ddl" style="width:100%">
 			<select class="form-control" id="DCCliente" name="DCCliente" onchange="select()">
-				<option value="">Seleccione Bodega</option>
+				<option value="">Seleccione Cliente</option>
 			</select>
 			<span class="input-group-btn">
 				<button type="button" class="btn btn-success btn-xs btn-flat" onclick="addCliente()"
@@ -648,7 +858,7 @@ if (isset($_GET['tipo'])) {
 		<b id="Label1">FACTURA No.</b>
 		<div class="row">
 			<div class="col-sm-3" id="LblSerie">
-				999999
+				<b></b>
 			</div>
 			<div class="col-sm-9">
 				<input type="" class="form-control input-xs" id="TextFacturaNo" name="TextFacturaNo" readonly>
@@ -663,43 +873,59 @@ if (isset($_GET['tipo'])) {
 
 	</div>
 </div>
+
+<div class="row">
+	<div class="col-sm-2">
+		<b>Saldo Pendiente</b>
+		<input name="saldoP" id="saldoP" class="form-control input-xs text-right" readonly value="0.00">
+	</div>
+	<div class="col-sm-6">
+		<b>Dirección</b>
+		<select class="form-control input-xs" id="DCDireccion" name="DCDireccion" onchange="">
+			<option value="."></option>
+		</select>
+	</div>
+</div>
+
 <div class="row">
 	<div class="col-sm-4">
 		<b>NOTA</b>
-		<input type="text" name="TxtNota" id="TxtNota" class="form-control input-xs">
+		<input type="text" name="TxtNota" id="TxtNota" class="form-control input-xs" value="." placeholder=".">
 	</div>
 	<div class="col-sm-4">
 		<b>OBSERVACION</b>
-		<input type="text" name="TxtObservacion" id="TxtObservacion" class="form-control input-xs">
+		<input type="text" name="TxtObservacion" id="TxtObservacion" class="form-control input-xs" value="."
+			placeholder=".">
 	</div>
 	<div class="col-sm-2">
 		<b>COTIZACION</b>
-		<input type="text" name="TextCotiza" id="TextCotiza" class="form-control input-xs">
+		<input type="text" name="TextCotiza" id="TextCotiza" class="form-control input-xs text-right" readonly placeholder="0.00"
+			value="0.00">
 	</div>
 	<div class="col-sm-1">
 		<b>CONVERSION</b>
 		<div class="row">
 			<div class="col-sm-6" style="padding-right:0px">
-				<label><input type="radio" name="radio_conve" id="OpcMult" value="OpcMult" checked> (X)</label>
+				<label><input type="radio" name="radio_conve" id="OpcMult" value="OpcMult" disabled checked> (X)</label>
 			</div>
 			<div class="col-sm-6" style="padding-right:0px">
-				<label><input type="radio" name="radio_conve" id="OpcDiv" value="OpcDiv"> (Y)</label>
+				<label><input type="radio" name="radio_conve" id="OpcDiv" value="OpcDiv" disabled> (Y)</label>
 			</div>
 		</div>
 	</div>
 	<div class="col-sm-1">
 		<b>Gavetas</b>
-		<input type="text" name="TxtGavetas" id="TxtGavetas" class="form-control input-xs">
+		<input type="text" name="TxtGavetas" id="TxtGavetas" class="form-control input-xs" value="0.00" placeholder="0.00">
 	</div>
 </div>
 <div class="row">
 	<div class="col-sm-9">
-		<div class="row box box-success">
+		<div class="row box box-success" style="padding-bottom: 7px; margin-left: 0px;">
 			<div class="col-sm-6">
 				<b>Producto</b>
 				<select class="form-control input-xs" id="DCArticulo" name="DCArticulo"
 					onchange="Articulo_Seleccionado()">
-					<option value="">Seleccione Bodega</option>
+					<option value="">Seleccione un Producto</option>
 				</select>
 			</div>
 			<div class="col-sm-1" style="padding-right:0px">
@@ -724,7 +950,7 @@ if (isset($_GET['tipo'])) {
 			<div class="col-sm-2">
 				<b>Detalle</b>
 				<input type="text" name="TxtDocumentos" id="TxtDocumentos" class="form-control input-xs" value="."
-					onblur="ingresar()">
+					onblur="checkModal()">
 			</div>
 
 		</div>
@@ -743,7 +969,7 @@ if (isset($_GET['tipo'])) {
 			</div>
 			<div class="col-sm-6">
 				<input type="text" name="LabelSubTotal" id="LabelSubTotal" class="form-control input-xs text-right"
-					value="0.00" style="color:red" readonly>
+					value="0.00" style="color:red" readonly onblur="TarifaLostFocus();">
 			</div>
 		</div>
 		<div class="row">
@@ -788,7 +1014,7 @@ if (isset($_GET['tipo'])) {
 			</div>
 			<div class="col-sm-6">
 				<input type="text" name="TxtEfectivo" id="TxtEfectivo" class="form-control input-xs text-right"
-					value="0.00" onblur="calcular_pago()" onkeyup="calcular_pago()">
+					value="0.00" onblur="calcular_pago()">
 			</div>
 		</div>
 		<div class="row">
@@ -804,13 +1030,13 @@ if (isset($_GET['tipo'])) {
 				<b>Documento</b>
 			</div>
 			<div class="col-sm-9">
-				<input type="text" name="TextCheqNo" id="TextCheqNo" class="form-control input-xs">
+				<input type="text" name="TextCheqNo" id="TextCheqNo" class="form-control input-xs" value=".">
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-sm-12">
 				<b>NOMBRE DEL BANCO</b>
-				<input type="text" name="TextBanco" id="TextBanco" class="form-control input-xs">
+				<input type="text" name="TextBanco" id="TextBanco" class="form-control input-xs" value=".">
 			</div>
 		</div>
 		<div class="row">
@@ -847,7 +1073,6 @@ if (isset($_GET['tipo'])) {
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">Ingrese el rango de boletos</h4>
 			</div>
 			<div class="modal-body">
@@ -858,6 +1083,7 @@ if (isset($_GET['tipo'])) {
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				<button type="button" class="btn btn-primary" onclick="Command2_Click();">Aceptar</button>
 			</div>
 		</div>
 	</div>

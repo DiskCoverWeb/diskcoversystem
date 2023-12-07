@@ -21,7 +21,7 @@ class punto_ventaM
 
   function Listar_Clientes_PV($query)
   {
-    $sql = "SELECT TOP 100 Cliente,Codigo,CI_RUC,TD,Grupo,Email,T 
+    $sql = "SELECT TOP 100 Cliente,Codigo,CI_RUC,TD,Grupo,Email,T,Direccion,DirNumero
         FROM Clientes 
         WHERE Cliente <> '.' 
         AND FA <> 0 ";
@@ -664,6 +664,58 @@ class punto_ventaM
     // print_r($sql);die();
     $stmt = $this->db->datos($sql);
     return $stmt;
+  }
+
+  function AdoLinea($parametros){
+    $sql = "SELECT CxC, Codigo, Autorizacion, Fact, Serie
+            FROM Catalogo_Lineas
+            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+            AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+            AND Fact = '" . $parametros['TipoFactura'] . "'
+            AND Serie = '" . $parametros['SerieFactura'] . "'
+            AND TL <> 0
+            ORDER BY Codigo";
+            
+    return $this->db->datos($sql);
+  }
+
+  function AdoAuxCatalogoProductos(){
+    $sql = "SELECT TOP 1 Div
+            FROM Catalogo_Productos
+            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+            AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+            AND TC = 'P'
+            AND Div <> 0";
+    return $this->db->datos($sql);
+  }
+
+  function ClientesDatosExtras($parametros){
+    $sql = "SELECT Direccion
+            FROM Clientes_Datos_Extras
+            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+            AND Codigo =  '" . $parametros['CodigoCliente'] . "'
+            AND Tipo_Dato = 'DIRECCION'
+            ORDER BY Direccion, Fecha_Registro DESC";
+    return $this->db->datos($sql);
+  }
+
+  function ClienteSaldoPendiente($parametros){
+    $sql = "SELECT COUNT(Factura) CantFact, SUM(Saldo_MN) As TSaldo_MN
+            FROM Facturas
+            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+            AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+            AND CodigoC =  '" . $parametros['CodigoCliente'] . "'";
+    return $this->db->datos($sql);
+  }
+
+  function DCDireccion($parametros){
+    $sql = "SELECT ". Full_Fields("Clientes_Datos_Extras") ."
+            FROM Clientes_Datos_Extras
+            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+            AND Codigo =  '" . $parametros['CodigoCliente'] . "'
+            AND Direccion = '".$parametros['DireccionAux']."'
+            AND Tipo_Dato = 'DIRECCION'";
+    return $this->db->datos($sql);
   }
 
 

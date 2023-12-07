@@ -92,6 +92,35 @@ if (isset($_GET['error_sri'])) {
 	echo json_encode($controlador->error_sri($parametros));
 }
 
+if (isset($_GET["AdoLinea"])) {
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->AdoLinea($parametros));
+}
+
+if (isset($_GET["AdoAuxCatalogoProductos"])) {
+	echo json_encode($controlador->AdoAuxCatalogoProductos());
+}
+
+if (isset($_GET["ClienteDatosExtras"])) {
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->ClienteDatosExtras($parametros));
+}
+
+if (isset($_GET["ClienteSaldoPendiente"])) {
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->ClienteSaldoPendiente($parametros));
+}
+
+if (isset($_GET["DCDireccion"])) {
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->DCDireccion($parametros));
+}
+
+if (isset($_GET["ingresarDir"])) {
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->ingresarDir($parametros));
+}
+
 class punto_ventaC
 {
 	private $modelo;
@@ -125,6 +154,67 @@ class punto_ventaC
 		// print_r($datos);die();
 	}
 
+	function AdoLinea($parametros)
+	{
+		$serie = Leer_Campo_Empresa("Serie_FA");
+		$TC = $parametros['TipoFactura'];
+		if (strlen($serie) < 6) {
+			$serie = "999999";
+			$parametros['SerieFactura'] = "999999";
+		}
+		$CodigoL = G_NINGUNO;
+		$Cta_Cobrar = G_NINGUNO;
+		$Autorizacion = "9999999999";
+		$datosAdoLinea = $this->modelo->AdoLinea($parametros);
+		$mensaje = "";
+		if (count($datosAdoLinea) > 0) {
+			$CodigoL = $datosAdoLinea[0]['Codigo'];
+			$Cta_Cobrar = $datosAdoLinea[0]['CxC'];
+			$Autorizacion = $datosAdoLinea[0]['Autorizacion'];
+			$TC = $datosAdoLinea[0]['Fact'];
+			$serie = $datosAdoLinea[0]['Serie'];
+		} else {
+			$mensaje = "Falta Organizar la CxC en Puntos de Venta.
+						Salga de este proceso y llame al su técnico
+						o al Contador de su Organizacion.";
+		}
+		$NumComp = ReadSetDataNum($TC . "_SERIE_" . $serie, True, False);
+		return array('mensaje' => $mensaje, 'SerieFactura' => $serie, 'NumComp' => generaCeros($NumComp, 9), 'CodigoL' => $CodigoL, 'Cta_Cobrar' => $Cta_Cobrar, 'Autorizacion' => $Autorizacion);
+	}
+
+	function AdoAuxCatalogoProductos()
+	{
+		$datos = $this->modelo->AdoAuxCatalogoProductos();
+		return $datos;
+	}
+
+	function ClienteDatosExtras($parametros)
+	{
+		$datos = $this->modelo->ClientesDatosExtras($parametros);
+		return $datos;
+	}
+
+	function ClienteSaldoPendiente($parametros)
+	{
+		$datos = $this->modelo->ClienteSaldoPendiente($parametros);
+		return $datos;
+	}
+
+	function DCDireccion($parametros)
+	{
+		$datos = $this->modelo->DCDireccion($parametros);
+		return $datos;
+	}
+
+	function ingresarDir($parametros)
+	{
+		SetAdoAddNew("Clientes_Datos_Extras");
+		SetAdoFields("Tipo_Dato", "DIRECCION");
+		SetAdoFields("Codigo", $parametros['CodigoCliente']);
+		SetAdoFields("Direccion", $parametros['DireccionAux']);
+		return SetAdoUpdate();
+	}
+
 	function SerieFactura($parametros)
 	{
 
@@ -148,7 +238,7 @@ class punto_ventaC
 		$NumComp = ReadSetDataNum($parametros['TC'] . "_SERIE_" . $serie, True, False);
 
 		$res = array('serie' => $serie, 'NumCom' => generaCeros($NumComp, 9));
-		// print_r($res);die();		
+
 		return $res;
 	}
 
@@ -395,20 +485,21 @@ class punto_ventaC
 			if (isset($parametros['electronico'])) {
 				$electronico = $parametros['electronico'];
 			}
-			$datos = $this->modelo->catalogo_lineas($parametros['TC'], $parametros['Serie'], $FechaTexto, $FechaTexto, $electronico);
-			if (count($datos) > 0) {
+			//$datos = $this->modelo->catalogo_lineas($parametros['TC'], $parametros['Serie'], $FechaTexto, $FechaTexto, $electronico);
+			//if (count($datos) > 0) {
 				// print_r($datos);die();
 				$FA['Nota'] = $parametros['TxtNota'];
 				$FA['Observacion'] = $parametros['TxtObservacion'];
 				$FA['Gavetas'] = intval($parametros['TxtGavetas']);
 				$FA['codigoCliente'] = $parametros['CodigoCliente'];
+				$FA['CodigoC'] = $parametros['CodigoCliente'];
 				$FA['TextCI'] = $parametros['CI'];
 				$FA['TxtEmail'] = $parametros['email'];
 				$FA['Cliente'] = trim(str_replace($parametros['CI'] . ' -', '', $parametros['NombreCliente']));
 				$FA['TC'] = $parametros['TC'];
 				$FA['Serie'] = $parametros['Serie'];
-				$FA['Cta_CxP'] = $datos[0]['CxC'];
-				$FA['Autorizacion'] = $datos[0]['Autorizacion'];
+				$FA['Cta_CxP'] = $parametros['Cta_Cobrar'];
+				$FA['Autorizacion'] = $parametros['Autorizacion'];
 				$FA['FechaTexto'] = $FechaTexto;
 				$FA['Fecha'] = $FechaTexto;
 				$FA['Total'] = $FA['Total_MN'];
@@ -420,14 +511,16 @@ class punto_ventaC
 				$FA['CodDoc'] = $parametros['CodDoc'];
 				$FA['valorBan'] = $parametros['valorBan'];
 				$FA['TxtEfectivo'] = $parametros['TxtEfectivo'];
+				$FA['Cod_CxC'] = $parametros['CodigoL'];
+				$FA['CLAVE'] = ".";
 
 				$Moneda_US = False;
 				$TextoFormaPago = G_PAGOCONT;
 				// print_r($parametros);die();	       
 				return $this->ProcGrabar($FA);
-			} else {
-				return array('respuesta' => -1, 'text' => "Cuenta CxC sin setear en catalogo de lineas");
-			}
+			//} else {
+			//	return array('respuesta' => -1, 'text' => "Cuenta CxC sin setear en catalogo de lineas");
+			//}
 		} else {
 			return array('respuesta' => -5, 'text' => "El Efectivo no alcanza para grabar");
 		}
@@ -780,6 +873,7 @@ class punto_ventaC
 					Imprimir_Punto_Venta_Grafico($TFA);
 				} else {
 					$TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
+					$TFA['CLAVE'] = '.';
 					$this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
 					$imp = $FA['Serie'] . '-' . generaCeros($FA['Factura'], 7);
 					$rep = 1;
