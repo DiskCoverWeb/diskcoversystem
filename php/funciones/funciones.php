@@ -8052,6 +8052,7 @@ function Lineas_De_CxC($TFA)
   // print_r($TFA);die();
 
    // 'MsgBox $TFA['Cta_CxP']
+   $resp = 0;
   if($TFA['Cta_CxP'] <> G_NINGUNO ){
      $ExisteCtas = array();
      $ExisteCtas[0] = $TFA['Cta_CxP'];
@@ -8067,7 +8068,14 @@ function Lineas_De_CxC($TFA)
 
   // print_r($TFA);die();
   $fecha1 = strtotime($TFA['Fecha']);
-  $fecha2 = strtotime($TFA['Vencimiento']->format('Y-m-d'));
+  //Check if $TFA['Vencimiento'] is type string
+  $fecha2 = ""; 
+  if(is_string($TFA['Vencimiento'])){
+    $fecha2 = strtotime($TFA['Vencimiento']);
+  }else{
+    $fecha2 = strtotime($TFA['Vencimiento']->format('Y-m-d'));
+  }
+  
 
   if($fecha1 > $fecha2 ){ return array('respuesta'=>-1,'TFA'=>$TFA,'mensaje'=>$Cadena);}
    if($resp!=1)
