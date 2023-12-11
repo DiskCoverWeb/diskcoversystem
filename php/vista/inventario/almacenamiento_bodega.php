@@ -519,7 +519,7 @@ async function buscar_ruta()
 							<div class="col-sm-5">
 								<b>Codigo de lugar</b>
 								<div class="input-group input-group-sm">
-										<input type="" class="form-control input-xs" id="txt_cod_lugar" name="txt_cod_lugar" onblur="buscar_ruta()">	
+										<input type="" class="form-control input-xs" id="txt_cod_lugar" style="font-size: 20px;" name="txt_cod_lugar" onblur="buscar_ruta()">	
 										<span class="input-group-btn">
 												<button type="button" class="btn btn-info btn-flat" onclick="abrir_modal_bodegas()"><i class="fa fa-map-marker"></i></button>
 										</span>

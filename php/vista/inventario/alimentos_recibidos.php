@@ -73,6 +73,20 @@
 
   	 var parametros = $('#form_correos').serialize();
   	 var estado_trans = $('#form_estado_transporte').serialize();
+  	 var todos = 1;
+  	 $('.rbl_opciones').each(function() {
+			    const checkbox = $(this);
+			    var isChecked = $('input[name="' + checkbox[0]['name'] + '"]').is(':checked');
+			    if (!isChecked) {
+			        todos = 0;
+			    }
+			});
+  	 if(todos==0)
+	  	{
+	  		Swal.fire('Estado de trasporte No ingresada o incompleto','','info');
+	  		return false;
+	  	}
+
   	 // parametros+='&'+estado_trans;
   	 parametros+='&ddl_ingreso='+$('#txt_donante').val();
   	  $.ajax({
@@ -565,6 +579,12 @@ function autocoplet_ingreso_donante(){
 
   function guardar_edicion()
   {
+  	var motivo_edit = $('#txt_motivo_edit').val();
+  	if(motivo_edit=='' || motivo_edit=='.')
+  	{
+  		Swal.fire("Coloque un motivo de edicion","","info");
+  		return false;
+  	}
   	datos = $("#form_editar").serialize();
   	$.ajax({
 		    type: "POST",
@@ -715,11 +735,11 @@ function autocoplet_ingreso_donante(){
 				<img src="../../img/png/mostrar.png">
 			</button>
 		</div>
-		<div class="col-xs-2 col-md-2 col-sm-2">
+		<!-- <div class="col-xs-2 col-md-2 col-sm-2">
 			<button class="btn btn-default" title="Guardar" onclick="show_estado_transporte()">
 				<img src="../../img/png/camion.png" style="width:32px; height: :32px;">
 			</button>
-		</div>
+		</div> -->
 		<div class="col-xs-2 col-md-2 col-sm-2" style="display:none;" id="pnl_notificacion">
 			<div class="navbar-custom-menu">
 				<ul class="nav navbar-nav">
@@ -815,7 +835,22 @@ function autocoplet_ingreso_donante(){
 												<b>CANTIDAD:</b>
 												<input type="" class="form-control input-xs" id="txt_cant" name="txt_cant">	
 									</div>
-								</div>								
+								</div>
+								<div class="col-sm-8">									
+									
+								</div>
+								<div class="col-sm-4">									
+									<button type="button" class="btn btn-default" title="Guardar" onclick="show_estado_transporte()">
+												<img src="../../img/png/camion.png" style="width:22px; height: :92px;">
+												<br><b>Estado de Trasporte</b>
+											</button>
+								</div>
+								<!-- <div class="col-sm-2">									
+										<b>Estado Trasporte</b>
+											<button class="btn btn-default" title="Guardar" onclick="show_estado_transporte()">
+												<img src="../../img/png/camion.png" style="width:32px; height: :32px;">
+											</button>
+								</div>	 -->											
 							</div>			
 					</div>
 					<div class="col-sm-12 col-md-4" style="padding:0px">
@@ -1019,7 +1054,7 @@ function autocoplet_ingreso_donante(){
           <div class="input-group">
 						<input type="text" class="form-control" id="txt_temperatura2" name="txt_temperatura2" onblur="cambiar_temperatura()">
 						<span class="input-group-addon">°C</span>
-					</div>    					
+					</div> 								
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
               <button type="button" class="btn btn-primary" onclick="cambiar_temperatura()">OK</button>
@@ -1088,9 +1123,12 @@ function autocoplet_ingreso_donante(){
 
           		<div class="col-sm-6">
           			<b>Temperatura</b>
-          			<input type="text" id="txt_temperatura_edi" name="txt_temperatura_edi" class="form-control input-xs">
-          			
+          			<input type="text" id="txt_temperatura_edi" name="txt_temperatura_edi" class="form-control input-xs">          			
           		</div>
+          		<div class="col-sm-12">
+								<b>Motivo de edicion</b>
+								<textarea class="form-control form-control-sm" rows="3" id="txt_motivo_edit" name="txt_motivo_edit" ></textarea>
+							</div>   
           		</form>
           	</div>
           					

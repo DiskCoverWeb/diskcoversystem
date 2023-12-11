@@ -600,8 +600,8 @@ class alimentos_recibidosC
 		  }
 			$tr.='<tr>
   					<td width="'.$d.'">'.($key+1).'</td>
-  					<td width="'.$d1.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
-  					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
+  					<td width="'.$d1.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
+  					<td width="'.$d2.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
   					<td width="'.$d4.'">'.number_format($value['Entrada'],2,'.','').'</td>
   					<td width="'.$d4.'">'.$value['Nombre_Completo'].'</td>
@@ -1312,7 +1312,7 @@ class alimentos_recibidosC
 						<a href="#" style="padding:0px">
 								<label>'.$value['Proceso'].'</label>
 						 		<div class="btn-group pull-right">
-						 			<span class="label-success btn-sm btn"><input type="radio" class="rbl_opciones" name="'.$value['Cmds'].'_'.$value['TP'].'" id="'.$value['Cmds'].'_1" value="1" checked></span>
+						 			<span class="label-success btn-sm btn"><input type="radio" class="rbl_opciones" name="'.$value['Cmds'].'_'.$value['TP'].'" id="'.$value['Cmds'].'_1" value="1"></span>
 						 			<span class="label-danger btn-sm btn"><input type="radio" class="rbl_opciones"  name="'.$value['Cmds'].'_'.$value['TP'].'" id="'.$value['Cmds'].'_0" value="0"></span>
 						 		</div>
 					 	</a>

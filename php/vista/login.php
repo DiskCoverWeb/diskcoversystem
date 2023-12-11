@@ -255,8 +255,10 @@
            confirmButtonText: 'Si!'
          }).then((result) => {
            if (result.value==true) {
-			Ingresar();
-            
+								Ingresar();
+           }else
+           {
+           	 
            }
          })
 

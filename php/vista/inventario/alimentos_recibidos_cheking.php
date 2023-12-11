@@ -34,6 +34,7 @@
 		      $('#txt_cta_inv').val(data.Cta_Debe); // save selected id to input
 
 		      $('#txt_codigo_p').val(data.CodigoP)
+		      $('#txt_responsable').val(data.Responsable)
 
 		      $('#btn_estado_trasporte').css('display','block');
 		      if(data.Cod_R=='0')
@@ -615,6 +616,14 @@ function autocoplet_ingreso()
 								<select class=" form-control input-xs form-select" id="ddl_alimento" name="ddl_alimento" disabled>
                		<option value="">Seleccione Alimento</option>
                	</select>								
+							</div>
+						</div>
+						<div class="row"  style="padding-top: 5px;">
+							<div class="col-sm-6 text-right">
+								<b>Responsable Recepcion:</b>
+							</div>
+							<div class="col-sm-6">								
+								<input type="" class="form-control input-xs" id="txt_responsable" name="txt_responsable" readonly>
 							</div>
 						</div>
 					</div>
