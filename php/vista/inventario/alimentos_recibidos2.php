@@ -201,7 +201,8 @@ function cargar_paquetes()
            op+='<option value="'+item.ID+'">'+item.Proceso+'</option>';
         })
 
-        $('#txt_paquetes').html(op);        
+        $('#txt_paquetes').html(op); 
+        $('#txt_paquetes2').html(op);        
       }
   });
 
@@ -529,8 +530,32 @@ function autocoplet_ingreso()
    function cambiar_sucursal()
   {
   	var can = $('#ddl_sucursales2').val();
-  	$('#modal_sucursal').modal('hide');
-    $('#ddl_sucursales').val(can);
+    $('#ddl_sucursales').val(can);    
+    $('#modal_sucursal').modal('hide');
+    if($('#txt_TipoSubMod').val()=='R')
+    {
+        $('#modal_producto_2').modal('show');     
+    }
+  }
+
+  function cambiar_empaque()
+  {
+    var can = $('#txt_paquetes2').val();
+    $('#modal_empaque').modal('hide');
+    $('#txt_paquetes').val(can);
+
+    if($("#pnl_sucursal").is(":visible")==true && $('#ddl_sucursales').val()=='')
+    {
+      $('#modal_sucursal').modal('show');
+    }else{
+      $('#modal_producto_2').modal('show');          
+    }
+
+    // if($('#txt_TipoSubMod').val()=='R')
+    // {
+    //     $('#modal_producto_2').modal('show');     
+    // }
+
   }
 
   function ocultar_comentario()
@@ -601,6 +626,7 @@ function autocoplet_ingreso()
         }
 
         $('#ddl_sucursales').html(op);
+        $('#ddl_sucursales2').html(op);
         // console.log(response);
         
       }, 
@@ -622,7 +648,7 @@ function autocoplet_ingreso()
       type:  'post',
       dataType: 'json',
       success:  function (response) { 
-        op = '<option value="">Seleccione sucursal</option>';
+        let op = '<option value="">Seleccione sucursal</option>';
         var sucursal = 0;
         response.forEach(function(item,i){
             sucursal = 1;
@@ -1159,6 +1185,11 @@ function autocoplet_ingreso()
     autocoplet_producto();
     autocoplet_pro2();
   })
+
+  function valida_cantidad_ingreso()
+  {
+
+  }
 	 
 	function cargar_pedido()
   {
@@ -1172,6 +1203,7 @@ function autocoplet_ingreso()
       type:  'post',
       dataType: 'json',
       success:  function (response) {
+        console.log(response);
         $('#tbl_body').html(response.tabla);
         var diff = parseFloat(response.cant_total)-parseFloat(response.reciclaje);
         if(diff < 0)
@@ -1180,7 +1212,7 @@ function autocoplet_ingreso()
         }
         $('#txt_primera_vez').val(response.primera_vez);
 
-        var ingresados_en_pedidos =  $('#txt_cant_total_pedido').val(response.reciclaje);
+        var ingresados_en_pedidos =  $('#txt_cant_total_pedido').val();
         var ingresados_en_kardex =  $('#txt_cant_total').val(diff);
         var total_pedido = $('#txt_cant').val();
         var faltantes = parseFloat(total_pedido)-parseFloat(response.cant_total);
@@ -1203,9 +1235,10 @@ function autocoplet_ingreso()
       type:  'post',
       dataType: 'json',
       success:  function (response) {
-        // console.log(response);
+        console.log(response);
         $('#tbl_body_pedido').html(response.tabla);
-        $('#txt_cant_total_pedido').val(response.cant_total);       
+        $('#txt_cant_total_pedido').val(response.cant_total);   
+        $('#txt_total_lin_pedido').val(response.num_lin);       
       }
     });
   }
@@ -1277,7 +1310,9 @@ function autocoplet_ingreso()
                 title: 'Agregado a pedido',
                 text :'',
               }).then( function() {              		
-                   cargar_pedido();              		
+                   cargar_pedido(); 
+                   $('#txt_paquetes').val('');
+                   $('#ddl_sucursales').val('');             		
               });
 
             // Swal.fire('','Agregado a pedido.','success');
@@ -1653,6 +1688,7 @@ function eliminar_all_pedido(pedido)
 		           <div class="col-sm-12">
 		           	<br>
 		           	 <input type="hidden" id="txt_cant_total_pedido" name ="txt_cant_total_pedido" value="0">
+                 <input type="hidden" id="txt_total_lin_pedido" name ="txt_total_lin_pedido" value="0">
 			        	 <div class="table-responsive">
 			        	 	 <table class="table">
 			        	 	 	<thead>		        	 	 		
@@ -1712,6 +1748,27 @@ function eliminar_all_pedido(pedido)
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
               <button type="button" class="btn btn-primary" onclick="cambiar_sucursal()">OK</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div id="modal_empaque" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Tipo empaque</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          <b>Tipo de empaque</b>
+           <select class="form-control input-sm" id="txt_paquetes2" name="txt_paquetes2" onchange="cambiar_empaque()">
+              <option value="">Seleccione Sucursal</option>
+           </select>                  
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-primary" onclick="cambiar_empaque()">OK</button>
               <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
           </div>
       </div>

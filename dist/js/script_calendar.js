@@ -42,7 +42,10 @@ Vue.component('calendar', {
       {        
         if($('#txt_TipoSubMod').val()=='R')
         {
-          $('#modal_producto_2').modal('show')
+            if($('#txt_paquetes').val()=='')
+            {
+              $('#modal_empaque').modal('show');
+            }
         }
       }
     },
