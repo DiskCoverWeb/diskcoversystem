@@ -351,13 +351,18 @@ function DLCxCxP($SubCta,$query=false)
     	return Ejecutar_SQL_SP($sSQL);
 	}
 
-	function tipo_proveedor()
+	function tipo_proveedor($TP='')
 	{
 		$sql = "SELECT TP, Proceso,ID
 				FROM Catalogo_Proceso
 				WHERE Item ='".$_SESSION['INGRESO']['item']."' 
-				AND Nivel = 98
-				ORDER BY Proceso";
+				AND Nivel = 98";
+
+		if($TP!=''){
+			$sql .= " AND TP = '$TP' ";
+		}
+
+		$sql .= " ORDER BY Proceso";
 
 		return $this->db->datos($sql);
 	}

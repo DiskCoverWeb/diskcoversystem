@@ -20,7 +20,7 @@ if(isset($_GET['consultar_libro']))
 {
 	$parametros = $_POST['parametros'];
 	$controlador = new diario_generalC();
-	echo json_encode($controlador->cargar_consulta($parametros));
+	echo json_encode($controlador->cargar_consulta_libroD($parametros));
 }
 if(isset($_GET['consultar_submodulo']))
 {
@@ -125,6 +125,13 @@ if(isset($_GET['reporte_libro_2_excel']))
 	echo json_encode($controlador->excel_libro($parametros));
 }
 
+if(isset($_GET['EliminarComprobantesIncompletos']))
+{
+	$controlador = new diario_generalC();
+	echo json_encode($controlador->EliminarComprobantesIncompletos());
+}
+
+
 class diario_generalC
 {
 	private $modelo;
@@ -158,13 +165,12 @@ class diario_generalC
 	}
 
 
-	function cargar_consulta($parametros)
+	function cargar_consulta_libroD($parametros)
 	{
-		//print_r($parametros);
 		$Fechaini = str_replace('-','',$parametros['Fechaini']);
 		$Fechafin = str_replace('-','',$parametros['Fechafin']);
 		
-		$tabla = $this->modelo->cargar_consulta_libro_tabla(
+		return $this->modelo->cargar_consulta_libro_tabla(
 			$Fechaini,
 			$Fechafin,
 			$parametros['DCAgencia'],
@@ -180,8 +186,6 @@ class diario_generalC
 			$parametros['CheckAgencia'],
 			$parametros['CheckUsuario'],
 			$parametros['CheckNum']);
-		
-		return $tabla;
 	}
 	function cargar_submodulo($parametros)
 	{
@@ -579,6 +583,14 @@ class diario_generalC
 			$parametros['CheckAgencia'],
 			$parametros['CheckUsuario'],
 			$parametros['CheckNum']);
+	}
+
+	function EliminarComprobantesIncompletos()
+	{
+		Actualiza_Comprobantes_Incompletos("Trans_Kardex");
+	    Actualiza_Comprobantes_Incompletos("Trans_SubCtas");
+	    Actualiza_Comprobantes_Incompletos("Transacciones");
+	    return true;
 	}
 }
 ?>

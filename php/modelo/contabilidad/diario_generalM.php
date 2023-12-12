@@ -56,86 +56,64 @@ ORDER BY Acceso_Sucursales.Item,Empresa";
 
   function cargar_consulta_libro_tabla($FechaIni,$FechaFin,$DCAgencia,$DCUsuario,$TextNumNo,$TextNumNo1,$OpcCI,$OpcCE,$OpcCD,$OpcND,$OpcNC,$OpcA,$CheckAgencia,$CheckUsuario,$CheckNum)
 	{
+    $ConSucursal = $_SESSION['INGRESO']['Sucursal'];
 		$sql = "SELECT T.Fecha,T.TP,T.Numero,CL.Cliente As Beneficiario,Co.Concepto,T.Cta,C.Cuenta,
        T.Parcial_ME,T.Debe,T.Haber,T.Detalle,Ac.Nombre_Completo,Co.CodigoU,Co.Autorizado,T.Item,T.ID 
        FROM Transacciones As T,Catalogo_Cuentas As C,Comprobantes As Co,Clientes As CL,Accesos As Ac 
        WHERE T.Fecha BETWEEN '".$FechaIni."' and '".$FechaFin."' 
        AND T.Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
-  if($OpcCI=='true')
-  {
-     $sql.="AND T.TP = '".G_COMPINGRESO."'";
-  }
-  if($OpcCE=='true')
-  {
-  	$sql.=  "AND T.TP = '".G_COMPEGRESO."' ";
-  }
-  if($OpcCD=='true')
-  {
-  	 $sql.="AND T.TP = '".G_COMPDIARIO."' "; 	
-  }
 
-  if($OpcND=='true')
-  {
-  	 $sql.="AND T.TP = '".G_COMPNOTADEBITO."' ";
-  }
+    if ($OpcCI=='true') {
+      $sql .= "AND T.TP = '" . G_COMPINGRESO . "' ";
+    } elseif ($OpcCE=='true') {
+      $sql .= "AND T.TP = '" . G_COMPEGRESO . "' ";
+    } elseif ($OpcCD=='true') {
+      $sql .= "AND T.TP = '" . G_COMPDIARIO . "' ";
+    } elseif ($OpcND=='true') {
+      $sql .= "AND T.TP = '" . G_COMPNOTADEBITO . "' ";
+    } elseif ($OpcNC=='true') {
+      $sql .= "AND T.TP = '" . G_COMPNOTACREDITO . "' ";
+    }
+    
+    if ($OpcA=='true') {
+      $sql .= "AND T.T = '" . G_ANULADO . "' ";
+    } else {
+      $sql .= "AND T.T = '" . G_NORMAL . "' ";
+    }
+
+    if ($CheckAgencia=='true' && $DCAgencia=='') {
+      $sql .= "AND Co.Item = '" . trim($DCAgencia) . "' ";
+    } else {
+      if (!$ConSucursal) {
+        $sql .= "AND Co.Item = '" . $_SESSION['INGRESO']['item'] . "' ";
+      }
+    }
   
-  if($OpcNC=='true')
-  {
-     $sql.="AND T.TP = '".G_COMPNOTACREDITO."' ";  	
-  }
+    if($CheckUsuario=='true')
+    {
+    	$sql.= "AND Co.CodigoU = '".$DCUsuario."' ";
+    }
  
-  if($OpcA=='true')
-  {
-  	$sql.="AND T.T = '".G_ANULADO."' ";  	
-  }else
-  {
-  	 $sql.="AND T.T = '".G_NORMAL."' ";
-  }
+    if($CheckNum=='true')
+    {  	
+    	$sql.= "AND Co.Numero BETWEEN ".$TextNumNo." and ".$TextNumNo1." ";
+    }
+    $sql.= "AND T.Item = Co.Item 
+         AND T.Item = C.Item
+         AND C.Item = Co.Item
+         AND T.Periodo = C.Periodo
+         AND T.Periodo = Co.Periodo 
+         AND C.Periodo = Co.Periodo 
+         AND T.Cta = C.Codigo 
+         AND T.TP = Co.TP 
+         AND T.Numero = Co.Numero 
+         AND T.Fecha = Co.Fecha 
+         AND Co.Codigo_B = CL.Codigo 
+         AND Co.CodigoU = Ac.Codigo 
+         ORDER BY T.Fecha,T.TP,T.Numero,T.ID ";
 
-  if($CheckAgencia=='true')
-  {
-  	if($DCAgencia=='')
-  	{  		
-  		$sql.="AND Co.Item = '".$_SESSION['INGRESO']['item']."' ";
-  	}else
-  	{
-  		$sql.= "AND Co.Item = '".$DCAgencia."' ";
-  	}
-
-  }else
-  {
-    $sql.="AND Co.Item = '".$_SESSION['INGRESO']['item']."' ";
-  }
-  
-  if($CheckUsuario=='true')
-  {
-  	$sql.= "AND Co.CodigoU = '".$DCUsuario."' ";
-  }
- 
-  if($CheckNum=='true')
-  {  	
-  	$sql.= "AND Co.Numero BETWEEN ".$TextNumNo." and ".$TextNumNo1." ";
-  }
-  $sql.= "AND T.Item = Co.Item 
-       AND T.Item = C.Item
-       AND C.Item = Co.Item
-       AND T.Periodo = C.Periodo
-       AND T.Periodo = Co.Periodo 
-       AND C.Periodo = Co.Periodo 
-       AND T.Cta = C.Codigo 
-       AND T.TP = Co.TP 
-       AND T.Numero = Co.Numero 
-       AND T.Fecha = Co.Fecha 
-       AND Co.Codigo_B = CL.Codigo 
-       AND Co.CodigoU = Ac.Codigo 
-       ORDER BY T.Fecha,T.TP,T.Numero,T.ID ";
-
-        // print_r($sql);
-        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-203;
-       $tbl = grilla_generica_new($sql,' Transacciones As T,Catalogo_Cuentas As C,Comprobantes As Co,Clientes As CL,Accesos As Ac ','tbl_di',false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida);
-	  
-        // $tabla = grilla_generica($stmt,null,NULL,'1',null,null,null,true);
-        	return $tbl;
+    $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-203;
+   return grilla_generica_new($sql,' Transacciones As T,Catalogo_Cuentas As C,Comprobantes As Co,Clientes As CL,Accesos As Ac ','tbl_di',false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida);
 	}
 
 

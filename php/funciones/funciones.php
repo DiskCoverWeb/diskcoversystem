@@ -9112,12 +9112,8 @@ function Imprimir_Guia_Remision($DtaFactura, $DtaDetalle, $TFA){
 
 function CalculosSaldoAnt($TipoCod,$TDebe,$THaber,$TSaldo)
 {
-
-// print_r(substr($TipoCod ,1,1));die();
-  // print_r($TipoCod);die();
-  $OpcCoop = false;
   $TotSaldoAnt = 0;
-  if($OpcCoop){
+  if($_SESSION['INGRESO']['Opc']){
     switch (substr($TipoCod ,0,1)) {
       case '1':
       case '4':
@@ -13100,5 +13096,42 @@ function Actualiza_Cuenta_Tabla($Tabla, $Campo, $CtaOld, $CtaNew, $ConTP = false
 
     Ejecutar_SQL_SP($sSQL);
 }
+
+function Actualiza_Comprobantes_Incompletos($Nombre_Tabla) {
+  // Enceramos Bandera de Verificacion
+  $sSQL = "UPDATE " . $Nombre_Tabla . " " .
+          "SET X = '.' " .
+          "WHERE X <> '.' ".
+          "AND Item = '" . $_SESSION['INGRESO']['item'] . "' " .
+          "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' ";
+  Ejecutar_SQL_SP($sSQL);
+
+  // Actualizamos si está completo el Comprobante
+  if ((isset($_SESSION['INGRESO']['Tipo_Base']) and $_SESSION['INGRESO']['Tipo_Base'] == 'SQL SERVER')) {
+    $sSQL = "UPDATE " . $Nombre_Tabla . " " .
+            "SET X = 'X' " .
+            "FROM " . $Nombre_Tabla . " AS X, Comprobantes AS C ";
+  } else {
+    $sSQL = "UPDATE " . $Nombre_Tabla . " AS X, Comprobantes AS C " .
+            "SET X.X = 'X' ";
+  }
+
+  $sSQL = $sSQL . "WHERE C.Item = '" . $_SESSION['INGRESO']['item'] . "' " .
+                 "AND C.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' " .
+                 "AND X.Item = C.Item " .
+                 "AND X.Periodo = C.Periodo " .
+                 "AND X.TP = C.TP " .
+                 "AND X.Fecha = C.Fecha " .
+                 "AND X.Numero = C.Numero ";
+  Ejecutar_SQL_SP($sSQL);
+
+  // Eliminación de los comprobantes Incompletos
+  $sSQL = "DELETE FROM " . $Nombre_Tabla . " " .
+          "WHERE X = '.' " .
+          "AND Item = '" . $_SESSION['INGRESO']['item'] . "' " .
+          "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' ";
+  Ejecutar_SQL_SP($sSQL);
+}
+
 
 ?>

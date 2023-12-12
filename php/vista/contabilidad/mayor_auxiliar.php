@@ -69,59 +69,20 @@
 			type:  'post',
 			dataType: 'json',
 			beforeSend: function () {		
-			  //    var spiner = '<div class="text-center"><img src="../../img/gif/proce.gif" width="100" height="100"></div>'			
-				 // $('#tabla_').html(spiner);
 				 $('#myModal_espera').modal('show');
 			},
 				success:  function (response) {
-				consultar_totales(OpcUno,PorConceptos);
 				
-				 $('#tabla_').html(response);
-				 var nFilas = $("#tabla_ tr").length;
+				 $('#debe').val(addCommas(formatearNumero(response.SumaDebe)));				 
+				 $('#haber').val(addCommas(formatearNumero(response.SumaHaber)));							 
+				 $('#saldo').val(addCommas(formatearNumero(response.SaldoTotal)));
+				 $('#LabelTotSaldoAnt').val(addCommas(formatearNumero(response.SaldoAnterior)));
+				
+				 $('#DGMayor').html(response.DGMayor);
+				 var nFilas = $("#DGMayor tr").length;
 				 // $('#num_r').html(nFilas-1);	
 				 $('#myModal_espera').modal('hide');	
-				 $('#tit').text($titulo);			    
-				
-			}
-		});
-
-	}
-
-	function consultar_totales(OpcUno,PorConceptos)
-	{
-		$('#OpcU').val(OpcUno);
-		var parametros =
-		{
-			'CheckUsu':$("#CheckUsu").is(':checked'),
-			'CheckAgencia':$("#CheckAgencia").is(':checked'),
-			'txt_CtaI':$('#txt_CtaI').val(),
-			'txt_CtaF':$('#txt_CtaF').val(),
-			'desde':$('#desde').val(),
-			'hasta':$('#hasta').val(),	
-			'DCAgencia':$('#DCAgencia').val(),
-			'DCUsuario':$('#DCUsuario').val(),	
-			'DCCtas':$('#DCCtas').val(),
-			'OpcUno':OpcUno,
-			'PorConceptos':PorConceptos				
-		}
-		$titulo = 'Mayor de '+$('#DCCtas option:selected').html(),
-		$.ajax({
-			data:  {parametros:parametros},
-			url:   '../controlador/contabilidad/mayor_auxiliarC.php?consultar_tot=true',
-			type:  'post',
-			dataType: 'json',
-			beforeSend: function () {		
-			  //    var spiner = '<div class="text-center"><img src="../../img/gif/proce.gif" width="100" height="100"></div>'			
-				 // $('#tabla_').html(spiner);
-				// $('#myModal_espera').modal('show');
-			},
-				success:  function (response) {
-				
-				//array('Suma_ME'=>$Suma_ME,'SalAnt'=>$salAnt);
-				 $('#debe').val(addCommas(response.SumaDebe));				 
-				 $('#haber').val(addCommas(response.SumaHaber));							 
-				 $('#saldo').val(addCommas(response.SaldoTotal));
-				 $('#OpcG').val(addCommas(response.SalAnt));			    
+				 $('#tit').text($titulo+" (Registros: "+response.TotalRegistros+")");			    
 				
 			}
 		});
@@ -136,10 +97,6 @@
       url:   '../controlador/contabilidad/diario_generalC.php?sucu_exi=true',
       type:  'post',
       dataType: 'json',
-      /*beforeSend: function () {   
-           var spiner = '<div class="text-center"><img src="../../img/gif/proce.gif" width="100" height="100"></div>'     
-         $('#tabla_').html(spiner);
-      },*/
         success:  function (response) { 
         if(response == 1)
         {
@@ -168,10 +125,6 @@
 			url:   '../controlador/contabilidad/diario_generalC.php?drop=true',
 			type:  'post',
 			dataType: 'json',
-			/*beforeSend: function () {		
-			     var spiner = '<div class="text-center"><img src="../../img/gif/proce.gif" width="100" height="100"></div>'			
-				 $('#tabla_').html(spiner);
-			},*/
 				success:  function (response) {
 				console.log(response);		
 				$.each(response.agencia, function(i, item){
@@ -198,26 +151,13 @@
 			url:   '../controlador/contabilidad/mayor_auxiliarC.php?cuentas=true',
 			type:  'post',
 			dataType: 'json',
-			/*beforeSend: function () {		
-			     var spiner = '<div class="text-center"><img src="../../img/gif/proce.gif" width="100" height="100"></div>'			
-				 $('#tabla_').html(spiner);
-			},*/
 				success:  function (response) {	
-				var count=0;			
 				$.each(response, function(i, item){
-					if(count == 0)
-					{
-					  agencia+='<option value="'+response[i].Codigo+'" selected>'+response[i].Nombre_Cta+'</option>';
-				    }else
-				    {
-				      agencia+='<option value="'+response[i].Codigo+'">'+response[i].Nombre_Cta+'</option>';	
-				    } 
-
-					count = count+1;
+					 agencia+='<option value="'+response[i].Codigo+'" '+((i==0)?'selected':'')+'>'+response[i].Nombre_Cta+'</option>';
 				});				
 
 				$('#DCCtas').html(agencia);					    
-		        consultar_datos(true,Individual);				
+		    consultar_datos(true,Individual);				
 			}
 		});
 
@@ -227,12 +167,12 @@
    	<div class="row">
    		<div class="col-lg-4 col-sm-4 col-md-8 col-xs-12">
    			<div class="col-xs-2 col-md-2 col-sm-2">
-   				<a href="./contabilidad.php?mod=contabilidad#" data-toggle="tooltip" title="Salir de modulo" class="btn btn-default">
+   				<a href="./inicio.php?mod=<?php echo @$_GET['mod']; ?>" data-toggle="tooltip" title="Salir de modulo" class="btn btn-default">
             		<img src="../../img/png/salire.png">
             	</a>
             </div>   
              <div class="col-xs-2 col-md-2 col-sm-2">
-            	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
+            	<button title="Consultar un Mayor Auxiliar"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
             		<img src="../../img/png/consultar.png" >
             	</button>
              </div>		        
@@ -255,7 +195,7 @@
   		       	</ul>            	
             </div>
              <div class="col-xs-2 col-md-2 col-sm-2">
-            	<button title="Todos los mayores"  class="btn btn-default" data-toggle="tooltip" onclick="consultar_datos(false,Individual);">
+            	<button title="Consultar Varios Mayor Auxiliar"  class="btn btn-default" data-toggle="tooltip" onclick="consultar_datos(false,Individual);">
             		<img src="../../img/png/es.png" >
             	</button>
             </div>           
@@ -269,7 +209,7 @@
              <input type="text" name="txt_CtaI" id="txt_CtaI" class="input-xs" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas']; ?>">
 			 <br>
              <b>Cuenta final:&nbsp;&nbsp;&nbsp;</b>
-             <input type="text" name="txt_CtaF" id="txt_CtaF"  class="input-xs" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas']; ?>" > 
+             <input type="text" name="txt_CtaF" id="txt_CtaF" onblur="llenar_combobox_cuentas()" class="input-xs" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas']; ?>" > 
         </div>
 	  	<div class="col-sm-3"><br>
 	  		<b>Desde:</b>
@@ -295,7 +235,7 @@
                 	<option value="">Seleccione cuenta</option>
                 </select>
           	    <b>Saldo anterior MN:</b> 
-          	    <input type="text" name="OpcP" id="OpcG" class="input-xs">           
+          	    <input type="text" name="OpcP" id="LabelTotSaldoAnt" class="input-xs">           
         </div>		
 	</div>
 	  <!--seccion de panel-->
@@ -309,7 +249,7 @@
 	  	    <div class="tab-content" style="background-color:#E7F5FF">
 	  	    	<div id="home" class="tab-pane fade in active">
 	  	    			
-	  	    	   <div class="table-responsive" id="tabla_">
+	  	    	   <div class="table-responsive" id="DGMayor">
 	  	    	   		  	    	   	
 	  	    	   </div>
 	  	    	 </div>		  	    	  	    	
