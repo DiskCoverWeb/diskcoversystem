@@ -13,7 +13,7 @@ if(isset($_GET['cuentas']))
 if(isset($_GET['consultar']))
 {	
    $controlador = new libro_bancoC();
-  echo json_encode($controlador->consultar_banco($_POST['parametros']));
+  echo json_encode($controlador->ConsultarBanco($_POST['parametros']));
 }
 if(isset($_GET['consultar_tot']))
 {	
@@ -53,12 +53,10 @@ class libro_bancoC
 {
 	private $modelo;
 	private $pdf;
-	private $cataCta;
 	function __construct()
 	{
 		$this->modelo = new libro_bancoM();
 		$this->pdf = new cabecera_pdf();
-		$this->cataCta = new catalogoCtaM();
 	}
 
   function cuentas()
@@ -68,30 +66,24 @@ class libro_bancoC
   }
  
 
-  function consultar_banco($parametros)
+  function ConsultarBanco($parametros)
   {
   	$desde = str_replace('-','',$parametros['desde']);
     $hasta = str_replace('-','',$parametros['hasta']);		
-  	$datos = $this->modelo->consultar_banco_($desde,$hasta,$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario'],$parametros['DCCtas'],$parametros['height']);
-  	return $datos;
+  	return $this->modelo->consultar_banco_($desde,$hasta,$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario'],$parametros['DCCtas']);
   }
   function imprimir_pdf($parametros)
   {
-  	    $desde = str_replace('-','',$parametros['desde']);
+  	$desde = str_replace('-','',$parametros['desde']);
 		$hasta = str_replace('-','',$parametros['hasta']);
-	
 
-  		$datos = $this->modelo->consultar_banco_datos($desde,$hasta,$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario'],$parametros['DCCtas']);
-
-  		//print_r($datos);
-
-      
+  	$datos = $this->modelo->consultar_banco_($desde,$hasta,$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario'],$parametros['DCCtas'], true);
 
 		$titulo = 'L I B R O    B A N C O';
 		$sizetable =7;
 		$mostrar = TRUE;
-		$Fechaini = $parametros['desde'] ;//str_replace('-','',$parametros['Fechaini']);
-		$Fechafin = $parametros['hasta']; //str_replace('-','',$parametros['Fechafin']);
+		$Fechaini = $parametros['desde'];
+		$Fechafin = $parametros['hasta'];
 		$tablaHTML= array();
 		
 		$tablaHTML[0]['medidas']=array(40,235);
@@ -135,13 +127,12 @@ class libro_bancoC
 					}else
 					{
 						$fecha = $value['Fecha']->format('Y-m-d');
-				
 					}
 				}
 
 			    $tablaHTML[$pos]['medidas']=$tablaHTML[2]['medidas'];
 		        $tablaHTML[$pos]['alineado']=$ali;
-		        $tablaHTML[$pos]['datos']=array($fecha,$value['TP'],$value['Numero'],$value['Cheq_Dep'],$value['Cliente'],$value['Concepto'],$value['Parcial_ME'],$value['Debe'],$value['Haber'],$value['Saldo']);
+		        $tablaHTML[$pos]['datos']=array($fecha,$value['TP'],$value['Numero'],$value['Cheq_Dep'],$value['Cliente'],$value['Concepto'],$value['Parcial_ME'],number_format($value['Debe'],2,'.',''),number_format($value['Haber'],2,'.',''),$value['Saldo']);
 		        $tablaHTML[$pos]['borde'] ='LR';
 		        $pos = $pos+1;
 		        $fecha = $value['Fecha']->format('Y-m-d');
@@ -166,7 +157,7 @@ class libro_bancoC
 				    
 			    $tablaHTML[$pos]['medidas']=$tablaHTML[2]['medidas'];
 		        $tablaHTML[$pos]['alineado']=$ali;
-		        $tablaHTML[$pos]['datos']=array($fecha,$value['TP'],$value['Numero'],$value['Cheq_Dep'],$value['Cliente'],$value['Concepto'],$value['Parcial_ME'],$value['Debe'],$value['Haber'],$value['Saldo']);
+		        $tablaHTML[$pos]['datos']=array($fecha,$value['TP'],$value['Numero'],$value['Cheq_Dep'],$value['Cliente'],$value['Concepto'],$value['Parcial_ME'],number_format($value['Debe'],2,'.',''),number_format($value['Haber'],2,'.',''),$value['Saldo']);
 		        $tablaHTML[$pos]['borde'] ='LR';
 		         $pos = $pos+1;
 		        $fecha = $value['Fecha']->format('Y-m-d');
@@ -206,7 +197,7 @@ class libro_bancoC
 		          
 			    $tablaHTML[$pos]['medidas']=$tablaHTML[2]['medidas'];
 		        $tablaHTML[$pos]['alineado']=$ali;
-		        $tablaHTML[$pos]['datos']=array($fecha,$value['TP'],$value['Numero'],$value['Cheq_Dep'],$value['Cliente'],$value['Concepto'],$value['Parcial_ME'],$value['Debe'],$value['Haber'],$value['Saldo']);
+		        $tablaHTML[$pos]['datos']=array($fecha,$value['TP'],$value['Numero'],$value['Cheq_Dep'],$value['Cliente'],$value['Concepto'],$value['Parcial_ME'],number_format($value['Debe'],2,'.',''),number_format($value['Haber'],2,'.',''),$value['Saldo']);
 		        $tablaHTML[$pos]['borde'] ='LR';
 		         $pos = $pos+1;
 		        $fecha = $value['Fecha']->format('Y-m-d');
@@ -227,9 +218,7 @@ class libro_bancoC
 
   function imprimir_excel($parametros,$sub)
   {
-  	
-		$this->modelo->exportar_excel($parametros,$sub);
-
+		$this->modelo->imprimir_excel_LibroBanco($parametros,$sub);
   }
 
   function Totales_banco($parametros)
@@ -238,42 +227,42 @@ class libro_bancoC
     $hasta = str_replace('-','',$parametros['hasta']);		
   	$datos = $this->modelo->consultar_banco_datos($desde,$hasta,$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario'],$parametros['DCCtas']);
 
-  $Debe = 0; $Haber = 0; $Saldo = 0;
-  $Debe_ME = 0;$Haber_ME = 0; $Saldo_ME = 0; $salAnt=0;
-  if(count($datos)>0)
-  {
-  	foreach ($datos as $key => $value) {
-  		 $Debe+= $value["Debe"];
-         $Haber+= $value["Haber"];
-         $Saldo = $value["Saldo"];
-         if($value["Parcial_ME"] >= 0)
-         {
-         	$Debe_ME+= $value["Parcial_ME"];
-         }else
-         {
-           $Haber_ME += $value["Parcial_ME"];
-         }
-       $Saldo_ME = $value["Saldo_ME"];  		
-  	}
-  }
+	  $Debe = 0; $Haber = 0; $Saldo = 0;
+	  $Debe_ME = 0;$Haber_ME = 0; $Saldo_ME = 0; $salAnt=0;
+	  if(count($datos)>0)
+	  {
+	  	foreach ($datos as $key => $value) {
+	  		 $Debe+= $value["Debe"];
+	         $Haber+= $value["Haber"];
+	         $Saldo = $value["Saldo"];
+	         if($value["Parcial_ME"] >= 0)
+	         {
+	         	$Debe_ME+= $value["Parcial_ME"];
+	         }else
+	         {
+	           $Haber_ME += $value["Parcial_ME"];
+	         }
+	       $Saldo_ME = $value["Saldo_ME"];  		
+	  	}
+	  }
 
-  $tipoCta = explode('.', $parametros['DCCtas']);
-if($tipoCta[0] == 1 || $tipoCta[0] == 5 || $tipoCta[0] == 7 || $tipoCta[0] == 9)
-{
-  $salAnt = $Saldo - $Debe + $Haber;
-}else
-{
-	$vari = round($Haber-$Debe,2);
-	$tot = round($Saldo,2);
-	// print_r($vari);	
-	// print_r('expression');
-	// print_r($tot-$vari);
-	$salAnt = $tot-$vari;
- 
-}
+	  $tipoCta = explode('.', $parametros['DCCtas']);
+		if($tipoCta[0] == 1 || $tipoCta[0] == 5 || $tipoCta[0] == 7 || $tipoCta[0] == 9)
+		{
+		  $salAnt = $Saldo - $Debe + $Haber;
+		}else
+		{
+			$vari = round($Haber-$Debe,2);
+			$tot = round($Saldo,2);
+			// print_r($vari);	
+			// print_r('expression');
+			// print_r($tot-$vari);
+			$salAnt = $tot-$vari;
+		 
+		}
 
-$totales = array('Debe'=>round($Debe,2),'Haber'=>round($Haber,2),'Saldo'=>round($Saldo,2),'Debe_ME'=>round($Debe_ME,2),'Haber_ME'=>round($Haber_ME,2),'Saldo_ME'=>round($Saldo_ME,2),'SalAnt'=>round($salAnt,2),'SalAnt_'=>round($Saldo_ME-$Debe_ME+$Haber_ME));
- return $totales;
+		$totales = array('Debe'=>round($Debe,2),'Haber'=>round($Haber,2),'Saldo'=>round($Saldo,2),'Debe_ME'=>round($Debe_ME,2),'Haber_ME'=>round($Haber_ME,2),'Saldo_ME'=>round($Saldo_ME,2),'SalAnt'=>round($salAnt,2),'SalAnt_'=>round($Saldo_ME-$Debe_ME+$Haber_ME));
+		 return $totales;
    	 
   }
 }

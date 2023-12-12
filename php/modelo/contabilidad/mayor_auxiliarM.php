@@ -191,67 +191,6 @@ include(dirname(__DIR__,2).'/db/variables_globales.php');//
 
 
   return array('DGMayor' => $DGMayor,"AdoTrans"=>$AdoTrans, "SumaDebe" => $SumaDebe, "SumaHaber" => $SumaHaber, "SaldoTotal" => $SaldoTotal, "SaldoAnterior"=> $SaldoAnterior, "TotalRegistros" => count($AdoMayor));
-
- 	/*$totales = $this->consulta_totales($OpcUno,$PorConceptos,$cuentaini,$cuentafin,$desde,$hasta,$DCCtas,$CheckAgencia,$DCAgencia,$Checkusu,$DCUsuario);
- 	//print_r($PorConceptos);
- 	if($cuentaini=='' || $cuentaini==" ")
- 	{
- 		$cuentaini = 1;
- 	}
- 	if($cuentafin == '' || $cuentafin == " ")
- 	{
- 		$cuentafin = 9;
- 	}
-
- 	if($PorConceptos=='true')
- 	{
- 		$sql =  "SELECT T.Fecha,T.TP,T.Numero,Cl.Cliente,T.Detalle As Concepto,T.Cheq_Dep,T.Debe,T.Haber,T.Saldo,
-          T.Parcial_ME,T.Saldo_ME,T.ID,T.Cta,T.Item FROM Transacciones As T,Clientes As Cl ";
- 	}else
- 	{
- 		 $sql = "SELECT T.Fecha,T.TP,T.Numero,Cl.Cliente,C.Concepto,T.Cheq_Dep,Debe,Haber,Saldo,
-          Parcial_ME,Saldo_ME,T.ID,T.Cta,T.Item FROM Transacciones As T,Comprobantes As C,Clientes As Cl ";
-
- 	}
- 	
- 	$sql.="WHERE T.Fecha BETWEEN '".$desde."' and '".$hasta."' AND T.T = '".G_NORMAL."' AND T.Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
-
-    if($OpcUno == 'true' )
-    {
-       $sql.=" AND T.Cta = '".$DCCtas."'";
-    }else
-    {
-    	$sql.= "AND T.Cta BETWEEN '".$cuentaini."' AND '".$cuentafin."' ";
-    }
-    if($CheckAgencia == 'true')
-   {
-   	 $sql.= " AND T.Item = '".$DCAgencia."' ";
-   }else
-   {
-   	$sql.= "AND T.Item = '".$_SESSION['INGRESO']['item']."' ";
-   }
- if($PorConceptos == 'true')
-  {
-  	$sql .= "AND T.Codigo_C = Cl.Codigo ";
-  }else
-  {
-  	if($Checkusu == 'true')
-  	{
-  		$sql.=  "AND C.CodigoU = '".$DCUsuario."' AND C.Codigo_B = Cl.Codigo AND T.TP = C.TP AND T.Numero = C.Numero AND T.Periodo = C.Periodo AND T.Fecha = C.Fecha AND T.Item = C.Item ";
-  	}else
-  	{
-  		 $sql.=  "AND C.Codigo_B = Cl.Codigo AND T.TP = C.TP AND T.Numero = C.Numero AND T.Periodo = C.Periodo AND T.Fecha = C.Fecha AND T.Item = C.Item ";
-
-  	}
-  }
-  $sql.= "ORDER BY T.Cta,T.Fecha,T.TP,T.Numero,Debe DESC,Haber,T.ID ";
-    // echo "<pre>";print_r($sql);echo "</pre>";die();
-
-    $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-144;
-    $tbl = grilla_generica_new($sql,'Transacciones As T,Comprobantes As C,Clientes As Cl ','tbl_may',false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida);
-
-       return $tbl;*/
-  
  }
 
 function consultar_cuentas_datos($OpcUno,$PorConceptos,$cuentaini,$cuentafin,$desde,$hasta,$DCCtas,$CheckAgencia,$DCAgencia,$Checkusu,$DCUsuario)

@@ -1,3 +1,10 @@
+<?php
+	Ejecutar_SQL_SP("UPDATE Comprobantes " .
+        "SET Cotizacion = 0.004 " .
+        "WHERE Cotizacion = 0 " .
+        "AND Item = '" . $_SESSION['INGRESO']['item'] . "' " .
+        "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'");
+?>
 <script type="text/javascript">
 	var Individual = false;
 	$(document).ready(function()
@@ -44,7 +51,7 @@
     		    mes = '0'+mes;
     	    }
     	    $('#hasta').val(partes[0]+"-"+partes[1]+"-"+ultimoDia.getDate());
-    	    consultar_datos();
+    	    ConsultarDatosLibroBanco();
         }else
         {
        	 alert('Procure que la fecha no sea mayor a '+(ano+30)+' y menor a 2000');
@@ -82,7 +89,7 @@
 
   }
 		
-	function consultar_datos()
+	function ConsultarDatosLibroBanco()
 	{
 		var parametros =
 		{
@@ -96,70 +103,31 @@
 			'height':screen.height,			
 		}
 		$titulo = 'Mayor de '+$('#DCCtas option:selected').html();
+		$('#myModal_espera').modal('show');
 		$.ajax({
 			data:  {parametros:parametros},
 			url:   '../controlador/contabilidad/libro_bancoC.php?consultar=true',
 			type:  'post',
 			dataType: 'json',
-			beforeSend: function () {		
-			  //    var spiner = '<div class="text-center"><img src="../../img/gif/proce.gif" width="100" height="100"></div>'			
-				 // $('#tabla_').html(spiner);
-				 $('#myModal_espera').modal('show');
-			},
-				success:  function (response) {
-				consultar_totales();
+			success:  function (response) {
+				$('#debe').val(addCommas(response.LabelTotDebe));
+				$('#haber').val(addCommas(response.LabelTotHaber));					
+				$('#saldo_ant').val(addCommas(response.LabelSaldoAntMN));
+				$('#saldo').val(addCommas(response.LabelTotSaldo));
+
+				$('#debe_').val(addCommas(response.LabelTotDebeME));
+				$('#haber_').val(addCommas(response.LabelTotHaberME));
+				$('#saldo_ant_').val(addCommas(response.LabelSaldoAntME));
+				$('#saldo_').val(addCommas(response.LabelTotSaldoME));
 				
-				 $('#tabla_').html(response);
+				 $('#tabla_').html(response.DGBanco);
 				 var nFilas = $("#tabla_ tr").length;
-				 // $('#num_r').html(nFilas-1);	
 				 $('#myModal_espera').modal('hide');	
-				 $('#tit').text($titulo);			    
-				
+				 $('#tit').text($titulo+" (Registros: "+response.TotalRegistros+")");			    
 			}
 		});
 
 	}
-
-	function consultar_totales()
-	{
-		var parametros =
-		{
-			'CheckUsu':$("#CheckUsu").is(':checked'),
-			'CheckAgencia':$("#CheckAgencia").is(':checked'),
-			'desde':$('#desde').val(),
-			'hasta':$('#hasta').val(),	
-			'DCAgencia':$('#DCAgencia').val(),
-			'DCUsuario':$('#DCUsuario').val(),	
-			'DCCtas':$('#DCCtas').val(),			
-		}
-		$titulo = 'Mayor de '+$('#DCCtas option:selected').html(),
-		$.ajax({
-			data:  {parametros:parametros},
-			url:   '../controlador/contabilidad/libro_bancoC.php?consultar_tot=true',
-			type:  'post',
-			dataType: 'json',
-			beforeSend: function () {		
-			  //    var spiner = '<div class="text-center"><img src="../../img/gif/proce.gif" width="100" height="100"></div>'			
-				 // $('#tabla_').html(spiner);
-				// $('#myModal_espera').modal('show');
-			},
-				success:  function (response) {
-					$('#debe').val(addCommas(response.Debe));
-					$('#haber').val(addCommas(response.Haber));					
-					$('#saldo_ant').val(addCommas(response.SalAnt));
-					$('#saldo').val(addCommas(response.Saldo));
-
-					$('#debe_').val(addCommas(response.Debe_ME));
-					$('#haber_').val(addCommas(response.Haber_ME));
-					$('#saldo_ant_').val(addCommas(response.SalAnt_));
-					$('#saldo_').val(addCommas(response.Saldo_ME));
-
-				console.log(response);
-			}
-		});
-
-	}
-
 		
 	function llenar_combobox()
 	{	
@@ -192,33 +160,20 @@
 
 	function llenar_combobox_cuentas()
 	{	
-
-		var agencia='<option value="">Seleccione Cuenta</option>';
+		var cuentas='';
 		$.ajax({
-			//data:  {ini:ini,fin:fin},
 			url:   '../controlador/contabilidad/libro_bancoC.php?cuentas=true',
 			type:  'post',
 			dataType: 'json',
-			/*beforeSend: function () {		
-			     var spiner = '<div class="text-center"><img src="../../img/gif/proce.gif" width="100" height="100"></div>'			
-				 $('#tabla_').html(spiner);
-			},*/
 				success:  function (response) {	
-				var count=0;			
 				$.each(response, function(i, item){
-					if(count == 0)
-					{
-					  agencia+='<option value="'+response[i].Codigo+'" selected>'+response[i].Nombre_Cta+'</option>';
-				    }else
-				    {
-				      agencia+='<option value="'+response[i].Codigo+'">'+response[i].Nombre_Cta+'</option>';	
-				    } 
-
-					count = count+1;
+					cuentas+='<option value="'+response[i].Codigo+'" '+((i==0)?'selected':'')+'>'+response[i].Nombre_Cta+'</option>';
 				});				
-
-				$('#DCCtas').html(agencia);					    
-		        consultar_datos(true,Individual);				
+				if($.trim(cuentas) === ''){
+					cuentas='<option value=".">Sin Cuentas</option>';
+				}
+				$('#DCCtas').html(cuentas);					    
+		        ConsultarDatosLibroBanco();				
 			}
 		});
 
@@ -228,12 +183,12 @@
    	<div class="row">
    		<div class="col-lg-4 col-sm-8 col-md-8 col-xs-12">
    			<div class="col-xs-2 col-md-2 col-sm-2">
-   				<a href="./contabilidad.php?mod=contabilidad#" data-toggle="tooltip" title="Salir de modulo" class="btn btn-default">
+   				<a href="./inicio.php?mod=<?php echo @$_GET['mod']; ?>" data-toggle="tooltip" title="Salir de modulo" class="btn btn-default">
             		<img src="../../img/png/salire.png">
             	</a>
             </div>
              <div class="col-xs-2 col-md-2 col-sm-2">
-            	<button title="Consultar Mayores auxiliares"  data-toggle="tooltip" class="btn btn-default" onclick="consultar_datos(true,Individual);">
+            	<button title="Consultar"  data-toggle="tooltip" class="btn btn-default" onclick="ConsultarDatosLibroBanco();">
             		<img src="../../img/png/consultar.png" >
             	</button>
             	</div>		
@@ -260,22 +215,22 @@
             <input type="date" name="desde" id="desde" class="input-xs"  value="<?php echo date("Y-m-d");?>" onblur="validar_year_menor(this.id);fecha_fin()" onkeyup="validar_year_mayor(this.id)">
 			<br>
             <b>Hasta:&nbsp;</b>
-            <input type="date" name="hasta" id="hasta"  class="input-xs"  value="<?php echo date("Y-m-d");?>" onblur="validar_year_menor(this.id);consultar_datos(true,Individual);" onkeyup="validar_year_mayor(this.id)">  	              	
+            <input type="date" name="hasta" id="hasta"  class="input-xs"  value="<?php echo date("Y-m-d");?>" onblur="validar_year_menor(this.id);ConsultarDatosLibroBanco();" onkeyup="validar_year_mayor(this.id)">  	              	
 	  	</div>
 
 	  	<div class="col-sm-3">
                 <label style="margin:0px"><input type="checkbox" name="CheckUsu" id="CheckUsu">  <b>Por usuario</b></label>
-                <select class="form-control input-xs" id="DCUsuario"  onchange="consultar_datos(true,Individual);">
+                <select class="form-control input-xs" id="DCUsuario"  onchange="ConsultarDatosLibroBanco();">
                 	<option value="">Seleccione usuario</option>
                 </select>
           	    <label id="lblAgencia" style="margin:0px"><input type="checkbox" name="CheckAgencia" id="CheckAgencia">  <b>Agencia</b></label>
-          	     <select class="form-control input-xs" id="DCAgencia" onchange="consultar_datos(true,Individual);">
+          	     <select class="form-control input-xs" id="DCAgencia" onchange="ConsultarDatosLibroBanco();">
                 	<option value="">Seleccione agencia</option>
                 </select>             
         </div>
         <div class="col-sm-3">
         	<b>Por cuenta</b>
-                <select class="form-control input-xs" id="DCCtas" onchange="consultar_datos(true,Individual);">
+                <select class="form-control input-xs" id="DCCtas" onchange="ConsultarDatosLibroBanco();">
                 	<option value="">Seleccione cuenta</option>
                 </select>
           	   
