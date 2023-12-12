@@ -2,6 +2,7 @@
   <link rel="stylesheet" href="../../dist/css/arbol_bodegas/reset.min.css">
   <link rel="stylesheet" href="../../dist/css/arbol_bodegas/arbol_bodega.css">
   <script src="../../dist/js/arbol_bodegas/prefixfree.min.js"></script>
+ 
 <script type="text/javascript">
   $(document).ready(function () {
   	cargar_bodegas()
@@ -43,15 +44,17 @@
 			var diferenciaEnMilisegundos = fecha2 - fecha1;
 			var diferenciaEnDias = ((diferenciaEnMilisegundos/ 1000)/86400);
 			diferenciaEnDias = parseInt(diferenciaEnDias);
-			if(diferenciaEnDias<10)
+
+			console.log(diferenciaEnDias);
+			if(diferenciaEnDias<0)
       {
       	 $('#btn_expired').css('display','initial');
       	 $('#txt_fecha_exp').css('color','red');
       	 $('#img_por_expirar').attr('src','../../img/gif/expired_titi2.gif');
       	 $('#btn_titulo').text('Expirado')
-      }else if(diferenciaEnDias==10){
+      }else if(diferenciaEnDias<=10 && diferenciaEnDias>0){
       	 $('#btn_expired').css('display','initial');
-      	 $('#txt_fecha_exp').css('color','red');
+      	 $('#txt_fecha_exp').css('color','yellow');
       	 $('#img_por_expirar').attr('src','../../img/gif/expired_titi.gif');
       	 $('#btn_titulo').text('Por Expirar')
       }else
@@ -110,7 +113,7 @@
           results: data.map(function (item) {
             return {
               id: item.id,
-              text: '<span style="color: ' + item.color + '; background:black;">' + item.text + '</span>',
+              text: '<span style="color: ' + item.color + '; background:#444141">' + item.text + '</span>',
               data : item.data,
             };
           })

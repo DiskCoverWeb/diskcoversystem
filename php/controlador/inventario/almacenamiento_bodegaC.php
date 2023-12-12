@@ -140,7 +140,7 @@ class almacenamiento_bodegaC
       	$fecha2 = new DateTime($value['Fecha_Exp']->format('Y-m-d'));
       	$diferenciaEnSegundos = $fecha2->getTimestamp() - $fecha1->getTimestamp();
 		$dias = intval($diferenciaEnSegundos / 86400);
-		if($dias<10){$color = 'red';}else if ($dias==10) { $color = '#e2d035';}else{$color = '#56a359';}
+		if($dias<0){$color = 'red';}else if ($dias<=10 && $dias>0) { $color = '#e2d035';}else{$color = '#56a359';}
 		
 		 $result[] = array("id"=>$value['ID'],"text"=>$value['Codigo_Barra'],'data'=>$value,'color'=>$color);
 		}
