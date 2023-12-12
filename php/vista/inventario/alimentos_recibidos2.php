@@ -666,8 +666,8 @@ function autocoplet_ingreso()
     var parametros = {
         'notificar':$('#txt_notificar').val(),
         'id':$('#txt_id').val(),
-        'asunto':'Recepcion',
-        'pedido':$('#txt_codigo').val(),
+        'asunto':'De Clasificacion a Recepcion',
+        'pedido':$('#txt_codigo').val()
     }
      $.ajax({
       data:  {parametros,parametros},
@@ -742,8 +742,8 @@ function autocoplet_ingreso()
              $('#pnl_notificacion').css('display','block');
              data.forEach(function(item,i){
               mensajes+='<li>'+
-                      '<a href="#" data-toggle="modal" onclick="mostrar_notificacion(\''+item.Texto_Memo+'\',\''+item.ID+'\')">'+
-                        '<h4>'+
+                      '<a href="#" data-toggle="modal" onclick="mostrar_notificacion(\''+item.Texto_Memo.replace(/[\r\n]/g, '')+'\',\''+item.ID+'\')">'+
+                        '<h4 style="margin:0px">'+
                           item.Asunto+
                           '<small>'+formatoDate(item.Fecha.date)+' <i class="fa fa-calendar-o"></i></small>'+
                         '</h4>'+
@@ -964,7 +964,7 @@ function autocoplet_ingreso()
                 </div>
 							</div>
 						</div>
-						<div class="row" id="panel_serie"  style="padding-top: 5px;">
+						<div class="row" id="panel_serie"  style="padding-top: 5px;display: none;">
 							<div class="col-sm-6 text-right">
 								<b>ESTADO TRANSPORTE</b>
 							</div>

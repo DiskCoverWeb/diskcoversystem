@@ -142,9 +142,10 @@ class alimentos_recibidosM
 
 	function buscar_transCorreos_procesados($cod=false,$fecha=false)
 	{
-		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,C.Actividad,TC.Llamadas   
+		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,C.Actividad,TC.Llamadas,TC.CodigoU,C2.Cliente as 'Responsable'     
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
+		inner join Clientes C2 on TC.CodigoU = C2.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
 		where Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
@@ -514,6 +515,20 @@ class alimentos_recibidosM
 				AND TP = 'ESTTRANS'
 				ORDER BY Cmds, Proceso";
 		return $this->db->datos($sql);
+	}
+
+	function estado_trasporte($pedido)
+	{
+
+		$sql = "SELECT  TF.ID,Proceso,Cumple
+				FROM         Trans_Fletes TF
+				inner join Catalogo_Proceso CP on CP.Cmds = TF.TP
+				WHERE  TF.Item = '".$_SESSION['INGRESO']['item']."' 
+				AND TF.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND Codigo_Inv= '".$pedido."'";
+				// print_r($sql);die();
+		return $this->db->datos($sql);
+
 	}
 
 

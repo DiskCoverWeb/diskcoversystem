@@ -257,6 +257,11 @@ if(isset($_GET['preguntas_transporte']))
 	// $parametros = $_POST['parametros'];
 	echo json_encode($controlador->preguntas_transporte());
 }
+if(isset($_GET['estado_trasporte']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->estado_trasporte($parametros));
+}
 
 /**
  * 
@@ -595,8 +600,8 @@ class alimentos_recibidosC
 		  }
 			$tr.='<tr>
   					<td width="'.$d.'">'.($key+1).'</td>
-  					<td width="'.$d1.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
-  					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
+  					<td width="'.$d1.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
+  					<td width="'.$d2.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
   					<td width="'.$d4.'">'.number_format($value['Entrada'],2,'.','').'</td>
   					<td width="'.$d4.'">'.$value['Nombre_Completo'].'</td>
@@ -774,7 +779,7 @@ class alimentos_recibidosC
   					  $tr.='<input type="checkbox" class="rbl_conta" name="rbl_conta" id="rbl_conta_'.$value['ID'].'" value="'.$value['ID'].'" checked  />';
   					}else
   					{
-  						$tr.='<input type="checkbox" class="rbl_conta" name="rbl_conta" id="rbl_conta_'.$value['ID'].'" value="'.$value['ID'].'" />';
+  						$tr.='<input type="checkbox" class="rbl_conta" onclick="guardar_check()" name="rbl_conta" id="rbl_conta_'.$value['ID'].'" value="'.$value['ID'].'" />';
   					}
   					$tr.='</td>
   					<td>
@@ -871,6 +876,7 @@ class alimentos_recibidosC
 		$fecha = $parametros['fecha'];
 
 		$datos = $this->modelo->buscar_transCorreos($query,$fecha);
+		// print_r($datos);die();
 		$tr= '';
 		foreach ($datos as $key => $value) {
 			$noti = $this->modelo->listar_notificaciones($_SESSION['INGRESO']['CodigoU'],'P',false,$value['Envio_No']);
@@ -883,7 +889,8 @@ class alimentos_recibidosC
 						</button>
 						<ul class="dropdown-menu">';
 						foreach ($noti as $key2 => $value2) {
-							$alerta.='<li><a href="#" onclick="mostrar_notificacion(\''.$value2['Texto_Memo'].'\',\''.$value2['ID'].'\')">Notificacion'.($key2+1).'</a></li>';
+							$texto2 = str_replace(array("\r", "\n"), '', $value2['Texto_Memo']);
+							$alerta.='<li><a href="#" onclick="mostrar_notificacion(\''.$texto2.'\',\''.$value2['ID'].'\')">Notificacion'.($key2+1).'</a></li>';
 						}
 						$alerta.='</ul>
 					</div>	';
@@ -1267,6 +1274,12 @@ class alimentos_recibidosC
 		return SetAdoUpdateGeneric();
 	}
 
+	function estado_trasporte($parametros)
+	{
+		$codigo = $parametros['pedido'];
+		return $this->modelo->estado_trasporte($codigo);
+	}
+
 	function editar_comentarios_trans_correos($pedido,$asunto,$texto)
 	{
 		SetAdoAddNew("Trans_Correos");	
@@ -1299,7 +1312,7 @@ class alimentos_recibidosC
 						<a href="#" style="padding:0px">
 								<label>'.$value['Proceso'].'</label>
 						 		<div class="btn-group pull-right">
-						 			<span class="label-success btn-sm btn"><input type="radio" class="rbl_opciones" name="'.$value['Cmds'].'_'.$value['TP'].'" id="'.$value['Cmds'].'_1" value="1" checked></span>
+						 			<span class="label-success btn-sm btn"><input type="radio" class="rbl_opciones" name="'.$value['Cmds'].'_'.$value['TP'].'" id="'.$value['Cmds'].'_1" value="1"></span>
 						 			<span class="label-danger btn-sm btn"><input type="radio" class="rbl_opciones"  name="'.$value['Cmds'].'_'.$value['TP'].'" id="'.$value['Cmds'].'_0" value="0"></span>
 						 		</div>
 					 	</a>

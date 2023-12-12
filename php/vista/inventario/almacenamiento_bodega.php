@@ -15,10 +15,13 @@
     $('#txt_codigo').on('select2:select', function (e) {
       var data = e.params.data.data;
 
+      console.log(data);
+
     	$('#txt_id').val(data.ID); 
       $('#txt_fecha_exp').val(formatoDate(data.Fecha_Exp.date));
       $('#txt_fecha').val(formatoDate(data.Fecha.date));
       $('#txt_donante').val(data.Centro_Costo);
+      $('#txt_paquetes').val(data.Tipo_Empaque);
 
       var cantidad = parseFloat(data.Entrada).toFixed(2)
       $('#txt_cant').val(cantidad); // save selected id to input
@@ -472,13 +475,13 @@ async function buscar_ruta()
 					</div> -->
 				</div>
 				<div class="row">
-					<div class="col-sm-5" style="display:none;">
-						Tipo de Empaque
-						<select class="form-control input-xs" id="txt_paquetes" name="txt_paquetes">
+					<div class="col-sm-5">
+						<b>Tipo de Empaque</b>
+						<select class="form-control input-xs" id="txt_paquetes" name="txt_paquetes" disabled>
 							<option value="">Seleccione Empaque</option>
 						</select>
 					</div>
-					<div class="col-sm-3" id="pnl_alertas">
+					<div class="col-sm-7 text-right" id="pnl_alertas">
 						<button class="btn btn-default" type="button" id="btn_alto_stock" style="display:none;">
 							<img id="img_alto_stock"  src="../../img/gif/alto_stock_titi.gif" style="width:48px">
 							<br>
@@ -516,7 +519,7 @@ async function buscar_ruta()
 							<div class="col-sm-5">
 								<b>Codigo de lugar</b>
 								<div class="input-group input-group-sm">
-										<input type="" class="form-control input-xs" id="txt_cod_lugar" name="txt_cod_lugar" onblur="buscar_ruta()">	
+										<input type="" class="form-control input-xs" id="txt_cod_lugar" style="font-size: 20px;" name="txt_cod_lugar" onblur="buscar_ruta()">	
 										<span class="input-group-btn">
 												<button type="button" class="btn btn-info btn-flat" onclick="abrir_modal_bodegas()"><i class="fa fa-map-marker"></i></button>
 										</span>

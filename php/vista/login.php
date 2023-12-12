@@ -255,15 +255,19 @@
            confirmButtonText: 'Si!'
          }).then((result) => {
            if (result.value==true) {
-			Ingresar();
-            
+								Ingresar();
+           }else
+           {
+           		$('#correo').val('');
+           		$('#contra').val('');
+           		$('#txt_cartera').val(0);
+           	 
            }
          })
 
   	}else
   	{
-		Ingresar();	
-		
+			Ingresar();	
   	}
   }
   
