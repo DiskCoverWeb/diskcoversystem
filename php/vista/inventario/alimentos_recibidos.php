@@ -1,4 +1,14 @@
 <?php date_default_timezone_set('America/Guayaquil'); ?>
+<style type="text/css">
+	.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+    color: #fbf0f0;
+    cursor: default;
+    background-color: #3c8dbc;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+}
+</style>
+
 <script type="text/javascript">
   $(document).ready(function () {
   	cargar_datos_procesados();
@@ -57,6 +67,28 @@
 
 
   })
+
+
+  function validar_trasporte_lleno()
+  {
+  	var todos = 1;
+  	$('.rbl_opciones').each(function() {
+			    const checkbox = $(this);
+			    var isChecked = $('input[name="' + checkbox[0]['name'] + '"]').is(':checked');
+			    if (!isChecked) {
+			        todos = 0;
+			    }
+			});
+  	 if(todos==0)
+	  	{
+	  		Swal.fire('Estado de trasporte incompleto','','info');
+	  		return false;
+	  	}else
+	  	{
+	  		$('#modal_estado_transporte').modal('hide');
+	  	}
+
+  }
 
   function guardar()
   {
@@ -801,7 +833,7 @@ function autocoplet_ingreso_donante(){
 											</span>
 											 <b>TEMPERATURA DE RECEPCION:</b>	
 											 <div class="input-group">
-				                	<input type="" class="form-control input-sm" id="txt_temperatura" name="txt_temperatura">	
+				                	<input type="" class="form-control input-sm" id="txt_temperatura" name="txt_temperatura" autocomplete="false" >	
 													<span class="input-group-addon">°C</span>
 											 </div>
 
@@ -1166,7 +1198,7 @@ function autocoplet_ingreso_donante(){
           					
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+              <button type="button" class="btn btn-default" onclick="validar_trasporte_lleno()">Cerrar</button>
           </div>
       </div>
   </div>

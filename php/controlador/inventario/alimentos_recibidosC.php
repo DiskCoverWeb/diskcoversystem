@@ -292,7 +292,7 @@ class alimentos_recibidosC
 		SetAdoFields('Fecha_P',$parametros['txt_fecha']);
 		SetAdoFields('CodigoP',$parametros['ddl_ingreso']);
 		SetAdoFields('Cod_C',$parametros['ddl_alimento']);
-		SetAdoFields('Porc_C',$parametros['txt_temperatura']);
+		SetAdoFields('Porc_C',number_format($parametros['txt_temperatura'],2,'.',''));
 		// SetAdoFields('Cod_R',$parametros['cbx_estado_tran']);
 		SetAdoFields('TOTAL',$parametros['txt_cant']);
 
@@ -1203,7 +1203,7 @@ class alimentos_recibidosC
 		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);  
 		   SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
 		   SetAdoFields('Codigo',$pedido[0]['CodigoU']); 
-		   SetAdoFields('Texto_Memo',$parametros['notificar'].' (Pedido:'.$parametros['pedido'].')');
+		   SetAdoFields('Texto_Memo',$parametros['notificar'].'<br> (Pedido:'.$parametros['pedido'].')');
 		   SetAdoFields('Codigo',$pedido[0]['CodigoU']); 
 		   SetAdoFields('Atencion',$parametros['pedido']);
 		   return SetAdoUpdate();		   

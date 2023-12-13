@@ -615,7 +615,7 @@ function autocoplet_ingreso()
         var sucursal = 0;
         response.forEach(function(item,i){
             sucursal = 1;
-            op+="<option value=\""+item.ID+"\">"+item.Direccion+"</option>";
+            op+="<option value=\""+item.ID+"\">"+item.TP+' - '+item.Direccion+"</option>";
         })
 
         if(sucursal==1)
@@ -693,7 +693,8 @@ function autocoplet_ingreso()
         'notificar':$('#txt_notificar').val(),
         'id':$('#txt_id').val(),
         'asunto':'De Clasificacion a Recepcion',
-        'pedido':$('#txt_codigo').val()
+        'pedido':$('#txt_codigo').val(),
+        'para':$('#txt_responsable').val(),
     }
      $.ajax({
       data:  {parametros,parametros},
@@ -795,7 +796,7 @@ function autocoplet_ingreso()
   function mostrar_notificacion(text,id)
   {
     $('#myModal_notificar').modal('show');
-    $('#txt_mensaje').text(text);   
+    $('#txt_mensaje').html(text);   
     $('#txt_id_noti').val(id);
   }
 
@@ -1015,7 +1016,7 @@ function autocoplet_ingreso()
                   <div class="input-group">
                       <input type="text" name="txt_responsable" id="txt_responsable" value="" class="form-control input-xs" readonly>
                       <span class="input-group-btn">
-                        <button type="button" class="btn btn-warning btn-flat btn-xs" onclick="nueva_notificacion()"><i class="fa fa-exclamation-triangle"></i></button>
+                        <button type="button" class="btn btn-warning btn-flat btn-xs" onclick="nueva_notificacion()"><i class="fa  fa-envelope"></i></button>
                       </span>
                   </div>
               </div>	

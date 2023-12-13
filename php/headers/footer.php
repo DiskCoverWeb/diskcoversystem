@@ -346,7 +346,7 @@
             </div>
             <div class="modal-body" style="background: antiquewhite;">
               <input type="hidden" name="txt_id_noti" id="txt_id_noti">
-                <p id="txt_mensaje"></p>
+                <div id="txt_mensaje"></div>
                 <hr>
                 <b>Responder</b>
                 <textarea class="form-control" id="txt_respuesta" name="txt_respuesta">.</textarea>
