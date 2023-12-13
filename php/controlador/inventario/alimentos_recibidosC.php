@@ -446,9 +446,11 @@ class alimentos_recibidosC
 	   // print_r($numeracion);die();
 	   $num = 1;
 	   if(count($numeracion)>0){
-	   		$num = substr($numeracion[0]['Codigo_Barra'],strlen($numeracion[0]['Codigo_Barra'])-4,strlen($numeracion[0]['Codigo_Barra']));
+	   		$num = substr($numeracion[0]['Codigo_Barra'],strlen($numeracion[0]['Codigo_Barra'])-3,strlen($numeracion[0]['Codigo_Barra']));
 	   		$num = intval($num)+1;
 	   	}
+
+	   	// print_r($num);die();
 	   $referencia = $parametro['txt_referencia'];
 	   SetAdoAddNew("Trans_Kardex"); 		
 	   SetAdoFields('Codigo_Inv',$referencia);
