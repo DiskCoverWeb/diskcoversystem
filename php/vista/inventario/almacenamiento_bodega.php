@@ -2,6 +2,7 @@
   <link rel="stylesheet" href="../../dist/css/arbol_bodegas/reset.min.css">
   <link rel="stylesheet" href="../../dist/css/arbol_bodegas/arbol_bodega.css">
   <script src="../../dist/js/arbol_bodegas/prefixfree.min.js"></script>
+ 
 <script type="text/javascript">
   $(document).ready(function () {
   	cargar_bodegas()
@@ -15,10 +16,13 @@
     $('#txt_codigo').on('select2:select', function (e) {
       var data = e.params.data.data;
 
+      console.log(data);
+
     	$('#txt_id').val(data.ID); 
       $('#txt_fecha_exp').val(formatoDate(data.Fecha_Exp.date));
       $('#txt_fecha').val(formatoDate(data.Fecha.date));
       $('#txt_donante').val(data.Centro_Costo);
+      $('#txt_paquetes').val(data.Tipo_Empaque);
 
       var cantidad = parseFloat(data.Entrada).toFixed(2)
       $('#txt_cant').val(cantidad); // save selected id to input
@@ -35,15 +39,24 @@
       	 $('#img_alto_stock').attr('src','../../img/png/alto_stock.png');
       }
 
-			var fecha1 = new Date(formatoDate(Date()));
+			var fecha1 = new Date();
       var fecha2 = new Date(formatoDate(data.Fecha_Exp.date));
 			var diferenciaEnMilisegundos = fecha2 - fecha1;
-			var diferenciaEnDias = diferenciaEnMilisegundos / 86400000;
-			if(diferenciaEnDias<=10 && diferenciaEnDias>=0)
+			var diferenciaEnDias = ((diferenciaEnMilisegundos/ 1000)/86400);
+			diferenciaEnDias = parseInt(diferenciaEnDias);
+
+			console.log(diferenciaEnDias);
+			if(diferenciaEnDias<0)
       {
       	 $('#btn_expired').css('display','initial');
       	 $('#txt_fecha_exp').css('color','red');
+      	 $('#img_por_expirar').attr('src','../../img/gif/expired_titi2.gif');
+      	 $('#btn_titulo').text('Expirado')
+      }else if(diferenciaEnDias<=10 && diferenciaEnDias>0){
+      	 $('#btn_expired').css('display','initial');
+      	 $('#txt_fecha_exp').css('color','yellow');
       	 $('#img_por_expirar').attr('src','../../img/gif/expired_titi.gif');
+      	 $('#btn_titulo').text('Por Expirar')
       }else
       {
       	 $('#btn_expired').css('display','none');
@@ -73,20 +86,43 @@
   }
 
   function pedidos(){
-  $('#txt_codigo').select2({
+  // $('#txt_codigo').select2({
+  //   placeholder: 'Seleccione una beneficiario',
+  //   // width:'90%',
+  //   ajax: {
+  //     url:   '../controlador/inventario/almacenamiento_bodegaC.php?search_contabilizado=true',          
+  //     dataType: 'json',
+  //     delay: 250,
+  //     processResults: function (data) {
+  //       // console.log(data);
+  //       return {
+  //         results: data
+  //       };
+  //     },
+  //     cache: true
+  //   }
+  // });
+  	$('#txt_codigo').select2({
     placeholder: 'Seleccione una beneficiario',
-    // width:'90%',
     ajax: {
-      url:   '../controlador/inventario/almacenamiento_bodegaC.php?search_contabilizado=true',          
+      url: '../controlador/inventario/almacenamiento_bodegaC.php?search_contabilizado=true',
       dataType: 'json',
       delay: 250,
       processResults: function (data) {
-        // console.log(data);
         return {
-          results: data
+          results: data.map(function (item) {
+            return {
+              id: item.id,
+              text: '<span style="color: ' + item.color + '; background:#444141">' + item.text + '</span>',
+              data : item.data,
+            };
+          })
         };
       },
       cache: true
+    },
+    escapeMarkup: function (markup) {
+      return markup;
     }
   });
 }
@@ -180,11 +216,11 @@ function asignar_bodega()
 		return false;
 	}
 
-	if(paquete=='.' || paquete =='')
-	{
-		Swal.fire('Seleccione Paquete','','info');
-		return false;
-	}
+	// if(paquete=='.' || paquete =='')
+	// {
+	// 	Swal.fire('Seleccione Paquete','','info');
+	// 	return false;
+	// }
 	if(id=='')
 	{
 		Swal.fire('Seleccione un pedido','','info');
@@ -443,21 +479,21 @@ async function buscar_ruta()
 				</div>
 				<div class="row">
 					<div class="col-sm-5">
-						Tipo de Empaque
-						<select class="form-control input-xs" id="txt_paquetes" name="txt_paquetes">
+						<b>Tipo de Empaque</b>
+						<select class="form-control input-xs" id="txt_paquetes" name="txt_paquetes" disabled>
 							<option value="">Seleccione Empaque</option>
 						</select>
 					</div>
-					<div class="col-sm-3 text-right" id="pnl_alertas">
+					<div class="col-sm-7 text-right" id="pnl_alertas">
 						<button class="btn btn-default" type="button" id="btn_alto_stock" style="display:none;">
 							<img id="img_alto_stock"  src="../../img/gif/alto_stock_titi.gif" style="width:48px">
 							<br>
 							Alto Stock
 						</button>
 						<button class="btn btn-default" type="button" id="btn_expired" style="display:none;">
+							<b id="btn_titulo">Por Expirar</b><br>
 							<img id="img_por_expirar" src="../../img/gif/expired_titi.gif" style="width:48px">
-							<br>
-							Por Expirar
+							
 						</button>
 					</div>
 				</div>
@@ -486,7 +522,7 @@ async function buscar_ruta()
 							<div class="col-sm-5">
 								<b>Codigo de lugar</b>
 								<div class="input-group input-group-sm">
-										<input type="" class="form-control input-xs" id="txt_cod_lugar" name="txt_cod_lugar" onblur="buscar_ruta()">	
+										<input type="" class="form-control input-xs" id="txt_cod_lugar" style="font-size: 20px;" name="txt_cod_lugar" onblur="buscar_ruta()">	
 										<span class="input-group-btn">
 												<button type="button" class="btn btn-info btn-flat" onclick="abrir_modal_bodegas()"><i class="fa fa-map-marker"></i></button>
 										</span>

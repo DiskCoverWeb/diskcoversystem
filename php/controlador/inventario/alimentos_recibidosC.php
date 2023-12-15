@@ -15,8 +15,10 @@ if(isset($_GET['proveedores']))
 }
 if(isset($_GET['guardar']))
 {
-	$parametros = $_POST;
-	echo json_decode($controlador->guardar($parametros));
+	// print_r($_POST);die();
+	parse_str($_POST['parametros'],$parametros);
+	parse_str($_POST['transporte'],$transporte);
+	echo json_decode($controlador->guardar($parametros,$transporte));
 }
 if(isset($_GET['guardar2']))
 {
@@ -75,7 +77,7 @@ if(isset($_GET['autoincrementable']))
 {
 	$parametros = $_POST['parametros'];
 	$num = $controlador->autoincrementable($parametros);
-	$num = generaCeros($num,4);
+	$num = generaCeros($num,3);
 	echo json_encode($num);
 }
 if(isset($_GET['search']))
@@ -220,6 +222,11 @@ if(isset($_GET['notificar_clasificacion']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->notificar_clasificacion($parametros));
 }
+if(isset($_GET['comentar_clasificacion']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->comentar_clasificacion($parametros));
+}
 if(isset($_GET['notificar_usuario']))
 {
 	$parametros = $_POST['parametros'];
@@ -235,6 +242,26 @@ if(isset($_GET['cambiar_estado']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->cambiar_estado($parametros));
 }
+if(isset($_GET['cambiar_estado_solucionado']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->cambiar_estado_solucionado($parametros));
+}
+if(isset($_GET['cambiar_a_clasificacion']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->cambiar_a_clasificacion($parametros));
+}
+if(isset($_GET['preguntas_transporte']))
+{
+	// $parametros = $_POST['parametros'];
+	echo json_encode($controlador->preguntas_transporte());
+}
+if(isset($_GET['estado_trasporte']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->estado_trasporte($parametros));
+}
 
 /**
  * 
@@ -249,10 +276,15 @@ class alimentos_recibidosC
 		$this->modelo = new alimentos_recibidosM();
 	}
 
-	function guardar($parametros)
+	function guardar($parametros,$transporte)
 	{
-		// print_r($parametros);die();
+		// print_r($parametros);
+		// print_r($transporte);die();
+
+
+
 		$parametros['fecha'] = $parametros['txt_fecha'];
+		$codigo = substr($parametros['txt_codigo'],0,-3).generaCeros($this->autoincrementable($parametros),3);
 		// print_r($parametros);die();
 		SetAdoAddNew('Trans_Correos');
 		SetAdoFields('T','I');
@@ -260,13 +292,25 @@ class alimentos_recibidosC
 		SetAdoFields('Fecha_P',$parametros['txt_fecha']);
 		SetAdoFields('CodigoP',$parametros['ddl_ingreso']);
 		SetAdoFields('Cod_C',$parametros['ddl_alimento']);
-		SetAdoFields('Porc_C',$parametros['txt_temperatura']);
-		SetAdoFields('Cod_R',$parametros['cbx_estado_tran']);
+		SetAdoFields('Porc_C',number_format($parametros['txt_temperatura'],2,'.',''));
+		// SetAdoFields('Cod_R',$parametros['cbx_estado_tran']);
 		SetAdoFields('TOTAL',$parametros['txt_cant']);
 
-		SetAdoFields('Envio_No',substr($parametros['txt_codigo'],0,-4).generaCeros($this->autoincrementable($parametros),4));
-		return SetAdoUpdate();
+		SetAdoFields('Envio_No',$codigo);
+		SetAdoUpdate();
 
+
+		foreach ($transporte as $key => $value) {
+			$Cmds = explode('_', $key);
+			SetAdoAddNew('Trans_Fletes');
+		    SetAdoFields('TP',$Cmds[0]);
+		    SetAdoFields('Referencia',$Cmds[1]);
+		    SetAdoFields('Cumple',$value);
+		    SetAdoFields('Codigo_Inv',$codigo);	
+		    SetAdoUpdate();		
+		}
+
+		return 1;
 	}
 
 	function guardar2($parametros)
@@ -381,6 +425,7 @@ class alimentos_recibidosC
 	function guardar_recibido($parametro)
 	{
 		
+		// print_r($parametro);die();
 	   // SetAdoAddNew("Trans_Kardex");
 
 		// print_r($parametro);die();
@@ -388,14 +433,24 @@ class alimentos_recibidosC
 
 	   $num_ped = $parametro['txt_codigo']; 	
 	   $producto = $this->modelo->catalogo_productos($parametro['txt_referencia']);
+	   if($producto[0]['TDP']=='R')
+	   {
+	   	 $prod = $this->modelo->existe_en_transKarder($parametro['txt_codigo'],$producto[0]['Codigo_Inv']);
+	   	 if(count($prod)>0)
+	   	 {
+	   	 	 return  $respuesta = array('ped'=>$num_ped,'resp'=>1,'total_add'=>'1');		
+	   	 }
+	   }
 	   $fecha = date('Y-m-d');
 	   $numeracion = $this->modelo->numeracion_dia_categoria($fecha,$producto[0]['Item_Banco']);
 	   // print_r($numeracion);die();
 	   $num = 1;
 	   if(count($numeracion)>0){
-	   		$num = substr($numeracion[0]['Codigo_Barra'],strlen($numeracion[0]['Codigo_Barra'])-4,strlen($numeracion[0]['Codigo_Barra']));
+	   		$num = substr($numeracion[0]['Codigo_Barra'],strlen($numeracion[0]['Codigo_Barra'])-3,strlen($numeracion[0]['Codigo_Barra']));
 	   		$num = intval($num)+1;
 	   	}
+
+	   	// print_r($num);die();
 	   $referencia = $parametro['txt_referencia'];
 	   SetAdoAddNew("Trans_Kardex"); 		
 	   SetAdoFields('Codigo_Inv',$referencia);
@@ -414,13 +469,14 @@ class alimentos_recibidosC
 	   SetAdoFields('CANTIDAD',$parametro['txt_cantidad']);
 	   SetAdoFields('Valor_Unitario',number_format($producto[0]['PVP'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
 	   // SetAdoFields('DH',2);
-	   SetAdoFields('Codigo_Barra',$parametro['txt_codigo'].'-'.$producto[0]['Item_Banco'].'-'.generaCeros($num,4));
+	   SetAdoFields('Codigo_Barra',$parametro['txt_codigo'].'-'.$producto[0]['Item_Banco'].'-'.generaCeros($num,3));
 	   SetAdoFields('CodBodega',-1);
 
 	   SetAdoFields('Cta_Inv',$parametro['txt_cta_inv']);
 	   SetAdoFields('Contra_Cta',$parametro['txt_contra_cta']);
 	   SetAdoFields('Codigo_P',$parametro['txt_codigo_p']);
 	   SetAdoFields('Codigo_Dr',$parametro['ddl_sucursales']);
+	   SetAdoFields('Tipo_Empaque',$parametro['txt_paquetes']);
 	   $resp = SetAdoUpdate();
 	   return  $respuesta = array('ped'=>$num_ped,'resp'=>$resp,'total_add'=>'1');		
 	}
@@ -546,8 +602,8 @@ class alimentos_recibidosC
 		  }
 			$tr.='<tr>
   					<td width="'.$d.'">'.($key+1).'</td>
-  					<td width="'.$d1.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
-  					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
+  					<td width="'.$d1.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
+  					<td width="'.$d2.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
   					<td width="'.$d4.'">'.number_format($value['Entrada'],2,'.','').'</td>
   					<td width="'.$d4.'">'.$value['Nombre_Completo'].'</td>
@@ -711,14 +767,21 @@ class alimentos_recibidosC
   					<td width="'.$d4.'"><input class="form-control"  id="txt_pvp_linea_'.$value['ID'].'" name="txt_pvp_linea_'.$value['ID'].'" onblur="recalcular('.$value['ID'].')" input-sm" value="'.$value['Valor_Unitario'].'"></td>
   					<td width="'.$d4.'"><input class="form-control" id="txt_total_linea_'.$value['ID'].'" name="txt_total_linea_'.$value['ID'].'"  input-sm" value="'.$value['Valor_Total'].'" readonly></td>
 
-  					<td width="'.$d3.'">'.$value['Nombre_Completo'].' <small class="label label-danger" onclick="abrir_modal_notificar(\''.$value['CodigoU'].'\')"><i class="fa fa-commenting"></i></small></td>
+  					<td>	  					
+						'.$value['Nombre_Completo'].'<br>
+						<small class="label label-danger" onclick="abrir_modal_notificar(\''.$value['CodigoU'].'\')" title="Notificar"><i class="fa fa-commenting"></i></small>
+						<!--- <small class="label label-danger" onclick="abrir_modal_notificar(\''.$value['CodigoU'].'\')"><i class="fa fa-exclamation-triangle"></i></small>
+						<small class="label label-danger" onclick="abrir_modal_notificar(\''.$value['CodigoU'].'\')"><i class="fa fa-commenting"></i></small>
+						<small class="label label-danger" onclick="abrir_modal_notificar(\''.$value['CodigoU'].'\')"><i class="fa fa-commenting"></i></small>
+						 --->
+  					 </td>
   					<td width="90px">';
   					if($value['T']=='C')
   					{
   					  $tr.='<input type="checkbox" class="rbl_conta" name="rbl_conta" id="rbl_conta_'.$value['ID'].'" value="'.$value['ID'].'" checked  />';
   					}else
   					{
-  						$tr.='<input type="checkbox" class="rbl_conta" name="rbl_conta" id="rbl_conta_'.$value['ID'].'" value="'.$value['ID'].'" />';
+  						$tr.='<input type="checkbox" class="rbl_conta" onclick="guardar_check()" name="rbl_conta" id="rbl_conta_'.$value['ID'].'" value="'.$value['ID'].'" />';
   					}
   					$tr.='</td>
   					<td>
@@ -815,12 +878,33 @@ class alimentos_recibidosC
 		$fecha = $parametros['fecha'];
 
 		$datos = $this->modelo->buscar_transCorreos($query,$fecha);
+		// print_r($datos);die();
 		$tr= '';
 		foreach ($datos as $key => $value) {
+			$noti = $this->modelo->listar_notificaciones($_SESSION['INGRESO']['CodigoU'],'P',false,$value['Envio_No']);
+			$alerta = '';
+			if(count($noti)>0)
+			{
+				$alerta = '<div class="btn-group pull-right">
+						<button type="button" class="label label-warning btn-warning dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							<i class="fa fa-commenting"></i>
+						</button>
+						<ul class="dropdown-menu">';
+						foreach ($noti as $key2 => $value2) {
+							$texto2 = str_replace(array("\r", "\n"), '', $value2['Texto_Memo']);
+							$alerta.='<li><a href="#" onclick="mostrar_notificacion(\''.$texto2.'\',\''.$value2['ID'].'\')">Notificacion'.($key2+1).'</a></li>';
+						}
+						$alerta.='</ul>
+					</div>	';
+			}
+			// print_r($value);
+			// print_r($noti);die();
 			$tr.='<tr>
 					<td>'.$value['Envio_No'].'</td>
 					<td>'.$value['Fecha_P']->format('Y-m-d').'</td>
-					<td>'.$value['Cliente'].'</td>
+					<td>'.$value['Cliente'].' 
+					'.$alerta.'						
+					</td>
 					<td>'.$value['Proceso'].'</td>
 					<td>'.number_format($value['TOTAL'],2,'.','').'</td>
 					<td>'.$value['Porc_C'].'</td>
@@ -1119,9 +1203,19 @@ class alimentos_recibidosC
 		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);  
 		   SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
 		   SetAdoFields('Codigo',$pedido[0]['CodigoU']); 
-		   SetAdoFields('Texto_Memo',$parametros['notificar']);
-		   return SetAdoUpdate();
+		   SetAdoFields('Texto_Memo',$parametros['notificar'].'<br> (Pedido:'.$parametros['pedido'].')');
+		   SetAdoFields('Codigo',$pedido[0]['CodigoU']); 
+		   SetAdoFields('Atencion',$parametros['pedido']);
+		   return SetAdoUpdate();		   
+		   
 	}
+
+	function comentar_clasificacion($parametros)
+	{
+		// print_r($parametros);die();
+		return $this->editar_comentarios_trans_correos($parametros['id'],'Clasificacion',$parametros['notificar']);				   
+	}
+
 
 	function notificar_usuario($parametros)
 	{
@@ -1134,7 +1228,8 @@ class alimentos_recibidosC
 		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);  
 		   SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
 		   SetAdoFields('Codigo',$parametros['usuario']); 
-		   SetAdoFields('Texto_Memo',$parametros['notificar']);
+		   SetAdoFields('Texto_Memo',$parametros['notificar'].' (Pedido:'.$parametros['pedido'].')');
+		   SetAdoFields('Atencion',$parametros['pedido']);
 		   return SetAdoUpdate();
 	}
 
@@ -1147,10 +1242,86 @@ class alimentos_recibidosC
 
 	function cambiar_estado($parametros)
 	{
+		$notificacion = $this->modelo->listar_notificaciones(false,false,$parametros['noti']);
+		$parametros2 = array('asunto'=>'Respuesta Notificacion','notificar'=>$parametros['respuesta'],'usuario'=>$notificacion[0]['CodigoU'],'pedido'=>$notificacion[0]['Atencion']);
+
+		// print_r($parametros2);die();
+
+
  	    SetAdoAddNew("Trans_Memos");	
+		SetAdoFields('T','N');
+		SetAdoFields('T','N');
+		SetAdoFieldsWhere('ID',$parametros['noti']);
+		SetAdoUpdateGeneric();
+
+		 return $this->notificar_usuario($parametros2);
+	}
+
+	function cambiar_estado_solucionado($parametros)
+	{
+		
+ 	    SetAdoAddNew("Trans_Memos");	
+		SetAdoFields('T','N');
 		SetAdoFields('T','N');
 		SetAdoFieldsWhere('ID',$parametros['noti']);
 		return SetAdoUpdateGeneric();
+	}
+
+	function cambiar_a_clasificacion($parametros)
+	{
+		// print_r($parametros);die();
+ 	    SetAdoAddNew("Trans_Correos");	
+		SetAdoFields('T','I');
+		SetAdoFieldsWhere('Envio_No',$parametros['pedido']);
+		return SetAdoUpdateGeneric();
+	}
+
+	function estado_trasporte($parametros)
+	{
+		$codigo = $parametros['pedido'];
+		return $this->modelo->estado_trasporte($codigo);
+	}
+
+	function editar_comentarios_trans_correos($pedido,$asunto,$texto)
+	{
+		SetAdoAddNew("Trans_Correos");	
+		switch ($asunto) {
+			case 'Recepcion':
+				SetAdoFields('Mensaje',$texto);
+				break;
+			case 'Clasificacion':
+				SetAdoFields('Llamadas',$texto);
+				break;
+		}
+		SetAdoFieldsWhere('ID',$pedido);
+	  return  SetAdoUpdateGeneric();
+	}
+
+	function preguntas_transporte()
+	{
+		$datos = $this->modelo->preguntas_transporte();
+		$html='<li class="list-group-item">
+					<a href="#" style="padding:0px">
+							<label></label>
+					 		<div class="btn-group pull-right">
+					 			<span class="label-default btn-sm btn"><img src="../../img/png/bueno2.png" style="width: 14px;"></span>
+					 			<span class="label-default btn-sm btn"><img src="../../img/png/close.png" style="width: 14px;"></span>
+					 		</div>
+				 	</a>
+				</li>';
+		foreach ($datos as $key => $value) {
+			$html.='<li class="list-group-item">
+						<a href="#" style="padding:0px">
+								<label>'.$value['Proceso'].'</label>
+						 		<div class="btn-group pull-right">
+						 			<span class="label-success btn-sm btn"><input type="radio" class="rbl_opciones" name="'.$value['Cmds'].'_'.$value['TP'].'" id="'.$value['Cmds'].'_1" value="1"></span>
+						 			<span class="label-danger btn-sm btn"><input type="radio" class="rbl_opciones"  name="'.$value['Cmds'].'_'.$value['TP'].'" id="'.$value['Cmds'].'_0" value="0"></span>
+						 		</div>
+					 	</a>
+					</li>';
+		}
+
+		return $html;
 	}
 
 

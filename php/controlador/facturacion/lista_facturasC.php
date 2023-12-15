@@ -254,7 +254,7 @@ class lista_facturasC
 		$tablaHtml = '
 		<table>
 			<thead id="cabecera">
-				<tr>';
+				<tr><td></td>';
 
 		$columnas = array_keys($resultado[0]); //Obtenemos cuantas columnas hay que mostrar a partir del primer resultado
 
@@ -268,7 +268,8 @@ class lista_facturasC
 			<tbody>';
 
 		foreach ($resultado as $fila) {
-			$tablaHtml .= '<tr>';
+			$i = '';
+			$tablaHtml .= '<tr><td><button type="button" class="btn btn-default btn-xs" onclick="Ver_factura(\''.$fila['Factura'].'\',\''.$fila['Serie'].'\',\''.$fila['Codigo'].'\',\''.$fila['Autorizacion'].'\')"><i class="fa fa-eye"></i></button></td>';
 			foreach ($columnas as $columna) {
 				$valor = $fila[$columna];
 				$clase = '';
@@ -348,6 +349,7 @@ class lista_facturasC
 		if ($_SESSION['INGRESO']['Impresora_Rodillo'] == 0) {
 			$this->punto_venta->pdf_factura_elec($cod, $ser, $ci, $nombre, $auto, $per, $aprobado = false);
 		} else {
+			// print_r('expression');die();
 			$this->punto_venta->pdf_factura_elec_rodillo($cod, $ser, $ci, $nombre, $auto, $per, $aprobado = false);
 		}
 		// $this->modelo->pdf_factura($cod,$ser,$ci,$per);
@@ -418,7 +420,7 @@ class lista_facturasC
 		$alineado = array();
 		
 		for ($i = 1; $i <= $cantidadDatos; $i++) {
-			$medidas[] = 10;
+			$medidas[] = 23;
 			$alineado[] = 'L';
 		}
 
@@ -430,27 +432,70 @@ class lista_facturasC
 
 		$datos = $tbl;
 
+		$cliente_anterior = '';
+		$cliente_actual = '';
+		$total = 0;
 		foreach ($datos as $key => $value) {
 			$tmp = array();
-
+			$tmpTotal = array();
+			// $cliente_actual = $value['CI_RUC'];
+			// if($cliente_anterior==''){ $cliente_anterior= $value['CI_RUC'];}
+			// if($cliente_anterior==$cliente_actual){
+				$total+=$value['Saldo_MN'];
+			// }
 			foreach ($columnas as $columna) {
 				$valor = $value[$columna];
 
 				if ($valor instanceof DateTime) {
 					$valor = $valor->format('Y-m-d');
-				}
-
+				}	
+				
 				$tmp[] = $valor;
 			}
-
+			// if($cliente_anterior!=$cliente_actual)
+			// {
+			// 	//utima linea total
+			// 	$i = 0;
+			// 	foreach ($columnas as $columna) {
+			// 		$valor = $i == 0 ? 'TOTAL' : '';
+			// 		if($columna=='Saldo_MN'){$valor = $total;}
+					
+			// 		$tmpTotal[] = $valor;
+			// 		$i++;
+			// 	}
+			// 	$tablaHTML[] = array(
+			// 		'medidas' => $medidas,
+			// 		'alineado' => $alineado,
+			// 		'datos' => $tmpTotal,
+			// 		'borde' => 1
+			// 	);
+			// 	$total = $value['Saldo_MN'];
+			// 	$cliente_anterior= $value['CI_RUC'];
+			// 	// print_r($tablaHTML);die();
+			// }
 			$tablaHTML[] = array(
 				'medidas' => $medidas,
 				'alineado' => $alineado,
 				'datos' => $tmp,
 				'borde' => 1
 			);
-
 		}
+
+		$i = 0;
+		foreach ($columnas as $columna) {
+			$valor = $i == 0 ? 'TOTAL' : '';
+			if($columna=='Saldo_MN'){$valor = $total;}
+			
+			$tmpTotal[] = $valor;
+			$i++;
+		}
+		$tablaHTML[] = array(
+			'medidas' => $medidas,
+			'alineado' => $alineado,
+			'datos' => $tmpTotal,
+			'borde' => 1
+		);
+
 
 		$this->pdf->cabecera_reporte_MC($titulo, $tablaHTML, $contenido = false, $image = false, $Fechaini = false, $Fechafin = false, $sizetable, $mostrar, 15, 'H');
 	}
@@ -551,9 +596,13 @@ class lista_facturasC
 		$tablaHTML[0]['medidas'] = $medidas;
 		$tablaHTML[0]['datos'] = $columnas;
 		$tablaHTML[0]['tipo'] = 'C';
+
+		$total = 0;
 		foreach ($tbl as $key => $value) {
 			
 			$tmp = array();
+			$tmpTotal = array();
+			$total+=$value['Saldo_MN'];
 
 			foreach ($columnas as $columna) {
 				$valor = $value[$columna];
@@ -571,6 +620,21 @@ class lista_facturasC
 				'tipo' => 'N'
 			);
 		}
+
+		$i = 0;
+		foreach ($columnas as $columna) {
+			$valor = $i == 0 ? 'TOTAL' : '';
+			if($columna=='Saldo_MN'){$valor = $total;}
+			
+			$tmpTotal[] = $valor;
+			$i++;
+		}
+		$tablaHTML[] = array(
+			'medidas' => $medidas,
+			'datos' => $tmpTotal,
+			'tipo' => 'N'
+		);
+
 
 		excel_generico(str_replace(' ','',$titulo), $tablaHTML);
 

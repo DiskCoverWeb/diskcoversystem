@@ -12,24 +12,28 @@ include(dirname(__DIR__,2).'/db/variables_globales.php');//
     $this->conn = new db();
 
  	}
-  function cuentas_($ini,$fin)
+  function cuentas_($cuentaini,$cuentafin)
   {
-  		
+  	$cuentaini = rtrim($cuentaini, ". ");
+    $cuentafin = rtrim($cuentafin, ". ");
   	$sql= "SELECT Codigo, Codigo+'    '+Cuenta As Nombre_Cta 
           FROM Catalogo_Cuentas
           WHERE DG = 'D'";
-          if(!empty($ini) && !empty($fin))
-          {
-          $sql.=" and Codigo BETWEEN '".$ini."' and '".$fin."' ";
+          if(!empty($cuentaini) && !empty($cuentafin)){
+            $sql.=" AND Codigo BETWEEN '".$cuentaini."' and '".$cuentafin."' ";
+          }else{
+            $sql.=" AND Codigo IN (SELECT Cta "
+              . "   FROM Transacciones "
+              . "   WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' "
+              . "   AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' "
+              . "   GROUP BY Cta)";
           } 
-          $sql.= "AND Cuenta <> '".G_NINGUNO."' 
+
+          $sql.= " 
           AND Item = '".$_SESSION['INGRESO']['item']."' 
           AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
           ORDER BY Codigo ";
-
-          $result = $this->conn->datos($sql);
-           return $result;
-
+          return $this->conn->datos($sql);
   }
 
    function cuentas_filtrado($ini,$fin)
@@ -57,72 +61,136 @@ include(dirname(__DIR__,2).'/db/variables_globales.php');//
   }
 
 
- function consultar_cuentas_($OpcUno,$PorConceptos,$cuentaini,$cuentafin,$desde,$hasta,$DCCtas,$CheckAgencia,$DCAgencia,$Checkusu,$DCUsuario)
+ function ListarMayoresAux($OpcUno,$PorConceptos,$Codigo1,$Codigo2,$FechaIni,$FechaFin,$DCCtas,$CheckAgencia,$DCAgencia,$CheckUsuario,$DCUsuario, $soloMayorDatos = false, $CheqTC='false', $DCTC =G_NINGUNO)
  {
+ 	$Codigo1 = rtrim($Codigo1, ". ");
+  $Codigo2 = rtrim($Codigo2, ". ");
 
- 	
- 	$totales = $this->consulta_totales($OpcUno,$PorConceptos,$cuentaini,$cuentafin,$desde,$hasta,$DCCtas,$CheckAgencia,$DCAgencia,$Checkusu,$DCUsuario);
- 	//print_r($PorConceptos);
- 	if($cuentaini=='')
- 	{
- 		$cuentaini = 1;
- 	}
- 	if($cuentafin == '')
- 	{
- 		$cuentafin = 9;
- 	}
+  $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
+  $NumEmpresa = $_SESSION['INGRESO']['item'];
+  $ConSucursal = $_SESSION['INGRESO']['Sucursal'];
 
- 	if($PorConceptos=='true')
- 	{
- 		$sql =  "SELECT T.Fecha,T.TP,T.Numero,Cl.Cliente,T.Detalle As Concepto,T.Cheq_Dep,T.Debe,T.Haber,T.Saldo,
-          T.Parcial_ME,T.Saldo_ME,T.ID,T.Cta,T.Item FROM Transacciones As T,Clientes As Cl ";
- 	}else
- 	{
- 		 $sql = "SELECT T.Fecha,T.TP,T.Numero,Cl.Cliente,C.Concepto,T.Cheq_Dep,Debe,Haber,Saldo,
-          Parcial_ME,Saldo_ME,T.ID,T.Cta,T.Item FROM Transacciones As T,Comprobantes As C,Clientes As Cl ";
-
- 	}
- 	
- 	$sql.="WHERE T.Fecha BETWEEN '".$desde."' and '".$hasta."' AND T.T = '".G_NORMAL."' AND T.Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
-
-    if($OpcUno == 'true' && $cuentaini =='' && $cuentafin=='')
-    {
-       $sql.=" AND T.Cta = '".$DCCtas."'";
-    }else
-    {
-    	$sql.= "AND T.Cta BETWEEN '".$cuentaini."' AND '".$cuentafin."' ";
-    }
-    if($CheckAgencia == 'true')
-   {
-   	 $sql.= " AND T.Item = '".$DCAgencia."' ";
-   }else
-   {
-   	$sql.= "AND T.Item = '".$_SESSION['INGRESO']['item']."' ";
-   }
- if($PorConceptos == 'true')
-  {
-  	$sql .= "AND T.Codigo_C = Cl.Codigo ";
-  }else
-  {
-  	if($Checkusu == 'true')
-  	{
-  		$sql.=  "AND C.CodigoU = '".$DCUsuario."' AND C.Codigo_B = Cl.Codigo AND T.TP = C.TP AND T.Numero = C.Numero AND T.Periodo = C.Periodo AND T.Fecha = C.Fecha AND T.Item = C.Item ";
-  	}else
-  	{
-  		 $sql.=  "AND C.Codigo_B = Cl.Codigo AND T.TP = C.TP AND T.Numero = C.Numero AND T.Periodo = C.Periodo AND T.Fecha = C.Fecha AND T.Item = C.Item ";
-
-  	}
+  if ($PorConceptos=='true') {
+    $sSQL = "SELECT T.Fecha, T.TP, T.Numero, Cl.Cliente, T.Detalle AS Concepto, T.Cheq_Dep, T.Debe, T.Haber, T.Saldo, " .
+            "T.Parcial_ME, T.Saldo_ME, T.ID, T.Cta, T.Item 
+            FROM " ;
+    $from_tables = " Transacciones AS T, Clientes AS Cl ";
+    $sSQL .= $from_tables;
+  } else {
+    $sSQL = "SELECT T.Fecha, T.TP, T.Numero, Cl.Cliente, C.Concepto, T.Cheq_Dep, Debe, Haber, Saldo, " .
+            "T.Parcial_ME, T.Saldo_ME, T.ID, T.Cta, CC.TC, CC.Cuenta, T.Item 
+            FROM" ;
+    $from_tables = " Catalogo_Cuentas AS CC, Transacciones AS T, Comprobantes AS C, Clientes AS Cl ";
+            $sSQL .= $from_tables;
   }
-  $sql.= "ORDER BY T.Cta,T.Fecha,T.TP,T.Numero,Debe DESC,Haber,T.ID ";
- // print_r($DCAgencia);print_r($CheckAgencia);
-  // print_r($sql);
-// die();
 
-    $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-144;
-    $tbl = grilla_generica_new($sql,'Transacciones As T,Comprobantes As C,Clientes As Cl ','tbl_may',false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida);
-
-       return $tbl;
+  $sSQL .= "WHERE T.Periodo = '" . $Periodo_Contable . "' ";
+  if ($CheckAgencia == 'true') {
+    $sSQL .= "AND T.Item = '" . trim($DCAgencia) . "' ";
+  } else {
+    if (!$ConSucursal) $sSQL .= "AND T.Item = '" . $NumEmpresa . "' ";
+  }
+  $sSQL .= "AND T.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' " .
+           "AND T.T = '" . G_NORMAL . "' ";
   
+  if ($CheqTC == 'false') {
+    if ($OpcUno == 'true') {
+      $sSQL .= "AND T.Cta = '" . $DCCtas . "' ";
+    } else {
+      $sSQL .= "AND T.Cta BETWEEN '" . $Codigo1 . "' AND '" . $Codigo2 . "' ";
+    }
+  } else {
+    $sSQL .= "AND CC.TC = '" . $DCTC . "' ";
+  }
+
+  if ($PorConceptos=='true') {
+    $sSQL .= "AND T.Codigo_C = Cl.Codigo ";
+  } else {
+    if ($CheckUsuario =='true') $sSQL .= "AND C.CodigoU = '" . trim($DCUsuario) . "' ";
+    $sSQL .= "AND T.Item = C.Item " .
+             "AND T.Item = CC.Item " .
+             "AND T.Periodo = C.Periodo " .
+             "AND T.Periodo = CC.Periodo " .
+             "AND T.Cta = CC.Codigo " .
+             "AND T.Fecha = C.Fecha " .
+             "AND T.TP = C.TP " .
+             "AND T.Numero = C.Numero " .
+             "AND C.Codigo_B = Cl.Codigo ";
+  }
+
+  $sSQL .= " ORDER BY T.Cta, T.Fecha, T.TP, T.Numero, Debe DESC, Haber, T.ID ";
+  $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-144;
+  $AdoMayor = $this->conn->datos($sSQL);
+  if($soloMayorDatos){
+    return $AdoMayor;
+  }
+  $DGMayor = grilla_generica_new($sSQL,$from_tables,'DGMayor',"Mayores multiples",$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida);
+
+  //Consulta de Totales
+  $sSQL = "SELECT T.Cta, SUM(T.Debe) AS TDebe, SUM(T.Haber) AS THaber, SUM(T.Parcial_ME) AS TParcial_ME ";
+  if ($PorConceptos=='true') {
+    $sSQL .= "FROM Transacciones AS T, Clientes AS Cl ";
+  } else {
+    $sSQL .= "FROM Transacciones AS T, Comprobantes AS C, Clientes AS Cl ";
+  }
+
+  $sSQL .= "WHERE T.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' " .
+           "AND T.T = '" . G_NORMAL . "' " .
+           "AND T.Periodo = '" . $Periodo_Contable . "' ";
+
+  if ($OpcUno == 'true') {
+    $sSQL .= "AND T.Cta = '" . $DCCtas . "' ";
+  } else {
+    $sSQL .= "AND T.Cta BETWEEN '" . $Codigo1 . "' AND '" . $Codigo2 . "' ";
+  }
+
+  if ($CheckAgencia =='true') {
+    $sSQL .= "AND T.Item = '" . trim($DCAgencia) . "' ";
+  } else {
+    if (!$ConSucursal) $sSQL .= "AND T.Item = '" . $NumEmpresa . "' ";
+  }
+
+  if ($PorConceptos=='true') {
+    $sSQL .= "AND T.Codigo_C = Cl.Codigo ";
+  } else {
+    if ($CheckUsuario =='true') $sSQL .= "AND C.CodigoU = '" . trim($DCUsuario) . "' ";
+    $sSQL .= "AND T.Cta !='1.1.01.01.01' AND C.Codigo_B = Cl.Codigo " .
+             "AND T.TP = C.TP " .
+             "AND T.Numero = C.Numero " .
+             "AND T.Periodo = C.Periodo " .
+             "AND T.Fecha = C.Fecha " .
+             "AND T.Item = C.Item ";
+  }
+
+  $sSQL .= "GROUP BY T.Cta " .
+           "ORDER BY T.Cta ";
+
+  $AdoTrans =    $this->conn->datos($sSQL);
+
+  //Totalizamos mayores
+  $SumaDebe = 0;
+  $SumaHaber = 0;
+  $Suma_ME = 0;
+  $SaldoTotal = 0;
+
+  foreach ($AdoTrans as $key => $fields) {
+    $Suma_ME += $fields["TParcial_ME"];
+    $SumaDebe += $fields["TDebe"];
+    $SumaHaber += $fields["THaber"];
+  }
+
+  // Obtenemos el último Saldo de la Cta
+  if (count($AdoMayor)> 0) {
+    end($AdoMayor);
+    $ultimoElemento = current($AdoMayor);
+    $SaldoTotal = $ultimoElemento["Saldo"];
+  }
+
+  // Totalizamos mayores
+  $SaldoAnterior = CalculosSaldoAnt($DCCtas, $SumaDebe, $SumaHaber, $SaldoTotal);
+
+
+  return array('DGMayor' => $DGMayor,"AdoTrans"=>$AdoTrans, "SumaDebe" => $SumaDebe, "SumaHaber" => $SumaHaber, "SaldoTotal" => $SaldoTotal, "SaldoAnterior"=> $SaldoAnterior, "TotalRegistros" => count($AdoMayor));
  }
 
 function consultar_cuentas_datos($OpcUno,$PorConceptos,$cuentaini,$cuentafin,$desde,$hasta,$DCCtas,$CheckAgencia,$DCAgencia,$Checkusu,$DCUsuario)
@@ -309,7 +377,7 @@ function consultar_cuentas_datos($OpcUno,$PorConceptos,$cuentaini,$cuentafin,$de
     $result = array();$submodulo=array();
      $desde = str_replace('-','',$parametros['desde']);
      $hasta = str_replace('-','',$parametros['hasta']);
-     $result = $this->consultar_cuentas_datos($parametros['OpcUno'],$parametros['PorConceptos'],$parametros['txt_CtaI'],$parametros['txt_CtaF'],$desde,$hasta,$parametros['DCCtas'],$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario']);
+     $result = $this->ListarMayoresAux($parametros['OpcUno'],$parametros['PorConceptos'],$parametros['txt_CtaI'],$parametros['txt_CtaF'],$desde,$hasta,$parametros['DCCtas'],$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario'], $soloMayorDatos = true);
      if($sub != 'false')
        {        
         $submodulo = $this->consultatr_submodulos($desde,$hasta,$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario']);
@@ -333,7 +401,7 @@ function consultar_cuentas_datos($OpcUno,$PorConceptos,$cuentaini,$cuentafin,$de
                if($pos!=1)
               {           
                  $tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
-                  $tablaHTML[$pos]['datos']=array('Fin de:'.mes_X_nombre($mesAc),'Total','','','',$desde,$haber,$saldo);
+                  $tablaHTML[$pos]['datos']=array('Fin de:'.mes_X_nombre($mesAc),'Total','','','',$debe,$haber,$saldo);
                   $tablaHTML[$pos]['tipo'] ='SUBR';          
                   $pos+=1;
                   $debe= 0;
@@ -381,24 +449,7 @@ function consultar_cuentas_datos($OpcUno,$PorConceptos,$cuentaini,$cuentafin,$de
          
 
     }
-      excel_generico($titulo,$tablaHTML);  
-
-
-
- //  	$desde = str_replace('-','',$parametros['desde']);
-	// $hasta = str_replace('-','',$parametros['hasta']);
-	// $result = $this->consultar_cuentas_datos($parametros['OpcUno'],$parametros['PorConceptos'],$parametros['txt_CtaI'],$parametros['txt_CtaF'],$desde,$hasta,$parametros['DCCtas'],$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario']);
-	//  if($sub != 'false')
- //       {       	
-  		// $submodulo = $this->consultatr_submodulos($desde,$hasta,$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario']);
- //  	   }else
- //  	   {
- //  	   	$submodulo=array();
- //  	   }
-  	   
-	// //print_r($result);
- // 	// exportar_excel_mayor_auxi($result,$submodulo,'Mayor Auxiliar',null,null,null);  
- //  excel_file_mayor_auxi($result,$submodulo,'Mayor Auxiliar',null,null,null);  
+      excel_generico($titulo,$tablaHTML);   
   }
  
 

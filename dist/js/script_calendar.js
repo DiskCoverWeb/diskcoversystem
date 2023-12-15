@@ -7,7 +7,7 @@ Vue.component('calendar', {
 
 
   data() {
-    console.log(this.value);
+    // console.log(this.value);
     return {
       selected: this.value,
       days: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'] };
@@ -42,7 +42,10 @@ Vue.component('calendar', {
       {        
         if($('#txt_TipoSubMod').val()=='R')
         {
-          $('#modal_producto_2').modal('show')
+            if($('#txt_paquetes').val()=='')
+            {
+              $('#modal_empaque').modal('show');
+            }
         }
       }
     },

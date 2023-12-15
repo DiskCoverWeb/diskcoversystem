@@ -456,7 +456,7 @@ function verificar_cuenta()
       type:  'post',
       dataType: 'json',
         success:  function (response) { 
-        if(response ==null)
+        if(response ==1)
         {
           Swal.fire(
             

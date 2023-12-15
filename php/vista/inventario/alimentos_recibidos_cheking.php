@@ -2,6 +2,7 @@
   <link rel="stylesheet" href="../../dist/css/style_calendar.css">
 <script type="text/javascript">
   $(document).ready(function () {
+
   	 window.addEventListener("message", function(event) {
             if (event.data === "closeModal") {
                 autocoplet_ingreso();
@@ -33,6 +34,9 @@
 		      $('#txt_cta_inv').val(data.Cta_Debe); // save selected id to input
 
 		      $('#txt_codigo_p').val(data.CodigoP)
+		      $('#txt_responsable').val(data.Responsable)
+
+		      $('#btn_estado_trasporte').css('display','block');
 		      if(data.Cod_R=='0')
 		      {
 		      	$('#img_estado').attr('src','../../img/png/bloqueo.png');
@@ -51,7 +55,11 @@
 
             	$('#pnl_factura').css('display','none');
             }
+
+          setInterval(function() {         	
    		 		cargar_pedido();
+          }, 5000); 
+
    		});
 
 
@@ -322,10 +330,10 @@ function autocoplet_ingreso()
 	        dataType:'json',
 		    success: function(data)
 		    {
-		    	if(data==1)
-		    	{
-		    		Swal.fire('Items Seleccionados Guardados','','success');
-		    	}
+		    	// if(data==1)
+		    	// {
+		    	// 	Swal.fire('Items Seleccionados Guardados','','success');
+		    	// }
 		    	
 		    }
 		});  	
@@ -403,15 +411,33 @@ function autocoplet_ingreso()
 
  function editar_comentario(mod)
  {
+
+ 	 id = $('#txt_id').val();
+ 	 if(id=='')
+ 	 {
+ 	 	 Swal.fire("","Seleccione un pedido","info");
+ 	 	return  false;
+ 	 }
  	var texto = '';
  	var asunto = '';
+ 	var enviar = 0;
  	 if(mod)
  	 {
  	 	 if($('#txt_comentario_clas').prop('readonly'))
  	 	 {
  	 	 	$('#txt_comentario_clas').prop('readonly',false)
  	 	 	$('#icon_comentario1').removeClass();
- 	 	 	$('#icon_comentario1').addClass('fa fa-save');
+ 	 	 	$('#icon_comentario1').addClass('fa fa-save'); 	 	 	
+ 	 	 	enviar = 0;
+ 	 	 	// $('#txt_comentario_clas').prop('readonly',true)
+ 	 	 }else{
+
+ 	 	 	$('#txt_comentario_clas').prop('readonly',true)
+ 	 	 	$('#icon_comentario1').removeClass();
+ 	 	 	$('#icon_comentario1').addClass('fa fa-pencil');
+ 	 	 	asunto = 'Clasificacion';
+ 	 	 	texto = $('#txt_comentario_clas').val();
+ 	 	 	enviar = 1;
  	 	 }
  	 }else
  	 {
@@ -419,13 +445,88 @@ function autocoplet_ingreso()
  	 	 {
  	 	 	$('#txt_comentario').prop('readonly',false)
  	 	 	$('#icon_comentario').removeClass();
- 	 	 	$('#icon_comentario').addClass('fa fa-save');
+ 	 	 	$('#icon_comentario').addClass('fa fa-save'); 	 	 
+ 	 	 	enviar = 0;
+ 	 	 	// $('#txt_comentario').prop('readonly',true);
+ 	 	 }else{
+ 	 	 	$('#txt_comentario').prop('readonly',true)
+ 	 	 	$('#icon_comentario').removeClass();
+ 	 	 	$('#icon_comentario').addClass('fa fa-pencil');
+ 	 	 	asunto = 'Recepcion';
+ 	 	 	texto = $('#txt_comentario').val();
+ 	 	 	enviar = 1;
  	 	 }
  	 }
 
- 	
+ 	 if(enviar)
+ 	 {
+ 	 	 	var parametros = {
+        'notificar':texto,
+        'id':$('#txt_id').val(),
+		    'asunto':asunto,
+		    }
+		     $.ajax({
+		      data:  {parametros,parametros},
+		      url:   '../controlador/inventario/alimentos_recibidosC.php?notificar_clasificacion=true',
+		      type:  'post',
+		      dataType: 'json',
+		      success:  function (response) { 
+		        if(response==1)
+		        {
+		          Swal.fire("","Notificacion enviada","success");
+		        }
+		        console.log(response);
+		        
+		      }, 
+		      error: function(xhr, textStatus, error){
+		        $('#myModal_espera').modal('hide');           
+		      }
+		    });
 
- 	 console.log(editar);
+
+		}
+
+ }
+
+ function ver_detalle_trasorte()
+ {
+ 	 codigo = $('#txt_codigo option:selected').text();
+ 	 var parametros = {
+        'pedido':codigo,
+		    }
+		     $.ajax({
+		      data:  {parametros,parametros},
+		      url:   '../controlador/inventario/alimentos_recibidosC.php?estado_trasporte=true',
+		      type:  'post',
+		      dataType: 'json',
+		      success:  function (response) { 
+		      	var test = '';
+		      	response.forEach(function(item,i){
+
+		      		console.log(item);
+
+		      		test+='<li class="list-group-item">'+
+											'<a href="#" style="padding:0px">'+
+													'<label>'+item.Proceso+'</label>'+
+											 		'<div class="btn-group pull-right">';
+											 		if(item.Cumple==1)
+											 		{
+											 			test+='<span class="label-success btn-sm btn">Cumple</span>'
+											 		}else{
+											 			test+='<span class="label-danger btn-sm btn">No cumple</span>'
+											 		}
+											 		test+='</div>'+
+										 	'</a>'+
+										'</li>';
+		      	})
+		      	$('#lista_preguntas').html(test);
+		      	$('#modal_estado_transporte').modal('show');
+		        
+		      }, 
+		      error: function(xhr, textStatus, error){
+		        $('#myModal_espera').modal('hide');           
+		      }
+		    });
  }
 
 
@@ -507,8 +608,6 @@ function autocoplet_ingreso()
 								<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
 							</div>
 						</div>
-					</div>
-					<div class="col-sm-4">
 						<div class="row"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
 								<b>ALIMENTO RECIBIDO:</b>
@@ -519,6 +618,17 @@ function autocoplet_ingreso()
                	</select>								
 							</div>
 						</div>
+						<div class="row"  style="padding-top: 5px;">
+							<div class="col-sm-6 text-right">
+								<b>Responsable Recepcion:</b>
+							</div>
+							<div class="col-sm-6">								
+								<input type="" class="form-control input-xs" id="txt_responsable" name="txt_responsable" readonly>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-4">
+						
 						<div class="row"  style="padding-top: 5px;">
 							<div class="col-sm-6 text-right">
 								 <b>CANTIDAD:</b>
@@ -535,9 +645,9 @@ function autocoplet_ingreso()
 								<div class="input-group input-group-sm">
 										<textarea class="form-control input-xs" id="txt_comentario" name="txt_comentario" readonly rows="1">
 																	</textarea>
-									<span class="input-group-btn">
+									<!-- <span class="input-group-btn">
 										<button type="button" class="btn btn-info btn-flat" onclick="editar_comentario()"><i id="icon_comentario" class="fa fa-pencil"></i></button>
-									</span>
+									</span> -->
 								</div>						
 							</div>
 						</div>
@@ -549,9 +659,9 @@ function autocoplet_ingreso()
 								<div class="input-group input-group-sm">
 									<textarea class="form-control input-xs" id="txt_comentario_clas" name="txt_comentario_clas" readonly rows="1">
 								</textarea>
-									<span class="input-group-btn">
+								<!-- 	<span class="input-group-btn">
 										<button type="button" class="btn btn-info btn-flat" onclick="editar_comentario(1)"><i id="icon_comentario1" class="fa fa-pencil"></i></button>
-									</span>
+									</span> -->
 								</div>
 
 								
@@ -569,8 +679,8 @@ function autocoplet_ingreso()
 							<div class="col-sm-6 text-right">
 								<b>ESTADO DE TRANSPORTE</b>
 							</div>
-							<div class="col-sm-6 text-center">
-									<img src="" id="img_estado">
+							<div class="col-sm-6 text-center" >
+								<button type="button" style="display: none;" id="btn_estado_trasporte" class="btn btn-primary btn-xs btn-block" onclick="ver_detalle_trasorte()"> Ver detalle <i class="fa fa-eye"></i></button>
 							</div>
 						</div>
 					
@@ -645,16 +755,16 @@ function autocoplet_ingreso()
 						  <div  class="col-sm-12">
 						  	<table class="table-sm table-hover" style="width:100%">
 				        <thead>
-				          <th>ITEM</th>
-				          <th>FECHA DE CLASIFICACION</th>
-				          <th>FECHA DE EXPIRACION</th>
-				          <th width="224px">DESCRIPCION</th>
-				          <th>CANTIDAD</th>
-				          <th>PRECIO O COSTO</th>
-				          <th>COSTO TOTAL</th>
-				          <th width="200px">USUARIO</th>
-				          <th>PARA CONTABILIZAR</th>				          
-				          <th></th>
+				          <th width="6%">ITEM</th>
+				          <th style="width: 8%;">FECHA DE CLASIFICACION</th>
+				          <th style="width: 8%;">FECHA DE EXPIRACION</th>
+				          <th width="25%">DESCRIPCION</th>
+				          <th width="6%">CANTIDAD</th>
+				          <th width="6%">PRECIO O COSTO</th>
+				          <th width="6%">COSTO TOTAL</th>
+				          <th>USUARIO</th>
+				          <th width="7%">PARA CONTABILIZAR</th>				          
+				          <th width="6%"></th>
 				        </thead>
 				        <tbody id="tbl_body"></tbody>
 
@@ -848,13 +958,14 @@ function eliminar_lin(num)
       });
   }
 
-   function notificar()
+ function notificar()
  {
    
     var parametros = {
         'notificar':$('#txt_texto').val(),
         'usuario':$('#txt_codigo_usu').val(),
-        'asunto':'Clasificacion',
+        'asunto':'De Checking a Clasificacion',
+        'pedido':$('#txt_codigo').val(),
     }
      $.ajax({
       data:  {parametros,parametros},
@@ -864,11 +975,37 @@ function eliminar_lin(num)
       success:  function (response) { 
         if(response==1)
         {
+        	
+          	cambiar_a_clasificacion();
           Swal.fire("","Notificacion enviada","success").then(function(){
           	$('#myModal_notificar_usuario').modal('hide'); 
           	$('#txt_texto').val('');   
           	$('#txt_codigo_usu').val('') 
           });
+        }
+        console.log(response);
+        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
+ }
+
+ function cambiar_a_clasificacion()
+ {   
+    var parametros = {
+        'pedido':$('#txt_codigo').val(),
+    }
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/inventario/alimentos_recibidosC.php?cambiar_a_clasificacion=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        if(response==1)
+        {
+          location.reload();
         }
         console.log(response);
         
@@ -903,3 +1040,32 @@ function eliminar_lin(num)
 
 
 
+
+
+<div id="modal_estado_transporte" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Estado de trasporte</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          	<div class="row">
+          		<form id="form_estado_transporte">
+          			<div class="col-sm-12">
+          				<div class="direct-chat-messages">	
+											<ul class="list-group list-group-flush" id="lista_preguntas">
+												
+											</ul>											
+										</div>
+          			</div>
+          		</form>
+          	</div>
+          					
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>

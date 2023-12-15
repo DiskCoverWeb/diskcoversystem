@@ -28,6 +28,12 @@ if(isset($_GET['validar_sri']))
 	echo json_encode($controlador->validar_sri($query));
 }
 
+if(isset($_GET['validar_sri_cliente']))
+{
+	$query = $_POST['ci'];
+	echo json_encode($controlador->validar_sri_cliente($query));
+}
+
 
 
 if(isset($_GET['guardar_cliente']))
@@ -101,7 +107,8 @@ if(isset($_GET['ExcelFInfoError']))
 }
 if(isset($_GET['tipo_proveedor']))
 {
-	echo json_encode($controlador->tipo_proveedor());
+	$TP = (isset($_GET['TP']))?$_GET['TP']:'';
+	echo json_encode($controlador->tipo_proveedor($TP));
 }
 if(isset($_GET['sucursales']))
 {
@@ -456,10 +463,9 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		return $this->modelo->Listar_Medidores($codigo);
 	}
 
-	function  tipo_proveedor()
+	function  tipo_proveedor($TP='')
 	{
-		$datos = $this->modelo-> tipo_proveedor();
-		return $datos;
+		return $this->modelo-> tipo_proveedor($TP);
 	}
 
 	function FInfoErrorShow(){
@@ -508,6 +514,139 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	function delete_sucursal($parametros)
 	{
 		return $this->modelo->delete_sucursal($parametros['id']);
+	}
+
+	function validar_sri_cliente($NumRUC)
+	{
+		$urlEsUnRUC = "https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=" . $NumRUC;
+
+		// Inicializa cURL para la primera solicitud
+		$ch1 = curl_init($urlEsUnRUC);
+		curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch1, CURLOPT_ENCODING, 'UTF-8');
+
+		try {
+		    // Ejecuta la primera solicitud cURL
+		    $res = curl_exec($ch1);
+
+		    // Verifica si hubo un error de cURL
+		    if ($res === false) {
+		    	return $r = array('res'=>0,'msg'=>'NO FUE POSIBLE VALIDAR EL RUC');
+		    }
+
+		    // Verifica si el resultado indica que el RUC existe
+		    if ($res == "true") {
+		        $urlDatosDelRUC = "https://srienlinea.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos2.jspa?accion=siguiente&ruc=" . $NumRUC;
+
+		        // Inicializa cURL para la segunda solicitud
+		        $ch2 = curl_init($urlDatosDelRUC);
+		        curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+		        curl_setopt($ch2, CURLOPT_ENCODING, 'UTF-8');
+
+		        // Ejecuta la segunda solicitud cURL
+		        $res2 = curl_exec($ch2);
+		        $res2 = mb_convert_encoding($res2, 'UTF-8', 'HTML-ENTITIES');
+		        // Verifica si hubo un error de cURL en la segunda solicitud
+		        if ($res2 === false) {
+		            return $r = array('res'=>0,'msg'=>'NO FUE POSIBLE VALIDAR EL RUC');
+		        }
+
+		        $xml = str_replace('"', "'", $res2);
+					$cont = strpos($xml, "<table class='formulario'>");
+
+					if ($cont > 1) {
+					    $xml = substr($xml, $cont);
+					    $cont = strpos($xml, "</table>");
+					    $xml = substr($xml, 0, $cont + 8);
+					    $xml = trim($xml);
+					    $xml = str_replace(["<td colspan='2' class='lineaSep' />","<td colspan='2'> </td>"], "", $xml);
+					    $cont = 0;
+					    $vNodos = array();
+					    while (strlen($xml) > 0) {
+					        $vNodos[] = null;
+					        $iniNodo = strpos($xml, "<td>");
+					        $finNodo = strpos($xml, "</td>");
+					        if ($iniNodo > 0 && $finNodo > 0 && $iniNodo < $finNodo) {
+					            @$vNodos[$cont] = substr($xml, $iniNodo + 4, $finNodo - $iniNodo - 4);
+					            @$vNodos[$cont] = str_replace(array("\r\n", "\r", "\n", "\t", "&nbsp;", "</a>", "<a class='link2' href='javascript:sociedad();'", "onclick='forma.ruc.value='" . $NumRUC . "''>"), "", $vNodos[$cont]);
+					            $vNodos[$cont] = trim(strtoupper($vNodos[$cont]));
+					            $xml = substr($xml, $finNodo + 4);
+					        } else {
+					            $xml = "";
+					        }
+
+					        $cont++;
+					    }
+					    $result = new stdClass();
+					    $result->RazonSocial = @trim($vNodos[0]);
+					    $result->RUC_SRI = @trim($vNodos[1]);
+					    $result->NombreComercial = @trim($vNodos[2]);
+					    $result->Estado = @trim($vNodos[3]);
+					    $result->ClaseRUC = @trim($vNodos[4]);
+					    $result->TipoRUC = @trim($vNodos[5]);
+					    $cont = 6;
+
+					    if (isset($vNodos[$cont]) && strlen(trim($vNodos[$cont])) == 2) {
+					        $result->Obligado = trim($vNodos[$cont]);
+					        $cont++;
+					    }else{
+					    	$result->Obligado = "SI";
+					    }
+
+					    $result->ActividadEconomica = @trim($vNodos[$cont]);
+					    $cont++;
+					    $result->FechaInicio = @trim($vNodos[$cont]);
+					    $cont++;
+					    $result->FechaCese = @trim($vNodos[$cont]);
+					    $cont++;
+					    $result->FechaReinicio = @trim($vNodos[$cont]);
+					    $cont++;
+					    $result->FechaActualizacion = @trim($vNodos[$cont]);
+					    $cont++;
+					    $result->Categoria = @trim($vNodos[$cont]);
+					}
+					$mensajes ="";
+					if (!is_null($result->RUC_SRI) && strlen($result->RUC_SRI) > 1) $mensajes .= "<p><b>R.U.C.:</b> " . $result->RUC_SRI . "</p>";
+					if (!is_null($result->RazonSocial) && strlen($result->RazonSocial) > 1) $mensajes .= "<p><b>RAZON SOCIAL:</b> " . $result->RazonSocial . "</p>";
+					if (!is_null($result->NombreComercial) && strlen($result->NombreComercial) > 1) $mensajes .= "<p><b>NOMBRE COMERCIAL:</b> " . $result->NombreComercial . "</p>";
+					if (!is_null($result->TipoRUC) && strlen($result->TipoRUC) > 1) $mensajes .= strtoupper($result->TipoRUC) . ", ";
+					if (!is_null($result->Obligado) && strlen($result->Obligado) > 1) $mensajes .= $result->Obligado . " OBLIGADO A LLEVAR CONTABILIDAD" . "</p>";
+					if (!is_null($result->ActividadEconomica) && strlen($result->ActividadEconomica) > 1) $mensajes .= "<p><b>ACTIVIDAD ECONOMICA:</b> " . $result->ActividadEconomica . "</p>";
+					if (!is_null($result->FechaInicio) && strlen($result->FechaInicio) > 1) $mensajes .= "<p><b>INICIO SU ACTIVIDAD EL</b> " . $result->FechaInicio . "</p>";
+					if (!is_null($result->FechaActualizacion) && strlen($result->FechaActualizacion) > 1) $mensajes .= "<p><b>R.U.C. ACTUALIZADO EL</b> " . $result->FechaActualizacion . "</p>";
+					if (!is_null($result->FechaReinicio) && strlen($result->FechaReinicio) > 2) $mensajes .= "<p><b>REINICIO DE ACTIVIDADES:</b> " . $result->FechaReinicio . "</p>";
+					if (!is_null($result->Categoria) && !is_null($result->ClaseRUC) && strlen($result->Categoria) > 1 && strlen($result->ClaseRUC) > 1) $mensajes .= "<p><b>CATEGORIA:</b> " . $result->Categoria . ", CLASE: " . $result->ClaseRUC . "</p>";
+					if (!is_null($result->FechaCese) && strlen($result->FechaCese) > 2) $mensajes .= "<p><b>CESE DE ACTIVIDADES:</b> " . $result->FechaCese . "</p>";
+
+					$Tipo_Contribuyente = Tipo_Contribuyente_SP_MYSQL($NumRUC);
+					if (strlen($Tipo_Contribuyente['@micro'])>1) {
+						$mensajes .= "<p><b>TIPO DE CONTRIBUYENTE:</b> \"" . $Tipo_Contribuyente['@micro'] . "\"</p>";
+					}
+
+					if (strlen($Tipo_Contribuyente['@Agente'])>1) {
+						$mensajes .= "<p><b>AGENTE DE RETENCION:</b> \"" . $Tipo_Contribuyente['@Agente'] . "\"</p>";
+					}
+
+					if (!is_null($result->Estado) && strlen($result->Estado) > 1) $mensajes .= "<p><b>ESTADO DEL CONTRIBUYENTE:</b> \"" . strtoupper($result->Estado) . "\" ";
+
+					
+					
+		        return array('res' => 1, 'tbl' => $mensajes,'data' => $result);
+		    } else {
+		        return array('res' => 0, 'msg' => 'NO ES RUC VALIDO');
+		    }
+
+		} catch (Exception $e) {
+		    // Maneja la excepción generada por cURL
+		    return array('res' => 0, 'msg'=>'NO FUE POSIBLE VALIDAR EL RUC');
+		} finally {
+		    // Cierra las sesiones cURL
+		    curl_close($ch1);
+		    if (isset($ch2)) {
+		        curl_close($ch2);
+		    }
+		}
+
 	}
 }
 ?>

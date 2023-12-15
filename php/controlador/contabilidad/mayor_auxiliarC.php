@@ -14,7 +14,7 @@ if(isset($_GET['cuentas']))
 if(isset($_GET['consultar']))
 {	
  $controlador = new mayor_auxiliarC();
-  echo json_encode($controlador->consultar_cuentas($_POST['parametros']));
+  echo json_encode($controlador->consultarListarMayoresAux($_POST['parametros']));
 }
 if(isset($_GET['consultar_tot']))
 {	
@@ -72,20 +72,15 @@ class mayor_auxiliarC
 
   function cuentas($ini,$fin)
   {
-  	$datos = $this->modelo->cuentas_($ini,$fin);
-  	return $datos;
+  	return $this->modelo->cuentas_($ini,$fin);
   }
  
 
-  function consultar_cuentas($parametros)
+  function consultarListarMayoresAux($parametros)
   {
-  	// print_r($parametros);die();
   	$desde = str_replace('-','',$parametros['desde']);
     $hasta = str_replace('-','',$parametros['hasta']);		
-  	$datos = $this->modelo->consultar_cuentas_($parametros['OpcUno'],$parametros['PorConceptos'],$parametros['txt_CtaI'],$parametros['txt_CtaF'],$desde,$hasta,$parametros['DCCtas'],$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario']);
-
-  	// print_r($datos);die();
-  	return $datos;
+  	return $this->modelo->ListarMayoresAux($parametros['OpcUno'],$parametros['PorConceptos'],$parametros['txt_CtaI'],$parametros['txt_CtaF'],$desde,$hasta,$parametros['DCCtas'],$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario']);
   }
   function imprimir_pdf($parametros,$sub='false')
   {
@@ -93,7 +88,7 @@ class mayor_auxiliarC
 				$hasta = str_replace('-','',$parametros['hasta']);
 	
 
-  		$datos = $this->modelo->consultar_cuentas_datos($parametros['OpcUno'],$parametros['PorConceptos'],$parametros['txt_CtaI'],$parametros['txt_CtaF'],$desde,$hasta,$parametros['DCCtas'],$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario']);
+  		$datos = $this->modelo->ListarMayoresAux($parametros['OpcUno'],$parametros['PorConceptos'],$parametros['txt_CtaI'],$parametros['txt_CtaF'],$desde,$hasta,$parametros['DCCtas'],$parametros['CheckAgencia'],$parametros['DCAgencia'],$parametros['CheckUsu'],$parametros['DCUsuario'], $soloMayorDatos = true);
 
        if($sub != 'false')
        {       	
@@ -169,7 +164,7 @@ class mayor_auxiliarC
 		        $pos = $pos+1;
 		        $tablaHTML[$pos]['medidas']=$tablaHTML[2]['medidas'];
 		        $tablaHTML[$pos]['alineado']=array('L','L','L','L','R','R','R','R');
-		        $tablaHTML[$pos]['datos']=array('','','',$value['Concepto'],'',$value['Debe'],$value['Haber'],$value['Saldo']);
+		        $tablaHTML[$pos]['datos']=array('','','',$value['Concepto'],'',number_format($value['Debe'],2,'.',''),number_format($value['Haber'],2,'.',''),$value['Saldo']);
 		        $tablaHTML[$pos]['borde'] =$borderow;
 		        $pos = $pos+1;
 		        $fecha = $value['Fecha']->format('Y-m-d');
@@ -218,7 +213,7 @@ class mayor_auxiliarC
 		            $pos = $pos+1;
 		            $tablaHTML[$pos]['medidas']=$tablaHTML[2]['medidas'];
 		            $tablaHTML[$pos]['alineado']=array('L','L','L','L','R','R','R','R');
-		            $tablaHTML[$pos]['datos']=array('','','',$value['Concepto'],'',$value['Debe'],$value['Haber'],$value['Saldo']);
+		            $tablaHTML[$pos]['datos']=array('','','',$value['Concepto'],'',number_format($value['Debe'],2,'.',''),number_format($value['Haber'],2,'.',''),$value['Saldo']);
 		            $tablaHTML[$pos]['borde'] =$borderow;
 		            $pos = $pos+1;
 		            $fecha = $value['Fecha']->format('Y-m-d');
@@ -283,7 +278,7 @@ class mayor_auxiliarC
 		          $pos = $pos+1;
 		          $tablaHTML[$pos]['medidas']=$tablaHTML[2]['medidas'];
 		          $tablaHTML[$pos]['alineado']=array('L','L','L','L','R','R','R','R');
-		          $tablaHTML[$pos]['datos']=array('','','',$value['Concepto'],'',$value['Debe'],$value['Haber'],$value['Saldo']);
+		          $tablaHTML[$pos]['datos']=array('','','',$value['Concepto'],'',number_format($value['Debe'],2,'.',''),number_format($value['Haber'],2,'.',''),$value['Saldo']);
 		          $tablaHTML[$pos]['borde'] =$borderow;		          
 		          $pos = $pos+1;
 		           foreach ($submodulo as $key => $value1) {
