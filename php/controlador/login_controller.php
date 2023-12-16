@@ -50,6 +50,11 @@ if (isset($_GET['patch'])) {
 	$_SESSION['INGRESO']['PATCH'] = strtoupper($parametro['patch']);
 }
 
+if (isset($_GET['datos_notificacion'])) {
+	$parametro = $_POST['parametros'];	
+	echo json_encode($login->datos_notificacion($parametro));
+}
+
 /**
  * 
  */
@@ -258,6 +263,40 @@ class login_controller
 			// print_r($datos);die();
 		}
 
+	}
+
+	function datos_notificacion($parametros)
+	{
+		$id = $parametros['id_noti'];
+		$lista = array();
+		$datos = $this->modelo->datos_notificacion($id);
+		foreach ($datos as $key => $value) {
+			$proceso = $this->link_proceso($value['CC2']);
+			$value['link'] = $proceso;
+			$lista[] = $value; 
+		}
+		// print_r($lista);die();
+		return $lista;
+	}
+
+	function link_proceso($num)
+	{
+		$pag = '';
+		switch ($num) {
+			case '1':
+				$pag = 'alimentosRec';
+				break;
+			case '2':			
+				$pag = 'alimentosRec2';
+				break;
+			case '3':
+				$pag = 'alimentosRec3';
+				break;
+			default:
+				// code...
+				break;
+		}
+		return $pag;
 	}
 
 	function enviar_email($parametros)

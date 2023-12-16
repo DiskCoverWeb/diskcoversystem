@@ -12,6 +12,8 @@
   	autocoplet_ingreso();
   	pedidos();
 
+  	notificaciones();
+
   
 
   
@@ -374,7 +376,7 @@ function autocoplet_ingreso()
   	$('#myModal_notificar_usuario').modal('show');
   }
 
- function notificar2()
+ function guardar_comentario_check()
  {
    var codigo = $('#txt_codigo').val();
    console.log(codigo);
@@ -384,20 +386,25 @@ function autocoplet_ingreso()
        return false;
     }
 
+    if($('#txt_comentario2').val()=='')
+    {
+    	 Swal.fire("Escriba un mensaje","","info");
+       return false;
+    }
+
     var parametros = {
         'notificar':$('#txt_comentario2').val(),
         'id':$('#txt_id').val(),
-        'asunto':'Recepcion',
     }
      $.ajax({
       data:  {parametros,parametros},
-      url:   '../controlador/inventario/alimentos_recibidosC.php?notificar_clasificacion=true',
+      url:   '../controlador/inventario/alimentos_recibidosC.php?guardar_comentario_check=true',
       type:  'post',
       dataType: 'json',
       success:  function (response) { 
         if(response==1)
         {
-          Swal.fire("","Notificacion enviada","success");
+          Swal.fire("","Comentario Guardado","success");
         }
         console.log(response);
         
@@ -529,6 +536,117 @@ function autocoplet_ingreso()
 		    });
  }
 
+   function nueva_notificacion()
+  {
+    $('#modal_notificar').modal('show');
+  }
+
+  function notificaciones()
+  {
+  	$.ajax({
+		    type: "POST",
+	      	url:   '../controlador/inventario/alimentos_recibidosC.php?listar_notificaciones=true',
+		      // data:datos,
+	        dataType:'json',
+		    success: function(data)
+		    {		    	    	
+		    	if(data.length>0)
+		    	{
+		    		var mensajes = '';
+		    		var cantidad  = 0;
+		    		 $('#pnl_notificacion').css('display','block');
+		    		 data.forEach(function(item,i){
+		    		 	mensajes+='<li>'+
+											'<a href="#" data-toggle="modal" onclick="mostrar_notificacion(\''+item.Texto_Memo+'\',\''+item.ID+'\',\''+item.Pedido+'\')">'+
+												'<h4 style="margin:0px">'+
+													item.Asunto+
+													'<small>'+formatoDate(item.Fecha.date)+' <i class="fa fa-calendar-o"></i></small>'+
+												'</h4>'+
+												'<p>'+item.Texto_Memo.substring(0,15)+'...</p>'+
+											'</a>'+
+										'</li>';
+										cantidad = cantidad+1;
+		    		 })
+
+		    		 $('#pnl_mensajes').html(mensajes);
+		    		 $('#cant_mensajes').text(cantidad);
+		    	}else
+		    	{
+
+		    		 $('#pnl_notificacion').css('display','none');
+		    	}
+		    	console.log(data);
+		    }
+		});  	
+
+  }
+
+  function mostrar_notificacion(text,id,pedido)
+  {
+
+  	cargar_notificacion(id);
+  	$('#myModal_notificar').modal('show');
+  	$('#txt_mensaje').html(text);  	
+  	$('#txt_id_noti').val(id); 	
+  	$('#txt_cod_pedido').val(pedido);
+  }
+
+
+
+  function cambiar_estado()
+  {
+  	respuesta = $('#txt_respuesta').val();
+  	if(respuesta=='' || respuesta=='.')
+  	{
+  		 Swal.fire("Ingrese una respuesta","",'info');
+  		 return false;
+  	}
+  	parametros = 
+  	{
+  		'noti':$("#txt_id_noti").val(),
+  		'respuesta':respuesta,
+  		'pedido':$('#txt_cod_pedido').val(),
+  	}
+  	$.ajax({
+		    type: "POST",
+	      	url:   '../controlador/inventario/alimentos_recibidosC.php?cambiar_estado=true',
+		      data:{parametros:parametros},
+	        dataType:'json',
+		    success: function(data)
+		    {		    
+		    	$('#myModal_notificar').modal('hide');
+		    	$('#txt_respuesta').val('');
+		    	notificaciones();
+		    }
+		});  	
+
+  }
+
+
+    function solucionado()
+  {
+   
+    parametros = 
+    {
+      'noti':$("#txt_id_noti").val(),
+    }
+    $.ajax({
+        type: "POST",
+          url:   '../controlador/inventario/alimentos_recibidosC.php?cambiar_estado_solucionado=true',
+          data:{parametros:parametros},
+          dataType:'json',
+        success: function(data)
+        {       
+          $('#myModal_notificar').modal('hide');
+          notificaciones();
+        }
+    });   
+
+  }
+
+
+
+
 
 </script>
 
@@ -539,14 +657,15 @@ function autocoplet_ingreso()
               <img src="../../img/png/salire.png">
             </a>
         </div>
-         <div class="col-xs-2 col-md-2 col-sm-2">
-					<button class="btn btn-default" title="Guardar checks temporalmente" onclick="guardar_check()">
-						<img src="../../img/png/check.png">
-					</button>
-				</div>  
+         
         <div class="col-xs-2 col-md-2 col-sm-2">
 					<button class="btn btn-default" title="Guardar" onclick="guardar()">
 						<img src="../../img/png/grabar.png">
+					</button>
+				</div>  
+				<div class="col-xs-2 col-md-2 col-sm-2">
+					<button class="btn btn-default" title="Guardar checks temporalmente" onclick="guardar_check()">
+						<img src="../../img/png/check.png">
 					</button>
 				</div>  
 		<!-- <div class="col-xs-2 col-md-2 col-sm-2">
@@ -554,6 +673,26 @@ function autocoplet_ingreso()
 				<img src="../../img/png/mostrar.png">
 			</button>
 		</div>    -->
+		<div class="col-xs-2 col-md-2 col-sm-2" style="display:none;" id="pnl_notificacion">
+			<div class="navbar-custom-menu">
+				<ul class="nav navbar-nav">
+
+						<li class="dropdown messages-menu">
+							<button class="btn btn-danger dropdown-toggle" title="Guardar"  data-toggle="dropdown" aria-expanded="false">
+									<img src="../../img/gif/notificacion.gif" style="width:32px;height: 32px;">
+							</button>  	
+							<ul class="dropdown-menu">
+								<li class="header">tienes <b id="cant_mensajes">0</b> mensajes</li>
+								<li>
+									<ul class="menu" id="pnl_mensajes">
+										
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+			</div>
+    </div>
     </div>
 </div>
 <div class="row">
@@ -619,11 +758,14 @@ function autocoplet_ingreso()
 							</div>
 						</div>
 						<div class="row"  style="padding-top: 5px;">
-							<div class="col-sm-6 text-right">
-								<b>Responsable Recepcion:</b>
-							</div>
-							<div class="col-sm-6">								
-								<input type="" class="form-control input-xs" id="txt_responsable" name="txt_responsable" readonly>
+							<div class="col-sm-12">
+								<b>Responsable Recepcion:</b>				
+								<div class="input-group">
+                      <input type="text" name="txt_responsable" id="txt_responsable" value="" class="form-control input-xs" readonly>
+                      <span class="input-group-btn">
+                        <button type="button" class="btn btn-warning btn-flat btn-xs" onclick="nueva_notificacion()"><i class="fa  fa-envelope"></i></button>
+                      </span>
+                  </div>
 							</div>
 						</div>
 					</div>
@@ -709,7 +851,7 @@ function autocoplet_ingreso()
 									<b>COMENTARIO DE CHECKING</b>									
 									<textarea class="form-control input-sm" rows="3" id="txt_comentario2" name="txt_comentario2" style="font-size: 16px;"></textarea>
 									<div class="text-right">
-										<button type="button" class="btn btn-primary btn-sm" onclick="notificar2()">Notificar</button>
+										<button type="button" class="btn btn-primary btn-sm" onclick="guardar_comentario_check()">Guardar</button>
 									</div>								
 							</div>
 						</div>
@@ -958,18 +1100,33 @@ function eliminar_lin(num)
       });
   }
 
- function notificar()
+ function notificar(usuario = false)
  {
+ 		var mensaje = $('#txt_notificar').val();
+ 		var para_proceso = 1;
+ 		if(usuario=='usuario')
+ 		{
+ 			mensaje = $('#txt_texto').val();
+ 			para_proceso = 2;
+ 		}
    
     var parametros = {
-        'notificar':$('#txt_texto').val(),
-        'usuario':$('#txt_codigo_usu').val(),
+        'notificar':mensaje,
+        'id':$('#txt_id').val(),
         'asunto':'De Checking a Clasificacion',
         'pedido':$('#txt_codigo').val(),
+        'de_proceso':3,
+        'pa_proceso':para_proceso,
     }
+
+    // var parametros = {
+    //     'notificar':$('#txt_texto').val(),
+    //     'asunto':'De Checking a Clasificacion',
+    //     'pedido':$('#txt_codigo').val(),
+    // }
      $.ajax({
       data:  {parametros,parametros},
-      url:   '../controlador/inventario/alimentos_recibidosC.php?notificar_usuario=true',
+      url:   '../controlador/inventario/alimentos_recibidosC.php?notificar_clasificacion=true',
       type:  'post',
       dataType: 'json',
       success:  function (response) { 
@@ -977,7 +1134,7 @@ function eliminar_lin(num)
         {
         	
           	cambiar_a_clasificacion();
-          Swal.fire("","Notificacion enviada","success").then(function(){
+          	Swal.fire("","Notificacion enviada","success").then(function(){
           	$('#myModal_notificar_usuario').modal('hide'); 
           	$('#txt_texto').val('');   
           	$('#txt_codigo_usu').val('') 
@@ -1032,11 +1189,31 @@ function eliminar_lin(num)
             </div>
              <div class="modal-footer">             	
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" onclick="notificar()">Notificar</button>
+                <button type="button" class="btn btn-primary" onclick="notificar('usuario')">Notificar</button>
             </div>
         </div>
     </div>
   </div>
+
+
+
+<div id="modal_notificar" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Notificar</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+            <textarea class="form-control input-sm" rows="3" style="font-size:16px" id="txt_notificar" name="txt_notificar" placeholder="Detalle de notificacion"></textarea>          
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+              <button type="button" class="btn btn-primary" onclick="notificar()">Notificar</button>
+          </div>
+      </div>
+  </div>
+</div>
 
 
 

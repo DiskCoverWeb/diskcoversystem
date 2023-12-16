@@ -227,6 +227,11 @@ if(isset($_GET['comentar_clasificacion']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->comentar_clasificacion($parametros));
 }
+if(isset($_GET['guardar_comentario_check']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->guardar_comentario_check($parametros));
+}
 if(isset($_GET['notificar_usuario']))
 {
 	$parametros = $_POST['parametros'];
@@ -881,6 +886,7 @@ class alimentos_recibidosC
 		// print_r($datos);die();
 		$tr= '';
 		foreach ($datos as $key => $value) {
+			// print_r($value);die();
 			$noti = $this->modelo->listar_notificaciones($_SESSION['INGRESO']['CodigoU'],'P',false,$value['Envio_No']);
 			$alerta = '';
 			if(count($noti)>0)
@@ -892,7 +898,7 @@ class alimentos_recibidosC
 						<ul class="dropdown-menu">';
 						foreach ($noti as $key2 => $value2) {
 							$texto2 = str_replace(array("\r", "\n"), '', $value2['Texto_Memo']);
-							$alerta.='<li><a href="#" onclick="mostrar_notificacion(\''.$texto2.'\',\''.$value2['ID'].'\')">Notificacion'.($key2+1).'</a></li>';
+							$alerta.='<li><a href="#" onclick="mostrar_notificacion(\''.$texto2.'\',\''.$value2['ID'].'\',\''.$value['Envio_No'].'\')">Notificacion'.($key2+1).'</a></li>';
 						}
 						$alerta.='</ul>
 					</div>	';
@@ -1194,26 +1200,55 @@ class alimentos_recibidosC
 	function notificar_clasificacion($parametros)
 	{
 		// print_r($parametros);die();
+
+		// print_r($_SESSION['INGRESO']);die();
 		$pedido = $this->modelo-> buscar_transCorreos_all(false,false,$parametros['id']);
 
 		   SetAdoAddNew("Trans_Memos"); 		
 		   SetAdoFields('T','P');		   		
-		   SetAdoFields('Asunto',$parametros['asunto']);
+		   SetAdoFields('Asunto','De:'.$this->Nombre_proceso($parametros['de_proceso']).' a '.$this->Nombre_proceso($parametros['pa_proceso']));
 		   SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);   
 		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);  
 		   SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
 		   SetAdoFields('Codigo',$pedido[0]['CodigoU']); 
-		   SetAdoFields('Texto_Memo',$parametros['notificar'].'<br> (Pedido:'.$parametros['pedido'].')');
+		   SetAdoFields('Texto_Memo',$parametros['notificar']);
 		   SetAdoFields('Codigo',$pedido[0]['CodigoU']); 
 		   SetAdoFields('Atencion',$parametros['pedido']);
+
+		   SetAdoFields('CC1',$parametros['de_proceso']);
+		   SetAdoFields('CC2',$parametros['pa_proceso']);
 		   return SetAdoUpdate();		   
 		   
+	}
+
+	function Nombre_proceso($num)
+	{
+		$nombre = '';
+		switch ($num) {
+			case '1':
+				$nombre = 'Recepcion'; // code...
+				break;
+			case '2':
+				$nombre = 'Clasificacion'; // code...
+				break;
+			case '3':
+				$nombre = 'Checking'; // code...
+				break;
+			
+		}
+		return $nombre;
 	}
 
 	function comentar_clasificacion($parametros)
 	{
 		// print_r($parametros);die();
 		return $this->editar_comentarios_trans_correos($parametros['id'],'Clasificacion',$parametros['notificar']);				   
+	}
+
+	function guardar_comentario_check($parametros)
+	{
+		// print_r($parametros);die();
+		return $this->editar_comentarios_trans_correos($parametros['id'],'Checking',$parametros['notificar']);				   
 	}
 
 
@@ -1223,36 +1258,46 @@ class alimentos_recibidosC
 
 		   SetAdoAddNew("Trans_Memos"); 		
 		   SetAdoFields('T','P');		   		
-		   SetAdoFields('Asunto',$parametros['asunto']);
+		   SetAdoFields('Asunto','Resp:'.$this->Nombre_proceso($parametros['de_proceso']).' a '.$this->Nombre_proceso($parametros['pa_proceso']));
 		   SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);   
 		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);  
 		   SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
 		   SetAdoFields('Codigo',$parametros['usuario']); 
-		   SetAdoFields('Texto_Memo',$parametros['notificar'].' (Pedido:'.$parametros['pedido'].')');
+		   SetAdoFields('Texto_Memo',$parametros['notificar']);
 		   SetAdoFields('Atencion',$parametros['pedido']);
+
+		   SetAdoFields('CC1',$parametros['de_proceso']);
+		   SetAdoFields('CC2',$parametros['pa_proceso']);
+
 		   return SetAdoUpdate();
 	}
 
 	function listar_notificaciones()
 	{
 		// print_r($parametros);die();
+		$noti = array();
 		$notificacion = $this->modelo->listar_notificaciones($_SESSION['INGRESO']['CodigoU'],'P');
-		return $notificacion;
+		foreach ($notificacion as $key => $value) {
+			$noti[] = array('ID'=>$value['ID'],'Texto_Memo'=>preg_replace("[\n|\r|\n\r]",'<br>',$value['Texto_Memo']),'Asunto'=>$value['Asunto'],'Fecha'=>$value['Fecha'],'Pedido'=>$value['Atencion']);
+		}
+
+		// print_r($notificacion);die();
+		return $noti;
 	}
 
 	function cambiar_estado($parametros)
 	{
 		$notificacion = $this->modelo->listar_notificaciones(false,false,$parametros['noti']);
-		$parametros2 = array('asunto'=>'Respuesta Notificacion','notificar'=>$parametros['respuesta'],'usuario'=>$notificacion[0]['CodigoU'],'pedido'=>$notificacion[0]['Atencion']);
+
+		$parametros2 = array('asunto'=>'Respuesta Notificacion','notificar'=>$parametros['respuesta'],'usuario'=>$notificacion[0]['CodigoU'],'pedido'=>$notificacion[0]['Atencion'],'de_proceso'=>$notificacion[0]['CC2'],'pa_proceso'=>$notificacion[0]['CC1']);
 
 		// print_r($parametros2);die();
 
 
- 	    SetAdoAddNew("Trans_Memos");	
-		SetAdoFields('T','N');
-		SetAdoFields('T','N');
-		SetAdoFieldsWhere('ID',$parametros['noti']);
-		SetAdoUpdateGeneric();
+ 	    // SetAdoAddNew("Trans_Memos");	
+		// SetAdoFields('T','N');
+		// SetAdoFieldsWhere('ID',$parametros['noti']);
+		// SetAdoUpdateGeneric();
 
 		 return $this->notificar_usuario($parametros2);
 	}
@@ -1291,6 +1336,9 @@ class alimentos_recibidosC
 				break;
 			case 'Clasificacion':
 				SetAdoFields('Llamadas',$texto);
+				break;
+			case 'Checking':
+				SetAdoFields('Mensaje2',$texto);
 				break;
 		}
 		SetAdoFieldsWhere('ID',$pedido);

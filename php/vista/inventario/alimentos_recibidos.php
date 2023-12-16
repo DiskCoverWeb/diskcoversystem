@@ -668,7 +668,7 @@ function autocoplet_ingreso_donante(){
 		    		 $('#pnl_notificacion').css('display','block');
 		    		 data.forEach(function(item,i){
 		    		 	mensajes+='<li>'+
-											'<a href="#" data-toggle="modal" onclick="mostrar_notificacion(\''+item.Texto_Memo+'\',\''+item.ID+'\')">'+
+											'<a href="#" data-toggle="modal" onclick="mostrar_notificacion(\''+item.Texto_Memo+'\',\''+item.ID+'\',\''+item.Pedido+'\')">'+
 												'<h4 style="margin:0px">'+
 													item.Asunto+
 													'<small>'+formatoDate(item.Fecha.date)+' <i class="fa fa-calendar-o"></i></small>'+
@@ -692,12 +692,17 @@ function autocoplet_ingreso_donante(){
 
   }
 
-  function mostrar_notificacion(text,id)
+  function mostrar_notificacion(text,id,pedido)
   {
+
+  	cargar_notificacion(id);
   	$('#myModal_notificar').modal('show');
-  	$('#txt_mensaje').text(text);  	
-  	$('#txt_id_noti').val(id);
+  	$('#txt_mensaje').html(text);  	
+  	$('#txt_id_noti').val(id); 	
+  	$('#txt_cod_pedido').val(pedido);
   }
+
+
 
   function cambiar_estado()
   {
@@ -711,6 +716,7 @@ function autocoplet_ingreso_donante(){
   	{
   		'noti':$("#txt_id_noti").val(),
   		'respuesta':respuesta,
+  		'pedido':$('#txt_cod_pedido').val(),
   	}
   	$.ajax({
 		    type: "POST",

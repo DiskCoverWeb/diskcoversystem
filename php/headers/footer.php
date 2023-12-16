@@ -339,20 +339,36 @@
   </div>
 
   <div id="myModal_notificar" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
-    <div class="modal-dialog modal-sm">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <h4 class="modal-title">Notificacion</h4>
             </div>
             <div class="modal-body" style="background: antiquewhite;">
-              <input type="hidden" name="txt_id_noti" id="txt_id_noti">
-                <div id="txt_mensaje"></div>
-                <hr>
-                <b>Responder</b>
-                <textarea class="form-control" id="txt_respuesta" name="txt_respuesta">.</textarea>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="row text-center">
+                    <b>Notificacion <span id="lbl_asunto"></span></b>
+                  </div>
+                    <input type="hidden" name="txt_id_noti" id="txt_id_noti">
+                    <input type="hidden" name="txt_cod_pedido" id="txt_cod_pedido">                    
+                    <b>De: </b><span id="lbl_de"></span> <br>
+                    <b>Para: </b><span id="lbl_para"></span> <br>
+                    <b>Pedido: </b><span id="lbl_pedido"></span> <a href="#" id="lbl_link">Ir a pedido</a><br>
+                    <b>Mensaje: </b><br>
+                    <div id="txt_mensaje"></div>                  
+                </div>
+                <div class="col-sm-6">
+                  <div class="row text-center">
+                    <b>Respuesta</b>
+                  </div>
+                <textarea class="form-control" id="txt_respuesta" name="txt_respuesta" rows="3">.</textarea>
                 <div class="text-right">
                   <button type="button" class="btn btn-primary" onclick="cambiar_estado()">Responder</button>
+                </div>                  
                 </div>
+              </div>
+              
             </div>
              <div class="modal-footer">
                 <button type="button" class="btn btn-primary" onclick="solucionado()">Marcar como solucionando</button>
@@ -477,6 +493,34 @@ function limpiar_IngresoClave_MYSQL() {
     $('#intentos_MYSQL').val('1');
     $('#txt_IngClave_MYSQL').val('');
 }
+
+function cargar_notificacion(id)
+{    
+  ruta = window.location.href;
+  base = ruta.split('&');
+    parametros = 
+    {
+      'id_noti':id,
+    }
+    $.ajax({
+        type: "POST",
+         url: '../controlador/login_controller.php?datos_notificacion=true',
+          data:{parametros:parametros},
+          dataType:'json',
+        success: function(data)
+        {       
+
+          $('#lbl_asunto').text(data[0].Asunto);
+          $('#lbl_de').text(data[0].De);
+          $('#lbl_para').text(data[0].Para);
+          $('#lbl_pedido').text(data[0].Atencion);
+          $('#txt_mensaje').text(data[0].Texto_Memo);
+          $('#lbl_link').attr('href',base[0]+'&acc='+data[0].link);
+         console.log(data)
+        }
+    });   
+
+  }
   </script>
 
 <?php

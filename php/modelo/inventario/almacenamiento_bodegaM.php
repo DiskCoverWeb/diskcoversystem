@@ -85,8 +85,9 @@ class almacenamiento_bodegaM
 
 	function Buscar_productos_ingresados($id=false,$cod=false)
 	{
-		$sql = "SELECT ".Full_Fields("Trans_Kardex")." 
-		FROM Trans_Kardex 
+		$sql = "SELECT Periodo, TK.T, CodBodega, Codigo_Barra, Codigo_Inv, TK.Fecha, TP, Numero, Entrada, Salida, Valor_Unitario, Valor_Total, Existencia, Costo, Total, Codigo_P, TK.Descuento, Descuento1, Cta_Inv, Contra_Cta, Orden_No, PVP, Total_IVA, TK.Porc_C, TK.CodigoU, Item, TK.X, Stock_Bod, Unit_Bod, Valor_Bod, Stock_Barra, Costo_Bod, Unit_Barr, Costo_Barr, Valor_Barr, Total_Bod, Total_Barr, Solicitud, CodigoL, Cod_Tarifa, Fecha_DUI, No_Refrendo, DUI, Precio_FOB, Comision, Trans_Unit, Utilidad, Guia_No, CodMarca, Lote_No, Procesado, Codigo_Dr, Codigo_Tra, Fecha_Fab, Fecha_Exp, Modelo, Procedencia, Serie_No, TC, Serie, Factura, Detalle, Centro_Costo, Tipo_Empaque, TK.ID ,C.Cliente
+		FROM Trans_Kardex TK
+		inner join Clientes C on TK.Codigo_P = C.Codigo
 		WHERE Orden_No in(select TC.Envio_No
 						from Trans_Correos TC
 						inner join Clientes C on TC.CodigoP = C.Codigo 
@@ -103,6 +104,7 @@ class almacenamiento_bodegaM
 		{
 			$sql.= " AND Codigo_Barra  like  '%".$cod."%'";
 		}
+		$sql.=" ORDER BY Fecha_Exp ASC";
 
 		// print_r($sql);die();
 		return $this->db->datos($sql);
@@ -291,7 +293,7 @@ class almacenamiento_bodegaM
 
 	function cargar_empaques($query=false)
 	{
-		$sql = "SELECT      Proceso, ID
+		$sql = "SELECT      Proceso, ID,Picture
 		FROM         Catalogo_Proceso
 		WHERE  Item = '".$_SESSION['INGRESO']['item']."'
 		AND Nivel = 97";

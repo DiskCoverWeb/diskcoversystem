@@ -197,12 +197,19 @@ function cargar_paquetes()
       success: function(data)
       {
         var op = '<option value="">Seleccione empaque</option>';
+        var option = '';
         data.forEach(function(item,i){
+
+          option+= '<div class="col-md-6 col-sm-6">'+
+                      '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/'+item.Picture+'.png" onclick="cambiar_empaque(\''+item.ID+'\')"  style="width: 60px;height: 60px;"></button><br>'+
+                      '<b>'+item.Proceso+'</b>'+
+                    '</div>';
+
            op+='<option value="'+item.ID+'">'+item.Proceso+'</option>';
         })
 
         $('#txt_paquetes').html(op); 
-        $('#txt_paquetes2').html(op);        
+        $('#pnl_tipo_empaque').html(option);        
       }
   });
 
@@ -519,6 +526,11 @@ function autocoplet_ingreso()
     $("#modal_cantidad #txt_cantidad2").focus();
     // $('#txt_cantidad2').trigger( "focus");
   }
+  function show_empaque()
+  {
+    $('#modal_empaque').modal('show');
+    // $('#txt_cantidad2').trigger( "focus");
+  }
 
   function cambiar_cantidad()
   {
@@ -538,9 +550,8 @@ function autocoplet_ingreso()
     }
   }
 
-  function cambiar_empaque()
+  function cambiar_empaque(can)
   {
-    var can = $('#txt_paquetes2').val();
     $('#modal_empaque').modal('hide');
     $('#txt_paquetes').val(can);
 
@@ -548,7 +559,10 @@ function autocoplet_ingreso()
     {
       $('#modal_sucursal').modal('show');
     }else{
-      $('#modal_producto_2').modal('show');          
+      if($('#txt_TipoSubMod').val()=='R')
+      {
+          $('#modal_producto_2').modal('show');     
+      }  
     }
 
     // if($('#txt_TipoSubMod').val()=='R')
@@ -689,12 +703,19 @@ function autocoplet_ingreso()
        return false;
     }
 
+    if($('#txt_notificar').val()=='')
+    {
+      Swal.fire("Ingrese un texto","","info");
+       return false;
+    }
+
     var parametros = {
         'notificar':$('#txt_notificar').val(),
         'id':$('#txt_id').val(),
         'asunto':'De Clasificacion a Recepcion',
         'pedido':$('#txt_codigo').val(),
-        'para':$('#txt_responsable').val(),
+        'de_proceso':2, 
+        'pa_proceso':1, 
     }
      $.ajax({
       data:  {parametros,parametros},
@@ -769,7 +790,7 @@ function autocoplet_ingreso()
              $('#pnl_notificacion').css('display','block');
              data.forEach(function(item,i){
               mensajes+='<li>'+
-                      '<a href="#" data-toggle="modal" onclick="mostrar_notificacion(\''+item.Texto_Memo.replace(/[\r\n]/g, '')+'\',\''+item.ID+'\')">'+
+                      '<a href="#" data-toggle="modal" onclick="mostrar_notificacion(\''+item.Texto_Memo+'\',\''+item.ID+'\',\''+item.Pedido+'\')">'+
                         '<h4 style="margin:0px">'+
                           item.Asunto+
                           '<small>'+formatoDate(item.Fecha.date)+' <i class="fa fa-calendar-o"></i></small>'+
@@ -793,11 +814,13 @@ function autocoplet_ingreso()
 
   }
 
-  function mostrar_notificacion(text,id)
+  function mostrar_notificacion(text,id,pedido)
   {
+   cargar_notificacion(id);
     $('#myModal_notificar').modal('show');
     $('#txt_mensaje').html(text);   
-    $('#txt_id_noti').val(id);
+    $('#txt_id_noti').val(id);  
+    $('#txt_cod_pedido').val(pedido);
   }
 
   function cambiar_estado()
@@ -1095,7 +1118,7 @@ function autocoplet_ingreso()
           </div>
           <div class="col-sm-4">
             <div class="col-sm-3">
-              <button type="button" class="btn btn-default">
+              <button type="button" class="btn btn-default" onclick="show_empaque()">
                 <img src="../../img/png/empaque.png" width="45px" height="45px">
                 <br>
               </button>              
@@ -1763,10 +1786,8 @@ function eliminar_all_pedido(pedido)
               <h4 class="modal-title">Tipo empaque</h4>
           </div>
           <div class="modal-body" style="background: antiquewhite;">
-          <b>Tipo de empaque</b>
-           <select class="form-control input-sm" id="txt_paquetes2" name="txt_paquetes2" onchange="cambiar_empaque()">
-              <option value="">Seleccione Sucursal</option>
-           </select>                  
+            <div class="row text-center" id="pnl_tipo_empaque">
+            </div>                       
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
               <button type="button" class="btn btn-primary" onclick="cambiar_empaque()">OK</button>

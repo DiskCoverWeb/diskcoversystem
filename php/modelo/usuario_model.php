@@ -785,5 +785,17 @@ class usuario_model{
 	    return $datos;
 	}
 
+
+	function datos_notificacion($id)
+	{
+		$sql = "SELECT TM.*,C.Cliente as 'De',C2.Cliente as 'Para' from Trans_Memos TM
+						INNER JOIN Clientes C ON TM.CodigoU = C.Codigo
+						INNER JOIN Clientes C2 ON TM.Codigo = C2.Codigo
+						WHERE TM.ID ='".$id."'";
+		// print_r($sql);die();
+		$resp=$this->db1->datos($sql);
+		return $resp;
+	}
+
 }
 ?>

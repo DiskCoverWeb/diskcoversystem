@@ -21,7 +21,7 @@
     	$('#txt_id').val(data.ID); 
       $('#txt_fecha_exp').val(formatoDate(data.Fecha_Exp.date));
       $('#txt_fecha').val(formatoDate(data.Fecha.date));
-      $('#txt_donante').val(data.Centro_Costo);
+      $('#txt_donante').val(data.Cliente);
       $('#txt_paquetes').val(data.Tipo_Empaque);
 
       var cantidad = parseFloat(data.Entrada).toFixed(2)
