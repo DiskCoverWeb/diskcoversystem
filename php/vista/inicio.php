@@ -478,7 +478,10 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'almacenamiento_bod':
 				require_once("inventario/almacenamiento_bodega.php");
 				break;
-
+				//Inventario  -> Ingreso de Productos -> Reubicar
+			case 'reasignacion_bodega':
+				require_once("inventario/reubicar.php");
+				break;
 			//Inventario  -> Reportes -> Lista productos
 			case 'CatalogoCtas':
 				require_once("inventario/Catalogo.php");

@@ -8,7 +8,16 @@
   	cargar_bodegas()
   	cargar_paquetes()
   	pedidos();
-  	productos_asignados();
+
+  	 $('#txt_cod_lugar').keydown( function(e) { 
+          var keyCode1 = e.keyCode || e.which; 
+          if (keyCode1 == 13) { 
+          	codigo = $('#txt_cod_lugar').val();
+          	codigo = codigo.trim();
+          	$('#txt_cod_lugar').val(codigo);
+          	buscar_ruta();
+          }
+      });  
   
 
 
@@ -86,22 +95,7 @@
   }
 
   function pedidos(){
-  // $('#txt_codigo').select2({
-  //   placeholder: 'Seleccione una beneficiario',
-  //   // width:'90%',
-  //   ajax: {
-  //     url:   '../controlador/inventario/almacenamiento_bodegaC.php?search_contabilizado=true',          
-  //     dataType: 'json',
-  //     delay: 250,
-  //     processResults: function (data) {
-  //       // console.log(data);
-  //       return {
-  //         results: data
-  //       };
-  //     },
-  //     cache: true
-  //   }
-  // });
+ 
   	$('#txt_codigo').select2({
     placeholder: 'Seleccione una beneficiario',
     ajax: {
@@ -314,7 +308,7 @@ function contenido_bodega()
 function productos_asignados()
 {
 	var parametros = {
-		'num_ped':$('#txt_codigo').val(),
+		'bodegas':$('#txt_cod_lugar').val(),
 	}
  	$.ajax({
 	    type: "POST",
@@ -379,6 +373,8 @@ async function buscar_ruta()
 	// if($('#txt_cod_bodega').val()!='' && $('#txt_cod_bodega').val()!='.' ){cargar_bodegas();}
 
 	 codigo = $('#txt_cod_lugar').val();
+	 codigo = codigo.trim();
+	  $('#txt_cod_lugar').val(codigo);
 	 // pasos = codigo.split('.');	 
 	 // let ruta = '';
 	 // let bodega = '';
@@ -409,7 +405,7 @@ async function buscar_ruta()
 		    {
 		    	$('#txt_bodega_title').text('Ruta:'+data);
 		    	$('#txt_cod_bodega').val(codigo);
-
+		    	productos_asignados();
 		    }
 		});
 }
@@ -514,50 +510,64 @@ async function buscar_ruta()
 										</div>
 								</div>
 						</div>
-							<div class="col-sm-1 text-center">
-								<button class="btn btn-primary" type="button" onclick="asignar_bodega()"><i class="fa fa-arrow-right"></i></button>	
-								<br>
-								<button class="btn btn-primary" type="button" onclick="desasignar_bodega()"><i class="fa fa-arrow-left"></i></button>								
-							</div>
-							<div class="col-sm-5">
-								<b>Codigo de lugar</b>
-								<div class="input-group input-group-sm">
-										<input type="" class="form-control input-xs" id="txt_cod_lugar" style="font-size: 20px;" name="txt_cod_lugar" onblur="buscar_ruta()">	
-										<span class="input-group-btn">
-												<button type="button" class="btn btn-info btn-flat" onclick="abrir_modal_bodegas()"><i class="fa fa-map-marker"></i></button>
-										</span>
-								</div>
+							
+							<div class="col-sm-7">
+								<!-- <br>
+								<button class="btn btn-primary" type="button" onclick="desasignar_bodega()"><i class="fa fa-arrow-left"></i></button>	
+ -->
+								<div class="row">
+									<div class="col-sm-9">
+										<b>Codigo de lugar</b>
+										<div class="input-group input-group-sm">
+												<input type="" class="form-control input-xs" id="txt_cod_lugar" style="font-size: 20px;" name="txt_cod_lugar" onblur="buscar_ruta()">	
+												<span class="input-group-btn">
+														<button type="button" class="btn btn-info btn-flat" onclick="abrir_modal_bodegas()"><i class="fa fa-sitemap"></i></button>
+												</span>
+										</div>
+									</div>
+									<div class="col-sm-3 text-right">
+										<br>
+											<button class="btn btn-primary btn-sm" type="button" onclick="asignar_bodega()"><i class="fa fa-map-marker"></i>  Asignar</button>											
+									</div>
+									
+								</div>							
+
+
 								<div class="box box-success">
 										<div class="box-header">
 											<h3 class="box-title" id="txt_bodega_title">Ruta: </h3>
 											<input type="hidden" class="form-control input-xs" id="txt_cod_bodega" name="txt_cod_bodega" readonly>
 										</div>
-										<div class="box-body">
+										<!-- <div class="box-body">
 											<ul class="nav nav-pills nav-stacked" id="contenido_bodega"></ul>						
-										</div>
-									</div>								
+										</div> -->
+									</div>	
+
+								<div class="row">
+										<div class="col-sm-12">
+											Contenido de bodega
+											<table class="table-sm table-hover table">
+												<thead>
+													<th><b>Producto</b></th>
+													<th><b>Ruta</b></th>
+													<th></th>
+												</thead>
+												<tbody id="tbl_asignados">
+													<tr>
+														<td colspan="3">Productos asignados</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>					
+								</div>
+
 							</div>
 						</div>
 						
 						
 					</div>
 				</div>
-				<div class="row">
-						<div class="col-sm-12">
-							<table class="table-sm table-hover table">
-								<thead>
-									<th><b>Producto</b></th>
-									<th><b>Ruta</b></th>
-									<th></th>
-								</thead>
-								<tbody id="tbl_asignados">
-									<tr>
-										<td colspan="3">Productos asignados</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>					
-				</div>
+				
 			</div>
 			</form>
 		</div>	
