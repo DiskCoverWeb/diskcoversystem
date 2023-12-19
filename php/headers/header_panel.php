@@ -25,7 +25,7 @@ include("../db/chequear_seguridad.php"); ?>
   <!-- <link rel="stylesheet" href="../../dist/css/sweetalert.css"> -->
   <script src="../../dist/js/sweetalert2.js"></script>
   <link rel="stylesheet" href="../../dist/css/sweetalert2.min.css">
-  <script src="../../dist/js/js_globales.js?<?php echo date('y') ?>"></script>
+  <script src="../../dist/js/js_globales.js?<?php echo date('ym') ?>"></script>
 
   <script type="text/javascript">
     function validador_correo(imput)

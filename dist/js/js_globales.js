@@ -436,3 +436,50 @@ function TextoValido(input, Numero=false, Mayusculas=false, NumeroDecimales=2) {
         TextB.val(TextosB);
     }
 }
+
+function validar_sriC(ci)
+  {
+    $('#myModal_espera').modal('show');
+    $.ajax({
+    data: {ci,ci},
+    url: '../controlador/modalesC.php?validar_sri_cliente=true',
+    type: 'POST',
+    dataType: 'json',
+    success: function(response) {
+      $('#myModal_espera').modal('hide');
+      if(response.res=='1')
+        {
+          $('.LblSRI').html(response.tbl).css('background-color','rgb(226 251 255)');
+          if(response.data){
+            if ($('#nombrec').length > 0) {
+              if($('#nombrec').val()!='' && $('#nombrec').val()!=response.data.RazonSocial){
+                Swal.fire({
+                  html: `ESTE RUC ESTA ASIGNADO A:<br>${$('#nombrec').val()}<br>
+                  LA INFORMACION CORRECTA DEL R.U.C. ES:<br>
+                  ${response.data.RazonSocial} <br>
+                  ¿Desea actualizar el campo Apellidos y Nombres?`,
+                  type: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  cancelButtonText: 'No.',
+                  confirmButtonText: 'Si'
+                }).then((result) => {
+                  $('#nombrec').val(response.data.RazonSocial);
+                  $("#BtnGuardarClienteFCliente").focus()
+                })
+              }else{
+                $('#nombrec').val(response.data.RazonSocial);
+              }
+            }
+          }
+        }else
+        {
+          $('.LblSRI').html('');
+          Swal.fire(response.msg,'','info')
+        }
+
+      }
+    });
+
+  }

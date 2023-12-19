@@ -25,7 +25,7 @@
   <!-- <script src="../../dist/js/pages/dashboard.js"></script> -->
   <!-- AdminLTE for demo purposes -->
   <script src="../../dist/js/demo.js"></script>
-  <script src="../../dist/js/js_globales.js?<?php echo date('y') ?>"></script>
+  <script src="../../dist/js/js_globales.js?<?php echo date('ym') ?>"></script>
   <script src="../../dist/js/script_acordeon.js"></script>
   </body>
 
