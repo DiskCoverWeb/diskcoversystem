@@ -103,6 +103,11 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 				require_once("contabilidad/Subcta_proyectos.php");
 				break;
 
+			//Contabilidad -> Archivo -> Ctas. Ingreso/Egresos/Primas/Centro de Costos
+			case 'ISubCtas':
+				require_once("contabilidad/ISubCtas.php");
+				break;
+
 			//Contabilidad -> Archivo -> Cierre de mes
 			case 'CierreMes':
 				require_once("contabilidad/cierre_mes.php");
