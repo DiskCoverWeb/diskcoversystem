@@ -24,7 +24,7 @@ class ISubCtasM
                 ORDER BY Codigo";
         $AdoCatalogo = $this->db->datos($sql);
 
-        $sql = "SELECT Codigo, Detalle, Nivel
+        $sql = "SELECT Codigo, Detalle, Nivel, (CAST(Codigo AS NVARCHAR(MAX)) + SPACE(5) + CAST(Detalle AS NVARCHAR(MAX)) + SPACE(54 - LEN(Detalle)) + CAST(Nivel AS NVARCHAR(MAX))) AS Nombre_Cta
                 FROM Catalogo_SubCtas
                 WHERE TC = '" . $parametros['TipoCta'] . "'
                 AND Item = '" . $_SESSION['INGRESO']['item'] . "'
