@@ -103,7 +103,7 @@ include_once("../funciones/funciones.php");
   <script src="../../bower_components/select2/dist/js/select2.js"></script>
   <script src="../../dist/js/jquery-ui.js"></script>
   <script src="../../dist/js/sweetalert2.js"></script>
-  <script src="../../dist/js/js_globales.js?<?php echo date('y') ?>"></script>
+  <script src="../../dist/js/js_globales.js?<?php echo date('ym') ?>"></script>
 
   <script type="text/javascript">
   var formato = "<?php if(isset($_SESSION['INGRESO']['Formato_Cuentas'])){echo $_SESSION['INGRESO']['Formato_Cuentas'];}?>";

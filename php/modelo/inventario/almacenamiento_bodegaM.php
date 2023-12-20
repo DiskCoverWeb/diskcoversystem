@@ -98,7 +98,7 @@ class almacenamiento_bodegaM
 		AND CodBodega = '-1'";
 		if($id)
 		{
-			$sql.= " AND ID  = '".$id."'";
+			$sql.= " AND TK.ID  = '".$id."'";
 		}
 		if($cod)
 		{
@@ -176,7 +176,8 @@ class almacenamiento_bodegaM
 	     AND T.Periodo = P.Periodo
 		 AND T.Codigo_Inv = P.Codigo_Inv
 		 AND CodBodega <> '-1'
-		 AND Orden_No <> '0'";
+		 AND Orden_No <> '0'
+		 AND T.T = 'C' ";
 		 if($orden)
 		 {
 	     	$sql.=" AND Orden_No = '".$orden."' ";

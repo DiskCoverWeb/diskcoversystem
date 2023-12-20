@@ -220,55 +220,6 @@ $mostrar_medidor = false;
     });
 	}
 
-  function validar_sriC()
-  {
-    var ci = $('#ruc').val();
-    $('#myModal_espera').modal('show');
-    $.ajax({
-    data: {ci,ci},
-    url: '../controlador/modalesC.php?validar_sri_cliente=true',
-    type: 'POST',
-    dataType: 'json',
-    success: function(response) {
-      $('#myModal_espera').modal('hide');
-      if(response.res=='1')
-        {
-          $('#LblSRI').html(response.tbl).css('background-color','rgb(226 251 255)');
-          if(response.data){
-            if ($('#nombrec').length > 0) {
-              if($('#nombrec').val()!='' && $('#nombrec').val()!=response.data.RazonSocial){
-                Swal.fire({
-                  html: `ESTE RUC ESTA ASIGNADO A:<br>${$('#nombrec').val()}<br>
-                  LA INFORMACION CORRECTA DEL R.U.C. ES:<br>
-                  ${response.data.RazonSocial} <br>
-                  ¿Desea actualizar el campo Apellidos y Nombres?`,
-                  type: 'warning',
-                  showCancelButton: true,
-                  confirmButtonColor: '#3085d6',
-                  cancelButtonColor: '#d33',
-                  cancelButtonText: 'No.',
-                  confirmButtonText: 'Si'
-                }).then((result) => {
-                  $('#nombrec').val(response.data.RazonSocial);
-                  $("#BtnGuardarClienteFCliente").focus()
-                })
-              }else{
-                $('#nombrec').val(response.data.RazonSocial);
-              }
-            }
-          }
-        }else
-        {
-          $('#LblSRI').html('');
-          Swal.fire(response.msg,'','info')
-        }
-
-      }
-    });
-
-  }
-
-
   function validar()
   {
 
@@ -492,12 +443,12 @@ $mostrar_medidor = false;
   visibility: hidden;
 }
 
-#LblSRI{
+.LblSRI{
   display: inline-grid;
   max-width: 80%;
 }
 
-#LblSRI p{
+.LblSRI p{
   padding: 0;
 }
 
@@ -522,7 +473,7 @@ $mostrar_medidor = false;
 					</div>
           <div class="col-xs-2 col-sm-1" style="padding:0px"><br>
             <!-- <iframe src="https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=1722214507001&output=embed"></iframe> -->
-            <button type="button" class="btn btn-sm" onclick="validar_sriC()">
+            <button type="button" class="btn btn-sm" onclick="validar_sriC($('#ruc').val())">
               <img src="../../img/png/SRI.jpg" style="width: 60%">
             </button>
             
@@ -623,7 +574,7 @@ $mostrar_medidor = false;
         <!-- /.box-body -->
         <div class="box-footer">
         	<button type="button" id="BtnGuardarClienteFCliente" onclick="guardar_cliente()" class="btn btn-primary">Guardar</button>
-          <div id="LblSRI" class="text-left">
+          <div class="text-left LblSRI">
               
             </div> 
 	      </div>

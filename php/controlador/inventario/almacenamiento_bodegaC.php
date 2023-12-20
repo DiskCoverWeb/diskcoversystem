@@ -224,8 +224,8 @@ class almacenamiento_bodegaC
     {
     	// print_r($parametros);die();
     	// print_r($ordenes);die();
-    	$fecha = date('Y-m-d');
-    	$datos = $this->modelo->cargar_agregado_en_bodega(false,$fecha);
+    	$bodega = $parametros['bodegas'];
+    	$datos = $this->modelo->cargar_agregado_en_bodega(false,false,false,$bodega);
     	// print_r($datos);die();
     	$ls='';		
 		foreach ($datos as $key => $value) 
