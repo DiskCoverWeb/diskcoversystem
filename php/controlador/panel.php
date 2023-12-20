@@ -517,6 +517,7 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         $_SESSION['INGRESO']['ImpCeros'] = $empresa[0]['Imp_Ceros'];
         $_SESSION['INGRESO']['Email_CE_Copia'] = $empresa[0]['Email_CE_Copia'];
         $_SESSION['INGRESO']['Ret_Aut'] = $empresa[0]['Ret_Aut'];
+        $_SESSION['INGRESO']['ConciliacionAut'] = $empresa[0]['Conciliacion_Aut'];
 
         //datos del periodo periodo
 

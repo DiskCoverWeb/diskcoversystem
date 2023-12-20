@@ -11332,6 +11332,9 @@ function GrabarComprobante($C1)
          SetAdoFields("C_Costo", $CodigoCC);
          SetAdoFields("Item", $C1["Item"]);
         // 'SetAdoFields("C", True)
+         if($TipoCta == "BA"){
+          SetAdoFields("C", $_SESSION['INGRESO']['ConciliacionAut']);
+         }
          SetAdoFields("Procesado", False);
          SetAdoUpdate();
          // $NumTrans = $NumTrans + 1;
