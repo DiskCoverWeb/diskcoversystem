@@ -59,7 +59,6 @@ class ISubCtasC
     }
 
     public function GrabarCta($parametros){
-        
         return $this->modelo->GrabarCta($parametros);
     }
 }

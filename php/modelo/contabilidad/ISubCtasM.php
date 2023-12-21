@@ -133,12 +133,11 @@ class ISubCtasM
                 AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
                 AND TC = '" . $parametros['TipoCta'] . "'";
         Ejecutar_SQL_SP($sql);
-
         SetAdoAddNew("Catalogo_SubCtas");
         SetAdoFields("TC", $parametros['TipoCta']);
         SetAdoFields("Codigo", $Codigo);
         SetAdoFields("Detalle", $parametros['TextSubCta']);
-        SetAdoFields("Presupuesto", $parametros['TextPresupuesto']);
+        SetAdoFields("Presupuesto", (int) $parametros['TextPresupuesto']);
         SetAdoFields("Caja", 0);
         SetAdoFields("Agrupacion", 0);
         SetAdoFields("Bloquear", 0);
@@ -146,7 +145,7 @@ class ISubCtasM
         SetAdoFields("Item", $_SESSION['INGRESO']['item']);
         SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
         SetAdoFields("Cta_Reembolso", CambioCodigoCta($parametros['MBoxCta']));
-        SetAdoFields("Reembolso", $parametros['TxtReembolso']);
+        SetAdoFields("Reembolso", (int) $parametros['TxtReembolso']);
         SetAdoFields("Fecha_D", $parametros['MBFechaI']);
         SetAdoFields("Fecha_H", $parametros['MBFechaF']);
 

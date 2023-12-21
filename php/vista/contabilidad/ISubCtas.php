@@ -27,40 +27,48 @@ date_default_timezone_set('America/Guayaquil');
 
     var indiceActual = 0;
     var cadenaEliminar = "";//Para eliminar la subcuenta
-    var Nuevo = true;
 
     $(document).ready(function () {
         OpcI_Click();
         CheqBloquear_Click();
-        Nuevo = true;
+        $('#DLCtas').tooltip('disable');
 
         deshabilitarbtnEliminar();
 
         $('#btnSiguiente').click(function () {
             actualizarIndiceYLLenarCta(indiceActual + 1);
-            Nuevo = false;
+            QuitarBloqueoBotonesSubCtas();
+            $('#DLCtas button').tooltip('enable');
+            $('#DLCtas').tooltip('disable');
         });
 
         $('#btnAnterior').click(function () {
             actualizarIndiceYLLenarCta(indiceActual - 1);
-            Nuevo = false;
+            QuitarBloqueoBotonesSubCtas();
+            $('#DLCtas button').tooltip('enable');
+            $('#DLCtas').tooltip('disable');
+
         });
 
         $('#btnPrimero').click(function () {
             actualizarIndiceYLLenarCta(0);
-            Nuevo = false;
+            QuitarBloqueoBotonesSubCtas();
+            $('#DLCtas button').tooltip('enable');
+            $('#DLCtas').tooltip('disable');
+
         });
 
         $('#btnUltimo').click(function () {
             var ultimoIndice = $('#DLCtas').children('button').length - 1;
             actualizarIndiceYLLenarCta(ultimoIndice);
-            Nuevo = false;
+            QuitarBloqueoBotonesSubCtas();
+            $('#DLCtas button').tooltip('enable');
+            $('#DLCtas').tooltip('disable');
         });
 
         $(document).dblclick(function (event) {
             // Verifica si el doble clic no ocurrió en el contenedor de botones ni en sus elementos hijos
             if (!$(event.target).closest("#DLCtas").length) {
-                Nuevo = true;
                 deshabilitarbtnEliminar();
                 despintarBoton();
             }
@@ -68,24 +76,36 @@ date_default_timezone_set('America/Guayaquil');
 
         $('#btnNuevo').on('click', function () {
             deshabilitarbtnEliminar();
-            if (Nuevo) {
-                despintarBoton();
-                NuevaCta();
-                $('#TxtNivel').val('00');
-                $('#TxtReembolso').val('0');
-                $('#CheqNivel').prop('checked', false);
-                var TipoCta = $("input[name='TipoCuenta']:checked").val();
-                if (TipoCta === 'CC') {
-                    $('#TxtCodigo').focus();
-                    $('#TxtCodigo').select();
-                } else {
-                    $('#TxtNivel').focus();
-                }
+            despintarBoton();
+            NuevaCta();
+            $('#DLCtas').tooltip('enable');
+            $('#DLCtas button').tooltip('disable');
+            $('#TxtNivel').val('00');
+            $('#TxtReembolso').val(0);
+            $('#CheqNivel').prop('checked', false);
+            $('#CheqBloquear').prop('checked', false).change();
+            var TipoCta = $("input[name='TipoCuenta']:checked").val();
+            if (TipoCta === 'CC') {
+                $('#TxtCodigo').focus();
+                $('#TxtCodigo').select();
             } else {
-                LlenarCta($('#DLCtas').children('button')[indiceActual].innerText);
                 $('#TxtNivel').focus();
             }
 
+        });
+
+        //Para que el tooltip solo se muestre cuando el boton esta deshabilitado
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('#btnEliminar').hover(function () {
+            // Verifica si el botón está deshabilitado
+            if ($(this).is(':disabled')) {
+                // Muestra el tooltip
+                $(this).tooltip('show');
+            } else {
+                // Oculta el tooltip
+                $(this).tooltip('hide');
+            }
         });
     });
 
@@ -114,7 +134,11 @@ date_default_timezone_set('America/Guayaquil');
 
             var nombreCta = botonActual.text();
             LlenarCta(nombreCta);
+            //split nombreCta para obtener el codigo de la subcuenta
+            nombreCta = nombreCta.split(' ');
+            cadenaEliminar = nombreCta[0];
             habilitarbtnEliminar();
+
         }
     }
 
@@ -170,6 +194,7 @@ date_default_timezone_set('America/Guayaquil');
                                     if (datos == 1) {
                                         swal.fire('Subcuenta eliminada correctamente', '', 'success');
                                         ListarSubCtas(TipoCta);
+                                        deshabilitarbtnEliminar();
                                     } else {
                                         swal.fire('Error al eliminar la subcuenta', '', 'error');
                                     }
@@ -184,12 +209,15 @@ date_default_timezone_set('America/Guayaquil');
 
     //btnNuevo
     function NuevaCta() {
-        $("#DLCtas button").off('click dblclick');
-        $("#DLCtas button").addClass('estiloOscuro');
+        $("#DLCtas button").prop('disabled', true).addClass('estiloOscuro');
         $('#TextSubCta').val('');
-        $('#MBoxCta').val('0 .  .  .  .   ');
+        $('#MBoxCta').val(0);
         var NumEmpresa = <?php echo $_SESSION['INGRESO']['item']; ?>;
         $('#TxtCodigo').val(NumEmpresa + '0000000');
+    }
+
+    function QuitarBloqueoBotonesSubCtas() {
+        $("#DLCtas button").prop('disabled', false).removeClass('estiloOscuro');
     }
 
 
@@ -197,6 +225,14 @@ date_default_timezone_set('America/Guayaquil');
     function GrabarCta() {
 
         var TipoCta = $("input[name='TipoCuenta']:checked").val();
+
+        var TextSubCta = $('#TextSubCta').val().trim();
+
+        if (TextSubCta === '') {
+            swal.fire('Llenar el campo de SubCuenta', '', 'error');
+            return false;
+        }
+
 
         var parametros = {
             "CodigoCta": $('#TxtCodigo').val(),
@@ -207,8 +243,8 @@ date_default_timezone_set('America/Guayaquil');
             "CheqBloquear": $('#CheqBloquear').prop('checked') ? 1 : 0,
             "TextSubCta": $('#TextSubCta').val(),
             "TextPresupuesto": $('#TextPresupuesto').val() == '' ? 0 : $('#TextPresupuesto').val(),
-            "MBoxCta": $('#MBoxCta').val() == '' ? '0 .  .  .  .   ' : $('#MBoxCta').val(),
-            "TxtReembolso": $('#TxtReembolso').val(),
+            "MBoxCta": $('#MBoxCta').val() == '' ? 0 : $('#MBoxCta').val(),
+            "TxtReembolso": $('#TxtReembolso').val() == '' ? 0 : $('#TxtReembolso').val(),
             "MBFechaI": $('#MBFechaI').val(),
             "MBFechaF": $('#MBFechaF').val()
         }
@@ -222,6 +258,7 @@ date_default_timezone_set('America/Guayaquil');
                 if (datos == 1) {
                     swal.fire('Grabación Exitosa', '', 'success');
                     ListarSubCtas(TipoCta);
+                    $('#DLCtas').tooltip('disable');
                 } else {
                     swal.fire('Error al grabar la subcuenta', '', 'error');
                 }
@@ -250,7 +287,7 @@ date_default_timezone_set('America/Guayaquil');
                 $('#TxtCodigo').val(datos.TxtCodigo);
                 if (AdoSubCta.length > 0) {
                     $.each(AdoSubCta, function (index, item) {
-                        $('<button>', {
+                        var boton = $('<button>', {
                             type: 'button',
                             'class': 'list-group-item list-group-item-action',
                             'style': 'white-space: pre; font-family: Courier;',
@@ -259,7 +296,6 @@ date_default_timezone_set('America/Guayaquil');
                                 var indice = $('#DLCtas').children('button').index(this);
                                 actualizarIndiceYLLenarCta(indice);
                                 cadenaEliminar = item.Codigo;
-                                Nuevo = false;
                             },
                             'click': function () {
                                 var indice = $('#DLCtas').children('button').index(this);
@@ -267,6 +303,10 @@ date_default_timezone_set('America/Guayaquil');
                                 cadenaEliminar = item.Codigo;
                             }
                         }).appendTo(lista);
+
+                        boton.attr('data-toggle', 'tooltip');
+                        boton.attr('title', 'Doble clic para editar');
+                        boton.tooltip();
                     });
                 }
             }
@@ -275,16 +315,16 @@ date_default_timezone_set('America/Guayaquil');
 
     function LimpiarCampos() {
         $('#TextSubCta').val('');
-        $('#TxtCodigo').val('');
-        $('#MBoxCta').val('0 .  .  .  .   ');
+        $('#TxtCodigo').val('<?php echo $_SESSION['INGRESO']['item']; ?>0000000');
+        $('#MBoxCta').val('0');
         $('#Label5').val('');
-        $('#TxtReembolso').val('');
-        $('#TxtNivel').val('');
-        $('#TextPresupuesto').val('');
+        $('#TxtReembolso').val(0);
+        $('#TxtNivel').val('00');
+        $('#TextPresupuesto').val('0');
         $('#MBFechaI').val('<?php echo date('Y-m-d'); ?>');
         $('#MBFechaF').val('<?php echo date('Y-m-d'); ?>');
         $('#CheqNivel').prop('checked', false);
-        $('#CheqBloquear').prop('checked', false);
+        $('#CheqBloquear').prop('checked', false).change();;
         $('#CheqCaja').prop('checked', false);
     }
 
@@ -320,9 +360,9 @@ date_default_timezone_set('America/Guayaquil');
                     }
                     $('#MBoxCta').val(fields.Cta_Reembolso);
                     $('#Label5').val(fields.Label5);
-                    if(fields.Reembolso == "."){
+                    if (fields.Reembolso == ".") {
                         $('#TxtReembolso').val(0);
-                    }else{
+                    } else {
                         $('#TxtReembolso').val(fields.Reembolso);
                     }
                     $('#TxtNivel').val(fields.Nivel);
@@ -330,7 +370,7 @@ date_default_timezone_set('America/Guayaquil');
                     $('#MBFechaI').val(fields.Fecha_D);
                     $('#MBFechaF').val(fields.Fecha_H);
                     $('#CheqNivel').prop('checked', fields.Agrupacion == 1 ? true : false);
-                    $('#CheqBloquear').prop('checked', fields.Bloquear == 1 ? true : false);
+                    $('#CheqBloquear').prop('checked', fields.Bloquear == 1 ? true : false).change();;
                     $('#CheqCaja').prop('checked', fields.Caja == 1 ? true : false);
                 } else {
                     $('#TextSubCta').val('');
@@ -363,6 +403,7 @@ date_default_timezone_set('America/Guayaquil');
         $('#TxtNivel').prop('disabled', true); //TxtNivel Enabled False
         $('#CheqCaja').css('visibility', 'hidden'); //CheqCaja Visible False
         $('#LabelCheqCaja').css('visibility', 'hidden');
+        deshabilitarbtnEliminar();
     }
 
     function OpcPM_Click() {
@@ -374,6 +415,7 @@ date_default_timezone_set('America/Guayaquil');
         $('#CheqCaja').css('visibility', 'hidden'); //CheqCaja Visible False
         $('#LabelCheqCaja').css('visibility', 'hidden');
         $('#CheqNivel').prop('checked', true);  //CheqNivel Enabled True
+        deshabilitarbtnEliminar();
     }
 
     function OpcG_Click() {
@@ -385,7 +427,7 @@ date_default_timezone_set('America/Guayaquil');
         $('#CheqCaja').css('visibility', 'visible'); //CheqCaja Visible True
         $('#LabelCheqCaja').css('visibility', 'visible');
         $('#CheqNivel').prop('checked', true);  //CheqNivel Enabled True
-
+        deshabilitarbtnEliminar();
     }
 
     function OpcI_Click() {
@@ -397,7 +439,7 @@ date_default_timezone_set('America/Guayaquil');
         $('#CheqCaja').css('visibility', 'hidden'); //CheqCaja Visible False
         $('#LabelCheqCaja').css('visibility', 'hidden');
         $('#CheqNivel').prop('checked', true);  //CheqNivel Enabled True
-
+        deshabilitarbtnEliminar();
     }
 
     function MarcarTexto(element) {
@@ -408,8 +450,12 @@ date_default_timezone_set('America/Guayaquil');
 <div>
     <div class="row">
         <div class="col-sm-12">
-            <button class="btn btn-default" data-toggle="tooltip" title="Eliminar" id="btnEliminar"
-                onclick="Eliminar();">
+            <a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
+            print_r($ruta[0] . '#'); ?>" title="Salir" class="btn btn-default">
+                <img src="../../img/png/salire.png">
+            </a>
+            <button class="btn btn-default" data-toggle="tooltip" title="Seleccione una sub cuenta a Eliminar"
+                id="btnEliminar" onclick="Eliminar();" disabled>
                 <img src="../../img/png/eliminar.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" title="Nuevo" id="btnNuevo" onclick="">
@@ -434,7 +480,7 @@ date_default_timezone_set('America/Guayaquil');
         </div>
     </div>
     <div class="row" style="padding: 10px 0px 0px 15px">
-        <div class="col-sm-11 panel panel-info">
+        <div class="col-sm-12 panel panel-info">
             <div class="row ">
                 <div class="col-sm-12 ">
                     <div>
@@ -478,7 +524,8 @@ date_default_timezone_set('America/Guayaquil');
                         SUBCUENTA DE BLOQUE
                     </div>
                     <div class="panel-body" id="btnContainer">
-                        <div id="DLCtas" class="list-group">
+                        <div id="DLCtas" class="list-group" data-toggle="tooltip"
+                            title="Presione las flechas para habilitar">
                         </div>
                     </div>
                 </div>
@@ -530,13 +577,13 @@ date_default_timezone_set('America/Guayaquil');
                             <!-- CUENTA RELACIONADA -->
                             <div class="col-md-2 d-flex align-items-center">
                                 <label for="MBoxCta" style="font-size:13.5px">CUENTA RELACIONADA</label>
-                                <input type="text" class="form-control" id="MBoxCta" placeholder="0 .  .  .  .   "
-                                    value="0 .  .  .  .   " style="text-align:right;" onclick="MarcarTexto(this);">
+                                <input type="text" class="form-control" id="MBoxCta" placeholder="0"
+                                    value="0" style="text-align:right;" onclick="MarcarTexto(this);">
                             </div>
                             <!-- BLOQUEAR CODIGO -->
                             <div class="col-md-2 d-flex align-items-center" style="padding-top:25px">
                                 <input class="form-check-input" type="checkbox" name="CheqBloquear" id="CheqBloquear"
-                                    value='' onclick="CheqBloquear_Click();">
+                                    value='' onchange="CheqBloquear_Click();">
                                 <label class="form-check-label" for="CheqBloquear" id="LabelCheqBloquear">
                                     Bloquear Codigo
                                 </label>
@@ -573,30 +620,6 @@ date_default_timezone_set('America/Guayaquil');
 
                 </div>
             </div>
-        </div>
-        <div class="col-sm-1">
-            <div class="row">
-                <div class="col-sm-12">
-                    <button class="btn btn-default" data-toggle="tooltip" title="Grabar" id="" onclick="GrabarCta();">
-                        <img src="../../img/png/grabar.png">
-                    </button>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
-                    print_r($ruta[0] . '#'); ?>" title="Salir" class="btn btn-default">
-                        <img src="../../img/png/salire.png">
-                    </a>
-                </div>
-            </div>
-            <!--<div class="row">
-                <div class="col-sm-12">
-                    <button class="btn btn-default" data-toggle="tooltip" title="Primero" id="">
-                        <img src="../../img/png/primero.png">
-                    </button>
-                </div>
-            </div>-->
         </div>
     </div>
 
