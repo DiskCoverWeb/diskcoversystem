@@ -272,6 +272,10 @@ class divisasC
   public function Grabar_FA($FA,$TextFacturaNo){
 
     // print_r($FA);die();
+
+    $FA = array_merge($FA,variables_tipo_factura());
+
+    // print_r($FA);die();
     $codigoCliente = $FA['codigoCliente'];
     $FA['CodigoC'] = $FA['codigoCliente'];
 
@@ -314,6 +318,7 @@ class divisasC
       $Cta = SinEspaciosIzq($FA['DCBanco']);
       $Cta1 = SinEspaciosIzq($FA['DCNC']);
       // print_r($FA);die();
+
       Grabar_Factura1($FA);
       
       //Seteos de Abonos Generales para todos los tipos de abonos
