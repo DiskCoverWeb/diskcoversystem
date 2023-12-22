@@ -1549,7 +1549,7 @@ function FormActivate() {
                                  <div class="input-group-addon input-xs">
                                    <b>FECHA:</b>
                                  </div>
-                                 <input type="date" class="form-control input-xs" id="fecha1" placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="validar_fecha()">
+                                 <input type="date" class="form-control input-xs" id="fecha1" placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="validar_fecha();fecha_valida(this)">
                                </div>
                           <!-- </div> -->
                         </div>
@@ -1573,7 +1573,7 @@ function FormActivate() {
                                  <div class="input-group-addon input-xs">
                                    <b>R.U.C / C.I:</b>
                                  </div>
-                                 <input type="text" class=" form-control input-xs" id="ruc" name='ruc' placeholder="R.U.C / C.I" value='000000000' maxlength='30' size='25'>
+                                 <input type="text" class=" form-control input-xs" id="ruc" name='ruc' placeholder="R.U.C / C.I" value='000000000' maxlength='30' size='25' onblur="" onkeyup="solo_numeros(this)">
                                </div>
                           <!-- </div> -->
                         </div>
@@ -1605,7 +1605,7 @@ function FormActivate() {
                                  <div class="input-group-addon input-xs">
                                    <b>COTIZACION:</b>
                                  </div>
-                                 <input type="text" class="form-control input-xs" id="cotizacion" name='cotizacion' placeholder="0.00" onKeyPress='return soloNumerosDecimales(event)' style="text-align:right; width: 70px;" maxlength='20' />
+                                 <input type="text" class="form-control input-xs" id="cotizacion" name='cotizacion' placeholder="0.00" onkeyup="validar_numeros_decimal(this)" onblur="validar_float(this,2)" style="text-align:right; width: 70px;" maxlength='20' />
                                </div>
                         </div>     
 
@@ -1689,7 +1689,7 @@ function FormActivate() {
                                      <div class="input-group-addon input-xs">
                                        <b><?php echo $_SESSION['INGRESO']['S_M']; ?>:</b>
                                      </div>
-                                     <input type="text" class="form-control input-xs" id="vae" name='vae' placeholder="0.00" style="text-align:right;" onKeyPress='return soloNumerosDecimales(event)' maxlength='20' size='13'>
+                                     <input type="text" class="form-control input-xs" id="vae" name='vae' placeholder="0.00" style="text-align:right;" onkeyup="validar_numeros_decimal(this)" onblur="validar_float(this,2)" maxlength='20' size='13'>
                                    </div>                           
                               </div>                               
                             </div>                                                  
@@ -1717,7 +1717,7 @@ function FormActivate() {
                                          <b><?php echo $_SESSION['INGRESO']['S_M']; ?>:</b>
                                      </div>
                                      <input type="text" class="form-control input-xs" id="vab" name='vab' placeholder="0.00" 
-                                style="text-align:right;"  onKeyPress='return soloNumerosDecimales(event)' 
+                                style="text-align:right;"  onkeyup="validar_numeros_decimal(this)" onblur="validar_float(this,2)"
                                 maxlength='20' size='13' value='0.00'>
                                   </div>  
                             </div> 
@@ -1750,7 +1750,7 @@ function FormActivate() {
                                 <div class="btn_f input-xs col-sm-12 text-center">
                                   <b>Efectivizar:</b>
                                 </div>
-                                <input type="date" class="form-control input-xs" id="efecti" name='efecti' placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>'>
+                                <input type="date" class="form-control input-xs" id="efecti" name='efecti' placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' onblur="fecha_valida(this)">
                               </div>                            
                           </div>
                           <div class="col-md-2">
@@ -1758,7 +1758,7 @@ function FormActivate() {
                                 <div class="btn_f input-xs col-sm-12 text-center">
                                   <b>Deposito No:</b>
                                 </div>
-                                <input type="text" class="form-control input-xs" id="depos" name='depos' placeholder="12345" onblur="agregar_depo()">
+                                <input type="text" class="form-control input-xs" id="depos" onkeyup="solo_numeros(this)" name='depos' placeholder="12345" onblur="agregar_depo()">
                               </div>
                           </div>                          
                         </div>                      
