@@ -10,6 +10,8 @@ date_default_timezone_set('America/Guayaquil');
     #DLCtas {
         max-height: 165px;
         overflow-y: auto;
+        width: auto;
+        height: 165px;
     }
 
     .boton-enfocado {
@@ -29,12 +31,31 @@ date_default_timezone_set('America/Guayaquil');
     }
 
     #encabezadosSubCtas h3 {
-        text-align: center;
+        /*text-align: center;*/
         font-size: 1.5em;
         white-space: pre;
     }
 
+    #btnContainer>.row {
+        display: flex;
+        align-items: center;
+    }
 
+    #btnContainer>.row>div:first-child {
+        flex-grow: 3;
+        /* Toma 3/4 del espacio disponible */
+        text-align: right;
+        padding-right: 125px;
+        /* Ajusta según sea necesario */
+    }
+
+    #btnContainer>.row>div:last-child {
+        flex-grow: 1;
+        /* Toma 1/4 del espacio disponible */
+        text-align: right;
+        padding-left: 10px;
+        /* Ajusta según sea necesario */
+    }
 </style>
 <script>
 
@@ -494,9 +515,22 @@ date_default_timezone_set('America/Guayaquil');
     <div class="row">
         <div class="col-sm-12">
             <a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
-            print_r($ruta[0] . '#'); ?>" title="Salir" class="btn btn-default">
+            print_r($ruta[0] . '#'); ?>" title="Salir" class="btn btn-default" style="border: solid 1px">
                 <img src="../../img/png/salire.png">
             </a>
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Grabar" id="btnGrabar"
+                onclick="GrabarCta();" style="border: solid 1px">
+                <img src="../../img/png/grabar.png">
+            </button>
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Nuevo" id="btnNuevo"
+                onclick="" style="border: solid 1px">
+                <img src="../../img/png/nuevo.png">
+            </button>
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
+                title="Seleccione una SubCuenta" id="btnEliminar" onclick="Eliminar();" disabled
+                style="border: solid 1px">
+                <img src="../../img/png/eliminar.png">
+            </button>
         </div>
     </div>
     <div class="row" style="padding: 10px 0px 0px 15px">
@@ -539,34 +573,37 @@ date_default_timezone_set('America/Guayaquil');
                 </div>
             </div>
             <div class="row" style="padding: 0px 10px 0px 0px">
-                <div class="col-sm-11">
+                <div class="col-sm-12">
                     <div class="panel panel-default">
                         <div class="panel-heading" style="text-align:center;">
                             SUBCUENTA DE BLOQUE
                         </div>
                         <div class="panel-body" id="btnContainer">
-                            <div class="row" style="padding-bottom: 10px; text-align: right;">
-                                <div class="col-sm-12 ">
-                                    <button class="btn btn-default btn-small" data-toggle="tooltip" title="Primero"
-                                        id="btnPrimero">
-                                        <img src="../../img/png/primero.png" style="width: 20px; height: 20px;">
-                                    </button>
-                                    <button class="btn btn-default rotar-180 btn-small" data-toggle="tooltip"
-                                        title="Anterior" id="btnAnterior">
-                                        <img src="../../img/png/siguiente.png" style="width: 20px; height: 20px;">
-                                    </button>
-                                    <button class="btn btn-default btn-small" data-toggle="tooltip" title="Siguiente"
-                                        id="btnSiguiente">
-                                        <img src="../../img/png/siguiente.png" style="width: 20px; height: 20px;">
-                                    </button>
-                                    <button class="btn btn-default rotar-180 btn-small" data-toggle="tooltip"
-                                        title="Ultimo" id="btnUltimo">
-                                        <img src="../../img/png/primero.png" style="width: 20px; height: 20px;">
-                                    </button>
+                            <div class="row" style="text-align: right;">
+                                <div>
+                                    <div id="encabezadosSubCtas">
+                                    </div>
                                 </div>
-                            </div>
-                            <div id="encabezadosSubCtas">
-
+                                <div>
+                                    <div>
+                                        <button class="btn btn-default btn-small" data-toggle="tooltip" title="Primero"
+                                            id="btnPrimero" style="border: solid 1px">
+                                            <img src="../../img/png/primero.png" style="width: 20px; height: 20px;">
+                                        </button>
+                                        <button class="btn btn-default rotar-180 btn-small" data-toggle="tooltip"
+                                            title="Anterior" id="btnAnterior" style="border: solid 1px">
+                                            <img src="../../img/png/siguiente.png" style="width: 20px; height: 20px;">
+                                        </button>
+                                        <button class="btn btn-default btn-small" data-toggle="tooltip"
+                                            title="Siguiente" id="btnSiguiente" style="border: solid 1px">
+                                            <img src="../../img/png/siguiente.png" style="width: 20px; height: 20px;">
+                                        </button>
+                                        <button class="btn btn-default rotar-180 btn-small" data-toggle="tooltip"
+                                            title="Ultimo" id="btnUltimo" style="border: solid 1px">
+                                            <img src="../../img/png/primero.png" style="width: 20px; height: 20px;">
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div id="DLCtas" class="list-group" data-toggle="tooltip"
                                 title="Presione las flechas para habilitar">
@@ -574,23 +611,6 @@ date_default_timezone_set('America/Guayaquil');
                         </div>
                     </div>
                 </div>
-
-                <div class="col-sm-1">
-                    <button class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Grabar"
-                        id="btnGrabar" onclick="GrabarCta();">
-                        <img src="../../img/png/grabar.png">
-                    </button>
-                    <button class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Nuevo"
-                        id="btnNuevo" onclick="" style="margin-top:5px">
-                        <img src="../../img/png/nuevo.png">
-                    </button>
-                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
-                        title="Seleccione una SubCuenta" id="btnEliminar" onclick="Eliminar();" disabled
-                        style="margin-top:5px">
-                        <img src="../../img/png/eliminar.png">
-                    </button>
-                </div>
-
             </div>
             <div class="row" style="padding: 0px 10px 0px 15px">
                 <div class="panel panel-default">
