@@ -28,18 +28,13 @@ date_default_timezone_set('America/Guayaquil');
         font-size: 12px;
     }
 
-    #navbar {
-        position: fixed;
-        /* Posición fija */
-        top: 85px;
-        /* Fija el elemento en la parte superior */
-        width: 100%;
-        /* Opcional: para que ocupe todo el ancho */
-        z-index: 1000;
-        /* Para asegurarse de que se muestre por encima de otros elementos */
-        background-color: white;
-        /* Opcional: para que el fondo no sea transparente */
+    #encabezadosSubCtas h3 {
+        text-align: center;
+        font-size: 1.5em;
+        white-space: pre;
     }
+
+
 </style>
 <script>
 
@@ -336,8 +331,8 @@ date_default_timezone_set('America/Guayaquil');
                         var boton = $('<button>', {
                             type: 'button',
                             'class': 'list-group-item list-group-item-action',
-                            'style': 'white-space: pre; font-family: Courier;',
-                            'text': `${item.Nombre_Cta}`,
+                            'style': 'white-space: pre; font-family: Courier; text-align: center;',
+                            'text': `${item.Codigo}  -  ${item.Detalle}  -  ${item.Nivel}`,
                             'dblclick': function () {
                                 var indice = $('#DLCtas').children('button').index(this);
                                 actualizarIndiceYLLenarCta(indice);
@@ -353,6 +348,8 @@ date_default_timezone_set('America/Guayaquil');
                         boton.attr('data-toggle', 'tooltip');
                         boton.attr('title', 'Doble clic para editar');
                         boton.tooltip();
+
+                        $('#encabezadosSubCtas').empty().append('<h3>Código  -  Detalle  -  Nivel</h3>');
                     });
                 }
             }
@@ -496,7 +493,7 @@ date_default_timezone_set('America/Guayaquil');
 <div id="generalContainer">
     <div class="row">
         <div class="col-sm-12">
-        <a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
+            <a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
             print_r($ruta[0] . '#'); ?>" title="Salir" class="btn btn-default">
                 <img src="../../img/png/salire.png">
             </a>
@@ -579,15 +576,17 @@ date_default_timezone_set('America/Guayaquil');
                 </div>
 
                 <div class="col-sm-1">
-                    <button class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Grabar" id="btnGrabar"
-                        onclick="GrabarCta();">
+                    <button class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Grabar"
+                        id="btnGrabar" onclick="GrabarCta();">
                         <img src="../../img/png/grabar.png">
                     </button>
-                    <button class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Nuevo" id="btnNuevo" onclick="" style="margin-top:5px">
-                        <img src="../../img/png/nuevo.png" >
+                    <button class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Nuevo"
+                        id="btnNuevo" onclick="" style="margin-top:5px">
+                        <img src="../../img/png/nuevo.png">
                     </button>
-                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Seleccione una SubCuenta"
-                        id="btnEliminar" onclick="Eliminar();" disabled style="margin-top:5px">
+                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
+                        title="Seleccione una SubCuenta" id="btnEliminar" onclick="Eliminar();" disabled
+                        style="margin-top:5px">
                         <img src="../../img/png/eliminar.png">
                     </button>
                 </div>
