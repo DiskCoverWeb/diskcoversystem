@@ -272,6 +272,11 @@ if(isset($_GET['Command2_Click'])){
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->command2_click($parametros));
 }
+if(isset($_GET['ExistenMovimientos'])){
+    $parametros = $_POST;
+    echo json_encode($controlador->ExistenMovimientos($parametros));
+}
+
 
 
 
@@ -2234,6 +2239,19 @@ function commandl_click($parametros){
 
 function command2_click($parametros){
     $this->modelo->command2_click($parametros);
+}
+
+function ExistenMovimientos($parametros)
+{
+  $Trans_No = $parametros['Trans_No'];
+  $ExisteMov = 0;
+  if($Trans_No <= 0 ){ $Trans_No = 1;}
+  $datos = $this->modelo->ExistenMovimientos($Trans_No);
+  if(count($datos)>0)
+  {
+  	$ExisteMov = 1;
+  }
+  return $ExisteMov;
 }
 
 }

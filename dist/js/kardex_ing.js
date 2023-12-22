@@ -221,7 +221,7 @@ function ddl_DCDctoModif() {
 }
 
 function ddl_DCPorcenIva(fecha) {
-  console.log(fecha);
+  // console.log(fecha);
  	var opcion = '<option value="I">Iva</option>';
   var ini ='';
  	var parametros = 
@@ -339,7 +339,7 @@ function ddl_DCConceptoRet(fecha) {
       type:  'post',
       dataType: 'json',
         success:  function (response) {
-        	console.log(response);
+        	// console.log(response);
         	$.each(response,function(i,item){
              if(i == 0)
             {
@@ -453,7 +453,7 @@ function DCBenef_LostFocus(bene,cta,contr)
         success:  function (response) {
             if (response.length !=0) 
             {
-           	console.log(response)
+           	// console.log(response)
              $("#grupo_no").val(response.grupo_no); 
              $("#Tipodoc").val(response.tipodoc);
              $("#TipoBenef").val(response.TipoBenef);
@@ -960,6 +960,14 @@ function autorizacion_factura()
   if($('#TxtNumAutor').val()<=0 || $('#TxtNumAutor').val()=="")
   {
      $('#TxtNumAutor').val("0000000001");
+  }else
+  {
+    num = $('#TxtNumAutor').val();
+    if(num.length<=9)
+    {
+      num = generar_ceros(num,9);
+      $('#TxtNumAutor').val(num);
+    }
   }
   factura_repetida();
 }
@@ -1023,7 +1031,7 @@ function serie_ultima(serie,tc=false)
              $('#TxtNumSerietres').val(response.numero);
               if(response.autorizacion!='')
               {
-                $('#TxtNumAutor').val(response.autorizacion);
+                $('#TxtNumAutor').val(generar_ceros(response.autorizacion,9));
               }   
 
           }else{
@@ -1051,13 +1059,13 @@ function serie_ultima_tc(serie,tc=false)
       type:  'post',
       dataType: 'json',
         success:  function (response) {
-          // console.log(response);
+          console.log(response);
           if(tc!=false)
           {
              $('#TxtNumSerietres').val(response.numero);
               if(response.autorizacion!='')
               {
-                $('#TxtNumAutor').val(response.autorizacion);
+                $('#TxtNumAutor').val(generar_ceros(response.autorizacion,9));
               }   
 
           }else{
@@ -1222,7 +1230,7 @@ function Ult_fact_Prove(prv)
             $('#TxtNumSerieUno').val(response.esta);
             $('#TxtNumSerieDos').val(response.punto);
             $('#TxtNumAutor').val(response.auto);
-
+            // console.log(response.auto)
             $('#TxtNumUnoComRet').val("001");
             $('#TxtNumDosComRet').val("001");
             $('#TxtNumTresComRet').val(1);
@@ -1274,7 +1282,7 @@ function Documento_Modificado()
 
 function validar_autorizacion()
 {
-   if($('#TxtNumUnoAutComRet').val()==0){$('#TxtNumUnoAutComRet').val('0000000000');}
+   if($('#TxtNumUnoAutComRet').val()==0 || $('#TxtNumUnoAutComRet').val()=='.' || $('#TxtNumUnoAutComRet').val()=='' ){$('#TxtNumUnoAutComRet').val('0000000001');}
    var parametros = 
    {
      'auto':$('#TxtNumUnoAutComRet').val(),
@@ -1287,7 +1295,7 @@ function validar_autorizacion()
       type:  'post',
       dataType: 'json',
         success:  function (response) {
-          console.log(response);
+          // console.log(response);
           if(response!=1)
           {
              Swal.fire(response.titulo,response.mensaje,'info') ;        
@@ -1351,7 +1359,7 @@ function factura_repetida()
       type:  'post',
       dataType: 'json',
         success:  function (response) {
-          console.log(response);
+          // console.log(response);
           if(response!=1)
           {
              Swal.fire('USTED ESTA TRATANDO DE INGRESAR UNA FACTURA EXISTENTE','','info').then(function(){ $('#TxtNumSerietres').select()}) ;        
