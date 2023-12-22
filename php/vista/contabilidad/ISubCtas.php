@@ -8,7 +8,7 @@ date_default_timezone_set('America/Guayaquil');
     }
 
     #DLCtas {
-        max-height: 84px;
+        max-height: 165px;
         overflow-y: auto;
     }
 
@@ -22,11 +22,31 @@ date_default_timezone_set('America/Guayaquil');
         background-color: #f5f5f5;
         color: black;
     }
+
+    .btn-small {
+        padding: 5px;
+        font-size: 12px;
+    }
+
+    #navbar {
+        position: fixed;
+        /* Posición fija */
+        top: 85px;
+        /* Fija el elemento en la parte superior */
+        width: 100%;
+        /* Opcional: para que ocupe todo el ancho */
+        z-index: 1000;
+        /* Para asegurarse de que se muestre por encima de otros elementos */
+        background-color: white;
+        /* Opcional: para que el fondo no sea transparente */
+    }
 </style>
 <script>
 
+    //Definicion de variables
     var indiceActual = 0;
     var cadenaEliminar = "";//Para eliminar la subcuenta
+    var codigosCC = new Set();//Para guardar los codigos de las subcuentas de centro de costos
 
     $(document).ready(function () {
         OpcI_Click();
@@ -226,14 +246,6 @@ date_default_timezone_set('America/Guayaquil');
 
         var TipoCta = $("input[name='TipoCuenta']:checked").val();
 
-        var TextSubCta = $('#TextSubCta').val().trim();
-
-        if (TextSubCta === '') {
-            swal.fire('Llenar el campo de SubCuenta', '', 'error');
-            return false;
-        }
-
-
         var parametros = {
             "CodigoCta": $('#TxtCodigo').val(),
             "TipoCta": TipoCta,
@@ -248,7 +260,38 @@ date_default_timezone_set('America/Guayaquil');
             "MBFechaI": $('#MBFechaI').val(),
             "MBFechaF": $('#MBFechaF').val()
         }
-        console.log(parametros);
+
+
+
+        var TextSubCta = $('#TextSubCta').val().trim();
+
+        if (TextSubCta === '') {
+            swal.fire('Llenar el campo de SubCuenta', '', 'error');
+            return false;
+        }
+
+        if (TipoCta === 'CC' && codigosCC.has($('#TxtCodigo').val())) {
+            swal.fire({
+                title: 'El código ya existe',
+                text: `¿Desea actualizar la SubCuenta [${$('#TxtCodigo').val()}]?`,
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Si',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.value) {
+                    GrabarCtaTmp(parametros);
+                } else {
+                    return false;
+                }
+            });
+        } else {
+            GrabarCtaTmp(parametros);
+        }
+    }
+
+    function GrabarCtaTmp(parametros) {
+        var TipoCta = $("input[name='TipoCuenta']:checked").val();
         $.ajax({
             data: { parametros: parametros },
             url: '../controlador/contabilidad/ISubCtasC.php?GrabarCta=true',
@@ -287,6 +330,9 @@ date_default_timezone_set('America/Guayaquil');
                 $('#TxtCodigo').val(datos.TxtCodigo);
                 if (AdoSubCta.length > 0) {
                     $.each(AdoSubCta, function (index, item) {
+                        if (TipoCta === 'CC') {
+                            codigosCC.add(item.Codigo);
+                        }
                         var boton = $('<button>', {
                             type: 'button',
                             'class': 'list-group-item list-group-item-action',
@@ -447,36 +493,13 @@ date_default_timezone_set('America/Guayaquil');
     }
 
 </script>
-<div>
+<div id="generalContainer">
     <div class="row">
         <div class="col-sm-12">
-            <a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
+        <a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
             print_r($ruta[0] . '#'); ?>" title="Salir" class="btn btn-default">
                 <img src="../../img/png/salire.png">
             </a>
-            <button class="btn btn-default" data-toggle="tooltip" title="Seleccione una sub cuenta a Eliminar"
-                id="btnEliminar" onclick="Eliminar();" disabled>
-                <img src="../../img/png/eliminar.png">
-            </button>
-            <button class="btn btn-default" data-toggle="tooltip" title="Nuevo" id="btnNuevo" onclick="">
-                <img src="../../img/png/nuevo.png">
-            </button>
-            <button class="btn btn-default" data-toggle="tooltip" title="Grabar" id="btnGrabar" onclick="GrabarCta();">
-                <img src="../../img/png/grabar.png">
-            </button>
-            <button class="btn btn-default" data-toggle="tooltip" title="Primero" id="btnPrimero">
-                <img src="../../img/png/primero.png">
-            </button>
-            <button class="btn btn-default rotar-180" data-toggle="tooltip" title="Anterior" id="btnAnterior">
-                <img src="../../img/png/siguiente.png">
-            </button>
-            <button class="btn btn-default" data-toggle="tooltip" title="Siguiente" id="btnSiguiente">
-                <img src="../../img/png/siguiente.png">
-            </button>
-            <button class="btn btn-default rotar-180" data-toggle="tooltip" title="Ultimo" id="btnUltimo">
-                <img src="../../img/png/primero.png">
-            </button>
-
         </div>
     </div>
     <div class="row" style="padding: 10px 0px 0px 15px">
@@ -518,19 +541,59 @@ date_default_timezone_set('America/Guayaquil');
                     </label>
                 </div>
             </div>
-            <div class="row" style="padding: 0px 10px 0px 10px">
-                <div class="panel panel-default">
-                    <div class="panel-heading" style="text-align:center;">
-                        SUBCUENTA DE BLOQUE
-                    </div>
-                    <div class="panel-body" id="btnContainer">
-                        <div id="DLCtas" class="list-group" data-toggle="tooltip"
-                            title="Presione las flechas para habilitar">
+            <div class="row" style="padding: 0px 10px 0px 0px">
+                <div class="col-sm-11">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" style="text-align:center;">
+                            SUBCUENTA DE BLOQUE
+                        </div>
+                        <div class="panel-body" id="btnContainer">
+                            <div class="row" style="padding-bottom: 10px; text-align: right;">
+                                <div class="col-sm-12 ">
+                                    <button class="btn btn-default btn-small" data-toggle="tooltip" title="Primero"
+                                        id="btnPrimero">
+                                        <img src="../../img/png/primero.png" style="width: 20px; height: 20px;">
+                                    </button>
+                                    <button class="btn btn-default rotar-180 btn-small" data-toggle="tooltip"
+                                        title="Anterior" id="btnAnterior">
+                                        <img src="../../img/png/siguiente.png" style="width: 20px; height: 20px;">
+                                    </button>
+                                    <button class="btn btn-default btn-small" data-toggle="tooltip" title="Siguiente"
+                                        id="btnSiguiente">
+                                        <img src="../../img/png/siguiente.png" style="width: 20px; height: 20px;">
+                                    </button>
+                                    <button class="btn btn-default rotar-180 btn-small" data-toggle="tooltip"
+                                        title="Ultimo" id="btnUltimo">
+                                        <img src="../../img/png/primero.png" style="width: 20px; height: 20px;">
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="encabezadosSubCtas">
+
+                            </div>
+                            <div id="DLCtas" class="list-group" data-toggle="tooltip"
+                                title="Presione las flechas para habilitar">
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="col-sm-1">
+                    <button class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Grabar" id="btnGrabar"
+                        onclick="GrabarCta();">
+                        <img src="../../img/png/grabar.png">
+                    </button>
+                    <button class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Nuevo" id="btnNuevo" onclick="" style="margin-top:5px">
+                        <img src="../../img/png/nuevo.png" >
+                    </button>
+                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Seleccione una SubCuenta"
+                        id="btnEliminar" onclick="Eliminar();" disabled style="margin-top:5px">
+                        <img src="../../img/png/eliminar.png">
+                    </button>
+                </div>
+
             </div>
-            <div class="row" style="padding: 0px 10px 0px 10px">
+            <div class="row" style="padding: 0px 10px 0px 15px">
                 <div class="panel panel-default">
                     <div class="panel-body">
 
@@ -577,8 +640,8 @@ date_default_timezone_set('America/Guayaquil');
                             <!-- CUENTA RELACIONADA -->
                             <div class="col-md-2 d-flex align-items-center">
                                 <label for="MBoxCta" style="font-size:13.5px">CUENTA RELACIONADA</label>
-                                <input type="text" class="form-control" id="MBoxCta" placeholder="0"
-                                    value="0" style="text-align:right;" onclick="MarcarTexto(this);">
+                                <input type="text" class="form-control" id="MBoxCta" placeholder="0" value="0"
+                                    style="text-align:right;" onclick="MarcarTexto(this);">
                             </div>
                             <!-- BLOQUEAR CODIGO -->
                             <div class="col-md-2 d-flex align-items-center" style="padding-top:25px">
