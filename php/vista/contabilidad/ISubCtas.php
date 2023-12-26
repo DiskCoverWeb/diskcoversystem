@@ -518,11 +518,11 @@ date_default_timezone_set('America/Guayaquil');
             print_r($ruta[0] . '#'); ?>" title="Salir" class="btn btn-default" style="border: solid 1px">
                 <img src="../../img/png/salire.png">
             </a>
-            <button class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Grabar" id="btnGrabar"
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Grabar" id="btnGrabar"
                 onclick="GrabarCta();" style="border: solid 1px">
                 <img src="../../img/png/grabar.png">
             </button>
-            <button class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Nuevo" id="btnNuevo"
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Nuevo" id="btnNuevo"
                 onclick="" style="border: solid 1px">
                 <img src="../../img/png/nuevo.png">
             </button>
