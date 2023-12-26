@@ -163,7 +163,7 @@ if(isset($_GET['modal_detalle_aux']))
     		'OpcTM'=>$_GET['OpcTM'],
     		'cta'=>$_GET['cta'],
     		'query'=>$_GET['q']);
-	echo json_encode($controlador->detalle_aux_submodulo($parametros));
+	echo json_encode($controlador->detalle_aux_submoduloC($parametros));
 }
 
 if(isset($_GET['modal_subcta_catalogo']))
@@ -273,7 +273,36 @@ if(isset($_GET['Command2_Click'])){
     echo json_encode($controlador->command2_click($parametros));
 }
 
+if(isset($_GET['ListarSubCtaModulo'])){
+    if(!isset($_GET['q']))
+	{
+		$_GET['q'] = '';
+	}
 
+	$parametros = array(
+    		'tc'=>$_GET['tc'],
+    		'OpcDH'=>$_GET['OpcDH'],
+    		'OpcTM'=>$_GET['OpcTM'],
+    		'cta'=>$_GET['cta'],
+    		'query'=>$_GET['q'],
+    		'Nivel_No'=>@$_GET['Nivel_No'],
+    		'DCSubCta'=>@$_GET['DCSubCta']
+    	);
+    echo json_encode($controlador->Listar_SubCta_Modulo($parametros));
+}
+
+if(isset($_GET['FacturasPendientesSC'])){
+    echo json_encode($controlador->Facturas_Pendientes_SC($_POST));
+}
+if(isset($_GET['InsertarCxP'])){
+	extract($_POST);
+	$_SESSION['AdoAux'] = Insertar_CxP($SubCtaGen, $CodigoCliente, $SubCta);
+    echo json_encode(true);
+}
+
+if(isset($_GET['DCFacturaLostFocus'])){
+	echo json_encode($controlador->DCFacturaLostFocus($_POST));
+}
 
 class incomC
 {
@@ -347,19 +376,10 @@ class incomC
 
 	function cuentas_Todos($parametros)
 	{
-		// print_r($parametros);die();
-		// $datos = $this->modelo->cuentas_todos($query,$tipo,$tipoCta);
 		$datos = $this->modelo->cuentas_todos($parametros['query'],$parametros['codigo'],$parametros['clave'],$parametros['tc']);
 		$cuenta = array();
 		foreach ($datos as $key => $value) {
-            // if($tipo=='')
-            // {
-                $cuenta[] = array('id'=>$value['Codigo'],'text'=>$value['Nombre_Cuenta']);
-			// $cuenta[] = array('id'=>$value['Codigo'],'text'=>$value['Nombre_Cuenta']);//para produccion
-            // }else
-            // {                
-            //     $cuenta[] = array('value'=>$value['Codigo'],'label'=>$value['Nombre_Cuenta']);
-            // }
+            $cuenta[] = array('id'=>$value['Codigo'],'text'=>$value['Nombre_Cuenta']);
 		}
 		return $cuenta;
 
@@ -474,7 +494,6 @@ class incomC
      		return $ddl;
      	}else
      	{
-     		$datos_tabla = $this->modelo->catalogo_subcta_grid($parametros['tc'],$parametros['cta'],$parametros['OpcDH'],$parametros['OpcTM']);
      	    $datos = $this->modelo->catalogo_subcta($parametros['tc']);
      	    foreach ($datos as $key => $value) {
      			$ddl[]=array('id'=>$value['Codigo'],'text'=>$value['Detalle']);
@@ -484,42 +503,138 @@ class incomC
      	}
      }
 
-     function detalle_aux_submodulo($parametros)
+     function detalle_aux_submoduloC($parametros)
      {
-     	$result = $this->modelo->detalle_aux_submodulo($parametros['query']);
-     	return $result;
+     	return $this->modelo->detalle_aux_submodulo($parametros['query'],$parametros['tc']);
      }
 
      function modal_generar_asiento_SC($parametros)
      {
-     	// print_r($parametros);die();
-     	$parametros_sc = array(
-            'be'=>$parametros['ben'],
-            'ru'=> '',
-            'co'=> $parametros['cta'],// codigo de cuenta cc
-            'tip'=>$parametros['tipoc'],//tipo de cuenta(CE,CD,..--) biene de catalogo subcuentas TC
-            'tic'=> $parametros['dh'], //debito o credito (1 o 2);
-            'sub'=> $parametros['codigo'], //Codigo se trae catalogo subcuenta o ruc del proveedor en caso de que se este ingresando
-            'sub2'=>$parametros['ben'],//nombre del beneficiario
-            'fecha_sc'=> $parametros['fec'], //fecha 
-            'fac2'=>$parametros['fac'],
-            'mes'=> $parametros['mes'],
-            'valorn'=> round($parametros['val'],2),//valor de sub cuenta 
-            'moneda'=> $parametros['tm'], /// moneda 1
-            'Trans'=>$parametros['aux'],//detalle que se trae del asiento
-            'T_N'=> $_SESSION['INGRESO']['modulo_'],
-            't'=> $parametros['tc'],                        
-        );
+       	$TextValor = $parametros['TextValor'];
+     	$TxtPrima = $parametros['TxtPrima'];
+     	$TxtMeses = $parametros['TxtMeses'];
+     	$DCDetalle = $parametros['DCDetalle'];
+     	$MBoxFechaV = $parametros['MBoxFechaV'];
+     	$OpcTM = $parametros['OpcTM'];
+     	$Opcion_Mulp = $parametros['Opcion_Mulp'];
+     	$Dolar =round($_SESSION['INGRESO']['Cotizacion'],2);
+     	$SubCta = $parametros['SubCta'];
+     	$DCFactura = $parametros['DCFactura'];
+     	$TxtFactura = $parametros['TxtFactura'];
+     	$SubCtaGen = $parametros['SubCtaGen'];
+     	$Codigo = $parametros['Codigo'];
+     	$Beneficiario = $parametros['Beneficiario'];
+     	$OpcDH = $parametros['OpcDH'];
 
-        $resp = ingresar_asientos_SC($parametros_sc);
-        if($resp==null)
-        {
-        	return array('resp'=>1,'total'=>$parametros['val']);
-        }else
-        {
-        	return array('resp'=>-1,'total'=>$parametros['val']);
+     	$Es_Fecha_Fin_Mes = false;
+		TextoValido($TextValor, true);
+		TextoValido($TxtPrima, true, 0);
+		TextoValido($TxtMeses, true, 0);
 
+		$ValorDH = floatval($TextValor);
+		$ValorDHAux = round($ValorDH, 2);
+
+		if ($DCDetalle === "") {
+		    $DCDetalle = G_NINGUNO;
+		}
+		$FechaTexto = $MBoxFechaV;
+		if (!IsDate($FechaTexto)) {
+	        $FechaTexto = FechaSistema();
+	    }
+
+		$FechaValida = FechaValida($MBoxFechaV);
+		if ($FechaValida["ErrorFecha"]) {
+            return ['error' => true, "mensaje" => $FechaValida["MsgBox"]];
         }
+
+		$Fecha_V_Prest = $MBoxFechaV;
+
+		if (strtotime($Fecha_V_Prest) === strtotime(UltimoDiaMes(date("d/m/Y",strtotime($Fecha_V_Prest))))) {
+		    $Es_Fecha_Fin_Mes = true;
+		}
+
+		if ($ValorDH > 0) {
+		    if ($OpcTM === 2) {
+		        if ($Opcion_Mulp=="true") {
+		            $ValorDH = round($ValorDH * $Dolar, 2);
+		        } else {
+		            if ($Dolar <= 0) {
+		                echo "No se puede Dividir para cero,\ncambie la Cotización.";
+		                $ValorDH = 0;
+		            } else {
+		                $ValorDH = round($ValorDH / $Dolar, 2);
+		            }
+		        }
+		    }
+
+		    $NoMeses = intval($TxtMeses);
+		    $SCCantidad = intval($TxtMeses);
+
+		    if ($NoMeses <= 0) {
+		        $NoMeses = 1;
+		    }
+
+		    switch ($SubCta) {
+		        case "G":
+		        case "I":
+		        case "PM":
+		            $NoMeses = 1;
+		            break;
+		    }
+
+		    $LnSC_No = 1;
+		    $Trans_No = 1;
+		    for ($I = 1; $I <= $NoMeses; $I++) {
+		        SetAdoAddNew("Asiento_SC");
+		        SetAdoFields("Prima", 0);
+
+		        if ($SubCta === "G" || $SubCta === "PM") {
+		            SetAdoFields("Fecha_V", $FechaTexto);
+		        } else {
+		            SetAdoFields("Fecha_V", $Fecha_V_Prest);
+		        }
+
+		        SetAdoFields("TC", $SubCta);
+		        SetAdoFields("Serie", "001001");
+
+		        if ($SubCta === "PM") {
+		            SetAdoFields("Prima", intval($DCFactura));
+		            SetAdoFields("Factura", intval($TxtPrima));
+		        } elseif ($SubCta === "G") {
+		            SetAdoFields("Factura", intval($TxtFactura));
+		            SetAdoFields("Prima", floatval($SCCantidad));
+		        } else {
+		            if ($NoMeses > 1) {
+		                SetAdoFields("Factura", intval(date("ymd") . sprintf("%02d", $I)));
+		            } else {
+		                SetAdoFields("Factura", intval($DCFactura));
+		            }
+		        }
+
+		        SetAdoFields("Codigo", $Codigo);
+		        SetAdoFields("Beneficiario", $Beneficiario);
+		        SetAdoFields("Detalle_SubCta", substr($DCDetalle, 0, 60));
+		        SetAdoFields("Cta", $SubCtaGen);
+		        SetAdoFields("DH", $OpcDH);
+		        SetAdoFields("Valor", $ValorDH);
+		        SetAdoFields("Valor_ME", 0);
+		        SetAdoFields("TM", $OpcTM);
+		        SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+		        SetAdoFields("T_No", $Trans_No);
+		        SetAdoFields("SC_No", $LnSC_No);
+		        SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+
+		        if ($OpcTM === 2) {
+		            SetAdoFields("Valor_ME", $ValorDHAux);
+		        }
+
+		        SetAdoUpdate();
+		        $Fecha_V_Prest = SiguienteMes($Fecha_V_Prest, $Es_Fecha_Fin_Mes);
+		    }
+
+		    $LnSC_No = $LnSC_No + 1;
+		}
+		return array('resp'=>1,'total'=>$parametros['TextValor']);
      }
 
      function modal_ingresar_asiento($parametros)
@@ -551,13 +666,14 @@ class incomC
      }
      function cargar_tablas_sc_modal($parametros)
      {
-     	$datos = $this->modelo->catalogo_subcta_grid($parametros['tc'],$parametros['cta'],$parametros['dh'],$parametros['tm']);
-     	// print_r($datos);die();
-     	return $datos;
+     	$DGSubCta = $this->modelo->catalogo_subcta_grid($parametros['tc'],$parametros['cta'],$parametros['dh'],$parametros['tm']);
+     	$SumarSubCta = $this->SumarSubCtas();
+     	$SumarSubCta['DGSubCta'] = $DGSubCta;
+     	return $SumarSubCta;
      }
      function modal_subcta_limpiar($parametros)
      {
-     	$this->modelo->limpiar_asiento_SC($parametros['tc'],$parametros['cta'],$parametros['dh'],$parametros['tm']); //TODO: Aqui revisar
+     	$this->modelo->limpiar_asiento_SC($parametros['tc'],$parametros['cta'],$parametros['dh'],$parametros['tm']); 
      }
      function asientos_grabados()
      {
@@ -2236,5 +2352,169 @@ function command2_click($parametros){
     $this->modelo->command2_click($parametros);
 }
 
+	function Listar_SubCta_Modulo($parametros)
+	{
+		$DCSubCtaMostrar = false;
+		$ToggleButton1_Visible = false;
+		$SubCta = $parametros['tc'];
+		$SubCtaGen = $parametros['cta'];
+		$query = $parametros['query'];
+		$Nivel_No = $parametros['Nivel_No'];
+		$DCSubCta = $parametros['DCSubCta'];
+
+		$Periodo_Contable = $_SESSION['INGRESO']['periodo'];
+		$NumEmpresa = $_SESSION['INGRESO']['item'];
+
+	    switch ($SubCta) {
+	        case "G":
+	        case "I":
+	        case "PM":
+	            if (isset($_SESSION['PorCtasCostos']) && $_SESSION['PorCtasCostos']) {
+	                $sSQL = "SELECT CS.Detalle As NomCuenta, CS.Detalle As text,CS.Codigo As id, CS.Codigo, 0 As Credito " .
+	                    "FROM Catalogo_SubCtas AS CS, Trans_Presupuestos AS TP " .
+	                    "WHERE CS.Periodo = '$Periodo_Contable' " .
+	                    "AND CS.Item = '$NumEmpresa' " .
+	                    "AND TP.Cta = '$SubCtaGen' " .
+	                    "AND CS.TC = '$SubCta' " .
+	                    "AND TP.MesNo = 0 " .
+	                    "AND CS.Periodo = TP.Periodo " .
+	                    "AND CS.Item = TP.Item " .
+	                    "AND CS.Codigo = TP.Codigo " .
+	                    "ORDER BY CS.Detalle ";
+	            }else if($Nivel_No!='null' ){
+	            	if(isset($_SESSION['AdoNivel']) && is_array($_SESSION['AdoNivel']) && count($_SESSION['AdoNivel'])>0){
+	            		foreach ($_SESSION['AdoNivel'] as $registro) {
+						    if ($registro['Detalle'] == $DCSubCta) {
+						        $Nivel_No = $registro['Nivel'];
+						        break;
+						    }
+						}
+	            	}
+	            	$sSQL = "SELECT Detalle As NomCuenta, Detalle As text,Codigo As id, Codigo, 0 As Credito " .
+				        "FROM Catalogo_SubCtas " .
+				        "WHERE TC = '$SubCta' " .
+				        "AND Item = '$NumEmpresa' " .
+				        "AND Periodo = '$Periodo_Contable' " .
+				        "AND Agrupacion = '0' " .
+				        "AND Nivel = '$Nivel_No' " .
+				        "AND Codigo <> '.' " .
+				        "ORDER BY Nivel, Detalle";
+	            } else {
+	                $DCSubCtaMostrar = true;
+	                $sSQL = "SELECT Detalle As NomCuenta, Detalle As text,Codigo As id, Codigo, 0 As Credito " .
+	                    "FROM Catalogo_SubCtas " .
+	                    "WHERE TC = '$SubCta' " .
+	                    "AND Item = '$NumEmpresa' " .
+	                    "AND Periodo = '$Periodo_Contable' " .
+	                    "AND Agrupacion = '0' " .
+	                    "AND Codigo <> '.' " .
+	                    "ORDER BY Nivel, Detalle ";
+	            }
+	            break;
+	        case "C":
+	        case "P":
+	        case "CP":
+	            $ToggleButton1_Visible = true;
+	            $sSQL = "SELECT Cl.Cliente As NomCuenta, Cl.Cliente As text,CP.Codigo As id, CP.Codigo, Cl.Credito " .
+	                "FROM Catalogo_CxCxP AS CP, Clientes AS Cl " .
+	                "WHERE CP.TC = '$SubCta' " .
+	                "AND CP.Cta = '$SubCtaGen' " .
+	                "AND CP.Item = '$NumEmpresa' " .
+	                "AND CP.Periodo = '$Periodo_Contable' " .
+	                "AND Cl.Codigo <> '.' " .
+	                "AND CP.Codigo = Cl.Codigo " .
+	                "ORDER BY Cl.Cliente ";
+	            break;
+	    }
+	   	$data = $this->modelo->SelectDB_List($sSQL);
+	    return ["DLSubCta" => $data,"DCSubCtaMostrar" => $DCSubCtaMostrar,"ToggleButton1_Visible" => $ToggleButton1_Visible];
+	}
+
+	function Facturas_Pendientes_SC($parametros)
+	{
+		extract($parametros);
+
+	    $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
+		$NumEmpresa = $_SESSION['INGRESO']['item'];
+
+	    if (!IsDate($FechaTexto)) {
+	        $FechaTexto = FechaSistema();
+	    }
+
+	    $sSQL = '';
+	    if ($_SESSION['AgruparSubMod']) {
+	        switch ($SubCta){
+	            case "C": $sSQL = "SELECT Factura,Detalle_SubCta,(SUM(Debitos)-SUM(Creditos)) As Saldos_MN,SUM(Parcial_ME) As Saldos_ME ";break;
+	            case "P": $sSQL = "SELECT Factura,Detalle_SubCta,(SUM(Creditos)-SUM(Debitos)) As Saldos_MN,-SUM(Parcial_ME) As Saldos_ME ";break;
+	            default: $sSQL = "SELECT Factura,Detalle_SubCta,(SUM(Debitos)-SUM(Creditos)) As Saldos_MN,-SUM(Parcial_ME) As Saldos_ME ";break;
+	        }
+	    } else {
+	        switch ($SubCta){
+	            case "C": $sSQL = "SELECT Factura,(SUM(Debitos)-SUM(Creditos)) As Saldos_MN,SUM(Parcial_ME) As Saldos_ME ";break;
+	            case "P": $sSQL = "SELECT Factura,(SUM(Creditos)-SUM(Debitos)) As Saldos_MN,-SUM(Parcial_ME) As Saldos_ME ";break;
+	            default: $sSQL = "SELECT Factura,(SUM(Debitos)-SUM(Creditos)) As Saldos_MN,-SUM(Parcial_ME) As Saldos_ME ";break;
+	        }
+	    }
+
+	    $sSQL .= "FROM Trans_SubCtas " .
+	             "WHERE Codigo = '$Codigo' " .
+	             "AND TC = '$SubCta' " .
+	             "AND Cta = '$SubCtaGen' " .
+	             "AND Item = '$NumEmpresa' " .
+	             "AND Periodo = '$Periodo_Contable' " .
+	             "AND Fecha <= '" . BuscarFecha($FechaTexto) . "' " .
+	             "AND T <> 'A' ";
+
+	    if ($_SESSION['AgruparSubMod']) {
+	        $sSQL .= "GROUP BY Factura,Detalle_SubCta ";
+	    } else {
+	        $sSQL .= "GROUP BY Factura ";
+	    }
+
+	    switch ($SubCta){
+	        case "C": $sSQL .= "HAVING SUM(Debitos)-SUM(Creditos) > 0 ";break;
+	        case "P": $sSQL .= "HAVING SUM(Creditos)-SUM(Debitos) > 0 ";break;
+	        default: $sSQL .= "HAVING SUM(Debitos)-SUM(Creditos) = 0 ";break;
+	    }
+
+	    $sSQL .= "ORDER BY Factura ";
+
+	    $_SESSION['AdoFacturas'] = $DCFactura = $this->modelo->SelectDB_List($sSQL);
+	     return ['DCFactura' => $DCFactura];
+	}
+
+	function DCFacturaLostFocus($parametros){
+		extract($parametros);
+		if(isset($_SESSION['AdoFacturas'])){
+			foreach ($_SESSION['AdoFacturas'] as $registro) {
+			    if ($registro['Factura'] == $Factura_No) {
+			    	if($OpcTM){
+			    		return ['TextValor'=>$registro['Saldos_MN']];
+			    	}else{
+			    		return ['TextValor'=>$registro['Saldos_ME']];
+			    	}
+			    }
+			}
+		}
+	}
+
+	function SumarSubCtas() {
+	  $SumaSubCta = 0;
+	  $SumaSubCta_ME = 0;
+
+	  $AdoSubCtaDet1 = ((isset($_SESSION['AdoSubCtaDet1']))?$_SESSION['AdoSubCtaDet1']:[]);
+
+	  if (count($AdoSubCtaDet1) > 0) {
+	    foreach ($AdoSubCtaDet1 as $key => $result) {
+	    	$SumaSubCta += $result["Valor"];
+	      	$SumaSubCta_ME += $result["Valor_ME"];
+	    }
+	  }
+
+	  $SumaSubCta = round($SumaSubCta, 2);
+	  $SumaSubCta_ME = round($SumaSubCta_ME, 2);
+
+	  return array('SumaSubCta' => $SumaSubCta, 'SumaSubCta_ME'=> $SumaSubCta_ME);
+	}
 }
 ?>

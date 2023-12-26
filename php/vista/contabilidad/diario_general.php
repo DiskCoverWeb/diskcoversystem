@@ -352,6 +352,14 @@
     })
       }
     <?php endif ?>
+
+    function ToggleDivUsuario() {
+      if($("#CheckUsuario").is(':checked')){
+        $("#div_usuario").css('visibility','visible')
+      }else{
+        $("#div_usuario").css('visibility','hidden')
+      }
+    }
   </script>
 
    <div>
@@ -412,7 +420,7 @@
      <div class="row">  
         <div class="col-sm-12">
           <div class="panel panel-default">
-             <div class="panel-heading" style="padding: 5px 5px"><b>COMPROBANTES DE<b></div>
+             <div class="panel-heading" style="padding: 5px 5px"><b>COMPROBANTES DE</b></div>
             <div class="panel-body" style="padding:2px">
             <div class="col-sm-1  col-xs-3">
               <label class="radio-inline"><input type="radio" name="OpcP" id="OpcT" onchange="cargar_libro_general();" checked=""><b>Todos</b></label> 
@@ -449,10 +457,10 @@
     <div class="row">
       <div class="col-sm-8">
         <div class="col-sm-4">
-          <label class="radio-inline input-sm"><input type="checkbox" name="CheckUsuario" id="CheckUsuario" onchange="cargar_libro_general();"> <b>Por Usuario</b></label>          
+          <label class="radio-inline input-sm"><input type="checkbox" name="CheckUsuario" id="CheckUsuario" onchange="if(document.getElementById('DCUsuario').value !== ''){ cargar_libro_general();};ToggleDivUsuario()"> <b>Por Usuario</b></label>          
         </div>
-        <div class="col-sm-4">
-          <select class="form-control input-sm" id="DCUsuario" >
+        <div class="col-sm-4" id="div_usuario" style="visibility: hidden;">
+          <select class="form-control input-sm" id="DCUsuario" onchange="cargar_libro_general();">
             <option value="">Seleccione usuario</option>
           </select>           
         </div>  

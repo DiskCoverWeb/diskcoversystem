@@ -8507,6 +8507,48 @@ function PrimerDiaSeguienteMes($fecha, $formato_salida ="d/m/Y")
   return $newFecha->format($formato_salida);
 }
 
+function SiguienteMes($fechaStr, $finMes = false) {
+    $fechaStr = date('d/m/Y', strtotime($fechaStr));
+    $dia = (int)date('d', strtotime($fechaStr));
+    $anio = (int)date('Y', strtotime($fechaStr));
+    $mes = (int)date('m', strtotime($fechaStr)) + 1;
+
+    if ($mes > 12) {
+        $mes = 1;
+        $anio++;
+    }
+
+    switch ($mes) {
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12:
+            if ($dia > 31) $dia = 31;
+            if ($finMes) $dia = 31;
+            break;
+        case 2:
+            if (($anio % 4 != 0 && $dia > 28) || ($anio % 4 == 0 && $dia > 29)) {
+                $dia = ($anio % 4 == 0) ? 29 : 28;
+                if ($finMes) $dia = ($anio % 4 == 0) ? 29 : 28;
+            }
+            break;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+            if ($dia > 30) $dia = 30;
+            if ($finMes) $dia = 30;
+            break;
+        default:
+            $dia = 30;
+    }
+
+    return sprintf('%02d/%02d/%04d', $dia, $mes, $anio);
+}
+
 function ObtenerMesFecha($fecha, $formato_entrada ="d/m/Y")
 {
   $d = date_create_from_format($formato_entrada, $fecha);
@@ -13131,6 +13173,37 @@ function Actualiza_Comprobantes_Incompletos($Nombre_Tabla) {
           "AND Item = '" . $_SESSION['INGRESO']['item'] . "' " .
           "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' ";
   Ejecutar_SQL_SP($sSQL);
+}
+
+function Insertar_CxP($SubCtaGen, $CodigoCliente, $SubCta) {
+  $conn = new db();
+  // Garantizamos que no exista duplicidad
+  $sSQL = "DELETE FROM Catalogo_CxCxP " .
+          "WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' " .
+          "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' " .
+          "AND Cta = '" . $SubCtaGen . "' " .
+          "AND Codigo = '" . $CodigoCliente . "' " .
+          "AND TC = '" . $SubCta . "' ";
+  Ejecutar_SQL_SP($sSQL);
+
+  // Procedemos a grabar submodulo
+  SetAdoAddNew("Catalogo_CxCxP");
+  SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+  SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
+  SetAdoFields("Codigo", $CodigoCliente);
+  SetAdoFields("Cta", $SubCtaGen);
+  SetAdoFields("TC", $SubCta);
+  SetAdoFields("Importaciones", 0);
+  SetAdoUpdate();
+
+  $sSQL = "SELECT * " .
+          "FROM Catalogo_CxCxP " .
+          "WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' " .
+          "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' " .
+          "AND Cta = '" . $SubCtaGen . "' " .
+          "AND Codigo = '" . $CodigoCliente . "' " .
+          "AND TC = '" . $SubCta . "' ";
+  return $conn->datos($sSQL); //AdoAux
 }
 
 

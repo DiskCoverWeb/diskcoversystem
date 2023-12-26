@@ -753,7 +753,7 @@ function FormActivate() {
     var chq_as = $("#txt_cheq_dep").val();
     var moneda = $("#txt_moneda").val();
     var cotizacion = $("#cotizacion").val();
-    var con = $("#con").val();
+    var con = $(".con:checked").val();
     var tipo_cue = $("#txt_tipo").val();
     var valor = $('#va').val();
     if(moneda==2)
@@ -820,13 +820,15 @@ function FormActivate() {
       var tipo = $('#txt_subcta').val();
       var cta = $('#txt_codigo').val();
       var tipoc = $('#tipoc').val();
+      var opc_mult = $(".con:checked").val();
+      opc_mult = (opc_mult=="X")
+      let Cuenta = $('#cuentar option:selected').text();
       $('#modal_cuenta').modal('hide');
       if(tipo == 'C' || tipo =='P' || tipo == 'G' || tipo=='I' || tipo=='PM' || tipo=='CP')
       {
         titulos(tipo);
-        var src ="../vista/modales.php?FSubCtas=true&mod=&tipo_subcta="+tipo+"&OpcDH="+deha+"&OpcTM="+moneda+"&cta="+cta+"&tipoc="+tipoc+"#";
+        var src ="../vista/modales.php?FSubCtas=true&mod=&tipo_subcta="+tipo+"&OpcDH="+deha+"&OpcTM="+moneda+"&cta="+cta+"&tipoc="+tipoc+"&Opcion_Mulp="+opc_mult+"&Cuenta="+Cuenta+"#";
         $('#modal_subcuentas').modal('show');
-        $('#titulo_frame').text('Ingreso de sub cuenta por cobras');
         $('#frame').attr('src',src).show();
          adjustIframeHeight(300);
       }else if(tipo=="CC")
@@ -845,22 +847,22 @@ function FormActivate() {
     {
       switch(tc) {
         case 'C':
-           $('#titulo_frame').text("Ingreso se Subcuenta por Cobrar");
+           $('#titulo_frame').text("Ingreso de Subcuenta por Cobrar");
           break;
         case 'P':
-           $('#titulo_frame').text("Ingreso se Subcuenta por Pagar");
+           $('#titulo_frame').text("Ingreso de Subcuenta por Pagar");
           break;
           case 'G':
-           $('#titulo_frame').text("Ingreso se Subcuenta de Gastos");
+           $('#titulo_frame').text("Ingreso de Subcuenta de Gastos");
           break;
           case 'I':
-           $('#titulo_frame').text("Ingreso se Subcuenta de Ingreso");
+           $('#titulo_frame').text("Ingreso de Subcuenta de Ingreso");
           break;
           case 'CP':
-           $('#titulo_frame').text("Ingreso se Subcuenta por Cobrar");
+           $('#titulo_frame').text("Ingreso de Subcuenta por Cobrar");
           break;
           case 'PM':
-           $('#titulo_frame').text("Ingreso se Subcuenta de Ingreso");
+           $('#titulo_frame').text("Ingreso de Subcuenta de Ingreso");
            break;
     }
   }
@@ -1014,7 +1016,7 @@ function FormActivate() {
            $('#titulo_frame').text("COMPRAS");
           
            var fec = $('#fecha1').val();
-           var opc_mult = $('#con').val();
+           var opc_mult = $(".con:checked").val();
            var src ="../vista/modales.php?FCompras=true&mod=&prv="+prv+"&ben="+ben+"&fec="+fec+"&opc_mult="+opc_mult+"&tipo=";
            $('#frame').attr('src',src).show();
 
@@ -1549,29 +1551,16 @@ function FormActivate() {
                                    <b>Tipo de conversión  :</b>
                                  </div>
                                   <label class="customradio" style="margin-bottom: 1px;"><span class="radiotextsty">(/)</span>
-                                <input type="radio" checked="checked" name="con" id='con' value='/'>
+                                <input type="radio" checked="checked" name="con" id='conslash' class="con" value='/'>
                                 <span class="checkmark"></span>
                               </label>        
                               <label class="customradio" style="margin-bottom: 1px;"><span class="radiotextsty">(X)</span>
-                                <input type="radio" name="con" id='con' value='X'>
+                                <input type="radio" name="con" id='con' class="con" value='X'>
                                 <span class="checkmark"></span>
                               </label> 
                                </div>
                         </div>   
 
-                    <!--     <div class="" style="float: left;position:relative;left:1%;width: 10%;margin-bottom: 1px;">
-                            <label class="labeltext" style="margin-bottom: 1px;">Tipo de conversión</label><br>
-                            <div class="">
-                              <label class="customradio" style="margin-bottom: 1px;"><span class="radiotextsty">(/)</span>
-                                <input type="radio" checked="checked" name="con" id='con' value='/'>
-                                <span class="checkmark"></span>
-                              </label>        
-                              <label class="customradio" style="margin-bottom: 1px;"><span class="radiotextsty">(X)</span>
-                                <input type="radio" name="con" id='con' value='X'>
-                                <span class="checkmark"></span>
-                              </label>
-                            </div>
-                        </div> -->
 
                          <div class="col-md-3 col-sm-3 col-xs-3">
                                <div class="input-group">

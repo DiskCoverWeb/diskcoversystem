@@ -28,6 +28,10 @@ class incomM
 	   $this->conn = new db();
 	}
 
+	public function SelectDB_List($sql)
+	{
+		return $this->conn->datos($sql);
+	}
 	function beneficiarios($query)
 	{
 		$sql="SELECT TOP 50 Cliente AS nombre, CI_RUC as id, email,Codigo
@@ -121,7 +125,7 @@ class incomM
 	function cuentas_todos($query=false,$codigo=false,$clave=false,$tipocta=false)
 	{
 		$sql="SELECT Codigo+Space(19-LEN(Codigo))+'   '+TC+Space(3-LEN(TC))+'   '+cast( Clave as varchar(5))+'  '
-					+Space(5-LEN(cast( Clave as varchar(5))))+'  -'+
+					+Space(5-LEN(cast( Clave as varchar(5))))+'  '+
 					Cuenta As Nombre_Cuenta,Codigo,Cuenta,TC 
 			   FROM Catalogo_Cuentas 
 			   WHERE DG = 'D' 
@@ -444,55 +448,44 @@ class incomM
 
     function catalogo_subcta_grid($tc,$SubCtaGen,$OpcDH,$OpcTM)
     {
-    	$cid = $this->conn;
-    	
-
         $sql = "SELECT * 
          FROM Asiento_SC
          WHERE TC = '".$tc."'
          AND Cta = '".$SubCtaGen."'
          AND DH = '".$OpcDH."'
          AND TM = '".$OpcTM."'
-         AND T_No = '".$_SESSION['INGRESO']['modulo_']."'
+         AND T_No = '".$_SESSION['Trans_No']."'
          AND Item = '".$_SESSION['INGRESO']['item']."'
          AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'";
-// print_r($sql);
-   //      $stmt = sqlsrv_query( $cid, $sql);
-			// if( $stmt === false)  
-			// {  
-			// 	 echo "Error en consulta PA.\n";  
-			// 	 die( print_r( sqlsrv_errors(), true));  
-			// }
-			// else
-			// {
 
-       		$medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-307;
-		      $tbl = grilla_generica_new($sql,'Asiento_SC','tbl_subcta',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,$medida);
-			 // print_r($tbl);die();
-		     return $tbl;
-
-
-				// $camne=array();
-				// return grilla_generica($stmt,null,null,1);
-			// }
+         $_SESSION['AdoSubCtaDet1'] = $this->conn->datos($sql);
+    		$medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-307;
+	      return grilla_generica_new($sql,'Asiento_SC','tbl_subcta',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,$medida);
     }
 
     function catalogo_subcta($SubCta)
     { 
-    	$cid = $this->conn;
-    	
-    	$sql = "SELECT Detalle,Codigo, Nivel
-        FROM Catalogo_SubCtas
-        WHERE TC = '".$SubCta."'
-        AND Item = '".$_SESSION['INGRESO']['item']."'
-        AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
-        AND Agrupacion <> 0
-        AND Codigo <> '.' 
-        ORDER BY Nivel,Detalle ";
-// print_r($sql);
-         $result = $this->conn->datos($sql);
-		  return $result;
+    		if(isset($_SESSION['PorCtasCostos']) && $_SESSION['PorCtasCostos']){
+    			$sql = "SELECT Detalle,Codigo, Nivel
+		        FROM Catalogo_SubCtas
+		        WHERE Item = '".$_SESSION['INGRESO']['item']."'
+		        AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		        AND 1 = 0 ";
+    		}else{
+    			$sql = "SELECT Detalle,Codigo, Nivel
+		        FROM Catalogo_SubCtas
+		        WHERE TC = '".$SubCta."'
+		        AND Item = '".$_SESSION['INGRESO']['item']."'
+		        AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		        AND Agrupacion <> 0
+		        AND Codigo <> '.' 
+		        ORDER BY Nivel,Detalle ";
+    		}
+
+    		$_SESSION['AdoNivel'] = $this->conn->datos($sql);
+        return $_SESSION['AdoNivel'];
     }
+
     function Catalogo_CxCxP($SubCta,$SubCtaGen,$query=false)
     {
 
@@ -518,11 +511,11 @@ class incomM
     }
 
 
-     function detalle_aux_submodulo($query = false)
+     function detalle_aux_submodulo($query, $SubCta='')
      {
 
     	$cid = $this->conn;
-     	 $sql = "SELECT Detalle_SubCta
+     	 $sql = "SELECT Detalle_SubCta AS id, Detalle_SubCta as text
          FROM Trans_SubCtas
          WHERE Item = '".$_SESSION['INGRESO']['item']."'
          AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
@@ -530,9 +523,14 @@ class incomM
          {
          	$sql.=" AND Detalle_SubCta LIKE '%".$query."%' ";
          }
+         if($SubCta!='')
+         {
+         	$sql.=" AND TC = '".$SubCta."' ";
+         }
          $sql.="GROUP BY Detalle_SubCta
          ORDER BY Detalle_SubCta ";
            $result = $this->conn->datos($sql);
+           array_unshift($result, ["id"=>".", "text"=>"."]);
 		  return $result;
      }
 
@@ -550,8 +548,6 @@ class incomM
     }
     function limpiar_asiento_SC($SubCta,$SubCtaGen,$OpcDH,$OpcTM)
     {
-
-    	$cid = $this->conn;
     	 $sql = "DELETE 
          FROM Asiento_SC 
          WHERE TC = '".$SubCta."'
@@ -577,22 +573,9 @@ class incomM
         {
           $sql.=" AND HABER <> 0 and DEBE = 0";
         }
-        // print_r($sql);die();
-
-          $result = $this->conn->String_Sql($sql);
-          // print_r($sql);die();
-	     return $result;
-
-  //        // print_r($sql);die();
-  //        $stmt = sqlsrv_query( $cid, $sql);
-  //        if( $stmt === false)  
-		// {  
-		// 	 echo "Error en consulta PA.\n";  
-		// 	 die( print_r( sqlsrv_errors(), true));  
-		// }
-		   
-		// return 1;
+	     return Ejecutar_SQL_SP($sql);
     }
+
     function asientos()
     { 
     	$cid = $this->conn;
