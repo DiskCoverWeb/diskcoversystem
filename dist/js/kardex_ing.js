@@ -825,7 +825,7 @@ function habilitar_bienes()
   }else
   {
     $('#TxtIvaBienMonIva').prop('readonly', true);
-    $('#TxtIvaBienValRet').attr('readonly', false); 
+    // $('#TxtIvaBienValRet').attr('readonly', false); 
     $('#DCPorcenRetenIvaBien').prop('disabled', true);
     $('#DCRetIBienes').css('display', 'none');
     $('#TxtIvaBienMonIva').val('0.00');     

@@ -183,6 +183,18 @@ if(isset($_GET['modal_subcta_catalogo']))
 	echo json_encode($controlador->catalogo_subcta($parametros));
 	
 }
+if(isset($_GET['modal_subcta_cta']))
+{
+	if(!isset($_GET['q']))
+	{
+		$_GET['q'] = '';
+	}
+	$parametros = array('tc'=>$_GET['tc'],
+						'nivel'=>$_GET['nivel'],
+		    			'query'=>$_GET['q']);
+	echo json_encode($controlador->catalogo_subcta2($parametros));
+	
+}
 if(isset($_GET['totales_asientos']))
 {
 	// $parametros = $_POST['parametros'];
@@ -474,13 +486,38 @@ class incomC
      		$datos = $this->modelo->Catalogo_CxCxP($parametros['tc'],$parametros['cta'],$parametros['query']);
      		$ddl =array();
      		foreach ($datos as $key => $value) {
-     			$ddl[]=array('id'=>$value['Codigo'],'text'=>$value['NomCuenta']);
+     			$ddl[]=array('id'=>$value['Codigo'],'text'=>$value['NomCuenta'],'data'=>$value);
      		}
      		return $ddl;
      	}else
      	{
      		$datos_tabla = $this->modelo->catalogo_subcta_grid($parametros['tc'],$parametros['cta'],$parametros['OpcDH'],$parametros['OpcTM']);
      	    $datos = $this->modelo->catalogo_subcta($parametros['tc']);
+     	    foreach ($datos as $key => $value) {
+     			$ddl[]=array('id'=>$value['Codigo'],'text'=>$value['Detalle'],'data'=>$value);
+     		}
+     		return $ddl;     	
+
+     	}
+     }
+
+
+     function catalogo_subcta2($parametros)
+     {
+
+     	// print_r($parametros);die();
+     	if($parametros['tc']=='C' ||  $parametros['tc']== "P" || $parametros['tc']=="CP" )
+     	{
+     		// $datos = $this->modelo->Catalogo_CxCxP($parametros['tc'],$parametros['cta'],$parametros['query']);
+     		// $ddl =array();
+     		// foreach ($datos as $key => $value) {
+     		// 	$ddl[]=array('id'=>$value['Codigo'],'text'=>$value['NomCuenta']);
+     		// }
+     		// return $ddl;
+     	}else
+     	{
+     		
+     	    $datos = $this->modelo->catalogo_subcta($parametros['tc'],1,$parametros['nivel']);
      	    foreach ($datos as $key => $value) {
      			$ddl[]=array('id'=>$value['Codigo'],'text'=>$value['Detalle']);
      		}
@@ -649,6 +686,8 @@ class incomC
           // print_r($Co);die();
          // 'Grabamos el Comprobante
           $resp = GrabarComprobante($Co);
+
+          // print_r('dd');die();
         // ' Seteamos para el siguiente comprobante
         //  DGAsientosB.Visible = False
          // RatonNormal
