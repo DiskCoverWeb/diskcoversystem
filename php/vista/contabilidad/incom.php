@@ -173,7 +173,25 @@ function Form_Activate()
     //   numero_comprobante();
     //   FormActivate()
     // }
-    
+    //Valida solo decimales en el modal CC
+    $(document).on('keypress', 'td.editable-decimal', function(e) {
+      var charCode = e.which || e.keyCode; // Obtiene el código del carácter
+      var charTyped = String.fromCharCode(charCode);
+
+      // Permite solo números y el punto decimal
+      if (!charTyped.match(/[\d.]/) && charCode !== 8 && charCode !== 46) {
+          e.preventDefault(); // Evita el ingreso del carácter
+      }
+    });
+
+    $(document).on('input', 'td.editable-decimal', function() {
+        var text = $(this).text();
+        if (!/^[\d.]*$/.test(text)) {
+            var newText = text.replace(/[^\d.]/g, '');
+            $(this).text(newText);
+        }
+    });
+
      $("#btn_acep").blur(function () { if($('#modal_cuenta').hasClass('in')){if($('#txt_efectiv').is(':visible')){$('#txt_efectiv').trigger( "focus" );}else{$('#txt_moneda').trigger( "focus" );}}});
 
 

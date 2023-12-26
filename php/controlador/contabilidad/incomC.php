@@ -2214,7 +2214,7 @@ function load_subcuentas($parametros){//TODO: Sumatoria_CC
                 
                         if ($columna === 'Valor') {
                             $editable = ' contenteditable="true"';
-                            $clase = "text-right"; 
+                            $clase = "text-right editable-decimal";
                             $valor = number_format((float)$valor, 2, '.', '');
                         }else{
                             $clase = "text-center";
