@@ -658,7 +658,7 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
         </div> -->
         </div>
         <!-- sidebar menu: : style can be found in sidebar.less -->
-        <ul class="sidebar-menu" data-widget="tree">
+        <ul class="sidebar-menu" data-widget="tree" style="white-space: normal;">
           <?php
           if (!isset($_SESSION['INGRESO']['modulo_']) || $_SESSION['INGRESO']['modulo_'] == "") {
             // print_r($_SESSION['INGRESO']['modulo_']);die();

@@ -1516,5 +1516,88 @@ class incomM
   }
 
 
+  function ExistenMovimientos($Trans_No)
+  {
+    	$cid = $this->conn;
+  		$SQL1 = "SELECT Item, CodigoU, T_No
+      	FROM Asiento
+      	WHERE Item = '".$_SESSION['INGRESO']['item']. "'
+      	AND CodigoU = '" .$_SESSION['INGRESO']['CodigoU']. "'
+      	AND T_No = " .$Trans_No. "
+      	UNION
+      	SELECT Item, CodigoU, T_No
+      	FROM Asiento_SC
+      	WHERE Item = '".$_SESSION['INGRESO']['item']. "'
+      	AND CodigoU = '" .$_SESSION['INGRESO']['CodigoU']. "'
+      	AND T_No = " .$Trans_No. "
+      	UNION
+      	SELECT Item, CodigoU, T_No
+      	FROM Asiento_B
+      	WHERE Item = '".$_SESSION['INGRESO']['item']. "'
+      	AND CodigoU = '" .$_SESSION['INGRESO']['CodigoU']. "'
+      	AND T_No = " .$Trans_No. "
+      	UNION
+      	SELECT Item, CodigoU, T_No
+      	FROM Asiento_R
+      	WHERE Item = '".$_SESSION['INGRESO']['item']. "'
+      	AND CodigoU = '" .$_SESSION['INGRESO']['CodigoU']. "'
+      	AND T_No = " .$Trans_No. " ";
+       
+	  $SQL2 = "SELECT Item, CodigoU, T_No 
+	     FROM Asiento_RP 
+	     WHERE Item = '".$_SESSION['INGRESO']['item']. "' 
+	     AND CodigoU = '" .$_SESSION['INGRESO']['CodigoU']. "' 
+	     AND T_No = " .$Trans_No. " 
+	     UNION 
+	     SELECT Item, CodigoU, T_No 
+	     FROM Asiento_K 
+	     WHERE Item = '".$_SESSION['INGRESO']['item']. "' 
+	     AND CodigoU = '" .$_SESSION['INGRESO']['CodigoU']. "' 
+	     AND T_No = " .$Trans_No. " 
+	     UNION 
+	     SELECT Item, CodigoU, T_No 
+	     FROM Asiento_P 
+	     WHERE Item = '".$_SESSION['INGRESO']['item']. "' 
+	     AND CodigoU = '" .$_SESSION['INGRESO']['CodigoU']. "' 
+	     AND T_No = " .$Trans_No. " 
+	     UNION 
+	     SELECT Item, CodigoU, T_No 
+	     FROM Asiento_Air 
+	     WHERE Item = '".$_SESSION['INGRESO']['item']. "' 
+	     AND CodigoU = '" .$_SESSION['INGRESO']['CodigoU']. "' 
+	     AND T_No = " .$Trans_No. " ";
+       
+	  $SQL3 = "SELECT Item, CodigoU, T_No 
+	     FROM Asiento_Compras 
+	     WHERE Item = '".$_SESSION['INGRESO']['item']. "' 
+	     AND CodigoU = '" .$_SESSION['INGRESO']['CodigoU']. "' 
+	     AND T_No = " .$Trans_No. " 
+	     UNION 
+	     SELECT Item, CodigoU, T_No 
+	     FROM Asiento_Exportaciones 
+	     WHERE Item = '".$_SESSION['INGRESO']['item']. "' 
+	     AND CodigoU = '" .$_SESSION['INGRESO']['CodigoU']. "' 
+	     AND T_No = " .$Trans_No. " 
+	     UNION 
+	     SELECT Item, CodigoU, T_No 
+	     FROM Asiento_Importaciones 
+	     WHERE Item = '".$_SESSION['INGRESO']['item']. "' 
+	     AND CodigoU = '" .$_SESSION['INGRESO']['CodigoU']. "' 
+	     AND T_No = " .$Trans_No. " 
+	     UNION 
+	     SELECT Item, CodigoU, T_No 
+	     FROM Asiento_Ventas 
+	     WHERE Item = '".$_SESSION['INGRESO']['item']. "' 
+	     AND CodigoU = '" .$_SESSION['INGRESO']['CodigoU']. "' 
+	     AND T_No = " .$Trans_No. " ";
+
+	   $sql = $SQL1 ." UNION ".$SQL2." UNION ".$SQL3;
+
+	   // print_r($sql);die();
+	   return  $cid->datos($sql);
+  }
+
+
+
 }
 ?>

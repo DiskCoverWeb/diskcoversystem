@@ -211,6 +211,103 @@ function generar_ceros(num,cant)
 	} 
 }
 
+function fecha_valida(campo)
+{
+	// console.log(campo.id);
+	valor = $('#'+campo.id).val();
+	console.log(valor)
+	if(campo=='' || campo==undefined || valor=='' || valor==undefined)  
+	{
+		// alert('Fecha no valida');
+		Swal.fire('Fecha no valida','','info').then(function(){
+			  $('#'+campo.id).focus();
+		});
+	}
+}
+
+
+ function validar_numeros_decimal(campo) 
+ {
+ 	contador = 0;
+ 	valor = $('#'+campo.id).val();
+ 	valor = valor.replace(',','.')
+   	var new_val = valor.replace(/[^0-9.]/g, '');
+   	var contador = 0;
+
+      for (var i = 0; i < valor.length; i++) {
+        if (valor[i] === '.') {
+          contador++;
+        }
+      }
+
+      if(contador>1)
+      {
+      	new_val = new_val.substr(0,new_val.length-1);
+      }
+      $('#'+campo.id).val(new_val);
+ }
+
+
+function validar_float(campo,decimales)
+{
+	valor = $('#'+campo.id).val();
+	if(valor=='' || valor=='.')
+	{
+		$('#'+campo.id).val('0.'+'0'.repeat(decimales));
+	}
+
+	valor = valor.replace(',','.')
+
+	contador = 0;
+ 	valor = $('#'+campo.id).val();
+   	var new_val = valor.replace(/[^0-9.]/g, '');
+   	var contador = 0;
+
+      for (var i = 0; i < valor.length; i++) {
+        if (valor[i] === '.') {
+          contador++;
+        }
+      }
+
+      if(contador>1)
+      {
+      	new_val = new_val.substr(0,new_val.length-1);
+      }
+
+      if(new_val.indexOf('.')!='-1')
+      {
+	      dec = new_val.split('.');
+	      console.log(dec);
+	      if(dec[1].length<decimales && dec[1].length!=decimales )
+	      {
+	      	   dec_can = decimales-(dec[1].length)
+	      	   decN = dec[1]+'0'.repeat(dec_can);
+	      	   if(dec[0]!='')
+	      	   {
+	      	   	new_val = dec[0]+'.'+decN; 
+	      	   }else
+	      	   {
+	      	   		new_val = '0'+'.'+decN; 
+	      	   }
+	      }
+	  }else{
+	  	console.log(new_val.indexOf('.'));
+	  	 new_val = new_val+'.'+'0'.repeat(decimales);
+	  }
+      $('#'+campo.id).val(new_val);
+}
+
+function validar_cantidad_numeros_blur(campo,min,max=false)
+{  
+  var v = $('#'+campo.id).val();
+  var num = v.length;
+  if(num < min || num>max)
+  {
+  	Swal.fire('El numero de ingresado debes tener como minimo :'+min+' y maximo:'+max,'','info');
+  	return false;
+  }
+}
+
 function paginacion(funcion,posicion,inicio=0,numreg=50,variables=false)
 {
 	// console.log(variables);
@@ -483,3 +580,15 @@ function validar_sriC(ci)
     });
 
   }
+
+
+function solo_numeros(input)
+{
+   var valor = input.value;
+
+    // Reemplazar cualquier caracter que no sea un número con una cadena vacía
+    var soloNumeros = valor.replace(/\D/g, '');
+
+    // Actualizar el valor del input con solo números
+    input.value = soloNumeros;
+}

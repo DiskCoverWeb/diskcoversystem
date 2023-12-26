@@ -9291,7 +9291,7 @@ function CambioCodigoCta($Codigo){
   if($Codigo_Cta == " "){ $Codigo_Cta = "0";}
   if($Codigo_Cta ==G_NINGUNO){ $Codigo_Cta = "0";}
 
-  print_r($Codigo_Cta);die();
+  //print_r($Codigo_Cta);die();
   return $Codigo_Cta;
 }
 
@@ -11374,6 +11374,9 @@ function GrabarComprobante($C1)
          SetAdoFields("C_Costo", $CodigoCC);
          SetAdoFields("Item", $C1["Item"]);
         // 'SetAdoFields("C", True)
+         if($TipoCta == "BA"){
+          SetAdoFields("C", $_SESSION['INGRESO']['ConciliacionAut']);
+         }
          SetAdoFields("Procesado", False);
          SetAdoUpdate();
          // $NumTrans = $NumTrans + 1;
@@ -13204,6 +13207,63 @@ function Insertar_CxP($SubCtaGen, $CodigoCliente, $SubCta) {
           "AND Codigo = '" . $CodigoCliente . "' " .
           "AND TC = '" . $SubCta . "' ";
   return $conn->datos($sSQL); //AdoAux
+}
+
+function FormatoCodigoCta($Cta){
+  $Ctas = "";
+  $Strg = "";
+  $ch = "";
+
+  $Ctas = $Cta;
+
+  if($Ctas == G_NINGUNO)
+    $Ctas = "0";
+
+  $Cadena = "";
+  $MascaraCtas = "#.#.##.##.##.###";
+  if(strlen($Ctas) < 20){
+    for($i = 0; $i < strlen($MascaraCtas); $i++){
+      $ch = substr($MascaraCtas, $i, 1);
+      $ch == "#" ? $Strg .= " " : $Strg .= ".";
+    }
+    $Cadena = $Ctas . substr($Strg, strlen($Ctas) + 1, strlen($Strg) - strlen($Ctas));
+  }else{
+    $Cadena = $Ctas;
+  }
+  return $Cadena;
+}
+
+function FormatoCodigo($S, $N){
+  $S1 = "";
+  $S2 = "";
+  $S3 = "";
+  $S4 = "";
+
+  $I = 1;
+  $J = 1;
+  $K = 0;
+
+  while(($I <= strlen($S)) && ($K == 0)){
+    if(substr($S, $I, 1) == "."){
+      $K = $I;
+    }
+    $I++;
+  }
+  if($K > 0){
+    $S2 = substr($S, $K + 1, 1);
+    $S1 = substr($S, 0, 2);
+  }else{
+    $S1 = substr($S, 0, 3);
+  }
+  $S3 = strtoupper($S1 . $S2 . sprintf("%02d", $N));
+  for($I = 1; $I <= strlen($S3); $I++){
+    if(substr($S3, $I, 1) == " "){
+      $S4 .= ".";
+    }else{
+      $S4 .= substr($S3, $I, 1);
+    }
+  }
+  return $_SESSION['INGRESO']['item'] . $S4;
 }
 
 

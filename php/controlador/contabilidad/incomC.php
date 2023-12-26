@@ -272,6 +272,10 @@ if(isset($_GET['Command2_Click'])){
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->command2_click($parametros));
 }
+if(isset($_GET['ExistenMovimientos'])){
+    $parametros = $_POST;
+    echo json_encode($controlador->ExistenMovimientos($parametros));
+}
 
 if(isset($_GET['ListarSubCtaModulo'])){
     if(!isset($_GET['q']))
@@ -2325,7 +2329,7 @@ function load_subcuentas($parametros){//TODO: Sumatoria_CC
                 
                         if ($columna === 'Valor') {
                             $editable = ' contenteditable="true"';
-                            $clase = "text-right"; 
+                            $clase = "text-right editable-decimal";
                             $valor = number_format((float)$valor, 2, '.', '');
                         }else{
                             $clase = "text-center";
@@ -2516,5 +2520,18 @@ function command2_click($parametros){
 
 	  return array('SumaSubCta' => $SumaSubCta, 'SumaSubCta_ME'=> $SumaSubCta_ME);
 	}
+function ExistenMovimientos($parametros)
+{
+  $Trans_No = $parametros['Trans_No'];
+  $ExisteMov = 0;
+  if($Trans_No <= 0 ){ $Trans_No = 1;}
+  $datos = $this->modelo->ExistenMovimientos($Trans_No);
+  if(count($datos)>0)
+  {
+  	$ExisteMov = 1;
+  }
+  return $ExisteMov;
+}
+
 }
 ?>

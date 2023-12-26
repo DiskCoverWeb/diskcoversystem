@@ -540,18 +540,18 @@ function DCFactura_LostFocus(event) {
 	</div>
 	<div class="col-sm-2">
 		<b id="Label6">Factura No</b>
-    <input type="text" name="txt_factura" id="txt_factura" class="form-control input-sm" value="0" tabindex="5">
+    <input type="text" name="txt_factura" id="txt_factura" class="form-control input-sm" onkeyup="solo_numeros(this)" value="0" tabindex="5">
     <select class="form-control input-sm" id="DCFactura" style="display:none" onblur="DCFactura_LostFocus(event)" tabindex="5">
       <option value="">.</option>
     </select> 
 	</div>
 	<div class="col-sm-1">
 		<b id="Label2">Meses</b>
-		<input type="text" name="txt_mes" id="txt_mes" class="form-control input-sm" value="0"  tabindex="6">
+		<input type="text" name="txt_mes" id="txt_mes" class="form-control input-sm" onkeyup="solo_numeros(this)" value="0"  tabindex="6">
 	</div>
 	<div class="col-sm-2">
 		<b>Valor M/N</b>
-		<input type="text" name="txt_valor" id="txt_valor" class="form-control input-sm" value="0" tabindex="12">
+		<input type="text" name="txt_valor" id="txt_valor" class="form-control input-sm" value="0"onkeyup="validar_numeros_decimal(this)" onblur="validar_float(this,2)" tabindex="12">
 	</div>
 </div>
 <div class="row">
