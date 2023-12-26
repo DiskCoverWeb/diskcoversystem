@@ -34,11 +34,13 @@ date_default_timezone_set('America/Guayaquil');
         /*text-align: center;*/
         font-size: 1.5em;
         white-space: pre;
+        margin: 10px 0px 10px 0px;
     }
 
     #btnContainer>.row {
         display: flex;
         align-items: center;
+        margin: -15px 0px 0px 10px;
     }
 
     #btnContainer>.row>div:first-child {
@@ -616,7 +618,7 @@ date_default_timezone_set('America/Guayaquil');
                 <div class="panel panel-default">
                     <div class="panel-body">
 
-                        <div class="row" style="padding: 10px 0">
+                        <div class="row" style="padding: 10px 0; margin: -15px 0px 0px -13px ;">
                             <!-- Código -->
                             <div class="col-md-2 d-flex align-items-center">
                                 <label for="TxtCodigo" class="mr-2">CÓDIGO</label>
