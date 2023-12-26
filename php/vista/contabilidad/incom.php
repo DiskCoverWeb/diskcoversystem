@@ -1,59 +1,94 @@
+<style>
+   .btn_f {  background-color: #CFE9EF;  color: #444;  border-color: #ddd;}
+   .input-group .input-group-addon 
+    {
+      background-color: #CFE9EF;  color: #444;  border-color: #ddd;  border-bottom-left-radius: 5px;  border-top-left-radius:  5px;}
+    #select2-cuentar-results .select2-results__option {   white-space: pre;  }
+</style>
+  <!-- =========================================INICIO DE PROGRAMACION =================================== -->
 <?php
 if (!isset($_SESSION))
   session_start();
-$_SESSION['INGRESO']['ti'] = 'Ingresar Comprobantes (Crtl+f5)';
 $T_No = 1;
 $SC_No = 0;
-//echo $_SESSION['INGRESO']['Id']; 
-//datos para consultar
-//CI_NIC
-//echo $_SESSION['INGRESO']['Opc'].' '.$_SESSION['INGRESO']['Sucursal'].' '.$_SESSION['INGRESO']['item'].' '.$_SESSION['INGRESO']['periodo'].' ';
 $variables_mod = '';
+$ModificarComp = 0;
+$CopiarComp = 0;
 $NuevoComp = 1;
 $load = 0;
 if (isset($_GET["modificar"])) {
   $variables_mod = $_GET["TP"] . '-' . $_GET["com"];
-  $NuevoComp = 0;
+  $ModificarComp = 1;
+}
+if (isset($_GET["copiar"])) {
+  $variables_mod = $_GET["TP"] . '-' . $_GET["com"];
+  $CopiarComp = 1;
 }
 if (isset($_GET["num_load"])) {
   $load = 1;
 }
 ?>
-<style>
-  .xs {
-    border: 1px dotted #CFE9EF;
-    border-radius: 0;
 
-    -webkit-appearance: none;
-  }
-  .xs1 {
-    border: 1px dotted #999;
-    border-radius: 0;
 
-    -webkit-appearance: none;
+
+<script type="text/javascript">
+var Trans_No = 1; var Ln_No = 1; var Ret_No = 1; var LnSC_No = 1;
+function Form_Activate()
+{ 
+    var ModificarComp = '<?php echo $ModificarComp; ?>';
+    var CopiarComp = '<?php echo $CopiarComp; ?>';
+    var NuevoComp    = '<?php echo $NuevoComp; ?>';
+
+  if(ModificarComp==1){
+     // Control_Procesos Normal, "Modificar Comprobante de: " & Co.TP & " No. " & Co.Numero
+    var comprobante = '<?php echo @$_GET["com"]; ?>';
+    var tp = '<?php  echo @$_GET["TP"]; ?>';
+     Listar_Comprobante_SP(comprobante,tp);
   }
-   .btn_f
+  
+  if(CopiarComp==1)
   {
-    background-color: #CFE9EF;
-    color: #444;
-    border-color: #ddd;
+     // Control_Procesos Normal, "Copiando Comprobante de: " & Co.TP & " No. " & Co.Numero
+    var comprobante = '<?php echo @$_GET["com"]; ?>';
+    var tp = '<?php  echo @$_GET["TP"]; ?>';
+     Listar_Comprobante_SP(comprobante,tp);
+     $('#NuevoComp').val(1);
   }
-   .input-group .input-group-addon 
-    {
-      background-color: #CFE9EF;
-      color: #444;
-      border-color: #ddd;
-      border-bottom-left-radius: 5px;
-      border-top-left-radius:  5px;
-    }
-    .height
-    {
-      min-height: 500px;
-    }
-    #select2-cuentar-results .select2-results__option {
-    white-space: pre;
-    }
-</style>
+
+  if(NuevoComp==1)
+  {
+    // console.log('ingresa nuevo');
+     var Numero = 0;
+     ExistenMovimientos();
+  }
+  
+  // TipoBusqueda = "%"
+  
+  Tipo_De_Comprobante_No();
+  FormActivate();
+
+ //  Llenar_Encabezado_Comprobante
+ //  CalculosTotalAsientos AdoAsientos, LabelDebe, LabelHaber, LabelDiferencia
+ //  Una_Vez = True
+ // // 'Listamos lista de clientes para procesar comprobantes
+  
+ //  If UCaseStrg(Modulo) = "GASTOS" Then
+ //     OpcTP(0).Visible = True
+ //     OpcTP(1).Visible = False
+ //     OpcTP(2).Visible = False
+ //     OpcTP(3).Visible = False
+ //     OpcTP(4).Visible = False
+ //  End If
+ //  If Bloquear_Control Then CmdGrabar.Enabled = False
+ //  RatonNormal
+ //  FComprobantes.WindowState = vbMaximized
+
+ //  MBoxFecha.SetFocus
+}
+
+
+</script>
+
 
 
 <script type="text/javascript">
@@ -65,22 +100,52 @@ if (isset($_GET["num_load"])) {
     {
       cargar_beneficiario(cli);
     }
-  
-  $(document).ready(function () {
-    cargar_cuenta();
-    var modificar = '<?php echo $variables_mod; ?>';
-    var modificar = '<?php echo $variables_mod; ?>';
-    var load = '<?php echo $load; ?>';
-    if(modificar!='')
-    {
-      // console.log(load);
+
+   function ExistenMovimientos()
+   {
+     var CopiarComp = '<?php echo $CopiarComp; ?>';
+      $.ajax({
+        url:   '../controlador/contabilidad/incomC.php?ExistenMovimientos=true',
+        type:  'post',
+        data: {
+          'Trans_No': Trans_No,
+        },
+        dataType: 'json',
+        success:  function (response) {
+         
+         if(response ==1 && CopiarComp == 0){
+               Swal.fire({
+                 title: 'El Sistema se cerro de forma inesperada, existen movimientos en transito con su codigo de usuario. Desea recuperarlos? ',
+                 text: "",
+                 type: 'warning',
+                 showCancelButton: true,
+                 confirmButtonColor: '#3085d6',
+                 cancelButtonColor: '#d33',
+                 confirmButtonText: 'Si!',
+                 allowOutsideClick: false
+               }).then((result) => {
+                 if (result.value!=true) {
+                  borrar_asientos();
+                 }
+               })
+                
+             }
+
+        }
+      });
+
+   }
+
+  function Listar_Comprobante_SP(com,tp)
+  {
+     var modificar = '<?php echo $variables_mod; ?>';
       $('#NuevoComp').val(modificar);
       $.ajax({
         url:   '../controlador/contabilidad/incomC.php?CallListar_Comprobante_SP=true',
         type:  'post',
         data: {
-          'NumeroComp': '<?php echo @$_GET["com"] ?>',
-          'TP': '<?php echo @$_GET["TP"] ?>',
+          'NumeroComp': com,
+          'TP': tp,
         },
         dataType: 'json',
         success:  function (response) {
@@ -92,11 +157,22 @@ if (isset($_GET["num_load"])) {
           FormActivate()
         }
       });
-    }else
-    {
-      numero_comprobante();
-      FormActivate()
-    }
+  }
+
+  
+  $(document).ready(function () {
+    Form_Activate();
+    cargar_cuenta();
+    var modificar = '<?php echo $variables_mod; ?>';
+    var load = '<?php echo $load; ?>';
+    // if(modificar!='')
+    // {
+     
+    // }else
+    // {
+    //   numero_comprobante();
+    //   FormActivate()
+    // }
     
      $("#btn_acep").blur(function () { if($('#modal_cuenta').hasClass('in')){if($('#txt_efectiv').is(':visible')){$('#txt_efectiv').trigger( "focus" );}else{$('#txt_moneda').trigger( "focus" );}}});
 
@@ -133,7 +209,6 @@ if (isset($_GET["num_load"])) {
 
 
 function FormActivate() {
-  $('#tit_sel').html('<i class="fa  fa-trash"></i>');
     $('#fecha1').focus();
     // numero_comprobante();
     cargar_totales_aseintos();
@@ -403,7 +478,6 @@ function FormActivate() {
       }
     }
 
-            $('#tit_sel').html('<i class="fa  fa-trash"></i>');
 
     function eliminar_todo_asisntoB()
     {
@@ -1161,7 +1235,8 @@ function FormActivate() {
              var texto ="";
              var tipo ="success";
              if(response.aut_res==1){texto = ' y Documento electronico Autorizado'; tipo ='success'; }
-             if (response.aut_res==2) { tipo_error_sri(response.clave); texto = ' y Documento electronico No autorizado'; tipo = 'warning';}
+             if (response.aut_res==2) { tipo_error_sri(response.clave); texto = ' y Documento electronico No autorizado'; tipo = 'warning';
+           }
              Swal.fire( ((parametros.NuevoComp==0)?'Comprobante Modificado '+texto: "Comprobante Generado "+texto),"",tipo).then(function(){ 
              eliminar_todo_asisntoB();
              cargar_tablas_contabilidad();
@@ -1474,7 +1549,7 @@ function FormActivate() {
                                  <div class="input-group-addon input-xs">
                                    <b>FECHA:</b>
                                  </div>
-                                 <input type="date" class="form-control input-xs" id="fecha1" placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="validar_fecha()">
+                                 <input type="date" class="form-control input-xs" id="fecha1" placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="validar_fecha();fecha_valida(this)">
                                </div>
                           <!-- </div> -->
                         </div>
@@ -1498,7 +1573,7 @@ function FormActivate() {
                                  <div class="input-group-addon input-xs">
                                    <b>R.U.C / C.I:</b>
                                  </div>
-                                 <input type="text" class=" form-control input-xs" id="ruc" name='ruc' placeholder="R.U.C / C.I" value='000000000' maxlength='30' size='25'>
+                                 <input type="text" class=" form-control input-xs" id="ruc" name='ruc' placeholder="R.U.C / C.I" value='000000000' maxlength='30' size='25' onblur="" onkeyup="solo_numeros(this)">
                                </div>
                           <!-- </div> -->
                         </div>
@@ -1530,7 +1605,7 @@ function FormActivate() {
                                  <div class="input-group-addon input-xs">
                                    <b>COTIZACION:</b>
                                  </div>
-                                 <input type="text" class="form-control input-xs" id="cotizacion" name='cotizacion' placeholder="0.00" onKeyPress='return soloNumerosDecimales(event)' style="text-align:right; width: 70px;" maxlength='20' />
+                                 <input type="text" class="form-control input-xs" id="cotizacion" name='cotizacion' placeholder="0.00" onkeyup="validar_numeros_decimal(this)" onblur="validar_float(this,2)" style="text-align:right; width: 70px;" maxlength='20' />
                                </div>
                         </div>     
 
@@ -1614,7 +1689,7 @@ function FormActivate() {
                                      <div class="input-group-addon input-xs">
                                        <b><?php echo $_SESSION['INGRESO']['S_M']; ?>:</b>
                                      </div>
-                                     <input type="text" class="form-control input-xs" id="vae" name='vae' placeholder="0.00" style="text-align:right;" onKeyPress='return soloNumerosDecimales(event)' maxlength='20' size='13'>
+                                     <input type="text" class="form-control input-xs" id="vae" name='vae' placeholder="0.00" style="text-align:right;" onkeyup="validar_numeros_decimal(this)" onblur="validar_float(this,2)" maxlength='20' size='13'>
                                    </div>                           
                               </div>                               
                             </div>                                                  
@@ -1642,7 +1717,7 @@ function FormActivate() {
                                          <b><?php echo $_SESSION['INGRESO']['S_M']; ?>:</b>
                                      </div>
                                      <input type="text" class="form-control input-xs" id="vab" name='vab' placeholder="0.00" 
-                                style="text-align:right;"  onKeyPress='return soloNumerosDecimales(event)' 
+                                style="text-align:right;"  onkeyup="validar_numeros_decimal(this)" onblur="validar_float(this,2)"
                                 maxlength='20' size='13' value='0.00'>
                                   </div>  
                             </div> 
@@ -1675,7 +1750,7 @@ function FormActivate() {
                                 <div class="btn_f input-xs col-sm-12 text-center">
                                   <b>Efectivizar:</b>
                                 </div>
-                                <input type="date" class="form-control input-xs" id="efecti" name='efecti' placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>'>
+                                <input type="date" class="form-control input-xs" id="efecti" name='efecti' placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' onblur="fecha_valida(this)">
                               </div>                            
                           </div>
                           <div class="col-md-2">
@@ -1683,7 +1758,7 @@ function FormActivate() {
                                 <div class="btn_f input-xs col-sm-12 text-center">
                                   <b>Deposito No:</b>
                                 </div>
-                                <input type="text" class="form-control input-xs" id="depos" name='depos' placeholder="12345" onblur="agregar_depo()">
+                                <input type="text" class="form-control input-xs" id="depos" onkeyup="solo_numeros(this)" name='depos' placeholder="12345" onblur="agregar_depo()">
                               </div>
                           </div>                          
                         </div>                      
@@ -1728,7 +1803,7 @@ function FormActivate() {
                                   <b>VALOR:</b>
                                  </div>
                                    <input type="text" class="form-control input-xs" id="va" name='va' 
-                              placeholder="0.00" style="text-align:right;" onKeyPress='return soloNumerosDecimales(event)' onblur="ingresar_asiento()" value="0.00">
+                              placeholder="0.00" style="text-align:right;"  onkeyup="validar_numeros_decimal(this)" onblur="ingresar_asiento();validar_float(this,2)" value="0.00">
                                </div>
                         </div>
                       </div>

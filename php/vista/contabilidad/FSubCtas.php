@@ -268,15 +268,15 @@ if(isset($_GET['tipoc']))
 	</div>
 	<div class="col-sm-2">
 		<b>Factura No</b>
-		<input type="text" name="txt_factura" id="txt_factura" class="form-control input-sm" value="0">
+		<input type="text" name="txt_factura" id="txt_factura" class="form-control input-sm" onkeyup="solo_numeros(this)" value="0">
 	</div>
 	<div class="col-sm-1">
 		<b>Meses</b>
-		<input type="text" name="txt_mes" id="txt_mes" class="form-control input-sm" value="0">
+		<input type="text" name="txt_mes" id="txt_mes" class="form-control input-sm" value="0" onkeyup="solo_numeros(this)">
 	</div>
 	<div class="col-sm-2">
 		<b>Valor M/N</b>
-		<input type="text" name="txt_valor" id="txt_valor" class="form-control input-sm" value="0" onblur="agregar_sc()">
+		<input type="text" name="txt_valor" id="txt_valor" class="form-control input-sm" value="0" onblur="agregar_sc()" onkeyup="validar_numeros_decimal(this)" onblur="validar_float(this,2)">
 	</div>
 </div>
 <div class="row">
