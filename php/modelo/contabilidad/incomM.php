@@ -219,7 +219,7 @@ class incomM
 		$camne=array();
 		$botones[0] = array('boton'=>'validarc', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'CTA_BANCO,CHEQ_DEP' );
 
-        $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla']);
+        $medida = 10;
 	    $tbl = grilla_generica_new($sql,$ta,'',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,$medida);
 			 // print_r($tbl);die();
 		return $tbl;
@@ -477,7 +477,7 @@ class incomM
 			// }
     }
 
-    function catalogo_subcta($SubCta)
+    function catalogo_subcta($SubCta,$agrupado=false,$nivel=false)
     { 
     	$cid = $this->conn;
     	
@@ -486,10 +486,14 @@ class incomM
         WHERE TC = '".$SubCta."'
         AND Item = '".$_SESSION['INGRESO']['item']."'
         AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
-        AND Agrupacion <> 0
-        AND Codigo <> '.' 
+        AND Agrupacion <>  ".intval($agrupado);
+        if($nivel)
+        {
+        	 $sql.=" AND Nivel ='".$nivel."'";
+        }
+        $sql.=" AND Codigo <> '.' 
         ORDER BY Nivel,Detalle ";
-// print_r($sql);
+// print_r($sql);die();
          $result = $this->conn->datos($sql);
 		  return $result;
     }

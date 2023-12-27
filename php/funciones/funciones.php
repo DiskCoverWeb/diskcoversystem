@@ -4799,7 +4799,7 @@ function ingresar_asientos_SC($parametros)  //revision parece repetida
     {
       $sql="INSERT INTO Asiento_SC(Codigo ,Beneficiario,Factura ,Prima,DH,Valor,Valor_ME
            ,Detalle_SubCta,FECHA_V,TC,Cta,TM,T_No,SC_No
-           ,Fecha_D ,Fecha_H,Bloquear,Item,CodigoU)
+           ,Fecha_D ,Fecha_H,Bloquear,Item,CodigoU,Serie)
       VALUES
            ('".$cod."'
            ,'".substr($parametros['sub2'],0,60)."'
@@ -4819,7 +4819,8 @@ function ingresar_asientos_SC($parametros)  //revision parece repetida
            ,null
            ,0
            ,'".$_SESSION['INGRESO']['item']."'
-           ,'".$_SESSION['INGRESO']['CodigoU']."')";
+           ,'".$_SESSION['INGRESO']['CodigoU']."'
+           ,'001001')";
        $stmt = sqlsrv_query( $cid, $sql);
        //echo $sql;
       if( $stmt === false)  
@@ -4832,7 +4833,7 @@ function ingresar_asientos_SC($parametros)  //revision parece repetida
     {
       $sql="INSERT INTO Asiento_SC(Codigo ,Beneficiario,Factura ,Prima,DH,Valor,Valor_ME
       ,Detalle_SubCta,FECHA_V,TC,Cta,TM,T_No,SC_No
-      ,Fecha_D ,Fecha_H,Bloquear,Item,CodigoU)
+      ,Fecha_D ,Fecha_H,Bloquear,Item,CodigoU,Serie)
       VALUES
       ";
       $dia=0;
@@ -5007,7 +5008,7 @@ function ingresar_asientos_SC($parametros)  //revision parece repetida
          ,null
          ,0
          ,'".$_SESSION['INGRESO']['item']."'
-         ,'".$_SESSION['INGRESO']['CodigoU']."'),";
+         ,'".$_SESSION['INGRESO']['CodigoU']."','001001'),";
          $SC_No++;
 
       //      if($i==1)

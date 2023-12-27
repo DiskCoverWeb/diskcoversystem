@@ -30,6 +30,16 @@ if(isset($_GET['tipoc']))
 		cargar_tablas_sc();
 		carga_ddl();
     carga_ddl_aux();
+
+    $('#ddl_subcta').on('select2:select', function (e) {
+      console.log(e)
+      var data = e.params.data.data;
+      cargar_submodulos(data.Nivel);      
+      $('#DLSubCta').select2('open');
+      // console.log(data);
+    });
+
+
 	});
 
 	function cargar_tablas_sc()
@@ -123,6 +133,16 @@ if(isset($_GET['tipoc']))
       var fac = $('#txt_factura').val();
       var mes = $('#txt_mes').val();
       var fec = $('#txt_fecha_ven').val();
+      if(tc=='G')
+      {
+         if($('#DLSubCta').val()==''){
+          Swal.fire('Seleccione una subcuenta','','info');
+          return false;
+         }else{
+          codigo = $('#DLSubCta').val();
+          ben = $('#DLSubCta  option:selected').text();
+         }
+      }
       if(aux=='')
       {
         aux = '.';
@@ -242,6 +262,7 @@ if(isset($_GET['tipoc']))
           break;
           case 'G':
            $('#titulo').text("SUBCUENTAS DE GASTOS");
+           $('#DLSubCta').css('display','initial');
           break;
           case 'I':
            $('#titulo').text("SUBCUENTAS DE INGRESO");
@@ -254,13 +275,39 @@ if(isset($_GET['tipoc']))
           break;
     }
   }
+
+  function cargar_submodulos(nivel)
+  {
+
+      var tc = '<?php echo $tc; ?>';
+      $('#DLSubCta').select2({
+        placeholder: 'Seleccione cuenta',
+        ajax: {
+          url:   '../controlador/contabilidad/incomC.php?modal_subcta_cta=true&nivel='+nivel+'&tc='+tc,
+          dataType: 'json',
+          // data:  {parametros:parametros},
+          // type:  'post',
+          delay: 250,
+          processResults: function (data) {
+            console.log(data);
+            return {
+              results: data
+            };
+          },
+          cache: true
+        }
+      });
+  }
 </script>
 <div class="row">
 	<div class="col-sm-4">
 		<b id="titulo">Sub cuenta por cobrar</b>
-		<select class="form-control input-sm" id="ddl_subcta">
+		<select class="form-control input-sm" id="ddl_subcta" >
 			<option value="">Seleccione una sub cuenta</option>
 		</select>	
+    <select class="form-control input-sm" id="DLSubCta" style="display:none;">
+      <option value="">Seleccione una sub cuenta</option>
+    </select> 
 	</div>
 	<div class="col-sm-3">
 		<b>Fecha Venc</b>

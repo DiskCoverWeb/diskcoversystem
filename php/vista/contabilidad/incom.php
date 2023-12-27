@@ -540,35 +540,80 @@ function FormActivate() {
 
     }
 
-  function numero_comprobante()
-    {
-      var tip = $('#tipoc').val();
-      var fecha = $('#fecha1').val();
-      if(tip=='CD'){ tip = 'Diario';}
-      else if(tip=='CI'){tip = 'Ingresos'}
-      else if(tip=='CE'){tip = 'Egresos';}
-      else if(tip=='ND'){tip = 'NotaDebito';}
-      else if(tip=='NC'){tip= 'NotaCredito';}
-      var parametros = 
-       {      
-         'tip': tip,
-         'fecha': fecha,                    
-       };
-    $.ajax({
-      data:  {parametros:parametros},
-       url:   '../controlador/contabilidad/incomC.php?num_comprobante=true',
-      type:  'post',
-      dataType: 'json',
-      // beforeSend: function () {
-      //    $("#num_com").html("");
-      // },
-      success:  function (response) {
-          $("#num_com").html("");
-          $("#num_com").html('Comprobante de '+tip+' No. <?php echo date('Y');?>-'+response);
-          // var valor = $("#subcuenta1").html(); 
+  // function numero_comprobante()
+  //   {
+  //     var tip = $('#tipoc').val();
+  //     var fecha = $('#fecha1').val();
+  //     if(tip=='CD'){ tip = 'Diario';}
+  //     else if(tip=='CI'){tip = 'Ingresos'}
+  //     else if(tip=='CE'){tip = 'Egresos';}
+  //     else if(tip=='ND'){tip = 'NotaDebito';}
+  //     else if(tip=='NC'){tip= 'NotaCredito';}
+  //     var parametros = 
+  //      {      
+  //        'tip': tip,
+  //        'fecha': fecha,                    
+  //      };
+  //   $.ajax({
+  //     data:  {parametros:parametros},
+  //      url:   '../controlador/contabilidad/incomC.php?num_comprobante=true',
+  //     type:  'post',
+  //     dataType: 'json',
+  //     // beforeSend: function () {
+  //     //    $("#num_com").html("");
+  //     // },
+  //     success:  function (response) {
+  //         $("#num_com").html("");
+  //         $("#num_com").html('Comprobante de '+tip+' No. <?php echo date('Y');?>-'+response);
+  //         // var valor = $("#subcuenta1").html(); 
+  //     }
+  //   });
+  //   }
+
+
+  function numero_comprobante(callback) {
+  var tip = $('#tipoc').val();
+  var fecha = $('#fecha1').val();
+
+  if (tip == 'CD') {
+    tip = 'Diario';
+  } else if (tip == 'CI') {
+    tip = 'Ingresos';
+  } else if (tip == 'CE') {
+    tip = 'Egresos';
+  } else if (tip == 'ND') {
+    tip = 'NotaDebito';
+  } else if (tip == 'NC') {
+    tip = 'NotaCredito';
+  }
+
+  var parametros = {
+    'tip': tip,
+    'fecha': fecha,
+  };
+
+  $.ajax({
+    data: { parametros: parametros },
+    url: '../controlador/contabilidad/incomC.php?num_comprobante=true',
+    type: 'post',
+    dataType: 'json',
+    success: function (response) {
+      $("#num_com").html("");
+      $("#num_com").html('Comprobante de ' + tip + ' No. <?php echo date('Y');?>-' + response);
+
+      // Ejecuta la función de retorno de llamada si se proporciona
+      if (callback && typeof callback === 'function') {
+        callback();
       }
-    });
-    }
+    },
+    error: function (error) {
+      console.error('Error en numero_comprobante:', error);
+      // Puedes manejar el error aquí si es necesario
+    },
+  });
+}
+
+
 
     function agregar_depo()
     {
@@ -1160,71 +1205,143 @@ function FormActivate() {
     }
   }
 
-  function validar_comprobante()
-  {
-    var debe =$('#txt_debe').val();
-    var haber = $('#txt_haber').val(); 
-    var ben = $('#beneficiario1').val();
-    var fecha = $('#fecha1').val();
-    var tip = $('#tipoc').val();
-    var ruc = $('#ruc').val();
-    var concepto = $('#concepto').val();
-    var haber = $('#txt_haber').val();
-    var com = $('#num_com').text();
-     var modificar = '<?php echo $NuevoComp; ?>';
-    // var comprobante = com.split('.');
-    if((debe != haber) || (debe==0 && haber==0) )
-    {
-      Swal.fire( 'Las transacciones no cuadran correctamente corrija los resultados de las cuentas','','info');
-      return false;
-    }
-    if(ben =='')
-    {      
-      ben = '.';
-    }
-    var parametros = 
-    {
-      'ruc': ruc, //codigo del cliente que sale co el ruc del beneficiario codigo
-      'tip':tip,//tipo de cuenta contable cd, etc
-      "fecha": fecha,// fecha actual 2020-09-21
-      'concepto':concepto, //detalle de la transaccion realida
-      'totalh': haber, //total del haber
-      'num_com':com,
-      'CodigoB':$('#ruc').val(),
-      'Serie_R':$('#Serie_R').val(),
-      'Retencion':$('#Retencion').val(),
-      'Autorizacion_R':$('#Autorizacion_R').val(),
-      'Autorizacion_LC':$('#Autorizacion_LC').val(),
-      'TD':'C',
-      'bene':$('select[name="beneficiario1"] option:selected').text(),
-      'email':$('#email').val(),
-      'Cta_modificar':$('#txt_cta_modificar').val(),
-      'T':'N',
-      'monto_total':$('#VT').val(),
-      'Abono':$('#vae').val(),
-      'TextCotiza':$("#cotizacion").val(),
-      'NuevoComp':modificar,
-    }
+  // function validar_comprobante()
+  // {
 
-    // console.log(parametros);
-    // return false;
-    Swal.fire({
-      title: "Esta seguro de Grabar el "+$('#num_com').text(),
-      text: "con fecha: "+$('#fecha1').val(),
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si!'
-    }).then((result) => {
-      if (result.value==true) {
-         grabar_comprobante(parametros);
-      }else
-      {
-        // alert('cancelado');
-      }
-    })
-  }
+  //   numero_comprobante();
+  //   var debe =$('#txt_debe').val();
+  //   var haber = $('#txt_haber').val(); 
+  //   var ben = $('#beneficiario1').val();
+  //   var fecha = $('#fecha1').val();
+  //   var tip = $('#tipoc').val();
+  //   var ruc = $('#ruc').val();
+  //   var concepto = $('#concepto').val();
+  //   var haber = $('#txt_haber').val();
+  //   var com = $('#num_com').text();
+  //    var modificar = '<?php echo $NuevoComp; ?>';
+  //   // var comprobante = com.split('.');
+  //   if((debe != haber) || (debe==0 && haber==0) )
+  //   {
+  //     Swal.fire( 'Las transacciones no cuadran correctamente corrija los resultados de las cuentas','','info');
+  //     return false;
+  //   }
+  //   if(ben =='')
+  //   {      
+  //     ben = '.';
+  //   }
+
+  //   var parametros = 
+  //   {
+  //     'ruc': ruc, //codigo del cliente que sale co el ruc del beneficiario codigo
+  //     'tip':tip,//tipo de cuenta contable cd, etc
+  //     "fecha": fecha,// fecha actual 2020-09-21
+  //     'concepto':concepto, //detalle de la transaccion realida
+  //     'totalh': haber, //total del haber
+  //     'num_com':com,
+  //     'CodigoB':$('#ruc').val(),
+  //     'Serie_R':$('#Serie_R').val(),
+  //     'Retencion':$('#Retencion').val(),
+  //     'Autorizacion_R':$('#Autorizacion_R').val(),
+  //     'Autorizacion_LC':$('#Autorizacion_LC').val(),
+  //     'TD':'C',
+  //     'bene':$('select[name="beneficiario1"] option:selected').text(),
+  //     'email':$('#email').val(),
+  //     'Cta_modificar':$('#txt_cta_modificar').val(),
+  //     'T':'N',
+  //     'monto_total':$('#VT').val(),
+  //     'Abono':$('#vae').val(),
+  //     'TextCotiza':$("#cotizacion").val(),
+  //     'NuevoComp':modificar,
+  //   }
+
+
+  //   // console.log(parametros);
+  //   // return false;
+
+  //   Swal.fire({
+  //     title: "Esta seguro de Grabar el "+$('#num_com').text(),
+  //     text: "con fecha: "+$('#fecha1').val(),
+  //     type: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonColor: '#3085d6',
+  //     cancelButtonColor: '#d33',
+  //     confirmButtonText: 'Si!'
+  //   }).then((result) => {
+  //     if (result.value==true) {
+  //        grabar_comprobante(parametros);
+  //     }else
+  //     {
+  //       // alert('cancelado');
+  //     }
+  //   })
+  // }
+
+  function validar_comprobante() 
+  {
+    numero_comprobante(function () {
+        var debe =$('#txt_debe').val();
+        var haber = $('#txt_haber').val(); 
+        var ben = $('#beneficiario1').val();
+        var fecha = $('#fecha1').val();
+        var tip = $('#tipoc').val();
+        var ruc = $('#ruc').val();
+        var concepto = $('#concepto').val();
+        var haber = $('#txt_haber').val();
+        var com = $('#num_com').text();
+         var modificar = '<?php echo $NuevoComp; ?>';
+        // var comprobante = com.split('.');
+        if((debe != haber) || (debe==0 && haber==0) )
+        {
+          Swal.fire( 'Las transacciones no cuadran correctamente corrija los resultados de las cuentas','','info');
+          return false;
+        }
+        if(ben =='')
+        {      
+          ben = '.';
+        }
+
+        var parametros = 
+        {
+          'ruc': ruc, //codigo del cliente que sale co el ruc del beneficiario codigo
+          'tip':tip,//tipo de cuenta contable cd, etc
+          "fecha": fecha,// fecha actual 2020-09-21
+          'concepto':concepto, //detalle de la transaccion realida
+          'totalh': haber, //total del haber
+          'num_com':com,
+          'CodigoB':$('#ruc').val(),
+          'Serie_R':$('#Serie_R').val(),
+          'Retencion':$('#Retencion').val(),
+          'Autorizacion_R':$('#Autorizacion_R').val(),
+          'Autorizacion_LC':$('#Autorizacion_LC').val(),
+          'TD':'C',
+          'bene':$('select[name="beneficiario1"] option:selected').text(),
+          'email':$('#email').val(),
+          'Cta_modificar':$('#txt_cta_modificar').val(),
+          'T':'N',
+          'monto_total':$('#VT').val(),
+          'Abono':$('#vae').val(),
+          'TextCotiza':$("#cotizacion").val(),
+          'NuevoComp':modificar,
+        }
+
+        // Continuar con el resto de la lógica después de numero_comprobante
+        Swal.fire({
+          title: "Esta seguro de Grabar el " + $('#num_com').text(),
+          text: "con fecha: " + $('#fecha1').val(),
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Si!'
+        }).then((result) => {
+          if (result.value == true) {
+            grabar_comprobante(parametros);
+          } else {
+            // alert('cancelado');
+          }
+        });
+  });
+}
 
   function grabar_comprobante(parametros)
   {  
