@@ -130,6 +130,12 @@ if(isset($_GET['delete_sucursal']))
 	echo json_encode($controlador->delete_sucursal($parametros));
 }
 
+if(isset($_GET['ListarCuenta']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->ListarCuenta($parametros));
+}
+
 
 /**
  * 
@@ -647,6 +653,10 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		    }
 		}
 
+	}
+
+	public function ListarCuenta($parametros){
+		return $this->modelo->ListarCuenta($parametros);
 	}
 }
 ?>

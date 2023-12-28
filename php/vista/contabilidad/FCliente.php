@@ -30,6 +30,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
 
 
   function buscar_numero_ci() {
+    $('#listaProductosRelacionados').empty();
     $('#LblSRI').html('');
     var ci_ruc = $('#ruc').val();
     if (ci_ruc == '' || ci_ruc == '.') {
@@ -75,6 +76,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
 
           if (response[0].FA == 1) { $('#rbl_facturar').prop('checked', true); } else { $('#rbl_facturar').prop('checked', false); }
           MostrarOcultarBtnAddMedidor()
+          ListarCuenta(response[0].nombre);
         } else {
           $('#ruc').val(ci_ruc);
           codigo();
@@ -519,7 +521,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
           cancelar();
           $('#modal_cuentas').modal('hide');
           swal.fire('Asignación realizada correctamente', '', 'success');
-        }else{
+        } else {
           swal.fire('Error al asignar', '', 'error');
         }
       }
@@ -541,6 +543,40 @@ switch ($_SESSION['INGRESO']['modulo_']) {
 
   }
   //FIN FUNCIONES BOTONES CXC y CXP
+
+  //ESTE METODO NO ES IGUAL AL DE VB, SOLO SIRVE PARA LLENAR EL PANEL DE PRODUCTOS RELACIONADOS
+  function ListarCuenta(nombre){
+    var parametros = {
+      'cliente': nombre
+    }
+    $.ajax({
+      data: { parametros: parametros },
+      url: '../controlador/modalesC.php?ListarCuenta=true',
+      type: 'post',
+      dataType: 'json',
+      success: function (response) {
+        console.log(response);
+        var cliente = response.Cliente;
+        var lista = response.Lista;
+        var li = "";
+        if(cliente.length > 0){
+          if(cliente[0]["T"] === "N"){
+            li+= "<li>Activo</li>";
+          }else{
+            li+= "<li>Inactivo</li>";
+          }
+          if(cliente[0]["FA"]){
+            li+= "<li>Cliente de Facturación</li>";
+          }
+          for(var i = 0; i < lista.length; i++){
+            li += "<li>"+lista[i]+"</li>";
+          }
+          $('#listaProductosRelacionados').html(li);
+        }
+      }
+    });
+
+  }
 </script>
 
 <style type="text/css">
@@ -563,6 +599,18 @@ switch ($_SESSION['INGRESO']['modulo_']) {
 
   #swal2-content {
     font-weight: 600;
+  }
+
+  #panel-container {
+    max-width: 350px;
+    width: 350px;
+    height: 150px;
+  }
+
+  .footer-content {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
   }
 </style>
 <!-- BOTONES CXC y CXP -->
@@ -712,10 +760,23 @@ switch ($_SESSION['INGRESO']['modulo_']) {
     </div>
     <!-- /.box-body -->
     <div class="box-footer">
-      <button type="button" id="BtnGuardarClienteFCliente" onclick="guardar_cliente()"
-        class="btn btn-primary">Guardar</button>
-      <div class="text-left LblSRI">
+      <div class="footer-content">
+        <button type="button" id="BtnGuardarClienteFCliente" onclick="guardar_cliente()" class="btn btn-primary">Guardar
+        </button>
+        <!--PRODUCTOS RELACIONADOS -->
+        <div class="panel panel-default" id="panel-container">
+          <div class="panel-heading">
+            <h3 class="panel-title">PRODUCTOS RELACIONADOS</h3>
+          </div>
+          <div class="panel-body" style="max-height: 95px; overflow-y: auto;">
+            <ul style="padding-left: 15px;" id="listaProductosRelacionados">
 
+            </ul>
+          </div>
+        </div>
+        <!--FIN PRODUCTOS RELACIONADOS -->
+      </div>
+      <div class="text-left LblSRI">
       </div>
     </div>
     <!-- /.box-footer -->

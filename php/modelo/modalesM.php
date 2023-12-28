@@ -390,5 +390,83 @@ function DLCxCxP($SubCta,$query=false)
 		$sql = "DELETE FROM Clientes_Datos_Extras WHERE ID ='".$id."'";
 		return $this->db->String_Sql($sql);
 	}
+
+	function ListarCuenta($parametros){
+		$Cliente = array();
+		$lista = array();
+		$sql = "SELECT TOP 50 * 
+				FROM Clientes
+				WHERE Cliente = '".$parametros['cliente']."'";
+		$AdoListCtas = $this->db->datos($sql);
+		$Codigo = "";
+		if(count($AdoListCtas)>0)
+		{
+			array_push($Cliente, $AdoListCtas[0]);
+			$Codigo = $AdoListCtas[0]['Codigo'];
+			$sql = "SELECT Tipo_Dato, Fecha_Registro, Direccion, Telefono, Ciudad, Descuento, Cuenta_No
+					FROM Clientes_Datos_Extras
+					WHERE Codigo = '".$Codigo."'
+					AND Item = '".$_SESSION['INGRESO']['item']."'
+					AND Tipo_Dato IN ('DIRECCION','LIBRETAS')
+					ORDER BY Tipo_Dato, Fecha_Registro DESC, Cuenta_No";
+			$AdoAux = $this->db->datos($sql);
+			if(count($AdoAux) > 0){
+				foreach ($AdoAux as $key => $value) {
+					if($value["Tipo_Dato"] != "DIRECCION"){
+						array_push($lista, "Cta. Ahorro No. ".$value["Cuenta_No"]);
+					}
+				}
+			}
+			$sql = "SELECT TC, Cta
+					FROM Catalogo_CxCxP
+					Where Codigo = '".$Codigo."'
+					AND Item = '".$_SESSION['INGRESO']['item']."'
+					AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+					ORDER BY TC, Cta";
+			$AdoAux = $this->db->datos($sql);
+			if(count($AdoAux) > 0){
+				foreach ($AdoAux as $key => $value) {
+					array_push($lista, "Cta. Contable (" . $value["TC"] . "): " . $value["Cta"]);
+				}
+			}
+
+			$sql = "SELECT Ejecutivo
+					FROM Catalogo_Rol_Pagos
+					WHERE Codigo = '".$Codigo."'
+					AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+					AND Item = '".$_SESSION['INGRESO']['item']."'";
+			$AdoAux = $this->db->datos($sql);
+			if(count($AdoAux) > 0){
+				array_push($lista, "Asignado a Rol de Pago");
+			}
+
+			$sql = "SELECT TP, Fecha, Credito_No
+					FROM Prestamos
+					WHERE Cuenta_No = '".$Codigo."'
+					AND TP = 'SUSC'
+					ORDER BY Fecha,Credito_No";
+			$AdoAux = $this->db->datos($sql);
+			if(count($AdoAux) > 0){
+				foreach ($AdoAux as $key => $value) {
+					array_push($lista, "Suscripción: [" . $value["Fecha"] . "] " . $value["Credito_No"]);
+				}
+			}
+
+			$sql = "SELECT TP, Fecha, Credito_No
+					FROM Prestamos
+					WHERE Cuenta_No = '".$Codigo."'
+					AND TP <> 'SUSC'
+					ORDER BY Fecha,Credito_No";
+			$AdoAux = $this->db->datos($sql);
+			if(count($AdoAux) > 0){
+				foreach ($AdoAux as $key => $value) {
+					array_push($lista, $value['TP'] . " [" . $value['Fecha'] . "] " . $value['Credito_No']);
+				}
+			}
+		}
+
+		
+		return array("Cliente" => $Cliente, "Lista" => $lista);
+	}
 }
 ?>
