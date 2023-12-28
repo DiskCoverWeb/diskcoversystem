@@ -689,12 +689,12 @@ function contracuenta()
                                             Porcentaje
                                         </div>
                                         <div class="col-sm-4">
-                                            <select class="" style="width:100%" id="DCPorcenRetenIvaBien" disabled="" onchange="calcular_retencion_porc_bienes()">
+                                            <select class="" style="width:100%" id="DCPorcenRetenIvaBien" disabled="" onchange="calcular_retencion_porc_bienes()" onblur="calcular_retencion_porc_bienes()">
                                                 <option value="0">0</option>
                                             </select>
                                         </div>                            
                                         <div class="col-sm-4">
-                                          <select class="" style="width:100%"  id="DCPorcenRetenIvaServ" disabled="" onchange="calcular_retencion_porc_serv()">
+                                          <select class="" style="width:100%"  id="DCPorcenRetenIvaServ" disabled="" onchange="calcular_retencion_porc_serv()" onblur="calcular_retencion_porc_serv()">
                                                 <option value="0">0</option>
                                             </select>
                                         </div>       

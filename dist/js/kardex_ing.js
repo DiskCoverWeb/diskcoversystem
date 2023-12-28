@@ -780,7 +780,9 @@ function calcular_iva()
   {
      $('#TxtMontoIva').val(0);
   }
-  calcular_ice();
+  // calcular_ice();
+  calcular_retencion_porc_bienes();
+  calcular_retencion_porc_serv();
 }
 
 function calcular_ice()
@@ -810,7 +812,7 @@ function calcular_ice()
     $('#TxtIvaSerMonIva').val($('#TxtMontoIva').val());
   }
  }
- calcular_iva();
+ // calcular_iva();
 }
 
 function habilitar_bienes()

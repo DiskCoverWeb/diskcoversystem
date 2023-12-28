@@ -10765,6 +10765,7 @@ function GrabarComprobante($C1)
   // RatonReloj
   // ' Encabezado del Comprobante
   // print_r($C1);die();
+    $TipoCta  = '';
    if(count($C1)==0){
        if($C1['T'] == ""){ $C1['T'] = G_NORMAL;}
        if($C1['Fecha'] == ''){ $C1['Fecha'] = date('Y-m-d');}
@@ -11311,6 +11312,7 @@ function GrabarComprobante($C1)
       $Fecha_Vence =$value["EFECTIVIZAR"];
       $DetalleComp =$value["DETALLE"];
       $CodigoP =$value["CODIGO_C"];
+      $TipoCta = $value["TC"];
       if($CodigoP = G_NINGUNO){ $CodigoP = $C1['CodigoB'];}
       // 'MsgBox C1.T_No & vbCrLf & C1.Concepto & vbCrLf & Debe & vbCrLf & Haber
       if(strpos($C1["Ctas_Modificar"], $Cta ) === false ){$C1["Ctas_Modificar"] = $C1["Ctas_Modificar"].$Cta.",";}
