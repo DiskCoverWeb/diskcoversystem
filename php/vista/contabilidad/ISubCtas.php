@@ -351,10 +351,11 @@ date_default_timezone_set('America/Guayaquil');
                         if (TipoCta === 'CC') {
                             codigosCC.add(item.Codigo);
                         }
+                        var botonEstilo = item.Agrupacion === 0 ? 'padding-left: 50px;' : '';
                         var boton = $('<button>', {
                             type: 'button',
                             'class': 'list-group-item list-group-item-action',
-                            'style': 'white-space: pre; font-family: Courier; text-align: center;',
+                            'style': `white-space: pre; font-family: Courier; ${botonEstilo}`,
                             'text': `${item.Codigo}  -  ${item.Detalle}  -  ${item.Nivel}`,
                             'dblclick': function () {
                                 var indice = $('#DLCtas').children('button').index(this);
