@@ -23,13 +23,49 @@ if(isset($_GET['tipoc']))
 }
  ?>
 <script type="text/javascript">
-	$(document).ready(function () {
+$(document).ready(function () {
     limpiar_asiento_sc();
     var tc = '<?php echo $tc; ?>';
     titulos(tc);
 		cargar_tablas_sc();
 		carga_ddl();
-    carga_ddl_aux();
+    // carga_ddl_aux();
+
+    $("#ddl_aux").on("focus", function() {
+      $(this).autocomplete("search",'%'); 
+    });
+
+     $( "#ddl_aux" ).autocomplete({
+      source: function( request, response ) {
+
+      var tc = '<?php echo $tc; ?>';
+      var OpcDH = '<?php echo $OpcDH; ?>';
+      var OpcTM = '<?php echo $OpcTM; ?>';
+      var cta = '<?php echo $cta; ?>';
+                
+            $.ajax({
+                url:   '../controlador/contabilidad/incomC.php?modal_detalle_aux=true&tc='+tc+'&OpcDH='+OpcDH+'&OpcTM='+OpcTM+'&cta='+cta,
+                type: 'post',
+                dataType: "json",
+                data: {
+                    q: request.term
+                },
+                success: function( data ) {
+                  // console.log(data);
+                    response( data );
+                }
+            });
+        },
+        select: function (event, ui) {
+            $( "#ddl_aux" ).val(ui.item.label);
+            return false;
+        },
+        focus: function(event, ui){
+            $( "#ddl_aux" ).val(ui.item.label);
+            return false;
+        },
+    });
+
 
     $('#ddl_subcta').on('select2:select', function (e) {
       console.log(e)
@@ -39,8 +75,10 @@ if(isset($_GET['tipoc']))
       // console.log(data);
     });
 
+});
 
-	});
+
+
 
 	function cargar_tablas_sc()
     {
@@ -278,7 +316,6 @@ if(isset($_GET['tipoc']))
 
   function cargar_submodulos(nivel)
   {
-
       var tc = '<?php echo $tc; ?>';
       $('#DLSubCta').select2({
         placeholder: 'Seleccione cuenta',
@@ -297,6 +334,44 @@ if(isset($_GET['tipoc']))
           cache: true
         }
       });
+  }
+
+  function Eliminar_Gasto(id,codigo)
+  {
+    var parametros = 
+    {
+      'tabla':'asientoSC',
+      'Codigo':codigo,
+      'ID':id,
+    }
+
+    Swal.fire({
+      title: 'Esta seguro de eliminar este registro',
+      text: "",
+      type: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'OK!'
+    }).then((result) => {
+      if (result.value==true) {
+        $.ajax({
+          data:  {parametros:parametros},
+          url:   '../controlador/contabilidad/incomC.php?eliminarregistro=true',
+          type:  'post',
+          dataType: 'json',
+            success:  function (response) { 
+              if(response==1)
+              {
+                 
+              cargar_tablas_sc();
+              }
+
+          }
+        });                    
+      }
+    });
+
   }
 </script>
 <div class="row">
@@ -332,9 +407,10 @@ if(isset($_GET['tipoc']))
 	</div>
 	<div class="col-sm-8">
 		<b>DETALLE AUXILIAR DE SUB MODULO</b>
-		<select class="form-control input-sm" id="ddl_aux">
+    <input type="" class="form-control input-xs"  id="ddl_aux"  name="ddl_aux" value="" style="z-index:initial;">
+		<!-- <select class="form-control input-sm" id="ddl_aux">
 			<option value="">Seleccione detalle auxiliar de sub modulo</option>
-		</select>
+		</select> -->
 	</div>
 </div>
 <div class="row" style="overflow-x: scroll;">

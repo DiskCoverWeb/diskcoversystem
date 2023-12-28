@@ -156,13 +156,14 @@ if(isset($_GET['eliminar_retenciones']))
 }
 if(isset($_GET['modal_detalle_aux']))
 {
-	if(!isset($_GET['q'])){$_GET['q'] = '';}
+	// print_r($_POST['q']);die();
+	if(!isset($_POST['q'])){$_POST['q'] = '';}
 	$parametros = array(
     		'tc'=>$_GET['tc'],
     		'OpcDH'=>$_GET['OpcDH'],
     		'OpcTM'=>$_GET['OpcTM'],
     		'cta'=>$_GET['cta'],
-    		'query'=>$_GET['q']);
+    		'query'=>$_POST['q']);
 	echo json_encode($controlador->detalle_aux_submodulo($parametros));
 }
 
@@ -214,6 +215,11 @@ if(isset($_GET['eliminarregistro']))
 {
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->eliminar_registro($parametros));
+}
+if(isset($_GET['eliminarregistrogasto']))
+{
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->eliminar_registrogasto($parametros));
 }
 
 if(isset($_GET['num_comprobante']))
@@ -289,7 +295,10 @@ if(isset($_GET['ExistenMovimientos'])){
     echo json_encode($controlador->ExistenMovimientos($parametros));
 }
 
-
+// if(isset($_GET['ddl_aux'])){
+//     $parametros = $_POST['parametros'];
+//     echo json_encode($controlador->Trans_SubCtas($parametros));
+// }
 
 
 class incomC
@@ -528,8 +537,13 @@ class incomC
 
      function detalle_aux_submodulo($parametros)
      {
-     	$result = $this->modelo->detalle_aux_submodulo($parametros['query']);
-     	return $result;
+     	// print_r($parametros);die();
+     	$list = array();
+     	$result = $this->modelo->detalle_aux_submodulo($parametros['query'],$parametros['tc']);
+     	foreach ($result as $key => $value) {
+     		$list[] = array('value'=>$value['Detalle_SubCta'],'label'=>$value['Detalle_SubCta']);
+     	}
+     	return $list;
      }
 
      function modal_generar_asiento_SC($parametros)
@@ -2291,6 +2305,13 @@ function ExistenMovimientos($parametros)
   	$ExisteMov = 1;
   }
   return $ExisteMov;
+}
+
+function Trans_SubCtas($parametros)
+{
+
+	$datos =  $this->modelo->Trans_SubCtas($SubCta);
+	print_r($datos);
 }
 
 }

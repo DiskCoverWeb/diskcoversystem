@@ -216,11 +216,13 @@ class incomM
 		// 	 echo "Error en consulta PA.\n";  
 		// 	 die( print_r( sqlsrv_errors(), true));  
 		// }
+
+		// print_r($sql);die();
 		$camne=array();
 		$botones[0] = array('boton'=>'validarc', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'CTA_BANCO,CHEQ_DEP' );
 
-        $medida = 10;
-	    $tbl = grilla_generica_new($sql,$ta,'',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,$medida);
+       $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-307; //el numero es el espacio ya ocupado por los otros 
+	    $tbl = grilla_generica_new($sql,$ta,$ta,$titulo=false,$botones,$check=false,$imagen=false,1,1,1,$medida/3);
 			 // print_r($tbl);die();
 		return $tbl;
 
@@ -467,7 +469,8 @@ class incomM
 			// {
 
        		$medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-307;
-		      $tbl = grilla_generica_new($sql,'Asiento_SC','tbl_subcta',$titulo=false,$botones=false,$check=false,$imagen=false,1,1,1,$medida);
+       		$botones[0] = array('boton'=>'Eliminar Gasto', 'icono'=>'<i class="fa fa-trash"></i>', 'tipo'=>'danger', 'id'=>'ID,Codigo' );
+		      $tbl = grilla_generica_new($sql,'Asiento_SC','tbl_subcta',$titulo=false,$botones,$check=false,$imagen=false,1,1,1,$medida);
 			 // print_r($tbl);die();
 		     return $tbl;
 
@@ -522,20 +525,29 @@ class incomM
     }
 
 
-     function detalle_aux_submodulo($query = false)
+     function detalle_aux_submodulo($query = false,$SubCta=false)
      {
 
     	$cid = $this->conn;
      	 $sql = "SELECT Detalle_SubCta
          FROM Trans_SubCtas
          WHERE Item = '".$_SESSION['INGRESO']['item']."'
-         AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+         AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+         if($SubCta)
+         {
+         	$sql.=" AND TC = '".$SubCta."' ";
+         }
          if($query)
          {
-         	$sql.=" AND Detalle_SubCta LIKE '%".$query."%' ";
+         	if($query!='')
+         	{
+         		$sql.=" AND Detalle_SubCta LIKE '%".$query."%' ";
+         	}
          }
          $sql.="GROUP BY Detalle_SubCta
          ORDER BY Detalle_SubCta ";
+
+         // print_r($sql);die();
            $result = $this->conn->datos($sql);
 		  return $result;
      }
@@ -652,7 +664,7 @@ class incomM
          WHERE Item = '".$_SESSION['INGRESO']['item']."'
          AND ".$Codigo."
          AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
-         AND T_No = ".$_SESSION['INGRESO']['modulo_'].";";
+         AND T_No = ".intval($_SESSION['INGRESO']['modulo_']).";";
 
          // print_r($sql);die();
           $result = $this->conn->String_Sql($sql);
@@ -1617,7 +1629,6 @@ class incomM
 	   // print_r($sql);die();
 	   return  $cid->datos($sql);
   }
-
 
 
 }
