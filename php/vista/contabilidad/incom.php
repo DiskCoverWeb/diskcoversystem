@@ -1088,8 +1088,10 @@ function FormActivate() {
         $('#modal_CC').modal('hide');
         var SumatoriaSC = $('#total_cc').val();
         $('#va').val(SumatoriaSC);
-        $('#cuentar').empty();
-        console.log($('#aux').val());
+        // $('#va').focus();
+        // $('#cuentar').empty();        
+        // $('#codigo').val('');
+        ingresar_asiento();
       }
     });
   }

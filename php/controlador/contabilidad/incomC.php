@@ -2211,12 +2211,12 @@ function load_subcuentas($parametros){//TODO: Sumatoria_CC
         .customT{
             display:revert;
         }
-        #myTable {
-            margin-left: auto;
-            margin-right: auto;
-        }
+       // #myTable {
+         //   margin-left: auto;
+           // margin-right: auto;
+       // }
         </style>
-        <table id="myTable">
+        <table id="myTable" class="table table-sm">
         <thead class="customT">
             <tr style="display:revert;" class="customT">
                 <th style="width:200px" class="text-center">Beneficiario</th>
@@ -2233,12 +2233,8 @@ function load_subcuentas($parametros){//TODO: Sumatoria_CC
         .customT{
             display:revert;
         }
-        #myTable {
-            margin-left: auto;
-            margin-right: auto;
-        }
     </style>
-		<table id="myTable">
+		<table id="myTable" class="table table-sm">
 			<thead id="cabecera" class="customT">
 				<tr>';
 
@@ -2247,7 +2243,13 @@ function load_subcuentas($parametros){//TODO: Sumatoria_CC
 
     foreach ($columnas as $columna) {
         if (in_array($columna, $columnasDeseadas)) {
-            $tablaHtml .= '<th>' . $columna . '</th>'; // Añadir solo las columnas deseadas
+        	if($columna=='Valor')
+        	{
+            	$tablaHtml .= '<th style="width: 100px;">' . $columna . '</th>'; // Añadir solo las columnas deseadas
+            }else{
+
+            	$tablaHtml .= '<th>' . $columna . '</th>'; // Añadir solo las columnas deseadas
+            }
         }
     }
 
@@ -2270,7 +2272,7 @@ function load_subcuentas($parametros){//TODO: Sumatoria_CC
                             $clase = "text-right editable-decimal";
                             $valor = number_format((float)$valor, 2, '.', '');
                         }else{
-                            $clase = "text-center";
+                            $clase = "text-left";
                         }
                 
                         $tablaHtml .= '<td class="' . $clase . '"' . $editable . '>' . $valor . '</td>';
@@ -2281,7 +2283,6 @@ function load_subcuentas($parametros){//TODO: Sumatoria_CC
 		$tablaHtml .= '
 			</tbody>
 		</table>';
-
     return $tablaHtml;
 }
 
