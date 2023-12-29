@@ -827,7 +827,7 @@ function contracuenta()
                                       </div>
                                       <div class="col-sm-4">
                                         Autorizacion
-                                        <input type="text" name="" class="form-control input-xs" id="TxtNumUnoAutComRet" onblur="validar_autorizacion()" onkeyup="solo_numeros(this);"  autocomplete="off">
+                                        <input type="text" name="TxtNumUnoAutComRet" class="form-control input-xs" id="TxtNumUnoAutComRet" onblur="validar_autorizacion()" onkeyup="solo_numeros(this);"  autocomplete="off">
                                       </div>
                                       <script type="text/javascript"> 
                                                function selec_tipo_comp()

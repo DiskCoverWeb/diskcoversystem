@@ -598,7 +598,7 @@ function ReadSetDataNum($SQLs,$ParaEmpresa=false,$Incrementar = false,$Fecha=fal
             WHERE Concepto = '".$SQLs. "' 
             AND Periodo = '".$_SESSION['INGRESO']['periodo']. "'
             AND Item = '".$_SESSION['INGRESO']['item']."'" ;
-    // print_r($sql);die();
+    // print_r($sql);
 		$result = $conn->datos($sql);
 	  if(count($result)>0)
 	  {
@@ -628,7 +628,7 @@ function ReadSetDataNum($SQLs,$ParaEmpresa=false,$Incrementar = false,$Fecha=fal
 	    if($Incrementar)
 	    {
 	    	$Strgs = "UPDATE Codigos 
-                SET Numero = Numero+1 
+                SET Numero = $NumCodigo+1 
                 WHERE Concepto = '".$SQLs."'
                 AND Periodo = '" .$_SESSION['INGRESO']['periodo']."' 
                 AND Item = '".$_SESSION['INGRESO']['item']. "' ";
@@ -10798,6 +10798,7 @@ function GrabarComprobante($C1)
     $AdoTemp = $conn->datos($sql);
     if(count($AdoTemp)>0 && $C1['RetNueva'] && $C1['RetSecuencial'])
     {    
+      // print_r('expression');die();
        $C1['Retencion'] = ReadSetDataNum("RE_SERIE_".$C1['Serie_R'], True, True);
     }
      $TMail['TipoDeEnvio'] = "CE";

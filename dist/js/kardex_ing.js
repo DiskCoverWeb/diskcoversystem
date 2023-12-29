@@ -1038,9 +1038,14 @@ function serie_ultima(serie,tc=false)
 
           }else{
             $('#TxtNumTresComRet').val(response.numero);
-            if(response.autorizacion!='')
+            var au = response.autorizacion.toString();          
+            
+            if(response.autorizacion!='' && au < 9)
+            {              
+              $('#TxtNumUnoAutComRet').val(generar_ceros(au,9));
+            }else
             {
-              $('#TxtNumUnoAutComRet').val(response.autorizacion);
+               $('#TxtNumUnoAutComRet').val(au);
             }   
           }      
       }
