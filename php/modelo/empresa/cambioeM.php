@@ -68,13 +68,12 @@ class cambioeM
 		return $this->db->datos($sql,'MYSQL');
 	}
 
-	function editar_datos_empresa($parametros)
+	function editar_datos_empresaMYSQL($parametros)
 	{
-
 		$sql = "UPDATE lista_empresas set 
 		Estado='".$parametros['Estado']."',
 		Mensaje='".$parametros['Mensaje']."',
-		Fecha_CE='".$parametros['Fecha']."' ,
+		Fecha_CE='".$parametros['FechaCE']."' ,
 		IP_VPN_RUTA='".$parametros['Servidor']."',
 		Base_Datos='".$parametros['Base']."' ,
 		Usuario_DB='".$parametros['Usuario']."',
@@ -82,13 +81,58 @@ class cambioeM
 		Tipo_Base='".$parametros['Motor']."',
 	    Puerto='".$parametros['Puerto']."',
 	    Fecha='".$parametros['FechaR']."',
-	    Fecha_VPN='".$parametros['FechaV']."',
 	    Fecha_DB='".$parametros['FechaDB']."',
 	    Fecha_P12='".$parametros['FechaP12']."', 
 	    Tipo_Plan='".$parametros['Plan']."' 
-	    WHERE ID='".$parametros['empresas']."' ";
-
+	    WHERE ID='".$parametros['empresas']."' ";	    
+	    return $this->db->String_Sql($sql,'MYSQL');
 	    // print_r($parametros);die();
+	}
+
+	function editar_catalogoLineas_empresa($parametros)
+	{
+		// buscamos datos d ela empresa por su id en mysql
+		$em = $this->datos_empresa($parametros['empresas']);
+	    if(count($em)>0)
+	    {
+	    	// validamos si tiene cadena de conexion 
+	    	if($em[0]['IP_VPN_RUTA']!='.' && $em[0]['IP_VPN_RUTA']!='')
+	    	{
+	            $conn = $this->db->modulos_sql_server($em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
+	            // print_r($conn);die();
+	            // validamos si se conecto 
+	            if($conn!=-1)
+	            {
+	            	$fe =  date("Y-m-d",strtotime($parametros['FechaCE']."- 1 year"));
+	            	$sql2 = "UPDATE Catalogo_Lineas 
+		    		SET Vencimiento = '".$parametros['FechaCE']."',Fecha = '".$fe."' 
+		    		WHERE Item = '".$em[0]['Item']."' 
+		    		AND Periodo = '.'  
+		    		AND TL <> 0 
+		    		AND len(Autorizacion)>=13";
+
+		    		$resp_catalogoLineas = $this->db->ejecutar_sql_terceros($sql2,$em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
+		    		return $resp_catalogoLineas ;
+		    	}else
+		    	{
+		    		// tiene datos de conexion pero no hay conexion a la base de datos
+		    		return -2;
+		    	}
+		    }else
+		    {
+		    	//sin datos de conexion
+		    	return -3;
+		    }
+		}else
+		{
+			// no hay empresa con el id enviado en mysql
+			return -4;
+		}
+
+	}
+
+	function editar_datos_empresa($parametros)
+	{
 
 	    $em = $this->datos_empresa($parametros['empresas']);
 	    if(count($em)>0)
@@ -98,11 +142,7 @@ class cambioeM
 	            $conn = $this->db->modulos_sql_server($em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
 	            // print_r($conn);die();
 	            if($conn!=-1)
-	            {
-	            	$fe =  date("Y-m-d",strtotime($parametros['Fecha']."- 1 year"));
-	            	$sql2 = "UPDATE Catalogo_Lineas 
-		    		SET Vencimiento = '".$parametros['Fecha']."',Fecha = '".$fe."' 
-		    		WHERE Item = '".$em[0]['Item']."' AND Periodo = '.'  AND TL <> 0 AND len(Autorizacion)>=13";
+	            {	            	
 		    		$ambiente = 1;
 		    		if($parametros['optionsRadios']=='option2')
 		    		{
@@ -130,7 +170,7 @@ class cambioeM
 		    		if(isset($parametros['Secure'])){ $Secure = 1; }
 
 
-		    		$sql3 = "UPDATE Empresas SET Fecha_CE = '".$parametros['Fecha']."',
+		    		$sql3 = "UPDATE Empresas SET Fecha_CE = '".$parametros['FechaCE']."',
 		    		Estado = '".$parametros['Estado']."',
 		    		Codigo_Contribuyente_Especial = '".$parametros['TxtContriEspecial']."',
 		    		Web_SRI_Recepcion = '".$parametros['TxtWebSRIre']."',
@@ -149,7 +189,7 @@ class cambioeM
 		    		Email_CE_Copia = '".$copia."',
 
 		    		Empresa = '".$parametros['TxtEmpresa']."',
-		    		Item = '".$parametros['TxtItem']."',
+		    		Item = '".$em[0]['Item']."',
 		    		Razon_Social = '".$parametros['TxtRazonSocial']."',
 		    		Nombre_Comercial = '".$parametros['TxtNomComercial']."',
 		    		RUC = '".$parametros['TxtRuc']."',
@@ -198,17 +238,26 @@ class cambioeM
 		    		// print_r($sql3);die();
 		    		// print_r($sql2);
 
-	            	$r = $this->db->ejecutar_sql_terceros($sql2,$em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
-	            	$r = $this->db->ejecutar_sql_terceros($sql3,$em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
+	            	
+	            	return $this->db->ejecutar_sql_terceros($sql3,$em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
 
 	            	// print_r($r);die();
+	            }else
+	            {
+	            	// no se pudo conectar a la base de datos
+	            	return -2;
 	            }
+	        }else
+	        {
+	        	// no hay datos de conexion a la base
+	        	return -3;
 	        }
 
 
+	    }else{
+	    	//no exister la empres que se busca en mysql
+	    	return -4;
 	    }
-	    $resp = $this->db->String_Sql($sql,'MYSQL');
-	    return array('res'=>$resp,'empresa'=>$parametros['empresas']);
 	}
 	function mensaje_masivo($parametros)
 	{		
@@ -306,6 +355,8 @@ class cambioeM
 	function actualizar_firma($firma,$ruc,$em)
 	{
 		$sql = "UPDATE Empresas SET Ruta_Certificado = '".$firma."' WHERE RUC='".$ruc."'";
+
+		// print_r($sql);die();
 		return $this->db->ejecutar_sql_terceros($sql,$em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
 	}
 	function actualizar_foto($foto,$ruc,$em)
