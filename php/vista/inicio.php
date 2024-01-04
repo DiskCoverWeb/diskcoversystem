@@ -219,6 +219,11 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'divisas':
 				require_once("facturacion/divisas.php");
 				break;
+			
+			//Facturacion -> Archivo -> Facturacion/Cobro 
+			case 'facturacion_cobro':
+				require_once("facturacion/FRecaudacionBancosCxC.php");
+				break;
 
 			//Facturacion -> Archivo -> Punto de venta
 			case 'punto_venta':
