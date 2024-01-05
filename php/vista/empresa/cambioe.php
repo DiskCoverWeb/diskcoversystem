@@ -869,15 +869,16 @@ async function datos_empresa()
 		$('#img_logo').prop('src','../../img/logotipos/'+empresa2.Logo_Tipo+'.png');
 
 		
-		if(empresa2.Num_CD==1){ $('#DM').prop('checked', true); }else{ $('#DS').prop('checked', true); }
-
-        if(empresa2.Num_CI==1){ $('#IM').prop('checked', true); }else{ $('#IS').prop('checked', true); }
-
-        if(empresa2.Num_CE==1){ $('#EM').prop('checked', true); }else{ $('#ES').prop('checked', true); }
-
-        if(empresa2.Num_ND==1){ $('#NDM').prop('checked', true); }else{ $('#NDS').prop('checked', true); }
-
-        if(empresa2.Num_NC==1){ $('#NCM').prop('checked', true); }else{ $('#NCS').prop('checked', true); }
+		$('#DM').prop('checked', false); 
+		$('#DS').prop('checked', false);
+        $('#IM').prop('checked', false); 
+        $('#IS').prop('checked', false);
+        $('#EM').prop('checked', false); 
+        $('#ES').prop('checked', false);
+        $('#NDM').prop('checked', false );
+        $('#NDS').prop('checked', false);
+        $('#NCM').prop('checked', false );
+        $('#NCS').prop('checked', false);
 
 		$('#TxtServidorSMTP').val('.');
 		$('#Autenti').prop('checked', false);
@@ -1350,42 +1351,42 @@ async function datos_empresa()
 		                        <label>|Numeración de Comprobantes|</label>
 		                        <div class="row">
 		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm1" id="DM"  onclick="DiariosM()">Diarios por meses</label>
+		                                <label><input type="radio" name="dm1" id="DM" value="1"  onclick="DiariosM()">Diarios por meses</label>
 		                            </div>
 		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm1" id="DS" onclick="DiariosS()">Diarios secuenciales</label>                                
-		                            </div>
-		                        </div>
-		                        <div class="row">
-		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm2" id="IM" onclick="IngresosM()">Ingresos por meses</label>
-		                            </div>
-		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm2" id="IS" onclick="IngresosS()">Ingresos secuenciales</label>
+		                                <label><input type="radio" name="dm1" id="DS" value="0" onclick="DiariosS()">Diarios secuenciales</label>                                
 		                            </div>
 		                        </div>
 		                        <div class="row">
 		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm3" id="EM" onclick="EgresosM()">Egresos por meses</label>
+		                                <label><input type="radio" name="dm2" id="IM"  value="1" onclick="IngresosM()">Ingresos por meses</label>
 		                            </div>
 		                            <div class="col-sm-6">
-		                                <label> <input type="radio" name="dm3" id="ES" onclick="EgresosS()">Egresos secuenciales</label>
-		                            </div>
-		                        </div>
-		                        <div class="row">
-		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm4" id="NDM" onclick="NDPM()">N/D por meses</label>
-		                            </div>
-		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm4" id="NDS" onclick="NDPS()">N/D secuenciales</label>
+		                                <label><input type="radio" name="dm2" id="IS"  value="0" onclick="IngresosS()">Ingresos secuenciales</label>
 		                            </div>
 		                        </div>
 		                        <div class="row">
 		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm5" id="NCM" onclick="NCPM()">N/C por meses</label>
+		                                <label><input type="radio" name="dm3" id="EM"  value="1" onclick="EgresosM()">Egresos por meses</label>
 		                            </div>
 		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm5" id="NCS" onclick="NCPS()">N/C secuenciales</label>
+		                                <label> <input type="radio" name="dm3" id="ES"  value="0" onclick="EgresosS()">Egresos secuenciales</label>
+		                            </div>
+		                        </div>
+		                        <div class="row">
+		                            <div class="col-sm-6">
+		                                <label><input type="radio" name="dm4" id="NDM" value="1" onclick="NDPM()">N/D por meses</label>
+		                            </div>
+		                            <div class="col-sm-6">
+		                                <label><input type="radio" name="dm4" id="NDS" value="0" onclick="NDPS()">N/D secuenciales</label>
+		                            </div>
+		                        </div>
+		                        <div class="row">
+		                            <div class="col-sm-6">
+		                                <label><input type="radio" name="dm5" id="NCM" value="1" onclick="NCPM()">N/C por meses</label>
+		                            </div>
+		                            <div class="col-sm-6">
+		                                <label><input type="radio" name="dm5" id="NCS"  value="0" onclick="NCPS()">N/C secuenciales</label>
 		                            </div>
 		                        </div>
 		                    </div>
@@ -1448,10 +1449,45 @@ async function datos_empresa()
 		                            </div>
 		                        </div>
 		                        <div class="row">
+		                            <div class="col-sm-12" style="background-color:#ffffc0">
+		                                <b>|Servidor de Correos|</b>
+		                            </div>
+		                        </div>
+		                        <div class="row">
 		                            <div class="col-sm-12">
 		                                <select class="form-control input-xs" id="ListaCopiaEmpresa" name="ListaCopiaEmpresa"width="100%" >
 		                                    <option value="">Empresa</option>
 		                                </select>
+		                            </div>
+		                        </div>
+		                        <div class="row">
+		                            <div class="col-sm-10" style="background-color:#ffffc0">
+		                                <b>Servidor SMTP</b>
+		                                <input type="text" name="TxtServidorSMTP" id="TxtServidorSMTP" class="form-control input-xs" value="">
+		                            </div>
+		                            <div class="col-sm-2" style="background-color:#ffffc0">
+		                                <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
+		                                <button type="button" class="btn btn-default" title="Grabar Empresa" onclick="()">
+		                                    <img src="../../img/png/grabar.png">
+		                                </button>
+		                            </div>
+		                            </div>
+		                        </div>
+		                        <div class="row" style="background-color:#ffffc0">
+		                            <div class="col-sm-3">
+		                                <input type="checkbox" name="Autenti" id="Autenti">Autentificación
+		                            </div>
+		                            <div class="col-sm-2">
+		                                <input type="checkbox" name="SSL" id="SSL">SSL
+		                            </div>
+		                            <div class="col-sm-2">
+		                                <input type="checkbox" name="Secure" id="Secure">SECURE
+		                            </div>
+		                            <div class="col-sm-1">
+		                                PUERTO
+		                            </div>
+		                            <div class="col-sm-2">
+		                                <input type="text" name="TxtPuerto" id="TxtPuerto" class="form-control input-xs">                                
 		                            </div>
 		                        </div>
 		                    </div>

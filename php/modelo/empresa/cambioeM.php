@@ -154,6 +154,8 @@ class cambioeM
 		    			$copia = 1;
 		    		}
 
+		    		// print_r($parametros);die();
+
 		    		$ASDAS = 0; $MFNV = 0; $MPVP = 0; $IRCF = 0; $IMR = 0; $IRIP = 0; $PDAC = 0; $RIAC = 0;
 		    		if(isset($parametros['ASDAS'])){ $ASDAS = 1; }
 		    		if(isset($parametros['MFNV'])){ $MFNV = 1; }
@@ -232,7 +234,12 @@ class cambioeM
 		    		Dec_Cant = '".$parametros['TxtCantidad']."',
 		    		smtp_UseAuntentificacion = '".$Autenti."',
 		    		smtp_SSL = '".$SSL."',
-		    		smtp_Secure = '".$Secure."'
+		    		smtp_Secure = '".$Secure."',
+		    		Num_CD = '".$parametros['dm1']."',
+		    		Num_CI = '".$parametros['dm2']."',
+		    		Num_CE ='".$parametros['dm3']."',
+		    		Num_ND ='".$parametros['dm4']."',
+		    		Num_NC='".$parametros['dm5']."'
 		    		WHERE Item='".$em[0]['Item']."'";
 
 		    		// print_r($sql3);die();
