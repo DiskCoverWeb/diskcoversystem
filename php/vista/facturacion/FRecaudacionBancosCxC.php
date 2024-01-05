@@ -93,7 +93,7 @@
             <div class="panel-heading">
                 <div class="row">
                     <div class="col-sm-4">
-                        <img id="miLogo" src="../../img/png/logotestbanco.png" width="80%" height="60%">
+                        <img id="miLogo" src="../../img/png/logotestbanco.png" class="img-fluid" width="80%" height="10%">
                     </div>
                     <div class="col-sm-8 col-xs-12">
                         <div class="row">
@@ -162,35 +162,35 @@
             switch (index) {
                 case 0:
                     console.log(index);
-                    $("#miPanel").css("background-color", "#003366");
+                    $("#miPanel").css("background-color", "#73ecf5");
                     $("#miLogo").attr("src", "../../img/png/logoBancoBolivariano.png");
                     break;
                 case 1:
-                    $("#miPanel").css("background-color", "#E60000");
+                    $("#miPanel").css("background-color", "#f2be82");
                     $("#miLogo").attr("src", "../../img/png/logoBancoInternacional.png");
                     break;
                 case 2:
-                    $("#miPanel").css("background-color", "#FF6600");
+                    $("#miPanel").css("background-color", "#ffed93");
                     $("#miLogo").attr("src", "../../img/png/logoBancoPichincha.png");
                     break;
                 case 3:
-                    $("#miPanel").css("background-color", "#8CC63F");
+                    $("#miPanel").css("background-color", "#81dbff");
                     $("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
                     break;
                 case 4:
-                    $("#miPanel").css("background-color", "#00AEEF");
+                    $("#miPanel").css("background-color", "#81dbff");
                     $("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
                     break;
                 case 5:
-                    $("#miPanel").css("background-color", "#7F3F98");
+                    $("#miPanel").css("background-color", "#2cd26e");
                     $("#miLogo").attr("src", "../../img/png/logoBancoProdubanco.png");
                     break;
                 case 6:
-                    $("#miPanel").css("background-color", "#006633");
+                    $("#miPanel").css("background-color", "#6b8ee7");
                     $("#miLogo").attr("src", "../../img/png/logoBancoGnrlRuminahui.png");
                     break;
                 case 7:
-                    $("#miPanel").css("background-color", "#FFCC00");
+                    $("#miPanel").css("background-color", "#f395cf");
                     $("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
                     break;
             }
