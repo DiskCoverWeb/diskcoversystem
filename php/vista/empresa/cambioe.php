@@ -609,6 +609,7 @@ function cargar_img()
 
 async function datos_empresa()
   {
+  	$('#myModal_espera').modal('show');
   	var sms = !!document.getElementById("Mensaje");
   	if(sms==false)
   	{
@@ -630,7 +631,15 @@ async function datos_empresa()
 		success: function(data)
 		{
 			empresa = data.empresa1[0];
-			empresa2 = data.empresa2[0];
+			empresa2 = '';
+			if(data.empresa2.length>0)
+			{
+				empresa2 = data.empresa2[0];
+			}
+			contribuyente = data.tipoContribuyente[0];
+
+			console.log(data.empresa2);
+			console.log(contribuyente);
 			 limpiar_tabs();
 			$('#datos_empresa').html(data.datos);
 			$('#ci_ruc').val(data.ci);
@@ -655,8 +664,11 @@ async function datos_empresa()
 
 			//----------------fin tab 1---------------------
 
-			if(empresa2==undefined)
-			{				
+			$('#myModal_espera').modal('hide');
+
+			if (empresa2 == '') 
+			{						
+				console.log('fola')
 				$('#txt_sqlserver').val(0);
 				Swal.fire('Esta empresa no tiene una configuracion SQL server','','warning');
 				$('#li_tab1').addClass('active');
@@ -791,6 +803,52 @@ async function datos_empresa()
 			$('#TxtCOSTOS').val(empresa2.Dec_Costo);
 			$('#TxtIVA').val(empresa2.Dec_IVA);
 			$('#TxtCantidad').val(empresa2.Dec_Cant);
+
+
+			$('#TxtRucTipocontribuyente').val(contribuyente.RUC)
+	 	 	$('#TxtZonaTipocontribuyente').val(contribuyente.Zona)
+	 	 	$('#TxtAgentetipoContribuyente').val(contribuyente.Agente_Retencion);
+
+	 	 	$('#rbl_ContEs').prop('checked',false)
+		 	$('#rbl_rimpeE').prop('checked',false)
+		 	$('#rbl_rimpeP').prop('checked',false)
+		 	$('#rbl_regGen').prop('checked',false)
+		 	$('#rbl_rise').prop('checked',false)
+		 	$('#rbl_micro2020').prop('checked',false)
+		 	$('#rbl_micro2021').prop('checked',false)
+
+	 	 	if(contribuyente.Contribuyente_Especial){
+	 	 		$('#rbl_ContEs').prop('checked',true)
+	 	 	}
+
+	 	 	if(contribuyente.RIMPE_E==1){
+		 		$('#rbl_rimpeE').prop('checked',true)
+		 	}
+
+		 	if(contribuyente.RIMPE_P==1){
+		 	$('#rbl_rimpeP').prop('checked',true)
+		 	}
+
+		 	if(contribuyente.Regimen_General==1){
+		 	$('#rbl_regGen').prop('checked',true)
+		 	}
+
+		 	if(contribuyente.RISE==1){
+		 	$('#rbl_rise').prop('checked',true)
+		 	}
+
+		 	if(contribuyente.Micro_2020==1){
+		 	$('#rbl_micro2020').prop('checked',true)
+		 	}
+
+		 	if(contribuyente.Micro_2021==1){
+		 	$('#rbl_micro2021').prop('checked',true)
+		 	}
+
+		 
+
+
+
 			//---------------------------------fin tab3---------------------
 
 			//-----------------------------tab4-----------------------------
@@ -910,6 +968,39 @@ async function datos_empresa()
 		$('#TxtRUCOpe').val('.');
 		$('#txtLeyendaDocumen').val('.');
 		$('#txtLeyendaImpresora').val('.');
+  }
+
+
+  function guardarTipoContribuyente()
+  {
+  	
+	 var parametros = 
+	 {
+	 	 'ruc':$('#TxtRucTipocontribuyente').val(),
+	 	 'zona':$('#TxtZonaTipocontribuyente').val(),
+	 	 'agente':$('#TxtAgentetipoContribuyente').val(),
+	 	 'op1': $('#rbl_ContEs').prop('checked'),
+		 'op2': $('#rbl_rimpeE').prop('checked'),
+		 'op3': $('#rbl_rimpeP').prop('checked'),
+		 'op4': $('#rbl_regGen').prop('checked'),
+		 'op5': $('#rbl_rise').prop('checked'),
+		 'op6': $('#rbl_micro2020').prop('checked'),
+		 'op7': $('#rbl_micro2021').prop('checked'),
+	 }
+	 $.ajax({
+      url: '../controlador/empresa/cambioeC.php?guardarTipoContribuyente=true',
+      type:'post',
+      dataType:'json',
+     data:{parametros:parametros},     
+      success: function(response){
+      	if(response==1)
+      	{
+      		Swal.fire('Guardado','','success')
+      	}
+
+      // console.log(response);
+    }
+    });
   }
 
 
@@ -1449,73 +1540,95 @@ async function datos_empresa()
 		                            </div>
 		                        </div>
 		                        <div class="row">
-		                            <div class="col-sm-12" style="background-color:#ffffc0">
-		                                <b>|Servidor de Correos|</b>
-		                            </div>
-		                        </div>
-		                        <div class="row">
 		                            <div class="col-sm-12">
 		                                <select class="form-control input-xs" id="ListaCopiaEmpresa" name="ListaCopiaEmpresa"width="100%" >
 		                                    <option value="">Empresa</option>
 		                                </select>
 		                            </div>
 		                        </div>
-		                        <div class="row">
-		                            <div class="col-sm-10" style="background-color:#ffffc0">
-		                                <b>Servidor SMTP</b>
-		                                <input type="text" name="TxtServidorSMTP" id="TxtServidorSMTP" class="form-control input-xs" value="">
+		                        
+		                    </div>
+		            </div>
+		            <div class="row">
+		            	<div class="col-sm-4" style="background-color:#c0ffc0">
+		            		<div class="row">
+		                        <label>|Cantidad de Decimales en|</label>
+		                    </div>   
+		                <div class="row">
+		                    <div class="col-md-3" style="background-color:#c0ffc0">
+		                        P.V.P
+		                        <input type="text" name="TxtPVP" id="TxtPVP" class="form-control input-xs" value="">
+		                    </div>
+		                    <div class="col-md-3" style="background-color:#c0ffc0">
+		                        COSTOS
+		                        <input type="text" name="TxtCOSTOS" id="TxtCOSTOS" class="form-control input-xs" value="">
+		                    </div>
+		                    <div class="col-md-3" style="background-color:#c0ffc0">
+		                        I.V.A
+		                        <input type="text" name="TxtIVA" id="TxtIVA" class="form-control input-xs" value="">
+		                    </div>
+		                    <div class="col-md-3" style="background-color:#c0ffc0">
+		                        CANTIDAD
+		                        <input type="text" name="TxtCantidad" id="TxtCantidad" class="form-control input-xs" value="">
+		                    </div>
+		                </div>
+		            		
+		            	</div>
+		            	<div class="col-sm-8" style="background-color:#ffdac0">
+		            			<div class="row" >
+		                            <div class="col-sm-12" >
+		                                <b>|Tipo Contibuyente|</b>
 		                            </div>
-		                            <div class="col-sm-2" style="background-color:#ffffc0">
+		                        </div>
+		                        
+		                        <div class="row">
+		                        	<div class="col-sm-4">
+		                                <b>RUC</b>
+		                                <input type="text" name="TxtRucTipocontribuyente" id="TxtRucTipocontribuyente" class="form-control input-xs" value="" readonly>
+		                            </div>
+		                            <div class="col-sm-2">
+		                                <b>Zona</b>
+		                                <input type="text" name="TxtZonaTipocontribuyente" id="TxtZonaTipocontribuyente" class="form-control input-xs" value="">
+		                            </div>
+		                            <div class="col-sm-4">
+		                                <b>Agente de retencion</b>
+		                                <input type="text" name="TxtAgentetipoContribuyente" id="TxtAgentetipoContribuyente" class="form-control input-xs" value="">
+		                            </div>
+		                            <div class="col-sm-2">
 		                                <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-		                                <button type="button" class="btn btn-default" title="Grabar Empresa" onclick="()">
+		                                <button type="button" class="btn btn-default" title="Grabar Empresa" onclick="guardarTipoContribuyente()">
 		                                    <img src="../../img/png/grabar.png">
 		                                </button>
 		                            </div>
 		                            </div>
 		                        </div>
-		                        <div class="row" style="background-color:#ffffc0">
-		                            <div class="col-sm-3">
-		                                <input type="checkbox" name="Autenti" id="Autenti">Autentificación
-		                            </div>
-		                            <div class="col-sm-2">
-		                                <input type="checkbox" name="SSL" id="SSL">SSL
-		                            </div>
-		                            <div class="col-sm-2">
-		                                <input type="checkbox" name="Secure" id="Secure">SECURE
-		                            </div>
-		                            <div class="col-sm-1">
-		                                PUERTO
-		                            </div>
-		                            <div class="col-sm-2">
-		                                <input type="text" name="TxtPuerto" id="TxtPuerto" class="form-control input-xs">                                
-		                            </div>
+		                        <div class="row">
+		                        	<label class="col-sm-4">
+		                                <input type="checkbox" name="rbl_ContEs" id="rbl_ContEs">Contribuyente Especial
+		                           </label>
+		                            <label class="col-sm-2">
+		                                <input type="checkbox" name="rbl_rimpeE" id="rbl_rimpeE">RIMPE E
+		                            </label>
+		                            <label class="col-sm-2">
+		                                <input type="checkbox" name="rbl_rimpeP" id="rbl_rimpeP">RIMPE P
+		                           </label>
+		                            <label class="col-sm-3">
+		                                <input type="checkbox" name="rbl_regGen" id="rbl_regGen">Regimen General
+		                            </label>
+		                            <label class="col-sm-2">
+		                                <input type="checkbox" name="rbl_rise" id="rbl_rise">RISE
+		                            </label>
+		                            <label class="col-sm-2">
+		                                <input type="checkbox" name="rbl_micro2020" id="rbl_micro2020">Micro 2020
+		                           </label>
+		                            <label class="col-sm-2">
+		                                <input type="checkbox" name="rbl_micro2021" id="rbl_micro2021">Micro 2021
+		                            </label>
 		                        </div>
-		                    </div>
-		            </div>
+		            	</div>
+		            	
+		            </div>                
 		                
-		                <div class="row">
-		                    <div class="col-md-4" style="background-color:#c0ffc0">
-		                        <label>|Cantidad de Decimales en|</label>
-		                    </div>                                    
-		                </div>
-		                <div class="row">
-		                    <div class="col-md-1" style="background-color:#c0ffc0">
-		                        P.V.P
-		                        <input type="text" name="TxtPVP" id="TxtPVP" class="form-control input-xs" value="">
-		                    </div>
-		                    <div class="col-md-1" style="background-color:#c0ffc0">
-		                        COSTOS
-		                        <input type="text" name="TxtCOSTOS" id="TxtCOSTOS" class="form-control input-xs" value="">
-		                    </div>
-		                    <div class="col-md-1" style="background-color:#c0ffc0">
-		                        I.V.A
-		                        <input type="text" name="TxtIVA" id="TxtIVA" class="form-control input-xs" value="">
-		                    </div>
-		                    <div class="col-md-1" style="background-color:#c0ffc0">
-		                        CANTIDAD
-		                        <input type="text" name="TxtCantidad" id="TxtCantidad" class="form-control input-xs" value="">
-		                    </div>
-		                </div>
 
 					</div>
 

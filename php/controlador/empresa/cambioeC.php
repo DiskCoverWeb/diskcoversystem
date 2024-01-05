@@ -95,6 +95,10 @@ if(isset($_GET['cargar_imgs']))
 {
 	echo json_encode($controlador->cargar_imgs());
 }
+if(isset($_GET['guardarTipoContribuyente']))
+{
+	echo json_encode($controlador->guardarTipoContribuyente($_POST['parametros']));
+}
 
 class cambioeC 
 {
@@ -178,10 +182,14 @@ class cambioeC
 		$sms = $parametros['sms'];
 		// print_r($parametros);die();
 		$datosEmp = array();
+		$contribuyente = array();
+		$datosEmp[0] = array();
 		$datos = $this->modelo->datos_empresa($ID);
+		// print_r($datos);die();
 		$CI = '.';
 		if(count($datos)>0)
 		{
+			$contribuyente = $this->modelo->tipoContribuyente($datos[0]['RUC_CI_NIC']);
 			$empresaSQL = '';
 			$empresaSQL2 = '';
 			$empresaSQL3 = '';
@@ -199,7 +207,7 @@ class cambioeC
 			}
 		}
 			
-		return array('empresa1'=>$datos,'empresa2'=>$datosEmp);
+		return array('empresa1'=>$datos,'empresa2'=>$datosEmp,'tipoContribuyente'=>$contribuyente);
 	}
 
 	function estados()
@@ -377,6 +385,12 @@ class cambioeC
 			    }
 			}   
 		return $opciones;             
+	}
+
+
+	function guardarTipoContribuyente($parametros)
+	{
+	 	return $this->modelo->editar_tipo_contribuyente($parametros);
 	}
 
 }

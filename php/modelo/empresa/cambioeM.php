@@ -373,6 +373,42 @@ class cambioeM
 		return $this->db->ejecutar_sql_terceros($sql,$em[0]['IP_VPN_RUTA'],$em[0]['Usuario_DB'],$em[0]['Contrasena_DB'],$em[0]['Base_Datos'],$em[0]['Puerto']);
 	}
 
+	function tipoContribuyente($ruc)
+	{
+		$sql = "SELECT * FROM lista_tipo_contribuyente WHERE RUC = '".$ruc."'";
+		return $this->db->datos($sql,'MYSQL');
+
+	}
+	function editar_tipo_contribuyente($parametros)
+	{
+		$op1 = 0;$op2 = 0;$op3 = 0;$op4 = 0;$op5 = 0;$op6 = 0;$op7 = 0;
+		if($parametros['op1']=='true'){$op1 = 1;	}
+		if($parametros['op2']=='true'){$op2 = 1;	}
+		if($parametros['op3']=='true'){$op3 = 1;	}
+		if($parametros['op4']=='true'){$op4 = 1;	}
+		if($parametros['op5']=='true'){$op5 = 1;	}
+		if($parametros['op6']=='true'){$op6 = 1;	}
+		if($parametros['op7']=='true'){$op7 = 1;	}
+
+
+		// print_r($parametros);die();
+
+		$sql = "UPDATE lista_tipo_contribuyente 
+		SET Zona='".$parametros['zona']."',
+		Agente_Retencion = '".$parametros['agente']."' ,
+		Contribuyente_Especial = ".$op1.",
+		RIMPE_E = ".$op2.",
+		RIMPE_P = ".$op3.",
+		Regimen_General = ".$op4.",
+		RISE = ".$op5.",
+		Micro_2020 = ".$op6.",
+		Micro_2021 = ".$op7."
+		WHERE RUC = '".$parametros['ruc']."'";
+
+		// print_r($sql);die();
+		return $this->db->String_Sql($sql,'MYSQL');
+	}
+
 
 
 }
