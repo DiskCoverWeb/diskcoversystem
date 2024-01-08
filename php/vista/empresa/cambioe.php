@@ -1574,7 +1574,7 @@ async function datos_empresa()
 		                </div>
 		            		
 		            	</div>
-		            	<div class="col-sm-8" style="background-color:#ffdac0">
+		            	<div class="col-sm-8" style="background-color:#c0ecff">
 		            			<div class="row" >
 		                            <div class="col-sm-12" >
 		                                <b>|Tipo Contibuyente|</b>
