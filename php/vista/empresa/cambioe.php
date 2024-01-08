@@ -1433,7 +1433,7 @@ async function datos_empresa()
 		                    </div>
 		                    <div class="col-md-4">                                        
 		                        <div class="box-body">
-		                        <img src="../../img/logotipos/sin_img.jpg" id="img_logo" name="img_logo" style="width:100%;border:1px solid"/>';
+		                        <img src="../../img/logotipos/sin_img.jpg" id="img_logo" name="img_logo" style="width:316px;height:158px; border:1px solid"/>
 		                        </div>                                        
 		                    </div>
 		                </div>
@@ -1657,11 +1657,15 @@ async function datos_empresa()
 		                <div class="col-sm-10">
 		                    <label>CERTIFICADO FIRMA ELECTRONICA (DEBE SER EN FORMATO DE EXTENSION P12</label>
 		                    <div class="input-group">
+		                    	<label for="miInputFile">Selecciona un archivo:</label>
+<input type="file" id="miInputFile" name="archivo" accept=".pdf, .doc, .docx">
+
+
 		                    	<input type="text" name="TxtEXTP12" id="TxtEXTP12" class="form-control input-sm" value="">
 		                    	<span class="input-group-addon input-xs"><input type="file"  id="file_firma" name="file_firma" /></span>
-		                    	<span class="input-group-btn">
+		                    	<!-- <span class="input-group-btn">
 									<button type="button" class="btn btn-info btn-flat btn-sm" onclick="subir_firma()">Subir firma</button>
-								</span>
+								</span> -->
 		                    </div>
 		                </div>
 		                <div class="col-sm-2">
