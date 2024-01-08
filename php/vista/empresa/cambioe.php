@@ -1501,13 +1501,13 @@ async function datos_empresa()
 		                                <b>Servidor SMTP</b>
 		                                <input type="text" name="TxtServidorSMTP" id="TxtServidorSMTP" class="form-control input-xs" value="">
 		                            </div>
-		                            <div class="col-sm-2" style="background-color:#ffffc0">
+		                            <!-- <div class="col-sm-2" style="background-color:#ffffc0">
 		                                <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
 		                                <button type="button" class="btn btn-default" title="Grabar Empresa" onclick="()">
 		                                    <img src="../../img/png/grabar.png">
 		                                </button>
 		                            </div>
-		                            </div>
+		                            </div> -->
 		                        </div>
 		                        <div class="row" style="background-color:#ffffc0">
 		                            <div class="col-sm-3">
