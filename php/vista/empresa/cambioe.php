@@ -23,6 +23,13 @@
       // console.log(data);
     });	
 
+  	 $('#file_firma').on('change', function() {
+
+  	 	dato = this.files[0].name;
+  	 	$('#TxtEXTP12').val(dato);
+
+  	 })
+
 
   	 // $('#empresas').on('select2:select', function (e) {
   	 // 	  var data = e.params.data.data;
@@ -134,7 +141,7 @@
 
   }
 
-   function subir_firma()
+function subir_firma()
   {
      var fileInput = $('#file_firma').get(0).files[0];    
       if(fileInput=='')
@@ -142,7 +149,7 @@
         Swal.fire('','Seleccione una imagen','warning');
         return false;
       }
-      $('#myModal_espera').modal('show');
+      // $('#myModal_espera').modal('show');
       var formData = new FormData(document.getElementById("form_empresa"));
          $.ajax({
             url: '../controlador/empresa/cambioeC.php?cargar_firma=true',
@@ -153,7 +160,7 @@
             dataType:'json',
             success: function(response) {
 
-      			$('#myModal_espera').modal('hide');
+      			// $('#myModal_espera').modal('hide');
                if(response==-1)
                {
                  Swal.fire(
@@ -166,11 +173,7 @@
                   Swal.fire(
                   '',
                   'Asegurese que el archivo subido sea certificado (.p12) valido')
-               }else
-               {
-                datos_empresa();
-
-               } 
+               }
             }
         });
 
@@ -387,28 +390,33 @@ function autocompletarCempresa(){
  
 function cambiarEmpresa()
 {
-	// $('#myModal_espera').modal('show');
-	var ciu = $('#ddl_ciudad option:selected').text();
+	$('#myModal_espera').modal('show');
 	var parametros = $('#form_empresa').serialize();
-	var parametros = parametros+'&ciu='+ciu;
-	console.log(ciu)
-	console.log(parametros);
+	var parametros = parametros+'&ciu='+$('#ddl_ciudad option:selected').text();
 	$.ajax({
 		type: "POST",
 		 url: '../controlador/empresa/cambioeC.php?editar_datos_empresa=true',
-		data: parametros,
+		data:parametros,
 		dataType:'json',
 		success: function(data)
-		{
+		{	
+			$('#myModal_espera').modal('hide');
+
+			if($('#file_firma').val()!='')
+			{
+				subir_firma();
+			}
 			if(data==1)
 			{
-				Swal.fire('Empresa modificada con exito ','','success');
+				Swal.fire('Empresa modificada con exito ','','success').then(function(){
+					 datos_empresa();
+				});
+
 			}else
 			{
 				Swal.fire('Intente mas tarde '+data,'','error');
 			}
-			$('#myModal_espera').modal('hide');
-			
+
 		}
 	});
 }
@@ -968,6 +976,7 @@ async function datos_empresa()
 		$('#TxtRUCOpe').val('.');
 		$('#txtLeyendaDocumen').val('.');
 		$('#txtLeyendaImpresora').val('.');
+		$('#file_firma').val('');
   }
 
 
@@ -1657,12 +1666,11 @@ async function datos_empresa()
 		                <div class="col-sm-10">
 		                    <label>CERTIFICADO FIRMA ELECTRONICA (DEBE SER EN FORMATO DE EXTENSION P12</label>
 		                    <div class="input-group">
-		                    	<label for="miInputFile">Selecciona un archivo:</label>
-<input type="file" id="miInputFile" name="archivo" accept=".pdf, .doc, .docx">
 
-
-		                    	<input type="text" name="TxtEXTP12" id="TxtEXTP12" class="form-control input-sm" value="">
-		                    	<span class="input-group-addon input-xs"><input type="file"  id="file_firma" name="file_firma" /></span>
+		                    	<input type="text" name="TxtEXTP12" id="TxtEXTP12" class="form-control input-sm" value="" >
+		                    	<span class="input-group-addon input-xs">
+		                    		<input type="file"  id="file_firma" data-placeholder="Elegir imágen..." name="file_firma" />
+		                    	</span>
 		                    	<!-- <span class="input-group-btn">
 									<button type="button" class="btn btn-info btn-flat btn-sm" onclick="subir_firma()">Subir firma</button>
 								</span> -->
