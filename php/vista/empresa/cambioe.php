@@ -23,6 +23,13 @@
       // console.log(data);
     });	
 
+  	 $('#file_firma').on('change', function() {
+
+  	 	dato = this.files[0].name;
+  	 	$('#TxtEXTP12').val(dato);
+
+  	 })
+
 
   	 // $('#empresas').on('select2:select', function (e) {
   	 // 	  var data = e.params.data.data;
@@ -134,7 +141,7 @@
 
   }
 
-   function subir_firma()
+function subir_firma()
   {
      var fileInput = $('#file_firma').get(0).files[0];    
       if(fileInput=='')
@@ -142,7 +149,7 @@
         Swal.fire('','Seleccione una imagen','warning');
         return false;
       }
-      $('#myModal_espera').modal('show');
+      // $('#myModal_espera').modal('show');
       var formData = new FormData(document.getElementById("form_empresa"));
          $.ajax({
             url: '../controlador/empresa/cambioeC.php?cargar_firma=true',
@@ -153,7 +160,7 @@
             dataType:'json',
             success: function(response) {
 
-      			$('#myModal_espera').modal('hide');
+      			// $('#myModal_espera').modal('hide');
                if(response==-1)
                {
                  Swal.fire(
@@ -166,11 +173,7 @@
                   Swal.fire(
                   '',
                   'Asegurese que el archivo subido sea certificado (.p12) valido')
-               }else
-               {
-                datos_empresa();
-
-               } 
+               }
             }
         });
 
@@ -387,28 +390,33 @@ function autocompletarCempresa(){
  
 function cambiarEmpresa()
 {
-	// $('#myModal_espera').modal('show');
-	var ciu = $('#ddl_ciudad option:selected').text();
+	$('#myModal_espera').modal('show');
 	var parametros = $('#form_empresa').serialize();
-	var parametros = parametros+'&ciu='+ciu;
-	console.log(ciu)
-	console.log(parametros);
+	var parametros = parametros+'&ciu='+$('#ddl_ciudad option:selected').text();
 	$.ajax({
 		type: "POST",
 		 url: '../controlador/empresa/cambioeC.php?editar_datos_empresa=true',
-		data: parametros,
+		data:parametros,
 		dataType:'json',
 		success: function(data)
-		{
+		{	
+			$('#myModal_espera').modal('hide');
+
+			if($('#file_firma').val()!='')
+			{
+				subir_firma();
+			}
 			if(data==1)
 			{
-				Swal.fire('Empresa modificada con exito ','','success');
+				Swal.fire('Empresa modificada con exito ','','success').then(function(){
+					 datos_empresa();
+				});
+
 			}else
 			{
 				Swal.fire('Intente mas tarde '+data,'','error');
 			}
-			$('#myModal_espera').modal('hide');
-			
+
 		}
 	});
 }
@@ -609,6 +617,7 @@ function cargar_img()
 
 async function datos_empresa()
   {
+  	$('#myModal_espera').modal('show');
   	var sms = !!document.getElementById("Mensaje");
   	if(sms==false)
   	{
@@ -630,7 +639,15 @@ async function datos_empresa()
 		success: function(data)
 		{
 			empresa = data.empresa1[0];
-			empresa2 = data.empresa2[0];
+			empresa2 = '';
+			if(data.empresa2.length>0)
+			{
+				empresa2 = data.empresa2[0];
+			}
+			contribuyente = data.tipoContribuyente[0];
+
+			console.log(data.empresa2);
+			console.log(contribuyente);
 			 limpiar_tabs();
 			$('#datos_empresa').html(data.datos);
 			$('#ci_ruc').val(data.ci);
@@ -655,8 +672,11 @@ async function datos_empresa()
 
 			//----------------fin tab 1---------------------
 
-			if(empresa2==undefined)
-			{				
+			$('#myModal_espera').modal('hide');
+
+			if (empresa2 == '') 
+			{						
+				console.log('fola')
 				$('#txt_sqlserver').val(0);
 				Swal.fire('Esta empresa no tiene una configuracion SQL server','','warning');
 				$('#li_tab1').addClass('active');
@@ -791,6 +811,52 @@ async function datos_empresa()
 			$('#TxtCOSTOS').val(empresa2.Dec_Costo);
 			$('#TxtIVA').val(empresa2.Dec_IVA);
 			$('#TxtCantidad').val(empresa2.Dec_Cant);
+
+
+			$('#TxtRucTipocontribuyente').val(contribuyente.RUC)
+	 	 	$('#TxtZonaTipocontribuyente').val(contribuyente.Zona)
+	 	 	$('#TxtAgentetipoContribuyente').val(contribuyente.Agente_Retencion);
+
+	 	 	$('#rbl_ContEs').prop('checked',false)
+		 	$('#rbl_rimpeE').prop('checked',false)
+		 	$('#rbl_rimpeP').prop('checked',false)
+		 	$('#rbl_regGen').prop('checked',false)
+		 	$('#rbl_rise').prop('checked',false)
+		 	$('#rbl_micro2020').prop('checked',false)
+		 	$('#rbl_micro2021').prop('checked',false)
+
+	 	 	if(contribuyente.Contribuyente_Especial){
+	 	 		$('#rbl_ContEs').prop('checked',true)
+	 	 	}
+
+	 	 	if(contribuyente.RIMPE_E==1){
+		 		$('#rbl_rimpeE').prop('checked',true)
+		 	}
+
+		 	if(contribuyente.RIMPE_P==1){
+		 	$('#rbl_rimpeP').prop('checked',true)
+		 	}
+
+		 	if(contribuyente.Regimen_General==1){
+		 	$('#rbl_regGen').prop('checked',true)
+		 	}
+
+		 	if(contribuyente.RISE==1){
+		 	$('#rbl_rise').prop('checked',true)
+		 	}
+
+		 	if(contribuyente.Micro_2020==1){
+		 	$('#rbl_micro2020').prop('checked',true)
+		 	}
+
+		 	if(contribuyente.Micro_2021==1){
+		 	$('#rbl_micro2021').prop('checked',true)
+		 	}
+
+		 
+
+
+
 			//---------------------------------fin tab3---------------------
 
 			//-----------------------------tab4-----------------------------
@@ -869,15 +935,16 @@ async function datos_empresa()
 		$('#img_logo').prop('src','../../img/logotipos/'+empresa2.Logo_Tipo+'.png');
 
 		
-		if(empresa2.Num_CD==1){ $('#DM').prop('checked', true); }else{ $('#DS').prop('checked', true); }
-
-        if(empresa2.Num_CI==1){ $('#IM').prop('checked', true); }else{ $('#IS').prop('checked', true); }
-
-        if(empresa2.Num_CE==1){ $('#EM').prop('checked', true); }else{ $('#ES').prop('checked', true); }
-
-        if(empresa2.Num_ND==1){ $('#NDM').prop('checked', true); }else{ $('#NDS').prop('checked', true); }
-
-        if(empresa2.Num_NC==1){ $('#NCM').prop('checked', true); }else{ $('#NCS').prop('checked', true); }
+		$('#DM').prop('checked', false); 
+		$('#DS').prop('checked', false);
+        $('#IM').prop('checked', false); 
+        $('#IS').prop('checked', false);
+        $('#EM').prop('checked', false); 
+        $('#ES').prop('checked', false);
+        $('#NDM').prop('checked', false );
+        $('#NDS').prop('checked', false);
+        $('#NCM').prop('checked', false );
+        $('#NCS').prop('checked', false);
 
 		$('#TxtServidorSMTP').val('.');
 		$('#Autenti').prop('checked', false);
@@ -909,6 +976,40 @@ async function datos_empresa()
 		$('#TxtRUCOpe').val('.');
 		$('#txtLeyendaDocumen').val('.');
 		$('#txtLeyendaImpresora').val('.');
+		$('#file_firma').val('');
+  }
+
+
+  function guardarTipoContribuyente()
+  {
+  	
+	 var parametros = 
+	 {
+	 	 'ruc':$('#TxtRucTipocontribuyente').val(),
+	 	 'zona':$('#TxtZonaTipocontribuyente').val(),
+	 	 'agente':$('#TxtAgentetipoContribuyente').val(),
+	 	 'op1': $('#rbl_ContEs').prop('checked'),
+		 'op2': $('#rbl_rimpeE').prop('checked'),
+		 'op3': $('#rbl_rimpeP').prop('checked'),
+		 'op4': $('#rbl_regGen').prop('checked'),
+		 'op5': $('#rbl_rise').prop('checked'),
+		 'op6': $('#rbl_micro2020').prop('checked'),
+		 'op7': $('#rbl_micro2021').prop('checked'),
+	 }
+	 $.ajax({
+      url: '../controlador/empresa/cambioeC.php?guardarTipoContribuyente=true',
+      type:'post',
+      dataType:'json',
+     data:{parametros:parametros},     
+      success: function(response){
+      	if(response==1)
+      	{
+      		Swal.fire('Guardado','','success')
+      	}
+
+      // console.log(response);
+    }
+    });
   }
 
 
@@ -1341,7 +1442,7 @@ async function datos_empresa()
 		                    </div>
 		                    <div class="col-md-4">                                        
 		                        <div class="box-body">
-		                        <img src="../../img/logotipos/sin_img.jpg" id="img_logo" name="img_logo" style="width:100%;border:1px solid"/>';
+		                        <img src="../../img/logotipos/sin_img.jpg" id="img_logo" name="img_logo" style="width:316px;height:158px; border:1px solid"/>
 		                        </div>                                        
 		                    </div>
 		                </div>
@@ -1350,42 +1451,42 @@ async function datos_empresa()
 		                        <label>|Numeración de Comprobantes|</label>
 		                        <div class="row">
 		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm1" id="DM"  onclick="DiariosM()">Diarios por meses</label>
+		                                <label><input type="radio" name="dm1" id="DM" value="1"  onclick="DiariosM()">Diarios por meses</label>
 		                            </div>
 		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm1" id="DS" onclick="DiariosS()">Diarios secuenciales</label>                                
-		                            </div>
-		                        </div>
-		                        <div class="row">
-		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm2" id="IM" onclick="IngresosM()">Ingresos por meses</label>
-		                            </div>
-		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm2" id="IS" onclick="IngresosS()">Ingresos secuenciales</label>
+		                                <label><input type="radio" name="dm1" id="DS" value="0" onclick="DiariosS()">Diarios secuenciales</label>                                
 		                            </div>
 		                        </div>
 		                        <div class="row">
 		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm3" id="EM" onclick="EgresosM()">Egresos por meses</label>
+		                                <label><input type="radio" name="dm2" id="IM"  value="1" onclick="IngresosM()">Ingresos por meses</label>
 		                            </div>
 		                            <div class="col-sm-6">
-		                                <label> <input type="radio" name="dm3" id="ES" onclick="EgresosS()">Egresos secuenciales</label>
-		                            </div>
-		                        </div>
-		                        <div class="row">
-		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm4" id="NDM" onclick="NDPM()">N/D por meses</label>
-		                            </div>
-		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm4" id="NDS" onclick="NDPS()">N/D secuenciales</label>
+		                                <label><input type="radio" name="dm2" id="IS"  value="0" onclick="IngresosS()">Ingresos secuenciales</label>
 		                            </div>
 		                        </div>
 		                        <div class="row">
 		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm5" id="NCM" onclick="NCPM()">N/C por meses</label>
+		                                <label><input type="radio" name="dm3" id="EM"  value="1" onclick="EgresosM()">Egresos por meses</label>
 		                            </div>
 		                            <div class="col-sm-6">
-		                                <label><input type="radio" name="dm5" id="NCS" onclick="NCPS()">N/C secuenciales</label>
+		                                <label> <input type="radio" name="dm3" id="ES"  value="0" onclick="EgresosS()">Egresos secuenciales</label>
+		                            </div>
+		                        </div>
+		                        <div class="row">
+		                            <div class="col-sm-6">
+		                                <label><input type="radio" name="dm4" id="NDM" value="1" onclick="NDPM()">N/D por meses</label>
+		                            </div>
+		                            <div class="col-sm-6">
+		                                <label><input type="radio" name="dm4" id="NDS" value="0" onclick="NDPS()">N/D secuenciales</label>
+		                            </div>
+		                        </div>
+		                        <div class="row">
+		                            <div class="col-sm-6">
+		                                <label><input type="radio" name="dm5" id="NCM" value="1" onclick="NCPM()">N/C por meses</label>
+		                            </div>
+		                            <div class="col-sm-6">
+		                                <label><input type="radio" name="dm5" id="NCS"  value="0" onclick="NCPS()">N/C secuenciales</label>
 		                            </div>
 		                        </div>
 		                    </div>
@@ -1400,13 +1501,13 @@ async function datos_empresa()
 		                                <b>Servidor SMTP</b>
 		                                <input type="text" name="TxtServidorSMTP" id="TxtServidorSMTP" class="form-control input-xs" value="">
 		                            </div>
-		                            <div class="col-sm-2" style="background-color:#ffffc0">
+		                            <!-- <div class="col-sm-2" style="background-color:#ffffc0">
 		                                <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
 		                                <button type="button" class="btn btn-default" title="Grabar Empresa" onclick="()">
 		                                    <img src="../../img/png/grabar.png">
 		                                </button>
 		                            </div>
-		                            </div>
+		                            </div> -->
 		                        </div>
 		                        <div class="row" style="background-color:#ffffc0">
 		                            <div class="col-sm-3">
@@ -1454,32 +1555,89 @@ async function datos_empresa()
 		                                </select>
 		                            </div>
 		                        </div>
+		                        
 		                    </div>
 		            </div>
-		                
-		                <div class="row">
-		                    <div class="col-md-4" style="background-color:#c0ffc0">
+		            <div class="row">
+		            	<div class="col-sm-4" style="background-color:#c0ffc0">
+		            		<div class="row">
 		                        <label>|Cantidad de Decimales en|</label>
-		                    </div>                                    
-		                </div>
+		                    </div>   
 		                <div class="row">
-		                    <div class="col-md-1" style="background-color:#c0ffc0">
+		                    <div class="col-md-3" style="background-color:#c0ffc0">
 		                        P.V.P
 		                        <input type="text" name="TxtPVP" id="TxtPVP" class="form-control input-xs" value="">
 		                    </div>
-		                    <div class="col-md-1" style="background-color:#c0ffc0">
+		                    <div class="col-md-3" style="background-color:#c0ffc0">
 		                        COSTOS
 		                        <input type="text" name="TxtCOSTOS" id="TxtCOSTOS" class="form-control input-xs" value="">
 		                    </div>
-		                    <div class="col-md-1" style="background-color:#c0ffc0">
+		                    <div class="col-md-3" style="background-color:#c0ffc0">
 		                        I.V.A
 		                        <input type="text" name="TxtIVA" id="TxtIVA" class="form-control input-xs" value="">
 		                    </div>
-		                    <div class="col-md-1" style="background-color:#c0ffc0">
+		                    <div class="col-md-3" style="background-color:#c0ffc0">
 		                        CANTIDAD
 		                        <input type="text" name="TxtCantidad" id="TxtCantidad" class="form-control input-xs" value="">
 		                    </div>
 		                </div>
+		            		
+		            	</div>
+		            	<div class="col-sm-8" style="background-color:#c0ecff">
+		            			<div class="row" >
+		                            <div class="col-sm-12" >
+		                                <b>|Tipo Contibuyente|</b>
+		                            </div>
+		                        </div>
+		                        
+		                        <div class="row">
+		                        	<div class="col-sm-4">
+		                                <b>RUC</b>
+		                                <input type="text" name="TxtRucTipocontribuyente" id="TxtRucTipocontribuyente" class="form-control input-xs" value="" readonly>
+		                            </div>
+		                            <div class="col-sm-2">
+		                                <b>Zona</b>
+		                                <input type="text" name="TxtZonaTipocontribuyente" id="TxtZonaTipocontribuyente" class="form-control input-xs" value="">
+		                            </div>
+		                            <div class="col-sm-4">
+		                                <b>Agente de retencion</b>
+		                                <input type="text" name="TxtAgentetipoContribuyente" id="TxtAgentetipoContribuyente" class="form-control input-xs" value="">
+		                            </div>
+		                            <div class="col-sm-2">
+		                                <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
+		                                <button type="button" class="btn btn-default" title="Grabar Empresa" onclick="guardarTipoContribuyente()">
+		                                    <img src="../../img/png/grabar.png">
+		                                </button>
+		                            </div>
+		                            </div>
+		                        </div>
+		                        <div class="row">
+		                        	<label class="col-sm-4">
+		                                <input type="checkbox" name="rbl_ContEs" id="rbl_ContEs">Contribuyente Especial
+		                           </label>
+		                            <label class="col-sm-2">
+		                                <input type="checkbox" name="rbl_rimpeE" id="rbl_rimpeE">RIMPE E
+		                            </label>
+		                            <label class="col-sm-2">
+		                                <input type="checkbox" name="rbl_rimpeP" id="rbl_rimpeP">RIMPE P
+		                           </label>
+		                            <label class="col-sm-3">
+		                                <input type="checkbox" name="rbl_regGen" id="rbl_regGen">Regimen General
+		                            </label>
+		                            <label class="col-sm-2">
+		                                <input type="checkbox" name="rbl_rise" id="rbl_rise">RISE
+		                            </label>
+		                            <label class="col-sm-2">
+		                                <input type="checkbox" name="rbl_micro2020" id="rbl_micro2020">Micro 2020
+		                           </label>
+		                            <label class="col-sm-2">
+		                                <input type="checkbox" name="rbl_micro2021" id="rbl_micro2021">Micro 2021
+		                            </label>
+		                        </div>
+		            	</div>
+		            	
+		            </div>                
+		                
 
 					</div>
 
@@ -1508,11 +1666,14 @@ async function datos_empresa()
 		                <div class="col-sm-10">
 		                    <label>CERTIFICADO FIRMA ELECTRONICA (DEBE SER EN FORMATO DE EXTENSION P12</label>
 		                    <div class="input-group">
-		                    	<input type="text" name="TxtEXTP12" id="TxtEXTP12" class="form-control input-sm" value="">
-		                    	<span class="input-group-addon input-xs"><input type="file"  id="file_firma" name="file_firma" /></span>
-		                    	<span class="input-group-btn">
+
+		                    	<input type="text" name="TxtEXTP12" id="TxtEXTP12" class="form-control input-sm" value="" >
+		                    	<span class="input-group-addon input-xs">
+		                    		<input type="file"  id="file_firma" data-placeholder="Elegir imágen..." name="file_firma" />
+		                    	</span>
+		                    	<!-- <span class="input-group-btn">
 									<button type="button" class="btn btn-info btn-flat btn-sm" onclick="subir_firma()">Subir firma</button>
-								</span>
+								</span> -->
 		                    </div>
 		                </div>
 		                <div class="col-sm-2">
