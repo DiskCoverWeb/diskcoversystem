@@ -5,28 +5,8 @@
 </style>
 
 <div>
-    <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active">
-            <a href="#banco1" aria-controls="banco1" role="tab" data-toggle="tab">Banco Bolivariano</a>
-        </li>
-        <li role="presentation"><a href="#banco2" aria-controls="banco2" role="tab" data-toggle="tab">Banco
-                Internacional</a></li>
-        <li role="presentation"><a href="#banco3" aria-controls="banco3" role="tab" data-toggle="tab">Banco
-                Pichincha</a></li>
-        <li role="presentation"><a href="#banco4" aria-controls="banco4" role="tab" data-toggle="tab">Banco Pacifico</a>
-        </li>
-        <li role="presentation"><a href="#banco4" aria-controls="banco4" role="tab" data-toggle="tab">Banco Pacifico
-                (Intermatico)</a></li>
-        <li role="presentation"><a href="#banco5" aria-controls="banco5" role="tab" data-toggle="tab">Banco
-                Produbanco</a></li>
-        <li role="presentation"><a href="#banco6" aria-controls="banco6" role="tab" data-toggle="tab">Banco General
-                Ruminahui</a></li>
-        <li role="presentation"><a href="#banco7" aria-controls="banco7" role="tab" data-toggle="tab">Banco
-                Guayaquil</a></li>
-    </ul>
-
     <div class="row" style="margin:5px; padding-top:10px">
-        <div class="col-sm-4 col-xs-12">
+        <div class="col-sm-12 col-xs-12">
             <div class="col">
                 <a href="./inicio.php?mod=<?php echo @$_GET['mod']; ?>" title="Salir de modulo" class="btn btn-default">
                     <img src="../../img/png/salire.png" width="25" height="30">
@@ -34,66 +14,69 @@
             </div>
             <div class="col">
                 <a href="javascript:void(0)" title="Visualizar" class="btn btn-default" onclick="Visualizar()">
-                    <img src="../../img/png/file2.png" width="25" height="30">
+                    <img src="../../img/png/visual.png" width="25" height="30">
                 </a>
             </div>
 
             <div class="col">
                 <a href="javascript:void(0)" id="Enviar Rubros" title="Enviar Rubros" class="btn btn-default"
                     onclick="Enviar()">
-                    <img src="../../img/png/folder-check.png" width="25" height="30">
+                    <img src="../../img/png/enviarRubros.png" width="25" height="30">
                 </a>
             </div>
             <div class="col">
                 <a href="javascript:void(0)" id="Recibir Rubos" title="Recibir Rubos" class="btn btn-default"
                     onclick="Recibir()">
-                    <img src="../../img/png/iess.png" width="25" height="30">
+                    <img src="../../img/png/recibirRubros.png" width="25" height="30">
                 </a>
             </div>
         </div>
-        <div class="col-sm-8 col-xs-12">
-            <div class="row">
-                <div class="form-group col-xs-12 col-md-6 padding-all margin-b-1">
-                    <div class="col-xs-12">
-                        <label for="CheqRangos" class="col control-label" style="font-size: 13px;">
-                            <input type="checkbox" name="CheqRangos" id="CheqRangos"> Procesar por Rangos
-                            Grupos
-                        </label>
-                    </div>
-                    <div class="col-xs-5">
-                        <select class="form-control input-xs" name="DCGrupoI" id="DCGrupoI" onchange="DCGrupoI">
-                            <option value="">Seleccione</option>
-                        </select>
-                    </div>
-
-                    <div class="col-xs-5">
-                        <select class="form-control input-xs" name="DCGrupoF" id="DCGrupoF" onchange="DCGrupoF">
-                            <option value="">Seleccione</option>
-                        </select>
-                    </div>
+    </div>
+    <div class="row" style="margin:5px; padding-top:10px">
+        <div class="col-sm-12 col-xs-12">
+            <div class="col-sm-4">
+                <label for="DCEntidad" style="font-size: 13px;">ENTIDAD FINANCIERA</label>
+                <select class="form-control input-xs" name="DCEntidad" id="DCEntidad" onchange="DCEntidad">
+                    <option value="">Seleccione</option>
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <div class="col-xs-12">
+                    <label for="CheqRangos" class="col control-label" style="font-size: 13px;">
+                        <input type="checkbox" name="CheqRangos" id="CheqRangos"> Procesar por Rangos Grupos
+                    </label>
                 </div>
-                <div class="col-xs-2">
-                    <b style='font-size: 13px;'>ORDEN No.</b>
-                    <input type='text' name='TxtOrden' id='' value='0' class='form-control input-xs'>
+                <div class="col-xs-6">
+                    <select class="form-control input-xs" name="DCGrupoI" id="DCGrupoI" style="display:none">
+                        <option value="">Seleccione</option>
+                    </select>
                 </div>
-
-                <div class='col-xs-4'>
-                    <label for='DCBanco' style='font-size: 13px;'>CUENTA A LA QUE SE VA ACREDITAR LOS
-                        ABONOS</label>
-                    <select class="form-control input-xs" name="DCBanco" id="DCBanco" onchange="DCBanco">
+                <div class="col-xs-6">
+                    <select class="form-control input-xs" name="DCGrupoF" id="DCGrupoF" style="display:none">
                         <option value="">Seleccione</option>
                     </select>
                 </div>
             </div>
+            <div class="col-sm-1">
+                <label style="font-size: 13px;">ORDEN No.</label>
+                <input type="text" name="TxtOrden" id="TxtOrden" placeholder="0" size="4">
+            </div>
+            <div class="col-sm-4">
+                <label for="DCBanco" style="font-size: 13px;">CUENTA A LA QUE SE VA ACREDITAR LOS ABONOS</label>
+                <select class="form-control input-xs" name="DCBanco" id="DCBanco" onchange="DCBanco">
+                    <option value="">Seleccione</option>
+                </select>
+            </div>
         </div>
     </div>
+
 
     <div class="row" style="margin:5px; padding-top:10px">
         <div id="miPanel">
             <div class="panel-heading">
                 <div class="row">
                     <div class="col-sm-4">
-                        <img id="miLogo" src="../../img/png/logotestbanco.png" class="img-fluid" width="80%" height="10%">
+                        <img id="miLogo" src="" class="img-fluid" width="80%" height="10%">
                     </div>
                     <div class="col-sm-8 col-xs-12">
                         <div class="row">
@@ -135,7 +118,8 @@
                             </div>
                             <div class="col-xs-6">
                                 <label for="CheqSat" class="control-label">
-                                    <input type="checkbox" name="CheqSat" id="CheqSat"> Generar Matrícula
+                                    <input type="checkbox" name="CheqSat" id="CheqSat" style="display:none"> Generar
+                                    Matrícula
                                 </label>
                             </div>
                         </div>
@@ -154,46 +138,118 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
+        Form_Activate();
+        $('#CheqRangos').click(function () {
+            $("#DCGrupoI, #DCGrupoF").toggle($(this).is(":checked") ? true : false);
+        });
+
+        Select_DCEntidad();
+        Select_Banco();
+    });
+
+    function Select_Banco() {
+
         $("#miPanel").css("background-color", "#5bc0de");
         $("#miLogo").attr("src", "../../img/png/logoBancoBolivariano.png");
 
-        $(".nav-tabs a").click(function () {
-            var index = $(this).parent().index();
+        var selectElement = $('#DCEntidad');
+        selectElement.change(function () {
+
+            console.log('Valor: ' + selectElement.val());
+            var index = selectElement.val();
+
             switch (index) {
-                case 0:
+                case 'BANCO BOLIVARIANO':
                     console.log(index);
                     $("#miPanel").css("background-color", "#73ecf5");
                     $("#miLogo").attr("src", "../../img/png/logoBancoBolivariano.png");
                     break;
-                case 1:
+                case 'BANCO INTERNACIONAL':
                     $("#miPanel").css("background-color", "#f2be82");
                     $("#miLogo").attr("src", "../../img/png/logoBancoInternacional.png");
                     break;
-                case 2:
+                case 'BANCO PICHINCHA':
                     $("#miPanel").css("background-color", "#ffed93");
                     $("#miLogo").attr("src", "../../img/png/logoBancoPichincha.png");
                     break;
-                case 3:
+                case 'BANCO DEL PACIFICO':
                     $("#miPanel").css("background-color", "#81dbff");
                     $("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
                     break;
-                case 4:
+                case 'BANCO DEL PACIFICO INTERMATICO':
                     $("#miPanel").css("background-color", "#81dbff");
                     $("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
                     break;
-                case 5:
+                case 'BANCO PRODUBANCO':
                     $("#miPanel").css("background-color", "#2cd26e");
                     $("#miLogo").attr("src", "../../img/png/logoBancoProdubanco.png");
                     break;
-                case 6:
+                case 'BANCO GENERAL RUMINAHUI':
                     $("#miPanel").css("background-color", "#6b8ee7");
                     $("#miLogo").attr("src", "../../img/png/logoBancoGnrlRuminahui.png");
                     break;
-                case 7:
+                case 'BANCO GUAYAQUIL':
                     $("#miPanel").css("background-color", "#f395cf");
                     $("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
                     break;
             }
         });
-    });
+    }
+
+
+    function Select_DCEntidad() {
+
+        $('#DCEntidad').select2({
+            placeholder: 'Entidad Financiera',
+            ajax: {
+                url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?DCEntidad=true',
+                dataType: 'json',
+                delay: 250,
+                processResults: function (data) {
+                    console.log(data.length);
+                    return {
+                        results: data.map(item => ({
+                            id: item.Descripcion,
+                            text: item.Descripcion
+                        }))
+                    };
+                },
+                cache: true
+            }
+        });
+    }
+
+    function Form_Activate() {
+        /**$.ajax({
+            type: "POST",
+            url: '../controlador/facturacion/FRecaudacionBancosCxC.php?Form_Activate=true',
+            dataType: 'json',
+            success: function (data) {
+                var DCGrupoI = $("#DCGrupoI");
+                for (var indice in data.AdoCtaBanco) {
+                    DCGrupoI.append('<option value="' + data.AdoCtaBanco[indice].NomCuenta + ' ">' + data.AdoCtaBanco[indice].NomCuenta + '</option>');
+                }
+
+                var DCGrupoF = $("#DCGrupoF"); 
+                for (var indice in data.AdoClientes) {
+                    DCGrupoF.append('<option value="' + data.AdoClientes[indice].Codigo + ' ">' + data.AdoClientes[indice].Cajero + '</option>');
+                }
+            }
+        });*/
+
+        var parametros = {
+            'MBFechaI': $("#MBFechaI").val(),
+            'MBFechaF': $("#MBFechaF").val()
+        }
+        $.ajax({
+            type: "POST",
+            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?Form_Activate=true',
+            dataType: 'json',
+            data: { parametros, parametros },
+            success: function (data) {
+
+            }
+        });
+
+    }
 </script>
