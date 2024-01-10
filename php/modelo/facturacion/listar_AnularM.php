@@ -20,7 +20,7 @@ class listar_AnularM
             AND TC <> '.' 
             GROUP BY TC 
             ORDER BY TC ";
-        return $this->db->datos($sql);
+    return $this->db->datos($sql);
   }
 
   function DCSerie($TC)

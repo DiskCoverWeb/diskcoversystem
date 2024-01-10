@@ -103,6 +103,7 @@ class listar_anularC
 	{
 		// print_r($parametro);die();
 		$datos = $this->modelo->DCTipo();
+		
 		$tc = array();
 		foreach ($datos as $key => $value) {
 			$tc[] = array('codigo'=>$value['TC'],'nombre'=>$value['TC']);
