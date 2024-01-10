@@ -232,7 +232,7 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 	     
 	     $sql.= "  ORDER BY CS.Detalle ";
 
-	     // print_r($sql);die();
+	      //print_r($sql);die();
 		   $datos1 =  $this->db->datos($sql);
 		   $datos = array();
 		   foreach ($datos1 as $key => $value) {

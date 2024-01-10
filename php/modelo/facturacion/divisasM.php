@@ -21,7 +21,7 @@ class divisasM
           AND Fecha <= '".$FechaProceso."' 
           AND Vencimiento >= '".$FechaProceso."' 
           ORDER BY Fact,Codigo";
-          // print_r($sql);die();
+          //print_r($sql);die();
     $stmt = $this->db->datos($sql);
     return $stmt;
   }

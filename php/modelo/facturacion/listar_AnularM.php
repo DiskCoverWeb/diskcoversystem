@@ -17,8 +17,7 @@ class listar_AnularM
         FROM Facturas 
         WHERE Item = '".$_SESSION['INGRESO']['item']."' 
         AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-        AND TC <>'.' 
-        AND TC <> '' 
+        AND TC <> '.' 
         GROUP BY TC 
         ORDER BY TC ";
         return $this->db->datos($sql);
