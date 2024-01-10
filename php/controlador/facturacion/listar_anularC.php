@@ -9,7 +9,7 @@ $controlador =  new listar_anularC();
 if(isset($_GET['DCTipo']))
 {
 	// $parametros = $_POST['parametros'];
-	print_r('expression');die();
+	// print_r('expression');die();
 	echo json_encode($controlador->DCTipo());
 }
 if(isset($_GET['DCSerie']))
