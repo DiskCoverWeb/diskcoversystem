@@ -101,7 +101,7 @@ class listar_anularC
 
 	function DCTipo()
 	{
-		// print_r($parametro);die();
+		print_r('holaaa');die();
 		$datos = $this->modelo->DCTipo();
 		
 		$tc = array();
