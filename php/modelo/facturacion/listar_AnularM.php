@@ -14,12 +14,12 @@ class listar_AnularM
   function  DCTipo()
   {
     $sql = "SELECT TC 
-        FROM Facturas 
-        WHERE Item = '".$_SESSION['INGRESO']['item']."' 
-        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-        AND TC <> '.' 
-        GROUP BY TC 
-        ORDER BY TC ";
+            FROM Facturas 
+            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+            AND TC <> '.' 
+            GROUP BY TC 
+            ORDER BY TC ";
         return $this->db->datos($sql);
   }
 
