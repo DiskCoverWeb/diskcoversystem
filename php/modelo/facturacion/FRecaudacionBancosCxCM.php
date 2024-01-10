@@ -51,13 +51,13 @@ class FRecaudacionBancosCxCM
 
     function SelectDB_Combo_DCBanco()
     {
-        $sql = "SELECT Codigo & Space(2) & Cuenta As NomCuenta,Codigo
+        $sql = "SELECT Codigo + '  ' + Cuenta AS NomCuenta, Codigo
                 FROM Catalogo_Cuentas 
                 WHERE TC = 'BA' 
                 AND DG = 'D' 
                 AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
                 AND Periodo =  '" . $_SESSION['INGRESO']['periodo'] . "'
-                ORDER BY Codigo ";
+                ORDER BY Codigo";
 
         return $this->db->datos($sql);
     }
@@ -69,7 +69,7 @@ class FRecaudacionBancosCxCM
                 WHERE Tipo_Referencia = 'BANCOS Y COOP'
                 AND Abreviado <> '.' 
                 AND TFA != 'False'
-                ORDER BY Descripcion ";
+                ORDER BY Descripcion";
 
         return $this->db->datos($sql);
     }

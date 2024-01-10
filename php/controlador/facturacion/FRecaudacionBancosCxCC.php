@@ -12,6 +12,20 @@ if (isset($_GET['DCEntidad'])) {
     echo json_encode($controlador->DCEntidad());
 }
 
+if (isset($_GET['DCGrupoI_DCGrupoF'])) {
+    //$parametros = $_POST['parametros'];
+    echo json_encode($controlador->DCGrupoI_DCGrupoF());
+}
+
+if (isset($_GET['DCBanco'])) {
+    //$parametros = $_POST['parametros'];
+    echo json_encode($controlador->DCBanco());
+}
+
+if (isset($_GET['FechaValida'])) {
+    echo json_encode(FechaValida($_POST['fecha']));
+}
+
 class FRecaudacionBancosCxCC
 {
     private $modelo;
@@ -27,7 +41,7 @@ class FRecaudacionBancosCxCC
         $list = array();
         if (count($datos) > 0) {
             foreach ($datos as $value) {
-                //$list[] = array('NomCuenta' => $value['NomCuenta']);
+                $list[] = array('Grupo' => $value['Grupo']);
             }
             return $list;
         }
@@ -40,7 +54,7 @@ class FRecaudacionBancosCxCC
         $list = array();
         if (count($datos) > 0) {
             foreach ($datos as $value) {
-                //$list[] = array('NomCuenta' => $value['NomCuenta']);
+                $list[] = array('Codigo' => $value['Codigo']);
             }
             return $list;
         }
@@ -65,15 +79,10 @@ class FRecaudacionBancosCxCC
         $datos = $this->modelo->Select_AdoAux();
         $list = array();
         if (!empty($datos)) {
-            foreach ($datos as $value) {
-                $Cta_Cobrar = isset($value['CxC']) ? $value['CxC'] : null;
-                $CxC_Clientes = isset($value['Concepto']) ? $value['Concepto'] : null;
-                $TipoFactura = isset($value['Fact']) ? $value['Fact'] : null;
-
+            foreach ($datos as $value) {                
                 $list[] = array(
-                    'Cta_Cobrar' => $Cta_Cobrar,
-                    'CxC_Clientes' => $CxC_Clientes,
-                    'TipoFctura' => $TipoFactura
+                    'Codigo' => $value['$Codigo'],
+                    'CxC' => $value['$CxC'],
                 );
             }
         }
@@ -86,18 +95,16 @@ class FRecaudacionBancosCxCC
         $list = array();
         if (count($datos) > 0) {
             foreach ($datos as $value) {
-                //$list[] = array('NomCuenta' => $value['NomCuenta']);
+                $list[] = array('Codigo_Inv' => $value['Codigo_Inv']);
             }
             return $list;
         }
         return $list;
     }
 
-    function Form_Activate($parametros)
-    {
+   function Form_Activate($parametros)
+    {       
         
-        
-        /**
         FechaValida($parametros['MBFechaI']);
         FechaValida($parametros['MBFechaF']);
         $NuevoComp = True;
@@ -110,9 +117,9 @@ class FRecaudacionBancosCxCC
 
         //catalogo de rubros a facturar
         $AdoProducto = $this->AdoProducto();
-        */
         
-
+        
+ 
     }
 
 

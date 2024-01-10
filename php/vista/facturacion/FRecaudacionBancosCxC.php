@@ -6,7 +6,7 @@
 
 <div>
     <div class="row" style="margin:5px; padding-top:10px">
-        <div class="col-sm-12 col-xs-12">
+        <div class="col-sm-2 col-xs-12">
             <div class="col">
                 <a href="./inicio.php?mod=<?php echo @$_GET['mod']; ?>" title="Salir de modulo" class="btn btn-default">
                     <img src="../../img/png/salire.png" width="25" height="30">
@@ -31,38 +31,39 @@
                 </a>
             </div>
         </div>
-    </div>
-    <div class="row" style="margin:5px; padding-top:10px">
-        <div class="col-sm-12 col-xs-12">
+
+        <div class="col-sm-10 col-xs-12">
             <div class="col-sm-4">
-                <label for="DCEntidad" style="font-size: 13px;">ENTIDAD FINANCIERA</label>
+                <label for="DCEntidad">ENTIDAD FINANCIERA</label>
                 <select class="form-control input-xs" name="DCEntidad" id="DCEntidad" onchange="DCEntidad">
                     <option value="">Seleccione</option>
                 </select>
             </div>
             <div class="col-sm-3">
-                <div class="col-xs-12">
-                    <label for="CheqRangos" class="col control-label" style="font-size: 13px;">
+                <div class="row">
+                    <label for="CheqRangos" class="col control-label">
                         <input type="checkbox" name="CheqRangos" id="CheqRangos"> Procesar por Rangos Grupos
                     </label>
                 </div>
-                <div class="col-xs-6">
-                    <select class="form-control input-xs" name="DCGrupoI" id="DCGrupoI" style="display:none">
-                        <option value="">Seleccione</option>
-                    </select>
-                </div>
-                <div class="col-xs-6">
-                    <select class="form-control input-xs" name="DCGrupoF" id="DCGrupoF" style="display:none">
-                        <option value="">Seleccione</option>
-                    </select>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <select class="form-control input-xs" name="DCGrupoI" id="DCGrupoI" style="display:none">
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                        <select class="form-control input-xs" name="DCGrupoF" id="DCGrupoF" style="display:none">
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="col-sm-1">
-                <label style="font-size: 13px;">ORDEN No.</label>
+                <label>ORDEN No.</label>
                 <input type="text" name="TxtOrden" id="TxtOrden" placeholder="0" size="4">
             </div>
             <div class="col-sm-4">
-                <label for="DCBanco" style="font-size: 13px;">CUENTA A LA QUE SE VA ACREDITAR LOS ABONOS</label>
+                <label for="DCBanco">CUENTA A LA QUE SE VA ACREDITAR LOS ABONOS</label>
                 <select class="form-control input-xs" name="DCBanco" id="DCBanco" onchange="DCBanco">
                     <option value="">Seleccione</option>
                 </select>
@@ -89,12 +90,15 @@
                                     value="<?php echo date('Y-m-d') ?>">
                             </div>
                             <div class="col-xs-6">
-                                <label for="CheqMatricula" class="control-label">
-                                    <input type="checkbox" name="CheqMatricula" id="CheqMatricula">
-                                    Generar Matrícula </label>
+                                <label for="CheqMatricula" class="col control-label">
+                                    <input type="checkbox" name="CheqMatricula" id="CheqMatricula"> Generar Matrícula
+                                </label>
                             </div>
                             <div class="col-xs-1">
-                                <button class="btn" onclick="Command2()"><i class="fa fa-close"></i></button>
+                                <button class="btn"
+                                    onclick="window.location.href='./inicio.php?mod=<?php echo @$_GET['mod']; ?>'">
+                                    <i class="fa fa-close"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="row">
@@ -102,8 +106,7 @@
                             </div>
                             <div class="col-xs-6">
                                 <label for="CheqPend" class="control-label">
-                                    <input type="checkbox" name="CheqPend" id="CheqPend"> Sin Deuda
-                                    Pendiente
+                                    <input type="checkbox" name="CheqPend" id="CheqPend"> Sin Deuda Pendiente
                                 </label>
                             </div>
                         </div>
@@ -116,10 +119,9 @@
                                     class="form-control input-xs validateDate" onchange="" title="Tope de pago"
                                     value="<?php echo date('Y-m-d') ?>">
                             </div>
-                            <div class="col-xs-6">
+                            <div class="col-xs-6 cheqSatMostrar" style="display:none">
                                 <label for="CheqSat" class="control-label">
-                                    <input type="checkbox" name="CheqSat" id="CheqSat" style="display:none"> Generar
-                                    Matrícula
+                                    <input type="checkbox" name="CheqSat" id="CheqSat"> Generar Matrícula
                                 </label>
                             </div>
                         </div>
@@ -138,14 +140,41 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        Form_Activate();
+        $('#MBFechaI').blur(function () {
+            let fechaI = $(this).val();
+            FechaValida(fechaI);
+        });
+
+        $('#MBFechaF').blur(function () {
+            let fechaF = $(this).val();
+            FechaValida(fechaF);
+        });
+
+        //$NuevoCompe = false
+        //$CopiarComp = false
+        //$Co.CodigoB = ""
+        //$Co.Numero = 0
+
+        Select('#DCGrupoI');
+        Select('#DCGrupoF', true);
+
+
         $('#CheqRangos').click(function () {
             $("#DCGrupoI, #DCGrupoF").toggle($(this).is(":checked") ? true : false);
         });
 
         Select_DCEntidad();
         Select_Banco();
+
+        Select_DCBanco();
+
     });
+
+    function mostrarCheqSat() {
+        $('.cheqSatMostrar').css('display', function (index, value) {
+            return value === 'none' ? 'block' : 'none';
+        });
+    }
 
     function Select_Banco() {
 
@@ -159,37 +188,56 @@
             var index = selectElement.val();
 
             switch (index) {
-                case 'BANCO BOLIVARIANO':
-                    console.log(index);
-                    $("#miPanel").css("background-color", "#73ecf5");
-                    $("#miLogo").attr("src", "../../img/png/logoBancoBolivariano.png");
-                    break;
-                case 'BANCO INTERNACIONAL':
-                    $("#miPanel").css("background-color", "#f2be82");
-                    $("#miLogo").attr("src", "../../img/png/logoBancoInternacional.png");
-                    break;
                 case 'BANCO PICHINCHA':
-                    $("#miPanel").css("background-color", "#ffed93");
+                    $("#miPanel").css("background-color", "#80FFFF");
                     $("#miLogo").attr("src", "../../img/png/logoBancoPichincha.png");
                     break;
-                case 'BANCO DEL PACIFICO':
-                    $("#miPanel").css("background-color", "#81dbff");
-                    $("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
-                    break;
-                case 'BANCO DEL PACIFICO INTERMATICO':
-                    $("#miPanel").css("background-color", "#81dbff");
-                    $("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
-                    break;
-                case 'BANCO PRODUBANCO':
-                    $("#miPanel").css("background-color", "#2cd26e");
-                    $("#miLogo").attr("src", "../../img/png/logoBancoProdubanco.png");
+                case 'BANCO BOLIVARIANO':
+                    $("#miPanel").css("background-color", "#808000");
+                    $("#miLogo").attr("src", "../../img/png/logoBancoBolivariano.png");
+                    mostrarCheqSat();
                     break;
                 case 'BANCO GENERAL RUMINAHUI':
-                    $("#miPanel").css("background-color", "#6b8ee7");
+                    $("#miPanel").css("background-color", "#800004");
                     $("#miLogo").attr("src", "../../img/png/logoBancoGnrlRuminahui.png");
                     break;
+                case 'BANCO INTERNACIONAL':
+                    $("#miPanel").css("background-color", "#FF8080");
+                    $("#miLogo").attr("src", "../../img/png/logoBancoInternacional.png");
+                    break;
+                case 'BANCO DEL PACIFICO':
+                    $("#miPanel").css("background-color", "#C0C000");
+                    $("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
+                    mostrarCheqSat();
+                    break;
+                case 'BANCO DEL PACIFICO INTERMATICO':
+                    $("#miPanel").css("background-color", "#C0C000");
+                    $("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
+                    mostrarCheqSat();
+                    break;
+                case 'BIZBANCKPACIFICO':
+                    $("#miPanel").css("background-color", "#C0C000");
+                    $("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
+                    mostrarCheqSat();
+                    break;
+                case 'BANCO PRODUBANCO':
+                    $("#miPanel").css("background-color", "#FFFFFF");
+                    $("#miLogo").attr("src", "../../img/png/logoBancoProdubanco.png");
+                    break;
                 case 'BANCO GUAYAQUIL':
-                    $("#miPanel").css("background-color", "#f395cf");
+                    $("#miPanel").css("background-color", "#FF8080");
+                    $("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
+                    break;
+                case 'COOPERATIVA JEP':
+                    $("#miPanel").css("background-color", "#80FF80");
+                    $("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
+                    break;
+                case 'CACPE':
+                    $("#miPanel").css("background-color", "#80FF80");
+                    $("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
+                    break;
+                default:
+                    $("#miPanel").css("background-color", "#FFFFFF");
                     $("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
                     break;
             }
@@ -198,7 +246,6 @@
 
 
     function Select_DCEntidad() {
-
         $('#DCEntidad').select2({
             placeholder: 'Entidad Financiera',
             ajax: {
@@ -206,7 +253,7 @@
                 dataType: 'json',
                 delay: 250,
                 processResults: function (data) {
-                    console.log(data.length);
+                    console.log('DATA DCENTIDAD ', data);
                     return {
                         results: data.map(item => ({
                             id: item.Descripcion,
@@ -219,37 +266,66 @@
         });
     }
 
-    function Form_Activate() {
-        /**$.ajax({
-            type: "POST",
-            url: '../controlador/facturacion/FRecaudacionBancosCxC.php?Form_Activate=true',
-            dataType: 'json',
-            success: function (data) {
-                var DCGrupoI = $("#DCGrupoI");
-                for (var indice in data.AdoCtaBanco) {
-                    DCGrupoI.append('<option value="' + data.AdoCtaBanco[indice].NomCuenta + ' ">' + data.AdoCtaBanco[indice].NomCuenta + '</option>');
-                }
-
-                var DCGrupoF = $("#DCGrupoF"); 
-                for (var indice in data.AdoClientes) {
-                    DCGrupoF.append('<option value="' + data.AdoClientes[indice].Codigo + ' ">' + data.AdoClientes[indice].Cajero + '</option>');
-                }
-            }
-        });*/
-
-        var parametros = {
-            'MBFechaI': $("#MBFechaI").val(),
-            'MBFechaF': $("#MBFechaF").val()
-        }
-        $.ajax({
-            type: "POST",
-            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?Form_Activate=true',
-            dataType: 'json',
-            data: { parametros, parametros },
-            success: function (data) {
-
+    function Select(selector, reverseOrder = false) {
+        $(selector).select2({
+            placeholder: 'Seleccione',
+            ajax: {
+                url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?DCGrupoI_DCGrupoF=true',
+                dataType: 'json',
+                delay: 250,
+                processResults: function (data) {
+                    if (reverseOrder) {
+                        data.reverse();
+                    }
+                    return {
+                        results: data.map(item => ({
+                            id: item.Grupo,
+                            text: item.Grupo
+                        }))
+                    };
+                },
+                cache: true
             }
         });
+    }
 
+    function Select_DCBanco() {
+
+        $('#DCBanco').select2({
+            placeholder: 'Seleccione',
+            ajax: {
+                url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?DCBanco=true',
+                dataType: 'json',
+                delay: 250,
+                processResults: function (data) {
+                    console.log('DATA DCBANCO ', data);
+                    return {
+                        results: data.map(item => ({
+                            id: item.Codigo,
+                            text: item.Codigo
+                        }))
+                    };
+                },
+                cache: true
+            }
+        });
+    }
+
+    function FechaValida(fecha) {
+        $.ajax({
+            type: "POST",
+            url: '../controlador/contabilidad/FCierre_CajaC.php?FechaValida=true',
+            dataType: 'json',
+            data: { 'fecha': fecha },
+            success: function (datos) {
+                if (datos.ErrorFecha) {
+                    Swal.fire({
+                        type: 'warning',
+                        title: datos.MsgBox,
+                        text: fecha
+                    });
+                }
+            }
+        });
     }
 </script>
