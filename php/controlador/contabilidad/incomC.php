@@ -294,7 +294,10 @@ if(isset($_GET['ExistenMovimientos'])){
     $parametros = $_POST;
     echo json_encode($controlador->ExistenMovimientos($parametros));
 }
-
+if(isset($_GET['DCBanco_LostFocus'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->DCBanco_LostFocus($parametros));
+}
 // if(isset($_GET['ddl_aux'])){
 //     $parametros = $_POST['parametros'];
 //     echo json_encode($controlador->Trans_SubCtas($parametros));
@@ -1978,6 +1981,7 @@ class incomC
 
 function Tipo_De_Comprobante_No($parametros)
 {
+	// print_r($parametros);die();
     $y = explode('-',$parametros);
      if($y[0]=='CD'){ $tp = "Diario";}
      if($y[0]=='CI'){ $tp = "Ingresos";}
@@ -2308,12 +2312,32 @@ function ExistenMovimientos($parametros)
   return $ExisteMov;
 }
 
-function Trans_SubCtas($parametros)
-{
+	function Trans_SubCtas($parametros)
+	{
 
-	$datos =  $this->modelo->Trans_SubCtas($SubCta);
-	print_r($datos);
-}
+		$datos =  $this->modelo->Trans_SubCtas($SubCta);
+		print_r($datos);
+	}
+
+	function DCBanco_LostFocus($parametros)
+	{
+		// print_r($parametros);die();
+		 $fecha = BuscarFecha($parametros['MBoxFecha']);
+	     $Cta_Aux = $parametros['CBanco'];
+	     if($Cta_Aux == ""){$Cta_Aux = ".";}
+	     $TextCheque = "00000001";
+
+	     $numero_cheque = $this->modelo->Transacciones_BA($Cta_Aux,$fecha);
+	     if(count($numero_cheque)>0)
+	     {
+	     	if($numero_cheque[0]['Ultimo_Chep']!='')
+	     	{
+	     	 	$TextCheque = generaCeros($numero_cheque[0]['Ultimo_Chep']+1,8);
+	     	}
+	     }
+	     return $TextCheque;
+	     
+	}
 
 }
 ?>

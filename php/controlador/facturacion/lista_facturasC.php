@@ -286,7 +286,14 @@ class lista_facturasC
 			</tbody>
 		</table>';
 
-		return $tablaHtml;
+		$Sum_SaldoMN = 0;
+		foreach ($resultado as $fila) {
+			if (isset($fila['Saldo_MN']) && is_numeric($fila['Saldo_MN'])) {
+				$Sum_SaldoMN += $fila['Saldo_MN'];
+			}
+		}
+
+		return array('tabla' => $tablaHtml, 'Sum_SaldoMN' => number_format($Sum_SaldoMN, 2, '.', ','));
 	}
 
 	function tabla_facturas_lineas($parametros)

@@ -17,6 +17,7 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
 
   $(document).ready(function () {
     catalogoLineas();
+    $("#label_SumSaldoMN, #Sum_SaldoMN").hide();
     // fin paginacion
 
     var cartera_usu = '<?php echo $cartera_usu; ?>';
@@ -699,14 +700,17 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
         if(response != '0'){
           $('#btnPDF').prop("disabled", false);
           $('#btnExcel').prop("disabled", false);
-          $('#tablaContenedor').html(response);
+          $('#tablaContenedor').html(response.tabla);
           $('#myModal_espera').modal('hide');
+          $("#label_SumSaldoMN, #Sum_SaldoMN").show();
+          $("#Sum_SaldoMN").val(response.Sum_SaldoMN);
         }else{
           Swal.fire('No se han encontrado datos.', '', 'warning');
           $('#btnPDF').prop("disabled", true);
           $('#btnExcel').prop("disabled", true);
           $('#myModal_espera').modal('hide');
           $("#tablaContenedor").html('');
+          $("#label_SumSaldoMN, #Sum_SaldoMN").hide();
         }
         
       }
@@ -1164,7 +1168,9 @@ if (isset($_GET['tipo']) && $_GET['tipo'] == 2) {
               <h2 style="margin-top: 0px;">Listado de facturas</h2>
             </div>
             <div class="col-sm-6 text-right" id="panel_pag">
-
+              <label for="Sum_SaldoMN" id="label_SumSaldoMN"> Total Saldo MN:
+                <input type="text" readonly id="Sum_SaldoMN" style="text-align: right;">
+              </label>
             </div>
             <div class="col-sm-12" style="overflow-x: scroll;height: 500px;">
               <table class="resp" style="white-space: nowrap;" id="tablaContenedor">

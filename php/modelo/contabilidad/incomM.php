@@ -1629,6 +1629,19 @@ class incomM
 	   // print_r($sql);die();
 	   return  $cid->datos($sql);
   }
+  function Transacciones_BA($Cta_Aux,$MBoxFecha)
+  {
+  	 $sql = "SELECT MAX(Cheq_Dep) As Ultimo_Chep 
+	        FROM Transacciones 
+	        WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+	        AND Periodo = '".$_SESSION['INGRESO']['periodo']. "' 
+	        AND Cta = '".$Cta_Aux."' 
+	        AND TP = 'CE' 
+	        AND ISNUMERIC(Cheq_Dep) <> 0 
+	        AND Haber > 0 
+	        AND Fecha <= '".$MBoxFecha."' ";
+	   return  $this->conn->datos($sql);
+  }
 
 
 }

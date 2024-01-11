@@ -9,6 +9,7 @@ $controlador =  new listar_anularC();
 if(isset($_GET['DCTipo']))
 {
 	// $parametros = $_POST['parametros'];
+	// print_r('expression');die();
 	echo json_encode($controlador->DCTipo());
 }
 if(isset($_GET['DCSerie']))
@@ -101,8 +102,8 @@ class listar_anularC
 
 	function DCTipo()
 	{
-		// print_r($parametro);die();
 		$datos = $this->modelo->DCTipo();
+		
 		$tc = array();
 		foreach ($datos as $key => $value) {
 			$tc[] = array('codigo'=>$value['TC'],'nombre'=>$value['TC']);

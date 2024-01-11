@@ -64,7 +64,6 @@ function Form_Activate()
   
   // TipoBusqueda = "%"
   
-  Tipo_De_Comprobante_No();
   FormActivate();
 
  //  Llenar_Encabezado_Comprobante
@@ -149,7 +148,6 @@ function Form_Activate()
         },
         dataType: 'json',
         success:  function (response) {
-          Tipo_De_Comprobante_No();
           if(cli=='')
           {
            Llenar_Encabezado_Comprobante();
@@ -398,6 +396,7 @@ function FormActivate() {
           })
           $('#conceptob').html(opcion);
           $('#conceptob').val(ini);
+          DCBanco_LostFocus();
                     // console.log(response);
       }
     }); 
@@ -1556,21 +1555,21 @@ function FormActivate() {
         });
 
   }
-  function Tipo_De_Comprobante_No()
-  {
-    var parametros = $('#NuevoComp').val();
-     $.ajax({
-          data:  {parametros:parametros},
-          url:   '../controlador/contabilidad/incomC.php?Tipo_De_Comprobante_No=true',
-          type:  'post',
-          dataType: 'json',
-            success:  function (response) { 
+  // function Tipo_De_Comprobante_No()
+  // {
+  //   var parametros = $('#NuevoComp').val();
+  //    $.ajax({
+  //         data:  {parametros:parametros},
+  //         url:   '../controlador/contabilidad/incomC.php?Tipo_De_Comprobante_No=true',
+  //         type:  'post',
+  //         dataType: 'json',
+  //           success:  function (response) { 
 
-            $("#num_com").html("");
-            $("#num_com").html(response);
-          }
-        });
-  }
+  //           $("#num_com").html("");
+  //           $("#num_com").html(response);
+  //         }
+  //       });
+  // }
 
   function listar_comprobante()
   {
@@ -1633,6 +1632,26 @@ function FormActivate() {
     {
       numero_comprobante();
     }
+  }
+
+  function DCBanco_LostFocus()
+  {
+    var CBanco = $('#conceptob').val();
+    var parametros = {
+      'CBanco':CBanco,
+      'MBoxFecha':$('#fecha1').val(),
+    }
+     $.ajax({
+          data:  {parametros:parametros},
+          url:   '../controlador/contabilidad/incomC.php?DCBanco_LostFocus=true',
+          type:  'post',
+          dataType: 'json',
+            success:  function (response) { 
+              $('#no_cheq').val(response);
+             console.log(response);     
+          }
+        });
+    
   }
 
 </script>
@@ -1843,7 +1862,7 @@ function FormActivate() {
                                      <div class="input-group-addon input-xs">
                                          <b>CUENTA:</b>
                                      </div>
-                                     <select class="form-control input-xs" name="conceptob" id='conceptob'>
+                                     <select class="form-control input-xs" name="conceptob" id='conceptob'onchange="DCBanco_LostFocus()">
                                          <option value="">Seleccione cuenta de banco</option>
                                     </select>
                                   </div>                            
