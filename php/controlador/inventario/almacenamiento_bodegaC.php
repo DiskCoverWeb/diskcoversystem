@@ -128,21 +128,26 @@ class almacenamiento_bodegaC
 	{
 		$datos = $this->modelo->Buscar_productos_ingresados($cod);
 		$result = array();
-		$color = '#56a359';
+		$color2 = '#000000';
+		$color = '';
 		$fecha_now = new DateTime();
 		foreach ($datos as $key => $value) {
-			// $fecha_exp = new DateTime($value['Fecha_Exp']->format('Y-m-d'));
-			// $dias = $fecha_now->diff($fecha_exp);
-
-			// print_r($dias);die();
+			// print_r($value);die();
 
 		$fecha1 = new DateTime();
       	$fecha2 = new DateTime($value['Fecha_Exp']->format('Y-m-d'));
       	$diferenciaEnSegundos = $fecha2->getTimestamp() - $fecha1->getTimestamp();
+
 		$dias = intval($diferenciaEnSegundos / 86400);
-		if($dias<0){$color = 'red';}else if ($dias<=10 && $dias>0) { $color = '#e2d035';}else{$color = '#56a359';}
+		if($value['Cod_C']=='AR01')
+		{
+			$color2 = '#0070C0';
+		}
+		if($dias<=0){$color = '#ffff00';}else if ($dias<=8 && $dias>0) { $color = '#ff0000';}
 		
-		 $result[] = array("id"=>$value['ID'],"text"=>$value['Codigo_Barra'],'data'=>$value,'color'=>$color);
+		 $result[] = array("id"=>$value['ID'],"text"=>$value['Codigo_Barra'],'data'=>$value,'fondo'=>$color,'texto'=>$color2);
+		 $color2 = '#000000';
+		 $color = '';
 		}
 		return $result;
 	}
