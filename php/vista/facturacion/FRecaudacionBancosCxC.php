@@ -156,17 +156,22 @@
         //$Co.Numero = 0
 
         Select('#DCGrupoI');
-        Select('#DCGrupoF', true);
+        Select('#DCGrupoF', true); // true indica que se debe invertir el orden
 
+        AdoAux();
+        AdoProducto();
+        Select_DCEntidad();
+        Select_DCBanco();
+        Select_Banco();
 
         $('#CheqRangos').click(function () {
             $("#DCGrupoI, #DCGrupoF").toggle($(this).is(":checked") ? true : false);
         });
 
-        Select_DCEntidad();
-        Select_Banco();
-
-        Select_DCBanco();
+        var Tipo_Carga = Leer_Campo_Empresa("Tipo_Carga_Banco");
+        var Costo_Banco = Leer_Campo_Empresa("Costo_Bancario");
+        var Cta_Bancaria = Leer_Campo_Empresa("Cta_Banco");
+        var Cta_Gasto_Banco = Leer_Seteos_Ctas("Cta_Gasto_Bancario");
 
     });
 
@@ -178,8 +183,8 @@
 
     function Select_Banco() {
 
-        $("#miPanel").css("background-color", "#5bc0de");
-        $("#miLogo").attr("src", "../../img/png/logoBancoBolivariano.png");
+        $("#miPanel").css("background-color", "#FFFFF1");
+        //$("#miLogo").attr("src", "../../img/png/logoBancoBolivariano.png");
 
         var selectElement = $('#DCEntidad');
         selectElement.change(function () {
@@ -203,7 +208,7 @@
                     break;
                 case 'BANCO INTERNACIONAL':
                     $("#miPanel").css("background-color", "#FF8080");
-                    $("#miLogo").attr("src", "../../img/png/logoBancoInternacional.png");
+                    //$("#miLogo").attr("src", "../../img/png/logoBancoInternacional.png");
                     break;
                 case 'BANCO DEL PACIFICO':
                     $("#miPanel").css("background-color", "#C0C000");
@@ -212,12 +217,12 @@
                     break;
                 case 'BANCO DEL PACIFICO INTERMATICO':
                     $("#miPanel").css("background-color", "#C0C000");
-                    $("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
+                    //$("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
                     mostrarCheqSat();
                     break;
                 case 'BIZBANCKPACIFICO':
                     $("#miPanel").css("background-color", "#C0C000");
-                    $("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
+                    //$("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
                     mostrarCheqSat();
                     break;
                 case 'BANCO PRODUBANCO':
@@ -230,20 +235,19 @@
                     break;
                 case 'COOPERATIVA JEP':
                     $("#miPanel").css("background-color", "#80FF80");
-                    $("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
+                    //$("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
                     break;
                 case 'CACPE':
                     $("#miPanel").css("background-color", "#80FF80");
-                    $("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
+                    //$("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
                     break;
                 default:
                     $("#miPanel").css("background-color", "#FFFFFF");
-                    $("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
+                    //$("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
                     break;
             }
         });
     }
-
 
     function Select_DCEntidad() {
         $('#DCEntidad').select2({
@@ -253,7 +257,7 @@
                 dataType: 'json',
                 delay: 250,
                 processResults: function (data) {
-                    console.log('DATA DCENTIDAD ', data);
+                    //console.log('DATA DCENTIDAD ', data);
                     return {
                         results: data.map(item => ({
                             id: item.Descripcion,
@@ -261,7 +265,6 @@
                         }))
                     };
                 },
-                cache: true
             }
         });
     }
@@ -274,6 +277,7 @@
                 dataType: 'json',
                 delay: 250,
                 processResults: function (data) {
+                    var AdoGrupo = data;
                     if (reverseOrder) {
                         data.reverse();
                     }
@@ -284,13 +288,11 @@
                         }))
                     };
                 },
-                cache: true
             }
         });
     }
 
     function Select_DCBanco() {
-
         $('#DCBanco').select2({
             placeholder: 'Seleccione',
             ajax: {
@@ -298,23 +300,48 @@
                 dataType: 'json',
                 delay: 250,
                 processResults: function (data) {
-                    console.log('DATA DCBANCO ', data);
+                    /*var Cta_Banco = null;
+                    var Cta_Del_Banco = // el valor se llena en el boton Recibir_Abonos;
+
+                    var bancoEncontrado = data.find(function (item) {
+                        return Cta_Del_Banco === item.Codigo;
+                    });
+
+                    if (bancoEncontrado) {
+                        Cta_Banco = bancoEncontrado.NomCuenta;
+                    } else {
+                        Swal.fire({
+                            title: 'No existen cuentas asignadas',
+                            text: 'No existen cuentas asignadas o no están bien establecidas las cuentas contables',
+                            type: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                    if (data.length === 0) {
+                        Swal.fire({
+                            title: 'No existen cuentas asignadas',
+                            text: 'No existen cuentas asignadas o no están bien establecidas las cuentas contables',
+                            type: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                    }*/
+
                     return {
                         results: data.map(item => ({
-                            id: item.Codigo,
-                            text: item.Codigo
+                            id: item.NomCuenta,
+                            text: item.NomCuenta
                         }))
                     };
                 },
-                cache: true
             }
         });
     }
 
+
     function FechaValida(fecha) {
         $.ajax({
             type: "POST",
-            url: '../controlador/contabilidad/FCierre_CajaC.php?FechaValida=true',
+            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?FechaValida=true',
             dataType: 'json',
             data: { 'fecha': fecha },
             success: function (datos) {
@@ -325,6 +352,40 @@
                         text: fecha
                     });
                 }
+            }
+        });
+    }
+
+    function Leer_Campo_Empresa(campo) {
+        $.ajax({
+            type: "POST",
+            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?LeerCampoEmpresa=true',
+            dataType: 'json',
+            data: { 'campo': campo },
+            success: function (datos) {
+                //console.log(datos);
+            }
+        });
+    }
+
+    function AdoAux() {
+        $.ajax({
+            type: "POST",
+            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?AdoAux=true',
+            dataType: 'json',
+            success: function (datos) {
+                //console.log(datos);
+            }
+        });
+    }
+
+    function AdoProducto() {
+        $.ajax({
+            type: "POST",
+            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?AdoProducto=true',
+            dataType: 'json',
+            success: function (datos) {
+                //console.log(datos);
             }
         });
     }

@@ -27,7 +27,7 @@ class FRecaudacionBancosCxCM
         return $this->db->datos($sql);
     }
 
-    function Select_AdoAux()
+    function AdoAux()
     {
         $sql = "SELECT * 
                 FROM Catalogo_Lineas 

@@ -26,6 +26,18 @@ if (isset($_GET['FechaValida'])) {
     echo json_encode(FechaValida($_POST['fecha']));
 }
 
+if (isset($_GET['AdoAux'])) {
+    echo json_encode($controlador->AdoAux());
+}
+
+if (isset($_GET['AdoProducto'])) {
+    echo json_encode($controlador->AdoProducto());
+}
+
+if (isset($_GET['LeerCampoEmpresa'])) {
+    echo json_encode(Leer_Campo_Empresa($_POST['campo']));
+}
+
 class FRecaudacionBancosCxCC
 {
     private $modelo;
@@ -54,7 +66,10 @@ class FRecaudacionBancosCxCC
         $list = array();
         if (count($datos) > 0) {
             foreach ($datos as $value) {
-                $list[] = array('Codigo' => $value['Codigo']);
+                $list[] = array(
+                    'Codigo' => $value['Codigo'],
+                    'NomCuenta' => $value['NomCuenta']
+                );
             }
             return $list;
         }
@@ -66,7 +81,7 @@ class FRecaudacionBancosCxCC
         $datos = $this->modelo->SelectDB_Combo_DCEntidad();
         $list = array();
         if (count($datos) > 0) {
-            foreach ($datos as $value) {                
+            foreach ($datos as $value) {
                 $list[] = array('Descripcion' => $value['Descripcion']);
             }
             return $list;
@@ -76,15 +91,18 @@ class FRecaudacionBancosCxCC
 
     function AdoAux()
     {
-        $datos = $this->modelo->Select_AdoAux();
+        $datos = $this->modelo->AdoAux();
         $list = array();
-        if (!empty($datos)) {
-            foreach ($datos as $value) {                
+        if (count($datos) > 0) {
+            foreach ($datos as $key => $value) {
                 $list[] = array(
-                    'Codigo' => $value['$Codigo'],
-                    'CxC' => $value['$CxC'],
+                    'Cta_Cobrar' => $value['CxC'],
+                    'CxC_Clientes' => $value['Concepto'],
+                    'Individual' => $value['Individual'],
+                    'TipoFactura' => $value['Fact'],
                 );
             }
+            return $list;
         }
         return $list;
     }
@@ -102,6 +120,7 @@ class FRecaudacionBancosCxCC
         return $list;
     }
 
+    /*
    function Form_Activate($parametros)
     {       
         
@@ -117,10 +136,7 @@ class FRecaudacionBancosCxCC
 
         //catalogo de rubros a facturar
         $AdoProducto = $this->AdoProducto();
-        
-        
- 
-    }
+    }*/
 
 
 
