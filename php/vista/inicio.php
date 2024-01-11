@@ -284,7 +284,11 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'facturarLista':
 				require_once("facturacion/lista_facturas.php");
 				break;
-
+			
+			case 'envio_recepcion':
+				require_once("facturacion/FRecaudacionBancosPreFa.php");
+				break;
+				
 			//Inventario -> Archivo -> Registro de bodegas 
 			case 'catalogoBodega':
 				require_once("facturacion/catalogo_bodega.php");

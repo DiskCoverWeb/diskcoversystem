@@ -1,0 +1,369 @@
+<script>
+    var TextoBanco = "";
+
+    var Cta_Cobrar = "";
+    var CxC_Clientes = "";
+    var LogoFactura = "";
+    var AltoFactura = "";
+    var AnchoFactura = "";
+    var EspacioFactura = "";
+    var Pos_Factura = "";
+    var Individual = "";
+    var TipoFactura = "";
+    $(document).ready(function () {
+
+        //FORM ACTIVATE
+        DCLinea();
+        DCBanco();
+        DCGrupos();
+        DCEntidadBancaria();
+
+        //Se encarga de manejar la entidad bancaria cuando cambia
+        $('#DCEntidadBancaria').change(function () {
+            var entidad = $(this).val();
+            TextoBanco = entidad;
+            OpcionesEntidadesBancarias(TextoBanco);
+        });
+
+        //MBFechaI_LostFocus
+        $('#MBFechaI').blur(function () {
+            $('MBFechaF').val(<?php echo date('Y-m-t'); ?>);
+            var parametros = {
+                'MBFechaI': $('#MBFechaI').val()
+            };
+            $.ajax({
+                url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?MBFechaI_LostFocus=true',
+                type: 'post',
+                dataType: 'json',
+                data: { 'parametros': parametros },
+                success: function (data) {
+                    if (data.length > 0) {
+                        $('#DCLinea').empty();
+                        $.each(data, function (index, value) {
+                            $('#DCLinea').append('<option value="' + value['Codigo'] + '">' + value['Concepto'] + '</option>');
+                        });
+                    }else{
+                        $('#DCLinea').empty();
+                        $('#DCLinea').append('<option value="0">No existen datos</option>');
+                    }
+                }
+            });
+        });
+
+
+
+    });
+
+    function OpcionesEntidadesBancarias(TextoBanco) {
+        color = 'rgb(255,255,255)';
+        fontColor = 'black';
+        switch (TextoBanco) {
+            case 'BOLIVARIANO':
+                $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/BancoBolivarianoLogo.png");
+                $("#imgBanco").attr("alt", "Logo Banco Bolivariano");
+                color = 'rgb(12,153,151)';
+                fontColor = 'white';
+                break;
+            case 'INTERNACIONAL':
+                $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/BancoInternacionalLogo.png");
+                $("#imgBanco").attr("alt", "Logo Banco Internacional");
+                color = 'rgb(242,145,0)';
+                fontColor = 'white';
+                break;
+            case 'GUAYAQUIL':
+                $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/BancoGuayaquilLogo.png");
+                $("#imgBanco").attr("alt", "Logo Banco Guayaquil");
+                color = 'rgb(178,0,107)';
+                fontColor = 'white';
+                break;
+            case 'PICHINCHA':
+                $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/BancoPichinchaLogo.png");
+                $("#imgBanco").attr("alt", "Logo Banco Pichincha");
+                color = 'rgb(255,223,0)';
+                fontColor = 'black';
+                break;
+            case 'BIZBANCKPACIFICO':
+                $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/BancoPacificoLogo.png");
+                $("#imgBanco").attr("alt", "Logo Banco Pacifico");
+                color = 'rgb(31,156,212)';
+                fontColor = 'black';
+                break;
+            case 'PRODUBANCO':
+                $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/ProduBancoLogo.png");
+                $("#imgBanco").attr("alt", "Logo Produbanco");
+                color = 'rgb(1,102,52)';
+                fontColor = 'black';
+                break;
+            case 'OTROSBANCOS':
+                $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/OtrosBancosLogo.png");
+                $("#imgBanco").attr("alt", "Logo Otros Bancos");
+                color = 'rgb(255,255,255)';
+                fontColor = 'black';
+                break;
+            case 'TARJETAS':
+                $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/TarjetasLogo.png");
+                $("#imgBanco").attr("alt", "Logo Tarjetas");
+                color = 'rgb(255,253,253)';
+                fontColor = 'black';
+                break;
+            case 'COOPJEP':
+                $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/CoopJEPLogo.png");
+                $("#imgBanco").attr("alt", "Logo Cooperativa JEP");
+                color = 'rgb(0,104,55)';
+                fontColor = 'black';
+                break;
+            case 'FARMACIAS':
+                $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/OtrosBancosLogo.png");
+                $("#imgBanco").attr("alt", "Logo Otros Bancos");
+                color = 'rgb(255,255,255)';
+                fontColor = 'black';
+                break;
+            case 'POREXCEL':
+                $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/RecaudacionExcelLogo.png");
+                $("#imgBanco").attr("alt", "Logo Recaudacion por Excel");
+                color = 'white';
+                fontColor = 'black';
+                break;
+        }
+        $('#fieldsetForm').css('background-color', color);
+        $('#fieldsetForm').css('color', fontColor);
+
+    }
+
+    function DCLinea() {
+        $.ajax({
+            url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?DCLinea=true',
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#DCLinea').empty();
+                    $.each(data, function (index, value) {
+                        $('#DCLinea').append('<option value="' + value['Codigo'] + '">' + value['Concepto'] + '</option>');
+                    });
+                    Cta_Cobrar = data[0]['CxC'];
+                    CxC_Clientes = data[0]['Concepto'];
+                    LogoFactura = data[0]['Logo_Factura'];
+                    AltoFactura = data[0]['Largo'];
+                    AnchoFactura = data[0]['Ancho'];
+                    EspacioFactura = data[0]['Espacios'];
+                    Pos_Factura = data[0]['Pos_Factura'];
+                    Individual = data[0]['Individual'];
+                    TipoFactura = data[0]['Fact'];
+                }
+
+            }
+        });
+
+    }
+
+    function DCBanco() {
+        $.ajax({
+            url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?DCBanco=true',
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#DCBanco').empty();
+                    $.each(data, function (index, value) {
+                        $('#DCBanco').append('<option value="' + value['Codigo'] + '">' + value['Codigo'] + ' - ' + value['Cuenta'] + '</option>');
+                    });
+                }
+            }
+        });
+    }
+
+    function DCGrupos() {
+        $.ajax({
+            url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?DCGrupos=true',
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#DCGrupoI').empty();
+                    $('#DCGrupoF').empty();
+                    $.each(data, function (index, value) {
+                        $('#DCGrupoI').append('<option value="' + value['Grupo'] + '">' + value['Grupo'] + '</option>');
+                        $('#DCGrupoF').append('<option value="' + value['Grupo'] + '">' + value['Grupo'] + '</option>');
+                    });
+
+                    var ultimoGrupo = data[data.length - 1]['Grupo'];
+                    $('#DCGrupoF').val(ultimoGrupo);
+                }
+            }
+        });
+
+    }
+
+    function DCEntidadBancaria() {
+        $.ajax({
+            url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?DCEntidadBancaria=true',
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#DCEntidadBancaria').empty();
+                    $.each(data, function (index, value) {
+                        $('#DCEntidadBancaria').append('<option value="' + value['Abreviado'] + '">' + value['Descripcion'] + '</option>');
+                    });
+                    TextoBanco = data[0]['Abreviado'];
+                    OpcionesEntidadesBancarias(TextoBanco);
+
+                }
+            }
+        });
+    }
+</script>
+<style>
+    .inline {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .inline input {
+        margin-left: 10px;
+    }
+
+    #TxtFile {
+        width: 100%;
+        background-color: black;
+        color: white;
+    }
+
+    input,
+    select {
+        color: black;
+    }
+</style>
+<div>
+    <div class="row">
+        <div class="col-sm-5" style="" id="btnsContainers">
+            <a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
+            print_r($ruta[0] . '#'); ?>" title="Salir" class="btn btn-default" style="border: solid 1px">
+                <img src="../../img/png/salire.png">
+            </a>
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Enviar Cobros"
+                id="Command4" onclick="" style="border: solid 1px">
+                <img src="../../img/png/FRecaudacionBancosPreFa/upload-file.png">
+            </button>
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Subir Abonos"
+                id="Command1" onclick="" style="border: solid 1px">
+                <img src="../../img/png/FRecaudacionBancosPreFa/papers.png">
+            </button>
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Generar Facturas"
+                id="Command6" onclick="" style="border: solid 1px">
+                <img src="../../img/png/FRecaudacionBancosPreFa/facturas.png">
+            </button>
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Alumnos Contabilidad"
+                id="Command7" onclick="" style="border: solid 1px">
+                <img src="../../img/png/FRecaudacionBancosPreFa/alumnos.png">
+            </button>
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Renumerar Codigos"
+                id="Command3" onclick="" style="border: solid 1px">
+                <img src="../../img/png/FRecaudacionBancosPreFa/renumerar.png">
+            </button>
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Imprimir Codigos"
+                id="Command5" onclick="" style="border: solid 1px">
+                <img src="../../img/png/FRecaudacionBancosPreFa/printer.png">
+            </button>
+        </div>
+        <div class="col-sm-3">
+            <label for="DCEntidadBancaria" style="display:block;">Entidad Bancaria:</label>
+            <select name="DCEntidadBancaria" id="DCEntidadBancaria" style="width: 100%; max-width: 100%;"></select>
+        </div>
+        <div class="col-sm-4">
+            <div class="row">
+                <label for="DCBanco" style="">CUENTA A LA QUE SE VA ACREDITAR LOS
+                    ABONOS:</label>
+                <select name="DCBanco" id="DCBanco" style="width:98%; max-width: 98%;">
+                    <option value="0">Banco</option>
+                </select>
+            </div>
+            <div class="row">
+                <label for="CheqMatricula" style="font-size:12.9px">
+                    <input type="checkbox" name="CheqMatricula" id="CheqMatricula" /> Generar Matricula y
+                    Pension
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="padding: 10px;">
+        <form action="">
+            <fieldset style="background-color:rgb(16,128,148); padding:10px; color:white;" id="fieldsetForm">
+                <div class="row">
+                    <div class="col-sm-3" style="display:flex; align-items:center; justify-content: center;">
+                        <img src="../../img/png/FRecaudacionBancosPreFa/LogosBancos/BancoBolivarianoLogo.png"
+                            alt="Logo Banco Bolivariano" width="90%" id="imgBanco" style="margin-top:15px">
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="inline" for="MBFechaI">Facturacion <input id="MBFechaI" name="MBFechaI"
+                                type="date" style="margin-left:18px; width:100%; text-align:center;"
+                                value="<?php echo date('Y-m-d'); ?>" /></label>
+                        <label class="inline" for="MBFechaF" style="white-space:nowrap;">Tope de Pago <input
+                                id="MBFechaF" name="MBFechaF" type="date" style="width:100%; text-align:center;"
+                                value="<?php echo date('Y-m-d'); ?>" /></label>
+                        <label class="inline" for="MBFechaV">Vencimiento <input id="MBFechaV" name="MBFechaV"
+                                type="date" style="margin-left:14px; width:100%; text-align:center;"
+                                value="<?php echo date('Y-m-d'); ?>" /></label>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="row">
+                            <label for="CheqRangos">
+                                <input type="checkbox" name="CheqRangos" id="CheqRangos" /> Procesar Por Rangos Grupos:
+                            </label>
+                        </div>
+                        <div class="row">
+                            <select name="DCGrupoI" id="DCGrupoI" style="width:48%; max-width: 48%;">
+                                <option value="0"></option>
+                            </select>
+                            <select name="DCGrupoF" id="DCGrupoF" style="width:48%; max-width: 48%;">
+                                <option value="0"></option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <label for="DCLinea" style="font-size:12px;">LINEA DE CUENTAS POR COBRAR PENSIONES:</label>
+                            <select name="DCLinea" id="DCLinea" style="width:98%; max-width: 98%;">
+                                <option value="0">CxC Clientes</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <label for="TxtCodBanco" style="display:block">COD. BANCO
+                            <input type="text" name="TxtCodBanco" id="TxtCodBanco" style="display:block; width:100%" />
+                        </label>
+                        <label for="TextFacturaNo" style="display:block">Nota de Venta No.
+                            <input type="text" name="TextFacturaNo" id="TextFacturaNo"
+                                style="display:block; width:100%" />
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label for="CheqNumCodigos">
+                            <input type="checkbox" name="CheqNumCodigos" id="CheqNumCodigos" /> Procesar Con Codigo de
+                            la Empresa
+                        </label>
+                        <label for="CheqAlDia" style="padding-left:10px">
+                            <input type="checkbox" name="CheqAlDia" id="CheqAlDia" style="font-size:12.9px" /> Generar
+                            quienes esten al dia
+                        </label>
+                        <label for="LabelAbonos" style="padding-left:10px">TOTAL RECAUDADO
+                            <input type="text" name="LabelAbonos" id="LabelAbonos" />
+                        </label>
+                    </div>
+                </div>
+                <div class="row" style="margin: 10px;">
+                    <textarea class="form-control" name="TxtFile" id="TxtFile" rows="5"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="DGFactura">
+
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
