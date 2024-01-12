@@ -1,4 +1,10 @@
 <script>
+    /*
+        AUTOR DE RUTINA	: Leonardo Súñiga
+        FECHA CREACION	: 03/01/2024
+        FECHA MODIFICACION: 12/01/2024
+        DESCIPCION : Clase que se encarga de manejar la interfaz de la pantalla de recaudacion de bancos
+    */
     var TextoBanco = "";
 
     var Cta_Cobrar = "";
@@ -10,6 +16,26 @@
     var Pos_Factura = "";
     var Individual = "";
     var TipoFactura = "";
+    var Factura_No = "";
+
+    let FA = {
+        'Factura': '',
+        'Serie': '',
+        'Nuevo_Doc': true,
+        'TC': '',
+        'Cod_CxC': '',
+        'Autorizacion': '',
+        'Tipo_PRN': '',
+        'Imp_Mes': '',
+        'Porc_IVA': '',
+        'Cta_CxP': '',
+        'Vencimiento': '',
+        'Imp_Mes': '',
+        'Cta_CxP_Anterior': '',
+        'Fecha_Corte': '',
+        'Fecha': ''
+    };
+
     $(document).ready(function () {
 
         //FORM ACTIVATE
@@ -27,7 +53,7 @@
 
         //MBFechaI_LostFocus
         $('#MBFechaI').blur(function () {
-            $('MBFechaF').val(<?php echo date('Y-m-t'); ?>);
+            $('#MBFechaF').val('<?php echo date('Y-m-t'); ?>');
             var parametros = {
                 'MBFechaI': $('#MBFechaI').val()
             };
@@ -42,17 +68,76 @@
                         $.each(data, function (index, value) {
                             $('#DCLinea').append('<option value="' + value['Codigo'] + '">' + value['Concepto'] + '</option>');
                         });
-                    }else{
+                    } else {
                         $('#DCLinea').empty();
                         $('#DCLinea').append('<option value="0">No existen datos</option>');
+                    }
+                    FA.Fecha = $('#MBFechaI').val();
+                    FA.TC = "FA";
+                }
+            });
+        });
+
+        //TextFacturaNo_LostFocus
+        $('#TextFacturaNo').blur(function () {
+            Factura_No = $('#TextFacturaNo').val();
+            FA.Factura = $('#TextFacturaNo').val();
+            var parametros = {
+                'FA': FA
+            };
+            $.ajax({
+                url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?TextFacturaNo_LostFocus=true',
+                type: 'post',
+                dataType: 'json',
+                data: { 'parametros': parametros },
+                success: function (data) {
+                    if (data.response) {
+                        FA.Factura = $('#TextFacturaNo').val();
+                    } else {
+                        FA.Nuevo_Doc = true;
+                        FA.Factura = data.Factura;
+                        if ($('#TextFacturaNo').val() < FA.Factura) {
+                            var Mensajes = "La Factura/Nota de Venta No. " + $('#TextFacturaNo').val() +
+                                " No está Procesada. ¿Desea Procesarla?";
+                            var Titulo = "Formulario de Confirmación";
+                            //Ask with swal fire 
+                            Swal.fire({
+                                title: Titulo,
+                                text: Mensajes,
+                                type: "warning",
+                                confirmButtonText: 'Sí!',
+                                showCancelButton: true,
+                                allowOutsideClick: false,
+                                cancelButtonText: 'No!'
+                            }).then((result) => {
+                                if (result.value) {
+                                    FA.Factura = $('#TextFacturaNo').val();
+                                } 
+                            });
+                        }else{
+                            FA.Factura = data.Factura;
+                            $('#TextFacturaNo').val(FA.Factura);
+                        }
                     }
                 }
             });
         });
 
+        //DCLinea_LostFocus
+        $('#DCLinea').blur(function(){
+            FA.Cod_CxC = $(this).val();
+            //To FA.Fecha todays date
+            FA.Fecha = '<?php echo date('Y-m-d'); ?>';
+            //TODO: Lineas_De_CxC retorna un TFA con todos los datos de FA, toca hacer un for 
+            //para asignar el parametro en el FA de esta clase. Comprobar si el parametro existe, caso contrario agregarlo
+
+        });
+
 
 
     });
+
+
 
     function OpcionesEntidadesBancarias(TextoBanco) {
         color = 'rgb(255,255,255)';
@@ -61,37 +146,37 @@
             case 'BOLIVARIANO':
                 $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/BancoBolivarianoLogo.png");
                 $("#imgBanco").attr("alt", "Logo Banco Bolivariano");
-                color = 'rgb(12,153,151)';
+                color = '#008080';
                 fontColor = 'white';
                 break;
             case 'INTERNACIONAL':
                 $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/BancoInternacionalLogo.png");
                 $("#imgBanco").attr("alt", "Logo Banco Internacional");
-                color = 'rgb(242,145,0)';
-                fontColor = 'white';
+                color = '#f3a446';
+                fontColor = 'black';
                 break;
             case 'GUAYAQUIL':
                 $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/BancoGuayaquilLogo.png");
                 $("#imgBanco").attr("alt", "Logo Banco Guayaquil");
-                color = 'rgb(178,0,107)';
-                fontColor = 'white';
+                color = '#f30582';
+                fontColor = 'black';
                 break;
             case 'PICHINCHA':
                 $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/BancoPichinchaLogo.png");
                 $("#imgBanco").attr("alt", "Logo Banco Pichincha");
-                color = 'rgb(255,223,0)';
+                color = '#FFFF80';
                 fontColor = 'black';
                 break;
-            case 'BIZBANCKPACIFICO':
+            case 'PACIFICO':
                 $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/BancoPacificoLogo.png");
                 $("#imgBanco").attr("alt", "Logo Banco Pacifico");
-                color = 'rgb(31,156,212)';
+                color = '#C0C0FF';
                 fontColor = 'black';
                 break;
             case 'PRODUBANCO':
                 $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/ProduBancoLogo.png");
                 $("#imgBanco").attr("alt", "Logo Produbanco");
-                color = 'rgb(1,102,52)';
+                color = 'white';
                 fontColor = 'black';
                 break;
             case 'OTROSBANCOS':
@@ -109,7 +194,7 @@
             case 'COOPJEP':
                 $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/CoopJEPLogo.png");
                 $("#imgBanco").attr("alt", "Logo Cooperativa JEP");
-                color = 'rgb(0,104,55)';
+                color = '#80FF80';
                 fontColor = 'black';
                 break;
             case 'FARMACIAS':
@@ -122,6 +207,12 @@
                 $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/RecaudacionExcelLogo.png");
                 $("#imgBanco").attr("alt", "Logo Recaudacion por Excel");
                 color = 'white';
+                fontColor = 'black';
+                break;
+            default:
+                $("#imgBanco").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/OtrosBancosLogo.png");
+                $("#imgBanco").attr("alt", "Logo Otros Bancos");
+                color = 'rgb(255,255,255)';
                 fontColor = 'black';
                 break;
         }
@@ -290,7 +381,7 @@
     </div>
     <div class="row" style="padding: 10px;">
         <form action="">
-            <fieldset style="background-color:rgb(16,128,148); padding:10px; color:white;" id="fieldsetForm">
+            <fieldset style="background-color:#008080; padding:10px; color:white;" id="fieldsetForm">
                 <div class="row">
                     <div class="col-sm-3" style="display:flex; align-items:center; justify-content: center;">
                         <img src="../../img/png/FRecaudacionBancosPreFa/LogosBancos/BancoBolivarianoLogo.png"
@@ -310,7 +401,7 @@
                     <div class="col-sm-3">
                         <div class="row">
                             <label for="CheqRangos">
-                                <input type="checkbox" name="CheqRangos" id="CheqRangos" /> Procesar Por Rangos Grupos:
+                                <input type="checkbox" name="CheqRangos" id="CheqRangos" checked/> Procesar Por Rangos Grupos:
                             </label>
                         </div>
                         <div class="row">
@@ -330,18 +421,19 @@
                     </div>
                     <div class="col-sm-3">
                         <label for="TxtCodBanco" style="display:block">COD. BANCO
-                            <input type="text" name="TxtCodBanco" id="TxtCodBanco" style="display:block; width:100%" />
+                            <input type="text" name="TxtCodBanco" id="TxtCodBanco" style="display:block; width:100%"
+                                value="0" />
                         </label>
                         <label for="TextFacturaNo" style="display:block">Nota de Venta No.
-                            <input type="text" name="TextFacturaNo" id="TextFacturaNo"
-                                style="display:block; width:100%" />
+                            <input type="text" name="TextFacturaNo" id="TextFacturaNo" style="display:block; width:100%"
+                                value="99999" />
                         </label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
                         <label for="CheqNumCodigos">
-                            <input type="checkbox" name="CheqNumCodigos" id="CheqNumCodigos" /> Procesar Con Codigo de
+                            <input type="checkbox" name="CheqNumCodigos" id="CheqNumCodigos" checked/> Procesar Con Codigo de
                             la Empresa
                         </label>
                         <label for="CheqAlDia" style="padding-left:10px">
@@ -349,7 +441,8 @@
                             quienes esten al dia
                         </label>
                         <label for="LabelAbonos" style="padding-left:10px">TOTAL RECAUDADO
-                            <input type="text" name="LabelAbonos" id="LabelAbonos" />
+                            <input type="text" name="LabelAbonos" id="LabelAbonos" value="0.00"
+                                style="text-align: right;" />
                         </label>
                     </div>
                 </div>
