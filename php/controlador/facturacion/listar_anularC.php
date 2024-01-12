@@ -1,5 +1,5 @@
 <?php 
-require_once(dirname(__DIR__,2)."/modelo/facturacion/listar_AnularM.php");
+require_once(dirname(__DIR__,2)."/modelo/facturacion/listar_anularM.php");
 require_once(dirname(__DIR__,2)."/comprobantes/SRI/autorizar_sri.php");
 
 /**
