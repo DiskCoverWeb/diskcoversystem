@@ -38,6 +38,15 @@ if (isset($_GET['LeerCampoEmpresa'])) {
     echo json_encode(Leer_Campo_Empresa($_POST['campo']));
 }
 
+if (isset($_GET['MBFechaFLostFocus'])) {
+    echo json_encode($controlador->MBFechaF_LostFocus($_POST['fecha']));
+}
+
+if (isset($_GET['LeerSeteosCtas'])) {
+    echo json_encode(Leer_Seteos_Ctas());
+}
+
+
 class FRecaudacionBancosCxCC
 {
     private $modelo;
@@ -120,26 +129,22 @@ class FRecaudacionBancosCxCC
         return $list;
     }
 
-    /*
-   function Form_Activate($parametros)
-    {       
-        
-        FechaValida($parametros['MBFechaI']);
-        FechaValida($parametros['MBFechaF']);
-        $NuevoComp = True;
-        $ModificarComp = False;
-        $CopiarComp = False;
-        //$Co.CodigoB = "";
-        //$Co.Numero = 0;
-        $this->DCGrupoI_DCGrupoF();
-        $AdoAux = $this->AdoAux();
-
-        //catalogo de rubros a facturar
-        $AdoProducto = $this->AdoProducto();
+    function MBFechaF_LostFocus($fecha)
+    {
+        $datos = $this->modelo->MBFechaF_LostFocus();    
+        if(count($datos) > 0) {            
+            print_r($fecha);            
+            $this->modelo->MBFechaF_LostFocusUpdate($fecha);      
+        }   
+    }
+/*
+    function FechaValida($MBFechaF){
+        $FechaValida = FechaValida($MBFechaF);
+        if ($FechaValida["ErrorFecha"]) {
+            return ['error' => true, "mensaje" => $FechaValida["MsgBox"]];
+        }        
+        return ['error' => false, "mensaje" => "--"];
     }*/
-
-
-
 }
 
 ?>

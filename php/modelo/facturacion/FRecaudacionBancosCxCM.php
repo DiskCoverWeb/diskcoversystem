@@ -74,6 +74,26 @@ class FRecaudacionBancosCxCM
         return $this->db->datos($sql);
     }
 
+    function MBFechaF_LostFocus()
+    {
+        $sql = "SELECT *
+                FROM Fechas_Balance
+                WHERE Detalle = 'Deuda Pendiente'
+                AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND Periodo =  '" . $_SESSION['INGRESO']['periodo'] . "' ";
+
+        return $this->db->datos($sql);
+    }
+
+    function MBFechaF_LostFocusUpdate($fecha)
+    {
+        "UPDATE Fechas_Balance
+        SET Fecha_Inicial = '" . $fecha . "', Fecha_Final = '" . $fecha . "',
+        WHERE Detalle = 'Deuda Pendiente'
+        AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
+        AND Periodo =  '" . $_SESSION['INGRESO']['periodo'] . "' ";
+    }
+
 
 
 

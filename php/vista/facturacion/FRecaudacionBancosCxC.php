@@ -142,13 +142,18 @@
 
         $('#MBFechaI').blur(function () {
             let fechaI = $(this).val();
-            FechaValida(fechaI);
+            fechaI = FechaValida(fechaI);
         });
 
         $('#MBFechaF').blur(function () {
             let fechaF = $(this).val();
-            FechaValida(fechaF);
+            let FechaValidares = FechaValida(fechaF, true);
+            //console.log('fecha valida', FechaValidares);
+
+            //MBFechaF_LostFocus(fechaF);
         });
+
+
 
         //$NuevoCompe = false
         //$CopiarComp = false
@@ -162,7 +167,7 @@
         AdoProducto();
         Select_DCEntidad();
         Select_DCBanco();
-        Select_Banco();
+        Case_Banco();
 
         $('#CheqRangos').click(function () {
             $("#DCGrupoI, #DCGrupoF").toggle($(this).is(":checked") ? true : false);
@@ -181,7 +186,7 @@
         });
     }
 
-    function Select_Banco() {
+    function Case_Banco() {
 
         $("#miPanel").css("background-color", "#FFFFF1");
         //$("#miLogo").attr("src", "../../img/png/logoBancoBolivariano.png");
@@ -194,11 +199,11 @@
 
             switch (index) {
                 case 'BANCO PICHINCHA':
-                    $("#miPanel").css("background-color", "#80FFFF");
+                    $("#miPanel").css("background-color", " #FFFF80");
                     $("#miLogo").attr("src", "../../img/png/logoBancoPichincha.png");
                     break;
                 case 'BANCO BOLIVARIANO':
-                    $("#miPanel").css("background-color", "#808000");
+                    $("#miPanel").css("background-color", "#008080");
                     $("#miLogo").attr("src", "../../img/png/logoBancoBolivariano.png");
                     mostrarCheqSat();
                     break;
@@ -207,16 +212,16 @@
                     $("#miLogo").attr("src", "../../img/png/logoBancoGnrlRuminahui.png");
                     break;
                 case 'BANCO INTERNACIONAL':
-                    $("#miPanel").css("background-color", "#FF8080");
-                    //$("#miLogo").attr("src", "../../img/png/logoBancoInternacional.png");
+                    $("#miPanel").css("background-color", "#f3a446");
+                    $("#miLogo").attr("src", "../../img/png/logoBancoInternacional.png");
                     break;
                 case 'BANCO DEL PACIFICO':
-                    $("#miPanel").css("background-color", "#C0C000");
+                    $("#miPanel").css("background-color", "#C0C0FF");
                     $("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
                     mostrarCheqSat();
                     break;
                 case 'BANCO DEL PACIFICO INTERMATICO':
-                    $("#miPanel").css("background-color", "#C0C000");
+                    $("#miPanel").css("background-color", "#C0C0FF");
                     //$("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
                     mostrarCheqSat();
                     break;
@@ -229,20 +234,20 @@
                     $("#miPanel").css("background-color", "#FFFFFF");
                     $("#miLogo").attr("src", "../../img/png/logoBancoProdubanco.png");
                     break;
-                case 'BANCO GUAYAQUIL':
-                    $("#miPanel").css("background-color", "#FF8080");
+                case 'BANCO DE GUAYAQUIL S.A':
+                    $("#miPanel").css("background-color", "#f30582");
                     $("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
                     break;
                 case 'COOPERATIVA JEP':
                     $("#miPanel").css("background-color", "#80FF80");
                     //$("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
                     break;
-                case 'CACPE':
+                case 'COOP. AHORRO Y CREDITO DE LA LA PEQUENA EMPRESA CACPE BIBLIAN LTDA':
                     $("#miPanel").css("background-color", "#80FF80");
                     //$("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
                     break;
                 default:
-                    $("#miPanel").css("background-color", "#FFFFFF");
+                    $("#miPanel").css("background-color", "rgb(255,255,255)");
                     //$("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
                     break;
             }
@@ -338,23 +343,49 @@
     }
 
 
-    function FechaValida(fecha) {
+    function FechaValida(fecha, MBFecha = false) {
         $.ajax({
             type: "POST",
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?FechaValida=true',
             dataType: 'json',
             data: { 'fecha': fecha },
             success: function (datos) {
+                //console.log(datos, MBFecha, 'fecha:' + fecha);
                 if (datos.ErrorFecha) {
                     Swal.fire({
                         type: 'warning',
                         title: datos.MsgBox,
                         text: fecha
                     });
+                } else if (MBFecha) {  
+                    console.log(fecha);                  
+                    $.ajax({
+                        type: "POST",
+                        url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?MBFechaFLostFocus=true',
+                        dataType: 'json',
+                        data: { 'fecha': fecha },
+                        success: function (datos) {
+                            //console.log('datoFECHALOSTFOCUS',datos);
+                        }
+                    });
                 }
+
             }
         });
     }
+/*
+    function MBFechaF_LostFocus(fecha) {
+        console.log('fehca dentro del metodo', fecha);
+        $.ajax({
+            type: "POST",
+            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?MBFechaFLostFocus=true',
+            dataType: 'json',
+            data: { 'fecha': fecha },
+            success: function (datos) {
+                //console.log('datoFECHALOSTFOCUS',datos);
+            }
+        });
+    }*/
 
     function Leer_Campo_Empresa(campo) {
         $.ajax({
@@ -363,7 +394,19 @@
             dataType: 'json',
             data: { 'campo': campo },
             success: function (datos) {
-                //console.log(datos);
+                //console.log('dato', datos);
+            }
+        });
+    }
+
+    function Leer_Seteos_Ctas(campo) {
+        $.ajax({
+            type: "POST",
+            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?LeerSeteosCtas=true',
+            dataType: 'json',
+            data: { 'campo': campo },
+            success: function (datos) {
+                console.log('dato seteo', datos);
             }
         });
     }
