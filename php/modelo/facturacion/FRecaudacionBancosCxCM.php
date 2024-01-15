@@ -92,6 +92,7 @@ class FRecaudacionBancosCxCM
         WHERE Detalle = 'Deuda Pendiente'
         AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
         AND Periodo =  '" . $_SESSION['INGRESO']['periodo'] . "' ";
+        
     }
 
 
