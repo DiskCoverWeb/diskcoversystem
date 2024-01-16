@@ -138,6 +138,10 @@ if (isset($_GET['descargar_xml'])) {
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->descargar_xml($parametros));
 }
+if (isset($_GET['generar_xml'])) {
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->generar_xml($parametros));
+}
 
 class lista_facturasC
 {
@@ -206,6 +210,9 @@ class lista_facturasC
 								<li><a href="#" onclick="descargar_fac(\'' . $value['Factura'] . '\',\'' . $value['Serie'] . '\',\'' . $value['CodigoC'] . '\')"><i class="fa fa-download"></i> Descargar Factura</a></li>';
 			if (strlen($value['Autorizacion']) > 13) {
 				$tr .= '<li><a href="#" onclick="descargar_xml(\'' . $value['Autorizacion'] . '\')"><i class="fa fa-download"></i> Descargar XML</a></li>';
+			}else if(strlen($value['Autorizacion']) <= 13 && $value['T'] != 'A')
+			{
+				$tr .= '<li><a href="#" onclick="generar_xml(\'' . $value['Factura'] . '\',\'' . $value['Serie'] . '\',\'' . $value['TC'] . '\')"><i class="fa fa-download"></i> Generar XML</a></li>';
 			}
 			$tr .= '
 								</ul>
@@ -1128,6 +1135,22 @@ QUITO - ECUADOR';
 			}
 		}
 	}
+
+	function generar_xml($parametros)
+	{
+		// print_r($parametros);die();
+		$xml = $this->sri->generar_solo_xml_factura($parametros);	   
+		// print_r($xml);die(); 
+		if($xml['respuesta']==1)
+		{
+			$rutaB = 'comprobantes/entidades/entidad_' . generaCeros($_SESSION['INGRESO']['IDEntidad'], 3) . '/CE' . generaCeros($_SESSION['INGRESO']['item'], 3) . '/Generados/' . $xml['Clave'] . '.xml';
+			return array('respuesta'=> 1,'ruta' => $rutaB, 'xml' => $xml['Clave'] . '.xml');
+		}else
+		{
+			return array('respuesta'=>$xml['respuesta'],'ruta' => '', 'xml' => $xml['Clave'] . '.xml');
+		}
+	}
+
 
 
 }

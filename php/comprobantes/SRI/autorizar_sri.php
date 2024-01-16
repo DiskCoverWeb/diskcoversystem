@@ -346,15 +346,21 @@ class autorizacion_sri
 	}
 
 	
-	function datos_factura($serie,$fact,$tc)
+	function datos_factura($serie,$fact,$tc,$restringirAut=true)
 	{
 		// $con = $this->conn->conexion();
-		$sql = "SELECT * From Facturas WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+		$sql = "SELECT * From Facturas 
+		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 		AND TC = '".$tc."' 
 		AND Serie = '".$serie."' 
-		AND Factura = ".$fact." 
-		AND LEN(Autorizacion) = 13 AND T <> 'A' ";
+		AND Factura = ".$fact." "; 
+		if($restringirAut)
+		{
+			$sql.="AND LEN(Autorizacion) = 13 ";
+		}
+		$sql.=" AND T <> 'A' ";
+		// print_r($sql);die();
 		$datos = $this->db->datos($sql);
 		return $datos;
 	}
@@ -3848,29 +3854,241 @@ function error_sri($clave)
 
 
 
-function generar_carpetas($entidad,$empresa)
-{
-if(strlen($entidad)<3){$entidad=generaCeros($entidad,3);} if(strlen($empresa)<3){$empresa=generaCeros($empresa,3);}
-    $carpeta_entidad=dirname(__DIR__)."/entidades/entidad_".$entidad; $carpeta_autorizados="" ; $carpeta_generados="" ;
-    $carpeta_firmados="" ; $carpeta_no_autori="" ; if(file_exists($carpeta_entidad)) {
-    $carpeta_comprobantes=$carpeta_entidad.'/CE'.$empresa; if(file_exists($carpeta_comprobantes)) {
-    $carpeta_autorizados=$carpeta_comprobantes."/Autorizados"; $carpeta_generados=$carpeta_comprobantes."/Generados";
-    $carpeta_firmados=$carpeta_comprobantes."/Firmados"; $carpeta_no_autori=$carpeta_comprobantes."/No_autorizados";
-    $carpeta_rechazados=$carpeta_comprobantes."/Rechazados"; $carpeta_rechazados=$carpeta_comprobantes."/Enviados";
-    if(!file_exists($carpeta_autorizados)) { mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777); }
-    if(!file_exists($carpeta_generados)) { mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777); }
-    if(!file_exists($carpeta_firmados)) { mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777); }
-    if(!file_exists($carpeta_no_autori)) { mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777); }
-    if(!file_exists($carpeta_rechazados)) { mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777); }
-    if(!file_exists($carpeta_rechazados)) { mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777); } }else {
-    mkdir($carpeta_entidad.'/CE'.$empresa, 0777); mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
-    mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
-    mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados',
-    0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777); } }else { mkdir($carpeta_entidad, 0777);
-    mkdir($carpeta_entidad.'/CE'.$empresa, 0777); mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
-    mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
-    mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados',
-    0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777); } 
-} 
+	function generar_carpetas($entidad,$empresa)
+	{
+	if(strlen($entidad)<3){$entidad=generaCeros($entidad,3);} if(strlen($empresa)<3){$empresa=generaCeros($empresa,3);}
+	    $carpeta_entidad=dirname(__DIR__)."/entidades/entidad_".$entidad; $carpeta_autorizados="" ; $carpeta_generados="" ;
+	    $carpeta_firmados="" ; $carpeta_no_autori="" ; if(file_exists($carpeta_entidad)) {
+	    $carpeta_comprobantes=$carpeta_entidad.'/CE'.$empresa; if(file_exists($carpeta_comprobantes)) {
+	    $carpeta_autorizados=$carpeta_comprobantes."/Autorizados"; $carpeta_generados=$carpeta_comprobantes."/Generados";
+	    $carpeta_firmados=$carpeta_comprobantes."/Firmados"; $carpeta_no_autori=$carpeta_comprobantes."/No_autorizados";
+	    $carpeta_rechazados=$carpeta_comprobantes."/Rechazados"; $carpeta_rechazados=$carpeta_comprobantes."/Enviados";
+	    if(!file_exists($carpeta_autorizados)) { mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777); }
+	    if(!file_exists($carpeta_generados)) { mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777); }
+	    if(!file_exists($carpeta_firmados)) { mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777); }
+	    if(!file_exists($carpeta_no_autori)) { mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777); }
+	    if(!file_exists($carpeta_rechazados)) { mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados', 0777); }
+	    if(!file_exists($carpeta_rechazados)) { mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777); } }else {
+	    mkdir($carpeta_entidad.'/CE'.$empresa, 0777); mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
+	    mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
+	    mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados',
+	    0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777); } }else { mkdir($carpeta_entidad, 0777);
+	    mkdir($carpeta_entidad.'/CE'.$empresa, 0777); mkdir($carpeta_entidad."/CE".$empresa."/Autorizados", 0777);
+	    mkdir($carpeta_entidad.'/CE'.$empresa.'/Generados', 0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Firmados', 0777);
+	    mkdir($carpeta_entidad.'/CE'.$empresa.'/No_autorizados', 0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Rechazados',
+	    0777); mkdir($carpeta_entidad.'/CE'.$empresa.'/Enviados', 0777); } 
+	} 
+
+
+	function generar_solo_xml_factura($parametros)
+	{
+		// 1 para autorizados
+	    //-1 para no autorizados y devueltas
+	    // 2 para devueltas
+	    //-2 no existe la factura
+	    // texto del erro en forma de matris
+		$cabecera['ambiente']=$_SESSION['INGRESO']['Ambiente'];
+	    $cabecera['ruta_ce']=$_SESSION['INGRESO']['Ruta_Certificado'];
+	    $cabecera['clave_ce']=$_SESSION['INGRESO']['Clave_Certificado'];
+	    $cabecera['nom_comercial_principal']=$this->quitar_carac($_SESSION['INGRESO']['Nombre_Comercial']);
+	    $cabecera['razon_social_principal']=$this->quitar_carac($_SESSION['INGRESO']['Razon_Social']);
+	    $cabecera['ruc_principal']=$_SESSION['INGRESO']['RUC'];
+	    $cabecera['direccion_principal']= $this->quitar_carac($_SESSION['INGRESO']['Direccion']);
+	    $cabecera['Entidad'] = generaCeros($_SESSION['INGRESO']['IDEntidad'],3);
+	   
+	    if(isset($parametros['serie'])){
+	    	$cabecera['serie']=$parametros['serie'];
+	    	$cabecera['esta']=substr($parametros['serie'],0,3); 
+	    	$cabecera['pto_e']=substr($parametros['serie'],3,5); 	    
+	    }else if(isset($parametros['Serie']))
+	    {	    	
+	    	$parametros['serie'] = $parametros['Serie'];
+	    	$cabecera['serie']=$parametros['Serie'];
+	    	$cabecera['esta']=substr($parametros['Serie'],0,3); 
+	   		$cabecera['pto_e']=substr($parametros['Serie'],3,5); 	    
+	    }
+
+	    if(isset($parametros['num_fac'])){
+	    	$cabecera['factura']=$parametros['num_fac'];
+	    }else if(isset($parametros['FacturaNo']))
+	    {	    	
+	    	$cabecera['factura']=$parametros['FacturaNo'];
+	    }
+	    else if(isset($parametros['Factura']))
+	    {	    	
+	    	$cabecera['factura']=$parametros['Factura'];
+	    }	    
+	    $cabecera['item']=$_SESSION['INGRESO']['item'];
+
+	    if(isset($parametros['tc'])){
+	    	$cabecera['tc']=$parametros['tc'];
+	    }else if(isset($parametros['TC']))
+	    {	    	
+	    	$cabecera['tc']=$parametros['TC'];
+	    }
+
+	    if(isset($parametros['cod_doc'])){
+	    	$cabecera['cod_doc']=$parametros['cod_doc'];
+	    }
+
+	    $cabecera['periodo']=$_SESSION['INGRESO']['periodo'];
+		if( isset($cabecera['tc']) && $cabecera['tc']=='LC' || isset($cabecera['TC']) && $cabecera['TC']=='LC')
+		{
+			$cabecera['cod_doc']='03';
+		}else if($cabecera['tc']=='FA')
+		{
+			$cabecera['cod_doc']='01';
+		}
+
+		//sucursal
+		 $sucursal = $this->catalogo_lineas($cabecera['tc'],$cabecera['serie']);
+		 if(count($sucursal)>0)
+		 {
+		 	$cabecera['Nombre_Establecimiento'] = $sucursal[0]['Nombre_Establecimiento'];
+		 	$cabecera['Direccion_Establecimiento'] = $sucursal[0]['Direccion_Establecimiento'];
+		 	$cabecera['Telefono_Establecimiento'] = $sucursal[0]['Telefono_Estab'];
+		 	$cabecera['Ruc_Establecimiento'] = $sucursal[0]['RUC_Establecimiento'];
+		 	$cabecera['Email_Establecimiento'] = $sucursal[0]['Email_Establecimiento'];
+		 	$cabecera['Placa_Vehiculo'] ='.';
+		 	$cabecera['Cta_Establecimiento'] = '.';
+		 	if(isset($sucursal[0]['Placa_Vehiculo']))
+		 	{
+		 		$cabecera['Placa_Vehiculo'] = $sucursal[0]['Placa_Vehiculo'];
+		 	}
+		 	if (isset($sucursal[0]['Cta_Establecimiento'])) {
+		 		$cabecera['Cta_Establecimiento'] = $sucursal[0]['Cta_Establecimiento'];
+		 	}		 	
+		 }
+				//datos de factura
+		 // print_r($cabecera);die();
+	    		$datos_fac = $this->datos_factura($cabecera['serie'],$cabecera['factura'],$cabecera['tc'],false);
+	    		if(count($datos_fac)==0)
+	    		{
+	    			return -2;
+	    		}
+	    		// print_r($datos_fac);die();
+	    	    $cabecera['RUC_CI']=$this->quitar_carac($datos_fac[0]['RUC_CI']);
+				$cabecera['Fecha']=$datos_fac[0]['Fecha']->format('Y-m-d');
+				$cabecera['Razon_Social']=$this->quitar_carac($datos_fac[0]['Razon_Social']);
+				$cabecera['Direccion_RS']=$this->quitar_carac($datos_fac[0]['Direccion_RS']);
+				$cabecera['Sin_IVA']= $this->money_formato($datos_fac[0]['Sin_IVA'],2);
+				$cabecera['Descuento'] = $this->money_formato($datos_fac[0]['Descuento']+$datos_fac[0]['Descuento2'],2);
+				$cabecera['baseImponible'] = $datos_fac[0]['Sin_IVA']+$cabecera['Descuento'];
+				$cabecera['Porc_IVA'] = $this->money_formato($datos_fac[0]['Porc_IVA'],2);
+
+				// print_r($cabecera['Porc_IVA']);die();
+				$cabecera['Con_IVA'] = $datos_fac[0]['Con_IVA'];
+				$cabecera['Total_MN'] = $this->money_formato($datos_fac[0]['Total_MN'],2);
+				$cabecera['Observacion'] = $datos_fac[0]['Observacion'];
+				$cabecera['Nota'] = $datos_fac[0]['Nota'];
+
+				$cabecera['Nota'] = $datos_fac[0]['Nota'];
+				if($datos_fac[0]['Tipo_Pago'] == '.')
+				{
+					$cabecera['formaPago']='01';
+				}else
+				{
+					$cabecera['formaPago']=$datos_fac[0]['Tipo_Pago'];
+				}
+				$cabecera['Propina']= number_format($datos_fac[0]['Servicio'],2,'.','');
+				$cabecera['Autorizacion']=$datos_fac[0]['Autorizacion'];
+				$cabecera['Imp_Mes']=$datos_fac[0]['Imp_Mes'];
+				$cabecera['SP']=$datos_fac[0]['SP'];
+				$cabecera['CodigoC']=$datos_fac[0]['CodigoC'];
+				$cabecera['TelefonoC']=$datos_fac[0]['Telefono_RS'];
+				$cabecera['Orden_Compra']=$datos_fac[0]['Orden_Compra'];
+				$cabecera['baseImponibleSinIva'] = $this->money_formato(($cabecera['Sin_IVA']-$datos_fac[0]['Desc_0']),2);
+				$cabecera['baseImponibleConIva'] = $this->money_formato(($cabecera['Con_IVA']-$datos_fac[0]['Desc_X']),2);
+				$cabecera['totalSinImpuestos'] = $this->money_formato(($cabecera['Sin_IVA']+$cabecera['Con_IVA']-$cabecera['Descuento']),2);
+				$cabecera['IVA'] = $this->money_formato($datos_fac[0]['IVA'],2);
+				$cabecera['descuentoAdicional']= $this->money_formato(0,2);
+				$cabecera['moneda']="DOLAR";
+				$cabecera['tipoIden']='';
+				// print_r($cabecera);die();
+
+			//datos de cliente
+	    	$datos_cliente = $this->datos_cliente($datos_fac[0]['CodigoC']);
+	    	// print_r($datos_cliente);die();
+	    	    $cabecera['Cliente']=$this->quitar_carac($datos_cliente[0]['Cliente']);
+				$cabecera['DireccionC']=$this->quitar_carac($datos_cliente[0]['Direccion']);
+				$cabecera['TelefonoC']=$datos_cliente[0]['Telefono'];
+				$cabecera['EmailR']=$this->quitar_carac($datos_cliente[0]['Email2']);
+				$cabecera['EmailC']=$this->quitar_carac($datos_cliente[0]['Email']);
+				$cabecera['Contacto']=$datos_cliente[0]['Contacto'];
+				$cabecera['Grupo']=$datos_cliente[0]['Grupo'];
+
+			//codigo verificador 
+				if($cabecera['RUC_CI']=='9999999999999')
+				  {
+				  	$cabecera['tipoIden']='07';
+			      }else
+			      {
+			      	$cod_veri = Digito_verificador($datos_fac[0]['RUC_CI']);
+			      	// print_r($cod_veri);die();
+			      	switch ($cod_veri['Tipo_Beneficiario']) {
+			      		case 'R':
+			      			$cabecera['tipoIden']='04';
+			      			break;
+			      		case 'C':
+			      			$cabecera['tipoIden']='05';
+			      			break;
+			      		case 'P':
+			      			$cabecera['tipoIden']='06';
+			      			break;
+			      	}
+			      }
+
+			      // print_r($cabecera);die();
+			    $cabecera['codigoPorcentaje']=0;
+			    if((floatval($cabecera['Porc_IVA'])*100)>12)
+			    {
+			       $cabecera['codigoPorcentaje']=3;
+			    }else
+			    {
+			      $cabecera['codigoPorcentaje']=2;
+			    }
+			   //detalle de factura
+			    $detalle = array();
+			    $cuerpo_fac = $this->detalle_factura($cabecera['serie'],$cabecera['factura'],$cabecera['Autorizacion'],$cabecera['tc']);
+			    foreach ($cuerpo_fac as $key => $value) 
+			    {			    	
+			    	$producto = $this->datos_producto($value['Codigo']);
+			    	$detalle[$key]['Codigo'] =  $value['Codigo'];
+			    	$detalle[$key]['Cod_Aux'] =  $producto[0]['Desc_Item'];
+				    $detalle[$key]['Cod_Bar'] =  $producto[0]['Codigo_Barra'];
+				    $detalle[$key]['Producto'] = $this->quitar_carac($value['Producto']);
+				    $detalle[$key]['Cantidad'] = $this->money_formato($value['Cantidad'],6);
+				    $detalle[$key]['Precio'] =  $this->money_formato($value['Precio'],6);
+				    $detalle[$key]['descuento'] = $this->money_formato(($value['Total_Desc']+$value['Total_Desc2']),2);
+				  if ($cabecera['Imp_Mes']==true)
+				  {
+				   	$detalle[$key]['Producto'] = $this->quitar_carac($value['Producto']).', '.$value['Ticket'].': '.$value['Mes'].' ';
+				  }
+				  if($cabecera['SP']==true)
+				  {
+				  	$detalle[$key]['Producto'] = $this->quitar_carac($value['Producto']).', Lote No. '.$value['Lote_No'].
+					', ELAB. '.$value['Fecha_Fab'].
+					', VENC. '.$value['Fecha_Exp'].
+					', Reg. Sanit. '.$value['Reg_Sanitario'].
+					', Modelo: '.$value['Modelo'].
+					', Procedencia: '.$value['Procedencia'];
+				  }
+				   $detalle[$key]['SubTotal'] =  $this->money_formato(($value['Cantidad']*$value['Precio'])-($value['Total_Desc']+$value['Total_Desc2']),2);
+				   $detalle[$key]['Serie_No'] = $value['Serie_No'];
+				   $detalle[$key]['Total_IVA'] = $this->money_formato($value['Total_IVA'],2);
+				   $detalle[$key]['Porc_IVA']= $this->money_formato($value['Porc_IVA'],2);
+			    }
+			    $cabecera['fechaem']=  date("d/m/Y", strtotime($cabecera['Fecha']));		
+
+			    // $linkSriAutorizacion = $_SESSION['INGRESO']['Web_SRI_Autorizado'];
+ 	    		// $linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion'];
+			    // print_r($cabecera);print_r($detalle);die();
+			    $cabecera['ClaveAcceso'] =$this->Clave_acceso($cabecera['Fecha'],$cabecera['cod_doc'],$cabecera['serie'],$cabecera['factura']);
+	            
+	            $xml = $this->generar_xml($cabecera,$detalle);	
+	           	return array('respuesta'=>$xml,'Clave'=>$cabecera['ClaveAcceso']);
+	            
+	       }
+
 } 
 ?>
