@@ -134,6 +134,9 @@ class cambioeM
 	function editar_datos_empresa($parametros)
 	{
 
+
+		// print_r($parametros);die();
+
 	    $em = $this->datos_empresa($parametros['empresas']);
 	    if(count($em)>0)
 	    {
@@ -189,6 +192,8 @@ class cambioeM
 		    		LeyendaFAT = '".$parametros['txtLeyendaImpresora']."',
 		    		Ambiente = '".$ambiente."',
 		    		Email_CE_Copia = '".$copia."',
+		    		Fecha_P12 = '".$parametros['FechaP12']."',
+		    		Fecha= '".$parametros['FechaR']."',
 
 		    		Empresa = '".$parametros['TxtEmpresa']."',
 		    		Item = '".$em[0]['Item']."',
