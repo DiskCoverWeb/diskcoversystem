@@ -87,13 +87,84 @@ class FRecaudacionBancosCxCM
 
     function MBFechaF_LostFocusUpdate($fecha)
     {
-        "UPDATE Fechas_Balance
+        $sql = "UPDATE Fechas_Balance
         SET Fecha_Inicial = '" . $fecha . "', Fecha_Final = '" . $fecha . "',
         WHERE Detalle = 'Deuda Pendiente'
         AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
         AND Periodo =  '" . $_SESSION['INGRESO']['periodo'] . "' ";
-        
     }
+
+    function Query1EnviarRubros()
+    {
+        $sSQL = "UPDATE Facturas 
+                SET Anio_Mes = SUBSTRING(DF.Ticket,1,4) + '-' + RIGHT(REPLICATE('0', 2 - LEN(CAST(DF.Mes_No As VARCHAR))), 2) + CAST(DF.Mes_No As VARCHAR)
+                FROM Facturas As F, Detalle_Factura As DF 
+                WHERE F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND LEN(Anio_Mes) = 1 
+                AND LEN(DF.Ticket) = 4 
+                AND F.Periodo = DF.Periodo 
+                AND F.Item = DF.Item  
+                AND F.TC = DF.TC  
+                AND F.Serie = DF.Serie  
+                AND F.Factura = DF.Factura";
+
+        Ejecutar_SQL_SP($sSQL);
+    }
+
+    function Query2EnviarRubros($parametros)
+    {
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+        $DCGrupoI = $parametros['DCGrupoI'];
+        $DCGrupoF = $parametros['DCGrupoF'];
+        $CheqRangos = $parametros['$CheqRangos'];
+
+        $sSQL = "SELECT F.CodigoC, C.Actividad, C.Cliente, C.CI_RUC, C.Direccion, C.Grupo, F.Fecha, F.Serie, F.Factura, F.Total_MN, F.Saldo_MN, F.Anio_Mes
+                FROM Facturas AS F, Clientes AS C 
+                WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                AND F.Fecha BETWEEN '" . BuscarFecha($MBFechaI) . "' AND '" . BuscarFecha($MBFechaF) . "' 
+                AND F.T = 'P' 
+                AND F.Saldo_MN > 0 
+                AND NOT F.TC IN ('C','P') ";
+
+        if ($CheqRangos != 0) {
+            $sSQL .= "AND C.Grupo BETWEEN '" . $DCGrupoI . "' AND '" . $DCGrupoF . "' ";
+        }
+
+        $sSQL .= "AND F.CodigoC = C.Codigo " .
+            "ORDER BY C.Grupo, C.Cliente, F.Anio_Mes, F.Serie, F.Factura, CI_RUC, F.CodigoC, C.Actividad, C.Direccion, F.Fecha, F.Saldo_MN ";
+
+        //Select_Adodc AdoPendiente, sSQL
+    }
+
+
+    function Query3EnviarRubros($parametros)
+    {
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+
+        $sSQL = "SELECT DF.*,C.Cliente,C.Grupo,C.CI_RUC,C.Direccion,CP.Item_Banco,CP.Desc_Item 
+                FROM Detalle_Factura As DF,Clientes As C,Catalogo_Productos As CP 
+                WHERE DF.Fecha BETWEEN  '" . BuscarFecha($MBFechaI) . "' AND '" . BuscarFecha($MBFechaF) . "'
+                AND DF.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND DF.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                AND DF.T = 'P' 
+                AND DF.CodigoC = C.Codigo 
+                AND DF.Item = CP.Item 
+                AND DF.Periodo = CP.Periodo 
+                AND DF.Codigo = CP.Codigo_Inv 
+                ORDER BY C.Grupo,C.Cliente, DF.Fecha";
+        //Select_Adodc AdoDetalle, sSQL
+    }
+
+
+
+
+
+
+
 
 
 

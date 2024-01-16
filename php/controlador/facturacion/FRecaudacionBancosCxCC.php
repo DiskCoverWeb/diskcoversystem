@@ -46,6 +46,11 @@ if (isset($_GET['LeerSeteosCtas'])) {
     echo json_encode(Leer_Seteos_Ctas());
 }
 
+if (isset($_GET['GenerarPichincha'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Generar_Pichincha($parametros));
+}
+
 
 class FRecaudacionBancosCxCC
 {
@@ -149,8 +154,46 @@ class FRecaudacionBancosCxCC
             return ['error' => false, "mensaje" => "--"];
         }*/
 
-    function Generar_Pichincha($MBFechaI, $MBFechaF, $AdoPendiente)
+    function Enviar_Rubros($parametros)
     {
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+        $CheqMatricula = $parametros['CheqMatricula'];
+
+        $Cont = 0;
+        $CaptionTemp = '';
+        $Costo_Banco = 0.0;
+        $Tabulador = '';
+
+        $SumaBancos = 0;        
+        FechaValida($MBFechaI);
+        FechaValida($MBFechaF);
+        $TipoDoc = ($CheqMatricula == 1) ? "0" : "1";
+
+        $AuxNumEmp = $_SESSION['INGRESO']['item'];
+        $Cta_Cobrar = Ninguno; //
+        $FechaFinal = $MBFechaF;
+        $FechaTexto = date('Y-m-d H:i:s');
+        $FechaTexto1 = date('m/d/Y', strtotime($MBFechaI));
+        $Mifecha = BuscarFecha($MBFechaI);
+        $MiMes = sprintf("%02d", date('m', strtotime($MBFechaI)));
+        $FechaFin = BuscarFecha($MBFechaF);
+        $TextoImprimio = "";
+
+        Eliminar_Nulos_SP("Facturas"); 
+
+        $this->modelo-> Query1EnviarRubros();
+        $this->modelo-> Query2EnviarRubros($parametros);
+        //Detalle de las Facturas Emitidas del mes     
+        $this->modelo-> Query3EnviarRubros($parametros);   
+    }
+
+    function Generar_Pichincha($parametros)
+    {
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+        $AdoPendiente = $parametros['AdoPendiente'];
+        $Cta_Bancaria = $parametros['Cta_Bancaria'];
         $AuxNumEmp = "";
         $DiaV = 0;
         $MesV = 0;
@@ -246,17 +289,70 @@ class FRecaudacionBancosCxCC
             }
         }
         fclose($NumFileFacturas);
-        
+
         //Comenzamos a generar el archivo: SCCOB.TXT
         $mes = date('m', strtotime($MBFechaI));
         $anio = intval(substr(date('Y', strtotime($MBFechaI)), 1, 3));
-        $dia = "15";        
-        $NumFileFacturas = fopen(strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/SCCOB" . $mes . ".TXT"));
+        $dia = "15";
+        $NumFileFacturas = fopen(strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/SCCOB" . $mes . ".TXT"), 'w');
+        if (count($AdoPendiente) > 0) {
+            foreach ($AdoPendiente as $row) {
+                $Contador = $Contador + 1;
+                $CodigoCli = $row["CodigoC"];
+                $NombreCliente = Sin_Signos_Especiales($row["Cliente"]);
+                $Factura_No = $Factura_No + 1;
+                $Total = $row["Saldo_MN"];
+                $Saldo = $row["Saldo_MN"] * 100;
+                $CodigoP = $row["CI_RUC"];
+                $DireccionCli = Sin_Signos_Especiales($row["Direccion"]);
+                $Codigo3 = SinEspaciosDer($DireccionCli);
+                $DireccionCli = trim(substr($DireccionCli, 0, strlen($DireccionCli) - strlen($Codigo3)));
+                $Codigo3 = trim(SinEspaciosDer($DireccionCli));
+                $Codigo1 = sprintf("%02d", intval(substr($GrupoNo, 0, 1)));
 
+                if (strlen($row["Actividad"]) >= 3) {
+                    fwrite($NumFileFacturas, "CO\t");
+                    fwrite($NumFileFacturas, $Cta_Bancaria . "\t");
+                    fwrite($NumFileFacturas, $Contador . "\t");
+                    fwrite($NumFileFacturas, sprintf("%010d", $Factura_No) . "\t");
+                    fwrite($NumFileFacturas, $CodigoP . "\t");
+                    fwrite($NumFileFacturas, "USD\t");
+                    fwrite($NumFileFacturas, sprintf("%013d", $Saldo) . "\t");
+                    fwrite($NumFileFacturas, "CTA\t");
+                    fwrite($NumFileFacturas, "10\t");
+                    $NumStrg = SinEspaciosIzq($row["Actividad"]);
+                    if (strlen($NumStrg) == 3) {
+                        fwrite($NumFileFacturas, SinEspaciosIzq($row["Actividad"]) . "\t");
+                        fwrite($NumFileFacturas, SinEspaciosDer($row["Actividad"]) . "\t");
+                    } else {
+                        fwrite($NumFileFacturas, "\t");
+                        fwrite($NumFileFacturas, "\t");
+                    }
+                    fwrite($NumFileFacturas, "R\t");
+                    fwrite($NumFileFacturas, "RUC\t");
+                    fwrite($NumFileFacturas, substr(date('m', strtotime($MBFechaI)) . " " . $NombreCliente, 0, 40) . "\t");
+                    fwrite($NumFileFacturas, "\t");
+                    fwrite($NumFileFacturas, "\t");
+                    fwrite($NumFileFacturas, "\t");
+                    fwrite($NumFileFacturas, "\t");
+                    fwrite($NumFileFacturas, "\t");
+                    fwrite($NumFileFacturas, $mes . "\t");
+                    fwrite($NumFileFacturas, "Pensión Acumulada\t");
+                    fwrite($NumFileFacturas, sprintf("%013d", $Saldo) . "\t");
+                }
+            }
+        }
+        fclose($NumFileFacturas);
+        $mensaje = "SE GENERARON LOS SIGUIENTES ARCHIVOS:" . PHP_EOL . PHP_EOL .
+            strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/SCREC" . $mes . ".TXT") . PHP_EOL . PHP_EOL .
+            strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/SCCOB" . $mes . ".TXT") . PHP_EOL . PHP_EOL .
+            "Valor Total a Recaudar USD " . number_format($SumaBancos, 2, '.', ',');
 
-
-
+        return array('res' => 'Ok', 'mensaje' => $mensaje);
     }
+
+
+
 }
 
 ?>

@@ -77,7 +77,7 @@
             <div class="panel-heading">
                 <div class="row">
                     <div class="col-sm-4">
-                        <img id="miLogo" src="" class="img-fluid" width="95%" height="20%">
+                        <img id="miLogo" src="" class="img-fluid" width="75%" height="20%">
                     </div>
                     <div class="col-sm-8 col-xs-12">
                         <div class="row">
@@ -175,6 +175,8 @@
         var Cta_Bancaria = Leer_Campo_Empresa("Cta_Banco");
         var Cta_Gasto_Banco = Leer_Seteos_Ctas("Cta_Gasto_Bancario");
 
+        var CheqMatricula = $("#CheqMatricula").prop("checked");        
+
     });
 
     function mostrarCheqSat() {
@@ -228,7 +230,7 @@
                     break;
                 case 'BIZBANCKPACIFICO':
                     $("#miPanel").css("background-color", "#C0C000");
-                    //$("#miLogo").attr("src", "../../img/png/logoBancoPacifico.png");
+                    //$("#miLogo").attr("src", "../../img/png/ima.png");
                     mostrarCheqSat();
                     break;
                 case 'PRODUBANCO':
@@ -248,13 +250,14 @@
                     break;
                 case 'CACPE':
                     $("#miPanel").css("background-color", "#80FF80");
-                    //$("#miLogo").attr("src", "../../img/png/logoBancoGuayaquil.png");
+                    $("#miLogo").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/CACPE.png");
                     break;
                 default:
                     $("#miPanel").css("background-color", "rgb(255,255,255)");
                     $("#miLogo").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/OtrosBancosLogo.png");
                     $("#imgBanco").attr("alt", "Logo Otros Bancos");
                     break;
+
             }
         });
     }
@@ -326,12 +329,9 @@
                 data.forEach(function (item) {
                     $DCBanco.append('<option value="' + item.NomCuenta + '">' + item.NomCuenta + '</option>');
                 });
-
             }
-        });        
+        });
     }
-
-
     function FechaValida(fecha, MBFecha = false) {
         $.ajax({
             type: "POST",
@@ -409,6 +409,30 @@
             dataType: 'json',
             success: function (datos) {
                 //console.log(datos);
+            }
+        });
+    }
+
+    function Generar_Pichicha($MBFechaI, $MBFechaF, $AdoPendiente, $Cta_Bancaria) {
+        var parametros = {
+            'MBFechaI': $MBFechaI,
+            'MBFechaF': $MBFechaF,
+            'AdoPendiente': $AdoPendiente,
+            'Cta_Bancaria': $Cta_Bancaria,
+        };
+        $.ajax({
+            type: "POST",
+            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?GenerarPichincha=true',
+            dataType: 'json',
+            data: { 'parametros': parametros },
+            success: function (data) {
+                console.log('ARCHIVOS GENERADOS ', data);
+                Swal.fire({
+                    title: 'Resultado de la Operación',
+                    icon: 'success',
+                    html: data.mensaje,
+                    confirmButtonText: 'Aceptar'
+                });
             }
         });
     }
