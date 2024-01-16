@@ -135,7 +135,7 @@ class cambioeM
 	{
 
 
-		print_r($parametros);die();
+		// print_r($parametros);die();
 
 	    $em = $this->datos_empresa($parametros['empresas']);
 	    if(count($em)>0)
