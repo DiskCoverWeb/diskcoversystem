@@ -156,15 +156,24 @@ class punto_ventaC
 
 	function AdoLinea($parametros)
 	{
+		$emision = date('Y-m-d');
+		$vencimiento = date('Y-m-d');
+		// busca serie de empresa
 		$serie = Leer_Campo_Empresa("Serie_FA");
-		$TC = $parametros['TipoFactura'];
-		if (strlen($serie) < 6) {
-			$serie = "999999";
-			$parametros['SerieFactura'] = "999999";
+		if ($serie == '.') {
+			// busca serie de usuario
+			$serie = $this->modelo->getSerieUsuario($_SESSION['INGRESO']['CodigoU']);
+			if (count($serie) > 0 && isset($serie[0]['Serie_FA'])) {
+				$serie = $serie[0]['Serie_FA'];
+			}
+			// busca en catalogo de lineas si no en existe o es punto
+			if ($serie == '.') {
+				$datos = $this->modelo->getCatalogoLineas13($emision, $vencimiento);
+				$serie = $datos[0]['Serie'];
+			}
 		}
-		$CodigoL = G_NINGUNO;
-		$Cta_Cobrar = G_NINGUNO;
-		$Autorizacion = "9999999999";
+		$parametros['SerieFactura'] = $serie;
+
 		$datosAdoLinea = $this->modelo->AdoLinea($parametros);
 		$mensaje = "";
 		if (count($datosAdoLinea) > 0) {
@@ -471,9 +480,13 @@ class punto_ventaC
 		}
 	}
 
+
+	//funcion que se ejecuta en punto de venta en facturacion
 	function generar_factura($parametros)
 	{
 		// print_r($parametros);die();
+		$this->sri->Actualizar_factura($parametros['CI'], $parametros['TextFacturaNo'], $parametros['Serie']);
+
 		// FechaValida MBFecha
 		$FechaTexto = $parametros['MBFecha'];
 		$FA = Calculos_Totales_Factura();
@@ -530,6 +543,9 @@ class punto_ventaC
 	{
 		// print_r($parametros);die();
 		// FechaValida MBFecha
+
+		$this->sri->Actualizar_factura($parametros['CI'], $parametros['TextFacturaNo'], $parametros['Serie']);
+
 		$FechaTexto = $parametros['MBFecha'];
 		$FA = Calculos_Totales_Factura();
 
@@ -581,7 +597,8 @@ class punto_ventaC
 	// funcion para vista de facturar electronico , sin restriccion de que la factura este en cero
 	function generar_factura_elec($parametros)
 	{
-		// print_r($parametros);die();
+		$this->sri->Actualizar_factura($parametros['CI'], $parametros['TextFacturaNo'], $parametros['Serie']);
+
 		$electronico = 0;
 		if (isset($parametros['electronico'])) {
 			$electronico = $parametros['electronico'];
@@ -817,7 +834,7 @@ class punto_ventaC
 					$rep1 = 0;
 					$imp_guia = '';
 					$clave_guia = '';
-					if ($FA['Remision'] != 0) {
+					if (isset($FA['Remision']) &&  $FA['Remision'] != 0) {
 						$FA['Autorizacion'] = $clave;
 						if ($FA['Autorizacion_GR'] >= 13) {
 							$rep1 = $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision($FA);

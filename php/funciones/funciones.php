@@ -1166,8 +1166,20 @@ function ping($ip)
 }
 function GetUrlSource($url)
 {
-  $res = file_get_contents($url);
-  return $res;
+  try
+  {
+     $context = stream_context_create([
+      "ssl" => [
+            "verify_peer" => false,
+            "verify_peer_name" => false,
+        ],
+    ]);
+    $res = file_get_contents($url,false,$context);
+    return $res;
+
+  }catch (Exception $e) {
+    return true;
+  } 
 }
 
 function Digito_Verificador_SP($NumeroRUC)

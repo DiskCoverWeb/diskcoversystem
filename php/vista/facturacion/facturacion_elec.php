@@ -708,11 +708,21 @@ function generar_factura() {
                 })
             }else if(data.respuesta == -1 || data.respuesta == 2 && data.respuesta_guia==0)
             {
-                 Swal.fire('XML Devuelto',data.text,'error');
-                 if(data.text=='' || data.text == null || data.text == 2)
+                if(data.text=='' || data.text == null || data.text == 2)
                  {
+
+                    Swal.fire('XML devuelto', 'Error al generar XML o al firmar', 'error');
                     tipo_error_sri(data.clave);
-                 }
+                 }else{
+                Swal.fire({
+                        type: 'error',
+                        title: data.text,
+                        confirmButtonText: 'Ok!',
+                        allowOutsideClick: false,
+                    }).then(function () {
+                        location.reload();
+                    })
+                }
             }else if (data.respuesta == 1 && data.respuesta_guia==1) {
                 Swal.fire({
                     // type: 'success',

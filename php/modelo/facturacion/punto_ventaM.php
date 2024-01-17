@@ -675,7 +675,7 @@ class punto_ventaM
             AND Serie = '" . $parametros['SerieFactura'] . "'
             AND TL <> 0
             ORDER BY Codigo";
-            
+            // print_r($sql);die();
     return $this->db->datos($sql);
   }
 
