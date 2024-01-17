@@ -2,7 +2,7 @@
     /*
         AUTOR DE RUTINA	: Leonardo Súñiga
         FECHA CREACION	: 03/01/2024
-        FECHA MODIFICACION: 12/01/2024
+        FECHA MODIFICACION: 17/01/2024
         DESCIPCION : Clase que se encarga de manejar la interfaz de la pantalla de recaudacion de bancos
     */
     var TextoBanco = "";
@@ -19,21 +19,20 @@
     var Factura_No = "";
 
     let FA = {
-        'Factura': '',
-        'Serie': '',
+        'Factura': '.',
+        'Serie': '.',
         'Nuevo_Doc': true,
-        'TC': '',
-        'Cod_CxC': '',
-        'Autorizacion': '',
-        'Tipo_PRN': '',
-        'Imp_Mes': '',
-        'Porc_IVA': '',
-        'Cta_CxP': '',
-        'Vencimiento': '',
-        'Imp_Mes': '',
-        'Cta_CxP_Anterior': '',
-        'Fecha_Corte': '',
-        'Fecha': ''
+        'TC': '.',
+        'Cod_CxC': '.',
+        'Autorizacion': '.',
+        'Tipo_PRN': '.',
+        'Imp_Mes': '.',
+        'Porc_IVA': '.',
+        'Cta_CxP': '.',
+        'Vencimiento': '.',
+        'Cta_CxP_Anterior': '.',
+        'Fecha_Corte': '.',
+        'Fecha': '.'
     };
 
     $(document).ready(function () {
@@ -66,11 +65,11 @@
                     if (data.length > 0) {
                         $('#DCLinea').empty();
                         $.each(data, function (index, value) {
-                            $('#DCLinea').append('<option value="' + value['Codigo'] + '">' + value['Concepto'] + '</option>');
+                            $('#DCLinea').append('<option value="' + value['Concepto'] + '">' + value['Concepto'] + '</option>');
                         });
                     } else {
                         $('#DCLinea').empty();
-                        $('#DCLinea').append('<option value="0">No existen datos</option>');
+                        $('#DCLinea').append('<option value="No existen datos">No existen datos</option>');
                     }
                     FA.Fecha = $('#MBFechaI').val();
                     FA.TC = "FA";
@@ -112,9 +111,9 @@
                             }).then((result) => {
                                 if (result.value) {
                                     FA.Factura = $('#TextFacturaNo').val();
-                                } 
+                                }
                             });
-                        }else{
+                        } else {
                             FA.Factura = data.Factura;
                             $('#TextFacturaNo').val(FA.Factura);
                         }
@@ -124,18 +123,152 @@
         });
 
         //DCLinea_LostFocus
-        $('#DCLinea').blur(function(){
+        $('#DCLinea').blur(function () {
             FA.Cod_CxC = $(this).val();
-            //To FA.Fecha todays date
             FA.Fecha = '<?php echo date('Y-m-d'); ?>';
-            //TODO: Lineas_De_CxC retorna un TFA con todos los datos de FA, toca hacer un for 
-            //para asignar el parametro en el FA de esta clase. Comprobar si el parametro existe, caso contrario agregarlo
+            var parametros = {
+                'FA': FA
+            };
+            $.ajax({
+                url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?DCLinea_LostFocus=true',
+                type: 'post',
+                dataType: 'json',
+                data: { 'parametros': parametros },
+                success: function (data) {
+                    var tmp = data.TFA;
+                    for (var key in tmp) {
+                        if (tmp.hasOwnProperty(key)) {
+                            FA[key] = tmp[key];
+                        }
+                    }
+                    $('#Label6').text('Aut. ' + FA.Autorizacion + " " + FA.TC + " No. " + FA.Serie + "-");
+                    $('#TextFacturaNo').val(FA.Factura);
+                }
+            });
+        });
 
+        //Navegacion cuando pierden el foco
+        $('#DCEntidadBancaria').blur(function () {
+            $('#MBFechaI').focus();
+        });
+
+        $('#MBFechaI').blur(function () {
+            $('#MBFechaF').focus();
+        });
+
+        $('#MBFechaF').blur(function () {
+            $('#CheqRangos').focus();
+        });
+
+        $('#CheqRangos').blur(function () {
+            $('#DCGrupoI').focus();
+        });
+
+        $('#DCGrupoI').blur(function () {
+            $('#DCGrupoF').focus();
+        });
+
+        $('#DCGrupoF').blur(function () {
+            $('#DCBanco').focus();
+        });
+
+        $('#DCBanco').blur(function () {
+            $('#TxtCodBanco').focus();
+        });
+
+        $('#TxtCodBanco').blur(function () {
+            $('#MBFechaV').focus();
+        });
+
+        $('#MBFechaV').blur(function () {
+            $('#DCLinea').focus();
+        });
+
+        $('#DCLinea').blur(function () {
+            $('#CheqMatricula').focus();
+        });
+
+        $('#CheqMatricula').blur(function () {
+            $('#TextFacturaNo').focus();
+        });
+
+        $('#TextFacturaNo').blur(function () {
+            $('#CheqNumCodigos').focus();
+        });
+
+        $('#CheqNumCodigos').blur(function () {
+            $('#CheqAlDia').focus();
+        });
+
+        $('#CheqAlDia').blur(function () {
+            $('#LabelAbonos').focus();
+        });
+
+        //Handle Command1_Click
+        $('#Command1').click(function () {
+            $('#modal_subir_archivo').modal('show');
+        });
+
+        $('#btnSubirArchivo').click(function () {
+            $('#modal_subir_archivo').modal('hide');
+            Command1_Click();
         });
 
 
 
+
     });
+
+    function DGFactura() {
+        $.ajax({
+            type: "POST",
+            url: "../controlador/facturacion/FRecaudacionBancosPreFaC.php?DGFactura=true",
+            dataType: "json",
+            success: function (response) {
+                $('#DGFactura').empty();
+                $('#DGFactura').html(response.tbl);
+            }
+        });
+    }
+
+    function Command1_Click() {
+        $('#myModal_espera').show();
+        //DGFactura.Visible = false
+        FA.Cod_CxC = $('#DCLinea').val();
+        var fileInput = $('#fileInput')[0];
+        var archivo = fileInput.files[0];
+
+        var formData = new FormData();
+        formData.append('FA', JSON.stringify(FA)); // Asegúrate de que FA es un objeto serializable
+        formData.append('Factura_No', Factura_No);
+        formData.append('MBFechaI', $('#MBFechaI').val());
+        formData.append('TextoBanco', TextoBanco);
+
+        if (archivo) {
+            formData.append('archivoBanco', archivo, archivo.name);
+        }
+
+        $.ajax({
+            url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?Command1_Click=true',
+            type: 'post',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                var response = JSON.parse(data);
+                $('#DGFactura').empty();
+                $('#DGFactura').html(response.tbl);
+                $('#LabelAbonos').val(response.TotalIngreso);
+                $('#TxtFile').text(response.TxtFile);
+                $('#myModal_espera').hide();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error en la solicitud: " + textStatus, errorThrown);
+                $('#myModal_espera').hide();
+            }
+        });
+    }
+
 
 
 
@@ -230,7 +363,7 @@
                 if (data.length > 0) {
                     $('#DCLinea').empty();
                     $.each(data, function (index, value) {
-                        $('#DCLinea').append('<option value="' + value['Codigo'] + '">' + value['Concepto'] + '</option>');
+                        $('#DCLinea').append('<option value="' + value['Concepto'] + '">' + value['Concepto'] + '</option>');
                     });
                     Cta_Cobrar = data[0]['CxC'];
                     CxC_Clientes = data[0]['Concepto'];
@@ -326,6 +459,14 @@
     select {
         color: black;
     }
+
+    fieldset {
+        background-color: #008080;
+        padding: 10px;
+        color: white;
+        height: 500px;
+        max-height: 500px;
+    }
 </style>
 <div>
     <div class="row">
@@ -381,7 +522,7 @@
     </div>
     <div class="row" style="padding: 10px;">
         <form action="">
-            <fieldset style="background-color:#008080; padding:10px; color:white;" id="fieldsetForm">
+            <fieldset style="" id="fieldsetForm">
                 <div class="row">
                     <div class="col-sm-3" style="display:flex; align-items:center; justify-content: center;">
                         <img src="../../img/png/FRecaudacionBancosPreFa/LogosBancos/BancoBolivarianoLogo.png"
@@ -401,7 +542,8 @@
                     <div class="col-sm-3">
                         <div class="row">
                             <label for="CheqRangos">
-                                <input type="checkbox" name="CheqRangos" id="CheqRangos" checked/> Procesar Por Rangos Grupos:
+                                <input type="checkbox" name="CheqRangos" id="CheqRangos" checked /> Procesar Por Rangos
+                                Grupos:
                             </label>
                         </div>
                         <div class="row">
@@ -424,16 +566,17 @@
                             <input type="text" name="TxtCodBanco" id="TxtCodBanco" style="display:block; width:100%"
                                 value="0" />
                         </label>
-                        <label for="TextFacturaNo" style="display:block">Nota de Venta No.
-                            <input type="text" name="TextFacturaNo" id="TextFacturaNo" style="display:block; width:100%"
-                                value="99999" />
+                        <label for="TextFacturaNo" style="display:block" id="Label6">Nota de Venta No.
                         </label>
+                        <input type="text" name="TextFacturaNo" id="TextFacturaNo" style="display:block; width:100%"
+                            value="99999" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
                         <label for="CheqNumCodigos">
-                            <input type="checkbox" name="CheqNumCodigos" id="CheqNumCodigos" checked/> Procesar Con Codigo de
+                            <input type="checkbox" name="CheqNumCodigos" id="CheqNumCodigos" checked /> Procesar Con
+                            Codigo de
                             la Empresa
                         </label>
                         <label for="CheqAlDia" style="padding-left:10px">
@@ -447,10 +590,10 @@
                     </div>
                 </div>
                 <div class="row" style="margin: 10px;">
-                    <textarea class="form-control" name="TxtFile" id="TxtFile" rows="5"></textarea>
+                    <textarea class="form-control" name="TxtFile" id="TxtFile" rows="5" readonly></textarea>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12">
+                    <div class="col-sm-12 text-center">
                         <div id="DGFactura">
 
                         </div>
@@ -460,3 +603,23 @@
         </form>
     </div>
 </div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_subir_archivo" data-backdrop="static"
+    data-keyboard="false">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Archivo del Banco</h4>
+            </div>
+            <div class="modal-body">
+                <input type="file" id="fileInput">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnSubirArchivo">Subir Archivo</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
