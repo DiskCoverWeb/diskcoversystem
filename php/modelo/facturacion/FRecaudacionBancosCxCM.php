@@ -67,7 +67,7 @@ class FRecaudacionBancosCxCM
         $sql = "SELECT Descripcion, Abreviado, ID
                 FROM Tabla_Referenciales_SRI
                 WHERE Tipo_Referencia = 'BANCOS Y COOP'
-                AND Abreviado <> '.' 
+                AND Abreviado != '.' 
                 AND TFA != 'False'
                 ORDER BY Descripcion";
 
@@ -88,10 +88,12 @@ class FRecaudacionBancosCxCM
     function MBFechaF_LostFocusUpdate($fecha)
     {
         $sql = "UPDATE Fechas_Balance
-        SET Fecha_Inicial = '" . $fecha . "', Fecha_Final = '" . $fecha . "',
-        WHERE Detalle = 'Deuda Pendiente'
-        AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
-        AND Periodo =  '" . $_SESSION['INGRESO']['periodo'] . "' ";
+                SET Fecha_Inicial = '" . $fecha . "', Fecha_Final = '" . $fecha . "'
+                WHERE Detalle = 'Deuda Pendiente'
+                AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND Periodo =  '" . $_SESSION['INGRESO']['periodo'] . "' ";
+
+        return $this->db->datos($sql);        
     }
 
     function Query1EnviarRubros()
@@ -107,9 +109,10 @@ class FRecaudacionBancosCxCM
                 AND F.Item = DF.Item  
                 AND F.TC = DF.TC  
                 AND F.Serie = DF.Serie  
-                AND F.Factura = DF.Factura";
+                AND F.Factura = DF.Factura"; 
+                //AND F.Factura = 37"; //solo para prueba
 
-        Ejecutar_SQL_SP($sSQL);
+        return Ejecutar_SQL_SP($sSQL);
     }
 
     function Query2EnviarRubros($parametros)
@@ -118,7 +121,7 @@ class FRecaudacionBancosCxCM
         $MBFechaF = $parametros['MBFechaF'];
         $DCGrupoI = $parametros['DCGrupoI'];
         $DCGrupoF = $parametros['DCGrupoF'];
-        $CheqRangos = $parametros['$CheqRangos'];
+        $CheqRangos = $parametros['CheqRangos'];
 
         $sSQL = "SELECT F.CodigoC, C.Actividad, C.Cliente, C.CI_RUC, C.Direccion, C.Grupo, F.Fecha, F.Serie, F.Factura, F.Total_MN, F.Saldo_MN, F.Anio_Mes
                 FROM Facturas AS F, Clientes AS C 
@@ -136,6 +139,7 @@ class FRecaudacionBancosCxCM
         $sSQL .= "AND F.CodigoC = C.Codigo " .
             "ORDER BY C.Grupo, C.Cliente, F.Anio_Mes, F.Serie, F.Factura, CI_RUC, F.CodigoC, C.Actividad, C.Direccion, F.Fecha, F.Saldo_MN ";
 
+        return $this->db->datos($sSQL);
         //Select_Adodc AdoPendiente, sSQL
     }
 
@@ -156,19 +160,50 @@ class FRecaudacionBancosCxCM
                 AND DF.Periodo = CP.Periodo 
                 AND DF.Codigo = CP.Codigo_Inv 
                 ORDER BY C.Grupo,C.Cliente, DF.Fecha";
+
+        return $this->db->datos($sSQL);
         //Select_Adodc AdoDetalle, sSQL
     }
 
+    function Query4EnviarRubros($parametros)
+    {
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
 
+        $sSQL = "SELECT F.CodigoC,C.Actividad,C.Cliente,C.Grupo,CI_RUC,C.Direccion,SUM(Saldo_MN) As Saldo_Pend
+                FROM Facturas As F,Clientes As C 
+                WHERE F.Fecha BETWEEN '" . BuscarFecha($MBFechaI) . "' AND '" . BuscarFecha($MBFechaF) . "'
+                AND F.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'  
+                AND F.T = 'P' 
+                AND NOT F.TC IN ('C','P') 
+                AND F.CodigoC = C.Codigo 
+                GROUP BY C.Grupo,C.Cliente,CI_RUC,F.CodigoC,C.Actividad,C.Direccion 
+                HAVING SUM(Saldo_MN) > 0 
+                ORDER BY C.Grupo,C.Cliente,CI_RUC";
 
+        return $this->db->datos($sSQL);
+        //Select_Adodc AdoFactura, sSQL
 
+    }
 
+    function Query5EnviarRubros($parametros)
+    {
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
 
+        $sSQL = "SELECT F.*,C.Cliente,C.Grupo,C.CI_RUC,C.Direccion,C.Casilla 
+                FROM Facturas As F,Clientes As C 
+                WHERE F.Fecha BETWEEN '" . BuscarFecha($MBFechaI) . "' AND '" . BuscarFecha($MBFechaF) . "'
+                AND F.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                AND F.T != 'A' 
+                AND F.CodigoC = C.Codigo 
+                ORDER BY C.CI_RUC,C.Grupo,F.Fecha";
 
-
-
-
-
+        return $this->db->datos($sSQL);
+        //Select_Adodc AdoAux, sSQL
+    }
 
 }
 ?>

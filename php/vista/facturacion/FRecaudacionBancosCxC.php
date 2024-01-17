@@ -20,7 +20,7 @@
 
             <div class="col">
                 <a href="javascript:void(0)" id="Enviar Rubros" title="Enviar Rubros" class="btn btn-default"
-                    onclick="Enviar()">
+                    onclick="Enviar_Rubros()">
                     <img src="../../img/png/enviarRubros.png" width="25" height="30">
                 </a>
             </div>
@@ -137,7 +137,8 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript">    
+
     $(document).ready(function () {
 
         $('#MBFechaI').blur(function () {
@@ -147,9 +148,7 @@
 
         $('#MBFechaF').blur(function () {
             let fechaF = $(this).val();
-            let FechaValidares = FechaValida(fechaF, true);
-
-            //MBFechaF_LostFocus(fechaF);
+            let FechaValidares = FechaValida(fechaF, true); //true indica realizar MBFechaF_LostFocus
         });
 
         //$NuevoCompe = false
@@ -170,12 +169,12 @@
             $("#DCGrupoI, #DCGrupoF").toggle($(this).is(":checked") ? true : false);
         });
 
-        var Tipo_Carga = Leer_Campo_Empresa("Tipo_Carga_Banco");
-        var Costo_Banco = Leer_Campo_Empresa("Costo_Bancario");
-        var Cta_Bancaria = Leer_Campo_Empresa("Cta_Banco");
-        var Cta_Gasto_Banco = Leer_Seteos_Ctas("Cta_Gasto_Bancario");
-
-        var CheqMatricula = $("#CheqMatricula").prop("checked");        
+        //Tipo_Carga = Leer_Campo_Empresa("Tipo_Carga_Banco");
+        //Costo_Banco = Leer_Campo_Empresa("Costo_Bancario");
+        //Cta_Bancaria = Leer_Campo_Empresa("Cta_Banco");
+        //Cta_Gasto_Banco = Leer_Seteos_Ctas("Cta_Gasto_Bancario");
+        
+        //var CheqMatricula = $("#CheqMatricula").prop("checked");
 
     });
 
@@ -339,30 +338,28 @@
             dataType: 'json',
             data: { 'fecha': fecha },
             success: function (datos) {
-                //console.log(datos, MBFecha, 'fecha:' + fecha);
+                console.log(datos, MBFecha, 'fecha:' + fecha);
                 if (datos.ErrorFecha) {
                     Swal.fire({
                         type: 'warning',
                         title: datos.MsgBox,
                         text: fecha
                     });
-                } else if (MBFecha) {
-                    MBFechaF_LostFocus();
                 }
-
+                else if (MBFecha) {
+                    MBFechaF_LostFocus(fecha);
+                }
             }
         });
     }
 
     function MBFechaF_LostFocus(fecha) {
-        console.log('fehca dentro del metodo', fecha);
         $.ajax({
             type: "POST",
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?MBFechaFLostFocus=true',
             dataType: 'json',
             data: { 'fecha': fecha },
             success: function (datos) {
-                //console.log('datoFECHALOSTFOCUS',datos);
             }
         });
     }
@@ -413,32 +410,89 @@
         });
     }
 
-    function Generar_Pichicha($MBFechaI, $MBFechaF, $AdoPendiente, $Cta_Bancaria) {
+    function Enviar_Rubros() {
+
+        var DCEntidad = $('#DCEntidad').val();
+        var DCGrupoI = $('#DCGrupoI').val();
+        var DCGrupoF = $('#DCGrupoF').val();
+        var TxtOrden = $('#TxtOrden').val();
+        var DCBanco = $('#DCBanco').val();
+
+        var MBFechaI = $('#MBFechaI').val();
+        var MBFechaF = $('#MBFechaF').val();
+
+        var CheqRangos = $('#CheqRangos').prop('checked');
+        var CheqMatricula = $('#CheqMatricula').prop('checked');
+        var CheqPend = $('#CheqPend').prop('checked');
+        var CheqSat = $('#CheqSat').prop('checked');        
+
         var parametros = {
-            'MBFechaI': $MBFechaI,
-            'MBFechaF': $MBFechaF,
-            'AdoPendiente': $AdoPendiente,
-            'Cta_Bancaria': $Cta_Bancaria,
+            'DCEntidad': DCEntidad,
+            'MBFechaI': MBFechaI,
+            'MBFechaF': MBFechaF,
+            'CheqMatricula': CheqMatricula,
+            'DCBanco': DCBanco,
+            'DCGrupoI': DCGrupoI,
+            'DCGrupoF': DCGrupoF,
+            'CheqRangos': CheqRangos,            
         };
+        console.log(parametros);
+
         $.ajax({
             type: "POST",
-            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?GenerarPichincha=true',
+            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?EnviarRubros=true',
             dataType: 'json',
             data: { 'parametros': parametros },
             success: function (data) {
-                console.log('ARCHIVOS GENERADOS ', data);
-                Swal.fire({
-                    title: 'Resultado de la Operación',
-                    icon: 'success',
-                    html: data.mensaje,
-                    confirmButtonText: 'Aceptar'
-                });
+                console.log(data);
+                /*if (data.res == 'OK') {
+                    
+                    switch ($data.textoBanco) {
+                        case "PICHINCHA":
+                            Swal.fire({
+                                title: 'Resultado de la Operación',
+                                icon: 'success',
+                                html: data.mensaje,
+                                confirmButtonText: 'Aceptar'
+                            });
+                            break;
+                        /*
+                    case "BGR_EC":
+                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
+                        //Generar_BGR_EC();
+                        break;
+                    case "INTERNACIONAL":
+                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
+                        //Generar_Internacional();
+                        break;
+                    case "BOLIVARIANO":
+                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
+                        //Generar_Bolivariano();
+                        break;
+                    case "PACIFICO":
+                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
+                        //Generar_Pacifico();
+                        break;
+                    case "PRODUBANCO":
+                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
+                        //Generar_Produbanco();
+                        break;
+                    case "GUAYAQUIL":
+                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
+                        //Generar_Guayaquil();
+                        break;
+                    case "COOPJEP":
+                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
+                        //Generar_Coop_Jep();
+                        break;
+                    default:
+                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
+                        echo "No está definido este Banco";
+                        break;                      
+                    }
+                }*/
+
             }
         });
     }
-
-
-
-
-
 </script>
