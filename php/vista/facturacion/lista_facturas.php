@@ -857,7 +857,41 @@ function modal_email_fac(factura,serie,codigoc,emails)
           }
         }
       });
+  }
 
+  function generar_xml(factura,serie,tc)
+  {
+
+    $('#myModal_espera').modal('show');
+     var parametros = 
+    {
+        'Factura':factura,
+        'Serie':serie,
+        'TC':tc,
+    }
+     $.ajax({
+        data: {parametros:parametros},
+        url:   '../controlador/facturacion/lista_facturasC.php?generar_xml=true',
+        dataType:'json',      
+        type:  'post',
+        // dataType: 'json',
+        success:  function (response) { 
+
+           $('#myModal_espera').modal('hide');
+          if(response.respuesta=='1')
+          {
+              console.log(response);
+              var link = document.createElement("a");
+              link.download = response.xml;
+              link.href ='../../php/'+response.ruta;
+              link.click();
+              console.log(link.href)
+          }else
+          {
+            Swal.fire('No se pude generar el xml','','info');
+          }
+        }
+      });
   }
 </script>
  <script type="text/javascript">
