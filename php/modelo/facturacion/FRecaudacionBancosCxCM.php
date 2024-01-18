@@ -110,8 +110,6 @@ class FRecaudacionBancosCxCM
                 AND F.TC = DF.TC  
                 AND F.Serie = DF.Serie  
                 AND F.Factura = DF.Factura"; 
-                //AND F.Factura = 37"; //solo para prueba
-
         return Ejecutar_SQL_SP($sSQL);
     }
 

@@ -19,14 +19,13 @@
             </div>
 
             <div class="col">
-                <a href="javascript:void(0)" id="Enviar Rubros" title="Enviar Rubros" class="btn btn-default"
+                <a href="javascript:void(0)" id="EnviarRubros" title="Enviar Rubros" class="btn btn-default"
                     onclick="Enviar_Rubros()">
                     <img src="../../img/png/enviarRubros.png" width="25" height="30">
                 </a>
             </div>
             <div class="col">
-                <a href="javascript:void(0)" id="Recibir Rubos" title="Recibir Rubos" class="btn btn-default"
-                    onclick="Recibir()">
+                <a href="javascript:void(0)" id="btnRecibirAbonos" title="Recibir Abonos" class="btn btn-default">
                     <img src="../../img/png/recibirRubros.png" width="25" height="30">
                 </a>
             </div>
@@ -135,9 +134,31 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="modalSubirArchivo">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">RECIBIR RUBROS</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input class="form-control" type="file" id="fileInput">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btnSubirArchivo">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
 </div>
 
-<script type="text/javascript">    
+<script type="text/javascript">
 
     $(document).ready(function () {
 
@@ -173,7 +194,7 @@
         //Costo_Banco = Leer_Campo_Empresa("Costo_Bancario");
         //Cta_Bancaria = Leer_Campo_Empresa("Cta_Banco");
         //Cta_Gasto_Banco = Leer_Seteos_Ctas("Cta_Gasto_Bancario");
-        
+
         //var CheqMatricula = $("#CheqMatricula").prop("checked");
 
     });
@@ -424,7 +445,7 @@
         var CheqRangos = $('#CheqRangos').prop('checked');
         var CheqMatricula = $('#CheqMatricula').prop('checked');
         var CheqPend = $('#CheqPend').prop('checked');
-        var CheqSat = $('#CheqSat').prop('checked');        
+        var CheqSat = $('#CheqSat').prop('checked');
 
         var parametros = {
             'DCEntidad': DCEntidad,
@@ -434,7 +455,7 @@
             'DCBanco': DCBanco,
             'DCGrupoI': DCGrupoI,
             'DCGrupoF': DCGrupoF,
-            'CheqRangos': CheqRangos,            
+            'CheqRangos': CheqRangos,
         };
         console.log(parametros);
 
@@ -444,14 +465,13 @@
             dataType: 'json',
             data: { 'parametros': parametros },
             success: function (data) {
-                console.log(data);
-                /*if (data.res == 'OK') {
-                    
-                    switch ($data.textoBanco) {
+                console.log('respuesta', data.textoBanco);
+                if (data.res == 'Ok') {
+                    switch (data.textoBanco) {
                         case "PICHINCHA":
                             Swal.fire({
-                                title: 'Resultado de la Operación',
-                                icon: 'success',
+                                title: 'SE GENERARON LOS SIGUIENTES ARCHIVOS:',
+                                type: 'success',
                                 html: data.mensaje,
                                 confirmButtonText: 'Aceptar'
                             });
@@ -488,11 +508,30 @@
                     default:
                         $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
                         echo "No está definido este Banco";
-                        break;                      
+                        break;   */
                     }
-                }*/
+                }
 
             }
         });
     }
+
+    $('#btnRecibirAbonos').click(function () {
+        $('#modalSubirArchivo').modal('show');
+    });
+
+    $('#btnSubirArchivo').click(function () {
+        $('#modalSubirArchivo').modal('hide');
+        Recibir_Abonos();
+    });
+
+    function Recibir_Abonos() {
+        //var archivo = $("#fileInput")[0].files[0];
+        //console.log("Subir el archivo: " + archivo.name);
+        
+    }
+
+
+
+
 </script>

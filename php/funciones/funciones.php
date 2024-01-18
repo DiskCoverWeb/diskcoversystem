@@ -5894,10 +5894,16 @@ function costo_venta($codigo_inv)  // optimizado
   }
 
  
-  function SinEspaciosDer($texto = ""){
+  function SinEspaciosDer($texto = ""){  
     $resultado = explode(" ", $texto);
     return $resultado[1];
   }
+
+  function SinEspaciosDer2($texto = ""){  
+    $resultado = explode(" ", $texto, 2); // El tercer parámetro limita el número de elementos en el array
+    return isset($resultado[1]) ? $resultado[1] : $resultado[0];
+}
+
 
   function SinEspaciosIzq($texto = ""){
     $resultado = explode(" ", $texto);
