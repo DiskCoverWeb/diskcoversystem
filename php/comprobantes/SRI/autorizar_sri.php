@@ -3539,7 +3539,7 @@ function Actualizar_factura($CI_RUC,$FacturaNo,$serie)
 
 	if(count($cli)>0)
 	{			
-		if($cli[0]['TD']=='' || $cli[0]['TD']=='.' || $cli[0]['Codigo']=='' || $cli[0]['Codigo']=='.')
+		if($cli[0]['TD']=='' || $cli[0]['TD']=='.' || $cli[0]['Codigo']=='' || $cli[0]['Codigo']=='.' || $cli[0]['TD']!=$digito['Tipo_Beneficiario'] || $cli[0]['Codigo']!= $digito['Codigo_RUC_CI'])
 		{
 			SetAdoAddNew("Clientes");
 	    	SetAdoFields("Codigo",$digito['Codigo_RUC_CI']);
