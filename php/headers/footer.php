@@ -393,7 +393,7 @@
        var iframe = document.getElementById('FCliente');
       if (iframe.contentWindow) {
         var iframeWindow = iframe.contentWindow;
-        console.log(iframeWindow);
+        // console.log(iframeWindow);
         iframeWindow.guardar_cliente();
     }
   }
