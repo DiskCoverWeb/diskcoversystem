@@ -316,7 +316,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" onclick="guardar_cliente_iframe()">Guardar</button>
                 <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
