@@ -439,6 +439,48 @@ $cuentas = SeteosCtas();
       document.body.removeChild(elemento);
     }
 
+    function guardar_imagen()
+    {
+      var fileInput = $('#file_img').val(); 
+      if(fileInput=='')
+      {
+        Swal.fire('','Seleccione una imagen','warning');
+        return false;
+      }
+
+
+        var formData = new FormData(document.getElementById("form_img"));
+         $.ajax({
+            url: '../controlador/panel.php?cargar_imagen=true',
+            type: 'post',
+            data: formData,
+            contentType: false,
+            processData: false,
+            dataType:'json',
+         // beforeSend: function () {
+         //        $("#foto_alumno").attr('src',"../img/gif/proce.gif");
+         //     },
+            success: function(response) {
+               if(response==-1)
+               {
+                
+               }else if(response ==-2)
+               {
+                  Swal.fire(
+                  '',
+                  'Asegurese que el archivo subido sea una imagen.',
+                  'error')
+               }else
+               {               
+                 $('#img_foto_sm').prop('src','../../img/usuarios/'+response+'?'+Math.random());
+                 $('#img_foto').prop('src','../../img/usuarios/'+response+'?'+Math.random());
+
+                $('#file_img').val('');  
+               } 
+            }
+        });
+    }
+
 
   </script>
 
@@ -610,15 +652,19 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
            
             <li class="dropdown user user-menu">             
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <img src="../../img/png/ejecutivo.png" class="user-image" alt="User Image">
+                <img id="img_foto_sm" src="../../img/usuarios/<?php echo $_SESSION['INGRESO']['Foto']; ?>" class="user-image" alt="User Image">
                 <span class="hidden-xs">Perfil</span>
               </a>
               <ul class="dropdown-menu">
 
                 <li class="user-header">
-                  <img src="../../img/png/ejecutivo.png" class="img-circle" alt="User Image">
+                  <img id="img_foto" src="../../img/usuarios/<?php echo $_SESSION['INGRESO']['Foto']; ?>" class="img-circle" alt="User Image">
                   <p><?php echo $_SESSION['INGRESO']['Nombre']; ?>
-                    <small><input type="file" class="input-sm"></small>
+                    <small>
+                      <form enctype="multipart/form-data" id="form_img" method="post">
+                        <input type="file" class="input-sm" id="file_img" name="file_img" onchange="guardar_imagen()">
+                      </form>
+                    </small>
                   </p>
                 </li>
 
