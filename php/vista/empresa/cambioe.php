@@ -390,7 +390,7 @@ function autocompletarCempresa(){
  
 function cambiarEmpresa()
 {
-	$('#myModal_espera').modal('show');
+	// $('#myModal_espera').modal('show');
 	var parametros = $('#form_empresa').serialize();
 	var parametros = parametros+'&ciu='+$('#ddl_ciudad option:selected').text();
 	$.ajax({
@@ -638,13 +638,19 @@ async function datos_empresa()
 		dataType:'json',
 		success: function(data)
 		{
+			console.log(data);
 			empresa = data.empresa1[0];
 			empresa2 = '';
+			contribuyente = '';
 			if(data.empresa2.length>0)
 			{
 				empresa2 = data.empresa2[0];
 			}
-			contribuyente = data.tipoContribuyente[0];
+			if(data.tipoContribuyente.length>0)
+			{
+				contribuyente = data.tipoContribuyente[0];
+			}
+			
 
 			console.log(data.empresa2);
 			console.log(contribuyente);
@@ -812,10 +818,14 @@ async function datos_empresa()
 			$('#TxtIVA').val(empresa2.Dec_IVA);
 			$('#TxtCantidad').val(empresa2.Dec_Cant);
 
+			// console.log(contribuyente)
 
-			$('#TxtRucTipocontribuyente').val(contribuyente.RUC)
-	 	 	$('#TxtZonaTipocontribuyente').val(contribuyente.Zona)
-	 	 	$('#TxtAgentetipoContribuyente').val(contribuyente.Agente_Retencion);
+			if(contribuyente!='')
+			{
+				$('#TxtRucTipocontribuyente').val(contribuyente.RUC)
+		 	 	$('#TxtZonaTipocontribuyente').val(contribuyente.Zona)
+		 	 	$('#TxtAgentetipoContribuyente').val(contribuyente.Agente_Retencion);
+		 	 }
 
 	 	 	$('#rbl_ContEs').prop('checked',false)
 		 	$('#rbl_rimpeE').prop('checked',false)
@@ -825,7 +835,7 @@ async function datos_empresa()
 		 	$('#rbl_micro2020').prop('checked',false)
 		 	$('#rbl_micro2021').prop('checked',false)
 
-	 	 	if(contribuyente.Contribuyente_Especial){
+	 	 	if(contribuyente.Contribuyente_Especial==1){
 	 	 		$('#rbl_ContEs').prop('checked',true)
 	 	 	}
 
@@ -860,12 +870,15 @@ async function datos_empresa()
 			//---------------------------------fin tab3---------------------
 
 			//-----------------------------tab4-----------------------------
+
+			// console.log(empresa2.Ambiente)			
 			if(empresa2.Ambiente=='1')
 			{
 				$('#optionsRadios1').prop('checked', true);
 			}else
 			{
-				$('#optionsRadios2').prop('checked', true);				
+				$('#optionsRadios2').prop('checked', true);	
+				// console.log('prioduc')			
 			}
 			$('#TxtContriEspecial').val(empresa2.Codigo_Contribuyente_Especial);
 			$('#TxtWebSRIre').val(empresa2.Web_SRI_Recepcion);
@@ -1595,7 +1608,7 @@ async function datos_empresa()
 		                                <b>RUC</b>
 		                                <input type="text" name="TxtRucTipocontribuyente" id="TxtRucTipocontribuyente" class="form-control input-xs" value="" readonly>
 		                            </div>
-		                            <div class="col-sm-2">
+		                            <div class="col-sm-3">
 		                                <b>Zona</b>
 		                                <input type="text" name="TxtZonaTipocontribuyente" id="TxtZonaTipocontribuyente" class="form-control input-xs" value="">
 		                            </div>
@@ -1604,11 +1617,11 @@ async function datos_empresa()
 		                                <input type="text" name="TxtAgentetipoContribuyente" id="TxtAgentetipoContribuyente" class="form-control input-xs" value="">
 		                            </div>
 		                            <div class="col-sm-2">
-		                                <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-		                                <button type="button" class="btn btn-default" title="Grabar Empresa" onclick="guardarTipoContribuyente()">
-		                                    <img src="../../img/png/grabar.png">
-		                                </button>
-		                            </div>
+		                               <!--  <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
+			                                <button type="button" class="btn btn-default" title="Grabar Empresa" onclick="guardarTipoContribuyente()">
+			                                    <img src="../../img/png/grabar.png">
+			                                </button>
+		                            	</div> -->
 		                            </div>
 		                        </div>
 		                        <div class="row">
