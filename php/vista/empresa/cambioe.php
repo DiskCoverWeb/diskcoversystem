@@ -638,13 +638,19 @@ async function datos_empresa()
 		dataType:'json',
 		success: function(data)
 		{
+			console.log(data);
 			empresa = data.empresa1[0];
 			empresa2 = '';
+			contribuyente = '';
 			if(data.empresa2.length>0)
 			{
 				empresa2 = data.empresa2[0];
 			}
-			contribuyente = data.tipoContribuyente[0];
+			if(data.tipoContribuyente.length>0)
+			{
+				contribuyente = data.tipoContribuyente[0];
+			}
+			
 
 			console.log(data.empresa2);
 			console.log(contribuyente);
@@ -812,10 +818,14 @@ async function datos_empresa()
 			$('#TxtIVA').val(empresa2.Dec_IVA);
 			$('#TxtCantidad').val(empresa2.Dec_Cant);
 
+			// console.log(contribuyente)
 
-			$('#TxtRucTipocontribuyente').val(contribuyente.RUC)
-	 	 	$('#TxtZonaTipocontribuyente').val(contribuyente.Zona)
-	 	 	$('#TxtAgentetipoContribuyente').val(contribuyente.Agente_Retencion);
+			if(contribuyente!='')
+			{
+				$('#TxtRucTipocontribuyente').val(contribuyente.RUC)
+		 	 	$('#TxtZonaTipocontribuyente').val(contribuyente.Zona)
+		 	 	$('#TxtAgentetipoContribuyente').val(contribuyente.Agente_Retencion);
+		 	 }
 
 	 	 	$('#rbl_ContEs').prop('checked',false)
 		 	$('#rbl_rimpeE').prop('checked',false)
@@ -860,12 +870,15 @@ async function datos_empresa()
 			//---------------------------------fin tab3---------------------
 
 			//-----------------------------tab4-----------------------------
+
+			// console.log(empresa2.Ambiente)			
 			if(empresa2.Ambiente=='1')
 			{
 				$('#optionsRadios1').prop('checked', true);
 			}else
 			{
-				$('#optionsRadios2').prop('checked', true);				
+				$('#optionsRadios2').prop('checked', true);	
+				// console.log('prioduc')			
 			}
 			$('#TxtContriEspecial').val(empresa2.Codigo_Contribuyente_Especial);
 			$('#TxtWebSRIre').val(empresa2.Web_SRI_Recepcion);
