@@ -411,6 +411,7 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         $_SESSION['INGRESO']['periodo'] = '.'; /////////
         $_SESSION['INGRESO']['Razon_Social'] = $empresa[0]['Razon_Social'];
         $_SESSION['INGRESO']['Fecha_ce'] = $empresa[0]['Fecha_CE'];
+        $_SESSION['INGRESO']['Fecha_p12'] = $empresa[0]['Fecha_P12'];
         $_SESSION['INGRESO']['Porc_Serv'] = round($empresa[0]['Servicio'] / 100, 2);
         $datos = getInfoIPS();
         $_SESSION['INGRESO']['IP_Local'] = $datos['local_net_address'];

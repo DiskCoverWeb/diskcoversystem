@@ -41,7 +41,7 @@ if (isset($_SESSION['INGRESO']['Fecha_ce'])) {
 $date11 = new DateTime(date('Y-m-d'));
 $date21 = new DateTime($f1);
 $diff1 = date_diff($date11, $date21)->format('%R%a');
-$diffdias = date_diff($date11, $date21)->format('%R%a días');
+$diffdias1 = date_diff($date11, $date21)->format('%R%a días');
 $color1 = 'white';
 $estado1 = 'Infefinido';
 if ($diff1 > 241) {
@@ -60,6 +60,37 @@ if ($diff1 > 241) {
   $estado1 = 'Comp-Elec. vencida';
   $color1 = 'danger';
 }
+
+$f3 = date('Y-m-d');
+// print_r($_SESSION);die();
+if (isset($_SESSION['INGRESO']['Fecha_P12'])) {
+  $f3 = $_SESSION['INGRESO']['Fecha_P12'];
+}
+$date1 = new DateTime(date('Y-m-d'));
+$date2 = new DateTime($f3);
+$diff = date_diff($date1, $date2)->format('%R%a');
+$diffdias3 = date_diff($date1, $date2)->format('%R%a días');
+// $interval = date_diff($date1, $date2);
+// echo $interval->format('%R%a días');
+$color3 = 'white';
+$estado3 = 'Infefinido';
+if ($diff > 241) {
+  $color3 = 'success';
+  $estado3 = 'Licencia activa';
+
+} else if ($diff >= 121 and $diff <= 240) {
+
+  $estado3 = 'Licencia activa';
+  $color3 = 'success';
+} else if ($diff >= 1 and $diff <= 120) {
+
+  $estado3 = 'Casi por renovar';
+  $color3 = 'warning';
+} else if ($diff <= 0 and isset($_SESSION['INGRESO']['item'])) {
+  $estado3 = 'licencia vencida';
+  $color3 = 'danger';
+}
+
 $modulo_header = '';
 if (isset($_GET['mod'])) {
   $cod = $_GET['mod'];
@@ -451,43 +482,7 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
 
         <div class="navbar-custom-menu">
           <ul class="nav navbar-nav">
-            <!-- Messages: style can be found in dropdown.less-->
-            <li class="dropdown messages-menu">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <i class="fa fa-calendar"></i>
-                Comp-Elec
-                <span class="label label-<?php echo $color1; ?>"><?php echo $estado1; ?></span>
-              </a>
-              <ul class="dropdown-menu">
-                <li>
-                  <!-- inner menu: contains the actual data -->
-                  <ul class="menu">
-                    <li><!-- start message -->
-                      <a href="#">
-                        <div class="pull-left">
-                          <img src="../../img/png/calendario.png" class="img-circle" alt="User Image">
-                        </div>
-                        <h4>
-                          Fecha de comprobante:
-                        </h4>
-                        <p>
-                          <?php if (isset($_SESSION['INGRESO']['Fecha_ce'])) {
-                            $originalDate = $_SESSION['INGRESO']['Fecha_ce'];
-                            $newDate = date("Y-m-d", strtotime($originalDate));
-                            echo $newDate;
-                          } else {
-                            echo date('Y-m-d');
-                          } ?>
-                        </p>
-                        <p>DIAS RESTANTES:
-                          <?php echo $diffdias ?>
-                        </p>
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
+            <!-- Messages: style can be found in dropdown.less-->            
             <li class="dropdown messages-menu">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                 <i class="fa fa-calendar"></i>
@@ -524,32 +519,127 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
                 </li>
               </ul>
             </li>
-            <li>
+            <li class="dropdown messages-menu">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-calendar"></i>
+                Comp-Elec
+                <span class="label label-<?php echo $color1; ?>"><?php echo $estado1; ?></span>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <!-- inner menu: contains the actual data -->
+                  <ul class="menu">
+                    <li><!-- start message -->
+                      <a href="#">
+                        <div class="pull-left">
+                          <img src="../../img/png/calendario.png" class="img-circle" alt="User Image">
+                        </div>
+                        <h4>
+                          Fecha de comprobante:
+                        </h4>
+                        <p>
+                          <?php if (isset($_SESSION['INGRESO']['Fecha_ce'])) {
+                            $originalDate = $_SESSION['INGRESO']['Fecha_ce'];
+                            $newDate = date("Y-m-d", strtotime($originalDate));
+                            echo $newDate;
+                          } else {
+                            echo date('Y-m-d');
+                          } ?>
+                        </p>
+                        <p>DIAS RESTANTES:
+                          <?php echo $diffdias1 ?>
+                        </p>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="dropdown messages-menu">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-calendar"></i>
+                Fecha P12
+                <span class="label label-<?php echo $color3; ?>"><?php echo $estado3; ?></span>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <!-- inner menu: contains the actual data -->
+                  <ul class="menu">
+                    <li><!-- start message -->
+                      <a href="#">
+                        <div class="pull-left">
+                          <img src="../../img/png/calendario.png" class="img-circle" alt="User Image">
+                        </div>
+                        <h4>
+                          Fecha de P12:
+                        </h4>
+                        <p>
+                          <?php if (isset($_SESSION['INGRESO']['Fecha_P12'])) {
+                            $originalDate = $_SESSION['INGRESO']['Fecha_P12'];
+                            $newDate = date("Y-m-d", strtotime($originalDate));
+                            echo $newDate;
+                          } else {
+                            echo date('Y-m-d');
+                          } ?>
+                        </p>
+                        <p>DIAS RESTANTES:
+                          <?php echo $diffdias3 ?>
+                        </p>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+           <!--  <li>
               <a href="#" class="btn" data-toggle="dropdown" style="padding: 12px 0px 12px 0px;"
                 onclick="cambiar_empresa()">
-                <!-- <i class="fa fa-calendar"></i> -->
                 <img src="../../img/png/salire.png" class="fa" alt="User Image" style="width:75%"
                   title="Salir de empresa">
               </a>
             </li>
             <li>
               <a href="#" class="btn " data-toggle="dropdown" style="padding: 12px 0px 12px 0px;" onclick="logout()">
-                <!-- <i class="fa fa-calendar"></i> -->
                 <img src="../../img/png/salirs.png" class="fa" alt="User Image" style="width:75%"
                   title="Salir de sistema">
               </a>
-              <!-- <i class="fa fa-calendar"></i> -->
 
-            </li>
+            </li> -->
 
             <!-- User Account: style can be found in dropdown.less -->
-            <li class="dropdown user user-menu">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <!-- <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image"> -->
-                <span class="hidden-xs">
-                  <?php echo $_SESSION['INGRESO']['Nombre']; ?>
-                </span>
+           
+            <li class="dropdown user user-menu">             
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <img src="../../img/png/ejecutivo.png" class="user-image" alt="User Image">
+                <span class="hidden-xs">Perfil</span>
               </a>
+              <ul class="dropdown-menu">
+
+                <li class="user-header">
+                  <img src="../../img/png/ejecutivo.png" class="img-circle" alt="User Image">
+                  <p><?php echo $_SESSION['INGRESO']['Nombre']; ?>
+                    <small><input type="file" class="input-sm"></small>
+                  </p>
+                </li>
+
+                <li class="user-footer">
+                  <div class="pull-left">
+                    <a href="#" class="btn" data-toggle="dropdown" style="padding: 12px 0px 12px 0px;"
+                      onclick="cambiar_empresa()">
+                      <!-- <i class="fa fa-calendar"></i> -->
+                      <img src="../../img/png/salire.png" class="fa" alt="User Image" style="width:75%"
+                        title="Salir de empresa">
+                    </a>
+                  </div>
+                  <div class="pull-right">
+                    <a href="#" class="btn " data-toggle="dropdown" style="padding: 12px 0px 12px 0px;" onclick="logout()">
+                      <!-- <i class="fa fa-calendar"></i> -->
+                      <img src="../../img/png/salirs.png" class="fa" alt="User Image" style="width:75%"
+                        title="Salir de sistema">
+                    </a>
+                  </div>
+                </li>
+              </ul>              
             </li>
           </ul>
         </div>
