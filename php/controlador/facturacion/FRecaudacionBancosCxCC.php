@@ -52,6 +52,35 @@ if (isset($_GET['EnviarRubros'])) {
     echo json_encode($controlador->Enviar_Rubros($parametros));
 }
 
+if (isset($_GET['RecibirAbonos'])) {
+    $MBFechaI = $_POST['MBFechaI'];
+    $MBFechaF = $_POST['MBFechaF'];
+    $TxtOrden = $_POST['TxtOrden'];
+    $DCEntidad = $_POST['DCEntidad'];
+
+    $parametros = array(
+        'MBFechaI' => $MBFechaI,
+        'MBFechaF' => $MBFechaF,
+        'TxtOrden' => $TxtOrden,
+        'DCEntidad' => $DCEntidad,
+    );
+
+    if (isset($_FILES['archivoBanco']) && $_FILES['archivoBanco']['error'] == UPLOAD_ERR_OK) {
+        $archivo = $_FILES['archivoBanco'];
+        $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/BANCO/ABONOS/";
+        if (!is_dir($carpetaDestino)) {
+            mkdir($carpetaDestino, 0777, true);
+        }
+        $nombreArchivoDestino = $carpetaDestino . basename($archivo['name']);
+        if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
+            $parametros['NombreArchivo'] = $nombreArchivoDestino;
+            echo json_encode($controlador->Recibir_Abonos($parametros));
+        } else {
+            echo json_encode(array("response" => 0, "message" => "Error al subir el archivo"));
+        }
+    }
+}
+
 class FRecaudacionBancosCxCC
 {
     private $modelo;
@@ -356,23 +385,70 @@ class FRecaudacionBancosCxCC
         return $res;
     }
 
-    function Recibir_Abonos($MBFechaI,$MBFechaF)
+    function Recibir_Abonos($parametros)
     {
-        $Label4 = G_NINGUNO;
+        //print_r($parametros);
+        $OrdenValida = false;
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+        //$Archivo = $parametros['Archivo'];
+        $TextoBanco = $parametros['DCEntidad'];
+        $TxtOrden = $parametros['TxtOrden'];
+        //$Label4 = G_NINGUNO;
         FechaValida($MBFechaI);
         FechaValida($MBFechaF);
-        $Filter = "Todos los archivos|*.txt";
-        $InitDir = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/";
-        if($Label4 != G_NINGUNO){
-            $Mensaje = 'SUBIR EL ARCHIVO DE LA PANTALLA';
-            $Titulo = 'Formulario de Grabacion';
-            return  array('Titulo' => $Titulo, 'Mensaje' => $Mensaje);
-        }else{
-            $FileName = Abrir_Archivo($Me.hwnd,$Dir_Dialog,$OpenFile);
-            //$NombreArchivo = $File;
-            $RutaGeneraFile = $FileName;
+
+        $NombreArchivo = $parametros['NombreArchivo'];
+        $RutaGeneraFile = strtoupper($NombreArchivo);
+        
+        $Contador = 0;
+        $CantCampos = 0;
+        $TotalIngreso = 0;
+        $Separador = G_NINGUNO;
+        $Orden_Pago = G_NINGUNO;
+        $OrdenValida = false;
+        $CamposFile = [];
+
+        $NumFile = fopen($RutaGeneraFile, "r");
+        if ($NumFile) {
+            while (!feof($NumFile)) {
+                $Cod_Field = fgets($NumFile);
+                if ($Separador == G_NINGUNO) {
+                    if (strpos($Cod_Field, "\t") !== false) {
+                        $Separador = "\t";
+                    }
+                }
+                if ($Contador == 0) {
+                    while (strlen($Cod_Field) > 2) {
+                        $No_Hasta = strpos($Cod_Field, $Separador);
+                        $CampoTemp = trim(substr($Cod_Field, 0, $No_Hasta - 1));
+                        $CamposFile[] = ['Campo' => "C" . sprintf("%02d", count($CamposFile)), 'Valor' => $CampoTemp];
+
+                        switch ($TextoBanco) {
+                            case "PICHINCHA":
+                                if ($CantCampos == 14 && $TxtOrden == $CampoTemp) {
+                                    $Orden_Pago = $CampoTemp;
+                                    $OrdenValida = true;
+                                }
+                                break;
+                            default:
+                                $OrdenValida = true;
+                                break;
+                        }
+                        $Cod_Field = trim(substr($Cod_Field, $No_Hasta + 1));
+                    }
+                }
+                $Contador++;
+            }
+            fclose($NumFile);
         }
 
+        if (!$OrdenValida) {
+            $mensaje = "La información del archivo no pertenece a la Orden No. " . $TxtOrden . " registrada del Banco, vuelva a seleccionar el documento correcto.";
+            return array('res' => 'Error', 'mensaje' => $mensaje);
+        }
+
+        return array('res' => 'OK', 'mensaje' => 'AUN EN DESARROLLO.');
     }
 
     function Generar_Pichincha($parametros)
@@ -426,9 +502,9 @@ class FRecaudacionBancosCxCC
                 $CodigoP = $valor["CI_RUC"];
                 $CodigoC = strval(intval($valor['CI_RUC']));
                 $CodigoC .= str_pad('', max(0, 4 - strlen($CodigoC)), ' ');
-                $DireccionCli = Sin_Signos_Especiales($valor["Direccion"]);                                 
-                $Codigo3 = SinEspaciosDer2($DireccionCli);                
-                $DireccionCli = trim(substr($DireccionCli, 0, strlen($DireccionCli) - strlen($Codigo3)));                
+                $DireccionCli = Sin_Signos_Especiales($valor["Direccion"]);
+                $Codigo3 = SinEspaciosDer2($DireccionCli);
+                $DireccionCli = trim(substr($DireccionCli, 0, strlen($DireccionCli) - strlen($Codigo3)));
                 $Codigo3 = trim(SinEspaciosDer2($DireccionCli));
                 $Codigo1 = $valor["Anio_Mes"];
 
@@ -502,7 +578,7 @@ class FRecaudacionBancosCxCC
                 $Factura_No = $Factura_No + 1;
                 $Total = $valor["Saldo_MN"];
                 $Saldo = $valor["Saldo_MN"] * 100;
-                $CodigoP = $valor["CI_RUC"];  
+                $CodigoP = $valor["CI_RUC"];
                 $DireccionCli = Sin_Signos_Especiales($valor["Direccion"]);
                 $Codigo3 = SinEspaciosDer2($DireccionCli);
                 $DireccionCli = trim(substr($DireccionCli, 0, strlen($DireccionCli) - strlen($Codigo3)));
@@ -544,13 +620,16 @@ class FRecaudacionBancosCxCC
         }
         fclose($NumFileFacturas);
         $mensaje =
-            strtoupper(dirname(__DIR__, 3) . "\TEMP\BANCO\FACTURAS\SCREC" . $mes . ".TXT") . PHP_EOL . PHP_EOL .
-            strtoupper(dirname(__DIR__, 3) . "\TEMP\BANCO\FACTURAS\SCCOB" . $mes . ".TXT") . PHP_EOL . PHP_EOL .
+            strtoupper("SCREC" . $mes . ".TXT") . PHP_EOL . PHP_EOL .
+            strtoupper("SCCOB" . $mes . ".TXT") . PHP_EOL . PHP_EOL .
             "Valor Total a Recaudar USD " . number_format($SumaBancos, 2, '.', ',');
 
-        return array('res' => 'Ok', 'mensaje' => $mensaje, 'textoBanco' => 'PICHINCHA');
+        return array('res' => 'Ok', 
+        'mensaje' => $mensaje, 
+        'textoBanco' => 'PICHINCHA', 
+        'Nombre1'=> 'SCREC' . $mes . ".TXT",
+        'Nombre2'=> 'SCCOB' . $mes . ".TXT");
     }
-
     
 }
 ?>

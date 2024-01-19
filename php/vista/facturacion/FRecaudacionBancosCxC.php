@@ -143,7 +143,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <input class="form-control" type="file" id="fileInput">
+                        <input class="form-control" type="file" id="fileInput" accept=".txt">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -475,6 +475,25 @@
                                 html: data.mensaje,
                                 confirmButtonText: 'Aceptar'
                             });
+
+                            var url = "../../TEMP/BANCO/FACTURAS/" + data.Nombre1;
+                            var url2 = "../../TEMP/BANCO/FACTURAS/" + data.Nombre2;
+
+                            var enlaceTemporal = $('<a></a>')
+                                .attr('href', url)
+                                .attr('download', data.Nombre1)
+                                .appendTo('body');
+
+                            enlaceTemporal[0].click();
+                            enlaceTemporal.remove();
+
+                            var enlaceTemporal2 = $('<a></a>')
+                                .attr('href', url2)
+                                .attr('download', data.Nombre2)
+                                .appendTo('body');
+
+                            enlaceTemporal2[0].click();
+                            enlaceTemporal2.remove();
                             break;
                         /*
                     case "BGR_EC":
@@ -525,11 +544,49 @@
         Recibir_Abonos();
     });
 
+
     function Recibir_Abonos() {
-        //var archivo = $("#fileInput")[0].files[0];
-        //console.log("Subir el archivo: " + archivo.name);
-        
+        var MBFechaI = $('#MBFechaI').val();
+        var MBFechaF = $('#MBFechaF').val();
+        var TxtOrden = $('#TxtOrden').val();
+        var DCEntidad = $('#DCEntidad').val();
+        var fileInput = $('#fileInput')[0];
+        var archivo = fileInput.files[0];
+
+        var formData = new FormData();
+        formData.append('MBFechaI', MBFechaI);
+        formData.append('MBFechaF', MBFechaF);
+        formData.append('TxtOrden', TxtOrden);
+        formData.append('DCEntidad', DCEntidad);
+
+        if (archivo) {
+            formData.append('archivoBanco', archivo, archivo.name);
+        }
+
+        $.ajax({
+            type: 'post',
+            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?RecibirAbonos=true',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                var datos = JSON.parse(data);
+                console.log('resultado', datos);
+                if (datos.res == 'Error') {
+                    Swal.fire({
+                        title: datos.mensaje,
+                        type: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error en la solicitud: " + textStatus, errorThrown);
+                //$('#myModal_espera').hide();
+            }
+        });
     }
+
 
 
 
