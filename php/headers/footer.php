@@ -314,6 +314,7 @@
                 <iframe id="FCliente" width="100%" height="400px" marginheight="0" frameborder="0"></iframe>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="guardar_cliente_iframe()">Guardar</button>
                 <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
@@ -386,6 +387,17 @@
             }
         });         
     })
+
+    function guardar_cliente_iframe()
+    {
+       var iframe = document.getElementById('FCliente');
+      if (iframe.contentWindow) {
+        var iframeWindow = iframe.contentWindow;
+        console.log(iframeWindow);
+        iframeWindow.guardar_cliente();
+    }
+  }
+
 function datos_cliente() {
     var frame = document.getElementById('FCliente');
     var ruc = frame.contentWindow.document.getElementById('ruc').value;

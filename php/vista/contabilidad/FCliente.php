@@ -15,6 +15,12 @@ switch ($_SESSION['INGRESO']['modulo_']) {
     echo 1;
   } ?>'
   $(document).ready(function () {
+
+     if (window.self !== window.top) {
+      $('#BtnGuardarClienteFCliente').css('display','none');
+      // console
+    } 
+
     provincias();
     tipo_proveedor_Cliente()
 
