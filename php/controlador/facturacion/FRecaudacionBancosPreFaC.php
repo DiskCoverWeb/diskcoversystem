@@ -68,7 +68,7 @@ if (isset($_GET['Command1_Click'])) {
 
     if (isset($_FILES['archivoBanco']) && $_FILES['archivoBanco']['error'] == UPLOAD_ERR_OK) {
         $archivo = $_FILES['archivoBanco'];
-        $carpetaDestino = "../../../TEMP/FRecaudacionBancosPreFa/";
+        $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/FRecaudacionBancosPreFa/";
         $nombreArchivoDestino = $carpetaDestino . basename($archivo['name']);
         if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
             $parametros['NombreArchivo'] = $nombreArchivoDestino;
@@ -77,6 +77,15 @@ if (isset($_GET['Command1_Click'])) {
             echo json_encode(array("response" => 0, "message" => "Error al subir el archivo"));
         }
     }
+}
+
+if (isset($_GET['DatosBanco'])) {
+    echo json_encode($controlador->DatosBanco());
+}
+
+if(isset($_GET['Command4_Click'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Command4_Click($parametros));
 }
 
 
@@ -480,5 +489,247 @@ class FRecaudacionBancosPreFaC
             }
         }
         return array('tbl' => $DGFactura['datos'], 'TotalIngreso' => $TotalIngreso, 'TxtFile' => $TxtFile);
+    }
+
+    public function DatosBanco()
+    {
+        $Tipo_Carga = Leer_Campo_Empresa("Tipo_Carga_Banco");
+        $Costo_Banco = Leer_Campo_Empresa("Costo_Bancario");
+        $Cta_Bancaria = Leer_Campo_Empresa("Cta_Banco");
+        $Cta_Gasto_Banco = Leer_Seteos_Ctas("Cta_Gasto_Bancario");
+        return array(
+            'Tipo_Carga' => $Tipo_Carga,
+            'Costo_Banco' => $Costo_Banco,
+            'Cta_Bancaria' => $Cta_Bancaria,
+            'Cta_Gasto_Banco' => $Cta_Gasto_Banco
+        );
+    }
+
+    public function Command4_Click($parametros)
+    {   
+        Actualizar_Datos_Representantes_SP();
+        $Cta_Banco = trim(strtoupper(SinEspaciosDer($parametros['DCBanco'])));
+        if (strlen($Cta_Banco) <= 1) {
+            $Cta_Banco = "0000000000";
+        }
+        $TipoDoc = "";
+        $AuxNumEmp = $_SESSION['INGRESO']['item'];
+        $FechaFinal = $parametros['MBFechaF'];
+        $FechaTexto = FechaSistema();
+        $FechaTexto1 = date("m/d/y", strtotime($parametros['MBFechaI']));
+        $MiFecha = BuscarFecha($parametros['MBFechaI']);
+        $MiMes = date("m", strtotime($parametros['MBFechaI']));
+        $Contador = 0;
+        //Consultamos la deuda Pendiente
+        $this->modelo->UpdateClientesFacturacion();
+        $this->modelo->UpdateClientesFacturacion2($parametros['MBFechaI']);
+        $this->modelo->UpdateClientesFacturacion3();
+
+        $AdoFactura = $this->modelo->Tipo_Carga($parametros);
+
+        $RutaDestino = "../../../TEMP/FRecaudacionBancosPreFa/DEUDAESTUDIANTE.csv";
+        $Codigo = strtoupper(MesesLetras(date("m", strtotime($parametros['MBFechaI']))) . "-" . date("d", strtotime($parametros['MBFechaI'])) . "-" . date("Y", strtotime($parametros['MBFechaI'])));
+        $RutaDestino = "../../../TEMP/FRecaudacionBancosPreFa/" . $Codigo . ".txt";
+        $NombreArchivoZip = $RutaDestino;
+        $FechaFin = BuscarFecha($parametros['MBFechaF']);
+        $TextoImprimio = "";
+        $FechaFin = BuscarFecha(date("y-m-t", strtotime($parametros['MBFechaF'])));
+        switch ($parametros['TextoBanco']) {
+            case "PACIFICO":
+                //TODO: Generar Pacifico
+                break;
+            case "PICHINCHA":
+                //TODO: Genera Pichincha
+                return $this->Generar_Pichincha($parametros, $AdoFactura);
+            case "BOLIVARIANO":
+                //TODO: Genera Bolivariano
+                break;
+            case "GUAYAQUIL":
+                //TODO: Genera Guayaquil
+                break;
+            case "PRODUBANCO":
+                //TODO: Genera Produbanco
+                break;
+            case "TARJETAS":
+                //TODO: Genera Tarjetas
+                break;
+            case "INTERNACIONAL":
+                //TODO Genera Internacional
+                break;
+            default:
+                break;
+        }
+    }
+
+    public function Generar_Pichincha($parametros, $AdoFactura)
+    {
+        $Total_Banco = 0;
+        $Mifecha = BuscarFecha($parametros['MBFechaI']);
+        $MiMes = date("m", strtotime($parametros['MBFechaI']));
+        $FechaFin = BuscarFecha(date('Y-m-t', strtotime($parametros['MBFechaI'])));
+        $TextoImprimio = "";
+        $AuxNumEmp = $_SESSION['INGRESO']['item'];
+        $Cta_Cobrar = G_NINGUNO;
+        $FechaTexto = FechaSistema();
+        //Comenzamos a generar el archivo: SCRECXX.TXT
+        $EsComa = True;
+        $Estab = False;
+        $Contador = 0;
+        $Factura_No = 0;
+        $Fecha_Meses = $parametros['MBFechaI'] . " al " . $parametros['MBFechaF'];
+        $Fecha_Meses = str_replace("/", "-", $Fecha_Meses);
+
+        $Mes = date("m", strtotime($parametros['MBFechaI']));
+        $Anio = intval(substr(date("Y", strtotime($parametros['MBFechaI'])), 1, 3));
+        $Dia = "15";
+
+        $RutaGeneraFile = strtoupper(dirname(__DIR__, 3) . "/TEMP/FRecaudacionBancosPreFa/SCREC " . $Fecha_Meses . ".TXT");
+        $NombreFile = "SCREC " . $Fecha_Meses . ".TXT";
+        $NumFileFacturas1 = fopen($RutaGeneraFile, "w"); //Abre el archivo
+
+        $RutaGeneraFile2 = strtoupper(dirname(__DIR__, 3) . "/TEMP/FRecaudacionBancosPreFa/SCCOB " . $Fecha_Meses . ".TXT");
+        $NombreFile2 = "SCCOB " . $Fecha_Meses . ".TXT";
+        $NumFileFacturas2 = fopen($RutaGeneraFile2, "w"); //Abre el archivo
+
+        if (count($AdoFactura)) {
+            foreach ($AdoFactura as $key => $value) {
+                $Contador++;
+                $CodigoCli = $value['Codigo'];
+                $NombreCliente = $this->Sin_Signos_Especiales($value['Cliente']);
+                $Factura_No = $Factura_No + 1;
+                $Total = $value['Valor_Cobro'];
+                $Saldo = $value['Valor_Cobro'] * 100;
+                $CodigoP = $value['CI_RUC'];
+                $CodigoC = intval($value['CI_RUC']);
+                $CodigoC = $CodigoC . str_repeat(" ", max(0, 4 - strlen($CodigoC)));
+                $DireccionCli = $this->Sin_Signos_Especiales($value['Direccion']);
+                $Codigo3 = trim($this->SinEspaciosDer2($DireccionCli));
+                $DireccionCli = trim(substr($DireccionCli, 0, strlen($DireccionCli) - strlen($Codigo3)));
+                $Codigo3 = trim($this->SinEspaciosDer2($DireccionCli));
+                //$Codigo1 = 
+                $Codigo4 = substr($value['Codigo_Inv'] . " " . $value['Producto'], 0, 33);
+                $Codigo4 = $Codigo4 . str_repeat(" ", max(0, 33 - strlen($Codigo4)))
+                    . sprintf("%02d", $value["Num_Mes"]) . " "
+                    . $value["Periodo"];
+
+                $Tabulador = "\t";
+
+                if (strlen($value['Actividad']) >= 3) {
+                    fwrite($NumFileFacturas2, "CO" . $Tabulador);
+                    fwrite($NumFileFacturas2, $parametros['Cta_Bancaria'] . $Tabulador);
+                    fwrite($NumFileFacturas2, $Contador . $Tabulador);
+                    fwrite($NumFileFacturas2, sprintf("%013d", $Factura_No) . $Tabulador);
+                    fwrite($NumFileFacturas2, $CodigoP . $Tabulador);
+                    fwrite($NumFileFacturas2, "USD" . $Tabulador);
+                    fwrite($NumFileFacturas2, sprintf("%013d", $Saldo) . $Tabulador);
+                    fwrite($NumFileFacturas2, "CTA" . $Tabulador);
+                    fwrite($NumFileFacturas2, "10" . $Tabulador);
+                    $NumStrg = SinEspaciosIzq($value['Actividad']);
+                    if (strlen($NumStrg) === 3) {
+                        fwrite($NumFileFacturas2, SinEspaciosIzq($value['Actividad']) . $Tabulador);
+                        fwrite($NumFileFacturas2, $this->SinEspaciosDer2($value['Actividad']) . $Tabulador);
+                    }else{
+                        fwrite($NumFileFacturas2, $Tabulador);
+                        fwrite($NumFileFacturas2, $Tabulador);
+                    }
+                    fwrite($NumFileFacturas2, "R" . $Tabulador);
+                    fwrite($NumFileFacturas2, $_SESSION['INGRESO']['RUC'] . $Tabulador);
+                    fwrite($NumFileFacturas2, sprintf("%02d", $value['Num_Mes'] . " " . substr($NombreCliente, 0, 37)) . $Tabulador);
+                    fwrite($NumFileFacturas2, $Tabulador);
+                    fwrite($NumFileFacturas2, $Tabulador);
+                    fwrite($NumFileFacturas2, $Tabulador);
+                    fwrite($NumFileFacturas2, $Tabulador);
+                    fwrite($NumFileFacturas2, date("m", strtotime($value['Fecha'])) . $Tabulador);
+                    fwrite($NumFileFacturas2, strtoupper($Codigo4) . $Tabulador);
+                    fwrite($NumFileFacturas2, sprintf("%013d", $Saldo) . $Tabulador);
+                    fwrite($NumFileFacturas2, "\n");
+                }else{
+                    if($parametros['TipoCarga'] >= 1){
+                        //Tipo Gualaceo
+                        fwrite($NumFileFacturas1, "CO" . $Tabulador);
+                        fwrite($NumFileFacturas1, sprintf("%013d", $CodigoC) . $Tabulador);
+                        fwrite($NumFileFacturas1, "USD". $Tabulador);
+                        fwrite($NumFileFacturas1, $Saldo . $Tabulador);
+                        fwrite($NumFileFacturas1, "REC" . $Tabulador);
+                        fwrite($NumFileFacturas1, $Tabulador);
+                        fwrite($NumFileFacturas1, $Tabulador);
+                        fwrite($NumFileFacturas1, strtoupper($Codigo4) . $Tabulador);
+                        fwrite($NumFileFacturas1, "N" . $Tabulador);
+                        fwrite($NumFileFacturas1, sprintf("%013d", intval($CodigoC)) . $Tabulador);
+                        fwrite($NumFileFacturas1, sprintf("%02d", $value['Num_Mes']) . " " . substr($NombreCliente, 0, 37) . $Tabulador);
+                        fwrite($NumFileFacturas1, "\n");
+                    }else{
+                        //Tipo General
+                        fwrite($NumFileFacturas1, "CO" . $Tabulador);
+                        fwrite($NumFileFacturas1, $parametros['Cta_Bancaria'] . $Tabulador);
+                        fwrite($NumFileFacturas1, $Contador . $Tabulador);
+                        fwrite($NumFileFacturas1, sprintf("%013d", $Factura_No) . $Tabulador);
+                        fwrite($NumFileFacturas1, $CodigoP . $Tabulador);
+                        fwrite($NumFileFacturas1, "USD" . $Tabulador);
+                        fwrite($NumFileFacturas1, sprintf("%013d", $Saldo) . $Tabulador);
+                        fwrite($NumFileFacturas1, "REC" . $Tabulador);
+                        fwrite($NumFileFacturas1, "10" . $Tabulador);
+                        fwrite($NumFileFacturas1, $Tabulador);
+                        fwrite($NumFileFacturas1, "0" . $Tabulador);
+                        fwrite($NumFileFacturas1, "R" . $Tabulador);
+                        fwrite($NumFileFacturas1, $_SESSION['INGRESO']['RUC'] . $Tabulador);
+                        fwrite($NumFileFacturas1, sprintf("%02d", $value['Num_Mes']) . " " . substr($NombreCliente, 0, 37) . $Tabulador);
+                        fwrite($NumFileFacturas1, $Tabulador);
+                        fwrite($NumFileFacturas1, $Tabulador);
+                        fwrite($NumFileFacturas1, $Tabulador);
+                        fwrite($NumFileFacturas1, $Tabulador);
+                        fwrite($NumFileFacturas1, date("m", strtotime($value['Fecha'])) . $Tabulador);
+                        fwrite($NumFileFacturas1, strtoupper($Codigo4) . $Tabulador);
+                        fwrite($NumFileFacturas1, sprintf("%013d", $Saldo) . $Tabulador);
+                        fwrite($NumFileFacturas1, "\n");
+                    }
+                }
+
+            }
+        }
+        fclose($NumFileFacturas1);
+        fclose($NumFileFacturas2);
+        return array('LabelAbonos' => sprintf("%02d", $Total_Banco),
+                     'Mensaje' => "SE GENERARON LOS SIGUIENTES ARCHIVOS: \n" . $NombreFile . "\n" . $NombreFile2,
+                    'Archivo1' => $RutaGeneraFile,
+                    'Archivo2' => $RutaGeneraFile2,
+                    'Nombre1' => $NombreFile,
+                    'Nombre2' => $NombreFile2);
+
+    }
+
+    //TODO: CAMBIAR ESTOS METODOS LUEGO POR LOS QUE ESTAN EN FUNCIONES
+    function SinEspaciosDer2($texto = "")
+    {
+        $resultado = explode(" ", $texto, 2); // El tercer parámetro limita el número de elementos en el array
+        return isset($resultado[1]) ? $resultado[1] : $resultado[0];
+    }
+
+    function Sin_Signos_Especiales($cad)
+    {
+        //$cad = trim($cadena);
+        $cad = str_replace(array("á", "é", "í", "ó", "ú"), array("a", "e", "i", "o", "u"), $cad);
+        // $cad = str_replace(array("Á", "É", "Í", "Ó", "Ú"), array("A", "E", "I", "O", "U"), $cad);
+        $cad = str_replace(array("à", "è", "ì", "ò", "ù"), array("a", "e", "i", "o", "u"), $cad);
+        $cad = str_replace(array("À", "È", "Ì", "Ò", "Ù"), array("A", "E", "I", "O", "U"), $cad);
+        $cad = str_replace(array("ñ", "Ñ"), array("n", "N"), $cad);
+        $cad = str_replace("ü", "u", $cad);
+        $cad = str_replace("Ü", "U", $cad);
+        $cad = str_replace("&", "Y", $cad);
+        $cad = str_replace(array("\r", "\n"), "|", $cad);
+        $cad = str_replace("Nº", "No.", $cad);
+        // $cad = str_replace("#", "No.", $cad);
+        $cad = str_replace("ª", "a. ", $cad);
+        $cad = str_replace("°", "o. ", $cad);
+        $cad = str_replace("½", "1/2", $cad);
+        $cad = str_replace("¼", "1/4", $cad);
+        $cad = str_replace(chr(255), " ", $cad);
+        $cad = str_replace(chr(254), " ", $cad);
+        $cad = str_replace("^", "", $cad);
+        // $cad = str_replace(":", " ", $cad);
+        // $cad = str_replace("\"", " ", $cad);
+        $cad = str_replace("´", " ", $cad);
+
+        return $cad;
     }
 }

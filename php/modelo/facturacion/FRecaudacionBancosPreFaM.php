@@ -257,5 +257,116 @@ class FRecaudacionBancosPreFaM
 
     }
 
+    public function UpdateClientesFacturacion()
+    {
+        $sql = "UPDATE Clientes_Facturacion
+                SET AlDia = 1
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'";
+        Ejecutar_SQL_SP($sql);
+    }
+
+    public function UpdateClientesFacturacion2($MBFechaI)
+    {
+        $sql = "UPDATE Clientes_Facturacion
+                SET AlDia = 0
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND Fecha < '" . BuscarFecha($MBFechaI) . "'";
+        Ejecutar_SQL_SP($sql);
+    }
+
+    public function UpdateClientesFacturacion3()
+    {
+        $sql = "UPDATE Clientes_Facturacion
+                SET Fecha = CONVERT(datetime, '01/' + STR(Num_Mes) + '/' + Periodo, 103)
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND Fecha <> CONVERT(datetime, '01/' + STR(Num_Mes) + '/' + Periodo, 103)";
+        Ejecutar_SQL_SP($sql);
+    }
+
+    public function Tipo_Carga($parametros)
+    {
+        $sql = "";
+        switch ($parametros['Tipo_Carga']) {
+            case 2:
+                $sql .= "SELECT F.Codigo,C.Grupo,C.Cliente,C.CI_RUC,C.Direccion,C.Casilla,C.Actividad,F.Periodo,F.Num_Mes,F.Fecha,CC.Codigo_Inv,
+                         C.Representante,C.CI_RUC_R,C.TD_R,C.Telefono_R,C.Tipo_Cta,C.Cod_Banco,C.Cta_Numero,C.DireccionT,C.Fecha_Cad,C.Email2,
+                         C.Saldo_Pendiente,CC.Producto,(F.Valor-(F.Descuento+F.Descuento2)) As Valor_Cobro
+                         FROM Clientes_Facturacion As F,Clientes As C,Catalogo_Productos As CC 
+                         WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                         AND CC.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                         AND (F.Valor-(F.Descuento+F.Descuento2)) > 0";
+                break;
+            case 3:
+                $sql .= "SELECT F.Codigo,C.Grupo,C.Cliente,C.CI_RUC,C.Direccion,C.Casilla,C.Actividad,C.Plan_Afiliado,C.Saldo_Pendiente,
+                         C.Representante,C.CI_RUC_R,C.TD_R,C.Telefono_R,C.Tipo_Cta,C.Cod_Banco,C.Cta_Numero,C.DireccionT,C.Fecha_Cad,C.Email2,'PENSION ' As Producto,
+                         '01.01' As Codigo_Inv,SUM(F.Valor-(F.Descuento+F.Descuento2)) As Valor_Cobro 
+                         FROM Clientes_Facturacion As F,Clientes As C 
+                         WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "'";
+                break;
+            default:
+                $sql = "SELECT F.Codigo,C.Grupo,C.Cliente,C.CI_RUC,C.Direccion,C.Casilla,C.Actividad,C.Plan_Afiliado,F.Periodo,F.Num_Mes,F.Fecha,
+                        C.Representante,C.CI_RUC_R,C.TD_R,C.Telefono_R,C.Tipo_Cta,C.Cod_Banco,C.Cta_Numero,C.DireccionT,C.Fecha_Cad,C.Email2,C.EmailR,
+                        F.Codigo_Inv,C.Saldo_Pendiente,SUM(F.Valor-(F.Descuento+F.Descuento2)) As Valor_Cobro,";
+                if ($parametros['Tipo_Carga']) {
+                    $sql .= "'MATRICULAS Y PENSION DE ' As Producto ";
+                } else {
+                    $sql .= "'PENSION DE ' As Producto ";
+                }
+                $sql .= "FROM Clientes_Facturacion As F, Clientes As C 
+                         WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "'";
+                break;
+
+        }
+
+        $sql .= "AND F.Fecha BETWEEN '" . BuscarFecha($parametros['MBFechaI']) . "' and '" . BuscarFecha($parametros['MBFechaF']) . "'";
+        if ($parametros['CheqRangos'] <> false) {
+            $sql .= "AND C.Grupo BETWEEN '" . $parametros['DCGrupoI'] . "' and '" . $parametros['DCGrupoF'] . "'";
+        }
+        if ($parametros['CheqAlDia'] <> false) {
+            $sql .= "AND F.AlDia <> 0";
+        }
+        switch ($parametros['TextoBanco']) {
+            case 'PACIFICO':
+            case 'PICHINCHA':
+            case 'BOLIVARIANO':
+            case 'GUAYAQUIL':
+            case 'PRODUBANCO':
+            case 'TARJETAS':
+                $sql .= "AND C.Tipo_Cta = 'TARJETA'
+                         AND LEN(C.Cta_Numero) >= 14";
+                break;
+            case 'INTERNACIONAL':
+            default:
+                $sql .= "AND C.Cod_Banco > 0
+                         AND LEN(C.Cta_Numero) > 1
+                         AND C.Tipo_Cta <> '.' ";
+                break;
+        }
+
+        switch ($parametros['Tipo_Carga']) {
+            case 2:
+                $sql .= "AND F.Codigo = C.Codigo
+                         AND F.Codigo_Inv = CC.Codigo_Inv
+                         AND F.Item = CC.Item
+                         ORDER BY C.Grupo,C.Cliente,F.Fecha,F.Codigo_Inv";
+                break;
+            case 3:
+                $sql .= "AND F.Codigo = C.Codigo
+                         GROUP BY F.Codigo,C.Grupo,C.Cliente,C.CI_RUC,C.Direccion,C.Casilla,C.Actividad,C.Plan_Afiliado,C.Saldo_Pendiente,
+                         C.Representante,C.CI_RUC_R,C.TD_R,C.Telefono_R,C.Tipo_Cta,C.Cod_Banco,C.Cta_Numero,C.DireccionT,C.Fecha_Cad,C.Email2
+                         HAVING SUM(F.Valor-(F.Descuento+F.Descuento2)) > 0
+                         ORDER BY C.Grupo,C.Cliente";
+                break;
+            default:
+                $sql .= "AND F.Codigo = C.Codigo
+                         GROUP BY F.Codigo,C.Grupo,C.Cliente,C.CI_RUC,C.Direccion,C.Casilla,C.Actividad,C.Plan_Afiliado,F.Periodo,F.Codigo_Inv,F.Num_Mes,F.Fecha,
+                         C.Representante,C.CI_RUC_R,C.TD_R,C.Telefono_R,C.Tipo_Cta,C.Cod_Banco,C.Cta_Numero,C.DireccionT,C.Fecha_Cad,C.Email2,C.EmailR,C.Saldo_Pendiente
+                         HAVING SUM(F.Valor-(F.Descuento+F.Descuento2)) > 0 
+                         ORDER BY C.Grupo,C.Cliente,F.Fecha";
+                break;
+        }
+        return $this->db->datos($sql);
+    }
+
 
 }

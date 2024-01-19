@@ -16,6 +16,10 @@
     var Pos_Factura = "";
     var Individual = "";
     var TipoFactura = "";
+    var Tipo_Carga = "";
+    var Costo_Banco = "";
+    var Cta_Bancaria = "";
+    var Cta_Gasto_Banco = "";
     var Factura_No = "";
 
     let FA = {
@@ -42,6 +46,7 @@
         DCBanco();
         DCGrupos();
         DCEntidadBancaria();
+        DatosBanco();
 
         //Se encarga de manejar la entidad bancaria cuando cambia
         $('#DCEntidadBancaria').change(function () {
@@ -62,6 +67,7 @@
                 dataType: 'json',
                 data: { 'parametros': parametros },
                 success: function (data) {
+                    $('#myModal_espera').modal('hide');
                     if (data.length > 0) {
                         $('#DCLinea').empty();
                         $.each(data, function (index, value) {
@@ -90,6 +96,7 @@
                 dataType: 'json',
                 data: { 'parametros': parametros },
                 success: function (data) {
+                    $('#myModal_espera').modal('hide');
                     if (data.response) {
                         FA.Factura = $('#TextFacturaNo').val();
                     } else {
@@ -135,6 +142,33 @@
                 dataType: 'json',
                 data: { 'parametros': parametros },
                 success: function (data) {
+                    $('#myModal_espera').modal('hide');
+                    var tmp = data.TFA;
+                    for (var key in tmp) {
+                        if (tmp.hasOwnProperty(key)) {
+                            FA[key] = tmp[key];
+                        }
+                    }
+                    $('#Label6').text('Aut. ' + FA.Autorizacion + " " + FA.TC + " No. " + FA.Serie + "-");
+                    $('#TextFacturaNo').val(FA.Factura);
+                }
+            });
+        });
+
+        //Handle DCLinea on change
+        $('#DCLinea').change(function () {
+            FA.Cod_CxC = $(this).val();
+            FA.Fecha = '<?php echo date('Y-m-d'); ?>';
+            var parametros = {
+                'FA': FA
+            };
+            $.ajax({
+                url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?DCLinea_LostFocus=true',
+                type: 'post',
+                dataType: 'json',
+                data: { 'parametros': parametros },
+                success: function (data) {
+                    $('#myModal_espera').modal('hide');
                     var tmp = data.TFA;
                     for (var key in tmp) {
                         if (tmp.hasOwnProperty(key)) {
@@ -153,6 +187,7 @@
         });
 
         $('#MBFechaI').blur(function () {
+            $('#myModal_espera').modal('show');
             $('#MBFechaF').focus();
         });
 
@@ -185,6 +220,7 @@
         });
 
         $('#DCLinea').blur(function () {
+            $('#myModal_espera').modal('show');
             $('#CheqMatricula').focus();
         });
 
@@ -193,6 +229,7 @@
         });
 
         $('#TextFacturaNo').blur(function () {
+            $('#myModal_espera').modal('show');
             $('#CheqNumCodigos').focus();
         });
 
@@ -211,15 +248,91 @@
 
         $('#btnSubirArchivo').click(function () {
             $('#modal_subir_archivo').modal('hide');
+            $('#myModal_espera').show();
+            $('#myModal_espera').modal('show');
             Command1_Click();
         });
 
-
+        //Handle Command4_Click
+        $('#Command4').click(function () {
+            $('#myModal_espera').show();
+            $('#myModal_espera').modal('show');
+            Command4_Click();
+        });
 
 
     });
 
-    function DGFactura() {
+    function Command4_Click() {
+        $('#DGFactura').empty();
+        var parametros = {
+            'FA': FA,
+            'Factura_No': Factura_No,
+            'MBFechaI': $('#MBFechaI').val(),
+            'TextoBanco': TextoBanco,
+            'DCBanco': $('#DCBanco').val(),
+            'MBFechaF': $('#MBFechaF').val(),
+            'CheqRangos': $('#CheqRangos').is(':checked'),
+            'Tipo_Carga': Tipo_Carga,
+            'CheqAlDia': $('#CheqAlDia').is(':checked'),
+            'DCGrupoF': $('#DCGrupoF').val(),
+            'DCGrupoI': $('#DCGrupoI').val(),
+            'Cta_Bancaria': Cta_Bancaria
+        }
+
+        $.ajax({
+            url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?Command4_Click=true',
+            type: 'post',
+            dataType: 'json',
+            data: { 'parametros': parametros },
+            success: function (data) {
+                $('#myModal_espera').modal('hide');
+                $('#LabelAbonos').val(data.LabelAbonos);
+                swal.fire({
+                    title: 'Información',
+                    text: data.Mensaje,
+                    type: 'info',
+                    confirmButtonText: 'Aceptar'
+                });
+            
+                var url = "../../TEMP/FRECAUDACIONBANCOSPREFA/" + data.Nombre1;
+                var url2 = "../../TEMP/FRECAUDACIONBANCOSPREFA/" + data.Nombre2;
+
+                var enlaceTemporal = $('<a></a>')
+                    .attr('href', url)
+                    .attr('download', data.Nombre1)
+                    .appendTo('body');
+
+                enlaceTemporal[0].click();
+                enlaceTemporal.remove();
+
+                var enlaceTemporal2 = $('<a></a>')
+                    .attr('href', url2)
+                    .attr('download', data.Nombre2)
+                    .appendTo('body');
+
+                enlaceTemporal2[0].click();
+                enlaceTemporal2.remove();
+            }
+        });
+
+    }
+
+    function DatosBanco() {
+        $.ajax({
+            url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?DatosBanco=true',
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                Tipo_Carga = data.Tipo_Carga;
+                Costo_Banco = data.Costo_Banco;
+                Cta_Bancaria = data.Cta_Bancaria;
+                Cta_Gasto_Banco = data.Cta_Gasto_Banco;
+            }
+        });
+    }
+
+    /*function DGFactura() {
         $.ajax({
             type: "POST",
             url: "../controlador/facturacion/FRecaudacionBancosPreFaC.php?DGFactura=true",
@@ -229,7 +342,7 @@
                 $('#DGFactura').html(response.tbl);
             }
         });
-    }
+    }*/
 
     function Command1_Click() {
         $('#myModal_espera').show();
@@ -255,16 +368,16 @@
             contentType: false,
             data: formData,
             success: function (data) {
+                $('#myModal_espera').modal('hide');
                 var response = JSON.parse(data);
                 $('#DGFactura').empty();
                 $('#DGFactura').html(response.tbl);
                 $('#LabelAbonos').val(response.TotalIngreso);
                 $('#TxtFile').text(response.TxtFile);
-                $('#myModal_espera').hide();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.error("Error en la solicitud: " + textStatus, errorThrown);
-                $('#myModal_espera').hide();
+                $('#myModal_espera').modal('hide');
             }
         });
     }
@@ -390,7 +503,7 @@
                 if (data.length > 0) {
                     $('#DCBanco').empty();
                     $.each(data, function (index, value) {
-                        $('#DCBanco').append('<option value="' + value['Codigo'] + '">' + value['Codigo'] + ' - ' + value['Cuenta'] + '</option>');
+                        $('#DCBanco').append('<option value="' + value['Codigo'] + "     " + value['Cuenta'] + '">' + value['Codigo'] + ' - ' + value['Cuenta'] + '</option>');
                     });
                 }
             }
@@ -428,9 +541,10 @@
                 if (data.length > 0) {
                     $('#DCEntidadBancaria').empty();
                     $.each(data, function (index, value) {
-                        $('#DCEntidadBancaria').append('<option value="' + value['Abreviado'] + '">' + value['Descripcion'] + '</option>');
+                        $('#DCEntidadBancaria').append('<option value="' + value['Abreviado'] + '">' + "BANCO PICHINCHA" + '</option>');//value['Descripcion']
                     });
                     TextoBanco = data[0]['Abreviado'];
+                    TextoBanco = "PICHINCHA";//POR EL MOMENTO SOLO VALE BANCO PICHINCHA
                     OpcionesEntidadesBancarias(TextoBanco);
 
                 }
@@ -484,25 +598,25 @@
                 <img src="../../img/png/FRecaudacionBancosPreFa/papers.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Generar Facturas"
-                id="Command6" onclick="" style="border: solid 1px">
+                id="Command6" onclick="" style="border: solid 1px" disabled>
                 <img src="../../img/png/FRecaudacionBancosPreFa/facturas.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Alumnos Contabilidad"
-                id="Command7" onclick="" style="border: solid 1px">
+                id="Command7" onclick="" style="border: solid 1px" disabled>
                 <img src="../../img/png/FRecaudacionBancosPreFa/alumnos.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Renumerar Codigos"
-                id="Command3" onclick="" style="border: solid 1px">
+                id="Command3" onclick="" style="border: solid 1px" disabled>
                 <img src="../../img/png/FRecaudacionBancosPreFa/renumerar.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Imprimir Codigos"
-                id="Command5" onclick="" style="border: solid 1px">
+                id="Command5" onclick="" style="border: solid 1px" disabled>
                 <img src="../../img/png/FRecaudacionBancosPreFa/printer.png">
             </button>
         </div>
         <div class="col-sm-3">
             <label for="DCEntidadBancaria" style="display:block;">Entidad Bancaria:</label>
-            <select name="DCEntidadBancaria" id="DCEntidadBancaria" style="width: 100%; max-width: 100%;"></select>
+            <select name="DCEntidadBancaria" id="DCEntidadBancaria" style="width: 100%; max-width: 100%;" disabled></select>
         </div>
         <div class="col-sm-4">
             <div class="row">
