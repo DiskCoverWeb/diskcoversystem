@@ -21,6 +21,9 @@
     var Cta_Bancaria = "";
     var Cta_Gasto_Banco = "";
     var Factura_No = "";
+    var NoMeses = "";
+    var NoAnio = "";
+    var RutaGeneraFile = ".";
 
     let FA = {
         'Factura': '.',
@@ -31,7 +34,7 @@
         'Autorizacion': '.',
         'Tipo_PRN': '.',
         'Imp_Mes': '.',
-        'Porc_IVA': '.',
+        'Porc_IVA': '0.12',
         'Cta_CxP': '.',
         'Vencimiento': '.',
         'Cta_CxP_Anterior': '.',
@@ -47,6 +50,8 @@
         DCGrupos();
         DCEntidadBancaria();
         DatosBanco();
+
+        console.log("TEST: " + '<?php $_SESSION['INGRESO']['S_M'] ?>');
 
         //Se encarga de manejar la entidad bancaria cuando cambia
         $('#DCEntidadBancaria').change(function () {
@@ -243,6 +248,7 @@
 
         //Handle Command1_Click
         $('#Command1').click(function () {
+            $('#TxtFile').text('');
             $('#modal_subir_archivo').modal('show');
         });
 
@@ -255,13 +261,78 @@
 
         //Handle Command4_Click
         $('#Command4').click(function () {
+            $('#TxtFile').text('');
             $('#myModal_espera').show();
             $('#myModal_espera').modal('show');
             Command4_Click();
         });
 
+        //Handle Command6_Click
+        $('#Command6').click(function () {
+            $('#TxtFile').text('');
+            Command6_Click();
+        });
+
 
     });
+
+    function Command6_Click() {
+        var Mensajes = "Esta Seguro que desea grabar las facturas procesadas: " + $('#TextFacturaNo').val() + " ?";
+        var Titulo = "Formulario de Grabacion";
+        var parametros = {
+            'DCBanco': $('#DCBanco').val(),
+            'FA': FA,
+            'DCLinea': $('#DCLinea').val(),
+            'Factura_No': Factura_No,
+            'NoMeses': NoMeses,
+            'NoAnio': NoAnio,
+            'TextoBanco': TextoBanco,
+            'Tipo_Carga': Tipo_Carga,
+            'RutaGeneraFile': RutaGeneraFile
+
+        };
+        Swal.fire({
+            title: Titulo,
+            text: Mensajes,
+            type: "warning",
+            confirmButtonText: 'Sí!',
+            showCancelButton: true,
+            allowOutsideClick: false,
+            cancelButtonText: 'No!'
+        }).then((result) => {
+            $('#myModal_espera').show();
+            $('#myModal_espera').modal('show');
+            if (result.value) {
+                $.ajax({
+                    url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?Command6_Click=true',
+                    type: 'post',
+                    dataType: 'json',
+                    data: { 'parametros': parametros },
+                    success: function (data) {
+                        $('#myModal_espera').modal('hide');
+                        $('#DGFactura').empty();
+                        $('#DGFactura').html(data.tbl);
+                        $('#myModal_espera').modal('hide');
+                        if (data.response) {
+                            swal.fire({
+                                title: 'Información',
+                                text: data.Mensaje,
+                                type: 'info',
+                                confirmButtonText: 'Aceptar'
+                            });
+                        }else{
+                            swal.fire({
+                                title: 'Información',
+                                text: data.error,
+                                type: 'error',
+                                confirmButtonText: 'Aceptar'
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
 
     function Command4_Click() {
         $('#DGFactura').empty();
@@ -294,9 +365,9 @@
                     type: 'info',
                     confirmButtonText: 'Aceptar'
                 });
-            
-                var url = "../../TEMP/FRECAUDACIONBANCOSPREFA/" + data.Nombre1;
-                var url2 = "../../TEMP/FRECAUDACIONBANCOSPREFA/" + data.Nombre2;
+
+                var url = "../../TEMP/BANCO/FACTURAS/" + data.Nombre1;
+                var url2 = "../../TEMP/BANCO/FACTURAS/" + data.Nombre2;
 
                 var enlaceTemporal = $('<a></a>')
                     .attr('href', url)
@@ -374,6 +445,9 @@
                 $('#DGFactura').html(response.tbl);
                 $('#LabelAbonos').val(response.TotalIngreso);
                 $('#TxtFile').text(response.TxtFile);
+                NoMeses = response.NoMeses;
+                NoAnio = response.NoAnio;
+                RutaGeneraFile = response.RutaGeneraFile;
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.error("Error en la solicitud: " + textStatus, errorThrown);
@@ -578,8 +652,8 @@
         background-color: #008080;
         padding: 10px;
         color: white;
-        height: 500px;
-        max-height: 500px;
+        height: 540px;
+        max-height: 550px;
     }
 </style>
 <div>
@@ -598,7 +672,7 @@
                 <img src="../../img/png/FRecaudacionBancosPreFa/papers.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Generar Facturas"
-                id="Command6" onclick="" style="border: solid 1px" disabled>
+                id="Command6" onclick="" style="border: solid 1px">
                 <img src="../../img/png/FRecaudacionBancosPreFa/facturas.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Alumnos Contabilidad"
@@ -616,7 +690,8 @@
         </div>
         <div class="col-sm-3">
             <label for="DCEntidadBancaria" style="display:block;">Entidad Bancaria:</label>
-            <select name="DCEntidadBancaria" id="DCEntidadBancaria" style="width: 100%; max-width: 100%;" disabled></select>
+            <select name="DCEntidadBancaria" id="DCEntidadBancaria" style="width: 100%; max-width: 100%;"
+                disabled></select>
         </div>
         <div class="col-sm-4">
             <div class="row">
@@ -704,11 +779,11 @@
                     </div>
                 </div>
                 <div class="row" style="margin: 10px;">
-                    <textarea class="form-control" name="TxtFile" id="TxtFile" rows="5" readonly></textarea>
+                    <textarea class="form-control" name="TxtFile" id="TxtFile" rows="10" readonly></textarea>
                 </div>
                 <div class="row">
                     <div class="col-sm-12 text-center">
-                        <div id="DGFactura">
+                        <div id="DGFactura" style="background-color: white;">
 
                         </div>
                     </div>

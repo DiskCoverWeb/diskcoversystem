@@ -254,7 +254,6 @@ class FRecaudacionBancosPreFaM
         $AdoAsientoF = $this->db->datos($sql);
         $datos = grilla_generica_new($sql, 'Asiento_F', '', 'PREFACTURACION DEL DIA', false, false, false, 1, 1, 1, 100);
         return array('datos' => $datos, 'AdoAsientoF' => $AdoAsientoF);
-
     }
 
     public function UpdateClientesFacturacion()
@@ -368,5 +367,304 @@ class FRecaudacionBancosPreFaM
         return $this->db->datos($sql);
     }
 
+    public function AdoFactura3()
+    {
+        $sql = "SELECT FECHA, Numero, Codigo_Cliente, SUM(TOTAL) As Total_Abonos
+                FROM Asiento_F
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'
+                GROUP BY FECHA, Numero, Codigo_Cliente
+                ORDER BY FECHA, Numero, Codigo_Cliente";
+        return $this->db->datos($sql);
+    }
 
+    public function ClientesFacturacion($CodigoCli)
+    {
+        $sql = "UPDATE Clientes_Facturacion
+                SET D = 0
+                WHERE Codigo = '" . $CodigoCli . "'
+                AND Item = '" . $_SESSION['INGRESO']['item'] . "'";
+        Ejecutar_SQL_SP($sql);
+    }
+
+    public function AdoProducto2($CodigoCli)
+    {
+        $sql = "SELECT CF.*,AF.Codigo_Cliente,AF.CODIGO_L,AF.TICKET,AF.PRODUCTO,AF.HABIT,AF.A_No
+                FROM Clientes_Facturacion As CF, Asiento_F As AF
+                WHERE CF.Codigo = '" . $CodigoCli . "'
+                AND CF.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND CF.Codigo_Inv = AF.CODIGO
+                AND CF.Num_Mes = AF.A_No
+                AND CF.Periodo = AF.HABIT
+                AND CF.Item = AF.Item
+                AND CF.Codigo = AF.Codigo_Cliente
+                ORDER BY CF.Fecha, CF.Codigo_Inv, Periodo, Num_Mes, CF.ID, CF.Valor DESC";
+        return $this->db->datos($sql);
+    }
+
+    public function ClientesFacturacionUpdate($CodigoCli, $CodigoInv, $NumMes, $Periodo)
+    {
+        $sql = "UPDATE Clientes_Facturacion
+                SET D = 1
+                WHERE Codigo = '" . $CodigoCli . "'
+                AND Codigo_Inv = '" . $CodigoInv . "'
+                AND Num_Mes = " . $NumMes . "
+                AND Periodo = '" . $Periodo . "'
+                AND Item = '" . $_SESSION['INGRESO']['item'] . "'";
+        Ejecutar_SQL_SP($sql);
+    }
+
+    public function ClientesFacturacionDelete($CodigoCli)
+    {
+        $sql = "DELETE * 
+                FROM Clientes_Facturacion
+                WHERE Codigo = '" . $CodigoCli . "'
+                AND Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND D <> 0";
+        Ejecutar_SQL_SP($sql);
+    }
+
+    public function DetalleFacturaUpdate($FATC, $FASerie, $Factura_Desde, $Factura_Hasta){
+        $sql = "UPDATE Detalle_Factura
+                SET Producto = CP.Producto
+                FROM Detalle_Factura As DF, Catalogo_Productos As CP
+                WHERE DF.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND DF.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                AND DF.TC = '" . $FATC . "'
+                AND DF.Serie = '" . $FASerie . "'
+                AND DF.Factura BETWEEN " . $Factura_Desde . " AND " . $Factura_Hasta . "
+                AND DF.Item = CP.Item
+                AND DF.Periodo = CP.Periodo
+                AND DF.Codigo = CP.Codigo_Inv";
+        Ejecutar_SQL_SP($sql);
+    }
+
+    public function DeleteAsientoF2(){
+        $sql = "DELETE * 
+                FROM Asiento_F
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'";
+        Ejecutar_SQL_SP($sql);
+    }
+
+    public function DGFactura2()
+    {
+        $sql = "SELECT FECHA,Numero As FACTURA,RUTA As BENEFICIARIO,CODIGO,CANT,PRODUCTO,TOTAL,
+                HABIT As PERIODO,Mes,A_No As NO_MES,Codigo_Cliente,CodigoU,Item 
+                FROM Asiento_F
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'";
+        $AdoAsientoF = $this->db->datos($sql);
+        $datos = grilla_generica_new($sql, 'Asiento_F', '', '', false, false, false, 1, 1, 1, 100);
+        return array('datos' => $datos, 'AdoAsientoF' => $AdoAsientoF);
+    }
+
+    public function Procesar_Saldo_De_Facturas($PorX = false)
+    {
+        /*$Contador = 0;
+        $sql = "";
+        if ($PorX) {
+            $sql = "UPDATE Detalle_Factura 
+                    SET Total = ROUND(Cantidad * Precio, " . $_SESSION['INGRESO']['Dec_PVP'] . " , 0)
+                    WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                    AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'";
+            Ejecutar_SQL_SP($sql);
+
+            $sql = "UPDATE Detalle_Factura
+                    SET Total_IVA = ROUND((Total-(Total_Desc+Total_Desc2)) * ROUND(Total_IVA/(Total-(Total_Desc+Total_Desc2)),2,0),4,0)
+                    WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                    AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                    AND T <> '" . G_ANULADO . "'
+                    AND Total_IVA <> 0";
+            Ejecutar_SQL_SP($sql);
+
+            if ($_SESSION['INGRESO']['SQL_Server']) {
+                $sql = "UPDATE Detalle_Factura
+                        SET CodigoC = F.CodigoC
+                        FROM Detalle_Factura As DF, Facturas As F";
+            } else {
+                $sql = "UPDATE Detalle_Factura As DF, Facturas As F
+                        SET DF.CodigoC = F.CodigoC";
+            }
+
+            $sql .= "WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                    AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                    AND F.Autorizacion = DF.Autorizacion
+                    AND F.Fecha = DF.Fecha
+                    AND F.Serie = DF.Serie
+                    AND F.Factura = DF.Factura
+                    AND F.Item = DF.Item
+                    AND F.Periodo = DF.Periodo
+                    AND F.TC = DF.TC
+                    AND F.CodigoC <> DF.CodigoC";
+            Ejecutar_SQL_SP($sql);
+
+            if ($_SESSION['INGRESO']['SQL_Server']) {
+                $sql = "UPDATE Detalle_Factura
+                        SET Fecha = F.Fecha
+                        FROM Detalle_Factura As DF, Facturas As F";
+            } else {
+                $sql = "UPDATE Detalle_Factura As DF, Facturas As F
+                        SET DF.Fecha = F.Fecha";
+            }
+            $sql .= "WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                    AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                    AND F.Autorizacion = DF.Autorizacion
+                    AND F.Serie = DF.Serie
+                    AND F.Factura = DF.Factura
+                    AND F.Item = DF.Item
+                    AND F.Periodo = DF.Periodo
+                    AND F.TC = DF.TC
+                    AND F.Fecha <> DF.Fecha";
+            Ejecutar_SQL_SP($sql);
+
+            if ($_SESSION['INGRESO']['SQL_Server']) {
+                $sql = "UPDATE Trans_Abonos
+                        SET CodigoC = F.CodigoC
+                        FROM Trans_Abonos As DF,Facturas As F";
+            } else {
+                $sql = "UPDATE Trans_Abonos As DF,Facturas As F
+                        SET DF.CodigoC = F.CodigoC";
+            }
+
+            $sql .= "WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                    AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                    AND F.Autorizacion = DF.Autorizacion
+                    AND F.Serie = DF.Serie
+                    AND F.Factura = DF.Factura
+                    AND F.Item = DF.Item
+                    AND F.Periodo = DF.Periodo
+                    AND F.TC = DF.TC
+                    AND F.CodigoC <> DF.CodigoC";
+            Ejecutar_SQL_SP($sql);
+
+            if ($_SESSION['INGRESO']['periodo'] === G_NINGUNO) {
+                for ($i = 1; $i <= 12; $i++) {
+                    $sql = "UPDATE Facturas
+                            SET IVA = (SELECT ROUND(SUM(Total_IVA),2,0)
+                                        FROM Detalle_Factura
+                                        WHERE Detalle_Factura.Total_IVA > 0
+                                        AND Detalle_Factura.TC = Facturas.TC
+                                        AND Detalle_Factura.Item = Facturas.Item
+                                        AND Detalle_Factura.Periodo = Facturas.Periodo
+                                        AND Detalle_Factura.Factura = Facturas.Factura
+                                        AND Detalle_Factura.CodigoC = Facturas.CodigoC
+                                        AND Detalle_Factura.Serie = Facturas.Serie
+                                        AND Detalle_Factura.Autorizacion = Facturas.Autorizacion)
+                            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                            AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                            AND MONTH(Fecha) = " . $i . "";
+                    Ejecutar_SQL_SP($sql);
+
+                    $sql = "UPDATE Facturas
+                            SET Con_IVA = (SELECT ROUND(SUM(Total),2,0) 
+                                            FROM Detalle_Factura
+                                            WHERE Detalle_Factura.Total_IVA > 0
+                                            AND Detalle_Factura.TC = Facturas.TC
+                                            AND Detalle_Factura.Item = Facturas.Item
+                                            AND Detalle_Factura.Periodo = Facturas.Periodo
+                                            AND Detalle_Factura.Factura = Facturas.Factura
+                                            AND Detalle_Factura.CodigoC = Facturas.CodigoC
+                                            AND Detalle_Factura.Serie = Facturas.Serie
+                                            AND Detalle_Factura.Autorizacion = Facturas.Autorizacion)
+                            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                            AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                            AND MONTH(Fecha) = " . $i . "";
+                    Ejecutar_SQL_SP($sql);
+
+                    $sql = "UPDATE Facturas
+                            SET Sin_IVA = (SELECT ROUND(SUM(Total),2,0) 
+                                            FROM Detalle_Factura
+                                            WHERE Detalle_Factura.Total_IVA <= 0
+                                            AND Detalle_Factura.TC = Facturas.TC
+                                            AND Detalle_Factura.Item = Facturas.Item
+                                            AND Detalle_Factura.Periodo = Facturas.Periodo
+                                            AND Detalle_Factura.Factura = Facturas.Factura
+                                            AND Detalle_Factura.CodigoC = Facturas.CodigoC
+                                            AND Detalle_Factura.Serie = Facturas.Serie
+                                            AND Detalle_Factura.Autorizacion = Facturas.Autorizacion)
+                            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                            AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                            AND MONTH(Fecha) = " . $i . "";
+                    Ejecutar_SQL_SP($sql);
+
+                    $sql = "UPDATE Facturas
+                            SET Descuento = (SELECT ROUND(SUM(Total_Desc),2,0) 
+                                            FROM Detalle_Factura
+                                            WHERE Detalle_Factura.Total_Desc > 0
+                                            AND Detalle_Factura.TC = Facturas.TC
+                                            AND Detalle_Factura.Item = Facturas.Item
+                                            AND Detalle_Factura.Periodo = Facturas.Periodo
+                                            AND Detalle_Factura.Factura = Facturas.Factura
+                                            AND Detalle_Factura.CodigoC = Facturas.CodigoC
+                                            AND Detalle_Factura.Serie = Facturas.Serie
+                                            AND Detalle_Factura.Autorizacion = Facturas.Autorizacion)
+                            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                            AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                            AND MONTH(Fecha) = " . $i . "";
+                    Ejecutar_SQL_SP($sql);
+
+                    $sql = "UPDATE Facturas
+                            SET Descuento2 = (SELECT ROUND(SUM(Total_Desc2),2,0) 
+                                            FROM Detalle_Factura
+                                            WHERE Detalle_Factura.Total_Desc2 > 0
+                                            AND Detalle_Factura.TC = Facturas.TC
+                                            AND Detalle_Factura.Item = Facturas.Item
+                                            AND Detalle_Factura.Periodo = Facturas.Periodo
+                                            AND Detalle_Factura.Factura = Facturas.Factura
+                                            AND Detalle_Factura.CodigoC = Facturas.CodigoC
+                                            AND Detalle_Factura.Serie = Facturas.Serie
+                                            AND Detalle_Factura.Autorizacion = Facturas.Autorizacion)
+                            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                            AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                            AND MONTH(Fecha) = " . $i . "";
+                    Ejecutar_SQL_SP($sql);
+
+                    $sql = "UPDATE Facturas
+                            SET Desc_0 = (SELECT SUM(Total_Desc+Total_Desc2)
+                                            FROM Detalle_Factura 
+                                            WHERE Detalle_Factura.Total_IVA = 0 
+                                            AND MONTH(Detalle_Factura.Fecha) = " . $i . " 
+                                            AND Detalle_Factura.TC = Facturas.TC 
+                                            AND Detalle_Factura.Item = Facturas.Item 
+                                            AND Detalle_Factura.Periodo = Facturas.Periodo 
+                                            AND Detalle_Factura.Fecha = Facturas.Fecha 
+                                            AND Detalle_Factura.Factura = Facturas.Factura 
+                                            AND Detalle_Factura.CodigoC = Facturas.CodigoC 
+                                            AND Detalle_Factura.Serie = Facturas.Serie 
+                                            AND Detalle_Factura.Autorizacion = Facturas.Autorizacion)
+                            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                            AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                            AND TC IN ('FA','NV','LC')
+                            AND Desc_0 = 0
+                            AND MONTH(Fecha) = " . $i . "";
+                    Ejecutar_SQL_SP($sql);
+
+                    $sql = "UPDATE Facturas 
+                            SET Desc_X = (SELECT SUM(Total_Desc+Total_Desc2) 
+                                            FROM Detalle_Factura 
+                                            WHERE Detalle_Factura.Total_IVA > 0 
+                                            AND MONTH(Detalle_Factura.Fecha) = " . $i . " 
+                                            AND Detalle_Factura.TC = Facturas.TC 
+                                            AND Detalle_Factura.Item = Facturas.Item 
+                                            AND Detalle_Factura.Periodo = Facturas.Periodo 
+                                            AND Detalle_Factura.Fecha = Facturas.Fecha 
+                                            AND Detalle_Factura.Factura = Facturas.Factura 
+                                            AND Detalle_Factura.CodigoC = Facturas.CodigoC 
+                                            AND Detalle_Factura.Serie = Facturas.Serie 
+                                            AND Detalle_Factura.Autorizacion = Facturas.Autorizacion) 
+                            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                            AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                            AND TC IN ('FA','NV','LC') 
+                            AND Desc_X = 0 
+                            AND MONTH(Fecha) = " . $i . "";
+                    Ejecutar_SQL_SP($sql);
+                    //TODO
+
+                }
+            }
+
+
+        }*/
+    }
 }
