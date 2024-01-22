@@ -387,20 +387,20 @@ class cambioeM
 	function editar_tipo_contribuyente($parametros)
 	{
 		$op1 = 0;$op2 = 0;$op3 = 0;$op4 = 0;$op5 = 0;$op6 = 0;$op7 = 0;
-		if($parametros['op1']=='true'){$op1 = 1;	}
-		if($parametros['op2']=='true'){$op2 = 1;	}
-		if($parametros['op3']=='true'){$op3 = 1;	}
-		if($parametros['op4']=='true'){$op4 = 1;	}
-		if($parametros['op5']=='true'){$op5 = 1;	}
-		if($parametros['op6']=='true'){$op6 = 1;	}
-		if($parametros['op7']=='true'){$op7 = 1;	}
+		if(isset($parametros['rbl_ContEs']) && $parametros['rbl_ContEs'] =='on'){$op1 = 1;	}
+		if(isset($parametros['rbl_rimpeE']) && $parametros['rbl_rimpeE'] =='on'){$op2 = 1;	}
+		if(isset($parametros['rbl_rimpeP']) && $parametros['rbl_rimpeP'] =='on'){$op3 = 1;	}
+		if(isset($parametros['rbl_regGen']) && $parametros['rbl_regGen'] =='on'){$op4 = 1;	}
+		if(isset($parametros['rbl_rise']) && $parametros['rbl_rise'] =='true'){$op5 = 1;	}
+		if(isset($parametros['rbl_micro2020']) && $parametros['rbl_micro2020'] =='on'){$op6 = 1;	}
+		if(isset($parametros['rbl_micro2021']) && $parametros['rbl_micro2021'] =='on'){$op7 = 1;	}
 
 
 		// print_r($parametros);die();
 
 		$sql = "UPDATE lista_tipo_contribuyente 
-		SET Zona='".$parametros['zona']."',
-		Agente_Retencion = '".$parametros['agente']."' ,
+		SET Zona='".$parametros['TxtZonaTipocontribuyente']."',
+		Agente_Retencion = '".$parametros['TxtAgentetipoContribuyente']."' ,
 		Contribuyente_Especial = ".$op1.",
 		RIMPE_E = ".$op2.",
 		RIMPE_P = ".$op3.",
@@ -408,9 +408,15 @@ class cambioeM
 		RISE = ".$op5.",
 		Micro_2020 = ".$op6.",
 		Micro_2021 = ".$op7."
-		WHERE RUC = '".$parametros['ruc']."'";
+		WHERE RUC = '".$parametros['TxtRuc']."'";
 
 		// print_r($sql);die();
+		return $this->db->String_Sql($sql,'MYSQL');
+	}
+
+	function ingresar_tipo_contribuyente($ruc)
+	{
+		$sql = "INSERT INTO lista_tipo_contribuyente (RUC,Zona,Agente_Retencion) values('".$ruc."','.','.')";
 		return $this->db->String_Sql($sql,'MYSQL');
 	}
 

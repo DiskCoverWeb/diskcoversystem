@@ -226,6 +226,15 @@ class cambioeC
 
 	function editar_datos_empresa($parametros)
 	{
+		// print_r($parametros);die();
+		$contribuyente = $this->modelo->tipoContribuyente($parametros['TxtRuc']);
+		if(count($contribuyente)==0)
+		{
+			$this->modelo->ingresar_tipo_contribuyente($parametros['TxtRuc']);
+		}else
+		{
+			return $this->modelo->editar_tipo_contribuyente($parametros);
+		}
 		$resp = $this->modelo->editar_datos_empresaMYSQL($parametros);
 		if($parametros['txt_sqlserver']==1)
 		{
