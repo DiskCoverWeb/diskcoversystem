@@ -93,7 +93,7 @@ class FRecaudacionBancosCxCM
                 AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
                 AND Periodo =  '" . $_SESSION['INGRESO']['periodo'] . "' ";
 
-        return $this->db->datos($sql);        
+        return $this->db->datos($sql);
     }
 
     function Query1EnviarRubros()
@@ -109,7 +109,7 @@ class FRecaudacionBancosCxCM
                 AND F.Item = DF.Item  
                 AND F.TC = DF.TC  
                 AND F.Serie = DF.Serie  
-                AND F.Factura = DF.Factura"; 
+                AND F.Factura = DF.Factura";
         return Ejecutar_SQL_SP($sSQL);
     }
 
@@ -201,6 +201,60 @@ class FRecaudacionBancosCxCM
 
         return $this->db->datos($sSQL);
         //Select_Adodc AdoAux, sSQL
+    }
+
+    function EliminarAbonos($TA)
+    {
+        $sSQL = "DELETE FROM Trans_Abonos 
+                WHERE Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND TP = 'FA' 
+                AND Serie = '" . $TA['Serie'] . "' 
+                AND Factura = " . $TA['Factura'] . " 
+                AND Recibo_No = '" . $TA['Serie'] . "'";
+        Ejecutar_SQL_SP($sSQL);
+    }
+
+    function AlumnosClientesActivados()
+    {
+        $sSQL = "SELECT Codigo, Cliente, CI_RUC, Direccion, Grupo, Email, Email2, EmailR 
+                FROM Clientes 
+                WHERE Codigo != '.' 
+                ORDER BY CI_RUC";
+        return $this->db->datos($sSQL);
+    }
+
+    function sqlCaseElse($TipoDoc, $SerieFactura, $Autorizacion, $Factura_No)
+    {
+        $sSQL = "SELECT F.*,C.CI_RUC 
+            FROM Facturas As F, Clientes As C 
+            WHERE F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+            AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+            AND F.TC = '" . $TipoDoc . "' 
+            AND F.Serie = '" . $SerieFactura . "' 
+            AND F.Autorizacion = '" . $Autorizacion . "' 
+            AND F.Factura = " . $Factura_No . " 
+            AND F.CodigoC = C.Codigo ";
+
+        return $this->db->datos($sSQL);
+
+    }
+
+    function sqlIngresarAbonos($TA)
+    {
+        $sSQL = "SELECT CodigoC, Cta_CxP, TC, Vencimiento, Autorizacion, Saldo_MN, Fecha 
+            FROM Facturas 
+            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+            AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+            AND T <> 'A' 
+            AND TC = 'FA' 
+            AND CodigoC = '" . $TA['CodigoC'] . "' 
+            AND Serie = '" . $TA['Serie'] . "' 
+            AND Factura = " . $TA['Factura'] . " 
+            AND Saldo_MN > 0 ";
+            
+        return $this->db->datos($sSQL);
+
     }
 
 }

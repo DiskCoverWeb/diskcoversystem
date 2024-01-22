@@ -476,8 +476,8 @@
                                 confirmButtonText: 'Aceptar'
                             });
 
-                            var url = "../../TEMP/BANCO/FACTURAS/" + data.Nombre1;
-                            var url2 = "../../TEMP/BANCO/FACTURAS/" + data.Nombre2;
+                            var url = "../../TEMP/FACTURAS/" + data.Nombre1;
+                            var url2 = "../../TEMP/FACTURAS/" + data.Nombre2;
 
                             var enlaceTemporal = $('<a></a>')
                                 .attr('href', url)
@@ -495,6 +495,7 @@
                             enlaceTemporal2[0].click();
                             enlaceTemporal2.remove();
                             break;
+
                         /*
                     case "BGR_EC":
                         $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
@@ -528,7 +529,18 @@
                         $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
                         echo "No está definido este Banco";
                         break;   */
+
+
                     }
+                    var url3 = "../../TEMP/FACTURAS/" + data.Nombre3;
+
+                    var enlaceTemporal3 = $('<a></a>')
+                        .attr('href', url3)
+                        .attr('download', data.Nombre3)
+                        .appendTo('body');
+
+                    enlaceTemporal3[0].click();
+                    enlaceTemporal3.remove();
                 }
 
             }
@@ -550,6 +562,8 @@
         var MBFechaF = $('#MBFechaF').val();
         var TxtOrden = $('#TxtOrden').val();
         var DCEntidad = $('#DCEntidad').val();
+        var DCBanco = $('#DCBanco').val();
+        var CheqSat = $('#CheqSat').prop('checked');
         var fileInput = $('#fileInput')[0];
         var archivo = fileInput.files[0];
 
@@ -558,6 +572,8 @@
         formData.append('MBFechaF', MBFechaF);
         formData.append('TxtOrden', TxtOrden);
         formData.append('DCEntidad', DCEntidad);
+        formData.append('DCBanco', DCBanco);
+        formData.append('CheqSat', CheqSat);
 
         if (archivo) {
             formData.append('archivoBanco', archivo, archivo.name);
