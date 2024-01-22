@@ -1,5 +1,6 @@
 <?php
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Month;
+use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
 
 /*
     AUTOR DE RUTINA	: Leonardo Súñiga
@@ -68,10 +69,12 @@ if (isset($_GET['Command1_Click'])) {
 
     if (isset($_FILES['archivoBanco']) && $_FILES['archivoBanco']['error'] == UPLOAD_ERR_OK) {
         $archivo = $_FILES['archivoBanco'];
-        $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/FRecaudacionBancosPreFa/";
+        $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/BANCO/ABONOS/";
         $nombreArchivoDestino = $carpetaDestino . basename($archivo['name']);
+        $tmp = basename($archivo['name']);
         if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
             $parametros['NombreArchivo'] = $nombreArchivoDestino;
+            $parametros['NombreArchivoTmp'] = $tmp;
             echo json_encode($controlador->Command1_Click($parametros));
         } else {
             echo json_encode(array("response" => 0, "message" => "Error al subir el archivo"));
@@ -83,9 +86,14 @@ if (isset($_GET['DatosBanco'])) {
     echo json_encode($controlador->DatosBanco());
 }
 
-if(isset($_GET['Command4_Click'])){
+if (isset($_GET['Command4_Click'])) {
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->Command4_Click($parametros));
+}
+
+if (isset($_GET['Command6_Click'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Command6_Click($parametros));
 }
 
 
@@ -475,12 +483,6 @@ class FRecaudacionBancosPreFaC
             }
         }
 
-        return $this->PreFacturacionDelDia($TxtFile);
-
-    }
-
-    public function PreFacturacionDelDia($TxtFile)
-    {
         $DGFactura = $this->modelo->DGFactura();
         $TotalIngreso = 0;
         if (count($DGFactura['AdoAsientoF']) > 0) {
@@ -488,7 +490,7 @@ class FRecaudacionBancosPreFaC
                 $TotalIngreso += $value['TOTAL'];
             }
         }
-        return array('tbl' => $DGFactura['datos'], 'TotalIngreso' => $TotalIngreso, 'TxtFile' => $TxtFile);
+        return array('tbl' => $DGFactura['datos'], 'TotalIngreso' => $TotalIngreso, 'TxtFile' => $TxtFile, 'NoMeses' => $NoMeses, 'NoAnio' => $NoAnio, 'RutaGeneraFile' => $parametros['NombreArchivoTmp']);
     }
 
     public function DatosBanco()
@@ -506,7 +508,7 @@ class FRecaudacionBancosPreFaC
     }
 
     public function Command4_Click($parametros)
-    {   
+    {
         Actualizar_Datos_Representantes_SP();
         $Cta_Banco = trim(strtoupper(SinEspaciosDer($parametros['DCBanco'])));
         if (strlen($Cta_Banco) <= 1) {
@@ -583,11 +585,11 @@ class FRecaudacionBancosPreFaC
         $Anio = intval(substr(date("Y", strtotime($parametros['MBFechaI'])), 1, 3));
         $Dia = "15";
 
-        $RutaGeneraFile = strtoupper(dirname(__DIR__, 3) . "/TEMP/FRecaudacionBancosPreFa/SCREC " . $Fecha_Meses . ".TXT");
+        $RutaGeneraFile = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/SCREC " . $Fecha_Meses . ".TXT");
         $NombreFile = "SCREC " . $Fecha_Meses . ".TXT";
         $NumFileFacturas1 = fopen($RutaGeneraFile, "w"); //Abre el archivo
 
-        $RutaGeneraFile2 = strtoupper(dirname(__DIR__, 3) . "/TEMP/FRecaudacionBancosPreFa/SCCOB " . $Fecha_Meses . ".TXT");
+        $RutaGeneraFile2 = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/SCCOB " . $Fecha_Meses . ".TXT");
         $NombreFile2 = "SCCOB " . $Fecha_Meses . ".TXT";
         $NumFileFacturas2 = fopen($RutaGeneraFile2, "w"); //Abre el archivo
 
@@ -595,17 +597,17 @@ class FRecaudacionBancosPreFaC
             foreach ($AdoFactura as $key => $value) {
                 $Contador++;
                 $CodigoCli = $value['Codigo'];
-                $NombreCliente = $this->Sin_Signos_Especiales($value['Cliente']);
+                $NombreCliente = Sin_Signos_Especiales($value['Cliente']);
                 $Factura_No = $Factura_No + 1;
                 $Total = $value['Valor_Cobro'];
                 $Saldo = $value['Valor_Cobro'] * 100;
                 $CodigoP = $value['CI_RUC'];
                 $CodigoC = intval($value['CI_RUC']);
                 $CodigoC = $CodigoC . str_repeat(" ", max(0, 4 - strlen($CodigoC)));
-                $DireccionCli = $this->Sin_Signos_Especiales($value['Direccion']);
-                $Codigo3 = trim($this->SinEspaciosDer2($DireccionCli));
+                $DireccionCli = Sin_Signos_Especiales($value['Direccion']);
+                $Codigo3 = trim(SinEspaciosDer2($DireccionCli));
                 $DireccionCli = trim(substr($DireccionCli, 0, strlen($DireccionCli) - strlen($Codigo3)));
-                $Codigo3 = trim($this->SinEspaciosDer2($DireccionCli));
+                $Codigo3 = trim(SinEspaciosDer2($DireccionCli));
                 //$Codigo1 = 
                 $Codigo4 = substr($value['Codigo_Inv'] . " " . $value['Producto'], 0, 33);
                 $Codigo4 = $Codigo4 . str_repeat(" ", max(0, 33 - strlen($Codigo4)))
@@ -627,8 +629,8 @@ class FRecaudacionBancosPreFaC
                     $NumStrg = SinEspaciosIzq($value['Actividad']);
                     if (strlen($NumStrg) === 3) {
                         fwrite($NumFileFacturas2, SinEspaciosIzq($value['Actividad']) . $Tabulador);
-                        fwrite($NumFileFacturas2, $this->SinEspaciosDer2($value['Actividad']) . $Tabulador);
-                    }else{
+                        fwrite($NumFileFacturas2, SinEspaciosDer2($value['Actividad']) . $Tabulador);
+                    } else {
                         fwrite($NumFileFacturas2, $Tabulador);
                         fwrite($NumFileFacturas2, $Tabulador);
                     }
@@ -643,12 +645,12 @@ class FRecaudacionBancosPreFaC
                     fwrite($NumFileFacturas2, strtoupper($Codigo4) . $Tabulador);
                     fwrite($NumFileFacturas2, sprintf("%013d", $Saldo) . $Tabulador);
                     fwrite($NumFileFacturas2, "\n");
-                }else{
-                    if($parametros['TipoCarga'] >= 1){
+                } else {
+                    if ($parametros['TipoCarga'] >= 1) {
                         //Tipo Gualaceo
                         fwrite($NumFileFacturas1, "CO" . $Tabulador);
                         fwrite($NumFileFacturas1, sprintf("%013d", $CodigoC) . $Tabulador);
-                        fwrite($NumFileFacturas1, "USD". $Tabulador);
+                        fwrite($NumFileFacturas1, "USD" . $Tabulador);
                         fwrite($NumFileFacturas1, $Saldo . $Tabulador);
                         fwrite($NumFileFacturas1, "REC" . $Tabulador);
                         fwrite($NumFileFacturas1, $Tabulador);
@@ -658,7 +660,7 @@ class FRecaudacionBancosPreFaC
                         fwrite($NumFileFacturas1, sprintf("%013d", intval($CodigoC)) . $Tabulador);
                         fwrite($NumFileFacturas1, sprintf("%02d", $value['Num_Mes']) . " " . substr($NombreCliente, 0, 37) . $Tabulador);
                         fwrite($NumFileFacturas1, "\n");
-                    }else{
+                    } else {
                         //Tipo General
                         fwrite($NumFileFacturas1, "CO" . $Tabulador);
                         fwrite($NumFileFacturas1, $parametros['Cta_Bancaria'] . $Tabulador);
@@ -689,47 +691,274 @@ class FRecaudacionBancosPreFaC
         }
         fclose($NumFileFacturas1);
         fclose($NumFileFacturas2);
-        return array('LabelAbonos' => sprintf("%02d", $Total_Banco),
-                     'Mensaje' => "SE GENERARON LOS SIGUIENTES ARCHIVOS: \n" . $NombreFile . "\n" . $NombreFile2,
-                    'Archivo1' => $RutaGeneraFile,
-                    'Archivo2' => $RutaGeneraFile2,
-                    'Nombre1' => $NombreFile,
-                    'Nombre2' => $NombreFile2);
+        return array(
+            'LabelAbonos' => sprintf("%02d", $Total_Banco),
+            'Mensaje' => "SE GENERARON LOS SIGUIENTES ARCHIVOS: \n" . $NombreFile . "\n" . $NombreFile2,
+            'Archivo1' => $RutaGeneraFile,
+            'Archivo2' => $RutaGeneraFile2,
+            'Nombre1' => $NombreFile,
+            'Nombre2' => $NombreFile2
+        );
 
     }
 
-    //TODO: CAMBIAR ESTOS METODOS LUEGO POR LOS QUE ESTAN EN FUNCIONES
-    function SinEspaciosDer2($texto = "")
+    function Command6_Click($parametros)
     {
-        $resultado = explode(" ", $texto, 2); // El tercer parámetro limita el número de elementos en el array
-        return isset($resultado[1]) ? $resultado[1] : $resultado[0];
-    }
+        try {
+            $DatInv = [];
+            $Tipo_Pago = "01";
+            $Total_Alumnos = 0;
+            $Total_Ingreso = 0;
+            $Factura_Desde = "0";
+            $Factura_Hasta = "0";
+            $FechaTexto = ".";
+            $Cta_Banco = trim(strtoupper(SinEspaciosIzq($parametros['DCBanco'])));
+            if (strlen($Cta_Banco) <= 1) {
+                $Cta_Banco = $_SESSION['SETEOS']['Cta_Del_Banco'];
+            }
+            $AdoBanco = $this->modelo->DCBanco();
+            if (count($AdoBanco) > 0) {
+                foreach ($AdoBanco as $key => $value) {
+                    if ($value['Codigo'] === $Cta_Banco) {
+                        $Tipo_Pago = $value['Tipo_Pago'];
+                        break;
+                    }
+                }
+            }
+            $parametros['FA']['Cod_CxC'] = $parametros['DCLinea'];
+            $parametros['FA']['Tipo_PRN'] = "FM";
+            $tmp = Lineas_De_CxC($parametros['FA']);
+            $parametros['FA'] = $tmp['TFA'];
+            $Contador = 0;
+            $AdoFactura = $this->modelo->AdoFactura3();
+            if (count($AdoFactura) > 0) {
+                $Total_Alumnos = count($AdoFactura);
+                $parametros['FA']['Imp_Mes'] = True;
+                $Factura_Desde = ReadSetDataNum($parametros['FA']['TC'] . "_SERIE_" . $parametros['FA']['Serie'], True, False);
+                $Factura_Hasta = $Factura_Desde;
+                foreach ($AdoFactura as $key => $value) {
+                    $Contador++;
+                    $Total_Sin_IVA = 0;
+                    $Total_Con_IVA = 0;
+                    $Total_Desc = 0;
+                    $Total_IVA = 0;
+                    $Total_Servicio = 0;
+                    //Forma de pago
+                    $Codigo3 = G_NINGUNO;
+                    $Codigo4 = G_NINGUNO;
+                    $TotalAbonos = $value['Total_Abonos'];
+                    $FechaTexto = $value['FECHA'];
 
-    function Sin_Signos_Especiales($cad)
-    {
-        //$cad = trim($cadena);
-        $cad = str_replace(array("á", "é", "í", "ó", "ú"), array("a", "e", "i", "o", "u"), $cad);
-        // $cad = str_replace(array("Á", "É", "Í", "Ó", "Ú"), array("A", "E", "I", "O", "U"), $cad);
-        $cad = str_replace(array("à", "è", "ì", "ò", "ù"), array("a", "e", "i", "o", "u"), $cad);
-        $cad = str_replace(array("À", "È", "Ì", "Ò", "Ù"), array("A", "E", "I", "O", "U"), $cad);
-        $cad = str_replace(array("ñ", "Ñ"), array("n", "N"), $cad);
-        $cad = str_replace("ü", "u", $cad);
-        $cad = str_replace("Ü", "U", $cad);
-        $cad = str_replace("&", "Y", $cad);
-        $cad = str_replace(array("\r", "\n"), "|", $cad);
-        $cad = str_replace("Nº", "No.", $cad);
-        // $cad = str_replace("#", "No.", $cad);
-        $cad = str_replace("ª", "a. ", $cad);
-        $cad = str_replace("°", "o. ", $cad);
-        $cad = str_replace("½", "1/2", $cad);
-        $cad = str_replace("¼", "1/4", $cad);
-        $cad = str_replace(chr(255), " ", $cad);
-        $cad = str_replace(chr(254), " ", $cad);
-        $cad = str_replace("^", "", $cad);
-        // $cad = str_replace(":", " ", $cad);
-        // $cad = str_replace("\"", " ", $cad);
-        $cad = str_replace("´", " ", $cad);
+                    $parametros['FA']['Factura'] = ReadSetDataNum($parametros['FA']['TC'] . "_SERIE_" . $parametros['FA']['Serie'], True, True);
+                    $parametros['Factura_No'] = $parametros['FA']['Factura'];
+                    $Factura_Hasta = $parametros['FA']['Factura'];
 
-        return $cad;
+                    $CodigoCli = $value['Codigo_Cliente'];
+                    $TBenef = Leer_Datos_Clientes($CodigoCli);
+
+                    $NombreCliente = $TBenef['Cliente'];
+                    Validar_Porc_IVA($FechaTexto);
+                    $parametros['FA']['Porc_IVA'] = $parametros['Porc_IVA'];
+
+                    $this->modelo->ClientesFacturacion($CodigoCli);
+
+                    //Generar_Consulta_SQL "Facturacion Bancos " & CodigoCli, sSQL
+                    //Detalle de la Factura
+                    $AdoProducto = $this->modelo->AdoProducto2($CodigoCli);
+                    if (count($AdoProducto) > 0) {
+                        $Codigo2 = $AdoProducto[0]['Periodo'];
+                        $SubCta = $AdoProducto[0]['TICKET'];
+                        $Codigo3 = $AdoProducto[0]['CODIGO_L'];
+                        $Codigo4 = $AdoProducto[0]['PRODUCTO'];
+                        foreach ($AdoProducto as $key2 => $value2) {
+                            $CodigoInv = $value2['Codigo_Inv'];
+                            $Cod_Ok = Leer_Codigo_Inv($CodigoInv, FechaSistema());
+                            $Abono = $value2['Valor'];
+                            $Total_Desc_ME = $value2['Descuento'] + $value2['Descuento2'];
+                            $Producto = "."; //$DatInv['Producto'];
+                            if ($TotalAbonos >= ($Abono - $Total_Desc_ME)) {
+                                SetAdoAddNew("Detalle_Factura");
+                                SetAdoFields("T", "C"); //Cancelado
+                                SetAdoFields("TC", $parametros['FA']['TC']);
+                                SetAdoFields("Porc_IVA", $parametros['FA']['Porc_IVA']);
+                                SetAdoFields("CodigoL", $parametros['FA']['Cod_CxC']);
+                                SetAdoFields("CodigoC", $CodigoCli);
+                                SetAdoFields("Factura", $parametros['Factura_No']);
+                                SetAdoFields("Cantidad", 1);
+                                SetAdoFields("Fecha", $FechaTexto);
+                                SetAdoFields("Codigo", $CodigoInv);
+                                SetAdoFields("Producto", $Producto);
+                                SetAdoFields("Precio", $Abono);
+                                SetAdoFields("Total_Desc", $Total_Desc_ME);
+                                SetAdoFields("Total", $Abono);
+                                SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+                                SetAdoFields("Mes", $value2['Mes']);
+                                SetAdoFields("Mes_No", $value2['Num_Mes']);
+                                SetAdoFields("Ticket", $value2['Periodo']);
+                                SetAdoFields("Ruta", $value2['GrupoNo']);
+                                SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
+                                SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+                                $SubTotal_IVA = 0;
+                                if ($parametros['FA']['TC'] === "NV") {
+                                    $Total_Sin_IVA = $Total_Sin_IVA + $Abono;
+                                    SetAdoFields("Cta_Venta", 0); //DatInv.Cta_Ventas_0
+                                } else {
+                                    SetAdoFields("Cta_Venta", 0);
+                                }
+                                $Total_IVA = $Total_IVA + $SubTotal_IVA;
+                                $Total_Desc = $Total_Desc + $Total_Desc_ME;
+                                SetAdoFields("Total_IVA", $SubTotal_IVA);
+                                SetAdoFields("Autorizacion", $parametros['FA']['Autorizacion']);
+                                SetAdoFields("Serie", $parametros['FA']['Serie']);
+                                SetAdoUpdate();
+                                //Activamos el item a borrar
+                                $this->modelo->ClientesFacturacionUpdate($CodigoCli, $value2['Codigo_Inv'], $value2['Num_Mes'], $value2['Periodo']);
+                                $TotalAbonos = $TotalAbonos - ($Abono - $Total_Desc_ME);
+
+                            }
+
+                        }
+                        $Total_Factura = $Total_Sin_IVA + $Total_Con_IVA + $Total_IVA - $Total_Desc;
+                        $Total_Ingreso = $Total_Ingreso + $Total_Factura;
+                        //Grabamos las Facturas
+                        SetAdoAddNew("Facturas");
+                        SetAdoFields("T", "C"); //Cancelado
+                        SetAdoFields("TC", $parametros['FA']['TC']);
+                        SetAdoFields("Porc_IVA", $parametros['FA']['Porc_IVA']);
+                        SetAdoFields("Factura", $parametros['Factura_No']);
+                        SetAdoFields("Fecha", $FechaTexto);
+                        SetAdoFields("Fecha_C", $FechaTexto);
+                        SetAdoFields("Fecha_V", $FechaTexto);
+                        SetAdoFields("CodigoC", $CodigoCli);
+                        SetAdoFields("Forma_Pago", "DEPOSITO BANCO");
+                        SetAdoFields("Sin_IVA", $Total_Sin_IVA);
+                        SetAdoFields("Con_IVA", $Total_Con_IVA);
+                        SetAdoFields("SubTotal", $Total_Sin_IVA + $Total_Con_IVA);
+                        SetAdoFields("IVA", $Total_IVA);
+                        SetAdoFields("Descuento", $Total_Desc);
+                        SetAdoFields("Total_MN", $Total_Factura);
+                        SetAdoFields("Saldo_MN", 0);
+                        SetAdoFields("Nota", "Facturas de " . MesesLetras($parametros['NoMeses']) . ", Doc. " . $SubCta);
+                        SetAdoFields("Cod_CxC", $parametros['FA']['Cod_CxC']);
+                        SetAdoFields("Cod_CxP", $parametros['FA']['Cod_CxP']);
+                        SetAdoFields("Cta_Venta", $parametros['FA']['Cta_Venta']);
+                        SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+                        SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
+                        SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+                        SetAdoFields("Hora", date('h:i:s a', time()));
+                        SetAdoFields("Vencimiento", $parametros['FA']['Vencimiento']->format('Y-m-d'));
+                        SetAdoFields("Autorizacion", $parametros['FA']['Autorizacion']);
+                        SetAdoFields("Serie", $parametros['FA']['Serie']);
+                        SetAdoFields("Imp_Mes", $parametros['FA']['Imp_Mes']);
+                        SetAdoFields("Tipo_Pago", $Tipo_Pago);
+                        if (strlen($TBenef['Representante']) > 1 && strlen($TBenef['RUC_CI_Rep']) > 1) {
+                            SetAdoFields("Razon_Social", $TBenef['Representante']);
+                            SetAdoFields("RUC_CI", $TBenef['RUC_CI_Rep']);
+                            SetAdoFields("TB", $TBenef['TD_Rep']);
+                        } else {
+                            switch ($TBenef['TD']) {
+                                case "C":
+                                case "R":
+                                case "P":
+                                    SetAdoFields("Razon_Social", $TBenef['Cliente']);
+                                    SetAdoFields("RUC_CI", $TBenef['RUC_CI']);
+                                    SetAdoFields("TB", $TBenef['TD']);
+                                    break;
+                                default:
+                                    SetAdoFields("Razon_Social", "CONSUMIDOR FINAL");
+                                    SetAdoFields("RUC_CI", "9999999999999");
+                                    SetAdoFields("TB", "R");
+                                    break;
+                            }
+                        }
+
+                        if (is_numeric($Codigo2) && intval($Codigo2) <> date("y", strtotime($FechaTexto))) {
+                            $parametros['FA']['Cta_CxP'] = $parametros['FA']['Cta_CxP_Anterior'];
+                            $Cta_Cobrar = $parametros['FA']['Cta_CxP_Anterior'];
+                        }
+                        SetAdoUpdate();
+
+                        //Abono de la Factura
+                        SetAdoAddNew("Trans_Abonos");
+                        SetAdoFields("T", "C");
+                        SetAdoFields("TP", $parametros['FA']['TC']);
+                        SetAdoFields("CodigoC", $CodigoCli);
+                        SetAdoFields("Fecha", $FechaTexto);
+                        SetAdoFields("Factura", $parametros['Factura_No']);
+                        SetAdoFields("Abono", $Total_Factura);
+                        SetAdoFields("Recibo_No", trim($SubCta));
+                        SetAdoFields("Cheque", $TBenef['Grupo_No']);
+                        SetAdoFields("Cta", $Cta_Banco);
+                        SetAdoFields("Cta_CxP", $parametros['FA']['Cta_CxP']);
+                        SetAdoFields("Serie", $parametros['FA']['Serie']);
+                        SetAdoFields("Autorizacion", $parametros['FA']['Autorizacion']);
+                        $TipoDeAbono = "";
+                        switch ($parametros['TextoBanco']) {
+                            case "PACIFICO":
+                                $TipoDeAbono = "DEPOSITO EN EL BANCO ";
+                                break;
+                            case "PICHINCHA":
+                                if (intval($parametros['Tipo_Carga']) >= 1) {
+                                    $TipoDeAbono = "DEPOSITO EN EL BANCO ";
+                                } else {
+                                    $TipoDeAbono = "DEP. " . $Codigo3;
+                                    if ($SubCta <> G_NINGUNO) {
+                                        $TipoDeAbono .= ". " . $SubCta;
+                                    }
+                                }
+                                break;
+                            case "INTERNACIONAL":
+                            case "OTROSBANCOS":
+                                $TipoDeAbono = "DEBITO BANCARIO ";
+                                break;
+                            case "BOLIVARIANO":
+                                $TipoDeAbono = "DEPOSITO EN EL BANCO ";
+                                break;
+                            case "GUAYAQUIL":
+                                $TipoDeAbono = "DEPOSITO EN EL BANCO ";
+                                break;
+                            case "COOPJEP":
+                                $TipoDeAbono = "DEPOSITO EN EL BANCO ";
+                                break;
+                            case "PRODUBANCO":
+                                $TipoDeAbono = "DEPOSITO EN EL BANCO ";
+                                break;
+                            case "TARJETAS":
+                                $TipoDeAbono = "CANCELACION TARJETA ";
+                                break;
+                            default:
+                                $TipoDeAbono = "DEPOSITO EN EL BANCO ";
+                                break;
+                        }
+                        if (strlen($Codigo3) > 1) {
+                            $TipoDeAbono .= $Codigo3;
+                        }
+                        SetAdoFields("Banco", trim($TipoDeAbono));
+                        if (strlen($Codigo4) > 1) {
+                            SetAdoFields("Comprobante", $Codigo4);
+                        } else {
+                            SetAdoFields("Comprobante", $SubCta);
+                        }
+                        SetAdoUpdate();
+                        $this->modelo->ClientesFacturacionDelete($CodigoCli);
+                    }
+                }
+            }
+            $parametros['FA']['Fecha_Corte'] = FechaSistema();
+            //Por pedido de Walter Vaca en vez de utilizar el metodo Procesar_Saldo_De_Facturas, se va a utilizar el sp;
+            sp_Actualizar_Saldos_Facturas($parametros['FA']['TC'], $parametros['FA']['Serie'], $parametros['FA']['Factura']);
+            $this->modelo->DetalleFacturaUpdate($parametros['FA']['TC'], $parametros['FA']['Serie'], $Factura_Desde, $Factura_Hasta);
+            $Mensaje = "GENERACION DE FACTURAS DEL: " . $FechaTexto . " \n
+            SE GRABARON: " . $Total_Alumnos . " ALUMNOS." . " \n
+            DESDE LA " . $parametros['FA']['TC'] . ": " . $Factura_Desde . " HASTA LA " . $Factura_Hasta . " \n
+            EL CIERRE DIARIO DE CAJA ES POR " . $_SESSION['INGRESO']['S_M'] . " " . sprintf("%02d", $Total_Ingreso) . " \n
+            OBTENIDO DEL ARCHIVO: \n" . $parametros['RutaGeneraFile'];
+            $this->modelo->DeleteAsientoF2();
+            $DGFactura = $this->modelo->DGFactura2();
+            return array('response' => 1, 'Mensaje' => $Mensaje, 'tbl' => $DGFactura['datos']);
+        } catch (Exception $e) {
+            return array('response' => 0, 'error' => $e->getMessage());
+        }
+
     }
 }
