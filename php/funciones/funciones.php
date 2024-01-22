@@ -5894,10 +5894,16 @@ function costo_venta($codigo_inv)  // optimizado
   }
 
  
-  function SinEspaciosDer($texto = ""){
+  function SinEspaciosDer($texto = ""){  
     $resultado = explode(" ", $texto);
     return $resultado[1];
   }
+
+  function SinEspaciosDer2($texto = ""){  
+    $resultado = explode(" ", $texto, 2); // El tercer parámetro limita el número de elementos en el array
+    return isset($resultado[1]) ? $resultado[1] : $resultado[0];
+}
+
 
   function SinEspaciosIzq($texto = ""){
     $resultado = explode(" ", $texto);
@@ -7969,6 +7975,33 @@ function BuscarFecha($FechaStr)
         return $newDate; 
      }
   }
+}
+
+function Sin_Signos_Especiales($cad) {
+    //$cad = trim($cadena);
+    $cad = str_replace(array("á", "é", "í", "ó", "ú"), array("a", "e", "i", "o", "u"), $cad);
+    // $cad = str_replace(array("Á", "É", "Í", "Ó", "Ú"), array("A", "E", "I", "O", "U"), $cad);
+    $cad = str_replace(array("à", "è", "ì", "ò", "ù"), array("a", "e", "i", "o", "u"), $cad);
+    $cad = str_replace(array("À", "È", "Ì", "Ò", "Ù"), array("A", "E", "I", "O", "U"), $cad);
+    $cad = str_replace(array("ñ", "Ñ"), array("n", "N"), $cad);
+    $cad = str_replace("ü", "u", $cad);
+    $cad = str_replace("Ü", "U", $cad);
+    $cad = str_replace("&", "Y", $cad);
+    $cad = str_replace(array("\r", "\n"), "|", $cad);
+    $cad = str_replace("Nº", "No.", $cad);
+    // $cad = str_replace("#", "No.", $cad);
+    $cad = str_replace("ª", "a. ", $cad);
+    $cad = str_replace("°", "o. ", $cad);
+    $cad = str_replace("½", "1/2", $cad);
+    $cad = str_replace("¼", "1/4", $cad);
+    $cad = str_replace(chr(255), " ", $cad);
+    $cad = str_replace(chr(254), " ", $cad);
+    $cad = str_replace("^", "", $cad);
+    // $cad = str_replace(":", " ", $cad);
+    // $cad = str_replace("\"", " ", $cad);
+    $cad = str_replace("´", " ", $cad);
+    
+    return $cad;
 }
 
 function Lineas_De_CxC($TFA)
