@@ -233,7 +233,7 @@ class cambioeC
 			$this->modelo->ingresar_tipo_contribuyente($parametros['TxtRuc']);
 		}else
 		{
-			return $this->modelo->editar_tipo_contribuyente($parametros);
+			$this->modelo->editar_tipo_contribuyente($parametros);
 		}
 		$resp = $this->modelo->editar_datos_empresaMYSQL($parametros);
 		if($parametros['txt_sqlserver']==1)
