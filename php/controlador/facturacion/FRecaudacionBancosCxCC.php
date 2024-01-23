@@ -80,7 +80,25 @@ if (isset($_GET['RecibirAbonos'])) {
             $parametros['NombreArchivo'] = $nombreArchivoDestino;
             echo json_encode($controlador->Recibir_Abonos($parametros));
         } else {
-            echo json_encode(array("response" => 0, "message" => "Error al subir el archivo"));
+            echo json_encode(array("res" => 'Error', "message" => "Error al subir el archivo"));
+        }
+    }
+}
+
+if (isset($_GET['VisualizarArchivo'])) {
+    $parametros = array();
+    if (isset($_FILES['archivoBanco']) && $_FILES['archivoBanco']['error'] == UPLOAD_ERR_OK) {
+        $archivo = $_FILES['archivoBanco'];
+        $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/ABONOS/";
+        if (!is_dir($carpetaDestino)) {
+            mkdir($carpetaDestino, 0777, true);
+        }
+        $nombreArchivoDestino = $carpetaDestino . basename($archivo['name']);
+        if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
+            $parametros['NombreArchivo'] = $nombreArchivoDestino;
+            echo json_encode($controlador->Visualizar_Archivo($parametros));
+        } else {
+            echo json_encode(array("res" => 'Error', "message" => "Error al subir el archivo"));
         }
     }
 }
@@ -245,10 +263,17 @@ class FRecaudacionBancosCxCC
                     'Fecha' => $value['Fecha'],
                     'Cliente' => $value['Cliente'],
                     'Grupo' => $value['Grupo'],
-                    'RUC' => $value['CI_RUC'],
+                    'CI_RUC' => $value['CI_RUC'],
                     'Direccion' => $value['Direccion'],
                     'Item_Banco' => $value['Item_Banco'],
-                    'Desc_Item' => $value['Desc_Item']
+                    'Desc_Item' => $value['Desc_Item'],
+                    'CodigoC' => $value['CodigoC'],
+                    'Total' => $value['Total'],
+                    'Total_Desc' => $value['Total_Desc'],
+                    'Total_Desc2' => $value['Total_Desc2'],
+                    'Producto' => $value['Producto'],
+                    'Mes' => $value['Mes'],
+
                 );
             }
         }
@@ -294,7 +319,7 @@ class FRecaudacionBancosCxCC
                     'AdoPendiente' => $AdoPendiente,
                     'Cta_Bancaria' => $Cta_Bancaria,
                     'Tipo_Carga' => $Tipo_Carga,
-                    'CheqMatricula' => $CheqMatricula,
+                    'CheqMatricula' => $CheqMatricula
                 );
                 //print_r($parametros2['Tipo_Carga']);
                 $res = $this->Generar_Pichincha($parametros);
@@ -305,8 +330,15 @@ class FRecaudacionBancosCxCC
                 //Generar_BGR_EC();
                 break;*/
             case "INTERNACIONAL":
-                $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                //Generar_Internacional();
+                $FechaFin = BuscarFecha(date("Y-m-t", strtotime($MBFechaF)));
+                $parametros = array(
+                    'MBFechaI' => $MBFechaI,
+                    'MBFechaF' => $MBFechaF,
+                    'AdoDetalle' => $AdoDetalle,
+                    'AdoFactura' => $AdoFactura,
+                    'Cta_Bancaria' => $Cta_Bancaria
+                );
+                $res = $this->Generar_Internacional($parametros);
                 break;
             /*case "BOLIVARIANO":
                 $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
@@ -393,14 +425,13 @@ class FRecaudacionBancosCxCC
 
     function Recibir_Abonos($parametros)
     {
-        //print_r($parametros);    
         $MBFechaI = $parametros['MBFechaI'];
         $MBFechaF = $parametros['MBFechaF'];
         //$Archivo = $parametros['Archivo'];
         $TextoBanco = $parametros['DCEntidad'];
         $TxtOrden = $parametros['TxtOrden'];
         $DCBanco = $parametros['DCBanco'];
-        $CheqSAT = $parametros['CheqSAT'];
+        $CheqSat = $parametros['CheqSat'];
         $Tipo_Carga = Leer_Campo_Empresa("Tipo_Carga_Banco");
         //$Label4 = G_NINGUNO;
         FechaValida($MBFechaI);
@@ -408,6 +439,7 @@ class FRecaudacionBancosCxCC
 
         $NombreArchivo = $parametros['NombreArchivo'];
         $RutaGeneraFile = strtoupper($NombreArchivo);
+        //print_r($RutaGeneraFile);
 
         $Contador = 0;
         $CantCampos = 0;
@@ -418,6 +450,7 @@ class FRecaudacionBancosCxCC
         $CamposFile = [];
 
         $NumFile = fopen($RutaGeneraFile, "r");
+
         if ($NumFile) {
             while (!feof($NumFile)) {
                 $Cod_Field = fgets($NumFile);
@@ -431,7 +464,6 @@ class FRecaudacionBancosCxCC
                         $No_Hasta = strpos($Cod_Field, $Separador);
                         $CamposFile[$CantCampos]['Campo'] = "C" . sprintf("%02d", $CantCampos);
                         $CampoTemp = trim(substr($Cod_Field, 0, $No_Hasta));
-
                         switch ($TextoBanco) {
                             case "PICHINCHA":
                                 if ($CantCampos == 14 && $TxtOrden == $CampoTemp) {
@@ -450,9 +482,11 @@ class FRecaudacionBancosCxCC
             }
             fclose($NumFile);
         }
+        //echo('camposfile');
+        //print_r($CamposFile);  
 
-        $Total_Alumnos = $Contador;
-        if (!$OrdenValida) {
+        $Total_Alumnos = $Contador; //26
+        if (!$OrdenValida) { //false
             $mensaje = "La información del archivo no pertenece a la Orden No. " . $TxtOrden . " registrada del Banco, vuelva a seleccionar el documento correcto.";
             return array('res' => 'Error', 'mensaje' => $mensaje);
         }
@@ -485,6 +519,8 @@ class FRecaudacionBancosCxCC
             }
         }
         fclose($NumFile);
+
+        //print_r(count($CamposFile));
         $FA['Serie'] = G_NINGUNO;
         $FA['TC'] = G_NINGUNO;
         $FA['Factura'] = 0;
@@ -582,97 +618,97 @@ class FRecaudacionBancosCxCC
                             }
                         }
                         break;
-                    case "BOLIVARIANO":
-                        if ($CheqSAT == 1) {
-                            $CodigoP = substr($Cod_Field, 13, 8);
-                        } else {
-                            $CodigoP = substr($Cod_Field, 0, 8);
-                        }
-                        if ($Total_Alumnos == 0) {
-                            $FechaTexto = substr($Cod_Field, 11, 2) . "/" . substr($Cod_Field, 9, 2) . "/" . substr($Cod_Field, 5, 4);
-                            $CodigoP = G_NINGUNO;
-                        }
-                        break;
-                    case "BGR_EC":
-                        if ($Tipo_Carga == 1) {
-                            $CodigoP = trim(strval(intval(substr($Cod_Field, 24, 19))));
-                            $FechaTexto = substr($Cod_Field, 204, 2) . "/" .
-                                substr($Cod_Field, 206, 2) . "/" .
-                                substr($Cod_Field, 208, 4);
-                        } else {
-                            $CodigoP = $CamposFile[10]['Valor'];
-                            $FechaTexto = str_replace(" ", "/", $CamposFile[24]['Valor']);
-                            $HoraTexto = str_replace(" ", ":", $CamposFile[25]['Valor']);
-                            $CodigoB = $CamposFile[28]['Valor'] . ":" . $CamposFile[19]['Valor'] . "-" . str_replace(" ", ":", $CamposFile[25]['Valor']);
-                        }
-                        break;
-                    case "INTERNACIONAL":
-                        $CodigoP = trim(strval(intval(substr($Cod_Field, 24, 19))));
-                        $FechaTexto = substr($Cod_Field, 204, 2) . "/" .
-                            substr($Cod_Field, 206, 2) . "/" .
-                            substr($Cod_Field, 208, 4);
-                        break;
-                    case "PACIFICO":
-                        if ($CheqSAT) {
-                            $CodigoP = $CamposFile[16]['Valor'];
-                            $FechaTexto = date('d/m/Y', strtotime($CamposFile[11]['Valor']));
+                    /* case "BOLIVARIANO":
+                         if ($CheqSat == 1) {
+                             $CodigoP = substr($Cod_Field, 13, 8);
+                         } else {
+                             $CodigoP = substr($Cod_Field, 0, 8);
+                         }
+                         if ($Total_Alumnos == 0) {
+                             $FechaTexto = substr($Cod_Field, 11, 2) . "/" . substr($Cod_Field, 9, 2) . "/" . substr($Cod_Field, 5, 4);
+                             $CodigoP = G_NINGUNO;
+                         }
+                         break;
+                     case "BGR_EC":
+                         if ($Tipo_Carga == 1) {
+                             $CodigoP = trim(strval(intval(substr($Cod_Field, 24, 19))));
+                             $FechaTexto = substr($Cod_Field, 204, 2) . "/" .
+                                 substr($Cod_Field, 206, 2) . "/" .
+                                 substr($Cod_Field, 208, 4);
+                         } else {
+                             $CodigoP = $CamposFile[10]['Valor'];
+                             $FechaTexto = str_replace(" ", "/", $CamposFile[24]['Valor']);
+                             $HoraTexto = str_replace(" ", ":", $CamposFile[25]['Valor']);
+                             $CodigoB = $CamposFile[28]['Valor'] . ":" . $CamposFile[19]['Valor'] . "-" . str_replace(" ", ":", $CamposFile[25]['Valor']);
+                         }
+                         break;
+                     case "INTERNACIONAL":
+                         $CodigoP = trim(strval(intval(substr($Cod_Field, 24, 19))));
+                         $FechaTexto = substr($Cod_Field, 204, 2) . "/" .
+                             substr($Cod_Field, 206, 2) . "/" .
+                             substr($Cod_Field, 208, 4);
+                         break;
+                     case "PACIFICO":
+                         if ($CheqSat) {
+                             $CodigoP = $CamposFile[16]['Valor'];
+                             $FechaTexto = date('d/m/Y', strtotime($CamposFile[11]['Valor']));
 
-                        } else {
-                            if ($Total_Alumnos !== 0) {
-                                $CodigoP = $CamposFile[3]['Valor'];
-                                $FechaTexto = substr($CamposFile[5]['Valor'], 0, 10);
-                            }
-                        }
-                        break;
-                    case "PRODUBANCO":
-                        $CodigoP = $CamposFile[6]['Valor'];
-                        $FechaTexto = $CamposFile[11]['Valor'];
-                        $CodigoB = $CamposFile[13]['Valor'];
+                         } else {
+                             if ($Total_Alumnos !== 0) {
+                                 $CodigoP = $CamposFile[3]['Valor'];
+                                 $FechaTexto = substr($CamposFile[5]['Valor'], 0, 10);
+                             }
+                         }
+                         break;
+                     case "PRODUBANCO":
+                         $CodigoP = $CamposFile[6]['Valor'];
+                         $FechaTexto = $CamposFile[11]['Valor'];
+                         $CodigoB = $CamposFile[13]['Valor'];
 
-                        $NoAnio = intval(substr(trim($CodigoB), 0, 4));
-                        if ($NoAnio <= 1900 && strtotime($FechaTexto)) {
-                            $NoMeses = date('n', strtotime($FechaTexto));
-                            $NoAnio = date('Y', strtotime($FechaTexto));
-                            $Mes = MesesLetras($NoMeses);
-                        }
-                        break;
-                    case "INTERMATICO":
-                        $CodigoP = $CamposFile[6]['Valor'];
-                        $FechaTexto = $CamposFile[0]['Valor'];
-                        if (strlen($FechaTexto) > 10) {
-                            $FechaTexto = FechaSistema();
-                            $CodigoP = G_NINGUNO;
-                        }
-                        $Mifecha = $FechaTexto;
-                        break;
-                    case "COOPJEP":
-                        $CodigoP = trim($CamposFile[15]['Valor']);
-                        $FechaTexto = $CamposFile[0]['Valor'];
-                        break;
+                         $NoAnio = intval(substr(trim($CodigoB), 0, 4));
+                         if ($NoAnio <= 1900 && strtotime($FechaTexto)) {
+                             $NoMeses = date('n', strtotime($FechaTexto));
+                             $NoAnio = date('Y', strtotime($FechaTexto));
+                             $Mes = MesesLetras($NoMeses);
+                         }
+                         break;
+                     case "INTERMATICO":
+                         $CodigoP = $CamposFile[6]['Valor'];
+                         $FechaTexto = $CamposFile[0]['Valor'];
+                         if (strlen($FechaTexto) > 10) {
+                             $FechaTexto = FechaSistema();
+                             $CodigoP = G_NINGUNO;
+                         }
+                         $Mifecha = $FechaTexto;
+                         break;
+                     case "COOPJEP":
+                         $CodigoP = trim($CamposFile[15]['Valor']);
+                         $FechaTexto = $CamposFile[0]['Valor'];
+                         break;
 
-                    case "CACPE":
-                        $CodigoP = strval(intval($CamposFile[5]['Valor']));
-                        $FechaTexto = substr($CamposFile[7]['Valor'], 3, 2) . "/" .
-                            substr($CamposFile[7]['Valor'], 0, 2) . "/" .
-                            substr($CamposFile[7]['Valor'], 6, 4);
-                        break;
-                    default:
-                        $CodigoP = G_NINGUNO;
-                        $TipoDoc = $CamposFile[0]['Valor'];
-                        $FechaTexto = $CamposFile[1]['Valor'];
-                        $SerieFactura = substr($CamposFile[2]['Valor'], 0, 3) . substr($CamposFile[2]['Valor'], 4, 3);
-                        $Factura_No = intval(substr($CamposFile[2]['Valor'], 8, 10));
-                        $Autorizacion = $CamposFile[3]['Valor'];
+                     case "CACPE":
+                         $CodigoP = strval(intval($CamposFile[5]['Valor']));
+                         $FechaTexto = substr($CamposFile[7]['Valor'], 3, 2) . "/" .
+                             substr($CamposFile[7]['Valor'], 0, 2) . "/" .
+                             substr($CamposFile[7]['Valor'], 6, 4);
+                         break;
+                     default:
+                         $CodigoP = G_NINGUNO;
+                         $TipoDoc = $CamposFile[0]['Valor'];
+                         $FechaTexto = $CamposFile[1]['Valor'];
+                         $SerieFactura = substr($CamposFile[2]['Valor'], 0, 3) . substr($CamposFile[2]['Valor'], 4, 3);
+                         $Factura_No = intval(substr($CamposFile[2]['Valor'], 8, 10));
+                         $Autorizacion = $CamposFile[3]['Valor'];
 
-                        $AdoFactura = $this->modelo->sqlCaseElse($TipoDoc, $SerieFactura, $Autorizacion, $Factura_No);
+                         $AdoFactura = $this->modelo->sqlCaseElse($TipoDoc, $SerieFactura, $Autorizacion, $Factura_No);
 
-                        if (count($AdoFactura) > 0) {
-                            foreach ($AdoFactura as $valor) {
-                                $CodigoP = $valor["CI_RUC"];
-                                $CodigoCli = $valor["CodigoC"];
-                            }
-                        }
-                        break;
+                         if (count($AdoFactura) > 0) {
+                             foreach ($AdoFactura as $valor) {
+                                 $CodigoP = $valor["CI_RUC"];
+                                 $CodigoCli = $valor["CodigoC"];
+                             }
+                         }
+                         break;*/
                 }
 
                 $Si_No = true;
@@ -763,6 +799,52 @@ class FRecaudacionBancosCxCC
         }
         $mensaje = 'No hay archivo seleccionado';
         return array('res' => 'Error', 'mensaje' => $mensaje);
+    }
+
+    function Visualizar_Archivo($parametros)
+    {
+        $NombreArchivo = $parametros['NombreArchivo'];
+        $RutaGeneraFile = strtoupper($NombreArchivo);
+        $maxCar = 0;
+        $txtFile = '';
+        $NumFile = fopen($RutaGeneraFile, "r");
+
+        if ($NumFile) {
+            while (!feof($NumFile)) {
+                $codField = fgets($NumFile);
+                if (strlen($codField) > $maxCar) {
+                    $maxCar = strlen($codField);
+                }
+                $txtFile .= $codField . PHP_EOL;
+            }
+
+            fclose($NumFile);
+
+            $j = 1;
+            $k = 0;
+            $cadena = "";
+            $cadena1 = "";
+
+            for ($i = 1; $i <= $maxCar; $i++) {
+                $cadena .= (string) $j;
+                $j++;
+
+                if ($j > 9) {
+                    $cadena .= "0";
+                    $j = 1;
+                    $k++;
+                    if ($k <= 10) {
+                        $cadena1 .= str_repeat(" ", 9) . (string) $k;
+                    } else {
+                        $cadena1 .= str_repeat(" ", 8) . (string) $k;
+                    }
+                }
+            }
+            $cadena .= PHP_EOL;
+            $cadena1 .= PHP_EOL;
+            $txtFile = $cadena1 . $cadena . $txtFile;
+            return array('res' => 'Ok', 'contenido' => $txtFile);
+        }
     }
 
     function Generar_Pichincha($parametros)
@@ -934,8 +1016,8 @@ class FRecaudacionBancosCxCC
         }
         fclose($NumFileFacturas);
         $mensaje =
-            strtoupper("SCREC" . $mes . ".TXT") . PHP_EOL . PHP_EOL .
-            strtoupper("SCCOB" . $mes . ".TXT") . PHP_EOL . PHP_EOL .
+            strtoupper("SCREC" . $mes . ".TXT") . " " .
+            strtoupper("SCCOB" . $mes . ".TXT") . " " .
             "Valor Total a Recaudar USD " . number_format($SumaBancos, 2, '.', ',');
 
         return array(
@@ -949,7 +1031,159 @@ class FRecaudacionBancosCxCC
 
     function Generar_Internacional($parametros)
     {
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+        $AdoDetalle = $parametros['AdoDetalle'];
+        $AdoFactura = $parametros['AdoFactura'];
+        $Cta_Bancaria = $parametros['Cta_Bancaria'];
+        //$Tipo_Carga = $parametros['Tipo_Carga'];
+        //$CheqMatricula = $parametros['CheqMatricula'];
+        $Separador = "\t";
+        if ($MBFechaI != $MBFechaF) {
+            $Traza = str_replace("/", "-", $MBFechaI) . "_al_" . str_replace("/", "-", $MBFechaF);
+        } else {
+            $Traza = str_replace("/", "-", $MBFechaI);
+        }
 
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        // Verificar si el directorio base existe, si no, crearlo
+        if (!is_dir($directorioBase)) {
+            mkdir($directorioBase, 0777, true);
+        }
+        $NumFileFacturas = fopen(strtoupper($directorioBase . "CxC_MES" . $Traza . ".TXT"), "w");
+        $Traza = "";
+
+        $FechaTexto = FechaSistema();
+        $Mifecha = BuscarFecha($MBFechaI);
+        $TextoImprimio = "";
+        $AuxNumEmp = $_SESSION['INGRESO']['item'];
+        $Cta_Cobrar = "Ninguno";
+        $Contador = 1;
+        $Total = 0;
+        //Comenzamos a generar el archivo: COALU.TXT
+        if (count($AdoDetalle) > 0) {
+            foreach ($AdoDetalle as $valor) {
+                $CodigoCli = $valor["CodigoC"];
+                $TRep = Leer_Datos_Clientes($CodigoCli);
+                $NombreCliente = trim(substr($valor["Cliente"], 0, 40));
+                $CodigoB = sprintf("%08d", $valor["CI_RUC"]);
+                $Abono = $valor["Total"] - $valor["Total_Desc"] - $valor["Total_Desc2"];
+
+                if ($Abono <= 0) {
+                    $Abono = 0;
+                }
+
+                $DireccionCli = $valor["Direccion"];
+                $GrupoNo = $valor["Grupo"];
+                $Detalle = $GrupoNo . "-" . $valor["Producto"] . "-" . $valor["Mes"];
+
+                // Empieza la trama
+                $Traza = "CO" . $Separador .
+                    trim(substr($Cta_Bancaria, 0, 20)) . $Separador .
+                    $Contador . $Separador .
+                    $Contador . $Separador .
+                    $CodigoB . $Separador .
+                    "USD" . $Separador .
+                    strval($Abono * 100) . $Separador .
+                    "REC" . $Separador .
+                    "32" . $Separador .
+                    $TRep['TD_R'] . $Separador .
+                    $TRep['CI_RUC_R'] . $Separador .
+                    $NombreCliente . $Separador .
+                    $DireccionCli . $Separador . $Separador . $Separador . $Separador . $Separador .
+                    $Detalle . str_repeat("\t", 13);
+
+                if ($Abono > 0) {
+                    fwrite($NumFileFacturas, $Traza);
+                    $Contador = $Contador + 1;
+                }
+                fwrite($NumFileFacturas, "\n");
+            }
+        }
+        fclose($NumFileFacturas);
+        $Separador = "\t";
+        if ($MBFechaI != $MBFechaF) {
+            $Traza = str_replace("/", "-", $MBFechaI) . "_al_" . str_replace("/", "-", $MBFechaF);
+        } else {
+            $Traza = str_replace("/", "-", $MBFechaI);
+        }
+
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        // Verificar si el directorio base existe, si no, crearlo
+        if (!is_dir($directorioBase)) {
+            mkdir($directorioBase, 0777, true);
+        }
+
+        $NumFileFacturas = fopen(strtoupper($directorioBase . "CxC_Pendiente_" . $Traza . ".TXT"), "w");
+        $Traza = "";
+        $FechaTexto = FechaSistema();
+        $Mifecha = BuscarFecha($MBFechaI);
+        $TextoImprimio = "";
+        $AuxNumEmp = $_SESSION['INGRESO']['item'];
+        $Cta_Cobrar = "Ninguno";
+        $Contador = 1;
+        $Total = 0;
+
+        // Comenzamos a generar el archivo: COALU.TXT
+        if (count($AdoFactura) > 0) {
+            foreach ($AdoFactura as $valor) {
+
+                $CodigoCli = $valor["CodigoC"];
+                $TRep = Leer_Datos_Clientes($CodigoCli);
+                $NombreCliente = trim(substr($valor["Cliente"], 0, 40));
+                $CodigoB = sprintf("%08d", $valor["CI_RUC"]);
+                $Abono = $valor["Saldo_Pend"];
+
+                if ($Abono <= 0) {
+                    $Abono = 0;
+                }
+
+                $DireccionCli = $valor["Direccion"];
+                $GrupoNo = $valor["Grupo"];
+                $Detalle = $GrupoNo . "-Saldo Pendiente-00";
+
+                // Empieza la trama
+                $Traza = "CO" . $Separador .
+                    trim(substr($Cta_Bancaria, 0, 20)) . $Separador .
+                    $Contador . $Separador .
+                    $Contador . $Separador .
+                    $CodigoB . $Separador .
+                    "USD" . $Separador .
+                    strval($Abono * 100) . $Separador .
+                    "REC" . $Separador .
+                    "32" . $Separador .
+                    $Separador . $Separador . $Separador . $Separador .
+                    $TRep['TD_R'] . $Separador .
+                    $TRep['CI_RUC_R'] . $Separador .
+                    $NombreCliente . $Separador . $Separador . $Separador . $Separador . $Separador .
+                    $Detalle . str_repeat($Separador, 13);
+
+                if ($Abono > 0) {
+                    fwrite($NumFileFacturas, $Traza);
+                    $Contador = $Contador + 1;
+                }
+                fwrite($NumFileFacturas, "\n");
+            }
+        }
+        // Finalizamos los archivos
+        fclose($NumFileFacturas);
+        $Separador = "\t";
+        if ($MBFechaI != $MBFechaF) {
+            $Traza = str_replace("/", "-", $MBFechaI) . "_al_" . str_replace("/", "-", $MBFechaF);
+        } else {
+            $Traza = str_replace("/", "-", $MBFechaI);
+        }
+        $mensaje =
+            strtoupper("CxC_MES_" . $Traza . ".TXT") . " " .
+            strtoupper("CxC_Pendiente_" . $Traza . ".TXT");
+
+        return array(
+            'res' => 'Ok',
+            'mensaje' => $mensaje,
+            'textoBanco' => 'INTERNACIONAL',
+            'Nombre1' => "CxC_MES_" . $Traza . ".TXT",
+            'Nombre2' => "CxC_Pendiente_" . $Traza . ".TXT"
+        );
     }
 
     function Generar_Pacifico($parametros)

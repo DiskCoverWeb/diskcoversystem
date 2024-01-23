@@ -2,6 +2,14 @@
     .miPanel {
         background-color: #5bc0de;
     }
+
+    #TxtFile {
+        resize: none;
+        background-color: black;
+        color: white;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
 </style>
 
 <div>
@@ -13,7 +21,7 @@
                 </a>
             </div>
             <div class="col">
-                <a href="javascript:void(0)" title="Visualizar" class="btn btn-default" onclick="Visualizar()">
+                <a href="javascript:void(0)" id="btnVerArchivo" title="Visualizar" class="btn btn-default">
                     <img src="../../img/png/visual.png" width="25" height="30">
                 </a>
             </div>
@@ -59,7 +67,7 @@
             </div>
             <div class="col-sm-1">
                 <label>ORDEN No.</label>
-                <input type="text" name="TxtOrden" id="TxtOrden" placeholder="0" size="4">
+                <input type="text" name="TxtOrden" id="TxtOrden" placeholder="0" size="4" value=0000>
             </div>
             <div class="col-sm-4">
                 <label for="DCBanco">CUENTA A LA QUE SE VA ACREDITAR LOS ABONOS</label>
@@ -148,6 +156,26 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" id="btnSubirArchivo">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="modalVerArchivo">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">VISUALIZAR ABONOS</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input class="form-control" type="file" id="fileInput2" accept=".txt">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btnVerArchivoSi">Aceptar</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                 </div>
 
@@ -442,10 +470,10 @@
         var MBFechaI = $('#MBFechaI').val();
         var MBFechaF = $('#MBFechaF').val();
 
-        var CheqRangos = $('#CheqRangos').prop('checked');
-        var CheqMatricula = $('#CheqMatricula').prop('checked');
-        var CheqPend = $('#CheqPend').prop('checked');
-        var CheqSat = $('#CheqSat').prop('checked');
+        var CheqRangos = $('#CheqRangos').prop('checked') ? 1 : 0;
+        var CheqMatricula = $('#CheqMatricula').prop('checked') ? 1 : 0;
+        //var CheqPend = $('#CheqPend').prop('checked')? 1 : 0;
+        //var CheqSat = $('#CheqSat').prop('checked')? 1 : 0;
 
         var parametros = {
             'DCEntidad': DCEntidad,
@@ -469,42 +497,15 @@
                 if (data.res == 'Ok') {
                     switch (data.textoBanco) {
                         case "PICHINCHA":
-                            Swal.fire({
-                                title: 'SE GENERARON LOS SIGUIENTES ARCHIVOS:',
-                                type: 'success',
-                                html: data.mensaje,
-                                confirmButtonText: 'Aceptar'
-                            });
-
-                            var url = "../../TEMP/FACTURAS/" + data.Nombre1;
-                            var url2 = "../../TEMP/FACTURAS/" + data.Nombre2;
-
-                            var enlaceTemporal = $('<a></a>')
-                                .attr('href', url)
-                                .attr('download', data.Nombre1)
-                                .appendTo('body');
-
-                            enlaceTemporal[0].click();
-                            enlaceTemporal.remove();
-
-                            var enlaceTemporal2 = $('<a></a>')
-                                .attr('href', url2)
-                                .attr('download', data.Nombre2)
-                                .appendTo('body');
-
-                            enlaceTemporal2[0].click();
-                            enlaceTemporal2.remove();
+                        case "INTERNACIONAL":
+                            procesarDatosBanco(data);
                             break;
-
                         /*
                     case "BGR_EC":
                         $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
                         //Generar_BGR_EC();
                         break;
-                    case "INTERNACIONAL":
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        //Generar_Internacional();
-                        break;
+                   
                     case "BOLIVARIANO":
                         $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
                         //Generar_Bolivariano();
@@ -547,6 +548,31 @@
         });
     }
 
+    function procesarDatosBanco(data) {
+        Swal.fire({
+            title: 'SE GENERARON LOS SIGUIENTES ARCHIVOS:',
+            type: 'success',
+            html: data.mensaje,
+            confirmButtonText: 'Aceptar'
+        });
+
+        var url = "../../TEMP/FACTURAS/" + data.Nombre1;
+        var url2 = "../../TEMP/FACTURAS/" + data.Nombre2;
+
+        function descargarArchivo(url, nombre) {
+            var enlaceTemporal = $('<a></a>')
+                .attr('href', url)
+                .attr('download', nombre)
+                .appendTo('body');
+
+            enlaceTemporal[0].click();
+            enlaceTemporal.remove();
+        }
+
+        descargarArchivo(url, data.Nombre1);
+        descargarArchivo(url2, data.Nombre2);
+    }
+
     $('#btnRecibirAbonos').click(function () {
         $('#modalSubirArchivo').modal('show');
     });
@@ -563,7 +589,8 @@
         var TxtOrden = $('#TxtOrden').val();
         var DCEntidad = $('#DCEntidad').val();
         var DCBanco = $('#DCBanco').val();
-        var CheqSat = $('#CheqSat').prop('checked');
+        //var CheqSat = $('#CheqSat').prop('checked');
+        var CheqSat = $('#CheqSat').prop('checked') ? 1 : 0;
         var fileInput = $('#fileInput')[0];
         var archivo = fileInput.files[0];
 
@@ -602,6 +629,68 @@
             }
         });
     }
+
+    $('#btnVerArchivo').click(function () {
+        $('#modalVerArchivo').modal('show');
+    });
+
+    $('#btnVerArchivoSi').click(function () {
+        $('#modalVerArchivo').modal('hide');
+        Visualizar();
+    });
+
+    function Visualizar() {
+        var fileInput = $('#fileInput2')[0];
+        var archivo = fileInput.files[0];
+
+        var formData = new FormData();
+
+        if (archivo) {
+            formData.append('archivoBanco', archivo, archivo.name);
+        }
+
+        $.ajax({
+            type: 'post',
+            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?VisualizarArchivo=true',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                var datos = JSON.parse(data);
+                console.log('resultado', datos);
+                if (datos.res == 'Error') {
+                    Swal.fire({
+                        title: datos.mensaje,
+                        type: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                } else {
+                    animarEscritura(datos.contenido);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error en la solicitud: " + textStatus, errorThrown);
+            }
+        });
+    }
+
+    function animarEscritura(contenido) {
+        var textarea = $('#TxtFile');
+        var lineas = contenido.split('\n');
+        var index = 0;
+        var velocidadEscritura = 100;
+
+        function escribirLinea() {
+            if (index < lineas.length) {
+                textarea.val(textarea.val() + lineas[index] + '\n');
+                textarea.scrollTop(textarea[0].scrollHeight);
+                index++;
+                setTimeout(escribirLinea, velocidadEscritura);
+            }
+        }
+        escribirLinea();
+    }
+
 
 
 
