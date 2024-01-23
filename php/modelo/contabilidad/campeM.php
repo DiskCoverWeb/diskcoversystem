@@ -8,6 +8,7 @@ class campeM
 {	
 		
     private $conn ;
+    private $db;
 	function __construct()
 	{
 	   $this->db = new db();

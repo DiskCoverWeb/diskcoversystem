@@ -62,6 +62,12 @@ class usuario_model{
 			$_SESSION['INGRESO']['Id'] = $datos[0]['CI_NIC'];
 			$_SESSION['INGRESO']['Clave'] = $datos[0]['Clave'];
 			$_SESSION['INGRESO']['Mail'] = $datos[0]['Usuario'];
+			if($datos[0]['Foto']!='.')
+			{
+      	$_SESSION['INGRESO']['Foto'] = $datos[0]['Foto'];
+      }else{
+      	$_SESSION['INGRESO']['Foto'] = 'ejecutivo.png';
+      }
 
 	// print_r($datos);die();
 			return 'panel.php';
@@ -359,6 +365,13 @@ class usuario_model{
 			return $datos;
 		}
 
+	}
+
+	function editar_foto($img)
+	{
+		$_SESSION['INGRESO']['Foto'] = $img;
+		$sql = "UPDATE acceso_usuarios SET Foto='".$img."' WHERE CI_NIC='".$_SESSION['INGRESO']['CodigoU']."'";
+		return $this->db1->String_Sql($sql,'MY SQL');
 	}
 
 	function getAccesoEmpresasSQL()

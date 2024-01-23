@@ -55,6 +55,66 @@ if (isset($_GET['validar_estado'])) {
     echo json_encode(validar_estado_all());
 }
 
+if(isset($_GET['cargar_imagen']))
+{
+    $file = $_FILES;
+    echo json_encode(guardar_img($file));
+}
+
+function guardar_img($file)
+{
+
+    $modelo = new usuario_model();
+    $ruta= dirname(__DIR__,2).'/img/usuarios/';//ruta carpeta donde queremos copiar las imágenes
+    if (!file_exists($ruta)) {
+       mkdir($ruta, 0777, true);
+    }
+    if(validar_formato_img($file)==1)
+    {
+         $uploadfile_temporal=$file['file_img']['tmp_name'];
+         $tipo = explode('/', $file['file_img']['type']);
+         $nombre = $_SESSION['INGRESO']['CodigoU'].'.'.$tipo[1];            
+         $nuevo_nom=$ruta.$nombre;
+         if (is_uploaded_file($uploadfile_temporal))
+         {
+           move_uploaded_file($uploadfile_temporal,$nuevo_nom);
+            $base = $modelo->editar_foto($nombre);
+           if($base==1)
+           {
+            return $nombre;
+           }else
+           {
+            return -1;
+           }
+
+         }
+         else
+         {
+           return -1;
+         } 
+     }else
+     {
+      return -2;
+     }
+}
+
+ function validar_formato_img($file)
+  {
+    switch ($file['file_img']['type']) {
+      case 'image/jpeg':
+      case 'image/pjpeg':
+      case 'image/gif':
+      case 'image/png':
+         return 1;
+        break;      
+      default:
+        return -1;
+        break;
+    }
+
+  }
+
+
 function IngClaves($parametros)
 {
     // print_r($_SESSION['INGRESO']);die();
@@ -411,6 +471,7 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         $_SESSION['INGRESO']['periodo'] = '.'; /////////
         $_SESSION['INGRESO']['Razon_Social'] = $empresa[0]['Razon_Social'];
         $_SESSION['INGRESO']['Fecha_ce'] = $empresa[0]['Fecha_CE'];
+        $_SESSION['INGRESO']['Fecha_p12'] = $empresa[0]['Fecha_P12'];
         $_SESSION['INGRESO']['Porc_Serv'] = round($empresa[0]['Servicio'] / 100, 2);
         $datos = getInfoIPS();
         $_SESSION['INGRESO']['IP_Local'] = $datos['local_net_address'];
