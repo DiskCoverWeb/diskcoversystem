@@ -499,6 +499,9 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'egreso_alimentos':
 				require_once("inventario/egreso_alimentos.php");
 				break;
+			case 'egreso_alimento2':
+				require_once("inventario/egreso_alimento2.php");
+				break;
 			//Inventario  -> Reportes -> Lista productos
 			case 'CatalogoCtas':
 				require_once("inventario/Catalogo.php");
