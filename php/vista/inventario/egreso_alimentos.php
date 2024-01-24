@@ -1,8 +1,47 @@
 <?php date_default_timezone_set('America/Guayaquil'); ?> 
 <script type="text/javascript">
   $(document).ready(function () {
-  	
+  	areas();  
+  	motivo_egreso()	
   })
+
+   function areas(){
+	  $('#ddl_areas').select2({
+	    placeholder: 'Seleccione una beneficiario',
+	    // width:'90%',
+	    ajax: {
+	      url:   '../controlador/inventario/egreso_alimentosC.php?areas=true',          
+	      dataType: 'json',
+	      delay: 250,
+	      processResults: function (data) {
+	        // console.log(data);
+	        return {
+	          results: data
+	        };
+	      },
+	      cache: true
+	    }
+	  });
+	}
+
+	function motivo_egreso(){
+	  $('#ddl_motivo').select2({
+	    placeholder: 'Seleccione una beneficiario',
+	    // width:'90%',
+	    ajax: {
+	      url:   '../controlador/inventario/egreso_alimentosC.php?motivos=true',          
+	      dataType: 'json',
+	      delay: 250,
+	      processResults: function (data) {
+	        // console.log(data);
+	        return {
+	          results: data
+	        };
+	      },
+	      cache: true
+	    }
+	  });
+	}
   	
    
 </script>
@@ -59,7 +98,7 @@
 							</div>
 							<br>
 							<b>Area de egreso:</b>
-							<select class="form-control" id="txt_codigo" name="txt_codigo">
+							<select class="form-control" id="ddl_areas" name="ddl_areas">
 					           	<option>Seleccione</option>
 					        </select>
 						</div>				        
@@ -73,7 +112,9 @@
 							</div>
 							<br>
 		            		<b>Motivo de egreso</b>								
-							<input type="" class="form-control input-xs" id="txt_donante" name="txt_donante" readonly>
+							<select class="form-control" id="ddl_motivo" name="ddl_motivo">
+					           	<option>Seleccione</option>
+					        </select>
 						</div>
 					</div>
 					<div class="col-sm-3">
