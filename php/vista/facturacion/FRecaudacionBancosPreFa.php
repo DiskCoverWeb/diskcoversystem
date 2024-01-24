@@ -372,10 +372,11 @@
                     var url = "../../TEMP/BANCO/FACTURAS/" + data[`Nombre${i}`];
                     var enlaceTemporal = $('<a></a>')
                         .attr('href', url)
-                        .attr('download', data.Nombre1 + i)
+                        .attr('download', data[`Nombre${i}`])
                         .appendTo('body');
                     enlaceTemporal[0].click();
                     enlaceTemporal.remove();
+                    
                 }
 
                 /*var url = "../../TEMP/BANCO/FACTURAS/" + data.Nombre1;
@@ -666,6 +667,10 @@
         color: white;
         height: 540px;
         max-height: 550px;
+    }
+
+    body{
+        padding-right: 0px !important;
     }
 </style>
 <div>
