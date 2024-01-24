@@ -510,6 +510,20 @@ function tipoProceso() {
             $('#reqFacturaContainer').css('display', 'none');
             $('#checkboxContainer').css('display', 'none');
             break;
+        case '94':
+            $('#txtConcepto').attr('placeholder', '');
+            $('#tp').val('MOTIVOS');
+            $('#pictureContainer').css('display', 'none');
+            $('#reqFacturaContainer').css('display', 'none');
+            $('#checkboxContainer').css('display', 'none');
+            break;
+        case '95':
+            $('#txtConcepto').attr('placeholder', '');
+            $('#tp').val('AREAEGRE');
+            $('#pictureContainer').css('display', 'none');
+            $('#reqFacturaContainer').css('display', 'none');
+            $('#checkboxContainer').css('display', 'none');
+            break;
         default:
             $('#txtConcepto').attr('placeholder', '');
             $('#tp').val('CATEGORI');
