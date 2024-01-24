@@ -32,6 +32,12 @@ if (isset($_GET['ListaTipo'])) {
     echo json_encode($controlador->ListaTipoProcesosGenerales());
 }
 
+if(isset($_GET['ListaTipoProcesosGeneralesAux'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->ListaTipoProcesosGeneralesAux($parametros));
+
+}
+
 class catalogo_bodegaC
 {
     private $modelo;
@@ -106,6 +112,11 @@ class catalogo_bodegaC
         } catch (Exception $e) {
             return array('status' => '400', 'error' => 'No se pudieron listar los datos.');
         }
+    }
+
+    function ListaTipoProcesosGeneralesAux($parametros){
+        $datos = $this->modelo->ListaTipoProcesosGeneralesAux($parametros);
+        return $datos;
     }
 }
 ?>
