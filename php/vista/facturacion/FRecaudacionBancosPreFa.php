@@ -51,6 +51,10 @@
         DCEntidadBancaria();
         DatosBanco();
 
+        if('<?php echo $_SESSION['INGRESO']['CodigoU']; ?>' == 'ACCESO02'){
+            $('#Command3').prop('disabled', false);
+        }
+
         
 
         //Se encarga de manejar la entidad bancaria cuando cambia
@@ -188,67 +192,68 @@
 
         //Navegacion cuando pierden el foco
         $('#DCEntidadBancaria').blur(function () {
-            $('#MBFechaI').focus();
+            //$('#MBFechaI').focus();
         });
 
         $('#MBFechaI').blur(function () {
             $('#myModal_espera').modal('show');
-            $('#MBFechaF').focus();
+            //$('#MBFechaF').focus();
         });
 
         $('#MBFechaF').blur(function () {
-            $('#CheqRangos').focus();
+            //$('#CheqRangos').focus();
         });
 
         $('#CheqRangos').blur(function () {
-            $('#DCGrupoI').focus();
+            //$('#DCGrupoI').focus();
         });
 
         $('#DCGrupoI').blur(function () {
-            $('#DCGrupoF').focus();
+            //$('#DCGrupoF').focus();
         });
 
         $('#DCGrupoF').blur(function () {
-            $('#DCBanco').focus();
+            //$('#DCBanco').focus();
         });
 
         $('#DCBanco').blur(function () {
-            $('#TxtCodBanco').focus();
+            //$('#TxtCodBanco').focus();
         });
 
         $('#TxtCodBanco').blur(function () {
-            $('#MBFechaV').focus();
+            //$('#MBFechaV').focus();
         });
 
         $('#MBFechaV').blur(function () {
-            $('#DCLinea').focus();
+            //$('#DCLinea').focus();
         });
 
         $('#DCLinea').blur(function () {
             $('#myModal_espera').modal('show');
-            $('#CheqMatricula').focus();
+            //$('#CheqMatricula').focus();
         });
 
         $('#CheqMatricula').blur(function () {
-            $('#TextFacturaNo').focus();
+            //$('#TextFacturaNo').focus();
         });
 
         $('#TextFacturaNo').blur(function () {
             $('#myModal_espera').modal('show');
-            $('#CheqNumCodigos').focus();
+            //$('#CheqNumCodigos').focus();
         });
 
         $('#CheqNumCodigos').blur(function () {
-            $('#CheqAlDia').focus();
+            //$('#CheqAlDia').focus();
         });
 
         $('#CheqAlDia').blur(function () {
-            $('#LabelAbonos').focus();
+            //$('#LabelAbonos').focus();
         });
 
         //Handle Command1_Click
         $('#Command1').click(function () {
             $('#TxtFile').text('');
+            $('#DGFactura').empty();
             $('#modal_subir_archivo').modal('show');
         });
 
@@ -262,6 +267,7 @@
         //Handle Command4_Click
         $('#Command4').click(function () {
             $('#TxtFile').text('');
+            $('#DGFactura').empty();
             $('#myModal_espera').show();
             $('#myModal_espera').modal('show');
             Command4_Click();
@@ -270,6 +276,7 @@
         //Handle Command6_Click
         $('#Command6').click(function () {
             $('#TxtFile').text('');
+            $('#DGFactura').empty();
             Command6_Click();
         });
 
@@ -352,6 +359,7 @@
             'Costo_Banco': Costo_Banco,
             'CheqMatricula': $('#CheqMatricula').is(':checked'),
             'TxtCodBanco': $('#TxtCodBanco').val(),
+            'MBFechaV': $('#MBFechaV').val()
         }
 
         $.ajax({
@@ -378,25 +386,7 @@
                     enlaceTemporal.remove();
                     
                 }
-
-                /*var url = "../../TEMP/BANCO/FACTURAS/" + data.Nombre1;
-                var url2 = "../../TEMP/BANCO/FACTURAS/" + data.Nombre2;
-
-                var enlaceTemporal = $('<a></a>')
-                    .attr('href', url)
-                    .attr('download', data.Nombre1)
-                    .appendTo('body');
-
-                enlaceTemporal[0].click();
-                enlaceTemporal.remove();
-
-                var enlaceTemporal2 = $('<a></a>')
-                    .attr('href', url2)
-                    .attr('download', data.Nombre2)
-                    .appendTo('body');
-
-                enlaceTemporal2[0].click();
-                enlaceTemporal2.remove();*/
+                $('#TxtFile').text(data.TxtFile);
             }
         });
 
@@ -416,17 +406,6 @@
         });
     }
 
-    /*function DGFactura() {
-        $.ajax({
-            type: "POST",
-            url: "../controlador/facturacion/FRecaudacionBancosPreFaC.php?DGFactura=true",
-            dataType: "json",
-            success: function (response) {
-                $('#DGFactura').empty();
-                $('#DGFactura').html(response.tbl);
-            }
-        });
-    }*/
 
     function Command1_Click() {
         $('#myModal_espera').show();
@@ -693,7 +672,7 @@
                 <img src="../../img/png/FRecaudacionBancosPreFa/facturas.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Alumnos Contabilidad"
-                id="Command7" onclick="" style="border: solid 1px" disabled>
+                id="Command7" onclick="" style="border: solid 1px">
                 <img src="../../img/png/FRecaudacionBancosPreFa/alumnos.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Renumerar Codigos"

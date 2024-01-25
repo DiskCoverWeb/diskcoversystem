@@ -459,6 +459,18 @@ class FRecaudacionBancosPreFaM
         return array('datos' => $datos, 'AdoAsientoF' => $AdoAsientoF);
     }
 
+    public function AdoAux($parametros){
+        $sql = "SELECT Codigo,GrupoNo,Periodo,Mes,Num_Mes,Fecha
+                FROM Clientes_Facturacion
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND Fecha BETWEEN " . BuscarFecha($parametros['MBFechaI']) . " AND " . BuscarFecha($parametros['MBFechaF']) . "";
+        if($parametros['CheqRangos'] <> false){
+            $sql .= "AND GrupoNo BETWEEN '" . $parametros['DCGrupoI'] . "' AND '" . $parametros['DCGrupoF'] . "'";
+        }
+        $sql .= "ORDER BY Codigo, Fecha";
+        return $this->db->datos($sql);
+    }
+
     public function Procesar_Saldo_De_Facturas($PorX = false)
     {
         /*$Contador = 0;
