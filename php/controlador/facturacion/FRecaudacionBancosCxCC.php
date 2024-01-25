@@ -1,5 +1,6 @@
 <?php
 include(dirname(__DIR__, 2) . '/modelo/facturacion/FRecaudacionBancosCxCM.php');
+require_once(dirname(__DIR__, 3) . '/lib/phpmailer/enviar_emails.php');
 
 $controlador = new FRecaudacionBancosCxCC();
 if (isset($_GET['Form_Activate'])) {
@@ -103,13 +104,20 @@ if (isset($_GET['VisualizarArchivo'])) {
     }
 }
 
+if (isset($_GET['EliminaArchivosTemporales'])) {
+    $tempFilePath = $_POST['tempFilePath'];
+    echo json_encode($controlador->EliminaArchivosTemporales($tempFilePath));
+}
+
 class FRecaudacionBancosCxCC
 {
     private $modelo;
+    private $email;
 
     function __construct()
     {
         $this->modelo = new FRecaudacionBancosCxCM();
+        $this->email = new enviar_emails();
     }
 
     function DCGrupoI_DCGrupoF()
@@ -202,6 +210,8 @@ class FRecaudacionBancosCxCC
         $MBFechaF = $parametros['MBFechaF'];
         //$Tipo_Carga = $parametros['Tipo_Carga'];        
         $CheqMatricula = $parametros['CheqMatricula'];
+        $CheqPend = $parametros['CheqPend'];
+        $DCBanco = $parametros['DCBanco'];
         $Cta_Bancaria = SinEspaciosDer($parametros['DCBanco']);
         $Tipo_Carga = Leer_Campo_Empresa("Tipo_Carga_Banco");
 
@@ -273,6 +283,8 @@ class FRecaudacionBancosCxCC
                     'Total_Desc2' => $value['Total_Desc2'],
                     'Producto' => $value['Producto'],
                     'Mes' => $value['Mes'],
+                    'Ticket' => $value['Ticket'],
+                    'Mes_No' => $value['Mes_No'],
 
                 );
             }
@@ -301,10 +313,13 @@ class FRecaudacionBancosCxCC
                 $AdoAux[] = array(
                     'Fecha' => $value['Fecha'],
                     'Cliente' => $value['Cliente'],
-                    'Grupo' => $value['Grupo'],
-                    'RUC' => $value['CI_RUC'],
+                    'GrupoNo' => $value['Grupo'],
+                    'CI_RUC' => $value['CI_RUC'],
                     'Direccion' => $value['Direccion'],
-                    'Casilla' => $value['Casilla']
+                    'Casilla' => $value['Casilla'],
+                    'CodigoC' => $value['CodigoC'],
+                    'Saldo_MN' => $value['Saldo_MN'],
+                    'Total_MN' => $value['Total_MN']
                 );
             }
         }
@@ -324,11 +339,18 @@ class FRecaudacionBancosCxCC
                 //print_r($parametros2['Tipo_Carga']);
                 $res = $this->Generar_Pichincha($parametros);
                 break;
-
-            /*case "BGR_EC":
-                $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                //Generar_BGR_EC();
-                break;*/
+            case "BGR_EC":
+                $FechaFin = BuscarFecha(date("Y-m-t", strtotime($MBFechaF)));
+                $parametros = array(
+                    'MBFechaI' => $MBFechaI,
+                    'MBFechaF' => $MBFechaF,
+                    'AdoAux' => $AdoAux,
+                    'AdoPendiente' => $AdoPendiente,
+                    'CheqPend' => $CheqPend,
+                    'CheqMatricula' => $CheqMatricula
+                );
+                $res = $this->Generar_BGR_EC($parametros);
+                break;
             case "INTERNACIONAL":
                 $FechaFin = BuscarFecha(date("Y-m-t", strtotime($MBFechaF)));
                 $parametros = array(
@@ -340,30 +362,59 @@ class FRecaudacionBancosCxCC
                 );
                 $res = $this->Generar_Internacional($parametros);
                 break;
-            /*case "BOLIVARIANO":
-                $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                //Generar_Bolivariano();
-                break;*/
+            case "BOLIVARIANO":
+                $FechaFin = BuscarFecha(date("Y-m-t", strtotime($MBFechaF)));
+                $parametros = array(
+                    'CheqMatricula' => $CheqMatricula,
+                    'MBFechaF' => $MBFechaF,
+                    'AdoAux' => $AdoAux,
+                    'AdoPendiente' => $AdoPendiente,
+                    'DCBanco' => $DCBanco,
+                    'CheqPend' => $CheqPend,
+                );
+                $res = $this->Generar_Bolivariano($parametros);
+                break;
             case "PACIFICO":
-                $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                //Generar_Pacifico();
-                break;
-            /*case "PRODUBANCO":
-                $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                //Generar_Produbanco();
-                break;
-            case "GUAYAQUIL":
-                $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                //Generar_Guayaquil();
+                $FechaFin = BuscarFecha(date("Y-m-t", strtotime($MBFechaF)));
+                $parametros = array(
+                    'MBFechaI' => $MBFechaI,
+                    'MBFechaF' => $MBFechaF,
+                    'AdoPendiente' => $AdoPendiente,
+                );
+                $res = $this->Generar_Pacifico($parametros);
                 break;
             case "COOPJEP":
-                $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                //Generar_Coop_Jep();
+                $FechaFin = BuscarFecha(date("Y-m-t", strtotime($MBFechaF)));
+                $parametros = array(
+                    'MBFechaI' => $MBFechaI,
+                    'MBFechaF' => $MBFechaF,
+                    'CheqMatricula' => $CheqMatricula,
+                );
+                $res = $this->Generar_Coop_Jep($parametros);
+                break;
+            case "PRODUBANCO":
+                $FechaFin = BuscarFecha(date("Y-m-t", strtotime($MBFechaF)));
+                $parametros = array(
+                    'MBFechaI' => $MBFechaI,
+                    'MBFechaF' => $MBFechaF,
+                    'AdoDetalle' => $AdoDetalle,
+                    'DCBanco' => $DCBanco,
+                );
+                $res = $this->Generar_Produbanco($parametros);
+                break;
+            case "GUAYAQUIL":
+                $FechaFin = BuscarFecha(date("Y-m-t", strtotime($MBFechaF)));
+                $parametros = array(
+                    'MBFechaI' => $MBFechaI,
+                    'MBFechaF' => $MBFechaF,
+                    'AdoPendiente' => $AdoPendiente,
+                    'DCBanco' => $DCBanco,
+                );
+                $res = $this->Generar_Guayaquil($parametros);
                 break;
             default:
-                $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
                 echo "No está definido este Banco";
-                break;*/
+                break;
         }
 
         // Facturas Emitidas del mes
@@ -779,7 +830,7 @@ class FRecaudacionBancosCxCC
                                 "Hora" . "\t" . "\t" . ": " . $TA['Cheque'] . "\n" .
                                 "Documento" . "\t" . ": " . $TA['Recibo_No'] . "\n" .
                                 "Valor Recibdo USD " . number_format($TA['Abono'], 2, '.', ',') . "\n";
-                            //SRI_Enviar_Mails($FA, $SRI_Autorizacion, "AB");
+                            $this->SRI_Enviar_Mails($FA, $SRI_Autorizacion, "AB");
                         }
                     }
                 }
@@ -801,6 +852,156 @@ class FRecaudacionBancosCxCC
         return array('res' => 'Error', 'mensaje' => $mensaje);
     }
 
+    function SRI_Enviar_Mails($TFA, $SRI_Autorizacion, $Tipo_Documento)
+    {
+        $RutaPDF = "";
+        $RutaXML = "";
+        $Email = "";
+        $posPuntoComa = 0;
+
+        $TMail['TipoDeEnvio'] = "CE";
+        $TMail['ListaMail'] = 255;
+        $TMail['Destinatario'] = $TFA['Cliente'];
+        $TMail['MensajeHTML'] = "";
+        $TMail['Adjunto'] = "";
+
+        switch ($Tipo_Documento) {
+            case "FA":
+                //SRI_Generar_PDF_FA($TFA, false);
+                //SRI_Generar_XML_Firmado($TFA['ClaveAcceso']);
+                break;
+            case "NC":
+                //SRI_Generar_PDF_NC($TFA, false);
+                //SRI_Generar_XML_Firmado($TFA['ClaveAcceso_LC']);
+                break;
+            case "LC":
+                //SRI_Generar_PDF_LC($TFA, false);
+                //SRI_Generar_XML_Firmado($TFA['ClaveAcceso_NC']);
+                break;
+            case "GR":
+                //SRI_Generar_PDF_GR($TFA, false);
+                //SRI_Generar_XML_Firmado($TFA['ClaveAcceso_GR']);
+                break;
+            case "RE":
+                //SRI_Generar_PDF_RE($TFA, false);
+                //SRI_Generar_XML_Firmado($TFA['ClaveAcceso']);
+                break;
+            case "AB":
+                $RutaPDF = "ninguno.pdf";
+                $RutaXML = "ninguno.xml";
+                break;
+        }
+        if (strlen($TFA['ClaveAcceso']) >= 13 || strlen($TFA['ClaveAcceso_GR']) >= 13 || strlen($TFA['ClaveAcceso_LC']) >= 13 || strlen($TFA['ClaveAcceso_NC']) >= 13) {
+            $TMail['TipoDeEnvio'] = "CE";
+        }
+
+        $RutaSysBases = dirname(__DIR__, 3);
+
+        if (strlen($TFA['PDF_ClaveAcceso']) > 1) {
+            $RutaPDF = $RutaSysBases . "/TEMP/" . $TFA['PDF_ClaveAcceso'] . ".pdf";
+            if (strpos($TFA['PDF_ClaveAcceso'], "_No_") == 0) {
+                $RutaXML = $RutaSysBases . "/TEMP/" . $TFA['PDF_ClaveAcceso'] . ".xml";
+            }
+        }
+
+        if (substr($TFA['ClaveAcceso'], 8, 2) == "07") {
+            $TMail['Mensaje'] = "Cliente: " . $TFA['Cliente'] . "\r\n" .
+                "Clave de Acceso: \r\n" . $TFA['ClaveAcceso'] . "\r\n" .
+                "Hora de Generacion: " . $SRI_Autorizacion['Hora_Autorizacion'] . "\r\n" .
+                "Emision: " . $TFA['Fecha'] . "\r\n" .
+                "Vencimiento: " . $SRI_Autorizacion['Fecha_Autorizacion'] . "\r\n" .
+                "Autorizacion: \r\n" . $SRI_Autorizacion['Autorizacion'] . "\r\n" .
+                "Retencion No. " . $TFA['Serie_R'] . "-" . sprintf("%09d", $TFA['Retencion']) . "\r\n" .
+                "Factura No. " . $TFA['Serie'] . "-" . sprintf("%09d", $TFA['Factura']) . "\r\n";
+
+            $TMail['Asunto'] = $TFA['Cliente'] . ", Retencion No. " . $TFA['Serie_R'] . "-" . sprintf("%09d", $TFA['Retencion']);
+        } elseif (substr($TFA['ClaveAcceso'], 8, 2) == "03") {
+            $TMail['Mensaje'] = "Cliente: " . $TFA['Cliente'] . "\r\n" .
+                "Clave de Acceso: \r\n" . $TFA['ClaveAcceso_LC'] . "\r\n" .
+                "Hora de Generacion: " . $SRI_Autorizacion['Hora_Autorizacion'] . "\r\n" .
+                "Emision: " . $TFA['Fecha'] . "\r\n" .
+                "Vencimiento: " . $SRI_Autorizacion['Fecha_Autorizacion'] . "\r\n" .
+                "Autorizacion: \r\n" . $SRI_Autorizacion['Autorizacion'] . "\r\n" .
+                "Liquidacion de Compras No. " . $TFA['Serie_LC'] . "-" . sprintf("%09d", $TFA['Factura']) . "\r\n";
+
+            $TMail['Asunto'] = $TFA['Cliente'] . ", Liquidacion de Compras No. " . $TFA['Serie_LC'] . "-" . sprintf("%09d", $TFA['Factura']);
+        } else {
+            $TMail['Mensaje'] = "Cliente: " . $TFA['Cliente'] . "\r\n" .
+                "Clave de Acceso: \r\n" . $TFA['ClaveAcceso'] . "\r\n" .
+                "Emision: " . $TFA['Fecha'] . "\r\n" .
+                "Vencimiento: " . $TFA['Fecha_V'] . "\r\n" .
+                "Fecha Autorizado: " . $TFA['Fecha_Aut'] . "\r\n" .
+                "Autorizacion: \r\n" . $TFA['Autorizacion'] . "\r\n" .
+                "Factura No. " . $TFA['Serie'] . "-" . sprintf("%09d", $TFA['Factura']) . "\r\n";
+
+            if ($Tipo_Documento === "AB") {
+                $TMail['Mensaje'] .= "\r\nSU PAGO FUE REGISTRADO CON EXITO\r\nEL " . FechaStrg($TFA['Fecha_C']) . "\r\n" . $TFA['Nota'] . "\r\n";
+            } else {
+                $TMail['Mensaje'] .= "Hora de Generacion: " . $TFA['Hora_FA'] . "\r\n";
+            }
+            $TMail['Asunto'] = $TFA['Cliente'] . ", Factura No. " . $TFA['Serie'] . "-" . sprintf("%09d", $TFA['Factura']);
+        }
+        // Datos del destinatario de mails
+        $TMail['para'] = "";
+        Insertar_Mail($TMail['para'], $TFA['EmailC']);
+        Insertar_Mail($TMail['para'], $TFA['EmailC2']);
+        Insertar_Mail($TMail['para'], $TFA['EmailR']);
+
+        $TMail['Mensaje'] .= str_repeat("-", 45) . "\r\n" .
+            "Email(s) Destinatario(s):\r\n" .
+            str_replace(";", "; ", $TMail['para']) . "\r\n" .
+            str_repeat("_", 45) . "\r\n" .
+            $_SESSION['INGRESO']['Nombre_Comercial'] . "\r\n" .
+            $_SESSION['INGRESO']['Razon_Social'] . "\r\n" .
+            $_SESSION['INGRESO']['Telefono1'] . "/" . $_SESSION['INGRESO']['Telefono1'] . "\r\n" .
+            "Dir. " . $_SESSION['INGRESO']['Direccion'] . "\r\n" .
+            strtoupper($_SESSION['INGRESO']['Ciudad']) . "-" . strtoupper($_SESSION['INGRESO']['NombrePais']) . "\r\n";
+
+        /**/
+        // Enviamos lista de mails
+        if ($_SESSION['INGRESO']['Email_CE_Copia']) {
+            $TMail['Credito_No'] = "X" . sprintf("%09d", $TFA['Factura']);
+            Insertar_Mail($TMail['para'], $_SESSION['INGRESO']['Email_Procesos']);
+        }
+
+        if (file_exists($RutaPDF)) {
+            $TMail['Adjunto'] = $RutaPDF . "; ";
+        }
+
+        if (file_exists($RutaXML)) {
+            $TMail['Adjunto'] .= $RutaXML;
+        }
+
+        // FEnviarCorreos 
+        $rps = $this->email->FEnviarCorreos($TMail, null, "");
+        if ($rps) {
+            $rps = $rps[0];
+            if (isset($rps['error'])) {
+                $res = $rps['mensaje'];
+            } else if (isset($rps['rps'])) {
+                if ($rps['rps'] == 1) {
+                    $res = "success";
+                } else {
+                    $res = "Ocurrio un problema en el envio del correo";
+                }
+            }
+        } else {
+            $res = "Ocurrio un error al recibir datos de la funcion";
+        }
+
+        // Eliminamos los archivos después de enviar el correo
+        if (file_exists($RutaPDF)) {
+            unlink($RutaPDF);
+        }
+
+        if (file_exists($RutaXML)) {
+            unlink($RutaXML);
+        }
+
+        $TMail['Volver_Envial'] = false;
+        return ['res' => $rps];
+    }
+
     function Visualizar_Archivo($parametros)
     {
         $NombreArchivo = $parametros['NombreArchivo'];
@@ -815,7 +1016,7 @@ class FRecaudacionBancosCxCC
                 if (strlen($codField) > $maxCar) {
                     $maxCar = strlen($codField);
                 }
-                $txtFile .= $codField . PHP_EOL;
+                $txtFile .= $codField . "\n";
             }
 
             fclose($NumFile);
@@ -840,8 +1041,8 @@ class FRecaudacionBancosCxCC
                     }
                 }
             }
-            $cadena .= PHP_EOL;
-            $cadena1 .= PHP_EOL;
+            $cadena .= "\n";
+            $cadena1 .= "\n";
             $txtFile = $cadena1 . $cadena . $txtFile;
             return array('res' => 'Ok', 'contenido' => $txtFile);
         }
@@ -865,7 +1066,7 @@ class FRecaudacionBancosCxCC
 
         $Mifecha = BuscarFecha($MBFechaI);
         $MiMes = sprintf("%02d", date("m", strtotime($MBFechaI)));
-        $FechaFin = BuscarFecha(date("Y-m-t", strtotime($MBFechaI)));  //$FechaFin = BuscarFecha(UltimoDiaMes($MBFechaI));
+        $FechaFin = BuscarFecha(date("Y-m-t", strtotime($MBFechaI)));
         $TextoImprimio = "";
         $AuxNumEmp = $_SESSION['INGRESO']['item'];
         $Cta_Cobrar = G_NINGUNO;
@@ -1050,7 +1251,7 @@ class FRecaudacionBancosCxCC
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
         }
-        $NumFileFacturas = fopen(strtoupper($directorioBase . "CxC_MES" . $Traza . ".TXT"), "w");
+        $NumFileFacturas = fopen(strtoupper($directorioBase . "CxC_MES_" . $Traza . ".TXT"), "w");
         $Traza = "";
 
         $FechaTexto = FechaSistema();
@@ -1181,13 +1382,772 @@ class FRecaudacionBancosCxCC
             'res' => 'Ok',
             'mensaje' => $mensaje,
             'textoBanco' => 'INTERNACIONAL',
-            'Nombre1' => "CxC_MES_" . $Traza . ".TXT",
-            'Nombre2' => "CxC_Pendiente_" . $Traza . ".TXT"
+            'Nombre1' => strtoupper("CxC_MES_" . $Traza . ".TXT"),
+            'Nombre2' => strtoupper("CxC_Pendiente_" . $Traza . ".TXT")
         );
     }
 
     function Generar_Pacifico($parametros)
     {
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+        $AdoPendiente = $parametros['AdoPendiente'];
+        $Costo_Banco = Leer_Campo_Empresa("Costo_Bancario");
+
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        if (!is_dir($directorioBase)) {
+            mkdir($directorioBase, 0777, true);
+        }
+        $NumFileFacturas = fopen(strtoupper($directorioBase . "BIZBANK CODIGO DEL" . str_replace("/", "-", $MBFechaI) . "_AL_" . str_replace("/", "-", $MBFechaF) . ".TXT"), "w");
+        $TipoDoc = "0";
+        $Contador = 0;
+        $FechaTexto = BuscarFecha($MBFechaI);
+        $TxtFile = "";
+
+        if (count($AdoPendiente) > 0) {
+            $TxtFile = "TOTAL NOMINA DE RECAUDACION:\n";
+            $Codigo3 = trim(substr($_SESSION['INGRESO']['noempr'], 0, 30));
+            $Total = 0;
+            $TotalIngreso = 0;
+            $Total_Factura = 0;
+            $IE = 1;
+            $JE = 1;
+            $KE = 1;
+            $Grupo_No = $AdoPendiente[0]["Grupo"];
+            $Codigo = $AdoPendiente[0]["CodigoC"];
+            foreach ($AdoPendiente as $valor) {                
+                $Contador++;
+                $CodigoCli = $valor["CI_RUC"];
+                $NombreCliente = Sin_Signos_Especiales(trim(substr($valor["Cliente"], 0, 30)));
+                $Codigo1 = trim(substr($valor["Direccion"], 0, 30));
+                $FechaTexto = " " . substr(MesesLetras(date('m', strtotime($MBFechaI))), 0, 3) . " " . date('Y', strtotime($MBFechaI));
+                $Codigo2 = strtoupper($valor["Grupo"] . " " . str_replace("/", " ", $MBFechaF));
+                $Total_Factura = 0; //$valor["Saldo_Pend"];
+
+                if ($Costo_Banco > 0) {
+                    $Total_Factura += $Costo_Banco;
+                }
+
+                $Total += $Total_Factura;
+                $TotalIngreso += $Total_Factura;
+                $I = (int) $Total_Factura;
+                $J = ($Total_Factura - $I) * 100;
+
+                if (strlen($valor['Actividad']) == 1) {
+                    // Empieza la trama por Alumno
+                    fwrite($NumFileFacturas, "1");
+                    fwrite($NumFileFacturas, "OCP");
+                    fwrite($NumFileFacturas, "SC");
+                    fwrite($NumFileFacturas, "  ");
+                    fwrite($NumFileFacturas, str_repeat(" ", 8));
+                    fwrite($NumFileFacturas, sprintf("%013d%02d", $I, $J));
+                    fwrite($NumFileFacturas, $CodigoCli . str_repeat(" ", 15 - strlen($CodigoCli)));
+                    fwrite($NumFileFacturas, $Codigo2 . str_repeat(" ", 20 - strlen($Codigo2)));
+                    fwrite($NumFileFacturas, "RE");
+                    fwrite($NumFileFacturas, "USD");
+                    fwrite($NumFileFacturas, $NombreCliente . str_repeat(" ", 30 - strlen($NombreCliente)));
+                    fwrite($NumFileFacturas, str_repeat(" ", 18));
+                    fwrite($NumFileFacturas, "0");
+                    fwrite($NumFileFacturas, sprintf("%06d", $Contador));
+                }
+                fwrite($NumFileFacturas, "\n");
+            }
+        }
+        fclose($NumFileFacturas);
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        if (!is_dir($directorioBase)) {
+            mkdir($directorioBase, 0777, true);
+        }
+        $NumFileFacturas = fopen(strtoupper($directorioBase . "BIZBANK DEBITO DEL" . str_replace("/", "-", $MBFechaI) . "_AL_" . str_replace("/", "-", $MBFechaF) . ".TXT"), "w");
+        $TipoDoc = "0";
+        $FechaTexto = BuscarFecha($MBFechaI);
+
+        if (count($AdoPendiente) > 0) {
+            $TxtFile = "TOTAL NOMINA DE RECAUDACION:\n";
+            $Codigo3 = trim(substr($_SESSION['INGRESO']['noempr'], 0, 30));
+            $Total = 0;
+            $TotalIngreso = 0;
+            $Total_Factura = 0;
+            $IE = 1;
+            $JE = 1;
+            $KE = 1;
+            $Grupo_No = $AdoPendiente[0]["Grupo"];
+            $Codigo = $AdoPendiente[0]["CodigoC"];
+            foreach ($AdoPendiente as $valor) {
+                if ($Grupo_No != $valor['Grupo']) {
+                    $Codigo4 = number_format($Total, 2, '.', ',');
+                    $Codigo4 = str_repeat(" ", 13 - strlen($Codigo4)) . number_format($Total, 2, '.', ',');
+                    $TxtFile .= "Grupo: " . $Grupo_No . "\t" . "Resumen de Registros por Grupo: " . $JE . "\t" . "Total a Recaudar USD" . "\t" . $Codigo4 . "\n";
+                    $JE = 0;
+                    $Total = 0;
+                    $IE++;
+                    $Grupo_No = $valor['Grupo'];
+                    $Codigo = $valor['CodigoC'];
+                }
+                if ($Codigo != $valor['CodigoC']) {
+                    $JE++;
+                    $KE++;
+                    $Codigo = $valor['CodigoC'];
+                }
+                $Contador++;
+                $CodigoCli = $valor['CI_RUC'];
+                $NombreCliente = Sin_Signos_Especiales(trim(substr($valor['Cliente'], 0, 30)));
+                $Codigo1 = trim(substr($valor['Direccion'], 0, 30));
+                $FechaTexto = " " . substr(MesesLetras(date('n', strtotime($MBFechaI))), 0, 3) . " " . date('Y', strtotime($MBFechaI));
+                $Codigo2 = strtoupper($valor['Grupo'] . " " . str_replace("/", " ", $MBFechaF));
+                $Total_Factura = 0; //$valor['Saldo_Pend'];
+                if ($Costo_Banco > 0) {
+                    $Total_Factura = $Total_Factura + $Costo_Banco;
+                }
+                $Total += $Total_Factura;
+                $TotalIngreso += $Total_Factura;
+                $I = (int) $Total_Factura;
+                $J = ($Total_Factura - $I) * 100;
+
+                if (strlen($valor['Actividad']) > 1 && strtoupper(substr($valor['Actividad'], 0, 5)) !== "TRANS") {
+                    // Empieza la trama por Alumno
+                    fwrite($NumFileFacturas, "1");
+                    fwrite($NumFileFacturas, "OCP");
+                    fwrite($NumFileFacturas, "SC");
+                    fwrite($NumFileFacturas, substr($valor['Actividad'], 0, 10));
+                    fwrite($NumFileFacturas, sprintf("%013d%02d", $I, $J));
+                    fwrite($NumFileFacturas, $CodigoCli . str_repeat(" ", 15 - strlen($CodigoCli)));
+                    fwrite($NumFileFacturas, $Codigo2 . str_repeat(" ", 20 - strlen($Codigo2)));
+                    fwrite($NumFileFacturas, "CU");
+                    fwrite($NumFileFacturas, "USD");
+                    fwrite($NumFileFacturas, $NombreCliente . str_repeat(" ", 30 - strlen($NombreCliente)));
+                    fwrite($NumFileFacturas, str_repeat(" ", 18));
+                    fwrite($NumFileFacturas, "0");
+                    fwrite($NumFileFacturas, sprintf("%06d", $Contador));
+                }
+                fwrite($NumFileFacturas, "\n");
+            }
+        }
+        fclose($NumFileFacturas);
+        $Codigo4 = number_format($Total, 2, '.', ',');
+        $Codigo4 = str_repeat(" ", 13 - strlen($Codigo4)) . $Codigo4;
+        $TxtFile .= "Grupo: " . $Grupo_No . "\t" . "Resumen de Registros por Grupo: " . $JE . "\t" . "Total a Recaudar USD" . "\t" . $Codigo4 . "\n";
+
+        $Codigo4 = number_format($TotalIngreso, 2, '.', ',');
+        $Codigo4 = str_repeat(" ", 13 - strlen($Codigo4)) . $Codigo4;
+        $TxtFile .= str_repeat("-", 90) . "\n" .
+            "Total Grupos: " . $IE . "\t" . "Total Alumnos: " . $KE . "\t\t" . "Total a Recaudar USD" . "\t" . $Codigo4 . "\n";
+
+        if ($MBFechaI != $MBFechaF) {
+            $Traza = str_replace("/", "-", $MBFechaI) . "_AL_" . str_replace("/", "-", $MBFechaF);
+        } else {
+            $Traza = str_replace("/", "-", $MBFechaI);
+        }
+        $mensaje =
+            strtoupper("BIZBANK CODIGO DEL" . $Traza . ".TXT") . " " .
+            strtoupper("BIZBANK DEBITO DEL" . $Traza . ".TXT");
+
+        return array(
+            'res' => 'Ok',
+            'mensaje' => $mensaje,
+            'textoBanco' => 'PACIFICO',
+            'Nombre1' => strtoupper("BIZBANK CODIGO DEL" . $Traza . ".TXT"),
+            'Nombre2' => strtoupper("BIZBANK DEBITO DEL" . $Traza . ".TXT")
+        );
+    }
+
+    function Generar_BGR_EC($parametros)
+    {
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+        $AdoAux = $parametros['AdoAux'];
+        $AdoPendiente = $parametros['AdoPendiente'];
+        $CheqPend = $parametros['CheqPend'];
+        $CheqMatricula = $parametros['CheqMatricula'];
+
+        $MiFecha = BuscarFecha($MBFechaI);
+        $MiMes = date('m', strtotime($MBFechaI));
+        $FechaFin = BuscarFecha(date("Y-m-t", strtotime($MBFechaI)));
+
+        $TextoImprimio = "";
+        $AuxNumEmp = $_SESSION['INGRESO']['item'];
+        $Cta_Cobrar = "Ninguno";
+        $FechaTexto = FechaSistema();
+
+        // Comenzamos a generar el archivo: BGR_MES_XX
+        $EsComa = true;
+        $Estab = false;
+        $Contador = 0;
+        $Factura_No = 0;
+
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        // Verificar si el directorio base existe, si no, crearlo
+        if (!is_dir($directorioBase)) {
+            mkdir($directorioBase, 0777, true);
+        }
+        $NumFileFacturas = fopen(strtoupper($directorioBase . "BGR_MES_" . sprintf('%02d', $MiMes) . ".TXT"), "w");
+
+        if (count($AdoAux) > 0) {
+            foreach ($AdoAux as $valor) {
+                $Contador++;
+                $CodigoCli = $valor['CodigoC'];
+                $NombreCliente = Sin_Signos_Especiales($valor['Cliente']);
+                $Factura_No++;
+                $SaldoPendiente = 0;
+
+                if (count($AdoPendiente) > 0) {
+                    foreach ($AdoPendiente as $pvalor) {
+                        if ($pvalor['CodigoC'] == $CodigoCli) {
+                            $SaldoPendiente = 0; //$pvalor['Saldo_Pend'];
+                            break;
+                        }
+                    }
+                }
+                if ($CheqPend == 1) {
+                    $Total = $valor['Saldo_MN'];
+                } else {
+                    $Total = $SaldoPendiente;
+                }
+                $Saldo = $Total * 100;
+                $CodigoP = $valor['CI_RUC'];
+                $CodigoC = $valor['CI_RUC'];
+                $DireccionCli = Sin_Signos_Especiales($valor['Direccion']);
+                $Codigo3 = SinEspaciosDer2($DireccionCli);
+                $DireccionCli = trim(substr($DireccionCli, 0, strlen($DireccionCli) - strlen($Codigo3)));
+                $Codigo3 = trim($DireccionCli);
+                $Codigo1 = sprintf('%02d', substr($valor['GrupoNo'], 0, 1));
+
+                if ($Saldo > 0) {
+                    // Tipo trama
+                    fwrite($NumFileFacturas, "CO" . "\t");
+                    fwrite($NumFileFacturas, $CodigoC . "\t");
+                    fwrite($NumFileFacturas, "USD" . "\t");
+                    fwrite($NumFileFacturas, $Saldo . "\t");
+                    fwrite($NumFileFacturas, "REC" . "\t");
+                    fwrite($NumFileFacturas, "\t");
+                    fwrite($NumFileFacturas, "\t");
+
+                    if ($CheqMatricula == 1) {
+                        $Codigo4 = "MATRICULAS DE " . substr(MesesLetras(date('n', strtotime($MBFechaI))), 0, 3) . "-" . date('Y', strtotime($MBFechaI));
+                    } else {
+                        $Codigo4 = "PENSION DE " . substr(MesesLetras(date('n', strtotime($MBFechaI))), 0, 3) . "-" . date('Y', strtotime($MBFechaI));
+                    }
+
+                    fwrite($NumFileFacturas, strtoupper(trim(substr($Codigo4, 0, 40))) . "\t");
+                    fwrite($NumFileFacturas, "N" . "\t");
+                    fwrite($NumFileFacturas, sprintf('%010d', $CodigoC) . "\t");
+                    fwrite($NumFileFacturas, substr($NombreCliente, 0, 40) . "\t");
+                }
+                fwrite($NumFileFacturas, "\n");
+            }
+        }
+        fclose($NumFileFacturas);
+
+        $mensaje = strtoupper("BGR_MES_" . sprintf('%02d', $MiMes) . ".TXT");
+
+        return array(
+            'res' => 'Ok',
+            'mensaje' => $mensaje,
+            'textoBanco' => 'BGR_EC',
+            'Nombre1' => $mensaje
+        );
+    }
+
+    function Generar_Bolivariano($parametros)
+    {
+        $CheqMatricula = $parametros['CheqMatricula'];
+        $CheqPend = $parametros['CheqPend'];
+        $MBFechaF = $parametros['MBFechaF'];
+        $AdoAux = $parametros['AdoAux'];
+        $AdoPendiente = $parametros['AdoPendiente'];
+        $CodigoDelBanco = $parametros['DCBanco'];
+
+        //$MBFechaI = ;
+        $MiFecha = BuscarFecha($MBFechaF);
+
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        // Verificar si el directorio base existe, si no, crearlo
+        if (!is_dir($directorioBase)) {
+            mkdir($directorioBase, 0777, true);
+        }
+
+        $RutaGeneraFile = strtoupper($directorioBase . "ALUMNOS" . $CodigoDelBanco . ".TXT");
+        $NumFileFacturas = fopen($RutaGeneraFile, "w");
+        $TipoDoc = "0";
+
+        if ($CheqMatricula == 1) {
+            $TipoDoc = "1";
+        }
+
+        $Contador = 0;
+        $FechaTexto = BuscarFecha(date("Y-m-t", strtotime($MBFechaF)));
+        if (count($AdoAux) > 0) {
+            fwrite($NumFileFacturas, "999");
+            fwrite($NumFileFacturas, $CodigoDelBanco);
+            fwrite($NumFileFacturas, $TipoDoc);
+            fwrite($NumFileFacturas, str_repeat(" ", 11));
+            fwrite($NumFileFacturas, $MiFecha);
+            foreach ($AdoAux as $valor) {
+                $SaldoPendiente = 0;
+                $Total_Factura = 0;
+                $Monto_Total = 0;
+                $Total = 0;
+                $CodigoCli = $valor['CI_RUC'];
+                $Codigo = "0";
+
+                for ($i = 0; $i < strlen($valor['CI_RUC']); $i++) {
+                    if (is_numeric(substr($valor['CI_RUC'], $i, 1))) {
+                        $Codigo .= substr($valor['CI_RUC'], $i, 1);
+                    }
+                }
+                $Codigo = trim(strval(intval($Codigo)));
+                $Codigo = $Codigo . str_repeat(" ", 15 - strlen($Codigo));
+                $NombreCliente = $this->SetearBlancos(substr($valor['Cliente'], 0, 30), 30, 0, false);
+                $Codigo1 = trim(substr(SinEspaciosIzq($valor['Direccion']), 0, 15));
+                $Codigo3 = trim(substr(SinEspaciosDer2($valor['Direccion']), 0, 3));
+                $Codigo2 = trim(substr($valor['Direccion'], strlen($Codigo1), strlen($valor['Direccion'])));
+                $Codigo4 = substr($valor['Casilla'], 0, 10);
+                $Saldo_ME = 0;
+                $Total_Desc = 0;
+                $SaldoPendiente = 0;
+
+                if (count($AdoPendiente) > 0) {
+                    foreach ($AdoPendiente as $pvalor) {
+                        if (strpos($pvalor['CI_RUC'], $CodigoCli) !== false) {
+                            $SaldoPendiente = 0; //$pvalor['Saldo_Pend'];
+                            break;
+                        }
+                    }
+                }
+                if ($CheqPend == 1) {
+                    $SaldoPendiente = $valor['Total_MN'];
+                }
+                $Total_Factura = $valor['Total_MN'];
+                $Monto_Total = $Total_Factura;
+                $Total = $SaldoPendiente;
+                if ($Codigo1 == "") {
+                    $Codigo1 = G_NINGUNO;
+                }
+                if ($Codigo2 == "") {
+                    $Codigo2 = G_NINGUNO;
+                }
+                if ($Codigo3 == "") {
+                    $Codigo3 = G_NINGUNO;
+                }
+
+                $Codigo2 = trim(substr($Codigo2, 0, strlen($Codigo2) - strlen(rtrim($Codigo2))));
+                $Codigo1 = $this->SetearBlancos($Codigo1, 15, 0, false);
+                $Codigo2 = $this->SetearBlancos($Codigo2, 15, 0, false);
+                $Codigo3 = $this->SetearBlancos($Codigo3, 3, 0, false);
+                $Codigo4 = $this->SetearBlancos($Codigo4, 10, 0, false);
+
+                if (trim($Codigo4) == G_NINGUNO) {
+                    $Codigo4 = str_repeat(" ", 10);
+                }
+                if ($Total < 0) {
+                    $Total = 0;
+                }
+
+                fwrite($NumFileFacturas, $CodigoDelBanco . "\t");
+                fwrite($NumFileFacturas, $Codigo . "\t");
+                fwrite($NumFileFacturas, $MiFecha . "\t");
+                fwrite($NumFileFacturas, $TipoDoc . " \t");
+                fwrite($NumFileFacturas, sprintf("%012.2f", $Total) . "\t");
+                fwrite($NumFileFacturas, $FechaTexto . "\t");
+                fwrite($NumFileFacturas, "01/01/1900" . "\t");
+                fwrite($NumFileFacturas, "N" . "\t");
+                fwrite($NumFileFacturas, Sin_Signos_Especiales($NombreCliente) . "\t");
+                fwrite($NumFileFacturas, $Codigo2 . "\t");
+                fwrite($NumFileFacturas, $Codigo3 . "\t");
+                fwrite($NumFileFacturas, $Codigo1 . "\t");
+                fwrite($NumFileFacturas, sprintf("%012.2f", $Monto_Total) . "\t");
+                fwrite($NumFileFacturas, $Codigo4 . "\t");
+                fwrite($NumFileFacturas, "1" . "\t");
+                fwrite($NumFileFacturas, sprintf("%012.2f", $Total) . "\t");
+                fwrite($NumFileFacturas, sprintf("%012.2f", $Total) . "\t");
+                $Contador = $Contador + 1;
+                fwrite($NumFileFacturas, "\n");
+            }
+        }
+        fclose($NumFileFacturas);
+        $mensaje = strtoupper("ALUMNOS" . $CodigoDelBanco . ".TXT");
+
+        return array(
+            'res' => 'Ok',
+            'mensaje' => $mensaje,
+            'textoBanco' => 'BOLIVARIANO',
+            'Nombre1' => $mensaje
+        );
+    }
+
+    function Generar_Coop_Jep($parametros)
+    {
+        $CheqMatricula = $parametros['CheqMatricula'];
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+
+        $AdoFactura = $this->modelo->sqlCoopJep($CheqMatricula, $MBFechaI, $MBFechaF);
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        // Verificar si el directorio base existe, si no, crearlo
+        if (!is_dir($directorioBase)) {
+            mkdir($directorioBase, 0777, true);
+        }
+
+        $RutaGeneraFile = strtoupper($directorioBase . "CARGA_JEP_" . str_replace("/", "-", FechaSistema()) . ".TXT");
+        $NumFileFacturas = fopen($RutaGeneraFile, 'w');
+        $TipoDoc = "0";
+        $Contador = 0;
+        $FechaTexto = BuscarFecha($MBFechaF);
+
+        if (count($AdoFactura) > 0) {
+            fwrite($NumFileFacturas, "CODIGO ALUMNO\t");
+            fwrite($NumFileFacturas, "NOMBRE ALUMNO\t");
+            fwrite($NumFileFacturas, "CURSO\t");
+            fwrite($NumFileFacturas, "MATRICULA\t");
+            fwrite($NumFileFacturas, "PENSION\t");
+            fwrite($NumFileFacturas, "TRANSPORTE\t");
+            fwrite($NumFileFacturas, "REFRIGERIO\t");
+            fwrite($NumFileFacturas, "DERECHOS DE EXAMEN\t");
+            fwrite($NumFileFacturas, "DEUDA PENDIENTE\t");
+            fwrite($NumFileFacturas, "AGENDA\t");
+            fwrite($NumFileFacturas, "RECARGOS\t");
+            fwrite($NumFileFacturas, "TALLERES SEMINARIOS\t");
+            fwrite($NumFileFacturas, "OTROS\t");
+            fwrite($NumFileFacturas, "VALOR TOTAL\t");
+            fwrite($NumFileFacturas, "BICONIVA\t");
+            fwrite($NumFileFacturas, "ICE\t");
+            fwrite($NumFileFacturas, "IVA\t");
+            fwrite($NumFileFacturas, "BISINIVA\t");
+            fwrite($NumFileFacturas, "BI NO OBJETO IVA\t");
+            fwrite($NumFileFacturas, "MAIL");
+            foreach ($AdoFactura as $valor) {
+                $Codigo = $valor['MAIL'];
+                if (strlen($Codigo) == 1) {
+                    $Codigo = "";
+                }
+                fwrite($NumFileFacturas, $valor['CODIGO ALUMNO'] . "\t");
+                fwrite($NumFileFacturas, $valor['NOMBRE ALUMNO'] . "\t");
+                fwrite($NumFileFacturas, $valor['CURSO'] . "\t");
+                fwrite($NumFileFacturas, $this->Campo_Blanco($valor['MATRICULA']) . "\t");
+                fwrite($NumFileFacturas, $this->Campo_Blanco($valor['PENSION']) . "\t");
+                fwrite($NumFileFacturas, $this->Campo_Blanco($valor['TRANSPORTE']) . "\t");
+                fwrite($NumFileFacturas, $this->Campo_Blanco($valor['REFRIGERIO']) . "\t");
+                fwrite($NumFileFacturas, $this->Campo_Blanco($valor['DERECHOS DE EXAMEN']) . "\t");
+                fwrite($NumFileFacturas, $this->Campo_Blanco($valor['DEUDA PENDIENTE']) . "\t");
+                fwrite($NumFileFacturas, $this->Campo_Blanco($valor['AGENDA']) . "\t");
+                fwrite($NumFileFacturas, $this->Campo_Blanco($valor['RECARGOS']) . "\t");
+                fwrite($NumFileFacturas, $this->Campo_Blanco($valor['TALLERES SEMINARIOS']) . "\t");
+                fwrite($NumFileFacturas, $this->Campo_Blanco($valor['OTROS']) . "\t");
+                fwrite($NumFileFacturas, $this->Campo_Blanco($valor['VALOR TOTAL']) . "\t");
+                fwrite($NumFileFacturas, $this->Campo_Blanco($valor['BICONIVA']) . "\t");
+                fwrite($NumFileFacturas, $this->Campo_Blanco($valor['ICE']) . "\t");
+                fwrite($NumFileFacturas, $this->Campo_Blanco($valor['IVA']) . "\t");
+                fwrite($NumFileFacturas, $this->Campo_Blanco($valor['BISINIVA']) . "\t");
+                if (intval($valor['BISINIVA']) > 0) {
+                    fwrite($NumFileFacturas, $this->Campo_Blanco($valor['BISINIVA']) . "\t");
+                } else {
+                    fwrite($NumFileFacturas, $this->Campo_Blanco($valor['BICONIVA']) . "\t");
+                }
+                fwrite($NumFileFacturas, $Codigo);
+                $Contador = $Contador + 1;
+                fwrite($NumFileFacturas, "\n");
+            }
+        }
+        fclose($NumFileFacturas);
+        $mensaje = strtoupper("CARGA_JEP_" . str_replace("/", "-", FechaSistema()) . ".TXT");
+
+        return array(
+            'res' => 'Ok',
+            'mensaje' => $mensaje,
+            'textoBanco' => 'COOPJEP',
+            'Nombre1' => $mensaje
+        );
+    }
+
+    function Generar_Produbanco($parametros)
+    {
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+        $AdoDetalle = $parametros['AdoDetalle'];
+        $DCBanco = $parametros['DCBanco'];
+
+        $Total_Banco = 0;
+        $Mifecha = BuscarFecha($MBFechaI);
+        $MiMes = date('m', strtotime($MBFechaI));
+        $FechaFin = BuscarFecha(date("Y-m-t", strtotime($MBFechaI)));
+        $TextoImprimio = "";
+        $AuxNumEmp = $_SESSION['INGRESO']['item'];
+        $Cta_Cobrar = G_NINGUNO;
+        $FechaTexto = FechaSistema();
+
+        // Comenzamos a generar el archivo: SCRECXX.TXT
+        $EsComa = true;
+        $Estab = false;
+        $Contador = 0;
+        $Factura_No = 0;
+
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        // Verificar si el directorio base existe, si no, crearlo
+        if (!is_dir($directorioBase)) {
+            mkdir($directorioBase, 0777, true);
+        }
+
+        $Fecha_Meses = $MBFechaI . " al " . $MBFechaF;
+        $Fecha_Meses = str_replace("/", "-", $Fecha_Meses);
+        $RutaGeneraFile = strtoupper($directorioBase . "PRODUBANCO RECAUDACION " . $Fecha_Meses . ".TXT");
+        $NumFileFacturas = fopen($RutaGeneraFile, 'w');
+
+        if (count($AdoDetalle) > 0) {
+            foreach ($AdoDetalle as $valor) {
+                $CodigoCli = $valor['CodigoC'];
+                $NombreCliente = trim(substr(Sin_Signos_Especiales($valor['Cliente']), 0, 40));
+                $CodigoP = $valor['CI_RUC'];
+                $CodigoC = $valor['CI_RUC'];
+                $Saldo = $valor['Total'] - $valor['Total_Desc'];
+                $Total = $Saldo;
+                $DireccionCli = $valor['Direccion'];
+                $GrupoNo = $valor['Grupo'];
+                $Detalle = $GrupoNo . "-" . $valor['Producto'] . "-" . $valor['Mes'];
+
+                $Contador = $Contador + 1;
+                $ValorStr = str_pad((string) ($Saldo * 100), 13, "0", STR_PAD_LEFT);
+                $CodigoC = $CodigoC . str_repeat(" ", abs(4 - strlen($CodigoC)));
+                $Codigo3 = trim(SinEspaciosDer2($DireccionCli));
+                $Codigo1 = str_pad(substr($GrupoNo, 0, 1), 2, "0", STR_PAD_LEFT);
+
+                if (strlen($Cta_Bancaria) < 10) {
+                    $Cta_Bancaria = str_pad($Cta_Bancaria, 10, "0", STR_PAD_LEFT);
+                }
+
+                $Codigo4 = $valor['Grupo'] . " De: " . $valor['Ticket'] . "-" . mesesLetras($valor['Mes_No']);
+
+                fwrite($NumFileFacturas, "CO" . "\t");
+                fwrite($NumFileFacturas, $Cta_Bancaria . "\t");
+                fwrite($NumFileFacturas, $Contador . "\t");
+                fwrite($NumFileFacturas, "\t");
+                fwrite($NumFileFacturas, $CodigoP . "\t");
+                fwrite($NumFileFacturas, "USD" . "\t");
+                fwrite($NumFileFacturas, $ValorStr . "\t");
+                fwrite($NumFileFacturas, "REC" . "\t");
+                fwrite($NumFileFacturas, $DCBanco . "\t");
+                fwrite($NumFileFacturas, "\t");
+                fwrite($NumFileFacturas, "\t");
+                fwrite($NumFileFacturas, "R" . "\t");
+                fwrite($NumFileFacturas, $_SESSION['INGRESO']['RUC'] . "\t");
+                fwrite($NumFileFacturas, $NombreCliente . "\t");
+                fwrite($NumFileFacturas, "\t");
+                fwrite($NumFileFacturas, "\t");
+                fwrite($NumFileFacturas, "\t");
+                fwrite($NumFileFacturas, "\t");
+                fwrite($NumFileFacturas, $Codigo4 . "\t");
+                fwrite($NumFileFacturas, "\t");
+                fwrite($NumFileFacturas, "\n");
+            }
+        }
+        fclose($NumFileFacturas);
+        $mensaje = strtoupper("PRODUBANCO RECAUDACION " . $Fecha_Meses . ".TXT");
+
+        return array(
+            'res' => 'Ok',
+            'mensaje' => $mensaje,
+            'textoBanco' => 'PRODUBANCO',
+            'Nombre1' => $mensaje
+        );
+    }
+
+    function Generar_Guayaquil($parametros)
+    {
+        $CodigoDelBanco = $parametros['DCBanco'];
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+        $AdoPendiente = $parametros['AdoPendiente'];
+        $Costo_Banco = Leer_Campo_Empresa("Costo_Bancario");
+
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        // Verificar si el directorio base existe, si no, crearlo
+        if (!is_dir($directorioBase)) {
+            mkdir($directorioBase, 0777, true);
+        }
+
+        $RutaGeneraFile = strtoupper($directorioBase . "RCE_" . date("Ymd", strtotime(FechaSistema())) .
+            "_" . str_pad($CodigoDelBanco, 7, "0", STR_PAD_LEFT) . "_01.TXT");
+
+        $NumFileFacturas = fopen($RutaGeneraFile, 'w');
+        $TipoDoc = "0";
+        $Contador = 0;
+        $FechaTexto = BuscarFecha($MBFechaI);
+        $TxtFile = "";
+
+        if (count($AdoPendiente) > 0) {
+            $TxtFile = "TOTAL NOMINA DE RECAUDACION:" . PHP_EOL;
+            $Codigo3 = substr(trim(substr($_SESSION['INGRESO']['noempr'], 1, 30)), 0, 30);
+            $Total = 0;
+            $TotalIngreso = 0;
+            $Total_Factura = 0;
+            $IE = 1;
+            $JE = 1;
+            $KE = 1;
+            $Grupo_No = $AdoPendiente[0]["Grupo"];
+            $Codigo = $AdoPendiente[0]["CodigoC"];
+            foreach ($AdoPendiente as $valor) {
+                if ($Grupo_No != $valor['Grupo']) {
+                    $Codigo4 = number_format($Total, 2, '.', ',');
+                    $Codigo4 = str_pad($Codigo4, 13, " ");
+                    $TxtFile .= "Grupo: " . $Grupo_No . "\t" . "Resumen de Registros por Grupo: " . $JE . "\t" . "Total a Recaudar USD" . "\t" . $Codigo4 . PHP_EOL;
+                    $JE = 0;
+                    $Total = 0;
+                    $IE += 1;
+                    $Grupo_No = $valor['Grupo'];
+                    $Codigo = $valor['CodigoC'];
+                }
+
+                if ($Codigo != $valor['CodigoC']) {
+                    $JE += 1;
+                    $KE += 1;
+                    $Codigo = $valor['CodigoC'];
+                }
+                $Contador += 1;
+                $CodigoCli = strval(floatval($valor['CI_RUC']));
+                $NombreCliente = Sin_Signos_Especiales(trim(substr($valor['Cliente'], 0, 40)));
+                $Codigo1 = trim(substr($valor['Direccion'], 0, 30));
+                $FechaTexto = " " . substr(MesesLetras(date('n', strtotime($MBFechaI))), 0, 3) . " " . date('Y', strtotime($MBFechaI));
+                $mesLetras = substr(MesesLetras(date('n', strtotime($MBFechaI))), 0, 3);
+                $Codigo2 = substr(strtoupper($mesLetras . " " . $valor['Grupo']), 0, 15);
+
+                $Total_Factura = 0; //$valor['Saldo_Pend'];
+
+                if ($Costo_Banco > 0) {
+                    $Total_Factura += $Costo_Banco;
+                }
+
+                $Total += $Total_Factura;
+                $TotalIngreso += $Total_Factura;
+
+                $I = intval($Total_Factura);
+                $J = ($Total_Factura - intval($Total_Factura)) * 100;
+
+                fwrite($NumFileFacturas, "CO");
+                fwrite($NumFileFacturas, sprintf("%07d", $Contador));
+                fwrite($NumFileFacturas, $CodigoCli . str_repeat(" ", 15 - strlen($CodigoCli)));
+                fwrite($NumFileFacturas, "USD");
+                fwrite($NumFileFacturas, sprintf("%08d%02d", $I, $J));
+                fwrite($NumFileFacturas, "REC");
+                fwrite($NumFileFacturas, $NombreCliente . str_repeat(" ", 40 - strlen($NombreCliente)));
+                fwrite($NumFileFacturas, date('Ym', strtotime($MBFechaI)));
+                fwrite($NumFileFacturas, "CU");
+                fwrite($NumFileFacturas, "PA");
+                fwrite($NumFileFacturas, "ES");
+                fwrite($NumFileFacturas, substr($Codigo2, 0, 15) . str_repeat(" ", 15 - strlen(substr($Codigo2, 0, 15))));
+
+                // Registro de Fecha Vencimiento
+                fwrite($NumFileFacturas, "RC");
+                fwrite($NumFileFacturas, sprintf("%07d", $Contador));
+                fwrite($NumFileFacturas, "VM");
+                fwrite($NumFileFacturas, date('Ymd', strtotime($MBFechaI)));
+                fwrite($NumFileFacturas, date('Ymd', strtotime($MBFechaF)));
+                fwrite($NumFileFacturas, "FI");
+                fwrite($NumFileFacturas, str_repeat("0", 30));
+                fwrite($NumFileFacturas, "\n");
+            }
+            $Codigo4 = number_format($Total, 2, '.', ',');
+            $Codigo4 = str_pad($Codigo4, 13, " ", STR_PAD_LEFT);
+            $TxtFile .= "Grupo: " . $Grupo_No . "\t" . "Resumen de Registros por Grupo: " . $JE . "\t" . "Total a Recaudar USD" . "\t" . $Codigo4 . "\n";
+
+            $Codigo4 = number_format($TotalIngreso, 2, '.', ',');
+            $Codigo4 = str_pad($Codigo4, 13, " ", STR_PAD_LEFT);
+            $TxtFile .= str_repeat("-", 90) . "\n";
+            $TxtFile .= "Total Grupos: " . $IE . "\t" . "Total Alumnos: " . $KE . "\t\t" . "Total a Recaudar USD" . "\t" . $Codigo4 . "\n";
+        }
+        fclose($NumFileFacturas);
+        $mensaje = strtoupper("RCE_" . date("Ymd", strtotime(FechaSistema())) .
+            "_" . str_pad($CodigoDelBanco, 7, "0", STR_PAD_LEFT) . "_01.TXT");
+
+        return array(
+            'res' => 'Ok',
+            'mensaje' => $mensaje,
+            'textoBanco' => 'GUAYAQUIL',
+            'Nombre1' => $mensaje,
+            'contenido' => $TxtFile
+        );
+
+    }
+    function Campo_Blanco($Dato)
+    {
+        if (strlen($Dato) > 1 && floatval($Dato) !== 0) {
+            return number_format(floatval($Dato), 2, '.', '');
+        } else {
+            return "";
+        }
+    }
+
+    function SetearBlancos($strg, $longStrg, $noBlancos, $esNumero, $conLineas = false, $decimales = false)
+    {
+        if (is_null($strg) || empty($strg)) {
+            $strg = "";
+        }
+        $strg = $this->CompilarString($strg);
+        if ($esNumero) {
+            if ($decimales) {
+                $sinEspacios = number_format(floatval($strg), 2, '.', '');
+            } else {
+                $sinEspacios = strval(intval($strg));
+            }
+            if (strlen($sinEspacios) < $longStrg) {
+                $sinEspacios = str_pad($sinEspacios, $longStrg, ' ', STR_PAD_LEFT);
+            }
+        } else {
+            if ($longStrg > 0) {
+                $sinEspacios = $strg . str_repeat(" ", $longStrg);
+                $sinEspacios = substr($sinEspacios, 0, $longStrg);
+            } else {
+                $sinEspacios = trim($strg);
+            }
+        }
+        if ($noBlancos > 0) {
+            $sinEspacios .= str_repeat(" ", $noBlancos);
+        }
+        if ($conLineas) {
+            $sinEspacios .= "|";
+        }
+        if ($sinEspacios === "") {
+            $sinEspacios = " ";
+        }
+        return $sinEspacios;
+    }
+
+    function CompilarString($cadSQL, $lString = 0, $quitarPuntos = false)
+    {
+        if ($lString > 0) {
+            $cadSQL = substr($cadSQL, 0, $lString);
+        }
+        // Eliminación de caracteres específicos
+        $caracteresAEliminar = ['|', "\r", "\n", "'", ",", "$", "#", "&", "'"];
+        foreach ($caracteresAEliminar as $char) {
+            $cadSQL = str_replace($char, '', $cadSQL);
+        }
+        // Reducción de espacios múltiples a un solo espacio
+        $cadSQL = preg_replace('/\s+/', ' ', $cadSQL);
+        // Manejo de cadenas nulas o vacías
+        if (is_null($cadSQL) || $cadSQL === '') {
+            $cadSQL = '.';
+        }
+        // Eliminación de puntos al inicio y al final, si es necesario
+        if ($quitarPuntos) {
+            $cadSQL = trim($cadSQL, '.');
+        }
+        // Valor por defecto en caso de cadena vacía
+        if ($cadSQL === '') {
+            $cadSQL = G_NINGUNO; // Asumiendo que Ninguno es un valor por defecto
+        }
+        return $cadSQL;
+    }
+
+    function EliminaArchivosTemporales($tempFilePath)
+    {
+        if (file_exists($tempFilePath)) {
+            if (unlink($tempFilePath)) {
+                return ['res' => 0]; // Éxito al eliminar el archivo
+            } else {
+                return ['res' => 2]; // Fallo al eliminar el archivo
+            }
+        } else {
+            return ['res' => 1]; // El archivo no existe
+        }
 
     }
 }

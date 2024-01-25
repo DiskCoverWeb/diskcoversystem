@@ -9,11 +9,14 @@
         color: white;
         border: 1px solid #ccc;
         font-size: 16px;
+        font-family: 'Courier New', Courier, monospace;
+        overflow-x: auto;
+        white-space: nowrap;
     }
 </style>
 
 <div>
-    <div class="row" style="margin:5px; padding-top:10px">
+    <div class="row" style="margin:5px; padding-top:10px; color:black;">
         <div class="col-sm-2 col-xs-12">
             <div class="col">
                 <a href="./inicio.php?mod=<?php echo @$_GET['mod']; ?>" title="Salir de modulo" class="btn btn-default">
@@ -79,7 +82,7 @@
     </div>
 
 
-    <div class="row" style="margin:5px; padding-top:10px">
+    <div class="row" style="margin:5px; padding-top:10px; color:black;">
         <div id="miPanel">
             <div class="panel-heading">
                 <div class="row">
@@ -102,11 +105,16 @@
                                 </label>
                             </div>
                             <div class="col-xs-1">
+                                <button class="btn" onclick=limpiarCampos() title="Limpiar Campos">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                            <!--div class="col-xs-1">
                                 <button class="btn"
                                     onclick="window.location.href='./inicio.php?mod=<?php echo @$_GET['mod']; ?>'">
                                     <i class="fa fa-close"></i>
                                 </button>
-                            </div>
+                            </div-->
                         </div>
                         <div class="row">
                             <div class="col-xs-5">
@@ -379,6 +387,7 @@
                 });
             }
         });
+
     }
     function FechaValida(fecha, MBFecha = false) {
         $.ajax({
@@ -472,7 +481,7 @@
 
         var CheqRangos = $('#CheqRangos').prop('checked') ? 1 : 0;
         var CheqMatricula = $('#CheqMatricula').prop('checked') ? 1 : 0;
-        //var CheqPend = $('#CheqPend').prop('checked')? 1 : 0;
+        var CheqPend = $('#CheqPend').prop('checked') ? 1 : 0;
         //var CheqSat = $('#CheqSat').prop('checked')? 1 : 0;
 
         var parametros = {
@@ -484,6 +493,7 @@
             'DCGrupoI': DCGrupoI,
             'DCGrupoF': DCGrupoF,
             'CheqRangos': CheqRangos,
+            'CheqPend': CheqPend,
         };
         console.log(parametros);
 
@@ -498,79 +508,84 @@
                     switch (data.textoBanco) {
                         case "PICHINCHA":
                         case "INTERNACIONAL":
-                            procesarDatosBanco(data);
+                        case "PACIFICO":
+                            procesarDatosBanco(data.mensaje, data.Nombre1, data.Nombre2);
                             break;
-                        /*
-                    case "BGR_EC":
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        //Generar_BGR_EC();
-                        break;
-                   
-                    case "BOLIVARIANO":
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        //Generar_Bolivariano();
-                        break;
-                    case "PACIFICO":
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        //Generar_Pacifico();
-                        break;
-                    case "PRODUBANCO":
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        //Generar_Produbanco();
-                        break;
-                    case "GUAYAQUIL":
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        //Generar_Guayaquil();
-                        break;
-                    case "COOPJEP":
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        //Generar_Coop_Jep();
-                        break;
-                    default:
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        echo "No está definido este Banco";
-                        break;   */
+                        case "BGR_EC":
+                        case "BOLIVARIANO":
+                        case "COOPJEP":
+                        case "PRODUBANCO":
+                            procesarDatosBanco(data.mensaje, data.Nombre1);
+                        case "GUAYAQUIL":
+                            procesarDatosBanco(data.mensaje, data.Nombre1, false, data.contenido);
+                            break;
 
-
+                        default:
+                            procesarDatosBanco('No está definido este Banco')
+                            break;
                     }
+
                     var url3 = "../../TEMP/FACTURAS/" + data.Nombre3;
+                    descargarArchivo(url3, data.Nombre3);
 
-                    var enlaceTemporal3 = $('<a></a>')
-                        .attr('href', url3)
-                        .attr('download', data.Nombre3)
-                        .appendTo('body');
-
-                    enlaceTemporal3[0].click();
-                    enlaceTemporal3.remove();
                 }
 
             }
         });
     }
 
-    function procesarDatosBanco(data) {
+    function procesarDatosBanco(mensaje, nombre1, nombre2, contenido) {
         Swal.fire({
             title: 'SE GENERARON LOS SIGUIENTES ARCHIVOS:',
             type: 'success',
-            html: data.mensaje,
+            html: mensaje,
             confirmButtonText: 'Aceptar'
         });
 
-        var url = "../../TEMP/FACTURAS/" + data.Nombre1;
-        var url2 = "../../TEMP/FACTURAS/" + data.Nombre2;
-
-        function descargarArchivo(url, nombre) {
-            var enlaceTemporal = $('<a></a>')
-                .attr('href', url)
-                .attr('download', nombre)
-                .appendTo('body');
-
-            enlaceTemporal[0].click();
-            enlaceTemporal.remove();
+        if (nombre1) {
+            var url = "../../TEMP/FACTURAS/" + nombre1;
+            descargarArchivo(url, nombre1);
+            EliminaArchivosTemporales(url);
         }
 
-        descargarArchivo(url, data.Nombre1);
-        descargarArchivo(url2, data.Nombre2);
+        if (nombre2) {
+            var url2 = "../../TEMP/FACTURAS/" + nombre2;
+            descargarArchivo(url2, nombre2);
+            EliminaArchivosTemporales(url2);
+        }
+        if (contenido) {
+            animarEscritura(contenido);
+        }
+    }
+
+    function descargarArchivo(url, nombre) {
+        var enlaceTemporal = $('<a></a>')
+            .attr('href', url)
+            .attr('download', nombre)
+            .appendTo('body');
+
+        enlaceTemporal[0].click();
+        enlaceTemporal.remove();
+    }
+
+
+    function EliminaArchivosTemporales($tempFilePath) {
+        $.ajax({
+            type: "POST",
+            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?EliminaArchivosTemporales=true',
+            dataType: 'json',
+            data: { 'tempFilePath': $tempFilePath },
+            success: function (data) {
+                if (data.res == 0) {
+                    console.log('Archivo eliminado correctamente');
+                } else {
+                    console.log('El archivo no existe');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error en la solicitud AJAX:', status, error);
+            }
+        });
     }
 
     $('#btnRecibirAbonos').click(function () {
@@ -589,7 +604,6 @@
         var TxtOrden = $('#TxtOrden').val();
         var DCEntidad = $('#DCEntidad').val();
         var DCBanco = $('#DCBanco').val();
-        //var CheqSat = $('#CheqSat').prop('checked');
         var CheqSat = $('#CheqSat').prop('checked') ? 1 : 0;
         var fileInput = $('#fileInput')[0];
         var archivo = fileInput.files[0];
@@ -657,7 +671,7 @@
             data: formData,
             success: function (data) {
                 var datos = JSON.parse(data);
-                console.log('resultado', datos);
+                //console.log('resultado', datos);
                 if (datos.res == 'Error') {
                     Swal.fire({
                         title: datos.mensaje,
@@ -689,6 +703,21 @@
             }
         }
         escribirLinea();
+    }
+
+    function limpiarCampos() {
+        $('#TxtFile').val('');
+        var fechaHoy = new Date().toISOString().split('T')[0];
+        $('#MBFechaI').val(fechaHoy);
+        $('#MBFechaF').val(fechaHoy);
+        $('#TxtOrden').val('0000');
+        $('#DCEntidad').val($('#DCEntidad option:first').val());
+        $('#DCBanco').val($('#DCBanco option:first').val());
+        $('#CheqPend').prop('checked', false);
+        $('#CheqMatricula').prop('checked', false);
+        $('#CheqSat').prop('checked', false);
+        $('#CheqRangos').prop('checked', false);
+        
     }
 
 

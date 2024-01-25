@@ -489,6 +489,7 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
 
 
         $_SESSION['INGRESO']['Moneda'] = $empresa[0]['S_M'];
+        $_SESSION['INGRESO']['NombrePais'] = $empresa[0]['Pais'];
         $_SESSION['INGRESO']['Web_SRI_Autorizado'] = $empresa[0]['Web_SRI_Autorizado'];
         $_SESSION['INGRESO']['Web_SRI_Recepcion'] = $empresa[0]['Web_SRI_Recepcion'];
         $_SESSION['INGRESO']['Direccion'] = $empresa[0]['Direccion'];

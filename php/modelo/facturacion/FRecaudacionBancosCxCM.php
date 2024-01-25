@@ -252,9 +252,40 @@ class FRecaudacionBancosCxCM
             AND Serie = '" . $TA['Serie'] . "' 
             AND Factura = " . $TA['Factura'] . " 
             AND Saldo_MN > 0 ";
-            
+
         return $this->db->datos($sSQL);
 
+    }
+
+    function sqlCoopJep($CheqMatricula, $MBFechaI, $MBFechaF)
+    {
+        $sSQL = "SELECT CI_RUC AS 'CODIGO ALUMNO', C.Cliente AS 'NOMBRE ALUMNO', C.Direccion AS 'CURSO', ";
+
+        if ($CheqMatricula) {
+            $sSQL .= "SUM(Saldo_MN) AS 'MATRICULA', '0' AS 'PENSION', ";
+        } else {
+            $sSQL .= "'0' AS 'MATRICULA', SUM(Saldo_MN) AS 'PENSION', ";
+        }
+
+        $sSQL .= "'' AS 'TRANSPORTE', '' AS 'REFRIGERIO', '' AS 'DERECHOS DE EXAMEN', 
+                  '' AS 'DEUDA PENDIENTE', '' AS 'AGENDA', '' AS 'RECARGOS', '' AS 'TALLERES SEMINARIOS', '' AS 'OTROS', 
+                    SUM(Saldo_MN) AS 'VALOR TOTAL', SUM(Con_IVA) AS 'BICONIVA', '' AS 'ICE', SUM(IVA) AS 'IVA',
+                    SUM(Sin_IVA) AS 'BISINIVA', '' AS 'BI NO OBJETO IVA', C.Email AS 'MAIL' 
+                    FROM Facturas AS F, Clientes AS C, Clientes_Matriculas AS CM 
+                    WHERE F.Fecha BETWEEN '" . BuscarFecha($MBFechaI) . "' AND '" . BuscarFecha($MBFechaF) . "' 
+                    AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                    AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                    AND F.T = 'P' 
+                    AND NOT F.TC IN ('C', 'P') 
+                    AND F.CodigoC = C.Codigo 
+                    AND F.CodigoC = CM.Codigo 
+                    AND F.Periodo = CM.Periodo 
+                    AND F.Item = CM.Item 
+                    GROUP BY C.CI_RUC, C.Cliente, C.Direccion, CM.TD, CM.Cedula_R, CM.Representante, C.Celular, C.Email 
+                    HAVING SUM(Saldo_MN) > 0 
+                    ORDER BY C.Direccion, C.Cliente, C.CI_RUC";
+
+        return $this->db->datos($sSQL);
     }
 
 }
