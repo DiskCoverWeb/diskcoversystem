@@ -357,7 +357,228 @@ class FRecaudacionBancosPreFaC
                     }
                     break;
                 case "INTERNACIONAL":
-                    //TODO: 
+                case "OTROSBANCOS":
+                    if ($Separador === "\t") {
+                        switch ($ContTAB) {
+                            case 18:
+                            case 21:
+                                if (is_numeric(substr($CamposFile[16]['Valor'], 0, 4))) {
+                                    $CodigoB = $CamposFile[6]['Valor'];
+                                    $CodigoCli = $CamposFile[6]['Valor'];
+                                    $FechaTexto = substr($CamposFile[7]['Valor'], 0, 10);
+                                    $HoraTexto = trim(substr($CamposFile[7]['Valor'], 10, 5));
+                                    $CodigoP = $CamposFile[10]['Valor'];
+                                    $Codigo3 = $CamposFile[10]['Valor'];
+                                    $Codigo4 = $CamposFile[8]['Valor'];
+                                    $ListaFacturas = G_NINGUNO;
+                                    $NoAnio = intval(substr($CamposFile[16]['Valor'], 0, 4));
+                                    $NoMeses = intval(substr($CamposFile[16]['Valor'], 5, 2));
+                                    $CodigoInv = trim(substr($CamposFile[16]['Valor'], 8, 18));
+                                    $Mes = MesesLetras($NoMeses);
+                                    $SubTotal = intval($CamposFile[13]);
+                                    $Total = $SubTotal;
+                                    if (strlen($Codigo4) <= 1) {
+                                        $Codigo4 = G_NINGUNO;
+                                    }
+                                }
+                                break;
+                            default:
+                                if (is_numeric(substr($CamposFile[12]['Valor'], 0, 4))) {
+                                    $CodigoB = $CamposFile[3]['Valor'];
+                                    $CodigoCli = $CamposFile[3]['Valor'];
+                                    $FechaTexto = substr($CamposFile[16]['Valor'], 0, 10);
+                                    $HoraTexto = trim(substr($CamposFile[16]['Valor'], 10, 5));
+                                    $CodigoP = $CamposFile[18]['Valor'];
+                                    $Codigo3 = $CamposFile[18]['Valor'];
+                                    $Codigo4 = trim(substr(substr($CamposFile[7]['Valor'], 0, 4) . ". " . str_replace("AGENCIA", "AGE.", $CamposFile[20]['Valor']), 0, 30));
+                                    $ListaFacturas = G_NINGUNO;
+                                    $NoAnio = intval(substr($CamposFile[12]['Valor'], 0, 4));
+                                    $NoMeses = intval(substr($CamposFile[12]['Valor'], 5, 2));
+                                    $CodigoInv = trim(substr($CamposFile[12]['Valor'], 8, 18));
+                                    $Mes = MesesLetras($NoMeses);
+                                    $SubTotal = floatval($CamposFile[10]);
+                                    $Total = $SubTotal;
+                                    if (strlen($Codigo4) <= 1) {
+                                        $Codigo4 = G_NINGUNO;
+                                    }
+                                }
+                                break;
+                        }
+                        if ($CodigoCli === G_NINGUNO) {
+                            for ($i = 0; $i <= $ContTAB; $i++) {
+                                $CamposFile[$i]['Campo'] = $CamposFile[$i]['Valor'];
+                            }
+                            $FechaTexto = FechaSistema();
+                            $NoAnio = "2000";
+                            $NoMeses = 12;
+                            $Mes = MesesLetras($NoMeses);
+                            $CodigoP = G_NINGUNO;
+                        }
+                        $Cantidad = 1;
+                    } else {
+                        $Cod_Field = str_replace('\t', ' ', $Cod_Field);
+                        $CodigoCli = trim(intval(substr($Cod_Field, 24, 19)));
+                        $Mifecha = substr($Cod_Field, 204, 2) . "/" . substr($Cod_Field, 206, 2) . "/" . substr($Cod_Field, 208, 4);
+                        $Total = floatval(substr($Cod_Field, 47, 13)) / 100;
+                        $Cadena = trim(substr($Cod_Field, 164, 40));
+                        $i = strpos($Cadena, "-");
+                        if ($i > 1) {
+                            $Cadena = trim(substr($Cadena, $i, strlen($Cadena)));
+                            $J = strpos($Cadena, "-");
+                            if ($J > 1) {
+                                $Cadena = trim(substr($Cadena, $J, strlen($Cadena)));
+                            }
+                            if ($i > 1 && $J > 1) {
+                                $Producto = trim(substr($Producto, $i, $J - 1));
+                            }
+                            $NoMeses = $this->LetrasMeses($CodigoB);
+                            $Mes = MesesLetras($NoMeses);
+                            $NoAnio = date("Y", strtotime($Mifecha));
+                        }
+                        $FechaTexto = $Mifecha;
+                    }
+                    break;
+                case "PRODUBANCO":
+                    $CodigoP = $CamposFile[7]['Valor'];
+                    $CodigoCli = $CamposFile[7]['Valor'];
+                    $NombreCliente = $CamposFile[8]['Valor'];
+                    $SubTotal = floatval($CamposFile[9]['Valor']);
+                    $Total = floatval($CamposFile[9]['Valor']);
+                    $FechaTexto = $CamposFile[12]['Valor'];
+                    $Producto = $CamposFile[14]['Valor'];
+                    $CodigoB = $CamposFile[14]['Valor'];
+
+                    $NoAnio = intval(substr(trim(SinEspaciosDer2($CodigoB)), 0, 4));
+                    $CodigoB = strtolower(trim(substr(trim(SinEspaciosDer2($CodigoB)), 5, 3)));
+                    $NoMeses = $this->LetrasMeses($CodigoB);
+                    $Codigo3 = $CamposFile[27]['Valor'];
+                    $Codigo4 = $CamposFile[31]['Valor'];
+                    $Codigo2 = $CamposFile[31]['Valor'];
+                    if ($NoAnio <= "1900" && IsDate($FechaTexto)) {
+                        $NoMeses = date("m", strtotime($FechaTexto));
+                        $NoAnio = date("Y", strtotime($FechaTexto));
+                        $Mes = MesesLetras($NoMeses);
+                    }
+                    break;
+                case "BOLIVARIANO":
+                    if (substr($Cod_Field, 11, 2) == "00") {
+                        $CodigoCli = substr($Cod_Field, 13, 8);
+                        $CodigoP = substr($Cod_Field, 13, 8);
+                    } else {
+                        $CodigoCli = substr($Cod_Field, 11, 10);
+                        $CodigoP = substr($Cod_Field, 11, 10);
+                    }
+                    if ($Total_Alumnos == 0) {
+                        $FechaTexto = substr($Cod_Field, 11, 2) . "/" .
+                            substr($Cod_Field, 9, 2) . "/" .
+                            substr($Cod_Field, 5, 4);
+                        $CodigoP = G_NINGUNO;
+                    }
+                    $Producto = "PENSION DE: " . MesesLetras(intval(substr($Cod_Field, 4, 2)));
+                    $Mes = MesesLetras(intval(substr($Cod_Field, 4, 2)));
+                    $NoMeses = intval(substr($Cod_Field, 4, 2));
+                    $NoAnio = intval(substr($Cod_Field, 0, 4));
+                    $Cantidad = 1;
+                    $Total = floatval(substr($Cod_Field, 21, 11)) / 100;
+                    $SubTotal = $Total;
+                    break;
+                case "GUAYAQUIL":
+                    if (substr($Cod_Field, 2, 3) == "RER") {
+                        $CodigoCli = G_NINGUNO;
+                        $CodigoP = G_NINGUNO;
+                        $Producto = G_NINGUNO;
+                        $Mes = G_NINGUNO;
+                        $NoMeses = 0;
+                        $NoAnio = 0;
+                        $Cantidad = 1;
+                        $CodigoP = G_NINGUNO;
+                        $Total = 0;
+                        $SubTotal = $Total;
+                    } else {
+                        $Mes = G_NINGUNO;
+                        $NoMeses = 0;
+                        $NoAnio = "2000";
+                        $CodigoCli = substr($Cod_Field, 4, 8);
+                        $CodigoP = substr($Cod_Field, 4, 8);
+                        $FechaTexto = substr($Cod_Field, 90, 2) . "/" .
+                            substr($Cod_Field, 88, 2) . "/" .
+                            substr($Cod_Field, 84, 4);
+                        $Producto = "PENSION DE: " . substr($Cod_Field, 59, 3);
+                        $Mes = substr($Cod_Field, 59, 3);
+                        $NoMeses = $this->LetrasMeses(substr($Cod_Field, 59, 3));
+                        $NoAnio = substr($Cod_Field, 84, 4);
+                        $Cantidad = 1;
+                        $Total = floatval(substr($Cod_Field, 74, 10)) / 100;
+                        $SubTotal = $Total;
+                    }
+                    break;
+                case "PACIFICO":
+                    $CodigoCli = trim(substr($Cod_Field, 301, 14));
+                    $CodigoP = trim(intval(substr($Cod_Field, 301, 14)));
+                    $Producto = trim(substr($Cod_Field, 251, 40));
+                    $Grupo_No = trim(SinEspaciosIzq($Producto));
+                    $Producto = trim(substr($Producto, strlen($Grupo_No), strlen($Producto)));
+                    $Mes = trim(SinEspaciosIzq($Producto));
+                    $NoMeses = $this->LetrasMeses($Mes);
+                    if (is_numeric(trim(SinEspaciosDer2($Producto)))) {
+                        $NoAnio = intval(trim(SinEspaciosDer2($Producto)));
+                        if ($NoAnio < 1900) {
+                            $NoAnio = intval(trim(substr($Producto, 3, 5)));
+                        }
+                    } else {
+                        $NoAnio = date("Y", strtotime(FechaSistema()));
+                    }
+                    if ($NoAnio < 1900) {
+                        $NoAnio = date("Y", strtotime(FechaSistema()));
+                    }
+                    $Cantidad = 1;
+                    $SubTotal = floatval(substr($Cod_Field, 31, 15)) / 100;
+                    $Total = floatval(substr($Cod_Field, 31, 15)) / 100;
+                    $NombreCliente = trim(substr($Cod_Field, 315, 40));
+                    $FechaTexto = substr($Cod_Field, 26, 2) . "/" .
+                        substr($Cod_Field, 24, 2) . "/" .
+                        substr($Cod_Field, 20, 4);
+                    $SubCta = trim(substr($Cod_Field, 291, 10));
+                    break;
+                case "POREXCEL":
+                    $CodigoCli = $CamposFile[0]['Valor'];
+                    $FechaTexto = $CamposFile[1]['Valor'];
+                    $NoMeses = intval($CamposFile[2]['Valor']);
+                    $NoAnio = intval($CamposFile[3]['Valor']);
+                    $SubTotal = floatval($CamposFile[4]['Valor']);
+                    $Total = $SubTotal;
+                    $Mes = MesesLetras($NoMeses);
+                    $Producto = "PENSION DE: " . $Mes;
+                    $Cantidad = 1;
+                    break;
+                case "TARJETAS":
+                    $Cantidad = 1;
+                    $CodigoCli = $CamposFile[3]['Valor'];
+                    $NombreCliente = G_NINGUNO;
+                    $NumeroTarjeta = $CamposFile[4]['Valor'];
+                    $CostoTarjeta = floatval($CamposFile[10]['Valor']);
+                    $SubTotal = floatval($CamposFile[15]['Valor']);
+                    $Total = floatval($CamposFile[15]['Valor']);
+                    $FechaTexto = DateTime::createFromFormat('Y-m-d', substr($CamposFile[0]['Valor'], 0, 10))->format('d/m/Y');
+                    $CodigoB = $FechaTexto;
+                    $CodigoP = '.'; //TODO: Leer_RUC_CI_TARJETA(NumeroTarjeta, Total, CodigoCli)
+                    $CodigoCli = $CodigoP;
+                    $Producto = "TARJETA DE: " . $NumeroTarjeta . " - " . $CamposFile[5]['Valor'];
+                    $CodigoB = strtolower(trim(substr(trim(SinEspaciosDer2($CodigoB)), 5, 3)));
+                    $Codigo3 = $CamposFile[1]['Valor'];
+                    $Codigo4 = $CamposFile[2]['Valor'];
+                    $Codigo2 = $CamposFile[3]['Valor'];
+                    break;
+                default:
+                    $CodigoCli = $CamposFile[0]['Valor'];
+                    $FechaTexto = $CamposFile[1]['Valor'];
+                    $NoMeses = intval($CamposFile[2]['Valor']);
+                    $NoAnio = intval($CamposFile[3]['Valor']);
+                    $SubTotal = floatval($CamposFile[4]['Valor']);
+                    $Total = $SubTotal;
+                    $Mes = MesesLetras($NoMeses);
+                    $Producto = "PENSION DE: " . $Mes;
+                    $Cantidad = 1;
                     break;
             }
             $Si_No = True;
@@ -514,6 +735,7 @@ class FRecaudacionBancosPreFaC
         if (strlen($Cta_Banco) <= 1) {
             $Cta_Banco = "0000000000";
         }
+        $parametros['Cta_Banco'] = $Cta_Banco;
         $TipoDoc = "";
         $AuxNumEmp = $_SESSION['INGRESO']['item'];
         $FechaFinal = $parametros['MBFechaF'];
@@ -531,17 +753,15 @@ class FRecaudacionBancosPreFaC
 
         $RutaDestino = "../../../TEMP/FRecaudacionBancosPreFa/DEUDAESTUDIANTE.csv";
         $Codigo = strtoupper(MesesLetras(date("m", strtotime($parametros['MBFechaI']))) . "-" . date("d", strtotime($parametros['MBFechaI'])) . "-" . date("Y", strtotime($parametros['MBFechaI'])));
-        $RutaDestino = "../../../TEMP/FRecaudacionBancosPreFa/" . $Codigo . ".txt";
+        $RutaDestino = "../../../TEMP/BANCO/FACTURAS/" . $Codigo . ".txt";
         $NombreArchivoZip = $RutaDestino;
         $FechaFin = BuscarFecha($parametros['MBFechaF']);
         $TextoImprimio = "";
         $FechaFin = BuscarFecha(date("y-m-t", strtotime($parametros['MBFechaF'])));
         switch ($parametros['TextoBanco']) {
             case "PACIFICO":
-                //TODO: Generar Pacifico
-                break;
+                return $this->Genera_Pacifico($parametros, $RutaDestino, $AdoFactura);
             case "PICHINCHA":
-                //TODO: Genera Pichincha
                 return $this->Generar_Pichincha($parametros, $AdoFactura);
             case "BOLIVARIANO":
                 //TODO: Genera Bolivariano
@@ -556,11 +776,297 @@ class FRecaudacionBancosPreFaC
                 //TODO: Genera Tarjetas
                 break;
             case "INTERNACIONAL":
-                //TODO Genera Internacional
-                break;
+                return $this->Genera_Internacional($parametros, $AdoFactura);
             default:
                 break;
         }
+    }
+
+    public function Genera_Internacional($parametros, $AdoFactura){
+
+        $Total_Banco = 0;
+        $Mifecha = BuscarFecha($parametros['MBFechaI']);
+        $MiMes = date("m", strtotime($parametros['MBFechaI']));
+        $FechaFin = BuscarFecha(date("y-m-t", strtotime($parametros['MBFechaI'])));
+        $TextoImprimio = "";
+        $AuxNumEmp = $_SESSION['INGRESO']['item'];
+        $Cta_Cobrar = G_NINGUNO;
+        $FechaTexto = FechaSistema();
+        //Comenzamos a generar el archivo: Internacional Recaudaciones.TXT
+        $EsComa = True;
+        $Estab = False;
+        $Contador = 0;
+        $Factura_No = 0;
+        $Fecha_Meses = $parametros['MBFechaI'] . " al " . $parametros['MBFechaF'];
+        $Fecha_Meses = str_replace("/", "-", $Fecha_Meses);
+
+        $ArchivoTexto = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Internacional Recaudaciones " . $Fecha_Meses . ".txt");
+        $ArchivoExcel = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Internacional Recaudaciones " . $Fecha_Meses . ".xls");
+        $NombreArchivos = $ArchivoTexto . "\n" . "\n";
+        $tmp = $ArchivoTexto;
+
+        $NumFileFacturas = fopen($ArchivoTexto, "w"); //Abre el archivo
+
+        if(count($AdoFactura) > 0 ){
+            foreach($AdoFactura as $key => $value){
+                $CodigoCli = $value['Codigo'];
+                $Grupo_No = $value['Grupo'];
+                $NombreCliente = Sin_Signos_Especiales($value['Cliente']);
+                $Producto = Sin_Signos_Especiales($value['Producto']);
+                $CodigoInv = $value['Codigo_Inv'];
+                $NoMes = $value['Num_Mes'];
+                $Mes = sprintf("%02d", $NoMes);
+                $Periodo = $value['Periodo'];
+                $Codigo2 = $Periodo . " " . $Mes . " " . $CodigoInv . str_repeat(" ", max(20 - strlen($CodigoInv), 0)) . " " . $Grupo_No . str_repeat(" ", max(10 - strlen($Grupo_No), 0)) . " " . $Producto;
+
+                $Factura_No = intval($value['Periodo'] . sprintf("%02d", $value['Num_Mes']));
+                $Total = $value['Valor_Cobro'];
+                $Saldo = $value['Valor_Cobro'] * 100;
+                $CodigoP = $value['CI_RUC'];
+                $CodigoC = $value['CI_RUC'];
+                $CodigoC = $CodigoC . str_repeat(" ", max(4 - strlen($CodigoC), 0));
+                $DireccionCli = Sin_Signos_Especiales($value['Direccion']);
+                $Codigo3 = SinEspaciosDer2($DireccionCli);
+                $DireccionCli = trim(substr($DireccionCli, 0, strlen($DireccionCli) - strlen($Codigo3)));
+                $Codigo3 = trim(SinEspaciosDer2($DireccionCli));
+                $Codigo1 = sprintf("%02d", substr($Grupo_No, 0, 1));
+                $Codigo4 = "";
+
+                $CadAux = "Pensión Acumulada";
+                if(strlen($value['Email2']) > 3){
+                    $CadAux .= ";" . $value['Email2'];
+                }
+                if($parametros['Tipo_Carga'] == 2){
+                    $Codigo4 = "RECAUDACIONES";
+                }else{
+                    if($parametros['CheqMatricula'] == True){
+                        $Codigo4 = "MATRICULAS Y PENSION DE " . substr(MesesLetras(date("m", strtotime($parametros['MBFechaI']))), 0, 3) . "-" . date("Y", strtotime($parametros['MBFechaI']));
+                    }else{
+                        if($parametros['Tipo_Carga'] == 3){
+                            $Codigo4 = "PENSION ACUMULADA";
+                        }else{
+                            $Codigo4 = "PENSION ACUMULADA DE " . substr(MesesLetras(date("m", strtotime($value['Fecha']))), 0, 3) . "-" . date("Y", strtotime($value['Fecha']));
+                        }
+                    }
+                }
+                if(strlen($value['Email2']) > 3){
+                    $Codigo4 .= "|" . $value['Email2'] . ";";
+                }
+                if(strlen($value['Actividad']) < 3){
+                    $Contador = $Contador + 1;
+                    fwrite($NumFileFacturas, "CO" . "\t");
+                    fwrite($NumFileFacturas, $parametros['Cta_Banco'] . "\t");
+                    fwrite($NumFileFacturas, $Contador . "\t");
+                    fwrite($NumFileFacturas, sprintf("%013d", $Factura_No) . "\t");
+                    fwrite($NumFileFacturas, $CodigoP . "\t");
+                    fwrite($NumFileFacturas, "USD" . "\t");
+                    fwrite($NumFileFacturas, sprintf("%013d", $Saldo) . "\t");
+                    fwrite($NumFileFacturas, "REC" . "\t");
+                    fwrite($NumFileFacturas, "32" . "\t");
+                    fwrite($NumFileFacturas, "\t");
+                    fwrite($NumFileFacturas, "0" . "\t");
+                    fwrite($NumFileFacturas, $value['TD_R'] . "\t");
+                    fwrite($NumFileFacturas, $value['CI_RUC_R'] . "\t");
+                    fwrite($NumFileFacturas, substr(date("m", strtotime($value['Fecha'])) . " " . $NombreCliente, 0, 40) . "\t");
+                    fwrite($NumFileFacturas, "\t");
+                    fwrite($NumFileFacturas, "\t");
+                    fwrite($NumFileFacturas, "\t");
+                    fwrite($NumFileFacturas, "\t");
+                    fwrite($NumFileFacturas, $Codigo2 . "\t");
+                    fwrite($NumFileFacturas, $Codigo4 . "\t");
+
+                }
+            }
+        }
+        fclose($NumFileFacturas);
+
+        $ArchivoTexto = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Internacional Debitos " . $Fecha_Meses . ".txt");
+        $ArchivoExcel2 = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Internacional Debitos " . $Fecha_Meses . ".xls");
+        $NombreArchivos .= $ArchivoTexto . "\n" . "\n";
+        $tmp2 = $ArchivoTexto;
+
+        $NumFileFacturas = fopen($ArchivoTexto, "w");
+        $Contador = 0;
+        $Mes = date("m", strtotime($parametros['MBFechaI']));
+        $Anio = intval(substr(date("Y", strtotime($parametros['MBFechaI'])), 1, 3));
+        $Dia = "15";
+
+        if(count($AdoFactura) > 0){
+            foreach($AdoFactura as $key => $value){
+                $CodigoCli = $value['Codigo'];
+                $GrupoNo = $value['Grupo'];
+                $NombreCliente = Sin_Signos_Especiales($value['Cliente']);
+                $Producto = Sin_Signos_Especiales($value['Producto']);
+                $CodigoInv = $value['Codigo_Inv'];
+                $NoMes = $value['Num_Mes'];
+                $Mes = sprintf("%02d", $NoMes);
+                $Periodo = $value['Periodo'];
+                $Codigo2 = $Periodo . " " . $Mes . " " . $CodigoInv . str_repeat(" ", max(20 - strlen($CodigoInv), 0)) . " " . $GrupoNo . str_repeat(" ", max(10 - strlen($GrupoNo), 0)) . " " . $Producto;
+                $TipoCta = G_NINGUNO;
+                switch($value['Tipo_Cta']){
+                    case "AHORROS":
+                        $TipoCta = "AHO";
+                        break;
+                    case "CORRIENTE":
+                        $TipoCta = "CTE";
+                        break;
+                }
+                if($value['Cod_Banco'] > 0 && strlen($value['Cta_Numero']) > 1 && $value['Cod_Banco'] == intval($parametros['TxtCodBanco']) && $TipoCta <> G_NINGUNO){
+                    $Contador = $Contador + 1;
+                    $Factura_No = intval($value['Periodo'] . sprintf("%02d", $value['Num_Mes']));
+                    $Total = $value['Valor_Cobro'];
+                    $Saldo = $value['Valor_Cobro'] * 100;
+                    $CodigoP = $value['CI_RUC'];
+                    $DireccionCli = Sin_Signos_Especiales($value['Direccion']);
+                    $Codigo3 = SinEspaciosDer2($DireccionCli);
+                    $DireccionCli = trim(substr($DireccionCli, 0, strlen($DireccionCli) - strlen($Codigo3)));
+                    $Codigo3 = trim(SinEspaciosDer2($DireccionCli));
+                    $Codigo1 = sprintf("%02d", substr($GrupoNo, 0, 1));
+                    $Codigo4 = "";
+                    if($parametros['Tipo_Carga'] == 2){
+                        $Codigo4 = "DEBITOS AUTOMATICOS";
+                    }else{
+                        if($parametros['CheqMatricula'] == True){
+                            $Codigo4 = "MATRICULAS Y PENSION DE " . substr(MesesLetras(date("m", strtotime($parametros['MBFechaI']))), 0, 3) . "-" . date("Y", strtotime($parametros['MBFechaI']));
+                        }else{
+                            if($parametros['Tipo_Carga'] == 3){
+                                $Codigo4 = "PENSION ACUMULADA";
+                            }else{
+                                $Codigo4 = "PENSION ACUMULADA DE " . substr(MesesLetras(date("m", strtotime($value['Fecha']))), 0, 3) . "-" . date("Y", strtotime($value['Fecha']));
+                            }
+                        }
+                    }
+                    if(strlen($value['Email2']) > 3){
+                        $Codigo4 .= "|" . $value['Email2'] . ";";
+                    }
+
+                    fwrite($NumFileFacturas, "CO" . "\t");
+                    fwrite($NumFileFacturas, $parametros['Cta_Banco'] . "\t");
+                    fwrite($NumFileFacturas, $Contador . "\t");
+                    fwrite($NumFileFacturas, sprintf("%013d", $Factura_No) . "\t");
+                    fwrite($NumFileFacturas, $CodigoP . "\t");
+                    fwrite($NumFileFacturas, "USD" . "\t");
+                    fwrite($NumFileFacturas, sprintf("%013d", $Saldo) . "\t");
+                    fwrite($NumFileFacturas, "CTA" . "\t");
+                    fwrite($NumFileFacturas, $value['Cod_Banco'] . "\t");
+                    fwrite($NumFileFacturas, $TipoCta . "\t");
+                    fwrite($NumFileFacturas, $value['Cta_Numero'] . "\t");
+                    fwrite($NumFileFacturas, $value['TD_R'] . "\t");
+                    fwrite($NumFileFacturas, $value['CI_RUC_R'] . "\t");
+                    fwrite($NumFileFacturas, substr(date("m", strtotime($value['Fecha'])) . " " . $NombreCliente, 0, 40) . "\t");
+                    fwrite($NumFileFacturas, "\t");
+                    fwrite($NumFileFacturas, "\t");
+                    fwrite($NumFileFacturas, "\t");
+                    fwrite($NumFileFacturas, "\t");
+                    fwrite($NumFileFacturas, $Codigo2 . "\t");
+                    fwrite($NumFileFacturas, $Codigo4 . "\t");
+                    fwrite($NumFileFacturas, sprintf("%013d", $Saldo) . "\t");
+                    fwrite($NumFileFacturas, "0" . "\t");
+                    fwrite($NumFileFacturas, "0" . "\t");
+                    fwrite($NumFileFacturas, "0" . "\t");
+                    fwrite($NumFileFacturas, "0" . "\t");
+                    fwrite($NumFileFacturas, "0" . "\t");
+                    fwrite($NumFileFacturas, "0" . "\t");
+
+                }
+            }
+        }
+        fclose($NumFileFacturas);
+        return array(
+            'LabelAbonos' => sprintf("%02d", $Total_Banco),
+            'CantArchivos' => 4,
+            'Mensaje' => "SE GENERARON LOS SIGUIENTES ARCHIVOS: \n" . basename($tmp) . "\n" . basename($tmp2),
+            'Nombre1' => basename($tmp),
+            'Nombre2' => basename($tmp2),
+            'Nombre3' => ".",
+            'Nombre4' => ".",
+        );
+    }
+
+    public function Genera_Pacifico($parametros, $RutaDelArchivo, $AdoFactura)
+    {
+        $RutaGeneraFile = $RutaDelArchivo;
+        $TipoDoc = "0";
+        $Contador = 0;
+        $FechaTexto = BuscarFecha($parametros['MBFechaI']);
+        $TxtFile = "";
+        $NumFileFacturas = fopen($RutaGeneraFile, "w"); //Abre el archivo
+        if (count($AdoFactura) > 0) {
+            $TxtFile .= "TOTAL NOMINA DE RECAUDACION: " . "\n";
+            $Codigo3 = trim(substr($_SESSION['INGRESO']['noempr'], 0, 3));
+            $Total = 0;
+            $TotalIngreso = 0;
+            $Total_Factura = 0;
+            $IE = 1;
+            $JE = 1;
+            $KE = 1;
+            $Grupo_No = $AdoFactura[0]['Grupo'];
+            $Codigo = $AdoFactura[0]['CodigoC'];
+            foreach ($AdoFactura as $key => $value) {
+                if ($Grupo_No <> $value['Grupo']) {
+                    $Codigo4 = number_format($Total, 2, '.', ',');
+                    $Codigo4 = str_repeat(" ", max(13 - strlen($Codigo4), 0)) . number_format($Total, 2, '.', ',');
+                    $TxtFile .= "Grupo: " . $Grupo_No . "\t" . "Resumen de Registros por Grupo: " . $JE . "\t" .
+                        "Total a Recaudar USD" . "\t" . $Codigo4 . "\n";
+                    $JE = 0;
+                    $Total = 0;
+                    $IE = $IE + 1;
+                    $Grupo_No = $value['Grupo'];
+                    $Codigo = $value['CodigoC'];
+                }
+                if ($Codigo <> $value['CodigoC']) {
+                    $JE = $JE + 1;
+                    $KE = $KE + 1;
+                    $Codigo = $value['CodigoC'];
+                }
+                $Contador = $Contador + 1;
+                $CodigoCli = $value['CI_RUC'];
+                $NombreCliente = trim(substr($value['Cliente'], 0, 30));
+                $Codigo1 = trim(substr($value['Direccion'], 0, 30));
+                $FechaTexto = " " . strtoupper(substr(MesesLetras($value['Num_Mes']), 0, 3)) . " " . substr($value['Periodo'], 2, 2);
+                $Codigo2 = strtoupper($value['Grupo']) . " " . strtoupper(substr(MesesLetras($value['Num_Mes']), 0, 3)) . " " . $value['Periodo'];
+                $Total_Factura = $value['Valor_Cobro'];
+                $Total = $Total + $Total_Factura;
+                $I = intval($Total_Factura);
+                $J = ($Total_Factura - intval($Total_Factura)) * 100;
+                fwrite($NumFileFacturas, "1"); // Localidad
+                fwrite($NumFileFacturas, "OCP"); // Transsaccion
+                fwrite($NumFileFacturas, "OC"); // Codigo de Servicio
+                fwrite($NumFileFacturas, "  "); // Tipo de Cuenta
+                fwrite($NumFileFacturas, str_repeat(" ", 8)); // Numero de Cuenta
+                fwrite($NumFileFacturas, sprintf("%013d", $I) . sprintf("%02d", $J)); // Valor
+                fwrite($NumFileFacturas, $CodigoCli . str_repeat(" ", max(15 - strlen($CodigoCli), 0))); // Codigo del Alumno : FechaTexto
+                fwrite($NumFileFacturas, $Codigo2 . str_repeat(" ", 20 - strlen($Codigo2))); // Referencia
+                fwrite($NumFileFacturas, "RE"); // Forma de Pago
+                fwrite($NumFileFacturas, "USD"); // Moneda
+                fwrite($NumFileFacturas, $NombreCliente . str_repeat(" ", max(30 - strlen($NombreCliente), 0))); // Nombre del Alumno
+                fwrite($NumFileFacturas, "01"); // Localidad
+                fwrite($NumFileFacturas, str_repeat(" ", 2)); // Agencia de Retiro
+                fwrite($NumFileFacturas, " "); // Tipo NUC
+                fwrite($NumFileFacturas, $CodigoCli . str_repeat(" ", max(14 - strlen($CodigoCli), 0))); // Numero Unico del Beneficiario
+                fwrite($NumFileFacturas, str_repeat(" ", 10)); // Telefono
+                fwrite($NumFileFacturas, " "); // NUC Ordenante
+                fwrite($NumFileFacturas, str_repeat(" ", 14)); // Numero Unico del Ordenante
+                fwrite($NumFileFacturas, $Codigo3 . str_repeat(" ", max(30 - strlen($Codigo3), 0))); // Nombre Colegio
+                fwrite($NumFileFacturas, sprintf("%06d", $Contador)); // Secuencial
+                fwrite($NumFileFacturas, "30"); // Banco del Pacifico
+                fwrite($NumFileFacturas, str_repeat(" ", 20)); // Numero de cuenta
+                fwrite($NumFileFacturas, "\n");
+            }
+            $Codigo4 = number_format($Total, 2, '.', ',');
+            $Codigo4 = str_repeat(" ", max(13 - strlen($Codigo4), 0)) . number_format($Total, 2, '.', ',');
+            $TxtFile .= "Grupo: " . $Grupo_No . "\t" . "Resumen de Registros por Grupo: " . $JE . "\t" .
+                "Total a Recaudar USD" . "\t" . $Codigo4 . "\n";
+            $Codigo4 = number_format($TotalIngreso, 2, '.', ',');
+            $Codigo4 = str_repeat(" ", max(13 - strlen($Codigo4), 0)) . number_format($TotalIngreso, 2, '.', ',');
+            $TxtFile .= str_repeat("-", 90) . "\n" . 
+                    "Total Grupos: " . $IE . "\t" . "Total Alumnos: " . $KE . "\t" . "\t" . "Total a Recaudar USD" . "\t" . $Codigo4 . "\n";
+        }
+        fclose($NumFileFacturas);
+        return array('TxtFile' => $TxtFile,
+         'CantArchivos' => 1,
+         'Nombre1' => basename($RutaGeneraFile));
+
     }
 
     public function Generar_Pichincha($parametros, $AdoFactura)
@@ -694,6 +1200,7 @@ class FRecaudacionBancosPreFaC
         return array(
             'LabelAbonos' => sprintf("%02d", $Total_Banco),
             'Mensaje' => "SE GENERARON LOS SIGUIENTES ARCHIVOS: \n" . $NombreFile . "\n" . $NombreFile2,
+            'CantArchivos' => 2,
             'Archivo1' => $RutaGeneraFile,
             'Archivo2' => $RutaGeneraFile2,
             'Nombre1' => $NombreFile,
@@ -949,10 +1456,10 @@ class FRecaudacionBancosPreFaC
             sp_Actualizar_Saldos_Facturas($parametros['FA']['TC'], $parametros['FA']['Serie'], $parametros['FA']['Factura']);
             $this->modelo->DetalleFacturaUpdate($parametros['FA']['TC'], $parametros['FA']['Serie'], $Factura_Desde, $Factura_Hasta);
             $Mensaje = "GENERACION DE FACTURAS DEL: " . $FechaTexto . " \n
-            SE GRABARON: " . $Total_Alumnos . " ALUMNOS." . " \n
-            DESDE LA " . $parametros['FA']['TC'] . ": " . $Factura_Desde . " HASTA LA " . $Factura_Hasta . " \n
-            EL CIERRE DIARIO DE CAJA ES POR " . $_SESSION['INGRESO']['S_M'] . " " . sprintf("%02d", $Total_Ingreso) . " \n
-            OBTENIDO DEL ARCHIVO: \n" . $parametros['RutaGeneraFile'];
+                        SE GRABARON: " . $Total_Alumnos . " ALUMNOS." . " \n
+                        DESDE LA " . $parametros['FA']['TC'] . ": " . $Factura_Desde . " HASTA LA " . $Factura_Hasta . " \n
+                        EL CIERRE DIARIO DE CAJA ES POR " . $_SESSION['INGRESO']['S_M'] . " " . sprintf("%02d", $Total_Ingreso) . " \n
+                        OBTENIDO DEL ARCHIVO: \n" . $parametros['RutaGeneraFile'];
             $this->modelo->DeleteAsientoF2();
             $DGFactura = $this->modelo->DGFactura2();
             return array('response' => 1, 'Mensaje' => $Mensaje, 'tbl' => $DGFactura['datos']);
@@ -960,5 +1467,55 @@ class FRecaudacionBancosPreFaC
             return array('response' => 0, 'error' => $e->getMessage());
         }
 
+    }
+
+    public function LetrasMeses($Mes)
+    {
+        $SMes = "";
+        if ($Mes === "") {
+            $Mes = "ene";
+        }
+        switch (strtolower(substr($Mes, 0, 3))) {
+            case "ene";
+                $SMes = 1;
+                break;
+            case "feb";
+                $SMes = 2;
+                break;
+            case "mar";
+                $SMes = 3;
+                break;
+            case "abr";
+                $SMes = 4;
+                break;
+            case "may";
+                $SMes = 5;
+                break;
+            case "jun";
+                $SMes = 6;
+                break;
+            case "jul";
+                $SMes = 7;
+                break;
+            case "ago";
+                $SMes = 8;
+                break;
+            case "sep";
+                $SMes = 9;
+                break;
+            case "oct";
+                $SMes = 10;
+                break;
+            case "nov";
+                $SMes = 11;
+                break;
+            case "dic";
+                $SMes = 12;
+                break;
+            default:
+                $SMes = 1;
+                break;
+        }
+        return $SMes;
     }
 }

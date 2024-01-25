@@ -1,47 +1,17 @@
 <?php date_default_timezone_set('America/Guayaquil'); ?> 
 <script type="text/javascript">
   $(document).ready(function () {
-  	areas();  
-  	motivo_egreso()	
+  	
   })
 
-   function areas(){
-	  $('#ddl_areas').select2({
-	    placeholder: 'Seleccione una beneficiario',
-	    // width:'90%',
-	    ajax: {
-	      url:   '../controlador/inventario/egreso_alimentosC.php?areas=true',          
-	      dataType: 'json',
-	      delay: 250,
-	      processResults: function (data) {
-	        // console.log(data);
-	        return {
-	          results: data
-	        };
-	      },
-	      cache: true
-	    }
-	  });
-	}
-
-	function motivo_egreso(){
-	  $('#ddl_motivo').select2({
-	    placeholder: 'Seleccione una beneficiario',
-	    // width:'90%',
-	    ajax: {
-	      url:   '../controlador/inventario/egreso_alimentosC.php?motivos=true',          
-	      dataType: 'json',
-	      delay: 250,
-	      processResults: function (data) {
-	        // console.log(data);
-	        return {
-	          results: data
-	        };
-	      },
-	      cache: true
-	    }
-	  });
-	}
+  function modal_mensaje()
+  {
+	$('#myModal_mensaje').modal('show');
+  }
+  function modal_motivo()
+  {
+  	$('#myModal_motivo').modal('show');
+  }
   	
    
 </script>
@@ -89,7 +59,7 @@
 					</div>
 				</div>
 				<div class="row">								
-					<div class="col-sm-3">
+					<div class="col-sm-5">
 						<div class="input-group">
 							<div class="input-group-btn" style="padding-right:5px">
 								<button type="button" class="btn btn-default btn-sm">
@@ -98,12 +68,12 @@
 							</div>
 							<br>
 							<b>Area de egreso:</b>
-							<select class="form-control" id="ddl_areas" name="ddl_areas">
+							<select class="form-control" id="txt_codigo" name="txt_codigo">
 					           	<option>Seleccione</option>
 					        </select>
 						</div>				        
 				    </div>
-					<div class="col-sm-3">
+				<!--	<div class="col-sm-3">
 						<div class="input-group">
 							<div class="input-group-btn" style="padding-right:5px">
 								<button type="button" class="btn btn-default btn-sm">
@@ -112,9 +82,7 @@
 							</div>
 							<br>
 		            		<b>Motivo de egreso</b>								
-							<select class="form-control" id="ddl_motivo" name="ddl_motivo">
-					           	<option>Seleccione</option>
-					        </select>
+							<input type="" class="form-control input-xs" id="txt_donante" name="txt_donante" readonly>
 						</div>
 					</div>
 					<div class="col-sm-3">
@@ -163,7 +131,7 @@
 					<div class="col-sm-1">
 						<b>Cantidad</b>
 								<input type="" class="form-control input-sm" id="txt_cod_lugar" style="font-size: 20px;" name="txt_cod_lugar" onblur="buscar_ruta()">									
-					</div>	
+					</div>	-->
 				</div>
 				<div class="row">
 					<br>
@@ -174,18 +142,59 @@
 				</div>
 				<hr>
 				<div class="row">		
-					<div class="col-sm-12">
+					<div class="table-responsive">
 						<table class="table-sm table-hover table">
 							<thead>
 								<th><b>Item</b></th>
 								<th><b>Fecha de Egreso</b></th>
-								<th><b>Producto</b></th>
-								<th><b>Cantidad</b></th>
-								<th></th>
+								<th><b>Usuario</b></th>
+								<th><b>Motivo</b></th>
+								<th><b>Detalle Egreso</b></th>
+								<th><b>Archivo adjunto</b></th>
+								<th><b>SubModulo gastos</b></th>
+								<th><b>Para Contabilizar</b></th>
 							</thead>
 							<tbody id="tbl_asignados">
 								<tr>
-									<td colspan="5">Productos asignados</td>
+									<td>1</td>
+									<td>
+										2023-10-12
+									</td>
+									<td>
+										<div class="input-group input-group-sm">
+											DIEGO C
+											<span class="input-group-btn">
+											<button type="button" class="btn btn-default btn-sm" onclick="modal_mensaje()">
+												<img src="../../img/png/user.png" style="width:20px">
+											</button>
+											</span>
+										</div>
+									</td>
+									<td>
+										<div class="input-group input-group-sm">
+											Refrigerio
+											<span class="input-group-btn">
+											<button type="button" class="btn btn-default btn-sm" onclick="modal_motivo()">
+												<img src="../../img/png/transporte_caja.png" style="width:20px">
+											</button>
+											</span>
+										</div>
+									</td>
+									<td>REFRIGERIO VOLUNTARIO LUNES</td>
+									<td>
+										<button type="button" class="btn btn-default btn-sm" onclick="$('#file_doc').click()">
+											<img src="../../img/png/clip.png" style="width:20px">
+										</button>
+										<input type="file" id="file_doc" name="" style="display: none;">
+									</td>
+									<td>
+										<select class="form-control input-sm">
+											<option value="">Seleccione modulo</option>
+										</select>
+									</td>
+									<td>
+										<input type="radio" name="">
+									</td>
 								</tr>
 							</tbody>
 						</table>
@@ -200,22 +209,65 @@
 
 
 
-<div id="myModal_arbol_bodegas" class="modal fade myModalNuevoCliente" role="dialog">
-    <div class="modal-dialog">
+<div id="myModal_mensaje" class="modal fade myModalNuevoCliente" role="dialog">
+    <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Seleccion manual de bodegas</h4>
+                <h4 class="modal-title">Mensaje</h4>
             </div>
-            <div class="modal-body" id="contenido_prov" style="background: antiquewhite;">
-            		<ul class="tree_bod" id="arbol_bodegas">
-								</ul>               
+            <div class="modal-body"  style="background: antiquewhite;">
+            	<textarea class="form-control" rows="3"></textarea>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div> 
         </div>
     </div>
-  </div>
+</div>
+
+<div id="myModal_motivo" class="modal fade myModalNuevoCliente" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Motivo</h4>
+            </div>
+            <div class="modal-body" style="background: antiquewhite;">
+            	<div class="col-sm-12">
+            		<table class="table">
+            			<thead>
+            				<th>Item</th>
+            				<th>Donante</th>
+            				<th>Producto</th>
+            				<th>Stock</th>
+            				<th>Cant Final(kg)</th>
+            				<th>Precio / Costo</th>
+            				<th>Total</th>
+            				<th>Contabilizar</th>
+            			</thead>
+            			<tbody>
+            				<tr>
+            					<td>1</td>
+            					<td>Corporacion la favororita</td>
+            					<td>Lacteos</td>
+            					<td></td>
+            					<td>10</td>
+            					<td>0.14</td>
+            					<td>1.40</td>
+            					<td>
+            						<input type="radio" name="">
+            					</td>
+            				</tr>
+            			</tbody>
+            		</table>
+            	</div>           
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div> 
+        </div>
+    </div>
+</div>
 
  <script src="../../dist/js/arbol_bodegas/arbol_bodega.js"></script>

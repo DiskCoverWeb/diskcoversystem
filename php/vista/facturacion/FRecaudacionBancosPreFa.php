@@ -51,7 +51,7 @@
         DCEntidadBancaria();
         DatosBanco();
 
-        console.log("TEST: " + '<?php $_SESSION['INGRESO']['S_M'] ?>');
+        
 
         //Se encarga de manejar la entidad bancaria cuando cambia
         $('#DCEntidadBancaria').change(function () {
@@ -348,7 +348,10 @@
             'CheqAlDia': $('#CheqAlDia').is(':checked'),
             'DCGrupoF': $('#DCGrupoF').val(),
             'DCGrupoI': $('#DCGrupoI').val(),
-            'Cta_Bancaria': Cta_Bancaria
+            'Cta_Bancaria': Cta_Bancaria,
+            'Costo_Banco': Costo_Banco,
+            'CheqMatricula': $('#CheqMatricula').is(':checked'),
+            'TxtCodBanco': $('#TxtCodBanco').val(),
         }
 
         $.ajax({
@@ -365,8 +368,18 @@
                     type: 'info',
                     confirmButtonText: 'Aceptar'
                 });
+                for(var i = 1; i <= data.CantArchivos; i++){
+                    var url = "../../TEMP/BANCO/FACTURAS/" + data[`Nombre${i}`];
+                    var enlaceTemporal = $('<a></a>')
+                        .attr('href', url)
+                        .attr('download', data[`Nombre${i}`])
+                        .appendTo('body');
+                    enlaceTemporal[0].click();
+                    enlaceTemporal.remove();
+                    
+                }
 
-                var url = "../../TEMP/BANCO/FACTURAS/" + data.Nombre1;
+                /*var url = "../../TEMP/BANCO/FACTURAS/" + data.Nombre1;
                 var url2 = "../../TEMP/BANCO/FACTURAS/" + data.Nombre2;
 
                 var enlaceTemporal = $('<a></a>')
@@ -383,7 +396,7 @@
                     .appendTo('body');
 
                 enlaceTemporal2[0].click();
-                enlaceTemporal2.remove();
+                enlaceTemporal2.remove();*/
             }
         });
 
@@ -615,10 +628,10 @@
                 if (data.length > 0) {
                     $('#DCEntidadBancaria').empty();
                     $.each(data, function (index, value) {
-                        $('#DCEntidadBancaria').append('<option value="' + value['Abreviado'] + '">' + "BANCO PICHINCHA" + '</option>');//value['Descripcion']
+                        $('#DCEntidadBancaria').append('<option value="' + value['Abreviado'] + '">' + value['Descripcion'] + '</option>');//value['Descripcion']
                     });
                     TextoBanco = data[0]['Abreviado'];
-                    TextoBanco = "PICHINCHA";//POR EL MOMENTO SOLO VALE BANCO PICHINCHA
+                    //TextoBanco = "PICHINCHA";//POR EL MOMENTO SOLO VALE BANCO PICHINCHA
                     OpcionesEntidadesBancarias(TextoBanco);
 
                 }
@@ -654,6 +667,10 @@
         color: white;
         height: 540px;
         max-height: 550px;
+    }
+
+    body{
+        padding-right: 0px !important;
     }
 </style>
 <div>
@@ -691,7 +708,7 @@
         <div class="col-sm-3">
             <label for="DCEntidadBancaria" style="display:block;">Entidad Bancaria:</label>
             <select name="DCEntidadBancaria" id="DCEntidadBancaria" style="width: 100%; max-width: 100%;"
-                disabled></select>
+                ></select>
         </div>
         <div class="col-sm-4">
             <div class="row">
