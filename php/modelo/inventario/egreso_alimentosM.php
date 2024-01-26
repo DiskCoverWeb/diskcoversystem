@@ -48,6 +48,19 @@ class egreso_alimentosM
 
 		return $this->db->datos($sql);
 	}
+	function buscar_producto()
+	{
+		$sql = "SELECT TK.*,C.Cliente,CP.Producto,CP.Unidad 
+			FROM Trans_Kardex TK
+			INNER JOIN Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv 
+			INNER JOIN Clientes C on TK.Codigo_P = C.Codigo
+			WHERE TK.Item = '".$_SESSION['INGRESO']['item']."'
+			AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+			AND TK.Item = CP.Item
+			AND TK.Periodo = CP.Periodo
+			AND TK.T ='E'  ";
+		return $this->db->datos($sql);
+	}
 
 }
 

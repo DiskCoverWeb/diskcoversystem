@@ -25,6 +25,11 @@ if(isset($_GET['motivos']))
 	}
 	echo json_encode($controlador->ddl_motivo($query));
 }
+if(isset($_GET['buscar_producto']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->buscar_producto($parametros));
+}
 
 /**
  * 
@@ -60,9 +65,13 @@ class egreso_alimentosC
 		foreach ($datos as $key => $value) {
 			$op[] = array('id'=>$value['ID'],'text'=>$value['Proceso'],'data'=>$value);			
 		}
-
 		return $op;
+	}
 
+	function buscar_producto($parametros)
+	{
+		$datos = $this->modelo->buscar_producto();
+		return $datos;
 	}	
 }
 

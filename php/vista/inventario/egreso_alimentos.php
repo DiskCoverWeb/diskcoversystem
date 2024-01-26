@@ -42,6 +42,29 @@
 	    }
 	  });
 	}
+
+	function buscar_producto(codigo)
+	{
+		var parametros = {
+		'codigo':$('#txt_cod_producto').val(),
+		}
+	 	$.ajax({
+		    type: "POST",
+	       url:   '../controlador/inventario/egreso_alimentosC.php?buscar_producto=true',
+		     data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+		    	data = data[0];
+		    	$('#txt_cod_producto').val(data.Codigo_Inv)
+				$('#txt_donante').val(data.Cliente)
+				$('#txt_grupo').val(data.Producto)
+				$('#txt_stock').val(data.Entrada)
+				$('#txt_unidad').val(data.Unidad)
+		    	console.log(data);
+		    }
+		});
+	}
   	
    
 </script>
@@ -138,31 +161,31 @@
 				</div>
 				<div class="row">
 					<div class="col-sm-3">
-						<b>Codigo de lugar</b>
-						<input type="" class="form-control input-sm" id="txt_cod_lugar" style="font-size: 20px;" name="txt_cod_lugar" onblur="buscar_ruta()">								
+						<b>Codigo productos</b>
+						<input type="" class="form-control input-sm" id="txt_cod_producto" style="font-size: 20px;" name="txt_cod_producto" onblur="buscar_producto()">								
 					</div>	
 					<div class="col-sm-3">
-						<b>Proveedor</b>
-						<input type="" class="form-control input-sm" id="txt_cod_lugar" style="font-size: 20px;" name="txt_cod_lugar" readonly>	
+						<b>Proveedor / Donante</b>
+						<input type="" class="form-control input-sm" id="txt_donante" name="txt_donante" readonly>	
 								
 					</div>														
 					<div class="col-sm-3">
 						<b>Grupo de producto</b>
-						<input type="" class="form-control input-sm" id="txt_cod_lugar" style="font-size: 20px;" name="txt_cod_lugar" onblur="buscar_ruta()">	
+						<input type="" class="form-control input-sm" id="txt_grupo" name="txt_grupo" onblur="buscar_ruta()">	
 								
 					</div>	
 					<div class="col-sm-1">
 						<b>Stock</b>
-						<input type="" class="form-control input-sm" id="txt_cod_lugar" style="font-size: 20px;" name="txt_cod_lugar" readonly>	
+						<input type="" class="form-control input-sm" id="txt_stock" style="font-size: 20px;" name="txt_stock" readonly>	
 								
 					</div>	
 					<div class="col-sm-1">
 						<b>Unidad</b>
-						<input type="" class="form-control input-sm" id="txt_cod_lugar" style="font-size: 20px;" name="txt_cod_lugar" readonly>	
+						<input type="" class="form-control input-sm" id="txt_unidad" name="txt_unidad" readonly>	
 					</div>	
 					<div class="col-sm-1">
 						<b>Cantidad</b>
-								<input type="" class="form-control input-sm" id="txt_cod_lugar" style="font-size: 20px;" name="txt_cod_lugar" onblur="buscar_ruta()">									
+								<input type="" class="form-control input-sm" id="txt_cantidad" style="font-size: 20px;" name="txt_cantidad" onblur="buscar_ruta()">									
 					</div>	
 				</div>
 				<div class="row">

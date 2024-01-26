@@ -265,7 +265,8 @@ class almacenamiento_bodegaC
 			{
 				SetAdoAddNew('Trans_Pedidos');
 				SetAdoFields('Codigo_Sup',$parametros['bodegas']);		
-				SetAdoFieldsWhere('ID',$tipo[0]);
+				SetAdoFieldsWhere('ID',$tipo[0]);	
+				SetAdoFieldsWhere('TC',"E");
 				SetAdoUpdateGeneric();
 				//a transpedidos
 			}else{
@@ -273,7 +274,8 @@ class almacenamiento_bodegaC
 				// print_r($value);die();
 				SetAdoAddNew('Trans_Kardex');
 				SetAdoFields('CodBodega',$parametros['bodegas']);	
-				SetAdoFields('Fecha_DUI',date('Y-m-d'));		
+				SetAdoFields('Fecha_DUI',date('Y-m-d'));	
+				SetAdoFields('T',"E");		
 				SetAdoFieldsWhere('ID',$value);
 				SetAdoUpdateGeneric();
 			}
