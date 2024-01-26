@@ -13242,5 +13242,45 @@ function FormatoCodigo($S, $N){
   return $_SESSION['INGRESO']['item'] . $S4;
 }
 
+function Leer_RUC_CI_Tarjeta($TarjetaNo, $Abono, $CodigoCli){
+  $conn = new db();
+  $Asteristicos = "";
+  $Leer_RUC_CI_TARJETA = "";
+  for($IdTj = 1; $IdTj <= strlen($TarjetaNo); $IdTj++){
+    if(substr($TarjetaNo, $IdTj - 1, 1) == "*"){
+      $Asteristicos .= "*";
+    }
+  }
+  $TarjetaNoTemp = trim(str_replace($Asteristicos, "%", $TarjetaNo));
+  //Comenzamos a recoger los detalles de la factura
+  $sql = "SELECT TOP 1 C.Grupo, CM.Representante, CM.Cedula_R, C.CI_RUC, C.Cliente, CM.Cta_Numero,CM.Cta_Numero,CF.Periodo,CF.Num_Mes,CF.Mes,CF.Codigo_Inv,C.Codigo
+          FROM Clientes AS C, Clientes_Matriculas AS CM, Clientes_Facturacion As CF
+          WHERE CM.Item = '".$_SESSION['INGRESO']['item']."' 
+          AND CM.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+          AND CM.Cta_Numero LIKE '" . $TarjetaNoTemp . "'
+          AND C.CI_RUC LIKE '%" . substr($CodigoCli, 4, 4) . "'
+          AND CF.X = '.'
+          AND (CF.Valor - CF.Descuento - CF.Descuento2) = " . $Abono . "
+          AND C.Codigo = CM.Codigo
+          AND C.Codigo = CF.Codigo
+          AND CM.Item = CF.Item
+          ORDER BY C.CI_RUC,CF.Periodo,CF.Num_Mes";
+  $AdoDBREUCCI = $conn->datos($sql);
+  $res = array();
+  $res['CodigoCli'] = G_NINGUNO;
+  $res['Leer_RUC_CI_TARJETA'] = G_NINGUNO;
+  if(count($AdoDBREUCCI) > 0){
+    $res['CodigoCli'] = $AdoDBREUCCI[0]['Codigo'];
+    $res['NombreCliente'] = $AdoDBREUCCI[0]['Cliente'];
+    $res['TarjetaNo'] = $AdoDBREUCCI[0]['Cta_Numero'];
+    $res['NoAnio'] = $AdoDBREUCCI[0]['Periodo'];
+    $res['NoMeses'] = $AdoDBREUCCI[0]['Num_Mes'];
+    $res['Mes'] = $AdoDBREUCCI[0]['Mes'];
+    $res['CodigoInv'] = $AdoDBREUCCI[0]['Codigo_Inv'];
+    $res['Leer_RUC_CI_TARJETA'] = $AdoDBREUCCI[0]['CI_RUC'];
+  }
+  return $res;
+}
+
 
 ?>

@@ -300,4 +300,60 @@ function excel_generico($titulo,$datos=false,$url=false)
 		// exit;
 
 }
+
+function excel_simple($datos, $path, $tituloHoja = 'Hoja 1'){
+	$spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setTitle($tituloHoja);
+
+    $fila = 1;
+    foreach ($datos as $dato) {
+        $columna = 'A';
+        foreach ($dato as $valor) {
+            $sheet->setCellValue($columna.$fila, $valor);
+            $columna++; // Incrementa la letra de la columna
+        }
+        $fila++; // Siguiente fila
+    }
+
+    // Ajustar automáticamente el tamaño de todas las columnas usadas
+    foreach ($sheet->getColumnIterator() as $column) {
+        $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+    }
+    
+    $writer = new Xlsx($spreadsheet);
+    $writer->save($path);
+}
+
+function Exportar_AdoDB_Excel($datosAdo, $path, $tituloHoja = "Hoja 1"){
+	$spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setTitle($tituloHoja);
+
+	if(!empty($datosAdo)){
+		$columna = 'A';
+		foreach($datosAdo[0] as $key => $value){
+			$sheet->setCellValue($columna.'1', $key);
+            $columna++;
+		}
+	}
+
+	$fila = 2;
+	foreach ($datosAdo as $dato) {
+        $columna = 'A';
+        foreach ($dato as $valor) {
+            $sheet->setCellValue($columna.$fila, $valor);
+            $columna++;
+        }
+        $fila++;
+    }
+
+	foreach ($sheet->getColumnIterator() as $column) {
+        $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+    }
+
+	$writer = new Xlsx($spreadsheet);
+    $writer->save($path);
+	
+}
 ?>

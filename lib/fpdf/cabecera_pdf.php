@@ -871,6 +871,50 @@ class cabecera_pdf
 	      }
 
 	}
+	function Imprimir_Codigo_Banco($datosAdo, $path){
+		$pdf = new FPDF();
+		$pdf->AddPage();
+		foreach ($datosAdo as $dato) {
+			// Añadir los detalles de la empresa
+			$pdf->SetFont('Arial', 'B', 12);
+			$pdf->Cell(0, 10, 'EMPRESA PARA DESARROLLO - QUITO', 0, 1, 'C');
+			$pdf->SetFont('Arial', 'B', 12);
+			$pdf->Cell(0, 10, 'DISKCOVER SYSTEM', 0, 1, 'C');
+			$pdf->SetFont('Arial', 'I', 10);
+			$texto = "QUITO, Desarrollo para programacion de DiskCover System. Telefono: 0229201331";
+			$pdf->Cell(0, 10, $texto, 0, 1, 'C');
+		
+			// Añadir la información del cliente
+			$pdf->SetFont('Arial', 'B', 10);
+			$pdf->Cell(40, 10, 'ESTUDIANTE:');
+			$pdf->SetFont('Arial', '', 10);
+			$pdf->SetX(37);
+			$pdf->Cell(40, 10, $dato['Cliente']);
+			$pdf->Ln(10);
+			$pdf->SetFont('Arial', 'B', 10);
+			$pdf->Cell(40, 10, 'DIRECCION:');
+			$pdf->SetFont('Arial', '', 10);
+			$pdf->SetX(37);
+			$pdf->Cell(40, 10, $dato['Direccion']);
+			$pdf->Ln(10);
+			$pdf->SetFont('Arial', 'B', 10);
+			$pdf->SetFont('Arial', 'B', 10);
+			$pdf->Cell(40, 10, 'CODIGO DEL BANCO No.:  ', 0, 0); // El tercer parámetro '0' indica que no queremos que el cursor se mueva a la siguiente línea después de esta celda.
+			$pdf->SetFont('Arial', '', 16);
+			$pdf->SetX(55);
+			$pdf->Cell(45, 10, $dato['CI_RUC'], 0, 1);
+			// Mensaje de cierre
+			$pdf->SetFont('Arial', '', 10);
+			$pdf->Cell(0, 10, 'Agradecemos su comprension y atencion a la presente.', 0, 1);
+			$pdf->Cell(0, 10, 'Atentamente, ', 0, 1);
+			$pdf->Cell(0, 10, 'Vaca Prieto Walter Jalil ', 0, 1);
+			// Obtener la posición actual del cursor en Y
+			$y = $pdf->GetY();
+			// Dibujar la línea justo debajo del último texto
+			$pdf->Line(10, $y, 200, $y);
+		}
+		$pdf->Output('F', $path);
+	}
   }
 
 
@@ -1277,6 +1321,7 @@ class PDF_MC_SIN_HEADER extends PDF_MC_Table
 		 $this->Ln(8);
  }
 }
+
 
 
 ?>
