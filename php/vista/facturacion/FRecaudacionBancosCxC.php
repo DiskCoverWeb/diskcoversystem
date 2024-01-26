@@ -235,7 +235,6 @@
         var selectElement = $('#DCEntidad');
         selectElement.change(function () {
 
-            console.log('Valor: ' + selectElement.val());
             var index = selectElement.val();
 
             switch (index) {
@@ -368,7 +367,6 @@
             dataType: 'json',
             data: { 'fecha': fecha },
             success: function (datos) {
-                console.log(datos, MBFecha, 'fecha:' + fecha);
                 if (datos.ErrorFecha) {
                     Swal.fire({
                         type: 'warning',
@@ -392,39 +390,14 @@
             success: function (datos) {
             }
         });
-    }
-
-    function Leer_Campo_Empresa(campo) {
-        $.ajax({
-            type: "POST",
-            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?LeerCampoEmpresa=true',
-            dataType: 'json',
-            data: { 'campo': campo },
-            success: function (datos) {
-                //console.log('dato', datos);
-            }
-        });
-    }
-
-    function Leer_Seteos_Ctas(campo) {
-        $.ajax({
-            type: "POST",
-            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?LeerSeteosCtas=true',
-            dataType: 'json',
-            data: { 'campo': campo },
-            success: function (datos) {
-                console.log('dato seteo', datos);
-            }
-        });
-    }
+    }  
 
     function AdoAux() {
         $.ajax({
             type: "POST",
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?AdoAux=true',
             dataType: 'json',
-            success: function (datos) {
-                //console.log(datos);
+            success: function (datos) {                
             }
         });
     }
@@ -434,8 +407,7 @@
             type: "POST",
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?AdoProducto=true',
             dataType: 'json',
-            success: function (datos) {
-                //console.log(datos);
+            success: function (datos) {               
             }
         });
     }
@@ -467,7 +439,6 @@
             'CheqRangos': CheqRangos,
             'CheqPend': CheqPend,
         };
-        console.log(parametros);
 
         $.ajax({
             type: "POST",
@@ -475,7 +446,6 @@
             dataType: 'json',
             data: { 'parametros': parametros },
             success: function (data) {
-                console.log('respuesta', data);
 
                 if (data.res == 'Ok') {
                     switch (data.textoBanco) {
@@ -551,12 +521,11 @@
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?EliminaArchivosTemporales=true',
             dataType: 'json',
             data: { 'tempFilePath': $tempFilePath },
-            success: function (data) {
-                console.log(data.res2);
+            success: function (data) {                
                 if (data.res == 0) {
-                    console.log('Archivo eliminado correctamente');
+                    //console.log('Archivo eliminado correctamente');
                 } else {
-                    console.log('El archivo no existe');
+                    //console.log('El archivo no existe');
                 }
             },
             error: function (xhr, status, error) {
@@ -605,7 +574,6 @@
             data: formData,
             success: function (data) {
                 var datos = JSON.parse(data);
-                console.log('resultado', datos);
                 if (datos.res == 'Error') {
                     Swal.fire({
                         title: datos.mensaje,
@@ -648,7 +616,6 @@
             data: formData,
             success: function (data) {
                 var datos = JSON.parse(data);
-                //console.log('resultado', datos);
                 if (datos.res == 'Error') {
                     Swal.fire({
                         title: datos.mensaje,
