@@ -2,10 +2,21 @@
     .miPanel {
         background-color: #5bc0de;
     }
+
+    #TxtFile {
+        resize: none;
+        background-color: black;
+        color: white;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        font-family: 'Courier New', Courier, monospace;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
 </style>
 
 <div>
-    <div class="row" style="margin:5px; padding-top:10px">
+    <div class="row" style="margin:5px; padding-top:10px; color:black;">
         <div class="col-sm-2 col-xs-12">
             <div class="col">
                 <a href="./inicio.php?mod=<?php echo @$_GET['mod']; ?>" title="Salir de modulo" class="btn btn-default">
@@ -13,7 +24,7 @@
                 </a>
             </div>
             <div class="col">
-                <a href="javascript:void(0)" title="Visualizar" class="btn btn-default" onclick="Visualizar()">
+                <a href="javascript:void(0)" id="btnVerArchivo" title="Visualizar" class="btn btn-default">
                     <img src="../../img/png/visual.png" width="25" height="30">
                 </a>
             </div>
@@ -59,7 +70,7 @@
             </div>
             <div class="col-sm-1">
                 <label>ORDEN No.</label>
-                <input type="text" name="TxtOrden" id="TxtOrden" placeholder="0" size="4">
+                <input type="text" name="TxtOrden" id="TxtOrden" placeholder="0" size="4" value=0>
             </div>
             <div class="col-sm-4">
                 <label for="DCBanco">CUENTA A LA QUE SE VA ACREDITAR LOS ABONOS</label>
@@ -71,7 +82,7 @@
     </div>
 
 
-    <div class="row" style="margin:5px; padding-top:10px">
+    <div class="row" style="margin:5px; padding-top:10px; color:black;">
         <div id="miPanel">
             <div class="panel-heading">
                 <div class="row">
@@ -94,11 +105,16 @@
                                 </label>
                             </div>
                             <div class="col-xs-1">
+                                <button class="btn" onclick=limpiarCampos() title="Limpiar Campos">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                            <!--div class="col-xs-1">
                                 <button class="btn"
                                     onclick="window.location.href='./inicio.php?mod=<?php echo @$_GET['mod']; ?>'">
                                     <i class="fa fa-close"></i>
                                 </button>
-                            </div>
+                            </div-->
                         </div>
                         <div class="row">
                             <div class="col-xs-5">
@@ -154,8 +170,26 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="modalVerArchivo">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">VISUALIZAR ABONOS</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input class="form-control" type="file" id="fileInput2" accept=".txt">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btnVerArchivoSi">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
 
-
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -172,11 +206,6 @@
             let FechaValidares = FechaValida(fechaF, true); //true indica realizar MBFechaF_LostFocus
         });
 
-        //$NuevoCompe = false
-        //$CopiarComp = false
-        //$Co.CodigoB = ""
-        //$Co.Numero = 0
-
         Select('#DCGrupoI');
         Select('#DCGrupoF', true); // true indica que se debe invertir el orden
 
@@ -189,13 +218,6 @@
         $('#CheqRangos').click(function () {
             $("#DCGrupoI, #DCGrupoF").toggle($(this).is(":checked") ? true : false);
         });
-
-        //Tipo_Carga = Leer_Campo_Empresa("Tipo_Carga_Banco");
-        //Costo_Banco = Leer_Campo_Empresa("Costo_Bancario");
-        //Cta_Bancaria = Leer_Campo_Empresa("Cta_Banco");
-        //Cta_Gasto_Banco = Leer_Seteos_Ctas("Cta_Gasto_Bancario");
-
-        //var CheqMatricula = $("#CheqMatricula").prop("checked");
 
     });
 
@@ -213,7 +235,6 @@
         var selectElement = $('#DCEntidad');
         selectElement.change(function () {
 
-            console.log('Valor: ' + selectElement.val());
             var index = selectElement.val();
 
             switch (index) {
@@ -277,7 +298,6 @@
                     $("#miLogo").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/OtrosBancosLogo.png");
                     $("#imgBanco").attr("alt", "Logo Otros Bancos");
                     break;
-
             }
         });
     }
@@ -319,39 +339,27 @@
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?DCBanco=true',
             dataType: 'json',
             success: function (data) {
-                /*var Cta_Banco = null;
-                    var Cta_Del_Banco = // el valor se llena en el boton Recibir_Abonos;
+                $DCBanco.empty();
 
-                    var bancoEncontrado = data.find(function (item) {
-                        return Cta_Del_Banco === item.Codigo;
+                if (data.list && data.list.length > 0) {
+                    data.list.forEach(function (item) {
+                        $DCBanco.append('<option value="' + item.NomCuenta + '">' + item.NomCuenta + '</option>');
                     });
-
-                    if (bancoEncontrado) {
-                        Cta_Banco = bancoEncontrado.NomCuenta;
-                    } else {
-                        Swal.fire({
-                            title: 'No existen cuentas asignadas',
-                            text: 'No existen cuentas asignadas o no están bien establecidas las cuentas contables',
-                            type: 'warning',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                    if (data.length === 0) {
-                        Swal.fire({
-                            title: 'No existen cuentas asignadas',
-                            text: 'No existen cuentas asignadas o no están bien establecidas las cuentas contables',
-                            type: 'warning',
-                            confirmButtonText: 'OK'
-                        });
-                    }*/
-
-                $DCBanco.empty(); // Limpia el select antes de agregar nuevas opciones
-                data.forEach(function (item) {
-                    $DCBanco.append('<option value="' + item.NomCuenta + '">' + item.NomCuenta + '</option>');
+                } else {
+                    console.error("No se encontraron datos en la lista.");
+                }
+                Swal.fire({
+                    type: 'warning',
+                    title: data.mensaje,                    
                 });
+
+            },
+            error: function (xhr, status, error) {
+                console.error("Error en la solicitud AJAX:", status, error);
             }
         });
     }
+
     function FechaValida(fecha, MBFecha = false) {
         $.ajax({
             type: "POST",
@@ -359,7 +367,6 @@
             dataType: 'json',
             data: { 'fecha': fecha },
             success: function (datos) {
-                console.log(datos, MBFecha, 'fecha:' + fecha);
                 if (datos.ErrorFecha) {
                     Swal.fire({
                         type: 'warning',
@@ -383,39 +390,14 @@
             success: function (datos) {
             }
         });
-    }
-
-    function Leer_Campo_Empresa(campo) {
-        $.ajax({
-            type: "POST",
-            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?LeerCampoEmpresa=true',
-            dataType: 'json',
-            data: { 'campo': campo },
-            success: function (datos) {
-                //console.log('dato', datos);
-            }
-        });
-    }
-
-    function Leer_Seteos_Ctas(campo) {
-        $.ajax({
-            type: "POST",
-            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?LeerSeteosCtas=true',
-            dataType: 'json',
-            data: { 'campo': campo },
-            success: function (datos) {
-                console.log('dato seteo', datos);
-            }
-        });
-    }
+    }  
 
     function AdoAux() {
         $.ajax({
             type: "POST",
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?AdoAux=true',
             dataType: 'json',
-            success: function (datos) {
-                //console.log(datos);
+            success: function (datos) {                
             }
         });
     }
@@ -425,8 +407,7 @@
             type: "POST",
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?AdoProducto=true',
             dataType: 'json',
-            success: function (datos) {
-                //console.log(datos);
+            success: function (datos) {               
             }
         });
     }
@@ -442,10 +423,10 @@
         var MBFechaI = $('#MBFechaI').val();
         var MBFechaF = $('#MBFechaF').val();
 
-        var CheqRangos = $('#CheqRangos').prop('checked');
-        var CheqMatricula = $('#CheqMatricula').prop('checked');
-        var CheqPend = $('#CheqPend').prop('checked');
-        var CheqSat = $('#CheqSat').prop('checked');
+        var CheqRangos = $('#CheqRangos').prop('checked') ? 1 : 0;
+        var CheqMatricula = $('#CheqMatricula').prop('checked') ? 1 : 0;
+        var CheqPend = $('#CheqPend').prop('checked') ? 1 : 0;
+        //var CheqSat = $('#CheqSat').prop('checked')? 1 : 0;
 
         var parametros = {
             'DCEntidad': DCEntidad,
@@ -456,8 +437,8 @@
             'DCGrupoI': DCGrupoI,
             'DCGrupoF': DCGrupoF,
             'CheqRangos': CheqRangos,
+            'CheqPend': CheqPend,
         };
-        console.log(parametros);
 
         $.ajax({
             type: "POST",
@@ -465,72 +446,90 @@
             dataType: 'json',
             data: { 'parametros': parametros },
             success: function (data) {
-                console.log('respuesta', data.textoBanco);
+
                 if (data.res == 'Ok') {
                     switch (data.textoBanco) {
                         case "PICHINCHA":
-                            Swal.fire({
-                                title: 'SE GENERARON LOS SIGUIENTES ARCHIVOS:',
-                                type: 'success',
-                                html: data.mensaje,
-                                confirmButtonText: 'Aceptar'
-                            });
-
-                            var url = "../../TEMP/BANCO/FACTURAS/" + data.Nombre1;
-                            var url2 = "../../TEMP/BANCO/FACTURAS/" + data.Nombre2;
-
-                            var enlaceTemporal = $('<a></a>')
-                                .attr('href', url)
-                                .attr('download', data.Nombre1)
-                                .appendTo('body');
-
-                            enlaceTemporal[0].click();
-                            enlaceTemporal.remove();
-
-                            var enlaceTemporal2 = $('<a></a>')
-                                .attr('href', url2)
-                                .attr('download', data.Nombre2)
-                                .appendTo('body');
-
-                            enlaceTemporal2[0].click();
-                            enlaceTemporal2.remove();
+                        case "INTERNACIONAL":
+                        case "PACIFICO":
+                            procesarDatosBanco(data.mensaje, data.Nombre1, data.Nombre2);
                             break;
-                        /*
-                    case "BGR_EC":
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        //Generar_BGR_EC();
-                        break;
-                    case "INTERNACIONAL":
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        //Generar_Internacional();
-                        break;
-                    case "BOLIVARIANO":
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        //Generar_Bolivariano();
-                        break;
-                    case "PACIFICO":
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        //Generar_Pacifico();
-                        break;
-                    case "PRODUBANCO":
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        //Generar_Produbanco();
-                        break;
-                    case "GUAYAQUIL":
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        //Generar_Guayaquil();
-                        break;
-                    case "COOPJEP":
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        //Generar_Coop_Jep();
-                        break;
-                    default:
-                        $FechaFin = BuscarFecha(UltimoDiaMes($MBFechaF));
-                        echo "No está definido este Banco";
-                        break;   */
+                        case "BGR_EC":
+                        case "BOLIVARIANO":
+                        case "COOPJEP":
+                        case "PRODUBANCO":
+                            procesarDatosBanco(data.mensaje, data.Nombre1);
+                            break;
+                        case "GUAYAQUIL":
+                            procesarDatosBanco(data.mensaje, data.Nombre1, false, data.contenido);
+                            break;                        
                     }
+                    var url3 = "../../TEMP/FACTURAS/" + data.Nombre3;
+                    descargarArchivo(url3, data.Nombre3);
+                }
+                else{
+                    Swal.fire({
+                        title: "No está definido este Banco",
+                        type: 'error',
+                    });
                 }
 
+            }
+        });
+    }
+
+    function procesarDatosBanco(mensaje, nombre1, nombre2, contenido) {
+        Swal.fire({
+            title: 'SE GENERARON LOS SIGUIENTES ARCHIVOS:',
+            type: 'success',
+            html: mensaje,
+            confirmButtonText: 'Aceptar'
+        });
+
+        if (nombre1) {
+            var url = "../../TEMP/FACTURAS/" + nombre1;
+            var u = "/TEMP/FACTURAS/" +nombre1;
+            descargarArchivo(url, nombre1);
+            EliminaArchivosTemporales(u);
+        }
+
+        if (nombre2) {
+            var url2 = "../../TEMP/FACTURAS/" + nombre2;
+            var u2 = "/TEMP/FACTURAS/" +nombre2;
+            descargarArchivo(url2, nombre2);
+            EliminaArchivosTemporales(u2);
+        }
+        if (contenido) {
+            animarEscritura(contenido);
+        }
+    }
+
+    function descargarArchivo(url, nombre) {
+        var enlaceTemporal = $('<a></a>')
+            .attr('href', url)
+            .attr('download', nombre)
+            .appendTo('body');
+
+        enlaceTemporal[0].click();
+        enlaceTemporal.remove();
+    }
+
+
+    function EliminaArchivosTemporales($tempFilePath) {
+        $.ajax({
+            type: "POST",
+            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?EliminaArchivosTemporales=true',
+            dataType: 'json',
+            data: { 'tempFilePath': $tempFilePath },
+            success: function (data) {                
+                if (data.res == 0) {
+                    //console.log('Archivo eliminado correctamente');
+                } else {
+                    //console.log('El archivo no existe');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error en la solicitud AJAX:', status, error);
             }
         });
     }
@@ -550,6 +549,8 @@
         var MBFechaF = $('#MBFechaF').val();
         var TxtOrden = $('#TxtOrden').val();
         var DCEntidad = $('#DCEntidad').val();
+        var DCBanco = $('#DCBanco').val();
+        var CheqSat = $('#CheqSat').prop('checked') ? 1 : 0;
         var fileInput = $('#fileInput')[0];
         var archivo = fileInput.files[0];
 
@@ -558,6 +559,8 @@
         formData.append('MBFechaF', MBFechaF);
         formData.append('TxtOrden', TxtOrden);
         formData.append('DCEntidad', DCEntidad);
+        formData.append('DCBanco', DCBanco);
+        formData.append('CheqSat', CheqSat);
 
         if (archivo) {
             formData.append('archivoBanco', archivo, archivo.name);
@@ -571,7 +574,6 @@
             data: formData,
             success: function (data) {
                 var datos = JSON.parse(data);
-                console.log('resultado', datos);
                 if (datos.res == 'Error') {
                     Swal.fire({
                         title: datos.mensaje,
@@ -586,6 +588,82 @@
             }
         });
     }
+
+    $('#btnVerArchivo').click(function () {
+        $('#modalVerArchivo').modal('show');
+    });
+
+    $('#btnVerArchivoSi').click(function () {
+        $('#modalVerArchivo').modal('hide');
+        Visualizar();
+    });
+
+    function Visualizar() {
+        var fileInput = $('#fileInput2')[0];
+        var archivo = fileInput.files[0];
+
+        var formData = new FormData();
+
+        if (archivo) {
+            formData.append('archivoBanco', archivo, archivo.name);
+        }
+
+        $.ajax({
+            type: 'post',
+            url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?VisualizarArchivo=true',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (data) {
+                var datos = JSON.parse(data);
+                if (datos.res == 'Error') {
+                    Swal.fire({
+                        title: datos.mensaje,
+                        type: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                } else {
+                    animarEscritura(datos.contenido);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error en la solicitud: " + textStatus, errorThrown);
+            }
+        });
+    }
+
+    function animarEscritura(contenido) {
+        var textarea = $('#TxtFile');
+        var lineas = contenido.split('\n');
+        var index = 0;
+        var velocidadEscritura = 100;
+
+        function escribirLinea() {
+            if (index < lineas.length) {
+                textarea.val(textarea.val() + lineas[index] + '\n');
+                textarea.scrollTop(textarea[0].scrollHeight);
+                index++;
+                setTimeout(escribirLinea, velocidadEscritura);
+            }
+        }
+        escribirLinea();
+    }
+
+    function limpiarCampos() {
+        $('#TxtFile').val('');
+        var fechaHoy = new Date().toISOString().split('T')[0];
+        $('#MBFechaI').val(fechaHoy);
+        $('#MBFechaF').val(fechaHoy);
+        $('#TxtOrden').val('0000');
+        $('#DCEntidad').val($('#DCEntidad option:first').val());
+        $('#DCBanco').val($('#DCBanco option:first').val());
+        $('#CheqPend').prop('checked', false);
+        $('#CheqMatricula').prop('checked', false);
+        $('#CheqSat').prop('checked', false);
+        $('#CheqRangos').prop('checked', false);
+
+    }
+
 
 
 
