@@ -9,7 +9,7 @@ use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
     DESCIPCION : Clase que se encarga de manejar la lógica de la pantalla de recaudacion de bancos
 */
 require_once(dirname(__DIR__, 2) . "/modelo/facturacion/FRecaudacionBancosPreFaM.php");
-
+require(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
 $controlador = new FRecaudacionBancosPreFaC();
 
 if (isset($_GET['DCLinea'])) {
@@ -96,16 +96,33 @@ if (isset($_GET['Command6_Click'])) {
     echo json_encode($controlador->Command6_Click($parametros));
 }
 
+if(isset($_GET['Command7_Click'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Command7_Click($parametros));
+}
+
+if(isset($_GET['Command5_Click'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Command5_Click($parametros));
+}
+
+if(isset($_GET['Command3_Click'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Command3_Click($parametros));
+}
+
 
 
 class FRecaudacionBancosPreFaC
 {
 
     private $modelo;
+    private $pdf;
 
     public function __construct()
     {
         $this->modelo = new FRecaudacionBancosPreFaM();
+        $this->pdf = new cabecera_pdf();
     }
 
     public function DCLinea()
@@ -559,15 +576,26 @@ class FRecaudacionBancosPreFaC
                     $CostoTarjeta = floatval($CamposFile[10]['Valor']);
                     $SubTotal = floatval($CamposFile[15]['Valor']);
                     $Total = floatval($CamposFile[15]['Valor']);
-                    $FechaTexto = DateTime::createFromFormat('Y-m-d', substr($CamposFile[0]['Valor'], 0, 10))->format('d/m/Y');
+                    $FechaTexto = date('d/m/Y', strtotime(substr($CamposFile[0]['Valor'], 0, 10)));
                     $CodigoB = $FechaTexto;
-                    $CodigoP = '.'; //TODO: Leer_RUC_CI_TARJETA(NumeroTarjeta, Total, CodigoCli)
+                    $tmp = Leer_RUC_CI_Tarjeta($NumeroTarjeta, $Total, $CodigoCli);
+                    if(count($tmp) > 2){
+                        $CodigoCli = $tmp['CodigoCli'];
+                        $NombreCliente = $tmp['NombreCliente'];
+                        $TarjetaNo = $tmp['TarjetaNo'];
+                        $NoAnio = $tmp['NoAnio'];
+                        $NoMeses = $tmp['NoMeses'];
+                        $Mes = $tmp['Mes'];
+                        $CodigoInv = $tmp['CodigoInv'];
+                        $CodigoP = $tmp['Leer_RUC_CI_TARJETA'];
+                    }
                     $CodigoCli = $CodigoP;
                     $Producto = "TARJETA DE: " . $NumeroTarjeta . " - " . $CamposFile[5]['Valor'];
                     $CodigoB = strtolower(trim(substr(trim(SinEspaciosDer2($CodigoB)), 5, 3)));
                     $Codigo3 = $CamposFile[1]['Valor'];
                     $Codigo4 = $CamposFile[2]['Valor'];
                     $Codigo2 = $CamposFile[3]['Valor'];
+                    
                     break;
                 default:
                     $CodigoCli = $CamposFile[0]['Valor'];
@@ -800,7 +828,9 @@ class FRecaudacionBancosPreFaC
         $Dia = "15";
 
         $RutaGeneraFile = strtoupper('../../../TEMP/BANCO/FACTURAS/Otros Bancos Debitos ' . $Fecha_Meses . '.TXT');
-        //TODO: Generar Excel
+        $RutaGeneraFileExcel = strtoupper('../../../TEMP/BANCO/FACTURAS/Otros Bancos Debitos ' . $Fecha_Meses . '.XLSX');
+        $datosExcel = [];
+        $tmpContador = 1;
         $NumFileFacturas = fopen($RutaGeneraFile, "w");
         if (count($AdoFactura) > 0) {
             foreach ($AdoFactura as $key => $value) {
@@ -875,6 +905,32 @@ class FRecaudacionBancosPreFaC
                         fwrite($NumFileFacturas, $Codigo4 . "\t");
                         fwrite($NumFileFacturas, sprintf("%013d", $Saldo) . "\t");
                         fwrite($NumFileFacturas, "\n");
+
+                        $datosExcel[$tmpContador] = [
+                            "CO", 
+                            $parametros['Cta_Banco'],
+                            $Contador,
+                            "'" . sprintf("%013d", $Factura_No),
+                            "'" . $CodigoP,
+                            "USD",
+                            "'" . sprintf("%013d", $Saldo),
+                            "CTA",
+                            $value['Cod_Banco'],
+                            $TipoCta,
+                            "'" . $value['Cta_Numero'],
+                            $value['TD_R'],
+                            "'" . sprintf("%010d", $value['CI_RUC_R']),
+                            substr(date("m", strtotime($value['Fecha'])) . " " . $NombreCliente, 0, 40),
+                            "0",
+                            "0",
+                            "0",
+                            "0",
+                            $Codigo2,
+                            $Codigo4,
+                            "'" . sprintf("%013d", $Saldo)
+                        ];
+                        $tmpContador++;
+
                         $Total_Banco = $Total_Banco + $Total;
                     }
 
@@ -883,12 +939,14 @@ class FRecaudacionBancosPreFaC
             }
         }
         fclose($NumFileFacturas);
+        excel_simple($datosExcel, $RutaGeneraFileExcel, "Otros Bancos Debitos");
         return array(
             'LabelAbonos' => sprintf("%02d", $Total_Banco),
             'Mensaje' => "SE HA GENERADO EL SIGUIENTE ARCHIVO \n" . basename($RutaGeneraFile),
-            'CantArchivos' => 1,
+            'CantArchivos' => 2,
             'TxtFile' => " ",
-            'Nombre1' => basename($RutaGeneraFile)
+            'Nombre1' => basename($RutaGeneraFile),
+            'Nombre2' => basename($RutaGeneraFileExcel)
         );
     }
 
@@ -947,7 +1005,7 @@ class FRecaudacionBancosPreFaC
 
     public function Generar_Produbanco($parametros, $AdoFactura)
     {
-        $AdoAux = $this->modelo->AdoAux($parametros);
+        //$AdoAux = $this->modelo->AdoAux($parametros);
         $Total_Banco = 0;
         $Mifecha = BuscarFecha($parametros['MBFechaI']);
         $MiMes = date("m", strtotime($parametros['MBFechaI']));
@@ -1230,6 +1288,9 @@ class FRecaudacionBancosPreFaC
         $NombreArchivos = $ArchivoTexto . "\n" . "\n";
         $tmp = $ArchivoTexto;
 
+        $datosExcel = [];
+        $tmpContador = 1;
+
         $NumFileFacturas = fopen($ArchivoTexto, "w"); //Abre el archivo
 
         if (count($AdoFactura) > 0) {
@@ -1301,15 +1362,43 @@ class FRecaudacionBancosPreFaC
                     fwrite($NumFileFacturas, $Codigo4 . "\t");
                     fwrite($NumFileFacturas, "\n");
 
+                    $datosExcel[$tmpContador] = [
+                        "CO", 
+                        $parametros['Cta_Banco'],
+                        $Contador,
+                        "'" . sprintf("%013d", $Factura_No),
+                        "'" . $CodigoP,
+                        "USD",
+                        "'" . sprintf("%013d", $Saldo),
+                        "REC",
+                        "32",
+                        "0",
+                        "0",
+                        $value['TD_R'],
+                        "'" . $value['CI_RUC_R'],
+                        substr(date("m", strtotime($value['Fecha'])) . " " . $NombreCliente, 0, 40),
+                        "0",
+                        "0",
+                        "0",
+                        "0",
+                        $Codigo2,
+                        $Codigo4
+                    ];
+                    $tmpContador++;
+
                 }
             }
         }
         fclose($NumFileFacturas);
+        excel_simple($datosExcel, $ArchivoExcel, "Internacional Recaudaciones");
 
         $ArchivoTexto = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Internacional Debitos " . $Fecha_Meses . ".txt");
         $ArchivoExcel2 = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Internacional Debitos " . $Fecha_Meses . ".xls");
         $NombreArchivos .= $ArchivoTexto . "\n" . "\n";
         $tmp2 = $ArchivoTexto;
+
+        $datosExcel = [];
+        $tmpContador = 1;
 
         $NumFileFacturas = fopen($ArchivoTexto, "w");
         $Contador = 0;
@@ -1395,20 +1484,51 @@ class FRecaudacionBancosPreFaC
                     fwrite($NumFileFacturas, "0" . "\t");
                     fwrite($NumFileFacturas, "\n");
 
+                    $datosExcel[$tmpContador] = [
+                        "CO", 
+                        $parametros['Cta_Banco'],
+                        $Contador,
+                        "'" . sprintf("%013d", $Factura_No),
+                        "'" . $CodigoP,
+                        "USD",
+                        "'" . sprintf("%013d", $Saldo),
+                        "CTA",
+                        $value['Cod_Banco'],
+                        $TipoCta,
+                        "'" . $value['Cta_Numero'],
+                        $value['TD_R'],
+                        "'" . $value['CI_RUC_R'],
+                        substr(date("m", strtotime($value['Fecha'])) . " " . $NombreCliente, 0, 40),
+                        "0",
+                        "0",
+                        "0",
+                        "0",
+                        $Codigo2,
+                        $Codigo4,
+                        "'" . sprintf("%013d", $Saldo),
+                        "0",
+                        "0",
+                        "0",
+                        "0",
+                        "0",
+                        "0"
+                    ];
+
                 }
             }
         }
-        //TODO: Generar Excel
+        
         fclose($NumFileFacturas);
+        excel_simple($datosExcel, $ArchivoExcel2, "Internacional Debitos");
         return array(
             'LabelAbonos' => sprintf("%02d", $Total_Banco),
-            'CantArchivos' => 2,
+            'CantArchivos' => 4,
             'TxtFile' => " ",
             'Mensaje' => "SE GENERARON LOS SIGUIENTES ARCHIVOS: \n" . basename($tmp) . "\n" . basename($tmp2),
             'Nombre1' => basename($tmp),
             'Nombre2' => basename($tmp2),
-            'Nombre3' => ".",
-            'Nombre4' => ".",
+            'Nombre3' => basename($ArchivoExcel),
+            'Nombre4' => basename($ArchivoExcel2),
         );
     }
 
@@ -1901,6 +2021,64 @@ class FRecaudacionBancosPreFaC
             return array('response' => 0, 'error' => $e->getMessage());
         }
 
+    }
+
+    public function Command7_Click($parametros){
+        $Contador = 1;
+        $AdoClientes = $this->modelo->AdoClientes($parametros);
+        if(count($AdoClientes) > 0){
+            foreach($AdoClientes as $key => $value){
+                $this->modelo->UpdateAdoCliente($parametros, $Contador);
+                $Contador++;
+            }
+        }
+        $AdoClientes = $this->modelo->AdoClientes2($parametros);
+        $path = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Clientes.XLSX");
+        Exportar_AdoDB_Excel($AdoClientes, $path, "DiskCover System");
+        return array('response' => 1, 'Nombre1' => basename($path), 'Mensaje' => "SE GENERO EL SIGUIENTE ARCHIVO: \n" . basename($path));
+    }
+
+    public function Command3_Click($parametros){
+        $Contador = 0;
+        $AdoClientes = $this->modelo->AdoClientes3();
+        if(count($AdoClientes) > 0){
+            foreach($AdoClientes as $key => $value){
+                $Contador++;
+                $this->modelo->UpdateAdoClientes3($Contador);
+            }
+        }
+        $Contador = 0;
+        $AdoClientes = $this->modelo->AdoClientes4();
+        if(count($AdoClientes) > 0){
+            foreach($AdoClientes as $key => $value){
+                $Contador++;
+                $this->modelo->UpdateAdoClientes4($Contador);
+            }
+        }
+        $Contador = 0;
+        $AdoClientes = $this->modelo->AdoClientes5($parametros);
+        if(count($AdoClientes) > 0){
+            foreach($AdoClientes as $key => $value){
+                $Contador++;
+                if($parametros['CheqNumCodigos'] <> false){
+                    $param = $_SESSION['INGRESO']['item'] . sprintf("%05d", $Contador);
+                    $this->modelo->UpdateAdoClientes5($parametros, $param);
+                }else{
+                    $param = sprintf("%08d", $Contador);
+                    $this->modelo->UpdateAdoClientes5($parametros, $param);
+                }
+            }
+        }
+        return array('response' => 1, 'Mensaje' => "PROCESO DE RENUMERACION TERMINADO");
+    }
+
+    public function Command5_Click($parametros){
+        $AdoClientes = $this->modelo->AdoClientes5($parametros);
+        $path = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Clientes.pdf");
+        $this->pdf->Imprimir_Codigo_Banco($AdoClientes, $path);
+        return(array('response' => 1,
+         'Nombre1' => basename($path),
+          'Mensaje' => "SE GENERO EL SIGUIENTE ARCHIVO: \n" . basename($path)));
     }
 
     public function LetrasMeses($Mes)

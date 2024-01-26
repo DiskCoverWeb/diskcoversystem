@@ -424,7 +424,8 @@ class FRecaudacionBancosPreFaM
         Ejecutar_SQL_SP($sql);
     }
 
-    public function DetalleFacturaUpdate($FATC, $FASerie, $Factura_Desde, $Factura_Hasta){
+    public function DetalleFacturaUpdate($FATC, $FASerie, $Factura_Desde, $Factura_Hasta)
+    {
         $sql = "UPDATE Detalle_Factura
                 SET Producto = CP.Producto
                 FROM Detalle_Factura As DF, Catalogo_Productos As CP
@@ -439,11 +440,12 @@ class FRecaudacionBancosPreFaM
         Ejecutar_SQL_SP($sql);
     }
 
-    public function DeleteAsientoF2(){
+    public function DeleteAsientoF2()
+    {
         $sql = "DELETE * 
                 FROM Asiento_F
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
-                AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'";
+                AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'";
         Ejecutar_SQL_SP($sql);
     }
 
@@ -459,16 +461,117 @@ class FRecaudacionBancosPreFaM
         return array('datos' => $datos, 'AdoAsientoF' => $AdoAsientoF);
     }
 
-    public function AdoAux($parametros){
+    public function AdoAux($parametros)
+    {
         $sql = "SELECT Codigo,GrupoNo,Periodo,Mes,Num_Mes,Fecha
                 FROM Clientes_Facturacion
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Fecha BETWEEN " . BuscarFecha($parametros['MBFechaI']) . " AND " . BuscarFecha($parametros['MBFechaF']) . "";
-        if($parametros['CheqRangos'] <> false){
+        if ($parametros['CheqRangos'] <> false) {
             $sql .= "AND GrupoNo BETWEEN '" . $parametros['DCGrupoI'] . "' AND '" . $parametros['DCGrupoF'] . "'";
         }
         $sql .= "ORDER BY Codigo, Fecha";
         return $this->db->datos($sql);
+    }
+
+    public function AdoClientes($parametros)
+    {
+        $sql = "SELECT * 
+                FROM Clientes
+                WHERE FA <> 0 ";
+        if ($parametros['CheqRangos'] <> false) {
+            $sql .= "AND Grupo BETWEEN '" . $parametros['DCGrupoI'] . "' AND '" . $parametros['DCGrupoF'] . "'";
+        }
+        $sql .= "ORDER BY CI_RUC,Cliente,Grupo";
+        return $this->db->datos($sql);
+    }
+
+    public function UpdateAdoCliente($parametros, $Contador)
+    {
+        $sql = "UPDATE Clientes
+                SET Num_Lista = " . sprintf("%03d", $Contador) . "
+                WHERE FA <> 0 ";
+        if ($parametros['CheqRangos'] <> false) {
+            $sql .= "AND Grupo BETWEEN '" . $parametros['DCGrupoI'] . "' AND '" . $parametros['DCGrupoF'] . "'";
+        }
+        Ejecutar_SQL_SP($sql);
+    }
+
+    public function AdoClientes2($parametros)
+    {
+        $sql = "SELECT CI_RUC,Cliente,Codigo,Grupo,TD,Num_Lista
+                FROM Clientes
+                WHERE FA <> 0";
+        if ($parametros['CheqRangos'] <> false) {
+            $sql .= "AND Grupo BETWEEN '" . $parametros['DCGrupoI'] . "' AND '" . $parametros['DCGrupoF'] . "'";
+        }
+        $sql .= "ORDER BY CI_RUC,Cliente,Grupo";
+        return $this->db->datos($sql);
+    }
+
+    public function AdoClientes3()
+    {
+        $sql = "SELECT Codigo,CI_RUC,Grupo,TD
+                FROM Clientes
+                WHERE TD NOT IN ('C','R')
+                AND FA = 0
+                AND Cliente <> 'CONSUMIDOR FINAL'
+                ORDER BY Grupo,Cliente,CI_RUC";
+        return $this->db->datos($sql);
+    }
+
+    public function UpdateAdoClientes3($Contador)
+    {
+        $sql = "UPDATE Clientes
+                SET CI_RUC = " . sprintf("%08d", $Contador) . "
+                WHERE TD NOT IN ('C','R')
+                AND FA = 0
+                AND Cliente <> 'CONSUMIDOR FINAL'";
+        Ejecutar_SQL_SP($sql);
+    }
+
+    public function AdoClientes4()
+    {
+        $sql = "SELECT Codigo,CI_RUC,Grupo,TD
+                FROM Clientes
+                WHERE FA <> 0
+                AND Cliente <> 'CONSUMIDOR FINAL'
+                ORDER BY Grupo,Cliente,CI_RUC";
+        return $this->db->datos($sql);
+    }
+
+    public function UpdateAdoClientes4($Contador)
+    {
+        $sql = "UPDATE Clientes
+                SET CI_RUC = " . sprintf("%08d", $Contador) . "
+                WHERE FA <> 0
+                AND Cliente <> 'CONSUMIDOR FINAL'";
+        Ejecutar_SQL_SP($sql);
+    }
+
+    public function AdoClientes5($parametros)
+    {
+        $sql = "SELECT Codigo,CI_RUC,Direccion,Cliente,Grupo,TD
+                FROM Clientes
+                WHERE FA <> 0";
+        if ($parametros['CheqRangos'] <> false) {
+            $sql .= "AND Grupo BETWEEN '" . $parametros['DCGrupoI'] . "' AND '" . $parametros['DCGrupoF'] . "'";
+        }
+        $sql .= "AND Cliente <> 'CONSUMIDOR FINAL'
+                ORDER BY Grupo,Cliente,Direccion,CI_RUC";
+        return $this->db->datos($sql);
+    }
+
+    public function UpdateAdoClientes5($parametros, $param)
+    {
+        $sql = "UPDATE Clientes
+                SET CI_RUC = " . $param . "
+                WHERE FA <> 0 ";
+        if ($parametros['CheqRangos'] <> false) {
+            $sql .= "AND Grupo BETWEEN '" . $parametros['DCGrupoI'] . "' AND '" . $parametros['DCGrupoF'] . "'";
+        }
+        $sql .= "AND Cliente <> 'CONSUMIDOR FINAL'";
+        Ejecutar_SQL_SP($sql);
     }
 
     public function Procesar_Saldo_De_Facturas($PorX = false)

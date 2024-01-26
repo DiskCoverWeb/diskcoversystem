@@ -51,17 +51,19 @@
         DCEntidadBancaria();
         DatosBanco();
 
-        if('<?php echo $_SESSION['INGRESO']['CodigoU']; ?>' == 'ACCESO02'){
+        if ('<?php echo $_SESSION['INGRESO']['CodigoU']; ?>' == 'ACCESO02') {
             $('#Command3').prop('disabled', false);
         }
 
-        
+
 
         //Se encarga de manejar la entidad bancaria cuando cambia
         $('#DCEntidadBancaria').change(function () {
             var entidad = $(this).val();
             TextoBanco = entidad;
             OpcionesEntidadesBancarias(TextoBanco);
+            $('#TxtFile').text('');
+            $('#DGFactura').empty();
         });
 
         //MBFechaI_LostFocus
@@ -280,8 +282,122 @@
             Command6_Click();
         });
 
+        //Handle Command7_Click
+        $('#Command7').click(function () {
+            $('#TxtFile').text('');
+            $('#myModal_espera').show();
+            $('#myModal_espera').modal('show');
+            $('#DGFactura').empty();
+            Command7_Click();
+        });
+
+        //Handle Command3_Click
+        $('#Command3').click(function () {
+            $('#TxtFile').text('');
+            $('#DGFactura').empty();
+            $('#myModal_espera').show();
+            $('#myModal_espera').modal('show');
+            Command3_Click();
+        });
+
+        //Handle Command5_Click
+        $('#Command5').click(function () {
+            $('#TxtFile').text('');
+            $('#DGFactura').empty();
+            $('#myModal_espera').show();
+            $('#myModal_espera').modal('show');
+            Command5_Click();
+        });
+
 
     });
+
+    function Command5_Click(){
+        var parametros = {
+            'CheqRangos': $('#CheqRangos').is(':checked'),
+            'DCGrupoI': $('#DCGrupoI').val(),
+            'DCGrupoF': $('#DCGrupoF').val(),
+            'CheqNumCodigos': $('#CheqNumCodigos').is(':checked'),
+        };
+        $.ajax({
+            url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?Command5_Click=true',
+            type: 'post',
+            dataType: 'json',
+            data: { 'parametros': parametros },
+            success: function (data) {
+                $('#myModal_espera').modal('hide');
+                swal.fire({
+                    title: 'Información',
+                    text: data.Mensaje,
+                    type: 'info',
+                    confirmButtonText: 'Aceptar'
+                });
+                var url = "../../TEMP/BANCO/FACTURAS/" + data.Nombre1;
+                    var enlaceTemporal = $('<a></a>')
+                        .attr('href', url)
+                        .attr('download', data.Nombre1)
+                        .appendTo('body');
+                    enlaceTemporal[0].click();
+                    enlaceTemporal.remove();
+                
+            }
+        });
+    }
+
+    function Command3_Click() {
+        var parametros = {
+            'CheqRangos': $('#CheqRangos').is(':checked'),
+            'DCGrupoI': $('#DCGrupoI').val(),
+            'DCGrupoF': $('#DCGrupoF').val(),
+            'CheqNumCodigos': $('#CheqNumCodigos').is(':checked'),
+        };
+        $.ajax({
+            url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?Command3_Click=true',
+            type: 'post',
+            dataType: 'json',
+            data: { 'parametros': parametros },
+            success: function (data) {
+                $('#myModal_espera').modal('hide');
+                swal.fire({
+                        title: 'Información',
+                        text: data.Mensaje,
+                        type: 'info',
+                        confirmButtonText: 'Aceptar'
+                    });
+                
+            }
+        });
+    }
+
+    function Command7_Click() {
+        var parametros = {
+            'CheqRangos': $('#CheqRangos').is(':checked'),
+            'DCGrupoI': $('#DCGrupoI').val(),
+            'DCGrupoF': $('#DCGrupoF').val()
+        };
+        $.ajax({
+            url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?Command7_Click=true',
+            type: 'post',
+            dataType: 'json',
+            data: { 'parametros': parametros },
+            success: function (data) {
+                $('#myModal_espera').modal('hide');
+                swal.fire({
+                    title: 'Información',
+                    text: data.Mensaje,
+                    type: 'info',
+                    confirmButtonText: 'Aceptar'
+                });
+                var url = "../../TEMP/BANCO/FACTURAS/" + data.Nombre1;
+                    var enlaceTemporal = $('<a></a>')
+                        .attr('href', url)
+                        .attr('download', data.Nombre1)
+                        .appendTo('body');
+                    enlaceTemporal[0].click();
+                    enlaceTemporal.remove();
+            }
+        });
+    }
 
     function Command6_Click() {
         var Mensajes = "Esta Seguro que desea grabar las facturas procesadas: " + $('#TextFacturaNo').val() + " ?";
@@ -327,7 +443,7 @@
                                 type: 'info',
                                 confirmButtonText: 'Aceptar'
                             });
-                        }else{
+                        } else {
                             swal.fire({
                                 title: 'Información',
                                 text: data.error,
@@ -376,7 +492,7 @@
                     type: 'info',
                     confirmButtonText: 'Aceptar'
                 });
-                for(var i = 1; i <= data.CantArchivos; i++){
+                for (var i = 1; i <= data.CantArchivos; i++) {
                     var url = "../../TEMP/BANCO/FACTURAS/" + data[`Nombre${i}`];
                     var enlaceTemporal = $('<a></a>')
                         .attr('href', url)
@@ -384,7 +500,7 @@
                         .appendTo('body');
                     enlaceTemporal[0].click();
                     enlaceTemporal.remove();
-                    
+
                 }
                 $('#TxtFile').text(data.TxtFile);
             }
@@ -648,7 +764,7 @@
         max-height: 550px;
     }
 
-    body{
+    body {
         padding-right: 0px !important;
     }
 </style>
@@ -680,14 +796,13 @@
                 <img src="../../img/png/FRecaudacionBancosPreFa/renumerar.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Imprimir Codigos"
-                id="Command5" onclick="" style="border: solid 1px" disabled>
+                id="Command5" onclick="" style="border: solid 1px" >
                 <img src="../../img/png/FRecaudacionBancosPreFa/printer.png">
             </button>
         </div>
         <div class="col-sm-3">
             <label for="DCEntidadBancaria" style="display:block;">Entidad Bancaria:</label>
-            <select name="DCEntidadBancaria" id="DCEntidadBancaria" style="width: 100%; max-width: 100%;"
-                ></select>
+            <select name="DCEntidadBancaria" id="DCEntidadBancaria" style="width: 100%; max-width: 100%;"></select>
         </div>
         <div class="col-sm-4">
             <div class="row">
