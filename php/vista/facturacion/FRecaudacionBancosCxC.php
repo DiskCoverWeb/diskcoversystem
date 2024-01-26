@@ -70,7 +70,7 @@
             </div>
             <div class="col-sm-1">
                 <label>ORDEN No.</label>
-                <input type="text" name="TxtOrden" id="TxtOrden" placeholder="0" size="4" value=0000>
+                <input type="text" name="TxtOrden" id="TxtOrden" placeholder="0" size="4" value=0>
             </div>
             <div class="col-sm-4">
                 <label for="DCBanco">CUENTA A LA QUE SE VA ACREDITAR LOS ABONOS</label>
@@ -190,8 +190,6 @@
             </div>
         </div>
     </div>
-
-
 </div>
 
 <script type="text/javascript">
@@ -208,11 +206,6 @@
             let FechaValidares = FechaValida(fechaF, true); //true indica realizar MBFechaF_LostFocus
         });
 
-        //$NuevoCompe = false
-        //$CopiarComp = false
-        //$Co.CodigoB = ""
-        //$Co.Numero = 0
-
         Select('#DCGrupoI');
         Select('#DCGrupoF', true); // true indica que se debe invertir el orden
 
@@ -225,13 +218,6 @@
         $('#CheqRangos').click(function () {
             $("#DCGrupoI, #DCGrupoF").toggle($(this).is(":checked") ? true : false);
         });
-
-        //Tipo_Carga = Leer_Campo_Empresa("Tipo_Carga_Banco");
-        //Costo_Banco = Leer_Campo_Empresa("Costo_Bancario");
-        //Cta_Bancaria = Leer_Campo_Empresa("Cta_Banco");
-        //Cta_Gasto_Banco = Leer_Seteos_Ctas("Cta_Gasto_Bancario");
-
-        //var CheqMatricula = $("#CheqMatricula").prop("checked");
 
     });
 
@@ -313,7 +299,6 @@
                     $("#miLogo").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/OtrosBancosLogo.png");
                     $("#imgBanco").attr("alt", "Logo Otros Bancos");
                     break;
-
             }
         });
     }
@@ -355,40 +340,27 @@
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?DCBanco=true',
             dataType: 'json',
             success: function (data) {
-                /*var Cta_Banco = null;
-                    var Cta_Del_Banco = // el valor se llena en el boton Recibir_Abonos;
+                $DCBanco.empty();
 
-                    var bancoEncontrado = data.find(function (item) {
-                        return Cta_Del_Banco === item.Codigo;
+                if (data.list && data.list.length > 0) {
+                    data.list.forEach(function (item) {
+                        $DCBanco.append('<option value="' + item.NomCuenta + '">' + item.NomCuenta + '</option>');
                     });
-
-                    if (bancoEncontrado) {
-                        Cta_Banco = bancoEncontrado.NomCuenta;
-                    } else {
-                        Swal.fire({
-                            title: 'No existen cuentas asignadas',
-                            text: 'No existen cuentas asignadas o no están bien establecidas las cuentas contables',
-                            type: 'warning',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                    if (data.length === 0) {
-                        Swal.fire({
-                            title: 'No existen cuentas asignadas',
-                            text: 'No existen cuentas asignadas o no están bien establecidas las cuentas contables',
-                            type: 'warning',
-                            confirmButtonText: 'OK'
-                        });
-                    }*/
-
-                $DCBanco.empty(); // Limpia el select antes de agregar nuevas opciones
-                data.forEach(function (item) {
-                    $DCBanco.append('<option value="' + item.NomCuenta + '">' + item.NomCuenta + '</option>');
+                } else {
+                    console.error("No se encontraron datos en la lista.");
+                }
+                Swal.fire({
+                    type: 'warning',
+                    title: data.mensaje,                    
                 });
+
+            },
+            error: function (xhr, status, error) {
+                console.error("Error en la solicitud AJAX:", status, error);
             }
         });
-
     }
+
     function FechaValida(fecha, MBFecha = false) {
         $.ajax({
             type: "POST",
@@ -503,7 +475,8 @@
             dataType: 'json',
             data: { 'parametros': parametros },
             success: function (data) {
-                console.log('respuesta', data.textoBanco);
+                console.log('respuesta', data);
+
                 if (data.res == 'Ok') {
                     switch (data.textoBanco) {
                         case "PICHINCHA":
@@ -516,18 +489,19 @@
                         case "COOPJEP":
                         case "PRODUBANCO":
                             procesarDatosBanco(data.mensaje, data.Nombre1);
+                            break;
                         case "GUAYAQUIL":
                             procesarDatosBanco(data.mensaje, data.Nombre1, false, data.contenido);
-                            break;
-
-                        default:
-                            procesarDatosBanco('No está definido este Banco')
-                            break;
+                            break;                        
                     }
-
                     var url3 = "../../TEMP/FACTURAS/" + data.Nombre3;
                     descargarArchivo(url3, data.Nombre3);
-
+                }
+                else{
+                    Swal.fire({
+                        title: "No está definido este Banco",
+                        type: 'error',
+                    });
                 }
 
             }
@@ -544,14 +518,16 @@
 
         if (nombre1) {
             var url = "../../TEMP/FACTURAS/" + nombre1;
+            var u = "/TEMP/FACTURAS/" +nombre1;
             descargarArchivo(url, nombre1);
-            EliminaArchivosTemporales(url);
+            EliminaArchivosTemporales(u);
         }
 
         if (nombre2) {
             var url2 = "../../TEMP/FACTURAS/" + nombre2;
+            var u2 = "/TEMP/FACTURAS/" +nombre2;
             descargarArchivo(url2, nombre2);
-            EliminaArchivosTemporales(url2);
+            EliminaArchivosTemporales(u2);
         }
         if (contenido) {
             animarEscritura(contenido);
@@ -576,6 +552,7 @@
             dataType: 'json',
             data: { 'tempFilePath': $tempFilePath },
             success: function (data) {
+                console.log(data.res2);
                 if (data.res == 0) {
                     console.log('Archivo eliminado correctamente');
                 } else {
@@ -717,7 +694,7 @@
         $('#CheqMatricula').prop('checked', false);
         $('#CheqSat').prop('checked', false);
         $('#CheqRangos').prop('checked', false);
-        
+
     }
 
 
