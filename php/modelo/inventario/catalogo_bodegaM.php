@@ -112,7 +112,7 @@ class catalogo_bodegaM
                 AND TP = '" . $parametros['tp'] . "'
                 AND Nivel = '" . $parametros['nivel'] . "'";
         }
-        
+
         return $this->db->datos($sql);
     }
 
@@ -123,6 +123,15 @@ class catalogo_bodegaM
                 AND Nivel = 00
                 AND DC = '--'
                 ORDER BY TP, Proceso";
+        return $this->db->datos($sql);
+    }
+    function ListaTipoProcesosGeneralesAux($parametros){
+        $sql = "SELECT TOP 1 TP 
+                FROM Catalogo_Proceso
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND Nivel = '" . $parametros['tp'] . "'
+                AND TP LIKE ('%')
+                ORDER BY Proceso";
         return $this->db->datos($sql);
     }
 }

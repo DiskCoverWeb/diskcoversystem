@@ -1,3 +1,4 @@
+var tp = "";
 $(document).ready(function () {
     $("input[name='cbxProdc']").prop("checked", false);
     ocultarMsjError();
@@ -468,8 +469,48 @@ function llenarListaTipoProcesosGenerales() {
 function tipoProceso() {
     //de selectTipo se obtiene la opcion seleccionada
     var tipoProceso = $('#selectTipo').val();
+    var parametros = {
+        'tp': tipoProceso
+    };
+    $.ajax({
+        type: 'POST',
+        url: '../controlador/inventario/catalogo_bodegaC.php?ListaTipoProcesosGeneralesAux=true',
+        data: { parametros: parametros },
+        success: function (data) {
+            var jsonData = JSON.parse(data);
+            if (jsonData.length > 0) {
+                var tpAux = jsonData[0].TP;
+                $('#txtConcepto').attr('placeholder', '');
+                $('#tp').val(tpAux);
+                switch (tipoProceso) {
+                    case '99':
+                        $('#txtConcepto').attr('placeholder', '');
+                        $('#pictureContainer').css('display', 'block');
+                        $('#reqFacturaContainer').css('display', 'block');
+                        $('#checkboxContainer').css('display', 'none');
+                        break;
+                    case '00':
+                        $('#txtConcepto').attr('placeholder', '');
+                        $('#tp').val('CATEGORI');
+                        $('#pictureContainer').css('display', 'none');
+                        $('#reqFacturaContainer').css('display', 'none');
+                        $('#checkboxContainer').css('display', 'block');
+                        break;
+                    default:
+                        $('#pictureContainer').css('display', 'none');
+                        $('#reqFacturaContainer').css('display', 'none');
+                        $('#checkboxContainer').css('display', 'none');
+                        break;
+                }
+            }
+            listarDatos();
+        },
+        error: function (error) {
+            console.error('Error en la solicitud AJAX:', error);
+        }
+    });
     //se verifica que tipo de TP es
-    switch (tipoProceso) {
+    /*switch (tipoProceso) {
         //Tipo de Ingreso
         case '99':
             $('#txtConcepto').attr('placeholder', '');
@@ -531,8 +572,8 @@ function tipoProceso() {
             $('#reqFacturaContainer').css('display', 'none');
             $('#checkboxContainer').css('display', 'none');
             break;
-    };
-    listarDatos();
+    };*/
+
 
 }
 
