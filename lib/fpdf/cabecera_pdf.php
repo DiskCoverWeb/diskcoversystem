@@ -876,38 +876,46 @@ class cabecera_pdf
 		$pdf->AddPage();
 		foreach ($datosAdo as $dato) {
 			// Añadir los detalles de la empresa
-			$pdf->SetFont('Arial', 'B', 12);
-			$pdf->Cell(0, 10, 'EMPRESA PARA DESARROLLO - QUITO', 0, 1, 'C');
-			$pdf->SetFont('Arial', 'B', 12);
-			$pdf->Cell(0, 10, 'DISKCOVER SYSTEM', 0, 1, 'C');
-			$pdf->SetFont('Arial', 'I', 10);
-			$texto = "QUITO, Desarrollo para programacion de DiskCover System. Telefono: 0229201331";
-			$pdf->Cell(0, 10, $texto, 0, 1, 'C');
-		
-			// Añadir la información del cliente
+			if(strtoupper($_SESSION['INGRESO']['noempr']) <> strtoupper($_SESSION['INGRESO']['Nombre_Comercial'])){
+				$pdf->SetFont('Arial', 'B', 13);
+				$pdf->Cell(0, 10, strtoupper($_SESSION['INGRESO']['noempr']) . " - " . strtoupper($_SESSION['INGRESO']['Ciudad']), 0, 1, 'C');
+				$pdf->SetFont('Arial', 'I', 8);
+				$Cadena = $_SESSION['INGRESO']['Ciudad'] . ", " . $_SESSION['INGRESO']['Direccion'] . mb_convert_encoding("Teléfono:", 'ISO-8859-1', 'UTF-8') . $_SESSION['INGRESO']['Telefono1'] . ".";
+				$pdf->Cell(0, 10, $Cadena, 0, 1, 'C');
+				$pdf->SetFont('Arial', '', 8);
+			}else{
+				$pdf->SetFont('Arial', 'B', 14);
+				$pdf->Cell(0, 10, strtoupper($_SESSION['INGRESO']['noempr']), 0, 1, 'C');
+				$pdf->SetFont('Arial', 'I', 8);
+				$Cadena = $_SESSION['INGRESO']['Ciudad'] . ", " . $_SESSION['INGRESO']['Direccion'] . mb_convert_encoding("Teléfono:", 'ISO-8859-1', 'UTF-8') . $_SESSION['INGRESO']['Telefono1'] . ".";
+				$pdf->Cell(0, 10, $Cadena, 0, 1, 'C');
+				$pdf->SetFont('Arial', '', 8);
+			}
 			$pdf->SetFont('Arial', 'B', 10);
-			$pdf->Cell(40, 10, 'ESTUDIANTE:');
+			$Cadena = mb_convert_encoding("Señores de: ", 'ISO-8859-1', 'UTF-8') . $_SESSION['INGRESO']['noempr'] . " - " . $_SESSION['INGRESO']['Ciudad'] . ".";
+			$pdf->Cell(45, 10, $Cadena, 0, 1);
+			$pdf->SetFont('Arial', '', 10);
+			$Cadena = "Reciban un cordial saludo de quienes conformamos DiskCover System, por medio de la presente le informamos a ustedes que el sistema de pagos es con el " .  mb_convert_encoding("código ", 'ISO-8859-1', 'UTF-8') . "siguiente: ";
+			$pdf->MultiCell(0, 5, $Cadena, 0, 'J');
+			$pdf->SetFont('Arial', 'B', 10);
+			$pdf->Cell(40, 10, 'ESTUDIANTE: ', 0, 0);
+			$pdf->SetFont('Arial', '', 10);
+			$pdf->Cell(40, 10, $dato['Cliente'], 0, 1);
+			$pdf->SetFont('Arial', 'B', 10);
+			$pdf->Cell(40, 10, mb_convert_encoding("DIRECCIÓN: ", 'ISO-8859-1', 'UTF-8'), 0, 0);
 			$pdf->SetFont('Arial', '', 10);
 			$pdf->SetX(37);
-			$pdf->Cell(40, 10, $dato['Cliente']);
-			$pdf->Ln(10);
+			$pdf->Cell(40, 10, $dato['Direccion'], 0, 1);
 			$pdf->SetFont('Arial', 'B', 10);
-			$pdf->Cell(40, 10, 'DIRECCION:');
-			$pdf->SetFont('Arial', '', 10);
-			$pdf->SetX(37);
-			$pdf->Cell(40, 10, $dato['Direccion']);
-			$pdf->Ln(10);
-			$pdf->SetFont('Arial', 'B', 10);
-			$pdf->SetFont('Arial', 'B', 10);
-			$pdf->Cell(40, 10, 'CODIGO DEL BANCO No.:  ', 0, 0); // El tercer parámetro '0' indica que no queremos que el cursor se mueva a la siguiente línea después de esta celda.
+			$pdf->Cell(40, 10, mb_convert_encoding("CÓDIGO DEL BANCO:", 'ISO-8859-1', 'UTF-8'), 0, 0); // El tercer parámetro '0' indica que no queremos que el cursor se mueva a la siguiente línea después de esta celda.
 			$pdf->SetFont('Arial', '', 16);
 			$pdf->SetX(55);
 			$pdf->Cell(45, 10, $dato['CI_RUC'], 0, 1);
 			// Mensaje de cierre
 			$pdf->SetFont('Arial', '', 10);
-			$pdf->Cell(0, 10, 'Agradecemos su comprension y atencion a la presente.', 0, 1);
+			$pdf->Cell(0, 10, mb_convert_encoding("Agradecemos su comprensión y atención a la presente.", 'ISO-8859-1', 'UTF-8'), 0, 1);
 			$pdf->Cell(0, 10, 'Atentamente, ', 0, 1);
-			$pdf->Cell(0, 10, 'Vaca Prieto Walter Jalil ', 0, 1);
+			$pdf->Cell(0, 10, $_SESSION['INGRESO']['Gerente'], 0, 1);
 			// Obtener la posición actual del cursor en Y
 			$y = $pdf->GetY();
 			// Dibujar la línea justo debajo del último texto
