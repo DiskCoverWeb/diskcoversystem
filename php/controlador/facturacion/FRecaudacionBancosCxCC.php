@@ -72,7 +72,7 @@ if (isset($_GET['RecibirAbonos'])) {
 
     if (isset($_FILES['archivoBanco']) && $_FILES['archivoBanco']['error'] == UPLOAD_ERR_OK) {
         $archivo = $_FILES['archivoBanco'];
-        $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/ABONOS/";
+        $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/BANCO/ABONOS/";
         if (!is_dir($carpetaDestino)) {
             mkdir($carpetaDestino, 0777, true);
         }
@@ -90,7 +90,7 @@ if (isset($_GET['VisualizarArchivo'])) {
     $parametros = array();
     if (isset($_FILES['archivoBanco']) && $_FILES['archivoBanco']['error'] == UPLOAD_ERR_OK) {
         $archivo = $_FILES['archivoBanco'];
-        $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/ABONOS/";
+        $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/BANCO/ABONOS/";
         if (!is_dir($carpetaDestino)) {
             mkdir($carpetaDestino, 0777, true);
         }
@@ -432,7 +432,7 @@ class FRecaudacionBancosCxCC
         // Facturas Emitidas del mes
         // Generacion del Resumen de la facturacion del mes
         $Tabulador = ";";
-        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/";
         $RutaGeneraFile = strtoupper($directorioBase . "RESUMEN_MES_" . substr(mesesLetras(date('m')), 0, 3) . "-" . date('Y') . "_" . $Cta_Bancaria . ".csv");
         $NumFileFacturas = fopen($RutaGeneraFile, "w");
         $Contador = 0;
@@ -1092,7 +1092,7 @@ class FRecaudacionBancosCxCC
         $Factura_No = 0;
         $SumaBancos = 0;
 
-        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/";
         // Verificar si el directorio base existe, si no, crearlo
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
@@ -1258,7 +1258,7 @@ class FRecaudacionBancosCxCC
             $Traza = str_replace("/", "-", $MBFechaI);
         }
 
-        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/";
         // Verificar si el directorio base existe, si no, crearlo
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
@@ -1321,7 +1321,7 @@ class FRecaudacionBancosCxCC
             $Traza = str_replace("/", "-", $MBFechaI);
         }
 
-        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/";
         // Verificar si el directorio base existe, si no, crearlo
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
@@ -1406,7 +1406,7 @@ class FRecaudacionBancosCxCC
         $AdoPendiente = $parametros['AdoPendiente'];
         $Costo_Banco = $parametros['Costo_Banco'];
 
-        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/";
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
         }
@@ -1474,7 +1474,7 @@ class FRecaudacionBancosCxCC
             }
         }
         fclose($NumFileFacturas);
-        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/";
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
         }
@@ -1592,7 +1592,7 @@ class FRecaudacionBancosCxCC
         $Contador = 0;
         $Factura_No = 0;
 
-        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/";
         // Verificar si el directorio base existe, si no, crearlo
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
@@ -1677,7 +1677,7 @@ class FRecaudacionBancosCxCC
         //$MBFechaI = ;
         $MiFecha = BuscarFecha($MBFechaF);
 
-        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/";
         // Verificar si el directorio base existe, si no, crearlo
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
@@ -1799,7 +1799,7 @@ class FRecaudacionBancosCxCC
         $MBFechaF = $parametros['MBFechaF'];
 
         $AdoFactura = $this->modelo->sqlCoopJep($CheqMatricula, $MBFechaI, $MBFechaF);
-        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/";
         // Verificar si el directorio base existe, si no, crearlo
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
@@ -1899,7 +1899,7 @@ class FRecaudacionBancosCxCC
         $Contador = 0;
         $Factura_No = 0;
 
-        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/";
         // Verificar si el directorio base existe, si no, crearlo
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
@@ -1976,7 +1976,7 @@ class FRecaudacionBancosCxCC
         $AdoPendiente = $parametros['AdoPendiente'];
         $Costo_Banco = $parametros['Costo_Banco'];
 
-        $directorioBase = dirname(__DIR__, 3) . "/TEMP/FACTURAS/";
+        $directorioBase = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/";
         // Verificar si el directorio base existe, si no, crearlo
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
