@@ -48,7 +48,7 @@ class egreso_alimentosM
 
 		return $this->db->datos($sql);
 	}
-	function buscar_producto()
+	function buscar_producto($query=false,$id=false)
 	{
 		$sql = "SELECT TK.*,C.Cliente,CP.Producto,CP.Unidad 
 			FROM Trans_Kardex TK
@@ -58,8 +58,44 @@ class egreso_alimentosM
 			AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 			AND TK.Item = CP.Item
 			AND TK.Periodo = CP.Periodo
-			AND TK.T ='E'  ";
+			AND TK.T ='E' ";
+			if($query)
+			{
+				$sql.=" AND TK.Codigo_Barra='".$query."'";
+			}
+			if($id)
+			{
+				$sql.=" AND TK.ID='".$id."'";
+			}
 		return $this->db->datos($sql);
+	}
+
+	function buscar_producto_egreso($query=false,$id=false)
+	{
+		$sql = "SELECT TK.*,C.Cliente,CP.Producto,CP.Unidad 
+			FROM Trans_Kardex TK
+			INNER JOIN Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv 
+			INNER JOIN Clientes C on TK.Codigo_P = C.Codigo
+			WHERE TK.Item = '".$_SESSION['INGRESO']['item']."'
+			AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+			AND TK.Item = CP.Item
+			AND TK.Periodo = CP.Periodo
+			AND TK.T ='S' ";
+			if($query)
+			{
+				$sql.=" AND TK.Codigo_Barra='".$query."'";
+			}
+			if($id)
+			{
+				$sql.=" AND TK.ID='".$id."'";
+			}
+		return $this->db->datos($sql);
+	}
+
+	function eliminar($id)
+	{
+		$sql = "DELETE FROM Trans_Kardex WHERE ID = '".$id."'";
+		return $this->db->String_Sql($sql);
 	}
 
 }

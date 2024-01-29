@@ -3,7 +3,23 @@
   $(document).ready(function () {
   	areas();  
   	motivo_egreso()	
+  	lista_egreso();
   })
+
+
+  function eliminar_egreso(id)
+  {
+ 	$.ajax({
+	    type: "POST",
+       url:   '../controlador/inventario/egreso_alimentosC.php?eliminar_egreso=true',
+	     data:{id:id},
+       dataType:'json',
+	    success: function(data)
+	    {
+	    	lista_egreso();
+	    }
+	});
+  }
 
    function areas(){
 	  $('#ddl_areas').select2({
@@ -56,14 +72,59 @@
 		    success: function(data)
 		    {
 		    	data = data[0];
-		    	$('#txt_cod_producto').val(data.Codigo_Inv)
+
+		    	$('#txt_id').val(data.ID)
+		    	$('#txt_cod_producto').val(data.Codigo_Barra)
 				$('#txt_donante').val(data.Cliente)
 				$('#txt_grupo').val(data.Producto)
 				$('#txt_stock').val(data.Entrada)
 				$('#txt_unidad').val(data.Unidad)
-		    	console.log(data);
 		    }
 		});
+	}
+
+	function add_egreso()
+	{
+		var parametros = 
+		{
+			'codigo':$('#txt_cod_producto').val(),
+			'id':$('#txt_id').val(),
+			'donante':$('#txt_donante').val(),
+			'grupo':$('#txt_grupo').val(),
+			'stock':$('#txt_stock').val(),
+			'unidad':$('#txt_unidad').val(),
+			'cantidad':$('#txt_cantidad').val(),
+			'fecha':$('#txt_fecha').val(),
+		}
+	 	$.ajax({
+		    type: "POST",
+	       	url:   '../controlador/inventario/egreso_alimentosC.php?add_egresos=true',
+		    data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+		    	if(data==1)
+		    	{
+		    		Swal.fire("Ingresado","","success");
+		    		lista_egreso();
+		    	}		    	
+		    }
+		});
+
+	}
+	function lista_egreso()
+	{		
+	 	$.ajax({
+		    type: "POST",
+	       	url:   '../controlador/inventario/egreso_alimentosC.php?listar_egresos=true',
+		    // data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+		    	$('#tbl_asignados').html(data);	    	
+		    }
+		});
+
 	}
   	
    
@@ -98,9 +159,9 @@
 	<div class="col-sm-12">		
 		<div class="box">
 			<form id="form_correos">
-			<div class="box-body" style="background: antiquewhite;">					
+			<div class="box-body" style="background: antiquewhite;">		
+			<form id="form_datos">			
 				<div class="row">	
-
 					<!-- <div class="col-sm-9"></div> -->
 					<div class="col-sm-3 col-md-3">
 						<div class="form-group">
@@ -122,7 +183,7 @@
 							<br>
 							<b>Area de egreso:</b>
 							<select class="form-control" id="ddl_areas" name="ddl_areas">
-					           	<option>Seleccione</option>
+					           	<option value="">Seleccione</option>
 					        </select>
 						</div>				        
 				    </div>
@@ -136,7 +197,7 @@
 							<br>
 		            		<b>Motivo de egreso</b>								
 							<select class="form-control" id="ddl_motivo" name="ddl_motivo">
-					           	<option>Seleccione</option>
+					           	<option value="">Seleccione</option>
 					        </select>
 						</div>
 					</div>
@@ -149,7 +210,7 @@
 							</div>
 							<br>
 							<b>Detalle de egreso:</b>
-	             			<input type="" class="form-control input-xs" id="txt_cant" name="txt_cant" readonly>	
+	             			<input type="" class="form-control input-xs" id="txt_cant" name="txt_cant">	
 	             		</div>
 					</div>
 					<div class="col-sm-3">
@@ -162,7 +223,8 @@
 				<div class="row">
 					<div class="col-sm-3">
 						<b>Codigo productos</b>
-						<input type="" class="form-control input-sm" id="txt_cod_producto" style="font-size: 20px;" name="txt_cod_producto" onblur="buscar_producto()">								
+						<input type="" class="form-control input-sm" id="txt_cod_producto" style="font-size: 17px;" name="txt_cod_producto" onblur="buscar_producto()">			
+						<input type="hidden" id="txt_id" name="">								
 					</div>	
 					<div class="col-sm-3">
 						<b>Proveedor / Donante</b>
@@ -171,7 +233,7 @@
 					</div>														
 					<div class="col-sm-3">
 						<b>Grupo de producto</b>
-						<input type="" class="form-control input-sm" id="txt_grupo" name="txt_grupo" onblur="buscar_ruta()">	
+						<input type="" class="form-control input-sm" id="txt_grupo" name="txt_grupo">	
 								
 					</div>	
 					<div class="col-sm-1">
@@ -185,16 +247,17 @@
 					</div>	
 					<div class="col-sm-1">
 						<b>Cantidad</b>
-								<input type="" class="form-control input-sm" id="txt_cantidad" style="font-size: 20px;" name="txt_cantidad" onblur="buscar_ruta()">									
+								<input type="" class="form-control input-sm" id="txt_cantidad" style="font-size: 17px;" name="txt_cantidad">									
 					</div>	
 				</div>
 				<div class="row">
 					<br>
 					<div class="col-sm-12 text-right">
 						<button class="btn btn-primary btn-sm"><b>Borrar</b></button>
-						<button class="btn btn-primary btn-sm"><b>Agregar</b></button>
+						<button type="button" class="btn btn-primary btn-sm" onclick="add_egreso()"><b>Agregar</b></button>
 					</div>
-				</div>
+				</div>			
+			</form>
 				<hr>
 				<div class="row">		
 					<div class="col-sm-12">

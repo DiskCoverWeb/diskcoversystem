@@ -78,6 +78,7 @@ class autorizacion_sri
 	    //-1 para no autorizados y devueltas
 	    // 2 para devueltas
 	    //-2 no existe la factura
+	    //-3 la conexion al sri no esta optima
 	    // texto del erro en forma de matris
 		$cabecera['ambiente']=$_SESSION['INGRESO']['Ambiente'];
 	    $cabecera['ruta_ce']=$_SESSION['INGRESO']['Ruta_Certificado'];
@@ -322,7 +323,14 @@ class autorizacion_sri
 
 			   		 }else 
 			   		 {
-			   		 	// print_r('expressiondd');die();
+			   		 	// if($validar_autorizado==2)
+			   		 	// {
+			   		 	// 	$ruta_enviados=dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Enviados/'.$cabecera['ClaveAcceso'].'.xml';
+			   		 	// 	if(!file_exists($ruta_enviados))
+			   		 	// 	{
+			   		 	// 		return -3;
+			   		 	// 	}
+			   		 	// }
 			   		 	if($validar_autorizado==1)
 			   		 	{
 			   		 		 $this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion'],$cabecera['Fecha'],$datos_fac[0]['CodigoC']);

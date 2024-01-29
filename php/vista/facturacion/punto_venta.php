@@ -712,12 +712,23 @@ if (isset($_GET['tipo'])) {
 
 					})
 				} else if (data.respuesta == -1) {
-					Swal.fire(data.text, '', 'error').then(function () {
-						var url = '../../TEMP/' + data.pdf + '.pdf';
-						window.open(url, '_blank');
-						AdoLinea();
-						eliminar_linea('', '');
-					});
+					if(data.text!=-3)
+					{
+						Swal.fire(data.text, '', 'error').then(function () {
+							var url = '../../TEMP/' + data.pdf + '.pdf';
+							window.open(url, '_blank');
+							AdoLinea();
+							eliminar_linea('', '');
+						});
+					}else
+					{
+						Swal.fire("Conexion con el sri Inestable", '', 'error').then(function () {
+							var url = '../../TEMP/' + data.pdf + '.pdf';
+							window.open(url, '_blank');
+							AdoLinea();
+							eliminar_linea('', '');
+						});
+					}
 				} else if (data.respuesta == 2) {
 					Swal.fire('XML devuelto', '', 'error');
 				}
