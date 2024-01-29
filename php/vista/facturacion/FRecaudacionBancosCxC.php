@@ -230,7 +230,7 @@
     function Case_Banco() {
 
         $("#miPanel").css("background-color", "rgb(255,255,255)");
-        //$("#miLogo").attr("src", "../../img/png/logoBancoBolivariano.png");
+        $("#miLogo").attr("src", "../../img/png/FRecaudacionBancosPreFa/LogosBancos/OtrosBancosLogo.png");
 
         var selectElement = $('#DCEntidad');
         selectElement.change(function () {
@@ -464,7 +464,7 @@
                             procesarDatosBanco(data.mensaje, data.Nombre1, false, data.contenido);
                             break;                        
                     }
-                    var url3 = "../../TEMP/FACTURAS/" + data.Nombre3;
+                    var url3 = "../../TEMP/BANCO/FACTURAS/" + data.Nombre3;
                     descargarArchivo(url3, data.Nombre3);
                 }
                 else{
@@ -487,15 +487,15 @@
         });
 
         if (nombre1) {
-            var url = "../../TEMP/FACTURAS/" + nombre1;
-            var u = "/TEMP/FACTURAS/" +nombre1;
+            var url = "../../TEMP/BANCO/FACTURAS/" + nombre1;
+            var u = "/TEMP/BANCO/FACTURAS/" +nombre1;
             descargarArchivo(url, nombre1);
             EliminaArchivosTemporales(u);
         }
 
         if (nombre2) {
-            var url2 = "../../TEMP/FACTURAS/" + nombre2;
-            var u2 = "/TEMP/FACTURAS/" +nombre2;
+            var url2 = "../../TEMP/BANCO/FACTURAS/" + nombre2;
+            var u2 = "/TEMP/BANCO/FACTURAS/" +nombre2;
             descargarArchivo(url2, nombre2);
             EliminaArchivosTemporales(u2);
         }
@@ -661,12 +661,6 @@
         $('#CheqMatricula').prop('checked', false);
         $('#CheqSat').prop('checked', false);
         $('#CheqRangos').prop('checked', false);
-
     }
-
-
-
-
-
 
 </script>
