@@ -2894,28 +2894,31 @@ function imprimirDocEle_guia($datos,$detalle,$educativo,$matri=false,$nombre="",
 	{
 		$logo=$_SESSION['INGRESO']['Logo_Tipo'];
 		//si es jpg
-		$src = __DIR__ . '/../../img/logotipos/'.$logo.'.jpg'; 
-		if (@getimagesize($src)) 
-		{ 
-			$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.jpg',40,22,80,40,'','https://www.discoversystem.com');
-		}
-		//si es gif
-		$src = __DIR__ . '/../../img/logotipos/'.$logo.'.gif'; 
-		if (@getimagesize($src)) 
-		{ 
-			$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.gif',40,22,80,40,'','https://www.discoversystem.com');
-		}
-		//si es png
-		$src = __DIR__ . '/../../img/logotipos/'.$logo.'.png'; 
-		if (@getimagesize($src)) 
-		{ 
-			$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,22,80,40,'','https://www.discoversystem.com');
-		}
+		try {
+			$src = dirname(__DIR__ ,2).'/img/logotipos/'.$logo.'.jpg'; 
+			if (@getimagesize($src)) 
+			{ 
+				$pdf->Image($src,40,22,80,40,'','https://www.discoversystem.com');
+			}
+			//si es gif		
+			$src = dirname(__DIR__ ,2).'/img/logotipos/'.$logo.'.gif'; 
+			if (@getimagesize($src)) 
+			{ 
+				$pdf->Image($src,40,22,80,40,'','https://www.discoversystem.com');
+			}
+			//si es png		
+			$src = dirname(__DIR__ ,2).'/img/logotipos/'.$logo.'.png'; 
+			if (@getimagesize($src)) 
+			{ 
+				$pdf->Image($src,40,22,80,40,'','https://www.discoversystem.com');						
+			}
+		} catch (Exception $e) {	}			
+				
 	}
 	else
 	{
 		$logo="diskcover";
-		$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,22,80,40,'','https://www.discoversystem.com');
+		$pdf->Image(dirname(__DIR__ ,2).'/img/logotipos/'.$logo.'.png',40,22,80,40,'','https://www.discoversystem.com');
 	}
 
 	$pdf->Ln(60);
