@@ -796,6 +796,7 @@ async function datos_empresa()
 			{
 				$('#img_logo').prop('src','../../img/logotipos/'+empresa2.Logo_Tipo);
 			}
+			$('#img_foto_name').text(empresa2.Logo_Tipo);
 			if(empresa2.Num_CD==1){ $('#DM').prop('checked', true); }else{ $('#DS').prop('checked', true); }
 
             if(empresa2.Num_CI==1){ $('#IM').prop('checked', true); }else{ $('#IS').prop('checked', true); }
@@ -896,10 +897,10 @@ async function datos_empresa()
 			$('#txtLeyendaImpresora').val(empresa2.LeyendaFAT);
 			
 
-		},error()
-		{
-			$('#myModal_espera').modal('hide');
-		}
+		},error: function (jqXHR, textStatus, errorThrown) {
+           $('#myModal_espera').modal('hide');
+          }
+
 	});
   }
 
@@ -1459,7 +1460,8 @@ async function datos_empresa()
 		                    <div class="col-md-4">                                        
 		                        <div class="box-body">
 		                        <img src="../../img/logotipos/sin_img.jpg" id="img_logo" name="img_logo" style="width:316px;height:158px; border:1px solid"/>
-		                        </div>                                        
+		                        <p><b>Nombre: </b><span id="img_foto_name"></span></p>   
+		                        </div>                                     
 		                    </div>
 		                </div>
 		                <div class="row">
