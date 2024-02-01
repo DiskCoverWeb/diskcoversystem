@@ -133,7 +133,7 @@
 
                }else
                {
-                cargar_tb2();
+               	datos_empresa();
                } 
                $('#myModal_espera').modal('hide');
             }
@@ -794,7 +794,7 @@ async function datos_empresa()
 
 			if(empresa2.Logo_Tipo!='' && empresa2.Logo_Tipo!='.')
 			{
-				$('#img_logo').prop('src','../../img/logotipos/'+empresa2.Logo_Tipo+'.png');
+				$('#img_logo').prop('src','../../img/logotipos/'+empresa2.Logo_Tipo);
 			}
 			if(empresa2.Num_CD==1){ $('#DM').prop('checked', true); }else{ $('#DS').prop('checked', true); }
 
@@ -896,6 +896,9 @@ async function datos_empresa()
 			$('#txtLeyendaImpresora').val(empresa2.LeyendaFAT);
 			
 
+		},error()
+		{
+			$('#myModal_espera').modal('hide');
 		}
 	});
   }
