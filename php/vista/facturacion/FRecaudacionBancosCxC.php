@@ -1,196 +1,212 @@
-<style type="text/css">
-    .miPanel {
-        background-color: #5bc0de;
-    }
+<html>
+<!--
+    AUTOR DE RUTINA	: Dallyana Vanegas
+    FECHA CREACION	: 03/01/2024
+    FECHA MODIFICACION: 29/01/2024
+    DESCIPCION : Clase que se encarga de manejar la interfaz de la pantalla de recaudacion de bancos CxC    
+ -->
 
-    #TxtFile {
-        resize: none;
-        background-color: black;
-        color: white;
-        border: 1px solid #ccc;
-        font-size: 16px;
-        font-family: 'Courier New', Courier, monospace;
-        overflow-x: auto;
-        white-space: nowrap;
-    }
-</style>
+<head>
+    <style type="text/css">
+        .miPanel {
+            background-color: #5bc0de;
+        }
 
-<div>
-    <div class="row" style="margin:5px; padding-top:10px; color:black;">
-        <div class="col-sm-2 col-xs-12">
-            <div class="col">
-                <a href="./inicio.php?mod=<?php echo @$_GET['mod']; ?>" title="Salir de modulo" class="btn btn-default">
-                    <img src="../../img/png/salire.png" width="25" height="30">
-                </a>
-            </div>
-            <div class="col">
-                <a href="javascript:void(0)" id="btnVerArchivo" title="Visualizar" class="btn btn-default">
-                    <img src="../../img/png/visual.png" width="25" height="30">
-                </a>
+        #TxtFile {
+            resize: none;
+            background-color: black;
+            color: white;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div class="row" style="margin:5px; padding-top:10px; color:black;">
+            <div class="col-sm-2 col-xs-12">
+                <div class="col">
+                    <a href="./inicio.php?mod=<?php echo @$_GET['mod']; ?>" title="Salir de modulo"
+                        class="btn btn-default">
+                        <img src="../../img/png/salire.png" width="25" height="30">
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="javascript:void(0)" id="btnVerArchivo" title="Visualizar" class="btn btn-default">
+                        <img src="../../img/png/visual.png" width="25" height="30">
+                    </a>
+                </div>
+
+                <div class="col">
+                    <a href="javascript:void(0)" id="EnviarRubros" title="Enviar Rubros" class="btn btn-default"
+                        onclick="Enviar_Rubros()">
+                        <img src="../../img/png/enviarRubros.png" width="25" height="30">
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="javascript:void(0)" id="btnRecibirAbonos" title="Recibir Abonos" class="btn btn-default">
+                        <img src="../../img/png/recibirRubros.png" width="25" height="30">
+                    </a>
+                </div>
             </div>
 
-            <div class="col">
-                <a href="javascript:void(0)" id="EnviarRubros" title="Enviar Rubros" class="btn btn-default"
-                    onclick="Enviar_Rubros()">
-                    <img src="../../img/png/enviarRubros.png" width="25" height="30">
-                </a>
-            </div>
-            <div class="col">
-                <a href="javascript:void(0)" id="btnRecibirAbonos" title="Recibir Abonos" class="btn btn-default">
-                    <img src="../../img/png/recibirRubros.png" width="25" height="30">
-                </a>
+            <div class="col-sm-10 col-xs-12">
+                <div class="col-sm-4">
+                    <label for="DCEntidad">ENTIDAD FINANCIERA</label>
+                    <select class="form-control input-xs" name="DCEntidad" id="DCEntidad" onchange="DCEntidad">
+                        <option value="">Seleccione</option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <div class="row">
+                        <label for="CheqRangos" class="col control-label">
+                            <input type="checkbox" name="CheqRangos" id="CheqRangos"> Procesar por Rangos Grupos
+                        </label>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <select class="form-control input-xs" name="DCGrupoI" id="DCGrupoI" style="display:none">
+                                <option value="">Seleccione</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <select class="form-control input-xs" name="DCGrupoF" id="DCGrupoF" style="display:none">
+                                <option value="">Seleccione</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <label>ORDEN No.</label>
+                    <input type="text" name="TxtOrden" id="TxtOrden" placeholder="0" size="4" value=0>
+                </div>
+                <div class="col-sm-4">
+                    <label for="DCBanco">CUENTA A LA QUE SE VA ACREDITAR LOS ABONOS</label>
+                    <select class="form-control input-xs" name="DCBanco" id="DCBanco" onchange="DCBanco">
+                        <option value="">Seleccione</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <div class="col-sm-10 col-xs-12">
-            <div class="col-sm-4">
-                <label for="DCEntidad">ENTIDAD FINANCIERA</label>
-                <select class="form-control input-xs" name="DCEntidad" id="DCEntidad" onchange="DCEntidad">
-                    <option value="">Seleccione</option>
-                </select>
-            </div>
-            <div class="col-sm-3">
-                <div class="row">
-                    <label for="CheqRangos" class="col control-label">
-                        <input type="checkbox" name="CheqRangos" id="CheqRangos"> Procesar por Rangos Grupos
-                    </label>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <select class="form-control input-xs" name="DCGrupoI" id="DCGrupoI" style="display:none">
-                            <option value="">Seleccione</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-6">
-                        <select class="form-control input-xs" name="DCGrupoF" id="DCGrupoF" style="display:none">
-                            <option value="">Seleccione</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-1">
-                <label>ORDEN No.</label>
-                <input type="text" name="TxtOrden" id="TxtOrden" placeholder="0" size="4" value=0>
-            </div>
-            <div class="col-sm-4">
-                <label for="DCBanco">CUENTA A LA QUE SE VA ACREDITAR LOS ABONOS</label>
-                <select class="form-control input-xs" name="DCBanco" id="DCBanco" onchange="DCBanco">
-                    <option value="">Seleccione</option>
-                </select>
-            </div>
-        </div>
-    </div>
 
-
-    <div class="row" style="margin:5px; padding-top:10px; color:black;">
-        <div id="miPanel">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-sm-4">
-                        <img id="miLogo" src="" class="img-fluid" width="75%" height="20%">
-                    </div>
-                    <div class="col-sm-8 col-xs-12">
-                        <div class="row">
-                            <div class="col-xs-2">
-                                <label for="MBFechaI" class="control-label">Facturación</label>
-                            </div>
-                            <div class="col-xs-3">
-                                <input type="date" name="MBFechaI" id="MBFechaI"
-                                    class="form-control input-xs validateDate" onchange="" title="Facturación"
-                                    value="<?php echo date('Y-m-d') ?>">
-                            </div>
-                            <div class="col-xs-6">
-                                <label for="CheqMatricula" class="col control-label">
-                                    <input type="checkbox" name="CheqMatricula" id="CheqMatricula"> Generar Matrícula
-                                </label>
-                            </div>
-                            <div class="col-xs-1">
-                                <button class="btn" onclick=limpiarCampos() title="Limpiar Campos">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            </div>
-                            <!--div class="col-xs-1">
+        <div class="row" style="margin:5px; padding-top:10px; color:black;">
+            <div id="miPanel">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <img id="miLogo" src="" class="img-fluid" width="75%" height="20%">
+                        </div>
+                        <div class="col-sm-8 col-xs-12">
+                            <div class="row">
+                                <div class="col-xs-2">
+                                    <label for="MBFechaI" class="control-label">Facturación</label>
+                                </div>
+                                <div class="col-xs-3">
+                                    <input type="date" name="MBFechaI" id="MBFechaI"
+                                        class="form-control input-xs validateDate" onchange="" title="Facturación"
+                                        value="<?php echo date('Y-m-d') ?>">
+                                </div>
+                                <div class="col-xs-6">
+                                    <label for="CheqMatricula" class="col control-label">
+                                        <input type="checkbox" name="CheqMatricula" id="CheqMatricula"> Generar
+                                        Matrícula
+                                    </label>
+                                </div>
+                                <div class="col-xs-1">
+                                    <button class="btn" onclick=limpiarCampos() title="Limpiar Campos">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                                <!--div class="col-xs-1">
                                 <button class="btn"
                                     onclick="window.location.href='./inicio.php?mod=<?php echo @$_GET['mod']; ?>'">
                                     <i class="fa fa-close"></i>
                                 </button>
                             </div-->
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-5">
                             </div>
-                            <div class="col-xs-6">
-                                <label for="CheqPend" class="control-label">
-                                    <input type="checkbox" name="CheqPend" id="CheqPend"> Sin Deuda Pendiente
-                                </label>
+                            <div class="row">
+                                <div class="col-xs-5">
+                                </div>
+                                <div class="col-xs-6">
+                                    <label for="CheqPend" class="control-label">
+                                        <input type="checkbox" name="CheqPend" id="CheqPend"> Sin Deuda Pendiente
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-2">
-                                <label for="MBFechaF" class="control-label">Tope de pago</label>
+                            <div class="row">
+                                <div class="col-xs-2">
+                                    <label for="MBFechaF" class="control-label">Tope de pago</label>
+                                </div>
+                                <div class="col-xs-3">
+                                    <input type="date" name="MBFechaF" id="MBFechaF"
+                                        class="form-control input-xs validateDate" onchange="" title="Tope de pago"
+                                        value="<?php echo date('Y-m-d') ?>">
+                                </div>
+                                <div class="col-xs-6 cheqSatMostrar" style="display:none">
+                                    <label for="CheqSat" class="control-label">
+                                        <input type="checkbox" name="CheqSat" id="CheqSat"> Generar Matrícula
+                                    </label>
+                                </div>
                             </div>
-                            <div class="col-xs-3">
-                                <input type="date" name="MBFechaF" id="MBFechaF"
-                                    class="form-control input-xs validateDate" onchange="" title="Tope de pago"
-                                    value="<?php echo date('Y-m-d') ?>">
-                            </div>
-                            <div class="col-xs-6 cheqSatMostrar" style="display:none">
-                                <label for="CheqSat" class="control-label">
-                                    <input type="checkbox" name="CheqSat" id="CheqSat"> Generar Matrícula
-                                </label>
-                            </div>
-                        </div>
 
+                        </div>
                     </div>
-                </div>
-                <div class="row" style="margin:20px;">
-                    <textarea class="form-control" id="TxtFile" rows="10"></textarea>
-                </div>
+                    <div class="row" style="margin:20px;">
+                        <textarea class="form-control" id="TxtFile" rows="10"></textarea>
+                    </div>
 
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="modalSubirArchivo">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">RECIBIR RUBROS</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <input class="form-control" type="file" id="fileInput" accept=".txt">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" id="btnSubirArchivo">Aceptar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="modalVerArchivo">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">VISUALIZAR ABONOS</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <input class="form-control" type="file" id="fileInput2" accept=".txt">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" id="btnVerArchivoSi">Aceptar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
-    <div class="modal" id="modalSubirArchivo">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">RECIBIR RUBROS</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <input class="form-control" type="file" id="fileInput" accept=".txt">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="btnSubirArchivo">Aceptar</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                </div>
+</body>
 
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="modalVerArchivo">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">VISUALIZAR ABONOS</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <input class="form-control" type="file" id="fileInput2" accept=".txt">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="btnVerArchivoSi">Aceptar</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</div>
+</html>
 
 <script type="text/javascript">
 
@@ -350,7 +366,7 @@
                 }
                 Swal.fire({
                     type: 'warning',
-                    title: data.mensaje,                    
+                    title: data.mensaje,
                 });
 
             },
@@ -390,14 +406,14 @@
             success: function (datos) {
             }
         });
-    }  
+    }
 
     function AdoAux() {
         $.ajax({
             type: "POST",
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?AdoAux=true',
             dataType: 'json',
-            success: function (datos) {                
+            success: function (datos) {
             }
         });
     }
@@ -407,7 +423,7 @@
             type: "POST",
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?AdoProducto=true',
             dataType: 'json',
-            success: function (datos) {               
+            success: function (datos) {
             }
         });
     }
@@ -462,12 +478,12 @@
                             break;
                         case "GUAYAQUIL":
                             procesarDatosBanco(data.mensaje, data.Nombre1, false, data.contenido);
-                            break;                        
+                            break;
                     }
                     var url3 = "../../TEMP/BANCO/FACTURAS/" + data.Nombre3;
                     descargarArchivo(url3, data.Nombre3);
                 }
-                else{
+                else {
                     Swal.fire({
                         title: "No está definido este Banco",
                         type: 'error',
@@ -488,14 +504,14 @@
 
         if (nombre1) {
             var url = "../../TEMP/BANCO/FACTURAS/" + nombre1;
-            var u = "/TEMP/BANCO/FACTURAS/" +nombre1;
+            var u = "/TEMP/BANCO/FACTURAS/" + nombre1;
             descargarArchivo(url, nombre1);
             EliminaArchivosTemporales(u);
         }
 
         if (nombre2) {
             var url2 = "../../TEMP/BANCO/FACTURAS/" + nombre2;
-            var u2 = "/TEMP/BANCO/FACTURAS/" +nombre2;
+            var u2 = "/TEMP/BANCO/FACTURAS/" + nombre2;
             descargarArchivo(url2, nombre2);
             EliminaArchivosTemporales(u2);
         }
@@ -521,7 +537,7 @@
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?EliminaArchivosTemporales=true',
             dataType: 'json',
             data: { 'tempFilePath': $tempFilePath },
-            success: function (data) {                
+            success: function (data) {
                 if (data.res == 0) {
                     //console.log('Archivo eliminado correctamente');
                 } else {

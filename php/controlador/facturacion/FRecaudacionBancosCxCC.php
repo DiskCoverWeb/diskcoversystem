@@ -1,4 +1,11 @@
 <?php
+/** 
+ * AUTOR DE RUTINA	: Dallyana Vanegas
+ * FECHA CREACION	: 03/01/2024
+ * FECHA MODIFICACION: 29/01/2024
+ * DESCIPCION : Clase que se encarga de manejar la interfaz de la pantalla de recaudacion de bancos CxC   
+ */
+
 include(dirname(__DIR__, 2) . '/modelo/facturacion/FRecaudacionBancosCxCM.php');
 require_once(dirname(__DIR__, 3) . '/lib/phpmailer/enviar_emails.php');
 
@@ -225,14 +232,14 @@ class FRecaudacionBancosCxCC
     function Enviar_Rubros($parametros)
     {
         $MBFechaI = $parametros['MBFechaI'];
-        $MBFechaF = $parametros['MBFechaF'];  
+        $MBFechaF = $parametros['MBFechaF'];
         $CheqMatricula = $parametros['CheqMatricula'];
         $CheqPend = $parametros['CheqPend'];
         $DCBanco = $parametros['DCBanco'];
         $Cta_Bancaria = SinEspaciosDer($parametros['DCBanco']);
         $Tipo_Carga = Leer_Campo_Empresa("Tipo_Carga_Banco");
         $Costo_Banco = Leer_Campo_Empresa("Costo_Bancario");
-        
+
         $Tabulador = '';
 
         $SumaBancos = 0;
@@ -425,7 +432,7 @@ class FRecaudacionBancosCxCC
                 $res = $this->Generar_Guayaquil($parametros);
                 break;
             default:
-                $res= array('res'=>'Error');
+                $res = array('res' => 'Error');
                 break;
         }
 
@@ -482,9 +489,9 @@ class FRecaudacionBancosCxCC
 
         fclose($NumFileFacturas);
         $Nombre3 = "RESUMEN_MES_" . substr(mesesLetras(date('m')), 0, 3) . "-" . date('Y') . "_" . $Cta_Bancaria . ".csv";
-        $res['Nombre3'] = $Nombre3;        
+        $res['Nombre3'] = $Nombre3;
         return $res;
-    }    
+    }
 
     function Recibir_Abonos($parametros)
     {
@@ -1554,7 +1561,7 @@ class FRecaudacionBancosCxCC
         $TxtFile .= str_repeat("-", 90) . "\n" .
             "Total Grupos: " . $IE . "\t" . "Total Alumnos: " . $KE . "\t\t" . "Total a Recaudar USD" . "\t" . $Codigo4 . "\n";
 
-        
+
         $mensaje =
             strtoupper("BIZBANK CODIGO DEL" . str_replace("/", "-", $MBFechaI) . "_AL_" . str_replace("/", "-", $MBFechaF) . ".TXT") . " " .
             strtoupper("BIZBANK DEBITO DEL" . str_replace("/", "-", $MBFechaI) . "_AL_" . str_replace("/", "-", $MBFechaF) . ".TXT");
@@ -2156,7 +2163,7 @@ class FRecaudacionBancosCxCC
     }
 
     function EliminaArchivosTemporales($tempFilePath)
-    {        
+    {
         $basePath = dirname(__DIR__, 3);
         $fullPath = $basePath . $tempFilePath;
         if (file_exists($fullPath)) {
@@ -2166,7 +2173,7 @@ class FRecaudacionBancosCxCC
                 return ['res' => 2]; // Fallo al eliminar el archivo
             }
         } else {
-            return ['res' => 1, 'res2'=> $fullPath]; // El archivo no existe
+            return ['res' => 1, 'res2' => $fullPath]; // El archivo no existe
         }
     }
 }
