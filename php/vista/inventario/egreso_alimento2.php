@@ -1,18 +1,90 @@
 <?php date_default_timezone_set('America/Guayaquil'); ?> 
 <script type="text/javascript">
   $(document).ready(function () {
-  	
+  	lista_egreso_checking();
+  	areas();  
+  	motivo_egreso()	
   })
 
   function modal_mensaje()
   {
 	$('#myModal_mensaje').modal('show');
   }
-  function modal_motivo()
+  function modal_motivo(orden)
   {
+  	cargar_motivo_lista(orden);
   	$('#myModal_motivo').modal('show');
   }
-  	
+
+  function cargar_motivo_lista(orden)
+	{		
+		var parametros = {
+			'orden':orden
+		}
+	 	$.ajax({
+		    type: "POST",
+	       	url:   '../controlador/inventario/egreso_alimentosC.php?cargar_motivo_lista=true',
+		    data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+		    	$('#txt_motivo_lista').html(data);	
+		    }
+		});
+	}
+  
+  function lista_egreso_checking()
+	{		
+	 	$.ajax({
+		    type: "POST",
+	       	url:   '../controlador/inventario/egreso_alimentosC.php?lista_egreso_checking=true',
+		    // data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+		    	$('#tbl_asignados').html(data);	
+		    }
+		});
+	}
+
+	 function areas(){
+	  $('#ddl_areas').select2({
+	    placeholder: 'Seleccione una beneficiario',
+	    // width:'90%',
+	    ajax: {
+	      url:   '../controlador/inventario/egreso_alimentosC.php?areas=true',          
+	      dataType: 'json',
+	      delay: 250,
+	      processResults: function (data) {
+	        // console.log(data);
+	        return {
+	          results: data
+	        };
+	      },
+	      cache: true
+	    }
+	  });
+	}
+
+	function motivo_egreso(){
+	  $('#ddl_motivo').select2({
+	    placeholder: 'Seleccione una beneficiario',
+	    // width:'90%',
+	    ajax: {
+	      url:   '../controlador/inventario/egreso_alimentosC.php?motivos=true',          
+	      dataType: 'json',
+	      delay: 250,
+	      processResults: function (data) {
+	        // console.log(data);
+	        return {
+	          results: data
+	        };
+	      },
+	      cache: true
+	    }
+	  });
+	}
+	
    
 </script>
 
@@ -68,11 +140,25 @@
 							</div>
 							<br>
 							<b>Area de egreso:</b>
-							<select class="form-control" id="txt_codigo" name="txt_codigo">
+							<select class="form-control" id="ddl_areas" name="ddl_areas">
 					           	<option>Seleccione</option>
 					        </select>
 						</div>				        
 				    </div>
+				    <div class="col-sm-3">
+						<div class="input-group">
+							<div class="input-group-btn" style="padding-right:5px">
+								<button type="button" class="btn btn-default btn-sm">
+									<img src="../../img/png/transporte_caja.png" style="width: 60px;height: 60px;">
+								</button>
+							</div>
+							<br>
+		            		<b>Motivo de egreso</b>								
+							<select class="form-control" id="ddl_motivo" name="ddl_motivo">
+					           	<option value="">Seleccione</option>
+					        </select>
+						</div>
+					</div>
 				<!--	<div class="col-sm-3">
 						<div class="input-group">
 							<div class="input-group-btn" style="padding-right:5px">
@@ -133,13 +219,13 @@
 								<input type="" class="form-control input-sm" id="txt_cod_lugar" style="font-size: 20px;" name="txt_cod_lugar" onblur="buscar_ruta()">									
 					</div>	-->
 				</div>
-				<div class="row">
+				<!-- <div class="row">
 					<br>
 					<div class="col-sm-12 text-right">
 						<button class="btn btn-primary btn-sm"><b>Borrar</b></button>
 						<button class="btn btn-primary btn-sm"><b>Agregar</b></button>
 					</div>
-				</div>
+				</div> -->
 				<hr>
 				<div class="row">		
 					<div class="table-responsive">
@@ -246,7 +332,7 @@
             				<th>Total</th>
             				<th>Contabilizar</th>
             			</thead>
-            			<tbody>
+            			<tbody id="txt_motivo_lista">
             				<tr>
             					<td>1</td>
             					<td>Corporacion la favororita</td>

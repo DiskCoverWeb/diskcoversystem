@@ -1401,7 +1401,7 @@ async function datos_empresa()
 		                        <label>RUC CONTADOR:</label>
 		                        <input type="text" name="TxtRucConta" id="TxtRucConta" class="form-control input-xs" value="" onkeyup="num_caracteres('TxtRucConta',13)" autocomplete="off">
 		                    </div>
-		                </div>'
+		                </div>
 					</div>
 
 					<div class="tab-pane" id="tab_3">
@@ -1508,9 +1508,9 @@ async function datos_empresa()
 		                            </div>
 		                        </div>
 		                    </div>
-		                    <div class="col-sm-8">                        
+		                    <div class="col-sm-8" style="background-color:#ffffc0">                        
 		                        <div class="row">
-		                            <div class="col-sm-12" style="background-color:#ffffc0">
+		                            <div class="col-sm-12">
 		                                <b>|Servidor de Correos|</b>
 		                            </div>
 		                        </div>
@@ -1729,7 +1729,7 @@ async function datos_empresa()
 		                <div class="col-sm-12">
 		                    <label>LEYENDA AL FINAL DE LA IMPRESION EN LA IMPRESORA DE PUNTO DE VENTA DE DOCUMENTOS ELECTRÓNICOS</label><br>                            
 		                    <textarea name="txtLeyendaImpresora" id="txtLeyendaImpresora"class="form-control" rows="2" resize="none"></textarea>
-		                </div>';
+		                </div>
 						</div>
 					</div>
 
