@@ -45,6 +45,11 @@ if (isset($_GET['DCLinea_LostFocus'])) {
     echo json_encode($controlador->DCLinea_LostFocus($parametros));
 }
 
+if (isset($_GET['Listar_Deuda_por_Api'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Listar_Deuda_por_Api($parametros));
+}
+
 
 
 class ListarGruposC
@@ -57,7 +62,24 @@ class ListarGruposC
         $this->modelo = new ListarGruposM();
     }
 
-    public function DCLinea_LostFocus($parametros){
+    public function Listar_Deuda_por_Api($parametros)
+    {
+        $FechaTope = BuscarFecha(FechaSistema());
+        if ($parametros['CheqVenc'] <> 'false') {
+            $FechaTope = BuscarFecha($parametros['MBFechaF']);
+        }
+        $data = $this->modelo->Listar_Deuda_por_Api($parametros, $FechaTope);
+        $Total = 0;
+        if(count($data['AdoQuery']) > 0){
+            foreach($data['AdoQuery'] as $key => $value){
+                $Total += $value['Saldo_Pendiente'];
+            }
+        }
+        return array('tbl' => $data['datos'], 'Caption' => number_format($Total, 2, '.', ','), 'numRegistros' => count($data['AdoQuery']));
+    }
+
+    public function DCLinea_LostFocus($parametros)
+    {
         $FA = variables_tipo_factura();
         if (isset($parametros['FA']) && is_array($parametros['FA'])) {
             // Fusionar los valores de $FA con los valores de $parametros['FA']
@@ -78,7 +100,8 @@ class ListarGruposC
         return $this->modelo->MBFecha_LostFocus($parametros);
     }
 
-    public function Listar_Clientes_Grupo($parametros){
+    public function Listar_Clientes_Grupo($parametros)
+    {
         $AdoQuery = $this->modelo->Listar_Clientes_Grupo($parametros);
         return array('tbl' => $AdoQuery['datos'], 'numRegistros' => count($AdoQuery['AdoQuery']));
     }

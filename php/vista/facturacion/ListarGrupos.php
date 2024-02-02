@@ -5,6 +5,7 @@
     var PorDireccion = false;
     var Codigo1 = '';
     var Codigo2 = '';
+    var activeTabId = '';
 
     let FA = {
         'Factura': '.',
@@ -32,8 +33,13 @@
         $('#DCLinea').prop('disabled', true);
         PorGrupo = true;
         Listar_Grupo(false);
+        activeTabId = $('.nav-tabs .active a').attr('href') + 'Data';
 
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            activeTabId = $(e.target).attr('href') + 'Data'; // Obtiene el ID del contenido del tab activo
+        });
 
+        console.log('<?php echo $_SESSION['INGRESO']['Fecha_P12']; ?>');
         //Handle Cheq Events
         $('#CheqRangos').change(function () {
             if ($(this).is(':checked')) {
@@ -82,48 +88,31 @@
         });
 
         $('#CTipoConsulta').change(function () {
-            switch ($(this).val()) {
-                case '0':
-                    PorGrupo = true;
-                    PorDireccion = false;
-                    Listar_Grupo(false);
-                    $('#DCCliente').prop('disabled', false);
-                    break;
-                case '1':
-                    PorDireccion = true;
-                    PorGrupo = false;
-                    Listar_Grupo(true);
-                    $('#DCCliente').prop('disabled', false);
-                    break;
-                case '2':
-                    $('#DCCliente').prop('disabled', true);
-                    break;
-            }
+            CTipoConsulta($(this).val());
         });
 
-        $('#DCLinea').change(function(){
+        $('#CTipoConsulta').blur(function () {
+            CTipoConsulta($(this).val());
+        });
+
+        $('#DCLinea').change(function () {
+            DCLinea();
+        });
+
+        $('#DCLinea').blur(function () {
+            DCLinea();
+        });
+
+        $('#DCProductos').change(function () {
+            $('#myModal_espera').show();
             $('#myModal_espera').modal('show');
-            FA.Cod_CxC = $(this).val();
-            FA.Fecha = '<?php echo date('Y-m-d'); ?>';
-            var parametros = {
-                'FA': FA
-            }
-            $.ajax({
-                url: "../controlador/facturacion/ListarGruposC.php?DCLinea_LostFocus=true",
-                type: "POST",
-                dataType: 'json',
-                data: { 'parametros': parametros },
-                success: function (data) {
-                    $('#myModal_espera').modal('hide');
-                    var tmp = data.tmp.TFA;
-                    for (var key in tmp) {
-                        if (tmp.hasOwnProperty(key)) {
-                            FA[key] = tmp[key];
-                        }
-                    }
-                    $('#Label2').text(data.Caption);
-                }
-            });
+            Listar_Deuda_por_Api();
+        });
+
+        $('#DCProductos').blur(function () {
+            $('#myModal_espera').show();
+            $('#myModal_espera').modal('show');
+            Listar_Deuda_por_Api();
         });
 
         //Handle Lost Focus
@@ -191,6 +180,79 @@
 
     });
     //Definicion de metodos
+
+    function Listar_Deuda_por_Api() {
+        var parametros = {
+            'MBFechaF': $('#MBFechaF').val(),
+            'CheqRangos': $('#CheqRangos').is(':checked'),
+            'Codigo1': Codigo1,
+            'Codigo2': Codigo2,
+            'CheqVenc': $('#CheqVenc').is(':checked')
+        };
+
+        $.ajax({
+            url: "../controlador/facturacion/ListarGruposC.php?Listar_Deuda_por_Api=true",
+            type: "POST",
+            data: { 'parametros': parametros },
+            dataType: 'json',
+            success: function (response) {
+                var data = response;
+                $('#myModal_espera').modal('hide');
+                if (activeTabId != '#EpEData') {
+                    $(activeTabId).empty();
+                    $(activeTabId).html(data.tbl);
+                    $(`${activeTabId} #datos_t tbody`).css('height', '36vh');
+                    $('#TotalRegistros').text('Total Registros: ' + data.numRegistros);
+                }
+
+            }
+        });
+    }
+
+    function CTipoConsulta(caso) {
+        switch (caso) {
+            case '0':
+                PorGrupo = true;
+                PorDireccion = false;
+                Listar_Grupo(false);
+                $('#DCCliente').prop('disabled', false);
+                break;
+            case '1':
+                PorDireccion = true;
+                PorGrupo = false;
+                Listar_Grupo(true);
+                $('#DCCliente').prop('disabled', false);
+                break;
+            case '2':
+                $('#DCCliente').prop('disabled', true);
+                break;
+        }
+    }
+
+    function DCLinea() {
+        $('#myModal_espera').modal('show');
+        FA.Cod_CxC = $('#DCLinea').val();
+        FA.Fecha = $('#CheqFA').prop('checked') ? $('#MBFecha').val() : $('#MBFechaI').val();
+        var parametros = {
+            'FA': FA
+        }
+        $.ajax({
+            url: "../controlador/facturacion/ListarGruposC.php?DCLinea_LostFocus=true",
+            type: "POST",
+            dataType: 'json',
+            data: { 'parametros': parametros },
+            success: function (data) {
+                $('#myModal_espera').modal('hide');
+                var tmp = data.tmp.TFA;
+                for (var key in tmp) {
+                    if (tmp.hasOwnProperty(key)) {
+                        FA[key] = tmp[key];
+                    }
+                }
+                $('#Label2').text(data.Caption);
+            }
+        });
+    }
 
     function Listar_Clientes_Grupo() {
         var parametros = {
@@ -543,7 +605,7 @@
             </div>
             <div role="tabpanel" class="tab-pane fade" id="NdA">
                 <fieldset class="espacio">
-                    <div id="NdA">
+                    <div id="NdAData">
 
                     </div>
                 </fieldset>
@@ -551,7 +613,40 @@
             <div role="tabpanel" class="tab-pane fade" id="EpE">
                 <fieldset class="espacio">
                     <div id="EpEData">
+                        <div class="row">
+                            <div class="sol-sm-5">
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <label for="Label13" id="Label12">Remitente</label>
+                                    </div>
+                                    <div class="sol-sm-10">
+                                        <input type="text" name="Label13" id="Label13">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <label for="TxtAsunto" id="Label7">Asunto</label>
+                                    </div>
+                                    <div class="sol-sm-10">
+                                        <input type="text" name="TxtAsunto" id="TxtAsunto">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <label for="LblArchivo">Adjuntar</label>
+                                    </div>
+                                    <div class="sol-sm-10">
+                                        <input type="file" name="LblArchivo" id="LblArchivo">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sol-sm-5">
 
+                            </div>
+                            <div class="sol-sm-2">
+
+                            </div>
+                        </div>
                     </div>
                 </fieldset>
             </div>

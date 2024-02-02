@@ -108,19 +108,19 @@ class ListarGruposM
         $sql = "SELECT T,Cliente,Grupo,Direccion,Codigo,CI_RUC,Email,Email2,Fecha_N,Representante,TD_R, CI_RUC_R,DireccionT,Telefono_R,TelefonoT,EmailR,Saldo_Pendiente
                 FROM Clientes
                 WHERE Cliente <> '.' ";
-        if($_SESSION['INGRESO']['Mas_Grupos']){
+        if ($_SESSION['INGRESO']['Mas_Grupos']) {
             $sql .= " AND DirNumero = '" . $_SESSION['INGRESO']['item'] . "'";
         }
-        if($parametros['CheqRangos'] <> 'false'){
+        if ($parametros['CheqRangos'] <> 'false') {
             $sql .= " AND Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "'";
-        }else{
-            if($parametros['PorGrupo'] === 'true'){
+        } else {
+            if ($parametros['PorGrupo'] === 'true') {
                 $titulo = "LISTADO DE CLIENTES (Grupo No. " . $parametros['DCCliente'] . ")";
                 $sql .= " AND Grupo = '" . $parametros['DCCliente'] . "'";
-            }else if($parametros['PorDireccion'] === 'true'){
+            } else if ($parametros['PorDireccion'] === 'true') {
                 $titulo = "LISTADO DE CLIENTES (Direccion: " . $parametros['DCCliente'] . ")";
                 $sql .= " AND Direccion = '" . $parametros['DCCliente'] . "'";
-            }else{
+            } else {
                 $titulo = "LISTADO DE CLIENTES";
             }
         }
@@ -129,6 +129,63 @@ class ListarGruposM
         $AdoQuery = $this->db->datos($sql);
         $datos = grilla_generica_new($sql, 'Clientes', '', $titulo, false, false, false, 1, 1, 1, 100);
         return array('datos' => $datos, 'AdoQuery' => $AdoQuery);
+    }
 
+    public function Listar_Deuda_Por_Api($parametros, $FechaTope)
+    {
+        $sql = "UPDATE Clientes
+                SET Saldo_Pendiente = 0, Credito = 0
+                WHERE Codigo <> '.'";
+        Ejecutar_SQL_SP($sql);
+
+        $sql = "UPDATE Clientes
+                SET Saldo_Pendiente = (SELECT ROUND(SUM(CF.Valor-CF.Descuento-CF.Descuento2),2,0)
+                                       FROM Clientes_Facturacion As CF
+                                       WHERE CF.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                                       AND CF.Fecha <= '" . $FechaTope . "'
+                                       AND CF.Codigo = Clientes.Codigo)
+                WHERE Codigo <> '.'";
+        if ($parametros['CheqRangos'] === 'true') {
+            $sql .= " AND Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "'";
+        }
+        Ejecutar_SQL_SP($sql);
+
+        $sql = "UPDATE Clientes
+                SET Fecha_Cad = (SELECT MIN(CF.Fecha)
+                                 FROM Clientes_Facturacion As CF
+                                 WHERE CF.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                                 AND CF.Fecha <= '" . $FechaTope . "'
+                                 AND CF.Codigo = Clientes.Codigo)
+                WHERE Codigo <> '.'";
+        if ($parametros['CheqRangos'] === 'true') {
+            $sql .= " AND Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "'";
+        }
+        Ejecutar_SQL_SP($sql);
+
+        $sql = "UPDATE Clientes
+                SET Saldo_Pendiente = 0
+                WHERE Saldo_Pendiente IS NULL";
+        Ejecutar_SQL_SP($sql);
+
+        $sql = "UPDATE Clientes
+                SET Fecha_Cad = '" . $FechaTope . "'
+                WHERE Fecha_Cad IS NULL";
+        Ejecutar_SQL_SP($sql);
+
+        $sql = "UPDATE Clientes
+                SET Credito = DATEDIFF(day,Fecha_Cad,'" . $FechaTope . "')
+                WHERE Codigo <> '.'";
+        Ejecutar_SQL_SP($sql);
+
+        $sql = "SELECT Grupo, Cliente As Estudiante, CI_RUC As Cedula, Saldo_Pendiente, Credito As Dias_Mora, EmailR, Codigo
+                FROM Clientes
+                WHERE FA <> 0";
+        if ($parametros['CheqRangos'] === 'true') {
+            $sql .= " AND Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "'";
+        }
+        $sql .= "ORDER BY Grupo, Cliente";
+        $AdoQuery = $this->db->datos($sql);
+        $datos = grilla_generica_new($sql, 'Clientes', '', 'LISTADO DE CLIENTES', false, false, false, 1, 1, 1, 100);
+        return array('datos' => $datos, 'AdoQuery' => $AdoQuery);
     }
 }
