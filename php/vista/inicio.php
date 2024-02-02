@@ -293,6 +293,10 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'envio_recepcion':
 				require_once("facturacion/FRecaudacionBancosPreFa.php");
 				break;
+
+			case 'listar_clientes_grupo':
+				require_once("facturacion/ListarGrupos.php");
+				break;
 				
 			//Inventario -> Archivo -> Registro de bodegas 
 			case 'catalogoBodega':
