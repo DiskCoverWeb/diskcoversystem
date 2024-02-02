@@ -195,7 +195,7 @@ class HistorialFacturasC
         // Ordenar el array alfabéticamente
         sort($OpcBusqueda);
 
-        $ListCliente = array("Todos");        
+        $ListCliente = array("Todos");
 
         foreach ($OpcBusqueda as $opcion) {
             $ListCliente[] = $opcion;
@@ -223,7 +223,162 @@ class HistorialFacturasC
         $Cod_Marca = G_NINGUNO;
         $DescItem = G_NINGUNO;
 
-        return array('ListCliente'=>$ListCliente,'FA'=>$FA);
+        return array('ListCliente' => $ListCliente, 'FA' => $FA);
+    }
+
+    function Ventas_Productos()
+    {
+        $Opcion = 8;
+        // echo "Ventas_Productos"; // Puedes descomentar esta línea si necesitas un equivalente a MsgBox en PHP
+        $Si_No = false;
+        $Con_Costeo = " ";
+        $Mensajes = "Reporte Con Costeo ";
+        $Titulo = "Formulario de Confirmación";
+        
+        $ClaveAdministrador=false;//
+
+        if ($ClaveAdministrador()) {
+            $Si_No = true;
+        }
+
+
+        $Label2 = " Ventas";
+        $Label4 = "  ";
+        $Label3 = "  ";
+        $DGQueryCaption = "HISTORIAL DE FACTURAS Y PRODUCTOS";
+
+        $sSQL = //$this->modelo->Historico_Facturas($Si_No, $FechaIni, $FechaFin, $Con_Costeo, $CodigoInv);
+
+            $Total = 0;
+        $Abono = 0;
+        $Saldo = 0;
+
+        foreach ($sSQL as $record) {
+            if ($Si_No) {
+                $Saldo += $record["Costos"];
+            }
+            $Total += $record["Total"];
+        }
+
+        $Label2 = "Facturado";
+        $Label4 = "PVP";
+        $Label3 = "Costo";
+
+        $LabelFacturado = number_format($Total, 2, '.', ',');
+        $LabelAbonado = number_format($Abono, 2, '.', ',');
+        $LabelSaldo = number_format($Saldo, 2, '.', ',');
+
+        return $sSQL;
+    }
+
+    function ToolbarMenu_ButtonMenuClick($parametros)
+    {
+        $ButtonMenu = $parametros['ButtonMenu'];
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+        $ListCliente = $parametros['ListCliente'];
+
+        FechaValida($MBFechaI);
+        FechaValida($MBFechaF);
+        $FechaIni = BuscarFecha($MBFechaI);
+        $FechaFin = BuscarFecha($MBFechaF);
+        $CheqCxC = $parametros['CheqCxC'];
+
+        if ($CheqCxC->value == 1) {
+            $PorCxC = true;
+        }
+
+        $Mifecha = $FechaIni;
+        $FechaTexto = $FechaFin;
+        $FA['Fecha_Corte'] = $MBFechaF;
+        $FA['Factura'] = 0;
+        $FA['Fecha_Hasta'] = $MBFechaF;
+        //$TMail->Volver_Envial = false;
+
+        if ($ListCliente == "Todos") {
+            $FA['TC'] = G_NINGUNO;
+            $FA['Serie'] = G_NINGUNO;
+            $FA['Factura'] = 0;
+        }
+
+        switch ($ButtonMenu->key) {
+            case "Resumen_Prod":
+                Resumen_Productos();
+                break;
+            case "Resumen_Prod_Meses":
+                Resumen_Prod_Meses();
+                break;
+            case "ResumenVentCost":
+                Resumen_Ventas_Costos();
+                break;
+            case "Resumen_Ventas_Vendedor":
+                Resumen_Ventas_Vendedor();
+                break;
+            case "Ventas_x_Cli":
+                Ventas_Cliente();
+                break;
+            case "Ventas_Cli_x_Mes":
+                Ventas_Clientes_Por_Meses();
+                break;
+            case "VentasxProductos":
+                Ventas_Productos();
+                break;
+            case "Ventas_ResumindasxVendedor":
+                Ventas_Resumindas_x_Vendedor();
+                break;
+            case "SMAbonos_Anticipados":
+                SMAbonos_Anticipados();
+                break;
+            case "Abonos_Ant":
+                Abonos_Anticipados();
+                break;
+            case "Abonos_Erroneos":
+                Abonos_Erroneos();
+                break;
+            case "Contra_Cta":
+                Contra_Cta_Abonos();
+                break;
+            case "Por_Clientes":
+                Tipo_Consulta_CxC("C");
+                break;
+            case "Por_Facturas":
+                Tipo_Consulta_CxC("F");
+                break;
+            case "Resumen_Cartera":
+                Tipo_Consulta_CxC("R");
+                break;
+            case "Por_Vendedor":
+                Tipo_Consulta_CxC("V");
+                break;
+            case "Resumen_Vent_x_Ejec":
+                break;
+            case "CxC_Tiempo_Credito":
+                CxC_Tiempo_Credito();
+                break;
+            case "Tipo_Pago_Cliente":
+                Tipo_Pago_Cliente();
+                break;
+            case "Bajar_Excel":
+                break;
+            case "Reporte_Ventas":
+                Ventas_x_Excel();
+                break;
+            case "Reporte_Catastro":
+                Catastro_Registro_Datos_Clientes();
+                break;
+            case "Enviar_FA_Email":
+                break;
+            case "Enviar_RE_Email":
+                break;
+            case "Recibos_Anticipados":
+                Recibo_Abonos_Anticipados();
+                break;
+            case "Deuda_x_Mail":
+                Actualizar_Abonos_Facturas_SP($FA);
+                Historico_Facturas();
+                Deuda_x_Mail("FA");
+                break;
+        }
     }
 }
 ?>

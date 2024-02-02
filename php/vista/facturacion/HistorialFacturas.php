@@ -17,6 +17,14 @@
             overflow-x: auto;
             white-space: nowrap;
         }
+
+        .btn-group .btn-default {
+            height: 48px;
+        }
+
+        .btn-group .btn-default.dropdown-toggle {
+            height: 48px;
+        }
     </style>
 </head>
 
@@ -40,15 +48,34 @@
                 </a>
             </div>
             <div class="col">
-                <a href="javascript:void(0)" id="Resumen" title="Resumen de ventas" class="btn btn-default">
-                    <img src="../../img/png/bar-graph.png" width="35" height="35">
-                </a>
+                <div class="btn-group">
+                    <a href="javascript:void(0)" id="Resumen" title="Resumen de ventas" class="btn btn-default">
+                        <img src="../../img/png/bar-graph.png" width="35" height="35" alt="Icono">
+                    </a>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu" id="menuResumen">
+                    </ul>
+                </div>
             </div>
             <div class="col">
-                <a href="javascript:void(0)" id="Detalle_Abonos" title="Detalle de abonos de Facturas/Notas de ventas"
-                    class="btn btn-default">
-                    <img src="../../img/png/budget.png" width="35" height="35">
-                </a>
+                <div class="btn-group">
+                    <a href="javascript:void(0)" id="Detalle_Abonos"
+                        title="Detalle de abonos de Facturas/Notas de ventas" class="btn btn-default">
+                        <img src="../../img/png/budget.png" width="35" height="35">
+                    </a>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu" id="menuDetalleAbonos">
+                    </ul>
+                </div>
+
             </div>
             <div class="col">
                 <a href="javascript:void(0)" id="Protestado" title="Cheques protestados" class="btn btn-default">
@@ -56,9 +83,19 @@
                 </a>
             </div>
             <div class="col">
-                <a href="javascript:void(0)" id="Facturas_Clientes" title="Listado de Facturas" class="btn btn-default">
-                    <img src="../../img/png/people.png" width="35" height="35">
-                </a>
+                <div class="btn-group">
+                    <a href="javascript:void(0)" id="Facturas_Clientes" title="Listado de Facturas"
+                        class="btn btn-default">
+                        <img src="../../img/png/people.png" width="35" height="35">
+                    </a>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu" id="menuListadoFacturas">
+                    </ul>
+                </div>
             </div>
             <div class="col">
                 <a href="javascript:void(0)" id="Por_Buses" title="Listado de buses" class="btn btn-default">
@@ -96,16 +133,34 @@
                 </a>
             </div>
             <div class="col">
-                <a href="javascript:void(0)" id="Ventas_x_Excel" title="Generar las ventas por excel"
-                    class="btn btn-default">
-                    <img src="../../img/png/account.png" width="35" height="35">
-                </a>
+                <div class="btn-group">
+                    <a href="javascript:void(0)" id="Ventas_x_Excel" title="Generar las ventas por excel"
+                        class="btn btn-default">
+                        <img src="../../img/png/account.png" width="35" height="35">
+                    </a>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu" id="menuVentasxExcel">
+                    </ul>
+                </div>
             </div>
             <div class="col">
-                <a href="javascript:void(0)" id="Enviar_FA_Emails" title="Enviar por mail facturas electronicas"
-                    class="btn btn-default">
-                    <img src="../../img/png/payment-check.png" width="35" height="35">
-                </a>
+                <div class="btn-group">
+                    <a href="javascript:void(0)" id="Enviar_FA_Emails" title="Enviar por mail facturas electronicas"
+                        class="btn btn-default">
+                        <img src="../../img/png/payment-check.png" width="35" height="35">
+                    </a>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu" id="menuEnviarFAmails">
+                    </ul>
+                </div>
             </div>
             <div class="col">
                 <a href="javascript:void(0)" id="Buscar_Malla" title="Patron de busqueda" class="btn btn-default">
@@ -251,6 +306,90 @@
 
     $(document).ready(function () {
 
+        var menuResumen = [
+            { id: 'id1', opcion: 'Resumen de productos' },
+            { id: 'id2', opcion: 'Resumen de productos por meses' },
+            { id: 'id3', opcion: 'Resumen de Ventas/Costos' },
+            { id: 'id4', opcion: 'Resumen Comisiones por Vendedor' },
+            { id: 'id5', opcion: 'Ventas por Cliente' },
+            { id: 'id6', opcion: 'Ventas Clientes por Meses' },
+            { id: 'VentasxProducto', opcion: 'Ventas Clientes por Productos' },
+            { id: 'id7', opcion: 'Ventas Resumidas por Vendedor' }
+        ];
+
+        for (var i = 0; i < menuResumen.length; i++) {
+            var menuItem = menuResumen[i];
+            $('#menuResumen').append('<li><a href="#" id="' + menuItem.id + '" data-opcion="' + menuItem.opcion + '">' + menuItem.opcion + '</a></li>');
+        }
+
+        $('#menuResumen').on('click', 'li a', function () {
+            var opcionSel = $(this).data('opcion');
+            var idSel = $(this).attr('id');
+            console.log('Selected Option:', opcionSel);
+            console.log('Selected ID:', idSel);
+            if (idSel == "VentasxProducto") {
+                Swal.fire({
+                    title: 'Formulario de confirmacion',
+                    type: 'success',
+                    html: 'Reporte con costeo',
+                    confirmButtonText: 'Aceptar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#clave_supervisor').modal('show');
+                    }
+                });
+            }
+        });
+
+       // $('#clave_supervisor').modal('show');
+
+        var menuDetalleAbonos = ['Anticipados de Abonos',
+            'Contrapartida del Abonos',
+            'Errores en Abonos Anticipados',
+            'Presenta Abonos mal Procesados'
+        ];
+
+        for (var i = 0; i < menuDetalleAbonos.length; i++) {
+            $('#menuDetalleAbonos').append('<li><a href="#">' + menuDetalleAbonos[i] + '</a></li>');
+        }
+
+        var menuListadoFacturas = ['Ordenadas por Clientes',
+            'Ordenados por Facturas',
+            'CxC Clientes por Vendedor',
+            'Resumen de Ventas por Vendedor',
+            'Resumen de Cartera Detallado',
+            'Cuentas por Cobrar por Tiempo de Credito',
+            'Tipo de Pagos Clientes'
+        ];
+
+        for (var i = 0; i < menuListadoFacturas.length; i++) {
+            $('#menuListadoFacturas').append('<li><a href="#">' + menuListadoFacturas[i] + '</a></li>');
+        }
+
+        var menuVentasxExcel = ['Bajar a Excel',
+            'Reporte de Ventas',
+            'Reporte de Catastro'
+        ];
+
+        for (var i = 0; i < menuVentasxExcel.length; i++) {
+            $('#menuVentasxExcel').append('<li><a href="#">' + menuVentasxExcel[i] + '</a></li>');
+        }
+
+        for (var i = 0; i < menuListadoFacturas.length; i++) {
+            $('#menuListadoFacturas').append('<li><a href="#">' + menuListadoFacturas[i] + '</a></li>');
+        }
+
+        var menuEnviarFAmails = ['Enviar por mail Facturas Electronicas',
+            'Enviar por mail Recibos de Pago',
+            'Enviar por Mail Recibos Anticipados',
+            'Enviar Resumen de Cartera por mail'
+        ];
+
+        for (var i = 0; i < menuEnviarFAmails.length; i++) {
+            $('#menuEnviarFAmails').append('<li><a href="#">' + menuEnviarFAmails[i] + '</a></li>');
+        }
+
+
         $('#MBFechaI').blur(function () {
             let fechaI = $(this).val();
             fechaI = FechaValida(fechaI);
@@ -267,6 +406,8 @@
 
         Form_Activate();
 
+
+
     });
 
     //var globalFA;
@@ -274,7 +415,6 @@
         var valorSeleccionado = $("#ListCliente").val();
         //console.log("Valor seleccionado:", valorSeleccionado);
     });
-
 
     function toggleDCCxC() {
         if ($('#CheqAbonos').is(":checked")) {
