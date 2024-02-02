@@ -1,10 +1,47 @@
 <?php date_default_timezone_set('America/Guayaquil'); ?> 
 <script type="text/javascript">
   $(document).ready(function () {
+  	validar_ingreso();
   	areas();  
   	motivo_egreso()	
   	lista_egreso();
   })
+
+
+  function validar_ingreso()
+  {
+  	$.ajax({
+		    type: "POST",
+	       	url:   '../controlador/inventario/egreso_alimentosC.php?listar_egresos=true',
+		    // data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+
+		    	$('#tbl_asignados').html(data);	 
+		    	if(!data=='')
+		    	{ 
+	    		Swal.fire({
+	                 title: 'Datos entontrados?',
+	                 text: "Se encontraron datos sin guardar desea cargarlos?",
+	                 type: 'warning',
+	                 showCancelButton: true,
+	                 confirmButtonColor: '#3085d6',
+	                 cancelButtonColor: '#d33',
+	                 confirmButtonText: 'Si!'
+	               }).then((result) => {
+	                 if (result.value!=true) {
+
+	                  	
+	                 	eliminar_egreso_all();
+	                 }
+	               })
+		    	} 	
+		    }
+		});
+
+
+  }
 
 
   function eliminar_egreso(id)
@@ -13,6 +50,21 @@
 	    type: "POST",
        url:   '../controlador/inventario/egreso_alimentosC.php?eliminar_egreso=true',
 	     data:{id:id},
+       dataType:'json',
+	    success: function(data)
+	    {
+	    	lista_egreso();
+	    }
+	});
+  }
+
+
+  function eliminar_egreso_all()
+  {
+ 	$.ajax({
+	    type: "POST",
+       url:   '../controlador/inventario/egreso_alimentosC.php?eliminar_egreso_all=true',
+	     // data:{id:id},
        dataType:'json',
 	    success: function(data)
 	    {
@@ -95,6 +147,9 @@
 			'unidad':$('#txt_unidad').val(),
 			'cantidad':$('#txt_cantidad').val(),
 			'fecha':$('#txt_fecha').val(),
+			'area':$('#ddl_areas').val(),
+			'motivo':$('#ddl_motivo').val(),
+			'detalle':$('#txt_detalle').val(),
 		}
 	 	$.ajax({
 		    type: "POST",
@@ -121,10 +176,31 @@
 	       dataType:'json',
 		    success: function(data)
 		    {
-		    	$('#tbl_asignados').html(data);	    	
+		    	$('#tbl_asignados').html(data);	
 		    }
 		});
+	}
 
+  	function guardar()
+	{		
+		var parametros = {
+
+		}
+	 	$.ajax({
+		    type: "POST",
+	       	url:   '../controlador/inventario/egreso_alimentosC.php?guardar_egreso=true',
+		    // data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+		    	if(data==1)
+		    	{
+		    		Swal.fire('Guardado','','success').then(function(){
+		    			location.reload();
+		    		})
+		    	}
+		    }
+		});
 	}
   	
    
@@ -143,12 +219,12 @@
 			</button>
 		</div>
 		<div class="col-xs-2 col-md-2 col-sm-2">
-			<button class="btn btn-default" title="Guardar" onclick="guardar()">
+			<button class="btn btn-default" title="" onclick="">
 				<img src="../../img/png/mostrar.png">
 			</button>
 		</div>    	
 		<div class="col-xs-2 col-md-2 col-sm-2">
-			<button class="btn btn-default" title="Guardar" onclick="guardar()">
+			<button class="btn btn-default" title="Historial" onclick="">
 				<img src="../../img/png/file_crono.png" style="width:32px;height:32px">
 			</button>
 		</div>  
@@ -210,7 +286,7 @@
 							</div>
 							<br>
 							<b>Detalle de egreso:</b>
-	             			<input type="" class="form-control input-xs" id="txt_cant" name="txt_cant">	
+	             			<input type="" class="form-control input-xs" id="txt_detalle" name="txt_detalle">	
 	             		</div>
 					</div>
 					<div class="col-sm-3">

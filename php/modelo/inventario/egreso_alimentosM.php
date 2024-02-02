@@ -78,6 +78,7 @@ class egreso_alimentosM
 			INNER JOIN Clientes C on TK.Codigo_P = C.Codigo
 			WHERE TK.Item = '".$_SESSION['INGRESO']['item']."'
 			AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+			AND TK.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
 			AND TK.Item = CP.Item
 			AND TK.Periodo = CP.Periodo
 			AND TK.T ='S' ";
@@ -92,10 +93,95 @@ class egreso_alimentosM
 		return $this->db->datos($sql);
 	}
 
+	function lista_egreso_checking($query=false,$id=false)
+	{
+		$sql = "SELECT
+				TK.Fecha,
+				TK.Detalle,
+			    TK.Orden_No,
+			    MAX(C.Cliente) AS Cliente,
+			    MAX(CP.Producto) AS Producto,
+			    MAX(CP.Unidad) AS Unidad,
+			    MAX(C1.Cliente) AS usuario,
+			    MAX(CPO.Proceso) AS area,
+			    MAX(CPO1.Proceso) AS Motivo
+			FROM Trans_Kardex TK
+			INNER JOIN Catalogo_Productos CP ON TK.Codigo_Inv = CP.Codigo_Inv 
+			INNER JOIN Clientes C ON TK.Codigo_P = C.Codigo
+			INNER JOIN Clientes C1 ON TK.CodigoU = C1.Codigo
+			INNER JOIN Catalogo_Proceso CPO ON TK.Codigo_Tra = CPO.Cmds
+			INNER JOIN Catalogo_Proceso CPO1 ON TK.Modelo = CPO1.Cmds
+			WHERE TK.Item = '".$_SESSION['INGRESO']['item']."'
+			AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+			AND TK.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+			AND TK.Item = CP.Item
+			AND TK.Periodo = CP.Periodo
+			AND TK.T ='G' ";
+			if($query)
+			{
+				$sql.=" AND TK.Codigo_Barra='".$query."'";
+			}
+			if($id)
+			{
+				$sql.=" AND TK.ID='".$id."'";
+			}
+			$sql.=" GROUP by Orden_No,TK.Fecha,TK.Detalle";
+			// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+
 	function eliminar($id)
 	{
 		$sql = "DELETE FROM Trans_Kardex WHERE ID = '".$id."'";
 		return $this->db->String_Sql($sql);
+	}
+
+	function eliminar_all()
+	{
+		$sql = "DELETE FROM Trans_Kardex 
+		WHERE T='S' 
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'";
+		return $this->db->String_Sql($sql);
+	}
+
+	function numero_Registro($fecha)
+	{
+		$sql = "select COUNT(*) as num from Trans_Kardex TK 
+				WHERE TK.Item = '".$_SESSION['INGRESO']['item']."'
+				AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND TK.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+				AND TK.T ='G'
+				AND TK.Fecha = '".$fecha."'
+				Group By Fecha";
+
+		return $this->db->datos($sql);
+	}
+
+	function cargar_motivo_lista($query=false,$id=false,$orden=false)
+	{		
+		$sql = "SELECT TK.*,C.Cliente,CP.Producto,CP.Unidad 
+			FROM Trans_Kardex TK
+			INNER JOIN Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv 
+			INNER JOIN Clientes C on TK.Codigo_P = C.Codigo
+			WHERE TK.Item = '".$_SESSION['INGRESO']['item']."'
+			AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+			AND TK.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+			AND TK.Item = CP.Item
+			AND TK.Periodo = CP.Periodo ";
+			if($query)
+			{
+				$sql.=" AND TK.Codigo_Barra='".$query."'";
+			}
+			if($id)
+			{
+				$sql.=" AND TK.ID='".$id."'";
+			}
+			if($orden)
+			{
+				$sql.=" AND TK.Orden_No='".$orden."'";
+			}
+		return $this->db->datos($sql);
 	}
 
 }
