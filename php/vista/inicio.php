@@ -220,9 +220,14 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 				require_once("facturacion/divisas.php");
 				break;
 			
-			//Facturacion -> Archivo -> Facturacion/Cobro 
+			//Facturacion -> Archivo -> Facturacion/Cobros Automaticos por Bancos
 			case 'facturacion_cobro':
 				require_once("facturacion/FRecaudacionBancosCxC.php");
+				break;
+
+			//Facturacion -> Reportes-> Resumen Historico de Cartera CxC
+			case 'historico_facturas':
+				require_once("facturacion/HistorialFacturas.php");
 				break;
 
 			//Facturacion -> Archivo -> Punto de venta
