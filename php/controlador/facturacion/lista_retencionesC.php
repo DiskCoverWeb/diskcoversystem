@@ -181,7 +181,7 @@ class lista_retencionesC
     function ver_retencion_pdf($retencion,$serie_r,$numero)
     {
     	// print_r($cod);die();
-    	$TP = 'CD';  	 
+    	$TP = 'CE';  	 
       	$this->incom->reporte_retencion($numero,$TP,$retencion,$serie_r,$imp=0);
 	 	
    
