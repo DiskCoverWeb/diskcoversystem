@@ -54,7 +54,7 @@ if(isset($_GET['eliminar_egreso_all']))
 }
 if(isset($_GET['guardar_egreso']))
 {
-	echo json_encode($controlador->guardar_egreso());
+	echo json_encode($controlador->guardar_egreso($_FILES,$_POST));
 }
 if(isset($_GET['cargar_motivo_lista']))
 {
@@ -161,21 +161,44 @@ class egreso_alimentosC
 		// print_r($id);die();
 	}
 
-	function guardar_egreso()
+	function guardar_egreso($file,$post)
 	{
 		// para el cheing de egreso se colocara la G
 		$num = $this->modelo->numero_Registro(date('Y-m-d'));
+
+		// print_r($num);die();
 		$registro = '001';
-		if($num[0]['num']!=''){$registro = '00'.($num[0]['num']+1);}
+		if(isset($num[0]['num']) && $num[0]['num']!=''){$registro = '00'.($num[0]['num']+1);}
+		$orden = str_replace('-','', date('Y-m-d')).'-'.$registro;
+
+		$ruta = dirname(__DIR__,2).'/comprobantes/sustentos/empresa_'.$_SESSION['INGRESO']['item'].'/';
+		if(!file_exists($ruta))
+		{
+			$ruta1 = dirname(__DIR__,2).'/comprobantes/sustentos';
+			mkdir($ruta1,0777);
+			mkdir($ruta,0777);
+		}
+		 $uploadfile_temporal=$file['archivo']['tmp_name'];
+   	     $tipo = explode('/', $file['archivo']['type']);
+         $nombre = $orden.'.'.$tipo[1];
+        
+   	     $nuevo_nom=$ruta.$nombre;
+   	     if (is_uploaded_file($uploadfile_temporal))
+   	     {
+   		     move_uploaded_file($uploadfile_temporal,$nuevo_nom);
+   	     }
 
 		SetAdoAddNew('Trans_Kardex');
 	    SetAdoFields('T','G');	    	    	    
-	    SetAdoFields('Orden_No',str_replace('-','', date('Y-m-d')).'-'.$registro);	
+	    SetAdoFields('Orden_No',$orden);	 	    
+	    SetAdoFields('Procedencia',$nombre);	
 
 	    SetAdoFieldsWhere('Periodo',$_SESSION['INGRESO']['periodo']);	
 	    SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);	
 	    SetAdoFieldsWhere('CodigoU',$_SESSION['INGRESO']['CodigoU']);	
+	    SetAdoFieldsWhere('T','S');				
 	    SetAdoFieldsWhere('T','S');			
+
 	   return  SetAdoUpdateGeneric();
 	}
 
@@ -191,7 +214,7 @@ class egreso_alimentosC
 						<div class="input-group input-group-sm">
 							'.$value['usuario'].'
 							<span class="input-group-btn">
-							<button type="button" class="btn btn-default btn-sm" onclick="modal_mensaje()">
+							<button type="button" class="btn btn-default btn-sm" onclick="modal_mensaje(\''.$value['Orden_No'].'\')">
 								<img src="../../img/png/user.png" style="width:20px">
 							</button>
 							</span>
@@ -256,9 +279,8 @@ class egreso_alimentosC
 
 		return $tr;
 		// print_r($parametros);
-
-
 	}
+
 }
 
 

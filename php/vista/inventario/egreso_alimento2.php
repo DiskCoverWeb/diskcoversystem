@@ -6,10 +6,55 @@
   	motivo_egreso()	
   })
 
-  function modal_mensaje()
+  function modal_mensaje(orden)
   {
-	$('#myModal_mensaje').modal('show');
+	$('#myModal_notificar_usuario').modal('show');
+	$('#txt_codigo').val(orden);
   }
+
+  function notificar(usuario = false)
+ {
+ 		var mensaje = $('#txt_notificar').val();
+ 		var para_proceso = 4;
+ 		if(usuario=='usuario')
+ 		{
+ 			mensaje = $('#txt_texto').val();
+ 			para_proceso = 4;
+ 		}
+   
+    var parametros = {
+        'notificar':mensaje,
+        'asunto':'De Checking egreso',
+        'pedido':$('#txt_codigo').val(),
+        'de_proceso':5,
+        'pa_proceso':para_proceso,
+    }
+
+     $.ajax({
+      data:  {parametros,parametros},
+      url:   '../controlador/inventario/alimentos_recibidosC.php?notificar_egresos=true',
+      type:  'post',
+      dataType: 'json',
+      success:  function (response) { 
+        if(response==1)
+        {
+        	
+          	Swal.fire("","Notificacion enviada","success").then(function(){
+          	$('#myModal_notificar_usuario').modal('hide'); 
+          	$('#txt_texto').val('');   
+          	$('#txt_codigo_usu').val('') 
+          });
+        }
+        console.log(response);
+        
+      }, 
+      error: function(xhr, textStatus, error){
+        $('#myModal_espera').modal('hide');           
+      }
+    });
+ }
+
+
   function modal_motivo(orden)
   {
   	cargar_motivo_lista(orden);
@@ -295,22 +340,25 @@
 
 
 
-<div id="myModal_mensaje" class="modal fade myModalNuevoCliente" role="dialog">
+
+<div id="myModal_notificar_usuario" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header bg-primary">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Mensaje</h4>
+                <h4 class="modal-title">Notificacion</h4>
             </div>
-            <div class="modal-body"  style="background: antiquewhite;">
-            	<textarea class="form-control" rows="3"></textarea>
+            <div class="modal-body" style="background: antiquewhite;">
+              <input type="hidden" name="txt_codigo" id="txt_codigo">
+                <textarea class="form-control form-control-sm" rows="3" id="txt_texto" name="txt_texto" placeholder="Detalle de notificacion"></textarea>
             </div>
-            <div class="modal-footer">
+             <div class="modal-footer">             	
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-            </div> 
+                <button type="button" class="btn btn-primary" onclick="notificar('usuario')">Notificar</button>
+            </div>
         </div>
     </div>
-</div>
+  </div>
+
 
 <div id="myModal_motivo" class="modal fade myModalNuevoCliente" role="dialog">
     <div class="modal-dialog modal-lg">

@@ -222,6 +222,11 @@ if(isset($_GET['notificar_clasificacion']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->notificar_clasificacion($parametros));
 }
+if(isset($_GET['notificar_egresos']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->notificar_egresos($parametros));
+}
 if(isset($_GET['comentar_clasificacion']))
 {
 	$parametros = $_POST['parametros'];
@@ -1221,6 +1226,31 @@ class alimentos_recibidosC
 		   
 	}
 
+	function notificar_egresos($parametros)
+	{
+		// print_r($parametros);die();
+		// print_r($_SESSION['INGRESO']);die();
+		$pedido = $this->modelo->cargar_motivo_lista($query=false,$id=false,$parametros['pedido']);
+
+		// print_r($pedido);die();
+
+		   SetAdoAddNew("Trans_Memos"); 		
+		   SetAdoFields('T','P');		   		
+		   SetAdoFields('Asunto','De:'.$this->Nombre_proceso($parametros['de_proceso']).' a '.$this->Nombre_proceso($parametros['pa_proceso']));
+		   SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);   
+		   SetAdoFields('Item',$_SESSION['INGRESO']['item']);  
+		   SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
+		   SetAdoFields('Codigo',$pedido[0]['CodigoU']); 
+		   SetAdoFields('Texto_Memo',$parametros['notificar']);
+		   SetAdoFields('Codigo',$pedido[0]['CodigoU']); 
+		   SetAdoFields('Atencion',$parametros['pedido']);
+
+		   SetAdoFields('CC1',$parametros['de_proceso']);
+		   SetAdoFields('CC2',$parametros['pa_proceso']);
+		   return SetAdoUpdate();		   
+		   
+	}
+
 	function Nombre_proceso($num)
 	{
 		$nombre = '';
@@ -1233,6 +1263,12 @@ class alimentos_recibidosC
 				break;
 			case '3':
 				$nombre = 'Checking'; // code...
+				break;
+			case '4':
+				$nombre = 'Egresos'; // code...
+				break;
+			case '5':
+				$nombre = 'Checking egreso'; // code...
 				break;
 			
 		}
