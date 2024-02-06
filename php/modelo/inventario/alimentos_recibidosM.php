@@ -529,7 +529,32 @@ class alimentos_recibidosM
 				AND Codigo_Inv= '".$pedido."'";
 				// print_r($sql);die();
 		return $this->db->datos($sql);
-
+	}
+	
+	function cargar_motivo_lista($query=false,$id=false,$orden=false)
+	{		
+		$sql = "SELECT TK.*,C.Cliente,CP.Producto,CP.Unidad 
+			FROM Trans_Kardex TK
+			INNER JOIN Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv 
+			INNER JOIN Clientes C on TK.Codigo_P = C.Codigo
+			WHERE TK.Item = '".$_SESSION['INGRESO']['item']."'
+			AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+			AND TK.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+			AND TK.Item = CP.Item
+			AND TK.Periodo = CP.Periodo ";
+			if($query)
+			{
+				$sql.=" AND TK.Codigo_Barra='".$query."'";
+			}
+			if($id)
+			{
+				$sql.=" AND TK.ID='".$id."'";
+			}
+			if($orden)
+			{
+				$sql.=" AND TK.Orden_No='".$orden."'";
+			}
+		return $this->db->datos($sql);
 	}
 
 
