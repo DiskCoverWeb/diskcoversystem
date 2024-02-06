@@ -27,6 +27,12 @@ if (isset($_GET['Form_Activate'])) {
     echo json_encode($controlador->Form_Activate());
 }
 
+if (isset($_GET['ListCliente_LostFocus'])) {
+    $ListClienteText = $_POST['ListClienteText'];
+    echo json_encode($controlador->ListCliente_LostFocus($ListClienteText));
+}
+
+
 class HistorialFacturasC
 {
     private $modelo;
@@ -99,24 +105,20 @@ class HistorialFacturasC
         $FechaIni = BuscarFecha($MBFechaI);
         $FechaFin = BuscarFecha($MBFechaF);
 
-        $DGQuery = "HISTORIAL DE FACTURAS";
-        $Label2 = " Facturado";
-        $Label4 = " Cobrado";
-        $Label3 = " Saldo";
+        //$DGQuery = "HISTORIAL DE FACTURAS";
+        //$Label2 = " Facturado";
+        //$Label4 = " Cobrado";
+        //$Label3 = " Saldo";
         $PorCxC = false;
 
         if ($CheqCxC == 1) {
             $PorCxC = true;
         }
 
-        $Total = 0;
-        $Abono = 0;
-        $Saldo = 0;
-
         $sSQL = $this->modelo->Historico_Facturas($FechaFin);
-        $this->Totales_CxC_Abonos($Opcion, $sSQL);
-
-        return $sSQL;
+        //$this->Totales_CxC_Abonos($Opcion, $sSQL);
+        $DGQuery = tablaGenerica($sSQL);
+        return $DGQuery;
     }
 
     function Totales_CxC_Abonos($Opcion, $AdoQuery)
@@ -226,6 +228,11 @@ class HistorialFacturasC
         return array('ListCliente' => $ListCliente, 'FA' => $FA);
     }
 
+    function ListCliente_LostFocus($ListClienteText)
+    {
+        return $this->modelo->ListCliente_LostFocus($ListClienteText);
+    }
+
     function Ventas_Productos()
     {
         $Opcion = 8;
@@ -234,8 +241,8 @@ class HistorialFacturasC
         $Con_Costeo = " ";
         $Mensajes = "Reporte Con Costeo ";
         $Titulo = "Formulario de Confirmación";
-        
-        $ClaveAdministrador=false;//
+
+        $ClaveAdministrador = false; //
 
         if ($ClaveAdministrador()) {
             $Si_No = true;
@@ -379,6 +386,112 @@ class HistorialFacturasC
                 Deuda_x_Mail("FA");
                 break;
         }
+    }
+
+    function Tipo_De_Consulta($Opcion_TP = false, $Opcion_Email = false, $Opcion_DF = false, $ListCliente, $DCCliente, $DCCxC, $OpcPend, $OpcAnul, $OpcCanc, $Opcion, $CheqCxC, $CheqIngreso, $CheqAbonos, $DescItem, $Cod_Marca)
+    {
+
+        $SQL3X = '';
+        $Patron_Busqueda = $DCCliente;
+
+        if ($Patron_Busqueda == '') {
+            $Patron_Busqueda = G_NINGUNO;
+        }
+
+        $Cta_Cobrar = trim(SinEspaciosIzq($DCCxC));
+
+        if ($OpcPend) {
+            if ($Opcion > 0) {
+                switch ($Opcion) {
+                    case 1:
+                        $SQL3X .= "AND F.Saldo_Actual <> 0 AND F.T <> 'A' ";
+                        break;
+                    case 2:
+                        $SQL3X .= "AND F.T = 'P' ";
+                        break;
+                    case 9:
+                    case 10:
+                    case 13:
+                    case 14:
+                        $SQL3X .= "AND F.Saldo_MN <> 0 ";
+                        break;
+                }
+            } else {
+                $SQL3X .= "AND F.T = ".G_PENDIENTE." ";
+            }
+        } elseif ($OpcCanc) {
+            $SQL3X .= "AND F.T = ".G_CANCELADO." ";
+        } elseif ($OpcAnul) {
+            $SQL3X .= "AND F.T = ".G_ANULADO." ";
+        }
+
+        switch ($ListCliente) {
+            case "Codigo":
+                $SQL3X .= "AND C.Codigo = '$Patron_Busqueda' ";
+                break;
+            case "Grupo/Zona":
+                $SQL3X .= "AND C.Grupo = '$Patron_Busqueda' ";
+                break;
+            case "CI_RUC":
+                $SQL3X .= "AND C.CI_RUC = '$Patron_Busqueda' ";
+                break;
+            case "Cliente":
+                $LongStrg = strlen($Patron_Busqueda);
+                $SQL3X .= "AND C.Cliente LIKE '$Patron_Busqueda%' ";
+                break;
+            case "Vendedor":
+                $LongStrg = strlen($Patron_Busqueda);
+                $SQL3X .= "AND A.Nombre_Completo LIKE '$Patron_Busqueda%' ";
+                break;
+            case "Ciudad":
+                $SQL3X .= "AND C.Ciudad = '$Patron_Busqueda' ";
+                break;
+            case "Factura":
+                $SQL3X .= "AND F.Factura = " . intval($Patron_Busqueda) . " ";
+                break;
+            case "Serie":
+                $SQL3X .= "AND F.Serie = '$Patron_Busqueda' ";
+                break;
+            case "Autorizacion":
+                $SQL3X .= "AND F.Autorizacion = '$Patron_Busqueda' ";
+                break;
+            case "Forma_Pago":
+                $SQL3X .= "AND F.Forma_Pago = '$Patron_Busqueda' ";
+                break;
+            case "Plan_Afiliado":
+                $SQL3X .= "AND C.Plan_Afiliado = '$Patron_Busqueda' ";
+                break;
+            case "Tipo Documento":
+                if ($Opcion_TP) {
+                    $SQL3X .= "AND F.TP = '$Patron_Busqueda' ";
+                } else {
+                    $SQL3X .= "AND F.TC = '$Patron_Busqueda' ";
+                }
+                $TipoFactura = $Patron_Busqueda;
+                break;
+        }
+
+        if ($DescItem != G_NINGUNO) {
+            //$SQL3X .= "AND MidStrg(F.Codigo,1," . strlen($Codigo) . ") = '$Codigo' ";
+        }
+        if ($Cod_Marca != G_NINGUNO) {
+            $SQL3X .= "AND F.CodMarca = '$Cod_Marca' ";
+        }
+        if ($CheqCxC) {
+            $SQL3X .= "AND F.Cta_CxP = '$Cta_Cobrar' ";
+        }
+        if ($CheqIngreso && $Opcion_DF) {
+            $SQL3X .= "AND F.Cta_Venta = '$Cta_Cobrar' ";
+        }
+        if ($CheqAbonos) {
+            if ($Opcion_Email) {
+                $SQL3X .= "AND TA.Cta = '$Cta_Cobrar' ";
+            } else {
+                $SQL3X .= "AND F.Cta = '$Cta_Cobrar' ";
+            }
+        }
+
+        return $SQL3X;
     }
 }
 ?>

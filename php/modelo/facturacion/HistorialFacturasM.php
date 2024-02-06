@@ -825,20 +825,20 @@ class HistorialFacturasM
         //SelectDB_Combo DCCxC, AdoCxC, sSQL, "NomCxC"
     }
 
-    function ListCliente_LostFocus($caso, $Modulo)
+    function ListCliente_LostFocus($ListClienteText)
     {
         $NumEmpresa = $_SESSION['INGRESO']['item'];
         $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
-        $CodigoUsuario = $_SESSION['INGRESO']['CodigoU'];
+        //$CodigoUsuario = $_SESSION['INGRESO']['CodigoU'];
+        //$Modulo = $_SESSION['INGRESO']['modulo'];
 
-        switch ($caso) {
+        switch ($ListClienteText) {
             case "Autorizacion":
                 $sSQL = "SELECT Autorizacion 
                         FROM Facturas 
                         WHERE Item = '" . $NumEmpresa . "'
                         AND Periodo = '" . $Periodo_Contable . "' ";
-                if ($Modulo == "EJECUTIVOS")
-                    $sSQL .= "AND Cod_Ejec = '" . $CodigoUsuario . "' ";
+                //if ($Modulo == "EJECUTIVOS") $sSQL .= "AND Cod_Ejec = '" . $CodigoUsuario . "' ";
                 $sSQL .= "GROUP BY Autorizacion " .
                     "ORDER BY Autorizacion DESC ";
                 $Nombre_Campo = "Autorizacion";
@@ -848,8 +848,7 @@ class HistorialFacturasM
                         FROM Facturas 
                         WHERE Item = '" . $NumEmpresa . "'
                         AND Periodo = '" . $Periodo_Contable . "' ";
-                if ($Modulo == "EJECUTIVOS")
-                    $sSQL .= "AND Cod_Ejec = '" . $CodigoUsuario . "' ";
+                //if ($Modulo == "EJECUTIVOS") $sSQL .= "AND Cod_Ejec = '" . $CodigoUsuario . "' ";
                 $sSQL .= "GROUP BY Serie " .
                     "ORDER BY Serie ";
                 $Nombre_Campo = "Serie";
@@ -859,8 +858,7 @@ class HistorialFacturasM
                         FROM Clientes AS C, Facturas AS F 
                         WHERE F.Item = '" . $NumEmpresa . "' 
                         AND F.Periodo = '" . $Periodo_Contable . "' ";
-                if ($Modulo == "EJECUTIVOS")
-                    $sSQL .= "AND F.Cod_Ejec = '" . $CodigoUsuario . "' ";
+                //if ($Modulo == "EJECUTIVOS") $sSQL .= "AND F.Cod_Ejec = '" . $CodigoUsuario . "' ";
                 $sSQL .= "AND C.Codigo = F.CodigoC 
                     GROUP BY Codigo 
                     ORDER BY Codigo ";
@@ -871,8 +869,7 @@ class HistorialFacturasM
                         FROM Clientes AS C, Facturas AS F 
                         WHERE F.Item = '" . $NumEmpresa . "' 
                         AND F.Periodo = '" . $Periodo_Contable . "' ";
-                if ($Modulo == "EJECUTIVOS")
-                    $sSQL .= "AND F.Cod_Ejec = '" . $CodigoUsuario . "' ";
+                //if ($Modulo == "EJECUTIVOS") $sSQL .= "AND F.Cod_Ejec = '" . $CodigoUsuario . "' ";
                 $sSQL .= "AND C.Codigo = F.CodigoC 
                     GROUP BY CI_RUC, Cliente, Codigo 
                     ORDER BY CI_RUC ";
@@ -883,8 +880,7 @@ class HistorialFacturasM
                         FROM Clientes AS C, Facturas AS F 
                         WHERE F.Item = '" . $NumEmpresa . "' 
                         AND F.Periodo = '" . $Periodo_Contable . "' ";
-                if ($Modulo == "EJECUTIVOS")
-                    $sSQL .= "AND F.Cod_Ejec = '" . $CodigoUsuario . "' ";
+                //if ($Modulo == "EJECUTIVOS") $sSQL .= "AND F.Cod_Ejec = '" . $CodigoUsuario . "' ";
                 $sSQL .= "AND C.Codigo = F.CodigoC
                     GROUP BY F.CodigoC, Cliente 
                     ORDER BY Cliente ";
@@ -894,8 +890,7 @@ class HistorialFacturasM
                         FROM Clientes AS C, Facturas AS F 
                         WHERE F.Item = '" . $NumEmpresa . "' 
                         AND F.Periodo = '" . $Periodo_Contable . "' ";
-                if ($Modulo == "EJECUTIVOS")
-                    $sSQL .= "AND F.Cod_Ejec = '" . $CodigoUsuario . "' ";
+                //if ($Modulo == "EJECUTIVOS") $sSQL .= "AND F.Cod_Ejec = '" . $CodigoUsuario . "' ";
                 $sSQL .= "AND C.Codigo = F.CodigoC 
                     GROUP BY C.Grupo 
                     ORDER BY C.Grupo ";
@@ -906,8 +901,7 @@ class HistorialFacturasM
                         FROM Clientes AS C, Catalogo_Rol_Pagos AS CR 
                         WHERE CR.Item = '" . $NumEmpresa . "' 
                         AND CR.Periodo = '" . $Periodo_Contable . "' ";
-                if ($Modulo == "EJECUTIVOS")
-                    $sSQL .= "AND CR.Codigo = '" . $CodigoUsuario . "' ";
+                //if ($Modulo == "EJECUTIVOS") $sSQL .= "AND CR.Codigo = '" . $CodigoUsuario . "' ";
                 $sSQL .= "AND C.Codigo = CR.Codigo 
                         GROUP BY C.Codigo, C.Cliente 
                         ORDER BY Cliente ";
@@ -918,21 +912,19 @@ class HistorialFacturasM
                         FROM Clientes AS C, Facturas AS F 
                         WHERE F.Item = '" . $NumEmpresa . "' 
                         AND F.Periodo = '" . $Periodo_Contable . "' ";
-                if ($Modulo == "EJECUTIVOS")
-                    $sSQL .= "AND F.Cod_Ejec = '" . $CodigoUsuario . "' ";
+                //if ($Modulo == "EJECUTIVOS") $sSQL .= "AND F.Cod_Ejec = '" . $CodigoUsuario . "' ";
                 $sSQL .= "AND C.Codigo = F.CodigoC 
                         GROUP BY Ciudad 
                         ORDER BY Ciudad ";
                 $Nombre_Campo = "Ciudad";
                 break;
             case "Factura":
-                $sSQL = "SELECT CONCAT(TC, ' ', Serie, ' ', CAST(Factura AS VARCHAR)) AS TipoFactura 
+                $sSQL = "SELECT (TC + ' ' +  Serie + ' ' + CAST(Factura AS VARCHAR)) AS TipoFactura 
                         FROM Facturas 
                         WHERE Item = '" . $NumEmpresa . "' 
                         AND Periodo = '" . $Periodo_Contable . "' 
                         AND TC NOT IN ('C','P') ";
-                if ($Modulo == "EJECUTIVOS")
-                    $sSQL .= "AND Cod_Ejec = '" . $CodigoUsuario . "' ";
+                //if ($Modulo == "EJECUTIVOS") $sSQL .= "AND Cod_Ejec = '" . $CodigoUsuario . "' ";
                 $sSQL .= "GROUP BY TC, Serie, Factura 
                     ORDER BY TC, Serie, Factura DESC ";
                 $Nombre_Campo = "TipoFactura";
@@ -943,8 +935,7 @@ class HistorialFacturasM
                         WHERE Item = '" . $NumEmpresa . "' 
                         AND Periodo = '" . $Periodo_Contable . "' 
                         AND TC NOT IN ('C','P') ";
-                if ($Modulo == "EJECUTIVOS")
-                    $sSQL .= "AND Cod_Ejec = '" . $CodigoUsuario . "' ";
+                //if ($Modulo == "EJECUTIVOS") $sSQL .= "AND Cod_Ejec = '" . $CodigoUsuario . "' ";
                 $sSQL .= "GROUP BY Forma_Pago 
                     ORDER BY Forma_Pago ";
                 $Nombre_Campo = "Forma_Pago";
@@ -955,8 +946,7 @@ class HistorialFacturasM
                         WHERE F.Item = '" . $NumEmpresa . "' 
                         AND F.Periodo = '" . $Periodo_Contable . "' 
                         AND TC NOT IN ('C','P') ";
-                if ($Modulo == "EJECUTIVOS")
-                    $sSQL .= "AND F.Cod_Ejec = '" . $CodigoUsuario . "' ";
+                //if ($Modulo == "EJECUTIVOS") $sSQL .= "AND F.Cod_Ejec = '" . $CodigoUsuario . "' ";
                 $sSQL .= "AND C.Codigo = F.CodigoC 
                         GROUP BY TC 
                         ORDER BY TC ";
@@ -969,8 +959,7 @@ class HistorialFacturasM
                         AND F.Periodo = '" . $Periodo_Contable . "' 
                         AND LENGTH(C.Plan_Afiliado) > 3 
                         AND TC NOT IN ('C','P') ";
-                if ($Modulo == "EJECUTIVOS")
-                    $sSQL .= "AND F.Cod_Ejec = '" . $CodigoUsuario . "' ";
+                //if ($Modulo == "EJECUTIVOS") $sSQL .= "AND F.Cod_Ejec = '" . $CodigoUsuario . "' ";
                 $sSQL .= "AND C.Codigo = F.CodigoC 
                         GROUP BY Plan_Afiliado 
                         ORDER BY Plan_Afiliado ";
@@ -985,7 +974,7 @@ class HistorialFacturasM
                 $Nombre_Campo = "Cuenta_No";
                 break;
             case "Producto":
-                $sSQL = "SELECT CONCAT(Codigo_Inv, ' - ', Producto) AS Codigos 
+                $sSQL = "SELECT (Codigo_Inv + ' - ' + Producto) AS Codigos 
                         FROM Catalogo_Productos 
                         WHERE Item = '" . $NumEmpresa . "' 
                         AND Periodo = '" . $Periodo_Contable . "' 
@@ -1003,7 +992,7 @@ class HistorialFacturasM
                 $Nombre_Campo = "Desc_Item";
                 break;
             case "Marca":
-                $sSQL = "SELECT CONCAT(CodMar, ' - ', Marca) AS NomMarca 
+                $sSQL = "SELECT (CodMar + ' - ' + Marca) AS NomMarca 
                         FROM Catalogo_Marcas 
                         WHERE Item = '" . $NumEmpresa . "' 
                         AND Periodo = '" . $Periodo_Contable . "' 
@@ -1017,11 +1006,346 @@ class HistorialFacturasM
                         WHERE Codigo = '-' ";
                 $Nombre_Campo = "Cliente";
                 break;
-            //SelectDB_Combo DCCliente, AdoCliente, sSQL, Nombre_Campo
         }
+        return array(
+            "data" => $this->db->datos($sSQL),
+            "nombreCampo" => $Nombre_Campo
+        );
+
     }
 
+    function Tipo_Consulta_CxC($Actualiza_Buses, $SQL_Server, $FechaIni, $FechaFin, $TipoFactura, $SiUnidadEducativa, $Tipo, $MBFechaF)
+    {
+        if ($Actualiza_Buses) {
+            if ($SQL_Server) {
+                $sSQL = "UPDATE Facturas " .
+                    "SET Forma_Pago = SUBSTRING(DF.Producto, 1, 10) 
+                    FROM Facturas AS F, Detalle_Factura AS DF ";
+            } else {
+                $sSQL = "UPDATE Facturas AS F, Detalle_Factura AS DF
+                    SET F.Forma_Pago = SUBSTRING(DF.Producto, 1, 10) ";
+            }
+            $sSQL .= "WHERE F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' 
+                AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                AND F.TC = DF.TC 
+                AND F.Serie = DF.Serie 
+                AND F.Autorizacion = DF.Autorizacion 
+                AND F.CodigoC = DF.CodigoC 
+                AND F.Fecha = DF.Fecha 
+                AND F.Factura = DF.Factura 
+                AND F.Item = DF.Item 
+                AND F.Periodo = DF.Periodo ";
+            Ejecutar_SQL_SP($sSQL);
+        }
+        if ($TipoFactura == "") {
+            $TipoFactura = G_NINGUNO;
+        }
 
+        $sSQL = "SELECT F.T, F.Razon_Social, ";
+
+        if ($SiUnidadEducativa) {
+            $sSQL .= "C.Cliente, ";
+        }
+
+        $sSQL .= "F.Fecha, F.Fecha_V, F.TC, F.Serie, F.Factura, ";
+
+        if ($Tipo == "R") {
+            $sSQL .= "F.Con_IVA, F.Sin_IVA, F.SubTotal, F.IVA, (F.Descuento + F.Descuento2) As Total_Descuento, F.Servicio, F.Total_MN, 
+                    F.Total_Abonos, F.Saldo_MN, F.Autorizacion, F.Cta_CxP, F.Total_Ret_Fuente, F.Total_Ret_IVA_B, F.Total_Ret_IVA_S, ";
+        } else {
+            $sSQL .= "F.Total_MN, F.Abonos_MN, F.Saldo_MN, F.Total_ME, F.Saldo_ME, F.Autorizacion, F.RUC_CI As RUC_CI_SRI, ";
+        }
+
+        if ($SiUnidadEducativa) {
+            $sSQL .= "C.CI_RUC, ";
+        }
+
+        $sSQL .= "F.Forma_Pago, C.Telefono, C.Celular, C.Ciudad, C.Direccion, C.DireccionT, C.Email, C.Grupo, ";
+
+        if ($SQL_Server) {
+            $sSQL .= "DATEDIFF(day, '" . BuscarFecha($MBFechaF) . "', F.Fecha_V) As Dias_De_Mora, ";
+        } else {
+            $sSQL .= "DATEDIFF('d', #" . BuscarFecha($MBFechaF) . "#, F.Fecha_V) As Dias_De_Mora, ";
+        }
+
+        $sSQL .= "A.Nombre_Completo As Ejecutivo, C.Plan_Afiliado As Sectorizacion, A.Cod_Ejec, F.Chq_Posf 
+            FROM Facturas As F, Clientes As C, Accesos As A 
+            WHERE F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'
+            AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+            AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+            " . Tipo_De_Consulta() . "
+            ND C.Codigo = F.CodigoC 
+            AND A.Codigo = F.Cod_Ejec
+            AND F.TC NOT IN ('C','P') ";
+
+        if ($Tipo == "V") {
+            $Opcion = 13;
+            $sSQL .= "ORDER BY A.Nombre_Completo, C.Grupo, ";
+            if ($SiUnidadEducativa) {
+                $sSQL .= "C.Cliente, F.Razon_Social, ";
+            } else {
+                $sSQL .= "F.Razon_Social, ";
+            }
+        }
+        if ($Tipo == "C") {
+            $Opcion = 9;
+            if ($SiUnidadEducativa) {
+                $sSQL .= "ORDER BY C.Cliente, F.Razon_Social, ";
+            } else {
+                $sSQL .= "ORDER BY F.Razon_Social, ";
+            }
+        }
+        if ($Tipo == "F") {
+            $Opcion = 10;
+            $sSQL .= "ORDER BY ";
+        }
+        if ($Tipo == "R") {
+            $Opcion = 19;
+            if ($SiUnidadEducativa) {
+                $sSQL .= "ORDER BY C.Cliente, F.Razon_Social, ";
+            } else {
+                $sSQL .= "ORDER BY F.Razon_Social ";
+            }
+        }
+        $sSQL .= "F.TC, F.Serie, F.Fecha, F.Factura ";
+        //Select_Adodc_Grid($DGQuery, $AdoQuery, $sSQL, "", "", true, "CxC Cartera");
+    }
+
+    function Listado_Tarjetas()
+    {
+        $sSQL = "SELECT CM.Tipo_Cta,C.Grupo,CM.Representante,CM.Cedula_R,CM.Telefono_R,C.Cliente,C.Direccion,CM.Cta_Numero,CM.Cod_Banco,CM.Caducidad
+              FROM Clientes As C,Clientes_Matriculas As CM 
+              WHERE C.FA <> 0 
+              AND CM.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+              AND CM.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+              AND LEN(CM.Tipo_Cta) > 1 
+              AND C.Codigo = CM.Codigo 
+              ORDER BY CM.Tipo_Cta, C.Grupo, C.Cliente";
+        //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
+        return $this->db->datos($sSQL);
+    }
+
+    function Estado_Cuenta_Cliente()
+    {
+        $sSQL = "SELECT C.Cliente, RCC.T, RCC.TC, RCC.Serie, RCC.Factura, RCC.Fecha, RCC.Detalle, RCC.Anio, RCC.Mes, RCC.Cargos, RCC.Abonos, RCC.CodigoC,
+              C.Email, C.EmailR, C.Direccion 
+              FROM Reporte_Cartera_Clientes As RCC, Clientes As C 
+              WHERE RCC.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+              AND RCC.CodigoU = '" . $_SESSION['INGRESO']['periodo'] . "' 
+              AND RCC.T <> 'A' 
+              AND RCC.CodigoC = C.Codigo 
+              ORDER BY C.Cliente, RCC.TC, RCC.Serie, RCC.Factura, RCC.Anio, RCC.Mes, RCC.ID ";
+        //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, "Reporte_Cartera_Clientes"
+
+        return $this->db->datos($sSQL);
+    }
+
+    function Buscar_Malla()
+    {
+        $sSQL = "SELECT Codigo, Cliente
+              FROM Clientes
+              WHERE Codigo = '-' ";
+        //SelectDB_Combo DCCliente, AdoCliente, sSQL, "Cliente"
+        return $this->db->datos($sSQL);
+    }
+
+    function Listado_Facturas_Por_Meses($JE, $MesS) //REV
+    {
+        $sSQL = "UPDATE Detalle_Factura 
+           SET Mes_No = " . $JE . " 
+           WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+           AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+           AND Mes = '" . $MesS . "' 
+           AND Mes_No = 0 ";
+        Ejecutar_SQL_SP($sSQL);
+    }
+
+    function Listado_Facturas_Por_Meses2($JE, $MesS, $SQL_Server) //REV
+    {
+        $sSQL = "UPDATE Clientes 
+                SET X = '.' 
+                WHERE X <> '.' ";
+        Ejecutar_SQL_SP($sSQL);
+        $sSQL = "DELETE * 
+                FROM Saldo_Diarios 
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "' 
+                AND TP = 'CXCP' ";
+        Ejecutar_SQL_SP($sSQL);
+
+        if ($SQL_Server) {
+            $sSQL = "UPDATE Clientes 
+            SET X = 'A' 
+            FROM Clientes As C,Facturas As F ";
+        } else {
+            $sSQL = "UPDATE Clientes As C,Facturas As F 
+            SET C.X = 'A' ";
+        }
+
+        $sSQL .= "WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                " . Buscar_x_Patron(True) . "
+                AND C.Codigo = F.CodigoC ";
+        Ejecutar_SQL_SP($sSQL);
+    }
+
+    function Ventas_x_Excel($FechaIni, $FechaFin)
+    {
+        $sSQL = "SELECT T,TC,Fecha,'" . $_SESSION['INGRESO']['Nombre_Comercial'] . "' As Razon_Social,'" . $_SESSION['INGRESO']['RUC'] . "' As RUC,Serie,Autorizacion,
+                Factura,Con_IVA,Sin_IVA,SubTotal,IVA,Total_MN,'999999' As Serie_R,'0' As Secuencial_R,
+                '" . $_SESSION['INGRESO']['RUC'] . "' As Autorizacion_R,'312' As Cod_Ret,'0' As Total_Retenido, '5' As Cta_Gasto 
+                FROM Facturas 
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                AND Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'
+                AND T <> 'A' 
+                ORDER BY TC,Serie,Factura ";
+        //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
+        return $this->db->datos($sSQL);
+    }
+
+    function Catastro_Registro_Datos_Clientes($FechaIni, $FechaFin)
+    {
+        $sSQL = "SELECT C.Cliente,C.CI_RUC,C.TD,C.Est_Civil,C.Sexo,C.Ciudad,C.Prov,C.Pais,F.T,F.Serie,F.Factura,
+                F.Fecha,F.Fecha_C,F.Fecha_V,F.Total_MN As Total,F.Total_Efectivo,F.Total_Banco,F.Total_Ret_Fuente,
+                F.Total_Ret_IVA_B,F.Total_Ret_IVA_S,F.Otros_Abonos,F.Total_Abonos,F.Saldo_Actual,F.CodigoC,F.TC,F.Autorizacion 
+                FROM Facturas As F,Clientes As C 
+                WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'
+                " . Tipo_De_Consulta() . "
+                AND F.CodigoC = C.Codigo 
+                ORDER BY C.Cliente,F.Factura,F.Fecha ";
+        //Select_AdoDB AdoCatastro, sSQL
+        return $this->db->datos($sSQL);
+    }
+
+    function Enviar_Emails_Facturas_Recibos($CheqAbonos, $DCCxC, $FechaIni, $FechaFin, $DocDesde, $DocHasta, $TipoEnvio)
+    {
+        $NumEmpresa = $_SESSION['INGRESO']['item'];
+        $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
+
+        if ($CheqAbonos->value != 0) {
+            $Cta_Aux_Mail = SinEspaciosIzq($DCCxC);
+
+            $sSQL = "UPDATE Facturas 
+                    SET X = 'X' 
+                    WHERE Item = '" . $NumEmpresa . "' 
+                    AND Periodo = '" . $Periodo_Contable . "' 
+                    AND Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' ";
+            Ejecutar_SQL_SP($sSQL);
+
+            $sSQL = "UPDATE Facturas 
+                SET X = '.' 
+                FROM Facturas As F, Trans_Abonos As TA 
+                WHERE F.Item = '" . $NumEmpresa . "' 
+                AND F.Periodo = '" . $Periodo_Contable . "' 
+                AND F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'
+                AND TA.Cta = '" . $Cta_Aux_Mail . "' 
+                AND F.Item = TA.Item 
+                AND F.Periodo = TA.Periodo 
+                AND F.TC = TA.TP 
+                AND F.Serie = TA.Serie 
+                AND F.Factura = TA.Factura ";
+            Ejecutar_SQL_SP($sSQL);
+            $CheqAbonos->value = 0;
+        }
+
+        $sSQL = "SELECT C.Cliente,F.CodigoC,F.Clave_Acceso,F.Estado_SRI,F.TC,F.Fecha,F.Fecha_V,F.Serie,F.Factura,F.Hora_Aut,F.Fecha_Aut,F.Autorizacion,
+                F.Saldo_MN,C.Email,C.Email2,C.EmailR,C.CI_RUC 
+                FROM Facturas As F,Clientes As C 
+                WHERE F.Item = '" . $NumEmpresa . "' 
+                AND F.Periodo = '" . $Periodo_Contable . "' 
+                AND F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' ";
+
+        if ($DocDesde > 0 && $DocHasta > 0 && $DocDesde <= $DocHasta) {
+            $sSQL .= "AND F.Factura BETWEEN " . $DocDesde . " and " . $DocHasta . " ";
+        }
+        if ($TipoEnvio == "FA") {
+            $sSQL .= "AND LEN(F.Autorizacion) >= 13 ";
+        }
+        if ($Cta_Aux_Mail != "Ninguno") {
+            $sSQL .= "AND F.X = '.' ";
+        }
+        $sSQL .= Tipo_De_Consulta(null, true) .
+            "AND F.TC IN ('FA','NV') " .
+            "AND F.CodigoC = C.Codigo " .
+            "ORDER BY F.Factura ";
+
+        //Select_Adodc($AdoQuery, $sSQL);
+    }
+
+    function Por_Buses($Patron_Busqueda)
+    {
+        $sSQL = "SELECT Cliente,Telefono,Direccion As Curso,DireccionT As Direccion_Ruta,Contacto As Ruta
+                FROM Clientes 
+                WHERE Plan_Afiliado = '" . $Patron_Busqueda . "' 
+                AND FA <> 0 
+                ORDER BY Cliente ";
+        //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
+        return $this->db->datos($sSQL);
+    }
+
+    function SMAbonos_Anticipados($FechaIni, $FechaFin)
+    {
+        $sSQL = "SELECT C.Cliente, C.CI_RUC, TS.Cta, TS.Fecha, TS.TP, TS.Numero, TS.Creditos As Abono
+          FROM Trans_SubCtas As TS, Clientes As C 
+          WHERE TS.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' 
+          AND TS.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+          AND TS.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+          AND TS.T <> 'A' 
+          " . Tipo_De_Consulta() . "
+          AND TS.Codigo = C.Codigo
+          ORDER BY C.Cliente, TS.Cta, TS.Fecha, TS.TP, TS.Numero ";
+        //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
+        return $this->db->datos($sSQL);
+    }
+
+    function Contra_Cta_Abonos($FechaIni, $FechaFin, $CheqAbonos, $DCCxC)
+    {
+        $sSQL = "SELECT CC.Cuenta, C.Cliente, TS.Fecha, TS.TP, TS.Numero, TS.Debitos, TS.Creditos, T.Cta AS Contra_Cta, TS.Cta
+                FROM Trans_SubCtas AS TS, Transacciones AS T, Catalogo_Cuentas AS CC, Clientes AS C 
+                WHERE TS.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' 
+                AND TS.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND TS.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                AND TS.T <> 'A' ";
+        if ($CheqAbonos == 1) {
+            $ContraCta = SinEspaciosIzq($DCCxC);
+            $sSQL .= "AND TS.Cta = '" . $ContraCta . "' ";
+            if (substr($ContraCta, 0, 1) == "1") {
+                $sSQL .= "AND TS.Debitos > 0  ";
+            }
+            if (substr($ContraCta, 0, 1) == "2") {
+                $sSQL .= "AND TS.Creditos > 0 ";
+            }
+        }
+        $sSQL .= "AND TS.Periodo = T.Periodo 
+                AND TS.Periodo = CC.Periodo 
+                AND TS.Item = T.Item 
+                AND TS.Item = CC.Item 
+                AND TS.TP = T.TP 
+                AND TS.Numero = T.Numero 
+                AND T.Cta = CC.Codigo 
+                AND TS.Codigo = C.Codigo 
+                AND TS.Cta <> T.Cta 
+                ORDER BY T.Cta, C.Cliente, TS.Fecha, TS.TP, TS.Numero ";
+        //Select_Adodc_Grid($DGQuery, $AdoQuery, $sSQL, "", "", true);
+    }
+
+    function Tipo_Pago_Cliente()
+    {
+        $sSQL = "SELECT C.Grupo, C.Cliente, C.CI_RUC, CM.Representante, CM.Cedula_R, CM.Telefono_R,
+                CM.Tipo_Cta, CM.Cta_Numero, CM.Caducidad, CM.Cod_Banco, TRSRI.Descripcion As Institucion_Financiera 
+                FROM Clientes As C, Clientes_Matriculas As CM, Tabla_Referenciales_SRI As TRSRI 
+                WHERE CM.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND CM.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                AND TRSRI.Tipo_Referencia = 'BANCOS Y COOP' 
+                AND C.Codigo = CM.Codigo 
+                AND CM.Cod_Banco = TRSRI.Codigo 
+                ORDER BY CM.Tipo_Cta, C.Grupo, C.Cliente ";
+        //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
+        return $this->db->datos($sSQL);
+    }
 
 }
 

@@ -18,12 +18,21 @@
             white-space: nowrap;
         }
 
+        #DGQueryCaption {
+            text-align: center;
+        }
+
         .btn-group .btn-default {
             height: 48px;
         }
 
         .btn-group .btn-default.dropdown-toggle {
             height: 48px;
+        }
+
+        .close {
+            color: #fff;
+            opacity: 1;
         }
     </style>
 </head>
@@ -252,7 +261,8 @@
     </div>
 
     <div class="row" style="margin-left:16px; margin-right:16px; margin-top:10px">
-        <div class="panel panel-default" style="height:300px">
+        <div class="panel panel-info" style="height:300px">
+            <div class="panel-heading" id="DGQueryCaption"></div>
             <div class="panel-body">
                 <div class="col-sm-12" style="overflow-x: scroll; height:300px">
                     <table class="blue-table" style="white-space: nowrap;" id="DGQuery">
@@ -264,34 +274,30 @@
 
     <div class="modal" id="modalBusqueda">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <div class="modal-content" style="background-color: white;">
+                <div class="modal-header" style="background-color: blue; color: white;">
+                    <button type="button" class="close" data-dismiss="modal" style="color: white;">&times;</button>
                     <h4 class="modal-title">PATRÓN DE BÚSQUEDA</h4>
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="row">
-
                             <div class="col-md-4">
                                 <label for="Label7">Patron de Busqueda:</label>
                                 <select class="form-control input-xs" name="ListCliente" id="ListCliente">
                                     <option value="">Seleccione</option>
                                 </select>
                             </div>
-
                             <div class="col-md-8">
                                 <label for=""></label>
-                                <select id="DCCliente" class="form-control">
-                                    <option value="dcc1">DCC 1</option>
-                                    <option value="dcc2">DCC 2</option>
-
+                                <select class="form-control input-xs" name="DCCliente" id="DCCliente">
+                                    <option value="">Seleccione</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" style="background-color: white;">
                     <button type="button" class="btn btn-success" id="modalBusquedaBtnAceptar">Aceptar</button>
                 </div>
             </div>
@@ -341,7 +347,7 @@
             }
         });
 
-       // $('#clave_supervisor').modal('show');
+        // $('#clave_supervisor').modal('show');
 
         var menuDetalleAbonos = ['Anticipados de Abonos',
             'Contrapartida del Abonos',
@@ -508,18 +514,19 @@
             'ListCliente': ListCliente
         };
 
-        console.log(parametros);
+        $("#DGQueryCaption").text("HISTORIAL DE FACTURAS");
 
         $.ajax({
             url: '../controlador/facturacion/HistorialFacturasC.php?Historico_Facturas=true',
             type: 'post',
-            dataType: 'json',
+            //dataType: 'json',
             data: { 'parametros': parametros },
             success: function (data) {
                 console.log(data);
-                if (data.length > 0) {
-                    $('#DGQuery').empty();
+                if (data !== '') {
                     $('#DGQuery').html(data);
+                } else {
+                    $('#DGQuery').html('<p>No hay datos que mostrar</p>');
                 }
             }
         });
@@ -552,6 +559,35 @@
             }
         });
     }
+
+    $('#ListCliente').change(function () {
+        var ListClienteText = $(this).val(); // Obtener el valor seleccionado del primer select
+        $.ajax({
+            url: '../controlador/facturacion/HistorialFacturasC.php?ListCliente_LostFocus=true',
+            type: 'post',
+            dataType: 'json',
+            data: { ListClienteText: ListClienteText },
+            success: function (data) {
+                console.log(data);
+                $('#DCCliente').empty();
+
+
+                $.each(data['data'], function (index, obj) {
+                    var valor = obj[data["nombreCampo"]];
+                    $('#DCCliente').append('<option value="' + valor + '">' + valor + '</option>');
+                });
+
+                var dataSize = data['data'].length;
+                var selectSize = dataSize > 17 ? 17 : dataSize;
+                $('#DCCliente').attr('size', selectSize);
+                $('#DCCliente option:first').prop("selected", true);
+
+                var valorSeleccionado = $('#DCCliente').val();
+                console.log("Valor seleccionado:", valorSeleccionado);
+            }
+        });
+    });
+
 
 
 
