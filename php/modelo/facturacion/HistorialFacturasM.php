@@ -46,7 +46,7 @@ class HistorialFacturasM
         return $this->db->datos($sSQL);
     }
 
-    function Historico_Facturas($FechaFin)
+    function Historico_Facturas($TipoConsulta,$FechaFin)
     {
         $sSQL = "SELECT C.Cliente, F.T, F.Serie, F.Factura, F.Fecha, Fecha_V, F.Total_MN As Total, F.Total_Efectivo, F.Total_Banco,
                 F.Total_Ret_Fuente, F.Total_Ret_IVA_B, F.Total_Ret_IVA_S, F.Otros_Abonos, F.Total_Abonos,F.Saldo_Actual, 
@@ -56,12 +56,18 @@ class HistorialFacturasM
                 WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
                 AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
                 AND F.Fecha <= '" . $FechaFin . "' 
-                " . Tipo_De_Consulta() . "
+                " . $TipoConsulta . "
                 AND F.CodigoC = C.Codigo 
                 AND F.Cod_Ejec = A.Codigo 
                 ORDER BY C.Cliente, F.Serie, F.Factura, F.Fecha";
         //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
-        return $this->db->datos($sSQL);
+
+        //$AdoQuery = $this->db->datos($sSQL);
+        
+        $datos = grilla_generica_new($sSQL, 'FACTURAS', '', 'RESUMEN DE PENSIONES DEL MES', false, false, false, 1, 1, 1, 100);
+        return $datos;
+
+        //return $this->db->datos($sSQL);
     }
 
     function Ventas_Productos($Si_No, $FechaIni, $FechaFin, $Con_Costeo, $CodigoInv)
@@ -1011,6 +1017,7 @@ class HistorialFacturasM
             "data" => $this->db->datos($sSQL),
             "nombreCampo" => $Nombre_Campo
         );
+        //SelectDB_Combo DCCliente, AdoCliente, sSQL, Nombre_Campo
 
     }
 

@@ -259,14 +259,11 @@
             <textarea class="form-control" id="TxtFile" rows="2"></textarea>
         </div>
     </div>
-
     <div class="row" style="margin-left:16px; margin-right:16px; margin-top:10px">
-        <div class="panel panel-info" style="height:300px">
-            <div class="panel-heading" id="DGQueryCaption"></div>
+        <div class="panel panel-info" style="height:420px">            
             <div class="panel-body">
-                <div class="col-sm-12" style="overflow-x: scroll; height:300px">
-                    <table class="blue-table" style="white-space: nowrap;" id="DGQuery">
-                    </table>
+                <div class="col-sm-12" style="height:420px" id="DGQuery">
+                    
                 </div>
             </div>
         </div>
@@ -501,35 +498,43 @@
 
     function Historico_Facturas() {
 
-        var MBFechaI = $('#MBFechaI').val();
-        var MBFechaF = $('#MBFechaF').val();
-        var CheqCxC = $('#CheqCxC').prop('checked') ? 1 : 0;
-        var ListCliente = $("#ListCliente").val();
-
         var parametros = {
-            'MBFechaI': MBFechaI,
-            'MBFechaF': MBFechaF,
-            'CheqCxC': CheqCxC,
+            'MBFechaI': $('#MBFechaI').val(),
+            'MBFechaF': $('#MBFechaF').val(),
+            'CheqCxC': $('#CheqCxC').prop('checked') ? 1 : 0,
             'FA': globalFA,
-            'ListCliente': ListCliente
+            'ListCliente': $("#ListCliente").val(),
+            'DCCliente': $('#DCCliente').val(),
+            'DCCxC': $('#DCCxC').val(),
+            'OpcPend': $('#OpcPend').prop('checked') ? 1 : 0,
+            'OpcAnul': $('#OpcAnul').prop('checked') ? 1 : 0,
+            'OpcCanc': $('#OpcCanc').prop('checked') ? 1 : 0,
+            'CheqIngreso': $('#CheqIngreso').prop('checked') ? 1 : 0,
+            'CheqAbonos': $('#CheqAbonos').prop('checked') ? 1 : 0,
+            'DescItem': globalDescItem,
+            'Cod_Marca': globalCodMarca
         };
 
         $("#DGQueryCaption").text("HISTORIAL DE FACTURAS");
 
+        //$DGQuery = "HISTORIAL DE FACTURAS";
+        //$Label2 = " Facturado";
+        //$Label4 = " Cobrado";
+        //$Label3 = " Saldo";
+        $('#myModal_espera').modal('show');
         $.ajax({
             url: '../controlador/facturacion/HistorialFacturasC.php?Historico_Facturas=true',
             type: 'post',
-            //dataType: 'json',
+            dataType: 'json',
             data: { 'parametros': parametros },
             success: function (data) {
-                console.log(data);
-                if (data !== '') {
-                    $('#DGQuery').html(data);
-                } else {
-                    $('#DGQuery').html('<p>No hay datos que mostrar</p>');
-                }
+                $('#myModal_espera').modal('hide');
+                $('#DGQuery').html(data);
+                $('#DGQuery #datos_t tbody').css('height', '36vh');
+
             }
         });
+        $('#MBFechaI').focus();
     }
 
     $('#Imprimir').click(function () {
@@ -537,6 +542,9 @@
     });
 
     var globalFA;
+    var globalCodigoInv;
+    var globalCodMarca;
+    var globalDescItem;
     function Form_Activate() {
         $.ajax({
             url: '../controlador/facturacion/HistorialFacturasC.php?Form_Activate=true',
@@ -544,7 +552,11 @@
             dataType: 'json',
             success: function (data) {
 
+                //console.log(data);
                 globalFA = data["FA"];
+                globalCodigoInv = data["CodigoInv"];
+                globalCodMarca = data["Cod_Marca"];
+                globalDescItem = data["DescItem"];
 
                 $('#ListCliente').empty();
                 $.each(data['ListCliente'], function (index, value) {
@@ -568,9 +580,8 @@
             dataType: 'json',
             data: { ListClienteText: ListClienteText },
             success: function (data) {
-                console.log(data);
+                //console.log(data);
                 $('#DCCliente').empty();
-
 
                 $.each(data['data'], function (index, obj) {
                     var valor = obj[data["nombreCampo"]];
