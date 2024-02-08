@@ -6,6 +6,7 @@
     var Codigo1 = '';
     var Codigo2 = '';
     var activeTabId = '';
+    var backgroundColor = 'white';
 
     let FA = {
         'Factura': '.',
@@ -31,15 +32,30 @@
         DCTipoPagoo();
         DCProductos();
         $('#DCLinea').prop('disabled', true);
-        PorGrupo = true;
-        Listar_Grupo(false);
+        //PorGrupo = true;
+        //Listar_Grupo(false);
         activeTabId = $('.nav-tabs .active a').attr('href') + 'Data';
 
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             activeTabId = $(e.target).attr('href') + 'Data'; // Obtiene el ID del contenido del tab activo
         });
 
-        console.log('<?php echo $_SESSION['INGRESO']['Fecha_P12']; ?>');
+        $(".nav-tabs li").click(function () {
+            // Reinicia el estilo de todos los enlaces
+            $(".nav-tabs li a").css({ "background-color": "white", "color": "#3c8dbc" });
+
+            // Encuentra el href del enlace dentro del li clickeado para obtener el ID del contenido del tab
+            var tabID = $(this).find('a').attr('href');
+
+            // Llama a contentColor con el ID del contenido del tab
+            contentColor(tabID + 'Data');
+            
+            SSTab2_Click(tabID + 'Data');
+
+            $(this).find('a').css({ "background-color": backgroundColor, "color": "black" });
+        });
+
+
         //Handle Cheq Events
         $('#CheqRangos').change(function () {
             if ($(this).is(':checked')) {
@@ -87,9 +103,9 @@
             Listar_Clientes_Grupo();
         });
 
-        $('#CTipoConsulta').change(function () {
+        /*$('#CTipoConsulta').change(function () {
             CTipoConsulta($(this).val());
-        });
+        });*/
 
         $('#CTipoConsulta').blur(function () {
             CTipoConsulta($(this).val());
@@ -173,21 +189,202 @@
                 }
             });
         });
-
-
-
-
-
     });
     //Definicion de metodos
+
+    function SSTab2_Click(tabID) {
+        Tipo_Rango_Grupos();
+        var parametros = {
+            'MBFechaI': $('#MBFechaI').val(),
+            'MBFechaF': $('#MBFechaF').val(),
+            'Opcion': activeTabId,
+            'CheqRangos': $('#CheqRangos').is(':checked') ? 1 : 0,
+            'PorGrupo': PorGrupo == true ? 1 : 0,
+            'PorDireccion': PorDireccion == true ? 1 : 0,
+            'Codigo1': Codigo1,
+            'Codigo2': Codigo2,
+            'DCCliente': $('#DCCliente').val(),
+            'CheqResumen': $('#CheqResumen').is(':checked') ? 1 : 0,
+            'CheqVenc': $('#CheqVenc').is(':checked') ? 1 : 0,
+            'DCProductosVisible' : $('#DCProductos').is(':visible') ? 1 : 0,
+            'OpcActivos' : $('#OpcActivos').is(':checked') ? 1 : 0,
+        };
+        $('#myModal_espera').modal('show');
+        switch (tabID) {
+            case '#LxGData':
+                Listar_Clientes_Grupo();
+                break;
+            case '#PmAData':
+                Pensiones_Mensuales_Anio(parametros);
+                break;
+            case '#AcDData':
+                Listado_Becados(parametros);
+                break;
+            case '#NdAData':
+                Nomina_Alumnos(parametros);
+                break;
+            case '#EpEData':
+                Listar_Clientes_Email(parametros);
+                break;
+            case '#RpPmData':
+                Resumen_Pensiones_Mes(parametros);
+                break;
+            case '#EdData':
+                Listar_Deuda_por_Api();
+                break;
+
+        }
+    }
+
+    function Listar_Clientes_Email(parametros){
+        $.ajax({
+            url: "../controlador/facturacion/ListarGruposC.php?Listar_Clientes_Email=true",
+            type: "POST",
+            data: { 'parametros': parametros },
+            dataType: 'json',
+            success: function (response) {
+                $('#myModal_espera').modal('hide');
+                var data = response;
+                /*$('#EpEData').empty();
+                $('#EpEData').html(data.tbl);
+                $('#EpEData #datos_t tbody').css('height', '36vh');
+                $('#TotalRegistros').text('Total Registros: ' + data.numRegistros);*/
+            }
+        });
+    }
+
+    function Resumen_Pensiones_Mes(parametros){
+        $.ajax({
+            url: "../controlador/facturacion/ListarGruposC.php?Resumen_Pensiones_Mes=true",
+            type: "POST",
+            data: { 'parametros': parametros },
+            dataType: 'json',
+            success: function (response) {
+                $('#myModal_espera').modal('hide');
+                var data = response;
+                $('#RpPmData').empty();
+                $('#RpPmData').html(data.tbl);
+                $('#RpPmData #datos_t tbody').css('height', '36vh');
+                $('#TotalRegistros').text('Total Registros: ' + data.numRegistros);
+            }
+        });
+    }
+
+    function Nomina_Alumnos(parametros){
+        $.ajax({
+            url: "../controlador/facturacion/ListarGruposC.php?Nomina_Alumnos=true",
+            type: "POST",
+            data: { 'parametros': parametros },
+            dataType: 'json',
+            success: function (response) {
+                $('#myModal_espera').modal('hide');
+                var data = response;
+                $('#NdAData').empty();
+                $('#NdAData').html(data.tbl);
+                $('#NdAData #datos_t tbody').css('height', '36vh');
+                $('#TotalRegistros').text('Total Registros: ' + data.numRegistros);
+            }
+        });
+    }
+
+    function Listado_Becados(parametros){
+        $.ajax({
+            url: "../controlador/facturacion/ListarGruposC.php?Listado_Becados=true",
+            type: "POST",
+            data: { 'parametros': parametros },
+            dataType: 'json',
+            success: function (response) {
+                $('#myModal_espera').modal('hide');
+                var data = response;
+                $('#AcDData').empty();
+                $('#AcDData').html(data.tbl);
+                $('#AcDData #datos_t tbody').css('height', '36vh');
+                $('#TotalRegistros').text('Total Registros: ' + data.numRegistros);
+            }
+        });
+    }
+
+    function Pensiones_Mensuales_Anio(parametros){
+        $.ajax({
+            url: "../controlador/facturacion/ListarGruposC.php?Pensiones_Mensuales_Anio=true",
+            type: "POST",
+            data: { 'parametros': parametros },
+            dataType: 'json',
+            success: function (response) {
+                $('#myModal_espera').modal('hide');
+                var data = response;
+                $('#PmAData').empty();
+                $('#PmAData').html(data.tbl);
+                $('#PmAData #datos_t tbody').css('height', '36vh');
+                $('#TotalRegistros').text('Total Registros: ' + data.numRegistros);
+                $('#Label9').val(data.Caption9);
+                $('#Label10').val(data.Caption10);
+                $('#Label4').val(data.Caption4);
+            }
+        });
+    }
+
+    function Tipo_Rango_Grupos() {
+        var CheqRangos = $('#CheqRangos').is(':checked') ? 1 : 0;
+        if (CheqRangos != false) {
+            Codigo1 = $('#DCGrupoI').val();
+            Codigo2 = $('#DCGrupoF').val();
+        } else {
+            if (PorGrupo || PorDireccion) {
+                Codigo1 = $('#DCCliente').val();
+                Codigo2 = $('#DCCliente').val();
+            } else {
+                Codigo1 = 'Todos';
+                Codigo2 = 'Todos';
+            }
+        }
+        if (Codigo1 == "") {
+            Codigo1 = '<?php echo G_NINGUNO; ?>';
+        }
+        if (Codigo2 == "") {
+            Codigo2 = '<?php echo G_NINGUNO; ?>';
+        }
+    }
+
+    function contentColor(tabID) {
+        switch (tabID) {
+            case '#LxGData':
+                backgroundColor = '#fffec2';
+                break;
+            case '#PmAData':
+                backgroundColor = '#ff9688';
+                break;
+            case '#AcDData':
+                backgroundColor = '#a5eea0';
+                break;
+            case '#NdAData':
+                backgroundColor = '#b2dafa';
+                break;
+            case '#EpEData':
+                backgroundColor = '#e4fbfb';
+                break;
+            case '#RpPmData':
+                backgroundColor = '#ecd6c0';
+                break;
+            case '#EdData':
+                backgroundColor = '#ffe5f0';
+                break;
+            default:
+                backgroundColor = 'white';
+                break;
+        }
+
+        $('#tabContent').css({ "background-color": backgroundColor });
+
+    }
 
     function Listar_Deuda_por_Api() {
         var parametros = {
             'MBFechaF': $('#MBFechaF').val(),
-            'CheqRangos': $('#CheqRangos').is(':checked'),
+            'CheqRangos': $('#CheqRangos').is(':checked') ? 1 : 0,
             'Codigo1': Codigo1,
             'Codigo2': Codigo2,
-            'CheqVenc': $('#CheqVenc').is(':checked')
+            'CheqVenc': $('#CheqVenc').is(':checked') ? 1 : 0
         };
 
         $.ajax({
@@ -260,7 +457,7 @@
             'Codigo2': Codigo2,
             'PorGrupo': PorGrupo,
             'PorDireccion': PorDireccion,
-            'CheqRangos': $('#CheqRangos').is(':checked'),
+            'CheqRangos': $('#CheqRangos').is(':checked') ? 1 : 0,
             'DCCliente': $('#DCCliente').val()
         };
         $.ajax({
@@ -282,9 +479,11 @@
     }
 
     function Listar_Grupo(tmp) {
+        tmp = tmp == true ? 1 : 0;
         var parametros = {
             'PorDireccion': tmp
         };
+        $('#myModal_espera').modal('show');
         $.ajax({
             url: "../controlador/facturacion/ListarGruposC.php?Listar_Grupo=true",
             type: "POST",
@@ -292,6 +491,7 @@
             success: function (response) {
                 var data = JSON.parse(response);
                 if (data.length > 0) {
+                    $('#myModal_espera').modal('hide');
                     $('#DCCliente').empty();
                     $.each(data, function (index, value) {
                         if (tmp) {
@@ -399,7 +599,6 @@
 
     .espacio {
         min-height: 47vh;
-
     }
 </style>
 <div>
@@ -481,7 +680,7 @@
             </div>
             <div class="row" style="font-size:12.9px">
                 <input id="MBFechaI" name="MBFechaI" type="date" style=" width:48%; text-align:center;"
-                    value="<?php echo date('Y-m-d'); ?>" />
+                    value="<?php echo date("Y-m-d", strtotime('first day of january this year')); ?>" />
                 <input id="MBFechaF" name="MBFechaF" type="date" style=" width:48%; text-align:center;"
                     value="<?php echo date('Y-m-d'); ?>" />
             </div>
@@ -550,7 +749,7 @@
             </div>
             <div class="row">
                 <label for="OpcActivos">
-                    <input type="radio" name="OpcActivos" id="OpcActivos" /> Activo
+                    <input type="radio" name="OpcActivos" id="OpcActivos" checked/> Activo
                 </label>
                 <label for="OpcInactivos">
                     <input type="radio" name="OpcActivos" id="OpcInactivos" /> Inactivo
@@ -558,30 +757,34 @@
             </div>
         </div>
     </div>
-    <div class="row alineacion"><!-- Nav tabs -->
-        <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#LxG" aria-controls="LxG" role="tab"
-                    data-toggle="tab">LISTADO POR GRUPOS</a></li>
+    <div class="row alineacion" style="margin-right: 0vw;"><!-- Nav tabs -->
+        <ul class="nav nav-tabs nav-justified" role="tablist">
+            <li role="presentation" class="active"><a href="#LxG" aria-controls="LxG" role="tab" data-toggle="tab"
+                    style="background-color: #fffec2;">LISTADO POR GRUPOS</a></li>
             <li role="presentation"><a href="#PmA" aria-controls="PmA" role="tab" data-toggle="tab">PENSION
                     MENSUAL DEL AÑO</a>
             </li>
-            <li role="presentation"><a href="#AcD" aria-controls="AcD" role="tab" data-toggle="tab">ALUMNOS CON
+            <li role="presentation"><a href="#AcD" aria-controls="AcD" role="tab" data-toggle="tab">ALUMNOS
+                    CON
                     DESCUENTO</a></li>
-            <li role="presentation"><a href="#NdA" aria-controls="NdA" role="tab" data-toggle="tab">NOMINA DE
+            <li role="presentation"><a href="#NdA" aria-controls="NdA" role="tab" data-toggle="tab">NOMINA
+                    DE
                     ALUMNOS</a></li>
-            <li role="presentation"><a href="#EpE" aria-controls="EpE" role="tab" data-toggle="tab">ENVIOS POR
+            <li role="presentation"><a href="#EpE" aria-controls="EpE" role="tab" data-toggle="tab">ENVIOS
+                    POR
                     EMAIL
                 </a></li>
             <li role="presentation"><a href="#RpPm" aria-controls="RpPm" role="tab" data-toggle="tab">RESUMEN
                     PENSIONES
                     POR MES
                 </a></li>
-            <li role="presentation"><a href="#Ed" aria-controls="Ed" role="tab" data-toggle="tab">ENVIAR DEUDA POR
+            <li role="presentation"><a href="#Ed" aria-controls="Ed" role="tab" data-toggle="tab">ENVIAR
+                    DEUDA POR
                     API Y EMAIL
                 </a></li>
         </ul>
         <!-- Tab panes -->
-        <div class="tab-content">
+        <div class="tab-content" id="tabContent" style="background-color: #fffec2;">
             <div role="tabpanel" class="tab-pane fade in active" id="LxG">
                 <fieldset class="espacio">
                     <div id="LxGData">
@@ -613,37 +816,67 @@
             <div role="tabpanel" class="tab-pane fade" id="EpE">
                 <fieldset class="espacio">
                     <div id="EpEData">
-                        <div class="row">
-                            <div class="sol-sm-5">
+                        <div class="row" style="margin-top:8vh;">
+                            <div class="col-sm-5">
                                 <div class="row">
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-3">
                                         <label for="Label13" id="Label12">Remitente</label>
                                     </div>
-                                    <div class="sol-sm-10">
-                                        <input type="text" name="Label13" id="Label13">
+                                    <div class="sol-sm-9">
+                                        <input type="text" name="Label13" id="Label13"
+                                            style="width: 70%; max-width:75%">
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-sm-2">
+                                <div class="row" style="margin-top: 5px;">
+                                    <div class="col-sm-3">
                                         <label for="TxtAsunto" id="Label7">Asunto</label>
                                     </div>
-                                    <div class="sol-sm-10">
-                                        <input type="text" name="TxtAsunto" id="TxtAsunto">
+                                    <div class="sol-sm-9">
+                                        <input type="text" name="TxtAsunto" id="TxtAsunto"
+                                            style="width: 70%; max-width:75%">
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-top: 5px;">
+                                    <div class="col-sm-3">
+                                        <label for="LblArchivo">Adjuntar</label>
+                                    </div>
+                                    <div class="sol-sm-9">
+                                        <input type="file" name="LblArchivo" id="LblArchivo"
+                                            style="width: 70%; max-width:75%">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label for="TxtMensaje">Esciba el mensaje</label>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-2">
-                                        <label for="LblArchivo">Adjuntar</label>
-                                    </div>
-                                    <div class="sol-sm-10">
-                                        <input type="file" name="LblArchivo" id="LblArchivo">
+                                    <div class="col-sm-12">
+                                        <textarea class="form-control" name="TxtMensaje" id="TxtMensaje"
+                                            rows="2"></textarea>
                                     </div>
                                 </div>
                             </div>
-                            <div class="sol-sm-5">
-
+                            <div class="col-sm-2">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label for="CheqConDeuda"> <input type="checkbox" name="CheqConDeuda"
+                                                id="CheqConDeuda"> Enviar mail con deuda pendiente</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
+                                            title="Listar por Grupos" id="btnListarGrupos" onclick="">Enviar mail
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="sol-sm-2">
+                        </div>
+                        <div class="row" style="margin-top:8vh;">
+                            <div class="col-sm-12" id="LstClientes">
 
                             </div>
                         </div>
@@ -665,6 +898,7 @@
                 </fieldset>
             </div>
         </div>
+
     </div>
     <div class="row totales alineacion">
         <label class="inline" for="Label9"> SubTotal CxC
