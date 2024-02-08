@@ -50,9 +50,9 @@ $tipo='';
 
    }
 
-  function Ver_retencion(retencion,serie,numero)
+  function Ver_retencion(retencion,serie,numero,tp)
   {    
-    var url = '../controlador/facturacion/lista_retencionesC.php?Ver_retencion=true&retencion='+retencion+'&serie='+serie+'&numero='+numero;   
+    var url = '../controlador/facturacion/lista_retencionesC.php?Ver_retencion=true&retencion='+retencion+'&serie='+serie+'&numero='+numero+'&tp='+tp;   
     window.open(url,'_blank');
   }
 
@@ -424,6 +424,8 @@ function modal_email_ret(retencion,serie,numero,autorizacion,emails)
           <th>Saldo</th>
           <th>RUC_CI</th>
           <th>TB</th>
+          <th>Numero</th>
+          <th>TP</th>
         </thead>
         <tbody  id="tbl_tabla">
           <tr>

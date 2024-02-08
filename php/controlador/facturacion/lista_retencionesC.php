@@ -25,7 +25,7 @@ if(isset($_GET['autorizar_retencion']))
 
 if(isset($_GET['Ver_retencion']))
 {
-  $controlador->ver_retencion_pdf($_GET['retencion'],$_GET['serie'],$_GET['numero']);
+  $controlador->ver_retencion_pdf($_GET['retencion'],$_GET['serie'],$_GET['numero'],$_GET['tp']);
 }
 
 if(isset($_GET['enviar_email_detalle']))
@@ -75,7 +75,6 @@ class lista_retencionesC
 
      function tabla_facturas($parametros)
     {
-
     	// print_r($parametros);die();
     	$codigo = $parametros['ci'];
     	$tbl = $this->modelo->retenciones_emitidas_tabla($codigo,$parametros['desde'],$parametros['hasta'],$parametros['serie']);
@@ -107,7 +106,7 @@ class lista_retencionesC
 					<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Acciones
 					<span class="fa fa-caret-down"></span></button>
 					<ul class="dropdown-menu">
-					<li><a href="#" onclick="Ver_retencion(\''.$value['SecRetencion'].'\',\''.$value['Serie_Retencion'].'\',\''.$value['Numero'].'\')"><i class="fa fa-eye"></i> Ver Retencion</a></li>';
+					<li><a href="#" onclick="Ver_retencion(\''.$value['SecRetencion'].'\',\''.$value['Serie_Retencion'].'\',\''.$value['Numero'].'\',\''.$value['TP'].'\')"><i class="fa fa-eye"></i> Ver Retencion</a></li>';
 					if(strlen($value['AutRetencion'])==13)
 					{
 						$tr.='<li><a href="#" onclick="autorizar(\''.$value['SecRetencion'].'\',\''.$value['Serie_Retencion'].'\',\''.$value['Fecha']->format('Y-m-d').'\')" ><i class="fa fa-paper-plane"></i>Autorizar</a></li>';
@@ -146,6 +145,8 @@ class lista_retencionesC
             <td class="text-right">'.$value['TD'].'</td>
             <td>'.$value['CI_RUC'].'</td>
             <td>RE</td>
+            <td>'.$value['Numero'].'</td>
+            <td>'.$value['TP'].'</td>
           </tr>';
     	}
 
@@ -178,11 +179,11 @@ class lista_retencionesC
 
     }
 
-    function ver_retencion_pdf($retencion,$serie_r,$numero)
+    function ver_retencion_pdf($retencion,$serie_r,$numero,$tp)
     {
     	// print_r($cod);die();
-    	$TP = 'CE';  	 
-      	$this->incom->reporte_retencion($numero,$TP,$retencion,$serie_r,$imp=0);
+    	// $TP = 'CE';  	 
+      	$this->incom->reporte_retencion($numero,$tp,$retencion,$serie_r,$imp=0);
 	 	
    
     }
