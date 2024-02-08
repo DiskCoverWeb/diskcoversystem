@@ -79,7 +79,7 @@ class ListarGruposM
 
     public function Listar_Grupo($parametros)
     {
-        if ($parametros['PorDireccion'] === 'true') {
+        if ($parametros['PorDireccion']) {
             $sql = "SELECT Direccion
                     FROM Clientes
                     WHERE FA <> 0";
@@ -111,13 +111,13 @@ class ListarGruposM
         if ($_SESSION['INGRESO']['Mas_Grupos']) {
             $sql .= " AND DirNumero = '" . $_SESSION['INGRESO']['item'] . "'";
         }
-        if ($parametros['CheqRangos'] <> 'false') {
+        if ($parametros['CheqRangos'] <> 0) {
             $sql .= " AND Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "'";
         } else {
-            if ($parametros['PorGrupo'] === 'true') {
+            if ($parametros['PorGrupo']) {
                 $titulo = "LISTADO DE CLIENTES (Grupo No. " . $parametros['DCCliente'] . ")";
                 $sql .= " AND Grupo = '" . $parametros['DCCliente'] . "'";
-            } else if ($parametros['PorDireccion'] === 'true') {
+            } else if ($parametros['PorDireccion']) {
                 $titulo = "LISTADO DE CLIENTES (Direccion: " . $parametros['DCCliente'] . ")";
                 $sql .= " AND Direccion = '" . $parametros['DCCliente'] . "'";
             } else {
@@ -145,7 +145,7 @@ class ListarGruposM
                                        AND CF.Fecha <= '" . $FechaTope . "'
                                        AND CF.Codigo = Clientes.Codigo)
                 WHERE Codigo <> '.'";
-        if ($parametros['CheqRangos'] === 'true') {
+        if ($parametros['CheqRangos']) {
             $sql .= " AND Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "'";
         }
         Ejecutar_SQL_SP($sql);
@@ -157,7 +157,7 @@ class ListarGruposM
                                  AND CF.Fecha <= '" . $FechaTope . "'
                                  AND CF.Codigo = Clientes.Codigo)
                 WHERE Codigo <> '.'";
-        if ($parametros['CheqRangos'] === 'true') {
+        if ($parametros['CheqRangos']) {
             $sql .= " AND Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "'";
         }
         Ejecutar_SQL_SP($sql);
@@ -180,12 +180,118 @@ class ListarGruposM
         $sql = "SELECT Grupo, Cliente As Estudiante, CI_RUC As Cedula, Saldo_Pendiente, Credito As Dias_Mora, EmailR, Codigo
                 FROM Clientes
                 WHERE FA <> 0";
-        if ($parametros['CheqRangos'] === 'true') {
+        if ($parametros['CheqRangos']) {
             $sql .= " AND Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "'";
         }
         $sql .= "ORDER BY Grupo, Cliente";
         $AdoQuery = $this->db->datos($sql);
         $datos = grilla_generica_new($sql, 'Clientes', '', 'LISTADO DE CLIENTES', false, false, false, 1, 1, 1, 100);
+        return array('datos' => $datos, 'AdoQuery' => $AdoQuery);
+    }
+
+    public function Pensiones_Mensuales_Anio($ListaCampos)
+    {
+        $sql = "SELECT " . $ListaCampos . " 
+                FROM Reporte_CxC_Cuotas
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'
+                ORDER BY GrupoNo,Cliente";
+        //print_r($sql);die();
+        $AdoQuery = $this->db->datos($sql);
+        $datos = grilla_generica_new($sql, 'Reporte_CxC_Cuotas', '', 'PENSIONES MENSUALES DEL AÑO', false, false, false, 1, 1, 1, 100);
+        return array('datos' => $datos, 'AdoQuery' => $AdoQuery);
+    }
+
+    public function Listado_Becados($parametros, $FechaIni, $FechaFin)
+    {
+        $sql = "SELECT C.Cliente As Estudiantes,C.Grupo,CF.Mes,CF.Valor,CF.Descuento,CF.Descuento2,(CF.Valor-(CF.Descuento+CF.Descuento2)) As Total_Pagar,(((CF.Descuento+CF.Descuento2)/CF.Valor)*100) As Porc
+                FROM Clientes As C, Clientes_Facturacion As CF
+                WHERE CF.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND CF.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'
+                AND (CF.Descuento+CF.Descuento2) <> 0";
+        if ($parametros['CheqRangos'] <> 0) {
+            $sql .= "AND C.Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "'";
+        } else {
+            if ($parametros['PorGrupo']) {
+                $sql .= "AND C.Grupo = '" . $parametros['DCCliente'] . "'";
+            } else if ($parametros['PorDireccion']) {
+                $sql .= "AND C.Direccion = '" . $parametros['DCCliente'] . "'";
+            }
+        }
+        $sql .= "AND CF.Codigo = C.Codigo
+                 ORDER BY C.Grupo,C.Cliente,CF.Num_Mes";
+        //print_r($sql);die();
+        $AdoQuery = $this->db->datos($sql);
+        $datos = grilla_generica_new($sql, 'Clientes_Facturacion', '', 'LISTADO DE BECADOS', false, false, false, 1, 1, 1, 100);
+        return array('datos' => $datos, 'AdoQuery' => $AdoQuery);
+    }
+
+    public function Nomina_Alumnos($parametros)
+    {
+        $sql = "SELECT C.Cliente As Estudiantes,' ' As T_1,' ' As T_2,' ' As T_3,' ' As T_4,' ' As T_5,C.Grupo,C.Direccion,C.Email,Count(DF.Codigo) As No_Facturas
+                FROM Clientes AS C,Detalle_Factura As DF
+                WHERE C.Cliente <> '.'";
+        if ($parametros['PorGrupo']) {
+            $sql .= "AND C.Grupo = '" . $parametros['DCCliente'] . "'";
+        } elseif ($parametros['PorDireccion']) {
+            $sql .= "AND C.Direccion = '" . $parametros['DCCliente'] . "'";
+        }
+        if ($parametros['CheqRangos'] <> 0) {
+            $sql .= "AND C.Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "'";
+        }
+        /*TODO: Ver donde se define Codigo3
+        if($parametros['DCProductosVisible']){
+            $sql .= "AND DF.Codigo ="
+        }*/
+        if ($parametros['OpcActivos']) {
+            $sql .= "AND C.T = 'N'";
+        } else {
+            $sql .= "AND C.T <> 'N'";
+        }
+        $sql .= "AND C.FA <> 0
+                 AND DF.T <> '" . G_ANULADO . "'
+                 AND DF.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                 AND DF.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                 AND C.Codigo = DF.CodigoC
+                 GROUP BY C.Grupo,C.Cliente,C.Direccion,C.Email
+                 ORDER BY C.Grupo,C.Cliente";
+        $AdoQuery = $this->db->datos($sql);
+        $datos = grilla_generica_new($sql, 'Clientes', '', 'NOMINA DE ALUMNOS', false, false, false, 1, 1, 1, 100);
+        return array('datos' => $datos, 'AdoQuery' => $AdoQuery);
+    }
+
+    public function Resumen_Pensiones_Mes($parametros, $FechaIni, $FechaFin)
+    {
+        $sql = "SELECT CF.Periodo,COUNT(CP.Producto) AS Cant,CF.GrupoNo,CP.Producto,SUM(CF.Valor-(CF.Descuento+CF.Descuento2)) As Total
+                FROM Clientes_Facturacion As CF,Catalogo_Productos As CP
+                WHERE CP.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                AND CP.Item = '" . $_SESSION['INGRESO']['item'] . "'";
+        if (date('m', strtotime($parametros['MBFechaI'])) == date('m', strtotime($parametros['MBFechaF']))) {
+            $sql .= "AND CF.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'";
+        } else {
+            $sql .= "AND CF.Fecha <= '" . $FechaFin . "'";
+        }
+        $sql .= "AND CF.GrupoNo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "'
+                 AND CF.Codigo_Inv = CP.Codigo_Inv
+                 AND CF.Item = CP.Item
+                 GROUP BY CF.Periodo,CF.GrupoNo,CP.Producto
+                 UNION
+                 SELECT 'x' As Periodo,COUNT(CP.Producto) AS Cant,' ==> ' As GrupoNo,'Total por Cobrar' As Producto,SUM(CF.Valor-CF.Descuento) As Total
+                 FROM Clientes_Facturacion As CF,Catalogo_Productos As CP
+                 WHERE CP.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                 AND CP.Item = '" . $_SESSION['INGRESO']['item'] . "'";
+        if (date('m', strtotime($parametros['MBFechaI'])) == date('m', strtotime($parametros['MBFechaF']))) {
+            $sql .= "AND CF.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'";
+        } else {
+            $sql .= "AND CF.Fecha <= '" . $FechaFin . "'";
+        }
+        $sql .= "AND CF.GrupoNo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "'
+                AND CF.Codigo_Inv = CP.Codigo_Inv
+                AND CF.Item = CP.Item
+                ORDER BY CF.Periodo,CF.GrupoNo,CP.Producto";
+        //print_r($sql);die();
+        $AdoQuery = $this->db->datos($sql);
+        $datos = grilla_generica_new($sql, 'Clientes_Facturacion', '', 'RESUMEN DE PENSIONES DEL MES', false, false, false, 1, 1, 1, 100);
         return array('datos' => $datos, 'AdoQuery' => $AdoQuery);
     }
 }
