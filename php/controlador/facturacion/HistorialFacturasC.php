@@ -18,14 +18,20 @@ if (isset($_GET['CheqCxC_Click'])) {
     echo json_encode($controlador->CheqCxC_Click());
 }
 
-if (isset($_GET['Historico_Facturas'])) {
-    $parametros = $_POST['parametros'];
-    echo json_encode($controlador->Historico_Facturas($parametros));
-}
-
 if (isset($_GET['Form_Activate'])) {
     echo json_encode($controlador->Form_Activate());
 }
+
+if (isset($_GET['ToolBarMenu_ButtonClick'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->ToolBarMenu_ButtonClick($parametros));
+}
+
+if (isset($_GET['ListCliente_LostFocus'])) {
+    $ListClienteText = $_POST['ListClienteText'];
+    echo json_encode($controlador->ListCliente_LostFocus($ListClienteText));
+}
+
 
 class HistorialFacturasC
 {
@@ -54,13 +60,14 @@ class HistorialFacturasC
         $MBFechaF = $parametros['MBFechaF'];
         $CheqCxC = $parametros['CheqCxC'];
         $ListCliente = $parametros['ListCliente'];
+        $FA = $parametros['FA'];
+        $idBtn = $parametros['idBtn'];
 
         FechaValida($MBFechaI);
         FechaValida($MBFechaF);
 
         $FechaIni = BuscarFecha($MBFechaI);
         $FechaFin = BuscarFecha($MBFechaF);
-
         $Mifecha = $FechaIni;
         $FechaTexto = $FechaFin;
 
@@ -70,9 +77,8 @@ class HistorialFacturasC
 
         $PorCxC = false;
 
-        if ($CheqCxC == 1) {
+        if ($CheqCxC == 1)
             $PorCxC = true;
-        }
 
         if ($ListCliente == "Todos") {
             $FA['TC'] = G_NINGUNO;
@@ -82,89 +88,262 @@ class HistorialFacturasC
 
         $Total = 0;
         $Abono = 0;
-        return $FA;
+        $data = array();
+        $Opcion = 0;
+
+        switch ($idBtn) {
+            case "Imprimir":
+                Impresiones();
+                break;
+            case "Facturas":
+                Actualizar_Abonos_Facturas_SP($FA);
+                $data = $this->Historico_Facturas($parametros);
+                $Total = $data['Total'];
+                $Abono = $data['Abono'];
+                $datos = $data['datos'];
+                $Opcion = $data['Opcion'];
+                $this->Totales_CxC_Abonos($datos['AdoQuery'], $Opcion);
+                break;
+            case "Protestado":
+                $data = $this->Cheques_Protestados($parametros);                
+                $Total = $data['Total'];
+                $datos = $data['datos'];
+                $Opcion = $data['Opcion'];
+                $this->Totales_CxC_Abonos($datos['AdoQuery'], $Opcion);
+                break;
+            case "Retenciones_NC":
+                //Actualizar_Abonos_Facturas( FA);
+                $data = $this->Abonos_Facturas(true, $parametros);
+                $Total = $data['Total'];
+                $datos = $data['datos'];
+                $Opcion = $data['Opcion'];
+                break;
+            case "Por_Buses":
+                //Por_Buses($DCCliente());
+                break;
+            case "Listado_Tarjetas":
+                $datos = $this->modelo->Listado_Tarjetas();
+                break;
+            case "CxC_Clientes":
+                Actualizar_Abonos_Facturas_SP($FA);
+                Listado_Facturas_Por_Meses(True);
+                break;
+            case "Listar_Por_Meses":
+                Listado_Facturas_Por_Meses(False);
+                break;
+            case "Estado_Cuenta_Cliente":
+                if ($ListCliente == "Todos") {
+                    $FA['CodigoC'] = "Todos";
+                }
+                $fechaSistema = FechaSistema();
+                $fechaSistema = date("d/m/Y", strtotime($fechaSistema));
+                //Reporte_Cartera_Clientes_SP(PrimerDiaMes($MBFechaI), UltimoDiaMes($fechaSistema), $FA['CodigoC']);  //ERROR
+                $datos = $this->modelo->Estado_Cuenta_Cliente();
+                if ($datos['num_filas']) {
+                    $Total = 0;
+                    $Abono = 0;
+                    foreach ($datos['AdoQuery'] as $fila) {
+                        $Total += $fila["Cargos"];
+                        $Abono += $fila["Abonos"];
+                    }
+                }
+                $Opcion = 19;
+                break;
+            case "Listados_Medidor":
+                //Listados_Medidor
+                break;
+            case "Base_Access":
+                //Listar_Base_Externa
+                break;
+            case "Base_MySQL":
+                //Leer_Datos_MySQL
+                //Listar_Base_MySQL
+                break;
+            case "Buscar_Malla":
+                return array('DCCliente' => $this->modelo->Buscar_Malla(), 'idBtn' => $idBtn);
+        }
+
+        $label_facturado = number_format($Total, 2, '.', ',');
+        $label_abonado = number_format($Abono, 2, '.', ',');
+        $label_saldo = number_format(($Total - $Abono), 2, '.', ',');
+
+        return array(
+            'label_facturado' => $label_facturado,
+            'label_abonado' => $label_abonado,
+            'label_saldo' => $label_saldo,
+            'tbl' => $datos['datos'],
+            'num_filas' => $datos['num_filas'],
+            'idBtn' => $idBtn,
+            'Opcion' => $Opcion,
+        );
+        //return $parametros;
+    }
+
+    function Abonos_Facturas($Ret_NC,$parametros){
+        $Opcion = 6;
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+        $CheqCxC = $parametros['CheqCxC'];
+        $PorCxC = false;        
+        if ($CheqCxC == 1) {
+            $PorCxC = true;
+        }
+
+        $paramAdd = array(
+            'ListCliente' => $parametros['ListCliente'],
+            'DCCliente' => $parametros['DCCliente'],
+            'DCCxC' => $parametros['DCCxC'],
+            'OpcPend' => $parametros['OpcPend'],
+            'OpcAnul' => $parametros['OpcAnul'],
+            'OpcCanc' => $parametros['OpcCanc'],
+            'CheqCxC' => $parametros['CheqCxC'],
+            'CheqIngreso' => $parametros['CheqIngreso'],
+            'CheqAbonos' => $parametros['CheqAbonos'],
+            'DescItem' => $parametros['DescItem'],
+            'Cod_Marca' => $parametros['Cod_Marca'],
+            'Opcion' => $Opcion,
+        );
+
+        $tipoConsulta = $this->Tipo_De_Consulta($paramAdd, true);
+        $sSQL = $this->modelo->Abonos_Facturas($tipoConsulta, $MBFechaI, $MBFechaF, $Ret_NC);
+
+        $Total = 0;
+        $label_abonado = number_format($Total, 2, '.', ',');
+        $label_facturado = "0.00";
+        $label_saldo = "0.00";
+
+        return array(
+            'datos' => $sSQL,
+            'Total' => $Total,
+            'Opcion' => $Opcion
+        );
+    }
+
+    function Cheques_Protestados($parametros)
+    {
+        $Total = 0;
+        $Opcion = 7;
+
+        $paramAdd = array(
+            'ListCliente' => $parametros['ListCliente'],
+            'DCCliente' => $parametros['DCCliente'],
+            'DCCxC' => $parametros['DCCxC'],
+            'OpcPend' => $parametros['OpcPend'],
+            'OpcAnul' => $parametros['OpcAnul'],
+            'OpcCanc' => $parametros['OpcCanc'],
+            'CheqCxC' => $parametros['CheqCxC'],
+            'CheqIngreso' => $parametros['CheqIngreso'],
+            'CheqAbonos' => $parametros['CheqAbonos'],
+            'DescItem' => $parametros['DescItem'],
+            'Cod_Marca' => $parametros['Cod_Marca'],
+            'Opcion' => $Opcion,
+        );
+
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+
+        $tipoConsulta = $this->Tipo_De_Consulta($paramAdd);
+        $sSQL = $this->modelo->Cheques_Protestados($tipoConsulta, $MBFechaI, $MBFechaF);
+
+        return array(
+            'datos' => $sSQL,
+            'Total' => $Total,
+            'Opcion' => $Opcion
+        );
+    }
+
+    public function Totales_CxC_Abonos($AdoQuery, $Opcion)
+    {
+        $Total = 0;
+        $Abono = 0;
+        $Saldo = 0;
+        foreach ($AdoQuery as $record) {
+            if ($record['T'] != G_ANULADO) {
+                switch ($Opcion) {
+                    case 1:
+                        $Total += $record['Total'];
+                        $Abono += $record['Total_Abonos'];
+                        break;
+                    case 6:
+                    case 7:
+                        $Total += $record['Abono'];
+                        break;
+                    case 9:
+                    case 10:
+                        $Total += $record['Total_MN'];
+                        $Saldo += $record['Saldo_MN'];
+                        break;
+                }
+            }
+        }
+        switch ($Opcion) {
+            case 1:
+                $Saldo = $Total - $Abono;
+                $LabelFacturado = number_format($Total, 2);
+                $LabelAbonado = number_format($Abono, 2);
+                $LabelSaldo = number_format($Saldo, 2);
+                break;
+            case 7:
+                $LabelFacturado = number_format($Total, 2);
+                $LabelAbonado = number_format($Abono, 2);
+                $LabelSaldo = number_format($Saldo, 2);
+                break;
+            case 9:
+            case 10:
+                $Abono = $Total - $Saldo;
+                $LabelFacturado = number_format($Total, 2);
+                $LabelAbonado = number_format($Abono, 2);
+                $LabelSaldo = number_format($Saldo, 2);
+                break;
+        }
+    }
+
+    function Listado_Tarjetas()
+    {
+        $sSQL = $this->modelo->Listado_Tarjetas();
+        return array('datos' => $sSQL);
     }
 
     function Historico_Facturas($parametros)
     {
-        //print_r($parametros);
-        $FA = $this->ToolBarMenu_ButtonClick($parametros);
-        Actualizar_Abonos_Facturas_SP($FA);
-
-        $MBFechaI = $parametros['MBFechaI'];
-        $MBFechaF = $parametros['MBFechaF'];
-        $CheqCxC = $parametros['CheqCxC'];
-
         $Opcion = 1;
-        $FechaIni = BuscarFecha($MBFechaI);
-        $FechaFin = BuscarFecha($MBFechaF);
+        $FechaIni = BuscarFecha($parametros['MBFechaI']);
+        $FechaFin = BuscarFecha($parametros['MBFechaF']);
 
-        $DGQuery = "HISTORIAL DE FACTURAS";
-        $Label2 = " Facturado";
-        $Label4 = " Cobrado";
-        $Label3 = " Saldo";
         $PorCxC = false;
 
-        if ($CheqCxC == 1) {
+        if ($parametros['CheqCxC'] == 1) {
             $PorCxC = true;
         }
 
         $Total = 0;
         $Abono = 0;
         $Saldo = 0;
+        $paramAdd = array(
+            'ListCliente' => $parametros['ListCliente'],
+            'DCCliente' => $parametros['DCCliente'],
+            'DCCxC' => $parametros['DCCxC'],
+            'OpcPend' => $parametros['OpcPend'],
+            'OpcAnul' => $parametros['OpcAnul'],
+            'OpcCanc' => $parametros['OpcCanc'],
+            'CheqCxC' => $parametros['CheqCxC'],
+            'CheqIngreso' => $parametros['CheqIngreso'],
+            'CheqAbonos' => $parametros['CheqAbonos'],
+            'DescItem' => $parametros['DescItem'],
+            'Cod_Marca' => $parametros['Cod_Marca'],
+            'Opcion' => $Opcion,
+        );
 
-        $sSQL = $this->modelo->Historico_Facturas($FechaFin);
-        $this->Totales_CxC_Abonos($Opcion, $sSQL);
+        $tipoConsulta = $this->Tipo_De_Consulta($paramAdd);
 
-        return $sSQL;
-    }
-
-    function Totales_CxC_Abonos($Opcion, $AdoQuery)
-    {
-        $Total = 0;
-        $Abono = 0;
-        $Saldo = 0;
-
-        foreach ($AdoQuery as $valor) {
-            if ($valor['T'] != G_ANULADO) {
-                switch ($Opcion) {
-                    case 1:
-                        $Total += $valor['Total'];
-                        $Abono += $valor['Total_Abonos'];
-                        break;
-                    case 6:
-                    case 7:
-                        $Total += $valor['Abono'];
-                        break;
-                    case 9:
-                    case 10:
-                        $Total += $valor['Total_MN'];
-                        $Saldo += $valor['Saldo_MN'];
-                        break;
-                }
-            }
-        }
-
-        switch ($Opcion) {
-            case 1:
-                $Saldo = $Total - $Abono;
-                $LabelFacturado = number_format($Total, 2, '.', ',');
-                $LabelAbonado = number_format($Abono, 2, '.', ',');
-                $LabelSaldo = number_format($Saldo, 2, '.', ',');
-                break;
-            case 7:
-                $LabelFacturadio = number_format($Total, 2, '.', ',');
-                $LabelAbonado = number_format($Abono, 2, '.', ',');
-                $LabelSaldo = number_format($Saldo, 2, '.', ',');
-                break;
-            case 9:
-            case 10:
-                $Abono = $Total - $Saldo;
-                $LabelFacturado = number_format($Total, 2, '.', ',');
-                $LabelAbonado = number_format($Abono, 2, '.', ',');
-                $LabelSaldo = number_format($Saldo, 2, '.', ',');
-                break;
-        }
+        $sSQL = $this->modelo->Historico_Facturas($tipoConsulta, $FechaFin);
+        return array(
+            'datos' => $sSQL,
+            'Total' => $Total,
+            'Abono' => $Abono,
+            'Saldo' => $Saldo,
+            'Opcion' => $Opcion
+        );
     }
 
     function Form_Activate()
@@ -223,7 +402,18 @@ class HistorialFacturasC
         $Cod_Marca = G_NINGUNO;
         $DescItem = G_NINGUNO;
 
-        return array('ListCliente' => $ListCliente, 'FA' => $FA);
+        return array(
+            'ListCliente' => $ListCliente,
+            'FA' => $FA,
+            'CodigoInv' => $CodigoInv,
+            'Cod_Marca' => $Cod_Marca,
+            'DescItem' => $DescItem
+        );
+    }
+
+    function ListCliente_LostFocus($ListClienteText)
+    {
+        return $this->modelo->ListCliente_LostFocus($ListClienteText);
     }
 
     function Ventas_Productos()
@@ -234,8 +424,8 @@ class HistorialFacturasC
         $Con_Costeo = " ";
         $Mensajes = "Reporte Con Costeo ";
         $Titulo = "Formulario de Confirmación";
-        
-        $ClaveAdministrador=false;//
+
+        $ClaveAdministrador = false; //
 
         if ($ClaveAdministrador()) {
             $Si_No = true;
@@ -379,6 +569,218 @@ class HistorialFacturasC
                 Deuda_x_Mail("FA");
                 break;
         }
+    }
+
+    function Tipo_De_Consulta($paramAdd, $Opcion_TP = false, $Opcion_Email = false, $Opcion_DF = false)
+    {
+        $ListCliente = $paramAdd['ListCliente'];
+        $DCCliente = $paramAdd['DCCliente'];
+        $DCCxC = $paramAdd['DCCxC'];
+        $OpcPend = $paramAdd['OpcPend'];
+        $OpcAnul = $paramAdd['OpcAnul'];
+        $OpcCanc = $paramAdd['OpcCanc'];
+        $Opcion = $paramAdd['Opcion'];
+        $CheqCxC = $paramAdd['CheqCxC'];
+        $CheqIngreso = $paramAdd['CheqIngreso'];
+        $CheqAbonos = $paramAdd['CheqAbonos'];
+        $DescItem = $paramAdd['DescItem'];
+        $Cod_Marca = $paramAdd['DescItem'];
+
+        $SQL3X = '';
+        $Patron_Busqueda = $DCCliente;
+
+        if ($Patron_Busqueda == '') {
+            $Patron_Busqueda = G_NINGUNO;
+        }
+
+        $Cta_Cobrar = trim(SinEspaciosIzq($DCCxC));
+
+        if ($OpcPend) {
+            if ($Opcion > 0) {
+                switch ($Opcion) {
+                    case 1:
+                        $SQL3X .= "AND F.Saldo_Actual <> 0 AND F.T <> 'A' ";
+                        break;
+                    case 2:
+                        $SQL3X .= "AND F.T = 'P' ";
+                        break;
+                    case 9:
+                    case 10:
+                    case 13:
+                    case 14:
+                        $SQL3X .= "AND F.Saldo_MN <> 0 ";
+                        break;
+                }
+            } else {
+                $SQL3X .= "AND F.T = " . G_PENDIENTE . " ";
+            }
+        } elseif ($OpcCanc) {
+            $SQL3X .= "AND F.T = " . G_CANCELADO . " ";
+        } elseif ($OpcAnul) {
+            $SQL3X .= "AND F.T = " . G_ANULADO . " ";
+        }
+
+        switch ($ListCliente) {
+            case "Codigo":
+                $SQL3X .= "AND C.Codigo = '$Patron_Busqueda' ";
+                break;
+            case "Grupo/Zona":
+                $SQL3X .= "AND C.Grupo = '$Patron_Busqueda' ";
+                break;
+            case "CI_RUC":
+                $SQL3X .= "AND C.CI_RUC = '$Patron_Busqueda' ";
+                break;
+            case "Cliente":
+                $LongStrg = strlen($Patron_Busqueda);
+                $SQL3X .= "AND C.Cliente LIKE '$Patron_Busqueda%' ";
+                break;
+            case "Vendedor":
+                $LongStrg = strlen($Patron_Busqueda);
+                $SQL3X .= "AND A.Nombre_Completo LIKE '$Patron_Busqueda%' ";
+                break;
+            case "Ciudad":
+                $SQL3X .= "AND C.Ciudad = '$Patron_Busqueda' ";
+                break;
+            case "Factura":
+                $SQL3X .= "AND F.Factura = " . intval($Patron_Busqueda) . " ";
+                break;
+            case "Serie":
+                $SQL3X .= "AND F.Serie = '$Patron_Busqueda' ";
+                break;
+            case "Autorizacion":
+                $SQL3X .= "AND F.Autorizacion = '$Patron_Busqueda' ";
+                break;
+            case "Forma_Pago":
+                $SQL3X .= "AND F.Forma_Pago = '$Patron_Busqueda' ";
+                break;
+            case "Plan_Afiliado":
+                $SQL3X .= "AND C.Plan_Afiliado = '$Patron_Busqueda' ";
+                break;
+            case "Tipo Documento":
+                if ($Opcion_TP) {
+                    $SQL3X .= "AND F.TP = '$Patron_Busqueda' ";
+                } else {
+                    $SQL3X .= "AND F.TC = '$Patron_Busqueda' ";
+                }
+                $TipoFactura = $Patron_Busqueda;
+                break;
+        }
+
+        if ($DescItem != G_NINGUNO) {
+            //$SQL3X .= "AND MidStrg(F.Codigo,1," . strlen($Codigo) . ") = '$Codigo' ";
+        }
+        if ($Cod_Marca != G_NINGUNO) {
+            $SQL3X .= "AND F.CodMarca = '$Cod_Marca' ";
+        }
+        if ($CheqCxC) {
+            $SQL3X .= "AND F.Cta_CxP = '$Cta_Cobrar' ";
+        }
+        if ($CheqIngreso && $Opcion_DF) {
+            $SQL3X .= "AND F.Cta_Venta = '$Cta_Cobrar' ";
+        }
+        if ($CheqAbonos) {
+            if ($Opcion_Email) {
+                $SQL3X .= "AND TA.Cta = '$Cta_Cobrar' ";
+            } else {
+                $SQL3X .= "AND F.Cta = '$Cta_Cobrar' ";
+            }
+        }
+
+        return $SQL3X;
+    }
+
+    function DCCliente_LostFocus($parametros)
+    {
+        $FA = $parametros['FA'];
+        $DCClienteText = $parametros['DCClienteText'];
+        $ListClienteText = $parametros['ListClienteText'];
+        $DCCClienteText = $parametros['DCCClienteText'];
+        $DCCliente = $parametros['DCCliente'];
+        $AdoCliente = $DCCliente;
+
+        $FA['Cod_Ejec'] = G_NINGUNO;
+        $FA['CodigoC'] = G_NINGUNO;
+        $FA['Cliente'] = G_NINGUNO;
+        $FA['CI_RUC'] = G_NINGUNO;
+        $FA['Grupo'] = G_NINGUNO;
+        $FA['CiudadC'] = G_NINGUNO;
+        $FA['Autorizacion'] = G_NINGUNO;
+        $FA['Forma_Pago'] = G_NINGUNO;
+        $FA['TC'] = G_NINGUNO;
+        $FA['Serie'] = G_NINGUNO;
+        $FA['Factura'] = 0;
+        $CodigoInv = G_NINGUNO;
+        $Cod_Marca = G_NINGUNO;
+        $DescItem = G_NINGUNO;
+
+        foreach ($AdoCliente as $cliente) {
+            switch ($ListClienteText) {
+                case "Codigo":
+                    $FA['CodigoC'] = $DCClienteText;
+                    break;
+                case "CI_RUC":
+                    if ($cliente['CI_RUC'] == $DCClienteText) {
+                        $FA['CodigoC'] = $cliente['Codigo'];
+                        $FA['Cliente'] = $cliente['Cliente'];
+                        $FA['CI_RUC'] = $cliente['CI_RUC'];
+                    }
+                    break;
+                case "Ciudad":
+                    $FA['CiudadC'] = $DCClienteText;
+                    break;
+                case "Cliente":
+                    if ($cliente['Cliente'] == $DCClienteText) {
+                        $FA['CodigoC'] = $cliente['CodigoC'];
+                        $FA['Cliente'] = $cliente['Cliente'];
+                    }
+                    break;
+                case "Vendedor":
+                    if ($cliente['Cliente'] == $DCClienteText) {
+                        $FA['Cod_Ejec'] = $cliente['Codigo'];
+                    }
+                    break;
+                case "Grupo":
+                    $FA['Grupo'] = $DCClienteText;
+                    break;
+                case "Factura":
+                    $FA['TC'] = SinEspaciosIzq($DCClienteText);
+                    $FA['Serie'] = MidStrg($DCClienteText, 4, 6);
+                    $FA['Factura'] = intval(SinEspaciosDer($DCClienteText));
+                    //$LblPatronBusqueda_Caption = "P A T R O N   D E   B U S Q U E D A:" . PHP_EOL .
+                    //$ListCliente . " = " . $FA['TC'] . ": " . $FA['Serie'] . "-" . $FA['Factura'];
+                    break;
+                case "Serie":
+                    $FA['Serie'] = $DCClienteText;
+                    break;
+                case "Autorizacion":
+                    $FA['Autorizacion'] = $DCClienteText;
+                    break;
+                case "Forma_Pago":
+                    $FA['Forma_Pago'] = $DCClienteText;
+                    break;
+                case "Plan_Afiliado":
+                    //
+                    break;
+                case "Tipo Documento":
+                    $FA['TC'] = $DCClienteText;
+                    break;
+                case "Marca":
+                    $DescItem = SinEspaciosIzq($DCClienteText);
+                    break;
+                case "DescItem":
+                    $Cod_Marca = $DCClienteText;
+                    break;
+                case "Producto":
+                    $CodigoInv = trim(SinEspaciosIzq($DCClienteText));
+                    $Producto = trim(substr($DCClienteText, strlen($CodigoInv) + 1));
+                    break;
+            }
+        }
+        /*if ($ListCliente !== "Factura") {
+            //$LblPatronBusqueda_Caption = "P A T R O N   D E   B U S Q U E D A:" . PHP_EOL .
+                                         //$ListCliente . " = " . $DCCliente;
+        }*/
+        return array('Cod_Marca' => $Cod_Marca, 'DescItem' => $DescItem, 'FA' => $FA);
     }
 }
 ?>

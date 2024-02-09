@@ -18,12 +18,21 @@
             white-space: nowrap;
         }
 
+        #DGQueryCaption {
+            text-align: center;
+        }
+
         .btn-group .btn-default {
             height: 48px;
         }
 
         .btn-group .btn-default.dropdown-toggle {
             height: 48px;
+        }
+
+        .close {
+            color: #fff;
+            opacity: 1;
         }
     </style>
 </head>
@@ -136,7 +145,7 @@
                 <div class="btn-group">
                     <a href="javascript:void(0)" id="Ventas_x_Excel" title="Generar las ventas por excel"
                         class="btn btn-default">
-                        <img src="../../img/png/account.png" width="35" height="35">
+                        <img src="../../img/png/sobresalir.png" width="35" height="35">
                     </a>
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
@@ -250,13 +259,38 @@
             <textarea class="form-control" id="TxtFile" rows="2"></textarea>
         </div>
     </div>
-
     <div class="row" style="margin-left:16px; margin-right:16px; margin-top:10px">
-        <div class="panel panel-default" style="height:300px">
+        <div class="panel panel-info" style="height:420px">
             <div class="panel-body">
-                <div class="col-sm-12" style="overflow-x: scroll; height:300px">
-                    <table class="blue-table" style="white-space: nowrap;" id="DGQuery">
-                    </table>
+                <div class="col-sm-12" style="height:420px" id="DGQuery">
+                    <div class="alert alert-warning" id="alertNoData" style="display: none; margin-top:10px">
+                        No se encontraron datos que mostrar.
+                    </div>
+                </div>
+
+                <div class="row" id="">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label for="lblCommand">S</label>
+                            <input type="text" class="form-control-sm" id="lblCommand" placeholder="0" size=1>
+                        </div>
+                        <div class="form-group">
+                            <label for="lblRegistro">Registros</label>
+                            <input type="text" class="form-control-sm" id="lblRegistro" placeholder="000" size=3>
+                        </div>
+                        <div class="form-group">
+                            <label for="lblFacturado" id="labelFacturado"></label>
+                            <input type="text" class="form-control-sm" id="lblFacturado" placeholder="000" size=3>
+                        </div>
+                        <div class="form-group">
+                            <label for="lblAbonado" id="labelAbonado"></label>
+                            <input type="text" class="form-control-sm" id="lblAbonado" placeholder="000" size=3>
+                        </div>
+                        <div class="form-group">
+                            <label for="lblSaldo" id="labelSaldo"></label>
+                            <input type="text" class="form-control-sm" id="lblSaldo" placeholder="000" size=3>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -264,34 +298,30 @@
 
     <div class="modal" id="modalBusqueda">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <div class="modal-content" style="background-color: white;">
+                <div class="modal-header" style="background-color: blue; color: white;">
+                    <button type="button" class="close" data-dismiss="modal" style="color: white;">&times;</button>
                     <h4 class="modal-title">PATRÓN DE BÚSQUEDA</h4>
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="row">
-
                             <div class="col-md-4">
                                 <label for="Label7">Patron de Busqueda:</label>
                                 <select class="form-control input-xs" name="ListCliente" id="ListCliente">
                                     <option value="">Seleccione</option>
                                 </select>
                             </div>
-
                             <div class="col-md-8">
                                 <label for=""></label>
-                                <select id="DCCliente" class="form-control">
-                                    <option value="dcc1">DCC 1</option>
-                                    <option value="dcc2">DCC 2</option>
-
+                                <select class="form-control input-xs" name="DCCliente" id="DCCliente">
+                                    <option value="">Seleccione</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" style="background-color: white;">
                     <button type="button" class="btn btn-success" id="modalBusquedaBtnAceptar">Aceptar</button>
                 </div>
             </div>
@@ -341,7 +371,7 @@
             }
         });
 
-       // $('#clave_supervisor').modal('show');
+        // $('#clave_supervisor').modal('show');
 
         var menuDetalleAbonos = ['Anticipados de Abonos',
             'Contrapartida del Abonos',
@@ -490,46 +520,136 @@
     }
 
     $('#Facturas').on('click', function () {
-        Historico_Facturas();
+        //Historico_Facturas();
+        var idBtn = $(this).attr('id');
+        ToolbarMenu_ButtonClick(idBtn);
     });
 
-    function Historico_Facturas() {
+    $('#Listado_Tarjetas').on('click', function () {
+        var idBtn = $(this).attr('id');
+        ToolbarMenu_ButtonClick(idBtn);
+    });
 
-        var MBFechaI = $('#MBFechaI').val();
-        var MBFechaF = $('#MBFechaF').val();
-        var CheqCxC = $('#CheqCxC').prop('checked') ? 1 : 0;
-        var ListCliente = $("#ListCliente").val();
+    $('#Estado_Cuenta_Cliente').on('click', function () {
+        var idBtn = $(this).attr('id');
+        ToolbarMenu_ButtonClick(idBtn);
+    });
 
+    $('#Buscar_Malla').on('click', function () {
+        var idBtn = $(this).attr('id');
+        ToolbarMenu_ButtonClick(idBtn);
+    });
+
+    $('#Protestado').on('click', function () {
+        var idBtn = $(this).attr('id');
+        ToolbarMenu_ButtonClick(idBtn);
+    });
+
+    $('#Retenciones_NC').on('click', function () {
+        var idBtn = $(this).attr('id');
+        ToolbarMenu_ButtonClick(idBtn);
+    });
+
+    function ToolbarMenu_ButtonClick(idBtn) {
         var parametros = {
-            'MBFechaI': MBFechaI,
-            'MBFechaF': MBFechaF,
-            'CheqCxC': CheqCxC,
+            'MBFechaI': $('#MBFechaI').val(),
+            'MBFechaF': $('#MBFechaF').val(),
+            'CheqCxC': $('#CheqCxC').prop('checked') ? 1 : 0,
+            'CheqIngreso': $('#CheqIngreso').prop('checked') ? 1 : 0,
+            'CheqAbonos': $('#CheqAbonos').prop('checked') ? 1 : 0,
+            'OpcPend': $('#OpcPend').prop('checked') ? 1 : 0,
+            'OpcAnul': $('#OpcAnul').prop('checked') ? 1 : 0,
+            'OpcCanc': $('#OpcCanc').prop('checked') ? 1 : 0,
+            'DCCxC': $('#DCCxC').val(),
+            'ListCliente': $("#ListCliente").val(),
+            'DCCliente': $('#DCCliente').val(),
             'FA': globalFA,
-            'ListCliente': ListCliente
+            'DescItem': globalDescItem,
+            'Cod_Marca': globalCodMarca,
+            'idBtn': idBtn
         };
-
-        console.log(parametros);
-
+        //console.log(parametros);
+        $('#myModal_espera').modal('show');
         $.ajax({
-            url: '../controlador/facturacion/HistorialFacturasC.php?Historico_Facturas=true',
+            url: '../controlador/facturacion/HistorialFacturasC.php?ToolBarMenu_ButtonClick=true',
             type: 'post',
             dataType: 'json',
             data: { 'parametros': parametros },
             success: function (data) {
+
                 console.log(data);
-                if (data.length > 0) {
-                    $('#DGQuery').empty();
-                    $('#DGQuery').html(data);
+                switch (data["idBtn"]) {
+                    case "Imprimir":
+                        break;
+                    case "Facturas":
+                        $("#labelFacturado").text("Facturado");
+                        $("#labelAbonado").text("Cobrado");
+                        $("#labelSaldo").text("Saldo");
+
+                        $("#lblCommand").val(data['Opcion']);
+                        $("#lblRegistro").val(data['num_filas']);
+                        $("#lblFacturado").val(data['label_facturado']);
+                        $("#lblAbonado").val(data['label_abonado']);
+                        $("#lblSaldo").val(data['label_saldo']);
+
+                        $('#myModal_espera').modal('hide');
+                        $('#DGQuery').html(data['tbl']);
+                        $('#DGQuery #datos_t tbody').css('height', '36vh');
+                        $('#MBFechaI').focus();
+                        break;
+                    case "Protestado":
+                    case "Listado_Tarjetas":
+                    case "Estado_Cuenta_Cliente":
+                    case "Retenciones_NC":
+                        $('#myModal_espera').modal('hide');
+                        if (data['num_filas'] > 0) {
+                            $('#DGQuery').html(data['tbl']);
+                            $('#DGQuery #datos_t tbody').css('height', '36vh');
+                        } else {
+                            $('#alertNoData').css('display', 'block');
+                        }
+                        break;
+                    case "Por_Buses":
+                        break;
+                    case "CxC_Clientes":
+                        break;
+                    case "Listar_Por_Meses":
+                        break;
+                    case "Listados_Medidor":
+                        break;
+                    case "Base_Access":
+                        break;
+                    case "Base_MySQL":
+                        break;
+                    case "Buscar_Malla":
+                        $('#myModal_espera').modal('hide');
+                        if (data['DCCliente'].length > 0) {
+                            $('#DCCliente').empty();
+                            $.each(data['DCCliente'], function (index, value) {
+                                $('#DCCliente').append('<option value="' + value['Codigo' + '-' + 'Cliente'] + '">' + value['Codigo' + '-' + 'Cliente'] + '</option>');
+                            });
+                            var dataSize = data['DCCliente'].length;
+                            var selectSize = dataSize > 17 ? 17 : dataSize;
+                            $('#DCCliente').attr('size', selectSize);
+                            $('#DCCliente option:first').prop("selected", true);
+                        } else {
+                            $('#DCCliente')[0].options[0].textContent = "No se encontraron valores";
+                        }
+                        $('#modalBusqueda').modal('show');
+                        break;
                 }
             }
         });
     }
 
     $('#Imprimir').click(function () {
-        $('#modalBusqueda').modal('show');
+
     });
 
     var globalFA;
+    var globalCodigoInv;
+    var globalCodMarca;
+    var globalDescItem;
     function Form_Activate() {
         $.ajax({
             url: '../controlador/facturacion/HistorialFacturasC.php?Form_Activate=true',
@@ -537,7 +657,11 @@
             dataType: 'json',
             success: function (data) {
 
+                //console.log(data);
                 globalFA = data["FA"];
+                globalCodigoInv = data["CodigoInv"];
+                globalCodMarca = data["Cod_Marca"];
+                globalDescItem = data["DescItem"];
 
                 $('#ListCliente').empty();
                 $.each(data['ListCliente'], function (index, value) {
@@ -552,6 +676,33 @@
             }
         });
     }
+
+    $('#ListCliente').change(function () {
+        var ListClienteText = $(this).val(); // Obtener el valor seleccionado del primer select
+        $.ajax({
+            url: '../controlador/facturacion/HistorialFacturasC.php?ListCliente_LostFocus=true',
+            type: 'post',
+            dataType: 'json',
+            data: { ListClienteText: ListClienteText },
+            success: function (data) {
+                //console.log(data);
+                $('#DCCliente').empty();
+
+                $.each(data['data'], function (index, obj) {
+                    var valor = obj[data["nombreCampo"]];
+                    $('#DCCliente').append('<option value="' + valor + '">' + valor + '</option>');
+                });
+
+                var dataSize = data['data'].length;
+                var selectSize = dataSize > 17 ? 17 : dataSize;
+                $('#DCCliente').attr('size', selectSize);
+                $('#DCCliente option:first').prop("selected", true);
+
+                var valorSeleccionado = $('#DCCliente').val();
+                console.log("Valor seleccionado:", valorSeleccionado);
+            }
+        });
+    });
 
 
 
