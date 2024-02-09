@@ -75,6 +75,11 @@ if (isset($_GET['Listar_Clientes_Email'])) {
     echo json_encode($controlador->Listar_Clientes_Email($parametros));
 }
 
+if (isset($_GET['Command5_Click'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Command5_Click($parametros));
+}
+
 
 
 class ListarGruposC
@@ -87,22 +92,95 @@ class ListarGruposC
         $this->modelo = new ListarGruposM();
     }
 
+    public function Command5_Click($parametros)
+    {
+        $Codigo1 = $parametros['Codigo1'];
+        $Codigo2 = $parametros['Codigo2'];
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+        $SubTotal = 0;
+        $Diferencia = 0;
+        $TotalIngreso = 0;
+        $ListaCampos = '.';
+        $dataSP = Reporte_CxC_Cuotas_SP($Codigo1, $Codigo2, $MBFechaI, $MBFechaF, $SubTotal, $Diferencia, $TotalIngreso, $ListaCampos, $parametros['CheqResumen'], $parametros['CheqVenc']);
+        $SubTotal = $dataSP['SubTotal'];
+        $Diferencia = $dataSP['TotalAnticipo'];
+        $TotalIngreso = $dataSP['TotalCxC'];
+        $ListaDeCampos = $dataSP['ListaDeCampos'];
+        $ListaDeCampos = str_replace("Cliente,", "RCC.Cliente", $ListaDeCampos);
+        $ListaDeCampos = str_replace("GrupoNo,", "RCC.GrupoNo", $ListaDeCampos);
+        $AdoAux = $this->modelo->Command5_Click($parametros, $ListaDeCampos);
+        $TMailPara = "";
+        $TMailAsunto = "";
+        $TMailDestinatario = "";
+        $TMailMensaje = "";
+        $TMailTipoDeEnvio = "";
+        if (strlen($parametros['TxtAsunto']) > 1) {
+            $TMailAsunto = $parametros['TxtAsunto'];
+        }
+        if (count($AdoAux) > 0) {
+            foreach ($AdoAux as $key => $value) {
+                $NombreRepresentante = $value['Representante'];
+                $NombreCli = $value['Cliente'];
+                $Codigo_Banco = $value['CI_RUC'];
+                $Curso = $value['Detalle_Grupo'];
+                $ListaMails = Insertar_Mail($TMailPara, $value['EmailR']);
+                $ListaMails .= Insertar_Mail($TMailPara, $value['Email']);
+                $Grupo_No = $value['GrupoNo'];
+                $TMailDestinatario = $NombreRepresentante;
+
+                if (strlen($parametros['TxtMensaje']) > 1) {
+                    $TMailMensaje = $parametros['TxtMensaje'];
+                }
+                if ($parametros['CheqConDeuda'] <> 0) {
+                    $CadDeuda = "";
+                    $SubTotal = 0;
+                    $columnNames = array_keys($value); // Obtener los nombres de las columnas del array asociativo
+                    for ($J = 2; $J < count($columnNames) - 7; $J++) {
+                        $columnName = $columnNames[$J]; // El nombre de la columna en la posición J
+                        $SubTotal = $SubTotal + $value["Total"];
+                        $Cadena = number_format($value[$columnName], 2, ".", ",");
+                        $Cadena = str_repeat(" ", 14 - strlen($Cadena)) . $Cadena;
+                        if (intval($value[$columnName]) > 0) {
+                            $CadDeuda .= $columnName . " USD " . $Cadena . "\n"; // Añade el nombre de la columna, el valor formateado y un salto de línea
+                        }
+                    }
+                    if (strlen($CadDeuda) > 1) {
+                        $TMailMensaje .= "\n";
+                        if (strlen($NombreRepresentante) > 1) {
+                            $TMailMensaje .= "Estimado(a): " . $NombreRepresentante . ", de su representado(a) " . $NombreCli . " del " . $Curso . ", ";
+                        } else {
+                            $TMailMensaje .= "Estimado(a), su representado(a) " . $NombreCli . ", Ubicacion: " . $Grupo_No . ", ";
+                        }
+                        $TMailMensaje .= "tiene los siguientes pendientes por cancelar:\n" . $CadDeuda .
+                            "SU CODIGO DE REFERENCIA ES: " . $Codigo_Banco . "\n" .
+                            "Cualquier consulta comuniquese al teléfono: " . $_SESSION['INGRESO']['Telefono1'];
+                    }
+                }
+                $TMailTipoDeEnvio = "CE";
+            }
+        }
+        return array('TMailPara' => $TMailPara, 'TMailAsunto' => $TMailAsunto, 'TMailDestinatario' => $TMailDestinatario, 'TMailMensaje' => $TMailMensaje, 'TMailTipoDeEnvio' => $TMailTipoDeEnvio);
+    }
+
     public function Listar_Clientes_Email($parametros)
     {
-        $AdoQuery = $this->modelo->Listar_Clientes_Grupo($parametros);
-        $LstClientes = array();
-        array_push($LstClientes, 'TODOS ' . str_repeat(" ", 85) . 'SALDO PENDIENTE');
+        $tmp = $this->modelo->Listar_Clientes_Grupo($parametros);
+        $AdoQuery = $tmp['AdoQuery'];
+        $LstClientes = [];
+        $LstClientes[] = array('Cliente' => 'TODOS', 'Email' => 'EMAIL', 'SaldoPendiente' => 'SALDO PENDIENTE');
         if ($parametros['PorGrupo'] || $parametros['PorDireccion']) {
             if (count($AdoQuery) > 0) {
                 foreach ($AdoQuery as $key => $value) {
                     $sSaldo_Pendiente = number_format($value['Saldo_Pendiente'], 2, '.', ',');
-                    $DeudaCliente = $value['Cliente'] . str_pad(" ", 80 - strlen($value['Cliente'])) . str_pad(" ", 15 - strlen($sSaldo_Pendiente)) . $sSaldo_Pendiente;
+                    //$DeudaCliente = $value['Cliente'] . str_pad(" ", 80 - strlen($value['Cliente'])) . str_pad(" ", 15 - strlen($sSaldo_Pendiente)) . $sSaldo_Pendiente;
+                    $Email = '';
                     if (strlen($value['EmailR']) > 1) {
-                        $DeudaCliente .= " -Email: " . $value['EmailR'];
+                        $Email = $value['EmailR'];
                     } else {
-                        $DeudaCliente .= " -Email: " . $value['Email'];
+                        $Email = $value['Email'];
                     }
-                    array_push($LstClientes, $DeudaCliente);
+                    $LstClientes[] = array('Cliente' => $value['Cliente'], 'Email' => $Email, 'SaldoPendiente' => $sSaldo_Pendiente);
                 }
             }
         }
@@ -144,7 +222,7 @@ class ListarGruposC
         $Caption9 = number_format($SubTotal, 2, '.', ',');
         $Caption10 = number_format($Diferencia, 2, '.', ',');
         $Caption4 = number_format($TotalIngreso, 2, '.', ',');
-        return array('tbl' => $AdoQuery['datos'], 'numRegistros' => count($AdoQuery['AdoQuery']), 'Caption9' => $Caption9, 'Caption10' => $Caption10, 'Caption14' => $Caption4);
+        return array('tbl' => $AdoQuery['datos'], 'numRegistros' => count($AdoQuery['AdoQuery']), 'Caption9' => $Caption9, 'Caption10' => $Caption10, 'Caption4' => $Caption4);
     }
 
     public function Listado_Becados($parametros)
