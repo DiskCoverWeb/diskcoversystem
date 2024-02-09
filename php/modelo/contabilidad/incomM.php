@@ -1387,7 +1387,6 @@ class incomM
 
 	   // print_r($TFA);die();
 
-
    // 'Determinamos el Tipo de Comprobante
     $sql = "SELECT Tipo_Comprobante_Codigo, Descripcion 
         FROM Tipo_Comprobante 

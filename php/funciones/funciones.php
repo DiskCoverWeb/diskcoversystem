@@ -13282,5 +13282,41 @@ function Leer_RUC_CI_Tarjeta($TarjetaNo, $Abono, $CodigoCli){
   return $res;
 }
 
+function Reporte_CxC_Cuotas_SP($GrupoINo, $GrupoFNo, $MBFechaInicial, $MBFechaCorte, $SubTotal, $TotalAnticipo, $TotalCxC, $ListaDeCampos, $Resumido, $Vencimiento ){
+  $FechaIni = BuscarFecha($MBFechaInicial);
+  $FechaFin = BuscarFecha($MBFechaCorte);
+  $EjercicioFiscal = date('Y', strtotime($MBFechaCorte));
+  $GrupoINo = trim(substr($GrupoINo, 0, 10));
+  $GrupoFNo = trim(substr($GrupoFNo, 0, 10));
+  if($Vencimiento){
+    $FechaIni = $FechaFin;
+  }
+  $conn = new db();
+    $parametros = array(
+      array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
+      array(&$EjercicioFiscal, SQLSRV_PARAM_IN),
+      array(&$FechaIni, SQLSRV_PARAM_IN),
+      array(&$FechaFin, SQLSRV_PARAM_IN),
+      array(&$GrupoINo, SQLSRV_PARAM_IN),
+      array(&$GrupoFNo, SQLSRV_PARAM_IN),
+      array(&$Resumido, SQLSRV_PARAM_IN),
+
+      array(&$SubTotal, SQLSRV_PARAM_OUT),
+      array(&$TotalAnticipo, SQLSRV_PARAM_OUT),
+      array(&$TotalCxC, SQLSRV_PARAM_OUT),
+      array(&$ListaDeCampos, SQLSRV_PARAM_OUT)
+    );
+    $sql = "EXEC sp_Reporte_CxC_Cuotas @Item=?, @Periodo=?, @CodigoUsuario=?, 
+    @EjercicioFiscal=?, @FechaInicio=?, @FechaCorte=?, @GrupoINo=?, @GrupoFNo=?, 
+    @Resumido=?, @SubTotal=?, @TotalAnticipo=?, @TotalCxC=?, @ListaCampos=?";
+    $data= $conn->ejecutar_procesos_almacenados($sql,$parametros);
+    
+    return compact('SubTotal', 'TotalAnticipo', 'TotalCxC', 'ListaDeCampos');
+
+
+}
+
 
 ?>
