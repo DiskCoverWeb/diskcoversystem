@@ -155,7 +155,9 @@ class incomM
 	{
 		$sql="SELECT CTA_BANCO, BANCO, CHEQ_DEP, EFECTIVIZAR, VALOR, ME, T_No, Item, CodigoU
 			FROM Asiento_B
-			WHERE Item = '".$_SESSION['INGRESO']['item']."' AND CodigoU = '".$_SESSION['INGRESO']['Id']."' ";
+			WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+			AND CodigoU = '".$_SESSION['INGRESO']['Id']."' 
+			AND T_No = '".$_SESSION['INGRESO']['modulo_']."'";
 		// print_r($sql);die();
 		  $result = $this->conn->datos($sql);
 	   return $result;
@@ -194,7 +196,7 @@ class incomM
 			WHERE 
 			Item = '".$_SESSION['INGRESO']['item']."' 
 			AND CodigoU = '".$_SESSION['INGRESO']['Id']."' ";
-			$sql=$sql." ORDER BY CTA_BANCO ";
+			$sql.=" ORDER BY CTA_BANCO ";
 			$ta='Asiento_B';
 		}
 		else
@@ -609,7 +611,7 @@ class incomM
 		   
 		// return 1;
     }
-    function asientos()
+    function asientos($id=false,$A_No=false)
     { 
     	$cid = $this->conn;
 		$result = array();
@@ -617,8 +619,12 @@ class incomM
          FROM Asiento
          WHERE Item = '".$_SESSION['INGRESO']['item']."'
          AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
-         AND T_No = ".$_SESSION['INGRESO']['modulo_']."
-         ORDER BY A_No ";
+         AND T_No = ".$_SESSION['INGRESO']['modulo_'];
+         if($A_No)
+         {
+         	$sql.=" AND A_No='".$A_No."'";
+         }
+         $sql.=" ORDER BY A_No ";
          // print_r($sql);die();
          $result = $this->conn->datos($sql);
 	   return $result;
