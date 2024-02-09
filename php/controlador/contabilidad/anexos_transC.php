@@ -46,12 +46,11 @@ class anexos_transC
 	}
 	function year()
 	{
-		$mese = array(
-  		array('year'=>'2020','num'=>'01','acro'=>'ENE'),
-  		array('year'=>'2019','num'=>'02','acro'=>'FEB'),
-  		array('year'=>'2018','num'=>'03','acro'=>'MAR'),
-  		array('year'=>'2017','num'=>'04','acro'=>'ABR'),
-  	);
+    $mes  =  $this->modelo->year();    
+		$mese = array();
+    foreach ($mes as $key => $value) {
+      $mese[] = array('year'=>$value['Anio'],'num'=>'0'.($key+1));
+    }
 
   	return $mese;
 
