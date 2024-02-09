@@ -145,7 +145,7 @@
                 <div class="btn-group">
                     <a href="javascript:void(0)" id="Ventas_x_Excel" title="Generar las ventas por excel"
                         class="btn btn-default">
-                        <img src="../../img/png/account.png" width="35" height="35">
+                        <img src="../../img/png/sobresalir.png" width="35" height="35">
                     </a>
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
@@ -260,10 +260,37 @@
         </div>
     </div>
     <div class="row" style="margin-left:16px; margin-right:16px; margin-top:10px">
-        <div class="panel panel-info" style="height:420px">            
+        <div class="panel panel-info" style="height:420px">
             <div class="panel-body">
                 <div class="col-sm-12" style="height:420px" id="DGQuery">
-                    
+                    <div class="alert alert-warning" id="alertNoData" style="display: none; margin-top:10px">
+                        No se encontraron datos que mostrar.
+                    </div>
+                </div>
+
+                <div class="row" id="">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label for="lblCommand">S</label>
+                            <input type="text" class="form-control-sm" id="lblCommand" placeholder="0" size=1>
+                        </div>
+                        <div class="form-group">
+                            <label for="lblRegistro">Registros</label>
+                            <input type="text" class="form-control-sm" id="lblRegistro" placeholder="000" size=3>
+                        </div>
+                        <div class="form-group">
+                            <label for="lblFacturado" id="labelFacturado"></label>
+                            <input type="text" class="form-control-sm" id="lblFacturado" placeholder="000" size=3>
+                        </div>
+                        <div class="form-group">
+                            <label for="lblAbonado" id="labelAbonado"></label>
+                            <input type="text" class="form-control-sm" id="lblAbonado" placeholder="000" size=3>
+                        </div>
+                        <div class="form-group">
+                            <label for="lblSaldo" id="labelSaldo"></label>
+                            <input type="text" class="form-control-sm" id="lblSaldo" placeholder="000" size=3>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -493,52 +520,130 @@
     }
 
     $('#Facturas').on('click', function () {
-        Historico_Facturas();
+        //Historico_Facturas();
+        var idBtn = $(this).attr('id');
+        ToolbarMenu_ButtonClick(idBtn);
     });
 
-    function Historico_Facturas() {
+    $('#Listado_Tarjetas').on('click', function () {
+        var idBtn = $(this).attr('id');
+        ToolbarMenu_ButtonClick(idBtn);
+    });
 
+    $('#Estado_Cuenta_Cliente').on('click', function () {
+        var idBtn = $(this).attr('id');
+        ToolbarMenu_ButtonClick(idBtn);
+    });
+
+    $('#Buscar_Malla').on('click', function () {
+        var idBtn = $(this).attr('id');
+        ToolbarMenu_ButtonClick(idBtn);
+    });
+
+    $('#Protestado').on('click', function () {
+        var idBtn = $(this).attr('id');
+        ToolbarMenu_ButtonClick(idBtn);
+    });
+
+    $('#Retenciones_NC').on('click', function () {
+        var idBtn = $(this).attr('id');
+        ToolbarMenu_ButtonClick(idBtn);
+    });
+
+    function ToolbarMenu_ButtonClick(idBtn) {
         var parametros = {
             'MBFechaI': $('#MBFechaI').val(),
             'MBFechaF': $('#MBFechaF').val(),
             'CheqCxC': $('#CheqCxC').prop('checked') ? 1 : 0,
-            'FA': globalFA,
-            'ListCliente': $("#ListCliente").val(),
-            'DCCliente': $('#DCCliente').val(),
-            'DCCxC': $('#DCCxC').val(),
+            'CheqIngreso': $('#CheqIngreso').prop('checked') ? 1 : 0,
+            'CheqAbonos': $('#CheqAbonos').prop('checked') ? 1 : 0,
             'OpcPend': $('#OpcPend').prop('checked') ? 1 : 0,
             'OpcAnul': $('#OpcAnul').prop('checked') ? 1 : 0,
             'OpcCanc': $('#OpcCanc').prop('checked') ? 1 : 0,
-            'CheqIngreso': $('#CheqIngreso').prop('checked') ? 1 : 0,
-            'CheqAbonos': $('#CheqAbonos').prop('checked') ? 1 : 0,
+            'DCCxC': $('#DCCxC').val(),
+            'ListCliente': $("#ListCliente").val(),
+            'DCCliente': $('#DCCliente').val(),
+            'FA': globalFA,
             'DescItem': globalDescItem,
-            'Cod_Marca': globalCodMarca
+            'Cod_Marca': globalCodMarca,
+            'idBtn': idBtn
         };
-
-        $("#DGQueryCaption").text("HISTORIAL DE FACTURAS");
-
-        //$DGQuery = "HISTORIAL DE FACTURAS";
-        //$Label2 = " Facturado";
-        //$Label4 = " Cobrado";
-        //$Label3 = " Saldo";
+        //console.log(parametros);
         $('#myModal_espera').modal('show');
         $.ajax({
-            url: '../controlador/facturacion/HistorialFacturasC.php?Historico_Facturas=true',
+            url: '../controlador/facturacion/HistorialFacturasC.php?ToolBarMenu_ButtonClick=true',
             type: 'post',
             dataType: 'json',
             data: { 'parametros': parametros },
             success: function (data) {
-                $('#myModal_espera').modal('hide');
-                $('#DGQuery').html(data);
-                $('#DGQuery #datos_t tbody').css('height', '36vh');
 
+                console.log(data);
+                switch (data["idBtn"]) {
+                    case "Imprimir":
+                        break;
+                    case "Facturas":
+                        $("#labelFacturado").text("Facturado");
+                        $("#labelAbonado").text("Cobrado");
+                        $("#labelSaldo").text("Saldo");
+
+                        $("#lblCommand").val(data['Opcion']);
+                        $("#lblRegistro").val(data['num_filas']);
+                        $("#lblFacturado").val(data['label_facturado']);
+                        $("#lblAbonado").val(data['label_abonado']);
+                        $("#lblSaldo").val(data['label_saldo']);
+
+                        $('#myModal_espera').modal('hide');
+                        $('#DGQuery').html(data['tbl']);
+                        $('#DGQuery #datos_t tbody').css('height', '36vh');
+                        $('#MBFechaI').focus();
+                        break;
+                    case "Protestado":
+                    case "Listado_Tarjetas":
+                    case "Estado_Cuenta_Cliente":
+                    case "Retenciones_NC":
+                        $('#myModal_espera').modal('hide');
+                        if (data['num_filas'] > 0) {
+                            $('#DGQuery').html(data['tbl']);
+                            $('#DGQuery #datos_t tbody').css('height', '36vh');
+                        } else {
+                            $('#alertNoData').css('display', 'block');
+                        }
+                        break;
+                    case "Por_Buses":
+                        break;
+                    case "CxC_Clientes":
+                        break;
+                    case "Listar_Por_Meses":
+                        break;
+                    case "Listados_Medidor":
+                        break;
+                    case "Base_Access":
+                        break;
+                    case "Base_MySQL":
+                        break;
+                    case "Buscar_Malla":
+                        $('#myModal_espera').modal('hide');
+                        if (data['DCCliente'].length > 0) {
+                            $('#DCCliente').empty();
+                            $.each(data['DCCliente'], function (index, value) {
+                                $('#DCCliente').append('<option value="' + value['Codigo' + '-' + 'Cliente'] + '">' + value['Codigo' + '-' + 'Cliente'] + '</option>');
+                            });
+                            var dataSize = data['DCCliente'].length;
+                            var selectSize = dataSize > 17 ? 17 : dataSize;
+                            $('#DCCliente').attr('size', selectSize);
+                            $('#DCCliente option:first').prop("selected", true);
+                        } else {
+                            $('#DCCliente')[0].options[0].textContent = "No se encontraron valores";
+                        }
+                        $('#modalBusqueda').modal('show');
+                        break;
+                }
             }
         });
-        $('#MBFechaI').focus();
     }
 
     $('#Imprimir').click(function () {
-        $('#modalBusqueda').modal('show');
+
     });
 
     var globalFA;
@@ -598,7 +703,6 @@
             }
         });
     });
-
 
 
 
