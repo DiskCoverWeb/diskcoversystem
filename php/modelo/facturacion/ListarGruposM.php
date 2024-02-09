@@ -294,4 +294,32 @@ class ListarGruposM
         $datos = grilla_generica_new($sql, 'Clientes_Facturacion', '', 'RESUMEN DE PENSIONES DEL MES', false, false, false, 1, 1, 1, 100);
         return array('datos' => $datos, 'AdoQuery' => $AdoQuery);
     }
+
+    public function Command5_Click($parametros, $ListaDeCampos){
+        $sql = "UPDATE Reporte_CxC_Cuotas
+                SET E = 0
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'";
+        Ejecutar_SQL_SP($sql);
+        
+        for($i = 0; $i < count($parametros['LstClientes']); $i++){
+            $NombreCliente = $parametros['LstClientes'][$i]['Cliente'];
+            $sql = "UPDATE Reporte_CxC_Cuotas
+                    SET E = 1
+                    WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                    AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'
+                    AND Cliente = '" . $NombreCliente . "'";
+            Ejecutar_SQL_SP($sql);
+        }
+
+        $sql = "SELECT " . $ListaDeCampos . ", C.Representante, C.CI_RUC, C.Email, C.EmailR, C.Cliente 
+                FROM Reporte_CxC_Cuotas As RCC, Clientes As C 
+                WHERE RCC.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND RCC.CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "' 
+                AND RCC.E <> 0 
+                AND RCC.Codigo = C.Codigo 
+                ORDER BY RCC.GrupoNo, RCC.Cliente";
+        $AdoAux = $this->db->datos($sql);
+        return $AdoAux;
+    }
 }

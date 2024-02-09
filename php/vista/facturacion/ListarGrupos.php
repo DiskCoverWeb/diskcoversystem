@@ -7,6 +7,7 @@
     var Codigo2 = '';
     var activeTabId = '';
     var backgroundColor = 'white';
+    var LstCount = 0;
 
     let FA = {
         'Factura': '.',
@@ -49,7 +50,7 @@
 
             // Llama a contentColor con el ID del contenido del tab
             contentColor(tabID + 'Data');
-            
+
             SSTab2_Click(tabID + 'Data');
 
             $(this).find('a').css({ "background-color": backgroundColor, "color": "black" });
@@ -97,7 +98,7 @@
             Codigo2 = $(this).val();
         });
 
-        $('#DCCliente').change(function () {
+        $('#DCCliente').blur(function () {
             $('#myModal_espera').show();
             $('#myModal_espera').modal('show');
             Listar_Clientes_Grupo();
@@ -189,8 +190,91 @@
                 }
             });
         });
+
+        //Handle Buttons
+        $('#Command5').click(function () {
+            Command5_Click();
+        });
     });
     //Definicion de metodos
+
+    function Command5_Click() {
+        var clientesMarcados = [];
+        $('#LstClientes input[type="checkbox"]:checked').each(function () {
+            var index = $(this).attr('id');
+
+            var clienteNombre = $(this).siblings('.cliente-nombre').text();
+            var clienteEmail = $(this).siblings('.cliente-email').text();
+            var clienteSaldo = $(this).siblings('.cliente-saldo').text();
+
+            var cliente = {
+                'Cliente': clienteNombre,
+                'Email': clienteEmail,
+                'Saldo': clienteSaldo
+            };
+            clientesMarcados.push(cliente);
+        });
+
+        if (clientesMarcados.length == 0) {
+            swal.fire({
+                title: 'Error',
+                text: 'Debe seleccionar al menos un cliente para enviar el correo.',
+                type: 'error'
+            });
+            return;
+        }
+
+        if($('#TxtAsunto').val() == ''){
+            swal.fire({
+                title: 'Error',
+                text: 'Debe ingresar un asunto para enviar el correo',
+                type: 'error'
+            });
+            return;
+        }
+
+        if($('#TxtRemitente').val() == ''){
+            swal.fire({
+                title: 'Error',
+                text: 'Debe ingresar un remitente para enviar el correo',
+                type: 'error'
+            });
+            return;
+        }
+
+        if($('#TxtMensaje').val() == ''){
+            swal.fire({
+                title: 'Error',
+                text: 'Debe ingresar un mensaje para enviar el correo',
+                type: 'error'
+            });
+            return;
+        }
+
+        $('#myModal_espera').modal('show');
+        var parametros = {
+            'MBFechaI': $('#MBFechaI').val(),
+            'MBFechaF': $('#MBFechaF').val(),
+            'Codigo1': Codigo1,
+            'Codigo2': Codigo2,
+            'CheqResumen': $('#CheqResumen').is(':checked') ? 1 : 0,
+            'CheqVenc': $('#CheqVenc').is(':checked') ? 1 : 0,
+            'LstClientes': clientesMarcados,
+            'TxtAsunto': $('#TxtAsunto').val(),
+            'TxtMensaje': $('#TxtMensaje').val(),
+            'CheqConDeuda': $('#CheqConDeuda').is(':checked') ? 1 : 0,
+        };
+
+        $.ajax({
+            url: "../controlador/facturacion/ListarGruposC.php?Command5_Click=true",
+            type: "POST",
+            data: { 'parametros': parametros },
+            success: function (response) {
+                //TODO: Implementar sistema de envio de correos.
+                $('#myModal_espera').modal('hide');
+            }
+        });
+    }
 
     function SSTab2_Click(tabID) {
         Tipo_Rango_Grupos();
@@ -206,8 +290,8 @@
             'DCCliente': $('#DCCliente').val(),
             'CheqResumen': $('#CheqResumen').is(':checked') ? 1 : 0,
             'CheqVenc': $('#CheqVenc').is(':checked') ? 1 : 0,
-            'DCProductosVisible' : $('#DCProductos').is(':visible') ? 1 : 0,
-            'OpcActivos' : $('#OpcActivos').is(':checked') ? 1 : 0,
+            'DCProductosVisible': $('#DCProductos').is(':visible') ? 1 : 0,
+            'OpcActivos': $('#OpcActivos').is(':checked') ? 1 : 0,
         };
         $('#myModal_espera').modal('show');
         switch (tabID) {
@@ -236,7 +320,7 @@
         }
     }
 
-    function Listar_Clientes_Email(parametros){
+    function Listar_Clientes_Email(parametros) {
         $.ajax({
             url: "../controlador/facturacion/ListarGruposC.php?Listar_Clientes_Email=true",
             type: "POST",
@@ -245,15 +329,58 @@
             success: function (response) {
                 $('#myModal_espera').modal('hide');
                 var data = response;
-                /*$('#EpEData').empty();
-                $('#EpEData').html(data.tbl);
-                $('#EpEData #datos_t tbody').css('height', '36vh');
-                $('#TotalRegistros').text('Total Registros: ' + data.numRegistros);*/
+                $('#LstClientes').empty();
+                if (data.LstClientes.length > 0) {
+                    $('#Command5').prop('disabled', false);
+                    $.each(data.LstClientes, function (index, value) {
+                        // Crear el elemento label con su contenido
+                        var labelContent = `<label for="LstCli${index}" class="cliente-container">
+                            <input type="checkbox" name="LstCli${index}" id="LstCli${index}" />
+                            <span class="cliente-nombre">${value.Cliente}</span>
+                            <span class="cliente-email">${value.Email}</span>
+                            <span class="cliente-saldo">${value.SaldoPendiente}</span>
+                        </label><br>`;
+
+                        // Añadir el label al DOM
+                        $('#LstClientes').append(labelContent);
+
+                        // Aplicar estilos CSS a .cliente-container y sus hijos directamente con jQuery
+                        $('.cliente-container').last().css({
+                            'display': 'flex',
+                            'justify-content': 'space-between',
+                            'align-items': 'center',
+                            'width': '100%'
+                        });
+
+                        $('.cliente-container').last().find('.cliente-nombre').css({
+                            'flex': '1',
+                            'text-align': 'left'
+                        });
+
+                        $('.cliente-container').last().find('.cliente-email').css({
+                            'flex': '1',
+                            'text-align': 'center'
+                        });
+
+                        $('.cliente-container').last().find('.cliente-saldo').css({
+                            'flex': '1',
+                            'text-align': 'right'
+                        });
+                    });
+
+                    $('#LstCli0').change(function () {
+                        // Verifica si el checkbox 'TODOS' está marcado
+                        var estado = $(this).is(':checked');
+
+                        //Si TODOS está marcado, los demas inputs también ser marcan.
+                        $('#LstClientes input[type="checkbox"]').prop('checked', estado);
+                    });
+                }
             }
         });
     }
 
-    function Resumen_Pensiones_Mes(parametros){
+    function Resumen_Pensiones_Mes(parametros) {
         $.ajax({
             url: "../controlador/facturacion/ListarGruposC.php?Resumen_Pensiones_Mes=true",
             type: "POST",
@@ -270,7 +397,7 @@
         });
     }
 
-    function Nomina_Alumnos(parametros){
+    function Nomina_Alumnos(parametros) {
         $.ajax({
             url: "../controlador/facturacion/ListarGruposC.php?Nomina_Alumnos=true",
             type: "POST",
@@ -287,7 +414,7 @@
         });
     }
 
-    function Listado_Becados(parametros){
+    function Listado_Becados(parametros) {
         $.ajax({
             url: "../controlador/facturacion/ListarGruposC.php?Listado_Becados=true",
             type: "POST",
@@ -304,7 +431,7 @@
         });
     }
 
-    function Pensiones_Mensuales_Anio(parametros){
+    function Pensiones_Mensuales_Anio(parametros) {
         $.ajax({
             url: "../controlador/facturacion/ListarGruposC.php?Pensiones_Mensuales_Anio=true",
             type: "POST",
@@ -401,7 +528,6 @@
                     $(`${activeTabId} #datos_t tbody`).css('height', '36vh');
                     $('#TotalRegistros').text('Total Registros: ' + data.numRegistros);
                 }
-
             }
         });
     }
@@ -500,6 +626,10 @@
                             $('#DCCliente').append('<option value="' + value['Grupo'] + '">' + value['Grupo'] + '</option>');
                         }
                     });
+                    if (data.length > 0) {
+                        var lastValue = tmp ? data[data.length - 1]['Direccion'] : data[data.length - 1]['Grupo'];
+                        $('#DCCliente').val(lastValue);
+                    }
                 }
             }
         });
@@ -618,14 +748,14 @@
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
                 title="Generar Eliminar Rubros" id="btnGenerarEliminarRubros" onclick="" style="border: solid 1px">
-                <img src="../../img/png/FRecaudacionBancosPreFa/upload-file.png">
+                <img src="../../img/png/anular.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
                 title="Generar Deuda Pendiente" id="btnGenerarDeudaPendiente" onclick="" style="border: solid 1px">
-                <img src="../../img/png/FRecaudacionBancosPreFa/alumnos.png">
+                <img src="../../img/png/deuda.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Recalcular Fechas"
-                id="btnRecalcularFechas" onclick="" style="border: solid 1px" disabled>
+                id="btnRecalcularFechas" onclick="" style="border: solid 1px">
                 <img src="../../img/png/FRecaudacionBancosPreFa/renumerar.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Imprimir Codigos"
@@ -634,7 +764,7 @@
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Recibos"
                 id="btnRecibos" onclick="" style="border: solid 1px">
-                <img src="../../img/png/FRecaudacionBancosPreFa/printer.png">
+                <img src="../../img/png/reporte_1.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Excel" id="btnExcel"
                 onclick="" style="border: solid 1px">
@@ -647,7 +777,7 @@
                 <input type="checkbox" name="CheqRangos" id="CheqRangos" /> Por Rangos Grupos:
             </label>
             <label for="CheqPendientes" style="font-size:12.9px">
-                <input type="checkbox" name="CheqPendientes" id="CheqPendientes" /> Listar Solo Pendientes
+                <input type="checkbox" name="CheqPendientes" id="CheqPendientes" checked /> Listar Solo Pendientes
             </label>
         </div>
         <div class="col-sm-4" style="">
@@ -675,7 +805,7 @@
                     </label>
                 </div>
                 <div class="col-sm-6" style="padding: 0px;">
-                    <input type="checkbox" name="CheqVenc" id="CheqVenc" /> Vencimiento
+                    <input type="checkbox" name="CheqVenc" id="CheqVenc" checked /> Vencimiento
                 </div>
             </div>
             <div class="row" style="font-size:12.9px">
@@ -696,7 +826,7 @@
                 </div>
                 <div class="col-sm-4" style="padding: padding: 0px 0px 0px 15px;">
                     <label for="CheqResumen" style="font-size:12.9px">
-                        <input type="checkbox" name="CheqResumen" id="CheqResumen" /> Resumen Periodos
+                        <input type="checkbox" name="CheqResumen" id="CheqResumen" checked /> Resumen Periodos
                     </label>
                 </div>
                 <div class="col-sm-4" style="padding: 0px;">
@@ -749,7 +879,7 @@
             </div>
             <div class="row">
                 <label for="OpcActivos">
-                    <input type="radio" name="OpcActivos" id="OpcActivos" checked/> Activo
+                    <input type="radio" name="OpcActivos" id="OpcActivos" checked /> Activo
                 </label>
                 <label for="OpcInactivos">
                     <input type="radio" name="OpcActivos" id="OpcInactivos" /> Inactivo
@@ -816,14 +946,14 @@
             <div role="tabpanel" class="tab-pane fade" id="EpE">
                 <fieldset class="espacio">
                     <div id="EpEData">
-                        <div class="row" style="margin-top:8vh;">
+                        <div class="row" style="margin-top:2vh;">
                             <div class="col-sm-5">
                                 <div class="row">
                                     <div class="col-sm-3">
                                         <label for="Label13" id="Label12">Remitente</label>
                                     </div>
                                     <div class="sol-sm-9">
-                                        <input type="text" name="Label13" id="Label13"
+                                        <input type="email" name="Label13" id="Label13"
                                             style="width: 70%; max-width:75%">
                                     </div>
                                 </div>
@@ -863,22 +993,25 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <label for="CheqConDeuda"> <input type="checkbox" name="CheqConDeuda"
-                                                id="CheqConDeuda"> Enviar mail con deuda pendiente</label>
+                                                id="CheqConDeuda" checked> Enviar mail con deuda pendiente</label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
-                                            title="Listar por Grupos" id="btnListarGrupos" onclick="">Enviar mail
+                                            title="Enviar mail" id="Command5" onclick="" disabled>Enviar mail
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row" style="margin-top:8vh;">
-                            <div class="col-sm-12" id="LstClientes">
+                        <div class="row" style="margin-top:1vh;">
+                            <fieldset
+                                style="min-height: 26vh; background-color: white; margin: 20px; max-height: 26vh; overflow-y: auto;">
+                                <div class="col-sm-12" id="LstClientes">
 
-                            </div>
+                                </div>
+                            </fieldset>
                         </div>
                     </div>
                 </fieldset>
