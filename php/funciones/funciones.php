@@ -13318,5 +13318,70 @@ function Reporte_CxC_Cuotas_SP($GrupoINo, $GrupoFNo, $MBFechaInicial, $MBFechaCo
 
 }
 
+function InsertarAsientosC($Adodc){
+  if(empty($Adodc['CodigoCli'])){ $CodigoCli = G_NINGUNO; }
+  if(is_null($Adodc['CodigoCli']) ){ $CodigoCli = G_NINGUNO; }
+  if($Adodc['Codigo'] <> G_NINGUNO){ 
+     $Debe = 0; $Haber = 0;
+     switch ($Adodc['OpcDH']) {
+       case '1':
+          $Debe = $Adodc['ValorDH'];
+         break;
+      case '2':
+          $Haber = $Adodc['ValorDH'];
+         break;
+     }
+    
+     if($Adodc['ValorDH'] <> 0 ){
+        SetAdoAddNew("Asiento");          
+        SetAdoFields("CODIGO",$Adodc['Codigo']);   
+        SetAdoFields("CUENTA",$Adodc['Cuenta']);   
+        SetAdoFields("DETALLE",$Adodc['DetalleComp']);   
+        SetAdoFields("Item",$_SESSION['INGRESO']['item']);  
+        if($_SESSION['INGRESO']['OpcCoop']==1 && $Adodc['Moneda_US']==1){
+           $Debe = $Debe/ $Adodc['Dolar'];
+           $Haber = $Haber/ $Adodc['Dolar'];
+        }else{          
+           SetAdoFields("PARCIAL_ME",0);
+           if($Adodc['Moneda_US']==1){ SetAdoFields("PARCIAL_ME",($Debe - $Haber)/$Adodc['Dolar']);}
+        }
+
+        SetAdoFields("DEBE",$Debe);   
+        SetAdoFields("HABER",$Haber);   
+        SetAdoFields("EFECTIVIZAR",$Adodc['Fecha_Vence']);
+        SetAdoFields("CHEQ_DEP",$Adodc['NoCheque']);
+        SetAdoFields("ME",$Adodc['Moneda_US']);
+        SetAdoFields("T_No",$Adodc['Trans_No']);
+        SetAdoFields("CODIGO_C",$Adodc['CodigoCli']);
+        SetAdoFields("CODIGO_CC",$Adodc['CodigoCC']);
+        SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+        SetAdoFields("TC",$Adodc['SubCta']);
+        SetAdoFields("A_No",$Adodc['Ln_No']);
+        return SetAdoUpdate();
+     }
+  }
+}
+
+function CalculosTotalAsientos($Adodc)
+  {
+     $SumaDebe = 0; $SumaHaber = 0; $Total_RetCta = 0;
+     $LlenarRetencion = False;
+     if(count($Adodc)>0)
+     {
+        foreach ($Adodc as $key => $value) 
+        {
+            if($_SESSION['SETEOS']['Cta_Ret_Egreso'] == $value["CODIGO"]){
+               $LlenarRetencion = True;
+               $Total_RetCta = $value["DEBE"];
+               if($Total_RetCta <= 0 ){$Total_RetCta = $value["HABER"];}
+            }
+            $SumaDebe = $SumaDebe + $value["DEBE"];
+            $SumaHaber = $SumaHaber + $value["HABER"];
+        }
+     }
+     
+     return array('SumaDebe'=>$SumaDebe,'SumaHaber'=>$SumaHaber,'LabelDi'=>number_format(($SumaDebe-$SumaHaber),2,'.',''));
+  }
+
 
 ?>
