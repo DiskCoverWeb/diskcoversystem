@@ -20,7 +20,33 @@ if (isset($_POST['nombrep'])) {
 class PDF extends PDF_MC_Table
 {
 
-} //Fin de la clase
+}
+
+function url_logo($logoName = false)
+{
+	$logo = $_SESSION['INGRESO']['Logo_Tipo'];
+	if($logoName){$logo = $logoName;}
+	
+		$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
+		//gif
+		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
+		//png
+		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
+
+		if (@getimagesize($src_png)) {
+			return $src_png;
+		} else if (@getimagesize($src_jpg)) {
+			return $src_jpg;
+		} else if (@getimagesize($src_gif)) {
+			return $src_gif;
+		}else
+		{
+			return '.';
+		}
+		//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
+}
+
+//Fin de la clase
 //para imprimir factura y prefactura en formato pequeño
 function imprimirDocElPF($stmt, $id = null, $formato = null, $nombre_archivo = null, $va = null, $imp1 = null, $param = null, $tipof = null, $conec = null, $ruta = null)
 {
@@ -200,27 +226,8 @@ function imprimirDocElPF($stmt, $id = null, $formato = null, $nombre_archivo = n
 	//$pdf->Image('../../img/jpg/logo_doc.jpg',3,3,35,20);
 	//../../img/jpg/logo_doc.jpg
 
-	if (isset($_SESSION['INGRESO']['Logo_Tipo'])) {
-		$logo = $_SESSION['INGRESO']['Logo_Tipo'];
-		//jpg
-		$src_jpg = dirname(__DIR__, 2) . 'img/logotipos/' . $logo . '.jpg';
-		//gif
-		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
-		//png
-		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
-
-		if (@getimagesize($src_png)) {
-			$pdf->Image($src_png, 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_jpg)) {
-			$pdf->Image($src_jpg, 40, 22, 80, 40, 'JPG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_gif)) {
-			$pdf->Image($src_gif, 40, 22, 80, 40, 'GIF', 'https://www.discoversystem.com');
-		}
-		//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
-	} else {
-		$logo = "diskcover";
-		$pdf->Image(dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png', 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-	}
+	$src = url_logo();
+	$pdf->Image($src, 40, 22, 80, 40);
 
 	// Arial bold 15
 	$pdf->SetFont('Arial', 'B', 12);
@@ -461,27 +468,9 @@ function imprimirDocElP($stmt, $id = null, $formato = null, $nombre_archivo = nu
 	$x = 41;
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
-	if (isset($_SESSION['INGRESO']['Logo_Tipo'])) {
-		$logo = $_SESSION['INGRESO']['Logo_Tipo'];
-		//jpg
-		$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
-		//gif
-		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
-		//png
-		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
+	$src = url_logo();
+	$pdf->Image($src, 40, 22, 80, 40);
 
-		if (@getimagesize($src_png)) {
-			$pdf->Image($src_png, 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_jpg)) {
-			$pdf->Image($src_jpg, 40, 22, 80, 40, 'JPG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_gif)) {
-			$pdf->Image($src_gif, 40, 22, 80, 40, 'GIF', 'https://www.discoversystem.com');
-		}
-		//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
-	} else {
-		$logo = "diskcover";
-		$pdf->Image(dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png', 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-	}
 	/*if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
 			 {
 				 $logo=$_SESSION['INGRESO']['Logo_Tipo'];
@@ -1353,27 +1342,8 @@ function imprimirDocEl($stmt, $id = null, $formato = null, $nombre_archivo = nul
 	$x = 41;
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
-	if (isset($_SESSION['INGRESO']['Logo_Tipo'])) {
-		$logo = $_SESSION['INGRESO']['Logo_Tipo'];
-		//jpg
-		$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
-		//gif
-		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
-		//png
-		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
-
-		if (@getimagesize($src_png)) {
-			$pdf->Image($src_png, 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_jpg)) {
-			$pdf->Image($src_jpg, 40, 22, 80, 40, 'JPG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_gif)) {
-			$pdf->Image($src_gif, 40, 22, 80, 40, 'GIF', 'https://www.discoversystem.com');
-		}
-		//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
-	} else {
-		$logo = "diskcover";
-		$pdf->Image(dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png', 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-	}
+	$src = url_logo();
+	$pdf->Image($src, 40, 22, 80, 40);
 	/*if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
 			 {
 				 $logo=$_SESSION['INGRESO']['Logo_Tipo'];
@@ -2041,27 +2011,8 @@ function imprimirDocEle_guia($datos, $detalle, $educativo, $matri = false, $nomb
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
 
-	if (isset($_SESSION['INGRESO']['Logo_Tipo'])) {
-		$logo = $_SESSION['INGRESO']['Logo_Tipo'];
-		//jpg
-		$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
-		//gif
-		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
-		//png
-		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
-
-		if (@getimagesize($src_png)) {
-			$pdf->Image($src_png, 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_jpg)) {
-			$pdf->Image($src_jpg, 40, 22, 80, 40, 'JPG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_gif)) {
-			$pdf->Image($src_gif, 40, 22, 80, 40, 'GIF', 'https://www.discoversystem.com');
-		}
-		//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
-	} else {
-		$logo = "diskcover";
-		$pdf->Image(dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png', 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-	}
+	$src = url_logo();
+	$pdf->Image($src, 40, 22, 80, 40);
 
 	$pdf->Ln(60);
 	$x = $pdf->GetX();
@@ -2769,28 +2720,9 @@ function imprimirDocEle_fac($datos, $detalle, $educativo, $matri = false, $nombr
 	$x = 41;
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
-
-	if (isset($_SESSION['INGRESO']['Logo_Tipo'])) {
-		$logo = $_SESSION['INGRESO']['Logo_Tipo'];
-		//jpg
-		$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
-		//gif
-		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
-		//png
-		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
-
-		if (@getimagesize($src_png)) {
-			$pdf->Image($src_png, 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_jpg)) {
-			$pdf->Image($src_jpg, 40, 22, 80, 40, 'JPG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_gif)) {
-			$pdf->Image($src_gif, 40, 22, 80, 40, 'GIF', 'https://www.discoversystem.com');
-		}
-		//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
-	} else {
-		$logo = "diskcover";
-		$pdf->Image(dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png', 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-	}
+	$src = url_logo();
+	$pdf->Image($src, 40, 22, 80, 40);
+	
 
 	$pdf->Ln(60);
 	$x = $pdf->GetX();
@@ -3859,27 +3791,8 @@ function imprimirDocEle_fac_anterior($datos, $detalle, $educativo, $matri = fals
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
 
-	if (isset($_SESSION['INGRESO']['Logo_Tipo'])) {
-		$logo = $_SESSION['INGRESO']['Logo_Tipo'];
-		//jpg
-		$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
-		//gif
-		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
-		//png
-		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
-
-		if (@getimagesize($src_png)) {
-			$pdf->Image($src_png, 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_jpg)) {
-			$pdf->Image($src_jpg, 40, 22, 80, 40, 'JPG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_gif)) {
-			$pdf->Image($src_gif, 40, 22, 80, 40, 'GIF', 'https://www.discoversystem.com');
-		}
-		//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
-	} else {
-		$logo = "diskcover";
-		$pdf->Image(dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png', 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-	}
+	$src = url_logo();
+	$pdf->Image($src, 40, 22, 80, 40);
 
 	// print_r($datos);die();
 	$tam = 9;
@@ -4624,27 +4537,8 @@ function imprimirDocEle_NC($datos, $detalle, $cliente, $matri = false, $nombre =
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
 
-	if (isset($_SESSION['INGRESO']['Logo_Tipo'])) {
-		$logo = $_SESSION['INGRESO']['Logo_Tipo'];
-		//jpg
-		$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
-		//gif
-		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
-		//png
-		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
-
-		if (@getimagesize($src_png)) {
-			$pdf->Image($src_png, 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_jpg)) {
-			$pdf->Image($src_jpg, 40, 22, 80, 40, 'JPG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_gif)) {
-			$pdf->Image($src_gif, 40, 22, 80, 40, 'GIF', 'https://www.discoversystem.com');
-		}
-		//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
-	} else {
-		$logo = "diskcover";
-		$pdf->Image(dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png', 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-	}
+	$src = url_logo();
+	$pdf->Image($src, 40, 22, 80, 40);
 
 	$pdf->Ln(60);
 	$x = $pdf->GetX();
@@ -5510,27 +5404,8 @@ function imprimirDocEle_ret($datos, $detalle, $nombre_archivo = null, $imp1 = fa
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
 
-	if (isset($_SESSION['INGRESO']['Logo_Tipo'])) {
-		$logo = $_SESSION['INGRESO']['Logo_Tipo'];
-		//jpg
-		$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
-		//gif
-		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
-		//png
-		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
-
-		if (@getimagesize($src_png)) {
-			$pdf->Image($src_png, 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_jpg)) {
-			$pdf->Image($src_jpg, 40, 22, 80, 40, 'JPG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_gif)) {
-			$pdf->Image($src_gif, 40, 22, 80, 40, 'GIF', 'https://www.discoversystem.com');
-		}
-		//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
-	} else {
-		$logo = "diskcover";
-		$pdf->Image(dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png', 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-	}
+	$src = url_logo();
+	$pdf->Image($src, 40, 22, 80, 40);
 
 	// print_r($datos);die();
 	$tam = 9;
@@ -5918,27 +5793,9 @@ function imprimirDocElNC($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$x = 41;
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
-	if (isset($_SESSION['INGRESO']['Logo_Tipo'])) {
-		$logo = $_SESSION['INGRESO']['Logo_Tipo'];
-		//jpg
-		$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
-		//gif
-		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
-		//png
-		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
+	$src = url_logo();
+	$pdf->Image($src, 40, 22, 80, 40);
 
-		if (@getimagesize($src_png)) {
-			$pdf->Image($src_png, 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_jpg)) {
-			$pdf->Image($src_jpg, 40, 22, 80, 40, 'JPG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_gif)) {
-			$pdf->Image($src_gif, 40, 22, 80, 40, 'GIF', 'https://www.discoversystem.com');
-		}
-		//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
-	} else {
-		$logo = "diskcover";
-		$pdf->Image(dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png', 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-	}
 	/*if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
 			 {
 				 $logo=$_SESSION['INGRESO']['Logo_Tipo'];
@@ -6605,27 +6462,8 @@ function imprimirDocElRE($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$x = 41;
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
-	if (isset($_SESSION['INGRESO']['Logo_Tipo'])) {
-		$logo = $_SESSION['INGRESO']['Logo_Tipo'];
-		//jpg
-		$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
-		//gif
-		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
-		//png
-		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
-
-		if (@getimagesize($src_png)) {
-			$pdf->Image($src_png, 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_jpg)) {
-			$pdf->Image($src_jpg, 40, 22, 80, 40, 'JPG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_gif)) {
-			$pdf->Image($src_gif, 40, 22, 80, 40, 'GIF', 'https://www.discoversystem.com');
-		}
-		//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
-	} else {
-		$logo = "diskcover";
-		$pdf->Image(dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png', 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-	}
+	$src = url_logo();
+	$pdf->Image($src, 40, 22, 80, 40);
 	/*if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
 			 {
 				 $logo=$_SESSION['INGRESO']['Logo_Tipo'];
@@ -7309,27 +7147,8 @@ function imprimirDocElGR($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$x = 41;
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
-	if (isset($_SESSION['INGRESO']['Logo_Tipo'])) {
-		$logo = $_SESSION['INGRESO']['Logo_Tipo'];
-		//jpg
-		$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
-		//gif
-		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
-		//png
-		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
-
-		if (@getimagesize($src_png)) {
-			$pdf->Image($src_png, 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_jpg)) {
-			$pdf->Image($src_jpg, 40, 22, 80, 40, 'JPG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_gif)) {
-			$pdf->Image($src_gif, 40, 22, 80, 40, 'GIF', 'https://www.discoversystem.com');
-		}
-		//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
-	} else {
-		$logo = "diskcover";
-		$pdf->Image(__DIR__ . '/../../img/logotipos/' . $logo . '.png', 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-	}
+	$src = url_logo();
+	$pdf->Image($src, 40, 22, 80, 40);
 	/*if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
 			 {
 				 $logo=$_SESSION['INGRESO']['Logo_Tipo'];
@@ -7814,27 +7633,8 @@ function imprimirDocElNV($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$x = 41;
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
-	if (isset($_SESSION['INGRESO']['Logo_Tipo'])) {
-		$logo = $_SESSION['INGRESO']['Logo_Tipo'];
-		//jpg
-		$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
-		//gif
-		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
-		//png
-		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
-
-		if (@getimagesize($src_png)) {
-			$pdf->Image($src_png, 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_jpg)) {
-			$pdf->Image($src_jpg, 40, 22, 80, 40, 'JPG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_gif)) {
-			$pdf->Image($src_gif, 40, 22, 80, 40, 'GIF', 'https://www.discoversystem.com');
-		}
-		//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
-	} else {
-		$logo = "diskcover";
-		$pdf->Image(dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png', 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-	}
+	$src = url_logo();
+	$pdf->Image($src, 40, 22, 80, 40);
 	/*if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
 			 {
 				 $logo=$_SESSION['INGRESO']['Logo_Tipo'];
@@ -8501,27 +8301,8 @@ function imprimirDocElND($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$x = 41;
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
-	if (isset($_SESSION['INGRESO']['Logo_Tipo'])) {
-		$logo = $_SESSION['INGRESO']['Logo_Tipo'];
-		//jpg
-		$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
-		//gif
-		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
-		//png
-		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
-
-		if (@getimagesize($src_png)) {
-			$pdf->Image($src_png, 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_jpg)) {
-			$pdf->Image($src_jpg, 40, 22, 80, 40, 'JPG', 'https://www.discoversystem.com');
-		} else if (@getimagesize($src_gif)) {
-			$pdf->Image($src_gif, 40, 22, 80, 40, 'GIF', 'https://www.discoversystem.com');
-		}
-		//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
-	} else {
-		$logo = "diskcover";
-		$pdf->Image(dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png', 40, 22, 80, 40, 'PNG', 'https://www.discoversystem.com');
-	}
+	$src = url_logo();
+	$pdf->Image($src, 40, 22, 80, 40);
 	/*if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
 			 {
 				 $logo=$_SESSION['INGRESO']['Logo_Tipo'];

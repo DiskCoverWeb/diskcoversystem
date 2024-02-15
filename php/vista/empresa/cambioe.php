@@ -792,9 +792,9 @@ async function datos_empresa()
 				$('#RIAC').prop('checked', true);
 			}
 
-			if(empresa2.Logo_Tipo!='' && empresa2.Logo_Tipo!='.')
+			if(empresa2.Logo_Tipo_url!='' && empresa2.Logo_Tipo_url!='.')
 			{
-				$('#img_logo').prop('src','../../img/logotipos/'+empresa2.Logo_Tipo);
+				$('#img_logo').prop('src',empresa2.Logo_Tipo_url);
 			}
 			$('#img_foto_name').text(empresa2.Logo_Tipo);
 			if(empresa2.Num_CD==1){ $('#DM').prop('checked', true); }else{ $('#DS').prop('checked', true); }
