@@ -207,7 +207,8 @@ class cambioeC
 					$datosEmp[0]['Logo_Tipo'] = $img_name;
 					$rut = dirname(__DIR__,3);
 					$src = str_replace($rut,"../../", $src);
-					$datosEmp[0]['Logo_Tipo_url'] = $src;				
+					$datosEmp[0]['Logo_Tipo_url'] = $src;
+					$_SESSION['INGRESO']['Logo_Tipo']	= $src;			
 				}
 			}
 		}
