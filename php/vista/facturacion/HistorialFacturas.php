@@ -262,12 +262,11 @@
     <div class="row" style="margin-left:16px; margin-right:16px; margin-top:10px">
         <div class="panel panel-info" style="height:420px">
             <div class="panel-body">
-                <div class="col-sm-12" style="height:420px" id="DGQuery">
-                    <div class="alert alert-warning" id="alertNoData" style="display: none; margin-top:10px">
-                        No se encontraron datos que mostrar.
-                    </div>
+                <div class="alert alert-warning" id="alertNoData" style="display: none; margin-top:10px">
+                    No se encontraron datos que mostrar.
                 </div>
-
+                <div class="col-sm-12" style="height:420px" id="DGQuery">
+                </div>
                 <div class="row" id="">
                     <form class="form-inline">
                         <div class="form-group">
@@ -279,16 +278,19 @@
                             <input type="text" class="form-control-sm" id="lblRegistro" placeholder="000" size=3>
                         </div>
                         <div class="form-group">
-                            <label for="lblFacturado" id="labelFacturado"></label>
-                            <input type="text" class="form-control-sm" id="lblFacturado" placeholder="000" size=3>
+                            <label for="lblFacturado" id="label2"></label>
+                            <input type="text" class="form-control-sm" id="lblFacturado" placeholder="000" size=3
+                                style="color:red">
                         </div>
                         <div class="form-group">
-                            <label for="lblAbonado" id="labelAbonado"></label>
-                            <input type="text" class="form-control-sm" id="lblAbonado" placeholder="000" size=3>
+                            <label for="lblAbonado" id="label4"></label>
+                            <input type="text" class="form-control-sm" id="lblAbonado" placeholder="000" size=3
+                                style="color:red">
                         </div>
                         <div class="form-group">
-                            <label for="lblSaldo" id="labelSaldo"></label>
-                            <input type="text" class="form-control-sm" id="lblSaldo" placeholder="000" size=3>
+                            <label for="lblSaldo" id="label3"></label>
+                            <input type="text" class="form-control-sm" id="lblSaldo" placeholder="000" size=3
+                                style="color:red">
                         </div>
                     </form>
                 </div>
@@ -335,16 +337,15 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-
         var menuResumen = [
-            { id: 'id1', opcion: 'Resumen de productos' },
-            { id: 'id2', opcion: 'Resumen de productos por meses' },
-            { id: 'id3', opcion: 'Resumen de Ventas/Costos' },
-            { id: 'id4', opcion: 'Resumen Comisiones por Vendedor' },
-            { id: 'id5', opcion: 'Ventas por Cliente' },
-            { id: 'id6', opcion: 'Ventas Clientes por Meses' },
-            { id: 'VentasxProducto', opcion: 'Ventas Clientes por Productos' },
-            { id: 'id7', opcion: 'Ventas Resumidas por Vendedor' }
+            { id: 'Resumen_Prod', opcion: 'Resumen de productos' },
+            { id: 'Resumen_Prod_Meses', opcion: 'Resumen de productos por meses' },
+            { id: 'ResumenVentCost', opcion: 'Resumen de Ventas/Costos' },
+            { id: 'Resumen_Ventas_Vendedor', opcion: 'Resumen Comisiones por Vendedor' },
+            { id: 'Ventas_x_Cli', opcion: 'Ventas por Cliente' },
+            { id: 'Ventas_Cli_x_Mes', opcion: 'Ventas Clientes por Meses' },
+            { id: 'VentasxProductos', opcion: 'Ventas Clientes por Productos' },
+            { id: 'Ventas_ResumidasxVendedor', opcion: 'Ventas Resumidas por Vendedor' }
         ];
 
         for (var i = 0; i < menuResumen.length; i++) {
@@ -355,23 +356,67 @@
         $('#menuResumen').on('click', 'li a', function () {
             var opcionSel = $(this).data('opcion');
             var idSel = $(this).attr('id');
-            console.log('Selected Option:', opcionSel);
-            console.log('Selected ID:', idSel);
-            if (idSel == "VentasxProducto") {
-                Swal.fire({
-                    title: 'Formulario de confirmacion',
-                    type: 'success',
-                    html: 'Reporte con costeo',
-                    confirmButtonText: 'Aceptar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $('#clave_supervisor').modal('show');
-                    }
-                });
+            //console.log('Selected Option:', opcionSel);
+            //console.log('Selected ID:', idSel);
+
+            switch (idSel) {
+                case "Resumen_Prod":
+
+                case "Resumen_Ventas_Vendedor":
+                case "Ventas_x_Cli":
+                case "Ventas_Cli_x_Mes":
+                case "Ventas_ResumidasxVendedor":
+                    ToolbarMenu_ButtonMenuClick(idSel);
+                    break;
+                case "Resumen_Prod_Meses":
+                    Swal.fire({
+                        title: 'Formulario de confirmacion',
+                        text: "(SI) Reporte por Cantidad\n(NO) Por Valor Económico",
+                        type: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'SI',
+                        cancelButtonText: 'NO'
+                    }).then((result) => {
+                        globalPorCantidad = result.value ? true : false;
+                        console.log(result.value ? 'Se seleccionó SI' : 'Se seleccionó NO');
+                        console.log(globalPorCantidad);
+                        ToolbarMenu_ButtonMenuClick(idSel);
+                    });
+
+                    break;
+                case "ResumenVentCost":
+                case "VentasxProductos":
+                    Swal.fire({
+                        title: 'Formulario de confirmacion',
+                        text: "Reporte con costeo",
+                        type: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'SI',
+                        cancelButtonText: 'NO'
+                    }).then((result) => {
+                        if (result.value) {
+                            globalConCosteo = true;
+                            $('#clave_supervisor').modal('show');
+                            ToolbarMenu_ButtonMenuClick(idSel);
+                        } else {
+                            globalConCosteo = false;
+                            Swal.fire('Operación cancelada', 'El reporte no se generará con costeo.', 'info');
+                        }
+                    });
+                    break;
             }
         });
 
-        // $('#clave_supervisor').modal('show');
+        var menuResumen = [
+            { id: 'Resumen_Prod', opcion: 'Anticipados de Abonos' },
+            { id: 'Resumen_Prod_Meses', opcion: 'Contrapartida del Abonos' },
+            { id: 'ResumenVentCost', opcion: 'Errores en Abonos Anticipados' },
+            { id: 'Resumen_Ventas_Vendedor', opcion: 'Presenta Abonos mal Procesados' }
+        ];
 
         var menuDetalleAbonos = ['Anticipados de Abonos',
             'Contrapartida del Abonos',
@@ -519,6 +564,14 @@
         });
     }
 
+    var globalSiNo = false;
+    function resp_clave_ingreso(response) {
+        if (response.respuesta == 1) {
+            $('#clave_supervisor').modal('hide');
+            globalSiNo = true;
+        }
+    }
+
     $('#Facturas').on('click', function () {
         //Historico_Facturas();
         var idBtn = $(this).attr('id');
@@ -546,6 +599,11 @@
     });
 
     $('#Retenciones_NC').on('click', function () {
+        var idBtn = $(this).attr('id');
+        ToolbarMenu_ButtonClick(idBtn);
+    });
+
+    $('#Por_Buses').on('click', function () {
         var idBtn = $(this).attr('id');
         ToolbarMenu_ButtonClick(idBtn);
     });
@@ -582,9 +640,9 @@
                     case "Imprimir":
                         break;
                     case "Facturas":
-                        $("#labelFacturado").text("Facturado");
-                        $("#labelAbonado").text("Cobrado");
-                        $("#labelSaldo").text("Saldo");
+                        $("#label2").text("Facturado");
+                        $("#label4").text("Cobrado");
+                        $("#label3").text("Saldo");
 
                         $("#lblCommand").val(data['Opcion']);
                         $("#lblRegistro").val(data['num_filas']);
@@ -599,17 +657,19 @@
                         break;
                     case "Protestado":
                     case "Listado_Tarjetas":
+                    case "Por_Buses":
                     case "Estado_Cuenta_Cliente":
                     case "Retenciones_NC":
-                        $('#myModal_espera').modal('hide');
                         if (data['num_filas'] > 0) {
                             $('#DGQuery').html(data['tbl']);
                             $('#DGQuery #datos_t tbody').css('height', '36vh');
+                            $('#alertNoData').hide();
+                            $('#myModal_espera').modal('hide');
                         } else {
-                            $('#alertNoData').css('display', 'block');
+                            $('#DGQuery').empty();
+                            $('#alertNoData').show();
+                            $('#myModal_espera').modal('hide');
                         }
-                        break;
-                    case "Por_Buses":
                         break;
                     case "CxC_Clientes":
                         break;
@@ -650,7 +710,11 @@
     var globalCodigoInv;
     var globalCodMarca;
     var globalDescItem;
+    var globalPorCantidad;
+    var globalSiNo;
+    var globalConCosteo;
     function Form_Activate() {
+
         $.ajax({
             url: '../controlador/facturacion/HistorialFacturasC.php?Form_Activate=true',
             type: 'post',
@@ -677,6 +741,7 @@
         });
     }
 
+    var DCCliente = [];
     $('#ListCliente').change(function () {
         var ListClienteText = $(this).val(); // Obtener el valor seleccionado del primer select
         $.ajax({
@@ -691,6 +756,7 @@
                 $.each(data['data'], function (index, obj) {
                     var valor = obj[data["nombreCampo"]];
                     $('#DCCliente').append('<option value="' + valor + '">' + valor + '</option>');
+                    DCCliente.push(valor);
                 });
 
                 var dataSize = data['data'].length;
@@ -703,6 +769,128 @@
             }
         });
     });
+
+    //var globalDescItem;
+    $('#DCCliente').blur(function () {
+        var parametros = {
+            'ListClienteVal': $("#ListCliente").val(),
+            'DCClienteVal': $('#DCCliente').val(),
+            'FA': globalFA,
+            'DCCliente': DCCliente
+        };
+
+        $.ajax({
+            url: '../controlador/facturacion/HistorialFacturasC.php?DCCliente_LostFocus=true',
+            type: 'post',
+            dataType: 'json',
+            data: { 'parametros': parametros },
+            success: function (data) {
+                globalFA = data["FA"];
+                globalCodigoInv = data["CodigoInv"];
+                globalCodMarca = data["Cod_Marca"];
+                globalDescItem = data["DescItem"];
+                console.log(globalDescItem);
+            }
+        });
+    });
+
+
+    function ToolbarMenu_ButtonMenuClick(idBtnMenu) {
+        var parametros = {
+            'MBFechaI': $('#MBFechaI').val(),
+            'MBFechaF': $('#MBFechaF').val(),
+            'CheqCxC': $('#CheqCxC').prop('checked') ? 1 : 0,
+            'CheqIngreso': $('#CheqIngreso').prop('checked') ? 1 : 0,
+            'CheqAbonos': $('#CheqAbonos').prop('checked') ? 1 : 0,
+            'OpcPend': $('#OpcPend').prop('checked') ? 1 : 0,
+            'OpcAnul': $('#OpcAnul').prop('checked') ? 1 : 0,
+            'OpcCanc': $('#OpcCanc').prop('checked') ? 1 : 0,
+            'DCCxC': $('#DCCxC').val(),
+            'ListCliente': $("#ListCliente").val(),
+            'DCCliente': $('#DCCliente').val(),
+            'FA': globalFA,
+            'DescItem': globalDescItem,
+            'Cod_Marca': globalCodMarca,
+            'idBtnMenu': idBtnMenu
+        };
+        if (typeof globalPorCantidad !== 'undefined') {
+            parametros['PorCantidad'] = globalPorCantidad;
+        }
+        if (typeof globalConCosteo !== 'undefined') {
+            parametros['Con_Costeo'] = globalConCosteo;
+        }
+        if (typeof globalSiNo !== 'undefined') {
+            parametros['Si_No'] = globalSiNo;
+        }
+        if (typeof globalCodigoInv !== 'undefined') {
+            parametros['CodigoInv'] = globalCodigoInv;
+        }
+        console.log(parametros);
+
+        $('#myModal_espera').modal('show');
+        $.ajax({
+            url: '../controlador/facturacion/HistorialFacturasC.php?ToolbarMenu_ButtonMenuClick=true',
+            type: 'post',
+            dataType: 'json',
+            data: { 'parametros': parametros },
+            success: function (data) {
+                var actionsMap = {
+                    "Resumen_Prod": {
+                        label2: "I.V.A",
+                        label4: "VENTAS",
+                        label3: "TOTAL"
+                    },
+                    "Resumen_Prod_Meses": {
+                        label2: "VENTAS",
+                        label4: "COBRADO",
+                        label3: "SALDO"
+                    },
+                    "ResumenVentCost": {
+                        label2: "VENTAS",
+                        label4: "",
+                        label3: ""
+                    },
+                    "Resumen_Ventas_Vendedor": {},
+                    "Ventas_x_Cli": {
+                        label2: "VENTAS",
+                        label4: "COBRADO",
+                        label3: "SALDO"
+                    },
+                    "Ventas_Cli_x_Mes": {
+                        label2: "VENTAS",
+                        label4: "COBRADO",
+                        label3: "SALDO"
+                    },
+                    "VentasxProductos": {
+                        label2: "VENTAS",
+                        label4: "",
+                        label3: ""
+                    },
+                    "Ventas_ResumidasxVendedor": {
+                        label2: "FACTURADO",
+                        label4: "",
+                        label3: ""
+                    }
+                };
+
+                var action = actionsMap[data["idBtnMenu"]];
+
+                if (action) {
+                    Object.keys(action).forEach(function (label) {
+                        $("#" + label).text(action[label]);
+                    });
+
+                    $("#lblCommand").val(data['Opcion']);
+                    $("#lblRegistro").val(data['num_filas']);
+
+                    $('#myModal_espera').modal('hide');
+                    $('#DGQuery').html(data['tbl']);
+                    $('#DGQuery #datos_t tbody').css('height', '36vh');
+                }
+            }
+        });
+    }
+
 
 
 

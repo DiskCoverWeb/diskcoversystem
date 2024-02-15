@@ -273,31 +273,40 @@
 
   <div class="modal fade" id="clave_supervisor" role="dialog" data-keyboard="false" data-backdrop="static">
       <div class="modal-dialog modal-dialog-centered modal-sm">
-          <div class="modal-content">
-              <div class="modal-header">
+          <div class="modal-content" style="background-color: white;">
+              <!--div class="modal-header">
                   <h5 class="modal-title" id="titulo_clave">Ingrese clave de supervisor</h5>
-
-              </div>
-              <div class="modal-body text-center">
+              </div-->
+              <div class="modal-header" style="background-color: blue; color: white;">
+                    <button type="button" class="close" data-dismiss="modal" style="color: white;">&times;</button>
+                    <h4 class="modal-title" id="titulo_clave">Ingrese clave de supervisor</h4>
+                </div>
+              <div class="modal-body">
+              <div class="container-fluid">
                   <div class="row">
-                      <div class="col-sm-7">
+                      <div class="col-sm-12">
                           <input type="hidden" name="BuscarEn" id="BuscarEn" value="MYSQL">
                           <input type="hidden" name="TipoSuper_MYSQL" id="TipoSuper_MYSQL"><br>
                           <input type="hidden" name="intentos_MYSQL" id="intentos_MYSQL" value="1">
                           <input type="password" name="txt_IngClave_MYSQL" id="txt_IngClave_MYSQL"
-                              class="form-control input-sm" placeholder="Clave" onfocusout="IngresoClave_MYSQL()"
-                              onkeypress="enter_MYSQL(event)" autocomplete="new-password">
+                              class="form-control input-sm" placeholder="Clave (Enter para validar)"  onfocusout="IngresoClave_MYSQL()"
+                              onkeypress="enter_MYSQL(event)" autocomplete="new-password" >
                       </div>
-                      <div class="col-sm-3">
-                          <div class="btn-group">
-                              <!-- <button class="btn btn-default btn-sm">Aceptar</button> -->
+                      <!--div class="col-sm-3">
+                          <div class="btn-group" >
+                              <! <button class="btn btn-default btn-sm">Aceptar</button> ->
                               <button class="btn btn-default" data-dismiss="modal"
                                   onclick="limpiar_IngresoClave_MYSQL();"> <img src="../../img/png/bloqueo.png"><br>
                                   Cancelar</button>
                           </div>
-                      </div>
+                      </div-->
                   </div>
               </div>
+              </div>
+              <div class="modal-footer" style="background-color: white;">
+              <button class="btn btn-danger" data-dismiss="modal"
+                                  onclick="limpiar_IngresoClave_MYSQL();"><i class="fa fa-close"></i> Cancelar</button>
+                </div>
           </div>
       </div>
   </div>

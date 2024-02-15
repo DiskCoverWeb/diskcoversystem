@@ -71,80 +71,84 @@ class HistorialFacturasM
         //return $this->db->datos($sSQL);
     }
 
-    function Ventas_Productos($Si_No, $FechaIni, $FechaFin, $Con_Costeo, $CodigoInv)
+    function Ventas_Productos($FechaIni, $FechaFin, $Si_No, $Con_Costeo, $CodigoInv, $tipoConsulta, $tipoConsulta2)
     {
         $sSQL = "SELECT F.T, CL.Cliente, F.TC As Doc, F.Serie, F.Factura, F.Fecha, F.Codigo, F.Producto, F.Mes, F.Cantidad, F.Total, 0 As Total_NC, 
-                (Total_Desc+Total_Desc2) As Descuento, (F.Total-Total_Desc-Total_Desc2) As SubTotal, C.Marca, 
-                C.Desc_Item As Parte, F.Lote_No, F.Fecha_Fab, F.Fecha_Exp, C.Reg_Sanitario, F.Serie_No + $Con_Costeo";
+                    (Total_Desc+Total_Desc2) As Descuento, (F.Total-Total_Desc-Total_Desc2) As SubTotal, C.Marca, 
+                    C.Desc_Item As Parte, F.Lote_No, F.Fecha_Fab, F.Fecha_Exp, C.Reg_Sanitario, F.Serie_No $Con_Costeo";
 
-        if ($Si_No) {
-            $sSQL .= ",F.Precio, Valor_Compra As Costos";
-        }
+        if ($Si_No)
+            $sSQL .= ", F.Precio, Valor_Compra As Costos ";
 
-        $sSQL .= "FROM Detalle_Factura As F, Catalogo_Productos As C, Clientes As CL 
-                WHERE F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'         
-                AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
-                AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
-                " . Tipo_De_Consulta(null, null, true) . "
-                AND C.INV <> 0 
-                AND F.T <> '" . G_ANULADO . "' ";
+        $sSQL .= " FROM Detalle_Factura As F, Catalogo_Productos As C, Clientes As CL 
+                    WHERE F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'
+                    AND F.Item = '" . $_SESSION['INGRESO']['item'] . "'  
+                    AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                    " . $tipoConsulta . "
+                    AND C.INV <> 0
+                    AND F.T <> '" . G_ANULADO . "' ";
 
-        if ($CodigoInv != G_NINGUNO) {
-            $sSQL .= "AND C.Codigo_Inv = '" . $CodigoInv . "' ";
-        }
+        if ($CodigoInv != G_NINGUNO)
+            $sSQL .= "AND C.Codigo_Inv = '$CodigoInv' ";
 
         $sSQL .= "AND F.Item = C.Item 
-                AND F.Periodo = C.Periodo 
-                AND F.Codigo = C.Codigo_Inv 
-                AND F.CodigoC = CL.Codigo 
-                UNION ALL 
-                SELECT F.T, CL.Cliente, F.TP As Doc, F.Serie, F.Factura, F.Fecha, F.Cta As Codigo, (F.Banco + ' - ' + F.Cheque) AS Producto_Aux, 
-                F.Mes, 1 As Cantidad, 0 As Total, -F.Abono As Total_NC, 0 As Descuento, -F.Abono As SubTotal, '.' As Marca, 
-                '.' As Parte, '.' As Lote_No, F.Fecha As Fecha_Fab, F.Fecha As Fecha_Exp, '.' As Reg_Sanitario, '.' As Serie_No ";
+        AND F.Periodo = C.Periodo 
+        AND F.Codigo = C.Codigo_Inv 
+        AND F.CodigoC = CL.Codigo 
+        UNION ALL 
+        SELECT F.T, CL.Cliente, F.TP As Doc, F.Serie, F.Factura, F.Fecha, F.Cta As Codigo, (F.Banco + ' - ' + F.Cheque) AS Producto_Aux, F.Mes, 1 As Cantidad, 0 As Total, -F.Abono As Total_NC, 
+                0 As Descuento, -F.Abono As SubTotal, '.' As Marca, '.' As Parte, '.' As Lote_No, F.Fecha As Fecha_Fab, F.Fecha As Fecha_Exp, '.' As Reg_Sanitario, '.' As Serie_No ";
 
-        if ($Si_No) {
+        if ($Si_No)
             $sSQL .= ", 0 As Precio, 0 As Costos ";
-        }
 
-        $sSQL .= "FROM Trans_Abonos AS F, Clientes AS CL 
-                WHERE F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'
-                AND F.Item = '" . $_SESSION['INGRESO']['item'] . "'
-                AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
-                AND F.Banco = '" . G_ANULADO . "'
-                " . Tipo_De_Consulta() . "
-                AND F.T <> '" . G_ANULADO . "'
-                AND F.CodigoC = CL.Codigo
-                ORDER BY Doc, F.Factura, F.Fecha";
+        $sSQL .= "FROM Trans_Abonos As F, Clientes As CL 
+                    WHERE F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'
+                    AND F.Item = '" . $_SESSION['INGRESO']['item'] . "'  
+                    AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                    AND F.Banco = 'NOTA DE CREDITO' 
+                    " . $tipoConsulta2 . "
+                    AND F.T <> '" . G_ANULADO . "'
+                    AND F.CodigoC = CL.Codigo 
+                    ORDER BY Doc, F.Factura, F.Fecha";
+
+        //print_r($sSQL);
         //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
-        return $this->db->datos($sSQL);
+        $res = $this->db->datos($sSQL);
+        $num_filas = count($res);
+
+        $datos = grilla_generica_new($sSQL, 'Trans_Abonos', '', 'HISTORIAL DE FACTURAS Y PRODUCTOS', false, false, false, 1, 1, 1, 100);
+        return array('datos' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
+
     }
 
-    function Abonos_Facturas($tipoConsulta, $FechaIni, $FechaFin, $Ret_NC, $SQL_Server = false)
+    function Abonos_Facturas($tipoConsulta, $FechaIni, $FechaFin, $Ret_NC, $SQL_Server = TRUE)
     {
         for ($IDMes = 1; $IDMes <= 12; $IDMes++) {
             if ($SQL_Server) {
                 $sSQL = "UPDATE Trans_Abonos 
                     SET Mes = DF.Mes, Mes_No = DF.Mes_No 
-                    FROM Trans_Abonos AS TA, Detalle_Factura AS DF ";
+                    FROM Trans_Abonos, Detalle_Factura AS DF ";
             } else {
-                $sSQL = "UPDATE Trans_Abonos AS TA, Detalle_Factura AS DF 
-                    SET TA.Mes = DF.Mes, TA.Mes_No = DF.Mes_No ";
+                $sSQL = "UPDATE Trans_Abonos, Detalle_Factura AS DF 
+                    SET Trans_Abonos.Mes = DF.Mes, Trans_Abonos.Mes_No = DF.Mes_No ";
             }
 
-            $sSQL .= "WHERE TA.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'
-                AND TA.Item = '" . $_SESSION['INGRESO']['item'] . "' 
-                AND TA.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+            $sSQL .= "WHERE Trans_Abonos.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' 
+                AND Trans_Abonos.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND Trans_Abonos.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
                 AND DF.T <> 'A' 
-                AND MONTH(TA.Fecha) = '" . $IDMes . "' 
-                AND TA.Item = DF.Item 
-                AND TA.Periodo = DF.Periodo 
-                AND TA.Factura = DF.Factura 
-                AND TA.Serie = DF.Serie 
-                AND TA.Autorizacion = DF.Autorizacion 
-                AND TA.CodigoC = DF.CodigoC ";
+                AND MONTH(Trans_Abonos.Fecha) = '" . $IDMes . "' 
+                AND Trans_Abonos.Item = DF.Item 
+                AND Trans_Abonos.Periodo = DF.Periodo 
+                AND Trans_Abonos.Factura = DF.Factura 
+                AND Trans_Abonos.Serie = DF.Serie 
+                AND Trans_Abonos.Autorizacion = DF.Autorizacion 
+                AND Trans_Abonos.CodigoC = DF.CodigoC ";
 
-            //Ejecutar_SQL_SP($sSQL);
+            Ejecutar_SQL_SP($sSQL);
         }
+
         //$Total = 0;
 
         if ($Ret_NC) {
@@ -281,7 +285,7 @@ class HistorialFacturasM
         return $this->db->datos($sSQL);
     }
 
-    function Resumen_Productos($FechaIni, $FechaFin)
+    function Resumen_Productos($tipoConsulta, $FechaIni, $FechaFin)
     {
         $sSQL = "SELECT C.Cliente, SUM(F.Cantidad) AS Cant_Prod, CP.Producto, F.Codigo, SUM(F.Total_IVA) AS IVA, 
                 SUM(F.Total) AS Ventas, SUM(F.Cantidad*CP.Gramaje/1000) AS Kilos, CP.Gramaje 
@@ -289,7 +293,7 @@ class HistorialFacturasM
                 WHERE F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' 
                 AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
                 AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
-                " . Tipo_De_Consulta(null, null, true) . "
+                " . $tipoConsulta . "
                 AND F.CodigoC = C.Codigo 
                 AND F.Item = CP.Item 
                 AND F.Periodo = CP.Periodo 
@@ -297,10 +301,15 @@ class HistorialFacturasM
                 GROUP BY C.Cliente, F.Codigo, F.CodigoC, CP.Producto, CP.Gramaje 
                 ORDER BY C.Cliente, F.Codigo, F.CodigoC, CP.Producto, CP.Gramaje";
         //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
-        return $this->db->datos($sSQL);
+        $res = $this->db->datos($sSQL);
+        $num_filas = count($res);
+
+        $datos = grilla_generica_new($sSQL, 'CLIENTES', '', 'HISTORIAL DE FACTURAS Y PRODUCTOS', false, false, false, 1, 1, 1, 100);
+        return array('datos' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
+
     }
 
-    function Ventas_Cliente($FechaIni, $FechaFin)
+    function Ventas_Cliente($FechaIni, $FechaFin, $tipoConsulta)
     {
         $sSQL = "SELECT C.Cliente, F.TC, COUNT(F.CodigoC) AS Cant_Fact, SUM(F.Total) AS Ventas, 
                 SUM(F.Total_IVA) AS I_V_A, SUM(F.Total + F.Total_IVA) AS Total_Facturado 
@@ -308,22 +317,28 @@ class HistorialFacturasM
          WHERE F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' 
            AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
            AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
-           " . Tipo_De_Consulta(null, null, true) . "
+           " . $tipoConsulta . "
            AND F.CodigoC = C.Codigo 
          GROUP BY C.Cliente, F.TC 
          ORDER BY SUM(F.Total + F.Total_IVA) DESC, C.Cliente";
         //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
-        return $this->db->datos($sSQL);
+        $res = $this->db->datos($sSQL);
+        $num_filas = count($res);
+
+        $datos = grilla_generica_new($sSQL, 'CLIENTES', '', 'HISTORIAL DE FACTURAS Y PRODUCTOS', false, false, false, 1, 1, 1, 100);
+        return array('datos' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
+
     }
 
-    function Resumen_Prod_Meses($FechaIni, $FechaFin, $SQL_Server, $PorCantidad, $MBFechaF)
+    function Resumen_Prod_Meses($FechaIni, $FechaFin, $PorCantidad, $MBFechaF, $SQL_Server = TRUE)
     {
+        //$_SESSION['INGRESO']['Tipo_Base'];
+
         $sSQL = "UPDATE Catalogo_Productos 
                 SET X = '.' 
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
                 AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
                 AND TC = 'P' ";
-
         Ejecutar_SQL_SP($sSQL);
 
         if ($SQL_Server) {
@@ -342,7 +357,6 @@ class HistorialFacturasM
                 AND CP.Item = DF.Item 
                 AND CP.Periodo = DF.Periodo 
                 AND CP.Codigo_Inv = DF.Codigo ";
-
         Ejecutar_SQL_SP($sSQL);
 
         $Nom_Mes = [
@@ -377,14 +391,13 @@ class HistorialFacturasM
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
                 AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
                 AND X = 'X'";
-
         Ejecutar_SQL_SP($sSQL);
 
-        $sSQL = "SELECT * " .
-            "FROM Saldo_Diarios " .
-            "WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' " .
-            "AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "' " .
-            "AND TP = 'RPXM'";
+        $sSQL = "SELECT * 
+            FROM Saldo_Diarios
+            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+            AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "' 
+            AND TP = 'RPXM'";
         //Select_Adodc AdoQuery1, sSQL
         for ($NoMes = 1; $NoMes <= 12; $NoMes++) {
             $sSQL = "UPDATE Saldo_Diarios ";
@@ -416,7 +429,7 @@ class HistorialFacturasM
         $sSQLx = "Total=" . implode("+", $Nom_Mes);
 
         $sSQL = "UPDATE Saldo_Diarios 
-                SET " . $sSQLx . " 
+                SET " . $sSQLx . "
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
                 AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "' 
                 AND TP = 'RPXM'";
@@ -444,16 +457,20 @@ class HistorialFacturasM
             AND SD.Item = CP.Item 
             ORDER BY SD.Total DESC, CP.Producto, SD.Codigo_Aux";
         //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
+        $res = $this->db->datos($sSQL);
+        $num_filas = count($res);
+
+        $datos = grilla_generica_new($sSQL, 'Saldo_Diarios', '', 'RESUMEN DE VENTAS DE PRODUCTOS MENSUALIZADO', false, false, false, 1, 1, 1, 100);
+        return array('datos' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
+
     }
 
-    function Ventas_Clientes_Por_Meses($SQL_Server, $FechaIni, $FechaFin, $FA, $MBFechaF)
+    function Ventas_Clientes_Por_Meses($FechaIni, $FechaFin, $FA, $MBFechaF, $SQL_Server = true)
     {
         $sSQL = "UPDATE Clientes
                 SET X = '.' 
                 WHERE FA <> " . intval(false);
         Ejecutar_SQL_SP($sSQL);
-
-        //$DGQuery->Visible = false;
 
         if ($SQL_Server) {
             $sSQL = "UPDATE C 
@@ -516,7 +533,7 @@ class HistorialFacturasM
         }
         Ejecutar_SQL_SP($sSQL);
 
-        $sSQL = "SELECT * 
+        $AdoQuery1 = "SELECT * 
                 FROM Saldo_Diarios 
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
                 AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'
@@ -572,12 +589,36 @@ class HistorialFacturasM
             AND TP = 'VCXM' ";
         Ejecutar_SQL_SP($sSQL);
 
-        $sSQL = "SELECT * 
+        $AdoQuery1 = "SELECT * 
             FROM Saldo_Diarios 
             WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
             AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "' 
             AND TP = 'VCXM' ";
         //Select_Adodc AdoQuery1, sSQL
+        $res = $this->db->datos($AdoQuery1);
+
+        if (count($res) > 0) {
+            foreach ($res as $record) {
+                $CantProm = 0;
+                $Total = 0;
+                for ($NoMes = 1; $NoMes <= 12; $NoMes++) {
+                    if ($record[$Nom_Mes[$NoMes]] != 0) {
+                        $Total += $record[$Nom_Mes[$NoMes]];
+                        $CantProm++;
+                    }
+                }
+                if ($CantProm <= 0) {
+                    $CantProm = 1;
+                }
+                $record["Diferencia"] = round($Total / $CantProm, 2);
+                $update = "UPDATE Saldo_Diarios 
+                SET Diferencia = " . $record["Diferencia"] . " 
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'
+                AND TP = 'VCXM'";
+                $this->db->datos($update);
+            }
+        }
 
         $sSQLx = "";
         for ($NoMes = 1; $NoMes <= date("n", strtotime($MBFechaF)); $NoMes++) {
@@ -601,11 +642,16 @@ class HistorialFacturasM
             AND SD.CodigoC = C.Codigo 
             ORDER BY SD.Total DESC, SD.Grupo_No, C.Grupo, C.Cliente";
         //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
+
+        $res = $this->db->datos($sSQL);
+        $num_filas = count($res);
+
+        $datos = grilla_generica_new($sSQL, 'Saldo_Diarios', '', 'VENTAS POR CLIENTES MENSUALIZADO', false, false, false, 1, 1, 1, 100);
+        return array('datos' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
     }
 
-    function Resumen_Ventas_Costos($FechaFin, $Con_Costeo, $Si_No, $FechaIni, $DescItem)
+    function Resumen_Ventas_Costos($FechaIni, $FechaFin, $Con_Costeo, $Si_No, $DescItem, $tipoConsulta)
     {
-
         $sSQL = "SELECT * 
                 FROM Catalogo_Productos 
                 WHERE TC = 'P' 
@@ -635,7 +681,7 @@ class HistorialFacturasM
                 AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
                 AND F.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
                 AND CP.INV <> 0 
-                " . Tipo_De_Consulta(null, null, true) . " ";
+                " . $tipoConsulta . " ";
 
         if ($DescItem != G_NINGUNO) {
             $sSQL .= "AND CP.Desc_Item = '" . $DescItem . "' ";
@@ -666,9 +712,15 @@ class HistorialFacturasM
             $sSQL .= "ORDER BY F.Codigo, SUM(F.Total) DESC, CP.Producto ";
         }
         //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
+
+        $res = $this->db->datos($sSQL);
+        $num_filas = count($res);
+
+        $datos = grilla_generica_new($sSQL, 'Saldo_Diarios', '', 'HISTORIAL DE FACTURAS Y PRODUCTOS', false, false, false, 1, 1, 1, 100);
+        return array('datos' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
     }
 
-    function Resumen_Ventas_Vendedor($FechaIni, $FechaFin)
+    function Resumen_Ventas_Vendedor($FechaIni, $FechaFin, $tipoConsulta)
     {
         $sSQL = "SELECT C.Grupo,C.Cliente, F.Fecha, TA.Fecha As Fecha_A, F.Serie, TA.Factura, CONVERT(Money,TA.Abono/(1+F.Porc_IVA)) As Abonos, 
          DATEDIFF(day,F.Fecha,TA.Fecha) As Dias_T, A.Nombre_Completo 
@@ -677,7 +729,7 @@ class HistorialFacturasM
           AND TA.Item = '" . $_SESSION['INGRESO']['item'] . "' 
           AND TA.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
           AND NOT SUBSTRING(TA.Banco,1,9) IN ('RETENCION','NOTA DE C') 
-          " . Tipo_De_Consulta() . "
+          " . $tipoConsulta . "
           AND C.Codigo = F.CodigoC 
           AND A.Codigo = F.Cod_Ejec 
           AND F.Item = TA.Item 
@@ -690,6 +742,11 @@ class HistorialFacturasM
           ORDER BY C.Grupo,C.Cliente,F.Serie,F.Factura ";
         //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
         //Opcion = 15
+        $res = $this->db->datos($sSQL);
+        $num_filas = count($res);
+
+        $datos = grilla_generica_new($sSQL, 'Clientes', '', '', false, false, false, 1, 1, 1, 100);
+        return array('datos' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
     }
 
     function Ventas_Resumidas_x_Vendedor($FechaIni, $FechaFin)
@@ -715,7 +772,7 @@ class HistorialFacturasM
 
         $sSQLSubTotal = "SELECT A.Cod_Ejec, ' ' AS Nombre_Vendedor, ' ' AS Grupo, 'SUBTOTAL VENDEDOR' AS Cuenta, 
                          SUM(F.SubTotal - F.Descuento - F.Descuento2) AS Cantidad, 
-                         CONCAT(ROUND((SUM(F.SubTotal - F.Descuento - F.Descuento2) / A.Cuota_Venta) * 100), '%') AS Cuota 
+                         CONCAT(STR((SUM(F.SubTotal - F.Descuento - F.Descuento2) / A.Cuota_Venta) * 100), '%') AS Cuota
                  FROM Facturas AS F, Catalogo_Cuentas AS CC, Accesos AS A, Clientes AS C 
                  WHERE F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' 
                  AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
@@ -734,6 +791,11 @@ class HistorialFacturasM
          ORDER BY A.Cod_Ejec, A.Nombre_Completo DESC, C.Grupo, CC.Cuenta";
 
         //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True;
+        $res = $this->db->datos($sSQL);
+        $num_filas = count($res);
+
+        $datos = grilla_generica_new($sSQL, 'Clientes', '', '', false, false, false, 1, 1, 1, 100);
+        return array('datos' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
     }
 
     function CxC_Tiempo_Credito($Mifecha, $FechaIni, $FechaFin, $FA)
@@ -1310,8 +1372,13 @@ class HistorialFacturasM
                 WHERE Plan_Afiliado = '" . $Patron_Busqueda . "' 
                 AND FA <> 0 
                 ORDER BY Cliente ";
-        //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
-        return $this->db->datos($sSQL);
+
+        $res = $this->db->datos($sSQL);
+        $num_filas = count($res);
+
+        $datos = grilla_generica_new($sSQL, 'TRANS_ABONOS', '', 'HISTORIAL DE FACTURAS', false, false, false, 1, 1, 1, 100);
+        return array('datos' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
+
     }
 
     function SMAbonos_Anticipados($FechaIni, $FechaFin)
