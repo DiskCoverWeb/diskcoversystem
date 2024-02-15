@@ -1,6 +1,8 @@
 <?php
 
 require_once(dirname(__DIR__, 2) . "/modelo/facturacion/ListarGruposM.php");
+require_once(dirname(__DIR__,3).'/lib/fpdf/reporte_de.php');
+
 
 $controlador = new ListarGruposC();
 
@@ -80,16 +82,115 @@ if (isset($_GET['Command5_Click'])) {
     echo json_encode($controlador->Command5_Click($parametros));
 }
 
+if (isset($_GET['GenerarFacturas_Click'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->GenerarFacturas_Click($parametros));
+}
+
+if (isset($_GET['ProcGrabarMult'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->ProcGrabarMult($parametros));
+}
+
+if (isset($_GET['Listado_x_Grupos'])) {
+    echo json_encode($controlador->Listado_x_Grupos());
+}
+
+if (isset($_GET['Recalcular_Fechas'])) {
+    echo json_encode($controlador->Recalcular_Fechas());
+}
+
 
 
 class ListarGruposC
 {
 
     private $modelo;
+    //private $pdf;
+    
 
     public function __construct()
     {
         $this->modelo = new ListarGruposM();
+        //$this->pdf = new PDF();
+        
+    }
+
+    public function Recalcular_Fechas()
+    {
+        try {
+            $this->modelo->Recalcular_Fechas();
+            return array('res' => 1, 'mensaje' => 'Fechas recalculadas correctamente');
+        } catch (Exception $e) {
+            return array('res' => 0, 'mensaje' => $e->getMessage());
+        }
+    }
+
+    public function Listado_x_Grupos()
+    {
+        try{
+            $AdoNiveles = $this->modelo->Listado_x_Grupos();
+            $ruta = ImprimirAdodc($AdoNiveles);
+            return array('res' => 1, 'mensaje' => 'Pdf generado correctamente', 'fileName' => basename($ruta));
+        }catch (Exception $e){
+            return array('res' => 0, 'mensaje' => $e->getMessage());
+        }
+    }
+
+    public function GenerarFacturas_Click($parametros)
+    {
+        $FA = Encerar_Factura($parametros['FA']);
+        $FA['Tipo_Pago'] = $parametros['DCTipoPago'];
+        $Mensaje = "";
+        $Res = 1;
+        $Titulo = "";
+        if (strlen($FA['Tipo_Pago']) == 1) {
+            $Mensaje = "NO HA SELECCIONADO LA FORMA DE PAGO";
+            $Res = 0;
+        } else {
+            $FA['Cod_CxC'] = $parametros['DCLinea'];
+            $tmp = Lineas_De_CxC($FA);
+            $FA = array_merge($FA, $tmp['TFA']);
+            if (strtotime($parametros['MBFechaI']) > $FA['Vencimiento']->getTimestamp()) {
+                $Mensaje = "No se puede General Facturas, porque la autorizacion ya esta caducada";
+                $Res = 0;
+            } else {
+                if ($parametros['CTipoConsulta'] == "2") {
+                    $FA['Factura'] = ReadSetDataNum($FA['TC'] . "_SERIE_" . $FA['Serie'], true, false);
+                    $Mensaje = "Esta Seguro de grabar desde \n";
+                    if ($parametros['TipoFactura'] == "NV") {
+                        $Mensaje .= "La Nota de Venta No. " . $FA['Serie'] . "-" . $FA['Factura'];
+                    } else {
+                        $Mensaje .= "La Factura No. " . $FA['Serie'] . "-" . $FA['Factura'];
+                    }
+                    $Mensaje .= " en bloque ";
+                    $Titulo = "Formulario de Grabación";
+                    $Res = 1;
+                    //Se vuelve a la vista, se pregunta con un swal.fire si se desea grabar
+                }
+            }
+        }
+        return array('response' => $Res, 'Mensaje' => $Mensaje, 'Titulo' => $Titulo, 'FA' => $FA);
+    }
+
+    public function ProcGrabarMult($parametros): array
+    {
+        $FA = $parametros['FA'];
+        $FA['Porc_IVA'] = Validar_Porc_IVA($parametros['MBFechaI']);
+        $NoMes = date('m', strtotime($parametros['MBFechaI']));
+        $Periodo_Facturacion = (string) date('Y', strtotime($parametros['MBFechaI']));
+        $CodigoL = G_NINGUNO;
+        $Cta_Ventas = G_NINGUNO;
+        try {
+            $tmp = $this->modelo->ProcGrabarMult($parametros, $NoMes, $Periodo_Facturacion, $FA, $CodigoL, $Cta_Ventas);
+            $Res = 1;
+            return array('Mensaje' => $tmp['mensaje'], 'Res' => $Res, 'datos' => $tmp['datos'], 'numRegistros' => $tmp['numRegistros']);
+        } catch (Exception $e) {
+            $Mensaje = "No se puede grabar la Factura" . $e->getMessage();
+            $Res = 0;
+            return array('Mensaje' => $Mensaje, 'Res' => $Res);
+        }
+
     }
 
     public function Command5_Click($parametros)
