@@ -390,7 +390,7 @@ function autocompletarCempresa(){
  
 function cambiarEmpresa()
 {
-	// $('#myModal_espera').modal('show');
+	$('#myModal_espera').modal('show');
 	var parametros = $('#form_empresa').serialize();
 	var parametros = parametros+'&ciu='+$('#ddl_ciudad option:selected').text();
 	$.ajax({
