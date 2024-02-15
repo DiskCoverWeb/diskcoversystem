@@ -1,3 +1,4 @@
+var Ini_Iva;
 $(document).ready(function()
   {
     ddl_DCRetIBienes();
@@ -223,7 +224,7 @@ function ddl_DCDctoModif() {
 function ddl_DCPorcenIva(fecha) {
   // console.log(fecha);
  	var opcion = '<option value="I">Iva</option>';
-  var ini ='';
+  var ini = Ini_Iva;
  	var parametros = 
  	{
  		'fecha':fecha,
@@ -234,12 +235,8 @@ function ddl_DCPorcenIva(fecha) {
       type:  'post',
       dataType: 'json',
         success:  function (response) {
-        //	console.log(response);
-        	$.each(response,function(i,item){
-            if(i==0)
-            {
-              ini = item.Porc;
-            }
+        	// console.log(response);
+        	$.each(response,function(i,item){            
         		opcion+='<option value="'+item.Porc+'">'+item.Porc+'</option>';
         	})
         	$('#DCPorcenIva').html(opcion);
