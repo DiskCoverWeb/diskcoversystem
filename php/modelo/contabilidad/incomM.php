@@ -1648,6 +1648,62 @@ class incomM
 	   return  $this->conn->datos($sql);
   }
 
+  function Facturas_Pendientes_SC($AgruparSubMod,$SubCta,$Codigo,$cta,$fecha)
+	{
+		$sql = '';
+	    // $FechaTexto = MBoxFechaV
+	    // If Not IsDate(FechaTexto) Then FechaTexto = FechaSistema
+	    if($AgruparSubMod){
+	       switch ($SubCta) {	        	
+	         Case "C": $sql = "SELECT Factura,Detalle_SubCta,(SUM(Debitos)-SUM(Creditos)) As Saldos_MN,SUM(Parcial_ME) As Saldos_ME ";
+	         break;
+	         Case "P": $sql = "SELECT Factura,Detalle_SubCta,(SUM(Creditos)-SUM(Debitos)) As Saldos_MN,-SUM(Parcial_ME) As Saldos_ME ";
+	         break;
+	         default:
+	          $sql = "SELECT Factura,Detalle_SubCta,(SUM(Debitos)-SUM(Creditos)) As Saldos_MN,-SUM(Parcial_ME) As Saldos_ME ";
+	         break;
+	       }
+	    }else{
+	    	switch ($SubCta) {	    		
+	         Case "C": $sql = "SELECT Factura,(SUM(Debitos)-SUM(Creditos)) As Saldos_MN,SUM(Parcial_ME) As Saldos_ME ";
+	         break;
+	         Case "P": $sql = "SELECT Factura,(SUM(Creditos)-SUM(Debitos)) As Saldos_MN,-SUM(Parcial_ME) As Saldos_ME ";
+	         break;
+	         default:
+	          $sql = "SELECT Factura,(SUM(Debitos)-SUM(Creditos)) As Saldos_MN,-SUM(Parcial_ME) As Saldos_ME ";
+	         break;
+	     }
+	    }
+	    $sql = $sql." FROM Trans_SubCtas 
+	         WHERE Codigo = '".$Codigo."' 
+	         AND TC = '".$SubCta."' 
+	         AND Cta = '".$cta."' 
+	         AND Item = '".$_SESSION['INGRESO']['item']."' 
+	         AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+	         AND Fecha <= '".BuscarFecha($fecha)."' 
+	         AND T <> 'A' ";
+	    if($AgruparSubMod){
+	       $sql = $sql." GROUP BY Factura,Detalle_SubCta ";
+	    }else{
+	       $sql = $sql." GROUP BY Factura ";
+	    }
+	    switch ($SubCta) {	    	
+	      Case "C": 
+	      $sql.=" HAVING SUM(Debitos)-SUM(Creditos) > 0 ";
+	      break;
+	      Case "P": 
+	      $sql.=" HAVING SUM(Creditos)-SUM(Debitos) > 0 ";
+	      break;
+	      default: 
+	      	$sql.=" HAVING SUM(Debitos)-SUM(Creditos) = 0 ";
+	      	break;
+	    }
+	    $sql.=" ORDER BY Factura ";
+
+	   return $this->conn->datos($sql);
+	   
+	}
+
 
 }
 ?>

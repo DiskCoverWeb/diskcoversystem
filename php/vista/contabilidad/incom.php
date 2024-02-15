@@ -163,6 +163,25 @@ function Form_Activate()
     cargar_cuenta();
     var modificar = '<?php echo $variables_mod; ?>';
     var load = '<?php echo $load; ?>';
+
+    $('#codigo').on('keyup', function(event) {
+        var codigoTecla = event.which || event.keyCode;
+        console.log(codigoTecla);
+        if(codigoTecla==27)
+        {
+          // tecla escape
+          if($('#tipoc').val()=='CE')
+          {
+            $('#codigo').val('-1');
+            agregar_diferencia();
+          }
+        }else if(codigoTecla==113){
+          // tecla f2
+          // cargar_modal();
+        }
+        
+    });
+
     // if(modificar!='')
     // {
      
@@ -196,6 +215,8 @@ function Form_Activate()
      window.addEventListener("message", function(event) {
         if (event.data === "closeModal") {
             $('#modal_subcuentas').modal('hide');
+            $("#codigo").val('');            
+            $("#cuentar").empty();
         }
     });
      window.addEventListener("message", function(event) {
@@ -237,6 +258,8 @@ function FormActivate() {
     cargar_tablas_retenciones();
     // cargar_tablas_sc();
     ListarAsientoB();
+
+    $('#codigo').val('');
 }
    function autocoplet_bene(){
       $('#beneficiario1').select2({
@@ -295,6 +318,41 @@ function FormActivate() {
            $('#beneficiario1').append($('<option>',{value:  response[0].id, text: response[0].text,selected: true }));
       }
     }); 
+    }
+
+    function agregar_diferencia()
+    {
+      modulo = '<?php echo $_SESSION['INGRESO']['modulo_']; ?>';
+      if(modulo=='5')
+      {
+
+      }else
+      {
+        tp = $('#tipoc').val();
+        if(tp=='CI' || tp=='CE')
+        {
+          guardar_diferencia();
+        }
+      }
+    }
+
+    function guardar_diferencia()
+    {      
+        var form = $('#formu1').serialize();
+        form = form+'&Trans_No='+Trans_No+'&Ln_No='+Ln_No;;
+        $.ajax({
+          data:  form,
+          url:   '../controlador/contabilidad/incomC.php?guardar_diferencia=true',
+          type:  'post',
+          dataType: 'json',
+          success:  function (response) {
+            if(response==1)
+            {
+              FormActivate();
+            }
+           
+          }
+        }); 
     }
 
     function mostrar_efectivo()
@@ -960,7 +1018,7 @@ function FormActivate() {
       if(tipo == 'C' || tipo =='P' || tipo == 'G' || tipo=='I' || tipo=='PM' || tipo=='CP')
       {
         titulos(tipo);
-        var src ="../vista/modales.php?FSubCtas=true&mod=&tipo_subcta="+tipo+"&OpcDH="+deha+"&OpcTM="+moneda+"&cta="+cta+"&tipoc="+tipoc+"#";
+        var src ="../vista/modales.php?FSubCtas=true&mod=&tipo_subcta="+tipo+"&OpcDH="+deha+"&OpcTM="+moneda+"&cta="+cta+"&tipoc="+tipoc+"&fecha="+$('#fecha1').val()+"#";
         $('#modal_subcuentas').modal('show');
         $('#titulo_frame').text('Ingreso de sub cuenta por cobras');
         $('#frame').attr('src',src).show();
@@ -1654,6 +1712,11 @@ function FormActivate() {
     
   }
 
+  function salir_todo()
+  {
+    alert('ccera')
+  }
+
 </script>
 
   <div class="box-body">
@@ -1705,7 +1768,7 @@ function FormActivate() {
                                  <div class="input-group-addon input-xs">
                                    <b>FECHA:</b>
                                  </div>
-                                 <input type="date" class="form-control input-xs" id="fecha1" placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="validar_fecha();fecha_valida(this)">
+                                 <input type="date" class="form-control input-xs" name="fecha1" id="fecha1" placeholder="01/01/2019" value='<?php echo date('Y-m-d') ?>' maxlength='10' size='15' onblur="validar_fecha();fecha_valida(this)">
                                </div>
                           <!-- </div> -->
                         </div>
@@ -1937,7 +2000,8 @@ function FormActivate() {
                             <div class="input-xs col-md-12 btn_f text-center">
                               <b>CODIGO:</b>
                             </div>
-                             <input type="text" class="form-control input-xs" id="codigo" name='codigo' placeholder="codigo" maxlength='30' size='12' onblur="cargar_modal();" onkeyup="mayusculas('codigo',this.value)" />
+                             <input type="text" class="form-control input-xs" title="Teclas especiales
+CE: ESC" id="codigo" name='codigo' placeholder="codigo" maxlength='30' size='12' onblur="cargar_modal();" onkeyup="mayusculas('codigo',this.value)" />
                           </div>
                         </div>
                         <div class="col-md-8 col-sm-9 col-xs-9">
@@ -2102,7 +2166,7 @@ function FormActivate() {
   </div>
 </div>
 
-<div class="modal fade" id="modal_subcuentas" tabindex="-1" role="dialog" >
+<div class="modal fade" id="modal_subcuentas" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -2118,7 +2182,7 @@ function FormActivate() {
       </div>
       <div class="modal-footer">
           <!-- <button type="button" class="btn btn-primary" onclick="cambia_foco();">Guardar</button> -->
-          <button style="display: none;" id="btn_salir" id="btn_cerrar_sub" type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          <button style="display: none;" onclick="salir_todo()" id="btn_salir" id="btn_cerrar_sub" type="button" class="btn btn-default">Cerrar</button>
       </div>
     </div>
   </div>
