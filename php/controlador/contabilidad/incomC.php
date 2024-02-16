@@ -2395,7 +2395,7 @@ function ExistenMovimientos($parametros)
 		// print_r($parametros);die();
 		$datos = $this->modelo->Facturas_Pendientes_SC($AgruparSubMod,$parametros['SubCta'],$parametros['Codigo'],$parametros['cta'],$parametros['fecha']);
 		foreach ($datos as $key => $value) {
-			$lista[] = array('id'=>$value['Factura'],'label'=>$value['Factura'],'data'=>$value);
+			$lista[] = array('id'=>$value['Saldos_MN'],'label'=>$value['Factura'],'data'=>$value);
 		}
 
 		return $lista;		

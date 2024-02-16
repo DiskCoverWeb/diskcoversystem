@@ -106,6 +106,7 @@ $(document).ready(function () {
         },
         select: function (event, ui) {
             $( "#txt_factura" ).val(ui.item.label);
+            $( "#txt_valor" ).val(ui.item.id);
             return false;
         },
         focus: function(event, ui){
