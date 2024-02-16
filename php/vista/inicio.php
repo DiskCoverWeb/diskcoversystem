@@ -500,16 +500,21 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'almacenamiento_bod':
 				require_once("inventario/almacenamiento_bodega.php");
 				break;
-				//Inventario  -> Ingreso de Productos -> Reubicar
+			//Inventario  -> Ingreso de Productos -> Reubicar
 			case 'reasignacion_bodega':
 				require_once("inventario/reubicar.php");
 				break;
-					//Inventario -> egreso de Productos -> egreso producto
+			//Inventario -> egreso de Productos -> egreso producto
 			case 'egreso_alimentos':
 				require_once("inventario/egreso_alimentos.php");
 				break;
 			case 'egreso_alimento2':
 				require_once("inventario/egreso_alimento2.php");
+				break;
+
+			//Inventario -> egreso de Productos -> registro beneficiarios
+			case 'registro_beneficiario':
+				require_once("inventario/registro_beneficiario.php");
 				break;
 			//Inventario  -> Reportes -> Lista productos
 			case 'CatalogoCtas':
