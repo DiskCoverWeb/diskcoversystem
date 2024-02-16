@@ -224,9 +224,12 @@ function SeteosCtas()
     $_SESSION['SETEOS']['Cta_Seguro'] = "0";
     $_SESSION['SETEOS']['Cta_Seguro_I'] = "0";
     $_SESSION['SETEOS']['Cta_Proveedores'] = "0";
-    $_SESSION['SETEOS']['Cta_Anticipos'] = "0";
+    $_SESSION['SETEOS']['Cta_Anticipos'] = "0";    
+    $_SESSION['SETEOS']['Cta_Ret_Egreso'] = "0";
     // 	// ' Consultamos las cuentas de la tabla
     $datos = $modelo->SeteoCta();
+
+    // print_r($datos);die();
 
     if (count($datos) > 0) {
         $Cadena = '';
@@ -380,6 +383,9 @@ function SeteosCtas()
                 case "Cta_Anticipos":
                     $_SESSION['SETEOS']['Cta_Anticipos'] = $value['Codigo'];
                     break;
+                case 'Cta_Ret_Egreso':
+                     $_SESSION['SETEOS']['Cta_Ret_Egreso'] = $value['Codigo'];
+                    break;
                 case "Inv_Promedio":
                     if ($value['Codigo'] == "TRUE") {
                         $Inv_Promedio = True;
@@ -489,6 +495,7 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
 
 
         $_SESSION['INGRESO']['Moneda'] = $empresa[0]['S_M'];
+        $_SESSION['INGRESO']['OpcCoop'] = $empresa[0]['Opc'];
         $_SESSION['INGRESO']['NombrePais'] = $empresa[0]['Pais'];
         $_SESSION['INGRESO']['Web_SRI_Autorizado'] = $empresa[0]['Web_SRI_Autorizado'];
         $_SESSION['INGRESO']['Web_SRI_Recepcion'] = $empresa[0]['Web_SRI_Recepcion'];

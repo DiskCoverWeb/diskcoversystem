@@ -1,5 +1,6 @@
 <?php
 require_once(dirname(__DIR__,2)."/modelo/empresa/cambioeM.php"); 
+require_once(dirname(__DIR__,3)."/lib/fpdf/reporte_de.php");
 /**
  * 
  */
@@ -197,18 +198,17 @@ class cambioeC
 			if($datos[0]['IP_VPN_RUTA']!='.' && $datos[0]['Base_Datos'] !='.' && $datos[0]['Usuario_DB']!='.' && $datos[0]['Contrasena_DB']!='.' && $datos[0]['Tipo_Base']!='.')
 			{
 				$datosEmp = $this->modelo->datos_sql_terceros($datos[0],$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
-				if(count($datosEmp)>0)
-				{
-					$extension = array('gif','png','jpg','jpeg');
-					foreach ($extension as $key => $value) {
-						$url = dirname(__DIR__,3)."/img/logotipos/".$datosEmp[0]['Logo_Tipo'].".".$value;
-				    	if(file_exists($url))
-				    	{
-				    		$logotipo = $datosEmp[0]['Logo_Tipo'].".".$value;	  
-				    		break;  		
-				    	}	
-					}
-					$datosEmp[0]['Logo_Tipo'] = $logotipo;					
+				if($datosEmp!= '-1' && count($datosEmp)>0)
+				{					
+					$src = url_logo($datosEmp[0]['Logo_Tipo']);
+					$img_name = ''; 
+					if($src!='' && $src!='.'){ $patch = explode('/',$src); $partes = count($patch); $img_name = $patch[$partes-1]; }else{$img_name = $datosEmp[0]['Logo_Tipo'].' (NO ENCONTRADO)';}	
+
+					$datosEmp[0]['Logo_Tipo'] = $img_name;
+					$rut = dirname(__DIR__,3);
+					$src = str_replace($rut,"../../", $src);
+					$datosEmp[0]['Logo_Tipo_url'] = $src;
+					// $_SESSION['INGRESO']['Logo_Tipo']	= $src;			
 				}
 			}
 		}
