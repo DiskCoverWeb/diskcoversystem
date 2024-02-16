@@ -67,7 +67,8 @@
         		$('#alerta').html(response[0].Razon_Social+'<br>'+response[0].Nombre);   
         		$('#alerta').css('font-size','10px');        		
         	}
-        	$('#img_logo').attr('src',response[0].Logo);
+			var newImgSrc = response[0].Logo + "?timestamp=" + new Date().getTime();
+        	$('#img_logo').attr('src',newImgSrc);
         	$('#img_logo').css('width','35%');
         	$('#img_logo').css('border-radius','5px');
         	$('#res').val(response[0].entidad);
@@ -78,9 +79,12 @@
         {
         	 $('#lbl_ruc').text(entidad);
         	 tr = '';
-        	 response.forEach(function(item,i){
-        	 	  tr+='<tr><td><img style="width:100%" src="'+item.Logo+'"></td><td><button class="btn btn-block btn-default" onclick="seleccionar_empresa(\''+item.Nombre+'\',\''+item.Razon_Social+'\',\''+item.Logo+'\',\''+item.entidad+'\',\''+item.Item+'\')">'+item.Razon_Social+'<br>'+item.Nombre+'</button></td></tr>';
-        	 })
+        	 response.forEach(function(item, i) {
+				// Añadir un timestamp o un identificador único a la URL de la imagen para evitar la caché
+				var uniqueImgSrc = item.Logo + '?v=' + new Date().getTime();
+
+				tr += '<tr><td><img style="width:100%" src="' + uniqueImgSrc + '"></td><td><button class="btn btn-block btn-default" onclick="seleccionar_empresa(\'' + item.Nombre + '\',\'' + item.Razon_Social + '\',\'' + uniqueImgSrc + '\',\'' + item.entidad + '\',\'' + item.Item + '\')">' + item.Razon_Social + '<br>' + item.Nombre + '</button></td></tr>';
+			})
 
         	 	// console.log(item)
         	 $('#tbl_empresas').html(tr);
