@@ -8931,4 +8931,58 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 		$pdf->Output('TEMP/' . $id . '.pdf', 'F');
 	}
 }
+
+/**
+ * Imprime un reporte en PDF con los datos de una consulta sql
+ * @param array $datos Datos a imprimir
+ * @param int $sizeLetra Tamaño de la letra
+ * @return string Ruta del archivo generado
+ */
+function ImprimirAdodc($datos, $sizeLetra = 10): string{
+	//TODO: Falta añadirle la cabecera para cada página
+	$pdf = new PDF();
+	$pdf->AliasNbPages();
+	$pdf->AddPage();
+	$pdf->SetFont('Arial', '', $sizeLetra);
+	$cabeceras = [];
+	$anchoColumnas = [40, 60, 30];
+	if(!empty($datos)){
+		$cabeceras = array_keys((array)$datos[0]);
+	}
+	// Inicializar los anchos de las columnas
+    $anchoColumnas = array_fill(0, count($cabeceras), 0);
+
+    // Calcular el ancho de la columna basado en las cabeceras
+    foreach ($cabeceras as $index => $header) {
+        $anchoColumnas[$index] = $pdf->GetStringWidth($header) + 2; // +2 para un poco de margen
+    }
+
+    // Calcular el ancho de columna basado en los datos
+    foreach ($datos as $row) {
+        foreach ($cabeceras as $index => $header) {
+            $texto = (string)$row[$header];
+            $anchoTexto = $pdf->GetStringWidth($texto) + 2; // +2 para un poco de margen
+            if ($anchoTexto > $anchoColumnas[$index]) {
+                $anchoColumnas[$index] = $anchoTexto;
+            }
+        }
+    }
+
+    // Dibujar las cabeceras con el ancho calculado
+    foreach ($cabeceras as $index => $header) {
+        $pdf->Cell($anchoColumnas[$index], 7, $header, 1);
+    }
+    $pdf->Ln();
+
+    // Dibujar los datos con el ancho calculado
+    foreach ($datos as $row) {
+        foreach ($cabeceras as $index => $header) {
+            $pdf->Cell($anchoColumnas[$index], 6, $row[$header], 1);
+        }
+        $pdf->Ln();
+    }
+	$ruta = dirname(__DIR__, 2) . '\TEMP\Reporte_Clientes_' . date('Y-m-d_H-i-s') . '.pdf';
+	$pdf->Output('F', $ruta);
+	return $ruta;
+}
 ?>

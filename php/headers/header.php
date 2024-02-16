@@ -753,7 +753,8 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
                 $tipo_img = array('jpg', 'gif', 'png', 'jpeg');
                 foreach ($tipo_img as $key => $value) {
                   if (file_exists(dirname(__DIR__, 2) . '/img/logotipos/' . $_SESSION['INGRESO']['Logo_Tipo'] . '.' . $value)) {
-                    $url = '../../img/logotipos/' . $_SESSION['INGRESO']['Logo_Tipo'] . '.' . $value;
+                    $timestamp = time();
+                    $url = '../../img/logotipos/' . $_SESSION['INGRESO']['Logo_Tipo'] . '.' . $value . '?v=' . $timestamp;
                     break;
                   }
                 }

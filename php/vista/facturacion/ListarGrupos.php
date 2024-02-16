@@ -195,8 +195,192 @@
         $('#Command5').click(function () {
             Command5_Click();
         });
+
+        $('#btnGenerarFacturas').click(function () {
+            GenerarFacturas_Click();
+        });
+
+        $('#btnListarGrupos').click(function () {
+            Listado_x_Grupos();
+        });
+
+        $('#btnRecalcularFechas').click(function () {
+            Recalcular_Fechas();
+        });
     });
     //Definicion de metodos
+
+    function Recalcular_Fechas() {
+        var mensaje = "Recalcular Meses de Cobros";
+        var titulo = "Formulario de Recalculación";
+        swal.fire({
+            title: titulo,
+            text: mensaje,
+            type: 'info',
+            showCancelButton: true
+        }).then((result) => {
+            if (result.value) {
+                $('#myModal_espera').modal('show');
+                $.ajax({
+                    url: "../controlador/facturacion/ListarGruposC.php?Recalcular_Fechas=true",
+                    type: "POST",
+                    dataType: 'json',
+                    success: function (response) {
+                        var data = response;
+                        $('#myModal_espera').modal('hide');
+                        if (data.res == 1) {
+                            swal.fire({
+                                title: 'Recalculo de Fechas',
+                                text: data.mensaje,
+                                type: 'success'
+                            });
+                        } else {
+                            swal.fire({
+                                title: 'Error',
+                                text: data.mensaje,
+                                type: 'error'
+                            });
+                        }
+                    }
+                });
+            } else {
+                return;
+            }
+        });
+    }
+
+    function Listado_x_Grupos() {
+        $('#myModal_espera').modal('show');
+        $.ajax({
+            url: "../controlador/facturacion/ListarGruposC.php?Listado_x_Grupos=true",
+            type: "POST",
+            dataType: 'json',
+            success: function (response) {
+                var data = response;
+                $('#myModal_espera').modal('hide');
+                if (data.res == 1) {
+                    swal.fire({
+                        title: 'Pdf creado',
+                        text: data.mensaje,
+                        type: 'success'
+                    });
+                    var url = "../../TEMP/" + data.fileName;
+                    var enlaceTemporal = $('<a></a>')
+                        .attr('href', url)
+                        .attr('download', data.fileName)
+                        .appendTo('body');
+                    enlaceTemporal[0].click();
+                    enlaceTemporal.remove();
+                } else {
+                    swal.fire({
+                        title: 'Error',
+                        text: data.mensaje,
+                        type: 'error'
+                    });
+                }
+            }
+        });
+    }
+
+    function GenerarFacturas_Click() {
+
+        if ($('#CTipoConsulta').val() != "2") {
+            swal.fire({
+                title: 'Error',
+                text: `Debe seleccionar la opción: 'Listar Todos' caso contrario no podrá facturar.`,
+                type: 'error'
+            });
+            return;
+        }
+
+        var parametros = {
+            'MBFechaI': $('#MBFechaI').val(),
+            'MBFechaF': $('#MBFechaF').val(),
+            'MBFecha': $('#MBFecha').val(),
+            'FA': FA,
+            'DCTipoPago': $('#DCTipoPago').val(),
+            'DCLinea': $('#DCLinea').val(),
+            'CTipoConsulta': $('#CTipoConsulta').val(),
+            'TipoFactura': TipoFactura,
+            'PorGrupo': PorGrupo ? 1 : 0,
+            'CheqRangos': $('#CheqRangos').is(':checked') ? 1 : 0,
+            'CheqFA': $('#CheqFA').is(':checked') ? 1 : 0,
+            'Codigo1': Codigo1,
+            'Codigo2': Codigo2,
+            'DCCliente': $('#DCCliente').val()
+        };
+        $('#myModal_espera').modal('show');
+        $.ajax({
+            url: "../controlador/facturacion/ListarGruposC.php?GenerarFacturas_Click=true",
+            type: "POST",
+            dataType: 'json',
+            data: { 'parametros': parametros },
+            success: function (response) {
+                var data = response;
+                $('#myModal_espera').modal('hide');
+                var tmp = data.FA;
+                for (var key in tmp) {
+                    if (tmp.hasOwnProperty(key)) {
+                        FA[key] = tmp[key];
+                    }
+                }
+                if (data.response == 1) {
+                    swal.fire({
+                        title: data.Titulo,
+                        text: data.Mensaje,
+                        type: 'info',
+                        showCancelButton: true
+                    }).then((result) => {
+                        if (result.value) {
+                            ProcGrabarMult(parametros);
+                        } else {
+                            return;
+                        }
+                    });
+                } else {
+                    swal.fire({
+                        title: data.Titulo,
+                        text: data.Mensaje,
+                        type: 'error'
+                    });
+                }
+            }
+        });
+    }
+
+    function ProcGrabarMult(data) {
+        var parametros = data;
+        $('#myModal_espera').modal('show');
+        $.ajax({
+            url: "../controlador/facturacion/ListarGruposC.php?ProcGrabarMult=true",
+            type: "POST",
+            dataType: 'json',
+            data: { 'parametros': parametros },
+            success: function (response) {
+                var data = response;
+                $('#myModal_espera').modal('hide');
+                if (data.Res == 1) {
+                    swal.fire({
+                        title: 'Facturas',
+                        text: data.Mensaje,
+                        type: 'info'
+                    });
+                    $('#LxGData').empty();
+                    $('#LxGData').html(data.datos.tbl);
+                    $('#LxGData #datos_t tbody').css('height', '36vh');
+                    $('#TotalRegistros').text('Total Registros: ' + data.numRegistros);
+
+                } else {
+                    swal.fire({
+                        title: 'Error',
+                        text: data.Mensaje,
+                        type: 'error'
+                    });
+                }
+            }
+        });
+
+    }
 
     function Command5_Click() {
         var clientesMarcados = [];
@@ -224,7 +408,7 @@
             return;
         }
 
-        if($('#TxtAsunto').val() == ''){
+        if ($('#TxtAsunto').val() == '') {
             swal.fire({
                 title: 'Error',
                 text: 'Debe ingresar un asunto para enviar el correo',
@@ -233,7 +417,7 @@
             return;
         }
 
-        if($('#TxtRemitente').val() == ''){
+        if ($('#TxtRemitente').val() == '') {
             swal.fire({
                 title: 'Error',
                 text: 'Debe ingresar un remitente para enviar el correo',
@@ -242,7 +426,7 @@
             return;
         }
 
-        if($('#TxtMensaje').val() == ''){
+        if ($('#TxtMensaje').val() == '') {
             swal.fire({
                 title: 'Error',
                 text: 'Debe ingresar un mensaje para enviar el correo',
@@ -269,6 +453,7 @@
             url: "../controlador/facturacion/ListarGruposC.php?Command5_Click=true",
             type: "POST",
             data: { 'parametros': parametros },
+            dataType: 'json',
             success: function (response) {
                 //TODO: Implementar sistema de envio de correos.
                 $('#myModal_espera').modal('hide');
@@ -738,36 +923,38 @@
             print_r($ruta[0] . '#'); ?>" title="Salir" class="btn btn-default" style="border: solid 1px">
                 <img src="../../img/png/salire.png">
             </a>
-            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Generar Facturas"
-                id="btnGenerarFacturas" onclick="" style="border: solid 1px">
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
+                title="Generación de Facturas en Bloque" id="btnGenerarFacturas" onclick="" style="border: solid 1px">
                 <img src="../../img/png/FRecaudacionBancosPreFa/facturas.png">
             </button>
-            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Listar por Grupos"
-                id="btnListarGrupos" onclick="" style="border: solid 1px">
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
+                title="Imprime un listado resumido de los grupos creados" id="btnListarGrupos" onclick=""
+                style="border: solid 1px">
                 <img src="../../img/png/FRecaudacionBancosPreFa/papers.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
-                title="Generar Eliminar Rubros" id="btnGenerarEliminarRubros" onclick="" style="border: solid 1px">
+                title="Generar o Eliminar por Lotes los Rubros a Facturar" id="btnGenerarEliminarRubros" onclick=""
+                style="border: solid 1px">
                 <img src="../../img/png/anular.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
-                title="Generar Deuda Pendiente" id="btnGenerarDeudaPendiente" onclick="" style="border: solid 1px">
+                title="Genera las Deudas Pendientes" id="btnGenerarDeudaPendiente" onclick="" style="border: solid 1px">
                 <img src="../../img/png/deuda.png">
             </button>
-            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Recalcular Fechas"
-                id="btnRecalcularFechas" onclick="" style="border: solid 1px">
-                <img src="../../img/png/FRecaudacionBancosPreFa/renumerar.png">
-            </button>
-            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Imprimir Codigos"
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Imprimir Resultados"
                 id="btnImprimirCodigos" onclick="" style="border: solid 1px">
                 <img src="../../img/png/FRecaudacionBancosPreFa/printer.png">
             </button>
-            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Recibos"
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
+                title="Recalcula Fecha de Facturación" id="btnRecalcularFechas" onclick="" style="border: solid 1px">
+                <img src="../../img/png/FRecaudacionBancosPreFa/renumerar.png">
+            </button>
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Imprimir Recibos"
                 id="btnRecibos" onclick="" style="border: solid 1px">
                 <img src="../../img/png/reporte_1.png">
             </button>
-            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Excel" id="btnExcel"
-                onclick="" style="border: solid 1px">
+            <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Enviar Excel"
+                id="btnExcel" onclick="" style="border: solid 1px">
                 <img src="../../img/png/excel2.png">
             </button>
         </div>

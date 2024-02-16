@@ -295,14 +295,15 @@ class ListarGruposM
         return array('datos' => $datos, 'AdoQuery' => $AdoQuery);
     }
 
-    public function Command5_Click($parametros, $ListaDeCampos){
+    public function Command5_Click($parametros, $ListaDeCampos)
+    {
         $sql = "UPDATE Reporte_CxC_Cuotas
                 SET E = 0
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'";
         Ejecutar_SQL_SP($sql);
-        
-        for($i = 0; $i < count($parametros['LstClientes']); $i++){
+
+        for ($i = 0; $i < count($parametros['LstClientes']); $i++) {
             $NombreCliente = $parametros['LstClientes'][$i]['Cliente'];
             $sql = "UPDATE Reporte_CxC_Cuotas
                     SET E = 1
@@ -321,5 +322,192 @@ class ListarGruposM
                 ORDER BY RCC.GrupoNo, RCC.Cliente";
         $AdoAux = $this->db->datos($sql);
         return $AdoAux;
+    }
+
+    public function ProcGrabarMult($parametros, $NoMes, $Periodo_Facturacion, $FA, $CodigoL, $Cta_Ventas)
+    {
+        $mensaje = "";
+        $sql = "SELECT C.Grupo,C.Cliente,C.Codigo,CF.Periodo,CF.Num_Mes,SUM(CF.Valor) As TValor
+                FROM Clientes As C,Clientes_Facturacion As CF
+                WHERE CF.Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND C.T = 'N'";
+        if ($parametros['PorGrupo'] <> 0) {
+            $sql .= "AND C.Grupo = '" . $parametros['DCCliente'] . "' ";
+        } else {
+            if ($parametros['CheqRangos'] <> 0)
+                $sql .= "AND C.Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "' ";
+        }
+        if ($parametros['CheqFA'] == 0) {
+            $sql .= "AND CF.Num_Mes = '" . $NoMes . "' 
+                     AND CF.Periodo = '" . $Periodo_Facturacion . "' ";
+        } else {
+            $sql .= "AND CF.Fecha BETWEEN '" . $parametros['MBFechaI'] . "' AND '" . $parametros['MBFechaF'] . "' ";
+        }
+        $sql .= "AND C.Codigo = CF.Codigo 
+                 GROUP BY C.Grupo,C.Cliente,C.Codigo,CF.Periodo,CF.Num_Mes 
+                 ORDER BY C.Grupo,C.Cliente,CF.Periodo,CF.Num_Mes";
+        $AdoQuery = $this->db->datos($sql);
+        $Contador = 0;
+        if (count($AdoQuery) > 0) {
+            $datos = grilla_generica_new($sql, 'Clientes', '', '', false, false, false, 1, 1, 1, 100);
+            $FechaTexto = "";
+            if ($parametros['CheqFA'] == 0) {
+                $FechaTexto = $parametros['MBFechaI'];
+            } else {
+                $FechaTexto = $parametros['MBFechaF'];
+            }
+            $FA['T'] = G_PENDIENTE;
+            $FA['Nuevo_Doc'] = 1;
+            $FA['Factura'] = ReadSetDataNum($FA['TC'] . "_SERIE_" . $FA['Serie'], True, False);
+            $FA['Fecha'] = $FechaTexto;
+            $Factura_No = $FA['Factura'];
+            $Factura_Desde = $Factura_No;
+            $Factura_Hasta = $Factura_No + count($AdoQuery);
+            $sql = "DELETE *
+                    FROM Facturas
+                    WHERE Factura BETWEEN '" . $Factura_Desde . "' AND '" . $Factura_Hasta . "'
+                    AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                    AND Item = '" . $_SESSION['INGRESO']['item'] . "'
+                    AND TC = '" . $FA['TC'] . "'
+                    AND Serie = '" . $FA['Serie'] . "'
+                    AND Autorizacion = '" . $FA['Autorizacion'] . "'";
+            Ejecutar_SQL_SP($sql);
+
+            foreach ($AdoQuery as $key => $value) {
+                $FA['Factura'] = ReadSetDataNum($FA['TC'] . "_SERIE_" . $FA['Serie'], True, False);
+                $FA['CodigoC'] = $value['Codigo'];
+                $FA['Cliente'] = $value['Cliente'];
+                $FA['Grupo'] = $value['Grupo'];
+                $NoMes = $value['Num_Mes'];
+                $MiMes = MesesLetras($NoMes);
+                $Periodo_Facturacion = $value['Periodo'];
+                $FA['EmailC'] = G_NINGUNO;
+                $FA['Fecha'] = $FechaTexto;
+                $FA['Nota'] = "Facturas del mes de " . date('m', strtotime($FechaTexto));
+                $sql = "DELETE *
+                        FROM Asiento_F 
+                        WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                        AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'";
+                Ejecutar_SQL_SP($sql);
+                $sql = "SELECT C.Cliente,CF.Codigo_Inv,CP.Producto,CF.Valor,CF.Descuento,CF.Descuento2,CP.IVA,C.Codigo,C.Grupo
+                        FROM Clientes_Facturacion As CF,Clientes As C,Catalogo_Productos CP
+                        WHERE CF.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                        AND CP.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                        AND C.Codigo = '" . $FA['CodigoC'] . "' 
+                        AND CF.Num_Mes = '" . $NoMes . "' 
+                        AND CF.Periodo = '" . $Periodo_Facturacion . "' 
+                        AND CF.Codigo_Inv = CP.Codigo_Inv 
+                        AND CF.Codigo = C.Codigo 
+                        AND CF.Item = CP.Item 
+                        ORDER BY CF.Codigo_Inv ";
+                $AdoParte = $this->db->datos($sql);
+                if (count($AdoParte) > 0) {
+                    foreach ($AdoParte as $key2 => $value2) {
+                        if ($value2['Valor'] > 0) {
+                            SetAdoAddNew("Asiento_F");
+                            SetAdoFields("CODIGO", $value2['Codigo_Inv']);
+                            SetAdoFields("CODIGO_L", $CodigoL);
+                            SetAdoFields("PRODUCTO", $value2['Producto']);
+                            SetAdoFields("CANT", 1);
+                            SetAdoFields("PRECIO", $value2['Valor']);
+                            SetAdoFields("Total_Desc", $value2['Descuento']);
+                            SetAdoFields("Total_Desc2", $value2['Descuento2']);
+                            SetAdoFields("TOTAL", $value2['Valor']);
+                            if ($value2['IVA']) {
+                                $Total_IVAFM = round($value2['Valor'] * $_SESSION['INGRESO']['porc'], 2);
+                            } else {
+                                $Total_IVAFM = 0;
+                            }
+                            SetAdoFields("Total_IVA", $Total_IVAFM);
+                            SetAdoFields("Cta", $Cta_Ventas);
+                            SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+                            SetAdoFields("Codigo_Cliente", $FA['CodigoC']);
+                            SetAdoFields("Mes", $MiMes);
+                            SetAdoFields("TICKET", $Periodo_Facturacion);
+                            SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+                            SetAdoFields("A_No", $Contador);
+                            SetAdoUpdate();
+                        }
+                    }
+                    $Factura_Hasta = $FA['Factura'];
+                    $FA['Tipo_PRN'] = "FM";
+                    $tmp = Calculos_Totales_Factura();
+                    $FA = array_merge($FA, $tmp);
+                    $FA['Nota'] = "FACTURA PENDIENTE DE PAGO";
+                    Grabar_Factura1($FA);
+                    $sql = "DELETE *
+                            FROM Clientes_Facturacion 
+                            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                            AND Codigo = '" . $FA['CodigoC'] . "'
+                            AND Num_Mes = '" . $NoMes . "'
+                            AND Periodo = '" . $Periodo_Facturacion . "'";
+                    Ejecutar_SQL_SP($sql);
+                }
+                $Contador++;
+            }
+            if ($parametros['TipoFactura'] == "NV") {
+                $mensaje = "IMPRIMIR NOTAS DE VENTA \n";
+            } else {
+                $mensaje = "IMPRIMIR FACTURAS (FM) \n";
+            }
+            $mensaje .= "DESDE: " . $Factura_Desde .
+                "\n HASTA: " . $Factura_Hasta .
+                "\n SON UN TOTAL DE: " . number_format($Factura_Hasta - $Factura_Desde + 1, 2, ',', '.') .
+                "\n EN EL MENU: \n" .
+                "ARCHIVOS -> LISTAR ANULAR FACTURAS \n
+                        Opción: En Bloque";
+
+            return array('mensaje' => $mensaje, 'datos' => $datos, 'numRegistros' => count($AdoQuery));
+        } else {
+            $mensaje = "No se puede grabar la Factura falta datos";
+            return array('mensaje' => $mensaje, 'datos' => array(), 'numRegistros' => 0);
+        }
+    }
+
+    public function Listado_x_Grupos()
+    {
+        $sql = "SELECT Grupo,Direccion,COUNT(Grupo) As Alumnos
+                FROM Clientes 
+                WHERE FA <> 0 ";
+        if ($_SESSION['INGRESO']['Mas_Grupos']) {
+            $sql .= "AND DirNumero = '" . $_SESSION['INGRESO']['item'] . "' ";
+        }
+        $sql .= "GROUP BY Grupo,Direccion
+                 ORDER BY Grupo,Direccion";
+        $AdoNiveles = $this->db->datos($sql);
+        if(count($AdoNiveles) > 0){
+            return $AdoNiveles;
+        }else{
+            throw new Exception("No se encontraron clientes para listar por grupos");
+        }
+    }
+
+    public function Recalcular_Fechas()
+    {
+        $sql = "SELECT Periodo 
+                FROM Clientes_Facturacion 
+                WHERE ISNUMERIC(Periodo) <> 0 
+                AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                GROUP BY Periodo 
+                ORDER BY Periodo ";
+        $AdoAux = $this->db->datos($sql);
+        if (count($AdoAux) > 0) {
+            foreach ($AdoAux as $key => $value) {
+                $Anio = $value['Periodo'];
+                for ($i = 1; $i <= 12; $i++) {
+                    $Mifecha = BuscarFecha(date('Y-m-t', strtotime("01/" . sprintf("02d", $i) . "/" . $Anio)));
+                    $sql = "UPDATE Clientes_Facturacion
+                                SET Fecha = '" . $Mifecha . "'
+                                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                                AND Periodo = '" . $Anio . "'
+                                AND Num_Mes = '" . $i . "'";
+                    Ejecutar_SQL_SP($sql);
+                }
+            }
+        } else {
+            throw new Exception("No se encontraron datos para recalcular las fechas");
+        }
+
+
     }
 }
