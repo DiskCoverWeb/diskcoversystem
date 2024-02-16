@@ -298,10 +298,14 @@ if(isset($_GET['DCBanco_LostFocus'])){
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->DCBanco_LostFocus($parametros));
 }
-// if(isset($_GET['ddl_aux'])){
-//     $parametros = $_POST['parametros'];
-//     echo json_encode($controlador->Trans_SubCtas($parametros));
-// }
+if(isset($_GET['guardar_diferencia'])){
+    $parametros = $_POST;
+    echo json_encode($controlador->guardar_diferencia($parametros));
+}
+if(isset($_GET['facturas_pendientes'])){
+    $parametros = $_GET;
+    echo json_encode($controlador->Facturas_Pendientes_SC($parametros));
+}
 
 
 class incomC
@@ -397,7 +401,8 @@ class incomC
 	function InsertarAsientoBanco($parametros)
 	{
 		// print_r($parametros);die();
-		// $datos = $this->modelo->cargar_asientosB();
+		$datos = $this->modelo->cargar_asientosB();
+		if(count($datos)>0){  $this->delete_asientoBTodos(); }
 		SetAdoAddNew("Asiento_B");
         SetAdoFields("ME",0);
         SetAdoFields("CTA_BANCO",$parametros['banco']);
@@ -2337,6 +2342,63 @@ function ExistenMovimientos($parametros)
 	     }
 	     return $TextCheque;
 	     
+	}
+
+	function guardar_diferencia($parametros)
+	{
+		// print_r($parametros);die();
+	   $asientos = $this->modelo->asientos();
+       if(isset($parametros['efec'])){
+          $OpcDH = 2; $ValorDH = $parametros['vae'];
+          $Codigo = Leer_Cta_Catalogo($parametros['conceptoe']);
+          $Cadena = $Codigo['Cuenta'];
+          if($Codigo['Moneda_US']){ $ValorDH = number_format($ValorDH * $parametros['cotizacion'], 2,'.','');}
+          $Fecha_Vence = $parametros['fecha1'];
+          $NoCheque = G_NINGUNO;
+          $AdoAsientos = array('OpcDH'=>$OpcDH,'CodigoCli'=>'.','CodigoCC'=>'.','DetalleComp'=>'.','ValorDH'=>$ValorDH,'Codigo'=>$Codigo['Codigo_Catalogo'],'Cuenta'=>$Codigo['Cuenta'],'Fecha_Vence'=>$parametros['fecha1'],'NoCheque'=>$NoCheque,'Trans_No'=>$parametros['Trans_No'],'Ln_No'=>(count($asientos)+1),'Dolar'=>$parametros['cotizacion'],'Moneda_US'=>$Codigo['Moneda_US'],'SubCta'=>$Codigo['SubCta']);
+           InsertarAsientosC($AdoAsientos);
+       	}
+        $SumaBancos = 0;
+        $A_No = count($asientos)+1;
+        $AdoAsientos = $this->modelo->asientos(false,false);
+        // print_r($AdoAsientos);die();
+        $calculos = CalculosTotalAsientos($AdoAsientos);
+               if(isset($parametros['ban'])){
+                  $SumaBancos =$calculos['SumaDebe'] - $calculos['SumaHaber'];
+                  $OpcDH = 2; $ValorDH = $calculos['SumaDebe'] - $calculos['SumaHaber'];
+                  $Codigo = Leer_Cta_Catalogo($parametros['conceptob']);
+                  $Cadena = $Codigo['Cuenta'];
+                  $DGAsientosB = $this->modelo->cargar_asientosB();
+                  if(count($DGAsientosB)>0)
+                  {
+                  	foreach ($DGAsientosB as $key => $value) {
+                  		 $Fecha_Vence = $value["EFECTIVIZAR"];
+                      	 $NoCheque = $value["CHEQ_DEP"];
+                  //     .fields("VALOR") = SumaBancos
+                  	}
+                  	 $AdoAsientos = array('OpcDH'=>$OpcDH,'CodigoCli'=>'.','CodigoCC'=>'.','DetalleComp'=>'.','ValorDH'=>$ValorDH,'Codigo'=>$Codigo['Codigo_Catalogo'],'Cuenta'=>$Codigo['Cuenta'],'Fecha_Vence'=>$Fecha_Vence,'NoCheque'=>$NoCheque,'Trans_No'=>$parametros['Trans_No'],'Ln_No'=>(count($asientos)+1),'Dolar'=>$parametros['cotizacion'],'Moneda_US'=>$Codigo['Moneda_US'],'SubCta'=>$Codigo['SubCta']);
+                  	  if($_SESSION['INGRESO']['OpcCoop']==1 && $AdoAsientos['Moneda_US']==1){$ValorDH = $ValorDH * $AdoAsientos['Dolar'];}
+
+                  	  // print_r($AdoAsientos);die();
+                 	 InsertarAsientosC($AdoAsientos);
+                  }                 
+               }
+               
+       	return 1;
+	}
+
+	function Facturas_Pendientes_SC($parametros)
+	{
+		$empresa = Empresa_data(); 
+		$AgruparSubMod = $empresa[0]['Det_SubMod'];
+		$lista = array();
+		// print_r($parametros);die();
+		$datos = $this->modelo->Facturas_Pendientes_SC($AgruparSubMod,$parametros['SubCta'],$parametros['Codigo'],$parametros['cta'],$parametros['fecha']);
+		foreach ($datos as $key => $value) {
+			$lista[] = array('id'=>$value['Factura'],'label'=>$value['Factura'],'data'=>$value);
+		}
+
+		return $lista;		
 	}
 
 }

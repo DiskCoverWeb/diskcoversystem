@@ -71,7 +71,7 @@ class cambioeM
 	function editar_datos_empresaMYSQL($parametros)
 	{
 		$img = '.';
-		if($parametros['ddl_img']!=''){ $logo = explode('.',$parametros['ddl_img']); $img = $logo[0];}
+		
 		$sql = "UPDATE lista_empresas set 
 		Estado='".$parametros['Estado']."',
 		Mensaje='".$parametros['Mensaje']."',
@@ -85,9 +85,14 @@ class cambioeM
 	    Fecha='".$parametros['FechaR']."',
 	    Fecha_DB='".$parametros['FechaDB']."',
 	    Fecha_P12='".$parametros['FechaP12']."', 
-	    Tipo_Plan='".$parametros['Plan']."', 
-		Logo_Tipo ='".$img."'
-	    WHERE ID='".$parametros['empresas']."' ";	  
+	    Tipo_Plan='".$parametros['Plan']."' ";
+	    if(isset($parametros['ddl_img']) && $parametros['ddl_img']!='')
+	    { 
+	    	$logo = explode('.',$parametros['ddl_img']); $img = $logo[0];
+	    	$sql.=",Logo_Tipo ='".$img."' ";
+		}
+
+		$sql.=" WHERE ID='".$parametros['empresas']."' ";	  
 
 	    // print_r($sql);die();  
 	    return $this->db->String_Sql($sql,'MYSQL');
@@ -143,7 +148,7 @@ class cambioeM
 		// print_r($parametros);die();
 
 		$img = '.';
-		if($parametros['ddl_img']!=''){ $logo = explode('.',$parametros['ddl_img']); $img = $logo[0];}
+		
 	    $em = $this->datos_empresa($parametros['empresas']);
 	    if(count($em)>0)
 	    {
@@ -251,9 +256,14 @@ class cambioeM
 		    		Num_CI = '".$parametros['dm2']."',
 		    		Num_CE ='".$parametros['dm3']."',
 		    		Num_ND ='".$parametros['dm4']."',
-		    		Num_NC='".$parametros['dm5']."',
-		    		Logo_Tipo='".$img."'
-		    		WHERE Item='".$em[0]['Item']."'";
+		    		Num_NC='".$parametros['dm5']."' ";
+		    		if(isset($parametros['ddl_img']) && $parametros['ddl_img']!='')
+		    		{ 
+		    			$logo = explode('.',$parametros['ddl_img']); $img = $logo[0];
+		    			$sql3.= ",Logo_Tipo='".$img."'";
+		    		}
+		    		
+		    		$sql3.=" WHERE Item='".$em[0]['Item']."'";
 
 		    		// print_r($sql3);die();
 		    		// print_r($sql2);

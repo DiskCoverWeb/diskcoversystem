@@ -46,6 +46,8 @@ if(isset($_GET['fec']))
 
 <script src="../../dist/js/kardex_ing.js"></script>
 <script type="text/javascript">
+    Ini_Iva = '<?php echo $_SESSION['INGRESO']['porc']*100; ?>';
+    console.log(Ini_Iva)
   $(document).ready(function()
   {
     $('#ChRetB').focus();    

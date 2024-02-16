@@ -21,6 +21,10 @@ if(isset($_GET['tipoc']))
 {
   $tipoc = $_GET['tipoc'];
 }
+if(isset($_GET['fecha']))
+{
+  $fecha = $_GET['fecha'];
+}
  ?>
 <script type="text/javascript">
 $(document).ready(function () {
@@ -33,6 +37,10 @@ $(document).ready(function () {
 
     $("#ddl_aux").on("focus", function() {
       $(this).autocomplete("search",'%'); 
+    });
+
+    $("#txt_factura").on("focus", function() {
+      $(this).autocomplete("search", "%");
     });
 
      $( "#ddl_aux" ).autocomplete({
@@ -68,11 +76,42 @@ $(document).ready(function () {
 
 
     $('#ddl_subcta').on('select2:select', function (e) {
-      console.log(e)
+      // console.log(e)
       var data = e.params.data.data;
       cargar_submodulos(data.Nivel);      
       $('#DLSubCta').select2('open');
       // console.log(data);
+
+    });
+
+    $( "#txt_factura" ).autocomplete({
+      source: function( request, response ) {
+        var tc = '<?php echo $tc; ?>';
+        var OpcDH = '<?php echo $OpcDH; ?>';
+        var OpcTM = '<?php echo $OpcTM; ?>';
+        var cta = '<?php echo $cta; ?>';
+        var fecha = $('#txt_fecha_ven').val();
+            $.ajax({
+                url:   '../controlador/contabilidad/incomC.php?facturas_pendientes=true&SubCta='+tc+'&fecha='+fecha+'&cta='+cta+'&Codigo='+$('#ddl_subcta').val(),
+                type: 'post',
+                dataType: "json",
+                data: {
+                    q: request.term
+                },
+                success: function( data ) {
+                  // console.log(data);
+                    response( data );
+                }
+            });
+        },
+        select: function (event, ui) {
+            $( "#txt_factura" ).val(ui.item.label);
+            return false;
+        },
+        focus: function(event, ui){
+            $( "#txt_factura" ).val(ui.item.label);
+            return false;
+        },
     });
 
 });
@@ -319,6 +358,7 @@ $(document).ready(function () {
       var tc = '<?php echo $tc; ?>';
       $('#DLSubCta').select2({
         placeholder: 'Seleccione cuenta',
+        width:'100%',
         ajax: {
           url:   '../controlador/contabilidad/incomC.php?modal_subcta_cta=true&nivel='+nivel+'&tc='+tc,
           dataType: 'json',
@@ -427,8 +467,8 @@ $(document).ready(function () {
 <script type="text/javascript">
   function cerrarModal() {
        // window.parent.document.getElementById('modal_subcuentas').style.display = 'none';
-       window.parent.document.getElementById('modal_subcuentas').click();
- 
+       // window.parent.document.getElementById('modal_subcuentas').click();
+   window.parent.postMessage("closeModal", "*");
     // $('#modal_subcuentas').hide();
   }
 </script>
