@@ -130,7 +130,7 @@
                 </a>
             </div>
             <div class="col">
-                <a href="javascript:void(0)" id="Listado_Por_Meses" title="Listar clientes por rubro de meses"
+                <a href="javascript:void(0)" id="Listar_Por_Meses" title="Listar clientes por rubro de meses"
                     class="btn btn-default">
                     <img src="../../img/png/requirement.png" width="35" height="35">
                 </a>
@@ -361,7 +361,6 @@
 
             switch (idSel) {
                 case "Resumen_Prod":
-
                 case "Resumen_Ventas_Vendedor":
                 case "Ventas_x_Cli":
                 case "Ventas_Cli_x_Mes":
@@ -411,59 +410,107 @@
             }
         });
 
-        var menuResumen = [
-            { id: 'Resumen_Prod', opcion: 'Anticipados de Abonos' },
-            { id: 'Resumen_Prod_Meses', opcion: 'Contrapartida del Abonos' },
-            { id: 'ResumenVentCost', opcion: 'Errores en Abonos Anticipados' },
-            { id: 'Resumen_Ventas_Vendedor', opcion: 'Presenta Abonos mal Procesados' }
-        ];
-
-        var menuDetalleAbonos = ['Anticipados de Abonos',
-            'Contrapartida del Abonos',
-            'Errores en Abonos Anticipados',
-            'Presenta Abonos mal Procesados'
+        var menuDetalleAbonos = [
+            { id: 'SMAbonos_Anticipados', opcion: 'Anticipados de Abonos' },
+            { id: 'Contra_Cta', opcion: 'Contrapartida del Abonos' },
+            { id: 'Abonos_Ant', opcion: 'Errores en Abonos Anticipados' },
+            { id: 'Abonos_Erroneos', opcion: 'Presenta Abonos mal Procesados' }
         ];
 
         for (var i = 0; i < menuDetalleAbonos.length; i++) {
-            $('#menuDetalleAbonos').append('<li><a href="#">' + menuDetalleAbonos[i] + '</a></li>');
+            var menuItem = menuDetalleAbonos[i];
+            $('#menuDetalleAbonos').append('<li><a href="#" id="' + menuItem.id + '" data-opcion="' + menuItem.opcion + '">' + menuItem.opcion + '</a></li>');
         }
 
-        var menuListadoFacturas = ['Ordenadas por Clientes',
-            'Ordenados por Facturas',
-            'CxC Clientes por Vendedor',
-            'Resumen de Ventas por Vendedor',
-            'Resumen de Cartera Detallado',
-            'Cuentas por Cobrar por Tiempo de Credito',
-            'Tipo de Pagos Clientes'
+        $('#menuDetalleAbonos').on('click', 'li a', function () {
+            var opcionSel = $(this).data('opcion');
+            var idSel = $(this).attr('id');
+
+            switch (idSel) {
+                case "SMAbonos_Anticipados":
+                case "Contra_Cta":
+                case "Abonos_Ant":
+                case "Abonos_Erroneos":
+                    ToolbarMenu_ButtonMenuClick(idSel);
+                    break;
+
+            }
+        });
+
+        var menuListadoFacturas = [
+            { id: 'Por_Clientes', opcion: 'Ordenadas por Clientes' },
+            { id: 'Por_Facturas', opcion: 'Ordenados por Facturas' },
+            { id: 'Por_Vendedor', opcion: 'CxC Clientes por Vendedor' },
+            { id: 'Resumen_Vent_x_Ejec', opcion: 'Resumen de Ventas por Vendedor' },
+            { id: 'Resumen_Cartera', opcion: 'Resumen de Cartera Detallado' },
+            { id: 'CxC_Tiempo_Credito', opcion: 'Cuentas por Cobrar por Tiempo de Credito' },
+            { id: 'Tipo_Pago_Cliente', opcion: 'Tipo de Pagos Clientes' },
         ];
 
         for (var i = 0; i < menuListadoFacturas.length; i++) {
-            $('#menuListadoFacturas').append('<li><a href="#">' + menuListadoFacturas[i] + '</a></li>');
+            var menuItem = menuListadoFacturas[i];
+            $('#menuListadoFacturas').append('<li><a href="#" id="' + menuItem.id + '" data-opcion="' + menuItem.opcion + '">' + menuItem.opcion + '</a></li>');
         }
 
-        var menuVentasxExcel = ['Bajar a Excel',
-            'Reporte de Ventas',
-            'Reporte de Catastro'
+        $('#menuListadoFacturas').on('click', 'li a', function () {
+            var opcionSel = $(this).data('opcion');
+            var idSel = $(this).attr('id');
+
+            switch (idSel) {
+                case "Por_Clientes":
+                case "Por_Facturas":
+                case "Por_Vendedor":
+                case "Resumen_Cartera":
+                case "CxC_Tiempo_Credito":
+                case "Tipo_Pago_Cliente":
+                    ToolbarMenu_ButtonMenuClick(idSel);
+                    break;
+                case "Resumen_Vent_x_Ejec":
+                    break;
+            }
+        });
+
+        var menuVentasxExcel = [
+            { id: 'Bajar_Excel', opcion: 'Bajar a Excel' },
+            { id: 'Reporte_Ventas', opcion: 'Reporte de Ventas' },
+            { id: 'Reporte_Catastro', opcion: 'Reporte de Catastro' },
         ];
 
         for (var i = 0; i < menuVentasxExcel.length; i++) {
-            $('#menuVentasxExcel').append('<li><a href="#">' + menuVentasxExcel[i] + '</a></li>');
+            var menuItem = menuVentasxExcel[i];
+            $('#menuVentasxExcel').append('<li><a href="#" id="' + menuItem.id + '" data-opcion="' + menuItem.opcion + '">' + menuItem.opcion + '</a></li>');
         }
 
-        for (var i = 0; i < menuListadoFacturas.length; i++) {
-            $('#menuListadoFacturas').append('<li><a href="#">' + menuListadoFacturas[i] + '</a></li>');
-        }
+        $('#menuVentasxExcel').on('click', 'li a', function () {
+            var opcionSel = $(this).data('opcion');
+            var idSel = $(this).attr('id');
 
-        var menuEnviarFAmails = ['Enviar por mail Facturas Electronicas',
-            'Enviar por mail Recibos de Pago',
-            'Enviar por Mail Recibos Anticipados',
-            'Enviar Resumen de Cartera por mail'
+            switch (idSel) {
+                case "Reporte_Ventas":
+                    ToolbarMenu_ButtonMenuClick(idSel);
+            }
+        });
+
+        var menuEnviarFAmails = [
+            { id: 'Enviar_FA_Email', opcion: 'Enviar por mail Facturas Electronicas' },
+            { id: 'Enviar_RE_Email', opcion: 'Enviar por mail Recibos de Pago' },
+            { id: 'Recibos_Anticipados', opcion: 'Enviar por Mail Recibos Anticipados' },
+            { id: 'Deuda_x_Mail', opcion: 'Enviar Resumen de Cartera por mail' },
         ];
 
         for (var i = 0; i < menuEnviarFAmails.length; i++) {
-            $('#menuEnviarFAmails').append('<li><a href="#">' + menuEnviarFAmails[i] + '</a></li>');
+            var menuItem = menuEnviarFAmails[i];
+            $('#menuEnviarFAmails').append('<li><a href="#" id="' + menuItem.id + '" data-opcion="' + menuItem.opcion + '">' + menuItem.opcion + '</a></li>');
         }
 
+        $('#menuEnviarFAmails').on('click', 'li a', function () {
+            var opcionSel = $(this).data('opcion');
+            var idSel = $(this).attr('id');
+
+            switch (idSel) {
+                case "":
+            }
+        });
 
         $('#MBFechaI').blur(function () {
             let fechaI = $(this).val();
@@ -480,8 +527,6 @@
         $('#CheqIngreso').click(toggleCheqIngreso);
 
         Form_Activate();
-
-
 
     });
 
@@ -640,20 +685,28 @@
                     case "Imprimir":
                         break;
                     case "Facturas":
-                        $("#label2").text("Facturado");
-                        $("#label4").text("Cobrado");
-                        $("#label3").text("Saldo");
+                        if (data['num_filas'] > 0) {
+                            $("#label2").text("Facturado");
+                            $("#label4").text("Cobrado");
+                            $("#label3").text("Saldo");
 
-                        $("#lblCommand").val(data['Opcion']);
-                        $("#lblRegistro").val(data['num_filas']);
-                        $("#lblFacturado").val(data['label_facturado']);
-                        $("#lblAbonado").val(data['label_abonado']);
-                        $("#lblSaldo").val(data['label_saldo']);
+                            $("#lblCommand").val(data['Opcion']);
+                            $("#lblRegistro").val(data['num_filas']);
+                            $("#lblFacturado").val(data['label_facturado']);
+                            $("#lblAbonado").val(data['label_abonado']);
+                            $("#lblSaldo").val(data['label_saldo']);
 
-                        $('#myModal_espera').modal('hide');
-                        $('#DGQuery').html(data['tbl']);
-                        $('#DGQuery #datos_t tbody').css('height', '36vh');
-                        $('#MBFechaI').focus();
+
+                            $('#DGQuery').html(data['tbl']);
+                            $('#DGQuery #datos_t tbody').css('height', '36vh');
+                            $('#MBFechaI').focus();
+                            $('#alertNoData').hide();
+                            $('#myModal_espera').modal('hide');
+                        } else {
+                            $('#DGQuery').empty();
+                            $('#alertNoData').show();
+                            $('#myModal_espera').modal('hide');
+                        }
                         break;
                     case "Protestado":
                     case "Listado_Tarjetas":
@@ -794,6 +847,9 @@
         });
     });
 
+    var url = window.location.href;
+    var urlParams = new URLSearchParams(url.split('?')[1]);
+    var TipoFactura = urlParams.get('tipo');
 
     function ToolbarMenu_ButtonMenuClick(idBtnMenu) {
         var parametros = {
@@ -811,7 +867,8 @@
             'FA': globalFA,
             'DescItem': globalDescItem,
             'Cod_Marca': globalCodMarca,
-            'idBtnMenu': idBtnMenu
+            'idBtnMenu': idBtnMenu,
+            'TipoFactura': TipoFactura
         };
         if (typeof globalPorCantidad !== 'undefined') {
             parametros['PorCantidad'] = globalPorCantidad;
@@ -862,15 +919,41 @@
                         label3: "SALDO"
                     },
                     "VentasxProductos": {
-                        label2: "VENTAS",
-                        label4: "",
-                        label3: ""
+                        label2: "FACTURADO",
+                        label4: "PVP",
+                        label3: "COSTO"
                     },
                     "Ventas_ResumidasxVendedor": {
                         label2: "FACTURADO",
                         label4: "",
                         label3: ""
-                    }
+                    },
+                    "SMAbonos_Anticipados": {
+                        label2: "VENTAS",
+                        label4: "COBRADO",
+                        label3: "SALDO"
+                    },
+                    "Contra_Cta": {
+                        label2: "DEBITOS",
+                        label4: "CREDITOS",
+                        label3: "SALDO"
+                    },
+                    "Abonos_Ant": {
+                        label2: "VENTAS",
+                        label4: "COBRADO",
+                        label3: "SALDO"
+                    },
+                    "Abonos_Erroneos": {
+                        label2: "FACTURADO",
+                        label4: "COBRADO",
+                        label3: "SALDO"
+                    },
+                    "Por_Clientes": {},
+                    "Por_Facturas": {},
+                    "Resumen_Cartera": {},
+                    "Por_Vendedor": {},
+                    "CxC_Tiempo_Credito": {},
+                    "Reporte_Ventas": {}
                 };
 
                 var action = actionsMap[data["idBtnMenu"]];
@@ -880,18 +963,27 @@
                         $("#" + label).text(action[label]);
                     });
 
-                    $("#lblCommand").val(data['Opcion']);
-                    $("#lblRegistro").val(data['num_filas']);
+                    if (data['num_filas'] > 0) {
+                        $("#lblCommand").val(data['Opcion']);
+                        $("#lblRegistro").val(data['num_filas']);
+                        $("#lblFacturado").val(data['label_facturado']);
+                        $("#lblAbonado").val(data['label_abonado']);
+                        $("#lblSaldo").val(data['label_saldo']);
 
-                    $('#myModal_espera').modal('hide');
-                    $('#DGQuery').html(data['tbl']);
-                    $('#DGQuery #datos_t tbody').css('height', '36vh');
+
+                        $('#DGQuery').html(data['tbl']);
+                        $('#DGQuery #datos_t tbody').css('height', '36vh');
+                        $('#myModal_espera').modal('hide');
+                        $('#alertNoData').hide();
+                    } else {
+                        $('#DGQuery').empty();
+                        $('#alertNoData').show();
+                        $('#myModal_espera').modal('hide');
+                    }
+
                 }
             }
         });
     }
-
-
-
 
 </script>
