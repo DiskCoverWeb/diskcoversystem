@@ -1069,13 +1069,12 @@ QUITO - ECUADOR';
 			fwrite($archivo, $contenidoSinBOM);
 			ftruncate($archivo, ftell($archivo));
 			fclose($archivo);
-			$seEliminoBOM = ($contenido !== $contenidoSinBOM);
-			if ($seEliminoBOM) {
+			
 				SetAdoAddNew("Trans_Documentos");
 				SetAdoFields("Documento_Autorizado", $contenidoSinBOM);
 				SetAdoFieldsWhere("Clave_Acceso", $parametros['xml']);
 				SetAdoUpdateGeneric();				
-			}			
+			
 
 			return array('ruta' => $rutaB, 'xml' => $parametros['xml'] . '.xml');
 		} else {
@@ -1152,14 +1151,13 @@ QUITO - ECUADOR';
 				ftruncate($archivo, ftell($archivo));
 				fclose($archivo);
 
-				$seEliminoBOM = ($contenido !== $contenidoSinBOM);
-				if ($seEliminoBOM) {
+				
 					SetAdoAddNew("Trans_Documentos");
 					SetAdoFields("Documento_Autorizado", $contenidoSinBOM);
 					SetAdoFieldsWhere("Clave_Acceso", $parametros['xml']);
 					SetAdoUpdateGeneric();			
-				}	
-			
+				
+
 				
 				
 
