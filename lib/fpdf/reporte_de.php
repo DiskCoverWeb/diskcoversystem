@@ -25,25 +25,26 @@ class PDF extends PDF_MC_Table
 function url_logo($logoName = false)
 {
 	$logo = $_SESSION['INGRESO']['Logo_Tipo'];
-	if($logoName){$logo = $logoName;}
-	
-		$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
-		//gif
-		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
-		//png
-		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
+	if ($logoName) {
+		$logo = $logoName;
+	}
 
-		if (@getimagesize($src_png)) {
-			return $src_png;
-		} else if (@getimagesize($src_jpg)) {
-			return $src_jpg;
-		} else if (@getimagesize($src_gif)) {
-			return $src_gif;
-		}else
-		{
-			return '.';
-		}
-		//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
+	$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
+	//gif
+	$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
+	//png
+	$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
+
+	if (@getimagesize($src_png)) {
+		return $src_png;
+	} else if (@getimagesize($src_jpg)) {
+		return $src_jpg;
+	} else if (@getimagesize($src_gif)) {
+		return $src_gif;
+	} else {
+		return '.';
+	}
+	//En caso de que ninguno de los 3 exista, no se muestra nada como logo. 
 }
 
 //Fin de la clase
@@ -205,13 +206,13 @@ function imprimirDocElPF($stmt, $id = null, $formato = null, $nombre_archivo = n
 			'totalfac' => $tota
 		);
 		/*$datos = array('numfactura' => '0','numautorizacio' =>'0','fechafac'=>$fecha,
-						  'horafac' => $hoy,'razon'=>$cli,'ci'=>'1234567890',
-						  'telefono' =>'09999999999','email' =>'example@example.com','subtotal'=>'450.00','dto'=>'0.00','iva'=>'54.00','totalfac'=>'504.00' );
-						  
-						  $lineas = array(
-						  '0'=>array('cant' => '2','detalle'=>' servicio de mantenimineto','pvp'=>'450.00','total'=>'450.00' ),
-						  '1'=>array('cant' => '3','detalle'=>' servicio de mantenimineto de servidores','pvp'=>'450.00','total'=>'450.00' ),
-						  '2'=>array('cant' => '3','detalle'=>' servicio de mantenimineto de servidores','pvp'=>'450.00','total'=>'450.00' ),  );*/
+								'horafac' => $hoy,'razon'=>$cli,'ci'=>'1234567890',
+								'telefono' =>'09999999999','email' =>'example@example.com','subtotal'=>'450.00','dto'=>'0.00','iva'=>'54.00','totalfac'=>'504.00' );
+								
+								$lineas = array(
+								'0'=>array('cant' => '2','detalle'=>' servicio de mantenimineto','pvp'=>'450.00','total'=>'450.00' ),
+								'1'=>array('cant' => '3','detalle'=>' servicio de mantenimineto de servidores','pvp'=>'450.00','total'=>'450.00' ),
+								'2'=>array('cant' => '3','detalle'=>' servicio de mantenimineto de servidores','pvp'=>'450.00','total'=>'450.00' ),  );*/
 	}
 
 	// fin de datos de la base de datos
@@ -227,7 +228,9 @@ function imprimirDocElPF($stmt, $id = null, $formato = null, $nombre_archivo = n
 	//../../img/jpg/logo_doc.jpg
 
 	$src = url_logo();
-	$pdf->Image($src, 40, 22, 80, 40);
+	if ($src !== '.') {
+		$pdf->Image($src, 40, 22, 80, 40);
+	} 
 
 	// Arial bold 15
 	$pdf->SetFont('Arial', 'B', 12);
@@ -357,23 +360,23 @@ function imprimirDocElPF($stmt, $id = null, $formato = null, $nombre_archivo = n
 		$pdf->Ln($salto);
 		$pdf->SetFont('Arial', 'B', 10);
 		/*$pdf->Cell(0,5,'Nombre  CI/RUC  Correo   Telf  DIR',0,0,'C');
-						  //$pdf->Cell(0,5,'TIPO PAGO                MONTO    ',0,0,'C');
-						  $pdf->Ln($salto);
-						  $pdf->Ln($salto);
-						  $pdf->Cell(0,0,'',1,0); 
-						  $pdf->Ln($salto);
-						  $pdf->Ln($salto);
-						  $pdf->Cell(0,0,'',1,0); 
-						  $pdf->Ln($salto);
-						  $pdf->Ln($salto);
-						  $pdf->Cell(0,0,'',1,0); 
-						  $pdf->Ln($salto);
-						  $pdf->Ln($salto);
-						  $pdf->Cell(0,0,'',1,0); 
-						  $pdf->Ln($salto);
-						  $pdf->Ln($salto);
-						  $pdf->Cell(0,0,'',1,0); 
-						  $pdf->Ln($salto);*/
+								//$pdf->Cell(0,5,'TIPO PAGO                MONTO    ',0,0,'C');
+								$pdf->Ln($salto);
+								$pdf->Ln($salto);
+								$pdf->Cell(0,0,'',1,0); 
+								$pdf->Ln($salto);
+								$pdf->Ln($salto);
+								$pdf->Cell(0,0,'',1,0); 
+								$pdf->Ln($salto);
+								$pdf->Ln($salto);
+								$pdf->Cell(0,0,'',1,0); 
+								$pdf->Ln($salto);
+								$pdf->Ln($salto);
+								$pdf->Cell(0,0,'',1,0); 
+								$pdf->Ln($salto);
+								$pdf->Ln($salto);
+								$pdf->Cell(0,0,'',1,0); 
+								$pdf->Ln($salto);*/
 		$pdf->Cell(0, 5, 'Nombre', 0, 0, 'L');
 		//$pdf->Cell(0,5,'TIPO PAGO                MONTO    ',0,0,'C');
 
@@ -469,37 +472,39 @@ function imprimirDocElP($stmt, $id = null, $formato = null, $nombre_archivo = nu
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
 	$src = url_logo();
-	$pdf->Image($src, 40, 22, 80, 40);
+	if ($src !== '.') {
+		$pdf->Image($src, 40, 22, 80, 40);
+	} 
 
 	/*if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
-			 {
-				 $logo=$_SESSION['INGRESO']['Logo_Tipo'];
-			 }
-			 else
-			 {
-				 $logo="diskcover";
-			 }
-			 $pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,20,80,40,'','http://www.fpdf.org');*/
+				{
+					$logo=$_SESSION['INGRESO']['Logo_Tipo'];
+				}
+				else
+				{
+					$logo="diskcover";
+				}
+				$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,20,80,40,'','http://www.fpdf.org');*/
 	//$drawing->setPath(__DIR__ . '/../../img/logotipos/'.$logo.'.png');
 	//$arr=array('NO TIENE LOGO');
 	//$pdf->Row($arr,13);
 	//panel
 	/*
-			 SELECT        TOP (1) Periodo, TL, Codigo, Concepto, Fact, CxC, Cta_Venta, Logo_Factura, Largo, Ancho, Item, Individual, Espacios, Pos_Factura, Fact_Pag, Pos_Y_Fact, Serie, Autorizacion, Vencimiento, Fecha, Secuencial, ItemsxFA, 
-							 Grupo_I, Grupo_F, CxC_Anterior, Imp_Mes, Nombre_Establecimiento, Direccion_Establecimiento, Telefono_Estab, Logo_Tipo_Estab, Tipo_Impresion, ID, X
-						 FROM            Catalogo_Lineas
-						 WHERE        (LEN(Autorizacion) >= 13) AND (Periodo = '.') AND (Item = '001') AND (Fact = 'FA') AND (Fecha <= '2020-03-11') AND (Vencimiento >= '2020-03-11')
-			 
-			 SELECT        Opc, Grupo, Item, Fecha, Ciudad, Pais, Empresa, Gerente, RUC, Telefono1, Telefono2, FAX, Direccion, SubDir, Logo_Tipo, Alto, Servicio, S_M, Cta_Caja, Cotizacion, Sucursal, Email, Contador, CodBanco, Num_CD, 
-				  Num_CE, Num_CI, Nombre_Comercial, Mod_Fact, Mod_Fecha, Plazo_Fijo, Det_Comp, CI_Representante, TD, RUC_Contador, CPais, No_Patronal, Dec_PVP, Dec_Costo, CProv, Grabar_PV, Num_Meses, Separar_Grupos, Credito, 
-				  Medio_Rol, Sueldo_Basico, Cant_Item_PV, Copia_PV, Encabezado_PV, Calcular_Comision, Formato_Inventario, Cant_Ancho_PV, Grafico_PV, Formato_Activo, Num_ND, Num_NC, Referencia, Fecha_Rifa, Rifa, Monto_Minimo, 
-				  Rol_2_Pagina, Cierre_Vertical, Tipo_Carga_Banco, Comision_Ejecutivo, Seguro, Nombre_Banco, Impresora_Rodillo, Costo_Bancario, Impresora_Defecto, Papel_Impresora, Marca_Agua, Seguro2, Cta_Banco, Mod_PVP, 
-				  Abreviatura, Registrar_IVA, Imp_Recibo_Caja, Det_SubMod, Establecimientos, Email_Conexion, Email_Contraseña, Actualizar_Buses, Email_Contabilidad, Cierre_Individual, Email_Respaldos, Imp_Ceros, Tesorero, CIT, 
-				  Razon_Social, Dec_IVA, Dec_Cant, Ambiente, Ruta_Certificado, Clave_Certificado, Web_SRI_Recepcion, Web_SRI_Autorizado, Codigo_Contribuyente_Especial, Formato_Cuentas, Email_Conexion_CE, Email_Contraseña_CE, 
-				  No_ATS, Obligado_Conta, No_Autorizar, Email_Procesos, Email_CE_Copia, Estado, Firma_Digital, ID, SP, Combo, Por_CxC, Fecha_Igualar, Ret_Aut, LeyendaFA, Signo_Dec, Signo_Mil, Fecha_CE, LeyendaFAT, Centro_Costos, 
-				  smtp_Servidor, smtp_Puerto, smtp_UseAuntentificacion, smtp_SSL
-			 FROM            Empresas
-			 */
+				SELECT        TOP (1) Periodo, TL, Codigo, Concepto, Fact, CxC, Cta_Venta, Logo_Factura, Largo, Ancho, Item, Individual, Espacios, Pos_Factura, Fact_Pag, Pos_Y_Fact, Serie, Autorizacion, Vencimiento, Fecha, Secuencial, ItemsxFA, 
+								Grupo_I, Grupo_F, CxC_Anterior, Imp_Mes, Nombre_Establecimiento, Direccion_Establecimiento, Telefono_Estab, Logo_Tipo_Estab, Tipo_Impresion, ID, X
+							FROM            Catalogo_Lineas
+							WHERE        (LEN(Autorizacion) >= 13) AND (Periodo = '.') AND (Item = '001') AND (Fact = 'FA') AND (Fecha <= '2020-03-11') AND (Vencimiento >= '2020-03-11')
+				
+				SELECT        Opc, Grupo, Item, Fecha, Ciudad, Pais, Empresa, Gerente, RUC, Telefono1, Telefono2, FAX, Direccion, SubDir, Logo_Tipo, Alto, Servicio, S_M, Cta_Caja, Cotizacion, Sucursal, Email, Contador, CodBanco, Num_CD, 
+					 Num_CE, Num_CI, Nombre_Comercial, Mod_Fact, Mod_Fecha, Plazo_Fijo, Det_Comp, CI_Representante, TD, RUC_Contador, CPais, No_Patronal, Dec_PVP, Dec_Costo, CProv, Grabar_PV, Num_Meses, Separar_Grupos, Credito, 
+					 Medio_Rol, Sueldo_Basico, Cant_Item_PV, Copia_PV, Encabezado_PV, Calcular_Comision, Formato_Inventario, Cant_Ancho_PV, Grafico_PV, Formato_Activo, Num_ND, Num_NC, Referencia, Fecha_Rifa, Rifa, Monto_Minimo, 
+					 Rol_2_Pagina, Cierre_Vertical, Tipo_Carga_Banco, Comision_Ejecutivo, Seguro, Nombre_Banco, Impresora_Rodillo, Costo_Bancario, Impresora_Defecto, Papel_Impresora, Marca_Agua, Seguro2, Cta_Banco, Mod_PVP, 
+					 Abreviatura, Registrar_IVA, Imp_Recibo_Caja, Det_SubMod, Establecimientos, Email_Conexion, Email_Contraseña, Actualizar_Buses, Email_Contabilidad, Cierre_Individual, Email_Respaldos, Imp_Ceros, Tesorero, CIT, 
+					 Razon_Social, Dec_IVA, Dec_Cant, Ambiente, Ruta_Certificado, Clave_Certificado, Web_SRI_Recepcion, Web_SRI_Autorizado, Codigo_Contribuyente_Especial, Formato_Cuentas, Email_Conexion_CE, Email_Contraseña_CE, 
+					 No_ATS, Obligado_Conta, No_Autorizar, Email_Procesos, Email_CE_Copia, Estado, Firma_Digital, ID, SP, Combo, Por_CxC, Fecha_Igualar, Ret_Aut, LeyendaFA, Signo_Dec, Signo_Mil, Fecha_CE, LeyendaFAT, Centro_Costos, 
+					 smtp_Servidor, smtp_Puerto, smtp_UseAuntentificacion, smtp_SSL
+				FROM            Empresas
+				*/
 	//datos empresa
 	$cid = cone_ajaxSQL();
 	$sql = "SELECT * FROM  Empresas WHERE
@@ -568,7 +573,7 @@ function imprimirDocElP($stmt, $id = null, $formato = null, $nombre_archivo = nu
 	$pdf->SetWidths(array(140));
 	$arr = array('');
 	/*$arr=array(etiqueta_xml($resultado,"<estab>").'-'.etiqueta_xml($resultado,"<ptoEmi>").'-'.
-			 etiqueta_xml($resultado,"<secuencial>"));*/
+				etiqueta_xml($resultado,"<secuencial>"));*/
 	$pdf->Row($arr, 10);
 	//fecha y hora
 	$pdf->SetFont('Arial', 'B', 7);
@@ -616,9 +621,9 @@ function imprimirDocElP($stmt, $id = null, $formato = null, $nombre_archivo = nu
 	$arr = array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
 	$pdf->Row($arr, 10);
 	/*$pdf->SetXY(410, 180);
-			 $pdf->SetWidths(array(275));
-			 $arr=array('000000000000000000000000000000000000000000000000');
-			 $pdf->Row($arr,13);*/
+				$pdf->SetWidths(array(275));
+				$arr=array('000000000000000000000000000000000000000000000000');
+				$pdf->Row($arr,13);*/
 	//C set <claveAcceso>
 	//$code=etiqueta_xml($resultado,"<claveAcceso>");
 	$code = $atrib['numeroAutorizacion'];
@@ -909,15 +914,15 @@ function imprimirDocElP($stmt, $id = null, $formato = null, $nombre_archivo = nu
 	}
 	//$arr=array(etiqueta_xml($resultado,"<campoAdicional"));
 	/*die();
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);*/
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);*/
 	//fecha
 	$pdf->SetXY(181, $y + 5);
 	$pdf->Cell(40, 60, '', '1', 1, 'Q');
@@ -963,9 +968,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 			if (is_array($arr2)) {
 				echo 'array';
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr2.' fff <br>';
 				if ($i == 1) {
@@ -975,9 +980,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 			$arr3 = etiqueta_xml($arr1[$i], "<baseImponible");
 			if (is_array($arr3)) {
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr3.' fff <br>';
 				if ($i == 0) {
@@ -990,9 +995,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 			$arr4 = etiqueta_xml($arr1[$i], "<valor");
 			if (is_array($arr3)) {
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr4.' fff <br>';
 				if ($i == 0) {
@@ -1198,125 +1203,125 @@ function imprimirDocEl($stmt, $id = null, $formato = null, $nombre_archivo = nul
 
 
 	/*$pdf->SetFillColor(80, 150, 200);
-			 $pdf->Rect(20, 50, 95, 20, 'F');
-			 $pdf->Line(20, 50, 10, 40);
-			 $pdf->SetXY(20, 50);
-			 $pdf->Cell(15, 6, '10, 10', 0 , 1); //Celda
+				$pdf->Rect(20, 50, 95, 20, 'F');
+				$pdf->Line(20, 50, 10, 40);
+				$pdf->SetXY(20, 50);
+				$pdf->Cell(15, 6, '10, 10', 0 , 1); //Celda
 
 
-			 $pdf->SetFillColor(80, 150, 200);
-			 $pdf->Rect(20, 50, 95, 20, 'F');
-			 $pdf->Line(20, 50, 10, 40);
-			 $pdf->SetXY(20, 50);
-			 $pdf->Cell(15, 6, '10, 10', 0 , 1); //Celda
+				$pdf->SetFillColor(80, 150, 200);
+				$pdf->Rect(20, 50, 95, 20, 'F');
+				$pdf->Line(20, 50, 10, 40);
+				$pdf->SetXY(20, 50);
+				$pdf->Cell(15, 6, '10, 10', 0 , 1); //Celda
 
-			 //Amarillo
-			 $pdf->SetFillColor(255, 215, 0);
-			 $pdf->Rect(110, 10, 45 , 20, 'F');
-			 $pdf->Line(110, 10, 115, 15);
-			 $pdf->SetXY(115, 15);
-			 $pdf->Cell(15, 6, '110, 10', 0 , 1);
-			 //Verde
-			 $pdf->SetFillColor(0, 128, 0);
-			 $pdf->Rect(160, 10, 40 , 20, 'F');
-			 $pdf->Line(160, 10, 165, 15);
-			 $pdf->SetXY(165, 15  );
-			 $pdf->Cell(15, 6, '160, 10', 0 , 1);
-			 //========================================
-			  
-			 //========================================
-			 //  Segundo bloque - 1 rectángulo       ==
-			 //========================================
-			 //Salmón
-			 $pdf->SetFillColor(255, 99, 71);
-			 $pdf->Rect(10, 35, 190, 140, 'F');
-			 $pdf->Line(10, 35, 15, 40);
-			 $pdf->SetXY(15, 40);
-			 $pdf->Cell(15, 6, '10, 35', 0 , 1);
-			 //========================================
-			  
-			 //========================================
-			 //  Tercer bloque - 2 rectángulos       ==
-			 //========================================
-			 //Rosa
-			 $pdf->SetFillColor(255, 20, 147);
-			 $pdf->Rect(10, 180, 90, 50, 'F');
-			 $pdf->Line(10, 180, 15, 185);
-			 $pdf->SetXY(15, 185);
-			 $pdf->Cell(15, 6, '10, 180', 0 , 1);
-			 //Café
-			 $pdf->SetFillColor(233, 150, 122);
-			 $pdf->Rect(110, 180, 90, 50, 'F');
-			 $pdf->Line(110, 180, 115, 185);
-			 $pdf->SetXY(115, 185);
-			 $pdf->Cell(15, 6, '110, 180', 0 , 1);
-			 //========================================
-			  
-			 //========================================
-			 //  Cuarto bloque - 6 rectángulos       ==
-			 //========================================
-			 //Verde
-			 $pdf->SetFillColor(124, 252, 0);
-			 $pdf->Rect(10, 235, 40, 25, 'F');
-			 $pdf->Line(10, 235, 15, 240);
-			 $pdf->SetXY(15, 240);
-			 $pdf->Cell(15, 6, '10, 235', 0 , 1);
-			 //Café
-			 $pdf->SetFillColor(160 ,82, 40);
-			 $pdf->Rect(60, 235, 40, 25, 'F');
-			 $pdf->Line(60, 235, 65, 240);
-			 $pdf->SetXY(65, 240);
-			 $pdf->Cell(15, 6, '60, 235', 0 , 1);
-			 //Marrón
-			 $pdf->SetFillColor(128, 0 ,0);
-			 $pdf->Rect(10, 265, 40, 25, 'F');
-			 $pdf->Line(10, 265, 15, 270);
-			 $pdf->SetXY(15, 270);
-			 $pdf->Cell(15, 6, '10, 265', 0 , 1);
-			 //Morado
-			 $pdf->SetFillColor(153, 50, 204);
-			 $pdf->Rect(60, 265, 40, 25, 'F');
-			 $pdf->Line(60, 265, 65, 270);
-			 $pdf->SetXY(65, 270);
-			 $pdf->Cell(15, 6, '60, 265', 0 , 1);
-			 //Azul
-			 $pdf->SetFillColor(0, 191, 255);
-			 $pdf->Rect(110, 235, 90, 25, 'F');
-			 $pdf->Line(110, 235, 115, 240);
-			 $pdf->SetXY(115, 240);
-			 $pdf->Cell(15, 6, '110, 235', 0 , 1);
-			 //Verde
-			 $pdf->SetFillColor(173, 255, 47);
-			 $pdf->Rect(110, 265, 90, 25, 'F');
-			 $pdf->Line(110, 265, 115, 270);
-			 $pdf->SetXY(115, 270);
-			 $pdf->Cell(15, 6, '110, 265', 0 , 1);
-			 $pdf->AddPage();
+				//Amarillo
+				$pdf->SetFillColor(255, 215, 0);
+				$pdf->Rect(110, 10, 45 , 20, 'F');
+				$pdf->Line(110, 10, 115, 15);
+				$pdf->SetXY(115, 15);
+				$pdf->Cell(15, 6, '110, 10', 0 , 1);
+				//Verde
+				$pdf->SetFillColor(0, 128, 0);
+				$pdf->Rect(160, 10, 40 , 20, 'F');
+				$pdf->Line(160, 10, 165, 15);
+				$pdf->SetXY(165, 15  );
+				$pdf->Cell(15, 6, '160, 10', 0 , 1);
+				//========================================
+				 
+				//========================================
+				//  Segundo bloque - 1 rectángulo       ==
+				//========================================
+				//Salmón
+				$pdf->SetFillColor(255, 99, 71);
+				$pdf->Rect(10, 35, 190, 140, 'F');
+				$pdf->Line(10, 35, 15, 40);
+				$pdf->SetXY(15, 40);
+				$pdf->Cell(15, 6, '10, 35', 0 , 1);
+				//========================================
+				 
+				//========================================
+				//  Tercer bloque - 2 rectángulos       ==
+				//========================================
+				//Rosa
+				$pdf->SetFillColor(255, 20, 147);
+				$pdf->Rect(10, 180, 90, 50, 'F');
+				$pdf->Line(10, 180, 15, 185);
+				$pdf->SetXY(15, 185);
+				$pdf->Cell(15, 6, '10, 180', 0 , 1);
+				//Café
+				$pdf->SetFillColor(233, 150, 122);
+				$pdf->Rect(110, 180, 90, 50, 'F');
+				$pdf->Line(110, 180, 115, 185);
+				$pdf->SetXY(115, 185);
+				$pdf->Cell(15, 6, '110, 180', 0 , 1);
+				//========================================
+				 
+				//========================================
+				//  Cuarto bloque - 6 rectángulos       ==
+				//========================================
+				//Verde
+				$pdf->SetFillColor(124, 252, 0);
+				$pdf->Rect(10, 235, 40, 25, 'F');
+				$pdf->Line(10, 235, 15, 240);
+				$pdf->SetXY(15, 240);
+				$pdf->Cell(15, 6, '10, 235', 0 , 1);
+				//Café
+				$pdf->SetFillColor(160 ,82, 40);
+				$pdf->Rect(60, 235, 40, 25, 'F');
+				$pdf->Line(60, 235, 65, 240);
+				$pdf->SetXY(65, 240);
+				$pdf->Cell(15, 6, '60, 235', 0 , 1);
+				//Marrón
+				$pdf->SetFillColor(128, 0 ,0);
+				$pdf->Rect(10, 265, 40, 25, 'F');
+				$pdf->Line(10, 265, 15, 270);
+				$pdf->SetXY(15, 270);
+				$pdf->Cell(15, 6, '10, 265', 0 , 1);
+				//Morado
+				$pdf->SetFillColor(153, 50, 204);
+				$pdf->Rect(60, 265, 40, 25, 'F');
+				$pdf->Line(60, 265, 65, 270);
+				$pdf->SetXY(65, 270);
+				$pdf->Cell(15, 6, '60, 265', 0 , 1);
+				//Azul
+				$pdf->SetFillColor(0, 191, 255);
+				$pdf->Rect(110, 235, 90, 25, 'F');
+				$pdf->Line(110, 235, 115, 240);
+				$pdf->SetXY(115, 240);
+				$pdf->Cell(15, 6, '110, 235', 0 , 1);
+				//Verde
+				$pdf->SetFillColor(173, 255, 47);
+				$pdf->Rect(110, 265, 90, 25, 'F');
+				$pdf->Line(110, 265, 115, 270);
+				$pdf->SetXY(115, 270);
+				$pdf->Cell(15, 6, '110, 265', 0 , 1);
+				$pdf->AddPage();
 
-			 $miCabecera = array('Nombre de campo', 'Apellido', 'Matrícula campo');
-			  
-			 $misDatos = array(
-						 array('nombre' => 'Esperbeneplatoledo', 'apellido' => 'Martínez', 'matricula' => '20420423'),
-						 array('nombre' => 'Araceli', 'apellido' => 'Morales', 'matricula' =>  '204909'),
-						 array('nombre' => 'Georginadavabulus', 'apellido' => 'Galindo', 'matricula' =>  '2043442'),
-						 array('nombre' => 'Luis', 'apellido' => 'Dolores', 'matricula' => '20411122'),
-						 array('nombre' => 'Mario', 'apellido' => 'Linares', 'matricula' => '2049990'),
-						 array('nombre' => 'Viridianapaliragama', 'apellido' => 'Badillo', 'matricula' => '20418855'),
-						 array('nombre' => 'Yadiramentoladosor', 'apellido' => 'García', 'matricula' => '20443335')
-						 );
-						 
-			  $pdf->Ln(10);
-			 $pdf->tablaHorizontal($miCabecera, $misDatos);
+				$miCabecera = array('Nombre de campo', 'Apellido', 'Matrícula campo');
+				 
+				$misDatos = array(
+							array('nombre' => 'Esperbeneplatoledo', 'apellido' => 'Martínez', 'matricula' => '20420423'),
+							array('nombre' => 'Araceli', 'apellido' => 'Morales', 'matricula' =>  '204909'),
+							array('nombre' => 'Georginadavabulus', 'apellido' => 'Galindo', 'matricula' =>  '2043442'),
+							array('nombre' => 'Luis', 'apellido' => 'Dolores', 'matricula' => '20411122'),
+							array('nombre' => 'Mario', 'apellido' => 'Linares', 'matricula' => '2049990'),
+							array('nombre' => 'Viridianapaliragama', 'apellido' => 'Badillo', 'matricula' => '20418855'),
+							array('nombre' => 'Yadiramentoladosor', 'apellido' => 'García', 'matricula' => '20443335')
+							);
+							
+				 $pdf->Ln(10);
+				$pdf->tablaHorizontal($miCabecera, $misDatos);
 
-			 $pdf->AddPage();
-			 $pdf->cabeceraHorizontal(array('fgfdgfdgfdgfdgdfgffdgfdgfdgfdfdfd'));
-			 $pdf->Ln(50);
-			 $pdf->SetWidths(array(70,80,80,80,80,80,80,80,70));
-			 $pdf->SetAligns(array('C','C','C','C','C','C','C','C','C'));
-			 $arr=array('Csssssssssssssssssssssssssssssssssssssssssssssssssss','C','C','C','C','C','C','C','C');
-			 $pdf->Row($arr,13);
+				$pdf->AddPage();
+				$pdf->cabeceraHorizontal(array('fgfdgfdgfdgfdgdfgffdgfdgfdgfdfdfd'));
+				$pdf->Ln(50);
+				$pdf->SetWidths(array(70,80,80,80,80,80,80,80,70));
+				$pdf->SetAligns(array('C','C','C','C','C','C','C','C','C'));
+				$arr=array('Csssssssssssssssssssssssssssssssssssssssssssssssssss','C','C','C','C','C','C','C','C');
+				$pdf->Row($arr,13);
 
-			 $pdf->AddPage();*/
+				$pdf->AddPage();*/
 	//logo
 	$i = 0;
 	if ($va == 1) {
@@ -1343,16 +1348,18 @@ function imprimirDocEl($stmt, $id = null, $formato = null, $nombre_archivo = nul
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
 	$src = url_logo();
-	$pdf->Image($src, 40, 22, 80, 40);
+	if ($src !== '.') {
+		$pdf->Image($src, 40, 22, 80, 40);
+	} 
 	/*if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
-			 {
-				 $logo=$_SESSION['INGRESO']['Logo_Tipo'];
-			 }
-			 else
-			 {
-				 $logo="diskcover";
-			 }
-			 $pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,20,80,40,'','http://www.fpdf.org');*/
+				{
+					$logo=$_SESSION['INGRESO']['Logo_Tipo'];
+				}
+				else
+				{
+					$logo="diskcover";
+				}
+				$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,20,80,40,'','http://www.fpdf.org');*/
 	//$drawing->setPath(__DIR__ . '/../../img/logotipos/'.$logo.'.png');
 	//$arr=array('NO TIENE LOGO');
 	//$pdf->Row($arr,13);
@@ -1423,9 +1430,9 @@ function imprimirDocEl($stmt, $id = null, $formato = null, $nombre_archivo = nul
 	$arr = array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
 	$pdf->Row($arr, 10);
 	/*$pdf->SetXY(410, 180);
-			 $pdf->SetWidths(array(275));
-			 $arr=array('000000000000000000000000000000000000000000000000');
-			 $pdf->Row($arr,13);*/
+				$pdf->SetWidths(array(275));
+				$arr=array('000000000000000000000000000000000000000000000000');
+				$pdf->Row($arr,13);*/
 	//C set <claveAcceso>
 	//$code=etiqueta_xml($resultado,"<claveAcceso>");
 	$code = $atrib['numeroAutorizacion'];
@@ -1708,15 +1715,15 @@ function imprimirDocEl($stmt, $id = null, $formato = null, $nombre_archivo = nul
 	}
 	//$arr=array(etiqueta_xml($resultado,"<campoAdicional"));
 	/*die();
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);*/
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);*/
 	//fecha
 	$pdf->SetXY(181, $y + 5);
 	$pdf->Cell(40, 60, '', '1', 1, 'Q');
@@ -1762,9 +1769,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 			if (is_array($arr2)) {
 				echo 'array';
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr2.' fff <br>';
 				if ($i == 1) {
@@ -1774,9 +1781,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 			$arr3 = etiqueta_xml($arr1[$i], "<baseImponible");
 			if (is_array($arr3)) {
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr3.' fff <br>';
 				if ($i == 0) {
@@ -1789,9 +1796,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 			$arr4 = etiqueta_xml($arr1[$i], "<valor");
 			if (is_array($arr3)) {
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr4.' fff <br>';
 				if ($i == 0) {
@@ -2012,7 +2019,9 @@ function imprimirDocEle_guia($datos, $detalle, $educativo, $matri = false, $nomb
 	//$pdf->SetWidths(array(250));
 
 	$src = url_logo();
-	$pdf->Image($src, 40, 22, 80, 40);
+	if ($src !== '.') {
+		$pdf->Image($src, 40, 22, 80, 40);
+	} 
 
 	$pdf->Ln(60);
 	$x = $pdf->GetX();
@@ -2721,8 +2730,10 @@ function imprimirDocEle_fac($datos, $detalle, $educativo, $matri = false, $nombr
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
 	$src = url_logo();
-	$pdf->Image($src, 40, 22, 80, 40);
-	
+	if ($src !== '.') {
+		$pdf->Image($src, 40, 22, 80, 40);
+	} 
+
 
 	$pdf->Ln(60);
 	$x = $pdf->GetX();
@@ -3792,7 +3803,9 @@ function imprimirDocEle_fac_anterior($datos, $detalle, $educativo, $matri = fals
 	//$pdf->SetWidths(array(250));
 
 	$src = url_logo();
-	$pdf->Image($src, 40, 22, 80, 40);
+	if ($src !== '.') {
+		$pdf->Image($src, 40, 22, 80, 40);
+	} 
 
 	// print_r($datos);die();
 	$tam = 9;
@@ -4092,24 +4105,24 @@ function imprimirDocEle_fac_anterior($datos, $detalle, $educativo, $matri = fals
 
 	//para direccion
 	/*$arr1="<campoAdicional";
-			 if(is_array($arr1))
-			 {
-				 $adi='';
-				 for ($i=0;$i<count($arr1);$i++)
-				 {
-					 
-					 
-					 if($i==0)
-					 {
-						 $adi=$arr1[$i];
-					 }
-					 //echo $arr1[$i];
-				 }
-			 }
-			 else
-			 {
-				 $adi='';
-			 }*/
+				if(is_array($arr1))
+				{
+					$adi='';
+					for ($i=0;$i<count($arr1);$i++)
+					{
+						
+						
+						if($i==0)
+						{
+							$adi=$arr1[$i];
+						}
+						//echo $arr1[$i];
+					}
+				}
+				else
+				{
+					$adi='';
+				}*/
 	// print_r($educativo);die();
 	if (count($educativo) > 0) {
 		$arr = array('Dirección: ' . $educativo[0]['Direccion'], 'Fecha emisión: ' . $datos[0]['Fecha']->format('Y-m-d'), 'Fecha pago: ' . $datos[0]['Fecha']->format('Y-m-d')); //mio
@@ -4538,7 +4551,9 @@ function imprimirDocEle_NC($datos, $detalle, $cliente, $matri = false, $nombre =
 	//$pdf->SetWidths(array(250));
 
 	$src = url_logo();
-	$pdf->Image($src, 40, 22, 80, 40);
+	if ($src !== '.') {
+		$pdf->Image($src, 40, 22, 80, 40);
+	} 
 
 	$pdf->Ln(60);
 	$x = $pdf->GetX();
@@ -5405,7 +5420,9 @@ function imprimirDocEle_ret($datos, $detalle, $nombre_archivo = null, $imp1 = fa
 	//$pdf->SetWidths(array(250));
 
 	$src = url_logo();
-	$pdf->Image($src, 40, 22, 80, 40);
+	if ($src !== '.') {
+		$pdf->Image($src, 40, 22, 80, 40);
+	} 
 
 	// print_r($datos);die();
 	$tam = 9;
@@ -5794,17 +5811,19 @@ function imprimirDocElNC($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
 	$src = url_logo();
-	$pdf->Image($src, 40, 22, 80, 40);
+	if ($src !== '.') {
+		$pdf->Image($src, 40, 22, 80, 40);
+	} 
 
 	/*if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
-			 {
-				 $logo=$_SESSION['INGRESO']['Logo_Tipo'];
-			 }
-			 else
-			 {
-				 $logo="diskcover";
-			 }
-			 $pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,20,80,40,'','http://www.fpdf.org');*/
+				{
+					$logo=$_SESSION['INGRESO']['Logo_Tipo'];
+				}
+				else
+				{
+					$logo="diskcover";
+				}
+				$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,20,80,40,'','http://www.fpdf.org');*/
 	//$drawing->setPath(__DIR__ . '/../../img/logotipos/'.$logo.'.png');
 	//$arr=array('NO TIENE LOGO');
 	//$pdf->Row($arr,13);
@@ -5875,9 +5894,9 @@ function imprimirDocElNC($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$arr = array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
 	$pdf->Row($arr, 10);
 	/*$pdf->SetXY(410, 180);
-			 $pdf->SetWidths(array(275));
-			 $arr=array('000000000000000000000000000000000000000000000000');
-			 $pdf->Row($arr,13);*/
+				$pdf->SetWidths(array(275));
+				$arr=array('000000000000000000000000000000000000000000000000');
+				$pdf->Row($arr,13);*/
 	//C set <claveAcceso>
 	//$code=etiqueta_xml($resultado,"<claveAcceso>");
 	$code = $atrib['numeroAutorizacion'];
@@ -6028,15 +6047,15 @@ function imprimirDocElNC($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$arr1 = etiqueta_xml($resultado, "<codigoInterno");
 	if (is_array($arr1)) {
 		/*$arr2=etiqueta_xml($resultado,"<codigoAuxiliar");
-						  if($arr2=='')
-						  {
-							  $arr2=array();
-							  //llenamos array vacio
-							  for ($i=0;$i<count($arr1);$i++)
-							  {
-								  $arr2[$i]='';
-							  }
-						  }*/
+								if($arr2=='')
+								{
+									$arr2=array();
+									//llenamos array vacio
+									for ($i=0;$i<count($arr1);$i++)
+									{
+										$arr2[$i]='';
+									}
+								}*/
 		$arr3 = etiqueta_xml($resultado, "<cantidad");
 		if ($arr3 == '') {
 			$arr3 = array();
@@ -6150,15 +6169,15 @@ function imprimirDocElNC($stmt, $id = null, $formato = null, $nombre_archivo = n
 	}
 	//$arr=array(etiqueta_xml($resultado,"<campoAdicional"));
 	/*die();
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);*/
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);*/
 	//fecha
 	$pdf->SetXY(181, $y + 5);
 	$pdf->Cell(40, 60, '', '1', 1, 'Q');
@@ -6204,9 +6223,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 			if (is_array($arr2)) {
 				echo 'array';
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr2.' fff <br>';
 				if ($i == 1) {
@@ -6216,9 +6235,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 			$arr3 = etiqueta_xml($arr1[$i], "<baseImponible");
 			if (is_array($arr3)) {
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr3.' fff <br>';
 				if ($i == 0) {
@@ -6231,9 +6250,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 			$arr4 = etiqueta_xml($arr1[$i], "<valor");
 			if (is_array($arr3)) {
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr4.' fff <br>';
 				if ($i == 0) {
@@ -6463,16 +6482,18 @@ function imprimirDocElRE($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
 	$src = url_logo();
-	$pdf->Image($src, 40, 22, 80, 40);
+	if ($src !== '.') {
+		$pdf->Image($src, 40, 22, 80, 40);
+	} 
 	/*if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
-			 {
-				 $logo=$_SESSION['INGRESO']['Logo_Tipo'];
-			 }
-			 else
-			 {
-				 $logo="diskcover";
-			 }
-			 $pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,20,80,40,'','http://www.fpdf.org');*/
+				{
+					$logo=$_SESSION['INGRESO']['Logo_Tipo'];
+				}
+				else
+				{
+					$logo="diskcover";
+				}
+				$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,20,80,40,'','http://www.fpdf.org');*/
 	//$drawing->setPath(__DIR__ . '/../../img/logotipos/'.$logo.'.png');
 	//$arr=array('NO TIENE LOGO');
 	//$pdf->Row($arr,13);
@@ -6544,9 +6565,9 @@ function imprimirDocElRE($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$arr = array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
 	$pdf->Row($arr, 10);
 	/*$pdf->SetXY(410, 180);
-			 $pdf->SetWidths(array(275));
-			 $arr=array('000000000000000000000000000000000000000000000000');
-			 $pdf->Row($arr,13);*/
+				$pdf->SetWidths(array(275));
+				$arr=array('000000000000000000000000000000000000000000000000');
+				$pdf->Row($arr,13);*/
 	//C set <claveAcceso>
 	//$code=etiqueta_xml($resultado,"<claveAcceso>");
 	$code = $atrib['numeroAutorizacion'];
@@ -6829,15 +6850,15 @@ function imprimirDocElRE($stmt, $id = null, $formato = null, $nombre_archivo = n
 	}
 	//$arr=array(etiqueta_xml($resultado,"<campoAdicional"));
 	/*die();
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);*/
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);*/
 	//fecha
 	$pdf->SetXY(181, $y + 5);
 	//$pdf->Cell(40,60,'','1',1,'Q');
@@ -6862,8 +6883,8 @@ function imprimirDocElRE($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$pdf->SetXY($x, ($y + 68));
 	//$pdf->SetWidths(array(319));
 	/*$arr=array('Para consultas, requerimientos o reclamos puede contactarse a nuestro Centro de Atención al Cliente Teléfono: 02-6052430, o escriba al correo
-		 prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichincha: Cta. Ahr. 4245946100 a Nombre de Walter Vaca Prieto/Cta. Cte
-		 3422225804, a Nombre de PRISMANET PROFESIONAL S.A.');*/
+			prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichincha: Cta. Ahr. 4245946100 a Nombre de Walter Vaca Prieto/Cta. Cte
+			3422225804, a Nombre de PRISMANET PROFESIONAL S.A.');*/
 	//$pdf->Row($arr,8);
 	//subtotales
 	//depende del valor de coordenada 'y' del detalle
@@ -6889,9 +6910,9 @@ function imprimirDocElRE($stmt, $id = null, $formato = null, $nombre_archivo = n
 			if (is_array($arr2)) {
 				echo 'array';
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr2.' fff <br>';
 				if ($i == 1) {
@@ -6901,9 +6922,9 @@ function imprimirDocElRE($stmt, $id = null, $formato = null, $nombre_archivo = n
 			$arr3 = etiqueta_xml($arr1[$i], "<baseImponible");
 			if (is_array($arr3)) {
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr3.' fff <br>';
 				if ($i == 0) {
@@ -6916,9 +6937,9 @@ function imprimirDocElRE($stmt, $id = null, $formato = null, $nombre_archivo = n
 			$arr4 = etiqueta_xml($arr1[$i], "<valor");
 			if (is_array($arr3)) {
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr4.' fff <br>';
 				if ($i == 0) {
@@ -6942,164 +6963,164 @@ function imprimirDocElRE($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$pdf->Row($arr, 10);
 
 	/*$y=$y-10+11;//365
-			 $pdf->SetFont('Arial','B',7);
-			 $pdf->SetXY(365, $y);
-			 $pdf->Cell(201,11,'','1',1,'Q');
-			 $pdf->SetXY(365, ($y+1));
-			 $pdf->SetWidths(array(170));
-			 $pdf->SetAligns(array("L"));
-			 $arr=array("SUBTOTAL 0%:");
-			 $pdf->Row($arr,10);
-			 $pdf->SetFont('Arial','',7);
-			 $pdf->SetXY(510, ($y+1));
-			 $pdf->SetWidths(array(55));
-			 $pdf->SetAligns(array("R"));
-			 $arr=array($ba0);
-			 $pdf->Row($arr,10);
-			 
-			 $y=$y+11;//380
-			 $pdf->SetFont('Arial','B',7);
-			 $pdf->SetXY(365, $y);
-			 $pdf->Cell(201,11,'','1',1,'Q');
-			 $pdf->SetXY(365, ($y+1));
-			 $pdf->SetWidths(array(170));
-			 $pdf->SetAligns(array("L"));
-			 $arr=array("TOTAL DESCUENTO:");
-			 $pdf->Row($arr,10);
-			 $pdf->SetFont('Arial','',7);
-			 $pdf->SetXY(510, ($y+1));
-			 $pdf->SetWidths(array(55));
-			 $pdf->SetAligns(array("R"));
-			 $arr=array(etiqueta_xml($resultado,"<totalDescuento>"));
-			 $pdf->Row($arr,10);
-			 
-			 $y=$y+11;//395
-			 $pdf->SetFont('Arial','B',7);
-			 $pdf->SetXY(365, $y);
-			 $pdf->Cell(201,11,'','1',1,'Q');
-			 $pdf->SetXY(365, ($y+1));
-			 $pdf->SetWidths(array(170));
-			 $pdf->SetAligns(array("L"));
-			 $arr=array("SUBTOTAL NO OBJETO DE IVA:");
-			 $pdf->Row($arr,10);
-			 $pdf->SetFont('Arial','',7);
-			 $pdf->SetXY(510, ($y+1));
-			 $pdf->SetWidths(array(55));
-			 $pdf->SetAligns(array("R"));
-			 $arr=array("000.00");
-			 $pdf->Row($arr,10);
-			 
-			 $y=$y+11;//410
-			 $pdf->SetFont('Arial','B',7);
-			 $pdf->SetXY(365, $y);
-			 $pdf->Cell(201,11,'','1',1,'Q');
-			 $pdf->SetXY(365, ($y+1));
-			 $pdf->SetWidths(array(170));
-			 $pdf->SetAligns(array("L"));
-			 $arr=array("SUBTOTAL EXENTO DE IVA:");
-			 $pdf->Row($arr,10);
-			 $pdf->SetFont('Arial','',7);
-			 $pdf->SetXY(510, ($y+1));
-			 $pdf->SetWidths(array(55));
-			 $pdf->SetAligns(array("R"));
-			 $arr=array("000.00");
-			 $pdf->Row($arr,10);
-			 
-			 $y=$y+11;//425
-			 $pdf->SetFont('Arial','B',7);
-			 $pdf->SetXY(365, $y);
-			 $pdf->Cell(201,11,'','1',1,'Q');
-			 $pdf->SetXY(365, ($y+1));
-			 $pdf->SetWidths(array(170));
-			 $pdf->SetAligns(array("L"));
-			 $arr=array("SUBTOTAL SIN IMPUESTOS:");
-			 $pdf->Row($arr,10);
-			 $pdf->SetFont('Arial','',7);
-			 $pdf->SetXY(510, ($y+1));
-			 $pdf->SetWidths(array(55));
-			 $pdf->SetAligns(array("R"));
-			 $arr=array($ba0);
-			 $pdf->Row($arr,10);
-			 
-			 $y=$y+11;//440
-			 $pdf->SetFont('Arial','B',7);
-			 $pdf->SetXY(365, $y);
-			 $pdf->Cell(201,11,'','1',1,'Q');
-			 $pdf->SetXY(365, ($y+1));
-			 $pdf->SetWidths(array(170));
-			 $pdf->SetAligns(array("L"));
-			 $arr=array("ICE:");
-			 $pdf->Row($arr,10);
-			 $pdf->SetFont('Arial','',7);
-			 $pdf->SetXY(510, ($y+1));
-			 $pdf->SetWidths(array(55));
-			 $pdf->SetAligns(array("R"));
-			 $arr=array("000.00");
-			 $pdf->Row($arr,10);
-			 
-			 $y=$y+11;//455
-			 $pdf->SetFont('Arial','B',7);
-			 $pdf->SetXY(365, $y);
-			 $pdf->Cell(201,11,'','1',1,'Q');
-			 $pdf->SetXY(365, ($y+1));
-			 $pdf->SetWidths(array(170));
-			 $pdf->SetAligns(array("L"));
-			 $arr=array("IVA ".$imp."%:");
-			 $pdf->Row($arr,10);
-			 $pdf->SetFont('Arial','',7);
-			 $pdf->SetXY(510, ($y+1));
-			 $pdf->SetWidths(array(55));
-			 $pdf->SetAligns(array("R"));
-			 $arr=array($vimp1);
-			 $pdf->Row($arr,10);
-			 
-			 $y=$y+11;//470
-			 $pdf->SetFont('Arial','B',7);
-			 $pdf->SetXY(365, $y);
-			 $pdf->Cell(201,11,'','1',1,'Q');
-			 $pdf->SetXY(365, ($y+1));
-			 $pdf->SetWidths(array(170));
-			 $pdf->SetAligns(array("L"));
-			 $arr=array("IVA 0%:");
-			 $pdf->Row($arr,10);
-			 $pdf->SetFont('Arial','',7);
-			 $pdf->SetXY(510, ($y+1));
-			 $pdf->SetWidths(array(55));
-			 $pdf->SetAligns(array("R"));
-			 $arr=array($vimp0);
-			 $pdf->Row($arr,10);
-			 
-			 $y=$y+11;//485
-			 $pdf->SetFont('Arial','B',7);
-			 $pdf->SetXY(365, $y);
-			 $pdf->Cell(201,11,'','1',1,'Q');
-			 $pdf->SetXY(365, ($y+1));
-			 $pdf->SetWidths(array(170));
-			 $pdf->SetAligns(array("L"));
-			 $arr=array("PROPINA:");
-			 $pdf->Row($arr,10);
-			 $pdf->SetFont('Arial','',7);
-			 $pdf->SetXY(510, ($y+1));
-			 $pdf->SetWidths(array(55));
-			 $pdf->SetAligns(array("R"));
-			 $arr=array(etiqueta_xml($resultado,"<propina>"));
-			 $pdf->Row($arr,10);
-			 
-			 $y=$y+11;//500
-			 $pdf->SetFont('Arial','B',7);
-			 $pdf->SetXY(365, $y);
-			 $pdf->Cell(201,11,'','1',1,'Q');
-			 $pdf->SetXY(365, ($y+1));
-			 $pdf->SetWidths(array(170));
-			 $pdf->SetAligns(array("L"));
-			 $arr=array("VALOR TOTAL:");
-			 $pdf->Row($arr,10);
-			 $pdf->SetFont('Arial','',7);
-			 $pdf->SetXY(510, ($y+1));
-			 $pdf->SetWidths(array(55));
-			 $pdf->SetAligns(array("R"));
-			 $arr=array(etiqueta_xml($resultado,"<importeTotal>"));
-			 $pdf->Row($arr,10);*/
+				$pdf->SetFont('Arial','B',7);
+				$pdf->SetXY(365, $y);
+				$pdf->Cell(201,11,'','1',1,'Q');
+				$pdf->SetXY(365, ($y+1));
+				$pdf->SetWidths(array(170));
+				$pdf->SetAligns(array("L"));
+				$arr=array("SUBTOTAL 0%:");
+				$pdf->Row($arr,10);
+				$pdf->SetFont('Arial','',7);
+				$pdf->SetXY(510, ($y+1));
+				$pdf->SetWidths(array(55));
+				$pdf->SetAligns(array("R"));
+				$arr=array($ba0);
+				$pdf->Row($arr,10);
+				
+				$y=$y+11;//380
+				$pdf->SetFont('Arial','B',7);
+				$pdf->SetXY(365, $y);
+				$pdf->Cell(201,11,'','1',1,'Q');
+				$pdf->SetXY(365, ($y+1));
+				$pdf->SetWidths(array(170));
+				$pdf->SetAligns(array("L"));
+				$arr=array("TOTAL DESCUENTO:");
+				$pdf->Row($arr,10);
+				$pdf->SetFont('Arial','',7);
+				$pdf->SetXY(510, ($y+1));
+				$pdf->SetWidths(array(55));
+				$pdf->SetAligns(array("R"));
+				$arr=array(etiqueta_xml($resultado,"<totalDescuento>"));
+				$pdf->Row($arr,10);
+				
+				$y=$y+11;//395
+				$pdf->SetFont('Arial','B',7);
+				$pdf->SetXY(365, $y);
+				$pdf->Cell(201,11,'','1',1,'Q');
+				$pdf->SetXY(365, ($y+1));
+				$pdf->SetWidths(array(170));
+				$pdf->SetAligns(array("L"));
+				$arr=array("SUBTOTAL NO OBJETO DE IVA:");
+				$pdf->Row($arr,10);
+				$pdf->SetFont('Arial','',7);
+				$pdf->SetXY(510, ($y+1));
+				$pdf->SetWidths(array(55));
+				$pdf->SetAligns(array("R"));
+				$arr=array("000.00");
+				$pdf->Row($arr,10);
+				
+				$y=$y+11;//410
+				$pdf->SetFont('Arial','B',7);
+				$pdf->SetXY(365, $y);
+				$pdf->Cell(201,11,'','1',1,'Q');
+				$pdf->SetXY(365, ($y+1));
+				$pdf->SetWidths(array(170));
+				$pdf->SetAligns(array("L"));
+				$arr=array("SUBTOTAL EXENTO DE IVA:");
+				$pdf->Row($arr,10);
+				$pdf->SetFont('Arial','',7);
+				$pdf->SetXY(510, ($y+1));
+				$pdf->SetWidths(array(55));
+				$pdf->SetAligns(array("R"));
+				$arr=array("000.00");
+				$pdf->Row($arr,10);
+				
+				$y=$y+11;//425
+				$pdf->SetFont('Arial','B',7);
+				$pdf->SetXY(365, $y);
+				$pdf->Cell(201,11,'','1',1,'Q');
+				$pdf->SetXY(365, ($y+1));
+				$pdf->SetWidths(array(170));
+				$pdf->SetAligns(array("L"));
+				$arr=array("SUBTOTAL SIN IMPUESTOS:");
+				$pdf->Row($arr,10);
+				$pdf->SetFont('Arial','',7);
+				$pdf->SetXY(510, ($y+1));
+				$pdf->SetWidths(array(55));
+				$pdf->SetAligns(array("R"));
+				$arr=array($ba0);
+				$pdf->Row($arr,10);
+				
+				$y=$y+11;//440
+				$pdf->SetFont('Arial','B',7);
+				$pdf->SetXY(365, $y);
+				$pdf->Cell(201,11,'','1',1,'Q');
+				$pdf->SetXY(365, ($y+1));
+				$pdf->SetWidths(array(170));
+				$pdf->SetAligns(array("L"));
+				$arr=array("ICE:");
+				$pdf->Row($arr,10);
+				$pdf->SetFont('Arial','',7);
+				$pdf->SetXY(510, ($y+1));
+				$pdf->SetWidths(array(55));
+				$pdf->SetAligns(array("R"));
+				$arr=array("000.00");
+				$pdf->Row($arr,10);
+				
+				$y=$y+11;//455
+				$pdf->SetFont('Arial','B',7);
+				$pdf->SetXY(365, $y);
+				$pdf->Cell(201,11,'','1',1,'Q');
+				$pdf->SetXY(365, ($y+1));
+				$pdf->SetWidths(array(170));
+				$pdf->SetAligns(array("L"));
+				$arr=array("IVA ".$imp."%:");
+				$pdf->Row($arr,10);
+				$pdf->SetFont('Arial','',7);
+				$pdf->SetXY(510, ($y+1));
+				$pdf->SetWidths(array(55));
+				$pdf->SetAligns(array("R"));
+				$arr=array($vimp1);
+				$pdf->Row($arr,10);
+				
+				$y=$y+11;//470
+				$pdf->SetFont('Arial','B',7);
+				$pdf->SetXY(365, $y);
+				$pdf->Cell(201,11,'','1',1,'Q');
+				$pdf->SetXY(365, ($y+1));
+				$pdf->SetWidths(array(170));
+				$pdf->SetAligns(array("L"));
+				$arr=array("IVA 0%:");
+				$pdf->Row($arr,10);
+				$pdf->SetFont('Arial','',7);
+				$pdf->SetXY(510, ($y+1));
+				$pdf->SetWidths(array(55));
+				$pdf->SetAligns(array("R"));
+				$arr=array($vimp0);
+				$pdf->Row($arr,10);
+				
+				$y=$y+11;//485
+				$pdf->SetFont('Arial','B',7);
+				$pdf->SetXY(365, $y);
+				$pdf->Cell(201,11,'','1',1,'Q');
+				$pdf->SetXY(365, ($y+1));
+				$pdf->SetWidths(array(170));
+				$pdf->SetAligns(array("L"));
+				$arr=array("PROPINA:");
+				$pdf->Row($arr,10);
+				$pdf->SetFont('Arial','',7);
+				$pdf->SetXY(510, ($y+1));
+				$pdf->SetWidths(array(55));
+				$pdf->SetAligns(array("R"));
+				$arr=array(etiqueta_xml($resultado,"<propina>"));
+				$pdf->Row($arr,10);
+				
+				$y=$y+11;//500
+				$pdf->SetFont('Arial','B',7);
+				$pdf->SetXY(365, $y);
+				$pdf->Cell(201,11,'','1',1,'Q');
+				$pdf->SetXY(365, ($y+1));
+				$pdf->SetWidths(array(170));
+				$pdf->SetAligns(array("L"));
+				$arr=array("VALOR TOTAL:");
+				$pdf->Row($arr,10);
+				$pdf->SetFont('Arial','',7);
+				$pdf->SetXY(510, ($y+1));
+				$pdf->SetWidths(array(55));
+				$pdf->SetAligns(array("R"));
+				$arr=array(etiqueta_xml($resultado,"<importeTotal>"));
+				$pdf->Row($arr,10);*/
 	//echo ' ddd '.$imp1;
 	//die();
 	if ($imp1 == null or $imp1 == 1) {
@@ -7148,16 +7169,18 @@ function imprimirDocElGR($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
 	$src = url_logo();
-	$pdf->Image($src, 40, 22, 80, 40);
+	if ($src !== '.') {
+		$pdf->Image($src, 40, 22, 80, 40);
+	} 
 	/*if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
-			 {
-				 $logo=$_SESSION['INGRESO']['Logo_Tipo'];
-			 }
-			 else
-			 {
-				 $logo="diskcover";
-			 }
-			 $pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,20,80,40,'','http://www.fpdf.org');*/
+				{
+					$logo=$_SESSION['INGRESO']['Logo_Tipo'];
+				}
+				else
+				{
+					$logo="diskcover";
+				}
+				$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,20,80,40,'','http://www.fpdf.org');*/
 	//$drawing->setPath(__DIR__ . '/../../img/logotipos/'.$logo.'.png');
 	//$arr=array('NO TIENE LOGO');
 	//$pdf->Row($arr,13);
@@ -7229,9 +7252,9 @@ function imprimirDocElGR($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$arr = array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
 	$pdf->Row($arr, 10);
 	/*$pdf->SetXY(410, 180);
-			 $pdf->SetWidths(array(275));
-			 $arr=array('000000000000000000000000000000000000000000000000');
-			 $pdf->Row($arr,13);*/
+				$pdf->SetWidths(array(275));
+				$arr=array('000000000000000000000000000000000000000000000000');
+				$pdf->Row($arr,13);*/
 	//C set <claveAcceso>
 	//$code=etiqueta_xml($resultado,"<claveAcceso>");
 	$code = $atrib['numeroAutorizacion'];
@@ -7311,9 +7334,9 @@ function imprimirDocElGR($stmt, $id = null, $formato = null, $nombre_archivo = n
 	//para buscar cliente
 	$cliente = etiqueta_xml($resultado, "<numDocSustento>");
 	/*$resul2= substr($cliente, 0, 7);
-			 $resul3= substr($cliente, 7, strlen($cliente));
-			 echo $resul2.' '.$resul3;
-			 die();*/
+				$resul3= substr($cliente, 7, strlen($cliente));
+				echo $resul2.' '.$resul3;
+				die();*/
 	//$cliente1=array();
 	$cliente1 = explode("-", $cliente);
 	//echo $cliente1[0].' '.$cliente1[1].' '.$cliente1[2];
@@ -7345,20 +7368,20 @@ function imprimirDocElGR($stmt, $id = null, $formato = null, $nombre_archivo = n
 	);
 	$pdf->Row($arr, 10);
 	/*$pdf->SetWidths(array(270,155,100));
-			 if(etiqueta_xml($resultado,"<moneda")=='DOLAR')
-			 {
-				 $mon='USD';
-			 }
-			 else
-			 {
-				 $mon='USD';
-				 //se busca otras monedas
-			 }
-			 //die();
-			 $arr=array('Comprobante que se modifica, Factura No. '.etiqueta_xml($resultado,"<numDocModificado>"),
-			 'MONTO: '.$mon.'  '.etiqueta_xml($resultado,"<importeTotal>")
-			 ,'Fecha emisión (comprobante a modificar): '.etiqueta_xml($resultado,"<fechaEmisionDocSustento>"));
-			 $pdf->Row($arr,10);*/
+				if(etiqueta_xml($resultado,"<moneda")=='DOLAR')
+				{
+					$mon='USD';
+				}
+				else
+				{
+					$mon='USD';
+					//se busca otras monedas
+				}
+				//die();
+				$arr=array('Comprobante que se modifica, Factura No. '.etiqueta_xml($resultado,"<numDocModificado>"),
+				'MONTO: '.$mon.'  '.etiqueta_xml($resultado,"<importeTotal>")
+				,'Fecha emisión (comprobante a modificar): '.etiqueta_xml($resultado,"<fechaEmisionDocSustento>"));
+				$pdf->Row($arr,10);*/
 	$y1 = $pdf->GetY();
 	//echo $pdf->GetY().' '.$y;
 	/*******************************************
@@ -7554,15 +7577,15 @@ function imprimirDocElGR($stmt, $id = null, $formato = null, $nombre_archivo = n
 	}
 	//$arr=array(etiqueta_xml($resultado,"<campoAdicional"));
 	/*die();
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);*/
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);*/
 	//fecha
 	$pdf->SetXY(181, $y + 5);
 	//$pdf->Cell(40,60,'','1',1,'Q');
@@ -7575,14 +7598,14 @@ function imprimirDocElGR($stmt, $id = null, $formato = null, $nombre_archivo = n
 
 	//leyenda final
 	/*$pdf->SetFont('Arial','',5);
-			 $pdf->SetXY($x, ($y+65));
-			 $pdf->Cell(321,46,'','1',1,'Q');
-			 $pdf->SetXY($x, ($y+68));
-			 $pdf->SetWidths(array(319));
-			 $arr=array('Para consultas, requerimientos o reclamos puede contactarse a nuestro Centro de Atención al Cliente Teléfono: 02-6052430, o escriba al correo
-		 prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichincha: Cta. Ahr. 4245946100 a Nombre de Walter Vaca Prieto/Cta. Cte
-		 3422225804, a Nombre de PRISMANET PROFESIONAL S.A.');
-			 $pdf->Row($arr,8);*/
+				$pdf->SetXY($x, ($y+65));
+				$pdf->Cell(321,46,'','1',1,'Q');
+				$pdf->SetXY($x, ($y+68));
+				$pdf->SetWidths(array(319));
+				$arr=array('Para consultas, requerimientos o reclamos puede contactarse a nuestro Centro de Atención al Cliente Teléfono: 02-6052430, o escriba al correo
+			prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichincha: Cta. Ahr. 4245946100 a Nombre de Walter Vaca Prieto/Cta. Cte
+			3422225804, a Nombre de PRISMANET PROFESIONAL S.A.');
+				$pdf->Row($arr,8);*/
 	//subtotales
 	//depende del valor de coordenada 'y' del detalle
 
@@ -7634,16 +7657,18 @@ function imprimirDocElNV($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
 	$src = url_logo();
-	$pdf->Image($src, 40, 22, 80, 40);
+	if ($src !== '.') {
+		$pdf->Image($src, 40, 22, 80, 40);
+	} 
 	/*if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
-			 {
-				 $logo=$_SESSION['INGRESO']['Logo_Tipo'];
-			 }
-			 else
-			 {
-				 $logo="diskcover";
-			 }
-			 $pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,20,80,40,'','http://www.fpdf.org');*/
+				{
+					$logo=$_SESSION['INGRESO']['Logo_Tipo'];
+				}
+				else
+				{
+					$logo="diskcover";
+				}
+				$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,20,80,40,'','http://www.fpdf.org');*/
 	//$drawing->setPath(__DIR__ . '/../../img/logotipos/'.$logo.'.png');
 	//$arr=array('NO TIENE LOGO');
 	//$pdf->Row($arr,13);
@@ -7714,9 +7739,9 @@ function imprimirDocElNV($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$arr = array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
 	$pdf->Row($arr, 10);
 	/*$pdf->SetXY(410, 180);
-			 $pdf->SetWidths(array(275));
-			 $arr=array('000000000000000000000000000000000000000000000000');
-			 $pdf->Row($arr,13);*/
+				$pdf->SetWidths(array(275));
+				$arr=array('000000000000000000000000000000000000000000000000');
+				$pdf->Row($arr,13);*/
 	//C set <claveAcceso>
 	//$code=etiqueta_xml($resultado,"<claveAcceso>");
 	$code = $atrib['numeroAutorizacion'];
@@ -7867,15 +7892,15 @@ function imprimirDocElNV($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$arr1 = etiqueta_xml($resultado, "<codigoInterno");
 	if (is_array($arr1)) {
 		/*$arr2=etiqueta_xml($resultado,"<codigoAuxiliar");
-						  if($arr2=='')
-						  {
-							  $arr2=array();
-							  //llenamos array vacio
-							  for ($i=0;$i<count($arr1);$i++)
-							  {
-								  $arr2[$i]='';
-							  }
-						  }*/
+								if($arr2=='')
+								{
+									$arr2=array();
+									//llenamos array vacio
+									for ($i=0;$i<count($arr1);$i++)
+									{
+										$arr2[$i]='';
+									}
+								}*/
 		$arr3 = etiqueta_xml($resultado, "<cantidad");
 		if ($arr3 == '') {
 			$arr3 = array();
@@ -7989,15 +8014,15 @@ function imprimirDocElNV($stmt, $id = null, $formato = null, $nombre_archivo = n
 	}
 	//$arr=array(etiqueta_xml($resultado,"<campoAdicional"));
 	/*die();
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);*/
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);*/
 	//fecha
 	$pdf->SetXY(181, $y + 5);
 	$pdf->Cell(40, 60, '', '1', 1, 'Q');
@@ -8043,9 +8068,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 			if (is_array($arr2)) {
 				echo 'array';
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr2.' fff <br>';
 				if ($i == 1) {
@@ -8055,9 +8080,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 			$arr3 = etiqueta_xml($arr1[$i], "<baseImponible");
 			if (is_array($arr3)) {
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr3.' fff <br>';
 				if ($i == 0) {
@@ -8070,9 +8095,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 			$arr4 = etiqueta_xml($arr1[$i], "<valor");
 			if (is_array($arr3)) {
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr4.' fff <br>';
 				if ($i == 0) {
@@ -8302,16 +8327,19 @@ function imprimirDocElND($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$pdf->SetXY($x, 20);
 	//$pdf->SetWidths(array(250));
 	$src = url_logo();
-	$pdf->Image($src, 40, 22, 80, 40);
+	if ($src !== '.') {
+		$pdf->Image($src, 40, 22, 80, 40);
+	} 
+	
 	/*if(isset($_SESSION['INGRESO']['Logo_Tipo'])) 
-			 {
-				 $logo=$_SESSION['INGRESO']['Logo_Tipo'];
-			 }
-			 else
-			 {
-				 $logo="diskcover";
-			 }
-			 $pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,20,80,40,'','http://www.fpdf.org');*/
+				{
+					$logo=$_SESSION['INGRESO']['Logo_Tipo'];
+				}
+				else
+				{
+					$logo="diskcover";
+				}
+				$pdf->Image(__DIR__ . '/../../img/logotipos/'.$logo.'.png',40,20,80,40,'','http://www.fpdf.org');*/
 	//$drawing->setPath(__DIR__ . '/../../img/logotipos/'.$logo.'.png');
 	//$arr=array('NO TIENE LOGO');
 	//$pdf->Row($arr,13);
@@ -8382,9 +8410,9 @@ function imprimirDocElND($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$arr = array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
 	$pdf->Row($arr, 10);
 	/*$pdf->SetXY(410, 180);
-			 $pdf->SetWidths(array(275));
-			 $arr=array('000000000000000000000000000000000000000000000000');
-			 $pdf->Row($arr,13);*/
+				$pdf->SetWidths(array(275));
+				$arr=array('000000000000000000000000000000000000000000000000');
+				$pdf->Row($arr,13);*/
 	//C set <claveAcceso>
 	//$code=etiqueta_xml($resultado,"<claveAcceso>");
 	$code = $atrib['numeroAutorizacion'];
@@ -8535,15 +8563,15 @@ function imprimirDocElND($stmt, $id = null, $formato = null, $nombre_archivo = n
 	$arr1 = etiqueta_xml($resultado, "<codigoInterno");
 	if (is_array($arr1)) {
 		/*$arr2=etiqueta_xml($resultado,"<codigoAuxiliar");
-						  if($arr2=='')
-						  {
-							  $arr2=array();
-							  //llenamos array vacio
-							  for ($i=0;$i<count($arr1);$i++)
-							  {
-								  $arr2[$i]='';
-							  }
-						  }*/
+								if($arr2=='')
+								{
+									$arr2=array();
+									//llenamos array vacio
+									for ($i=0;$i<count($arr1);$i++)
+									{
+										$arr2[$i]='';
+									}
+								}*/
 		$arr3 = etiqueta_xml($resultado, "<cantidad");
 		if ($arr3 == '') {
 			$arr3 = array();
@@ -8657,15 +8685,15 @@ function imprimirDocElND($stmt, $id = null, $formato = null, $nombre_archivo = n
 	}
 	//$arr=array(etiqueta_xml($resultado,"<campoAdicional"));
 	/*die();
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);
-			 $pdf->SetWidths(array(40));
-			 $arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
-			 $pdf->Row($arr,13);*/
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);
+				$pdf->SetWidths(array(40));
+				$arr=array(etiqueta_xml($resultado,"<obligadoContabilidad>"));
+				$pdf->Row($arr,13);*/
 	//fecha
 	$pdf->SetXY(181, $y + 5);
 	$pdf->Cell(40, 60, '', '1', 1, 'Q');
@@ -8711,9 +8739,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 			if (is_array($arr2)) {
 				echo 'array';
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr2.' fff <br>';
 				if ($i == 1) {
@@ -8723,9 +8751,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 			$arr3 = etiqueta_xml($arr1[$i], "<baseImponible");
 			if (is_array($arr3)) {
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr3.' fff <br>';
 				if ($i == 0) {
@@ -8738,9 +8766,9 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
 			$arr4 = etiqueta_xml($arr1[$i], "<valor");
 			if (is_array($arr3)) {
 				/*for ($j=0;$j<count($arr2);$j++)
-													{
-														echo $arr2[$j].' ggg <br>';
-													}*/
+																{
+																	echo $arr2[$j].' ggg <br>';
+																}*/
 			} else {
 				//echo $arr4.' fff <br>';
 				if ($i == 0) {
@@ -8938,7 +8966,8 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
  * @param int $sizeLetra Tamaño de la letra
  * @return string Ruta del archivo generado
  */
-function ImprimirAdodc($datos, $sizeLetra = 10): string{
+function ImprimirAdodc($datos, $sizeLetra = 10): string
+{
 	//TODO: Falta añadirle la cabecera para cada página
 	$pdf = new PDF();
 	$pdf->AliasNbPages();
@@ -8946,41 +8975,41 @@ function ImprimirAdodc($datos, $sizeLetra = 10): string{
 	$pdf->SetFont('Arial', '', $sizeLetra);
 	$cabeceras = [];
 	$anchoColumnas = [40, 60, 30];
-	if(!empty($datos)){
-		$cabeceras = array_keys((array)$datos[0]);
+	if (!empty($datos)) {
+		$cabeceras = array_keys((array) $datos[0]);
 	}
 	// Inicializar los anchos de las columnas
-    $anchoColumnas = array_fill(0, count($cabeceras), 0);
+	$anchoColumnas = array_fill(0, count($cabeceras), 0);
 
-    // Calcular el ancho de la columna basado en las cabeceras
-    foreach ($cabeceras as $index => $header) {
-        $anchoColumnas[$index] = $pdf->GetStringWidth($header) + 2; // +2 para un poco de margen
-    }
+	// Calcular el ancho de la columna basado en las cabeceras
+	foreach ($cabeceras as $index => $header) {
+		$anchoColumnas[$index] = $pdf->GetStringWidth($header) + 2; // +2 para un poco de margen
+	}
 
-    // Calcular el ancho de columna basado en los datos
-    foreach ($datos as $row) {
-        foreach ($cabeceras as $index => $header) {
-            $texto = (string)$row[$header];
-            $anchoTexto = $pdf->GetStringWidth($texto) + 2; // +2 para un poco de margen
-            if ($anchoTexto > $anchoColumnas[$index]) {
-                $anchoColumnas[$index] = $anchoTexto;
-            }
-        }
-    }
+	// Calcular el ancho de columna basado en los datos
+	foreach ($datos as $row) {
+		foreach ($cabeceras as $index => $header) {
+			$texto = (string) $row[$header];
+			$anchoTexto = $pdf->GetStringWidth($texto) + 2; // +2 para un poco de margen
+			if ($anchoTexto > $anchoColumnas[$index]) {
+				$anchoColumnas[$index] = $anchoTexto;
+			}
+		}
+	}
 
-    // Dibujar las cabeceras con el ancho calculado
-    foreach ($cabeceras as $index => $header) {
-        $pdf->Cell($anchoColumnas[$index], 7, $header, 1);
-    }
-    $pdf->Ln();
+	// Dibujar las cabeceras con el ancho calculado
+	foreach ($cabeceras as $index => $header) {
+		$pdf->Cell($anchoColumnas[$index], 7, $header, 1);
+	}
+	$pdf->Ln();
 
-    // Dibujar los datos con el ancho calculado
-    foreach ($datos as $row) {
-        foreach ($cabeceras as $index => $header) {
-            $pdf->Cell($anchoColumnas[$index], 6, $row[$header], 1);
-        }
-        $pdf->Ln();
-    }
+	// Dibujar los datos con el ancho calculado
+	foreach ($datos as $row) {
+		foreach ($cabeceras as $index => $header) {
+			$pdf->Cell($anchoColumnas[$index], 6, $row[$header], 1);
+		}
+		$pdf->Ln();
+	}
 	$ruta = dirname(__DIR__, 2) . '\TEMP\Reporte_Clientes_' . date('Y-m-d_H-i-s') . '.pdf';
 	$pdf->Output('F', $ruta);
 	return $ruta;
