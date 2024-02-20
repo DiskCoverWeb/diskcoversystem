@@ -3303,9 +3303,10 @@ function generar_xml_retencion($cabecera,$detalle)
     }
     function quitar_carac($query)
     {
-    	$query = preg_replace("[\n|\r|\n\r]", "", $query);
-    	$buscar = array('á','é','í','ó','ú','Á','É','Í','Ó','Ú','Ñ','ñ','/','?','�','-','.');
-    	$remplaza = array('a','e','i','o','u','A','E','I','O','U','N','n','','','','','');
+    	// $query = preg_replace("[\n|\r|\n\r]", "", $query);
+    	$query = preg_replace("/[\n\r\x{EF}\x{BB}\x{BF}]/u", "", $query);
+    	$buscar = array('á','é','í','ó','ú','Á','É','Í','Ó','Ú','Ñ','ñ','/','?','�','-','.','ï»¿');
+    	$remplaza = array('a','e','i','o','u','A','E','I','O','U','N','n','','','','','',);
     	$corregido = str_replace($buscar, $remplaza, $query);
     	 // print_r($corregido);
     	$corregido = trim($corregido);
@@ -3609,6 +3610,7 @@ function SRI_Actualizar_Documento_XML($ClaveDeAcceso)
 			{
 				rewind($archivo);   // Volvemos a situar el puntero al principio del archivo
 				$DatosXMLA = fread($archivo, filesize($url_autorizado));  // Leemos hasta el final del archivo
+				$DatosXMLA = str_replace('ï»¿', '', $DatosXMLA);
 				if( $DatosXMLA == false )
 				{
 					echo "Error al leer el archivo";

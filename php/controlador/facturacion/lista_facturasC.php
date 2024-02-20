@@ -1060,6 +1060,22 @@ QUITO - ECUADOR';
 
 		$rutaB = 'comprobantes/entidades/entidad_' . generaCeros($_SESSION['INGRESO']['IDEntidad'], 3) . '/CE' . generaCeros($_SESSION['INGRESO']['item'], 3) . '/Autorizados/' . $parametros['xml'] . '.xml';
 		if (file_exists($rutaA)) {
+
+			$rutaArchivo = $rutaA ;
+			$archivo = fopen($rutaArchivo, 'r+');
+			$contenido = fread($archivo, filesize($rutaArchivo));
+			$contenidoSinBOM = str_replace('ï»¿', '', $contenido);
+			rewind($archivo);
+			fwrite($archivo, $contenidoSinBOM);
+			ftruncate($archivo, ftell($archivo));
+			fclose($archivo);
+			
+				SetAdoAddNew("Trans_Documentos");
+				SetAdoFields("Documento_Autorizado", $contenidoSinBOM);
+				SetAdoFieldsWhere("Clave_Acceso", $parametros['xml']);
+				SetAdoUpdateGeneric();				
+			
+
 			return array('ruta' => $rutaB, 'xml' => $parametros['xml'] . '.xml');
 		} else {
 			// crea las carpetas si no existen
@@ -1127,8 +1143,24 @@ QUITO - ECUADOR';
 
 				$contenido = $docs[0]['Documento_Autorizado'];
 				$archivo = fopen($rutaA, 'a');
-				fputs($archivo, $contenido);
+				$rutaArchivo = $rutaA ;
+				$archivo = fopen($rutaArchivo, 'r+');
+				$contenidoSinBOM = str_replace('ï»¿', '', $contenido);
+				rewind($archivo);
+				fwrite($archivo, $contenidoSinBOM);
+				ftruncate($archivo, ftell($archivo));
 				fclose($archivo);
+
+				
+					SetAdoAddNew("Trans_Documentos");
+					SetAdoFields("Documento_Autorizado", $contenidoSinBOM);
+					SetAdoFieldsWhere("Clave_Acceso", $parametros['xml']);
+					SetAdoUpdateGeneric();			
+				
+
+				
+				
+
 				return array('ruta' => $rutaB, 'xml' => $parametros['xml'] . '.xml');
 			} else {
 				return -1;
