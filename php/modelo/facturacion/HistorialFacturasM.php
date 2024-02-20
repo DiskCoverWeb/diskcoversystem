@@ -661,6 +661,10 @@ class HistorialFacturasM
         return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
     }
 
+    function Query($sSQL){
+        return $this->db->datos($sSQL);
+    }
+
     function Resumen_Ventas_Costos($FechaIni, $FechaFin, $Con_Costeo, $Si_No, $DescItem, $tipoConsulta)
     {
         $sSQL = "SELECT * 
