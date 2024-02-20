@@ -52,6 +52,8 @@ class anexos_transM
     //  {
     // $datos[] = $row;
     //  }
+
+       // print_r($sql);die();
        $datos = $this->conn->datos($sql);
        return $datos;
 

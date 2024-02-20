@@ -16,6 +16,7 @@ require_once(dirname(__DIR__,2)."/lib/excel/plantilla.php");
 require_once(dirname(__DIR__,1)."/db/db1.php");
 require_once(dirname(__DIR__,1)."/db/variables_globales.php");
 require_once(dirname(__DIR__,1)."/comprobantes/SRI/autorizar_sri.php");
+require_once(dirname(__DIR__,2) . "/lib/phpmailer/enviar_emails.php");
 //require_once("../../lib/fpdf/fpdf.php");
 
 if(isset($_POST['RUC']) AND !isset($_POST['submitweb'])) 
@@ -13381,6 +13382,12 @@ function CalculosTotalAsientos($Adodc)
      }
      
      return array('SumaDebe'=>$SumaDebe,'SumaHaber'=>$SumaHaber,'LabelDi'=>number_format(($SumaDebe-$SumaHaber),2,'.',''));
+  }
+
+  function enviar_email_comprobantes($archivos, $to_correo, $cuerpo_correo, $titulo_correo, $HTML = false)
+  {
+    $email = new enviar_emails();
+    return $email->enviar_email_generico($archivos,$to_correo,$cuerpo_correo,$titulo_correo,$HTML);    
   }
 
 
