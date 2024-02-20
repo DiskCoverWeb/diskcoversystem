@@ -2,6 +2,13 @@
 require_once(dirname(__DIR__, 2) . "/db/db1.php");
 require_once(dirname(__DIR__, 2) . "/funciones/funciones.php");
 
+/*
+    AUTOR DE RUTINA	: Leonardo Súñiga
+    FECHA CREACION	: 06/01/2024
+    FECHA MODIFICACION: 20/01/2024
+    DESCIPCIÓN		: Modelo ListarGrupos
+*/
+
 class ListarGruposM
 {
     private $db;
@@ -509,5 +516,28 @@ class ListarGruposM
         }
 
 
+    }
+
+    public function Imprimir_Recibos_Cobros($parametros){
+        $sql = "SELECT SUM(Valor) As SaldoPend, Codigo 
+                FROM Clientes_Facturacion 
+                WHERE Fecha BETWEEN '" . $parametros['MBFechaI'] . "' AND '" . $parametros['MBFechaF'] . "' 
+                AND Item = '" . $_SESSION['INGRESO']['item'] . "'";
+        if($parametros['CheqRangos'] <> 0){
+            $sql .= "AND Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "'";
+        }
+        $sql .= "GROUP BY Codigo";
+        return $this->db->datos($sql);
+    }
+
+    public function Recibos_Case1($parametros, $Codigo1, $Codigo2){
+        $sql = "SELECT SUM(Valor) As SaldoPend,Codigo 
+                FROM Clientes_Facturacion 
+                WHERE Fecha BETWEEN '" . $parametros['MBFechaI'] . "' AND '" . $parametros['MBFechaF'] . "' ";
+        if($parametros['CheqRangos'] <> 0){
+            $sql .= "AND Grupo BETWEEN '" . $Codigo1 . "' AND '" . $Codigo2 . "' ";
+        }
+        $sql .= "GROUP BY Codigo ";
+        return $this->db->datos($sql);
     }
 }

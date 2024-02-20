@@ -342,7 +342,7 @@ function Exportar_AdoDB_Excel($datosAdo, $path, $tituloHoja = "Hoja 1"){
 	foreach ($datosAdo as $dato) {
         $columna = 'A';
         foreach ($dato as $valor) {
-            $sheet->setCellValue($columna.$fila, $valor);
+            $sheet->setCellValue($columna.$fila, conversionToString($valor));
             $columna++;
         }
         $fila++;

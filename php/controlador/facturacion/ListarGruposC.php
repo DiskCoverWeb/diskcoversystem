@@ -1,7 +1,15 @@
 <?php
 
 require_once(dirname(__DIR__, 2) . "/modelo/facturacion/ListarGruposM.php");
-require_once(dirname(__DIR__,3).'/lib/fpdf/reporte_de.php');
+require_once(dirname(__DIR__, 3) . '/lib/fpdf/reporte_de.php');
+require(dirname(__DIR__, 3) . '/lib/fpdf/cabecera_pdf.php');
+
+/*
+    AUTOR DE RUTINA	: Leonardo Súñiga
+    FECHA CREACION	: 06/01/2024
+    FECHA MODIFICACION: 20/01/2024
+    DESCIPCIÓN		: Controlador de la vista ListarGrupos
+*/
 
 
 $controlador = new ListarGruposC();
@@ -100,20 +108,111 @@ if (isset($_GET['Recalcular_Fechas'])) {
     echo json_encode($controlador->Recalcular_Fechas());
 }
 
+if (isset($_GET['Impresora'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Impresora($parametros));
+}
+
+if (isset($_GET['Recibos'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Recibos($parametros));
+}
+
+if (isset($_GET['Excel'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Excel($parametros));
+}
+
 
 
 class ListarGruposC
 {
 
     private $modelo;
-    //private $pdf;
-    
+    private $pdf;
+
 
     public function __construct()
     {
         $this->modelo = new ListarGruposM();
-        //$this->pdf = new PDF();
-        
+        $this->pdf = new cabecera_pdf();
+
+    }
+
+    public function Excel($parametros)
+    {
+        $AdoQuery = $parametros['AdoQuery'];
+        try {
+            if (count($AdoQuery) > 0) {
+                $ruta = strtoupper(dirname(__DIR__, 3) . "/TEMP/Reporte_Excel" . date('Y-m-d_H-i-s') . ".XLSX");
+                Exportar_AdoDB_Excel($AdoQuery, $ruta);
+                return array('res' => 1, 'fileName' => basename($ruta));
+            }else{
+                throw new Exception("No se puede exportar a excel porque no hay datos");
+            }
+        } catch (Exception $e) {
+            return array('res' => 0, 'mensaje' => $e->getMessage());
+        }
+
+    }
+
+    public function Recibos($parametros)
+    {
+        $Opcion = intval($parametros['Opcion']);
+        try {
+            switch ($Opcion) {
+                case 0:
+                    $AdoAux = $this->modelo->Imprimir_Recibos_Cobros($parametros);
+                    if (count($AdoAux) > 0) {
+                        //TODO: Imprimir_Recibos_CxC_PreFA
+                        $ruta = ImprimirAdodc($AdoAux, 9);
+                        return array('res' => 1, 'fileName' => basename($ruta));
+                    } else {
+                        throw new Exception("No se puede imprimir el rango de recibos porque no hay datos");
+                    }
+                case 1:
+                    $Codigo1 = $parametros['DCCliente'];
+                    $Codigo2 = $parametros['DCCliente'];
+                    if ($Codigo1 == "")
+                        $Codigo1 = G_NINGUNO;
+                    if ($Codigo2 == "")
+                        $Codigo2 = G_NINGUNO;
+                    $AdoAux = $this->modelo->Recibos_Case1($parametros, $Codigo1, $Codigo2);
+                    if (count($AdoAux) > 0) {
+                        //TODO: Imprimir_Recibos_CxC_PreFA
+                        $ruta = ImprimirAdodc($AdoAux, 9);
+                        return array('res' => 1, 'fileName' => basename($ruta));
+                    } else {
+                        throw new Exception("No se puede imprimir el rango de recibos porque no hay datos");
+                    }
+            }
+        } catch (Exception $e) {
+            return array('res' => 0, 'mensaje' => $e->getMessage());
+        }
+    }
+
+    public function Impresora($parametros)
+    {
+        $Opcion = intval($parametros['Opcion']);
+        $AdoQuery = $parametros['AdoQuery'];
+        try {
+            switch ($Opcion) {
+                case 0:
+                    $ruta = ImprimirAdodc($AdoQuery, 7, ['Cliente', 'Grupo', 'Direccion']);
+                    return array('res' => 1, 'fileName' => basename($ruta));
+                case 1:
+                    $ruta = '';
+                    //TODO: Imprimir_CxC_Grupos
+                    return array('res' => 1, 'fileName' => $ruta);
+                case 2:
+                    $ruta = ImprimirAdodc($AdoQuery, 7, ['Cliente', 'Grupo', 'Direccion']);
+                    return array('res' => 1, 'fileName' => basename($ruta));
+                default:
+                    throw new Exception("Opcion no valida");
+            }
+        } catch (Exception $e) {
+            return array('res' => 0, 'mensaje' => $e->getMessage());
+        }
     }
 
     public function Recalcular_Fechas()
@@ -128,11 +227,11 @@ class ListarGruposC
 
     public function Listado_x_Grupos()
     {
-        try{
+        try {
             $AdoNiveles = $this->modelo->Listado_x_Grupos();
             $ruta = ImprimirAdodc($AdoNiveles);
             return array('res' => 1, 'mensaje' => 'Pdf generado correctamente', 'fileName' => basename($ruta));
-        }catch (Exception $e){
+        } catch (Exception $e) {
             return array('res' => 0, 'mensaje' => $e->getMessage());
         }
     }
@@ -285,7 +384,7 @@ class ListarGruposC
                 }
             }
         }
-        return array('LstClientes' => $LstClientes, 'numRegistros' => count($LstClientes));
+        return array('LstClientes' => $LstClientes, 'numRegistros' => count($LstClientes), 'AdoQuery' => $AdoQuery);
     }
 
     public function Resumen_Pensiones_Mes($parametros)
@@ -293,13 +392,13 @@ class ListarGruposC
         $FechaIni = BuscarFecha($parametros['MBFechaI']);
         $FechaFin = BuscarFecha($parametros['MBFechaF']);
         $AdoQuery = $this->modelo->Resumen_Pensiones_Mes($parametros, $FechaIni, $FechaFin);
-        return array('tbl' => $AdoQuery['datos'], 'numRegistros' => count($AdoQuery['AdoQuery']));
+        return array('tbl' => $AdoQuery['datos'], 'numRegistros' => count($AdoQuery['AdoQuery']), 'AdoQuery' => $AdoQuery['AdoQuery']);
     }
 
     public function Nomina_Alumnos($parametros)
     {
         $AdoQuery = $this->modelo->Nomina_Alumnos($parametros);
-        return array('tbl' => $AdoQuery['datos'], 'numRegistros' => count($AdoQuery['AdoQuery']));
+        return array('tbl' => $AdoQuery['datos'], 'numRegistros' => count($AdoQuery['AdoQuery']), 'AdoQuery' => $AdoQuery['AdoQuery']);
     }
 
     public function Pensiones_Mensuales_Anio($parametros)
@@ -323,7 +422,7 @@ class ListarGruposC
         $Caption9 = number_format($SubTotal, 2, '.', ',');
         $Caption10 = number_format($Diferencia, 2, '.', ',');
         $Caption4 = number_format($TotalIngreso, 2, '.', ',');
-        return array('tbl' => $AdoQuery['datos'], 'numRegistros' => count($AdoQuery['AdoQuery']), 'Caption9' => $Caption9, 'Caption10' => $Caption10, 'Caption4' => $Caption4);
+        return array('tbl' => $AdoQuery['datos'], 'numRegistros' => count($AdoQuery['AdoQuery']), 'Caption9' => $Caption9, 'Caption10' => $Caption10, 'Caption4' => $Caption4, 'AdoQuery' => $AdoQuery['AdoQuery']);
     }
 
     public function Listado_Becados($parametros)
@@ -331,7 +430,7 @@ class ListarGruposC
         $FechaIni = BuscarFecha($parametros['MBFechaI']);
         $FechaFin = BuscarFecha($parametros['MBFechaF']);
         $AdoQuery = $this->modelo->Listado_Becados($parametros, $FechaIni, $FechaFin);
-        return array('tbl' => $AdoQuery['datos'], 'numRegistros' => count($AdoQuery['AdoQuery']));
+        return array('tbl' => $AdoQuery['datos'], 'numRegistros' => count($AdoQuery['AdoQuery']), 'AdoQuery' => $AdoQuery['AdoQuery']);
     }
 
     public function Listar_Deuda_por_Api($parametros)
@@ -347,7 +446,7 @@ class ListarGruposC
                 $Total += $value['Saldo_Pendiente'];
             }
         }
-        return array('tbl' => $data['datos'], 'Caption' => number_format($Total, 2, '.', ','), 'numRegistros' => count($data['AdoQuery']));
+        return array('tbl' => $data['datos'], 'Caption' => number_format($Total, 2, '.', ','), 'numRegistros' => count($data['AdoQuery']), 'AdoQuery' => $data['AdoQuery']);
     }
 
     public function DCLinea_LostFocus($parametros)
@@ -375,7 +474,7 @@ class ListarGruposC
     public function Listar_Clientes_Grupo($parametros)
     {
         $AdoQuery = $this->modelo->Listar_Clientes_Grupo($parametros);
-        return array('tbl' => $AdoQuery['datos'], 'numRegistros' => count($AdoQuery['AdoQuery']));
+        return array('tbl' => $AdoQuery['datos'], 'numRegistros' => count($AdoQuery['AdoQuery']), 'AdoQuery' => $AdoQuery['AdoQuery']);
     }
 
     public function DCLinea($parametros)

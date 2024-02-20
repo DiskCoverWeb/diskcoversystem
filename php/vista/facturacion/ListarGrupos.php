@@ -1,4 +1,12 @@
 <script>
+
+    /*
+    AUTOR DE RUTINA	: Leonardo Súñiga
+    FECHA CREACION	: 06/01/2024
+    FECHA MODIFICACION: 20/01/2024
+    DESCIPCIÓN		:  Vista ListarGrupos
+    */
+
     //Definicion de variables
     var TipoFactura = "FA";
     var PorGrupo = false;
@@ -8,6 +16,8 @@
     var activeTabId = '';
     var backgroundColor = 'white';
     var LstCount = 0;
+    var Opcion = 0;
+    var AdoQuery = [];
 
     let FA = {
         'Factura': '.',
@@ -207,8 +217,151 @@
         $('#btnRecalcularFechas').click(function () {
             Recalcular_Fechas();
         });
+
+        $('#btnImpresora').click(function () {
+            Impresora();
+        });
+
+        $('#btnRecibos').click(function () {
+            Recibos();
+        });
+
+        $('#btnExcel').click(function () {
+            Excel();
+        });
     });
     //Definicion de metodos
+
+    function Excel() {
+        if(AdoQuery.length == 0){
+            swal.fire({
+                title: 'Error',
+                text: 'No hay datos para exportar',
+                type: 'error'
+            });
+            return;
+        }
+        
+        var parametros = {
+            'AdoQuery': AdoQuery
+        };
+        console.log(parametros);
+        $('#myModal_espera').modal('show');
+        $.ajax({
+            url: "../controlador/facturacion/ListarGruposC.php?Excel=true",
+            type: "POST",
+            data: { 'parametros': parametros },
+            dataType: 'json',
+            success: function (response) {
+                var data = response;
+                $('#myModal_espera').modal('hide');
+                if (data.res == 1) {
+                    swal.fire({
+                        title: 'Excel creado',
+                        text: '',
+                        type: 'success'
+                    });
+                    var url = "../../TEMP/" + data.fileName;
+                    var enlaceTemporal = $('<a></a>')
+                        .attr('href', url)
+                        .attr('download', data.fileName)
+                        .appendTo('body');
+                    enlaceTemporal[0].click();
+                    enlaceTemporal.remove();
+                } else {
+                    swal.fire({
+                        title: 'Error al crear el excel',
+                        text: data.mensaje,
+                        type: 'error'
+                    });
+                }
+            }
+        });
+    }
+
+    function Recibos() {
+        var parametros = {
+            'Opcion': Opcion,
+            'CheqRangos': $('#CheqRangos').is(':checked') ? 1 : 0,
+            'Codigo1': Codigo1,
+            'Codigo2': Codigo2,
+            'MBFechaI': $('#MBFechaI').val(),
+            'MBFechaF': $('#MBFechaF').val(),
+            'DCCliente': $('#DCCliente').val()
+        };
+
+        $('#myModal_espera').modal('show');
+        $.ajax({
+            url: "../controlador/facturacion/ListarGruposC.php?Recibos=true",
+            type: "POST",
+            data: { 'parametros': parametros },
+            dataType: 'json',
+            success: function (response) {
+                var data = response;
+                $('#myModal_espera').modal('hide');
+                if (data.res == 1) {
+                    swal.fire({
+                        title: 'Recibo creado',
+                        text: '',
+                        type: 'success'
+                    });
+                    var url = "../../TEMP/" + data.fileName;
+                    var enlaceTemporal = $('<a></a>')
+                        .attr('href', url)
+                        .attr('download', data.fileName)
+                        .appendTo('body');
+                    enlaceTemporal[0].click();
+                    enlaceTemporal.remove();
+                } else {
+                    swal.fire({
+                        title: 'Error al crear el recibo',
+                        text: data.mensaje,
+                        type: 'error'
+                    });
+                }
+            }
+        });
+    }
+
+    function Impresora() {
+        var parametros = {
+            'Opcion': Opcion,
+            'AdoQuery': AdoQuery,
+            'CheqDesc': $('#CheqDesc').is(':checked') ? 1 : 0,
+        };
+
+        $('#myModal_espera').modal('show');
+        $.ajax({
+            url: "../controlador/facturacion/ListarGruposC.php?Impresora=true",
+            type: "POST",
+            data: { 'parametros': parametros },
+            dataType: 'json',
+            success: function (response) {
+                var data = response;
+                $('#myModal_espera').modal('hide');
+                if (data.res == 1) {
+                    swal.fire({
+                        title: 'Pdf creado',
+                        text: '',
+                        type: 'success'
+                    });
+                    var url = "../../TEMP/" + data.fileName;
+                    var enlaceTemporal = $('<a></a>')
+                        .attr('href', url)
+                        .attr('download', data.fileName)
+                        .appendTo('body');
+                    enlaceTemporal[0].click();
+                    enlaceTemporal.remove();
+                } else {
+                    swal.fire({
+                        title: 'Error',
+                        text: data.mensaje,
+                        type: 'error'
+                    });
+                }
+            }
+        });
+    }
 
     function Recalcular_Fechas() {
         var mensaje = "Recalcular Meses de Cobros";
@@ -481,24 +634,31 @@
         $('#myModal_espera').modal('show');
         switch (tabID) {
             case '#LxGData':
+                Opcion = 0;
                 Listar_Clientes_Grupo();
                 break;
             case '#PmAData':
+                Opcion = 1;
                 Pensiones_Mensuales_Anio(parametros);
                 break;
             case '#AcDData':
+                Opcion = 2;
                 Listado_Becados(parametros);
                 break;
             case '#NdAData':
+                Opcion = 3;
                 Nomina_Alumnos(parametros);
                 break;
             case '#EpEData':
+                Opcion = 4;
                 Listar_Clientes_Email(parametros);
                 break;
             case '#RpPmData':
+                Opcion = 5;
                 Resumen_Pensiones_Mes(parametros);
                 break;
             case '#EdData':
+                Opcion = 6;
                 Listar_Deuda_por_Api();
                 break;
 
@@ -560,6 +720,7 @@
                         //Si TODOS está marcado, los demas inputs también ser marcan.
                         $('#LstClientes input[type="checkbox"]').prop('checked', estado);
                     });
+                    AdoQuery = data.AdoQuery;
                 }
             }
         });
@@ -578,6 +739,7 @@
                 $('#RpPmData').html(data.tbl);
                 $('#RpPmData #datos_t tbody').css('height', '36vh');
                 $('#TotalRegistros').text('Total Registros: ' + data.numRegistros);
+                AdoQuery = data.AdoQuery;
             }
         });
     }
@@ -595,6 +757,7 @@
                 $('#NdAData').html(data.tbl);
                 $('#NdAData #datos_t tbody').css('height', '36vh');
                 $('#TotalRegistros').text('Total Registros: ' + data.numRegistros);
+                AdoQuery = data.AdoQuery;
             }
         });
     }
@@ -612,6 +775,7 @@
                 $('#AcDData').html(data.tbl);
                 $('#AcDData #datos_t tbody').css('height', '36vh');
                 $('#TotalRegistros').text('Total Registros: ' + data.numRegistros);
+                AdoQuery = data.AdoQuery;
             }
         });
     }
@@ -632,6 +796,7 @@
                 $('#Label9').val(data.Caption9);
                 $('#Label10').val(data.Caption10);
                 $('#Label4').val(data.Caption4);
+                AdoQuery = data.AdoQuery;
             }
         });
     }
@@ -712,6 +877,7 @@
                     $(activeTabId).html(data.tbl);
                     $(`${activeTabId} #datos_t tbody`).css('height', '36vh');
                     $('#TotalRegistros').text('Total Registros: ' + data.numRegistros);
+                    AdoQuery = data.AdoQuery;
                 }
             }
         });
@@ -783,6 +949,7 @@
                 $('#LxGData').html(data.tbl);
                 $('#LxGData #datos_t tbody').css('height', '36vh');
                 $('#TotalRegistros').text('Total Registros: ' + data.numRegistros);
+                AdoQuery = data.AdoQuery;
             }
         });
 
@@ -915,6 +1082,10 @@
     .espacio {
         min-height: 47vh;
     }
+
+    body {
+        padding-right: 0px !important;
+    }
 </style>
 <div>
     <div class="row"> <!--Botones-->
@@ -942,7 +1113,7 @@
                 <img src="../../img/png/deuda.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Imprimir Resultados"
-                id="btnImprimirCodigos" onclick="" style="border: solid 1px">
+                id="btnImpresora" onclick="" style="border: solid 1px">
                 <img src="../../img/png/FRecaudacionBancosPreFa/printer.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom"

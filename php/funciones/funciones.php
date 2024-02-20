@@ -13382,6 +13382,25 @@ function CalculosTotalAsientos($Adodc)
      
      return array('SumaDebe'=>$SumaDebe,'SumaHaber'=>$SumaHaber,'LabelDi'=>number_format(($SumaDebe-$SumaHaber),2,'.',''));
   }
-
+/**
+ * Verifica el tipo de dato, ir añadiendo segun sea necesario
+ * @param mixed $dato Dato a verificar
+ * @return string Dato convertido a string
+ */
+function conversionToString($dato): string {
+  if (is_array($dato)) {
+      // Verifica si el array tiene el elemento en la clave 0 antes de acceder a él
+      if (isset($dato[0])) {
+          return (string) $dato[0];
+      }
+      return '.';
+  } else if (is_string($dato)) {
+      return $dato;
+  } else if (is_null($dato)) {
+      return '.';
+  }
+  // Maneja otros tipos de datos o valores inesperados
+  return '.';
+}
 
 ?>
