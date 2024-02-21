@@ -482,6 +482,8 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         $datos = getInfoIPS();
         $_SESSION['INGRESO']['IP_Local'] = $datos['local_net_address'];
         $_SESSION['INGRESO']['HOST_NAME'] = $datos['host_name'];
+        $_SESSION['INGRESO']['modulo_'] = "02";
+        control_procesos(G_NORMAL, "Ingreso al Sistema WEB");
 
         //datos de empresa seleccionada
         $empresa = getEmpresasDE($_SESSION['INGRESO']['item'], $_SESSION['INGRESO']['noempr']);
@@ -1180,7 +1182,6 @@ function validar_estado_all()
 
     //llamada al SP de MySql
     Datos_Iniciales_Entidad_SP_MySQL($empresa[0], $dataUser[0]);
-
     if ($ConexionConMySQL) {
         if (
             $empresa[0]["Estado"] != $EstadoEmpresa || $empresa[0]["Cartera"] != $Cartera ||
@@ -1200,6 +1201,7 @@ function validar_estado_all()
             $conn->String_Sql($sql);
         }
     }
+    //Revisado, todo correcto hasta aqui.
 
 
     if ($PCActivo == false) {
@@ -1216,6 +1218,14 @@ function validar_estado_all()
     $titulo = "";
     $rps = "";
 
+    $NumEmpresa = $empresa[0]['Item'];
+    $Periodo_Contable = G_NINGUNO;
+    $Dolar = 0;
+    $RUCEmpresa = $empresa[0]['RUC'];
+    $CodigoUsuario = $_SESSION['INGRESO']['CodigoU'];
+    $NumModulo = "00";
+
+    sp_Iniciar_Datos_Default($NumEmpresa, $Periodo_Contable, $Dolar, $RUCEmpresa, $CodigoUsuario, $Fecha_CE, $NumModulo);
     if ($Cartera != 0 && $Cant_FA != 0) {
         $ListaFacturas = "ESTIMADO " . strtoupper($_SESSION['INGRESO']['noempr']) . ", SE LE COMUNICA QUE USTED MANTIENE UNA CARTERA VENCIDA DE USD " . number_format($Cartera, 2, '.', ',') . ", EQUIVALENTE A " . $Cant_FA . " FACTURA(S) EMITIDA(S) A USTED." . PHP_EOL;
     }

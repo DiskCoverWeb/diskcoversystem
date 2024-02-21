@@ -38,7 +38,7 @@
 
     $(document).ready(function () {
         //Form Activate 
-        ActualizarDatosRepresentantes();
+        ActualizarDatosRepresentantes(); 
         DCGrupos();
         DCTipoPagoo();
         DCProductos();
@@ -233,7 +233,7 @@
     //Definicion de metodos
 
     function Excel() {
-        if(AdoQuery.length == 0){
+        if (AdoQuery.length == 0) {
             swal.fire({
                 title: 'Error',
                 text: 'No hay datos para exportar',
@@ -241,7 +241,7 @@
             });
             return;
         }
-        
+
         var parametros = {
             'AdoQuery': AdoQuery
         };
@@ -1408,3 +1408,29 @@
         <!--<textarea class="form-control" name="TxtFile" id="TxtFile" rows="10" readonly></textarea>-->
     </div>
 </div>
+
+<!-- Modal FAsignaFact -->
+<div class="modal fade" tabindex="-1" role="dialog" id="FAsignaFact">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">CUENTAS POR COBRAR / CUENTAS POR PAGAR</h4>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <div class="row">
+                        <div class="col-sm-10">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
