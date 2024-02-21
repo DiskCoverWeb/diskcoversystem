@@ -121,6 +121,11 @@ if (isset($_GET["ingresarDir"])) {
 	echo json_encode($controlador->ingresarDir($parametros));
 }
 
+if(isset($_GET["enviar_email_comprobantes"])){
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->enviar_email_comprobantes($parametros));
+}
+
 class punto_ventaC
 {
 	private $modelo;
@@ -857,11 +862,6 @@ class punto_ventaC
 					// print_r('ex');die();
 					if ($rep == 1) {
 						if ($_SESSION['INGRESO']['Impresora_Rodillo'] == 0 && $_SESSION['INGRESO']['Grafico_PV'] == 0) {
-							$ema_pdf = $this->modelo->pdf_factura_elec($FA['Factura'], $FA['Serie'], $FA['codigoCliente'], $imp, $clave, $periodo = false, 1, 1);
-							if ($ema_pdf == -1) {
-								//pdf normal
-								return array('respuesta' => 5, 'pdf' => $imp, 'clave' => $clave, 'respuesta_guia' => $rep1, 'pdf_guia' => $imp_guia, 'clave_guia' => $clave_guia, 'rodillo' => $_SESSION['INGRESO']['Impresora_Rodillo']);
-							}
 
 							return array('respuesta' => $rep, 'pdf' => $imp, 'clave' => $clave, 'respuesta_guia' => $rep1, 'pdf_guia' => $imp_guia, 'clave_guia' => $clave_guia, 'rodillo' => $_SESSION['INGRESO']['Impresora_Rodillo']);
 
@@ -1038,6 +1038,34 @@ class punto_ventaC
 			return array('estado' => $estado, 'codigo' => $codigo, 'mensaje' => $mensaje, 'adicional' => $adicional, 'fecha' => $fecha);
 
 		}
+	}
+
+	function enviar_email_comprobantes($parametros)
+	{
+		$to_correo = $parametros['correo'];
+		$titulo_correo = 'comprobantes electronicos';
+        $cuerpo_correo = 'comprobantes electronico';
+
+        $lista_archivos = array();
+
+        if(isset($parametros['pdf']) && count($parametros['pdf']))
+        {
+        	foreach ($parametros['pdf'] as $key => $value) {
+        		if (file_exists(dirname(__DIR__, 3) . '/TEMP/' . $value)) {
+                $lista_archivos[] = dirname(__DIR__, 3) . '/TEMP/' . $value;
+              }
+        	}
+        }
+
+        if(isset($parametros['clave']) && count($parametros['clave'])>0)
+        {
+        	foreach ($parametros['clave'] as $key => $value) {
+        		 if (file_exists(dirname(__DIR__, 3) . '/php/comprobantes/entidades/entidad_' . generaCeros($_SESSION['INGRESO']['IDEntidad'], 3) . '/CE' . generaCeros($_SESSION['INGRESO']['item'], 3) . '/Autorizados/' .$value)) {
+                 $lista_archivos[] = dirname(__DIR__, 3) . '/php/comprobantes/entidades/entidad_' . generaCeros($_SESSION['INGRESO']['IDEntidad'], 3) . '/CE' . generaCeros($_SESSION['INGRESO']['item'], 3) . '/Autorizados/' . $value;
+              	}
+        	}
+        }
+		return enviar_email_comprobantes($lista_archivos, $to_correo, $cuerpo_correo, $titulo_correo, $HTML = false);
 	}
 
 

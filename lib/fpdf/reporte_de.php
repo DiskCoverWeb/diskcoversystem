@@ -8964,9 +8964,10 @@ prisma_net@hotmail.es; para Transferencia o Depósitos hacer en El Banco Pichinc
  * Imprime un reporte en PDF con los datos de una consulta sql
  * @param array $datos Datos a imprimir
  * @param int $sizeLetra Tamaño de la letra
+ * @param array $cabecerasEspecificadas Cabeceras específicas a imprimir
  * @return string Ruta del archivo generado
  */
-function ImprimirAdodc($datos, $sizeLetra = 10): string
+function ImprimirAdodc($datos, $sizeLetra = 10, $cabecerasEspecificadas = []): string
 {
 	//TODO: Falta añadirle la cabecera para cada página
 	$pdf = new PDF();
@@ -8975,7 +8976,9 @@ function ImprimirAdodc($datos, $sizeLetra = 10): string
 	$pdf->SetFont('Arial', '', $sizeLetra);
 	$cabeceras = [];
 	$anchoColumnas = [40, 60, 30];
-	if (!empty($datos)) {
+	if(!empty($cabecerasEspecificadas)){
+		$cabeceras = $cabecerasEspecificadas;
+	}else if (!empty($datos)) {
 		$cabeceras = array_keys((array) $datos[0]);
 	}
 	// Inicializar los anchos de las columnas
@@ -8989,7 +8992,7 @@ function ImprimirAdodc($datos, $sizeLetra = 10): string
 	// Calcular el ancho de columna basado en los datos
 	foreach ($datos as $row) {
 		foreach ($cabeceras as $index => $header) {
-			$texto = (string) $row[$header];
+			$texto = conversionToString($row[$header]);
 			$anchoTexto = $pdf->GetStringWidth($texto) + 2; // +2 para un poco de margen
 			if ($anchoTexto > $anchoColumnas[$index]) {
 				$anchoColumnas[$index] = $anchoTexto;
@@ -9006,7 +9009,13 @@ function ImprimirAdodc($datos, $sizeLetra = 10): string
 	// Dibujar los datos con el ancho calculado
 	foreach ($datos as $row) {
 		foreach ($cabeceras as $index => $header) {
-			$pdf->Cell($anchoColumnas[$index], 6, $row[$header], 1);
+			// Asegurar de que el header exista en el row antes de imprimir
+			if (isset($row[$header])) {
+                $pdf->Cell($anchoColumnas[$index], 6, conversionToString($row[$header]), 1);
+            } else {
+                // Si el header no existe, podría imprimir una celda vacía o manejar como se prefiera
+                $pdf->Cell($anchoColumnas[$index], 6, '', 1);
+            }
 		}
 		$pdf->Ln();
 	}
@@ -9014,4 +9023,6 @@ function ImprimirAdodc($datos, $sizeLetra = 10): string
 	$pdf->Output('F', $ruta);
 	return $ruta;
 }
+
+
 ?>

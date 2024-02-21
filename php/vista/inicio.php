@@ -504,6 +504,10 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'reasignacion_bodega':
 				require_once("inventario/reubicar.php");
 				break;
+				//Inventario -> Asignación
+			case 'asignacion_os':
+				require_once("inventario/asignacion_os.php");
+				break;
 			//Inventario -> egreso de Productos -> egreso producto
 			case 'egreso_alimentos':
 				require_once("inventario/egreso_alimentos.php");
