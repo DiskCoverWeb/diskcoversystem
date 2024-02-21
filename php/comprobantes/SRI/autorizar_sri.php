@@ -3270,6 +3270,8 @@ function generar_xml_retencion($cabecera,$detalle)
 			{
 				rewind($archivo);   // Volvemos a situar el puntero al principio del archivo
 				$cadena2 = fread($archivo, filesize($url_autorizado));  // Leemos hasta el final del archivo
+				$cadena2 = str_replace('ï»¿', '', $cadena2);
+
 				if( $cadena2 == false )
 					echo "Error al leer el archivo";
 				else
@@ -3741,6 +3743,8 @@ function actualizar_datos_CER($autorizacion,$tc,$serie,$retencion,$entidad,$auto
  }
   function guardar_documento($autorizacion,$cadena2,$serie,$retencion,$Fecha)
      {
+
+		$cadena2 = str_replace('ï»¿', '', $cadena2);
      	$sql="INSERT INTO Trans_Documentos
 		    (Item,Periodo,Clave_Acceso,Documento_Autorizado,TD,Serie,Documento,Fecha,X)
 			 VALUES

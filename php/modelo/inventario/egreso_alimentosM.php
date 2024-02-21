@@ -184,6 +184,17 @@ class egreso_alimentosM
 		return $this->db->datos($sql);
 	}
 
+
+	function catalog_cuentas()
+	{
+		$sql = "SELECT Periodo, Clave, TC, ME, DG, Item, TB, Codigo, Cuenta, Presupuesto, Saldo_Anterior, Debitos, Creditos, Saldo_Mes, Saldo_Total, Saldo_Total_ME, Total_N6, Total_N5, Total_N4, Total_N3, Total_N2, Total_N1, Listar,Tipo_Pago, CC, X, ID, TP
+		FROM Catalogo_Cuentas
+		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'  
+		AND Item = '".$_SESSION['INGRESO']['item']."' 
+		AND TC IN ('G', 'CC')";
+		return $this->db->datos($sql);
+	}
+
 }
 
 ?>

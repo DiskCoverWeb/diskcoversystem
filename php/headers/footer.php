@@ -41,6 +41,15 @@
           </div>
       </div>
   </div>
+   <div class="modal fade" id="myModal_envio_Email" role="dialog" data-keyboard="false" data-backdrop="static">
+      <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+              <div class="modal-body text-center">
+                  <img src="../../img/gif/loader_email.gif" width="80%">
+              </div>
+          </div>
+      </div>
+  </div>
 
   <div class="modal fade" id="myModal_espera_progress" role="dialog" data-keyboard="false" data-backdrop="static">
       <div class="modal-dialog modal-sm">
