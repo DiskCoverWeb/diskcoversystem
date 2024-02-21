@@ -692,8 +692,16 @@ function generar_factura() {
             {
                 if(data.text=='' || data.text == null || data.text == 2)
                  {
-
-                    Swal.fire('XML devuelto', 'Error al generar XML o al firmar', 'error');
+                    Swal.fire({
+                        type: 'error',
+                        title: 'XML devuelto',
+                        text:'Error al generar XML o al firmar',
+                        confirmButtonText: 'Ok!',
+                        allowOutsideClick: false,
+                    }).then(function () {
+                        location.reload();
+                    })
+                   
                     tipo_error_sri(data.clave);
                  }else{
                 Swal.fire({
