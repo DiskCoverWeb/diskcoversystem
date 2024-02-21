@@ -201,7 +201,7 @@ class lista_facturasC
 								<ul class="dropdown-menu">
 								<li><a href="#" onclick="Ver_factura(\'' . $value['Factura'] . '\',\'' . $value['Serie'] . '\',\'' . $value['CodigoC'] . '\',\'' . $value['Autorizacion'] . '\')"><i class="fa fa-eye"></i> Ver factura</a></li>';
 			if (count($exis) > 0 && strlen($value['Autorizacion']) == 13 && $parametros['tipo'] != '') {
-				$tr .= '<li><a href="#" onclick="autorizar(\'' . $value['TC'] . '\',\'' . $value['Factura'] . '\',\'' . $value['Serie'] . '\',\'' . $value['Fecha']->format('Y-m-d') . '\')" ><i class="fa fa-paper-plane"></i>Autorizar</a></li>';
+				$tr .= '<li><a href="#" onclick="autorizar(\'' . $value['TC'] . '\',\'' . $value['Factura'] . '\',\'' . $value['Serie'] . '\',\'' . $value['Fecha']->format('Y-m-d') . '\',\'' . $email. '\')" ><i class="fa fa-paper-plane"></i>Autorizar</a></li>';
 			}
 			if ($value['T'] != 'A' && $parametros['tipo'] != '') {
 				$tr .= '<li><a href="#" onclick="anular_factura(\'' . $value['Factura'] . '\',\'' . $value['Serie'] . '\',\'' . $value['CodigoC'] . '\')"><i class="fa fa-times-circle"></i>Anular factura</a></li>';

@@ -354,7 +354,7 @@
 		window.open(url,'_blank');
 	}
 
-  function autorizar(tc,factura,serie,fecha)
+  function autorizar(tc,factura,serie,fecha,email)
   { 
     $('#myModal_espera').modal('show');
     var parametros = 
@@ -399,9 +399,10 @@
           confirmButtonText: 'Ok!',
           allowOutsideClick: false,
         }).then(function(){
-          // var url=  '../../TEMP/'+data.pdf+'.pdf';
-          // window.open(url, '_blank'); 
-          // location.reload();    
+
+            nombre_pdf = [data.pdf+'.pdf'];
+            clave_Acceso = [data.clave+'.xml'];
+            enviar_email_comprobantes(nombre_pdf,clave_Acceso,email);
 
         })
       }else if(data.respuesta==-1)
@@ -448,7 +449,35 @@
       }
     });
     
-  }
+}
+
+function enviar_email_comprobantes(nombre_pdf,clave_Acceso,email)
+{
+    $('#myModal_envio_Email').modal('show');
+    var parametros = {
+        'clave':clave_Acceso,
+        'pdf':nombre_pdf,
+        'correo':email,
+    }
+    $.ajax({
+        type: "POST",
+        url: '../controlador/facturacion/punto_ventaC.php?enviar_email_comprobantes=true',
+        data: {
+            parametros: parametros
+        },
+        dataType: 'json',
+        success: function(data) {
+            console.log(data);
+            $('#myModal_envio_Email').modal('hide');        
+            if(data==1)
+            {
+                Swal.fire('Email enviado','','success').then(function(){
+                    location.reload();
+                });
+            }   
+        }
+    });
+}
 
 
   function tipo_error_sri(clave)
