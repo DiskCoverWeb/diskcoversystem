@@ -8,7 +8,7 @@
 
 <head>
     <style>
-        #TxtFile {
+        #LblPatronBusqueda {
             resize: none;
             background-color: blue;
             color: white;
@@ -256,7 +256,7 @@
             </div>
         </div>
         <div class="col-sm-6">
-            <textarea class="form-control" id="TxtFile" rows="2"></textarea>
+            <textarea class="form-control" id="LblPatronBusqueda" rows="2"></textarea>
         </div>
     </div>
     <div class="row" style="margin-left:16px; margin-right:16px; margin-top:10px">
@@ -322,10 +322,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer" style="background-color: white;">
-                    <button type="button" class="btn btn-success" id="modalBusquedaBtnAceptar">Aceptar</button>
-                </div>
+                </div>            
             </div>
         </div>
     </div>
@@ -422,8 +419,6 @@
                         cancelButtonText: 'NO'
                     }).then((result) => {
                         globalPorCantidad = result.value;
-                        //console.log(result.value ? 'Se seleccionó SI' : 'Se seleccionó NO');
-                        //console.log(globalPorCantidad);
                         ToolbarMenu_ButtonMenuClick(idSel);
                     });
                     break;
@@ -445,7 +440,6 @@
                             $('#clave_supervisor').modal('show');
                         } else {
                             globalConCosteo = false;
-                            //console.log('reporte sin costeo');
                             ToolbarMenu_ButtonMenuClick(idSel);
                         }
                     });
@@ -475,6 +469,7 @@
         $('#CheqIngreso').click(toggleCheqIngreso);
 
         Form_Activate();
+
     });
 
     $('#modalBusquedaBtnAceptar').on('click', function () {
@@ -561,7 +556,6 @@
             ToolbarMenu_ButtonMenuClick(globalIdCase);
         }
         else {
-            //console.log('proceso cancelado' + globalIdCase);
         }
     }
 
@@ -584,7 +578,7 @@
             cancelButtonText: 'NO'
         }).then((result) => {
             if (result.value) {
-                globalPorFecha = true;                
+                globalPorFecha = true;
             } else {
                 $("#MBFechaI").val("01/01/2000");
             }
@@ -621,9 +615,15 @@
             dataType: 'json',
             data: { 'parametros': params },
             success: function (data) {
-                //console.log(data);
                 switch (data["idBtn"]) {
                     case "Facturas":
+                    case "CxC_Clientes":
+                    case "Listar_Por_Meses":
+                    case "Protestado":
+                    case "Listado_Tarjetas":
+                    case "Por_Buses":
+                    case "Estado_Cuenta_Cliente":
+                    case "Retenciones_NC":
                         if (data['num_filas'] > 0) {
                             $("#label2").text("Facturado");
                             $("#label4").text("Cobrado");
@@ -646,22 +646,7 @@
                             $('#myModal_espera').modal('hide');
                         }
                         break;
-                    case "Protestado":
-                    case "Listado_Tarjetas":
-                    case "Por_Buses":
-                    case "Estado_Cuenta_Cliente":
-                    case "Retenciones_NC":
-                        if (data['num_filas'] > 0) {
-                            $('#DGQuery').html(data['tbl']);
-                            $('#DGQuery #datos_t tbody').css('height', '36vh');
-                            $('#alertNoData').hide();
-                            $('#myModal_espera').modal('hide');
-                        } else {
-                            $('#DGQuery').empty();
-                            $('#alertNoData').show();
-                            $('#myModal_espera').modal('hide');
-                        }
-                        break;
+
                     case "Buscar_Malla":
                         $('#myModal_espera').modal('hide');
                         if (data['DCCliente'].length > 0) {
@@ -718,7 +703,6 @@
                 $("#ListCliente option:first").prop("selected", true);
 
                 var valorSeleccionado = $("#ListCliente").val();
-                //console.log("Valor seleccionado:", valorSeleccionado);
             }
         });
     }
@@ -746,7 +730,6 @@
                 $('#DCCliente option:first').prop("selected", true);
 
                 var valorSeleccionado = $('#DCCliente').val();
-                //console.log("Valor seleccionado:", valorSeleccionado);
             }
         });
     });
@@ -769,9 +752,18 @@
                 globalCodigoInv = data["CodigoInv"];
                 globalCodMarca = data["Cod_Marca"];
                 globalDescItem = data["DescItem"];
-                //console.log(globalDescItem);
             }
         });
+    });
+
+    $('#DCCliente').on('dblclick', function() {
+        if ($("#ListCliente").val() == 'Factura') {
+            $('#LblPatronBusqueda').val("P A T R O N   D E   B U S Q U E D A:\n" + $("#ListCliente").val() + " = " + globalFA['TC'] + ": " + globalFA['Serie'] + "-" + globalFA['Factura']);
+        } else {
+            $('#LblPatronBusqueda').val("P A T R O N   D E   B U S Q U E D A:\n" + $("#ListCliente").val() + " = " + $('#DCCliente').val());
+        }
+        $('#modalBusqueda').modal('hide');
+
     });
 
 
@@ -802,8 +794,6 @@
             'Si_No': globalSiNo !== undefined ? globalSiNo : false,
             'CodigoInv': globalCodigoInv !== undefined ? globalCodigoInv : false
         };
-
-        //console.log(globalSiNo);
 
         $('#myModal_espera').modal('show');
         $.ajax({

@@ -206,12 +206,12 @@ class HistorialFacturasC
                 break;
             case "CxC_Clientes":
                 Actualizar_Abonos_Facturas_SP($FA);
-                $res=$this->Listado_Facturas_Por_Meses($parametros,True);
+                $res = $this->Listado_Facturas_Por_Meses($parametros, True);
                 $Opcion = $res['Opcion'];
                 $label_saldo = $res['label_saldo'];
                 break;
             case "Listar_Por_Meses":
-                $res=$this->Listado_Facturas_Por_Meses($parametros,False);
+                $res = $this->Listado_Facturas_Por_Meses($parametros, False);
                 $Opcion = $res['Opcion'];
                 $label_saldo = $res['label_saldo'];
                 break;
@@ -264,7 +264,7 @@ class HistorialFacturasC
     {
         $DCClienteVal = $parametros['DCCliente'];
         $Por_Fecha = $parametros['Por_Fecha'];
-        $TiempoSistema = time();
+        
 
         $MBFechaI = FechaValida($parametros['MBFechaI']);
         $MBFechaF = FechaValida($parametros['MBFechaF']);
@@ -273,7 +273,7 @@ class HistorialFacturasC
 
         $MesIni = date('n', strtotime($parametros['MBFechaI']));
         $MesFin = date('n', strtotime($parametros['MBFechaF']));
-        
+
         $FechaIni = BuscarFecha($parametros['MBFechaI']);
         $FechaFin = BuscarFecha($parametros['MBFechaF']);
 
@@ -292,7 +292,7 @@ class HistorialFacturasC
 
         $Saldo = 0;
         $SaldoAnterior = 0;
-        $VerPEN = False;
+        $VetPEN = False;
         $TPEN = 0;
 
         $Opcion = 11;
@@ -344,7 +344,7 @@ class HistorialFacturasC
         }
         $sSQL .= " WHERE F.Item = '" . $NumEmpresa . "' 
                     AND F.Periodo = '" . $Periodo_Contable . "' 
-                    " . $this->Buscar_x_Patron($parametros,true) . " 
+                    " . $this->Buscar_x_Patron($parametros, true) . " 
                     AND C.Codigo = F.CodigoC";
         Ejecutar_SQL_SP($sSQL);
 
@@ -376,33 +376,31 @@ class HistorialFacturasC
         Eliminar_Nulos_SP("Saldo_Diarios");
 
         //Listado de facturas emitidas
-        $sSQL = "SELECT F.CodigoC, C.Cliente, C.Grupo, F.Fecha, F.T,";
-
+        $sSQL = "SELECT F.CodigoC,C.Cliente,C.Grupo,F.Fecha,F.T,";
         if ($Por_FA) {
-            $sSQL .= "Total_MN, Saldo_MN FROM Facturas AS F, Clientes AS C";
+            $sSQL .= "Total_MN,Saldo_MN ";
+            $sSQL .= "FROM Facturas As F,Clientes As C ";
         } else {
             if ($parametros['OpcPend']) {
-                $sSQL .= "Mes_No, (Total - Total_Desc - Total_Desc2 + Total_IVA) AS Saldo_MN, Mes_No, Ticket";
+                $sSQL .= "Mes_No,(Total-Total_Desc-Total_Desc2+Total_IVA) As Saldo_MN,Mes_No,Ticket ";
             } else {
-                $sSQL .= "Mes_No, (Total - Total_Desc - Total_Desc2 + Total_IVA) AS Total_MN, Mes_No, Ticket";
+                $sSQL .= "Mes_No,(Total-Total_Desc-Total_Desc2+Total_IVA) As Total_MN,Mes_No,Ticket ";
             }
-
-            $sSQL .= " FROM Detalle_Factura AS F, Clientes AS C";
+            $sSQL .= "FROM Detalle_Factura As F,Clientes As C ";
         }
-
         if ($Por_Fecha) {
-            $sSQL .= " WHERE F.Fecha BETWEEN #" . $FechaIni . "# and #" . $FechaFin . "#";
+            $sSQL .= "WHERE F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' ";
         } else {
-            $sSQL .= " WHERE F.Fecha <= #" . $FechaFin . "#";
+            $sSQL .= "WHERE F.Fecha <= '" . $FechaFin . "' ";
         }
+        $sSQL .= "AND F.Item = '" . $NumEmpresa . "' ";
+        $sSQL .= "AND F.Periodo = '" . $Periodo_Contable . "' ";
+        $sSQL .= $this->TipoDeConsulta($parametros, $Opcion, null, null, true);
+        $sSQL .= "AND F.CodigoC = C.Codigo ";
+        $sSQL .= "ORDER BY C.Cliente, F.Fecha ";
 
-        $sSQL .= " AND F.Item = '" . $NumEmpresa . "' 
-          AND F.Periodo = '" . $Periodo_Contable . "' 
-          " . $this->TipoDeConsulta($parametros,$Opcion, null, null, true) . " 
-          AND F.CodigoC = C.Codigo 
-          ORDER BY C.Cliente, F.Fecha";
+        $AdoHistoria = $this->modelo->datos($sSQL);
 
-        $AdoHistoria = $this->modelo->Query($sSQL);
         //Actualizamos valores de los datos consultados
         $K = 0;
         if (count($AdoHistoria) > 0) {
@@ -412,44 +410,50 @@ class HistorialFacturasC
                     $SQLSubTotal = "";
                     $Total = 0;
                     for ($JE = $AnioIni; $JE <= $AnioFin; $JE++) {
+
                         $Total += $TAnios[$JE];
                         $SQLSubTotal .= "P_" . strval($JE) . " = " . $TAnios[$JE] . ", ";
                         $TAnios[$JE] = 0;
+
                     }
                     for ($JE = 1; $JE <= 12; $JE++) {
                         $Total += $TMeses[$JE];
-                        $SQLSubTotal .= MesesLetras(chr($JE)) . " = " . $TMeses[$JE] . ", ";
+                        $SQLSubTotal .= MesesLetras($JE) . " = " . $TMeses[$JE] . ", ";
                         $TMeses[$JE] = 0;
                     }
+
                     $SQLSubTotal .= "PEN = " . $TPEN . " ";
                     $Total += $TPEN;
                     $TPEN = 0;
                     if ($Total != 0) {
                         $sSQL = "UPDATE Saldo_Diarios 
-                                SET $SQLSubTotal 
-                                WHERE Item = '" . $NumEmpresa . "' 
-                                AND CodigoU = '" . $CodigoUsuario . "' 
-                                AND CodigoC = '" . $CodigoCli . "' 
-                                AND TP = 'CXCP' ";
+                                 SET " . $SQLSubTotal . " 
+                                 WHERE Item = '" . $NumEmpresa . "' 
+                                 AND CodigoU = '" . $CodigoUsuario . "' 
+                                 AND CodigoC = '" . $CodigoCli . "' 
+                                 AND TP = 'CXCP'";
                         Ejecutar_SQL_SP($sSQL);
                     }
+
                     $CodigoCli = $historia['CodigoC'];
                 }
                 $K++;
                 $Total = ($parametros['OpcPend']) ? $historia['Saldo_MN'] : $historia['Total_MN'];
                 $Total = round($Total, 2);
                 $Valor_Total += $Total;
+                $timestamp = $historia['Fecha']->getTimestamp();
+
                 //Seteamos a;os y meses de actualizacion
                 if ($Por_FA) {
-                    $MesIni = date('n', strtotime($historia['Fecha']));
-                    $AnioAct = date('Y', strtotime($historia['Fecha']));
+                    $MesIni = date('n', $timestamp);
+                    $AnioAct = date('Y', $timestamp);
                 } else {
                     $MesIni = $historia['Mes_No'];
                     $AnioAct = intval($historia['Ticket']);
                 }
 
                 if ($MesIni == 0)
-                    $MesIni = date('n', strtotime($historia['Fecha']));
+                    $MesIni = date('n', $timestamp);
 
                 //Actualizamos los valores en los campos respectivos
                 if ($Total != 0) {
@@ -476,7 +480,7 @@ class HistorialFacturasC
 
             for ($JE = 1; $JE <= 12; $JE++) {
                 $Total += $TMeses[$JE];
-                $SQLSubTotal .= MesesLetras(chr($JE)) . " = " . $TMeses[$JE] . ", ";
+                $SQLSubTotal .= MesesLetras($JE) . " = " . $TMeses[$JE] . ", ";
                 $TMeses[$JE] = 0;
             }
 
@@ -486,7 +490,7 @@ class HistorialFacturasC
 
             if ($Total != 0) {
                 $sSQL = "UPDATE Saldo_Diarios 
-                         SET $SQLSubTotal 
+                         SET " . $SQLSubTotal . " 
                          WHERE Item = '" . $NumEmpresa . "' 
                          AND CodigoU = '" . $CodigoUsuario . "' 
                          AND CodigoC = '" . $CodigoCli . "'
@@ -516,13 +520,13 @@ class HistorialFacturasC
                         $SQLSubTotal = "";
                         for ($JE = 1; $JE <= 12; $JE++) {
                             $Total += $TMeses[$JE];
-                            $SQLSubTotal .= "CxC_" . substr(MesesLetras(chr($JE)), 0, 3) . " = " . $TMeses[$JE] . ", ";
+                            $SQLSubTotal .= "CxC_" . substr(MesesLetras($JE), 0, 3) . " = " . $TMeses[$JE] . ", ";
                             $TMeses[$JE] = 0;
                         }
                         $SQLSubTotal = substr($SQLSubTotal, 0, -2);
                         if ($Total != 0) {
                             $sSQL = "UPDATE Saldo_Diarios 
-                                     SET $SQLSubTotal
+                                     SET " . $SQLSubTotal . " 
                                      WHERE Item = '" . $NumEmpresa . "'
                                      AND CodigoU = '" . $CodigoUsuario . "'
                                      AND CodigoC = '" . $CodigoCli . "'
@@ -547,13 +551,13 @@ class HistorialFacturasC
                 $Total = 0;
                 for ($JE = 1; $JE <= 12; $JE++) {
                     $Total += $TMeses[$JE];
-                    $SQLSubTotal .= "CxC_" . substr(MesesLetras(chr($JE)), 0, 3) . " = " . $TMeses[$JE] . ", ";
+                    $SQLSubTotal .= "CxC_" . substr(MesesLetras($JE), 0, 3) . " = " . $TMeses[$JE] . ", ";
                     $TMeses[$JE] = 0;
                 }
                 $SQLSubTotal = substr($SQLSubTotal, 0, -2);
                 if ($Total != 0) {
                     $sSQL = "UPDATE Saldo_Diarios 
-                             SET $SQLSubTotal
+                             SET " . $SQLSubTotal . " 
                              WHERE Item = '" . $NumEmpresa . "'
                              AND CodigoU = '" . $CodigoUsuario . "'
                              AND CodigoC = '" . $CodigoCli . "'
@@ -569,15 +573,15 @@ class HistorialFacturasC
             $SQLSubTotal .= "P_" . strval($JE) . " + ";
         }
         for ($JE = 1; $JE <= 12; $JE++) {
-            $SQLSubTotal .= MesesLetras(chr($JE)) . " + ";
+            $SQLSubTotal .= MesesLetras($JE) . " + ";
         }
         for ($JE = 1; $JE <= 12; $JE++) {
-            $SQLSubTotal .= "CxC_" . substr(MesesLetras(chr($JE)), 0, 3) . " + ";
+            $SQLSubTotal .= "CxC_" . substr(MesesLetras($JE), 0, 3) . " + ";
         }
         $SQLSubTotal .= "PEN ";
 
         $sSQL = "UPDATE Saldo_Diarios
-                    SET Total = $SQLSubTotal
+                    SET Total = " . $SQLSubTotal . " 
                     WHERE Item = '" . $NumEmpresa . "'
                     AND CodigoU = '" . $CodigoUsuario . "'
                     AND TP = 'CXCP' ";
@@ -596,35 +600,42 @@ class HistorialFacturasC
             $SQLSubTotal .= "SUM(P_" . strval($JE) . ") As TP_" . strval($JE) . ",";
         }
         for ($JE = 1; $JE <= 12; $JE++) {
-            $SQLSubTotal .= "SUM(" . MesesLetras(chr($JE)) . ") As " . "T" . MesesLetras(chr($JE)) . ",";
+            $SQLSubTotal .= "SUM(" . MesesLetras($JE) . ") As " . "T" . MesesLetras($JE) . ",";
         }
         for ($JE = 1; $JE <= 12; $JE++) {
-            $SQLSubTotal .= "SUM(CxC_" . substr(MesesLetras(chr($JE)), 0, 3) . ") As " . "TCxC_" . substr(MesesLetras(chr($JE)), 0, 3) . ",";
+            $SQLSubTotal .= "SUM(CxC_" . substr(MesesLetras($JE), 0, 3) . ") As " . "TCxC_" . substr(MesesLetras($JE), 0, 3) . ",";
         }
         $SQLSubTotal .= "SUM(PEN) As TPEN ";
 
-        $sSQL = "SELECT TP, $SQLSubTotal
+        $sSQL = "SELECT TP, " . $SQLSubTotal . " 
                     FROM Saldo_Diarios 
                     WHERE Item = '" . $NumEmpresa . "'
                     AND CodigoU = '" . $CodigoUsuario . "'
                     AND TP = 'CXCP'
                     GROUP BY TP ";
 
-        $AdoQuery1 = $this->modelo->db->datos($sSQL);
-        if (count($AdoQuery1) > 0) {
-            if ($AdoQuery1['TPEN'] != 0)
-                $VetPEN = true;
-            for ($JE = $AnioIni; $JE <= $AnioFin; $JE++) {
-                if ($AdoQuery1["TP_" . strval($JE)] != 0)
-                    $VerAnios[$JE] = true;
-            }
-            for ($JE = 1; $JE <= 12; $JE++) {
-                if ($AdoQuery1["T" . MesesLetras(chr($JE))] != 0)
-                    $VerMeses[$JE] = true;
-            }
-            for ($JE = 1; $JE <= 12; $JE++) {
-                if ($AdoQuery1["TCxC_" . substr(MesesLetras(chr($JE)), 0, 3)] != 0)
-                    $CxC_VerMeses[$JE] = true;
+        $AdoQuery1 = $this->modelo->datos($sSQL);
+
+        if ($AdoQuery1) {
+            foreach ($AdoQuery1 as $row) {
+                if ($row['TPEN'] != 0) {
+                    $VetPEN = true;
+                }
+                for ($JE = $AnioIni; $JE <= $AnioFin; $JE++) {
+                    if ($row["TP_" . $JE] != 0) {
+                        $VerAnios[$JE] = true;
+                    }
+                }
+                for ($JE = 1; $JE <= 12; $JE++) {
+                    if ($row["T" . MesesLetras($JE)] != 0) {
+                        $VerMeses[$JE] = true;
+                    }
+                }
+                for ($JE = 1; $JE <= 12; $JE++) {
+                    if ($row["TCxC_" . substr(MesesLetras($JE), 0, 3)] != 0) {
+                        $CxC_VerMeses[$JE] = true;
+                    }
+                }
             }
         }
 
@@ -638,11 +649,11 @@ class HistorialFacturasC
         }
         for ($IE = 1; $IE <= 12; $IE++) {
             if ($VerMeses[$IE])
-                $sSQL .= MesesLetras(chr($IE)) . ",";
+                $sSQL .= MesesLetras($IE) . ",";
         }
         for ($IE = 1; $IE <= 12; $IE++) {
             if ($CxC_VerMeses[$IE])
-                $sSQL .= "CxC_" . substr(MesesLetras(chr($IE)), 0, 3) . ",";
+                $sSQL .= "CxC_" . substr(MesesLetras($IE), 0, 3) . ",";
         }
         $sSQL .= "SD.Total,C.Direccion,C.Grupo,C.Plan_Afiliado As BUS_No,SD.Ln As No_
                     FROM Saldo_Diarios As SD,Clientes As C 
@@ -652,47 +663,39 @@ class HistorialFacturasC
                     AND SD.CodigoC = C.Codigo 
                     ORDER BY C.Grupo,C.Cliente,SD.TC ";
 
-        $DGQuery = $this->modelo->Query($sSQL);
-        $AdoQuery = $DGQuery;        
+        $DGQuery = $this->modelo->datos($sSQL,true, $Por_FA);
+        $AdoQuery = $DGQuery;
 
         $label_saldo = number_format($Valor_Total, 2, '.', ',');
 
-        $Minutos = date('H:i:s');
-        
-        $HistorialFacturasTitle = "RESUMEN HISTORICO DE FACTURAS/NOTAS DE VENTA ";
-        
-        if ($Por_FA) {
-           $HistorialFacturas .= " EMITIDAS ";
-        } else {
-           $HistorialFacturas .= " POR MESES";
-        }
-        
-        $HistorialFacturas .= date('H:i:s', strtotime($Minutos) - strtotime($TiempoSistema));
-        
         return array(
-            'DGQuery' => $DGQuery,
-            'AdoQuery' => $AdoQuery,
-            'num_filas' => count($AdoQuery),
+            'DGQuery' => $DGQuery['DGQuery'],
+            'AdoQuery' => $DGQuery['AdoQuery'],
+            'num_filas' => $DGQuery['num_filas'],
             'Opcion' => $Opcion,
-            'label_saldo' => $label_saldo,
+            'label_saldo' => $label_saldo
         );
-        
+
     }
 
-    function Buscar_x_Patron($parametros, $PorFactura = false, $Opcion_TP = false) {
+    function Buscar_x_Patron($parametros, $PorFactura = false, $Opcion_TP = false)
+    {
         $DCClienteVal = $parametros['DCCliente'];
         $ListCliente = $parametros['ListCliente'];
 
         $SQL3X = "";
         $Patron_Busqueda = $DCClienteVal;
-        if ($Patron_Busqueda == "") $Patron_Busqueda = G_NINGUNO;
-        
+        if ($Patron_Busqueda == "")
+            $Patron_Busqueda = G_NINGUNO;
+
         switch ($ListCliente) {
             case "Factura":
-                if ($PorFactura) $SQL3X .= "AND F.Factura = " . intval($Patron_Busqueda) . " ";
+                if ($PorFactura)
+                    $SQL3X .= "AND F.Factura = " . intval($Patron_Busqueda) . " ";
                 break;
             case "Forma_Pago":
-                if ($PorFactura) $SQL3X .= "AND F.Forma_Pago = '" . $Patron_Busqueda . "' ";
+                if ($PorFactura)
+                    $SQL3X .= "AND F.Forma_Pago = '" . $Patron_Busqueda . "' ";
                 break;
             case "Tipo Documento":
                 if ($PorFactura) {
@@ -728,7 +731,7 @@ class HistorialFacturasC
         }
         return $SQL3X;
     }
-    
+
 
     function Abonos_Facturas($Ret_NC, $parametros)
     {
@@ -849,7 +852,7 @@ class HistorialFacturasC
 
 
 
-    function TipoDeConsulta($parametros, $Opcion, $val = false, $val2 =false, $val3=false)
+    function TipoDeConsulta($parametros, $Opcion, $val = false, $val2 = false, $val3 = false)
     {
         $paramAdd = array(
             'ListCliente' => $parametros['ListCliente'],
@@ -1171,7 +1174,7 @@ class HistorialFacturasC
         $tipoConsulta = $this->TipoDeConsulta($parametros, 0);
         $TipoFactura = $parametros['TipoFactura'];
         $sSQL = $this->modelo->Tipo_Consulta_CxC($Tipo, $tipoConsulta, $FechaIni, $FechaFin, $Actualiza_Buses, $TipoFactura, $MBFechaF);
-        //print_r($sSQL);
+
         $Total = 0;
         $Saldo = 0;
         if (count($sSQL['AdoQuery']) > 0) {
@@ -1529,9 +1532,7 @@ class HistorialFacturasC
                 case "Factura":
                     $FA['TC'] = SinEspaciosIzq($DCClienteVal);
                     $FA['Serie'] = MidStrg($DCClienteVal, 4, 6);
-                    $FA['Factura'] = intval(SinEspaciosDer($DCClienteVal));
-                    //$LblPatronBusqueda_Caption = "P A T R O N   D E   B U S Q U E D A:" . PHP_EOL .
-                    //$ListCliente . " = " . $FA['TC'] . ": " . $FA['Serie'] . "-" . $FA['Factura'];
+                    $FA['Factura'] = intval(SinEspaciosDer($DCClienteVal));                    
                     break;
                 case "Serie":
                     $FA['Serie'] = $DCClienteVal;
@@ -1559,11 +1560,7 @@ class HistorialFacturasC
                     $Producto = trim(substr($DCClienteVal, strlen($CodigoInv) + 1));
                     break;
             }
-        }
-        /*if ($ListCliente !== "Factura") {
-            //$LblPatronBusqueda_Caption = "P A T R O N   D E   B U S Q U E D A:" . PHP_EOL .
-                                         //$ListCliente . " = " . $DCCliente;
-        }*/
+        }        
         return array('Cod_Marca' => $Cod_Marca, 'DescItem' => $DescItem, 'CodigoInv' => $CodigoInv, 'FA' => $FA);
     }
 }

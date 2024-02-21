@@ -661,8 +661,27 @@ class HistorialFacturasM
         return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
     }
 
-    function Query($sSQL){
-        return $this->db->datos($sSQL);
+    function datos($sSQL, $val = false, $Por_FA = false)
+    {
+        if ($val) {
+            $TiempoSistema = time();
+            $Minutos = date('H:i:s');
+            $HistorialFacturas = "RESUMEN HISTORICO DE FACTURAS/NOTAS DE VENTA ";
+            if ($Por_FA) {
+                $HistorialFacturas .= " EMITIDAS ";
+            } else {
+                $HistorialFacturas .= " POR MESES ";
+            }
+            $HistorialFacturas .= date('H:i:s', strtotime($Minutos) - strtotime($TiempoSistema));
+
+            $res = $this->db->datos($sSQL);
+            $num_filas = count($res);
+            $datos = grilla_generica_new($sSQL, 'Saldo_Diarios', '', $HistorialFacturas, false, false, false, 1, 1, 1, 100);
+            return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
+        } else {
+            return $this->db->datos($sSQL);
+        }
+
     }
 
     function Resumen_Ventas_Costos($FechaIni, $FechaFin, $Con_Costeo, $Si_No, $DescItem, $tipoConsulta)
