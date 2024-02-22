@@ -608,6 +608,9 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case '11':
 				echo "<div class='box-body'><img src='../../img/modulo_educativo.png' width='100%' height='500px'></div>";
 				break;
+			case '14':
+				echo "<div class='box-body'><img src='../../img/modulo_gestion_social.png' width='100%'></div>";
+				break;
 			case '28':
 				echo "<div class='box-body'><img src='../../img/modulo_farmacia.png' width='100%'></div>";
 				break;

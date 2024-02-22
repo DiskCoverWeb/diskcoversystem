@@ -191,8 +191,8 @@ class HistorialFacturasC
             case "Retenciones_NC":
                 $res = $this->Abonos_Facturas(true, $parametros);
                 $Opcion = $res['Opcion'];
-                $label_facturado = $res['label_saldo'];
-                $label_abonado = $res['label_saldo'];
+                $label_facturado = $res['label_facturado'];
+                $label_abonado = $res['label_abonado'];
                 $label_saldo = $res['label_saldo'];
                 break;
             case "Por_Buses":
@@ -206,10 +206,14 @@ class HistorialFacturasC
                 break;
             case "CxC_Clientes":
                 Actualizar_Abonos_Facturas_SP($FA);
-                Listado_Facturas_Por_Meses(True);
+                $res = $this->Listado_Facturas_Por_Meses($parametros, True);
+                $Opcion = $res['Opcion'];
+                $label_saldo = $res['label_saldo'];
                 break;
             case "Listar_Por_Meses":
-                Listado_Facturas_Por_Meses(False);
+                $res = $this->Listado_Facturas_Por_Meses($parametros, False);
+                $Opcion = $res['Opcion'];
+                $label_saldo = $res['label_saldo'];
                 break;
             case "Estado_Cuenta_Cliente":
                 if ($ListCliente == "Todos") {
@@ -255,6 +259,479 @@ class HistorialFacturasC
             'Opcion' => $Opcion,
         );
     }
+
+    function Listado_Facturas_Por_Meses($parametros, $Por_FA, $SQL_Server = true)
+    {
+        $DCClienteVal = $parametros['DCCliente'];
+        $Por_Fecha = $parametros['Por_Fecha'];
+
+
+        $MBFechaI = FechaValida($parametros['MBFechaI']);
+        $MBFechaF = FechaValida($parametros['MBFechaF']);
+
+        $Valor_Total = 0;
+
+        $MesIni = date('n', strtotime($parametros['MBFechaI']));
+        $MesFin = date('n', strtotime($parametros['MBFechaF']));
+
+        $FechaIni = BuscarFecha($parametros['MBFechaI']);
+        $FechaFin = BuscarFecha($parametros['MBFechaF']);
+
+        $AnioI = date('Y', strtotime($parametros['MBFechaI']));
+        $AnioF = date('Y', strtotime($parametros['MBFechaF']));
+
+        $AnioFin = date('Y', strtotime($parametros['MBFechaF'])) - 1;
+        $AnioIni = $AnioFin - 6;
+
+        $TAnios = array_fill($AnioIni, $AnioFin - $AnioIni + 1, 0);
+        $VerAnios = array_fill($AnioIni, $AnioFin - $AnioIni + 1, false);
+
+        $NumEmpresa = $_SESSION['INGRESO']['item'];
+        $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
+        $CodigoUsuario = $_SESSION['INGRESO']['CodigoU'];
+
+        $Saldo = 0;
+        $SaldoAnterior = 0;
+        $VetPEN = False;
+        $TPEN = 0;
+
+        $Opcion = 11;
+
+        for ($JE = $AnioIni; $JE <= $AnioFin; $JE++) {
+            $TAnios[$JE] = 0;
+            $VerAnios[$JE] = false;
+        }
+
+        for ($JE = 1; $JE <= 12; $JE++) {
+            $TMeses[$JE] = 0;
+            $VerMeses[$JE] = false;
+            $CxC_VerMeses[$JE] = false;
+            $MesS = MesesLetras($JE);
+            $sSQL = "UPDATE Detalle_Factura 
+                        SET Mes_No = " . $JE . " 
+                        WHERE Item = '" . $NumEmpresa . "' 
+                        AND Periodo = '" . $Periodo_Contable . "' 
+                        AND Mes = '" . $MesS . "' 
+                        AND Mes_No = 0";
+            Ejecutar_SQL_SP($sSQL);
+        }
+
+        $Si_No = false;
+        $NumFacturas = 12;
+
+        //Actualizamos Clientes
+        $sSQL = "UPDATE Clientes SET X = '.' WHERE X <> '.' ";
+        Ejecutar_SQL_SP($sSQL);
+
+        //Patron de busqueda
+        $Patron_Busqueda = $DCClienteVal;
+        if ($Patron_Busqueda == "")
+            $Patron_Busqueda = G_NINGUNO;
+
+        //Insertamos los clientes que estan en procesos
+        $sSQL = "DELETE * 
+                    FROM Saldo_Diarios 
+                    WHERE Item = '" . $NumEmpresa . "' 
+                    AND CodigoU = '" . $CodigoUsuario . "' 
+                    AND TP = 'CXCP'";
+        Ejecutar_SQL_SP($sSQL);
+
+        //Actualizamos patrones de busqueda Facturado
+        if ($SQL_Server) {
+            $sSQL = "UPDATE Clientes SET X = 'A' FROM Clientes AS C, Facturas AS F ";
+        } else {
+            $sSQL = "UPDATE Clientes AS C, Facturas AS F SET C.X = 'A' ";
+        }
+        $sSQL .= " WHERE F.Item = '" . $NumEmpresa . "' 
+                    AND F.Periodo = '" . $Periodo_Contable . "' 
+                    " . $this->Buscar_x_Patron($parametros, true) . " 
+                    AND C.Codigo = F.CodigoC";
+        Ejecutar_SQL_SP($sSQL);
+
+        if ($parametros['CheqPreFa'] != 0) {
+            if ($SQL_Server) {
+                $sSQL = "UPDATE Clientes 
+                         SET X = 'A' 
+                         FROM Clientes AS C, Clientes_Facturacion AS F";
+            } else {
+                $sSQL = "UPDATE Clientes AS C, Clientes_Facturacion AS F 
+                         SET C.X = 'A'";
+            }
+
+            $sSQL .= " WHERE F.Item = '" . $NumEmpresa . "' 
+                      " . $this->Buscar_x_Patron($parametros) . " 
+                      AND C.Codigo = F.Codigo";
+
+            Ejecutar_SQL_SP($sSQL);
+        }
+
+        $sSQL = "INSERT INTO Saldo_Diarios (CodigoC, Item, CodigoU, TP) 
+         SELECT Codigo, '" . $NumEmpresa . "' AS Item, '" . $CodigoUsuario . "' AS CodigoUs, 'CXCP' AS TP 
+         FROM Clientes 
+         WHERE X = 'A' 
+         GROUP BY Codigo";
+
+        Ejecutar_SQL_SP($sSQL);
+
+        Eliminar_Nulos_SP("Saldo_Diarios");
+
+        //Listado de facturas emitidas
+        $sSQL = "SELECT F.CodigoC,C.Cliente,C.Grupo,F.Fecha,F.T,";
+        if ($Por_FA) {
+            $sSQL .= "Total_MN,Saldo_MN ";
+            $sSQL .= "FROM Facturas As F,Clientes As C ";
+        } else {
+            if ($parametros['OpcPend']) {
+                $sSQL .= "Mes_No,(Total-Total_Desc-Total_Desc2+Total_IVA) As Saldo_MN,Mes_No,Ticket ";
+            } else {
+                $sSQL .= "Mes_No,(Total-Total_Desc-Total_Desc2+Total_IVA) As Total_MN,Mes_No,Ticket ";
+            }
+            $sSQL .= "FROM Detalle_Factura As F,Clientes As C ";
+        }
+        if ($Por_Fecha) {
+            $sSQL .= "WHERE F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' ";
+        } else {
+            $sSQL .= "WHERE F.Fecha <= '" . $FechaFin . "' ";
+        }
+        $sSQL .= "AND F.Item = '" . $NumEmpresa . "' ";
+        $sSQL .= "AND F.Periodo = '" . $Periodo_Contable . "' ";
+        $sSQL .= $this->TipoDeConsulta($parametros, $Opcion, null, null, true);
+        $sSQL .= "AND F.CodigoC = C.Codigo ";
+        $sSQL .= "ORDER BY C.Cliente, F.Fecha ";
+
+        $AdoHistoria = $this->modelo->datos($sSQL);
+
+        //Actualizamos valores de los datos consultados
+        $K = 0;
+        if (count($AdoHistoria) > 0) {
+            $CodigoCli = $AdoHistoria[0]['CodigoC'];
+            foreach ($AdoHistoria as $historia) {
+                if ($CodigoCli != $historia['CodigoC']) {
+                    $SQLSubTotal = "";
+                    $Total = 0;
+                    for ($JE = $AnioIni; $JE <= $AnioFin; $JE++) {
+
+                        $Total += $TAnios[$JE];
+                        $SQLSubTotal .= "P_" . strval($JE) . " = " . $TAnios[$JE] . ", ";
+                        $TAnios[$JE] = 0;
+
+                    }
+                    for ($JE = 1; $JE <= 12; $JE++) {
+                        $Total += $TMeses[$JE];
+                        $SQLSubTotal .= MesesLetras($JE) . " = " . $TMeses[$JE] . ", ";
+                        $TMeses[$JE] = 0;
+                    }
+
+                    $SQLSubTotal .= "PEN = " . $TPEN . " ";
+                    $Total += $TPEN;
+                    $TPEN = 0;
+                    if ($Total != 0) {
+                        $sSQL = "UPDATE Saldo_Diarios 
+                                 SET " . $SQLSubTotal . " 
+                                 WHERE Item = '" . $NumEmpresa . "' 
+                                 AND CodigoU = '" . $CodigoUsuario . "' 
+                                 AND CodigoC = '" . $CodigoCli . "' 
+                                 AND TP = 'CXCP'";
+                        Ejecutar_SQL_SP($sSQL);
+                    }
+
+                    $CodigoCli = $historia['CodigoC'];
+                }
+                $K++;
+                $Total = ($parametros['OpcPend']) ? $historia['Saldo_MN'] : $historia['Total_MN'];
+                $Total = round($Total, 2);
+                $Valor_Total += $Total;
+                $timestamp = $historia['Fecha']->getTimestamp();
+
+                //Seteamos a;os y meses de actualizacion
+                if ($Por_FA) {
+                    $MesIni = date('n', $timestamp);
+                    $AnioAct = date('Y', $timestamp);
+                } else {
+                    $MesIni = $historia['Mes_No'];
+                    $AnioAct = intval($historia['Ticket']);
+                }
+
+                if ($MesIni == 0)
+                    $MesIni = date('n', $timestamp);
+
+                //Actualizamos los valores en los campos respectivos
+                if ($Total != 0) {
+                    if ($AnioIni <= $AnioAct && $AnioAct <= $AnioFin) {
+                        $TAnios[$AnioAct] += $Total;
+                        $VerAnios[$AnioAct] = true;
+                    } elseif ($AnioAct < $AnioIni) {
+                        $TPEN += $Total;
+                        $VerPEN = true;
+                    } else {
+                        $TMeses[$MesIni] += $Total;
+                        $VerMeses[$MesIni] = true;
+                    }
+                }
+            }
+            $SQLSubTotal = "";
+            $Total = 0;
+
+            for ($JE = $AnioIni; $JE <= $AnioFin; $JE++) {
+                $Total += $TAnios[$JE];
+                $SQLSubTotal .= "P_" . strval($JE) . " = " . $TAnios[$JE] . ", ";
+                $TAnios[$JE] = 0;
+            }
+
+            for ($JE = 1; $JE <= 12; $JE++) {
+                $Total += $TMeses[$JE];
+                $SQLSubTotal .= MesesLetras($JE) . " = " . $TMeses[$JE] . ", ";
+                $TMeses[$JE] = 0;
+            }
+
+            $SQLSubTotal .= "PEN = " . $TPEN . " ";
+            $Total += $TPEN;
+            $TPEN = 0;
+
+            if ($Total != 0) {
+                $sSQL = "UPDATE Saldo_Diarios 
+                         SET " . $SQLSubTotal . " 
+                         WHERE Item = '" . $NumEmpresa . "' 
+                         AND CodigoU = '" . $CodigoUsuario . "' 
+                         AND CodigoC = '" . $CodigoCli . "'
+                         AND TP = 'CXCP' ";
+                Ejecutar_SQL_SP($sSQL);
+            }
+        }
+        //Listado CxC PreFacturable
+        if ($parametros['CheqPreFa'] != 0) {
+            $K = 0;
+            $sSQL = "SELECT C.Cliente,F.Codigo,C.Grupo,F.Fecha,SUM(F.Valor-F.Descuento) As Total_MN
+                    FROM Clientes_Facturacion As F,Clientes As C
+                    WHERE F.Item = '" . $NumEmpresa . "'
+                    AND F.Fecha <= '" . $FechaFin . "'
+                    " . $this->Buscar_x_Patron($parametros, true) . "
+                    AND F.Codigo = C.Codigo
+                    GROUP BY C.Cliente,F.Codigo,C.Grupo,F.Fecha
+                    ORDER BY C.Cliente,F.Codigo,C.Grupo,F.Fecha ";
+
+            $AdoHistoria = $this->modelo->db->datos($sSQL);
+            //Actualizamos valores de los datos consultados Pre-Factura
+            if (count($AdoHistoria) > 0) {
+                $CodigoCli = $AdoHistoria[0]['CodigoC'];
+                foreach ($AdoHistoria as $historia) {
+                    if ($CodigoCli != $historia['Codigo']) {
+                        $Total = 0;
+                        $SQLSubTotal = "";
+                        for ($JE = 1; $JE <= 12; $JE++) {
+                            $Total += $TMeses[$JE];
+                            $SQLSubTotal .= "CxC_" . substr(MesesLetras($JE), 0, 3) . " = " . $TMeses[$JE] . ", ";
+                            $TMeses[$JE] = 0;
+                        }
+                        $SQLSubTotal = substr($SQLSubTotal, 0, -2);
+                        if ($Total != 0) {
+                            $sSQL = "UPDATE Saldo_Diarios 
+                                     SET " . $SQLSubTotal . " 
+                                     WHERE Item = '" . $NumEmpresa . "'
+                                     AND CodigoU = '" . $CodigoUsuario . "'
+                                     AND CodigoC = '" . $CodigoCli . "'
+                                     AND TP = 'CXCP' ";
+                            Ejecutar_SQL_SP($sSQL);
+                        }
+                        $CodigoCli = $historia['Codigo'];
+                    }
+                    $K++;
+                    $CodigoCli = $historia['Codigo'];
+                    $Total = round($historia['Total_MN'], 2);
+                    $Valor_Total += $Total;
+                    //Seteamos anios y meses de actualizacion
+                    $MesIni = date('n', strtotime($historia['Fecha']));
+                    $AnioAct = date('Y', strtotime($historia['Fecha']));
+                    //Actualizamos los valores en los campos respectivos
+                    if ($Total != 0 && $AnioAct >= $AnioIni) {
+                        $TMeses[$MesIni] += $Total;
+                    }
+                }
+                $SQLSubTotal = "";
+                $Total = 0;
+                for ($JE = 1; $JE <= 12; $JE++) {
+                    $Total += $TMeses[$JE];
+                    $SQLSubTotal .= "CxC_" . substr(MesesLetras($JE), 0, 3) . " = " . $TMeses[$JE] . ", ";
+                    $TMeses[$JE] = 0;
+                }
+                $SQLSubTotal = substr($SQLSubTotal, 0, -2);
+                if ($Total != 0) {
+                    $sSQL = "UPDATE Saldo_Diarios 
+                             SET " . $SQLSubTotal . " 
+                             WHERE Item = '" . $NumEmpresa . "'
+                             AND CodigoU = '" . $CodigoUsuario . "'
+                             AND CodigoC = '" . $CodigoCli . "'
+                             AND TP = 'CXCP' ";
+                    Ejecutar_SQL_SP($sSQL);
+                }
+            }
+        }
+
+        // Totalizamos los meses y años pendientes
+        $SQLSubTotal = "";
+        for ($JE = $AnioIni; $JE <= $AnioFin; $JE++) {
+            $SQLSubTotal .= "P_" . strval($JE) . " + ";
+        }
+        for ($JE = 1; $JE <= 12; $JE++) {
+            $SQLSubTotal .= MesesLetras($JE) . " + ";
+        }
+        for ($JE = 1; $JE <= 12; $JE++) {
+            $SQLSubTotal .= "CxC_" . substr(MesesLetras($JE), 0, 3) . " + ";
+        }
+        $SQLSubTotal .= "PEN ";
+
+        $sSQL = "UPDATE Saldo_Diarios
+                    SET Total = " . $SQLSubTotal . " 
+                    WHERE Item = '" . $NumEmpresa . "'
+                    AND CodigoU = '" . $CodigoUsuario . "'
+                    AND TP = 'CXCP' ";
+        Ejecutar_SQL_SP($sSQL);
+
+        $sSQL = "DELETE * 
+                    FROM Saldo_Diarios 
+                    WHERE Item = '" . $NumEmpresa . "' 
+                    AND CodigoU = '" . $CodigoUsuario . "' 
+                    AND Total = 0 
+                    AND TP = 'CXCP' ";
+        Ejecutar_SQL_SP($sSQL);
+
+        $SQLSubTotal = "";
+        for ($JE = $AnioIni; $JE <= $AnioFin; $JE++) {
+            $SQLSubTotal .= "SUM(P_" . strval($JE) . ") As TP_" . strval($JE) . ",";
+        }
+        for ($JE = 1; $JE <= 12; $JE++) {
+            $SQLSubTotal .= "SUM(" . MesesLetras($JE) . ") As " . "T" . MesesLetras($JE) . ",";
+        }
+        for ($JE = 1; $JE <= 12; $JE++) {
+            $SQLSubTotal .= "SUM(CxC_" . substr(MesesLetras($JE), 0, 3) . ") As " . "TCxC_" . substr(MesesLetras($JE), 0, 3) . ",";
+        }
+        $SQLSubTotal .= "SUM(PEN) As TPEN ";
+
+        $sSQL = "SELECT TP, " . $SQLSubTotal . " 
+                    FROM Saldo_Diarios 
+                    WHERE Item = '" . $NumEmpresa . "'
+                    AND CodigoU = '" . $CodigoUsuario . "'
+                    AND TP = 'CXCP'
+                    GROUP BY TP ";
+
+        $AdoQuery1 = $this->modelo->datos($sSQL);
+
+        if ($AdoQuery1) {
+            foreach ($AdoQuery1 as $row) {
+                if ($row['TPEN'] != 0) {
+                    $VetPEN = true;
+                }
+                for ($JE = $AnioIni; $JE <= $AnioFin; $JE++) {
+                    if ($row["TP_" . $JE] != 0) {
+                        $VerAnios[$JE] = true;
+                    }
+                }
+                for ($JE = 1; $JE <= 12; $JE++) {
+                    if ($row["T" . MesesLetras($JE)] != 0) {
+                        $VerMeses[$JE] = true;
+                    }
+                }
+                for ($JE = 1; $JE <= 12; $JE++) {
+                    if ($row["TCxC_" . substr(MesesLetras($JE), 0, 3)] != 0) {
+                        $CxC_VerMeses[$JE] = true;
+                    }
+                }
+            }
+        }
+
+        // Listado de Rubros de pensiones por meses
+        $sSQL = "SELECT C.Cliente,";
+        if ($VetPEN)
+            $sSQL .= "PEN,";
+        for ($IE = $AnioIni; $IE <= $AnioFin; $IE++) {
+            if ($VerAnios[$IE])
+                $sSQL .= "P_" . strval($IE) . ",";
+        }
+        for ($IE = 1; $IE <= 12; $IE++) {
+            if ($VerMeses[$IE])
+                $sSQL .= MesesLetras($IE) . ",";
+        }
+        for ($IE = 1; $IE <= 12; $IE++) {
+            if ($CxC_VerMeses[$IE])
+                $sSQL .= "CxC_" . substr(MesesLetras($IE), 0, 3) . ",";
+        }
+        $sSQL .= "SD.Total,C.Direccion,C.Grupo,C.Plan_Afiliado As BUS_No,SD.Ln As No_
+                    FROM Saldo_Diarios As SD,Clientes As C 
+                    WHERE SD.Item = '" . $NumEmpresa . "' 
+                    AND SD.CodigoU = '" . $CodigoUsuario . "' 
+                    AND SD.TP = 'CXCP' 
+                    AND SD.CodigoC = C.Codigo 
+                    ORDER BY C.Grupo,C.Cliente,SD.TC ";
+
+        $DGQuery = $this->modelo->datos($sSQL, true, $Por_FA);
+        $AdoQuery = $DGQuery;
+
+        $label_saldo = number_format($Valor_Total, 2, '.', ',');
+
+        return array(
+            'DGQuery' => $DGQuery['DGQuery'],
+            'AdoQuery' => $DGQuery['AdoQuery'],
+            'num_filas' => $DGQuery['num_filas'],
+            'Opcion' => $Opcion,
+            'label_saldo' => $label_saldo
+        );
+
+    }
+
+    function Buscar_x_Patron($parametros, $PorFactura = false, $Opcion_TP = false)
+    {
+        $DCClienteVal = $parametros['DCCliente'];
+        $ListCliente = $parametros['ListCliente'];
+
+        $SQL3X = "";
+        $Patron_Busqueda = $DCClienteVal;
+        if ($Patron_Busqueda == "")
+            $Patron_Busqueda = G_NINGUNO;
+
+        switch ($ListCliente) {
+            case "Factura":
+                if ($PorFactura)
+                    $SQL3X .= "AND F.Factura = " . intval($Patron_Busqueda) . " ";
+                break;
+            case "Forma_Pago":
+                if ($PorFactura)
+                    $SQL3X .= "AND F.Forma_Pago = '" . $Patron_Busqueda . "' ";
+                break;
+            case "Tipo Documento":
+                if ($PorFactura) {
+                    if ($Opcion_TP) {
+                        $SQL3X .= "AND F.TP = '" . $Patron_Busqueda . "' ";
+                    } else {
+                        $SQL3X .= "AND F.TC = '" . $Patron_Busqueda . "' ";
+                    }
+                    $TipoFactura = $Patron_Busqueda;
+                }
+                break;
+            case "Codigo":
+                $SQL3X .= "AND C.Codigo = '" . $Patron_Busqueda . "' ";
+                break;
+            case "CI_RUC":
+                $SQL3X .= "AND C.CI_RUC = '" . $Patron_Busqueda . "' ";
+                break;
+            case "Cliente":
+                $SQL3X .= "AND UPPER(SUBSTRING(C.Cliente, 1, " . strlen($Patron_Busqueda) . ")) = '" . $Patron_Busqueda . "' ";
+                break;
+            case "Ciudad":
+                $SQL3X .= "AND C.Ciudad = '" . $Patron_Busqueda . "' ";
+                break;
+            case "Grupo":
+                $SQL3X .= "AND C.Grupo = '" . $Patron_Busqueda . "' ";
+                break;
+            case "Plan_Afiliado":
+                $SQL3X .= "AND C.Plan_Afiliado = '" . $Patron_Busqueda . "' ";
+                break;
+            default:
+                $SQL3X .= "AND C.Codigo <> ' ' ";
+                break;
+        }
+        return $SQL3X;
+    }
+
 
     function Abonos_Facturas($Ret_NC, $parametros)
     {
@@ -375,7 +852,7 @@ class HistorialFacturasC
 
 
 
-    function TipoDeConsulta($parametros, $Opcion, $val = false)
+    function TipoDeConsulta($parametros, $Opcion, $val = false, $val2 = false, $val3 = false)
     {
         $paramAdd = array(
             'ListCliente' => $parametros['ListCliente'],
@@ -392,7 +869,7 @@ class HistorialFacturasC
             'Opcion' => $Opcion,
         );
 
-        return $this->Tipo_De_Consulta($paramAdd, $val);
+        return $this->Tipo_De_Consulta($paramAdd, $val, $val2, $val3);
     }
 
     function Form_Activate()
@@ -503,17 +980,28 @@ class HistorialFacturasC
         switch ($idBtnMenu) {
             case "Resumen_Prod":
                 $res = $this->Resumen_Productos($parametros, $FechaIni, $FechaFin);
-                // $datos = $res['DGQuery'];
+                $label_facturado = $res['label_facturado'];
+                $label_abonado = $res['label_abonado'];
+                $label_saldo = $res['label_saldo'];
                 $Opcion = $res['Opcion'];
                 break;
             case "Resumen_Prod_Meses":
+                $Opcion = 16;
                 $PorCantidad = $parametros['PorCantidad'];
                 $res = $this->modelo->Resumen_Prod_Meses($FechaIni, $FechaFin, $PorCantidad, $MBFechaF);
-                $Opcion = 16;
+                $Total = 0;
+                $Abono = 0;
+                if (count($res['AdoQuery']) > 0) {
+                    foreach ($res['AdoQuery'] as $fila) {
+                        $Total += $fila["Total"];
+                    }
+                }
+                $label_facturado = number_format($Total, 2, ',', '.');
+                $label_abonado = number_format($Abono, 2, ',', '.');
+                $label_saldo = number_format($Total - $Abono, 2, ',', '.');
                 break;
             case "ResumenVentCost":
                 $res = $this->Resumen_Ventas_Costos($FechaIni, $FechaFin, $parametros);
-                //  $datos = $res['DGQuery'];
                 $Opcion = $res['Opcion'];
                 break;
             case "Resumen_Ventas_Vendedor":
@@ -523,12 +1011,16 @@ class HistorialFacturasC
                 break;
             case "Ventas_x_Cli":
                 $res = $this->Ventas_Cliente($parametros, $FechaIni, $FechaFin);
-                //  $datos = $res['DGQuery'];
+                $label_facturado = $res['label_facturado'];
+                $label_abonado = $res['label_abonado'];
+                $label_saldo = $res['label_saldo'];
                 $Opcion = $res['Opcion'];
                 break;
             case "Ventas_Cli_x_Mes":
                 $res = $this->Ventas_Clientes_Por_Meses($FechaIni, $FechaFin, $parametros['FA'], $MBFechaF);
-                //  $datos = $res['DGQuery'];
+                $label_facturado = $res['label_facturado'];
+                $label_abonado = $res['label_abonado'];
+                $label_saldo = $res['label_saldo'];
                 $Opcion = $res['Opcion'];
                 break;
             case "VentasxProductos":
@@ -551,7 +1043,9 @@ class HistorialFacturasC
                 break;
             case "SMAbonos_Anticipados":
                 $res = $this->SMAbonos_Anticipados($FechaIni, $FechaFin, $parametros);
-                //  $datos = $res['DGQuery'];
+                $label_facturado = $res['label_facturado'];
+                $label_abonado = $res['label_abonado'];
+                $label_saldo = $res['label_saldo'];
                 $Opcion = $res['Opcion'];
                 break;
             case "Abonos_Ant":
@@ -570,7 +1064,9 @@ class HistorialFacturasC
                 break;
             case "Contra_Cta":
                 $res = $this->Contra_Cta_Abonos($parametros, $FechaIni, $FechaFin);
-                // $datos = $res['DGQuery'];
+                $label_facturado = $res['label_facturado'];
+                $label_abonado = $res['label_abonado'];
+                $label_saldo = $res['label_saldo'];
                 $Opcion = $res['Opcion'];
                 break;
             case "Por_Clientes":
@@ -630,8 +1126,8 @@ class HistorialFacturasC
                 $res = $this->modelo->Tipo_Pago_Cliente();
                 break;
             case "Bajar_Excel":
-                //Exportar_AdoDB_Excel($AdoQuery);
-                break;
+                return $this->Bajar_Excel($parametros['AdoQuery']);
+                
             case "Reporte_Ventas":
                 $res = $this->modelo->Ventas_x_Excel($FechaIni, $FechaFin);
                 break;
@@ -663,6 +1159,17 @@ class HistorialFacturasC
         );
     }
 
+    function Bajar_Excel($AdoQuery)
+    {
+        $path = strtoupper(dirname(__DIR__, 3) . "/TEMP/HISTORICO/");
+        $filename = 'Excel_' . date('Ymd_His') . '.xlsx';
+        $filePath = $path . $filename;
+        Exportar_AdoDB_Excel($AdoQuery, $filePath, "DiskCover System");
+        return array('response' => 1, 'nombre' => $filename, 'mensaje' => "SE GENERO EL SIGUIENTE ARCHIVO: \n" . $filename);
+    }
+
+
+
     function Tipo_Consulta_CxC($Tipo, $FechaIni, $FechaFin, $parametros)
     {
         $Actualiza_Buses = Leer_Campo_Empresa("Actualizar_Buses");
@@ -678,7 +1185,7 @@ class HistorialFacturasC
         $tipoConsulta = $this->TipoDeConsulta($parametros, 0);
         $TipoFactura = $parametros['TipoFactura'];
         $sSQL = $this->modelo->Tipo_Consulta_CxC($Tipo, $tipoConsulta, $FechaIni, $FechaFin, $Actualiza_Buses, $TipoFactura, $MBFechaF);
-        //print_r($sSQL);
+
         $Total = 0;
         $Saldo = 0;
         if (count($sSQL['AdoQuery']) > 0) {
@@ -857,9 +1364,10 @@ class HistorialFacturasC
             'DGQuery' => $sSQL['DGQuery'],
             'AdoQuery' => $sSQL['AdoQuery'],
             'num_filas' => $sSQL['num_filas'],
-            'Total' => $Total,
-            'Abono' => $Abono,
-            'Opcion' => $Opcion
+            'Opcion' => $Opcion,
+            'label_facturado' => $label_facturado,
+            'label_abonado' => $label_abonado,
+            'label_saldo' => $label_saldo,
         );
     }
 
@@ -1037,8 +1545,6 @@ class HistorialFacturasC
                     $FA['TC'] = SinEspaciosIzq($DCClienteVal);
                     $FA['Serie'] = MidStrg($DCClienteVal, 4, 6);
                     $FA['Factura'] = intval(SinEspaciosDer($DCClienteVal));
-                    //$LblPatronBusqueda_Caption = "P A T R O N   D E   B U S Q U E D A:" . PHP_EOL .
-                    //$ListCliente . " = " . $FA['TC'] . ": " . $FA['Serie'] . "-" . $FA['Factura'];
                     break;
                 case "Serie":
                     $FA['Serie'] = $DCClienteVal;
@@ -1067,10 +1573,6 @@ class HistorialFacturasC
                     break;
             }
         }
-        /*if ($ListCliente !== "Factura") {
-            //$LblPatronBusqueda_Caption = "P A T R O N   D E   B U S Q U E D A:" . PHP_EOL .
-                                         //$ListCliente . " = " . $DCCliente;
-        }*/
         return array('Cod_Marca' => $Cod_Marca, 'DescItem' => $DescItem, 'CodigoInv' => $CodigoInv, 'FA' => $FA);
     }
 }
