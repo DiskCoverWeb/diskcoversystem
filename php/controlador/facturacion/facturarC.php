@@ -1102,7 +1102,7 @@ class facturarC
 
       // 'Autorizamos la factura y/o Guia de Remision
       if (strlen($FA['Autorizacion']) == 13) {
-         $respuesta = $this->sri->SRI_Crear_Clave_Acceso_Facturas($FA);
+         $respuesta = '';//$this->sri->SRI_Crear_Clave_Acceso_Facturas($FA);
 
       }
 
@@ -1129,16 +1129,20 @@ class facturarC
 
       $Grafico_PV = Leer_Campo_Empresa("Grafico_PV");
       $imp = '';
+      $preguntaMultiple = 'multiple';
       if ($FA['TC'] <> "OP") {
          // 'MsgBox FA.Autorizacion & vbCrLf & FA.Autorizacion_GR
          if (strlen($FA['Autorizacion']) >= 13) {
             if ($Grafico_PV) {
                $info = Imprimir_Punto_Venta_Grafico_datos($FA);
+               $info['CLAVE'] = '1';
                $this->pdf->Imprimir_Punto_Venta_Grafico($info);
                $imp = $FA['Serie'] . '-' . generaCeros($FA['Factura'], 7);
             } else {
                $info = Imprimir_Punto_Venta_datos($FA);
+               $info['CLAVE'] = '1';
                $this->pdf->Imprimir_Punto_Venta($info);
+               $imp = $FA['Serie'] . '-' . generaCeros($FA['Factura'], 7);
             }
          } else {
             //Se va a retornar esta variable para manejar en la vista si se imprime multiple o no.

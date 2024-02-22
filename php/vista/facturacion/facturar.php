@@ -796,10 +796,12 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 				if (data.AU.respuesta == 1) {
 					var url = '../../TEMP/' + data.pdf + '.pdf';
 					window.open(url, '_blank');
-					Swal.fire('Factura Autorizada', '', 'success');
+					Swal.fire('Factura Creada', 'Para autorizarla por favor ir a Reportes > Lista de Facturas', 'success');
 					Eliminar_linea('', '');
 				} else if (data.AU.respuesta == 3 || data.multiple == 'multiple') {
-					Swal.fire('Factura Autorizada', '', 'success');
+					Swal.fire('Factura Creada', 'Para autorizarla por favor ir a Reportes > Lista de Facturas', 'success');
+					var url = '../../TEMP/' + data.pdf + '.pdf';
+					window.open(url, '_blank');
 					Eliminar_linea('', '');
 				} else {
 					Swal.fire({
@@ -1307,6 +1309,12 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 
 </script>
 
+<style>
+	body{
+		padding-right: 0px !important;
+	}
+</style>
+
 <div class="row">
 	<div class="col-lg-7 col-sm-10 col-md-6 col-xs-12">
 		<div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
@@ -1457,7 +1465,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 					<b class="col-sm-4 control-label" style="padding: 0px">Cuenta x Cobrar</b>
 					<div class="col-sm-8" style="padding: 0px">
 						<select class="form-control input-xs" id="DCLineas" name="DCLineas"
-							onchange="DCLinea_LostFocus()">
+							onblur="DCLinea_LostFocus()">
 							<option value="">Seleccione</option>
 						</select>
 
