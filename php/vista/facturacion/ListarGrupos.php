@@ -38,7 +38,7 @@
 
     $(document).ready(function () {
         //Form Activate 
-        ActualizarDatosRepresentantes(); 
+        ActualizarDatosRepresentantes();
         DCGrupos();
         DCTipoPagoo();
         DCProductos();
@@ -228,6 +228,10 @@
 
         $('#btnExcel').click(function () {
             Excel();
+        });
+
+        $('#btnGenerarEliminarRubros').click(function () {
+            $('#FAsignaFact').modal('show');
         });
     });
     //Definicion de metodos
@@ -1409,6 +1413,25 @@
     </div>
 </div>
 
+<!-- Estilo Modales -->
+<style>
+    .centrar {
+        text-align: center;
+    }
+
+    .label-colores {
+        background-color: black;
+        color: yellow;
+        width: 100%;
+    }
+
+    .especiado {
+        height: 30vh;
+        max-height: 30vh;
+        overflow-y: auto;
+    }
+</style>
+
 <!-- Modal FAsignaFact -->
 <div class="modal fade" tabindex="-1" role="dialog" id="FAsignaFact">
     <div class="modal-dialog" role="document">
@@ -1422,15 +1445,86 @@
                 <div>
                     <div class="row">
                         <div class="col-sm-10">
+                            <div class="row">
+                                <div class="col-sm-10 centrar">
+                                    <label for="" id="LblCliente" class="label-colores">
+                                        CUENTA DE ASIGNACION
+                                    </label>
+                                </div>
+                                <div class="col-sm-2 centrar" style="padding: 0; margin: 0;">
+                                    <label for="" id="LblCodigo" class="label-colores">
+                                        XXXXXXXXXX
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <div class="row">
+                                        <label for="" id="Label1" style="margin-left: 1vw;">
+                                            Label1
+                                        </label>
+                                    </div>
+                                    <div class="row">
+                                        <div id="LstMeses" class="espaciado">
 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-10">
+                                    <div class="row">
+                                        <label for="" style="margin-left: 1vw;">
+                                            Productos
+                                        </label>
+                                    </div>
+                                    <div id="DCInv" class="espaciado">
+
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                        <div class="col-sm-2">
+                            <div class="row centrar">
+                                <button class="btn btn-default" data-toggle="tooltip" data-placement="left"
+                                    title="Insertar" id="Command1" onclick="">
+                                    <img src="../../img/png/insertar.png">
+                                </button>
+                                <button class="btn btn-default" data-toggle="tooltip" data-placement="left"
+                                    title="Modificar" id="Command3" onclick="">
+                                    <img src="../../img/png/modificar.png">
+                                </button>
+                                <button class="btn btn-default" data-dismiss="modal" data-toggle="tooltip"
+                                    data-placement="left" title="Cancelar" id="Command2" onclick="">
+                                    <img src="../../img/png/close.png">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <form action="" class="form-inline">
+                            <div class="form-group">
+                                <label for="TxtDia">Día</label>
+                                <input type="number" name="TxtDia" id="TxtDia" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="TxtArea">VALOR A FACTURAR</label>
+                                <input type="text" name="TxtArea" id="TxtArea" placeholder="0.00" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="TxtDesc">DESCUENTO</label>
+                                <input type="text" name="TxtDesc" id="TxtDesc" placeholder="0.00" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="TxtDesc2">DESCUENTO 2</label>
+                                <input type="text" name="TxtDesc2" id="TxtDesc2" placeholder="0.00" class="form-control">
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <!--<div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
+            </div>-->
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
