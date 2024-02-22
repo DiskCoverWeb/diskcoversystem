@@ -482,8 +482,6 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         $datos = getInfoIPS();
         $_SESSION['INGRESO']['IP_Local'] = $datos['local_net_address'];
         $_SESSION['INGRESO']['HOST_NAME'] = $datos['host_name'];
-        $_SESSION['INGRESO']['modulo_'] = "02";
-        control_procesos(G_NORMAL, "Ingreso al Sistema WEB");
 
         //datos de empresa seleccionada
         $empresa = getEmpresasDE($_SESSION['INGRESO']['item'], $_SESSION['INGRESO']['noempr']);
@@ -526,6 +524,9 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         $_SESSION['INGRESO']['Email'] = $empresa[0]['Email'];
         $_SESSION['INGRESO']['RUC'] = $empresa[0]['RUC'];
         $_SESSION['INGRESO']['Gerente'] = $empresa[0]['Gerente'];
+
+        $_SESSION['INGRESO']['modulo_'] = "33";
+        control_procesos(G_NORMAL, "Ingreso al Sistema WEB");
         
         $_SESSION['INGRESO']['Det_Comp'] = $empresa[0]['Det_Comp'];
         $_SESSION['INGRESO']['Signo_Dec'] = $empresa[0]['Signo_Dec'];
