@@ -117,7 +117,7 @@ class login_controller
 							break;
 						}
 					}
-					$datos1[] = array('entidad' => $value['ID_Empresa'], 'Nombre' => $value['Empresa'], 'Razon_Social' => $value['Razon_Social'], 'Item' => $value['Item'], 'Logo' => $url);
+					$datos1[] = array('entidad' => $value['ID_Empresa'], 'Nombre' => $value['Empresa'], 'Razon_Social' => $value['Razon_Social'], 'Item' => $value['Item'], 'Logo' => $url,'ci'=>$value['RUC_CI_NIC']);
 
 				}
 			}

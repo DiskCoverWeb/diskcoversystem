@@ -41,10 +41,12 @@ class cambioeM
 		}
 		if($query)
 		{
-			$sql.=" and Empresa like '%".$query."%' ";
+			$sql.=" AND (RUC_CI_NIC LIKE '%".$query."%' OR Empresa LIKE '%".$query."%') ";
+			// $sql.=" and CI_RUC+ +Empresa like '%".$query."%' ";
 		}
 
 		$sql.='ORDER BY Empresa;';		
+		// print_r($sql);die();
 		return $this->db->datos($sql,'MYSQL');
 	}
 

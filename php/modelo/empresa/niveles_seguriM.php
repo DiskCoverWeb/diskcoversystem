@@ -119,7 +119,10 @@ class niveles_seguriM
 	}
 	function usuarios($entidad,$query)
 	{
-		$sql = "SELECT  ID,CI_NIC,Nombre_Usuario,Usuario,Clave,Email FROM acceso_usuarios WHERE SUBSTRING(CI_NIC,1,6)  <> 'ACCESO' AND  Nombre_Usuario LIKE '%".$query."%' ";
+		$sql = "SELECT  ID,CI_NIC,Nombre_Usuario,Usuario,Clave,Email 
+		FROM acceso_usuarios 
+		WHERE SUBSTRING(CI_NIC,1,6)  <> 'ACCESO' 
+		AND  (CI_NIC LIKE '%".$query."%' OR Nombre_Usuario LIKE '%".$query."%' )";
 		if($entidad)
 		{
 			$sql.="AND ID_Empresa='".$entidad."'";
@@ -129,7 +132,7 @@ class niveles_seguriM
 		 $resp = $this->db->datos($sql,'MY SQL');
 		foreach ($resp as $key => $value) {
 		
-			$datos[]=['id'=>$value['CI_NIC'],'text'=>$value['Nombre_Usuario'],'CI'=>$value['CI_NIC'],'usuario'=>$value['Usuario'],'clave'=>$value['Clave'],$value['Email']];					
+			$datos[]=array('id'=>$value['CI_NIC'],'text'=>$value['Nombre_Usuario'],'CI'=>$value['CI_NIC'],'usuario'=>$value['Usuario'],'clave'=>$value['Clave'],$value['Email']);					
 		 }
 
 	      return $datos;

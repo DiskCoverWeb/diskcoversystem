@@ -83,7 +83,9 @@
 				// Añadir un timestamp o un identificador único a la URL de la imagen para evitar la caché
 				var uniqueImgSrc = item.Logo + '?v=' + new Date().getTime();
 
-				tr += '<tr><td><img style="width:100%" src="' + uniqueImgSrc + '"></td><td><button class="btn btn-block btn-default" onclick="seleccionar_empresa(\'' + item.Nombre + '\',\'' + item.Razon_Social + '\',\'' + uniqueImgSrc + '\',\'' + item.entidad + '\',\'' + item.Item + '\')">' + item.Razon_Social + '<br>' + item.Nombre + '</button></td></tr>';
+				tr += '<tr><td><img style="height: 73px;width: 190px;" src="' + uniqueImgSrc + '"></td><td><button class="btn btn-block btn-default" onclick="seleccionar_empresa(\'' + item.Nombre + '\',\'' + item.Razon_Social + '\',\'' + uniqueImgSrc + '\',\'' + item.entidad + '\',\'' + item.Item + '\')">' + item.Razon_Social + '<br>' + item.Nombre + '<br>' + item.ci + '</button></td></tr>';
+
+        	 	// console.log(item)
 			})
 
         	 	// console.log(item)
