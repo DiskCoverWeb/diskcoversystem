@@ -858,7 +858,7 @@ class punto_ventaC
 					$TFA['CLAVE'] = $clave;
 					$imp = $FA['Serie'] . '-' . generaCeros($FA['Factura'], 7);
 
-					$this->modelo->pdf_factura_elec($FA['Factura'], $FA['Serie'], $FA['codigoCliente'], $imp, $clave, $periodo = false, 1, 1);
+					$this->modelo->pdf_factura_elec($FA['Factura'], $FA['Serie'], $FA['codigoCliente'], $imp, $clave, $periodo = false, 0, 1);
 					// print_r('ex');die();
 					if ($rep == 1) {
 						if ($_SESSION['INGRESO']['Impresora_Rodillo'] == 0 && $_SESSION['INGRESO']['Grafico_PV'] == 0) {
