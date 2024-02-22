@@ -1,6 +1,6 @@
 <?php 
-require(dirname(__DIR__,2).'/modelo/empresa/niveles_seguriM.php');
-require(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
+require_once(dirname(__DIR__,2).'/modelo/empresa/niveles_seguriM.php');
+require_once(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
 //require_once(dirname(__DIR__)."/modelo/facturacion/lista_facturasM.php");
 
 /**

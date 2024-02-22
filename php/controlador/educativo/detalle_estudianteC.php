@@ -2,12 +2,12 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 $tipo=2;require_once(dirname(__DIR__,2)."/db/chequear_seguridad.php");
-include(dirname(__DIR__,2).'/modelo/educativo/detalle_estudianteM.php'); 
+require_once(dirname(__DIR__,2).'/modelo/educativo/detalle_estudianteM.php'); 
 // include(dirname(__DIR__,2).'/funciones/funciones.php');
-include(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
+require_once(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
 // require(dirname(__DIR__,2).'/lib/phpmailer/class.phpmailer.php');
 // require(dirname(__DIR__,2).'/lib/phpmailer/class.smtp.php');
-include(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
+require_once(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
 // include(dirname(__DIR__,3)."/lib/excel/plantilla.php");
 /**
  * 

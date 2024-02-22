@@ -4,7 +4,7 @@ require_once(dirname(__DIR__,2)."/modelo/facturacion/punto_ventaM.php");
 require(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
 if(!class_exists('enviar_emails'))
 {
-	require(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
+	require_once(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
 }
 // require(dirname(__DIR__,2)."/comprobantes/SRI/autorizar_sri.php");
 
