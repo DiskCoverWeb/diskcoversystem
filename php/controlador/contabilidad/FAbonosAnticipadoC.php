@@ -1,7 +1,7 @@
 <?php
 include(dirname(__DIR__, 2) . '/modelo/contabilidad/FAbonosAnticipadoM.php');
 require_once(dirname(__DIR__, 2) . "/funciones/funciones.php");
-include(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
+require_once(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
 
 $controlador = new FAbonoAnticipadoC();
 
