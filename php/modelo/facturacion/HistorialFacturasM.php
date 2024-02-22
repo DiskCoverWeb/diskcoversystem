@@ -1342,6 +1342,7 @@ class HistorialFacturasM
         $num_filas = count($res);
 
         $datos = grilla_generica_new($sSQL, 'FACTURAS', '', '', false, false, false, 1, 1, 1, 100);
+        //excel_generico('VENTAS POR EXCEL', $res);
         return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
 
     }

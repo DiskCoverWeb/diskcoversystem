@@ -264,7 +264,7 @@ class HistorialFacturasC
     {
         $DCClienteVal = $parametros['DCCliente'];
         $Por_Fecha = $parametros['Por_Fecha'];
-        
+
 
         $MBFechaI = FechaValida($parametros['MBFechaI']);
         $MBFechaF = FechaValida($parametros['MBFechaF']);
@@ -663,7 +663,7 @@ class HistorialFacturasC
                     AND SD.CodigoC = C.Codigo 
                     ORDER BY C.Grupo,C.Cliente,SD.TC ";
 
-        $DGQuery = $this->modelo->datos($sSQL,true, $Por_FA);
+        $DGQuery = $this->modelo->datos($sSQL, true, $Por_FA);
         $AdoQuery = $DGQuery;
 
         $label_saldo = number_format($Valor_Total, 2, '.', ',');
@@ -1126,8 +1126,8 @@ class HistorialFacturasC
                 $res = $this->modelo->Tipo_Pago_Cliente();
                 break;
             case "Bajar_Excel":
-                //Exportar_AdoDB_Excel($AdoQuery);
-                break;
+                return $this->Bajar_Excel($parametros['AdoQuery']);
+                
             case "Reporte_Ventas":
                 $res = $this->modelo->Ventas_x_Excel($FechaIni, $FechaFin);
                 break;
@@ -1158,6 +1158,17 @@ class HistorialFacturasC
             'Opcion' => $Opcion,
         );
     }
+
+    function Bajar_Excel($AdoQuery)
+    {
+        $path = strtoupper(dirname(__DIR__, 3) . "/TEMP/HISTORICO/");
+        $filename = 'Excel_' . date('Ymd_His') . '.xlsx';
+        $filePath = $path . $filename;
+        Exportar_AdoDB_Excel($AdoQuery, $filePath, "DiskCover System");
+        return array('response' => 1, 'nombre' => $filename, 'mensaje' => "SE GENERO EL SIGUIENTE ARCHIVO: \n" . $filename);
+    }
+
+
 
     function Tipo_Consulta_CxC($Tipo, $FechaIni, $FechaFin, $parametros)
     {
@@ -1353,9 +1364,10 @@ class HistorialFacturasC
             'DGQuery' => $sSQL['DGQuery'],
             'AdoQuery' => $sSQL['AdoQuery'],
             'num_filas' => $sSQL['num_filas'],
+            'Opcion' => $Opcion,
             'label_facturado' => $label_facturado,
             'label_abonado' => $label_abonado,
-            'label_saldo' => $label_saldo
+            'label_saldo' => $label_saldo,
         );
     }
 
@@ -1532,7 +1544,7 @@ class HistorialFacturasC
                 case "Factura":
                     $FA['TC'] = SinEspaciosIzq($DCClienteVal);
                     $FA['Serie'] = MidStrg($DCClienteVal, 4, 6);
-                    $FA['Factura'] = intval(SinEspaciosDer($DCClienteVal));                    
+                    $FA['Factura'] = intval(SinEspaciosDer($DCClienteVal));
                     break;
                 case "Serie":
                     $FA['Serie'] = $DCClienteVal;
@@ -1560,7 +1572,7 @@ class HistorialFacturasC
                     $Producto = trim(substr($DCClienteVal, strlen($CodigoInv) + 1));
                     break;
             }
-        }        
+        }
         return array('Cod_Marca' => $Cod_Marca, 'DescItem' => $DescItem, 'CodigoInv' => $CodigoInv, 'FA' => $FA);
     }
 }
