@@ -2,8 +2,8 @@
 
     /*
     AUTOR DE RUTINA	: Leonardo Súñiga
-    FECHA CREACION	: 06/01/2024
-    FECHA MODIFICACION: 20/01/2024
+    FECHA CREACION	: 06/02/2024
+    FECHA MODIFICACION: 20/02/2024
     DESCIPCIÓN		:  Vista ListarGrupos
     */
 
