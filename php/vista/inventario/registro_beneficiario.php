@@ -2,8 +2,8 @@
 <!--
     AUTOR DE RUTINA	: Dallyana Vanegas
     FECHA CREACION	: 16/02/2024
-    FECHA MODIFICACION: --
-    DESCIPCION :   Ventana Gestion Social Registro de Beneficiario
+    FECHA MODIFICACION: 23/02/2024
+    DESCIPCION :   Actualizacion de la interfaz para vista
  -->
 
 <head>
@@ -70,21 +70,21 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row" style="margin: 10px; display: flex; justify-content: center;">
+                    <div class="row" style="margin: 10px;">
                         <div class="col-sm-3">
-                            <label for="nombreRepre" style="display: block;">NOMBRE REPRESENTANTE LEGAR</label>
+                            <label for="nombreRepre" style="display: block;">NOMBRE REPRESENTANTE LEGAL</label>
                             <input class="form-control input-xs" type="text" name="nombreRepre" id="nombreRepre"
-                                placeholder="Nombre Representante" value=0>
+                                placeholder="Nombre Representante" value="0">
                         </div>
                         <div class="col-sm-3">
                             <label for="ciRepre" style="display: block;">CI REPRESENTANTE LEGAL</label>
                             <input class="form-control input-xs" type="text" name="ciRepre" id="ciRepre"
-                                placeholder="CI Representante" value=0>
+                                placeholder="CI Representante" value="0">
                         </div>
                         <div class="col-sm-3">
                             <label for="telfRepre" style="display: block;">TELEFONO REPRESENTANTE LEGAL</label>
                             <input class="form-control input-xs" type="text" name="telfRepre" id="telfRepre"
-                                placeholder="xxxxxxxxxx" value=0>
+                                placeholder="xxxxxxxxxx" value="0">
                         </div>
                     </div>
                     <div class="row" style="margin:10px; ">
@@ -204,7 +204,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row" style="margin:10px; display: flex; justify-content: center;">
+                    <div class="row" style="margin:10px;">
                         <div class="col-sm-2">
                             <label for="tipoEntrega" style="display: block;">TOTAL DE PERSONAS ASISTIDAS</label>
                             <select class="form-control input-xs" name="tipoEntrega" id="tipoEntrega">
@@ -238,10 +238,10 @@
                     </div>
                     <div class="row" style="margin: 10px;">
                         <div class="col-sm-5"></div>
-                        
+
                         <div class="col-sm-3">
-                            <div class="row"  style="display: flex; justify-content: center;">
-                            <img src="../../img/png/adjuntar-archivo.png" width="60" height="60">
+                            <div class="row" style="display: flex; justify-content: center;">
+                                <img src="../../img/png/adjuntar-archivo.png" width="60" height="60">
                             </div>
                             <div class="row">
                                 <div class="form-group">

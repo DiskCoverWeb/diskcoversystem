@@ -2,7 +2,7 @@
 <!--
     AUTOR DE RUTINA : Dallyana Vanegas
     FECHA CREACION : 30/01/2024
-    FECHA MODIFICACION : 20/02/2024
+    FECHA MODIFICACION : 23/02/2024
     DESCIPCION : Clase que se encarga de manejar el Historial de Facturas
 -->
 
@@ -617,7 +617,8 @@
             data: { 'parametros': params },
             success: function (data) {
                 globalAdoQuery = data.AdoQuery;
-                console.log(globalAdoQuery);
+                console.log(data);
+
                 switch (data.idBtn) {
                     case "Facturas":
                     case "CxC_Clientes":
@@ -775,6 +776,7 @@
     var TipoFactura = urlParams.get('tipo');
     var globalAdoQuery = null;
     function ToolbarMenu_ButtonMenuClick(idBtnMenu) {
+        //console.log(globalAdoQuery.length);
         var params = {
             'MBFechaI': $('#MBFechaI').val(),
             'MBFechaF': $('#MBFechaF').val(),
@@ -799,16 +801,27 @@
             'AdoQuery': globalAdoQuery
         };
 
+        console.log(params['AdoQuery']);
+
         $('#myModal_espera').modal('show');
         $.ajax({
             url: '../controlador/facturacion/HistorialFacturasC.php?ToolbarMenu_ButtonMenuClick=true',
             type: 'post',
             dataType: 'json',
             data: { 'parametros': params },
-            success: function (data) {
-                globalAdoQuery = data.AdoQuery;
-
+            success: function (data) {  
                 console.log(data);
+                globalAdoQuery = data.AdoQuery;
+                //console.log(globalAdoQuery.length);
+                if(data.response ==0){
+                    $('#myModal_espera').modal('hide');
+                    swal.fire({
+                        title: 'Información',
+                        text: 'No se encontraron datos para generar el archivo Excel',
+                        type: 'info',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
 
                 if (data.response == 1) {
                     $('#myModal_espera').modal('hide');
@@ -825,8 +838,10 @@
                         .appendTo('body');
                     enlaceTemporal[0].click();
                     enlaceTemporal.remove();
+
+                    globalAdoQuery = null;
                 }
-                
+
                 var actionsMap = {
                     "Resumen_Prod": { label2: "I.V.A", label4: "VENTAS", label3: "TOTAL" },
                     "Resumen_Prod_Meses": { label2: "VENTAS", label4: "COBRADO", label3: "SALDO" },
@@ -856,6 +871,7 @@
                 });
 
                 if (data.num_filas > 0) {
+                    
                     $('#lblCommand').val(data.Opcion);
                     $('#lblRegistro').val(data.num_filas);
                     $('#lblFacturado').val(data.label_facturado);

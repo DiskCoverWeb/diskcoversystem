@@ -2,7 +2,7 @@
 /** 
  * AUTOR DE RUTINA : Dallyana Vanegas
  * FECHA CREACION : 30/01/2024
- * FECHA MODIFICACION : 20/02/2024
+ * FECHA MODIFICACION : 23/02/2024
  * DESCIPCION : Clase que se encarga de manejar el Historial de Facturas
  */
 require_once(dirname(__DIR__, 2) . "/db/db1.php");
@@ -1258,18 +1258,17 @@ class HistorialFacturasM
         return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
     }
 
-    function Estado_Cuenta_Cliente()
+    function Estado_Cuenta_Cliente($MBFechaI,$fechaSistema, $FA)
     {
         $sSQL = "SELECT C.Cliente, RCC.T, RCC.TC, RCC.Serie, RCC.Factura, RCC.Fecha, RCC.Detalle, RCC.Anio, RCC.Mes, RCC.Cargos, RCC.Abonos, RCC.CodigoC,
               C.Email, C.EmailR, C.Direccion 
               FROM Reporte_Cartera_Clientes As RCC, Clientes As C 
               WHERE RCC.Item = '" . $_SESSION['INGRESO']['item'] . "' 
-              AND RCC.CodigoU = '" . $_SESSION['INGRESO']['periodo'] . "' 
+              AND RCC.CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "' 
               AND RCC.T <> 'A' 
               AND RCC.CodigoC = C.Codigo 
               ORDER BY C.Cliente, RCC.TC, RCC.Serie, RCC.Factura, RCC.Anio, RCC.Mes, RCC.ID ";
-        //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, "Reporte_Cartera_Clientes"
-
+        
         $res = $this->db->datos($sSQL);
         $num_filas = count($res);
 

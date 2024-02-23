@@ -2,8 +2,8 @@
 /** 
  * AUTOR DE RUTINA	: Dallyana Vanegas
  * FECHA CREACION	: 03/01/2024
- * FECHA MODIFICACION: 29/01/2024
- * DESCIPCION : Clase que se encarga de manejar la interfaz de la pantalla de recaudacion de bancos CxC   
+ * FECHA MODIFICACION: 23/02/2024
+ * DESCIPCION : Actualizacion de creacion de directorio para enviar rubros
  */
 
 include(dirname(__DIR__, 2) . '/modelo/facturacion/FRecaudacionBancosCxCM.php');
@@ -440,6 +440,9 @@ class FRecaudacionBancosCxCC
         // Generacion del Resumen de la facturacion del mes
         $Tabulador = ";";
         $directorioBase = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/";
+        if (!is_dir($directorioBase)) {
+            mkdir($directorioBase, 0777, true);
+        }
         $RutaGeneraFile = strtoupper($directorioBase . "RESUMEN_MES_" . substr(mesesLetras(date('m')), 0, 3) . "-" . date('Y') . "_" . $Cta_Bancaria . ".csv");
         $NumFileFacturas = fopen($RutaGeneraFile, "w");
         $Contador = 0;

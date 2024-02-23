@@ -1,9 +1,9 @@
 <?php
 /** 
  * AUTOR DE RUTINA : Dallyana Vanegas
- * FECHA CREACION : 03/01/2024
- * FECHA MODIFICACION : 29/01/2024
- * DESCIPCION : Clase que se encarga de manejar la interfaz de la pantalla de recaudacion de bancos CxC   
+ * FECHA CREACION : 30/01/2024
+ * FECHA MODIFICACION : 23/02/2024
+ * DESCIPCION : Clase que se encarga de manejar el Historial de Facturas
  */
 
 include(dirname(__DIR__, 2) . '/modelo/facturacion/HistorialFacturasM.php');
@@ -221,8 +221,8 @@ class HistorialFacturasC
                 }
                 $fechaSistema = FechaSistema();
                 $fechaSistema = date("d/m/Y", strtotime($fechaSistema));
-                //Reporte_Cartera_Clientes_SP(PrimerDiaMes($MBFechaI), UltimoDiaMes($fechaSistema), $FA['CodigoC']);  //ERROR
-                $res = $this->modelo->Estado_Cuenta_Cliente();
+                Reporte_Cartera_Clientes_SP(PrimerDiaMes($MBFechaI), UltimoDiaMes2(date('d/m/Y'),'Ymd'),$FA['CodigoC']);
+                $res = $this->modelo->Estado_Cuenta_Cliente($MBFechaI,$fechaSistema,$FA);
                 if ($res['num_filas']) {
                     $Total = 0;
                     $Abono = 0;
@@ -1125,9 +1125,13 @@ class HistorialFacturasC
             case "Tipo_Pago_Cliente":
                 $res = $this->modelo->Tipo_Pago_Cliente();
                 break;
-            case "Bajar_Excel":
-                return $this->Bajar_Excel($parametros['AdoQuery']);
-                
+            case "Bajar_Excel":                
+                //print_r(count($AdoQuery));
+                if (!empty($parametros['AdoQuery'])){
+                    return $this->Bajar_Excel($parametros['AdoQuery']);
+                }else{
+                    return array('response'=>0);
+                }
             case "Reporte_Ventas":
                 $res = $this->modelo->Ventas_x_Excel($FechaIni, $FechaFin);
                 break;
@@ -1161,14 +1165,17 @@ class HistorialFacturasC
 
     function Bajar_Excel($AdoQuery)
     {
-        $path = strtoupper(dirname(__DIR__, 3) . "/TEMP/HISTORICO/");
-        $filename = 'Excel_' . date('Ymd_His') . '.xlsx';
-        $filePath = $path . $filename;
-        Exportar_AdoDB_Excel($AdoQuery, $filePath, "DiskCover System");
-        return array('response' => 1, 'nombre' => $filename, 'mensaje' => "SE GENERO EL SIGUIENTE ARCHIVO: \n" . $filename);
+        if (count($AdoQuery) > 0) {
+            $path = strtoupper(dirname(__DIR__, 3) . "/TEMP/HISTORICO/");
+            if (!is_dir($path)) {
+                mkdir($path, 0777, true);
+            }
+            $filename = 'Excel_' . date('Ymd_His') . '.xlsx';
+            $filePath = $path . $filename;
+            Exportar_AdoDB_Excel($AdoQuery, $filePath, "DiskCover System");
+            return array('response' => 1, 'nombre' => $filename, 'mensaje' => "SE GENERO EL SIGUIENTE ARCHIVO: \n" . $filename);
+        }
     }
-
-
 
     function Tipo_Consulta_CxC($Tipo, $FechaIni, $FechaFin, $parametros)
     {

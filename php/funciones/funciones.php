@@ -8524,7 +8524,7 @@ function UltimoDiaMes($FechaStr)
       break;
   }
  
-  return $UltimoDiaMes = generaCeros($vDia,2)."/".generaCeros($Vmes,2)."/".generaCeros($Vanio,4);
+  return generaCeros($vDia,2)."/".generaCeros($Vmes,2)."/".generaCeros($Vanio,4);
 }
 
 function UltimoDiaMes2($FechaStr, $formato_salida='d/m/Y', $formato_entrada='d/m/Y')
