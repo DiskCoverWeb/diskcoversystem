@@ -1,3 +1,64 @@
+<script>
+
+    $(document).ready(function () {
+        beneficiario();
+
+        $('#beneficiario').on('select2:select', function (e) {
+            var data = e.params.data;//Datos beneficiario seleccionado
+            llenarDatos(data);
+
+        });
+
+    });
+
+    //Metodos
+    function beneficiario() {
+        $('#beneficiario').select2({
+            placeholder: 'Beneficiario',
+            ajax: {
+                url: '../controlador/inventario/asignacion_osC.php?',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        query: params.term,
+                        Beneficiario: true
+                    }
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.results
+                    };
+                },
+                cache: true
+            }
+        });
+    }
+
+    function llenarDatos(datos) {
+        $('#beneficiario').val(datos.Beneficiario);
+        $('#fechAten').val(datos.Fecha_Atencion);//Fecha de Atencion
+        $('#tipoEstado').val(datos.CodigoA);//Tipo de Estado
+        $('#tipoEntrega').val(datos.CodigoACD);//Tipo de Entrega
+        $('#horaEntrega').val(datos.Hora_Entrega); //Hora de Entrega
+        var fecha = new Date(datos.Fecha_Atencion);
+        const opciones = { weekday: 'long' };
+        const diaEnLetras = new Intl.DateTimeFormat('es-ES', opciones).format(fecha);
+        $('#diaEntr').val(diaEnLetras);//Dia de Entrega
+        $('#frecuencia').val(datos.Envio_No);//Frecuencia
+        $('#tipoBenef').val(datos.Beneficiario);//Tipo de Beneficiario
+        $('#totalPersAten').val(datos.No_Soc);//Total, Personas Atendidas
+        $('#tipoPobl').val(datos.Area);//Tipo de Poblacion
+        $('#acciSoci').val(datos.Acreditacion);//Accion Social
+        $('#vuln').val(datos.Tipo);//Vulnerabilidad
+        $('#tipoAten').val(datos.Cod_Fam);//Tipo de Atencion
+        $('#CantGlobSugDist').val(datos.Salario);//Cantidad global sugerida a distribuir
+        $('#CantGlobDist').val(datos.Descuento);//Cantidad global a distribuir
+
+
+    }
+
+</script>
 <style>
     label {
         text-align: left;
@@ -39,12 +100,12 @@
         padding-top: 1vh;
     }
 
-    @media(max-width: 768px){
-        #container-estado{
-            padding: 0vw 3vw 0vw 3vw !important; 
+    @media(max-width: 768px) {
+        #container-estado {
+            padding: 0vw 3vw 0vw 3vw !important;
         }
 
-        .centrar{
+        .centrar {
             text-align: center;
         }
     }
@@ -60,15 +121,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <select name="diaEntr" id="diaEntr">
-                            <option value="LUN">LUNES</option>
-                            <option value="MAR">MARTES</option>
-                            <option value="MIE">MIERCOLES</option>
-                            <option value="JUE">JUEVES</option>
-                            <option value="VIE">VIERNES</option>
-                            <option value="SAB">SABADO</option>
-                            <option value="DOM">DOMINGO</option>
-                        </select>
+                        <input type="text" name="diaEntr" id="diaEntr" />
                     </div>
                 </div>
             </div>
@@ -103,18 +156,12 @@
             <div class="col-sm-3">
                 <div class="row">
                     <div class="col-sm-6 text-right centrar">
-                        <label for="estado">
+                        <label for="tipoEstado">
                             Estado
                         </label>
                     </div>
                     <div class="col-sm-6" style="padding: 0" id="container-estado">
-                        <select name="estado" id="estado">
-                            <option value="acti">Activa</option>
-                            <option value="prev">Pre-Vinculación</option>
-                            <option value="susp">Suspendida</option>
-                            <option value="desv">Desvinculada</option>
-                            <!-- TODO:¿Hay que añadir mas o solo esas?-->
-                        </select>
+                        <input type="tipoEstado" name="tipoEstado" id="tipoEstado" />
                     </div>
                 </div>
             </div>
@@ -126,11 +173,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <select name="tipoEntrega" id="tipoEntrega">
-                            <option value="Regu">Regular</option>
-                            <option value="Espo">Esporádica</option>
-                            <!-- TODO:¿Hay que añadir mas o solo esas?-->
-                        </select>
+                        <input type="text" name="tipoEntrega" id="tipoEntrega" />
                     </div>
                 </div>
             </div>
@@ -154,13 +197,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <select name="frecuencia" id="frecuencia">
-                            <option value="sema">Semanal</option>
-                            <option value="mens">Mensual</option>
-                            <option value="quin">Quincenal</option>
-                            <option value="ocas">Ocasional</option>
-                            <!-- TODO:¿Hay que añadir mas o solo esas?-->
-                        </select>
+                        <input type="text" name="frecuencia" id="frecuencia" />
                     </div>
                 </div>
             </div>
@@ -236,7 +273,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <input type="number" name="CantGlobSugDist" id="CantGlobSugDist" value="200" readonly style="">
+                        <input type="number" name="CantGlobSugDist" id="CantGlobSugDist" readonly style="">
                     </div>
                 </div>
                 <div class="row">
@@ -246,7 +283,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <input type="number" name="CantGlobDist" id="CantGlobDist" value="200" style="">
+                        <input type="number" name="CantGlobDist" id="CantGlobDist" style="">
                     </div>
                 </div>
                 <div class="row">
