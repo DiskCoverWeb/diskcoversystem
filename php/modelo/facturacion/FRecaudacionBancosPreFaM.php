@@ -306,7 +306,7 @@ class FRecaudacionBancosPreFaM
                 $sql = "SELECT F.Codigo,C.Grupo,C.Cliente,C.CI_RUC,C.Direccion,C.Casilla,C.Actividad,C.Plan_Afiliado,F.Periodo,F.Num_Mes,F.Fecha,
                         C.Representante,C.CI_RUC_R,C.TD_R,C.Telefono_R,C.Tipo_Cta,C.Cod_Banco,C.Cta_Numero,C.DireccionT,C.Fecha_Cad,C.Email2,C.EmailR,
                         F.Codigo_Inv,C.Saldo_Pendiente,SUM(F.Valor-(F.Descuento+F.Descuento2)) As Valor_Cobro,";
-                if ($parametros['Tipo_Carga']) {
+                if ($parametros['CheqMatricula']) {
                     $sql .= "'MATRICULAS Y PENSION DE ' As Producto ";
                 } else {
                     $sql .= "'PENSION DE ' As Producto ";
@@ -318,23 +318,29 @@ class FRecaudacionBancosPreFaM
         }
 
         $sql .= "AND F.Fecha BETWEEN '" . BuscarFecha($parametros['MBFechaI']) . "' and '" . BuscarFecha($parametros['MBFechaF']) . "'";
-        if ($parametros['CheqRangos'] <> false) {
+        if ($parametros['CheqRangos'] <> 0) {
             $sql .= "AND C.Grupo BETWEEN '" . $parametros['DCGrupoI'] . "' and '" . $parametros['DCGrupoF'] . "'";
         }
-        if ($parametros['CheqAlDia'] <> false) {
+        if ($parametros['CheqAlDia'] <> 0) {
             $sql .= "AND F.AlDia <> 0";
         }
         switch ($parametros['TextoBanco']) {
             case 'PACIFICO':
+                break;
             case 'PICHINCHA':
+                break;
             case 'BOLIVARIANO':
+                break;
             case 'GUAYAQUIL':
+                break;
             case 'PRODUBANCO':
+                break;
             case 'TARJETAS':
                 $sql .= "AND C.Tipo_Cta = 'TARJETA'
                          AND LEN(C.Cta_Numero) >= 14";
                 break;
             case 'INTERNACIONAL':
+                break;
             default:
                 $sql .= "AND C.Cod_Banco > 0
                          AND LEN(C.Cta_Numero) > 1
@@ -364,6 +370,7 @@ class FRecaudacionBancosPreFaM
                          ORDER BY C.Grupo,C.Cliente,F.Fecha";
                 break;
         }
+        //print_r($sql);
         return $this->db->datos($sql);
     }
 
@@ -467,7 +474,7 @@ class FRecaudacionBancosPreFaM
                 FROM Clientes_Facturacion
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Fecha BETWEEN " . BuscarFecha($parametros['MBFechaI']) . " AND " . BuscarFecha($parametros['MBFechaF']) . "";
-        if ($parametros['CheqRangos'] <> false) {
+        if ($parametros['CheqRangos'] <> 0) {
             $sql .= "AND GrupoNo BETWEEN '" . $parametros['DCGrupoI'] . "' AND '" . $parametros['DCGrupoF'] . "'";
         }
         $sql .= "ORDER BY Codigo, Fecha";
@@ -479,7 +486,7 @@ class FRecaudacionBancosPreFaM
         $sql = "SELECT * 
                 FROM Clientes
                 WHERE FA <> 0 ";
-        if ($parametros['CheqRangos'] <> false) {
+        if ($parametros['CheqRangos'] <> 0) {
             $sql .= "AND Grupo BETWEEN '" . $parametros['DCGrupoI'] . "' AND '" . $parametros['DCGrupoF'] . "'";
         }
         $sql .= "ORDER BY CI_RUC,Cliente,Grupo";
@@ -491,7 +498,7 @@ class FRecaudacionBancosPreFaM
         $sql = "UPDATE Clientes
                 SET Num_Lista = " . sprintf("%03d", $Contador) . "
                 WHERE FA <> 0 ";
-        if ($parametros['CheqRangos'] <> false) {
+        if ($parametros['CheqRangos'] <> 0) {
             $sql .= "AND Grupo BETWEEN '" . $parametros['DCGrupoI'] . "' AND '" . $parametros['DCGrupoF'] . "'";
         }
         Ejecutar_SQL_SP($sql);
@@ -502,7 +509,7 @@ class FRecaudacionBancosPreFaM
         $sql = "SELECT CI_RUC,Cliente,Codigo,Grupo,TD,Num_Lista
                 FROM Clientes
                 WHERE FA <> 0";
-        if ($parametros['CheqRangos'] <> false) {
+        if ($parametros['CheqRangos'] <> 0) {
             $sql .= "AND Grupo BETWEEN '" . $parametros['DCGrupoI'] . "' AND '" . $parametros['DCGrupoF'] . "'";
         }
         $sql .= "ORDER BY CI_RUC,Cliente,Grupo";
@@ -554,7 +561,7 @@ class FRecaudacionBancosPreFaM
         $sql = "SELECT Codigo,CI_RUC,Direccion,Cliente,Grupo,TD
                 FROM Clientes
                 WHERE FA <> 0";
-        if ($parametros['CheqRangos'] <> false) {
+        if ($parametros['CheqRangos'] <> 0) {
             $sql .= "AND Grupo BETWEEN '" . $parametros['DCGrupoI'] . "' AND '" . $parametros['DCGrupoF'] . "'";
         }
         $sql .= "AND Cliente <> 'CONSUMIDOR FINAL'
@@ -567,7 +574,7 @@ class FRecaudacionBancosPreFaM
         $sql = "UPDATE Clientes
                 SET CI_RUC = " . $param . "
                 WHERE FA <> 0 ";
-        if ($parametros['CheqRangos'] <> false) {
+        if ($parametros['CheqRangos'] <> 0) {
             $sql .= "AND Grupo BETWEEN '" . $parametros['DCGrupoI'] . "' AND '" . $parametros['DCGrupoF'] . "'";
         }
         $sql .= "AND Cliente <> 'CONSUMIDOR FINAL'";

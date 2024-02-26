@@ -70,6 +70,15 @@ if (isset($_GET['Command1_Click'])) {
     if (isset($_FILES['archivoBanco']) && $_FILES['archivoBanco']['error'] == UPLOAD_ERR_OK) {
         $archivo = $_FILES['archivoBanco'];
         $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/BANCO/ABONOS/";
+
+        //Verifica si la carpeta existe
+        if (!is_dir($carpetaDestino)) {
+            // Intentar crear la carpeta, el 0777 es el modo de permiso más permisivo
+            if (!mkdir($carpetaDestino, 0777, true)) { // true permite la creación de estructuras de directorios anidados
+                echo json_encode(array("response" => 0, "message" => "Error al subir el archivo"));
+            }
+        }
+
         $nombreArchivoDestino = $carpetaDestino . basename($archivo['name']);
         $tmp = basename($archivo['name']);
         if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
@@ -759,7 +768,7 @@ class FRecaudacionBancosPreFaC
     public function Command4_Click($parametros)
     {
         Actualizar_Datos_Representantes_SP();
-        $Cta_Banco = trim(strtoupper(SinEspaciosDer($parametros['DCBanco'])));
+        $Cta_Banco = trim(strtoupper(SinEspaciosDer2($parametros['DCBanco'])));
         if (strlen($Cta_Banco) <= 1) {
             $Cta_Banco = "0000000000";
         }
@@ -779,9 +788,14 @@ class FRecaudacionBancosPreFaC
 
         $AdoFactura = $this->modelo->Tipo_Carga($parametros);
 
-        $RutaDestino = "../../../TEMP/FRecaudacionBancosPreFa/DEUDAESTUDIANTE.csv";
+        //Verifica si la carpeta FACTURAS existe
+        if (!file_exists(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS")) {
+            mkdir(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS", 0777, true);
+        }
+
+        //$RutaDestino = "../../../TEMP/FRecaudacionBancosPreFa/DEUDAESTUDIANTE.csv";
         $Codigo = strtoupper(MesesLetras(date("m", strtotime($parametros['MBFechaI']))) . "-" . date("d", strtotime($parametros['MBFechaI'])) . "-" . date("Y", strtotime($parametros['MBFechaI'])));
-        $RutaDestino = "../../../TEMP/BANCO/FACTURAS/" . $Codigo . ".txt";
+        $RutaDestino = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/" . $Codigo . ".txt";
         $NombreArchivoZip = $RutaDestino;
         $FechaFin = BuscarFecha($parametros['MBFechaF']);
         $TextoImprimio = "";
@@ -869,7 +883,7 @@ class FRecaudacionBancosPreFaC
                         if ($parametros['Tipo_Carga'] == 2) {
                             $Codigo4 = "DEBITOS AUTOMATICOS";
                         } else {
-                            if ($parametros['CheqMatricula'] == true) {
+                            if ($parametros['CheqMatricula']) {
                                 $Codigo4 = "MATRICULAS Y PENSION DE " . substr(MesesLetras(date("m", strtotime($parametros['MBFechaI']))), 0, 3) . "-" . date("Y", strtotime($parametros['MBFechaI']));
                             } else {
                                 if ($parametros['Tipo_Carga'] == 3) {
@@ -896,7 +910,7 @@ class FRecaudacionBancosPreFaC
                         fwrite($NumFileFacturas, $value['Cta_Numero'] . "\t");
                         fwrite($NumFileFacturas, $value['TD_R'] . "\t");
                         fwrite($NumFileFacturas, sprintf("%010d", $value['CI_RUC_R']) . "\t");
-                        fwrite($NumFileFacturas, substr(date("m", strtotime($value['Fecha'])) . " " . $NombreCliente, 0, 40) . "\t");
+                        fwrite($NumFileFacturas, substr(date("m", $value['Fecha']->getTimestamp()) . " " . $NombreCliente, 0, 40) . "\t");
                         fwrite($NumFileFacturas, "\t");
                         fwrite($NumFileFacturas, "\t");
                         fwrite($NumFileFacturas, "\t");
@@ -920,7 +934,7 @@ class FRecaudacionBancosPreFaC
                             "'" . $value['Cta_Numero'],
                             $value['TD_R'],
                             "'" . sprintf("%010d", $value['CI_RUC_R']),
-                            substr(date("m", strtotime($value['Fecha'])) . " " . $NombreCliente, 0, 40),
+                            substr(date("m", $value['Fecha']->getTimestamp()) . " " . $NombreCliente, 0, 40),
                             "0",
                             "0",
                             "0",
@@ -1026,7 +1040,7 @@ class FRecaudacionBancosPreFaC
             foreach ($AdoFactura as $key => $value) {
                 $Contador++;
                 $GrupoNo = $value['Grupo'];
-                $CodigoCli = $value['CodigoC'];
+                $CodigoCli = $value['Codigo'];
                 $NombreCliente = trim(substr(Sin_Signos_Especiales($value['Cliente']), 0, 40));
                 $Factura_No++;
                 $Total = $value['Valor_Cobro'];
@@ -1051,7 +1065,7 @@ class FRecaudacionBancosPreFaC
                     $Codigo4 = "Transporte " . $value['Grupo'] . " De: " . $value['Periodo'] . "-" . MesesLetras($value['Num_Mes']);
                 }
                 fwrite($NumFileFacturas, "CO" . "\t");
-                fwrite($NumFileFacturas, $$parametros['Cta_Bancaria'] . "\t");
+                fwrite($NumFileFacturas, $parametros['Cta_Bancaria'] . "\t");
                 fwrite($NumFileFacturas, $Contador . "\t");
                 fwrite($NumFileFacturas, "\t");
                 fwrite($NumFileFacturas, $CodigoP . "\t");
@@ -1102,7 +1116,7 @@ class FRecaudacionBancosPreFaC
             $JE = 1;
             $KE = 1;
             $Grupo_No = $AdoFactura[0]['Grupo'];
-            $Codigo = $AdoFactura[0]['CodigoC'];
+            $Codigo = $AdoFactura[0]['Codigo'];
             foreach ($AdoFactura as $key => $value) {
                 if ($Grupo_No <> $value['Grupo']) {
                     $Codigo4 = number_format($Total, 2, '.', ',');
@@ -1112,19 +1126,19 @@ class FRecaudacionBancosPreFaC
                     $Total = 0;
                     $IE++;
                     $Grupo_No = $value['Grupo'];
-                    $Codigo = $value['CodigoC'];
+                    $Codigo = $value['Codigo'];
                 }
-                if ($Codigo <> $value['CodigoC']) {
+                if ($Codigo <> $value['Codigo']) {
                     $JE++;
                     $KE++;
-                    $Codigo = $value['CodigoC'];
+                    $Codigo = $value['Codigo'];
                 }
                 $Contador++;
                 $CodigoCli = $value['CI_RUC'];
                 $NombreCliente = Sin_Signos_Especiales(trim(substr($value['Cliente'], 0, 40)));
                 $Codigo1 = trim(substr($value['Direccion'], 0, 30));
                 $FechaTexto = " " . substr(MesesLetras(date("m", strtotime($parametros['MBFechaI']))), 0, 3) . " " . date("Y", strtotime($parametros['MBFechaI']));
-                $Codigo2 = substr(strtoupper(substr(MesesLetras(date("m", strtotime($value['Fecha']))), 0, 3)) . " " . $value['Grupo'], 0, 15);
+                $Codigo2 = substr(strtoupper(substr(MesesLetras(date("m", $value['Fecha']->getTimestamp())), 0, 3)) . " " . $value['Grupo'], 0, 15);
                 $Total_Factura = $value['Valor_Cobro'];
                 if ($parametros['Costo_Banco'] > 0) {
                     $Total_Factura = $Total_Factura + $parametros['Costo_Banco'];
@@ -1141,16 +1155,18 @@ class FRecaudacionBancosPreFaC
                 fwrite($NumFileFacturas, sprintf("%08d", $I) . sprintf("%02d", $J));
                 fwrite($NumFileFacturas, "REC");
                 fwrite($NumFileFacturas, $NombreCliente . str_repeat(" ", 40 - strlen($NombreCliente)));
-                fwrite($NumFileFacturas, date("Y/m", strtotime($value['Fecha'])));
+                fwrite($NumFileFacturas, date("Ym", $value['Fecha']->getTimestamp()));
                 fwrite($NumFileFacturas, "CU");
                 fwrite($NumFileFacturas, "PA");
                 fwrite($NumFileFacturas, "ES");
                 fwrite($NumFileFacturas, $Codigo2 . str_repeat(" ", 15 - strlen($Codigo2)));
+                fwrite($NumFileFacturas, "\n");
+
                 fwrite($NumFileFacturas, "RC");
                 fwrite($NumFileFacturas, sprintf("%07d", $Contador));
                 fwrite($NumFileFacturas, "VM");
-                fwrite($NumFileFacturas, date("Y/m/d", strtotime($parametros['MBFechaI'])));
-                fwrite($NumFileFacturas, date("Y/m/d", strtotime($parametros['MBFechaV'])));
+                fwrite($NumFileFacturas, date("Ymd", strtotime($parametros['MBFechaI'])));
+                fwrite($NumFileFacturas, date("Ymd", strtotime($parametros['MBFechaV'])));
                 fwrite($NumFileFacturas, "FI");
                 fwrite($NumFileFacturas, str_repeat("0", 30));
                 fwrite($NumFileFacturas, "\n");
@@ -1178,7 +1194,7 @@ class FRecaudacionBancosPreFaC
         $TipoDoc = "01";
         $Contador = 0;
         $FechaTexto = BuscarFecha($parametros['MBFechaF']);
-        $FechaTexto1 = date("m/d/y", strtotime($parametros['MBFechaI']));
+        $FechaTexto1 = date("m/d/y", strtotime($parametros['MBFechaV']));
         $NumFileFacturas = fopen($RutaGeneraFile, "w"); //Abre el archivo
 
         if (count($AdoFactura) > 0) {
@@ -1187,6 +1203,7 @@ class FRecaudacionBancosPreFaC
             fwrite($NumFileFacturas, $TipoDoc);
             fwrite($NumFileFacturas, str_repeat(" ", 11));
             fwrite($NumFileFacturas, $FechaTexto1);
+            fwrite($NumFileFacturas, "\n");
             foreach ($AdoFactura as $key => $value) {
                 $SaldoPendiente = 0;
                 $Total_Factura = 0;
@@ -1233,23 +1250,23 @@ class FRecaudacionBancosPreFaC
                 if ($Total < 0) {
                     $Total = 0;
                 }
-                fwrite($NumFileFacturas, $$_SESSION['INGRESO']['CodigoDelBanco']);
+                fwrite($NumFileFacturas, $_SESSION['INGRESO']['CodigoDelBanco']);
                 fwrite($NumFileFacturas, $Codigo);
-                fwrite($NumFileFacturas, date("m/d/y", strtotime($value['Fecha'])));
+                fwrite($NumFileFacturas, date("m/d/y", strtotime($parametros['MBFechaI'])));
                 fwrite($NumFileFacturas, $TipoDoc . "  ");
-                fwrite($NumFileFacturas, sprintf("%08.2f", $Total));
-                fwrite($NumFileFacturas, date("m/d/y", strtotime($value['Fecha'])));
+                fwrite($NumFileFacturas, sprintf("%010.2f", $Total));
+                fwrite($NumFileFacturas, date("m/d/y", strtotime($parametros['MBFechaV'])));
                 fwrite($NumFileFacturas, "01/01/1900");
                 fwrite($NumFileFacturas, "N");
-                fwrite($NumFileFacturas, Sin_Signos_Especiales($NombreCliente));
+                fwrite($NumFileFacturas, rtrim(ltrim(Sin_Signos_Especiales($NombreCliente))));
                 fwrite($NumFileFacturas, $Codigo2);
                 fwrite($NumFileFacturas, $Codigo3);
                 fwrite($NumFileFacturas, $Codigo1);
-                fwrite($NumFileFacturas, sprintf("%08.2f", $Monto_Total));
+                fwrite($NumFileFacturas, sprintf("%010.2f", $Monto_Total));
                 fwrite($NumFileFacturas, $Codigo4);
                 fwrite($NumFileFacturas, "1");
-                fwrite($NumFileFacturas, sprintf("%08.2f", $Total));
-                fwrite($NumFileFacturas, sprintf("%08.2f", $Total));
+                fwrite($NumFileFacturas, sprintf("%010.2f", $Total));
+                fwrite($NumFileFacturas, sprintf("%010.2f", $Total));
                 fwrite($NumFileFacturas, "\n");
                 $Contador = $Contador + 1;
             }
@@ -1325,13 +1342,13 @@ class FRecaudacionBancosPreFaC
                 if ($parametros['Tipo_Carga'] == 2) {
                     $Codigo4 = "RECAUDACIONES";
                 } else {
-                    if ($parametros['CheqMatricula'] == true) {
+                    if ($parametros['CheqMatricula']) {
                         $Codigo4 = "MATRICULAS Y PENSION DE " . substr(MesesLetras(date("m", strtotime($parametros['MBFechaI']))), 0, 3) . "-" . date("Y", strtotime($parametros['MBFechaI']));
                     } else {
                         if ($parametros['Tipo_Carga'] == 3) {
                             $Codigo4 = "PENSION ACUMULADA";
                         } else {
-                            $Codigo4 = "PENSION ACUMULADA DE " . substr(MesesLetras(date("m", strtotime($value['Fecha']))), 0, 3) . "-" . date("Y", strtotime($value['Fecha']));
+                            $Codigo4 = "PENSION ACUMULADA DE " . substr(MesesLetras(date("m", $value['Fecha']->getTimestamp())), 0, 3) . "-" . date("Y", $value['Fecha']->getTimestamp());
                         }
                     }
                 }
@@ -1343,7 +1360,7 @@ class FRecaudacionBancosPreFaC
                     fwrite($NumFileFacturas, "CO" . "\t");
                     fwrite($NumFileFacturas, $parametros['Cta_Banco'] . "\t");
                     fwrite($NumFileFacturas, $Contador . "\t");
-                    fwrite($NumFileFacturas, sprintf("%013d", $Factura_No) . "\t");
+                    fwrite($NumFileFacturas, sprintf("%010d", $Factura_No) . "\t");
                     fwrite($NumFileFacturas, $CodigoP . "\t");
                     fwrite($NumFileFacturas, "USD" . "\t");
                     fwrite($NumFileFacturas, sprintf("%013d", $Saldo) . "\t");
@@ -1353,7 +1370,7 @@ class FRecaudacionBancosPreFaC
                     fwrite($NumFileFacturas, "0" . "\t");
                     fwrite($NumFileFacturas, $value['TD_R'] . "\t");
                     fwrite($NumFileFacturas, $value['CI_RUC_R'] . "\t");
-                    fwrite($NumFileFacturas, substr(date("m", strtotime($value['Fecha'])) . " " . $NombreCliente, 0, 40) . "\t");
+                    fwrite($NumFileFacturas, substr(date("m", $value['Fecha']->getTimestamp()) . " " . $NombreCliente, 0, 40) . "\t");
                     fwrite($NumFileFacturas, "\t");
                     fwrite($NumFileFacturas, "\t");
                     fwrite($NumFileFacturas, "\t");
@@ -1366,17 +1383,17 @@ class FRecaudacionBancosPreFaC
                         "CO", 
                         $parametros['Cta_Banco'],
                         $Contador,
-                        "'" . sprintf("%013d", $Factura_No),
-                        "'" . $CodigoP,
+                        sprintf("%010d", $Factura_No),
+                        $CodigoP,
                         "USD",
-                        "'" . sprintf("%013d", $Saldo),
+                        sprintf("%013d", $Saldo),
                         "REC",
                         "32",
                         "0",
                         "0",
                         $value['TD_R'],
-                        "'" . $value['CI_RUC_R'],
-                        substr(date("m", strtotime($value['Fecha'])) . " " . $NombreCliente, 0, 40),
+                        $value['CI_RUC_R'],
+                        substr(date("m", $value['Fecha']->getTimestamp()) . " " . $NombreCliente, 0, 40),
                         "0",
                         "0",
                         "0",
@@ -1441,7 +1458,7 @@ class FRecaudacionBancosPreFaC
                     if ($parametros['Tipo_Carga'] == 2) {
                         $Codigo4 = "DEBITOS AUTOMATICOS";
                     } else {
-                        if ($parametros['CheqMatricula'] == true) {
+                        if ($parametros['CheqMatricula']) {
                             $Codigo4 = "MATRICULAS Y PENSION DE " . substr(MesesLetras(date("m", strtotime($parametros['MBFechaI']))), 0, 3) . "-" . date("Y", strtotime($parametros['MBFechaI']));
                         } else {
                             if ($parametros['Tipo_Carga'] == 3) {
@@ -1488,16 +1505,16 @@ class FRecaudacionBancosPreFaC
                         "CO", 
                         $parametros['Cta_Banco'],
                         $Contador,
-                        "'" . sprintf("%013d", $Factura_No),
-                        "'" . $CodigoP,
+                        sprintf("%013d", $Factura_No),
+                        $CodigoP,
                         "USD",
-                        "'" . sprintf("%013d", $Saldo),
+                        sprintf("%013d", $Saldo),
                         "CTA",
                         $value['Cod_Banco'],
                         $TipoCta,
-                        "'" . $value['Cta_Numero'],
+                        $value['Cta_Numero'],
                         $value['TD_R'],
-                        "'" . $value['CI_RUC_R'],
+                        $value['CI_RUC_R'],
                         substr(date("m", strtotime($value['Fecha'])) . " " . $NombreCliente, 0, 40),
                         "0",
                         "0",
@@ -1505,7 +1522,7 @@ class FRecaudacionBancosPreFaC
                         "0",
                         $Codigo2,
                         $Codigo4,
-                        "'" . sprintf("%013d", $Saldo),
+                        sprintf("%013d", $Saldo),
                         "0",
                         "0",
                         "0",
@@ -1550,7 +1567,7 @@ class FRecaudacionBancosPreFaC
             $JE = 1;
             $KE = 1;
             $Grupo_No = $AdoFactura[0]['Grupo'];
-            $Codigo = $AdoFactura[0]['CodigoC'];
+            $Codigo = $AdoFactura[0]['Codigo'];
             foreach ($AdoFactura as $key => $value) {
                 if ($Grupo_No <> $value['Grupo']) {
                     $Codigo4 = number_format($Total, 2, '.', ',');
@@ -1561,12 +1578,12 @@ class FRecaudacionBancosPreFaC
                     $Total = 0;
                     $IE = $IE + 1;
                     $Grupo_No = $value['Grupo'];
-                    $Codigo = $value['CodigoC'];
+                    $Codigo = $value['Codigo'];
                 }
-                if ($Codigo <> $value['CodigoC']) {
+                if ($Codigo <> $value['Codigo']) {
                     $JE = $JE + 1;
                     $KE = $KE + 1;
-                    $Codigo = $value['CodigoC'];
+                    $Codigo = $value['Codigo'];
                 }
                 $Contador = $Contador + 1;
                 $CodigoCli = $value['CI_RUC'];
@@ -1679,7 +1696,7 @@ class FRecaudacionBancosPreFaC
                     fwrite($NumFileFacturas2, "CO" . $Tabulador);
                     fwrite($NumFileFacturas2, $parametros['Cta_Bancaria'] . $Tabulador);
                     fwrite($NumFileFacturas2, $Contador . $Tabulador);
-                    fwrite($NumFileFacturas2, sprintf("%013d", $Factura_No) . $Tabulador);
+                    fwrite($NumFileFacturas2, sprintf("%010d", $Factura_No) . $Tabulador);
                     fwrite($NumFileFacturas2, $CodigoP . $Tabulador);
                     fwrite($NumFileFacturas2, "USD" . $Tabulador);
                     fwrite($NumFileFacturas2, sprintf("%013d", $Saldo) . $Tabulador);
@@ -1700,15 +1717,15 @@ class FRecaudacionBancosPreFaC
                     fwrite($NumFileFacturas2, $Tabulador);
                     fwrite($NumFileFacturas2, $Tabulador);
                     fwrite($NumFileFacturas2, $Tabulador);
-                    fwrite($NumFileFacturas2, date("m", strtotime($value['Fecha'])) . $Tabulador);
+                    fwrite($NumFileFacturas2, date("m", $value['Fecha']->getTimestamp()) . $Tabulador);
                     fwrite($NumFileFacturas2, strtoupper($Codigo4) . $Tabulador);
                     fwrite($NumFileFacturas2, sprintf("%013d", $Saldo) . $Tabulador);
                     fwrite($NumFileFacturas2, "\n");
                 } else {
-                    if ($parametros['TipoCarga'] >= 1) {
+                    if ($parametros['Tipo_Carga'] >= 1) {
                         //Tipo Gualaceo
                         fwrite($NumFileFacturas1, "CO" . $Tabulador);
-                        fwrite($NumFileFacturas1, sprintf("%013d", $CodigoC) . $Tabulador);
+                        fwrite($NumFileFacturas1, sprintf("%010d", $CodigoC) . $Tabulador);
                         fwrite($NumFileFacturas1, "USD" . $Tabulador);
                         fwrite($NumFileFacturas1, $Saldo . $Tabulador);
                         fwrite($NumFileFacturas1, "REC" . $Tabulador);
@@ -1716,7 +1733,7 @@ class FRecaudacionBancosPreFaC
                         fwrite($NumFileFacturas1, $Tabulador);
                         fwrite($NumFileFacturas1, strtoupper($Codigo4) . $Tabulador);
                         fwrite($NumFileFacturas1, "N" . $Tabulador);
-                        fwrite($NumFileFacturas1, sprintf("%013d", intval($CodigoC)) . $Tabulador);
+                        fwrite($NumFileFacturas1, sprintf("%010d", intval($CodigoC)) . $Tabulador);
                         fwrite($NumFileFacturas1, sprintf("%02d", $value['Num_Mes']) . " " . substr($NombreCliente, 0, 37) . $Tabulador);
                         fwrite($NumFileFacturas1, "\n");
                     } else {
@@ -1724,7 +1741,7 @@ class FRecaudacionBancosPreFaC
                         fwrite($NumFileFacturas1, "CO" . $Tabulador);
                         fwrite($NumFileFacturas1, $parametros['Cta_Bancaria'] . $Tabulador);
                         fwrite($NumFileFacturas1, $Contador . $Tabulador);
-                        fwrite($NumFileFacturas1, sprintf("%013d", $Factura_No) . $Tabulador);
+                        fwrite($NumFileFacturas1, sprintf("%010d", $Factura_No) . $Tabulador);
                         fwrite($NumFileFacturas1, $CodigoP . $Tabulador);
                         fwrite($NumFileFacturas1, "USD" . $Tabulador);
                         fwrite($NumFileFacturas1, sprintf("%013d", $Saldo) . $Tabulador);
@@ -1739,7 +1756,7 @@ class FRecaudacionBancosPreFaC
                         fwrite($NumFileFacturas1, $Tabulador);
                         fwrite($NumFileFacturas1, $Tabulador);
                         fwrite($NumFileFacturas1, $Tabulador);
-                        fwrite($NumFileFacturas1, date("m", strtotime($value['Fecha'])) . $Tabulador);
+                        fwrite($NumFileFacturas1, date("m", $value['Fecha']->getTimestamp()) . $Tabulador);
                         fwrite($NumFileFacturas1, strtoupper($Codigo4) . $Tabulador);
                         fwrite($NumFileFacturas1, sprintf("%013d", $Saldo) . $Tabulador);
                         fwrite($NumFileFacturas1, "\n");
@@ -2033,6 +2050,11 @@ class FRecaudacionBancosPreFaC
             }
         }
         $AdoClientes = $this->modelo->AdoClientes2($parametros);
+        //Verificamos si las carpetas existen 
+        if(!file_exists(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS")){
+            mkdir(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS", 0777, true);
+        }
+
         $path = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Clientes.XLSX");
         Exportar_AdoDB_Excel($AdoClientes, $path, "DiskCover System");
         return array('response' => 1, 'Nombre1' => basename($path), 'Mensaje' => "SE GENERO EL SIGUIENTE ARCHIVO: \n" . basename($path));
@@ -2060,7 +2082,7 @@ class FRecaudacionBancosPreFaC
         if(count($AdoClientes) > 0){
             foreach($AdoClientes as $key => $value){
                 $Contador++;
-                if($parametros['CheqNumCodigos'] <> false){
+                if($parametros['CheqNumCodigos'] <> 0){
                     $param = $_SESSION['INGRESO']['item'] . sprintf("%05d", $Contador);
                     $this->modelo->UpdateAdoClientes5($parametros, $param);
                 }else{
@@ -2074,6 +2096,10 @@ class FRecaudacionBancosPreFaC
 
     public function Command5_Click($parametros){
         $AdoClientes = $this->modelo->AdoClientes5($parametros);
+        //Verificamos si las carpetas existen
+        if(!file_exists(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS")){
+            mkdir(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS", 0777, true);
+        }
         $path = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Clientes.pdf");
         $this->pdf->Imprimir_Codigo_Banco($AdoClientes, $path);
         return(array('response' => 1,

@@ -279,7 +279,17 @@
         $('#Command6').click(function () {
             $('#TxtFile').text('');
             $('#DGFactura').empty();
-            Command6_Click();
+            if ('Cliente' in FA) {
+                Command6_Click();
+            } else {
+                swal.fire({
+                    title: 'Faltan datos',
+                    text: 'Seleccione la Linea de Cuentas por Cobrar Pensiones',
+                    type: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+
         });
 
         //Handle Command7_Click
@@ -312,12 +322,12 @@
 
     });
 
-    function Command5_Click(){
+    function Command5_Click() {
         var parametros = {
-            'CheqRangos': $('#CheqRangos').is(':checked'),
+            'CheqRangos': $('#CheqRangos').is(':checked') ? 1 : 0,
             'DCGrupoI': $('#DCGrupoI').val(),
             'DCGrupoF': $('#DCGrupoF').val(),
-            'CheqNumCodigos': $('#CheqNumCodigos').is(':checked'),
+            'CheqNumCodigos': $('#CheqNumCodigos').is(':checked') ? 1 : 0,
         };
         $.ajax({
             url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?Command5_Click=true',
@@ -333,23 +343,23 @@
                     confirmButtonText: 'Aceptar'
                 });
                 var url = "../../TEMP/BANCO/FACTURAS/" + data.Nombre1;
-                    var enlaceTemporal = $('<a></a>')
-                        .attr('href', url)
-                        .attr('download', data.Nombre1)
-                        .appendTo('body');
-                    enlaceTemporal[0].click();
-                    enlaceTemporal.remove();
-                
+                var enlaceTemporal = $('<a></a>')
+                    .attr('href', url)
+                    .attr('download', data.Nombre1)
+                    .appendTo('body');
+                enlaceTemporal[0].click();
+                enlaceTemporal.remove();
+
             }
         });
     }
 
     function Command3_Click() {
         var parametros = {
-            'CheqRangos': $('#CheqRangos').is(':checked'),
+            'CheqRangos': $('#CheqRangos').is(':checked') ? 1 : 0,
             'DCGrupoI': $('#DCGrupoI').val(),
             'DCGrupoF': $('#DCGrupoF').val(),
-            'CheqNumCodigos': $('#CheqNumCodigos').is(':checked'),
+            'CheqNumCodigos': $('#CheqNumCodigos').is(':checked') ? 1 : 0,
         };
         $.ajax({
             url: '../controlador/facturacion/FRecaudacionBancosPreFaC.php?Command3_Click=true',
@@ -359,19 +369,19 @@
             success: function (data) {
                 $('#myModal_espera').modal('hide');
                 swal.fire({
-                        title: 'Información',
-                        text: data.Mensaje,
-                        type: 'info',
-                        confirmButtonText: 'Aceptar'
-                    });
-                
+                    title: 'Información',
+                    text: data.Mensaje,
+                    type: 'info',
+                    confirmButtonText: 'Aceptar'
+                });
+
             }
         });
     }
 
     function Command7_Click() {
         var parametros = {
-            'CheqRangos': $('#CheqRangos').is(':checked'),
+            'CheqRangos': $('#CheqRangos').is(':checked') ? 1 : 0,
             'DCGrupoI': $('#DCGrupoI').val(),
             'DCGrupoF': $('#DCGrupoF').val()
         };
@@ -389,12 +399,12 @@
                     confirmButtonText: 'Aceptar'
                 });
                 var url = "../../TEMP/BANCO/FACTURAS/" + data.Nombre1;
-                    var enlaceTemporal = $('<a></a>')
-                        .attr('href', url)
-                        .attr('download', data.Nombre1)
-                        .appendTo('body');
-                    enlaceTemporal[0].click();
-                    enlaceTemporal.remove();
+                var enlaceTemporal = $('<a></a>')
+                    .attr('href', url)
+                    .attr('download', data.Nombre1)
+                    .appendTo('body');
+                enlaceTemporal[0].click();
+                enlaceTemporal.remove();
             }
         });
     }
@@ -466,14 +476,14 @@
             'TextoBanco': TextoBanco,
             'DCBanco': $('#DCBanco').val(),
             'MBFechaF': $('#MBFechaF').val(),
-            'CheqRangos': $('#CheqRangos').is(':checked'),
+            'CheqRangos': $('#CheqRangos').is(':checked') ? 1 : 0,
             'Tipo_Carga': Tipo_Carga,
-            'CheqAlDia': $('#CheqAlDia').is(':checked'),
+            'CheqAlDia': $('#CheqAlDia').is(':checked') ? 1 : 0,
             'DCGrupoF': $('#DCGrupoF').val(),
             'DCGrupoI': $('#DCGrupoI').val(),
             'Cta_Bancaria': Cta_Bancaria,
             'Costo_Banco': Costo_Banco,
-            'CheqMatricula': $('#CheqMatricula').is(':checked'),
+            'CheqMatricula': $('#CheqMatricula').is(':checked') ? 1 : 0,
             'TxtCodBanco': $('#TxtCodBanco').val(),
             'MBFechaV': $('#MBFechaV').val()
         }
@@ -796,7 +806,7 @@
                 <img src="../../img/png/FRecaudacionBancosPreFa/renumerar.png">
             </button>
             <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Imprimir Codigos"
-                id="Command5" onclick="" style="border: solid 1px" >
+                id="Command5" onclick="" style="border: solid 1px">
                 <img src="../../img/png/FRecaudacionBancosPreFa/printer.png">
             </button>
         </div>
