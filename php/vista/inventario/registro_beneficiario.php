@@ -45,27 +45,39 @@
                     <div class="row" style="margin:10px; ">
                         <div class="col-sm-2">
                             <label for="ruc" style="display: block;">CI/RUC</label>
-                            <input class="form-control input-xs" type="text" name="ruc" id="ruc" placeholder="0"
-                                value=0>
+                            <select class="form-control input-xs" name="ruc" id="ruc">
+                                <option value="">Seleccione</option>
+                            </select>
                         </div>
                         <div class="col-sm-1" style="display: flex; justify-content: center;">
                             <img src="../../img/png/SRIlogo.png" width="80" height="50">
                         </div>
 
                         <div class="col-sm-3">
-                            <label for="usuario" style="display: block;">Nombre del Beneficiario/Usuario</label>
-                            <input class="form-control input-xs" type="text" name="usuario" id="usuario" placeholder="0"
-                                value=0>
+                            <label for="cliente" style="display: block;">Nombre del Beneficiario/Usuario</label>
+                            <div class="input-group">
+                                <select class="form-control input-xs" name="cliente" id="cliente">
+                                    <option value="">Seleccione</option>
+                                </select>
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-success btn-xs btn-flat" id="btn_nuevo_cli"
+                                        onclick="addCliente()" title="Nuevo cliente">
+                                        <span class="fa fa-user-plus"></span>
+                                    </button>
+                                </span>
+                            </div>
+
                         </div>
+
                         <div class="col-sm-4">
-                            <label for="tipoBenef" style="display: block;">Tipo de Beneficiario</label>
-                            <select class="form-control input-xs" name="tipoBenef" id="tipoBenef">
+                            <label for="select_93" style="display: block;">Tipo de Beneficiario</label>
+                            <select class="form-control input-xs" name="select_93" id="select_93">
                                 <option value="">Seleccione</option>
                             </select>
                         </div>
                         <div class="col-sm-2">
-                            <label for="estado" style="display: block;">Estado</label>
-                            <select class="form-control input-xs" name="estado" id="estado">
+                            <label for="select_87" style="display: block;">Estado</label>
+                            <select class="form-control input-xs" name="select_87" id="select_87">
                                 <option value="">Seleccione</option>
                             </select>
                         </div>
@@ -128,12 +140,12 @@
                             <div class="row">
                                 <label for="email" style="display: block;">Email</label>
                                 <input class="form-control input-xs" type="text" name="email" id="email"
-                                    placeholder="Direccion" value=0>
+                                    placeholder="email" value=0>
                             </div>
                             <div class="row">
                                 <label for="email2" style="display: block;">Email 2</label>
                                 <input class="form-control input-xs" type="text" name="email2" id="email2"
-                                    placeholder="Direccion" value=0>
+                                    placeholder="email2" value=0>
                             </div>
                         </div>
                         <div class="col-sm-1"></div>
@@ -173,8 +185,8 @@
                 <div class="card-body" style="margin:1px; padding-top:5px; padding-bottom:5px;">
                     <div class="row" style="margin:10px; ">
                         <div class="col-sm-3">
-                            <label for="tipoEntrega" style="display: block;">TIPO DE ENTREGA</label>
-                            <select class="form-control input-xs" name="tipoEntrega" id="tipoEntrega">
+                            <label for="select_88" style="display: block;">TIPO DE ENTREGA</label>
+                            <select class="form-control input-xs" name="select_88" id="select_88">
                                 <option value="">Seleccione</option>
                             </select>
                         </div>
@@ -212,26 +224,26 @@
                             </select>
                         </div>
                         <div class="col-sm-2">
-                            <label for="tipoPoblacion" style="display: block;">TIPO DE POBLACION</label>
-                            <select class="form-control input-xs" name="tipoPoblacion" id="tipoPoblacion">
+                            <label for="select_91" style="display: block;">TIPO DE POBLACION</label>
+                            <select class="form-control input-xs" name="select_91" id="select_91">
                                 <option value="">Seleccione</option>
                             </select>
                         </div>
                         <div class="col-sm-2">
-                            <label for="accionSocial" style="display: block;">ACCION SOCIAL</label>
-                            <select class="form-control input-xs" name="accionSocial" id="accionSocial">
+                            <label for="select_92" style="display: block;">ACCION SOCIAL</label>
+                            <select class="form-control input-xs" name="select_92" id="select_92">
                                 <option value="">Seleccione</option>
                             </select>
                         </div>
                         <div class="col-sm-2">
-                            <label for="vulnerabilidad" style="display: block;">VULNERABILIDAD</label>
-                            <select class="form-control input-xs" name="vulnerabilidad" id="vulnerabilidad">
+                            <label for="select_90" style="display: block;">VULNERABILIDAD</label>
+                            <select class="form-control input-xs" name="select_90" id="select_90">
                                 <option value="">Seleccione</option>
                             </select>
                         </div>
                         <div class="col-sm-2">
-                            <label for="tipoAtencion" style="display: block;">TIPO DE ATENCION</label>
-                            <select class="form-control input-xs" name="tipoAtencion" id="tipoAtencion">
+                            <label for="select_89" style="display: block;">TIPO DE ATENCION</label>
+                            <select class="form-control input-xs" name="select_89" id="select_89">
                                 <option value="">Seleccione</option>
                             </select>
                         </div>
@@ -267,20 +279,140 @@
 
 <script>
     $(document).ready(function () {
-        var diasEntrega = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
-        $.each(diasEntrega, function (index, dia) {
-            $("#diaEntrega").append($("<option>", {
-                value: dia,
-                text: dia
-            }));
-        });
 
-        var horasEntrega = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM"];
-        $.each(horasEntrega, function (index, hora) {
-            $("#horaEntrega").append($("<option>", {
-                value: hora,
-                text: hora
-            }));
+        Form_Activate();
+    });
+
+    function Form_Activate() {
+        var valores = [87, 88, 89, 90, 91, 92, 93];
+        //console.log("1");
+        LlenarSelectTipos(valores);
+        //console.log("2");
+        LlenarDatosCliente();
+        //console.log("3");
+    }
+
+    function LlenarSelectTipos(valores) {
+        $.ajax({
+            url: '../controlador/inventario/registro_beneficiarioC.php?LlenarSelect=true',
+            type: 'post',
+            dataType: 'json',
+            data: { valores: valores },
+            success: function (data) {
+                //console.log(data);
+                $.each(data, function (index, resultado) {
+                    LlenarSelect(resultado.valor, resultado.datos);
+                });
+            }
+        });
+    }
+
+    function LlenarSelect(valor, datos) {
+        if (valor) {
+            var selectId = '#select_' + valor;
+            var $select = $(selectId);
+            $select.empty();
+            if (datos === "No se encontraron datos para mostrar") {
+                $select.append('<option value="">' + datos + '</option>');
+            } else {
+                $.each(datos, function (index, opcion) {
+                    $select.append('<option value="' + opcion['Cmds'] + '">' + opcion['Proceso'] + '</option>');
+                });
+            }
+        }
+    }
+
+    function LlenarDatosCliente() {
+        $.ajax({
+            url: '../controlador/inventario/registro_beneficiarioC.php?LlenarDatosCliente=true',
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                // Llenar el select2 de clientes
+                $('#cliente').empty().select2({
+                    placeholder: 'Seleccione un cliente',
+                    data: response.clientes
+                });
+
+                // Llenar el select2 de RUCs
+                $('#ruc').empty().select2({
+                    placeholder: 'Seleccione un RUC',
+                    data: response.rucs
+                });
+            }
+        });
+    }
+
+    $('#ruc').on('select2:select', function (e) {
+        var RUC = e.params.data.id;
+
+        var parametros = {
+            'RUC': RUC,
+            'Cliente': false
+        };
+
+        //console.log(parametros);
+
+        $.ajax({
+            url: '../controlador/inventario/registro_beneficiarioC.php?seleccionarClienteConRUCVisc=true',
+            type: 'POST',
+            dataType: 'json',
+            data: { parametros: parametros },
+            success: function (response) {
+                //console.log(response[0].Cliente);
+                $('#cliente').val(response[0].Cliente).trigger('change.select2');
+                $('#estado').val(response[0].CodigoA);
+                $('#nombreRepre').val(response[0].Representante);
+                $('#ciRepre').val(response[0].CI_RUC_R);
+                $('#telfRepre').val(response[0].Telefono_R);
+                $('#contacto').val(response[0].Contacto);
+                $('#profesion').val(response[0].Profesion);
+                //$('#fechaCad').val(response[0].Fecha_Cad);
+                //$('#horaEntrega').val(response[0].Hora_Ent);
+                $('#direcion').val(response[0].Direccion);
+                $('#email').val(response[0].Email);
+                $('#email2').val(response[0].Email2);
+                $('#referencia').val(response[0].Lugar_Trabajo);
+                $('#telefono').val(response[0].Telefono);
+                $('#telefono2').val(response[0].TelefonoT);
+            }
         });
     });
+
+    $('#cliente').on('select2:select', function (e) {
+        /*var ClienteId = e.params.data.id; 
+
+        var parametros = {
+            'RUC': false, 
+            'Cliente': ClienteId
+        };
+
+        $.ajax({
+            url: '../controlador/inventario/registro_beneficiarioC.php?seleccionarClienteConRUCVisc=true',
+            type: 'POST',
+            dataType: 'json',
+            data: { parametros: parametros },
+            success: function (response) {
+                console.log(response[0]);
+                //$('#ruc').val(response[0].CI_RUC).trigger('change.select2');
+                $('#estado').val(response[0].CodigoA);
+                $('#nombreRepre').val(response[0].Representante);
+                $('#ciRepre').val(response[0].CI_RUC_R);
+                $('#telfRepre').val(response[0].Telefono_R);
+                $('#contacto').val(response[0].Contacto);
+                $('#profesion').val(response[0].Profesion);
+                //$('#fechaCad').val(response[0].Fecha_Cad);
+                //$('#horaEntrega').val(response[0].Hora_Ent);
+                $('#direcion').val(response[0].Direccion);
+                $('#email').val(response[0].Email);
+                $('#email2').val(response[0].Email2);
+                $('#referencia').val(response[0].Lugar_Trabajo);
+                $('#telefono').val(response[0].Telefono);
+                $('#telefono2').val(response[0].TelefonoT);
+            }
+        });*/
+    });
+
+
+
 </script>
