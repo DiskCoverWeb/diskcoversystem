@@ -61,6 +61,11 @@ if(isset($_GET['cargar_motivo_lista']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->cargar_motivo_lista($parametros));
 }
+if(isset($_GET['catalog_cuentas']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->catalog_cuentas($parametros));
+}
 
 /**
  * 
@@ -232,14 +237,15 @@ class egreso_alimentosC
 					</td>
 					<td>'.$value['Detalle'].'</td>
 					<td>
-						<button type="button" class="btn btn-default btn-sm" onclick="$("#file_doc").click()">
+						<button type="button" class="btn btn-default btn-sm" onclick="mostra_doc(\''.$value['procedencia'].'\')">
 							<img src="../../img/png/clip.png" style="width:20px">
 						</button>
 						<input type="file" id="file_doc" name="" style="display: none;">
 					</td>
 					<td>
-						<select class="form-control input-sm">
+						<select class="form-control input-sm" id="ddl_subcta_'.$value['Orden_No'].'" name="ddl_subcta_'.$value['Orden_No'].'">
 							<option value="">Seleccione modulo</option>
+							'.$this->catalog_cuentas().'
 						</select>
 					</td>
 					<td>
@@ -279,6 +285,17 @@ class egreso_alimentosC
 
 		return $tr;
 		// print_r($parametros);
+	}
+
+	function catalog_cuentas()
+	{
+		$datos = $this->modelo->catalog_cuentas();
+		$tr='';
+		foreach ($datos as $key => $value) {
+			$tr.='<option value="'.$value['Codigo'].'">'.$value['Cuenta'].'</option>';
+		}
+
+		return $tr;
 	}
 
 }

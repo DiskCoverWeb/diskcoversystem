@@ -129,6 +129,12 @@
 	    }
 	  });
 	}
+
+	function mostra_doc(documento)
+	{
+		$('#modal_documento').modal('show');
+		$('#img_documento').attr('src','../comprobantes/sustentos/empresa_<?php echo $_SESSION['INGRESO']['item']; ?>/'+documento)
+	}
 	
    
 </script>
@@ -354,6 +360,21 @@
              <div class="modal-footer">             	
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-primary" onclick="notificar('usuario')">Notificar</button>
+            </div>
+        </div>
+    </div>
+  </div>
+ <div id="modal_documento" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h4 class="modal-title">Notificacion</h4>
+            </div>
+            <div class="modal-body" style="background: antiquewhite;">
+            	<img src="" id="img_documento" name="img_documento">
+            </div>
+             <div class="modal-footer">             	
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>

@@ -99,6 +99,7 @@ class egreso_alimentosM
 				TK.Fecha,
 				TK.Detalle,
 			    TK.Orden_No,
+				procedencia,
 			    MAX(C.Cliente) AS Cliente,
 			    MAX(CP.Producto) AS Producto,
 			    MAX(CP.Unidad) AS Unidad,
@@ -125,7 +126,7 @@ class egreso_alimentosM
 			{
 				$sql.=" AND TK.ID='".$id."'";
 			}
-			$sql.=" GROUP by Orden_No,TK.Fecha,TK.Detalle";
+			$sql.=" GROUP by Orden_No,TK.Fecha,TK.Detalle,procedencia";
 			// print_r($sql);die();
 		return $this->db->datos($sql);
 	}
@@ -185,13 +186,17 @@ class egreso_alimentosM
 	}
 
 
-	function catalog_cuentas()
+	function catalog_cuentas($query=false)
 	{
 		$sql = "SELECT Periodo, Clave, TC, ME, DG, Item, TB, Codigo, Cuenta, Presupuesto, Saldo_Anterior, Debitos, Creditos, Saldo_Mes, Saldo_Total, Saldo_Total_ME, Total_N6, Total_N5, Total_N4, Total_N3, Total_N2, Total_N1, Listar,Tipo_Pago, CC, X, ID, TP
 		FROM Catalogo_Cuentas
 		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'  
-		AND Item = '".$_SESSION['INGRESO']['item']."' 
-		AND TC IN ('G', 'CC')";
+		AND Item = '".$_SESSION['INGRESO']['item']."' ";
+		if($query)
+		{
+			$sql.=" AND Cuenta like '%".$query."%' ";
+		}
+		$sql.=" AND TC IN ('G', 'CC')";
 		return $this->db->datos($sql);
 	}
 
