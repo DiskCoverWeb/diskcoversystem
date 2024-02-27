@@ -213,7 +213,7 @@ class FRecaudacionBancosPreFaC
         if ($NombreArchivo <> "") {
             Actualizar_Datos_Representantes_SP();
         }
-        $RutaGeneraFile = strtoupper($NombreArchivo);
+        $RutaGeneraFile = $NombreArchivo;
         $TotalIngreso = 0;
         $Contador = 0;
         $FileResp = 0;
@@ -841,8 +841,8 @@ class FRecaudacionBancosPreFaC
         $Anio = intval(substr(date("Y", strtotime($parametros['MBFechaI'])), 1, 3));
         $Dia = "15";
 
-        $RutaGeneraFile = strtoupper('../../../TEMP/BANCO/FACTURAS/Otros Bancos Debitos ' . $Fecha_Meses . '.TXT');
-        $RutaGeneraFileExcel = strtoupper('../../../TEMP/BANCO/FACTURAS/Otros Bancos Debitos ' . $Fecha_Meses . '.XLSX');
+        $RutaGeneraFile = dirname(__DIR__, 3) . '/TEMP/BANCO/FACTURAS/Otros Bancos Debitos ' . $Fecha_Meses . '.TXT';
+        $RutaGeneraFileExcel = dirname(__DIR__, 3) . '/TEMP/BANCO/FACTURAS/Otros Bancos Debitos ' . $Fecha_Meses . '.XLSX';
         $datosExcel = [];
         $tmpContador = 1;
         $NumFileFacturas = fopen($RutaGeneraFile, "w");
@@ -971,7 +971,7 @@ class FRecaudacionBancosPreFaC
         $Fecha_Meses = $parametros['MBFechaI'] . " al " . $parametros['MBFechaF'];
         $Fecha_Meses = str_replace("/", "-", $Fecha_Meses);
         $ContadorTarjeta = 0;
-        $RutaGeneraFile = strtoupper('../../../TEMP/BANCO/FACTURAS/Tarjetas ' . $Fecha_Meses . '.TXT');
+        $RutaGeneraFile = dirname(__DIR__, 3) . '/TEMP/BANCO/FACTURAS/Tarjetas ' . $Fecha_Meses . '.TXT';
         $NombreArchivos = $RutaGeneraFile;
         $NumFileFacturas = fopen($RutaGeneraFile, "w"); //Abre el archivo
         if (count($AdoFactura) > 0) {
@@ -1034,7 +1034,7 @@ class FRecaudacionBancosPreFaC
         $Factura_No = 0;
         $Fecha_Meses = $parametros['MBFechaI'] . " al " . $parametros['MBFechaF'];
         $Fecha_Meses = str_replace("/", "-", $Fecha_Meses);
-        $RutaGeneraFile = strtoupper('../../../TEMP/BANCO/FACTURAS/RECAUDACION ' . $Fecha_Meses . '.TXT');
+        $RutaGeneraFile = dirname(__DIR__, 3) . '/TEMP/BANCO/FACTURAS/RECAUDACION ' . $Fecha_Meses . '.TXT';
         $NumFileFacturas = fopen($RutaGeneraFile, "w"); //Abre el archivo
         if (count($AdoFactura) > 0) {
             foreach ($AdoFactura as $key => $value) {
@@ -1100,7 +1100,7 @@ class FRecaudacionBancosPreFaC
 
     public function Generar_Guayaquil($parametros, $AdoFactura)
     {
-        $RutaGeneraFile = strtoupper('../../../TEMP/BANCO/FACTURAS/RCE_' . FechaSistema() . '_' . sprintf("%07d", intval($_SESSION['INGRESO']['CodigoDelBanco'])) . '_01.txt');
+        $RutaGeneraFile = dirname(__DIR__, 3) . '/TEMP/BANCO/FACTURAS/RCE_' . FechaSistema() . '_' . sprintf("%07d", intval($_SESSION['INGRESO']['CodigoDelBanco'])) . '_01.txt';
         $TipoDoc = "0";
         $Contador = 0;
         $FechaTexto = BuscarFecha($parametros['MBFechaF']);
@@ -1300,8 +1300,8 @@ class FRecaudacionBancosPreFaC
         $Fecha_Meses = $parametros['MBFechaI'] . " al " . $parametros['MBFechaF'];
         $Fecha_Meses = str_replace("/", "-", $Fecha_Meses);
 
-        $ArchivoTexto = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Internacional Recaudaciones " . $Fecha_Meses . ".txt");
-        $ArchivoExcel = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Internacional Recaudaciones " . $Fecha_Meses . ".xls");
+        $ArchivoTexto = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Internacional Recaudaciones " . $Fecha_Meses . ".txt";
+        $ArchivoExcel = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Internacional Recaudaciones " . $Fecha_Meses . ".xls";
         $NombreArchivos = $ArchivoTexto . "\n" . "\n";
         $tmp = $ArchivoTexto;
 
@@ -1409,8 +1409,8 @@ class FRecaudacionBancosPreFaC
         fclose($NumFileFacturas);
         excel_simple($datosExcel, $ArchivoExcel, "Internacional Recaudaciones");
 
-        $ArchivoTexto = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Internacional Debitos " . $Fecha_Meses . ".txt");
-        $ArchivoExcel2 = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Internacional Debitos " . $Fecha_Meses . ".xls");
+        $ArchivoTexto = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Internacional Debitos " . $Fecha_Meses . ".txt";
+        $ArchivoExcel2 = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Internacional Debitos " . $Fecha_Meses . ".xls";
         $NombreArchivos .= $ArchivoTexto . "\n" . "\n";
         $tmp2 = $ArchivoTexto;
 
@@ -1660,11 +1660,11 @@ class FRecaudacionBancosPreFaC
         $Anio = intval(substr(date("Y", strtotime($parametros['MBFechaI'])), 1, 3));
         $Dia = "15";
 
-        $RutaGeneraFile = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/SCREC " . $Fecha_Meses . ".TXT");
+        $RutaGeneraFile = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/SCREC " . $Fecha_Meses . ".TXT";
         $NombreFile = "SCREC " . $Fecha_Meses . ".TXT";
         $NumFileFacturas1 = fopen($RutaGeneraFile, "w"); //Abre el archivo
 
-        $RutaGeneraFile2 = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/SCCOB " . $Fecha_Meses . ".TXT");
+        $RutaGeneraFile2 = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/SCCOB " . $Fecha_Meses . ".TXT";
         $NombreFile2 = "SCCOB " . $Fecha_Meses . ".TXT";
         $NumFileFacturas2 = fopen($RutaGeneraFile2, "w"); //Abre el archivo
 
@@ -2055,7 +2055,7 @@ class FRecaudacionBancosPreFaC
             mkdir(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS", 0777, true);
         }
 
-        $path = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Clientes.XLSX");
+        $path = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Clientes.XLSX";
         Exportar_AdoDB_Excel($AdoClientes, $path, "DiskCover System");
         return array('response' => 1, 'Nombre1' => basename($path), 'Mensaje' => "SE GENERO EL SIGUIENTE ARCHIVO: \n" . basename($path));
     }
@@ -2100,7 +2100,7 @@ class FRecaudacionBancosPreFaC
         if(!file_exists(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS")){
             mkdir(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS", 0777, true);
         }
-        $path = strtoupper(dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Clientes.pdf");
+        $path = dirname(__DIR__, 3) . "/TEMP/BANCO/FACTURAS/Clientes.pdf";
         $this->pdf->Imprimir_Codigo_Banco($AdoClientes, $path);
         return(array('response' => 1,
          'Nombre1' => basename($path),
