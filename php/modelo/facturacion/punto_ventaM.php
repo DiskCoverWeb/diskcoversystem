@@ -28,7 +28,7 @@ class punto_ventaM
     if (!is_numeric($query)) {
       $sql .= " AND Cliente LIKE '%" . $query . "%'";
     } else {
-      $sql .= " AND CI_RUC LIKE '" . $query . "%'";
+      $sql .= " AND CI_RUC LIKE '%" . $query . "%'";
     }
     // $sql.=" UNION 
     // SELECT Cliente,Codigo,CI_RUC,TD,Grupo,Email,T 
@@ -48,7 +48,7 @@ class punto_ventaM
     if (!is_numeric($query)) {
       $sql .= " AND Cliente LIKE '%" . $query . "%'";
     } else {
-      $sql .= " AND CI_RUC = '" . $query . "'";
+      $sql .= " AND CI_RUC LIKE '%" . $query . "%'";
     } // print_r($sql);die();
 
     return $this->db->datos($sql);

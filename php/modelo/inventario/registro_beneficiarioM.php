@@ -23,31 +23,44 @@ class registro_beneficiarioM
 
     function LlenarDatosCliente($query)
     {
-        $sql = "SELECT TOP 100 Cliente, CI_RUC FROM Clientes WHERE Cliente <> '.'"; 
-
-        if (!empty($query)) {
-            if (!is_numeric($query)) {
-                $sql .= " AND Cliente LIKE '%" . $query . "%'"; 
-            } else {
-                $sql .= " AND CI_RUC LIKE '" . $query . "%'";
-            }
-        }
-        return $this->db->datos($sql);
-    }
-
-    function seleccionarClienteConRUCVisc($RUC, $Cliente) {
-        //print_r($Cliente);
-        if ($RUC) {
-            $sql = "SELECT Cliente, CodigoA, Representante, CI_RUC_R, Telefono_R, Contacto, Profesion, Direccion, Email, Email2, Lugar_Trabajo, Telefono, TelefonoT FROM Clientes WHERE CI_RUC = '" . $RUC . "'";
-        } elseif ($Cliente) {
-            $sql = "SELECT CI_RUC, CodigoA, Representante, CI_RUC_R, Telefono_R, Contacto, Profesion, Direccion, Email, Email2, Lugar_Trabajo, Telefono, TelefonoT FROM Clientes WHERE Cliente = '" . $Cliente . "'";
+        /*Hora_Ent*/
+        $sql = "SELECT TOP 100 Cliente, CI_RUC, Codigo, CodigoA, Representante, 
+                CI_RUC_R, Telefono_R, Contacto, Profesion, Direccion, 
+                Email, Email2, Lugar_Trabajo, Telefono, TelefonoT, Fecha_Cad
+                FROM Clientes 
+                WHERE Cliente <> '.'  ";
+        if (!is_numeric($query)) {
+            $sql .= " AND Cliente LIKE '%" . $query . "%'";
         } else {
-            $sql = "";
+            $sql .= " AND CI_RUC LIKE '%" . $query . "%'";
         }
-        //print_r($sql);
+
         return $this->db->datos($sql);
     }
-    
+
+    function guardarAsignacion($parametros)
+    {
+        $sql = "UPDATE Clientes SET
+                CodigoA = '" . $parametros['CodigoA'] . "', 
+                Representante = '" . $parametros['Representante'] . "', 
+                CI_RUC_R = '" . $parametros['CI_RUC_R'] . "', 
+                Telefono_R = '" . $parametros['Telefono_R'] . "', 
+                Contacto = '" . $parametros['Contacto'] . "', 
+                Profesion = '" . $parametros['Profesion'] . "', 
+                Fecha_Cad = '" . $parametros['Fecha_Cad'] . "', 
+                Hora_Ent = '" . $parametros['Hora_Ent'] . "', 
+                Direccion = '" . $parametros['Direccion'] . "', 
+                Email = '" . $parametros['Email'] . "', 
+                Email2 = '" . $parametros['Email2'] . "', 
+                Lugar_Trabajo = '" . $parametros['Lugar_Trabajo'] . "', 
+                Telefono = '" . $parametros['Telefono'] . "', 
+                TelefonoT = '" . $parametros['TelefonoT'] . "' ";
+        
+        //$sql2 
+        return $this->db->datos($sql);
+
+    }
+
 }
 
 ?>
