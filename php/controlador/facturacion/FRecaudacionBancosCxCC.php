@@ -443,7 +443,7 @@ class FRecaudacionBancosCxCC
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
         }
-        $RutaGeneraFile = strtoupper($directorioBase . "RESUMEN_MES_" . substr(mesesLetras(date('m')), 0, 3) . "-" . date('Y') . "_" . $Cta_Bancaria . ".csv");
+        $RutaGeneraFile = $directorioBase . "RESUMEN_MES_" . substr(mesesLetras(date('m')), 0, 3) . "-" . date('Y') . "_" . $Cta_Bancaria . ".csv";
         $NumFileFacturas = fopen($RutaGeneraFile, "w");
         $Contador = 0;
         $FechaTexto = buscarFecha($MBFechaI);
@@ -511,7 +511,7 @@ class FRecaudacionBancosCxCC
         FechaValida($MBFechaF);
 
         $NombreArchivo = $parametros['NombreArchivo'];
-        $RutaGeneraFile = strtoupper($NombreArchivo);
+        $RutaGeneraFile = $NombreArchivo;
         //print_r($RutaGeneraFile);
 
         $Contador = 0;
@@ -619,7 +619,7 @@ class FRecaudacionBancosCxCC
         $FechaTexto = $MBFechaI;
         $DiarioCaja = ReadSetDataNum('Recibo_No', True, True);
 
-        $RutaGeneraFile = strtoupper($NombreArchivo);
+        $RutaGeneraFile = $NombreArchivo;
 
         if ($RutaGeneraFile !== "") {
             $TotalIngreso = 0;
@@ -1027,7 +1027,7 @@ class FRecaudacionBancosCxCC
     function Visualizar_Archivo($parametros)
     {
         $NombreArchivo = $parametros['NombreArchivo'];
-        $RutaGeneraFile = strtoupper($NombreArchivo);
+        $RutaGeneraFile = $NombreArchivo;
         $maxCar = 0;
         $txtFile = '';
         $NumFile = fopen($RutaGeneraFile, "r");
@@ -1107,7 +1107,7 @@ class FRecaudacionBancosCxCC
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
         }
-        $NumFileFacturas = fopen(strtoupper($directorioBase . "SCREC" . date("m", strtotime($MBFechaI)) . ".TXT"), "w");
+        $NumFileFacturas = fopen($directorioBase . "SCREC" . date("m", strtotime($MBFechaI)) . ".TXT", "w");
 
         if (count($AdoPendiente) > 0) {
             foreach ($AdoPendiente as $valor) {
@@ -1188,7 +1188,7 @@ class FRecaudacionBancosCxCC
         $mes = date('m', strtotime($MBFechaI));
         $anio = intval(substr(date('Y', strtotime($MBFechaI)), 1, 3));
         $dia = "15";
-        $NumFileFacturas = fopen(strtoupper($directorioBase . "SCCOB" . $mes . ".TXT"), 'w');
+        $NumFileFacturas = fopen($directorioBase . "SCCOB" . $mes . ".TXT", 'w');
         if (count($AdoPendiente) > 0) {
             foreach ($AdoPendiente as $valor) {
                 $Contador = $Contador + 1;
@@ -1273,7 +1273,7 @@ class FRecaudacionBancosCxCC
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
         }
-        $NumFileFacturas = fopen(strtoupper($directorioBase . "CxC_MES_" . $Traza . ".TXT"), "w");
+        $NumFileFacturas = fopen($directorioBase . "CxC_MES_" . $Traza . ".TXT", "w");
         $Traza = "";
 
         $FechaTexto = FechaSistema();
@@ -1337,7 +1337,7 @@ class FRecaudacionBancosCxCC
             mkdir($directorioBase, 0777, true);
         }
 
-        $NumFileFacturas = fopen(strtoupper($directorioBase . "CxC_Pendiente_" . $Traza . ".TXT"), "w");
+        $NumFileFacturas = fopen($directorioBase . "CxC_Pendiente_" . $Traza . ".TXT", "w");
         $Traza = "";
         $FechaTexto = FechaSistema();
         $Mifecha = BuscarFecha($MBFechaI);
@@ -1404,8 +1404,8 @@ class FRecaudacionBancosCxCC
             'res' => 'Ok',
             'mensaje' => $mensaje,
             'textoBanco' => 'INTERNACIONAL',
-            'Nombre1' => strtoupper("CxC_MES_" . $Traza . ".TXT"),
-            'Nombre2' => strtoupper("CxC_Pendiente_" . $Traza . ".TXT")
+            'Nombre1' => "CxC_MES_" . $Traza . ".TXT",
+            'Nombre2' => "CxC_Pendiente_" . $Traza . ".TXT"
         );
     }
 
@@ -1420,7 +1420,7 @@ class FRecaudacionBancosCxCC
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
         }
-        $NumFileFacturas = fopen(strtoupper($directorioBase . "BIZBANK CODIGO DEL" . str_replace("/", "-", $MBFechaI) . "_AL_" . str_replace("/", "-", $MBFechaF) . ".TXT"), "w");
+        $NumFileFacturas = fopen($directorioBase . "BIZBANK CODIGO DEL" . str_replace("/", "-", $MBFechaI) . "_AL_" . str_replace("/", "-", $MBFechaF) . ".TXT", "w");
         $TipoDoc = "0";
         $Contador = 0;
         $FechaTexto = BuscarFecha($MBFechaI);
@@ -1488,7 +1488,7 @@ class FRecaudacionBancosCxCC
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
         }
-        $NumFileFacturas = fopen(strtoupper($directorioBase . "BIZBANK DEBITO DEL" . str_replace("/", "-", $MBFechaI) . "_AL_" . str_replace("/", "-", $MBFechaF) . ".TXT"), "w");
+        $NumFileFacturas = fopen($directorioBase . "BIZBANK DEBITO DEL" . str_replace("/", "-", $MBFechaI) . "_AL_" . str_replace("/", "-", $MBFechaF) . ".TXT", "w");
         $TipoDoc = "0";
         $FechaTexto = BuscarFecha($MBFechaI);
 
@@ -1573,8 +1573,8 @@ class FRecaudacionBancosCxCC
             'res' => 'Ok',
             'mensaje' => $mensaje,
             'textoBanco' => 'PACIFICO',
-            'Nombre1' => strtoupper("BIZBANK CODIGO DEL" . str_replace("/", "-", $MBFechaI) . "_AL_" . str_replace("/", "-", $MBFechaF) . ".TXT"),
-            'Nombre2' => strtoupper("BIZBANK DEBITO DEL" . str_replace("/", "-", $MBFechaI) . "_AL_" . str_replace("/", "-", $MBFechaF) . ".TXT")
+            'Nombre1' => "BIZBANK CODIGO DEL" . str_replace("/", "-", $MBFechaI) . "_AL_" . str_replace("/", "-", $MBFechaF) . ".TXT",
+            'Nombre2' => "BIZBANK DEBITO DEL" . str_replace("/", "-", $MBFechaI) . "_AL_" . str_replace("/", "-", $MBFechaF) . ".TXT"
         );
     }
 
@@ -1607,7 +1607,7 @@ class FRecaudacionBancosCxCC
         if (!is_dir($directorioBase)) {
             mkdir($directorioBase, 0777, true);
         }
-        $NumFileFacturas = fopen(strtoupper($directorioBase . "BGR_MES_" . sprintf('%02d', $MiMes) . ".TXT"), "w");
+        $NumFileFacturas = fopen($directorioBase . "BGR_MES_" . sprintf('%02d', $MiMes) . ".TXT", "w");
 
         if (count($AdoAux) > 0) {
             foreach ($AdoAux as $valor) {
@@ -1665,7 +1665,7 @@ class FRecaudacionBancosCxCC
         }
         fclose($NumFileFacturas);
 
-        $mensaje = strtoupper("BGR_MES_" . sprintf('%02d', $MiMes) . ".TXT");
+        $mensaje = "BGR_MES_" . sprintf('%02d', $MiMes) . ".TXT";
 
         return array(
             'res' => 'Ok',
@@ -1693,7 +1693,7 @@ class FRecaudacionBancosCxCC
             mkdir($directorioBase, 0777, true);
         }
 
-        $RutaGeneraFile = strtoupper($directorioBase . "ALUMNOS" . $CodigoDelBanco . ".TXT");
+        $RutaGeneraFile = $directorioBase . "ALUMNOS" . $CodigoDelBanco . ".TXT";
         $NumFileFacturas = fopen($RutaGeneraFile, "w");
         $TipoDoc = "0";
 
@@ -1792,7 +1792,7 @@ class FRecaudacionBancosCxCC
             }
         }
         fclose($NumFileFacturas);
-        $mensaje = strtoupper("ALUMNOS" . $CodigoDelBanco . ".TXT");
+        $mensaje = "ALUMNOS" . $CodigoDelBanco . ".TXT";
 
         return array(
             'res' => 'Ok',
@@ -1815,7 +1815,7 @@ class FRecaudacionBancosCxCC
             mkdir($directorioBase, 0777, true);
         }
 
-        $RutaGeneraFile = strtoupper($directorioBase . "CARGA_JEP_" . str_replace("/", "-", FechaSistema()) . ".TXT");
+        $RutaGeneraFile = $directorioBase . "CARGA_JEP_" . str_replace("/", "-", FechaSistema()) . ".TXT";
         $NumFileFacturas = fopen($RutaGeneraFile, 'w');
         $TipoDoc = "0";
         $Contador = 0;
@@ -1876,7 +1876,7 @@ class FRecaudacionBancosCxCC
             }
         }
         fclose($NumFileFacturas);
-        $mensaje = strtoupper("CARGA_JEP_" . str_replace("/", "-", FechaSistema()) . ".TXT");
+        $mensaje = "CARGA_JEP_" . str_replace("/", "-", FechaSistema()) . ".TXT";
 
         return array(
             'res' => 'Ok',
@@ -1917,7 +1917,7 @@ class FRecaudacionBancosCxCC
 
         $Fecha_Meses = $MBFechaI . " al " . $MBFechaF;
         $Fecha_Meses = str_replace("/", "-", $Fecha_Meses);
-        $RutaGeneraFile = strtoupper($directorioBase . "PRODUBANCO RECAUDACION " . $Fecha_Meses . ".TXT");
+        $RutaGeneraFile = $directorioBase . "PRODUBANCO RECAUDACION " . $Fecha_Meses . ".TXT";
         $NumFileFacturas = fopen($RutaGeneraFile, 'w');
 
         if (count($AdoDetalle) > 0) {
@@ -1968,7 +1968,7 @@ class FRecaudacionBancosCxCC
             }
         }
         fclose($NumFileFacturas);
-        $mensaje = strtoupper("PRODUBANCO RECAUDACION " . $Fecha_Meses . ".TXT");
+        $mensaje = "PRODUBANCO RECAUDACION " . $Fecha_Meses . ".TXT";
 
         return array(
             'res' => 'Ok',
@@ -1992,8 +1992,8 @@ class FRecaudacionBancosCxCC
             mkdir($directorioBase, 0777, true);
         }
 
-        $RutaGeneraFile = strtoupper($directorioBase . "RCE_" . date("Ymd", strtotime(FechaSistema())) .
-            "_" . str_pad($CodigoDelBanco, 7, "0", STR_PAD_LEFT) . "_01.TXT");
+        $RutaGeneraFile = $directorioBase . "RCE_" . date("Ymd", strtotime(FechaSistema())) .
+            "_" . str_pad($CodigoDelBanco, 7, "0", STR_PAD_LEFT) . "_01.TXT";
 
         $NumFileFacturas = fopen($RutaGeneraFile, 'w');
         $TipoDoc = "0";
@@ -2082,8 +2082,8 @@ class FRecaudacionBancosCxCC
             $TxtFile .= "Total Grupos: " . $IE . "\t" . "Total Alumnos: " . $KE . "\t\t" . "Total a Recaudar USD" . "\t" . $Codigo4 . "\n";
         }
         fclose($NumFileFacturas);
-        $mensaje = strtoupper("RCE_" . date("Ymd", strtotime(FechaSistema())) .
-            "_" . str_pad($CodigoDelBanco, 7, "0", STR_PAD_LEFT) . "_01.TXT");
+        $mensaje = "RCE_" . date("Ymd", strtotime(FechaSistema())) .
+            "_" . str_pad($CodigoDelBanco, 7, "0", STR_PAD_LEFT) . "_01.TXT";
 
         return array(
             'res' => 'Ok',
