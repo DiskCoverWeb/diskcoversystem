@@ -1,4 +1,5 @@
 <?php
+@session_start();
 //Llamada al modelo
 require_once("../modelo/usuario_model.php");
 include_once("../funciones/funciones.php");
@@ -44,6 +45,15 @@ if (isset($_GET['salir_empresa'])) {
 if (isset($_GET['validateStar'])) {
     extract($_POST);
     echo json_encode(Ver_Grafico_FormPict($NumModulo));
+}
+if (isset($_GET['validar_session_Activa']))
+{
+    if(!isset($_SESSION['INGRESO']))
+    {
+       echo json_encode(-1);
+    }else{
+       echo json_encode(1);
+    }
 }
 
 if (isset($_GET['ConfirmacionComunicado'])) {
