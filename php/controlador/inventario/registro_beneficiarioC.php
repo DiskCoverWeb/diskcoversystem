@@ -21,9 +21,55 @@ if (isset($_GET['seleccionarClienteConRUCVisc'])) {
     echo json_encode($controlador->seleccionarClienteConRUCVisc($parametros['RUC'], $parametros['Cliente']));
 }
 
-if (isset($_GET['guardarAsignacion'])) {
-    $params = $_POST['params'];
-    echo json_encode($controlador->LlenarSelect($params));
+if (isset($_POST['guardarAsignacion'])) {
+
+    $params = array(
+        'Cliente' => $_POST['Cliente'],
+        'CI_RUC' => $_POST['CI_RUC'],
+        'Codigo' => $_POST['Codigo'],
+        'Actividad' => $_POST['Actividad'],
+        'CodigoA' => $_POST['CodigoA'],
+        'Representante' => $_POST['Representante'],
+        'CI_RUC_R' => $_POST['CI_RUC_R'],
+        'Telefono_R' => $_POST['Telefono_R'],
+        'Contacto' => $_POST['Contacto'],
+        'Profesion' => $_POST['Profesion'],
+        'Fecha_Cad' => $_POST['Fecha_Cad'],
+        'Hora_Ent' => $_POST['Hora_Ent'],
+        'Direccion' => $_POST['Direccion'],
+        'Email' => $_POST['Email'],
+        'Email2' => $_POST['Email2'],
+        'Lugar_Trabajo' => $_POST['Lugar_Trabajo'],
+        'Telefono' => $_POST['Telefono'],
+        'TelefonoT' => $_POST['TelefonoT'],
+        'CodigoA2' => $_POST['CodigoA2'],
+        'Fecha_Registro' => $_POST['Fecha_Registro'],
+        'Hora_Registro' => $_POST['Hora_Registro'],
+        'Envio_No' => $_POST['Envio_No'],
+        'No_Soc' => $_POST['No_Soc'],
+        'Area' => $_POST['Area'],
+        'Acreditacion' => $_POST['Acreditacion'],
+        'Tipo_Dato' => $_POST['Tipo_Dato'],
+        'Cod_Fam' => $_POST['Cod_Fam'],
+        'Observaciones' => $_POST['Observaciones']
+    );
+
+    if (isset($_FILES['Evidencias']) && $_FILES['Evidencias']['error'] == UPLOAD_ERR_OK) {
+        $archivo = $_FILES['Evidencias'];
+        $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/Evidencias_" . $_SESSION['INGRESO']['Entidad'] . "/Evidencias_" . $_SESSION['INGRESO']['item'] . "/";
+        if (!is_dir($carpetaDestino)) {
+            mkdir($carpetaDestino, 0777, true);
+        }
+        $nombreArchivoDestino = $carpetaDestino . basename($archivo['name']);
+        print_r($nombreArchivoDestino);
+        if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
+            echo json_encode($controlador->guardarAsignacion($params));
+        } else {
+            echo json_encode(array("res" => 'Error', "message" => "Error al subir el archivo"));
+        }
+    } else {
+        echo json_encode($controlador->guardarAsignacion($params));
+    }
 }
 
 class registro_beneficiarioC
@@ -101,8 +147,10 @@ class registro_beneficiarioC
         }
     }
 
-    function guardarAsignacion($parametros){
-        $this->modelo->guardarAsignacion($parametros);
+    function guardarAsignacion($parametros)
+    {
+        print_r($parametros);
+        //$this->modelo->guardarAsignacion($parametros);
     }
 }
 ?>

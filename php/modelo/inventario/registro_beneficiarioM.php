@@ -41,6 +41,7 @@ class registro_beneficiarioM
     function guardarAsignacion($parametros)
     {
         $sql = "UPDATE Clientes SET
+                Actividad = '" . $parametros['Actividad'] . "',
                 CodigoA = '" . $parametros['CodigoA'] . "', 
                 Representante = '" . $parametros['Representante'] . "', 
                 CI_RUC_R = '" . $parametros['CI_RUC_R'] . "', 
@@ -55,8 +56,16 @@ class registro_beneficiarioM
                 Lugar_Trabajo = '" . $parametros['Lugar_Trabajo'] . "', 
                 Telefono = '" . $parametros['Telefono'] . "', 
                 TelefonoT = '" . $parametros['TelefonoT'] . "' ";
-        
-        //$sql2 
+
+        $sql2 = "INSERT INTO Clientes_Datos_Extras (Codigo, CodigoA, Fecha_Registro, Hora_Ent, 
+                    Envio_No, No_Soc, Area, Acreditacion, Tipo_Dato, Cod_Fam, Evidencias, Observaciones) 
+                    VALUES ('" . $parametros['Codigo'] . "', '" . $parametros['CodigoA2'] . "', '" . $parametros['Fecha_Registro'] . "', 
+                    '" . $parametros['Hora_Ent'] . "', '" . $parametros['Envio_No'] . "', '" . $parametros['No_Soc'] . "', 
+                    '" . $parametros['Area'] . "', '" . $parametros['Acreditacion'] . "', '" . $parametros['Tipo_Dato'] . "', 
+                    '" . $parametros['Cod_Fam'] . "', '" . $parametros['Evidencias'] . "', '" . $parametros['Observaciones'] . "')
+                    WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                    AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' ";
+
         return $this->db->datos($sql);
 
     }

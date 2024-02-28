@@ -60,11 +60,13 @@
             <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                 <div class="card-body" style="margin:1px; padding-top:5px; padding-bottom:5px;">
                     <div class="row" style="margin:10px; ">
+
                         <div class="col-sm-2">
                             <label for="ruc" style="display: block;">CI/RUC</label>
                             <select class="form-control input-xs" name="ruc" id="ruc">
                                 <option value="">Seleccione</option>
                             </select>
+
                         </div>
                         <div class="col-sm-1" style="display: flex; justify-content: center;">
                             <img src="../../img/png/SRIlogo.png" width="80" height="50">
@@ -83,9 +85,7 @@
                                     </button>
                                 </span>
                             </div>
-
                         </div>
-
                         <div class="col-sm-4">
                             <label for="select_93" style="display: block;">Tipo de Beneficiario</label>
                             <select class="form-control input-xs" name="select_93" id="select_93">
@@ -218,8 +218,8 @@
                             <img src="../../img/png/reloj.png" width="55" height="55">
                         </div>
                         <div class="col-sm-2">
-                            <label for="horaEntrega" style="display: block;">HORA DE ENTREGA</label>
-                            <input type="time" name="horaEntrega" id="horaEntrega" class="form-control input-xs"
+                            <label for="horaEntregac" style="display: block;">HORA DE ENTREGA</label>
+                            <input type="time" name="horaEntregac" id="horaEntregac" class="form-control input-xs"
                                 title="HORA DE ENTREGA">
                         </div>
 
@@ -295,12 +295,15 @@
 <script>
     $(document).ready(function () {
         Form_Activate();
+
     });
 
     function Form_Activate() {
         var valores = [86, 87, 88, 89, 90, 91, 92, 93];
         LlenarSelectTipos(valores);
         LlenarDatosCliente();
+        var horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        var val = $('#horaEntregac').val(horaActual);
     }
 
     function LlenarSelectTipos(valores) {
@@ -327,7 +330,7 @@
                 $select.append('<option value="">' + datos + '</option>');
             } else {
                 $.each(datos, function (index, opcion) {
-                    $select.append('<option value="' + opcion['Cmds'] + '">' + opcion['Proceso'] + '</option>');
+                    $select.append('<option value="' + opcion['Proceso'] + '">' + opcion['Proceso'] + '</option>');
                 });
             }
         }
@@ -378,56 +381,114 @@
     }
 
     $('#btnGuardarAsignacion').click(function () {
-        var params = {
-            'Cliente': miCliente,
-            'CI_RUC': miRuc,
-            'CodigoA': $('#estado').val(),
-            'Representante': $('#nombreRepre').val(),
-            'CI_RUC_R': $('#ciRepre').val(),
-            'Telefono_R': $('#telfRepre').val(),
-            'Contacto': $('#contacto').val(),
-            'Profesion': $('#cargo').val(),
-            'Fecha_Cad': $('#fechaEntrega').val(),
-            'Hora_Ent': $('#horaEntrega').val(),
-            'Direccion': $('#direccion').val(),
-            'Email': $('#email').val(),
-            'Email2': $('#email2').val(),
-            'Lugar_Trabajo': $('#referencia').val(),
-            'Telefono': $('#telefono').val(),
-            'TelefonoT': $('#telefono2').val()
-        };
-        if (miCliente != null && miRuc != null) {
-            $.ajax({
-                url: '../controlador/inventario/guardarAsignacion.php',
-                type: 'post',
-                dataType: 'json',
-                data: { 'params': params },
-                success: function (data) {
-                    if (data.response == 0) {
-                        swal.fire({
-                            title: 'Guardar',
-                            text: 'Se ha registrado correctamente',
-                            type: 'success',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
-                }
+        var fileInput = $('#archivoAdd')[0];
+        var archivo = fileInput.files[0];
+
+        var val = $('#horaEntregac').val();
+        console.log(val);
+        console.log(miRuc);
+
+        var formData = new FormData();
+
+        formData.append('Cliente', miCliente);
+        formData.append('CI_RUC', miRuc);
+        formData.append('Codigo', miCodigo);
+        formData.append('Actividad', $('#select_93').val());
+        formData.append('CodigoA', $('#select_87').val());
+        formData.append('Representante', $('#nombreRepre').val());
+        formData.append('CI_RUC_R', $('#ciRepre').val());
+        formData.append('Telefono_R', $('#telfRepre').val());
+        formData.append('Contacto', $('#contacto').val());
+        formData.append('Profesion', $('#cargo').val());
+        formData.append('Fecha_Cad', $('#fechaEntrega').val());
+        formData.append('Hora_Ent', $('#horaEntrega').val());
+        formData.append('Direccion', $('#direccion').val());
+        formData.append('Email', $('#email').val());
+        formData.append('Email2', $('#email2').val());
+        formData.append('Lugar_Trabajo', $('#referencia').val());
+        formData.append('Telefono', $('#telefono').val());
+        formData.append('TelefonoT', $('#telefono2').val());
+        // Información adicional
+        formData.append('CodigoA2', $('#select_88').val());
+        formData.append('Fecha_Registro', $('diaEntregac').val());
+        formData.append('Hora_Registro', $('horaEntregac').val());
+        formData.append('Envio_No', $('frecuencia').val());
+        formData.append('No_Soc', $('totalPersonas').val());
+        formData.append('Area', $('#select_91').val());
+        formData.append('Acreditacion', $('#select_92').val());
+        formData.append('Tipo_Dato', $('#select_90').val());
+        formData.append('Cod_Fam', $('#select_89').val());
+        formData.append('Evidencias', archivo, archivo.name);
+        formData.append('Observaciones', $('#infoNut').val());
+
+        console.log(formData.get('Evidencias'));
+
+        var camposVacios = [];
+
+        // Verificar cada campo y agregar su nombre al array si está vacío
+        /*if (!miRuc) camposVacios.push('RUC');
+        if (!$('#select_88').val()) camposVacios.push('Tipo Entrega');
+        if (!$('#diaEntregac').val()) camposVacios.push('Fecha Entrega');
+        if (!$('#horaEntregac').val()) camposVacios.push('Hora Entrega');
+        if (!$('#select_86').val()) camposVacios.push('Frecuencia');
+        if (!$('#totalPersonas').val()) camposVacios.push('Personas Atendidas');
+        if (!$('#select_91').val()) camposVacios.push('Tipo poblacion');
+        if (!$('#select_92').val()) camposVacios.push('Accion social');
+        if (!$('#select_90').val()) camposVacios.push('Vulnerabilidad');
+        if (!$('#select_89').val()) camposVacios.push('Tipo Atencion');
+        if (!archivo) camposVacios.push('Evidencias');
+        if (!$('#infoNut').val()) camposVacios.push('Observaciones');
+
+        // Verificar si hay campos vacíos
+        if (camposVacios.length > 0) {
+            // Construir el mensaje de los campos vacíos
+            var mensaje = 'Los siguientes campos están vacíos:\n';
+            camposVacios.forEach(function (campo) {
+                mensaje += campo + ',';
             });
-        } else {
-            swal.fire({
-                title: 'No se llenaron los campos mínimos requeridos',
-                type: 'error',
+
+            // Mostrar el cuadro de diálogo Swal con la lista de campos vacíos
+            Swal.fire({
+                title: 'Campos Vacíos',
+                text: mensaje,
+                type: 'warning',
                 confirmButtonText: 'Aceptar'
             });
-        }
+        } else {*/
+        $.ajax({
+            url: '../controlador/inventario/registro_beneficiarioC.php?guardarAsignacion=true',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                Swal.fire({
+                    title: 'Guardar',
+                    text: 'Se ha registrado correctamente',
+                    type: 'success',
+                    confirmButtonText: 'Aceptar'
+                });
+            },
+            error: function () {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Ha ocurrido un error al procesar la solicitud',
+                    type: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+        /* }*/
     });
 
-
     var miRuc;
+    var miCodigo;
     $('#cliente').on('select2:select', function (e) {
         var data = e.params.data;
         //console.log("VALOR DEL RUC ", data.CI_RUC);
-        miRuc = data.CI_RUC
+        miRuc = data.CI_RUC;
+        //miCodigo = data.Codigo;
+        miCliente = data.id;
         $('#ruc').val(data.CI_RUC).trigger('change');
         //console.log("Valor de $('#ruc').val():", $('#ruc').val());
         llenarDatos(data);
@@ -437,6 +498,8 @@
     $('#ruc').on('select2:select', function (e) {
         var data = e.params.data;
         //console.log("VALOR DEL CLIENTE ", data.Cliente);
+        miRuc = data.id;
+        //miCodigo = data.Codigo;
         miCliente = data.Cliente;
         $('#cliente').val(data.Cliente).trigger('change.select2');
         //#collapseOneconsole.log("Valor de $('#ruc').val():", $('#ruc').val());
