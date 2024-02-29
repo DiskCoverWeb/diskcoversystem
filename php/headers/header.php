@@ -145,8 +145,8 @@ $cuentas = SeteosCtas();
 
     $(document).ready(function () {
       // validateStar();
-      // setInterval(validateStar, 6*60000);
 
+    setInterval(validar_session_Activa, 5000);
 
       var cuentas = '<?php echo $cuentas; ?>';
       if (cuentas != '') {
@@ -336,6 +336,31 @@ $cuentas = SeteosCtas();
       var Fecha = y + "-" + m + "-" + d;
       // console.log(Fecha);
       return Fecha;
+    }
+
+
+    function validar_session_Activa()
+    {
+       $.ajax({
+        url: '../controlador/panel.php?validar_session_Activa=true',
+        type: 'post',
+        data: { 'NumModulo': '<?php echo @$_SESSION['INGRESO']['modulo_'] ?>' },
+        dataType: 'json',
+        success: function (response) {
+          if(response=='-1')
+          {
+              Swal.fire({
+              type: 'info',
+              title: 'Session Expirada',
+              confirmButtonText: 'Ok!',
+              allowOutsideClick: false,
+            }).then(function () {
+              window.location = '../vista/login.php';
+            })
+          }
+        }
+      });
+
     }
 
     function validateStar() {

@@ -17,7 +17,8 @@ class asignacion_osM
 
     public function tipoBeneficiario($query = false): array
     {
-        $sql = "SELECT TOP 100 C.Codigo, C.CodigoA, C.Cliente, C.CI_RUC, CD.Fecha_Registro, CD.Envio_No, CD.CodigoA as CodigoACD, CD.Beneficiario,
+        $sql = "SELECT TOP 100 C.Codigo, C.CodigoA, C.Cliente, C.CI_RUC, CD.Fecha_Registro, CD.Envio_No, 
+                CD.CodigoA as CodigoACD, CD.Beneficiario,
                 CD.No_Soc, CD.Area, CD.Acreditacion, CD.Tipo, CD.Cod_Fam, CD.Salario, CD.Descuento, 
                 CD.Evidencias, CD.Item 
                 FROM Clientes as C
