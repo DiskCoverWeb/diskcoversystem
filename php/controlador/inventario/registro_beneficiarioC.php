@@ -1,4 +1,12 @@
 <?php
+
+/** 
+ * AUTOR DE RUTINA	: Dallyana Vanegas
+ * FECHA CREACION	: 16/02/2024
+ * FECHA MODIFICACION : 29/02/2024
+ * DESCIPCION : Clase controlador para Agencia
+ */
+
 include(dirname(__DIR__, 2) . '/modelo/inventario/registro_beneficiarioM.php');
 
 $controlador = new registro_beneficiarioC();
@@ -21,7 +29,7 @@ if (isset($_GET['seleccionarClienteConRUCVisc'])) {
     echo json_encode($controlador->seleccionarClienteConRUCVisc($parametros['RUC'], $parametros['Cliente']));
 }
 
-if (isset($_POST['guardarAsignacion'])) {
+if (isset($_GET['guardarAsignacion'])) {
 
     $params = array(
         'Cliente' => $_POST['Cliente'],
@@ -56,19 +64,30 @@ if (isset($_POST['guardarAsignacion'])) {
 
     if (isset($_FILES['Evidencias']) && $_FILES['Evidencias']['error'] == UPLOAD_ERR_OK) {
         $archivo = $_FILES['Evidencias'];
-        $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/Evidencias_" . $_SESSION['INGRESO']['Entidad'] . "/Evidencias_" . $_SESSION['INGRESO']['item'] . "/";
+        $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/EVIDENCIA_" . $_SESSION['INGRESO']['Entidad'] .
+            "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
+        $carpetaDestino = str_replace(' ', '_', $carpetaDestino);
+
         if (!is_dir($carpetaDestino)) {
             mkdir($carpetaDestino, 0777, true);
         }
+
         $nombreArchivoDestino = $carpetaDestino . basename($archivo['name']);
-        print_r($nombreArchivoDestino);
-        if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
-            echo json_encode($controlador->guardarAsignacion($params));
+
+        if (file_exists($nombreArchivoDestino)) {
+            echo json_encode([
+                "res" => '0',
+                "mensaje" => "Ya existe un archivo con el nombre '"
+                    . $archivo['name'] . "'. Por favor, cambie el nombre del archivo."
+            ]);
         } else {
-            echo json_encode(array("res" => 'Error', "message" => "Error al subir el archivo"));
+            if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
+                $params['NombreArchivo'] = $archivo['name'];
+                echo json_encode($controlador->guardarAsignacion($params));
+            } else {
+                echo json_encode(["res" => '0', "mensaje" => "No se ha cargado ningún archivo", "datos" => $parametros]);
+            }
         }
-    } else {
-        echo json_encode($controlador->guardarAsignacion($params));
     }
 }
 
@@ -101,17 +120,20 @@ class registro_beneficiarioC
     {
         try {
             $datos = $this->modelo->LlenarDatosCliente($query);
-            $res = [];
             if (count($datos) == 0) {
                 throw new Exception('No se encontraron datos');
             }
             foreach ($datos as $valor) {
+                $fecha = $valor['Fecha_Cad']->format('Y-m-d');
+
                 $clientes[] = [
                     'id' => $valor['Codigo'],
                     'text' => $valor['Cliente'],
                     'CodigoA' => $valor['CodigoA'],
                     'CI_RUC' => $valor['CI_RUC'],
                     'Representante' => $valor['Representante'],
+                    'Fecha_Cad' => $fecha,
+                    //'Hora_Ent' => ['Hora_Ent'],
                     'CI_RUC_R' => $valor['CI_RUC_R'],
                     'Telefono_R' => $valor['Telefono_R'],
                     'Contacto' => $valor['Contacto'],
@@ -129,6 +151,8 @@ class registro_beneficiarioC
                     'CodigoA' => $valor['CodigoA'],
                     'Cliente' => $valor['Cliente'],
                     'Representante' => $valor['Representante'],
+                    'Fecha_Cad' => $fecha,
+                    //'Hora_Ent' => ['Hora_Ent'],
                     'CI_RUC_R' => $valor['CI_RUC_R'],
                     'Telefono_R' => $valor['Telefono_R'],
                     'Contacto' => $valor['Contacto'],
@@ -149,8 +173,8 @@ class registro_beneficiarioC
 
     function guardarAsignacion($parametros)
     {
-        print_r($parametros);
-        //$this->modelo->guardarAsignacion($parametros);
+        $datos = $this->modelo->guardarAsignacion($parametros);
+        return array("res" => '1', "mensaje" => "Se registro correctamente", "datos" => $datos);
     }
 }
 ?>

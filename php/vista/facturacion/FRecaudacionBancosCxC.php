@@ -2,7 +2,7 @@
 <!--
     AUTOR DE RUTINA	: Dallyana Vanegas
     FECHA CREACION	: 03/01/2024
-    FECHA MODIFICACION: 29/01/2024
+    FECHA MODIFICACION: 29/02/2024
     DESCIPCION : Clase que se encarga de manejar la interfaz de la pantalla de recaudacion de bancos CxC    
  -->
 
@@ -456,14 +456,15 @@
             'CheqPend': CheqPend,
         };
 
+        $('#myModal_espera').modal('show');
         $.ajax({
             type: "POST",
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?EnviarRubros=true',
             dataType: 'json',
             data: { 'parametros': parametros },
             success: function (data) {
-
                 if (data.res == 'Ok') {
+                    $('#myModal_espera').modal('hide');
                     switch (data.textoBanco) {
                         case "PICHINCHA":
                         case "INTERNACIONAL":
@@ -489,7 +490,6 @@
                         type: 'error',
                     });
                 }
-
             }
         });
     }
@@ -582,6 +582,7 @@
             formData.append('archivoBanco', archivo, archivo.name);
         }
 
+        $('#myModal_espera').modal('show');
         $.ajax({
             type: 'post',
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?RecibirAbonos=true',
@@ -589,11 +590,19 @@
             contentType: false,
             data: formData,
             success: function (data) {
+                console.log(data);
+                $('#myModal_espera').modal('hide');
                 var datos = JSON.parse(data);
                 if (datos.res == 'Error') {
                     Swal.fire({
                         title: datos.mensaje,
                         type: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }else{
+                    Swal.fire({
+                        title: datos.mensaje,
+                        type: 'success',
                         confirmButtonText: 'Aceptar'
                     });
                 }
