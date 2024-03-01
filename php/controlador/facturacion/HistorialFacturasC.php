@@ -1344,7 +1344,7 @@ class HistorialFacturasC
     function Bajar_Excel($AdoQuery)
     {
         if (count($AdoQuery) > 0) {
-            $path = strtoupper(dirname(__DIR__, 3) . "/TEMP/HISTORICO/");
+            $path = dirname(__DIR__, 3) . "/TEMP/HISTORICO/";
             if (!is_dir($path)) {
                 mkdir($path, 0777, true);
             }
