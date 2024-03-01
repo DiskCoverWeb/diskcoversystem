@@ -1,3 +1,6 @@
+<?php
+require_once("FPensiones.php"); 
+?>
 <script>
 
     /*
@@ -239,7 +242,6 @@
         });
     });
     //Definicion de metodos
-
     function Excel() {
         if (AdoQuery.length == 0) {
             swal.fire({
@@ -1040,7 +1042,6 @@
                 }
             }
         });
-
     }
 
     function DCTipoPagoo() {
@@ -1541,127 +1542,6 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary">Save changes</button>
             </div>-->
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<!-- Modal FPensiones -->
-<div class="modal fade" tabindex="-1" role="dialog" id="FPensiones">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="row" style="text-align: center;">
-                    <button class="btn btn-default" data-toggle="tooltip" data-dismiss="modal" data-placement="bottom"
-                        title="Salir" id="" onclick="">
-                        <img src="../../img/png/insertar.png">
-                    </button>
-                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Insertar" id=""
-                        onclick="">
-                        <img src="../../img/png/insertar.png">
-                    </button>
-                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Eliminar" id=""
-                        onclick="">
-                        <img src="../../img/png/insertar.png">
-                    </button>
-                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="(+/-) Pensión"
-                        id="" onclick="">
-                        <img src="../../img/png/insertar.png">
-                    </button>
-                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="(+/-) Desc."
-                        id="" onclick="">
-                        <img src="../../img/png/insertar.png">
-                    </button>
-                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="(+/-) Desc. 2"
-                        id="" onclick="">
-                        <img src="../../img/png/insertar.png">
-                    </button>
-                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Copiar Mes"
-                        id="" onclick="">
-                        <img src="../../img/png/insertar.png">
-                    </button>
-                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Multa" id=""
-                        onclick="">
-                        <img src="../../img/png/insertar.png">
-                    </button>
-                    <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Recargos" id=""
-                        onclick="">
-                        <img src="../../img/png/insertar.png">
-                    </button>
-                </div>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-sm-12 text-center">
-                        <label for="MCheqRangos">
-                            <input type="checkbox" name="MCheqRangos" id="MCheqRangos" checked> Por Rangos:
-                        </label>
-                        <select name="MDCGrupoI" id="MDCGrupoI" class="selectM"></select>
-                        <select name="MDCGrupoF" id="MDCGrupoF" class="selectM"></select>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-sm-6 text-right">
-                                <label for="MMBFechaI">Fecha Inicio de Emision:</label>
-                            </div>
-                            <div class="col-sm-6">
-                                <input type="date" name="MMBFechaI" id="MMBFechaI">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6 text-right">
-                                <label for="MTextCant">Cantidad de Meses:</label>
-                            </div>
-                            <div class="col-sm-6">
-                                <input type="text" name="MTextCant" id="MTextCant" style="">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6 text-right">
-                                <label for="MTxtArea">Valor a Facturar por Mes:</label>
-                            </div>
-                            <div class="col-sm-6">
-                                <input type="text" name="MTxtArea" id="MTxtArea" class="">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6 text-right">
-                                <label for="MTxtDesc">Descuento por Mes:</label>
-                            </div>
-                            <div class="col-sm-6">
-                                <input type="text" name="MTxtDesc" id="MTxtDesc" class="">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6 text-right">
-                                <label for="MTxtDesc2">Descuento 2 por Mes:</label>
-                            </div>
-                            <div class="col-sm-6">
-                                <input type="text" name="MTxtDesc2" id="MTxtDesc2" class="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <label for="">
-                                    Productos
-                                </label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div id="DCInv" style="height: 25vh; max-height:25vh; overflow-y:auto">
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
