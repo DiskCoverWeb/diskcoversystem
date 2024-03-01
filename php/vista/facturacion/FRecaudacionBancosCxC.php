@@ -506,14 +506,14 @@
             var url = "../../TEMP/BANCO/FACTURAS/" + nombre1;
             var u = "/TEMP/BANCO/FACTURAS/" + nombre1;
             descargarArchivo(url, nombre1);
-            EliminaArchivosTemporales(u);
+            //EliminaArchivosTemporales(u);
         }
 
         if (nombre2) {
             var url2 = "../../TEMP/BANCO/FACTURAS/" + nombre2;
             var u2 = "/TEMP/BANCO/FACTURAS/" + nombre2;
             descargarArchivo(url2, nombre2);
-            EliminaArchivosTemporales(u2);
+            //EliminaArchivosTemporales(u2);
         }
         if (contenido) {
             animarEscritura(contenido);
@@ -521,6 +521,8 @@
     }
 
     function descargarArchivo(url, nombre) {
+        console.log('ur:' , url);
+        console.log('nom:', nombre);
         var enlaceTemporal = $('<a></a>')
             .attr('href', url)
             .attr('download', nombre)
@@ -531,7 +533,7 @@
     }
 
 
-    function EliminaArchivosTemporales($tempFilePath) {
+    /*function EliminaArchivosTemporales($tempFilePath) {
         $.ajax({
             type: "POST",
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?EliminaArchivosTemporales=true',
@@ -548,7 +550,7 @@
                 console.error('Error en la solicitud AJAX:', status, error);
             }
         });
-    }
+    }*/
 
     $('#btnRecibirAbonos').click(function () {
         $('#modalSubirArchivo').modal('show');
