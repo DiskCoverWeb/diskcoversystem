@@ -406,6 +406,7 @@
                 case "Tipo_Pago_Cliente":
                 case "Bajar_Excel":
                 case "Reporte_Ventas":
+                case "Reporte_Catastro":
                     ToolbarMenu_ButtonMenuClick(idSel);
                     break;
                 case "Resumen_Prod_Meses":
@@ -560,7 +561,7 @@
         }
     }
 
-    $('#Facturas, #Listado_Tarjetas, #Estado_Cuenta_Cliente, #Buscar_Malla, #Protestado, #Retenciones_NC, #Por_Buses').on('click', function () {
+    $('#Imprimir, #Facturas, #Listado_Tarjetas, #Estado_Cuenta_Cliente, #Buscar_Malla, #Protestado, #Retenciones_NC, #Por_Buses').on('click', function () {
         var idBtn = $(this).attr('id');
         ToolbarMenu_ButtonClick(idBtn);
     });
@@ -586,7 +587,6 @@
             ToolbarMenu_ButtonClick(idBtn);
         });
     });
-
 
     function ToolbarMenu_ButtonClick(idBtn) {
         var params = {
@@ -620,6 +620,11 @@
                 console.log(data);
 
                 switch (data.idBtn) {
+                    case "Imprimir":
+                        $('#myModal_espera').modal('hide');
+                        //window.open(url, '_blank');
+                        console.log('proceso terminado');
+                        break;
                     case "Facturas":
                     case "CxC_Clientes":
                     case "Listar_Por_Meses":
@@ -673,10 +678,6 @@
             }
         });
     }
-
-    $('#Imprimir').click(function () {
-
-    });
 
     var globalFA;
     var globalCodMarca;
@@ -809,11 +810,11 @@
             type: 'post',
             dataType: 'json',
             data: { 'parametros': params },
-            success: function (data) {  
+            success: function (data) {
                 console.log(data);
                 globalAdoQuery = data.AdoQuery;
                 //console.log(globalAdoQuery.length);
-                if(data.response ==0){
+                if (data.response == 0) {
                     $('#myModal_espera').modal('hide');
                     swal.fire({
                         title: 'Información',
@@ -861,7 +862,8 @@
                     "Por_Vendedor": {},
                     "CxC_Tiempo_Credito": {},
                     "Bajar_Excel": {},
-                    "Reporte_Ventas": {}
+                    "Reporte_Ventas": {},
+                    "Reporte_Catastro": {},
                 };
 
                 var action = actionsMap[data.idBtnMenu] || {};
@@ -871,7 +873,7 @@
                 });
 
                 if (data.num_filas > 0) {
-                    
+
                     $('#lblCommand').val(data.Opcion);
                     $('#lblRegistro').val(data.num_filas);
                     $('#lblFacturado').val(data.label_facturado);
@@ -891,7 +893,7 @@
         });
     }
 
-    function Impresiones() {
+    function Impresiones(Opcion) {
         var MBFechaI = $('#MBFechaI').val();
         var MBFechaF = $('#MBFechaF').val();
 
@@ -902,7 +904,13 @@
                 MensajeEncabData = "ESTADO DE CUENTA DE CLIENTES";
                 SQLMsg1 = "Corte al " + MBFechaF;
                 Mifecha = MBFechaF;
-                Imprimir_Saldo_Factura(AdoQuery);
+                var parametros = {
+                    MensajeEncabData: MensajeEncabData,
+                    SQLMsg1: SQLMsg1,
+                    Mifecha: Mifecha
+                };
+                return parametros;
+                //Imprimir_Saldo_Factura(AdoQuery);
                 break;
             case 2:
                 MensajeEncabData = "ESTADO DE CUENTA DE CLIENTES";

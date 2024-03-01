@@ -1258,7 +1258,7 @@ class HistorialFacturasM
         return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
     }
 
-    function Estado_Cuenta_Cliente($MBFechaI,$fechaSistema, $FA)
+    function Estado_Cuenta_Cliente($MBFechaI, $fechaSistema, $FA)
     {
         $sSQL = "SELECT C.Cliente, RCC.T, RCC.TC, RCC.Serie, RCC.Factura, RCC.Fecha, RCC.Detalle, RCC.Anio, RCC.Mes, RCC.Cargos, RCC.Abonos, RCC.CodigoC,
               C.Email, C.EmailR, C.Direccion 
@@ -1268,7 +1268,7 @@ class HistorialFacturasM
               AND RCC.T <> 'A' 
               AND RCC.CodigoC = C.Codigo 
               ORDER BY C.Cliente, RCC.TC, RCC.Serie, RCC.Factura, RCC.Anio, RCC.Mes, RCC.ID ";
-        
+
         $res = $this->db->datos($sSQL);
         $num_filas = count($res);
 
@@ -1325,6 +1325,21 @@ class HistorialFacturasM
         Ejecutar_SQL_SP($sSQL);
     }
 
+    function Catastro_Registro_Datos_Clientes($FechaIni, $FechaFin, $tipoConsulta)
+    {
+        $sSQL = "SELECT C.Cliente,C.CI_RUC,C.TD,C.Est_Civil,C.Sexo,C.Ciudad,C.Prov,C.Pais,F.T,F.Serie,F.Factura,
+                     F.Fecha,F.Fecha_C,F.Fecha_V,F.Total_MN As Total,F.Total_Efectivo,F.Total_Banco,F.Total_Ret_Fuente,
+                     F.Total_Ret_IVA_B,F.Total_Ret_IVA_S,F.Otros_Abonos,F.Total_Abonos,F.Saldo_Actual,F.CodigoC,F.TC,F.Autorizacion 
+                     FROM Facturas As F,Clientes As C 
+                     WHERE F.Item =  '" . $_SESSION['INGRESO']['item'] . "'
+                     AND F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' 
+                     " . $tipoConsulta . "
+                     AND F.CodigoC = C.Codigo 
+                     ORDER BY C.Cliente,F.Factura,F.Fecha ";
+
+        return $this->db->datos($sSQL);
+    }
+
     function Ventas_x_Excel($FechaIni, $FechaFin)
     {
         $sSQL = "SELECT T,TC,Fecha,'" . $_SESSION['INGRESO']['Nombre_Comercial'] . "' As Razon_Social,'" . $_SESSION['INGRESO']['RUC'] . "' As RUC,Serie,Autorizacion,
@@ -1344,21 +1359,6 @@ class HistorialFacturasM
         //excel_generico('VENTAS POR EXCEL', $res);
         return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
 
-    }
-
-    function Catastro_Registro_Datos_Clientes($FechaIni, $FechaFin)
-    {
-        $sSQL = "SELECT C.Cliente,C.CI_RUC,C.TD,C.Est_Civil,C.Sexo,C.Ciudad,C.Prov,C.Pais,F.T,F.Serie,F.Factura,
-                F.Fecha,F.Fecha_C,F.Fecha_V,F.Total_MN As Total,F.Total_Efectivo,F.Total_Banco,F.Total_Ret_Fuente,
-                F.Total_Ret_IVA_B,F.Total_Ret_IVA_S,F.Otros_Abonos,F.Total_Abonos,F.Saldo_Actual,F.CodigoC,F.TC,F.Autorizacion 
-                FROM Facturas As F,Clientes As C 
-                WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "' 
-                AND F.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'
-                " . Tipo_De_Consulta() . "
-                AND F.CodigoC = C.Codigo 
-                ORDER BY C.Cliente,F.Factura,F.Fecha ";
-        //Select_AdoDB AdoCatastro, sSQL
-        return $this->db->datos($sSQL);
     }
 
     function Enviar_Emails_Facturas_Recibos($CheqAbonos, $DCCxC, $FechaIni, $FechaFin, $DocDesde, $DocHasta, $TipoEnvio)
