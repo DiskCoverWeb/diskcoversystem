@@ -33,6 +33,7 @@ class enviar_emails
 
     if ($empresaGeneral[0]["smtp_Servidor"] == "relay.dnsexit.com" ||  $empresaGeneral[0]["smtp_Servidor"] == "mail.diskcoversystem.com") 
     {
+
       $server_externo = 1;
       $empresaGeneral[0]['smtp_Servidor'] = "smtp.diskcoversystem.com";
       $empresaGeneral[0]['Email_Conexion'] = "admin";
@@ -88,9 +89,11 @@ class enviar_emails
             $mail->Port = $empresaGeneral[0]['smtp_Puerto'];
           }
 
-          $mail->setFrom($_SESSION['INGRESO']['Email_Conexion_CE'], 'DiskCover System');
+          $from = str_replace("@diskcoversystem.com","@smtp.diskcoversystem.com", $_SESSION['INGRESO']['Email_Conexion_CE']);
+
+          $mail->setFrom($from, 'DiskCover System');
           $mail->addAddress($value); //Add a recipient
-          $mail->addReplyTo($_SESSION['INGRESO']['Email_Conexion_CE'], 'Informacion');
+          $mail->addReplyTo($from, 'Informacion');
           //$mail->addCC('cc@example.com');
           //$mail->addBCC('bcc@example.com');
 
@@ -212,10 +215,10 @@ class enviar_emails
             }
             $mail->Port = $empresaGeneral[0]['smtp_Puerto'];
           }
-
-          $mail->setFrom($_SESSION['INGRESO']['Email_Conexion_CE'], 'DiskCover System');
+          $from = str_replace("@diskcoversystem.com","@smtp.diskcoversystem.com", $_SESSION['INGRESO']['Email_Conexion_CE']);
+          $mail->setFrom($from, 'DiskCover System');
           $mail->addAddress($value); //Add a recipient
-          $mail->addReplyTo($_SESSION['INGRESO']['Email_Conexion_CE'], 'Informacion');
+          $mail->addReplyTo($from, 'Informacion');
           //$mail->addCC('cc@example.com');
           //$mail->addBCC('bcc@example.com');
 
