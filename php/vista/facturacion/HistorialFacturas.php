@@ -563,6 +563,7 @@
 
     $('#Imprimir, #Facturas, #Listado_Tarjetas, #Estado_Cuenta_Cliente, #Buscar_Malla, #Protestado, #Retenciones_NC, #Por_Buses').on('click', function () {
         var idBtn = $(this).attr('id');
+        console.log('clic en ,', idBtn);
         ToolbarMenu_ButtonClick(idBtn);
     });
 
@@ -618,12 +619,12 @@
             success: function (data) {
                 globalAdoQuery = data.AdoQuery;
                 console.log(data);
-
                 switch (data.idBtn) {
                     case "Imprimir":
-                        $('#myModal_espera').modal('hide');
-                        //window.open(url, '_blank');
-                        console.log('proceso terminado');
+                        var nuevaVentana = window.open('', '_blank');
+                        nuevaVentana.document.write('<embed width="100%" height="100%" src="data:application/pdf;base64,' + data.pdf_content + '">');
+                        break;
+
                         break;
                     case "Facturas":
                     case "CxC_Clientes":
@@ -802,7 +803,7 @@
             'AdoQuery': globalAdoQuery
         };
 
-        console.log(params['AdoQuery']);
+        console.log('datos enviados ', params['AdoQuery']);
 
         $('#myModal_espera').modal('show');
         $.ajax({
@@ -811,7 +812,9 @@
             dataType: 'json',
             data: { 'parametros': params },
             success: function (data) {
-                console.log(data);
+
+                console.log('datos recbidos ', data);
+
                 globalAdoQuery = data.AdoQuery;
                 //console.log(globalAdoQuery.length);
                 if (data.response == 0) {
@@ -841,6 +844,25 @@
                     enlaceTemporal.remove();
 
                     globalAdoQuery = null;
+                }
+
+                if (data.response == 2) {
+                    $('#myModal_espera').modal('hide');
+                    swal.fire({
+                        title: 'SE HA GENERADO EL SIGUIENTE ARCHIVO: ',
+                        text: data.mensaje,
+                        type: 'success',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    var url = "../../Excel/" + data.nombre;
+                    var enlaceTemporal = $('<a></a>')
+                        .attr('href', url)
+                        .attr('download', data.nombre)
+                        .appendTo('body');
+                    enlaceTemporal[0].click();
+                    enlaceTemporal.remove();
+
+                    //globalAdoQuery = null;
                 }
 
                 var actionsMap = {
@@ -893,7 +915,7 @@
         });
     }
 
-    function Impresiones(Opcion) {
+    /*function Impresiones(Opcion) {
         var MBFechaI = $('#MBFechaI').val();
         var MBFechaF = $('#MBFechaF').val();
 
@@ -1017,7 +1039,7 @@
         $('#myModal_espera').modal('hide');
         $('#alertNoData').hide();
     }
-
+*/
 
 
 

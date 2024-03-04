@@ -24,11 +24,6 @@ if (isset($_GET['LlenarDatosCliente'])) {
     echo json_encode($controlador->LlenarDatosCliente($query));
 }
 
-if (isset($_GET['seleccionarClienteConRUCVisc'])) {
-    $parametros = $_POST['parametros'];
-    echo json_encode($controlador->seleccionarClienteConRUCVisc($parametros['RUC'], $parametros['Cliente']));
-}
-
 if (isset($_GET['guardarAsignacion'])) {
 
     $params = array(
@@ -82,7 +77,7 @@ if (isset($_GET['guardarAsignacion'])) {
             ]);
         } else {
             if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
-                $params['NombreArchivo'] = $archivo['name'];
+                $params['NombreArchivo'] = pathinfo($archivo['name'], PATHINFO_FILENAME);
                 echo json_encode($controlador->guardarAsignacion($params));
             } else {
                 echo json_encode(["res" => '0', "mensaje" => "No se ha cargado ningún archivo", "datos" => $parametros]);

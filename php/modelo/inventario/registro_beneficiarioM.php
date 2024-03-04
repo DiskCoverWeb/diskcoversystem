@@ -69,17 +69,23 @@ class registro_beneficiarioM
         $noSoc = isset($parametros['No_Soc']) ? $parametros['No_Soc'] : '';
 
         $sql2 = "INSERT INTO Clientes_Datos_Extras (Codigo, CodigoA, Fecha_Registro, --Hora_Ent, 
-                     Envio_No, No_Soc, Area, Acreditacion, Tipo_Dato, Cod_Fam, Evidencias, Observaciones) 
-                     VALUES ('" . $parametros['Codigo'] . "', '" . $parametros['CodigoA2'] . "', '" . $parametros['Fecha_Registro'] . "', 
-                     -- '" . $parametros['Hora_Ent'] . "', 
-                     '" . $envioNo . "', '" . $noSoc . "', 
-                     '" . $parametros['Area'] . "', '" . $parametros['Acreditacion'] . "', '" . $parametros['Tipo_Dato'] . "', 
-                     '" . $parametros['Cod_Fam'] . "', '" . $parametros['NombreArchivo'] . "', '" . $parametros['Observaciones'] . "')";
-
-        Eliminar_Nulos_SP("Clientes_Datos_Extras");
-
+                     Envio_No, No_Soc, Area, Acreditacion, Tipo_Dato, Cod_Fam, Evidencias, Observaciones, Item) 
+                     VALUES ('" . $parametros['Codigo'] . "', 
+                             '" . $parametros['CodigoA2'] . "', 
+                             '" . $parametros['Fecha_Registro'] . "', 
+                             -- '" . $parametros['Hora_Ent'] . "', 
+                             '" . $envioNo . "', '" . $noSoc . "', 
+                             '" . $parametros['Area'] . "', 
+                             '" . $parametros['Acreditacion'] . "', 
+                             '" . $parametros['Tipo_Dato'] . "', 
+                             '" . $parametros['Cod_Fam'] . "', 
+                             '" . $parametros['NombreArchivo'] . "', 
+                             '" . $parametros['Observaciones'] . "',
+                             '" . $_SESSION['INGRESO']['item'] . "')";
+        
         $dato1 = $this->db->datos($sql);
         $dato2 = $this->db->datos($sql2);
+        Eliminar_Nulos_SP("Clientes_Datos_Extras");
         return array('dato1' => $dato1, 'dato2' => $dato2);
     }
 }

@@ -175,15 +175,13 @@ class HistorialFacturasC
 
         switch ($idBtn) {
             case "Imprimir":
-                //print_r('entramos a imprimir');
-                /*$res = $this->Historico_Facturas($parametros);
+                $res = $this->Historico_Facturas($parametros);
                 $parametros = array(
                     'titulo' => "TITULO DE TEST",
-                    'datos' => $res['AdoQuery'],
+                    'datos' => "",
                 );
-                $resp2 =  $this->pdf->generarDetalle($parametros);
-                print_r($resp2);
-                return array('pdf' => $resp2, 'idBtn' => $idBtn);     */     
+                $pdf_content = $this->pdf->generarDetalle($parametros);
+                return array('pdf_content' => $pdf_content, 'idBtn' => $idBtn);
             case "Facturas":
                 Actualizar_Abonos_Facturas_SP($FA);
                 $res = $this->Historico_Facturas($parametros);
@@ -978,6 +976,7 @@ class HistorialFacturasC
         $FechaTexto = $FechaFin;
         $FA['Fecha_Corte'] = $MBFechaF;
         $FA['Factura'] = 0;
+        $FA['Fecha_Desde'] = $MBFechaI;
         $FA['Fecha_Hasta'] = $MBFechaF;
         //$TMail->Volver_Envial = false;
 
@@ -1189,15 +1188,21 @@ class HistorialFacturasC
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $RutaSysBases = dirname(__DIR__, 3);
-        $RutaGeneraFile = $RutaSysBases . "/Excel/Catastro Cliente del ";
-        $RutaGeneraFile = str_replace(' ', '_', $RutaGeneraFile);
+        $path = dirname(__DIR__, 3) . "/Excel/";
+        if (!is_dir($path)) {
+            mkdir($path, 0777, true);
+        }
+
+        $filename = "Catastro Cliente del ";
 
         if ($MBFechaI == $MBFechaF) {
-            $RutaGeneraFile .= str_replace("/", "-", $MBFechaF) . ".xlsx";
+            $filename .= str_replace("/", "-", $MBFechaF) . ".xlsx";
         } else {
-            $RutaGeneraFile .= str_replace("/", "-", $MBFechaI) . " al " . str_replace("/", "-", $MBFechaF) . ".xlsx";
+            $filename .= str_replace("/", "-", $MBFechaI) . " al " . str_replace("/", "-", $MBFechaF) . ".xlsx";
         }
+
+        $filename = str_replace(' ', '_', $filename);
+        $RutaGeneraFile = $path . $filename;
 
         $FA['Fecha_Corte'] = $MBFechaF;
         Actualizar_Abonos_Facturas_SP($FA);
@@ -1252,7 +1257,7 @@ class HistorialFacturasC
                 $Dias_Morosidad = 0;
                 // Calcular días de morosidad
                 if ($registro["T"] != "C")
-                    $Dias_Morosidad = CFechaLong(FechaSistema()) - CFechaLong($registro["Fecha_V"]);
+                    $Dias_Morosidad = CFechaLong(date('Y-m-d')) - CFechaLong($registro["Fecha_V"]->format('Y-m-d'));
 
                 // Escribir datos en la hoja de cálculo
                 $sheet->setCellValue("A" . $NFila, "SP10101");
@@ -1273,9 +1278,9 @@ class HistorialFacturasC
                 $sheet->setCellValue("M" . $NFila, "'" . $registro["Serie"] . sprintf("%09d", $registro["Factura"]));
                 $sheet->setCellValue("N" . $NFila, number_format($registro["Total"], 2, ".", ""));
                 $sheet->setCellValue("O" . $NFila, number_format($registro["Saldo_Actual"], 2, ".", ""));
-                $sheet->setCellValue("P" . $NFila, date_format(date_create($registro["Fecha"]), "d/m/Y"));
-                $sheet->setCellValue("Q" . $NFila, date_format(date_create($registro["Fecha_V"]), "d/m/Y"));
-                $sheet->setCellValue("R" . $NFila, date_format(date_create($registro["Fecha_V"]), "d/m/Y"));
+                $sheet->setCellValue("P" . $NFila, $registro["Fecha"]);
+                $sheet->setCellValue("Q" . $NFila, $registro["Fecha_V"]);
+                $sheet->setCellValue("R" . $NFila, $registro["Fecha_V"]);
                 $sheet->setCellValue("S" . $NFila, " ");
                 $sheet->setCellValue("T" . $NFila, " ");
                 if ($Dias_Morosidad > 0) {
@@ -1319,7 +1324,7 @@ class HistorialFacturasC
                 $sheet->setCellValue("AI" . $NFila, " ");
                 $sheet->setCellValue("AJ" . $NFila, " ");
                 if ($registro["T"] == "C") {
-                    $sheet->setCellValue("AK" . $NFila, date_format(date_create($registro["Fecha_V"]), "d/m/Y"));
+                    $sheet->setCellValue("AK" . $NFila, $registro["Fecha_V"]);
                     if ($registro["Total_Efectivo"] > 0) {
                         $sheet->setCellValue("AL" . $NFila, "E");
                     } elseif ($registro["Total_Banco"] > 0) {
@@ -1335,9 +1340,14 @@ class HistorialFacturasC
             // Guardar archivo Excel
             $writer = new Xlsx($spreadsheet);
             $writer->save($RutaGeneraFile);
-            echo "ARCHIVO GENERADO EN:<br>" . $RutaGeneraFile;
+
+            return [
+                'response' => '2',
+                'mensaje' => $filename,
+                'nombre' => $filename,
+            ];
         } else {
-            echo "ARCHIVO NO GENERADO";
+            return ['response' => '0'];
         }
     }
 
