@@ -23,7 +23,7 @@ class asignacion_osM
                 CD.Evidencias, CD.Item 
                 FROM Clientes as C
                 INNER JOIN Clientes_Datos_Extras as CD ON C.Codigo = CD.Codigo
-                WHERE CD.Item = '001'";
+                WHERE CD.Item = '" . $_SESSION['INGRESO']['item'] . "' ";
         if (!is_numeric($query)) {
             $sql .= " AND C.Cliente LIKE '%" . $query . "%'";
         } else {

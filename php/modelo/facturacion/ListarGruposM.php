@@ -112,7 +112,7 @@ class ListarGruposM
     public function Listar_Clientes_Grupo($parametros)
     {
         $titulo = "";
-        $sql = "SELECT T,Cliente,Grupo,Direccion,Codigo,CI_RUC,Email,Email2,Fecha_N,Representante,TD_R, CI_RUC_R,DireccionT,Telefono_R,TelefonoT,EmailR,Saldo_Pendiente
+        $sql = "SELECT TOP 100 T,Cliente,Grupo,Direccion,Codigo,CI_RUC,Email,Email2,Fecha_N,Representante,TD_R, CI_RUC_R,DireccionT,Telefono_R,TelefonoT,EmailR,Saldo_Pendiente
                 FROM Clientes
                 WHERE Cliente <> '.' ";
         if ($_SESSION['INGRESO']['Mas_Grupos']) {
@@ -184,7 +184,7 @@ class ListarGruposM
                 WHERE Codigo <> '.'";
         Ejecutar_SQL_SP($sql);
 
-        $sql = "SELECT Grupo, Cliente As Estudiante, CI_RUC As Cedula, Saldo_Pendiente, Credito As Dias_Mora, EmailR, Codigo
+        $sql = "SELECT TOP 100 Grupo, Cliente As Estudiante, CI_RUC As Cedula, Saldo_Pendiente, Credito As Dias_Mora, EmailR, Codigo
                 FROM Clientes
                 WHERE FA <> 0";
         if ($parametros['CheqRangos']) {
@@ -198,7 +198,7 @@ class ListarGruposM
 
     public function Pensiones_Mensuales_Anio($ListaCampos)
     {
-        $sql = "SELECT " . $ListaCampos . " 
+        $sql = "SELECT TOP 100 " . $ListaCampos . " 
                 FROM Reporte_CxC_Cuotas
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'
@@ -211,7 +211,7 @@ class ListarGruposM
 
     public function Listado_Becados($parametros, $FechaIni, $FechaFin)
     {
-        $sql = "SELECT C.Cliente As Estudiantes,C.Grupo,CF.Mes,CF.Valor,CF.Descuento,CF.Descuento2,(CF.Valor-(CF.Descuento+CF.Descuento2)) As Total_Pagar,(((CF.Descuento+CF.Descuento2)/CF.Valor)*100) As Porc
+        $sql = "SELECT TOP 100 C.Cliente As Estudiantes,C.Grupo,CF.Mes,CF.Valor,CF.Descuento,CF.Descuento2,(CF.Valor-(CF.Descuento+CF.Descuento2)) As Total_Pagar,(((CF.Descuento+CF.Descuento2)/CF.Valor)*100) As Porc
                 FROM Clientes As C, Clientes_Facturacion As CF
                 WHERE CF.Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND CF.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'
@@ -235,7 +235,7 @@ class ListarGruposM
 
     public function Nomina_Alumnos($parametros)
     {
-        $sql = "SELECT C.Cliente As Estudiantes,' ' As T_1,' ' As T_2,' ' As T_3,' ' As T_4,' ' As T_5,C.Grupo,C.Direccion,C.Email,Count(DF.Codigo) As No_Facturas
+        $sql = "SELECT TOP 100 C.Cliente As Estudiantes,' ' As T_1,' ' As T_2,' ' As T_3,' ' As T_4,' ' As T_5,C.Grupo,C.Direccion,C.Email,Count(DF.Codigo) As No_Facturas
                 FROM Clientes AS C,Detalle_Factura As DF
                 WHERE C.Cliente <> '.'";
         if ($parametros['PorGrupo']) {
@@ -269,7 +269,7 @@ class ListarGruposM
 
     public function Resumen_Pensiones_Mes($parametros, $FechaIni, $FechaFin)
     {
-        $sql = "SELECT CF.Periodo,COUNT(CP.Producto) AS Cant,CF.GrupoNo,CP.Producto,SUM(CF.Valor-(CF.Descuento+CF.Descuento2)) As Total
+        $sql = "SELECT TOP 100 CF.Periodo,COUNT(CP.Producto) AS Cant,CF.GrupoNo,CP.Producto,SUM(CF.Valor-(CF.Descuento+CF.Descuento2)) As Total
                 FROM Clientes_Facturacion As CF,Catalogo_Productos As CP
                 WHERE CP.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
                 AND CP.Item = '" . $_SESSION['INGRESO']['item'] . "'";
