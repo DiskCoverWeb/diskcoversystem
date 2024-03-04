@@ -337,6 +337,28 @@ class detalle_estudianteC
 
   function guardar_pago($file,$post)
    {
+
+    $ruta = dirname(__DIR__,2).'/comprobantes/pago_subidos/empresa_'.$_SESSION['INGRESO']['item'].'/';
+    if(!file_exists($ruta))
+    {
+      $ruta1 = dirname(__DIR__,2).'/comprobantes/pago_subidos';
+      mkdir($ruta1,0777);
+      mkdir($ruta,0777);
+    }
+     $uploadfile_temporal=$file['file']['tmp_name'];
+     $tipo = explode('/', $file['file']['type']);
+     $nombre = $_SESSION['INGRESO']['item'].'_'.$post['nom_1'].'_pago.'.$tipo[1];
+    // print_r($file);print_r($post);die();
+     $nuevo_nom=$ruta.$nombre;
+
+     if (is_uploaded_file($uploadfile_temporal))
+     {
+       move_uploaded_file($uploadfile_temporal,$nuevo_nom);
+        return 1;
+     }
+
+
+/*
      $formato = array('pdf','jpeg','jpg','gif','png');
    // print_r($post);
   //  $ruta="../vista/TEMP/".$_SESSION['INGRESO']['item']."_TEMP/".$_SESSION['INGRESO']['item'].'_PAGOS';//ruta carpeta donde queremos copiar las imágenes
@@ -372,6 +394,8 @@ class detalle_estudianteC
      {
       return -2;
      }
+
+     */
 
   }
 

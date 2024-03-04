@@ -449,6 +449,9 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'detalle_estudiante':
 				require_once("educativo/detalle_estudiante.php");
 				break;
+				case 'matricula_estudiante':
+				require_once("educativo/matricula_estudiante.php");
+				break;
 
 			//**************************************INVENTARIO**************************************/
 
