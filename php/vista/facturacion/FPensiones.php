@@ -3,9 +3,11 @@
 
     var MCodigo1;
     var MCodigo2;
+    var btnCase;
     $(document).ready(function () {
         MCodigo1 = "";
         MCodigo2 = "";
+        btnCase = "";
         DCInv();
         DCGruposM();
         $('#MCheqRangos').change(function () {
@@ -30,32 +32,100 @@
 
         //Handle buttons
         $('#btnInsertarPensiones').click(function () {
-            Toolbarl_ButtonClick("Insertar");
+            $('#clave_supervisor').modal('show');
+            btnCase = "Insertar";
         });
 
         $('#btnEliminarPensiones').click(function () {
-            Toolbarl_ButtonClick("Eliminar");
+            $('#clave_supervisor').modal('show');
+            btnCase = "Eliminar";
         });
 
         $('#btnMasMenosPensiones').click(function () {
             Toolbarl_ButtonClick("Pension");
+            btnCase = "Pension";
         });
 
         $('#btnMasMenosDescuento').click(function () {
             Toolbarl_ButtonClick("Descuento");
+            btnCase = "Descuento";
         });
 
         $('#btnMasMenosDescuento2').click(function () {
             Toolbarl_ButtonClick("Descuento2");
+            btnCase = "Descuento2";
         });
 
         $('#btnCopiarMes').click(function () {
-            Toolbarl_ButtonClick("Copiar_Mes");
-            //TODO: Manejar el modal de copiar mes
+            $('#clave_supervisor').modal('show');
+            btnCase = "Copiar_Mes";
         });
 
-        //TODO: Multas
+        $('#btnMultas').click(function () {
+            $('#clave_supervisor').modal('show');
+            btnCase = "Multas";
+        });
+
+        //Manejador del modal Copiar mes cuando se presiona Enter.
+        $('#LstCopiar').keydown(function (e) {
+            if (e.key === "Enter") {
+                LstCopiar_KeyDown();
+            }
+        });
+
     });
+
+    function resp_clave_ingreso(response) {
+        if (response.respuesta == 1) {
+            Toolbarl_ButtonClick(btnCase);
+        } else {
+            console.log("Clave incorrecta");
+        }
+    }
+
+    function LstCopiar_KeyDown() {
+        var parametros = {
+            'LstCopiar': $('input[name="LstCopiar"]:checked').val(),
+            'FechaTexto': $('#MMBFechaI').val(),
+            'Codigo1': MCodigo1,
+            'Codigo2': MCodigo2,
+            'Contador': $('#MTextCant').val(),
+            'CheqRangos': $('#MCheqRangos').is(':checked') ? 1 : 0,
+        };
+
+        if (parametros['LstCopiar'] == undefined) {
+            swal.fire({
+                title: "Error",
+                text: "Debe seleccionar un mes",
+                type: "error"
+            });
+            return;
+        }
+
+        $.ajax({
+            url: "../controlador/facturacion/FPensionesC.php?Copiar_Mes_KeyDown=true",
+            type: "POST",
+            data: { 'parametros': parametros },
+            dataType: "json",
+            success: function (response) {
+                var data = response
+                if (data.res == 1) {
+                    swal.fire({
+                        title: "Correcto",
+                        text: data.msj,
+                        type: "success"
+                    });
+                } else {
+                    swal.fire({
+                        title: "Error",
+                        text: data.msj,
+                        type: "error"
+                    });
+                    console.log(data.error);
+                }
+            }
+        });
+    }
 
 
     function DCInv() {
@@ -151,12 +221,38 @@
                 Copiar_Mes();
                 break;
             case "Multas":
+                Multas(parametros);
                 break;
         }
     }
 
+    function Multas(param) {
+        $.ajax({
+            url: "../controlador/facturacion/FPensionesC.php?Multas=true",
+            type: "POST",
+            data: { 'parametros': param },
+            dataType: "json",
+            success: function (response) {
+                var data = response
+                if (data.res == 1) {
+                    swal.fire({
+                        title: "Correcto",
+                        text: data.msj,
+                        type: "success"
+                    });
+                } else {
+                    swal.fire({
+                        title: "Error",
+                        text: data.msj,
+                        type: "error"
+                    });
+                    console.log(data.error);
+                }
+            }
+        });
+    }
+
     function Copiar_Mes() {
-        //TODO: Agregar el modal de clave del supervisor
         $.ajax({
             url: "../controlador/facturacion/FPensionesC.php?Copiar_Mes=true",
             type: "POST",
@@ -173,14 +269,11 @@
                                             </label><br>`;
                         $('#LstCopiar').append(labelContent);
                     });
-
-
                 } else {
                     console.log(data.error);
                 }
             }
         });
-
     }
 
     function Tipo_Cambio_Valor(tipo_cambio, param) {
@@ -204,9 +297,20 @@
         }
 
         if (valor_cambiar == 0) {
+            switch (tipo_cambio) {
+                case "Pension":
+                    msjE = "El valor a facturar por mes no puede ser 0";
+                    break;
+                case "Descuento":
+                    msjE = "El valor de descuento por mes no puede ser 0";
+                    break;
+                case "Descuento2":
+                    msjE = "El valor de descuento 2 por mes no puede ser 0";
+                    break;
+            }
             swal.fire({
                 title: "Error",
-                text: "El valor a cambiar no puede ser 0",
+                text: msjE,
                 type: "error"
             });
             return;
@@ -255,7 +359,6 @@
     }
 
     function Eliminar_Pensiones(param) {
-        //TODO: Agregar el modal de clave del supervisor
         $.ajax({
             url: "../controlador/facturacion/FPensionesC.php?EliminarPensiones=true",
             type: "POST",
@@ -284,7 +387,6 @@
 
     // Método intermedio para verificar si existen rubros.
     function Existen_Rubros(param) {
-        //TODO: Agregar el modal de clave del supervisor
         $.ajax({
             url: "../controlador/facturacion/FPensionesC.php?ExistenRubros=true",
             type: "POST",
@@ -304,13 +406,13 @@
                         cancelButtonText: 'No'
                     }).then((result) => {
                         if (result.value) {
-                            //Insertar_Pensiones(param);
+                            Insertar_Pensiones(param);
                         } else {
                             return;
                         }
                     });
                 } else {
-                    //Insertar_Pensiones(param);
+                    Insertar_Pensiones(param);
                 }
             }
         });
@@ -344,7 +446,7 @@
 
 </script>
 <style>
-    .modal-body {
+    .pensiones-body {
         background-color: #fffec2;
     }
 </style>
@@ -393,7 +495,7 @@
                     </button>
                 </div>
             </div>
-            <div class="modal-body">
+            <div class="modal-body pensiones-body">
                 <div class="row">
                     <div class="col-sm-12 text-center">
                         <label for="MCheqRangos">
@@ -484,6 +586,11 @@
                     <div id="LstCopiar" style="height: 25vh; max-height:25vh; overflow-y:auto">
 
                     </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row" style="text-align: center;">
+                    <label for="">Enter para cambiar</label>
                 </div>
             </div>
         </div>

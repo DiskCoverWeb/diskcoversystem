@@ -162,9 +162,19 @@ class FPensionesM
         }
     }
 
-    public function Update_Clientes($parametros, $Mifecha): void
+    public function Multas_Delete_Update($parametros, $Mifecha): void
     {
         try {
+            $sql = "DELETE * 
+                FROM Clientes_Facturacion 
+                WHERE Codigo_Inv = '" . $parametros['CodigoP'] . "' 
+                AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND Fecha BETWEEN '" . BuscarFecha($parametros['FechaTexto']) . "' AND '" . BuscarFecha($Mifecha) . "' ";
+            if ($parametros['CheqRangos'] <> 0) {
+                $sql .= "AND GrupoNo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "' ";
+            }
+            Ejecutar_SQL_SP($sql);
+
             $sql = "UPDATE Clientes 
                 SET X = 'M' 
                 WHERE FA <> 0 ";
@@ -181,6 +191,67 @@ class FPensionesM
                 $sql .= "AND F.GrupoNo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "' ";
             }
             $sql .= "AND C.Codigo = F.CodigoC ";
+            Ejecutar_SQL_SP($sql);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+
+    }
+
+    public function Multas_Insert($parametros, $NoAnio, $NoMes, $Mifecha, $Mesl): void
+    {
+        $sql = "INSERT INTO Clientes_Facturacion (T, GrupoNo, Codigo, Codigo_Inv, Valor, CodigoU, Item, 
+        Periodo, Num_Mes, Mes, Fecha)
+        SELECT 'N', Grupo, Codigo, '" . $parametros['CodigoP'] .
+            "', '" . $parametros['Valor'] . "', '" . $_SESSION['INGRESO']['CodigoU'] . "', '" . $_SESSION['INGRESO']['item'] .
+            "', '" . $NoAnio . "', '" . $NoMes . "', '" . $Mesl . "', '" . BuscarFecha($Mifecha) . "' 
+        FROM Clientes 
+        WHERE FA <> 0
+        AND X = 'M' ";
+        if ($_SESSION['INGRESO']['Mas_Grupos']) {
+            $sql .= "AND DirNumero = '" . $_SESSION['INGRESO']['item'] . "' ";
+        }
+        if ($parametros['CheqRangos'] <> 0) {
+            $sql .= "AND Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "' ";
+        }
+        $sql .= "ORDER BY Grupo, Cliente, Sexo ";
+        try {
+            Ejecutar_SQL_SP($sql);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public function KeyDown_Delete($parametros, $Mifecha): void
+    {
+        $sql = "DELETE * 
+                FROM Clientes_Facturacion 
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND Fecha BETWEEN '" . BuscarFecha($parametros['FechaTexto']) . "' AND '" . BuscarFecha($Mifecha) . "' ";
+        if ($parametros['CheqRangos'] <> 0) {
+            $sql .= "AND GrupoNo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "' ";
+        }
+        try {
+            Ejecutar_SQL_SP($sql);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public function KeyDown_Insert($parametros, $NoAnio, $NoMes, $Mesl, $Mifecha, $Copiar_Periodo, $Copiar_Mes): void
+    {
+        $sql = "INSERT INTO Clientes_Facturacion (T, GrupoNo, Codigo, Codigo_Inv, Valor, Item, CodigoU, Periodo, Num_Mes, Mes, Fecha, D)
+                SELECT 'N', Grupo, Codigo, Codigo_Inv, Valor, Item, '" . $_SESSION['INGRESO']['CodigoU'] . "', '" . $NoAnio . "', 
+                '" . $NoMes . "', '" . $Mesl . "', '" . BuscarFecha($Mifecha) . "', 0 
+                FROM Clientes_Facturacion 
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND Periodo = '" . $Copiar_Periodo . "' 
+                AND Num_Mes = '" . $Copiar_Mes . "' ";
+        if ($parametros['CheqRangos'] <> 0) {
+            $sql .= "AND GrupoNo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "' ";
+        }
+        $sql .= "ORDER BY GrupoNo, Codigo, Codigo_Inv ";
+        try {
             Ejecutar_SQL_SP($sql);
         } catch (Exception $e) {
             throw new Exception($e->getMessage());

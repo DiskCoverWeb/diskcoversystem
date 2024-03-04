@@ -1,5 +1,7 @@
 <?php
-require_once("FPensiones.php"); 
+//Modales requeridos
+require_once("FPensiones.php");
+require_once("FAsignaFact.php");
 ?>
 <script>
 
@@ -240,6 +242,58 @@ require_once("FPensiones.php");
         $('#btnGenerarDeudaPendiente').click(function () {
             $('#FPensiones').modal('show');
         });
+
+        // Variable para almacenar los datos de la fila seleccionada
+        var datosFilaSeleccionada = {};
+
+        // Evento para manejar el doble clic en las filas de la tabla y actualizar datosFilaSeleccionada
+        $(document).on('dblclick', '#datos_t tbody tr', function () {
+            // Primero, quitar la clase 'fila-seleccionada' de todas las filas para resetear el estilo
+            $('#datos_t tbody tr').removeClass('fila-seleccionada');
+
+            // Añadir la clase 'fila-seleccionada' solamente a la fila que fue seleccionada con doble clic
+            $(this).addClass('fila-seleccionada');
+
+            // Vaciar el objeto para asegurarnos de que no contenga datos de selecciones anteriores
+            datosFilaSeleccionada = {};
+
+            var $fila = $(this); // Fila seleccionada
+            $('#datos_t thead th').each(function (index) {
+                var nombreColumna = $(this).text(); // Obtenemos el nombre de la columna
+                var valorCelda = $fila.find('td').eq(index).text(); // Obtenemos el valor de la celda correspondiente
+                datosFilaSeleccionada[nombreColumna] = valorCelda; // Asociamos nombre de columna con valor
+            });
+        });
+
+        // Evento para manejar CTRL + Insert
+        $(document).keydown(function (e) {
+            if (e.ctrlKey && e.which == 45) {
+                // Verificar si la tabla existe
+                if ($('#datos_t').length === 0) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'No existen datos cargados',
+                        type: 'error'
+                    });
+                } else if (Object.keys(datosFilaSeleccionada).length === 0) {
+                    // Verificar si se ha seleccionado una fila
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Debe seleccionar una fila',
+                        type: 'error'
+                    });
+                } else {
+                    //Mandamos los datos de la fila seleccionada al modal.
+                    //$('#FAsignaFact').data('filaSeleccionada', datosFilaSeleccionada);
+                    //$('#FAsignaFact').modal('show');
+                    $(document).trigger('abrirModal', [datosFilaSeleccionada]);
+                }
+            }
+        });
+
+
+
+
     });
     //Definicion de metodos
     function Excel() {
@@ -1095,6 +1149,10 @@ require_once("FPensiones.php");
     body {
         padding-right: 0px !important;
     }
+
+    .fila-seleccionada {
+        color: blue;
+    }
 </style>
 <div>
     <div class="row"> <!--Botones-->
@@ -1446,102 +1504,3 @@ require_once("FPensiones.php");
         max-width: 10vw;
     }
 </style>
-
-<!-- Modal FAsignaFact -->
-<div class="modal fade" tabindex="-1" role="dialog" id="FAsignaFact">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">CUENTAS POR COBRAR / CUENTAS POR PAGAR</h4>
-            </div>
-            <div class="modal-body">
-                <div>
-                    <div class="row">
-                        <div class="col-sm-10">
-                            <div class="row">
-                                <div class="col-sm-10 centrar">
-                                    <label for="" id="LblCliente" class="label-colores">
-                                        CUENTA DE ASIGNACION
-                                    </label>
-                                </div>
-                                <div class="col-sm-2 centrar" style="padding: 0; margin: 0;">
-                                    <label for="" id="LblCodigo" class="label-colores">
-                                        XXXXXXXXXX
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-2">
-                                    <div class="row">
-                                        <label for="" id="Label1" style="margin-left: 1vw;">
-                                            Label1
-                                        </label>
-                                    </div>
-                                    <div class="row">
-                                        <div id="LstMeses" class="espaciado">
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-10">
-                                    <div class="row">
-                                        <label for="" style="margin-left: 1vw;">
-                                            Productos
-                                        </label>
-                                    </div>
-                                    <div id="DCInv" class="espaciado">
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="row centrar">
-                                <button class="btn btn-default" data-toggle="tooltip" data-placement="left"
-                                    title="Insertar" id="Command1" onclick="">
-                                    <img src="../../img/png/insertar.png">
-                                </button>
-                                <button class="btn btn-default" data-toggle="tooltip" data-placement="left"
-                                    title="Modificar" id="Command3" onclick="">
-                                    <img src="../../img/png/modificar.png">
-                                </button>
-                                <button class="btn btn-default" data-dismiss="modal" data-toggle="tooltip"
-                                    data-placement="left" title="Cancelar" id="Command2" onclick="">
-                                    <img src="../../img/png/close.png">
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <form action="">
-                                <div class="">
-                                    <label for="TxtDia">Día</label>
-                                    <input type="number" name="TxtDia" id="TxtDia" class="" style="width: 3vw;">
-                                    <label for="TxtArea">VALOR A FACTURAR</label>
-                                    <input type="text" name="TxtArea" id="TxtArea" placeholder="0.00" class="anchura">
-                                    <label for="TxtDesc">DESCUENTO</label>
-                                    <input type="text" name="TxtDesc" id="TxtDesc" placeholder="0.00" class="anchura">
-                                    <label for="TxtDesc2">DESCUENTO 2</label>
-                                    <input type="text" name="TxtDesc2" id="TxtDesc2" placeholder="0.00" class="anchura">
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div id="DGRubros" style="height: 25vh; max-height:25vh; overflow-y:auto">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--<div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>-->
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->

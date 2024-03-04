@@ -18,15 +18,28 @@ if (isset($_GET['InsertarPensiones'])) {
     echo json_encode($controlador->Insertar_Pensiones($parametros));
 }
 
+if (isset($_GET['EliminarPensiones'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Eliminar_Pensiones($parametros));
+}
+
 if (isset($_GET['Tipo_Cambio_Valor'])) {
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->Tipo_Cambio_Valor($parametros));
 }
 
-//TODO: Agregar le isset para eliminar pensiones, no agregarlo hasta tener la clave de supervisor.
-
 if (isset($_GET['Copiar_Mes'])) {
     echo json_encode($controlador->Copiar_Mes());
+}
+
+if (isset($_GET['Multas'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Multas($parametros));
+}
+
+if (isset($_GET['Copiar_Mes_KeyDown'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->LstCopiar_KeyDown($parametros));
 }
 
 class FPensionesC
@@ -39,15 +52,66 @@ class FPensionesC
         $this->modelo = new FPensionesM();
     }
 
-    public function Copiar_Mes(){
-        try{
+    public function LstCopiar_KeyDown($parametros)
+    {
+        try {
+            $Copiar_Periodo = SinEspaciosIzq($parametros['LstCopiar']);
+            $Copiar_Mes = SinEspaciosDer2($parametros['LstCopiar']);
+            $Mifecha = $this->Rango_Fechas_Proceso($parametros['Contador'], $parametros['FechaTexto']);
+            $this->modelo->KeyDown_Delete($parametros, $Mifecha);
+            $Mifecha = $parametros['FechaTexto'];
+            for ($i = 1; $i <= $parametros['Contador']; $i++) {
+                $NoDias = intval(date("d", strtotime($Mifecha)));
+                $NoMes = intval(date("m", strtotime($Mifecha)));
+                $NoAnio = intval(date("Y", strtotime($Mifecha)));
+                $Mesl = MesesLetras($NoMes);
+                $this->modelo->KeyDown_Insert($parametros, $NoAnio, $NoMes, $Mesl, $Mifecha, $Copiar_Periodo, $Copiar_Mes);
+                $Mifecha = new DateTime($Mifecha);
+                $Mifecha->add(new DateInterval("P1M"));
+                $Mifecha = $Mifecha->format("d/m/Y");
+            }
+            Eliminar_Nulos_SP("Clientes_Facturacion");
+            return array("res" => "1", "msj" => "Proceso Terminado");
+        } catch (Exception $e) {
+            return array("res" => "0", "msj" => "Error al insertar los datos", 'error' => $e->getMessage());
+        }
+    }
+
+    public function Multas($parametros)
+    {
+        try {
+            //Actualizar_Abonos_Facturas_SP();
+            $Mifecha = $this->Rango_Fechas_Proceso($parametros['Contador'], $parametros['FechaTexto']);
+            $this->modelo->Multas_Delete_Update($parametros, $Mifecha);
+            $Mifecha = $parametros['FechaTexto'];
+            for ($i = 1; $i <= $parametros['Contador']; $i++) {
+                $NoDias = intval(date("d", strtotime($Mifecha)));
+                $NoMes = intval(date("m", strtotime($Mifecha)));
+                $NoAnio = intval(date("Y", strtotime($Mifecha)));
+                $Mesl = MesesLetras($NoMes);
+                $this->modelo->Multas_Insert($parametros, $NoAnio, $NoMes, $Mifecha, $Mesl);
+                $Mifecha = new DateTime($Mifecha);
+                $Mifecha->add(new DateInterval("P1M"));
+                $Mifecha = $Mifecha->format("d/m/Y");
+            }
+            Eliminar_Nulos_SP("Clientes_Facturacion");
+            return array("res" => "1", "msj" => "Proceso Terminado");
+        } catch (Exception $e) {
+            return array("res" => "0", "msj" => "Error al insertar los datos", 'error' => $e->getMessage());
+        }
+
+    }
+
+    public function Copiar_Mes()
+    {
+        try {
             $AdoAux = $this->modelo->Copiar_Mes();
-            if(count($AdoAux) > 0 ){
+            if (count($AdoAux) > 0) {
                 return array("res" => "1", "datos" => $AdoAux);
-            }else{
+            } else {
                 throw new Exception("No se encontraron datos");
             }
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return array("res" => "0", "msj" => "No se encontraron datos", 'error' => $e->getMessage());
         }
     }
