@@ -48,6 +48,7 @@ $(document).ready(function() {
 
 		$('#txt_cod_banco').attr('readonly',true);
 		$('#txt_clave').attr('readonly',true);
+		login_data();
 	}
 	var mod='<?php echo $mod; ?>'; 
 	if(mod!='11')
@@ -160,13 +161,16 @@ $(document).ready(function() {
             success: function(response) {
             	console.log(response);
             if(response == 1)
-            {Swal.fire({
+            {
+            	Swal.fire({
 		  		 	//position: 'top-end',
                     type: 'success',
                     title: 'Archivo subido con exito!',
                     showConfirmButton: true
                     //timer: 2500
                  });
+        enviar_evidencia_email();
+		login_data();
             }  
             else
             {
@@ -484,6 +488,9 @@ function lista_cursos()
              },
 		  success: function(response){		  	
 
+
+			console.log(response);
+
 			if(response!='' && response !='-2')
 			{
 			//$('#contenido_tab').css('display','block');
@@ -620,6 +627,19 @@ function lista_cursos()
 		     //  $('#modal_espera').modal('hide');
             }
 		  
+		  if(response[0].Evidencias=='' || response[0].Evidencias=='.')
+		  {
+		  	$('#link_pago').css('display','none');
+		  	// $('#btn_eliminar_pago').css('display','none');
+		  	$('#b_file_3').css('display','block');
+		  }else
+		  {
+		  	$('#link_pago').attr('href','../comprobantes/pagos_subidos/entidad_<?php echo $_SESSION['INGRESO']['IDEntidad']; ?>/empresa_<?php echo $_SESSION['INGRESO']['item']; ?>/'+response[0].Evidencias);
+		  	$('#b_file_3').css('display','none');
+
+		  	$('#link_pago').css('display','initial');
+		  	// $('#btn_eliminar_pago').css('display','initial');
+		  }
 
 
 		//	response.forEach(function(data,index){
@@ -1291,6 +1311,81 @@ function lista_cursos()
 	  }
 	}
 
+	function eliminar_pago()
+	{
+		Swal.fire({
+         title: 'Esta seguro?',
+         text: "Esta usted seguro de eliminar el documento subido!",
+         type: 'warning',
+         showCancelButton: true,
+         confirmButtonColor: '#3085d6',
+         cancelButtonColor: '#d33',
+         confirmButtonText: 'Si!'
+       }).then((result) => {
+         if (result.value==true) {
+          eliminar_pago_doc()
+         }
+       })
+	}
+
+	function eliminar_pago_doc()
+	{
+		parametros = 
+		{
+			'usuario':$("#txt_cod_banco").val(),
+			'password':$("#txt_clave").val(),
+		}
+		$.ajax({
+		  url: '../controlador/educativo/detalle_estudianteC.php?eliminar_pago=true',
+		  type:'post',
+		  dataType:'json',
+		  data:{parametros:parametros},
+		  success: function(response){		  	
+			console.log(response);
+			if(response!=null )
+			{				
+		  		login_data();
+		    }
+		}
+	  });
+	}
+
+	function enviar_evidencia_email()
+	{
+		var parametro = 
+		{
+			'usuario':$("#txt_cod_banco").val(),
+			'password':$("#txt_clave").val(),
+		}
+
+	   $.ajax({
+		  url: '../controlador/educativo/detalle_estudianteC.php?enviar_email_evidencia=true',
+		  type:'post',
+		  dataType:'json',
+		  data:{parametros:parametros},
+		  success: function(response){		  	
+			console.log(response);
+			if(response!=null )
+			{				
+		  		if(response == true)
+		  		{
+
+		  		$('#modal_espera').modal('hide');
+		  			Swal.fire({
+		  		 	//position: 'top-end',
+                    type: 'success',
+                    title: 'Documentos Enviados por correo!',
+                    showConfirmButton: true
+                    //timer: 2500
+                 });
+		  		}
+		  		console.log(response);
+		    }
+		}
+	  });
+
+	}
+
 	function enviar_email()
 	{
 		 //$('#modal_espera').modal('show');
@@ -1482,7 +1577,7 @@ function lista_cursos()
 		    		</div>
 		    		<div class="col-sm-3 text-right">
 		    			<br>
-		    			<button type="button" id="btn_guar_est" class="btn btn-success btn-sm" onclick="actualizar_est('menu2')"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>  Guardar y continuar</button>    			
+		    			<button type="button" id="btn_guar_est" class="btn btn-success btn-sm" onclick="actualizar_est('menu2')"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>  Guardar datos Estudiante</button>    			
 		    		</div>    		
 		    	</div>        	
 			    <div class="row">
@@ -1674,7 +1769,7 @@ function lista_cursos()
     		</div>
     		<div class="col-sm-3"><br>
     			
-    			<button type="button" class="btn btn-success btn-sm" id="btn_guar_fin_rep" onclick="procesos('fin_g')"><span class="glyphicon glyphicon-floppy-saved" aria-hidden="true"></span>  Guardar y Finalizar</button>    			
+    			<!-- <button type="button" class="btn btn-success btn-sm" id="btn_guar_fin_rep" onclick="procesos('fin_g')"><span class="glyphicon glyphicon-floppy-saved" aria-hidden="true"></span>  Guardar datos representante</button>    			 -->
     		</div>
     	</div>
     	<div class="row">
@@ -1790,7 +1885,7 @@ function lista_cursos()
     		</div>
     		<div class="col-sm-4">
     			<br>
-    			<h2>Seccion para pago</h2>
+    			<h2>Adjuntar pago</h2>
     			<form enctype="multipart/form-data" id="file_depo" method="post">
 	    			<div class="row">
 	    				<div class="col-sm-12">
@@ -1798,8 +1893,12 @@ function lista_cursos()
 	      		       		<input  type="text"  class="form-control-file" id="nom_1" name="nom_1" hidden="" />
 	    				</div>    			
 	    				<div class="col-sm-12">
-	    					<button type="button" class="btn btn-primary btn-sm btn-block" id="b_file_3"><span class="fa fa-fw fa-money" aria-hidden="true"></span> Subir pago</button>     					
-	    				</div>   	
+	    					<button type="button" class="btn btn-primary btn-sm btn-block" id="b_file_3"><span class="fa fa-fw fa-money" aria-hidden="true"></span> Subir pago y enviar por correo</button>     					
+	    				</div> 
+	    				<div class="col-sm-12 text-right">
+	    					<a id="link_pago" href="" target="_blank" class="margin"><i class="fa fa-eye"></i> ver Archivo adjuno</a> 
+	    					<span id="btn_eliminar_pago" class="text-danger" title="eliminar documento pago" onclick="eliminar_pago()"><i class="fa fa-trash"></i>  </span>
+	    				</div>     	
 	    			</div>
 	    		</form>    			
     		</div>
