@@ -1897,7 +1897,7 @@ function lista_cursos()
 	    				</div> 
 	    				<div class="col-sm-12 text-right">
 	    					<a id="link_pago" href="" target="_blank" class="margin"><i class="fa fa-eye"></i> ver Archivo adjuno</a> 
-	    					<span id="btn_eliminar_pago" class="text-danger" title="eliminar documento pago" onclick="eliminar_pago()"><i class="fa fa-trash"></i>  </span>
+	    					<!-- <span id="btn_eliminar_pago" class="text-danger" title="eliminar documento pago" onclick="eliminar_pago()"><i class="fa fa-trash"></i>  </span> -->
 	    				</div>     	
 	    			</div>
 	    		</form>    			
