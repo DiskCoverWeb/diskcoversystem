@@ -46,6 +46,11 @@ if (isset($_GET['DCCliente_LostFocus'])) {
     echo json_encode($controlador->DCCliente_LostFocus($parametros));
 }
 
+if (isset($_GET['Imprimir'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Imprimir($parametros));
+}
+
 
 class HistorialFacturasC
 {
@@ -174,14 +179,6 @@ class HistorialFacturasC
         $Opcion = 0;
 
         switch ($idBtn) {
-            case "Imprimir":
-                $res = $this->Historico_Facturas($parametros);
-                $parametros = array(
-                    'titulo' => "TITULO DE TEST",
-                    'datos' => "",
-                );
-                $pdf_content = $this->pdf->generarDetalle($parametros);
-                return array('pdf_content' => $pdf_content, 'idBtn' => $idBtn);
             case "Facturas":
                 Actualizar_Abonos_Facturas_SP($FA);
                 $res = $this->Historico_Facturas($parametros);
@@ -269,6 +266,38 @@ class HistorialFacturasC
             'idBtn' => $idBtn,
             'Opcion' => $Opcion,
         );
+    }
+
+    function Imprimir($parametros)
+    {
+
+        $basepath = dirname(__DIR__, 3) . "/TEMP/IMPRIMIR/";
+        if (!is_dir($basepath)) {
+            mkdir($basepath, 0777, true);
+        }
+
+        $filename = $parametros['MensajeEncabData'] . " " . $parametros['SQLMsg1'] . ".pdf";
+        $filename = str_replace(' ', '_', $filename);
+        $path = $basepath . $filename;
+
+        // Verificar si el archivo ya existe y agregar sufijo autoincremental si es necesario
+        $i = 1;
+        while (file_exists($path)) {
+            $info = pathinfo($path);
+            $filename = $info['filename'] . '_' . $i . '.' . $info['extension'];
+            $path = $info['dirname'] . '/' . $filename;
+            $i++;
+        }
+
+        $this->pdf->generarPDFTabla($parametros, $path);
+
+        //$this->pdf->generarPDFTabla($datos, $path);
+
+        return [
+            'response' => 1,
+            'nombre' => basename($path),
+            'mensaje' => "SE GENERO EL SIGUIENTE ARCHIVO: \n" . basename($path)
+        ];
     }
 
     function Listado_Facturas_Por_Meses($parametros, $Por_FA, $SQL_Server = true)

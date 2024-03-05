@@ -561,7 +561,7 @@
         }
     }
 
-    $('#Imprimir, #Facturas, #Listado_Tarjetas, #Estado_Cuenta_Cliente, #Buscar_Malla, #Protestado, #Retenciones_NC, #Por_Buses').on('click', function () {
+    $('#Facturas, #Listado_Tarjetas, #Estado_Cuenta_Cliente, #Buscar_Malla, #Protestado, #Retenciones_NC, #Por_Buses').on('click', function () {
         var idBtn = $(this).attr('id');
         console.log('clic en ,', idBtn);
         ToolbarMenu_ButtonClick(idBtn);
@@ -618,14 +618,14 @@
             data: { 'parametros': params },
             success: function (data) {
                 globalAdoQuery = data.AdoQuery;
+                globalOpc = data.Opcion;
                 console.log(data);
                 switch (data.idBtn) {
-                    case "Imprimir":
+                    /*case "Imprimir":
                         var nuevaVentana = window.open('', '_blank');
                         nuevaVentana.document.write('<embed width="100%" height="100%" src="data:application/pdf;base64,' + data.pdf_content + '">');
                         break;
-
-                        break;
+                        break;*/
                     case "Facturas":
                     case "CxC_Clientes":
                     case "Listar_Por_Meses":
@@ -777,6 +777,7 @@
     var urlParams = new URLSearchParams(url.split('?')[1]);
     var TipoFactura = urlParams.get('tipo');
     var globalAdoQuery = null;
+    var globalOpc = 0;
     function ToolbarMenu_ButtonMenuClick(idBtnMenu) {
         //console.log(globalAdoQuery.length);
         var params = {
@@ -816,6 +817,8 @@
                 console.log('datos recbidos ', data);
 
                 globalAdoQuery = data.AdoQuery;
+                globalOpc = data.Opcion;
+
                 //console.log(globalAdoQuery.length);
                 if (data.response == 0) {
                     $('#myModal_espera').modal('hide');
@@ -915,66 +918,72 @@
         });
     }
 
-    /*function Impresiones(Opcion) {
+    $('#Imprimir').on('click', function () {
+        var idBtn = $(this).attr('id');
+        console.log('clic en ,', idBtn);
+        Impresiones(globalOpc);
+    });
+
+    function Impresiones(globalOpc) {
         var MBFechaI = $('#MBFechaI').val();
         var MBFechaF = $('#MBFechaF').val();
 
         $('#DGQuery').empty();
 
-        switch (Opcion) {
+        var parametros = {
+            'AdoQuery': globalAdoQuery
+        }
+
+        var MensajeEncabData, SQLMsg1, Mifecha;
+
+        switch (globalOpc) {
             case 1:
                 MensajeEncabData = "ESTADO DE CUENTA DE CLIENTES";
                 SQLMsg1 = "Corte al " + MBFechaF;
                 Mifecha = MBFechaF;
-                var parametros = {
-                    MensajeEncabData: MensajeEncabData,
-                    SQLMsg1: SQLMsg1,
-                    Mifecha: Mifecha
-                };
-                return parametros;
                 //Imprimir_Saldo_Factura(AdoQuery);
                 break;
             case 2:
                 MensajeEncabData = "ESTADO DE CUENTA DE CLIENTES";
-                SQLMsg1 = "CORTE DEL " + MBFechaIt + " AL " + MBFechaF;
+                SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                Imprimir_Saldo_Clientes(AdoQuery, 8);
+                //Imprimir_Saldo_Clientes(AdoQuery, 8);
                 break;
             case 3:
                 MensajeEncabData = "ESTADO DE PRODUCTOS POR CLIENTES";
-                SQLMsg1 = "CORTE DEL " + MBFechaIt + " AL " + MBFechaF;
+                SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                Imprimir_Resumen_Productos(AdoQuery, 8);
+                //Imprimir_Resumen_Productos(AdoQuery, 8);
                 break;
             case 4:
                 MensajeEncabData = "RESUMEN DE VENTAS POR CLIENTES";
-                SQLMsg1 = "CORTE DEL " + MBFechaIt + " AL " + MBFechaF;
+                SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                ImprimirAdo(AdoQuery, true, 2, 9);
+                //ImprimirAdo(AdoQuery, true, 2, 9);
                 break;
             case 5:
                 MensajeEncabData = "RESUMEN DE VENTAS POR PRODUCTOS";
-                SQLMsg1 = "CORTE DEL " + MBFechaIt + " AL " + MBFechaF;
+                SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                ImprimirVentasCosto(AdoQuery, true, 2, 9);
+                //ImprimirVentasCosto(AdoQuery, true, 2, 9);
                 break;
             case 6:
                 MensajeEncabData = "ESTADO DE ABONOS DE CLIENTES";
-                SQLMsg1 = "CORTE DEL " + MBFechaIt + " AL " + MBFechaF;
+                SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                Imprimir_Abonos_De_Caja(AdoQuery, MBFechaIt, MBFechaF);
+                //Imprimir_Abonos_De_Caja(AdoQuery, MBFechaI, MBFechaF);
                 break;
             case 7:
                 MensajeEncabData = "ESTADO DE CHEQUES PROTESTADOS";
-                SQLMsg1 = "CORTE DEL " + MBFechaIt + " AL " + MBFechaF;
+                SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                Imprimir_Abonos_De_Caja(AdoQuery, MBFechaIt, MBFechaF);
+                //Imprimir_Abonos_De_Caja(AdoQuery, MBFechaI, MBFechaF);
                 break;
             case 8:
                 MensajeEncabData = "VENTAS POR PRODUCTOS";
-                SQLMsg1 = "CORTE DEL " + MBFechaIt + " AL " + MBFechaF;
+                SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                ImprimirAdo(AdoQuery, true, 1, 8);
+                //ImprimirAdo(AdoQuery, true, 1, 8);
                 break;
             case 9:
             case 10:
@@ -986,9 +995,9 @@
                 if (OpcCanc) SQLMsg1 = "LISTADO DE FACTURAS CANCELADAS";
                 if (OpcTodas) SQLMsg1 = "LISTADO DE TODAS LAS FACTURAS";
                 Mifecha = MBFechaF;
-                if (TipoDoc === "C") Imprimir_Resumen_Cartera(AdoQuery, Codigo4);
-                if (TipoDoc === "F") ImprimirCtasCob(AdoQuery, sSQL, true);
-                if (TipoDoc === "V") Imprimir_Resumen_Cartera_Vendedor(AdoQuery);
+                //if (TipoDoc === "C") Imprimir_Resumen_Cartera(AdoQuery, Codigo4);
+                //if (TipoDoc === "F") ImprimirCtasCob(AdoQuery, sSQL, true);
+                //if (TipoDoc === "V") Imprimir_Resumen_Cartera_Vendedor(AdoQuery);
                 break;
             case 11:
                 if (OpcPend) SQLMsg1 = "LISTADO DE FACTURAS PENDIENTES";
@@ -996,52 +1005,83 @@
                 if (OpcCanc) SQLMsg1 = "LISTADO DE FACTURAS CANCELADAS";
                 if (OpcTodas) SQLMsg1 = "LISTADO DE TODAS LAS FACTURAS";
                 Mifecha = MBFechaF;
-                Imprimir_Pendientes_Facturacion(AdoQuery, Opcion, true);
+                //Imprimir_Pendientes_Facturacion(AdoQuery, Opcion, true);
                 break;
             case 12:
-                Imprimir_Por_Buses(AdoQuery, DCCliente);
+                //Imprimir_Por_Buses(AdoQuery, DCCliente);
                 break;
             case 15:
                 MensajeEncabData = "RESUMEN DE COMISIONES POR VENDEDORES";
                 SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
                 Orientacion_Pagina = 2;
-                ImprimirAdo(AdoQuery, true, 2, 7, true);
+                //ImprimirAdo(AdoQuery, true, 2, 7, true);
                 break;
             case 16:
                 MensajeEncabData = DGQuery.Caption;
                 SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
                 Orientacion_Pagina = 2;
-                ImprimirAdo(AdoQuery, true, 2, 7, true);
+                //ImprimirAdo(AdoQuery, true, 2, 7, true);
                 break;
             case 17:
                 MensajeEncabData = "VENTAS RESUMIDAS POR VENDEDOR";
                 SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
                 Orientacion_Pagina = 1;
-                Imprimir_Ventas_Resumidas_Vendedor(AdoQuery, MSChart, 2, 7, true);
+                //Imprimir_Ventas_Resumidas_Vendedor(AdoQuery, MSChart, 2, 7, true);
                 break;
             case 18:
                 MensajeEncabData = "TOTAL CUENTAS POR COBRAR POR TIEMPO DE CREDITO";
                 SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
                 Orientacion_Pagina = 2;
-                Imprimir_Tiempo_Credito(AdoQuery, true, 2, 10, true);
+                //Imprimir_Tiempo_Credito(AdoQuery, true, 2, 10, true);
                 break;
             case 19:
-                Resultado = Reporte_Cartera_Clientes_PDF(PrimerDiaMes(MBFechaI), FA.CodigoC, false, true);
+                //Resultado = Reporte_Cartera_Clientes_PDF(PrimerDiaMes(MBFechaI), FA.CodigoC, false, true);
                 break;
         }
         //HistorialFacturas.Caption = "RESUMEN HISTORICO DE FACTURAS/NOTAS DE VENTA";
-        $('#DGQuery').html(data.tbl);
-        $('#DGQuery #datos_t tbody').css('height', '36vh');
-        $('#myModal_espera').modal('hide');
-        $('#alertNoData').hide();
+       // $('#DGQuery').html(data.tbl);
+       // $('#DGQuery #datos_t tbody').css('height', '36vh');
+       // $('#myModal_espera').modal('hide');
+       // $('#alertNoData').hide();
+
+        parametros['MensajeEncabData'] = MensajeEncabData;
+        parametros['SQLMsg1'] = SQLMsg1;
+        parametros['Mifecha'] = Mifecha;
+
+        console.log('enviados a imprimir:',parametros)
+        $.ajax({
+            url: '../controlador/facturacion/HistorialFacturasC.php?Imprimir=true',
+            type: 'post',
+            dataType: 'json',
+            data: { 'parametros': parametros },
+            success: function (data) {
+                console.log('RESP',data);
+                if (data.response == 1) {
+                    $('#myModal_espera').modal('hide');
+                    swal.fire({
+                        title: 'Información',
+                        text: data.mensaje,
+                        type: 'success',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    var url = "../../TEMP/IMPRIMIR/" + data.nombre;
+                    var enlaceTemporal = $('<a></a>')
+                        .attr('href', url)
+                        .attr('download', data.nombre)
+                        .appendTo('body');
+                    enlaceTemporal[0].click();
+                    enlaceTemporal.remove();
+
+                    globalAdoQuery = null;
+                }
+            }
+        });
+
+
     }
-*/
-
-
-
 
 </script>
