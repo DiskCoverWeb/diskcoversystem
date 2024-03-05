@@ -12,6 +12,16 @@ if (isset($_GET['DCInv'])) {
     echo json_encode($controlador->DCInv());
 }
 
+if (isset($_GET['Listar_Rubros_Grupo'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Listar_Rubros_Grupo($parametros));
+}
+
+if (isset($_GET['Command1_Click'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Command1_Click($parametros));
+}
+
 class FAsignaFactC
 {
     private $modelo;
@@ -44,6 +54,29 @@ class FAsignaFactC
             return array("res" => "1", "datos" => $datos);
         } catch (Exception $e) {
             return array("res" => "0", "msj" => $e->getMessage());
+        }
+    }
+
+    public function Listar_Rubros_Grupo($parametros){
+        try{
+            $datos = $this->modelo->Listar_Rubros_Grupo($parametros);
+            if(count($datos['AdoRubros']) == 0){
+                throw new Exception("No se encontraron rubros");
+            }
+            return array("res" => "1", "tbl" => $datos['datos']);
+        }catch(Exception $e){
+            return array("res" => "0", "msj" => $e->getMessage());
+        }
+    }
+
+    public function Command1_Click($parametros)
+    {
+        try {
+            $parametros['CodigoP'] = SinEspaciosIzq($parametros['CodigoP']);
+            $this->modelo->Command1_Click($parametros);
+            return array("res" => "1", "msj" => "Proceso Terminado");
+        } catch (Exception $e) {
+            return array("res" => "0", "msj" => "Error al ejecutar el proceso", "error" => $e->getMessage());
         }
     }
 }

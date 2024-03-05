@@ -23,6 +23,7 @@ require_once("FAsignaFact.php");
     var LstCount = 0;
     var Opcion = 0;
     var AdoQuery = [];
+    var datosFilaSeleccionada = {};
 
     let FA = {
         'Factura': '.',
@@ -42,6 +43,9 @@ require_once("FAsignaFact.php");
     };
 
     $(document).ready(function () {
+        $('[data-toggle="popover"]').popover({
+            html: true
+        });
         //Form Activate 
         ActualizarDatosRepresentantes();
         DCGrupos();
@@ -243,11 +247,17 @@ require_once("FAsignaFact.php");
             $('#FPensiones').modal('show');
         });
 
-        // Variable para almacenar los datos de la fila seleccionada
-        var datosFilaSeleccionada = {};
+        //Vacia los datos seleccionados y la tabla del contenedor DGRubros ya que las tablas genericas tienen el mismo id.
+        $('#FAsignaFact').on('hidden.bs.modal', function () {
+            datosFilaSeleccionada = {};
+            $('#datos_t tbody tr').removeClass('fila-seleccionada');
+            Listar_Clientes_Grupo();
+            $('#DGRubros').empty();
+
+        });
 
         // Evento para manejar el doble clic en las filas de la tabla y actualizar datosFilaSeleccionada
-        $(document).on('dblclick', '#datos_t tbody tr', function () {
+        $('#LxGData').on('dblclick', '#datos_t tbody tr', function () {
             // Primero, quitar la clase 'fila-seleccionada' de todas las filas para resetear el estilo
             $('#datos_t tbody tr').removeClass('fila-seleccionada');
 
@@ -267,29 +277,30 @@ require_once("FAsignaFact.php");
 
         // Evento para manejar CTRL + Insert
         $(document).keydown(function (e) {
-            if (e.ctrlKey && e.which == 45) {
-                // Verificar si la tabla existe
-                if ($('#datos_t').length === 0) {
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'No existen datos cargados',
-                        type: 'error'
-                    });
-                } else if (Object.keys(datosFilaSeleccionada).length === 0) {
-                    // Verificar si se ha seleccionado una fila
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Debe seleccionar una fila',
-                        type: 'error'
-                    });
-                } else {
-                    //Mandamos los datos de la fila seleccionada al modal.
-                    //$('#FAsignaFact').data('filaSeleccionada', datosFilaSeleccionada);
-                    //$('#FAsignaFact').modal('show');
-                    $(document).trigger('abrirModal', [datosFilaSeleccionada]);
+            //El modal solo se abre cuando Listado por Grupos este cargado
+            if ($('#LxGData').children().length > 0) {
+                if (e.ctrlKey && e.which == 45) {
+                    // Verificar si la tabla existe
+                    if ($('#datos_t').length === 0) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No existen datos cargados',
+                            type: 'error'
+                        });
+                    } else if (Object.keys(datosFilaSeleccionada).length === 0) {
+                        // Verificar si se ha seleccionado una fila
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Debe seleccionar una fila',
+                            type: 'error'
+                        });
+                    } else {
+                        $(document).trigger('abrirModal', [datosFilaSeleccionada]);
+                    }
                 }
             }
         });
+
 
 
 
@@ -699,18 +710,22 @@ require_once("FAsignaFact.php");
         switch (tabID) {
             case '#LxGData':
                 Opcion = 0;
+                vaciarDivs();
                 Listar_Clientes_Grupo();
                 break;
             case '#PmAData':
                 Opcion = 1;
+                vaciarDivs();
                 Pensiones_Mensuales_Anio(parametros);
                 break;
             case '#AcDData':
                 Opcion = 2;
+                vaciarDivs();
                 Listado_Becados(parametros);
                 break;
             case '#NdAData':
                 Opcion = 3;
+                vaciarDivs();
                 Nomina_Alumnos(parametros);
                 break;
             case '#EpEData':
@@ -719,14 +734,26 @@ require_once("FAsignaFact.php");
                 break;
             case '#RpPmData':
                 Opcion = 5;
+                vaciarDivs();
                 Resumen_Pensiones_Mes(parametros);
                 break;
             case '#EdData':
                 Opcion = 6;
+                vaciarDivs();
                 Listar_Deuda_por_Api();
                 break;
 
         }
+    }
+
+    function vaciarDivs() {
+        $('#LxGData').empty();
+        $('#PmAData').empty();
+        $('#AcDData').empty();
+        $('#NdAData').empty();
+        $('#EpEData').empty();
+        $('#RpPmData').empty();
+        $('#EdData').empty();
     }
 
     function Listar_Clientes_Email(parametros) {
@@ -1471,8 +1498,20 @@ require_once("FAsignaFact.php");
         <label class="inline" for="Label5" id="TotalRegistros">
         </label>
     </div>
-    <div class="row alineacion">
-        <!--<textarea class="form-control" name="TxtFile" id="TxtFile" rows="10" readonly></textarea>-->
+    <div class="row alineacion text-center">
+        <a tabindex="0" class="btn btn-lg btn-info" role="button" data-toggle="popover" data-trigger="focus"
+            title="Atajos" data-content="(F1)->Genera Archivos de Texto
+                          (CTRL+B)->Buscar Datos <br>
+                          (CTRL+G)->Cambia en Grupo el Valor del Grupo <br>
+                          (CTRL+D)->Cambia en Grupo el Valor de la Direccion <br>
+                          (CTRL+R)->Retirar Beneficiarios sin deuda del Grupo <br>
+                          (CTRL+Insert)->Insertar Rubros <br>
+                          (CTRL+F10)->Eliminar Totdos Rubros de Facturacion <br>
+                          (CTRL+F11)->Inserta Totdos Rubros de Facturacion">Atajos
+        </a>
+        <!-- <textarea class="form-control" name="TxtFile" id="TxtFile" rows="1" readonly>
+                        (CTRL+B)->Buscar Datos (CTRL+G)->Cambiar Valor Grupo (CTRL+D)->Cambiar Valor Dirección (CTRL+Insert)->Insertar Rubros  (CTRL+F10)->Eliminar Rubros  (CTRL+F11)->Insertar Rubros
+        </textarea>-->
     </div>
 </div>
 
