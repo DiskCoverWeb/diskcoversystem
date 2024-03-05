@@ -146,7 +146,7 @@ $cuentas = SeteosCtas();
     $(document).ready(function () {
       // validateStar();
 
-    setInterval(validar_session_Activa, 5000);
+    setInterval(validar_session_Activa, 360 * 1000);
 
       var cuentas = '<?php echo $cuentas; ?>';
       if (cuentas != '') {
