@@ -105,14 +105,15 @@ class detalle_estudianteM
 	{
 		if($nuevo=='false')
 		{
-			$sql = "SELECT C.ID,C.Grupo,Archivo_Foto,CI_RUC,CI_P,Ocupacion_M,Ocupacion_P,C.Codigo,Cliente,Direccion,Sexo,Email,Procedencia,Matricula
-			,Representante_Alumno,Nacionalidad,Prov,Seccion,Curso_Superior,C.Fecha_N,Fecha_M,Fecha,CI_RUC,Celular,Especialidad,Telefono,Observaciones,Nombre_Padre,CI_P,
+			$sql = "SELECT C.ID,C.Grupo,Archivo_Foto,CI_RUC,CI_P,Ocupacion_M,Ocupacion_P,C.Codigo,Cliente,C.Direccion,Sexo,Email,Procedencia,Matricula
+			,Representante_Alumno,Nacionalidad,C.Prov,Seccion,Curso_Superior,C.Fecha_N,Fecha_M,Fecha,CI_RUC,C.Celular,Especialidad,C.Telefono,CM.Observaciones,Nombre_Padre,CI_P,
 			Nacionalidad_P,Lugar_Trabajo_P,Telefono_Trabajo_P,Celular_P,Profesion_P,Email_P,Nombre_Madre,CI_M,Nacionalidad_M,
 			Lugar_Trabajo_M,Telefono_Trabajo_M,Celular_M,Profesion_M,Email_M,Representante_Alumno,CI_R,Profesion_R,Ocupacion_R,
-			C.Telefono_R,Telefono_RS,Lugar_Trabajo_R,Email_R,Email_R,Matricula_No,Folio_No,Ciudad,DireccionT,Email2 
+			C.Telefono_R,Telefono_RS,Lugar_Trabajo_R,Email_R,Email_R,Matricula_No,Folio_No,C.Ciudad,C.DireccionT,Email2,CDE.Evidencias
 			FROM Clientes as C
-			INNER JOIN Clientes_Matriculas ON c.CI_RUC = Clientes_Matriculas.Codigo		
+			INNER JOIN Clientes_Matriculas CM ON C.CI_RUC = CM.Codigo		
 			INNER JOIN Catalogo_Cursos ON c.Grupo = Catalogo_Cursos.Curso
+			LEFT JOIN Clientes_Datos_Extras CDE on C.Codigo = CDE.Codigo
 			WHERE FA = 'TRUE' 
 			AND CI_RUC = '".$usu."' 
 			AND Clave='".$pass."'";
@@ -124,7 +125,7 @@ class detalle_estudianteM
 			AND CI_RUC = '".$usu."' 
 			AND Clave='".$pass."'";
 		}
-
+// print_r($sql);die();
 		$result = $this->conn->datos($sql);
 		if(count($result)==0 && $nuevo=='false')
 		{

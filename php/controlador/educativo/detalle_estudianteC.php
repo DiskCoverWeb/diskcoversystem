@@ -139,6 +139,10 @@ if(isset($_GET['enviar_email_']))
 {
 	echo json_encode($controlador->enviar_email_($_POST['usu'],$_POST['pass'],$_POST['nuevo_usu']));
 }
+if(isset($_GET['enviar_email_evidencia']))
+{
+  echo json_encode($controlador->enviar_email_evidencia($_POST['parametros']));
+}
 if(isset($_GET['cargar_file']))
 {
    echo json_encode($controlador->guardar_file($_FILES,$_POST));
@@ -156,6 +160,12 @@ if(isset($_GET['nueva_matricula']))
   $parametros = $_POST['usuario'];
   //print_r($parametros);
   echo json_encode($controlador->nueva_matricula($parametros));
+}
+if(isset($_GET['eliminar_pago']))
+{
+  $parametros = $_POST['parametros'];
+  //print_r($parametros);
+  echo json_encode($controlador->eliminar_pago($parametros));
 }
 class detalle_estudianteC
 {
@@ -334,15 +344,29 @@ class detalle_estudianteC
 
   }
 
+  function eliminar_pago($parametros)
+  {
+    // print_r($parametros);die();
+    SetAdoAddNew("Clientes_Datos_Extras");          
+    SetAdoFields("Evidencias",'');
+
+    SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
+    SetAdoFieldsWhere('Codigo',$parametros['usuario']);
+    return SetAdoUpdateGeneric();
+
+  }
+
 
   function guardar_pago($file,$post)
    {
 
-    $ruta = dirname(__DIR__,2).'/comprobantes/pago_subidos/empresa_'.$_SESSION['INGRESO']['item'].'/';
+    $ruta = dirname(__DIR__,2).'/comprobantes/pagos_subidos/entidad_'.$_SESSION['INGRESO']['IDEntidad'].'/empresa_'.$_SESSION['INGRESO']['item'].'/';
     if(!file_exists($ruta))
     {
-      $ruta1 = dirname(__DIR__,2).'/comprobantes/pago_subidos';
+      $ruta1 = dirname(__DIR__,2).'/comprobantes/pagos_subidos/';
+      $ruta2 = dirname(__DIR__,2).'/comprobantes/pagos_subidos/entidad_'.$_SESSION['INGRESO']['IDEntidad'];
       mkdir($ruta1,0777);
+      mkdir($ruta2,0777);      
       mkdir($ruta,0777);
     }
      $uploadfile_temporal=$file['file']['tmp_name'];
@@ -353,7 +377,13 @@ class detalle_estudianteC
 
      if (is_uploaded_file($uploadfile_temporal))
      {
-       move_uploaded_file($uploadfile_temporal,$nuevo_nom);
+        move_uploaded_file($uploadfile_temporal,$nuevo_nom);
+        SetAdoAddNew("Clientes_Datos_Extras");          
+        SetAdoFields("Evidencias",$nombre);
+
+        SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
+        SetAdoFieldsWhere('Codigo',$post['nom_1']);
+        SetAdoUpdateGeneric();
         return 1;
      }
 
@@ -849,6 +879,18 @@ if (!file_exists('../../img/img_estudiantes/'.$datos[0]['Archivo_Foto']))
 
     $this->pdf->cabecera_reporte_colegio('Facturas_emitidas','Factura Emitida',mb_convert_encoding($tablaHtml, 'ISO-8859-1','UTF-8'),$contenido,$image,'','',7,$mostrar,$email);
 
+  }
+
+  function enviar_email_evidencia($parametros)
+  {
+    $empresaGeneral = $this->empresaGeneral;
+    $titulo_correo = 'Comprobante de pago';
+    $datos = $this->modelo->login($parametros['usuario'],$parametros['password'],'false');
+
+    $cuerpo_correo = 'Comprobante de pago de '.utf8_decode($datos[0]['Cliente']);
+    $to_correo = $empresaGeneral[0]['Email_Contabilidad'];
+    $archivos[] =  $ruta = dirname(__DIR__,2).'/comprobantes/pagos_subidos/entidad_'.$_SESSION['INGRESO']['IDEntidad'].'/empresa_'.$_SESSION['INGRESO']['item'].'/'.$datos[0]['Evidencias'];
+    enviar_email_comprobantes($archivos, $to_correo, $cuerpo_correo, $titulo_correo, $HTML = false);
   }
 
 
