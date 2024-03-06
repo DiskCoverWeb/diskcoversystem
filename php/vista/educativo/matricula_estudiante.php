@@ -1552,8 +1552,8 @@ function lista_cursos()
 				     <input type="" name="txt_op" id="txt_op" hidden=""><!-- 
 				  	 <button type="button" onclick="abrir_modal()">modal</button> -->
 
-				  	 <button type="button" class="btn btn-default  btn-sm" id='imprimir_pdf' onclick="procesos('im_d')"><span class="glyphicon glyphicon-save-file" aria-hidden="true"></span> Imprimir documentos</button>
-				  	 <button type="button" class="btn btn-default  btn-sm" id='enavia_email' onclick="procesos('env')"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>  Enviar email</button>
+				  	 <!-- <button type="button" class="btn btn-default  btn-sm" id='imprimir_pdf' onclick="procesos('im_d')"><span class="glyphicon glyphicon-save-file" aria-hidden="true"></span> Imprimir documentos</button>
+				  	 <button type="button" class="btn btn-default  btn-sm" id='enavia_email' onclick="procesos('env')"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>  Enviar email</button> -->
 				</div>
 		    	
 		    </div>
