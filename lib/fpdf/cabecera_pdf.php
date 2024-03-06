@@ -924,7 +924,7 @@ class cabecera_pdf
 		$pdf->Output('F', $path);
 	}
 
-/**Dallyana Vanegas */
+	/**Dallyana Vanegas */
 	function generarEncabezado($pdf, $datosAdo)
 	{
 		setlocale(LC_TIME, 'es_ES');
@@ -976,24 +976,23 @@ class cabecera_pdf
 		$pdf->SetFont('Arial', 'I', 14);
 		$pdf->Cell(0, 5, $datosAdo['MensajeEncabData'], 0, 1, 'L');
 		$pdf->SetFont('Arial', 'I', 12);
-		$pdf->Cell(0, 5, 'Grupo No: 0', 0, 1, 'L');
+		$pdf->Cell(0, 5, 'Grupo No: ' .$datosAdo['Opcion'], 0, 1, 'L');
 		$pdf->Ln(3);
 	}
 
-/**Dallyana Vanegas */
-	function generarPDFTabla($parametros, $path){
+	/**Dallyana Vanegas */
+	function generarPDFTabla($parametros, $path)
+	{
 		$datosAdo = $parametros['AdoQuery'];
-		$pdf = new FPDF(); 
-		$pdf->AddPage();
+		$pdf = new FPDF('P', 'mm', 'Letter'); // Orientación por defecto: Vertical
+		$pdf->SetAutoPageBreak(true, 15); // Margen inferior de 15mm
 	
-		$this->generarEncabezado($pdf, $parametros);
-	
-		$pdf->SetFont('Arial', 'BIU', 9); 
+		$pdf->SetFont('Arial', 'BIU', 9);
 		$anchoPagina = $pdf->GetPageWidth();
-		$anchoUtilizable = $anchoPagina - 28; 
+		$anchoUtilizable = $anchoPagina - 28;
 	
 		if (!empty($datosAdo)) {
-			$headers = array_keys((array) $datosAdo[0]);
+			$headers = array_keys((array)$datosAdo[0]);
 			$numColumnas = count($headers);
 	
 			$anchosColumnas = array_fill(0, $numColumnas, 0);
@@ -1001,11 +1000,14 @@ class cabecera_pdf
 			foreach ($datosAdo as $fila) {
 				foreach ($headers as $indice => $header) {
 					$valor = $fila[$header];
+					if (is_array($valor)) {
+						$valor = reset($valor);
+					}
 					$anchoActual = $pdf->GetStringWidth($valor) + 6;
 					$anchosColumnas[$indice] = max($anchosColumnas[$indice], $anchoActual);
 				}
 			}
-				
+	
 			for ($i = 0; $i < $numColumnas; $i++) {
 				$anchoColumna = $anchosColumnas[$i];
 				$anchoEncabezado = $pdf->GetStringWidth($headers[$i]) + 6;
@@ -1017,32 +1019,37 @@ class cabecera_pdf
 			$anchoTotalColumnas = array_sum($anchosColumnas);
 	
 			if ($anchoTotalColumnas > $anchoUtilizable) {
-				$pdf->AddPage('L'); 
+				$pdf->AddPage('L'); // Orientación horizontal
+			} else {
+				$pdf->AddPage();
 			}
 	
-			$espacioBlanco = ($anchoUtilizable - $anchoTotalColumnas) / 2;
-			$pdf->Cell($espacioBlanco, 0, '', 0, 0, 'C');
+			$this->generarEncabezado($pdf, $parametros);
+	
 			foreach ($headers as $indice => $header) {
 				$pdf->Cell($anchosColumnas[$indice], 6, $header, 0, 0, 'C');
 			}
 			$pdf->Ln();
 			$pdf->SetFont('Arial', '', 9);
-			
+	
 			foreach ($datosAdo as $fila) {
-				$pdf->Cell($espacioBlanco, 0, '', 0, 0, 'C');
+				$pdf->SetX(15); // Establece la posición X para centrar la fila
+	
 				foreach ($headers as $header) {
-					$pdf->Cell($anchosColumnas[array_search($header, $headers)], 6, $fila[$header], 0, 0, 'C'); 
+					$valor = $fila[$header];
+					if (is_array($valor)) {
+						$valor = reset($valor);
+					}
+					$pdf->Cell($anchosColumnas[array_search($header, $headers)], 6, $valor, 0, 0, 'C');
 				}
 				$pdf->Ln();
-				$pdf->Cell(array_sum($anchosColumnas) + $espacioBlanco, 0, '', 'B'); 
+				$pdf->Cell(array_sum($anchosColumnas), 0, '', 'B');
 				$pdf->Ln();
 			}
 		} else {
 			$pdf->Cell(0, 10, 'No hay datos disponibles para mostrar en la tabla.', 0, 1);
 		}
 	
-		$espacioBlanco = ($anchoUtilizable - $anchoTotalColumnas) / 2;
-		$pdf->Cell($espacioBlanco, 0, '', 0, 0, 'C');
 		$pdf->Output('F', $path);
 	}
 }

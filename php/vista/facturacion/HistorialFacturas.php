@@ -203,7 +203,7 @@
             </div>
             <div class="col-sm-3">
                 <label>
-                    <input type="radio" name="inlineRadioOptions" id="inlineRadio4" value="option4"> Todas
+                    <input type="radio" name="OpcTodas" id="OpcTodas" value="OpcTodas"> Todas
                 </label>
             </div>
         </div>
@@ -934,7 +934,15 @@
             'AdoQuery': globalAdoQuery
         }
 
-        var MensajeEncabData, SQLMsg1, Mifecha;
+        var MensajeEncabData = "", SQLMsg1 = "", Mifecha = "";
+        var case_no_def = false;
+
+        var CheqCxC = $('#CheqCxC').prop('checked') ? 1 : 0;
+        var CheqIngreso = $('#CheqIngreso').prop('checked') ? 1 : 0;
+        var CheqAbonos = $('#CheqAbonos').prop('checked') ? 1 : 0;
+        var OpcPend = $('#OpcPend').prop('checked') ? 1 : 0;
+        var OpcAnul = $('#OpcAnul').prop('checked') ? 1 : 0;
+        var OpcCanc = $('#OpcCanc').prop('checked') ? 1 : 0;
 
         switch (globalOpc) {
             case 1:
@@ -988,12 +996,15 @@
             case 9:
             case 10:
             case 13:
-                Codigo4 = "Ninguno";
-                if (CheqCxC.value === 1) Codigo4 = DCCxC;
+                //Codigo4 = "Ninguno";              
+                var Codigo4 = "Ninguno";
+                if (CheqCxC === 1) Codigo4 = DCCxC;
+                SQLMsg1 = "";
                 if (OpcPend) SQLMsg1 = "LISTADO DE FACTURAS PENDIENTES";
                 if (OpcAnul) SQLMsg1 = "LISTADO DE FACTURAS ANULADAS";
                 if (OpcCanc) SQLMsg1 = "LISTADO DE FACTURAS CANCELADAS";
                 if (OpcTodas) SQLMsg1 = "LISTADO DE TODAS LAS FACTURAS";
+
                 Mifecha = MBFechaF;
                 //if (TipoDoc === "C") Imprimir_Resumen_Cartera(AdoQuery, Codigo4);
                 //if (TipoDoc === "F") ImprimirCtasCob(AdoQuery, sSQL, true);
@@ -1018,10 +1029,9 @@
                 //ImprimirAdo(AdoQuery, true, 2, 7, true);
                 break;
             case 16:
-                MensajeEncabData = DGQuery.Caption;
+                MensajeEncabData = "RESUMEN DE VENTAS DE PRODUCTOS MENSUALIZADO";
                 SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                Orientacion_Pagina = 2;
                 //ImprimirAdo(AdoQuery, true, 2, 7, true);
                 break;
             case 17:
@@ -1038,50 +1048,56 @@
                 Orientacion_Pagina = 2;
                 //Imprimir_Tiempo_Credito(AdoQuery, true, 2, 10, true);
                 break;
-            case 19:
+            //case 19:
                 //Resultado = Reporte_Cartera_Clientes_PDF(PrimerDiaMes(MBFechaI), FA.CodigoC, false, true);
+                //break;
+            default:
+                case_no_def = true;
                 break;
         }
         //HistorialFacturas.Caption = "RESUMEN HISTORICO DE FACTURAS/NOTAS DE VENTA";
-       // $('#DGQuery').html(data.tbl);
-       // $('#DGQuery #datos_t tbody').css('height', '36vh');
-       // $('#myModal_espera').modal('hide');
-       // $('#alertNoData').hide();
+        // $('#DGQuery').html(data.tbl);
+        // $('#DGQuery #datos_t tbody').css('height', '36vh');
+        // $('#myModal_espera').modal('hide');
+        // $('#alertNoData').hide();
 
-        parametros['MensajeEncabData'] = MensajeEncabData;
-        parametros['SQLMsg1'] = SQLMsg1;
-        parametros['Mifecha'] = Mifecha;
+        if (!case_no_def) {
+            parametros['MensajeEncabData'] = MensajeEncabData;
+            parametros['SQLMsg1'] = SQLMsg1;
+            parametros['Mifecha'] = Mifecha;
+            parametros['Opcion'] = globalOpc;
 
-        console.log('enviados a imprimir:',parametros)
-        $.ajax({
-            url: '../controlador/facturacion/HistorialFacturasC.php?Imprimir=true',
-            type: 'post',
-            dataType: 'json',
-            data: { 'parametros': parametros },
-            success: function (data) {
-                console.log('RESP',data);
-                if (data.response == 1) {
-                    $('#myModal_espera').modal('hide');
-                    swal.fire({
-                        title: 'Información',
-                        text: data.mensaje,
-                        type: 'success',
-                        confirmButtonText: 'Aceptar'
-                    });
-                    var url = "../../TEMP/IMPRIMIR/" + data.nombre;
-                    var enlaceTemporal = $('<a></a>')
-                        .attr('href', url)
-                        .attr('download', data.nombre)
-                        .appendTo('body');
-                    enlaceTemporal[0].click();
-                    enlaceTemporal.remove();
+            console.log('enviados a imprimir:', parametros)
+            $.ajax({
+                url: '../controlador/facturacion/HistorialFacturasC.php?Imprimir=true',
+                type: 'post',
+                dataType: 'json',
+                data: { 'parametros': parametros },
+                success: function (data) {
+                    console.log('RESP', data);
+                    if (data.response == 1) {
+                        $('#myModal_espera').modal('hide');
+                        swal.fire({
+                            title: 'Información',
+                            text: data.mensaje,
+                            type: 'success',
+                            confirmButtonText: 'Aceptar'
+                        });
+                        var url = "../../TEMP/IMPRIMIR/" + data.nombre;
+                        var enlaceTemporal = $('<a></a>')
+                            .attr('href', url)
+                            .attr('download', data.nombre)
+                            .appendTo('body');
+                        enlaceTemporal[0].click();
+                        enlaceTemporal.remove();
 
-                    globalAdoQuery = null;
+                        globalAdoQuery = null;
+                    }
                 }
-            }
-        });
-
-
+            });
+        } else {
+            console.log('caso no definido');
+        }
     }
 
 </script>
