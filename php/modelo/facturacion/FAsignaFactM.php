@@ -81,10 +81,10 @@ class FAsignaFactM
                         }
                         break;
                     case 2:
-                        if(($Anio % 4 <> 0) AND ($Dia > 28)){
+                        if (($Anio % 4 <> 0) and ($Dia > 28)) {
                             $Dia = 28;
                         }
-                        if(($Anio % 4 == 0) AND ($Dia > 29)){
+                        if (($Anio % 4 == 0) and ($Dia > 29)) {
                             $Dia = 29;
                         }
                         break;
@@ -117,7 +117,51 @@ class FAsignaFactM
                 SetAdoFields('CodigoU', $_SESSION['INGRESO']['CodigoU']);
                 SetAdoUpdate();
             }
-        }catch (Exception $e){
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public function UpdateValor($parametros): void
+    {
+        try {
+            $sql = "UPDATE Clientes_Facturacion 
+                    SET Valor = '" . $parametros['NuevoValor'] . "' 
+                    WHERE Codigo = '" . $parametros['CodigoCliente'] . "'
+                    AND Codigo_Inv = '" . $parametros['Codigos'] . "' 
+                    AND Item = '" . $_SESSION['INGRESO']['item'] . "'";
+            Ejecutar_SQL_SP($sql);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public function UpdateDescuento($parametros): void
+    {
+        try {
+            $sql = "UPDATE Clientes_Facturacion 
+                    SET Descuento = '" . $parametros['NuevoValor'] . "' 
+                    WHERE Codigo = '" . $parametros['CodigoCliente'] . "'
+                    AND Codigo_Inv = '" . $parametros['Codigos'] . "' 
+                    AND Item = '" . $_SESSION['INGRESO']['item'] . "'";
+            Ejecutar_SQL_SP($sql);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public function UpdateDescuento2($parametros): void
+    {
+        try {
+            $sql = "UPDATE Clientes_Facturacion 
+                    SET Descuento2 = '" . $parametros['NuevoValor'] . "' 
+                    WHERE Codigo = '" . $parametros['CodigoCliente'] . "'
+                    AND Codigo_Inv = '" . $parametros['Codigos'] . "' 
+                    AND Item = '" . $_SESSION['INGRESO']['item'] . "'";
+            Ejecutar_SQL_SP($sql);
+        } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
     }

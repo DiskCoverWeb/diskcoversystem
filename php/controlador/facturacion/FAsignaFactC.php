@@ -22,6 +22,21 @@ if (isset($_GET['Command1_Click'])) {
     echo json_encode($controlador->Command1_Click($parametros));
 }
 
+if (isset($_GET['Ctrl_V'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Ctrl_V($parametros));
+}
+
+if (isset($_GET['Ctrl_D'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Ctrl_D($parametros));
+}
+
+if (isset($_GET['Ctrl_2'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Ctrl_D2($parametros));
+}
+
 class FAsignaFactC
 {
     private $modelo;
@@ -29,6 +44,33 @@ class FAsignaFactC
     public function __construct()
     {
         $this->modelo = new FAsignaFactM();
+    }
+
+    public function Ctrl_V($parametros){
+        try{
+            $this->modelo->UpdateValor($parametros);
+            return array("res" => "1", "msj" => "Valor actualizado");
+        }catch(Exception $e){
+            return array("res" => "0", "msj" => "Error al actualizar el valor", "error" => $e->getMessage());
+        }
+    }
+
+    public function Ctrl_D($parametros){
+        try{
+            $this->modelo->UpdateDescuento($parametros);
+            return array("res" => "1", "msj" => "Descuento actualizado");
+        }catch(Exception $e){
+            return array("res" => "0", "msj" => "Error al actualizar el descuento", "error" => $e->getMessage());
+        }
+    }
+
+    public function Ctrl_D2($parametros){
+        try{
+            $this->modelo->UpdateDescuento2($parametros);
+            return array("res" => "1", "msj" => "Descuento2 actualizado");
+        }catch(Exception $e){
+            return array("res" => "0", "msj" => "Error al actualizar el descuento", "error" => $e->getMessage());
+        }
     }
 
     public function AdoRubros(): array
