@@ -8,6 +8,10 @@
 
 include(dirname(__DIR__, 2) . '/modelo/facturacion/HistorialFacturasM.php');
 require_once(dirname(__DIR__, 3) . '/lib/phpmailer/enviar_emails.php');
+require(dirname(__DIR__, 3) . '/lib/fpdf/cabecera_pdf.php');
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 $controlador = new HistorialFacturasC();
 if (isset($_GET['CheqAbonos_Click'])) {
@@ -42,16 +46,23 @@ if (isset($_GET['DCCliente_LostFocus'])) {
     echo json_encode($controlador->DCCliente_LostFocus($parametros));
 }
 
+if (isset($_GET['Imprimir'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Imprimir($parametros));
+}
+
 
 class HistorialFacturasC
 {
     private $modelo;
     private $email;
+    private $pdf;
 
     function __construct()
     {
         $this->modelo = new HistorialFacturasM();
         //$this->email = new enviar_emails();
+        $this->pdf = new cabecera_pdf();
     }
 
     function CheqAbonos_Click()
@@ -168,9 +179,6 @@ class HistorialFacturasC
         $Opcion = 0;
 
         switch ($idBtn) {
-            case "Imprimir":
-                Impresiones();
-                break;
             case "Facturas":
                 Actualizar_Abonos_Facturas_SP($FA);
                 $res = $this->Historico_Facturas($parametros);
@@ -221,8 +229,8 @@ class HistorialFacturasC
                 }
                 $fechaSistema = FechaSistema();
                 $fechaSistema = date("d/m/Y", strtotime($fechaSistema));
-                Reporte_Cartera_Clientes_SP(PrimerDiaMes($MBFechaI), UltimoDiaMes2(date('d/m/Y'),'Ymd'),$FA['CodigoC']);
-                $res = $this->modelo->Estado_Cuenta_Cliente($MBFechaI,$fechaSistema,$FA);
+                Reporte_Cartera_Clientes_SP(PrimerDiaMes($MBFechaI), UltimoDiaMes2(date('d/m/Y'), 'Ymd'), $FA['CodigoC']);
+                $res = $this->modelo->Estado_Cuenta_Cliente($MBFechaI, $fechaSistema, $FA);
                 if ($res['num_filas']) {
                     $Total = 0;
                     $Abono = 0;
@@ -258,6 +266,38 @@ class HistorialFacturasC
             'idBtn' => $idBtn,
             'Opcion' => $Opcion,
         );
+    }
+
+    function Imprimir($parametros)
+    {
+
+        $basepath = dirname(__DIR__, 3) . "/TEMP/IMPRIMIR/";
+        if (!is_dir($basepath)) {
+            mkdir($basepath, 0777, true);
+        }
+
+        $filename = $parametros['MensajeEncabData'] . " " . $parametros['SQLMsg1'] . ".pdf";
+        $filename = str_replace(' ', '_', $filename);
+        $path = $basepath . $filename;
+
+        // Verificar si el archivo ya existe y agregar sufijo autoincremental si es necesario
+        $i = 1;
+        while (file_exists($path)) {
+            $info = pathinfo($path);
+            $filename = $info['filename'] . '_' . $i . '.' . $info['extension'];
+            $path = $info['dirname'] . '/' . $filename;
+            $i++;
+        }
+
+        $this->pdf->generarPDFTabla($parametros, $path);
+
+        //$this->pdf->generarPDFTabla($datos, $path);
+
+        return [
+            'response' => 1,
+            'nombre' => basename($path),
+            'mensaje' => "SE GENERO EL SIGUIENTE ARCHIVO: \n" . basename($path)
+        ];
     }
 
     function Listado_Facturas_Por_Meses($parametros, $Por_FA, $SQL_Server = true)
@@ -965,6 +1005,7 @@ class HistorialFacturasC
         $FechaTexto = $FechaFin;
         $FA['Fecha_Corte'] = $MBFechaF;
         $FA['Factura'] = 0;
+        $FA['Fecha_Desde'] = $MBFechaI;
         $FA['Fecha_Hasta'] = $MBFechaF;
         //$TMail->Volver_Envial = false;
 
@@ -1125,22 +1166,25 @@ class HistorialFacturasC
             case "Tipo_Pago_Cliente":
                 $res = $this->modelo->Tipo_Pago_Cliente();
                 break;
-            case "Bajar_Excel":                
+            case "Bajar_Excel":
                 //print_r(count($AdoQuery));
-                if (!empty($parametros['AdoQuery'])){
+                if (!empty($parametros['AdoQuery'])) {
                     return $this->Bajar_Excel($parametros['AdoQuery']);
-                }else{
-                    return array('response'=>0);
+                } else {
+                    return array('response' => 0);
                 }
             case "Reporte_Ventas":
                 $res = $this->modelo->Ventas_x_Excel($FechaIni, $FechaFin);
                 break;
             case "Reporte_Catastro":
-                Catastro_Registro_Datos_Clientes();
-                break;
+                $tipoConsulta = $this->TipoDeConsulta($parametros, 0);
+                return $this->Catastro_Registro_Datos_Clientes($FA, $MBFechaI, $MBFechaF, $tipoConsulta);
             case "Enviar_FA_Email":
-                break;
+                $tipoConsulta = $this->TipoDeConsulta($parametros, 0, true);
+                return $this->modelo->Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, "FA", $tipoConsulta );
+
             case "Enviar_RE_Email":
+                $this->modelo->Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, "FA" );
                 break;
             case "Recibos_Anticipados":
                 Recibo_Abonos_Anticipados();
@@ -1163,10 +1207,186 @@ class HistorialFacturasC
         );
     }
 
+    function Catastro_Registro_Datos_Clientes($FA, $MBFechaI, $MBFechaF, $tipoConsulta)
+    {
+
+        $fechaSistema = FechaSistema();
+        $fechaSistema = date("d/m/Y", strtotime($fechaSistema));
+
+        $NFila = 0;
+        $RutaGeneraFile = '';
+        $Dias_Morosidad = 0;
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $path = dirname(__DIR__, 3) . "/Excel/";
+        if (!is_dir($path)) {
+            mkdir($path, 0777, true);
+        }
+
+        $filename = "Catastro Cliente del ";
+
+        if ($MBFechaI == $MBFechaF) {
+            $filename .= str_replace("/", "-", $MBFechaF) . ".xlsx";
+        } else {
+            $filename .= str_replace("/", "-", $MBFechaI) . " al " . str_replace("/", "-", $MBFechaF) . ".xlsx";
+        }
+
+        $filename = str_replace(' ', '_', $filename);
+        $RutaGeneraFile = $path . $filename;
+
+        $FA['Fecha_Corte'] = $MBFechaF;
+        Actualizar_Abonos_Facturas_SP($FA);
+
+        $sheet->setCellValue('A1', 'CATASTRO REGISTRO DE DATOS CREDITICIOS');
+        $sheet->setCellValue('A2', 'DATOS DEL CLIENTE');
+        $sheet->setCellValue('G2', 'CAMPOS SOCIODEMOGRÁFICOS');
+        $sheet->setCellValue('M2', 'DATOS DE ENDEUDAMIENTO');
+        $sheet->setCellValue('A3', 'Código de la Entidad');
+        $sheet->setCellValue('B3', 'Fecha de Datos');
+        $sheet->setCellValue('C3', 'Tipo de Identificación del Sujeto');
+        $sheet->setCellValue('D3', 'Identificación del Sujeto');
+        $sheet->setCellValue('E3', 'Nombres y Apellidos del Sujeto');
+        $sheet->setCellValue('F3', 'Clase del Sujeto');
+        $sheet->setCellValue('G3', 'Provincia');
+        $sheet->setCellValue('H3', 'Cantón');
+        $sheet->setCellValue('I3', 'Parroquia');
+        $sheet->setCellValue('J3', 'Sexo');
+        $sheet->setCellValue('K3', 'Estado Civil');
+        $sheet->setCellValue('L3', 'Origen de Ingresos');
+        $sheet->setCellValue('M3', 'Número de Operación');
+        $sheet->setCellValue('N3', 'Valor de la Operación');
+        $sheet->setCellValue('O3', 'Saldo de Operación');
+        $sheet->setCellValue('P3', 'Fecha de Concesión');
+        $sheet->setCellValue('Q3', 'Fecha de Vencimiento');
+        $sheet->setCellValue('R3', 'Fecha que es Exigible');
+        $sheet->setCellValue('S3', 'Plazo Operación (días)');
+        $sheet->setCellValue('T3', 'Periodicidad de Pago (días)');
+        $sheet->setCellValue('U3', 'Días de Morosidad');
+        $sheet->setCellValue('V3', 'Monto de Morosidad');
+        $sheet->setCellValue('W3', 'Monto de Interés en Mora');
+        $sheet->setCellValue('X3', 'Valor por vencer de 1 a 30 días');
+        $sheet->setCellValue('Y3', 'Valor por vencer de 31 a 90 días');
+        $sheet->setCellValue('Z3', 'Valor por vencer de 91 a 180 días');
+        $sheet->setCellValue('AA3', 'Valor por vencer de 181 a 360 días');
+        $sheet->setCellValue('AB3', 'Valor por vencer de mas 360 días');
+        $sheet->setCellValue('AC3', 'Valor vencido 1 A 30 dias');
+        $sheet->setCellValue('AD3', 'Valor vencido de 31 a 90 días');
+        $sheet->setCellValue('AE3', 'Valor vencido de 91 a 180 días');
+        $sheet->setCellValue('AF3', 'Valor vencido de 181 a 360 días');
+        $sheet->setCellValue('AG3', 'Valor vencido de más de 360 días');
+        $sheet->setCellValue('AH3', 'Valor en Demanda Judicial');
+        $sheet->setCellValue('AI3', 'Cartera Castigada');
+        $sheet->setCellValue('AJ3', 'Cuota del Crédito');
+        $sheet->setCellValue('AK3', 'Fecha de Cancelación');
+        $sheet->setCellValue('AL3', 'Forma de Cancelación');
+
+        $AdoCatastro = $this->modelo->Catastro_Registro_Datos_Clientes(BuscarFecha($MBFechaI), BuscarFecha($MBFechaF), $tipoConsulta);
+
+        if (!empty($AdoCatastro)) {
+            foreach ($AdoCatastro as $registro) {
+                $Dias_Morosidad = 0;
+                // Calcular días de morosidad
+                if ($registro["T"] != "C")
+                    $Dias_Morosidad = CFechaLong(date('Y-m-d')) - CFechaLong($registro["Fecha_V"]->format('Y-m-d'));
+
+                // Escribir datos en la hoja de cálculo
+                $sheet->setCellValue("A" . $NFila, "SP10101");
+                $sheet->setCellValue("B" . $NFila, $MBFechaF);
+                $sheet->setCellValue("C" . $NFila, $registro["TD"]);
+                $sheet->setCellValue("A" . $NFila, "SP10101");
+                $sheet->setCellValue("B" . $NFila, $MBFechaF);
+                $sheet->setCellValue("C" . $NFila, $registro["TD"]);
+                $sheet->setCellValue("D" . $NFila, $registro["CI_RUC"]);
+                $sheet->setCellValue("E" . $NFila, $registro["Cliente"]);
+                $sheet->setCellValue("F" . $NFila, (substr($registro["CI_RUC"], 2, 1) == "9") ? "J" : "N");
+                $sheet->setCellValue("G" . $NFila, $registro["Prov"]);
+                $sheet->setCellValue("H" . $NFila, "C" . $registro["Ciudad"]);
+                $sheet->setCellValue("I" . $NFila, "P" . $registro["Ciudad"]);
+                $sheet->setCellValue("J" . $NFila, $registro["Sexo"]);
+                $sheet->setCellValue("K" . $NFila, $registro["Est_Civil"]);
+                $sheet->setCellValue("L" . $NFila, "I");
+                $sheet->setCellValue("M" . $NFila, "'" . $registro["Serie"] . sprintf("%09d", $registro["Factura"]));
+                $sheet->setCellValue("N" . $NFila, number_format($registro["Total"], 2, ".", ""));
+                $sheet->setCellValue("O" . $NFila, number_format($registro["Saldo_Actual"], 2, ".", ""));
+                $sheet->setCellValue("P" . $NFila, $registro["Fecha"]);
+                $sheet->setCellValue("Q" . $NFila, $registro["Fecha_V"]);
+                $sheet->setCellValue("R" . $NFila, $registro["Fecha_V"]);
+                $sheet->setCellValue("S" . $NFila, " ");
+                $sheet->setCellValue("T" . $NFila, " ");
+                if ($Dias_Morosidad > 0) {
+                    $sheet->setCellValue("U" . $NFila, $Dias_Morosidad);
+                }
+                if ($registro["T"] != "C") {
+                    $sheet->setCellValue("V" . $NFila, number_format($registro["Saldo_Actual"], 2, ".", ""));
+                }
+                $sheet->setCellValue("W" . $NFila, " ");
+                if (-30 <= $Dias_Morosidad && $Dias_Morosidad <= -1) {
+                    $sheet->setCellValue("X" . $NFila, number_format($registro["Total"], 2, ".", ""));
+                }
+                if (-90 <= $Dias_Morosidad && $Dias_Morosidad <= -31) {
+                    $sheet->setCellValue("Y" . $NFila, number_format($registro["Total"], 2, ".", ""));
+                }
+                if (-180 <= $Dias_Morosidad && $Dias_Morosidad <= -91) {
+                    $sheet->setCellValue("Z" . $NFila, number_format($registro["Total"], 2, ".", ""));
+                }
+                if (-360 <= $Dias_Morosidad && $Dias_Morosidad <= -181) {
+                    $sheet->setCellValue("AA" . $NFila, number_format($registro["Total"], 2, ".", ""));
+                }
+                if (-360 <= $Dias_Morosidad) {
+                    $sheet->setCellValue("AB" . $NFila, number_format($registro["Total"], 2, ".", ""));
+                }
+                if (1 <= $Dias_Morosidad && $Dias_Morosidad <= 30) {
+                    $sheet->setCellValue("AC" . $NFila, number_format($registro["Saldo_Actual"], 2, ".", ""));
+                }
+                if (31 <= $Dias_Morosidad && $Dias_Morosidad <= 90) {
+                    $sheet->setCellValue("AD" . $NFila, number_format($registro["Saldo_Actual"], 2, ".", ""));
+                }
+                if (91 <= $Dias_Morosidad && $Dias_Morosidad <= 180) {
+                    $sheet->setCellValue("AE" . $NFila, number_format($registro["Saldo_Actual"], 2, ".", ""));
+                }
+                if (181 <= $Dias_Morosidad && $Dias_Morosidad <= 360) {
+                    $sheet->setCellValue("AF" . $NFila, number_format($registro["Saldo_Actual"], 2, ".", ""));
+                }
+                if ($Dias_Morosidad > 360) {
+                    $sheet->setCellValue("AG" . $NFila, number_format($registro["Saldo_Actual"], 2, ".", ""));
+                }
+                $sheet->setCellValue("AH" . $NFila, " ");
+                $sheet->setCellValue("AI" . $NFila, " ");
+                $sheet->setCellValue("AJ" . $NFila, " ");
+                if ($registro["T"] == "C") {
+                    $sheet->setCellValue("AK" . $NFila, $registro["Fecha_V"]);
+                    if ($registro["Total_Efectivo"] > 0) {
+                        $sheet->setCellValue("AL" . $NFila, "E");
+                    } elseif ($registro["Total_Banco"] > 0) {
+                        $sheet->setCellValue("AL" . $NFila, "C");
+                    } else {
+                        $sheet->setCellValue("AL" . $NFila, "T");
+                    }
+                }
+
+                $NFila++;
+            }
+
+            // Guardar archivo Excel
+            $writer = new Xlsx($spreadsheet);
+            $writer->save($RutaGeneraFile);
+
+            return [
+                'response' => '2',
+                'mensaje' => $filename,
+                'nombre' => $filename,
+            ];
+        } else {
+            return ['response' => '0'];
+        }
+    }
+
     function Bajar_Excel($AdoQuery)
     {
         if (count($AdoQuery) > 0) {
-            $path = strtoupper(dirname(__DIR__, 3) . "/TEMP/HISTORICO/");
+            $path = dirname(__DIR__, 3) . "/TEMP/HISTORICO/";
             if (!is_dir($path)) {
                 mkdir($path, 0777, true);
             }

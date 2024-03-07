@@ -1183,7 +1183,7 @@ class FRecaudacionBancosCxCC
             }
         }
         fclose($NumFileFacturas);
-
+        //SCCOB03.TXT
         //Comenzamos a generar el archivo: SCCOB.TXT
         $mes = date('m', strtotime($MBFechaI));
         $anio = intval(substr(date('Y', strtotime($MBFechaI)), 1, 3));
@@ -1247,8 +1247,8 @@ class FRecaudacionBancosCxCC
             'res' => 'Ok',
             'mensaje' => $mensaje,
             'textoBanco' => 'PICHINCHA',
-            'Nombre1' => 'SCREC' . $mes . ".TXT",
-            'Nombre2' => 'SCCOB' . $mes . ".TXT"
+            'Nombre1' => "SCREC" . $mes . ".TXT",
+            'Nombre2' => "SCCOB" . $mes . ".TXT"
         );
     }
 

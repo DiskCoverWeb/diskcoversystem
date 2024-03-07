@@ -158,7 +158,7 @@
             </div>
             <div class="col">
                 <div class="btn-group">
-                    <a href="javascript:void(0)" id="Enviar_FA_Emails" title="Enviar por mail facturas electronicas"
+                    <a href="javascript:void(0)" id="Enviar_Emails" title="Enviar por mail facturas electronicas"
                         class="btn btn-default">
                         <img src="../../img/png/payment-check.png" width="35" height="35">
                     </a>
@@ -203,7 +203,7 @@
             </div>
             <div class="col-sm-3">
                 <label>
-                    <input type="radio" name="inlineRadioOptions" id="inlineRadio4" value="option4"> Todas
+                    <input type="radio" name="OpcTodas" id="OpcTodas" value="OpcTodas"> Todas
                 </label>
             </div>
         </div>
@@ -245,13 +245,14 @@
             </div>
 
             <div class="col">
-                <label for="TxtOrden" style="display: block;">Documento desde</label>
-                <input class="form-control input-xs" type="text" name="TxtOrden" id="TxtOrden" placeholder="0" value=0>
+                <label for="TxtDocDesde" style="display: block;">Documento desde</label>
+                <input class="form-control input-xs" type="text" name="TxtDocDesde" id="TxtDocDesde" placeholder="0"
+                    value=0>
             </div>
 
             <div class="col">
-                <label for="TxtOrden1" style="display: block;">Documento hasta</label>
-                <input class="form-control input-xs" type="text" name="TxtOrden1" id="TxtOrden1" placeholder="0"
+                <label for="TxtDocHasta" style="display: block;">Documento hasta</label>
+                <input class="form-control input-xs" type="text" name="TxtDocHasta" id="TxtDocHasta" placeholder="0"
                     value=0>
             </div>
         </div>
@@ -335,9 +336,9 @@
 
     $(document).ready(function () {
         var menuResumen = [
-            { id: 'Resumen_Prod', opcion: 'Resumen de productos' },
-            { id: 'Resumen_Prod_Meses', opcion: 'Resumen de productos por meses' },
-            { id: 'ResumenVentCost', opcion: 'Resumen de Ventas/Costos' },
+            { id: 'Resumen_Prod', opcion: 'Resumen de productos' },//2
+            { id: 'Resumen_Prod_Meses', opcion: 'Resumen de productos por meses' }, //13
+            { id: 'ResumenVentCost', opcion: 'Resumen de Ventas/Costos' }, //13
             { id: 'Resumen_Ventas_Vendedor', opcion: 'Resumen Comisiones por Vendedor' },
             { id: 'Ventas_x_Cli', opcion: 'Ventas por Cliente' },
             { id: 'Ventas_Cli_x_Mes', opcion: 'Ventas Clientes por Meses' },
@@ -406,6 +407,8 @@
                 case "Tipo_Pago_Cliente":
                 case "Bajar_Excel":
                 case "Reporte_Ventas":
+                case "Reporte_Catastro":
+                case "Enviar_FA_Email":
                     ToolbarMenu_ButtonMenuClick(idSel);
                     break;
                 case "Resumen_Prod_Meses":
@@ -562,6 +565,7 @@
 
     $('#Facturas, #Listado_Tarjetas, #Estado_Cuenta_Cliente, #Buscar_Malla, #Protestado, #Retenciones_NC, #Por_Buses').on('click', function () {
         var idBtn = $(this).attr('id');
+        console.log('clic en ,', idBtn);
         ToolbarMenu_ButtonClick(idBtn);
     });
 
@@ -586,7 +590,6 @@
             ToolbarMenu_ButtonClick(idBtn);
         });
     });
-
 
     function ToolbarMenu_ButtonClick(idBtn) {
         var params = {
@@ -617,9 +620,14 @@
             data: { 'parametros': params },
             success: function (data) {
                 globalAdoQuery = data.AdoQuery;
+                globalOpc = data.Opcion;
                 console.log(data);
-
                 switch (data.idBtn) {
+                    /*case "Imprimir":
+                        var nuevaVentana = window.open('', '_blank');
+                        nuevaVentana.document.write('<embed width="100%" height="100%" src="data:application/pdf;base64,' + data.pdf_content + '">');
+                        break;
+                        break;*/
                     case "Facturas":
                     case "CxC_Clientes":
                     case "Listar_Por_Meses":
@@ -673,10 +681,6 @@
             }
         });
     }
-
-    $('#Imprimir').click(function () {
-
-    });
 
     var globalFA;
     var globalCodMarca;
@@ -775,8 +779,8 @@
     var urlParams = new URLSearchParams(url.split('?')[1]);
     var TipoFactura = urlParams.get('tipo');
     var globalAdoQuery = null;
+    var globalOpc = 0;
     function ToolbarMenu_ButtonMenuClick(idBtnMenu) {
-        //console.log(globalAdoQuery.length);
         var params = {
             'MBFechaI': $('#MBFechaI').val(),
             'MBFechaF': $('#MBFechaF').val(),
@@ -798,10 +802,12 @@
             'Con_Costeo': globalConCosteo !== undefined ? globalConCosteo : false,
             'Si_No': globalSiNo !== undefined ? globalSiNo : false,
             'CodigoInv': globalCodigoInv !== undefined ? globalCodigoInv : false,
-            'AdoQuery': globalAdoQuery
+            'AdoQuery': globalAdoQuery,
+            'TxtDocDesde': parseInt($("#TxtDocDesde").val()),
+            'TxtDocHasta': parseInt($("#TxtDocHasta").val()),
         };
 
-        console.log(params['AdoQuery']);
+        console.log('datos enviados ', params['AdoQuery']);
 
         $('#myModal_espera').modal('show');
         $.ajax({
@@ -809,11 +815,15 @@
             type: 'post',
             dataType: 'json',
             data: { 'parametros': params },
-            success: function (data) {  
-                console.log(data);
+            success: function (data) {
+
+                console.log('datos recbidos ', data);
+
                 globalAdoQuery = data.AdoQuery;
+                globalOpc = data.Opcion;
+
                 //console.log(globalAdoQuery.length);
-                if(data.response ==0){
+                if (data.response == 0) {
                     $('#myModal_espera').modal('hide');
                     swal.fire({
                         title: 'Información',
@@ -842,6 +852,29 @@
                     globalAdoQuery = null;
                 }
 
+                if (data.response == 2) {
+                    $('#myModal_espera').modal('hide');
+                    swal.fire({
+                        title: 'SE HA GENERADO EL SIGUIENTE ARCHIVO: ',
+                        text: data.mensaje,
+                        type: 'success',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    var url = "../../Excel/" + data.nombre;
+                    var enlaceTemporal = $('<a></a>')
+                        .attr('href', url)
+                        .attr('download', data.nombre)
+                        .appendTo('body');
+                    enlaceTemporal[0].click();
+                    enlaceTemporal.remove();
+
+                    //globalAdoQuery = null;
+                }
+
+                if (data.response == 'mail1') {
+                    Enviar_Emails_Facturas_Recibos(data.AdoQuery, data.tipoEnvio);
+                }
+
                 var actionsMap = {
                     "Resumen_Prod": { label2: "I.V.A", label4: "VENTAS", label3: "TOTAL" },
                     "Resumen_Prod_Meses": { label2: "VENTAS", label4: "COBRADO", label3: "SALDO" },
@@ -861,7 +894,9 @@
                     "Por_Vendedor": {},
                     "CxC_Tiempo_Credito": {},
                     "Bajar_Excel": {},
-                    "Reporte_Ventas": {}
+                    "Reporte_Ventas": {},
+                    "Reporte_Catastro": {},
+                    //"Enviar_FA_Email":{},
                 };
 
                 var action = actionsMap[data.idBtnMenu] || {};
@@ -871,7 +906,7 @@
                 });
 
                 if (data.num_filas > 0) {
-                    
+
                     $('#lblCommand').val(data.Opcion);
                     $('#lblRegistro').val(data.num_filas);
                     $('#lblFacturado').val(data.label_facturado);
@@ -891,74 +926,148 @@
         });
     }
 
-    function Impresiones() {
+    function Enviar_Emails_Facturas_Recibos(consulta, tipoEnvio) {
+        if (consulta.length > 0) {
+            Swal.fire({
+                title: 'Pregunta de Envío de Mails',
+                text: '¿Está seguro de querer enviar por correo electrónico los documentos?',
+                type: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    consulta.forEach((registro) => {
+                        let codigoC = registro['CodigoC'];
+                        let claveAcceso = registro['Clave_Acceso'];
+                        let estadoSRI = registro['Estado_SRI'];
+                        let TC = registro['TC'];
+                        let fecha = registro['Fecha'];
+                        let fechaV = registro['Fecha_V'];
+                        let serie = registro['Serie'];
+                        let CI_RUC = registro['CI_RUC'];
+                        let factura = registro['Factura'];
+                        let autorizacion = registro['Autorizacion'];
+                        let horaFA = registro['Hora_Aut'];
+                        let fechaAut = registro['Fecha_Aut'];
+                        let emailC = registro['Email'];
+                        let emailR = registro['Email2'];
+                        let cliente = registro['Cliente'];
+                        let comercial = registro['Cliente'];
+                        let horaAutorizacion = registro['Hora_Aut'];
+
+                        if (tipoEnvio === "FA") {
+                            //SRI_Enviar_Mails(codigoC, claveAcceso, estadoSRI, TC, fecha, fechaV, serie, CI_RUC, factura, autorizacion, horaFA, fechaAut, emailC, emailR, cliente, comercial, horaAutorizacion, "FA");
+                        } else {
+                            //Recibo_Enviar_Mails(codigoC, claveAcceso, estadoSRI, TC, fecha, fechaV, serie, CI_RUC, factura, autorizacion, horaFA, fechaAut, emailC, emailR, cliente, comercial, horaAutorizacion);
+                        }
+                    });
+                    Swal.fire({
+                        title: 'Proceso terminado exitosamente',
+                        icon: 'success'
+                    });
+                }
+            });
+        } else {
+            Swal.fire({
+                title: 'No hay registros para enviar',
+                text: (tipoEnvio === "FA") ? 'No hay Facturas Pendientes para enviar' : 'No hay Recibos Pendientes para enviar',
+                type: 'info'
+            });
+        }
+    }
+
+    $('#Imprimir').on('click', function () {
+        var idBtn = $(this).attr('id');
+        console.log('clic en ,', idBtn);
+        Impresiones(globalOpc);
+    });
+
+    function Impresiones(globalOpc) {
         var MBFechaI = $('#MBFechaI').val();
         var MBFechaF = $('#MBFechaF').val();
 
         $('#DGQuery').empty();
 
-        switch (Opcion) {
+        var parametros = {
+            'AdoQuery': globalAdoQuery
+        }
+
+        var MensajeEncabData = "", SQLMsg1 = "", Mifecha = "";
+        var case_no_def = false;
+
+        var CheqCxC = $('#CheqCxC').prop('checked') ? 1 : 0;
+        var CheqIngreso = $('#CheqIngreso').prop('checked') ? 1 : 0;
+        var CheqAbonos = $('#CheqAbonos').prop('checked') ? 1 : 0;
+        var OpcPend = $('#OpcPend').prop('checked') ? 1 : 0;
+        var OpcAnul = $('#OpcAnul').prop('checked') ? 1 : 0;
+        var OpcCanc = $('#OpcCanc').prop('checked') ? 1 : 0;
+
+        switch (globalOpc) {
             case 1:
                 MensajeEncabData = "ESTADO DE CUENTA DE CLIENTES";
                 SQLMsg1 = "Corte al " + MBFechaF;
                 Mifecha = MBFechaF;
-                Imprimir_Saldo_Factura(AdoQuery);
+                //Imprimir_Saldo_Factura(AdoQuery);
                 break;
             case 2:
                 MensajeEncabData = "ESTADO DE CUENTA DE CLIENTES";
-                SQLMsg1 = "CORTE DEL " + MBFechaIt + " AL " + MBFechaF;
+                SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                Imprimir_Saldo_Clientes(AdoQuery, 8);
+                //Imprimir_Saldo_Clientes(AdoQuery, 8);
                 break;
             case 3:
                 MensajeEncabData = "ESTADO DE PRODUCTOS POR CLIENTES";
-                SQLMsg1 = "CORTE DEL " + MBFechaIt + " AL " + MBFechaF;
+                SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                Imprimir_Resumen_Productos(AdoQuery, 8);
+                //Imprimir_Resumen_Productos(AdoQuery, 8);
                 break;
             case 4:
                 MensajeEncabData = "RESUMEN DE VENTAS POR CLIENTES";
-                SQLMsg1 = "CORTE DEL " + MBFechaIt + " AL " + MBFechaF;
+                SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                ImprimirAdo(AdoQuery, true, 2, 9);
+                //ImprimirAdo(AdoQuery, true, 2, 9);
                 break;
             case 5:
                 MensajeEncabData = "RESUMEN DE VENTAS POR PRODUCTOS";
-                SQLMsg1 = "CORTE DEL " + MBFechaIt + " AL " + MBFechaF;
+                SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                ImprimirVentasCosto(AdoQuery, true, 2, 9);
+                //ImprimirVentasCosto(AdoQuery, true, 2, 9);
                 break;
             case 6:
                 MensajeEncabData = "ESTADO DE ABONOS DE CLIENTES";
-                SQLMsg1 = "CORTE DEL " + MBFechaIt + " AL " + MBFechaF;
+                SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                Imprimir_Abonos_De_Caja(AdoQuery, MBFechaIt, MBFechaF);
+                //Imprimir_Abonos_De_Caja(AdoQuery, MBFechaI, MBFechaF);
                 break;
             case 7:
                 MensajeEncabData = "ESTADO DE CHEQUES PROTESTADOS";
-                SQLMsg1 = "CORTE DEL " + MBFechaIt + " AL " + MBFechaF;
+                SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                Imprimir_Abonos_De_Caja(AdoQuery, MBFechaIt, MBFechaF);
+                //Imprimir_Abonos_De_Caja(AdoQuery, MBFechaI, MBFechaF);
                 break;
             case 8:
                 MensajeEncabData = "VENTAS POR PRODUCTOS";
-                SQLMsg1 = "CORTE DEL " + MBFechaIt + " AL " + MBFechaF;
+                SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                ImprimirAdo(AdoQuery, true, 1, 8);
+                //ImprimirAdo(AdoQuery, true, 1, 8);
                 break;
             case 9:
             case 10:
             case 13:
-                Codigo4 = "Ninguno";
-                if (CheqCxC.value === 1) Codigo4 = DCCxC;
+                //Codigo4 = "Ninguno";              
+                var Codigo4 = "Ninguno";
+                if (CheqCxC === 1) Codigo4 = DCCxC;
+                SQLMsg1 = "";
                 if (OpcPend) SQLMsg1 = "LISTADO DE FACTURAS PENDIENTES";
                 if (OpcAnul) SQLMsg1 = "LISTADO DE FACTURAS ANULADAS";
                 if (OpcCanc) SQLMsg1 = "LISTADO DE FACTURAS CANCELADAS";
                 if (OpcTodas) SQLMsg1 = "LISTADO DE TODAS LAS FACTURAS";
+
                 Mifecha = MBFechaF;
-                if (TipoDoc === "C") Imprimir_Resumen_Cartera(AdoQuery, Codigo4);
-                if (TipoDoc === "F") ImprimirCtasCob(AdoQuery, sSQL, true);
-                if (TipoDoc === "V") Imprimir_Resumen_Cartera_Vendedor(AdoQuery);
+                //if (TipoDoc === "C") Imprimir_Resumen_Cartera(AdoQuery, Codigo4);
+                //if (TipoDoc === "F") ImprimirCtasCob(AdoQuery, sSQL, true);
+                //if (TipoDoc === "V") Imprimir_Resumen_Cartera_Vendedor(AdoQuery);
                 break;
             case 11:
                 if (OpcPend) SQLMsg1 = "LISTADO DE FACTURAS PENDIENTES";
@@ -966,52 +1075,88 @@
                 if (OpcCanc) SQLMsg1 = "LISTADO DE FACTURAS CANCELADAS";
                 if (OpcTodas) SQLMsg1 = "LISTADO DE TODAS LAS FACTURAS";
                 Mifecha = MBFechaF;
-                Imprimir_Pendientes_Facturacion(AdoQuery, Opcion, true);
+                //Imprimir_Pendientes_Facturacion(AdoQuery, Opcion, true);
                 break;
             case 12:
-                Imprimir_Por_Buses(AdoQuery, DCCliente);
+                //Imprimir_Por_Buses(AdoQuery, DCCliente);
                 break;
             case 15:
                 MensajeEncabData = "RESUMEN DE COMISIONES POR VENDEDORES";
                 SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
                 Orientacion_Pagina = 2;
-                ImprimirAdo(AdoQuery, true, 2, 7, true);
+                //ImprimirAdo(AdoQuery, true, 2, 7, true);
                 break;
             case 16:
-                MensajeEncabData = DGQuery.Caption;
+                MensajeEncabData = "RESUMEN DE VENTAS DE PRODUCTOS MENSUALIZADO";
                 SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
-                Orientacion_Pagina = 2;
-                ImprimirAdo(AdoQuery, true, 2, 7, true);
+                //ImprimirAdo(AdoQuery, true, 2, 7, true);
                 break;
             case 17:
                 MensajeEncabData = "VENTAS RESUMIDAS POR VENDEDOR";
                 SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
                 Orientacion_Pagina = 1;
-                Imprimir_Ventas_Resumidas_Vendedor(AdoQuery, MSChart, 2, 7, true);
+                //Imprimir_Ventas_Resumidas_Vendedor(AdoQuery, MSChart, 2, 7, true);
                 break;
             case 18:
                 MensajeEncabData = "TOTAL CUENTAS POR COBRAR POR TIEMPO DE CREDITO";
                 SQLMsg1 = "CORTE DEL " + MBFechaI + " AL " + MBFechaF;
                 Mifecha = MBFechaF;
                 Orientacion_Pagina = 2;
-                Imprimir_Tiempo_Credito(AdoQuery, true, 2, 10, true);
+                //Imprimir_Tiempo_Credito(AdoQuery, true, 2, 10, true);
                 break;
-            case 19:
-                Resultado = Reporte_Cartera_Clientes_PDF(PrimerDiaMes(MBFechaI), FA.CodigoC, false, true);
+            //case 19:
+            //Resultado = Reporte_Cartera_Clientes_PDF(PrimerDiaMes(MBFechaI), FA.CodigoC, false, true);
+            //break;
+            default:
+                case_no_def = true;
                 break;
         }
         //HistorialFacturas.Caption = "RESUMEN HISTORICO DE FACTURAS/NOTAS DE VENTA";
-        $('#DGQuery').html(data.tbl);
-        $('#DGQuery #datos_t tbody').css('height', '36vh');
-        $('#myModal_espera').modal('hide');
-        $('#alertNoData').hide();
+        // $('#DGQuery').html(data.tbl);
+        // $('#DGQuery #datos_t tbody').css('height', '36vh');
+        // $('#myModal_espera').modal('hide');
+        // $('#alertNoData').hide();
+
+        if (!case_no_def) {
+            parametros['MensajeEncabData'] = MensajeEncabData;
+            parametros['SQLMsg1'] = SQLMsg1;
+            parametros['Mifecha'] = Mifecha;
+            parametros['Opcion'] = globalOpc;
+
+            console.log('enviados a imprimir:', parametros)
+            $.ajax({
+                url: '../controlador/facturacion/HistorialFacturasC.php?Imprimir=true',
+                type: 'post',
+                dataType: 'json',
+                data: { 'parametros': parametros },
+                success: function (data) {
+                    console.log('RESP', data);
+                    if (data.response == 1) {
+                        $('#myModal_espera').modal('hide');
+                        swal.fire({
+                            title: 'Información',
+                            text: data.mensaje,
+                            type: 'success',
+                            confirmButtonText: 'Aceptar'
+                        });
+                        var url = "../../TEMP/IMPRIMIR/" + data.nombre;
+                        var enlaceTemporal = $('<a></a>')
+                            .attr('href', url)
+                            .attr('download', data.nombre)
+                            .appendTo('body');
+                        enlaceTemporal[0].click();
+                        enlaceTemporal.remove();
+
+                        globalAdoQuery = null;
+                    }
+                }
+            });
+        } else {
+            console.log('caso no definido');
+        }
     }
-
-
-
-
 
 </script>
