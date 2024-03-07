@@ -24,6 +24,7 @@ require_once("FAsignaFact.php");
     var Opcion = 0;
     var AdoQuery = [];
     var datosFilaSeleccionada = {};
+    var campoModificar = "";
 
     let FA = {
         'Factura': '.',
@@ -51,6 +52,7 @@ require_once("FAsignaFact.php");
         DCGrupos();
         DCTipoPagoo();
         DCProductos();
+        //validar_Campos_Solo_Nums();
         $('#DCLinea').prop('disabled', true);
         //PorGrupo = true;
         //Listar_Grupo(false);
@@ -240,11 +242,27 @@ require_once("FAsignaFact.php");
         });
 
         $('#btnGenerarEliminarRubros').click(function () {
-            $('#FAsignaFact').modal('show');
+            if (PorGrupo) {
+                $('#FPensiones').modal('show');
+            } else {
+                swal.fire({
+                    title: 'Error',
+                    text: 'Debe seleccionar Listar por Grupo, caso contrario no podrá facturar.',
+                    type: 'error'
+                });
+            }
         });
 
         $('#btnGenerarDeudaPendiente').click(function () {
-            $('#FPensiones').modal('show');
+            if (PorGrupo) {
+                $('#FPensiones').modal('show');
+            } else {
+                swal.fire({
+                    title: 'Error',
+                    text: 'Debe seleccionar Listar por Grupo, caso contrario no podrá facturar.',
+                    type: 'error'
+                });
+            }
         });
 
         //Vacia los datos seleccionados y la tabla del contenedor DGRubros ya que las tablas genericas tienen el mismo id.
@@ -272,41 +290,320 @@ require_once("FAsignaFact.php");
                 var nombreColumna = $(this).text(); // Obtenemos el nombre de la columna
                 var valorCelda = $fila.find('td').eq(index).text(); // Obtenemos el valor de la celda correspondiente
                 datosFilaSeleccionada[nombreColumna] = valorCelda; // Asociamos nombre de columna con valor
+                campoModificar = nombreColumna;
             });
         });
 
-        // Evento para manejar CTRL + Insert
+        //Evento para manejar atajos por teclado
         $(document).keydown(function (e) {
-            //El modal solo se abre cuando Listado por Grupos este cargado
+            // El modal solo se abre cuando Listado por Grupos esté cargado
             if ($('#LxGData').children().length > 0) {
-                if (e.ctrlKey && e.which == 45) {
-                    // Verificar si la tabla existe
-                    if ($('#datos_t').length === 0) {
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'No existen datos cargados',
-                            type: 'error'
-                        });
-                    } else if (Object.keys(datosFilaSeleccionada).length === 0) {
-                        // Verificar si se ha seleccionado una fila
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'Debe seleccionar una fila',
-                            type: 'error'
-                        });
-                    } else {
-                        $(document).trigger('abrirModal', [datosFilaSeleccionada]);
+                if (e.ctrlKey) {
+                    e.preventDefault();
+                    switch (e.which) {
+                        case 45: // CTRL + Ins
+                            handleShortcut({
+                                errorText: 'Debe seleccionar una fila',
+                                action: function () {
+                                    $(document).trigger('abrirModal', [datosFilaSeleccionada]);
+                                }
+                            });
+                            break;
+                        case 68: // Ctrl + D
+                            handleShortcut({
+                                errorText: 'Debe seleccionar una fila',
+                                action: Update_Direccion
+                            });
+                            break;
+                        case 71: // Ctrl + G
+                            handleShortcut({
+                                errorText: 'Debe seleccionar una fila',
+                                action: Update_Grupo
+                            });
+                            break;
+                        case 66://Ctrl +B
+                            handleShortcut({
+                                errorText: 'Debe seleccionar una fila',
+                                action: Desactivar_Grupo
+                            });
+                            break;
+                        case 121://Ctrl + F10
+                            handleShortcut({
+                                errorText: 'Debe seleccionar una fila',
+                                action: Eliminar_Rubros_Facturacion
+                            });
+                            break;
+                        case 82://Ctrl +R
+                            handleShortcut({
+                                errorText: 'Debe seleccionar una fila',
+                                action: Retirar_Beneficiarios
+                            });
+                            break;
                     }
                 }
             }
         });
 
-
-
-
-
     });
     //Definicion de metodos
+    function Retirar_Beneficiarios() {
+        var parametros = {
+            'Codigo1': datosFilaSeleccionada.Grupo
+        };
+        var mensaje = "¿Retirar Beneficiarios sin deuda del Grupo" + datosFilaSeleccionada.Grupo + "?";
+        var titulo = "Formulario de Retiro";
+        swal.fire({
+            title: titulo,
+            text: mensaje,
+            type: 'info',
+            showCancelButton: true
+        }).then((result) => {
+            if (result.value) {
+                $('#myModal_espera').modal('show');
+                $.ajax({
+                    url: "../controlador/facturacion/ListarGruposC.php?Retirar_Beneficiarios=true",
+                    type: "POST",
+                    data: { 'parametros': parametros },
+                    dataType: 'json',
+                    success: function (response) {
+                        var data = response;
+                        $('#myModal_espera').modal('hide');
+                        if (data.res == 1) {
+                            swal.fire({
+                                title: 'Retiro de Beneficiarios',
+                                text: data.mensaje,
+                                type: 'success'
+                            });
+                        } else {
+                            swal.fire({
+                                title: 'Error',
+                                text: data.mensaje,
+                                type: 'error'
+                            });
+                        }
+                    }
+                });
+            } else {
+                return;
+            }
+        });
+    }
+
+    function Eliminar_Rubros_Facturacion() {
+        var mensaje = "¿Está seguro que desea eliminar los rubros de facturación?";
+        var titulo = "Eliminar Rubros de Facturación";
+        swal.fire({
+            title: titulo,
+            text: mensaje,
+            type: 'info',
+            showCancelButton: true
+        }).then((result) => {
+            if (result.value) {
+                $('#myModal_espera').modal('show');
+                $.ajax({
+                    url: "../controlador/facturacion/ListarGruposC.php?Eliminar_Rubros_Facturacion=true",
+                    type: "POST",
+                    dataType: 'json',
+                    success: function (response) {
+                        var data = response;
+                        $('#myModal_espera').modal('hide');
+                        if (data.res == 1) {
+                            swal.fire({
+                                title: 'Eliminar Rubros de Facturación',
+                                text: data.mensaje,
+                                type: 'success'
+                            });
+                        } else {
+                            swal.fire({
+                                title: 'Error',
+                                text: data.mensaje,
+                                type: 'error'
+                            });
+                        }
+                    }
+                });
+            } else {
+                return;
+            }
+        });
+    }
+
+    function Desactivar_Grupo() {
+        var parametros = {
+            'Codigo1': datosFilaSeleccionada.Grupo
+        };
+
+        var mensaje = "¿Está seguro que desea desactivar el grupo: " + datosFilaSeleccionada.Grupo + "?";
+        var titulo = "Desactivar Grupo";
+        swal.fire({
+            title: titulo,
+            text: mensaje,
+            type: 'info',
+            showCancelButton: true
+        }).then((result) => {
+            if (result.value) {
+                $('#myModal_espera').modal('show');
+                $.ajax({
+                    url: "../controlador/facturacion/ListarGruposC.php?Desactivar_Grupo=true",
+                    type: "POST",
+                    data: { 'parametros': parametros },
+                    dataType: 'json',
+                    success: function (response) {
+                        var data = response;
+                        $('#myModal_espera').modal('hide');
+                        if (data.res == 1) {
+                            swal.fire({
+                                title: 'Desactivar Grupo',
+                                text: data.mensaje,
+                                type: 'success'
+                            });
+                            Listar_Grupo(false);
+                        } else {
+                            swal.fire({
+                                title: 'Error',
+                                text: data.mensaje,
+                                type: 'error'
+                            });
+                        }
+                    }
+                });
+            } else {
+                return;
+            }
+        });
+
+    }
+
+    function Update_Direccion() {
+        var parametros = {
+            'Codigo1': datosFilaSeleccionada.Grupo
+        };
+        var cadena = "Nueva direccion para el grupo: " + datosFilaSeleccionada.Grupo;
+        $('#LblNuevoValorP').text(cadena);
+        $('#modalNuevoValorP').modal('show');
+        $('#valorIngresarP').off('keydown');//Se desvincula del manejador de eventos padre.
+        $('#valorIngresarP').keydown(function (event) {
+            if (event.keyCode === 13) {
+                var nuevoValor = $('#valorIngresarP').val();
+                if (nuevoValor != '' || nuevoValor != null || nuevoValor != undefined || nuevoValor != ' ') {
+                    parametros['Codigo2'] = nuevoValor;
+                    console.log(parametros);
+                    $.ajax({
+                        type: "POST",
+                        url: "../controlador/facturacion/ListarGruposC.php?Update_Direccion=true",
+                        data: { 'parametros': parametros },
+                        dataType: "json",
+                        success: function (response) {
+                            var data = response;
+                            if (data.res == 1) {
+                                swal.fire({
+                                    title: "Correcto",
+                                    text: data.msj,
+                                    type: "success"
+                                });
+                                $('#modalNuevoValorP').modal('hide');
+                                $('#valorIngresarP').val('');
+                                Listar_Clientes_Grupo();
+                            } else {
+                                swal.fire({
+                                    title: "Error",
+                                    text: data.msj,
+                                    type: "error"
+                                });
+                                $('#modalNuevoValorP').modal('hide');
+                                $('#valorIngresarP').val('');
+                                console.log(data.error);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    function Update_Grupo() {
+        var parametros = {
+            'Codigo1': datosFilaSeleccionada.Grupo
+        };
+        var cadena = "Nuevo grupo para el grupo actual: " + datosFilaSeleccionada.Grupo;
+        $('#LblNuevoValorP').text(cadena);
+        $('#modalNuevoValorP').modal('show');
+        $('#valorIngresarP').off('keydown');//Se desvincula del manejador de eventos padre.
+        $('#valorIngresarP').keydown(function (event) {
+            if (event.keyCode === 13) {
+                var nuevoValor = $('#valorIngresarP').val();
+                if (nuevoValor != '' || nuevoValor != null || nuevoValor != undefined || nuevoValor != ' ') {
+                    parametros['Codigo2'] = nuevoValor;
+                    console.log(parametros);
+                    $.ajax({
+                        type: "POST",
+                        url: "../controlador/facturacion/ListarGruposC.php?Update_Grupo=true",
+                        data: { 'parametros': parametros },
+                        dataType: "json",
+                        success: function (response) {
+                            var data = response;
+                            if (data.res == 1) {
+                                swal.fire({
+                                    title: "Correcto",
+                                    text: data.msj,
+                                    type: "success"
+                                });
+                                $('#modalNuevoValorP').modal('hide');
+                                $('#valorIngresarP').val('');
+                                Listar_Clientes_Grupo();
+                            } else {
+                                swal.fire({
+                                    title: "Error",
+                                    text: data.msj,
+                                    type: "error"
+                                });
+                                $('#modalNuevoValorP').modal('hide');
+                                $('#valorIngresarP').val('');
+                                console.log(data.error);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    function handleShortcut(options) {
+        // Verificar si la tabla existe
+        if ($('#datos_t').length === 0) {
+            Swal.fire({
+                title: 'Error',
+                text: 'No existen datos cargados',
+                type: 'error'
+            });
+        } else if (Object.keys(datosFilaSeleccionada).length === 0) {
+            // Verificar si se ha seleccionado una fila
+            Swal.fire({
+                title: 'Error',
+                text: options.errorText,
+                type: 'error'
+            });
+        } else {
+            options.action();
+        }
+    }
+
+    function validar_Campos_Solo_Nums() {
+        $('#valorIngresarP').keypress(function (event) {
+            var charCode = (event.which) ? event.which : event.keyCode;
+
+            // Permitir números, punto decimal y coma
+            // No permitir más de un punto decimal o una coma
+            if ((charCode !== 46 && charCode !== 44 && charCode > 31 && (charCode < 48 || charCode > 57)) ||
+                (charCode === 46 && $(this).val().indexOf('.') > -1) || // Si ya hay un punto no permitir otro
+                (charCode === 44 && $(this).val().indexOf(',') > -1)) { // Si ya hay una coma no permitir otra
+                // Bloquear entrada si no es número, si es un punto decimal o una coma repetidos
+                event.preventDefault();
+            }
+        });
+    }
+
+
     function Excel() {
         if (AdoQuery.length == 0) {
             swal.fire({
@@ -711,35 +1008,44 @@ require_once("FAsignaFact.php");
             case '#LxGData':
                 Opcion = 0;
                 vaciarDivs();
+                //Mostrar atajos de teclado 
+                $('#btnsAtajos').css('display', 'block');
                 Listar_Clientes_Grupo();
                 break;
             case '#PmAData':
                 Opcion = 1;
                 vaciarDivs();
+                //Ocultar atajos de teclado
+                $('#btnsAtajos').css('display', 'none');
                 Pensiones_Mensuales_Anio(parametros);
                 break;
             case '#AcDData':
                 Opcion = 2;
                 vaciarDivs();
+                $('#btnsAtajos').css('display', 'none');
                 Listado_Becados(parametros);
                 break;
             case '#NdAData':
                 Opcion = 3;
                 vaciarDivs();
+                $('#btnsAtajos').css('display', 'none');
                 Nomina_Alumnos(parametros);
                 break;
             case '#EpEData':
                 Opcion = 4;
+                $('#btnsAtajos').css('display', 'none');
                 Listar_Clientes_Email(parametros);
                 break;
             case '#RpPmData':
                 Opcion = 5;
                 vaciarDivs();
+                $('#btnsAtajos').css('display', 'none');
                 Resumen_Pensiones_Mes(parametros);
                 break;
             case '#EdData':
                 Opcion = 6;
                 vaciarDivs();
+                $('#btnsAtajos').css('display', 'none');
                 Listar_Deuda_por_Api();
                 break;
 
@@ -751,9 +1057,12 @@ require_once("FAsignaFact.php");
         $('#PmAData').empty();
         $('#AcDData').empty();
         $('#NdAData').empty();
-        $('#EpEData').empty();
         $('#RpPmData').empty();
         $('#EdData').empty();
+        $('#Label9').val('');
+        $('#Label10').val('');
+        $('#Label4').val('');
+        $('#Label5').val('Total registros:');
     }
 
     function Listar_Clientes_Email(parametros) {
@@ -1498,17 +1807,40 @@ require_once("FAsignaFact.php");
         <label class="inline" for="Label5" id="TotalRegistros">
         </label>
     </div>
-    <div class="row alineacion text-center">
-        <a tabindex="0" class="btn btn-lg btn-info" role="button" data-toggle="popover" data-trigger="focus"
-            title="Atajos" data-content="(F1)->Genera Archivos de Texto
-                          (CTRL+B)->Buscar Datos <br>
-                          (CTRL+G)->Cambia en Grupo el Valor del Grupo <br>
-                          (CTRL+D)->Cambia en Grupo el Valor de la Direccion <br>
-                          (CTRL+R)->Retirar Beneficiarios sin deuda del Grupo <br>
-                          (CTRL+Insert)->Insertar Rubros <br>
-                          (CTRL+F10)->Eliminar Totdos Rubros de Facturacion <br>
-                          (CTRL+F11)->Inserta Totdos Rubros de Facturacion">Atajos
-        </a>
+    <div class="row alineacion text-center" id="btnsAtajos">
+        <div class="col-sm-1">
+            <button type="button" class="btn btn-xs btn-info" data-container="body" data-toggle="popover"
+                data-trigger="focus" data-placement="top" data-content="Insertar Rubros">CTRL+Insert
+            </button>
+        </div>
+        <div class="col-sm-1">
+            <button type="button" class="btn btn-xs btn-info" data-container="body" data-toggle="popover"
+                data-trigger="focus" data-placement="top" data-content="Cambia en Grupo el Valor de la Direccion">CTRL+D
+            </button>
+        </div>
+        <div class="col-sm-1">
+            <button type="button" class="btn btn-xs btn-info" data-container="body" data-toggle="popover"
+                data-trigger="focus" data-placement="top" data-content="Cambia en Grupo el Valor del Grupo">CTRL+G
+            </button>
+        </div>
+        <div class="col-sm-1">
+            <button type="button" class="btn btn-xs btn-info" data-container="body" data-toggle="popover"
+                data-trigger="focus" data-placement="top" data-content="Desactivar Grupo">CTRL+B
+            </button>
+        </div>
+        <div class="col-sm-1">
+            <button type="button" class="btn btn-xs btn-info" data-container="body" data-toggle="popover"
+                data-trigger="focus" data-placement="top" data-content="Eliminar Totdos Rubros de Facturacion">CTRL+F10
+            </button>
+        </div>
+        <div class="col-sm-1">
+            <button type="button" class="btn btn-xs btn-info" data-container="body" data-toggle="popover"
+                data-trigger="focus" data-placement="top" data-content="Retirar Beneficiarios sin deuda del Grupo">
+                CTRL + R
+            </button>
+        </div>
+
+
         <!-- <textarea class="form-control" name="TxtFile" id="TxtFile" rows="1" readonly>
                         (CTRL+B)->Buscar Datos (CTRL+G)->Cambiar Valor Grupo (CTRL+D)->Cambiar Valor Dirección (CTRL+Insert)->Insertar Rubros  (CTRL+F10)->Eliminar Rubros  (CTRL+F11)->Insertar Rubros
         </textarea>-->
@@ -1543,3 +1875,22 @@ require_once("FAsignaFact.php");
         max-width: 10vw;
     }
 </style>
+
+<div class="modal fade modal-custom" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+    id="modalNuevoValorP">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="row">
+                    <label for="valorIngresarP" id="LblNuevoValorP">
+                        Nuevo Valor
+                    </label>
+                </div>
+                <div class="row">
+                    <input type="text" name="valorIngresarP" id="valorIngresarP" placeholder="(Presione Enter)" \>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

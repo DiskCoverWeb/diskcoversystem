@@ -123,6 +123,25 @@ if (isset($_GET['Excel'])) {
     echo json_encode($controlador->Excel($parametros));
 }
 
+if (isset($_GET['Update_Direccion'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Update_Direccion($parametros));
+}
+
+if (isset($_GET['Update_Grupo'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Update_Grupo($parametros));
+}
+
+if (isset($_GET['Desactivar_Grupo'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Desactivar_Grupo($parametros));
+}
+
+if (isset($_GET['Eliminar_Rubros_Facturacion'])) {
+    echo json_encode($controlador->Eliminar_Rubros_Facturacion());
+}
+
 
 
 class ListarGruposC
@@ -139,6 +158,56 @@ class ListarGruposC
 
     }
 
+    public function Retirar_Beneficiarios($parametros)
+    {
+        try {
+            $this->modelo->Retirar_Beneficiarios($parametros);
+            return array("res" => 1, "msj" => "Beneficiarios retirados correctamente");
+        }catch (Exception $e){
+            return array("res" => 0, "msj" => "Error al retirar beneficiarios", "error" => $e->getMessage());
+        }
+    }
+
+    public function Eliminar_Rubros_Facturacion()
+    {
+        try {
+            $this->modelo->Eliminar_Rubros_Facturacion();
+            return array("res" => 1, "msj" => "Rubros eliminados correctamente");
+        } catch (Exception $e) {
+            return array("res" => 0, "msj" => "Error al eliminar rubros", "error" => $e->getMessage());
+        }
+    }
+
+    public function Desactivar_Grupo($parametros)
+    {
+        try {
+            $this->modelo->Desactivar_Grupo($parametros);
+            return array("res" => 1, "msj" => "Grupo desactivado correctamente");
+        } catch (Exception $e) {
+            return array("res" => 0, "msj" => "Error al desactivar", "error" => $e->getMessage());
+        }
+    }
+
+    public function Update_Grupo($parametros)
+    {
+        try {
+            $this->modelo->Update_Grupo($parametros);
+            return array("res" => 1, "msj" => "Grupo actualizado correctamente");
+        } catch (Exception $e) {
+            return array("res" => 0, "msj" => "Error al actualizar", "error" => $e->getMessage());
+        }
+    }
+
+    public function Update_Direccion($parametros)
+    {
+        try {
+            $this->modelo->Update_Direccion($parametros);
+            return array("res" => 1, "msj" => "Direccion actualizada correctamente");
+        } catch (Exception $e) {
+            return array("res" => 0, "msj" => "Error al actualizar", "error" => $e->getMessage());
+        }
+    }
+
     public function Excel($parametros)
     {
         $AdoQuery = $parametros['AdoQuery'];
@@ -147,7 +216,7 @@ class ListarGruposC
                 $ruta = strtoupper(dirname(__DIR__, 3) . "/TEMP/Reporte_Excel" . date('Y-m-d_H-i-s') . ".XLSX");
                 Exportar_AdoDB_Excel($AdoQuery, $ruta);
                 return array('res' => 1, 'fileName' => basename($ruta));
-            }else{
+            } else {
                 throw new Exception("No se puede exportar a excel porque no hay datos");
             }
         } catch (Exception $e) {

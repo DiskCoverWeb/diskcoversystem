@@ -2,6 +2,13 @@
 require_once(dirname(__DIR__, 2) . "/db/db1.php");
 require_once(dirname(__DIR__, 2) . "/funciones/funciones.php");
 
+/*
+    AUTOR DE RUTINA	: Leonardo Súñiga
+    FECHA CREACION	: 04/03/2024
+    FECHA MODIFICACION: 06/03/2024
+    DESCIPCIÓN		: Modelo del modal FAsignaFact, se encarga de consultar con la base de datos.
+*/
+
 class FAsignaFactM
 {
     private $db;

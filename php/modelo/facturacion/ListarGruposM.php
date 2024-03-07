@@ -87,7 +87,7 @@ class ListarGruposM
     public function Listar_Grupo($parametros)
     {
         if ($parametros['PorDireccion']) {
-            $sql = "SELECT Direccion
+            $sql = "SELECT TOP 100 Direccion
                     FROM Clientes
                     WHERE FA <> 0";
             if ($_SESSION['INGRESO']['Mas_Grupos']) {
@@ -97,7 +97,7 @@ class ListarGruposM
                     ORDER BY Direccion";
             return $this->db->datos($sql);
         } else {
-            $sql = "SELECT Grupo
+            $sql = "SELECT TOP 100 Grupo
                     FROM Clientes
                     WHERE FA <> 0";
             if ($_SESSION['INGRESO']['Mas_Grupos']) {
@@ -441,6 +441,10 @@ class ListarGruposM
                     $tmp = Calculos_Totales_Factura();
                     $FA = array_merge($FA, $tmp);
                     $FA['Nota'] = "FACTURA PENDIENTE DE PAGO";
+                    $tmp = new DateTime($FA['Vencimiento']['date'], new DateTimeZone('America/Guayaquil'));
+                    $FA['Vencimiento'] = $tmp->format('Y-m-d');
+                    $tmp = new DateTime($FA['Fecha_Aut']['date'], new DateTimeZone('America/Guayaquil'));
+                    $FA['Fecha_Aut'] = $tmp->format('Y-m-d');
                     Grabar_Factura1($FA);
                     $sql = "DELETE *
                             FROM Clientes_Facturacion 
@@ -482,9 +486,9 @@ class ListarGruposM
         $sql .= "GROUP BY Grupo,Direccion
                  ORDER BY Grupo,Direccion";
         $AdoNiveles = $this->db->datos($sql);
-        if(count($AdoNiveles) > 0){
+        if (count($AdoNiveles) > 0) {
             return $AdoNiveles;
-        }else{
+        } else {
             throw new Exception("No se encontraron clientes para listar por grupos");
         }
     }
@@ -518,26 +522,185 @@ class ListarGruposM
 
     }
 
-    public function Imprimir_Recibos_Cobros($parametros){
+    public function Imprimir_Recibos_Cobros($parametros)
+    {
         $sql = "SELECT SUM(Valor) As SaldoPend, Codigo 
                 FROM Clientes_Facturacion 
                 WHERE Fecha BETWEEN '" . $parametros['MBFechaI'] . "' AND '" . $parametros['MBFechaF'] . "' 
                 AND Item = '" . $_SESSION['INGRESO']['item'] . "'";
-        if($parametros['CheqRangos'] <> 0){
+        if ($parametros['CheqRangos'] <> 0) {
             $sql .= "AND Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "'";
         }
         $sql .= "GROUP BY Codigo";
         return $this->db->datos($sql);
     }
 
-    public function Recibos_Case1($parametros, $Codigo1, $Codigo2){
+    public function Recibos_Case1($parametros, $Codigo1, $Codigo2)
+    {
         $sql = "SELECT SUM(Valor) As SaldoPend,Codigo 
                 FROM Clientes_Facturacion 
                 WHERE Fecha BETWEEN '" . $parametros['MBFechaI'] . "' AND '" . $parametros['MBFechaF'] . "' ";
-        if($parametros['CheqRangos'] <> 0){
+        if ($parametros['CheqRangos'] <> 0) {
             $sql .= "AND Grupo BETWEEN '" . $Codigo1 . "' AND '" . $Codigo2 . "' ";
         }
         $sql .= "GROUP BY Codigo ";
         return $this->db->datos($sql);
+    }
+
+    public function Update_Direccion($parametros)
+    {
+        try {
+            $sql = "UPDATE Clientes 
+                    SET Direccion = '" . $parametros['Codigo2'] . "' 
+                    WHERE Grupo = '" . $parametros['Codigo1'] . "' ";
+            if ($_SESSION['INGRESO']['Mas_Grupos']) {
+                $sql .= "AND DirNumero = '" . $_SESSION['INGRESO']['item'] . "'";
+            }
+            Ejecutar_SQL_SP($sql);
+        } catch (Exception $e) {
+            throw new Exception("Error al actualizar la dirección");
+        }
+    }
+
+    public function Update_Grupo($parametros)
+    {
+        try {
+            $sql = "UPDATE Clientes 
+                    SET Grupo = '" . $parametros['Codigo2'] . "' 
+                    WHERE Grupo = '" . $parametros['Codigo1'] . "' ";
+            if ($_SESSION['INGRESO']['Mas_Grupos']) {
+                $sql .= "AND DirNumero = '" . $_SESSION['INGRESO']['item'] . "'";
+            }
+            Ejecutar_SQL_SP($sql);
+        } catch (Exception $e) {
+            throw new Exception("Error al actualizar el grupo");
+        }
+    }
+
+    public function Desactivar_Grupo($parametros): void
+    {
+        try {
+            $sql = "UPDATE Clientes_Facturacion 
+                    SET GrupoNo = C.Grupo 
+                    FROM Clientes_Facturacion As CF, Clientes As C
+                    WHERE CF.Item = '" . $_SESSION['INGRESO']['item'] . "' ";
+            if ($_SESSION['INGRESO']['Mas_Grupos']) {
+                $sql .= "AND C.DirNumero = '" . $_SESSION['INGRESO']['item'] . "' ";
+            }
+            $sql .= "AND CF.Codigo = C.Codigo";
+            Ejecutar_SQL_SP($sql);
+            $sql = "UPDATE Trans_Notas 
+                    SET CodE = C.Grupo 
+                    FROM Trans_Notas As CF,Clientes As C 
+                    WHERE CF.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                    AND CF.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                    AND CF.Codigo = C.Codigo ";
+            Ejecutar_SQL_SP($sql);
+            $sql = "UPDATE Trans_Asistencia 
+                    SET CodE = C.Grupo 
+                    FROM Trans_Asistencia As CF, Clientes As C
+                    WHERE CF.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                    AND CF.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                    AND CF.Codigo = C.Codigo";
+            Ejecutar_SQL_SP($sql);
+            $sql = "UPDATE Trans_Notas_Auxiliares 
+                    SET CodE = C.Grupo 
+                    FROM Trans_Notas_Auxiliares As CF, Clientes As C 
+                    WHERE CF.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                    AND CF.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                    AND CF.Codigo = C.Codigo";
+            Ejecutar_SQL_SP($sql);
+            $sql = "UPDATE Trans_Notas_Grado 
+                    SET CodE = C.Grupo 
+                    FROM Trans_Notas_Grado As CF, Clientes As C 
+                    WHERE CF.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                    AND CF.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                    AND CF.Codigo = C.Codigo";
+            Ejecutar_SQL_SP($sql);
+            $sql = "UPDATE Trans_Actas 
+                    SET CodE = C.Grupo 
+                    FROM Trans_Actas As CF, Clientes As C
+                    WHERE CF.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                    AND CF.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                    AND CF.Codigo = C.Codigo";
+            Ejecutar_SQL_SP($sql);
+            $sql = "DELETE * 
+                    FROM Clientes_Facturacion 
+                    WHERE GrupoNo = '" . $parametros['Codigo1'] . "' 
+                    AND Item = '" . $_SESSION['INGRESO']['item'] . "'";
+            Ejecutar_SQL_SP($sql);
+            $sql = "DELETE * 
+                    FROM Trans_Notas 
+                    WHERE CodE = '" . $parametros['Codigo1'] . "' 
+                    AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                    AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'";
+            Ejecutar_SQL_SP($sql);
+            $sql = "DELETE * 
+                    FROM Trans_Asistencia 
+                    WHERE CodE = '" . $parametros['Codigo1'] . "' 
+                    AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                    AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'";
+            Ejecutar_SQL_SP($sql);
+            $sql = "DELETE * 
+                    FROM Trans_Notas_Auxiliares 
+                    WHERE CodE = '" . $parametros['Codigo1'] . "' 
+                    AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                    AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'";
+            Ejecutar_SQL_SP($sql);
+            $sql = "DELETE * 
+                    FROM Trans_Notas_Grado 
+                    WHERE CodE = '" . $parametros['Codigo1'] . "' 
+                    AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                    AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'";
+            Ejecutar_SQL_SP($sql);
+            $sql = "DELETE * 
+                    FROM Trans_Actas 
+                    WHERE CodE = '" . $parametros['Codigo1'] . "' 
+                    AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                    AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'";
+            Ejecutar_SQL_SP($sql);
+            $sql = "UPDATE Clientes 
+                    SET FA = 0
+                    WHERE Grupo = '" . $parametros['Codigo1'] . "' ";
+            if ($_SESSION['INGRESO']['Mas_Grupos']) {
+                $sql .= "AND DirNumero = '" . $_SESSION['INGRESO']['item'] . "'";
+            }
+            Ejecutar_SQL_SP($sql);
+        } catch (Exception $e) {
+            throw new Exception("Error al desactivar el grupo");
+        }
+    }
+
+    public function Eliminar_Rubros_Facturacion(){
+        try{
+            $sql = "DELETE * 
+                    FROM Clientes_Facturacion 
+                    WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                    AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'";
+            Ejecutar_SQL_SP($sql);
+        }catch (Exception $e){
+            throw new Exception("Error al eliminar los rubros de facturación");
+        }
+    }
+
+    public function Retirar_Beneficiarios($parametros){
+        try{
+            $sql = "UPDATE Clientes 
+                    SET X = 'R' 
+                    WHERE Codigo <> '" . G_NINGUNO . "' ";
+            Ejecutar_SQL_SP($sql);
+            $sql = "UPDATE Clientes 
+                    SET X = '.' 
+                    FROM Clientes As C, Clientes_Facturacion As CF 
+                    WHERE C.Codigo = CF.Codigo";
+            Ejecutar_SQL_SP($sql);
+            $sql = "UPDATE Clientes 
+                    SET FA = 0 
+                    WHERE X = 'R' 
+                    AND Grupo = '" . $parametros['Codigo1'] . "' ";
+            Ejecutar_SQL_SP($sql);
+        }catch (Exception $e){
+            throw new Exception("Error al retirar los beneficiarios");
+        }
     }
 }

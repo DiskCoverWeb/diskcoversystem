@@ -1,4 +1,11 @@
 <script>
+
+    /*
+        AUTOR DE RUTINA	: Leonardo Súñiga
+        FECHA CREACION	: 04/03/2024
+        FECHA MODIFICACION: 06/03/2024
+        DESCIPCIÓN		: Vista del modal FAsignaFact, se encarga de la parte visual. Aparece cuando se selecciona un cliente y se presiona CTRL + Ins
+    */
     //document ready
     var datosFilaSelec = {};
     var datosFilaDGRubros = {};
@@ -501,6 +508,25 @@
                     <div class="col-sm-12">
                         <div id="DGRubros" style="height: 25vh; max-height:25vh; overflow-y:auto">
                         </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-1">
+                        <button type="button" class="btn btn-xs btn-info" data-container="body" data-toggle="popover"
+                            data-trigger="focus" data-placement="top" data-content="Modificar Valor">CTRL+V
+                        </button>
+                    </div>
+                    <div class="col-sm-1">
+                        <button type="button" class="btn btn-xs btn-info" data-container="body" data-toggle="popover"
+                            data-trigger="focus" data-placement="top"
+                            data-content="Modificar Descuento">CTRL+D
+                        </button>
+                    </div>
+                    <div class="col-sm-1">
+                        <button type="button" class="btn btn-xs btn-info" data-container="body" data-toggle="popover"
+                            data-trigger="focus" data-placement="top"
+                            data-content="MOdificar Descuento 2">CTRL+2
+                        </button>
                     </div>
                 </div>
             </div>

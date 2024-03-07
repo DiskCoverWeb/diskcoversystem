@@ -1,6 +1,14 @@
 <!-- Script para Modal FPensiones -->
 <script>
 
+/*
+    AUTOR DE RUTINA	: Leonardo Súñiga
+    FECHA CREACION	: 01/03/2024
+    FECHA MODIFICACION: P/01/2024
+    DESCIPCIÓN		: Vista del modal FPensiones, se encarga del modal cuando se presiona el boton 
+    de Generar o Eliminar por lotes los rubros a facturar o el boton de Generar Deudas Pendientes
+*/
+
     var MCodigo1;
     var MCodigo2;
     var btnCase;
@@ -32,8 +40,9 @@
 
         //Handle buttons
         $('#btnInsertarPensiones').click(function () {
-            $('#clave_supervisor').modal('show');
+            //$('#clave_supervisor').modal('show');
             btnCase = "Insertar";
+            Toolbarl_ButtonClick(btnCase);
         });
 
         $('#btnEliminarPensiones').click(function () {
@@ -412,6 +421,7 @@
                         }
                     });
                 } else {
+                    swal.fire('Información', data.msj, 'info');
                     Insertar_Pensiones(param);
                 }
             }

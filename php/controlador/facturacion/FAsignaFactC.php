@@ -2,6 +2,13 @@
 
 require_once(dirname(__DIR__, 2) . "/modelo/facturacion/FAsignaFactM.php");
 
+/*
+    AUTOR DE RUTINA	: Leonardo Súñiga
+    FECHA CREACION	: 04/03/2024
+    FECHA MODIFICACION: 06/03/2024
+    DESCIPCIÓN		: Controlador del modal FAsignaFact, se encarga de la parte logica
+*/
+
 $controlador = new FAsignaFactC();
 
 if (isset($_GET['AdoRubros'])) {
@@ -46,29 +53,32 @@ class FAsignaFactC
         $this->modelo = new FAsignaFactM();
     }
 
-    public function Ctrl_V($parametros){
-        try{
+    public function Ctrl_V($parametros)
+    {
+        try {
             $this->modelo->UpdateValor($parametros);
             return array("res" => "1", "msj" => "Valor actualizado");
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return array("res" => "0", "msj" => "Error al actualizar el valor", "error" => $e->getMessage());
         }
     }
 
-    public function Ctrl_D($parametros){
-        try{
+    public function Ctrl_D($parametros)
+    {
+        try {
             $this->modelo->UpdateDescuento($parametros);
             return array("res" => "1", "msj" => "Descuento actualizado");
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return array("res" => "0", "msj" => "Error al actualizar el descuento", "error" => $e->getMessage());
         }
     }
 
-    public function Ctrl_D2($parametros){
-        try{
+    public function Ctrl_D2($parametros)
+    {
+        try {
             $this->modelo->UpdateDescuento2($parametros);
             return array("res" => "1", "msj" => "Descuento2 actualizado");
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return array("res" => "0", "msj" => "Error al actualizar el descuento", "error" => $e->getMessage());
         }
     }
@@ -99,14 +109,15 @@ class FAsignaFactC
         }
     }
 
-    public function Listar_Rubros_Grupo($parametros){
-        try{
+    public function Listar_Rubros_Grupo($parametros)
+    {
+        try {
             $datos = $this->modelo->Listar_Rubros_Grupo($parametros);
-            if(count($datos['AdoRubros']) == 0){
+            if (count($datos['AdoRubros']) == 0) {
                 throw new Exception("No se encontraron rubros");
             }
             return array("res" => "1", "tbl" => $datos['datos']);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return array("res" => "0", "msj" => $e->getMessage());
         }
     }

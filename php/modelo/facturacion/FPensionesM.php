@@ -2,6 +2,13 @@
 require_once(dirname(__DIR__, 2) . "/db/db1.php");
 require_once(dirname(__DIR__, 2) . "/funciones/funciones.php");
 
+/*
+    AUTOR DE RUTINA	: Leonardo Súñiga
+    FECHA CREACION	: 01/03/2024
+    FECHA MODIFICACION: P/01/2024
+    DESCIPCIÓN		: Modelo del modal FPensiones, se encarga de consultar a la base de datos.
+*/
+
 class FPensionesM
 {
 
@@ -35,7 +42,7 @@ class FPensionesM
     {
         $sql = "SELECT TOP 10 Codigo 
                 FROM Clientes_Facturacion 
-                WHERE Codigo_Inv = '" . $parametros['CodigoP'] . "' 
+                WHERE Codigo_Inv = '" . SinEspaciosIzq($parametros['CodigoP']) . "' 
                 AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
                 AND Fecha BETWEEN '" . BuscarFecha($parametros['FechaTexto']) . "' AND '" . BuscarFecha($Mifecha) . "' ";
         if ($parametros['CheqRangos'] <> 0) {
@@ -46,9 +53,9 @@ class FPensionesM
 
     public function DeleteClientesFacturacion($parametros, $Mifecha): void
     {
-        $sql = "DELETE * 
+        $sql = "DELETE 
                 FROM Clientes_Facturacion 
-                WHERE Codigo_Inv = '" . $parametros['CodigoP'] . "' 
+                WHERE Codigo_Inv = '" . SinEspaciosIzq($parametros['CodigoP']) . "' 
                 AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
                 AND Fecha BETWEEN '" . BuscarFecha($parametros['FechaTexto']) . "' AND '" . BuscarFecha($Mifecha) . "' ";
         if ($parametros['CheqRangos'] <> 0) {
@@ -65,7 +72,7 @@ class FPensionesM
     {
         $sql = "INSERT INTO Clientes_Facturacion (T, GrupoNo, Codigo, Codigo_Inv, Valor, Descuento, 
         Descuento2, CodigoU, Item, Periodo, Num_Mes, Mes, Fecha) 
-        SELECT 'N', Grupo, Codigo, '" . $parametros['CodigoP'] . "', 
+        SELECT 'N', Grupo, Codigo, '" . SinEspaciosIzq($parametros['CodigoP']) . "', 
         '" . $parametros['Valor'] . "', '" . $parametros['Total_Desc'] . "', '" . $parametros['Total_Desc2'] . "', 
         '" . $_SESSION['INGRESO']['CodigoU'] . "', '" . $_SESSION['INGRESO']['item'] . "', '" . $NoAnio . "', 
         '" . $NoMes . "', '" . $Mesl . "', '" . BuscarFecha($Mifecha) . "' 
@@ -107,7 +114,7 @@ class FPensionesM
                 $sql .= $parametros['Valor_Cambiar'] . " ";
             }
 
-            $sql .= "WHERE Codigo_Inv = '" . $parametros['CodigoP'] . "' 
+            $sql .= "WHERE Codigo_Inv = '" . SinEspaciosIzq($parametros['CodigoP']) . "' 
                  AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
                  AND Fecha BETWEEN '" . BuscarFecha($parametros['FechaTexto']) . "' AND '" . BuscarFecha($Mifecha) . "' ";
             if ($parametros['Tipo_Cambio'] === 'Descuento2') {
@@ -124,7 +131,7 @@ class FPensionesM
             $sql = "";
             switch ($parametros['Tipo_Cambio']) {
                 case "Pension":
-                    $sql = "DELETE *
+                    $sql = "DELETE 
                             FROM Clientes_Facturacion 
                             WHERE Valor <= 0 ";
                     break;
@@ -165,9 +172,9 @@ class FPensionesM
     public function Multas_Delete_Update($parametros, $Mifecha): void
     {
         try {
-            $sql = "DELETE * 
+            $sql = "DELETE  
                 FROM Clientes_Facturacion 
-                WHERE Codigo_Inv = '" . $parametros['CodigoP'] . "' 
+                WHERE Codigo_Inv = '" . SinEspaciosIzq($parametros['CodigoP']) . "' 
                 AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
                 AND Fecha BETWEEN '" . BuscarFecha($parametros['FechaTexto']) . "' AND '" . BuscarFecha($Mifecha) . "' ";
             if ($parametros['CheqRangos'] <> 0) {
@@ -202,7 +209,7 @@ class FPensionesM
     {
         $sql = "INSERT INTO Clientes_Facturacion (T, GrupoNo, Codigo, Codigo_Inv, Valor, CodigoU, Item, 
         Periodo, Num_Mes, Mes, Fecha)
-        SELECT 'N', Grupo, Codigo, '" . $parametros['CodigoP'] .
+        SELECT 'N', Grupo, Codigo, '" . SinEspaciosIzq($parametros['CodigoP']) .
             "', '" . $parametros['Valor'] . "', '" . $_SESSION['INGRESO']['CodigoU'] . "', '" . $_SESSION['INGRESO']['item'] .
             "', '" . $NoAnio . "', '" . $NoMes . "', '" . $Mesl . "', '" . BuscarFecha($Mifecha) . "' 
         FROM Clientes 
@@ -224,7 +231,7 @@ class FPensionesM
 
     public function KeyDown_Delete($parametros, $Mifecha): void
     {
-        $sql = "DELETE * 
+        $sql = "DELETE 
                 FROM Clientes_Facturacion 
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
                 AND Fecha BETWEEN '" . BuscarFecha($parametros['FechaTexto']) . "' AND '" . BuscarFecha($Mifecha) . "' ";
