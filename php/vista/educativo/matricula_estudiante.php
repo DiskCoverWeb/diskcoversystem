@@ -51,18 +51,18 @@ $(document).ready(function() {
 		login_data();
 	}
 	var mod='<?php echo $mod; ?>'; 
-	if(mod!='11')
-	{
-		$('#home_t').css('display','none');
-		$('#menu2_t').css('display','none');
-		$('#menu3_t').css('display','none');
-		$('#home').css('display','none');
-		$('#menu2').css('display','none');
-		$('#menu3').css('display','none');
-		$( "#menu4_t" ).addClass( "active" );
-		$('#menu4').css('display','block');
-		$( "#menu4" ).removeClass( "fade" );
-	}
+	// if(mod!='11')
+	// {
+	// 	$('#home_t').css('display','none');
+	// 	$('#menu2_t').css('display','none');
+	// 	$('#menu3_t').css('display','none');
+	// 	$('#home').css('display','none');
+	// 	$('#menu2').css('display','none');
+	// 	$('#menu3').css('display','none');
+	// 	$( "#menu4_t" ).addClass( "active" );
+	// 	$('#menu4').css('display','block');
+	// 	$( "#menu4" ).removeClass( "fade" );
+	// }
 
 
    provincias();
