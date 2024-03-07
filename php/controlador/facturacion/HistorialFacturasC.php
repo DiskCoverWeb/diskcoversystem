@@ -1180,8 +1180,11 @@ class HistorialFacturasC
                 $tipoConsulta = $this->TipoDeConsulta($parametros, 0);
                 return $this->Catastro_Registro_Datos_Clientes($FA, $MBFechaI, $MBFechaF, $tipoConsulta);
             case "Enviar_FA_Email":
-                break;
+                $tipoConsulta = $this->TipoDeConsulta($parametros, 0, true);
+                return $this->modelo->Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, "FA", $tipoConsulta );
+
             case "Enviar_RE_Email":
+                $this->modelo->Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, "FA" );
                 break;
             case "Recibos_Anticipados":
                 Recibo_Abonos_Anticipados();

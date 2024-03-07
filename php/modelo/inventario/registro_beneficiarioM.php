@@ -3,7 +3,7 @@
 /** 
  * AUTOR DE RUTINA : Dallyana Vanegas
  * FECHA CREACION : 16/02/2024
- * FECHA MODIFICACION : 29/02/2024
+ * FECHA MODIFICACION : 07/03/2024
  * DESCIPCION : Clase modelo para llenar campos y guardar registros de Agencia
  */
 
@@ -33,7 +33,7 @@ class registro_beneficiarioM
     {
         $sql = "SELECT TOP 100 Cliente, CI_RUC, Codigo, CodigoA, Representante, 
                 CI_RUC_R, Telefono_R, Contacto, Profesion, Direccion, 
-                Email, Email2, Lugar_Trabajo, Telefono, TelefonoT, Fecha_Cad --, Hora_Ent
+                Email, Email2, Lugar_Trabajo, Telefono, TelefonoT, Fecha_Cad , Hora_Ent
                 FROM Clientes 
                 WHERE Cliente <> '.'  ";
         if (!is_numeric($query)) {
@@ -55,8 +55,8 @@ class registro_beneficiarioM
                  Telefono_R = '" . $parametros['Telefono_R'] . "', 
                  Contacto = '" . $parametros['Contacto'] . "',   
                  Profesion = '" . $parametros['Profesion'] . "', 
-                 -- Hora_Ent = '" . $parametros['Hora_Ent'] . "', 
-                 -- Fecha_Cad = '" . $parametros['Fecha_Cad'] . "', 
+                 Hora_Ent = '" . $parametros['Hora_Ent'] . "', 
+                 Fecha_Cad = '" . $parametros['Fecha_Cad'] . "', 
                  Direccion = '" . $parametros['Direccion'] . "', 
                  Email = '" . $parametros['Email'] . "', 
                  Email2 = '" . $parametros['Email2'] . "', 
@@ -68,12 +68,12 @@ class registro_beneficiarioM
         $envioNo = isset($parametros['Envio_No']) ? $parametros['Envio_No'] : '';
         $noSoc = isset($parametros['No_Soc']) ? $parametros['No_Soc'] : '';
 
-        $sql2 = "INSERT INTO Clientes_Datos_Extras (Codigo, CodigoA, Fecha_Registro, --Hora_Ent, 
+        $sql2 = "INSERT INTO Clientes_Datos_Extras (Codigo, CodigoA, Fecha_Registro, Hora_Ent, 
                      Envio_No, No_Soc, Area, Acreditacion, Tipo_Dato, Cod_Fam, Evidencias, Observaciones, Item) 
                      VALUES ('" . $parametros['Codigo'] . "', 
                              '" . $parametros['CodigoA2'] . "', 
                              '" . $parametros['Fecha_Registro'] . "', 
-                             -- '" . $parametros['Hora_Ent'] . "', 
+                             '" . $parametros['Hora_Ent'] . "', 
                              '" . $envioNo . "', '" . $noSoc . "', 
                              '" . $parametros['Area'] . "', 
                              '" . $parametros['Acreditacion'] . "', 

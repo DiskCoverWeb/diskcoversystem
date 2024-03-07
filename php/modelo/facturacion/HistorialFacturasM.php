@@ -1361,12 +1361,17 @@ class HistorialFacturasM
 
     }
 
-    function Enviar_Emails_Facturas_Recibos($CheqAbonos, $DCCxC, $FechaIni, $FechaFin, $DocDesde, $DocHasta, $TipoEnvio)
+    function Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, $TipoEnvio, $tipoConsulta)
     {
+        $CheqAbonos = $parametros['CheqAbonos'];
+        $DCCxC = $parametros['DCCxC'];
+        $DocDesde = $parametros['TxtDocDesde'] ;
+        $DocHasta = $parametros['TxtDocHasta'];
+
         $NumEmpresa = $_SESSION['INGRESO']['item'];
         $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
 
-        if ($CheqAbonos->value != 0) {
+        if ($CheqAbonos== 0) {
             $Cta_Aux_Mail = SinEspaciosIzq($DCCxC);
 
             $sSQL = "UPDATE Facturas 
@@ -1389,7 +1394,6 @@ class HistorialFacturasM
                 AND F.Serie = TA.Serie 
                 AND F.Factura = TA.Factura ";
             Ejecutar_SQL_SP($sSQL);
-            $CheqAbonos->value = 0;
         }
 
         $sSQL = "SELECT C.Cliente,F.CodigoC,F.Clave_Acceso,F.Estado_SRI,F.TC,F.Fecha,F.Fecha_V,F.Serie,F.Factura,F.Hora_Aut,F.Fecha_Aut,F.Autorizacion,
@@ -1405,15 +1409,16 @@ class HistorialFacturasM
         if ($TipoEnvio == "FA") {
             $sSQL .= "AND LEN(F.Autorizacion) >= 13 ";
         }
-        if ($Cta_Aux_Mail != "Ninguno") {
+        if ($Cta_Aux_Mail != G_NINGUNO) {
             $sSQL .= "AND F.X = '.' ";
         }
-        $sSQL .= Tipo_De_Consulta(null, true) .
-            "AND F.TC IN ('FA','NV') " .
-            "AND F.CodigoC = C.Codigo " .
-            "ORDER BY F.Factura ";
+        $sSQL .= $tipoConsulta . " 
+            AND F.TC IN ('FA','NV') 
+            AND F.CodigoC = C.Codigo 
+            ORDER BY F.Factura ";
 
-        //Select_Adodc($AdoQuery, $sSQL);
+        $AdoQuery = $this->db->datos($sSQL);
+        return array('AdoQuery' => $AdoQuery, 'response'=> 'mail1', 'tipoEnvio'=> $TipoEnvio);
     }
 
     function Por_Buses($Patron_Busqueda)

@@ -520,7 +520,7 @@
         $('#contacto').val(datos.Contacto);
         $('#cargo').val(datos.Profesion);
         $('#fechaEntrega').val(datos.Fecha_Cad);
-        //$('#horaEntrega').val(datos.Hora_Ent);
+        $('#horaEntrega').val(datos.Hora_Ent);
         $('#direccion').val(datos.Direccion);
         $('#email').val(datos.Email);
         $('#email2').val(datos.Email2);

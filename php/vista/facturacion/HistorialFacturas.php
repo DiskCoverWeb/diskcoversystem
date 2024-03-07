@@ -158,7 +158,7 @@
             </div>
             <div class="col">
                 <div class="btn-group">
-                    <a href="javascript:void(0)" id="Enviar_FA_Emails" title="Enviar por mail facturas electronicas"
+                    <a href="javascript:void(0)" id="Enviar_Emails" title="Enviar por mail facturas electronicas"
                         class="btn btn-default">
                         <img src="../../img/png/payment-check.png" width="35" height="35">
                     </a>
@@ -245,13 +245,14 @@
             </div>
 
             <div class="col">
-                <label for="TxtOrden" style="display: block;">Documento desde</label>
-                <input class="form-control input-xs" type="text" name="TxtOrden" id="TxtOrden" placeholder="0" value=0>
+                <label for="TxtDocDesde" style="display: block;">Documento desde</label>
+                <input class="form-control input-xs" type="text" name="TxtDocDesde" id="TxtDocDesde" placeholder="0"
+                    value=0>
             </div>
 
             <div class="col">
-                <label for="TxtOrden1" style="display: block;">Documento hasta</label>
-                <input class="form-control input-xs" type="text" name="TxtOrden1" id="TxtOrden1" placeholder="0"
+                <label for="TxtDocHasta" style="display: block;">Documento hasta</label>
+                <input class="form-control input-xs" type="text" name="TxtDocHasta" id="TxtDocHasta" placeholder="0"
                     value=0>
             </div>
         </div>
@@ -335,9 +336,9 @@
 
     $(document).ready(function () {
         var menuResumen = [
-            { id: 'Resumen_Prod', opcion: 'Resumen de productos' },
-            { id: 'Resumen_Prod_Meses', opcion: 'Resumen de productos por meses' },
-            { id: 'ResumenVentCost', opcion: 'Resumen de Ventas/Costos' },
+            { id: 'Resumen_Prod', opcion: 'Resumen de productos' },//2
+            { id: 'Resumen_Prod_Meses', opcion: 'Resumen de productos por meses' }, //13
+            { id: 'ResumenVentCost', opcion: 'Resumen de Ventas/Costos' }, //13
             { id: 'Resumen_Ventas_Vendedor', opcion: 'Resumen Comisiones por Vendedor' },
             { id: 'Ventas_x_Cli', opcion: 'Ventas por Cliente' },
             { id: 'Ventas_Cli_x_Mes', opcion: 'Ventas Clientes por Meses' },
@@ -407,6 +408,7 @@
                 case "Bajar_Excel":
                 case "Reporte_Ventas":
                 case "Reporte_Catastro":
+                case "Enviar_FA_Email":
                     ToolbarMenu_ButtonMenuClick(idSel);
                     break;
                 case "Resumen_Prod_Meses":
@@ -779,7 +781,6 @@
     var globalAdoQuery = null;
     var globalOpc = 0;
     function ToolbarMenu_ButtonMenuClick(idBtnMenu) {
-        //console.log(globalAdoQuery.length);
         var params = {
             'MBFechaI': $('#MBFechaI').val(),
             'MBFechaF': $('#MBFechaF').val(),
@@ -801,7 +802,9 @@
             'Con_Costeo': globalConCosteo !== undefined ? globalConCosteo : false,
             'Si_No': globalSiNo !== undefined ? globalSiNo : false,
             'CodigoInv': globalCodigoInv !== undefined ? globalCodigoInv : false,
-            'AdoQuery': globalAdoQuery
+            'AdoQuery': globalAdoQuery,
+            'TxtDocDesde': parseInt($("#TxtDocDesde").val()),
+            'TxtDocHasta': parseInt($("#TxtDocHasta").val()),
         };
 
         console.log('datos enviados ', params['AdoQuery']);
@@ -868,6 +871,10 @@
                     //globalAdoQuery = null;
                 }
 
+                if (data.response == 'mail1') {
+                    Enviar_Emails_Facturas_Recibos(data.AdoQuery, data.tipoEnvio);
+                }
+
                 var actionsMap = {
                     "Resumen_Prod": { label2: "I.V.A", label4: "VENTAS", label3: "TOTAL" },
                     "Resumen_Prod_Meses": { label2: "VENTAS", label4: "COBRADO", label3: "SALDO" },
@@ -889,6 +896,7 @@
                     "Bajar_Excel": {},
                     "Reporte_Ventas": {},
                     "Reporte_Catastro": {},
+                    //"Enviar_FA_Email":{},
                 };
 
                 var action = actionsMap[data.idBtnMenu] || {};
@@ -916,6 +924,57 @@
                 }
             }
         });
+    }
+
+    function Enviar_Emails_Facturas_Recibos(consulta, tipoEnvio) {
+        if (consulta.length > 0) {
+            Swal.fire({
+                title: 'Pregunta de Envío de Mails',
+                text: '¿Está seguro de querer enviar por correo electrónico los documentos?',
+                type: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    consulta.forEach((registro) => {
+                        let codigoC = registro['CodigoC'];
+                        let claveAcceso = registro['Clave_Acceso'];
+                        let estadoSRI = registro['Estado_SRI'];
+                        let TC = registro['TC'];
+                        let fecha = registro['Fecha'];
+                        let fechaV = registro['Fecha_V'];
+                        let serie = registro['Serie'];
+                        let CI_RUC = registro['CI_RUC'];
+                        let factura = registro['Factura'];
+                        let autorizacion = registro['Autorizacion'];
+                        let horaFA = registro['Hora_Aut'];
+                        let fechaAut = registro['Fecha_Aut'];
+                        let emailC = registro['Email'];
+                        let emailR = registro['Email2'];
+                        let cliente = registro['Cliente'];
+                        let comercial = registro['Cliente'];
+                        let horaAutorizacion = registro['Hora_Aut'];
+
+                        if (tipoEnvio === "FA") {
+                            //SRI_Enviar_Mails(codigoC, claveAcceso, estadoSRI, TC, fecha, fechaV, serie, CI_RUC, factura, autorizacion, horaFA, fechaAut, emailC, emailR, cliente, comercial, horaAutorizacion, "FA");
+                        } else {
+                            //Recibo_Enviar_Mails(codigoC, claveAcceso, estadoSRI, TC, fecha, fechaV, serie, CI_RUC, factura, autorizacion, horaFA, fechaAut, emailC, emailR, cliente, comercial, horaAutorizacion);
+                        }
+                    });
+                    Swal.fire({
+                        title: 'Proceso terminado exitosamente',
+                        icon: 'success'
+                    });
+                }
+            });
+        } else {
+            Swal.fire({
+                title: 'No hay registros para enviar',
+                text: (tipoEnvio === "FA") ? 'No hay Facturas Pendientes para enviar' : 'No hay Recibos Pendientes para enviar',
+                type: 'info'
+            });
+        }
     }
 
     $('#Imprimir').on('click', function () {
@@ -1049,8 +1108,8 @@
                 //Imprimir_Tiempo_Credito(AdoQuery, true, 2, 10, true);
                 break;
             //case 19:
-                //Resultado = Reporte_Cartera_Clientes_PDF(PrimerDiaMes(MBFechaI), FA.CodigoC, false, true);
-                //break;
+            //Resultado = Reporte_Cartera_Clientes_PDF(PrimerDiaMes(MBFechaI), FA.CodigoC, false, true);
+            //break;
             default:
                 case_no_def = true;
                 break;
