@@ -125,8 +125,7 @@ class FPensionesM
                 $sql .= "AND GrupoNo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "' ";
             }
 
-            print_r($sql);
-            //Ejecutar_SQL_SP($sql);
+            Ejecutar_SQL_SP($sql);
 
             $sql = "";
             switch ($parametros['Tipo_Cambio']) {
@@ -148,8 +147,7 @@ class FPensionesM
             }
 
             $sql .= "AND Item = '" . $_SESSION['INGRESO']['item'] . "' ";
-            print_r($sql);
-            //Ejecutar_SQL_SP($sql);
+            Ejecutar_SQL_SP($sql);
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
@@ -195,7 +193,7 @@ class FPensionesM
                     AND F.T <> 'A' 
                     AND F.Fecha BETWEEN '" . BuscarFecha($parametros['FechaTexto']) . "' AND '" . BuscarFecha($Mifecha) . "' ";
             if ($parametros['CheqRangos'] <> 0) {
-                $sql .= "AND F.GrupoNo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "' ";
+                $sql .= "AND C.Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "' ";
             }
             $sql .= "AND C.Codigo = F.CodigoC ";
             Ejecutar_SQL_SP($sql);
@@ -248,7 +246,7 @@ class FPensionesM
     public function KeyDown_Insert($parametros, $NoAnio, $NoMes, $Mesl, $Mifecha, $Copiar_Periodo, $Copiar_Mes): void
     {
         $sql = "INSERT INTO Clientes_Facturacion (T, GrupoNo, Codigo, Codigo_Inv, Valor, Item, CodigoU, Periodo, Num_Mes, Mes, Fecha, D)
-                SELECT 'N', Grupo, Codigo, Codigo_Inv, Valor, Item, '" . $_SESSION['INGRESO']['CodigoU'] . "', '" . $NoAnio . "', 
+                SELECT 'N', GrupoNo, Codigo, Codigo_Inv, Valor, Item, '" . $_SESSION['INGRESO']['CodigoU'] . "', '" . $NoAnio . "', 
                 '" . $NoMes . "', '" . $Mesl . "', '" . BuscarFecha($Mifecha) . "', 0 
                 FROM Clientes_Facturacion 
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 

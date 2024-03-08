@@ -1,13 +1,13 @@
 <!-- Script para Modal FPensiones -->
 <script>
 
-/*
-    AUTOR DE RUTINA	: Leonardo Súñiga
-    FECHA CREACION	: 01/03/2024
-    FECHA MODIFICACION: P/01/2024
-    DESCIPCIÓN		: Vista del modal FPensiones, se encarga del modal cuando se presiona el boton 
-    de Generar o Eliminar por lotes los rubros a facturar o el boton de Generar Deudas Pendientes
-*/
+    /*
+        AUTOR DE RUTINA	: Leonardo Súñiga
+        FECHA CREACION	: 01/03/2024
+        FECHA MODIFICACION: P/01/2024
+        DESCIPCIÓN		: Vista del modal FPensiones, se encarga del modal cuando se presiona el boton 
+        de Generar o Eliminar por lotes los rubros a facturar o el boton de Generar Deudas Pendientes
+    */
 
     var MCodigo1;
     var MCodigo2;
@@ -40,9 +40,8 @@
 
         //Handle buttons
         $('#btnInsertarPensiones').click(function () {
-            //$('#clave_supervisor').modal('show');
+            $('#clave_supervisor').modal('show');
             btnCase = "Insertar";
-            Toolbarl_ButtonClick(btnCase);
         });
 
         $('#btnEliminarPensiones').click(function () {
@@ -124,6 +123,8 @@
                         text: data.msj,
                         type: "success"
                     });
+                    //Hide modal
+                    $('#FrmCopiar').modal('hide');
                 } else {
                     swal.fire({
                         title: "Error",
@@ -368,29 +369,45 @@
     }
 
     function Eliminar_Pensiones(param) {
-        $.ajax({
-            url: "../controlador/facturacion/FPensionesC.php?EliminarPensiones=true",
-            type: "POST",
-            data: { 'parametros': param },
-            dataType: "json",
-            success: function (response) {
-                var data = response
-                if (data.res == 1) {
-                    swal.fire({
-                        title: "Correcto",
-                        text: data.msj,
-                        type: "success"
-                    });
-                } else {
-                    swal.fire({
-                        title: "Error",
-                        text: data.msj,
-                        type: "error"
-                    });
-                    console.log(data.error);
-                }
+        swal.fire({
+            title: "Eliminar",
+            text: "¿Está seguro de eliminar los rubros con codigo " + param.CodigoP + "?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    url: "../controlador/facturacion/FPensionesC.php?EliminarPensiones=true",
+                    type: "POST",
+                    data: { 'parametros': param },
+                    dataType: "json",
+                    success: function (response) {
+                        var data = response
+                        if (data.res == 1) {
+                            swal.fire({
+                                title: "Correcto",
+                                text: data.msj,
+                                type: "success"
+                            });
+                        } else {
+                            swal.fire({
+                                title: "Error",
+                                text: data.msj,
+                                type: "error"
+                            });
+                            console.log(data.error);
+                        }
+                    }
+                });
+            } else {
+                return;
             }
         });
+
 
     }
 
