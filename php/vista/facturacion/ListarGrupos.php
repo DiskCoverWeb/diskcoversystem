@@ -25,6 +25,7 @@ require_once("FAsignaFact.php");
     var AdoQuery = [];
     var datosFilaSeleccionada = {};
     var campoModificar = "";
+    var ListaDeCampos = [];
 
     let FA = {
         'Factura': '.',
@@ -52,6 +53,7 @@ require_once("FAsignaFact.php");
         DCGrupos();
         DCTipoPagoo();
         DCProductos();
+        $('#Label13').val('<?php echo $_SESSION['INGRESO']['Email_Conexion']; ?>');
         //validar_Campos_Solo_Nums();
         $('#DCLinea').prop('disabled', true);
         //PorGrupo = true;
@@ -933,6 +935,10 @@ require_once("FAsignaFact.php");
             return;
         }
 
+        if (clientesMarcados[0].Cliente == "TODOS") {
+            clientesMarcados.shift();
+        }
+
         if ($('#TxtAsunto').val() == '') {
             swal.fire({
                 title: 'Error',
@@ -972,16 +978,45 @@ require_once("FAsignaFact.php");
             'TxtAsunto': $('#TxtAsunto').val(),
             'TxtMensaje': $('#TxtMensaje').val(),
             'CheqConDeuda': $('#CheqConDeuda').is(':checked') ? 1 : 0,
+            'ListaDeCampos': ListaDeCampos
         };
+
+        var fileInput = $('#LblArchivo')[0];
+        var archivo = fileInput.files[0];
+
+        var formData = new FormData();
+        formData.append('parametros', JSON.stringify(parametros));
+
+        if (archivo) {
+            formData.append('archivoEmail', archivo, archivo.name);
+        }
+
+
 
         $.ajax({
             url: "../controlador/facturacion/ListarGruposC.php?Command5_Click=true",
             type: "POST",
-            data: { 'parametros': parametros },
-            dataType: 'json',
+            data: formData,
+            processData: false,
+            contentType: false,
             success: function (response) {
-                //TODO: Implementar sistema de envio de correos.
                 $('#myModal_espera').modal('hide');
+                var data = JSON.parse(response);
+                if (data.res == 1) {
+                    swal.fire({
+                        title: 'Correos enviados',
+                        text: data.mensaje,
+                        type: 'success'
+                    });
+                    $('#LblArchivo').val('');
+                } else {
+                    swal.fire({
+                        title: 'Error',
+                        text: data.mensaje,
+                        type: 'error'
+                    });
+                    $('#LblArchivo').val('');
+                }
             }
         });
     }
@@ -1121,6 +1156,7 @@ require_once("FAsignaFact.php");
                         $('#LstClientes input[type="checkbox"]').prop('checked', estado);
                     });
                     AdoQuery = data.AdoQuery;
+                    ListaDeCampos = data.ListaDeCampos;
                 }
             }
         });
@@ -1715,7 +1751,7 @@ require_once("FAsignaFact.php");
                                     </div>
                                     <div class="sol-sm-9">
                                         <input type="email" name="Label13" id="Label13"
-                                            style="width: 70%; max-width:75%">
+                                            style="width: 70%; max-width:75%" readonly>
                                     </div>
                                 </div>
                                 <div class="row" style="margin-top: 5px;">
