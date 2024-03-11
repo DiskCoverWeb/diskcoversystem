@@ -523,8 +523,6 @@ function lista_cursos()
 				$("#cbx_sexo_F").prop("checked", true);
 			}
 			$("#email_estudiante").val(response[0]['Email']);
-			$("#procedencia").val(response[0]['Procedencia']);
-			$("#matricula").val(response[0]['Matricula']);
 			//$("#").val(response[0]['']);
 			//$("#").val(response[0]['']);
 			$("#representante").val(response[0]['Representante_Alumno']);
@@ -540,7 +538,6 @@ function lista_cursos()
 			 $("#select_provincias option[value="+response[0]['Prov']+"]").attr("selected",true);
 		    }
 		    
-			$("#txt_seccion").val(response[0]['Seccion']);
 			$('#curso_detalle').val(response[0]['Curso_Superior']);
 			$('#fecha_n').val(response[0]['Fecha_N']);
 			$('#observaciones').val(response[0]['Observaciones']);
@@ -589,7 +586,7 @@ function lista_cursos()
 
 			$("#txt_dir_est").val(response[0]['DireccionT']);
 			//$("#email_estudiante").val(response[0]['Email2']);
-			numero_patricula();
+
 			$('#imprimir_pdf').prop('disabled', false);
 			$('#enavia_email').prop('disabled', false);
 
@@ -631,7 +628,7 @@ function lista_cursos()
 		  {
 		  	$('#link_pago').css('display','none');
 		  	// $('#btn_eliminar_pago').css('display','none');
-		  	$('#b_file_3').css('display','block');
+		  	// $('#b_file_3').css('display','block');
 		  }else
 		  {
 		  	$('#link_pago').attr('href','../comprobantes/pagos_subidos/entidad_<?php echo $_SESSION['INGRESO']['IDEntidad']; ?>/empresa_<?php echo $_SESSION['INGRESO']['item']; ?>/'+response[0].Evidencias);
@@ -814,7 +811,7 @@ function lista_cursos()
 			'F':$("#cbx_sexo_F").is(':checked'),
 		    'email':$("#email_estudiante").val(),
 			'procedencia':$("#procedencia").val(),
-			'matricula':$("#matricula").val(),
+			// 'matricula':$("#matricula").val(),
 		    'nacionalidad':$("#txt_nacionalidad").val(),
 			//'id':$("#txt_curso").val(),
 			'provincia':$("#select_provincias").val(),
@@ -822,15 +819,15 @@ function lista_cursos()
 			'seccion':$("#txt_seccion").val(),
 			'fechan':$('#fecha_n').val(),
 			'nom_curso':$('#select_cursos option:selected').html(),
-			'procedencia':$('#procedencia').val(),
-			'observacion':$('#observaciones').val(),
+			// 'procedencia':$('#procedencia').val(),
+			// 'observacion':$('#observaciones').val(),
 			'matricula_n':$('#txt_matricula_num').val(),
-			'tomo':$('#txt_tomo').val(),
+			// 'tomo':$('#txt_tomo').val(),
 			'dir_est':$('#txt_dir_est').val(),
 			'fecha_m':$('#txt_fecha_m').val(),
 		}
 		$.ajax({
-		  url: '../controlador/educativo/detalle_estudianteC.php?update_alumno=true',
+		  url: '../controlador/educativo/detalle_estudianteC.php?update_alumno_matricula=true',
 		  type:'post',
 		  dataType:'json',
 		  data:{parametro:parametro},		 
@@ -934,6 +931,8 @@ function lista_cursos()
 	  });
 	}
 	function actualizar_representante(){
+
+		actualizar_est('menu2')
 		var parametro = {			
 			//datos de padres de familia
 			'codigo':$("#txt_cedula").val(), 
@@ -954,26 +953,13 @@ function lista_cursos()
 		  data:{parametro:parametro},		 
 		  success: function(response){
 		  	if(response ==1)
-		  	{
-		  		if($('#file').val() != '')
-		  		 {
-		  		 	$('#b_file_2').click();
-		  		 }
-		  		 if($('#file_pago').val() != '')
+		  	{		  		
+		  		console.log($('#file_pago').val())
+		  		 if($('#file_pago').val()!='')
 		  		 {
 		  		 	$('#b_file_3').click();
 		  		 }
-	
-		  		 Swal.fire({
-		  		 	//position: 'top-end',
-                    type: 'success',
-                    title: 'Datos de Representante actualizados!',
-                    showConfirmButton: true
-                    //timer: 2500
-              });
-		  		 
-		  		  generar_archivos();
-		  		 
+		  		 generar_archivos_matricula()		  		 
 		  	}else
 		  	{
 		  		Swal.fire({
@@ -989,34 +975,9 @@ function lista_cursos()
 	}
 
 
-	function documentos()
-	{
-		archivos(false);
-		enviar_email();
-	}
 
-	function madre_repre()
-	{
-		    $('#file_rep').css('display','none');
-		    $("#txt_nombre_r").val($("#txt_nombre_m").val());
-			$("#txt_ci_r").val($("#txt_ci_m").val());
-			$("#txt_profesion_r").val($("#txt_profesion_m").val());
-			$("#txt_ocupacion_r").val($("#txt_ocupacion_m").val());
-			$("#txt_telefono_r").val($("#txt_telefono_m").val());
-			$("#txt_celular_r").val($("#txt_celular_m").val());
-			$("#txt_trabajo_r").val($("#txt_trabajo_m").val());
-			if($("#txt_email_fac_r").val() =='')
-			{
-			  $("#txt_email_fac_r").val($("#txt_email_m").val()); 
-		    }else
-		    {
-		    	if($("#txt_email_fac_r").val() == $("#txt_email_p").val())
-		    	{
-		    	   $("#txt_email_fac_r").val($("#txt_email_m").val()); 
-		    	}
-		    }
-			$("#txt_email_r").val($("#txt_email_m").val());
-	}
+
+	
 	function ver_archivo()
 	{
 		$('#file_rep').css('display','initial');
@@ -1065,26 +1026,11 @@ function lista_cursos()
 			$("#txt_email_r").val($("#txt_email_p").val());
 	}
 
-
-	function archivos(email)
-	{
-        var banco = $('#txt_cod_banco').val();
-		var pass = $('#txt_clave').val();
-		var url = '../controlador/educativo/detalle_estudianteC.php?generar_archivos=true&usu='+$("#txt_cod_banco").val()+'&pass='+$("#txt_clave").val()+'&nuevo_usu=false&email='+email;
-		window.open(url)
-		var url1 = '../controlador/educativo/detalle_estudianteC.php?generar_archivos2=true&usu='+$("#txt_cod_banco").val()+'&pass='+$("#txt_clave").val()+'&nuevo_usu=false&email='+email;
-		window.open(url1)
-		var url2 = '../controlador/educativo/detalle_estudianteC.php?generar_archivos3=true&usu='+$("#txt_cod_banco").val()+'&pass='+$("#txt_clave").val()+'&nuevo_usu=false&email='+email;
-		window.open(url2)
-		validar_estudiante(banco,pass,false);
-
-	}
-
-	function generar_archivos()
+	function generar_archivos_matricula()
 	{
 
 	   $.ajax({
-		  url: '../controlador/educativo/detalle_estudianteC.php?generar_archivos=true&usu='+$("#txt_cod_banco").val()+'&pass='+$("#txt_clave").val()+'&nuevo_usu=false&email=true',
+		  url: '../controlador/educativo/detalle_estudianteC.php?generar_archivos_matricula=true&usu='+$("#txt_cod_banco").val()+'&pass='+$("#txt_clave").val(),
 		  type:'post',
 		  dataType:'json',
 		 // data:{usu:usu,pass:pass,nuevo:nuevo},
@@ -1092,58 +1038,10 @@ function lista_cursos()
 		  console.log(response);
 			if(response == null || response == '')
 			{
-				 generar_archivos2();	  	
+				var url = '../controlador/educativo/detalle_estudianteC.php?generar_archivos=true&usu='+$("#txt_cod_banco").val()+'&pass='+$("#txt_clave").val()+'&nuevo_usu=false&email='+email;
+				window.open(url)
 		    }
 
-		}
-	  });
-
-	}
-	function generar_archivos2()
-	{	
-
-	   $.ajax({
-		  url: '../controlador/educativo/detalle_estudianteC.php?generar_archivos2=true&usu='+$("#txt_cod_banco").val()+'&pass='+$("#txt_clave").val()+'&nuevo_usu=false&email=true',
-		  type:'post',
-		  dataType:'json',
-		  //data:{usu:usu,pass:pass,nuevo_usu:nuevo},
-		  success: function(response){		  	
-			console.log(response);
-			if(response ==null || response == '')
-			{
-		  	  generar_archivos3();
-		    }
-		}
-	  });
-
-	}
-	function generar_archivos3()
-	{
-
-	   $.ajax({
-		  url: '../controlador/educativo/detalle_estudianteC.php?generar_archivos3=true&usu='+$("#txt_cod_banco").val()+'&pass='+$("#txt_clave").val()+'&nuevo_usu=false&email=true',
-		  type:'post',
-		  dataType:'json',
-		 // data:{usu:usu,pass:pass,nuevo_usu:nuevo},
-		  success: function(response){
-		  if(response == null || response ==''){	
-		  	var op = $('#txt_op').val();
-		  	if(op == 'env')
-		  	{
-		  		enviar_email();
-		  		$('#txt_op').val('');
-		  	}else if(op == 'im_d')
-		  	{
-		  	  archivos(false);
-		  	  $('#txt_op').val('');
-		  	}else if(op=='fin_g')
-		  	{
-		  		archivos(false);
-		  		enviar_email();
-		  		$('#txt_op').val('');
-		  	}
-		  }
-			
 		}
 	  });
 
@@ -1352,7 +1250,7 @@ function lista_cursos()
 
 	function enviar_evidencia_email()
 	{
-		var parametro = 
+		var parametros = 
 		{
 			'usuario':$("#txt_cod_banco").val(),
 			'password':$("#txt_clave").val(),
@@ -1575,10 +1473,10 @@ function lista_cursos()
 		    		<div class="col-sm-9">
 		    			<h3>MATRICULA</h3>
 		    		</div>
-		    		<div class="col-sm-3 text-right">
+		    		<!-- <div class="col-sm-3 text-right">
 		    			<br>
 		    			<button type="button" id="btn_guar_est" class="btn btn-success btn-sm" onclick="actualizar_est('menu2')"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>  Guardar datos Estudiante</button>    			
-		    		</div>    		
+		    		</div>    	 -->	
 		    	</div>        	
 			    <div class="row">
 			      	<div class="col-sm-9">
@@ -1596,35 +1494,35 @@ function lista_cursos()
 				         		<b>Sexo</b><br>
 				      		    <label><input type="radio" name="cbx_sexo" id="cbx_sexo_M" checked=""> MASCULINO</label>  
 				      		    <label><input type="radio" name="cbx_sexo" id="cbx_sexo_F"> FEMENINO</label> 
-				      	    </div>
-				      	    <div class="col-sm-8">
-				      	       <b>NIVEL DE ESTUDIO</b>
-				      		  <input type="" name="" class="form-control input-sm" id="curso_detalle" disabled="">
-				      	    </div>
-				      	    <div class="col-sm-2">
-				      	    	<b>Curso Cod</b>
-				      		   <input type="" name="" class="form-control input-sm" value="" id="txt_curso" readonly>
-				      		</div>
-				      	    <div class="col-sm-2">
-				      	    	<b>Jornada</b>
-				      		   <input type="" name="" class="form-control input-sm" value="" id="txt_seccion" readonly>
-				      	    </div>
-				  			<div class="col-sm-3">
-			      			    <b>CURSO</b>
-			      			    <input type="text" name="" class="form-control input-sm" id="txt_curso_cod" size=''>      			
-			      		    </div> 
-				      		<div class="col-sm-3">
-				      			<b>FECHA MATRICULA.</b>
-				      			<input type="date" name="" class="form-control input-sm" id="txt_fecha_m"  value="<?php echo date("Y-m-d");?>"> 
-				      		</div>
+				      	    </div>	      	
 					      	<div class="col-sm-3">
-					      		<b>TOMO No.</b>
-					      		<input type="numeber" name="" class="form-control input-sm" id="txt_tomo" readonly="">      			
-					      	</div> 
-					      	<div class="col-sm-3">
-					      		<b>PAG No.</b>
-					      		<input type="text" name="" class="form-control input-sm" id="txt_pag" disabled="">      			
-					      	</div> 
+					  			<b>FECHA NACIMIENTO</b>
+					  			<input type="date" name="" class="form-control input-sm" id="fecha_n">      			
+					  		</div> 
+					  		<div class="col-sm-3">
+					  			<b>CEDULA DE IDENTIDAD</b>
+					  			<input type="numeber" name="" class="form-control input-sm" id="txt_cedula">      			
+			  				</div>  
+			  				<div class="col-sm-4">
+					  			<b>NACIONALIDAD</b>
+					  			<input type="text" name="" class="form-control input-sm" id="txt_nacionalidad">      			
+					  		</div> 
+					  		<div class="col-sm-4">
+					  			<b>PROVINCIA</b>
+					  			<select class="form-control input-sm" id="select_provincias" onchange="ciudad(this.value)">
+					  				<option value="">seleccione provincia</option>
+					  			</select>   			
+					  		</div>
+					  		<div class="col-sm-4">
+					  			<b>CIUDAD</b>
+					  			<select class="form-control input-sm" id="select_ciudad">
+					  				<option value="">seleccione ciudad</option>
+					  			</select>       			
+					  		</div>   
+					  		<div class="col-sm-4">
+			  			<b>CORREO DE ESTUDIANTE</b>
+			  		    <input type="text" name="" class="form-control input-sm" id="email_estudiante">      			
+			  		</div>
 
 			      		</div>      		   		
 			      	</div>
@@ -1640,53 +1538,9 @@ function lista_cursos()
 			      	</div>      	
 			    </div>
 			    <div class="row"> 
-			  		<div class="col-sm-4">
-			  			<b>FECHA NACIMIENTO</b>
-			  			<input type="date" name="" class="form-control input-sm" id="fecha_n">      			
-			  		</div> 
-			  		<div class="col-sm-4">
-			  			<b>MATRICULA No</b>
-			  			<input type="text" name="" class="form-control input-sm" placeholder="" id="txt_matricula_num" readonly="">      			
-			  		</div>
-			  		<div class="col-sm-4">
-			  			<b>CEDULA DE IDENTIDAD</b>
-			  			<input type="numeber" name="" class="form-control input-sm" id="txt_cedula">      			
-			  		</div>  
-			  		<div class="col-sm-4">
-			  			<b>NACIONALIDAD</b>
-			  			<input type="text" name="" class="form-control input-sm" id="txt_nacionalidad">      			
-			  		</div> 
-			  		<div class="col-sm-4">
-			  			<b>PROVINCIA</b>
-			  			<select class="form-control input-sm" id="select_provincias" onchange="ciudad(this.value)">
-			  				<option value="">seleccione provincia</option>
-			  			</select>   			
-			  		</div>
-			  		<div class="col-sm-4">
-			  			<b>CIUDAD</b>
-			  			<select class="form-control input-sm" id="select_ciudad">
-			  				<option value="">seleccione ciudad</option>
-			  			</select>       			
-			  		</div>   
-			  		<div class="col-sm-8">
-			  			<b>DIRECCION</b>
-			  		    <input type="text" name="" class="form-control input-sm" id="txt_dir_est">      			
-			  		</div>
-			  		<div class="col-sm-4">
-			  			<b>PROCEDENCIA</b>
-			  		    <input type="text" name="" class="form-control input-sm" id="procedencia">      			
-			  		</div>
 			 
-			  		<div class="col-sm-12">
-			  			<b>CORREO DE ESTUDIANTE</b>
-			  		    <input type="text" name="" class="form-control input-sm" id="email_estudiante">      			
-			  		</div>
-			  		<div class="col-sm-12">
-			  			<b>OBSERVACIONES</b>
-			  		    <textarea class="form-control input-sm" id="observaciones" onblur="pasar_tab('menu2')">
-			  		    	
-			  		    </textarea>     			
-			  		</div>
+			  		
+			  		
 			  		<div class="col-sm-9" style="text-align: right;">
 			  			<b>DEUDA PENDIENTE</b>
 			  		</div>
@@ -1774,7 +1628,7 @@ function lista_cursos()
     	</div>
     	<div class="row">
     		<div class="col-sm-8">
-    			<div class="row">
+    			<div class="row" style="display:none;">
     				<div class="col-sm-4">
 		      		   <b>REPRESENTANTE</b>
 		      	    </div>
@@ -1799,7 +1653,7 @@ function lista_cursos()
     			</div>
     			<div class="row">
     				<div class="col-sm-4">
-		      			<b>CEDULA DE IDENTIDAD </b>    			
+		      			<b>CEDULA DE IDENTIDAD / RUC </b>    			
 		      		</div>
 		      		<div class="col-sm-8">
 		      			<input type="text" name="" class="form-control input-sm" id="txt_ci_r" onblur="/*validar_repre()*/" max="10">
@@ -1815,7 +1669,7 @@ function lista_cursos()
 		      			<br>     			
 		      		</div>      		
 		      	</div>      	
-		      	<div class="row">
+		      	<div class="row" style="display:none;">
 		      		<div class="col-sm-4">
 		      			<b>PROFESION</b>
 		      		</div>
@@ -1824,7 +1678,7 @@ function lista_cursos()
 		      			<br>
 		      		</div>
 		      	</div>
-		      	<div class="row">
+		      	<div class="row" style="display:none;">
 		      		<div class="col-sm-4">
 		      			<b>OCUPACION</b>
 		      		</div>
@@ -1851,7 +1705,7 @@ function lista_cursos()
 		        </div>
 		      	<div class="row">
 		      		<div class="col-sm-4">
-		      			<b>LUGAR DE TRABAJO</b>     			
+		      			<b>DIRECCION DE LA FACTURA</b>     			
 		      		</div>
 		      		<div class="col-sm-8">
 		      			<input type="text" name="" class="form-control input-sm" id="txt_trabajo_r"> 
@@ -1860,7 +1714,7 @@ function lista_cursos()
 		      	</div> 
 		      	<div class="row">
 		      		<div class="col-sm-4">
-		      			<b>CORREO FACTURA</b>     			
+		      			<b>CORREO ELECTRONICO 1</b>     			
 		      		</div>
 		      		<div class="col-sm-8">
 		      			<input type="text" name="" class="form-control input-sm" id="txt_email_fac_r"> 
@@ -1869,7 +1723,7 @@ function lista_cursos()
 		      	</div>
 		      	<div class="row">
 		      		<div class="col-sm-4">
-		      			<b>CORREO ELECTRONICO</b>
+		      			<b>CORREO ELECTRONICO 2</b>
 		      		</div>
 		      		<div class="col-sm-8">
 		      			<input type="text" name="" class="form-control input-sm" id="txt_email_r">
@@ -1893,7 +1747,7 @@ function lista_cursos()
 	      		       		<input  type="text"  class="form-control-file" id="nom_1" name="nom_1" hidden="" />
 	    				</div>    			
 	    				<div class="col-sm-12">
-	    					<button type="button" class="btn btn-primary btn-sm btn-block" id="b_file_3"><span class="fa fa-fw fa-money" aria-hidden="true"></span> Subir pago y enviar por correo</button>     					
+	    					<button type="button" style="display:none;" class="btn btn-primary btn-sm btn-block" id="b_file_3"><span class="fa fa-fw fa-money" aria-hidden="true"></span> Subir pago y enviar por correo</button>     					
 	    				</div> 
 	    				<div class="col-sm-12 text-right">
 	    					<a id="link_pago" href="" target="_blank" class="margin"><i class="fa fa-eye"></i> ver Archivo adjuno</a> 

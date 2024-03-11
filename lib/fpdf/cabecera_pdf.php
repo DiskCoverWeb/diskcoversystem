@@ -763,6 +763,151 @@ class cabecera_pdf
 	}
 
 
+	function cabecera_reporte_colegio_matricula($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$sal_hea_body=15,$orientacion='P',$download = true, $repetirCabecera=null, $mostrar_cero=false)
+	{	
+
+
+	  $this->pdftable->fechaini = $fechaini; 
+	    $this->pdftable->fechafin = $fechafin; 
+	    $this->pdftable->titulo = $titulo;
+	    $this->pdftable->salto_header_cuerpo = $sal_hea_body;
+	    $this->pdftable->orientacion = $orientacion;
+	    $estiloRow='';
+		 $this->pdftable->AddPage($orientacion);
+		 if($image)
+		 {
+		  foreach ($image as $key => $value) {
+		  	//print_r($value);		 	
+		 	 	 $this->pdftable->Image($value['url'], $value['x'],$value['y'],$value['width'],$value['height']);
+		 	 	 $this->pdftable->Ln(5);		 	 
+		 }
+		}
+
+		if($contenido)
+		{
+		 foreach ($contenido as $key => $value) {
+		 	if(!isset($value['estilo'])){$value['estilo'] = '';}
+		 	 if($value['tipo'] == 'texto' && $value['posicion']=='top-tabla')
+		 	 {
+		 	 	$siz = 11;
+		 	 	$separacion = 4;
+		 	 	if(isset($value['tamaño'])){$siz = $value['tamaño'];}
+		 	 	if(isset($value['separacion'])){$separacion = $value['separacion'];}
+		 	 	//print_r($value);
+		 	 	$this->pdftable->SetFont('Arial',$value['estilo'],$siz);
+		 	 	$this->pdftable->MultiCell(0,3,$value['valor']);
+		 	 	$this->pdftable->Ln($separacion);
+
+		 	 }else if($value['tipo'] == 'titulo' && $value['posicion']=='top-tabla')
+		 	 {
+		 	 	$siz = 18;
+		 	 	$separacion = 4;
+		 	 	if(isset($value['tamaño'])){$siz = $value['tamaño'];}
+		 	 	if(isset($value['separacion'])){$separacion = $value['separacion'];}
+		 	 	$this->pdftable->SetFont('Arial','',$siz);
+		 	 	$this->pdftable->Cell(0,3,$value['valor'],0,0,'C');
+		 	 	$this->pdftable->Ln($separacion);
+
+		 	 }
+		 }
+        }
+                $this->pdftable->SetFont('Arial','',$sizetable);
+                // $this->pdftable->SetX(65);
+		    foreach ($tablaHTML as $key => $value){
+		    	if(isset($value['MT']))
+		    	{
+		    		$n = $this->pdftable->GetY();
+		    		$this->pdftable->SetY($value['MT']+$n);
+		    	}
+		    	if(isset($value['ML']))
+		    	{
+		    		$this->pdftable->SetX($value['ML']);
+		    	}else{
+
+		    		$this->pdftable->SetX(10);
+		    	}
+		    	if(isset($value['estilo']) && $value['estilo']!='')
+		    	{
+		    		$this->pdftable->SetFont('Arial',$value['estilo'],$sizetable);
+		    		$estiloRow = $value['estilo'];
+		    	}else
+		    	{
+		    		$this->pdftable->SetFont('Arial','',$sizetable);
+		    		$estiloRow ='';
+		    	}
+		    	if(isset($value['borde']) && $value['borde']!='0')
+		    	{
+		    		$borde=$value['borde'];
+		    	}else
+		    	{
+		    		$borde =0;
+		    	}
+
+		    //print_r($value['medida']);
+		       $this->pdftable->SetWidths($value['medidas']);
+			   $this->pdftable->SetAligns($value['alineado']);
+			   //print_r($value['datos']);
+			   $arr= $value['datos'];
+			   if(!is_null($repetirCabecera) && is_array($repetirCabecera)){
+			   	$repetirCabecera['row']['medidas'] = $value['medidas'];
+			   	$repetirCabecera['row']['alineado'] = $value['alineado'];
+			   }
+			   $this->pdftable->Row($arr,4,$borde,$estiloRow,null,$mostrar_cero,$repetirCabecera);	
+			   if(isset($value['ML']))
+		    	{
+		    		$this->pdftable->SetX($value['ML']);
+		    	}	else{
+
+		    		$this->pdftable->SetX(10);
+		    	}
+		    	//  if(isset($value['MT']))
+		    	// {
+		    	// 	$n = $this->pdftable->GetY();
+		    	// 	$this->pdftable->SetY($value['MT']+$n);
+		    	// }
+			   // $this->pdftable->SetX(65);    	
+		    }
+		
+
+		  if($contenido)
+		  {
+		 foreach ($contenido as $key => $value) {
+		 	 if($value['tipo'] == 'texto' && $value['posicion']=='button-tabla')
+		 	 {
+		 	 	$siz = 11;
+		 	 	if(isset($value['tamaño'])){$siz = $value['tamaño'];}
+		 	 	$this->pdftable->SetFont('Arial','',$siz);
+		 	 	$this->pdftable->MultiCell(0,3,$value['valor']);
+		 	 	$this->pdftable->Ln(5);
+		 	 }else if($value['tipo'] == 'titulo' && $value['posicion']=='button-tabla')
+		 	 {
+		 	 	$siz = 18;
+		 	 	if(isset($value['tamaño'])){$siz = $value['tamaño'];}
+		 	 	$this->pdftable->SetFont('Arial','',$siz);
+		 	 	$this->pdftable->Cell(0,3,$value['valor'],0,0,'C');
+		 	 	$this->pdftable->Ln(5);
+		 	 }
+		 }
+		}
+		//echo $titulo;
+		//die();
+		if ($download) {	
+		 if($mostrar==true)
+	       {
+		    $this->pdftable->Output('',$titulo.'.pdf');
+
+	       }else
+	       {
+		     $this->pdftable->Output('D',$titulo.'.pdf',false);
+
+	      }
+		}else{
+			$this->pdftable->Output('F',dirname(__DIR__,2).'/TEMP/'.$titulo.'.pdf');
+		}
+
+	}
+
+
 
 	function cabecera_reporte_colegio($titulo,$nombre,$tablaHTML,$contenido=false,$image=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$email=false,$sal_hea_body=30)
 	{	
