@@ -3,7 +3,7 @@
 <!--
     AUTOR DE RUTINA	: Dallyana Vanegas
     FECHA CREACION : 16/02/2024
-    FECHA MODIFICACION : 29/02/2024
+    FECHA MODIFICACION : 11/03/2024
     DESCIPCION : Interfaz de modulo Gestion Social/Registro Beneficiario
  -->
 
@@ -341,7 +341,7 @@
                 $select.append('<option value="">' + datos + '</option>');
             } else {
                 $.each(datos, function (index, opcion) {
-                    $select.append('<option value="' + opcion['Proceso'] + '">' + opcion['Proceso'] + '</option>');
+                    $select.append('<option value="' + opcion['Cmds'] + '">' + opcion['Proceso'] + '</option>');
                 });
             }
         }
@@ -394,9 +394,6 @@
     $('#btnGuardarAsignacion').click(function () {
         var fileInput = $('#archivoAdd')[0];
         var archivo = fileInput.files[0];
-
-        var val = $('#horaEntregac').val();
-
         var formData = new FormData();
 
         formData.append('Cliente', miCliente);
@@ -421,7 +418,7 @@
         formData.append('CodigoA2', $('#select_88').val());
         formData.append('Fecha_Registro', $('#diaEntregac').val());
         formData.append('Hora_Registro', $('#horaEntregac').val());
-        formData.append('Envio_No', $('#frecuencia').val());
+        formData.append('Envio_No', $('#select_86').val());
         formData.append('No_Soc', $('#totalPersonas').val());
         formData.append('Area', $('#select_91').val());
         formData.append('Acreditacion', $('#select_92').val());
@@ -435,15 +432,15 @@
 
         var camposVacios = [];
         if (!miRuc) camposVacios.push('RUC');
-        //if (!$('#select_88').val()) camposVacios.push('Tipo Entrega');
+        if (!$('#select_88').val()) camposVacios.push('Tipo Entrega');
         if (!$('#diaEntregac').val()) camposVacios.push('Fecha Entrega');
         if (!$('#horaEntregac').val()) camposVacios.push('Hora Entrega');
-        //if (!$('#select_86').val()) camposVacios.push('Frecuencia');
+        if (!$('#select_86').val()) camposVacios.push('Frecuencia');
         if (!$('#totalPersonas').val()) camposVacios.push('Personas Atendidas');
-        //if (!$('#select_91').val()) camposVacios.push('Tipo poblacion');
-        //if (!$('#select_92').val()) camposVacios.push('Accion social');
-        //if (!$('#select_90').val()) camposVacios.push('Vulnerabilidad');
-        //if (!$('#select_89').val()) camposVacios.push('Tipo Atencion');
+        if (!$('#select_91').val()) camposVacios.push('Tipo poblacion');
+        if (!$('#select_92').val()) camposVacios.push('Accion social');
+        if (!$('#select_90').val()) camposVacios.push('Vulnerabilidad');
+        if (!$('#select_89').val()) camposVacios.push('Tipo Atencion');
         if (!archivo) camposVacios.push('Evidencias');
         if (!$('#infoNut').val()) camposVacios.push('Observaciones');
 

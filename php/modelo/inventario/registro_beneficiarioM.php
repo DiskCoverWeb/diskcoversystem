@@ -3,7 +3,7 @@
 /** 
  * AUTOR DE RUTINA : Dallyana Vanegas
  * FECHA CREACION : 16/02/2024
- * FECHA MODIFICACION : 07/03/2024
+ * FECHA MODIFICACION : 11/03/2024
  * DESCIPCION : Clase modelo para llenar campos y guardar registros de Agencia
  */
 
@@ -24,7 +24,7 @@ class registro_beneficiarioM
         $sql = "SELECT Nivel, TP, Proceso, Cmds
                     FROM Catalogo_Proceso
                     WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
-                    AND Cmds LIKE '" . $valor . "%'
+                    AND Cmds LIKE '" . $valor . ".%'
                     ORDER BY Cmds";
         return $this->db->datos($sql);
     }
@@ -73,7 +73,7 @@ class registro_beneficiarioM
                      VALUES ('" . $parametros['Codigo'] . "', 
                              '" . $parametros['CodigoA2'] . "', 
                              '" . $parametros['Fecha_Registro'] . "', 
-                             '" . $parametros['Hora_Ent'] . "', 
+                             '" . $parametros['Hora_Registro'] . "', 
                              '" . $envioNo . "', '" . $noSoc . "', 
                              '" . $parametros['Area'] . "', 
                              '" . $parametros['Acreditacion'] . "', 

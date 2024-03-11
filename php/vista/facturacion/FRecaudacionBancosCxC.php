@@ -332,19 +332,22 @@
         });
     }
 
-    function Select(selector, reverseOrder = false) {
+    function Select(selector, selUlt) {
         var $selector = $(selector);
         $.ajax({
             url: '../controlador/facturacion/FRecaudacionBancosCxCC.php?DCGrupoI_DCGrupoF=true',
             dataType: 'json',
             success: function (data) {
                 $selector.empty();
-                if (reverseOrder) {
-                    data.reverse();
-                }
                 data.forEach(function (item) {
                     $selector.append('<option value="' + item.Grupo + '">' + item.Grupo + '</option>');
                 });
+
+                if (selUlt) {
+                    var lastItem = data[data.length - 1]; 
+                    $selector.val(lastItem.Grupo);
+                }
+
             }
         });
     }
@@ -485,6 +488,7 @@
                     descargarArchivo(url3, data.Nombre3);
                 }
                 else {
+                    $('#myModal_espera').modal('hide');
                     Swal.fire({
                         title: "No está definido este Banco",
                         type: 'error',
@@ -521,8 +525,8 @@
     }
 
     function descargarArchivo(url, nombre) {
-        console.log('ur:' , url);
-        console.log('nom:', nombre);
+        //console.log('ur:' , url);
+        //console.log('nom:', nombre);
         var enlaceTemporal = $('<a></a>')
             .attr('href', url)
             .attr('download', nombre)
@@ -592,7 +596,7 @@
             contentType: false,
             data: formData,
             success: function (data) {
-                console.log(data);
+                //console.log(data);
                 $('#myModal_espera').modal('hide');
                 var datos = JSON.parse(data);
                 if (datos.res == 'Error') {
@@ -601,7 +605,7 @@
                         type: 'error',
                         confirmButtonText: 'Aceptar'
                     });
-                }else{
+                } else {
                     Swal.fire({
                         title: datos.mensaje,
                         type: 'success',
