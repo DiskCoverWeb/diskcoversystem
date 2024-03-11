@@ -991,13 +991,22 @@ function naciones_todas()  // optimizado
 }
 
 
-function provincia_todas($Cpais=false)  // optimizado
+function provincia_todas($Cpais=false,$provincia=false)  // optimizado
 {
   if (!$Cpais) {
     $Cpais = '593';
   }
 	  $conn = new db();
-    $sql = "SELECT * FROM Tabla_Naciones WHERE CPais = '".$Cpais."' AND TR ='P' ORDER BY CProvincia";
+    $sql = "SELECT * FROM Tabla_Naciones WHERE TR ='P' ";
+    if($Cpais)
+    {
+      $sql.=" AND  CPais = '".$Cpais."'"; 
+    }
+    if($provincia)
+      {
+        $sql.=" and CProvincia = '".$provincia."'";
+      }
+      $sql.=" ORDER BY CProvincia";
     // print_r($sql);die();
 		$datos = $conn->datos($sql);
     $result = array();  

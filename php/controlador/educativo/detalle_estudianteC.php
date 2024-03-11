@@ -127,7 +127,12 @@ if(isset($_GET['generar_archivos_matricula']))
 {
   //$parametros = $_POST['parametro'];
   //print_r($parametros);
-  echo json_encode($controlador->generar_pdf_matricula($_GET['usu'],$_GET['pass']));
+  $descargar = false;
+  if(isset($_GET['descargar']))
+  {
+    $descargar = $_GET['descargar'];
+  }
+  echo json_encode($controlador->generar_pdf_matricula($_GET['usu'],$_GET['pass'],$descargar));
 }
 
 if(isset($_GET['generar_archivos2']))
@@ -155,6 +160,10 @@ if(isset($_GET['enviar_email_']))
 if(isset($_GET['enviar_email_evidencia']))
 {
   echo json_encode($controlador->enviar_email_evidencia($_POST['parametros']));
+}
+if(isset($_GET['enviar_email_evidencia_matricula']))
+{
+  echo json_encode($controlador->enviar_email_evidencia_matricula($_POST['parametros']));
 }
 if(isset($_GET['cargar_file']))
 {
@@ -676,7 +685,7 @@ class detalle_estudianteC
     return  $rps;
   }
 
-  function generar_pdf_matricula($usu,$pass)
+  function generar_pdf_matricula($usu,$pass,$descargar=false)
   {
 
     $fecha = new DateTime();
@@ -687,8 +696,10 @@ class detalle_estudianteC
 
 
     $titulo = 'REGISTRO DE MATRICULA CON REPRESENTANTE';
-    $sizetable =7;
-    $mostrar = TRUE;
+    $name_doc = str_replace(' ','_', $titulo).'_'.$datos[0]['CI_RUC'];
+    $sizetable =10;
+    $mostrar = true;
+
     $tablaHTML= array();
 
     $url = dirname(__DIR__,2).'/img/img_estudiantes/'.$datos[0]['Archivo_Foto'];
@@ -698,6 +709,9 @@ class detalle_estudianteC
     }
 
      $image[] = array('url'=>$url,'x'=>10,'y'=>55,'width'=>50,'height'=>50);
+     $url_qr = 
+     $qr =array('dato_qr'=>$datos[0]['CI_RUC'],'name_qr'=>$datos[0]['CI_RUC'],'x'=>5,'y'=>100,'width'=>60,'height'=>60);
+
     
 
     $tablaHTML[0]['medidas']=array(125);
@@ -751,9 +765,17 @@ class detalle_estudianteC
     $tablaHTML[7]['borde'] =1;
     $tablaHTML[7]['ML'] =65;
 
+// print_r($datos[0]);die();
+    $prov = '.';
+    if($datos[0]['Prov']!='.' && $datos[0]['Prov']!='')
+    {
+      $prov = provincia_todas('593',$datos[0]['Prov']);
+      $prov = $prov[0]['Descripcion_Rubro'];
+    }
+
     $tablaHTML[8]['medidas']=array(42,42,41);
     $tablaHTML[8]['alineado']=array('L','L','L');
-    $tablaHTML[8]['datos']=array($datos[0]['Nacionalidad'],$sexo,$datos[0]['Ciudad']);
+    $tablaHTML[8]['datos']=array($datos[0]['Nacionalidad'],$prov,$datos[0]['Ciudad']);
     $tablaHTML[8]['borde'] =1;
     $tablaHTML[8]['ML'] =65;
 
@@ -833,99 +855,55 @@ class detalle_estudianteC
 
     $tablaHTML[21]['medidas']=array(63,62);
     $tablaHTML[21]['alineado']=array('L','L');
-    $tablaHTML[21]['datos']=array($datos[0]['Email2'],$datos[0]['Email']);
+    $tablaHTML[21]['datos']=array($datos[0]['Email2'],$datos[0]['Email_R']);
     $tablaHTML[21]['borde'] =1;    
     $tablaHTML[21]['ML'] =65;
 
 
-    $tablaHTML[22]['medidas']=array(63,63);
+    $tablaHTML[22]['medidas']=array(73,73);
     $tablaHTML[22]['alineado']=array('C','C');
-    $tablaHTML[22]['datos']=array('__________________________________________','________________________________________');
+    $tablaHTML[22]['datos']=array('____________________________________','___________________________________');
     // $tablaHTML[22]['borde'] =1;     
-    $tablaHTML[22]['ML'] =45;   
+    $tablaHTML[22]['ML'] =40;   
     $tablaHTML[22]['MT'] =100;
 
-    $tablaHTML[23]['medidas']=array(63,63);
+    $tablaHTML[23]['medidas']=array(73,73);
     $tablaHTML[23]['alineado']=array('C','C');
     $tablaHTML[23]['datos']=array($this->empresa[0]['Rector'],$this->empresa[0]['Secretario1']);
     // $tablaHTML[22]['borde'] =1;     
-    $tablaHTML[23]['ML'] =45;   
+    $tablaHTML[23]['ML'] =40;   
 
-    $tablaHTML[24]['medidas']=array(63,63);
+    $tablaHTML[24]['medidas']=array(73,73);
     $tablaHTML[24]['alineado']=array('C','C');
     $tablaHTML[24]['datos']=array('<b>'.$this->empresa[0]['Texto_Rector'],'<b>'.$this->empresa[0]['Texto_Secretario1']);
     // $tablaHTML[22]['borde'] =1;     
-    $tablaHTML[24]['ML'] =45;  
+    $tablaHTML[24]['ML'] =40;  
 
 // print_r($datos);die();
+// print_r($mostrar.'--'.$descargar);die();
+    if($descargar){$descargar = true;}else{$descargar=false;}
+   return $this->pdf->cabecera_reporte_colegio_matricula($titulo,$tablaHTML,$name_doc,$contenido=false,$image,$qr,false,false,$sizetable,$mostrar,10,false,$descargar);
+  }
 
-  $this->pdf->cabecera_reporte_colegio_matricula($titulo,$tablaHTML,$contenido=false,$image,false,false,$sizetable,$mostrar);
+  function enviar_email_evidencia_matricula($parametros)
+  {
+     $empresaGeneral = $this->empresaGeneral;
+      $titulo_correo = 'Registro de matricula';
+      $datos = $this->modelo->login($parametros['usuario'],$parametros['password'],'false');
 
-    // print_r($datos);die();
 
+      $titulo = 'REGISTRO DE MATRICULA CON REPRESENTANTE';
+      $name_doc = str_replace(' ','_', $titulo).'_'.$datos[0]['CI_RUC'];
 
-    $contenido=false;
-    $image = null;
-    $datos = $this->modelo->login($usu,$pass,false);
-  
-    $tablaHtml='
-  <tr><td height="20" width="550">&nbsp;</td></tr>
-  <tr><td width="200" height=""><b><u>DATOS PERSONALES</u></b></td><td width="" height=""></td></tr>
-  <tr><td width="200" height=""><b>NOMBRES Y APELLIDOS</b></td><td width="550"></td></tr>
-  <tr><td width="200" height=""><b>CEDULA</b></td><td width="550"></td></tr>
-  <tr><td width="200" height=""><b>LUGAR DE NACIMIENTO</b></td><td width="550">'.$datos[0]['Ciudad'].'</td></tr>
-  <tr><td width="200" height=""><b>FECHA DE NACIMIENTO</b></td><td width="550"></td></tr>
-  <tr><td width="200" height=""><b>DOMICILIO</b></td><td width="550" >'.$datos[0]['DireccionT'].'</td></tr>
-  <tr><td width="200" height=""><b>TELEFONO</b></td><td width="550">'.$datos[0]['Telefono'].'</td></tr>
-  <tr><td height="20" width="550">&nbsp;</td></tr>
-  <tr><td><b><u>DATOS FAMILIARES</u></b></td><td width="" height=""></td></tr>
-  <tr><td width="200" height=""><b>NOMBRES DEL PADRE</b></td><td width="550">'.$datos[0]['Nombre_Padre'].'</td></tr>
-  <tr><td width="200" height=""><b>NACIONALIDAD</b></td><td width="550">'.$datos[0]['Nacionalidad_P'].'</td></tr>
-  <tr><td width="200" height=""><b>PROFESION</b></td><td width="550">'.$datos[0]['Profesion_P'].'</td></tr>
-  <tr><td width="200" height=""><b>LUGAR DE TRABAJO</b></td><td  width="550" >'.$datos[0]['Lugar_Trabajo_P'].'</td></tr>
-  <tr><td width="200" height=""><b>TELEFONO</b></td><td width="550" >'.$datos[0]['Celular_P'].'</td></tr>
-  <tr><td height="20" width="550">&nbsp;</td></tr>
-  <tr><td width="200" height=""><b>NOMBRES DEL MADRE</b></td><td width="550">'.$datos[0]['Nombre_Madre'].'</td></tr>
-  <tr><td width="200" height=""><b>NACIONALIDAD</b></td><td width="550">'.$datos[0]['Nacionalidad_M'].'</td></tr>
-  <tr><td width="200" height=""><b>PROFESION</b></td><td width="550">'.$datos[0]['Profesion_M'].'</td></tr>
-  <tr><td width="200" height=""><b>LUGAR DE TRABAJO</b></td><td  width="550">'.$datos[0]['Lugar_Trabajo_M'].'</td></tr>
-  <tr><td width="200" height=""><b>TELEFONO</b></td><td width="550">'.$datos[0]['Celular_M'].'</td></tr>
-  <tr><td height="20">&nbsp;</td></tr>
-  <tr><td width="200" height=""><b>REPRESENTANTE</b></td><td width="550">'.$datos[0]['Representante_Alumno'].'</td></tr>
-  <tr><td width="200" height=""><b>CEDULA DE IDENTIDAD</b></td><td width="550">'.$datos[0]['CI_R'].'</td></tr>
-  <tr><td width="200" height=""><b>TELEFONO</b></td><td width="550">'.$datos[0]['Telefono_RS'].'</td></tr><tr><td width="200" height=""><b>Email</b></td><td width="550">'.$datos[0]['Email2'].'</td></tr> 
-</table>
-<table>
-  <tr><td height="30" width="350">&nbsp;</td><td height="30" width="350">&nbsp;</td></tr>
-  <tr><td height="20" width="350" ALIGN="CENTER">______________________________</td><td height="20" width="350" ALIGN="CENTER">______________________________</td></tr>
-  <tr><td height="20" width="350"  ALIGN="CENTER"><I>'.$this->empresa[0]['Rector'].'</I></td><td height="20" width="350"  ALIGN="CENTER"><I>'.$this->empresa[0]['Secretario1'].'<I></td></tr>
-  <tr><td height="20" width="350"  ALIGN="CENTER"><b>'.$this->empresa[0]['Texto_Rector'].'</b></td><td height="20" width="350"  ALIGN="CENTER"><B>'.$this->empresa[0]['Texto_Secretario1'].'</B></td></tr>
-  <tr><td height="25">&nbsp;</td></tr><tr><td height="20" width="700" ALIGN="CENTER">______________________________</td></tr><tr><td height="25" width="700"  ALIGN="CENTER"><I>Representante Legal</I></td></tr>
-  <tr><td width="750">NOTA:DOCUMENTO NO VALIDO SIN FIRMA Y SELLO DE LA INSTITUCION</td></tr>
-</table>';
-if($datos[0]['Archivo_Foto'] !='.' && $datos[0]['Archivo_Foto'] !='')
-{
-if (!file_exists('../../img/img_estudiantes/'.$datos[0]['Archivo_Foto'])) 
-    {
-      $url='../../../img/jpg/sinimagen.jpg';
-    }else
-    {
-      $url='../../img/img_estudiantes/'.$datos[0]['Archivo_Foto'];
-    }
-   }else
-   {
-      $url='../../../img/jpg/sinimagen.jpg';
-
-   }
-    $image[0]['url']=$url;
-    $image[0]['x']=150;
-    $image[0]['y']= 50;
-    $image[0]['width']=40;
-    $image[0]['height']=40;
-
-    $this->pdf->cabecera_reporte_colegio($_SESSION['INGRESO']['item'].'_HOJA_DE_MATRICULA_'.$usu,'HOJA DE MATRICULA',mb_convert_encoding($tablaHtml, 'ISO-8859-1','UTF-8'),$contenido,$image,'','',10,true);
-
- 
+      $cliente =$datos[0]['Cliente'];
+      $cuerpo_correo = 'Registro de matricula '.$cliente;
+      $to_correo = $datos[0]['Email2'].','.$datos[0]['Email_R'];
+      $archivos=array();
+      if(file_exists(dirname(__DIR__,3).'/TEMP/'.$name_doc.'.pdf'))
+      {
+        $archivos[] = dirname(__DIR__,3).'/TEMP/'.$name_doc.'.pdf';
+      }
+      return  enviar_email_comprobantes($archivos, $to_correo, $cuerpo_correo, $titulo_correo, $HTML = false);
   }
 
   function generar_pdf($usu,$pass,$nuevo,$email)
@@ -1199,7 +1177,7 @@ if (!file_exists('../../img/img_estudiantes/'.$datos[0]['Archivo_Foto']))
     $datos = $this->modelo->login($parametros['usuario'],$parametros['password'],'false');
 
     $cuerpo_correo = 'Comprobante de pago de '.utf8_decode($datos[0]['Cliente']);
-    $to_correo = $empresaGeneral[0]['Email_Contabilidad'].',ejfc_omoshiroi@hotmail.com';
+    $to_correo = $empresaGeneral[0]['Email_Contabilidad'];
     $archivos[] =  $ruta = dirname(__DIR__,2).'/comprobantes/pagos_subidos/entidad_'.$_SESSION['INGRESO']['IDEntidad'].'/empresa_'.$_SESSION['INGRESO']['item'].'/'.$datos[0]['Evidencias'];
     enviar_email_comprobantes($archivos, $to_correo, $cuerpo_correo, $titulo_correo, $HTML = false);
   }

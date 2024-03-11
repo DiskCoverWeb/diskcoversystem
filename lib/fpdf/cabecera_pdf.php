@@ -1,4 +1,5 @@
 <?php
+require_once('QRCode/qrcode.class.php');
 
 if(!class_exists('PDF_MC_Table'))
 {
@@ -763,8 +764,9 @@ class cabecera_pdf
 	}
 
 
-	function cabecera_reporte_colegio_matricula($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$sal_hea_body=15,$orientacion='P',$download = true, $repetirCabecera=null, $mostrar_cero=false)
+	function cabecera_reporte_colegio_matricula($titulo,$tablaHTML,$name_doc=false,$contenido=false,$image=false,$qr=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$sal_hea_body=15,$orientacion='P',$download=true, $repetirCabecera=null, $mostrar_cero=false)
 	{	
+
 
 
 	  $this->pdftable->fechaini = $fechaini; 
@@ -781,6 +783,27 @@ class cabecera_pdf
 		 	 	 $this->pdftable->Image($value['url'], $value['x'],$value['y'],$value['width'],$value['height']);
 		 	 	 $this->pdftable->Ln(5);		 	 
 		 }
+		}
+
+		if($qr)
+		{
+
+			$rutaQR = dirname(__DIR__,2).'/TEMP/';
+			if(!file_exists($rutaQR))
+			{
+				 mkdir(dirname(__DIR__,2).'/TEMP/', 0777, true);
+			}
+
+			$mensaje = mb_convert_encoding($qr['dato_qr'], 'UTF-8', 'ISO-8859-1');
+
+			$qrcode = new QRcode($mensaje,'L');
+			$rs = $qrcode->displayPNG($qr['width'],array(255,255,255),array(0,0,0),$rutaQR.$qr['name_qr'].'.png');
+			if($rs)
+			{
+
+				$this->pdftable->Image($rutaQR.$qr['name_qr'].'.png', $qr['x'],$qr['y'],$qr['width'],$qr['height']);
+				$this->pdftable->Ln(5);	
+			}
 		}
 
 		if($contenido)
@@ -889,10 +912,26 @@ class cabecera_pdf
 		 	 }
 		 }
 		}
-		//echo $titulo;
-		//die();
+		// echo $titulo;
+		// die();
+		 if($name_doc){$titulo = $name_doc;}
 		if ($download) {	
-		 if($mostrar==true)
+			
+			$ruta = dirname(__DIR__,2).'/TEMP/'.$titulo.'.pdf';
+			if(!file_exists(dirname(__DIR__,2).'/TEMP/'))
+			{
+				 mkdir(dirname(__DIR__,2).'/TEMP/', 0777, true);    
+			}
+			try {
+				$this->pdftable->Output('F',$ruta);
+				return 1;				
+			} catch (Exception $e) {
+				return -1;				
+			}
+		 
+		}else{
+
+			if($mostrar==true)
 	       {
 		    $this->pdftable->Output('',$titulo.'.pdf');
 
@@ -901,8 +940,7 @@ class cabecera_pdf
 		     $this->pdftable->Output('D',$titulo.'.pdf',false);
 
 	      }
-		}else{
-			$this->pdftable->Output('F',dirname(__DIR__,2).'/TEMP/'.$titulo.'.pdf');
+			
 		}
 
 	}

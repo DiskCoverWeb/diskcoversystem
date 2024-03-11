@@ -344,10 +344,10 @@
         success:  function (response) { 
         if(response==-1)
         {
-        	Swal.fire('Clave o usuario invalidos!','No se pudo acceder.','error');
+        	Swal.fire('Clave o usuario invalidos!','No se pudo acceder. Comuniquese con la institucion para ser habilitado.','error');
         }else if(response==-2)
         {        	
-        	Swal.fire('Clave o usuario de cartera invalidos!','No se pudo acceder.','error');
+        	Swal.fire('Clave o usuario invalidos!','No se pudo acceder.  Comuniquese con la institucion para ser habilitado.','error');
         }
         else
         {     	

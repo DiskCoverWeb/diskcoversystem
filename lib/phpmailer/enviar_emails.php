@@ -178,6 +178,8 @@ class enviar_emails
     }
     // print_r($_SESSION['INGRESO']);die();
     // print_r($to_correo);die();
+    $to_correo = trim($to_correo);
+    $to_correo = str_replace(';',',',$to_correo);
     $to = explode(',', $to_correo);
     foreach ($to as $key => $value) {
       if ($value != '.' && $value != '') {

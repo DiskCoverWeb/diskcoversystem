@@ -1030,15 +1030,16 @@ function lista_cursos()
 	{
 
 	   $.ajax({
-		  url: '../controlador/educativo/detalle_estudianteC.php?generar_archivos_matricula=true&usu='+$("#txt_cod_banco").val()+'&pass='+$("#txt_clave").val(),
+		  url: '../controlador/educativo/detalle_estudianteC.php?generar_archivos_matricula=true&usu='+$("#txt_cod_banco").val()+'&pass='+$("#txt_clave").val()+'&descargar=true',
 		  type:'post',
 		  dataType:'json',
 		 // data:{usu:usu,pass:pass,nuevo:nuevo},
 		  success: function(response){	
 		  console.log(response);
-			if(response == null || response == '')
+			if(response == 1)
 			{
-				var url = '../controlador/educativo/detalle_estudianteC.php?generar_archivos=true&usu='+$("#txt_cod_banco").val()+'&pass='+$("#txt_clave").val()+'&nuevo_usu=false&email='+email;
+				enviar_evidencia_email_matricula();
+				var url = '../controlador/educativo/detalle_estudianteC.php?generar_archivos_matricula=true&usu='+$("#txt_cod_banco").val()+'&pass='+$("#txt_clave").val();
 				window.open(url)
 		    }
 
@@ -1279,6 +1280,45 @@ function lista_cursos()
 		  		}
 		  		console.log(response);
 		    }
+		}
+	  });
+
+	}
+
+	function enviar_evidencia_email_matricula()
+	{
+		$('#myModal_envio_Email').modal('show');
+		var parametros = 
+		{
+			'usuario':$("#txt_cod_banco").val(),
+			'password':$("#txt_clave").val(),
+		}
+
+	   $.ajax({
+		  url: '../controlador/educativo/detalle_estudianteC.php?enviar_email_evidencia_matricula=true',
+		  type:'post',
+		  dataType:'json',
+		  data:{parametros:parametros},
+		  success: function(response){		  	
+			console.log(response);
+
+		  		$('#myModal_envio_Email').modal('hide');						
+		  		if(response==1)
+		  		{
+
+		  			Swal.fire({
+		  		 	//position: 'top-end',
+                    type: 'success',
+                    title: 'Documentos Enviados por correo!',
+                    showConfirmButton: true
+                    //timer: 2500
+                 });
+		  		}
+		  		console.log(response);
+		   
+		},error()
+		{
+	  		$('#myModal_envio_Email').modal('hide');
 		}
 	  });
 
