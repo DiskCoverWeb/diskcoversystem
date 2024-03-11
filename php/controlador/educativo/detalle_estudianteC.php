@@ -897,7 +897,7 @@ class detalle_estudianteC
 
       $cliente =$datos[0]['Cliente'];
       $cuerpo_correo = 'Registro de matricula '.$cliente;
-      $to_correo = $datos[0]['Email2'].','.$datos[0]['Email_R'];
+      $to_correo = $empresaGeneral[0]['Email_Contabilidad'].','.$datos[0]['Email2'].','.$datos[0]['Email_R'];
       $archivos=array();
       if(file_exists(dirname(__DIR__,3).'/TEMP/'.$name_doc.'.pdf'))
       {
