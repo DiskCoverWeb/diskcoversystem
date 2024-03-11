@@ -304,29 +304,52 @@ class ListarGruposM
 
     public function Command5_Click($parametros, $ListaDeCampos)
     {
-        $sql = "UPDATE Reporte_CxC_Cuotas
-                SET E = 0
-                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
-                AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'";
+        $sql = "";
+        if ($parametros['CheqConDeuda']) {
+            $sql = "UPDATE Reporte_CxC_Cuotas 
+                    SET E = 0 
+                    WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                    AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'";
+        } else {
+            $sql = "UPDATE Clientes 
+                    SET FactM = 0 
+                    WHERE FA <> 0";
+        }
         Ejecutar_SQL_SP($sql);
 
         for ($i = 0; $i < count($parametros['LstClientes']); $i++) {
             $NombreCliente = $parametros['LstClientes'][$i]['Cliente'];
-            $sql = "UPDATE Reporte_CxC_Cuotas
-                    SET E = 1
-                    WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
-                    AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'
-                    AND Cliente = '" . $NombreCliente . "'";
+            if ($parametros['CheqConDeuda']) {
+                $sql = "UPDATE Reporte_CxC_Cuotas
+                        SET E = 1
+                        WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                        AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'
+                        AND Cliente = '" . $NombreCliente . "'";
+            } else {
+                $sql = "UPDATE Clientes 
+                        SET FactM = 1 
+                        WHERE FA <> 0 
+                        AND Cliente LIKE '" . $NombreCliente . "%'";
+            }
             Ejecutar_SQL_SP($sql);
         }
 
-        $sql = "SELECT " . $ListaDeCampos . ", C.Representante, C.CI_RUC, C.Email, C.EmailR, C.Cliente 
-                FROM Reporte_CxC_Cuotas As RCC, Clientes As C 
-                WHERE RCC.Item = '" . $_SESSION['INGRESO']['item'] . "' 
-                AND RCC.CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "' 
-                AND RCC.E <> 0 
-                AND RCC.Codigo = C.Codigo 
-                ORDER BY RCC.GrupoNo, RCC.Cliente";
+        if ($parametros['CheqConDeuda']) {
+            $sql = "SELECT " . $ListaDeCampos . ", C.Representante, C.CI_RUC, C.Email, C.EmailR, C.Cliente 
+                    FROM Reporte_CxC_Cuotas As RCC, Clientes As C 
+                    WHERE RCC.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                    AND RCC.CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "' 
+                    AND RCC.E <> 0 
+                    AND RCC.Codigo = C.Codigo 
+                    ORDER BY RCC.GrupoNo, RCC.Cliente";
+        } else {
+            $sql = "SELECT Cliente, 0 As CxC_20XX, 0 As SubTotal, 0 As Anticipos, 0 As Total, Direccion As Detalle_Grupo, Grupo As GrupoNo , Representante, CI_RUC, Email, EmailR 
+                    FROM Clientes 
+                    WHERE FA <> 0 
+                    AND FactM <> 0 
+                    ORDER BY GrupoNo, Cliente ";
+        }
+        //print_r($sql);die();
         $AdoAux = $this->db->datos($sql);
         return $AdoAux;
     }
@@ -671,20 +694,22 @@ class ListarGruposM
         }
     }
 
-    public function Eliminar_Rubros_Facturacion(){
-        try{
+    public function Eliminar_Rubros_Facturacion()
+    {
+        try {
             $sql = "DELETE * 
                     FROM Clientes_Facturacion 
                     WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                     AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'";
             Ejecutar_SQL_SP($sql);
-        }catch (Exception $e){
+        } catch (Exception $e) {
             throw new Exception("Error al eliminar los rubros de facturación");
         }
     }
 
-    public function Retirar_Beneficiarios($parametros){
-        try{
+    public function Retirar_Beneficiarios($parametros)
+    {
+        try {
             $sql = "UPDATE Clientes 
                     SET X = 'R' 
                     WHERE Codigo <> '" . G_NINGUNO . "' ";
@@ -699,7 +724,7 @@ class ListarGruposM
                     WHERE X = 'R' 
                     AND Grupo = '" . $parametros['Codigo1'] . "' ";
             Ejecutar_SQL_SP($sql);
-        }catch (Exception $e){
+        } catch (Exception $e) {
             throw new Exception("Error al retirar los beneficiarios");
         }
     }

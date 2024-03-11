@@ -112,7 +112,7 @@ if (isset($_GET['Command5_Click'])) {
             echo json_encode($controlador->tmp($parametros));
         }
     } catch (Exception $e) {
-        echo json_encode(array("res" => 0, "msj" => "Error al enviar los correos", "error" => $e->getMessage()));
+        echo json_encode(array("res" => 0, "mensaje" => "Error al enviar los correos", "error" => $e->getMessage()));
     }
 
 
@@ -508,10 +508,11 @@ class ListarGruposC
                                 $this->email->enviar_email(false, $TMailPara, $TMailMensaje, $TMailAsunto, false);
                                 return array('res' => 1, 'mensaje' => 'Correo enviado correctamente');
                             }
-                            //$this->email->enviar_email(false, $TMailPara, $TMailMensaje, $TMailAsunto, false);
                         } else {
                             throw new Exception("No se encontraron deudas para enviar");
                         }
+                    }else{
+                        return array('res' => 1, 'mensaje' => 'Datos actualizados correctamente');
                     }
                 }
             } else {
