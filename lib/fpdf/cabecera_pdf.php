@@ -794,7 +794,12 @@ class cabecera_pdf
 				 mkdir(dirname(__DIR__,2).'/TEMP/', 0777, true);
 			}
 
-			$mensaje = mb_convert_encoding($qr['dato_qr'], 'UTF-8', 'ISO-8859-1');
+			if($qr['dato_qr']!='' && $qr['dato_qr']!='.')
+			{
+				$mensaje = mb_convert_encoding($qr['dato_qr'], 'UTF-8', 'ISO-8859-1');
+			}else{
+				$mensaje = 'https://www.diskcoversystem.com';
+			}
 
 			$qrcode = new QRcode($mensaje,'L');
 			$rs = $qrcode->displayPNG($qr['width'],array(255,255,255),array(0,0,0),$rutaQR.$qr['name_qr'].'.png');
@@ -916,7 +921,7 @@ class cabecera_pdf
 		// die();
 		 if($name_doc){$titulo = $name_doc;}
 		if ($download) {	
-			
+
 			$ruta = dirname(__DIR__,2).'/TEMP/'.$titulo.'.pdf';
 			if(!file_exists(dirname(__DIR__,2).'/TEMP/'))
 			{

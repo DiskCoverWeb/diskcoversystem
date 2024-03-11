@@ -710,7 +710,7 @@ class detalle_estudianteC
 
      $image[] = array('url'=>$url,'x'=>10,'y'=>55,'width'=>50,'height'=>50);
      $url_qr = 
-     $qr =array('dato_qr'=>$datos[0]['CI_RUC'],'name_qr'=>$datos[0]['CI_RUC'],'x'=>5,'y'=>100,'width'=>60,'height'=>60);
+     $qr =array('dato_qr'=>'.','name_qr'=>$datos[0]['CI_RUC'],'x'=>5,'y'=>100,'width'=>60,'height'=>60);
 
     
 

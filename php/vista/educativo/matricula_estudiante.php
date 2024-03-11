@@ -931,6 +931,7 @@ function lista_cursos()
 	  });
 	}
 	function actualizar_representante(){
+        $('#myModal_espera').modal('show');
 
 		actualizar_est('menu2')
 		var parametro = {			
@@ -954,6 +955,9 @@ function lista_cursos()
 		  success: function(response){
 		  	if(response ==1)
 		  	{		  		
+
+                $('#myModal_espera').modal('hide');
+
 		  		console.log($('#file_pago').val())
 		  		 if($('#file_pago').val()!='')
 		  		 {
@@ -968,7 +972,7 @@ function lista_cursos()
 				 //text: 'the quantity entered is outside the order range!'
                });
 
-                $('#modal_espera').modal('hide');
+                $('#myModal_espera').modal('hide');
 		  	}
 		}
 	  });
