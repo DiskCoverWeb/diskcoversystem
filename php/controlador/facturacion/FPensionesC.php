@@ -2,6 +2,13 @@
 
 require_once(dirname(__DIR__, 2) . "/modelo/facturacion/FPensionesM.php");
 
+/*
+    AUTOR DE RUTINA	: Leonardo Súñiga
+    FECHA CREACION	: 01/03/2024
+    FECHA MODIFICACION: P/01/2024
+    DESCIPCIÓN		: Controlador del modal FPensiones, se encarga de la parte logica 
+*/
+
 $controlador = new FPensionesC();
 
 if (isset($_GET['DCInv'])) {
@@ -223,9 +230,16 @@ class FPensionesC
     private function Rango_Fechas_Proceso($numMeses, $fecha): DateTime
     {
         $fecha = new DateTime($fecha);
-        $fecha->add(new DateInterval("P" . $numMeses . "M"));
-        $fecha->format("Y-m-t");
-        return $fecha;
+        if($numMeses == 1){
+            $fecha->modify('last day of this month');
+            $fecha->format("Y-m-d");
+            return $fecha;
+        }else{
+            $fecha->add(new DateInterval("P" . $numMeses . "M"));
+            $fecha->modify('last day of this month');
+            $fecha->format("Y-m-d");
+            return $fecha;
+        }
     }
 
 

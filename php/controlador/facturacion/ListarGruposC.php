@@ -3,6 +3,7 @@
 require_once(dirname(__DIR__, 2) . "/modelo/facturacion/ListarGruposM.php");
 require_once(dirname(__DIR__, 3) . '/lib/fpdf/reporte_de.php');
 require(dirname(__DIR__, 3) . '/lib/fpdf/cabecera_pdf.php');
+require_once(dirname(__DIR__, 3) . '/lib/phpmailer/enviar_emails.php');
 
 /*
     AUTOR DE RUTINA	: Leonardo Súñiga
@@ -86,8 +87,35 @@ if (isset($_GET['Listar_Clientes_Email'])) {
 }
 
 if (isset($_GET['Command5_Click'])) {
-    $parametros = $_POST['parametros'];
-    echo json_encode($controlador->Command5_Click($parametros));
+    try {
+        $parametros = json_decode($_POST['parametros'], true);
+        if (isset($_FILES['archivoEmail']) && $_FILES['archivoEmail']['error'] == UPLOAD_ERR_OK) {
+            $archivo = $_FILES['archivoEmail'];
+            $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/";
+
+            if (!is_dir($carpetaDestino)) {
+                // Intentar crear la carpeta, el 0777 es el modo de permiso más permisivo
+                if (!mkdir($carpetaDestino, 0777, true)) { // true permite la creación de estructuras de directorios anidados
+                    throw new Exception("No se pudo crear la carpeta");
+                }
+            }
+
+            $nombreArchivoDestino = $carpetaDestino . basename($archivo['name']);
+            if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
+                $parametros['archivoEmail'] = $nombreArchivoDestino;
+                echo json_encode($controlador->tmp($parametros));
+            } else {
+                throw new Exception("No se pudo guardar el archivo");
+            }
+
+        } else {
+            echo json_encode($controlador->tmp($parametros));
+        }
+    } catch (Exception $e) {
+        echo json_encode(array("res" => 0, "mensaje" => "Error al enviar los correos", "error" => $e->getMessage()));
+    }
+
+
 }
 
 if (isset($_GET['GenerarFacturas_Click'])) {
@@ -123,6 +151,25 @@ if (isset($_GET['Excel'])) {
     echo json_encode($controlador->Excel($parametros));
 }
 
+if (isset($_GET['Update_Direccion'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Update_Direccion($parametros));
+}
+
+if (isset($_GET['Update_Grupo'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Update_Grupo($parametros));
+}
+
+if (isset($_GET['Desactivar_Grupo'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Desactivar_Grupo($parametros));
+}
+
+if (isset($_GET['Eliminar_Rubros_Facturacion'])) {
+    echo json_encode($controlador->Eliminar_Rubros_Facturacion());
+}
+
 
 
 class ListarGruposC
@@ -131,12 +178,65 @@ class ListarGruposC
     private $modelo;
     private $pdf;
 
+    private $email;
+
 
     public function __construct()
     {
         $this->modelo = new ListarGruposM();
         $this->pdf = new cabecera_pdf();
+        $this->email = new enviar_emails();
 
+    }
+
+    public function Retirar_Beneficiarios($parametros)
+    {
+        try {
+            $this->modelo->Retirar_Beneficiarios($parametros);
+            return array("res" => 1, "msj" => "Beneficiarios retirados correctamente");
+        } catch (Exception $e) {
+            return array("res" => 0, "msj" => "Error al retirar beneficiarios", "error" => $e->getMessage());
+        }
+    }
+
+    public function Eliminar_Rubros_Facturacion()
+    {
+        try {
+            $this->modelo->Eliminar_Rubros_Facturacion();
+            return array("res" => 1, "msj" => "Rubros eliminados correctamente");
+        } catch (Exception $e) {
+            return array("res" => 0, "msj" => "Error al eliminar rubros", "error" => $e->getMessage());
+        }
+    }
+
+    public function Desactivar_Grupo($parametros)
+    {
+        try {
+            $this->modelo->Desactivar_Grupo($parametros);
+            return array("res" => 1, "msj" => "Grupo desactivado correctamente");
+        } catch (Exception $e) {
+            return array("res" => 0, "msj" => "Error al desactivar", "error" => $e->getMessage());
+        }
+    }
+
+    public function Update_Grupo($parametros)
+    {
+        try {
+            $this->modelo->Update_Grupo($parametros);
+            return array("res" => 1, "msj" => "Grupo actualizado correctamente");
+        } catch (Exception $e) {
+            return array("res" => 0, "msj" => "Error al actualizar", "error" => $e->getMessage());
+        }
+    }
+
+    public function Update_Direccion($parametros)
+    {
+        try {
+            $this->modelo->Update_Direccion($parametros);
+            return array("res" => 1, "msj" => "Direccion actualizada correctamente");
+        } catch (Exception $e) {
+            return array("res" => 0, "msj" => "Error al actualizar", "error" => $e->getMessage());
+        }
     }
 
     public function Excel($parametros)
@@ -147,7 +247,7 @@ class ListarGruposC
                 $ruta = strtoupper(dirname(__DIR__, 3) . "/TEMP/Reporte_Excel" . date('Y-m-d_H-i-s') . ".XLSX");
                 Exportar_AdoDB_Excel($AdoQuery, $ruta);
                 return array('res' => 1, 'fileName' => basename($ruta));
-            }else{
+            } else {
                 throw new Exception("No se puede exportar a excel porque no hay datos");
             }
         } catch (Exception $e) {
@@ -294,22 +394,7 @@ class ListarGruposC
 
     public function Command5_Click($parametros)
     {
-        $Codigo1 = $parametros['Codigo1'];
-        $Codigo2 = $parametros['Codigo2'];
-        $MBFechaI = $parametros['MBFechaI'];
-        $MBFechaF = $parametros['MBFechaF'];
-        $SubTotal = 0;
-        $Diferencia = 0;
-        $TotalIngreso = 0;
-        $ListaCampos = '.';
-        $dataSP = Reporte_CxC_Cuotas_SP($Codigo1, $Codigo2, $MBFechaI, $MBFechaF, $SubTotal, $Diferencia, $TotalIngreso, $ListaCampos, $parametros['CheqResumen'], $parametros['CheqVenc']);
-        $SubTotal = $dataSP['SubTotal'];
-        $Diferencia = $dataSP['TotalAnticipo'];
-        $TotalIngreso = $dataSP['TotalCxC'];
-        $ListaDeCampos = $dataSP['ListaDeCampos'];
-        $ListaDeCampos = str_replace("Cliente,", "RCC.Cliente", $ListaDeCampos);
-        $ListaDeCampos = str_replace("GrupoNo,", "RCC.GrupoNo", $ListaDeCampos);
-        $AdoAux = $this->modelo->Command5_Click($parametros, $ListaDeCampos);
+        $AdoAux = $this->modelo->Command5_Click($parametros, $parametros['ListaDeCampos']);
         $TMailPara = "";
         $TMailAsunto = "";
         $TMailDestinatario = "";
@@ -326,12 +411,14 @@ class ListarGruposC
                 $Curso = $value['Detalle_Grupo'];
                 $ListaMails = Insertar_Mail($TMailPara, $value['EmailR']);
                 $ListaMails .= Insertar_Mail($TMailPara, $value['Email']);
+                $TMailPara = $value['Email'];
                 $Grupo_No = $value['GrupoNo'];
                 $TMailDestinatario = $NombreRepresentante;
 
                 if (strlen($parametros['TxtMensaje']) > 1) {
                     $TMailMensaje = $parametros['TxtMensaje'];
                 }
+
                 if ($parametros['CheqConDeuda'] <> 0) {
                     $CadDeuda = "";
                     $SubTotal = 0;
@@ -341,7 +428,7 @@ class ListarGruposC
                         $SubTotal = $SubTotal + $value["Total"];
                         $Cadena = number_format($value[$columnName], 2, ".", ",");
                         $Cadena = str_repeat(" ", 14 - strlen($Cadena)) . $Cadena;
-                        if (intval($value[$columnName]) > 0) {
+                        if (floatval($value[$columnName]) > 0) {
                             $CadDeuda .= $columnName . " USD " . $Cadena . "\n"; // Añade el nombre de la columna, el valor formateado y un salto de línea
                         }
                     }
@@ -355,6 +442,7 @@ class ListarGruposC
                         $TMailMensaje .= "tiene los siguientes pendientes por cancelar:\n" . $CadDeuda .
                             "SU CODIGO DE REFERENCIA ES: " . $Codigo_Banco . "\n" .
                             "Cualquier consulta comuniquese al teléfono: " . $_SESSION['INGRESO']['Telefono1'];
+                        //$this->email->enviar_email(false, $TMailPara, $TMailMensaje, $TMailAsunto, false);
                     }
                 }
                 $TMailTipoDeEnvio = "CE";
@@ -363,8 +451,95 @@ class ListarGruposC
         return array('TMailPara' => $TMailPara, 'TMailAsunto' => $TMailAsunto, 'TMailDestinatario' => $TMailDestinatario, 'TMailMensaje' => $TMailMensaje, 'TMailTipoDeEnvio' => $TMailTipoDeEnvio);
     }
 
+    public function tmp($parametros)
+    {
+        try {
+            $AdoAux = $this->modelo->Command5_Click($parametros, $parametros['ListaDeCampos']);
+            $TMailPara = "";
+            $TMailAsunto = "";
+            $TMailDestinatario = "";
+            $TMailMensaje = "";
+            if (strlen($parametros['TxtAsunto']) > 1) {
+                $TMailAsunto = $parametros['TxtAsunto'];
+            }
+            if (count($AdoAux) > 0) {
+                foreach ($AdoAux as $key => $value) {
+                    $NombreRepresentante = $value['Representante'];
+                    $NombreCli = $value['Cliente'];
+                    $Codigo_Banco = $value['CI_RUC'];
+                    $Curso = $value['Detalle_Grupo'];
+                    $ListaMails = Insertar_Mail($TMailPara, $value['EmailR']);
+                    $ListaMails .= Insertar_Mail($TMailPara, $value['Email']);
+                    $TMailPara = $value['Email'];
+                    $Grupo_No = $value['GrupoNo'];
+                    $TMailDestinatario = $NombreRepresentante;
+
+                    if (strlen($parametros['TxtMensaje']) > 1) {
+                        $TMailMensaje = $parametros['TxtMensaje'];
+                    }
+
+                    if ($parametros['CheqConDeuda'] <> 0) {
+                        $CadDeuda = "";
+                        $SubTotal = 0;
+                        $columnNames = array_keys($value); // Obtener los nombres de las columnas del array asociativo
+                        for ($J = 2; $J < count($columnNames) - 7; $J++) {
+                            $columnName = $columnNames[$J]; // El nombre de la columna en la posición J
+                            $SubTotal = $SubTotal + $value["Total"];
+                            $Cadena = number_format($value[$columnName], 2, ".", ",");
+                            $Cadena = str_repeat(" ", 14 - strlen($Cadena)) . $Cadena;
+                            if (floatval($value[$columnName]) > 0) {
+                                $CadDeuda .= $columnName . " USD " . $Cadena . "\n"; // Añade el nombre de la columna, el valor formateado y un salto de línea
+                            }
+                        }
+                        if (strlen($CadDeuda) > 1) {
+                            $TMailMensaje .= "\n";
+                            if (strlen($NombreRepresentante) > 1) {
+                                $TMailMensaje .= "Estimado(a): " . $NombreRepresentante . ", de su representado(a) " . $NombreCli . " del " . $Curso . ", ";
+                            } else {
+                                $TMailMensaje .= "Estimado(a), su representado(a) " . $NombreCli . ", Ubicacion: " . $Grupo_No . ", ";
+                            }
+                            $TMailMensaje .= "tiene los siguientes pendientes por cancelar:\n" . $CadDeuda .
+                                "SU CODIGO DE REFERENCIA ES: " . $Codigo_Banco . "\n" .
+                                "Cualquier consulta comuniquese al teléfono: " . $_SESSION['INGRESO']['Telefono1'];
+                            if (isset($parametros['archivoEmail'])) {
+                                $this->email->enviar_email(array(baseName($parametros['archivoEmail'])), $TMailPara, $TMailMensaje, $TMailAsunto, false);
+                                return array('res' => 1, 'mensaje' => 'Correo enviado correctamente');
+                            } else {
+                                $this->email->enviar_email(false, $TMailPara, $TMailMensaje, $TMailAsunto, false);
+                                return array('res' => 1, 'mensaje' => 'Correo enviado correctamente');
+                            }
+                        } else {
+                            throw new Exception("No se encontraron deudas para enviar");
+                        }
+                    }else{
+                        return array('res' => 1, 'mensaje' => 'Datos actualizados correctamente');
+                    }
+                }
+            } else {
+                throw new Exception("No se puede enviar correos porque no hay datos");
+            }
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
     public function Listar_Clientes_Email($parametros)
     {
+        $Codigo1 = $parametros['Codigo1'];
+        $Codigo2 = $parametros['Codigo2'];
+        $MBFechaI = $parametros['MBFechaI'];
+        $MBFechaF = $parametros['MBFechaF'];
+        $SubTotal = 0;
+        $Diferencia = 0;
+        $TotalIngreso = 0;
+        $ListaCampos = '.';
+        $dataSP = Reporte_CxC_Cuotas_SP($Codigo1, $Codigo2, $MBFechaI, $MBFechaF, $SubTotal, $Diferencia, $TotalIngreso, $ListaCampos, $parametros['CheqResumen'], $parametros['CheqVenc']);
+        $SubTotal = $dataSP['SubTotal'];
+        $Diferencia = $dataSP['TotalAnticipo'];
+        $TotalIngreso = $dataSP['TotalCxC'];
+        $ListaDeCampos = $dataSP['ListaDeCampos'];
+        $ListaDeCampos = str_replace("Cliente,", "RCC.Cliente", $ListaDeCampos);
+        $ListaDeCampos = str_replace("GrupoNo,", "RCC.GrupoNo", $ListaDeCampos);
         $tmp = $this->modelo->Listar_Clientes_Grupo($parametros);
         $AdoQuery = $tmp['AdoQuery'];
         $LstClientes = [];
@@ -384,7 +559,7 @@ class ListarGruposC
                 }
             }
         }
-        return array('LstClientes' => $LstClientes, 'numRegistros' => count($LstClientes), 'AdoQuery' => $AdoQuery);
+        return array('LstClientes' => $LstClientes, 'numRegistros' => count($LstClientes), 'AdoQuery' => $AdoQuery, 'ListaDeCampos' => $ListaDeCampos);
     }
 
     public function Resumen_Pensiones_Mes($parametros)
