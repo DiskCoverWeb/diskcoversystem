@@ -208,9 +208,16 @@ class niveles_seguriM
 	  	   return $r;
 	    }
 	// }
-
-
 	}
+
+	function guardar_acceso_empresa_mysql($modulos,$entidad,$empresas,$usuario)
+	{	
+	    
+	  	$sql = "INSERT INTO acceso_empresas (ID_Empresa,CI_NIC,Modulo,item,Pagina) VALUES ('".$entidad."','".$usuario."','".$modulos."','".$empresas."','.')";
+	  		$r = $this->db->String_Sql($sql,'MYSQL');
+	  	   return $r;
+	}
+
 	function update_acceso_usuario($niveles,$usuario,$clave,$entidad,$CI_NIC,$email,$serie)
 	{
 		// print_r($niveles);die();
@@ -937,6 +944,12 @@ class niveles_seguriM
 	{
 		$sql = "DELETE FROM acceso_empresas WHERE ID_Empresa='".$enti."' AND CI_NIC='".$usu."' AND Modulo = '".$mod."' AND Item='".$item."' AND Pagina = '".$pag."'";
 		return $this->db->String_Sql($sql,'MYSQL');
+	}
+
+
+	function comprobar_conexion($host,$usu,$pass,$base,$Puerto)
+	{
+		return $this->db->modulos_sql_server($host,$usu,$pass,$base,$Puerto);
 	}
 
 	

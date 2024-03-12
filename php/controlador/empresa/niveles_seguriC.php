@@ -244,7 +244,181 @@ class niveles_seguriC
 		$data = $this->modelo->datos_usuario($entidad,$usuario);
 		return $data;
 	}
+
 	function guardar_datos_modulo($parametros)
+	{
+
+		// print_r($parametros);die();
+		$modulos = $parametros['modulos'];
+		$empresas = $parametros['empresas'];
+		$empresas = array_unique($empresas);
+		$modulos_sqlserver = array();
+		$modulos_filtrados = array_filter($modulos, function($modulo) use ($empresas) {
+		    return in_array($modulo[1], $empresas);
+		});
+
+		$mensaje = '';
+		$respuesta = 1;
+		$server_estado = 1;
+
+		foreach ($modulos_filtrados as $key => $value) 
+		{
+			// $value[0] =>modulo  $value[1] => item empresa $value[2] ==> si esta activo o inactivo
+
+			if($value[2]=='true')
+			{
+				// ingresa acceso				
+				$r = $this->modelo->guardar_acceso_empresa($value[0],$parametros['entidad'],$value[1],$parametros['CI_usuario']);
+				array_push($modulos_sqlserver, $value[0]);
+			}else
+			{
+				$this->modelo->delete_modulos_mysql($parametros['entidad'],$value[1],$parametros['CI_usuario'],$value[0]);
+			}
+		}
+
+		$niveles = array('1'=>$parametros['n1'],'2'=>$parametros['n2'],'3'=>$parametros['n3'],'4'=>$parametros['n4'],'5'=>$parametros['n5'],'6'=>$parametros['n6'],'7'=>$parametros['n7'],'super'=>$parametros['super']);
+
+		// fin de ingreso en MYSQL
+
+		// --------------------------ingreso sql server-----------------------------------
+		foreach ($empresas as $key => $value) 
+		{
+			// validamos si tiene datos de conexion
+			$empresa = $value;
+			$datos = $this->modelo->empresas_datos($parametros['entidad'],$value);
+			if(count($datos)>0)
+			{
+				// valida que datos de conexion no esten en vacio o con punto
+				if($datos[0]['host']!='' && $datos[0]['usu']!='' && $datos[0]['pass']!='' && $datos[0]['base']!='' && $datos[0]['Puerto']!='' && $datos[0]['host']!='.' && $datos[0]['usu']!='.' && $datos[0]['pass']!='.' && $datos[0]['base']!='.' && $datos[0]['Puerto']!='.')
+					{
+						$resp = $this->modelo->comprobar_conexion($datos[0]['host'],$datos[0]['usu'],$datos[0]['pass'],$datos[0]['base'],$datos[0]['Puerto']);
+						if($resp!='-1')
+						{
+							// entra a hacer todo el proceso
+							//busca en tabla  accesos de sqlserver para actualizar o crear
+							$respuesta = $this->modelo->existe_en_SQLSERVER($parametros['entidad'],$empresa,$parametros['CI_usuario']);
+
+							if($respuesta['resp']!=-1)
+							{
+							
+									switch ($respuesta['resp']) {
+										case '1':
+											// si encuentra datos actualiza en sql server
+											$res = $this->modelo->actualizar_en_sql_tercero($parametros['entidad'],$empresa,$parametros['CI_usuario'],$parametros);
+											if($res==-1)
+											{
+												$mensaje.='No se puedo actualizar en SQLServer: items'.$empresa.' Entidad:'.$parametros['entidad'];
+												$resp = 0;
+											}else if($res==-2)
+											{
+												$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+												$resp = 0;
+											}	
+											 $this->modelo->update_acceso_usuario($niveles,$parametros['usuario'],$parametros['pass'],$parametros['entidad'],$parametros['CI_usuario'],$parametros['email'],$parametros['serie']);
+											break;
+										case '-2':
+											//cuando tiene credenciales validas pero el usuario no existe
+											$res = $this->modelo->insertat_en_sql_terceros($parametros['entidad'],$empresa,$parametros['CI_usuario'],$parametros);
+											if($res==-1)
+											{
+												$mensaje.='No se puedo Insertar en SQLServer: items'.$empresa.' Entidad:'.$parametros['entidad'];
+												$resp = 0;
+											}else if($res==-2)
+											{
+												$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+												$resp = 0;
+											}	
+											break;				
+										default:
+										    // cuando las conexiones del sqlserver o base de datos no son las correctas
+											$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+											$resp = 0;
+											break;
+									}
+									//busca en clientes para actualizar o insertar
+									$respuesta = $this->modelo->existe_en_SQLSERVER_cliente($parametros['entidad'],$empresa,$parametros['CI_usuario']);
+
+
+									switch ($respuesta['resp']) {
+										case '1':
+											// si encuentra datos actualiza en sql server
+											$res = $this->modelo->actualizar_cliente_en_sql_tercero($parametros['entidad'],$empresa,$parametros['CI_usuario'],$parametros);
+											if($res==-1)
+											{
+												$mensaje.='No se puedo actualizar Cliente en SQLServer: items'.$empresa.' Entidad:'.$parametros['entidad'];
+												$resp = 0;
+											}else if($res==-2)
+											{
+												$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+												$resp = 0;
+											}	
+											break;
+										case '-2':
+											//cuando tiene credenciales validas pero el usuario no existe
+											$res = $this->modelo->insertar_cliente_en_sql_terceros($parametros['entidad'],$empresa,$parametros['CI_usuario'],$parametros);
+											if($res==-1)
+											{
+												$mensaje.='No se puedo Insertar Cliente en SQLServer: items'.$empresa.' Entidad:'.$parametros['entidad'];
+												$resp = 0;
+											}else if($res==-2)
+											{
+												$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+												$resp = 0;
+											}	
+											break;				
+										default:
+										    // cuando las conexiones del sqlserver o base de datos no son las correctas
+											$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+											$resp = 0;
+											break;
+									}
+
+									//verifica si esta en acceso_empresa
+									foreach ($modulos_sqlserver as $modulo) 
+									{
+										$respuesta = $this->modelo->existe_en_SQLSERVER_acceso_empresa($parametros['entidad'],$empresa,$parametros['CI_usuario'],$modulo);
+										// print_r($respuesta);die();
+										switch ($respuesta['resp']) {
+											case '1':
+												// verifica si esta en mysql
+											    $this->modelo->guardar_acceso_empresa($modulo,$parametros['entidad'],$empresa,$parametros['CI_usuario']);
+												break;
+											case '-2':
+												//cuando tiene credenciales validas pero el usuario no existe
+												$res = $this->modelo->insertar_acceso_en_sql_terceros($parametros['entidad'],generaCeros($empresa,3),$parametros['CI_usuario'],generaCeros($modulo,2));
+												if($res==-1)
+												{
+													$mensaje.='No se puedo Insertar Cliente en SQLServer: items'.$empresa.' Entidad:'.$parametros['entidad'];
+													$resp = 0;
+												}else if($res==-2)
+												{
+													$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+													$resp = 0;
+												}
+												$this->modelo->guardar_acceso_empresa($modulo,$parametros['entidad'],$empresa,$parametros['CI_usuario']);	
+												break;				
+											default:
+											    // cuando las conexiones del sqlserver o base de datos no son las correctas
+												$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+												$resp = 0;
+												break;
+										}
+									}
+							}else
+							{
+								$this->modelo->guardar_acceso_empresa($modulo,$parametros['entidad'],$empresa,$parametros['CI_usuario']);
+								$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
+							}
+						}
+					}
+			}
+		}
+		print_r($mensaje.'-'.$resp);die();
+		 $r =  array('estado_proceso'=>$respuesta,'mensaje'=>$mensaje);	
+		 return $r;
+		
+	}
+	function guardar_datos_modulo2($parametros)
 	{
 
 		 // print_r($parametros);die();
@@ -267,8 +441,7 @@ class niveles_seguriC
 			$modulo = $value['Modulo'];
 			$empresa = $value['Item'];
 			array_push($empresas_eli,$empresa);			
-		}
-
+			}
 		}
 		$mensaje = '';
 		$resp = 1;
@@ -626,7 +799,7 @@ class niveles_seguriC
 							
 				$tbl2.='<td class="text-center" style="border: solid 1px; width: 50px;">
 								'.$value2['aplicacion'].'</br>
-				            <input type="checkbox" name="rbl_'.$value2['modulo'].'_'.$value1['id'].'" id="rbl_'.$value2['modulo'].'_'.$value1['id'].'" title="'.$value2['aplicacion'].'" onclick="marcar_acceso1(\''.$value1['id'].'\',\''.$value2['modulo'].'\')" '.$server.' >
+				            <input type="checkbox" name="rbl_'.$value2['modulo'].'_'.$value1['id'].'" id="rbl_'.$value2['modulo'].'_'.$value1['id'].'" title="'.$value2['aplicacion'].'" onclick="listar_empresa_modificada(\''.$value1['id'].'\')" '.$server.' >
 				        </td>';
 			}
 			$tbl2.='</tr></table></div></div></div></div>';	

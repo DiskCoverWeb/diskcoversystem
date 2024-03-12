@@ -1,5 +1,5 @@
 <?php
-require_once('QRCode/qrcode.class.php');
+// require_once('QRCode/qrcode.class.php');
 
 if(!class_exists('PDF_MC_Table'))
 {
