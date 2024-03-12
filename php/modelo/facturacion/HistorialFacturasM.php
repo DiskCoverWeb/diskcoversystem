@@ -201,7 +201,7 @@ class HistorialFacturasM
         //$DGQueryVisible = true;
     }
 
-    function Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $Co)
+    function Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $Co, $tipoConsulta)
     {
         $sSQL = "SELECT C.Cliente, C.Email, C.Email2, C.CI_RUC, TS.Cta, TS.Fecha, TS.TP, TS.Numero, TS.Creditos As Abono, Co.Concepto 
                 FROM Trans_SubCtas AS TS, Comprobantes AS Co, Clientes AS C 
@@ -211,7 +211,7 @@ class HistorialFacturasM
                 AND TS.TP = '" . $Co['TP'] . "' 
                 AND TS.Numero = '" . $Co['Numero'] . "'
                 AND TS.T <> 'A' 
-                " . Tipo_De_Consulta() . "
+                " . $tipoConsulta . "
                 AND TS.Item = Co.Item 
                 AND TS.Periodo = Co.Periodo 
                 AND TS.TP = Co.TP 
@@ -219,7 +219,12 @@ class HistorialFacturasM
                 AND TS.Codigo = C.Codigo 
                 ORDER BY C.Cliente, TS.Cta, TS.Fecha, TS.TP, TS.Numero";
         //Select_Adodc AdoFacturas, sSQL
-        return $this->db->datos($sSQL);
+        $res = $this->db->datos($sSQL);
+        $num_filas = count($res);
+
+        $datos = grilla_generica_new($sSQL, 'TRANS_SUBCTAS', '', '', false, false, false, 1, 1, 1, 100);
+        return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
+
     }
 
     function Abonos_Anticipados($FechaIni, $FechaFin)
@@ -775,12 +780,12 @@ class HistorialFacturasM
           AND F.CodigoC = TA.CodigoC 
           ORDER BY C.Grupo,C.Cliente,F.Serie,F.Factura ";
         //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
-        //Opcion = 15
+        $Opcion = 15;
         $res = $this->db->datos($sSQL);
         $num_filas = count($res);
 
         $datos = grilla_generica_new($sSQL, 'Clientes', '', '', false, false, false, 1, 1, 1, 100);
-        return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
+        return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res, 'Opcion' => $Opcion);
     }
 
     function Ventas_Resumidas_x_Vendedor($FechaIni, $FechaFin)
@@ -825,11 +830,12 @@ class HistorialFacturasM
          ORDER BY A.Cod_Ejec, A.Nombre_Completo DESC, C.Grupo, CC.Cuenta";
 
         //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True;
+        $Opcion = 17;
         $res = $this->db->datos($sSQL);
         $num_filas = count($res);
 
         $datos = grilla_generica_new($sSQL, 'Clientes', '', '', false, false, false, 1, 1, 1, 100);
-        return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
+        return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res, 'Opcion' => $Opcion);
     }
 
     function CxC_Tiempo_Credito($Mifecha, $FechaIni, $FechaFin, $FA)
@@ -903,11 +909,12 @@ class HistorialFacturasM
 
         $sSQL = $sSQLV . "UNION " . $sSQLT . "ORDER BY A.Nombre_Completo, Clientes ";
         //Select_Adodc_Grid($DGQuery, $AdoQuery, $sSQL);
+        $Opcion = 18;
         $res = $this->db->datos($sSQL);
         $num_filas = count($res);
 
         $datos = grilla_generica_new($sSQL, 'FACTURAS', '', '', false, false, false, 1, 1, 1, 100);
-        return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
+        return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res, 'Opcion' => $Opcion);
     }
 
     function Cheques_Protestados($TipoConsulta, $FechaIni, $FechaFin)
@@ -1269,11 +1276,12 @@ class HistorialFacturasM
               AND RCC.CodigoC = C.Codigo 
               ORDER BY C.Cliente, RCC.TC, RCC.Serie, RCC.Factura, RCC.Anio, RCC.Mes, RCC.ID ";
 
+        $Opcion = 19;
         $res = $this->db->datos($sSQL);
         $num_filas = count($res);
 
         $datos = grilla_generica_new($sSQL, 'CLIENTES', '', 'REPORTE CARTERA CLIENTES', false, false, false, 1, 1, 1, 100);
-        return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
+        return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res, 'Opcion' => $Opcion);
     }
 
     function Buscar_Malla()
@@ -1365,13 +1373,13 @@ class HistorialFacturasM
     {
         $CheqAbonos = $parametros['CheqAbonos'];
         $DCCxC = $parametros['DCCxC'];
-        $DocDesde = $parametros['TxtDocDesde'] ;
+        $DocDesde = $parametros['TxtDocDesde'];
         $DocHasta = $parametros['TxtDocHasta'];
 
         $NumEmpresa = $_SESSION['INGRESO']['item'];
         $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
 
-        if ($CheqAbonos== 0) {
+        if ($CheqAbonos == 0) {
             $Cta_Aux_Mail = SinEspaciosIzq($DCCxC);
 
             $sSQL = "UPDATE Facturas 
@@ -1418,7 +1426,8 @@ class HistorialFacturasM
             ORDER BY F.Factura ";
 
         $AdoQuery = $this->db->datos($sSQL);
-        return array('AdoQuery' => $AdoQuery, 'response'=> 'mail1', 'tipoEnvio'=> $TipoEnvio);
+        print_r($sSQL);
+        return array('AdoQuery' => $AdoQuery, 'response' => 'mail1', 'tipoEnvio' => $TipoEnvio);
     }
 
     function Por_Buses($Patron_Busqueda)

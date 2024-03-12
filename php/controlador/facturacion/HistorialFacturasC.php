@@ -77,17 +77,18 @@ class HistorialFacturasC
 
     function Historico_Facturas($parametros)
     {
-        $Opcion = 1;
+        $Opcion = $parametros['Opcion'];
+        
         $FechaIni = BuscarFecha($parametros['MBFechaI']);
         $FechaFin = BuscarFecha($parametros['MBFechaF']);
-
+        
         $PorCxC = false;
 
         if ($parametros['CheqCxC'] == 1) {
             $PorCxC = true;
         }
 
-        $tipoConsulta = $this->TipoDeConsulta($parametros, $Opcion);
+        $tipoConsulta = $this->Tipo_De_Consulta($parametros);
         $sSQL = $this->modelo->Historico_Facturas($tipoConsulta, $FechaFin);
         $Totales = $this->Totales_CxC_Abonos($sSQL['AdoQuery'], $Opcion);
 
@@ -102,14 +103,15 @@ class HistorialFacturasC
 
     function Ventas_Productos($parametros, $FechaIni, $FechaFin)
     {
-        $Opcion = 8;
+        //$Opcion = 8;
+        $Opcion = $parametros['Opcion'];
 
         $Con_Costeo = $parametros['Con_Costeo'];
         $Si_No = $parametros['Si_No'];
         $CodigoInv = $parametros['CodigoInv'];
 
-        $tipoConsulta = $this->TipoDeConsulta($parametros, $Opcion, true);
-        $tipoConsulta2 = $this->TipoDeConsulta($parametros, $Opcion);
+        $tipoConsulta = $this->Tipo_De_Consulta($parametros, true);
+        $tipoConsulta2 = $this->Tipo_De_Consulta($parametros);
 
         $sSQL = $this->modelo->Ventas_Productos($FechaIni, $FechaFin, $Si_No, $Con_Costeo, $CodigoInv, $tipoConsulta, $tipoConsulta2);
 
@@ -176,7 +178,8 @@ class HistorialFacturasC
         $Total = 0;
         $Abono = 0;
         $res = array();
-        $Opcion = 0;
+        //$Opcion = 0;
+        $Opcion = $parametros['Opcion'];
 
         switch ($idBtn) {
             case "Facturas":
@@ -204,7 +207,7 @@ class HistorialFacturasC
                 $label_saldo = $res['label_saldo'];
                 break;
             case "Por_Buses":
-                $Opcion = 12;
+                //$Opcion = 12;
                 if ($CheqCxC == 1)
                     $PorCxC = true;
                 $res = $this->modelo->Por_Buses($parametros['DCCliente']);
@@ -239,7 +242,7 @@ class HistorialFacturasC
                         $Abono += $fila["Abonos"];
                     }
                 }
-                $Opcion = 19;
+                $Opcion = $res['Opcion'];
                 break;
             case "Listados_Medidor":
                 break;
@@ -335,7 +338,7 @@ class HistorialFacturasC
         $VetPEN = False;
         $TPEN = 0;
 
-        $Opcion = 11;
+        $Opcion = $parametros['Opcion'];
 
         for ($JE = $AnioIni; $JE <= $AnioFin; $JE++) {
             $TAnios[$JE] = 0;
@@ -435,7 +438,7 @@ class HistorialFacturasC
         }
         $sSQL .= "AND F.Item = '" . $NumEmpresa . "' ";
         $sSQL .= "AND F.Periodo = '" . $Periodo_Contable . "' ";
-        $sSQL .= $this->TipoDeConsulta($parametros, $Opcion, null, null, true);
+        $sSQL .= $this->Tipo_De_Consulta($parametros, null, null, true);
         $sSQL .= "AND F.CodigoC = C.Codigo ";
         $sSQL .= "ORDER BY C.Cliente, F.Fecha ";
 
@@ -707,6 +710,8 @@ class HistorialFacturasC
         $AdoQuery = $DGQuery;
 
         $label_saldo = number_format($Valor_Total, 2, '.', ',');
+        
+        $Opcion = 11;
 
         return array(
             'DGQuery' => $DGQuery['DGQuery'],
@@ -775,7 +780,9 @@ class HistorialFacturasC
 
     function Abonos_Facturas($Ret_NC, $parametros)
     {
-        $Opcion = 6;
+        //$Opcion = 6;
+        $Opcion = $parametros['Opcion'];
+
         $MBFechaI = $parametros['MBFechaI'];
         $MBFechaF = $parametros['MBFechaF'];
         $CheqCxC = $parametros['CheqCxC'];
@@ -784,7 +791,7 @@ class HistorialFacturasC
             $PorCxC = true;
         }
 
-        $tipoConsulta = $this->TipoDeConsulta($parametros, $Opcion, true);
+        $tipoConsulta = $this->Tipo_De_Consulta($parametros, true);
 
         $sSQL = $this->modelo->Abonos_Facturas($tipoConsulta, $MBFechaI, $MBFechaF, $Ret_NC);
 
@@ -807,13 +814,15 @@ class HistorialFacturasC
     function Cheques_Protestados($parametros)
     {
         $Total = 0;
-        $Opcion = 7;
-
+        
         $MBFechaI = $parametros['MBFechaI'];
         $MBFechaF = $parametros['MBFechaF'];
 
-        $tipoConsulta = $this->TipoDeConsulta($parametros, $Opcion);
+        $tipoConsulta = $this->Tipo_De_Consulta($parametros);
         $sSQL = $this->modelo->Cheques_Protestados($tipoConsulta, $MBFechaI, $MBFechaF);
+
+        $Opcion = 7;
+        //$Opcion = $parametros['Opcion'];
         $totales = $this->Totales_CxC_Abonos($sSQL['AdoQuery'], $Opcion);
 
         return array(
@@ -892,7 +901,7 @@ class HistorialFacturasC
 
 
 
-    function TipoDeConsulta($parametros, $Opcion, $val = false, $val2 = false, $val3 = false)
+    /*function Tipo_De_Consulta($parametros, $Opcion, $val = false, $val2 = false, $val3 = false)
     {
         $paramAdd = array(
             'ListCliente' => $parametros['ListCliente'],
@@ -910,7 +919,7 @@ class HistorialFacturasC
         );
 
         return $this->Tipo_De_Consulta($paramAdd, $val, $val2, $val3);
-    }
+    }*/
 
     function Form_Activate()
     {
@@ -1014,7 +1023,8 @@ class HistorialFacturasC
             $FA['Serie'] = G_NINGUNO;
             $FA['Factura'] = 0;
         }
-        $Opcion = 0;
+        //$Opcion = 0;
+        $Opcion = $parametros['Opcion'];
         $label_facturado = 0;
         $label_abonado = 0;
         $label_saldo = 0;
@@ -1027,7 +1037,7 @@ class HistorialFacturasC
                 $Opcion = $res['Opcion'];
                 break;
             case "Resumen_Prod_Meses":
-                $Opcion = 16;
+                //$Opcion = 16;
                 $PorCantidad = $parametros['PorCantidad'];
                 $res = $this->modelo->Resumen_Prod_Meses($FechaIni, $FechaFin, $PorCantidad, $MBFechaF);
                 $Total = 0;
@@ -1046,9 +1056,9 @@ class HistorialFacturasC
                 $Opcion = $res['Opcion'];
                 break;
             case "Resumen_Ventas_Vendedor":
-                $Opcion = 15;
-                $tipoConsulta = $this->TipoDeConsulta($parametros, $Opcion);
+                $tipoConsulta = $this->Tipo_De_Consulta($parametros);
                 $res = $this->modelo->Resumen_Ventas_Vendedor($FechaIni, $FechaFin, $tipoConsulta);
+                $Opcion = $res['Opcion'];
                 break;
             case "Ventas_x_Cli":
                 $res = $this->Ventas_Cliente($parametros, $FechaIni, $FechaFin);
@@ -1058,7 +1068,7 @@ class HistorialFacturasC
                 $Opcion = $res['Opcion'];
                 break;
             case "Ventas_Cli_x_Mes":
-                $res = $this->Ventas_Clientes_Por_Meses($FechaIni, $FechaFin, $parametros['FA'], $MBFechaF);
+                $res = $this->Ventas_Clientes_Por_Meses($parametros, $FechaIni, $FechaFin, $parametros['FA'], $MBFechaF);
                 $label_facturado = $res['label_facturado'];
                 $label_abonado = $res['label_abonado'];
                 $label_saldo = $res['label_saldo'];
@@ -1080,7 +1090,7 @@ class HistorialFacturasC
                     }
                 }
                 $label_facturado = number_format($Total, 2, ',', '.');
-                $Opcion = 17;
+                $Opcion = $res['Opcion'];
                 break;
             case "SMAbonos_Anticipados":
                 $res = $this->SMAbonos_Anticipados($FechaIni, $FechaFin, $parametros);
@@ -1090,14 +1100,14 @@ class HistorialFacturasC
                 $Opcion = $res['Opcion'];
                 break;
             case "Abonos_Ant":
-                $Opcion = 6;
+                //$Opcion = 6;
                 $res = $this->modelo->Abonos_Anticipados($FechaIni, $FechaFin);
                 $label_facturado = "0.00";
                 $label_abonado = "0.00";
                 $label_saldo = "0.00";
                 break;
             case "Abonos_Erroneos":
-                $Opcion = 6;
+                //$Opcion = 6;
                 $PorCxC = false;
                 $res = $this->modelo->Abonos_Erroneos($FechaIni, $FechaFin);
                 $label_facturado = "0.00";
@@ -1161,7 +1171,7 @@ class HistorialFacturasC
                 }
                 $label_facturado = number_format($Total, 2, ',', '.');
                 $label_saldo = number_format($Saldo, 2, ',', '.');
-                $Opcion = 18;
+                $Opcion = $res['Opcion'];
                 break;
             case "Tipo_Pago_Cliente":
                 $res = $this->modelo->Tipo_Pago_Cliente();
@@ -1177,17 +1187,17 @@ class HistorialFacturasC
                 $res = $this->modelo->Ventas_x_Excel($FechaIni, $FechaFin);
                 break;
             case "Reporte_Catastro":
-                $tipoConsulta = $this->TipoDeConsulta($parametros, 0);
+                $tipoConsulta = $this->Tipo_De_Consulta($parametros);
                 return $this->Catastro_Registro_Datos_Clientes($FA, $MBFechaI, $MBFechaF, $tipoConsulta);
             case "Enviar_FA_Email":
-                $tipoConsulta = $this->TipoDeConsulta($parametros, 0, true);
+                $tipoConsulta = $this->Tipo_De_Consulta($parametros, true);
                 return $this->modelo->Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, "FA", $tipoConsulta );
 
             case "Enviar_RE_Email":
                 $this->modelo->Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, "FA" );
                 break;
             case "Recibos_Anticipados":
-                Recibo_Abonos_Anticipados();
+                $res = $this->Recibo_Abonos_Anticipados($FechaIni,$FechaFin,$parametros);
                 break;
             case "Deuda_x_Mail":
                 Actualizar_Abonos_Facturas_SP($FA);
@@ -1204,6 +1214,49 @@ class HistorialFacturasC
             'num_filas' => $res['num_filas'],
             'idBtnMenu' => $idBtnMenu,
             'Opcion' => $Opcion,
+        );
+    }
+
+    function Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $parametros){
+        $tipoConsulta = $this->Tipo_De_Consulta($parametros);
+        $AdoFacturas = $this->modelo->Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $parametros['Co'], $tipoConsulta);
+        if (count($AdoFacturas) > 0) {
+            foreach ($AdoFacturas as $fila) {
+                $Co = $parametros['Co'];
+    
+                $Co["Beneficiario"] = $fila["Cliente"];
+                $Co["RUC_CI"] = $fila["CI_RUC"];
+                $Co["Concepto"] = $fila["Concepto"];
+                $Co["Efectivo"] = $fila["Abono"];
+                $Co["Email"] = "";
+                if (strlen($fila["Email"]) > 3) {
+                    $Co["Email"] = $fila["Email"];
+                }
+                if ($Co["Email"] == "" && strlen($fila["Email2"]) > 3) {
+                    $Co["Email"] = $fila["Email2"];
+                } elseif (strlen($fila["Email2"]) > 3 && $fila["Email"] != $fila["Email2"]) {
+                    $Co["Email"] = $Co["Email"] . ";" . $fila["Email2"];
+                }
+        
+                //Imprimir_Recibo_Anticipos($Co, true);
+        
+                if (strlen($Co["Email"]) > 3) {
+                    if ($parametros['SiEnviar']) {
+                        /* $TMail->para = $Co["Email"];
+                        $TMail->Asunto = "RECIBO ABONO ANTICIPADO No. " . date("Y", strtotime($fila["Fecha"])) . "-" . $Co["TP"] . "-" . sprintf("%09d", $Co["Numero"]);
+                        $TMail->Adjunto = $RutaDocumentoPDF;
+                        $TMail->Mensaje = "Beneficiario: " . $Co["Beneficiario"] . "\n" .
+                                            "Fecha del Abono: " . $fila["Fecha"] . "\n" .
+                                            "Abono Anticipado por USD " . number_format($Co["Efectivo"], 2);
+                        */
+                    }
+                }
+            }
+        }  
+        return array(            
+            'tbl' => $AdoFacturas['DGQuery'],
+            'AdoQuery' => $AdoFacturas['AdoQuery'],
+            'num_filas' => $AdoFacturas['num_filas'],
         );
     }
 
@@ -1409,7 +1462,7 @@ class HistorialFacturasC
         Actualizar_Abonos_Facturas_SP($FA);
         $FechaIni = BuscarFecha($MBFechaI);
         $FechaFin = BuscarFecha($MBFechaF);
-        $tipoConsulta = $this->TipoDeConsulta($parametros, 0);
+        $tipoConsulta = $this->Tipo_De_Consulta($parametros);
         $TipoFactura = $parametros['TipoFactura'];
         $sSQL = $this->modelo->Tipo_Consulta_CxC($Tipo, $tipoConsulta, $FechaIni, $FechaFin, $Actualiza_Buses, $TipoFactura, $MBFechaF);
 
@@ -1442,7 +1495,9 @@ class HistorialFacturasC
         $CheqAbonos = $parametros['CheqAbonos'];
         $DCCxC = $parametros['DCCxC'];
 
-        $Opcion = 21;
+        //$Opcion = 21;
+        $Opcion = $parametros['Opcion'];
+
         $sSQL = $this->modelo->Contra_Cta_Abonos($FechaIni, $FechaFin, $CheqAbonos, $DCCxC);
         $Total = 0;
         $Abono = 0;
@@ -1470,9 +1525,11 @@ class HistorialFacturasC
     }
     function SMAbonos_Anticipados($FechaIni, $FechaFin, $parametros)
     {
-        $Opcion = 20;
+        //$Opcion = 20;
+        $Opcion = $parametros['Opcion'];
+
         $SubCtaGen = Leer_Seteos_Ctas("Cta_Anticipos_Clientes");
-        $tipoConsulta = $this->TipoDeConsulta($parametros, $Opcion);
+        $tipoConsulta = $this->Tipo_De_Consulta($parametros);
         $sSQL = $this->modelo->SMAbonos_Anticipados($FechaIni, $FechaFin, $tipoConsulta);
         $Total = 0;
         $Abono = 0;
@@ -1500,9 +1557,11 @@ class HistorialFacturasC
     }
 
 
-    function Ventas_Clientes_Por_Meses($FechaIni, $FechaFin, $FA, $MBFechaF)
+    function Ventas_Clientes_Por_Meses($parametros, $FechaIni, $FechaFin, $FA, $MBFechaF)
     {
-        $Opcion = 14;
+        //$Opcion = 14;
+        $Opcion = $parametros['Opcion'];
+
         $sSQL = $this->modelo->Ventas_Clientes_Por_Meses($FechaIni, $FechaFin, $FA, $MBFechaF);
         $Total = 0;
         $Abono = 0;
@@ -1530,8 +1589,9 @@ class HistorialFacturasC
 
     function Ventas_Cliente($parametros, $FechaIni, $FechaFin)
     {
-        $Opcion = 4;
-        $tipoConsulta = $this->TipoDeConsulta($parametros, $Opcion, true);
+        //$Opcion = 4
+        $Opcion = $parametros['Opcion'];
+        $tipoConsulta = $this->Tipo_De_Consulta($parametros, true);
         $sSQL = $this->modelo->Ventas_Cliente($FechaIni, $FechaFin, $tipoConsulta);
         $Total = 0;
         $Abono = 0;
@@ -1559,12 +1619,14 @@ class HistorialFacturasC
 
     function Resumen_Ventas_Costos($FechaIni, $FechaFin, $parametros)
     {
-        $Opcion = 5;
+        //$Opcion = 5;
+        $Opcion = $parametros['Opcion'];
+
         $Con_Costeo = $parametros['Con_Costeo'];
         $Si_No = $parametros['Si_No'];
         $DescItem = $parametros['DescItem'];
 
-        $tipoConsulta = $this->TipoDeConsulta($parametros, $Opcion, true);
+        $tipoConsulta = $this->Tipo_De_Consulta($parametros, true);
         $sSQL = $this->modelo->Resumen_Ventas_Costos($FechaIni, $FechaFin, $Con_Costeo, $Si_No, $DescItem, $tipoConsulta);
 
         return array(
@@ -1577,8 +1639,10 @@ class HistorialFacturasC
 
     function Resumen_Productos($parametros, $FechaIni, $FechaFin)
     {
-        $Opcion = 3;
-        $tipoConsulta = $this->TipoDeConsulta($parametros, $Opcion);
+        //$Opcion = 3;
+        $Opcion = $parametros['Opcion'];
+
+        $tipoConsulta = $this->Tipo_De_Consulta($parametros);
         $sSQL = $this->modelo->Resumen_Productos($tipoConsulta, $FechaIni, $FechaFin);
         $Total = 0;
         $Abono = 0;
