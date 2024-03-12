@@ -344,7 +344,7 @@ function guardar()
     		 // $('#myModal_espera').modal('show'); 
     		},
     		success:  function (response) { 
-          console.log(response);
+          // console.log(response);
           if(response.mensaje!='')
           {
             Swal.fire({
