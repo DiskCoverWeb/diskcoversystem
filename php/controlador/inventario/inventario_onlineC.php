@@ -115,6 +115,51 @@ if (isset($_GET['validar_presupuesto'])) {
 	echo json_encode($controlador->validar_presupuesto($parametro));
 }
 
+if (isset($_GET['subir_archivo'])) {
+    try {
+        
+        if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == UPLOAD_ERR_OK) {
+            $archivo = $_FILES['archivo'];
+            $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/ftpuser/ftp/files/";
+
+            if (!is_dir($carpetaDestino)) {
+                // Intentar crear la carpeta, el 0777 es el modo de permiso más permisivo
+                if (!mkdir($carpetaDestino, 0777, true)) { // true permite la creación de estructuras de directorios anidados
+                    throw new Exception("No se pudo crear la carpeta");
+                }
+            }
+
+            $nombreArchivoDestino = $carpetaDestino . basename($archivo['name']);
+            if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
+                $parametros['archivo'] = $nombreArchivoDestino;
+                echo json_encode(array("res" => 1, "mensaje" => "Archivo guardado", "nombreArchivo" => basename($nombreArchivoDestino) ));
+            } else {
+                throw new Exception("No se pudo guardar el archivo");
+            }
+
+        }else{
+			throw new Exception("Error al subir el archivo");
+		
+		}
+    } catch (Exception $e) {
+        echo json_encode(array("res" => 0, "mensaje" => "Error al enviar los correos", "error" => $e->getMessage()));
+    }
+}
+
+if (isset($_GET['eliminar_archivo'])) {
+	try {
+		$parametros = $_POST['parametros'];
+		$archivoDestino = dirname(__DIR__, 3) . "/TEMP/ftpuser/ftp/files/" . $parametros['archivo'];
+		if (unlink($archivoDestino)) {
+			echo json_encode(array("res" => 1, "mensaje" => "Archivo eliminado"));
+		} else {
+			throw new Exception("No se pudo eliminar el archivo");
+		}
+	} catch (Exception $e) {
+		echo json_encode(array("res" => 0, "mensaje" => "Error al eliminar el archivo", "error" => $e->getMessage()));
+	}
+}
+
 class inventario_onlineC
 {
 	private $modelo;

@@ -74,7 +74,76 @@ function verificar_cuenta()
     // autocmpletar_rubro_bajas();
     autocmpletar();
 
+
+
   });
+
+  function simularClick(){
+    $('#archivoAdjunto').click();
+  }
+
+  function subir_archivo(){
+    var fileInput = $('#archivoAdjunto')[0];
+    var archivo = fileInput.files[0];
+
+    var formData = new FormData();
+
+    if (archivo) {
+      formData.append('archivo', archivo, archivo.name);
+    }
+
+    $.ajax({
+      url: '../controlador/inventario/inventario_onlineC.php?subir_archivo=true',
+      type: 'POST',
+      data: formData,
+      contentType: false,
+      processData: false,
+      success: function(response) {
+        var data = JSON.parse(response);
+        if(data.res == 1)
+        {
+          swal.fire({
+            title: 'Archivo subido con exito',
+            type: 'success',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Ok',
+          }).then((result) => {
+            if (result.value) {
+              eliminar_archivo(data.nombreArchivo);
+            }
+          });
+          //vaciar el input file
+          $('#archivoAdjunto').val('');
+          
+        }else
+        {
+          Swal.fire('Error al subir archivo','','error');
+          $('#archivoAdjunto').val('');
+        }
+      }
+    });
+  }
+
+  function eliminar_archivo(nombreArchivo){
+    var parametros = {
+      'archivo': nombreArchivo
+    };  
+    $.ajax({
+      url: '../controlador/inventario/inventario_onlineC.php?eliminar_archivo=true',
+      type: 'POST',
+      data: {'parametros': parametros},
+      success: function(response) {
+        var data = response
+        if(data.res == 1)
+        {
+          console.log('Archivo eliminado con exito');
+        }else
+        {
+          console.log('Error al eliminar archivo');
+        }
+      }
+    });
+  }
 
    function autocmpletar(){
       var centro = $('#ddl_cc_').val();
@@ -1405,6 +1474,12 @@ function mayorizar_inventario()
                   <button class="btn btn-primary btn-sm" title="Agregar" onclick="Guardar();"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></button>
                   <input type="hidden" name="" id="num_filas">
                 </div>  
+                <div class="col-sm-1">
+                  <input type="file" name="archivoAdjunto" id="archivoAdjunto" style="display: none;" onchange="subir_archivo()">
+                  <button class="btn btn-primary btn-sm" onclick="simularClick()">
+                      Subir Archivo
+                  </button>
+                </div>
            </div>
     </div>
 
