@@ -253,32 +253,37 @@ class niveles_seguriC
 		$empresas = $parametros['empresas'];
 		$empresas = array_unique($empresas);
 		$modulos_sqlserver = array();
+		// filtra los check de son de las empresas seleccionadas
 		$modulos_filtrados = array_filter($modulos, function($modulo) use ($empresas) {
 		    return in_array($modulo[1], $empresas);
+		});
+		// escoje solo los checks en true
+		$array_filtrado = array_filter($modulos_filtrados, function($elem) {
+			// print_r($elem);die();
+		    return $elem[2] == 'true';
 		});
 
 		$mensaje = '';
 		$respuesta = 1;
 		$server_estado = 1;
 
-		foreach ($modulos_filtrados as $key => $value) 
-		{
-			// $value[0] =>modulo  $value[1] => item empresa $value[2] ==> si esta activo o inactivo
 
-			if($value[2]=='true')
-			{
-				// ingresa acceso				
-				$r = $this->modelo->guardar_acceso_empresa($value[0],$parametros['entidad'],$value[1],$parametros['CI_usuario']);
-				array_push($modulos_sqlserver, $value[0]);
-			}else
-			{
-				$this->modelo->delete_modulos_mysql($parametros['entidad'],$value[1],$parametros['CI_usuario'],$value[0]);
-			}
+		// elimina en mysql
+		foreach ($empresas as $key => $value) {
+			$this->modelo->delete_modulos_mysql($parametros['entidad'],$value,$parametros['CI_usuario'],false);
+		}
+
+		foreach ($array_filtrado as $key => $value) 
+		{
+			// $value[0] =>modulo  $value[1] => item empresa $value[2] ==> si esta activo o inactivo					
+			$r = $this->modelo->guardar_acceso_empresa($value[0],$parametros['entidad'],$value[1],$parametros['CI_usuario']);
+			array_push($modulos_sqlserver, $value[0]);
 		}
 
 		$niveles = array('1'=>$parametros['n1'],'2'=>$parametros['n2'],'3'=>$parametros['n3'],'4'=>$parametros['n4'],'5'=>$parametros['n5'],'6'=>$parametros['n6'],'7'=>$parametros['n7'],'super'=>$parametros['super']);
 
 		// fin de ingreso en MYSQL
+
 
 		// --------------------------ingreso sql server-----------------------------------
 		foreach ($empresas as $key => $value) 

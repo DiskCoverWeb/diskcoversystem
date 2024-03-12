@@ -486,6 +486,7 @@ class niveles_seguriM
 		{
 			// print_r($datos);die();
 			$sql = "SELECT * FROM Accesos WHERE Codigo = '".$CI_usuario."'";
+			print_r($sql);die();
 			$res = $this->db->consulta_datos_db_sql_terceros($sql,$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
 			if($res==-1)
 			{
