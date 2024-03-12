@@ -1,5 +1,4 @@
 <?php
-// require_once('QRCode/qrcode.class.php');
 
 if(!class_exists('PDF_MC_Table'))
 {
@@ -9,6 +8,7 @@ if (!class_exists('FPDF')) {
     //$mi_clase = new MiClase();
    require('fpdf.php');
 }
+require_once(dirname(__DIR__).'/fpdf/QRCode/qrcode.class.php');
 
 //include(dirname(__DIR__,2)."/php/db/db.php");
 //echo dirname(__DIR__,1);
