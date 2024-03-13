@@ -16,6 +16,10 @@ if (isset($_GET['LlenarSelect'])) {
     echo json_encode($controlador->LlenarSelect($valores));
 }
 
+if (isset($_GET['LlenarSelectDiaEntrega'])) {
+    echo json_encode($controlador->LlenarSelectDiaEntrega());
+}
+
 if (isset($_GET['LlenarDatosCliente'])) {
     $query = '';
     if (isset($_GET['query'])) {
@@ -109,6 +113,17 @@ class registro_beneficiarioC
             $resultados[] = $resultado;
         }
         return $resultados;
+    }
+
+    function LlenarSelectDiaEntrega()
+    {
+
+        $datos = $this->modelo->LlenarSelectDiaEntrega();
+        if (empty($datos)) {
+            $datos = "No se encontraron datos para mostrar";
+        }
+
+        return $datos;
     }
 
     function LlenarDatosCliente($query): array
