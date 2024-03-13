@@ -62,21 +62,30 @@
                 </div>
                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
                     data-parent="#accordionExample">
-                    <div class="card-body" style="margin:1px; padding-top:5px; padding-bottom:5px;">
-                        <div class="row" style="margin:10px; ">
-
-                            <div class="col-sm-2">
+                    <div class="card-body" style="margin: 1px; padding-top: 5px; padding-bottom: 5px;">
+                        <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="select_93" style="display: block;">Tipo de Beneficiario</label>
+                                <select class="form-control input-xs" name="select_93" id="select_93">
+                                    <option value="">Seleccione</option>
+                                </select>
+                            </div>
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="" style="display: block;">Tipo de Donación</label>
+                                <select class="form-control input-xs" name="" id="">
+                                    <option value="">Seleccione</option>
+                                </select>
+                            </div>
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="ruc" style="display: block;">CI/RUC</label>
                                 <select class="form-control input-xs" name="ruc" id="ruc">
                                     <option value="">Seleccione</option>
                                 </select>
-
                             </div>
-                            <div class="col-sm-1" style="display: flex; justify-content: center;">
+                            <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
                                 <img src="../../img/png/SRIlogo.png" width="80" height="50">
                             </div>
-
-                            <div class="col-sm-3">
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="cliente" style="display: block;">Nombre del Beneficiario/Usuario</label>
                                 <div class="input-group">
                                     <select class="form-control input-xs" name="cliente" id="cliente">
@@ -90,70 +99,67 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-sm-4">
-                                <label for="select_93" style="display: block;">Tipo de Beneficiario</label>
-                                <select class="form-control input-xs" name="select_93" id="select_93">
-                                    <option value="">Seleccione</option>
-                                </select>
-                            </div>
-                            <div class="col-sm-2">
+                            <div style="flex: 1;">
                                 <label for="select_87" style="display: block;">Estado</label>
                                 <select class="form-control input-xs" name="select_87" id="select_87">
                                     <option value="">Seleccione</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="row" style="margin: 10px;">
-                            <div class="col-sm-3">
-                                <label for="nombreRepre" style="display: block;">NOMBRE REPRESENTANTE LEGAL</label>
+
+                        <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="nombreRepre" style="display: block;">Nombre Representante Legal</label>
                                 <input class="form-control input-xs" type="text" name="nombreRepre" id="nombreRepre"
                                     placeholder="Nombre Representante">
                             </div>
-                            <div class="col-sm-3">
-                                <label for="ciRepre" style="display: block;">CI REPRESENTANTE LEGAL</label>
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="ciRepre" style="display: block;">CI Representante Legal</label>
                                 <input class="form-control input-xs" type="text" name="ciRepre" id="ciRepre"
                                     placeholder="CI Representante">
                             </div>
-                            <div class="col-sm-3">
-                                <label for="telfRepre" style="display: block;">TELEFONO REPRESENTANTE LEGAL</label>
+                            <div style="flex: 1;">
+                                <label for="telfRepre" style="display: block;">Telefono Representante Legal</label>
                                 <input class="form-control input-xs" type="text" name="telfRepre" id="telfRepre"
                                     placeholder="Representante legal">
                             </div>
                         </div>
-                        <div class="row" style="margin:10px; ">
-                            <div class="col-sm-2">
-                                <label for="contacto" style="display: block;">CONTACTO/ENCARGADO</label>
+
+                        <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="contacto" style="display: block;">Contacto/Encargado</label>
                                 <input class="form-control input-xs" type="text" name="contacto" id="contacto"
                                     placeholder="Contacto">
                             </div>
-                            <div class="col-sm-3">
-                                <label for="cargo" style="display: block;">CARGO</label>
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="cargo" style="display: block;">Cargo</label>
                                 <input class="form-control input-xs" type="text" name="cargo" id="cargo"
                                     placeholder="Profesion">
                             </div>
-                            <div class="col-sm-1" style="display: flex; justify-content: center;">
+                            <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
                                 <img src="../../img/png/calendario2.png" width="60" height="60">
                             </div>
-                            <div class="col-sm-3">
-                                <label for="fechaEntrega" style="display: block;">DIA ENTREGA A USUARIOS
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="fechaEntrega" style="display: block;">Día Entrega a Usuarios Finales
                                     FINALES</label>
                                 <input type="date" name="fechaEntrega" id="fechaEntrega"
                                     class="form-control input-xs validateDate" onchange="" title="DIA ENTREGA USUARIOS"
                                     value="<?php echo date('Y-m-d') ?>">
                             </div>
-                            <div class="col-sm-1" style="display: flex; justify-content: center;">
+                            <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
                                 <img src="../../img/png/reloj.png" width="55" height="55">
                             </div>
-                            <div class="col-sm-2">
-                                <label for="horaEntrega" style="display: block;">HORA DE ENTREGA</label>
+                            <div style="flex: 1; ">
+                                <label for="horaEntrega" style="display: block;">Hora Entrega a Usuarios Finales</label>
                                 <input type="time" name="horaEntrega" id="horaEntrega" class="form-control input-xs"
                                     title="HORA ENTREGA">
                             </div>
                         </div>
+
                         <div class="row" style="margin: 10px; display: flex; justify-content: center;">
                             <div class="col-sm-3">
                                 <div class="row">
-                                    <label for="direccion" style="display: block;">DIRECCION</label>
+                                    <label for="direccion" style="display: block;">Dirección</label>
                                     <input class="form-control input-xs" type="text" name="direccion" id="direccion"
                                         placeholder="Direccion">
                                 </div>
@@ -171,17 +177,17 @@
                             <div class="col-sm-1"></div>
                             <div class="col-sm-3">
                                 <div class="row">
-                                    <label for="referencia" style="display: block;">REFERENCIA</label>
+                                    <label for="referencia" style="display: block;">Referencia</label>
                                     <input class="form-control input-xs" type="text" name="referecia" id="referencia"
                                         placeholder="Referencia">
                                 </div>
                                 <div class="row">
-                                    <label for="telefono" style="display: block;">TELEFONO</label>
+                                    <label for="telefono" style="display: block;">Teléfono 1</label>
                                     <input class="form-control input-xs" type="text" name="telefono" id="telefono"
                                         placeholder="Telefono ">
                                 </div>
                                 <div class="row">
-                                    <label for="telefono2" style="display: block;">TELEFONO 2</label>
+                                    <label for="telefono2" style="display: block;">Teléfono 2</label>
                                     <input class="form-control input-xs" type="text" name="telefono2" id="telefono2"
                                         placeholder="Telefono 2">
                                 </div>
@@ -203,66 +209,66 @@
                 </div>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
                     <div class="card-body" style="margin:1px; padding-top:5px; padding-bottom:5px;">
-                        <div class="row" style="margin:10px; ">
-                            <div class="col-sm-3">
-                                <label for="select_88" style="display: block;">TIPO DE ENTREGA</label>
+                        <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="select_88" style="display: block;">Tipo de Entrega</label>
                                 <select class="form-control input-xs" name="select_88" id="select_88">
                                     <option value="">Seleccione</option>
                                 </select>
                             </div>
-                            <div class="col-sm-1" style="display: flex; justify-content: center;">
+                            <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
                                 <img src="../../img/png/calendario2.png" width="60" height="60">
                             </div>
-                            <div class="col-sm-2">
-                                <label for="diaEntregac" style="display: block;">DIA DE ENTREGA</label>
-                                <input type="date" name="diaEntregac" id="diaEntregac"
-                                    class="form-control input-xs validateDate" onchange="" title="DIA DE ENTREGA"
-                                    value="<?php echo date('Y-m-d') ?>">
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="diaEntregac" style="display: block;">Día de Entrega</label>
+                                <select class="form-control input-xs" name="diaEntregac" id="diaEntregac">
+                                    <option value="">Seleccione</option>
+                                </select>
+
                             </div>
-                            <div class="col-sm-1" style="display: flex; justify-content: center;">
+                            <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
                                 <img src="../../img/png/reloj.png" width="55" height="55">
                             </div>
-                            <div class="col-sm-2">
-                                <label for="horaEntregac" style="display: block;">HORA DE ENTREGA</label>
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="horaEntregac" style="display: block;">Hora de Entrega</label>
                                 <input type="time" name="horaEntregac" id="horaEntregac" class="form-control input-xs"
                                     title="HORA DE ENTREGA">
                             </div>
 
-                            <div class="col-sm-3">
-                                <label for="select_86" style="display: block;">FRECUENCIA</label>
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="select_86" style="display: block;">Frecuencia</label>
                                 <select class="form-control input-xs" name="select_86" id="select_86">
                                     <option value="">Seleccione</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="row" style="margin:10px;">
-                            <div class="col-sm-2">
-                                <label for="totalPersonas" style="display: block;">TOTAL DE PERSONAS
-                                    ASISTIDAS</label>
+                        <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="totalPersonas" style="display: block;">Total de Personas Atendidas</label>
                                 <input type="number" name="totalPersonas" id="totalPersonas"
                                     class="form-control input-xs" title="TOTAL DE PERSONAS ASISTIDAS" min="0" max="100">
 
                             </div>
-                            <div class="col-sm-2">
-                                <label for="select_91" style="display: block;">TIPO DE POBLACION</label>
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="select_91" style="display: block;">Tipo de Población</label>
                                 <select class="form-control input-xs" name="select_91" id="select_91">
                                     <option value="">Seleccione</option>
                                 </select>
                             </div>
-                            <div class="col-sm-2">
-                                <label for="select_92" style="display: block;">ACCION SOCIAL</label>
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="select_92" style="display: block;">Acción Social</label>
                                 <select class="form-control input-xs" name="select_92" id="select_92">
                                     <option value="">Seleccione</option>
                                 </select>
                             </div>
-                            <div class="col-sm-2">
-                                <label for="select_90" style="display: block;">VULNERABILIDAD</label>
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="select_90" style="display: block;">Vulnerabilidad</label>
                                 <select class="form-control input-xs" name="select_90" id="select_90">
                                     <option value="">Seleccione</option>
                                 </select>
                             </div>
-                            <div class="col-sm-2">
-                                <label for="select_89" style="display: block;">TIPO DE ATENCION</label>
+                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="select_89" style="display: block;">Tipo de Atención</label>
                                 <select class="form-control input-xs" name="select_89" id="select_89">
                                     <option value="">Seleccione</option>
                                 </select>
@@ -277,7 +283,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="form-group">
-                                        <label for="archivoAdd">ARCHIVOS ADJUNTOS</label>
+                                        <label for="archivoAdd">Archivos Adjuntos</label>
                                         <input type="file" class="form-control-file" id="archivoAdd">
                                     </div>
 
@@ -285,7 +291,7 @@
                             </div>
                             <div class="col-sm-4">
                                 <div class="row">
-                                    <label for="infoNut" style="display: block;">INFORMACION NUTRICIONAL</label>
+                                    <label for="infoNut" style="display: block;">Información Nutricional</label>
                                     <textarea class="form-control" id="infoNut" rows="4"></textarea>
                                 </div>
 
@@ -307,15 +313,49 @@
     function Form_Activate() {
         var valores = [86, 87, 88, 89, 90, 91, 92, 93];
         LlenarSelectTipos(valores);
+        LlenarSelectDiaEntrega();
         LlenarDatosCliente();
         var horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         $('#horaEntregac').val(horaActual);
 
-        var fechaActual = new Date();
+        /*var fechaActual = new Date();
         var fechaFormateada = fechaActual.getFullYear() + '-' +
             ('0' + (fechaActual.getMonth() + 1)).slice(-2) + '-' +
             ('0' + fechaActual.getDate()).slice(-2);
-        $('#diaEntregac').val(fechaFormateada);
+        $('#diaEntregac').val(fechaFormateada);*/
+    }
+
+    $('#select_93').change(function () {
+        var selectedOption = $(this).val();
+        var cardBody = $('.card-body');
+        var cardHeader = $('.card-header');
+
+        var colorValor = $(this).find('option:selected').data('color-valor');
+        var hexColor = colorValor.substring(4);
+
+        // Obtener el color más oscuro para el card-header
+        var darkerColor = darkenColor(hexColor, 20); // Puedes ajustar el porcentaje según sea necesario
+
+        if (hexColor) {
+            cardBody.css('background-color', '#' + hexColor);
+            cardHeader.css('background-color', darkerColor);
+        } else {
+            cardBody.css('background-color', '#fffacd');
+        }
+    });
+
+    function darkenColor(color, percent) {
+        var num = parseInt(color, 16),
+            amt = Math.round(2.55 * percent),
+            R = (num >> 16) - amt,
+            G = (num >> 8 & 0x00FF) - amt,
+            B = (num & 0x0000FF) - amt;
+
+        R = (R < 255 ? (R < 1 ? 0 : R) : 255);
+        G = (G < 255 ? (G < 1 ? 0 : G) : 255);
+        B = (B < 255 ? (B < 1 ? 0 : B) : 255);
+
+        return "#" + ((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1);
     }
 
     function LlenarSelectTipos(valores) {
@@ -332,6 +372,20 @@
         });
     }
 
+    function LlenarSelectDiaEntrega() {
+        $.ajax({
+            url: '../controlador/inventario/registro_beneficiarioC.php?LlenarSelectDiaEntrega=true',
+            type: 'post',
+            dataType: 'json',
+            success: function (datos) {
+                $.each(datos, function (index, opcion) {
+                    $('#diaEntregac').append('<option value="' + opcion['Dia_Mes_C'] + '">' + opcion['Dia_Mes'] + '</option>');
+                });
+            }
+        });
+    }
+
+
     function LlenarSelect(valor, datos) {
         if (valor) {
             var selectId = '#select_' + valor;
@@ -341,7 +395,7 @@
                 $select.append('<option value="">' + datos + '</option>');
             } else {
                 $.each(datos, function (index, opcion) {
-                    $select.append('<option value="' + opcion['Cmds'] + '">' + opcion['Proceso'] + '</option>');
+                    $select.append('<option value="' + opcion['Cmds'] + '" data-color-valor="' + opcion['Picture'] + '">' + opcion['Proceso'] + '</option>');
                 });
             }
         }
@@ -392,6 +446,7 @@
     }
 
     $('#btnGuardarAsignacion').click(function () {
+
         var fileInput = $('#archivoAdd')[0];
         var archivo = fileInput.files[0];
         var formData = new FormData();

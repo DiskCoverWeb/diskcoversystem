@@ -21,12 +21,21 @@ class registro_beneficiarioM
 
     function LlenarSelect($valor)
     {
-        $sql = "SELECT Nivel, TP, Proceso, Cmds
+        $sql = "SELECT Nivel, TP, Proceso, Cmds, Picture
                     FROM Catalogo_Proceso
                     WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                     AND Cmds LIKE '" . $valor . ".%'
                     ORDER BY Cmds";
         return $this->db->datos($sql);
+    }
+
+    function LlenarSelectDiaEntrega(){
+        $sql = "SELECT   Dia_Mes, Dia_Mes_C, Zip, ID
+                    FROM      Tabla_Dias_Meses
+                    WHERE   (Tipo = 'D')
+                    ORDER BY No_D_M ";
+                    
+        return $this->db->datos($sql);  
     }
 
     function LlenarDatosCliente($query)
