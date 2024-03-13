@@ -208,9 +208,16 @@ class niveles_seguriM
 	  	   return $r;
 	    }
 	// }
-
-
 	}
+
+	function guardar_acceso_empresa_mysql($modulos,$entidad,$empresas,$usuario)
+	{	
+	    
+	  	$sql = "INSERT INTO acceso_empresas (ID_Empresa,CI_NIC,Modulo,item,Pagina) VALUES ('".$entidad."','".$usuario."','".$modulos."','".$empresas."','.')";
+	  		$r = $this->db->String_Sql($sql,'MYSQL');
+	  	   return $r;
+	}
+
 	function update_acceso_usuario($niveles,$usuario,$clave,$entidad,$CI_NIC,$email,$serie)
 	{
 		// print_r($niveles);die();
@@ -309,6 +316,7 @@ class niveles_seguriM
 	function nuevo_usuario($parametros)
 	{
 	   $sql = "INSERT INTO acceso_usuarios (TODOS,Clave,Usuario,CI_NIC,ID_Empresa,Nombre_Usuario) VALUES (1,'".$parametros['cla']."','".$parametros['usu']."','".$parametros['ced']."','".$parametros['ent']."','".$parametros['nom']."')";
+	   	// print_r($sql);die();
 	   return $this->db->String_Sql($sql,'MY SQL');
 	}
 
@@ -479,6 +487,7 @@ class niveles_seguriM
 		{
 			// print_r($datos);die();
 			$sql = "SELECT * FROM Accesos WHERE Codigo = '".$CI_usuario."'";
+			// print_r($sql);die();
 			$res = $this->db->consulta_datos_db_sql_terceros($sql,$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
 			if($res==-1)
 			{
@@ -539,6 +548,21 @@ class niveles_seguriM
 
 	}
 
+	function eliminar_en_SQLSERVER_acceso_empresa($entidad,$id_empresa,$CI_usuario)
+	{
+		set_time_limit(0);
+		$mensaje='';
+		$sql= "SELECT Base_Datos,Usuario_DB,Contrasena_DB,IP_VPN_RUTA,Tipo_Base,Puerto,Empresa  FROM lista_empresas WHERE ID_Empresa = '".$entidad."' AND Item = '".$id_empresa."'";
+		$datos = $this->db->datos($sql,'MY SQL');
+		if(count($datos)>0)
+		{
+			$sql = "DELETE FROM Acceso_Empresa WHERE Codigo = '".$CI_usuario."' AND Item='".$id_empresa."'";
+			// print_r($sql);die();
+			$res = $this->db->consulta_datos_db_sql_terceros($sql,$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
+		}
+
+	}
+
 	function existe_en_SQLSERVER_acceso_empresa($entidad,$id_empresa,$CI_usuario,$modulo)
 	{
 		set_time_limit(0);
@@ -549,6 +573,8 @@ class niveles_seguriM
 		{
 			// print_r($datos);die();
 			$sql = "SELECT * FROM Acceso_Empresa WHERE Codigo = '".$CI_usuario."' AND Modulo = '".$modulo."' AND Item='".$id_empresa."'";
+
+			// print_r($sql);die();
 			$res = $this->db->consulta_datos_db_sql_terceros($sql,$datos[0]['IP_VPN_RUTA'],$datos[0]['Usuario_DB'],$datos[0]['Contrasena_DB'],$datos[0]['Base_Datos'],$datos[0]['Puerto']);
 			if($res==-1)
 			{
@@ -937,6 +963,12 @@ class niveles_seguriM
 	{
 		$sql = "DELETE FROM acceso_empresas WHERE ID_Empresa='".$enti."' AND CI_NIC='".$usu."' AND Modulo = '".$mod."' AND Item='".$item."' AND Pagina = '".$pag."'";
 		return $this->db->String_Sql($sql,'MYSQL');
+	}
+
+
+	function comprobar_conexion($host,$usu,$pass,$base,$Puerto)
+	{
+		return $this->db->modulos_sql_server($host,$usu,$pass,$base,$Puerto);
 	}
 
 	
