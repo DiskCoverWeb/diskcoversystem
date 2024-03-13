@@ -682,6 +682,7 @@ if($('#rbl_'+modulo).prop('checked'))
 {
   $.each(listado_empresas,function(i,item){
     $('#rbl_'+modulo+'_'+item.id).prop('checked',true);
+     listado_empresas_modificados.push(item.id);
   })
 }else
 {
