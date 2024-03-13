@@ -92,6 +92,16 @@ function verificar_cuenta()
       formData.append('archivo', archivo, archivo.name);
     }
 
+    var file = $('#archivoAdjunto').val().toLowerCase();
+    if(file && (file.indexOf('.csv') == -1 && file.indexOf('.txt') == -1)) {
+        swal.fire('Por favor, seleccione un archivo CSV o TXT.','','error')
+        $(this).val('');
+        return;
+    }
+
+    //modal #myModal_espera
+    //$('#myModal_espera').modal('show');
+
     $.ajax({
       url: '../controlador/inventario/inventario_onlineC.php?subir_archivo=true',
       type: 'POST',
@@ -100,6 +110,7 @@ function verificar_cuenta()
       processData: false,
       success: function(response) {
         var data = JSON.parse(response);
+        $('#myModal_espera').modal('hide');
         if(data.res == 1)
         {
           swal.fire({
@@ -109,7 +120,7 @@ function verificar_cuenta()
             confirmButtonText: 'Ok',
           }).then((result) => {
             if (result.value) {
-              eliminar_archivo(data.nombreArchivo);
+              procesar_archivo(data.nombreArchivo);
             }
           });
           //vaciar el input file
@@ -124,16 +135,49 @@ function verificar_cuenta()
     });
   }
 
+  function procesar_archivo(nombreArchivo){
+    var parametros = {
+      'archivo': nombreArchivo
+    };
+    $.ajax({
+      url: '../controlador/inventario/inventario_onlineC.php?procesar_archivo=true',
+      type: 'POST',
+      data: {'parametros': parametros},
+      success: function(response) {
+        var data = JSON.parse(response);
+        if(data.res == 1)
+        {
+          swal.fire({
+            title: 'Archivo procesado con exito',
+            type: 'success',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Ok',
+          }).then((result) => {
+            if (result.value) {
+              eliminar_archivo(nombreArchivo);
+            }
+          });
+        }else
+        {
+          Swal.fire(response.mensaje,'','error');
+        }
+      }
+    });
+  }
+
   function eliminar_archivo(nombreArchivo){
     var parametros = {
       'archivo': nombreArchivo
     };  
+    //modal #myModal_espera
+    $('#myModal_espera').modal('show');
     $.ajax({
       url: '../controlador/inventario/inventario_onlineC.php?eliminar_archivo=true',
       type: 'POST',
       data: {'parametros': parametros},
       success: function(response) {
-        var data = response
+        $('#myModal_espera').modal('hide');
+        var data = JSON.parse(response);
         if(data.res == 1)
         {
           console.log('Archivo eliminado con exito');

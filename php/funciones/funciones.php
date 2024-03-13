@@ -13419,5 +13419,49 @@ function conversionToString($dato): string {
     return $email->enviar_email_generico($archivos,$to_correo,$cuerpo_correo,$titulo_correo,$HTML);    
   }
 
-
+  function Subir_Archivo_CSV_SP($PathCSV){
+    try{
+      $TipoFile = "";
+      if(strlen($PathCSV) > 1){
+        //Leer el archivo
+        $file = fopen($PathCSV, "r");
+        //Busca en la primera linea
+        $linea = fgets($file);
+        if(strpos($linea, ";emision") !== false){
+          $TipoFile = "05";
+        }
+        if(strpos($linea, ";CI_RUC_Codigo") !== false){
+          $TipoFile = "15";
+        }
+        if(strpos($linea, ";COD_MES") !== false){
+          $TipoFile = "27";
+        }
+        if(strpos($linea, ";CI_RUC_P_SUBMOD") !== false){
+          $TipoFile = "99";
+        }
+        fclose($file);
+        if($TipoFile <> ""){
+          $FileCSV = basename($PathCSV);
+          $PathCSVT = "/home/ftpuser/ftp/files/";
+          $strIPServidor = "db.diskcoversystem.com";
+          $conn = new db();
+          $parametros = array(
+            array(&$strIPServidor, SQLSRV_PARAM_IN),
+            array(&$PathCSVT, SQLSRV_PARAM_IN),
+            array(&$FileCSV, SQLSRV_PARAM_IN),
+            array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
+            array(&$TipoFile, SQLSRV_PARAM_IN),
+          );
+          $sql = "EXEC sp_Subir_Archivo_CSV @strIPServidor=?, @PathFileCSV=?, @FileCSV=?, 
+          @Usuario=?, @TipoFile=?";
+          $data = $conn->ejecutar_procesos_almacenados($sql,$parametros);
+          return $data;
+        }else{
+          throw new Exception("El archivo no es valido");
+        }
+      }
+    }catch(Exception $e){
+      throw new Exception($e->getMessage());
+    }
+  }
 ?>

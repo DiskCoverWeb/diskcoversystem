@@ -117,29 +117,50 @@ if (isset($_GET['validar_presupuesto'])) {
 
 if (isset($_GET['subir_archivo'])) {
     try {
-        
+
+		$ftpHost = "ftp.diskcoversystem.com";
+		$ftpUserName = "ftpuser";
+		$ftpPassword = "ftp2023User";
+		$ftpPuerto = 21;
+
+		//FTP Connection
+		$connId = ftp_connect($ftpHost);
+
+		//Login to FTP
+		$ftpLogin = ftp_login($connId, $ftpUserName, $ftpPassword);
+
+		$localFilePath  = $_FILES['archivo'];
+		$carpetaDestino = dirname(__DIR__, 3) . "/TEMP/";
+		$nombreArchivoDestino = $carpetaDestino . basename($localFilePath['name']);//Destino temporal para guardar el archivo
+		$remoteFilePath = '/files/' . $localFilePath['name'];//Path donde se va a guardar el archivo
+
         if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == UPLOAD_ERR_OK) {
-            $archivo = $_FILES['archivo'];
-            $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/ftpuser/ftp/files/";
 
             if (!is_dir($carpetaDestino)) {
                 // Intentar crear la carpeta, el 0777 es el modo de permiso más permisivo
                 if (!mkdir($carpetaDestino, 0777, true)) { // true permite la creación de estructuras de directorios anidados
+					ftp_close($connId);
                     throw new Exception("No se pudo crear la carpeta");
                 }
             }
 
-            $nombreArchivoDestino = $carpetaDestino . basename($archivo['name']);
-            if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
-                $parametros['archivo'] = $nombreArchivoDestino;
-                echo json_encode(array("res" => 1, "mensaje" => "Archivo guardado", "nombreArchivo" => basename($nombreArchivoDestino) ));
+            if (move_uploaded_file($localFilePath['tmp_name'], $nombreArchivoDestino)) {
+				if(ftp_put($connId, $remoteFilePath, $nombreArchivoDestino, FTP_ASCII)){
+					ftp_close($connId);
+					echo json_encode(array("res" => 1, "mensaje" => "Archivo guardado", "nombreArchivo" => basename($nombreArchivoDestino) ));
+				}else{
+					ftp_close($connId);
+					throw new Exception("No se pudo guardar el archivo en el servidor FTP");
+				}
+				ftp_close($connId);
+                //echo json_encode(array("res" => 1, "mensaje" => "Archivo guardado", "nombreArchivo" => basename($nombreArchivoDestino) ));
             } else {
-                throw new Exception("No se pudo guardar el archivo");
+				ftp_close($connId);
+                throw new Exception("No se pudo guardar el archivo en el servidor");
             }
-
         }else{
+			ftp_close($connId);
 			throw new Exception("Error al subir el archivo");
-		
 		}
     } catch (Exception $e) {
         echo json_encode(array("res" => 0, "mensaje" => "Error al enviar los correos", "error" => $e->getMessage()));
@@ -148,15 +169,44 @@ if (isset($_GET['subir_archivo'])) {
 
 if (isset($_GET['eliminar_archivo'])) {
 	try {
+		$ftpHost = "ftp.diskcoversystem.com";
+		$ftpUserName = "ftpuser";
+		$ftpPassword = "ftp2023User";
+		$ftpPuerto = 21;
+
+		$connId = ftp_connect($ftpHost);
+
+		// login to FTP server
+		$ftpLogin = ftp_login($connId, $ftpUserName, $ftpPassword);
+
 		$parametros = $_POST['parametros'];
-		$archivoDestino = dirname(__DIR__, 3) . "/TEMP/ftpuser/ftp/files/" . $parametros['archivo'];
-		if (unlink($archivoDestino)) {
+
+		// server file path
+		$file = '/files/' . $parametros['archivo'];
+		$archivoDestino = dirname(__DIR__, 3) . "/TEMP/" . $parametros['archivo'];
+
+		// try to delete file on server
+		if(ftp_delete($connId, $file)){
+			unlink($archivoDestino);
 			echo json_encode(array("res" => 1, "mensaje" => "Archivo eliminado"));
-		} else {
-			throw new Exception("No se pudo eliminar el archivo");
+		}else{
+			throw new Exception("No se pudo eliminar el archivo del servidor FTP");
 		}
+
+		// close the connection
+		ftp_close($connId);
 	} catch (Exception $e) {
 		echo json_encode(array("res" => 0, "mensaje" => "Error al eliminar el archivo", "error" => $e->getMessage()));
+	}
+}
+
+if (isset($_GET['procesar_archivo'])) {
+	try {
+		$parametros = $_POST['parametros'];
+		$respuesta = $controlador->procesar_archivo_csv($parametros);
+		echo json_encode($respuesta);
+	} catch (Exception $e) {
+		echo json_encode(array("res" => 0, "mensaje" => $e->getMessage(), "error" => $e->getMessage()));
 	}
 }
 
@@ -172,6 +222,21 @@ class inventario_onlineC
 		$this->pdf = new cabecera_pdf();	
 		$this->ing_des = new ingreso_descargosM();
 		// $this->pdftable = new PDF_MC_Table();			
+	}
+
+	function procesar_archivo_csv($parametros){
+		try{
+			$PathArchivo = dirname(__DIR__, 3) . '/TEMP/' . $parametros['archivo'];
+			$tmp = Subir_Archivo_CSV_SP($PathArchivo);
+			if($tmp === 1){
+				return array("res" => 1, "mensaje" => "Archivo procesado correctamente");
+			}else{
+				throw new Exception("Error al procesar el archivo");
+			}
+
+		}catch(Exception $e){
+			throw new Exception($e->getMessage());
+		}
 	}
 
 	function cuenta_existente()
