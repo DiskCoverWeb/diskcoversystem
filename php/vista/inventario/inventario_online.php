@@ -117,16 +117,7 @@ function verificar_cuenta()
         $('#myModal_espera').modal('hide');
         if(data.res == 1)
         {
-          swal.fire({
-            title: 'Archivo subido con exito',
-            type: 'success',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Ok',
-          }).then((result) => {
-            if (result.value) {
-              procesar_archivo(data.nombreArchivo);
-            }
-          });
+          procesar_archivo(data.nombreArchivo);
           //vaciar el input file
           $('#archivoAdjunto').val('');
           
@@ -159,7 +150,7 @@ function verificar_cuenta()
             confirmButtonText: 'Ok',
           }).then((result) => {
             if (result.value) {
-              nuevaTabla = true;
+              //nuevaTabla = true;
               eliminar_archivo(nombreArchivo);
             }
           });
@@ -208,6 +199,8 @@ function verificar_cuenta()
         var data = JSON.parse(response);
         if(data.res == 1)
         {
+          //cargar_tabla();
+          cargar_entrega();
           console.log('Archivo eliminado con exito');
         }else
         {
