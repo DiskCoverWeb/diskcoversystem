@@ -212,6 +212,11 @@ if (isset($_GET['procesar_archivo'])) {
 	}
 }
 
+if(isset($_GET['asiento_csv'])){
+	echo json_encode($controlador->asiento_csv());
+
+}
+
 class inventario_onlineC
 {
 	private $modelo;
@@ -226,10 +231,19 @@ class inventario_onlineC
 		// $this->pdftable = new PDF_MC_Table();			
 	}
 
+	function asiento_csv(){
+		try{
+			$datos = $this->modelo->asiento_csv();
+			return array("res" => 1, "tbl" => $datos['datos']);
+		}catch(Exception $e){
+			throw new Exception($e->getMessage());
+		}
+	}
+
 	function procesar_archivo_csv($parametros){
 		try{
 			$PathArchivo = dirname(__DIR__, 3) . '/TEMP/' . $parametros['archivo'];
-			$tmp = Subir_Archivo_CSV_SP($PathArchivo);
+			$tmp = Subir_Archivo_CSV_SP($PathArchivo, $parametros['fecha']);
 			if($tmp === 1){
 				return array("res" => 1, "mensaje" => "Archivo procesado correctamente");
 			}else{

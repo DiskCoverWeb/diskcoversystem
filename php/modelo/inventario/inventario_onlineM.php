@@ -15,6 +15,19 @@ class inventario_onlineM
 	   $this->db = new db();
 	}
 
+	function asiento_csv(){
+		try{
+			$sql = "SELECT *
+					FROM Asiento_CSV_" . $_SESSION['INGRESO']['CodigoU'] . " ";
+			$AdoQuery = $this->db->datos($sql);
+			$tabla = 'Asiento_CSV_' . $_SESSION['INGRESO']['CodigoU'];
+			$datos = grilla_generica_new($sql, $tabla, '', '', false, false, false, 1, 1, 1, 100);
+			return array('datos' => $datos);
+		}catch(Exception $e){
+			throw new Exception("Error al cargar los datos", 1);
+		}
+	}
+
 	function listar_articulos($query='')
 	{
 			$cid = $this->conn;

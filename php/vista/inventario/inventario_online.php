@@ -7,6 +7,7 @@ if(isset($_GET['proyecto'])){$proye=$_GET['proyecto'];}
 ?>
 <script type="text/javascript">
   var f = '';
+  var nuevaTabla = false;
 function verificar_cuenta()
   {
     var mar = $('#txt_CodMar').val(); 
@@ -59,6 +60,8 @@ function verificar_cuenta()
     proyectos();
     verificar_cuenta();
 
+    $('#contenedor_tabla_csv').hide();
+
   $('#imprimir_pdf').click(function(){
   var url = '../controlador/inventario/inventario_onlineC.php?reporte_pdf';                
   window.open(url, '_blank');
@@ -99,6 +102,7 @@ function verificar_cuenta()
         return;
     }
 
+
     //modal #myModal_espera
     //$('#myModal_espera').modal('show');
 
@@ -137,7 +141,8 @@ function verificar_cuenta()
 
   function procesar_archivo(nombreArchivo){
     var parametros = {
-      'archivo': nombreArchivo
+      'archivo': nombreArchivo,
+      'fecha': $('#txt_fecha').val()
     };
     $.ajax({
       url: '../controlador/inventario/inventario_onlineC.php?procesar_archivo=true',
@@ -154,6 +159,7 @@ function verificar_cuenta()
             confirmButtonText: 'Ok',
           }).then((result) => {
             if (result.value) {
+              nuevaTabla = true;
               eliminar_archivo(nombreArchivo);
             }
           });
@@ -161,6 +167,28 @@ function verificar_cuenta()
         {
           Swal.fire(response.mensaje,'','error');
         }
+      }
+    });
+  }
+
+  function cargar_tabla(){
+    //modal #myModal_espera
+    $('#myModal_espera').modal('show');
+    $.ajax({
+      url: '../controlador/inventario/inventario_onlineC.php?asiento_csv=true',
+      type: 'POST',
+      dataType: 'json',
+      success: function(response) {
+        var data = response;
+        if(data.res == 1){
+          $('#myModal_espera').modal('hide');
+          //t-head hide
+          $('#contendor-tabla').hide();
+          $('#contenedor_tabla_csv').show();
+          $('#contenedor_tabla_csv').empty();
+          $('#contenedor_tabla_csv').html(data.tbl);
+        }
+        nuevaTabla = false;
       }
     });
   }
@@ -529,69 +557,75 @@ function verificar_cuenta()
 
   function Guardar(id='')
   {
-    rubro = $('#ddl_rubro_'+id).val().split(',');
-    bajas = $('#txt_bajas_'+id).val();
-    ddl_bajas = $('#ddl_rubro_bajas_'+id).val().split(',');
-    producto = $('#ddl_productos_'+id).val().split(',');
-    if(producto=='')
-    {
-      Swal.fire('Seleccione producto','','info');
-      return false;
-    }
-    console.log(producto);
-    var parametros = 
-    {
-        'codigo':$('#txt_codigo_'+id).val(),
-        'producto':$('select[name="ddl_productos_'+id+'"] option:selected').text(),
-        'cta_pro':producto[5],
-        'uni':$('#txt_uni_'+id).val(),
-        'cant':$('#txt_cant_'+id).val(),
-        'cc':$('#ddl_cc_'+id).val(),
-        'rubro':rubro[0],
-        'bajas':bajas,
-        'observacion':$('#txt_obs_'+id).val(),
-        'id':id,
-        'ante':$('#txt_id_pro_'+id).val(),
-        'fecha':$('#txt_fecha').val(),
-        'bajas_por':ddl_bajas[0],
-        'TC':$('#TC').val(),
-        'valor':$('#valor_total').val(),
-        'total':$('#valor_total_linea').val(),
-        'pro':$('#txt_proyecto').val(),
-        'codma':$('#txt_CodMar').val(),
-    };
-
-  if(validar_entrada()==true)
-  {
-    $.ajax({
-      data:  {parametros:parametros},
-      url:   '../controlador/inventario/inventario_onlineC.php?guardar=true',
-      type:  'post',
-      dataType: 'json',
-        success:  function (response) { 
-        if(response ==1)
+    if(nuevaTabla === true){
+      cargar_tabla();
+    }else{
+      $('#contenedor_tabla_csv').hide();
+      $('#contendor-tabla').show();
+      rubro = $('#ddl_rubro_'+id).val().split(',');
+        bajas = $('#txt_bajas_'+id).val();
+        ddl_bajas = $('#ddl_rubro_bajas_'+id).val().split(',');
+        producto = $('#ddl_productos_'+id).val().split(',');
+        if(producto=='')
         {
-          Swal.fire(
-            
-            'Operacion realizada con exito.','',
-            'success'
-          )
-          $('#txt_cant_').val(0);
-          cargar_entrega()
-          validar_presupuesto($('#txt_codigo_').val())
-         // location.reload();
-        }else
+          Swal.fire('Seleccione producto','','info');
+          return false;
+        }
+        console.log(producto);
+        var parametros = 
         {
-          Swal.fire(
-            '',
-            'Algo extraño a pasado.',
-            'error'
-          )
+            'codigo':$('#txt_codigo_'+id).val(),
+            'producto':$('select[name="ddl_productos_'+id+'"] option:selected').text(),
+            'cta_pro':producto[5],
+            'uni':$('#txt_uni_'+id).val(),
+            'cant':$('#txt_cant_'+id).val(),
+            'cc':$('#ddl_cc_'+id).val(),
+            'rubro':rubro[0],
+            'bajas':bajas,
+            'observacion':$('#txt_obs_'+id).val(),
+            'id':id,
+            'ante':$('#txt_id_pro_'+id).val(),
+            'fecha':$('#txt_fecha').val(),
+            'bajas_por':ddl_bajas[0],
+            'TC':$('#TC').val(),
+            'valor':$('#valor_total').val(),
+            'total':$('#valor_total_linea').val(),
+            'pro':$('#txt_proyecto').val(),
+            'codma':$('#txt_CodMar').val(),
+        };
 
-        }           
+      if(validar_entrada()==true)
+      {
+        $.ajax({
+          data:  {parametros:parametros},
+          url:   '../controlador/inventario/inventario_onlineC.php?guardar=true',
+          type:  'post',
+          dataType: 'json',
+            success:  function (response) { 
+            if(response ==1)
+            {
+              Swal.fire(
+                
+                'Operacion realizada con exito.','',
+                'success'
+              )
+              $('#txt_cant_').val(0);
+              cargar_entrega()
+              validar_presupuesto($('#txt_codigo_').val())
+            // location.reload();
+            }else
+            {
+              Swal.fire(
+                '',
+                'Algo extraño a pasado.',
+                'error'
+              )
+
+            }           
+          }
+        });
       }
-    });
-  }
+    }
 
   }
 
@@ -1390,6 +1424,12 @@ function mayorizar_inventario()
   }
 </script>
 
+<style>
+  body {
+        padding-right: 0px !important;
+    }
+</style>
+
 <div class="row">
   <div class="col-lg-4 col-sm-4 col-md-8 col-xs-12">
     <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
@@ -1514,21 +1554,25 @@ function mayorizar_inventario()
                   <textarea placeholder="observacion" class="form-control" id="txt_obs_"></textarea>
                 </div>
                 <div class="col-sm-1" id="campos">
-                  <br>
-                  <button class="btn btn-primary btn-sm" title="Agregar" onclick="Guardar();"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></button>
-                  <input type="hidden" name="" id="num_filas">
+                  <div class="row">
+                    <br>
+                    <button class="btn btn-primary btn-sm" title="Agregar" onclick="Guardar();"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></button>
+                    <input type="hidden" name="" id="num_filas">
+                    <input type="file" name="archivoAdjunto" id="archivoAdjunto" style="display: none;" onchange="subir_archivo()">
+                    <button class="btn btn-primary btn-sm" onclick="simularClick()" data-toggle="tooltip" data-placement="top" title="Subir Archivo">
+                      <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                  
                 </div>  
                 <div class="col-sm-1">
-                  <input type="file" name="archivoAdjunto" id="archivoAdjunto" style="display: none;" onchange="subir_archivo()">
-                  <button class="btn btn-primary btn-sm" onclick="simularClick()">
-                      Subir Archivo
-                  </button>
+                  
                 </div>
            </div>
     </div>
 
        </div>
-       <div class="panel-body">
+       <div class="panel-body" id="contendor-tabla">
         <table class="table table-responsive">
           <thead>
             <th>Fecha</th>
@@ -1545,6 +1589,9 @@ function mayorizar_inventario()
           </tbody>
         </table>
           <!-- <div class="text-center" id="contenido_entrega"></div> -->
+
+       </div>
+       <div class="panel-body" id="contenedor_tabla_csv">
 
        </div>
      </div>

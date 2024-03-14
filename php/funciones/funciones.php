@@ -13419,7 +13419,7 @@ function conversionToString($dato): string {
     return $email->enviar_email_generico($archivos,$to_correo,$cuerpo_correo,$titulo_correo,$HTML);    
   }
 
-  function Subir_Archivo_CSV_SP($PathCSV){
+  function Subir_Archivo_CSV_SP($PathCSV, $Fecha){
     try{
       $TipoFile = "";
       if(strlen($PathCSV) > 1){
@@ -13439,6 +13439,9 @@ function conversionToString($dato): string {
         if(strpos($linea, ";CI_RUC_P_SUBMOD") !== false){
           $TipoFile = "99";
         }
+        if(strpos($linea, ";Centro_de_costos") !== false){
+          $TipoFile = "31";
+        }
         fclose($file);
         if($TipoFile <> ""){
           $FileCSV = basename($PathCSV);
@@ -13454,8 +13457,25 @@ function conversionToString($dato): string {
           );
           $sql = "EXEC sp_Subir_Archivo_CSV @strIPServidor=?, @PathFileCSV=?, @FileCSV=?, 
           @Usuario=?, @TipoFile=?";
-          $data = $conn->ejecutar_procesos_almacenados($sql,$parametros);
-          return $data;
+          $data1 = $conn->ejecutar_procesos_almacenados($sql,$parametros);
+          
+          $NumModulo = "00";
+          $parametros = array(
+            array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+            array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+            array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
+            array(&$NumModulo, SQLSRV_PARAM_IN),
+            array(&$Fecha, SQLSRV_PARAM_IN),
+          );
+          $sql = "EXEC sp_Importar_ES_Inventarios @Item=?, @Periodo=?, @Usuario=?, @NumModulo=?, @FechaInventario=?";
+          $data2 = $conn->ejecutar_procesos_almacenados($sql,$parametros);
+
+          if($data1 === 1 && $data2 === 1){
+            return 1;
+          }else{
+            throw new Exception("Error al procesar el archivo SP");
+          }
+
         }else{
           throw new Exception("El archivo no es valido");
         }
