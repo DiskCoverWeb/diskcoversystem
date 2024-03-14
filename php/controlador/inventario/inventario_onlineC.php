@@ -124,10 +124,12 @@ if (isset($_GET['subir_archivo'])) {
 		$ftpPuerto = 21;
 
 		//FTP Connection
-		$connId = ftp_connect($ftpHost);
+		$connId = ftp_connect($ftpHost, $ftpPuerto);
 
 		//Login to FTP
 		$ftpLogin = ftp_login($connId, $ftpUserName, $ftpPassword);
+
+		ftp_pasv($connId, true);
 
 		$localFilePath  = $_FILES['archivo'];
 		$carpetaDestino = dirname(__DIR__, 3) . "/TEMP/";
@@ -145,7 +147,7 @@ if (isset($_GET['subir_archivo'])) {
             }
 
             if (move_uploaded_file($localFilePath['tmp_name'], $nombreArchivoDestino)) {
-				if(ftp_put($connId, $remoteFilePath, $nombreArchivoDestino, FTP_ASCII)){
+				if(ftp_put($connId, $remoteFilePath, $nombreArchivoDestino, FTP_BINARY)){
 					ftp_close($connId);
 					echo json_encode(array("res" => 1, "mensaje" => "Archivo guardado", "nombreArchivo" => basename($nombreArchivoDestino) ));
 				}else{
