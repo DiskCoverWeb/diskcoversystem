@@ -190,7 +190,7 @@
             </div>
             <div class="col-sm-3">
                 <label>
-                    <input type="radio" name="OpcPen" id="OpcPen" value="OpcPen"> Pendiente
+                    <input type="radio" name="OpcPen" id="OpcPen" value="OpcPen" checked> Pendiente
                 </label>
             </div>
             <div class="col-sm-3">
@@ -464,7 +464,7 @@
                             cancelButtonText: 'NO'
                         }).then((result) => {
                             if (result.value) {
-                                SiEnviar = True;
+                                SiEnviar = true;
                             }
                             ToolbarMenu_ButtonMenuClick(idSel);
                         });
@@ -509,6 +509,50 @@
         Form_Activate();
 
     });
+
+    var Fecha = "";
+    var TP = "";
+    var Numero = "";
+
+    $('#DGQuery').on('click', 'tr', function () {
+
+        //console.log("Fecha:", Fecha);
+        //console.log("TP:", TP);
+        //console.log("Numero:", Numero);
+
+        if (Opcion == 20) {
+
+            $('#DGQuery tr').css('background-color', '');
+            $(this).css('background-color', '#f1c232');
+            Fecha = "";
+            TP = "";
+            Numero = "";
+            $(this).find('td').each(function (index) {
+                var cellValue = $(this).text();
+                switch (index) {
+                    case 3:
+                        Fecha = cellValue;
+                        break;
+                    case 4:
+                        TP = cellValue;
+                        break;
+                    case 5:
+                        Numero = cellValue;
+                        break;
+                    default:
+                        break;
+                }
+            });
+            globalCo['Fecha'] = Fecha;
+            globalCo['TP'] = TP;
+            globalCo['Numero'] = Numero;
+
+            console.log("Fecha:", globalCo['Fecha']);
+            console.log("TP:", globalCo['TP']);
+            console.log("Numero:", globalCo['Numero']);
+        }
+    });
+
 
     $('#modalBusquedaBtnAceptar').on('click', function () {
         var valorSeleccionado = $("#ListCliente").val();
@@ -698,6 +742,7 @@
                             $('#MBFechaI').focus();
                             $('#alertNoData').hide();
                             $('#myModal_espera').modal('hide');
+
                         } else {
                             $('#DGQuery').empty();
                             $('#alertNoData').show();
@@ -812,6 +857,7 @@
     });
 
     $('#DCCliente').on('dblclick', function () {
+
         if ($("#ListCliente").val() == 'Factura') {
             $('#LblPatronBusqueda').val("P A T R O N   D E   B U S Q U E D A:\n" + $("#ListCliente").val() + " = " + globalFA['TC'] + ": " + globalFA['Serie'] + "-" + globalFA['Factura']);
         } else {
@@ -826,6 +872,7 @@
     var urlParams = new URLSearchParams(url.split('?')[1]);
     var TipoFactura = urlParams.get('tipo');
     var globalAdoQuery = null;
+    var idTabla;
     function ToolbarMenu_ButtonMenuClick(idBtnMenu) {
         var params = {
             'MBFechaI': $('#MBFechaI').val(),
@@ -856,7 +903,7 @@
             'SiEnviar': SiEnviar !== undefined ? SiEnviar : false,
         };
 
-        console.log(params['Co']);
+        console.log(SiEnviar);
 
         $('#myModal_espera').modal('show');
         $.ajax({
@@ -869,16 +916,7 @@
                 globalAdoQuery = data.AdoQuery;
                 Opcion = data.Opcion;
 
-                console.log('opcion recibida ', Opcion);
-
-                if (Opcion == 20) {
-
-                    globalCo['Fecha'] = globalAdoQuery[3];
-                    globalCo['TP'] = globalAdoQuery[4];
-                    globalCo['Numero'] = globalAdoQuery[5];
-
-                    console.log(globalCo['Fecha']);
-                }
+                console.log(data);
 
                 if (data.response == 0) {
                     $('#myModal_espera').modal('hide');
@@ -954,7 +992,7 @@
                     "Reporte_Ventas": {},
                     "Reporte_Catastro": {},
                     //"Enviar_FA_Email":{},
-                    'Recibos_Anticipados': {},
+                    //"Recibos_Anticipados": {},
                 };
 
                 var action = actionsMap[data.idBtnMenu] || {};
@@ -964,7 +1002,6 @@
                 });
 
                 if (data.num_filas > 0) {
-
                     $('#lblCommand').val(data.Opcion);
                     $('#lblRegistro').val(data.num_filas);
                     $('#lblFacturado').val(data.label_facturado);
@@ -975,12 +1012,19 @@
                     $('#DGQuery #datos_t tbody').css('height', '36vh');
                     $('#myModal_espera').modal('hide');
                     $('#alertNoData').hide();
+
+                    if (Opcion == 20) {
+                        var firstRow = $('#DGQuery tr:eq(1)');
+                        firstRow.css('background-color', '#f1c232');
+                        firstRow.trigger('click');
+                    }
                 } else {
                     $('#DGQuery').empty();
                     $('#alertNoData').show();
                     $('#myModal_espera').modal('hide');
                 }
             }
+
         });
     }
 
@@ -1036,6 +1080,10 @@
     }
 
     $('#Imprimir').on('click', function () {
+        console.log("Fecha:", Fecha);
+        console.log("TP:", TP);
+        console.log("Numero:", Numero);
+
         var idBtn = $(this).attr('id');
         var valor = $(this).data('valor');
 
@@ -1046,7 +1094,7 @@
         }
 
         console.log('clic en ', idBtn, ' con valor ', Opcion);
-        Impresiones(Opcion);
+        //Impresiones(Opcion);
     });
 
     function Impresiones(Opcion) {

@@ -26,6 +26,12 @@
         .btn-link {
             color: black;
         }
+
+        #calendarioTable th,
+        #calendarioTable td {
+            width: 3;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -217,7 +223,7 @@
                                 </select>
                             </div>
                             <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
-                                <img src="../../img/png/calendario2.png" width="60" height="60">
+                                <img src="../../img/png/calendario2.png" width="60" height="60" id="btnMostrarModal">
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="diaEntregac" style="display: block;">Día de Entrega</label>
@@ -301,6 +307,51 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal" id="modalCalendario">
+            <div class="modal-dialog">
+                <div class="modal-content" style="background-color: white;">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" style="color: white;">&times;</button>
+                        <h4 class="modal-title">CALENDARIO DE ASIGNACION</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <script>
+                                            var diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+                                            for (var i = 0; i < diasSemana.length; i++) {
+                                                document.write('<th>' + diasSemana[i] + '</th>');
+                                            }
+                                        </script>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <script>
+                                        var horas = ['9:30 AM - 10:00 AM', '10:00 AM - 10:30 AM', '10:30 AM - 11:00 AM',
+                                            '11:00 AM - 11:30 AM', '11:30 AM - 12:00 PM', '12:00 PM - 12:30 PM',
+                                            '12:30 PM - 1:00 PM', '1:00 PM - 1:30 PM', '1:30 PM - 2:00 PM',
+                                            '2:00 PM - 2:30 PM', '2:30 PM - 3:00 PM', '3:00 PM - 3:30 PM',
+                                            '3:30 PM - 4:00 PM', '4:00 PM - 4:30 PM'];
+                                        for (var i = 0; i < horas.length; i++) {
+                                            document.write('<tr>');
+                                            document.write('<td>' + horas[i] + '</td>');
+                                            for (var j = 0; j < diasSemana.length; j++) {
+                                                document.write('<td></td>');
+                                            }
+                                            document.write('</tr>');
+                                        }
+                                    </script>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 </body>
 </form>
 
@@ -328,19 +379,23 @@
     $('#select_93').change(function () {
         var selectedOption = $(this).val();
         var cardBody = $('.card-body');
+        //var modalBody = $('.modal-body');
         var cardHeader = $('.card-header');
+        var modalHeader = $('.modal-header');
 
         var colorValor = $(this).find('option:selected').data('color-valor');
         var hexColor = colorValor.substring(4);
 
-        // Obtener el color más oscuro para el card-header
-        var darkerColor = darkenColor(hexColor, 20); // Puedes ajustar el porcentaje según sea necesario
+        var darkerColor = darkenColor(hexColor, 20);
 
         if (hexColor) {
             cardBody.css('background-color', '#' + hexColor);
+            //modalBody.css('background-color', '#' + hexColor);
             cardHeader.css('background-color', darkerColor);
+            modalHeader.css('background-color', darkerColor);
         } else {
             cardBody.css('background-color', '#fffacd');
+
         }
     });
 
@@ -536,7 +591,6 @@
                     }
                 }
             });
-
         }
     });
 
@@ -587,5 +641,9 @@
         $('#ruc').val('');
         $('#nombreruc').text('');
     }
+
+    $('#btnMostrarModal').click(function () {
+        $('#modalCalendario').modal('show');
+    });
 
 </script>

@@ -61,7 +61,7 @@ class HistorialFacturasC
     function __construct()
     {
         $this->modelo = new HistorialFacturasM();
-        //$this->email = new enviar_emails();
+        $this->email = new enviar_emails();
         $this->pdf = new cabecera_pdf();
     }
 
@@ -1177,7 +1177,6 @@ class HistorialFacturasC
                 $res = $this->modelo->Tipo_Pago_Cliente();
                 break;
             case "Bajar_Excel":
-                //print_r(count($AdoQuery));
                 if (!empty($parametros['AdoQuery'])) {
                     return $this->Bajar_Excel($parametros['AdoQuery']);
                 } else {
@@ -1197,7 +1196,12 @@ class HistorialFacturasC
                 $this->modelo->Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, "FA" );
                 break;
             case "Recibos_Anticipados":
-                $res = $this->Recibo_Abonos_Anticipados($FechaIni,$FechaFin,$parametros);
+                $this->Recibo_Abonos_Anticipados($FechaIni,$FechaFin,$parametros);
+                $res = $this->SMAbonos_Anticipados($FechaIni, $FechaFin, $parametros);
+                $label_facturado = $res['label_facturado'];
+                $label_abonado = $res['label_abonado'];
+                $label_saldo = $res['label_saldo'];
+                $Opcion = $res['Opcion'];
                 break;
             case "Deuda_x_Mail":
                 Actualizar_Abonos_Facturas_SP($FA);
@@ -1218,12 +1222,11 @@ class HistorialFacturasC
     }
 
     function Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $parametros){
+        $Co = $parametros['Co'];
         $tipoConsulta = $this->Tipo_De_Consulta($parametros);
-        $AdoFacturas = $this->modelo->Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $parametros['Co'], $tipoConsulta);
-        if (count($AdoFacturas) > 0) {
-            foreach ($AdoFacturas as $fila) {
-                $Co = $parametros['Co'];
-    
+        $AdoFacturas = $this->modelo->Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $Co, $tipoConsulta);
+        if (count($AdoFacturas['AdoQuery']) > 0) {
+            foreach ($AdoFacturas['AdoQuery'] as $fila) {            
                 $Co["Beneficiario"] = $fila["Cliente"];
                 $Co["RUC_CI"] = $fila["CI_RUC"];
                 $Co["Concepto"] = $fila["Concepto"];
@@ -1237,27 +1240,23 @@ class HistorialFacturasC
                 } elseif (strlen($fila["Email2"]) > 3 && $fila["Email"] != $fila["Email2"]) {
                     $Co["Email"] = $Co["Email"] . ";" . $fila["Email2"];
                 }
-        
-                //Imprimir_Recibo_Anticipos($Co, true);
-        
+            
                 if (strlen($Co["Email"]) > 3) {
-                    if ($parametros['SiEnviar']) {
-                        /* $TMail->para = $Co["Email"];
-                        $TMail->Asunto = "RECIBO ABONO ANTICIPADO No. " . date("Y", strtotime($fila["Fecha"])) . "-" . $Co["TP"] . "-" . sprintf("%09d", $Co["Numero"]);
-                        $TMail->Adjunto = $RutaDocumentoPDF;
-                        $TMail->Mensaje = "Beneficiario: " . $Co["Beneficiario"] . "\n" .
-                                            "Fecha del Abono: " . $fila["Fecha"] . "\n" .
+                    if ($parametros['SiEnviar']==true) {                        
+                        $ano = substr($Co['Fecha'], 0, 4);
+                        //$TMailPara = $Co["Email"];
+                        $TMailPara = 'dayavan38@gmail.com';
+                        $TMailAsunto = "RECIBO ABONO ANTICIPADO No. " . $ano . "-" . $Co["TP"] . "-" . sprintf("%09d", $Co["Numero"]);
+                        //$TMailAdjunto = $RutaDocumentoPDF;
+                        $TMailMensaje = "Beneficiario: " . $Co["Beneficiario"] . "\n" .
+                                            "Fecha del Abono: " . $Co["Fecha"] . "\n" .
                                             "Abono Anticipado por USD " . number_format($Co["Efectivo"], 2);
-                        */
+
+                        $this->email->enviar_email(false, $TMailPara, $TMailMensaje, $TMailAsunto,false);
                     }
                 }
             }
         }  
-        return array(            
-            'tbl' => $AdoFacturas['DGQuery'],
-            'AdoQuery' => $AdoFacturas['AdoQuery'],
-            'num_filas' => $AdoFacturas['num_filas'],
-        );
     }
 
     function Catastro_Registro_Datos_Clientes($FA, $MBFechaI, $MBFechaF, $tipoConsulta)

@@ -247,7 +247,7 @@ class HistorialFacturasM
         $res = $this->db->datos($sSQL);
         $num_filas = count($res);
 
-        $datos = grilla_generica_new($sSQL, 'Facturas', '', 'ABONOS DE ANTICIPADOS', false, false, false, 1, 1, 1, 100);
+        $datos = grilla_generica_new($sSQL, 'Facturas', 'mi_tabla_abono', 'ABONOS DE ANTICIPADOS', false, false, false, 1, 1, 1, 100);
         return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res);
 
     }
@@ -1426,7 +1426,7 @@ class HistorialFacturasM
             ORDER BY F.Factura ";
 
         $AdoQuery = $this->db->datos($sSQL);
-        print_r($sSQL);
+        //print_r($sSQL);
         return array('AdoQuery' => $AdoQuery, 'response' => 'mail1', 'tipoEnvio' => $TipoEnvio);
     }
 
