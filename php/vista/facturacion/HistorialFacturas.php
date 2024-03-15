@@ -916,58 +916,29 @@
                 globalAdoQuery = data.AdoQuery;
                 Opcion = data.Opcion;
 
-                console.log(data);
+                console.log("data.response: " + data.response);
 
-                if (data.response == 0) {
-                    $('#myModal_espera').modal('hide');
-                    swal.fire({
-                        title: 'Información',
-                        text: 'No se encontraron datos para generar el archivo Excel',
-                        type: 'info',
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
+                $('#myModal_espera').modal('hide');
 
-                if (data.response == 1) {
-                    $('#myModal_espera').modal('hide');
-                    swal.fire({
-                        title: 'Información',
-                        text: data.mensaje,
-                        type: 'info',
-                        confirmButtonText: 'Aceptar'
-                    });
-                    var url = "../../TEMP/HISTORICO/" + data.nombre;
-                    var enlaceTemporal = $('<a></a>')
-                        .attr('href', url)
-                        .attr('download', data.nombre)
-                        .appendTo('body');
-                    enlaceTemporal[0].click();
-                    enlaceTemporal.remove();
-
-                    globalAdoQuery = null;
-                }
-
-                if (data.response == 2) {
-                    $('#myModal_espera').modal('hide');
-                    swal.fire({
-                        title: 'SE HA GENERADO EL SIGUIENTE ARCHIVO: ',
-                        text: data.mensaje,
-                        type: 'success',
-                        confirmButtonText: 'Aceptar'
-                    });
-                    var url = "../../Excel/" + data.nombre;
-                    var enlaceTemporal = $('<a></a>')
-                        .attr('href', url)
-                        .attr('download', data.nombre)
-                        .appendTo('body');
-                    enlaceTemporal[0].click();
-                    enlaceTemporal.remove();
-
-                    //globalAdoQuery = null;
-                }
-
-                if (data.response == 'mail1') {
-                    Enviar_Emails_Facturas_Recibos(data.AdoQuery, data.tipoEnvio);
+                switch (data.response) {
+                    case 0:
+                        mostrarAlerta('Información', 'No se encontraron datos para generar el archivo Excel', 'info');
+                        break;
+                    case 1:
+                        descargarArchivo(data, '../../TEMP/HISTORICO/');
+                        break;
+                    case 2:
+                        mostrarAlerta('SE HA GENERADO EL SIGUIENTE ARCHIVO:', data.mensaje, 'success');
+                        break;
+                    case 3:
+                        console.log("descarga del archivo");
+                        descargarArchivo(data, '../../TEMP/');
+                        break;
+                    case 4:
+                        Enviar_Emails_Facturas_Recibos(data.AdoQuery, data.tipoEnvio);
+                        break;
+                    default:
+                        console.log('Respuesta no reconocida');
                 }
 
                 var actionsMap = {
@@ -1028,6 +999,44 @@
         });
     }
 
+    function mostrarAlerta(titulo, mensaje, tipo) {
+        swal.fire({
+            title: titulo,
+            text: mensaje,
+            type: tipo,
+            confirmButtonText: 'Aceptar'
+        });
+    }
+
+    function descargarArchivo(data, ruta) {
+        mostrarAlerta('Información', data.mensaje, 'info');
+        var url = ruta + data.nombre;
+        var enlaceTemporal = $('<a></a>')
+            .attr('href', url)
+            .attr('download', data.nombre)
+            .appendTo('body');
+        enlaceTemporal[0].click();
+        enlaceTemporal.remove();
+    }
+
+    function SRI_Enviar_Mails(FA, SRI_Autorizacion, Tipo_Documento) {
+        var params = {
+            'FA': FA,
+            'SRI_Autorizacion': SRI_Autorizacion,
+            'Tipo_Documento': Tipo_Documento,
+        };
+
+        $.ajax({
+            url: '../controlador/facturacion/HistorialFacturasC.php?SRI_Enviar_Mails=true',
+            type: 'post',
+            dataType: 'json',
+            data: { 'parametros': params },
+            success: function (data) {
+
+            }
+        });
+    }
+
     function Enviar_Emails_Facturas_Recibos(consulta, tipoEnvio) {
         if (consulta.length > 0) {
             Swal.fire({
@@ -1040,28 +1049,31 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     consulta.forEach((registro) => {
-                        let codigoC = registro['CodigoC'];
-                        let claveAcceso = registro['Clave_Acceso'];
-                        let estadoSRI = registro['Estado_SRI'];
-                        let TC = registro['TC'];
-                        let fecha = registro['Fecha'];
-                        let fechaV = registro['Fecha_V'];
-                        let serie = registro['Serie'];
-                        let CI_RUC = registro['CI_RUC'];
-                        let factura = registro['Factura'];
-                        let autorizacion = registro['Autorizacion'];
-                        let horaFA = registro['Hora_Aut'];
-                        let fechaAut = registro['Fecha_Aut'];
-                        let emailC = registro['Email'];
-                        let emailR = registro['Email2'];
-                        let cliente = registro['Cliente'];
-                        let comercial = registro['Cliente'];
-                        let horaAutorizacion = registro['Hora_Aut'];
+                            globalFA = {
+                            'CodigoC': registro['CodigoC'],
+                            'ClaveAcceso': registro['Clave_Acceso'],
+                            'EstadoSRI': registro['Estado_SRI'],
+                            'TC': registro['TC'],
+                            'CheqAbonos_Clickfecha': registro['Fecha'],
+                            'FechaV': registro['Fecha_V'],
+                            'Serie': registro['Serie'],
+                            'CI_RUC': registro['CI_RUC'],
+                            'Factura': registro['Factura'],
+                            'Autorizacion': registro['Autorizacion'],
+                            'HoraFA': registro['Hora_Aut'],
+                            'FechaAut': registro['Fecha_Aut'],
+                            'EmailC': registro['Email'],
+                            'EmailR': registro['Email2'],
+                            'Cliente': registro['Cliente'],
+                            'Comercial': registro['Comercial']
+                        };
+
+                        SRI_Autorizacion[horaAutorizacion] = registro['Hora_Aut'];
 
                         if (tipoEnvio === "FA") {
-                            //SRI_Enviar_Mails(codigoC, claveAcceso, estadoSRI, TC, fecha, fechaV, serie, CI_RUC, factura, autorizacion, horaFA, fechaAut, emailC, emailR, cliente, comercial, horaAutorizacion, "FA");
+                            SRI_Enviar_Mails(globalFA, SRI_Autorizacion, "FA");
                         } else {
-                            //Recibo_Enviar_Mails(codigoC, claveAcceso, estadoSRI, TC, fecha, fechaV, serie, CI_RUC, factura, autorizacion, horaFA, fechaAut, emailC, emailR, cliente, comercial, horaAutorizacion);
+                            Recibo_Enviar_Mails(globalFA);
                         }
                     });
                     Swal.fire({
@@ -1094,7 +1106,7 @@
         }
 
         console.log('clic en ', idBtn, ' con valor ', Opcion);
-        //Impresiones(Opcion);
+        Impresiones(Opcion);
     });
 
     function Impresiones(Opcion) {

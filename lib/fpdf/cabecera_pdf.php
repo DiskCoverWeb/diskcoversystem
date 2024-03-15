@@ -1113,7 +1113,7 @@ class cabecera_pdf
 	}
 
 	/**Dallyana Vanegas */
-	function generarEncabezado($pdf, $datosAdo)
+	function generarEncabezado($pdf)
 	{
 		setlocale(LC_TIME, 'es_ES');
 
@@ -1134,7 +1134,7 @@ class cabecera_pdf
 		$pdf->SetX(-42);
 		$pdf->Cell(0,10,date('H:i:s'),0,0);
 
-		$pdf->Image(dirname(__DIR__,2).'/img/logotipos/DiskCover.png',183,8, 20);
+		$pdf->Image(dirname(__DIR__,2).'/img/logotipos/DiskCover.png',190,8, 20);
 		$pdf->Ln(3);
 		
 		$pdf->SetXY(-50, $pdf->GetY());
@@ -1159,21 +1159,16 @@ class cabecera_pdf
 		$pdf->SetFont('Arial','',8); 
 		$pdf->SetX(-38); 
 		$pdf->Cell(0,10, $_SESSION['INGRESO']['Nombre'] ,0,0); 
-		$pdf->Ln(10);
-
-		$pdf->SetFont('Arial', 'I', 14);
-		$pdf->Cell(0, 5, $datosAdo['MensajeEncabData'], 0, 1, 'L');
-		$pdf->SetFont('Arial', 'I', 12);
-		$pdf->Cell(0, 5, 'Grupo No: ' .$datosAdo['Opcion'], 0, 1, 'L');
-		$pdf->Ln(3);
+		$pdf->Ln(10);		
 	}
 
 	/**Dallyana Vanegas */
 	function generarPDFTabla($parametros, $path)
 	{
 		$datosAdo = $parametros['AdoQuery'];
-		$pdf = new FPDF('P', 'mm', 'Letter'); // Orientación por defecto: Vertical
-		$pdf->SetAutoPageBreak(true, 15); // Margen inferior de 15mm
+
+		$pdf = new FPDF('P', 'mm', 'Letter');
+		$pdf->SetAutoPageBreak(true, 15);
 	
 		$pdf->SetFont('Arial', 'BIU', 9);
 		$anchoPagina = $pdf->GetPageWidth();
@@ -1207,12 +1202,17 @@ class cabecera_pdf
 			$anchoTotalColumnas = array_sum($anchosColumnas);
 	
 			if ($anchoTotalColumnas > $anchoUtilizable) {
-				$pdf->AddPage('L'); // Orientación horizontal
+				$pdf->AddPage('L');
 			} else {
 				$pdf->AddPage();
 			}
 	
-			$this->generarEncabezado($pdf, $parametros);
+			$this->generarEncabezado($pdf);
+			$pdf->SetFont('Arial', 'I', 14);
+			$pdf->Cell(0, 5, $parametros['MensajeEncabData'], 0, 1, 'L');
+			$pdf->SetFont('Arial', 'I', 12);
+			$pdf->Cell(0, 5, 'Grupo No: ' .$parametros['Opcion'], 0, 1, 'L');
+			$pdf->Ln(3);
 	
 			foreach ($headers as $indice => $header) {
 				$pdf->Cell($anchosColumnas[$indice], 6, $header, 0, 0, 'C');
@@ -1221,7 +1221,7 @@ class cabecera_pdf
 			$pdf->SetFont('Arial', '', 9);
 	
 			foreach ($datosAdo as $fila) {
-				$pdf->SetX(15); // Establece la posición X para centrar la fila
+				$pdf->SetX(15);
 	
 				foreach ($headers as $header) {
 					$valor = $fila[$header];
@@ -1237,9 +1237,29 @@ class cabecera_pdf
 		} else {
 			$pdf->Cell(0, 10, 'No hay datos disponibles para mostrar en la tabla.', 0, 1);
 		}
-	
 		$pdf->Output('F', $path);
 	}
+
+	/**Dallyana Vanegas */
+	function Imprimir_Abono_Anticipado($CA, $path){
+		$pdf = new FPDF('P', 'mm', 'Letter');
+		$pdf->AddPage();
+		$this->generarEncabezado($pdf);
+		$pdf->SetFont('Arial', '', 12);
+				
+		$pdf->Cell(0,5,'ABONO ANTICIPADO No.',0,1);
+		$pdf->Cell(0,5,'Fecha: ' . $CA["Fecha"],0,1);
+		$pdf->Cell(0,5,'Por $' . $CA["Efectivo"],0,1);
+		$pdf->Cell(0,5,'Beneficiario: ' . $CA["Beneficiario"],0,1);
+		$pdf->Cell(0,5,'La suma de: ' . $CA["Efectivo"],0,1);
+		$pdf->Cell(0,5,'POR CONCEPTO DE:',0,1);
+		$pdf->Cell(0,5,$CA["Concepto"],0,1);
+		$pdf->Cell(0,5,'C O N F O R M E',0,1);
+		$pdf->Cell(0,5,'C.I./R.U.C. ' . $CA["RUC_CI"],0,1);
+		
+		$pdf->Output('F', $path);
+	}
+	
 }
 
 class PDFv extends FPDF

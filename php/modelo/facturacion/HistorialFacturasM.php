@@ -1427,7 +1427,7 @@ class HistorialFacturasM
 
         $AdoQuery = $this->db->datos($sSQL);
         //print_r($sSQL);
-        return array('AdoQuery' => $AdoQuery, 'response' => 'mail1', 'tipoEnvio' => $TipoEnvio);
+        return array('AdoQuery' => $AdoQuery, 'response' => 4, 'tipoEnvio' => $TipoEnvio);
     }
 
     function Por_Buses($Patron_Busqueda)

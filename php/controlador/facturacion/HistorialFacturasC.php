@@ -14,6 +14,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 $controlador = new HistorialFacturasC();
+
 if (isset($_GET['CheqAbonos_Click'])) {
     echo json_encode($controlador->CheqAbonos_Click());
 }
@@ -51,6 +52,11 @@ if (isset($_GET['Imprimir'])) {
     echo json_encode($controlador->Imprimir($parametros));
 }
 
+if (isset($_GET['SRI_Enviar_Mails'])) {
+    //$parametros = $_POST['parametros'];
+    //echo json_encode($controlador->SRI_Enviar_Mails($TFA, $SRI_Autorizacion, $Tipo_Documento));
+}
+
 
 class HistorialFacturasC
 {
@@ -78,10 +84,10 @@ class HistorialFacturasC
     function Historico_Facturas($parametros)
     {
         $Opcion = $parametros['Opcion'];
-        
+
         $FechaIni = BuscarFecha($parametros['MBFechaI']);
         $FechaFin = BuscarFecha($parametros['MBFechaF']);
-        
+
         $PorCxC = false;
 
         if ($parametros['CheqCxC'] == 1) {
@@ -283,7 +289,6 @@ class HistorialFacturasC
         $filename = str_replace(' ', '_', $filename);
         $path = $basepath . $filename;
 
-        // Verificar si el archivo ya existe y agregar sufijo autoincremental si es necesario
         $i = 1;
         while (file_exists($path)) {
             $info = pathinfo($path);
@@ -294,13 +299,36 @@ class HistorialFacturasC
 
         $this->pdf->generarPDFTabla($parametros, $path);
 
-        //$this->pdf->generarPDFTabla($datos, $path);
-
         return [
             'response' => 1,
             'nombre' => basename($path),
             'mensaje' => "SE GENERO EL SIGUIENTE ARCHIVO: \n" . basename($path)
         ];
+    }
+
+    function RutaDocumentoPDF($nombre, $CA)
+    {
+
+        $basepath = dirname(__DIR__, 3) . "/TEMP/";
+        if (!is_dir($basepath)) {
+            mkdir($basepath, 0777, true);
+        }
+
+        $filename = $nombre;
+        $filename = str_replace(' ', '_', $filename);
+        $path = $basepath . $filename;
+
+        $i = 1;
+        while (file_exists($path)) {
+            $info = pathinfo($path);
+            $filename = $nombre;
+            $path = $info['dirname'] . '/' . $filename;
+            $i++;
+        }
+
+        $this->pdf->Imprimir_Abono_Anticipado($CA, $path);
+
+        return basename($path);
     }
 
     function Listado_Facturas_Por_Meses($parametros, $Por_FA, $SQL_Server = true)
@@ -710,7 +738,7 @@ class HistorialFacturasC
         $AdoQuery = $DGQuery;
 
         $label_saldo = number_format($Valor_Total, 2, '.', ',');
-        
+
         $Opcion = 11;
 
         return array(
@@ -814,7 +842,7 @@ class HistorialFacturasC
     function Cheques_Protestados($parametros)
     {
         $Total = 0;
-        
+
         $MBFechaI = $parametros['MBFechaI'];
         $MBFechaF = $parametros['MBFechaF'];
 
@@ -1190,19 +1218,20 @@ class HistorialFacturasC
                 return $this->Catastro_Registro_Datos_Clientes($FA, $MBFechaI, $MBFechaF, $tipoConsulta);
             case "Enviar_FA_Email":
                 $tipoConsulta = $this->Tipo_De_Consulta($parametros, true);
-                return $this->modelo->Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, "FA", $tipoConsulta );
+                return $this->modelo->Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, "FA", $tipoConsulta);
 
             case "Enviar_RE_Email":
-                $this->modelo->Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, "FA" );
+                $tipoConsulta = $this->Tipo_De_Consulta($parametros, true);
+                $this->modelo->Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, "RE", $tipoConsulta);
                 break;
             case "Recibos_Anticipados":
-                $this->Recibo_Abonos_Anticipados($FechaIni,$FechaFin,$parametros);
-                $res = $this->SMAbonos_Anticipados($FechaIni, $FechaFin, $parametros);
-                $label_facturado = $res['label_facturado'];
-                $label_abonado = $res['label_abonado'];
-                $label_saldo = $res['label_saldo'];
-                $Opcion = $res['Opcion'];
-                break;
+                return $this->Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $parametros);
+            /*$res = $this->SMAbonos_Anticipados($FechaIni, $FechaFin, $parametros);
+            $label_facturado = $res['label_facturado'];
+            $label_abonado = $res['label_abonado'];
+            $label_saldo = $res['label_saldo'];
+            $Opcion = $res['Opcion'];*/
+            //break;
             case "Deuda_x_Mail":
                 Actualizar_Abonos_Facturas_SP($FA);
                 $this->Historico_Facturas($parametros);
@@ -1221,12 +1250,13 @@ class HistorialFacturasC
         );
     }
 
-    function Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $parametros){
+    function Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $parametros)
+    {
         $Co = $parametros['Co'];
         $tipoConsulta = $this->Tipo_De_Consulta($parametros);
         $AdoFacturas = $this->modelo->Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $Co, $tipoConsulta);
         if (count($AdoFacturas['AdoQuery']) > 0) {
-            foreach ($AdoFacturas['AdoQuery'] as $fila) {            
+            foreach ($AdoFacturas['AdoQuery'] as $fila) {
                 $Co["Beneficiario"] = $fila["Cliente"];
                 $Co["RUC_CI"] = $fila["CI_RUC"];
                 $Co["Concepto"] = $fila["Concepto"];
@@ -1240,23 +1270,38 @@ class HistorialFacturasC
                 } elseif (strlen($fila["Email2"]) > 3 && $fila["Email"] != $fila["Email2"]) {
                     $Co["Email"] = $Co["Email"] . ";" . $fila["Email2"];
                 }
-            
+
+                $NombreArchivo = "Recibo_No_" . $Co["TP"] . "-" . sprintf("%09d", $Co["Numero"]) . ".pdf";
+                $RutaDocumentoPDF = $this->RutaDocumentoPDF($NombreArchivo, $Co);
+                //print_r($RutaDocumentoPDF['nombre']);
+
                 if (strlen($Co["Email"]) > 3) {
-                    if ($parametros['SiEnviar']==true) {                        
+                    if ($parametros['SiEnviar'] == true) {
                         $ano = substr($Co['Fecha'], 0, 4);
                         //$TMailPara = $Co["Email"];
                         $TMailPara = 'dayavan38@gmail.com';
                         $TMailAsunto = "RECIBO ABONO ANTICIPADO No. " . $ano . "-" . $Co["TP"] . "-" . sprintf("%09d", $Co["Numero"]);
-                        //$TMailAdjunto = $RutaDocumentoPDF;
+                        $TMailAdjunto = $RutaDocumentoPDF;
                         $TMailMensaje = "Beneficiario: " . $Co["Beneficiario"] . "\n" .
-                                            "Fecha del Abono: " . $Co["Fecha"] . "\n" .
-                                            "Abono Anticipado por USD " . number_format($Co["Efectivo"], 2);
+                            "Fecha del Abono: " . $Co["Fecha"] . "\n" .
+                            "Abono Anticipado por USD " . number_format($Co["Efectivo"], 2);
 
-                        $this->email->enviar_email(false, $TMailPara, $TMailMensaje, $TMailAsunto,false);
+                        $rsp=$this->email->enviar_email(array($TMailAdjunto), $TMailPara, $TMailMensaje, $TMailAsunto, false);
+
+                       print_r($rsp);die;
                     }
                 }
             }
-        }  
+        }
+
+        $res = $this->SMAbonos_Anticipados($FechaIni, $FechaFin, $parametros);
+
+        return [
+            'response' => 3,
+            'nombre' => $RutaDocumentoPDF,
+            'mensaje' => "SE GENERO EL SIGUIENTE ARCHIVO: \n" . $RutaDocumentoPDF,
+            'resp' => $res,
+        ];
     }
 
     function Catastro_Registro_Datos_Clientes($FA, $MBFechaI, $MBFechaF, $tipoConsulta)
