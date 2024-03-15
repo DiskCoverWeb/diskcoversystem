@@ -280,20 +280,35 @@ function guardar()
   {
     var selected=[];
     // var selected = $('#form_modulos_check').serialize();
+    var array = Object.values(listado_empresas_modificados); // Convertir objeto a array
+    var uniqueArray = Array.from(new Set(array)); // Eliminar duplicados
+// console.log(uniqueArray);
+
     var emp = $('#txt_empresas').val();
    $("#form_modulos_check input[type='checkbox']").each(function() {
       var id = $(this).attr("id");
       var check = this.checked;
       var empEnti = id.replace('rbl_','');
       var empEnti = empEnti.split('_');
-      empEnti.push(check);
-      selected.push(empEnti);
+      uniqueArray.forEach(function(item,i){
+        if(item == empEnti[1])
+        {
+
+          empEnti.push(check);
+          selected.push(empEnti);
+
+        }
+      })
 
         //console.log(empEnti);
         // empresa[]
         // selected.push($(this).id)
     });
-       enviar_para_guardar(selected,listado_empresas_modificados); 
+
+   //console.log(selected);
+   //console.log(listado_empresas_modificados);
+
+   enviar_para_guardar(selected,listado_empresas_modificados); 
   }
 
   function listar_empresa_modificada(item)
@@ -1118,7 +1133,7 @@ function acceso_pagina(entidad,item)
         </div>      
 
         <form id="form_modulos_check">
-          <div class="box" id="tbl_modulos" style="overflow-y:scroll; height: 500px; overflow-x: hidden;">
+          <div class="box" id="tbl_modulos" style="overflow-y:scroll; height: 500px;">
             
           </div>
         </form>      

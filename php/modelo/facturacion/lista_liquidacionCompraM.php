@@ -141,10 +141,14 @@ class lista_liquidacionCompraM
          AND DF.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
          AND DF.Factura = " . $TFA['Factura'] . "  
          AND DF.Item = CP.Item 
+         AND DF.TC = 'LC'
          AND DF.Periodo = CP.Periodo 
          AND DF.Codigo = CP.Codigo_Inv 
          ORDER BY DF.ID, DF.Codigo";
+
+         // print_r($sSQL);die();
     $detalle_fac = $this->db->datos($sSQL);
+    // print_r($detalle_fac);die();
 
 	$tipo_con = Tipo_Contribuyente_SP_MYSQL($_SESSION['INGRESO']['RUC']);
 
