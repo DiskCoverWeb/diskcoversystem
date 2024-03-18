@@ -9334,7 +9334,7 @@ function Validar_Porc_IVA($FechaIVA)
     if($FechaIVA == "00/00/0000"){$FechaIVA = date('Y-m-d');}
       $sql = "SELECT * 
       FROM Tabla_Por_ICE_IVA 
-      WHERE IVA <> 0  
+      WHERE IVA <> 'FALSE'  
       AND Fecha_Inicio <= '".BuscarFecha($FechaIVA)."' 
       AND Fecha_Final >= '".BuscarFecha($FechaIVA)."' 
       ORDER BY Porc DESC ";
