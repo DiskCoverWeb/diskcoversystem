@@ -1553,7 +1553,7 @@ function mayorizar_inventario()
                     <input type="hidden" name="" id="num_filas">
                     <input type="file" name="archivoAdjunto" id="archivoAdjunto" style="display: none;" onchange="subir_archivo()">
                     <button class="btn btn-primary btn-sm" onclick="simularClick()" data-toggle="tooltip" data-placement="top" title="Subir Archivo">
-                      <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
+                      <span class="glyphicon glyphicon-open-file" aria-hidden="true"></span>
                     </button>
                   </div>
                   
