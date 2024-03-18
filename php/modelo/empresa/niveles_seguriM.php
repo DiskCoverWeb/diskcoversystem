@@ -22,6 +22,7 @@ class niveles_seguriM
 		$sql="SELECT * 
 		    FROM modulos 
 		    WHERE modulo <> '".G_NINGUNO."' and modulo <> 'VS'
+		    AND link<>'.' AND icono<>'.'
 		    ORDER BY aplicacion "; 
 		    $datos=[];
 		 $fila = $this->db->datos($sql,'MY SQL');

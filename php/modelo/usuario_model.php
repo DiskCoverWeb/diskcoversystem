@@ -698,7 +698,8 @@ class usuario_model{
 		JOIN modulos M on A.Modulo = M.modulo 
 		WHERE CI_NIC='".$_SESSION['INGRESO']['Id']."' 
 		AND Item='".$_SESSION['INGRESO']['item']."' 
-		AND ID_Empresa='".$_SESSION['INGRESO']['IDEntidad']."' ";
+		AND ID_Empresa='".$_SESSION['INGRESO']['IDEntidad']."' 
+		 AND link<>'.' AND icono<>'.' ORDER BY aplicacion ASC ";
 		// echo $sql;
 		$datos = $this->db1->datos($sql,$tipo='MY SQL');
 		return $datos;
