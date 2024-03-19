@@ -21,6 +21,11 @@ if (isset ($_GET['actualizarSelectDonacion'])) {
     echo json_encode($controlador->actualizarSelectDonacion($valor));
 }
 
+if (isset ($_GET['descargarArchivo'])) {
+    $valor = $_POST['valor'];
+    echo json_encode($controlador->descargarArchivo($valor));
+}
+
 if (isset ($_GET['LlenarSelectDiaEntrega'])) {
     echo json_encode($controlador->LlenarSelectDiaEntrega());
 }
@@ -138,6 +143,27 @@ class registro_beneficiarioC
         }
         return $datos[0];
     }
+
+    function descargarArchivo($valor)
+    {
+        $base = dirname(__DIR__, 3);
+        $directorio = "/TEMP/EVIDENCIA_" . $_SESSION['INGRESO']['Entidad'] .
+        "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
+        $directorio = str_replace(' ', '_', $directorio);
+        $carpetaDestino =  $base . $directorio;
+    
+        $carpetaDestino = str_replace(' ', '_', $carpetaDestino);
+    
+        $archivos = scandir($carpetaDestino);
+        foreach ($archivos as $archivo) {
+            $nombreArchivo = pathinfo($archivo, PATHINFO_FILENAME);
+            if ($nombreArchivo === $valor) {
+                return ["Dir"=> $directorio, "Nombre"=>$archivo];
+            }
+        }
+    }
+    
+
     function obtenerCamposComunes($valor)
     {
         return [

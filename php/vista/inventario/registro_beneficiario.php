@@ -32,6 +32,31 @@
             width: 3;
             text-align: center;
         }
+
+
+        #validarSRI {
+            transition: transform 0.3s ease;
+        }
+
+        #validarSRI:hover {
+            transform: translateY(-10px);
+        }
+
+        #btnMostrarModal {
+            transition: transform 0.3s ease;
+        }
+
+        #btnMostrarModal:hover {
+            transform: translateY(-10px);
+        }
+
+        #descargarArchivo img {
+            transition: transform 0.3s ease;
+        }
+
+        #descargarArchivo img:hover {
+            transform: translateX(10px);
+        }
     </style>
 </head>
 
@@ -84,7 +109,7 @@
                             </div>
                             <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
                                 <img src="../../img/png/SRIlogo.png" width="80" height="50"
-                                    onclick="validar_sriC($('#ruc').val())">
+                                    onclick="validar_sriC($('#ruc').val())" id="validarSRI" title="VALIDAR RUC">
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="cliente" style="display: block;">Nombre del Beneficiario/Usuario</label>
@@ -262,8 +287,12 @@
 
                             <div class="col-sm-3">
                                 <div class="row" style="display: flex; justify-content: center;">
-                                    <img src="../../img/png/adjuntar-archivo.png" width="60" height="60">
+                                    <a href="#" id="descargarArchivo">
+                                        <img src="../../img/png/adjuntar-archivo.png" width="60" height="60"
+                                            title="DESCARGAR ARCHIVO">
+                                    </a>
                                 </div>
+
                                 <div class="row">
                                     <div class="form-group">
                                         <label for="archivoAdd">Archivos Adjuntos</label>
@@ -505,7 +534,7 @@
         var archivo = fileInput.files[0];
         var formData = new FormData();
 
-        console.log('dentro de guardar'+ $('#tipoDonacion').val());
+        //console.log('dentro de guardar' + $('#diaEntrega').val());
 
         formData.append('Cliente', miCliente);
         formData.append('CI_RUC', miRuc);
@@ -599,12 +628,14 @@
     var miRuc;
     var miCodigo;
     var miCliente;
+    var nombreArchivo;
     $('#cliente').on('select2:select', function (e) {
         var data = e.params.data;
-        console.log(data.id);
+        //console.log(data.id);
         miCodigo = data.id;
         miRuc = data.CI_RUC;
         miCliente = data.text;
+        nombreArchivo = data.Evidencias;
 
         if ($('#ruc').find("option[value='" + data.id + "']").length) {
             $('#ruc').val(data.id).trigger('change');
@@ -613,7 +644,7 @@
             $('#ruc').append(newOption).trigger('change');
         }
         var valorSeleccionado = $('#ruc').val();
-        console.log(valorSeleccionado);
+        //console.log(valorSeleccionado);
 
         $('#nombreruc').text(miRuc);
         llenarDatos(data);
@@ -621,10 +652,12 @@
 
     $('#ruc').on('select2:select', function (e) {
         var data = e.params.data;
-        console.log(data.id);
+        //console.log(data);
         miCodigo = data.id;
         miRuc = data.text;
         miCliente = data.Cliente;
+        nombreArchivo = data.Evidencias;
+
         $('#nombreruc').text(miCliente);
 
         if ($('#cliente').find("option[value='" + data.id + "']").length) {
@@ -634,7 +667,7 @@
             $('#cliente').append(newOption).trigger('change');
         }
         var valorSeleccionado = $('#cliente').val();
-        console.log(valorSeleccionado);
+        //console.log(valorSeleccionado);
 
         $('#nombreruc').text(miCliente);
         llenarDatos(data);
@@ -655,33 +688,33 @@
                         $('#tipoDonacion').append(newOption).trigger('change');
                     }
                     var valorSeleccionado = $('#tipoDonacion').val();
-                    callback(valorSeleccionado);
+                    //callback(valorSeleccionado);
                 }
             });
         } else {
             $('#tipoDonacion').val(null).trigger('change');
             var valorSeleccionado = $('#tipoDonacion').val();
-            callback(valorSeleccionado);
+            //callback(valorSeleccionado);
         }
     }
 
     function llenarDatos(datos) {
+        $('#miFormulario').find('input').val('');
         $('#nombreRepre').val(datos.Representante);
         $('#ciRepre').val(datos.CI_RUC_R);
         $('#telfRepre').val(datos.Telefono_R);
         $('#contacto').val(datos.Contacto);
         $('#cargo').val(datos.Profesion);
-        $('#diaEntrega').val(datos.Dia_Ent);
         $('#direccion').val(datos.Direccion);
         $('#email').val(datos.Email);
         $('#email2').val(datos.Email2);
         $('#referencia').val(datos.Lugar_Trabajo);
         $('#telefono').val(datos.Telefono);
         $('#telefono2').val(datos.TelefonoT);
-
-        actualizarSelectDonacion(datos.Calificacion, function (valorSeleccionado) {
-            console.log('asignado: ' + valorSeleccionado);
-        });
+        actualizarSelectDonacion(datos.Calificacion);
+        /*actualizarSelectDonacion(datos.Calificacion, function (valorSeleccionado) {
+            //console.log('asignado: ' + valorSeleccionado);
+        });*/
 
         $('#select_87').val(datos.CodigoA).trigger('change');
 
@@ -696,6 +729,14 @@
             $('#select_93').val('');
             actualizarEstilo();
         }
+
+        //console.log(datos.Dia_Ent);
+        if (datos.Dia_Ent == '.') {
+            $('#diaEntrega').val($('#diaEntrega option:first').val());
+        } else {
+            $('#diaEntrega').val(datos.Dia_Ent);
+        }
+
 
         if (/^\d{2}:\d{2}$/.test(datos.Hora_Ent)) {
             $('#horaEntrega').val(datos.Hora_Ent);
@@ -767,5 +808,36 @@
 
         return "#" + ((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1);
     }
+
+    function descargarArchivo(url, nombre) {
+        var ruta = "../../" + url + nombre;
+        //console.log(ruta);
+        var enlaceTemporal = $('<a></a>')
+            .attr('href', ruta)
+            .attr('download', nombre)
+            .appendTo('body');
+        enlaceTemporal[0].click();
+        enlaceTemporal.remove();
+    }
+
+    $('#descargarArchivo').click(function () {
+        //console.log('Click en descarga');
+        if (nombreArchivo) {
+            $.ajax({
+                url: '../controlador/inventario/registro_beneficiarioC.php?descargarArchivo=true',
+                type: 'post',
+                dataType: 'json',
+                data: { valor: nombreArchivo },
+                success: function (data) {
+                    //console.log(data);
+                    descargarArchivo(data.Dir, data.Nombre);
+                }
+            });
+        } else {
+            //console.log('error');
+            swal.fire('', 'No hay archivo adjunto disponible para descargar', 'error');
+        }
+    });
+
 
 </script>
