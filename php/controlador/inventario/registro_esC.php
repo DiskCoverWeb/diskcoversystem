@@ -454,9 +454,30 @@ class registro_esC
   function DCBenef_Data($parametros)
   {
     // print_r($parametros);die();
+    $datos[0]['AgenteRetencion'] = '';
+    $datos[0]['micro']=''; 
     $datos = $this->modelo->ListarProveedorUsuario($parametros['cta'],$parametros['contra'],$parametros['DCBenef']);
-
-    // print_r($datos);die();
+    $datos[0]['AgenteRetencion'] ='.';
+    $datos[0]['micro'] = '.';
+    if(count($datos)>0)
+    {
+      $tipoB = Tipo_Contribuyente_SP_MYSQL($datos[0]['CICLIENTE']);
+      $datos[0]['AgenteRetencion'] = $tipoB['@Agente'];
+      $datos[0]['micro'] = $tipoB['@micro'];     
+      switch ($datos[0]['tipodoc']) {
+         case 'C':
+           $datos[0]['estado'] = 'CEDULA';
+           break;
+            case 'P':
+           $datos[0]['estado'] = 'PASAPORTE';
+           break;
+            case 'R':
+           $datos[0]['estado'] = 'RUC ACTIVO';
+           break;
+       } 
+      
+    // print_r($tipB);die();
+    }
     if(count($datos)>0)
     {
     if($datos[0]['tipodoc']=='R')

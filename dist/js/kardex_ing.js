@@ -458,7 +458,11 @@ function DCBenef_LostFocus(bene,cta,contr)
              $("#InvImp").val(response.InvImp);  
              $("#TipoBenef").val(response.TipoBenef); 
              $("#ci").val(response.CICLIENTE); 
-
+             if(response.AgenteRetencion.length>1)
+             {
+              $("#agente").text(response.AgenteRetencion); 
+             }
+             $('#lbl_estado').text(response.estado)
              $('#TextConcepto').val(response.text);
              $('#LblNumIdent').val(response.CICLIENTE);
              $('#LblTD').val(response.TipoBenef);
@@ -943,6 +947,8 @@ function validar_num_factura(id)
 
 function calcular_porc_ret()
 {
+  $('#lbl_retencion_all_text').val('');
+  $('#lbl_retencion_all_text').val($('#DCConceptoRet option:selected').text());
   $('#DCConceptoRet').css('border','1px solid #d2d6de');
   var valor =$('#DCConceptoRet').val();
   valor = valor.split('-');

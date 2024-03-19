@@ -488,7 +488,7 @@ function contracuenta()
             </div>
             <div class="row">
               <div class="col-sm-8">
-                <b>PROVEEDOR</b>
+                <b>TIPO DE PROVEEDOR: </b><span id="agente"></span>
                 <?php if($tipo2!=''){ ?>
                     <!-- <div class="input-group"> -->
                       <select class="form-control input-xs" id="DCProveedor" onchange="datos_pro()">
@@ -507,7 +507,8 @@ function contracuenta()
               <div class="col-sm-1"><br>
                 <input type="text" class="form-control input-xs" name="" id="LblTD" style="color: red" readonly="">
               </div>
-              <div class="col-sm-3"><br>                
+              <div class="col-sm-3">
+              <b>Estado:</b><span id="lbl_estado"></span>              
                 <input type="text" class="form-control input-xs" name="" id="LblNumIdent" readonly="">
                 <input type="hidden" class="form-control input-xs" name="" id="txtemail" readonly="">
               </div>
@@ -908,7 +909,8 @@ function contracuenta()
                                         <b>CODIGO DE RETENCION</b>
                                         <select class="" id="DCConceptoRet" style="width:100%" name="DCConceptoRet" onchange="calcular_porc_ret()" onblur="calcular_porc_ret()">
                                           <option value="">Seleccione Codigo de retencion</option>
-                                        </select>                                        
+                                        </select>    
+                                        <textarea class="form-control" rows="2" id="lbl_retencion_all_text" readonly></textarea>                                    
                                       </div>
                                       <div class="col-sm-2">
                                         <b>BASE IMP</b>
