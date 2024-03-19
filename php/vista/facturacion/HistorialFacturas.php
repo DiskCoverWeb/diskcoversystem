@@ -191,22 +191,22 @@
             </div>
             <div class="col-sm-3">
                 <label>
-                    <input type="radio" name="OpcPend" id="OpcPend" value="OpcPen" checked> Pendiente
+                    <input type="radio" name="Opc" id="OpcPend" value="OpcPen" checked> Pendiente
                 </label>
             </div>
             <div class="col-sm-3">
                 <label>
-                    <input type="radio" name="OpcCanc" id="OpcCanc" value="OpcCanc"> Cancelada
+                    <input type="radio" name="Opc" id="OpcCanc" value="OpcCanc"> Cancelada
                 </label>
             </div>
             <div class="col-sm-3">
                 <label>
-                    <input type="radio" name="OpcAnul" id="OpcAnul" value="OpcAnul"> Anulada
+                    <input type="radio" name="Opc" id="OpcAnul" value="OpcAnul"> Anulada
                 </label>
             </div>
             <div class="col-sm-3">
                 <label>
-                    <input type="radio" name="OpcTodas" id="OpcTodas" value="OpcTodas"> Todas
+                    <input type="radio" name="Opc" id="OpcTodas" value="OpcTodas"> Todas
                 </label>
             </div>
         </div>

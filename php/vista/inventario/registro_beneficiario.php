@@ -3,7 +3,7 @@
 <!--
     AUTOR DE RUTINA	: Dallyana Vanegas
     FECHA CREACION : 16/02/2024
-    FECHA MODIFICACION : 11/03/2024
+    FECHA MODIFICACION : 19/03/2024
     DESCIPCION : Interfaz de modulo Gestion Social/Registro Beneficiario
  -->
 
@@ -399,7 +399,7 @@
             }
         });
     }
-
+    var arrayColor = [];
     function LlenarSelect(valor, datos) {
         if (valor) {
             var $select = $('#select_' + valor);
@@ -411,6 +411,7 @@
                     var option = '<option value="' + opcion['Cmds'] + '"';
                     if (valor == 93) {
                         option += ' data-color-valor="' + opcion['Picture'] + '"';
+                        arrayColor.push({ Cmds: opcion['Cmds'], Picture: opcion['Picture'] });
                     }
                     option += '>' + opcion['Proceso'] + '</option>';
                     $select.append(option);
@@ -503,6 +504,8 @@
         var fileInput = $('#archivoAdd')[0];
         var archivo = fileInput.files[0];
         var formData = new FormData();
+
+        console.log('dentro de guardar'+ $('#tipoDonacion').val());
 
         formData.append('Cliente', miCliente);
         formData.append('CI_RUC', miRuc);
@@ -598,25 +601,69 @@
     var miCliente;
     $('#cliente').on('select2:select', function (e) {
         var data = e.params.data;
-        //console.log(data);
+        console.log(data.id);
         miCodigo = data.id;
         miRuc = data.CI_RUC;
         miCliente = data.text;
-        $('#ruc').val(data.miRuc).trigger('change');
+
+        if ($('#ruc').find("option[value='" + data.id + "']").length) {
+            $('#ruc').val(data.id).trigger('change');
+        } else {
+            var newOption = new Option(data.CI_RUC, data.id, true, true);
+            $('#ruc').append(newOption).trigger('change');
+        }
+        var valorSeleccionado = $('#ruc').val();
+        console.log(valorSeleccionado);
+
         $('#nombreruc').text(miRuc);
         llenarDatos(data);
     });
 
     $('#ruc').on('select2:select', function (e) {
         var data = e.params.data;
-        //console.log(data);
+        console.log(data.id);
         miCodigo = data.id;
         miRuc = data.text;
         miCliente = data.Cliente;
-        $('#cliente').val(data.miCliente).trigger('change');
+        $('#nombreruc').text(miCliente);
+
+        if ($('#cliente').find("option[value='" + data.id + "']").length) {
+            $('#cliente').val(data.id).trigger('change');
+        } else {
+            var newOption = new Option(data.Cliente, data.id, true, true);
+            $('#cliente').append(newOption).trigger('change');
+        }
+        var valorSeleccionado = $('#cliente').val();
+        console.log(valorSeleccionado);
+
         $('#nombreruc').text(miCliente);
         llenarDatos(data);
     });
+
+    function actualizarSelectDonacion(Calificacion, callback) {
+        if (Calificacion.length === 3) {
+            $.ajax({
+                url: '../controlador/inventario/registro_beneficiarioC.php?actualizarSelectDonacion=true',
+                type: 'post',
+                dataType: 'json',
+                data: { valor: Calificacion },
+                success: function (data) {
+                    if ($('#tipoDonacion').find("option[value='" + Calificacion + "']").length) {
+                        $('#tipoDonacion').val(Calificacion).trigger('change');
+                    } else {
+                        var newOption = new Option(data.Concepto, Calificacion, true, true);
+                        $('#tipoDonacion').append(newOption).trigger('change');
+                    }
+                    var valorSeleccionado = $('#tipoDonacion').val();
+                    callback(valorSeleccionado);
+                }
+            });
+        } else {
+            $('#tipoDonacion').val(null).trigger('change');
+            var valorSeleccionado = $('#tipoDonacion').val();
+            callback(valorSeleccionado);
+        }
+    }
 
     function llenarDatos(datos) {
         $('#nombreRepre').val(datos.Representante);
@@ -632,22 +679,23 @@
         $('#telefono').val(datos.Telefono);
         $('#telefono2').val(datos.TelefonoT);
 
-        console.log("tipo calificacion: " +datos.Calificacion);
-        var data = {
-            id: datos.Calificacion,
-            text: 'Donacion de organizacion'
-        };
-        console.log(data);
-        var newOption = new Option(data.text, data.id, false, false);
-        //$('#tipoDonacion').append(newOption).trigger('change');
-        $('#tipoDonacion').val(datos.Calificacion).trigger('change');
-        console.log("tipo donacion: " + $('#tipoDonacion').val());
+        actualizarSelectDonacion(datos.Calificacion, function (valorSeleccionado) {
+            console.log('asignado: ' + valorSeleccionado);
+        });
 
         $('#select_87').val(datos.CodigoA).trigger('change');
-        $('#select_93').val(datos.Actividad).trigger('change');
-        //console.log($('#select_93').val());
-        var colorValor = $('#select_93').find('option:selected').data('color-valor');;
-        actualizarEstilo(colorValor);
+
+        var resultado = Encontrado(datos.Actividad);
+        var encontrado = resultado.encontrado;
+        var colorV = resultado.colorV;
+
+        if (encontrado) {
+            $('#select_93').val(datos.Actividad).trigger('change');
+            actualizarEstilo(colorV);
+        } else {
+            $('#select_93').val('');
+            actualizarEstilo();
+        }
 
         if (/^\d{2}:\d{2}$/.test(datos.Hora_Ent)) {
             $('#horaEntrega').val(datos.Hora_Ent);
@@ -681,6 +729,18 @@
         $('#modalCalendario').modal('show');
     });
 
+    function Encontrado(Actividad) {
+        var encontrado = false;
+        var colorV;
+        arrayColor.forEach(function (opcion) {
+            if (opcion['Cmds'] === Actividad) {
+                encontrado = true;
+                colorV = opcion['Picture'];
+            }
+        });
+        return { encontrado: encontrado, colorV: colorV };
+    }
+
     function actualizarEstilo(colorValor) {
         if (colorValor) {
             var hexColor = colorValor.substring(4);
@@ -689,7 +749,8 @@
             $('.card-header, .modal-header').css('background-color', darkerColor);
             $('.card-footer, .modal-footer').css('background-color', darkerColor);
         } else {
-            $('.card-body, .modal-body').css('background-color', '#F6F193');
+            $('.card-body, .modal-body').css('background-color', '#fffacd');
+            $('.card-header, .modal-header').css('background-color', '#f3e5ab');
         }
     }
 

@@ -3,7 +3,7 @@
 /** 
  * AUTOR DE RUTINA	: Dallyana Vanegas
  * FECHA CREACION	: 16/02/2024
- * FECHA MODIFICACION : 18/03/2024
+ * FECHA MODIFICACION : 19/03/2024
  * DESCIPCION : Clase controlador para Agencia
  */
 
@@ -14,6 +14,11 @@ $controlador = new registro_beneficiarioC();
 if (isset ($_GET['LlenarSelect'])) {
     $valores = $_POST['valores'];
     echo json_encode($controlador->LlenarSelect($valores));
+}
+
+if (isset ($_GET['actualizarSelectDonacion'])) {
+    $valor = $_POST['valor'];
+    echo json_encode($controlador->actualizarSelectDonacion($valor));
 }
 
 if (isset ($_GET['LlenarSelectDiaEntrega'])) {
@@ -81,20 +86,11 @@ if (isset ($_GET['guardarAsignacion'])) {
         }
 
         $nombreArchivoDestino = $carpetaDestino . basename($archivo['name']);
-
-        if (file_exists($nombreArchivoDestino)) {
-            echo json_encode([
-                "res" => '0',
-                "mensaje" => "Ya existe un archivo con el nombre '"
-                    . $archivo['name'] . "'. Por favor, cambie el nombre del archivo."
-            ]);
+        if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
+            $params['NombreArchivo'] = pathinfo($archivo['name'], PATHINFO_FILENAME);
+            echo json_encode($controlador->guardarAsignacion($params));
         } else {
-            if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
-                $params['NombreArchivo'] = pathinfo($archivo['name'], PATHINFO_FILENAME);
-                echo json_encode($controlador->guardarAsignacion($params));
-            } else {
-                echo json_encode(["res" => '0', "mensaje" => "No se ha cargado ningún archivo", "datos" => $parametros]);
-            }
+            echo json_encode(["res" => '0', "mensaje" => "No se ha cargado ningún archivo", "datos" => $parametros]);
         }
     }
 }
@@ -133,6 +129,15 @@ class registro_beneficiarioC
         return $datos;
     }
 
+    function actualizarSelectDonacion($valor)
+    {
+        $datos = $this->modelo->actualizarSelectDonacion($valor);
+        //print_r(gettype($datos));
+        if (empty ($datos)) {
+            $datos = ["Concepto" => "Seleccione un valor"];
+        }
+        return $datos[0];
+    }
     function obtenerCamposComunes($valor)
     {
         return [

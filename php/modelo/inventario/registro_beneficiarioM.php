@@ -3,7 +3,7 @@
 /** 
  * AUTOR DE RUTINA : Dallyana Vanegas
  * FECHA CREACION : 16/02/2024
- * FECHA MODIFICACION : 11/03/2024
+ * FECHA MODIFICACION : 19/03/2024
  * DESCIPCION : Clase modelo para llenar campos y guardar registros de Agencia
  */
 
@@ -36,6 +36,17 @@ class registro_beneficiarioM
                 WHERE (Tipo = 'D')
                 ORDER BY No_D_M ";
 
+        return $this->db->datos($sql);
+    }
+
+    function actualizarSelectDonacion($valor)
+    {
+        $sql = "SELECT Concepto
+                FROM Catalogo_Lineas
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                AND LEN(Fact) = 3
+                AND RIGHT(Codigo, 3) = '" . $valor . "'";
         return $this->db->datos($sql);
     }
 
@@ -142,8 +153,6 @@ class registro_beneficiarioM
                 '" . $parametros['NombreArchivo'] . "', 
                 '" . $parametros['Observaciones'] . "',
                 '" . $_SESSION['INGRESO']['item'] . "')";
-
-        Eliminar_Nulos_SP("Clientes_Datos_Extras");
         return $this->db->datos($sql2);
     }
 
@@ -152,7 +161,7 @@ class registro_beneficiarioM
     {
         $sql = "SELECT COUNT(*) AS count FROM Clientes_Datos_Extras WHERE Codigo = '" . $parametros['Codigo'] . "'";
         $result = $this->db->datos($sql);
-        
+
         if ($result[0]['count'] > 0) {
             $sql1 = $this->ActualizarClientes($parametros);
             $sql2 = $this->ActualizarClientesDatosExtra($parametros);
@@ -160,7 +169,7 @@ class registro_beneficiarioM
             $sql1 = $this->ActualizarClientes($parametros);
             $sql2 = $this->CrearClienteDatosExtra($parametros);
         }
-
+        Eliminar_Nulos_SP("Clientes_Datos_Extras");
         return array('dato1' => $sql1, 'dato2' => $sql2);
     }
 }
