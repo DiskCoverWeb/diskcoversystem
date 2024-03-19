@@ -592,3 +592,25 @@ function solo_numeros(input)
     // Actualizar el valor del input con solo números
     input.value = soloNumeros;
 }
+
+function DCPorcenIva(idFecha, idSelect){
+	var parametros = {
+		'Fecha_Ini': $('#'+idFecha).val()
+	};
+	$.ajax({
+		type: "POST",
+		url: '../controlador/facturacion/facturarC.php?DCPorcenIVA=true',
+		data: { parametros: parametros },
+		dataType: 'json',
+		success: function (data) {
+			$('#'+idSelect).empty();
+			$.each(data, function (i, item) {
+				$('#'+idSelect).append($('<option>', {
+					value: item.Porc,
+					text: item.Porc
+				}));
+			});
+		}
+	});
+
+}

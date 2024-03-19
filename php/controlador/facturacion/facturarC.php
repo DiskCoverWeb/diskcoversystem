@@ -240,6 +240,12 @@ if (isset($_GET['case_orde'])) {
    echo json_encode($controlador->case_orde($parametros));
 }
 
+if(isset($_GET['DCPorcenIVA'])){
+   $parametros = $_POST['parametros'];
+   echo json_encode($controlador->DCPorcenIVA($parametros));
+
+}
+
 
 class facturarC
 {
@@ -252,6 +258,11 @@ class facturarC
       $this->modelo = new facturarM();
       $this->sri = new autorizacion_sri();
       $this->pdf = new cabecera_pdf();
+   }
+
+   function DCPorcenIVA($parametros){
+      $datos = Porcentajes_IVA($parametros['Fecha_Ini']);
+      return $datos;
    }
 
    function case_lote($parametros)

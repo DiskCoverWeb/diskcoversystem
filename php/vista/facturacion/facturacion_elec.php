@@ -100,7 +100,7 @@ $(document).ready(function() {
     //     console.log(data);
     //   });
 
-
+    DCPorcenIva('MBFecha', 'DCPorcenIVA');
 });
 
 
@@ -1295,7 +1295,7 @@ function Command8_Click() {
 
         <b>Fecha</b>
         <input type="date" name="MBFecha" id="MBFecha" class="form-control input-xs"
-            value="<?php echo date('Y-m-d'); ?>">
+            value="<?php echo date('Y-m-d'); ?>" onblur="DCPorcenIva('MBFecha', 'DCPorcenIVA');">
     </div>
     <div class="col-sm-4">
         <b>Nombre del cliente</b>
@@ -1313,12 +1313,9 @@ function Command8_Click() {
         <input type="hidden" name="codigoCliente" id="codigoCliente" class="form-control input-xs">
         <input type="hidden" name="LblT" id="LblT" class="form-control input-xs">
 
-        <b>Tipo de pago</b>
-        <select class="" style="width: 100%;" id="DCTipoPago"
-            onchange="$('#DCTipoPago').css('border','1px solid #d2d6de');">
-            <option value="">Seleccione tipo de pago</option>
+        <b>I.V.A</b>
+        <select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA"> 
         </select>
-
     </div>
     <div class="col-sm-2">
         <b>CI/RUC/PAS</b>
@@ -1328,8 +1325,13 @@ function Command8_Click() {
             <span class="input-group-btn">
                <label id="LblTD" name="LblTD" class="input-xs form-control" style="color :coral;"></label>
             </span>
-            
         </div>
+
+        <b>Tipo de pago</b>
+        <select class="" style="width: 100%;" id="DCTipoPago"
+            onchange="$('#DCTipoPago').css('border','1px solid #d2d6de');">
+            <option value="">Seleccione tipo de pago</option>
+        </select>
     </div>
     <div class="col-sm-2">
         <b id="Label1">FACTURA No.</b>

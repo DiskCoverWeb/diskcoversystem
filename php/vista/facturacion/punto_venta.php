@@ -1,6 +1,6 @@
 <?php date_default_timezone_set('America/Guayaquil');  //print_r($_SESSION);die();//print_r($_SESSION['INGRESO']);die();
 $TC = 'FA';
-if (isset($_GET['tipo'])) {
+if (isset ($_GET['tipo'])) {
 	$TC = $_GET['tipo'];
 }
 ?>
@@ -44,7 +44,7 @@ if (isset($_GET['tipo'])) {
 		//     console.log(data);
 		//   });
 
-
+		DCPorcenIva('MBFecha', 'DCPorcenIVA');
 	});
 
 	function AdoLinea() {
@@ -151,7 +151,7 @@ if (isset($_GET['tipo'])) {
 					var value = res[0].TSaldo_MN;
 					if (value == null) {
 						value = 0.00;
-					}else{
+					} else {
 						value = parseFloat(res[0].TSaldo_MN);
 					}
 					$('#saldoP').val(value.toFixed(2));
@@ -188,7 +188,7 @@ if (isset($_GET['tipo'])) {
 	function tipo_documento() {
 		/*var tc = $('#DCLinea').val();
 		tc = tc.split(' ');*/
-		
+
 		var TipoFactura = '<?php echo $TC; ?>';
 
 		//var TipoFactura = tc[0];
@@ -313,7 +313,7 @@ if (isset($_GET['tipo'])) {
 		$('#LabelSubTotal').focus();
 	}
 
-	function TarifaLostFocus(){
+	function TarifaLostFocus() {
 		var value = $('#LabelSubTotal').val();
 		$('#TxtEfectivo').val(value);
 	}
@@ -671,7 +671,7 @@ if (isset($_GET['tipo'])) {
 			'TextFacturaNo': $('#TextFacturaNo').val(),
 			'TxtNota': $('#TxtNota').val(),
 			'TxtObservacion': $('#TxtObservacion').val(),
-			'TipoFactura': tc,	
+			'TipoFactura': tc,
 			'TxtGavetas': $('#TxtGavetas').val(),
 			'CodigoCliente': $('#codigoCliente').val(),
 			'email': $('#Lblemail').val(),
@@ -712,16 +712,14 @@ if (isset($_GET['tipo'])) {
 
 					})
 				} else if (data.respuesta == -1) {
-					if(data.text!=-3)
-					{
+					if (data.text != -3) {
 						Swal.fire(data.text, '', 'error').then(function () {
 							var url = '../../TEMP/' + data.pdf + '.pdf';
 							window.open(url, '_blank');
 							AdoLinea();
 							eliminar_linea('', '');
 						});
-					}else
-					{
+					} else {
 						Swal.fire("Conexion con el sri Inestable", '', 'error').then(function () {
 							var url = '../../TEMP/' + data.pdf + '.pdf';
 							window.open(url, '_blank');
@@ -843,7 +841,11 @@ if (isset($_GET['tipo'])) {
 			onchange="numeroFactura(); tipo_documento();" style="display:none"></select>
 		<b>Fecha</b>
 		<input type="date" name="MBFecha" id="MBFecha" class="form-control input-xs"
-			value="<?php echo date('Y-m-d'); ?>">
+			value="<?php echo date('Y-m-d'); ?>" onblur="DCPorcenIva('MBFecha', 'DCPorcenIVA');">
+	</div>
+	<div class="col-sm-2">
+		<b>I.V.A</b>
+		<select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA"> </select>
 	</div>
 	<div class="col-sm-4">
 		<b>Nombre del cliente</b>
@@ -876,16 +878,16 @@ if (isset($_GET['tipo'])) {
 			</div>
 		</div>
 	</div>
+
+</div>
+
+<div class="row">
 	<div class="col-sm-2">
 		<b>BODEGAS</b>
 		<select class="form-control input-xs" id="DCBodega" name="DCBodega" onblur="validar_bodega()">
 			<option value="">Seleccione Bodega</option>
 		</select>
-
 	</div>
-</div>
-
-<div class="row">
 	<div class="col-sm-2">
 		<b>Saldo Pendiente</b>
 		<input name="saldoP" id="saldoP" class="form-control input-xs text-right" readonly value="0.00">
@@ -910,8 +912,8 @@ if (isset($_GET['tipo'])) {
 	</div>
 	<div class="col-sm-2">
 		<b>COTIZACION</b>
-		<input type="text" name="TextCotiza" id="TextCotiza" class="form-control input-xs text-right" readonly placeholder="0.00"
-			value="0.00">
+		<input type="text" name="TextCotiza" id="TextCotiza" class="form-control input-xs text-right" readonly
+			placeholder="0.00" value="0.00">
 	</div>
 	<div class="col-sm-1">
 		<b>CONVERSION</b>
@@ -926,7 +928,8 @@ if (isset($_GET['tipo'])) {
 	</div>
 	<div class="col-sm-1">
 		<b>Gavetas</b>
-		<input type="text" name="TxtGavetas" id="TxtGavetas" class="form-control input-xs" value="0.00" placeholder="0.00">
+		<input type="text" name="TxtGavetas" id="TxtGavetas" class="form-control input-xs" value="0.00"
+			placeholder="0.00">
 	</div>
 </div>
 <div class="row">

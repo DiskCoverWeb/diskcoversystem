@@ -130,7 +130,11 @@
                             </div-->
                             </div>
                             <div class="row">
-                                <div class="col-xs-5">
+                                <div class="col-xs-2">
+                                    <label for="DCPorcenIVA">I.V.A</label>
+                                </div>
+                                <div class="col-xs-3">
+                                    <select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA"></select>
                                 </div>
                                 <div class="col-xs-6">
                                     <label for="CheqPend" class="control-label">
@@ -208,6 +212,8 @@
 
 </html>
 
+
+
 <script type="text/javascript">
 
     $(document).ready(function () {
@@ -215,6 +221,7 @@
         $('#MBFechaI').blur(function () {
             let fechaI = $(this).val();
             fechaI = FechaValida(fechaI);
+            DCPorcenIva('MBFechaI', 'DCPorcenIVA');
         });
 
         $('#MBFechaF').blur(function () {
@@ -235,6 +242,7 @@
             $("#DCGrupoI, #DCGrupoF").toggle($(this).is(":checked") ? true : false);
         });
 
+        DCPorcenIva('MBFechaI', 'DCPorcenIVA');
     });
 
     function mostrarCheqSat() {
@@ -344,7 +352,7 @@
                 });
 
                 if (selUlt) {
-                    var lastItem = data[data.length - 1]; 
+                    var lastItem = data[data.length - 1];
                     $selector.val(lastItem.Grupo);
                 }
 

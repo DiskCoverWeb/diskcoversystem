@@ -35,6 +35,8 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 		autocomplete_cliente();
 		autocomplete_producto();
 		LstOrden();
+
+		DCPorcenIva('MBoxFecha', 'DCPorcenIVA');
 		// Lineas_De_CxC();
 		$('#DCCliente').on('select2:select', function (e) {
 			var data = e.params.data.datos;
@@ -1310,7 +1312,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 </script>
 
 <style>
-	body{
+	body {
 		padding-right: 0px !important;
 	}
 </style>
@@ -1496,17 +1498,25 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 					<b class="col-sm-5 control-label" style="padding: 0px">Fecha Emision</b>
 					<div class="col-sm-7" style="padding: 0px">
 						<input type="date" name="MBoxFecha" id="MBoxFecha" class="form-control input-xs"
-							value="<?php echo date('Y-m-d'); ?>">
+							value="<?php echo date('Y-m-d'); ?>" onblur="DCPorcenIva('MBoxFecha', 'DCPorcenIVA');">
 					</div>
 				</div>
-				<div class="col-sm-4">
+				<div class="col-sm-3">
 					<b class="col-sm-6 control-label" style="padding: 0px">Fecha Vencimiento</b>
 					<div class="col-sm-6" style="padding: 0px">
 						<input type="date" name="MBoxFechaV" id="MBoxFechaV" class="form-control input-xs"
 							value="<?php echo date('Y-m-d'); ?>">
 					</div>
 				</div>
-				<div class="col-sm-5">
+				<div class="col-sm-2">
+					<div class="col-sm-4 text-right" style="padding: 0">
+						<label for="DCPorcenIVA">I.V.A:</label>
+					</div>
+					<div class="col-sm-8">
+						<select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA"> </select>
+					</div>
+				</div>
+				<div class="col-sm-4">
 					<b class="col-sm-3 control-label" style="padding: 0px">Tipo de pago</b>
 					<div class="col-sm-8">
 						<select class="form-control input-xs" id="DCTipoPago" name="DCTipoPago">
@@ -1675,7 +1685,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 					<input type="text" name="LabelServ" id="LabelServ" class="form-control input-xs">
 				</div>
 				<div class="col-sm-1" style="padding: 2px;">
-					<b id="label3">I.V.A 12.00%</b>
+					<b id="label3">I.V.A</b>
 					<input type="text" name="LabelIVA" id="LabelIVA" class="form-control input-xs">
 				</div>
 				<div class="col-sm-2" style="padding: 2px;">
