@@ -53,7 +53,7 @@
             </div>
         </div>
     </div>
-    <form id="miFormulario">
+    <form id="miFormulario" style="padding-bottom:30px">
         <div class="accordion" id="accordionExample" style="margin-left:30px; margin-right: 30px;">
             <div class="card">
                 <div class="card-header" id="headingOne">
@@ -72,31 +72,24 @@
                         <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="select_93" style="display: block;">Tipo de Beneficiario</label>
-                                <select class="form-control input-xs" name="select_93" id="select_93">
-                                    <option value="">Seleccione</option>
-                                </select>
+                                <select class="form-control input-xs" name="select_93" id="select_93"></select>
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
-                                <label for="" style="display: block;">Tipo de Donación</label>
-                                <select class="form-control input-xs" name="" id="">
-                                    <option value="">Seleccione</option>
-                                </select>
+                                <label for="tipoDonacion" style="display: block;">Tipo de Donación</label>
+                                <select class="form-control input-xs" name="tipoDonacion" id="tipoDonacion"></select>
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="ruc" style="display: block;">CI/RUC</label>
-                                <select class="form-control input-xs" name="ruc" id="ruc">
-                                    <option value="">Seleccione</option>
-                                </select>
+                                <select class="form-control input-xs" name="ruc" id="ruc"></select>
                             </div>
                             <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
-                                <img src="../../img/png/SRIlogo.png" width="80" height="50">
+                                <img src="../../img/png/SRIlogo.png" width="80" height="50"
+                                    onclick="validar_sriC($('#ruc').val())">
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="cliente" style="display: block;">Nombre del Beneficiario/Usuario</label>
                                 <div class="input-group">
-                                    <select class="form-control input-xs" name="cliente" id="cliente">
-                                        <option value="">Seleccione</option>
-                                    </select>
+                                    <select class="form-control input-xs" name="cliente" id="cliente"></select>
                                     <span class="input-group-btn">
                                         <button type="button" class="btn btn-success btn-xs btn-flat" id="btn_nuevo_cli"
                                             onclick="addCliente()" title="Nuevo cliente">
@@ -107,9 +100,7 @@
                             </div>
                             <div style="flex: 1;">
                                 <label for="select_87" style="display: block;">Estado</label>
-                                <select class="form-control input-xs" name="select_87" id="select_87">
-                                    <option value="">Seleccione</option>
-                                </select>
+                                <select class="form-control input-xs" name="select_87" id="select_87"></select>
                             </div>
                         </div>
 
@@ -146,19 +137,15 @@
                                 <img src="../../img/png/calendario2.png" width="60" height="60">
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
-                                <label for="fechaEntrega" style="display: block;">Día Entrega a Usuarios Finales
-                                    FINALES</label>
-                                <input type="date" name="fechaEntrega" id="fechaEntrega"
-                                    class="form-control input-xs validateDate" onchange="" title="DIA ENTREGA USUARIOS"
-                                    value="<?php echo date('Y-m-d') ?>">
+                                <label for="diaEntrega" style="display: block;">Día Entrega a Usuarios Finales</label>
+                                <select class="form-control input-xs" name="diaEntrega" id="diaEntrega"></select>
                             </div>
                             <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
                                 <img src="../../img/png/reloj.png" width="55" height="55">
                             </div>
                             <div style="flex: 1; ">
                                 <label for="horaEntrega" style="display: block;">Hora Entrega a Usuarios Finales</label>
-                                <input type="time" name="horaEntrega" id="horaEntrega" class="form-control input-xs"
-                                    title="HORA ENTREGA">
+                                <input type="time" name="horaEntrega" id="horaEntrega" class="form-control input-xs">
                             </div>
                         </div>
 
@@ -184,7 +171,7 @@
                             <div class="col-sm-3">
                                 <div class="row">
                                     <label for="referencia" style="display: block;">Referencia</label>
-                                    <input class="form-control input-xs" type="text" name="referecia" id="referencia"
+                                    <input class="form-control input-xs" type="text" name="referencia" id="referencia"
                                         placeholder="Referencia">
                                 </div>
                                 <div class="row">
@@ -218,66 +205,56 @@
                         <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="select_88" style="display: block;">Tipo de Entrega</label>
-                                <select class="form-control input-xs" name="select_88" id="select_88">
-                                    <option value="">Seleccione</option>
-                                </select>
+                                <select class="form-control input-xs" name="select_88" id="select_88"></select>
                             </div>
                             <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
-                                <img src="../../img/png/calendario2.png" width="60" height="60" id="btnMostrarModal">
+                                <img src="../../img/png/calendario2.png" width="60" height="60" id="btnMostrarModal"
+                                    title="CALENDARIO ASIGNACION">
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="diaEntregac" style="display: block;">Día de Entrega</label>
-                                <select class="form-control input-xs" name="diaEntregac" id="diaEntregac">
-                                    <option value="">Seleccione</option>
-                                </select>
-
+                                <select class="form-control input-xs" name="diaEntregac" id="diaEntregac"></select>
                             </div>
                             <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
                                 <img src="../../img/png/reloj.png" width="55" height="55">
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="horaEntregac" style="display: block;">Hora de Entrega</label>
-                                <input type="time" name="horaEntregac" id="horaEntregac" class="form-control input-xs"
-                                    title="HORA DE ENTREGA">
+                                <input type="time" name="horaEntregac" id="horaEntregac" class="form-control input-xs">
                             </div>
 
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="select_86" style="display: block;">Frecuencia</label>
-                                <select class="form-control input-xs" name="select_86" id="select_86">
-                                    <option value="">Seleccione</option>
-                                </select>
+                                <select class="form-control input-xs" name="select_86" id="select_86"></select>
+                            </div>
+
+                            <div id="comentariodiv"
+                                style="flex: 1; margin-right: 10px; margin-lefth: 10px; style=display: none;">
+                                <label for="comentario" style="display: block;">Comentario</label>
+                                <textarea class="form-control" id="comentario" rows="2" style="resize: none"></textarea>
                             </div>
                         </div>
                         <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="totalPersonas" style="display: block;">Total de Personas Atendidas</label>
                                 <input type="number" name="totalPersonas" id="totalPersonas"
-                                    class="form-control input-xs" title="TOTAL DE PERSONAS ASISTIDAS" min="0" max="100">
-
+                                    class="form-control input-xs" min="0" max="100">
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="select_91" style="display: block;">Tipo de Población</label>
-                                <select class="form-control input-xs" name="select_91" id="select_91">
-                                    <option value="">Seleccione</option>
-                                </select>
+                                <select class="form-control input-xs" name="select_91" id="select_91"></select>
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="select_92" style="display: block;">Acción Social</label>
-                                <select class="form-control input-xs" name="select_92" id="select_92">
-                                    <option value="">Seleccione</option>
-                                </select>
+                                <select class="form-control input-xs" name="select_92" id="select_92"></select>
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="select_90" style="display: block;">Vulnerabilidad</label>
-                                <select class="form-control input-xs" name="select_90" id="select_90">
-                                    <option value="">Seleccione</option>
-                                </select>
+                                <select class="form-control input-xs" name="select_90" id="select_90"></select>
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="select_89" style="display: block;">Tipo de Atención</label>
-                                <select class="form-control input-xs" name="select_89" id="select_89">
-                                    <option value="">Seleccione</option>
-                                </select>
+                                <select class="form-control input-xs" name="select_89" id="select_89"></select>
                             </div>
                         </div>
                         <div class="row" style="margin: 10px;">
@@ -298,7 +275,8 @@
                             <div class="col-sm-4">
                                 <div class="row">
                                     <label for="infoNut" style="display: block;">Información Nutricional</label>
-                                    <textarea class="form-control" id="infoNut" rows="4"></textarea>
+                                    <textarea class="form-control" id="infoNut" rows="4"
+                                        style="resize: none"></textarea>
                                 </div>
 
                             </div>
@@ -358,60 +336,41 @@
 <script>
     $(document).ready(function () {
         Form_Activate();
-
     });
 
+    function usar_cliente(nombre, ruc, codigo, email, td = 'N') {
+        //console.log(ruc);
+        $('#cliente').val(ruc).trigger('change');
+        $('#myModal').modal('hide');
+    }
+
+    var horaActual;
     function Form_Activate() {
+        $('#comentariodiv').hide();
         var valores = [86, 87, 88, 89, 90, 91, 92, 93];
         LlenarSelectTipos(valores);
         LlenarSelectDiaEntrega();
         LlenarDatosCliente();
-        var horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        $('#horaEntregac').val(horaActual);
+        LlenarTipoDonacion();
 
-        /*var fechaActual = new Date();
-        var fechaFormateada = fechaActual.getFullYear() + '-' +
-            ('0' + (fechaActual.getMonth() + 1)).slice(-2) + '-' +
-            ('0' + fechaActual.getDate()).slice(-2);
-        $('#diaEntregac').val(fechaFormateada);*/
+        horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        $('#horaEntregac').val(horaActual);
     }
 
     $('#select_93').change(function () {
-        var selectedOption = $(this).val();
-        var cardBody = $('.card-body');
-        //var modalBody = $('.modal-body');
-        var cardHeader = $('.card-header');
-        var modalHeader = $('.modal-header');
-
         var colorValor = $(this).find('option:selected').data('color-valor');
-        var hexColor = colorValor.substring(4);
-
-        var darkerColor = darkenColor(hexColor, 20);
-
-        if (hexColor) {
-            cardBody.css('background-color', '#' + hexColor);
-            //modalBody.css('background-color', '#' + hexColor);
-            cardHeader.css('background-color', darkerColor);
-            modalHeader.css('background-color', darkerColor);
-        } else {
-            cardBody.css('background-color', '#fffacd');
-
-        }
+        actualizarEstilo(colorValor);
     });
 
-    function darkenColor(color, percent) {
-        var num = parseInt(color, 16),
-            amt = Math.round(2.55 * percent),
-            R = (num >> 16) - amt,
-            G = (num >> 8 & 0x00FF) - amt,
-            B = (num & 0x0000FF) - amt;
-
-        R = (R < 255 ? (R < 1 ? 0 : R) : 255);
-        G = (G < 255 ? (G < 1 ? 0 : G) : 255);
-        B = (B < 255 ? (B < 1 ? 0 : B) : 255);
-
-        return "#" + ((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1);
-    }
+    $('#select_86').change(function () {
+        var selectedValue = $(this).val();
+        //console.log(selectedValue);
+        if (selectedValue === '86.04') {
+            $('#comentariodiv').show();
+        } else {
+            $('#comentariodiv').hide();
+        }
+    });
 
     function LlenarSelectTipos(valores) {
         $.ajax({
@@ -435,23 +394,31 @@
             success: function (datos) {
                 $.each(datos, function (index, opcion) {
                     $('#diaEntregac').append('<option value="' + opcion['Dia_Mes_C'] + '">' + opcion['Dia_Mes'] + '</option>');
+                    $('#diaEntrega').append('<option value="' + opcion['Dia_Mes_C'] + '">' + opcion['Dia_Mes'] + '</option>');
                 });
             }
         });
     }
 
-
     function LlenarSelect(valor, datos) {
         if (valor) {
-            var selectId = '#select_' + valor;
-            var $select = $(selectId);
+            var $select = $('#select_' + valor);
             $select.empty();
             if (datos === "No se encontraron datos para mostrar") {
                 $select.append('<option value="">' + datos + '</option>');
             } else {
                 $.each(datos, function (index, opcion) {
-                    $select.append('<option value="' + opcion['Cmds'] + '" data-color-valor="' + opcion['Picture'] + '">' + opcion['Proceso'] + '</option>');
+                    var option = '<option value="' + opcion['Cmds'] + '"';
+                    if (valor == 93) {
+                        option += ' data-color-valor="' + opcion['Picture'] + '"';
+                    }
+                    option += '>' + opcion['Proceso'] + '</option>';
+                    $select.append(option);
                 });
+                if (valor == 93) {
+                    $select.find('option:first').prop('selected', true);
+                    actualizarEstilo($select.find('option:selected').data('color-valor'));
+                }
             }
         }
     }
@@ -479,7 +446,7 @@
         });
 
         $('#cliente').select2({
-            placeholder: 'Seleccione un Cliente',
+            placeholder: 'Seleccione un cliente',
             ajax: {
                 url: '../controlador/inventario/registro_beneficiarioC.php?',
                 dataType: 'json',
@@ -500,6 +467,37 @@
         });
     }
 
+    function LlenarTipoDonacion() {
+        $('#tipoDonacion').select2({
+            placeholder: 'Seleccione un tipo de donación',
+            ajax: {
+                url: '../controlador/inventario/registro_beneficiarioC.php?',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        query: params.term,
+                        LlenarTipoDonacion: true
+                    }
+                },
+                processResults: function (data) {
+                    var options = [];
+                    $.each(data.tipoDonacion, function (index, item) {
+                        var idDigits = item.id.slice(-3);
+                        options.push({
+                            id: idDigits,
+                            text: item.text
+                        });
+                    });
+                    return {
+                        results: options
+                    };
+                },
+                cache: true
+            }
+        });
+    }
+
     $('#btnGuardarAsignacion').click(function () {
 
         var fileInput = $('#archivoAdd')[0];
@@ -511,12 +509,13 @@
         formData.append('Codigo', miCodigo);
         formData.append('Actividad', $('#select_93').val());
         formData.append('CodigoA', $('#select_87').val());
+        formData.append('Calificacion', $('#tipoDonacion').val());
         formData.append('Representante', $('#nombreRepre').val());
         formData.append('CI_RUC_R', $('#ciRepre').val());
         formData.append('Telefono_R', $('#telfRepre').val());
         formData.append('Contacto', $('#contacto').val());
         formData.append('Profesion', $('#cargo').val());
-        formData.append('Fecha_Cad', $('#fechaEntrega').val());
+        formData.append('Dia_Ent', $('#diaEntrega').val());
         formData.append('Hora_Ent', $('#horaEntrega').val());
         formData.append('Direccion', $('#direccion').val());
         formData.append('Email', $('#email').val());
@@ -526,7 +525,7 @@
         formData.append('TelefonoT', $('#telefono2').val());
         // Información adicional
         formData.append('CodigoA2', $('#select_88').val());
-        formData.append('Fecha_Registro', $('#diaEntregac').val());
+        formData.append('Dia_Ent2', $('#diaEntregac').val());
         formData.append('Hora_Registro', $('#horaEntregac').val());
         formData.append('Envio_No', $('#select_86').val());
         formData.append('No_Soc', $('#totalPersonas').val());
@@ -587,7 +586,7 @@
                             type: 'success',
                             confirmButtonText: 'Aceptar'
                         });
-                        limpiarCampos();
+                        //limpiarCampos();
                     }
                 }
             });
@@ -597,9 +596,9 @@
     var miRuc;
     var miCodigo;
     var miCliente;
-
     $('#cliente').on('select2:select', function (e) {
         var data = e.params.data;
+        //console.log(data);
         miCodigo = data.id;
         miRuc = data.CI_RUC;
         miCliente = data.text;
@@ -610,6 +609,7 @@
 
     $('#ruc').on('select2:select', function (e) {
         var data = e.params.data;
+        //console.log(data);
         miCodigo = data.id;
         miRuc = data.text;
         miCliente = data.Cliente;
@@ -619,31 +619,92 @@
     });
 
     function llenarDatos(datos) {
-        $('#estado').val(datos.CodigoA);
         $('#nombreRepre').val(datos.Representante);
         $('#ciRepre').val(datos.CI_RUC_R);
         $('#telfRepre').val(datos.Telefono_R);
         $('#contacto').val(datos.Contacto);
         $('#cargo').val(datos.Profesion);
-        $('#fechaEntrega').val(datos.Fecha_Cad);
-        $('#horaEntrega').val(datos.Hora_Ent);
+        $('#diaEntrega').val(datos.Dia_Ent);
         $('#direccion').val(datos.Direccion);
         $('#email').val(datos.Email);
         $('#email2').val(datos.Email2);
         $('#referencia').val(datos.Lugar_Trabajo);
         $('#telefono').val(datos.Telefono);
         $('#telefono2').val(datos.TelefonoT);
+
+        console.log("tipo calificacion: " +datos.Calificacion);
+        var data = {
+            id: datos.Calificacion,
+            text: 'Donacion de organizacion'
+        };
+        console.log(data);
+        var newOption = new Option(data.text, data.id, false, false);
+        //$('#tipoDonacion').append(newOption).trigger('change');
+        $('#tipoDonacion').val(datos.Calificacion).trigger('change');
+        console.log("tipo donacion: " + $('#tipoDonacion').val());
+
+        $('#select_87').val(datos.CodigoA).trigger('change');
+        $('#select_93').val(datos.Actividad).trigger('change');
+        //console.log($('#select_93').val());
+        var colorValor = $('#select_93').find('option:selected').data('color-valor');;
+        actualizarEstilo(colorValor);
+
+        if (/^\d{2}:\d{2}$/.test(datos.Hora_Ent)) {
+            $('#horaEntrega').val(datos.Hora_Ent);
+        } else {
+            $('#horaEntrega').val(horaActual);
+        }
+
+        $('#select_88').val(datos.CodigoA2).trigger('change');;
+        $('#diaEntregac').val(datos.Dia_Ent2);
+        $('#horaEntregac').val(datos.Hora_Ent2);
+        $('#select_86').val(datos.Envio_No).trigger('change');;
+        $('#totalPersonas').val(datos.No_Soc);
+        $('#select_91').val(datos.Area).trigger('change');;
+        $('#select_92').val(datos.Acreditacion).trigger('change');;
+        $('#select_90').val(datos.Tipo_Dato).trigger('change');;
+        $('#select_89').val(datos.Cod_Fam).trigger('change');;
+        $('#infoNut').val(datos.Observaciones);
     }
 
-    function limpiarCampos() {
-        $('#miFormulario').find('input, select, textarea').val('');
+    /*function limpiarCampos() {
+        $('#miFormulario select').each(function () {
+            $(this).val($(this).find('option:first').val());
+        });
+        $('#miFormulario').find('input, textarea').val('');
         $('#cliente').val('');
         $('#ruc').val('');
         $('#nombreruc').text('');
-    }
+    }*/
 
     $('#btnMostrarModal').click(function () {
         $('#modalCalendario').modal('show');
     });
+
+    function actualizarEstilo(colorValor) {
+        if (colorValor) {
+            var hexColor = colorValor.substring(4);
+            var darkerColor = darkenColor(hexColor, 20);
+            $('.card-body').css('background-color', '#' + hexColor);
+            $('.card-header, .modal-header').css('background-color', darkerColor);
+            $('.card-footer, .modal-footer').css('background-color', darkerColor);
+        } else {
+            $('.card-body, .modal-body').css('background-color', '#F6F193');
+        }
+    }
+
+    function darkenColor(color, percent) {
+        var num = parseInt(color, 16),
+            amt = Math.round(2.55 * percent),
+            R = (num >> 16) - amt,
+            G = (num >> 8 & 0x00FF) - amt,
+            B = (num & 0x0000FF) - amt;
+
+        R = (R < 255 ? (R < 1 ? 0 : R) : 255);
+        G = (G < 255 ? (G < 1 ? 0 : G) : 255);
+        B = (B < 255 ? (B < 1 ? 0 : B) : 255);
+
+        return "#" + ((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1);
+    }
 
 </script>

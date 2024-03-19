@@ -2,11 +2,11 @@
 /** 
  * AUTOR DE RUTINA : Dallyana Vanegas
  * FECHA CREACION : 30/01/2024
- * FECHA MODIFICACION : 23/02/2024
+ * FECHA MODIFICACION : 18/03/2024
  * DESCIPCION : Clase que se encarga de manejar el Historial de Facturas
  */
-require_once(dirname(__DIR__, 2) . "/db/db1.php");
-require_once(dirname(__DIR__, 2) . "/funciones/funciones.php");
+require_once (dirname(__DIR__, 2) . "/db/db1.php");
+require_once (dirname(__DIR__, 2) . "/funciones/funciones.php");
 @session_start();
 
 class HistorialFacturasM
@@ -16,6 +16,16 @@ class HistorialFacturasM
     function __construct()
     {
         $this->db = new db();
+    }
+
+    function SRI_Generar_XML_Firmado($ClaveDeAcceso)
+    {
+        $sSQL = "SELECT Documento_Autorizado
+                FROM Trans_Documentos 
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+                AND Clave_Acceso = '" . $ClaveDeAcceso . "' ";
+        return $this->db->datos($sSQL);
     }
 
     function CheqAbonos_Click()
@@ -780,7 +790,7 @@ class HistorialFacturasM
           AND F.CodigoC = TA.CodigoC 
           ORDER BY C.Grupo,C.Cliente,F.Serie,F.Factura ";
         //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True
-        $Opcion = 15;
+        $Opcion = '15';
         $res = $this->db->datos($sSQL);
         $num_filas = count($res);
 
@@ -830,7 +840,7 @@ class HistorialFacturasM
          ORDER BY A.Cod_Ejec, A.Nombre_Completo DESC, C.Grupo, CC.Cuenta";
 
         //Select_Adodc_Grid DGQuery, AdoQuery, sSQL, , , True;
-        $Opcion = 17;
+        $Opcion = '17';
         $res = $this->db->datos($sSQL);
         $num_filas = count($res);
 
@@ -909,7 +919,7 @@ class HistorialFacturasM
 
         $sSQL = $sSQLV . "UNION " . $sSQLT . "ORDER BY A.Nombre_Completo, Clientes ";
         //Select_Adodc_Grid($DGQuery, $AdoQuery, $sSQL);
-        $Opcion = 18;
+        $Opcion = '18';
         $res = $this->db->datos($sSQL);
         $num_filas = count($res);
 
@@ -1207,7 +1217,7 @@ class HistorialFacturasM
             AND F.TC NOT IN ('C','P') ";
 
         if ($Tipo == "V") {
-            $Opcion = 13;
+            $Opcion = '13';
             $sSQL .= "ORDER BY A.Nombre_Completo, C.Grupo, ";
             if ($_SESSION['INGRESO']['SiUnidadEducativa']) {
                 $sSQL .= "C.Cliente, F.Razon_Social, ";
@@ -1216,7 +1226,7 @@ class HistorialFacturasM
             }
         }
         if ($Tipo == "C") {
-            $Opcion = 9;
+            $Opcion = '9';
             if ($_SESSION['INGRESO']['SiUnidadEducativa']) {
                 $sSQL .= "ORDER BY C.Cliente, F.Razon_Social, ";
             } else {
@@ -1224,11 +1234,11 @@ class HistorialFacturasM
             }
         }
         if ($Tipo == "F") {
-            $Opcion = 10;
+            $Opcion = '10';
             $sSQL .= "ORDER BY ";
         }
         if ($Tipo == "R") {
-            $Opcion = 19;
+            $Opcion = '19';
             if ($_SESSION['INGRESO']['SiUnidadEducativa']) {
                 $sSQL .= "ORDER BY C.Cliente, F.Razon_Social, ";
             } else {
@@ -1276,7 +1286,7 @@ class HistorialFacturasM
               AND RCC.CodigoC = C.Codigo 
               ORDER BY C.Cliente, RCC.TC, RCC.Serie, RCC.Factura, RCC.Anio, RCC.Mes, RCC.ID ";
 
-        $Opcion = 19;
+        $Opcion = '19';
         $res = $this->db->datos($sSQL);
         $num_filas = count($res);
 
@@ -1378,8 +1388,8 @@ class HistorialFacturasM
 
         $NumEmpresa = $_SESSION['INGRESO']['item'];
         $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
-
-        if ($CheqAbonos == 0) {
+        $Cta_Aux_Mail = G_NINGUNO;
+        if ($CheqAbonos != 0) {
             $Cta_Aux_Mail = SinEspaciosIzq($DCCxC);
 
             $sSQL = "UPDATE Facturas 
@@ -1423,11 +1433,92 @@ class HistorialFacturasM
         $sSQL .= $tipoConsulta . " 
             AND F.TC IN ('FA','NV') 
             AND F.CodigoC = C.Codigo 
+            AND F.Factura = 1487
+            AND C.Email = 'lrsunigagarcia@gmail.com' 
             ORDER BY F.Factura ";
 
-        $AdoQuery = $this->db->datos($sSQL);
-        //print_r($sSQL);
-        return array('AdoQuery' => $AdoQuery, 'response' => 4, 'tipoEnvio' => $TipoEnvio);
+        $res = $this->db->datos($sSQL);
+        $num_filas = count($res);
+
+        $datos = grilla_generica_new($sSQL, 'FACTURAS', '', '', false, false, false, 1, 1, 1, 100);
+        return array('DGQuery' => $datos, 'num_filas' => $num_filas, 'AdoQuery' => $res, 'response' => 4, 'tipoEnvio' => $TipoEnvio);
+    }
+
+    function Generar_Recibo_PDF($FA)
+    {
+        $res = 1;
+
+        $Comprobante = "Recibo No " . $FA['Serie'] . "-" . sprintf("%09d", $FA['Factura']);
+        $NumEmpresa = $_SESSION['INGRESO']['item'];
+        $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
+
+        $sSQL = "SELECT F.*,C.Cliente,C.CI_RUC,C.Telefono,C.TelefonoT,C.Direccion,C.DireccionT," .
+            "C.Representante,C.Grupo,C.Codigo,C.Ciudad,C.Email,C.Email2,C.EmailR,C.CI_RUC_R,C.TD,C.TD_R,C.DirNumero " .
+            "FROM Facturas AS F,Clientes AS C " .
+            "WHERE F.Item = '" . $NumEmpresa . "' " .
+            "AND F.Periodo = '" . $Periodo_Contable . "' " .
+            "AND F.TC = '" . $FA['TC'] . "' " .
+            "AND F.Serie = '" . $FA['Serie'] . "' " .
+            "AND F.Autorizacion = '" . $FA['Autorizacion'] . "' " .
+            "AND F.CodigoC = '" . $FA['CodigoC'] . "' " .
+            "AND F.Factura = " . $FA['Factura'] . " " .
+            "AND C.Codigo = F.CodigoC ";
+        $AdoDBFac = $this->db->datos($sSQL);
+
+        if (count($AdoDBFac) > 0) {
+            foreach ($AdoDBFac as $row) {
+                $TFA['Grupo'] = $row['Grupo'];
+                $TFA['Autorizacion'] = $row['Autorizacion'];
+                $TFA['CodigoC'] = $row['CodigoC'];
+                $TFA['DireccionC'] = $row['Direccion'];
+                $TFA['Cliente'] = $row['Cliente'];
+                $TFA['CI_RUC'] = strlen($row['RUC_CI']) > 1 ? $row['RUC_CI'] : "";
+                if (strlen($row['Razon_Social']) > 1 && strlen($row['RUC_CI']) > 1) {
+                    $sSQL = "SELECT Codigo,Grupo_No,Representante,Cedula_R,Lugar_Trabajo_R,Telefono_R,Email_R " .
+                        "FROM Clientes_Matriculas " .
+                        "WHERE Item = '" . $NumEmpresa . "' " .
+                        "AND Periodo = '" . $Periodo_Contable . "' " .
+                        "AND Codigo = '" . $TFA['CodigoC'] . "' ";
+                    $AdoDBDet = $this->db->datos($sSQL);
+
+                    if (count($AdoDBDet) > 0) {
+                        foreach ($AdoDBDet as $row) {
+                            $TFA['Curso'] = $TFA['DireccionC'];
+                            $TFA['EmailR'] = $row['Email_R'];
+                            $TFA['DireccionC'] = $row['Lugar_Trabajo_R'];
+                            $TFA['Comercial'] = $row['Representante'];
+                        }
+                    }
+                }
+            }
+        }
+
+        $sSQL = "SELECT CodigoC, SUM(Saldo_MN) AS Pendiente " .
+            "FROM Facturas " .
+            "WHERE Item = '" . $NumEmpresa . "' " .
+            "AND Periodo = '" . $Periodo_Contable . "' " .
+            "AND CodigoC = '" . $FA['CodigoC'] . "' " .
+            "AND TC = '" . $FA['TC'] . "' " .
+            "AND Saldo_MN > 0 " .
+            "AND T <> 'A' " .
+            "GROUP BY CodigoC ";
+        $AdoDBAux = $this->db->datos($sSQL);
+
+        $sSQL = "SELECT * " .
+            "FROM Detalle_Factura " .
+            "WHERE Item = '" . $NumEmpresa . "' " .
+            "AND Periodo = '" . $Periodo_Contable . "' " .
+            "AND TC = '" . $FA['TC'] . "' " .
+            "AND Serie = '" . $FA['Serie'] . "' " .
+            "AND Autorizacion = '" . $FA['Autorizacion'] . "' " .
+            "AND Factura = " . $FA['Factura'] . " " .
+            "ORDER BY ID,Codigo ";
+        $AdoDBDet = $this->db->datos($sSQL);
+
+        imprimirDocEle_fac($TFA, $AdoDBDet, false, $Comprobante, null, 'factura', null, null, false, false, false);
+        
+        return $res;
+
     }
 
     function Por_Buses($Patron_Busqueda)
