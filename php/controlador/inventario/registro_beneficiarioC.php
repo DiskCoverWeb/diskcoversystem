@@ -3,45 +3,59 @@
 /** 
  * AUTOR DE RUTINA	: Dallyana Vanegas
  * FECHA CREACION	: 16/02/2024
- * FECHA MODIFICACION : 29/02/2024
+ * FECHA MODIFICACION : 19/03/2024
  * DESCIPCION : Clase controlador para Agencia
  */
 
-include(dirname(__DIR__, 2) . '/modelo/inventario/registro_beneficiarioM.php');
+include (dirname(__DIR__, 2) . '/modelo/inventario/registro_beneficiarioM.php');
 
 $controlador = new registro_beneficiarioC();
 
-if (isset($_GET['LlenarSelect'])) {
+if (isset ($_GET['LlenarSelect'])) {
     $valores = $_POST['valores'];
     echo json_encode($controlador->LlenarSelect($valores));
 }
 
-if (isset($_GET['LlenarSelectDiaEntrega'])) {
+if (isset ($_GET['actualizarSelectDonacion'])) {
+    $valor = $_POST['valor'];
+    echo json_encode($controlador->actualizarSelectDonacion($valor));
+}
+
+if (isset ($_GET['LlenarSelectDiaEntrega'])) {
     echo json_encode($controlador->LlenarSelectDiaEntrega());
 }
 
-if (isset($_GET['LlenarDatosCliente'])) {
+if (isset ($_GET['LlenarDatosCliente'])) {
     $query = '';
-    if (isset($_GET['query'])) {
+    if (isset ($_GET['query'])) {
         $query = $_GET['query'];
     }
     echo json_encode($controlador->LlenarDatosCliente($query));
 }
 
-if (isset($_GET['guardarAsignacion'])) {
+if (isset ($_GET['LlenarTipoDonacion'])) {
+    $query = '';
+    if (isset ($_GET['query'])) {
+        $query = $_GET['query'];
+    }
+    echo json_encode($controlador->LlenarTipoDonacion($query));
+}
+
+if (isset ($_GET['guardarAsignacion'])) {
 
     $params = array(
         'Cliente' => $_POST['Cliente'],
         'CI_RUC' => $_POST['CI_RUC'],
         'Codigo' => $_POST['Codigo'],
         'Actividad' => $_POST['Actividad'],
+        'Calificacion' => $_POST['Calificacion'],
         'CodigoA' => $_POST['CodigoA'],
         'Representante' => $_POST['Representante'],
         'CI_RUC_R' => $_POST['CI_RUC_R'],
         'Telefono_R' => $_POST['Telefono_R'],
         'Contacto' => $_POST['Contacto'],
         'Profesion' => $_POST['Profesion'],
-        'Fecha_Cad' => $_POST['Fecha_Cad'],
+        'Dia_Ent' => $_POST['Dia_Ent'],
         'Hora_Ent' => $_POST['Hora_Ent'],
         'Direccion' => $_POST['Direccion'],
         'Email' => $_POST['Email'],
@@ -50,7 +64,7 @@ if (isset($_GET['guardarAsignacion'])) {
         'Telefono' => $_POST['Telefono'],
         'TelefonoT' => $_POST['TelefonoT'],
         'CodigoA2' => $_POST['CodigoA2'],
-        'Fecha_Registro' => $_POST['Fecha_Registro'],
+        'Dia_Ent2' => $_POST['Dia_Ent2'],
         'Hora_Registro' => $_POST['Hora_Registro'],
         'Envio_No' => $_POST['Envio_No'],
         'No_Soc' => $_POST['No_Soc'],
@@ -61,7 +75,7 @@ if (isset($_GET['guardarAsignacion'])) {
         'Observaciones' => $_POST['Observaciones']
     );
 
-    if (isset($_FILES['Evidencias']) && $_FILES['Evidencias']['error'] == UPLOAD_ERR_OK) {
+    if (isset ($_FILES['Evidencias']) && $_FILES['Evidencias']['error'] == UPLOAD_ERR_OK) {
         $archivo = $_FILES['Evidencias'];
         $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/EVIDENCIA_" . $_SESSION['INGRESO']['Entidad'] .
             "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
@@ -72,20 +86,11 @@ if (isset($_GET['guardarAsignacion'])) {
         }
 
         $nombreArchivoDestino = $carpetaDestino . basename($archivo['name']);
-
-        if (file_exists($nombreArchivoDestino)) {
-            echo json_encode([
-                "res" => '0',
-                "mensaje" => "Ya existe un archivo con el nombre '"
-                    . $archivo['name'] . "'. Por favor, cambie el nombre del archivo."
-            ]);
+        if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
+            $params['NombreArchivo'] = pathinfo($archivo['name'], PATHINFO_FILENAME);
+            echo json_encode($controlador->guardarAsignacion($params));
         } else {
-            if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
-                $params['NombreArchivo'] = pathinfo($archivo['name'], PATHINFO_FILENAME);
-                echo json_encode($controlador->guardarAsignacion($params));
-            } else {
-                echo json_encode(["res" => '0', "mensaje" => "No se ha cargado ningún archivo", "datos" => $parametros]);
-            }
+            echo json_encode(["res" => '0', "mensaje" => "No se ha cargado ningún archivo", "datos" => $parametros]);
         }
     }
 }
@@ -103,7 +108,7 @@ class registro_beneficiarioC
     {
         foreach ($valores as $valor) {
             $datos = $this->modelo->LlenarSelect($valor);
-            if (empty($datos)) {
+            if (empty ($datos)) {
                 $datos = "No se encontraron datos para mostrar";
             }
             $resultado = array(
@@ -117,13 +122,57 @@ class registro_beneficiarioC
 
     function LlenarSelectDiaEntrega()
     {
-
         $datos = $this->modelo->LlenarSelectDiaEntrega();
-        if (empty($datos)) {
+        if (empty ($datos)) {
             $datos = "No se encontraron datos para mostrar";
         }
-
         return $datos;
+    }
+
+    function actualizarSelectDonacion($valor)
+    {
+        $datos = $this->modelo->actualizarSelectDonacion($valor);
+        //print_r(gettype($datos));
+        if (empty ($datos)) {
+            $datos = ["Concepto" => "Seleccione un valor"];
+        }
+        return $datos[0];
+    }
+    function obtenerCamposComunes($valor)
+    {
+        return [
+            'id' => $valor['Codigo'],
+            'Cliente' => $valor['Cliente'],
+            'CodigoA' => $valor['CodigoA'],
+            'CI_RUC' => $valor['CI_RUC'],
+            'Representante' => $valor['Representante'],
+            'Dia_Ent' => $valor['Dia_Ent'],
+            'Hora_Ent' => $valor['Hora_Ent'],
+            'CI_RUC_R' => $valor['CI_RUC_R'],
+            'Telefono_R' => $valor['Telefono_R'],
+            'Contacto' => $valor['Contacto'],
+            'Profesion' => $valor['Profesion'],
+            'Direccion' => $valor['Direccion'],
+            'Email' => $valor['Email'],
+            'Email2' => $valor['Email2'],
+            'Lugar_Trabajo' => $valor['Lugar_Trabajo'],
+            'Telefono' => $valor['Telefono'],
+            'TelefonoT' => $valor['TelefonoT'],
+            'Actividad' => $valor['Actividad'],
+            'Calificacion' => $valor['Calificacion'],
+            //Informacion Adicional
+            'CodigoA2' => $valor['CodigoA2'],
+            'Dia_Ent2' => $valor['Dia_Ent2'],
+            'Hora_Ent2' => $valor['Hora_Ent2'],
+            'Envio_No' => $valor['Envio_No'],
+            'No_Soc' => $valor['No_Soc'],
+            'Area' => $valor['Area'],
+            'Acreditacion' => $valor['Acreditacion'],
+            'Tipo_Dato' => $valor['Tipo_Dato'],
+            'Cod_Fam' => $valor['Cod_Fam'],
+            'Evidencias' => $valor['Evidencias'],
+            'Observaciones' => $valor['Observaciones']
+        ];
     }
 
     function LlenarDatosCliente($query): array
@@ -133,49 +182,40 @@ class registro_beneficiarioC
             if (count($datos) == 0) {
                 throw new Exception('No se encontraron datos');
             }
-            foreach ($datos as $valor) {
-                $fecha = $valor['Fecha_Cad']->format('Y-m-d');
+            //print_r($datos); 
+            $clientes = [];
+            $rucs = [];
 
-                $clientes[] = [
+            foreach ($datos as $valor) {
+                $clienteFields = $this->obtenerCamposComunes($valor);
+                $clienteFields['text'] = $valor['Cliente'];
+                $clientes[] = $clienteFields;
+
+                $rucFields = $this->obtenerCamposComunes($valor);
+                $rucFields['text'] = $valor['CI_RUC'];
+                $rucs[] = $rucFields;
+            }
+
+            return ['clientes' => $clientes, 'rucs' => $rucs];
+        } catch (Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    function LlenarTipoDonacion($query): array
+    {
+        try {
+            $datos = $this->modelo->LlenarTipoDonacion($query);
+            if (count($datos) == 0) {
+                throw new Exception('No se encontraron datos');
+            }
+            foreach ($datos as $valor) {
+                $tipoDonacion[] = [
                     'id' => $valor['Codigo'],
-                    'text' => $valor['Cliente'],
-                    'CodigoA' => $valor['CodigoA'],
-                    'CI_RUC' => $valor['CI_RUC'],
-                    'Representante' => $valor['Representante'],
-                    'Fecha_Cad' => $fecha,
-                    'Hora_Ent' => ['Hora_Ent'],
-                    'CI_RUC_R' => $valor['CI_RUC_R'],
-                    'Telefono_R' => $valor['Telefono_R'],
-                    'Contacto' => $valor['Contacto'],
-                    'Profesion' => $valor['Profesion'],
-                    'Direccion' => $valor['Direccion'],
-                    'Email' => $valor['Email'],
-                    'Email2' => $valor['Email2'],
-                    'Lugar_Trabajo' => $valor['Lugar_Trabajo'],
-                    'Telefono' => $valor['Telefono'],
-                    'TelefonoT' => $valor['TelefonoT']
-                ];
-                $rucs[] = [
-                    'id' => $valor['Codigo'],
-                    'text' => $valor['CI_RUC'],
-                    'CodigoA' => $valor['CodigoA'],
-                    'Cliente' => $valor['Cliente'],
-                    'Representante' => $valor['Representante'],
-                    'Fecha_Cad' => $fecha,
-                    'Hora_Ent' => ['Hora_Ent'],
-                    'CI_RUC_R' => $valor['CI_RUC_R'],
-                    'Telefono_R' => $valor['Telefono_R'],
-                    'Contacto' => $valor['Contacto'],
-                    'Profesion' => $valor['Profesion'],
-                    'Direccion' => $valor['Direccion'],
-                    'Email' => $valor['Email'],
-                    'Email2' => $valor['Email2'],
-                    'Lugar_Trabajo' => $valor['Lugar_Trabajo'],
-                    'Telefono' => $valor['Telefono'],
-                    'TelefonoT' => $valor['TelefonoT']
+                    'text' => $valor['Concepto'],
                 ];
             }
-            return ['clientes' => $clientes, 'rucs' => $rucs];
+            return ['tipoDonacion' => $tipoDonacion];
         } catch (Exception $e) {
             return ['error' => $e->getMessage()];
         }

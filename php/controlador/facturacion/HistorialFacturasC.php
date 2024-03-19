@@ -2,66 +2,101 @@
 /** 
  * AUTOR DE RUTINA : Dallyana Vanegas
  * FECHA CREACION : 30/01/2024
- * FECHA MODIFICACION : 23/02/2024
+ * FECHA MODIFICACION : 18/03/2024
  * DESCIPCION : Clase que se encarga de manejar el Historial de Facturas
  */
 
-include(dirname(__DIR__, 2) . '/modelo/facturacion/HistorialFacturasM.php');
-require_once(dirname(__DIR__, 3) . '/lib/phpmailer/enviar_emails.php');
-require(dirname(__DIR__, 3) . '/lib/fpdf/cabecera_pdf.php');
+include (dirname(__DIR__, 2) . '/modelo/facturacion/HistorialFacturasM.php');
+require_once (dirname(__DIR__, 2) . '/modelo/facturacion/punto_ventaM.php');
+require_once (dirname(__DIR__, 3) . '/lib/phpmailer/enviar_emails.php');
+require (dirname(__DIR__, 3) . '/lib/fpdf/cabecera_pdf.php');
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 $controlador = new HistorialFacturasC();
-if (isset($_GET['CheqAbonos_Click'])) {
+
+if (isset ($_GET['CheqAbonos_Click'])) {
     echo json_encode($controlador->CheqAbonos_Click());
 }
 
-if (isset($_GET['CheqCxC_Click'])) {
+if (isset ($_GET['CheqCxC_Click'])) {
     echo json_encode($controlador->CheqCxC_Click());
 }
 
-if (isset($_GET['Form_Activate'])) {
+if (isset ($_GET['Form_Activate'])) {
     echo json_encode($controlador->Form_Activate());
 }
 
-if (isset($_GET['ToolBarMenu_ButtonClick'])) {
+if (isset ($_GET['ToolBarMenu_ButtonClick'])) {
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->ToolBarMenu_ButtonClick($parametros));
 }
 
-if (isset($_GET['ToolbarMenu_ButtonMenuClick'])) {
+if (isset ($_GET['ToolbarMenu_ButtonMenuClick'])) {
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->ToolbarMenu_ButtonMenuClick($parametros));
 }
 
-if (isset($_GET['ListCliente_LostFocus'])) {
+if (isset ($_GET['ListCliente_LostFocus'])) {
     $ListClienteText = $_POST['ListClienteText'];
     echo json_encode($controlador->ListCliente_LostFocus($ListClienteText));
 }
 
-if (isset($_GET['DCCliente_LostFocus'])) {
+if (isset ($_GET['DCCliente_LostFocus'])) {
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->DCCliente_LostFocus($parametros));
 }
 
-if (isset($_GET['Imprimir'])) {
+if (isset ($_GET['Imprimir'])) {
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->Imprimir($parametros));
 }
 
+if (isset ($_GET['SRI_Enviar_Mails'])) {
+    $params = $_POST['parametros'];
+
+    $TFA = $params['FA'];
+    $SRI_Autorizacion = $params['SRI_Autorizacion'];
+    $Tipo_Documento = $params['Tipo_Documento'];
+    echo json_encode($controlador->SRI_Enviar_Mails($TFA, $SRI_Autorizacion, $Tipo_Documento));
+}
+
+if (isset ($_GET['Recibo_Enviar_Mails'])) {
+    $params = $_POST['parametros'];
+
+    $TFA = $params['FA'];
+    echo json_encode($controlador->Recibo_Enviar_Mails($TFA));
+}
+
+if (isset ($_GET['EnviarMails'])) {
+    $params = $_POST['parametros'];
+
+    $archivo_pdf = $params['archivo_pdf'];
+    $archivo_xml = $params['archivo_xml'];
+    $TFA = $params['FA'];
+    $SRI_Autorizacion = $params['SRI_Autorizacion'];
+    $Tipo_Documento = $params['Tipo_Documento'];
+    echo json_encode($controlador->EnviarMails($archivo_pdf, $archivo_xml, $TFA, $SRI_Autorizacion, $Tipo_Documento));
+}
+
+if (isset ($_GET['EnviarMailAbono'])) {
+    $params = $_POST['parametros'];
+    echo json_encode($controlador->EnviarMailAbono($params));
+}
 
 class HistorialFacturasC
 {
     private $modelo;
     private $email;
     private $pdf;
+    private $puntoventa;
 
     function __construct()
     {
         $this->modelo = new HistorialFacturasM();
-        //$this->email = new enviar_emails();
+        $this->email = new enviar_emails();
+        $this->puntoventa = new punto_ventaM();
         $this->pdf = new cabecera_pdf();
     }
 
@@ -75,13 +110,173 @@ class HistorialFacturasC
         return $this->modelo->CheqCxC_Click();
     }
 
+    function EnviarMails($archivo_pdf, $archivo_xml, $TFA, $SRI_Autorizacion, $Tipo_Documento)
+    {
+        $RutaPDF = "";
+        $RutaXML = "";
+
+        switch ($Tipo_Documento) {
+            case "FA":
+                $RutaPDF = $archivo_pdf;
+                $RutaXML = $archivo_xml;
+                break;
+            case "NC":
+                $RutaPDF = $archivo_pdf;
+                $RutaXML = $archivo_xml;
+                break;
+            case "LC":
+                $RutaPDF = $archivo_pdf;
+                $RutaXML = $archivo_xml;
+                break;
+            case "GR":
+                $RutaPDF = $archivo_pdf;
+                $RutaXML = $archivo_xml;
+                break;
+            case "RE":
+                $RutaPDF = $archivo_pdf;
+                $RutaXML = $archivo_xml;
+                break;
+            case "AB":
+                $RutaPDF = "ninguno.pdf";
+                $RutaXML = "ninguno.xml";
+                break;
+        }
+
+        $fecha_actual = date("Y-m-d");
+        if (substr($TFA['ClaveAcceso'], 8, 2) == "07") {
+            $TMailMensaje = "Cliente: " . $TFA['Cliente'] . "\r\n" .
+                "Clave de Acceso: \r\n" . $TFA['ClaveAcceso'] . "\r\n" .
+                "Hora de Generacion: " . $SRI_Autorizacion['Hora_Autorizacion'] . "\r\n" .
+                "Emision: " . $fecha_actual . "\r\n" .
+                "Vencimiento: " . $SRI_Autorizacion['Fecha_Autorizacion'] . "\r\n" .
+                "Autorizacion: \r\n" . $SRI_Autorizacion['Autorizacion'] . "\r\n" .
+                "Retencion No. " . $TFA['Serie_R'] . "-" . sprintf("%09d", $TFA['Retencion']) . "\r\n" .
+                "Factura No. " . $TFA['Serie'] . "-" . sprintf("%09d", $TFA['Factura']) . "\r\n";
+
+            $TMailAsunto = $TFA['Cliente'] . ", Retencion No. " . $TFA['Serie_R'] . "-" . sprintf("%09d", $TFA['Retencion']);
+        } elseif (substr($TFA['ClaveAcceso'], 8, 2) == "03") {
+            $TMailMensaje = "Cliente: " . $TFA['Cliente'] . "\r\n" .
+                "Clave de Acceso: \r\n" . $TFA['ClaveAcceso_LC'] . "\r\n" .
+                "Hora de Generacion: " . $SRI_Autorizacion['Hora_Autorizacion'] . "\r\n" .
+                "Emision: " . $fecha_actual . "\r\n" .
+                "Vencimiento: " . $TFA['Fecha_Autorizacion'] . "\r\n" .
+                "Autorizacion: \r\n" . $SRI_Autorizacion['Autorizacion'] . "\r\n" .
+                "Liquidacion de Compras No. " . $TFA['Serie_LC'] . "-" . sprintf("%09d", $TFA['Factura']) . "\r\n";
+
+            $TMailAsunto = $TFA['Cliente'] . ", Liquidacion de Compras No. " . $TFA['Serie_LC'] . "-" . sprintf("%09d", $TFA['Factura']);
+        } else {
+            $TMailMensaje = "Cliente: " . $TFA['Cliente'] . "\r\n" .
+                "Clave de Acceso: \r\n" . $TFA['ClaveAcceso'] . "\r\n" .
+                "Emision: " . $fecha_actual . "\r\n" .
+                "Vencimiento: " . $TFA['Fecha_V']['date'] . "\r\n" .
+                "Fecha Autorizado: " . $TFA['Fecha_Aut']['date'] . "\r\n" .
+                "Autorizacion: \r\n" . $TFA['Autorizacion'] . "\r\n" .
+                "Factura No. " . $TFA['Serie'] . "-" . sprintf("%09d", $TFA['Factura']) . "\r\n";
+
+            if ($Tipo_Documento === "AB") {
+                $TMailMensaje .= "\r\nSU PAGO FUE REGISTRADO CON EXITO\r\nEL " . FechaStrg($TFA['Fecha_C']) . "\r\n" . $TFA['Nota'] . "\r\n";
+            } else {
+                $TMailMensaje .= "Hora de Generacion: " . $TFA['Hora_FA'] . "\r\n";
+            }
+            $TMailAsunto = $TFA['Cliente'] . ", Factura No. " . $TFA['Serie'] . "-" . sprintf("%09d", $TFA['Factura']);
+        }
+
+        if (isset ($TFA['EmailC']) && $TFA['EmailC'] !== '.') {
+            $TMailPara[] = $TFA['EmailC'];
+        }
+
+        if (isset ($TFA['EmailR']) && $TFA['EmailR'] !== '.') {
+            $TMailPara[] = $TFA['EmailR'];
+        }
+
+        $TMailPara = implode(', ', $TMailPara);
+
+        $TMailMensaje .= str_repeat("-", 45) . "\r\n" .
+            "Email(s) Destinatario(s):\r\n" .
+            $TMailPara . "\r\n" .
+            str_repeat("_", 45) . "\r\n" .
+            $_SESSION['INGRESO']['Nombre_Comercial'] . "\r\n" .
+            $_SESSION['INGRESO']['Razon_Social'] . "\r\n" .
+            $_SESSION['INGRESO']['Telefono1'] . "/" . $_SESSION['INGRESO']['Telefono1'] . "\r\n" .
+            "Dir. " . $_SESSION['INGRESO']['Direccion'] . "\r\n" .
+            strtoupper($_SESSION['INGRESO']['Ciudad']) . "-" . strtoupper($_SESSION['INGRESO']['NombrePais']) . "\r\n";
+
+        $TMailAdjunto = array($RutaPDF, $RutaXML);
+
+        $rps = $this->email->enviar_email($TMailAdjunto, $TMailPara, $TMailMensaje, $TMailAsunto, $HTML = false);
+        return $rps;
+    }
+
+    function Recibo_Enviar_Mails($TFA)
+    {
+        $Comprobante = "";
+        $fecha_actual = date("Y-m-d");
+        if (strlen($TFA['Serie']) == 6 && $TFA['Factura'] > 0) {
+            //$Comprobante = "Recibo No " . $TFA['Serie'] . "-" . sprintf("%09d", $TFA['Factura']);
+            //$this->modelo->Generar_Recibo_PDF($TFA);
+
+            $TMailMensaje = "Cliente: " . $TFA['Cliente'] . "\n" .
+                "Codigo: " . $TFA['CI_RUC'] . "\n" .
+                "Emision: " . $fecha_actual . "\n" .
+                $Comprobante . "\n";
+
+            $TMailAsunto = $TFA['Cliente'] . ", " . $Comprobante;
+
+            $TMailAdjunto = $Comprobante . ".pdf";
+
+            if (isset ($TFA['EmailC']) && $TFA['EmailC'] !== '.') {
+                $TMailPara[] = $TFA['EmailC'];
+            }
+
+            if (isset ($TFA['EmailR']) && $TFA['EmailR'] !== '.') {
+                $TMailPara[] = $TFA['EmailR'];
+            }
+
+            $TMailPara = implode(', ', $TMailPara);
+
+            $rps = $this->email->enviar_email(false, $TMailPara, $TMailMensaje, $TMailAsunto, $HTML = false);
+            return $rps;
+        }
+    }
+
+
+    function SRI_Generar_XML_Firmado($ClaveDeAcceso)
+    {
+        $resultados = $this->modelo->SRI_Generar_XML_Firmado($ClaveDeAcceso);
+        $RutaSysBases = dirname(__DIR__, 3);
+        if (!empty ($resultados)) {
+            $RutaXMLFirmado = $RutaSysBases . "/TEMP/" . $ClaveDeAcceso . ".xml";
+            file_put_contents($RutaXMLFirmado, $resultados[0]['Documento_Autorizado']);
+            return 1;
+        }
+    }
+
+    function SRI_Enviar_Mails($TFA, $SRI_Autorizacion, $Tipo_Documento)
+    {
+        $Factura = $TFA['Factura'];
+        $Serie = $TFA['Serie'];
+        $CodigoC = $TFA['CodigoC'];
+        $nombre = $TFA['Serie'] . '-' . generaCeros($TFA['Factura'], 7);
+        $Clave_Acceso = $TFA['ClaveAcceso'];
+        $rep = $this->puntoventa->pdf_factura_elec($Factura, $Serie, $CodigoC, $nombre, $Clave_Acceso, $periodo = false, 0, 1);
+        if ($rep == 1) {
+            $rep2 = $this->SRI_Generar_XML_Firmado($Clave_Acceso);
+            if ($rep2 == 1) {
+                return array('res_pdf' => $rep, 'res_xml' => $rep2, 'pdf' => $nombre, 'clave' => $Clave_Acceso);
+            }
+            return array('res_pdf' => $rep, 'res_xml' => -1, 'pdf' => $nombre);
+        } else {
+            return array('res_pdf' => -1, 'res_xml' => -1);
+        }
+    }
+
     function Historico_Facturas($parametros)
     {
         $Opcion = $parametros['Opcion'];
-        
+
         $FechaIni = BuscarFecha($parametros['MBFechaI']);
         $FechaFin = BuscarFecha($parametros['MBFechaF']);
-        
+
         $PorCxC = false;
 
         if ($parametros['CheqCxC'] == 1) {
@@ -178,9 +373,8 @@ class HistorialFacturasC
         $Total = 0;
         $Abono = 0;
         $res = array();
-        //$Opcion = 0;
-        $Opcion = $parametros['Opcion'];
 
+        $Opcion = $parametros['Opcion'];
         switch ($idBtn) {
             case "Facturas":
                 Actualizar_Abonos_Facturas_SP($FA);
@@ -283,7 +477,6 @@ class HistorialFacturasC
         $filename = str_replace(' ', '_', $filename);
         $path = $basepath . $filename;
 
-        // Verificar si el archivo ya existe y agregar sufijo autoincremental si es necesario
         $i = 1;
         while (file_exists($path)) {
             $info = pathinfo($path);
@@ -294,13 +487,35 @@ class HistorialFacturasC
 
         $this->pdf->generarPDFTabla($parametros, $path);
 
-        //$this->pdf->generarPDFTabla($datos, $path);
-
         return [
             'response' => 1,
-            'nombre' => basename($path),
-            'mensaje' => "SE GENERO EL SIGUIENTE ARCHIVO: \n" . basename($path)
+            'nombre' => $filename,
+            'mensaje' => "SE GENERO EL SIGUIENTE ARCHIVO: \n" . $filename
         ];
+    }
+
+    function RutaDocumentoPDF($nombre, $CA)
+    {
+        $basepath = dirname(__DIR__, 3) . "/TEMP/";
+        if (!is_dir($basepath)) {
+            mkdir($basepath, 0777, true);
+        }
+
+        $filename = $nombre . ".pdf";
+        $filename = str_replace(' ', '_', $filename);
+        $path = $basepath . $filename;
+
+        $i = 1;
+        while (file_exists($path)) {
+            $info = pathinfo($path);
+            $filename = $info['filename'] . '_' . $i . '.' . $info['extension'];
+            $path = $info['dirname'] . '/' . $filename;
+            $i++;
+        }
+
+        $this->pdf->Imprimir_Abono_Anticipado($CA, $path);
+
+        return $filename;
     }
 
     function Listado_Facturas_Por_Meses($parametros, $Por_FA, $SQL_Server = true)
@@ -710,7 +925,7 @@ class HistorialFacturasC
         $AdoQuery = $DGQuery;
 
         $label_saldo = number_format($Valor_Total, 2, '.', ',');
-        
+
         $Opcion = 11;
 
         return array(
@@ -777,7 +992,6 @@ class HistorialFacturasC
         return $SQL3X;
     }
 
-
     function Abonos_Facturas($Ret_NC, $parametros)
     {
         //$Opcion = 6;
@@ -814,7 +1028,7 @@ class HistorialFacturasC
     function Cheques_Protestados($parametros)
     {
         $Total = 0;
-        
+
         $MBFechaI = $parametros['MBFechaI'];
         $MBFechaF = $parametros['MBFechaF'];
 
@@ -881,6 +1095,7 @@ class HistorialFacturasC
                 $label_saldo = $Saldo;
                 break;
         }
+
         return array(
             'label_facturado' => $label_facturado,
             'label_abonado' => $label_abonado,
@@ -898,28 +1113,6 @@ class HistorialFacturasC
             'num_filas' => $sSQL['num_filas'],
         );
     }
-
-
-
-    /*function Tipo_De_Consulta($parametros, $Opcion, $val = false, $val2 = false, $val3 = false)
-    {
-        $paramAdd = array(
-            'ListCliente' => $parametros['ListCliente'],
-            'DCCliente' => $parametros['DCCliente'],
-            'DCCxC' => $parametros['DCCxC'],
-            'OpcPend' => $parametros['OpcPend'],
-            'OpcAnul' => $parametros['OpcAnul'],
-            'OpcCanc' => $parametros['OpcCanc'],
-            'CheqCxC' => $parametros['CheqCxC'],
-            'CheqIngreso' => $parametros['CheqIngreso'],
-            'CheqAbonos' => $parametros['CheqAbonos'],
-            'DescItem' => $parametros['DescItem'],
-            'Cod_Marca' => $parametros['Cod_Marca'],
-            'Opcion' => $Opcion,
-        );
-
-        return $this->Tipo_De_Consulta($paramAdd, $val, $val2, $val3);
-    }*/
 
     function Form_Activate()
     {
@@ -955,7 +1148,7 @@ class HistorialFacturasC
             $ListCliente[] = $opcion;
         }
 
-        if (empty($TipoFactura)) {
+        if (empty ($TipoFactura)) {
             $TipoFactura = G_NINGUNO;
         }
 
@@ -1028,6 +1221,9 @@ class HistorialFacturasC
         $label_facturado = 0;
         $label_abonado = 0;
         $label_saldo = 0;
+
+        $retorno = array();
+
         switch ($idBtnMenu) {
             case "Resumen_Prod":
                 $res = $this->Resumen_Productos($parametros, $FechaIni, $FechaFin);
@@ -1177,8 +1373,7 @@ class HistorialFacturasC
                 $res = $this->modelo->Tipo_Pago_Cliente();
                 break;
             case "Bajar_Excel":
-                //print_r(count($AdoQuery));
-                if (!empty($parametros['AdoQuery'])) {
+                if (!empty ($parametros['AdoQuery'])) {
                     return $this->Bajar_Excel($parametros['AdoQuery']);
                 } else {
                     return array('response' => 0);
@@ -1191,21 +1386,37 @@ class HistorialFacturasC
                 return $this->Catastro_Registro_Datos_Clientes($FA, $MBFechaI, $MBFechaF, $tipoConsulta);
             case "Enviar_FA_Email":
                 $tipoConsulta = $this->Tipo_De_Consulta($parametros, true);
-                return $this->modelo->Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, "FA", $tipoConsulta );
-
+                $res = $this->modelo->Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, "FA", $tipoConsulta);
+                $retorno['response'] = $res['response'];
+                $retorno['tipoEnvio'] = $res['tipoEnvio'];
+                break;
             case "Enviar_RE_Email":
-                $this->modelo->Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, "FA" );
+                $tipoConsulta = $this->Tipo_De_Consulta($parametros, true);
+                $res = $this->modelo->Enviar_Emails_Facturas_Recibos($parametros, $FechaIni, $FechaFin, "RE", $tipoConsulta);
+                $retorno['response'] = $res['response'];
+                $retorno['tipoEnvio'] = $res['tipoEnvio'];
                 break;
             case "Recibos_Anticipados":
-                $res = $this->Recibo_Abonos_Anticipados($FechaIni,$FechaFin,$parametros);
+                $res = $this->Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $parametros);
+                $retorno['response'] = $res['response'];
+                $retorno['nombre'] = $res['nombreArchivo'];
+                $retorno['Co'] = $res['Co'];
+                $res = $this->SMAbonos_Anticipados($FechaIni, $FechaFin, $parametros);
+                $label_facturado = $res['label_facturado'];
+                $label_abonado = $res['label_abonado'];
+                $label_saldo = $res['label_saldo'];
+                $Opcion = $res['Opcion'];
                 break;
             case "Deuda_x_Mail":
                 Actualizar_Abonos_Facturas_SP($FA);
-                $this->Historico_Facturas($parametros);
-                Deuda_x_Mail("FA");
+                $res = $this->Historico_Facturas($parametros);
+                $resU = $this->Deuda_x_Mail($res['AdoQuery']);
+                $retorno['result'] = $resU['result'];
+                $retorno['correos_error'] = $resU['correos_error'];
                 break;
         }
-        return array(
+
+        $retorno += array(
             'label_facturado' => $label_facturado,
             'label_abonado' => $label_abonado,
             'label_saldo' => $label_saldo,
@@ -1215,15 +1426,98 @@ class HistorialFacturasC
             'idBtnMenu' => $idBtnMenu,
             'Opcion' => $Opcion,
         );
+
+        return $retorno;
     }
 
-    function Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $parametros){
+    function Deuda_x_Mail($AdoQuery)
+    {
+        $si_envia = false;
+        $cad_deuda = "";
+        $pos_punto_coma = 0;
+        $Total = 0;
+        $correos_error = array();
+        $contador = 0;
+
+        if (count($AdoQuery) > 0) {
+            foreach ($AdoQuery as $record) {
+                if ($contador >= 3) {
+                    break;
+                }
+                if (isset ($record["Cliente"])) {
+                    $TBeneficiario["Cliente"] = $record["Cliente"];
+                }
+                if (isset ($record["Representante"])) {
+                    $TBeneficiario["Representante"] = $record["Representante"];
+                }
+                if (isset ($record["Grupo"])) {
+                    $TBeneficiario["Grupo_No"] = $record["Grupo"];
+                }
+                if (isset ($record["Email"])) {
+                    $TBeneficiario["Email1"] = $record["Email"];
+                }
+                if (isset ($record["Email2"])) {
+                    $TBeneficiario["Email2"] = $record["Email2"];
+                }
+                if (isset ($record["EmailR"])) {
+                    $TBeneficiario["EmailR"] = $record["EmailR"];
+                }
+
+                if (strlen($TBeneficiario["Representante"]) <= 1 && strlen($TBeneficiario["Cliente"]) > 1) {
+                    $TBeneficiario["Representante"] = $TBeneficiario["Cliente"];
+                }
+
+                $CadDeuda = "TC\tFECHA EMIS\tSERIE\t\tDOCUMENTO\tSALDO ACTUTAL\n";
+                $contador++;
+                $CodigoP = sprintf("%014s", number_format($record["Saldo_Actual"], 2, ".", ","));
+                $fecha_formateada = $record["Fecha"]->format('Y-m-d H:i:s');
+                $cad_deuda .= $record["TC"] . "\t" . $fecha_formateada . "\t" . $record["Serie"] . "\t" . sprintf("%09d", $record["Factura"]) . "\t\t" . $CodigoP . "\r\n";
+                $Total += $record["Saldo_Actual"];
+
+                $CodigoP = sprintf("%020s", number_format($Total, 2, ".", ","));
+                $TMailAsunto = "Envio automatizado de su cartera pendiente por USD " . number_format($Total, 2, ".", ",");
+                $TMailMensaje = "Estimado(a): " . $TBeneficiario['Representante'] . ", del Grupo " . $TBeneficiario['Grupo_No'] . ".\nUsted tiene los siguientes pendientes por cancelar:\n" .
+                    $cad_deuda .
+                    str_repeat("_", 60) . "\n" .
+                    "TOTAL PENDIENTE POR CANCELAR" . str_repeat(" ", 26) . "USD\t" . $CodigoP . "\n" .
+                    "NOTA: En caso de tener inconformidad con los valores detallados en su Estado de Cuenta, comuniquese con atencion al Cliente.\n";
+
+                if (isset ($TFA['Email1']) && $TBeneficiario['Email1'] !== '.') {
+                    $TMailPara[] = $TBeneficiario['Email1'];
+                }
+
+                if (isset ($TFA['Email2']) && $TBeneficiario['Email2'] !== '.') {
+                    $TMailPara[] = $TBeneficiario['Email2'];
+                }
+
+                if (isset ($TFA['EmailR']) && $TBeneficiario['EmailR'] !== '.') {
+                    $TMailPara[] = $TBeneficiario['EmailR'];
+                }
+
+                $TMailPara = implode(', ', $TMailPara);
+
+                $rsp = $this->email->enviar_email(false, $TMailPara, $TMailMensaje, $TMailAsunto, false);
+                if ($rsp == -1) {
+                    $correos_error[] = $TMailPara;
+                }
+            }
+        }
+
+        if (count($correos_error) > 0) {
+            return ['result' => -1, 'correos_error' => $correos_error];
+        } else {
+            return ['result' => 1, 'correos_error' => $correos_error];
+        }
+    }
+
+    function Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $parametros)
+    {
+        $Co = $parametros['Co'];
         $tipoConsulta = $this->Tipo_De_Consulta($parametros);
-        $AdoFacturas = $this->modelo->Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $parametros['Co'], $tipoConsulta);
-        if (count($AdoFacturas) > 0) {
-            foreach ($AdoFacturas as $fila) {
-                $Co = $parametros['Co'];
-    
+        $AdoFacturas = $this->modelo->Recibo_Abonos_Anticipados($FechaIni, $FechaFin, $Co, $tipoConsulta);
+
+        if (count($AdoFacturas['AdoQuery']) > 0) {
+            foreach ($AdoFacturas['AdoQuery'] as $fila) {
                 $Co["Beneficiario"] = $fila["Cliente"];
                 $Co["RUC_CI"] = $fila["CI_RUC"];
                 $Co["Concepto"] = $fila["Concepto"];
@@ -1237,32 +1531,42 @@ class HistorialFacturasC
                 } elseif (strlen($fila["Email2"]) > 3 && $fila["Email"] != $fila["Email2"]) {
                     $Co["Email"] = $Co["Email"] . ";" . $fila["Email2"];
                 }
-        
-                //Imprimir_Recibo_Anticipos($Co, true);
-        
-                if (strlen($Co["Email"]) > 3) {
-                    if ($parametros['SiEnviar']) {
-                        /* $TMail->para = $Co["Email"];
-                        $TMail->Asunto = "RECIBO ABONO ANTICIPADO No. " . date("Y", strtotime($fila["Fecha"])) . "-" . $Co["TP"] . "-" . sprintf("%09d", $Co["Numero"]);
-                        $TMail->Adjunto = $RutaDocumentoPDF;
-                        $TMail->Mensaje = "Beneficiario: " . $Co["Beneficiario"] . "\n" .
-                                            "Fecha del Abono: " . $fila["Fecha"] . "\n" .
-                                            "Abono Anticipado por USD " . number_format($Co["Efectivo"], 2);
-                        */
-                    }
-                }
+
+                $NombreArchivo = "Recibo_No_" . $Co["TP"] . "-" . sprintf("%09d", $Co["Numero"]);
+                $RutaDocumentoPDF = $this->RutaDocumentoPDF($NombreArchivo, $Co);
+
+                return ['response' => 3, 'nombreArchivo' => $RutaDocumentoPDF, 'Co' => $Co];
             }
-        }  
-        return array(            
-            'tbl' => $AdoFacturas['DGQuery'],
-            'AdoQuery' => $AdoFacturas['AdoQuery'],
-            'num_filas' => $AdoFacturas['num_filas'],
-        );
+        }
     }
 
+    function EnviarMailAbono($parametros)
+    {
+        $Co = $parametros['Co'];
+
+        if (strlen($Co["Email"]) > 3) {
+            if ($parametros['SiEnviar'] == true) {
+                $ano = substr($Co['Fecha'], 0, 4);
+
+                if (isset ($TFA['Email']) && $Co["Email"] !== '.') {
+                    $TMailPara[] = $Co["Email"];
+                }
+
+                $TMailPara = implode(', ', $TMailPara);
+                $TMailAsunto = "RECIBO ABONO ANTICIPADO No. " . $ano . "-" . $Co["TP"] . "-" . sprintf("%09d", $Co["Numero"]);
+                $TMailAdjunto[] = $parametros['archivo'];
+                $TMailMensaje = "Beneficiario: " . $Co["Beneficiario"] . "\n" .
+                    "Fecha del Abono: " . $Co["Fecha"] . "\n" .
+                    "Abono Anticipado por USD " . number_format($Co["Efectivo"], 2);
+
+                $rsp = $this->email->enviar_email($TMailAdjunto, $TMailPara, $TMailMensaje, $TMailAsunto, false);
+                return $rsp;
+            }
+        }
+
+    }
     function Catastro_Registro_Datos_Clientes($FA, $MBFechaI, $MBFechaF, $tipoConsulta)
     {
-
         $fechaSistema = FechaSistema();
         $fechaSistema = date("d/m/Y", strtotime($fechaSistema));
 
@@ -1273,7 +1577,7 @@ class HistorialFacturasC
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $path = dirname(__DIR__, 3) . "/Excel/";
+        $path = dirname(__DIR__, 3) . "/TEMP/EXCEL/";
         if (!is_dir($path)) {
             mkdir($path, 0777, true);
         }
@@ -1337,7 +1641,7 @@ class HistorialFacturasC
 
         $AdoCatastro = $this->modelo->Catastro_Registro_Datos_Clientes(BuscarFecha($MBFechaI), BuscarFecha($MBFechaF), $tipoConsulta);
 
-        if (!empty($AdoCatastro)) {
+        if (!empty ($AdoCatastro)) {
             foreach ($AdoCatastro as $registro) {
                 $Dias_Morosidad = 0;
                 // Calcular días de morosidad
@@ -1421,18 +1725,16 @@ class HistorialFacturasC
 
                 $NFila++;
             }
-
             // Guardar archivo Excel
             $writer = new Xlsx($spreadsheet);
             $writer->save($RutaGeneraFile);
 
             return [
-                'response' => '2',
-                'mensaje' => $filename,
+                'response' => 2,
                 'nombre' => $filename,
             ];
         } else {
-            return ['response' => '0'];
+            return ['response' => 0];
         }
     }
 
@@ -1556,7 +1858,6 @@ class HistorialFacturasC
 
     }
 
-
     function Ventas_Clientes_Por_Meses($parametros, $FechaIni, $FechaFin, $FA, $MBFechaF)
     {
         //$Opcion = 14;
@@ -1585,8 +1886,6 @@ class HistorialFacturasC
         );
     }
 
-
-
     function Ventas_Cliente($parametros, $FechaIni, $FechaFin)
     {
         //$Opcion = 4
@@ -1614,7 +1913,6 @@ class HistorialFacturasC
             'label_abonado' => $label_abonado,
             'label_saldo' => $label_saldo
         );
-
     }
 
     function Resumen_Ventas_Costos($FechaIni, $FechaFin, $parametros)
@@ -1675,7 +1973,7 @@ class HistorialFacturasC
         $CheqIngreso = $paramAdd['CheqIngreso'];
         $CheqAbonos = $paramAdd['CheqAbonos'];
         $DescItem = $paramAdd['DescItem'];
-        $Cod_Marca = $paramAdd['DescItem'];
+        $Cod_Marca = $paramAdd['Cod_Marca'];
 
         $SQL3X = '';
         $Patron_Busqueda = $DCCliente;
@@ -1703,12 +2001,14 @@ class HistorialFacturasC
                         break;
                 }
             } else {
-                $SQL3X .= "AND F.T = " . G_PENDIENTE . " ";
+                $SQL3X .= "AND F.T = '" . G_PENDIENTE . "' ";
             }
         } elseif ($OpcCanc) {
-            $SQL3X .= "AND F.T = " . G_CANCELADO . " ";
+            $SQL3X .= "AND F.T = '" . G_CANCELADO . "' ";
+
         } elseif ($OpcAnul) {
-            $SQL3X .= "AND F.T = " . G_ANULADO . " ";
+            $SQL3X .= "AND F.T = '" . G_ANULADO . "' ";
+
         }
 
         switch ($ListCliente) {
@@ -1867,4 +2167,5 @@ class HistorialFacturasC
         return array('Cod_Marca' => $Cod_Marca, 'DescItem' => $DescItem, 'CodigoInv' => $CodigoInv, 'FA' => $FA);
     }
 }
+
 ?>
