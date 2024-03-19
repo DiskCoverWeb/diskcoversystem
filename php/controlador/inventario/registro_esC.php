@@ -1,5 +1,6 @@
 <?php 
 include('../../modelo/inventario/registro_esM.php');
+require_once('../../funciones/funciones.php');
 // include('../../controlador/contabilidad/incomC.php');
 /**
  * 
@@ -395,7 +396,8 @@ class registro_esC
    function DCPorcenIva($parametros)
   {
     $fecha = $parametros['fecha'];
-    $datos = $this->modelo->DCPorcenIva($fecha);
+    // $datos = $this->modelo->DCPorcenIva($fecha);
+    $datos = Porcentajes_IVA($fecha); 
      // print_r($datos);die();
     return $datos;
   }

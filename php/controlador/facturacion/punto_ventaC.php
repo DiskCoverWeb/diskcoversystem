@@ -305,6 +305,7 @@ class punto_ventaC
 		if (isset($parametros['electronico'])) {
 			$electronico = $parametros['electronico'];
 		}
+		$Porc_Iva = floatval($parametros['PorcIva']/100);
 		$TextVUnit = $parametros['TextVUnit'];
 		$TextCant = $parametros['TextCant'];
 		$TipoFactura = $parametros['TC'];
@@ -366,7 +367,7 @@ class punto_ventaC
 						break;
 					default:
 						if ($articulo['IVA'] != 0) {
-							$Real3 = number_format(($Real1 - $Real2) * $_SESSION['INGRESO']['porc'], 2, '.', '');
+							$Real3 = number_format(($Real1 - $Real2) * $Porc_Iva, 2, '.', '');
 						} else {
 							$Real3 = 0;
 						}

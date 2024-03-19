@@ -14,6 +14,8 @@ $(document).ready(function() {
 
     var operadora = '<?php echo $operadora; ?>';
     var servicio = '<?php echo $servicio; ?>';
+
+    DCPorcenIva('MBFecha', 'DCPorcenIVA');
     if(servicio!=0)
     {
         $('#campo_servicio').css('display','block');
@@ -85,9 +87,9 @@ $(document).ready(function() {
     }
 
 
-    $('#MBFecha').on('change', function(){
-        validar_cta()
-    })
+    // $('#MBFecha').on('change', function(){
+    //     validar_cta()
+    // })
 
     // $('#DCCliente').on('select2:select', function (e) {
     //     var data = e.params.data.data;
@@ -100,7 +102,7 @@ $(document).ready(function() {
     //     console.log(data);
     //   });
 
-    DCPorcenIva('MBFecha', 'DCPorcenIVA');
+
 });
 
 
@@ -441,6 +443,7 @@ function ingresar() {
         'TxtRifaH': $('#TxtRifaH').val(),
         'Serie': $('#LblSerie').text(),
         'CodigoCliente': $('#codigoCliente').val(),
+        'PorcIva':$('#DCPorcenIVA').val(),
         'electronico': 1,
     }
     $.ajax({
@@ -1258,6 +1261,12 @@ function Command8_Click() {
 
 }
 
+function cambiar_iva(valor)
+{
+    $('#Label3').text('I.V.A. '+parseFloat(valor).toFixed(2)+'%');
+    // console.log(valor)
+}
+
 //fin guia de remision
 </script>
 
@@ -1291,11 +1300,7 @@ function Command8_Click() {
         <select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="1"
             onchange="numeroFactura(); tipo_documento();">
             <option value=""></option>
-        </select>
-
-        <b>Fecha</b>
-        <input type="date" name="MBFecha" id="MBFecha" class="form-control input-xs"
-            value="<?php echo date('Y-m-d'); ?>" onblur="DCPorcenIva('MBFecha', 'DCPorcenIVA');">
+        </select>       
     </div>
     <div class="col-sm-4">
         <b>Nombre del cliente</b>
@@ -1311,12 +1316,8 @@ function Command8_Click() {
             <!-- <button onclick="tipo_error_sri('0308202203179238540700120010020000006811234567815')" class="btn">error</button>  -->
         </div>
         <input type="hidden" name="codigoCliente" id="codigoCliente" class="form-control input-xs">
-        <input type="hidden" name="LblT" id="LblT" class="form-control input-xs">
-
-        <b>I.V.A</b>
-        <select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA"> 
-        </select>
-    </div>
+        <input type="hidden" name="LblT" id="LblT" class="form-control input-xs">       
+    </div>    
     <div class="col-sm-2">
         <b>CI/RUC/PAS</b>
         <div class="input-group">
@@ -1325,13 +1326,7 @@ function Command8_Click() {
             <span class="input-group-btn">
                <label id="LblTD" name="LblTD" class="input-xs form-control" style="color :coral;"></label>
             </span>
-        </div>
-
-        <b>Tipo de pago</b>
-        <select class="" style="width: 100%;" id="DCTipoPago"
-            onchange="$('#DCTipoPago').css('border','1px solid #d2d6de');">
-            <option value="">Seleccione tipo de pago</option>
-        </select>
+        </div>       
     </div>
     <div class="col-sm-2">
         <b id="Label1">FACTURA No.</b>
@@ -1349,7 +1344,24 @@ function Command8_Click() {
         <select class="form-control input-xs" id="DCBodega" name="DCBodega" onblur="validar_bodega()">
             <option value="01">Seleccione Bodega</option>
         </select>
-
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-2">
+         <b>Fecha</b>
+        <input type="date" name="MBFecha" id="MBFecha" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>" onblur="DCPorcenIva('MBFecha', 'DCPorcenIVA'); validar_cta();">        
+    </div>
+    <div class="col-sm-1">
+         <b>I.V.A</b>
+        <select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA" onchange="cambiar_iva(this.value)"> 
+        </select>
+    </div>
+    <div class="col-sm-7">
+         <b>Tipo de pago</b>
+        <select class="" style="width: 100%;" id="DCTipoPago"
+            onchange="$('#DCTipoPago').css('border','1px solid #d2d6de');">
+            <option value="">Seleccione tipo de pago</option>
+        </select>        
     </div>
 </div>
 <div class="row">
@@ -1376,11 +1388,11 @@ function Command8_Click() {
                 <b>P.V.P</b>
                 <input type="text" name="TextVUnit" id="TextVUnit" class="form-control input-xs" value="0.01"
                     onblur="calcular()">
-            </div>
+            </div>           
             <div class="col-sm-1" style="padding-right:0px">
                 <b>Dcto_Val</b>
                 <input type="text" name="TextVDescto" id="TextVDescto" class="form-control input-xs" value="0">
-            </div> 
+            </div>  
             <div class="col-sm-1" style="padding-right:0px;display:none;" id="campo_servicio">
                 <b>Servicio</b>
                 <input type="text" name="TextServicios" id="TextServicios" class="form-control input-xs" value="0">

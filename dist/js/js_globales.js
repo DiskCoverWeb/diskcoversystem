@@ -594,6 +594,7 @@ function solo_numeros(input)
 }
 
 function DCPorcenIva(idFecha, idSelect){
+	// alert(idFecha);
 	var parametros = {
 		'Fecha_Ini': $('#'+idFecha).val()
 	};
@@ -603,13 +604,15 @@ function DCPorcenIva(idFecha, idSelect){
 		data: { parametros: parametros },
 		dataType: 'json',
 		success: function (data) {
-			$('#'+idSelect).empty();
-			$.each(data, function (i, item) {
-				$('#'+idSelect).append($('<option>', {
-					value: item.Porc,
-					text: item.Porc
-				}));
-			});
+			llenarComboList(data,idSelect);
+
+			// $('#'+idSelect).empty();
+			// $.each(data, function (i, item) {
+			// 	$('#'+idSelect).append($('<option>', {
+			// 		value: item.Porc,
+			// 		text: item.Porc
+			// 	}));
+			// });
 		}
 	});
 

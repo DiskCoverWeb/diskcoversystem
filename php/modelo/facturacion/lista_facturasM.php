@@ -267,6 +267,7 @@ class lista_facturasM
    	FROM Detalle_Factura 
    	WHERE Factura = '".$cod."' 
    	AND CodigoC='".$ci."' 
+   	AND DF.TC = 'FA'
    	AND Item = '".$_SESSION['INGRESO']['item']."'
 	AND Periodo =  '".$_SESSION['INGRESO']['periodo']."' ";	
 	$detalle_fac = $this->db->datos($sql1);

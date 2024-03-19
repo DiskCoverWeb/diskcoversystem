@@ -593,7 +593,7 @@ function contracuenta()
                                         <div class="col-sm-12">
                                             <div class="col-sm-2"  style="padding-left: 0px;padding-right: 0px">
                                              <b>Emision</b>
-                                                <input type="date" name="" class="form-control input-xs" value="<?php echo date('Y-m-d') ?>" id="MBFechaEmi" onblur="fecha_valida(this)" autocomplete="off">
+                                                <input type="date" name="" class="form-control input-xs" value="<?php echo date('Y-m-d') ?>" id="MBFechaEmi" onblur="fecha_valida(this);ddl_DCPorcenIva(this.value)" autocomplete="off">
                                             </div>
                                             <div class="col-sm-2"  style="padding-left: 0px;padding-right: 0px">
                                                 <b>Registro</b>
