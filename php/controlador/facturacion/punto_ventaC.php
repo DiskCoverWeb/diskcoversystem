@@ -532,6 +532,7 @@ class punto_ventaC
 				$FA['TxtEfectivo'] = $parametros['TxtEfectivo'];
 				$FA['Cod_CxC'] = $parametros['CodigoL'];
 				$FA['CLAVE'] = ".";
+				$FA['PorcIva'] = $parametros['PorcIva'];
 
 				$Moneda_US = False;
 				$TextoFormaPago = G_PAGOCONT;
@@ -646,6 +647,7 @@ class punto_ventaC
 			} else {
 				$FA['Tipo_Pago'] = '01';
 			}
+			$FA['PorcIva'] = $parametros['PorcIva'];
 
 
 			//datos para guia de remision
@@ -857,6 +859,7 @@ class punto_ventaC
 					// Imprimir_Facturas_CxC(FacturasPV, FA, True, False, True, True);
 					$TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
 					$TFA['CLAVE'] = $clave;
+					$TFA['PorcIva'] = $FA['PorcIva'];
 					$imp = $FA['Serie'] . '-' . generaCeros($FA['Factura'], 7);
 
 					$this->modelo->pdf_factura_elec($FA['Factura'], $FA['Serie'], $FA['codigoCliente'], $imp, $clave, $periodo = false, 0, 1);

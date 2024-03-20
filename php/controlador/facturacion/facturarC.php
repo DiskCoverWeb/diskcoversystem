@@ -585,6 +585,10 @@ class facturarC
             $SubTotalIVA = 0;
          }
 
+         if($parametros['PorcIva'] != 0){
+            $SubTotalIVA = number_format(($SubTotal - $SubTotalDescuento) * floatval($parametros['PorcIva'] / 100), 2, '.', '');
+         }
+
          $Ln_No = count($datosL) + 1;
 
          if (strlen($parametros['codigo']) > 1) {
@@ -1147,11 +1151,13 @@ class facturarC
             if ($Grafico_PV) {
                $info = Imprimir_Punto_Venta_Grafico_datos($FA);
                $info['CLAVE'] = '1';
+               $info['PorcIva'] = $parametros['PorcIva'];
                $this->pdf->Imprimir_Punto_Venta_Grafico($info);
                $imp = $FA['Serie'] . '-' . generaCeros($FA['Factura'], 7);
             } else {
                $info = Imprimir_Punto_Venta_datos($FA);
                $info['CLAVE'] = '1';
+               $info['PorcIva'] = $parametros['PorcIva'];
                $this->pdf->Imprimir_Punto_Venta($info);
                $imp = $FA['Serie'] . '-' . generaCeros($FA['Factura'], 7);
             }

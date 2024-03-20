@@ -328,11 +328,15 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 		} else {
 			// Facturas.Caption = "INGRESAR FACTURA"
 			$('#label2').text(data.Autorizacion + " FACTURA No. " + data.Serie + "-");
-			$('#label3').text("I.V.A. " + (parseFloat(data.Porc_IVA) * 100).toFixed(2) + "%")
+			//$('#label3').text("I.V.A. " + (parseFloat(data.Porc_IVA) * 100).toFixed(2) + "%")
 			$('#TextFacturaNo').val(data.NoFactura);
 		}
 		// 'Facturas.Caption = Facturas.Caption & " (" & FA.TC & ")"
 		//$('#label36').text("Servicio " + (data.Porc_Serv * 100).toFixed(2) + "%")
+	}
+
+	function cambiar_iva(valor) {
+		$('#label3').text('I.V.A. ' + parseFloat(valor).toFixed(2) + '%');
 	}
 
 	function DCEjecutivo() {
@@ -604,6 +608,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			'TxtTipoRooms': '.',//$('#MBoxFechaV').val(), //ojo poner el verdadero
 			'LstOrden': '.',//$('#MBoxFechaV').val(), //ojo poner el verdadero
 			'Sec_Public': $('#CheqSP').prop('checked'),
+			'PorcIva': $('#DCPorcenIVA').val()
 		}
 		$.ajax({
 			type: "POST",
@@ -785,7 +790,8 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			'Reprocesar': $('#Reprocesar').val(),
 			'Cliente': $('#DCCliente').val(),
 			'Total': $('#LabelTotal').val(),
-			'FA': FAc
+			'FA': FAc,
+			'PorcIva': $('#DCPorcenIVA').val()
 		}
 		$.ajax({
 			type: "POST",
@@ -1513,7 +1519,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 						<label for="DCPorcenIVA">I.V.A:</label>
 					</div>
 					<div class="col-sm-8">
-						<select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA"> </select>
+						<select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA" onblur="cambiar_iva(this.value)"> </select>
 					</div>
 				</div>
 				<div class="col-sm-4">

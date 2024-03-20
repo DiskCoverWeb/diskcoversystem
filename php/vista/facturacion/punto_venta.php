@@ -193,12 +193,12 @@ if (isset ($_GET['tipo'])) {
 
 		//var TipoFactura = tc[0];
 
-		var Porc_IVA = '<?php echo $_SESSION['INGRESO']['porc']; ?>';
-		var Porc_IVA = parseFloat(Porc_IVA) * 100;
+		var Porc_IVA = $('#DCPorcenIVA').val();
+		Porc_IVA = parseFloat(Porc_IVA) * 100;
 		if (TipoFactura == "PV") {
 			// FacturasPV.Caption = "INGRESAR TICKET"
 			$('#Label1').text(" TICKET No.");
-			$('#Label3').text(" I.V.A. " + Porc_IVA.toFixed(2) + "%")
+			//$('#Label3').text(" I.V.A. " + Porc_IVA.toFixed(2) + "%")
 			$('#title').text('Ticket');
 		} else if (TipoFactura == "CP") {
 			// FacturasPV.Caption = "INGRESAR CHEQUES PROTESTADOS"
@@ -225,12 +225,16 @@ if (isset ($_GET['tipo'])) {
 		} else {
 			// FacturasPV.Caption = "INGRESAR FACTURA"
 			$('#Label1').text(" FACTURA No.");
-			$('#Label3').text(" I.V.A. " + Porc_IVA.toFixed(2) + "%")
+			//$('#Label3').text(" I.V.A. " + Porc_IVA.toFixed(2) + "%")
 			$('#CodDoc').val("01");
 			$('#title').text('Facturas');
 		}
 	}
 
+	function cambiar_iva(valor)
+{
+    $('#Label3').text('I.V.A. '+parseFloat(valor).toFixed(2)+'%');
+}
 
 	function autocomplete_cliente() {
 		$('#DCCliente').select2({
@@ -512,7 +516,8 @@ if (isset ($_GET['tipo'])) {
 			'Serie': $('#LblSerie').text(),
 			'CodigoCliente': $('#codigoCliente').val(),
 			'TextServicios': '.',
-			'TextVDescto': 0
+			'TextVDescto': 0,
+			'PorcIva': $('#DCPorcenIVA').val()
 		}
 		$.ajax({
 			type: "POST",
@@ -688,7 +693,8 @@ if (isset ($_GET['tipo'])) {
 			'valorBan': $('#TextCheque').val(),
 			'Cta_Cobrar': $('#Cta_CxP').val(),
 			'Autorizacion': $('#Autorizacion').val(),
-			'CodigoL': $('#CodigoL').val()
+			'CodigoL': $('#CodigoL').val(),
+			'PorcIva': $('#DCPorcenIVA').val()
 		}
 		$.ajax({
 			type: "POST",
@@ -845,7 +851,7 @@ if (isset ($_GET['tipo'])) {
 	</div>
 	<div class="col-sm-2">
 		<b>I.V.A</b>
-		<select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA"> </select>
+		<select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA" onblur="cambiar_iva(this.value)"> </select>
 	</div>
 	<div class="col-sm-4">
 		<b>Nombre del cliente</b>
@@ -997,7 +1003,7 @@ if (isset ($_GET['tipo'])) {
 		</div>
 		<div class="row">
 			<div class="col-sm-6">
-				<b id="Label3">I.V.A. 12.00</b>
+				<b id="Label3">I.V.A</b>
 			</div>
 			<div class="col-sm-6">
 				<input type="text" name="LabelIVA" id="LabelIVA" class="form-control input-xs text-right" value="0.00"

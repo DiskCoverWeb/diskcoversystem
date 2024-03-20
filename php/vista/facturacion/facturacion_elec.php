@@ -638,6 +638,7 @@ function generar_factura() {
         'valorBan': $('#TextCheque').val(),
         'electronico': 1,
         'tipo_pago': $('#DCTipoPago').val(),
+        'PorcenIVA': $('#DCPorcenIVA').val(),
 
         //---------------datos de gia de remicion--------------///
         'MBoxFechaGRE': $('#MBoxFechaGRE').val(),
