@@ -46,6 +46,8 @@
     cargarBancos();
     DCGrupo_No();
 
+    DCPorcenIva('fechaEmision', 'DCPorcenIVA');
+
     document.addEventListener('click', function(event) {
       let backdrop = document.querySelector('.modal-backdrop');
       if (backdrop === event.target) {
@@ -62,6 +64,10 @@
           $("#MBHistorico").val(data.MBHistorico)        
       }
     });
+
+    $("#DCPorcenIVA").change(function() {
+         alert('dd');
+      });
 
     $('.validateDate').on('keyup', function () {
         if($(this).val().length >= 10){
@@ -108,7 +114,7 @@
     $('#cliente').on('select2:select', function (e) {
       var data = e.params.data.data;
       // var dataM = e.params.data.dataMatricula;
-
+      cambiarlabel()
       $('#email').val(data.EmailR);
       $('#direccion').val(data.direccion);
       $('#direccion1').val(data.direccion1);
@@ -185,6 +191,9 @@
     $("#CMedidorFiltro").on('change', function () {
       catalogoProductos($('#codigo').val(), $("#CMedidorFiltro").val());
     })
+
+    cambiarlabel()
+
   });
 
   function usar_cliente(nombre, ruc, codigocliente, email, T, grupo) {
@@ -247,6 +256,8 @@
   }
 
   function catalogoProductos(codigoCliente, CMedidor="."){
+    console.log(codigoCliente);
+    console.log(CMedidor);
     $('#myModal_espera').modal('show');
     $.ajax({
       type: "POST",                 
@@ -261,7 +272,12 @@
           $("#cuerpo").empty();
           let totalItem = datos.length
           for (var indice in datos) {
-            subtotal = (parseFloat(datos[indice].valor) + (parseFloat(datos[indice].valor) * parseFloat(datos[indice].iva) / 100)) - parseFloat(datos[indice].descuento) - parseFloat(datos[indice].descuento2);
+            if(datos[indice].iva==1)
+            {
+              subtotal = (parseFloat(datos[indice].valor) + (parseFloat(datos[indice].valor) * parseFloat($('#DCPorcenIVA').val()) / 100)) - parseFloat(datos[indice].descuento) - parseFloat(datos[indice].descuento2);
+            }else{
+              subtotal = (parseFloat(datos[indice].valor) + (parseFloat(datos[indice].valor) * parseFloat(datos[indice].iva) / 100)) - parseFloat(datos[indice].descuento) - parseFloat(datos[indice].descuento2);
+            }
             var tr = `<tr class="tr`+clave+`">
               <td><input ${((totalItem==clave)?`onblur="$('#TextBanco').focus()"`:'')} style="border:0px;background:bottom;" type="checkbox" id="checkbox`+clave+`" onclick="totalFactura('checkbox`+clave+`','`+subtotal+`','`+datos[indice].iva+`','`+datos[indice].descuento+`','`+datos.length+`','`+clave+`')" name="`+datos[indice].mes+`"></td>
               <td><input style="border:0px;background:bottom;max-width: 85px;" type ="text" id="Mes`+clave+`" value ="`+datos[indice].mes+`" disabled/></td>
@@ -489,7 +505,7 @@
           'Precio' : $("#valor"+i).val(),
           'Total_Desc' : $("#descuento"+i).val(),
           'Total_Desc2' : $("#descuento2"+i).val(),
-          'Iva' : $("#Iva"+i).val(),
+          'Iva' : $('#DCPorcenIVA').val(),//$("#Iva"+i).val(),
           'Total' : $("#subtotal"+i).val(),
           'MiMes' : $("#Mes"+i).val(),
           'Periodo' : $("#Periodo"+i).val(),
@@ -509,14 +525,24 @@
       }, 
       success: function(data){calcularSaldo()}
     });
-    var valor = 0; var descuento = 0; var descuentop = 0; var total = 0;var subtotal = 0;
+    // console.log('conti');
+    var valor = 0; var descuento = 0; var descuentop = 0; var total = 0;var subtotal = 0;var iva12 = 0; var valor12 = 0;
     for(var i=1; i<datos+1; i++){
       checkbox = "checkbox"+i;
       if($('#'+checkbox).prop('checked'))
       {
+
         descuento+=parseFloat($('#descuento'+i).val());
-        descuentop+=parseFloat($('#descuento2'+i).val());
-        valor+=parseFloat($('#valor'+i).val());
+        descuentop+=parseFloat($('#descuento2'+i).val());       
+        iva = $('#Iva'+i).val()
+        if(iva==1)
+        {
+          iva12+= parseFloat($('#valor'+i).val())*(parseFloat($('#DCPorcenIVA').val())/100) 
+          valor12+=parseFloat($('#valor'+i).val());
+        }else
+        {
+           valor+=parseFloat($('#valor'+i).val());
+        }
         subtotal+=parseFloat($('#descuento2'+i).val());
         total+=parseFloat($('#subtotal'+i).val());
       }
@@ -529,6 +555,7 @@
     $("#iva12").val(parseFloat(iva12).toFixed(2));
     $("#total").val(parseFloat(total).toFixed(2));
     $("#total0").val(parseFloat(valor).toFixed(2));
+    $("#total12").val(parseFloat(valor12).toFixed(2));
     $("#valorBanco").val(parseFloat(total).toFixed(2));
    // $("#saldoTotal").val(parseFloat(0).toFixed(2));
 
@@ -1082,6 +1109,19 @@
     }
   }
 
+
+  function cambiar_iva(valor)
+  {
+    codigoCliente = $('#codigo').val();
+    catalogoProductos(codigoCliente);
+  }
+  function cambiarlabel()
+  {
+     valiva = $("#DCPorcenIVA").val();
+     $('#lbl_iva2').text(valiva);
+     $('#lbl_iva').text(valiva);
+  }
+
 </script>
 <style type="text/css"> 
  .contenedor_img{
@@ -1264,6 +1304,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
 
 }
 
+
 </style>
   <div class="row">
     <div class="col-sm-5 col-xs-12">
@@ -1332,22 +1373,30 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
           <div class="col-md-7 padding-all">
             <div class="row">
               
-              <div class="form-group col-xs-6 col-md-4  padding-all margin-b-1 div_fechas_emision">
-                <label for="inputEmail3" class="col control-label">Fecha Emision</label>
-                <div class="col">
-                  <input tabindex="2" type="date" name="fechaEmision" id="fechaEmision" class="form-control input-xs validateDate mw115" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
-                </div>
+              <div class="form-group col-xs-6 col-md-3 margin-b-1 div_fechas_emision">
+                <!-- <label for="inputEmail3" class="col control-label"> -->
+                <b>Fecha Emision</b>
+              <!-- </label> -->
+                <!-- <div class="col"> -->
+                  <input tabindex="2" type="date" name="fechaEmision" id="fechaEmision" class="form-control input-xs validateDate mw115" value="<?php echo date('Y-m-d'); ?>" onblur="catalogoLineas();DCPorcenIva('fechaEmision', 'DCPorcenIVA');">
+                <!-- </div> -->
               </div>
-              <div class="form-group col-xs-6 col-md-5  padding-all margin-b-1 div_fechas_vencimiento">
-                <label for="inputEmail3" class="col control-label">Fecha Vencimiento</label>
-                <div class="col">
+              <div class="form-group col-xs-6 col-md-3  padding-all margin-b-1 div_fechas_vencimiento">
+                <b>Fecha Vencimiento</b>
+                <!-- <div class="col"> -->
                   <input type="date" tabindex="3" name="fechaVencimiento" id="fechaVencimiento" class="form-control input-xs validateDate mw115" value="<?php echo date('Y-m-d'); ?>" onchange="catalogoLineas();">
-                </div>
+                <!-- </div> -->
               </div>
-              <div class="form-group col-xs-12 col-md-2  padding-all margin-b-1 div_fechas_dc">
+              <div class="col-md-2 padding-all">
+                 <b>I.V.A</b>
+                 <select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA"  tabindex="4" onchange="cambiar_iva(this.value);cambiarlabel()" onblur="cambiarlabel()"></select>
+                
+              </div>
+              <div class="form-group col-xs-12 col-md-4  padding-all margin-b-1 div_fechas_dc">
                 <label for="inputEmail3" class="labelDCLinea col control-label no-visible">.</label>
                 <div class="col colDCLinea">
-                  <select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="4" onchange="numeroFactura();">
+                  <br>
+                  <select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="5" onchange="numeroFactura();">
                   </select>
                 </div>
                   <input type="hidden" id="Autorizacion">
@@ -1481,7 +1530,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             
             <div class="row">
               <div class="col-xs-12">
-                <input style="margin-top: 0px;margin-right: 2px;" tabindex="5" type="checkbox" name="rbl_radio" id="rbl_no" checked=""> Con mes
+                <input style="margin-top: 0px;margin-right: 2px;" tabindex="" type="checkbox" name="rbl_radio" id="rbl_no" checked=""> Con mes
               </div>
             </div>
 
@@ -1516,7 +1565,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             </div>
             <div class="row">
               <div class="form-group">
-                <label for="inputEmail3" class="col-xs-6 control-label padding-all  max-width-110">Total Tarifa 12%</label>
+                <label for="inputEmail3" class="col-xs-6 control-label padding-all  max-width-110">Total Tarifa <span id="lbl_iva">0</span>%</label>
                 <div class="col-xs-6">
                   <input type="text" style="color: coral;" name="total12" id="total12" class="form-control input-xs red text-right min-width-150" readonly value="0.00">
                 </div>
@@ -1545,7 +1594,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
             </div>
             <div class="row">
               <div class="form-group">
-                <label for="inputEmail3" class="col-xs-6 control-label padding-all  max-width-110">I.V.A. 12%</label>
+                <label for="inputEmail3" class="col-xs-6 control-label padding-all  max-width-110">I.V.A. <span id="lbl_iva2"></span>%</label>
                 <div class="col-xs-6">
                   <input type="text" style="color: coral;"  name="iva12" id="iva12" class="form-control input-xs red text-right min-width-150" readonly value="0.00">
                 </div>

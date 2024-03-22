@@ -169,6 +169,7 @@ class facturar_pensionM
 			AND CF.Codigo_Inv = CP.Codigo_Inv 
       ".(($Codigo_Auto!=G_NINGUNO)?" AND CF.Codigo_Auto='$Codigo_Auto' ":"")."
 			ORDER BY CF.Periodo,CF.Num_Mes,CF.Codigo_Inv,CF.Credito_No";
+      // print_r($sql);die();
     $stmt = $this->db->datos($sql);
     return $stmt;
   }

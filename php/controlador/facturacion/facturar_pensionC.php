@@ -386,6 +386,7 @@ class facturar_pensionC
       $codigoCliente = G_NINGUNO;
     }
     $datos = $this->facturacion->historiaCliente($codigoCliente);
+    // print_r($codigoCliente);die();
     $historia = [];
     foreach ($datos as $value) {
       $historia[] = array('TD'=> mb_convert_encoding($value['TD'], 'UTF-8'),'Fecha'=> mb_convert_encoding($value['Fecha']->format('Y-m-d'), 'UTF-8'),'Serie'=> mb_convert_encoding($value['Serie'], 'UTF-8'),'Factura'=> mb_convert_encoding($value['Factura'], 'UTF-8'),'Detalle'=> $value['Detalle'], 'Anio'=> mb_convert_encoding($value['Anio'], 'UTF-8'),'Mes'=> mb_convert_encoding($value['Mes'], 'UTF-8'),'Total'=> mb_convert_encoding($value['Total'], 'UTF-8'),'Abonos'=> mb_convert_encoding($value['Abonos'], 'UTF-8'),'Mes_No'=> mb_convert_encoding($value['Mes_No'], 'UTF-8'),'No'=> mb_convert_encoding($value['No'], 'UTF-8') );
@@ -942,13 +943,14 @@ class facturar_pensionC
         SetAdoFields("Total_Desc", $producto['Total_Desc']);
         SetAdoFields("Total_Desc2", $producto['Total_Desc2']);
         SetAdoFields("TOTAL", $producto['Precio']);
-        SetAdoFields("Total_IVA", ($producto['Total'] * ($producto['Iva'] / 100)));
+        SetAdoFields("Total_IVA", ($producto['Precio'] * ($producto['Iva'] / 100)));
         SetAdoFields("Cta", 'Cuenta');
         SetAdoFields("Codigo_Cliente", $_POST['codigoCliente']);
         SetAdoFields("Mes", $producto['MiMes']);
         SetAdoFields("TICKET", $producto['Periodo']);
         SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
 
+        // print_r($producto);die();
         if(isset($producto['CORTE'])){
           SetAdoFields("CORTE", $producto['CORTE']);
         }
