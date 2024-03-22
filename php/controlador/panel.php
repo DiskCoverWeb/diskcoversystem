@@ -536,7 +536,6 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         $_SESSION['INGRESO']['Gerente'] = $empresa[0]['Gerente'];
 
         $_SESSION['INGRESO']['modulo_'] = "33";
-        control_procesos(G_NORMAL, "Ingreso al Sistema WEB");
         
         $_SESSION['INGRESO']['Det_Comp'] = $empresa[0]['Det_Comp'];
         $_SESSION['INGRESO']['Signo_Dec'] = $empresa[0]['Signo_Dec'];
@@ -660,7 +659,6 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         $_SESSION['INGRESO']['Entidad'] = $empresa[0]['Nombre_Entidad'];
 
         // print_r($_SESSION['INGRESO']);die();
-
 
     }
 }

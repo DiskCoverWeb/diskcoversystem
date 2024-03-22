@@ -399,8 +399,9 @@ class db
 	}	
 }
 
-function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
+function control_procesos($TipoTrans,$opcional_proceso,$Tarea='.')
 {  
+   $start_time = microtime(true);
   // print_r($_SESSION['INGRESO']);die();
   $conn = new db();
   $TMail_Credito_No = G_NINGUNO;
@@ -417,16 +418,6 @@ function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
   }
   if($Modulo <> G_NINGUNO AND $TipoTrans<>G_NINGUNO AND $NumEmpresa<>G_NINGUNO)
   {
-    try {
-      $sSQL = "SELECT Aplicacion " .
-        "FROM modulos " .
-        "WHERE modulo = '" . $Modulo . "' ";
-      $rps = $conn->datos($sSQL,'MYSQL');
-      $ModuloName = $rps[0]['Aplicacion'] ;
-    } catch (Exception $e) {
-      $ModuloName = $Modulo;
-    }
-    
     if($Tarea == G_NINGUNO)
     {
       $Tarea = "Inicio de Sección";
@@ -436,7 +427,6 @@ function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
     }
     $proceso = substr($opcional_proceso,0,60);
     $NombreUsuario1 = substr($_SESSION['INGRESO']['Nombre'], 0, 60);
-    $TipoTrans = $TipoTrans;
     $Mifecha1 = date("Y-m-d");
     $MiHora1 = date("H:i:s");
     $CodigoUsuario= $_SESSION['INGRESO']['CodigoU'];
@@ -449,12 +439,16 @@ function control_procesos($TipoTrans,$Tarea,$opcional_proceso='')
       $opcional_proceso = G_NINGUNO;
     }
 
-    $ip= ip();
+	$ip = $_SESSION['INGRESO']['IP_Wan'];
+
     $sql = "INSERT INTO acceso_pcs (IP_Acceso,CodigoU,Item,Aplicacion,RUC,Fecha,Hora,
              ES,Tarea,Proceso,Credito_No,Periodo)VALUES('".$ip."','".$CodigoUsuario."','".$NumEmpresa."',
-             '".$ModuloName."','".$_SESSION['INGRESO']['RUC']."','".$Mifecha1."','".$MiHora1."','".$TipoTrans."','".$Tarea."','".$proceso."','".$TMail_Credito_No."','".$_SESSION['INGRESO']['periodo']."');";
+             '".$_SESSION['INGRESO']['NombreModulo']."','".$_SESSION['INGRESO']['RUC']."','".$Mifecha1."','".$MiHora1."','".$TipoTrans."','".$Tarea."','".$proceso."','".$TMail_Credito_No."','".$_SESSION['INGRESO']['periodo']."');";
     $conn->String_Sql($sql,'MYSQL');
-
+	$end_time = microtime(true);
+	$execution_time = ($end_time - $start_time);
+	#$tmp = `<script>console.log('Tiempo de ejecución: ' . $execution_time . ' segundos');</script>`;
+	#echo "Tiempo de ejecución: " . $execution_time . " segundos";
   }
 
  

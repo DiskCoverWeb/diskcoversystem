@@ -39,7 +39,19 @@ if (isset($_GET['recuperar'])) {
 if (isset($_GET['setear_empresa'])) {
 	$parametro = $_POST['parametros'];
 	$_SESSION['INGRESO']['CARTERA_ITEM'] = $parametro['item_cartera'];
-
+	
+	// if user from the share internet  
+	if(!empty($_SERVER['HTTP_CLIENT_IP'])) {   
+        $_SESSION['INGRESO']['IP_Wan'] = $_SERVER['HTTP_CLIENT_IP'];   
+    }   
+    //if user is from the proxy   
+    elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {   
+        $_SESSION['INGRESO']['IP_Wan'] = $_SERVER['HTTP_X_FORWARDED_FOR'];   
+    }   
+    //if user is from the remote address   
+    else{   
+        $_SESSION['INGRESO']['IP_Wan'] = $_SERVER['REMOTE_ADDR'];   
+    }  
 	// print_r($parametro);die();
 }
 if (isset($_GET['logout'])) {
@@ -143,7 +155,7 @@ class login_controller
 		// print_r($datos);
 		// die();
 
-		$_SESSION['INGRESO']['IP_Wan'] = $_SERVER['REMOTE_ADDR'];
+		
 		$_SESSION['INGRESO']['PC_MAC'] = "00:00:00:00:00:00";
 
 		$_SESSION['INGRESO']['usuario'] = $parametro['usuario'];
@@ -172,6 +184,7 @@ class login_controller
 			// print_r($empresa);print_r($cliente);die();
 		} else {
 			$datos = $this->modelo->Ingresar($parametro['usuario'], $parametro['pass'], $parametro['entidad'], $parametro['item']);
+			
 		}
 
 

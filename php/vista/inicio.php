@@ -17,6 +17,7 @@ $modulo_header = '';
 if (isset($_GET['mod'])) {
 	$cod = $_GET['mod'];
 	$detalle_modulo = datos_modulo($cod);
+	control_procesos("I", "WEB: INGRESO MODULO");
 	$modulo_header = $detalle_modulo[0]['aplicacion'];
 	$modulo_logo = file_exists($detalle_modulo[0]['icono']) ? $detalle_modulo[0]['icono'] : '../../img/modulos/diskcover.png';
 }

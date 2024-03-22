@@ -617,8 +617,9 @@ class usuario_model{
 
 	function detalle_modulos($cod)
 	{
-		$sql = "SELECT * FROM modulos WHERE modulo = '".$cod."'";
+		$sql = "SELECT modulo, aplicacion, icono, link FROM modulos WHERE modulo = '".$cod."'";
 		$consulta=$this->db1->datos($sql,'MYSQL');
+		$_SESSION['INGRESO']['NombreModulo'] = $consulta[0]['aplicacion'];
 		return $consulta;
 	}
 	//consultar modulo
