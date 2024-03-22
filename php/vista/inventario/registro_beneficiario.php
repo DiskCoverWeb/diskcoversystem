@@ -3,19 +3,41 @@
 <!--
     AUTOR DE RUTINA	: Dallyana Vanegas
     FECHA CREACION : 16/02/2024
-    FECHA MODIFICACION : 19/03/2024
+    FECHA MODIFICACION : 21/03/2024
     DESCIPCION : Interfaz de modulo Gestion Social/Registro Beneficiario
  -->
 
 <head>
     <style>
+        .table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .table th,
+        .table td {
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #tabla-body {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        #modalCalendario table {
+            text-align: center;
+        }
+
+        #modalCalendario th {
+            font-weight: bold;
+        }
+
         .card-header {
             background-color: #f3e5ab;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-header h2 {
-            font-weight: bold;
         }
 
         .card-body {
@@ -26,13 +48,6 @@
         .btn-link {
             color: black;
         }
-
-        #calendarioTable th,
-        #calendarioTable td {
-            width: 3;
-            text-align: center;
-        }
-
 
         #validarSRI {
             transition: transform 0.3s ease;
@@ -84,10 +99,9 @@
                 <div class="card-header" id="headingOne">
                     <h2 class="mb-0">
                         <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
-                            aria-expanded="true" aria-controls="collapseOne">
+                            style="font-weight: bold;" aria-expanded="true" aria-controls="collapseOne">
                             <i class="fa fa-arrow-down" aria-hidden="true"></i>
                             INFORMACION GENERAL
-                            <span id="nombreruc" style="color: red; font-weight: bold;"></span>
                         </button>
                     </h2>
                 </div>
@@ -95,26 +109,30 @@
                     data-parent="#accordionExample">
                     <div class="card-body" style="margin: 1px; padding-top: 5px; padding-bottom: 5px;">
                         <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                            <div style="flex: 1; margin-right: 10px; ">
                                 <label for="select_93" style="display: block;">Tipo de Beneficiario</label>
-                                <select class="form-control input-xs" name="select_93" id="select_93"></select>
+                                <select class="form-control input-xs" name="select_93" id="select_93"
+                                    style="width: 100%;"></select>
                             </div>
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                            <div style="flex: 1; margin-right: 10px; ">
                                 <label for="tipoDonacion" style="display: block;">Tipo de Donación</label>
-                                <select class="form-control input-xs" name="tipoDonacion" id="tipoDonacion"></select>
+                                <select class="form-control input-xs" name="tipoDonacion" id="tipoDonacion"
+                                    style="width: 100%;"></select>
                             </div>
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                            <div style="flex: 1; margin-right: 10px; ">
                                 <label for="ruc" style="display: block;">CI/RUC</label>
-                                <select class="form-control input-xs" name="ruc" id="ruc"></select>
+                                <select class="form-control input-xs" name="ruc" id="ruc" style="width: 100%;"></select>
                             </div>
-                            <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
+                            <div
+                                style="display: flex; justify-content: center; align-items: center;  margin-right: 10px;">
                                 <img src="../../img/png/SRIlogo.png" width="80" height="50"
                                     onclick="validar_sriC($('#ruc').val())" id="validarSRI" title="VALIDAR RUC">
                             </div>
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                            <div style="flex: 1; margin-right: 10px;">
                                 <label for="cliente" style="display: block;">Nombre del Beneficiario/Usuario</label>
                                 <div class="input-group">
-                                    <select class="form-control input-xs" name="cliente" id="cliente"></select>
+                                    <select class="form-control input-xs" name="cliente" id="cliente"
+                                        style="width: 100%;"></select>
                                     <span class="input-group-btn">
                                         <button type="button" class="btn btn-success btn-xs btn-flat" id="btn_nuevo_cli"
                                             onclick="addCliente()" title="Nuevo cliente">
@@ -125,17 +143,18 @@
                             </div>
                             <div style="flex: 1;">
                                 <label for="select_87" style="display: block;">Estado</label>
-                                <select class="form-control input-xs" name="select_87" id="select_87"></select>
+                                <select class="form-control input-xs" name="select_87" id="select_87"
+                                    style="width: 100%;"></select>
                             </div>
                         </div>
 
                         <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                            <div style="flex: 1; margin-right: 10px; ">
                                 <label for="nombreRepre" style="display: block;">Nombre Representante Legal</label>
                                 <input class="form-control input-xs" type="text" name="nombreRepre" id="nombreRepre"
                                     placeholder="Nombre Representante">
                             </div>
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                            <div style="flex: 1; margin-right: 10px; ">
                                 <label for="ciRepre" style="display: block;">CI Representante Legal</label>
                                 <input class="form-control input-xs" type="text" name="ciRepre" id="ciRepre"
                                     placeholder="CI Representante">
@@ -148,24 +167,24 @@
                         </div>
 
                         <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                            <div style="flex: 1; margin-right: 10px; ">
                                 <label for="contacto" style="display: block;">Contacto/Encargado</label>
                                 <input class="form-control input-xs" type="text" name="contacto" id="contacto"
                                     placeholder="Contacto">
                             </div>
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                            <div style="flex: 1; margin-right: 10px; ">
                                 <label for="cargo" style="display: block;">Cargo</label>
                                 <input class="form-control input-xs" type="text" name="cargo" id="cargo"
                                     placeholder="Profesion">
                             </div>
-                            <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
+                            <div style="margin-right: 10px;  display: flex; ">
                                 <img src="../../img/png/calendario2.png" width="60" height="60">
                             </div>
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                            <div style="flex: 1; margin-right: 10px; ">
                                 <label for="diaEntrega" style="display: block;">Día Entrega a Usuarios Finales</label>
                                 <select class="form-control input-xs" name="diaEntrega" id="diaEntrega"></select>
                             </div>
-                            <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
+                            <div style="margin-right: 10px;  display: flex; ">
                                 <img src="../../img/png/reloj.png" width="55" height="55">
                             </div>
                             <div style="flex: 1; ">
@@ -217,20 +236,21 @@
             <div class="card">
                 <div class="card-header" id="headingTwo">
                     <h2 class="mb-0">
-
                         <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                            data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"
+                            id="botonInfoAdd" style="font-weight: bold;">
                             <i class="fa fa-arrow-down" aria-hidden="true"></i>
                             INFORMACION ADICIONAL
                         </button>
                     </h2>
                 </div>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                    <div class="card-body" style="margin:1px; padding-top:5px; padding-bottom:5px;">
+                    <div class="card-body" style="margin: 1px; padding-top: 5px; padding-bottom: 40px;">
                         <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="select_88" style="display: block;">Tipo de Entrega</label>
-                                <select class="form-control input-xs" name="select_88" id="select_88"></select>
+                                <select class="form-control input-xs" name="select_88" id="select_88"
+                                    style="width: 100%;"></select>
                             </div>
                             <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
                                 <img src="../../img/png/calendario2.png" width="60" height="60" id="btnMostrarModal"
@@ -238,7 +258,8 @@
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="diaEntregac" style="display: block;">Día de Entrega</label>
-                                <select class="form-control input-xs" name="diaEntregac" id="diaEntregac"></select>
+                                <select class="form-control input-xs" name="diaEntregac" id="diaEntregac"
+                                    style="width: 100%;"></select>
                             </div>
                             <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
                                 <img src="../../img/png/reloj.png" width="55" height="55">
@@ -250,7 +271,8 @@
 
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="select_86" style="display: block;">Frecuencia</label>
-                                <select class="form-control input-xs" name="select_86" id="select_86"></select>
+                                <select class="form-control input-xs" name="select_86" id="select_86"
+                                    style="width: 100%;"></select>
                             </div>
 
                             <div id="comentariodiv"
@@ -267,20 +289,25 @@
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="select_91" style="display: block;">Tipo de Población</label>
-                                <select class="form-control input-xs" name="select_91" id="select_91"></select>
+                                <select class="form-control input-xs" name="select_91" id="select_91"
+                                    style="width: 100%;"></select>
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="select_92" style="display: block;">Acción Social</label>
-                                <select class="form-control input-xs" name="select_92" id="select_92"></select>
+                                <select class="form-control input-xs" name="select_92" id="select_92"
+                                    style="width: 100%;"></select>
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="select_90" style="display: block;">Vulnerabilidad</label>
-                                <select class="form-control input-xs" name="select_90" id="select_90"></select>
+                                <select class="form-control input-xs" name="select_90" id="select_90"
+                                    style="width: 100%;"></select>
                             </div>
                             <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                 <label for="select_89" style="display: block;">Tipo de Atención</label>
-                                <select class="form-control input-xs" name="select_89" id="select_89"></select>
+                                <select class="form-control input-xs" name="select_89" id="select_89"
+                                    style="width: 100%;"></select>
                             </div>
+
                         </div>
                         <div class="row" style="margin: 10px;">
                             <div class="col-sm-5"></div>
@@ -298,7 +325,6 @@
                                         <label for="archivoAdd">Archivos Adjuntos</label>
                                         <input type="file" class="form-control-file" id="archivoAdd">
                                     </div>
-
                                 </div>
                             </div>
                             <div class="col-sm-4">
@@ -316,7 +342,7 @@
         </div>
 
         <div class="modal" id="modalCalendario">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content" style="background-color: white;">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" style="color: white;">&times;</button>
@@ -324,51 +350,49 @@
                     </div>
                     <div class="modal-body">
                         <div class="container-fluid">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <script>
-                                            var diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
-                                            for (var i = 0; i < diasSemana.length; i++) {
-                                                document.write('<th>' + diasSemana[i] + '</th>');
-                                            }
-                                        </script>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <script>
-                                        var horas = ['9:30 AM - 10:00 AM', '10:00 AM - 10:30 AM', '10:30 AM - 11:00 AM',
-                                            '11:00 AM - 11:30 AM', '11:30 AM - 12:00 PM', '12:00 PM - 12:30 PM',
-                                            '12:30 PM - 1:00 PM', '1:00 PM - 1:30 PM', '1:30 PM - 2:00 PM',
-                                            '2:00 PM - 2:30 PM', '2:30 PM - 3:00 PM', '3:00 PM - 3:30 PM',
-                                            '3:30 PM - 4:00 PM', '4:00 PM - 4:30 PM'];
-                                        for (var i = 0; i < horas.length; i++) {
-                                            document.write('<tr>');
-                                            document.write('<td>' + horas[i] + '</td>');
-                                            for (var j = 0; j < diasSemana.length; j++) {
-                                                document.write('<td></td>');
-                                            }
-                                            document.write('</tr>');
-                                        }
-                                    </script>
-                                </tbody>
-                            </table>
+                            <div style="max-height: 300px; overflow-y: auto; overflow-x: auto;">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <script>
+                                                var diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 
+                                                'Viernes','Sabado','Domingo'];
+                                                for (var i = 0; i < diasSemana.length; i++) {
+                                                    document.write('<th>' + diasSemana[i] + '</th>');
+                                                }
+                                            </script>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabla-body">
+                                        <!-- Aquí se renderizarían las filas de la tabla -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </form>
 </body>
-</form>
+
 
 <script>
     $(document).ready(function () {
         Form_Activate();
     });
 
+    function validarRucYValidarSriC() {
+        var ruc = $('#ruc').val();
+        if (ruc) {
+            validar_sriC(ruc);
+        } else {
+            Swal.fire('', 'Por favor ingrese un RUC válido.', 'error');
+        }
+    }
+
     function usar_cliente(nombre, ruc, codigo, email, td = 'N') {
-        //console.log(ruc);
         $('#cliente').val(ruc).trigger('change');
         $('#myModal').modal('hide');
     }
@@ -376,24 +400,19 @@
     var horaActual;
     function Form_Activate() {
         $('#comentariodiv').hide();
-        var valores = [86, 87, 88, 89, 90, 91, 92, 93];
-        LlenarSelectTipos(valores);
+
         LlenarSelectDiaEntrega();
-        LlenarDatosCliente();
+        LlenarSelectRucCliente();
         LlenarTipoDonacion();
+
+        [86, 87, 88, 89, 90, 91, 92, 93].forEach(LlenarSelects_Val);
 
         horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         $('#horaEntregac').val(horaActual);
     }
 
-    $('#select_93').change(function () {
-        var colorValor = $(this).find('option:selected').data('color-valor');
-        actualizarEstilo(colorValor);
-    });
-
     $('#select_86').change(function () {
         var selectedValue = $(this).val();
-        //console.log(selectedValue);
         if (selectedValue === '86.04') {
             $('#comentariodiv').show();
         } else {
@@ -401,18 +420,100 @@
         }
     });
 
-    function LlenarSelectTipos(valores) {
-        $.ajax({
-            url: '../controlador/inventario/registro_beneficiarioC.php?LlenarSelect=true',
-            type: 'post',
-            dataType: 'json',
-            data: { valores: valores },
-            success: function (data) {
-                $.each(data, function (index, resultado) {
-                    LlenarSelect(resultado.valor, resultado.datos);
+    function LlenarCalendario(Actividad) {
+        if (Actividad) {
+            $.ajax({
+                url: '../controlador/inventario/registro_beneficiarioC.php?LlenarCalendario=true',
+                type: 'post',
+                dataType: 'json',
+                data: { valor: Actividad },
+                success: function (datos) {
+                    console.log(typeof datos);
+                    if (datos != 0) {
+                        LlenarCalendarioC(datos);
+                    } else {
+                        $('#tabla-body').empty();
+                        swal.fire('', 'No se encontraron datos de asignacion', '');
+                    }
+                }
+            });
+        }
+    }
+
+    var miColor;
+    function ObtenerColor(valEnvio_No, callback) {
+        if (valEnvio_No) {
+            $.ajax({
+                url: '../controlador/inventario/registro_beneficiarioC.php?ObtenerColor=true',
+                type: 'post',
+                dataType: 'json',
+                data: { valor: valEnvio_No },
+                success: function (data) {
+                    if (data != 0) {
+                        miColor = data.Picture;
+                        callback(miColor);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al obtener color:', error);
+                }
+            });
+        }
+    }
+
+    function LlenarCalendarioC(data) {
+
+        var horas = ['01:00 - 02:00', '02:00 - 03:00', '03:00 - 04:00',
+         '04:00 - 05:00', '05:00 - 06:00', '06:00 - 07:00',
+          '07:00 - 08:00', '08:00 - 09:00', '09:00 - 10:00', 
+          '10:00 - 11:00', '11:00 - 12:00', '12:00 - 13:00', 
+          '13:00 - 14:00', '14:00 - 15:00', '15:00 - 16:00', 
+          '16:00 - 17:00', '17:00 - 18:00', '18:00 - 19:00', 
+          '19:00 - 20:00', '20:00 - 21:00', '21:00 - 22:00', 
+          '22:00 - 23:00', '23:00 - 24:00'];
+        var diasSemana = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
+        $('#tabla-body').empty();
+
+        $.each(data, function (index, cliente) {
+            var Actividad = cliente.Actividad || '';
+            var Cliente = cliente.Cliente || '';
+            var Envio_No = cliente.Envio_No || '';
+            var Dia_Ent = cliente.Dia_Ent || '';
+            var Hora_Ent = cliente.Hora_Ent || '';
+
+            ObtenerColor(Envio_No, function (color) {
+                var colorV = color.substring(4);
+                var indiceColumna = diasSemana.indexOf(Dia_Ent);
+                var indiceFila = -1;
+                for (var i = 0; i < horas.length; i++) {
+                    var horaInicio = horas[i].split(' - ')[0];
+                    var horaFin = horas[i].split(' - ')[1];
+                    if (Hora_Ent >= horaInicio && Hora_Ent < horaFin) {
+                        indiceFila = i;
+                        break;
+                    }
+                }
+
+                var $fila = $('#tabla-body tr').filter(function () {
+                    return $(this).find('td:first').text() === horas[indiceFila];
                 });
-            }
+
+                if ($fila.length === 0) {
+                    $fila = $('<tr>');
+                    $fila.append($('<td>').text(horas[indiceFila]));
+                    $.each(diasSemana, function (indiceDia, dia) {
+                        var $celda = $('<td>');
+                        $fila.append($celda);
+                    });
+                    $('#tabla-body').append($fila);
+                }
+
+                var $celda = $fila.find('td').eq(indiceColumna + 1);
+                var $div = $('<div>').text(Cliente).css('background-color', '#' + colorV);
+                $celda.append($div);
+            });
         });
+        $('#modalCalendario').modal('show');
     }
 
     function LlenarSelectDiaEntrega() {
@@ -428,34 +529,10 @@
             }
         });
     }
-    var arrayColor = [];
-    function LlenarSelect(valor, datos) {
-        if (valor) {
-            var $select = $('#select_' + valor);
-            $select.empty();
-            if (datos === "No se encontraron datos para mostrar") {
-                $select.append('<option value="">' + datos + '</option>');
-            } else {
-                $.each(datos, function (index, opcion) {
-                    var option = '<option value="' + opcion['Cmds'] + '"';
-                    if (valor == 93) {
-                        option += ' data-color-valor="' + opcion['Picture'] + '"';
-                        arrayColor.push({ Cmds: opcion['Cmds'], Picture: opcion['Picture'] });
-                    }
-                    option += '>' + opcion['Proceso'] + '</option>';
-                    $select.append(option);
-                });
-                if (valor == 93) {
-                    $select.find('option:first').prop('selected', true);
-                    actualizarEstilo($select.find('option:selected').data('color-valor'));
-                }
-            }
-        }
-    }
 
-    function LlenarDatosCliente() {
+    function LlenarSelectRucCliente() {
         $('#ruc').select2({
-            placeholder: 'Seleccione un RUC',
+            placeholder: 'Seleccione una opcion',
             ajax: {
                 url: '../controlador/inventario/registro_beneficiarioC.php?',
                 dataType: 'json',
@@ -463,7 +540,7 @@
                 data: function (params) {
                     return {
                         query: params.term,
-                        LlenarDatosCliente: true
+                        LlenarSelectRucCliente: true
                     }
                 },
                 processResults: function (data) {
@@ -476,7 +553,7 @@
         });
 
         $('#cliente').select2({
-            placeholder: 'Seleccione un cliente',
+            placeholder: 'Seleccione una opcion',
             ajax: {
                 url: '../controlador/inventario/registro_beneficiarioC.php?',
                 dataType: 'json',
@@ -484,7 +561,7 @@
                 data: function (params) {
                     return {
                         query: params.term,
-                        LlenarDatosCliente: true
+                        LlenarSelectRucCliente: true
                     }
                 },
                 processResults: function (data) {
@@ -499,7 +576,7 @@
 
     function LlenarTipoDonacion() {
         $('#tipoDonacion').select2({
-            placeholder: 'Seleccione un tipo de donación',
+            placeholder: 'Seleccione una opcion',
             ajax: {
                 url: '../controlador/inventario/registro_beneficiarioC.php?',
                 dataType: 'json',
@@ -512,13 +589,60 @@
                 },
                 processResults: function (data) {
                     var options = [];
-                    $.each(data.tipoDonacion, function (index, item) {
-                        var idDigits = item.id.slice(-3);
+                    if (data.respuesta === "No se encontraron datos para mostrar") {
                         options.push({
-                            id: idDigits,
-                            text: item.text
+                            id: '',
+                            text: data.respuesta
                         });
-                    });
+                    } else {
+                        $.each(data.respuesta, function (index, item) {
+                            var idDigits = item.id.slice(-3);
+                            options.push({
+                                id: idDigits,
+                                text: item.text
+                            });
+                        });
+                    }
+                    return {
+                        results: options
+                    };
+                },
+                cache: true
+            }
+        });
+    }
+
+    function LlenarSelects_Val(valor) {
+        $('#select_' + valor).select2({
+            placeholder: 'Seleccione una opción',
+            ajax: {
+                url: '../controlador/inventario/registro_beneficiarioC.php?',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        query: params.term,
+                        valor: valor,
+                        LlenarSelects_Val: true
+                    };
+                },
+                processResults: function (data) {
+                    var options = [];
+                    if (data.respuesta === "No se encontraron datos para mostrar") {
+                        options.push({
+                            id: '',
+                            text: data.respuesta
+                        });
+                    } else {
+                        $.each(data.respuesta, function (index, opcion) {
+                            var option = {
+                                id: opcion.id,
+                                text: opcion.text,
+                                color: opcion.color
+                            };
+                            options.push(option);
+                        });
+                    }
                     return {
                         results: options
                     };
@@ -529,19 +653,17 @@
     }
 
     $('#btnGuardarAsignacion').click(function () {
-
         var fileInput = $('#archivoAdd')[0];
         var archivo = fileInput.files[0];
         var formData = new FormData();
-
-        //console.log('dentro de guardar' + $('#diaEntrega').val());
 
         formData.append('Cliente', miCliente);
         formData.append('CI_RUC', miRuc);
         formData.append('Codigo', miCodigo);
         formData.append('Actividad', $('#select_93').val());
         formData.append('CodigoA', $('#select_87').val());
-        formData.append('Calificacion', $('#tipoDonacion').val());
+        var valorTipoDonacion = $('#tipoDonacion').val() ? $('#tipoDonacion').val() : '.';
+        formData.append('Calificacion', valorTipoDonacion);
         formData.append('Representante', $('#nombreRepre').val());
         formData.append('CI_RUC_R', $('#ciRepre').val());
         formData.append('Telefono_R', $('#telfRepre').val());
@@ -570,6 +692,10 @@
         if (archivo) {
             formData.append('Evidencias', archivo, archivo.name);
         }
+
+        formData.forEach(function (value, key) {
+            console.log(key + ': ' + value);
+        });
 
         var camposVacios = [];
         if (!miRuc) camposVacios.push('RUC');
@@ -618,169 +744,243 @@
                             type: 'success',
                             confirmButtonText: 'Aceptar'
                         });
-                        //limpiarCampos();
                     }
                 }
             });
         }
     });
+
+    function LimpiarSelectsInfoAdd() {
+        $('#collapseTwo').collapse('hide');
+        $('#select_82').val(null).trigger('change');
+        $('#select_86').val(null).trigger('change');
+        $('#select_88').val(null).trigger('change');
+        $('#select_89').val(null).trigger('change');
+        $('#select_90').val(null).trigger('change');
+        $('#select_91').val(null).trigger('change');
+        $('#archivoAdd').val('');
+        $('#diaEntregac').val('');
+        $('#horaEntregac').val('');
+        $('#totalPersonas').val('');
+        $('#infoNut').val('');
+        $('#select_93').val(null).trigger('change');
+        //miActividad = '';
+    }
 
     var miRuc;
     var miCodigo;
     var miCliente;
     var nombreArchivo;
     $('#cliente').on('select2:select', function (e) {
+        LimpiarSelectsInfoAdd();
         var data = e.params.data;
-        //console.log(data.id);
         miCodigo = data.id;
         miRuc = data.CI_RUC;
         miCliente = data.text;
-        nombreArchivo = data.Evidencias;
-
-        if ($('#ruc').find("option[value='" + data.id + "']").length) {
-            $('#ruc').val(data.id).trigger('change');
+        if (data.id === '.') {
+            swal.fire("", "No se encontró un RUC relacionado.", "error");
         } else {
-            var newOption = new Option(data.CI_RUC, data.id, true, true);
-            $('#ruc').append(newOption).trigger('change');
+            if ($('#ruc').find("option[value='" + data.id + "']").length) {
+                $('#ruc').val(data.id).trigger('change');
+            } else {
+                var newOption = new Option(data.CI_RUC, data.id, true, true);
+                $('#ruc').append(newOption).trigger('change');
+            }
+            var valorSeleccionado = $('#ruc').val();
+            llenarCamposInfo(miCodigo);
         }
-        var valorSeleccionado = $('#ruc').val();
-        //console.log(valorSeleccionado);
-
-        $('#nombreruc').text(miRuc);
-        llenarDatos(data);
     });
 
     $('#ruc').on('select2:select', function (e) {
+        LimpiarSelectsInfoAdd();
         var data = e.params.data;
-        //console.log(data);
         miCodigo = data.id;
         miRuc = data.text;
         miCliente = data.Cliente;
-        nombreArchivo = data.Evidencias;
-
-        $('#nombreruc').text(miCliente);
-
-        if ($('#cliente').find("option[value='" + data.id + "']").length) {
-            $('#cliente').val(data.id).trigger('change');
+        if (data.id === '.') {
+            swal.fire("", "No se encontró un Cliente relacionado.", "error");
         } else {
-            var newOption = new Option(data.Cliente, data.id, true, true);
-            $('#cliente').append(newOption).trigger('change');
+            if ($('#cliente').find("option[value='" + data.id + "']").length) {
+                $('#cliente').val(data.id).trigger('change');
+            } else {
+                var newOption = new Option(data.Cliente, data.id, true, true);
+                $('#cliente').append(newOption).trigger('change');
+            }
+            var valorSeleccionado = $('#cliente').val();
+            llenarCamposInfo(miCodigo);
         }
-        var valorSeleccionado = $('#cliente').val();
-        //console.log(valorSeleccionado);
-
-        $('#nombreruc').text(miCliente);
-        llenarDatos(data);
     });
 
-    function actualizarSelectDonacion(Calificacion, callback) {
-        if (Calificacion.length === 3) {
-            $.ajax({
-                url: '../controlador/inventario/registro_beneficiarioC.php?actualizarSelectDonacion=true',
-                type: 'post',
-                dataType: 'json',
-                data: { valor: Calificacion },
-                success: function (data) {
-                    if ($('#tipoDonacion').find("option[value='" + Calificacion + "']").length) {
-                        $('#tipoDonacion').val(Calificacion).trigger('change');
+    //var miActividad = '';
+    $('#select_93').on('select2:select', function (e) {
+        $('#collapseTwo').collapse('hide');
+        var data = e.params.data;
+        //miActividad = data.id;
+        //console.log(miActividad);
+        actualizarEstilo(data.color);
+    });
+
+    function llenarCamposInfo(Codigo) {
+        $.ajax({
+            url: '../controlador/inventario/registro_beneficiarioC.php?llenarCamposInfo=true',
+            type: 'post',
+            dataType: 'json',
+            data: { valor: Codigo },
+            success: function (data) {
+                if (data != 0) {
+                    $('#nombreRepre').val(data.Representante);
+                    $('#ciRepre').val(data.CI_RUC_R);
+                    $('#telfRepre').val(data.Telefono_R);
+                    $('#contacto').val(data.Contacto);
+                    $('#cargo').val(data.Profesion);
+                    $('#direccion').val(data.Direccion);
+                    $('#email').val(data.Email);
+                    $('#email2').val(data.Email2);
+                    $('#referencia').val(data.Lugar_Trabajo);
+                    $('#telefono').val(data.Telefono);
+                    $('#telefono2').val(data.TelefonoT);
+                    llenarSelects2Info(data.Actividad, data.Calificacion, data.CodigoA);
+
+                    if (data.Dia_Ent == '.') {
+                        $('#diaEntrega').val($('#diaEntrega option:first').val());
                     } else {
-                        var newOption = new Option(data.Concepto, Calificacion, true, true);
-                        $('#tipoDonacion').append(newOption).trigger('change');
+                        $('#diaEntrega').val(data.Dia_Ent);
                     }
-                    var valorSeleccionado = $('#tipoDonacion').val();
-                    //callback(valorSeleccionado);
+                    if (/^\d{2}:\d{2}$/.test(data.Hora_Ent)) {
+                        $('#horaEntrega').val(data.Hora_Ent);
+                    } else {
+                        $('#horaEntrega').val(horaActual);
+                    }
                 }
-            });
-        } else {
-            $('#tipoDonacion').val(null).trigger('change');
-            var valorSeleccionado = $('#tipoDonacion').val();
-            //callback(valorSeleccionado);
-        }
-    }
-
-    function llenarDatos(datos) {
-        $('#miFormulario').find('input').val('');
-        $('#nombreRepre').val(datos.Representante);
-        $('#ciRepre').val(datos.CI_RUC_R);
-        $('#telfRepre').val(datos.Telefono_R);
-        $('#contacto').val(datos.Contacto);
-        $('#cargo').val(datos.Profesion);
-        $('#direccion').val(datos.Direccion);
-        $('#email').val(datos.Email);
-        $('#email2').val(datos.Email2);
-        $('#referencia').val(datos.Lugar_Trabajo);
-        $('#telefono').val(datos.Telefono);
-        $('#telefono2').val(datos.TelefonoT);
-        actualizarSelectDonacion(datos.Calificacion);
-        /*actualizarSelectDonacion(datos.Calificacion, function (valorSeleccionado) {
-            //console.log('asignado: ' + valorSeleccionado);
-        });*/
-
-        $('#select_87').val(datos.CodigoA).trigger('change');
-
-        var resultado = Encontrado(datos.Actividad);
-        var encontrado = resultado.encontrado;
-        var colorV = resultado.colorV;
-
-        if (encontrado) {
-            $('#select_93').val(datos.Actividad).trigger('change');
-            actualizarEstilo(colorV);
-        } else {
-            $('#select_93').val('');
-            actualizarEstilo();
-        }
-
-        //console.log(datos.Dia_Ent);
-        if (datos.Dia_Ent == '.') {
-            $('#diaEntrega').val($('#diaEntrega option:first').val());
-        } else {
-            $('#diaEntrega').val(datos.Dia_Ent);
-        }
-
-
-        if (/^\d{2}:\d{2}$/.test(datos.Hora_Ent)) {
-            $('#horaEntrega').val(datos.Hora_Ent);
-        } else {
-            $('#horaEntrega').val(horaActual);
-        }
-
-        $('#select_88').val(datos.CodigoA2).trigger('change');;
-        $('#diaEntregac').val(datos.Dia_Ent2);
-        $('#horaEntregac').val(datos.Hora_Ent2);
-        $('#select_86').val(datos.Envio_No).trigger('change');;
-        $('#totalPersonas').val(datos.No_Soc);
-        $('#select_91').val(datos.Area).trigger('change');;
-        $('#select_92').val(datos.Acreditacion).trigger('change');;
-        $('#select_90').val(datos.Tipo_Dato).trigger('change');;
-        $('#select_89').val(datos.Cod_Fam).trigger('change');;
-        $('#infoNut').val(datos.Observaciones);
-    }
-
-    /*function limpiarCampos() {
-        $('#miFormulario select').each(function () {
-            $(this).val($(this).find('option:first').val());
-        });
-        $('#miFormulario').find('input, textarea').val('');
-        $('#cliente').val('');
-        $('#ruc').val('');
-        $('#nombreruc').text('');
-    }*/
-
-    $('#btnMostrarModal').click(function () {
-        $('#modalCalendario').modal('show');
-    });
-
-    function Encontrado(Actividad) {
-        var encontrado = false;
-        var colorV;
-        arrayColor.forEach(function (opcion) {
-            if (opcion['Cmds'] === Actividad) {
-                encontrado = true;
-                colorV = opcion['Picture'];
             }
         });
-        return { encontrado: encontrado, colorV: colorV };
     }
+
+    function llenarSelects2Info(actividad, calificacion, estado) {
+        var params = {};
+        if (actividad == '.') {
+            params.actividad = false;
+        } else {
+            params.actividad = actividad;
+        }
+        if (calificacion == '.') {
+            params.calificacion = false;
+        } else {
+            params.calificacion = calificacion;
+        }
+        if (estado == '.') {
+            params.estado = false;
+        } else {
+            params.estado = estado;
+        }
+        $.ajax({
+            url: '../controlador/inventario/registro_beneficiarioC.php?llenarSelects2Info=true',
+            type: 'post',
+            dataType: 'json',
+            data: { 'params': params },
+            success: function (data) {
+                var dato1 = data.dato1;
+                var dato2 = data.dato2;
+                var dato3 = data.dato3;
+                actualizarEstilo(dato1.Picture);
+                if (dato1 != 0) {
+                    if ($('#select_93').find("option[value='" + dato1.Cmds + "']").length) {
+                        $('#select_93').val(dato1.Cmds).trigger('change');
+                    } else {
+                        var newOption = new Option(dato1.Proceso, dato1.Cmds, true, true);
+                        $('#select_93').append(newOption).trigger('change');
+                    }
+                }
+                if (dato2 != 0) {
+                    var codigo = dato2.Codigo;
+                    var Cod = codigo.substring(codigo.length - 3)
+                    if ($('#tipoDonacion').find("option[value='" + Cod + "']").length) {
+                        $('#tipoDonacion').val(Cod).trigger('change');
+                    } else {
+                        var newOption = new Option(dato2.Concepto, Cod, true, true);
+                        $('#tipoDonacion').append(newOption).trigger('change');
+                    }
+                }
+                if (dato3 != 0) {
+                    if ($('#select_87').find("option[value='" + dato3.Cmds + "']").length) {
+                        $('#select_87').val(dato3.Cmds).trigger('change');
+                    } else {
+                        var newOption = new Option(dato3.Proceso, dato3.Cmds, true, true);
+                        $('#select_87').append(newOption).trigger('change');
+                    }
+                }
+            }
+        });
+    }
+
+    $('#botonInfoAdd').click(function () {
+        if (miCodigo) {
+            $.ajax({
+                url: '../controlador/inventario/registro_beneficiarioC.php?llenarCamposInfoAdd=true',
+                type: 'post',
+                dataType: 'json',
+                data: { valor: miCodigo },
+                success: function (datos) {
+                    if (datos != 0) {
+                        llenarCamposInfoAdd(datos);
+                    } else {
+                        swal.fire('', 'No se encontraron datos adicionales', 'info');
+                    }
+
+                }
+            });
+
+        }
+    });
+
+    function llenarCamposInfoAdd(datos) {
+        $('#diaEntregac').val(datos.Dia_Ent2);
+        $('#horaEntregac').val(datos.Hora_Ent2);
+        $('#totalPersonas').val(datos.No_Soc);
+        $('#infoNut').val(datos.Observaciones);
+        nombreArchivo = datos.Evidencias;
+        llenarSelects2InfoAdd(datos.CodigoA2);
+        llenarSelects2InfoAdd(datos.Envio_No);
+        llenarSelects2InfoAdd(datos.Area);
+        llenarSelects2InfoAdd(datos.Acreditacion);
+        llenarSelects2InfoAdd(datos.Tipo_Dato);
+        llenarSelects2InfoAdd(datos.Cod_Fam);
+    }
+
+    function llenarSelects2InfoAdd(valor) {
+        if (valor == '.') {
+            valor = false;
+        }
+        $.ajax({
+            url: '../controlador/inventario/registro_beneficiarioC.php?llenarSelects2InfoAdd=true',
+            type: 'post',
+            dataType: 'json',
+            data: { valor: valor },
+            success: function (datos) {
+                if (datos != 0) {
+                    valorp = datos.Cmds.slice(0, 2);
+                    if ($('#select_' + valorp).find("option[value='" + datos.Cmds + "']").length) {
+                        $('#select_' + valorp).val(datos.Cmds).trigger('change');
+                    } else {
+                        var newOption = new Option(datos.Proceso, datos.Cmds, true, true);
+                        $('#select_' + valorp).append(newOption).trigger('change');
+                    }
+                }
+
+            }
+        });
+    }
+
+    $('#btnMostrarModal').click(function () {
+        var valorSeleccionado = $('#select_93').val();
+        if (valorSeleccionado && valorSeleccionado.length > 0) {
+            console.log(valorSeleccionado);
+            LlenarCalendario(valorSeleccionado);
+        } else {
+            swal.fire('', 'Por favor, seleccione una organizacion', 'info');
+        }
+    });
+
 
     function actualizarEstilo(colorValor) {
         if (colorValor) {
@@ -788,10 +988,9 @@
             var darkerColor = darkenColor(hexColor, 20);
             $('.card-body').css('background-color', '#' + hexColor);
             $('.card-header, .modal-header').css('background-color', darkerColor);
-            $('.card-footer, .modal-footer').css('background-color', darkerColor);
         } else {
-            $('.card-body, .modal-body').css('background-color', '#fffacd');
-            $('.card-header, .modal-header').css('background-color', '#f3e5ab');
+            $('.card-body').css('background-color', '#fffacd');
+            $('.card-header').css('background-color', '#f3e5ab');
         }
     }
 
@@ -811,7 +1010,6 @@
 
     function descargarArchivo(url, nombre) {
         var ruta = "../../" + url + nombre;
-        //console.log(ruta);
         var enlaceTemporal = $('<a></a>')
             .attr('href', ruta)
             .attr('download', nombre)
@@ -821,7 +1019,6 @@
     }
 
     $('#descargarArchivo').click(function () {
-        //console.log('Click en descarga');
         if (nombreArchivo) {
             $.ajax({
                 url: '../controlador/inventario/registro_beneficiarioC.php?descargarArchivo=true',
@@ -829,13 +1026,23 @@
                 dataType: 'json',
                 data: { valor: nombreArchivo },
                 success: function (data) {
-                    //console.log(data);
-                    descargarArchivo(data.Dir, data.Nombre);
+                    if (data.response === 1) {
+                        descargarArchivo(data.Dir, data.Nombre);
+                    } else {
+                        swal.fire('', 'El archivo no se encuentra en la base de datos', 'error');
+                    }
+                },
+                error: function () {
+                    swal.fire('', 'Error al intentar descargar el archivo', 'error');
                 }
             });
         } else {
-            //console.log('error');
-            swal.fire('', 'No hay archivo adjunto disponible para descargar', 'error');
+            if (miCliente) {
+                swal.fire('', "No se encontró un archivo adjunto para el beneficiario " + miCliente, 'error');
+            } else {
+                swal.fire('', 'Seleccione un nombre de Beneficiario/Usuario o CI/RUC', 'error')
+            }
+
         }
     });
 

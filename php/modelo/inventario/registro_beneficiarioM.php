@@ -3,7 +3,7 @@
 /** 
  * AUTOR DE RUTINA : Dallyana Vanegas
  * FECHA CREACION : 16/02/2024
- * FECHA MODIFICACION : 19/03/2024
+ * FECHA MODIFICACION : 21/03/2024
  * DESCIPCION : Clase modelo para llenar campos y guardar registros de Agencia
  */
 
@@ -19,14 +19,31 @@ class registro_beneficiarioM
         $this->db = new db();
     }
 
-    function LlenarSelect($valor)
+    function LlenarCalendario($valor)
     {
-        $sql = "SELECT Nivel, TP, Proceso, Cmds, Picture
-                    FROM Catalogo_Proceso
-                    WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
-                    AND Cmds LIKE '" . $valor . ".%'
-                    ORDER BY Cmds";
+        $sql = "SELECT TOP 100 C.Actividad, C.Cliente, F.Envio_No,  F.Dia_Ent, F.Hora_Ent       
+                    FROM Clientes AS C
+                    LEFT JOIN Clientes_Datos_Extras AS F ON C.Codigo = F.Codigo
+                    WHERE C.Cliente <> '.'
+                    AND Actividad = '" . $valor . "'
+                    ORDER BY Hora_Ent";
         return $this->db->datos($sql);
+    }
+
+    function ObtenerColor($valor)
+    {
+        if ($valor) {
+            $sql = "SELECT Cmds, Picture
+                FROM Catalogo_Proceso
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND Cmds = '" . $valor . "'";
+            $resultado = $this->db->datos($sql);
+            if (!empty ($resultado)) {
+                return $resultado[0];
+            } else {
+                return 0;
+            }
+        }
     }
 
     function LlenarSelectDiaEntrega()
@@ -39,33 +56,54 @@ class registro_beneficiarioM
         return $this->db->datos($sql);
     }
 
-    function actualizarSelectDonacion($valor)
+    function actualizarSelect_Val($valor)
     {
-        $sql = "SELECT Concepto
-                FROM Catalogo_Lineas
+        if ($valor) {
+            $sql = "SELECT Nivel, TP, Proceso, Cmds, Picture
+                FROM Catalogo_Proceso
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
-                AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
-                AND LEN(Fact) = 3
-                AND RIGHT(Codigo, 3) = '" . $valor . "'";
-        return $this->db->datos($sql);
+                AND Cmds = '" . $valor . "'";
+            $resultado = $this->db->datos($sql);
+
+            if (!empty ($resultado)) {
+                return $resultado[0];
+            } else {
+                return 0;
+            }
+        }
     }
 
-    function LlenarDatosCliente($query)
+    function actualizarSelectDonacion($calificacion)
     {
-        $sql = "SELECT TOP 100
-                C.Cliente, C.CI_RUC, C.Codigo, C.CodigoA, C.Representante,
-                C.CI_RUC_R, C.Telefono_R, C.Contacto, C.Profesion, C.Direccion,
-                C.Email, C.Email2, C.Lugar_Trabajo, C.Telefono, C.TelefonoT,
-                C.Dia_Ent, C.Hora_Ent, C.Calificacion, C.Actividad,
-                F.CodigoA AS CodigoA2, F.Dia_Ent AS Dia_Ent2, F.Hora_Ent AS Hora_Ent2,
-                F.Envio_No, F.No_Soc, F.Area, F.Acreditacion, F.Tipo_Dato,
-                F.Cod_Fam, F.Evidencias, F.Observaciones, F.Item
-            FROM
-                Clientes AS C
-            LEFT JOIN
-                Clientes_Datos_Extras AS F ON C.Codigo = F.Codigo
-            WHERE
-                C.Cliente <> '.'";
+        if ($calificacion) {
+            $sql = "SELECT Codigo, Concepto
+                    FROM Catalogo_Lineas
+                    WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                    AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                    AND LEN(Fact) = 3
+                    AND RIGHT(Codigo, 3) = '" . $calificacion . "'";
+            $resultado = $this->db->datos($sql);
+            if (!empty ($resultado)) {
+                return $resultado[0];
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    function llenarSelects2Info($actividad, $calificacion, $estado)
+    {
+        $sql1 = $this->actualizarSelect_Val($actividad);
+        $sql2 = $this->actualizarSelectDonacion($calificacion);
+        $sql3 = $this->actualizarSelect_Val($estado);
+        return ['dato1' => $sql1, 'dato2' => $sql2, 'dato3' => $sql3];
+    }
+
+    function LlenarSelectRucCliente($query)
+    {
+        $sql = "SELECT TOP 100 Cliente, CI_RUC, Codigo
+                FROM Clientes
+                WHERE Cliente <> '.'";
 
         if (!is_numeric($query)) {
             $sql .= " AND Cliente LIKE '%" . $query . "%'";
@@ -73,6 +111,38 @@ class registro_beneficiarioM
             $sql .= " AND CI_RUC LIKE '%" . $query . "%'";
         }
         return $this->db->datos($sql);
+    }
+
+    function llenarCamposInfo($valor)
+    {
+        $sql = "SELECT CodigoA, Representante, CI_RUC_R, Telefono_R, Contacto, 
+                Profesion, Direccion, Email, Email2, 
+                Lugar_Trabajo, Telefono, TelefonoT, Dia_Ent, Hora_Ent, 
+                Calificacion, Actividad
+                FROM  Clientes 
+                WHERE Cliente <> '.'
+                AND Codigo = '" . $valor . "'";
+        $resultado = $this->db->datos($sql);
+        if (!empty ($resultado)) {
+            return $resultado[0];
+        } else {
+            return 0;
+        }
+    }
+
+    function llenarCamposInfoAdd($valor)
+    {
+        $sql = "SELECT CodigoA AS CodigoA2, Dia_Ent AS Dia_Ent2, Hora_Ent AS Hora_Ent2,
+                Envio_No, No_Soc, Area, Acreditacion, Tipo_Dato,
+                Cod_Fam, Evidencias, Observaciones, Item
+                FROM  Clientes_Datos_Extras
+                WHERE Codigo = '" . $valor . "'";
+        $resultado = $this->db->datos($sql);
+        if (!empty ($resultado)) {
+            return $resultado[0];
+        } else {
+            return 0;
+        }
     }
 
     function LlenarTipoDonacion($query)
@@ -88,9 +158,25 @@ class registro_beneficiarioM
             $sql .= " AND Codigo LIKE '%" . $query . "%'";
         }
         $sql .= "ORDER BY Fact";
-
         return $this->db->datos($sql);
     }
+
+    function LlenarSelects_Val($query, $valor)
+    {
+        $sql = "SELECT Nivel, TP, Proceso, Cmds, Picture
+                FROM Catalogo_Proceso
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                AND Cmds LIKE '" . $valor . ".%'";
+
+        if (!is_numeric($query)) {
+            $sql .= " AND Proceso LIKE '%" . $query . "%'";
+        } else {
+            $sql .= " AND Cmds LIKE '%" . $query . "%'";
+        }
+        $sql .= "ORDER BY Cmds";
+        return $this->db->datos($sql);
+    }
+
 
     function ActualizarClientes($parametros)
     {
@@ -112,7 +198,6 @@ class registro_beneficiarioM
                 Telefono = '" . $parametros['Telefono'] . "', 
                 TelefonoT = '" . $parametros['TelefonoT'] . "' 
                 WHERE CI_RUC = '" . $parametros['CI_RUC'] . "'";
-
         return $this->db->datos($sql);
     }
 
@@ -132,7 +217,6 @@ class registro_beneficiarioM
                 Observaciones = '" . $parametros['Observaciones'] . "'
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Codigo = '" . $parametros['Codigo'] . "'";
-
         return $this->db->datos($sql);
     }
 
@@ -170,7 +254,7 @@ class registro_beneficiarioM
             $sql2 = $this->CrearClienteDatosExtra($parametros);
         }
         Eliminar_Nulos_SP("Clientes_Datos_Extras");
-        return array('dato1' => $sql1, 'dato2' => $sql2);
+        return ['dato1' => $sql1, 'dato2' => $sql2];
     }
 }
 

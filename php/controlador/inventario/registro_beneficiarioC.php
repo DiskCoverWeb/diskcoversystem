@@ -3,7 +3,7 @@
 /** 
  * AUTOR DE RUTINA	: Dallyana Vanegas
  * FECHA CREACION	: 16/02/2024
- * FECHA MODIFICACION : 19/03/2024
+ * FECHA MODIFICACION : 21/03/2024
  * DESCIPCION : Clase controlador para Agencia
  */
 
@@ -16,9 +16,32 @@ if (isset ($_GET['LlenarSelect'])) {
     echo json_encode($controlador->LlenarSelect($valores));
 }
 
+if (isset ($_GET['llenarSelects2Info'])) {
+    $params = $_POST['params'];
+    $actividad = $params['actividad'];
+    $calificacion = $params['calificacion'];
+    $estado = $params['estado'];
+    echo json_encode($controlador->llenarSelects2Info($actividad, $calificacion, $estado));
+}
+
+if (isset ($_GET['llenarSelects2InfoAdd'])) {
+    $valor = $_POST['valor'];
+    echo json_encode($controlador->llenarSelects2InfoAdd($valor));
+}
+
+if (isset ($_GET['ObtenerColor'])) {
+    $valor = $_POST['valor'];
+    echo json_encode($controlador->ObtenerColor($valor));
+}
+
 if (isset ($_GET['actualizarSelectDonacion'])) {
     $valor = $_POST['valor'];
     echo json_encode($controlador->actualizarSelectDonacion($valor));
+}
+
+if (isset ($_GET['LlenarCalendario'])) {
+    $valor = $_POST['valor'];
+    echo json_encode($controlador->LlenarCalendario($valor));
 }
 
 if (isset ($_GET['descargarArchivo'])) {
@@ -30,12 +53,12 @@ if (isset ($_GET['LlenarSelectDiaEntrega'])) {
     echo json_encode($controlador->LlenarSelectDiaEntrega());
 }
 
-if (isset ($_GET['LlenarDatosCliente'])) {
+if (isset ($_GET['LlenarSelectRucCliente'])) {
     $query = '';
     if (isset ($_GET['query'])) {
         $query = $_GET['query'];
     }
-    echo json_encode($controlador->LlenarDatosCliente($query));
+    echo json_encode($controlador->LlenarSelectRucCliente($query));
 }
 
 if (isset ($_GET['LlenarTipoDonacion'])) {
@@ -44,6 +67,24 @@ if (isset ($_GET['LlenarTipoDonacion'])) {
         $query = $_GET['query'];
     }
     echo json_encode($controlador->LlenarTipoDonacion($query));
+}
+
+if (isset ($_GET['LlenarSelects_Val'])) {
+    $query = '';
+    $valor = isset($_GET['valor']) ? $_GET['valor'] : 0;
+    if (isset ($_GET['query'])) {
+        $query = $_GET['query'];
+    }
+    echo json_encode($controlador->LlenarSelects_Val($query, $valor));
+}
+
+if (isset ($_GET['llenarCamposInfo'])) {
+    $valor = $_POST['valor'];
+    echo json_encode($controlador->llenarCamposInfo($valor));
+}
+if (isset ($_GET['llenarCamposInfoAdd'])) {
+    $valor = $_POST['valor'];
+    echo json_encode($controlador->llenarCamposInfoAdd($valor));
 }
 
 if (isset ($_GET['guardarAsignacion'])) {
@@ -90,14 +131,24 @@ if (isset ($_GET['guardarAsignacion'])) {
             mkdir($carpetaDestino, 0777, true);
         }
 
-        $nombreArchivoDestino = $carpetaDestino . basename($archivo['name']);
+        $nombreArchivoOriginal = pathinfo($archivo['name'], PATHINFO_FILENAME);
+        $extension = pathinfo($archivo['name'], PATHINFO_EXTENSION);
+        $nombreArchivoDestino = $carpetaDestino . $nombreArchivoOriginal . '.' . $extension;
+
+        $contador = 1;
+        while (file_exists($nombreArchivoDestino)) {
+            $nombreArchivoDestino = $carpetaDestino . $nombreArchivoOriginal . '_' . $contador . '.' . $extension;
+            $contador++;
+        }
+
         if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
-            $params['NombreArchivo'] = pathinfo($archivo['name'], PATHINFO_FILENAME);
+            $params['NombreArchivo'] = $nombreArchivoOriginal;
             echo json_encode($controlador->guardarAsignacion($params));
         } else {
             echo json_encode(["res" => '0', "mensaje" => "No se ha cargado ningún archivo", "datos" => $parametros]);
         }
     }
+
 }
 
 class registro_beneficiarioC
@@ -109,106 +160,105 @@ class registro_beneficiarioC
         $this->modelo = new registro_beneficiarioM();
     }
 
-    function LlenarSelect($valores)
+    function LlenarCalendario($valor)
     {
-        foreach ($valores as $valor) {
-            $datos = $this->modelo->LlenarSelect($valor);
-            if (empty ($datos)) {
-                $datos = "No se encontraron datos para mostrar";
-            }
-            $resultado = array(
-                "valor" => $valor,
-                "datos" => $datos
-            );
-            $resultados[] = $resultado;
+        $datos = $this->modelo->LlenarCalendario($valor);
+        if (empty ($datos)) {
+            $datos = 0;
         }
-        return $resultados;
+        return $datos;
+    }
+
+    function llenarCamposInfo($valor)
+    {
+        $datos = $this->modelo->llenarCamposInfo($valor);
+        if (empty ($datos)) {
+            $datos = 0;
+        }
+        return $datos;
+
+    }
+    function llenarCamposInfoAdd($valor)
+    {
+        $datos = $this->modelo->llenarCamposInfoAdd($valor);
+        if (empty ($datos)) {
+            $datos = 0;
+        }
+        return $datos;
+
     }
 
     function LlenarSelectDiaEntrega()
     {
         $datos = $this->modelo->LlenarSelectDiaEntrega();
         if (empty ($datos)) {
-            $datos = "No se encontraron datos para mostrar";
+            $datos = 0;
         }
         return $datos;
     }
 
-    function actualizarSelectDonacion($valor)
-    {
-        $datos = $this->modelo->actualizarSelectDonacion($valor);
-        //print_r(gettype($datos));
+    function ObtenerColor($valor){
+        $datos = $this->modelo->ObtenerColor($valor);
         if (empty ($datos)) {
-            $datos = ["Concepto" => "Seleccione un valor"];
+            $datos = 0;
         }
-        return $datos[0];
+        return $datos;
+    }
+
+    function llenarSelects2Info($actividad, $calificacion, $estado)
+    {
+        $datos = $this->modelo->llenarSelects2Info($actividad, $calificacion, $estado);
+        if (empty ($datos)) {
+            $datos = 0;
+        }
+        return $datos;
+    }
+
+    function llenarSelects2InfoAdd($valor)
+    {
+        $datos = $this->modelo->actualizarSelect_Val($valor);
+        if (empty ($datos)) {
+            $datos = 0;
+        }
+        return $datos;
     }
 
     function descargarArchivo($valor)
     {
         $base = dirname(__DIR__, 3);
         $directorio = "/TEMP/EVIDENCIA_" . $_SESSION['INGRESO']['Entidad'] .
-        "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
+            "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
         $directorio = str_replace(' ', '_', $directorio);
-        $carpetaDestino =  $base . $directorio;
-    
+        $carpetaDestino = $base . $directorio;
+
         $carpetaDestino = str_replace(' ', '_', $carpetaDestino);
-    
+
         $archivos = scandir($carpetaDestino);
         foreach ($archivos as $archivo) {
             $nombreArchivo = pathinfo($archivo, PATHINFO_FILENAME);
             if ($nombreArchivo === $valor) {
-                return ["Dir"=> $directorio, "Nombre"=>$archivo];
+                return ["response" => 1, "Dir" => $directorio, "Nombre" => $archivo];
             }
         }
+        return ["response" => 0];
     }
-    
 
     function obtenerCamposComunes($valor)
     {
         return [
             'id' => $valor['Codigo'],
             'Cliente' => $valor['Cliente'],
-            'CodigoA' => $valor['CodigoA'],
             'CI_RUC' => $valor['CI_RUC'],
-            'Representante' => $valor['Representante'],
-            'Dia_Ent' => $valor['Dia_Ent'],
-            'Hora_Ent' => $valor['Hora_Ent'],
-            'CI_RUC_R' => $valor['CI_RUC_R'],
-            'Telefono_R' => $valor['Telefono_R'],
-            'Contacto' => $valor['Contacto'],
-            'Profesion' => $valor['Profesion'],
-            'Direccion' => $valor['Direccion'],
-            'Email' => $valor['Email'],
-            'Email2' => $valor['Email2'],
-            'Lugar_Trabajo' => $valor['Lugar_Trabajo'],
-            'Telefono' => $valor['Telefono'],
-            'TelefonoT' => $valor['TelefonoT'],
-            'Actividad' => $valor['Actividad'],
-            'Calificacion' => $valor['Calificacion'],
-            //Informacion Adicional
-            'CodigoA2' => $valor['CodigoA2'],
-            'Dia_Ent2' => $valor['Dia_Ent2'],
-            'Hora_Ent2' => $valor['Hora_Ent2'],
-            'Envio_No' => $valor['Envio_No'],
-            'No_Soc' => $valor['No_Soc'],
-            'Area' => $valor['Area'],
-            'Acreditacion' => $valor['Acreditacion'],
-            'Tipo_Dato' => $valor['Tipo_Dato'],
-            'Cod_Fam' => $valor['Cod_Fam'],
-            'Evidencias' => $valor['Evidencias'],
-            'Observaciones' => $valor['Observaciones']
         ];
     }
 
-    function LlenarDatosCliente($query): array
+    function LlenarSelectRucCliente($query): array
     {
         try {
-            $datos = $this->modelo->LlenarDatosCliente($query);
+            $datos = $this->modelo->LlenarSelectRucCliente($query);
             if (count($datos) == 0) {
                 throw new Exception('No se encontraron datos');
             }
-            //print_r($datos); 
             $clientes = [];
             $rucs = [];
 
@@ -241,7 +291,27 @@ class registro_beneficiarioC
                     'text' => $valor['Concepto'],
                 ];
             }
-            return ['tipoDonacion' => $tipoDonacion];
+            return ['respuesta' => $tipoDonacion];
+        } catch (Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    function LlenarSelects_Val($query, $valor): array
+    {
+        try {
+            $datos = $this->modelo->LlenarSelects_Val($query, $valor);
+            if (count($datos) == 0) {
+                throw new Exception('No se encontraron datos');
+            }
+            foreach ($datos as $dato) {
+                $respuesta[] = [
+                    'id' => $dato['Cmds'],
+                    'text' => $dato['Proceso'],
+                    'color' => $dato['Picture'],
+                ];
+            }
+            return ['respuesta' => $respuesta];
         } catch (Exception $e) {
             return ['error' => $e->getMessage()];
         }
