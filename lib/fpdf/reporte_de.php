@@ -3768,6 +3768,10 @@ function imprimirDocEle_fac($datos, $detalle, $educativo, $matri = false, $nombr
 		$pdf->Output();
 	}
 	if ($imp1 == 1) {
+		if(!file_exists(dirname(__DIR__, 2) . '/TEMP/'))
+		{
+			mkdir(dirname(__DIR__, 2) . '/TEMP/', 0777);
+		}
 		$pdf->Output('F', dirname(__DIR__, 2) . '/TEMP/' . $datos[0]['Serie'] . '-' . generaCeros($datos[0]['Factura'], 7) . '.pdf');
 
 		// $pdf->Output('TEMP/'.$nombre.'.pdf','F'); 
@@ -4515,6 +4519,10 @@ function imprimirDocEle_fac_anterior($datos, $detalle, $educativo, $matri = fals
 		$pdf->Output();
 	}
 	if ($imp1 == 1) {
+		if(!file_exists(dirname(__DIR__, 2) . '/TEMP/'))
+		{
+			mkdir(dirname(__DIR__, 2) . '/TEMP/', 0777);
+		}
 		$pdf->Output('F', dirname(__DIR__, 2) . '/TEMP/' . $datos[0]['Serie'] . '-' . generaCeros($datos[0]['Factura'], 7) . '.pdf');
 
 		// $pdf->Output('TEMP/'.$nombre.'.pdf','F'); 
@@ -5382,6 +5390,10 @@ function imprimirDocEle_NC($datos, $detalle, $cliente, $matri = false, $nombre =
 		$pdf->Output();
 	}
 	if ($imp1 == 1) {
+		if(!file_exists(dirname(__DIR__, 2) . '/TEMP/'))
+		{
+			mkdir(dirname(__DIR__, 2) . '/TEMP/', 0777);
+		}
 		$pdf->Output('F', dirname(__DIR__, 2) . '/TEMP/' . $datos['Serie_NC'] . '-' . generaCeros($datos['Nota_Credito'], 7) . '.pdf');
 
 		// $pdf->Output('TEMP/'.$nombre.'.pdf','F'); 
@@ -5766,6 +5778,10 @@ function imprimirDocEle_ret($datos, $detalle, $nombre_archivo = null, $imp1 = fa
 		$pdf->Output();
 	}
 	if ($imp1 == 1) {
+		if(!file_exists(dirname(__DIR__, 2) . '/TEMP/'))
+		{
+			mkdir(dirname(__DIR__, 2) . '/TEMP/', 0777);
+		}
 		$pdf->Output('F', dirname(__DIR__, 2) . '/TEMP/RE_' . $datos[0]['Serie_Retencion'] . '-' . generaCeros($datos[0]['SecRetencion'], 9) . '.pdf');
 
 		// $pdf->Output('TEMP/'.$nombre.'.pdf','F'); 
@@ -9019,6 +9035,10 @@ function ImprimirAdodc($datos, $sizeLetra = 10, $cabecerasEspecificadas = []): s
 		}
 		$pdf->Ln();
 	}
+	if(!file_exists(dirname(__DIR__, 2) . '/TEMP/'))
+		{
+			mkdir(dirname(__DIR__, 2) . '/TEMP/', 0777);
+		}
 	$ruta = dirname(__DIR__, 2) . '\TEMP\Reporte_Clientes_' . date('Y-m-d_H-i-s') . '.pdf';
 	$pdf->Output('F', $ruta);
 	return $ruta;

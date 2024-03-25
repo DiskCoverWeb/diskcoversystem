@@ -232,13 +232,23 @@ class autorizacion_sri
 
 			      // print_r($cabecera);die();
 			    $cabecera['codigoPorcentaje']=0;
-			    if((floatval($cabecera['Porc_IVA'])*100)>12)
+			    $porceiva = (floatval($cabecera['Porc_IVA'])*100);
+			    if($porceiva>0)
 			    {
-			       $cabecera['codigoPorcentaje']=3;
-			    }else
-			    {
-			      $cabecera['codigoPorcentaje']=2;
+			    	$iva = Porcentajes_IVA($cabecera['Fecha'],$porceiva);
+			    	if(count($iva)>0)
+			    	{
+			    		$cabecera['codigoPorcentaje']=$iva[0]['Codigo'];
+			    	}
 			    }
+			    // if((floatval($cabecera['Porc_IVA'])*100)>12)
+			    // {
+			    //    $cabecera['codigoPorcentaje']=3;
+			    // }else
+			    // {
+			    //   $cabecera['codigoPorcentaje']=2;
+			    // }
+
 			   //detalle de factura
 			    $detalle = array();
 			    $cuerpo_fac = $this->detalle_factura($cabecera['serie'],$cabecera['factura'],$cabecera['Autorizacion'],$cabecera['tc']);
@@ -2255,14 +2265,29 @@ function generar_xml($cabecera,$detalle)
 				}
 				else
 				{
-					if(($value['Porc_IVA']*100) > 12)
-					{
-						$xml_codigoPorcentaje = $xml->createElement( "codigoPorcentaje",'3' );
-					}
-					else
-					{
-						$xml_codigoPorcentaje = $xml->createElement( "codigoPorcentaje",'2' );
-					}
+
+					//se cambia por el valor de iva en la tabla
+
+					$porceiva = (floatval($cabecera['Porc_IVA'])*100);
+				    if($porceiva>0)
+				    {
+				    	$iva = Porcentajes_IVA($cabecera['Fecha'],$porceiva);
+				    	if(count($iva)>0)
+				    	{
+				    		$xml_codigoPorcentaje = $xml->createElement( "codigoPorcentaje",$iva[0]['Codigo']);
+				    	}
+				    }
+
+
+
+					// if(($value['Porc_IVA']*100) > 12)
+					// {
+					// 	$xml_codigoPorcentaje = $xml->createElement( "codigoPorcentaje",'3' );
+					// }
+					// else
+					// {
+					// 	$xml_codigoPorcentaje = $xml->createElement( "codigoPorcentaje",'2' );
+					// }
 					$xml_tarifa = $xml->createElement( "tarifa", ($value['Porc_IVA']*100));
 					
 				}

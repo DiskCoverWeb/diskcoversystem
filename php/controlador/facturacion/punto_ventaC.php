@@ -532,7 +532,7 @@ class punto_ventaC
 				$FA['TxtEfectivo'] = $parametros['TxtEfectivo'];
 				$FA['Cod_CxC'] = $parametros['CodigoL'];
 				$FA['CLAVE'] = ".";
-				$FA['PorcIva'] = $parametros['PorcIva'];
+				$FA['Porc_IVA'] = (floatval($parametros['PorcIva'])/100);
 
 				$Moneda_US = False;
 				$TextoFormaPago = G_PAGOCONT;
@@ -604,6 +604,7 @@ class punto_ventaC
 	// funcion para vista de facturar electronico , sin restriccion de que la factura este en cero
 	function generar_factura_elec($parametros)
 	{
+		// print_r($parametros);die();
 		$this->sri->Actualizar_factura($parametros['CI'], $parametros['TextFacturaNo'], $parametros['Serie']);
 
 		$electronico = 0;
@@ -647,7 +648,7 @@ class punto_ventaC
 			} else {
 				$FA['Tipo_Pago'] = '01';
 			}
-			$FA['PorcIva'] = $parametros['PorcIva'];
+			$FA['Porc_IVA'] = (floatval($parametros['PorcIva'])/100);
 
 
 			//datos para guia de remision
@@ -699,7 +700,10 @@ class punto_ventaC
 	{
 		$conn = new db();
 		$Grafico_PV = Leer_Campo_Empresa("Grafico_PV");
-		$FA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
+		if(!isset($FA['Porc_IVA']))
+		{
+			$FA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
+		}
 		// 'Seteamos los encabezados para las facturas
 		// $FA = Calculos_Totales_Factura();
 		$Dolar = 0;
@@ -859,7 +863,7 @@ class punto_ventaC
 					// Imprimir_Facturas_CxC(FacturasPV, FA, True, False, True, True);
 					$TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
 					$TFA['CLAVE'] = $clave;
-					$TFA['PorcIva'] = $FA['PorcIva'];
+					$TFA['PorcIva'] = $FA['Porc_IVA'];
 					$imp = $FA['Serie'] . '-' . generaCeros($FA['Factura'], 7);
 
 					$this->modelo->pdf_factura_elec($FA['Factura'], $FA['Serie'], $FA['codigoCliente'], $imp, $clave, $periodo = false, 0, 1);

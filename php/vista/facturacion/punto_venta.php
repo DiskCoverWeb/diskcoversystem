@@ -718,23 +718,42 @@ if (isset ($_GET['tipo'])) {
 
 					})
 				} else if (data.respuesta == -1) {
-					if (data.text != -3) {
-						Swal.fire(data.text, '', 'error').then(function () {
-							var url = '../../TEMP/' + data.pdf + '.pdf';
-							window.open(url, '_blank');
-							AdoLinea();
-							eliminar_linea('', '');
-						});
-					} else {
-						Swal.fire("Conexion con el sri Inestable", '', 'error').then(function () {
-							var url = '../../TEMP/' + data.pdf + '.pdf';
-							window.open(url, '_blank');
-							AdoLinea();
-							eliminar_linea('', '');
-						});
-					}
+					if(data.text=='' || data.text == null)
+	                 {
+	                    Swal.fire({
+	                        type: 'error',
+	                        title: 'XML devuelto',
+	                        text:'Error al generar XML o al firmar',
+	                        confirmButtonText: 'Ok!',
+	                        allowOutsideClick: false,
+	                    }).then(function () {
+	                        location.reload();
+	                    })
+	                   
+	                    tipo_error_sri(data.clave);
+	                 }else{
+	                Swal.fire({
+	                        type: 'error',
+	                        title: data.text,
+	                        confirmButtonText: 'Ok!',
+	                        allowOutsideClick: false,
+	                    }).then(function () {
+	                        location.reload();
+	                    })
+	                }
 				} else if (data.respuesta == 2) {
-					Swal.fire('XML devuelto', '', 'error');
+					// Swal.fire('XML devuelto', '', 'error');
+					 Swal.fire({
+                        type: 'error',
+                        title: 'XML devuelto',
+                        text:'Error al generar XML o al firmar',
+                        confirmButtonText: 'Ok!',
+                        allowOutsideClick: false,
+                    }).then(function () {
+                        location.reload();
+                    })
+                   
+                    tipo_error_sri(data.clave);
 				}
 				else if (data.respuesta == 4) {
 					Swal.fire('SRI intermitente intente mas tarde', '', 'info');
