@@ -175,29 +175,29 @@ function tipo_documento() {
     if (TipoFactura == "PV") {
         // FacturasPV.Caption = "INGRESAR TICKET"
         $('#Label1').text(" TICKET No.");
-        $('#Label3').text(" I.V.A. " + Porc_IVA.toFixed(2) + "%")
+        //$('#Label3').text(" I.V.A. " + Porc_IVA.toFixed(2) + "%")
     } else if (TipoFactura == "CP") {
         // FacturasPV.Caption = "INGRESAR CHEQUES PROTESTADOS"
         $('#Label1').text(" COMPROBANTE No.");
-        $('#Label3').text(" I.V.A. 0.00%")
+        //$('#Label3').text(" I.V.A. 0.00%")
     } else if (TipoFactura == "NV") {
         // FacturasPV.Caption = "INGRESAR NOTA DE VENTA"
         $('#Label1').text(" NOTA DE VENTA No.");
-        $('#Label3').text(" I.V.A. 0.00%")
+        //$('#Label3').text(" I.V.A. 0.00%")
     } else if (TipoFactura == "DO") {
         // FacturasPV.Caption = "INGRESAR NOTA DE DONACION"
         $('#Label1').text(" NOTA DE DONACION No.");
-        $('#Label3').text(" I.V.A. 0.00%")
+        //$('#Label3').text(" I.V.A. 0.00%")
     } else if (TipoFactura == "LC") {
         // FacturasPV.Caption = "INGRESAR LIQUIDACION DE COMPRAS"
         $('#Label1').text(" LIQUIDACION DE COMPRAS No.");
-        $('#Label3').text(" I.V.A. 0.00%")
+        //$('#Label3').text(" I.V.A. 0.00%")
         OpcDiv.value = True
         // 'If Len(Opc_Grupo_Div) > 1 Then Grupo_Inv = Opc_Grupo_Div
     } else {
         // FacturasPV.Caption = "INGRESAR FACTURA"
         $('#Label1').text(" FACTURA No.");
-        $('#Label3').text(" I.V.A. " + Porc_IVA.toFixed(2) + "%")
+        //$('#Label3').text(" I.V.A. " + Porc_IVA.toFixed(2) + "%")
         $('#CodDoc').val("01");
     }
 }
@@ -638,7 +638,7 @@ function generar_factura() {
         'valorBan': $('#TextCheque').val(),
         'electronico': 1,
         'tipo_pago': $('#DCTipoPago').val(),
-        'PorcenIVA': $('#DCPorcenIVA').val(),
+        'PorcIva': $('#DCPorcenIVA').val(),
 
         //---------------datos de gia de remicion--------------///
         'MBoxFechaGRE': $('#MBoxFechaGRE').val(),
@@ -1265,7 +1265,7 @@ function Command8_Click() {
 function cambiar_iva(valor)
 {
     $('#Label3').text('I.V.A. '+parseFloat(valor).toFixed(2)+'%');
-    // console.log(valor)
+    $('#LabelTotTarifa').text('Total Tarifa '+parseInt(valor)+'%');
 }
 
 //fin guia de remision
@@ -1354,7 +1354,7 @@ function cambiar_iva(valor)
     </div>
     <div class="col-sm-1">
          <b>I.V.A</b>
-        <select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA" onchange="cambiar_iva(this.value)"> 
+        <select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA" onblur="cambiar_iva(this.value)"> 
         </select>
     </div>
     <div class="col-sm-7">
@@ -1459,7 +1459,7 @@ function cambiar_iva(valor)
         </div>
         <div class="row">
             <div class="col-sm-6">
-                <b>Total Tarifa 12%</b>
+                <b id="LabelTotTarifa">Total Tarifa</b>
             </div>
             <div class="col-sm-6">
                 <input type="text" name="LabelConIVA" id="LabelConIVA" class="form-control input-xs text-right"
@@ -1486,7 +1486,7 @@ function cambiar_iva(valor)
         </div>
         <div class="row">
             <div class="col-sm-6">
-                <b id="Label3">I.V.A. 12.00</b>
+                <b id="Label3">I.V.A. </b>
             </div>
             <div class="col-sm-6">
                 <input type="text" name="LabelIVA" id="LabelIVA" class="form-control input-xs text-right" value="0.00"
