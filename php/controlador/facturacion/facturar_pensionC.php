@@ -749,7 +749,9 @@ class facturar_pensionC
     }
     $SaldoPendiente = 0;
     $Total_Abonos = $FA['TxtEfectivo']+$FA['TextCheque']+$FA['TxtNCVal']+$FA['saldoFavor'];
+    $totalIva = 0;
     foreach ($datos as $key => $value) {
+       $totalIva = $totalIva+$value['Total_IVA'];
        $Valor = $value["TOTAL"];
        $Total_Desc = $value["Total_Desc"]+$value["Total_Desc2"];
        $ValorDH = $Valor - $Total_Desc;
@@ -801,7 +803,13 @@ class facturar_pensionC
       $FA['Total_Abonos'] = $Total_Abonos;
       $FA['T'] = G_PENDIENTE;
       $FA['Saldo_MN'] = $FA['Total'] - $Total_Abonos;
-      $FA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
+      if($totalIva==0)
+      {
+        $FA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
+      }else
+      {
+        $FA['Porc_IVA'] = floatval($FA['PorcIva']/100); //$_SESSION['INGRESO']['porc'];
+      }
       $FA['Cliente'] = $FA['TextRepresentante'];
       $FA['me'] = $value['HABIT'];
       $TA['me'] = $value['HABIT'];
@@ -872,7 +880,7 @@ class facturar_pensionC
      
       //Forma del Abono IVA NC
       if ($TFA['Total_IVA'] > 0) {
-        $TA['Cta'] = $Cta_IVA;
+        $TA['Cta'] = $_SESSION['SETEOS']['Cta_IVA'];
         $TA['Banco'] = "NOTA DE CREDITO";
         $TA['Cheque'] = "I.V.A.";
         $TA['Serie_NC'] = G_NINGUNO;
@@ -943,7 +951,13 @@ class facturar_pensionC
         SetAdoFields("Total_Desc", $producto['Total_Desc']);
         SetAdoFields("Total_Desc2", $producto['Total_Desc2']);
         SetAdoFields("TOTAL", $producto['Precio']);
-        SetAdoFields("Total_IVA", ($producto['Precio'] * ($producto['Iva'] / 100)));
+        if($producto['Iva']!=0)
+        {
+          SetAdoFields("Total_IVA", ($producto['Precio'] * ($producto['Iva_val'] / 100)));
+        }else
+        {
+           SetAdoFields("Total_IVA", ($producto['Precio'] * ($producto['Iva'] / 100)));
+        }
         SetAdoFields("Cta", 'Cuenta');
         SetAdoFields("Codigo_Cliente", $_POST['codigoCliente']);
         SetAdoFields("Mes", $producto['MiMes']);

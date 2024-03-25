@@ -65,9 +65,9 @@
       }
     });
 
-    $("#DCPorcenIVA").change(function() {
-         alert('dd');
-      });
+    // $("#DCPorcenIVA").change(function() {
+    //      alert('dd');
+    //   });
 
     $('.validateDate').on('keyup', function () {
         if($(this).val().length >= 10){
@@ -505,12 +505,13 @@
           'Precio' : $("#valor"+i).val(),
           'Total_Desc' : $("#descuento"+i).val(),
           'Total_Desc2' : $("#descuento2"+i).val(),
-          'Iva' : $('#DCPorcenIVA').val(),//$("#Iva"+i).val(),
+          'Iva' : $("#Iva"+i).val(),
           'Total' : $("#subtotal"+i).val(),
           'MiMes' : $("#Mes"+i).val(),
           'Periodo' : $("#Periodo"+i).val(),
           'CORTE' : $("#inputLectura"+i).val(),
           'Tipo_Hab' : $("#inputMedidor"+i).val(),
+          'Iva_val':$('#DCPorcenIVA').val(),
         };
         key++;
       }
@@ -740,7 +741,8 @@
         tipo_debito_automatico = $('#tipo_debito_automatico').val();
         numero_cuenta_debito_automatico = $('#numero_cuenta_debito_automatico').val();
         caducidad_debito_automatico = $('#caducidad_debito_automatico').val();
-        TextInteres = $('#interesTarjeta').val();
+        TextInteres = $('#interesTarjeta').val();        
+        PorcIVA = $('#DCPorcenIVA').val();
 
         let por_deposito_debito_automatico ="0";
         if($('#por_deposito_debito_automatico').prop('checked')){
@@ -797,7 +799,8 @@
               'TxtCtaNo':numero_cuenta_debito_automatico, 
               'MBFecha':caducidad_debito_automatico, 
               'CheqPorDeposito':por_deposito_debito_automatico, 
-              'TextInteres' : TextInteres
+              'TextInteres' : TextInteres,
+              'PorcIva': PorcIVA,
             },
             dataType:'json',  
             success: function(response)
