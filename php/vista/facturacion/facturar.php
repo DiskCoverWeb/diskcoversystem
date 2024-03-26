@@ -580,6 +580,10 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			Swal.fire('Seleccione un cliente', '', 'info');
 			return false;
 		}
+		if($('#TextCant').val() == '' || $('#TextCant').val() == 0){
+			Swal.fire('Ingrese una cantidad valida', '', 'info');
+			return false;
+		}
 		var parametros = {
 			'codigo': $('#DCArticulos').val(),
 			'fecha': $('#MBoxFecha').val(),
@@ -721,7 +725,8 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 				} else if (data.res == -3) {
 					alerta_reprocesar('Formulario de Confirmación', data.men);
 				} else if (data.res == 1) {
-					Abonos(data.data);
+					//Abonos(data.data);
+					Autorizar_Factura_Actual(data.data);
 				} else if (data.res == -1) {
 					Swal.fire({
 						title: 'Algo salió mal',
@@ -807,10 +812,10 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 				if (data.AU.respuesta == 1) {
 					var url = '../../TEMP/' + data.pdf + '.pdf';
 					window.open(url, '_blank');
-					Swal.fire('Factura Creada', 'Para autorizarla por favor ir a Reportes > Lista de Facturas', 'success');
+					Swal.fire('Factura Creada y Autorizada', '', 'success');
 					Eliminar_linea('', '');
 				} else if (data.AU.respuesta == 3 || data.multiple == 'multiple') {
-					Swal.fire('Factura Creada', 'Para autorizarla por favor ir a Reportes > Lista de Facturas', 'success');
+					Swal.fire('Factura creada pero no autorizada', '' , 'warning');
 					var url = '../../TEMP/' + data.pdf + '.pdf';
 					window.open(url, '_blank');
 					Eliminar_linea('', '');
