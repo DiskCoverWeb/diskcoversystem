@@ -527,6 +527,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
+				console.log(data);
 				$('#TextVUnit').val(data.TextVUnit);
 				$('#LabelStock').val(data.labelstock);
 				$('#LabelStockArt').html(data.LabelStockArt);
@@ -704,7 +705,9 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			'TC': $('#TC').val(),
 			'Serie': $('#Serie').val(),
 			'Autorizacion': $('#Autorizacion').val(),
-			'FA': FAGlobal
+			'FA': FAGlobal,
+			'Fecha':$('#MBoxFecha').val(),
+			'PorcIva':$('#DCPorcenIVA').val(),
 		}
 		$.ajax({
 			type: "POST",
@@ -770,7 +773,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 
 
 	function Autorizar_Factura_Actual(FAc) {
-		$('#myModal_espera').modal('show');
+		// $('#myModal_espera').modal('show');
 		var FA = $("#FA").serialize();
 		var parametros = {
 			'TextObs': $('#TextObs').val(),
@@ -791,7 +794,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			'Cliente': $('#DCCliente').val(),
 			'Total': $('#LabelTotal').val(),
 			'FA': FAc,
-			'PorcIva': $('#DCPorcenIVA').val()
+			// 'PorcIva': $('#DCPorcenIVA').val()
 		}
 		$.ajax({
 			type: "POST",

@@ -957,9 +957,9 @@ class autorizacion_sri
 			AND TC = '" .$TFA['TC']."' 
 			AND Serie = '" .$TFA['Serie']."' 
 			AND Factura = " .$TFA['Factura']."
-			AND Remision = " .$TFA['Remision']."  
 			AND CodigoC = '" .$TFA['CodigoC']."' 
 			AND Autorizacion = '" .$TFA['Autorizacion']."' ";
+			// print_r('expression');die();
 			$this->db->String_Sql($sql3);
 
 			$xml = $this->generar_xml($TFA,$AdoDBDet);

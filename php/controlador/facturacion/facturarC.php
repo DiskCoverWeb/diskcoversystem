@@ -585,7 +585,7 @@ class facturarC
             $SubTotalIVA = 0;
          }
 
-         if($parametros['PorcIva'] != 0){
+         if($parametros['PorcIva'] != 0 && $parametros['BanIVA'] == 1){
             $SubTotalIVA = number_format(($SubTotal - $SubTotalDescuento) * floatval($parametros['PorcIva'] / 100), 2, '.', '');
          }
 
@@ -1009,7 +1009,7 @@ class facturarC
          $FA['Orden_Compra'] = 0;
          $FA['SubCta'] = G_NINGUNO;
          $FA['SP'] = 0; //false
-         $FA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
+         $FA['Porc_IVA'] = (floatval($parametros['PorcIva'])/100);  //$_SESSION['INGRESO']['porc'];
          $FA['Total_MN'] = $parametros['Total'];
 
 
@@ -1019,6 +1019,7 @@ class facturarC
          $FA['Observacion'] = $TextObs;
          $FA['Nota'] = $TextNota;
          $FA['Pedido'] = $TxtPedido;
+         $FA['Fecha'] = $parametros['Fecha'];
 
          // // 'MsgBox Val(TxtCompra)
          if (is_numeric($TxtCompra)) {
@@ -1115,10 +1116,12 @@ class facturarC
          $FA[$key] = $value;
       }
 
+
+      // print_r($FA);die();
+
       // 'Autorizamos la factura y/o Guia de Remision
       if (strlen($FA['Autorizacion']) == 13) {
-         $respuesta = '';//$this->sri->SRI_Crear_Clave_Acceso_Facturas($FA);
-
+         $respuesta = $this->sri->Autorizar_factura_o_liquidacion($FA);
       }
 
       if (strlen($FA['Autorizacion_GR']) == 13) {
