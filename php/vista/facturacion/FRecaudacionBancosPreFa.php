@@ -34,7 +34,7 @@
         'Autorizacion': '.',
         'Tipo_PRN': '.',
         'Imp_Mes': '.',
-        'Porc_IVA': '0.12',
+        'Porc_IVA': '.',
         'Cta_CxP': '.',
         'Vencimiento': '.',
         'Cta_CxP_Anterior': '.',
@@ -98,6 +98,7 @@
         $('#TextFacturaNo').blur(function () {
             Factura_No = $('#TextFacturaNo').val();
             FA.Factura = $('#TextFacturaNo').val();
+            FA.Porc_IVA = parseFloat($('#DCPorcenIVA').val() / 100);
             var parametros = {
                 'FA': FA
             };
@@ -319,8 +320,14 @@
             Command5_Click();
         });
 
+        DCPorcenIva('MBFechaI', 'DCPorcenIVA');
 
     });
+
+    function cambio_iva(valor){
+        FA.Porc_IVA = parseFloat(valor / 100);
+        //$('#LabelIVA').text('I.V.A ' + valor + '%');
+    }
 
     function Command5_Click() {
         var parametros = {
@@ -421,8 +428,8 @@
             'NoAnio': NoAnio,
             'TextoBanco': TextoBanco,
             'Tipo_Carga': Tipo_Carga,
-            'RutaGeneraFile': RutaGeneraFile
-
+            'RutaGeneraFile': RutaGeneraFile,
+            'PorcIva': $('#DCPorcenIVA').val()
         };
         Swal.fire({
             title: Titulo,
@@ -841,7 +848,14 @@
                     <div class="col-sm-3">
                         <label class="inline" for="MBFechaI">Facturacion <input id="MBFechaI" name="MBFechaI"
                                 type="date" style="margin-left:18px; width:100%; text-align:center;"
-                                value="<?php echo date('Y-m-d'); ?>" /></label>
+                                value="<?php echo date('Y-m-d'); ?>"
+                                onblur="DCPorcenIva('MBFechaI', 'DCPorcenIVA');" /></label>
+                        <label class="inline" for="DCPorcenIVA" id="LabelIVA">I.V.A
+                            <select class="form-control input-xs text-center" name="DCPorcenIVA" id="DCPorcenIVA"
+                                style="margin-left:4.8vw;" onblur="cambio_iva(this.value);">
+                            </select>
+                        </label>
+
                         <label class="inline" for="MBFechaF" style="white-space:nowrap;">Tope de Pago <input
                                 id="MBFechaF" name="MBFechaF" type="date" style="width:100%; text-align:center;"
                                 value="<?php echo date('Y-m-d'); ?>" /></label>

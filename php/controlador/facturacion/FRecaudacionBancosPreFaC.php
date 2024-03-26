@@ -1836,7 +1836,7 @@ class FRecaudacionBancosPreFaC
 
                     $NombreCliente = $TBenef['Cliente'];
                     Validar_Porc_IVA($FechaTexto);
-                    $parametros['FA']['Porc_IVA'] = $parametros['Porc_IVA'];
+                    $parametros['FA']['Porc_IVA'] = $parametros['PorcIva'];
 
                     $this->modelo->ClientesFacturacion($CodigoCli);
 
@@ -1851,9 +1851,10 @@ class FRecaudacionBancosPreFaC
                         foreach ($AdoProducto as $key2 => $value2) {
                             $CodigoInv = $value2['Codigo_Inv'];
                             $Cod_Ok = Leer_Codigo_Inv($CodigoInv, FechaSistema());
+                            $DatInv = $Cod_Ok['datos'];
                             $Abono = $value2['Valor'];
                             $Total_Desc_ME = $value2['Descuento'] + $value2['Descuento2'];
-                            $Producto = "."; //$DatInv['Producto'];
+                            $Producto = $DatInv['Producto'];
                             if ($TotalAbonos >= ($Abono - $Total_Desc_ME)) {
                                 SetAdoAddNew("Detalle_Factura");
                                 SetAdoFields("T", "C"); //Cancelado
@@ -1881,7 +1882,13 @@ class FRecaudacionBancosPreFaC
                                     $Total_Sin_IVA = $Total_Sin_IVA + $Abono;
                                     SetAdoFields("Cta_Venta", 0); //DatInv.Cta_Ventas_0
                                 } else {
-                                    SetAdoFields("Cta_Venta", 0);
+                                    if($DatInv['IVA']){
+                                        $SubTotal_IVA = round($Abono * floatval($parametros['PorcIva'] / 100));
+                                        $Total_Con_IVA = $Total_Con_IVA + $Abono;
+                                    }else{
+                                        $Total_Sin_IVA = $Total_Sin_IVA + $Abono;
+                                    }
+                                    SetAdoFields("Cta_Venta", $DatInv['Cta_Ventas']);
                                 }
                                 $Total_IVA = $Total_IVA + $SubTotal_IVA;
                                 $Total_Desc = $Total_Desc + $Total_Desc_ME;
