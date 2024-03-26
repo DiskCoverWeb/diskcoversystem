@@ -794,7 +794,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			'Cliente': $('#DCCliente').val(),
 			'Total': $('#LabelTotal').val(),
 			'FA': FAc,
-			// 'PorcIva': $('#DCPorcenIVA').val()
+			'PorcIva': $('#DCPorcenIVA').val()
 		}
 		$.ajax({
 			type: "POST",
