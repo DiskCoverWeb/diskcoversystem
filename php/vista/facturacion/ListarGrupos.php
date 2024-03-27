@@ -1,7 +1,7 @@
 <?php
 //Modales requeridos
-require_once("FPensiones.php");
-require_once("FAsignaFact.php");
+require_once ("FPensiones.php");
+require_once ("FAsignaFact.php");
 ?>
 <script>
 
@@ -36,7 +36,7 @@ require_once("FAsignaFact.php");
         'Autorizacion': '.',
         'Tipo_PRN': '.',
         'Imp_Mes': '.',
-        'Porc_IVA': '0.12',
+        'Porc_IVA': '.',
         'Cta_CxP': '.',
         'Vencimiento': '.',
         'Cta_CxP_Anterior': '.',
@@ -79,6 +79,7 @@ require_once("FAsignaFact.php");
             $(this).find('a').css({ "background-color": backgroundColor, "color": "black" });
         });
 
+        DCPorcenIva('MBFechaI', 'DCPorcenIVA');
 
         //Handle Cheq Events
         $('#CheqRangos').change(function () {
@@ -348,6 +349,12 @@ require_once("FAsignaFact.php");
 
     });
     //Definicion de metodos
+
+    function cambiar_iva(valor) {
+        $('#LabelIva').text('I.V.A ' + valor + '%');
+        FA.Porc_IVA = parseFloat(valor / 100);
+    }
+
     function Retirar_Beneficiarios() {
         var parametros = {
             'Codigo1': datosFilaSeleccionada.Grupo
@@ -820,6 +827,15 @@ require_once("FAsignaFact.php");
             return;
         }
 
+        if ($('#DCLinea').prop('disabled')) {
+            swal.fire({
+                title: 'Error',
+                text: 'No existen datos en lineas de facturación.',
+                type: 'error'
+            });
+            return;
+        }
+
         var parametros = {
             'MBFechaI': $('#MBFechaI').val(),
             'MBFechaF': $('#MBFechaF').val(),
@@ -836,7 +852,7 @@ require_once("FAsignaFact.php");
             'Codigo2': Codigo2,
             'DCCliente': $('#DCCliente').val()
         };
-        $('#myModal_espera').modal('show');
+        //$('#myModal_espera').modal('show');
         $.ajax({
             url: "../controlador/facturacion/ListarGruposC.php?GenerarFacturas_Click=true",
             type: "POST",
@@ -851,6 +867,7 @@ require_once("FAsignaFact.php");
                         FA[key] = tmp[key];
                     }
                 }
+                //FA['Porc_IVA'] = parseFloat($('#DCPorcenIVA').val() / 100);
                 if (data.response == 1) {
                     swal.fire({
                         title: data.Titulo,
@@ -877,7 +894,8 @@ require_once("FAsignaFact.php");
 
     function ProcGrabarMult(data) {
         var parametros = data;
-        $('#myModal_espera').modal('show');
+        parametros['PorcIva'] = $('#DCPorcenIVA').val();
+        //$('#myModal_espera').modal('show');
         $.ajax({
             url: "../controlador/facturacion/ListarGruposC.php?ProcGrabarMult=true",
             type: "POST",
@@ -1594,25 +1612,34 @@ require_once("FAsignaFact.php");
             </div>
         </div>
     </div>
-    <div class="row alineacion">
-        <div class="col-sm-2">
+    <div class="row alineacion" style="display:flex; align-items:center;">
+        <div class="col-sm-1">
             <div class="row">
-                <div class="col-sm-6" style="padding: 0px;">
-                    <label for="CheqVenc"> Emisión:
-                    </label>
-                </div>
-                <div class="col-sm-6" style="padding: 0px;">
-                    <input type="checkbox" name="CheqVenc" id="CheqVenc" checked /> Vencimiento
-                </div>
+                <label for="CheqVenc"> Emisión:</label>
             </div>
-            <div class="row" style="font-size:12.9px">
-                <input id="MBFechaI" name="MBFechaI" type="date" style=" width:48%; text-align:center;"
-                    value="<?php echo date("Y-m-d", strtotime('first day of january this year')); ?>" />
-                <input id="MBFechaF" name="MBFechaF" type="date" style=" width:48%; text-align:center;"
-                    value="<?php echo date('Y-m-d'); ?>" />
+            <div class="row">
+                <input type="checkbox" name="CheqVenc" id="CheqVenc" checked /> Vencimiento
+            </div>
+            <div class="row">
+                <label for="DCPorcenIVA" id="LabelIva">I.V.A:</label>
             </div>
         </div>
-        <div class="col-sm-5">
+        <div class="col-sm-2" style="text-align: center;">
+            <div class="row">
+                <input id="MBFechaI" name="MBFechaI" type="date" style="width:75%; text-align:center;"
+                    value="<?php echo date("Y-m-d", strtotime('first day of january this year')); ?>"
+                    onblur="DCPorcenIva('MBFechaI', 'DCPorcenIVA');" />
+            </div>
+            <div class="row">
+                <input id="MBFechaF" name="MBFechaF" type="date" style="width:75%; text-align:center;"
+                    value="<?php echo date('Y-m-d'); ?>" />
+            </div>
+            <div class="row">
+                <select name="DCPorcenIVA" id="DCPorcenIVA" style="width:75%;"
+                    onblur="cambiar_iva(this.value)"></select>
+            </div>
+        </div>
+        <div class="col-sm-4">
             <div class="row">
                 <div class="col-sm-4" style="padding: 0px;">
                     <select name="CTipoConsulta" id="CTipoConsulta" style="width:100%; max-width: 100%;">

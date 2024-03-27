@@ -350,7 +350,13 @@ class ListarGruposC
             $FA['Cod_CxC'] = $parametros['DCLinea'];
             $tmp = Lineas_De_CxC($FA);
             $FA = array_merge($FA, $tmp['TFA']);
-            if (strtotime($parametros['MBFechaI']) > $FA['Vencimiento']->getTimestamp()) {
+            $tempVenc = '';
+            if($FA['Vencimiento'] instanceof DateTime){
+                $tempVenc = $FA['Vencimiento']->getTimestamp();
+            }else{
+                $tempVenc = strtotime($FA['Vencimiento']);
+            }
+            if (strtotime($parametros['MBFechaI']) > $tempVenc) {
                 $Mensaje = "No se puede General Facturas, porque la autorizacion ya esta caducada";
                 $Res = 0;
             } else {
@@ -375,7 +381,7 @@ class ListarGruposC
     public function ProcGrabarMult($parametros): array
     {
         $FA = $parametros['FA'];
-        $FA['Porc_IVA'] = Validar_Porc_IVA($parametros['MBFechaI']);
+        $FA['Porc_IVA'] = floatval($parametros['PorcIva'] / 100);
         $NoMes = date('m', strtotime($parametros['MBFechaI']));
         $Periodo_Facturacion = (string) date('Y', strtotime($parametros['MBFechaI']));
         $CodigoL = G_NINGUNO;

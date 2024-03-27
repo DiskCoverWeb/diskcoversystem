@@ -1,6 +1,8 @@
 <?php
-require_once(dirname(__DIR__, 2) . "/db/db1.php");
-require_once(dirname(__DIR__, 2) . "/funciones/funciones.php");
+use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
+
+require_once (dirname(__DIR__, 2) . "/db/db1.php");
+require_once (dirname(__DIR__, 2) . "/funciones/funciones.php");
 
 /*
     AUTOR DE RUTINA	: Leonardo Súñiga
@@ -357,7 +359,7 @@ class ListarGruposM
     public function ProcGrabarMult($parametros, $NoMes, $Periodo_Facturacion, $FA, $CodigoL, $Cta_Ventas)
     {
         $mensaje = "";
-        $sql = "SELECT C.Grupo,C.Cliente,C.Codigo,CF.Periodo,CF.Num_Mes,SUM(CF.Valor) As TValor
+        $sql = "SELECT TOP 100 C.Grupo,C.Cliente,C.Codigo,CF.Periodo,CF.Num_Mes,SUM(CF.Valor) As TValor
                 FROM Clientes As C,Clientes_Facturacion As CF
                 WHERE CF.Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND C.T = 'N'";
@@ -444,7 +446,7 @@ class ListarGruposM
                             SetAdoFields("Total_Desc2", $value2['Descuento2']);
                             SetAdoFields("TOTAL", $value2['Valor']);
                             if ($value2['IVA']) {
-                                $Total_IVAFM = round($value2['Valor'] * $_SESSION['INGRESO']['porc'], 2);
+                                $Total_IVAFM = round($value2['Valor'] * $FA['Porc_IVA'], 2);
                             } else {
                                 $Total_IVAFM = 0;
                             }
@@ -464,10 +466,14 @@ class ListarGruposM
                     $tmp = Calculos_Totales_Factura();
                     $FA = array_merge($FA, $tmp);
                     $FA['Nota'] = "FACTURA PENDIENTE DE PAGO";
-                    $tmp = new DateTime($FA['Vencimiento']['date'], new DateTimeZone('America/Guayaquil'));
-                    $FA['Vencimiento'] = $tmp->format('Y-m-d');
-                    $tmp = new DateTime($FA['Fecha_Aut']['date'], new DateTimeZone('America/Guayaquil'));
-                    $FA['Fecha_Aut'] = $tmp->format('Y-m-d');
+                    if ($FA['Vencimiento'] instanceof DateTime) {
+                        $tmp = new DateTime($FA['Vencimiento']['date'], new DateTimeZone('America/Guayaquil'));
+                        $FA['Vencimiento'] = $tmp->format('Y-m-d');
+                    }
+                    if ($FA['Fecha_Aut'] instanceof DateTime) {
+                        $tmp = new DateTime($FA['Fecha_Aut']['date'], new DateTimeZone('America/Guayaquil'));
+                        $FA['Fecha_Aut'] = $tmp->format('Y-m-d');
+                    }
                     Grabar_Factura1($FA);
                     $sql = "DELETE *
                             FROM Clientes_Facturacion 
@@ -493,7 +499,7 @@ class ListarGruposM
 
             return array('mensaje' => $mensaje, 'datos' => $datos, 'numRegistros' => count($AdoQuery));
         } else {
-            $mensaje = "No se puede grabar la Factura falta datos";
+            $mensaje = "No se puede grabar la factura, no existen datos en el periodo seleccionado";
             return array('mensaje' => $mensaje, 'datos' => array(), 'numRegistros' => 0);
         }
     }
