@@ -16,19 +16,6 @@ if (isset ($_GET['LlenarSelect'])) {
     echo json_encode($controlador->LlenarSelect($valores));
 }
 
-if (isset ($_GET['llenarSelects2Info'])) {
-    $params = $_POST['params'];
-    $actividad = $params['actividad'];
-    $calificacion = $params['calificacion'];
-    $estado = $params['estado'];
-    echo json_encode($controlador->llenarSelects2Info($actividad, $calificacion, $estado));
-}
-
-if (isset ($_GET['llenarSelects2InfoAdd'])) {
-    $valor = $_POST['valor'];
-    echo json_encode($controlador->llenarSelects2InfoAdd($valor));
-}
-
 if (isset ($_GET['ObtenerColor'])) {
     $valor = $_POST['valor'];
     echo json_encode($controlador->ObtenerColor($valor));
@@ -71,11 +58,12 @@ if (isset ($_GET['LlenarTipoDonacion'])) {
 
 if (isset ($_GET['LlenarSelects_Val'])) {
     $query = '';
-    $valor = isset($_GET['valor']) ? $_GET['valor'] : 0;
+    $valor = isset ($_GET['valor']) ? $_GET['valor'] : 0;
     if (isset ($_GET['query'])) {
         $query = $_GET['query'];
     }
-    echo json_encode($controlador->LlenarSelects_Val($query, $valor));
+    $valor2 = isset ($_GET['valor2']) ? $_GET['valor2'] : false;
+    echo json_encode($controlador->LlenarSelects_Val($query, $valor, $valor2));
 }
 
 if (isset ($_GET['llenarCamposInfo'])) {
@@ -114,7 +102,7 @@ if (isset ($_GET['guardarAsignacion'])) {
         'Hora_Registro' => $_POST['Hora_Registro'],
         'Envio_No' => $_POST['Envio_No'],
         'No_Soc' => $_POST['No_Soc'],
-        'Area' => $_POST['Area'],
+        //'Area' => $_POST['Area'],
         'Acreditacion' => $_POST['Acreditacion'],
         'Tipo_Dato' => $_POST['Tipo_Dato'],
         'Cod_Fam' => $_POST['Cod_Fam'],
@@ -197,26 +185,9 @@ class registro_beneficiarioC
         return $datos;
     }
 
-    function ObtenerColor($valor){
+    function ObtenerColor($valor)
+    {
         $datos = $this->modelo->ObtenerColor($valor);
-        if (empty ($datos)) {
-            $datos = 0;
-        }
-        return $datos;
-    }
-
-    function llenarSelects2Info($actividad, $calificacion, $estado)
-    {
-        $datos = $this->modelo->llenarSelects2Info($actividad, $calificacion, $estado);
-        if (empty ($datos)) {
-            $datos = 0;
-        }
-        return $datos;
-    }
-
-    function llenarSelects2InfoAdd($valor)
-    {
-        $datos = $this->modelo->actualizarSelect_Val($valor);
         if (empty ($datos)) {
             $datos = 0;
         }
@@ -297,21 +268,35 @@ class registro_beneficiarioC
         }
     }
 
-    function LlenarSelects_Val($query, $valor): array
+    function LlenarSelects_Val($query, $valor, $valor2): array
     {
         try {
-            $datos = $this->modelo->LlenarSelects_Val($query, $valor);
-            if (count($datos) == 0) {
+            $datos = $this->modelo->LlenarSelects_Val($query, $valor, $valor2);
+
+            if (empty ($datos)) {
                 throw new Exception('No se encontraron datos');
             }
-            foreach ($datos as $dato) {
-                $respuesta[] = [
-                    'id' => $dato['Cmds'],
-                    'text' => $dato['Proceso'],
-                    'color' => $dato['Picture'],
-                ];
+
+            $respuesta = [];
+            foreach ($datos as $dato) { {
+                    if ($valor2) {
+                        $id = substr($dato['Codigo'], -3);
+                        $respuesta[] = [
+                            'id' => $id,
+                            'text' => $dato['Concepto'],
+                        ];
+                    } else {
+                        $respuesta[] = [
+                            'id' => $dato['Cmds'],
+                            'text' => $dato['Proceso'],
+                            'color' => $dato['Color'],
+                            'picture' => $dato['Picture'],
+                        ];
+                    }
+                }
             }
-            return ['respuesta' => $respuesta];
+            $val = $valor2 ? 1 : 2;
+            return ['val' => $val, 'respuesta' => $respuesta];
         } catch (Exception $e) {
             return ['error' => $e->getMessage()];
         }

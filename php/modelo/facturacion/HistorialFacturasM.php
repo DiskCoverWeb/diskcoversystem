@@ -1446,8 +1446,7 @@ class HistorialFacturasM
 
     function Generar_Recibo_PDF($FA)
     {
-        $res = 1;
-
+        //$res = 1;
         $Comprobante = "Recibo No " . $FA['Serie'] . "-" . sprintf("%09d", $FA['Factura']);
         $NumEmpresa = $_SESSION['INGRESO']['item'];
         $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
@@ -1515,9 +1514,9 @@ class HistorialFacturasM
             "ORDER BY ID,Codigo ";
         $AdoDBDet = $this->db->datos($sSQL);
 
-        imprimirDocEle_fac($TFA, $AdoDBDet, false, $Comprobante, null, 'factura', null, null, false, false, false);
-        
-        return $res;
+        //imprimirDocEle_fac($TFA, $AdoDBDet, false, $Comprobante, null, 'factura', null, null, false, false, false);
+        imprimir_Generar_Recibo_PDF($TFA, $AdoDBDet);
+        //return $res;
 
     }
 
