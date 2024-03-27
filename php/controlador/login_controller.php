@@ -18,6 +18,19 @@ if (isset($_GET['base_actual_'])) {
 if (isset($_GET['Cartera_Entidad'])) {
 	$entidad = $_POST['entidad'];
 	$_SESSION['INGRESO']['Height_pantalla'] = $_GET['pantalla'];
+	// if user from the share internet  
+	if(!empty($_SERVER['HTTP_CLIENT_IP'])) {   
+        $_SESSION['INGRESO']['IP_Wan'] = $_SERVER['HTTP_CLIENT_IP'];   
+    }   
+    //if user is from the proxy   
+    elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {   
+        $_SESSION['INGRESO']['IP_Wan'] = $_SERVER['HTTP_X_FORWARDED_FOR'];   
+    }   
+    //if user is from the remote address   
+    else{   
+        $_SESSION['INGRESO']['IP_Wan'] = $_SERVER['REMOTE_ADDR'];   
+    }
+
 	echo json_encode($login->validar_entidad_cartera($entidad));
 }
 if (isset($_GET['Usuario'])) {
@@ -39,19 +52,7 @@ if (isset($_GET['recuperar'])) {
 if (isset($_GET['setear_empresa'])) {
 	$parametro = $_POST['parametros'];
 	$_SESSION['INGRESO']['CARTERA_ITEM'] = $parametro['item_cartera'];
-	
-	// if user from the share internet  
-	if(!empty($_SERVER['HTTP_CLIENT_IP'])) {   
-        $_SESSION['INGRESO']['IP_Wan'] = $_SERVER['HTTP_CLIENT_IP'];   
-    }   
-    //if user is from the proxy   
-    elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {   
-        $_SESSION['INGRESO']['IP_Wan'] = $_SERVER['HTTP_X_FORWARDED_FOR'];   
-    }   
-    //if user is from the remote address   
-    else{   
-        $_SESSION['INGRESO']['IP_Wan'] = $_SERVER['REMOTE_ADDR'];   
-    }  
+	  
 	// print_r($parametro);die();
 }
 if (isset($_GET['logout'])) {
