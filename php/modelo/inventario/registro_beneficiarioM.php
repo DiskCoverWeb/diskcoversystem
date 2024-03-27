@@ -33,7 +33,7 @@ class registro_beneficiarioM
     function ObtenerColor($valor)
     {
         if ($valor) {
-            $sql = "SELECT Cmds, Picture
+            $sql = "SELECT Cmds, Picture, Color
                 FROM Catalogo_Proceso
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Cmds = '" . $valor . "'";
@@ -56,48 +56,6 @@ class registro_beneficiarioM
         return $this->db->datos($sql);
     }
 
-    function actualizarSelect_Val($valor)
-    {
-        if ($valor) {
-            $sql = "SELECT Nivel, TP, Proceso, Cmds, Picture
-                FROM Catalogo_Proceso
-                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
-                AND Cmds = '" . $valor . "'";
-            $resultado = $this->db->datos($sql);
-
-            if (!empty ($resultado)) {
-                return $resultado[0];
-            } else {
-                return 0;
-            }
-        }
-    }
-
-    function actualizarSelectDonacion($calificacion)
-    {
-        if ($calificacion) {
-            $sql = "SELECT Codigo, Concepto
-                    FROM Catalogo_Lineas
-                    WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
-                    AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
-                    AND LEN(Fact) = 3
-                    AND RIGHT(Codigo, 3) = '" . $calificacion . "'";
-            $resultado = $this->db->datos($sql);
-            if (!empty ($resultado)) {
-                return $resultado[0];
-            } else {
-                return 0;
-            }
-        }
-    }
-
-    function llenarSelects2Info($actividad, $calificacion, $estado)
-    {
-        $sql1 = $this->actualizarSelect_Val($actividad);
-        $sql2 = $this->actualizarSelectDonacion($calificacion);
-        $sql3 = $this->actualizarSelect_Val($estado);
-        return ['dato1' => $sql1, 'dato2' => $sql2, 'dato3' => $sql3];
-    }
 
     function LlenarSelectRucCliente($query)
     {
@@ -145,38 +103,57 @@ class registro_beneficiarioM
         }
     }
 
-    function LlenarTipoDonacion($query)
+    function sqlComunDonacion()
     {
-        $sql = "SELECT Codigo, Concepto
+        return "SELECT Codigo, Concepto
                 FROM Catalogo_Lineas
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
                 AND LEN(Fact) = 3";
-        if (!is_numeric($query)) {
-            $sql .= " AND Concepto LIKE '%" . $query . "%'";
-        } else {
-            $sql .= " AND Codigo LIKE '%" . $query . "%'";
-        }
-        $sql .= "ORDER BY Fact";
-        return $this->db->datos($sql);
     }
 
-    function LlenarSelects_Val($query, $valor)
+    function LlenarTipoDonacion($valor)
     {
-        $sql = "SELECT Nivel, TP, Proceso, Cmds, Picture
-                FROM Catalogo_Proceso
-                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
-                AND Cmds LIKE '" . $valor . ".%'";
+        $sql = $this->sqlComunDonacion();
 
-        if (!is_numeric($query)) {
-            $sql .= " AND Proceso LIKE '%" . $query . "%'";
-        } else {
-            $sql .= " AND Cmds LIKE '%" . $query . "%'";
+        if (!is_numeric($valor)) {
+            $sql .= " AND Concepto LIKE '%" . $valor . "%'";
         }
-        $sql .= "ORDER BY Cmds";
+
+        $sql .= " ORDER BY Fact";
         return $this->db->datos($sql);
     }
 
+    function actualizarSelectDonacion($valor)
+    {
+        if ($valor) {
+            $sql = $this->sqlComunDonacion();
+            $sql .= " AND Codigo LIKE '%" . $valor . "%'";
+
+            return $this->db->datos($sql);
+        }
+    }
+
+    function LlenarSelects_Val($query, $valor, $valor2)
+    {
+        $sql = "SELECT Nivel, TP, Proceso, Cmds, Picture, Color
+                    FROM Catalogo_Proceso
+                    WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'";
+
+        if (strlen($valor) > 2) {
+            $sql .= " AND Cmds LIKE '" . $valor . "'";
+        } else {
+            $sql .= " AND Cmds LIKE '" . $valor . ".%'";
+        }
+        $sql .= (!is_numeric($query)) ? " AND Proceso LIKE '%" . $query . "%'" : " AND Cmds LIKE '%" . $query . "%'";
+
+        $sql .= " ORDER BY Cmds";
+
+        if ($valor2) {
+            return $this->actualizarSelectDonacion($valor);
+        }
+        return $this->db->datos($sql);
+    }
 
     function ActualizarClientes($parametros)
     {
@@ -203,13 +180,14 @@ class registro_beneficiarioM
 
     function ActualizarClientesDatosExtra($parametros)
     {
+        //-- Area = '" . $parametros['Area'] . "', 
         $sql = "UPDATE Clientes_Datos_Extras SET
                 CodigoA = '" . $parametros['CodigoA2'] . "', 
                 Dia_Ent = '" . $parametros['Dia_Ent2'] . "', 
                 Hora_Ent = '" . $parametros['Hora_Registro'] . "', 
                 Envio_No = '" . $parametros['Envio_No'] . "', 
                 No_Soc = '" . $parametros['No_Soc'] . "', 
-                Area = '" . $parametros['Area'] . "', 
+                
                 Acreditacion = '" . $parametros['Acreditacion'] . "', 
                 Tipo_Dato = '" . $parametros['Tipo_Dato'] . "', 
                 Cod_Fam = '" . $parametros['Cod_Fam'] . "', 
@@ -223,7 +201,8 @@ class registro_beneficiarioM
     function CrearClienteDatosExtra($parametros)
     {
         $sql2 = "INSERT INTO Clientes_Datos_Extras (Codigo, CodigoA, Dia_Ent, Hora_Ent, 
-        Envio_No, No_Soc, Area, Acreditacion, Tipo_Dato, Cod_Fam, Evidencias, Observaciones, Item) 
+        Envio_No, No_Soc, --Area, 
+        Acreditacion, Tipo_Dato, Cod_Fam, Evidencias, Observaciones, Item) 
         VALUES ('" . $parametros['Codigo'] . "', 
                 '" . $parametros['CodigoA2'] . "', 
                 '" . $parametros['Dia_Ent2'] . "', 

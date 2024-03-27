@@ -65,6 +65,22 @@
             transform: translateY(-10px);
         }
 
+        #btnMostrarGrupo {
+            transition: transform 0.3s ease;
+        }
+
+        #btnMostrarGrupo:hover {
+            transform: translateY(-10px);
+        }
+
+        #btnMostrarDir {
+            transition: transform 0.3s ease;
+        }
+
+        #btnMostrarDir:hover {
+            transform: translateY(-10px);
+        }
+
         #descargarArchivo img {
             transition: transform 0.3s ease;
         }
@@ -72,12 +88,38 @@
         #descargarArchivo img:hover {
             transform: translateX(10px);
         }
+
+        .centered-img {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .carousel-caption {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            text-align: top;
+            color: black;
+        }
+
+        .modal-body {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .form-group.row {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
     </style>
 </head>
 
+
 <body>
     <div>
-        <div class="row" style="margin:5px; padding-top:10px; color:black;">
+        <div class="row" style="margin:5px; padding-top:10px; color:black; display: flex; align-items: center;">
             <div class="col-sm-2 col-xs-12">
                 <div class="col">
                     <a href="./inicio.php?mod=<?php echo @$_GET['mod']; ?>" title="Salir de modulo"
@@ -85,296 +127,484 @@
                         <img src="../../img/png/salire.png" width="25" height="30">
                     </a>
                 </div>
-                <div class="col">
+                <div class="col" style="margin-left: auto;">
                     <a href="javascript:void(0)" id="btnGuardarAsignacion" title="Guardar" class="btn btn-default">
                         <img src="../../img/png/grabar.png" width="25" height="30">
                     </a>
                 </div>
             </div>
         </div>
-    </div>
-    <form id="miFormulario" style="padding-bottom:30px">
-        <div class="accordion" id="accordionExample" style="margin-left:30px; margin-right: 30px;">
-            <div class="card">
-                <div class="card-header" id="headingOne">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
-                            style="font-weight: bold;" aria-expanded="true" aria-controls="collapseOne">
-                            <i class="fa fa-arrow-down" aria-hidden="true"></i>
-                            INFORMACION GENERAL
-                        </button>
-                    </h2>
-                </div>
-                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
-                    data-parent="#accordionExample">
-                    <div class="card-body" style="margin: 1px; padding-top: 5px; padding-bottom: 5px;">
-                        <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
-                            <div style="flex: 1; margin-right: 10px; ">
-                                <label for="select_93" style="display: block;">Tipo de Beneficiario</label>
-                                <select class="form-control input-xs" name="select_93" id="select_93"
-                                    style="width: 100%;"></select>
-                            </div>
-                            <div style="flex: 1; margin-right: 10px; ">
-                                <label for="tipoDonacion" style="display: block;">Tipo de Donación</label>
-                                <select class="form-control input-xs" name="tipoDonacion" id="tipoDonacion"
-                                    style="width: 100%;"></select>
-                            </div>
-                            <div style="flex: 1; margin-right: 10px; ">
-                                <label for="ruc" style="display: block;">CI/RUC</label>
-                                <select class="form-control input-xs" name="ruc" id="ruc" style="width: 100%;"></select>
-                            </div>
-                            <div
-                                style="display: flex; justify-content: center; align-items: center;  margin-right: 10px;">
-                                <img src="../../img/png/SRIlogo.png" width="80" height="50"
-                                    onclick="validar_sriC($('#ruc').val())" id="validarSRI" title="VALIDAR RUC">
-                            </div>
-                            <div style="flex: 1; margin-right: 10px;">
-                                <label for="cliente" style="display: block;">Nombre del Beneficiario/Usuario</label>
-                                <div class="input-group">
-                                    <select class="form-control input-xs" name="cliente" id="cliente"
+        <form id="miFormulario" style=" padding-bottom:30px">
+            <div class="accordion" id="accordionExample" style="margin-top:px; margin-left:30px; margin-right: 30px;">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
+                                style="font-weight: bold;" aria-expanded="true" aria-controls="collapseOne">
+                                <i class="fa fa-arrow-down" aria-hidden="true"></i>
+                                INFORMACION GENERAL
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                        data-parent="#accordionExample">
+                        <div class="card-body" style="margin: 1px; padding-top: 5px; padding-bottom: 5px;">
+                            <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
+                                <div id="carouselBtnIma_93" class="carousel slide" data-ride="carousel"
+                                    style="margin-right: 10px;">
+                                    <div class="carousel-inner">
+                                    </div>
+                                </div>
+                                <div style="flex: 1; margin-right: 10px; ">
+                                    <label for="input_93" style="display: block;">Tipo de Beneficiario</label>
+                                    <input class="form-control input-xs" type="text" name="input_93" id="input_93"
+                                        placeholder="Haz clic sobre la imagen" readonly>
+                                </div>
+                                <div id="carouselBtnImaDon" class="carousel slide" data-ride="carousel"
+                                    style="margin-right: 10px;">
+                                    <div class="carousel-inner">
+                                    </div>
+                                </div>
+                                <div style="flex: 1; margin-right: 10px; ">
+                                    <label for="tipoDonacion" style="display: block;">Tipo de Donación</label>
+                                    <input class="form-control input-xs" type="text" name="tipoDonacion"
+                                        id="tipoDonacion" placeholder="Haz clic sobre la imagen" readonly>
+                                </div>
+                                <div style="flex: 1; margin-right: 10px; ">
+                                    <label for="ruc" style="display: block;">CI/RUC</label>
+                                    <select class="form-control input-xs" name="ruc" id="ruc"
                                         style="width: 100%;"></select>
-                                    <span class="input-group-btn">
-                                        <button type="button" class="btn btn-success btn-xs btn-flat" id="btn_nuevo_cli"
-                                            onclick="addCliente()" title="Nuevo cliente">
-                                            <span class="fa fa-user-plus"></span>
-                                        </button>
-                                    </span>
+                                </div>
+                                <div
+                                    style="display: flex; justify-content: center; align-items: center;  margin-right: 10px;">
+                                    <img src="../../img/png/SRIlogo.png" width="80" height="50"
+                                        onclick="validar_sriC($('#ruc').val())" id="validarSRI" title="VALIDAR RUC">
+                                </div>
+                                <div style="flex: 1; margin-right: 10px;">
+                                    <label for="cliente" style="display: block;">Nombre del Beneficiario/Usuario</label>
+                                    <div class="input-group">
+                                        <select class="form-control input-xs" name="cliente" id="cliente"
+                                            style="width: 100%;"></select>
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-success btn-xs btn-flat"
+                                                id="btn_nuevo_cli" onclick="addCliente()" title="Nuevo cliente">
+                                                <span class="fa fa-user-plus"></span>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div id="carouselBtnIma_87" class="carousel slide" data-ride="carousel"
+                                    style="margin-right: 10px;">
+                                    <div class="carousel-inner">
+                                    </div>
+                                </div>
+                                <div style="flex: 1;">
+                                    <label for="input_87" style="display: block;">Estado</label>
+                                    <input class="form-control input-xs" type="text" name="input_87" id="input_87"
+                                        placeholder="Haz clic sobre la imagen" readonly>
                                 </div>
                             </div>
-                            <div style="flex: 1;">
-                                <label for="select_87" style="display: block;">Estado</label>
-                                <select class="form-control input-xs" name="select_87" id="select_87"
-                                    style="width: 100%;"></select>
+                            <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
+                                <div style="flex: 1; margin-right: 10px; ">
+                                    <label for="nombreRepre" style="display: block;">Nombre Representante Legal</label>
+                                    <input class="form-control input-xs" type="text" name="nombreRepre" id="nombreRepre"
+                                        placeholder="Nombre Representante">
+                                </div>
+                                <div style="flex: 1; margin-right: 10px; ">
+                                    <label for="ciRepre" style="display: block;">CI Representante Legal</label>
+                                    <input class="form-control input-xs" type="text" name="ciRepre" id="ciRepre"
+                                        placeholder="CI Representante">
+                                </div>
+                                <div style="flex: 1;">
+                                    <label for="telfRepre" style="display: block;">Telefono Representante Legal</label>
+                                    <input class="form-control input-xs" type="text" name="telfRepre" id="telfRepre"
+                                        placeholder="Representante legal">
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
-                            <div style="flex: 1; margin-right: 10px; ">
-                                <label for="nombreRepre" style="display: block;">Nombre Representante Legal</label>
-                                <input class="form-control input-xs" type="text" name="nombreRepre" id="nombreRepre"
-                                    placeholder="Nombre Representante">
+                            <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
+                                <div style="flex: 1; margin-right: 10px; ">
+                                    <label for="contacto" style="display: block;">Contacto/Encargado</label>
+                                    <input class="form-control input-xs" type="text" name="contacto" id="contacto"
+                                        placeholder="Contacto">
+                                </div>
+                                <div style="flex: 1; margin-right: 10px; ">
+                                    <label for="cargo" style="display: block;">Cargo</label>
+                                    <input class="form-control input-xs" type="text" name="cargo" id="cargo"
+                                        placeholder="Profesion">
+                                </div>
+                                <div style="margin-right: 10px;  display: flex; ">
+                                    <img src="../../img/png/calendario2.png" width="60" height="60">
+                                </div>
+                                <div style="flex: 1; margin-right: 10px; ">
+                                    <label for="diaEntrega" style="display: block;">Día Entrega a Usuarios
+                                        Finales</label>
+                                    <select class="form-control input-xs" name="diaEntrega" id="diaEntrega"></select>
+                                </div>
+                                <div style="margin-right: 10px;  display: flex; ">
+                                    <img src="../../img/png/reloj.png" width="55" height="55">
+                                </div>
+                                <div style="flex: 1; ">
+                                    <label for="horaEntrega" style="display: block;">Hora Entrega a Usuarios
+                                        Finales</label>
+                                    <input type="time" name="horaEntrega" id="horaEntrega"
+                                        class="form-control input-xs">
+                                </div>
                             </div>
-                            <div style="flex: 1; margin-right: 10px; ">
-                                <label for="ciRepre" style="display: block;">CI Representante Legal</label>
-                                <input class="form-control input-xs" type="text" name="ciRepre" id="ciRepre"
-                                    placeholder="CI Representante">
-                            </div>
-                            <div style="flex: 1;">
-                                <label for="telfRepre" style="display: block;">Telefono Representante Legal</label>
-                                <input class="form-control input-xs" type="text" name="telfRepre" id="telfRepre"
-                                    placeholder="Representante legal">
-                            </div>
-                        </div>
 
-                        <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
-                            <div style="flex: 1; margin-right: 10px; ">
-                                <label for="contacto" style="display: block;">Contacto/Encargado</label>
-                                <input class="form-control input-xs" type="text" name="contacto" id="contacto"
-                                    placeholder="Contacto">
-                            </div>
-                            <div style="flex: 1; margin-right: 10px; ">
-                                <label for="cargo" style="display: block;">Cargo</label>
-                                <input class="form-control input-xs" type="text" name="cargo" id="cargo"
-                                    placeholder="Profesion">
-                            </div>
-                            <div style="margin-right: 10px;  display: flex; ">
-                                <img src="../../img/png/calendario2.png" width="60" height="60">
-                            </div>
-                            <div style="flex: 1; margin-right: 10px; ">
-                                <label for="diaEntrega" style="display: block;">Día Entrega a Usuarios Finales</label>
-                                <select class="form-control input-xs" name="diaEntrega" id="diaEntrega"></select>
-                            </div>
-                            <div style="margin-right: 10px;  display: flex; ">
-                                <img src="../../img/png/reloj.png" width="55" height="55">
-                            </div>
-                            <div style="flex: 1; ">
-                                <label for="horaEntrega" style="display: block;">Hora Entrega a Usuarios Finales</label>
-                                <input type="time" name="horaEntrega" id="horaEntrega" class="form-control input-xs">
-                            </div>
-                        </div>
+                            <div class="row" style="margin: 10px; display: flex; justify-content: center;">
 
-                        <div class="row" style="margin: 10px; display: flex; justify-content: center;">
-                            <div class="col-sm-3">
-                                <div class="row">
+                                <div class="col-sm-1" style="margin-right:10px;">
+                                    <div class="row" style="display: flex; justify-content: center;">
+                                        <a href="#" id="btnMostrarDir">
+                                            <img src="../../img/png/map.png" width="60" height="60"
+                                                title="INGRESAR DIRECCIÓN">
+                                        </a>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <label for="dir">Ingresar Direccion </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3" style="margin-right:10px;">
+                                    <!--div class="row">
                                     <label for="direccion" style="display: block;">Dirección</label>
                                     <input class="form-control input-xs" type="text" name="direccion" id="direccion"
                                         placeholder="Direccion">
+                                </div-->
+                                    <div class="row">
+                                        <label for="email" style="display: block;">Email</label>
+                                        <input class="form-control input-xs" type="text" name="email" id="email"
+                                            placeholder="Email">
+                                    </div>
+                                    <div class="row">
+                                        <label for="email2" style="display: block;">Email 2</label>
+                                        <input class="form-control input-xs" type="text" name="email2" id="email2"
+                                            placeholder="Email2">
+                                    </div>
                                 </div>
-                                <div class="row">
-                                    <label for="email" style="display: block;">Email</label>
-                                    <input class="form-control input-xs" type="text" name="email" id="email"
-                                        placeholder="Email">
-                                </div>
-                                <div class="row">
-                                    <label for="email2" style="display: block;">Email 2</label>
-                                    <input class="form-control input-xs" type="text" name="email2" id="email2"
-                                        placeholder="Email2">
-                                </div>
-                            </div>
-                            <div class="col-sm-1"></div>
-                            <div class="col-sm-3">
-                                <div class="row">
+                                <!--div class="col-sm-1"></div-->
+                                <div class="col-sm-3" style="margin-right:10px;">
+                                    <!--div class="row">
                                     <label for="referencia" style="display: block;">Referencia</label>
                                     <input class="form-control input-xs" type="text" name="referencia" id="referencia"
                                         placeholder="Referencia">
-                                </div>
-                                <div class="row">
-                                    <label for="telefono" style="display: block;">Teléfono 1</label>
-                                    <input class="form-control input-xs" type="text" name="telefono" id="telefono"
-                                        placeholder="Telefono ">
-                                </div>
-                                <div class="row">
-                                    <label for="telefono2" style="display: block;">Teléfono 2</label>
-                                    <input class="form-control input-xs" type="text" name="telefono2" id="telefono2"
-                                        placeholder="Telefono 2">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-header" id="headingTwo">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                            data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"
-                            id="botonInfoAdd" style="font-weight: bold;">
-                            <i class="fa fa-arrow-down" aria-hidden="true"></i>
-                            INFORMACION ADICIONAL
-                        </button>
-                    </h2>
-                </div>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                    <div class="card-body" style="margin: 1px; padding-top: 5px; padding-bottom: 40px;">
-                        <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
-                                <label for="select_88" style="display: block;">Tipo de Entrega</label>
-                                <select class="form-control input-xs" name="select_88" id="select_88"
-                                    style="width: 100%;"></select>
-                            </div>
-                            <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
-                                <img src="../../img/png/calendario2.png" width="60" height="60" id="btnMostrarModal"
-                                    title="CALENDARIO ASIGNACION">
-                            </div>
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
-                                <label for="diaEntregac" style="display: block;">Día de Entrega</label>
-                                <select class="form-control input-xs" name="diaEntregac" id="diaEntregac"
-                                    style="width: 100%;"></select>
-                            </div>
-                            <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
-                                <img src="../../img/png/reloj.png" width="55" height="55">
-                            </div>
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
-                                <label for="horaEntregac" style="display: block;">Hora de Entrega</label>
-                                <input type="time" name="horaEntregac" id="horaEntregac" class="form-control input-xs">
-                            </div>
-
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
-                                <label for="select_86" style="display: block;">Frecuencia</label>
-                                <select class="form-control input-xs" name="select_86" id="select_86"
-                                    style="width: 100%;"></select>
-                            </div>
-
-                            <div id="comentariodiv"
-                                style="flex: 1; margin-right: 10px; margin-lefth: 10px; style=display: none;">
-                                <label for="comentario" style="display: block;">Comentario</label>
-                                <textarea class="form-control" id="comentario" rows="2" style="resize: none"></textarea>
-                            </div>
-                        </div>
-                        <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
-                                <label for="totalPersonas" style="display: block;">Total de Personas Atendidas</label>
-                                <input type="number" name="totalPersonas" id="totalPersonas"
-                                    class="form-control input-xs" min="0" max="100">
-                            </div>
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
-                                <label for="select_91" style="display: block;">Tipo de Población</label>
-                                <select class="form-control input-xs" name="select_91" id="select_91"
-                                    style="width: 100%;"></select>
-                            </div>
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
-                                <label for="select_92" style="display: block;">Acción Social</label>
-                                <select class="form-control input-xs" name="select_92" id="select_92"
-                                    style="width: 100%;"></select>
-                            </div>
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
-                                <label for="select_90" style="display: block;">Vulnerabilidad</label>
-                                <select class="form-control input-xs" name="select_90" id="select_90"
-                                    style="width: 100%;"></select>
-                            </div>
-                            <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
-                                <label for="select_89" style="display: block;">Tipo de Atención</label>
-                                <select class="form-control input-xs" name="select_89" id="select_89"
-                                    style="width: 100%;"></select>
-                            </div>
-
-                        </div>
-                        <div class="row" style="margin: 10px;">
-                            <div class="col-sm-5"></div>
-
-                            <div class="col-sm-3">
-                                <div class="row" style="display: flex; justify-content: center;">
-                                    <a href="#" id="descargarArchivo">
-                                        <img src="../../img/png/adjuntar-archivo.png" width="60" height="60"
-                                            title="DESCARGAR ARCHIVO">
-                                    </a>
-                                </div>
-
-                                <div class="row">
-                                    <div class="form-group">
-                                        <label for="archivoAdd">Archivos Adjuntos</label>
-                                        <input type="file" class="form-control-file" id="archivoAdd">
+                                </div-->
+                                    <div class="row">
+                                        <label for="telefono" style="display: block;">Teléfono 1</label>
+                                        <input class="form-control input-xs" type="text" name="telefono" id="telefono"
+                                            placeholder="Telefono ">
+                                    </div>
+                                    <div class="row">
+                                        <label for="telefono2" style="display: block;">Teléfono 2</label>
+                                        <input class="form-control input-xs" type="text" name="telefono2" id="telefono2"
+                                            placeholder="Telefono 2">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-4">
-                                <div class="row">
-                                    <label for="infoNut" style="display: block;">Información Nutricional</label>
-                                    <textarea class="form-control" id="infoNut" rows="4"
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="headingTwo">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"
+                                id="botonInfoAdd" style="font-weight: bold;">
+                                <i class="fa fa-arrow-down" aria-hidden="true"></i>
+                                INFORMACION ADICIONAL
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                        <div class="card-body" style="margin: 1px; padding-top: 5px; padding-bottom: 40px;">
+                            <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
+                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                    <label for="select_88" style="display: block;">Tipo de Entrega</label>
+                                    <select class="form-control input-xs" name="select_88" id="select_88"
+                                        style="width: 100%;"></select>
+                                </div>
+                                <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
+                                    <img src="../../img/png/calendario2.png" width="60" height="60" id="btnMostrarModal"
+                                        title="CALENDARIO ASIGNACION">
+                                </div>
+                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                    <label for="diaEntregac" style="display: block;">Día de Entrega</label>
+                                    <select class="form-control input-xs" name="diaEntregac" id="diaEntregac"
+                                        style="width: 100%;"></select>
+                                </div>
+                                <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
+                                    <img src="../../img/png/reloj.png" width="55" height="55">
+                                </div>
+                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                    <label for="horaEntregac" style="display: block;">Hora de Entrega</label>
+                                    <input type="time" name="horaEntregac" id="horaEntregac"
+                                        class="form-control input-xs">
+                                </div>
+                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                    <label for="select_86" style="display: block;">Frecuencia</label>
+                                    <select class="form-control input-xs" name="select_86" id="select_86"
+                                        style="width: 100%;"></select>
+                                </div>
+                                <div id="comentariodiv"
+                                    style="flex: 1; margin-right: 10px; margin-lefth: 10px; style=display: none;">
+                                    <label for="comentario" style="display: block;">Comentario</label>
+                                    <textarea class="form-control" id="comentario" rows="2"
                                         style="resize: none"></textarea>
                                 </div>
-
+                            </div>
+                            <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
+                                <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
+                                    <img src="../../img/png/grupoEdad.png" width="60" height="60" id="btnMostrarGrupo"
+                                        title="TIPO DE POBLACIÓN">
+                                </div>
+                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                    <label for="totalPersonas" style="display: block;">Total de Personas
+                                        Atendidas</label>
+                                    <input type="number" name="totalPersonas" id="totalPersonas"
+                                        class="form-control input-xs" min="0" max="100">
+                                </div>
+                                <!--div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <label for="select_91" style="display: block;">Tipo de Población</label>
+                                <select class="form-control input-xs" name="select_91" id="select_91"
+                                    style="width: 100%;"></select>
+                            </div-->
+                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                    <label for="select_92" style="display: block;">Acción Social</label>
+                                    <select class="form-control input-xs" name="select_92" id="select_92"
+                                        style="width: 100%;"></select>
+                                </div>
+                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                    <label for="select_90" style="display: block;">Vulnerabilidad</label>
+                                    <select class="form-control input-xs" name="select_90" id="select_90"
+                                        style="width: 100%;"></select>
+                                </div>
+                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                    <label for="select_89" style="display: block;">Tipo de Atención</label>
+                                    <select class="form-control input-xs" name="select_89" id="select_89"
+                                        style="width: 100%;"></select>
+                                </div>
+                            </div>
+                            <div class="row" style="margin: 10px;">
+                                <div class="col-sm-5"></div>
+                                <div class="col-sm-3">
+                                    <div class="row" style="display: flex; justify-content: center;">
+                                        <a href="#" id="descargarArchivo">
+                                            <img src="../../img/png/adjuntar-archivo.png" width="60" height="60"
+                                                title="DESCARGAR ARCHIVO">
+                                        </a>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <label for="archivoAdd">Archivos Adjuntos</label>
+                                            <input type="file" class="form-control-file" id="archivoAdd">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="row">
+                                        <label for="infoNut" style="display: block;">Información Nutricional</label>
+                                        <textarea class="form-control" id="infoNut" rows="4"
+                                            style="resize: none"></textarea>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="modal" id="modalCalendario">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content" style="background-color: white;">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" style="color: white;">&times;</button>
-                        <h4 class="modal-title">CALENDARIO DE ASIGNACION</h4>
+            <div class="modal" id="modalCalendario">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content" style="background-color: white;">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"
+                                style="color: white;">&times;</button>
+                            <h4 class="modal-title">CALENDARIO DE ASIGNACION</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container-fluid">
+                                <div style="max-height: 300px; overflow-y: auto; overflow-x: auto;">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <script>
+                                                    var diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves',
+                                                        'Viernes', 'Sabado', 'Domingo'];
+                                                    for (var i = 0; i < diasSemana.length; i++) {
+                                                        document.write('<th>' + diasSemana[i] + '</th>');
+                                                    }
+                                                </script>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tabla-body">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <div class="container-fluid">
-                            <div style="max-height: 300px; overflow-y: auto; overflow-x: auto;">
-                                <table class="table table-bordered">
+                </div>
+            </div>
+
+            <div id="modalBtnDir" class="modal fade" role="dialog">
+                <div class="modal-dialog" style="max-width: 400px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Registro de Ubicación</h4>
+                        </div>
+                        <div class="modal-body" style="overflow-y: auto; max-height: 200px;">
+                            <div class="form-group row">
+                                <label for="Provincia" class="col-sm-3 col-form-label">Provincia</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" name="Provincia" id="Provincia"
+                                        placeholder="Ingrese una provincia">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="Ciudad" class="col-sm-3 col-form-label">Ciudad</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" name="Ciudad" id="Ciudad"
+                                        placeholder="Ingrese una ciudad">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="Canton" class="col-sm-3 col-form-label">Cantón</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" name="Canton" id="Canton"
+                                        placeholder="Ingrese un cantón">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="Parroquia" class="col-sm-3 col-form-label">Parroquia</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" name="Parroquia" id="Parroquia"
+                                        placeholder="Ingrese una parroquia">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="Barrio" class="col-sm-3 col-form-label">Barrio</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" name="Barrio" id="Barrio"
+                                        placeholder="Ingrese un barrio">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="CalleP" class="col-sm-3 col-form-label">Calle principal</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" name="CalleP" id="CalleP"
+                                        placeholder="Ingrese calle principal">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="CalleS" class="col-sm-3 col-form-label">Calle secundaria</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" name="CalleS" id="CalleS"
+                                        placeholder="Ingrese calle secundaria">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="Referencia" class="col-sm-3 col-form-label">Referencia</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="text" name="Referencia" id="Referencia"
+                                        placeholder="Ingrese una referencia">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="modalBtnGrupo" class="modal fade" role="dialog">
+                <div class="modal-dialog" style="max-width: 400px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Tipo de población</h4>
+                        </div>
+                        <div class="modal-body" style="overflow-y: auto; max-height: 200px;">
+                            <form>
+                                <table class="table table-sm table-dark" id="tablaPoblacion">
                                     <thead>
                                         <tr>
-                                            <th></th>
-                                            <script>
-                                                var diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 
-                                                'Viernes','Sabado','Domingo'];
-                                                for (var i = 0; i < diasSemana.length; i++) {
-                                                    document.write('<th>' + diasSemana[i] + '</th>');
-                                                }
-                                            </script>
+                                            <th scope="col" colspan="2">Tipo de Población</th>
+                                            <th scope="col">Hombres</th>
+                                            <th scope="col">Mujeres</th>
+                                            <th scope="col">Total</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tabla-body">
-                                        <!-- Aquí se renderizarían las filas de la tabla -->
+                                    <tbody>
+                                        <!-- Aquí se añadirán las filas dinámicamente -->
                                     </tbody>
                                 </table>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="modalsBtn87" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Estado</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row" style="margin: 10px; display: flex;">
+                                <div id="modal_87"
+                                    style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
+
+            <div id="modalsBtn93" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Beneficiario</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row" style="margin: 10px; display: flex;">
+                                <div id="modal_93"
+                                    style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="modalsBtnDon" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Donacion</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row" style="margin: 10px; display: flex;">
+                                <div id="modal_Don"
+                                    style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
 </body>
 
 
@@ -383,6 +613,177 @@
         Form_Activate();
     });
 
+    //direccion
+    $('#btnMostrarDir').click(function () {
+        $('#modalBtnDir').modal('show');
+    });
+
+    //grupo
+    $('#btnMostrarGrupo').click(function () {
+        $('#modalBtnGrupo').modal('show');
+        agregarFila();
+    });
+
+    function agregarFila() {
+        var tbody = $('#tablaPoblacion tbody');
+        tbody.empty();
+        datosArray.forEach(function (item) {
+            var valor = item.id.substring(0, 2);
+            if (valor == 91) {
+                var fila = $('<tr>');
+
+                var celda1 = $('<td>', { colspan: 2, text: item.text });
+                var celda2 = $('<td>').append($('<input>', { type: 'number', class: 'form-control', name: 'hombres' }));
+                var celda3 = $('<td>').append($('<input>', { type: 'number', class: 'form-control', name: 'mujeres' }));
+                var celda4 = $('<td>').append($('<input>', { type: 'number', class: 'form-control', name: 'total' }));
+
+                fila.append(celda1, celda2, celda3, celda4);
+
+                tbody.append(fila);
+            }
+        });
+    }
+
+    var datosArray = [];
+    function llenarCarousels(valor, valor2) {
+        $.ajax({
+            type: "GET",
+            url: '../controlador/inventario/registro_beneficiarioC.php?LlenarSelects_Val=true',
+            data: { valor: valor, valor2: valor2 },
+            dataType: 'json',
+            success: function (res) {
+                var val = res.val;
+                var datos = res.respuesta;
+                console.log(datos);
+
+                datos.forEach(function (item) {
+                    datosArray.push(item);
+                });
+
+                if (val == 1) {
+                    var carouselInner = $('#carouselBtnImaDon .carousel-inner');
+                    if (datos.length > 0) {
+                        carouselInner.empty();
+                    }
+                    datos.forEach(function (item, index) {
+                        var carouselItem = $('<div class="item">');
+                        if (index === 0) {
+                            carouselItem.addClass('active');
+                        }
+                        var imgSrc = '../../img/png/' + item.picture + '.png';
+                        var carouselContent = '<img src="' + imgSrc + '" alt="' + item.text + '" width="55" height="55">' +
+                            '<div class="carousel-caption">' +
+                            '</div>';
+                        carouselItem.html(carouselContent);
+                        carouselItem.click(function () {
+                            abrirModal('Don');
+                        });
+                        carouselInner.append(carouselItem);
+                    });
+                    var option = '';
+                    var opt = '<option value="">Estado</option>';
+                    datos.forEach(function (item) {
+                        option += '<div class="col-md-6 col-sm-6">' +
+                            '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/group.png" onclick="itemSelect(\'' + item.picture +
+                            '\',\'' + item.text + '\', \'' + item.color + '\', \'' + item.id +
+                            '\')" style="width: 60px;height: 60px;"></button><br>' +
+                            '<b>' + item.text + '</b>' +
+                            '</div>';
+                        opt += '<option value="' + item.id + '">' + item.text + '</option>';
+                    });
+                    $('#modal_Don').html(option);
+
+                } else {
+                    var carouselInner = $('#carouselBtnIma_' + valor + ' .carousel-inner');
+                    if (datos.length > 0) {
+                        carouselInner.empty();
+                    }
+                    datos.forEach(function (item, index) {
+                        var carouselItem = $('<div class="item">');
+                        if (index === 0) {
+                            carouselItem.addClass('active');
+                        }
+                        var imgSrc = '../../img/png/' + item.picture + '.png';
+                        var carouselContent = '<img src="' + imgSrc + '" alt="' + item.text + '" width="55" height="55">' +
+                            '<div class="carousel-caption">' +
+                            '</div>';
+                        carouselItem.html(carouselContent);
+                        carouselItem.click(function () {
+                            abrirModal(valor);
+                        });
+                        carouselInner.append(carouselItem);
+                    });
+
+                    var option = '';
+                    if (valor == 87) {
+                        var opt = '<option value="">Estado</option>';
+                        datos.forEach(function (item) {
+                            option += '<div class="col-md-6 col-sm-6">' +
+                                '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/' +
+                                item.picture + '.png" onclick="itemSelect(\'' + item.picture +
+                                '\',\'' + item.text + '\', \'' + item.color + '\', \'' + item.id +
+                                '\')" style="width: 60px;height: 60px;"></button><br>' +
+                                '<b>' + item.text + '</b>' +
+                                '</div>';
+                            opt += '<option value="' + item.id + '">' + item.text + '</option>';
+                        });
+                        $('#modal_87').html(option);
+                    }
+                    if (valor == 93) {
+                        var opt = '<option value="">Beneficiario</option>';
+                        datos.forEach(function (item) {
+                            option += '<div class="col-md-6 col-sm-6">' +
+                                '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/' +
+                                item.picture + '.png" onclick="itemSelect(\'' + item.picture +
+                                '\',\'' + item.text + '\', \'' + item.color + '\', \'' + item.id +
+                                '\')" style="width: 60px;height: 60px;"></button><br>' +
+                                '<b>' + item.text + '</b>' +
+                                '</div>';
+                            opt += '<option value="' + item.id + '">' + item.text + '</option>';
+
+                        });
+                        $('#modal_93').html(option);
+                    }
+                }
+            }
+        });
+    }
+
+    function abrirModal(valor) {
+        $('#modalsBtn' + valor).modal('show');
+    };
+
+    function itemSelect(picture, text, color, id) {
+        console.log(id + " ," + text);
+
+        if (id.length == 3) {
+            var imagen = "../../img/png/" + picture + ".png";
+
+            $("#carouselBtnImaDon .item.active img").attr("src", imagen);
+            $("#carouselBtnImaDon").carousel("pause");
+            $("#modalsBtnDon").modal("hide");
+
+            $('#tipoDonacion').val(text);
+            $('#tipoDonacion').attr('val', id);
+        }
+
+        var valor = id.substring(0, 2);
+        var imagen = "../../img/png/" + picture + ".png";
+
+        $("#carouselBtnIma_" + valor + " .item.active img").attr("src", imagen);
+        $("#carouselBtnIma_" + valor).carousel("pause");
+        $("#modalsBtn" + valor).modal("hide");
+
+        $('#input_' + valor).val(text);
+        $('#input_' + valor).attr('val', id);
+        if (valor == 93) {
+            actualizarEstilo(color);
+        }
+
+        //console.log($('#tipoDonacion').attr('val'));
+    }
+
+    //btn icono RUC
     function validarRucYValidarSriC() {
         var ruc = $('#ruc').val();
         if (ruc) {
@@ -392,6 +793,7 @@
         }
     }
 
+    //btn dentro de modal icono RUC
     function usar_cliente(nombre, ruc, codigo, email, td = 'N') {
         $('#cliente').val(ruc).trigger('change');
         $('#myModal').modal('hide');
@@ -400,23 +802,38 @@
     var horaActual;
     function Form_Activate() {
         $('#comentariodiv').hide();
-
         LlenarSelectDiaEntrega();
         LlenarSelectRucCliente();
-        LlenarTipoDonacion();
-
-        [86, 87, 88, 89, 90, 91, 92, 93].forEach(LlenarSelects_Val);
+        llenarCarousels(87);
+        llenarCarousels(93);
+        llenarCarousels(91);
+        //[87, 91, 93].forEach(llenarCarousels);
+        llenarCarousels("CXC", true);
+        [86, 88, 89, 90, 92].forEach(LlenarSelects_Val);
 
         horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         $('#horaEntregac').val(horaActual);
     }
 
+    //textarea para tipo de frecuencia ocacional
     $('#select_86').change(function () {
         var selectedValue = $(this).val();
         if (selectedValue === '86.04') {
             $('#comentariodiv').show();
         } else {
             $('#comentariodiv').hide();
+        }
+    });
+
+    //calendario
+    $('#btnMostrarModal').click(function () {
+        var valorSeleccionado = $('#input_93').attr('val');
+        console.log(valorSeleccionado);
+        if (valorSeleccionado && valorSeleccionado.length > 0) {
+            //console.log(valorSeleccionado);
+            LlenarCalendario(valorSeleccionado);
+        } else {
+            swal.fire('', 'Por favor, seleccione una organizacion', 'info');
         }
     });
 
@@ -440,6 +857,7 @@
         }
     }
 
+    //color para celdas del calendario
     var miColor;
     function ObtenerColor(valEnvio_No, callback) {
         if (valEnvio_No) {
@@ -450,7 +868,7 @@
                 data: { valor: valEnvio_No },
                 success: function (data) {
                     if (data != 0) {
-                        miColor = data.Picture;
+                        miColor = data.Color;
                         callback(miColor);
                     }
                 },
@@ -462,15 +880,14 @@
     }
 
     function LlenarCalendarioC(data) {
-
         var horas = ['01:00 - 02:00', '02:00 - 03:00', '03:00 - 04:00',
-         '04:00 - 05:00', '05:00 - 06:00', '06:00 - 07:00',
-          '07:00 - 08:00', '08:00 - 09:00', '09:00 - 10:00', 
-          '10:00 - 11:00', '11:00 - 12:00', '12:00 - 13:00', 
-          '13:00 - 14:00', '14:00 - 15:00', '15:00 - 16:00', 
-          '16:00 - 17:00', '17:00 - 18:00', '18:00 - 19:00', 
-          '19:00 - 20:00', '20:00 - 21:00', '21:00 - 22:00', 
-          '22:00 - 23:00', '23:00 - 24:00'];
+            '04:00 - 05:00', '05:00 - 06:00', '06:00 - 07:00',
+            '07:00 - 08:00', '08:00 - 09:00', '09:00 - 10:00',
+            '10:00 - 11:00', '11:00 - 12:00', '12:00 - 13:00',
+            '13:00 - 14:00', '14:00 - 15:00', '15:00 - 16:00',
+            '16:00 - 17:00', '17:00 - 18:00', '18:00 - 19:00',
+            '19:00 - 20:00', '20:00 - 21:00', '21:00 - 22:00',
+            '22:00 - 23:00', '23:00 - 24:00'];
         var diasSemana = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
         $('#tabla-body').empty();
 
@@ -516,6 +933,7 @@
         $('#modalCalendario').modal('show');
     }
 
+    //selects Dia de Entrega
     function LlenarSelectDiaEntrega() {
         $.ajax({
             url: '../controlador/inventario/registro_beneficiarioC.php?LlenarSelectDiaEntrega=true',
@@ -530,6 +948,7 @@
         });
     }
 
+    //select RUC y Cliente
     function LlenarSelectRucCliente() {
         $('#ruc').select2({
             placeholder: 'Seleccione una opcion',
@@ -574,44 +993,7 @@
         });
     }
 
-    function LlenarTipoDonacion() {
-        $('#tipoDonacion').select2({
-            placeholder: 'Seleccione una opcion',
-            ajax: {
-                url: '../controlador/inventario/registro_beneficiarioC.php?',
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        query: params.term,
-                        LlenarTipoDonacion: true
-                    }
-                },
-                processResults: function (data) {
-                    var options = [];
-                    if (data.respuesta === "No se encontraron datos para mostrar") {
-                        options.push({
-                            id: '',
-                            text: data.respuesta
-                        });
-                    } else {
-                        $.each(data.respuesta, function (index, item) {
-                            var idDigits = item.id.slice(-3);
-                            options.push({
-                                id: idDigits,
-                                text: item.text
-                            });
-                        });
-                    }
-                    return {
-                        results: options
-                    };
-                },
-                cache: true
-            }
-        });
-    }
-
+    //todos los selects_num
     function LlenarSelects_Val(valor) {
         $('#select_' + valor).select2({
             placeholder: 'Seleccione una opción',
@@ -652,6 +1034,7 @@
         });
     }
 
+    //registro 
     $('#btnGuardarAsignacion').click(function () {
         var fileInput = $('#archivoAdd')[0];
         var archivo = fileInput.files[0];
@@ -660,10 +1043,9 @@
         formData.append('Cliente', miCliente);
         formData.append('CI_RUC', miRuc);
         formData.append('Codigo', miCodigo);
-        formData.append('Actividad', $('#select_93').val());
-        formData.append('CodigoA', $('#select_87').val());
-        var valorTipoDonacion = $('#tipoDonacion').val() ? $('#tipoDonacion').val() : '.';
-        formData.append('Calificacion', valorTipoDonacion);
+        formData.append('Actividad', $('#input_93').attr('val'));
+        formData.append('CodigoA', $('#input_87').attr('val'));
+        formData.append('Calificacion', $('#tipoDonacion').attr('val'));
         formData.append('Representante', $('#nombreRepre').val());
         formData.append('CI_RUC_R', $('#ciRepre').val());
         formData.append('Telefono_R', $('#telfRepre').val());
@@ -683,7 +1065,7 @@
         formData.append('Hora_Registro', $('#horaEntregac').val());
         formData.append('Envio_No', $('#select_86').val());
         formData.append('No_Soc', $('#totalPersonas').val());
-        formData.append('Area', $('#select_91').val());
+        //formData.append('Area', $('#select_91').val());
         formData.append('Acreditacion', $('#select_92').val());
         formData.append('Tipo_Dato', $('#select_90').val());
         formData.append('Cod_Fam', $('#select_89').val());
@@ -697,6 +1079,7 @@
             console.log(key + ': ' + value);
         });
 
+        //validacion campos llenos
         var camposVacios = [];
         if (!miRuc) camposVacios.push('RUC');
         if (!$('#select_88').val()) camposVacios.push('Tipo Entrega');
@@ -704,7 +1087,7 @@
         if (!$('#horaEntregac').val()) camposVacios.push('Hora Entrega');
         if (!$('#select_86').val()) camposVacios.push('Frecuencia');
         if (!$('#totalPersonas').val()) camposVacios.push('Personas Atendidas');
-        if (!$('#select_91').val()) camposVacios.push('Tipo poblacion');
+        //if (!$('#select_91').val()) camposVacios.push('Tipo poblacion');
         if (!$('#select_92').val()) camposVacios.push('Accion social');
         if (!$('#select_90').val()) camposVacios.push('Vulnerabilidad');
         if (!$('#select_89').val()) camposVacios.push('Tipo Atencion');
@@ -750,6 +1133,7 @@
         }
     });
 
+    //limpieza
     function LimpiarSelectsInfoAdd() {
         $('#collapseTwo').collapse('hide');
         $('#select_82').val(null).trigger('change');
@@ -757,16 +1141,15 @@
         $('#select_88').val(null).trigger('change');
         $('#select_89').val(null).trigger('change');
         $('#select_90').val(null).trigger('change');
-        $('#select_91').val(null).trigger('change');
+        //$('#select_91').val(null).trigger('change');
         $('#archivoAdd').val('');
         $('#diaEntregac').val('');
         $('#horaEntregac').val('');
         $('#totalPersonas').val('');
         $('#infoNut').val('');
-        $('#select_93').val(null).trigger('change');
-        //miActividad = '';
     }
 
+    //llenar campos del cliente segun nombre seleccionado
     var miRuc;
     var miCodigo;
     var miCliente;
@@ -791,6 +1174,7 @@
         }
     });
 
+    //llenar campos del cliente segun ruc seleccionado
     $('#ruc').on('select2:select', function (e) {
         LimpiarSelectsInfoAdd();
         var data = e.params.data;
@@ -811,108 +1195,53 @@
         }
     });
 
-    //var miActividad = '';
-    $('#select_93').on('select2:select', function (e) {
-        $('#collapseTwo').collapse('hide');
-        var data = e.params.data;
-        //miActividad = data.id;
-        //console.log(miActividad);
-        actualizarEstilo(data.color);
-    });
-
+    //llenar campos del panel informacion
     function llenarCamposInfo(Codigo) {
         $.ajax({
             url: '../controlador/inventario/registro_beneficiarioC.php?llenarCamposInfo=true',
             type: 'post',
             dataType: 'json',
             data: { valor: Codigo },
-            success: function (data) {
-                if (data != 0) {
-                    $('#nombreRepre').val(data.Representante);
-                    $('#ciRepre').val(data.CI_RUC_R);
-                    $('#telfRepre').val(data.Telefono_R);
-                    $('#contacto').val(data.Contacto);
-                    $('#cargo').val(data.Profesion);
-                    $('#direccion').val(data.Direccion);
-                    $('#email').val(data.Email);
-                    $('#email2').val(data.Email2);
-                    $('#referencia').val(data.Lugar_Trabajo);
-                    $('#telefono').val(data.Telefono);
-                    $('#telefono2').val(data.TelefonoT);
-                    llenarSelects2Info(data.Actividad, data.Calificacion, data.CodigoA);
+            success: function (datos) {
+                console.log(datos);
+                if (datos != 0) {
+                    $('#nombreRepre').val(datos.Representante);
+                    $('#ciRepre').val(datos.CI_RUC_R);
+                    $('#telfRepre').val(datos.Telefono_R);
+                    $('#contacto').val(datos.Contacto);
+                    $('#cargo').val(datos.Profesion);
+                    $('#direccion').val(datos.Direccion);
+                    $('#email').val(datos.Email);
+                    $('#email2').val(datos.Email2);
+                    $('#referencia').val(datos.Lugar_Trabajo);
+                    $('#telefono').val(datos.Telefono);
+                    $('#telefono2').val(datos.TelefonoT);
 
-                    if (data.Dia_Ent == '.') {
+                    datosArray.forEach(function (item) {
+                        if (item.id === datos.Actividad || item.id === datos.CodigoA || item.id === datos.Calificacion) {
+                            //var dgts = item.id.substring(0, 2);
+                            itemSelect(item.picture, item.text, item.color, item.id);
+                        }
+                    });
+                    //llenarPreSelects(datos.Actividad);
+                    //llenarPreSelects(datos.CodigoA);
+                    //llenarPreSelects(datos.Calificacion, true);
+                    if (datos.Dia_Ent == '.') {
                         $('#diaEntrega').val($('#diaEntrega option:first').val());
                     } else {
-                        $('#diaEntrega').val(data.Dia_Ent);
+                        $('#diaEntrega').val(datos.Dia_Ent);
                     }
-                    if (/^\d{2}:\d{2}$/.test(data.Hora_Ent)) {
-                        $('#horaEntrega').val(data.Hora_Ent);
+                    if (/^\d{2}:\d{2}$/.test(datos.Hora_Ent)) {
+                        $('#horaEntrega').val(datos.Hora_Ent);
                     } else {
-                        $('#horaEntrega').val(horaActual);
+                        $('#horaEntrega').val(datos);
                     }
                 }
             }
         });
     }
 
-    function llenarSelects2Info(actividad, calificacion, estado) {
-        var params = {};
-        if (actividad == '.') {
-            params.actividad = false;
-        } else {
-            params.actividad = actividad;
-        }
-        if (calificacion == '.') {
-            params.calificacion = false;
-        } else {
-            params.calificacion = calificacion;
-        }
-        if (estado == '.') {
-            params.estado = false;
-        } else {
-            params.estado = estado;
-        }
-        $.ajax({
-            url: '../controlador/inventario/registro_beneficiarioC.php?llenarSelects2Info=true',
-            type: 'post',
-            dataType: 'json',
-            data: { 'params': params },
-            success: function (data) {
-                var dato1 = data.dato1;
-                var dato2 = data.dato2;
-                var dato3 = data.dato3;
-                actualizarEstilo(dato1.Picture);
-                if (dato1 != 0) {
-                    if ($('#select_93').find("option[value='" + dato1.Cmds + "']").length) {
-                        $('#select_93').val(dato1.Cmds).trigger('change');
-                    } else {
-                        var newOption = new Option(dato1.Proceso, dato1.Cmds, true, true);
-                        $('#select_93').append(newOption).trigger('change');
-                    }
-                }
-                if (dato2 != 0) {
-                    var codigo = dato2.Codigo;
-                    var Cod = codigo.substring(codigo.length - 3)
-                    if ($('#tipoDonacion').find("option[value='" + Cod + "']").length) {
-                        $('#tipoDonacion').val(Cod).trigger('change');
-                    } else {
-                        var newOption = new Option(dato2.Concepto, Cod, true, true);
-                        $('#tipoDonacion').append(newOption).trigger('change');
-                    }
-                }
-                if (dato3 != 0) {
-                    if ($('#select_87').find("option[value='" + dato3.Cmds + "']").length) {
-                        $('#select_87').val(dato3.Cmds).trigger('change');
-                    } else {
-                        var newOption = new Option(dato3.Proceso, dato3.Cmds, true, true);
-                        $('#select_87').append(newOption).trigger('change');
-                    }
-                }
-            }
-        });
-    }
-
+    //llenar campos de panel informacion adicional
     $('#botonInfoAdd').click(function () {
         if (miCodigo) {
             $.ajax({
@@ -922,7 +1251,17 @@
                 data: { valor: miCodigo },
                 success: function (datos) {
                     if (datos != 0) {
-                        llenarCamposInfoAdd(datos);
+                        $('#diaEntregac').val(datos.Dia_Ent2);
+                        $('#horaEntregac').val(datos.Hora_Ent2);
+                        $('#totalPersonas').val(datos.No_Soc);
+                        $('#infoNut').val(datos.Observaciones);
+                        nombreArchivo = datos.Evidencias;
+                        llenarPreSelects(datos.CodigoA2);
+                        llenarPreSelects(datos.Envio_No);
+                        //llenarPreSelects(datos.Area);
+                        llenarPreSelects(datos.Acreditacion);
+                        llenarPreSelects(datos.Tipo_Dato);
+                        llenarPreSelects(datos.Cod_Fam);
                     } else {
                         swal.fire('', 'No se encontraron datos adicionales', 'info');
                     }
@@ -933,55 +1272,34 @@
         }
     });
 
-    function llenarCamposInfoAdd(datos) {
-        $('#diaEntregac').val(datos.Dia_Ent2);
-        $('#horaEntregac').val(datos.Hora_Ent2);
-        $('#totalPersonas').val(datos.No_Soc);
-        $('#infoNut').val(datos.Observaciones);
-        nombreArchivo = datos.Evidencias;
-        llenarSelects2InfoAdd(datos.CodigoA2);
-        llenarSelects2InfoAdd(datos.Envio_No);
-        llenarSelects2InfoAdd(datos.Area);
-        llenarSelects2InfoAdd(datos.Acreditacion);
-        llenarSelects2InfoAdd(datos.Tipo_Dato);
-        llenarSelects2InfoAdd(datos.Cod_Fam);
-    }
+    //llenar selects preseleccionados
+    function llenarPreSelects(valor) {
+        if (valor != ".") {
+            $.ajax({
+                url: '../controlador/inventario/registro_beneficiarioC.php?LlenarSelects_Val=true',
+                type: 'GET',
+                dataType: 'json',
+                data: { valor: valor },
+                success: function (res) {
+                    var val = res.val;
+                    var datos = res.respuesta;
 
-    function llenarSelects2InfoAdd(valor) {
-        if (valor == '.') {
-            valor = false;
-        }
-        $.ajax({
-            url: '../controlador/inventario/registro_beneficiarioC.php?llenarSelects2InfoAdd=true',
-            type: 'post',
-            dataType: 'json',
-            data: { valor: valor },
-            success: function (datos) {
-                if (datos != 0) {
-                    valorp = datos.Cmds.slice(0, 2);
-                    if ($('#select_' + valorp).find("option[value='" + datos.Cmds + "']").length) {
-                        $('#select_' + valorp).val(datos.Cmds).trigger('change');
-                    } else {
-                        var newOption = new Option(datos.Proceso, datos.Cmds, true, true);
-                        $('#select_' + valorp).append(newOption).trigger('change');
-                    }
+                    datos.forEach(function (item) {
+                        valorp = item.id.slice(0, 2);
+                        if ($('#select_' + valorp).find("option[value='" + item.id + "']").length) {
+                            $('#select_' + valorp).val(item.id).trigger('change');
+                        } else {
+                            var newOption = new Option(item.text, item.id, true, true);
+                            $('#select_' + valorp).append(newOption).trigger('change');
+                        }
+                    });
+
                 }
-
-            }
-        });
+            });
+        }
     }
 
-    $('#btnMostrarModal').click(function () {
-        var valorSeleccionado = $('#select_93').val();
-        if (valorSeleccionado && valorSeleccionado.length > 0) {
-            console.log(valorSeleccionado);
-            LlenarCalendario(valorSeleccionado);
-        } else {
-            swal.fire('', 'Por favor, seleccione una organizacion', 'info');
-        }
-    });
-
-
+    //estilos de panel
     function actualizarEstilo(colorValor) {
         if (colorValor) {
             var hexColor = colorValor.substring(4);
@@ -994,6 +1312,7 @@
         }
     }
 
+    //conversion color y tono mas oscuro para encabezado del panel
     function darkenColor(color, percent) {
         var num = parseInt(color, 16),
             amt = Math.round(2.55 * percent),
@@ -1008,6 +1327,7 @@
         return "#" + ((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1);
     }
 
+    //descarga del archivo adjunto
     function descargarArchivo(url, nombre) {
         var ruta = "../../" + url + nombre;
         var enlaceTemporal = $('<a></a>')
@@ -1045,6 +1365,4 @@
 
         }
     });
-
-
 </script>
