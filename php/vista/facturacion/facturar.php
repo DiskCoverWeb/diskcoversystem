@@ -809,22 +809,15 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			success: function (data) {
 
 				$('#myModal_espera').modal('hide');
-				if (data.AU.respuesta == 1) {
+				if (data.AU == 1) {
 					var url = '../../TEMP/' + data.pdf + '.pdf';
 					window.open(url, '_blank');
 					Swal.fire('Factura Creada y Autorizada', '', 'success');
 					Eliminar_linea('', '');
-				} else if (data.AU.respuesta == 3 || data.multiple == 'multiple') {
+				} else {
 					Swal.fire('Factura creada pero no autorizada', '' , 'warning');
 					var url = '../../TEMP/' + data.pdf + '.pdf';
 					window.open(url, '_blank');
-					Eliminar_linea('', '');
-				} else {
-					Swal.fire({
-						title: 'Algo salió mal',
-						type: 'error',
-						confirmButtonText: 'Ok!'
-					});
 					Eliminar_linea('', '');
 				}
 			}
