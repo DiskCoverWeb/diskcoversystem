@@ -612,7 +612,7 @@
      {
        let subtotal = pre*cant;
        let dscto = (subtotal*des)/100;
-       let total = (subtotal-dscto)*1.12;
+       let total = (subtotal-dscto)*1.15;
 
        let iva = parseFloat($('#txt_iva').val()); 
        $('#txt_subtotal').val(subtotal-dscto);
