@@ -27,6 +27,8 @@
     autocoplet_cta_vnt_ant();
     num_comprobante();
 
+    DCPorcenIva('txt_fecha', 'PorcIVA');
+    $('#PorcIVA').prop('disabled',true);
 
 
   $("#subir_imagen").on('click', function() {
@@ -610,17 +612,24 @@
      let des = parseFloat($('#txt_descto').val());
      if($('#rbl_si').prop('checked'))
      {
-       let subtotal = pre*cant;
-       let dscto = (subtotal*des)/100;
-       let total = (subtotal-dscto)*1.15;
+      $('#PorcIVA').prop('disabled',false);
+       let subtotal = pre*cant;//1*25.86=25.86
+       let dscto = subtotal*(des/100);//0
+       let IVA = $('#PorcIVA').val() / 100;
+
+       let subT =  (subtotal-dscto);
+       let iva_valor = subT*IVA       
+       let total = subT+iva_valor ;
 
        let iva = parseFloat($('#txt_iva').val()); 
-       $('#txt_subtotal').val(subtotal-dscto);
-       $('#txt_total').val(total);
-       $('#txt_iva').val(total-(subtotal-dscto));
+       $('#txt_subtotal').val(subT);
+       $('#txt_total').val(total.toFixed(2));
+       $('#txt_iva').val((iva_valor).toFixed(2));
 
      }else
      {
+      //disabled PorcIVA
+      $('#PorcIVA').prop('disabled',true);
       $('#txt_iva').val(0);
        let iva = parseFloat($('#txt_iva').val());       
        let sub = (pre*cant);
@@ -780,7 +789,7 @@
             </div>           
              <div class="col-sm-2">
               <b>Fecha:</b>
-              <input type="date" name="txt_fecha" id="txt_fecha" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" onblur="num_comprobante()">
+              <input type="date" name="txt_fecha" id="txt_fecha" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" onblur="num_comprobante(); DCPorcenIva('txt_fecha', 'PorcIVA');">
            </div>
           </div>
         <div class="row">
@@ -812,7 +821,11 @@
             </div>   
         </div>
         <div class="row">
-            <div class="col-sm-2">
+          <div class="col-sm-1">
+            <b>I.V.A</b>
+            <select class="form-control input-sm" name="PorcIVA" id="PorcIVA" onchange="calculos()"></select>
+          </div>
+            <div class="col-sm-1">
                <b>Existente</b>
                   <input type="text" name="txt_existencias" id="txt_existencias" class="form-control input-sm" readonly="">
             </div>
