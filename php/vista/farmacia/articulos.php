@@ -622,7 +622,7 @@
        let total = subT+iva_valor ;
 
        let iva = parseFloat($('#txt_iva').val()); 
-       $('#txt_subtotal').val(subT);
+       $('#txt_subtotal').val(subT.toFixed(2));
        $('#txt_total').val(total.toFixed(2));
        $('#txt_iva').val((iva_valor).toFixed(2));
 
