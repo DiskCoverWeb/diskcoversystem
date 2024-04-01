@@ -378,7 +378,7 @@ class cambioeM
 
 	function datos_sql_terceros($parametros,$host,$user,$pass,$base,$Puerto)
 	{
-		// print_r($parametros);die();
+		// print_r($host);die();
 		$sql = "SELECT * FROM Empresas WHERE Item = '".$parametros['Item']."' AND RUC = '".$parametros['RUC_CI_NIC']."'";
 		// print_r($sql);die();
 		return  $this->db->consulta_datos_db_sql_terceros($sql,$host,$user,$pass,$base,$Puerto);

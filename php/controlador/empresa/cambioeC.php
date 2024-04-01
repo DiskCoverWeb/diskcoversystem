@@ -236,16 +236,21 @@ class cambioeC
 		if(count($contribuyente)==0)
 		{
 			$this->modelo->ingresar_tipo_contribuyente($parametros['TxtRuc']);
+			control_procesos('N',"Grabar conribuyente especial",'Por:'.$_SESSION['INGRESO']['CodigoU']);
 		}else
 		{
-			$this->modelo->editar_tipo_contribuyente($parametros);
+			// print_r($contribuyente);print_r($parametros);die();
+			$this->modelo->editar_tipo_contribuyente($parametros);			
+			control_procesos('N',"Editado conribuyente especial",'Por:'.$_SESSION['INGRESO']['CodigoU']);
 		}
+		$text = $this->validar_cambios($parametros);
 		$resp = $this->modelo->editar_datos_empresaMYSQL($parametros);
 		if($parametros['txt_sqlserver']==1)
 		{
 			$resp = $this->modelo->editar_catalogoLineas_empresa($parametros);
 			if($resp==1)
 			{
+				 $this->validar_cambiosSQL($parametros);
 				return $this->modelo->editar_datos_empresa($parametros);
 			}else
 			{
@@ -405,6 +410,112 @@ class cambioeC
 	function guardarTipoContribuyente($parametros)
 	{
 	 	return $this->modelo->editar_tipo_contribuyente($parametros);
+	}
+
+	function validar_cambios($parametros)
+	{
+		// print_r($parametros);
+		$texto = '';
+		$empresas = $this->modelo->datos_empresa($parametros['empresas']);
+		// print_r($empresas);die();
+		$datosEmp = $this->modelo->datos_sql_terceros($empresas[0],$empresas[0]['IP_VPN_RUTA'],$empresas[0]['Usuario_DB'],$empresas[0]['Contrasena_DB'],$empresas[0]['Base_Datos'],$empresas[0]['Puerto']);
+
+		if($empresas[0]['Empresa']!=$parametros['TxtEmpresa'])
+		{
+			$texto=$empresas[0]['Empresa'].' a '.$parametros['TxtEmpresa'];			
+			control_procesos('N',"Edicion datos empres",$texto.' Por:'.$_SESSION['INGRESO']['CodigoU']);
+		}
+		if($empresas[0]['Razon_Social']!=$parametros['TxtRazonSocial'])
+		{
+			$texto=$empresas[0]['Razon_Social'].' a '.$parametros['TxtRazonSocial'];
+			control_procesos('N',"Edicion datos empres",$texto.' Por:'.$_SESSION['INGRESO']['CodigoU']);
+		}
+
+		if($empresas[0]['Gerente']!=$parametros['TxtRepresentanteLegal'])
+		{
+			$texto=$empresas[0]['Gerente'].' a '.$parametros['TxtRepresentanteLegal'];
+
+			control_procesos('N',"Edicion datos empres",$texto.' Por:'.$_SESSION['INGRESO']['CodigoU']);
+		}
+		if($empresas[0]['Contador']!=$parametros['TxtNombConta'])
+		{
+			$texto= $empresas[0]['Contador'].' a '.$parametros['TxtNombConta'];
+
+			control_procesos('N',"Edicion datos empres",$texto.' Por:'.$_SESSION['INGRESO']['CodigoU']);
+		}
+		if($empresas[0]['RUC_Contador']!=$parametros['TxtRucConta'])
+		{
+			$texto=$empresas[0]['RUC_Contador'].' a '.$parametros['TxtRucConta'];
+
+			control_procesos('N',"Edicion datos empres",$texto.' Por:'.$_SESSION['INGRESO']['CodigoU']);
+		}
+		if($empresas[0]['IP_VPN_RUTA']!=$parametros['Servidor'])
+		{
+			$texto='IP_VPN_RUTA '.$empresas[0]['IP_VPN_RUTA'].' a '.$parametros['Servidor'];
+
+			control_procesos('N',"Edicion datos empres",$texto.' Por:'.$_SESSION['INGRESO']['CodigoU']);
+		}
+		if($empresas[0]['Base_Datos']!=$parametros['Base'])
+		{
+			$texto='Base_Datos'.$empresas[0]['Base_Datos'].' a '.$parametros['Base'];
+
+			control_procesos('N',"Edicion datos empres",$texto.' Por:'.$_SESSION['INGRESO']['CodigoU']);
+		}
+		if($empresas[0]['Fecha_CE']!=$parametros['FechaCE'])
+		{
+			$texto=' Fecha_CE'.$empresas[0]['Fecha_CE'].' a '.$parametros['FechaCE'];
+
+			control_procesos('N',"Edicion datos empresa",$texto.' Por:'.$_SESSION['INGRESO']['CodigoU']);
+		}
+		if($empresas[0]['Fecha_DB']!=$parametros['FechaDB'])
+		{
+			$texto=' Fecha_DB '.$empresas[0]['Fecha_DB'].' a '.$parametros['FechaDB'];
+
+			control_procesos('N',"Edicion datos empres",$texto.' Por:'.$_SESSION['INGRESO']['CodigoU']);
+		}
+		if($empresas[0]['Fecha']!=$parametros['FechaR'])
+		{
+			$texto=' FechaR '.$empresas[0]['Fecha'].' a '.$parametros['FechaR'];
+
+			control_procesos('N',"Edicion datos empres",$texto.' Por:'.$_SESSION['INGRESO']['CodigoU']);
+		}
+		if($empresas[0]['Fecha_P12']!=$parametros['FechaP12'])
+		{
+			$texto=' FechaP12 '.$empresas[0]['Fecha_P12'].' a '.$parametros['FechaP12'];
+
+			control_procesos('N',"Edicion datos empres",$texto.' Por:'.$_SESSION['INGRESO']['CodigoU']);
+		}
+
+	}
+
+	function validar_cambiosSQL($parametros)
+	{
+		// print_r($parametros);
+		$texto = '';
+		$empresas = $this->modelo->datos_empresa($parametros['empresas']);
+		// print_r($empresas);die();
+		$datosEmp = $this->modelo->datos_sql_terceros($empresas[0],$empresas[0]['IP_VPN_RUTA'],$empresas[0]['Usuario_DB'],$empresas[0]['Contrasena_DB'],$empresas[0]['Base_Datos'],$empresas[0]['Puerto']);
+		// sqlparte
+		if($parametros['optionsRadios']=='option1'){$ambiente = 1;}else{$ambiente=2;}
+
+		if($datosEmp[0]['Ambiente']!=$ambiente)
+		{
+			$texto='Ambiente '.$datosEmp[0]['Ambiente'].' a '.$ambiente;
+
+			control_procesos('N',"Edicion datos empres",$texto.' Por:'.$_SESSION['INGRESO']['CodigoU']);
+		}
+		if($datosEmp[0]['Ruta_Certificado']!=$parametros['TxtEXTP12'])
+		{
+			$texto=' '.$datosEmp[0]['Ruta_Certificado'].' a '.$parametros['TxtEXTP12'];
+
+			control_procesos('N',"Edicion datos empres",$texto.' Por:'.$_SESSION['INGRESO']['CodigoU']);
+		}
+		if($datosEmp[0]['Clave_Certificado']!=$parametros['TxtContraExtP12'])
+		{
+			$texto=' '.$datosEmp[0]['Clave_Certificado'].' a '.$parametros['TxtContraExtP12'];
+
+			control_procesos('N',"Edicion datos empres",$texto.' Por:'.$_SESSION['INGRESO']['CodigoU']);
+		}
 	}
 
 }

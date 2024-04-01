@@ -397,60 +397,6 @@ class db
 	   return 1;
 	
 	}	
-}
-
-function control_procesos($TipoTrans,$opcional_proceso,$Tarea='.')
-{  
-   $start_time = microtime(true);
-  // print_r($_SESSION['INGRESO']);die();
-  $conn = new db();
-  $TMail_Credito_No = G_NINGUNO;
-  $NumEmpresa = $_SESSION['INGRESO']['item'];
-  $TMail = '';
-  $Modulo = $_SESSION['INGRESO']['modulo_'];
-  if($NumEmpresa=="")
-  {
-    $NumEmpresa = G_NINGUNO;
-  }
-  if($TMail == "")
-  {
-    $TMail = G_NINGUNO;
-  }
-  if($Modulo <> G_NINGUNO AND $TipoTrans<>G_NINGUNO AND $NumEmpresa<>G_NINGUNO)
-  {
-    if($Tarea == G_NINGUNO)
-    {
-      $Tarea = "Inicio de Sección";
-    }else
-    {
-      $Tarea = substr($Tarea,0,60);
-    }
-    $proceso = substr($opcional_proceso,0,60);
-    $NombreUsuario1 = substr($_SESSION['INGRESO']['Nombre'], 0, 60);
-    $Mifecha1 = date("Y-m-d");
-    $MiHora1 = date("H:i:s");
-    $CodigoUsuario= $_SESSION['INGRESO']['CodigoU'];
-    if($Tarea == "")
-    {
-      $Tarea = G_NINGUNO;
-    }
-    if($opcional_proceso=="")
-    {
-      $opcional_proceso = G_NINGUNO;
-    }
-
-	$ip = $_SESSION['INGRESO']['IP_Wan'];
-
-    $sql = "INSERT INTO acceso_pcs (IP_Acceso,CodigoU,Item,Aplicacion,RUC,Fecha,Hora,
-             ES,Tarea,Proceso,Credito_No,Periodo)VALUES('".$ip."','".$CodigoUsuario."','".$NumEmpresa."',
-             '".$_SESSION['INGRESO']['NombreModulo']."','".$_SESSION['INGRESO']['RUC']."','".$Mifecha1."','".$MiHora1."','".$TipoTrans."','".$Tarea."','".$proceso."','".$TMail_Credito_No."','".$_SESSION['INGRESO']['periodo']."');";
-    $conn->String_Sql($sql,'MYSQL');
-	$end_time = microtime(true);
-	$execution_time = ($end_time - $start_time);
-	#$tmp = `<script>console.log('Tiempo de ejecución: ' . $execution_time . ' segundos');</script>`;
-	#echo "Tiempo de ejecución: " . $execution_time . " segundos";
-  }
-
  
 }
 ?>
