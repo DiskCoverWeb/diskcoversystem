@@ -164,7 +164,9 @@ if(isset($_GET['balance_excel']))
 //funcion que recive los parametros
 function reporte_analitico_mensual($parametros)
 {
-	//print_r($parametros);die();
+	// print_r($parametros);
+	// die();
+	control_procesos('N', "(".$parametros['Tipo'].") Analitico Mensual del ".$parametros['desde']."  al ".$parametros['hasta'],' Consulta');
 	//creamos el objeto 
 	$modelo = new contabilidad_model();
 	//enviamos los datos al modelo
@@ -179,7 +181,7 @@ function reporte_analitico_mensual($parametros)
 		   $tabla = $modelo->Reporte_Analitico_Mensual_gilla($parametros['Tipo'],$respuesta['query']);
 		   return $tabla;
 		//retoprnamos la tabla este retorno se realizara a la primera duncion donde se llamar "don de esta isset($_GET['balance']"
-		   return $tabla;
+		   // return $tabla;
 	    }else
 	    {
 	    	$tabla = $modelo->Reporte_Analitico_Mensual_gilla($parametros['Tipo'],$respuesta['query'],'true');
