@@ -33,7 +33,7 @@ class registro_beneficiarioM
     function ObtenerColor($valor)
     {
         if ($valor) {
-            $sql = "SELECT Cmds, Picture, Color
+            $sql = "SELECT ".Full_Fields('Catalogo_Proceso')."
                 FROM Catalogo_Proceso
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Cmds = '" . $valor . "'";
@@ -44,6 +44,16 @@ class registro_beneficiarioM
                 return 0;
             }
         }
+    }
+
+    function LlenarSelectSexo()
+    {
+        $sql = "SELECT Tipo_Referencia, Codigo, Descripcion
+                FROM Tabla_Referenciales_SRI
+                WHERE (Tipo_Referencia = 'SEXO')
+                ORDER BY Tipo_Referencia, Descripcion";
+
+        return $this->db->datos($sql);
     }
 
     function LlenarSelectDiaEntrega()
@@ -73,10 +83,10 @@ class registro_beneficiarioM
 
     function llenarCamposInfo($valor)
     {
-        $sql = "SELECT CodigoA, Representante, CI_RUC_R, Telefono_R, Contacto, 
-                Profesion, Direccion, Email, Email2, 
-                Lugar_Trabajo, Telefono, TelefonoT, Dia_Ent, Hora_Ent, 
-                Calificacion, Actividad
+        $sql = "SELECT Codigo, CodigoA, Representante, CI_RUC_R, Telefono_R, Contacto, Sexo,
+                    Profesion, Email, Email2, Telefono, TelefonoT, Dia_Ent, 
+                    Hora_Ent, Prov, Ciudad, Canton, Parroquia, Barrio,
+                    Direccion, DireccionT,  Referencia, Calificacion, Actividad
                 FROM  Clientes 
                 WHERE Cliente <> '.'
                 AND Codigo = '" . $valor . "'";
@@ -91,8 +101,8 @@ class registro_beneficiarioM
     function llenarCamposInfoAdd($valor)
     {
         $sql = "SELECT CodigoA AS CodigoA2, Dia_Ent AS Dia_Ent2, Hora_Ent AS Hora_Ent2,
-                Envio_No, No_Soc, Area, Acreditacion, Tipo_Dato,
-                Cod_Fam, Evidencias, Observaciones, Item
+                    Envio_No, No_Soc, Area, Acreditacion, Tipo_Dato,
+                    Cod_Fam, Evidencias, Observaciones, Item, Etapa_Procesal
                 FROM  Clientes_Datos_Extras
                 WHERE Codigo = '" . $valor . "'";
         $resultado = $this->db->datos($sql);
@@ -105,7 +115,7 @@ class registro_beneficiarioM
 
     function sqlComunDonacion()
     {
-        return "SELECT Codigo, Concepto
+        return "SELECT Codigo, Concepto, Picture
                 FROM Catalogo_Lineas
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
@@ -136,7 +146,7 @@ class registro_beneficiarioM
 
     function LlenarSelects_Val($query, $valor, $valor2)
     {
-        $sql = "SELECT Nivel, TP, Proceso, Cmds, Picture, Color
+        $sql = "SELECT ".Full_Fields('Catalogo_Proceso')."
                     FROM Catalogo_Proceso
                     WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'";
 
@@ -157,6 +167,8 @@ class registro_beneficiarioM
 
     function ActualizarClientes($parametros)
     {
+        //Direccion = '" . $parametros['Direccion'] . "', 
+        //Lugar_Trabajo = '" . $parametros['Lugar_Trabajo'] . "', 
         $sql = "UPDATE Clientes SET
                 Actividad = '" . $parametros['Actividad'] . "',
                 Calificacion = '" . $parametros['Calificacion'] . "',
@@ -168,26 +180,38 @@ class registro_beneficiarioM
                 Profesion = '" . $parametros['Profesion'] . "', 
                 Hora_Ent = '" . $parametros['Hora_Ent'] . "', 
                 Dia_Ent = '" . $parametros['Dia_Ent'] . "', 
-                Direccion = '" . $parametros['Direccion'] . "', 
+
+                Sexo = '" . $parametros['Sexo'] . "', 
+
                 Email = '" . $parametros['Email'] . "', 
-                Email2 = '" . $parametros['Email2'] . "', 
-                Lugar_Trabajo = '" . $parametros['Lugar_Trabajo'] . "', 
+                Email2 = '" . $parametros['Email2'] . "',                 
                 Telefono = '" . $parametros['Telefono'] . "', 
-                TelefonoT = '" . $parametros['TelefonoT'] . "' 
+                TelefonoT = '" . $parametros['TelefonoT'] . "', 
+
+                Prov = '" . $parametros['Provincia'] . "', 
+                Ciudad = '" . $parametros['Ciudad'] . "', 
+                Canton = '" . $parametros['Canton'] . "', 
+                Parroquia = '" . $parametros['Parroquia'] . "', 
+                Barrio = '" . $parametros['Barrio'] . "', 
+                Direccion = '" . $parametros['CalleP'] . "', 
+                DireccionT = '" . $parametros['CalleS'] . "', 
+                Referencia = '" . $parametros['Referencia'] . "'
                 WHERE CI_RUC = '" . $parametros['CI_RUC'] . "'";
+
         return $this->db->datos($sql);
     }
 
     function ActualizarClientesDatosExtra($parametros)
     {
-        //-- Area = '" . $parametros['Area'] . "', 
+ 
         $sql = "UPDATE Clientes_Datos_Extras SET
                 CodigoA = '" . $parametros['CodigoA2'] . "', 
                 Dia_Ent = '" . $parametros['Dia_Ent2'] . "', 
                 Hora_Ent = '" . $parametros['Hora_Registro'] . "', 
-                Envio_No = '" . $parametros['Envio_No'] . "', 
+                Envio_No = '" . $parametros['Envio_No'] . "',
+                Etapa_Procesal = '" . $parametros['Comentario'] . "',
                 No_Soc = '" . $parametros['No_Soc'] . "', 
-                
+                Area = '" . $parametros['Area'] . "',
                 Acreditacion = '" . $parametros['Acreditacion'] . "', 
                 Tipo_Dato = '" . $parametros['Tipo_Dato'] . "', 
                 Cod_Fam = '" . $parametros['Cod_Fam'] . "', 
@@ -201,13 +225,14 @@ class registro_beneficiarioM
     function CrearClienteDatosExtra($parametros)
     {
         $sql2 = "INSERT INTO Clientes_Datos_Extras (Codigo, CodigoA, Dia_Ent, Hora_Ent, 
-        Envio_No, No_Soc, --Area, 
+        Envio_No, Etapa_Procesal, No_Soc, Area, 
         Acreditacion, Tipo_Dato, Cod_Fam, Evidencias, Observaciones, Item) 
         VALUES ('" . $parametros['Codigo'] . "', 
                 '" . $parametros['CodigoA2'] . "', 
                 '" . $parametros['Dia_Ent2'] . "', 
                 '" . $parametros['Hora_Registro'] . "', 
                 '" . $parametros['Envio_No'] . "', 
+                '" . $parametros['Comentario'] . "', 
                 '" . $parametros['No_Soc'] . "', 
                 '" . $parametros['Area'] . "', 
                 '" . $parametros['Acreditacion'] . "', 
@@ -232,6 +257,8 @@ class registro_beneficiarioM
             $sql1 = $this->ActualizarClientes($parametros);
             $sql2 = $this->CrearClienteDatosExtra($parametros);
         }
+
+        Eliminar_Nulos_SP("Clientes");
         Eliminar_Nulos_SP("Clientes_Datos_Extras");
         return ['dato1' => $sql1, 'dato2' => $sql2];
     }

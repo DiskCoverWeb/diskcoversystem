@@ -193,18 +193,23 @@
                                         </span>
                                     </div>
                                 </div>
+                                <div style="flex: 1; margin-right: 10px; ">
+                                    <label for="sexo" style="display: block;">Sexo</label>
+                                    <select class="form-control input-xs" name="sexo" id="sexo"
+                                        style="width: 100%;"></select>
+                                </div>
+                            </div>
+                            <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
                                 <div id="carouselBtnIma_87" class="carousel slide" data-ride="carousel"
                                     style="margin-right: 10px;">
                                     <div class="carousel-inner">
                                     </div>
                                 </div>
-                                <div style="flex: 1;">
+                                <div style="flex: 1; margin-right: 10px; ">
                                     <label for="input_87" style="display: block;">Estado</label>
                                     <input class="form-control input-xs" type="text" name="input_87" id="input_87"
                                         placeholder="Haz clic sobre la imagen" readonly>
                                 </div>
-                            </div>
-                            <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
                                 <div style="flex: 1; margin-right: 10px; ">
                                     <label for="nombreRepre" style="display: block;">Nombre Representante Legal</label>
                                     <input class="form-control input-xs" type="text" name="nombreRepre" id="nombreRepre"
@@ -216,7 +221,7 @@
                                         placeholder="CI Representante">
                                 </div>
                                 <div style="flex: 1;">
-                                    <label for="telfRepre" style="display: block;">Telefono Representante Legal</label>
+                                    <label for="telfRepre" style="display: block;">Teléfono Representante Legal</label>
                                     <input class="form-control input-xs" type="text" name="telfRepre" id="telfRepre"
                                         placeholder="Representante legal">
                                 </div>
@@ -231,7 +236,7 @@
                                 <div style="flex: 1; margin-right: 10px; ">
                                     <label for="cargo" style="display: block;">Cargo</label>
                                     <input class="form-control input-xs" type="text" name="cargo" id="cargo"
-                                        placeholder="Profesion">
+                                        placeholder="Profesión">
                                 </div>
                                 <div style="margin-right: 10px;  display: flex; ">
                                     <img src="../../img/png/calendario2.png" width="60" height="60">
@@ -263,7 +268,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="form-group">
-                                            <label for="dir">Ingresar Direccion </label>
+                                            <label for="dir">Ingresar Dirección </label>
                                         </div>
                                     </div>
                                 </div>
@@ -295,12 +300,12 @@
                                     <div class="row">
                                         <label for="telefono" style="display: block;">Teléfono 1</label>
                                         <input class="form-control input-xs" type="text" name="telefono" id="telefono"
-                                            placeholder="Telefono ">
+                                            placeholder="Teléfono ">
                                     </div>
                                     <div class="row">
                                         <label for="telefono2" style="display: block;">Teléfono 2</label>
                                         <input class="form-control input-xs" type="text" name="telefono2" id="telefono2"
-                                            placeholder="Telefono 2">
+                                            placeholder="Teléfono 2">
                                     </div>
                                 </div>
                             </div>
@@ -367,11 +372,11 @@
                                     <input type="number" name="totalPersonas" id="totalPersonas"
                                         class="form-control input-xs" min="0" max="100">
                                 </div>
-                                <!--div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
-                                <label for="select_91" style="display: block;">Tipo de Población</label>
-                                <select class="form-control input-xs" name="select_91" id="select_91"
-                                    style="width: 100%;"></select>
-                            </div-->
+                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                    <label for="select_91" style="display: block;">Tipo de Población</label>
+                                    <select class="form-control input-xs" name="select_91" id="select_91"
+                                        style="width: 100%;"></select>
+                                </div>
                                 <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
                                     <label for="select_92" style="display: block;">Acción Social</label>
                                     <select class="form-control input-xs" name="select_92" id="select_92"
@@ -460,17 +465,20 @@
                         </div>
                         <div class="modal-body" style="overflow-y: auto; max-height: 200px;">
                             <div class="form-group row">
-                                <label for="Provincia" class="col-sm-3 col-form-label">Provincia</label>
+                                <label for="Ciudad" class="col-sm-3 col-form-label">Provincia</label>
                                 <div class="col-sm-9">
-                                    <input class="form-control" type="text" name="Provincia" id="Provincia"
-                                        placeholder="Ingrese una provincia">
+                                    <select class="form-control input-sm" id="select_provincias"
+                                        onchange="ciudad(this.value)">
+                                        <option value="">Seleccione provincia</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="Ciudad" class="col-sm-3 col-form-label">Ciudad</label>
                                 <div class="col-sm-9">
-                                    <input class="form-control" type="text" name="Ciudad" id="Ciudad"
-                                        placeholder="Ingrese una ciudad">
+                                    <select class="form-control input-sm" id="select_ciudad">
+                                        <option value="">Seleccione ciudad</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -515,6 +523,10 @@
                                         placeholder="Ingrese una referencia">
                                 </div>
                             </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" id="btnGuardarDir">Aceptar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div>
                 </div>
@@ -615,8 +627,72 @@
 
     //direccion
     $('#btnMostrarDir').click(function () {
+        provincias();
         $('#modalBtnDir').modal('show');
     });
+
+    //direccion
+    $('#btnGuardarDir').click(function () {
+        $('#modalBtnDir').modal('hide');
+        var provincia = $('#select_provincias').val();
+        var ciudad = $('#select_ciudad').val();
+        var canton = $('#Canton').val();
+        var parroquia = $('#Parroquia').val();
+        var barrio = $('#Barrio').val();
+        var callep = $('#CalleP').val();
+        var calles = $('#CalleS').val();
+        var referencia = $('#Referencia').val();
+
+        console.log(provincia + "," + ciudad);
+        console.log(canton + "," + parroquia);
+        console.log(barrio + "," + callep);
+        console.log(calles + "," + referencia);
+    });
+
+    function provincias() {
+        var option = "<option value='' disabled selected>Seleccione provincia</option>";
+        $.ajax({
+            url: '../controlador/inventario/registro_beneficiarioC.php?provincias=true',
+            type: 'post',
+            dataType: 'json',
+            beforeSend: function () {
+                $("#select_ciudad").html("<option value='' disabled selected>Seleccione provincia</option>");
+            },
+            success: function (response) {
+                response.forEach(function (data, index) {
+                    option += "<option value='" + data.Codigo + "'>" + data.Descripcion_Rubro + "</option>";
+                });
+                $('#select_provincias').html(option);
+                if (prov != null) {
+                    $('#select_provincias').val(prov).trigger('change');
+                    ciudad(prov);
+                }
+            }
+        });
+
+    }
+    function ciudad(idpro) {
+        console.log(idpro);
+        var option = "<option value='' disabled selected>Seleccione ciudad</option>";
+        if (idpro != '') {
+            $.ajax({
+                url: '../controlador/inventario/registro_beneficiarioC.php?ciudad=true',
+                type: 'post',
+                dataType: 'json',
+                data: { idpro: idpro },
+                success: function (response) {
+                    response.forEach(function (data, index) {
+                        option += "<option value='" + data.Codigo + "'>" + data.Descripcion_Rubro + "</option>";
+                    });
+                    $('#select_ciudad').html(option);
+                    if (ciud != null) {
+                        $('#select_ciudad').val(ciud).trigger('change');
+                    }
+                }
+            });
+        }
+    }
+
 
     //grupo
     $('#btnMostrarGrupo').click(function () {
@@ -633,9 +709,9 @@
                 var fila = $('<tr>');
 
                 var celda1 = $('<td>', { colspan: 2, text: item.text });
-                var celda2 = $('<td>').append($('<input>', { type: 'number', class: 'form-control', name: 'hombres' }));
-                var celda3 = $('<td>').append($('<input>', { type: 'number', class: 'form-control', name: 'mujeres' }));
-                var celda4 = $('<td>').append($('<input>', { type: 'number', class: 'form-control', name: 'total' }));
+                var celda2 = $('<td>').append($('<input>', { type: 'text', class: 'form-control', name: 'hombres' }));
+                var celda3 = $('<td>').append($('<input>', { type: 'text', class: 'form-control', name: 'mujeres' }));
+                var celda4 = $('<td>').append($('<input>', { type: 'text', class: 'form-control', name: 'total' }));
 
                 fila.append(celda1, celda2, celda3, celda4);
 
@@ -684,7 +760,7 @@
                     var opt = '<option value="">Estado</option>';
                     datos.forEach(function (item) {
                         option += '<div class="col-md-6 col-sm-6">' +
-                            '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/group.png" onclick="itemSelect(\'' + item.picture +
+                            '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/' + item.picture + '.png" onclick="itemSelect(\'' + item.picture +
                             '\',\'' + item.text + '\', \'' + item.color + '\', \'' + item.id +
                             '\')" style="width: 60px;height: 60px;"></button><br>' +
                             '<b>' + item.text + '</b>' +
@@ -694,25 +770,27 @@
                     $('#modal_Don').html(option);
 
                 } else {
-                    var carouselInner = $('#carouselBtnIma_' + valor + ' .carousel-inner');
-                    if (datos.length > 0) {
-                        carouselInner.empty();
-                    }
-                    datos.forEach(function (item, index) {
-                        var carouselItem = $('<div class="item">');
-                        if (index === 0) {
-                            carouselItem.addClass('active');
+                    if (valor != 91) {
+                        var carouselInner = $('#carouselBtnIma_' + valor + ' .carousel-inner');
+                        if (datos.length > 0) {
+                            carouselInner.empty();
                         }
-                        var imgSrc = '../../img/png/' + item.picture + '.png';
-                        var carouselContent = '<img src="' + imgSrc + '" alt="' + item.text + '" width="55" height="55">' +
-                            '<div class="carousel-caption">' +
-                            '</div>';
-                        carouselItem.html(carouselContent);
-                        carouselItem.click(function () {
-                            abrirModal(valor);
+                        datos.forEach(function (item, index) {
+                            var carouselItem = $('<div class="item">');
+                            if (index === 0) {
+                                carouselItem.addClass('active');
+                            }
+                            var imgSrc = '../../img/png/' + item.picture + '.png';
+                            var carouselContent = '<img src="' + imgSrc + '" alt="' + item.text + '" width="55" height="55">' +
+                                '<div class="carousel-caption">' +
+                                '</div>';
+                            carouselItem.html(carouselContent);
+                            carouselItem.click(function () {
+                                abrirModal(valor);
+                            });
+                            carouselInner.append(carouselItem);
                         });
-                        carouselInner.append(carouselItem);
-                    });
+                    }
 
                     var option = '';
                     if (valor == 87) {
@@ -744,6 +822,7 @@
                         });
                         $('#modal_93').html(option);
                     }
+
                 }
             }
         });
@@ -803,13 +882,14 @@
     function Form_Activate() {
         $('#comentariodiv').hide();
         LlenarSelectDiaEntrega();
+        LlenarSelectSexo();
         LlenarSelectRucCliente();
         llenarCarousels(87);
         llenarCarousels(93);
         llenarCarousels(91);
         //[87, 91, 93].forEach(llenarCarousels);
         llenarCarousels("CXC", true);
-        [86, 88, 89, 90, 92].forEach(LlenarSelects_Val);
+        [86, 88, 89, 90, 91, 92].forEach(LlenarSelects_Val);
 
         horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         $('#horaEntregac').val(horaActual);
@@ -821,6 +901,7 @@
         if (selectedValue === '86.04') {
             $('#comentariodiv').show();
         } else {
+            $('#comentariodiv').val('.');
             $('#comentariodiv').hide();
         }
     });
@@ -833,7 +914,7 @@
             //console.log(valorSeleccionado);
             LlenarCalendario(valorSeleccionado);
         } else {
-            swal.fire('', 'Por favor, seleccione una organizacion', 'info');
+            swal.fire('', 'Por favor, seleccione una organización', 'info');
         }
     });
 
@@ -933,6 +1014,23 @@
         $('#modalCalendario').modal('show');
     }
 
+    //selects Sexo
+    function LlenarSelectSexo() {
+        $.ajax({
+            url: '../controlador/inventario/registro_beneficiarioC.php?LlenarSelectSexo=true',
+            type: 'post',
+            dataType: 'json',
+            success: function (datos) {
+                $('#sexo').append('<option value="" disabled selected>Seleccione una opción</option>');
+
+                $.each(datos, function (index, opcion) {
+                    $('#sexo').append('<option value="' + opcion['Codigo'] + '">' + opcion['Descripcion'] + '</option>');
+                });
+            }
+        });
+    }
+
+
     //selects Dia de Entrega
     function LlenarSelectDiaEntrega() {
         $.ajax({
@@ -940,6 +1038,9 @@
             type: 'post',
             dataType: 'json',
             success: function (datos) {
+                $('#diaEntregac').append('<option value="" disabled selected>Seleccione una opción</option>');
+                $('#diaEntrega').append('<option value="" disabled selected>Seleccione una opción</option>');
+
                 $.each(datos, function (index, opcion) {
                     $('#diaEntregac').append('<option value="' + opcion['Dia_Mes_C'] + '">' + opcion['Dia_Mes'] + '</option>');
                     $('#diaEntrega').append('<option value="' + opcion['Dia_Mes_C'] + '">' + opcion['Dia_Mes'] + '</option>');
@@ -951,7 +1052,7 @@
     //select RUC y Cliente
     function LlenarSelectRucCliente() {
         $('#ruc').select2({
-            placeholder: 'Seleccione una opcion',
+            placeholder: 'Seleccione una opción',
             ajax: {
                 url: '../controlador/inventario/registro_beneficiarioC.php?',
                 dataType: 'json',
@@ -972,7 +1073,7 @@
         });
 
         $('#cliente').select2({
-            placeholder: 'Seleccione una opcion',
+            placeholder: 'Seleccione una opción',
             ajax: {
                 url: '../controlador/inventario/registro_beneficiarioC.php?',
                 dataType: 'json',
@@ -1051,21 +1152,34 @@
         formData.append('Telefono_R', $('#telfRepre').val());
         formData.append('Contacto', $('#contacto').val());
         formData.append('Profesion', $('#cargo').val());
-        formData.append('Dia_Ent', $('#diaEntrega').val());
+        formData.append('Dia_Ent', $('#diaEntrega').val() || '.');
         formData.append('Hora_Ent', $('#horaEntrega').val());
-        formData.append('Direccion', $('#direccion').val());
+
+        formData.append('Sexo', $('#sexo').val() || '.');
+        //formData.append('Direccion', $('#direccion').val());
+        //formData.append('Lugar_Trabajo', $('#referencia').val());
         formData.append('Email', $('#email').val());
         formData.append('Email2', $('#email2').val());
-        formData.append('Lugar_Trabajo', $('#referencia').val());
         formData.append('Telefono', $('#telefono').val());
         formData.append('TelefonoT', $('#telefono2').val());
+
+        formData.append('Provincia', $('#select_provincias').val() || '.');
+        formData.append('Ciudad', $('#select_ciudad').val() || '.');
+        formData.append('Canton', $('#Canton').val() || '.');
+        formData.append('Parroquia', $('#Parroquia').val() || '.');
+        formData.append('Barrio', $('#Barrio').val() || '.');
+        formData.append('CalleP', $('#CalleP').val() || '.');
+        formData.append('CalleS', $('#CalleS').val() || '.');
+        formData.append('Referencia', $('#Referencia').val() || '.');
+
         // Información adicional
         formData.append('CodigoA2', $('#select_88').val());
-        formData.append('Dia_Ent2', $('#diaEntregac').val());
+        formData.append('Dia_Ent2', $('#diaEntregac').val() || '.');
         formData.append('Hora_Registro', $('#horaEntregac').val());
         formData.append('Envio_No', $('#select_86').val());
+        formData.append('Comentario', $('#comentario').val() || '.');
         formData.append('No_Soc', $('#totalPersonas').val());
-        //formData.append('Area', $('#select_91').val());
+        formData.append('Area', $('#select_91').val());
         formData.append('Acreditacion', $('#select_92').val());
         formData.append('Tipo_Dato', $('#select_90').val());
         formData.append('Cod_Fam', $('#select_89').val());
@@ -1087,7 +1201,7 @@
         if (!$('#horaEntregac').val()) camposVacios.push('Hora Entrega');
         if (!$('#select_86').val()) camposVacios.push('Frecuencia');
         if (!$('#totalPersonas').val()) camposVacios.push('Personas Atendidas');
-        //if (!$('#select_91').val()) camposVacios.push('Tipo poblacion');
+        if (!$('#select_91').val()) camposVacios.push('Tipo poblacion');
         if (!$('#select_92').val()) camposVacios.push('Accion social');
         if (!$('#select_90').val()) camposVacios.push('Vulnerabilidad');
         if (!$('#select_89').val()) camposVacios.push('Tipo Atencion');
@@ -1141,7 +1255,7 @@
         $('#select_88').val(null).trigger('change');
         $('#select_89').val(null).trigger('change');
         $('#select_90').val(null).trigger('change');
-        //$('#select_91').val(null).trigger('change');
+        $('#select_91').val(null).trigger('change');
         $('#archivoAdd').val('');
         $('#diaEntregac').val('');
         $('#horaEntregac').val('');
@@ -1196,6 +1310,8 @@
     });
 
     //llenar campos del panel informacion
+    var prov;
+    var ciud;
     function llenarCamposInfo(Codigo) {
         $.ajax({
             url: '../controlador/inventario/registro_beneficiarioC.php?llenarCamposInfo=true',
@@ -1203,19 +1319,32 @@
             dataType: 'json',
             data: { valor: Codigo },
             success: function (datos) {
-                console.log(datos);
+                console.log(datos.Ciudad);
                 if (datos != 0) {
                     $('#nombreRepre').val(datos.Representante);
                     $('#ciRepre').val(datos.CI_RUC_R);
                     $('#telfRepre').val(datos.Telefono_R);
                     $('#contacto').val(datos.Contacto);
                     $('#cargo').val(datos.Profesion);
-                    $('#direccion').val(datos.Direccion);
+                    //$('#direccion').val(datos.Direccion);
                     $('#email').val(datos.Email);
                     $('#email2').val(datos.Email2);
-                    $('#referencia').val(datos.Lugar_Trabajo);
+                    //$('#referencia').val(datos.Lugar_Trabajo);
                     $('#telefono').val(datos.Telefono);
                     $('#telefono2').val(datos.TelefonoT);
+                    if (datos.Sexo) {
+                        $('#sexo').val(datos.Sexo);
+                    }
+
+                    prov = (datos.Prov !== '.') ? datos.Prov : null;
+                    ciud = (datos.Ciudad !== '.') ? datos.Ciudad : null;
+
+                    $('#Canton').val(datos.Canton);
+                    $('#Parroquia').val(datos.Parroquia);
+                    $('#Barrio').val(datos.Barrio);
+                    $('#CalleP').val(datos.Direccion);
+                    $('#CalleS').val(datos.DireccionT);
+                    $('#Referencia').val(datos.Referencia);
 
                     datosArray.forEach(function (item) {
                         if (item.id === datos.Actividad || item.id === datos.CodigoA || item.id === datos.Calificacion) {
@@ -1254,11 +1383,12 @@
                         $('#diaEntregac').val(datos.Dia_Ent2);
                         $('#horaEntregac').val(datos.Hora_Ent2);
                         $('#totalPersonas').val(datos.No_Soc);
+                        $('#comentario').val(datos.Etapa_Procesal);
                         $('#infoNut').val(datos.Observaciones);
                         nombreArchivo = datos.Evidencias;
                         llenarPreSelects(datos.CodigoA2);
                         llenarPreSelects(datos.Envio_No);
-                        //llenarPreSelects(datos.Area);
+                        llenarPreSelects(datos.Area);
                         llenarPreSelects(datos.Acreditacion);
                         llenarPreSelects(datos.Tipo_Dato);
                         llenarPreSelects(datos.Cod_Fam);

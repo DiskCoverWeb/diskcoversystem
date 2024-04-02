@@ -11,71 +11,75 @@ include (dirname(__DIR__, 2) . '/modelo/inventario/registro_beneficiarioM.php');
 
 $controlador = new registro_beneficiarioC();
 
-if (isset ($_GET['LlenarSelect'])) {
+if (isset($_GET['LlenarSelect'])) {
     $valores = $_POST['valores'];
     echo json_encode($controlador->LlenarSelect($valores));
 }
 
-if (isset ($_GET['ObtenerColor'])) {
+if (isset($_GET['ObtenerColor'])) {
     $valor = $_POST['valor'];
     echo json_encode($controlador->ObtenerColor($valor));
 }
 
-if (isset ($_GET['actualizarSelectDonacion'])) {
+if (isset($_GET['actualizarSelectDonacion'])) {
     $valor = $_POST['valor'];
     echo json_encode($controlador->actualizarSelectDonacion($valor));
 }
 
-if (isset ($_GET['LlenarCalendario'])) {
+if (isset($_GET['LlenarCalendario'])) {
     $valor = $_POST['valor'];
     echo json_encode($controlador->LlenarCalendario($valor));
 }
 
-if (isset ($_GET['descargarArchivo'])) {
+if (isset($_GET['descargarArchivo'])) {
     $valor = $_POST['valor'];
     echo json_encode($controlador->descargarArchivo($valor));
 }
 
-if (isset ($_GET['LlenarSelectDiaEntrega'])) {
+if (isset($_GET['LlenarSelectSexo'])) {
+    echo json_encode($controlador->LlenarSelectSexo());
+}
+
+if (isset($_GET['LlenarSelectDiaEntrega'])) {
     echo json_encode($controlador->LlenarSelectDiaEntrega());
 }
 
-if (isset ($_GET['LlenarSelectRucCliente'])) {
+if (isset($_GET['LlenarSelectRucCliente'])) {
     $query = '';
-    if (isset ($_GET['query'])) {
+    if (isset($_GET['query'])) {
         $query = $_GET['query'];
     }
     echo json_encode($controlador->LlenarSelectRucCliente($query));
 }
 
-if (isset ($_GET['LlenarTipoDonacion'])) {
+if (isset($_GET['LlenarTipoDonacion'])) {
     $query = '';
-    if (isset ($_GET['query'])) {
+    if (isset($_GET['query'])) {
         $query = $_GET['query'];
     }
     echo json_encode($controlador->LlenarTipoDonacion($query));
 }
 
-if (isset ($_GET['LlenarSelects_Val'])) {
+if (isset($_GET['LlenarSelects_Val'])) {
     $query = '';
-    $valor = isset ($_GET['valor']) ? $_GET['valor'] : 0;
-    if (isset ($_GET['query'])) {
+    $valor = isset($_GET['valor']) ? $_GET['valor'] : 0;
+    if (isset($_GET['query'])) {
         $query = $_GET['query'];
     }
-    $valor2 = isset ($_GET['valor2']) ? $_GET['valor2'] : false;
+    $valor2 = isset($_GET['valor2']) ? $_GET['valor2'] : false;
     echo json_encode($controlador->LlenarSelects_Val($query, $valor, $valor2));
 }
 
-if (isset ($_GET['llenarCamposInfo'])) {
+if (isset($_GET['llenarCamposInfo'])) {
     $valor = $_POST['valor'];
     echo json_encode($controlador->llenarCamposInfo($valor));
 }
-if (isset ($_GET['llenarCamposInfoAdd'])) {
+if (isset($_GET['llenarCamposInfoAdd'])) {
     $valor = $_POST['valor'];
     echo json_encode($controlador->llenarCamposInfoAdd($valor));
 }
 
-if (isset ($_GET['guardarAsignacion'])) {
+if (isset($_GET['guardarAsignacion'])) {
 
     $params = array(
         'Cliente' => $_POST['Cliente'],
@@ -91,25 +95,40 @@ if (isset ($_GET['guardarAsignacion'])) {
         'Profesion' => $_POST['Profesion'],
         'Dia_Ent' => $_POST['Dia_Ent'],
         'Hora_Ent' => $_POST['Hora_Ent'],
-        'Direccion' => $_POST['Direccion'],
+
+        'Sexo' => $_POST['Sexo'],
+
+        //'Direccion' => $_POST['Direccion'],
+        //'Lugar_Trabajo' => $_POST['Lugar_Trabajo'],
         'Email' => $_POST['Email'],
         'Email2' => $_POST['Email2'],
-        'Lugar_Trabajo' => $_POST['Lugar_Trabajo'],
+
+        'Provincia' => $_POST['Provincia'],
+        'Ciudad' => $_POST['Ciudad'],
+        'Canton' => $_POST['Canton'],
+        'Parroquia' => $_POST['Parroquia'],
+        'Barrio' => $_POST['Barrio'],
+        'CalleP' => $_POST['CalleP'],
+        'CalleS' => $_POST['CalleS'],
+        'Referencia' => $_POST['Referencia'],
+        
         'Telefono' => $_POST['Telefono'],
         'TelefonoT' => $_POST['TelefonoT'],
+
         'CodigoA2' => $_POST['CodigoA2'],
         'Dia_Ent2' => $_POST['Dia_Ent2'],
         'Hora_Registro' => $_POST['Hora_Registro'],
         'Envio_No' => $_POST['Envio_No'],
+        'Comentario' => $_POST['Comentario'],
         'No_Soc' => $_POST['No_Soc'],
-        //'Area' => $_POST['Area'],
+        'Area' => $_POST['Area'],
         'Acreditacion' => $_POST['Acreditacion'],
         'Tipo_Dato' => $_POST['Tipo_Dato'],
         'Cod_Fam' => $_POST['Cod_Fam'],
         'Observaciones' => $_POST['Observaciones']
     );
 
-    if (isset ($_FILES['Evidencias']) && $_FILES['Evidencias']['error'] == UPLOAD_ERR_OK) {
+    if (isset($_FILES['Evidencias']) && $_FILES['Evidencias']['error'] == UPLOAD_ERR_OK) {
         $archivo = $_FILES['Evidencias'];
         $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/EVIDENCIA_" . $_SESSION['INGRESO']['Entidad'] .
             "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
@@ -139,6 +158,21 @@ if (isset ($_GET['guardarAsignacion'])) {
 
 }
 
+if(isset($_GET['provincias']))
+{
+  $pais = '';
+  if(isset($_POST['pais']))
+  {
+    $pais = $_POST['pais'];
+  }
+	echo json_encode(provincia_todas($pais));
+}
+
+if(isset($_GET['ciudad']))
+{
+	echo json_encode(todas_ciudad($_POST['idpro']));
+}
+
 class registro_beneficiarioC
 {
     private $modelo;
@@ -151,7 +185,7 @@ class registro_beneficiarioC
     function LlenarCalendario($valor)
     {
         $datos = $this->modelo->LlenarCalendario($valor);
-        if (empty ($datos)) {
+        if (empty($datos)) {
             $datos = 0;
         }
         return $datos;
@@ -160,7 +194,7 @@ class registro_beneficiarioC
     function llenarCamposInfo($valor)
     {
         $datos = $this->modelo->llenarCamposInfo($valor);
-        if (empty ($datos)) {
+        if (empty($datos)) {
             $datos = 0;
         }
         return $datos;
@@ -169,17 +203,26 @@ class registro_beneficiarioC
     function llenarCamposInfoAdd($valor)
     {
         $datos = $this->modelo->llenarCamposInfoAdd($valor);
-        if (empty ($datos)) {
+        if (empty($datos)) {
             $datos = 0;
         }
         return $datos;
 
     }
 
+    function LlenarSelectSexo()
+    {
+        $datos = $this->modelo->LlenarSelectSexo();
+        if (empty($datos)) {
+            $datos = 0;
+        }
+        return $datos;
+    }
+
     function LlenarSelectDiaEntrega()
     {
         $datos = $this->modelo->LlenarSelectDiaEntrega();
-        if (empty ($datos)) {
+        if (empty($datos)) {
             $datos = 0;
         }
         return $datos;
@@ -188,7 +231,8 @@ class registro_beneficiarioC
     function ObtenerColor($valor)
     {
         $datos = $this->modelo->ObtenerColor($valor);
-        if (empty ($datos)) {
+        if(!isset( $datos['Color'])){  $datos['Color'] = '#fffacd';}
+        if (empty($datos)) {
             $datos = 0;
         }
         return $datos;
@@ -273,25 +317,29 @@ class registro_beneficiarioC
         try {
             $datos = $this->modelo->LlenarSelects_Val($query, $valor, $valor2);
 
-            if (empty ($datos)) {
+            if (empty($datos)) {
                 throw new Exception('No se encontraron datos');
             }
 
             $respuesta = [];
             foreach ($datos as $dato) { {
+                if(!isset( $dato['Color'])){  $dato['Color'] = '#fffacd';}
                     if ($valor2) {
                         $id = substr($dato['Codigo'], -3);
                         $respuesta[] = [
                             'id' => $id,
                             'text' => $dato['Concepto'],
+                            'picture' => $dato['Picture'],
                         ];
                     } else {
+
                         $respuesta[] = [
                             'id' => $dato['Cmds'],
                             'text' => $dato['Proceso'],
                             'color' => $dato['Color'],
                             'picture' => $dato['Picture'],
                         ];
+
                     }
                 }
             }
