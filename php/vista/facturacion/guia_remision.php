@@ -3,6 +3,7 @@
   date_default_timezone_set('America/Guayaquil');
 ?>
 <script type="text/javascript">
+  let ivaprod = 0;
   $(document).ready(function() {
     // limpiar_grid();
     $('#MBoxFechaGRE').select();
@@ -14,6 +15,7 @@
       DCEmpresaEntrega()
       cargar_grilla()
       productos()
+      DCPorcenIva('MBoxFechaGRE', 'DCPorcIVA');
 
 
  $('#cliente').on('select2:select', function (e) {
@@ -28,6 +30,12 @@
       console.log(data);
     });
   });
+
+  function cambiar_iva(){
+    var iva = $('#DCPorcIVA').val();
+    $('#LabelTotTarifa').text('Total Tarifa ' + iva + '%');
+    $('#LabelIVA').text('IVA ' + iva + '%');
+  }
 
   function cerrar_modal_cambio_nombre() {
     var nuevo = $('#TxtDetalle').val();
@@ -409,6 +417,9 @@ function aceptar(){
         'Cantidad' :$('#cantidad').val(),
         'codigoCliente':codigoCliente,
     }
+    if(ivaprod){
+      lineas.Iva = $('#DCPorcIVA').val();
+    }
     $.ajax({
       type: "POST",
       url: '../controlador/facturacion/lista_guia_remisionC.php?guardarLineas=true&'+parametros+'&T='+$('#txt_tc').text(),
@@ -439,8 +450,9 @@ function aceptar(){
         console.log(data);
         $('#tbl_divisas').html(data.tbl);   
         $("#total0").val(parseFloat(data.total).toFixed(2));
-        $("#totalFac").val(parseFloat(data.total).toFixed(2));
-        $("#efectivo").val(parseFloat(data.total).toFixed(2));
+        $("#totalFac").val(parseFloat(data.total + data.iva_total).toFixed(2));
+        $("#efectivo").val(parseFloat(data.total + data.iva_total).toFixed(2));
+        $('#iva12').val(parseFloat(data.iva_total).toFixed(2));
         $('#myModal_espera').modal('hide');
       }
     });
@@ -480,6 +492,7 @@ function aceptar(){
         success: function(data) {
             console.log(data);
             if (data.respueta == true) {
+              ivaprod = data.datos.IVA;
                 if (data.datos.Stock < 0) {
                     Swal.fire(data.datos.Producto + ' ES UN PRODUCTO SIN EXISTENCIA', '', 'info').then(
                         function() {
@@ -655,7 +668,7 @@ function Eliminar(cod)
        return false;
     } 
 
-    $('#myModal_espera').modal('show');
+    //$('#myModal_espera').modal('show');
 
     parametros = $('#form_guia').serialize();
     parametros = parametros+'&Comercial='+$('#DCRazonSocial option:selected').text()+'&Entrega='+$('#DCEmpresaEntrega option:selected').text();
@@ -756,9 +769,13 @@ function Eliminar(cod)
   <form id="form_guia">
   <div class="col-sm-2">
     <b>Fecha de emision de guia</b>
-    <input type="date" name="MBoxFechaGRE" id="MBoxFechaGRE" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>" onblur="MBoxFechaGRE_LostFocus();">
+    <input type="date" name="MBoxFechaGRE" id="MBoxFechaGRE" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>" onblur="MBoxFechaGRE_LostFocus(); DCPorcenIva('MBoxFechaGRE', 'DCPorcIVA');">
   </div>
-    <div class="col-sm-5 col-xs-12">
+  <div class="col-sm-1">
+    <b>I.V.A</b>
+    <select class="form-control input-xs" name="DCPorcIVA" id="DCPorcIVA" onblur="cambiar_iva()"></select>
+  </div>
+    <div class="col-sm-3 col-xs-12">
     <b>Cliente</b>
    <div class="input-group">
       <select class="form-control input-xs" id="cliente" name="cliente">
@@ -826,7 +843,7 @@ function Eliminar(cod)
          }
       }
   </script>
-  <div class="col-sm-1" style="padding: 0px;">
+  <div class="col-sm-1" style="">
     <b>Serie Fac</b>
     <input type="text" class="form-control input-xs" placeholder="001001" name="txt_serie_fac" id="txt_serie_fac" onblur="default_serie()">            
   </div> 
@@ -990,7 +1007,7 @@ function Eliminar(cod)
     </div>
     <div class="row">
        <div class="col-sm-6">
-          <label>Total Tarifa 12%</label>
+          <label id="LabelTotTarifa">Total Tarifa</label>
         </div>
         <div class="col-sm-6">
           <input type="text" name="total12" id="total12" class="form-control input-xs red text-right" value="0.00" readonly>
@@ -998,7 +1015,7 @@ function Eliminar(cod)
     </div>
     <div class="row">
       <div class="col-sm-6">
-        <label>I.V.A. 12%</label>
+        <label id="LabelIVA">I.V.A.</label>
       </div>
       <div class="col-sm-6">
         <input type="text" name="iva12" id="iva12" class="form-control input-xs red text-right" value="0.00" readonly>

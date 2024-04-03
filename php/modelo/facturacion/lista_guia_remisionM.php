@@ -170,7 +170,7 @@ $Autorizacion_GR=false,$remision=false,$serie_gr=false)
   }
 
 	function cargarLineas($guia,$codigoL=false){
-    $sql = "SELECT Codigo,Cantidad as 'CANTIDAD',Producto,Precio AS 'PRECIO',Total,ID
+    $sql = "SELECT Codigo,Cantidad as 'CANTIDAD',Producto,Precio AS 'PRECIO',Total,ID, Total_IVA
             FROM Detalle_Factura
             WHERE Item = '".$_SESSION['INGRESO']['item']."' 
             AND Periodo = '".$_SESSION['INGRESO']['periodo']."'

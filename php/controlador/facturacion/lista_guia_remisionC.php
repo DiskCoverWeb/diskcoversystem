@@ -554,10 +554,12 @@ QUITO - ECUADOR';
 		  // print_r($serie);die();
 	    $reg = $this->modelo->cargarLineas($guia,$codigoL);
 	    $total = 0;
+		$iva_total = 0;
 	    foreach ($reg['datos'] as $key => $value) {
-	      $total+=$value['Total'];     
+	      $total+=$value['Total'];
+		  $iva_total+=$value['Total_IVA'];     
 	    }
-	    return array('tbl'=>$reg['tbl'],'total'=>$total);
+	    return array('tbl'=>$reg['tbl'],'total'=>$total, 'iva_total'=>$iva_total);
 	}
 	function AdoPersonas($query)
   {  
@@ -588,7 +590,6 @@ QUITO - ECUADOR';
   	function guardarFactura($parametros)
   	{
   		
-	    // print_r($parametros);
 	    // die();
 	    $TFA = array();
 	    $ci_comer = explode('_', $parametros['DCRazonSocial']);
@@ -648,7 +649,7 @@ QUITO - ECUADOR';
 				$TFA['Autorizacion'] = $parametros['txt_auto_fac'];
 				$TFA['Factura'] = $parametros['txt_num_fac'];
 				$TFA['SinFactura'] = 1;
-				$TFA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
+				$TFA['Porc_IVA'] = floatval($parametros['DCPorcIVA'] / 100);
 				$TFA['Fecha'] = $parametros['MBoxFechaGRE'];
         $TFA['FechaGRE'] = $GR[0]['FechaGRE'];
 
