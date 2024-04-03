@@ -3179,6 +3179,8 @@ function sp_Reporte_Analitico_Mensual($tipo,$desde,$hasta)
          AND TB = '".$tipo."'
          ORDER BY Codigo_Aux;";
 
+         // print_r($sql);die();
+
 	   if($excel==false)
 	   {
 	   	 $medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-117; 
