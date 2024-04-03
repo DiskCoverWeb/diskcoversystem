@@ -3,7 +3,7 @@
 /** 
  * AUTOR DE RUTINA : Dallyana Vanegas
  * FECHA CREACION : 16/02/2024
- * FECHA MODIFICACION : 21/03/2024
+ * FECHA MODIFICACION : 03/04/2024
  * DESCIPCION : Clase modelo para llenar campos y guardar registros de Agencia
  */
 
@@ -17,6 +17,21 @@ class registro_beneficiarioM
     function __construct()
     {
         $this->db = new db();
+    }
+
+    function LlenarTblPoblacion()
+    {
+        $sql = "SELECT CP.Proceso AS Poblacion,
+                SUM(CASE WHEN C.Sexo = 'M' THEN 1 ELSE 0 END) AS Hombres,
+                SUM(CASE WHEN C.Sexo = 'F' THEN 1 ELSE 0 END) AS Mujeres,
+                COUNT(*) AS Total
+                FROM Clientes AS C
+                JOIN Clientes_Datos_Extras AS CD ON C.Codigo = CD.Codigo
+                JOIN Catalogo_Proceso AS CP ON CD.Area = CP.Cmds
+                WHERE CP.Cmds LIKE '91.%'
+                GROUP BY CP.Proceso
+                ORDER BY CP.Proceso";
+        return $this->db->datos($sql);
     }
 
     function LlenarCalendario($valor)
@@ -33,12 +48,12 @@ class registro_beneficiarioM
     function ObtenerColor($valor)
     {
         if ($valor) {
-            $sql = "SELECT ".Full_Fields('Catalogo_Proceso')."
+            $sql = "SELECT " . Full_Fields('Catalogo_Proceso') . "
                 FROM Catalogo_Proceso
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Cmds = '" . $valor . "'";
             $resultado = $this->db->datos($sql);
-            if (!empty ($resultado)) {
+            if (!empty($resultado)) {
                 return $resultado[0];
             } else {
                 return 0;
@@ -52,7 +67,6 @@ class registro_beneficiarioM
                 FROM Tabla_Referenciales_SRI
                 WHERE (Tipo_Referencia = 'SEXO')
                 ORDER BY Tipo_Referencia, Descripcion";
-
         return $this->db->datos($sql);
     }
 
@@ -91,7 +105,7 @@ class registro_beneficiarioM
                 WHERE Cliente <> '.'
                 AND Codigo = '" . $valor . "'";
         $resultado = $this->db->datos($sql);
-        if (!empty ($resultado)) {
+        if (!empty($resultado)) {
             return $resultado[0];
         } else {
             return 0;
@@ -106,7 +120,7 @@ class registro_beneficiarioM
                 FROM  Clientes_Datos_Extras
                 WHERE Codigo = '" . $valor . "'";
         $resultado = $this->db->datos($sql);
-        if (!empty ($resultado)) {
+        if (!empty($resultado)) {
             return $resultado[0];
         } else {
             return 0;
@@ -146,7 +160,7 @@ class registro_beneficiarioM
 
     function LlenarSelects_Val($query, $valor, $valor2)
     {
-        $sql = "SELECT ".Full_Fields('Catalogo_Proceso')."
+        $sql = "SELECT " . Full_Fields('Catalogo_Proceso') . "
                     FROM Catalogo_Proceso
                     WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'";
 
@@ -167,8 +181,6 @@ class registro_beneficiarioM
 
     function ActualizarClientes($parametros)
     {
-        //Direccion = '" . $parametros['Direccion'] . "', 
-        //Lugar_Trabajo = '" . $parametros['Lugar_Trabajo'] . "', 
         $sql = "UPDATE Clientes SET
                 Actividad = '" . $parametros['Actividad'] . "',
                 Calificacion = '" . $parametros['Calificacion'] . "',
@@ -180,14 +192,11 @@ class registro_beneficiarioM
                 Profesion = '" . $parametros['Profesion'] . "', 
                 Hora_Ent = '" . $parametros['Hora_Ent'] . "', 
                 Dia_Ent = '" . $parametros['Dia_Ent'] . "', 
-
                 Sexo = '" . $parametros['Sexo'] . "', 
-
                 Email = '" . $parametros['Email'] . "', 
                 Email2 = '" . $parametros['Email2'] . "',                 
                 Telefono = '" . $parametros['Telefono'] . "', 
                 TelefonoT = '" . $parametros['TelefonoT'] . "', 
-
                 Prov = '" . $parametros['Provincia'] . "', 
                 Ciudad = '" . $parametros['Ciudad'] . "', 
                 Canton = '" . $parametros['Canton'] . "', 
@@ -197,13 +206,11 @@ class registro_beneficiarioM
                 DireccionT = '" . $parametros['CalleS'] . "', 
                 Referencia = '" . $parametros['Referencia'] . "'
                 WHERE CI_RUC = '" . $parametros['CI_RUC'] . "'";
-
         return $this->db->datos($sql);
     }
 
     function ActualizarClientesDatosExtra($parametros)
     {
- 
         $sql = "UPDATE Clientes_Datos_Extras SET
                 CodigoA = '" . $parametros['CodigoA2'] . "', 
                 Dia_Ent = '" . $parametros['Dia_Ent2'] . "', 

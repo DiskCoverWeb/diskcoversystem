@@ -533,7 +533,7 @@
             </div>
 
             <div id="modalBtnGrupo" class="modal fade" role="dialog">
-                <div class="modal-dialog" style="max-width: 400px;">
+                <div class="modal-dialog" style="width: 500px;">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -541,7 +541,7 @@
                         </div>
                         <div class="modal-body" style="overflow-y: auto; max-height: 200px;">
                             <form>
-                                <table class="table table-sm table-dark" id="tablaPoblacion">
+                                <table class="table table-md table-dark" id="tablaPoblacion">
                                     <thead>
                                         <tr>
                                             <th scope="col" colspan="2">Tipo de Población</th>
@@ -551,7 +551,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- Aquí se añadirán las filas dinámicamente -->
+                                        <!-- filas -->
                                     </tbody>
                                 </table>
                             </form>
@@ -615,10 +615,7 @@
             </div>
         </form>
     </div>
-
-
 </body>
-
 
 <script>
     $(document).ready(function () {
@@ -642,13 +639,9 @@
         var callep = $('#CalleP').val();
         var calles = $('#CalleS').val();
         var referencia = $('#Referencia').val();
-
-        console.log(provincia + "," + ciudad);
-        console.log(canton + "," + parroquia);
-        console.log(barrio + "," + callep);
-        console.log(calles + "," + referencia);
     });
 
+    //select provincias
     function provincias() {
         var option = "<option value='' disabled selected>Seleccione provincia</option>";
         $.ajax({
@@ -669,10 +662,10 @@
                 }
             }
         });
-
     }
+
+    //select ciudad
     function ciudad(idpro) {
-        console.log(idpro);
         var option = "<option value='' disabled selected>Seleccione ciudad</option>";
         if (idpro != '') {
             $.ajax({
@@ -693,32 +686,29 @@
         }
     }
 
-
     //grupo
     $('#btnMostrarGrupo').click(function () {
         $('#modalBtnGrupo').modal('show');
-        agregarFila();
-    });
+        $.ajax({
+            type: "GET",
+            url: '../controlador/inventario/registro_beneficiarioC.php?LlenarTblPoblacion=true',
+            dataType: 'json',
+            success: function (datos) {
+                $('#tablaPoblacion tbody').empty();
 
-    function agregarFila() {
-        var tbody = $('#tablaPoblacion tbody');
-        tbody.empty();
-        datosArray.forEach(function (item) {
-            var valor = item.id.substring(0, 2);
-            if (valor == 91) {
-                var fila = $('<tr>');
-
-                var celda1 = $('<td>', { colspan: 2, text: item.text });
-                var celda2 = $('<td>').append($('<input>', { type: 'text', class: 'form-control', name: 'hombres' }));
-                var celda3 = $('<td>').append($('<input>', { type: 'text', class: 'form-control', name: 'mujeres' }));
-                var celda4 = $('<td>').append($('<input>', { type: 'text', class: 'form-control', name: 'total' }));
-
-                fila.append(celda1, celda2, celda3, celda4);
-
-                tbody.append(fila);
+                $.each(datos, function (index, dato) {
+                    $('#tablaPoblacion tbody').append(`
+                    <tr>
+                        <td colspan="2">${dato.Poblacion}</td>
+                        <td>${dato.Hombres}</td>
+                        <td>${dato.Mujeres}</td>
+                        <td>${dato.Total}</td>
+                    </tr>
+                `);
+                });
             }
         });
-    }
+    });
 
     var datosArray = [];
     function llenarCarousels(valor, valor2) {
@@ -730,7 +720,6 @@
             success: function (res) {
                 var val = res.val;
                 var datos = res.respuesta;
-                console.log(datos);
 
                 datos.forEach(function (item) {
                     datosArray.push(item);
@@ -770,27 +759,25 @@
                     $('#modal_Don').html(option);
 
                 } else {
-                    if (valor != 91) {
-                        var carouselInner = $('#carouselBtnIma_' + valor + ' .carousel-inner');
-                        if (datos.length > 0) {
-                            carouselInner.empty();
-                        }
-                        datos.forEach(function (item, index) {
-                            var carouselItem = $('<div class="item">');
-                            if (index === 0) {
-                                carouselItem.addClass('active');
-                            }
-                            var imgSrc = '../../img/png/' + item.picture + '.png';
-                            var carouselContent = '<img src="' + imgSrc + '" alt="' + item.text + '" width="55" height="55">' +
-                                '<div class="carousel-caption">' +
-                                '</div>';
-                            carouselItem.html(carouselContent);
-                            carouselItem.click(function () {
-                                abrirModal(valor);
-                            });
-                            carouselInner.append(carouselItem);
-                        });
+                    var carouselInner = $('#carouselBtnIma_' + valor + ' .carousel-inner');
+                    if (datos.length > 0) {
+                        carouselInner.empty();
                     }
+                    datos.forEach(function (item, index) {
+                        var carouselItem = $('<div class="item">');
+                        if (index === 0) {
+                            carouselItem.addClass('active');
+                        }
+                        var imgSrc = '../../img/png/' + item.picture + '.png';
+                        var carouselContent = '<img src="' + imgSrc + '" alt="' + item.text + '" width="55" height="55">' +
+                            '<div class="carousel-caption">' +
+                            '</div>';
+                        carouselItem.html(carouselContent);
+                        carouselItem.click(function () {
+                            abrirModal(valor);
+                        });
+                        carouselInner.append(carouselItem);
+                    });
 
                     var option = '';
                     if (valor == 87) {
@@ -833,8 +820,6 @@
     };
 
     function itemSelect(picture, text, color, id) {
-        console.log(id + " ," + text);
-
         if (id.length == 3) {
             var imagen = "../../img/png/" + picture + ".png";
 
@@ -858,8 +843,6 @@
         if (valor == 93) {
             actualizarEstilo(color);
         }
-
-        //console.log($('#tipoDonacion').attr('val'));
     }
 
     //btn icono RUC
@@ -886,8 +869,6 @@
         LlenarSelectRucCliente();
         llenarCarousels(87);
         llenarCarousels(93);
-        llenarCarousels(91);
-        //[87, 91, 93].forEach(llenarCarousels);
         llenarCarousels("CXC", true);
         [86, 88, 89, 90, 91, 92].forEach(LlenarSelects_Val);
 
@@ -899,6 +880,7 @@
     $('#select_86').change(function () {
         var selectedValue = $(this).val();
         if (selectedValue === '86.04') {
+            $('#comentariodiv').val(comen);
             $('#comentariodiv').show();
         } else {
             $('#comentariodiv').val('.');
@@ -909,9 +891,7 @@
     //calendario
     $('#btnMostrarModal').click(function () {
         var valorSeleccionado = $('#input_93').attr('val');
-        console.log(valorSeleccionado);
         if (valorSeleccionado && valorSeleccionado.length > 0) {
-            //console.log(valorSeleccionado);
             LlenarCalendario(valorSeleccionado);
         } else {
             swal.fire('', 'Por favor, seleccione una organización', 'info');
@@ -926,7 +906,6 @@
                 dataType: 'json',
                 data: { valor: Actividad },
                 success: function (datos) {
-                    console.log(typeof datos);
                     if (datos != 0) {
                         LlenarCalendarioC(datos);
                     } else {
@@ -1029,7 +1008,6 @@
             }
         });
     }
-
 
     //selects Dia de Entrega
     function LlenarSelectDiaEntrega() {
@@ -1156,8 +1134,6 @@
         formData.append('Hora_Ent', $('#horaEntrega').val());
 
         formData.append('Sexo', $('#sexo').val() || '.');
-        //formData.append('Direccion', $('#direccion').val());
-        //formData.append('Lugar_Trabajo', $('#referencia').val());
         formData.append('Email', $('#email').val());
         formData.append('Email2', $('#email2').val());
         formData.append('Telefono', $('#telefono').val());
@@ -1189,9 +1165,9 @@
             formData.append('Evidencias', archivo, archivo.name);
         }
 
-        formData.forEach(function (value, key) {
+        /*formData.forEach(function (value, key) {
             console.log(key + ': ' + value);
-        });
+        });*/
 
         //validacion campos llenos
         var camposVacios = [];
@@ -1220,6 +1196,7 @@
                 confirmButtonText: 'Aceptar'
             });
         } else {
+            $('#myModal_espera').modal('show');
             $.ajax({
                 type: 'post',
                 url: '../controlador/inventario/registro_beneficiarioC.php?guardarAsignacion=true',
@@ -1228,6 +1205,7 @@
                 data: formData,
                 dataType: 'json',
                 success: function (response) {
+                    $('#myModal_espera').modal('hide');
                     if (response.res == '0') {
                         Swal.fire({
                             title: 'AVISO',
@@ -1319,17 +1297,14 @@
             dataType: 'json',
             data: { valor: Codigo },
             success: function (datos) {
-                console.log(datos.Ciudad);
                 if (datos != 0) {
                     $('#nombreRepre').val(datos.Representante);
                     $('#ciRepre').val(datos.CI_RUC_R);
                     $('#telfRepre').val(datos.Telefono_R);
                     $('#contacto').val(datos.Contacto);
                     $('#cargo').val(datos.Profesion);
-                    //$('#direccion').val(datos.Direccion);
                     $('#email').val(datos.Email);
                     $('#email2').val(datos.Email2);
-                    //$('#referencia').val(datos.Lugar_Trabajo);
                     $('#telefono').val(datos.Telefono);
                     $('#telefono2').val(datos.TelefonoT);
                     if (datos.Sexo) {
@@ -1348,13 +1323,9 @@
 
                     datosArray.forEach(function (item) {
                         if (item.id === datos.Actividad || item.id === datos.CodigoA || item.id === datos.Calificacion) {
-                            //var dgts = item.id.substring(0, 2);
                             itemSelect(item.picture, item.text, item.color, item.id);
                         }
                     });
-                    //llenarPreSelects(datos.Actividad);
-                    //llenarPreSelects(datos.CodigoA);
-                    //llenarPreSelects(datos.Calificacion, true);
                     if (datos.Dia_Ent == '.') {
                         $('#diaEntrega').val($('#diaEntrega option:first').val());
                     } else {
@@ -1371,6 +1342,7 @@
     }
 
     //llenar campos de panel informacion adicional
+    var comen;
     $('#botonInfoAdd').click(function () {
         if (miCodigo) {
             $.ajax({
@@ -1384,6 +1356,7 @@
                         $('#horaEntregac').val(datos.Hora_Ent2);
                         $('#totalPersonas').val(datos.No_Soc);
                         $('#comentario').val(datos.Etapa_Procesal);
+                        comen = datos.Etapa_Procesal;
                         $('#infoNut').val(datos.Observaciones);
                         nombreArchivo = datos.Evidencias;
                         llenarPreSelects(datos.CodigoA2);

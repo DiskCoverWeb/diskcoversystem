@@ -3,7 +3,7 @@
 /** 
  * AUTOR DE RUTINA	: Dallyana Vanegas
  * FECHA CREACION	: 16/02/2024
- * FECHA MODIFICACION : 21/03/2024
+ * FECHA MODIFICACION : 03/04/2024
  * DESCIPCION : Clase controlador para Agencia
  */
 
@@ -29,6 +29,10 @@ if (isset($_GET['actualizarSelectDonacion'])) {
 if (isset($_GET['LlenarCalendario'])) {
     $valor = $_POST['valor'];
     echo json_encode($controlador->LlenarCalendario($valor));
+}
+
+if (isset($_GET['LlenarTblPoblacion'])) {
+    echo json_encode($controlador->LlenarTblPoblacion());
 }
 
 if (isset($_GET['descargarArchivo'])) {
@@ -95,14 +99,9 @@ if (isset($_GET['guardarAsignacion'])) {
         'Profesion' => $_POST['Profesion'],
         'Dia_Ent' => $_POST['Dia_Ent'],
         'Hora_Ent' => $_POST['Hora_Ent'],
-
         'Sexo' => $_POST['Sexo'],
-
-        //'Direccion' => $_POST['Direccion'],
-        //'Lugar_Trabajo' => $_POST['Lugar_Trabajo'],
         'Email' => $_POST['Email'],
         'Email2' => $_POST['Email2'],
-
         'Provincia' => $_POST['Provincia'],
         'Ciudad' => $_POST['Ciudad'],
         'Canton' => $_POST['Canton'],
@@ -111,10 +110,9 @@ if (isset($_GET['guardarAsignacion'])) {
         'CalleP' => $_POST['CalleP'],
         'CalleS' => $_POST['CalleS'],
         'Referencia' => $_POST['Referencia'],
-        
         'Telefono' => $_POST['Telefono'],
         'TelefonoT' => $_POST['TelefonoT'],
-
+        //datos extra
         'CodigoA2' => $_POST['CodigoA2'],
         'Dia_Ent2' => $_POST['Dia_Ent2'],
         'Hora_Registro' => $_POST['Hora_Registro'],
@@ -180,6 +178,15 @@ class registro_beneficiarioC
     function __construct()
     {
         $this->modelo = new registro_beneficiarioM();
+    }
+
+    function LlenarTblPoblacion()
+    {
+        $datos = $this->modelo->LlenarTblPoblacion();
+        if (empty($datos)) {
+            $datos = 0;
+        }
+        return $datos;
     }
 
     function LlenarCalendario($valor)
