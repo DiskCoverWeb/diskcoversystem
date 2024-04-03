@@ -7,6 +7,7 @@
  */
 
 include(dirname(__DIR__, 2) . '/modelo/facturacion/FRecaudacionBancosCxCM.php');
+require_once ('HistorialFacturasC.php');
 require_once(dirname(__DIR__, 3) . '/lib/phpmailer/enviar_emails.php');
 
 $controlador = new FRecaudacionBancosCxCC();
@@ -120,11 +121,13 @@ class FRecaudacionBancosCxCC
 {
     private $modelo;
     private $email;
+    private $historico;
 
     function __construct()
     {
         $this->modelo = new FRecaudacionBancosCxCM();
         $this->email = new enviar_emails();
+        $this->historico = new HistorialFacturasC();
     }
 
     function DCGrupoI_DCGrupoF()
@@ -615,7 +618,7 @@ class FRecaudacionBancosCxCC
         // Alumnos/Clientes que están activados para generar las facturas
         $AdoClientes = $this->modelo->AlumnosClientesActivados();
         $MBFechaI = FechaValida($MBFechaI);
-        $Mifecha = BuscarFecha($MBFechaI);
+        //$Mifecha = BuscarFecha($MBFechaI);
         $FechaTexto = $MBFechaI;
         $DiarioCaja = ReadSetDataNum('Recibo_No', True, True);
 
@@ -852,7 +855,7 @@ class FRecaudacionBancosCxCC
                                 "Hora" . "\t" . "\t" . ": " . $TA['Cheque'] . "\n" .
                                 "Documento" . "\t" . ": " . $TA['Recibo_No'] . "\n" .
                                 "Valor Recibdo USD " . number_format($TA['Abono'], 2, '.', ',') . "\n";
-                            $this->SRI_Enviar_Mails($FA, $SRI_Autorizacion, "AB");
+                            $this->historico->EnviarMails('','',$FA, $SRI_Autorizacion, "AB");
                         }
                     }
                 }
@@ -874,7 +877,7 @@ class FRecaudacionBancosCxCC
         return array('res' => 'Error', 'mensaje' => $mensaje);
     }
 
-    function SRI_Enviar_Mails($TFA, $SRI_Autorizacion, $Tipo_Documento)
+    /*function SRI_Enviar_Mails($TFA, $SRI_Autorizacion, $Tipo_Documento)
     {
         $RutaPDF = "";
         $RutaXML = "";
@@ -979,7 +982,7 @@ class FRecaudacionBancosCxCC
             "Dir. " . $_SESSION['INGRESO']['Direccion'] . "\r\n" .
             strtoupper($_SESSION['INGRESO']['Ciudad']) . "-" . strtoupper($_SESSION['INGRESO']['NombrePais']) . "\r\n";
 
-        /**/
+        
         // Enviamos lista de mails
         if ($_SESSION['INGRESO']['Email_CE_Copia']) {
             $TMail['Credito_No'] = "X" . sprintf("%09d", $TFA['Factura']);
@@ -1022,7 +1025,7 @@ class FRecaudacionBancosCxCC
 
         $TMail['Volver_Envial'] = false;
         return ['res' => $rps];
-    }
+    }*/
 
     function Visualizar_Archivo($parametros)
     {
