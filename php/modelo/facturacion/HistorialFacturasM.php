@@ -1433,8 +1433,6 @@ class HistorialFacturasM
         $sSQL .= $tipoConsulta . " 
             AND F.TC IN ('FA','NV') 
             AND F.CodigoC = C.Codigo 
-            AND F.Factura = 1487
-            AND C.Email = 'lrsunigagarcia@gmail.com' 
             ORDER BY F.Factura ";
 
         $res = $this->db->datos($sSQL);
@@ -1446,7 +1444,7 @@ class HistorialFacturasM
 
     function Generar_Recibo_PDF($FA)
     {
-        //$res = 1;
+        $res = 1;
         $Comprobante = "Recibo No " . $FA['Serie'] . "-" . sprintf("%09d", $FA['Factura']);
         $NumEmpresa = $_SESSION['INGRESO']['item'];
         $Periodo_Contable = $_SESSION['INGRESO']['periodo'];
@@ -1515,8 +1513,12 @@ class HistorialFacturasM
         $AdoDBDet = $this->db->datos($sSQL);
 
         //imprimirDocEle_fac($TFA, $AdoDBDet, false, $Comprobante, null, 'factura', null, null, false, false, false);
-        imprimir_Generar_Recibo_PDF($TFA, $AdoDBDet);
-        //return $res;
+        $res = imprimir_Generar_Recibo_PDF($TFA, $AdoDBDet);
+        if(isset($res['nombre']) && $res['nombre']) {
+            return ['nombre' => $res['nombre']];
+        }
+        
+        return 1;
 
     }
 

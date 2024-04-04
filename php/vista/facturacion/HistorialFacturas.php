@@ -687,7 +687,6 @@
             'Opcion': Opcion
         };
 
-        console.log('enviado: ' + params['Opcion']);
         $('#myModal_espera').modal('show');
         $.ajax({
             url: '../controlador/facturacion/HistorialFacturasC.php?ToolBarMenu_ButtonClick=true',
@@ -695,7 +694,6 @@
             dataType: 'json',
             data: { 'parametros': params },
             success: function (data) {
-                console.log(data);
                 if (data['Opcion']) {
                     Opcion = data.Opcion;
                 }
@@ -1018,7 +1016,6 @@
             dataType: 'json',
             data: { 'parametros': params },
             success: function (data) {
-
                 if (data == 1) {
                     swal.fire('Archivo enviado con exito!', 'mail:' + Co['Email'], 'success');
                 } else {
@@ -1065,18 +1062,34 @@
             dataType: 'json',
             data: { 'parametros': params },
             success: function (data) {
-                console.log(data);
-                /*var url = '../../TEMP/';
-                if (data.res_pdf === 1 && data.res_xml !== -1) {
-                    var ruta_pdf = data.pdf +".pdf";
-                    var ruta_xml = data.clave +".xml";
-                    EnviarMails(ruta_pdf, ruta_xml, FA, SRI_Autorizacion, Tipo_Documento);
-                } else if (data.res_pdf === 1 && data.res_xml === -1) {
-                    var ruta_pdf = url + data.pdf;
-                    EnviarMails(ruta_pdf, '', FA, SRI_Autorizacion, Tipo_Documento);
-                } else {
+                var url = '../../TEMP/';
+                if (data.nombre) {
+                    var ruta_pdf = data.nombre + ".pdf";
+                    EnviarMailRecibo(ruta_pdf, FA);
+                }
+                else {
                     swal.fire('Informacion', 'Archivos no encontrados', 'error');
-                }*/
+                }
+            }
+        });
+    }
+
+    function EnviarMailRecibo(archivo, FA) {
+        var params = {
+            'archivo': archivo,
+            'FA': FA
+        };
+        $.ajax({
+            url: '../controlador/facturacion/HistorialFacturasC.php?EnviarMailRecibo=true',
+            type: 'post',
+            dataType: 'json',
+            data: { 'parametros': params },
+            success: function (data) {
+                if (data == 1) {
+                    swal.fire('Archivo enviado con exito!', 'success');
+                } else {
+                    swal.fire('Error no se envio el archivo', 'error');
+                }
             }
         });
     }
