@@ -1138,6 +1138,7 @@ QUITO - ECUADOR';
 
 
 			$docs = $this->modelo->trans_documentos($parametros['xml']);
+			// print_r($docs);die();
 			if (count($docs) > 0) {
 
 
