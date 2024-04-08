@@ -443,7 +443,8 @@ function grabar_cuenta($parametros)
 	}
 	$Numero = 0;
 	$TipoCta = "N";
-	$TipoCta = $parametros['LstSubMod'];
+	// print_r($parametros[])
+	$TipoCta = $parametros['LstSubMod'][0];
 	if($TipoDoc == 'G')
 	{
 		$TextConcepto = TextoValido($parametros['TextConcepto'],false,True);

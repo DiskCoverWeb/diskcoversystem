@@ -333,7 +333,7 @@
   function grabar()
   {
 
-    $('#myModal_espera').modal('show');
+    // $('#myModal_espera').modal('show');
     var acre = $('#MBoxCtaAcreditar').val();
     if(acre == ''){acre = 0;}
 
@@ -706,9 +706,8 @@ function validar_eliminar()
          </div>
          <div class="col-sm-3">
            <b>Tipo de cuenta</b><br>
-           <select class="form-control input-sm" id="LstSubMod" onchange="presupuesto_act($('#LstSubMod').val())">
-             <option value="">Seleccione tipo de cuenta</option>
-             <option value='N'>General/Normal</option>
+           <select class="form-control input-sm" id="LstSubMod" onchange="presupuesto_act($('#LstSubMod').val())" row="11" multiple>
+             <option value='N' selected>General/Normal</option>
              <option value='CJ'>Cuenta de Caja</option>
              <option value='BA'>Cuenta de Bancos</option>
              <option value='C'>Modulo de CxC</option>
