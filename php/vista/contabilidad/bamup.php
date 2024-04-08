@@ -36,6 +36,7 @@ $(document).ready(function()
 
 
        });
+		agencias();
 
     });
 
@@ -57,6 +58,8 @@ function bamup(tipo)
  		'TipoPre':$('input:radio[name=optionsRadios]:checked').val(),
  		'Tipo':tipo,
  		'Imp':false,
+ 		'Agencia':$('#rbl_agencia').prop('checked'),
+ 		'AgenciaVal':$('#lista_agencia').val(),
  		//'ES' o 'ER',
  	}
 //parametros que se van a enviar al controlado  tanto para SP como para reporte
@@ -91,6 +94,30 @@ function bamup(tipo)
       },
        error: function(xhr, textStatus, error){
 		    $('#myModal_espera').modal('hide');
+		    Swal.fire('No se pudo cargar','Intente mas tarde','info');
+		  }
+    }); 
+}
+
+function agencias()
+{
+	$.ajax({
+      // data:  {parametros:parametros},
+      url:   '../controlador/contabilidad/contabilidad_controller.php?agencias=true',
+      type:  'post',
+     dataType: 'json',
+         beforeSend: function () {		
+			  //    var spiner = '<div class="text-center"><img src="../../img/gif/proce.gif" width="100" height="100"></div>'			
+				 // $('#tabla_').html(spiner);
+				 // $('#myModal_espera').modal('show');
+			},
+        success:  function (response) {
+        	//resultado que obtenemos de todo el proceso si es -1 fallo proceso 
+        	llenarComboList(response,'lista_agencia');
+        	console.log(response);
+      },
+       error: function(xhr, textStatus, error){
+		  
 		    Swal.fire('No se pudo cargar','Intente mas tarde','info');
 		  }
     }); 
@@ -159,6 +186,14 @@ function bamup(tipo)
 								</div>
 						 </div>
 					</div>				 
+				</div>
+				<div class="row">
+					<div class="col-sm-4">
+						<label><input type="checkbox" id="rbl_agencia"> <b> Nombre de Agencia</b></label>
+						<select class="form-control input-xs" id="lista_agencia">
+							<option value="">Seleccione agencia</option>
+						</select>
+					</div>
 				</div>
 				
 		 </div>

@@ -214,7 +214,7 @@ class divisasM
   }
 
     public function cargarLineas(){
-    $sql = "SELECT CODIGO,CANT as 'CANTIDAD',PRODUCTO,PRECIO2 AS 'PRECIO',TOTAL
+    $sql = "SELECT CODIGO,CANT as 'CANTIDAD',PRODUCTO,PRECIO2 AS 'PRECIO',TOTAL, Total_IVA
             FROM Asiento_F
             WHERE Item = '".$_SESSION['INGRESO']['item']."' 
             AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'

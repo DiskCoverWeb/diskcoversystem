@@ -615,10 +615,12 @@ Email: ".$datos_pre['cliente']['Email']."
   {
     $reg = $this->modelo->cargarLineas();
     $total = 0;
+    $iva_total = 0;
     foreach ($reg['datos'] as $key => $value) {
-      $total+=$value['TOTAL'];     
+      $total+=$value['TOTAL'];
+      $iva_total+=$value['Total_IVA'];     
     }
-    return array('tbl'=>$reg['tbl'],'total'=>$total);
+    return array('tbl'=>$reg['tbl'],'total'=>$total, 'iva_total'=>$iva_total);
   }
 
   function Eliminar($codigo)

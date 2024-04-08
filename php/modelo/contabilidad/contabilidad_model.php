@@ -3167,13 +3167,13 @@ function sp_Reporte_Analitico_Mensual($tipo,$desde,$hasta)
        return $respuesta;
 }
 
-     function Reporte_Analitico_Mensual_gilla($tipo,$query,$excel=false)
+     function Reporte_Analitico_Mensual_gilla($tipo,$query,$excel=false,$item=false)
      {
          
          // $conn = new Conectar();
          // $cid=$conn->conexion();
          $sql=$query." FROM Reporte_Analitico_Mensual
-         WHERE Item = '".$_SESSION['INGRESO']['item']."'
+         WHERE Item = '".$item."'
          AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
          AND CodigoU ='".$_SESSION['INGRESO']['CodigoU']."'
          AND TB = '".$tipo."'
@@ -3427,6 +3427,15 @@ function sp_Reporte_Analitico_Mensual($tipo,$desde,$hasta)
            AND C.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
            AND C.CodigoU = A.Codigo 
            AND C.Codigo_B = Cl.Codigo ";
+          return $this->db_->datos($sql);
+     }
+
+     function agencias()
+     {
+     	$sql = "SELECT (Item +'  '+ Empresa) As nombre,Item as codigo 
+        		FROM Empresas 
+        		WHERE Empresa <> '".G_NINGUNO."'
+        		ORDER BY Item ";
           return $this->db_->datos($sql);
      }
 

@@ -9,6 +9,12 @@ if(isset($_POST['submitlog']))
 	login('', '', '');
 }
 
+if(isset($_GET['agencias'])) 
+{
+	// $parametros = $_POST['parametros'];
+	echo json_encode(agencias());
+}
+
 if(isset($_GET['listar_comprobante'])) 
 {
 	$parametros = $_POST['parametros'];
@@ -164,8 +170,14 @@ if(isset($_GET['balance_excel']))
 //funcion que recive los parametros
 function reporte_analitico_mensual($parametros)
 {
-	// print_r($parametros);
-	// die();
+	
+	$item = $_SESSION['INGRESO']['item'];
+	if(isset($parametros['Agencia']) && isset($parametros['AgenciaVal']) && $parametros['Agencia']=='true')
+	{
+		$item = $parametros['AgenciaVal'];
+	}
+
+
 	control_procesos('N', "(".$parametros['Tipo'].") Analitico Mensual del ".$parametros['desde']."  al ".$parametros['hasta'],' Consulta');
 	//creamos el objeto 
 	$modelo = new contabilidad_model();
@@ -178,13 +190,13 @@ function reporte_analitico_mensual($parametros)
 	{
 		if($parametros['Imp']=='false')
 		{
-		   $tabla = $modelo->Reporte_Analitico_Mensual_gilla($parametros['Tipo'],$respuesta['query']);
+		   $tabla = $modelo->Reporte_Analitico_Mensual_gilla($parametros['Tipo'],$respuesta['query'],false,$item);
 		   return $tabla;
 		//retoprnamos la tabla este retorno se realizara a la primera duncion donde se llamar "don de esta isset($_GET['balance']"
 		   // return $tabla;
 	    }else
 	    {
-	    	$tabla = $modelo->Reporte_Analitico_Mensual_gilla($parametros['Tipo'],$respuesta['query'],'true');
+	     $tabla = $modelo->Reporte_Analitico_Mensual_gilla($parametros['Tipo'],$respuesta['query'],'true',$item);
 	    }
 	}else
 	{
@@ -893,6 +905,11 @@ function reporte_pdf($parametros)
 	$pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$parametros['desde'],$parametros['hasta'],$sizetable,$mostrar,30,'L');
 }
 
+function agencias()
+{
+	$modelo = new contabilidad_model();
+	return $modelo->agencias();
+}
 
 function listar_comprobantes($parametros)
 {

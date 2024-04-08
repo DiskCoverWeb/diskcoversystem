@@ -20,6 +20,7 @@
       e.preventDefault();
     }
   });
+  let ivaprod = 0;
   $(document).ready(function () {    
      $("#total").blur(function () { $('#btn_cal').trigger( "focus" );});
      $("#cantidad").blur(function () { $('#btn_cal').trigger( "focus" );});
@@ -29,6 +30,7 @@
     autocomplete_cliente();
     provincias();
     $("#nombreCliente").hide();
+    DCPorcenIva('fecha', 'DCPorcIVA');
     //enviar datos del cliente
     $('#cliente').on('select2:select', function (e) {
       var data = e.params.data.data;
@@ -41,6 +43,12 @@
       console.log(data);
     });
   });
+
+  function cambiar_iva(){
+    let iva = $('#DCPorcIVA').val();
+    $('#LabelTotTarifa').text('Total Tarifa '+iva+'%');
+    $('#LabelIVA').text('I.V.A. '+iva+'%');
+  }
 
   function autocomplete_cliente(){
     $('#cliente').select2({
@@ -127,6 +135,7 @@
         success: function(data) {
             console.log(data);
             if (data.respueta == true) {
+              ivaprod = data.datos.IVA;
                 if (data.datos.Stock < 0) {
                     Swal.fire(data.datos.Producto + ' ES UN PRODUCTO SIN EXISTENCIA', '', 'info').then(
                         function() {
@@ -268,6 +277,9 @@ function aceptar(){
         'Periodo' :year,
         'Cantidad' :cantidad,
     }
+    if(ivaprod){
+      datosLineas.Iva = $('#DCPorcIVA').val();
+    }
     codigoCliente = $("#codigoCliente").val();
     $.ajax({
       type: "POST",
@@ -294,8 +306,9 @@ function aceptar(){
       {
         $('#tbl_divisas').html(data.tbl);   
         $("#total0").val(parseFloat(data.total).toFixed(2));
-        $("#totalFac").val(parseFloat(data.total).toFixed(2));
-        $("#efectivo").val(parseFloat(data.total).toFixed(2));
+        $('#iva12').val(parseFloat(data.iva_total).toFixed(2));
+        $("#totalFac").val(parseFloat(data.total+data.iva_total).toFixed(2));
+        $("#efectivo").val(parseFloat(data.total+data.iva_total).toFixed(2));
         $('#myModal_espera').modal('hide');
       }
     });
@@ -680,10 +693,15 @@ function validador_correo()
 </div>
 <div class="row">
   <div class="col-sm-2">            
-    <label>Fecha</label>
-    <input type="date" class="form-control input-xs" name="fecha" id="fecha" value="<?php echo date('Y-m-d'); ?>" onchange="numeroFactura();catalogoLineas();">
+    <b>Fecha</b>
+    <input type="date" class="form-control input-xs" name="fecha" id="fecha" value="<?php echo date('Y-m-d'); ?>" onchange="numeroFactura();catalogoLineas();" onblur="DCPorcenIva('fecha', 'DCPorcIVA');">
   </div>
-  <div class="col-sm-5 col-xs-12">
+  <div class="col-sm-1">
+    <b>I.V.A</b>
+    <select class="form-control input-xs" name="DCPorcIVA" id="DCPorcIVA" onblur="cambiar_iva();"></select>
+  </div>
+
+  <div class="col-sm-4 col-xs-12">
     <b>Cliente</b>
    <div class="input-group">
       <select class="form-control input-xs" id="cliente" name="cliente">
@@ -770,7 +788,7 @@ function validador_correo()
     </div>
     <div class="row">
        <div class="col-sm-6">
-          <label>Total Tarifa 12%</label>
+          <label id="LabelTotTarifa">Total Tarifa</label>
         </div>
         <div class="col-sm-6">
           <input type="text" name="total12" id="total12" class="form-control input-xs red text-right" value="0.00" readonly>
@@ -778,7 +796,7 @@ function validador_correo()
     </div>
     <div class="row">
       <div class="col-sm-6">
-        <label>I.V.A. 12%</label>
+        <label id="LabelIVA">I.V.A.</label>
       </div>
       <div class="col-sm-6">
         <input type="text" name="iva12" id="iva12" class="form-control input-xs red text-right" value="0.00" readonly>
