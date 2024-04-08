@@ -126,7 +126,7 @@
                     <img src="../../img/png/salire.png" width="35" height="35">
                 </a>
                 <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Guardar"
-                    id="btnGuardarAsignacion" onclick="" >
+                    id="btnGuardarAsignacion" onclick="">
                     <img src="../../img/png/disco.png" width="35" height="35">
                 </button>
             </div>
@@ -685,6 +685,7 @@
 
 <script>
     $(document).ready(function () {
+        $("#btnUsarCli").hide();
         Form_Activate();
     });
 
@@ -970,10 +971,10 @@
     }
 
     //btn dentro de modal icono RUC
-    function usar_cliente(nombre, ruc, codigo, email, td = 'N') {
+    /*function usar_cliente(nombre, ruc, codigo, email, td = 'N') {
         $('#cliente').val(ruc).trigger('change');
         $('#myModal').modal('hide');
-    }
+    }*/
 
     var horaActual;
     function Form_Activate() {
@@ -1020,7 +1021,7 @@
                 dataType: 'json',
                 data: { valor: Actividad },
                 success: function (datos) {
-                    console.log(datos);
+                    //console.log(datos);
                     if (datos != 0) {
                         LlenarCalendarioC(datos);
                     } else {
@@ -1393,6 +1394,7 @@
 
     //llenar campos del cliente segun ruc seleccionado
     $('#ruc').on('select2:select', function (e) {
+        //console.log('cambio el ruc');
         LimpiarSelectsInfoAdd();
         var data = e.params.data;
         miCodigo = data.id;

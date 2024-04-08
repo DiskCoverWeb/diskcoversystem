@@ -106,7 +106,7 @@ function Empresa_data()
  }
 
 
-function control_procesos($TipoTrans='N',$opcional_proceso,$Tarea='.')
+function control_procesos($TipoTrans,$opcional_proceso,$Tarea='.')
 {  
    $start_time = microtime(true);
   // print_r($_SESSION['INGRESO']);die();
