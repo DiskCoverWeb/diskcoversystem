@@ -3,7 +3,7 @@
 <!--
     AUTOR DE RUTINA	: Dallyana Vanegas
     FECHA CREACION : 16/02/2024
-    FECHA MODIFICACION : 21/03/2024
+    FECHA MODIFICACION : 08/04/2024
     DESCIPCION : Interfaz de modulo Gestion Social/Registro Beneficiario
  -->
 
@@ -119,21 +119,19 @@
 
 <body>
     <div>
-        <div class="row" style="margin:5px; padding-top:10px; color:black; display: flex; align-items: center;">
-            <div class="col-sm-2 col-xs-12">
-                <div class="col">
-                    <a href="./inicio.php?mod=<?php echo @$_GET['mod']; ?>" title="Salir de modulo"
-                        class="btn btn-default">
-                        <img src="../../img/png/salire.png" width="25" height="30">
-                    </a>
-                </div>
-                <div class="col" style="margin-left: auto;">
-                    <a href="javascript:void(0)" id="btnGuardarAsignacion" title="Guardar" class="btn btn-default">
-                        <img src="../../img/png/grabar.png" width="25" height="30">
-                    </a>
-                </div>
+        <div class="row">
+            <div class="col-sm-5" style="" id="btnsContainers">
+                <a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
+                print_r($ruta[0] . '#'); ?>" title="Salir" class="btn btn-default">
+                    <img src="../../img/png/salire.png" width="35" height="35">
+                </a>
+                <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Guardar"
+                    id="btnGuardarAsignacion" onclick="" >
+                    <img src="../../img/png/disco.png" width="35" height="35">
+                </button>
             </div>
         </div>
+
         <form id="miFormulario" style=" padding-bottom:30px">
             <div class="accordion" id="accordionExample" style="margin-top:px; margin-left:30px; margin-right: 30px;">
                 <div class="card">
@@ -155,6 +153,13 @@
                                     <div class="carousel-inner">
                                     </div>
                                 </div>
+                                <!--div style="margin-right: 10px;  display: flex; ">
+                                    <a href="#" id="ingresarBeneficiario">
+                                        <img src="../../img/png/grupo.png" width="60" height="60"
+                                        onclick="abrirModal(93)" title="INGRESAR BENEFICIARIO">
+                                    </a>
+                                </div-->
+
                                 <div style="flex: 1;  margin-right: 10px; ">
                                     <label for="input_93" style="display: block;">Tipo de Beneficiario</label>
                                     <input class="form-control input-xs" type="text" name="input_93" id="input_93"
@@ -206,6 +211,12 @@
                                     <div class="carousel-inner">
                                     </div>
                                 </div>
+                                <!--div style="margin-right: 10px;  display: flex; ">
+                                    <a href="#" id="ingresarEstado">
+                                        <img src="../../img/png/estado.png" width="60" height="60"
+                                        onclick="abrirModal(87)" title="INGRESAR ESTADO">
+                                    </a>
+                                </div-->
                                 <div style="flex: 1; margin-right: 10px; ">
                                     <label for="input_87" style="display: block;">Estado</label>
                                     <input class="form-control input-xs" type="text" name="input_87" id="input_87"
@@ -583,6 +594,37 @@
                 </div>
             </div>
 
+            <div id="modalsBtnpAliado" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Productor</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row" style="margin: 10px; display: flex;">
+                                <div id="" style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
+                                    <div class="col-md-6 col-sm-6">
+                                        <button type="button" class="btn btn-default btn-sm">
+                                            <img src="../../img/png/industrial.png" style="width: 90%; height: 90%;"
+                                                alt="Imagen">
+                                        </button>
+                                        <b>Industrial</b>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <button type="button" class="btn btn-default btn-sm">
+                                            <img src="../../img/png/animales.png" style="width: 90%; height: 90%;"
+                                                alt="Imagen">
+                                        </button>
+                                        <b>Artesanal</b>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <div id="modalsBtn87" class="modal fade" role="dialog">
                 <div class="modal-dialog modal-sm">
@@ -911,6 +953,9 @@
         $('#input_' + valor).attr('val', id);
         if (valor == 93) {
             actualizarEstilo(color);
+        }
+        if (id == 93.04) {
+            abrirModal('pAliado');
         }
     }
 
