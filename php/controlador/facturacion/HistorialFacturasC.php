@@ -16,44 +16,44 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 $controlador = new HistorialFacturasC();
 
-if (isset ($_GET['CheqAbonos_Click'])) {
+if (isset($_GET['CheqAbonos_Click'])) {
     echo json_encode($controlador->CheqAbonos_Click());
 }
 
-if (isset ($_GET['CheqCxC_Click'])) {
+if (isset($_GET['CheqCxC_Click'])) {
     echo json_encode($controlador->CheqCxC_Click());
 }
 
-if (isset ($_GET['Form_Activate'])) {
+if (isset($_GET['Form_Activate'])) {
     echo json_encode($controlador->Form_Activate());
 }
 
-if (isset ($_GET['ToolBarMenu_ButtonClick'])) {
+if (isset($_GET['ToolBarMenu_ButtonClick'])) {
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->ToolBarMenu_ButtonClick($parametros));
 }
 
-if (isset ($_GET['ToolbarMenu_ButtonMenuClick'])) {
+if (isset($_GET['ToolbarMenu_ButtonMenuClick'])) {
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->ToolbarMenu_ButtonMenuClick($parametros));
 }
 
-if (isset ($_GET['ListCliente_LostFocus'])) {
+if (isset($_GET['ListCliente_LostFocus'])) {
     $ListClienteText = $_POST['ListClienteText'];
     echo json_encode($controlador->ListCliente_LostFocus($ListClienteText));
 }
 
-if (isset ($_GET['DCCliente_LostFocus'])) {
+if (isset($_GET['DCCliente_LostFocus'])) {
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->DCCliente_LostFocus($parametros));
 }
 
-if (isset ($_GET['Imprimir'])) {
+if (isset($_GET['Imprimir'])) {
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->Imprimir($parametros));
 }
 
-if (isset ($_GET['SRI_Enviar_Mails'])) {
+if (isset($_GET['SRI_Enviar_Mails'])) {
     $params = $_POST['parametros'];
 
     $TFA = $params['FA'];
@@ -62,14 +62,14 @@ if (isset ($_GET['SRI_Enviar_Mails'])) {
     echo json_encode($controlador->SRI_Enviar_Mails($TFA, $SRI_Autorizacion, $Tipo_Documento));
 }
 
-if (isset ($_GET['Recibo_Enviar_Mails'])) {
+if (isset($_GET['Recibo_Enviar_Mails'])) {
     $params = $_POST['parametros'];
 
     $TFA = $params['FA'];
     echo json_encode($controlador->Recibo_Enviar_Mails($TFA));
 }
 
-if (isset ($_GET['EnviarMails'])) {
+if (isset($_GET['EnviarMails'])) {
     $params = $_POST['parametros'];
 
     $archivo_pdf = $params['archivo_pdf'];
@@ -80,7 +80,12 @@ if (isset ($_GET['EnviarMails'])) {
     echo json_encode($controlador->EnviarMails($archivo_pdf, $archivo_xml, $TFA, $SRI_Autorizacion, $Tipo_Documento));
 }
 
-if (isset ($_GET['EnviarMailAbono'])) {
+if (isset($_GET['EnviarMailRecibo'])) {
+    $params = $_POST['parametros'];
+    echo json_encode($controlador->EnviarMailRecibo($params));
+}
+
+if (isset($_GET['EnviarMailAbono'])) {
     $params = $_POST['parametros'];
     echo json_encode($controlador->EnviarMailAbono($params));
 }
@@ -181,11 +186,11 @@ class HistorialFacturasC
             $TMailAsunto = $TFA['Cliente'] . ", Factura No. " . $TFA['Serie'] . "-" . sprintf("%09d", $TFA['Factura']);
         }
 
-        if (isset ($TFA['EmailC']) && $TFA['EmailC'] !== '.') {
+        if (isset($TFA['EmailC']) && $TFA['EmailC'] !== '.') {
             $TMailPara[] = $TFA['EmailC'];
         }
 
-        if (isset ($TFA['EmailR']) && $TFA['EmailR'] !== '.') {
+        if (isset($TFA['EmailR']) && $TFA['EmailR'] !== '.') {
             $TMailPara[] = $TFA['EmailR'];
         }
 
@@ -210,41 +215,56 @@ class HistorialFacturasC
     function Recibo_Enviar_Mails($TFA)
     {
         $Comprobante = "";
-        $fecha_actual = date("Y-m-d");
+
         if (strlen($TFA['Serie']) == 6 && $TFA['Factura'] > 0) {
             //$Comprobante = "Recibo No " . $TFA['Serie'] . "-" . sprintf("%09d", $TFA['Factura']);
-            //$this->modelo->Generar_Recibo_PDF($TFA);
+            $res = $this->modelo->Generar_Recibo_PDF($TFA);
+            //print_r($res['nombre']); die();
 
-            $TMailMensaje = "Cliente: " . $TFA['Cliente'] . "\n" .
-                "Codigo: " . $TFA['CI_RUC'] . "\n" .
-                "Emision: " . $fecha_actual . "\n" .
-                $Comprobante . "\n";
-
-            $TMailAsunto = $TFA['Cliente'] . ", " . $Comprobante;
-
-            $TMailAdjunto = $Comprobante . ".pdf";
-
-            if (isset ($TFA['EmailC']) && $TFA['EmailC'] !== '.') {
-                $TMailPara[] = $TFA['EmailC'];
+            if (isset($res['nombre']) && $res['nombre']) {
+                //$TMailAdjunto[] = dirname(__DIR__, 3) . "/TEMP/" . $res['nombre'];
+                //$Comprobante = $res['nombre'];
+                return $res;
             }
-
-            if (isset ($TFA['EmailR']) && $TFA['EmailR'] !== '.') {
-                $TMailPara[] = $TFA['EmailR'];
-            }
-
-            $TMailPara = implode(', ', $TMailPara);
-
-            $rps = $this->email->enviar_email(false, $TMailPara, $TMailMensaje, $TMailAsunto, $HTML = false);
-            return $rps;
         }
     }
+
+    function EnviarMailRecibo($parametros)
+    {
+        $TFA = $parametros['FA'];
+        $Comprobante = $parametros['archivo'];
+        $fecha_actual = date("Y-m-d");
+
+        $TMailMensaje = "Cliente: " . $TFA['Cliente'] . "\n" .
+            "Codigo: " . $TFA['CI_RUC'] . "\n" .
+            "Emision: " . $fecha_actual . "\n" .
+            $Comprobante . "\n";
+
+        $TMailAsunto = $TFA['Cliente'] . ", " . $Comprobante;
+
+        $TMailAdjunto[] = $Comprobante;
+
+        if (isset ($TFA['EmailC']) && $TFA['EmailC'] !== '.') {
+            $TMailPara[] = $TFA['EmailC'];
+        }
+
+        if (isset ($TFA['EmailR']) && $TFA['EmailR'] !== '.') {
+            $TMailPara[] = $TFA['EmailR'];
+        }
+
+        $TMailPara = implode(', ', $TMailPara);
+
+        $rps = $this->email->enviar_email($TMailAdjunto, $TMailPara, $TMailMensaje, $TMailAsunto, $HTML = false);
+        return $rps;
+    }
+
 
 
     function SRI_Generar_XML_Firmado($ClaveDeAcceso)
     {
         $resultados = $this->modelo->SRI_Generar_XML_Firmado($ClaveDeAcceso);
         $RutaSysBases = dirname(__DIR__, 3);
-        if (!empty ($resultados)) {
+        if (!empty($resultados)) {
             $RutaXMLFirmado = $RutaSysBases . "/TEMP/" . $ClaveDeAcceso . ".xml";
             file_put_contents($RutaXMLFirmado, $resultados[0]['Documento_Autorizado']);
             return 1;
@@ -1148,7 +1168,7 @@ class HistorialFacturasC
             $ListCliente[] = $opcion;
         }
 
-        if (empty ($TipoFactura)) {
+        if (empty($TipoFactura)) {
             $TipoFactura = G_NINGUNO;
         }
 
@@ -1373,7 +1393,7 @@ class HistorialFacturasC
                 $res = $this->modelo->Tipo_Pago_Cliente();
                 break;
             case "Bajar_Excel":
-                if (!empty ($parametros['AdoQuery'])) {
+                if (!empty($parametros['AdoQuery'])) {
                     return $this->Bajar_Excel($parametros['AdoQuery']);
                 } else {
                     return array('response' => 0);
@@ -1444,22 +1464,22 @@ class HistorialFacturasC
                 if ($contador >= 3) {
                     break;
                 }
-                if (isset ($record["Cliente"])) {
+                if (isset($record["Cliente"])) {
                     $TBeneficiario["Cliente"] = $record["Cliente"];
                 }
-                if (isset ($record["Representante"])) {
+                if (isset($record["Representante"])) {
                     $TBeneficiario["Representante"] = $record["Representante"];
                 }
-                if (isset ($record["Grupo"])) {
+                if (isset($record["Grupo"])) {
                     $TBeneficiario["Grupo_No"] = $record["Grupo"];
                 }
-                if (isset ($record["Email"])) {
+                if (isset($record["Email"])) {
                     $TBeneficiario["Email1"] = $record["Email"];
                 }
-                if (isset ($record["Email2"])) {
+                if (isset($record["Email2"])) {
                     $TBeneficiario["Email2"] = $record["Email2"];
                 }
-                if (isset ($record["EmailR"])) {
+                if (isset($record["EmailR"])) {
                     $TBeneficiario["EmailR"] = $record["EmailR"];
                 }
 
@@ -1482,15 +1502,15 @@ class HistorialFacturasC
                     "TOTAL PENDIENTE POR CANCELAR" . str_repeat(" ", 26) . "USD\t" . $CodigoP . "\n" .
                     "NOTA: En caso de tener inconformidad con los valores detallados en su Estado de Cuenta, comuniquese con atencion al Cliente.\n";
 
-                if (isset ($TFA['Email1']) && $TBeneficiario['Email1'] !== '.') {
+                if (isset($TFA['Email1']) && $TBeneficiario['Email1'] !== '.') {
                     $TMailPara[] = $TBeneficiario['Email1'];
                 }
 
-                if (isset ($TFA['Email2']) && $TBeneficiario['Email2'] !== '.') {
+                if (isset($TFA['Email2']) && $TBeneficiario['Email2'] !== '.') {
                     $TMailPara[] = $TBeneficiario['Email2'];
                 }
 
-                if (isset ($TFA['EmailR']) && $TBeneficiario['EmailR'] !== '.') {
+                if (isset($TFA['EmailR']) && $TBeneficiario['EmailR'] !== '.') {
                     $TMailPara[] = $TBeneficiario['EmailR'];
                 }
 
@@ -1548,7 +1568,7 @@ class HistorialFacturasC
             if ($parametros['SiEnviar'] == true) {
                 $ano = substr($Co['Fecha'], 0, 4);
 
-                if (isset ($TFA['Email']) && $Co["Email"] !== '.') {
+                if (isset($TFA['Email']) && $Co["Email"] !== '.') {
                     $TMailPara[] = $Co["Email"];
                 }
 
@@ -1641,7 +1661,7 @@ class HistorialFacturasC
 
         $AdoCatastro = $this->modelo->Catastro_Registro_Datos_Clientes(BuscarFecha($MBFechaI), BuscarFecha($MBFechaF), $tipoConsulta);
 
-        if (!empty ($AdoCatastro)) {
+        if (!empty($AdoCatastro)) {
             foreach ($AdoCatastro as $registro) {
                 $Dias_Morosidad = 0;
                 // Calcular días de morosidad
