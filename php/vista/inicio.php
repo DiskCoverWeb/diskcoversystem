@@ -194,6 +194,9 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'cierre_caja':
 				require_once("contabilidad/FCierre_Caja.php");
 				break;
+			case 'cierre_ejercicio':
+				require_once("contabilidad/cierreejercicio.php");
+				break;
 
 			case 'InfoError':
 				include("contabilidad/FInfoError.php");

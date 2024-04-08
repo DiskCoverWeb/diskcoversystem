@@ -477,7 +477,7 @@ function contracuenta()
                     </div>
                 </div>
                 <div class="col-sm-4 text-center">
-                  <button class="btn btn-default" id="btn_g"> <img src="../../img/png/grabar.png"  onclick="validar_formulario();"><br> Guardar</button>
+                  <button class="btn btn-default" id="btn_g" tabindex="15"> <img src="../../img/png/grabar.png"  onclick="validar_formulario();"><br> Guardar</button>
                   
                   <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button> -->
                   <button class="btn btn-default"  data-dismiss="modal" onclick="limpiar_retencaion();"> <img src="../../img/png/bloqueo.png" ><br> Cancelar</button>
@@ -765,7 +765,7 @@ function contracuenta()
                   <div class="row">
                     <div class="col-sm-4">
                       <b>Forma de pago</b>
-                      <select class="" style="width: 100%;" onchange="mostrar_panel_ext()" id="CFormaPago">
+                      <select class="" style="width: 100%;" onchange="mostrar_panel_ext()" id="CFormaPago" tabindex="1">
                         <option value="">Seleccione forma de pago</option>
                         <option value="1" selected="">Local</option>
                         <option value="2">Exterior</option>
@@ -773,7 +773,7 @@ function contracuenta()
                     </div>
                     <div class="col-sm-8">
                       <b>Tipo de pago</b>
-                      <select class="" style="width: 100%;" id="DCTipoPago" onchange="$('#DCTipoPago').css('border','1px solid #d2d6de');">
+                      <select class="" style="width: 100%;" id="DCTipoPago" onchange="$('#DCTipoPago').css('border','1px solid #d2d6de');" tabindex="2">
                         <option value="">Seleccione tipo de pago</option>
                       </select>                    
                     </div>
@@ -807,10 +807,10 @@ function contracuenta()
                                 <div class="box-body" style="padding-top:0px">
                                     <div class="row">
                                         <div class="col-sm-4">
-                                          <label class="radio-inline" onclick="mostra_select()" id="lbl_rbl"><input type="checkbox" name="ChRetF" id="ChRetF"> Retencion en la fuente</label>
+                                          <label class="radio-inline" onclick="mostra_select()" id="lbl_rbl"><input type="checkbox" name="ChRetF" id="ChRetF" tabindex="3"> Retencion en la fuente</label>
                                         </div>
                                         <div class="col-sm-8">
-                                          <select class="" id="DCRetFuente" style="display: none; width: 100%" onchange="$('#DCRetFuente').css('border','1px solid #d2d6de');">
+                                          <select class="" id="DCRetFuente" style="display: none; width: 100%" onchange="$('#DCRetFuente').css('border','1px solid #d2d6de');" tabindex="4">
                                             <option value=""> Seleccione Tipo de retencion</option>
                                           </select>
                                         </div>
@@ -819,18 +819,22 @@ function contracuenta()
                                       <div class="col-sm-2">
                                         Serie
                                         <div class="row">
-                                          <div class="col-sm-6"style="padding-left: 0px;padding-right: 0px;"><input type="text" class="form-control input-xs" name="TxtNumUnoComRet" id="TxtNumUnoComRet" onkeyup="solo_3_numeros(this.id);solo_numeros(this)" placeholder="001" onblur="autocompletar_serie_num(this.id)"  autocomplete="off"></div>
-                                          <div class="col-sm-6"style="padding-left: 0px;padding-right: 0px;"><input type="text" class="form-control input-xs" name="TxtNumDosComRet" id="TxtNumDosComRet" onkeyup="solo_3_numeros(this.id);solo_numeros(this)" placeholder="001" onblur="autocompletar_serie_num(this.id)"  autocomplete="off"></div>
+                                          <div class="col-sm-6"style="padding-left: 0px;padding-right: 0px;">
+                                            <input type="text" class="form-control input-xs" name="TxtNumUnoComRet" id="TxtNumUnoComRet" onkeyup="solo_3_numeros(this.id);solo_numeros(this)" placeholder="001" onblur="autocompletar_serie_num(this.id)"  autocomplete="off" tabindex="5">
+                                           </div>
+                                          <div class="col-sm-6"style="padding-left: 0px;padding-right: 0px;">
+                                                <input type="text" class="form-control input-xs" name="TxtNumDosComRet" id="TxtNumDosComRet" onkeyup="solo_3_numeros(this.id);solo_numeros(this)" placeholder="001" onblur="autocompletar_serie_num(this.id)"  autocomplete="off" tabindex="6">
+                                            </div>
                                         </div>
                                       </div>
                                       <div class="col-sm-2">
                                         Numero
-                                        <input type="text" class="form-control input-xs" name="TxtNumTresComRet" id="TxtNumTresComRet" onblur="validar_num_retencion()" onkeyup="solo_9_numeros(this.id);solo_numeros(this)" placeholder="000000001" tabindex="-1"  autocomplete="off">
+                                        <input type="text" class="form-control input-xs" name="TxtNumTresComRet" id="TxtNumTresComRet" onblur="validar_num_retencion()" onkeyup="solo_9_numeros(this.id);solo_numeros(this)" placeholder="000000001"  autocomplete="off" tabindex="7">
                                         <input type="hidden" name="val_num" id="val_num" value="0"  autocomplete="off">
                                       </div>
                                       <div class="col-sm-4">
                                         Autorizacion
-                                        <input type="text" name="TxtNumUnoAutComRet" class="form-control input-xs" id="TxtNumUnoAutComRet" onblur="validar_autorizacion()" onkeyup="solo_numeros(this);"  autocomplete="off">
+                                        <input type="text" name="TxtNumUnoAutComRet" class="form-control input-xs" id="TxtNumUnoAutComRet" onblur="validar_autorizacion()" onkeyup="solo_numeros(this);"  autocomplete="off" tabindex="8">
                                       </div>
                                       <script type="text/javascript"> 
                                                function selec_tipo_comp()
@@ -899,7 +903,7 @@ function contracuenta()
                                             SUMATORIA
                                           </div>
                                           <div class="col-sm-8"><br>
-                                            <input type="text" name="" class="form-control input-xs  text-right" id="TxtSumatoria"  autocomplete="off" onkeyup="validar_numeros_decimal(this)" onblur="validar_float(this,2)" >
+                                            <input type="text" name="" class="form-control input-xs  text-right" id="TxtSumatoria"  autocomplete="off" tabindex="9" onkeyup="validar_numeros_decimal(this)" onblur="validar_float(this,2)" >
                                           </div>
                                         </div>                                      
                                       </div>                          
@@ -907,22 +911,22 @@ function contracuenta()
                                     <div class="row">
                                       <div class="col-sm-7">
                                         <b>CODIGO DE RETENCION</b>
-                                        <select class="" id="DCConceptoRet" style="width:100%" name="DCConceptoRet" onchange="calcular_porc_ret()" onblur="calcular_porc_ret()">
+                                        <select class="" tabindex="10" id="DCConceptoRet" style="width:100%" name="DCConceptoRet" onchange="calcular_porc_ret()" onblur="calcular_porc_ret()">
                                           <option value="">Seleccione Codigo de retencion</option>
                                         </select>    
                                         <textarea class="form-control" rows="2" id="lbl_retencion_all_text" readonly></textarea>                                    
                                       </div>
                                       <div class="col-sm-2">
                                         <b>BASE IMP</b>
-                                        <input type="text" class="form-control input-xs  text-right" name="TxtBimpConA" id="TxtBimpConA"  autocomplete="off" onblur="validar_base_impo();validar_float(this,2)" onkeyup="validar_numeros_decimal(this)">
+                                        <input type="text" class="form-control input-xs  text-right" name="TxtBimpConA" id="TxtBimpConA"  autocomplete="off" onblur="validar_base_impo();validar_float(this,2)" onkeyup="validar_numeros_decimal(this)" tabindex="11">
                                       </div>
                                        <div class="col-sm-1" style="padding-left: 0px;padding-right: 0px">
                                         <b>PORC</b>
-                                        <input type="text" class="form-control input-xs  text-right" name="TxtPorRetConA" id="TxtPorRetConA" onblur="insertar_grid()" readonly=""  autocomplete="off">
+                                        <input type="text" class="form-control input-xs  text-right" name="TxtPorRetConA" id="TxtPorRetConA" onblur="insertar_grid()" readonly=""  autocomplete="off" tabindex="12">
                                       </div>
                                        <div class="col-sm-2">
                                         <b>VALOR RET</b>
-                                        <input type="text" class="form-control input-xs text-right" name="TxtValConA" id="TxtValConA" readonly=""  autocomplete="off">
+                                        <input type="text" class="form-control input-xs text-right" name="TxtValConA" id="TxtValConA" readonly=""  autocomplete="off" tabindex="13">
                                       </div>
                                     </div>
                                 </div>
@@ -937,7 +941,7 @@ function contracuenta()
                   <div class="row">
                     <div class="col-sm-12 text-right">
                       <b>Total Retencion</b>
-                      <input type="text" class="input-xs" name="" id="txt_total_retencion" readonly=""  autocomplete="off">
+                      <input type="text" class="input-xs" name="" id="txt_total_retencion" readonly=""  autocomplete="off" tabindex="14">
                     </div>
                   </div>        
                </div>

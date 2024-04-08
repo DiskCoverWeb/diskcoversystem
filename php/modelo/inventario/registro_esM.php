@@ -1472,5 +1472,16 @@ function cuentas_todos($query)
      	return $this->db->String_Sql($sql);
      }
 
+     function cambiar_codigo_sec($num,$SQLs)
+     {
+     	$sql = "UPDATE Codigos 
+                SET Numero = $num 
+                WHERE Concepto = '".$SQLs."'
+                AND Periodo = '" .$_SESSION['INGRESO']['periodo']."' 
+                AND Item = '".$_SESSION['INGRESO']['item']. "' ";
+                // print_r($sql);
+       	return $this->db->String_Sql($sql);
+     }
+
 }
 ?>

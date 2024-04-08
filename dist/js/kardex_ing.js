@@ -32,8 +32,8 @@ $(document).ready(function()
     //   });
     // });
 
-    $("#TxtNumTresComRet").blur(function () {
-        validar_num_retencion();
+    $("#TxtNumTresComRet").blur(async function () {
+        await validar_num_retencion();
        if($('#val_num').val() == 0)
          {
           $('#TxtNumTresComRet').select();
@@ -1308,11 +1308,32 @@ function validar_autorizacion()
           // console.log(response);
           if(response!=1)
           {
-             Swal.fire(response.titulo,response.mensaje,'info') ;        
+             Swal.fire(response.titulo,response.mensaje,'info').then(function(){
+              cambiar_codigo_sec()
+              $('#TxtSumatoria').select();
+             }) ;        
           }
       }
     });
 
+}
+
+function cambiar_codigo_sec()
+{
+  var parametros = 
+   {
+     'auto':$('#TxtNumUnoAutComRet').val(),
+     'serie':$('#TxtNumUnoComRet').val()+''+$('#TxtNumDosComRet').val(),
+     'numero':$('#TxtNumTresComRet').val(),
+   }
+   $.ajax({
+      data:  {parametros:parametros},
+      url:   '../controlador/inventario/registro_esC.php?cambiar_codigo_sec=true',
+      type:  'post',
+      dataType: 'json',
+        success:  function (response) { 
+        }
+    });
 }
 
  function generar_asiento()

@@ -214,8 +214,13 @@ if(isset($_GET['eliminar_air']))
 {  
    $parametros = $_POST['parametros'];
    echo  json_encode($controlador->eliminar_air($parametros));
-
 }
+if(isset($_GET['cambiar_codigo_sec']))
+{  
+   $parametros = $_POST['parametros'];
+   echo  json_encode($controlador->cambiar_codigo_sec($parametros));
+}
+
 class registro_esC
 {
 	private $modelo;
@@ -1148,6 +1153,18 @@ class registro_esC
      function eliminar_air($parametros)
      {
        return $this->modelo->eliminar_air($parametros['a_no'],$parametros['cod']);
+     }
+
+     function cambiar_codigo_sec($parametros)
+     {
+
+        $num = $parametros['numero'];
+        $SQLs = 'RE_SERIE_'.$parametros['serie'];
+        $datos = $this->modelo->existe_numero(substr($parametros['serie'],0,3),substr($parametros['serie'],3,6),$num);
+        if(count($datos)==0)
+        {
+          return $this->modelo->cambiar_codigo_sec($num,$SQLs);
+        }
      }
 }
 ?>

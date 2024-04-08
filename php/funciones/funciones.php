@@ -10928,6 +10928,12 @@ function GrabarComprobante($C1)
        $C1['Retencion'] = ReadSetDataNum("RE_SERIE_".$C1['Serie_R'], True, True);
     }
      $TMail['TipoDeEnvio'] = "CE";
+  }else{
+    if($C1['RetNueva'] && $C1['RetSecuencial'])
+    {    
+      // print_r('expression');die();
+       $C1['Retencion'] = ReadSetDataNum("RE_SERIE_".$C1['Serie_R'], True, True);
+    }
   }
   $FA['TP'] = $C1['TP'];
   $FA['Fecha'] = $C1['Fecha'];
