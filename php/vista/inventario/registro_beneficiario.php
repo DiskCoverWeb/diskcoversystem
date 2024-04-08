@@ -155,11 +155,12 @@
                                     <div class="carousel-inner">
                                     </div>
                                 </div>
-                                <div style="flex: 1; margin-right: 10px; ">
+                                <div style="flex: 1;  margin-right: 10px; ">
                                     <label for="input_93" style="display: block;">Tipo de Beneficiario</label>
                                     <input class="form-control input-xs" type="text" name="input_93" id="input_93"
                                         placeholder="Haz clic sobre la imagen" readonly>
                                 </div>
+
                                 <div id="carouselBtnImaDon" class="carousel slide" data-ride="carousel"
                                     style="margin-right: 10px;">
                                     <div class="carousel-inner">
@@ -355,11 +356,13 @@
                                         style="width: 100%;"></select>
                                 </div>
                                 <div id="comentariodiv"
-                                    style="flex: 1; margin-right: 10px; margin-lefth: 10px; style=display: none;">
-                                    <label for="comentario" style="display: block;">Comentario</label>
-                                    <textarea class="form-control" id="comentario" rows="2"
-                                        style="resize: none"></textarea>
+                                    style="flex: 1; margin-right: 10px; margin-left: 10px; display: none;">
+                                    <label for="comentario" style="display: block;">Comentario (máximo 85
+                                        caracteres)</label>
+                                    <textarea class="form-control" id="comentario" rows="2" style="resize: none"
+                                        maxlength="85"></textarea>
                                 </div>
+
                             </div>
                             <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
                                 <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
@@ -405,7 +408,8 @@
                                     <div class="row">
                                         <div class="form-group">
                                             <label for="archivoAdd">Archivos Adjuntos</label>
-                                            <input type="file" class="form-control-file" id="archivoAdd">
+                                            <input type="file" class="form-control-file" id="archivoAdd" multiple
+                                                onchange="checkFiles(this)">
                                         </div>
                                     </div>
                                 </div>
@@ -465,9 +469,9 @@
                         </div>
                         <div class="modal-body" style="overflow-y: auto; max-height: 200px;">
                             <div class="form-group row">
-                                <label for="Ciudad" class="col-sm-3 col-form-label">Provincia</label>
+                                <label for="Provincia" class="col-sm-3 col-form-label">Provincia</label>
                                 <div class="col-sm-9">
-                                    <select class="form-control input-sm" id="select_provincias"
+                                    <select class="form-control input-sm" id="select_prov"
                                         onchange="ciudad(this.value)">
                                         <option value="">Seleccione provincia</option>
                                     </select>
@@ -476,7 +480,7 @@
                             <div class="form-group row">
                                 <label for="Ciudad" class="col-sm-3 col-form-label">Ciudad</label>
                                 <div class="col-sm-9">
-                                    <select class="form-control input-sm" id="select_ciudad">
+                                    <select class="form-control input-sm" id="select_ciud">
                                         <option value="">Seleccione ciudad</option>
                                     </select>
                                 </div>
@@ -560,6 +564,26 @@
                 </div>
             </div>
 
+            <div id="modalDescarga" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Descargar Archivos</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row" style="margin: 10px; display: flex;">
+                                <!-- Cambiar el id a modalDescContainer -->
+                                <div id="modalDescContainer"
+                                    style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
             <div id="modalsBtn87" class="modal fade" role="dialog">
                 <div class="modal-dialog modal-sm">
                     <div class="modal-content">
@@ -622,6 +646,51 @@
         Form_Activate();
     });
 
+    function checkFiles(input) {
+        const maxFiles = 3;
+        const maxFileSize = 10;
+
+        const files = input.files;
+        if (files.length > maxFiles) {
+            Swal.fire("", "Solo se permiten un máximo de " + maxFiles + " archivos.", "info");
+            input.value = '';
+        } else if (files.length > 0) {
+            var fileNames = [];
+            var fileSizeLimit = false;
+            var contieneComa = false;
+
+            for (var i = 0; i < files.length; i++) {
+                var fileName = files[i].name;
+                if (fileName.includes(',')) {
+                    contieneComa = true;
+                    break;
+                }
+
+                fileNames.push(fileName);
+
+                if (files[i].size > maxFileSize * 1024 * 1024) {
+                    fileSizeLimit = true;
+                    break;
+                }
+            }
+
+            if (contieneComa) {
+                Swal.fire("", "Los nombres de los archivos no deben contener comas (,).", "info");
+                input.value = '';
+            } else if (fileSizeLimit) {
+                Swal.fire("", "El tamaño máximo permitido por archivo es de " + maxFileSize + "MB.", "info");
+                input.value = '';
+            } else {
+                var fileList = fileNames.join(', ');
+                if (fileList.length > 90) {
+                    Swal.fire("", "La longitud total de los nombres de archivo supera los 90 caracteres.", "info");
+                } else {
+                    Swal.fire("Archivos seleccionados:", fileList, "info");
+                }
+            }
+        }
+    }
+
     //direccion
     $('#btnMostrarDir').click(function () {
         provincias();
@@ -631,8 +700,8 @@
     //direccion
     $('#btnGuardarDir').click(function () {
         $('#modalBtnDir').modal('hide');
-        var provincia = $('#select_provincias').val();
-        var ciudad = $('#select_ciudad').val();
+        var provincia = $('#select_prov').val();
+        var ciudad = $('#select_ciud').val();
         var canton = $('#Canton').val();
         var parroquia = $('#Parroquia').val();
         var barrio = $('#Barrio').val();
@@ -649,15 +718,15 @@
             type: 'post',
             dataType: 'json',
             beforeSend: function () {
-                $("#select_ciudad").html("<option value='' disabled selected>Seleccione provincia</option>");
+                $("#select_ciud").html("<option value='' disabled selected>Seleccione provincia</option>");
             },
             success: function (response) {
                 response.forEach(function (data, index) {
                     option += "<option value='" + data.Codigo + "'>" + data.Descripcion_Rubro + "</option>";
                 });
-                $('#select_provincias').html(option);
+                $('#select_prov').html(option);
                 if (prov != null) {
-                    $('#select_provincias').val(prov).trigger('change');
+                    $('#select_prov').val(prov).trigger('change');
                     ciudad(prov);
                 }
             }
@@ -677,9 +746,9 @@
                     response.forEach(function (data, index) {
                         option += "<option value='" + data.Codigo + "'>" + data.Descripcion_Rubro + "</option>";
                     });
-                    $('#select_ciudad').html(option);
+                    $('#select_ciud').html(option);
                     if (ciud != null) {
-                        $('#select_ciudad').val(ciud).trigger('change');
+                        $('#select_ciud').val(ciud).trigger('change');
                     }
                 }
             });
@@ -736,7 +805,7 @@
                             carouselItem.addClass('active');
                         }
                         var imgSrc = '../../img/png/' + item.picture + '.png';
-                        var carouselContent = '<img src="' + imgSrc + '" alt="' + item.text + '" width="55" height="55">' +
+                        var carouselContent = '<img src="' + imgSrc + '" alt="' + item.text + '" width="50" height="50">' +
                             '<div class="carousel-caption">' +
                             '</div>';
                         carouselItem.html(carouselContent);
@@ -769,7 +838,7 @@
                             carouselItem.addClass('active');
                         }
                         var imgSrc = '../../img/png/' + item.picture + '.png';
-                        var carouselContent = '<img src="' + imgSrc + '" alt="' + item.text + '" width="55" height="55">' +
+                        var carouselContent = '<img src="' + imgSrc + '" alt="' + item.text + '" width="60" height="60">' +
                             '<div class="carousel-caption">' +
                             '</div>';
                         carouselItem.html(carouselContent);
@@ -880,10 +949,10 @@
     $('#select_86').change(function () {
         var selectedValue = $(this).val();
         if (selectedValue === '86.04') {
-            $('#comentariodiv').val(comen);
+            $('#comentario').val(comen);
             $('#comentariodiv').show();
         } else {
-            $('#comentariodiv').val('.');
+            $('#comentario').val('.');
             $('#comentariodiv').hide();
         }
     });
@@ -906,6 +975,7 @@
                 dataType: 'json',
                 data: { valor: Actividad },
                 success: function (datos) {
+                    console.log(datos);
                     if (datos != 0) {
                         LlenarCalendarioC(datos);
                     } else {
@@ -1116,8 +1186,11 @@
     //registro 
     $('#btnGuardarAsignacion').click(function () {
         var fileInput = $('#archivoAdd')[0];
-        var archivo = fileInput.files[0];
         var formData = new FormData();
+
+        for (var i = 0; i < fileInput.files.length; i++) {
+            formData.append('Evidencias[]', fileInput.files[i]);
+        }
 
         formData.append('Cliente', miCliente);
         formData.append('CI_RUC', miRuc);
@@ -1139,8 +1212,8 @@
         formData.append('Telefono', $('#telefono').val());
         formData.append('TelefonoT', $('#telefono2').val());
 
-        formData.append('Provincia', $('#select_provincias').val() || '.');
-        formData.append('Ciudad', $('#select_ciudad').val() || '.');
+        formData.append('Provincia', $('#select_prov').val() || '.');
+        formData.append('Ciudad', $('#select_ciud').val() || '.');
         formData.append('Canton', $('#Canton').val() || '.');
         formData.append('Parroquia', $('#Parroquia').val() || '.');
         formData.append('Barrio', $('#Barrio').val() || '.');
@@ -1161,13 +1234,16 @@
         formData.append('Cod_Fam', $('#select_89').val());
         formData.append('Observaciones', $('#infoNut').val());
 
-        if (archivo) {
-            formData.append('Evidencias', archivo, archivo.name);
-        }
-
-        /*formData.forEach(function (value, key) {
+        formData.forEach(function (value, key) {
             console.log(key + ': ' + value);
-        });*/
+        });
+
+        console.log("Added Evidences:");
+        for (var [key, value] of formData.entries()) {
+            if (key === 'Evidencias') {
+                console.log(value.name);
+            }
+        }
 
         //validacion campos llenos
         var camposVacios = [];
@@ -1181,7 +1257,7 @@
         if (!$('#select_92').val()) camposVacios.push('Accion social');
         if (!$('#select_90').val()) camposVacios.push('Vulnerabilidad');
         if (!$('#select_89').val()) camposVacios.push('Tipo Atencion');
-        if (!archivo) camposVacios.push('Evidencias');
+        if (!fileInput.files.length) camposVacios.push('Evidencias');
         if (!$('#infoNut').val()) camposVacios.push('Observaciones');
 
         if (camposVacios.length > 0) {
@@ -1209,7 +1285,7 @@
                     if (response.res == '0') {
                         Swal.fire({
                             title: 'AVISO',
-                            text: response.mensaje,
+                            text: response.mensaje + (response.datos || ''),
                             type: 'error',
                             confirmButtonText: 'Aceptar'
                         });
@@ -1228,7 +1304,7 @@
     //limpieza
     function LimpiarSelectsInfoAdd() {
         $('#collapseTwo').collapse('hide');
-        $('#select_82').val(null).trigger('change');
+        $('#select_92').val(null).trigger('change');
         $('#select_86').val(null).trigger('change');
         $('#select_88').val(null).trigger('change');
         $('#select_89').val(null).trigger('change');
@@ -1239,11 +1315,15 @@
         $('#horaEntregac').val('');
         $('#totalPersonas').val('');
         $('#infoNut').val('');
+        $('#comentario').val('');
+        comen = '';
+        nombreArchivo = '';
+
     }
 
     //llenar campos del cliente segun nombre seleccionado
     var miRuc;
-    var miCodigo;
+    var miCodigo = '';
     var miCliente;
     var nombreArchivo;
     $('#cliente').on('select2:select', function (e) {
@@ -1307,7 +1387,9 @@
                     $('#email2').val(datos.Email2);
                     $('#telefono').val(datos.Telefono);
                     $('#telefono2').val(datos.TelefonoT);
-                    if (datos.Sexo) {
+                    if (datos.Sexo == '.') {
+                        $('#sexo').val($('#sexo option:first').val());
+                    } else {
                         $('#sexo').val(datos.Sexo);
                     }
 
@@ -1344,6 +1426,7 @@
     //llenar campos de panel informacion adicional
     var comen;
     $('#botonInfoAdd').click(function () {
+        console.log(miCodigo);
         if (miCodigo) {
             $.ajax({
                 url: '../controlador/inventario/registro_beneficiarioC.php?llenarCamposInfoAdd=true',
@@ -1371,7 +1454,8 @@
 
                 }
             });
-
+        } else {
+            swal.fire('', 'No se selecciono un Cliente', 'info');
         }
     });
 
@@ -1384,19 +1468,20 @@
                 dataType: 'json',
                 data: { valor: valor },
                 success: function (res) {
+                    console.log(res);
                     var val = res.val;
                     var datos = res.respuesta;
-
-                    datos.forEach(function (item) {
-                        valorp = item.id.slice(0, 2);
-                        if ($('#select_' + valorp).find("option[value='" + item.id + "']").length) {
-                            $('#select_' + valorp).val(item.id).trigger('change');
-                        } else {
-                            var newOption = new Option(item.text, item.id, true, true);
-                            $('#select_' + valorp).append(newOption).trigger('change');
-                        }
-                    });
-
+                    if (!res.error) {
+                        datos.forEach(function (item) {
+                            valorp = item.id.slice(0, 2);
+                            if ($('#select_' + valorp).find("option[value='" + item.id + "']").length) {
+                                $('#select_' + valorp).val(item.id).trigger('change');
+                            } else {
+                                var newOption = new Option(item.text, item.id, true, true);
+                                $('#select_' + valorp).append(newOption).trigger('change');
+                            }
+                        });
+                    }
                 }
             });
         }
@@ -1443,15 +1528,61 @@
 
     $('#descargarArchivo').click(function () {
         if (nombreArchivo) {
+            console.log(nombreArchivo);
             $.ajax({
                 url: '../controlador/inventario/registro_beneficiarioC.php?descargarArchivo=true',
                 type: 'post',
                 dataType: 'json',
                 data: { valor: nombreArchivo },
                 success: function (data) {
+                    //console.log(data);
                     if (data.response === 1) {
-                        descargarArchivo(data.Dir, data.Nombre);
-                    } else {
+                        $('#modalDescContainer').empty();
+                        if (data.archivos.length > 0) {
+                            data.archivos.forEach(function (archivo) {
+                                var extension = archivo.split('.').pop().toLowerCase();
+                                console.log(extension);
+                                var iconSrc;
+                                switch (extension) {
+                                    case 'pdf':
+                                        iconSrc = '../../img/png/pdf_icon.png';
+                                        break;
+                                    case 'doc':
+                                    case 'docx':
+                                        iconSrc = '../../img/png/doc_icon.png';
+                                        break;
+                                    case 'png':
+                                    case 'jpg':
+                                        iconSrc = '../../img/png/jpg_icon.png';
+                                        break;
+                                    default:
+                                        iconSrc = '../../img/png/file_icon.png';
+                                        break;
+                                }
+                                var buttonHTML = '<div class="col-md-6 col-sm-6">' +
+                                    '<button type="button" class="btn btn-default btn-sm"' +
+                                    'onclick="descargarArchivo(\'' + data.dir + '\', \'' + archivo + '\')">' +
+                                    '<img src="' + iconSrc + '" style="width: 60px;height: 60px;">' +
+                                    '</button><br>' +
+                                    '<b>' + archivo + '</b>' +
+                                    '</div>';
+                                $('#modalDescContainer').append(buttonHTML);
+                            });
+                        }
+                        $('#modalDescContainer').append('<hr>');
+
+                        if (data.archivosNo.length > 0) {
+                            var archivosNoEncontradosHTML = '<span style="margin-top:20px" class="text-danger">Archivos no encontrados:<br>';
+                            data.archivosNo.forEach(function (archivoNoEncontrado) {
+                                archivosNoEncontradosHTML += archivoNoEncontrado + '<br>';
+                            });
+                            archivosNoEncontradosHTML += '</span>';
+                            $('#modalDescContainer').append(archivosNoEncontradosHTML);
+                        }
+
+                        $('#modalDescarga').modal('show');
+                    }
+                    else {
                         swal.fire('', 'El archivo no se encuentra en la base de datos', 'error');
                     }
                 },
@@ -1465,7 +1596,7 @@
             } else {
                 swal.fire('', 'Seleccione un nombre de Beneficiario/Usuario o CI/RUC', 'error')
             }
-
         }
     });
+
 </script>

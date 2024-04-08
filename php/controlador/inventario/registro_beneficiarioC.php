@@ -84,7 +84,7 @@ if (isset($_GET['llenarCamposInfoAdd'])) {
 }
 
 if (isset($_GET['guardarAsignacion'])) {
-
+    // Crear un array con los datos del formulario
     $params = array(
         'Cliente' => $_POST['Cliente'],
         'CI_RUC' => $_POST['CI_RUC'],
@@ -126,49 +126,64 @@ if (isset($_GET['guardarAsignacion'])) {
         'Observaciones' => $_POST['Observaciones']
     );
 
-    if (isset($_FILES['Evidencias']) && $_FILES['Evidencias']['error'] == UPLOAD_ERR_OK) {
-        $archivo = $_FILES['Evidencias'];
-        $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/EVIDENCIA_" . $_SESSION['INGRESO']['Entidad'] .
-            "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
+    // Verificar si se han cargado archivos
+    if (isset($_FILES['Evidencias']) && $_FILES['Evidencias']['error'][0] == UPLOAD_ERR_OK) {
+        $nombresArchivos = array();
+        $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/EVIDENCIA_" . $_SESSION['INGRESO']['Entidad'] . "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
         $carpetaDestino = str_replace(' ', '_', $carpetaDestino);
 
+        // Crear el directorio si no existe
         if (!is_dir($carpetaDestino)) {
             mkdir($carpetaDestino, 0777, true);
         }
 
-        $nombreArchivoOriginal = pathinfo($archivo['name'], PATHINFO_FILENAME);
-        $extension = pathinfo($archivo['name'], PATHINFO_EXTENSION);
-        $nombreArchivoDestino = $carpetaDestino . $nombreArchivoOriginal . '.' . $extension;
+        // Iterar sobre cada archivo cargado
+        foreach ($_FILES['Evidencias']['name'] as $indice => $nombre) {
+            // Generar un nombre único para el archivo
+            $nombreArchivoOriginal = pathinfo($nombre, PATHINFO_FILENAME);
+            $extension = pathinfo($nombre, PATHINFO_EXTENSION);
+            $nombreArchivoDestino = $carpetaDestino . $nombreArchivoOriginal . '.' . $extension;
 
-        $contador = 1;
-        while (file_exists($nombreArchivoDestino)) {
-            $nombreArchivoDestino = $carpetaDestino . $nombreArchivoOriginal . '_' . $contador . '.' . $extension;
-            $contador++;
+            $contador = 1;
+            while (file_exists($nombreArchivoDestino)) {
+                $nombreArchivoOriginal = $nombreArchivoOriginal . '_' . $contador;
+                $nombreArchivoDestino = $carpetaDestino . $nombreArchivoOriginal . '.' . $extension;
+                $contador++;
+            }
+
+            if (move_uploaded_file($_FILES['Evidencias']['tmp_name'][$indice], $nombreArchivoDestino)) {
+                $nombresArchivos[] = $nombreArchivoOriginal;
+            } else {
+                echo json_encode(["res" => '0', "mensaje" => "No se ha cargado el archivo: " . $nombre]);
+                return;
+            }
         }
 
-        if (move_uploaded_file($archivo['tmp_name'], $nombreArchivoDestino)) {
-            $params['NombreArchivo'] = $nombreArchivoOriginal;
-            echo json_encode($controlador->guardarAsignacion($params));
+        $params['NombreArchivo'] = implode(',', $nombresArchivos);
+
+        if (strlen($params['NombreArchivo']) > 90) {
+            echo json_encode(["res" => '0', "mensaje" => "El nombre del archivo supera los 90 caracteres", "datos" => $params['NombreArchivo']]);
         } else {
-            echo json_encode(["res" => '0', "mensaje" => "No se ha cargado ningún archivo", "datos" => $parametros]);
+            echo json_encode($controlador->guardarAsignacion($params));
         }
+
+    } else {
+        echo json_encode(["res" => '0', "mensaje" => "No se ha cargado ningún archivo"]);
     }
 
 }
 
-if(isset($_GET['provincias']))
-{
-  $pais = '';
-  if(isset($_POST['pais']))
-  {
-    $pais = $_POST['pais'];
-  }
-	echo json_encode(provincia_todas($pais));
+
+if (isset($_GET['provincias'])) {
+    $pais = '';
+    if (isset($_POST['pais'])) {
+        $pais = $_POST['pais'];
+    }
+    echo json_encode(provincia_todas($pais));
 }
 
-if(isset($_GET['ciudad']))
-{
-	echo json_encode(todas_ciudad($_POST['idpro']));
+if (isset($_GET['ciudad'])) {
+    echo json_encode(todas_ciudad($_POST['idpro']));
 }
 
 class registro_beneficiarioC
@@ -238,32 +253,50 @@ class registro_beneficiarioC
     function ObtenerColor($valor)
     {
         $datos = $this->modelo->ObtenerColor($valor);
-        if(!isset( $datos['Color'])){  $datos['Color'] = '#fffacd';}
+        if (!isset($datos['Color'])) {
+            $datos['Color'] = '#fffacd';
+        }
         if (empty($datos)) {
             $datos = 0;
         }
         return $datos;
     }
 
-    function descargarArchivo($valor)
+    function descargarArchivo($valores)
     {
         $base = dirname(__DIR__, 3);
-        $directorio = "/TEMP/EVIDENCIA_" . $_SESSION['INGRESO']['Entidad'] .
-            "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
+        $directorio = "/TEMP/EVIDENCIA_" . $_SESSION['INGRESO']['Entidad'] . "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
         $directorio = str_replace(' ', '_', $directorio);
         $carpetaDestino = $base . $directorio;
-
         $carpetaDestino = str_replace(' ', '_', $carpetaDestino);
+        $archivos = explode(',', $valores);
+        $archivosEncontrados = array();
+        $archivosNo = array();
+        $archivosEnCarpeta = scandir($carpetaDestino);
 
-        $archivos = scandir($carpetaDestino);
-        foreach ($archivos as $archivo) {
-            $nombreArchivo = pathinfo($archivo, PATHINFO_FILENAME);
-            if ($nombreArchivo === $valor) {
-                return ["response" => 1, "Dir" => $directorio, "Nombre" => $archivo];
+        foreach ($archivos as $valor) {
+            $found = false;
+            foreach ($archivosEnCarpeta as $archivo) {
+                $nombreArchivo = pathinfo($archivo, PATHINFO_FILENAME);
+                if ($valor === $nombreArchivo) {
+                    $archivosEncontrados[] = $archivo;
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $archivosNo[] = $valor;
             }
         }
-        return ["response" => 0];
+
+        if (count($archivosEncontrados) > 0) {
+            return ["response" => 1, "archivos" => $archivosEncontrados, "archivosNo" => $archivosNo, "dir" => $directorio];
+        } else {
+            return ["response" => 0, "archivosNo" => $archivos];
+        }
     }
+
+
 
     function obtenerCamposComunes($valor)
     {
@@ -330,7 +363,9 @@ class registro_beneficiarioC
 
             $respuesta = [];
             foreach ($datos as $dato) { {
-                if(!isset( $dato['Color'])){  $dato['Color'] = '#fffacd';}
+                    if (!isset($dato['Color'])) {
+                        $dato['Color'] = '#fffacd';
+                    }
                     if ($valor2) {
                         $id = substr($dato['Codigo'], -3);
                         $respuesta[] = [

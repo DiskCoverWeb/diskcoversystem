@@ -226,6 +226,8 @@ class registro_beneficiarioM
                 Observaciones = '" . $parametros['Observaciones'] . "'
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Codigo = '" . $parametros['Codigo'] . "'";
+
+                //print_r($sql);
         return $this->db->datos($sql);
     }
 
