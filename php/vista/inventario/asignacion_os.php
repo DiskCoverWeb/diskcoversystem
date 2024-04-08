@@ -35,6 +35,46 @@
         });
     }
 
+    function agregar(){
+        var datos = {
+            'Item': $('#tbl_body tr').length + 1,
+            'Producto': $('#grupProd').val(),
+            'Cantidad': $('#cant').val(),
+            'Comentario': $('#comeAsig').val()
+        };
+
+        //validar datos
+        if (datos.Producto == '') {
+            swal.fire('Error', 'Debe seleccionar un producto', 'error');
+            return;
+        }
+        if (datos.Cantidad == '' || datos.Cantidad <= 0) {
+            swal.fire('Error', 'Debe ingresar una cantidad valida', 'error');
+            return;
+        }
+
+        var fila = '<tr>' +
+            '<td>' + datos.Item + '</td>' +
+            '<td>' + datos.Producto + '</td>' +
+            '<td>' + datos.Cantidad + '</td>' +
+            '<td>' + datos.Comentario + '</td>' +
+            '<td><button type="button" class="btn btn-danger btn-sm" onclick="eliminar(this)"><i class="fa fa-trash"></i></button></td>' +
+            '</tr>';
+
+        //agregar la fila
+        $('#tbl_body').append(fila);
+    }
+
+    function eliminar(btn) {
+        var row = btn.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+
+    function limpiar(){
+        //$('#form_asignacion').trigger('reset');
+        $('#tbl_body').empty();
+    }
+
     function llenarDatos(datos) {
         $('#beneficiario').val(datos.Beneficiario);
         $('#fechAten').val(datos.Fecha_Atencion);//Fecha de Atencion
@@ -356,8 +396,8 @@
         </div>
     </div>
     <div class="row" style="text-align: right; padding-right: 1.5vw;">
-        <button type="button" class="btn btn-primary btn-sm"><b>Agregar</b></button>
-        <button type="button" class="btn btn-primary btn-sm" onclick=""><b>Limpiar</b></button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="agregar();"><b>Agregar</b></button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="limpiar();"><b>Limpiar</b></button>
     </div>
 </form>
 
