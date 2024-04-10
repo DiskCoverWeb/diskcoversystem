@@ -249,6 +249,12 @@ class niveles_seguriC
 	{
 
 		// print_r($parametros);die();
+
+		$niveles = array('1'=>$parametros['n1'],'2'=>$parametros['n2'],'3'=>$parametros['n3'],'4'=>$parametros['n4'],'5'=>$parametros['n5'],'6'=>$parametros['n6'],'7'=>$parametros['n7'],'super'=>$parametros['super']);
+		 $this->modelo->update_acceso_usuario($niveles,$parametros['usuario'],$parametros['pass'],$parametros['entidad'],$parametros['CI_usuario'],$parametros['email'],$parametros['serie']);
+
+		if(isset($parametros['empresas']))
+		{
 		$modulos = $parametros['modulos'];
 		$empresas = $parametros['empresas'];
 		$empresas = array_unique($empresas);
@@ -281,7 +287,7 @@ class niveles_seguriC
 			array_push($modulos_sqlserver, array('modulo'=>$value[0],'item'=>$value[1]));
 		}
 
-		$niveles = array('1'=>$parametros['n1'],'2'=>$parametros['n2'],'3'=>$parametros['n3'],'4'=>$parametros['n4'],'5'=>$parametros['n5'],'6'=>$parametros['n6'],'7'=>$parametros['n7'],'super'=>$parametros['super']);
+	
 
 		// fin de ingreso en MYSQL
 
@@ -316,7 +322,7 @@ class niveles_seguriC
 										$mensaje.='<br>Base de datos o credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
 										$resp = 0;
 									}	
-									 $this->modelo->update_acceso_usuario($niveles,$parametros['usuario'],$parametros['pass'],$parametros['entidad'],$parametros['CI_usuario'],$parametros['email'],$parametros['serie']);
+									 // $this->modelo->update_acceso_usuario($niveles,$parametros['usuario'],$parametros['pass'],$parametros['entidad'],$parametros['CI_usuario'],$parametros['email'],$parametros['serie']);
 									break;
 								case '-2':
 									//cuando tiene credenciales validas pero el usuario no existe
@@ -413,6 +419,7 @@ class niveles_seguriC
 						$mensaje.='<br>Credenciales SQLServer no valida en items'.$empresa.' Entidad:'.$parametros['entidad'];
 					}
 			}
+		}
 		}
 		// print_r($mensaje.'-'.$resp);die();
 		 $r =  array('estado_proceso'=>$respuesta,'mensaje'=>$mensaje);	
