@@ -253,6 +253,10 @@ class niveles_seguriC
 		$niveles = array('1'=>$parametros['n1'],'2'=>$parametros['n2'],'3'=>$parametros['n3'],'4'=>$parametros['n4'],'5'=>$parametros['n5'],'6'=>$parametros['n6'],'7'=>$parametros['n7'],'super'=>$parametros['super']);
 		 $this->modelo->update_acceso_usuario($niveles,$parametros['usuario'],$parametros['pass'],$parametros['entidad'],$parametros['CI_usuario'],$parametros['email'],$parametros['serie']);
 
+		 $mensaje = '';
+		$respuesta = 1;
+		$server_estado = 1;
+
 		if(isset($parametros['empresas']))
 		{
 		$modulos = $parametros['modulos'];
@@ -269,9 +273,7 @@ class niveles_seguriC
 		    return $elem[2] == 'true';
 		});
 
-		$mensaje = '';
-		$respuesta = 1;
-		$server_estado = 1;
+		
 
 
 		// elimina en mysql
