@@ -3,13 +3,18 @@
 /** 
  * AUTOR DE RUTINA	: Dallyana Vanegas
  * FECHA CREACION	: 16/02/2024
- * FECHA MODIFICACION : 08/04/2024
+ * FECHA MODIFICACION : 11/04/2024
  * DESCIPCION : Clase controlador para Agencia
  */
 
 include (dirname(__DIR__, 2) . '/modelo/inventario/registro_beneficiarioM.php');
 
 $controlador = new registro_beneficiarioC();
+
+if (isset($_GET['EliminaArchivosTemporales'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->EliminaArchivosTemporales($parametros));
+}
 
 if (isset($_GET['LlenarSelect'])) {
     $valores = $_POST['valores'];
@@ -129,37 +134,61 @@ if (isset($_GET['guardarAsignacion'])) {
     // Verificar si se han cargado archivos
     if (isset($_FILES['Evidencias']) && $_FILES['Evidencias']['error'][0] == UPLOAD_ERR_OK) {
         $nombresArchivos = array();
-        $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/EVIDENCIA_" . $_SESSION['INGRESO']['Entidad'] . "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
-        $carpetaDestino = str_replace(' ', '_', $carpetaDestino);
+        $filePathBase = dirname(__DIR__, 3) . "/TEMP/EVIDENCIA_" . $_SESSION['INGRESO']['Entidad'] . "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
+        $filePathBase = str_replace(' ', '_', $filePathBase);
 
         // Crear el directorio si no existe
-        if (!is_dir($carpetaDestino)) {
-            mkdir($carpetaDestino, 0777, true);
+        if (!is_dir($filePathBase)) {
+            mkdir($filePathBase, 0777, true);
         }
 
         // Iterar sobre cada archivo cargado
         foreach ($_FILES['Evidencias']['name'] as $indice => $nombre) {
-            // Generar un nombre único para el archivo
-            $nombreArchivoOriginal = pathinfo($nombre, PATHINFO_FILENAME);
-            $extension = pathinfo($nombre, PATHINFO_EXTENSION);
-            $nombreArchivoDestino = $carpetaDestino . $nombreArchivoOriginal . '.' . $extension;
+            $filename = pathinfo($nombre, PATHINFO_FILENAME);
+            $ext = strtolower(pathinfo($nombre, PATHINFO_EXTENSION));
+            $filepath = $filePathBase . $filename . '.' . $ext;
 
-            $contador = 1;
-            while (file_exists($nombreArchivoDestino)) {
-                $nombreArchivoOriginal = $nombreArchivoOriginal . '_' . $contador;
-                $nombreArchivoDestino = $carpetaDestino . $nombreArchivoOriginal . '.' . $extension;
-                $contador++;
+            switch ($ext) {
+                case 'doc':
+                case 'docx':
+                    $letra_ext = 'W';
+                    break;
+                case 'pdf':
+                    $letra_ext = 'D';
+                    break;
+                case 'jpg':
+                case 'png':
+                    $letra_ext = 'P';
+                    break;
+                default:
+                    $letra_ext = 'O';
             }
 
-            if (move_uploaded_file($_FILES['Evidencias']['tmp_name'][$indice], $nombreArchivoDestino)) {
-                $nombresArchivos[] = $nombreArchivoOriginal;
+            $codigo = $params['Codigo'];
+
+            $filename = $filename . '_' . $letra_ext . $codigo;
+            $filepath = $filePathBase . $filename . '.' . $ext;
+
+            /*$contador = 1;
+            while (file_exists($filepath)) {
+                $filename = $filename . '_' . $contador;
+                $filepath = $filePathBase . $filename . '.' . $ext;
+                $contador++;
+            }*/
+
+            if (move_uploaded_file($_FILES['Evidencias']['tmp_name'][$indice], $filepath)) {
+                $nombresArchivos[] = $filename;
             } else {
                 echo json_encode(["res" => '0', "mensaje" => "No se ha cargado el archivo: " . $nombre]);
                 return;
             }
         }
 
-        $params['NombreArchivo'] = implode(',', $nombresArchivos);
+        foreach ($nombresArchivos as &$nombreArchivo) {
+            $nombreArchivo = $nombreArchivo . ',';
+        }
+        unset($nombreArchivo);
+        $params['NombreArchivo'] = implode('', $nombresArchivos);
 
         if (strlen($params['NombreArchivo']) > 90) {
             echo json_encode(["res" => '0', "mensaje" => "El nombre del archivo supera los 90 caracteres", "datos" => $params['NombreArchivo']]);
@@ -262,6 +291,29 @@ class registro_beneficiarioC
         return $datos;
     }
 
+    function EliminaArchivosTemporales($parametros)
+    {
+        $basePath = dirname(__DIR__, 3);
+        $tempFilePath = $parametros['ruta'] . $parametros['nombre'];
+        $fullPath = $basePath . $tempFilePath;
+        //print_r($parametros['nombre']);die();
+        $filename = pathinfo($parametros['nombre'], PATHINFO_FILENAME);
+        $result = $this->modelo->EliminarEvidencias($filename, $parametros['codigo']);
+
+        //print_r($fullPath); die();
+        if (file_exists($fullPath)) {
+            if (unlink($fullPath)) {
+                return ['res' => 0, 'res2' => $result]; // Éxito al eliminar el archivo
+            } else {
+                return ['res' => 2, 'res2' => $result]; // Fallo al eliminar el archivo
+            }
+        } else {
+            if ($result != 1) {
+                return ['res' => 0, 'res2' => $result]; // Éxito al eliminar el archivo
+            }
+        }
+    }
+
     function descargarArchivo($valores)
     {
         $base = dirname(__DIR__, 3);
@@ -269,7 +321,9 @@ class registro_beneficiarioC
         $directorio = str_replace(' ', '_', $directorio);
         $carpetaDestino = $base . $directorio;
         $carpetaDestino = str_replace(' ', '_', $carpetaDestino);
+
         $archivos = explode(',', $valores);
+        $archivos = array_filter($archivos);
         $archivosEncontrados = array();
         $archivosNo = array();
         $archivosEnCarpeta = scandir($carpetaDestino);
@@ -288,12 +342,7 @@ class registro_beneficiarioC
                 $archivosNo[] = $valor;
             }
         }
-
-        if (count($archivosEncontrados) > 0) {
-            return ["response" => 1, "archivos" => $archivosEncontrados, "archivosNo" => $archivosNo, "dir" => $directorio];
-        } else {
-            return ["response" => 0, "archivosNo" => $archivos];
-        }
+        return ["archivos" => $archivosEncontrados, "archivosNo" => $archivosNo, "dir" => $directorio];
     }
 
 
@@ -371,7 +420,7 @@ class registro_beneficiarioC
                         $respuesta[] = [
                             'id' => $id,
                             'text' => $dato['Concepto'],
-                            'picture' => $dato['Picture'],
+                            'picture' => $dato['Picture']
                         ];
                     } else {
 

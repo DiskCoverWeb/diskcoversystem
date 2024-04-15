@@ -3,28 +3,23 @@
 <!--
     AUTOR DE RUTINA	: Dallyana Vanegas
     FECHA CREACION : 16/02/2024
-    FECHA MODIFICACION : 08/04/2024
+    FECHA MODIFICACION : 11/04/2024
     DESCIPCION : Interfaz de modulo Gestion Social/Registro Beneficiario
  -->
 
 <head>
     <style>
-        .table {
-            width: 100%;
+        #tablaPoblacion {
             table-layout: fixed;
+            word-wrap: break-word;
         }
 
-        .table th,
-        .table td {
+        #tablaPoblacion th,
+        #tablaPoblacion td {
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-        }
-
-        #tabla-body {
-            max-height: 300px;
-            overflow-y: auto;
         }
 
         #modalCalendario table {
@@ -54,6 +49,14 @@
         }
 
         #validarSRI:hover {
+            transform: translateY(-10px);
+        }
+
+        .btnsDD {
+            transition: transform 0.3s ease;
+        }
+
+        .btnsDD:hover {
             transform: translateY(-10px);
         }
 
@@ -113,6 +116,11 @@
             margin-top: 0.5rem;
             margin-bottom: 0.5rem;
         }
+
+        .text-danger:hover {
+            color: orangered;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -133,7 +141,7 @@
         </div>
 
         <form id="miFormulario" style=" padding-bottom:30px">
-            <div class="accordion" id="accordionExample" style="margin-top:px; margin-left:30px; margin-right: 30px;">
+            <div class="accordion" id="accordionExample" style="margin-top:0px; margin-left:30px; margin-right: 30px;">
                 <div class="card">
                     <div class="card-header" id="headingOne">
                         <h2 class="mb-0">
@@ -160,10 +168,16 @@
                                     </a>
                                 </div-->
 
-                                <div style="flex: 1;  margin-right: 10px; ">
+                                <!--div style="flex: 1;  margin-right: 10px; display:none">
                                     <label for="input_93" style="display: block;">Tipo de Beneficiario</label>
                                     <input class="form-control input-xs" type="text" name="input_93" id="input_93"
                                         placeholder="Haz clic sobre la imagen" readonly>
+                                </div-->
+
+                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
+                                    <label for="select_93" style="display: block;">Tipo de Beneficiario</label>
+                                    <select class="form-control input-xs" name="select_93" id="select_93"
+                                        style="width: 100%;"></select>
                                 </div>
 
                                 <div id="carouselBtnImaDon" class="carousel slide" data-ride="carousel"
@@ -171,11 +185,17 @@
                                     <div class="carousel-inner">
                                     </div>
                                 </div>
-                                <div style="flex: 1; margin-right: 10px; ">
+                                <!--div style="flex: 1; margin-right: 10px; ">
                                     <label for="tipoDonacion" style="display: block;">Tipo de Donación</label>
                                     <input class="form-control input-xs" type="text" name="tipoDonacion"
                                         id="tipoDonacion" placeholder="Haz clic sobre la imagen" readonly>
+                                </div-->
+                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
+                                    <label for="select_CxC" style="display: block;">Tipo de Donación</label>
+                                    <select class="form-control input-xs" name="select_CxC" id="select_CxC"
+                                        style="width: 100%;"></select>
                                 </div>
+
                                 <div style="flex: 1; margin-right: 10px; ">
                                     <label for="ruc" style="display: block;">CI/RUC</label>
                                     <select class="form-control input-xs" name="ruc" id="ruc"
@@ -184,21 +204,25 @@
                                 <div
                                     style="display: flex; justify-content: center; align-items: center;  margin-right: 10px;">
                                     <img src="../../img/png/SRIlogo.png" width="80" height="50"
-                                        onclick="validar_sriC($('#ruc').val())" id="validarSRI" title="VALIDAR RUC">
+                                        onclick="validarRucYValidarSriC()" id="validarSRI" title="VALIDAR RUC">
                                 </div>
-                                <div style="flex: 1; margin-right: 10px;">
-                                    <label for="cliente" style="display: block;">Nombre del Beneficiario/Usuario</label>
-                                    <div class="input-group">
-                                        <select class="form-control input-xs" name="cliente" id="cliente"
-                                            style="width: 100%;"></select>
-                                        <span class="input-group-btn">
-                                            <button type="button" class="btn btn-success btn-xs btn-flat"
-                                                id="btn_nuevo_cli" onclick="addCliente()" title="Nuevo cliente">
-                                                <span class="fa fa-user-plus"></span>
-                                            </button>
-                                        </span>
+                                <div class="row" style="margin-right: 10px;">
+                                    <div class="col-sm-6" style="width:100%">
+                                        <label for="cliente" style="display: block;">Nombre del
+                                            Beneficiario/Usuario</label>
+                                        <div class="input-group">
+                                            <select class="form-control input-xs" name="cliente" id="cliente"
+                                                style="width: 100%;"></select>
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-success btn-xs btn-flat"
+                                                    id="btn_nuevo_cli" onclick="addCliente()" title="Nuevo cliente">
+                                                    <span class="fa fa-user-plus"></span>
+                                                </button>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
+
                                 <div style="flex: 1; margin-right: 10px; ">
                                     <label for="sexo" style="display: block;">Sexo</label>
                                     <select class="form-control input-xs" name="sexo" id="sexo"
@@ -217,15 +241,23 @@
                                         onclick="abrirModal(87)" title="INGRESAR ESTADO">
                                     </a>
                                 </div-->
-                                <div style="flex: 1; margin-right: 10px; ">
+                                <!--div style="flex: 1; margin-right: 10px; ">
                                     <label for="input_87" style="display: block;">Estado</label>
                                     <input class="form-control input-xs" type="text" name="input_87" id="input_87"
                                         placeholder="Haz clic sobre la imagen" readonly>
+                                </div-->
+                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
+                                    <label for="select_87" style="display: block;">Estado</label>
+                                    <select class="form-control input-xs" name="select_87" id="select_87"
+                                        style="width: 100%;"></select>
                                 </div>
                                 <div style="flex: 1; margin-right: 10px; ">
-                                    <label for="nombreRepre" style="display: block;">Nombre Representante Legal</label>
-                                    <input class="form-control input-xs" type="text" name="nombreRepre" id="nombreRepre"
-                                        placeholder="Nombre Representante">
+                                    <div class="col" style="width:100%">
+                                        <label for="nombreRepre" style="display: block;">Nombre Representante
+                                            Legal</label>
+                                        <input class="form-control input-xs" type="text" name="nombreRepre"
+                                            id="nombreRepre" placeholder="Nombre Representante">
+                                    </div>
                                 </div>
                                 <div style="flex: 1; margin-right: 10px; ">
                                     <label for="ciRepre" style="display: block;">CI Representante Legal</label>
@@ -339,29 +371,29 @@
                     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
                         <div class="card-body" style="margin: 1px; padding-top: 5px; padding-bottom: 40px;">
                             <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
-                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
                                     <label for="select_88" style="display: block;">Tipo de Entrega</label>
                                     <select class="form-control input-xs" name="select_88" id="select_88"
                                         style="width: 100%;"></select>
                                 </div>
-                                <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
+                                <div style="margin-right: 10px; margin-left: 10px; display: flex; ">
                                     <img src="../../img/png/calendario2.png" width="60" height="60" id="btnMostrarModal"
                                         title="CALENDARIO ASIGNACION">
                                 </div>
-                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
                                     <label for="diaEntregac" style="display: block;">Día de Entrega</label>
                                     <select class="form-control input-xs" name="diaEntregac" id="diaEntregac"
                                         style="width: 100%;"></select>
                                 </div>
-                                <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
+                                <div style="margin-right: 10px; margin-left: 10px; display: flex; ">
                                     <img src="../../img/png/reloj.png" width="55" height="55">
                                 </div>
-                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
                                     <label for="horaEntregac" style="display: block;">Hora de Entrega</label>
                                     <input type="time" name="horaEntregac" id="horaEntregac"
                                         class="form-control input-xs">
                                 </div>
-                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
                                     <label for="select_86" style="display: block;">Frecuencia</label>
                                     <select class="form-control input-xs" name="select_86" id="select_86"
                                         style="width: 100%;"></select>
@@ -376,40 +408,40 @@
 
                             </div>
                             <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
-                                <div style="margin-right: 10px; margin-lefth: 10px; display: flex; ">
+                                <div style="margin-right: 10px; margin-left: 10px; display: flex; ">
                                     <img src="../../img/png/grupoEdad.png" width="60" height="60" id="btnMostrarGrupo"
                                         title="TIPO DE POBLACIÓN">
                                 </div>
-                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
                                     <label for="totalPersonas" style="display: block;">Total de Personas
                                         Atendidas</label>
                                     <input type="number" name="totalPersonas" id="totalPersonas"
                                         class="form-control input-xs" min="0" max="100">
                                 </div>
-                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
                                     <label for="select_91" style="display: block;">Tipo de Población</label>
                                     <select class="form-control input-xs" name="select_91" id="select_91"
                                         style="width: 100%;"></select>
                                 </div>
-                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
                                     <label for="select_92" style="display: block;">Acción Social</label>
                                     <select class="form-control input-xs" name="select_92" id="select_92"
                                         style="width: 100%;"></select>
                                 </div>
-                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
                                     <label for="select_90" style="display: block;">Vulnerabilidad</label>
                                     <select class="form-control input-xs" name="select_90" id="select_90"
                                         style="width: 100%;"></select>
                                 </div>
-                                <div style="flex: 1; margin-right: 10px; margin-lefth: 10px;">
+                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
                                     <label for="select_89" style="display: block;">Tipo de Atención</label>
                                     <select class="form-control input-xs" name="select_89" id="select_89"
                                         style="width: 100%;"></select>
                                 </div>
                             </div>
                             <div class="row" style="margin: 10px;">
-                                <div class="col-sm-5"></div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-6"></div>
+                                <div class="col-sm-1" style="margin-right:10px;">
                                     <div class="row" style="display: flex; justify-content: center;">
                                         <a href="#" id="descargarArchivo">
                                             <img src="../../img/png/adjuntar-archivo.png" width="60" height="60"
@@ -417,11 +449,7 @@
                                         </a>
                                     </div>
                                     <div class="row">
-                                        <div class="form-group">
-                                            <label for="archivoAdd">Archivos Adjuntos</label>
-                                            <input type="file" class="form-control-file" id="archivoAdd" multiple
-                                                onchange="checkFiles(this)">
-                                        </div>
+                                        <label for="archivoAdd">Archivos Adjuntos</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
@@ -448,7 +476,7 @@
                         <div class="modal-body">
                             <div class="container-fluid">
                                 <div style="max-height: 300px; overflow-y: auto; overflow-x: auto;">
-                                    <table class="table table-bordered">
+                                    <table class="table table-bordered table-responsive">
                                         <thead>
                                             <tr>
                                                 <th></th>
@@ -548,15 +576,15 @@
             </div>
 
             <div id="modalBtnGrupo" class="modal fade" role="dialog">
-                <div class="modal-dialog" style="width: 500px;">
+                <div class="modal-dialog modal-md">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title">Tipo de población</h4>
                         </div>
-                        <div class="modal-body" style="overflow-y: auto; max-height: 200px;">
-                            <form>
-                                <table class="table table-md table-dark" id="tablaPoblacion">
+                        <div class="modal-body" style="overflow-y: auto;">
+                            <div class="table-responsive">
+                                <table class="table" id="tablaPoblacion">
                                     <thead>
                                         <tr>
                                             <th scope="col" colspan="2">Tipo de Población</th>
@@ -569,24 +597,54 @@
                                         <!-- filas -->
                                     </tbody>
                                 </table>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div id="modalDescarga" class="modal fade" role="dialog">
-                <div class="modal-dialog modal-sm">
+            <div id="modalDescarga" data-backdrop="static" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-md">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Descargar Archivos</h4>
+                            <h4 class="modal-title">Gestionar Archivos</h4>
                         </div>
-                        <div class="modal-body">
-                            <div class="row" style="margin: 10px; display: flex;">
-                                <!-- Cambiar el id a modalDescContainer -->
-                                <div id="modalDescContainer"
-                                    style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
+                        <div class="modal-body" style="margin:10px">
+                            <div class="row-sm-12">
+                                <div id="cargarArchivo" class="form-group" style="display: flex;">
+                                    <label for="archivoAdd">Adjuntar Archivos: (máximo 3 archivos) </label>
+                                    <input type="file" style="margin-left: 10px" class="form-control-file"
+                                        id="archivoAdd" multiple onchange="checkFiles(this)">
+                                </div>
+                            </div>
+                            <div class="row-sm-12" style="width: 100%; margin-right:10px; margin-left:10px;">
+                                <div class="form-group" style="display: flex; justify-content: center;">
+                                    <div id="modalDescContainer" class="d-flex justify-content-center flex-wrap">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row-sm-12">
+                                <div class="col" id="divNoFile" style="display:flex">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="display:none">
+                            <div class="row" style="margin: 10px;">
+                                <div class="col-xs-4">
+
+                                </div>
+                                <div class="col-xs-4">
+                                    <button id="btnDescargar" type="button" class="btn btn-default btn-block"
+                                        onclick="descargarArchivo(ruta, nombre)">
+                                        <span class="glyphicon glyphicon-download" aria-hidden="true"></span> Descargar
+                                    </button>
+                                </div>
+                                <div class="col-xs-4">
+                                    <button type="button" class="btn btn-danger btn-block"
+                                        onclick="eliminarArchivo(ruta, nombre)">
+                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Eliminar
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -624,7 +682,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div id="modalsBtn87" class="modal fade" role="dialog">
                 <div class="modal-dialog modal-sm">
@@ -685,17 +742,35 @@
 
 <script>
     $(document).ready(function () {
-        $("#btnUsarCli").hide();
+        //$("#btnUsarCli").hide();        
         Form_Activate();
     });
 
     function checkFiles(input) {
-        const maxFiles = 3;
+        console.log(contador);
+        var maxFiles = 3;
+        var max = 3;
         const maxFileSize = 10;
 
         const files = input.files;
+        if (contador != 0) {
+            max = maxFiles - contador;
+            if (files.length > max) {
+                Swal.fire({
+                    title: 'Solo se permiten un máximo de ' + maxFiles + ' archivos.',
+                    text: 'Ya cargó ' + contador + ' archivo (s). Puede eliminar algunos si es necesario.',
+                    type: 'error'
+                });
+                input.value = '';
+                return;
+            }
+        }
         if (files.length > maxFiles) {
-            Swal.fire("", "Solo se permiten un máximo de " + maxFiles + " archivos.", "info");
+            Swal.fire({
+                title: 'Solo se permiten un máximo de ' + maxFiles + ' archivos.',
+                text: 'Intentó cargar ' + files.length + ' archivo (s).',
+                type: 'error'
+            });
             input.value = '';
         } else if (files.length > 0) {
             var fileNames = [];
@@ -703,7 +778,7 @@
             var contieneComa = false;
 
             for (var i = 0; i < files.length; i++) {
-                var fileName = files[i].name;
+                var fileName = files[i].name.toLowerCase();
                 if (fileName.includes(',')) {
                     contieneComa = true;
                     break;
@@ -718,20 +793,43 @@
             }
 
             if (contieneComa) {
-                Swal.fire("", "Los nombres de los archivos no deben contener comas (,).", "info");
+                Swal.fire({
+                    title: 'Los nombres de los archivos no deben contener comas (,).',
+                    text: '',
+                    type: 'error'
+                });
                 input.value = '';
             } else if (fileSizeLimit) {
-                Swal.fire("", "El tamaño máximo permitido por archivo es de " + maxFileSize + "MB.", "info");
+                Swal.fire({
+                    title: 'El tamaño máximo permitido por archivo es de ' + maxFileSize + 'MB.',
+                    text: '',
+                    type: 'error'
+                });
                 input.value = '';
             } else {
-                var fileList = fileNames.join(', ');
-                if (fileList.length > 90) {
-                    Swal.fire("", "La longitud total de los nombres de archivo supera los 90 caracteres.", "info");
+                if (contador != 0) {
+                    fileNames.push(nombreArchivo);
+                }
+                var fileList = fileNames.join(',');
+                if (fileList.length > 50) {
+                    Swal.fire({
+                        title: 'La longitud total de los nombres de archivo supera los 50 caracteres.',
+                        text: '',
+                        type: 'error'
+                    });
+                    input.value = '';
                 } else {
-                    Swal.fire("Archivos seleccionados:", fileList, "info");
+                    $('#modalDescarga').modal('hide');
+                    Swal.fire({
+                        title: 'Archivos cargados con éxito',
+                        text: 'Archivos seleccionados: ' + fileList,
+                        type: 'success'
+                    });
+                    $('#modalDescarga .modal-footer').hide();
                 }
             }
         }
+
     }
 
     //direccion
@@ -800,24 +898,28 @@
 
     //grupo
     $('#btnMostrarGrupo').click(function () {
-        $('#modalBtnGrupo').modal('show');
         $.ajax({
             type: "GET",
             url: '../controlador/inventario/registro_beneficiarioC.php?LlenarTblPoblacion=true',
             dataType: 'json',
             success: function (datos) {
-                $('#tablaPoblacion tbody').empty();
+                if (datos != 0) {
+                    $('#modalBtnGrupo').modal('show');
+                    $('#tablaPoblacion tbody').empty();
 
-                $.each(datos, function (index, dato) {
-                    $('#tablaPoblacion tbody').append(`
-                    <tr>
-                        <td colspan="2">${dato.Poblacion}</td>
-                        <td>${dato.Hombres}</td>
-                        <td>${dato.Mujeres}</td>
-                        <td>${dato.Total}</td>
-                    </tr>
-                `);
-                });
+                    $.each(datos, function (index, dato) {
+                        $('#tablaPoblacion tbody').append(`<tr><td colspan="2">${dato.Poblacion}</td>
+                                                                <td>${dato.Hombres}</td>
+                                                                <td>${dato.Mujeres}</td>
+                                                                <td>${dato.Total}</td></tr>`);
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'No se encontraron datos de población',
+                        text: '',
+                        type: 'info'
+                    });
+                }
             }
         });
     });
@@ -910,14 +1012,16 @@
                         var opt = '<option value="">Beneficiario</option>';
                         datos.forEach(function (item) {
                             option += '<div class="col-md-6 col-sm-6">' +
-                                '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/' +
-                                item.picture + '.png" onclick="itemSelect(\'' + item.picture +
-                                '\',\'' + item.text + '\', \'' + item.color + '\', \'' + item.id +
-                                '\')" style="width: 60px;height: 60px;"></button><br>' +
+                                '<button type="button" class="btn btn-default btn-sm" onclick="' +
+                                (item.id === '93.04' ? "itemSelect('" + item.picture + "','" + item.text +
+                                    "','" + item.color + "','" + item.id + "'); abrirModal('pAliado');" :
+                                    "itemSelect('" + item.picture + "','" + item.text + "','" + item.color +
+                                    "','" + item.id + "');") +
+                                '">' +
+                                '<img src="../../img/png/' + item.picture + '.png" style="width: 60px;height: 60px;"></button><br>' +
                                 '<b>' + item.text + '</b>' +
                                 '</div>';
                             opt += '<option value="' + item.id + '">' + item.text + '</option>';
-
                         });
                         $('#modal_93').html(option);
                     }
@@ -926,6 +1030,42 @@
             }
         });
     }
+
+    function handleSelectEvent(e, valor) {
+        var data = e.params.data;
+        var id = data.id;
+        datosArray.forEach(function (item) {
+            if (item.id == id) {
+                var imagen = "../../img/png/" + item.picture + ".png";
+                if (valor == 93) {
+                    var val = id.substring(0, 2);
+                    $("#carouselBtnIma_" + val + " .item.active img").attr("src", imagen);
+                    $("#carouselBtnIma_" + val).carousel("pause");
+                    actualizarEstilo(item.color);
+                    if (id == "93.04") abrirModal('pAliado');
+                }
+                if (valor == 87) {
+                    var val = id.substring(0, 2);
+                    $("#carouselBtnIma_" + val + " .item.active img").attr("src", imagen);
+                    $("#carouselBtnIma_" + val).carousel("pause");
+                }
+                if (valor == 0) {
+                    $("#carouselBtnImaDon .item.active img").attr("src", imagen);
+                    $("#carouselBtnImaDon").carousel("pause");
+                }
+            }
+        });
+    }
+
+    $('#select_93').on('select2:select', function (e) {
+        handleSelectEvent(e, 93);
+    });
+    $('#select_87').on('select2:select', function (e) {
+        handleSelectEvent(e, 87);
+    });
+    $('#select_CxC').on('select2:select', function (e) {
+        handleSelectEvent(e, 0);
+    });
 
     function abrirModal(valor) {
         $('#modalsBtn' + valor).modal('show');
@@ -938,43 +1078,57 @@
             $("#carouselBtnImaDon .item.active img").attr("src", imagen);
             $("#carouselBtnImaDon").carousel("pause");
             $("#modalsBtnDon").modal("hide");
+            var newOption = new Option(text, id, true, true);
+            $('#select_CxC').append(newOption).trigger('change');
+        } else {
+            var valor = id.substring(0, 2);
+            var imagen = "../../img/png/" + picture + ".png";
 
-            $('#tipoDonacion').val(text);
-            $('#tipoDonacion').attr('val', id);
-        }
+            $("#carouselBtnIma_" + valor + " .item.active img").attr("src", imagen);
+            $("#carouselBtnIma_" + valor).carousel("pause");
+            $("#modalsBtn" + valor).modal("hide");
 
-        var valor = id.substring(0, 2);
-        var imagen = "../../img/png/" + picture + ".png";
+            if (valor == 93) {
+                actualizarEstilo(color);
+            }
 
-        $("#carouselBtnIma_" + valor + " .item.active img").attr("src", imagen);
-        $("#carouselBtnIma_" + valor).carousel("pause");
-        $("#modalsBtn" + valor).modal("hide");
-
-        $('#input_' + valor).val(text);
-        $('#input_' + valor).attr('val', id);
-        if (valor == 93) {
-            actualizarEstilo(color);
-        }
-        if (id == 93.04) {
-            abrirModal('pAliado');
+            var newOption = new Option(text, id, true, true);
+            $('#select_' + valor).append(newOption).trigger('change');
         }
     }
 
     //btn icono RUC
     function validarRucYValidarSriC() {
         var ruc = $('#ruc').val();
+        console.log(ruc);
         if (ruc) {
             validar_sriC(ruc);
         } else {
-            Swal.fire('', 'Por favor ingrese un RUC válido.', 'error');
+            Swal.fire({
+                title: 'Por favor, seleccione un RUC',
+                text: '',
+                type: 'error'
+            });
         }
     }
 
     //btn dentro de modal icono RUC
-    /*function usar_cliente(nombre, ruc, codigo, email, td = 'N') {
-        $('#cliente').val(ruc).trigger('change');
+    function usar_cliente(nombre, ruc, codigo, email, td = 'N') {
+        LimpiarSelectsInfoAdd();
+
+        var newOption = new Option(nombre, codigo, true, true);
+        $('#cliente').append(newOption).trigger('change');
+
+        var newOption = new Option(ruc, codigo, true, true);
+        $('#ruc').append(newOption).trigger('change');
+
+        miCliente = nombre;
+        miRuc = ruc;
+        miCodigo = codigo;
+
         $('#myModal').modal('hide');
-    }*/
+        llenarCamposInfo(codigo);
+    }
 
     var horaActual;
     function Form_Activate() {
@@ -984,8 +1138,17 @@
         LlenarSelectRucCliente();
         llenarCarousels(87);
         llenarCarousels(93);
-        llenarCarousels("CXC", true);
-        [86, 88, 89, 90, 91, 92].forEach(LlenarSelects_Val);
+        llenarCarousels("CxC", true);
+        LlenarSelects_Val("CxC", true);
+        LlenarSelects_Val(86);
+        LlenarSelects_Val(87);
+        LlenarSelects_Val(88);
+        LlenarSelects_Val(89);
+        LlenarSelects_Val(90);
+        LlenarSelects_Val(91);
+        LlenarSelects_Val(92);
+        LlenarSelects_Val(93);
+        //[86, 87, 88, 89, 90, 91, 92, 93].forEach(LlenarSelects_Val);
 
         horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         $('#horaEntregac').val(horaActual);
@@ -1005,11 +1168,15 @@
 
     //calendario
     $('#btnMostrarModal').click(function () {
-        var valorSeleccionado = $('#input_93').attr('val');
-        if (valorSeleccionado && valorSeleccionado.length > 0) {
+        var valorSeleccionado = $('#select_93').val();
+        if (valorSeleccionado !== null && valorSeleccionado !== undefined) {
             LlenarCalendario(valorSeleccionado);
         } else {
-            swal.fire('', 'Por favor, seleccione una organización', 'info');
+            Swal.fire({
+                title: 'Por favor, seleccione una organización',
+                text: '',
+                type: 'info'
+            });
         }
     });
 
@@ -1021,12 +1188,15 @@
                 dataType: 'json',
                 data: { valor: Actividad },
                 success: function (datos) {
-                    //console.log(datos);
-                    if (datos != 0) {
+                    if (datos != 0 && datos[0].Envio_No != null) {
                         LlenarCalendarioC(datos);
                     } else {
                         $('#tabla-body').empty();
-                        swal.fire('', 'No se encontraron datos de asignacion', '');
+                        Swal.fire({
+                            title: 'No se encontraron datos de asignación',
+                            text: '',
+                            type: 'info'
+                        });
                     }
                 }
             });
@@ -1056,6 +1226,21 @@
     }
 
     function LlenarCalendarioC(data) {
+        console.log(data[0]);
+        if (data[0].Envio_No == 'null') {
+            console.log('1');
+        }
+        if (data[0].Envio_No == null) {
+            console.log('2');
+        }
+        if (data[0].Envio_No == '') {
+            console.log('3');
+        }
+        if (data[0].Envio_No == undefined) {
+            console.log('4');
+        }
+
+        console.log('sin valor');
         var horas = ['01:00 - 02:00', '02:00 - 03:00', '03:00 - 04:00',
             '04:00 - 05:00', '05:00 - 06:00', '06:00 - 07:00',
             '07:00 - 08:00', '08:00 - 09:00', '09:00 - 10:00',
@@ -1107,6 +1292,7 @@
             });
         });
         $('#modalCalendario').modal('show');
+
     }
 
     //selects Sexo
@@ -1188,8 +1374,46 @@
         });
     }
 
+    //llenar select Donacion
+    function LlenarTipoDonacion() {
+        $('#select_CxC').select2({
+            placeholder: 'Seleccione una opcion',
+            ajax: {
+                url: '../controlador/inventario/registro_beneficiarioC.php?',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        query: params.term,
+                        LlenarTipoDonacion: true
+                    }
+                },
+                processResults: function (data) {
+                    var options = [];
+                    if (data.respuesta === "No se encontraron datos para mostrar") {
+                        options.push({
+                            id: '',
+                            text: data.respuesta
+                        });
+                    } else {
+                        $.each(data.respuesta, function (index, item) {
+                            var idDigits = item.id.slice(-3);
+                            options.push({
+                                id: idDigits,
+                                text: item.text
+                            });
+                        });
+                    }
+                    return {
+                        results: options
+                    };
+                },
+                cache: true
+            }
+        });
+    }
     //todos los selects_num
-    function LlenarSelects_Val(valor) {
+    function LlenarSelects_Val(valor, valor2) {
         $('#select_' + valor).select2({
             placeholder: 'Seleccione una opción',
             ajax: {
@@ -1200,6 +1424,7 @@
                     return {
                         query: params.term,
                         valor: valor,
+                        valor2: valor2,
                         LlenarSelects_Val: true
                     };
                 },
@@ -1241,9 +1466,9 @@
         formData.append('Cliente', miCliente);
         formData.append('CI_RUC', miRuc);
         formData.append('Codigo', miCodigo);
-        formData.append('Actividad', $('#input_93').attr('val'));
-        formData.append('CodigoA', $('#input_87').attr('val'));
-        formData.append('Calificacion', $('#tipoDonacion').attr('val'));
+        formData.append('Actividad', $('#select_93').val() || '.');
+        formData.append('CodigoA', $('#select_87').val() || '.');
+        formData.append('Calificacion', $('#select_CxC').val() || '.');
         formData.append('Representante', $('#nombreRepre').val());
         formData.append('CI_RUC_R', $('#ciRepre').val());
         formData.append('Telefono_R', $('#telfRepre').val());
@@ -1286,7 +1511,7 @@
 
         console.log("Added Evidences:");
         for (var [key, value] of formData.entries()) {
-            if (key === 'Evidencias') {
+            if (key === 'Evidencias[]') {
                 console.log(value.name);
             }
         }
@@ -1314,7 +1539,7 @@
             Swal.fire({
                 title: 'Campos Vacíos',
                 text: mensaje,
-                type: 'warning',
+                type: 'error',
                 confirmButtonText: 'Aceptar'
             });
         } else {
@@ -1341,6 +1566,8 @@
                             type: 'success',
                             confirmButtonText: 'Aceptar'
                         });
+                        nombreArchivo = response.datos.result;
+                        console.log(nombreArchivo);
                     }
                 }
             });
@@ -1364,7 +1591,9 @@
         $('#comentario').val('');
         comen = '';
         nombreArchivo = '';
-
+        ruta = '';
+        nombre = '';
+        $('#modalDescarga .modal-footer').hide();
     }
 
     //llenar campos del cliente segun nombre seleccionado
@@ -1379,7 +1608,7 @@
         miRuc = data.CI_RUC;
         miCliente = data.text;
         if (data.id === '.') {
-            swal.fire("", "No se encontró un RUC relacionado.", "error");
+            Swal.fire("", "No se encontró un RUC relacionado.", "error");
         } else {
             if ($('#ruc').find("option[value='" + data.id + "']").length) {
                 $('#ruc').val(data.id).trigger('change');
@@ -1394,14 +1623,13 @@
 
     //llenar campos del cliente segun ruc seleccionado
     $('#ruc').on('select2:select', function (e) {
-        //console.log('cambio el ruc');
         LimpiarSelectsInfoAdd();
         var data = e.params.data;
         miCodigo = data.id;
         miRuc = data.text;
         miCliente = data.Cliente;
         if (data.id === '.') {
-            swal.fire("", "No se encontró un Cliente relacionado.", "error");
+            Swal.fire("No se encontró un Cliente relacionado.", "", "error");
         } else {
             if ($('#cliente').find("option[value='" + data.id + "']").length) {
                 $('#cliente').val(data.id).trigger('change');
@@ -1409,7 +1637,7 @@
                 var newOption = new Option(data.Cliente, data.id, true, true);
                 $('#cliente').append(newOption).trigger('change');
             }
-            var valorSeleccionado = $('#cliente').val();
+            //var valorSeleccionado = $('#cliente').val();
             llenarCamposInfo(miCodigo);
         }
     });
@@ -1473,7 +1701,6 @@
     //llenar campos de panel informacion adicional
     var comen;
     $('#botonInfoAdd').click(function () {
-        console.log(miCodigo);
         if (miCodigo) {
             $.ajax({
                 url: '../controlador/inventario/registro_beneficiarioC.php?llenarCamposInfoAdd=true',
@@ -1496,13 +1723,23 @@
                         llenarPreSelects(datos.Tipo_Dato);
                         llenarPreSelects(datos.Cod_Fam);
                     } else {
-                        swal.fire('', 'No se encontraron datos adicionales', 'info');
+                        Swal.fire({
+                            title: 'No se encontraron datos adicionales',
+                            text: '',
+                            type: 'info'
+                        });
                     }
 
                 }
             });
         } else {
-            swal.fire('', 'No se selecciono un Cliente', 'info');
+            Swal.fire({
+                title: 'No se seleccionó un Cliente',
+                text: '',
+                type: 'warning',
+
+
+            });
         }
     });
 
@@ -1515,7 +1752,6 @@
                 dataType: 'json',
                 data: { valor: valor },
                 success: function (res) {
-                    console.log(res);
                     var val = res.val;
                     var datos = res.respuesta;
                     if (!res.error) {
@@ -1562,8 +1798,28 @@
         return "#" + ((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1);
     }
 
+    var ruta;
+    var nombre;
+    function DownloadOrDelete(archivo, noDescarga) {
+        nombre = archivo;
+        console.log(nombre);
+        if (noDescarga == true) {
+            $('#btnDescargar').hide();
+            console.log('hola1');
+        }
+        else { $('#btnDescargar').show(); }
+        $('#modalDescarga .modal-footer').show();
+    }
+
     //descarga del archivo adjunto
     function descargarArchivo(url, nombre) {
+        $('#modalDescarga').modal('hide');
+        $('#modalDescarga .modal-footer').hide();
+        Swal.fire({
+            title: '',
+            text: "Archivo descargado con éxito",
+            type: 'success',
+        });
         var ruta = "../../" + url + nombre;
         var enlaceTemporal = $('<a></a>')
             .attr('href', ruta)
@@ -1573,8 +1829,52 @@
         enlaceTemporal.remove();
     }
 
+    function eliminarArchivo(url, nombre) {
+        $('#modalDescarga').modal('hide');
+        $('#modalDescarga .modal-footer').hide();
+        var parametros = {
+            'nombre': nombre,
+            'ruta': ruta,
+            'codigo': miCodigo,
+        };
+        Swal.fire({
+            title: 'Formulario de confirmación',
+            text: "(SI) Eliminar el archivo: " + nombre + "\n(NO) Cancelar",
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'SI',
+            cancelButtonText: 'NO'
+        }).then((result) => {
+            if (result.value) {
+                console.log(result.value);
+                $.ajax({
+                    type: "POST",
+                    url: '../controlador/inventario/registro_beneficiarioC.php?EliminaArchivosTemporales=true',
+                    dataType: 'json',
+                    data: { 'parametros': parametros },
+                    success: function (data) {
+                        console.log(data.res2);
+                        if (data.res == 0) {
+                            Swal.fire({
+                                title: 'Archivo eliminado con éxito',
+                                text: '',
+                                type: 'success',
+                            });
+                            nombreArchivo = data.res2;
+                            $('#modalDescarga .modal-footer').hide();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    var contador = 0;
     $('#descargarArchivo').click(function () {
-        if (nombreArchivo) {
+        if (miCliente) {
+            $('#modalDescarga').modal('show');
             console.log(nombreArchivo);
             $.ajax({
                 url: '../controlador/inventario/registro_beneficiarioC.php?descargarArchivo=true',
@@ -1582,68 +1882,75 @@
                 dataType: 'json',
                 data: { valor: nombreArchivo },
                 success: function (data) {
-                    //console.log(data);
-                    if (data.response === 1) {
-                        $('#modalDescContainer').empty();
-                        if (data.archivos.length > 0) {
-                            data.archivos.forEach(function (archivo) {
-                                var extension = archivo.split('.').pop().toLowerCase();
-                                console.log(extension);
-                                var iconSrc;
-                                switch (extension) {
-                                    case 'pdf':
-                                        iconSrc = '../../img/png/pdf_icon.png';
-                                        break;
-                                    case 'doc':
-                                    case 'docx':
-                                        iconSrc = '../../img/png/doc_icon.png';
-                                        break;
-                                    case 'png':
-                                    case 'jpg':
-                                        iconSrc = '../../img/png/jpg_icon.png';
-                                        break;
-                                    default:
-                                        iconSrc = '../../img/png/file_icon.png';
-                                        break;
-                                }
-                                var buttonHTML = '<div class="col-md-6 col-sm-6">' +
-                                    '<button type="button" class="btn btn-default btn-sm"' +
-                                    'onclick="descargarArchivo(\'' + data.dir + '\', \'' + archivo + '\')">' +
-                                    '<img src="' + iconSrc + '" style="width: 60px;height: 60px;">' +
-                                    '</button><br>' +
-                                    '<b>' + archivo + '</b>' +
-                                    '</div>';
-                                $('#modalDescContainer').append(buttonHTML);
-                            });
-                        }
-                        $('#modalDescContainer').append('<hr>');
+                    ruta = data.dir;
+                    $('#modalDescContainer').empty();
+                    $('#divNoFile').empty();
+                    var archivosEncontrados = data.archivos.length;
+                    var archivosNoEncontrados = data.archivosNo.length;
+                    contador = archivosEncontrados + archivosNoEncontrados;
+                    if (data.archivos.length > 0) {
+                        var buttonsHTML = '';
+                        data.archivos.forEach(function (archivo) {
+                            var extension = archivo.split('.').pop().toLowerCase();
+                            var iconSrc;
+                            switch (extension) {
+                                case 'pdf':
+                                    iconSrc = '../../img/png/pdf_icon.png';
+                                    break;
+                                case 'doc':
+                                case 'docx':
+                                    iconSrc = '../../img/png/doc_icon.png';
+                                    break;
+                                case 'png':
+                                case 'jpg':
+                                    iconSrc = '../../img/png/jpg_icon.png';
+                                    break;
+                                default:
+                                    iconSrc = '../../img/png/file_icon.png';
+                                    break;
+                            }
+                            var maxLength = 12;
 
-                        if (data.archivosNo.length > 0) {
-                            var archivosNoEncontradosHTML = '<span style="margin-top:20px" class="text-danger">Archivos no encontrados:<br>';
-                            data.archivosNo.forEach(function (archivoNoEncontrado) {
-                                archivosNoEncontradosHTML += archivoNoEncontrado + '<br>';
-                            });
-                            archivosNoEncontradosHTML += '</span>';
-                            $('#modalDescContainer').append(archivosNoEncontradosHTML);
+                            var truncatedFileName = archivo.length > maxLength ? archivo.substr(0, maxLength) + '...' : archivo;
+                            var buttonHTML = '<div class="col-md-4 col-sm-4">' +
+                                '<button style="margin-right:50px" title="clic para descargar o eliminar" type="button" class="btn btn-default btn-sm btnsDD"' +
+                                'onclick="DownloadOrDelete(\'' + archivo + '\')">' +
+                                '<img src="' + iconSrc + '" style="width: 60px;height: 60px;">' +
+                                '</button><br>' +
+                                '<b title="' + archivo + '">' + truncatedFileName + '</b>' +
+                                '</div>';
+                            buttonsHTML += buttonHTML;
+                        });
+                        $('#modalDescContainer').html('<div class="row">' + buttonsHTML + '</div>');
+                        if (archivos.length < 3) {
+                            $('#modalDescContainer').addClass('justify-content-center');
+                        } else {
+                            $('#modalDescContainer').removeClass('justify-content-center');
                         }
-
-                        $('#modalDescarga').modal('show');
                     }
-                    else {
-                        swal.fire('', 'El archivo no se encuentra en la base de datos', 'error');
+                    if (data.archivosNo.length > 0) {
+                        var archivosNoEncontradosHTML = '<ul class="list-unstyled"><b>Archivos no encontrados en el directorio:</b>';
+                        data.archivosNo.forEach(function (archivoNoEncontrado) {
+                            archivosNoEncontradosHTML += '<li><span class="text-danger">' + archivoNoEncontrado + '</span></li>';
+                        });
+                        archivosNoEncontradosHTML += '</ul>';
+                        $('#divNoFile').append(archivosNoEncontradosHTML);
                     }
-                },
-                error: function () {
-                    swal.fire('', 'Error al intentar descargar el archivo', 'error');
                 }
             });
         } else {
-            if (miCliente) {
-                swal.fire('', "No se encontró un archivo adjunto para el beneficiario " + miCliente, 'error');
-            } else {
-                swal.fire('', 'Seleccione un nombre de Beneficiario/Usuario o CI/RUC', 'error')
-            }
+            Swal.fire({
+                title: 'Seleccione un nombre de Beneficiario/Usuario o CI/RUC',
+                text: '',
+                type: 'error',
+            });
         }
     });
 
+
+    $('#divNoFile').on('click', 'span.text-danger', function () {
+        var archivoClic = $(this).text();
+        console.log('Se hizo clic en el archivo:', archivoClic);
+        DownloadOrDelete(archivoClic, true);
+    });
 </script>
