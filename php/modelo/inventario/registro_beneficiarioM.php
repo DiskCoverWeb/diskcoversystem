@@ -3,7 +3,7 @@
 /** 
  * AUTOR DE RUTINA : Dallyana Vanegas
  * FECHA CREACION : 16/02/2024
- * FECHA MODIFICACION : 11/04/2024
+ * FECHA MODIFICACION : 15/04/2024
  * DESCIPCION : Clase modelo para llenar campos y guardar registros de Agencia
  */
 

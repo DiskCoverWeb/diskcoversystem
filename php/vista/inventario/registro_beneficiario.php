@@ -3,7 +3,7 @@
 <!--
     AUTOR DE RUTINA	: Dallyana Vanegas
     FECHA CREACION : 16/02/2024
-    FECHA MODIFICACION : 11/04/2024
+    FECHA MODIFICACION : 15/04/2024
     DESCIPCION : Interfaz de modulo Gestion Social/Registro Beneficiario
  -->
 
@@ -776,6 +776,7 @@
             var fileNames = [];
             var fileSizeLimit = false;
             var contieneComa = false;
+            var contieneEspacio = false;
 
             for (var i = 0; i < files.length; i++) {
                 var fileName = files[i].name.toLowerCase();
@@ -784,6 +785,10 @@
                     break;
                 }
 
+                if (fileName.includes(' ')) {
+                    contieneEspacio = true;
+                    break;
+                }
                 fileNames.push(fileName);
 
                 if (files[i].size > maxFileSize * 1024 * 1024) {
@@ -792,10 +797,12 @@
                 }
             }
 
-            if (contieneComa) {
+            if (contieneComa || contieneEspacio) {
+                var errorMessage = contieneComa ? 'comas (,)' : 'espacios';
+                var errorTitle = contieneComa ? 'comas' : 'espacios';
                 Swal.fire({
-                    title: 'Los nombres de los archivos no deben contener comas (,).',
-                    text: '',
+                    title: 'Los nombres de los archivos no deben contener ' + errorTitle + '.',
+                    text: 'Se encontraron ' + errorMessage + ' en los nombres de los archivos.',
                     type: 'error'
                 });
                 input.value = '';
