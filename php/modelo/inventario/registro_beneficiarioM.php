@@ -3,7 +3,7 @@
 /** 
  * AUTOR DE RUTINA : Dallyana Vanegas
  * FECHA CREACION : 16/02/2024
- * FECHA MODIFICACION : 08/04/2024
+ * FECHA MODIFICACION : 11/04/2024
  * DESCIPCION : Clase modelo para llenar campos y guardar registros de Agencia
  */
 
@@ -17,6 +17,28 @@ class registro_beneficiarioM
     function __construct()
     {
         $this->db = new db();
+    }
+
+    function EliminarEvidencias($nombre, $codigo)
+    {
+        $sql = "UPDATE Clientes_Datos_Extras 
+            SET Evidencias = REPLACE(Evidencias, '" . $nombre . ",', '')
+            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+            AND Codigo = '" . $codigo . "'";
+        $this->db->datos($sql);
+
+        $sql = "SELECT Evidencias FROM Clientes_Datos_Extras 
+                         WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                         AND Codigo = '" . $codigo . "' 
+                         AND Evidencias IS NOT NULL";
+        $result = $this->db->datos($sql);
+
+        if ($result) {
+            return $result[0]['Evidencias'];
+        } else {
+            return 1;
+        }
+
     }
 
     function LlenarTblPoblacion()
@@ -222,12 +244,12 @@ class registro_beneficiarioM
                 Acreditacion = '" . $parametros['Acreditacion'] . "', 
                 Tipo_Dato = '" . $parametros['Tipo_Dato'] . "', 
                 Cod_Fam = '" . $parametros['Cod_Fam'] . "', 
-                Evidencias = '" . $parametros['NombreArchivo'] . "', 
+                Evidencias = CONCAT(Evidencias, '" . $parametros['NombreArchivo'] . "'),
                 Observaciones = '" . $parametros['Observaciones'] . "'
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Codigo = '" . $parametros['Codigo'] . "'";
 
-                //print_r($sql);
+        //print_r($sql);
         return $this->db->datos($sql);
     }
 
@@ -269,7 +291,14 @@ class registro_beneficiarioM
 
         Eliminar_Nulos_SP("Clientes");
         Eliminar_Nulos_SP("Clientes_Datos_Extras");
-        return ['dato1' => $sql1, 'dato2' => $sql2];
+
+        $sql = "SELECT Evidencias FROM Clientes_Datos_Extras 
+                         WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                         AND Codigo = '" . $parametros['Codigo'] . "' 
+                         AND Evidencias IS NOT NULL";
+        $result = $this->db->datos($sql);
+
+        return ['dato1' => $sql1, 'dato2' => $sql2,'result' => $result[0]['Evidencias']];
     }
 }
 
