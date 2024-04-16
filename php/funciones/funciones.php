@@ -13449,122 +13449,134 @@ function InsertarAsientosC($Adodc){
   }
 }
 
-
 /*
-function InsertarAsiento($Adodc)
-{
-
-  $InsertarCta = True;
-  $Ln_No_A = 0;
-  if(empty($Adodc['CodigoCli'])){ $CodigoCli = G_NINGUNO; }
-  if(is_null($Adodc['CodigoCli']) ){ $CodigoCli = G_NINGUNO; }
-  if($NoCheque =G_NINGUNO){$CodigoCli = G_NINGUNO;}
+  function InsertarAsiento($DetalleComp,$ValorDH,$datosCTA,$OpcTM,$OpcDH,$A_No,$Opcion_Mulp,$fecha)
+  {
+      $InsertarCta = True;
+      $Dolar =round($_SESSION['INGRESO']['Cotizacion'],2);
+      $Ln_No_A = 0;
+      $CodigoCli = '.';
+      $NoCheque = '.';
+      $Codigo = $datosCTA[0]['Codigo'];
+      $Moneda_US = $datosCTA[0]['Moneda_US'];
+      $Cuenta = $datosCTA[0]['Cuenta'];
+      $SubCta = $datosCTA[0]['SubCta'];
+      $Trans_No = 1;
+      $OpcCoop = False;
+      $CodigoCC = '.';
+      if(empty($CodigoCli)){$CodigoCli = G_NINGUNO;}
+      if(is_null($CodigoCli)){$CodigoCli = G_NINGUNO;}
+      if($NoCheque == G_NINGUNO){$CodigoCli = G_NINGUNO;}
   
-  $ValorDHAux = number_format($Adodc['ValorDH'], 2,'.','');
-  // 'MsgBox ValorDHAux
-  if($Adodc['Codigo'] <> G_NINGUNO){
-     $Debe = 0; $Haber = 0;
-     // 'And Moneda_US = False Then ValorDH = Redondear(ValorDH * Dolar,2)
-     if($Adodc['OpcTM'] == 2 Or $Adodc['Moneda_US']){
-        if(isset($Adodc['Opcion_Mulp']){
-           $Adodc['Dolar'] = Val($Adodc['ValorDH'] * $Adodc['Dolar']);
-        }else{
-           if($Adodc['Dolar'] <= 0 ){
-              // MsgBox "No se puede Dividir para cero," & vbCrLf & "cambie la Cotización."
-               $Adodc['ValorDH'] = 0;
-           }else{
-              $Adodc['ValorDH'] = Val( $Adodc['ValorDH'] / $Adodc['Dolar'])
-           }
-        }
-    }
-     switch (variable) {
-        case 'value':
-          // code...
-          break;
-        
-        default:
-          // code...
-          break;
-      } OpcDH
-       Case 1: Debe = ValorDH
-       Case 2: Haber = ValorDH
-     End Select
-     If ValorDH <> 0 And Cuenta <> Ninguno Then
-        Select Case SubCta
-          Case "C", "P", "G", "I", "CP", "PM", "CC"
-               sSQL = "SELECT * " _
-                    & "FROM Asiento " _
-                    & "WHERE TC = '" & SubCta & "' " _
-                    & "AND CODIGO = '" & Codigo & "' " _
-                    & "AND T_No = " & Trans_No & " " _
-                    & "AND Item = '" & NumEmpresa & "' " _
-                    & "AND CodigoU = '" & CodigoUsuario & "' "
-               Select Case OpcDH
-                 Case 1: sSQL = sSQL & "AND DEBE > 0 "
-                 Case 2: sSQL = sSQL & "AND HABER > 0 "
-               End Select
-               Select_AdoDB AdoRegSC, sSQL
-               If AdoRegSC.RecordCount > 0 Then
-                  InsertarCta = False
-                  Ln_No_A = AdoRegSC.fields("A_No")
-               End If
-               AdoRegSC.Close
-        End Select
+      $ValorDHAux = round($ValorDH, 2);
+      //'MsgBox ValorDHAux
 
+  if($Codigo <> G_NINGUNO) {
+        $Debe = 0; $Haber = 0;
+        // 'And Moneda_US = False Then ValorDH = Redondear(ValorDH * Dolar,2)
+        // print_r($Moneda_US);die();
+       if($OpcTM == 2 Or $Moneda_US!=0){
+          if ($Opcion_Mulp !='/') {
+            // print_r('sss');
+             $ValorDH = $ValorDH * $Dolar;
+          }else{
+             if($Dolar <= 0){
+                $MsgBox = "No se puede Dividir para cero, cambie la Cotización.";
+                $ValorDH = 0;
+                // print_r($Dolar);
+             }else{
+                $ValorDH = Val($ValorDH / $Dolar);
+                // print_r('saaa');
+             }
+          }
+       }
+       switch ($OpcDH) 
+       {
+         case '1':$Debe = $ValorDH;break;
+         case '2':$Haber = $ValorDH;break;       
+       }
 
+        if($ValorDH <> 0 And $Cuenta <> G_NINGUNO)
+        {
+          switch ($SubCta) {
+            case 'C':
+            case 'P':
+            case 'G':
+            case 'I':
+            case 'CP':
+            case 'PM':
+            case 'CC':
+              // sSQL = "SELECT * " _
+              //           & "FROM Asiento " _
+              //           & "WHERE TC = '" & SubCta & "' " _
+              //           & "AND CODIGO = '" & Codigo & "' " _
+              //           & "AND T_No = " & Trans_No & " " _
+              //           & "AND Item = '" & NumEmpresa & "' " _
+              //           & "AND CodigoU = '" & CodigoUsuario & "' "
+              //      Select Case OpcDH
+              //        Case 1: sSQL = sSQL & "AND DEBE > 0 "
+              //        Case 2: sSQL = sSQL & "AND HABER > 0 "
+              //      End Select
+              //      Select_AdoDB AdoRegSC, sSQL
+              //      If AdoRegSC.RecordCount > 0 Then
+              //         InsertarCta = False
+              //         Ln_No_A = AdoRegSC.Fields("A_No")
+              //      End If
+              //      AdoRegSC.Close
+              break;
+          }
+            // print_r('expression');die();
+            SetAdoAddNew("Asiento");
+            SetAdoFields("PARCIAL_ME",0);
+            SetAdoFields("ME",0);
+            SetAdoFields("CODIGO",$Codigo);
+            SetAdoFields("CUENTA",$Cuenta);
+            SetAdoFields("DETALLE",trim(substr($DetalleComp, 0, 60)));
+             if ($OpcCoop){
+                if($Moneda_US){
+                   $Debe = round($Debe / $Dolar, 2);
+                   $Haber = round($Haber / $Dolar, 2);
+                }else{
+                   $Debe = round($Debe, 2);
+                   $Haber = round($Haber, 2);
+                }
+             }
+               SetAdoFields("PARCIAL_ME",0);
+                if($Moneda_US==1 Or $OpcTM == 2){
+                   if (($Debe - $Haber) < 0){ $ValorDHAux = -$ValorDHAux;
+                  SetAdoFields("PARCIAL_ME",$ValorDHAux);
+                  SetAdoFields("ME",1);
+                }
+                $Debe = round($Debe, 2);
+                $Haber = round($Haber, 2);
+             }
+            SetAdoFields("DEBE",$Debe);
+            SetAdoFields("HABER",$Haber);
+            SetAdoFields("EFECTIVIZAR",$fecha);
+            SetAdoFields("CHEQ_DEP",$NoCheque);
+            SetAdoFields("CODIGO_C",$CodigoCli);
+            SetAdoFields("CODIGO_CC",$CodigoCC);
+            SetAdoFields("T_No",$Trans_No);
+            SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+            SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+            SetAdoFields("TC",$SubCta);
+            if($InsertarCta)
+            {
+              SetAdoFields("A_No",$A_No);
+              // insertar
+            }else
+            {
+              SetAdoFields("A_No",$Ln_No_A);
+              // actualizar
+            }  
 
-        
-        With DtaAsiento.Recordset
-             If InsertarCta Then
-               .AddNew
-             Else
-               .MoveFirst
-               .Find ("A_No = " & Ln_No_A & " ")
-                If .EOF Then .AddNew
-             End If
-            .fields("PARCIAL_ME") = 0
-            .fields("ME") = False
-            .fields("CODIGO") = Codigo
-            .fields("CUENTA") = Cuenta
-            .fields("DETALLE") = TrimStrg(MidStrg(DetalleComp, 1, 60))
-             If OpcCoop Then
-                If Moneda_US Then
-                   Debe = Redondear(Debe / Dolar, 2)
-                   Haber = Redondear(Haber / Dolar, 2)
-                Else
-                   Debe = Redondear(Debe, 2)
-                   Haber = Redondear(Haber, 2)
-                End If
-             Else
-               .fields("PARCIAL_ME") = 0
-                If Moneda_US Or OpcTM = 2 Then
-                   If (Debe - Haber) < 0 Then ValorDHAux = -ValorDHAux
-                  .fields("PARCIAL_ME") = ValorDHAux
-                  .fields("ME") = True
-                End If
-                Debe = Redondear(Debe, 2)
-                Haber = Redondear(Haber, 2)
-             End If
-            .fields("DEBE") = Debe
-            .fields("HABER") = Haber
-            .fields("EFECTIVIZAR") = Fecha_Vence
-            .fields("CHEQ_DEP") = NoCheque
-            .fields("CODIGO_C") = CodigoCli
-            .fields("CODIGO_CC") = CodigoCC
-            .fields("T_No") = Trans_No
-            .fields("Item") = NumEmpresa
-            .fields("CodigoU") = CodigoUsuario
-            .fields("TC") = SubCta
-             If InsertarCta Then
-               .fields("A_No") = Ln_No
-                Ln_No = Ln_No + 1
-             End If
-            .Update
-             
-        End With
-     End If
-  End If
-}*/
+            // print_r($datos);die();    
+            SetAdoUpdate();       
+        }//abre en 
+      }
+  }
+*/
+
 
 function CalculosTotalAsientos($Adodc)
   {
