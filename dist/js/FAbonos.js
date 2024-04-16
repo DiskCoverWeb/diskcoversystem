@@ -1,3 +1,5 @@
+let FechaCorte = '.';
+
 $(document).ready(function () {
 	DCVendedor();
 	DiarioCaja();
@@ -8,7 +10,7 @@ $(document).ready(function () {
 	DCRetIBienes();
 	DCCodRet();
 	DCTipo();
-	$('#DCTipo').on('change',DCSerie);
+	$('#DCTipo').on('change', DCSerie);
 
 });
 
@@ -213,7 +215,16 @@ function DCFactura1() {
 			$('#CI_RUC').val(data[0].CI_RUC);
 			Calculo_Saldo();
 			// $('#').val(data[0].);
-			console.log(data);
+			FechaCorte = new Date(data[0].Fecha.date.split(' ')[0]);
+			const fechaInput = new Date($('#MBFecha').val());
+			if (fechaInput < FechaCorte) {
+				Swal.fire({
+					title: 'Error',
+					text: 'No se puede grabar abonos con fecha inferior a la emision de la factura',
+					type: 'error',
+				});
+				
+			}
 		}
 	});
 }
@@ -312,6 +323,18 @@ function TextRecibido() {
 }
 
 function guardar_abonos() {
+
+	const fechaInput = new Date($('#MBFecha').val());
+	if (fechaInput < FechaCorte) {
+		Swal.fire({
+			title: 'Error',
+			text: 'No se puede grabar abonos con fecha inferior a la emision de la factura',
+			type: 'error',
+		});
+		return;
+	
+	}
+
 	Swal.fire({
 		title: 'Esta Seguro que desea grabar estos pagos.',
 		text: '',
