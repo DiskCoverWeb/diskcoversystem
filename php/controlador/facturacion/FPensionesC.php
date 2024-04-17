@@ -12,7 +12,11 @@ require_once(dirname(__DIR__, 2) . "/modelo/facturacion/FPensionesM.php");
 $controlador = new FPensionesC();
 
 if (isset($_GET['DCInv'])) {
-    echo json_encode($controlador->DCInv());
+    $query = '';
+    if (isset($_GET['q'])) {
+        $query = $_GET['q'];
+    }
+    echo json_encode($controlador->DCInv($query));
 }
 
 if (isset($_GET['ExistenRubros'])) {
@@ -135,16 +139,29 @@ class FPensionesC
         }
     }
 
-    public function DCInv()
+    public function DCInv($query)
     {
         try {
-            $datos = $this->modelo->DCInv();
+            $datos = $this->modelo->DCInv($query);
+            $res = [];
             if (count($datos) == 0) {
-                throw new Exception("No se encontraron productos");
+                $res[] = 
+                [
+                    'id' => 0,
+                    'text' => 'No se encontraron datos'
+                ];
+            }else{
+                foreach($datos as $row){
+                    $res[] = 
+                    [
+                        'id' => $row['NomProd'],
+                        'text' => $row['NomProd']
+                    ];
+                }
             }
-            return array("res" => "1", "datos" => $datos);
+            return ['results' => $res];
         } catch (Exception $e) {
-            return array("res" => "0", "msj" => $e->getMessage());
+            return ['error' => $e->getMessage()];
         }
     }
 
@@ -212,7 +229,7 @@ class FPensionesC
                 $this->modelo->InsertClientesFacturacion($parametros, $NoAnio, $NoMes, $Mifecha, $Mesl);
                 $Mifecha = new DateTime($Mifecha);
                 $Mifecha->add(new DateInterval("P1M"));
-                $Mifecha = $Mifecha->format("d/m/Y");
+                $Mifecha = $Mifecha->format("Y-m-d");
             }
             Eliminar_Nulos_SP("Clientes_Facturacion");
             return array("res" => "1", "msj" => "Proceso Terminado");

@@ -122,7 +122,7 @@
 						placeholder="00000000" value="99999999">
 				</div>
 				<div class="col-sm-6 col-xs-8">
-					<label for="TxtAutoRet">Autorizacion </label>
+					<label for="TxtAutoRet" id="LabelAutorizacion">Autorizacion </label>
 					<input type="text" name="TxtAutoRet" id="TxtAutoRet" class="form-control input-xs"
 						placeholder="Grupo No" value="000000000">
 				</div>

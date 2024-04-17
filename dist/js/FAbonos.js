@@ -223,8 +223,12 @@ function DCFactura1() {
 					text: 'No se puede grabar abonos con fecha inferior a la emision de la factura',
 					type: 'error',
 				});
-				
 			}
+			var dia = FechaCorte.getDate();
+			var mes = FechaCorte.getMonth() + 1;
+			var anio = FechaCorte.getFullYear();
+			FechaCorte = `${anio}-${mes}-${dia}`;
+			$('#LabelAutorizacion').text(`Autorizacion Fecha de Emisión ${FechaCorte}`);
 		}
 	});
 }

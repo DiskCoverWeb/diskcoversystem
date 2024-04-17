@@ -48,6 +48,7 @@ require_once ("FAsignaFact.php");
         $('[data-toggle="popover"]').popover({
             html: true
         });
+        $('#TipoSuper_MYSQL').val('Supervisor');
         //Form Activate 
         ActualizarDatosRepresentantes();
         DCGrupos();

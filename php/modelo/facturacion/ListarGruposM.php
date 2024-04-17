@@ -535,7 +535,7 @@ class ListarGruposM
             foreach ($AdoAux as $key => $value) {
                 $Anio = $value['Periodo'];
                 for ($i = 1; $i <= 12; $i++) {
-                    $Mifecha = BuscarFecha(date('Y-m-t', strtotime("01/" . sprintf("02d", $i) . "/" . $Anio)));
+                    $Mifecha = BuscarFecha(date('Y-m-t', strtotime("01/" . sprintf("%02d", $i) . "/" . $Anio)));
                     $sql = "UPDATE Clientes_Facturacion
                                 SET Fecha = '" . $Mifecha . "'
                                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'

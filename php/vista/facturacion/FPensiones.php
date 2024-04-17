@@ -139,25 +139,26 @@
 
 
     function DCInv() {
-        $.ajax({
-            url: "../controlador/facturacion/FPensionesC.php?DCInv=true",
-            type: "POST",
-            dataType: "json",
-            success: function (response) {
-                var data = response
-                if (data.res == 1) {
-                    $('#MDCInv').empty();
-                    $.each(data.datos, function (index, value) {
-                        var labelContent = `<label for="MChkProd${index}">
-                                                <input type="radio" name="DCInv" id="MChkProd${index}" value="${value['NomProd']}"> ${value['NomProd']}
-                                            </label><br>`;
-                        $('#MDCInv').append(labelContent);
-                    });
-                } else {
-                    $('#MDCInv').append('<label for="MChkProd0">No se encontraron productos</label>');
-                }
+        $('#MDCInv').select2({
+            placeholder: "Seleccione un producto",
+            allowClear: true,
+            ajax: {
+                url: "../controlador/facturacion/FPensionesC.php?DCInv=true",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data, params) {
+                    return {
+                        results: data.results
+                    };
+                },
+                cache: true
             }
-
         });
     }
 
@@ -187,7 +188,7 @@
         var Valor = $('#MTxtArea').val();
         var Total_Desc = $('#MTxtDesc').val();
         var Total_Desc2 = $('#MTxtDesc2').val();
-        var CodigoP = $('input[name="DCInv"]:checked').val();
+        var CodigoP = $('#MDCInv').val();
         var CheqRangos = $('#MCheqRangos').is(':checked') ? 1 : 0;
         if (CodigoP == undefined) {
             swal.fire({
@@ -250,6 +251,8 @@
                         text: data.msj,
                         type: "success"
                     });
+                    $('#FPensiones').modal('hide');
+                    $('#clave_supervisor').modal('hide');
                 } else {
                     swal.fire({
                         title: "Error",
@@ -279,6 +282,8 @@
                                             </label><br>`;
                         $('#LstCopiar').append(labelContent);
                     });
+                    $('#FPensiones').modal('hide');
+                    $('#clave_supervisor').modal('hide');
                 } else {
                     console.log(data.error);
                 }
@@ -393,6 +398,8 @@
                                 text: data.msj,
                                 type: "success"
                             });
+                            $('#FPensiones').modal('hide');
+                            $('#clave_supervisor').modal('hide');
                         } else {
                             swal.fire({
                                 title: "Error",
@@ -459,6 +466,9 @@
                         text: data.msj,
                         type: "success"
                     });
+                    $('#FPensiones').modal('hide');
+                    $('#clave_supervisor').modal('hide');
+
                 } else {
                     swal.fire({
                         title: "Error",
@@ -581,20 +591,16 @@
             <div class="modal-footer" style="text-align: left;">
                 <div class="row">
                     <div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <label for="">
-                                    Productos
-                                </label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div id="MDCInv" style="height: 25vh; max-height:25vh; overflow-y:auto">
+                        <label for="MDCInv">
+                            Productos
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <select name="MDCInv" id="MDCInv" class="form-control" style="width: 100%;">
 
-                                </div>
-                            </div>
-                        </div>
+                        </select>
                     </div>
                 </div>
             </div>

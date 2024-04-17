@@ -1,6 +1,6 @@
 <?php
-require_once(dirname(__DIR__, 2) . "/db/db1.php");
-require_once(dirname(__DIR__, 2) . "/funciones/funciones.php");
+require_once (dirname(__DIR__, 2) . "/db/db1.php");
+require_once (dirname(__DIR__, 2) . "/funciones/funciones.php");
 
 /*
     AUTOR DE RUTINA	: Leonardo Súñiga
@@ -21,7 +21,7 @@ class FPensionesM
 
     }
 
-    public function DCInv(): array
+    public function DCInv($query = false): array
     {
         $sql = "SELECT Codigo_Inv + '  ' + Producto As NomProd, *
                 FROM Catalogo_Productos 
@@ -29,8 +29,13 @@ class FPensionesM
                 AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
                 AND TC = 'P' 
                 AND LEN(Cta_Inventario) = 1 
-                AND INV <> 0 
-                ORDER BY Codigo_Inv";
+                AND INV <> 0 ";
+        if (is_numeric($query)) {
+            $sql .= "AND Codigo_Inv LIKE '%" . $query . "%' ";
+        } else {
+            $sql .= "AND Producto LIKE '%" . $query . "%' ";
+        }
+        $sql .= "ORDER BY Producto ";
         try {
             return $this->db->datos($sql);
         } catch (Exception $e) {
