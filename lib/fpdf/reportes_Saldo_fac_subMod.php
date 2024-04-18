@@ -252,9 +252,7 @@ class Reporte_subModulo
 
 	}
 
-
-	function cuentas_x_pagar($parametro)
-	{
+	function cuentas_x_pagar($parametro) {
 		$datos = $this->ModeloSubModulo->consulta_c_p_datos(
 			$parametro['tipocuenta'],
 			$parametro['ChecksubCta'],
@@ -266,90 +264,149 @@ class Reporte_subModulo
 			$parametro['fechafin'],
 			$parametro['Cta'],
 			$parametro['CodigoCli'],
-			$parametro['DCDet']);
-		  $titulo='';
-
-
-		if($parametro['tipocuenta']=='P')
-		{
-			$titulo='SALDO DE CUENTAS POR PAGAR';
-		}else
-		{
-			$titulo ='SALDO DE CUENTAS POR COBRAR';
+			$parametro['DCDet']
+		);
+	
+		$titulo = '';
+		if ($parametro['tipocuenta'] == 'P') {
+			$titulo = 'SALDO DE CUENTAS POR PAGAR';
+		} else {
+			$titulo = 'SALDO DE CUENTAS POR COBRAR';
 		}
-		 
-     
-		 $cuentas = array();
-		 $totalSaldo=0;
-		 $totalabono=0;
-		 $totalTotal=0;
-		 foreach ($datos as $key => $value) {
-
-
-		 	if(!in_array($value['Cuenta'],$cuentas))
-		 	{
-		 		$cuentas[]=$value['Cuenta'];
-		 	}
-		 }
-
-		 $abono=0;$saldo=0;$total=0;
-		 $pos=1;
+	
+		$cuentas = array();
+		$clientes = array();
+		$totalSaldo = 0; $totalabono = 0; $totalTotal = 0;
+	
+		foreach ($datos as $key => $value) {
+			if (!in_array($value['Cuenta'], $cuentas)) {
+				$cuentas[] = $value['Cuenta'];
+			}
+			if (!in_array($value['Cliente'], $clientes)) {
+				$clientes[] = $value['Cliente'];
+			}
+		}
+	
+		$abono = 0; $saldo = 0; $total = 0;
+		$pos = 1;
 		$tablaHTML = array();
-		$tablaHTML[0]['medidas']=array(20,40,19,15,7,19,15,15,15,15,15);
-		$tablaHTML[0]['alineado']=array('L','L','L','L','L','L','L','L','R','R','R');
-		$tablaHTML[0]['datos']=array('CUENTA','PERSONAS','TELEFONO','FACTURA','TP','NUMERO','FECHA','FECHA V','TOTAL','ABONO','SALDO');
-		$tablaHTML[0]['estilo']='BI';
+		$tablaHTML[0]['medidas'] = array(60, 19, 15, 7, 19, 15, 15, 15, 15, 15);
+		$tablaHTML[0]['alineado'] = array('L', 'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R');
+		$tablaHTML[0]['datos'] = array('PERSONAS', 'TELEFONO', 'FACTURA', 'TP', 'NUMERO', 'FECHA', 'FECHA V', 'TOTAL', 'ABONO', 'SALDO');
+		$tablaHTML[0]['estilo'] = 'BI';
 		$tablaHTML[0]['borde'] = 'B';
 	
-			foreach ($cuentas as $key => $cuent) 
-			{
-				$htmlcuenta = '';
-			   foreach ($datos as $key => $value) 
-			   {
-			   	if($cuent == $value['Cuenta'])
-			   	{
-			   		if($htmlcuenta == '')
-			   		{
-			   			$htmlcuenta = $value['Cuenta'];
-			   		}else
-			   		{
-			   			$htmlcuenta = '';
-			   		}
-			   		$saldo+=$value['Saldo'];
-					$total+=$value['Total'];
-					$abono+=$value['Abonos'];
-			   		$tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
-		            $tablaHTML[$pos]['alineado']=$tablaHTML[0]['alineado'];
-		            $tablaHTML[$pos]['datos']=array($htmlcuenta,$value['Cliente'],$value['Telefono'],$value['Factura'],$value['TC'],$value['Codigo'],$value['Fecha_Emi']->format('Y-m-d'),$value['Fecha_Ven']->format('Y-m-d'),bcdiv($value['Total'],1,2), bcdiv($value['Abonos'],1,2), bcdiv($value['Saldo'],1,2));
-		            $tablaHTML[$pos]['borde'] = 'RL';
-                    $pos = $pos+1;
-                    $htmlcuenta = $value['Cuenta'];
-			   	}
-			  }
-                $totalSaldo+=$saldo;
-		        $totalabono+=$abono;
-		        $totalTotal+=$total;
-			  	$tablaHTML[$pos]['medidas']=array(135,20,20,20);
-		        $tablaHTML[$pos]['alineado']=array('R','R','R','R');
-		        $tablaHTML[$pos]['datos']=array('SUBTOTAL',$total,$abono,$saldo);
-		        $tablaHTML[$pos]['borde'] = 'BT';
-			   	$pos = $pos+2;
-
+		$clientesVistos = array();
+		foreach ($cuentas as $key => $cuent) {
+			$tablaHTML[$pos]['medidas'] = array(195);
+			$tablaHTML[$pos]['alineado'] = array('L');
+			$tablaHTML[$pos]['datos'] = array(strtoupper($cuent) .':');	
+			$tablaHTML[$pos]['borde'] = 'B';
+			$pos++;
+	
+			$clienteTemporal = '';
+			$saldoC = 0; $totalC = 0; $abonoC = 0;
+	
+			foreach ($datos as $key => $value) {
+				if ($cuent == $value['Cuenta']) {					
+					if ($clienteTemporal != $value['Cliente']) {
+						//$clientesVistos[] = $value['Cliente'];
+						if ($clienteTemporal != '') {
+							
+							$tablaHTML[$pos]['medidas'] = array(60,90, 15, 15, 15);
+							$tablaHTML[$pos]['alineado'] = array('L','L', 'R', 'R', 'R');
+							$tablaHTML[$pos]['datos'] = array('','SUBTOTAL DE ' . $clienteTemporal, $totalC, $abonoC, $saldoC);
+							$tablaHTML[$pos]['borde'] = 'BT';
+							$pos += 2;
+						}
+						$clienteTemporal = $value['Cliente'];
+						$saldoC = 0; $totalC = 0; $abonoC = 0;
+					}
+					if (!in_array($clienteTemporal, $clientesVistos)) {
+						$clientesVistos[] = $clienteTemporal;
+	
+						$saldoC += $value['Saldo'];
+						$totalC += $value['Total'];
+						$abonoC += $value['Abonos'];
+						$saldo += $value['Saldo'];
+						$total += $value['Total'];
+						$abono += $value['Abonos'];
+	
+						$tablaHTML[$pos]['medidas'] = $tablaHTML[0]['medidas'];
+						$tablaHTML[$pos]['alineado'] = $tablaHTML[0]['alineado'];
+						$tablaHTML[$pos]['datos'] = array(
+							$clienteTemporal,
+							$value['Telefono'],
+							$value['Factura'],
+							$value['TC'],
+							$value['Codigo'],
+							$value['Fecha_Emi']->format('Y-m-d'),
+							$value['Fecha_Ven']->format('Y-m-d'),
+							bcdiv($value['Total'], 1, 2),
+							bcdiv($value['Abonos'], 1, 2),
+							bcdiv($value['Saldo'], 1, 2)
+						);
+						$tablaHTML[$pos]['borde'] = 'RL';
+						$pos++;
+					} else {
+						$saldoC += $value['Saldo'];
+						$totalC += $value['Total'];
+						$abonoC += $value['Abonos'];
+						$saldo += $value['Saldo'];
+						$total += $value['Total'];
+						$abono += $value['Abonos'];
+	
+						$tablaHTML[$pos]['medidas'] = $tablaHTML[0]['medidas'];
+						$tablaHTML[$pos]['alineado'] = $tablaHTML[0]['alineado'];
+						$tablaHTML[$pos]['datos'] = array(
+							'',
+							$value['Telefono'],
+							$value['Factura'],
+							$value['TC'],
+							$value['Codigo'],
+							$value['Fecha_Emi']->format('Y-m-d'),
+							$value['Fecha_Ven']->format('Y-m-d'),
+							bcdiv($value['Total'], 1, 2),
+							bcdiv($value['Abonos'], 1, 2),
+							bcdiv($value['Saldo'], 1, 2)
+						);
+						$tablaHTML[$pos]['borde'] = 'RL';
+						$pos++;
+					}	
+				}
 			}
-
-	    $pos = $pos+1;
+	
+			if ($clienteTemporal != '') {
+				$tablaHTML[$pos]['medidas'] = array(60,90, 15, 15, 15);
+				$tablaHTML[$pos]['alineado'] = array('L','L', 'R', 'R', 'R');
+				$tablaHTML[$pos]['datos'] = array('','SUBTOTAL DE ' . $clienteTemporal, $totalC, $abonoC, $saldoC);
+				$tablaHTML[$pos]['borde'] = 'T';
+				$pos += 2;
+			}
+	
+			$tablaHTML[$pos]['medidas'] = array(60,90, 15, 15, 15);
+			$tablaHTML[$pos]['alineado'] = array('L','L', 'R', 'R', 'R');
+			$tablaHTML[$pos]['datos'] = array('','SUBTOTAL ' . strtoupper($cuent), $total, $abono, $saldo);
+			$tablaHTML[$pos]['borde'] = 'B';
+			$pos = $pos + 2;
+	
+			$totalSaldo += $saldo;
+			$totalabono += $abono;
+			$totalTotal += $total;
+		}
+	
 		$tablaHTML[$pos]['medidas']=array(135,20,20,20);
 		$tablaHTML[$pos]['alineado']=array('R','R','R','R');
 		$tablaHTML[$pos]['datos']=array('TOTAL',$totalTotal,$totalabono,$totalSaldo);
 		$tablaHTML[$pos]['borde'] = 'BT';
-
+	
 			
 
 
 	 $this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$imagen=false,$parametro['fechaini'],$parametro['fechafin'],6,true);
 			
-	}
-
+	} 
+	
 	function egresos_centro_c($parametro)
 	{
 		date_default_timezone_set('America/Guayaquil');

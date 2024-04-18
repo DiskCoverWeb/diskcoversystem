@@ -51,6 +51,8 @@ class PDF_MC_Table extends FPDF
 			$h=$h1*$nb;
 		// print_r($nb.'-'.$h1.'-'.$h.'-'.$data[0]);die();
 		//Issue a page break first if needed
+		$this->Cell(array_sum($this->widths), 0, '', '');
+		$this->Ln(); 
 		$this->CheckPageBreak($h,$dataCabecera);		
 		//Draw the cells of the row
 		for($i=0;$i<count($data);$i++)

@@ -663,7 +663,8 @@ function sp_proceso_balance_pdf($parametros)
 		    	$datos = array();
 		    	foreach($value as $key1 => $valu)
 		    	{
-		    		if(is_float($valu))
+		    		// print_r($value);die();
+		    		if(is_numeric($valu))
 		    		{
 
 		    			array_push($datos, number_format($valu,2,'.',''));
