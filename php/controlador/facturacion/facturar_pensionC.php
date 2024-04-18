@@ -797,6 +797,7 @@ class facturar_pensionC
       $SubTotal_NC = $FA['TxtNC'];
       $Total_Anticipo = $FA['saldoFavor'];
       $Total_Bancos = $FA['TextCheque'];
+      $Total_Efectivo = $FA['TxtEfectivo'];
       $TotalCajaMN = $FA['Total'] - $Total_Bancos - $SubTotal_NC;
       $TextoFormaPago = "CONTADO";
       $Total_Abonos = $TotalCajaMN + $Total_Bancos + $SubTotal_NC;
@@ -847,15 +848,18 @@ class facturar_pensionC
       }
       $TA['Cheque'] = $FA['chequeNo'];
       $TA['Abono'] = $Total_Bancos;
+
+      // print_r($TA);die();
       Grabar_Abonos($TA);
 
       //Abono de Factura
       $TA['Cta'] = $_SESSION['SETEOS']['Cta_CajaG'];
       $TA['Banco'] = "EFECTIVO MN";
       $TA['Cheque'] = strtoupper($FA['Grupo_No']);
-      $TA['Abono'] = $TotalCajaMN;
+      $TA['Abono'] = $Total_Efectivo;
       $TA['Comprobante'] = "";
       $TA['Codigo_Inv'] = "";
+      // print_r($TA);die();
       Grabar_Abonos($TA);
 
       //Forma del Abono SubTotal NC
