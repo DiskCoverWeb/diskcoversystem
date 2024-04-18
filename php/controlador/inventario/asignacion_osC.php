@@ -11,6 +11,11 @@ if (isset($_GET['Beneficiario'])) {
     echo json_encode($controlador->tipoBeneficiario($query));
 }
 
+if(isset($_GET['datosExtra'])){
+    $parametros = $_POST['param'];
+    echo json_encode($controlador->datosExtra($parametros));
+}
+
 
 
 
@@ -66,6 +71,36 @@ class asignacion_osC
             return ['results' => $res]; // Ajuste aquí para coincidir con el formato de Select2
         } catch (Exception $e) {
             return ['error' => $e->getMessage()];
+        }
+    }
+
+    function datosExtra($parametros){
+        try{
+            $consulta = '(';
+            foreach($parametros as $value){
+                //if value == '.' ignore the value
+                if($value == '.'){
+                    continue;
+                }
+                $consulta .= "'" . $value . "',";
+            }
+            //remove the last comma
+            if(substr($consulta, -1) == ','){
+                $consulta = substr($consulta, 0, -1);
+            }
+            $consulta .= ')';
+            //if consulta is equals to () return ('.')
+            if($consulta === '()'){
+                $consulta = "('.')";
+            }
+            $datos = $this->modelo->datosExtra($consulta);
+            if(count($datos) == 0){
+                throw new Exception('No se encontraron datos');
+            }
+            $res = array();
+            return array('result' => '1', 'datos' => $datos);
+        }catch(Exception $e){
+            return array('result' => '0', 'message' => $e->getMessage());
         }
     }
 

@@ -1,5 +1,17 @@
 <script>
 
+    let diccionarioTP = 
+    [
+        {'TP': 'BENEFICI', 'inputname': 'tipoBenef'},
+        {'TP': 'VULNERAB', 'inputname': 'vuln'},
+        {'TP': 'POBLACIO', 'inputname': 'tipoPobl'},
+        {'TP': 'ACCIONSO', 'inputname': 'acciSoci'},
+        {'TP': 'ATENCION', 'inputname': 'tipoAten'},
+        {'TP': 'ENTREGA', 'inputname': 'tipoEntrega'},
+        {'TP': 'ESTADO', 'inputname': 'tipoEstado'},
+        {'TP': 'FRECUENC', 'inputname': 'frecuencia'}
+    ];
+
     $(document).ready(function () {
         beneficiario();
 
@@ -84,7 +96,7 @@
         var fecha = new Date(datos.Fecha_Atencion);
         const opciones = { weekday: 'long' };
         const diaEnLetras = new Intl.DateTimeFormat('es-ES', opciones).format(fecha);
-        $('#diaEntr').val(diaEnLetras);//Dia de Entrega
+        $('#diaEntr').val(diaEnLetras.toUpperCase());//Dia de Entrega
         $('#frecuencia').val(datos.Envio_No);//Frecuencia
         $('#tipoBenef').val(datos.Beneficiario);//Tipo de Beneficiario
         $('#totalPersAten').val(datos.No_Soc);//Total, Personas Atendidas
@@ -94,8 +106,58 @@
         $('#tipoAten').val(datos.Cod_Fam);//Tipo de Atencion
         $('#CantGlobSugDist').val(datos.Salario);//Cantidad global sugerida a distribuir
         $('#CantGlobDist').val(datos.Descuento);//Cantidad global a distribuir
+        const params = [datos.CodigoA, datos.CodigoACD, datos.Envio_No, datos.Beneficiario, datos.Area, datos.Acreditacion, datos.Tipo, datos.Cod_Fam];
+        datosExtras(params);
 
 
+    }
+
+    function datosExtras(param){
+        $.ajax({
+            url: '../controlador/inventario/asignacion_osC.php?datosExtra=true',
+            type: 'POST',
+            dataType: 'json',
+            data: {param: param},
+            success: function (data) {
+                if(data.result == 1){
+                   const tmp = relacionarListas(data.datos, diccionarioTP);
+                   for (let i = 0; i < tmp.length; i++) {
+                       $('#' + tmp[i].inputname).val(tmp[i].Proceso);
+                       if(tmp[i].Color != '.'){
+                            const color = tmp[i].Color.substring(4);
+                            console.log(color);
+                            $('#rowGeneral').css('background-color', '#'+color);
+                       }
+                   }
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+
+    /**
+     * Relaciona las listas de datos
+     * @param {Array} lista1 los datos extras obtenidos de la tabla Catalogo_Procesos
+     * @param {Array} lista2 la relacion que tienen cada Tipo de Proceso con el input que se muestra
+     * @returns {Array}
+     */
+    function relacionarListas(lista1, lista2){
+        const relacion = {};
+        lista1.forEach(element => {
+            const tp = element.TP;
+            relacion[tp] = {...element};
+        });
+
+        lista2.forEach(element2 => {
+            const tp = element2.TP;
+            if(relacion[tp]){
+                relacion[tp] = {...relacion[tp], ...element2};
+            }
+        });
+
+        return Object.values(relacion);
     }
 
 </script>
@@ -151,7 +213,7 @@
     }
 </style>
 <form id="form_asignacion">
-    <div class="row" style="padding: 1vw; background-color: rgb(254,252,172); border: 1px solid;">
+    <div class="row" style="padding: 1vw; background-color: rgb(254,252,172); border: 1px solid;" id="rowGeneral">
         <div class="row">
             <div class="col-sm-4">
                 <div class="row">
@@ -161,7 +223,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <input type="text" name="diaEntr" id="diaEntr" />
+                        <input type="text" name="diaEntr" id="diaEntr" class="form-control input-xs">
                     </div>
                 </div>
             </div>
@@ -173,8 +235,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <select name="beneficiario" id="beneficiario">
-                            <option value=".">Beneficiario</option>
+                        <select name="beneficiario" id="beneficiario" class="form-control input-xs">
                         </select>
                     </div>
                 </div>
@@ -187,7 +248,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <input type="date" name="fechAten" id="fechAten">
+                        <input type="date" name="fechAten" id="fechAten" class="form-control input-xs">
                     </div>
                 </div>
             </div>
@@ -201,7 +262,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6" style="padding: 0" id="container-estado">
-                        <input type="tipoEstado" name="tipoEstado" id="tipoEstado" />
+                        <input type="tipoEstado" name="tipoEstado" id="tipoEstado" class="form-control input-xs">
                     </div>
                 </div>
             </div>
@@ -213,7 +274,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <input type="text" name="tipoEntrega" id="tipoEntrega" />
+                        <input type="text" name="tipoEntrega" id="tipoEntrega" class="form-control input-xs">
                     </div>
                 </div>
             </div>
@@ -225,7 +286,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <input type="time" name="horaEntrega" id="horaEntrega">
+                        <input type="time" name="horaEntrega" id="horaEntrega" class="form-control input-xs">
                     </div>
                 </div>
             </div>
@@ -237,7 +298,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <input type="text" name="frecuencia" id="frecuencia" />
+                        <input type="text" name="frecuencia" id="frecuencia" class="form-control input-xs">
                     </div>
                 </div>
             </div>
@@ -251,17 +312,17 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <input type="text" name="tipoBenef" id="tipoBenef">
+                        <input type="text" name="tipoBenef" id="tipoBenef" class="form-control input-xs">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-6 text-right centrar">
-                        <label for="totalPersAten" style="font-size: 13px;">
+                        <label for="totalPersAten" style="font-size: 13px; white-space: nowrap;">
                             Total, Personas Atendidas:
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <input type="text" name="totalPersAten" id="totalPersAten">
+                        <input type="text" name="totalPersAten" id="totalPersAten" class="form-control input-xs">
                     </div>
                 </div>
                 <div class="row">
@@ -271,7 +332,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <input type="text" name="tipoPobl" id="tipoPobl">
+                        <input type="text" name="tipoPobl" id="tipoPobl" class="form-control input-xs">
                     </div>
                 </div>
                 <div class="row">
@@ -281,7 +342,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <input type="text" name="acciSoci" id="acciSoci">
+                        <input type="text" name="acciSoci" id="acciSoci" class="form-control input-xs">
                     </div>
                 </div>
                 <div class="row">
@@ -291,7 +352,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <input type="text" name="vuln" id="vuln">
+                        <input type="text" name="vuln" id="vuln" class="form-control input-xs">
                     </div>
                 </div>
                 <div class="row">
@@ -301,29 +362,29 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <input type="text" name="tipoAten" id="tipoAten">
+                        <input type="text" name="tipoAten" id="tipoAten" class="form-control input-xs">
                     </div>
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="row">
-                    <div class="col-sm-6 text-center">
-                        <label for="CantGlobSugDist">
+                    <div class="col-sm-8 text-center">
+                        <label for="CantGlobSugDist" style="font-size: 13px; white-space: nowrap;">
                             Cantidad global sugerida a distribuir
                         </label>
                     </div>
-                    <div class="col-sm-6">
-                        <input type="number" name="CantGlobSugDist" id="CantGlobSugDist" readonly style="">
+                    <div class="col-sm-4">
+                        <input type="number" name="CantGlobSugDist" id="CantGlobSugDist" readonly style="" class="form-control input-xs">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-6 text-center">
-                        <label for="CantGlobDist" style="text-align: center;">
+                    <div class="col-sm-8 text-center">
+                        <label for="CantGlobDist" style="font-size: 13px; white-space: nowrap;">
                             Cantidad global a distribuir
                         </label>
                     </div>
-                    <div class="col-sm-6">
-                        <input type="number" name="CantGlobDist" id="CantGlobDist" style="">
+                    <div class="col-sm-4">
+                        <input type="number" name="CantGlobDist" id="CantGlobDist" style="" class="form-control input-xs">
                     </div>
                 </div>
                 <div class="row">
@@ -333,7 +394,7 @@
                         </label>
                     </div>
                     <div class="col-sm-6">
-                        <textarea name="infoNutr" id="infoNutr" rows="3" class="form-control">
+                        <textarea name="infoNutr" id="infoNutr" rows="3" class="form-control input-xs">
                         </textarea>
                     </div>
                 </div>
