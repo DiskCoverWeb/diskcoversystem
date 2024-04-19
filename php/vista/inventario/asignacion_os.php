@@ -1,16 +1,16 @@
 <script>
 
-    let diccionarioTP = 
-    [
-        {'TP': 'BENEFICI', 'inputname': 'tipoBenef'},
-        {'TP': 'VULNERAB', 'inputname': 'vuln'},
-        {'TP': 'POBLACIO', 'inputname': 'tipoPobl'},
-        {'TP': 'ACCIONSO', 'inputname': 'acciSoci'},
-        {'TP': 'ATENCION', 'inputname': 'tipoAten'},
-        {'TP': 'ENTREGA', 'inputname': 'tipoEntrega'},
-        {'TP': 'ESTADO', 'inputname': 'tipoEstado'},
-        {'TP': 'FRECUENC', 'inputname': 'frecuencia'}
-    ];
+    let diccionarioTP =
+        [
+            { 'TP': 'BENEFICI', 'inputname': 'tipoBenef' },
+            { 'TP': 'VULNERAB', 'inputname': 'vuln' },
+            { 'TP': 'POBLACIO', 'inputname': 'tipoPobl' },
+            { 'TP': 'ACCIONSO', 'inputname': 'acciSoci' },
+            { 'TP': 'ATENCION', 'inputname': 'tipoAten' },
+            { 'TP': 'ENTREGA', 'inputname': 'tipoEntrega' },
+            { 'TP': 'ESTADO', 'inputname': 'tipoEstado' },
+            { 'TP': 'FRECUENC', 'inputname': 'frecuencia' }
+        ];
 
     $(document).ready(function () {
         beneficiario();
@@ -19,6 +19,15 @@
             var data = e.params.data;//Datos beneficiario seleccionado
             llenarDatos(data);
 
+        });
+
+        autocoplet_pro();
+        autocoplet_pro2();
+
+        $('#ddl_producto').on('select2:select', function (e) {
+            var data = e.params.data.data;
+            $('#grupProd').append($('<option>', { value: data[0].Codigo_Inv, text: data[0].Producto, selected: true }));
+            $('#txt_referencia').val(data[0].Codigo_Inv);
         });
 
     });
@@ -47,7 +56,58 @@
         });
     }
 
-    function agregar(){
+    function cambiar_cantidad() {
+        var can = $('#txt_cantidad2').val();
+        $('#cant').val(can);
+        $('#modal_cantidad').modal('hide');
+        $('#cant').focus();
+    }
+
+    function autocoplet_pro() {
+        $('#ddl_producto').select2({
+            placeholder: 'Seleccione una producto',
+            ajax: {
+                url: '../controlador/inventario/alimentos_recibidosC.php?autocom_pro=true',
+                dataType: 'json',
+                delay: 250,
+                processResults: function (data) {
+                    // console.log(data);
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            }
+        });
+    }
+
+    function autocoplet_pro2() {
+        $('#grupProd').select2({
+            placeholder: 'Seleccione una producto',
+            ajax: {
+                url: '../controlador/inventario/alimentos_recibidosC.php?autocom_pro=true',
+                dataType: 'json',
+                delay: 250,
+                processResults: function (data) {
+                    // console.log(data);
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            }
+        });
+    }
+
+    function show_producto() {
+        $('#modal_producto').modal('show');
+    }
+
+    function show_cantidad() {
+        $('#modal_cantidad').modal('show');
+    }
+
+    function agregar() {
         var datos = {
             'Item': $('#tbl_body tr').length + 1,
             'Producto': $('#grupProd').val(),
@@ -82,7 +142,7 @@
         row.parentNode.removeChild(row);
     }
 
-    function limpiar(){
+    function limpiar() {
         //$('#form_asignacion').trigger('reset');
         $('#tbl_body').empty();
     }
@@ -112,23 +172,23 @@
 
     }
 
-    function datosExtras(param){
+    function datosExtras(param) {
         $.ajax({
             url: '../controlador/inventario/asignacion_osC.php?datosExtra=true',
             type: 'POST',
             dataType: 'json',
-            data: {param: param},
+            data: { param: param },
             success: function (data) {
-                if(data.result == 1){
-                   const tmp = relacionarListas(data.datos, diccionarioTP);
-                   for (let i = 0; i < tmp.length; i++) {
-                       $('#' + tmp[i].inputname).val(tmp[i].Proceso);
-                       if(tmp[i].Color != '.'){
+                if (data.result == 1) {
+                    const tmp = relacionarListas(data.datos, diccionarioTP);
+                    for (let i = 0; i < tmp.length; i++) {
+                        $('#' + tmp[i].inputname).val(tmp[i].Proceso);
+                        if (tmp[i].Color != '.') {
                             const color = tmp[i].Color.substring(4);
                             console.log(color);
-                            $('#rowGeneral').css('background-color', '#'+color);
-                       }
-                   }
+                            $('#rowGeneral').css('background-color', '#' + color);
+                        }
+                    }
                 }
             },
             error: function (error) {
@@ -143,17 +203,17 @@
      * @param {Array} lista2 la relacion que tienen cada Tipo de Proceso con el input que se muestra
      * @returns {Array}
      */
-    function relacionarListas(lista1, lista2){
+    function relacionarListas(lista1, lista2) {
         const relacion = {};
         lista1.forEach(element => {
             const tp = element.TP;
-            relacion[tp] = {...element};
+            relacion[tp] = { ...element };
         });
 
         lista2.forEach(element2 => {
             const tp = element2.TP;
-            if(relacion[tp]){
-                relacion[tp] = {...relacion[tp], ...element2};
+            if (relacion[tp]) {
+                relacion[tp] = { ...relacion[tp], ...element2 };
             }
         });
 
@@ -374,7 +434,8 @@
                         </label>
                     </div>
                     <div class="col-sm-4">
-                        <input type="number" name="CantGlobSugDist" id="CantGlobSugDist" readonly style="" class="form-control input-xs">
+                        <input type="number" name="CantGlobSugDist" id="CantGlobSugDist" readonly style=""
+                            class="form-control input-xs">
                     </div>
                 </div>
                 <div class="row">
@@ -384,7 +445,8 @@
                         </label>
                     </div>
                     <div class="col-sm-4">
-                        <input type="number" name="CantGlobDist" id="CantGlobDist" style="" class="form-control input-xs">
+                        <input type="number" name="CantGlobDist" id="CantGlobDist" style=""
+                            class="form-control input-xs">
                     </div>
                 </div>
                 <div class="row">
@@ -419,41 +481,40 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <div class="row">
-                <div class="col-sm-6 form-group" style="padding-left: 1vw; padding-top:1.6vh;">
-                    <button type="button" class="btn btn-default" onclick=""><img
-                            src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo producto</b></button>
-                    <input type="text" name="grupProd" id="grupProd" placeholder="" style="width: 47%; max-width:47%;"
-                        class="form-control">
-                </div>
-                <div class="col-sm-3">
-                    <label for="stock">
-                        Stock
-                    </label>
-                    <input type="text" name="stock" id="stock" class="form-control">
-                </div>
+    <div class="row" style="padding-top: 1rem">
+        <div class="col-sm-5" style="display: flex; justify-content: center; align-items: center;">
+            <div class="col-sm-5" style="">
+                <button type="button" class="btn btn-default" onclick="show_producto();"><img
+                        src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo producto</b></button>
+            </div>
+            <div class="col-sm-7">
+                <select name="grupProd" id="grupProd" class="form-control input-xs"></select>
             </div>
         </div>
-        <div class="col-sm-6">
-            <div class="row">
-                <div class="col-sm-6 form-group" style="padding-top:1.6vh;">
-                    <button type="button" style="width: initial;" class="btn btn-default" onclick="show_cantidad()"
-                        id="btn_cantidad">
-                        <img src="../../img/png/kilo.png" />
-                        <br>
-                        <b>Cantidad</b>
-                    </button>
-                    <input type="number" name="cant" id="cant" class="form-control">
-                </div>
-                <div class="col-sm-6">
-                    <label for="comeAsig">
-                        Comentario de Asignación
-                    </label>
-                    <input type="text" name="comeAsig" id="comeAsig" class="form-control">
-                </div>
+        <div class="col-sm-1">
+            <label for="stock">
+                Stock
+            </label>
+            <input type="text" name="stock" id="stock" class="form-control input-xs">
+        </div>
+        <div class="col-sm-3" style="display: flex; justify-content: center; align-items: center;">
+            <div class="col-sm-5 text-right">
+                <button type="button" style="width: initial;" class="btn btn-default" onclick="show_cantidad()"
+                    id="btn_cantidad">
+                    <img src="../../img/png/kilo.png" />
+                    <br>
+                    <b>Cantidad</b>
+                </button>
             </div>
+            <div class="col-sm-7 text-left">
+                <input type="number" name="cant" id="cant" class="form-control input-xs">
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <label for="comeAsig">
+                Comentario de Asignación
+            </label>
+            <input type="text" name="comeAsig" id="comeAsig" class="form-control input-xs">
         </div>
     </div>
     <div class="row" style="text-align: right; padding-right: 1.5vw;">
@@ -487,4 +548,55 @@
         </div>
     </div>
 </div>
+
+<div id="modal_producto" class="modal fade myModalNuevoCliente" role="dialog" data-keyboard="false"
+    data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Producto</h4>
+            </div>
+            <div class="modal-body" style="background: antiquewhite;">
+                <div class="row">
+                    <div class="col-md-3">
+                        <b>Referencia:</b>
+                        <input type="text" name="txt_referencia" id="txt_referencia" class="form-control input-sm"
+                            readonly="">
+                    </div>
+                    <div class="col-sm-9">
+                        <b>Producto:</b><br>
+                        <select class="form-control" id="ddl_producto" name="ddl_producto" style="width: 100%;">
+                            <option value="">Seleccione una producto</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer" style="background-color:antiquewhite;">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_cantidad" class="modal fade myModalNuevoCliente" role="dialog" data-keyboard="false"
+    data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Cantidad</h4>
+            </div>
+            <div class="modal-body" style="background: antiquewhite;">
+                <b>Cantidad</b>
+                <input type="" name="txt_cantidad2" id="txt_cantidad2" class="form-control" placeholder="0"
+                    onblur="cambiar_cantidad()">
+            </div>
+            <div class="modal-footer" style="background-color:antiquewhite;">
+                <button type="button" class="btn btn-primary" onclick="cambiar_cantidad()">OK</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
 </div>
