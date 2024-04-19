@@ -1,4 +1,5 @@
 <?php 
+use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
 include('../../modelo/inventario/registro_esM.php');
 require_once('../../funciones/funciones.php');
 // include('../../controlador/contabilidad/incomC.php');
@@ -221,6 +222,37 @@ if(isset($_GET['cambiar_codigo_sec']))
    echo  json_encode($controlador->cambiar_codigo_sec($parametros));
 }
 
+
+if(isset($_GET['grid_kardex'])){
+  $parametros = $_POST['parametros'];
+  echo json_encode($controlador->grid_kardex($parametros));
+}
+
+if(isset($_GET['trans_kardex_opcional'])){
+  echo json_encode($controlador->trans_kardex_opcional());
+}
+
+if(isset($_GET['stock_actual_inventario'])){
+  $parametros = $_POST['parametros'];
+  echo json_encode($controlador->stock_actual_inventario($parametros));
+}
+
+if(isset($_GET['IngresoAsientoK'])){
+  $parametros = $_POST['parametros'];
+  echo json_encode($controlador->IngresoAsientoK($parametros));
+}
+
+if(isset($_GET['seleccionar_comprobante'])){
+  $parametros = $_POST['parametros'];
+  echo json_encode($controlador->seleccionar_comprobante($parametros));
+}
+
+if(isset($_GET['grabar_comprobante'])){
+  $parametros = $_POST['parametros'];
+  echo json_encode($controlador->grabar_comprobante($parametros));
+}
+
+
 class registro_esC
 {
 	private $modelo;
@@ -230,6 +262,404 @@ class registro_esC
 		$this->modelo = new  registro_esM();
     // $this->incom = new  incomC();
 	}
+
+  function seleccionar_comprobante($parametros){
+    try{
+      return $this->modelo->seleccionar_comprobante($parametros);
+    }catch(Exception $e){
+      return array('res' => 0, 'msg' => $e->getMessage());
+    }
+  }
+
+  function grabar_comprobante($parametros){
+    try{
+      $parametros['DetalleComp'] = G_NINGUNO;
+      $parametros['Codigo'] = Leer_Cta_Catalogo(SinEspaciosDer2($parametros['DCCtaObra']))['Codigo_Catalogo'];
+      $parametros['Ln_No'] = 1;
+      $parametros['Opcion_Mulp'] = False;
+      $Asiento = 1;
+      $parametros['CodigoCli'] = $parametros['CodigoCli'] == '' ? G_NINGUNO : $parametros['CodigoCli'];
+      $Total_Factura = 0;
+      $Si_No = False;
+      $NumComp = '';
+      $parametros['Factura_No'] = $parametros['Factura_No'] <= 0 ? 0 : $parametros['Factura_No'];
+      $this->modelo->delete_asientos($parametros);
+      $AdoKardex = $this->modelo->select_asientoK($parametros);
+      if(count($AdoKardex) > 0){
+        $Si_No = True;
+        $FechaComp = $parametros['MBFechaI'];
+        $FechaTexto = $parametros['MBFechaI'];
+        $parametros['CLTP'] = $parametros['CLTP'] == '' ? "CD" : $parametros['CLTP'];
+        switch($parametros['CLTP']){
+          case "CD":
+            $NumComp = ReadSetDataNum("Diario", True, True);
+            break;
+          case "ND":
+            $NumComp = ReadSetDataNum("NotaDebito", True, True);
+            break;
+          case "NC":
+            $NumComp = ReadSetDataNum("NotaCredito", True, True);
+            break;
+        }
+        $CodigoInv = $AdoKardex[0]['CODIGO_INV'];
+        $Cta_Inventario = $AdoKardex[0]['CTA_INVENTARIO'];
+        $Total = 0;
+        $ValorDH = 0;
+        foreach($AdoKardex as $row){
+          if($Cta_Inventario != $row['CTA_INVENTARIO']){
+            if($parametros['OpcI']){
+              $temp = InsertarAsientos($Cta_Inventario, 0, $ValorDH, 0, $parametros);
+              $parametros['Ln_No'] = $temp['Ln_No'];
+              $parametros['Cuenta'] = $temp['Cuenta'];
+              $parametros['SubCta'] = $temp['SubCta'];
+            }else{
+              $temp = InsertarAsientos($Cta_Inventario, 0, 0, $ValorDH, $parametros);
+              $parametros['Ln_No'] = $temp['Ln_No'];
+              $parametros['Cuenta'] = $temp['Cuenta'];
+              $parametros['SubCta'] = $temp['SubCta'];
+            }
+            $parametros['Ln_No'] += 1;
+            $CodigoInv = $row['CODIGO_INV'];
+            $Cta_Inventario = $row['CTA_INVENTARIO'];
+            $ValorDH = 0;
+          }
+          $ValorDH += $row['VALOR_TOTAL'];
+        }
+        if($parametros['OpcI']){
+          $temp = InsertarAsientos($Cta_Inventario, 0, $ValorDH, 0, $parametros);
+          $parametros['Ln_No'] = $temp['Ln_No'];
+          $parametros['Cuenta'] = $temp['Cuenta'];
+          $parametros['SubCta'] = $temp['SubCta'];
+        }else{
+          $temp = InsertarAsientos($Cta_Inventario, 0, 0, $ValorDH, $parametros);
+          $parametros['Ln_No'] = $temp['Ln_No'];
+          $parametros['Cuenta'] = $temp['Cuenta'];
+          $parametros['SubCta'] = $temp['SubCta'];
+        }
+      }
+      
+      $parametros['OpcTM'] = 1;
+      $parametros['OpcDH'] = 2;
+      $parametros['ValorDH'] = $ValorDH;
+      $parametros['NoCheque'] = G_NINGUNO;
+      //Grabamos el asiento de la compra
+      $AdoRet = $this->modelo->select_asiento_compras($parametros);
+      if(count($AdoRet) > 0){
+        $Cta = $AdoRet[0]['Cta_Servicio'];
+        $parametros['DetalleComp'] = "Retencion del " . $$AdoRet[0]['Porc_Bienes'] . "%, Factura No. " .$$AdoRet[0]['Secuencial'] . ", de " .$parametros['NombreCliente'];
+        $parametros['Codigo'] = Leer_Cta_Catalogo($Cta);
+        $ValorDH = $$AdoRet[0]['ValorRetServicios'];
+        $parametros['ValorDH'] = $ValorDH;
+        $Total_RetIVA += $$AdoRet[0]['ValorRetServicios'];
+        if($ValorDH > 0){
+          InsertarAsiento($parametros);
+        }
+        $Cta = $AdoRet[0]['Cta_Bienes'];
+        $parametros['DetalleComp'] = "Retencion del " . $$AdoRet[0]['Porc_Servicios'] . "%, Factura No. " .$$AdoRet[0]['Secuencial'] . ", de " .$parametros['NombreCliente'];
+        $parametros['Codigo'] = Leer_Cta_Catalogo($Cta);
+        $ValorDH = $$AdoRet[0]['ValorRetBienes'];
+        $parametros['ValorDH'] = $ValorDH;
+        if($ValorDH > 0){
+          InsertarAsiento($parametros);
+        }
+      }
+      //Grabamos el asiento de las retenciones
+      $AdoRet = $this->modelo->select_asiento_air($parametros);
+      if(count($AdoRet) > 0){
+        foreach($AdoRet as $row){
+          $Cta = $row['Cta_Retencion'];
+          $parametros['DetalleComp'] = "Retencion (" . $row['CodRet'] . ") No. " .$row['SecRetencion'] . " del " . ($row['Porcentaje'] * 100) . "%, de " . $row['NombreCliente'];
+          $parametros['Codigo'] = Leer_Cta_Catalogo($Cta);
+          $ValorDH = $row['ValRet'];
+          $parametros['ValorDH'] = $ValorDH;
+          $Total_Ret += $row['ValRet'];
+          if($ValorDH > 0){
+            InsertarAsiento($parametros);
+          }
+        }
+      }
+      $parametros['DetalleComp'] = G_NINGUNO;
+      //Contra Cuenta del kardex
+      if($Si_No){
+        $AdoKardex = $this->modelo->select_asiento_k_contra_cta($parametros);
+        if(count($AdoKardex) > 0){
+          $parametros['SubCta'] = $AdoKardex[0]['TC'];
+          $Contra_Cta = $AdoKardex[0]['CONTRA_CTA'];
+          $Total = 0;
+          $ValorDH = 0;
+          $SubCta = '';
+          if($parametros['OpcE'] && ($parametros['CheqContraCta'] == 0)){
+            foreach($AdoKardex as $row){
+              if($Contra_Cta <> $row['CONTRA_CTA']){
+                if($parametros['OpcI']){
+                  $temp = InsertarAsientos($Contra_Cta, 0, 0, $ValorDH, $parametros);
+                  $parametros['Ln_No'] = $temp['Ln_No'];
+                  $parametros['Cuenta'] = $temp['Cuenta'];
+                  $parametros['SubCta'] = $temp['SubCta'];
+                }else{
+                  $temp = InsertarAsientos($Contra_Cta, 0, $ValorDH, 0, $parametros);
+                  $parametros['Ln_No'] = $temp['Ln_No'];
+                  $parametros['Cuenta'] = $temp['Cuenta'];
+                  $parametros['SubCta'] = $temp['SubCta'];
+                }
+                $SubCta = $row['TC'];
+                $Contra_Cta = $row['CONTRA_CTA'];
+                $ValorDH = 0;
+              }
+              $ValorDH += $row['VALOR_TOTAL'];
+            }
+            $parametros['SubCta'] = $SubCta;
+            $parametros['ValorDH'] = $ValorDH;
+            if($parametros['OpcI']){
+              $temp = InsertarAsientos($Contra_Cta, 0, 0, $ValorDH, $parametros);
+              $parametros['Ln_No'] = $temp['Ln_No'];
+              $parametros['Cuenta'] = $temp['Cuenta'];
+              $parametros['SubCta'] = $temp['SubCta'];
+            }else{
+              $temp = InsertarAsientos($Contra_Cta, 0, $ValorDH, 0, $parametros);
+              $parametros['Ln_No'] = $temp['Ln_No'];
+              $parametros['Cuenta'] = $temp['Cuenta'];
+              $parametros['SubCta'] = $temp['SubCta'];
+            }
+          }
+        }
+        $TotInventario = $this->TotalInventario($parametros);
+        $Total = $TotInventario['total'];
+        $Total_IVA = $TotInventario['total_iva'];
+        //Insertamos el IVA de la compra
+        if($parametros['OpcI']){
+          $temp = InsertarAsientos($_SESSION['SETEOS']['Cta_IVA_Inventario'], 0, $Total_IVA, 0, $parametros);
+          $parametros['Ln_No'] = $temp['Ln_No'];
+          $parametros['Cuenta'] = $temp['Cuenta'];
+          $parametros['SubCta'] = $temp['SubCta'];
+        }else{
+          $temp = InsertarAsientos($_SESSION['SETEOS']['Cta_IVA_Inventario'], 0, 0, $Total_IVA, $parametros);
+          $parametros['Ln_No'] = $temp['Ln_No'];
+          $parametros['Cuenta'] = $temp['Cuenta'];
+          $parametros['SubCta'] = $temp['SubCta'];
+        }
+        if(intval($parametros['TxtDifxDec']) > 0){
+          $temp = InsertarAsientos($_SESSION['SETEOS']['Cta_Faltantes'], 0, intval($parametros['TxtDifxDec']), 0, $parametros);
+          $parametros['Ln_No'] = $temp['Ln_No'];
+          $parametros['Cuenta'] = $temp['Cuenta'];
+          $parametros['SubCta'] = $temp['SubCta'];
+        }else if(intval($parametros['TxtDifxDec']) < 0){
+          $temp = InsertarAsientos($_SESSION['SETEOS']['Cta_Faltantes'], 0, 0, -1 * intval($parametros['TxtDifxDec']), $parametros);
+          $parametros['Ln_No'] = $temp['Ln_No'];
+          $parametros['Cuenta'] = $temp['Cuenta'];
+          $parametros['SubCta'] = $temp['SubCta'];
+        }
+        $AdoAsientos = $this->modelo->select_asientos($parametros);
+        $Debe = 0;
+        $Haber = 0;
+        if(count($AdoAsientos) > 0){
+          foreach($AdoAsientos as $row){
+            $Debe += $row['DEBE'];
+            $Haber += $row['HABER'];
+          }
+        }
+        if($parametros['CheqContraCta']){
+          $Contra_Cta = SinEspaciosDer2($parametros['DCCtaObra']);
+          $Codigo = Leer_Cta_Catalogo($Contra_Cta);
+          $ValorDH = $Debe - $Haber;
+          $ValorDH = $ValorDH < 0? $ValorDH * -1 : $ValorDH;
+          switch($SubCta){
+            case "C":
+            case "P":
+            case "G":
+            case "I":
+              $Total_Factura = $ValorDH;
+              SetAdoAddNew("Asiento_SC");
+              SetAdoFields("TM", "1");
+              SetAdoFields("Factura", intval($parametros['TxtFactNo']));
+              SetAdoFields("Codigo", $parametros['CodigoCliente']);
+              SetAdoFields("FECHA_V", $parametros['MBVence']);
+              SetAdoFields("Cta", $Contra_Cta);
+              SetAdoFields("TC", $SubCta);
+              SetAdoFields("T_No", $parametros['Trans_No']);
+              $parametros['OpcI'] ? SetAdoFields("DH", "2") : SetAdoFields("DH", "1");
+              SetAdoFields("Valor", $ValorDH);
+              SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
+              SetAdoUpdate();
+              break;
+          }
+          if($parametros['OpcI']){
+            $temp = InsertarAsientos($Contra_Cta, 0, 0, $ValorDH, $parametros);
+            $parametros['Ln_No'] = $temp['Ln_No'];
+            $parametros['Cuenta'] = $temp['Cuenta'];
+            $parametros['SubCta'] = $temp['SubCta'];
+          }else{
+            $temp = InsertarAsientos($Contra_Cta, 0, $ValorDH, 0, $parametros);
+            $parametros['Ln_No'] = $temp['Ln_No'];
+            $parametros['Cuenta'] = $temp['Cuenta'];
+            $parametros['SubCta'] = $temp['SubCta'];
+          }
+        }
+        if($parametros['Cod_Benef'] == "X"){
+          $parametros['CodigoCliente'] = G_NINGUNO;
+        }
+      }
+      $AdoAsientos = $this->modelo->select_asientos($parametros);
+      $Debe = 0;
+      $Haber = 0;
+      if(count($AdoAsientos) > 0){
+        foreach($AdoAsientos as $row){
+          $Debe += $row['DEBE'];
+          $Haber += $row['HABER'];
+        }
+        if(($Debe - $Haber) != 0){
+          throw new Exception("Verifique el comprobante, no cuadra por: " . ($Debe - $Haber));
+        }
+        $Co = array
+        (
+          'T' => G_NORMAL,
+          'TP' => $parametros['CLTP'],
+          'Fecha' => $FechaTexto,
+          'Numero' => $NumComp,
+          'Concepto' => $parametros['TextConcepto'],
+          'CodigoB' => $parametros['CodigoCli'],
+          'Efectivo' => 0,
+          'Monto_Total' => $Total,
+          'Usuario' => $_SESSION['INGRESO']['CodigoU'],
+          'T_No' => $parametros['Trans_No'],
+          'Item' => $_SESSION['INGRESO']['item']
+        );
+        if(strlen($parametros['TextOrden']) > 1){
+          $Co['Concepto'] = $Co['Concepto'] . ", Orden No. " . $parametros['TextOrden'];
+        }
+        if(intval($parametros['TxtFactNo']) > 0){
+          $Co['Concepto'] = $Co['Concepto'] . ", Factura No. " . $parametros['TxtFactNo'];
+        }
+        die();
+        GrabarComprobante($Co);
+        //TODO: Ver como se imprimen
+        mayorizar_inventario_sp();
+        return array('res' => 1, 'msg' => 'Comprobante grabado con exito');
+      }else{
+        throw new Exception("No existen Datos para procesar");
+      }
+    }catch(Exception $e){
+      return array('res' => 0, 'msg' => $e->getMessage());
+    }
+  }
+
+  function IngresoAsientoK($parametros){
+    try{
+      SetAdoAddNew("Asiento_K");
+      SetAdoFields("DH", $parametros['OpcDH']);
+      SetAdoFields("CODIGO_INV", $parametros['CodigoInv']);
+      //
+      SetAdoFields("P_DESC", $parametros['TextDesc']);
+      SetAdoFields("P_DESC1", $parametros['TextDesc1']);
+      SetAdoFields("PRODUCTO", $parametros['Producto']);
+      SetAdoFields("CANT_ES", $parametros['Entrada']);
+      SetAdoFields("VALOR_UNIT", $parametros['ValorUnit']);
+      SetAdoFields("VALOR_TOTAL", $parametros['ValorTotal']);
+      SetAdoFields("IVA", $parametros['SubTotal_IVA']);
+      SetAdoFields("CTA_INVENTARIO", $parametros['Cta_Inventario']);
+      SetAdoFields("CONTRA_CTA", $parametros['Contra_Cta']);
+      SetAdoFields("CANTIDAD", $parametros['Cantidad']);
+      SetAdoFields("SALDO", $parametros['Saldo']);
+      SetAdoFields("UNIDAD", $parametros['UNIDAD']);
+      SetAdoFields("CodBod", $parametros['Cod_Bodega']);
+      SetAdoFields("CodMar", $parametros['Cod_Marca']);
+      SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+      SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+      SetAdoFields("T_No", $parametros['Trans_No']);
+      SetAdoFields("SUBCTA", $parametros['SubCtaGen']);
+      SetAdoFields("TC", $parametros['SubCta']);
+      SetAdoFields("Codigo_B", $parametros['CodigoCliente']);
+      SetAdoFields("COD_BAR", $parametros['TxtCodBar']);
+      SetAdoFields("ORDEN", $parametros['TextOrden']);
+      SetAdoFields("Lote_No", $parametros['TxtLoteNo']);
+      SetAdoFields("Fecha_Fab", $parametros['MBFechaFab']);
+      SetAdoFields("Fecha_Exp", $parametros['MBFechaExp']);
+      SetAdoFields("Reg_Sanitario", $parametros['TxtRegSanitario']);
+      SetAdoFields("Modelo", $parametros['TxtModelo']);
+      SetAdoFields("Procedencia", $parametros['TxtProcedencia']);
+      SetAdoFields("Serie_No", $parametros['TxtSerieNo']);
+      SetAdoUpdate();
+      return $this->TotalInventario($parametros);
+    }catch(Exception $e){
+      return array('res' => 0, 'msg' => $e->getMessage());
+    }
+  }
+
+  function TotalInventario($parametros){
+    try{
+      $AdoKardex = $this->modelo->grid_kardex($parametros);
+      $datos = $AdoKardex['datos'];
+      $Total = 0;
+      $Total_IVA = 0;
+      if(count($datos) > 0){
+        foreach($datos as $value){
+          $Total += $value['VALOR_TOTAL'];
+          $Total_IVA += $value['IVA'];
+        }
+        return array('res' => 1, 'total' => $Total, 'total_iva' => $Total_IVA);
+      }else{
+        throw new Exception("No se encontraron registros");
+      }
+    }catch(Exception $e){
+      return array('res' => 0, 'msg' => $e->getMessage());
+    }
+  }
+
+  function stock_actual_inventario($parametros){
+    $CantBodegas = 0;
+    $Cantidad = 0;
+    $ValorUnit = 0;
+    $SaldoAnterior = 0;
+    if(strlen($parametros['Fecha_Inv']) < 10){
+      $parametros['Fecha_Inv'] = FechaSistema();
+    }
+    if(strlen($parametros['Codigo_Inventario']) <= 1){
+      $parametros['Codigo_Inventario'] = G_NINGUNO;
+    }else{
+      try{
+        $AdoStock = $this->modelo->stock_actual_inventario($parametros);
+        if(count($AdoStock) > 0){
+          $Cantidad = $AdoStock[0]['Stock'];
+          $ValorUnit = $AdoStock[0]['TCosto'];
+          $SaldoAnterior = $AdoStock[0]['Saldo_Inv'];
+          return array('res' => 1, 'cantidad' => $Cantidad, 'valor_unit' => $ValorUnit, 'saldo_anterior' => $SaldoAnterior);
+        }else{
+          throw new Exception("No se encontraron registros");
+        }
+      }catch(Exception $e){
+        return array('res' => 0, 'msg' => $e->getMessage());
+      }
+    }
+  }
+
+  function grid_kardex($parametros){
+    try{
+      $response = $this->modelo->grid_kardex($parametros);
+      if(count($response['datos']) > 0){
+        return array('res' => 1, 'tabla' => $response['tabla']);
+      }else{
+        return array('res' => 0, 'msg' => 'No se encontraron registros');
+      }
+    }catch(Exception $e){
+      return array('res' => 0, 'msg' => $e->getMessage());
+    }
+  }
+
+  function trans_kardex_opcional(){
+    try{
+      $datos = $this->modelo->Trans_Kardex();
+      $res = [];
+      foreach($datos as $value){
+        $res[] = [
+          'id' => $value['Numero'],
+          'text' => $value['Numero']
+        ];
+      }
+      return $res;
+    }catch(Exception $e){
+      return array('res' => 0, 'msg' => $e->getMessage());
+    }
+  }
 
 	function familias($query)
 	{
@@ -679,6 +1109,7 @@ class registro_esC
     $NoCheque = G_NINGUNO;
     $Total_RetIVA = 0;
     $ValorDH= 0; // vambiar por valor que se coloque en cotizacion
+    $A_No = 0;
     $fecha = $parametros['FechaEmision'];
     if(Leer_Campo_Empresa('Registrar_IVA')!=0)
     {
@@ -775,7 +1206,7 @@ class registro_esC
               $ValorDH = 0;
               // print_r($Dolar);
            }else{
-              $ValorDH = Val($ValorDH / $Dolar);
+              $ValorDH = intval($ValorDH / $Dolar);
               // print_r('saaa');
            }
         }
@@ -795,7 +1226,8 @@ class registro_esC
           case 'CP':
           case 'PM':
           case 'CC':
-            // sSQL = "SELECT * " _
+            // sSQL = "SELECT * "
+             
             //           & "FROM Asiento " _
             //           & "WHERE TC = '" & SubCta & "' " _
             //           & "AND CODIGO = '" & Codigo & "' " _

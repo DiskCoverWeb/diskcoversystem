@@ -1,4 +1,4 @@
-<script src="../../lib/dist/js/kardex_ing.js"></script>
+<script src="../../dist/js/kardex_ing.js"></script>
 
 <style type="text/css">
     td,
@@ -382,14 +382,361 @@
 </style>
 <script type="text/javascript">
 
+    let Trans_No = '97';
+    let Cod_Inv_Producto = '';
+    let OpcDH = 0;
+    let Cantidad = 0;
+    let SaldoAnterior = 0;
+    let Contra_Cta1 = '.';
+    let CodigoCliente = '.';
+    let Cta_Inventario = '.';
+    let Cod_Benef = '.';
+
     $(document).ready(function () {
         familias();
         contracuenta();
         Trans_Kardex();
         bodega();
         marca();
+        DCPorcenIva('MBFechaI', 'DCPorcIVA');
+        $('#DCPorcIVA').attr('disabled', true);
+        iniciar_asientos();
 
-    })
+        //DCBenef_LostFocus
+        $('#DCBenef').on('select2:select', function (e) {
+            let data = e.params.data;
+            let parametros = {
+                'CodigoCliente': data.id
+            }
+            $('#Label3').val(data.CICLIENTE);
+            CodigoCliente = data.CICLIENTE;
+            $('#TextConcepto').val(data.text);
+            Cod_Benef = data.cod_benef;
+        });
+
+        //Text_Orden Got Focus
+        $('#TextOrden').one('focus', function () {
+            stock_actual_inventario();
+        });
+
+        $('#TextOrden').attr('disabled', true);
+
+        //TextEntrada_GotFocus
+        $('#TextEntrada').on('blur', function () {
+            TextEntrada_GotFocus();
+        });
+
+        $('#TextTotal').one('focus', function () {
+            TextTotal_GotFocus();
+        });
+
+        $('#myModal_comprobante').on('show.bs.modal', function (e) {
+            $('#titulo-modal').text(`GRABACIÓN DEL COMPROBANTE: ${$('#CLTP').val()}`);
+        });
+
+    });
+
+    //Seleccionar comprobante
+    function Command3_Click() {
+        var numero = parseInt($('#numComprobante').val());
+        if(numero < 1){
+            swal.fire({
+                type: 'error',
+                title: 'Error',
+                text: 'Debe ingresar un número de comprobante válido'
+            });
+            return;
+        }
+        var parametros = {
+            'Numero': numero,
+            'Trans_No':Trans_No,
+            'CLTP': $('#CLTP').val(),
+            'MBFechaI': $('#MBFechaI').val(),
+
+        };
+
+        $.ajax({
+            data: { 'parametros': parametros },
+            url: '../controlador/inventario/registro_esC.php?seleccionar_comprobante=true',
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if (data.res == 1) {
+                    //close modal
+                    $('#myModal_comprobante').modal('hide');
+                    swal.fire({
+                        type: 'success',
+                        title: '',
+                        text: data.msg
+                    });
+                    $('tbody').empty();
+                }else{
+                    swal.fire({
+                        type: 'error',
+                        title: 'Error',
+                        text: 'No se pudo procesar el comprobante' + data.msg
+                    });
+                }
+            }
+        });
+
+    }
+
+    function validar_grabacion(){
+        if($('tbody').children().length == 2){
+            Swal.fire({
+                type: 'error',
+                title: 'Error',
+                text: 'No se ha ingresado ningún producto'
+            });
+            return;
+        }
+        swal.fire({
+            title: '¿Está seguro de grabar el comprobante?',
+            text: "GRABACIÓN DEL COMPROBANTE",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Grabar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.value) {
+                grabar_comprobante();
+            }else{
+                return;
+            }
+        });
+    }
+
+    function grabar_comprobante(){
+        var parametros = {
+            'Trans_No': Trans_No,
+            'CodigoCli': CodigoCliente,
+            'MBFechaI': $('#MBFechaI').val(),
+            'MBVence': $('#MBVence').val(),
+            'TextOrden': $('#TextOrden').val(),
+            'Factura_No': $('#TxtFactNo').val(),
+            'CLTP': $('#CLTP').val(),
+            'OpcI': $('#OpcI').prop('checked') ? 1 : 0,
+            'OpcE': $('#OpcE').prop('checked') ? 1 : 0,
+            'NombreCliente': $('#DCBenef').val(),
+            'CheqContraCta': $('#CheqContraCta').prop('checked') ? 1 : 0,
+            'TxtDifxDec': $('#TxtDifxDec').val(),
+            'DCCtaObra': $('#DCCtaObra').val(),
+            'TxtFactNo': $('#TxtFactNo').val(),
+            'Cod_Benef': Cod_Benef,
+            'TextConcepto': $('#TextConcepto').val(),
+        };
+        /*
+        $.ajax({
+            data: { 'parametros': parametros },
+            url: '../controlador/inventario/registro_esC.php?grabar_comprobante=true',
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                
+            }
+        });*/
+
+
+    }
+
+    function iniciar_asientos() {
+        $.ajax({
+            url: '../controlador/inventario/registro_esC.php?iniciar_aseinto=true',
+            type: 'post',
+            dataType: 'json',
+            data: { 'Trans_No': Trans_No },
+            success: function (data) {
+                grid_kardex();
+            }
+        });
+    }
+
+    function toupper(input) {
+        input.value = input.value.toUpperCase();
+    }
+
+    function TextTotal_GotFocus() {
+        let Cod_Bodega = $('#DCBodega').val();
+        let Cod_Marca = $('#DCMarca').val();
+        let Entrada = $('#TextEntrada').val();
+        let ValorUnit = $('#TextVUnit').val();
+        let DValorUnit = ValorUnit;
+        let Total_Desc = $('#TextDesc').val() / 100;
+        DValorUnit = DValorUnit - (DValorUnit * Total_Desc);
+        Total_Desc = $('#TextDesc1').val() / 100;
+        if (Total_Desc > 0) {
+            DValorUnit = DValorUnit - (DValorUnit * Total_Desc);
+        }
+        let DValorTotal = DValorUnit * Entrada;
+        ValorUnit = DValorUnit;
+        let ValorTotal = DValorTotal.toFixed(2);
+        $('#TextTotal').val(ValorTotal);
+    }
+
+    function TexTotal_LostFocus() {
+        let FechaTexto = $('#MBFechaI').val();
+        let Entrada = parseInt($('#TextEntrada').val());
+        let Factura_No = $('#TxtFactNo').val() <= 0 ? 0 : $('#TxtFactNo').val();
+        let SubTotal_IVA = 0;
+        let ValorTotal = parseFloat($('#TextTotal').val());
+
+        if (Entrada <= 0 || $('#TextVUnit').val() <= 0) {
+            Swal.fire({
+                type: 'error',
+                title: 'Error',
+                text: 'Falta de Ingresar la cantidad o el valor unitario'
+            });
+            return;
+        }
+
+        if ($('#OpcIVA').prop('checked')) {
+            SubTotal_IVA = $('#TextTotal').val() * ($('#DCPorcenIva').val() / 100);
+        }
+
+        let Saldo = 0;
+        let Contra_Cta = '.';
+
+        if ($('#OpcI').prop('checked')) {
+            Cantidad = Cantidad + Entrada;
+            Saldo = SaldoAnterior + ValorTotal
+            OpcDH = 1;
+            Contra_Cta = $('#DCCtaObra').val();
+        } else {
+            Cantidad = Cantidad - Entrada;
+            Saldo = SaldoAnterior - ValorTotal;
+            OpcDH = 2;
+            Contra_Cta = $('#CheqContraCta').prop('checked') ? $('#DCCtaObra').val() : Contra_Cta1;
+        }
+
+
+        var parametros = {
+            'OpcDH': OpcDH,
+            'CodigoInv': $('#LabelCodigo').val(),
+            'TextDesc': $('#TextDesc').val(),
+            'TextDesc1': $('#TextDesc1').val(),
+            'Producto': $('#labelProductro').val(),
+            'Entrada': $('#TextEntrada').val(),
+            'ValorUnit': $('#TextVUnit').val(),
+            'ValorTotal': $('#TextTotal').val(),
+            'SubTotal_IVA': SubTotal_IVA,
+            'Cta_Inventario': Cta_Inventario,
+            'Contra_Cta': Contra_Cta,
+            'Cantidad': Cantidad,
+            'Saldo': Saldo,
+            'UNIDAD': $('#LabelUnidad').val(),
+            'Cod_Bodega': $('#DCBodega').val(),
+            'Cod_Marca': $('#DCMarca').val(),
+            'Trans_No': Trans_No,
+            'SubCtaGen': '.',
+            'SubCta': $('#SubCta').val(),
+            'CodigoCliente': CodigoCliente,
+            'TxtCodBar': $('#TxtCodBar').val(),
+            'TextOrden': $('#TextOrden').val(),
+            'TxtLoteNo': $('#TxtLoteNo').val(),
+            'MBFechaFab': $('#MBFechaFab').val(),
+            'MBFechaExp': $('#MBFechaExp').val(),
+            'TxtRegSanitario': $('#TxtRegSanitario').val(),
+            'TxtModelo': $('#TxtModelo').val(),
+            'TxtProcedencia': $('#TxtProcedencia').val(),
+            'TxtSerieNo': $('#TxtSerieNo').val(),
+        };
+        $.ajax({
+            data: { 'parametros': parametros },
+            url: '../controlador/inventario/registro_esC.php?IngresoAsientoK=true',
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if (data.res == 1) {
+                    $('#TxtSubTotal').val(data.total.toFixed(2));
+                    $('#TxtIVA').val(data.total_iva.toFixed(2));
+                    const tmp = data.total + data.total_iva;
+                    $('#Label1').val(tmp.toFixed(2));
+                    grid_kardex();
+                }
+            }
+        });
+    }
+
+    function stock_actual_inventario() {
+        var parametros = {
+            'Codigo_Inventario': Cod_Inv_Producto,
+            'Fecha_Inv': $('#MBFechaI').val()
+        }
+        $.ajax({
+            data: { parametros: parametros },
+            url: '../controlador/inventario/registro_esC.php?stock_actual_inventario=true',
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if (data.res) {
+                    const precio = data.valor_unit;
+                    $("#TextVUnit").val(precio.toFixed(2));
+                    Cantidad = data.cantidad;
+                    SaldoAnterior = data.saldo_anterior;
+                }
+            }
+        });
+    }
+
+    function TextVUnit_LostFocus() {
+        const valorUnit = $('#TextVUnit').val();
+        const entrada = $('#TextEntrada').val();
+        const valorTotal = valorUnit * entrada;
+        $('#TextTotal').val(valorTotal.toFixed(2));
+    }
+
+    function TextEntrada_GotFocus() {
+        const OpcI = $('#OpcI').prop('checked');
+        const OpcE = $('#OpcE').prop('checked');
+        const precio = $('#TextVUnit').val();
+        if (OpcI) {
+            OpcDH = 1;
+        } else {
+            OpcDH = 2;
+        }
+        if (OpcE) {
+            if (precio == 0) {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Error',
+                    text: `Falta de Ingresar en este codigo ${$('#LabelCodigo').val()}: La entrada inicial`,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        }
+    }
+
+    function grid_kardex() {
+        var parametros = {
+            'Trans_No': Trans_No
+        };
+        $.ajax({
+            data: { parametros: parametros },
+            url: '../controlador/inventario/registro_esC.php?grid_kardex=true',
+            type: 'post',
+            dataType: 'json',
+            data: { 'parametros': parametros },
+            success: function (data) {
+                if (data.res == 1) {
+                    console.log(data);
+                    $('#tbl-container').empty();
+                    $('#tbl-container').html(data.tabla);
+                }
+            }
+        });
+    }
+
+    function habilitar_iva() {
+        if ($('#OpcIVA').prop('checked')) {
+            $('#DCPorcIVA').attr('disabled', false);
+        } else {
+            $('#DCPorcIVA').attr('disabled', true);
+        }
+    }
 
     function familias() {
         $('#ddl_familia').select2({
@@ -478,22 +825,26 @@
     }
 
     function Trans_Kardex() {
-        $.ajax({
-            // data:  {parametros:parametros},
-            url: '../controlador/inventario/registro_esC.php?Trans_Kardex=true',
-            type: 'post',
-            dataType: 'json',
-            success: function (response) {
-                if (response.length != 0) {
-                    console.log(response);
-                }
+        $('#DCDiario').select2({
+            placeholder: 'Seleccione Diario',
+            ajax: {
+                url: '../controlador/inventario/registro_esC.php?trans_kardex_opcional=true',
+                dataType: 'json',
+                delay: 250,
+                processResults: function (data) {
+                    //  console.log(data);
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
             }
         });
 
     }
 
     function bodega() {
-        var option = '<option value="">Seleccione bodega</option>';
+        //var option = '<option value="">Seleccione bodega</option>';
         $.ajax({
             // data:  {parametros:parametros},
             url: '../controlador/inventario/registro_esC.php?bodega=true',
@@ -503,9 +854,13 @@
                 if (response.length != 0) {
                     $.each(response, function (i, item) {
                         //  console.log(item);
-                        option += '<option value="' + item.CodBod + '">' + item.CodBod + ' ' + item.Bodega + '</option';
+                        let option = $('<option>', {
+                            value: item.CodBod,
+                            text: item.Bodega
+                        });
+                        $('#DCBodega').append(option);
                     });
-                    $('#DCBodega').html(option);
+
                 }
             }
         });
@@ -514,7 +869,7 @@
 
 
     function marca() {
-        var option = '<option value="">Seleccione marca</option>';
+        //var option = '<option value="">Seleccione marca</option>';
         $.ajax({
             // data:  {parametros:parametros},
             url: '../controlador/inventario/registro_esC.php?marca=true',
@@ -524,9 +879,13 @@
                 if (response.length != 0) {
                     $.each(response, function (i, item) {
                         // console.log(item);
-                        option += '<option value="' + item.CodMar + '">' + item.Marca + '</option';
+                        let option = $('<option>', {
+                            value: item.CodMar,
+                            text: item.Marca
+                        });
+                        $('#DCMarca').append(option);
                     });
-                    $('#DCMarca').html(option);
+
                 }
             }
         });
@@ -554,7 +913,6 @@
             }
         });
 
-
     }
 
     function guardar() {
@@ -563,7 +921,7 @@
 
 
     function modal_retencion() {
-        if ($('#rbl_retencion').prop('checked')) {
+        if ($('#CheqRF').prop('checked')) {
             $('#myModal').modal('show');
         }
     }
@@ -589,10 +947,14 @@
                     $('#LabelUnidad').val(response.unidad);
                     $('#LabelCodigo').val(response.codigo);
                     $('#TxtRegSanitario').val(response.registrosani);
+                    Cod_Inv_Producto = response.codigo;
+                    Contra_Cta1 = response.contra_cta1;
+                    Cta_Inventario = response.cta_inventario;
+                    $('#TextOrden').attr('disabled', false);
                     if (response.si_no == 0) {
-                        $('#Sin').prop('checked', true);
+                        $('#OpcX').prop('checked', true);
                     } else {
-                        $('#con').prop('checked', true);
+                        $('#OpcIVA').prop('checked', true);
                     }
                     // console.log(response);
                 }
@@ -601,23 +963,56 @@
 
     }
     function tipo_ingreso() {
-        if ($('#ingreso').prop('checked')) {
+        if ($('#OpcI').prop('checked')) {
             // alert('ingreso');
+            //make visible Label 11
+            $('#TextIVA').attr('disabled', false);
+            $('#CheqContraCta').attr('checked', true);
+            $('#CheqContraCta').attr('disabled', false);
             $('#DCCtaObra').attr('disabled', false);
             $('#DCBenef').attr('disabled', false);
-            $('#cbx_contra_cta').attr('disabled', false);
-            $('#cbx_contra_cta').attr('checked', true);
+            $('#CheqRF').attr('disabled', false);
+
         } else {
+            $('#TextIVA').attr('disabled', true);
+            $('#CheqContraCta').attr('checked', false);
+            $('#CheqContraCta').attr('disabled', true);
             $('#DCCtaObra').attr('disabled', true);
             $('#DCBenef').attr('disabled', true);
-            $('#cbx_contra_cta').attr('disabled', true);
-            $('#cbx_contra_cta').attr('checked', false);
+            $('#CheqRF').attr('disabled', true);
+            let cltp = $('#CLTP').val();
+            switch (cltp) {
+                case "ND":
+                case "NC":
+                    $('#CheqRF').attr('disabled', false);
+                    $('#TextIVA').attr('disabled', true);
+                    break;
+            }
             // alert('egreso');
         }
 
     }
+
+    function CheqContraCuenta_Clic() {
+        const contra = $('#CheqContraCta').prop('checked');
+        if (contra) {
+            //DCCtaObra visible true
+            $('#DCCtaObra').attr('disabled', false);
+            //DCBenef visible true
+            $('#DCBenef').attr('disabled', false);
+        } else {
+            const opce = $('#OpcE').prop('checked');
+            if (opce) {
+                //DCCtaObra visible false
+                $('#DCCtaObra').attr('disabled', true);
+                //DCBenef visible false
+                $('#DCBenef').attr('disabled', true);
+            }
+        }
+    }
+
     function limpiar_retencaion() {
-        $('#rbl_retencion').prop('checked', false);
+        $('#CheqRF').prop('checked', false);
         $('#myModal').modal('hide');
         cancelar();
     }
@@ -709,7 +1104,7 @@
             <button type="button" class="btn btn-default" id="imprimir_excel" title="Descargar Excel">
                 <img src="../../img/png/table_excel.png">
             </button>
-            <button title="Guardar" class="btn btn-default" onclick="">
+            <button title="Guardar" class="btn btn-default" onclick="validar_grabacion()">
                 <img src="../../img/png/grabar.png">
             </button>
             <button title="Enviar" class="btn btn-default" id="enviar_btn" onclick="enviar_correo()">
@@ -755,10 +1150,10 @@
 
                                 <div class="row"><br>
                                     <div class="col-sm-1 text-right">
-                                        <label for="">TD:</label>
+                                        <label for="CLTP">TD:</label>
                                     </div>
                                     <div class="col-sm-1 alineacion">
-                                        <select class="form-control">
+                                        <select class="form-control input-xs" id="CLTP" name="CLTP">
                                             <!--<option value="">Seleccione TP</option>-->
                                             <option value="CD">CD</option>
                                             <option value="NC">NC</option>
@@ -768,18 +1163,18 @@
                                     </div>
                                     <div class="col-sm-2">
                                         <label class="radio-inline"><b><input type="radio" name="rbl_tipo" checked=""
-                                                    id="ingreso" onclick="tipo_ingreso()"> Ingreso</b></label>
-                                        <label class="radio-inline"><b><input type="radio" name="rbl_tipo" id="egreso"
+                                                    id="OpcI" onclick="tipo_ingreso()"> Ingreso</b></label>
+                                        <label class="radio-inline"><b><input type="radio" name="rbl_tipo" id="OpcE"
                                                     onclick="tipo_ingreso()">
                                                 Egreso</b></label>
                                     </div>
                                     <div class="col-sm-2">
-                                        <label class="radio-inline"><b><input type="checkbox" name="cbx_contra_cta"
-                                                    checked="" id="cbx_contra_cta">
+                                        <label class="radio-inline"><b><input type="checkbox" name="CheqContraCta"
+                                                    checked="" id="CheqContraCta" onchange="CheqContraCuenta_Clic();">
                                                 CONTRA CUENTA</b></label>
                                     </div>
                                     <div class="col-sm-6">
-                                        <select class="form-control" id="DCCtaObra" onchange="leercuenta();"
+                                        <select class="form-control input-xs" id="DCCtaObra" onchange="leercuenta();"
                                             placeholder="Contra Cuenta">
                                             <!--<option>Contra Cuenta</option>-->
                                         </select>
@@ -790,32 +1185,34 @@
                                         <label for="MBFechaI">Fecha:</label>
                                     </div>
                                     <div class="col-sm-2 alineacion">
-                                        <input class="form-control" type="date" name="MBFechaI"
-                                            value="<?php echo date('Y-m-d') ?>" id="MBFechaI">
+                                        <input class="form-control input-xs" style="width: 65%;" type="date"
+                                            name="MBFechaI" value="<?php echo date('Y-m-d') ?>" id="MBFechaI"
+                                            onblur="DCPorcenIva('MBFechaI', 'DCPorcIVA');">
                                     </div>
                                     <div class="col-sm-4 col-md-offset-3">
-                                        <select class="form-control" id="DCBenef" name="DCBenef"
-                                            onchange="DCBenef_LostFocus();" placeholder="Clientes">
+                                        <select class="form-control input-xs" id="DCBenef" name="DCBenef"
+                                            placeholder="Clientes">
                                             <!--<option>Clientes</option>-->
                                         </select>
                                     </div>
                                     <div class="col-sm-2">
-                                        <select class="form-control" name="DCDiario" id="DCDiario"
+                                        <select class="form-control input-xs" name="DCDiario" id="DCDiario"
                                             placeholder="Diario"></select>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-1">
-                                        <label for="MBVence">Vencimiento:</label>
+                                        <label for="MBVence"><small>Vencimiento:</small></label>
                                     </div>
                                     <div class="col-sm-2 alineacion">
-                                        <input class="form-control" type="date" name="MBVence" id="MBVence">
+                                        <input class="form-control input-xs" style="width: 65%;" type="date"
+                                            name="MBVence" id="MBVence" value="<?php echo date('Y-m-d') ?>">
                                     </div>
                                     <div class="col-sm-2 alineacion text-right">
                                         <label for="TextConcepto">POR CONCEPTO DE:</label>
                                     </div>
                                     <div class="col-sm-7">
-                                        <input type="text" name="TextConcepto" class="form-control input-sm"
+                                        <input type="text" name="TextConcepto" class="form-control input-xs"
                                             id="TextConcepto">
                                     </div>
                                 </div>
@@ -823,48 +1220,49 @@
                                     <div class="col-sm-3">
                                         <label class="radio-inline">
                                             <b>
-                                                <input type="checkbox" name="rbl_retencion"
+                                                <input type="checkbox" name="CheqRF"
                                                     onclick="Ult_fact_Prove($('#DCProveedor').val());modal_retencion();"
-                                                    id="rbl_retencion">
+                                                    id="CheqRF">
                                                 Retencion en la
                                                 fuente:
                                             </b>
                                         </label>
                                     </div>
                                     <div class="col-sm-2">
-                                        <input type="text" name="LblRF" class="input-sm form-control" id="LblRF">
+                                        <input type="text" name="LblRF" class="input-xs form-control" id="LblRF"
+                                            value="0.00">
                                     </div>
                                     <div class="col-sm-2 alineacion text-right">
                                         <label for="LblRIVA">Retencion del I.V.A:</label>
                                     </div>
                                     <div class="col-sm-2">
-                                        <input type="text" name="LblRIVA" id="LblRIVA" class="input-sm form-control">
+                                        <input type="text" name="LblRIVA" id="LblRIVA" class="input-xs form-control"
+                                            value="0.00">
                                     </div>
                                     <div class="col-sm-1 alineacion text-right">
                                         <label for="TxtFactNo">N° Factura:</label>
                                     </div>
                                     <div class="col-sm-2">
-                                        <input type="text" name="TxtFactNo" id="TxtFactNo"
-                                            class="input-sm form-control">
+                                        <input type="text" name="TxtFactNo" id="TxtFactNo" class="input-xs form-control"
+                                            value="0">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4">
-                                        <select class="form-control input-sm" id="ddl_familia" name="ddl_producto"
+                                        <select class="form-control input-xs" id="ddl_familia" name="ddl_familia"
                                             onchange="producto_famili($('#ddl_familia').val())">
                                             <option value="">Seleccione un Familiar</option>
                                         </select>
                                     </div>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control text-center" name="" id="labelProductro"
-                                            value="PRODUCTO" readonly="">
+                                        <input type="text" class="form-control text-center input-xs"
+                                            name="labelProductro" id="labelProductro" value="PRODUCTO" readonly="">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4">
-                                        <select class="form-control input-sm" id="ddl_producto"
-                                            onchange="detalle_articulo()">
-                                            <option>Seleccione un articulo</option>
+                                        <select class="form-control input-xs" id="ddl_producto" name="ddl_producto"
+                                            placeholder="Seleccione Producto" onchange="detalle_articulo()">
                                         </select>
                                     </div>
                                     <div class="col-sm-8">
@@ -873,42 +1271,48 @@
                                                 <div class="row">
                                                     <div class="col-sm-6">
                                                         <label class="radio-inline"><b><input type="radio" name="rbl_"
-                                                                    id="con"> Con
+                                                                    id="OpcIVA" onchange="habilitar_iva();"> Con
                                                                 Iva</b>
                                                         </label>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <label class="radio-inline"><b><input type="radio" name="rbl_"
-                                                                    id="Sin"> Sin
+                                                                    id="OpcX" checked onchange="habilitar_iva();"> Sin
                                                                 Iva</b>
                                                         </label>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-2">
+                                                <label for="DCPorcIVA">I.V.A</label>
+                                            </div>
+                                            <div class="col-sm-3">
                                                 <label for="DCMarca">MARCA</label>
                                             </div>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-3">
                                                 <label for="LabelCodigo">CODIGO</label>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-sm-4">
                                                 <!--Bodega-->
-                                                <select class="form-control input-sm" id="DCBodega">
-                                                    <option>Seleccione</option>
+                                                <select class="form-control input-xs" id="DCBodega">
                                                 </select>
                                             </div>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-2">
+                                                <!--IVA-->
+                                                <select class="form-control input-xs" id="DCPorcIVA" name="DCPorcIVA">
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-3">
                                                 <!--Marca-->
-                                                <select class="form-control input-sm" id="DCMarca">
-                                                    <option>Seleccione Marca</option>
+                                                <select class="form-control input-xs" id="DCMarca">
                                                 </select>
                                             </div>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-3">
                                                 <!--Codigo-->
-                                                <input type="text" class="form-control input-sm" id="LabelCodigo"
-                                                    name="LabelCodigo">
+                                                <input type="text" class="form-control input-xs" id="LabelCodigo"
+                                                    name="LabelCodigo" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -916,81 +1320,82 @@
                                 <div class="row">
                                     <div class="col-sm-2">
                                         <label for="LabelUnidad">UNIDAD</label>
-                                        <input type="text" name="LabelUnidad" class="form-control input-sm"
-                                            id="LabelUnidad">
+                                        <input type="text" name="LabelUnidad" class="form-control input-xs"
+                                            id="LabelUnidad" readonly>
                                     </div>
                                     <div class="col-sm-2">
-                                        <label for="TextOrden">GUIA N°</label>
-                                        <input type="text" name="TextOrden" id="TextOrden"
-                                            class="form-control input-sm">
+                                        <label for="TextOrden" id="">GUIA N°</label>
+                                        <input type="text" name="TextOrden" id="TextOrden" class="form-control input-xs"
+                                            value="0">
                                     </div>
                                     <div class="col-sm-2">
                                         <label for="TextEntrada">CANTIDAD</label>
                                         <input type="text" name="TextEntrada" id="TextEntrada"
-                                            class="form-control input-sm">
+                                            class="form-control input-xs" value="0">
                                     </div>
                                     <div class="col-sm-2">
                                         <label for="TextVUnit">VALOR UNIT.</label>
-                                        <input type="text" name="TextVUnit" id="TextVUnit"
-                                            class="form-control input-sm">
+                                        <input type="text" name="TextVUnit" id="TextVUnit" class="form-control input-xs"
+                                            value="0.00" onblur="TextVUnit_LostFocus();">
                                     </div>
                                     <div class="col-sm-4">
                                         <label for="TxtCodBar">CODIGO DE BARRA</label>
                                         <input type="text" name="TxtCodBar" id="TxtCodBar"
-                                            class="form-control input-sm">
+                                            class="form-control input-xs">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-2">
                                         <label for="TxtLoteNo">LOTE N°</label>
-                                        <input type="text" name="TxtLoteNo" id="TxtLoteNo"
-                                            class="form-control input-sm">
+                                        <input type="text" name="TxtLoteNo" id="TxtLoteNo" class="form-control input-xs"
+                                            value="0">
                                     </div>
                                     <div class="col-sm-2">
                                         <label for="MBFechaFab">FECHA FAB</label>
-                                        <input type="text" name="MBFechaFab" id="MBFechaFab"
-                                            class="form-control input-sm">
+                                        <input type="date" name="MBFechaFab" id="MBFechaFab"
+                                            class="form-control input-xs" value="<?php echo date('Y-m-d') ?>">
                                     </div>
                                     <div class="col-sm-2">
                                         <label for="MBFechaExp">FECHA EXP</label>
-                                        <input type="text" name="MBFechaExp" id="MBFechaExp"
-                                            class="form-control input-sm">
+                                        <input type="date" name="MBFechaExp" id="MBFechaExp"
+                                            class="form-control input-xs" value="<?php echo date('Y-m-d') ?>">
                                     </div>
                                     <div class="col-sm-2">
                                         <label for="TxtRegSanitario">REG. SANITARIO</label>
                                         <input type="text" name="TxtRegSanitario" id="TxtRegSanitario"
-                                            class="form-control input-sm">
+                                            class="form-control input-xs" readonly>
                                     </div>
                                     <div class="col-sm-4">
                                         <label for="TxtModelo">MODELO</label>
-                                        <input type="text" name="TxtModelo" id="TxtModelo"
-                                            class="form-control input-sm">
+                                        <input type="text" name="TxtModelo" id="TxtModelo" class="form-control input-xs"
+                                            onblur="toupper(this);">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3">
                                         <label for="TxtProcedencia">PROCEDENCIA/UBICACION</label>
                                         <input type="text" name="TxtProcedencia" id="TxtProcedencia"
-                                            class="form-control input-sm">
+                                            class="form-control input-xs" onblur="toupper(this);">
                                     </div>
                                     <div class="col-sm-3">
                                         <label for="TxtSerieNo">SERIE No.</label>
                                         <input type="text" name="TxtSerieNo" id="TxtSerieNo"
-                                            class="form-control input-sm">
+                                            class="form-control input-xs">
                                     </div>
                                     <div class="col-sm-2">
                                         <label for="TextDesc">DESC. 1</label>
-                                        <input type="text" name="TextDesc" id="TextDesc" class="form-control input-sm">
+                                        <input type="text" name="TextDesc" id="TextDesc" class="form-control input-xs"
+                                            value="0.00">
                                     </div>
                                     <div class="col-sm-2">
                                         <label for="TextDesc1">DESC. 2</label>
-                                        <input type="text" name="TextDesc1" id="TextDesc1"
-                                            class="form-control input-sm">
+                                        <input type="text" name="TextDesc1" id="TextDesc1" class="form-control input-xs"
+                                            value="0.00">
                                     </div>
                                     <div class="col-sm-2">
                                         <label for="TextTotal">VALOR TOTAL</label>
-                                        <input type="text" name="TextTotal" id="TextTotal"
-                                            class="form-control input-sm">
+                                        <input type="text" name="TextTotal" id="TextTotal" class="form-control input-xs"
+                                            value="0.00" onblur="TexTotal_LostFocus();">
                                     </div>
                                 </div>
                             </div>
@@ -1000,7 +1405,7 @@
             </div>
         </div>
 
-        <div class="tbl-container" style="margin:1vw;">
+        <div class="tbl-container" style="margin:1vw;" id="tbl-container">
             <div class="row">
                 <div class="table-responsive" style="height: 400px">
                     <table>
@@ -1075,24 +1480,27 @@
 
         <div class="row"><br><br>
             <div class="col-sm-2">
+                <input type="text" name="Label3" id="Label3" class="form-control input-xs">
+            </div>
+            <div class="col-sm-2">
                 <button class="btn btn-default" data-toggle="modal" data-target="#myModal_comprobante">Seleccionar <br>
                     comprobante</button>
             </div>
             <div class="col-sm-2">
                 <label for="TxtDifxDec">DIFxDECIMALES</label>
-                <input type="text" name="TxtDifxDec" id="TxtDifxDec" class="input-sm form-control">
+                <input type="text" name="TxtDifxDec" id="TxtDifxDec" class="input-xs form-control" value="0">
             </div>
             <div class="col-sm-2">
                 <label for="TxtSubTotal">SUBTOTAL</label>
-                <input type="text" name="TxtSubTotal" id="TxtSubTotal" class="input-sm form-control" >
+                <input type="text" name="TxtSubTotal" id="TxtSubTotal" class="input-xs form-control" value="0">
             </div>
             <div class="col-sm-2">
-                <label for="TextIVA">I.V.A</label>
-                <input type="text" name="TextIVA" id="TextIVA" class="input-sm form-control" >
+                <label for="TextIVA" id="Label11">I.V.A</label>
+                <input type="text" name="TextIVA" id="TextIVA" class="input-xs form-control" value="0">
             </div>
             <div class="col-sm-2">
                 <label for="Label1">TOTAL</label>
-                <input type="text" name="Label1" id="Label1" class="input-sm form-control" >
+                <input type="text" name="Label1" id="Label1" class="input-xs form-control">
             </div>
         </div>
     </div>
@@ -1695,13 +2103,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Modal Header</h4>
+                <h4 class="modal-title" id="titulo-modal">GRABACIÓN DE COMPROBANTE:</h4>
             </div>
             <div class="modal-body">
-                <p>Some text in the modal.</p>
+                <label for="numComprobante">Ingrese el número de comprobante:</label>
+                <input type="text" name="numComprobante" id="numComprobante" value="0">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" onclick="Command3_Click()">Buscar</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
 

@@ -398,7 +398,7 @@ function SeteosCtas()
                     break;
                 case "Inv_Promedio":
                     if ($value['Codigo'] == "TRUE") {
-                        $Inv_Promedio = True;
+                        $_SESSION['SETEOS']['Inv_Promedio'] = True;
                     }
                     break;
                 case "PVP_Al_Inicio":

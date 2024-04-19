@@ -17,6 +17,46 @@ class registro_esM
 	   $this->conn = cone_ajax();
 	   $this->db = new db();
 	}
+
+	function stock_actual_inventario($parametros){
+		$sql = "";
+		if(isset($parametros['Por_Bodega'])){
+			$sql = "SELECT Codigo_Inv,AVG(Costo) As TCosto,SUM(Entrada-Salida) As Stock,(AVG(Costo)*SUM(Entrada-Salida)) As Saldo_Inv 
+					FROM Trans_Kardex 
+					WHERE Fecha <= '".BuscarFecha($parametros['Fecha_Inv'])."' 
+					AND Codigo_Inv = '".$parametros['Codigo_Inventario']."'
+					AND CodBodega = '".$parametros['Por_Bodega']."' 
+					AND Item = '".$_SESSION['INGRESO']['item']."' 
+					AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+					AND T <> 'A' 
+					AND TP <> '.'
+					AND Numero > 0 
+					GROUP BY Codigo_Inv ";
+		}else{
+			$sql = "SELECT TOP 1 Codigo_Inv,Costo As TCosto,Existencia As Stock,Total As Saldo_Inv 
+					FROM Trans_Kardex 
+					WHERE Fecha <= '".BuscarFecha($parametros['Fecha_Inv'])."' 
+					AND Codigo_Inv = '".$parametros['Codigo_Inventario']."' 
+					AND Item = '".$_SESSION['INGRESO']['item']."' 
+					AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+					AND T <> 'A' 
+					AND TP <> '.' 
+					AND Numero > 0 
+					ORDER BY Fecha DESC,TP DESC, Numero DESC,ID DESC";
+		}
+		return $this->db->datos($sql);
+	}
+
+	function grid_kardex($parametros):array{
+		$sql = "SELECT * 
+				FROM Asiento_K 
+				WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+				AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
+				AND T_No = '".$parametros['Trans_No']. "'";
+		$datos = $this->db->datos($sql);
+		$grilla = grilla_generica_new($sql, 'Asiento_K', '', '', false, false, false, 1, 1, 1, 100);
+		return array('tabla'=>$grilla, 'datos'=>$datos);
+	}
 	function familias($query='')
 	{
 		 $cid = $this->conn;
@@ -1482,6 +1522,133 @@ function cuentas_todos($query)
                 // print_r($sql);
        	return $this->db->String_Sql($sql);
      }
+
+	 function seleccionar_comprobante($parametros){
+		try{
+			$sql = "DELETE * 
+					FROM Trans_Kardex 
+					WHERE TP = 'CD' 
+					AND Numero = '".$parametros['Numero']."' 
+					AND Item = '".$_SESSION['INGRESO']['item']."' 
+					AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+			Ejecutar_SQL_SP($sql);
+			$sql = "SELECT * 
+					FROM Asiento_K 
+					WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+					AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
+					AND T_No = '".$parametros['Trans_No']."'";
+			$AdoKardex = $this->db->datos($sql);
+			if(count($AdoKardex) > 0){
+				foreach($AdoKardex as $row){
+					SetAdoAddNew("Trans_Kardex");
+					SetAdoFields("T", G_NORMAL);
+					SetAdoFields("TP", $parametros['CLTP']);
+					SetAdoFields("Numero", $parametros['Numero']);
+					SetAdoFields("Fecha", $parametros['MBFechaI']);
+					SetAdoFields("Codigo_Inv", $row['CODIGO_INV']);
+					SetAdoFields("Codigo_P", $row['Codigo_B']);
+					SetAdoFields("Descuento", $row['P_DESC']);
+					SetAdoFields("Descuento1", $row['P_DESC1']);
+					SetAdoFields("Valor_Total", $row['VALOR_TOTAL']);
+					SetAdoFields("Existencia", $row['CANTIDAD']);
+					SetAdoFields("Valor_Unitario", $row['VALOR_UNIT']);
+					SetAdoFields("Total", $row['SALDO']);
+					SetAdoFields("Cta_Inv", $row['CTA_INVENTARIO']);
+					SetAdoFields("Contra_Cta", $row['CONTRA_CTA']);
+					SetAdoFields("Orden_No", $row['ORDEN']);
+					SetAdoFields("CodBodega", $row['CodBod']);
+					SetAdoFields("CodMar", $row['CodMar']);
+					SetAdoFields("Codigo_Barra", $row['COD_BAR']);
+					SetAdoFields("Costo", $row['VALOR_UNIT']);
+					SetAdoFields("PVP", $row['PVP']);
+					if(isset($_SESSION['SETEOS']['Inv_Promedio'])){
+						$Cantidad = $row['CANTIDAD'] <= 0 ? 1 : $row['CANTIDAD'];
+						$Saldo = $row['SALDO'];
+						SetAdoFields("Costo", $Saldo / $Cantidad);
+					}
+					if($row['DH'] == 1){
+						SetAdoFields("Entrada", $row['CANT_ES']);
+					}else{
+						SetAdoFields("Salida", $row['CANT_ES']);
+					}
+					SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+					SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+					SetAdoUpdate();
+				}
+				$this->borrar_asientos($parametros['Trans_No']);
+				return array('res' => 1, 'msg' => 'Proceso exitoso');
+			}else{
+				throw new Exception("No se encontraron datos en Asiento_K");
+			}
+		}catch(Exception $e){
+			throw new Exception($e->getMessage());
+		}
+	 }
+
+	 function delete_asientos($parametros){
+		$sql = "DELETE 
+				FROM Asiento_SC 
+				WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+				AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
+				AND T_No  = '".$parametros['Trans_No']."'";
+		Ejecutar_SQL_SP($sql);
+		$sql = "DELETE 
+				FROM Asiento 
+				WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+				AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
+				AND T_No  = '".$parametros['Trans_No']."'";
+		Ejecutar_SQL_SP($sql);
+	 }
+
+	 function select_asientoK($parametros){
+		$sql = "SELECT * 
+				FROM Asiento_K 
+				WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+				AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
+				AND T_No = '".$parametros['Trans_No']."' 
+				ORDER BY CTA_INVENTARIO, CONTRA_CTA";
+		return $this->db->datos($sql);
+	 }
+
+	 function select_asiento_compras($parametros){
+		$sql = "SELECT * 
+				FROM Asiento_Compras 
+				WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+				AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
+				AND T_No = '".$parametros['Trans_No']."'";
+		return $this->db->datos($sql);
+	 }
+
+	 function select_asiento_air($parametros){
+		$sql = "SELECT *
+				FROM Asiento_Air 
+				WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+				AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
+				AND T_No = '".$parametros['Trans_No']."' 
+				AND Tipo_Trans = 'C' 
+				ORDER BY Cta_Retencion, A_No, ValRet ";
+		return $this->db->datos($sql);
+	 }
+
+	 function select_asiento_k_contra_cta($parametros){
+		$sql = "SELECT * 
+				FROM Asiento_K 
+				WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+				AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
+				AND T_No = '".$parametros['Trans_No']."' 
+				ORDER BY CONTRA_CTA";
+		return $this->db->datos($sql);
+	 }
+
+	 function select_asientos($parametros){
+		$sql = "SELECT * 
+				FROM Asiento 
+				WHERE Item = '".$_SESSION['INGRESO']['item']."'
+				AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+				AND T_No = '".$parametros['Trans_No']."' ";
+		return $this->db->datos($sql);
+	 }
+
 
 }
 ?>

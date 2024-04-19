@@ -13691,6 +13691,224 @@ function conversionToString($dato): string {
     }
   }
 
+  
+  function InsertarAsientos($CodCta, $Parcial_MEs, $Debes, $Habers, $parametros): array
+    {
+        $conn = new db();
+        $InsAsiento = False;
+        $Cuenta = '.';
+        $SubCta = '.';
+        $CodigoCC = G_NINGUNO;
+        $NoCheque = G_NINGUNO;
+        $parametros['CodigoCli'] = isset($parametros['CodigoCli']) ? $parametros['CodigoCli'] : G_NINGUNO;
+        if ($Debes > 0 || $Habers > 0 && $CodCta <> "") {
+            if ($CodCta <> "0") {
+                $sql = "SELECT TC, Codigo, Cuenta
+                        FROM Catalogo_Cuentas
+                        WHERE Codigo = '" . $CodCta . "'
+                        AND Item = '" . $_SESSION['INGRESO']['item'] . "'
+                        AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'";
+                $AdoReg = $conn->datos($sql);
+                if (count($AdoReg) > 0) {
+                    $InsAsiento = True;
+                    $Cuenta = $AdoReg[0]['Cuenta'];
+                    $SubCta = $AdoReg[0]['TC'];
+                }
+            }
+            if (!$InsAsiento || strlen($CodCta) > 2) {
+                $sql = "SELECT TC, Codigo, Cuenta
+                        FROM Catalogo_Cuentas
+                        WHERE Codigo = '" . $CodCta . "'
+                        AND Item = '" . $_SESSION['INGRESO']['item'] . "'
+                        AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'";
+                $AdoReg = $conn->datos($sql);
+                if (count($AdoReg) > 0) {
+                    $InsAsiento = True;
+                    $CodCta = $AdoReg[0]['Codigo'];
+                    $Cuenta = $AdoReg[0]['Cuenta'];
+                    $SubCta = $AdoReg[0]['TC'];
+                }
+            }
+            if ($InsAsiento) {
+                SetAdoAddNew('Asiento');
+                SetAdoFields('CODIGO', $CodCta);
+                SetAdoFields('CUENTA', $Cuenta);
+                SetAdoFields('DETALLE', $parametros['DetalleComp']);
+                if($_SESSION['INGRESO']['OpcCoop'] == false){
+                  SetAdoFields('PARCIAL_ME', round($Parcial_MEs, 2, PHP_ROUND_HALF_UP));
+                }
+                SetAdoFields('DEBE', round($Debes, 2, PHP_ROUND_HALF_UP));
+                SetAdoFields('HABER', round($Habers, 2, PHP_ROUND_HALF_UP));
+                SetAdoFields('Item', $_SESSION['INGRESO']['item']);
+                SetAdoFields('T_No', $parametros['Trans_No']);
+                SetAdoFields('ME', False);
+                SetAdoFields('EFECTIVIZAR', $parametros['MBFechaI']);
+                SetAdoFields('CODIGO_C', $parametros['CodigoCli']);
+                SetAdoFields('CODIGO_CC', $CodigoCC);
+                SetAdoFields('CHEQ_DEP', $NoCheque);
+                SetAdoFields('CodigoU', $_SESSION['INGRESO']['CodigoU']);
+                SetAdoFields('A_No', $parametros['Ln_No']);
+                SetAdoFields('TC', $SubCta);
+                SetAdoUpdate();
+                $parametros['Ln_No'] += 1;
+                return array('CodCta' => $CodCta, 'Cuenta' => $Cuenta, 'SubCta' => $SubCta, 'Ln_No' => $parametros['Ln_No']);
+            }
+            return array('CodCta' => G_NINGUNO, 'Cuenta' => G_NINGUNO, 'SubCta' => G_NINGUNO, 'Ln_No' => $parametros['Ln_No']);
+        }
+        return array('CodCta' => G_NINGUNO, 'Cuenta' => G_NINGUNO, 'SubCta' => G_NINGUNO, 'Ln_No' => $parametros['Ln_No']);
+    }
+
+    /*
+    Nota: En el código fuente la mayoria de variables que se utilizan en esta función se definen fuera de la misma, 
+    adaptar a PHP esta resultando muy complejo ya que es muy dificil seguir el flujo de trabajo de todas las variables que se 
+    utilizan. Esta funcion toca reescribirla completamente para que no de errores. 
+    */
+    function InsertarAsiento($parametros){
+      $InsertarCta = True;
+      $Ln_No_A = 0;
+      $conn = new db();
+      $parametros['CodigoCli'] = isset($parametros['CodigoCli']) ? $parametros['CodigoCli'] : G_NINGUNO;
+      $parametros['CodigoCli'] = $parametros['NoCheque'] == G_NINGUNO ? G_NINGUNO : $parametros['CodigoCli'];
+      $ValorDH = $parametros['$ValorDH'];
+      $ValorDHAux = number_format($ValorDH, 2, '.', '');
+      if($parametros['Codigo'] != G_NINGUNO){
+        $Debe = 0;
+        $Haber = 0;
+        if($parametros['OpcTM'] == 2 || $_SESSION['INGRESO']['Moneda']){
+          if($parametros['Opcion_Mulp']){
+            $ValorDH = intval($ValorDH * $_SESSION['INGRESO']['Cotizacion']);
+          }else{
+            if($_SESSION['INGRESO']['Cotizacion'] <= 0){
+              throw new Exception("No se puede dividir para cero, cambie la Cotización");
+            }else{
+              $ValorDH = intval($ValorDH / $_SESSION['INGRESO']['Cotizacion']);
+            }
+          }
+        }
+        switch($parametros['OpcDH']){
+          case 1:
+            $Debe = $ValorDH;
+            break;
+          case 2:
+            $Haber = $ValorDH;
+            break;
+        }
+        if($ValorDH != 0 && $parametros['Cuenta'] != G_NINGUNO){
+          switch($parametros['SubCta']){
+            case "C":
+            case "P":
+            case "G":
+            case "I":
+            case "CP":
+            case "PM":
+            case "CC":
+              $sql = "SELECT * 
+                      FROM Asiento 
+                      WHERE TC = '" . $parametros['SubCta'] . "' 
+                      AND CODIGO = '" . $parametros['Codigo'] . "' 
+                      AND T_No = '" . $parametros['Trans_No'] . "' 
+                      AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                      AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'" ;
+              switch($parametros['OpcDH']){
+                case 1: 
+                  $sql .= "AND DEBE > 0";
+                  break;
+                case 2:
+                  $sql .= "AND HABER > 0";
+                  break;
+              }
+              $AdoRegSC = $conn->datos($sql);
+              if(count($AdoRegSC) > 0){
+                $InsertarCta = False;
+                $Ln_No_A = $AdoRegSC[0]['A_No'];
+              }
+              break;
+          }
+          if($InsertarCta){
+            //Se inserta nuevo asiento
+            print_r($sql);die();
+            SetAdoAddNew("Asiento");
+            SetAdoFields("PARCIAL_ME", 0);
+            SetAdoFields("CODIGO", $parametros['Codigo']);
+            SetAdoFields("CUENTA", $parametros['Cuenta']);
+            SetAdoFields("DETALLE", trim(substr($parametros['DetalleComp'], 0, 60)));
+            if($_SESSION['INGRESO']['OpcCoop']){
+              if($_SESSION['INGRESO']['Moneda']){
+                $Debe = number_format($Debe / $_SESSION['INGRESO']['Cotizacion'], 2, '.', '');
+                $Haber = number_format($Haber / $_SESSION['INGRESO']['Cotizacion'], 2, '.', '');
+              }else{
+                $Debe = number_format($Debe, 2, '.', '');
+                $Haber = number_format($Haber, 2, '.', '');
+              }
+            }else{
+              SetAdoFields("PARCIAL_ME", 0);
+              if($_SESSION['INGRESO']['Moneda'] || ($parametros['OpcTM'] == 2)){
+                if(($Debe - $Haber) < 0){
+                  $ValorDHAux = -1 * $ValorDHAux;
+                }
+                SetAdoFields("PARCIAL_ME", $ValorDHAux);
+                SetAdoFields("ME", 1);
+              }
+              $Debe = number_format($Debe, 2, '.', '');
+              $Haber = number_format($Haber, 2, '.', '');
+            }
+            SetAdoFields("DEBE", $Debe);
+            SetAdoFields("HABER", $Haber);
+            SetAdoFields("EFECTIVIZAR", $parametros['MBFechaI']);
+            SetAdoFields("CHEQ_DEP", $parametros['NoCheque']);
+            SetAdoFields("CODIGO_C", $parametros['CodigoCli']);
+            SetAdoFields("CODIGO_CC", $parametros['CodigoCC']);
+            SetAdoFields("T_No", $parametros['Trans_No']);
+            SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+            SetAdoFields("CodigoU", $_SESSION['INGRESO']['CodigoU']);
+            SetAdoFields("TC", $parametros['SubCta']);
+            SetAdoFields("A_No", $parametros['Ln_No']);
+            SetAdoUpdate();
+          }else{
+            //Se actualiza el asiento
+            $sql = "UPDATE Asiento 
+                    SET PARCIAL_ME = 0, 
+                    CODIGO = '" . $parametros['Codigo'] . "', 
+                    CUENTA = '" . $parametros['Cuenta'] . "', 
+                    DETALLE = '" . trim(substr($parametros['DetalleComp'], 0, 60)) . "', ";
+            if($_SESSION['INGRESO']['OpcCoop']){
+              if($_SESSION['INGRESO']['Moneda']){
+                $Debe = number_format($Debe / $_SESSION['INGRESO']['Cotizacion'], 2, '.', '');
+                $Haber = number_format($Haber / $_SESSION['INGRESO']['Cotizacion'], 2, '.', '');
+              }else{
+                $Debe = number_format($Debe, 2, '.', '');
+                $Haber = number_format($Haber, 2, '.', '');
+              }
+            }else{
+              $sql .= "PARCIAL_ME = 0, ";
+              if($_SESSION['INGRESO']['Moneda'] || ($parametros['OpcTM'] == 2)){
+                if(($Debe - $Haber) < 0){
+                  $ValorDHAux = -1 * $ValorDHAux;
+                }
+                $sql .= "PARCIAL_ME = " . $ValorDHAux . ", 
+                         ME = 1, ";
+              }
+              $Debe = number_format($Debe, 2, '.', '');
+              $Haber = number_format($Haber, 2, '.', '');
+            }
+            $sql .= "DEBE = " . $Debe . ", 
+                     HABER = " . $Haber . ", 
+                     EFECTIVIZAR = '" . $parametros['MBFechaI'] . "', 
+                     CHEQ_DEP = '" . $parametros['NoCheque'] . "', 
+                     CODIGO_C = '" . $parametros['CodigoCli'] . "', 
+                     CODIGO_CC = '" . $parametros['CodigoCC'] . "', 
+                     T_No = '" . $parametros['Trans_No'] . "', 
+                     Item = '" . $_SESSION['INGRESO']['item'] . "', 
+                     CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "', 
+                     TC = '" . $parametros['SubCta'] . "'
+                     WHERE A_NO = '" . $Ln_No_A . "'";
+            print_r($sql);die();
+            Ejecutar_SQL_SP($sql);
+          }
+        }
+      }
+    }
+
   function IniciarAsientosDe($Trans_No)
     {
       $conn = new db();  
