@@ -178,7 +178,7 @@ class almacenamiento_bodegaM
 		 AND T.Codigo_Inv = P.Codigo_Inv
 		 AND CodBodega <> '-1'
 		 AND Orden_No <> '0'
-		 AND T.T = 'C' ";
+		 AND T.T = 'E' ";
 		 if($orden)
 		 {
 	     	$sql.=" AND Orden_No = '".$orden."' ";

@@ -360,7 +360,7 @@ function autocoplet_ingreso()
         console.log(response);
         var lista = '';
         response.forEach(function(item,i){
-        	lista+='<li style="font-size: large;"><a href="#" style="padding-right:0px"><label>'+item.Producto+'</label><span class="label label-danger pull-right">'+item.Cantidad+'</span></a></li>';
+        	lista+='<li style="font-size: large;"><a href="#" style="padding-right:0px"><label>'+item.Producto+'</label><span class="label label-danger pull-right">'+item.Cantidad+' - '+item.UNIDAD+'</span></a></li>';
         })
         $('#lista_pedido').html(lista);    
       }

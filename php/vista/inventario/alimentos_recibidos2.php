@@ -74,6 +74,13 @@
       $('#txt_grupo').focus();
     });
 
+    $('#ddl_producto2').on('select2:select', function (e) {
+      var data = e.params.data.data;
+      console.log(data);
+        $('#lbl_unidad').text(data[0].Unidad);
+      });
+
+
    $('#txt_producto').on('select2:select', function (e) {
       var data = e.params.data.data;
       $('#txt_unidad').val(data[0].Unidad);
@@ -1696,9 +1703,14 @@ function eliminar_all_pedido(pedido)
 		              </select>
 		           </div>
 		           <div class="col-sm-3">
-			           	<b>Cantidad</b>
-			           	<input type="text" name="txt_cantidad_pedido" id="txt_cantidad_pedido" class="form-control input-sm" />
-			           	<input type="hidden" name="txt_id_linea_pedido" id="txt_id_linea_pedido">
+                <b>Cantidad</b>
+                <div class="input-group">
+                    <input type="text" name="txt_cantidad_pedido" id="txt_cantidad_pedido" class="form-control input-sm" />
+                    <input type="hidden" name="txt_id_linea_pedido" id="txt_id_linea_pedido">
+                    <span class="input-group-addon" id="lbl_unidad">-</span>
+                </div>
+
+			           
 		           </div> 
 		         </div>
 		         <div class="row">

@@ -170,7 +170,7 @@ class almacenamiento_bodegaC
 
 				 $ls.= '<li class="list-group-item"><a href="#" style="padding:0px"><label><input type="checkbox" class="rbl_pedido" value="'.$value['ID'].'">'.$prod[0]['Producto'].'</label>
 				 		<div class="btn-group pull-right">
-				 				<span class="label-primary btn-sm btn">'.$value['Entrada'].'</span>				
+				 				<span class="label-primary btn-sm btn">'.$value['Entrada'].' '.$prod[0]['Unidad'].'</span>				
 				 		</div>
 				 </a>
 				 <ul style="padding: 20px;">';

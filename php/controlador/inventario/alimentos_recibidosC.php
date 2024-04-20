@@ -2,6 +2,17 @@
 require_once(dirname(__DIR__,2)."/modelo/inventario/alimentos_recibidosM.php");
 require_once(dirname(__DIR__,2)."/funciones/funciones.php");
 
+/*
+-----------------nota importante en campo (T)----------------------
+I =>INGRESO NORMAL
+R =>EDITAR INGRESO
+P =>LISTO PARA CHECHING
+C =>ESTA EN CLASIFICACION
+
+E => YA ALMACENADO (APLICA A LINEAS)
+
+*/
+
 
 $controlador = new alimentos_recibidosC();
 if(isset($_GET['proveedores']))
@@ -80,6 +91,8 @@ if(isset($_GET['autoincrementable']))
 	$num = generaCeros($num,3);
 	echo json_encode($num);
 }
+
+//busqueda para clasificacion
 if(isset($_GET['search']))
 {
 	$query = '';
@@ -488,6 +501,13 @@ class alimentos_recibidosC
 	   SetAdoFields('Codigo_Dr',$parametro['ddl_sucursales']);
 	   SetAdoFields('Tipo_Empaque',$parametro['txt_paquetes']);
 	   $resp = SetAdoUpdate();
+
+
+	   SetAdoAddNew("Trans_Correos"); 		
+	   SetAdoFields('T','C');
+	   SetAdoFieldsWhere('ID',$parametro['txt_id']);
+	   SetAdoUpdateGeneric();
+
 	   return  $respuesta = array('ped'=>$num_ped,'resp'=>$resp,'total_add'=>'1');		
 	}
 
@@ -887,7 +907,7 @@ class alimentos_recibidosC
 		$query = $parametros['query'];
 		$fecha = $parametros['fecha'];
 
-		$datos = $this->modelo->buscar_transCorreos($query,$fecha);
+		$datos = $this->modelo->buscar_transCorreos_ingresos($query,$fecha);
 		// print_r($datos);die();
 		$tr= '';
 		foreach ($datos as $key => $value) {
@@ -940,6 +960,8 @@ class alimentos_recibidosC
 		foreach ($datos as $key => $value) {
 			$proceso = 'Clasificacion';
 			if($value['T']=='P'){$proceso = 'Checking';}
+			if($value['T']=='R'){$proceso = 'Ingreso';}
+			if($value['T']=='C'){$proceso = 'Clasificacion';}
 			$tr.='<tr>
 					<td>'.$value['Envio_No'].'</td>
 					<td>'.$value['Fecha_P']->format('Y-m-d').'</td>

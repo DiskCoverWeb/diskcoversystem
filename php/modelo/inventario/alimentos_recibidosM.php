@@ -70,6 +70,30 @@ class alimentos_recibidosM
 		inner join Clientes C2 on TC.CodigoU = C2.Codigo 
 		where Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND TC.T = 'I' 
+		OR TC.T = 'C' ";
+		if($cod)
+		{
+			$sql.= " AND Envio_No  like  '%".$cod."%'";
+		}
+		if($fecha)
+		{
+			$sql.= " AND TC.Fecha_P =  '".$fecha."'";
+		}
+		$sql.=" ORDER BY ID desc";  
+
+		// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+	function buscar_transCorreos_ingresos($cod=false,$fecha=false)
+	{
+		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas,TC.CodigoU,C2.Cliente as 'Responsable'   
+		from Trans_Correos TC
+		inner join Clientes C on TC.CodigoP = C.Codigo 
+		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
+		inner join Clientes C2 on TC.CodigoU = C2.Codigo 
+		where Item = '".$_SESSION['INGRESO']['item']."'
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC.T = 'I' ";
 		if($cod)
 		{
@@ -92,8 +116,7 @@ class alimentos_recibidosM
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
 		where Item = '".$_SESSION['INGRESO']['item']."'
-		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
-		AND TC.T = 'P' OR  TC.T = 'N' ";
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
 		if($cod)
 		{
 			$sql.= " AND Envio_No  like  '%".$cod."%'";
@@ -214,7 +237,7 @@ class alimentos_recibidosM
 	function cargar_pedidos_trans_pedidos($orden,$fecha=false,$codigo_inv=false)
 	{
     // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT T.*,P.Producto ,A.Nombre_Completo 
+     $sql = "SELECT T.*,P.Producto ,A.Nombre_Completo,P.UNIDAD 
      FROM Trans_Pedidos  T ,Catalogo_Productos P, Accesos A    
      WHERE T.Item = '".$_SESSION['INGRESO']['item']."' 
      AND T.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
