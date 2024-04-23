@@ -69,6 +69,8 @@ class usuario_model{
       	$_SESSION['INGRESO']['Foto'] = 'ejecutivo.png';
       }
 
+      // print_r($_SESSION['INGRESO']);die();
+
 	// print_r($datos);die();
 			return 'panel.php';
 		}else

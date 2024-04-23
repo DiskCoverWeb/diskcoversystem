@@ -1,5 +1,5 @@
 <?php 
-include('../headers/header_panel.php');
+require_once('../headers/header_panel.php');
 $empresa = '';
 if (isset($_SESSION['INGRESO']['empresa'])) { 
   $empresa = $_SESSION['INGRESO']['empresa'];

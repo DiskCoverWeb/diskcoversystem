@@ -185,8 +185,9 @@ class login_controller
 			// print_r($empresa);print_r($cliente);die();
 		} else {
 			$datos = $this->modelo->Ingresar($parametro['usuario'], $parametro['pass'], $parametro['entidad'], $parametro['item']);
-			
 		}
+
+		// print_r($datos);die();
 
 
 		return $datos;

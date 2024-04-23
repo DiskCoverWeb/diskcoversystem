@@ -31,6 +31,7 @@ class select_empresa
 		$empresa= getEmpresas($_SESSION['INGRESO']['IDEntidad'],$cartera);
 		$i=0;
 		$num = count($empresa);
+		// $num = 0;
 		if($num > 1)
 		{
 			$html = '
@@ -87,7 +88,31 @@ class select_empresa
 		  	}
 		}else
 		{
-			$html = '<div class="box-body text-center"><div class="col-lg-12 col-xs-9"><img src="../../img/NO_ASIGNADO.gif" style="width: 50%;"></div></div>';
+			$html = '<div class="box-body text-center">
+			
+			<div class="col-lg-8 col-xs-9"><img src="../../img/NO_ASIGNADO.gif" style="width: 85%;"></div>
+			<div class="col-lg-4 col-xs-9 text-left"><div class="callout callout-info">
+				<h4>Tip!</h4>
+				<ol>
+					<li>Asegurese al 100% de que tiene accesos asignados</li>					
+					<li>Asegurese de que las credenciales listadas en la parte de abajo esten correctas</li>
+					<li>Asegurese de que los datos listado abajo en Credenciales y Zona Administrativa esten llenos caso contrario salir y volver a ingresar</li>
+					<li>En caso de que esto persista llamar al Administrador del sistema </li>
+				</ol>
+				<p style="font-size:12px">(La causa frecuente de este error es por que su conexion de internet tiene intermitencias)</p>
+				<hr style="margin: 10px 0 10px 0; border-top: 1px solid #e9e4e4;">
+				<b>Credenciales</b>		
+				<p style="margin:0px">Usuario: '.$_SESSION['INGRESO']['usuario'].'</p>
+				<p style="margin:0px">Contraseña: '.$_SESSION['INGRESO']['pass'].'</p>
+				<b>Zona Administrativa</b>					
+				<p style="margin:0px">Item: '.$_SESSION['INGRESO']['item'].'</li>
+				<p style="margin:0px">Entidad: '.$_SESSION['INGRESO']['IDEntidad'].'</p>
+				<p style="margin:0px">base:'.$_SESSION['INGRESO']['base_actual'].'</p>
+				<p style="margin:0px">RUC: '.$_SESSION['INGRESO']['Id'].'</p>
+
+
+			</div></div>
+			</div>';
 			return $html;
 		}
 

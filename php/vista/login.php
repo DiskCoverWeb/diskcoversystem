@@ -342,6 +342,8 @@
          $('#tabla_').html(spiner);
       },*/
         success:  function (response) { 
+
+        	console.log(response);
         if(response==-1)
         {
         	Swal.fire('Clave o usuario invalidos!','No se pudo acceder. Comuniquese con la institucion para ser habilitado.','error');
