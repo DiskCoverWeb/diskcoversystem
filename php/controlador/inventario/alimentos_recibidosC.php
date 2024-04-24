@@ -962,10 +962,28 @@ class alimentos_recibidosC
 			if($value['T']=='P'){$proceso = 'Checking';}
 			if($value['T']=='R'){$proceso = 'Ingreso';}
 			if($value['T']=='C'){$proceso = 'Clasificacion';}
+
+			$noti = $this->modelo->listar_notificaciones($_SESSION['INGRESO']['CodigoU'],'P',false,$value['Envio_No']);
+			$alerta = '';
+			if(count($noti)>0)
+			{
+				$alerta = '<div class="btn-group pull-right">
+						<button type="button" class="label label-warning btn-warning dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							<i class="fa fa-commenting"></i>
+						</button>
+						<ul class="dropdown-menu">';
+						foreach ($noti as $key2 => $value2) {
+							$texto2 = str_replace(array("\r", "\n"), '', $value2['Texto_Memo']);
+							$alerta.='<li><a href="#" onclick="mostrar_notificacion(\''.$texto2.'\',\''.$value2['ID'].'\',\''.$value['Envio_No'].'\')">Notificacion'.($key2+1).'</a></li>';
+						}
+						$alerta.='</ul>
+					</div>	';
+			}
+
 			$tr.='<tr>
 					<td>'.$value['Envio_No'].'</td>
 					<td>'.$value['Fecha_P']->format('Y-m-d').'</td>
-					<td>'.$value['Cliente'].'</td>
+					<td>'.$value['Cliente'].''.$alerta.'</td>
 					<td>'.$value['Proceso'].'</td>
 					<td>'.number_format($value['TOTAL'],2,'.','').'</td>
 					<td>'.$value['Porc_C'].'</td>
@@ -1229,7 +1247,9 @@ class alimentos_recibidosC
 		// print_r($parametros);die();
 
 		// print_r($_SESSION['INGRESO']);die();
-		$pedido = $this->modelo-> buscar_transCorreos_all(false,false,$parametros['id']);
+			$pedido = $this->modelo->buscar_transCorreos_all(false,false,$parametros['id']);
+			if(isset($parametros['encargado']) && $parametros['encargado']!='')
+				{ $pedido[0]['CodigoU'] = $parametros['encargado']; }
 
 		   SetAdoAddNew("Trans_Memos"); 		
 		   SetAdoFields('T','P');		   		
@@ -1362,7 +1382,22 @@ class alimentos_recibidosC
 
 	function cambiar_estado_solucionado($parametros)
 	{
-		
+		$notificacion = $this->modelo->listar_notificaciones(false,false,$parametros['noti']);
+
+
+		// print_r($notificacion);die();
+		if(count($notificacion)>0 && $notificacion[0]['CC2']!=3)
+		{
+
+			SetAdoAddNew("Trans_Correos");	
+			SetAdoFieldsWhere('Envio_No',$notificacion[0]['Atencion']);
+			if($notificacion[0]['CC1']==3){
+				SetAdoFields('T','P');
+			}else if($notificacion[0]['CC1']==2){ SetAdoFields('T','C'); }
+			SetAdoUpdateGeneric();
+		}
+
+		// print_r($notificacion);die();
  	    SetAdoAddNew("Trans_Memos");	
 		SetAdoFields('T','N');
 		SetAdoFields('T','N');
@@ -1374,7 +1409,7 @@ class alimentos_recibidosC
 	{
 		// print_r($parametros);die();
  	    SetAdoAddNew("Trans_Correos");	
-		SetAdoFields('T','I');
+		SetAdoFields('T',$parametros['T']);
 		SetAdoFieldsWhere('Envio_No',$parametros['pedido']);
 		return SetAdoUpdateGeneric();
 	}

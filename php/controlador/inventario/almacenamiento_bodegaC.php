@@ -3,6 +3,10 @@ require_once(dirname(__DIR__,2)."/modelo/inventario/almacenamiento_bodegaM.php")
 require_once(dirname(__DIR__,2)."/funciones/funciones.php");
 
 
+/* para T cuando sea 
+	
+	E = Esta almacenado;
+*/
 $controlador = new almacenamiento_bodegaC();
 
 if(isset($_GET['search_contabilizado']))
@@ -109,6 +113,11 @@ if(isset($_GET['lista_bodegas_arbol']))
 {
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->lista_bodegas_arbol($parametros));
+}
+if(isset($_GET['lista_bodegas_arbol2']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->lista_bodegas_arbol2($parametros));
 }
 
 /**
@@ -417,6 +426,108 @@ class almacenamiento_bodegaC
 		return $html;
 
 	}
+
+	function lista_bodegas_arbol2($parametros)
+	{
+		// print_r($parametros);die();
+		$nivel_solicitado = $parametros['nivel'];
+		$padre = str_replace('_','.',$parametros['padre']);
+		$datos = $this->modelo->bodegas();
+
+		// analiza cuantos niveles tiene
+		$niveles = 0;
+		foreach ($datos as $key => $value) {
+			$niv = explode('.', $value['CodBod']);
+			if(count($niv)>$niveles)
+			{
+				$niveles = count($niv);
+			}
+		}
+		
+		//separa los niveles en grupos
+		$grupo_nivel = array();
+		for ($i=1; $i <= $niveles ; $i++) { 
+			$grupo_nivel[$i] = array();
+			foreach ($datos as $key => $value) {
+				$niv = explode('.', $value['CodBod']);
+				if(count($niv)==$i)
+				{
+					array_push($grupo_nivel[$i], $value);
+				}
+			}
+		}
+
+
+		// print_r($nivel_solicitado);die();
+
+		$hijos = 0;
+		$html = '';
+		foreach ($grupo_nivel[$nivel_solicitado] as $key => $value) {
+			if($padre=='')
+			{
+				$prefijo = $value['CodBod'];
+				foreach ($grupo_nivel[$nivel_solicitado+1] as $key2 => $value2) {
+					if (substr($value2['CodBod'], 0, strlen($prefijo)) === $prefijo) {
+						$hijos = 1;
+						break;
+					} 
+				}
+				$ruta = $this->ruta_bodega($prefijo);
+				if($hijos==1)
+				{
+					$html.='<li>
+						       <input type="checkbox" id="c'.$prefijo.'" />
+						       <label class="tree_bod_label" for="c'.$prefijo.'" id="c_'.$prefijo.'" onclick="cargar_bodegas2(\''.($nivel_solicitado+1).'\',\''.$prefijo.'\');cargar_nombre_bodega2(\''.$ruta.'\',\'.\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</label>
+						       	<ul id="h'.$prefijo.'">
+						       	</ul>
+					       	</li>';
+					$hijos=0;
+				}else
+				{
+					$html.='<li><span class="tree_bod_label" id="c_'.str_replace('.','_',$prefijo).'" onclick="cargar_nombre_bodega2(\''.$ruta.'\',\''.$value['CodBod'].'\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</span></li>';
+				}
+			}else{
+				//cuando viene con padre
+					$prefijo = $value['CodBod'];
+					if(isset($grupo_nivel[$nivel_solicitado+1]))
+					{
+
+						foreach ($grupo_nivel[$nivel_solicitado+1] as $key2 => $value2) {
+							if (substr($value2['CodBod'], 0, strlen($padre)) === $padre) {
+								$hijos = 1;
+								break;
+							} 
+						}
+					}
+					$ruta = $this->ruta_bodega($prefijo);
+					
+					if (substr($value['CodBod'], 0, strlen($padre)) === $padre) {
+						// print_r('padre');die();
+					if($hijos==1)
+					{
+						// print_r($value2['CodBod'].'-'.$value['Bodega']);die();
+						$html.='<li>
+							       <input type="checkbox" id="c'.str_replace('.','_',$prefijo).'" />
+							       <label class="tree_bod_label" for="c'.str_replace('.','_',$prefijo).'" id="c_'.str_replace('.','_',$prefijo).'" onclick="cargar_bodegas2(\''.($nivel_solicitado+1).'\',\''.str_replace('.','_',$prefijo).'\');cargar_nombre_bodega2(\''.$ruta.'\',\'.\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</label>
+							       	<ul id="h'.str_replace('.','_',$prefijo).'">
+							       	</ul>
+						       	</li>';
+						$hijos=0;
+					}else
+					{
+						$html.='<li><span class="tree_bod_label" id="c_'.str_replace('.','_',$prefijo).'" onclick="cargar_nombre_bodega2(\''.$ruta.'\',\''.$value['CodBod'].'\',\''.$nivel_solicitado.'\')">'.$value['Bodega'].'</span></li>';
+					}
+				}
+				
+
+			}
+			
+		}
+
+		return $html;
+
+	}
+
 
 	function ruta_bodega($padre)
 	{

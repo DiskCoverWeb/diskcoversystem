@@ -748,6 +748,8 @@ function autocoplet_ingreso_donante(){
         success: function(data)
         {       
           $('#myModal_notificar').modal('hide');
+
+  				cargar_datos_procesados();
           notificaciones();
         }
     });   

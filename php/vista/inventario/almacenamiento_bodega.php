@@ -299,7 +299,12 @@ function contenido_bodega()
        dataType:'json',
 	    success: function(data)
 	    {
+	    	$('#arbol_bodegas li span.label-success').removeClass('label-success');
+	    	id = $('#txt_cod_bodega').val();
+	    	id = id.replaceAll('.','_');
 	    	$('#contenido_bodega').html(data);
+	    	$('#c_'+id).addClass('label-success');	
+	    	productos_asignados();
 	    }
 	});
 
@@ -588,7 +593,7 @@ async function buscar_ruta()
 								</ul>               
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-default" onclick="cargar_bodegas();" data-dismiss="modal">Cerrar</button>
             </div> 
         </div>
     </div>

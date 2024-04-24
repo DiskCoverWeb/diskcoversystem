@@ -36,6 +36,8 @@
   	motivo_egreso()	
   	lista_egreso();
   	notificaciones();
+
+
   })
 
   function notificaciones()
@@ -222,6 +224,36 @@
 	    }
 	  });
 	}
+	function area_egreso_modal(){
+		
+	 	$.ajax({
+		    type: "POST",
+	       url:   '../controlador/inventario/egreso_alimentosC.php?areas=true',          
+		     // data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+		    	 var option = '';
+		    	 data.forEach(function(item,i){
+		    	 	img = 'simple';
+		    	 	if(item.data.Picture!='.'){	 		img = item.data.Picture; 	 	}
+	          option+= '<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">'+
+	                      '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/'+img+'.png" onclick="cambiar_area(\''+item.id+'\',\''+item.text+'\')"  style="width: 60px;height: 60px;"></button><br>'+
+	                      '<b>'+item.text+'</b>'+
+	                    '</div>';
+	        })
+
+	        // $('#txt_paquetes').html(op); 
+	        $('#pnl_opciones').html(option);       	 
+		    }
+		});
+	}
+
+	function cambiar_area(id,text)
+	{
+		$('#ddl_areas').append($('<option>',{value:  id, text: text,selected: true }));
+		$('#myModal_opciones').modal('hide');
+	} 
 
 	function motivo_egreso(){
 	  $('#ddl_motivo').select2({
@@ -240,6 +272,36 @@
 	      cache: true
 	    }
 	  });
+	}
+
+	function motivo_egreso_modal(){
+		
+	 	$.ajax({
+		    type: "POST",
+	       url:   '../controlador/inventario/egreso_alimentosC.php?motivos=true',          
+		     // data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+		    	 var option = '';
+		    	 data.forEach(function(item,i){
+	         	img = 'simple';
+		    	 	if(item.data.Picture!='.'){	 		img = item.data.Picture; 	 	}
+	          option+= '<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">'+
+	                      '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/'+img+'.png" onclick="cambiar_motivo(\''+item.id+'\',\''+item.text+'\')"  style="width: 60px;height: 60px;"></button><br>'+
+	                      '<b>'+item.text+'</b>'+
+	                    '</div>';
+	        })
+	        // $('#txt_paquetes').html(op); 
+	        $('#pnl_opciones').html(option);       	 
+		    }
+		});
+	}
+
+	function cambiar_motivo(id,text)
+	{
+		$('#ddl_motivo').append($('<option>',{value:  id, text: text,selected: true }));
+		$('#myModal_opciones').modal('hide');
 	}
 
 	function buscar_producto(codigo)
@@ -268,6 +330,19 @@
 
 	function add_egreso()
 	{
+		var stock = $('#txt_stock').val(); 
+		var cant = $('#txt_cantidad').val(); 
+		console.log(cant);
+		console.log(stock);
+		if(parseFloat(stock) < parseFloat(cant))
+		{
+			Swal.fire("La catidad supera al Stock","","info")
+			return false;
+		}else if(parseFloat(cant)<=0  || cant=='' )
+		{
+			Swal.fire("La catidad invalida","","info")
+			return false;
+		}
 		var parametros = 
 		{
 			'codigo':$('#txt_cod_producto').val(),
@@ -318,8 +393,25 @@
     
 	    // Verificar si se seleccionó un archivo
 	    if (!archivo) {
-	      alert('Por favor, seleccione un archivo.');
-	      return;
+
+	    	Swal.fire("Seleccione un archivo","","info");
+	      // alert('Por favor, seleccione un archivo.');
+	      return false;
+	    }
+	    if($('#txt_detalle').val()=='')
+	    {
+	    	Swal.fire("","Ingrese un detalle de egreso","info");
+	    	return false;
+	    }
+	    if($('#ddl_areas').val()=='')
+	    {
+	    	Swal.fire("","Seleccione un Area de egreso","info");
+	    	return false;
+	    }
+	    if($('#ddl_motivo').val()=='')
+	    {
+	    	Swal.fire("","Seleccione un motivo de egreso","info");
+	    	return false;
 	    }
 
 	    // Crear un objeto FormData
@@ -346,6 +438,20 @@
 		    	}
 		    }
 		});
+	}
+
+	function abrir_modal(op)
+	{
+		if(op=='M')
+		{
+			$('#lbl_titulo_modal').text('MOTIVO DE EGRESO');
+		 	motivo_egreso_modal()
+		}else
+		{
+			$('#lbl_titulo_modal').text('AREA DE EGRESO');
+		 	area_egreso_modal();
+		}
+		$('#myModal_opciones').modal('show');
 	}
   	
    
@@ -417,7 +523,7 @@
 					<div class="col-sm-3">
 						<div class="input-group">
 							<div class="input-group-btn" style="padding-right:5px">
-								<button type="button" class="btn btn-default btn-sm">
+								<button type="button" class="btn btn-default btn-sm" onclick="abrir_modal('A')">
 									<img src="../../img/png/area_egreso.png" style="width: 60px;height: 60px;">
 								</button>
 							</div>
@@ -431,7 +537,7 @@
 					<div class="col-sm-3">
 						<div class="input-group">
 							<div class="input-group-btn" style="padding-right:5px">
-								<button type="button" class="btn btn-default btn-sm">
+								<button type="button" class="btn btn-default btn-sm" onclick="abrir_modal('M')">
 									<img src="../../img/png/transporte_caja.png" style="width: 60px;height: 60px;">
 								</button>
 							</div>
@@ -457,7 +563,7 @@
 					<div class="col-sm-3">						
 						<form enctype="multipart/form-data" id="form_img" method="post" style="width: inherit;">
 							 <div class="fileupload fileupload-new" data-provides="fileupload">
-							    <span class="btn btn-primary btn-file">
+							    <span class="btn btn-default btn-file">
 							    <img src="../../img/png/clip.png" style="width: 60px;height: 60px;">
 							    <span class="fileupload-new">Archivo Adjunto</span>
 							    <span class="fileupload-exists">Archivo Adjunto</span> 
@@ -482,7 +588,7 @@
 					</div>														
 					<div class="col-sm-3">
 						<b>Grupo de producto</b>
-						<input type="" class="form-control input-sm" id="txt_grupo" name="txt_grupo">	
+						<input type="" class="form-control input-sm" id="txt_grupo" name="txt_grupo" readonly>	
 								
 					</div>	
 					<div class="col-sm-1">
@@ -532,6 +638,30 @@
 		</div>	
 	</div>
 </div>
+
+
+<!-- Modal -->
+<div id="myModal_opciones" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="lbl_titulo_modal"></h4>
+      </div>
+      <div class="modal-body">
+        	<div class="row text-center" id="pnl_opciones">
+          </div> 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 
 
 

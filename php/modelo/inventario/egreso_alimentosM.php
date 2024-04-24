@@ -21,7 +21,7 @@ class egreso_alimentosM
 
 	function areas($query)
 	{
-		$sql = "SELECT   Proceso, Cmds, ID
+		$sql = "SELECT   Proceso, Cmds, ID,Picture
 				FROM      Catalogo_Proceso
 				WHERE  Item = '".$_SESSION['INGRESO']['item']."' 
 				AND Nivel = 95
@@ -35,7 +35,7 @@ class egreso_alimentosM
 	}
 	function motivo_egreso($query)
 	{
-		$sql = "SELECT   Proceso, Cmds, ID
+		$sql = "SELECT   Proceso, Cmds, ID,Picture
 			FROM      Catalogo_Proceso
 			WHERE   Item = '".$_SESSION['INGRESO']['item']."' 
 			AND Nivel = 94

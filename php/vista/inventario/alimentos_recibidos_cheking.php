@@ -1104,9 +1104,12 @@ function eliminar_lin(num)
  {
  		var mensaje = $('#txt_notificar').val();
  		var para_proceso = 1;
+ 		var encargado = '';
  		if(usuario=='usuario')
  		{
  			mensaje = $('#txt_texto').val();
+ 			encargado = $('#txt_codigo_usu').val();
+
  			para_proceso = 2;
  		}
    
@@ -1117,6 +1120,7 @@ function eliminar_lin(num)
         'pedido':$('#txt_codigo').val(),
         'de_proceso':3,
         'pa_proceso':para_proceso,
+        'encargado':encargado,
     }
 
     // var parametros = {
@@ -1132,8 +1136,14 @@ function eliminar_lin(num)
       success:  function (response) { 
         if(response==1)
         {
-        	
+
+        	if(usuario=='usuario')
+			 		{		 		
+          	cambiar_a_clasificacion('C');
+			 		}else{
           	cambiar_a_clasificacion();
+			 		}
+        	
           	Swal.fire("","Notificacion enviada","success").then(function(){
           	$('#myModal_notificar_usuario').modal('hide'); 
           	$('#txt_texto').val('');   
@@ -1149,10 +1159,12 @@ function eliminar_lin(num)
     });
  }
 
- function cambiar_a_clasificacion()
+ function cambiar_a_clasificacion(T = 'R')
  {   
+ 		var t = T;
     var parametros = {
         'pedido':$('#txt_codigo').val(),
+        'T':t,
     }
      $.ajax({
       data:  {parametros,parametros},
