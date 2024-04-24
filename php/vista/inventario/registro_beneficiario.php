@@ -3,7 +3,7 @@
 <!--
     AUTOR DE RUTINA	: Dallyana Vanegas
     FECHA CREACION : 16/02/2024
-    FECHA MODIFICACION : 15/04/2024
+    FECHA MODIFICACION : 24/04/2024
     DESCIPCION : Interfaz de modulo Gestion Social/Registro Beneficiario
  -->
 
@@ -223,34 +223,25 @@
                                     </div>
                                 </div>
 
-                                <div style="flex: 1; margin-right: 10px; ">
-                                    <label for="sexo" style="display: block;">Sexo</label>
-                                    <select class="form-control input-xs" name="sexo" id="sexo"
-                                        style="width: 100%;"></select>
-                                </div>
-                            </div>
-                            <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
                                 <div id="carouselBtnIma_87" class="carousel slide" data-ride="carousel"
                                     style="margin-right: 10px;">
                                     <div class="carousel-inner">
                                     </div>
                                 </div>
-                                <!--div style="margin-right: 10px;  display: flex; ">
-                                    <a href="#" id="ingresarEstado">
-                                        <img src="../../img/png/estado.png" width="60" height="60"
-                                        onclick="abrirModal(87)" title="INGRESAR ESTADO">
-                                    </a>
-                                </div-->
-                                <!--div style="flex: 1; margin-right: 10px; ">
-                                    <label for="input_87" style="display: block;">Estado</label>
-                                    <input class="form-control input-xs" type="text" name="input_87" id="input_87"
-                                        placeholder="Haz clic sobre la imagen" readonly>
-                                </div-->
+
                                 <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
                                     <label for="select_87" style="display: block;">Estado</label>
                                     <select class="form-control input-xs" name="select_87" id="select_87"
                                         style="width: 100%;"></select>
                                 </div>
+
+                                <!--div style="flex: 1; margin-right: 10px; ">
+                                    <label for="sexo" style="display: block;">Sexo</label>
+                                    <select class="form-control input-xs" name="sexo" id="sexo"
+                                        style="width: 100%;"></select>
+                                </div-->
+                            </div>
+                            <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
                                 <div style="flex: 1; margin-right: 10px; ">
                                     <div class="col" style="width:100%">
                                         <label for="nombreRepre" style="display: block;">Nombre Representante
@@ -416,13 +407,13 @@
                                     <label for="totalPersonas" style="display: block;">Total de Personas
                                         Atendidas</label>
                                     <input type="number" name="totalPersonas" id="totalPersonas"
-                                        class="form-control input-xs" min="0" max="100">
+                                        class="form-control input-xs" min="0" max="100" readonly>
                                 </div>
-                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
+                                <!--div style="flex: 1; margin-right: 10px; margin-left: 10px;">
                                     <label for="select_91" style="display: block;">Tipo de Población</label>
                                     <select class="form-control input-xs" name="select_91" id="select_91"
                                         style="width: 100%;"></select>
-                                </div>
+                                </div-->
                                 <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
                                     <label for="select_92" style="display: block;">Acción Social</label>
                                     <select class="form-control input-xs" name="select_92" id="select_92"
@@ -582,7 +573,7 @@
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title">Tipo de población</h4>
                         </div>
-                        <div class="modal-body" style="overflow-y: auto;">
+                        <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
                             <div class="table-responsive">
                                 <table class="table" id="tablaPoblacion">
                                     <thead>
@@ -598,6 +589,10 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" id="btnGuardarGrupo">Aceptar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div>
                 </div>
@@ -775,20 +770,21 @@
         } else if (files.length > 0) {
             var fileNames = [];
             var fileSizeLimit = false;
-            var contieneComa = false;
-            var contieneEspacio = false;
+            var contieneSpecialChar = false;
+            var specialChar = /[!@#$%^&*()+\-=\[\]{};':"\\|,<>\/?]/;
 
             for (var i = 0; i < files.length; i++) {
                 var fileName = files[i].name.toLowerCase();
-                if (fileName.includes(',')) {
-                    contieneComa = true;
+                console.log(fileName);
+                if (specialChar.test(fileName)) {
+                    contieneSpecialChar = true;
                     break;
                 }
 
                 if (fileName.includes(' ')) {
-                    contieneEspacio = true;
-                    break;
+                    fileName = fileName.replace(/ /g, "_");
                 }
+                console.log(fileName);
                 fileNames.push(fileName);
 
                 if (files[i].size > maxFileSize * 1024 * 1024) {
@@ -797,12 +793,10 @@
                 }
             }
 
-            if (contieneComa || contieneEspacio) {
-                var errorMessage = contieneComa ? 'comas (,)' : 'espacios';
-                var errorTitle = contieneComa ? 'comas' : 'espacios';
+            if (contieneSpecialChar) {
                 Swal.fire({
-                    title: 'Los nombres de los archivos no deben contener ' + errorTitle + '.',
-                    text: 'Se encontraron ' + errorMessage + ' en los nombres de los archivos.',
+                    title: 'Los nombres de los archivos no deben contener caracteres especiales',
+                    text: specialChar,
                     type: 'error'
                 });
                 input.value = '';
@@ -818,9 +812,10 @@
                     fileNames.push(nombreArchivo);
                 }
                 var fileList = fileNames.join(',');
+                console.log(fileList);
                 if (fileList.length > 50) {
                     Swal.fire({
-                        title: 'La longitud total de los nombres de archivo supera los 50 caracteres.',
+                        title: 'La longitud total de los nombres de archivo supera el máximo de caracteres.',
                         text: '',
                         type: 'error'
                     });
@@ -904,7 +899,7 @@
     }
 
     //grupo
-    $('#btnMostrarGrupo').click(function () {
+    /*$('#btnMostrarGrupo').click(function () {
         $.ajax({
             type: "GET",
             url: '../controlador/inventario/registro_beneficiarioC.php?LlenarTblPoblacion=true',
@@ -929,6 +924,72 @@
                 }
             }
         });
+    });*/
+
+    //grupo
+    $('#btnMostrarGrupo').click(function () {
+        $('#modalBtnGrupo').modal('show');
+        agregarFila();
+    });
+
+    function agregarFila() {
+        console.log(valoresFilas);
+        var tbody = $('#tablaPoblacion tbody');
+        tbody.empty();
+        datosArray.forEach(function (item) {
+            var valor = item.id.substring(0, 2);
+            //console.log(item);
+            if (valor == 91) {
+                var fila = $('<tr>', { valueData: item.id });
+                var celda1 = $('<td>', { colspan: 2, text: item.text });
+                var celda2 = $('<td>').append($('<input>', { type: 'number', class: 'form-control hombres', name: 'hombres', value: 0 }));
+                var celda3 = $('<td>').append($('<input>', { type: 'number', class: 'form-control mujeres', name: 'mujeres', value: 0 }));
+                var celda4 = $('<td>').append($('<input>', { type: 'number', class: 'form-control total', name: 'total', readonly: true, value: 0 }));
+                fila.append(celda1, celda2, celda3, celda4);
+                tbody.append(fila);
+
+                var valorFila = valoresFilas.find(f => f.valueData === item.id);
+
+                if (valorFila) {
+                    fila.find('.hombres').val(valorFila.hombres);
+                    fila.find('.mujeres').val(valorFila.mujeres);
+                    fila.find('.total').val(valorFila.total);
+                }
+
+                fila.find('.hombres, .mujeres').on('change', function () {
+                    var hombres = parseInt(fila.find('.hombres').val()) || 0;
+                    var mujeres = parseInt(fila.find('.mujeres').val()) || 0;
+                    var total = hombres + mujeres;
+                    fila.find('.total').val(total);
+                });
+            }
+        });
+    }
+    var valoresFilas = [];
+    $('#btnGuardarGrupo').click(function () {
+        var filas = $('#tablaPoblacion tbody tr');
+        valoresFilas = [];
+        var totalSum = 0;
+        filas.each(function () {
+            var hombres = parseInt($(this).find('.hombres').val()) || 0;
+            var mujeres = parseInt($(this).find('.mujeres').val()) || 0;
+            var total = parseInt($(this).find('.total').val()) || 0;
+            var textoFila = $(this).find('td:first-child').text();
+            var valueData = $(this).attr('valueData');
+
+            if (hombres > 0 || mujeres > 0 || total > 0) {
+                console.log('Fila:', textoFila);
+                console.log('Hombres:', hombres);
+                console.log('Mujeres:', mujeres);
+                console.log('Total:', total);
+                console.log('-------------------');
+                totalSum += total;
+                valoresFilas.push({ hombres, mujeres, total, valueData });
+            }
+        });
+        console.log(totalSum);
+        $('#totalPersonas').val(totalSum);
+        $('#modalBtnGrupo').modal('hide');
     });
 
     var datosArray = [];
@@ -945,95 +1006,96 @@
                 datos.forEach(function (item) {
                     datosArray.push(item);
                 });
-
-                if (val == 1) {
-                    var carouselInner = $('#carouselBtnImaDon .carousel-inner');
-                    if (datos.length > 0) {
-                        carouselInner.empty();
-                    }
-                    datos.forEach(function (item, index) {
-                        var carouselItem = $('<div class="item">');
-                        if (index === 0) {
-                            carouselItem.addClass('active');
+                if (valor != 91) {
+                    if (val == 1) {
+                        var carouselInner = $('#carouselBtnImaDon .carousel-inner');
+                        if (datos.length > 0) {
+                            carouselInner.empty();
                         }
-                        var imgSrc = '../../img/png/' + item.picture + '.png';
-                        var carouselContent = '<img src="' + imgSrc + '" alt="' + item.text + '" width="50" height="50">' +
-                            '<div class="carousel-caption">' +
-                            '</div>';
-                        carouselItem.html(carouselContent);
-                        carouselItem.click(function () {
-                            abrirModal('Don');
+                        datos.forEach(function (item, index) {
+                            var carouselItem = $('<div class="item">');
+                            if (index === 0) {
+                                carouselItem.addClass('active');
+                            }
+                            var imgSrc = '../../img/png/' + item.picture + '.png';
+                            var carouselContent = '<img src="' + imgSrc + '" alt="' + item.text + '" width="50" height="50">' +
+                                '<div class="carousel-caption">' +
+                                '</div>';
+                            carouselItem.html(carouselContent);
+                            carouselItem.click(function () {
+                                abrirModal('Don');
+                            });
+                            carouselInner.append(carouselItem);
                         });
-                        carouselInner.append(carouselItem);
-                    });
-                    var option = '';
-                    var opt = '<option value="">Estado</option>';
-                    datos.forEach(function (item) {
-                        option += '<div class="col-md-6 col-sm-6">' +
-                            '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/' + item.picture + '.png" onclick="itemSelect(\'' + item.picture +
-                            '\',\'' + item.text + '\', \'' + item.color + '\', \'' + item.id +
-                            '\')" style="width: 60px;height: 60px;"></button><br>' +
-                            '<b>' + item.text + '</b>' +
-                            '</div>';
-                        opt += '<option value="' + item.id + '">' + item.text + '</option>';
-                    });
-                    $('#modal_Don').html(option);
-
-                } else {
-                    var carouselInner = $('#carouselBtnIma_' + valor + ' .carousel-inner');
-                    if (datos.length > 0) {
-                        carouselInner.empty();
-                    }
-                    datos.forEach(function (item, index) {
-                        var carouselItem = $('<div class="item">');
-                        if (index === 0) {
-                            carouselItem.addClass('active');
-                        }
-                        var imgSrc = '../../img/png/' + item.picture + '.png';
-                        var carouselContent = '<img src="' + imgSrc + '" alt="' + item.text + '" width="60" height="60">' +
-                            '<div class="carousel-caption">' +
-                            '</div>';
-                        carouselItem.html(carouselContent);
-                        carouselItem.click(function () {
-                            abrirModal(valor);
-                        });
-                        carouselInner.append(carouselItem);
-                    });
-
-                    var option = '';
-                    if (valor == 87) {
+                        var option = '';
                         var opt = '<option value="">Estado</option>';
                         datos.forEach(function (item) {
                             option += '<div class="col-md-6 col-sm-6">' +
-                                '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/' +
-                                item.picture + '.png" onclick="itemSelect(\'' + item.picture +
+                                '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/' + item.picture + '.png" onclick="itemSelect(\'' + item.picture +
                                 '\',\'' + item.text + '\', \'' + item.color + '\', \'' + item.id +
                                 '\')" style="width: 60px;height: 60px;"></button><br>' +
                                 '<b>' + item.text + '</b>' +
                                 '</div>';
                             opt += '<option value="' + item.id + '">' + item.text + '</option>';
                         });
-                        $('#modal_87').html(option);
-                    }
-                    if (valor == 93) {
-                        var opt = '<option value="">Beneficiario</option>';
-                        datos.forEach(function (item) {
-                            option += '<div class="col-md-6 col-sm-6">' +
-                                '<button type="button" class="btn btn-default btn-sm" onclick="' +
-                                (item.id === '93.04' ? "itemSelect('" + item.picture + "','" + item.text +
-                                    "','" + item.color + "','" + item.id + "'); abrirModal('pAliado');" :
-                                    "itemSelect('" + item.picture + "','" + item.text + "','" + item.color +
-                                    "','" + item.id + "');") +
-                                '">' +
-                                '<img src="../../img/png/' + item.picture + '.png" style="width: 60px;height: 60px;"></button><br>' +
-                                '<b>' + item.text + '</b>' +
-                                '</div>';
-                            opt += '<option value="' + item.id + '">' + item.text + '</option>';
-                        });
-                        $('#modal_93').html(option);
-                    }
+                        $('#modal_Don').html(option);
 
+                    } else {
+                        var carouselInner = $('#carouselBtnIma_' + valor + ' .carousel-inner');
+                        if (datos.length > 0) {
+                            carouselInner.empty();
+                        }
+                        datos.forEach(function (item, index) {
+                            var carouselItem = $('<div class="item">');
+                            if (index === 0) {
+                                carouselItem.addClass('active');
+                            }
+                            var imgSrc = '../../img/png/' + item.picture + '.png';
+                            var carouselContent = '<img src="' + imgSrc + '" alt="' + item.text + '" width="60" height="60">' +
+                                '<div class="carousel-caption">' +
+                                '</div>';
+                            carouselItem.html(carouselContent);
+                            carouselItem.click(function () {
+                                abrirModal(valor);
+                            });
+                            carouselInner.append(carouselItem);
+                        });
+
+                        var option = '';
+                        if (valor == 87) {
+                            var opt = '<option value="">Estado</option>';
+                            datos.forEach(function (item) {
+                                option += '<div class="col-md-6 col-sm-6">' +
+                                    '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/' +
+                                    item.picture + '.png" onclick="itemSelect(\'' + item.picture +
+                                    '\',\'' + item.text + '\', \'' + item.color + '\', \'' + item.id +
+                                    '\')" style="width: 60px;height: 60px;"></button><br>' +
+                                    '<b>' + item.text + '</b>' +
+                                    '</div>';
+                                opt += '<option value="' + item.id + '">' + item.text + '</option>';
+                            });
+                            $('#modal_87').html(option);
+                        }
+                        if (valor == 93) {
+                            var opt = '<option value="">Beneficiario</option>';
+                            datos.forEach(function (item) {
+                                option += '<div class="col-md-6 col-sm-6">' +
+                                    '<button type="button" class="btn btn-default btn-sm" onclick="' +
+                                    (item.id === '93.04' ? "itemSelect('" + item.picture + "','" + item.text +
+                                        "','" + item.color + "','" + item.id + "'); abrirModal('pAliado');" :
+                                        "itemSelect('" + item.picture + "','" + item.text + "','" + item.color +
+                                        "','" + item.id + "');") +
+                                    '">' +
+                                    '<img src="../../img/png/' + item.picture + '.png" style="width: 60px;height: 60px;"></button><br>' +
+                                    '<b>' + item.text + '</b>' +
+                                    '</div>';
+                                opt += '<option value="' + item.id + '">' + item.text + '</option>';
+                            });
+                            $('#modal_93').html(option);
+                        }
+                    }
                 }
+
             }
         });
     }
@@ -1079,6 +1141,7 @@
     };
 
     function itemSelect(picture, text, color, id) {
+        console.log(id);
         if (id.length == 3) {
             var imagen = "../../img/png/" + picture + ".png";
 
@@ -1145,6 +1208,7 @@
         LlenarSelectRucCliente();
         llenarCarousels(87);
         llenarCarousels(93);
+        llenarCarousels(91);
         llenarCarousels("CxC", true);
         LlenarSelects_Val("CxC", true);
         LlenarSelects_Val(86);
@@ -1506,14 +1570,20 @@
         formData.append('Envio_No', $('#select_86').val());
         formData.append('Comentario', $('#comentario').val() || '.');
         formData.append('No_Soc', $('#totalPersonas').val());
-        formData.append('Area', $('#select_91').val());
+        //formData.append('Area', $('#select_91').val());
         formData.append('Acreditacion', $('#select_92').val());
         formData.append('Tipo_Dato', $('#select_90').val());
         formData.append('Cod_Fam', $('#select_89').val());
         formData.append('Observaciones', $('#infoNut').val());
 
+        console.log(valoresFilas);
+        formData.append('TipoPoblacion', JSON.stringify(valoresFilas));
+
+        console.log("Tipo Poblacion:");
         formData.forEach(function (value, key) {
-            console.log(key + ': ' + value);
+            if (key == 'TipoPoblacion[]') {
+                console.log(value);
+            }
         });
 
         console.log("Added Evidences:");
@@ -1531,7 +1601,10 @@
         if (!$('#horaEntregac').val()) camposVacios.push('Hora Entrega');
         if (!$('#select_86').val()) camposVacios.push('Frecuencia');
         if (!$('#totalPersonas').val()) camposVacios.push('Personas Atendidas');
-        if (!$('#select_91').val()) camposVacios.push('Tipo poblacion');
+        //if (!$('#select_91').val()) camposVacios.push('Tipo poblacion');
+        if (valoresFilas.length == 0) {
+            camposVacios.push('Tipo Poblacion');
+        }
         if (!$('#select_92').val()) camposVacios.push('Accion social');
         if (!$('#select_90').val()) camposVacios.push('Vulnerabilidad');
         if (!$('#select_89').val()) camposVacios.push('Tipo Atencion');
@@ -1589,7 +1662,7 @@
         $('#select_88').val(null).trigger('change');
         $('#select_89').val(null).trigger('change');
         $('#select_90').val(null).trigger('change');
-        $('#select_91').val(null).trigger('change');
+        //$('#select_91').val(null).trigger('change');
         $('#archivoAdd').val('');
         $('#diaEntregac').val('');
         $('#horaEntregac').val('');
@@ -1600,6 +1673,7 @@
         nombreArchivo = '';
         ruta = '';
         nombre = '';
+        valoresFilas = [];
         $('#modalDescarga .modal-footer').hide();
     }
 
@@ -1660,6 +1734,8 @@
             data: { valor: Codigo },
             success: function (datos) {
                 if (datos != 0) {
+                    actualizarEstilo();
+
                     $('#nombreRepre').val(datos.Representante);
                     $('#ciRepre').val(datos.CI_RUC_R);
                     $('#telfRepre').val(datos.Telefono_R);
@@ -1739,6 +1815,7 @@
 
                 }
             });
+            llenarCamposPoblacion(miCodigo);
         } else {
             Swal.fire({
                 title: 'No se seleccionó un Cliente',
@@ -1749,6 +1826,28 @@
             });
         }
     });
+
+    function llenarCamposPoblacion(Codigo) {
+        console.log('hola');
+        $.ajax({
+            url: '../controlador/inventario/registro_beneficiarioC.php?llenarCamposPoblacion=true',
+            type: 'post',
+            dataType: 'json',
+            data: { valor: Codigo },
+            success: function (datos) {
+                if (datos != 0) {
+                    console.log(datos);
+                    datos.forEach(function (registro) { 
+                        var hombres = registro.Hombres;
+                        var mujeres = registro.Mujeres;
+                        var total = registro.Total;
+                        var valueData = registro.Cmds;
+                        valoresFilas.push({ hombres, mujeres, total, valueData });
+                    });
+                }
+            }
+        });
+    }
 
     //llenar selects preseleccionados
     function llenarPreSelects(valor) {
@@ -1786,7 +1885,7 @@
             $('.card-header, .modal-header').css('background-color', darkerColor);
         } else {
             $('.card-body').css('background-color', '#fffacd');
-            $('.card-header').css('background-color', '#f3e5ab');
+            $('.card-header, .modal-header').css('background-color', '#f3e5ab');
         }
     }
 

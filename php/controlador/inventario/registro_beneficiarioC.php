@@ -3,7 +3,7 @@
 /** 
  * AUTOR DE RUTINA	: Dallyana Vanegas
  * FECHA CREACION	: 16/02/2024
- * FECHA MODIFICACION : 15/04/2024
+ * FECHA MODIFICACION : 24/04/2024
  * DESCIPCION : Clase controlador para Agencia
  */
 
@@ -88,6 +88,11 @@ if (isset($_GET['llenarCamposInfoAdd'])) {
     echo json_encode($controlador->llenarCamposInfoAdd($valor));
 }
 
+if (isset($_GET['llenarCamposPoblacion'])) {
+    $valor = $_POST['valor'];
+    echo json_encode($controlador->llenarCamposPoblacion($valor));
+}
+
 if (isset($_GET['guardarAsignacion'])) {
     // Crear un array con los datos del formulario
     $params = array(
@@ -124,7 +129,8 @@ if (isset($_GET['guardarAsignacion'])) {
         'Envio_No' => $_POST['Envio_No'],
         'Comentario' => $_POST['Comentario'],
         'No_Soc' => $_POST['No_Soc'],
-        'Area' => $_POST['Area'],
+        //'Area' => $_POST['Area'],
+        'TipoPoblacion' => $_POST['TipoPoblacion'],
         'Acreditacion' => $_POST['Acreditacion'],
         'Tipo_Dato' => $_POST['Tipo_Dato'],
         'Cod_Fam' => $_POST['Cod_Fam'],
@@ -134,7 +140,7 @@ if (isset($_GET['guardarAsignacion'])) {
     // Verificar si se han cargado archivos
     if (isset($_FILES['Evidencias']) && $_FILES['Evidencias']['error'][0] == UPLOAD_ERR_OK) {
         $nombresArchivos = array();
-        $filePathBase = dirname(__DIR__, 3) . "/TEMP/EVIDENCIA_" . $_SESSION['INGRESO']['Entidad'] . "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
+        $filePathBase = dirname(__DIR__, 2) . "/comprobantes/sustentos/EVIDENCIA_" . $_SESSION['INGRESO']['Entidad'] . "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
         $filePathBase = str_replace(' ', '_', $filePathBase);
 
         // Crear el directorio si no existe
@@ -145,6 +151,7 @@ if (isset($_GET['guardarAsignacion'])) {
         // Iterar sobre cada archivo cargado
         foreach ($_FILES['Evidencias']['name'] as $indice => $nombre) {
             $filename = pathinfo($nombre, PATHINFO_FILENAME);
+            $filename = str_replace(' ', '_', $filename);
             $ext = strtolower(pathinfo($nombre, PATHINFO_EXTENSION));
             $filepath = $filePathBase . $filename . '.' . $ext;
 
@@ -191,7 +198,7 @@ if (isset($_GET['guardarAsignacion'])) {
         $params['NombreArchivo'] = implode('', $nombresArchivos);
 
         if (strlen($params['NombreArchivo']) > 90) {
-            echo json_encode(["res" => '0', "mensaje" => "El nombre del archivo supera los 90 caracteres", "datos" => $params['NombreArchivo']]);
+            echo json_encode(["res" => '0', "mensaje" => "El nombre del archivo supera el máximo de caracteres", "datos" => $params['NombreArchivo']]);
         } else {
             echo json_encode($controlador->guardarAsignacion($params));
         }
@@ -261,6 +268,18 @@ class registro_beneficiarioC
 
     }
 
+    function llenarCamposPoblacion($parametros)
+    {
+        $datos = $this->modelo->llenarCamposPoblacion($parametros);
+        if (empty($datos)) {
+            $datos = 0;
+        }
+        return $datos;
+
+    }
+
+    
+
     function LlenarSelectSexo()
     {
         $datos = $this->modelo->LlenarSelectSexo();
@@ -293,7 +312,7 @@ class registro_beneficiarioC
 
     function EliminaArchivosTemporales($parametros)
     {
-        $basePath = dirname(__DIR__, 3);
+        $basePath = dirname(__DIR__, 2);
         $tempFilePath = $parametros['ruta'] . $parametros['nombre'];
         $fullPath = $basePath . $tempFilePath;
         //print_r($parametros['nombre']);die();
@@ -316,8 +335,8 @@ class registro_beneficiarioC
 
     function descargarArchivo($valores)
     {
-        $base = dirname(__DIR__, 3);
-        $directorio = "/TEMP/EVIDENCIA_" . $_SESSION['INGRESO']['Entidad'] . "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
+        $base = dirname(__DIR__, 2);
+        $directorio = "/comprobantes/sustentos/EVIDENCIA_" . $_SESSION['INGRESO']['Entidad'] . "/EVIDENCIA_" . $_SESSION['INGRESO']['item'] . "/";
         $directorio = str_replace(' ', '_', $directorio);
         $carpetaDestino = $base . $directorio;
         $carpetaDestino = str_replace(' ', '_', $carpetaDestino);
@@ -446,5 +465,6 @@ class registro_beneficiarioC
         $datos = $this->modelo->guardarAsignacion($parametros);
         return array("res" => '1', "mensaje" => "Se registro correctamente", "datos" => $datos);
     }
+
 }
 ?>

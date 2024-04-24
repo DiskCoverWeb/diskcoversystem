@@ -3,7 +3,7 @@
 /** 
  * AUTOR DE RUTINA : Dallyana Vanegas
  * FECHA CREACION : 16/02/2024
- * FECHA MODIFICACION : 15/04/2024
+ * FECHA MODIFICACION : 24/04/2024
  * DESCIPCION : Clase modelo para llenar campos y guardar registros de Agencia
  */
 
@@ -240,7 +240,6 @@ class registro_beneficiarioM
                 Envio_No = '" . $parametros['Envio_No'] . "',
                 Etapa_Procesal = '" . $parametros['Comentario'] . "',
                 No_Soc = '" . $parametros['No_Soc'] . "', 
-                Area = '" . $parametros['Area'] . "',
                 Acreditacion = '" . $parametros['Acreditacion'] . "', 
                 Tipo_Dato = '" . $parametros['Tipo_Dato'] . "', 
                 Cod_Fam = '" . $parametros['Cod_Fam'] . "', 
@@ -256,16 +255,15 @@ class registro_beneficiarioM
     function CrearClienteDatosExtra($parametros)
     {
         $sql2 = "INSERT INTO Clientes_Datos_Extras (Codigo, CodigoA, Dia_Ent, Hora_Ent, 
-        Envio_No, Etapa_Procesal, No_Soc, Area, 
-        Acreditacion, Tipo_Dato, Cod_Fam, Evidencias, Observaciones, Item) 
+        Envio_No, Etapa_Procesal, No_Soc, Acreditacion, Tipo_Dato, 
+        Cod_Fam, Evidencias, Observaciones, Item) 
         VALUES ('" . $parametros['Codigo'] . "', 
                 '" . $parametros['CodigoA2'] . "', 
                 '" . $parametros['Dia_Ent2'] . "', 
                 '" . $parametros['Hora_Registro'] . "', 
                 '" . $parametros['Envio_No'] . "', 
                 '" . $parametros['Comentario'] . "', 
-                '" . $parametros['No_Soc'] . "', 
-                '" . $parametros['Area'] . "', 
+                '" . $parametros['No_Soc'] . "',                  
                 '" . $parametros['Acreditacion'] . "', 
                 '" . $parametros['Tipo_Dato'] . "', 
                 '" . $parametros['Cod_Fam'] . "', 
@@ -275,6 +273,43 @@ class registro_beneficiarioM
         return $this->db->datos($sql2);
     }
 
+    function llenarCamposPoblacion($codigo) {
+        $sqlFecha = "SELECT MAX(FechaM) AS UltimaFecha FROM Trans_Tipo_Poblacion 
+                     WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                     AND CodigoC = '" . $codigo . "'";
+    
+        $resultadoFecha = $this->db->datos($sqlFecha);
+    
+        $ultimaFecha = $resultadoFecha[0]['UltimaFecha']->format('Y-m-d');
+    
+        $sqlRegistros = "SELECT * FROM Trans_Tipo_Poblacion 
+                         WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                         AND CodigoC = '" . $codigo . "' 
+                         AND FechaM = '" . $ultimaFecha . "'";
+    
+        return $this->db->datos($sqlRegistros);
+    }
+    
+
+    function CrearTipoPoblacion($parametros) {
+        $tipoPoblacion = json_decode($parametros['TipoPoblacion'], true);
+    
+        $sql = "INSERT INTO Trans_Tipo_Poblacion (Item, Periodo, Fecha, FechaM, CodigoC, Cmds, Hombres, Mujeres, Total, CodigoU, X) VALUES ";
+        $values = array();
+    
+        foreach ($tipoPoblacion as $poblacion) {
+            $values[] = "('" . $_SESSION['INGRESO']['item'] . "', '" . $_SESSION['INGRESO']['periodo'] . "',
+                        '" . date('Y-m-d') . "', '" . date('Y-m-d') . "',
+                        '" . $parametros['Codigo'] . "', '" . $poblacion['valueData'] . "',
+                        '" . $poblacion['hombres'] . "', '" . $poblacion['mujeres'] . "',
+                        '" . $poblacion['total'] . "', '" . $_SESSION['INGRESO']['CodigoU'] . "', '.')";
+        }
+    
+        $sql .= implode(', ', $values); 
+        return $this->db->datos($sql);
+    }
+
+
 
     function guardarAsignacion($parametros)
     {
@@ -282,11 +317,13 @@ class registro_beneficiarioM
         $result = $this->db->datos($sql);
 
         if ($result[0]['count'] > 0) {
-            $sql1 = $this->ActualizarClientes($parametros);
-            $sql2 = $this->ActualizarClientesDatosExtra($parametros);
+            $this->ActualizarClientes($parametros);
+            $this->ActualizarClientesDatosExtra($parametros);
+            $this->CrearTipoPoblacion($parametros);
         } else {
-            $sql1 = $this->ActualizarClientes($parametros);
-            $sql2 = $this->CrearClienteDatosExtra($parametros);
+            $this->ActualizarClientes($parametros);
+            $this->CrearClienteDatosExtra($parametros);
+            $this->CrearTipoPoblacion($parametros);
         }
 
         Eliminar_Nulos_SP("Clientes");
@@ -298,7 +335,7 @@ class registro_beneficiarioM
                          AND Evidencias IS NOT NULL";
         $result = $this->db->datos($sql);
 
-        return ['dato1' => $sql1, 'dato2' => $sql2,'result' => $result[0]['Evidencias']];
+        return ['result' => $result[0]['Evidencias']];
     }
 }
 
