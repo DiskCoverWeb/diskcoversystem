@@ -803,6 +803,10 @@ class facturar_pensionC
       $Total_Abonos = $TotalCajaMN + $Total_Bancos + $SubTotal_NC;
       $FA['Total_Abonos'] = $Total_Abonos;
       $FA['T'] = G_PENDIENTE;
+      if(isset($FA['saldoTotal']) && $FA['saldoTotal']==0)
+      {
+        $FA['T'] = 'C';        
+      }
       $FA['Saldo_MN'] = $FA['Total'] - $Total_Abonos;
       if($totalIva==0)
       {
@@ -824,6 +828,7 @@ class facturar_pensionC
       $Codigo3 = ".";
       $Anio1 = $value["TICKET"];
       //Grabamos el numero de factura
+      // print_r($FA);die();
       Grabar_Factura1($FA);
 
       //Seteos de Abonos Generales para todos los tipos de abonos
@@ -911,16 +916,36 @@ class facturar_pensionC
       $TA['Factura'] = $FA['Factura'];
       $TA['Autorizacion'] = $FA['Autorizacion'];
       $TA['CodigoC'] = $FA['codigoCliente'];
+      $conn = new db();
+        $sql = "UPDATE Facturas
+            SET Saldo_MN = 0 ";
+          if (isset($FA['saldoTotal']) && $FA['saldoTotal'] == 0) {
+            $sql .= ",T = 'C'";
+          } else {
+            $sql .= " ,T = 'P' ";
+          }
+        $sql .= "
+          WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+          AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+          AND Factura = " . $TextFacturaNo . "
+          AND TC = '" . $FA['TC'] . "'
+          AND CodigoC = '" . $FA['codigoCliente'] . "'
+          AND Autorizacion = '" . $FA['Autorizacion'] . "'
+          AND Serie = '" . $FA['Serie'] . "' ";
+
+        $conn->String_Sql($sql);
+
 
       $TxtEfectivo = "0.00";
-    if (strlen($FA['Autorizacion']) >= 13) {
+      if (strlen($FA['Autorizacion']) >= 13) 
+      {
         $FA['Desde'] = $FA['Factura'];
         $FA['Hasta'] = $FA['Factura'];
-         }
-    $FA['serie'] = $FA['Serie'];
-    $FA['num_fac'] = $FA['Factura'];
-    $FA['tc'] = $FA['TC'];
-    $FA['cod_doc'] = '01';
+      }
+      $FA['serie'] = $FA['Serie'];
+      $FA['num_fac'] = $FA['Factura'];
+      $FA['tc'] = $FA['TC'];
+      $FA['cod_doc'] = '01';
 
     if (strlen($FA['Autorizacion']) == 13) {
       try {

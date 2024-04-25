@@ -6855,7 +6855,7 @@ function Grabar_Factura1($TFA,$VerFactura = false, $NoRegTrans = false)
   $Orden_No = 0;
   $Total_Desc_ME = 0;
   if(strlen($TFA['Tipo_Pago']) <= 1){ $TFA['Tipo_Pago'] = "01";}
-  $TFA['T'] = G_PENDIENTE;
+  if(!isset($TFA['T'])){$TFA['T'] = G_PENDIENTE;}  
   $TFA['SubTotal'] = 0;
   $TFA['Con_IVA'] = 0;
   $TFA['Sin_IVA'] = 0;
