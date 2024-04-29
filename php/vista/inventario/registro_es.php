@@ -528,16 +528,34 @@
             'Cod_Benef': Cod_Benef,
             'TextConcepto': $('#TextConcepto').val(),
         };
-        /*
+        
         $.ajax({
             data: { 'parametros': parametros },
             url: '../controlador/inventario/registro_esC.php?grabar_comprobante=true',
             type: 'post',
             dataType: 'json',
             success: function (data) {
+                if(data.res == 1){
+                    var url = "../../TEMP/" + data.pdf1;
+                    window.open(url, '_blank');
+                    var url = "../../TEMP/" + data.pdf2;
+                    window.open(url, '_blank');
+                    swal.fire({
+                        type: 'success',
+                        title: 'Todo correcto',
+                        text: 'Comprobante grabado con éxito'
+                    });
+                    location.reload();
+                }else{
+                    swal.fire({
+                        type: 'error',
+                        title: 'Error',
+                        text: 'No se pudo grabar el comprobante'
+                    });
                 
+                }
             }
-        });*/
+        });
 
 
     }
@@ -1098,18 +1116,15 @@
             print_r($ruta[0] . '#'); ?>" title="Salir de modulo" class="btn btn-default">
                 <img src="../../img/png/salire.png">
             </a>
-            <button type="button" class="btn btn-default" id="imprimir_pdf" title="Descargar PDF">
-                <img src="../../img/png/impresora.png">
-            </button>
             <button type="button" class="btn btn-default" id="imprimir_excel" title="Descargar Excel">
                 <img src="../../img/png/table_excel.png">
             </button>
             <button title="Guardar" class="btn btn-default" onclick="validar_grabacion()">
                 <img src="../../img/png/grabar.png">
             </button>
-            <button title="Enviar" class="btn btn-default" id="enviar_btn" onclick="enviar_correo()">
+            <!--<button title="Enviar" class="btn btn-default" id="enviar_btn" onclick="enviar_correo()">
                 <img src="../../img/png/send_email.png" style="height:32px; width:32px">
-            </button>
+            </button>-->
         </div>
     </div>
     <div class="">
@@ -1158,7 +1173,6 @@
                                             <option value="CD">CD</option>
                                             <option value="NC">NC</option>
                                             <option value="ND">ND</option>
-                                            <option value="CD">CD</option>
                                         </select>
                                     </div>
                                     <div class="col-sm-2">
@@ -1341,7 +1355,7 @@
                                     <div class="col-sm-4">
                                         <label for="TxtCodBar">CODIGO DE BARRA</label>
                                         <input type="text" name="TxtCodBar" id="TxtCodBar"
-                                            class="form-control input-xs">
+                                            class="form-control input-xs" value=".">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -1368,19 +1382,19 @@
                                     <div class="col-sm-4">
                                         <label for="TxtModelo">MODELO</label>
                                         <input type="text" name="TxtModelo" id="TxtModelo" class="form-control input-xs"
-                                            onblur="toupper(this);">
+                                            onblur="toupper(this);" value=".">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3">
                                         <label for="TxtProcedencia">PROCEDENCIA/UBICACION</label>
                                         <input type="text" name="TxtProcedencia" id="TxtProcedencia"
-                                            class="form-control input-xs" onblur="toupper(this);">
+                                            class="form-control input-xs" onblur="toupper(this);" value=".">
                                     </div>
                                     <div class="col-sm-3">
                                         <label for="TxtSerieNo">SERIE No.</label>
                                         <input type="text" name="TxtSerieNo" id="TxtSerieNo"
-                                            class="form-control input-xs">
+                                            class="form-control input-xs" value=".">
                                     </div>
                                     <div class="col-sm-2">
                                         <label for="TextDesc">DESC. 1</label>

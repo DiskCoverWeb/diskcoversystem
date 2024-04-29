@@ -2,6 +2,7 @@
 use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
 include('../../modelo/inventario/registro_esM.php');
 require_once('../../funciones/funciones.php');
+require(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
 // include('../../controlador/contabilidad/incomC.php');
 /**
  * 
@@ -256,10 +257,12 @@ if(isset($_GET['grabar_comprobante'])){
 class registro_esC
 {
 	private $modelo;
+  private $pdf;
   // private $incom ;
 	function __construct()
 	{
 		$this->modelo = new  registro_esM();
+    $this->pdf = new cabecera_pdf();
     // $this->incom = new  incomC();
 	}
 
@@ -300,7 +303,7 @@ class registro_esC
           case "NC":
             $NumComp = ReadSetDataNum("NotaCredito", True, True);
             break;
-        }
+        } 
         $CodigoInv = $AdoKardex[0]['CODIGO_INV'];
         $Cta_Inventario = $AdoKardex[0]['CTA_INVENTARIO'];
         $Total = 0;
@@ -510,31 +513,30 @@ class registro_esC
         if(($Debe - $Haber) != 0){
           throw new Exception("Verifique el comprobante, no cuadra por: " . ($Debe - $Haber));
         }
-        $Co = array
-        (
-          'T' => G_NORMAL,
-          'TP' => $parametros['CLTP'],
-          'Fecha' => $FechaTexto,
-          'Numero' => $NumComp,
-          'Concepto' => $parametros['TextConcepto'],
-          'CodigoB' => $parametros['CodigoCli'],
-          'Efectivo' => 0,
-          'Monto_Total' => $Total,
-          'Usuario' => $_SESSION['INGRESO']['CodigoU'],
-          'T_No' => $parametros['Trans_No'],
-          'Item' => $_SESSION['INGRESO']['item']
-        );
+        $Co = datos_Co();
+        $Co['T'] = G_NORMAL;
+        $Co['TP'] = $parametros['CLTP'];
+        $Co['Fecha'] = $FechaTexto;
+        $Co['Numero'] = $NumComp;
+        $Co['Concepto'] = $parametros['TextConcepto'];
+        $Co['CodigoB'] = $parametros['CodigoCli'];
+        $Co['Efectivo'] = 0;
+        $Co['Monto_Total'] = $Total;
+        $Co['Usuario'] = $_SESSION['INGRESO']['CodigoU'];
+        $Co['T_No'] = $parametros['Trans_No'];
+        $Co['Item'] = $_SESSION['INGRESO']['item'];
+        $Co['RetSecuencial'] = False;//Por defecto es falso?
         if(strlen($parametros['TextOrden']) > 1){
           $Co['Concepto'] = $Co['Concepto'] . ", Orden No. " . $parametros['TextOrden'];
         }
         if(intval($parametros['TxtFactNo']) > 0){
           $Co['Concepto'] = $Co['Concepto'] . ", Factura No. " . $parametros['TxtFactNo'];
         }
-        die();
         GrabarComprobante($Co);
-        //TODO: Ver como se imprimen
+        $pdf1 = ImprimirComprobantesDe(False, $Co);
+        $pdf2 = Datos_Nota_Inventario($NumComp, $parametros['TextOrden'], "CD", $FechaTexto, $FechaTexto, $Total);
         mayorizar_inventario_sp();
-        return array('res' => 1, 'msg' => 'Comprobante grabado con exito');
+        return array('res' => 1, 'msg' => 'Comprobante grabado con exito', 'pdf1' => $pdf1, 'pdf2' => $pdf2);
       }else{
         throw new Exception("No existen Datos para procesar");
       }

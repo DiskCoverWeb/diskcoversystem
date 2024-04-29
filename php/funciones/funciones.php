@@ -653,7 +653,7 @@ function ReadSetDataNum($SQLs,$ParaEmpresa=false,$Incrementar = false,$Fecha=fal
             WHERE Concepto = '".$SQLs. "' 
             AND Periodo = '".$_SESSION['INGRESO']['periodo']. "'
             AND Item = '".$_SESSION['INGRESO']['item']."'" ;
-    // print_r($sql);
+            
 		$result = $conn->datos($sql);
 	  if(count($result)>0)
 	  {
@@ -11334,7 +11334,7 @@ function GrabarComprobante($C1)
         SetAdoFields("Serie_No",$value["Serie_No"]);
         SetAdoFields("Procedencia",$value["Procedencia"]);
         SetAdoFields("CodigoL",$value["SUBCTA"]);
-        if($Inv_Promedio)
+        if(isset($_SESSION['SETEOS']['Inv_Promedio']))
         {
            $Cantidad =$value["CANTIDAD"];
            $Saldo =$value["SALDO"];
@@ -11350,7 +11350,7 @@ function GrabarComprobante($C1)
         SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
         SetAdoFields("Item",$_SESSION['INGRESO']['item']);
         SetAdoUpdate();
-        $NumTrans = $NumTrans + 1;
+        //$NumTrans = $NumTrans + 1;
     }
   }
   // ' Grabamos Prestamos
@@ -13826,7 +13826,6 @@ function conversionToString($dato): string {
           }
           if($InsertarCta){
             //Se inserta nuevo asiento
-            print_r($sql);die();
             SetAdoAddNew("Asiento");
             SetAdoFields("PARCIAL_ME", 0);
             SetAdoFields("CODIGO", $parametros['Codigo']);
@@ -13902,7 +13901,6 @@ function conversionToString($dato): string {
                      CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "', 
                      TC = '" . $parametros['SubCta'] . "'
                      WHERE A_NO = '" . $Ln_No_A . "'";
-            print_r($sql);die();
             Ejecutar_SQL_SP($sql);
           }
         }
@@ -13933,5 +13931,304 @@ function conversionToString($dato): string {
         return $lista;
         // print_r($datos);die();
     }
+
+  function ImprimirComprobantesDe(bool $ImpSoloReten, array $Co){
+    $Mensajes = "";
+    $conn = new db();  
+    $ConceptoComp = "";
+    switch($Co['TP']){
+      case "CI":
+        $Mensajes = "Imprimir Comprobante de Ingreso No. ";
+        break;
+      case "CE":
+        $Mensajes = "Imprimir Comprobante de Egreso No. ";
+        break;
+      case "CD":
+        $Mensajes = "Imprimir Comprobante de Diario No. ";
+        break;
+      case "ND":
+        $Mensajes = "Imprimir Nota de Debito No.";
+        break;
+      case "NC":
+        $Mensajes = "Imprimir Nota de Crédito No. ";
+        break;
+    }
+    $Orientacion_Pagina = 1;
+
+    $Mensajes .= sprintf("%08d", $Co['Numero']) . " ?";
+    $Titutlo = "IMPRESION DE " . $Co['TP'];
+    $Bandera = False;
+    $Co['Fecha'] = FechaSistema();
+    $sql = "SELECT C.*,A.Nombre_Completo,Cl.CI_RUC,Cl.Direccion,Cl.Email, 
+            Cl.Telefono,Cl.Celular,Cl.FAX,Cl.Cliente,Cl.Codigo,Cl.Ciudad 
+            FROM Comprobantes As C,Accesos As A,Clientes As Cl 
+            WHERE C.Numero = " . $Co['Numero'] . " 
+            AND C.TP = '" . $Co['TP'] . "' 
+            AND C.Item = '" . $Co['Item'] . "' 
+            AND C.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+            AND C.CodigoU = A.Codigo 
+            AND C.Codigo_B = Cl.Codigo";
+    $AdoComp = $conn->datos($sql);
+    if(count($AdoComp) > 0) $Co['Fecha'] = $AdoComp[0]['Fecha'];
+    $sql = "SELECT T.Cta,Ca.Cuenta,Parcial_ME,Debe,Haber,Detalle,Cheq_Dep,T.Fecha_Efec,Ca.Item 
+            FROM Transacciones As T,Catalogo_Cuentas As Ca 
+            WHERE T.TP = '" . $Co['TP'] . "' 
+            AND T.Numero = " . $Co['Numero'] . " 
+            AND T.Item = '" . $Co['Item'] . "' 
+            AND T.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+            AND T.Item = Ca.Item 
+            AND T.Cta = Ca.Codigo 
+            AND T.Periodo = Ca.Periodo 
+            ORDER BY T.ID,Debe DESC,T.Cta ";
+    $AdoTrans = $conn->datos($sql);
+    $sql = "SELECT T.Cta,C.TC,C.Cuenta,Co.Fecha,Cl.Cliente,T.Cheq_Dep,T.Debe,T.Haber,T.Fecha_Efec 
+            FROM Transacciones As T,Comprobantes As Co,Catalogo_Cuentas As C,Clientes As Cl 
+            WHERE T.TP = '" . $Co['TP'] . "' 
+            AND T.Numero = " . $Co['Numero'] . " 
+            AND T.Item = '" . $Co['Item'] . "' 
+            AND T.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+            AND T.Numero = Co.Numero 
+            AND T.TP = Co.TP 
+            AND T.Cta = C.Codigo 
+            AND T.Item = C.Item 
+            AND T.Item = Co.Item 
+            AND T.Periodo = C.Periodo 
+            AND T.Periodo = Co.Periodo 
+            AND C.TC = 'BA' 
+            AND Co.Codigo_B = Cl.Codigo ";
+    $AdoBanco = $conn->datos($sql);
+    $sql = "SELECT * 
+            FROM Trans_Compras 
+            WHERE Numero = " . $Co['Numero'] . " 
+            AND TP = '" . $Co['TP'] . "' 
+            AND Item = '" . $Co['Item'] . "' 
+            AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+            ORDER BY Cta_Servicio,Cta_Bienes ";
+    $AdoFact = $conn->datos($sql);
+    $sql = "SELECT R.*,TIV.Concepto 
+            FROM Trans_Air As R,Tipo_Concepto_Retencion As TIV 
+            WHERE R.Numero = " . $Co['Numero'] . " 
+            AND R.TP = '" . $Co['TP'] . "' 
+            AND R.Item = '" . $Co['Item'] . "' 
+            AND TIV.Fecha_Inicio <= '" . BuscarFecha($Co['Fecha']) . "'
+            AND TIV.Fecha_Final >= '" . BuscarFecha($Co['Fecha']) . "'
+            AND R.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+            AND R.Tipo_Trans IN ('C','I') 
+            AND R.CodRet = TIV.Codigo 
+            ORDER BY R.Cta_Retencion ";
+    $AdoRet = $conn->datos($sql);
+    $sql = "SELECT T.Cta,T.TC,T.Factura,C.Cliente,T.Detalle_SubCta,T.Debitos,T.Creditos,T.Fecha_V,T.Codigo,T.Prima 
+            FROM Trans_SubCtas As T,Clientes As C 
+            WHERE T.TP = '" . $Co['TP'] . "' 
+            AND T.Numero = " . $Co['Numero'] . " 
+            AND T.Item = '" . $Co['Item'] . "' 
+            AND T.Periodo = '" .  $_SESSION['INGRESO']['periodo'] . "' 
+            AND T.TC IN ('C','P') 
+            AND T.Codigo = C.Codigo 
+            ORDER BY T.Cta,C.Cliente,T.Fecha_V,T.Factura ";
+    $AdoSubC1 = $conn->datos($sql);
+    $sql = "SELECT T.Cta,T.TC,T.Factura,C.Detalle As Cliente,T.Detalle_SubCta,T.Debitos,T.Creditos,T.Fecha_V,T.Codigo,T.Prima 
+            FROM Trans_SubCtas As T,Catalogo_SubCtas As C 
+            WHERE T.TP = '" . $Co['TP'] . "' 
+            AND T.Numero = " . $Co['Numero'] . " 
+            AND T.Item = '" . $Co['Item'] . "' 
+            AND T.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+            AND T.TC NOT IN ('C','P') 
+            AND T.TC = C.TC 
+            AND T.Item = C.Item 
+            AND T.Periodo = C.Periodo 
+            AND T.Codigo = C.Codigo 
+            ORDER BY T.Cta,C.Detalle,T.Fecha_V,T.Factura ";
+    $AdoSubC2 = $conn->datos($sql);
+
+    if(count($AdoComp) > 0){
+      $ConceptoComp = $AdoComp[0]['Concepto'];
+    }
+
+    require_once(dirname(__DIR__,2) . "/lib/fpdf/cabecera_pdf.php");
+    $pdf = new cabecera_pdf();
+
+    switch($Co['TP']){
+      case "CI":
+        //Falta de implementar estos metodos para crear el PDF, se necesita referencia visual
+        break;
+      case "CE":
+        //Falta de implementar estos metodos para crear el PDF, se necesita referencia visual
+        break;
+      case "CD":
+        return $pdf->ImprimirCompDiario($AdoComp, $AdoTrans, $AdoFact, $AdoRet, $AdoSubC1, $AdoSubC2, $ImpSoloReten);
+      case "ND":
+        return $pdf->ImprimirCompNota_D_C($AdoComp, $AdoTrans, $AdoSubC1, $AdoSubC2, "ND");
+      case "NC":
+        return $pdf->ImprimirCompNota_D_C($AdoComp, $AdoTrans, $AdoSubC1, $AdoSubC2, "NC");
+    }
+
+  }
+
+  function Datos_Nota_Inventario(int $Numero, string $OrdenNo, string $OpcPrint, string $SFechaI, string $SFechaF, float $Total_Inv){
+    require_once(dirname(__DIR__,2) . "/lib/fpdf/cabecera_pdf.php");
+    $pdf = new cabecera_pdf();
+    $DtaProv = array();
+    $Datas = array();
+    $Codigo = "";
+    $conn = new db(); 
+    switch($OpcPrint){
+      case "R":
+        $Codigo = SinEspaciosIzq($OrdenNo);
+        break;
+      case "CD":
+        $Codigo = strval($Numero);
+        break;
+      case "NC":
+        $Codigo = strval($Numero);
+        break;
+      case "G":
+        $Codigo = $OrdenNo;
+        break;
+      case "B":
+        $Codigo = $OrdenNo;
+        break;
+    }
+    $FechaIni = BuscarFecha($SFechaI);
+    $FechaFin = BuscarFecha($SFechaF);
+    $sql = "SELECT Co.Fecha,P.Producto,K.TP,K.Numero,C.Cliente,C.CI_RUC,C.Direccion,C.Telefono, 
+            Lote_No,Fecha_Exp,Fecha_Fab,P.Reg_Sanitario,Modelo,Serie_No,Procedencia,Concepto,Entrada,Salida 
+            FROM Trans_Kardex As K,Catalogo_Productos As P,Comprobantes As Co,Clientes As C 
+            WHERE K.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+            AND K.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' ";
+    switch($OpcPrint){
+      case "R":
+        $sql .= "AND K.Fecha BETWEEN " . $FechaIni . " AND " . $FechaFin . " 
+                 AND K.Codigo_P = '" . $Codigo . "' ";
+        break;
+      case "CD":
+        $sql .= "AND K.TP = 'CD'  
+                 AND K.Numero = " . intval($Codigo) . " ";
+        break;
+      case "NC":
+        $sql .= "AND K.TP = 'NC' 
+                 AND K.Numero = " . intval($Codigo) . " ";
+        break;
+      case "G":
+        $sql .= "AND K.Orden_No = '" . $Codigo . "' ";
+        break;
+      case "B":
+        $sql .= "AND K.Codigo_Barra = '" . $Codigo . "' ";
+        break;
+    }
+    $sql.= "AND K.Codigo_Inv = P.Codigo_Inv 
+            AND K.TP = Co.TP 
+            AND K.Numero = Co.Numero 
+            AND K.Item = Co.Item 
+            AND K.Item = P.Item 
+            AND K.Periodo = Co.Periodo  
+            AND K.Periodo = P.Periodo  
+            AND C.Codigo = Co.Codigo_B 
+            ORDER BY P.Producto,K.Fecha,K.TP,K.Numero,K.ID ";
+    $DtaProv = $conn->datos($sql);
+    $FechaTexto = "";
+    $NombreCliente = "";
+    if(count($DtaProv) > 0){
+      $FechaTexto = $DtaProv[0]['Fecha'];
+      $Numero = $DtaProv[0]['Numero'];
+      $NombreCliente = $DtaProv[0]['Cliente'];
+    }
+    $sql = "SELECT K.Orden_No,K.Codigo_Barra,K.CodBodega,K.Codigo_Inv,P.Producto,K.Fecha,K.TP,K.Numero,Entrada,Salida, 
+            Lote_No,Fecha_Exp,Fecha_Fab,P.Reg_Sanitario,Modelo,Serie_No,Procedencia 
+            FROM Trans_Kardex As K,Catalogo_Productos As P 
+            WHERE K.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+            AND K.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' ";
+    switch($OpcPrint){
+      case "R":
+        $sql .= "AND K.Fecha BETWEEN " . $FechaIni . " AND " . $FechaFin . " 
+                  AND Codigo_P = '" . $Codigo . "' ";
+        break;
+      case "CD":
+        $sql .= "AND K.TP = 'CD'  
+                  AND K.Numero = " . intval($Codigo) . " ";
+        break;
+      case "NC":
+        $sql .= "AND K.TP = 'NC' 
+                  AND K.Numero = " . intval($Codigo) . " ";
+        break;
+      case "G":
+        $sql .= "AND K.Orden_No = '" . $Codigo . "' ";
+        break;
+      case "B":
+        $sql .= "AND K.Codigo_Barra = '" . $Codigo . "' ";
+        break;
+    }
+    $sql .= "AND K.Codigo_Inv = P.Codigo_Inv 
+            AND K.Item = P.Item 
+            AND K.Periodo = P.Periodo 
+            ORDER BY K.Orden_No,K.Codigo_Inv,K.Fecha,K.TP,K.Numero,K.ID ";
+    $Datas = $conn->datos($sql);
+    $sql = "SELECT K.Cta_Inv As Ctas ,C.Cuenta 
+            FROM Trans_Kardex As K,Catalogo_Cuentas As C 
+            WHERE K.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+            AND K.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' ";
+    switch($OpcPrint){
+      case "R":
+        $sql .= "AND K.Fecha BETWEEN " . $FechaIni . " AND " . $FechaFin . " ";
+        break;
+      case "CD":
+        $sql .= "AND K.TP = 'CD'  
+                  AND K.Numero = " . intval($Codigo) . " ";
+        break;
+      case "NC":
+        $sql .= "AND K.TP = 'NC' 
+                  AND K.Numero = " . intval($Codigo) . " ";
+        break;
+      case "G":
+        $sql .= "AND K.Orden_No = '" . $Codigo . "' ";
+        break;
+      case "B":
+        $sql .= "AND K.Codigo_Barra = '" . $Codigo . "' ";
+        break;
+    }
+    $sql .= "AND K.Cta_Inv = C.Codigo 
+            AND K.Item = C.Item 
+            AND K.Periodo = C.Periodo 
+            GROUP BY K.Cta_Inv,C.Cuenta 
+            UNION 
+            SELECT K.Contra_Cta AS Ctas,C.Cuenta 
+            FROM Trans_Kardex As K,Catalogo_Cuentas As C 
+            WHERE K.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+            AND K.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' ";
+    switch($OpcPrint){
+      case "R":
+        $sql .= "AND K.Fecha BETWEEN " . $FechaIni . " AND " . $FechaFin . " ";
+        break;
+      case "CD":
+        $sql .= "AND K.TP = 'CD'  
+                  AND K.Numero = " . intval($Codigo) . " ";
+        break;
+      case "NC":
+        $sql .= "AND K.TP = 'NC' 
+                  AND K.Numero = " . intval($Codigo) . " ";
+        break;
+      case "G":
+        $sql .= "AND K.Orden_No = '" . $Codigo . "' ";
+        break;
+      case "B":
+        $sql .= "AND K.Codigo_Barra = '" . $Codigo . "' ";
+        break;
+    }
+    $sql .= "AND K.Contra_Cta = C.Codigo 
+            AND K.Item = C.Item 
+            AND K.Periodo = C.Periodo 
+            GROUP BY K.Contra_Cta,C.Cuenta ";
+    $AdoDBKardex = $conn->datos($sql);
+    $i = 0;
+    $Detalles_Ctas = [];
+    if(count($AdoDBKardex) > 0){
+      foreach($AdoDBKardex as $value){
+        $Detalles_Ctas[$i] = $value['Cuenta'];
+        $i++;
+      }
+    }
+    $DatosNotaInventario = array('DtaProv' => $DtaProv, 'Datas' => $Datas, 'AdoDBKardex' => $AdoDBKardex, 'NombreCliente' => $NombreCliente, 'Detalles_Ctas' => $Detalles_Ctas, 'FechaTexto' => $FechaTexto, 'Numero' => $Numero, 'Total_Inv' => $Total_Inv);
+    return $pdf->Imprimir_Nota_Inventario($DatosNotaInventario);
+  }
 
 ?>

@@ -1261,6 +1261,630 @@ class cabecera_pdf
 		
 		$pdf->Output('F', $path);
 	}
+
+	function HeaderCompDiario($pdf){
+		
+	}
+
+	function ImprimirCompDiario(array $DataComp, array $DataTrans, array $DataFact, array $DataRets, array $DataSubC1, array $DataSubC2, bool $ImpSoloReten, bool $NuevaPagina = false, bool $NoImpret = false){
+		$pdf = new FPDF('P', 'cm', 'A4');
+		$nameArchivo = "";
+		$fuente = 'Times';
+		$path = dirname(__DIR__,2).'/TEMP/COMPROBANTEDEDIARIO'.FechaSistema().'.pdf';
+		$pdf->AddPage();
+		$pdf->SetFont($fuente, 'B', 12);
+
+		//Comienza header
+		$margenesIniciales = array('x' => $pdf->GetX(), 'y' => $pdf->GetY()); //Punto 0.0
+
+		$header = function($pdf, $DataComp){
+			$fuente = 'Times';
+			$x = $pdf->GetX();
+			$y = $pdf->GetY();
+			$w = $pdf->GetPageWidth() - 2;
+			$h = 3; 
+			$columnWidth = $w / 3;
+			$pdf->Rect($x, $y, $w, $h);//Rectangulo de la informacion inicial
+			$logo = $this->logo();
+
+			//Primera columna
+			$pdf->SetXY($x, $y);
+			$pdf->Image($logo, $x+($columnWidth/12), $y+($h/4), $columnWidth/2, $h/2);
+
+			//Segunda columna
+			$pdf->SetXY($x + $columnWidth, $y);
+			$pdf->Cell($columnWidth, 0.5, $_SESSION['INGRESO']['noempr'], 0, 1, 'C');
+
+			$pdf->SetXY($x + $columnWidth, $y+0.5);
+			$pdf->Cell($columnWidth, 0.5, $_SESSION['INGRESO']['Nombre_Comercial'], 0, 1, 'C');
+
+			$pdf->SetXY($x + $columnWidth, $y+1);
+			$pdf->SetFont($fuente, 'B', 10);
+			$pdf->Cell($columnWidth, 0.5, 'R.U.C. ' . $_SESSION['INGRESO']['RUC'], 0, 1, 'C');
+
+			$pdf->SetXY($x + $columnWidth, $y+1.5);
+			$pdf->SetFont($fuente, 'B', 7);
+			$pdf->Cell($columnWidth, 0.5, 'Dir.: ' . $_SESSION['INGRESO']['Direccion'] . ' - Telef.: ' . $_SESSION['INGRESO']['Telefono1'] . '/FAX: ' . $_SESSION['INGRESO']['FAX'], 0, 1, 'C');
+
+			$pdf->SetXY($x + $columnWidth, $y+2);
+			$pdf->SetFont($fuente, 'B', 16);
+			$pdf->Cell($columnWidth, 0.5, 'COMPROBANTE DE DIARIO', 0, 1, 'C');
+			
+			//Tercera columna
+			//Primera Fila
+			$pdf->SetXY($x + 2.37 * $columnWidth, $y+0.5);
+			$pdf->SetFont($fuente, 'B', 16);
+			$pdf->Cell(1.5, 0.5, 'No.', 0, 0, 'L');
+			$pdf->SetFont($fuente, '', 10);
+			$fecha = $DataComp[0]['Fecha'];
+			$mes = $fecha->format('m');
+			$num = sprintf('%08d', $DataComp[0]['Numero']);
+			$pdf->Cell(0, 0.5, $mes . "-" . $num, 0, 0, 'L');
+
+			//Segunda Fila
+			$pdf->SetXY($x + 2.37 * $columnWidth, $y+1.2);
+			$pdf->SetFont($fuente, 'B', 12);
+			$pdf->Cell(1.5, 0.5, 'Fecha:', 0, 0, 'L');
+			$pdf->SetFont($fuente, '', 10);
+			$pdf->Cell(0, 0.5, $fecha->format('d/M/Y'), 0, 0, 'L');
+
+			//Tercera Fila
+			$pdf->SetXY($x + 2.37 * $columnWidth, $y+1.9);
+			$pdf->SetFont($fuente, 'B', 12);
+			$pdf->Cell(2.5, 0.5, 'Pagina No:', 0, 0, 'L');
+			$pdf->SetFont($fuente, '', 10);
+			$pdf->Cell(0, 0.5, $pdf->PageNo(), 0, 0, 'L');
+
+		};
+		$header($pdf, $DataComp);
+		//Termina header
+
+		//Concepto inicio
+		$x = $margenesIniciales['x'];
+        $y = $margenesIniciales['y'] + 3;//+3 del rectangulo anterior
+		$w = $pdf->GetPageWidth() - 2;
+		
+		$h = 1.5;//ancho del rectangulo actual
+		$pdf->SetXY($x,$y);
+
+		$pdf->Rect($x, $y, $w, $h);//Rectangulo concepto
+		$pdf->SetFont($fuente, 'B', 10);
+		$pdf->Cell(2.3, $h, 'Concepto de:', 0, 0, 'L');
+		$pdf->SetFont($fuente, '', 10);
+		$pdf->Cell(0, $h, $DataComp[0]['Concepto'], 0, 0, 'L');
+		//Concepto fin
+
+		//Contenido inicio
+		//Rectangulo contabilizacion
+		$x = $margenesIniciales['x'];
+		$y = $margenesIniciales['y'] + 3 + 1.5;//+3 + 1.5 de los rectangulos anteriores
+		$h = 0.5; //ancho del rectangulo actual
+		$pdf->SetXY($x, $y);
+		$pdf->Rect($x, $y, $w, $h);
+
+		$pdf->SetFont($fuente, 'B', 10);
+		$pdf->Cell(0, $h, 'CONTABILIZACION', 0, 0, 'C');
+
+		//Rectangulo de la tabla
+		$x = $margenesIniciales['x'];
+		$y = $margenesIniciales['y'] + 3 + 1.5 + 0.5;//+3 + 1.5 + 0.5 de los rectangulos anteriores
+		$h = 5;
+		$pdf->SetXY($x, $y);
+		$pdf->Rect($x, $y, $w, $h);
+
+		$columnaWidht2 = ($w/5);
+
+		//Lines separadoras
+		$wcol1 = $x + $columnaWidht2 - 1;
+		$wcol2 = $x + 2 * $columnaWidht2 + 1;
+		$wcol3 = $x + 3 * $columnaWidht2 + 1;
+		$wcol4 = $x + 4 * $columnaWidht2 + 1;
+		$pdf->Line($wcol1, $y, $wcol1, $y + $h);
+		$pdf->Line($wcol2, $y, $wcol2, $y + $h);
+		$pdf->Line($wcol3, $y, $wcol3, $y + $h);
+		$pdf->Line($wcol4, $y, $wcol4, $y + $h);
+
+		//Cabeceras
+		$pdf->SetFont($fuente, 'B', 11);
+		$pdf->Cell($wcol1 - 1, 0.5, 'CODIGO', 1, 0, 'C');//Cabecera Codigo
+		$pdf->Cell($columnaWidht2 + 2, 0.5, 'CONCEPTO', 1, 0, 'C');//Cabecera CONCEPTO
+		$pdf->Cell($columnaWidht2, 0.5, 'PARCIAL/ME', 1, 0, 'C');//Cabecera PARCIAL/ME
+		$pdf->Cell($columnaWidht2, 0.5, 'DEBE', 1, 0, 'C');//Cabecera DEBE
+		$pdf->Cell($columnaWidht2-1, 0.5, 'HABER', 1, 0, 'C');//Cabecera HABER
+		$pdf->Ln();
+
+		$pdf->SetFont($fuente, '', 9);
+		$TotParcialME = 0;
+		$TotDebe = 0;
+		$TotHaber = 0;
+		foreach($DataTrans as $value){
+			$pdf->Cell($wcol1 - 1, 0.5, $value['Cta'], 0, 0, 'C');//Codigo
+			$pdf->Cell($columnaWidht2 + 2, 0.5, $value['Cuenta'], 0, 0, 'C');//Concepto
+			$pdf->Cell($columnaWidht2, 0.5, $value['Parcial_ME'], 0, 0, 'C');//Parcial
+			$TotParcialME += floatval($value['Parcial_ME']);
+			$pdf->Cell($columnaWidht2, 0.5, $value['Debe'], 0, 0, 'C');//Debe
+			$TotDebe += floatval($value['Debe']);
+			$pdf->Cell($columnaWidht2 - 1, 0.5, $value['Haber'], 0, 0, 'C');//Haber
+			$TotHaber += floatval($value['Haber']);
+			//Salto de linea
+			$pdf->Ln();
+		}
+		//Contenido fin
+
+		//Rectantulo totales inicio
+		$x = $margenesIniciales['x'];
+		$y = $margenesIniciales['y'] + 3 + 1.5 + 0.5 + 5;//+3 + 1.5 + 0.5 + 10 de los rectangulos anteriores
+		$h = 1;
+		$pdf->SetXY($x, $y);
+		$pdf->Rect($x, $y, $w, $h);
+
+		$columnWidth = $w / 3;
+		$wcol1 = $x + $columnWidth + 6.22;
+		$wcol2 = $x + 2 * $columnWidth + 3.6;
+		$pdf->Line($wcol1, $y, $wcol1, $y + $h);
+		$pdf->Line($wcol2, $y, $wcol2, $y + $h);
+
+		$pdf->SetFont($fuente, 'B', 12);
+		$pdf->Cell(12.5, 1, 'TOTALES', 0, 0, 'R');
+		$pdf->Cell(2.5, 1, strval($TotDebe), 0, 0, 'R');
+		$pdf->Cell(3.5, 1, strval($TotHaber), 0, 0, 'R');
+		//Rectangulo totales fin
+
+		//Footer
+		$x = $margenesIniciales['x'];
+		$y = $margenesIniciales['y'] + 3 + 1.5 + 0.5 + 5 + 1;//+3 + 1.5 + 0.5 + 6 + 0.5de los rectangulos anteriores
+		$h = 2;
+		$pdf->SetXY($x, $y);
+		$pdf->Rect($x, $y, $w, $h);
+
+		$columnWidth = $w / 5;
+		$pdf->Line($x + $columnWidth, $y, $x + $columnWidth, $y + $h);
+		$pdf->Line($x + 2 * $columnWidth, $y, $x + 2 * $columnWidth, $y + $h);
+		$pdf->Line($x + 3 * $columnWidth, $y, $x + 3 * $columnWidth, $y + $h);
+		$pdf->Line($x + 4 * $columnWidth, $y, $x + 4 * $columnWidth, $y + $h);
+
+		$pdf->Line($x + $columnWidth, $y + $h/1.5, $x + 5 * $columnWidth, $y + $h/1.5);
+
+		$pdf->SetX($x + $columnWidth);
+		$pdf->SetFont($fuente, '', 10);
+		$pdf->Cell(0, 1, $DataComp[0]['Nombre_Completo'], 0, 0, 'L');
+		$pdf->SetX($x);
+		$pdf->SetFont($fuente, 'B', 12);
+		$pdf->Cell(3.9, 1, 'COTIZACION', 0, 0, 'C');
+		$pdf->Cell(3.9, 3.3, 'Elabordo por:', 0, 0, 'C');
+		$pdf->Cell(3.9, 3.3, 'Contador', 0, 0, 'C');
+		$pdf->Cell(3.9, 3.3, 'Aprobado por', 0, 0, 'C');
+		$pdf->Cell(3.9, 3.3, 'Conforme', 0, 0, 'C');
+
+		$pdf->Output('F',strtoupper($path));
+
+		return basename($path);
+	}
+
+	function ImprimirCompNota_D_C(array $DataComp, array $DataTrans, array $DataSubC1, array $DataSubC2, string $Tipo_D_C){
+		$pdf = new FPDF('P', 'cm', 'A4');
+		$nameArchivo = "";
+		switch($Tipo_D_C){
+			case 'ND':
+				$nameArchivo = 'NOTADEDEBITO'.FechaSistema().'.pdf';
+				break;
+			case 'NC':
+				$nameArchivo = 'NOTADECREDITO'.FechaSistema().'.pdf';
+				break;
+		}
+		$fuente = 'Times';
+		$path = dirname(__DIR__,2).'/TEMP/'.$nameArchivo;
+		$pdf->AddPage();
+		$pdf->SetFont($fuente, 'B', 12);
+
+		//Comienza header
+		$margenesIniciales = array('x' => $pdf->GetX(), 'y' => $pdf->GetY()); //Punto 0.0
+
+		$header = function($pdf, $DataComp, $Tipo_D_C){
+			$fuente = 'Times';
+			$x = $pdf->GetX();
+			$y = $pdf->GetY();
+			$w = $pdf->GetPageWidth() - 2;
+			$h = 3; 
+			$columnWidth = $w / 3;
+			$pdf->Rect($x, $y, $w, $h);//Rectangulo de la informacion inicial
+			$logo = $this->logo();
+
+			//Primera columna
+			$pdf->SetXY($x, $y);
+			$pdf->Image($logo, $x+($columnWidth/12), $y+($h/4), $columnWidth/2, $h/2);
+
+			//Segunda columna
+			$pdf->SetXY($x + $columnWidth, $y);
+			$pdf->Cell($columnWidth, 0.5, $_SESSION['INGRESO']['noempr'], 0, 1, 'C');
+
+			$pdf->SetXY($x + $columnWidth, $y+0.5);
+			$pdf->Cell($columnWidth, 0.5, $_SESSION['INGRESO']['Nombre_Comercial'], 0, 1, 'C');
+
+			$pdf->SetXY($x + $columnWidth, $y+1);
+			$pdf->SetFont($fuente, 'B', 10);
+			$pdf->Cell($columnWidth, 0.5, 'R.U.C. ' . $_SESSION['INGRESO']['RUC'], 0, 1, 'C');
+
+			$pdf->SetXY($x + $columnWidth, $y+1.5);
+			$pdf->SetFont($fuente, 'B', 7);
+			$pdf->Cell($columnWidth, 0.5, 'Dir.: ' . $_SESSION['INGRESO']['Direccion'] . ' - Telef.: ' . $_SESSION['INGRESO']['Telefono1'] . '/FAX: ' . $_SESSION['INGRESO']['FAX'], 0, 1, 'C');
+
+			$pdf->SetXY($x + $columnWidth, $y+2);
+			$pdf->SetFont($fuente, 'B', 16);
+			switch($Tipo_D_C){
+				case 'ND':
+					$pdf->Cell($columnWidth, 0.5, 'NOTA DE DEBITO', 0, 1, 'C');
+					break;
+				case 'NC':
+					$pdf->Cell($columnWidth, 0.5, 'NOTA DE CREDITO', 0, 1, 'C');
+					break;
+			}
+			//Tercera columna
+			//Primera Fila
+			$pdf->SetXY($x + 2.37 * $columnWidth, $y+0.5);
+			$pdf->SetFont($fuente, 'B', 16);
+			$pdf->Cell(1.5, 0.5, 'No.', 0, 0, 'L');
+			$pdf->SetFont($fuente, '', 10);
+			$fecha = $DataComp[0]['Fecha'];
+			$mes = $fecha->format('m');
+			$num = sprintf('%08d', $DataComp[0]['Numero']);
+			$pdf->Cell(0, 0.5, $mes . "-" . $num, 0, 0, 'L');
+
+			//Segunda Fila
+			$pdf->SetXY($x + 2.37 * $columnWidth, $y+1.2);
+			$pdf->SetFont($fuente, 'B', 12);
+			$pdf->Cell(1.5, 0.5, 'Fecha:', 0, 0, 'L');
+			$pdf->SetFont($fuente, '', 10);
+			$pdf->Cell(0, 0.5, $fecha->format('d/M/Y'), 0, 0, 'L');
+
+			//Tercera Fila
+			$pdf->SetXY($x + 2.37 * $columnWidth, $y+1.9);
+			$pdf->SetFont($fuente, 'B', 12);
+			$pdf->Cell(2.5, 0.5, 'Pagina No:', 0, 0, 'L');
+			$pdf->SetFont($fuente, '', 10);
+			$pdf->Cell(0, 0.5, $pdf->PageNo(), 0, 0, 'L');
+
+		};
+		$header($pdf, $DataComp, $Tipo_D_C);
+		//Termina header
+
+		//Concepto inicio
+		$x = $margenesIniciales['x'];
+        $y = $margenesIniciales['y'] + 3;//+3 del rectangulo anterior
+		$w = $pdf->GetPageWidth() - 2;
+		
+		$h = 1.5;//ancho del rectangulo actual
+		$pdf->SetXY($x,$y);
+
+		$pdf->Rect($x, $y, $w, $h);//Rectangulo concepto
+		$pdf->SetFont($fuente, 'B', 10);
+		$pdf->Cell(2.3, $h, 'Concepto de:', 0, 0, 'L');
+		$pdf->SetFont($fuente, '', 10);
+		$pdf->Cell(0, $h, $DataComp[0]['Concepto'], 0, 0, 'L');
+		//Concepto fin
+
+		//Contenido inicio
+		//Rectangulo contabilizacion
+		$x = $margenesIniciales['x'];
+		$y = $margenesIniciales['y'] + 3 + 1.5;//+3 + 1.5 de los rectangulos anteriores
+		$h = 0.5; //ancho del rectangulo actual
+		$pdf->SetXY($x, $y);
+		$pdf->Rect($x, $y, $w, $h);
+
+		$pdf->SetFont($fuente, 'B', 10);
+		$pdf->Cell(0, $h, 'CONTABILIZACION', 0, 0, 'C');
+
+		//Rectangulo de la tabla
+		$x = $margenesIniciales['x'];
+		$y = $margenesIniciales['y'] + 3 + 1.5 + 0.5;//+3 + 1.5 + 0.5 de los rectangulos anteriores
+		$h = 5;
+		$pdf->SetXY($x, $y);
+		$pdf->Rect($x, $y, $w, $h);
+
+		$columnaWidht2 = ($w/5);
+
+		//Lines separadoras
+		$wcol1 = $x + $columnaWidht2 - 1;
+		$wcol2 = $x + 2 * $columnaWidht2 + 1;
+		$wcol3 = $x + 3 * $columnaWidht2 + 1;
+		$wcol4 = $x + 4 * $columnaWidht2 + 1;
+		$pdf->Line($wcol1, $y, $wcol1, $y + $h);
+		$pdf->Line($wcol2, $y, $wcol2, $y + $h);
+		$pdf->Line($wcol3, $y, $wcol3, $y + $h);
+		$pdf->Line($wcol4, $y, $wcol4, $y + $h);
+
+		//Cabeceras
+		$pdf->SetFont($fuente, 'B', 11);
+		$pdf->Cell($wcol1 - 1, 0.5, 'CODIGO', 1, 0, 'C');//Cabecera Codigo
+		$pdf->Cell($columnaWidht2 + 2, 0.5, 'CONCEPTO', 1, 0, 'C');//Cabecera CONCEPTO
+		$pdf->Cell($columnaWidht2, 0.5, 'PARCIAL/ME', 1, 0, 'C');//Cabecera PARCIAL/ME
+		$pdf->Cell($columnaWidht2, 0.5, 'DEBE', 1, 0, 'C');//Cabecera DEBE
+		$pdf->Cell($columnaWidht2-1, 0.5, 'HABER', 1, 0, 'C');//Cabecera HABER
+		$pdf->Ln();
+
+		$pdf->SetFont($fuente, '', 9);
+		$TotParcialME = 0;
+		$TotDebe = 0;
+		$TotHaber = 0;
+		foreach($DataTrans as $value){
+			$pdf->Cell($wcol1 - 1, 0.5, $value['Cta'], 0, 0, 'C');//Codigo
+			$pdf->Cell($columnaWidht2 + 2, 0.5, $value['Cuenta'], 0, 0, 'C');//Concepto
+			$pdf->Cell($columnaWidht2, 0.5, $value['Parcial_ME'], 0, 0, 'C');//Parcial
+			$TotParcialME += floatval($value['Parcial_ME']);
+			$pdf->Cell($columnaWidht2, 0.5, $value['Debe'], 0, 0, 'C');//Debe
+			$TotDebe += floatval($value['Debe']);
+			$pdf->Cell($columnaWidht2 - 1, 0.5, $value['Haber'], 0, 0, 'C');//Haber
+			$TotHaber += floatval($value['Haber']);
+			//Salto de linea
+			$pdf->Ln();
+		}
+		//Contenido fin
+
+		//Rectantulo totales inicio
+		$x = $margenesIniciales['x'];
+		$y = $margenesIniciales['y'] + 3 + 1.5 + 0.5 + 5;//+3 + 1.5 + 0.5 + 10 de los rectangulos anteriores
+		$h = 1;
+		$pdf->SetXY($x, $y);
+		$pdf->Rect($x, $y, $w, $h);
+
+		$columnWidth = $w / 3;
+		$wcol1 = $x + $columnWidth + 6.22;
+		$wcol2 = $x + 2 * $columnWidth + 3.6;
+		$pdf->Line($wcol1, $y, $wcol1, $y + $h);
+		$pdf->Line($wcol2, $y, $wcol2, $y + $h);
+
+		$pdf->SetFont($fuente, 'B', 12);
+		$pdf->Cell(12.5, 1, 'TOTALES', 0, 0, 'R');
+		$pdf->Cell(2.5, 1, strval($TotDebe), 0, 0, 'R');
+		$pdf->Cell(3.5, 1, strval($TotHaber), 0, 0, 'R');
+		//Rectangulo totales fin
+
+		//Footer
+		$x = $margenesIniciales['x'];
+		$y = $margenesIniciales['y'] + 3 + 1.5 + 0.5 + 5 + 1;//+3 + 1.5 + 0.5 + 6 + 0.5de los rectangulos anteriores
+		$h = 2;
+		$pdf->SetXY($x, $y);
+		$pdf->Rect($x, $y, $w, $h);
+
+		$columnWidth = $w / 5;
+		$pdf->Line($x + $columnWidth, $y, $x + $columnWidth, $y + $h);
+		$pdf->Line($x + 2 * $columnWidth, $y, $x + 2 * $columnWidth, $y + $h);
+		$pdf->Line($x + 3 * $columnWidth, $y, $x + 3 * $columnWidth, $y + $h);
+		$pdf->Line($x + 4 * $columnWidth, $y, $x + 4 * $columnWidth, $y + $h);
+
+		$pdf->Line($x + $columnWidth, $y + $h/1.5, $x + 5 * $columnWidth, $y + $h/1.5);
+
+		$pdf->SetX($x + $columnWidth);
+		$pdf->SetFont($fuente, '', 10);
+		$pdf->Cell(0, 1, $DataComp[0]['Nombre_Completo'], 0, 0, 'L');
+		$pdf->SetX($x);
+		$pdf->SetFont($fuente, 'B', 12);
+		$pdf->Cell(3.9, 1, 'COTIZACION', 0, 0, 'C');
+		$pdf->Cell(3.9, 3.3, 'Elabordo por:', 0, 0, 'C');
+		$pdf->Cell(3.9, 3.3, 'Contador', 0, 0, 'C');
+		$pdf->Cell(3.9, 3.3, 'Aprobado por', 0, 0, 'C');
+		$pdf->Cell(3.9, 3.3, 'Conforme', 0, 0, 'C');
+
+		$pdf->Output('F',strtoupper($path));
+
+		return basename($path);
+	}
+
+	function Imprimir_Nota_Inventario(array $DatosNotaInventario){
+		$pdf = new FPDF('P', 'cm', 'A4');
+		$nameArchivo = "";
+		$fuente = 'Times';
+		$path = dirname(__DIR__,2).'/TEMP/NOTAINVENTARIO'.FechaSistema().'.pdf';
+		$pdf->AddPage();
+		$pdf->SetFont($fuente, 'B', 12);
+
+		$DtaProv = $DatosNotaInventario['DtaProv'];
+		$Datas = $DatosNotaInventario['Datas'];
+		$AdoDBKardex = $DatosNotaInventario['AdoDBKardex'];
+		$NombreCliente = $DatosNotaInventario['NombreCliente'];
+		$Detalles_Ctas = $DatosNotaInventario['Detalles_Ctas'];
+		$Numero = $DatosNotaInventario['Numero'];
+		$Total_Inv = $DatosNotaInventario['Total_Inv'];
+
+		$margenesIniciales = array('x' => $pdf->GetX(), 'y' => $pdf->GetY()); //Punto 0.0
+	
+		$header = function($pdf, $DatosNotaInventario, $margenesIniciales){
+			$fuente = 'Times';
+			$x = $pdf->GetX();
+			$y = $pdf->GetY();
+			$w = $pdf->GetPageWidth() - 2;
+			$h = 3; 
+			$columnWidth = $w / 3;
+			$pdf->Rect($x, $y, $w, $h - 0.5);//Rectangulo de la informacion inicial
+			$logo = $this->logo();
+
+			//Primera columna
+			$pdf->SetXY($x, $y);
+			$pdf->Image($logo, $x+($columnWidth/12), $y+($h/4), $columnWidth/2, $h/2);
+
+			//Segunda columna
+			$pdf->SetXY($x + $columnWidth, $y);
+			$pdf->Cell($columnWidth, 0.5, $_SESSION['INGRESO']['noempr'], 0, 1, 'C');
+
+			$pdf->SetXY($x + $columnWidth, $y+0.5);
+			$pdf->Cell($columnWidth, 0.5, $_SESSION['INGRESO']['Nombre_Comercial'], 0, 1, 'C');
+
+			$pdf->SetXY($x + $columnWidth, $y+1);
+			$pdf->SetFont($fuente, 'B', 7);
+			$pdf->Cell($columnWidth, 0.5, 'Quito, ' . $_SESSION['INGRESO']['Direccion'] . ' - Telef.: ' . $_SESSION['INGRESO']['Telefono1'] . '/FAX: ' . $_SESSION['INGRESO']['FAX'], 0, 1, 'C');
+
+			$pdf->SetXY($x + $columnWidth, $y+1.5);
+			$pdf->SetFont($fuente, 'B', 13);
+			$pdf->Cell($columnWidth, 0.5, 'NOTA DE ENTRADA/SALIDA DE INVENTARIO', 0, 1, 'C');
+			
+			//Tercera columna
+			//Primera Fila
+			$pdf->SetXY($x + 2.37 * $columnWidth, $y+0.5);
+			$pdf->SetFont($fuente, 'B', 8);
+			$pdf->Cell(1.5, 0.5, 'Hora:', 0, 0, 'L');
+			$pdf->SetFont($fuente, '', 8);
+			$pdf->Cell(0, 0.5, date('H:i:s'), 0, 0, 'L');
+
+			//Segunda Fila
+			$pdf->SetXY($x + 2.37 * $columnWidth, $y+1);
+			$pdf->SetFont($fuente, 'B', 8);
+			$pdf->Cell(2.5, 0.5, 'Pagina No.', 0, 0, 'L');
+			$pdf->SetFont($fuente, '', 8);
+			$pdf->Cell(0, 0.5, $pdf->PageNo(), 0, 0, 'L');
+
+			//Tercera Fila
+			$pdf->SetXY($x + 2.37 * $columnWidth, $y+1.5);
+			$pdf->SetFont($fuente, 'B', 8);
+			$pdf->Cell(1.5, 0.5, 'Fecha:', 0, 0, 'L');
+			$pdf->SetFont($fuente, '', 8);
+			$pdf->Cell(0, 0.5, date('d/m/Y'), 0, 0, 'L');
+
+			//Cuarta Fila
+			$pdf->SetXY($x + 2.37 * $columnWidth, $y+2);
+			$pdf->SetFont($fuente, 'B', 8);
+			$pdf->Cell(1.5, 0.5, 'Usuario:', 0, 0, 'L');
+			$pdf->SetFont($fuente, '', 8);
+			$pdf->Cell(0, 0.5, $_SESSION['INGRESO']['Nombre'], 0, 0, 'L');
+
+			$x = $margenesIniciales['x'];
+        	$y = $margenesIniciales['y'] + $h;//+3 del rectangulo anterior
+			$w = $pdf->GetPageWidth() - 2;
+		
+			$h += 1.5;//ancho del rectangulo actual
+			$pdf->SetXY($x,$y);
+			$pdf->SetFont($fuente, 'B', 10);
+			$pdf->Cell(2, 0.5, 'FECHA:', 0, 0, 'L');
+			$pdf->SetFont($fuente, '', 10);
+			$pdf->Cell(0, 0.5, date('d/m/Y'), 0, 0, 'L');
+			$pdf->SetXY($x,$y);
+			$pdf->SetFont($fuente, 'B', 10);
+			if(count($DatosNotaInventario['DtaProv']) == 0){
+				$pdf->Cell(0, 0.5, 'TP: CD, No. ', 0, 0, 'R');
+				$pdf->Ln();
+				$pdf->Cell(0, 0.5, 'BENEFICIARIO: ', 0, 0, 'L');
+			}else{
+				$pdf->Cell(0, 0.5, 'TP:CD, No. ' . sprintf('%08d',$DatosNotaInventario['Numero']), 0, 0, 'R');
+				$pdf->Ln();
+				$pdf->Cell(3, 0.5, 'BENEFICIARIO: ', 0, 0, 'L');
+				$pdf->SetFont($fuente, '', 10);
+				$pdf->Cell(3, 0.5, $DatosNotaInventario['NombreCliente'], 0, 0, 'L');
+			}
+			//draw line
+			$pdf->Line($x, $y + 1, $w + 1, $y + 1);
+			$x = $margenesIniciales['x'];
+        	$y = $margenesIniciales['y'] + 4;
+			$w = $pdf->GetPageWidth() - 2;
+			$pdf->SetXY($x, $y);
+
+			if(count($DatosNotaInventario['DtaProv']) == 0){
+				$pdf->SetFont($fuente, 'B', 8);
+				$pdf->Cell(4, 0.5, 'CUENTAS INVOLUCRADAS: ', 0, 0, 'L');
+			}else{
+				$pdf->SetFont($fuente, 'B', 8);
+				$pdf->Cell(4, 0.5, 'CUENTAS INVOLUCRADAS: ', 0, 0, 'L');//FIXME
+				$pdf->SetXY($x + 4, $pdf->GetY());//FIXME
+				$Ctas = $DatosNotaInventario['Detalles_Ctas'];
+				foreach($Ctas as $value){
+					$pdf->Cell(4, 0.5, $value, 0, 1, 'L');
+				}
+			}
+
+
+		};
+
+		$header($pdf, $DatosNotaInventario, $margenesIniciales);
+
+		//Dibujamos tabla
+		$x = $margenesIniciales['x'];
+		$y = $margenesIniciales['y'] + 5;
+		$w = $pdf->GetPageWidth() - 2;
+		
+		//Draw a line
+		$pdf->SetXY($x, $y);
+		$pdf->Line($x, $y, $w + 1, $y);
+		//Put headers
+		$pdf->SetFont($fuente, 'B', 8);
+		$pdf->Cell(3, 0.5, 'BOD', 0, 0, 'L');
+		$pdf->Cell(3, 0.5, 'CODIGO/SERIE', 0, 0, 'L');
+		$pdf->Cell(2, 0.5, 'CODIGO', 0, 0, 'L');
+		$pdf->Cell(7, 0.5, 'PRODUCTO', 0, 0, 'L');
+		$pdf->Cell(2, 0.5, 'ENTRADA', 0, 0, 'L');
+		$pdf->Cell(2, 0.5, 'SALIDA', 0, 0, 'L');
+		//draw an other line
+		$pdf->Ln();
+		$pdf->SetXY($x, $pdf->GetY());
+		$pdf->Line($x, $pdf->GetY(), $w + 1, $pdf->GetY());
+
+		//print_r($DatosNotaInventario);
+
+		//Draw content
+		$pdf->SetFont($fuente, '', 8);
+
+		for($i = 0; $i < count($Datas); $i++){
+			$pdf->Cell(3, 0.5, $Datas[$i]['CodBodega'], 0, 0, 'L');
+			$pdf->Cell(3, 0.5, " ", 0, 0, 'L');
+			$pdf->Cell(2, 0.5, $Datas[$i]['Codigo_Inv'], 0, 0, 'L');
+			$pdf->SetFont($fuente, '', 7.5);
+			$pdf->Cell(7, 0.5, $Datas[$i]['Producto'], 0, 0, 'L');
+			$pdf->SetFont($fuente, '', 8);
+			$pdf->Cell(2, 0.5, $Datas[$i]['Entrada'], 0, 0, 'L');
+			$pdf->Cell(2, 0.5, $Datas[$i]['Salida'], 0, 0, 'L');
+			$pdf->Ln();
+		}
+
+		$pdf->SetXY($x, $pdf->GetY());
+		$pdf->Line($x, $pdf->GetY(), $w + 1, $pdf->GetY());
+
+		$pdf->Cell(8, 0.5, 'TOTAL INVENTARIO', 0, 0, 'L');
+		$pdf->Cell(3, 0.5, strval($Total_Inv), 0, 0, 'L');
+		
+
+		$pdf->SetFont($fuente, '', 10);
+		$pdf->SetXY($x + 3, $pdf->GetY() + 2);
+		$pdf->Cell(4, 0.5, 'AUTORIZADO', 'T', 0, 'C');
+		$pdf->SetXY($pdf->GetX() + 1, $pdf->GetY());
+		$pdf->Cell(4, 0.5, 'ENTREGUE CONFORME', 'T', 0, 'C');
+		$pdf->SetXY($pdf->GetX() + 1, $pdf->GetY());
+		$pdf->Cell(4, 0.5, 'RECIBI CONFORME', 'T', 0, 'C');
+
+		if(count($DtaProv) == 0){
+			$pdf->SetXY($margenesIniciales['x'], $margenesIniciales['y'] + 5);
+			$pdf->SetFont($fuente, 'B', 16);
+			//$pdf->Cell(0, 3, 'NO SE ENCONTRARON DATOS', 0, 1, 'C');
+			$pdf->Output('F',strtoupper($path));
+			return basename($path);
+		}
+
+		
+
+
+		$pdf->Output('F',strtoupper($path));
+
+		return basename($path);
+	}
+
+	function logo($logoName = false){
+		$logo = $_SESSION['INGRESO']['Logo_Tipo'];
+		if ($logoName) {
+			$logo = $logoName;
+		}
+
+		$src_jpg = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.jpg';
+		//gif
+		$src_gif = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.gif';
+		//png
+		$src_png = dirname(__DIR__, 2) . '/img/logotipos/' . $logo . '.png';
+
+		if (@getimagesize($src_png)) {
+			return $src_png;
+		} else if (@getimagesize($src_jpg)) {
+			return $src_jpg;
+		} else if (@getimagesize($src_gif)) {
+			return $src_gif;
+		} else {
+			return '.';
+		}
+	}
 	
 }
 
