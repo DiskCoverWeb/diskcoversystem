@@ -131,6 +131,44 @@ class egreso_alimentosM
 		return $this->db->datos($sql);
 	}
 
+	function lista_egreso_checking_devuelto($query=false,$id=false)
+	{
+		$sql = "SELECT
+				TK.Fecha,
+				TK.Detalle,
+			    TK.Orden_No,
+				procedencia,
+			    MAX(C.Cliente) AS Cliente,
+			    MAX(CP.Producto) AS Producto,
+			    MAX(CP.Unidad) AS Unidad,
+			    MAX(C1.Cliente) AS usuario,
+			    MAX(CPO.Proceso) AS area,
+			    MAX(CPO1.Proceso) AS Motivo
+			FROM Trans_Kardex TK
+			INNER JOIN Catalogo_Productos CP ON TK.Codigo_Inv = CP.Codigo_Inv 
+			INNER JOIN Clientes C ON TK.Codigo_P = C.Codigo
+			INNER JOIN Clientes C1 ON TK.CodigoU = C1.Codigo
+			INNER JOIN Catalogo_Proceso CPO ON TK.Codigo_Tra = CPO.Cmds
+			INNER JOIN Catalogo_Proceso CPO1 ON TK.Modelo = CPO1.Cmds
+			WHERE TK.Item = '".$_SESSION['INGRESO']['item']."'
+			AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+			AND TK.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
+			AND TK.Item = CP.Item
+			AND TK.Periodo = CP.Periodo
+			AND TK.T ='R' ";
+			if($query)
+			{
+				$sql.=" AND TK.Codigo_Barra='".$query."'";
+			}
+			if($id)
+			{
+				$sql.=" AND TK.ID='".$id."'";
+			}
+			$sql.=" GROUP by Orden_No,TK.Fecha,TK.Detalle,procedencia";
+			// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+
 	function eliminar($id)
 	{
 		$sql = "DELETE FROM Trans_Kardex WHERE ID = '".$id."'";

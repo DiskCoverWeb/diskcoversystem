@@ -1851,7 +1851,7 @@ function eliminar_all_pedido(pedido)
             </div>
             <div class="modal-footer" style="background-color:antiquewhite;">
                 <!-- <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button> -->
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
             </div>
         </div>
     </div>

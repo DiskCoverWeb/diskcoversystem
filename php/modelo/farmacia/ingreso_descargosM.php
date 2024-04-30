@@ -96,7 +96,7 @@ class ingreso_descargosM
 	function cargar_pedidos_trans($orden,$SUBCTA,$fecha=false,$diferente=false,$paciente=false)
 	{
     // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT T.*,P.Producto 
+     $sql = "SELECT T.*,P.Producto,,P.Unidad 
      FROM Trans_Kardex  T ,Catalogo_Productos P
      WHERE Orden_No = '".$orden."' 
      AND T.CodigoL = '".$SUBCTA."'

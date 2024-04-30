@@ -87,7 +87,7 @@ class egreso_alimentosC
 		$datos = $this->modelo->areas($query);
 		$op=array();
 		foreach ($datos as $key => $value) {
-			$op[] = array('id'=>$value['Cmds'],'text'=>$value['Proceso'],'data'=>$value);			
+			$op[] = array('id'=>$value['Cmds'],'text'=>trim($value['Proceso']),'data'=>$value);			
 		}
 
 		return $op;
@@ -148,7 +148,7 @@ class egreso_alimentosC
 			<td>'.($key+1).'</td>
 			<td>'.$value['Fecha']->format('Y-m-d').'</td>
 			<td>'.$value['Producto'].'</td>
-			<td>'.$value['Salida'].'</td>
+			<td>'.$value['Salida'].' '.$value['Unidad'].'</td>
 			<td><button type="button" class="btn btn-danger btn-sm" onclick="eliminar_egreso('.$value['ID'].')"><i class="fa fa-trash"></i></button></td>
 			</tr>';
 		}
@@ -168,6 +168,10 @@ class egreso_alimentosC
 
 	function guardar_egreso($file,$post)
 	{
+		if($this->validar_formato_img($file)!=1)
+	    {
+	    	return -2;
+	    }
 		// para el cheing de egreso se colocara la G
 		$num = $this->modelo->numero_Registro(date('Y-m-d'));
 
@@ -206,6 +210,25 @@ class egreso_alimentosC
 
 	   return  SetAdoUpdateGeneric();
 	}
+
+	 function validar_formato_img($file)
+	  {
+
+	  	// print_r($file);die();
+	    switch ($file['archivo']['type']) {
+	      case 'image/jpeg':
+	      case 'image/pjpeg':
+	      case 'image/gif':
+	      case 'image/png':
+	         return 1;
+	        break;      
+	      default:
+	        return -1;
+	        break;
+	    }
+
+	  }
+
 
 	function lista_egreso_checking()
 	{
@@ -269,12 +292,18 @@ class egreso_alimentosC
 		$datos = $this->modelo->cargar_motivo_lista(false,false,$parametros['orden']);
 		foreach ($datos as $key => $value) {
 			// print_r($value);die();
+			$stock = 0;
+			$datos_stock = Leer_Codigo_Inv($value['Codigo_Inv'],date('Y-m-d'));
+			if($datos_stock['respueta']==1)
+			{
+				$stock = $datos_stock['datos']['Stock'];
+			}
 			$tr.='<tr>
-					<td>1</td>
+					<td>'.($key+1).'</td>
 					<td>'.$value['Cliente'].'</td>
 					<td>'.$value['Producto'].'</td>
-					<td>'.$value['Stock_Bod'].'</td>
-					<td>'.$value['Salida'].'</td>
+					<td>'.$stock.'</td>
+					<td>'.$value['Salida'].' '.$value['Unidad'].'</td>
 					<td>'.$value['Valor_Unitario'].'</td>
 					<td>'.($value['Valor_Unitario']*$value['Salida']).'</td>
 					<td>

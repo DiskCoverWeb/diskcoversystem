@@ -244,11 +244,19 @@ class almacenamiento_bodegaC
     	$ls='';		
 		foreach ($datos as $key => $value) 
 		{
+			$stock = 0;
+			$dato_inv = Leer_Codigo_Inv($value['Codigo_Inv'],date('Y-m-d'));
+			if($dato_inv['respueta']==1)
+			{
+				$stock = $dato_inv['datos']['Stock'].' '.$dato_inv['datos']['Unidad'];
+			}
+			// print_r($dato_inv);die();
 			if($value['CodBodega']!='.' && $value['CodBodega']!='-1')
 			{
 				$ruta = $this->ruta_bodega($value['CodBodega']);
 				$ls.= '<tr>
 					<td>'.$value['Producto'].'</td>
+					<td>'.$stock.'</td>
 					<td>'.$ruta.'</td>
 					<td>
 						<button type="button" onclick="eliminar_bodega(\''.$value['ID'].'\')" class="btn btn-danger btn-sm" title="Eliminar Bodega"><i class="fa fa-trash"></i></button>

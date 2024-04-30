@@ -151,16 +151,16 @@
 				<img src="../../img/png/grabar.png">
 			</button>
 		</div>
-		<div class="col-xs-2 col-md-2 col-sm-2">
+		<!-- <div class="col-xs-2 col-md-2 col-sm-2">
 			<button class="btn btn-default" title="Guardar" onclick="guardar()">
 				<img src="../../img/png/mostrar.png">
 			</button>
-		</div>    	
-		<div class="col-xs-2 col-md-2 col-sm-2">
+		</div>    	 -->
+		<!-- <div class="col-xs-2 col-md-2 col-sm-2">
 			<button class="btn btn-default" title="Guardar" onclick="guardar()">
 				<img src="../../img/png/file_crono.png" style="width:32px;height:32px">
 			</button>
-		</div>  
+		</div>   -->
   </div>
   
 </div>
@@ -368,10 +368,14 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary">
-                <h4 class="modal-title">Notificacion</h4>
+                <h4 class="modal-title">Foto Evidencia</h4>
             </div>
             <div class="modal-body" style="background: antiquewhite;">
-            	<img src="" id="img_documento" name="img_documento">
+            	<div class="row">
+            		<div class="col-sm-12 text-center">
+            			<img src="" id="img_documento" name="img_documento" width="50%">
+            		</div>
+            	</div>
             </div>
              <div class="modal-footer">             	
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

@@ -291,6 +291,7 @@ function Guardar_bodega(id)
 								<thead>
 									<th>Codigo</th>
 									<th><b>Producto</b></th>
+									<th><b>Stock</b></th>
 									<th>Codigo bodega</th>
 									<th><b>Ruta</b></th>
 									<th></th>
@@ -354,7 +355,7 @@ function Guardar_bodega(id)
 								</ul>               
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" onclick="cargar_bodegas();lista_stock_ubicado();" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-default" onclick="cargar_bodegas();lista_stock_ubicado();" data-dismiss="modal">OK</button>
             </div> 
         </div>
     </div>
@@ -372,7 +373,7 @@ function Guardar_bodega(id)
 								</ul>               
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" onclick="cargar_bodegas();lista_stock_ubicado();" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-default" onclick="cargar_bodegas();lista_stock_ubicado();" data-dismiss="modal">OK</button>
             </div> 
         </div>
     </div>

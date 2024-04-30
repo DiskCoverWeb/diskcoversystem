@@ -233,18 +233,17 @@
 	       dataType:'json',
 		    success: function(data)
 		    {
-		    	 var option = '';
+		    	var option = '';
 		    	 data.forEach(function(item,i){
-		    	 	img = 'simple';
+	         	img = 'simple';
 		    	 	if(item.data.Picture!='.'){	 		img = item.data.Picture; 	 	}
 	          option+= '<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">'+
 	                      '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/'+img+'.png" onclick="cambiar_area(\''+item.id+'\',\''+item.text+'\')"  style="width: 60px;height: 60px;"></button><br>'+
-	                      '<b>'+item.text+'</b>'+
+	                      '<b style="white-space: nowrap;">'+item.text+'</b>'+
 	                    '</div>';
 	        })
-
 	        // $('#txt_paquetes').html(op); 
-	        $('#pnl_opciones').html(option);       	 
+	        $('#pnl_opciones').html(option);      
 		    }
 		});
 	}
@@ -435,6 +434,9 @@
 		    		Swal.fire('Guardado','','success').then(function(){
 		    			location.reload();
 		    		})
+		    	}else if(data==-2)
+		    	{
+		    		Swal.fire('formato de evidencia incorrecto','asegurese de que sea una imagen','error');
 		    	}
 		    }
 		});
@@ -453,7 +455,20 @@
 		}
 		$('#myModal_opciones').modal('show');
 	}
-  	
+
+	function lista_egreso_checking()
+	{		
+	 	$.ajax({
+		    type: "POST",
+	       	url:   '../controlador/inventario/egreso_alimentosC.php?lista_egreso_checking=true',
+		    // data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+		    	$('#tbl_asignados').html(data);	
+		    }
+		});
+	}  	
    
 </script>
 
@@ -469,11 +484,11 @@
 				<img src="../../img/png/grabar.png">
 			</button>
 		</div>
-		<div class="col-xs-2 col-md-2 col-sm-2">
+		<!-- <div class="col-xs-2 col-md-2 col-sm-2">
 			<button class="btn btn-default" title="" onclick="">
 				<img src="../../img/png/mostrar.png">
 			</button>
-		</div>    	
+		</div>    	 -->
 		<div class="col-xs-2 col-md-2 col-sm-2">
 			<button class="btn btn-default" title="Historial" onclick="">
 				<img src="../../img/png/file_crono.png" style="width:32px;height:32px">
@@ -557,8 +572,8 @@
 							</div>
 							<br>
 							<b>Detalle de egreso:</b>
-	             			<input type="" class="form-control input-xs" id="txt_detalle" name="txt_detalle">	
-	             		</div>
+							<textarea id="txt_detalle" name="txt_detalle"  class="form-control input-xs"></textarea>
+	          </div>
 					</div>
 					<div class="col-sm-3">						
 						<form enctype="multipart/form-data" id="form_img" method="post" style="width: inherit;">

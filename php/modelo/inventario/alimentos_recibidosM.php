@@ -85,7 +85,7 @@ class alimentos_recibidosM
 		// print_r($sql);die();
 		return $this->db->datos($sql);
 	}
-	function buscar_transCorreos_ingresos($cod=false,$fecha=false)
+	function buscar_transCorreos_ingresos($cod=false,$fecha=false,$fechah=false)
 	{
 		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas,TC.CodigoU,C2.Cliente as 'Responsable'   
 		from Trans_Correos TC
@@ -99,31 +99,32 @@ class alimentos_recibidosM
 		{
 			$sql.= " AND Envio_No  like  '%".$cod."%'";
 		}
-		if($fecha)
+		if($fecha!=false && $fechah!=false)
 		{
-			$sql.= " AND TC.Fecha_P =  '".$fecha."'";
-		}
+			$sql.= " AND TC.Fecha_P between  '".$fecha."' AND '".$fechah."'";
+		}		
 		$sql.=" ORDER BY ID desc";  
 
 		// print_r($sql);die();
 		return $this->db->datos($sql);
 	}
 
-	function buscar_transCorreos_procesados_all($cod=false,$fecha=false,$id=false)
+	function buscar_transCorreos_procesados_all($cod=false,$fecha=false,$fechah=false,$id=false)
 	{
 		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas    
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
 		where Item = '".$_SESSION['INGRESO']['item']."'
-		AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+		AND TC.T <> 'I'";
 		if($cod)
 		{
 			$sql.= " AND Envio_No  like  '%".$cod."%'";
 		}
-		if($fecha)
+		if($fecha!=false && $fechah!=false)
 		{
-			$sql.= " AND TC.Fecha_P =  '".$fecha."'";
+			$sql.= " AND TC.Fecha_P between  '".$fecha."' AND '".$fechah."'";
 		}
 		if($id)
 		{
@@ -208,7 +209,7 @@ class alimentos_recibidosM
 	function cargar_pedidos_trans($orden,$fecha=false,$nombre=false)
 	{
     // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT T.*,P.Producto,P.TDP,A.Nombre_Completo 
+     $sql = "SELECT T.*,P.Producto,P.Unidad,P.TDP,A.Nombre_Completo 
      FROM Trans_Kardex  T ,Catalogo_Productos P, Accesos A        
      WHERE T.Item = '".$_SESSION['INGRESO']['item']."' 
      AND T.Periodo = '".$_SESSION['INGRESO']['periodo']."'

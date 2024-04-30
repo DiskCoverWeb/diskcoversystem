@@ -61,16 +61,19 @@
       	 $('#txt_fecha_exp').css('color','red');
       	 $('#img_por_expirar').attr('src','../../img/gif/expired_titi2.gif');
       	 $('#btn_titulo').text('Expirado')
+      	 $('#txt_fecha_exp').css('background','#ffff');
       }else if(diferenciaEnDias<=10 && diferenciaEnDias>0){
       	 $('#btn_expired').css('display','initial');
       	 $('#txt_fecha_exp').css('color','yellow');
       	 $('#img_por_expirar').attr('src','../../img/gif/expired_titi.gif');
       	 $('#btn_titulo').text('Por Expirar')
+      	 $('#txt_fecha_exp').css('background','#a6a5a5');
       }else
       {
       	 $('#btn_expired').css('display','none');
       	 $('#txt_fecha_exp').css('color','#000000');
       	 $('#img_por_expirar').attr('src','../../img/png/expired.png');
+      	 $('#txt_fecha_exp').css('background','#ffff');
       }
       
   	lineas_pedidos();
@@ -554,6 +557,7 @@ async function buscar_ruta()
 											<table class="table-sm table-hover table">
 												<thead>
 													<th><b>Producto</b></th>
+													<th><b>Stock</b></th>
 													<th><b>Ruta</b></th>
 													<th></th>
 												</thead>
@@ -593,7 +597,7 @@ async function buscar_ruta()
 								</ul>               
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" onclick="cargar_bodegas();" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-default" onclick="cargar_bodegas();" data-dismiss="modal">OK</button>
             </div> 
         </div>
     </div>

@@ -635,7 +635,7 @@ class alimentos_recibidosC
   					<td width="'.$d1.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
   					<td width="'.$d2.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
-  					<td width="'.$d4.'">'.number_format($value['Entrada'],2,'.','').'</td>
+  					<td width="'.$d4.'">'.number_format($value['Entrada'],2,'.','').' '.$value['Unidad'].'</td>
   					<td width="'.$d4.'">'.$value['Nombre_Completo'].'</td>
   					<td width="'.$d4.'">'.$value['Codigo_Barra'].'</td>
   					<td width="'.$d4.'">'.$sucursal.'</td>
@@ -721,7 +721,7 @@ class alimentos_recibidosC
 			$tr.='<tr>
   					<td width="'.$d.'">'.($key+1).'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
-  					<td width="'.$d4.'">'.number_format($value['Cantidad'],2,'.','').'</td>
+  					<td width="'.$d4.'">'.number_format($value['Cantidad'],2,'.','').' '.$value['UNIDAD'].'</td>
   					<td width="90px">
   					<!--	<button class="btn btn-sm btn-primary" onclick="editar_lin(\''.$value['ID'].'\')" title="Editar linea"><span class="glyphicon glyphicon-floppy-disk"></span></button> -->
   						<button class="btn btn-sm btn-danger" title="Eliminar linea"  onclick="eliminar_lin_pedido(\''.$value['ID'].'\')" ><span class="glyphicon glyphicon-trash"></span></button>
@@ -793,7 +793,7 @@ class alimentos_recibidosC
   					<td width="'.$d1.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
   					<td width="'.$d2.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
   					<td width="'.$d3.'">'.$value['Producto'].'</td>
-  					<td width="'.$d4.'" id="txt_cant_ped_'.$value['ID'].'">'.number_format($value['Entrada'],2,'.','').'</td>
+  					<td width="'.$d4.'" id="txt_cant_ped_'.$value['ID'].'">'.number_format($value['Entrada'],2,'.','').' '.$value['Unidad'].'</td>
   					<td width="'.$d4.'"><input class="form-control"  id="txt_pvp_linea_'.$value['ID'].'" name="txt_pvp_linea_'.$value['ID'].'" onblur="recalcular('.$value['ID'].')" input-sm" value="'.$value['Valor_Unitario'].'"></td>
   					<td width="'.$d4.'"><input class="form-control" id="txt_total_linea_'.$value['ID'].'" name="txt_total_linea_'.$value['ID'].'"  input-sm" value="'.$value['Valor_Total'].'" readonly></td>
 
@@ -906,8 +906,9 @@ class alimentos_recibidosC
 	{
 		$query = $parametros['query'];
 		$fecha = $parametros['fecha'];
+		$fechah = $parametros['fechah'];
 
-		$datos = $this->modelo->buscar_transCorreos_ingresos($query,$fecha);
+		$datos = $this->modelo->buscar_transCorreos_ingresos($query,$fecha,$fechah);
 		// print_r($datos);die();
 		$tr= '';
 		foreach ($datos as $key => $value) {
@@ -954,14 +955,16 @@ class alimentos_recibidosC
 	{
 		$query = $parametros['query'];
 		$fecha = $parametros['fecha'];
+		$fechah = $parametros['fechah'];
 
-		$datos = $this->modelo->buscar_transCorreos_procesados_all($query,$fecha);
+		$datos = $this->modelo->buscar_transCorreos_procesados_all($query,$fecha,$fechah);
 		$tr= '';
 		foreach ($datos as $key => $value) {
 			$proceso = 'Clasificacion';
 			if($value['T']=='P'){$proceso = 'Checking';}
-			if($value['T']=='R'){$proceso = 'Ingreso';}
+			if($value['T']=='R' || $value['T']=='I'){$proceso = 'Ingreso';}
 			if($value['T']=='C'){$proceso = 'Clasificacion';}
+			if($value['T']=='N'){$proceso = 'Almacenamiento';}
 
 			$noti = $this->modelo->listar_notificaciones($_SESSION['INGRESO']['CodigoU'],'P',false,$value['Envio_No']);
 			$alerta = '';

@@ -30,9 +30,16 @@ class reubicarC
     	$tr = '';
     	foreach ($datos as $key => $value) {
     		$rutas = $this->ruta_bodega($value['CodBodega']);
+    		$stock = 0;
+    		$datos_inv = Leer_Codigo_Inv($value['Codigo_Inv'],date('Y-m-d'));
+    		if($datos_inv['respueta']==1)
+    		{
+    			$stock = $datos_inv['datos']['Stock'].' '.$datos_inv['datos']['Unidad'];
+    		}
     		$tr.="<tr>
     			<td>".$value['Codigo_Barra']."</td>
     			<td>".$value['Producto']."</td>
+    			<td>".$stock."</td>
     			<td>".$value['CodBodega']."</td>
     			<td>".$rutas."</td>
     			<td><button type='button' title = 'Cambiar ubicacion' class='btn btn-xs btn-primary' onclick='cambiar_bodegas(\"".$value['ID']."\")'><i class='fa fa-refresh'></i></button></td>

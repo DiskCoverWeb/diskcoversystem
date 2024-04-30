@@ -403,6 +403,7 @@ function autocoplet_ingreso_donante(){
   		parametros = 
   		{
   			'fecha':$('#txt_fecha_b').val(),
+  			'fechah':$('#txt_fecha_bh').val(),
   			'query':$('#txt_query').val(),
   		}
 	  	$.ajax({
@@ -425,6 +426,7 @@ function autocoplet_ingreso_donante(){
   		parametros = 
   		{
   			'fecha':$('#txt_fecha_b').val(),
+  			'fechah':$('#txt_fecha_bh').val(),
   			'query':$('#txt_query').val(),
   		}
 	  	$.ajax({
@@ -947,12 +949,16 @@ function autocoplet_ingreso_donante(){
 							<input type="" name="txt_query" id="txt_query" class="form-control input-xs">
 						</div>
 						<div class="col-sm-2">							
-							<b>Fecha</b>
-							<input type="date" name="txt_fecha_b" id="txt_fecha_b" class="form-control input-xs">
+							<b>Fecha Desde</b>
+							<input type="date" name="txt_fecha_b" id="txt_fecha_b" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">
 						</div>
-						<div class="col-sm-10 text-right">							
+						<div class="col-sm-2">							
+							<b>Fecha Hasta</b>
+							<input type="date" name="txt_fecha_bh" id="txt_fecha_bh" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">
+						</div>
+						<div class="col-sm-8 text-right">							
 							<br>
-							<button type="button" class="btn-sm btn-primary btn" id="" name="" onclick="cargar_datos()"><i class="fa fa-search"></i> Buscar</button>
+							<button type="button" class="btn-sm btn-primary btn" id="" name="" onclick="cargar_datos();cargar_datos_procesados()"><i class="fa fa-search"></i> Buscar</button>
 						</div>
 					</div> 
 					<br>
@@ -1206,7 +1212,7 @@ function autocoplet_ingreso_donante(){
           					
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
-              <button type="button" class="btn btn-default" onclick="validar_trasporte_lleno()">Cerrar</button>
+              <button type="button" class="btn btn-default" onclick="validar_trasporte_lleno()">Ok</button>
           </div>
       </div>
   </div>
