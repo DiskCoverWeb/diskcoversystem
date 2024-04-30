@@ -592,7 +592,7 @@ function ReadSetDataNum($SQLs,$ParaEmpresa=false,$Incrementar = false,$Fecha=fal
   	$NumEmpresa = '000';
   }
 
-  $Num_Meses_CI=true;
+  $Num_Meses_CI=true;//por defecto deberian ser false y cambiarse por las variables de session.
   $Num_Meses_CD=true;  
   $Num_Meses_CE=true;
   $Num_Meses_ND=true;

@@ -505,13 +505,15 @@ class registro_esC
       $AdoAsientos = $this->modelo->select_asientos($parametros);
       $Debe = 0;
       $Haber = 0;
+      $msg = "";
       if(count($AdoAsientos) > 0){
         foreach($AdoAsientos as $row){
           $Debe += $row['DEBE'];
           $Haber += $row['HABER'];
         }
         if(($Debe - $Haber) != 0){
-          throw new Exception("Verifique el comprobante, no cuadra por: " . ($Debe - $Haber));
+          $msg = "Verifique el comprobante, no cuadra por: " . ($Debe - $Haber);
+          //throw new Exception("Verifique el comprobante, no cuadra por: " . ($Debe - $Haber));
         }
         $Co = datos_Co();
         $Co['T'] = G_NORMAL;
@@ -536,7 +538,10 @@ class registro_esC
         $pdf1 = ImprimirComprobantesDe(False, $Co);
         $pdf2 = Datos_Nota_Inventario($NumComp, $parametros['TextOrden'], "CD", $FechaTexto, $FechaTexto, $Total);
         mayorizar_inventario_sp();
-        return array('res' => 1, 'msg' => 'Comprobante grabado con exito', 'pdf1' => $pdf1, 'pdf2' => $pdf2);
+        if($msg == ""){
+          $msg = "Comprobante grabado con exito";
+        }
+        return array('res' => 1, 'msg' => $msg, 'pdf1' => $pdf1, 'pdf2' => $pdf2);
       }else{
         throw new Exception("No existen Datos para procesar");
       }

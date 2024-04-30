@@ -543,14 +543,21 @@
                     swal.fire({
                         type: 'success',
                         title: 'Todo correcto',
-                        text: 'Comprobante grabado con éxito'
+                        text: data.msg
+                    }).then((result) => {
+                        if(result.value){
+                            location.reload();
+                        }
                     });
-                    location.reload();
                 }else{
                     swal.fire({
                         type: 'error',
-                        title: 'Error',
-                        text: 'No se pudo grabar el comprobante'
+                        title: 'No se pudo grabar el comprobante',
+                        text: data.msg
+                    }).then((result) => {
+                        if(result.value){
+                            location.reload();
+                        }
                     });
                 
                 }
@@ -1227,7 +1234,7 @@
                                     </div>
                                     <div class="col-sm-7">
                                         <input type="text" name="TextConcepto" class="form-control input-xs"
-                                            id="TextConcepto">
+                                            id="TextConcepto" value=".">
                                     </div>
                                 </div>
                                 <div class="row">
