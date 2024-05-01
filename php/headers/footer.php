@@ -313,7 +313,7 @@
               </div>
               </div>
               <div class="modal-footer" style="background-color: white;">
-              <button class="btn btn-danger" data-dismiss="modal"
+              <button id="btnCancelAuth" class="btn btn-danger" data-dismiss="modal"
                                   onclick="limpiar_IngresoClave_MYSQL();"><i class="fa fa-close"></i> Cancelar</button>
                 </div>
           </div>

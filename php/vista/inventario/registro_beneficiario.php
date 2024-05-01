@@ -121,7 +121,19 @@
             color: orangered;
             cursor: pointer;
         }
+
+
+
+        #calendar {
+            max-width: 500px;
+            margin: 0 auto;
+        }
     </style>
+
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    <!--link rel="stylesheet" href="../../bower_components/fullcalendar/dist/fullcalendar.min.css" /-->
+    <!--script src="../../bower_components/fullcalendar/dist/fullcalendar.min.js"></script-->
+    <!--script src="../../bower_components/fullcalendar/dist/locale-all.js"></script-->
 </head>
 
 
@@ -137,6 +149,28 @@
                     id="btnGuardarAsignacion" onclick="">
                     <img src="../../img/png/disco.png" width="35" height="35">
                 </button>
+                <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Autorizar"
+                    id="btnAutorizarCambios" onclick="">
+                    <img src="../../img/png/admin.png" width="35" height="35">
+                </button>
+            </div>
+        </div>
+
+        <div id="calendar"></div>
+
+        <button id="btnCalendar">Calendar</button>
+        <div class="modal" id="mycalendar">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content" style="background-color: white;">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">CALENDARIO DE ASIGNACION</h4>
+                    </div>
+                    <div class="modal-body">
+
+
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -161,18 +195,6 @@
                                     <div class="carousel-inner">
                                     </div>
                                 </div>
-                                <!--div style="margin-right: 10px;  display: flex; ">
-                                    <a href="#" id="ingresarBeneficiario">
-                                        <img src="../../img/png/grupo.png" width="60" height="60"
-                                        onclick="abrirModal(93)" title="INGRESAR BENEFICIARIO">
-                                    </a>
-                                </div-->
-
-                                <!--div style="flex: 1;  margin-right: 10px; display:none">
-                                    <label for="input_93" style="display: block;">Tipo de Beneficiario</label>
-                                    <input class="form-control input-xs" type="text" name="input_93" id="input_93"
-                                        placeholder="Haz clic sobre la imagen" readonly>
-                                </div-->
 
                                 <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
                                     <label for="select_93" style="display: block;">Tipo de Beneficiario</label>
@@ -185,11 +207,7 @@
                                     <div class="carousel-inner">
                                     </div>
                                 </div>
-                                <!--div style="flex: 1; margin-right: 10px; ">
-                                    <label for="tipoDonacion" style="display: block;">Tipo de Donación</label>
-                                    <input class="form-control input-xs" type="text" name="tipoDonacion"
-                                        id="tipoDonacion" placeholder="Haz clic sobre la imagen" readonly>
-                                </div-->
+
                                 <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
                                     <label for="select_CxC" style="display: block;">Tipo de Donación</label>
                                     <select class="form-control input-xs" name="select_CxC" id="select_CxC"
@@ -235,11 +253,6 @@
                                         style="width: 100%;"></select>
                                 </div>
 
-                                <!--div style="flex: 1; margin-right: 10px; ">
-                                    <label for="sexo" style="display: block;">Sexo</label>
-                                    <select class="form-control input-xs" name="sexo" id="sexo"
-                                        style="width: 100%;"></select>
-                                </div-->
                             </div>
                             <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
                                 <div style="flex: 1; margin-right: 10px; ">
@@ -309,11 +322,7 @@
                                 </div>
 
                                 <div class="col-sm-3" style="margin-right:10px;">
-                                    <!--div class="row">
-                                    <label for="direccion" style="display: block;">Dirección</label>
-                                    <input class="form-control input-xs" type="text" name="direccion" id="direccion"
-                                        placeholder="Direccion">
-                                </div-->
+
                                     <div class="row">
                                         <label for="email" style="display: block;">Email</label>
                                         <input class="form-control input-xs" type="text" name="email" id="email"
@@ -327,11 +336,7 @@
                                 </div>
                                 <!--div class="col-sm-1"></div-->
                                 <div class="col-sm-3" style="margin-right:10px;">
-                                    <!--div class="row">
-                                    <label for="referencia" style="display: block;">Referencia</label>
-                                    <input class="form-control input-xs" type="text" name="referencia" id="referencia"
-                                        placeholder="Referencia">
-                                </div-->
+
                                     <div class="row">
                                         <label for="telefono" style="display: block;">Teléfono 1</label>
                                         <input class="form-control input-xs" type="text" name="telefono" id="telefono"
@@ -409,11 +414,7 @@
                                     <input type="number" name="totalPersonas" id="totalPersonas"
                                         class="form-control input-xs" min="0" max="100" readonly>
                                 </div>
-                                <!--div style="flex: 1; margin-right: 10px; margin-left: 10px;">
-                                    <label for="select_91" style="display: block;">Tipo de Población</label>
-                                    <select class="form-control input-xs" name="select_91" id="select_91"
-                                        style="width: 100%;"></select>
-                                </div-->
+
                                 <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
                                     <label for="select_92" style="display: block;">Acción Social</label>
                                     <select class="form-control input-xs" name="select_92" id="select_92"
@@ -739,7 +740,133 @@
     $(document).ready(function () {
         //$("#btnUsarCli").hide();        
         Form_Activate();
+        //Calendario();
     });
+
+    $('#btnCalendar').click(function () {
+
+        $('#mycalendar').modal('show');
+    });
+
+    function Calendario(datos) {
+        const promesas = datos.map(cliente => {
+            return new Promise((resolve) => {
+                const Actividad = cliente.Actividad || '';
+                const Cliente = cliente.Cliente || '';
+                const Envio_No = cliente.Envio_No || '';
+                const Dia_Ent = cliente.Dia_Ent || '';
+                const Hora_Ent = cliente.Hora_Ent || '';
+
+                ObtenerColor(Envio_No, function (color) {
+                    const colorV = '#' + color.substring(4);
+                    const fechaActual = new Date();
+                    const diaSemana = fechaActual.getDay();
+                    let fechaEvento;
+
+                    switch (Dia_Ent) {
+                        case 'Lun':
+                            fechaEvento = new Date(fechaActual.setDate(fechaActual.getDate() + ((1 + 7 - diaSemana) % 7)));
+                            break;
+                        case 'Mar':
+                            fechaEvento = new Date(fechaActual.setDate(fechaActual.getDate() + ((2 + 7 - diaSemana) % 7)));
+                            break;
+                        case 'Mie':
+                            fechaEvento = new Date(fechaActual.setDate(fechaActual.getDate() + ((3 + 7 - diaSemana) % 7)));
+                            break;
+                        case 'Jue':
+                            fechaEvento = new Date(fechaActual.setDate(fechaActual.getDate() + ((4 + 7 - diaSemana) % 7)));
+                            break;
+                        case 'Vie':
+                            fechaEvento = new Date(fechaActual.setDate(fechaActual.getDate() + ((5 + 7 - diaSemana) % 7)));
+                            break;
+                        case 'Sab':
+                            fechaEvento = new Date(fechaActual.setDate(fechaActual.getDate() + ((6 + 7 - diaSemana) % 7)));
+                            break;
+                        case 'Dom':
+                            fechaEvento = new Date(fechaActual.setDate(fechaActual.getDate() + ((0 + 7 - diaSemana) % 7)));
+                            break;
+                        default:
+                            fechaEvento = fechaActual;
+                    }
+
+                    const fechaInicio = new Date(fechaEvento.getFullYear(), fechaEvento.getMonth(), fechaEvento.getDate(), Hora_Ent.split(':')[0], Hora_Ent.split(':')[1]);
+                    const fechaFin = new Date(fechaInicio.getTime() + 3600000);
+
+                    resolve({
+                        title: Cliente,
+                        start: fechaInicio,
+                        end: fechaFin,
+                        backgroundColor: colorV
+                    });
+                });
+            });
+        });
+
+        Promise.all(promesas)
+            .then(events => {
+                llenarCalendar(events);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
+    function llenarCalendar(events) {
+        console.log(events);
+        var calendarEl = $("#calendar")[0];
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            locale: 'es',
+            initialDate: new Date(),
+            navLinks: true,
+            selectable: true,
+            selectMirror: true,
+            select: function (arg) {
+                Swal.fire({
+                    title: 'Título del evento',
+                    input: 'text',
+                    showCancelButton: true,
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'Por favor, ingresa un título para el evento'
+                        }
+                    }
+                }).then((result) => {
+                    if (result.value) {
+                        calendar.addEvent({
+                            title: result.value,
+                            start: arg.start,
+                            end: arg.end,
+                            allDay: arg.allDay
+                        });
+                    }
+                });
+                calendar.unselect();
+            },
+            eventClick: function (arg) {
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: 'Esta acción eliminará el evento',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.value) {
+                        arg.event.remove();
+                    }
+                });
+            },
+            editable: true,
+            dayMaxEvents: true,
+            events: events
+        });
+        calendar.render();
+    }
 
     function checkFiles(input) {
         console.log(contador);
@@ -1261,6 +1388,7 @@
                 success: function (datos) {
                     if (datos != 0 && datos[0].Envio_No != null) {
                         LlenarCalendarioC(datos);
+                        Calendario(datos);
                     } else {
                         $('#tabla-body').empty();
                         Swal.fire({
@@ -1311,7 +1439,6 @@
             console.log('4');
         }
 
-        console.log('sin valor');
         var horas = ['01:00 - 02:00', '02:00 - 03:00', '03:00 - 04:00',
             '04:00 - 05:00', '05:00 - 06:00', '06:00 - 07:00',
             '07:00 - 08:00', '08:00 - 09:00', '09:00 - 10:00',
@@ -1525,6 +1652,53 @@
         });
     }
 
+    $('#btnCancelAuth').click(function () {
+        $('#collapseTwo').collapse('hide');
+    });
+
+    function autorizarCambios() {
+        Swal.fire({
+            title: "Se requiere autorización para modificar el beneficiario: " + miCliente,
+            text: "¿Desea proceder ingresando su contraseña?",
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'SI',
+            cancelButtonText: 'NO'
+        }).then((result) => {
+            if (result.value) {
+                $('#clave_supervisor').modal('show');
+            } else {
+                //$('#collapseTwo').collapse('hide'); //descomentar
+            }
+        });
+    }
+    $('#btnAutorizarCambios').click(function () {
+        //console.log('hola');
+        //console.log(miCliente);
+        if (miCliente != undefined) {
+            autorizarCambios();
+        } else {
+            Swal.fire({
+                title: 'No se seleccionó un Cliente',
+                text: '',
+                type: 'warning',
+            });
+        }
+    });
+
+    function resp_clave_ingreso(response) {
+        if (response.respuesta == 1) {
+            $('#clave_supervisor').modal('hide');
+            $('#collapseTwo').collapse('show');
+            userAuth = true;
+        } else {
+            console.log('no se ingreso pass');
+            $('#collapseTwo').collapse('hide');
+        }
+    }
+
     //registro 
     $('#btnGuardarAsignacion').click(function () {
         var fileInput = $('#archivoAdd')[0];
@@ -1608,7 +1782,7 @@
         if (!$('#select_92').val()) camposVacios.push('Accion social');
         if (!$('#select_90').val()) camposVacios.push('Vulnerabilidad');
         if (!$('#select_89').val()) camposVacios.push('Tipo Atencion');
-        if (!fileInput.files.length) camposVacios.push('Evidencias');
+        if (!fileInput.files.length && nombreArchivo == "") camposVacios.push('Evidencias');
         if (!$('#infoNut').val()) camposVacios.push('Observaciones');
 
         if (camposVacios.length > 0) {
@@ -1766,6 +1940,21 @@
                             itemSelect(item.picture, item.text, item.color, item.id);
                         }
                     });
+
+                    if (datos.CodigoA == '.') {
+                        $('#select_87').val(null).trigger('change');
+                        $('#carouselBtnIma_87').carousel("cycle");
+                    }
+                    if (datos.Actividad == '.') {
+                        $('#select_93').val(null).trigger('change');
+                        $('#carouselBtnIma_93').carousel("cycle");
+                    }
+                    if (datos.Calificacion == '.') {
+                        $('#select_CxC').val(null).trigger('change');
+                        $('#carouselBtnImaDon').carousel("cycle");
+                    }
+
+
                     if (datos.Dia_Ent == '.') {
                         $('#diaEntrega').val($('#diaEntrega option:first').val());
                     } else {
@@ -1783,8 +1972,10 @@
 
     //llenar campos de panel informacion adicional
     var comen;
+    var userAuth = false;
     $('#botonInfoAdd').click(function () {
         if (miCodigo) {
+            console.log(userAuth);
             $.ajax({
                 url: '../controlador/inventario/registro_beneficiarioC.php?llenarCamposInfoAdd=true',
                 type: 'post',
@@ -1805,6 +1996,9 @@
                         llenarPreSelects(datos.Acreditacion);
                         llenarPreSelects(datos.Tipo_Dato);
                         llenarPreSelects(datos.Cod_Fam);
+                        if (userAuth == false) {
+                            autorizarCambios();
+                        }
                     } else {
                         Swal.fire({
                             title: 'No se encontraron datos adicionales',
@@ -1812,7 +2006,6 @@
                             type: 'info'
                         });
                     }
-
                 }
             });
             llenarCamposPoblacion(miCodigo);
@@ -1821,8 +2014,6 @@
                 title: 'No se seleccionó un Cliente',
                 text: '',
                 type: 'warning',
-
-
             });
         }
     });
@@ -1837,7 +2028,7 @@
             success: function (datos) {
                 if (datos != 0) {
                     console.log(datos);
-                    datos.forEach(function (registro) { 
+                    datos.forEach(function (registro) {
                         var hombres = registro.Hombres;
                         var mujeres = registro.Mujeres;
                         var total = registro.Total;

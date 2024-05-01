@@ -199,13 +199,14 @@ if (isset($_GET['guardarAsignacion'])) {
 
         if (strlen($params['NombreArchivo']) > 90) {
             echo json_encode(["res" => '0', "mensaje" => "El nombre del archivo supera el máximo de caracteres", "datos" => $params['NombreArchivo']]);
-        } else {
-            echo json_encode($controlador->guardarAsignacion($params));
-        }
-
-    } else {
-        echo json_encode(["res" => '0', "mensaje" => "No se ha cargado ningún archivo"]);
+        } 
+    } else{
+        $params['NombreArchivo'] = '';
     }
+    echo json_encode($controlador->guardarAsignacion($params));
+    /*else {
+        echo json_encode(["res" => '0', "mensaje" => "No se ha cargado ningún archivo"]);
+    }*/
 
 }
 
