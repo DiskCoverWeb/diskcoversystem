@@ -51,7 +51,7 @@
 
 
   	$('#modal_cantidad').on('shown.bs.modal', function () {
-		    $('#txt_cantidad2').focus();
+		    $('#txt_cantidad_add').focus();
 		})  
 
 		$('#modal_temperatura').on('shown.bs.modal', function () {
@@ -494,10 +494,26 @@ function autocoplet_ingreso_donante(){
   	 }
   	 console.log(cbx);
   }
+
   function cambiar_cantidad()
   {
-  	var can = $('#txt_cantidad2').val();
-  	$('#txt_cant').val(can);
+  	total = 0;
+  	
+  	$('.input-numero').each(function() {
+            var valor = parseFloat($(this).val());
+            if (!isNaN(valor)) {
+                total += valor;
+                console.log(valor);
+            }
+    });
+  //	var can = $('#txt_cantidad2').val();
+  	$('#txt_cantidad2').val(total);
+  }
+
+  function cerrar_modal_cant()
+  {
+  	var total = $('#txt_cantidad2').val();
+  	$('#txt_cant').val(total);
   	$('#modal_cantidad').modal('hide');
   	$('#txt_cant').focus();
   }
@@ -755,6 +771,12 @@ function autocoplet_ingreso_donante(){
           notificaciones();
         }
     });   
+
+  }
+
+  function mas_input()
+  {
+  	$('#div_cantidad').append('<input type="text" name="txt_cantidad_add" id="txt_cantidad_add" class="form-control input-numero" placeholder="0" onblur="cambiar_cantidad()" onKeyPress="return soloNumerosDecimales(event)">');
 
   }
 
@@ -1087,7 +1109,6 @@ function autocoplet_ingreso_donante(){
 
 
 
-
 <div id="modal_temperatura" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog modal-sm">
       <div class="modal-content">
@@ -1096,11 +1117,11 @@ function autocoplet_ingreso_donante(){
               <h4 class="modal-title">Temperatura</h4>
           </div>
           <div class="modal-body" style="background: antiquewhite;">
-          <b>Temperatura</b>
-          <div class="input-group">
-						<input type="text" class="form-control" id="txt_temperatura2" name="txt_temperatura2" onblur="cambiar_temperatura()">
-						<span class="input-group-addon">°C</span>
-					</div> 								
+	          <b>Temperatura</b>
+	          <div class="input-group">
+							<input type="text" class="form-control" id="txt_temperatura2" name="txt_temperatura2" onblur="cambiar_temperatura()">
+							<span class="input-group-addon">°C</span>
+						</div> 								
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
               <button type="button" class="btn btn-primary" onclick="cambiar_temperatura()">OK</button>
@@ -1111,7 +1132,7 @@ function autocoplet_ingreso_donante(){
 </div>
 
 
-<div id="modal_cantidad" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+<div id="modal_cantidad" class="modal fade modal_cantidad" role="dialog" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog modal-sm">
       <div class="modal-content">
           <div class="modal-header bg-primary">
@@ -1120,10 +1141,24 @@ function autocoplet_ingreso_donante(){
           </div>
           <div class="modal-body" style="background: antiquewhite;">
           <b>Cantidad</b>
-          <input type="text" name="txt_cantidad2" id="txt_cantidad2" class="form-control" placeholder="0"  onblur="cambiar_cantidad()">        					
+          <div class="row">
+          	<div class="col-sm-12">
+
+		          		<form id="div_cantidad">
+	          		<div class="input-group input-group-sm">
+			          		 	<input type="text" name="txt_cantidad_add" id="txt_cantidad_add" onblur="cambiar_cantidad()" onKeyPress="return soloNumerosDecimales(event)" placeholder="0" class="form-control">
+
+										  <span class="input-group-btn">
+											<button type="button" class="btn-info btn-sm" onclick="mas_input()"><i class="fa fa-plus"></i></button>
+										</span>									
+								</div>	   
+									</form>	 
+								<input type="text" name="txt_cantidad2" id="txt_cantidad2" class="form-control" readonly>
+          	</div>
+          </div>   					
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
-              <button type="button" class="btn btn-primary" onclick="cambiar_cantidad()">OK</button>
+              <button type="button" class="btn btn-primary" onclick="cerrar_modal_cant()">OK</button>
               <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
           </div>
       </div>
