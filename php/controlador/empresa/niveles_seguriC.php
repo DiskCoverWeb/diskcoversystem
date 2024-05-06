@@ -711,6 +711,8 @@ class niveles_seguriC
 
 	function todos_los_modulos()
 	{
+		$parametros = $_POST['parametros'];
+		// print_r($parametros);
 
 		$tbl2 = '';
 		$modulos = $this->modelo->modulos_todo();
@@ -728,11 +730,27 @@ class niveles_seguriC
 			foreach ($modulos as $key2 => $value2) {	
 				$server = '';
 				// if($value1['dbSQLSERVER']==0){$server = 'Disabled';}
-							
-				$tbl2.='<td class="text-center" style="border: solid 1px; width: 50px;">
+				// $numero = floatval($value2['codMenu']);
+				if($parametros['entidad']!=0 && $parametros['entidad']!=1 && $parametros['entidad']!=''&& $parametros['entidad']!=null) 
+				{
+					// print_r('diferente a prisma');
+					if($value2['modulo']<90)
+					{							
+						$tbl2.='<td class="text-center" style="border: solid 1px; width: 50px;">
 								'.$value2['aplicacion'].'</br>
 				            <input type="checkbox" name="rbl_'.$value2['modulo'].'" id="rbl_'.$value2['modulo'].'" title="'.$value2['aplicacion'].'" onclick="marcar_acceso_todos(\''.$value2['modulo'].'\')">
 				        </td>';
+				    }
+				}else
+				{
+
+					// print_r('diferente a prisma');
+					$tbl2.='<td class="text-center" style="border: solid 1px; width: 50px;">
+								'.$value2['aplicacion'].'</br>
+				            <input type="checkbox" name="rbl_'.$value2['modulo'].'" id="rbl_'.$value2['modulo'].'" title="'.$value2['aplicacion'].'" onclick="marcar_acceso_todos(\''.$value2['modulo'].'\')">
+				        </td>';
+
+				}
 			}
 			$tbl2.='</tr></table></div></div></div>';
 
@@ -807,11 +825,27 @@ class niveles_seguriC
 			foreach ($modulos as $key2 => $value2) {	
 				$server = '';
 				// if($value1['dbSQLSERVER']==0){$server = 'Disabled';}
-							
-				$tbl2.='<td class="text-center" style="border: solid 1px; width: 50px;">
+				if($value1['ID_Empresa']!=0 && $value1['ID_Empresa']!=1 && $value1['ID_Empresa']!=''&& $value1['ID_Empresa']!=null) 
+				{
+					// print_r('diferente a prisma');
+					if($value2['modulo']<90)
+					{							
+						$tbl2.='<td class="text-center" style="border: solid 1px; width: 50px;">
 								'.$value2['aplicacion'].'</br>
 				            <input type="checkbox" name="rbl_'.$value2['modulo'].'_'.$value1['id'].'" id="rbl_'.$value2['modulo'].'_'.$value1['id'].'" title="'.$value2['aplicacion'].'" onclick="listar_empresa_modificada(\''.$value1['id'].'\')" '.$server.' >
 				        </td>';
+				    }
+				}else
+				{
+
+					$tbl2.='<td class="text-center" style="border: solid 1px; width: 50px;">
+								'.$value2['aplicacion'].'</br>
+				            <input type="checkbox" name="rbl_'.$value2['modulo'].'_'.$value1['id'].'" id="rbl_'.$value2['modulo'].'_'.$value1['id'].'" title="'.$value2['aplicacion'].'" onclick="listar_empresa_modificada(\''.$value1['id'].'\')" '.$server.' >
+				        </td>';
+
+				}
+
+				
 			}
 			$tbl2.='</tr></table></div></div></div></div>';	
 

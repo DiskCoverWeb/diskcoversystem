@@ -86,7 +86,7 @@ class niveles_seguriM
 
 	function empresas($entidad)
 	{
-		$sql="SELECT  ID,Empresa,Item,IP_VPN_RUTA,Base_Datos,Usuario_DB,Contrasena_DB,Tipo_Base,Puerto,RUC_CI_NIC  FROM lista_empresas WHERE ID_empresa = ".$entidad." AND Item <> '".G_NINGUNO."' ORDER BY Empresa ASC";
+		$sql="SELECT  ID,Empresa,Item,IP_VPN_RUTA,Base_Datos,Usuario_DB,Contrasena_DB,Tipo_Base,Puerto,RUC_CI_NIC,ID_Empresa  FROM lista_empresas WHERE ID_empresa = ".$entidad." AND Item <> '".G_NINGUNO."' ORDER BY Empresa ASC";
 		// print_r($sql);die();
 		$resp = $this->db->datos($sql,'MY SQL');
 		  $datos=array();
@@ -101,7 +101,7 @@ class niveles_seguriM
 			// 	}
 			// }
 				//$datos[]=['id'=>utf8_encode($filas['Item']),'text'=>utf8_encode($filas['Empresa'])];
-				$datos[]=array('id'=>$value['Item'],'text'=>$value['Empresa'],'dbSQLSERVER'=>$server,'CI_RUC'=>$value['RUC_CI_NIC']);			
+				$datos[]=array('id'=>$value['Item'],'text'=>$value['Empresa'],'dbSQLSERVER'=>$server,'CI_RUC'=>$value['RUC_CI_NIC'],'ID_Empresa'=>$value['ID_Empresa']);			
 		 }
 	      return $datos;
 	}
