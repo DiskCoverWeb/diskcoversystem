@@ -125,7 +125,7 @@
 
 
         #calendar {
-            max-width: 500px;
+            max-width: 1000px;
             margin: 0 auto;
         }
     </style>
@@ -156,19 +156,20 @@
             </div>
         </div>
 
-        <div id="calendar"></div>
-
-        <button id="btnCalendar">Calendar</button>
         <div class="modal" id="mycalendar">
             <div class="modal-dialog modal-lg">
-                <div class="modal-content" style="background-color: white;">
+                <div class="modal-content" style="background-color: white; ">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">CALENDARIO DE ASIGNACION</h4>
                     </div>
                     <div class="modal-body">
+                        <div id="calendar" style="overflow-y: auto; max-height: 400px;"></div>
 
-
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" id="btnGuardarCale">Aceptar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                     </div>
                 </div>
             </div>
@@ -740,111 +741,110 @@
     $(document).ready(function () {
         //$("#btnUsarCli").hide();        
         Form_Activate();
-        //Calendario();
-    });
-
-    $('#btnCalendar').click(function () {
-
-        $('#mycalendar').modal('show');
     });
 
     function Calendario(datos) {
-        const promesas = datos.map(cliente => {
-            return new Promise((resolve) => {
-                const Actividad = cliente.Actividad || '';
-                const Cliente = cliente.Cliente || '';
-                const Envio_No = cliente.Envio_No || '';
-                const Dia_Ent = cliente.Dia_Ent || '';
-                const Hora_Ent = cliente.Hora_Ent || '';
+        return new Promise((resolve, reject) => {
+            const promesas = datos.map(async (cliente) => {
+                var Actividad = cliente.Actividad || '';
+                var Cliente = cliente.Cliente || '';
+                var Envio_No = cliente.Envio_No || '';
+                var Dia_Ent = cliente.Dia_Ent || '';
+                var Hora_Ent = cliente.Hora_Ent || '';
+                var colorV = await ObtenerColor(Envio_No);
+                var fechaActual = new Date();
+                var diaSemana = fechaActual.getDay();
+                var fechaEvento;
 
-                ObtenerColor(Envio_No, function (color) {
-                    const colorV = '#' + color.substring(4);
-                    const fechaActual = new Date();
-                    const diaSemana = fechaActual.getDay();
-                    let fechaEvento;
+                switch (Dia_Ent) {
+                    case 'Lun':
+                        fechaEvento = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate() - diaSemana + 1);
+                        break;
+                    case 'Mar':
+                        fechaEvento = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate() - diaSemana + 2);
+                        break;
+                    case 'Mie':
+                        fechaEvento = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate() - diaSemana + 3);
+                        break;
+                    case 'Jue':
+                        fechaEvento = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate() - diaSemana + 4);
+                        break;
+                    case 'Vie':
+                        fechaEvento = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate() - diaSemana + 5);
+                        break;
+                    case 'Sab':
+                        fechaEvento = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate() - diaSemana + 6);
+                        break;
+                    case 'Dom':
+                        fechaEvento = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate() - diaSemana + 0);
+                        break;
+                    default:
+                        fechaEvento = fechaActual;
+                }
 
-                    switch (Dia_Ent) {
-                        case 'Lun':
-                            fechaEvento = new Date(fechaActual.setDate(fechaActual.getDate() + ((1 + 7 - diaSemana) % 7)));
-                            break;
-                        case 'Mar':
-                            fechaEvento = new Date(fechaActual.setDate(fechaActual.getDate() + ((2 + 7 - diaSemana) % 7)));
-                            break;
-                        case 'Mie':
-                            fechaEvento = new Date(fechaActual.setDate(fechaActual.getDate() + ((3 + 7 - diaSemana) % 7)));
-                            break;
-                        case 'Jue':
-                            fechaEvento = new Date(fechaActual.setDate(fechaActual.getDate() + ((4 + 7 - diaSemana) % 7)));
-                            break;
-                        case 'Vie':
-                            fechaEvento = new Date(fechaActual.setDate(fechaActual.getDate() + ((5 + 7 - diaSemana) % 7)));
-                            break;
-                        case 'Sab':
-                            fechaEvento = new Date(fechaActual.setDate(fechaActual.getDate() + ((6 + 7 - diaSemana) % 7)));
-                            break;
-                        case 'Dom':
-                            fechaEvento = new Date(fechaActual.setDate(fechaActual.getDate() + ((0 + 7 - diaSemana) % 7)));
-                            break;
-                        default:
-                            fechaEvento = fechaActual;
-                    }
+                const fechaInicio = new Date(fechaEvento.getFullYear(), fechaEvento.getMonth(), fechaEvento.getDate(), Hora_Ent.split(':')[0], Hora_Ent.split(':')[1]);
+                const fechaFin = new Date(fechaInicio.getTime() + 30 * 60000);
 
-                    const fechaInicio = new Date(fechaEvento.getFullYear(), fechaEvento.getMonth(), fechaEvento.getDate(), Hora_Ent.split(':')[0], Hora_Ent.split(':')[1]);
-                    const fechaFin = new Date(fechaInicio.getTime() + 3600000);
+                return {
+                    title: Cliente,
+                    start: fechaInicio,
+                    end: fechaFin,
+                    backgroundColor: colorV,
+                    textColor: 'black',
+                };
+            });
 
-                    resolve({
-                        title: Cliente,
-                        start: fechaInicio,
-                        end: fechaFin,
-                        backgroundColor: colorV
-                    });
+            Promise.all(promesas)
+                .then((events) => {
+                    resolve(events);
+                    inicializarCalendario(events);
+                })
+                .catch((error) => {
+                    reject(error);
                 });
-            });
         });
-
-        Promise.all(promesas)
-            .then(events => {
-                llenarCalendar(events);
-            })
-            .catch(error => {
-                console.error(error);
-            });
     }
 
-    function llenarCalendar(events) {
+    var eventosEliminados = [];
+    var eventosEditados = [];
+    var eventosCreados = [];
+    function inicializarCalendario(events) {
         console.log(events);
+        $('#mycalendar').modal('show');
         var calendarEl = $("#calendar")[0];
         var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek',
             headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                //left: 'prev,next today',
+                //center: 'title',
+                right: 'timeGridWeek,listWeek'
             },
-            locale: 'es',
-            initialDate: new Date(),
+            allDaySlot: false,
+            weekends: false,
             navLinks: true,
             selectable: true,
             selectMirror: true,
+            slotMinTime: '09:30:00',
+            slotMaxTime: '16:30:00',
+            slotDuration: '00:15:00',
             select: function (arg) {
-                Swal.fire({
-                    title: 'Título del evento',
-                    input: 'text',
-                    showCancelButton: true,
-                    inputValidator: (value) => {
-                        if (!value) {
-                            return 'Por favor, ingresa un título para el evento'
-                        }
-                    }
-                }).then((result) => {
-                    if (result.value) {
-                        calendar.addEvent({
-                            title: result.value,
-                            start: arg.start,
-                            end: arg.end,
-                            allDay: arg.allDay
-                        });
-                    }
+                var eventoExistente = calendar.getEvents().find(function (evento) {
+                    return evento.title === miCliente;
                 });
+
+                if (!eventoExistente) {
+                    var endDate = new Date(arg.start.getTime() + 30 * 60000);
+                    var nuevoEvento = {
+                        title: miCliente,
+                        start: arg.start,
+                        end: endDate,
+                        allDay: arg.allDay
+                    };
+                    calendar.addEvent(nuevoEvento);
+                    eventosCreados.push(nuevoEvento);
+                } else {
+                    swal.fire("", "El usuario ya tiene una asignación en el Calendario", "error");
+                }
                 calendar.unselect();
             },
             eventClick: function (arg) {
@@ -858,15 +858,77 @@
                 }).then((result) => {
                     if (result.value) {
                         arg.event.remove();
+                        eventosEliminados.push(arg.event);
                     }
                 });
             },
             editable: true,
             dayMaxEvents: true,
-            events: events
+            events: events.map(event => {
+                console.log(`Evento: ${event.title}, Día: ${event.start.getDay()}`);
+                return event;
+            }).concat([
+                {
+                    daysOfWeek: [1, 2, 3, 4, 5],
+                    startTime: '12:30',
+                    endTime: '13:30',
+                    display: 'background',
+                    rendering: 'background'
+                }
+            ]),
+            eventChange: function (info) {
+                if (info.event.title === miCliente) {
+                    var index = eventosEditados.findIndex(function (item) {
+                        return item.title === miCliente;
+                    });
+                    if (index !== -1) {
+                        eventosEditados[index] = {
+                            title: info.event.title,
+                            start: info.event.start,
+                            end: info.event.end
+                        };
+                    } else {
+                        eventosEditados.push({
+                            title: info.event.title,
+                            start: info.event.start,
+                            end: info.event.end
+                        });
+                    }
+                }
+            }
         });
+
         calendar.render();
     }
+
+    $('#btnGuardarCale').click(function () {
+        $('#mycalendar').modal('hide');
+        console.log('editados');
+        console.log(eventosEditados);
+        console.log('eliminados');
+        console.log(eventosEliminados);
+        console.log('creados');
+        console.log(eventosCreados);
+
+        if (eventosEditados.length > 0) {
+            eventosEditados.forEach(function (evento) {
+                var startDate = new Date(evento.start);
+                var dayName = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'][startDate.getDay()];
+                var startTime = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                $('#diaEntregac').val(dayName.substring(0, 3));
+
+                $('#horaEntregac').val(startTime);
+            });
+        } else {
+            eventosCreados.forEach(function (evento) {
+                var startDate = new Date(evento.start);
+                var dayName = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'][startDate.getDay()];
+                var startTime = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                $('#diaEntregac').val(dayName.substring(0, 3));
+                $('#horaEntregac').val(startTime);
+            });
+        }
+    });
 
     function checkFiles(input) {
         console.log(contador);
@@ -1386,8 +1448,9 @@
                 dataType: 'json',
                 data: { valor: Actividad },
                 success: function (datos) {
+                    //console.log(datos);
                     if (datos != 0 && datos[0].Envio_No != null) {
-                        LlenarCalendarioC(datos);
+                        //LlenarCalendarioC(datos);
                         Calendario(datos);
                     } else {
                         $('#tabla-body').empty();
@@ -1403,28 +1466,26 @@
     }
 
     //color para celdas del calendario
-    var miColor;
-    function ObtenerColor(valEnvio_No, callback) {
-        if (valEnvio_No) {
-            $.ajax({
-                url: '../controlador/inventario/registro_beneficiarioC.php?ObtenerColor=true',
-                type: 'post',
-                dataType: 'json',
-                data: { valor: valEnvio_No },
-                success: function (data) {
-                    if (data != 0) {
-                        miColor = data.Color;
-                        callback(miColor);
+    function ObtenerColor(valEnvio_No) {
+        return new Promise((resolve) => {
+            if (valEnvio_No) {
+                $.ajax({
+                    url: '../controlador/inventario/registro_beneficiarioC.php?ObtenerColor=true',
+                    type: 'post',
+                    dataType: 'json',
+                    data: { valor: valEnvio_No },
+                    success: function (data) {
+                        var color = "#" + data.Color.substring(4);
+                        resolve(color);
                     }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error al obtener color:', error);
-                }
-            });
-        }
+                });
+            } else {
+                resolve('#000000');
+            }
+        });
     }
 
-    function LlenarCalendarioC(data) {
+    /*function LlenarCalendarioC(data) {
         console.log(data[0]);
         if (data[0].Envio_No == 'null') {
             console.log('1');
@@ -1450,48 +1511,46 @@
         var diasSemana = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
         $('#tabla-body').empty();
 
-        $.each(data, function (index, cliente) {
+        $.each(data, async function (index, cliente) {
             var Actividad = cliente.Actividad || '';
             var Cliente = cliente.Cliente || '';
             var Envio_No = cliente.Envio_No || '';
             var Dia_Ent = cliente.Dia_Ent || '';
             var Hora_Ent = cliente.Hora_Ent || '';
 
-            ObtenerColor(Envio_No, function (color) {
-                var colorV = color.substring(4);
-                var indiceColumna = diasSemana.indexOf(Dia_Ent);
-                var indiceFila = -1;
-                for (var i = 0; i < horas.length; i++) {
-                    var horaInicio = horas[i].split(' - ')[0];
-                    var horaFin = horas[i].split(' - ')[1];
-                    if (Hora_Ent >= horaInicio && Hora_Ent < horaFin) {
-                        indiceFila = i;
-                        break;
-                    }
+            var colorV = await ObtenerColor(Envio_No);
+            var indiceColumna = diasSemana.indexOf(Dia_Ent);
+            var indiceFila = -1;
+            for (var i = 0; i < horas.length; i++) {
+                var horaInicio = horas[i].split(' - ')[0];
+                var horaFin = horas[i].split(' - ')[1];
+                if (Hora_Ent >= horaInicio && Hora_Ent < horaFin) {
+                    indiceFila = i;
+                    break;
                 }
+            }
 
-                var $fila = $('#tabla-body tr').filter(function () {
-                    return $(this).find('td:first').text() === horas[indiceFila];
-                });
-
-                if ($fila.length === 0) {
-                    $fila = $('<tr>');
-                    $fila.append($('<td>').text(horas[indiceFila]));
-                    $.each(diasSemana, function (indiceDia, dia) {
-                        var $celda = $('<td>');
-                        $fila.append($celda);
-                    });
-                    $('#tabla-body').append($fila);
-                }
-
-                var $celda = $fila.find('td').eq(indiceColumna + 1);
-                var $div = $('<div>').text(Cliente).css('background-color', '#' + colorV);
-                $celda.append($div);
+            var $fila = $('#tabla-body tr').filter(function () {
+                return $(this).find('td:first').text() === horas[indiceFila];
             });
+
+            if ($fila.length === 0) {
+                $fila = $('<tr>');
+                $fila.append($('<td>').text(horas[indiceFila]));
+                $.each(diasSemana, function (indiceDia, dia) {
+                    var $celda = $('<td>');
+                    $fila.append($celda);
+                });
+                $('#tabla-body').append($fila);
+            }
+
+            var $celda = $fila.find('td').eq(indiceColumna + 1);
+            var $div = $('<div>').text(Cliente).css('background-color', colorV);
+            $celda.append($div);
+
         });
         $('#modalCalendario').modal('show');
-
-    }
+    }*/
 
     //selects Sexo
     function LlenarSelectSexo() {
@@ -1652,10 +1711,6 @@
         });
     }
 
-    $('#btnCancelAuth').click(function () {
-        $('#collapseTwo').collapse('hide');
-    });
-
     function autorizarCambios() {
         Swal.fire({
             title: "Se requiere autorización para modificar el beneficiario: " + miCliente,
@@ -1668,9 +1723,11 @@
             cancelButtonText: 'NO'
         }).then((result) => {
             if (result.value) {
+                $('#TipoSuper_MYSQL').val('Actualizar');
+                $('#titulo_clave').text('Autorizar Cambios');
                 $('#clave_supervisor').modal('show');
             } else {
-                //$('#collapseTwo').collapse('hide'); //descomentar
+                $('#collapseTwo').collapse('hide');
             }
         });
     }
@@ -1785,7 +1842,14 @@
         if (!fileInput.files.length && nombreArchivo == "") camposVacios.push('Evidencias');
         if (!$('#infoNut').val()) camposVacios.push('Observaciones');
 
-        if (camposVacios.length > 0) {
+        if (userNew == false && userAuth == false) {
+            Swal.fire({
+                title: '',
+                text: "Usted no está autorizado.",
+                type: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        } else if (camposVacios.length > 0) {
             var mensaje = 'Los siguientes campos están vacíos:\n';
             camposVacios.forEach(function (campo) {
                 mensaje += campo + ',';
@@ -1830,6 +1894,11 @@
 
     //limpieza
     function LimpiarSelectsInfoAdd() {
+        eventosEliminados = [];
+        eventosEditados = [];
+        eventosCreados = [];
+        userAuth = false;
+        userNew = false;
         $('#collapseTwo').collapse('hide');
         $('#select_92').val(null).trigger('change');
         $('#select_86').val(null).trigger('change');
@@ -1972,10 +2041,12 @@
 
     //llenar campos de panel informacion adicional
     var comen;
+    var userNew = false;
     var userAuth = false;
     $('#botonInfoAdd').click(function () {
         if (miCodigo) {
-            console.log(userAuth);
+            console.log('userAuth?: ' + userAuth);
+            console.log('userNew?: ' + userNew);
             $.ajax({
                 url: '../controlador/inventario/registro_beneficiarioC.php?llenarCamposInfoAdd=true',
                 type: 'post',
@@ -1996,10 +2067,11 @@
                         llenarPreSelects(datos.Acreditacion);
                         llenarPreSelects(datos.Tipo_Dato);
                         llenarPreSelects(datos.Cod_Fam);
-                        if (userAuth == false) {
+                        if (userNew == false && userAuth == false) {
                             autorizarCambios();
                         }
                     } else {
+                        userNew = true;
                         Swal.fire({
                             title: 'No se encontraron datos adicionales',
                             text: '',
@@ -2019,7 +2091,7 @@
     });
 
     function llenarCamposPoblacion(Codigo) {
-        console.log('hola');
+        //console.log('hola');
         $.ajax({
             url: '../controlador/inventario/registro_beneficiarioC.php?llenarCamposPoblacion=true',
             type: 'post',
@@ -2099,10 +2171,10 @@
     var nombre;
     function DownloadOrDelete(archivo, noDescarga) {
         nombre = archivo;
-        console.log(nombre);
+        //console.log(nombre);
         if (noDescarga == true) {
             $('#btnDescargar').hide();
-            console.log('hola1');
+            //console.log('hola1');
         }
         else { $('#btnDescargar').show(); }
         $('#modalDescarga .modal-footer').show();

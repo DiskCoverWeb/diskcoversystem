@@ -63,6 +63,7 @@ class registro_beneficiarioM
                     LEFT JOIN Clientes_Datos_Extras AS F ON C.Codigo = F.Codigo
                     WHERE C.Cliente <> '.'
                     AND Actividad = '" . $valor . "'
+                    AND Envio_No != '.'
                     ORDER BY Hora_Ent";
         return $this->db->datos($sql);
     }
