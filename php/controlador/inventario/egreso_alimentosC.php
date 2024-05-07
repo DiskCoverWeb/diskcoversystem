@@ -16,6 +16,15 @@ if(isset($_GET['areas']))
 	}
 	echo json_encode($controlador->ddl_areas($query));
 } 
+if(isset($_GET['areas_checking']))
+{
+	$query = '';
+	if(isset($_GET['q']))
+	{
+		$query = $_GET['q'];
+	}
+	echo json_encode($controlador->areas_checking($query));
+} 
 if(isset($_GET['motivos']))
 {
 	$query = '';
@@ -41,7 +50,13 @@ if(isset($_GET['listar_egresos']))
 }
 if(isset($_GET['lista_egreso_checking']))
 {
-	echo json_encode($controlador->lista_egreso_checking());
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->lista_egreso_checking($parametros));
+}
+if(isset($_GET['lista_egreso_checking_reportados']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->lista_egreso_checking_reportados($parametros));
 }
 if(isset($_GET['eliminar_egreso']))
 {
@@ -66,6 +81,11 @@ if(isset($_GET['catalog_cuentas']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->catalog_cuentas($parametros));
 }
+if(isset($_GET['cambiar_a_reportado']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->cambiar_a_reportado($parametros));
+}
 
 /**
  * 
@@ -85,6 +105,18 @@ class egreso_alimentosC
 	function ddl_areas($query)
 	{
 		$datos = $this->modelo->areas($query);
+		$op=array();
+		foreach ($datos as $key => $value) {
+			$op[] = array('id'=>$value['Cmds'],'text'=>trim($value['Proceso']),'data'=>$value);			
+		}
+
+		return $op;
+
+	}
+
+	function areas_checking($query)
+	{
+		$datos = $this->modelo->areas_checking($query);
 		$op=array();
 		foreach ($datos as $key => $value) {
 			$op[] = array('id'=>$value['Cmds'],'text'=>trim($value['Proceso']),'data'=>$value);			
@@ -230,10 +262,16 @@ class egreso_alimentosC
 	  }
 
 
-	function lista_egreso_checking()
+	function lista_egreso_checking($parametros)
 	{
+		$area = false;
+		if(isset($parametros['areas']))
+		{
+			$area = $parametros['areas'];
+		}
+		// print_r($parametros);die();
 		$tr = '';
-		$datos = $this->modelo->lista_egreso_checking();
+		$datos = $this->modelo->lista_egreso_checking(false,false,$area);
 		foreach ($datos as $key => $value) {
 			$tr.='<tr>
 					<td>'.($key+1).'</td>
@@ -273,6 +311,56 @@ class egreso_alimentosC
 					</td>
 					<td>
 						<input type="checkbox" name="">
+					</td>
+				</tr>';
+			// $tr.='<tr>			
+			
+			// <td>'.$value['Producto'].'</td>
+			// <td>'.$value['Salida'].'</td>
+			// <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminar_egreso('.$value['ID'].')"><i class="fa fa-trash"></i></button></td>
+			// </tr>';
+		}
+		return $tr;
+	}
+
+	function lista_egreso_checking_reportados($parametros)
+	{
+		$area = false;
+		if(isset($parametros['areas']))
+		{
+			$area = $parametros['areas'];
+		}
+		// print_r($parametros);die();
+		$tr = '';
+		$datos = $this->modelo->lista_egreso_checking_devuelto(false,false,$area);
+		foreach ($datos as $key => $value) {
+			$tr.='<tr>
+					<td>'.($key+1).'</td>
+					<td>'.$value['Fecha']->format('Y-m-d').'</td>
+					<td>
+						<div class="input-group input-group-sm">
+							'.$value['usuario'].'							
+						</div>
+					</td>
+					<td>
+						<div class="input-group input-group-sm">
+							'.$value['area'].'							
+						</div>
+					</td>					
+					<td>'.$value['Detalle'].'</td>
+					<td>
+						<div class="input-group input-group-sm">
+							'.$value['Motivo'].'							
+						</div>
+					</td>
+					
+					<td>
+						
+					</td>
+					<td>
+					<button class="btn btn-primary"><i class="fa fa-save"></i></button>
+					<button class="btn btn-primary"><i class="fa fa-trash"></i></button>
+					<button class="btn btn-primary"><i class="fa fa-pen"></i></button>
 					</td>
 				</tr>';
 			// $tr.='<tr>			
@@ -325,6 +413,15 @@ class egreso_alimentosC
 		}
 
 		return $tr;
+	}
+
+	function cambiar_a_reportado($parametros)
+	{
+	   SetAdoAddNew("Trans_Kardex"); 		
+	   SetAdoFields('T','R');
+	   SetAdoFieldsWhere('Orden_No',$parametros['orden']);
+	  return  SetAdoUpdateGeneric();
+
 	}
 
 }

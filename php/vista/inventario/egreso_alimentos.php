@@ -458,18 +458,28 @@
 
 	function lista_egreso_checking()
 	{		
+		var parametros = {
+			'desde':$('#txt_desde').val(),
+			'hasta':$('#txt_hasta').val()
+		}
 	 	$.ajax({
 		    type: "POST",
-	       	url:   '../controlador/inventario/egreso_alimentosC.php?lista_egreso_checking=true',
-		    // data:{parametros:parametros},
+	       	url:   '../controlador/inventario/egreso_alimentosC.php?lista_egreso_checking_reportados=true',
+		    data:{parametros:parametros},
 	       dataType:'json',
 		    success: function(data)
 		    {
-		    	$('#tbl_asignados').html(data);	
+		    	$('#tbl_asignados_check').html(data);	
 		    }
 		});
 	}  	
-   
+
+	function myModal_historial()
+	{
+		lista_egreso_checking();
+		$('#myModal_historial').modal('show');
+	}   
+
 </script>
 
  <div class="row">
@@ -490,7 +500,7 @@
 			</button>
 		</div>    	 -->
 		<div class="col-xs-2 col-md-2 col-sm-2">
-			<button class="btn btn-default" title="Historial" onclick="">
+			<button class="btn btn-default" title="Historial" onclick="myModal_historial()">
 				<img src="../../img/png/file_crono.png" style="width:32px;height:32px">
 			</button>
 		</div>
@@ -697,5 +707,61 @@
         </div>
     </div>
   </div>
+
+  <div id="myModal_historial" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="lbl_titulo_modal"></h4>
+      </div>
+      <div class="modal-body">
+      		<div class="row">
+	      		<div class="col-sm-3">
+	      			<b>Desde</b>
+	        		<input type="date" name="txt_desde" id="txt_desde" value="<?php echo date('Y-m-d'); ?>">
+	        	</div>	
+	        	<div class="col-sm-3">
+	        		<b>Hasta</b>
+        			<input type="date" name="txt_hasta" id="txt_hasta" value="<?php echo date('Y-m-d'); ?>">
+        		</div>
+        		<div class="col-sm-6 text-right">
+        			<br>
+        			<button class="btn btn-primary btn-sm" onclick="lista_egreso_checking();">Buscar</button>
+        		</div>		
+      		</div>
+        	<div class="row">
+        		
+						<div class="col-sm-12">
+							<div class="table-responsive">
+								<table class="table-sm table-hover table">
+									<thead>
+										<th><b>Item</b></th>
+										<th><b>Fecha de Egreso</b></th>
+										<th><b>Usuario</b></th>
+										<th><b>Area Egreso</b></th>
+										<th><b>Detalle Egreso</b></th>
+										<th><b>Motivo</b></th>
+										<th><b>Observacion</b></th>
+										<th></th>
+									</thead>
+									<tbody id="tbl_asignados_check">
+										
+									</tbody>
+								</table>
+							</div>	
+						</div>
+					</div>
+				
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 
  <script src="../../dist/js/arbol_bodegas/arbol_bodega.js"></script>

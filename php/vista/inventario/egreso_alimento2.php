@@ -55,6 +55,23 @@
  }
 
 
+ function cambiar_a_reportado()
+ {
+ 	orden = $('#txt_codigo').val();
+ 	var parametros = {
+		'orden':orden
+	}
+ 	$.ajax({
+	    type: "POST",
+       	url:   '../controlador/inventario/egreso_alimentosC.php?cambiar_a_reportado=true',
+	    data:{parametros:parametros},
+       dataType:'json',
+	    success: function(data)
+	    {
+	    	lista_egreso_checking();
+	    }
+	});
+ }
   function modal_motivo(orden)
   {
   	cargar_motivo_lista(orden);
@@ -80,10 +97,14 @@
   
   function lista_egreso_checking()
 	{		
+		var parametros = 
+		{
+			'areas':$('#ddl_areas').val(),
+		}
 	 	$.ajax({
 		    type: "POST",
 	       	url:   '../controlador/inventario/egreso_alimentosC.php?lista_egreso_checking=true',
-		    // data:{parametros:parametros},
+		    data:{parametros:parametros},
 	       dataType:'json',
 		    success: function(data)
 		    {
@@ -94,10 +115,10 @@
 
 	 function areas(){
 	  $('#ddl_areas').select2({
-	    placeholder: 'Seleccione una beneficiario',
+	    placeholder: 'Seleccione una Area',
 	    // width:'90%',
 	    ajax: {
-	      url:   '../controlador/inventario/egreso_alimentosC.php?areas=true',          
+	      url:   '../controlador/inventario/egreso_alimentosC.php?areas_checking=true',          
 	      dataType: 'json',
 	      delay: 250,
 	      processResults: function (data) {
@@ -191,25 +212,17 @@
 							</div>
 							<br>
 							<b>Area de egreso:</b>
-							<select class="form-control" id="ddl_areas" name="ddl_areas">
-					           	<option>Seleccione</option>
-					        </select>
+							<div class="input-group input-group-sm">
+								<select class="form-control" id="ddl_areas" name="ddl_areas" onchange="lista_egreso_checking()">
+						           	<option value="">Seleccione</option>
+						        </select>
+								<span class="input-group-btn">
+									<button type="button" class="btn-info btn-xs" onclick="$('#ddl_areas').empty();lista_egreso_checking()"><i class="fa fa-trash"></i></button>
+								</span>
+							</div>							
 						</div>				        
 				    </div>
-				    <div class="col-sm-3">
-						<div class="input-group">
-							<div class="input-group-btn" style="padding-right:5px">
-								<button type="button" class="btn btn-default btn-sm">
-									<img src="../../img/png/transporte_caja.png" style="width: 60px;height: 60px;">
-								</button>
-							</div>
-							<br>
-		            		<b>Motivo de egreso</b>								
-							<select class="form-control" id="ddl_motivo" name="ddl_motivo">
-					           	<option value="">Seleccione</option>
-					        </select>
-						</div>
-					</div>
+				    
 				<!--	<div class="col-sm-3">
 						<div class="input-group">
 							<div class="input-group-btn" style="padding-right:5px">
@@ -359,7 +372,7 @@
             </div>
              <div class="modal-footer">             	
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" onclick="notificar('usuario')">Notificar</button>
+                <button type="button" class="btn btn-primary" onclick="notificar('usuario');cambiar_a_reportado()">Notificar</button>
             </div>
         </div>
     </div>

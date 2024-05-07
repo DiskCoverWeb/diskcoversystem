@@ -93,7 +93,25 @@ class egreso_alimentosM
 		return $this->db->datos($sql);
 	}
 
-	function lista_egreso_checking($query=false,$id=false)
+	function areas_checking($query)
+	{
+		$sql = "SELECT
+			CPO.Cmds,
+			CPO.Proceso AS Proceso
+			FROM Trans_Kardex TK
+			INNER JOIN Catalogo_Proceso CPO ON TK.Codigo_Tra = CPO.Cmds
+			WHERE TK.Item = '".$_SESSION['INGRESO']['item']."'
+			AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+			AND TK.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'";
+			if($query)
+			{
+				$sql.=" AND Proceso like '%".$query."%' ";
+			}
+			$sql.="AND TK.T ='G'  GROUP by CPO.Cmds,CPO.Proceso";
+			return $this->db->datos($sql);
+	}
+
+	function lista_egreso_checking($query=false,$id=false,$area =false)
 	{
 		$sql = "SELECT
 				TK.Fecha,
@@ -126,12 +144,16 @@ class egreso_alimentosM
 			{
 				$sql.=" AND TK.ID='".$id."'";
 			}
+			if($area)
+			{
+				$sql.=" AND TK.Codigo_Tra ='".$area."'";
+			}
 			$sql.=" GROUP by Orden_No,TK.Fecha,TK.Detalle,procedencia";
 			// print_r($sql);die();
 		return $this->db->datos($sql);
 	}
 
-	function lista_egreso_checking_devuelto($query=false,$id=false)
+	function lista_egreso_checking_devuelto($query=false,$id=false,$area=false,$desde=false,$hasta=false)
 	{
 		$sql = "SELECT
 				TK.Fecha,
@@ -163,6 +185,21 @@ class egreso_alimentosM
 			if($id)
 			{
 				$sql.=" AND TK.ID='".$id."'";
+			}
+			if($area)
+			{
+				$sql.=" AND TK.Codigo_Tra ='".$area."'";
+			}
+			if($desde!=false && $hasta!=false)
+			{
+				if($desde==$hasta)
+				{
+					$sql.=" AND TK.Fecha ='".$desde."'";
+				}else
+				{
+					$sql.=" AND TK.Fecha between '".$desde."' AND '".$hasta."'";
+				}
+				
 			}
 			$sql.=" GROUP by Orden_No,TK.Fecha,TK.Detalle,procedencia";
 			// print_r($sql);die();
