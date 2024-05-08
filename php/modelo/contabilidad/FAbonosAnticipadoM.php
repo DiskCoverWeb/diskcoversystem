@@ -53,11 +53,12 @@ class FAbonosAnticipadoM
     {
         $sql = "SELECT Grupo,Codigo,Cliente,Email,Email2
                 FROM Clientes
-                WHERE FA <> '0'";
-        if ($grupo <> G_NINGUNO) {
-            $sql .= "AND GRUPO = '" . $grupo . "'";
+                WHERE FA != 0";
+        if ($grupo != G_NINGUNO) {
+            $sql .= " AND GRUPO = '" . $grupo . "'";
         }
-        $sql .= "ORDER BY Cliente"; // <> adFalse linea 56
+        $sql .= " ORDER BY Cliente"; // <> adFalse linea 56
+        //print_r($sql);
         return $this->db->datos($sql);
     }
 

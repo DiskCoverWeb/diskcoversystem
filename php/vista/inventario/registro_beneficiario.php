@@ -3,7 +3,7 @@
 <!--
     AUTOR DE RUTINA	: Dallyana Vanegas
     FECHA CREACION : 16/02/2024
-    FECHA MODIFICACION : 24/04/2024
+    FECHA MODIFICACION : 08/05/2024
     DESCIPCION : Interfaz de modulo Gestion Social/Registro Beneficiario
  -->
 
@@ -131,6 +131,7 @@
     </style>
 
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/locales/es.global.min.js'></script>
     <!--link rel="stylesheet" href="../../bower_components/fullcalendar/dist/fullcalendar.min.css" /-->
     <!--script src="../../bower_components/fullcalendar/dist/fullcalendar.min.js"></script-->
     <!--script src="../../bower_components/fullcalendar/dist/locale-all.js"></script-->
@@ -809,7 +810,7 @@
     var eventosEditados = [];
     var eventosCreados = [];
     function inicializarCalendario(events) {
-        console.log(events);
+        //console.log(events);
         $('#mycalendar').modal('show');
         var calendarEl = $("#calendar")[0];
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -819,6 +820,7 @@
                 //center: 'title',
                 right: 'timeGridWeek,listWeek'
             },
+            locale: 'es',
             allDaySlot: false,
             weekends: false,
             navLinks: true,
@@ -848,19 +850,25 @@
                 calendar.unselect();
             },
             eventClick: function (arg) {
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: 'Esta acción eliminará el evento',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.value) {
-                        arg.event.remove();
-                        eventosEliminados.push(arg.event);
-                    }
-                });
+                if (arg.event.title === miCliente) {
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: 'Esta acción eliminará el evento',
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.value) {
+                            arg.event.remove();
+                            eventosEliminados.push({
+                                title: arg.event.title,
+                                start: arg.event.start,
+                                end: arg.event.end
+                            });
+                        }
+                    });
+                }
             },
             editable: true,
             dayMaxEvents: true,
@@ -927,6 +935,12 @@
                 $('#diaEntregac').val(dayName.substring(0, 3));
                 $('#horaEntregac').val(startTime);
             });
+        }
+
+        if (eventosEliminados.length > 0) {
+            $('#diaEntregac').val('');
+            $('#horaEntregac').val('');
+
         }
     });
 
