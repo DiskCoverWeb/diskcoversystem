@@ -1146,7 +1146,7 @@ function autocoplet_ingreso_donante(){
 
 		          		<form id="div_cantidad">
 	          		<div class="input-group input-group-sm">
-			          		 	<input type="text" name="txt_cantidad_add" id="txt_cantidad_add" onblur="cambiar_cantidad()" onKeyPress="return soloNumerosDecimales(event)" placeholder="0" class="form-control">
+			          		 	<input type="text" class=".input-numero" name="txt_cantidad_add" id="txt_cantidad_add" onblur="cambiar_cantidad()" onKeyPress="return soloNumerosDecimales(event)" placeholder="0" class="form-control">
 
 										  <span class="input-group-btn">
 											<button type="button" class="btn-info btn-sm" onclick="mas_input()"><i class="fa fa-plus"></i></button>
