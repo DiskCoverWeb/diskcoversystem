@@ -470,6 +470,7 @@ function guardar()
   var nom=$('#txt_nom').val();
   var ced=$('#txt_ced').val();
   var ent=$('#ddl_entidad').val();
+  var ema=$('#txt_ema').val();
   var parametros = 
   {
     'usu':usu,
@@ -477,6 +478,7 @@ function guardar()
     'nom':nom,
     'ced':ced,
     'ent':ent,
+    'ema':ema,
   }
   if(ent != "")
   {
@@ -1159,8 +1161,18 @@ function acceso_pagina(entidad,item)
         <input type="text" name="" id="txt_cla" class="form-control">
         <b>Nombre completo</b><br>
         <input type="text" name="" id="txt_nom" class="form-control">
-        <b>Cedula</b><br>
-        <input type="text" name="" id="txt_ced" class="form-control">
+        <div class="row">
+            <div class="col-sm-6">
+                <b>Cedula</b><br>
+                <input type="text" name="" id="txt_ced" class="form-control">
+              
+            </div>
+            <div class="col-sm-6">
+              <b>Email</b><br>
+               <input type="text" name="" id="txt_ema" class="form-control">
+              
+            </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
