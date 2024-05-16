@@ -316,7 +316,7 @@ class niveles_seguriM
 
 	function nuevo_usuario($parametros)
 	{
-	   $sql = "INSERT INTO acceso_usuarios (TODOS,Clave,Usuario,CI_NIC,ID_Empresa,Nombre_Usuario) VALUES (1,'".$parametros['cla']."','".$parametros['usu']."','".$parametros['ced']."','".$parametros['ent']."','".$parametros['nom']."')";
+	   $sql = "INSERT INTO acceso_usuarios (TODOS,Clave,Usuario,CI_NIC,ID_Empresa,Nombre_Usuario,Email) VALUES (1,'".$parametros['cla']."','".$parametros['usu']."','".$parametros['ced']."','".$parametros['ent']."','".$parametros['nom']."','".$parametros['ema']."')";
 	   	// print_r($sql);die();
 	   return $this->db->String_Sql($sql,'MY SQL');
 	}
