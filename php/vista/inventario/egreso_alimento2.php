@@ -156,6 +156,37 @@
 		$('#modal_documento').modal('show');
 		$('#img_documento').attr('src','../comprobantes/sustentos/empresa_<?php echo $_SESSION['INGRESO']['item']; ?>/'+documento)
 	}
+
+	function modal_areas()
+	{
+		$('#myModal_opciones').modal('show');
+		area_egreso_modal();
+	}
+
+	function area_egreso_modal(){
+		
+	 	$.ajax({
+		    type: "POST",
+	       url:   '../controlador/inventario/egreso_alimentosC.php?areas_checking=true',
+		     // data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+		    	console.log(data)
+		    	var option = '';
+		    	 data.forEach(function(item,i){
+	         	img = 'simple';
+		    	 	if(item.data.Picture!='.'){	 		img = item.data.Picture; 	 	}
+	          option+= '<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">'+
+	                      '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/'+img+'.png" onclick="cambiar_area(\''+item.id+'\',\''+item.text+'\')"  style="width: 60px;height: 60px;"></button><br>'+
+	                      '<b style="white-space: nowrap;">'+item.text+'</b>'+
+	                    '</div>';
+	        })
+	        // $('#txt_paquetes').html(op); 
+	        $('#pnl_opciones').html(option);      
+		    }
+		});
+	}
 	
    
 </script>
@@ -206,7 +237,7 @@
 					<div class="col-sm-5">
 						<div class="input-group">
 							<div class="input-group-btn" style="padding-right:5px">
-								<button type="button" class="btn btn-default btn-sm">
+								<button type="button" class="btn btn-default btn-sm" onclick="modal_areas()">
 									<img src="../../img/png/area_egreso.png" style="width: 60px;height: 60px;">
 								</button>
 							</div>
@@ -443,3 +474,26 @@
 </div>
 
  <script src="../../dist/js/arbol_bodegas/arbol_bodega.js"></script>
+
+<!-- Modal -->
+<div id="myModal_opciones" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="lbl_titulo_modal"></h4>
+      </div>
+      <div class="modal-body">
+        	<div class="row text-center" id="pnl_opciones">
+          </div> 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
