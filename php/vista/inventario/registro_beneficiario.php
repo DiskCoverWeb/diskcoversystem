@@ -3,12 +3,17 @@
 <!--
     AUTOR DE RUTINA	: Dallyana Vanegas
     FECHA CREACION : 16/02/2024
-    FECHA MODIFICACION : 24/04/2024
+    FECHA MODIFICACION : 08/05/2024
     DESCIPCION : Interfaz de modulo Gestion Social/Registro Beneficiario
  -->
 
 <head>
     <style>
+        #tablaIntegrantes {
+            text-align: center;
+            white-space: nowrap;
+        }
+
         #tablaPoblacion {
             table-layout: fixed;
             word-wrap: break-word;
@@ -22,13 +27,6 @@
             text-overflow: ellipsis;
         }
 
-        #modalCalendario table {
-            text-align: center;
-        }
-
-        #modalCalendario th {
-            font-weight: bold;
-        }
 
         .card-header {
             background-color: #f3e5ab;
@@ -84,6 +82,14 @@
             transform: translateY(-10px);
         }
 
+        .icon {
+            transition: transform 0.3s ease;
+        }
+
+        .icon:hover {
+            transform: translateY(-5px);
+        }
+
         #descargarArchivo img {
             transition: transform 0.3s ease;
         }
@@ -121,333 +127,465 @@
             color: orangered;
             cursor: pointer;
         }
-    </style>
-</head>
 
+        #calendar {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+    </style>
+
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/locales/es.global.min.js'></script>
+</head>
 
 <body>
     <div>
         <div class="row">
-            <div class="col-sm-5" style="" id="btnsContainers">
+            <div class="col-sm-5" id="btnsContainers">
                 <a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
                 print_r($ruta[0] . '#'); ?>" title="Salir" class="btn btn-default">
-                    <img src="../../img/png/salire.png" width="35" height="35">
+                    <img src="../../img/png/salire.png" width="35" height="35" alt="Salir">
                 </a>
                 <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Guardar"
-                    id="btnGuardarAsignacion" onclick="">
-                    <img src="../../img/png/disco.png" width="35" height="35">
+                    id="btnGuardarAsignacion">
+                    <img src="../../img/png/disco.png" width="35" height="35" alt="Guardar">
+                </button>
+                <button class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Autorizar"
+                    id="btnAutorizarCambios">
+                    <img src="../../img/png/admin.png" width="35" height="35" alt="Autorizar">
                 </button>
             </div>
         </div>
 
-        <form id="miFormulario" style=" padding-bottom:30px">
-            <div class="accordion" id="accordionExample" style="margin-top:0px; margin-left:30px; margin-right: 30px;">
-                <div class="card">
-                    <div class="card-header" id="headingOne">
-                        <h2 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
-                                style="font-weight: bold;" aria-expanded="true" aria-controls="collapseOne">
-                                <i class="fa fa-arrow-down" aria-hidden="true"></i>
-                                INFORMACION GENERAL
-                            </button>
-                        </h2>
-                    </div>
-                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
-                        data-parent="#accordionExample">
-                        <div class="card-body" style="margin: 1px; padding-top: 5px; padding-bottom: 5px;">
-                            <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
-                                <div id="carouselBtnIma_93" class="carousel slide" data-ride="carousel"
-                                    style="margin-right: 10px;">
-                                    <div class="carousel-inner">
+        <div class="accordion" id="accordionExample" style="margin-top:0px; margin-left:30px; margin-right: 30px;">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
+                            style="font-weight: bold;" aria-expanded="true" aria-controls="collapseOne">
+                            <i class="fa fa-arrow-down" aria-hidden="true"></i>
+                            INFORMACION GENERAL
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                    data-parent="#accordionExample">
+                    <div class="card-body" style="margin: 1px; padding-top: 5px; padding-bottom: 5px;">
+                        <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
+                            <div id="carouselBtnIma_93" class="carousel slide" data-ride="carousel"
+                                style="margin-right: 10px;">
+                                <div class="carousel-inner">
+                                </div>
+                            </div>
+
+                            <div style="flex: 1; margin-right: 10px;">
+                                <label for="select_93" style="display: block;">Tipo de Beneficiario</label>
+                                <select class="form-control input-xs" name="select_93" id="select_93"
+                                    style="width: 100%;"></select>
+                            </div>
+
+                            <div id="carouselBtnImaDon" class="carousel slide" data-ride="carousel"
+                                style="margin-right: 10px;">
+                                <div class="carousel-inner">
+                                </div>
+                            </div>
+
+                            <div style="flex: 1; margin-right: 10px;">
+                                <label for="select_CxC" style="display: block;">Tipo de Donación</label>
+                                <select class="form-control input-xs" name="select_CxC" id="select_CxC"
+                                    style="width: 100%;"></select>
+                            </div>
+
+                            <div class="campoSocial" style="flex: 1; margin-right: 10px; ">
+                                <label for="ruc" style="display: block;">CI/RUC</label>
+                                <select class="form-control input-xs" name="ruc" id="ruc" style="width: 100%;"></select>
+                            </div>
+
+                            <div class="campoSocial"
+                                style="display: flex; justify-content: center; align-items: center;  margin-right: 10px;">
+                                <img src="../../img/png/SRIlogo.png" width="80" height="50"
+                                    onclick="validarRucYValidarSriC()" id="validarSRI" title="VALIDAR RUC">
+                            </div>
+
+                            <div class="row campoSocial" style="margin-right: 10px;">
+                                <div class="col-sm-6" style="width:100%">
+                                    <label for="cliente" style="display: block;">Nombre del
+                                        Beneficiario/Usuario</label>
+                                    <div class="input-group">
+                                        <select class="form-control input-xs" name="cliente" id="cliente"
+                                            style="width: 100%;"></select>
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-success btn-xs btn-flat"
+                                                id="btn_nuevo_cli" onclick="addCliente()" title="Nuevo cliente">
+                                                <span class="fa fa-user-plus"></span>
+                                            </button>
+                                        </span>
                                     </div>
                                 </div>
-                                <!--div style="margin-right: 10px;  display: flex; ">
-                                    <a href="#" id="ingresarBeneficiario">
-                                        <img src="../../img/png/grupo.png" width="60" height="60"
-                                        onclick="abrirModal(93)" title="INGRESAR BENEFICIARIO">
+                            </div>
+
+                            <div class="campoFamilia" style="margin-right: 10px;" style="width: 100%;">
+                                <label for="fechaIngreso" style="display: block;">Fecha de ingreso</label>
+                                <input type="date" id="fechaIngreso">
+                            </div>
+
+                            <div id="carouselBtnIma_87" class="carousel slide" data-ride="carousel"
+                                style="margin-right: 10px;">
+                                <div class="carousel-inner">
+                                </div>
+                            </div>
+
+                            <div style="flex: 1; margin-right: 10px;">
+                                <label for="select_87" style="display: block;">Estado</label>
+                                <select class="form-control input-xs" name="select_87" id="select_87"
+                                    style="width: 100%;"></select>
+                            </div>
+                        </div>
+                        <div class="row campoSocial" style="margin: 10px; display: flex; flex-wrap: wrap;">
+                            <div style="flex: 1; margin-right: 10px; ">
+                                <div class="col" style="width:100%">
+                                    <label for="nombreRepre" style="display: block;">Nombre Representante
+                                        Legal</label>
+                                    <input class="form-control input-xs" type="text" name="nombreRepre" id="nombreRepre"
+                                        placeholder="Nombre Representante">
+                                </div>
+                            </div>
+                            <div style="flex: 1; margin-right: 10px; ">
+                                <label for="ciRepre" style="display: block;">CI Representante Legal</label>
+                                <input class="form-control input-xs" type="text" name="ciRepre" id="ciRepre"
+                                    placeholder="CI Representante">
+                            </div>
+                            <div style="flex: 1;">
+                                <label for="telfRepre" style="display: block;">Teléfono Representante Legal</label>
+                                <input class="form-control input-xs" type="text" name="telfRepre" id="telfRepre"
+                                    placeholder="Representante legal">
+                            </div>
+                        </div>
+
+                        <div class="row campoSocial" style="margin: 10px; display: flex; flex-wrap: wrap;">
+                            <div style="flex: 1; margin-right: 10px; ">
+                                <label for="contacto" style="display: block;">Contacto/Encargado</label>
+                                <input class="form-control input-xs" type="text" name="contacto" id="contacto"
+                                    placeholder="Contacto">
+                            </div>
+                            <div style="flex: 1; margin-right: 10px; ">
+                                <label for="cargo" style="display: block;">Cargo</label>
+                                <input class="form-control input-xs" type="text" name="cargo" id="cargo"
+                                    placeholder="Profesión">
+                            </div>
+                            <div style="margin-right: 10px;  display: flex; ">
+                                <img src="../../img/png/calendario2.png" width="60" height="60">
+                            </div>
+                            <div style="flex: 1; margin-right: 10px; ">
+                                <label for="diaEntrega" style="display: block;">Día Entrega a Usuarios
+                                    Finales</label>
+                                <select class="form-control input-xs" name="diaEntrega" id="diaEntrega"></select>
+                            </div>
+                            <div style="margin-right: 10px;  display: flex; ">
+                                <img src="../../img/png/reloj.png" width="55" height="55">
+                            </div>
+                            <div style="flex: 1; ">
+                                <label for="horaEntrega" style="display: block;">Hora Entrega a Usuarios
+                                    Finales</label>
+                                <input type="time" name="horaEntrega" id="horaEntrega" class="form-control input-xs">
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin: 10px; display: flex; justify-content: center;">
+                            <div class="col-sm-3 campoFamilia" style="margin-right:10px;">
+                                <div class="row" style="display: flex;">
+                                    <div id="carouselBtnIma_93" class="carousel slide" data-ride="carousel"
+                                        style="margin-right: 10px; display: inline-block;">
+                                        <div class="carousel-inner"></div>
+                                    </div>
+                                    <div
+                                        style="flex: 1; margin-right: 10px; margin-left: 10px; display: inline-block; width: 100%;">
+                                        <label for="programa" style="display: block;">Programa</label>
+                                        <select class="form-control input-xs" name="programa" id="programa"
+                                            style="width: 100%;">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
+                                        <label for="grupo" style="display: block;">Grupo</label>
+                                        <select class="form-control input-xs" name="grupo" id="grupo"
+                                            style="width: 100%;"></select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3 campoFamilia" style="margin-right:10px;">
+                                <div class="row">
+                                    <label for="nombres" style="display: block;">Nombres</label>
+                                    <input class="form-control input-xs" type="text" name="nombres" id="nombres"
+                                        placeholder="Nombres">
+                                </div>
+                                <div class="row">
+                                    <label for="apellidos" style="display: block;">Apellidos</label>
+                                    <input class="form-control input-xs" type="text" name="apellidos" id="apellidos"
+                                        placeholder="Apellidos">
+                                </div>
+
+                                <div class="row">
+                                    <label for="cedula" style="display: block;">Cédula de identidad</label>
+                                    <input class="form-control input-xs" type="text" name="cedula" id="cedula"
+                                        placeholder="Cédula de identidad">
+                                </div>
+
+                                <div class="row">
+                                    <label for="nivelEscolar" style="display: block;">Nivel escolar</label>
+                                    <input class="form-control input-xs" type="text" name="nivelEscolar"
+                                        id="nivelEscolar" placeholder="Cédula de identidad">
+                                </div>
+
+                                <div class="row">
+                                    <label for="estadoCivil" style="display: block;">Estado civil</label>
+                                    <select class="form-control input-xs" name="estadoCivil" id="estadoCivil"
+                                        style="width: 100%;"></select>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3 campoFamilia" style="margin-right:10px;">
+                                <div class="row">
+                                    <label for="edad" style="display: block;">Edad</label>
+                                    <input class="form-control input-xs" type="number" name="edad" id="edad"
+                                        placeholder="Edad">
+                                </div>
+
+                                <div class="row">
+                                    <label for="ocupacion" style="display: block;">Ocupación</label>
+                                    <input class="form-control input-xs" type="text" name="ocupacion" id="ocupacion"
+                                        placeholder="Ocupación">
+                                </div>
+
+                                <div class="row">
+                                    <label for="telefonoFam" style="display: block;">Teléfono</label>
+                                    <input class="form-control input-xs" type="text" name="telefonoFam" id="telefonoFam"
+                                        placeholder="Teléfono">
+                                </div>
+
+                                <div class="row">
+                                    <label for="pregunta" style="display: block;">¿Cómo se enteró del BAQ?</label>
+                                    <input class="form-control input-xs" type="text" name="pregunta" id="pregunta"
+                                        placeholder="¿Cómo se enteró del BAQ?">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2" style="margin-right:10px; text-align: center; padding: 10px;">
+                                <div class="row" id="btnMostrarDir">
+                                    <img src="../../img/png/map.png" width="60" height="60" title="INGRESAR DIRECCIÓN"
+                                        class="icon">
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label>Ingresar Dirección</label>
+                                    </div>
+                                </div>
+
+                                <div class="row campoFamilia" id="btnInfoUser">
+                                    <img src="../../img/png/infoUser.png" width="60" height="60"
+                                        title="INFORMACIÓN DEL USUARIO" class="icon">
+                                </div>
+                                <div class="row campoFamilia">
+                                    <div class="form-group">
+                                        <label>Información del usuario</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3 campoSocial" style="margin-right:10px;">
+                                <div class="row">
+                                    <label for="email" style="display: block;">Email</label>
+                                    <input class="form-control input-xs" type="text" name="email" id="email"
+                                        placeholder="Email">
+                                </div>
+                                <div class="row">
+                                    <label for="email2" style="display: block;">Email 2</label>
+                                    <input class="form-control input-xs" type="text" name="email2" id="email2"
+                                        placeholder="Email2">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3 campoSocial" style="margin-right:10px;">
+                                <div class="row">
+                                    <label for="telefono" style="display: block;">Teléfono 1</label>
+                                    <input class="form-control input-xs" type="text" name="telefono" id="telefono"
+                                        placeholder="Teléfono ">
+                                </div>
+                                <div class="row">
+                                    <label for="telefono2" style="display: block;">Teléfono 2</label>
+                                    <input class="form-control input-xs" type="text" name="telefono2" id="telefono2"
+                                        placeholder="Teléfono 2">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"
+                            id="botonInfoAdd" style="font-weight: bold;">
+                            <i class="fa fa-arrow-down" aria-hidden="true"></i>
+                            INFORMACION ADICIONAL
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                    <div id="mostrarOrgSocialAdd" class="card-body"
+                        style="margin: 1px; padding-top: 5px; padding-bottom: 40px;  display: none;">
+                        <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
+                            <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
+                                <label for="select_88" style="display: block;">Tipo de Entrega</label>
+                                <select class="form-control input-xs" name="select_88" id="select_88"
+                                    style="width: 100%;"></select>
+                            </div>
+                            <div style="margin-right: 10px; margin-left: 10px; display: flex; ">
+                                <img src="../../img/png/calendario2.png" width="60" height="60" id="btnMostrarModal"
+                                    title="CALENDARIO ASIGNACION">
+                            </div>
+                            <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
+                                <label for="diaEntregac" style="display: block;">Día de Entrega</label>
+                                <select class="form-control input-xs" name="diaEntregac" id="diaEntregac"
+                                    style="width: 100%;"></select>
+                            </div>
+                            <div style="margin-right: 10px; margin-left: 10px; display: flex; ">
+                                <img src="../../img/png/reloj.png" width="55" height="55">
+                            </div>
+                            <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
+                                <label for="horaEntregac" style="display: block;">Hora de Entrega</label>
+                                <input type="time" name="horaEntregac" id="horaEntregac" class="form-control input-xs">
+                            </div>
+                            <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
+                                <label for="select_86" style="display: block;">Frecuencia</label>
+                                <select class="form-control input-xs" name="select_86" id="select_86"
+                                    style="width: 100%;"></select>
+                            </div>
+                            <div id="comentariodiv"
+                                style="flex: 1; margin-right: 10px; margin-left: 10px; display: none;">
+                                <label for="comentario" style="display: block;">Comentario (máximo 85
+                                    caracteres)</label>
+                                <textarea class="form-control" id="comentario" rows="2" style="resize: none"
+                                    maxlength="85"></textarea>
+                            </div>
+
+                        </div>
+                        <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
+                            <div style="margin-right: 10px; margin-left: 10px; display: flex; ">
+                                <img src="../../img/png/grupoEdad.png" width="60" height="60" id="btnMostrarGrupo"
+                                    title="TIPO DE POBLACIÓN">
+                            </div>
+                            <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
+                                <label for="totalPersonas" style="display: block;">Total de Personas
+                                    Atendidas</label>
+                                <input type="number" name="totalPersonas" id="totalPersonas"
+                                    class="form-control input-xs" min="0" max="100" readonly>
+                            </div>
+
+                            <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
+                                <label for="select_92" style="display: block;">Acción Social</label>
+                                <select class="form-control input-xs" name="select_92" id="select_92"
+                                    style="width: 100%;"></select>
+                            </div>
+                            <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
+                                <label for="select_90" style="display: block;">Vulnerabilidad</label>
+                                <select class="form-control input-xs" name="select_90" id="select_90"
+                                    style="width: 100%;"></select>
+                            </div>
+                            <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
+                                <label for="select_89" style="display: block;">Tipo de Atención</label>
+                                <select class="form-control input-xs" name="select_89" id="select_89"
+                                    style="width: 100%;"></select>
+                            </div>
+                        </div>
+                        <div class="row" style="margin: 10px;">
+                            <div class="col-sm-6"></div>
+                            <div class="col-sm-1" style="margin-right:10px;">
+                                <div class="row" style="display: flex; justify-content: center;">
+                                    <a href="#" id="descargarArchivo">
+                                        <img src="../../img/png/adjuntar-archivo.png" width="60" height="60"
+                                            title="DESCARGAR ARCHIVO">
                                     </a>
-                                </div-->
-
-                                <!--div style="flex: 1;  margin-right: 10px; display:none">
-                                    <label for="input_93" style="display: block;">Tipo de Beneficiario</label>
-                                    <input class="form-control input-xs" type="text" name="input_93" id="input_93"
-                                        placeholder="Haz clic sobre la imagen" readonly>
-                                </div-->
-
-                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
-                                    <label for="select_93" style="display: block;">Tipo de Beneficiario</label>
-                                    <select class="form-control input-xs" name="select_93" id="select_93"
-                                        style="width: 100%;"></select>
                                 </div>
-
-                                <div id="carouselBtnImaDon" class="carousel slide" data-ride="carousel"
-                                    style="margin-right: 10px;">
-                                    <div class="carousel-inner">
-                                    </div>
-                                </div>
-                                <!--div style="flex: 1; margin-right: 10px; ">
-                                    <label for="tipoDonacion" style="display: block;">Tipo de Donación</label>
-                                    <input class="form-control input-xs" type="text" name="tipoDonacion"
-                                        id="tipoDonacion" placeholder="Haz clic sobre la imagen" readonly>
-                                </div-->
-                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
-                                    <label for="select_CxC" style="display: block;">Tipo de Donación</label>
-                                    <select class="form-control input-xs" name="select_CxC" id="select_CxC"
-                                        style="width: 100%;"></select>
-                                </div>
-
-                                <div style="flex: 1; margin-right: 10px; ">
-                                    <label for="ruc" style="display: block;">CI/RUC</label>
-                                    <select class="form-control input-xs" name="ruc" id="ruc"
-                                        style="width: 100%;"></select>
-                                </div>
-                                <div
-                                    style="display: flex; justify-content: center; align-items: center;  margin-right: 10px;">
-                                    <img src="../../img/png/SRIlogo.png" width="80" height="50"
-                                        onclick="validarRucYValidarSriC()" id="validarSRI" title="VALIDAR RUC">
-                                </div>
-                                <div class="row" style="margin-right: 10px;">
-                                    <div class="col-sm-6" style="width:100%">
-                                        <label for="cliente" style="display: block;">Nombre del
-                                            Beneficiario/Usuario</label>
-                                        <div class="input-group">
-                                            <select class="form-control input-xs" name="cliente" id="cliente"
-                                                style="width: 100%;"></select>
-                                            <span class="input-group-btn">
-                                                <button type="button" class="btn btn-success btn-xs btn-flat"
-                                                    id="btn_nuevo_cli" onclick="addCliente()" title="Nuevo cliente">
-                                                    <span class="fa fa-user-plus"></span>
-                                                </button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div id="carouselBtnIma_87" class="carousel slide" data-ride="carousel"
-                                    style="margin-right: 10px;">
-                                    <div class="carousel-inner">
-                                    </div>
-                                </div>
-
-                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
-                                    <label for="select_87" style="display: block;">Estado</label>
-                                    <select class="form-control input-xs" name="select_87" id="select_87"
-                                        style="width: 100%;"></select>
-                                </div>
-
-                                <!--div style="flex: 1; margin-right: 10px; ">
-                                    <label for="sexo" style="display: block;">Sexo</label>
-                                    <select class="form-control input-xs" name="sexo" id="sexo"
-                                        style="width: 100%;"></select>
-                                </div-->
-                            </div>
-                            <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
-                                <div style="flex: 1; margin-right: 10px; ">
-                                    <div class="col" style="width:100%">
-                                        <label for="nombreRepre" style="display: block;">Nombre Representante
-                                            Legal</label>
-                                        <input class="form-control input-xs" type="text" name="nombreRepre"
-                                            id="nombreRepre" placeholder="Nombre Representante">
-                                    </div>
-                                </div>
-                                <div style="flex: 1; margin-right: 10px; ">
-                                    <label for="ciRepre" style="display: block;">CI Representante Legal</label>
-                                    <input class="form-control input-xs" type="text" name="ciRepre" id="ciRepre"
-                                        placeholder="CI Representante">
-                                </div>
-                                <div style="flex: 1;">
-                                    <label for="telfRepre" style="display: block;">Teléfono Representante Legal</label>
-                                    <input class="form-control input-xs" type="text" name="telfRepre" id="telfRepre"
-                                        placeholder="Representante legal">
+                                <div class="row">
+                                    <label for="archivoAdd">Archivos Adjuntos</label>
                                 </div>
                             </div>
-
-                            <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
-                                <div style="flex: 1; margin-right: 10px; ">
-                                    <label for="contacto" style="display: block;">Contacto/Encargado</label>
-                                    <input class="form-control input-xs" type="text" name="contacto" id="contacto"
-                                        placeholder="Contacto">
-                                </div>
-                                <div style="flex: 1; margin-right: 10px; ">
-                                    <label for="cargo" style="display: block;">Cargo</label>
-                                    <input class="form-control input-xs" type="text" name="cargo" id="cargo"
-                                        placeholder="Profesión">
-                                </div>
-                                <div style="margin-right: 10px;  display: flex; ">
-                                    <img src="../../img/png/calendario2.png" width="60" height="60">
-                                </div>
-                                <div style="flex: 1; margin-right: 10px; ">
-                                    <label for="diaEntrega" style="display: block;">Día Entrega a Usuarios
-                                        Finales</label>
-                                    <select class="form-control input-xs" name="diaEntrega" id="diaEntrega"></select>
-                                </div>
-                                <div style="margin-right: 10px;  display: flex; ">
-                                    <img src="../../img/png/reloj.png" width="55" height="55">
-                                </div>
-                                <div style="flex: 1; ">
-                                    <label for="horaEntrega" style="display: block;">Hora Entrega a Usuarios
-                                        Finales</label>
-                                    <input type="time" name="horaEntrega" id="horaEntrega"
-                                        class="form-control input-xs">
-                                </div>
-                            </div>
-
-                            <div class="row" style="margin: 10px; display: flex; justify-content: center;">
-
-                                <div class="col-sm-1" style="margin-right:10px;">
-                                    <div class="row" style="display: flex; justify-content: center;">
-                                        <a href="#" id="btnMostrarDir">
-                                            <img src="../../img/png/map.png" width="60" height="60"
-                                                title="INGRESAR DIRECCIÓN">
-                                        </a>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <label for="dir">Ingresar Dirección </label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-3" style="margin-right:10px;">
-                                    <!--div class="row">
-                                    <label for="direccion" style="display: block;">Dirección</label>
-                                    <input class="form-control input-xs" type="text" name="direccion" id="direccion"
-                                        placeholder="Direccion">
-                                </div-->
-                                    <div class="row">
-                                        <label for="email" style="display: block;">Email</label>
-                                        <input class="form-control input-xs" type="text" name="email" id="email"
-                                            placeholder="Email">
-                                    </div>
-                                    <div class="row">
-                                        <label for="email2" style="display: block;">Email 2</label>
-                                        <input class="form-control input-xs" type="text" name="email2" id="email2"
-                                            placeholder="Email2">
-                                    </div>
-                                </div>
-                                <!--div class="col-sm-1"></div-->
-                                <div class="col-sm-3" style="margin-right:10px;">
-                                    <!--div class="row">
-                                    <label for="referencia" style="display: block;">Referencia</label>
-                                    <input class="form-control input-xs" type="text" name="referencia" id="referencia"
-                                        placeholder="Referencia">
-                                </div-->
-                                    <div class="row">
-                                        <label for="telefono" style="display: block;">Teléfono 1</label>
-                                        <input class="form-control input-xs" type="text" name="telefono" id="telefono"
-                                            placeholder="Teléfono ">
-                                    </div>
-                                    <div class="row">
-                                        <label for="telefono2" style="display: block;">Teléfono 2</label>
-                                        <input class="form-control input-xs" type="text" name="telefono2" id="telefono2"
-                                            placeholder="Teléfono 2">
-                                    </div>
+                            <div class="col-sm-4">
+                                <div class="row">
+                                    <label for="infoNut" style="display: block;">Información Nutricional</label>
+                                    <textarea class="form-control" id="infoNut" rows="4"
+                                        style="resize: none"></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header" id="headingTwo">
-                        <h2 class="mb-0">
-                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                                data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"
-                                id="botonInfoAdd" style="font-weight: bold;">
-                                <i class="fa fa-arrow-down" aria-hidden="true"></i>
-                                INFORMACION ADICIONAL
-                            </button>
-                        </h2>
-                    </div>
-                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                        <div class="card-body" style="margin: 1px; padding-top: 5px; padding-bottom: 40px;">
-                            <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
-                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
-                                    <label for="select_88" style="display: block;">Tipo de Entrega</label>
-                                    <select class="form-control input-xs" name="select_88" id="select_88"
-                                        style="width: 100%;"></select>
+                    <div id="mostrarFamiliasAdd" class="card-body"
+                        style="margin: 1px; padding-top: 5px; padding-bottom: 40px;  display: none;">
+                        <div class="row"
+                            style="margin: 10px; display: flex; justify-content: center; align-items: center;">
+                            <div class="col-sm-2" style="margin-right:10px; text-align: center; padding: 10px;"
+                                id="modalEstrFam">
+                                <div class="row">
+                                    <img src="../../img/png/estructura_familiar.png" width="80" height="80"
+                                        title="ESTRUCTURA FAMILIAR" class="icon">
                                 </div>
-                                <div style="margin-right: 10px; margin-left: 10px; display: flex; ">
-                                    <img src="../../img/png/calendario2.png" width="60" height="60" id="btnMostrarModal"
-                                        title="CALENDARIO ASIGNACION">
-                                </div>
-                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
-                                    <label for="diaEntregac" style="display: block;">Día de Entrega</label>
-                                    <select class="form-control input-xs" name="diaEntregac" id="diaEntregac"
-                                        style="width: 100%;"></select>
-                                </div>
-                                <div style="margin-right: 10px; margin-left: 10px; display: flex; ">
-                                    <img src="../../img/png/reloj.png" width="55" height="55">
-                                </div>
-                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
-                                    <label for="horaEntregac" style="display: block;">Hora de Entrega</label>
-                                    <input type="time" name="horaEntregac" id="horaEntregac"
-                                        class="form-control input-xs">
-                                </div>
-                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
-                                    <label for="select_86" style="display: block;">Frecuencia</label>
-                                    <select class="form-control input-xs" name="select_86" id="select_86"
-                                        style="width: 100%;"></select>
-                                </div>
-                                <div id="comentariodiv"
-                                    style="flex: 1; margin-right: 10px; margin-left: 10px; display: none;">
-                                    <label for="comentario" style="display: block;">Comentario (máximo 85
-                                        caracteres)</label>
-                                    <textarea class="form-control" id="comentario" rows="2" style="resize: none"
-                                        maxlength="85"></textarea>
-                                </div>
-
-                            </div>
-                            <div class="row" style="margin: 10px; display: flex; flex-wrap: wrap;">
-                                <div style="margin-right: 10px; margin-left: 10px; display: flex; ">
-                                    <img src="../../img/png/grupoEdad.png" width="60" height="60" id="btnMostrarGrupo"
-                                        title="TIPO DE POBLACIÓN">
-                                </div>
-                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
-                                    <label for="totalPersonas" style="display: block;">Total de Personas
-                                        Atendidas</label>
-                                    <input type="number" name="totalPersonas" id="totalPersonas"
-                                        class="form-control input-xs" min="0" max="100" readonly>
-                                </div>
-                                <!--div style="flex: 1; margin-right: 10px; margin-left: 10px;">
-                                    <label for="select_91" style="display: block;">Tipo de Población</label>
-                                    <select class="form-control input-xs" name="select_91" id="select_91"
-                                        style="width: 100%;"></select>
-                                </div-->
-                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
-                                    <label for="select_92" style="display: block;">Acción Social</label>
-                                    <select class="form-control input-xs" name="select_92" id="select_92"
-                                        style="width: 100%;"></select>
-                                </div>
-                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
-                                    <label for="select_90" style="display: block;">Vulnerabilidad</label>
-                                    <select class="form-control input-xs" name="select_90" id="select_90"
-                                        style="width: 100%;"></select>
-                                </div>
-                                <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
-                                    <label for="select_89" style="display: block;">Tipo de Atención</label>
-                                    <select class="form-control input-xs" name="select_89" id="select_89"
-                                        style="width: 100%;"></select>
-                                </div>
-                            </div>
-                            <div class="row" style="margin: 10px;">
-                                <div class="col-sm-6"></div>
-                                <div class="col-sm-1" style="margin-right:10px;">
-                                    <div class="row" style="display: flex; justify-content: center;">
-                                        <a href="#" id="descargarArchivo">
-                                            <img src="../../img/png/adjuntar-archivo.png" width="60" height="60"
-                                                title="DESCARGAR ARCHIVO">
-                                        </a>
-                                    </div>
-                                    <div class="row">
-                                        <label for="archivoAdd">Archivos Adjuntos</label>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="">Estructura familiar</label>
                                     </div>
                                 </div>
-                                <div class="col-sm-4">
-                                    <div class="row">
-                                        <label for="infoNut" style="display: block;">Información Nutricional</label>
-                                        <textarea class="form-control" id="infoNut" rows="4"
-                                            style="resize: none"></textarea>
+                            </div>
+
+                            <div class="col-sm-2" style="margin-right:10px; text-align: center; padding: 10px;"
+                                id="modalVulnFam">
+                                <div class="row">
+                                    <img src="../../img/png/vulnerabilidades.png" width="80" height="80"
+                                        title="VULNERABILIDADES" class="icon">
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="">Vulnerabilidades</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2" style="margin-right:10px; text-align: center; padding: 10px;"
+                                id="modalSituFam">
+                                <div class="row">
+                                    <img src="../../img/png/situacion_economica.png" width="80" height="80"
+                                        title="SITUACIÓN ECONÓMICA" class="icon">
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="">Situación Económica</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2" style="margin-right:10px; text-align: center; padding: 10px;"
+                                id="modalViviFam">
+                                <div class="row">
+                                    <img src="../../img/png/vivienda_servicios.png" width="80" height="80"
+                                        title="VIVIENDA Y SERVICIOS BÁSICOS" class="icon">
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="">Vivienda y Servisiós Básicos</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2" style="margin-right:10px; text-align: center; padding: 10px;"
+                                id="modalEvalFam">
+                                <div class="row">
+                                    <img src="../../img/png/evaluacion.png" width="80" height="80" title="EVALUACIÓN"
+                                        class="icon">
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="">Evaluación</label>
                                     </div>
                                 </div>
                             </div>
@@ -455,290 +593,960 @@
                     </div>
                 </div>
             </div>
-
-            <div class="modal" id="modalCalendario">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content" style="background-color: white;">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"
-                                style="color: white;">&times;</button>
-                            <h4 class="modal-title">CALENDARIO DE ASIGNACION</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="container-fluid">
-                                <div style="max-height: 300px; overflow-y: auto; overflow-x: auto;">
-                                    <table class="table table-bordered table-responsive">
-                                        <thead>
-                                            <tr>
-                                                <th></th>
-                                                <script>
-                                                    var diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves',
-                                                        'Viernes', 'Sabado', 'Domingo'];
-                                                    for (var i = 0; i < diasSemana.length; i++) {
-                                                        document.write('<th>' + diasSemana[i] + '</th>');
-                                                    }
-                                                </script>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tabla-body">
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="modalBtnDir" class="modal fade" role="dialog">
-                <div class="modal-dialog" style="max-width: 400px;">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Registro de Ubicación</h4>
-                        </div>
-                        <div class="modal-body" style="overflow-y: auto; max-height: 200px;">
-                            <div class="form-group row">
-                                <label for="Provincia" class="col-sm-3 col-form-label">Provincia</label>
-                                <div class="col-sm-9">
-                                    <select class="form-control input-sm" id="select_prov"
-                                        onchange="ciudad(this.value)">
-                                        <option value="">Seleccione provincia</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="Ciudad" class="col-sm-3 col-form-label">Ciudad</label>
-                                <div class="col-sm-9">
-                                    <select class="form-control input-sm" id="select_ciud">
-                                        <option value="">Seleccione ciudad</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="Canton" class="col-sm-3 col-form-label">Cantón</label>
-                                <div class="col-sm-9">
-                                    <input class="form-control" type="text" name="Canton" id="Canton"
-                                        placeholder="Ingrese un cantón">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="Parroquia" class="col-sm-3 col-form-label">Parroquia</label>
-                                <div class="col-sm-9">
-                                    <input class="form-control" type="text" name="Parroquia" id="Parroquia"
-                                        placeholder="Ingrese una parroquia">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="Barrio" class="col-sm-3 col-form-label">Barrio</label>
-                                <div class="col-sm-9">
-                                    <input class="form-control" type="text" name="Barrio" id="Barrio"
-                                        placeholder="Ingrese un barrio">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="CalleP" class="col-sm-3 col-form-label">Calle principal</label>
-                                <div class="col-sm-9">
-                                    <input class="form-control" type="text" name="CalleP" id="CalleP"
-                                        placeholder="Ingrese calle principal">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="CalleS" class="col-sm-3 col-form-label">Calle secundaria</label>
-                                <div class="col-sm-9">
-                                    <input class="form-control" type="text" name="CalleS" id="CalleS"
-                                        placeholder="Ingrese calle secundaria">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="Referencia" class="col-sm-3 col-form-label">Referencia</label>
-                                <div class="col-sm-9">
-                                    <input class="form-control" type="text" name="Referencia" id="Referencia"
-                                        placeholder="Ingrese una referencia">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-success" id="btnGuardarDir">Aceptar</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="modalBtnGrupo" class="modal fade" role="dialog">
-                <div class="modal-dialog modal-md">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Tipo de población</h4>
-                        </div>
-                        <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
-                            <div class="table-responsive">
-                                <table class="table" id="tablaPoblacion">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col" colspan="2">Tipo de Población</th>
-                                            <th scope="col">Hombres</th>
-                                            <th scope="col">Mujeres</th>
-                                            <th scope="col">Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- filas -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-success" id="btnGuardarGrupo">Aceptar</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="modalDescarga" data-backdrop="static" class="modal fade" role="dialog">
-                <div class="modal-dialog modal-md">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Gestionar Archivos</h4>
-                        </div>
-                        <div class="modal-body" style="margin:10px">
-                            <div class="row-sm-12">
-                                <div id="cargarArchivo" class="form-group" style="display: flex;">
-                                    <label for="archivoAdd">Adjuntar Archivos: (máximo 3 archivos) </label>
-                                    <input type="file" style="margin-left: 10px" class="form-control-file"
-                                        id="archivoAdd" multiple onchange="checkFiles(this)">
-                                </div>
-                            </div>
-                            <div class="row-sm-12" style="width: 100%; margin-right:10px; margin-left:10px;">
-                                <div class="form-group" style="display: flex; justify-content: center;">
-                                    <div id="modalDescContainer" class="d-flex justify-content-center flex-wrap">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row-sm-12">
-                                <div class="col" id="divNoFile" style="display:flex">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer" style="display:none">
-                            <div class="row" style="margin: 10px;">
-                                <div class="col-xs-4">
-
-                                </div>
-                                <div class="col-xs-4">
-                                    <button id="btnDescargar" type="button" class="btn btn-default btn-block"
-                                        onclick="descargarArchivo(ruta, nombre)">
-                                        <span class="glyphicon glyphicon-download" aria-hidden="true"></span> Descargar
-                                    </button>
-                                </div>
-                                <div class="col-xs-4">
-                                    <button type="button" class="btn btn-danger btn-block"
-                                        onclick="eliminarArchivo(ruta, nombre)">
-                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Eliminar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="modalsBtnpAliado" class="modal fade" role="dialog">
-                <div class="modal-dialog modal-sm">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Productor</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row" style="margin: 10px; display: flex;">
-                                <div id="" style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
-                                    <div class="col-md-6 col-sm-6">
-                                        <button type="button" class="btn btn-default btn-sm">
-                                            <img src="../../img/png/industrial.png" style="width: 90%; height: 90%;"
-                                                alt="Imagen">
-                                        </button>
-                                        <b>Industrial</b>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <button type="button" class="btn btn-default btn-sm">
-                                            <img src="../../img/png/animales.png" style="width: 90%; height: 90%;"
-                                                alt="Imagen">
-                                        </button>
-                                        <b>Artesanal</b>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="modalsBtn87" class="modal fade" role="dialog">
-                <div class="modal-dialog modal-sm">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Estado</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row" style="margin: 10px; display: flex;">
-                                <div id="modal_87"
-                                    style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="modalsBtn93" class="modal fade" role="dialog">
-                <div class="modal-dialog modal-sm">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Beneficiario</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row" style="margin: 10px; display: flex;">
-                                <div id="modal_93"
-                                    style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="modalsBtnDon" class="modal fade" role="dialog">
-                <div class="modal-dialog modal-sm">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Donacion</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row" style="margin: 10px; display: flex;">
-                                <div id="modal_Don"
-                                    style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
+        </div>
     </div>
+
+    <div id="estructuraFam" class="modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Estructura familiar</h4>
+                </div>
+                <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
+                    <div style="margin: 10px; overflow-x: auto;">
+                        <table class="table" id="tablaIntegrantes">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Género</th>
+                                    <th>Parentesco</th>
+                                    <th>Rango de edad</th>
+                                    <th>Ocupación</th>
+                                    <th>Estado Civil</th>
+                                    <th>Nivel de Escolaridad</th>
+                                    <th>Nombre de la Institución</th>
+                                    <th>Tipo de Institución</th>
+                                    <th>Vulnerabilidad</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="filaAgregar">
+                                    <td><input type="text" class="form-control imput-xs" id="nuevoNombre"></td>
+                                    <td>
+                                        <select class="form-control imput-xs" id="nuevoGenero">
+                                            <option value="">Seleccione</option>
+                                            <option value="masculino">Masculino</option>
+                                            <option value="femenino">Femenino</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-control imput-xs" id="nuevoParentesco"></td>
+                                    <td>
+                                        <select class="form-control imput-xs" id="nuevoRangoEdad">
+                                            <option value="">Seleccione</option>
+                                            <option value="0-5">0-5 años</option>
+                                            <option value="6-12">6-12 años</option>
+                                            <option value="13-18">13-18 años</option>
+                                            <option value="19-64">19-64 años</option>
+                                            <option value="65+">65 años o más</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-control imput-xs" id="nuevaOcupacion"></td>
+                                    <td>
+                                        <select class="form-control imput-xs" id="nuevoEstadoCivil">
+                                            <option value="">Seleccione</option>
+                                            <option value="soltero">Soltero/a</option>
+                                            <option value="casado">Casado/a</option>
+                                            <option value="divorciado">Divorciado/a</option>
+                                            <option value="viudo">Viudo/a</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-control imput-xs" id="nuevoNivelEscolaridad">
+                                            <option value="">Seleccione</option>
+                                            <option value="ninguna">Ninguna</option>
+                                            <option value="primaria">Primaria</option>
+                                            <option value="secundaria">Secundaria</option>
+                                            <option value="bachillerato">Bachillerato</option>
+                                            <option value="tecnico">Técnico</option>
+                                            <option value="universidad">Universidad</option>
+                                            <option value="posgrado">Posgrado</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-control imput-xs" id="nuevoNombreInstitucion">
+                                    </td>
+                                    <td>
+                                        <select class="form-control imput-xs" id="nuevoTipoInstitucion">
+                                            <option value="">Seleccione</option>
+                                            <option value="fiscal">Fiscal</option>
+                                            <option value="fiscomisional">Fiscomisional</option>
+                                            <option value="particular">Particular</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-control imput-xs" id="nuevaVulnerabilidad">
+                                            <option value="">Seleccione</option>
+                                            <option value="discapacidad">Discapacidad</option>
+                                            <option value="enfermedad">Enfermedad</option>
+                                            <option value="ninguna">Ninguna</option>
+                                        </select>
+                                    </td>
+                                    <td><button type="button" class="btn btn-primary"
+                                            id="agregarIntegrante">Agregar</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btnTablaIntegrantes">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="vulnerabilidadFam" class="modal">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Vulnerabilidades</h4>
+                </div>
+                <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
+                    <div style="margin: 10px; overflow-x: auto;">
+                        <table class="table" id="tablaFamVulnerable">
+                            <thead>
+                                <tr>
+                                    <th>Nombre persona</th>
+                                    <th>Nombre de la discapacidad</th>
+                                    <th>Tipo de discapacidad</th>
+                                    <th>% discapacidad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btnTblFamVulnerable">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="situacionFam" class="modal">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Situación Económica</h4>
+                </div>
+                <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btn">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="viviendaFam" class="modal">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Vivienda y Servicios Básicos</h4>
+                </div>
+                <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btn">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="evaluacionFam" class="modal">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Evaluación</h4>
+                </div>
+                <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btn">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="infoUserFam" class="modal">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Información del Usuario</h4>
+                </div>
+                <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
+                    <div class="campoFamilia" style="margin-right: 10px;">
+                        <div class="row form-group form-group-xs">
+                            <div class="col-sm-6">
+                                <div>
+                                    <label for="trabajaSelect">¿Trabaja?</label>
+                                    <div class="d-flex">
+                                        <select class="form-control input-xs" id="trabajaSelect">
+                                            <option value="0" selected>Sí</option>
+                                            <option value="1">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="trabajaAct" style="display: none;">
+                                    <label for="comentarioAct">Actividad:</label>
+                                    <textarea class="form-control input-xs" id="comentarioAct" rows="2"
+                                        style="resize: none"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="trabajaAct">
+                                    <label for="modalidadSelect">Modalidad</label>
+                                    <select class="form-control input-xs" id="modalidadSelect">
+                                        <option value="" selected>Seleccione una opción</option>
+                                        <option value="0">Dependiente</option>
+                                        <option value="1">Independiente</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group form-group-xs">
+                            <div class="col-sm-6">
+                                <div>
+                                    <label for="conyugeSelect">¿Cónyuge trabaja?</label>
+                                    <div class="d-flex">
+                                        <select class="form-control input-xs" id="conyugeSelect">
+                                            <option value="0" selected>Sí</option>
+                                            <option value="1">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="conyugeAct" style="display: none;">
+                                    <label for="comentarioConyugeAct">Actividad:</label>
+                                    <textarea class="form-control input-xs" id="comentarioConyugeAct" rows="2"
+                                        style="resize: none"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="conyugeAct">
+                                    <label for="modalidadConyugeSelect">Modalidad</label>
+                                    <select class="form-control input-xs" id="modalidadConyugeSelect">
+                                        <option value="" disabled selected>Seleccione una opción</option>
+                                        <option value="0">Dependiente</option>
+                                        <option value="1">Independiente</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group form-group-xs">
+                            <div class="col-sm-6">
+                                <div>
+                                    <label for="numHijos">Número de hijos</label>
+                                    <input class="form-control input-xs" type="number" id="numHijos" name="numHijos"
+                                        min="0">
+                                </div>
+                                <div>
+                                    <label for="numPersonas">Número de personas que viven en la casa</label>
+                                    <input class="form-control input-xs" type="number" id="numPersonas"
+                                        name="numPersonas" min="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btn">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="mycalendar">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background-color: white; ">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">CALENDARIO DE ASIGNACION</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="calendar" style="overflow-y: auto; max-height: 400px;"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btnGuardarCale">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalBtnDir" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Registro de Ubicación</h4>
+                </div>
+                <div class="modal-body" style="overflow-y: auto;">
+                    <div class="form-group row">
+                        <label for="Provincia" class="col-sm-3 col-form-label">Provincia</label>
+                        <div class="col-sm-9">
+                            <select class="form-control input-sm" id="select_prov" onchange="ciudad(this.value)">
+                                <option value="">Seleccione provincia</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Ciudad" class="col-sm-3 col-form-label">Ciudad</label>
+                        <div class="col-sm-9">
+                            <select class="form-control input-sm" id="select_ciud">
+                                <option value="">Seleccione ciudad</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Canton" class="col-sm-3 col-form-label">Cantón</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" type="text" name="Canton" id="Canton"
+                                placeholder="Ingrese un cantón">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Parroquia" class="col-sm-3 col-form-label">Parroquia</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" type="text" name="Parroquia" id="Parroquia"
+                                placeholder="Ingrese una parroquia">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Barrio" class="col-sm-3 col-form-label">Barrio</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" type="text" name="Barrio" id="Barrio"
+                                placeholder="Ingrese un barrio">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="CalleP" class="col-sm-3 col-form-label">Calle principal</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" type="text" name="CalleP" id="CalleP"
+                                placeholder="Ingrese calle principal">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="CalleS" class="col-sm-3 col-form-label">Calle secundaria</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" type="text" name="CalleS" id="CalleS"
+                                placeholder="Ingrese calle secundaria">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Referencia" class="col-sm-3 col-form-label">Referencia</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" type="text" name="Referencia" id="Referencia"
+                                placeholder="Ingrese una referencia">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btnGuardarDir">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalBtnGrupo" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Tipo de población</h4>
+                </div>
+                <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
+                    <div class="table-responsive">
+                        <table class="table" id="tablaPoblacion">
+                            <thead>
+                                <tr>
+                                    <th scope="col" colspan="2">Tipo de Población</th>
+                                    <th scope="col">Hombres</th>
+                                    <th scope="col">Mujeres</th>
+                                    <th scope="col">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- filas -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btnGuardarGrupo">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalDescarga" data-backdrop="static" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Gestionar Archivos</h4>
+                </div>
+                <div class="modal-body" style="margin:10px">
+                    <div class="row-sm-12">
+                        <div id="cargarArchivo" class="form-group" style="display: flex;">
+                            <label for="archivoAdd">Adjuntar Archivos: (máximo 3 archivos) </label>
+                            <input type="file" style="margin-left: 10px" class="form-control-file" id="archivoAdd"
+                                multiple onchange="checkFiles(this)">
+                        </div>
+                    </div>
+                    <div class="row-sm-12" style="width: 100%; margin-right:10px; margin-left:10px;">
+                        <div class="form-group" style="display: flex; justify-content: center;">
+                            <div id="modalDescContainer" class="d-flex justify-content-center flex-wrap">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row-sm-12">
+                        <div class="col" id="divNoFile" style="display:flex">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display:none">
+                    <div class="row" style="margin: 10px;">
+                        <div class="col-xs-4">
+
+                        </div>
+                        <div class="col-xs-4">
+                            <button id="btnDescargar" type="button" class="btn btn-default btn-block"
+                                onclick="descargarArchivo(ruta, nombre)">
+                                <span class="glyphicon glyphicon-download" aria-hidden="true"></span> Descargar
+                            </button>
+                        </div>
+                        <div class="col-xs-4">
+                            <button type="button" class="btn btn-danger btn-block"
+                                onclick="eliminarArchivo(ruta, nombre)">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalsBtnpAliado" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Productor</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin: 10px; display: flex;">
+                        <div id="" style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
+                            <div class="col-md-6 col-sm-6">
+                                <button type="button" class="btn btn-default btn-sm">
+                                    <img src="../../img/png/industrial.png" style="width: 90%; height: 90%;"
+                                        alt="Imagen">
+                                </button>
+                                <b>Industrial</b>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <button type="button" class="btn btn-default btn-sm">
+                                    <img src="../../img/png/animales.png" style="width: 90%; height: 90%;" alt="Imagen">
+                                </button>
+                                <b>Artesanal</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalsBtn87" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Estado</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin: 10px; display: flex;">
+                        <div id="modal_87" style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalsBtn93" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Beneficiario</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin: 10px; display: flex;">
+                        <div id="modal_93" style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalsBtnDon" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Donacion</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin: 10px; display: flex;">
+                        <div id="modal_Don"
+                            style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 <script>
     $(document).ready(function () {
         //$("#btnUsarCli").hide();        
         Form_Activate();
+        $('.campoSocial').hide();
+        $('.campoFamilia').hide();
+
+
+        var fechaActual = new Date().toISOString().split('T')[0];
+        $('#fechaIngreso').val(fechaActual);
+    });
+
+    $("#btnTablaIntegrantes").click(function () {
+        console.log(integrantes);
+        $('#estructuraFam').modal('hide');
+    });
+    var integrantes = [];
+
+    $("#agregarIntegrante").click(function () {
+        console.log('click para nuevo integrante');
+        var integrante = {
+            nombre: $("#nuevoNombre").val(),
+            genero: $("#nuevoGenero").val(),
+            parentesco: $("#nuevoParentesco").val(),
+            rangoEdad: $("#nuevoRangoEdad").val(),
+            ocupacion: $("#nuevaOcupacion").val(),
+            estadoCivil: $("#nuevoEstadoCivil").val(),
+            nivelEscolaridad: $("#nuevoNivelEscolaridad").val(),
+            nombreInstitucion: $("#nuevoNombreInstitucion").val(),
+            tipoInstitucion: $("#nuevoTipoInstitucion").val(),
+            vulnerabilidad: $("#nuevaVulnerabilidad").val()
+        };
+        integrantes.push(integrante);
+        actualizarTabla();
+        limpiarCampos();
+    });
+
+    function actualizarTabla() {
+        var tablaBody = $("#tablaIntegrantes tbody");
+        tablaBody.children(':not(:first)').remove();
+
+        for (var i = 0; i < integrantes.length; i++) {
+            var integrante = integrantes[i];
+            var fila = $("<tr></tr>");
+            fila.append($("<td></td>").text(integrante.nombre));
+            fila.append($("<td></td>").text(integrante.genero));
+            fila.append($("<td></td>").text(integrante.parentesco));
+            fila.append($("<td></td>").text(integrante.rangoEdad));
+            fila.append($("<td></td>").text(integrante.ocupacion));
+            fila.append($("<td></td>").text(integrante.estadoCivil));
+            fila.append($("<td></td>").text(integrante.nivelEscolaridad));
+            fila.append($("<td></td>").text(integrante.nombreInstitucion));
+            fila.append($("<td></td>").text(integrante.tipoInstitucion));
+            fila.append($("<td></td>").text(integrante.vulnerabilidad));
+            fila.append($("<td><button type='button' class='btn btn-danger btn-eliminar'>Eliminar</button> <button type='button' class='btn btn-warning btn-editar'>Editar</button></td>"));
+            tablaBody.append(fila);
+        }
+    }
+
+    function limpiarCampos() {
+        $("#nuevoNombre").val("");
+        $("#nuevoGenero").val("");
+        $("#nuevoParentesco").val("");
+        $("#nuevoRangoEdad").val("");
+        $("#nuevaOcupacion").val("");
+        $("#nuevoEstadoCivil").val("");
+        $("#nuevoNivelEscolaridad").val("");
+        $("#nuevoNombreInstitucion").val("");
+        $("#nuevoTipoInstitucion").val("");
+        $("#nuevaVulnerabilidad").val("");
+    }
+
+    $("#tablaIntegrantes").on("click", ".btn-eliminar", function () {
+        var fila = $(this).closest("tr");
+        var index = fila.index();
+        integrantes.splice(index - 1, 1);
+        actualizarTabla();
+    });
+
+    $("#tablaIntegrantes").on("click", ".btn-editar", function () {
+        var fila = $(this).closest("tr");
+        var index = fila.index();
+        var integrante = integrantes[index - 1];
+        $("#nuevoNombre").val(integrante.nombre);
+        $("#nuevoGenero").val(integrante.genero);
+        $("#nuevoParentesco").val(integrante.parentesco);
+        $("#nuevoRangoEdad").val(integrante.rangoEdad);
+        $("#nuevaOcupacion").val(integrante.ocupacion);
+        $("#nuevoEstadoCivil").val(integrante.estadoCivil);
+        $("#nuevoNivelEscolaridad").val(integrante.nivelEscolaridad);
+        $("#nuevoNombreInstitucion").val(integrante.nombreInstitucion);
+        $("#nuevoTipoInstitucion").val(integrante.tipoInstitucion);
+        $("#nuevaVulnerabilidad").val(integrante.vulnerabilidad);
+        integrantes.splice(index - 1, 1);
+        actualizarTabla();
+    });
+
+    $('#btnInfoUser').click(function () {
+        $('#infoUserFam').modal('show');
+        if ($('#trabajaSelect').val() === '0') {
+            $('.trabajaAct').show();
+        }
+        if ($('#conyugeSelect').val() === '0') {
+            $('.conyugeAct').show();
+        }
+    });
+
+    $('#trabajaSelect').change(function () {
+        var valorSeleccionado = $(this).val();
+        if (valorSeleccionado === '0') {
+            $('.trabajaAct').show();
+        } else {
+            $('.trabajaAct').hide();
+            $('#comentarioAct').val('');
+            $('#modalidadSelect').val('');
+
+        }
+    });
+
+    $('#conyugeSelect').change(function () {
+        var valorSeleccionado = $(this).val();
+        if (valorSeleccionado === '0') {
+            $('.conyugeAct').show();
+        } else {
+            $('.conyugeAct').hide();
+            $('#comentarioConyugeAct').val('');
+            $('#modalidadConyugeSelect').val('');
+        }
+    });
+
+    $('#modalEstrFam').click(function () {
+        $('#estructuraFam').modal('show');
+    });
+
+    var integrantesDiscapacitados = [];
+    $("#btnTblFamVulnerable").click(function () {
+        console.log('hola1');
+        $("#tablaFamVulnerable tbody tr").each(function () {
+            var $row = $(this);
+            var nombre = $row.find("td:first").text();
+            var nombreDiscapacidad = $row.find("#nombreDiscapacidad").val();
+            var tipoDiscapacidad = $row.find("#tipoDiscapacidad").val();
+            var porcentajeDiscapacidad = $row.find("#xDiscapacidad").val();
+
+            if (nombreDiscapacidad && tipoDiscapacidad && porcentajeDiscapacidad) {
+                integrantesDiscapacitados.push({
+                    nombre: nombre,
+                    nombreDiscapacidad: nombreDiscapacidad,
+                    tipoDiscapacidad: tipoDiscapacidad,
+                    porcentajeDiscapacidad: porcentajeDiscapacidad
+                });
+            }
+        });
+
+        console.log(integrantesDiscapacitados);
+        $('#vulnerabilidadFam').modal('hide');
+    });
+
+    $('#modalVulnFam').click(function () {
+        if (integrantes.length > 0) {
+            $("#tablaFamVulnerable tbody").empty();
+            var tablaBody = $("#tablaFamVulnerable tbody");
+            if (integrantesDiscapacitados.length > 0) {
+                for (var i = 0; i < integrantesDiscapacitados.length; i++) {
+                    var integrante = integrantesDiscapacitados[i];
+                    var fila = $("<tr></tr>");
+                    fila.append($("<td></td>").text(integrante.nombre));
+                    fila.append($("<td></td>").text(integrante.nombreDiscapacidad));
+                    fila.append($("<td></td>").text(integrante.tipoDiscapacidad));
+                    fila.append($("<td></td>").text(integrante.porcentajeDiscapacidad));
+                    tablaBody.append(fila);
+                }
+            } else {
+                for (var i = 0; i < integrantes.length; i++) {
+                    var integrante = integrantes[i];
+                    if (integrante.vulnerabilidad == 'discapacidad')
+                        var fila = $("<tr></tr>");
+                    fila.append($("<td></td>").text(integrante.nombre));
+                    fila.append($("<td><input type='text' class='form-control imput-xs' id='nombreDiscapacidad'></td>"));
+                    fila.append($("<td><select class='form-control imput-xs' id='tipoDiscapacidad'> " +
+                        "<option value=''>Seleccione</option>" +
+                        "<option value='fisica'>Física</option>" +
+                        "<option value='mental'>Mental</option>" +
+                        "<option value='social'>Social</option></select></td>"));
+                    fila.append($("<td><input type='text' class='form-control imput-xs' id='xDiscapacidad'></td>"));
+                    tablaBody.append(fila);
+                }
+            }
+
+            $('#vulnerabilidadFam').modal('show');
+        } else {
+            nombreSol = $('#nombres').val();
+            swal.fire('', 'No hay integrantes para el Sr.(a)' + nombreSol, 'info');
+        }
+
+    });
+
+    $('#modalSituFam').click(function () {
+        $('#situacionFam').modal('show');
+    });
+
+    $('#modalViviFam').click(function () {
+        $('#viviendaFam').modal('show');
+    });
+
+    $('#modalEvalFam').click(function () {
+        $('#evaluacionFam').modal('show');
+    });
+
+
+
+    function Calendario(datos) {
+        return new Promise((resolve, reject) => {
+            const promesas = datos.map(async (cliente) => {
+                var Actividad = cliente.Actividad || '';
+                var Cliente = cliente.Cliente || '';
+                var Envio_No = cliente.Envio_No || '';
+                var Dia_Ent = cliente.Dia_Ent || '';
+                var Hora_Ent = cliente.Hora_Ent || '';
+                var colorV = await ObtenerColor(Envio_No);
+                var fechaActual = new Date();
+                var diaSemana = fechaActual.getDay();
+                var fechaEvento;
+
+                switch (Dia_Ent) {
+                    case 'Lun':
+                        fechaEvento = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate() - diaSemana + 1);
+                        break;
+                    case 'Mar':
+                        fechaEvento = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate() - diaSemana + 2);
+                        break;
+                    case 'Mie':
+                        fechaEvento = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate() - diaSemana + 3);
+                        break;
+                    case 'Jue':
+                        fechaEvento = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate() - diaSemana + 4);
+                        break;
+                    case 'Vie':
+                        fechaEvento = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate() - diaSemana + 5);
+                        break;
+                    case 'Sab':
+                        fechaEvento = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate() - diaSemana + 6);
+                        break;
+                    case 'Dom':
+                        fechaEvento = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate() - diaSemana + 0);
+                        break;
+                    default:
+                        fechaEvento = fechaActual;
+                }
+
+                const fechaInicio = new Date(fechaEvento.getFullYear(), fechaEvento.getMonth(), fechaEvento.getDate(), Hora_Ent.split(':')[0], Hora_Ent.split(':')[1]);
+                const fechaFin = new Date(fechaInicio.getTime() + 30 * 60000);
+
+                return {
+                    title: Cliente,
+                    start: fechaInicio,
+                    end: fechaFin,
+                    backgroundColor: colorV,
+                    textColor: 'black',
+                };
+            });
+
+            Promise.all(promesas)
+                .then((events) => {
+                    resolve(events);
+                    inicializarCalendario(events);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+    }
+
+    var eventosEliminados = [];
+    var eventosEditados = [];
+    var eventosCreados = [];
+    function inicializarCalendario(events) {
+        //console.log(events);
+        $('#mycalendar').modal('show');
+        var calendarEl = $("#calendar")[0];
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek',
+            headerToolbar: {
+                //left: 'prev,next today',
+                //center: 'title',
+                right: 'timeGridWeek,listWeek'
+            },
+            locale: 'es',
+            views: {
+                timeGridWeek: {
+                    buttonText: 'Semana'
+                },
+                listWeek: {
+                    buttonText: 'Lista'
+                }
+            },
+            allDaySlot: false,
+            weekends: false,
+            navLinks: true,
+            selectable: true,
+            selectMirror: true,
+            slotMinTime: '09:30:00',
+            slotMaxTime: '16:30:00',
+            slotDuration: '00:15:00',
+            select: function (arg) {
+                var eventoExistente = calendar.getEvents().find(function (evento) {
+                    return evento.title === miCliente;
+                });
+
+                if (!eventoExistente) {
+                    var endDate = new Date(arg.start.getTime() + 30 * 60000);
+                    var nuevoEvento = {
+                        title: miCliente,
+                        start: arg.start,
+                        end: endDate,
+                        allDay: arg.allDay
+                    };
+                    calendar.addEvent(nuevoEvento);
+                    eventosCreados.push(nuevoEvento);
+                } else {
+                    swal.fire("", "El usuario ya tiene una asignación en el Calendario", "error");
+                }
+                calendar.unselect();
+            },
+            eventClick: function (arg) {
+                if (arg.event.title === miCliente) {
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: 'Esta acción eliminará el evento',
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.value) {
+                            arg.event.remove();
+                            eventosEliminados.push({
+                                title: arg.event.title,
+                                start: arg.event.start,
+                                end: arg.event.end
+                            });
+                        }
+                    });
+                }
+            },
+            editable: true,
+            dayMaxEvents: true,
+            events: events.map(event => {
+                console.log(`Evento: ${event.title}, Día: ${event.start.getDay()}`);
+                return event;
+            }).concat([
+                {
+                    daysOfWeek: [1, 2, 3, 4, 5],
+                    startTime: '12:30',
+                    endTime: '13:30',
+                    display: 'background',
+                    rendering: 'background'
+                }
+            ]),
+            eventChange: function (info) {
+                if (info.event.title === miCliente) {
+                    var index = eventosEditados.findIndex(function (item) {
+                        return item.title === miCliente;
+                    });
+                    if (index !== -1) {
+                        eventosEditados[index] = {
+                            title: info.event.title,
+                            start: info.event.start,
+                            end: info.event.end
+                        };
+                    } else {
+                        eventosEditados.push({
+                            title: info.event.title,
+                            start: info.event.start,
+                            end: info.event.end
+                        });
+                    }
+                }
+            }
+        });
+
+        calendar.render();
+    }
+
+    $('#btnGuardarCale').click(function () {
+        $('#mycalendar').modal('hide');
+        console.log('editados');
+        console.log(eventosEditados);
+        console.log('eliminados');
+        console.log(eventosEliminados);
+        console.log('creados');
+        console.log(eventosCreados);
+
+        if (eventosEditados.length > 0) {
+            eventosEditados.forEach(function (evento) {
+                var startDate = new Date(evento.start);
+                var dayName = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'][startDate.getDay()];
+                var startTime = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                $('#diaEntregac').val(dayName.substring(0, 3));
+
+                $('#horaEntregac').val(startTime);
+            });
+        } else {
+            eventosCreados.forEach(function (evento) {
+                var startDate = new Date(evento.start);
+                var dayName = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'][startDate.getDay()];
+                var startTime = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                $('#diaEntregac').val(dayName.substring(0, 3));
+                $('#horaEntregac').val(startTime);
+            });
+        }
+
+        if (eventosEliminados.length > 0) {
+            $('#diaEntregac').val('');
+            $('#horaEntregac').val('');
+
+        }
     });
 
     function checkFiles(input) {
@@ -899,34 +1707,6 @@
     }
 
     //grupo
-    /*$('#btnMostrarGrupo').click(function () {
-        $.ajax({
-            type: "GET",
-            url: '../controlador/inventario/registro_beneficiarioC.php?LlenarTblPoblacion=true',
-            dataType: 'json',
-            success: function (datos) {
-                if (datos != 0) {
-                    $('#modalBtnGrupo').modal('show');
-                    $('#tablaPoblacion tbody').empty();
-
-                    $.each(datos, function (index, dato) {
-                        $('#tablaPoblacion tbody').append(`<tr><td colspan="2">${dato.Poblacion}</td>
-                                                                <td>${dato.Hombres}</td>
-                                                                <td>${dato.Mujeres}</td>
-                                                                <td>${dato.Total}</td></tr>`);
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'No se encontraron datos de población',
-                        text: '',
-                        type: 'info'
-                    });
-                }
-            }
-        });
-    });*/
-
-    //grupo
     $('#btnMostrarGrupo').click(function () {
         $('#modalBtnGrupo').modal('show');
         agregarFila();
@@ -965,6 +1745,7 @@
             }
         });
     }
+
     var valoresFilas = [];
     $('#btnGuardarGrupo').click(function () {
         var filas = $('#tablaPoblacion tbody tr');
@@ -1184,7 +1965,7 @@
 
     //btn dentro de modal icono RUC
     function usar_cliente(nombre, ruc, codigo, email, td = 'N') {
-        LimpiarSelectsInfoAdd();
+        LimpiarPanelOrgSocialAdd();
 
         var newOption = new Option(nombre, codigo, true, true);
         $('#cliente').append(newOption).trigger('change');
@@ -1259,8 +2040,10 @@
                 dataType: 'json',
                 data: { valor: Actividad },
                 success: function (datos) {
+                    //console.log(datos);
                     if (datos != 0 && datos[0].Envio_No != null) {
-                        LlenarCalendarioC(datos);
+                        //LlenarCalendarioC(datos);
+                        Calendario(datos);
                     } else {
                         $('#tabla-body').empty();
                         Swal.fire({
@@ -1275,95 +2058,23 @@
     }
 
     //color para celdas del calendario
-    var miColor;
-    function ObtenerColor(valEnvio_No, callback) {
-        if (valEnvio_No) {
-            $.ajax({
-                url: '../controlador/inventario/registro_beneficiarioC.php?ObtenerColor=true',
-                type: 'post',
-                dataType: 'json',
-                data: { valor: valEnvio_No },
-                success: function (data) {
-                    if (data != 0) {
-                        miColor = data.Color;
-                        callback(miColor);
+    function ObtenerColor(valEnvio_No) {
+        return new Promise((resolve) => {
+            if (valEnvio_No) {
+                $.ajax({
+                    url: '../controlador/inventario/registro_beneficiarioC.php?ObtenerColor=true',
+                    type: 'post',
+                    dataType: 'json',
+                    data: { valor: valEnvio_No },
+                    success: function (data) {
+                        var color = "#" + data.Color.substring(4);
+                        resolve(color);
                     }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error al obtener color:', error);
-                }
-            });
-        }
-    }
-
-    function LlenarCalendarioC(data) {
-        console.log(data[0]);
-        if (data[0].Envio_No == 'null') {
-            console.log('1');
-        }
-        if (data[0].Envio_No == null) {
-            console.log('2');
-        }
-        if (data[0].Envio_No == '') {
-            console.log('3');
-        }
-        if (data[0].Envio_No == undefined) {
-            console.log('4');
-        }
-
-        console.log('sin valor');
-        var horas = ['01:00 - 02:00', '02:00 - 03:00', '03:00 - 04:00',
-            '04:00 - 05:00', '05:00 - 06:00', '06:00 - 07:00',
-            '07:00 - 08:00', '08:00 - 09:00', '09:00 - 10:00',
-            '10:00 - 11:00', '11:00 - 12:00', '12:00 - 13:00',
-            '13:00 - 14:00', '14:00 - 15:00', '15:00 - 16:00',
-            '16:00 - 17:00', '17:00 - 18:00', '18:00 - 19:00',
-            '19:00 - 20:00', '20:00 - 21:00', '21:00 - 22:00',
-            '22:00 - 23:00', '23:00 - 24:00'];
-        var diasSemana = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
-        $('#tabla-body').empty();
-
-        $.each(data, function (index, cliente) {
-            var Actividad = cliente.Actividad || '';
-            var Cliente = cliente.Cliente || '';
-            var Envio_No = cliente.Envio_No || '';
-            var Dia_Ent = cliente.Dia_Ent || '';
-            var Hora_Ent = cliente.Hora_Ent || '';
-
-            ObtenerColor(Envio_No, function (color) {
-                var colorV = color.substring(4);
-                var indiceColumna = diasSemana.indexOf(Dia_Ent);
-                var indiceFila = -1;
-                for (var i = 0; i < horas.length; i++) {
-                    var horaInicio = horas[i].split(' - ')[0];
-                    var horaFin = horas[i].split(' - ')[1];
-                    if (Hora_Ent >= horaInicio && Hora_Ent < horaFin) {
-                        indiceFila = i;
-                        break;
-                    }
-                }
-
-                var $fila = $('#tabla-body tr').filter(function () {
-                    return $(this).find('td:first').text() === horas[indiceFila];
                 });
-
-                if ($fila.length === 0) {
-                    $fila = $('<tr>');
-                    $fila.append($('<td>').text(horas[indiceFila]));
-                    $.each(diasSemana, function (indiceDia, dia) {
-                        var $celda = $('<td>');
-                        $fila.append($celda);
-                    });
-                    $('#tabla-body').append($fila);
-                }
-
-                var $celda = $fila.find('td').eq(indiceColumna + 1);
-                var $div = $('<div>').text(Cliente).css('background-color', '#' + colorV);
-                $celda.append($div);
-            });
+            } else {
+                resolve('#000000');
+            }
         });
-        $('#modalCalendario').modal('show');
-
     }
 
     //selects Sexo
@@ -1483,6 +2194,7 @@
             }
         });
     }
+
     //todos los selects_num
     function LlenarSelects_Val(valor, valor2) {
         $('#select_' + valor).select2({
@@ -1523,6 +2235,52 @@
                 cache: true
             }
         });
+    }
+
+    function autorizarCambios() {
+        Swal.fire({
+            title: "Se requiere autorización para modificar el beneficiario: " + miCliente,
+            text: "¿Desea proceder ingresando su contraseña?",
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'SI',
+            cancelButtonText: 'NO'
+        }).then((result) => {
+            if (result.value) {
+                $('#TipoSuper_MYSQL').val('Actualizar');
+                $('#titulo_clave').text('Autorizar Cambios');
+                $('#clave_supervisor').modal('show');
+            } else {
+                $('#collapseTwo').collapse('hide');
+            }
+        });
+    }
+
+    $('#btnAutorizarCambios').click(function () {
+        //console.log('hola');
+        //console.log(miCliente);
+        if (miCliente != undefined) {
+            autorizarCambios();
+        } else {
+            Swal.fire({
+                title: 'No se seleccionó un Cliente',
+                text: '',
+                type: 'warning',
+            });
+        }
+    });
+
+    function resp_clave_ingreso(response) {
+        if (response.respuesta == 1) {
+            $('#clave_supervisor').modal('hide');
+            $('#collapseTwo').collapse('show');
+            userAuth = true;
+        } else {
+            console.log('no se ingreso pass');
+            $('#collapseTwo').collapse('hide');
+        }
     }
 
     //registro 
@@ -1608,10 +2366,17 @@
         if (!$('#select_92').val()) camposVacios.push('Accion social');
         if (!$('#select_90').val()) camposVacios.push('Vulnerabilidad');
         if (!$('#select_89').val()) camposVacios.push('Tipo Atencion');
-        if (!fileInput.files.length) camposVacios.push('Evidencias');
+        if (!fileInput.files.length && nombreArchivo == "") camposVacios.push('Evidencias');
         if (!$('#infoNut').val()) camposVacios.push('Observaciones');
 
-        if (camposVacios.length > 0) {
+        if (userNew == false && userAuth == false) {
+            Swal.fire({
+                title: '',
+                text: "Usted no está autorizado.",
+                type: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        } else if (camposVacios.length > 0) {
             var mensaje = 'Los siguientes campos están vacíos:\n';
             camposVacios.forEach(function (campo) {
                 mensaje += campo + ',';
@@ -1655,7 +2420,12 @@
     });
 
     //limpieza
-    function LimpiarSelectsInfoAdd() {
+    function LimpiarPanelOrgSocialAdd() {
+        eventosEliminados = [];
+        eventosEditados = [];
+        eventosCreados = [];
+        userAuth = false;
+        userNew = false;
         $('#collapseTwo').collapse('hide');
         $('#select_92').val(null).trigger('change');
         $('#select_86').val(null).trigger('change');
@@ -1683,7 +2453,7 @@
     var miCliente;
     var nombreArchivo;
     $('#cliente').on('select2:select', function (e) {
-        LimpiarSelectsInfoAdd();
+        LimpiarPanelOrgSocialAdd();
         var data = e.params.data;
         miCodigo = data.id;
         miRuc = data.CI_RUC;
@@ -1704,7 +2474,7 @@
 
     //llenar campos del cliente segun ruc seleccionado
     $('#ruc').on('select2:select', function (e) {
-        LimpiarSelectsInfoAdd();
+        LimpiarPanelOrgSocialAdd();
         var data = e.params.data;
         miCodigo = data.id;
         miRuc = data.text;
@@ -1766,6 +2536,21 @@
                             itemSelect(item.picture, item.text, item.color, item.id);
                         }
                     });
+
+                    if (datos.CodigoA == '.') {
+                        $('#select_87').val(null).trigger('change');
+                        $('#carouselBtnIma_87').carousel("cycle");
+                    }
+                    if (datos.Actividad == '.') {
+                        $('#select_93').val(null).trigger('change');
+                        $('#carouselBtnIma_93').carousel("cycle");
+                    }
+                    if (datos.Calificacion == '.') {
+                        $('#select_CxC').val(null).trigger('change');
+                        $('#carouselBtnImaDon').carousel("cycle");
+                    }
+
+
                     if (datos.Dia_Ent == '.') {
                         $('#diaEntrega').val($('#diaEntrega option:first').val());
                     } else {
@@ -1781,10 +2566,42 @@
         });
     }
 
-    //llenar campos de panel informacion adicional
-    var comen;
-    $('#botonInfoAdd').click(function () {
+    $('#select_93').change(function () {
+        LimpiarPanelOrgSocialAdd();
+    });
+
+    $('#select_93').change(function () {
+        var valorSeleccionado = $('#select_93').val();
+        switch (valorSeleccionado) {
+            case '93.01':
+                console.log('social93');
+                $('.campoSocial').show();
+                $('.campoFamilia').hide();
+                break;
+            case '93.02':
+                console.log('familia93');
+                $('.campoSocial').hide();
+                $('.campoFamilia').show();
+                break;
+            case '93.03':
+                console.log('operativo93');
+                $('.campoSocial').hide();
+                $('.campoFamilia').hide();
+                break;
+            case '93.04':
+                console.log('productor93');
+                $('.campoSocial').hide();
+                $('.campoFamilia').hide();
+                break;
+        }
+    });
+
+
+    //llenar campos panel org.social
+    function CamposPanelOrgSocial() {
+        $("#mostrarFamiliasAdd").css("display", "none");
         if (miCodigo) {
+            $("#mostrarOrgSocialAdd").css("display", "block");
             $.ajax({
                 url: '../controlador/inventario/registro_beneficiarioC.php?llenarCamposInfoAdd=true',
                 type: 'post',
@@ -1805,30 +2622,65 @@
                         llenarPreSelects(datos.Acreditacion);
                         llenarPreSelects(datos.Tipo_Dato);
                         llenarPreSelects(datos.Cod_Fam);
+                        if (userNew == false && userAuth == false) {
+                            autorizarCambios();
+                        }
                     } else {
+                        userNew = true;
                         Swal.fire({
                             title: 'No se encontraron datos adicionales',
                             text: '',
                             type: 'info'
                         });
                     }
-
                 }
             });
             llenarCamposPoblacion(miCodigo);
-        } else {
+        }
+        else {
+            $('#collapseTwo').collapse('hide');
             Swal.fire({
-                title: 'No se seleccionó un Cliente',
+                title: 'No se seleccionó un Beneficiario/Usuario',
                 text: '',
                 type: 'warning',
-
-
             });
+        }
+    }
+
+    //llenar campos panel familias
+    function CamposPanelFamilias() {
+        $("#mostrarFamiliasAdd").css("display", "block");
+        $("#mostrarOrgSocialAdd").css("display", "none");
+
+    }
+
+    //llenar campos de panel informacion adicional
+    var comen;
+    var userNew = false;
+    var userAuth = false;
+    $('#botonInfoAdd').click(function () {
+        var valorSeleccionado = $('#select_93').val();
+        switch (valorSeleccionado) {
+            case '93.01':
+                console.log('social');
+                CamposPanelOrgSocial();
+                break;
+            case '93.02':
+                console.log('familia');
+                CamposPanelFamilias();
+                break;
+            case '93.03':
+                console.log('operativo');
+                break;
+            case '93.04':
+                console.log('productor');
+                break;
+            default:
         }
     });
 
     function llenarCamposPoblacion(Codigo) {
-        console.log('hola');
+        //console.log('hola');
         $.ajax({
             url: '../controlador/inventario/registro_beneficiarioC.php?llenarCamposPoblacion=true',
             type: 'post',
@@ -1837,7 +2689,7 @@
             success: function (datos) {
                 if (datos != 0) {
                     console.log(datos);
-                    datos.forEach(function (registro) { 
+                    datos.forEach(function (registro) {
                         var hombres = registro.Hombres;
                         var mujeres = registro.Mujeres;
                         var total = registro.Total;
@@ -1908,10 +2760,10 @@
     var nombre;
     function DownloadOrDelete(archivo, noDescarga) {
         nombre = archivo;
-        console.log(nombre);
+        //console.log(nombre);
         if (noDescarga == true) {
             $('#btnDescargar').hide();
-            console.log('hola1');
+            //console.log('hola1');
         }
         else { $('#btnDescargar').show(); }
         $('#modalDescarga .modal-footer').show();

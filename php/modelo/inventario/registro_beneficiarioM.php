@@ -63,6 +63,7 @@ class registro_beneficiarioM
                     LEFT JOIN Clientes_Datos_Extras AS F ON C.Codigo = F.Codigo
                     WHERE C.Cliente <> '.'
                     AND Actividad = '" . $valor . "'
+                    AND Envio_No != '.'
                     ORDER BY Hora_Ent";
         return $this->db->datos($sql);
     }
@@ -233,6 +234,7 @@ class registro_beneficiarioM
 
     function ActualizarClientesDatosExtra($parametros)
     {
+        //print_r($parametros);
         $sql = "UPDATE Clientes_Datos_Extras SET
                 CodigoA = '" . $parametros['CodigoA2'] . "', 
                 Dia_Ent = '" . $parametros['Dia_Ent2'] . "', 
@@ -243,14 +245,17 @@ class registro_beneficiarioM
                 Acreditacion = '" . $parametros['Acreditacion'] . "', 
                 Tipo_Dato = '" . $parametros['Tipo_Dato'] . "', 
                 Cod_Fam = '" . $parametros['Cod_Fam'] . "', 
-                Evidencias = CONCAT(Evidencias, '" . $parametros['NombreArchivo'] . "'),
-                Observaciones = '" . $parametros['Observaciones'] . "'
-                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+                Observaciones = '" . $parametros['Observaciones'] . "'";
+        if ($parametros['NombreArchivo']!='') {
+            $sql .= ", Evidencias = CONCAT(Evidencias, '" . $parametros['NombreArchivo'] . "')";
+        }
+        $sql .= " WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Codigo = '" . $parametros['Codigo'] . "'";
-
-        //print_r($sql);
+    
+        //print_r($sql); die();
         return $this->db->datos($sql);
     }
+    
 
     function CrearClienteDatosExtra($parametros)
     {
@@ -273,30 +278,32 @@ class registro_beneficiarioM
         return $this->db->datos($sql2);
     }
 
-    function llenarCamposPoblacion($codigo) {
+    function llenarCamposPoblacion($codigo)
+    {
         $sqlFecha = "SELECT MAX(FechaM) AS UltimaFecha FROM Trans_Tipo_Poblacion 
                      WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
                      AND CodigoC = '" . $codigo . "'";
-    
+
         $resultadoFecha = $this->db->datos($sqlFecha);
-    
+
         $ultimaFecha = $resultadoFecha[0]['UltimaFecha']->format('Y-m-d');
-    
+
         $sqlRegistros = "SELECT * FROM Trans_Tipo_Poblacion 
                          WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
                          AND CodigoC = '" . $codigo . "' 
                          AND FechaM = '" . $ultimaFecha . "'";
-    
+
         return $this->db->datos($sqlRegistros);
     }
-    
 
-    function CrearTipoPoblacion($parametros) {
+
+    function CrearTipoPoblacion($parametros)
+    {
         $tipoPoblacion = json_decode($parametros['TipoPoblacion'], true);
-    
+
         $sql = "INSERT INTO Trans_Tipo_Poblacion (Item, Periodo, Fecha, FechaM, CodigoC, Cmds, Hombres, Mujeres, Total, CodigoU, X) VALUES ";
         $values = array();
-    
+
         foreach ($tipoPoblacion as $poblacion) {
             $values[] = "('" . $_SESSION['INGRESO']['item'] . "', '" . $_SESSION['INGRESO']['periodo'] . "',
                         '" . date('Y-m-d') . "', '" . date('Y-m-d') . "',
@@ -304,8 +311,8 @@ class registro_beneficiarioM
                         '" . $poblacion['hombres'] . "', '" . $poblacion['mujeres'] . "',
                         '" . $poblacion['total'] . "', '" . $_SESSION['INGRESO']['CodigoU'] . "', '.')";
         }
-    
-        $sql .= implode(', ', $values); 
+
+        $sql .= implode(', ', $values);
         return $this->db->datos($sql);
     }
 
