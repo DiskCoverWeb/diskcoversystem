@@ -211,6 +211,7 @@ $(document).ready(function () {
       var fac = $('#txt_factura').val();
       var mes = $('#txt_mes').val();
       var fec = $('#txt_fecha_ven').val();
+      var seri = $('#txt_serie').val();
       if(tc=='G')
       {
          if($('#DLSubCta').val()==''){
@@ -245,6 +246,7 @@ $(document).ready(function () {
         'tipoc':tipoc,
         'fac':fac,
         'mes':mes,
+        'serie':seri,
       }
         $.ajax({
           data:  {parametros:parametros},
@@ -425,10 +427,14 @@ $(document).ready(function () {
       <option value="">Seleccione una sub cuenta</option>
     </select> 
 	</div>
-	<div class="col-sm-3">
+	<div class="col-sm-2">
 		<b>Fecha Venc</b>
 		<input type="date" name="txt_fecha_ven" id="txt_fecha_ven" class="form-control input-sm" value="<?php echo date('Y-m-d');?>">
 	</div>
+<div class="col-sm-1" style=" padding: 0px;">
+    <b>Serie</b>
+    <input type="input" name="txt_serie" id="txt_serie" class="form-control input-sm" value="" placeholder="001001">
+  </div>
 	<div class="col-sm-2">
 		<b>Factura No</b>
 		<input type="text" name="txt_factura" id="txt_factura" class="form-control input-sm" onkeyup="solo_numeros(this)" value="0">
