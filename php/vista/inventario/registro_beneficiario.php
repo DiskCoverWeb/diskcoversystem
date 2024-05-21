@@ -9,7 +9,9 @@
 
 <head>
     <style>
-        #tablaIntegrantes {
+        #tablaIntegrantes,
+        #tablaFamDisc,
+        #tablaFamEnfe {
             text-align: center;
             white-space: nowrap;
         }
@@ -372,7 +374,8 @@
                                 </div>
                             </div>
 
-                            <div class="col-sm-2" style="margin-right:10px; text-align: center; padding: 10px;">
+                            <div class="col-sm-6 col-md-2"
+                                style="margin-right:10px; text-align: center; padding: 10px;">
                                 <div class="row" id="btnMostrarDir">
                                     <img src="../../img/png/map.png" width="60" height="60" title="INGRESAR DIRECCIÓN"
                                         class="icon">
@@ -528,7 +531,7 @@
                         style="margin: 1px; padding-top: 5px; padding-bottom: 40px;  display: none;">
                         <div class="row"
                             style="margin: 10px; display: flex; justify-content: center; align-items: center;">
-                            <div class="col-sm-2" style="margin-right:10px; text-align: center; padding: 10px;"
+                            <div class="col-sm-6 col-md-2" style="margin-right:10px; text-align: center; padding: 10px;"
                                 id="modalEstrFam">
                                 <div class="row">
                                     <img src="../../img/png/estructura_familiar.png" width="80" height="80"
@@ -541,7 +544,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-sm-2" style="margin-right:10px; text-align: center; padding: 10px;"
+                            <div class="col-sm-6 col-md-2" style="margin-right:10px; text-align: center; padding: 10px;"
                                 id="modalVulnFam">
                                 <div class="row">
                                     <img src="../../img/png/vulnerabilidades.png" width="80" height="80"
@@ -553,7 +556,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-2" style="margin-right:10px; text-align: center; padding: 10px;"
+
+                            <div class="col-sm-6 col-md-2" style="margin-right:10px; text-align: center; padding: 10px;"
                                 id="modalSituFam">
                                 <div class="row">
                                     <img src="../../img/png/situacion_economica.png" width="80" height="80"
@@ -565,7 +569,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-2" style="margin-right:10px; text-align: center; padding: 10px;"
+
+                            <div class="col-sm-6 col-md-2" style="margin-right:10px; text-align: center; padding: 10px;"
                                 id="modalViviFam">
                                 <div class="row">
                                     <img src="../../img/png/vivienda_servicios.png" width="80" height="80"
@@ -577,7 +582,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-2" style="margin-right:10px; text-align: center; padding: 10px;"
+
+                            <div class="col-sm-6 col-md-2" style="margin-right:10px; text-align: center; padding: 10px;"
                                 id="modalEvalFam">
                                 <div class="row">
                                     <img src="../../img/png/evaluacion.png" width="80" height="80" title="EVALUACIÓN"
@@ -704,9 +710,9 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Vulnerabilidades</h4>
                 </div>
-                <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
-                    <div style="margin: 10px; overflow-x: auto;">
-                        <table class="table" id="tablaFamVulnerable">
+                <div class="modal-body" style="overflow-y: auto; max-height: 300px; margin:5px">
+                    <div style="overflow-x: auto;">
+                        <table class="table" id="tablaFamDisc">
                             <thead>
                                 <tr>
                                     <th>Nombre persona</th>
@@ -719,7 +725,37 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <div id="mensajeNoIntegrantes" class="alert alert-info" style="display: none;">
+                        No hay integrantes discapacitados en la familia.
+                    </div>
+
+                    <div style="overflow-x: auto; margin-top: 10px">
+                        <table class="table" id="tablaFamEnfe">
+                            <thead>
+                                <tr>
+                                    <th>Nombre persona</th>
+                                    <th>Nombre de la enfermedad</th>
+                                    <th>Tipo de enfermedad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="mensajeNoIntegrantesE" class="alert alert-info" style="display: none;">
+                        No hay integrantes enfermos en la familia.
+                    </div>
+
+                    <div class="row" style=" margin:10px">
+                        <div class="col-6">
+                            <label for="totalFamVuln">Total de integrantes vulnerables:</label>
+                            <input class="form-control imput-xs" id="totalFamVuln" readonly></input>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" id="btnTblFamVulnerable">Aceptar</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -729,14 +765,31 @@
     </div>
 
     <div id="situacionFam" class="modal">
-        <div class="modal-dialog modal-md">
+        <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Situación Económica</h4>
                 </div>
-                <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
-
+                <div class="modal-body">
+                    <div class="row" style="margin: 10px;">
+                        <div id="modal_" style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
+                            <div class="col-md-6 col-sm-6 d-flex justify-content-center">
+                                <button id="btnIngresos" type="button" class="btn btn-default btn-sm">
+                                    <img src="../../img/png/ingresos.png" style="width: 60px; height: 60px">
+                                </button>
+                                <br>
+                                <b>Ingresos</b>
+                            </div>
+                            <div class="col-md-6 col-sm-6 d-flex justify-content-center">
+                                <button id="btnEgresos" type="button" class="btn btn-default btn-sm">
+                                    <img src="../../img/png/egresos.png" style="width: 60px; height: 60px">
+                                </button>
+                                <br>
+                                <b>Egresos</b>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" id="btn">Aceptar</button>
@@ -746,6 +799,154 @@
         </div>
     </div>
 
+    <div id="modalIngresos" class="modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Situación Económica (Ingresos)</h4>
+                </div>
+                <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
+                    <div style="margin: 10px; overflow-x: auto;">
+                        <table class="table" id="tablaIntegrantes">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Lugar de trabajo</th>
+                                    <th>Tipo de seguro</th>
+                                    <th>Sueldo fijo</th>
+                                    <th>Ingreso fijo $</th>
+                                    <th>Ingreso eventual $</th>
+                                    <th>Pensión de alimentos $</th>
+                                    <th>Ayuda familiar $</th>
+                                    <th>Jubilación</th>
+                                    <th>Tipo de Bono</th>
+                                    <th>Bono $</th>
+                                    <th>Uso del Bono</th>
+                                    <th>Suma de Ingresos $</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="filaAgregar">
+                                    <td><input type="text" class="form-control imput-xs" id="nuevoNombre"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="lugarTrabajo"></td>
+                                    <td>
+                                        <select class="form-control imput-xs" id="tipoDeSeguro">
+                                            <option value="">Seleccione</option>
+                                            <option value="iess">IEES</option>
+                                            <option value="issfa">ISSFA</option>
+                                            <option value="ispol">ISPOL</option>
+                                            <option value="seguro">Seguro privado</option>
+                                            <option value="ninguno">Ninguno</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-control imput-xs" id="sueldoFijo">
+                                            <option value="">Seleccione</option>
+                                            <option value="si">Si</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-control imput-xs" id="ingresoFijo"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="ingresoEventual"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="pensionAlimentos"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="ayudaFamiliar"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="jubilacion"></td>
+                                    <td>
+                                        <select class="form-control imput-xs" id="tipoBono">
+                                            <option value="">Seleccione</option>
+                                            <option value="desarrollo">Desarrollo Humano</option>
+                                            <option value="manuela">Manuela Sáenz</option>
+                                            <option value="joaquin">Joaquín Gallegos Lara</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-control imput-xs" id="bono"></td>
+                                    <td>
+                                        <select class="form-control imput-xs" id="nuevoTipoInstitucion">
+                                            <option value="">Seleccione</option>
+                                            <option value="fiscal">Mediación e insumos y movilización</option>
+                                            <option value="fiscomisional">Gastos generales</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-control imput-xs" id="sumaIngresos"></td>
+                                    <td><button type="button" class="btn btn-primary"
+                                            id="agregarIngreso">Agregar</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btn">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalEgresos" class="modal">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Situación Económica (Egresos)</h4>
+                </div>
+                <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
+                    <div style="margin: 10px; overflow-x: auto;">
+                        <table class="table" id="tablaVivienda">
+                            <thead>
+                                <tr>
+                                    <th>Tipo de vivienda</th>
+                                    <th>¿La vivienda es?</th>
+                                    <th>Valor/Avalúo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <td><input type="text" class="form-control imput-xs" id="tipoVivienda"></td>
+                                <td><input type="text" class="form-control imput-xs" id="laViviendaEs"></td>
+                                <td><input type="text" class="form-control imput-xs" id="valor"></td>
+                            </tbody>
+                        </table>
+                        <table class="table" id="tablaServicios">
+                            <thead>
+                                <tr>
+                                    <th>Qué servicios pose¿?</th>
+                                    <th>Dispone</th>
+                                    <th>Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <table class="table" id="tablaOtrosGastos">
+                            <thead>
+                                <tr>
+                                    <th>Otros Gastos</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row" style=" margin:10px">
+                        <div class="col-6">
+                            <label for="totalEgresos">Total egresos:</label>
+                            <input class="form-control imput-xs" id="totalEgresos" readonly></input>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btn">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div id="viviendaFam" class="modal">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
@@ -753,8 +954,21 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Vivienda y Servicios Básicos</h4>
                 </div>
-                <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
-
+                <div class="modal-body" style="overflow-y: auto; max-height: 300px; margin:5px">
+                    <div style="overflow-x: auto;">
+                        <table class="table" id="tablaFamDisc">
+                            <thead>
+                                <tr>
+                                    <th>Nombre persona</th>
+                                    <th>Nombre de la discapacidad</th>
+                                    <th>Tipo de discapacidad</th>
+                                    <th>% discapacidad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" id="btn">Aceptar</button>
@@ -1146,10 +1360,13 @@
         console.log(integrantes);
         $('#estructuraFam').modal('hide');
     });
+
     var integrantes = [];
+    var integrantesDisc = [];
+    var integrantesEnfe = [];
+    var totalVulnerables = 0;
 
     $("#agregarIntegrante").click(function () {
-        console.log('click para nuevo integrante');
         var integrante = {
             nombre: $("#nuevoNombre").val(),
             genero: $("#nuevoGenero").val(),
@@ -1163,6 +1380,29 @@
             vulnerabilidad: $("#nuevaVulnerabilidad").val()
         };
         integrantes.push(integrante);
+
+        if (integrante.vulnerabilidad === "discapacidad") {
+            var integranteDiscapacidad = {
+                nombre: integrante.nombre,
+                nombreDiscapacidad: "",
+                tipoDiscapacidad: "",
+                porDiscapacidad: ""
+            };
+            integrantesDisc.push(integranteDiscapacidad);
+            totalVulnerables++;
+        }
+
+        if (integrante.vulnerabilidad === "enfermedad") {
+            var integranteEnfermedad = {
+                nombre: integrante.nombre,
+                nombreEnfermedad: "",
+                tipoEnfermedad: ""
+            };
+            integrantesEnfe.push(integranteEnfermedad);
+            totalVulnerables++;
+        }
+
+        console.log(totalVulnerables);
         actualizarTabla();
         limpiarCampos();
     });
@@ -1204,15 +1444,28 @@
 
     $("#tablaIntegrantes").on("click", ".btn-eliminar", function () {
         var fila = $(this).closest("tr");
-        var index = fila.index();
-        integrantes.splice(index - 1, 1);
+        var index = fila.index() - 1;
+        var integrante = integrantes[index];
+
+        if (integrante.vulnerabilidad === "discapacidad") {
+            totalVulnerables--;
+            integrantesDisc = integrantesDisc.filter(d => d.nombre !== integrante.nombre);
+        }
+
+        if (integrante.vulnerabilidad === "enfermedad") {
+            totalVulnerables--;
+            integrantesEnfe = integrantesEnfe.filter(e => e.nombre !== integrante.nombre);
+        }
+
+        integrantes.splice(index, 1);
         actualizarTabla();
     });
 
     $("#tablaIntegrantes").on("click", ".btn-editar", function () {
         var fila = $(this).closest("tr");
-        var index = fila.index();
-        var integrante = integrantes[index - 1];
+        var index = fila.index() - 1;
+        var integrante = integrantes[index];
+
         $("#nuevoNombre").val(integrante.nombre);
         $("#nuevoGenero").val(integrante.genero);
         $("#nuevoParentesco").val(integrante.parentesco);
@@ -1223,7 +1476,18 @@
         $("#nuevoNombreInstitucion").val(integrante.nombreInstitucion);
         $("#nuevoTipoInstitucion").val(integrante.tipoInstitucion);
         $("#nuevaVulnerabilidad").val(integrante.vulnerabilidad);
-        integrantes.splice(index - 1, 1);
+
+        if (integrante.vulnerabilidad === "discapacidad") {
+            totalVulnerables--;
+            integrantesDisc = integrantesDisc.filter(d => d.nombre !== integrante.nombre);
+        }
+
+        if (integrante.vulnerabilidad === "enfermedad") {
+            totalVulnerables--;
+            integrantesEnfe = integrantesEnfe.filter(e => e.nombre !== integrante.nombre);
+        }
+
+        integrantes.splice(index, 1);
         actualizarTabla();
     });
 
@@ -1245,7 +1509,6 @@
             $('.trabajaAct').hide();
             $('#comentarioAct').val('');
             $('#modalidadSelect').val('');
-
         }
     });
 
@@ -1264,49 +1527,14 @@
         $('#estructuraFam').modal('show');
     });
 
-    var integrantesDiscapacitados = [];
-    $("#btnTblFamVulnerable").click(function () {
-        console.log('hola1');
-        $("#tablaFamVulnerable tbody tr").each(function () {
-            var $row = $(this);
-            var nombre = $row.find("td:first").text();
-            var nombreDiscapacidad = $row.find("#nombreDiscapacidad").val();
-            var tipoDiscapacidad = $row.find("#tipoDiscapacidad").val();
-            var porcentajeDiscapacidad = $row.find("#xDiscapacidad").val();
-
-            if (nombreDiscapacidad && tipoDiscapacidad && porcentajeDiscapacidad) {
-                integrantesDiscapacitados.push({
-                    nombre: nombre,
-                    nombreDiscapacidad: nombreDiscapacidad,
-                    tipoDiscapacidad: tipoDiscapacidad,
-                    porcentajeDiscapacidad: porcentajeDiscapacidad
-                });
-            }
-        });
-
-        console.log(integrantesDiscapacitados);
-        $('#vulnerabilidadFam').modal('hide');
-    });
-
     $('#modalVulnFam').click(function () {
         if (integrantes.length > 0) {
-            $("#tablaFamVulnerable tbody").empty();
-            var tablaBody = $("#tablaFamVulnerable tbody");
-            if (integrantesDiscapacitados.length > 0) {
-                for (var i = 0; i < integrantesDiscapacitados.length; i++) {
-                    var integrante = integrantesDiscapacitados[i];
+            if (integrantesDisc.length > 0) {
+                $("#tablaFamDisc tbody").empty();
+                var tablaBody = $("#tablaFamDisc tbody");
+                for (var i = 0; i < integrantesDisc.length; i++) {
+                    var integrante = integrantesDisc[i];
                     var fila = $("<tr></tr>");
-                    fila.append($("<td></td>").text(integrante.nombre));
-                    fila.append($("<td></td>").text(integrante.nombreDiscapacidad));
-                    fila.append($("<td></td>").text(integrante.tipoDiscapacidad));
-                    fila.append($("<td></td>").text(integrante.porcentajeDiscapacidad));
-                    tablaBody.append(fila);
-                }
-            } else {
-                for (var i = 0; i < integrantes.length; i++) {
-                    var integrante = integrantes[i];
-                    if (integrante.vulnerabilidad == 'discapacidad')
-                        var fila = $("<tr></tr>");
                     fila.append($("<td></td>").text(integrante.nombre));
                     fila.append($("<td><input type='text' class='form-control imput-xs' id='nombreDiscapacidad'></td>"));
                     fila.append($("<td><select class='form-control imput-xs' id='tipoDiscapacidad'> " +
@@ -1314,18 +1542,98 @@
                         "<option value='fisica'>Física</option>" +
                         "<option value='mental'>Mental</option>" +
                         "<option value='social'>Social</option></select></td>"));
-                    fila.append($("<td><input type='text' class='form-control imput-xs' id='xDiscapacidad'></td>"));
+                    fila.append($("<td><input type='text' class='form-control imput-xs' id='porDiscapacidad'></td>"));
                     tablaBody.append(fila);
                 }
+            } else {
+                $("#tablaFamDisc").hide();
+                $("#mensajeNoIntegrantes").show();
             }
 
+            if (integrantesEnfe.length > 0) {
+                $("#tablaFamEnfe tbody").empty();
+                var tablaBody = $("#tablaFamEnfe tbody");
+                for (var i = 0; i < integrantesEnfe.length; i++) {
+                    var integrante = integrantesEnfe[i];
+                    var fila = $("<tr></tr>");
+                    fila.append($("<td></td>").text(integrante.nombre));
+                    fila.append($("<td><input type='text' class='form-control imput-xs' id='nombreEnfermedad'></td>"));
+                    fila.append($("<td><select class='form-control imput-xs' id='tipoEnfermedad'> " +
+                        "<option value=''>Seleccione</option>" +
+                        "<option value='cronica'>Crónica</option>" +
+                        "<option value='catastrofica'>Catastrófica</option>" +
+                        "<option value='otra'>Otra</option></select></td>"));
+                    tablaBody.append(fila);
+                }
+            } else {
+                $("#tablaFamEnfe").hide();
+                $("#mensajeNoIntegrantesE").show();
+            }
+
+            $('#totalFamVuln').val(totalVulnerables);
             $('#vulnerabilidadFam').modal('show');
         } else {
-            nombreSol = $('#nombres').val();
-            swal.fire('', 'No hay integrantes para el Sr.(a)' + nombreSol, 'info');
+            var nombreSol = $('#nombres').val();
+            swal.fire('', 'No hay integrantes para el Sr.(a) ' + nombreSol, 'info');
+        }
+    });
+
+    $("#btnIngresos").click(function () {
+        console.log('ingresos');
+        $('#situacionFam').modal('hide');
+        $('#modalIngresos').modal('show');
+    });
+
+    $("#btnEgresos").click(function () {
+        console.log('egresos');
+        const servicios = ["Agua", "Luz", "Alcantarillado", "Internet", "Teléfono convencional",
+            "Plan de Celular", "TvCable", "Plataformas Streaming", "Gas doméstico",
+        ];
+
+        function agregarFila(servicio) {
+            const fila = `
+        <tr>
+            <td>${servicio}</td>
+            <td>
+                <select class="form-control input-xs">
+                    <option value="">Seleccione</option>
+                    <option value="si">Sí</option>
+                    <option value="no">No</option>
+                </select>
+            </td>
+            <td><input type="text" class="form-control input-xs"></td>            
+        </tr>
+    `;
+            $("#tablaServicios tbody").append(fila);
         }
 
+        servicios.forEach(servicio => agregarFila(servicio));
+
+        const otrosGastos = ["Deudas", "Medicamentos", "Estudios", "Seguro"];
+
+        function agregarFila2(otrosGastos) {
+            const fila = `
+        <tr>
+            <td>${otrosGastos}</td>
+            <td>
+                <select class="form-control input-xs">
+                    <option value="">Seleccione</option>
+                    <option value="si">Sí</option>
+                    <option value="no">No</option>
+                </select>
+            </td>
+            <td><input type="text" class="form-control input-xs"></td>            
+        </tr>
+    `;
+            $("#tablaOtrosGastos tbody").append(fila);
+        }
+
+        servicios.forEach(servicio => agregarFila2(servicio));
+
+        $('#situacionFam').modal('hide');
+        $('#modalEgresos').modal('show');
     });
+
 
     $('#modalSituFam').click(function () {
         $('#situacionFam').modal('show');
