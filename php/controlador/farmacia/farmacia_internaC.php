@@ -93,7 +93,7 @@ class farmacia_internaC
 		$pro = explode('-',$parametros['proveedor']);
 	    }
 		// print_r($parametros);die();
-		$datos = $this->modelo->tabla_ingresos($pro[2],$parametros['comprobante'],$parametros['factura']);
+		$datos = $this->modelo->tabla_ingresos($pro[2],$parametros['comprobante'],$parametros['factura'],$parametros['serie']);
 		return $datos['tbl'];
 	}
 

@@ -19,7 +19,7 @@ class farmacia_internaM
 	   $this->conn = new db();
 	}
 
-	function tabla_ingresos($query=false,$comprobante=false,$factura=false)
+	function tabla_ingresos($query=false,$comprobante=false,$factura=false,$serie=false)
 	{
 		$sql="SELECT Fecha_DUI as 'Fecha',Cliente as 'Proveedor',Factura,Serie_No,Numero as 'Comprobante',SUM(Valor_Total) as Total
 		FROM Trans_Kardex T
@@ -38,6 +38,10 @@ class farmacia_internaM
 		if($factura)
 		{
 			$sql.=" AND Factura like '%".$factura."%'";
+		}
+		if($serie)
+		{
+			$sql.=" AND Serie_No like '%".$serie."%'";
 		}
 		$sql.="GROUP BY Numero,Codigo_P,Factura,Serie_No,Fecha_DUI,Cliente
 		ORDER BY Fecha_DUI DESC";

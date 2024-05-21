@@ -45,6 +45,7 @@
       'proveedor':$('#ddl_proveedor').val(),
       'factura':$('#txt_factura').val(),
       'comprobante':$('#txt_comprobante').val(),
+      'serie':$('#txt_serie').val(),
     }
      $.ajax({
       data:  {parametros:parametros},
@@ -391,11 +392,15 @@ function Ver_pedido(reporte,factura='',comprobante='')
                    <span class="input-group-addon" onclick="$('#ddl_proveedor').empty();tabla_ingresos()" title="Borrar seleccion"><i class="fa fa-close"></i></span>
               </div>
 			</div>	
-			<div class="col-sm-4">
+      <div class="col-sm-2">
+        Serie
+        <input type="text" class="form-control input-sm" name="txt_serie" id="txt_serie" placeholder="001001" onkeyup="tabla_ingresos()">
+      </div>  
+			<div class="col-sm-3">
 				Facturas
 				<input type="text" class="form-control input-sm" name="txt_factura" id="txt_factura" placeholder="Numero de factura" onkeyup="tabla_ingresos()">
 			</div>	
-			<div class="col-sm-4">
+			<div class="col-sm-3">
 				No. Comprobante
 				<input type="text" class="form-control input-sm" name="txt_comprobante" id="txt_comprobante" onkeyup="tabla_ingresos()" placeholder="Numero de Comprobante">
 			</div>
