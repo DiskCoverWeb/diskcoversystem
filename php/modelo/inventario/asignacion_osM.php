@@ -40,12 +40,27 @@ class asignacion_osM
         }
     }
 
-    public function datosExtra($consulta){
+    public function datosExtra($consulta)
+    {
         $sql = "SELECT Proceso, Cmds, TP, Color 
                 FROM Catalogo_Proceso
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
                 AND CMDS IN " . $consulta . "
                 ORDER BY TP";
+        try{
+            return $this->db->datos($sql);
+        }catch(Exception $e){
+            throw new Exception($e);
+        }
+    }
+
+    function listaAsignacion($beneficiario)
+    {
+         $sql = "SELECT ".Full_Fields("Detalle_Factura")."
+                FROM Detalle_Factura
+                WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+                AND Periodo='".$_SESSION['INGRESO']['periodo']."'
+                AND CodigoC = '".$beneficiario."'";
         try{
             return $this->db->datos($sql);
         }catch(Exception $e){

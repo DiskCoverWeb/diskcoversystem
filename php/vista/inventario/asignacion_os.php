@@ -14,7 +14,7 @@
 
     $(document).ready(function () {
         beneficiario();
-
+        listaAsignacion();
         $('#beneficiario').on('select2:select', function (e) {
             var data = e.params.data;//Datos beneficiario seleccionado
             llenarDatos(data);
@@ -109,32 +109,29 @@
 
     function agregar() {
         var datos = {
-            'Item': $('#tbl_body tr').length + 1,
-            'Producto': $('#grupProd').val(),
+            'Codigo': $('#grupProd').val(),
+            'Producto': $('#grupProd option:selected').text(),
             'Cantidad': $('#cant').val(),
-            'Comentario': $('#comeAsig').val()
-        };
-
-        //validar datos
-        if (datos.Producto == '') {
-            swal.fire('Error', 'Debe seleccionar un producto', 'error');
-            return;
-        }
-        if (datos.Cantidad == '' || datos.Cantidad <= 0) {
-            swal.fire('Error', 'Debe ingresar una cantidad valida', 'error');
-            return;
-        }
-
-        var fila = '<tr>' +
-            '<td>' + datos.Item + '</td>' +
-            '<td>' + datos.Producto + '</td>' +
-            '<td>' + datos.Cantidad + '</td>' +
-            '<td>' + datos.Comentario + '</td>' +
-            '<td><button type="button" class="btn btn-danger btn-sm" onclick="eliminar(this)"><i class="fa fa-trash"></i></button></td>' +
-            '</tr>';
-
-        //agregar la fila
-        $('#tbl_body').append(fila);
+            'Comentario': $('#comeAsig').val(),
+            'beneficiarioCodigo':$('#beneficiario').val(), 
+            'beneficiarioN':$('#beneficiario option:selected').text(),   
+            'FechaAte':$('#fechAten').val(),   
+        };       
+        $.ajax({
+            url: '../controlador/inventario/asignacion_osC.php?addAsignacion=true',
+            type: 'POST',
+            dataType: 'json',
+            data: { param: datos },
+            success: function (data) {
+                if(data==1)
+                {
+                    listaAsignacion();
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
     }
 
     function eliminar(btn) {
@@ -148,7 +145,7 @@
     }
 
     function llenarDatos(datos) {
-        $('#beneficiario').val(datos.Beneficiario);
+       // $('#beneficiario').val(datos.Beneficiario);
         $('#fechAten').val(datos.Fecha_Atencion);//Fecha de Atencion
         $('#tipoEstado').val(datos.CodigoA);//Tipo de Estado
         $('#tipoEntrega').val(datos.CodigoACD);//Tipo de Entrega
@@ -190,6 +187,25 @@
                         }
                     }
                 }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+
+
+    function listaAsignacion() {
+        var param = {
+            'beneficiario':$('#beneficiario').val(),
+        }
+        $.ajax({
+            url: '../controlador/inventario/asignacion_osC.php?listaAsignacion=true',
+            type: 'POST',
+            dataType: 'json',
+            data: { param: param },
+            success: function (data) {
+                $('#tbl_body').html(data);
             },
             error: function (error) {
                 console.log(error);
@@ -295,7 +311,7 @@
                             <div class="input-group-addon input-xs">
                                 <b>Beneficiario/ Usuario:</b>
                             </div>
-                             <select name="beneficiario" id="beneficiario" class="form-control input-xs"></select>
+                             <select name="beneficiario" id="beneficiario" class="form-control input-xs" onchange="listaAsignacion()"></select>
                         </div>
                     </div>
                 </div>
@@ -430,7 +446,7 @@
             <div class="col-sm-4">
                 <div class="row">
                     <div class="col-sm-6"  style="font-size: 13px; white-space: nowrap;">                        
-                        <img  src="../../img/png/refrigerio.png" style="width: 25%;" />
+                        <img  src="../../img/png/cantidad_global.png" style="width: 25%;" />
                         <b>Cantidad global sugerida a distribuir</b>
                     </div>
                     <div class="col-sm-6">
@@ -451,7 +467,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-6"  style="font-size: 13px; white-space: nowrap;">
-                        <img  src="../../img/png/cereza.png" style="width: 25%;" />
+                        <img  src="../../img/png/info_nutricional.png" style="width: 25%;" />
                         <b>Información Nutricional</b>
                     </div>
                     <div class="col-sm-6">

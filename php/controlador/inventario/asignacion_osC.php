@@ -16,6 +16,15 @@ if(isset($_GET['datosExtra'])){
     echo json_encode($controlador->datosExtra($parametros));
 }
 
+if(isset($_GET['listaAsignacion'])){
+    $parametros = $_POST['param'];
+    echo json_encode($controlador->listaAsignacion($parametros));
+}
+if(isset($_GET['addAsignacion'])){
+    $parametros = $_POST['param'];
+    echo json_encode($controlador->addAsignacion($parametros));
+}
+
 
 
 
@@ -103,6 +112,49 @@ class asignacion_osC
             return array('result' => '0', 'message' => $e->getMessage());
         }
     }
+
+
+    function listaAsignacion($parametros)
+    {
+        $tr = '';
+        $datos = $this->modelo->listaAsignacion($parametros['beneficiario']);
+        foreach ($datos as $key => $value) {
+            $tr.='<tr>
+                    <td>'.($key+1).'</td>
+                    <td>'.$value['Producto'].'</td>
+                    <td>'.$value['Cantidad'].'</td>
+                    <td>'.$value['Procedencia'].'</td>
+                    <td><button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button></td>
+                </tr>';
+        }
+
+        return $tr;
+        // print_r($datos);die();
+    }
+
+    function addAsignacion($parametros)
+    {
+
+        $producto = Leer_Codigo_Inv($parametros['Codigo'],$parametros['FechaAte']);
+
+        // print_r($parametros);die();
+        SetAdoAddNew("Detalle_Factura");
+        SetAdoFields("TC","OP");
+        SetAdoFields("CodigoC",$parametros['beneficiarioCodigo']);
+        SetAdoFields("Procedencia",$parametros['Comentario']);
+        SetAdoFields("Codigo",$parametros['Codigo']);
+        SetAdoFields("Producto",$parametros['Producto']);
+        SetAdoFields("Cantidad",$parametros['Cantidad']);
+        SetAdoFields("Precio",number_format($producto['datos']['PVP'],2,'','.'));
+        SetAdoFields("Total",number_format($producto['datos']['PVP']*$parametros['Cantidad'],2,'','.'));
+        SetAdoFields("Fecha",$parametros['FechaAte']);
+        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+        SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+        SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+        
+        return SetAdoUpdate();
+    }
+
 
 
 }

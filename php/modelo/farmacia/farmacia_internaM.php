@@ -21,7 +21,7 @@ class farmacia_internaM
 
 	function tabla_ingresos($query=false,$comprobante=false,$factura=false)
 	{
-		$sql="SELECT Fecha_DUI as 'Fecha',Cliente as 'Proveedor',Factura,Numero as 'Comprobante',SUM(Valor_Total) as Total
+		$sql="SELECT Fecha_DUI as 'Fecha',Cliente as 'Proveedor',Factura,Serie_No,Numero as 'Comprobante',SUM(Valor_Total) as Total
 		FROM Trans_Kardex T
 		RIGHT JOIN Clientes C ON T.CodigoL=C.Codigo
 		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
@@ -39,7 +39,7 @@ class farmacia_internaM
 		{
 			$sql.=" AND Factura like '%".$factura."%'";
 		}
-		$sql.="GROUP BY Numero,Codigo_P,Factura,Fecha_DUI,Cliente
+		$sql.="GROUP BY Numero,Codigo_P,Factura,Serie_No,Fecha_DUI,Cliente
 		ORDER BY Fecha_DUI DESC";
 		// $sql.=' OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY;';
 
