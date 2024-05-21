@@ -97,7 +97,7 @@ class egreso_alimentosM
 	{
 		$sql = "SELECT
 			CPO.Cmds,
-			CPO.Proceso AS Proceso
+			CPO.Proceso AS Proceso,CPO.Picture
 			FROM Trans_Kardex TK
 			INNER JOIN Catalogo_Proceso CPO ON TK.Codigo_Tra = CPO.Cmds
 			WHERE TK.Item = '".$_SESSION['INGRESO']['item']."'
@@ -107,7 +107,7 @@ class egreso_alimentosM
 			{
 				$sql.=" AND Proceso like '%".$query."%' ";
 			}
-			$sql.="AND TK.T ='G'  GROUP by CPO.Cmds,CPO.Proceso";
+			$sql.="AND TK.T ='G'  GROUP by CPO.Cmds,CPO.Proceso,CPO.Picture";
 			return $this->db->datos($sql);
 	}
 

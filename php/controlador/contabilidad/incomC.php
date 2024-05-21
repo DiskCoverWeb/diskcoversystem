@@ -572,7 +572,8 @@ class incomC
             'moneda'=> $parametros['tm'], /// moneda 1
             'Trans'=>$parametros['aux'],//detalle que se trae del asiento
             'T_N'=> $_SESSION['INGRESO']['modulo_'],
-            't'=> $parametros['tc'],                        
+            't'=> $parametros['tc'],
+            'serie'=>$parametros['serie']                        
         );
 
         $resp = ingresar_asientos_SC($parametros_sc);

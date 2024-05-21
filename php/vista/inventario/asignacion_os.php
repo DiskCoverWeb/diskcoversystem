@@ -275,90 +275,91 @@
 <form id="form_asignacion">
     <div class="row" style="padding: 1vw; background-color: rgb(254,252,172); border: 1px solid;" id="rowGeneral">
         <div class="row">
-            <div class="col-sm-4">
-                <div class="row">
-                    <div class="col-sm-6 text-right centrar">
-                        <label for="diaEntr">
-                            Día de Entrega
-                        </label>
-                    </div>
-                    <div class="col-sm-6">
-                        <input type="text" name="diaEntr" id="diaEntr" class="form-control input-xs">
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="row">
-                    <div class="col-sm-6 text-right centrar">
-                        <label for="beneficiario" style="flex-basis: 35%;">
-                            Beneficiario/ USUARIO:
-                        </label>
-                    </div>
-                    <div class="col-sm-6">
-                        <select name="beneficiario" id="beneficiario" class="form-control input-xs">
-                        </select>
+
+            <div class="col-sm-3">
+                <div class="row">                    
+                    <div class="col-md-12 col-sm-6 col-xs-6">  
+                        <div class="input-group">
+                            <div class="input-group-addon input-xs">
+                                <b>Día de Entrega</b>
+                            </div>
+                            <input type="text" name="diaEntr" id="diaEntr" class="form-control input-xs">
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4">
-                <div class="row">
-                    <div class="col-sm-6 text-right centrar">
-                        <label for="fechAten">
-                            Fecha de Atención
-                        </label>
+            <div class="col-sm-5">
+                <div class="row">                   
+                     <div class="col-md-12 col-sm-6 col-xs-6">  
+                        <div class="input-group">
+                            <div class="input-group-addon input-xs">
+                                <b>Beneficiario/ Usuario:</b>
+                            </div>
+                             <select name="beneficiario" id="beneficiario" class="form-control input-xs"></select>
+                        </div>
                     </div>
-                    <div class="col-sm-6">
-                        <input type="date" name="fechAten" id="fechAten" class="form-control input-xs">
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="row">                   
+                    <div class="col-md-12 col-sm-6 col-xs-6">  
+                        <div class="input-group">
+                            <div class="input-group-addon input-xs">                   
+                                <i class="fa fa-calendar"></i>
+                                <b>Fecha de Atención:</b>
+                            </div>
+                            <input type="date" name="fechAten" id="fechAten" class="form-control input-xs">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row alineado">
             <div class="col-sm-3">
-                <div class="row">
-                    <div class="col-sm-6 text-right centrar">
-                        <label for="tipoEstado">
-                            Estado
-                        </label>
-                    </div>
-                    <div class="col-sm-6" style="padding: 0" id="container-estado">
+                <div class="row">                   
+                    <div class="col-md-12 col-sm-6 col-xs-6">  
+                        <div class="input-group">
+                            <div class="input-group-addon input-xs">  
+                                <b> Estado</b>
+                            </div>
                         <input type="tipoEstado" name="tipoEstado" id="tipoEstado" class="form-control input-xs">
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-sm-3">
                 <div class="row">
-                    <div class="col-sm-6 text-right centrar">
-                        <label for="tipoEntrega">
-                            Tipo de Entrega
-                        </label>
-                    </div>
-                    <div class="col-sm-6">
+                    <div class="col-md-12 col-sm-6 col-xs-6">  
+                        <div class="input-group">
+                            <div class="input-group-addon input-xs">  
+                                <b> Tipo de Entrega</b>
+                            </div>
                         <input type="text" name="tipoEntrega" id="tipoEntrega" class="form-control input-xs">
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-sm-3">
-                <div class="row">
-                    <div class="col-sm-6 text-right centrar">
-                        <label for="tipoEntrega">
-                            Hora de Entrega
-                        </label>
-                    </div>
-                    <div class="col-sm-6">
+                <div class="row">                    
+                    <div class="col-md-12 col-sm-6 col-xs-6">  
+                        <div class="input-group">
+                            <div class="input-group-addon input-xs">  
+                                <b><i class="fa fa-clock-o"></i> Hora de Entrega</b>
+                            </div>
                         <input type="time" name="horaEntrega" id="horaEntrega" class="form-control input-xs">
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-sm-3">
                 <div class="row">
-                    <div class="col-sm-6 text-right centrar">
-                        <label for="frecuencia">
-                            Frecuencia
-                        </label>
-                    </div>
-                    <div class="col-sm-6">
+                    <div class="col-md-12 col-sm-6 col-xs-6">  
+                        <div class="input-group">
+                            <div class="input-group-addon input-xs">  
+                                <b>Frecuencia</b>
+                            </div>
                         <input type="text" name="frecuencia" id="frecuencia" class="form-control input-xs">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -366,94 +367,92 @@
         <div class="row alineado">
             <div class="col-sm-4">
                 <div class="row">
-                    <div class="col-sm-6 text-right centrar">
-                        <label for="tipoBenef">
-                            Tipo de Beneficiario:
-                        </label>
-                    </div>
-                    <div class="col-sm-6">
-                        <input type="text" name="tipoBenef" id="tipoBenef" class="form-control input-xs">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6 text-right centrar">
-                        <label for="totalPersAten" style="font-size: 13px; white-space: nowrap;">
-                            Total, Personas Atendidas:
-                        </label>
-                    </div>
-                    <div class="col-sm-6">
-                        <input type="text" name="totalPersAten" id="totalPersAten" class="form-control input-xs">
+                    <div class="col-md-12 col-sm-6 col-xs-6">  
+                        <div class="input-group">
+                            <div class="input-group-addon input-xs">
+                                <b> Tipo de Beneficiario:</b>
+                            </div>
+                        <input type="text" name="tipoBenef" id="tipoBenef" class="form-control input-xs" readonly>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-6 text-right centrar">
-                        <label for="tipoPobl" style="flex-basis: 50%;">
-                            Tipo de Población:
-                        </label>
-                    </div>
-                    <div class="col-sm-6">
-                        <input type="text" name="tipoPobl" id="tipoPobl" class="form-control input-xs">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6 text-right centrar">
-                        <label for="acciSoci" style="flex-basis: 50%;">
-                            Acción Social:
-                        </label>
-                    </div>
-                    <div class="col-sm-6">
-                        <input type="text" name="acciSoci" id="acciSoci" class="form-control input-xs">
+                <div class="row">                    
+                    <div class="col-md-12 col-sm-6 col-xs-6">  
+                        <div class="input-group">
+                            <div class="input-group-addon input-xs">
+                                <b>Total, Personas Atendidas:</b>
+                            </div>
+                            <input type="text" name="totalPersAten" id="totalPersAten" class="form-control input-xs" readonly>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-6 text-right centrar">
-                        <label for="vuln" style="flex-basis: 50%;">
-                            Vulnerabalidad:
-                        </label>
-                    </div>
-                    <div class="col-sm-6">
-                        <input type="text" name="vuln" id="vuln" class="form-control input-xs">
+                <div class="row">                   
+                    <div class="col-md-12 col-sm-6 col-xs-6">  
+                        <div class="input-group">
+                            <div class="input-group-addon input-xs">
+                                <b>Tipo de Población:</b>
+                            </div>
+                            <input type="text" name="tipoPobl" id="tipoPobl" class="form-control input-xs" readonly>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-6 text-right centrar">
-                        <label for="tipoAten" style="flex-basis: 50%;">
-                            Tipo de Atención:
-                        </label>
+                <div class="row">                    
+                     <div class="col-md-12 col-sm-6 col-xs-6">  
+                        <div class="input-group">
+                            <div class="input-group-addon input-xs">
+                                <b>  Acción Social:</b>
+                            </div>
+                            <input type="text" name="acciSoci" id="acciSoci" class="form-control input-xs" readonly>
+                        </div>
                     </div>
-                    <div class="col-sm-6">
-                        <input type="text" name="tipoAten" id="tipoAten" class="form-control input-xs">
+                </div>
+                <div class="row">                   
+                    <div class="col-md-12 col-sm-6 col-xs-6">  
+                        <div class="input-group">
+                            <div class="input-group-addon input-xs">
+                                <b> Vulnerabalidad:</b>
+                            </div>
+                            <input type="text" name="vuln" id="vuln" class="form-control input-xs" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">                    
+                    <div class="col-md-12 col-sm-6 col-xs-6">  
+                        <div class="input-group">
+                            <div class="input-group-addon input-xs">
+                                <b> Tipo de Atención:</b>
+                            </div>
+                            <input type="text" name="tipoAten" id="tipoAten" class="form-control input-xs" readonly>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="row">
-                    <div class="col-sm-8 text-center">
-                        <label for="CantGlobSugDist" style="font-size: 13px; white-space: nowrap;">
-                            Cantidad global sugerida a distribuir
-                        </label>
+                    <div class="col-sm-6"  style="font-size: 13px; white-space: nowrap;">                        
+                        <img  src="../../img/png/refrigerio.png" style="width: 25%;" />
+                        <b>Cantidad global sugerida a distribuir</b>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-6">
                         <input type="number" name="CantGlobSugDist" id="CantGlobSugDist" readonly style=""
                             class="form-control input-xs">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-8 text-center">
+                    <div class="col-sm-6">
                         <label for="CantGlobDist" style="font-size: 13px; white-space: nowrap;">
                             Cantidad global a distribuir
                         </label>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-6">
                         <input type="number" name="CantGlobDist" id="CantGlobDist" style=""
                             class="form-control input-xs">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-6 text-right centrar">
-                        <label for="infoNutr">
-                            Información Nutricional
-                        </label>
+                    <div class="col-sm-6"  style="font-size: 13px; white-space: nowrap;">
+                        <img  src="../../img/png/cereza.png" style="width: 25%;" />
+                        <b>Información Nutricional</b>
                     </div>
                     <div class="col-sm-6">
                         <textarea name="infoNutr" id="infoNutr" rows="3" class="form-control input-xs">
@@ -469,7 +468,7 @@
                 </div>
                 <div class="row">
                     <div class="input-group">
-                        <textarea name="comeGeneAsig" id="comeGeneAsig" rows="6"
+                        <textarea name="comeGeneAsig" id="comeGeneAsig" rows="5"
                             placeholder="comentario general de clasificación..." class="form-control">
                             </textarea>
                         <span class="input-group-btn">
@@ -482,6 +481,7 @@
         </div>
     </div>
     <div class="row" style="padding-top: 1rem">
+        
         <div class="col-sm-5" style="display: flex; justify-content: center; align-items: center;">
             <div class="col-sm-5" style="">
                 <button type="button" class="btn btn-default" onclick="show_producto();"><img

@@ -4798,6 +4798,8 @@ function dimenciones_tabl($len)
 
 function ingresar_asientos_SC($parametros)  //revision parece repetida
 {
+  
+  if(!isset($parametros['serie'])){$parametros['serie'] = '001001';}
   $conn = new db();
   $cid=$conn->conexion();
   //   $conn = new Conectar();
@@ -4896,7 +4898,7 @@ function ingresar_asientos_SC($parametros)  //revision parece repetida
            ,0
            ,'".$_SESSION['INGRESO']['item']."'
            ,'".$_SESSION['INGRESO']['CodigoU']."'
-           ,'001001')";
+           ,'".$parametros['serie']."')";
        $stmt = sqlsrv_query( $cid, $sql);
        //echo $sql;
       if( $stmt === false)  
@@ -5084,7 +5086,7 @@ function ingresar_asientos_SC($parametros)  //revision parece repetida
          ,null
          ,0
          ,'".$_SESSION['INGRESO']['item']."'
-         ,'".$_SESSION['INGRESO']['CodigoU']."','001001'),";
+         ,'".$_SESSION['INGRESO']['CodigoU']."','".$parametros['serie']."'),";
          $SC_No++;
 
       //      if($i==1)
