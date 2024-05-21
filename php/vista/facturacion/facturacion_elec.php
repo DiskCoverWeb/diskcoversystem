@@ -152,7 +152,8 @@ function validar_cta() {
                     title: data,
                     text: '',
                     allowOutsideClick: false,
-                });
+                });                
+                $('#btn_g').prop('disabled', true);
             }
         }
     });
