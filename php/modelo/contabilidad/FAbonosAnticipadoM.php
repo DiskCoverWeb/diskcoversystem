@@ -51,7 +51,7 @@ class FAbonosAnticipadoM
 
     function SelectDB_Combo_DCClientes($grupo = G_NINGUNO)
     {
-        $sql = "SELECT Grupo,Codigo,Cliente,Email,Email2
+        $sql = "SELECT TOP 50 Grupo,Codigo,Cliente,Email,Email2
                 FROM Clientes
                 WHERE FA <> '0'";
         if ($grupo <> G_NINGUNO) {
@@ -162,7 +162,7 @@ class FAbonosAnticipadoM
                     $SubCta = $AdoReg['TC'];
                 }
             }
-            if (!$InsAsiento || strlen($CodCta) > 2) {
+            /*if (!$InsAsiento || strlen($CodCta) > 2) {
                 $sql = "SELECT TC, Codigo, Cuenta
                         FROM Catalogo_Cuentas
                         WHERE Codigo = '" . $CodCta . "'
@@ -175,7 +175,7 @@ class FAbonosAnticipadoM
                     $Cuenta = $AdoReg['Cuenta'];
                     $SubCta = $AdoReg['TC'];
                 }
-            }
+            }*/
             if ($InsAsiento) {
                 SetAdoAddNew('Asiento');
                 SetAdoFields('CODIGO', $CodCta);

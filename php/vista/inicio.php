@@ -238,7 +238,12 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'punto_venta':
 				require_once("facturacion/punto_venta.php");
 				break;
-
+			
+			//Facturacion -> Archivo -> Abonos Anticipados (CXP)
+			case 'AbonoAnticipado':
+				require_once("contabilidad/FAbonoAnticipado.php");
+				break;
+			
 			//Facturacion -> Archivo -> Lista liquidacion compras
 			//Facturacion -> Reportes -> Lista liquidacion compras
 			case 'listarLiquidaciones':
@@ -590,6 +595,11 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'listadoFacturasElectronicas':				
 				require_once("facturacion/cartera_clientes.php");
 				break;
+			
+			//Inscripciones -> Formularios -> Voluntarios
+			case 'voluntarios':
+				require_once("inscripciones/voluntarios.php");
+				break;
 
 			default:
 				echo "<div class='box-body'><img src='../../img/404.png' width='100%'></div>";
@@ -620,6 +630,9 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 				break;
 			case '28':
 				echo "<div class='box-body'><img src='../../img/modulo_farmacia.png' width='100%'></div>";
+				break;
+			case '40':
+				echo "<div class='box-body'><h1>MODULO INSCRIPCIONES</h1></div>";
 				break;
 			case '99':
 				echo "<div class='box-body'><img src='../../img/modulo_empresa.png' width='100%' height='500px'></div>";

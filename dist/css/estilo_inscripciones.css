@@ -1,0 +1,121 @@
+.contenedor-cf{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    z-index: 50;
+    width: 100%;
+}
+.cargar-formulario{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    padding: 50px 100px;
+    border-radius: 10px;
+    background-color: white;
+    
+}
+
+.icono-cargar{
+    animation-name: cargar;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+    animation-iteration-count: infinite;
+    margin-bottom: 15px;
+}
+
+.icono-cargar i{
+    color: #898989;
+    font-size: 25pt;
+}
+
+.p-cargar{
+    font-weight: 600;
+    color: #616161;
+    font-size: 1.1em;
+}
+
+.form-contenedor{
+    margin: 0 auto;
+    height: 150px;
+    max-width: 90%;
+    font-size: 1.5rem;
+    width: 700px;
+}
+
+.form-contenedor h1{
+    font-weight: 600;
+}
+
+/*.encabezado{
+    background-image: linear-gradient(115deg, rgb(17 69 89 / 85%), rgb(149 148 148 / 73%)), url(../../img/inscripcion/header.png);
+}*/
+
+.encabezado{
+    /*background-image: linear-gradient(115deg, rgb(76 0 255 / 85%), rgb(161 0 0 / 73%)), url(../../img/inscripcion/header.png);*/
+    background-image: linear-gradient(115deg, rgb(68 176 255 / 90%), rgb(7 191 106 / 70%)), url(../../img/inscripcion/header.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #fff;
+}
+
+.f-seccion{
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 1px 2px 5px 0px #0000003a;
+    margin: 0 0 18px 0;
+    background-color: #fff;
+}
+
+.fc-pregunta{
+    color: #000;
+}
+
+.f-sec-label{
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 12pt;
+}
+
+.f-sec-input label{
+    font-weight: 500;
+}
+
+.f-input:disabled{
+    color: light-dark(rgb(84, 84, 84), rgb(170, 170, 170));
+}
+
+.f-error-file{
+    color: rgb(217,48,37);
+}
+
+.form-footer{
+    display: flex;
+    justify-content: space-between;
+    padding: 0 5px 20px 5px;
+}
+
+.env-insc-form{
+    background-color: rgb(191, 98, 0);
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    padding: 10px 20px;
+    font-weight: 600;
+}
+
+.reset-insc-form{
+    background-color: transparent;
+    border: none;
+    color: rgb(191, 98, 0);
+    font-weight: 600;
+}
+
+@keyframes cargar{
+    from{
+        transform: rotate(0);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}
