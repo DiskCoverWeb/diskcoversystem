@@ -85,7 +85,7 @@
     color: light-dark(rgb(84, 84, 84), rgb(170, 170, 170));
 }
 
-.f-error-file{
+.f-error-file, .f-label-obl{
     color: rgb(217,48,37);
 }
 

@@ -6,6 +6,9 @@
     if(isset($_GET['CatalogoForm'])){
         echo json_encode($controlador->getCatalogo());
     }
+    if(isset($_GET['EnviarInscripcion'])){
+        echo json_encode($controlador->enviarInscripcion($_POST['parametros']));
+    }
 
     class InscVoluntariosC{
         private $modelo;
@@ -29,8 +32,27 @@
                     );
                 }
                 return $catalogo;
+            }else{
+                $catalogo[] = array(
+                    'error' => 'No hay catalogo'
+                );
+                return $catalogo;
             }
-            return $catalogo;
+        }
+
+        function enviarInscripcion($parametros){
+            $respuesta = $this->modelo->enviarInscripcion($parametros);
+
+            if($respuesta == 1){
+                return array(
+                    "codigo" => 1,
+                    "respuesta" => "Se enviaron los datos correctamente"
+                );
+            }
+            return array(
+                "codigo" => 0,
+                "respuesta" => "Hubo un error al enviar los datos"
+            );
         }
     }
 ?>

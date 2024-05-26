@@ -1,7 +1,6 @@
 <link rel="stylesheet" href="../../dist/css/estilo_inscripciones.css">
 <script type="text/javascript"></script>
 <script src="../../dist/js/inscripciones.js"></script>
-<!-- TODO: ESTILIZAR E IMPLEMENTAR PANTALLA DE CARGA -->
 <div class="contenedor-cf" id="contenedor-cf">
     <div class="cargar-formulario">
         <div>
