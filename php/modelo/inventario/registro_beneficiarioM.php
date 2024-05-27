@@ -3,7 +3,7 @@
 /** 
  * AUTOR DE RUTINA : Dallyana Vanegas
  * FECHA CREACION : 16/02/2024
- * FECHA MODIFICACION : 24/04/2024
+ * FECHA MODIFICACION : 23/05/2024
  * DESCIPCION : Clase modelo para llenar campos y guardar registros de Agencia
  */
 
@@ -156,6 +156,7 @@ class registro_beneficiarioM
                 FROM Catalogo_Lineas
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+                AND TL <> 0
                 AND LEN(Fact) = 3";
     }
 
