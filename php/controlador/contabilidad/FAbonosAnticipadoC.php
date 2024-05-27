@@ -7,7 +7,8 @@ $controlador = new FAbonoAnticipadoC();
 
 if (isset($_GET['DCClientes'])) {
     $grupo = G_NINGUNO;
-    if (isset($_GET['grupo']) != '') {
+    //if (isset($_GET['grupo']) != '') {
+    if (isset($_GET['grupo']) && $_GET['grupo'] != '') {
         $grupo = $_GET['grupo'];
     }
     echo json_encode($controlador->DCCliente($grupo));
@@ -132,9 +133,9 @@ class FAbonoAnticipadoC
         if (count($datos) > 0) {
             foreach ($datos as $key => $value) {
                 //If Not .EOF Then DCCtaAnt.Text = .fields("NomCuenta")
-                if (strpos($value['NomCuenta'], $SubCtaGen) !== false) {
-                    $list[] = array('NomCuenta' => $value['NomCuenta']);
-                }
+                /*if (strpos($value['NomCuenta'], $SubCtaGen) !== false) {
+                }*/
+                $list[] = array('NomCuenta' => $value['NomCuenta']);
             }
             return $list;
         }

@@ -77,7 +77,7 @@ function Grabar_abonos() {
 
     var parametros = {
         'codigo_cliente': $('#DCClientes').val(),
-        'sub_cta_gen': $('#DCCtaAnt').val()
+        'sub_cta_gen': $('#DCCtaAnt').val().split(" ")[0]
     };
     $.ajax({
         type: "POST",
@@ -138,6 +138,7 @@ function DCCtaAnt() {
         //data: {parametros: parametros},
         dataType: 'json',
         success: function (data) {
+            console.log(data);
             llenarSelect(data, "DCCtaAnt", "NomCuenta");
         }
     });
@@ -156,9 +157,10 @@ function DCTipo(faFactura) {
 }
 
 function DCClientes(grupo) {
+    let strGrupo = grupo!=null ? `&grupo=${grupo}` : '';
     $.ajax({
         type: "POST",
-        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCClientes=true&grupo=' + grupo,
+        url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCClientes=true' + strGrupo,
         //data: {parametros: parametros},
         dataType: 'json',
         success: function (data) {
@@ -251,7 +253,7 @@ function insertAsientoSC() {
 
 function insertarAsiento(Parcial_MEs, Debes, Habers) {
     if (document.getElementById("Frame2").style.display == 'block') {
-        var Cta_Aux = $('#DCBanco').val();
+        var Cta_Aux = $('#DCBanco').val().split(" ")[0];
         if (Cta_Aux.length <= 1)
             Cta_Aux = '0';//Cta_CajaG
     } else {
