@@ -24,6 +24,14 @@ if(isset($_GET['addAsignacion'])){
     $parametros = $_POST['param'];
     echo json_encode($controlador->addAsignacion($parametros));
 }
+if(isset($_GET['eliminarLinea'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->eliminarLinea($parametros));
+}
+if(isset($_GET['Codigo_Inv_stock'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Codigo_Inv_stock($parametros));
+}
 
 
 
@@ -51,12 +59,12 @@ class asignacion_osC
     {
         try {
             $datos = $this->modelo->tipoBeneficiario($query);
-            $res = [];
+            $res = array();
             if (count($datos) == 0) {
                 throw new Exception('No se encontraron datos');
             }
             foreach ($datos as $value) {
-                $res[] = [
+                $res[] = array(
                     'id' => $value['Codigo'],
                     'text' => $value['Cliente'],
                     'CodigoA' => $value['CodigoA'],
@@ -65,17 +73,25 @@ class asignacion_osC
                     'Dia_Entrega' => $value['Fecha_Registro']->format('d'),
                     'Hora_Entrega' => $value['Fecha_Registro']->format('H:i'),
                     'Envio_No' => $value['Envio_No'],
+                    'Frecuencia' => $value['Frecuencia'],
                     'Beneficiario' => $value['Beneficiario'],
                     'No_Soc' => $value['No_Soc'],
                     'Area' => $value['Area'],
                     'Acreditacion' => $value['Acreditacion'],
+                    'AccionSocial' => $value['AccionSocial'],
                     'Tipo' => $value['Tipo'],
                     'Cod_Fam' => $value['Cod_Fam'],
+                    'TipoAtencion' => $value['TipoAtencion'],
                     'Salario' => $value['Salario'],
                     'CodigoACD' => $value['CodigoACD'],
+                    'TipoEntega' => $value['TipoEntega'],
                     'Descuento' => $value['Descuento'],
-                    'Evidencias' => $value['Evidencias']
-                ];
+                    'Evidencias' => $value['Evidencias'],
+                    'CodTipoBene' => $value['Actividad'],
+                    'TipoBene' => $value['TipoBene'],
+                    'Color'=>$value['Color'],
+                    'Picture'=>$value['Picture'],
+                );
             }
             return ['results' => $res]; // Ajuste aquí para coincidir con el formato de Select2
         } catch (Exception $e) {
@@ -124,7 +140,7 @@ class asignacion_osC
                     <td>'.$value['Producto'].'</td>
                     <td>'.$value['Cantidad'].'</td>
                     <td>'.$value['Procedencia'].'</td>
-                    <td><button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button></td>
+                    <td><button class="btn btn-danger btn-sm" onclick="eliminar_linea('.$value['ID'].')"><i class="fa fa-trash"></i></button></td>
                 </tr>';
         }
 
@@ -155,6 +171,17 @@ class asignacion_osC
         return SetAdoUpdate();
     }
 
+    function eliminarLinea($parametros)
+    {
+        return $this->modelo->eliminarLinea($parametros['id']);
+        // print_r($parametros);die();
+    }
 
-
+    function Codigo_Inv_stock($parametros)
+    {
+        $CodigoDeInv = $parametros['codigo'];
+        $FechaInventario = date('Y-m-d');
+        $datos = Leer_Codigo_Inv($CodigoDeInv,$FechaInventario);
+        return $datos;
+    }
 }

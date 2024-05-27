@@ -17,6 +17,7 @@
         listaAsignacion();
         $('#beneficiario').on('select2:select', function (e) {
             var data = e.params.data;//Datos beneficiario seleccionado
+            console.log(data);
             llenarDatos(data);
 
         });
@@ -26,6 +27,7 @@
 
         $('#ddl_producto').on('select2:select', function (e) {
             var data = e.params.data.data;
+            // console.log(data);
             $('#grupProd').append($('<option>', { value: data[0].Codigo_Inv, text: data[0].Producto, selected: true }));
             $('#txt_referencia').val(data[0].Codigo_Inv);
         });
@@ -108,6 +110,12 @@
     }
 
     function agregar() {
+        if($('#beneficiario').val()=='' || $('#beneficiario').val()==null)
+        {
+            Swal.fire("","Seleccione Beneficiario","info").then(function(){
+                return false;
+            })
+        }
         var datos = {
             'Codigo': $('#grupProd').val(),
             'Producto': $('#grupProd option:selected').text(),
@@ -126,6 +134,7 @@
                 if(data==1)
                 {
                     listaAsignacion();
+                    limpiar();
                 }
             },
             error: function (error) {
@@ -140,31 +149,40 @@
     }
 
     function limpiar() {
-        //$('#form_asignacion').trigger('reset');
-        $('#tbl_body').empty();
+        $("#grupProd").empty();
+        $("#ddl_producto").empty();
+        $("#txt_referencia").val("");
+        $('#stock').val("");
+        $('#cant').val("");
+        $("#comeAsig").val("");
     }
 
     function llenarDatos(datos) {
+
+        console.log(datos);
        // $('#beneficiario').val(datos.Beneficiario);
         $('#fechAten').val(datos.Fecha_Atencion);//Fecha de Atencion
         $('#tipoEstado').val(datos.CodigoA);//Tipo de Estado
-        $('#tipoEntrega').val(datos.CodigoACD);//Tipo de Entrega
+        $('#tipoEntrega').val(datos.TipoEntega);//Tipo de Entrega
         $('#horaEntrega').val(datos.Hora_Entrega); //Hora de Entrega
         var fecha = new Date(datos.Fecha_Atencion);
         const opciones = { weekday: 'long' };
         const diaEnLetras = new Intl.DateTimeFormat('es-ES', opciones).format(fecha);
         $('#diaEntr').val(diaEnLetras.toUpperCase());//Dia de Entrega
-        $('#frecuencia').val(datos.Envio_No);//Frecuencia
-        $('#tipoBenef').val(datos.Beneficiario);//Tipo de Beneficiario
+        $('#frecuencia').val(datos.Frecuencia);//Frecuencia
+        $('#tipoBenef').val(datos.TipoBene);//Tipo de Beneficiario
         $('#totalPersAten').val(datos.No_Soc);//Total, Personas Atendidas
         $('#tipoPobl').val(datos.Area);//Tipo de Poblacion
-        $('#acciSoci').val(datos.Acreditacion);//Accion Social
+        $('#acciSoci').val(datos.AccionSocial);//Accion Social
         $('#vuln').val(datos.Tipo);//Vulnerabilidad
-        $('#tipoAten').val(datos.Cod_Fam);//Tipo de Atencion
+        $('#tipoAten').val(datos.TipoAtencion);//Tipo de Atencion
         $('#CantGlobSugDist').val(datos.Salario);//Cantidad global sugerida a distribuir
         $('#CantGlobDist').val(datos.Descuento);//Cantidad global a distribuir
         const params = [datos.CodigoA, datos.CodigoACD, datos.Envio_No, datos.Beneficiario, datos.Area, datos.Acreditacion, datos.Tipo, datos.Cod_Fam];
-        datosExtras(params);
+        color = datos.Color.replace('Hex_','');
+        $('#rowGeneral').css('background-color', '#' + color);
+        $('#img_tipoBene').attr('src','../../img/png/'+datos.Picture+'.png')
+      //  datosExtras(params);
 
 
     }
@@ -236,6 +254,66 @@
         return Object.values(relacion);
     }
 
+    function eliminar_linea(id)
+    {
+         Swal.fire({
+         title: 'Esta seguro?',
+         text: "Esta usted seguro de que quiere borrar este registro!",
+         type: 'warning',
+         showCancelButton: true,
+         confirmButtonColor: '#3085d6',
+         cancelButtonColor: '#d33',
+         confirmButtonText: 'Si!'
+       }).then((result) => {
+             if (result.value==true) {
+                eliminarLinea(id)
+             }  
+       })   
+
+    }
+
+    function eliminarLinea(id)
+    {
+        var parametros = 
+        {
+            'id':id,
+        }
+        $.ajax({
+          data:  {parametros:parametros},
+          url:   '../controlador/inventario/asignacion_osC.php?eliminarLinea=true',
+          type:  'post',
+          dataType: 'json',
+            success:  function (response) { 
+              if(response==1)
+              {
+                Swal.fire( '','Registro eliminado','success').then(function(){ listaAsignacion();});
+              }
+
+          }
+        });
+    }
+
+    function buscar_producto(codigo)
+    {
+        var parametros = {
+            'codigo':codigo,
+        }
+        $.ajax({
+            type: "POST",
+            url:   '../controlador/inventario/asignacion_osC.php?Codigo_Inv_stock=true',
+            data:{parametros:parametros},
+           dataType:'json',
+            success: function(data)
+            {
+                if(data.respueta)
+                {
+                    $('#stock').val(data.datos.Stock);
+                }
+              console.log(data);
+            }
+        });
+    }
+
 </script>
 <style>
     label {
@@ -289,7 +367,7 @@
     }
 </style>
 <form id="form_asignacion">
-    <div class="row" style="padding: 1vw; background-color: rgb(254,252,172); border: 1px solid;" id="rowGeneral">
+    <div class="row" style="padding: 1vw; background-color: #fffacd; border: 1px solid;" id="rowGeneral">
         <div class="row">
 
             <div class="col-sm-3">
@@ -389,6 +467,11 @@
                                 <b> Tipo de Beneficiario:</b>
                             </div>
                         <input type="text" name="tipoBenef" id="tipoBenef" class="form-control input-xs" readonly>
+                        <span class="input-group-btn">
+                            <button type="button" class="">
+                                <img id="img_tipoBene"  src="../../img/png/cantidad_global.png" style="width: 20px;" />
+                            </button>
+                        </span>
                         </div>
                     </div>
                 </div>
@@ -498,33 +581,36 @@
     </div>
     <div class="row" style="padding-top: 1rem">
         
-        <div class="col-sm-5" style="display: flex; justify-content: center; align-items: center;">
-            <div class="col-sm-5" style="">
-                <button type="button" class="btn btn-default" onclick="show_producto();"><img
-                        src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo producto</b></button>
-            </div>
-            <div class="col-sm-7">
-                <select name="grupProd" id="grupProd" class="form-control input-xs"></select>
+        <div class="col-sm-5">
+            <div class="input-group">
+                <span class="input-group-btn" style="padding-right: 10px;">
+                     <button type="button" class="btn btn-default" onclick="show_producto();"><img
+                    src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo producto</b></button>
+                </span>
+                <b>Grupo producto:</b>
+                 <select name="grupProd" id="grupProd" class="form-control input-xs" onchange="buscar_producto(this.value)"></select>
             </div>
         </div>
         <div class="col-sm-1">
             <label for="stock">
                 Stock
             </label>
-            <input type="text" name="stock" id="stock" class="form-control input-xs">
+            <input type="text" name="stock" id="stock" class="form-control input-xs" readonly>
         </div>
-        <div class="col-sm-3" style="display: flex; justify-content: center; align-items: center;">
-            <div class="col-sm-5 text-right">
-                <button type="button" style="width: initial;" class="btn btn-default" onclick="show_cantidad()"
+        <div class="col-sm-3">
+            
+            <div class="input-group">
+                <span class="input-group-btn" style="padding-right: 10px;">
+                     <button type="button" style="width: initial;" class="btn btn-default" onclick="show_cantidad()"
                     id="btn_cantidad">
-                    <img src="../../img/png/kilo.png" />
-                    <br>
-                    <b>Cantidad</b>
+                    <img src="../../img/png/kilo.png" style="width: 42px;height: 42px;" />
                 </button>
+                </span>
+                <b>Cantidad</b>
+                  <input type="number" name="cant" id="cant" class="form-control input-xs">
             </div>
-            <div class="col-sm-7 text-left">
-                <input type="number" name="cant" id="cant" class="form-control input-xs">
-            </div>
+
+
         </div>
         <div class="col-sm-3">
             <label for="comeAsig">
@@ -582,7 +668,7 @@
                     </div>
                     <div class="col-sm-9">
                         <b>Producto:</b><br>
-                        <select class="form-control" id="ddl_producto" name="ddl_producto" style="width: 100%;">
+                        <select class="form-control" id="ddl_producto" name="ddl_producto" style="width: 100%;" onchange="buscar_producto(this.value)" >
                             <option value="">Seleccione una producto</option>
                         </select>
                     </div>
