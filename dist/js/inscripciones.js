@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function (){
     let area = $('#form-contenedor').parent().parent();
     area.css('background-color', 'rgb(251, 241, 221)');
     area.css('overflow-y', 'scroll');
+    area.css('overflow-x', 'hidden');
     $('#contenedor-cf').parent().css('position', 'relative');
     $.ajax({
         type: "GET",
@@ -187,6 +188,15 @@ function resetFormInsc(){
 }
 
 function enviarFormInsc(){
+    let htmlLoad = `
+    <div class="icon-rform rf-iload">
+        <i class="fa fa-circle-o-notch" aria-hidden="true"></i>
+    </div>
+    <p class="msg-rform">Enviando Formulario...</p>
+    `;
+    $("#res-form").html(htmlLoad);
+    $("#mensaje-form-enviado").css('visibility', 'visible');
+
     let servicio_basico = new Array();
     document.querySelectorAll('input[name="04.19"]:checked').forEach(el => {
         servicio_basico.push(el.value);
@@ -254,9 +264,21 @@ function enviarFormInsc(){
         dataType: 'json',
         success: function (respuesta) {
             if(respuesta['codigo'] == 1){
-                //Guardar documentos y redirigir
+                let htmlOk = `
+                <div class="icon-rform rf-icheck">
+                    <i class="fa fa-check-circle" aria-hidden="true"></i>
+                </div>
+                <p class="msg-rform">${respuesta['respuesta']}</p>
+                `;
+                $("#res-form").html(htmlOk);
             }else{
-                //Mostrar mensaje de error
+                let htmlErr = `
+                <div class="icon-rform rf-icheck">
+                    <i class="fa fa-check-circle" aria-hidden="true"></i>
+                </div>
+                <p class="msg-rform">${respuesta['respuesta']}</p>
+                `;
+                $("#res-form").html(htmlErr);
             }
         }
     });

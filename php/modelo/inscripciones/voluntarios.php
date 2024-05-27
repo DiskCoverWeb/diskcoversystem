@@ -20,8 +20,11 @@
 
         function enviarInscripcion($param){
             $sql = "INSERT INTO Clientes
-            (Cliente,Telefono,CI_RUC,Sexo,Fecha_N,Plan_Afiliado,Est_Civil,Calificacion,Gestacion,Especial,Referencia,Dosis,Asignar_Dr,DireccionT,Representante,CodigoA,Contacto,Telefono_R,Tipo_Cta,Canton,Parroquia,Barrio,Direccion,DirNumero,Credito,No_Dep,Matricula,Cod_Banco,Descuento,Profesion,Porc_C,FAX,FactM,Casilla,Cod_Ejec,Cta_CxP,Lugar_Trabajo,Tipo_Cliente,Bono_Desarrollo,IESS,Actividad,Tipo_Vivienda,Servicios_Basicos,Archivo_CI_RUC_PAS,Archivo_Record_Policial,Archivo_Planilla,Archivo_Carta_Recom,Archivo_Certificado_Medico,Archivo_VIH,Archivo_Reglamento,TB,TD)
+            (T,FA,Codigo,Cliente,Telefono,CI_RUC,Sexo,Fecha_N,Plan_Afiliado,Est_Civil,Calificacion,Gestacion,Especial,Referencia,Dosis,Asignar_Dr,DireccionT,Representante,CodigoA,Contacto,Telefono_R,Tipo_Cta,Canton,Parroquia,Barrio,Direccion,DirNumero,Credito,No_Dep,Matricula,Cod_Banco,Descuento,Profesion,Porc_C,FAX,FactM,Casilla,Cod_Ejec,Cta_CxP,Lugar_Trabajo,Tipo_Cliente,Bono_Desarrollo,IESS,Actividad,Tipo_Vivienda,Servicios_Basicos,Archivo_CI_RUC_PAS,Archivo_Record_Policial,Archivo_Planilla,Archivo_Carta_Recom,Archivo_Certificado_Medico,Archivo_VIH,Archivo_Reglamento,TB,TD)
             VALUES(
+            '.',
+            0,
+            '".$param['cedula']."',
             '".$param['cliente']."',
             '".$param['telefono']."',
             '".$param['cedula']."',

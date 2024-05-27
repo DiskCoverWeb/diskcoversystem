@@ -1,10 +1,56 @@
-.contenedor-cf{
+.contenedor-cf, .mensaje-form-enviado{
     position: absolute;
     display: flex;
     justify-content: center;
     z-index: 50;
     width: 100%;
 }
+
+.mensaje-form-enviado{
+    position: fixed;
+    top: 8%;
+    left: 8%;
+    background-color: rgba(0, 0, 0, .5);
+    height: 92%;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+}
+
+.res-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 40%;
+    padding: 40px;
+    border-radius: 10px;
+    background-color: white;
+    height: 50%;
+}
+
+.icon-rform{
+    font-size: 50pt;
+}
+
+.msg-rform{
+    font-size: 1.1em;
+    color: #5d5d5d;
+    font-weight: 600;
+}
+
+.rf-icheck{
+    color: #20b564;
+}
+
+.rf-ierr{
+    color: rgb(223 88 88);
+}
+
+.rf-iload{
+    color: #939393;
+}
+
 .cargar-formulario{
     display: flex;
     flex-direction: column;
@@ -13,10 +59,9 @@
     padding: 50px 100px;
     border-radius: 10px;
     background-color: white;
-    
 }
 
-.icono-cargar{
+.icono-cargar, .rf-iload{
     animation-name: cargar;
     animation-duration: 1s;
     animation-timing-function: ease-out;
