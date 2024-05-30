@@ -35,7 +35,7 @@ function val_estado($intervalo)
 
 		if(rps != "ok")
 		{
-			if(rps == "BLOQ" || rps == "MAS360" || rps == "VEN360" || rps == noAuto || rps == noActivo)
+			if(rps == "BLOQ" || rps == "MAS360" || rps == "VEN360" || rps == "noAuto" || rps == "noActivo")
 			{
 				Swal.fire({
 					title:titulo,
@@ -59,8 +59,12 @@ function val_estado($intervalo)
 				Swal.fire({
 					title:titulo,
 					html:mensaje,
-					type:"info"
-			   });
+					type:"info",
+                 	allowOutsideClick: false
+			   }).then(function()
+					{						
+						logout();
+					});
 			}
 		}
 		
