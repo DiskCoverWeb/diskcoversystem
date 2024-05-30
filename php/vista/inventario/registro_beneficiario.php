@@ -2,8 +2,9 @@
 
 <!--
     AUTOR DE RUTINA	: Dallyana Vanegas
+    MODIFICADO POR : Teddy Moreira
     FECHA CREACION : 16/02/2024
-    FECHA MODIFICACION : 25/05/2024
+    FECHA MODIFICACION : 28/05/2024
     DESCIPCION : Interfaz de modulo Gestion Social/Registro Beneficiario
  -->
 
@@ -13,17 +14,29 @@
         #tablaFamDisc,
         #tablaSituacion,
         #tablaFamEnfe {
+            /*table-layout: fixed;
+            width: 250px;*/
             text-align: center;
             white-space: nowrap;
         }
 
+        .campos-d tbody tr td select {
+            width: fit-content;
+        }
+
+        .campos-d tbody tr td input {
+            width: 150px;
+        }
+
         #tablaPoblacion {
             table-layout: fixed;
+            /*width: 250px;*/
             word-wrap: break-word;
         }
 
         #tablaPoblacion th,
         #tablaPoblacion td {
+            /*width: 100px;*/
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
@@ -305,6 +318,9 @@
                                         <label for="programa" style="display: block;">Programa</label>
                                         <select class="form-control input-xs" name="programa" id="programa"
                                             style="width: 100%;">
+                                            <option value="" selected disabled></option>
+                                            <option value="familias">Familias</option>
+                                            <option value="setentaYPiquito">70 y piquito</option>
                                         </select>
                                     </div>
                                 </div>
@@ -581,7 +597,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="form-group">
-                                        <label for="">Vivienda y Servisiós Básicos</label>
+                                        <label for="">Vivienda y Servicios Básicos</label>
                                     </div>
                                 </div>
                             </div>
@@ -871,10 +887,10 @@
                 </div>
                 <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
                     <div style="margin: 10px; overflow-x: auto;">
-                        <table class="table" id="tablaIntegrantes">
+                        <table class="table campos-d" id="tablaIntegrantes">
                             <thead>
                                 <tr>
-                                    <th>Nombre</th>
+                                    <th>Nombres y Apellidos</th>
                                     <th>Género</th>
                                     <th>Parentesco</th>
                                     <th>Rango de edad</th>
@@ -892,7 +908,7 @@
                                     <td><input type="text" class="form-control imput-xs" id="nuevoNombre"></td>
                                     <td>
                                         <select class="form-control imput-xs" id="nuevoGenero">
-                                            <option value="">Seleccione</option>
+                                            <option value="" selected disabled>Seleccione</option>
                                             <option value="masculino">Masculino</option>
                                             <option value="femenino">Femenino</option>
                                         </select>
@@ -900,7 +916,7 @@
                                     <td><input type="text" class="form-control imput-xs" id="nuevoParentesco"></td>
                                     <td>
                                         <select class="form-control imput-xs" id="nuevoRangoEdad">
-                                            <option value="">Seleccione</option>
+                                            <option value="" selected disabled>Seleccione</option>
                                             <option value="0-5">0-5 años</option>
                                             <option value="6-12">6-12 años</option>
                                             <option value="13-18">13-18 años</option>
@@ -911,7 +927,7 @@
                                     <td><input type="text" class="form-control imput-xs" id="nuevaOcupacion"></td>
                                     <td>
                                         <select class="form-control imput-xs" id="nuevoEstadoCivil">
-                                            <option value="">Seleccione</option>
+                                            <option value="" selected disabled>Seleccione</option>
                                             <option value="soltero">Soltero/a</option>
                                             <option value="casado">Casado/a</option>
                                             <option value="divorciado">Divorciado/a</option>
@@ -920,7 +936,7 @@
                                     </td>
                                     <td>
                                         <select class="form-control imput-xs" id="nuevoNivelEscolaridad">
-                                            <option value="">Seleccione</option>
+                                            <option value="" selected disabled>Seleccione</option>
                                             <option value="ninguna">Ninguna</option>
                                             <option value="primaria">Primaria</option>
                                             <option value="secundaria">Secundaria</option>
@@ -934,7 +950,7 @@
                                     </td>
                                     <td>
                                         <select class="form-control imput-xs" id="nuevoTipoInstitucion">
-                                            <option value="">Seleccione</option>
+                                            <option value="" selected disabled>Seleccione</option>
                                             <option value="fiscal">Fiscal</option>
                                             <option value="fiscomisional">Fiscomisional</option>
                                             <option value="particular">Particular</option>
@@ -942,7 +958,7 @@
                                     </td>
                                     <td>
                                         <select class="form-control imput-xs" id="nuevaVulnerabilidad">
-                                            <option value="">Seleccione</option>
+                                            <option value="" selected disabled>Seleccione</option>
                                             <option value="discapacidad">Discapacidad</option>
                                             <option value="enfermedad">Enfermedad</option>
                                             <option value="ninguna">Ninguna</option>
@@ -1064,10 +1080,10 @@
                 </div>
                 <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
                     <div style="margin: 10px; overflow-x: auto;">
-                        <table class="table" id="tablaSituacion">
+                        <table class="table campos-d" id="tablaSituacion">
                             <thead>
                                 <tr>
-                                    <th>Nombre</th>
+                                    <th>Nombres y Apellidos</th>
                                     <th>Lugar de trabajo</th>
                                     <th>Tipo de seguro</th>
                                     <th>Sueldo fijo</th>
@@ -1089,7 +1105,7 @@
                                     <td><input type="text" class="form-control imput-xs" id="lugarTrabajo"></td>
                                     <td>
                                         <select class="form-control imput-xs" id="tipoSeguro">
-                                            <option value="">Seleccione</option>
+                                            <option value="" selected disabled>Seleccione</option>
                                             <option value="iess">IEES</option>
                                             <option value="issfa">ISSFA</option>
                                             <option value="ispol">ISPOL</option>
@@ -1099,33 +1115,33 @@
                                     </td>
                                     <td>
                                         <select class="form-control imput-xs" id="sueldoFijo">
-                                            <option value="">Seleccione</option>
+                                            <option value="" selected disabled>Seleccione</option>
                                             <option value="si">Si</option>
                                             <option value="no">No</option>
                                         </select>
                                     </td>
-                                    <td><input type="text" class="form-control imput-xs" id="ingresoFijo"></td>
-                                    <td><input type="text" class="form-control imput-xs" id="ingresoEventual"></td>
-                                    <td><input type="text" class="form-control imput-xs" id="pensionAlimentos"></td>
-                                    <td><input type="text" class="form-control imput-xs" id="ayudaFamiliar"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="ingresoFijo" onchange="sumarCamposIngreso()"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="ingresoEventual" onchange="sumarCamposIngreso()"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="pensionAlimentos" onchange="sumarCamposIngreso()"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="ayudaFamiliar" onchange="sumarCamposIngreso()"></td>
                                     <td><input type="text" class="form-control imput-xs" id="jubilacion"></td>
                                     <td>
                                         <select class="form-control imput-xs" id="tipoBono">
-                                            <option value="">Seleccione</option>
+                                            <option value="" selected disabled>Seleccione</option>
                                             <option value="desarrollo">Desarrollo Humano</option>
                                             <option value="manuela">Manuela Sáenz</option>
                                             <option value="joaquin">Joaquín Gallegos Lara</option>
                                         </select>
                                     </td>
-                                    <td><input type="text" class="form-control imput-xs" id="bono"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="bono" onchange="sumarCamposIngreso()"></td>
                                     <td>
                                         <select class="form-control imput-xs" id="usoBono">
-                                            <option value="">Seleccione</option>
+                                            <option value="" selected disabled>Seleccione</option>
                                             <option value="mediacion">Mediación e insumos y movilización</option>
                                             <option value="gastos">Gastos generales</option>
                                         </select>
                                     </td>
-                                    <td><input type="text" class="form-control imput-xs" id="sumaIngresos"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="sumaIngresos" readonly></td>
                                     <td><button type="button" class="btn btn-primary"
                                             id="agregarSituacion">Agregar</button></td>
                                 </tr>
@@ -1167,7 +1183,7 @@
                             <tbody>
                                 <td>
                                     <select class="form-control imput-xs" id="tipoVivienda">
-                                        <option value="">Seleccione</option>
+                                        <option value="" selected disabled>Seleccione</option>
                                         <option value="casa">Casa</option>
                                         <option value="departamento">Departamento</option>
                                         <option value="mediaagua">Media Agua</option>
@@ -1176,7 +1192,7 @@
                                 </td>
                                 <td>
                                     <select class="form-control imput-xs" id="laViviendaEs">
-                                        <option value="">Seleccione</option>
+                                        <option value="" disabled selected>Seleccione</option>
                                         <option value="propia">Propia</option>
                                         <option value="prestada">Prestada</option>
                                         <option value="arrendada">Arrendada</option>
@@ -1246,7 +1262,7 @@
                                 <td><input type="number" class="form-control imput-xs" id="nopisos" min="0"></td>
                                 <td>
                                     <select class="form-control imput-xs" id="tipoMaterial">
-                                        <option value="">Seleccione</option>
+                                        <option value="" selected disabled>Seleccione</option>
                                         <option value="bloque">Bloque</option>
                                         <option value="adobe">Adobe</option>
                                         <option value="caña">Caña</option>
@@ -1255,7 +1271,7 @@
                                 </td>
                                 <td>
                                     <select class="form-control imput-xs" id="tipoTecho">
-                                        <option value="">Seleccione</option>
+                                        <option value="" selected disabled>Seleccione</option>
                                         <option value="losa">Losa</option>
                                         <option value="paja">Paja</option>
                                         <option value="zinc">Zinc</option>
@@ -1264,7 +1280,7 @@
                                 </td>
                                 <td>
                                     <select class="form-control imput-xs" id="tipoPiso">
-                                        <option value="">Seleccione</option>
+                                        <option value="" selected disabled>Seleccione</option>
                                         <option value="tierra">Tierra</option>
                                         <option value="madera">Madera</option>
                                         <option value="cemento">Cemento</option>
@@ -1368,6 +1384,7 @@
                             <thead>
                                 <tr>
                                     <th>Título</th>
+                                    <th>Descripción</th>
                                     <th>Valor Numérico</th>
                                     <th>Valor Textual</th>
                                 </tr>
@@ -1375,54 +1392,75 @@
                             <tbody>
                                 <tr>
                                     <td>Edad</td>
+                                    <td><input type="number" class="form-control" id="edadDato" readonly></td>
                                     <td><input type="number" class="form-control" id="edadEval" readonly></td>
                                     <td><input type="text" class="form-control" id="edadText" readonly></td>
                                 </tr>
                                 <tr>
                                     <td>Ingreso x habitante</td>
+                                    <td><input type="number" class="form-control" id="ingresoHabitanteDato" readonly>
+                                    </td>
                                     <td><input type="number" class="form-control" id="ingresoHabitante" readonly></td>
                                     <td><input type="text" class="form-control" id="ingresoHabitanteText" readonly></td>
                                 </tr>
                                 <tr>
                                     <td>Discapacidad o Enfermedades</td>
+                                    <td><input type="number" class="form-control" id="discapacidadDato" readonly></td>
                                     <td><input type="number" class="form-control" id="discapacidadEval" readonly></td>
                                     <td><input type="text" class="form-control" id="discapacidadText" readonly></td>
                                 </tr>
                                 <tr>
                                     <td>Número de hijos</td>
+                                    <td><input type="number" class="form-control" id="numHijosDato" readonly></td>
                                     <td><input type="number" class="form-control" id="numHijosEval" readonly></td>
                                     <td><input type="text" class="form-control" id="numHijosText" readonly></td>
                                 </tr>
                                 <tr>
                                     <td>Vivienda</td>
+                                    <td><input type="text" class="form-control" id="viviendaDato" readonly></td>
                                     <td><input type="number" class="form-control" id="vivienda" readonly></td>
                                     <td><input type="text" class="form-control" id="viviendaText" readonly></td>
                                 </tr>
                                 <tr>
                                     <td>Madre/Padre Solter@</td>
+                                    <td><input type="text" class="form-control" id="madrePadreSolteroDato" readonly>
+                                    </td>
                                     <td><input type="number" class="form-control" id="madrePadreSoltero" readonly></td>
-                                    <td><input type="text" class="form-control" id="madrePadreSolteroText" readonly></td>
+                                    <td><input type="text" class="form-control" id="madrePadreSolteroText" readonly>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Trabajo Usuario</td>
+                                    <td><input type="text" class="form-control" id="trabajoUsuarioDato" readonly></td>
                                     <td><input type="number" class="form-control" id="trabajoUsuario" readonly></td>
                                     <td><input type="text" class="form-control" id="trabajoUsuarioText" readonly></td>
                                 </tr>
                                 <tr>
                                     <td>Trabajo Cónyuge</td>
+                                    <td><input type="text" class="form-control" id="trabajoConyugeDato" readonly></td>
                                     <td><input type="number" class="form-control" id="trabajoConyuge" readonly></td>
                                     <td><input type="text" class="form-control" id="trabajoConyugeText" readonly></td>
                                 </tr>
                                 <tr>
                                     <td>Uso del Bono de discapacidad</td>
-                                    <td><input type="number" class="form-control" id="usoBonoDiscapacidad" readonly></td>
-                                    <td><input type="text" class="form-control" id="usoBonoDiscapacidadText" readonly></td>
+                                    <td><input type="number" class="form-control" id="usoBonoDiscapacidadDato" readonly>
+                                    </td>
+                                    <td><input type="number" class="form-control" id="usoBonoDiscapacidad" readonly>
+                                    </td>
+                                    <td><input type="text" class="form-control" id="usoBonoDiscapacidadText" readonly>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
-                        <div class="col-6">
-                            <label for="totalAplica">TOTAL:</label>
-                            <input class="form-control imput-xs" id="totalAplica" readonly></input>
+                        <div class="row">
+                            <div class="col-6 col-sm-3">
+                                <label for="totalAplica">TOTAL:</label>
+                                <input class="form-control imput-xs" id="totalAplica" readonly></input>
+                            </div>
+                            <div class="col-6 col-sm-8">
+                                <label for="totalAplicaVC">VALOR CONTEXTUAL:</label>
+                                <input class="form-control imput-xs" id="totalAplicaVC" readonly></input>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1464,7 +1502,7 @@
                                 <div class="trabajaAct">
                                     <label for="modalidadSelect">Modalidad</label>
                                     <select class="form-control input-xs" id="modalidadSelect">
-                                        <option value="" selected>Seleccione una opción</option>
+                                        <option value="" selected disabled>Seleccione una opción</option>
                                         <option value="0">Dependiente</option>
                                         <option value="1">Independiente</option>
                                     </select>
@@ -1510,12 +1548,12 @@
                                     <div>
                                         <label for="numHijosMayores">Mayores de edad</label>
                                         <input class="form-control input-xs" type="number" id="numHijosMayores"
-                                            name="numHijosMayores" min="0" value="0">
+                                            name="numHijosMayores" min="0" value="">
                                     </div>
                                     <div>
                                         <label for="numHijosMenores">Menores de edad</label>
                                         <input class="form-control input-xs" type="number" id="numHijosMenores"
-                                            name="numHijosMenores" min="0" value="0">
+                                            name="numHijosMenores" min="0" value="">
                                     </div>
                                 </div>
                             </div>
@@ -1550,14 +1588,14 @@
                     <div class="row" style="margin: 10px;">
                         <div id="modal_" style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
                             <div class="col-md-6 col-sm-6 d-flex justify-content-center">
-                                <button id="btnFamilias" type="button" class="btn btn-default btn-sm">
+                                <button id="btnFamilias" type="button" class="btn btn-default btn-sm" onclick="cambiarSelectPrograma(this)">
                                     <img src="../../img/png/familias2.png" style="width: 60px; height: 60px">
                                 </button>
                                 <br>
                                 <b>Familias</b>
                             </div>
                             <div class="col-md-6 col-sm-6 d-flex justify-content-center">
-                                <button id="btn70Piquito" type="button" class="btn btn-default btn-sm">
+                                <button id="btn70Piquito" type="button" class="btn btn-default btn-sm" onclick="cambiarSelectPrograma(this)">
                                     <img src="../../img/png/70piquito.png" style="width: 60px; height: 60px">
                                 </button>
                                 <br>
@@ -1628,6 +1666,17 @@
         $("#totalIngresos").val(totalIngresos.toFixed(2));
     }
 
+    function sumarCamposIngreso(){
+        let ingresoFijo = $("#ingresoFijo").val().trim() == "" ? 0 : parseInt($("#ingresoFijo").val());
+        let ingresoEventual = $("#ingresoEventual").val().trim() == "" ? 0 : parseInt($("#ingresoEventual").val());
+        let pensionAlimentos = $("#pensionAlimentos").val().trim() == "" ? 0 : parseInt($("#pensionAlimentos").val());
+        let ayudaFamiliar = $("#ayudaFamiliar").val().trim() == "" ? 0 : parseInt($("#ayudaFamiliar").val());
+        let bono = $("#bono").val().trim() == "" ? 0 : parseInt($("#bono").val());
+
+        let totalIng = ingresoFijo + ingresoEventual + pensionAlimentos + ayudaFamiliar + bono;
+        $("#sumaIngresos").val(totalIng);
+    }
+
     var situaciones = [];
     $("#agregarSituacion").click(function () {
         var situacion = {
@@ -1645,10 +1694,20 @@
             usoBono: $("#usoBono").val(),
             sumaIngresos: $("#sumaIngresos").val()
         };
-        situaciones.push(situacion);
-        actualizarTablaSituacion();
-        limpiarCamposSit();
-        calcularTotalIngresos();
+        let situacionVacios = false;
+        for (let campo in situacion){
+            if(situacion[campo] == ""){situacionVacios = true;}
+        }
+
+        if(situacionVacios == false){
+            situaciones.push(situacion);
+            actualizarTablaSituacion();
+            limpiarCamposSit();
+            calcularTotalIngresos();
+        }else{
+            swal.fire('Campos Vacíos', 'Rellene todos los campos', 'error');
+        }
+        
     });
 
     function actualizarTablaSituacion() {
@@ -1733,16 +1792,13 @@
     });
 
     $("#btnAceptarIntegrante").click(function () {
-        //console.log(integrantes);
-        //console.log(integrantesDisc);
-        //console.log(integrantesEnfe);
         $('#modalEstructuraFam').modal('hide');
     });
 
     var integrantes = [];
     var integrantesDisc = [];
     var integrantesEnfe = [];
-    var totalVulnerables = 0;
+    var totalVulnerables = null;
     $("#agregarIntegrante").click(function () {
         var integrante = {
             nombre: $("#nuevoNombre").val(),
@@ -1756,29 +1812,39 @@
             tipoInstitucion: $("#nuevoTipoInstitucion").val(),
             vulnerabilidad: $("#nuevaVulnerabilidad").val()
         };
-        integrantes.push(integrante);
 
-        if (integrante.vulnerabilidad === "discapacidad") {
-            var integranteDiscapacidad = {
-                nombre: integrante.nombre,
-                nombreDiscapacidad: "",
-                tipoDiscapacidad: "",
-                porDiscapacidad: ""
-            };
-            integrantesDisc.push(integranteDiscapacidad);
-            totalVulnerables++;
+        let integVacios = false;
+        for (let campo in integrante){
+            if(integrante[campo] == ""){integVacios = true;}
         }
-        if (integrante.vulnerabilidad === "enfermedad") {
-            var integranteEnfermedad = {
-                nombre: integrante.nombre,
-                nombreEnfermedad: "",
-                tipoEnfermedad: ""
-            };
-            integrantesEnfe.push(integranteEnfermedad);
-            totalVulnerables++;
+
+        if(integVacios == false){
+            integrantes.push(integrante);
+
+            if (integrante.vulnerabilidad === "discapacidad") {
+                var integranteDiscapacidad = {
+                    nombre: integrante.nombre,
+                    nombreDiscapacidad: "",
+                    tipoDiscapacidad: "",
+                    porDiscapacidad: ""
+                };
+                integrantesDisc.push(integranteDiscapacidad);
+                totalVulnerables++;
+            }
+            if (integrante.vulnerabilidad === "enfermedad") {
+                var integranteEnfermedad = {
+                    nombre: integrante.nombre,
+                    nombreEnfermedad: "",
+                    tipoEnfermedad: ""
+                };
+                integrantesEnfe.push(integranteEnfermedad);
+                totalVulnerables++;
+            }
+            actualizarTabla();
+            limpiarCampos();
+        }else{
+            swal.fire('Campos Vacíos', 'Rellene todos los campos', 'error');
         }
-        actualizarTabla();
-        limpiarCampos();
     });
 
     function actualizarTabla() {
@@ -1872,12 +1938,21 @@
         $('#modalPrograma').modal('show');
     })
 
+    function cambiarSelectPrograma(elem){
+        if(elem.id == "btnFamilias"){
+            $("#programa").val("familias");
+        }else if(elem.id == "btn70Piquito"){
+            $("#programa").val("setentaYPiquito");
+        }
+        $('#modalPrograma').modal('hide');
+    }
+
     /**
      * INFORMACION USUARIO
     */
     $('#btnAceptarUser').click(function () {
         const trabaja = $("#trabajaSelect").val();
-        const comentarioAct = $("#comentarioAct").val();
+        const cometntarioAc = $("#comentarioAct").val();
         const modalidad = $("#modalidadSelect").val();
         const conyugeTrabaja = $("#conyugeSelect").val();
         const comentarioConyugeAct = $("#comentarioConyugeAct").val();
@@ -1915,7 +1990,7 @@
             $hijosAct.show();
         } else {
             $hijosAct.hide();
-            $('#numHijosMayores, #numHijosMenores').val(0);
+            $('#numHijosMayores, #numHijosMenores').val();
         }
     });
 
@@ -1956,13 +2031,17 @@
     * VULNERABILIDADES
     */
     $("#btnAceptarVulnerable").click(function () {
-        $("#tablaFamDisc tbody tr").each(function () {
-            const nombre = $(this).find("td:eq(0)").text();
-            const nombreDiscapacidad = $(this).find("td:eq(1) input").val();
-            const tipoDiscapacidad = $(this).find("td:eq(2) select").val();
-            const porDiscapacidad = $(this).find("td:eq(3) input").val();
-        });
-        console.log(nombre, nombreDiscapacidad, tipoDiscapacidad, porDiscapacidad);
+        if ($("#tablaFamDisc tbody tr").length > 0) {
+            $("#tablaFamDisc tbody tr").each(function () {
+                const nombre = $(this).find("td:eq(0)").text();
+                const nombreDiscapacidad = $(this).find("td:eq(1) input").val();
+                const tipoDiscapacidad = $(this).find("td:eq(2) select").val();
+                const porDiscapacidad = $(this).find("td:eq(3) input").val();
+                console.log(nombre, nombreDiscapacidad, tipoDiscapacidad, porDiscapacidad);
+            });
+        } else {
+            console.log("No hay datos en la tabla de familia con discapacidad.");
+        }
         $('#modalVulnerabilidadFam').modal('hide');
     });
 
@@ -1972,11 +2051,12 @@
                 $("#tablaFamDisc tbody").empty();
                 var tablaBody = $("#tablaFamDisc tbody");
                 for (var i = 0; i < integrantesDisc.length; i++) {
-                    var integrante = integrantesDisc[i];
+                    console.log(integrantesDisc[i]);
+                    var integrantedisc = integrantesDisc[i];
                     var fila = $("<tr></tr>");
-                    fila.append($("<td></td>").text(integrante.nombre));
+                    fila.append($("<td></td>").text(integrantedisc.nombre));
                     fila.append($("<td><input type='text' class='form-control imput-xs' id='nombreDiscapacidad'></td>"));
-                    fila.append($("<td><select class='form-control imput-xs' id='tipoDiscapacidad'> " +
+                    fila.append($("<td><select class='form-control imput-xs'id='tipoDiscapacidad'> " +
                         "<option value=''>Seleccione</option>" +
                         "<option value='fisica'>Física</option>" +
                         "<option value='mental'>Mental</option>" +
@@ -1984,7 +2064,7 @@
                     fila.append($("<td><input type='text' class='form-control imput-xs' id='porDiscapacidad'></td>"));
                     tablaBody.append(fila);
                 }
-            } else {
+            } else if (integrantesDisc.length == 0) {
                 $("#tablaFamDisc").hide();
                 $("#mensajeNoIntegrantes").show();
             }
@@ -1993,9 +2073,10 @@
                 $("#tablaFamEnfe tbody").empty();
                 var tablaBody = $("#tablaFamEnfe tbody");
                 for (var i = 0; i < integrantesEnfe.length; i++) {
-                    var integrante = integrantesEnfe[i];
+                    console.log(integrantesEnfe[i]);
+                    var integranteenf = integrantesEnfe[i];
                     var fila = $("<tr></tr>");
-                    fila.append($("<td></td>").text(integrante.nombre));
+                    fila.append($("<td></td>").text(integranteenf.nombre));
                     fila.append($("<td><input type='text' class='form-control imput-xs' id='nombreEnfermedad'></td>"));
                     fila.append($("<td><select class='form-control imput-xs' id='tipoEnfermedad'> " +
                         "<option value=''>Seleccione</option>" +
@@ -2004,7 +2085,7 @@
                         "<option value='otra'>Otra</option></select></td>"));
                     tablaBody.append(fila);
                 }
-            } else {
+            } else if (integrantesEnfe.length == 0) {
                 $("#tablaFamEnfe").hide();
                 $("#mensajeNoIntegrantesE").show();
             }
@@ -2080,7 +2161,7 @@
             <td>${servicio}</td>
             <td>
                 <select class="form-control input-xs">
-                    <option value="">Seleccione</option>
+                    <option value="" selected disabled>Seleccione</option>
                     <option value="si">Sí</option>
                     <option value="no">No</option>
                 </select>
@@ -2101,7 +2182,7 @@
             <td>${otrosGastos}</td>
             <td>
                 <select class="form-control input-xs">
-                    <option value="">Seleccione</option>
+                    <option value="" selected disabled>Seleccione</option>
                     <option value="si">Sí</option>
                     <option value="no">No</option>
                 </select>
@@ -2154,6 +2235,8 @@
             const cantidad = $(this).find("input").val();
             //console.log(`Ambiente: ${ambiente}, Cantidad: ${cantidad}`);
         });
+
+        $('#modalViviendaFam').modal('hide');
 
     });
 
@@ -2208,114 +2291,200 @@
         var totalAplica = 0;
 
         if (parseInt($("#edad").val()) >= 65) {
+            $("#edadDato").val(parseInt($("#edad").val()));
             $("#edadEval").val(1);
             $("#edadText").val("APLICA");
+            $("#edadText").css("color", "green");
             totalAplica++;
-        } else {
+        } else if (parseInt($("#edad").val()) < 65) {
+            $("#edadDato").val(parseInt($("#edad").val()));
             $("#edadEval").val(0);
             $("#edadText").val("NO APLICA");
+            $("#edadText").css("color", "red");
+        }else{
+            $("#edadDato").val("");
+            $("#edadText").val("NO DEFINIDO");
+            $("#edadText").css("color", "grey");
         }
 
         var numPersonas = ($("#numPersonas").val()) || 0;
         var ingresoPorPersona = ingresos / numPersonas;
+        console.log(ingresoPorPersona)
         if (ingresoPorPersona <= 48) {
-            $("#ingresoHabitante").val(0);
+            $("#ingresoHabitanteDato").val(ingresoPorPersona);
+            $("#ingresoHabitante").val(2);
             $("#ingresoHabitanteText").val("POBREZA EXTREMA");
+            $("#ingresoHabitanteText").css("color", "green");
             totalAplica++;
         } else if (ingresoPorPersona > 48 && ingresoPorPersona <= 85) {
+            $("#ingresoHabitanteDato").val(ingresoPorPersona);
             $("#ingresoHabitante").val(1);
             $("#ingresoHabitanteText").val("POBREZA");
+            $("#ingresoHabitanteText").css("color", "orange");
             totalAplica++;
         } else if (ingresoPorPersona > 85) {
-            $("#ingresoHabitante").val(2);
+            $("#ingresoHabitanteDato").val(ingresoPorPersona);
+            $("#ingresoHabitante").val(0);
             $("#ingresoHabitanteText").val("NO APLICA");
-        } else {
-            $("#ingresoHabitante").val(99);
+            $("#ingresoHabitanteText").css("color", "red");
+        }else{
+            $("#ingresoHabitanteDato").val("");
             $("#ingresoHabitanteText").val("NO DEFINIDO");
+            $("#ingresoHabitanteText").css("color", "grey");
         }
 
         if (totalVulnerables >= 1) {
+            $("#discapacidadDato").val(totalVulnerables);
             $("#discapacidadEval").val(1);
             $("#discapacidadText").val("APLICA");
+            $("#discapacidadText").css("color", "green");
             totalAplica++;
-        } else {
+        } else if (totalVulnerables == 0) {
+            $("#discapacidadDato").val(totalVulnerables);
             $("#discapacidadEval").val(0);
             $("#discapacidadText").val("NO APLICA");
+            $("#discapacidadText").css("color", "red");
+        }else{
+            $("#discapacidadDato").val("");
+            $("#discapacidadText").val("NO DEFINIDO");
+            $("#discapacidadText").css("color", "grey");
         }
 
         var numHijosMenores = parseInt($('#numHijosMenores').val());
         if (numHijosMenores > 1) {
+            $("#numHijosDato").val(numHijosMenores);
             $("#numHijosEval").val(1);
             $("#numHijosText").val("APLICA");
+            $("#numHijosText").css("color", "green");
             totalAplica++;
-        } else {
+        } else if (numHijosMenores == 0) {
+            $("#numHijosDato").val(numHijosMenores);
             $("#numHijosEval").val(0);
             $("#numHijosText").val("NO APLICA");
+            $("#numHijosText").css("color", "red");
+        }else{
+            $("#numHijosDato").val("");
+            $("#numHijosText").val("NO DEFINIDO");
+            $("#numHijosText").css("color", "grey");
         }
 
         var laViviendaEs = $("#laViviendaEs").val();
-        if (laViviendaEs != "propia") {
+        console.log(laViviendaEs);
+        if (laViviendaEs == "prestada" || laViviendaEs == "arrendada" || laViviendaEs == "compartida") {
+            $("#viviendaDato").val(laViviendaEs);
             $("#vivienda").val(1);
             $("#viviendaText").val("APLICA");
+            $("#viviendaText").css("color", "green");
             totalAplica++;
-        } else {
+        } else if (laViviendaEs == "propia") {
+            $("#viviendaDato").val(laViviendaEs);
             $("#vivienda").val(0);
             $("#viviendaText").val("NO APLICA");
+            $("#viviendaText").css("color", "red");
+        } else {
+            //$("#vivienda").val();
+            $("#viviendaDato").val("");
+            $("#viviendaText").val("NO DEFINIDO");
+            $("#viviendaText").css("color", "grey");
         }
 
         var estadoCivil = $('#estadoCivil').val();
         if (estadoCivil == "soltero" || estadoCivil == "separado" || estadoCivil == "viudo") {
+            $("#madrePadreSolteroDato").val(estadoCivil);
             $("#madrePadreSoltero").val(1);
             $("#madrePadreSolteroText").val("APLICA");
+            $("#madrePadreSolteroText").css("color", "green");
             totalAplica++;
-        } else {
+        } else if (estadoCivil == "casado" || estadoCivil == "unionL" || estadoCivil == "unionH") {
+            $("#madrePadreSolteroDato").val(estadoCivil);
             $("#madrePadreSoltero").val(0);
             $("#madrePadreSolteroText").val("NO APLICA");
+            $("#madrePadreSolteroText").css("color", "red");
+        } else {
+            $("#madrePadreSolteroDato").val("");
+            $("#madrePadreSolteroText").val("NO DEFINIDO");
+            $("#madrePadreSolteroText").css("color", "grey");
         }
 
         var modalidad = $("#modalidadSelect").val();
-        if (modalidad != "0") {
+        if (modalidad == "1") {
+            $("#trabajoUsuarioDato").val(modalidad);
             $("#trabajoUsuario").val(1);
             $("#trabajoUsuarioText").val("APLICA");
+            $("#trabajoUsuarioText").css("color", "green");
+
             totalAplica++;
-        } else {
+        } else if (modalidad == "0") {
+            $("#trabajoUsuarioDato").val(modalidad);
             $("#trabajoUsuario").val(0);
             $("#trabajoUsuarioText").val("NO APLICA");
+            $("#trabajoUsuarioText").css("color", "red");
+        } else {
+            $("#trabajoUsuarioDato").val("");
+            $("#trabajoUsuarioText").val("NO DEFINIDO");
+            $("#trabajoUsuarioText").css("color", "grey");
         }
 
         var modalidadC = $("#modalidadConyugeSelect").val();
-        if (laViviendaEs != "0") {
+        if (modalidadC == "1") {
+            $("#trabajoConyugeDato").val(modalidadC);
             $("#trabajoConyuge").val(1);
             $("#trabajoConyugeText").val("APLICA");
+            $("#trabajoConyugeText").css("color", "green");
+
             totalAplica++;
-        } else {
+        } else if (modalidadC == "0") {
+            $("#trabajoConyugeDato").val(modalidadC);
             $("#trabajoConyuge").val(0);
             $("#trabajoConyugeText").val("NO APLICA");
+            $("#trabajoConyugeText").css("color", "red");
+
+        } else {
+            $("#trabajoConyugeDato").val("");
+            $("#trabajoConyugeText").val("NO DEFINIDO");
+            $("#trabajoConyugeText").css("color", "grey");
         }
 
-        var usoBono = 0;
+        var usoBono = null;
         for (var i = 0; i < situaciones.length; i++) {
             var situacion = situaciones[i];
             if (situacion.usoBono != "") {
                 usoBono = 1;
                 break;
             }
+
+            if(i == situaciones.length-1){
+                usoBono = 0;
+            }
         }
-        if (usoBono !== 0) {
+        if (usoBono === 1) {
+            $("#usoBonoDiscapacidadDato").val(usoBono);
             $("#usoBonoDiscapacidad").val(1);
             $("#usoBonoDiscapacidadText").val("APLICA");
+            $("#usoBonoDiscapacidadText").css("color", "green");
             totalAplica++;
-        } else {
+        } else if (usoBono === 0) {
+            $("#usoBonoDiscapacidadDato").val(usoBono);
             $("#usoBonoDiscapacidad").val(0);
             $("#usoBonoDiscapacidadText").val("NO APLICA");
+            $("#usoBonoDiscapacidadText").css("color", "red");
+
+        } else {
+            $("#usoBonoDiscapacidadDato").val("");
+            $("#usoBonoDiscapacidadText").val("NO DEFINIDO");
+            $("#usoBonoDiscapacidadText").css("color", "grey");
         }
-        
-        if(totalAplica>=5){
-            $("#totalAplica").val("APLICA");
-        }else{
-            $("#totalAplica").val("NO APLICA");
+
+        if (totalAplica >= 5) {
+            $("#totalAplica").val(totalAplica);
+            $("#totalAplicaVC").val("APLICA");
+            $("#totalAplicaVC").css("color", "green");
+        } else {
+            $("#totalAplica").val(totalAplica);
+            $("#totalAplicaVC").val("NO APLICA");
+            $("#totalAplicaVC").css("color", "red");
         }
-        
+
         $('#modalEvaluacionFam').modal('show');
     });
 
@@ -3643,6 +3812,8 @@
             case '93.04':
                 break;
             default:
+                swal.fire("Error", "Tipo de Beneficiario no ha sido seleccionado.", "error");
+                break;
         }
     });
 
