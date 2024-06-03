@@ -307,7 +307,7 @@ class registro_beneficiarioM
 
         foreach ($tipoPoblacion as $poblacion) {
             $values[] = "('" . $_SESSION['INGRESO']['item'] . "', '" . $_SESSION['INGRESO']['periodo'] . "',
-                        '" . date('Y-m-d') . "', '" . date('Y-m-d') . "',
+                        '" . date('Y-m-d H:i:s') . "', '" . date('Y-m-d H:i:s') . "',
                         '" . $parametros['Codigo'] . "', '" . $poblacion['valueData'] . "',
                         '" . $poblacion['hombres'] . "', '" . $poblacion['mujeres'] . "',
                         '" . $poblacion['total'] . "', '" . $_SESSION['INGRESO']['CodigoU'] . "', '.')";

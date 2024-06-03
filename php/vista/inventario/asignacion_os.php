@@ -162,9 +162,9 @@
         console.log(datos);
        // $('#beneficiario').val(datos.Beneficiario);
         $('#fechAten').val(datos.Fecha_Atencion);//Fecha de Atencion
-        $('#tipoEstado').val(datos.CodigoA);//Tipo de Estado
+        $('#tipoEstado').val(datos.Estado);//Tipo de Estado
         $('#tipoEntrega').val(datos.TipoEntega);//Tipo de Entrega
-        $('#horaEntrega').val(datos.Hora_Entrega); //Hora de Entrega
+        $('#horaEntrega').val(datos.Hora); //Hora de Entrega
         var fecha = new Date(datos.Fecha_Atencion);
         const opciones = { weekday: 'long' };
         const diaEnLetras = new Intl.DateTimeFormat('es-ES', opciones).format(fecha);
@@ -174,10 +174,11 @@
         $('#totalPersAten').val(datos.No_Soc);//Total, Personas Atendidas
         $('#tipoPobl').val(datos.Area);//Tipo de Poblacion
         $('#acciSoci').val(datos.AccionSocial);//Accion Social
-        $('#vuln').val(datos.Tipo);//Vulnerabilidad
+        $('#vuln').val(datos.vulneravilidad);//Vulnerabilidad
         $('#tipoAten').val(datos.TipoAtencion);//Tipo de Atencion
         $('#CantGlobSugDist').val(datos.Salario);//Cantidad global sugerida a distribuir
         $('#CantGlobDist').val(datos.Descuento);//Cantidad global a distribuir
+        $('#infoNutr').val(datos.InfoNutri);
         const params = [datos.CodigoA, datos.CodigoACD, datos.Envio_No, datos.Beneficiario, datos.Area, datos.Acreditacion, datos.Tipo, datos.Cod_Fam];
         color = datos.Color.replace('Hex_','');
         $('#rowGeneral').css('background-color', '#' + color);
@@ -223,7 +224,8 @@
             dataType: 'json',
             data: { param: param },
             success: function (data) {
-                $('#tbl_body').html(data);
+                $('#tbl_body').html(data.tabla);
+                $('#CantGlobDist').val(data.cantidad);
             },
             error: function (error) {
                 console.log(error);
@@ -314,6 +316,26 @@
         });
     }
 
+    function llenarCamposPoblacion() {
+        var Codigo = $('#beneficiario').val();
+        if(Codigo=='' || Codigo==null)
+        {
+            Swal.fire("Seleccione un beneficiario","","info")
+            return false;
+        }
+        $.ajax({
+            url: '../controlador/inventario/asignacion_osC.php?llenarCamposPoblacion=true',
+            type: 'post',
+            dataType: 'json',
+            data: { valor: Codigo },
+            success: function (datos) {
+                $('#modalBtnGrupo').modal('show');
+                $('#tbl_body_poblacion').html(datos);
+               console.log(datos);
+            }
+        });
+    }
+
 </script>
 <style>
     label {
@@ -346,8 +368,7 @@
     }
 
     /* Ajustar el ancho de los inputs si es necesario */
-    .form-group input[type="text",
-    type="datetime-local"] {
+    .form-group input[type="text",type="datetime-local"] {
         flex-grow: 1;
         /* Permite que el input crezca para ocupar el espacio disponible */
     }
@@ -366,6 +387,50 @@
         }
     }
 </style>
+<script type="text/javascript">
+    function guardar()
+    {
+        ben = $('#beneficiario').val();
+        distribuir = $('#CantGlobDist').val();
+        if(ben=='' || ben==null){Swal.fire("","Seleccione un Beneficiario","info");return false;}
+        if(distribuir==0 || distribuir==''){ Swal.fire("","No se a agregado nigun grupo de producto","info");return false;}
+        var parametros = {
+            'beneficiario':ben,
+            'fecha':$('#fechAten').val(),
+        }
+         $.ajax({
+            url: '../controlador/inventario/asignacion_osC.php?GuardarAsignacion=true',
+            type: 'post',
+            dataType: 'json',
+            data: { parametros: parametros },
+            success: function (datos) {
+                if(datos==1)
+                {
+                    Swal.fire("Asignacion Guardada","","success").then(function(){
+                        location.reload();
+                    });
+                }
+
+            }
+        });
+    }
+</script>
+<div class="row mb-2">
+    <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
+        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
+            <a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
+            print_r($ruta[0] . '#'); ?>" title="Salir de modulo" class="btn btn-default">
+                <img src="../../img/png/salire.png">
+            </a>
+        </div>
+         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
+            <button title="Guardar" class="btn btn-default" onclick="guardar()">
+                <img src="../../img/png/grabar.png">
+            </button>
+        </div>
+    </div>
+       
+</div>
 <form id="form_asignacion">
     <div class="row" style="padding: 1vw; background-color: #fffacd; border: 1px solid;" id="rowGeneral">
         <div class="row">
@@ -482,6 +547,11 @@
                                 <b>Total, Personas Atendidas:</b>
                             </div>
                             <input type="text" name="totalPersAten" id="totalPersAten" class="form-control input-xs" readonly>
+                            <span class="input-group-btn">
+                            <button type="button" class="" onclick="llenarCamposPoblacion()">
+                                <img id="img_tipoBene"  src="../../img/png/Personas_atendidas.png" style="width: 32px;" />
+                            </button>
+                        </span>
                         </div>
                     </div>
                 </div>
@@ -528,9 +598,15 @@
             </div>
             <div class="col-sm-4">
                 <div class="row">
-                    <div class="col-sm-6"  style="font-size: 13px; white-space: nowrap;">                        
-                        <img  src="../../img/png/cantidad_global.png" style="width: 25%;" />
-                        <b>Cantidad global sugerida a distribuir</b>
+                    <div class="col-sm-6"  style="font-size: 13px; ">
+                        <div class="row">
+                            <div class="col-sm-4">                        
+                                <img  src="../../img/png/cantidad_global.png" style="width: 100%;" />
+                            </div>  
+                            <div class="col-sm-8" style="padding:0px">                        
+                                <b>Cantidad global sugerida a distribuir</b>
+                            </div>                     
+                        </div> 
                     </div>
                     <div class="col-sm-6">
                         <input type="number" name="CantGlobSugDist" id="CantGlobSugDist" readonly style=""
@@ -545,7 +621,7 @@
                     </div>
                     <div class="col-sm-6">
                         <input type="number" name="CantGlobDist" id="CantGlobDist" style=""
-                            class="form-control input-xs">
+                            class="form-control input-xs" readonly>
                     </div>
                 </div>
                 <div class="row">
@@ -702,3 +778,36 @@
         </div>
     </div>
 </div>
+
+
+    <div id="modalBtnGrupo" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Tipo de población</h4>
+                </div>
+                <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
+                    <div class="table-responsive">
+                        <table class="table" id="tablaPoblacion">
+                            <thead>
+                                <tr>
+                                    <th scope="col" colspan="2">Tipo de Población</th>
+                                    <th scope="col">Hombres</th>
+                                    <th scope="col">Mujeres</th>
+                                    <th scope="col">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl_body_poblacion">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btnGuardarGrupo">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>

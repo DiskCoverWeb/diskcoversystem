@@ -32,7 +32,14 @@ if(isset($_GET['Codigo_Inv_stock'])){
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->Codigo_Inv_stock($parametros));
 }
-
+if(isset($_GET['llenarCamposPoblacion'])){
+    $valor = $_POST['valor'];
+    echo json_encode($controlador->llenarCamposPoblacion($valor));
+}
+if(isset($_GET['GuardarAsignacion'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->GuardarAsignacion($parametros));
+}
 
 
 
@@ -59,6 +66,7 @@ class asignacion_osC
     {
         try {
             $datos = $this->modelo->tipoBeneficiario($query);
+            // print_r($datos);
             $res = array();
             if (count($datos) == 0) {
                 throw new Exception('No se encontraron datos');
@@ -91,6 +99,10 @@ class asignacion_osC
                     'TipoBene' => $value['TipoBene'],
                     'Color'=>$value['Color'],
                     'Picture'=>$value['Picture'],
+                    'Estado'=>$value['Estado'],
+                    'Hora'=>$value['Hora'],
+                    'vulneravilidad'=>$value['vulnerabilidad'],
+                    'InfoNutri'=>$value['Observaciones'],
                 );
             }
             return ['results' => $res]; // Ajuste aquí para coincidir con el formato de Select2
@@ -133,6 +145,8 @@ class asignacion_osC
     function listaAsignacion($parametros)
     {
         $tr = '';
+        $cantidad = 0;
+        $res = array();
         $datos = $this->modelo->listaAsignacion($parametros['beneficiario']);
         foreach ($datos as $key => $value) {
             $tr.='<tr>
@@ -142,9 +156,12 @@ class asignacion_osC
                     <td>'.$value['Procedencia'].'</td>
                     <td><button class="btn btn-danger btn-sm" onclick="eliminar_linea('.$value['ID'].')"><i class="fa fa-trash"></i></button></td>
                 </tr>';
+                $cantidad+= number_format($value['Cantidad'],2,'.','');
         }
 
-        return $tr;
+        $res = array('tabla'=>$tr,'cantidad'=>$cantidad);
+
+        return $res;
         // print_r($datos);die();
     }
 
@@ -184,4 +201,40 @@ class asignacion_osC
         $datos = Leer_Codigo_Inv($CodigoDeInv,$FechaInventario);
         return $datos;
     }
+
+    function llenarCamposPoblacion($parametros)
+    {
+        $tr = '';
+        $poblacion = $this->modelo->tipo_poblacion();
+        $datos = $this->modelo->llenarCamposPoblacion($parametros);
+        if (count($datos)>0) {
+            $tr = '';
+            foreach ($poblacion as $key => $value) {
+                $clave = array_search($value['Cmds'], array_column($datos, 'Cmds'));
+                if($clave=='') 
+                    { $item['Hombres']=0; $item['Mujeres']=0; $item['Total']=0;}else{
+                $item = $datos[$clave];
+            }   
+                // print_r($item);die();
+                $tr.='<tr><td colspan="2">'.$value['Proceso'].'</td><td>'.$item['Hombres'].'</td><td>'.$item['Mujeres'].'</td><td>'.$item['Total'].'</td></tr>';
+            }
+        }
+        return $tr;
+
+    }
+
+    function GuardarAsignacion($parametros)
+    {
+        // print_r($parametros);die();
+        SetAdoAddNew('Detalle_Factura');
+        SetAdoFields('T','K');      
+       
+        SetAdoFieldsWhere('CodigoU',$_SESSION['INGRESO']['CodigoU']);
+        SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
+        SetAdoFieldsWhere('Periodo',$_SESSION['INGRESO']['periodo']); 
+        SetAdoFieldsWhere('CodigoC',$parametros['beneficiario']);  
+        SetAdoFieldsWhere('Fecha',$parametros['fecha']);  
+        return SetAdoUpdateGeneric();
+    }
+
 }
