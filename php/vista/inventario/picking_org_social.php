@@ -259,7 +259,7 @@
 					            <div class="row"> 
 									<div class="col-sm-12" id="pnl_comentario">
 					                  <div class="input-group">
-					                      <textarea class="form-control input-sm" rows="3" style="font-size:16px" id="txt_comentario2" name="txt_comentario2" placeholder="COMENTARIO DE PICKING"></textarea>
+					                      <textarea class="form-control input-sm" rows="1" style="font-size:16px" id="txt_comentario2" name="txt_comentario2" placeholder="COMENTARIO DE PICKING"></textarea>
 					                      <span class="input-group-btn">
 					                        <button type="button" class="btn btn-primary btn-sm" onclick="comentar()"><i class="fa fa-save"></i></button>   
 					                      </span>
@@ -273,4 +273,115 @@
 			</div>
 		</div>
 	</div>
+</div>
+<div class="row">
+	<div class="col-sm-12">		
+		<div class="box">
+			<div class="box-body">
+				<div class="col-sm-5">
+		            <div class="input-group">
+		                <span class="input-group-btn" style="padding-right: 10px;">
+		                     <button type="button" class="btn btn-default" onclick="show_producto();"><img
+		                    src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo producto</b></button>
+		                </span>
+		                <b>Grupo producto:</b>
+		                 <select name="grupProd" id="grupProd" class="form-control input-xs" onchange="buscar_producto(this.value)"></select>
+		                 <br>
+		                 <b>Codigo</b>
+		                 <input type="" name="" id="" class="form-control input-xs" placeholder="Codigo de producto">
+		            </div>
+		        </div>
+		        <div class="col-sm-5">
+		        	<div class="row">
+		        		<div class="col-sm-9">
+		        			<b>Proveedor / Donante</b>
+		        			<input type="" name="" class="form-control input-xs" placeholder="Proveedor / Donante">
+		        		</div>
+		        		<div class="col-sm-3">
+		        			 <b>Stock:</b>
+		        			<input type="" name="" class="form-control input-xs" placeholder="0">
+		        		</div>
+		        	</div>
+		        	<b>Ubicacion</b>
+		        	<input type="" name="" class="form-control input-xs" placeholder="Proveedor / Donante">		        	
+		        </div>
+		        <div class="col-sm-2">
+		            <b>Fecha expiracions</b>
+		            <input type="date" name="stock" id="stock" class="form-control input-xs" readonly>
+		        </div>
+		        <div class="col-sm-3">            
+		            <div class="input-group">
+		                <span class="input-group-btn" style="padding-right: 10px;">
+		                     <button type="button" style="width: initial;" class="btn btn-default" onclick="show_cantidad()"
+		                    id="btn_cantidad">
+		                    <img src="../../img/png/kilo.png" style="width: 42px;height: 42px;" />
+		                </button>
+		                </span>
+		                <b>Cantidad</b>
+		                  <input type="number" name="cant" id="cant" class="form-control input-xs">
+		            </div>
+		        </div>
+		        <div class="col-sm-9 text-right">
+		            <button class="btn btn-primary btn-sm">Ingreso</button>
+		            <button class="btn btn-primary btn-sm">Borrar</button>
+		        </div>
+				
+			</div>
+			<div class="col-sm-12">
+				<hr style="margin:0px">
+			</div>
+			<div class="box-body">
+				<div class="col-sm-12">
+					<table class="table table-hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>FECHA ATENCION</th>
+                                <th>FECHA PICKING</th>
+                                <th>DESCRIPCION</th>
+                                <th>CODIGO</th>
+                                <th>USUARIO</th>
+                                <th>CANTIDAD (KG)</th>
+                                <th>ELIMINAR</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbl_body"></tbody>
+                    </table>
+				</div>
+			</div>
+		</div>
+
+	</div>	
+</div>
+
+
+<div id="modalBtnGrupo" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Tipo de población</h4>
+            </div>
+            <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
+                <div class="table-responsive">
+                    <table class="table" id="tablaPoblacion">
+                        <thead>
+                            <tr>
+                                <th scope="col" colspan="2">Tipo de Población</th>
+                                <th scope="col">Hombres</th>
+                                <th scope="col">Mujeres</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbl_body_poblacion">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="btnGuardarGrupo">Aceptar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
 </div>
