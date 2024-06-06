@@ -4,6 +4,11 @@
   		areas();  
   		motivo_egreso()	
   	})
+
+  	function ver_detalle()
+  	{
+  		$('#modalDetalleCantidad').modal('show');
+  	}
 </script>
 <div class="row mb-2">
     <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
@@ -201,7 +206,7 @@
 						                        </div>
 												<input type="text" class="form-control input-xs">
 												<span class="input-group-btn">
-													<button type="button" class="btn btn-info btn-flat btn-sm"><i class="fa fa-eye"></i> Ver detalle</button>
+													<button type="button" class="btn btn-info btn-flat btn-sm" onclick="ver_detalle()"><i class="fa fa-eye"></i> Ver detalle</button>
 												</span>
 											</div>
 									</div>					                   
@@ -354,32 +359,56 @@
 </div>
 
 
-<div id="modalBtnGrupo" class="modal fade" role="dialog">
+<div id="modalDetalleCantidad" class="modal fade" role="dialog">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Tipo de población</h4>
+                <h4 class="modal-title">Ver detalle</h4>
             </div>
             <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
-                <div class="table-responsive">
-                    <table class="table" id="tablaPoblacion">
-                        <thead>
-                            <tr>
-                                <th scope="col" colspan="2">Tipo de Población</th>
-                                <th scope="col">Hombres</th>
-                                <th scope="col">Mujeres</th>
-                                <th scope="col">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbl_body_poblacion">
-
-                        </tbody>
-                    </table>
+                <div class="row mb-3">				                	
+                   <div class="col-sm-4">	
+                   		<b>Grupo de productos</b>
+                   		<input type="text" class="form-control input-xs">
+					</div>
+					<div class="col-sm-4" style="padding:0px">						
+                        <b>Cantidad parcial a distribuir</b>
+                        <div class="input-group input-group-sm">
+							<input type="text" class="form-control input-xs">
+		               		<div class="input-group-addon input-xs">
+	                            <b>Dif:</b>
+	                        </div>
+							<input type="text" class="form-control input-xs">
+							
+						</div>
+					</div>				
+					<div class="col-sm-4">						
+	                    <b>Comentario de asignacion</b>
+						<input type="text" class="form-control input-xs">
+					</div>	                   
                 </div>
+                 <div class="row">				                	
+                   	<div class="col-sm-4 text-center">
+                   		<label>Total</label>
+					</div>
+					<div class="col-sm-4" style="padding:0px">		
+                        <div class="input-group input-group-sm">
+							<input type="text" class="form-control input-xs">
+		               		<div class="input-group-addon input-xs">
+	                            <b>Dif:</b>
+	                        </div>
+							<input type="text" class="form-control input-xs">
+							
+						</div>
+					</div>				
+					<div class="col-sm-4">						
+					</div>	                   
+                </div>
+				               
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" id="btnGuardarGrupo">Aceptar</button>
+                <!-- <button type="button" class="btn btn-success" id="btnGuardarGrupo">Aceptar</button> -->
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
