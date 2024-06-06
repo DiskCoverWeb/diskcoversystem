@@ -555,7 +555,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">                   
+                <!-- <div class="row">                   
                     <div class="col-md-12 col-sm-6 col-xs-6">  
                         <div class="input-group">
                             <div class="input-group-addon input-xs">
@@ -564,7 +564,7 @@
                             <input type="text" name="tipoPobl" id="tipoPobl" class="form-control input-xs" readonly>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="row">                    
                      <div class="col-md-12 col-sm-6 col-xs-6">  
                         <div class="input-group">
