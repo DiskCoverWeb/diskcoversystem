@@ -58,11 +58,11 @@ class registro_beneficiarioM
 
     function LlenarCalendario($valor)
     {
-        $sql = "SELECT TOP 100 C.Actividad, C.Cliente, F.Envio_No,  F.Dia_Ent, F.Hora_Ent       
+        $sql = "SELECT TOP 100 C.TB, C.Cliente, F.Envio_No,  F.Dia_Ent, F.Hora_Ent       
                     FROM Clientes AS C
                     LEFT JOIN Clientes_Datos_Extras AS F ON C.Codigo = F.Codigo
                     WHERE C.Cliente <> '.'
-                    AND Actividad = '" . $valor . "'
+                    AND TB = '" . $valor . "'
                     AND Envio_No != '.'
                     ORDER BY Hora_Ent";
         return $this->db->datos($sql);
@@ -123,7 +123,7 @@ class registro_beneficiarioM
         $sql = "SELECT Codigo, CodigoA, Representante, CI_RUC_R, Telefono_R, Contacto, Sexo,
                     Profesion, Email, Email2, Telefono, TelefonoT, Dia_Ent, 
                     Hora_Ent, Prov, Ciudad, Canton, Parroquia, Barrio,
-                    Direccion, DireccionT,  Referencia, Calificacion, Actividad
+                    Direccion, DireccionT,  Referencia, Calificacion, TB
                 FROM  Clientes 
                 WHERE Cliente <> '.'
                 AND Codigo = '" . $valor . "'";
@@ -164,7 +164,7 @@ class registro_beneficiarioM
     {
         $sql = $this->sqlComunDonacion();
 
-        if (!is_numeric($valor)) {
+        if (!is_numeric($valor) && $valor !='') {
             $sql .= " AND Concepto LIKE '%" . $valor . "%'";
         }
 
@@ -184,6 +184,8 @@ class registro_beneficiarioM
 
     function LlenarSelects_Val($query, $valor, $valor2)
     {
+
+        // print_r($valor.'-'.$valor2.'-'.$query);die();
         $sql = "SELECT " . Full_Fields('Catalogo_Proceso') . "
                     FROM Catalogo_Proceso
                     WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'";
@@ -193,10 +195,19 @@ class registro_beneficiarioM
         } else {
             $sql .= " AND Cmds LIKE '" . $valor . ".%'";
         }
-        $sql .= (!is_numeric($query)) ? " AND Proceso LIKE '%" . $query . "%'" : " AND Cmds LIKE '%" . $query . "%'";
+        if(!is_numeric($query))
+        {
+            $sql.=" AND Cmds LIKE '%" . $query . "%' ";
+        }else
+        {
+            if($query!='')
+            {
+                $sql.=" AND Proceso LIKE '%" . $query . "%'";
+            }
+        }
 
         $sql .= " ORDER BY Cmds";
-
+        //print_r($sql);die();
         if ($valor2) {
             return $this->actualizarSelectDonacion($valor);
         }
@@ -206,7 +217,7 @@ class registro_beneficiarioM
     function ActualizarClientes($parametros)
     {
         $sql = "UPDATE Clientes SET
-                Actividad = '" . $parametros['Actividad'] . "',
+                TB = '" . $parametros['TB'] . "',
                 Calificacion = '" . $parametros['Calificacion'] . "',
                 CodigoA = '" . $parametros['CodigoA'] . "', 
                 Representante = '" . $parametros['Representante'] . "', 
