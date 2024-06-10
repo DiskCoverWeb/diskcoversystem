@@ -935,9 +935,9 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <select class="form-control imput-xs" id="nuevoNivelEscolaridad">
+                                        <select class="form-control imput-xs" id="nuevoNivelEscolaridad" onchange="validarNinguno(this, 'nuevoNombreInstitucion', 'nuevoTipoInstitucion')">
                                             <option value="" selected disabled>Seleccione</option>
-                                            <option value="ninguna">Ninguna</option>
+                                            <option value="ninguno">Ninguna</option>
                                             <option value="primaria">Primaria</option>
                                             <option value="secundaria">Secundaria</option>
                                             <option value="bachillerato">Bachillerato</option>
@@ -946,10 +946,10 @@
                                             <option value="posgrado">Posgrado</option>
                                         </select>
                                     </td>
-                                    <td><input type="text" class="form-control imput-xs" id="nuevoNombreInstitucion">
+                                    <td><input type="text" class="form-control imput-xs" id="nuevoNombreInstitucion" disabled>
                                     </td>
                                     <td>
-                                        <select class="form-control imput-xs" id="nuevoTipoInstitucion">
+                                        <select class="form-control imput-xs" id="nuevoTipoInstitucion" disabled>
                                             <option value="" selected disabled>Seleccione</option>
                                             <option value="fiscal">Fiscal</option>
                                             <option value="fiscomisional">Fiscomisional</option>
@@ -1091,7 +1091,7 @@
                                     <th>Ingreso eventual $</th>
                                     <th>Pensión de alimentos $</th>
                                     <th>Ayuda familiar $</th>
-                                    <th>Jubilación</th>
+                                    <th>Jubilación $</th>
                                     <th>Tipo de Bono</th>
                                     <th>Bono $</th>
                                     <th>Uso del Bono</th>
@@ -1114,34 +1114,35 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <select class="form-control imput-xs" id="sueldoFijo">
+                                        <select class="form-control imput-xs" id="sueldoFijo" onchange="validarNinguno(this,'ingresoFijo')">
                                             <option value="" selected disabled>Seleccione</option>
                                             <option value="si">Si</option>
                                             <option value="no">No</option>
                                         </select>
                                     </td>
-                                    <td><input type="text" class="form-control imput-xs" id="ingresoFijo" onchange="sumarCamposIngreso()"></td>
-                                    <td><input type="text" class="form-control imput-xs" id="ingresoEventual" onchange="sumarCamposIngreso()"></td>
-                                    <td><input type="text" class="form-control imput-xs" id="pensionAlimentos" onchange="sumarCamposIngreso()"></td>
-                                    <td><input type="text" class="form-control imput-xs" id="ayudaFamiliar" onchange="sumarCamposIngreso()"></td>
-                                    <td><input type="text" class="form-control imput-xs" id="jubilacion"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="ingresoFijo" onchange="sumarCamposIngreso(this)" disabled></td>
+                                    <td><input type="text" class="form-control imput-xs" id="ingresoEventual" onchange="sumarCamposIngreso(this)"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="pensionAlimentos" onchange="sumarCamposIngreso(this)"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="ayudaFamiliar" onchange="sumarCamposIngreso(this)"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="jubilacion" onchange="sumarCamposIngreso(this)"></td>
                                     <td>
-                                        <select class="form-control imput-xs" id="tipoBono">
+                                        <select class="form-control imput-xs" id="tipoBono" onchange="validarNinguno(this,'bono','usoBono')">
                                             <option value="" selected disabled>Seleccione</option>
                                             <option value="desarrollo">Desarrollo Humano</option>
                                             <option value="manuela">Manuela Sáenz</option>
                                             <option value="joaquin">Joaquín Gallegos Lara</option>
+                                            <option value="ninguno">Ninguno</option>
                                         </select>
                                     </td>
-                                    <td><input type="text" class="form-control imput-xs" id="bono" onchange="sumarCamposIngreso()"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="bono" onchange="sumarCamposIngreso(this)" disabled></td>
                                     <td>
-                                        <select class="form-control imput-xs" id="usoBono">
+                                        <select class="form-control imput-xs" id="usoBono" disabled>
                                             <option value="" selected disabled>Seleccione</option>
                                             <option value="mediacion">Mediación e insumos y movilización</option>
                                             <option value="gastos">Gastos generales</option>
                                         </select>
                                     </td>
-                                    <td><input type="text" class="form-control imput-xs" id="sumaIngresos" readonly></td>
+                                    <td><input type="text" class="form-control imput-xs" id="sumaIngresos" readonly value="0.00"></td>
                                     <td><button type="button" class="btn btn-primary"
                                             id="agregarSituacion">Agregar</button></td>
                                 </tr>
@@ -1422,7 +1423,7 @@
                                     <td><input type="text" class="form-control" id="viviendaText" readonly></td>
                                 </tr>
                                 <tr>
-                                    <td>Madre/Padre Solter@</td>
+                                    <td>Estado Civil</td>
                                     <td><input type="text" class="form-control" id="madrePadreSolteroDato" readonly>
                                     </td>
                                     <td><input type="number" class="form-control" id="madrePadreSoltero" readonly></td>
@@ -1666,15 +1667,38 @@
         $("#totalIngresos").val(totalIngresos.toFixed(2));
     }
 
-    function sumarCamposIngreso(){
-        let ingresoFijo = $("#ingresoFijo").val().trim() == "" ? 0 : parseInt($("#ingresoFijo").val());
-        let ingresoEventual = $("#ingresoEventual").val().trim() == "" ? 0 : parseInt($("#ingresoEventual").val());
-        let pensionAlimentos = $("#pensionAlimentos").val().trim() == "" ? 0 : parseInt($("#pensionAlimentos").val());
-        let ayudaFamiliar = $("#ayudaFamiliar").val().trim() == "" ? 0 : parseInt($("#ayudaFamiliar").val());
-        let bono = $("#bono").val().trim() == "" ? 0 : parseInt($("#bono").val());
+    function validarNinguno(selectElem, ...valores){
+        if(selectElem.value == "ninguno" || selectElem.value == "no"){
+            for(let valor of valores){
+                $(`#${valor}`).attr('disabled', 'true');
+                $(`#${valor}`).val("");
+            }
+        }else{
+            for(let valor of valores){
+                $(`#${valor}`).removeAttr('disabled');
+                //$(`#${valor}`).val("");
+            }
+        }
+    }
 
-        let totalIng = ingresoFijo + ingresoEventual + pensionAlimentos + ayudaFamiliar + bono;
-        $("#sumaIngresos").val(totalIng);
+    function sumarCamposIngreso(elem){
+        if(isNaN(parseFloat(elem.value))){
+            elem.value = "";
+            Swal.fire('Valor no permitido', 'Este campo debe ser numerico', 'info');
+        }else{
+            console.log(parseFloat(elem.value));
+            elem.value = parseFloat(elem.value).toFixed(2);
+        }
+
+        let ingresoFijo = $("#ingresoFijo").val().trim() == "" ? 0 : parseFloat($("#ingresoFijo").val());
+        let ingresoEventual = $("#ingresoEventual").val().trim() == "" ? 0 : parseFloat($("#ingresoEventual").val());
+        let pensionAlimentos = $("#pensionAlimentos").val().trim() == "" ? 0 : parseFloat($("#pensionAlimentos").val());
+        let ayudaFamiliar = $("#ayudaFamiliar").val().trim() == "" ? 0 : parseFloat($("#ayudaFamiliar").val());
+        let jubilacion = $("#jubilacion").val().trim() == "" ? 0 : parseFloat($("#jubilacion").val());
+        let bono = $("#bono").val().trim() == "" ? 0 : parseFloat($("#bono").val());
+
+        let totalIng = ingresoFijo + ingresoEventual + pensionAlimentos + ayudaFamiliar + jubilacion + bono;
+        $("#sumaIngresos").val(totalIng.toFixed(2));
     }
 
     var situaciones = [];
@@ -1682,30 +1706,33 @@
         var situacion = {
             nombre: $("#nombreSituacion").val(),
             lugarTrabajo: $("#lugarTrabajo").val(),
-            tipoSeguro: $("#tipoSeguro").val(),
-            sueldoFijo: $("#sueldoFijo").val(),
-            ingresoFijo: $("#ingresoFijo").val(),
-            ingresoEventual: $("#ingresoEventual").val(),
-            pensionAlimentos: $("#pensionAlimentos").val(),
-            ayudaFamiliar: $("#ayudaFamiliar").val(),
-            jubilacion: $("#jubilacion").val(),
-            tipoBono: $("#tipoBono").val(),
-            bono: $("#bono").val(),
-            usoBono: $("#usoBono").val(),
+            tipoSeguro: $("#tipoSeguro").val()==null?"":$("#tipoSeguro").val(),
+            sueldoFijo: $("#sueldoFijo").val()==null?"":$("#sueldoFijo").val(),
+            ingresoFijo: $("#ingresoFijo").val()==""?"0.00":$("#ingresoFijo").val(),
+            ingresoEventual: $("#ingresoEventual").val()==""?"0.00":$("#ingresoEventual").val(),
+            pensionAlimentos: $("#pensionAlimentos").val()==""?"0.00":$("#pensionAlimentos").val(),
+            ayudaFamiliar: $("#ayudaFamiliar").val()==""?"0.00":$("#ayudaFamiliar").val(),
+            jubilacion: $("#jubilacion").val()==""?"0.00":$("#jubilacion").val(),
+            tipoBono: $("#tipoBono").val()==null?"":$("#tipoBono").val(),
+            bono: $("#bono").val()==""?"0.00":$("#bono").val(),
+            usoBono: $("#usoBono").val()==null?"":$("#usoBono").val(),
             sumaIngresos: $("#sumaIngresos").val()
         };
-        let situacionVacios = false;
-        for (let campo in situacion){
-            if(situacion[campo] == ""){situacionVacios = true;}
-        }
 
-        if(situacionVacios == false){
+        let situacionVacios = [];
+        if(situacion['nombre'].trim() == "") situacionVacios.push("Nombres y Apellidos");
+        if(situacion['tipoSeguro'] == "") situacionVacios.push("Tipo de Seguro");
+        if(situacion['sueldoFijo'] == "") situacionVacios.push("Sueldo Fijo");
+        if(situacion['tipoBono'] == "") situacionVacios.push("Tipo de Bono");
+        if(situacion['tipoBono'] != "ninguno" && situacion['usoBono'] == "") situacionVacios.push("Uso del Bono");
+
+        if(situacionVacios.length > 0){
+            swal.fire('Campos Vacíos', `Rellene los campos: ${situacionVacios.join(', ')}`, 'error');
+        }else{
             situaciones.push(situacion);
             actualizarTablaSituacion();
             limpiarCamposSit();
             calcularTotalIngresos();
-        }else{
-            swal.fire('Campos Vacíos', 'Rellene todos los campos', 'error');
         }
         
     });
@@ -1741,13 +1768,16 @@
         $("#tipoSeguro").val("");
         $("#sueldoFijo").val("");
         $("#ingresoFijo").val("");
+        $("#ingresoFijo").attr("disabled", "true");
         $("#ingresoEventual").val("");
         $("#pensionAlimentos").val("");
         $("#ayudaFamiliar").val("");
         $("#jubilacion").val("");
         $("#tipoBono").val("");
         $("#bono").val("");
+        $("#bono").attr("disabled", "true");
         $("#usoBono").val("");
+        $("#usoBono").attr("disabled", "true");
         $("#sumaIngresos").val("");
     }
 
@@ -1801,24 +1831,33 @@
     var totalVulnerables = null;
     $("#agregarIntegrante").click(function () {
         var integrante = {
-            nombre: $("#nuevoNombre").val(),
-            genero: $("#nuevoGenero").val(),
-            parentesco: $("#nuevoParentesco").val(),
-            rangoEdad: $("#nuevoRangoEdad").val(),
-            ocupacion: $("#nuevaOcupacion").val(),
-            estadoCivil: $("#nuevoEstadoCivil").val(),
-            nivelEscolaridad: $("#nuevoNivelEscolaridad").val(),
-            nombreInstitucion: $("#nuevoNombreInstitucion").val(),
-            tipoInstitucion: $("#nuevoTipoInstitucion").val(),
-            vulnerabilidad: $("#nuevaVulnerabilidad").val()
+            nombre: $("#nuevoNombre").val()==null?"":$("#nuevoNombre").val(),
+            genero: $("#nuevoGenero").val()==null?"":$("#nuevoGenero").val(),
+            parentesco: $("#nuevoParentesco").val()==null?"":$("#nuevoParentesco").val(),
+            rangoEdad: $("#nuevoRangoEdad").val()==null?"":$("#nuevoRangoEdad").val(),
+            ocupacion: $("#nuevaOcupacion").val()==null?"":$("#nuevaOcupacion").val(),
+            estadoCivil: $("#nuevoEstadoCivil").val()==null?"":$("#nuevoEstadoCivil").val(),
+            nivelEscolaridad: $("#nuevoNivelEscolaridad").val()==null?"":$("#nuevoNivelEscolaridad").val(),
+            nombreInstitucion: $("#nuevoNombreInstitucion").val()==null?"":$("#nuevoNombreInstitucion").val(),
+            tipoInstitucion: $("#nuevoTipoInstitucion").val()==null?"":$("#nuevoTipoInstitucion").val(),
+            vulnerabilidad: $("#nuevaVulnerabilidad").val()==null?"":$("#nuevaVulnerabilidad").val()
         };
 
-        let integVacios = false;
-        for (let campo in integrante){
-            if(integrante[campo] == ""){integVacios = true;}
-        }
+        let integVacios = [];
+        if(integrante['nombre'].trim() == "") integVacios.push("Nombres y Apellidos");
+        if(integrante['genero'] == "") integVacios.push("Genero");
+        if(integrante['parentesco'].trim() == "") integVacios.push("Parentesco");
+        if(integrante['rangoEdad'] == "") integVacios.push("Rango de edad");
+        if(integrante['ocupacion'].trim() == "") integVacios.push("Ocupacion");
+        if(integrante['estadoCivil'] == "") integVacios.push("Estado civil");
+        if(integrante['nivelEscolaridad'] == "") integVacios.push("Nivel de Escolaridad");
+        if(integrante['nivelEscolaridad'] != "ninguno" && integrante['nombreInstitucion'] == "") integVacios.push("Nombre de la Institución");
+        if(integrante['nivelEscolaridad'] != "ninguno" && integrante['tipoInstitucion'] == "") integVacios.push("Tipo de Institución");
+        if(integrante['vulnerabilidad'] == "") integVacios.push("Vulnerabilidad");
 
-        if(integVacios == false){
+        if(integVacios.length > 0){
+            swal.fire('Campos Vacíos', `Rellene los campos: ${integVacios.join(', ')}`, 'error');
+        }else{
             integrantes.push(integrante);
 
             if (integrante.vulnerabilidad === "discapacidad") {
@@ -1842,8 +1881,6 @@
             }
             actualizarTabla();
             limpiarCampos();
-        }else{
-            swal.fire('Campos Vacíos', 'Rellene todos los campos', 'error');
         }
     });
 
@@ -1878,7 +1915,9 @@
         $("#nuevoEstadoCivil").val("");
         $("#nuevoNivelEscolaridad").val("");
         $("#nuevoNombreInstitucion").val("");
+        $("#nuevoNombreInstitucion").attr("disabled", "true");
         $("#nuevoTipoInstitucion").val("");
+        $("#nuevoTipoInstitucion").attr("disabled", "true");
         $("#nuevaVulnerabilidad").val("");
     }
 
