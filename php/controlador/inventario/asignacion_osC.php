@@ -40,7 +40,10 @@ if(isset($_GET['GuardarAsignacion'])){
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->GuardarAsignacion($parametros));
 }
-
+if(isset($_GET['tipo_asignacion'])){
+    // $parametros = $_POST['parametros'];
+    echo json_encode($controlador->tipo_asignacion());
+}
 
 
 
@@ -64,6 +67,10 @@ class asignacion_osC
      */
     public function tipoBeneficiario($query): array
     {
+
+        $diaActual =  BuscardiasSemana(date('w'));
+        $diaActual = $diaActual[1]+1;
+
         try {
             $datos = $this->modelo->tipoBeneficiario($query);
             // print_r($datos);
@@ -72,38 +79,44 @@ class asignacion_osC
                 throw new Exception('No se encontraron datos');
             }
             foreach ($datos as $value) {
-                $res[] = array(
-                    'id' => $value['Codigo'],
-                    'text' => $value['Cliente'],
-                    'CodigoA' => $value['CodigoA'],
-                    'CI_RUC' => $value['CI_RUC'],
-                    'Fecha_Atencion' => $value['Fecha_Registro']->format('Y-m-d'),
-                    'Dia_Entrega' => $value['Fecha_Registro']->format('d'),
-                    'Hora_Entrega' => $value['Fecha_Registro']->format('H:i'),
-                    'Envio_No' => $value['Envio_No'],
-                    'Frecuencia' => $value['Frecuencia'],
-                    'Beneficiario' => $value['Beneficiario'],
-                    'No_Soc' => $value['No_Soc'],
-                    'Area' => $value['Area'],
-                    'Acreditacion' => $value['Acreditacion'],
-                    'AccionSocial' => $value['AccionSocial'],
-                    'Tipo' => $value['Tipo'],
-                    'Cod_Fam' => $value['Cod_Fam'],
-                    'TipoAtencion' => $value['TipoAtencion'],
-                    'Salario' => $value['Salario'],
-                    'CodigoACD' => $value['CodigoACD'],
-                    'TipoEntega' => $value['TipoEntega'],
-                    'Descuento' => $value['Descuento'],
-                    'Evidencias' => $value['Evidencias'],
-                    'CodTipoBene' => $value['Actividad'],
-                    'TipoBene' => $value['TipoBene'],
-                    'Color'=>$value['Color'],
-                    'Picture'=>$value['Picture'],
-                    'Estado'=>$value['Estado'],
-                    'Hora'=>$value['Hora'],
-                    'vulneravilidad'=>$value['vulnerabilidad'],
-                    'InfoNutri'=>$value['Observaciones'],
-                );
+
+                $dia =  BuscardiasSemana($value['Dia_Ent']);
+                if($diaActual==$dia[1])
+                {
+                    // print_r($dia);die();
+                    $res[] = array(
+                        'id' => $value['Codigo'],
+                        'text' => $value['Cliente'],
+                        'CodigoA' => $value['CodigoA'],
+                        'CI_RUC' => $value['CI_RUC'],
+                        'Fecha_Atencion' => $value['Fecha_Registro']->format('Y-m-d'),
+                        'Dia_Entrega' => $dia[0],
+                        'Hora_Entrega' => $value['Fecha_Registro']->format('H:i'),
+                        'Envio_No' => $value['Envio_No'],
+                        'Frecuencia' => $value['Frecuencia'],
+                        'Beneficiario' => $value['Beneficiario'],
+                        'No_Soc' => $value['No_Soc'],
+                        'Area' => $value['Area'],
+                        'Acreditacion' => $value['Acreditacion'],
+                        'AccionSocial' => $value['AccionSocial'],
+                        'Tipo' => $value['Tipo'],
+                        'Cod_Fam' => $value['Cod_Fam'],
+                        'TipoAtencion' => $value['TipoAtencion'],
+                        'Salario' => $value['Salario'],
+                        'CodigoACD' => $value['CodigoACD'],
+                        'TipoEntega' => $value['TipoEntega'],
+                        'Descuento' => $value['Descuento'],
+                        'Evidencias' => $value['Evidencias'],
+                        'CodTipoBene' => $value['Actividad'],
+                        'TipoBene' => $value['TipoBene'],
+                        'Color'=>$value['Color'],
+                        'Picture'=>$value['Picture'],
+                        'Estado'=>$value['Estado'],
+                        'Hora'=>$value['Hora'],
+                        'vulneravilidad'=>$value['vulnerabilidad'],
+                        'InfoNutri'=>$value['Observaciones'],
+                    );
+                }
             }
             return ['results' => $res]; // Ajuste aquí para coincidir con el formato de Select2
         } catch (Exception $e) {
@@ -221,6 +234,15 @@ class asignacion_osC
         }
         return $tr;
 
+    }
+
+    function tipo_asignacion()
+    {
+        $datos = $this->modelo->tipo_asignacion();
+        foreach ($datos as $key => $value) {
+            $lista[] = array('ID' =>$value['Cmds'] ,'Proceso'=>$value['Proceso'],'Picture'=>$value['Picture'] );
+        }
+        return $lista;
     }
 
     function GuardarAsignacion($parametros)

@@ -15,6 +15,7 @@
     $(document).ready(function () {
         beneficiario();
         listaAsignacion();
+        tipoCompra();
         $('#beneficiario').on('select2:select', function (e) {
             var data = e.params.data;//Datos beneficiario seleccionado
             console.log(data);
@@ -39,7 +40,7 @@
         $('#beneficiario').select2({
             placeholder: 'Beneficiario',
             ajax: {
-                url: '../controlador/inventario/asignacion_osC.php?',
+                url: '../controlador/inventario/asignacion_osC.php?Beneficiario',
                 dataType: 'json',
                 delay: 250,
                 data: function (params) {
@@ -157,6 +158,44 @@
         $("#comeAsig").val("");
     }
 
+    function onclicktipoCompra()
+    {
+        $('#modal_tipoCompra').modal('show');
+    }
+
+    function tipoCompra()
+    {
+         $.ajax({
+            url: '../controlador/inventario/asignacion_osC.php?tipo_asignacion=true',
+            type: 'POST',
+            dataType: 'json',
+            // data: { param: datos },
+            success: function (data) {
+
+            var op = '<option value="">Seleccione empaque</option>';
+            var option = '';
+            data.forEach(function(item,i){
+// console.log(item);
+              option+= '<div class="col-md-6 col-sm-6">'+
+                          '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/'+item.Picture+'.png" onclick="cambiar_empaque(\''+item.ID+'\')"  style="width: 60px;height: 60px;"></button><br>'+
+                          '<b>'+item.Proceso+'</b>'+
+                        '</div>';
+
+               op+='<option value="'+item.ID+'">'+item.Proceso+'</option>';
+            })
+
+            $('#tipoCompra').html(op); 
+            $('#pnl_tipo_empaque').html(option);   
+
+               // llenarComboList(data,'tipoCompra');
+               console.log(data);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+
     function llenarDatos(datos) {
 
         console.log(datos);
@@ -165,10 +204,7 @@
         $('#tipoEstado').val(datos.Estado);//Tipo de Estado
         $('#tipoEntrega').val(datos.TipoEntega);//Tipo de Entrega
         $('#horaEntrega').val(datos.Hora); //Hora de Entrega
-        var fecha = new Date(datos.Fecha_Atencion);
-        const opciones = { weekday: 'long' };
-        const diaEnLetras = new Intl.DateTimeFormat('es-ES', opciones).format(fecha);
-        $('#diaEntr').val(diaEnLetras.toUpperCase());//Dia de Entrega
+        $('#diaEntr').val(datos.Dia_Entrega.toUpperCase());//Dia de Entrega
         $('#frecuencia').val(datos.Frecuencia);//Frecuencia
         $('#tipoBenef').val(datos.TipoBene);//Tipo de Beneficiario
         $('#totalPersAten').val(datos.No_Soc);//Total, Personas Atendidas
@@ -447,7 +483,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-5">
+            <div class="col-sm-4">
                 <div class="row">                   
                      <div class="col-md-12 col-sm-6 col-xs-6">  
                         <div class="input-group">
@@ -458,7 +494,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>           
             <div class="col-sm-3">
                 <div class="row">                   
                     <div class="col-md-12 col-sm-6 col-xs-6">  
@@ -472,6 +508,22 @@
                     </div>
                 </div>
             </div>
+             <div class="col-sm-2">
+                 <div class="row">
+                    <div class="col-md-12 col-sm-6 col-xs-6">  
+                        <div class="input-group">                          
+                        <span class="input-group-btn">
+                            <button type="button" class="" onclick="onclicktipoCompra()">
+                                <img id="img_tipoCompra"  src="../../img/png/TipoCompra.png" style="width: 20px;" />
+                            </button>
+                        </span>
+                         <select name="tipoCompra" id="tipoCompra" class="form-control input-xs" onchange="">
+                         </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <div class="row alineado">
             <div class="col-sm-3">
@@ -811,3 +863,23 @@
             </div>
         </div>
     </div>
+
+<div id="modal_tipoCompra" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Tipo empaque</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+            <div class="row text-center" id="pnl_tipo_empaque">
+            </div>                       
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-primary" onclick="cambiar_empaque()">OK</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+

@@ -8567,6 +8567,26 @@ function Imprimir_Recibo_Caja($TRecibo)
 
 }
 
+function BuscardiasSemana($query)
+{
+  $posi = 0;
+  $dias = array(
+              array('Lunes','1','Monday'),
+              array('Martes','2','Tuesday'),
+              array('Miercoles','3','Wednesday'),
+              array('Jueves','4','Thursdar'),
+              array('Viernes','5','Friday'),
+              array('Sabado','6','Saturday'),
+              array('Domingo','0','Sunday')
+            );
+  $result = array_filter($dias, function($dia) use ($query) {
+      return strpos($dia[0], $query) !== false || strpos($dia[1], $query) !== false || strpos($dia[2], $query) !== false;
+  });
+  $result = array_values($result);
+  $result = $result[0];
+  return $result;
+}
+
 function UltimoDiaMes($FechaStr)
 {
   $vFechaStr = $FechaStr;
