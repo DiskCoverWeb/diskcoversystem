@@ -1152,7 +1152,7 @@
                     <div class="row" style=" margin:10px">
                         <div class="col-6">
                             <label for="totalIngresos">Total ingresos:</label>
-                            <input class="form-control imput-xs" id="totalIngresos" readonly></input>
+                            <input class="form-control imput-xs" id="totalIngresos" value="0.00" readonly></input>
                         </div>
                     </div>
                 </div>
@@ -1200,7 +1200,7 @@
                                         <option value="compartida">Compartida</option>
                                     </select>
                                 </td>
-                                <td><input type="text" class="form-control imput-xs" id="valor"></td>
+                                <td><input type="text" class="form-control imput-xs" id="valor" onchange="verificarDecimales(this)"></td>
                             </tbody>
                         </table>
                         <table class="table" id="tablaServicios">
@@ -1681,7 +1681,7 @@
         }
     }
 
-    function sumarCamposIngreso(elem){
+    function verificarDecimales(elem){
         if(isNaN(parseFloat(elem.value))){
             elem.value = "";
             Swal.fire('Valor no permitido', 'Este campo debe ser numerico', 'info');
@@ -1689,6 +1689,10 @@
             console.log(parseFloat(elem.value));
             elem.value = parseFloat(elem.value).toFixed(2);
         }
+    }
+
+    function sumarCamposIngreso(elem){
+        verificarDecimales(elem);
 
         let ingresoFijo = $("#ingresoFijo").val().trim() == "" ? 0 : parseFloat($("#ingresoFijo").val());
         let ingresoEventual = $("#ingresoEventual").val().trim() == "" ? 0 : parseFloat($("#ingresoEventual").val());
@@ -2205,7 +2209,7 @@
                     <option value="no">No</option>
                 </select>
             </td>
-            <td><input type="text" class="form-control input-xs"></td>            
+            <td><input type="text" class="form-control input-xs" onchange="verificarDecimales(this)"></td>            
         </tr>
     `;
             $("#tablaServicios tbody").append(fila);
@@ -2226,13 +2230,13 @@
                     <option value="no">No</option>
                 </select>
             </td>
-            <td><input type="text" class="form-control input-xs"></td>            
+            <td><input type="text" class="form-control input-xs" onchange="verificarDecimales(this)"></td>            
         </tr>
     `;
             $("#tablaOtrosGastos tbody").append(fila);
         }
 
-        servicios.forEach(servicio => agregarFila2(servicio));
+        otrosGastos.forEach(gastos => agregarFila2(gastos));
 
         $('#modalSituacionFam').modal('hide');
         $('#modalEgresosFam').modal('show');
