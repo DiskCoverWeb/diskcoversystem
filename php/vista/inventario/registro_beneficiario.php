@@ -315,12 +315,12 @@
                                             title="TIPO DE PROGRAMA" class="icon">
                                     </div>
                                     <div style="flex: 1; margin-right: 10px; margin-left: 10px;">
-                                        <label for="programa" style="display: block;">Programa</label>
-                                        <select class="form-control input-xs" name="programa" id="programa"
+                                        <label for="select_85" style="display: block;">Programa</label>
+                                        <select class="form-control input-xs" name="select_85" id="select_85"
                                             style="width: 100%;">
-                                            <option value="" selected disabled></option>
+                                            <!--<option value="" selected disabled></option>
                                             <option value="familias">Familias</option>
-                                            <option value="setentaYPiquito">70 y piquito</option>
+                                            <option value="setentaYPiquito">70 y piquito</option>-->
                                         </select>
                                     </div>
                                 </div>
@@ -935,9 +935,9 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <select class="form-control imput-xs" id="nuevoNivelEscolaridad">
+                                        <select class="form-control imput-xs" id="nuevoNivelEscolaridad" onchange="validarNinguno(this, 'nuevoNombreInstitucion', 'nuevoTipoInstitucion')">
                                             <option value="" selected disabled>Seleccione</option>
-                                            <option value="ninguna">Ninguna</option>
+                                            <option value="ninguno">Ninguna</option>
                                             <option value="primaria">Primaria</option>
                                             <option value="secundaria">Secundaria</option>
                                             <option value="bachillerato">Bachillerato</option>
@@ -946,10 +946,10 @@
                                             <option value="posgrado">Posgrado</option>
                                         </select>
                                     </td>
-                                    <td><input type="text" class="form-control imput-xs" id="nuevoNombreInstitucion">
+                                    <td><input type="text" class="form-control imput-xs" id="nuevoNombreInstitucion" disabled>
                                     </td>
                                     <td>
-                                        <select class="form-control imput-xs" id="nuevoTipoInstitucion">
+                                        <select class="form-control imput-xs" id="nuevoTipoInstitucion" disabled>
                                             <option value="" selected disabled>Seleccione</option>
                                             <option value="fiscal">Fiscal</option>
                                             <option value="fiscomisional">Fiscomisional</option>
@@ -1091,7 +1091,7 @@
                                     <th>Ingreso eventual $</th>
                                     <th>Pensión de alimentos $</th>
                                     <th>Ayuda familiar $</th>
-                                    <th>Jubilación</th>
+                                    <th>Jubilación $</th>
                                     <th>Tipo de Bono</th>
                                     <th>Bono $</th>
                                     <th>Uso del Bono</th>
@@ -1114,34 +1114,35 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <select class="form-control imput-xs" id="sueldoFijo">
+                                        <select class="form-control imput-xs" id="sueldoFijo" onchange="validarNinguno(this,'ingresoFijo')">
                                             <option value="" selected disabled>Seleccione</option>
                                             <option value="si">Si</option>
                                             <option value="no">No</option>
                                         </select>
                                     </td>
-                                    <td><input type="text" class="form-control imput-xs" id="ingresoFijo" onchange="sumarCamposIngreso()"></td>
-                                    <td><input type="text" class="form-control imput-xs" id="ingresoEventual" onchange="sumarCamposIngreso()"></td>
-                                    <td><input type="text" class="form-control imput-xs" id="pensionAlimentos" onchange="sumarCamposIngreso()"></td>
-                                    <td><input type="text" class="form-control imput-xs" id="ayudaFamiliar" onchange="sumarCamposIngreso()"></td>
-                                    <td><input type="text" class="form-control imput-xs" id="jubilacion"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="ingresoFijo" onchange="sumarCamposIngreso(this)" disabled></td>
+                                    <td><input type="text" class="form-control imput-xs" id="ingresoEventual" onchange="sumarCamposIngreso(this)"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="pensionAlimentos" onchange="sumarCamposIngreso(this)"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="ayudaFamiliar" onchange="sumarCamposIngreso(this)"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="jubilacion" onchange="sumarCamposIngreso(this)"></td>
                                     <td>
-                                        <select class="form-control imput-xs" id="tipoBono">
+                                        <select class="form-control imput-xs" id="tipoBono" onchange="validarNinguno(this,'bono','usoBono')">
                                             <option value="" selected disabled>Seleccione</option>
                                             <option value="desarrollo">Desarrollo Humano</option>
                                             <option value="manuela">Manuela Sáenz</option>
                                             <option value="joaquin">Joaquín Gallegos Lara</option>
+                                            <option value="ninguno">Ninguno</option>
                                         </select>
                                     </td>
-                                    <td><input type="text" class="form-control imput-xs" id="bono" onchange="sumarCamposIngreso()"></td>
+                                    <td><input type="text" class="form-control imput-xs" id="bono" onchange="sumarCamposIngreso(this)" disabled></td>
                                     <td>
-                                        <select class="form-control imput-xs" id="usoBono">
+                                        <select class="form-control imput-xs" id="usoBono" disabled>
                                             <option value="" selected disabled>Seleccione</option>
                                             <option value="mediacion">Mediación e insumos y movilización</option>
                                             <option value="gastos">Gastos generales</option>
                                         </select>
                                     </td>
-                                    <td><input type="text" class="form-control imput-xs" id="sumaIngresos" readonly></td>
+                                    <td><input type="text" class="form-control imput-xs" id="sumaIngresos" readonly value="0.00"></td>
                                     <td><button type="button" class="btn btn-primary"
                                             id="agregarSituacion">Agregar</button></td>
                                 </tr>
@@ -1151,7 +1152,7 @@
                     <div class="row" style=" margin:10px">
                         <div class="col-6">
                             <label for="totalIngresos">Total ingresos:</label>
-                            <input class="form-control imput-xs" id="totalIngresos" readonly></input>
+                            <input class="form-control imput-xs" id="totalIngresos" value="0.00" readonly></input>
                         </div>
                     </div>
                 </div>
@@ -1199,7 +1200,7 @@
                                         <option value="compartida">Compartida</option>
                                     </select>
                                 </td>
-                                <td><input type="text" class="form-control imput-xs" id="valor"></td>
+                                <td><input type="text" class="form-control imput-xs" id="valor" onchange="verificarDecimales(this)"></td>
                             </tbody>
                         </table>
                         <table class="table" id="tablaServicios">
@@ -1422,7 +1423,7 @@
                                     <td><input type="text" class="form-control" id="viviendaText" readonly></td>
                                 </tr>
                                 <tr>
-                                    <td>Madre/Padre Solter@</td>
+                                    <td>Estado Civil</td>
                                     <td><input type="text" class="form-control" id="madrePadreSolteroDato" readonly>
                                     </td>
                                     <td><input type="number" class="form-control" id="madrePadreSoltero" readonly></td>
@@ -1586,8 +1587,8 @@
                 </div>
                 <div class="modal-body">
                     <div class="row" style="margin: 10px;">
-                        <div id="modal_" style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
-                            <div class="col-md-6 col-sm-6 d-flex justify-content-center">
+                        <div id="modal_85" style="display: flex; flex-wrap: wrap; overflow-y: auto; max-height: 200px;">
+                            <!--<div class="col-md-6 col-sm-6 d-flex justify-content-center">
                                 <button id="btnFamilias" type="button" class="btn btn-default btn-sm" onclick="cambiarSelectPrograma(this)">
                                     <img src="../../img/png/familias2.png" style="width: 60px; height: 60px">
                                 </button>
@@ -1600,7 +1601,7 @@
                                 </button>
                                 <br>
                                 <b>70 y piquito</b>
-                            </div>
+                            </div>-->
                         </div>
                     </div>
                 </div>
@@ -1666,15 +1667,42 @@
         $("#totalIngresos").val(totalIngresos.toFixed(2));
     }
 
-    function sumarCamposIngreso(){
-        let ingresoFijo = $("#ingresoFijo").val().trim() == "" ? 0 : parseInt($("#ingresoFijo").val());
-        let ingresoEventual = $("#ingresoEventual").val().trim() == "" ? 0 : parseInt($("#ingresoEventual").val());
-        let pensionAlimentos = $("#pensionAlimentos").val().trim() == "" ? 0 : parseInt($("#pensionAlimentos").val());
-        let ayudaFamiliar = $("#ayudaFamiliar").val().trim() == "" ? 0 : parseInt($("#ayudaFamiliar").val());
-        let bono = $("#bono").val().trim() == "" ? 0 : parseInt($("#bono").val());
+    function validarNinguno(selectElem, ...valores){
+        if(selectElem.value == "ninguno" || selectElem.value == "no"){
+            for(let valor of valores){
+                $(`#${valor}`).attr('disabled', 'true');
+                $(`#${valor}`).val("");
+            }
+        }else{
+            for(let valor of valores){
+                $(`#${valor}`).removeAttr('disabled');
+                //$(`#${valor}`).val("");
+            }
+        }
+    }
 
-        let totalIng = ingresoFijo + ingresoEventual + pensionAlimentos + ayudaFamiliar + bono;
-        $("#sumaIngresos").val(totalIng);
+    function verificarDecimales(elem){
+        if(isNaN(parseFloat(elem.value))){
+            elem.value = "";
+            Swal.fire('Valor no permitido', 'Este campo debe ser numerico', 'info');
+        }else{
+            console.log(parseFloat(elem.value));
+            elem.value = parseFloat(elem.value).toFixed(2);
+        }
+    }
+
+    function sumarCamposIngreso(elem){
+        verificarDecimales(elem);
+
+        let ingresoFijo = $("#ingresoFijo").val().trim() == "" ? 0 : parseFloat($("#ingresoFijo").val());
+        let ingresoEventual = $("#ingresoEventual").val().trim() == "" ? 0 : parseFloat($("#ingresoEventual").val());
+        let pensionAlimentos = $("#pensionAlimentos").val().trim() == "" ? 0 : parseFloat($("#pensionAlimentos").val());
+        let ayudaFamiliar = $("#ayudaFamiliar").val().trim() == "" ? 0 : parseFloat($("#ayudaFamiliar").val());
+        let jubilacion = $("#jubilacion").val().trim() == "" ? 0 : parseFloat($("#jubilacion").val());
+        let bono = $("#bono").val().trim() == "" ? 0 : parseFloat($("#bono").val());
+
+        let totalIng = ingresoFijo + ingresoEventual + pensionAlimentos + ayudaFamiliar + jubilacion + bono;
+        $("#sumaIngresos").val(totalIng.toFixed(2));
     }
 
     var situaciones = [];
@@ -1682,30 +1710,33 @@
         var situacion = {
             nombre: $("#nombreSituacion").val(),
             lugarTrabajo: $("#lugarTrabajo").val(),
-            tipoSeguro: $("#tipoSeguro").val(),
-            sueldoFijo: $("#sueldoFijo").val(),
-            ingresoFijo: $("#ingresoFijo").val(),
-            ingresoEventual: $("#ingresoEventual").val(),
-            pensionAlimentos: $("#pensionAlimentos").val(),
-            ayudaFamiliar: $("#ayudaFamiliar").val(),
-            jubilacion: $("#jubilacion").val(),
-            tipoBono: $("#tipoBono").val(),
-            bono: $("#bono").val(),
-            usoBono: $("#usoBono").val(),
+            tipoSeguro: $("#tipoSeguro").val()==null?"":$("#tipoSeguro").val(),
+            sueldoFijo: $("#sueldoFijo").val()==null?"":$("#sueldoFijo").val(),
+            ingresoFijo: $("#ingresoFijo").val()==""?"0.00":$("#ingresoFijo").val(),
+            ingresoEventual: $("#ingresoEventual").val()==""?"0.00":$("#ingresoEventual").val(),
+            pensionAlimentos: $("#pensionAlimentos").val()==""?"0.00":$("#pensionAlimentos").val(),
+            ayudaFamiliar: $("#ayudaFamiliar").val()==""?"0.00":$("#ayudaFamiliar").val(),
+            jubilacion: $("#jubilacion").val()==""?"0.00":$("#jubilacion").val(),
+            tipoBono: $("#tipoBono").val()==null?"":$("#tipoBono").val(),
+            bono: $("#bono").val()==""?"0.00":$("#bono").val(),
+            usoBono: $("#usoBono").val()==null?"":$("#usoBono").val(),
             sumaIngresos: $("#sumaIngresos").val()
         };
-        let situacionVacios = false;
-        for (let campo in situacion){
-            if(situacion[campo] == ""){situacionVacios = true;}
-        }
 
-        if(situacionVacios == false){
+        let situacionVacios = [];
+        if(situacion['nombre'].trim() == "") situacionVacios.push("Nombres y Apellidos");
+        if(situacion['tipoSeguro'] == "") situacionVacios.push("Tipo de Seguro");
+        if(situacion['sueldoFijo'] == "") situacionVacios.push("Sueldo Fijo");
+        if(situacion['tipoBono'] == "") situacionVacios.push("Tipo de Bono");
+        if(situacion['tipoBono'] != "ninguno" && situacion['usoBono'] == "") situacionVacios.push("Uso del Bono");
+
+        if(situacionVacios.length > 0){
+            swal.fire('Campos Vacíos', `Rellene los campos: ${situacionVacios.join(', ')}`, 'error');
+        }else{
             situaciones.push(situacion);
             actualizarTablaSituacion();
             limpiarCamposSit();
             calcularTotalIngresos();
-        }else{
-            swal.fire('Campos Vacíos', 'Rellene todos los campos', 'error');
         }
         
     });
@@ -1741,13 +1772,16 @@
         $("#tipoSeguro").val("");
         $("#sueldoFijo").val("");
         $("#ingresoFijo").val("");
+        $("#ingresoFijo").attr("disabled", "true");
         $("#ingresoEventual").val("");
         $("#pensionAlimentos").val("");
         $("#ayudaFamiliar").val("");
         $("#jubilacion").val("");
         $("#tipoBono").val("");
         $("#bono").val("");
+        $("#bono").attr("disabled", "true");
         $("#usoBono").val("");
+        $("#usoBono").attr("disabled", "true");
         $("#sumaIngresos").val("");
     }
 
@@ -1801,24 +1835,33 @@
     var totalVulnerables = null;
     $("#agregarIntegrante").click(function () {
         var integrante = {
-            nombre: $("#nuevoNombre").val(),
-            genero: $("#nuevoGenero").val(),
-            parentesco: $("#nuevoParentesco").val(),
-            rangoEdad: $("#nuevoRangoEdad").val(),
-            ocupacion: $("#nuevaOcupacion").val(),
-            estadoCivil: $("#nuevoEstadoCivil").val(),
-            nivelEscolaridad: $("#nuevoNivelEscolaridad").val(),
-            nombreInstitucion: $("#nuevoNombreInstitucion").val(),
-            tipoInstitucion: $("#nuevoTipoInstitucion").val(),
-            vulnerabilidad: $("#nuevaVulnerabilidad").val()
+            nombre: $("#nuevoNombre").val()==null?"":$("#nuevoNombre").val(),
+            genero: $("#nuevoGenero").val()==null?"":$("#nuevoGenero").val(),
+            parentesco: $("#nuevoParentesco").val()==null?"":$("#nuevoParentesco").val(),
+            rangoEdad: $("#nuevoRangoEdad").val()==null?"":$("#nuevoRangoEdad").val(),
+            ocupacion: $("#nuevaOcupacion").val()==null?"":$("#nuevaOcupacion").val(),
+            estadoCivil: $("#nuevoEstadoCivil").val()==null?"":$("#nuevoEstadoCivil").val(),
+            nivelEscolaridad: $("#nuevoNivelEscolaridad").val()==null?"":$("#nuevoNivelEscolaridad").val(),
+            nombreInstitucion: $("#nuevoNombreInstitucion").val()==null?"":$("#nuevoNombreInstitucion").val(),
+            tipoInstitucion: $("#nuevoTipoInstitucion").val()==null?"":$("#nuevoTipoInstitucion").val(),
+            vulnerabilidad: $("#nuevaVulnerabilidad").val()==null?"":$("#nuevaVulnerabilidad").val()
         };
 
-        let integVacios = false;
-        for (let campo in integrante){
-            if(integrante[campo] == ""){integVacios = true;}
-        }
+        let integVacios = [];
+        if(integrante['nombre'].trim() == "") integVacios.push("Nombres y Apellidos");
+        if(integrante['genero'] == "") integVacios.push("Genero");
+        if(integrante['parentesco'].trim() == "") integVacios.push("Parentesco");
+        if(integrante['rangoEdad'] == "") integVacios.push("Rango de edad");
+        if(integrante['ocupacion'].trim() == "") integVacios.push("Ocupacion");
+        if(integrante['estadoCivil'] == "") integVacios.push("Estado civil");
+        if(integrante['nivelEscolaridad'] == "") integVacios.push("Nivel de Escolaridad");
+        if(integrante['nivelEscolaridad'] != "ninguno" && integrante['nombreInstitucion'] == "") integVacios.push("Nombre de la Institución");
+        if(integrante['nivelEscolaridad'] != "ninguno" && integrante['tipoInstitucion'] == "") integVacios.push("Tipo de Institución");
+        if(integrante['vulnerabilidad'] == "") integVacios.push("Vulnerabilidad");
 
-        if(integVacios == false){
+        if(integVacios.length > 0){
+            swal.fire('Campos Vacíos', `Rellene los campos: ${integVacios.join(', ')}`, 'error');
+        }else{
             integrantes.push(integrante);
 
             if (integrante.vulnerabilidad === "discapacidad") {
@@ -1842,8 +1885,6 @@
             }
             actualizarTabla();
             limpiarCampos();
-        }else{
-            swal.fire('Campos Vacíos', 'Rellene todos los campos', 'error');
         }
     });
 
@@ -1878,7 +1919,9 @@
         $("#nuevoEstadoCivil").val("");
         $("#nuevoNivelEscolaridad").val("");
         $("#nuevoNombreInstitucion").val("");
+        $("#nuevoNombreInstitucion").attr("disabled", "true");
         $("#nuevoTipoInstitucion").val("");
+        $("#nuevoTipoInstitucion").attr("disabled", "true");
         $("#nuevaVulnerabilidad").val("");
     }
 
@@ -1938,14 +1981,14 @@
         $('#modalPrograma').modal('show');
     })
 
-    function cambiarSelectPrograma(elem){
+    /*function cambiarSelectPrograma(elem){ // cambiada reciente
         if(elem.id == "btnFamilias"){
             $("#programa").val("familias");
         }else if(elem.id == "btn70Piquito"){
             $("#programa").val("setentaYPiquito");
         }
         $('#modalPrograma').modal('hide');
-    }
+    }*/
 
     /**
      * INFORMACION USUARIO
@@ -2166,7 +2209,7 @@
                     <option value="no">No</option>
                 </select>
             </td>
-            <td><input type="text" class="form-control input-xs"></td>            
+            <td><input type="text" class="form-control input-xs" onchange="verificarDecimales(this)"></td>            
         </tr>
     `;
             $("#tablaServicios tbody").append(fila);
@@ -2187,13 +2230,13 @@
                     <option value="no">No</option>
                 </select>
             </td>
-            <td><input type="text" class="form-control input-xs"></td>            
+            <td><input type="text" class="form-control input-xs" onchange="verificarDecimales(this)"></td>            
         </tr>
     `;
             $("#tablaOtrosGastos tbody").append(fila);
         }
 
-        servicios.forEach(servicio => agregarFila2(servicio));
+        otrosGastos.forEach(gastos => agregarFila2(gastos));
 
         $('#modalSituacionFam').modal('hide');
         $('#modalEgresosFam').modal('show');
@@ -2310,6 +2353,8 @@
         var numPersonas = ($("#numPersonas").val()) || 0;
         var ingresoPorPersona = ingresos / numPersonas;
         console.log(ingresoPorPersona)
+        console.log(ingresos)
+        console.log(numPersonas)
         if (ingresoPorPersona <= 48) {
             $("#ingresoHabitanteDato").val(ingresoPorPersona);
             $("#ingresoHabitante").val(2);
@@ -2527,7 +2572,7 @@
     function Calendario(datos) {
         return new Promise((resolve, reject) => {
             const promesas = datos.map(async (cliente) => {
-                var Actividad = cliente.Actividad || '';
+                var TB = cliente.TB || '';
                 var Cliente = cliente.Cliente || '';
                 var Envio_No = cliente.Envio_No || '';
                 var Dia_Ent = cliente.Dia_Ent || '';
@@ -3041,6 +3086,20 @@
                             });
                             $('#modal_93').html(option);
                         }
+                        if (valor == 85) {
+                            var opt = '<option value="">Programa</option>';
+                            datos.forEach(function (item) {
+                                option += '<div class="col-md-6 col-sm-6">' +
+                                    '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/' +
+                                    item.picture + '.png" onclick="itemSelect(\'' + item.picture +
+                                    '\',\'' + item.text + '\', \'' + item.color + '\', \'' + item.id +
+                                    '\')" style="width: 60px;height: 60px;"></button><br>' +
+                                    '<b>' + item.text + '</b>' +
+                                    '</div>';
+                                opt += '<option value="' + item.id + '">' + item.text + '</option>';
+                            });
+                            $('#modal_85').html(option);
+                        }
                     }
                 }
 
@@ -3061,6 +3120,11 @@
                     actualizarEstilo(item.color);
                     if (id == "93.04") abrirModal('pAliado');
                 }
+                if (valor == 85) {
+                    var val = id.substring(0, 2);
+                    $("#carouselBtnIma_" + val + " .item.active img").attr("src", imagen);
+                    $("#carouselBtnIma_" + val).carousel("pause");
+                }
                 if (valor == 87) {
                     var val = id.substring(0, 2);
                     $("#carouselBtnIma_" + val + " .item.active img").attr("src", imagen);
@@ -3076,6 +3140,9 @@
 
     $('#select_93').on('select2:select', function (e) {
         handleSelectEvent(e, 93);
+    });
+    $('#select_85').on('select2:select', function (e) {
+        handleSelectEvent(e, 85);
     });
     $('#select_87').on('select2:select', function (e) {
         handleSelectEvent(e, 87);
@@ -3152,11 +3219,14 @@
         LlenarSelectDiaEntrega();
         LlenarSelectSexo();
         LlenarSelectRucCliente();
+        llenarCarousels(85);
         llenarCarousels(87);
         llenarCarousels(93);
         llenarCarousels(91);
         llenarCarousels("CxC", true);
-        LlenarSelects_Val("CxC", true);
+       // LlenarSelects_Val("CxC", true);
+        LlenarTipoDonacion();
+        LlenarSelects_Val(85);
         LlenarSelects_Val(86);
         LlenarSelects_Val(87);
         LlenarSelects_Val(88);
@@ -3197,13 +3267,13 @@
         }
     });
 
-    function LlenarCalendario(Actividad) {
-        if (Actividad) {
+    function LlenarCalendario(TB) {
+        if (TB) {
             $.ajax({
                 url: '../controlador/inventario/registro_beneficiarioC.php?LlenarCalendario=true',
                 type: 'post',
                 dataType: 'json',
-                data: { valor: Actividad },
+                data: { valor: TB },
                 success: function (datos) {
                     if (datos != 0 && datos[0].Envio_No != null) {
                         Calendario(datos);
@@ -3324,7 +3394,7 @@
         $('#select_CxC').select2({
             placeholder: 'Seleccione una opcion',
             ajax: {
-                url: '../controlador/inventario/registro_beneficiarioC.php?',
+                url: '../controlador/inventario/registro_beneficiarioC.php?LlenarTipoDonacion=true',
                 dataType: 'json',
                 delay: 250,
                 data: function (params) {
@@ -3363,7 +3433,7 @@
         $('#select_' + valor).select2({
             placeholder: 'Seleccione una opción',
             ajax: {
-                url: '../controlador/inventario/registro_beneficiarioC.php?',
+                url: '../controlador/inventario/registro_beneficiarioC.php?LlenarSelects_Val=true',
                 dataType: 'json',
                 delay: 250,
                 data: function (params) {
@@ -3371,7 +3441,7 @@
                         query: params.term,
                         valor: valor,
                         valor2: valor2,
-                        LlenarSelects_Val: true
+                        //LlenarSelects_Val: true
                     };
                 },
                 processResults: function (data) {
@@ -3445,121 +3515,184 @@
 
     //registro 
     $('#btnGuardarAsignacion').click(function () {
-        var fileInput = $('#archivoAdd')[0];
-        var formData = new FormData();
-
-        for (var i = 0; i < fileInput.files.length; i++) {
-            formData.append('Evidencias[]', fileInput.files[i]);
-        }
-
-        formData.append('Cliente', miCliente);
-        formData.append('CI_RUC', miRuc);
-        formData.append('Codigo', miCodigo);
-        formData.append('Actividad', $('#select_93').val() || '.');
-        formData.append('CodigoA', $('#select_87').val() || '.');
-        formData.append('Calificacion', $('#select_CxC').val() || '.');
-        formData.append('Representante', $('#nombreRepre').val());
-        formData.append('CI_RUC_R', $('#ciRepre').val());
-        formData.append('Telefono_R', $('#telfRepre').val());
-        formData.append('Contacto', $('#contacto').val());
-        formData.append('Profesion', $('#cargo').val());
-        formData.append('Dia_Ent', $('#diaEntrega').val() || '.');
-        formData.append('Hora_Ent', $('#horaEntrega').val());
-
-        formData.append('Sexo', $('#sexo').val() || '.');
-        formData.append('Email', $('#email').val());
-        formData.append('Email2', $('#email2').val());
-        formData.append('Telefono', $('#telefono').val());
-        formData.append('TelefonoT', $('#telefono2').val());
-
-        formData.append('Provincia', $('#select_prov').val() || '.');
-        formData.append('Ciudad', $('#select_ciud').val() || '.');
-        formData.append('Canton', $('#Canton').val() || '.');
-        formData.append('Parroquia', $('#Parroquia').val() || '.');
-        formData.append('Barrio', $('#Barrio').val() || '.');
-        formData.append('CalleP', $('#CalleP').val() || '.');
-        formData.append('CalleS', $('#CalleS').val() || '.');
-        formData.append('Referencia', $('#Referencia').val() || '.');
-
-        // Información adicional
-        formData.append('CodigoA2', $('#select_88').val());
-        formData.append('Dia_Ent2', $('#diaEntregac').val() || '.');
-        formData.append('Hora_Registro', $('#horaEntregac').val());
-        formData.append('Envio_No', $('#select_86').val());
-        formData.append('Comentario', $('#comentario').val() || '.');
-        formData.append('No_Soc', $('#totalPersonas').val());
-        //formData.append('Area', $('#select_91').val());
-        formData.append('Acreditacion', $('#select_92').val());
-        formData.append('Tipo_Dato', $('#select_90').val());
-        formData.append('Cod_Fam', $('#select_89').val());
-        formData.append('Observaciones', $('#infoNut').val());
-
-        formData.append('TipoPoblacion', JSON.stringify(valoresFilas));
-
-        //validacion campos llenos
-        var camposVacios = [];
-        if (!miRuc) camposVacios.push('RUC');
-        if (!$('#select_88').val()) camposVacios.push('Tipo Entrega');
-        if (!$('#diaEntregac').val()) camposVacios.push('Fecha Entrega');
-        if (!$('#horaEntregac').val()) camposVacios.push('Hora Entrega');
-        if (!$('#select_86').val()) camposVacios.push('Frecuencia');
-        if (!$('#totalPersonas').val()) camposVacios.push('Personas Atendidas');
-        //if (!$('#select_91').val()) camposVacios.push('Tipo poblacion');
-        if (valoresFilas.length == 0) {
-            camposVacios.push('Tipo Poblacion');
-        }
-        if (!$('#select_92').val()) camposVacios.push('Accion social');
-        if (!$('#select_90').val()) camposVacios.push('Vulnerabilidad');
-        if (!$('#select_89').val()) camposVacios.push('Tipo Atencion');
-        if (!fileInput.files.length && nombreArchivo == "") camposVacios.push('Evidencias');
-        if (!$('#infoNut').val()) camposVacios.push('Observaciones');
-
-        if (userNew == false && userAuth == false) {
-            Swal.fire({
-                title: '',
-                text: "Usted no está autorizado.",
-                type: 'error',
-                confirmButtonText: 'Aceptar'
-            });
-        } else if (camposVacios.length > 0) {
-            var mensaje = 'Los siguientes campos están vacíos:\n';
-            camposVacios.forEach(function (campo) {
-                mensaje += campo + ',';
-            });
-            Swal.fire({
-                title: 'Campos Vacíos',
-                text: mensaje,
-                type: 'error',
-                confirmButtonText: 'Aceptar'
-            });
-        } else {
-            $('#myModal_espera').modal('show');
-            $.ajax({
-                type: 'post',
-                url: '../controlador/inventario/registro_beneficiarioC.php?guardarAsignacion=true',
-                processData: false,
-                contentType: false,
-                data: formData,
-                dataType: 'json',
-                success: function (response) {
-                    $('#myModal_espera').modal('hide');
-                    if (response.res == '0') {
-                        Swal.fire({
-                            title: 'AVISO',
-                            text: response.mensaje + (response.datos || ''),
-                            type: 'error',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    } else {
-                        Swal.fire({
-                            title: response.mensaje,
-                            type: 'success',
-                            confirmButtonText: 'Aceptar'
-                        });
-                        nombreArchivo = response.datos.result;
-                    }
+        switch($('#select_93').val()){
+            case '93.01':
+            {
+                var fileInput = $('#archivoAdd')[0];
+                var formData = new FormData();
+        
+                for (var i = 0; i < fileInput.files.length; i++) {
+                    formData.append('Evidencias[]', fileInput.files[i]);
                 }
-            });
+        
+                formData.append('Cliente', miCliente);
+                formData.append('CI_RUC', miRuc);
+                formData.append('Codigo', miCodigo);
+                formData.append('TB', $('#select_93').val() || '.');
+                formData.append('CodigoA', $('#select_87').val() || '.');
+                formData.append('Calificacion', $('#select_CxC').val() || '.');
+                formData.append('Representante', $('#nombreRepre').val());
+                formData.append('CI_RUC_R', $('#ciRepre').val());
+                formData.append('Telefono_R', $('#telfRepre').val());
+                formData.append('Contacto', $('#contacto').val());
+                formData.append('Profesion', $('#cargo').val());
+                formData.append('Dia_Ent', $('#diaEntrega').val() || '.');
+                formData.append('Hora_Ent', $('#horaEntrega').val());
+        
+                formData.append('Sexo', $('#sexo').val() || '.');
+                formData.append('Email', $('#email').val());
+                formData.append('Email2', $('#email2').val());
+                formData.append('Telefono', $('#telefono').val());
+                formData.append('TelefonoT', $('#telefono2').val());
+        
+                formData.append('Provincia', $('#select_prov').val() || '.');
+                formData.append('Ciudad', $('#select_ciud').val() || '.');
+                formData.append('Canton', $('#Canton').val() || '.');
+                formData.append('Parroquia', $('#Parroquia').val() || '.');
+                formData.append('Barrio', $('#Barrio').val() || '.');
+                formData.append('CalleP', $('#CalleP').val() || '.');
+                formData.append('CalleS', $('#CalleS').val() || '.');
+                formData.append('Referencia', $('#Referencia').val() || '.');
+        
+                // Información adicional
+                formData.append('CodigoA2', $('#select_88').val());
+                formData.append('Dia_Ent2', $('#diaEntregac').val() || '.');
+                formData.append('Hora_Registro', $('#horaEntregac').val());
+                formData.append('Envio_No', $('#select_86').val());
+                formData.append('Comentario', $('#comentario').val() || '.');
+                formData.append('No_Soc', $('#totalPersonas').val());
+                //formData.append('Area', $('#select_91').val());
+                formData.append('Acreditacion', $('#select_92').val());
+                formData.append('Tipo_Dato', $('#select_90').val());
+                formData.append('Cod_Fam', $('#select_89').val());
+                formData.append('Observaciones', $('#infoNut').val());
+        
+                formData.append('TipoPoblacion', JSON.stringify(valoresFilas));
+        
+                //validacion campos llenos
+                var camposVacios = [];
+                if (!miRuc) camposVacios.push('RUC');
+                if (!$('#select_88').val()) camposVacios.push('Tipo Entrega');
+                if (!$('#diaEntregac').val()) camposVacios.push('Fecha Entrega');
+                if (!$('#horaEntregac').val()) camposVacios.push('Hora Entrega');
+                if (!$('#select_86').val()) camposVacios.push('Frecuencia');
+                if (!$('#totalPersonas').val()) camposVacios.push('Personas Atendidas');
+                //if (!$('#select_91').val()) camposVacios.push('Tipo poblacion');
+                if (valoresFilas.length == 0) {
+                    camposVacios.push('Tipo Poblacion');
+                }
+                if (!$('#select_92').val()) camposVacios.push('Accion social');
+                if (!$('#select_90').val()) camposVacios.push('Vulnerabilidad');
+                if (!$('#select_89').val()) camposVacios.push('Tipo Atencion');
+                if (!fileInput.files.length && nombreArchivo == "") camposVacios.push('Evidencias');
+                if (!$('#infoNut').val()) camposVacios.push('Observaciones');
+        
+                if (userNew == false && userAuth == false) {
+                    Swal.fire({
+                        title: '',
+                        text: "Usted no está autorizado.",
+                        type: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                } else if (camposVacios.length > 0) {
+                    var mensaje = 'Los siguientes campos están vacíos:\n';
+                    camposVacios.forEach(function (campo) {
+                        mensaje += campo + ',';
+                    });
+                    Swal.fire({
+                        title: 'Campos Vacíos',
+                        text: mensaje,
+                        type: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                } else {
+                    $('#myModal_espera').modal('show');
+                    $.ajax({
+                        type: 'post',
+                        url: '../controlador/inventario/registro_beneficiarioC.php?guardarAsignacion=true',
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        dataType: 'json',
+                        success: function (response) {
+                            $('#myModal_espera').modal('hide');
+                            if (response.res == '0') {
+                                Swal.fire({
+                                    title: 'AVISO',
+                                    text: response.mensaje + (response.datos || ''),
+                                    type: 'error',
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: response.mensaje,
+                                    type: 'success',
+                                    confirmButtonText: 'Aceptar'
+                                });
+                                nombreArchivo = response.datos.result;
+                            }
+                        }
+                    });
+                }
+            }
+            break;
+            case '93.02':
+            {
+                const formData = new FormData();
+                formData.append('TB', $('#select_93').val());
+                formData.append('Calificacion', $('#select_CxC').val());
+                formData.append('Num_Lista', $('#select_85').val());
+                formData.append('Fecha', $('#fechaIngreso').val());
+                formData.append('CodigoA', $('#select_87').val());
+                formData.append('Cliente', `${$('#apellidos').val()} ${$('#nombres').val()}` || '.');
+                formData.append('CI_RUC', $('#cedula').val() || '.');
+                formData.append('Profesion', $('#nivelEscolar').val() || '.');
+                formData.append('Est_Civil', $('#estadoCivil').val() || '.');
+                formData.append('Fecha_N', $('#edad').val() || '.');// ??????
+                formData.append('Actividad', $('#ocupacion').val() || '.');
+                formData.append('Telefono', $('#telefonoFam').val() || '.');
+                formData.append('Referencia', $('#pregunta').val() || '.');
+                
+                $('#myModal_espera').modal('show');
+                console.log(formData);
+                /*$.ajax({
+                    type: 'post',
+                    url: '../controlador/inventario/registro_beneficiarioC.php?guardarAsignacion=true',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    dataType: 'json',
+                    success: function (response) {
+                        $('#myModal_espera').modal('hide');
+                        if (response.res == '0') {
+                            Swal.fire({
+                                title: 'AVISO',
+                                text: response.mensaje + (response.datos || ''),
+                                type: 'error',
+                                confirmButtonText: 'Aceptar'
+                            });
+                        } else {
+                            Swal.fire({
+                                title: response.mensaje,
+                                type: 'success',
+                                confirmButtonText: 'Aceptar'
+                            });
+                            nombreArchivo = response.datos.result;
+                        }
+                    }
+                });*/
+            }
+            break;
+            default:
+            {
+                Swal.fire({
+                    title: 'ERROR',
+                    text: 'Porfavor seleccione un Tipo de Beneficiario',
+                    type: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+            break;
         }
     });
 
@@ -3676,7 +3809,7 @@
                     $('#Referencia').val(datos.Referencia);
 
                     datosArray.forEach(function (item) {
-                        if (item.id === datos.Actividad || item.id === datos.CodigoA || item.id === datos.Calificacion) {
+                        if (item.id === datos.TB || item.id === datos.CodigoA || item.id === datos.Calificacion) {
                             itemSelect(item.picture, item.text, item.color, item.id);
                         }
                     });
@@ -3685,7 +3818,7 @@
                         $('#select_87').val(null).trigger('change');
                         $('#carouselBtnIma_87').carousel("cycle");
                     }
-                    if (datos.Actividad == '.') {
+                    if (datos.TB == '.') {
                         $('#select_93').val(null).trigger('change');
                         $('#carouselBtnIma_93').carousel("cycle");
                     }

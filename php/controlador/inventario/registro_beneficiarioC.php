@@ -99,7 +99,7 @@ if (isset($_GET['guardarAsignacion'])) {
         'Cliente' => $_POST['Cliente'],
         'CI_RUC' => $_POST['CI_RUC'],
         'Codigo' => $_POST['Codigo'],
-        'Actividad' => $_POST['Actividad'],
+        'TB' => $_POST['TB'],
         'Calificacion' => $_POST['Calificacion'],
         'CodigoA' => $_POST['CodigoA'],
         'Representante' => $_POST['Representante'],
