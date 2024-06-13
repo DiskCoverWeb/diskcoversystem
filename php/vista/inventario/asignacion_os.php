@@ -14,12 +14,12 @@
 
     $(document).ready(function () {
         beneficiario();
-        listaAsignacion();
-        tipoCompra();
+        // tipoCompra();
         $('#beneficiario').on('select2:select', function (e) {
             var data = e.params.data;//Datos beneficiario seleccionado
             console.log(data);
-            llenarDatos(data);
+            tipoCompra(data)
+            listaAsignacion();
 
         });
 
@@ -117,6 +117,21 @@
                 return false;
             })
         }
+
+        var stock = $('#stock').val();
+        var cant =  $('#cant').val();
+        console.log(cant)
+        console.log(stock);
+        if(cant=='' || cant==null || cant <= 0)
+        { 
+            Swal.fire("Cantidad no valida","","info");
+            return false;
+        }
+        if(parseFloat(cant)> parseFloat(stock))
+        { 
+            Swal.fire("Cantidad supera al stock","","info")
+            return false;
+        }
         var datos = {
             'Codigo': $('#grupProd').val(),
             'Producto': $('#grupProd option:selected').text(),
@@ -125,7 +140,16 @@
             'beneficiarioCodigo':$('#beneficiario').val(), 
             'beneficiarioN':$('#beneficiario option:selected').text(),   
             'FechaAte':$('#fechAten').val(),   
+            'asignacion':$('#tipoCompra').val(),
         };       
+
+        if($('#tipoCompra').val()=='' || $('#tipoCompra').val()==null)
+        {
+            Swal.fire("Seleccione Tipo de asignacion","","info")
+             return false;
+        }
+
+
         $.ajax({
             url: '../controlador/inventario/asignacion_osC.php?addAsignacion=true',
             type: 'POST',
@@ -158,12 +182,23 @@
         $("#comeAsig").val("");
     }
 
+    function removeOptionByValue(value) {
+        var selectElement = document.getElementById('tipoCompra');
+        for (var i = 0; i < selectElement.options.length; i++) {
+            if (selectElement.options[i].value === value) {
+                selectElement.remove(i);
+                break;
+            }
+        }
+    }
+    
+
     function onclicktipoCompra()
     {
         $('#modal_tipoCompra').modal('show');
     }
 
-    function tipoCompra()
+    function tipoCompra(benefi)
     {
          $.ajax({
             url: '../controlador/inventario/asignacion_osC.php?tipo_asignacion=true',
@@ -172,7 +207,7 @@
             // data: { param: datos },
             success: function (data) {
 
-            var op = '<option value="">Seleccione empaque</option>';
+            var op = '';
             var option = '';
             data.forEach(function(item,i){
 // console.log(item);
@@ -187,6 +222,9 @@
             $('#tipoCompra').html(op); 
             $('#pnl_tipo_empaque').html(option);   
 
+            llenarDatos(benefi);
+
+
                // llenarComboList(data,'tipoCompra');
                console.log(data);
             },
@@ -196,9 +234,10 @@
         });
     }
 
-    function llenarDatos(datos) {
-
+function llenarDatos(datos) {
         console.log(datos);
+         // await tipoCompra();
+        
        // $('#beneficiario').val(datos.Beneficiario);
         $('#fechAten').val(datos.Fecha_Atencion);//Fecha de Atencion
         $('#tipoEstado').val(datos.Estado);//Tipo de Estado
@@ -219,6 +258,11 @@
         color = datos.Color.replace('Hex_','');
         $('#rowGeneral').css('background-color', '#' + color);
         $('#img_tipoBene').attr('src','../../img/png/'+datos.Picture+'.png')
+
+         datos.asignaciones_hechas.forEach(function(item,i){
+            removeOptionByValue(item.No_Hab)
+         })
+
       //  datosExtras(params);
 
 

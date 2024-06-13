@@ -78,10 +78,15 @@ class asignacion_osC
             if (count($datos) == 0) {
                 throw new Exception('No se encontraron datos');
             }
+
+            $cant_asig = $this->modelo->tipo_asignacion();
+            $cant_asig = count($cant_asig);
             foreach ($datos as $value) {
+                $asignacionesLis =$this->modelo->asignaciones_hechas($value['Codigo']);                
+                $asignaciones = count($asignacionesLis);
 
                 $dia =  BuscardiasSemana($value['Dia_Ent']);
-                if($diaActual==$dia[1])
+                if($diaActual==$dia[1] && $asignaciones!=$cant_asig)
                 {
                     // print_r($dia);die();
                     $res[] = array(
@@ -115,6 +120,7 @@ class asignacion_osC
                         'Hora'=>$value['Hora'],
                         'vulneravilidad'=>$value['vulnerabilidad'],
                         'InfoNutri'=>$value['Observaciones'],
+                        'asignaciones_hechas' =>$asignacionesLis,
                     );
                 }
             }
@@ -160,7 +166,7 @@ class asignacion_osC
         $tr = '';
         $cantidad = 0;
         $res = array();
-        $datos = $this->modelo->listaAsignacion($parametros['beneficiario']);
+        $datos = $this->modelo->listaAsignacion($parametros['beneficiario'],'.');
         foreach ($datos as $key => $value) {
             $tr.='<tr>
                     <td>'.($key+1).'</td>
@@ -197,6 +203,7 @@ class asignacion_osC
         SetAdoFields("Item",$_SESSION['INGRESO']['item']);
         SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
         SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+        SetAdoFields("No_Hab",$parametros['asignacion']);
         
         return SetAdoUpdate();
     }

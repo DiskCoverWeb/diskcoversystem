@@ -1,9 +1,8 @@
 <?php
-
 require_once (dirname(__DIR__, 2) . "/db/db1.php");
 require_once (dirname(__DIR__, 2) . "/funciones/funciones.php");
 
-class asignacion_osM
+class asignacion_pickingM
 {
 
     private $db;
@@ -15,35 +14,37 @@ class asignacion_osM
 
     }
 
-    public function tipoBeneficiario($query = ''): array
+    function tipoBeneficiario($codigo = '')
     {
-        $sql = "SELECT DISTINCT TOP 100 C.Codigo, C.CodigoA,CP5.Proceso AS 'Estado', C.Cliente, C.CI_RUC, CD.Fecha_Registro, CD.Envio_No,CP3.Proceso as 'Frecuencia',CD.CodigoA as CodigoACD,CP4.Proceso as'TipoEntega' ,CD.Beneficiario, CD.No_Soc, CD.Area, CD.Acreditacion,CP1.Proceso as 'AccionSocial', CD.Tipo, CD.Cod_Fam,CP2.Proceso as 'TipoAtencion', CD.Salario, CD.Descuento, CD.Evidencias, CD.Item,C.Actividad,CP.Proceso as 'TipoBene',CP.Color,CP.Picture,CD.Hora_Ent as 'Hora',CD.Tipo_Dato as 'CodVulnera',CP6.Proceso AS 'vulnerabilidad',CD.Observaciones,CD.Hora_Ent,CD.Dia_Ent 
-            FROM Clientes as C INNER JOIN Clientes_Datos_Extras as CD ON C.Codigo = CD.Codigo 
-            LEFT JOIN Catalogo_Proceso CP ON C.Actividad = CP.Cmds 
-            LEFT JOIN Catalogo_Proceso CP1 ON CD.Acreditacion = CP1.Cmds 
-            LEFT JOIN Catalogo_Proceso CP2 ON CD.Cod_Fam = CP2.Cmds 
-            LEFT JOIN Catalogo_Proceso CP3 ON CD.Envio_No = CP3.Cmds 
-            LEFT JOIN Catalogo_Proceso CP4 ON CD.CodigoA = CP4.Cmds 
-            LEFT JOIN Catalogo_Proceso CP5 ON C.CodigoA = CP5.Cmds 
-            LEFT JOIN Catalogo_Proceso CP6 ON CD.Tipo_Dato= CP6.Cmds 
-            WHERE CD.Item = '" . $_SESSION['INGRESO']['item'] . "'
+        $sql = "SELECT DISTINCT No_Hab,C.Codigo, C.CodigoA,CP5.Proceso AS 'Estado', C.Cliente, C.CI_RUC, CD.Fecha_Registro, CD.Envio_No,CP3.Proceso as 'Frecuencia',CD.CodigoA as CodigoACD,CP4.Proceso as'TipoEntega' ,CD.Beneficiario, CD.No_Soc, CD.Area, CD.Acreditacion,CP1.Proceso as 'AccionSocial', CD.Tipo, CD.Cod_Fam,CP2.Proceso as 'TipoAtencion', CD.Salario, CD.Descuento, CD.Evidencias, CD.Item,C.Actividad,CP.Proceso as 'TipoBene',CP.Color,CP.Picture,CD.Hora_Ent as 'Hora',CD.Tipo_Dato as 'CodVulnera',CP6.Proceso AS 'vulnerabilidad',CD.Observaciones,CD.Hora_Ent,CD.Dia_Ent,CP7.Proceso as 'Tipo Asignacion' 
+        	FROM Detalle_Factura DF
+			INNER JOIN Clientes C on DF.CodigoC = C.Codigo
+			INNER JOIN Clientes_Datos_Extras as CD ON C.Codigo = CD.Codigo 
+			LEFT JOIN Catalogo_Proceso CP ON C.Actividad = CP.Cmds 
+			LEFT JOIN Catalogo_Proceso CP1 ON CD.Acreditacion = CP1.Cmds 
+			LEFT JOIN Catalogo_Proceso CP2 ON CD.Cod_Fam = CP2.Cmds 
+			LEFT JOIN Catalogo_Proceso CP3 ON CD.Envio_No = CP3.Cmds 
+			LEFT JOIN Catalogo_Proceso CP4 ON CD.CodigoA = CP4.Cmds 
+			LEFT JOIN Catalogo_Proceso CP5 ON C.CodigoA = CP5.Cmds 
+			LEFT JOIN Catalogo_Proceso CP6 ON CD.Tipo_Dato= CP6.Cmds 
+			LEFT JOIN Catalogo_Proceso CP7 ON DF.No_Hab= CP7.Cmds 
+			WHERE DF.Item = '".$_SESSION['INGRESO']['item']."'
+			AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+			if($codigo)
+			{
+				$sql.=" CodigoC+' '+ = like '%".$codigo."%'";
+			}
+			$sql.=" AND DF.TC = 'OP'
+			AND DF.T = 'K'
             AND CD.Item = CP.Item 
             AND CD.Item = CP1.Item 
             AND CD.Item = CP2.Item 
             AND CD.Item = CP3.Item 
             AND CD.Item = CP4.Item  
-            AND CD.Item = CP5.Item";
-        if ($query != '') {
-            if (!is_numeric($query)) {
-                $sql .= " AND C.Cliente LIKE '%" . $query . "%'";
-            } else {
-                $sql .= " AND C.CI_RUC LIKE '%" . $query . "%'";
-            }
-        }
+            AND CD.Item = CP5.Item";     
 
-        $sql .= " ORDER BY C.Cliente";
+            // print_r($sql);die();   
 
-        // print_r($sql);die();
         try {
             return $this->db->datos($sql);
         } catch (Exception $e) {
@@ -65,7 +66,7 @@ class asignacion_osM
         }
     }
 
-    function listaAsignacion($beneficiario,$T=false,$tipo=false)
+    function listaAsignacion($beneficiario,$T=false)
     {
          $sql = "SELECT ".Full_Fields("Detalle_Factura")."
                 FROM Detalle_Factura
@@ -75,10 +76,6 @@ class asignacion_osM
                 if($T)
                 {
                     $sql.="AND T = '".$T."'";
-                }
-                if($tipo)
-                {
-                    $sql.=" AND No_Hab = '".$tipo."'";
                 }
         try{
             return $this->db->datos($sql);

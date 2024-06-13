@@ -1,13 +1,106 @@
 <script type="text/javascript">
 	$(document).ready(function () {
-  		lista_egreso_checking();
-  		areas();  
-  		motivo_egreso()	
+  		beneficiario();
+
+  		 $('#beneficiario').on('select2:select', function (e) {
+            var datos = e.params.data.data;//Datos beneficiario seleccionado
+	        $('#fechAten').val(datos.Fecha_Atencion);//Fecha de Atencion
+	        $('#tipoEstado').val(datos.Estado);//Tipo de Estado
+	        $('#tipoEntrega').val(datos.TipoEntega);//Tipo de Entrega
+	        $('#horaEntrega').val(datos.Hora); //Hora de Entrega
+	        $('#diaEntr').val(datos.Dia_Ent.toUpperCase());//Dia de Entrega
+	        $('#frecuencia').val(datos.Frecuencia);//Frecuencia
+	        $('#tipoBenef').val(datos.TipoBene);//Tipo de Beneficiario
+	        $('#totalPersAten').val(datos.No_Soc);//Total, Personas Atendidas
+	        $('#tipoPobl').val(datos.Area);//Tipo de Poblacion
+	        $('#acciSoci').val(datos.AccionSocial);//Accion Social
+	        $('#vuln').val(datos.vulneravilidad);//Vulnerabilidad
+	        $('#tipoAten').val(datos.TipoAtencion);//Tipo de Atencion
+	        $('#CantGlobSugDist').val(datos.Salario);//Cantidad global sugerida a distribuir
+	        $('#CantGlobDist').val(datos.Descuento);//Cantidad global a distribuir
+	        $('#infoNutr').val(datos.InfoNutri);
+	        cargarOrden();
+        });
+
   	})
+
+  	 function beneficiario() {
+  	 	$('#beneficiario').select2({
+        placeholder: 'Seleccione una beneficiario',
+        // width:'90%',
+        ajax: {
+           url: '../controlador/inventario/asignacion_pickingC.php?Beneficiario=true',
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {
+            // console.log(data);
+            return {
+              results: data
+            };
+          },
+          cache: true
+        }
+      });
+    }
+
+    function cargarOrden() {
+    	codigo = $('#beneficiario').val();
+    	beneficiario = codigo.split('-');
+        var param = {
+            'beneficiario':beneficiario[0],
+            'tipo':beneficiario[1],
+        }
+        $.ajax({
+            url: '../controlador/inventario/asignacion_pickingC.php?cargarOrden=true',
+            type: 'POST',
+            dataType: 'json',
+            data: { param: param },
+            success: function (data) {
+            	$('#pnl_detalle').html(data.detalle);
+            	$('#ddlgrupoProducto').html(data.ddl);
+            	$('#txt_total').val(data.total);
+                $('#CantGlobDist').val(data.cantidad);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+
 
   	function ver_detalle()
   	{
+  		cargarOrden();
   		$('#modalDetalleCantidad').modal('show');
+  	}
+
+  	function validar_codigo()
+  	{
+  	 	codigo = $('#txt_codigo').val();
+  	 	grupo = $('#ddlgrupoProducto').val();
+		var parametros = {
+		'codigo':codigo,
+		}
+	 	$.ajax({
+		    type: "POST",
+	       url:   '../controlador/inventario/egreso_alimentosC.php?buscar_producto=true',
+		     data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+		    	data = data[0];
+		    	console.log(data);
+		    	// if(grupo==data[])
+		    	$('#txt_id').val(data.ID)
+		    	$('#txt_cod_producto').val(data.Codigo_Barra)
+				$('#txt_donante').val(data.Cliente)
+				$('#txt_grupo').val(data.Producto)
+				$('#txt_stock').val(data.Entrada)
+				$('#txt_unidad').val(data.Unidad)
+		    }
+		});
+	
+
   	}
 </script>
 <div class="row mb-2">
@@ -39,7 +132,7 @@
 				                            <div class="input-group-addon input-xs">
 				                                <b>Beneficiario/ Usuario:</b>
 				                            </div>
-				                             <select name="beneficiario" id="beneficiario" class="form-control input-xs" onchange="listaAsignacion()"></select>
+				                             <select name="beneficiario" id="beneficiario" class="form-control input-xs"></select>
 				                        </div>
 				                    </div>
 				                </div>
@@ -128,11 +221,11 @@
 				                                <b> Tipo de Beneficiario:</b>
 				                            </div>
 				                        <input type="text" name="tipoBenef" id="tipoBenef" class="form-control input-xs" readonly>
-				                        <span class="input-group-btn">
+				                        <!-- <span class="input-group-btn">
 				                            <button type="button" class="">
 				                                <img id="img_tipoBene"  src="../../img/png/cantidad_global.png" style="width: 20px;" />
 				                            </button>
-				                        </span>
+				                        </span> -->
 				                        </div>
 				                    </div>
 				                </div>
@@ -143,15 +236,15 @@
 				                                <b>Total, Personas Atendidas:</b>
 				                            </div>
 				                            <input type="text" name="totalPersAten" id="totalPersAten" class="form-control input-xs" readonly>
-				                            <span class="input-group-btn">
+				                           <!--  <span class="input-group-btn">
 				                            <button type="button" class="" onclick="llenarCamposPoblacion()">
 				                                <img id="img_tipoBene"  src="../../img/png/Personas_atendidas.png" style="width: 32px;" />
 				                            </button>
-				                        </span>
+				                        </span> -->
 				                        </div>
 				                    </div>
 				                </div>
-				                <div class="row">                   
+				                <!-- <div class="row">                   
 				                    <div class="col-md-12 col-sm-6 col-xs-6">  
 				                        <div class="input-group">
 				                            <div class="input-group-addon input-xs">
@@ -160,7 +253,7 @@
 				                            <input type="text" name="tipoPobl" id="tipoPobl" class="form-control input-xs" readonly>
 				                        </div>
 				                    </div>
-				                </div>
+				                </div> -->
 				                <div class="row">                    
 				                     <div class="col-md-12 col-sm-6 col-xs-6">  
 				                        <div class="input-group">
@@ -200,7 +293,7 @@
 						                            <b>CANTIDAD:</b>
 						                        </div>
 
-												<input type="text" class="form-control input-xs">
+												<input type="text" class="form-control input-xs" id="txt_total">
 							               		<div class="input-group-addon input-xs">
 						                            <b>Dif:</b>
 						                        </div>
@@ -290,10 +383,10 @@
 		                    src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo producto</b></button>
 		                </span>
 		                <b>Grupo producto:</b>
-		                 <select name="grupProd" id="grupProd" class="form-control input-xs" onchange="buscar_producto(this.value)"></select>
+		                 <select name="ddlgrupoProducto" id="ddlgrupoProducto" class="form-control input-xs" onchange="buscar_producto(this.value)"></select>
 		                 <br>
 		                 <b>Codigo</b>
-		                 <input type="" name="" id="" class="form-control input-xs" placeholder="Codigo de producto">
+		                 <input type="" name="txt_codigo" id="txt_codigo" class="form-control input-xs" placeholder="Codigo de producto" onblur="validar_codigo()">
 		            </div>
 		        </div>
 		        <div class="col-sm-5">
@@ -366,45 +459,8 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Ver detalle</h4>
             </div>
-            <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
-                <div class="row mb-3">				                	
-                   <div class="col-sm-4">	
-                   		<b>Grupo de productos</b>
-                   		<input type="text" class="form-control input-xs">
-					</div>
-					<div class="col-sm-4" style="padding:0px">						
-                        <b>Cantidad parcial a distribuir</b>
-                        <div class="input-group input-group-sm">
-							<input type="text" class="form-control input-xs">
-		               		<div class="input-group-addon input-xs">
-	                            <b>Dif:</b>
-	                        </div>
-							<input type="text" class="form-control input-xs">
-							
-						</div>
-					</div>				
-					<div class="col-sm-4">						
-	                    <b>Comentario de asignacion</b>
-						<input type="text" class="form-control input-xs">
-					</div>	                   
-                </div>
-                 <div class="row">				                	
-                   	<div class="col-sm-4 text-center">
-                   		<label>Total</label>
-					</div>
-					<div class="col-sm-4" style="padding:0px">		
-                        <div class="input-group input-group-sm">
-							<input type="text" class="form-control input-xs">
-		               		<div class="input-group-addon input-xs">
-	                            <b>Dif:</b>
-	                        </div>
-							<input type="text" class="form-control input-xs">
-							
-						</div>
-					</div>				
-					<div class="col-sm-4">						
-					</div>	                   
-                </div>
+            <div class="modal-body" style="overflow-y: auto; max-height: 300px;"  id="pnl_detalle">
+                 
 				               
             </div>
             <div class="modal-footer">
