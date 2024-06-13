@@ -17,8 +17,9 @@ class asignacion_osM
 
     public function tipoBeneficiario($query = ''): array
     {
-        $sql = "SELECT DISTINCT TOP 100 C.Codigo, C.CodigoA,CP5.Proceso AS 'Estado', C.Cliente, C.CI_RUC, CD.Fecha_Registro, CD.Envio_No,CP3.Proceso as 'Frecuencia',CD.CodigoA as CodigoACD,CP4.Proceso as'TipoEntega' ,CD.Beneficiario, CD.No_Soc, CD.Area, CD.Acreditacion,CP1.Proceso as 'AccionSocial', CD.Tipo, CD.Cod_Fam,CP2.Proceso as 'TipoAtencion', CD.Salario, CD.Descuento, CD.Evidencias, CD.Item,C.Actividad,CP.Proceso as 'TipoBene',CP.Color,CP.Picture,CD.Hora_Ent as 'Hora',CD.Tipo_Dato as 'CodVulnera',CP6.Proceso AS 'vulnerabilidad',CD.Observaciones,CD.Hora_Ent,CD.Dia_Ent 
-            FROM Clientes as C INNER JOIN Clientes_Datos_Extras as CD ON C.Codigo = CD.Codigo 
+        $sql = "SELECT DISTINCT TOP 100 C.Codigo, C.CodigoA,CP5.Proceso AS 'Estado', C.Cliente, C.CI_RUC, CD.Fecha_Registro, CD.Envio_No,CP3.Proceso as 'Frecuencia',CD.CodigoA as CodigoACD,CP4.Proceso as'TipoEntega' ,CD.Beneficiario, CD.No_Soc, CD.Area, CD.Acreditacion,CP1.Proceso as 'AccionSocial', CD.Tipo, CD.Cod_Fam,CP2.Proceso as 'TipoAtencion', CD.Salario, CD.Descuento, CD.Evidencias, CD.Item,C.Actividad,CP.Proceso as 'TipoBene',CP.Color,CP.Picture,CD.Hora_Ent as 'Hora',CD.Tipo_Dato as 'CodVulnera',CP6.Proceso AS 'vulnerabilidad',CD.Hora_Ent,CD.Dia_Ent 
+            FROM Clientes as C 
+            INNER JOIN Clientes_Datos_Extras as CD ON C.Codigo = CD.Codigo 
             LEFT JOIN Catalogo_Proceso CP ON C.Actividad = CP.Cmds 
             LEFT JOIN Catalogo_Proceso CP1 ON CD.Acreditacion = CP1.Cmds 
             LEFT JOIN Catalogo_Proceso CP2 ON CD.Cod_Fam = CP2.Cmds 
@@ -43,7 +44,7 @@ class asignacion_osM
 
         $sql .= " ORDER BY C.Cliente";
 
-        // print_r($sql);die();
+        print_r($sql);die();
         try {
             return $this->db->datos($sql);
         } catch (Exception $e) {
