@@ -44,7 +44,7 @@ class asignacion_osM
 
         $sql .= " ORDER BY C.Cliente";
 
-        print_r($sql);die();
+        // print_r($sql);die();
         try {
             return $this->db->datos($sql);
         } catch (Exception $e) {
