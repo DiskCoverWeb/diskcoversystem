@@ -152,8 +152,8 @@
 
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/locales/es.global.min.js'></script>
+   
 </head>
-
 <body>
     <div>
         <div class="row">
@@ -645,7 +645,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Registro de Ubicación</h4>
+                    <h4 class="modal-title">Ingresar Dirección</h4>
                 </div>
                 <div class="modal-body" style="overflow-y: auto;">
                     <div class="form-group row">
@@ -987,6 +987,7 @@
                     <h4 class="modal-title">Vulnerabilidades</h4>
                 </div>
                 <div class="modal-body" style="overflow-y: auto; max-height: 300px; margin:5px">
+                    <p>Integrantes discapacitados</p>
                     <div style="overflow-x: auto;">
                         <table class="table" id="tablaFamDisc">
                             <thead>
@@ -1006,6 +1007,7 @@
                         No hay integrantes discapacitados en la familia.
                     </div>
 
+                    <p>Integrantes con Enfermedad</p>
                     <div style="overflow-x: auto; margin-top: 10px">
                         <table class="table" id="tablaFamEnfe">
                             <thead>
@@ -3482,9 +3484,7 @@
             cancelButtonText: 'NO'
         }).then((result) => {
             if (result.value) {
-                $('#TipoSuper_MYSQL').val('Actualizar');
-                $('#titulo_clave').text('Autorizar Cambios');
-                $('#clave_supervisor').modal('show');
+                IngClave('Supervisor');
             } else {
                 $('#collapseTwo').collapse('hide');
             }
