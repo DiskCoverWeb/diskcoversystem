@@ -1580,7 +1580,7 @@
     </div>
     </div>
 
-    <div id="modalPrograma" class="modal">
+    <div id="modalsBtn85" class="modal">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1980,7 +1980,7 @@
      * PROGRAMA
     */
     $('#btnPrograma').click(function () {
-        $('#modalPrograma').modal('show');
+        $('#modalsBtn85').modal('show');
     })
 
     /*function cambiarSelectPrograma(elem){ // cambiada reciente
@@ -2891,7 +2891,7 @@
             type: 'post',
             dataType: 'json',
             beforeSend: function () {
-                $("#select_ciud").html("<option value='' disabled selected>Seleccione provincia</option>");
+                $("#select_ciud").html("<option value='' disabled selected>Seleccione ciudad</option>");
             },
             success: function (response) {
                 response.forEach(function (data, index) {

@@ -280,6 +280,18 @@
       </div>
   </div>
 
+  <script>
+    function IngClave(tipo,base=false)
+    {
+        if(base)
+        {
+            $('#BuscarEn').val(base);
+        }
+        $('#TipoSuper_MYSQL').val(tipo);
+        $("#clave_supervisor").modal('show');
+    }
+  </script>
+
   <div class="modal fade" id="clave_supervisor" role="dialog" data-keyboard="false" data-backdrop="static">
       <div class="modal-dialog modal-dialog-centered modal-sm">
           <div class="modal-content" style="background-color: white;">
@@ -294,7 +306,7 @@
               <div class="container-fluid">
                   <div class="row">
                       <div class="col-sm-12">
-                          <input type="hidden" name="BuscarEn" id="BuscarEn" value="MYSQL">
+                          <input type="hidden" name="BuscarEn" id="BuscarEn" value="">
                           <input type="hidden" name="TipoSuper_MYSQL" id="TipoSuper_MYSQL"><br>
                           <input type="hidden" name="intentos_MYSQL" id="intentos_MYSQL" value="1">
                           <input type="password" name="txt_IngClave_MYSQL" id="txt_IngClave_MYSQL"
