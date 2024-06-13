@@ -3492,14 +3492,16 @@
     }
 
     $('#btnAutorizarCambios').click(function () {
-        if (miCliente != undefined) {
-            autorizarCambios();
-        } else {
-            Swal.fire({
-                title: 'No se seleccionó un Cliente',
-                text: '',
-                type: 'warning',
-            });
+        if($("#select_93").val() == "93.01"){
+            if (miCliente != undefined) {
+                autorizarCambios();
+            } else {
+                Swal.fire({
+                    title: 'No se seleccionó un Cliente',
+                    text: '',
+                    type: 'warning',
+                });
+            }
         }
     });
 
