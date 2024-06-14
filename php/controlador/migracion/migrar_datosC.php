@@ -31,7 +31,7 @@ class migrar_datosC
 	{
 		$this->modelo->generarArchivos();
 		$url = "c:/DatosTbl/TABLAS/";
-		$this->generarZip("DatosTabla",$ruta);
+		$this->generarZip("TABLAS",$ruta);
 	}
 
 	function generarSP()
