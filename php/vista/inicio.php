@@ -602,6 +602,11 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 				require_once("inscripciones/voluntarios.php");
 				break;
 
+			//Migracion -> Archivo -> Migrar_esquemas
+			case 'migrar_esquemas':
+				require_once('migracion/migrar_esquemas.php');
+				break;
+
 			default:
 				echo "<div class='box-body'><img src='../../img/404.png' width='100%'></div>";
 				break;
