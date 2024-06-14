@@ -38,7 +38,6 @@
 					throw new Exception("No se pudo guardar el archivo en el servidor FTP");
 				}
 				ftp_close($connId);
-                //echo json_encode(array("res" => 1, "mensaje" => "Archivo guardado", "nombreArchivo" => basename($nombreArchivoDestino) ));
             } else {
 				ftp_close($connId);
                 throw new Exception("No se pudo guardar el archivo en el servidor");
@@ -52,7 +51,6 @@
         } else {
             ftp_close($connId);
 			throw new Exception("Error al subir el archivo");
-            //json_encode(array("res" => 0, "mensaje" => "No se ha subido ningún archivo o ha ocurrido un error"));
         }
     }
 ?>
