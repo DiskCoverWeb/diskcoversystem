@@ -170,7 +170,7 @@ class migrar_datosM
 		$datosSP = $this->db->datos($sql);
 
 		foreach ($datosSP as $key => $value) {
-			$rutaArchivo = "c:/DatosTbl/SP/SP_".$value['sp'].".txt";
+			$rutaArchivo = "c:/DatosTbl/SP/".$value['sp'].".txt";
 			$contenido = $value['Definition'];
 
 			$archivo = fopen($rutaArchivo, 'w');
