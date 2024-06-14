@@ -7,54 +7,67 @@
 ?>
 <script type="text/javascript">
 	
-   function generarArchivos()
-   {
+   // function generarArchivos()
+   // {
 
-	      	$('#myModal_espera').modal('show');
-	    var parametros = 
-	    {
+// 	      	$('#myModal_espera').modal('show');
+// 	    var parametros = 
+// 	    {
 	      
-	    }
-	     $.ajax({
-	       data:  {parametros:parametros},
-	      url:   '../controlador/migracion/migrar_datosC.php?generarArchivos=true',
-	      type:  'post',
-	      dataType: 'json',
-	      success:  function (response) {  
-	      	$('#myModal_espera').modal('hide');
-	      	Swal.fire("","Geraro lod archivos","success")
+// 	    }
+// 	     $.ajax({
+// 	       data:  {parametros:parametros},
+// 	      url:   '../controlador/migracion/migrar_datosC.php?generarArchivos=true',
+// 	      type:  'post',
+// 	      dataType: 'json',
+// 	      success:  function (response) {  
+// 	      	$('#myModal_espera').modal('hide');
+// 	      	Swal.fire("","Geraro lod archivos","success")
 	       
-	      },error: function (error) {		      
-	      	$('#myModal_espera').modal('hide');
-		    },
-	    });
+// 	      },error: function (error) {		      
+// 	      	$('#myModal_espera').modal('hide');
+// 		    },
+// 	    });
+   // }
+
+	function generarArchivos()
+   	{
+   		url = '../controlador/migracion/migrar_datosC.php?generarArchivos=true';
+   		window.open(url,"_blank");
    }
+
    function generarSP()
    {
-   	$('#myModal_espera').modal('show');
-	    var parametros = 
-	    {
-	      
-	    }
-	     $.ajax({
-	       data:  {parametros:parametros},
-	      url:   '../controlador/migracion/migrar_datosC.php?generarSP=true',
-	      type:  'post',
-	      dataType: 'json',
-	      success:  function (response) { 
-	      	$('#myModal_espera').modal('hide');
-	      	if(response==1)
-	      	{
-	      		Swal.fire("","Archivos creados","success");
-	      	}else
-	      	{
-	      		Swal.fire("","Uno o varios archivos no se pudieron generar","error");
-	      	}	       
-	      },error: function (error) {		      
-	      	$('#myModal_espera').modal('hide');
-		    },
-	    });
+   		url = '../controlador/migracion/migrar_datosC.php?generarSP=true';
+   		window.open(url,"_blank");
    }
+   // function generarSP2()
+   // {
+
+   // 	$('#myModal_espera').modal('show');
+// 	    var parametros = 
+// 	    {
+	      
+// 	    }
+// 	     $.ajax({
+// 	       data:  {parametros:parametros},
+// 	      url:   '../controlador/migracion/migrar_datosC.php?generarSP=true',
+// 	      type:  'post',
+// 	      dataType: 'json',
+// 	      success:  function (response) { 
+// 	      	$('#myModal_espera').modal('hide');
+// 	      	if(response==1)
+// 	      	{
+// 	      		Swal.fire("","Archivos creados","success");
+// 	      	}else
+// 	      	{
+// 	      		Swal.fire("","Uno o varios archivos no se pudieron generar","error");
+// 	      	}	       
+// 	      },error: function (error) {		      
+// 	      	$('#myModal_espera').modal('hide');
+// 		    },
+// 	    });
+   // }
 </script>
 
 <div class="content">
