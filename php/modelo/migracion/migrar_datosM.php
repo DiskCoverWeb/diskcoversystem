@@ -32,6 +32,9 @@ class migrar_datosM
 	   	{
 	   		mkdir('c:/DatosTbl/TABLAS/',0777,true);
 	   	}
+
+
+	   	$respuesta = 1;
 	    
 	      $usuario = $_SESSION['INGRESO']['Usuario_DB'];
 	      $password = $_SESSION['INGRESO']['Password_DB'];  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
@@ -126,16 +129,14 @@ class migrar_datosM
 					// Reemplazar el archivo original con el archivo temporal
 					rename($archivo_temporal, $ruta_archivo);
 
-
-		            echo 'tabla'.($key+1);
 		        }else
 		        {
-		           $res = -1;
+		           $respuesta = -1;
 		        } 
 
 	    }
 
-	    return 1;
+	    return $respuesta;
 
 
 	}
