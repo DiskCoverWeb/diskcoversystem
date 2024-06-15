@@ -83,7 +83,7 @@
 		}
 	 	$.ajax({
 		    type: "POST",
-	       url:   '../controlador/inventario/egreso_alimentosC.php?buscar_producto=true',
+	       url:   '../controlador/inventario/asignacion_pickingC.php?buscar_producto=true',
 		     data:{parametros:parametros},
 	       dataType:'json',
 		    success: function(data)
@@ -92,9 +92,9 @@
 		    	console.log(data);
 		    	// if(grupo==data[])
 		    	$('#txt_id').val(data.ID)
-		    	$('#txt_cod_producto').val(data.Codigo_Barra)
+		    	// $('#txt_cod_producto').val(data.Codigo_Barra)
 				$('#txt_donante').val(data.Cliente)
-				$('#txt_grupo').val(data.Producto)
+				// $('#txt_grupo').val(data.Producto)
 				$('#txt_stock').val(data.Entrada)
 				$('#txt_unidad').val(data.Unidad)
 		    }
@@ -387,21 +387,22 @@
 		                 <br>
 		                 <b>Codigo</b>
 		                 <input type="" name="txt_codigo" id="txt_codigo" class="form-control input-xs" placeholder="Codigo de producto" onblur="validar_codigo()">
+		                 <input type="hidden" id="txt_id" name="txt_id">
 		            </div>
 		        </div>
 		        <div class="col-sm-5">
 		        	<div class="row">
 		        		<div class="col-sm-9">
 		        			<b>Proveedor / Donante</b>
-		        			<input type="" name="" class="form-control input-xs" placeholder="Proveedor / Donante">
+		        			<input type=""  class="form-control input-xs" placeholder="Proveedor / Donante" id="txt_donante" name="txt_donante">
 		        		</div>
 		        		<div class="col-sm-3">
 		        			 <b>Stock:</b>
-		        			<input type="" name="" class="form-control input-xs" placeholder="0">
+		        			<input type="" name="txt_stock" id="txt_stock" class="form-control input-xs" placeholder="0" readonly>
 		        		</div>
 		        	</div>
 		        	<b>Ubicacion</b>
-		        	<input type="" name="" class="form-control input-xs" placeholder="Proveedor / Donante">		        	
+		        	<input type="" name="" class="form-control input-xs" placeholder="Proveedor / Donante" readonly>		        	
 		        </div>
 		        <div class="col-sm-2">
 		            <b>Fecha expiracions</b>

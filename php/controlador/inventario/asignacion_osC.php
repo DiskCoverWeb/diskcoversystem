@@ -86,13 +86,12 @@ class asignacion_osC
                 $asignaciones = count($asignacionesLis);
 
                 $dia =  BuscardiasSemana($value['Dia_Ent']);
-                // print_r($diaActual);
-                // print_r($dia[1]);
+                print_r($diaActual);
+                print_r($dia);
                 // print_r($asignaciones);
                 // print_r($cant_asig.'\n');
-                // if($diaActual==$dia[1] && $asignaciones!=$cant_asig)
-                // if()
-                // {
+                if($diaActual==$dia[1])
+                {
                     // print_r($dia);die();
                     $res[] = array(
                         'id' => $value['Codigo'],
@@ -127,7 +126,7 @@ class asignacion_osC
                         // 'InfoNutri'=>$value['Observaciones'],
                         'asignaciones_hechas' =>$asignacionesLis,
                     );
-                // }
+                }
             }
             return ['results' => $res]; // Ajuste aquí para coincidir con el formato de Select2
         } catch (Exception $e) {

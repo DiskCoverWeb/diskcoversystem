@@ -1,6 +1,7 @@
 <?php
 require_once(dirname(__DIR__, 2) . "/modelo/inventario/asignacion_pickingM.php");
 require_once(dirname(__DIR__, 2) . "/modelo/inventario/asignacion_osM.php");
+require_once(dirname(__DIR__, 2) . "/modelo/inventario/egreso_alimentosM.php");
 
 $controlador = new asignacion_pickingC();
 
@@ -20,6 +21,11 @@ if(isset($_GET['datosExtra'])){
 if(isset($_GET['cargarOrden'])){
     $parametros = $_POST['param'];
     echo json_encode($controlador->cargarOrden($parametros));
+}
+if(isset($_GET['buscar_producto']))
+{
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->buscar_producto($parametros));
 }
 /*
 if(isset($_GET['addAsignacion'])){
@@ -55,12 +61,15 @@ class asignacion_pickingC
 {
     private $modelo;
     private $asignacion;
+    private $egresos;
 
     public function __construct()
     {
 
         $this->modelo = new asignacion_pickingM();
         $this->asignacion = new asignacion_osM();
+        $this->egresos = new egreso_alimentosM();
+
 
     }
 
@@ -136,6 +145,15 @@ class asignacion_pickingC
         $res = array('detalle'=>$detalle,'ddl'=>$ddlGrupoPro,'total'=>$total);
 
         return $res;
+    }
+
+    function buscar_producto($parametros)
+    {
+        $datos = $this->egresos->buscar_producto($parametros['codigo']);
+        foreach ($datos as $key => $value) {
+            $datos[0]['ubicacion'] = 
+        }
+        return $datos;
     }
 
    /* function addAsignacion($parametros)
