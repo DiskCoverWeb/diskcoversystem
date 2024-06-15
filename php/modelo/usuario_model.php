@@ -746,31 +746,35 @@ class usuario_model{
 
     $ClaveGeneral = '';
 	  $IngClaves_Caption  = '';		
-		// print_r($sql);die();
-		if($parametros['buscaren']=='MYSQ'){
+		// print_r($parametros);die();
+		if($parametros['buscaren']=='MYSQL'){
 				$sql = "SELECT * 
 				FROM acceso_usuarios
 				WHERE Usuario = '".$parametros['tipo']."' ";
+				// print_r($sql);die();
 				$datos = $this->db1->datos($sql,'MY SQL');
 		}else
 		{
 				$sql = "SELECT * 
 				FROM Accesos
 				WHERE Usuario = '".$parametros['tipo']."' ";
+				// print_r($sql);die();
 				$datos = $this->db1->datos($sql);
 		}
 		if(count($datos)>0)
 		{
-			if($parametros['buscaren']=='MYSQ')
+			if($parametros['buscaren']=='MYSQL')
 			{
-			 $ClaveGeneral = $datos[0]["Clave"];
-	   	 $IngClaves_Caption = $datos[0]["Nombre_Usuario"];
-	   	}else
-	   	{
-	   		$ClaveGeneral = $datos[0]["Clave"];
-	   	  $IngClaves_Caption = $datos[0]["Usuario"];
-	   	}
+			 	$ClaveGeneral = $datos[0]["Clave"];
+				$IngClaves_Caption = $datos[0]["Nombre_Usuario"];
+			}else
+			{
+				$ClaveGeneral = $datos[0]["Clave"];
+				$IngClaves_Caption = $datos[0]["Usuario"];
+			}
 		}
+
+		// print_r($datos);die();
 	   return array('clave'=>$ClaveGeneral,'nombre'=>$IngClaves_Caption);
 	}
 

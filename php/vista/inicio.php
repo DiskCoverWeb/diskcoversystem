@@ -605,9 +605,15 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 				require_once("inscripciones/voluntarios.php");
 				break;
 
+<<<<<<< HEAD
 			//Inscripciones -> Formularios -> Voluntarios
 			case 'migrar_datos':
 				require_once("migracion/migrar_datos.php");
+=======
+			//Migracion -> Archivo -> Migrar_esquemas
+			case 'migrar_esquemas':
+				require_once('migracion/migrar_esquemas.php');
+>>>>>>> developer01
 				break;
 
 			default:
