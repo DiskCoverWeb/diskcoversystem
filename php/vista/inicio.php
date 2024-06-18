@@ -534,10 +534,11 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 				require_once("inventario/egreso_alimento2.php");
 				break;
 
-			//Inventario -> egreso de Productos -> registro beneficiarios
+			//Gestion Social -> egreso de Productos -> registro beneficiarios
 			case 'registro_beneficiario':
-				require_once("inventario/registro_beneficiario.php");
+				require_once("gestion_social/registro_beneficiario.php");
 				break;
+			
 			//Inventario  -> Reportes -> Lista productos
 			case 'CatalogoCtas':
 				require_once("inventario/Catalogo.php");
