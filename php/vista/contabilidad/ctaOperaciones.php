@@ -627,6 +627,18 @@ function validar_eliminar()
 
   }
 }
+
+function mostrarModalPass(){
+  IngClave('Supervisor');
+  resp_clave_ingreso(response);
+}
+
+function resp_clave_ingreso(response){
+  if (response.respuesta == 1) {
+      $('#clave_supervisor').modal('hide');
+      $('#modal_copiar').modal('show');
+  }
+}
 </script>
 <div class="container-lg">
   <div class="row">
@@ -637,7 +649,7 @@ function validar_eliminar()
        </a>
      </div>
      <div class="col-xs-2 col-md-2 col-sm-2">
-       <button type="button" class="btn btn-default" title="Copiar Catalogo" data-toggle="modal" data-target="#modal_copiar">
+       <button type="button" class="btn btn-default" title="Copiar Catalogo" onclick="mostrarModalPass()" >
         <img src="../../img/png/copiar_1.png">
       </button>
     </div>

@@ -234,11 +234,16 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 				require_once("facturacion/HistorialFacturas.php");
 				break;
 
+				
+			//Facturacion -> Archivo -> Facturacion de Distribucion
+			case 'factura_distribucion':
+			require_once("facturacion/facturas_distribucion.php");
+			break;
+				
 			//Facturacion -> Archivo -> Punto de venta
 			case 'punto_venta':
-				require_once("facturacion/punto_venta.php");
-				break;
-
+			require_once("facturacion/punto_venta.php");
+			break;
 			
 			//Facturacion -> Archivo -> Abonos Anticipados (CXP)
 			case 'AbonoAnticipado':

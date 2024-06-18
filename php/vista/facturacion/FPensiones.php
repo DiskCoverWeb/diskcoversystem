@@ -40,12 +40,14 @@
 
         //Handle buttons
         $('#btnInsertarPensiones').click(function () {
-            $('#clave_supervisor').modal('show');
+            //$('#clave_supervisor').modal('show');
+            IngClave('Supervisor');
             btnCase = "Insertar";
         });
 
         $('#btnEliminarPensiones').click(function () {
-            $('#clave_supervisor').modal('show');
+            //$('#clave_supervisor').modal('show');
+            IngClave('Supervisor');
             btnCase = "Eliminar";
         });
 
@@ -65,12 +67,14 @@
         });
 
         $('#btnCopiarMes').click(function () {
-            $('#clave_supervisor').modal('show');
+            //$('#clave_supervisor').modal('show');
+            IngClave('Supervisor');
             btnCase = "Copiar_Mes";
         });
 
         $('#btnMultas').click(function () {
-            $('#clave_supervisor').modal('show');
+            //$('#clave_supervisor').modal('show');
+            IngClave('Supervisor');
             btnCase = "Multas";
         });
 

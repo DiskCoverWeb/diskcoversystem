@@ -446,7 +446,8 @@
                         if (result.value) {
                             globalConCosteo = true;
                             globalIdCase = idSel;
-                            $('#clave_supervisor').modal('show');
+                            //$('#clave_supervisor').modal('show');
+                            IngClave('Administrador');
                         } else {
                             globalConCosteo = false;
                             ToolbarMenu_ButtonMenuClick(idSel);

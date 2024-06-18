@@ -1625,6 +1625,60 @@
     });
 
     function Form_ActivateFamilias() {
+        /*$('#estadoCivil').select2({
+            placeholder: 'Seleccione una opción',
+            ajax: {
+                url: '../controlador/inventario/registro_beneficiarioC.php?LlenarEstadoCivil=true',
+                dataType: 'json',
+                delay: 250,
+                processResults: function (data) {
+                    var options = [];
+                    if(data.res == 1){
+                        var option = {
+                            id: opcion.id,
+                            text: opcion.text,
+                            color: opcion.color
+                        };
+                        options.push(option);
+                    }else{
+
+                    }
+                    if (data.respuesta === "No se encontraron datos para mostrar") {
+                        options.push({
+                            id: '',
+                            text: data.respuesta
+                        });
+                    } else {
+                        $.each(data.respuesta, function (index, opcion) {
+                            var option = {
+                                id: opcion.id,
+                                text: opcion.text,
+                                color: opcion.color
+                            };
+                            options.push(option);
+                        });
+                    }
+                    return {
+                        results: options
+                    };
+                },
+                cache: true
+            }
+        });
+        $.ajax({
+            url: '../controlador/inventario/registro_beneficiarioC.php?estadoCivil=true',
+            type: 'get',
+            dataType: 'json',
+            success: function (data) {
+                var $selectEstadoCivil = $('#estadoCivil');
+                $.each(opcionesEstadoCivil, function (index, opcion) {
+                    var $option = $('<option></option>')
+                        .val(opcion.valor)
+                        .text(opcion.texto);
+                    $selectEstadoCivil.append($option);
+                });
+            }
+        });*/
         var opcionesEstadoCivil = [
             { valor: 'soltero', texto: 'Soltero/a' },
             { valor: 'unionL', texto: 'Unión Libre' },
@@ -3229,6 +3283,7 @@
        // LlenarSelects_Val("CxC", true);
         LlenarTipoDonacion();
         LlenarSelects_Val(85);
+        LlenarSelects_Val("estadoCivil");
         LlenarSelects_Val(86);
         LlenarSelects_Val(87);
         LlenarSelects_Val(88);

@@ -31,6 +31,11 @@ if (isset($_GET['IngClaves'])) {
     echo json_encode(IngClaves($parametros));
 }
 
+if(isset($_GET['IngClaveCredenciales'])) {
+    $usuario = $_POST['usuario'];
+    echo json_encode(IngClaveCredenciales($usuario));
+}
+
 if (isset($_GET['IngClaves_MYSQL'])) {
     $parametros = $_POST['parametros'];
     // print_r($parametro);die();
@@ -166,6 +171,16 @@ function datos_modulo($cod)
     $per = new usuario_model();
     $datos = $per->detalle_modulos($cod);
     return $datos;
+}
+
+function IngClaveCredenciales($usuario){
+    $per = new usuario_model();
+    $datos = $per->IngClaveCredenciales($usuario);
+    if(count($datos) > 0){
+        return array("res" => 1, "nombre" => $datos[0]['Nombre_Completo']);
+    }else{
+        return array("res" => 0);
+    }
 }
 
 function IngClaves_MYSQL($parametros)

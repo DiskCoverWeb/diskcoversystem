@@ -84,6 +84,12 @@ class registro_beneficiarioM
         }
     }
 
+    function llenarEstadoCivil(){
+        $sql = "SELECT Cuenta FROM Catalogo_Auditor WHERE Codigo LIKE '01.09.%';";
+        $resultado = $this->db->datos($sql);
+        return $resultado;
+    }
+
     function LlenarSelectSexo()
     {
         $sql = "SELECT Tipo_Referencia, Codigo, Descripcion

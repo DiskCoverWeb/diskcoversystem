@@ -251,7 +251,7 @@
       </div>
   </div>
 
-  <div class="modal fade" id="clave_contador" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!--<div class="modal fade" id="clave_contador" role="dialog" data-keyboard="false" data-backdrop="static">
       <div class="modal-dialog modal-dialog-centered modal-sm">
           <div class="modal-content">
               <div class="modal-header">
@@ -269,7 +269,6 @@
                       </div>
                       <div class="col-sm-3">
                           <div class="btn-group">
-                              <!-- <button class="btn btn-default btn-sm">Aceptar</button> -->
                               <button class="btn btn-default" data-dismiss="modal" onclick="limpiar_IngresoClave();">
                                   <img src="../../img/png/bloqueo.png"><br> Cancelar</button>
                           </div>
@@ -278,17 +277,33 @@
               </div>
           </div>
       </div>
-  </div>
+  </div>-->
 
   <script>
     function IngClave(tipo,base=false)
     {
-        if(base)
-        {
-            $('#BuscarEn').val(base);
-        }
-        $('#TipoSuper_MYSQL').val(tipo);
-        $("#clave_supervisor").modal('show');
+        $.ajax({
+            data: {
+                usuario: tipo
+            },
+            url: '../controlador/panel.php?IngClaveCredenciales=true',
+            type: 'post',
+            dataType: 'json',
+            success: function(response) {
+                if(response['res'] == 1){
+                    $('#titulo_clave').text(response['nombre']);
+
+                    if(base)
+                    {
+                        $('#BuscarEn').val(base);
+                    }
+                    $('#TipoSuper_MYSQL').val(tipo);
+                    $("#clave_supervisor").modal('show');
+                }else{
+                    Swal.fire("Error", "Hubo un problema al obtener datos del supervisor.", "error");
+                }
+            }
+        });
     }
   </script>
 
@@ -306,6 +321,7 @@
               <div class="container-fluid">
                   <div class="row">
                       <div class="col-sm-12">
+                        <label for="txt_IngClave_MYSQL">Clave de Acceso:</label>
                           <input type="hidden" name="BuscarEn" id="BuscarEn" value="">
                           <input type="hidden" name="TipoSuper_MYSQL" id="TipoSuper_MYSQL"><br>
                           <input type="hidden" name="intentos_MYSQL" id="intentos_MYSQL" value="1">
@@ -476,7 +492,8 @@ function IngresoClave() {
             } else {
                 //esta funcion debe estar definida en la paginandonde se este llamando
                 resp_clave_ingreso(response);
-                $('#clave_contador').modal('hide');
+                //$('#clave_contador').modal('hide');
+                $('#clave_supervisor').modal('hide');
             }
         }
     });
@@ -524,7 +541,8 @@ function IngresoClave_MYSQL() {
             } else {
                 //esta funcion debe estar definida en la paginandonde se este llamando
                 resp_clave_ingreso(response);
-                $('#clave_contador').modal('hide');
+                //$('#clave_contador').modal('hide');
+                $('#clave_supervisor').modal('hide');
             }
         }
     });

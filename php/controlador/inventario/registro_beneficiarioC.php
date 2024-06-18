@@ -31,6 +31,10 @@ if (isset($_GET['actualizarSelectDonacion'])) {
     echo json_encode($controlador->actualizarSelectDonacion($valor));
 }
 
+if(isset($_GET['LlenarEstadoCivil'])) {
+    echo json_encode($controlador->llenarEstadoCivil($valor));
+}
+
 if (isset($_GET['LlenarCalendario'])) {
     $valor = $_POST['valor'];
     echo json_encode($controlador->LlenarCalendario($valor));
@@ -309,6 +313,16 @@ class registro_beneficiarioC
             $datos = 0;
         }
         return $datos;
+    }
+
+    function llenarEstadoCivil()
+    {
+        $datos = $this->modelo->llenarEstadoCivil();
+        if (empty($datos)) {
+            return ["res" => 0, "mensaje" => "No se encontraron datos para mostrar"];
+        }else{
+            return ["res" => 1, "mensaje" => $datos];
+        }
     }
 
     function EliminaArchivosTemporales($parametros)

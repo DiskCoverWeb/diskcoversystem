@@ -723,6 +723,14 @@ class usuario_model{
 
 	}
 
+	function IngClaveCredenciales($usuario){
+		$sql = "SELECT Nombre_Completo
+		FROM Accesos
+		WHERE Usuario = '".$usuario."';";
+		$datos = $this->db1->datos($sql);
+		return $datos;
+	}
+
 	function IngClave($parametros)
 	{
 

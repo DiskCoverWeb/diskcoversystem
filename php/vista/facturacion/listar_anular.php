@@ -241,9 +241,10 @@ function resultado_sri()
         success: function(data) {
         	if(data==1)
         	{		        	
-				 		$('#TipoSuper_MYSQL').val('Auxiliar');
+				 		/*$('#TipoSuper_MYSQL').val('Auxiliar');
 				 		$('#BuscarEn').val('SQL');
-				 		$('#clave_supervisor').modal('show');
+				 		$('#clave_supervisor').modal('show');*/
+						IngClave('Auxiliar');
 				 	}else
 				 	{
 				 		 Swal.fire('Esta Factura ya esta anulada','','info');

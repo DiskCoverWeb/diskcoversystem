@@ -885,9 +885,10 @@ switch ($_SESSION['INGRESO']['modulo_']) {
 
   function SolicitarReactivar() {
     if ($("#MBFechaI").val() != "" && $("#MBFechaF").val() != "") {
-      $('#clave_contador').modal('show');
+      /*$('#clave_contador').modal('show');
       $('#titulo_clave').text('Contador General');
-      $('#TipoSuper').val('Contador');
+      $('#TipoSuper').val('Contador');*/
+      IngClave('Contador');
     } else {
       Swal.fire('Seleccione las fechas', '', 'info');
     }
