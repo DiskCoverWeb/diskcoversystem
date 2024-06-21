@@ -147,18 +147,18 @@ class migrar_datosM
 		set_time_limit(0);
 	   	ini_set('memory_limit', '1024M');
 
-	   	// $resp = 1;
-	   	// if(!file_exists('c:/DatosTbl/'))
-	   	// {
-	   	// 	mkdir('c:/DatosTbl/',0777,true);
-	   	// }
+	   	$resp = 1;
+	   	if(!file_exists('c:/DatosTbl/'))
+	   	{
+	   		mkdir('c:/DatosTbl/',0777,true);
+	   	}
 
-	   	// if(!file_exists('c:/DatosTbl/SP/'))
-	   	// {
-	   	// 	mkdir('c:/DatosTbl/SP/',0777,true);
-	   	// }
+	   	if(!file_exists('c:/DatosTbl/SP/'))
+	   	{
+	   		mkdir('c:/DatosTbl/SP/',0777,true);
+	   	}
 
-	   	$link = '/home/ftpuser/ftp/files/';
+	   	$link = '/home/ftpuser/ftp/files';
 	    
 	    $usuario = $_SESSION['INGRESO']['Usuario_DB'];
 	    $password = $_SESSION['INGRESO']['Password_DB'];  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
@@ -188,6 +188,39 @@ class migrar_datosM
 		}
 
 		return $resp;
+	}
+
+	function Enviar_ftp($link)
+	{
+		$ftp_server = "db.diskcoversystem.com";
+		$ftp_user_name = "ftpuser";
+		$ftp_user_pass = "ftp2023User";
+
+		// Conectar al servidor FTP
+		$conn_id = ftp_connect($ftp_server);
+
+		// Autenticarse con el usuario y la contraseña
+		$login_result = ftp_login($conn_id, $ftp_user_name, $ftp_user_pass);
+
+		// Comprobar la conexión
+		if ((!$conn_id) || (!$login_result)) {
+		    die("No se pudo conectar al servidor FTP con los detalles proporcionados.");
+		}
+		echo "Conectado a $ftp_server, como $ftp_user_name\n";
+
+		// Ruta local y remota del archivo
+		$file_local = "ruta/local/al/archivo.txt";
+		$file_remote = "ruta/remota/en/servidor/archivo.txt";
+
+		// Subir el archivo
+		if (ftp_put($conn_id, $file_remote, $file_local, FTP_BINARY)) {
+		    echo "El archivo $file_local se ha subido satisfactoriamente como $file_remote.\n";
+		} else {
+		    echo "Hubo un problema al subir el archivo $file_local.\n";
+		}
+
+		// Cerrar la conexión FTP
+		ftp_close($conn_id);
 	}
 
 }
