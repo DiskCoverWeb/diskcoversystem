@@ -137,6 +137,7 @@ if (isset($_GET['guardarAsignacion'])) {
         'Observaciones' => $_POST['Observaciones']
     );
 
+
     // Verificar si se han cargado archivos
     if (isset($_FILES['Evidencias']) && $_FILES['Evidencias']['error'][0] == UPLOAD_ERR_OK) {
         $nombresArchivos = array();

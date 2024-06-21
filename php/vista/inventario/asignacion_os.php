@@ -67,14 +67,27 @@
     }
 
     function autocoplet_pro() {
+        tipo = $('#tipoCompra').val();
+        url_ = '';
+        if(tipo=='84.02')
+        {
+            console.log('sss');
+            let url_ = '../controlador/inventario/asignacion_osC.php?autocom_pro=true';
+            console.log(url_);
+        }else
+        {
+            let url_ = '../controlador/inventario/alimentos_recibidosC.php?autocom_pro=true';
+            console.log(url_);
+
+        }
         $('#ddl_producto').select2({
             placeholder: 'Seleccione una producto',
             ajax: {
-                url: '../controlador/inventario/alimentos_recibidosC.php?autocom_pro=true',
+                url: url_,
                 dataType: 'json',
                 delay: 250,
                 processResults: function (data) {
-                    // console.log(data);
+                    console.log(url_);
                     return {
                         results: data
                     };
@@ -85,10 +98,24 @@
     }
 
     function autocoplet_pro2() {
+        tipo = $('#tipoCompra').val();
+        var url_ = '';
+        if(tipo=='84.02')
+        {
+            console.log('sss');
+            url_ = '../controlador/inventario/asignacion_osC.php?autocom_pro=true';
+            console.log(url_);
+        }else
+        {
+            url_ = '../controlador/inventario/alimentos_recibidosC.php?autocom_pro=true';
+            console.log(url_);
+            
+        }
+
         $('#grupProd').select2({
             placeholder: 'Seleccione una producto',
             ajax: {
-                url: '../controlador/inventario/alimentos_recibidosC.php?autocom_pro=true',
+                url: url_,
                 dataType: 'json',
                 delay: 250,
                 processResults: function (data) {
@@ -494,6 +521,20 @@ function llenarDatos(datos) {
             }
         });
     }
+
+    function add_beneficiario(){
+        $('#modal_addBeneficiario').modal('show');
+
+    }
+    function eliminar_beneficiario(){
+        beneficiario = $('#beneficiario').val();
+        if(beneficiario=='' || beneficiario==null)
+        {
+            Swal.fire('Seleccione un beneficiario','','error');
+            return false;
+        }
+    }
+
 </script>
 <div class="row mb-2">
     <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
@@ -515,19 +556,19 @@ function llenarDatos(datos) {
     <div class="row" style="padding: 1vw; background-color: #fffacd; border: 1px solid;" id="rowGeneral">
         <div class="row">
 
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <div class="row">                    
-                    <div class="col-md-12 col-sm-6 col-xs-6">  
+                    <div class="col-md-12 col-sm-6 col-xs-6" style="padding-right: 0px;">  
                         <div class="input-group">
                             <div class="input-group-addon input-xs">
-                                <b>Día de Entrega</b>
+                                <b>Día Entrega</b>
                             </div>
                             <input type="text" name="diaEntr" id="diaEntr" class="form-control input-xs">
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-5">
                 <div class="row">                   
                      <div class="col-md-12 col-sm-6 col-xs-6">  
                         <div class="input-group">
@@ -535,6 +576,16 @@ function llenarDatos(datos) {
                                 <b>Beneficiario/ Usuario:</b>
                             </div>
                              <select name="beneficiario" id="beneficiario" class="form-control input-xs" onchange="listaAsignacion()"></select>
+                             <span class="input-group-btn">
+                            <button type="button" class="" onclick="add_beneficiario()">
+                                <img id="img_tipoCompra"  src="../../img/png/mostrar.png" style="width: 20px;" />
+                            </button>
+                        </span>
+                        <span class="input-group-btn">
+                            <button type="button" class="" onclick="eliminar_beneficiario()">
+                                <img id="img_tipoCompra"  src="../../img/png/close.png" style="width: 20px;" />
+                            </button>
+                        </span>
                         </div>
                     </div>
                 </div>
@@ -561,7 +612,7 @@ function llenarDatos(datos) {
                                 <img id="img_tipoCompra"  src="../../img/png/TipoCompra.png" style="width: 20px;" />
                             </button>
                         </span>
-                         <select name="tipoCompra" id="tipoCompra" class="form-control input-xs" onchange="">
+                         <select name="tipoCompra" id="tipoCompra" class="form-control input-xs" onchange="autocoplet_pro2()">
                          </select>
                         </div>
                     </div>
@@ -587,7 +638,7 @@ function llenarDatos(datos) {
                     <div class="col-md-12 col-sm-6 col-xs-6">  
                         <div class="input-group">
                             <div class="input-group-addon input-xs">  
-                                <b> Tipo de Entrega</b>
+                                <b> Tipo Entrega</b>
                             </div>
                         <input type="text" name="tipoEntrega" id="tipoEntrega" class="form-control input-xs">
                         </div>
@@ -909,6 +960,24 @@ function llenarDatos(datos) {
     </div>
 
 <div id="modal_tipoCompra" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Tipo empaque</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+            <div class="row text-center" id="pnl_tipo_empaque">
+            </div>                       
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-primary" onclick="cambiar_empaque()">OK</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+<div id="modal_addBeneficiario" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog modal-sm">
       <div class="modal-content">
           <div class="modal-header bg-primary">

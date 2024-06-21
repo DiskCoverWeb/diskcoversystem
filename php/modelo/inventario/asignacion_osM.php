@@ -44,7 +44,7 @@ class asignacion_osM
 
         $sql .= " ORDER BY C.Cliente";
 
-        print_r($sql);die();
+        // print_r($sql);die();
         try {
             return $this->db->datos($sql);
         } catch (Exception $e) {
@@ -138,6 +138,22 @@ class asignacion_osM
                 AND Item='".$_SESSION['INGRESO']['item']."'
                 AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
         return $this->db->datos($sql);    
+    }
+
+    function alimentosRecibidoscompra($query)
+    {
+        $sql = "SELECT DISTINCT TK.Codigo_Inv,CP.Producto,CP.* 
+                FROM Trans_kardex TK
+                INNER JOIN Catalogo_Productos CP ON TK.Codigo_Inv = CP.Codigo_Inv
+                INNER JOIN Trans_Correos TC ON TK.Orden_No = TC.Envio_No
+                WHERE Cod_C = 'AR01'
+                AND CP.Item = TK.Item
+                AND CP.Periodo = TK.Periodo";
+                if($query)
+                {
+                    $sql = " AND CP.Producto like '%".$query."%'";
+                }
+         return $this->db->datos($sql);    
     }
 
 

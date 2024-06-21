@@ -44,6 +44,15 @@ if(isset($_GET['tipo_asignacion'])){
     // $parametros = $_POST['parametros'];
     echo json_encode($controlador->tipo_asignacion());
 }
+if(isset($_GET['autocom_pro'])){
+    $query = '';
+    if(isset($_GET['q']))
+    {
+        $query = $_GET['q'];
+    }
+    // $parametros = $_POST['parametros'];
+    echo json_encode($controlador->autocom_pro($query));
+}
 
 
 
@@ -70,6 +79,10 @@ class asignacion_osC
 
         $diaActual =  BuscardiasSemana(date('w'));
         $diaActual = $diaActual[1]+1;
+        if($diaActual>6)
+        {
+            $diaActual = 0;
+        }
 
         try {
             $datos = $this->modelo->tipoBeneficiario($query);
@@ -86,11 +99,11 @@ class asignacion_osC
                 $asignaciones = count($asignacionesLis);
 
                 $dia =  BuscardiasSemana($value['Dia_Ent']);
-                print_r($diaActual);
-                print_r($dia);
+                // print_r($diaActual);
+                // print_r($dia);
                 // print_r($asignaciones);
                 // print_r($cant_asig.'\n');
-                if($diaActual==$dia[1])
+                if($diaActual==$dia[1] && $asignaciones != $cant_asig)
                 {
                     // print_r($dia);die();
                     $res[] = array(
@@ -133,6 +146,70 @@ class asignacion_osC
             return ['error' => $e->getMessage()];
         }
     }
+
+    function AddBeneficiario($query)
+    {
+
+            $datos = $this->modelo->tipoBeneficiario($query);
+            // print_r($datos);
+            $res = array();
+            if (count($datos) == 0) {
+                throw new Exception('No se encontraron datos');
+            }
+
+            $cant_asig = $this->modelo->tipo_asignacion();
+            $cant_asig = count($cant_asig);
+            foreach ($datos as $value) 
+            {
+                $asignacionesLis =$this->modelo->asignaciones_hechas($value['Codigo']);                
+                $asignaciones = count($asignacionesLis);
+
+                $dia =  BuscardiasSemana($value['Dia_Ent']);
+                // print_r($diaActual);
+                // print_r($dia);
+                // print_r($asignaciones);
+                // print_r($cant_asig.'\n');
+                if($diaActual==$dia[1] && $asignaciones != $cant_asig)
+                {
+                    // print_r($dia);die();
+                    $res[] = array(
+                        'id' => $value['Codigo'],
+                        'text' => $value['Cliente'],
+                        'CodigoA' => $value['CodigoA'],
+                        'CI_RUC' => $value['CI_RUC'],
+                        'Fecha_Atencion' => $value['Fecha_Registro']->format('Y-m-d'),
+                        'Dia_Entrega' => $dia[0],
+                        'Hora_Entrega' => $value['Fecha_Registro']->format('H:i'),
+                        'Envio_No' => $value['Envio_No'],
+                        'Frecuencia' => $value['Frecuencia'],
+                        'Beneficiario' => $value['Beneficiario'],
+                        'No_Soc' => $value['No_Soc'],
+                        'Area' => $value['Area'],
+                        'Acreditacion' => $value['Acreditacion'],
+                        'AccionSocial' => $value['AccionSocial'],
+                        'Tipo' => $value['Tipo'],
+                        'Cod_Fam' => $value['Cod_Fam'],
+                        'TipoAtencion' => $value['TipoAtencion'],
+                        'Salario' => $value['Salario'],
+                        'CodigoACD' => $value['CodigoACD'],
+                        'TipoEntega' => $value['TipoEntega'],
+                        'Descuento' => $value['Descuento'],
+                        'Evidencias' => $value['Evidencias'],
+                        'CodTipoBene' => $value['Actividad'],
+                        'TipoBene' => $value['TipoBene'],
+                        'Color'=>$value['Color'],
+                        'Picture'=>$value['Picture'],
+                        'Estado'=>$value['Estado'],
+                        'Hora'=>$value['Hora'],
+                        'vulneravilidad'=>$value['vulnerabilidad'],
+                        // 'InfoNutri'=>$value['Observaciones'],
+                        'asignaciones_hechas' =>$asignacionesLis,
+                    );
+                }
+            }
+            return $res; // Ajuste aquí para coincidir con el formato de Select2
+    }
+
 
     function datosExtra($parametros){
         try{
@@ -268,6 +345,17 @@ class asignacion_osC
         SetAdoFieldsWhere('CodigoC',$parametros['beneficiario']);  
         SetAdoFieldsWhere('Fecha',$parametros['fecha']);  
         return SetAdoUpdateGeneric();
+    }
+
+    function autocom_pro($query)
+    {
+        $datos = $this->modelo->alimentosRecibidoscompra($query);
+        $lista = array();
+        foreach ($datos as $key => $value) {
+            $lista[] = array('id'=>$value['Codigo_Inv'], 'text'=>$value['Producto'],'data'=>$value);
+        }
+
+        return $lista;
     }
 
 }

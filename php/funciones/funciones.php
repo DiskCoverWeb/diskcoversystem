@@ -7917,6 +7917,7 @@ function Leer_Codigo_Inv($CodigoDeInv,$FechaInventario,$CodBodega='',$CodMarca='
  // 'Datos por default
   if($CodBodega == "" ){$CodBodega = G_NINGUNO;}
   if($CodMarca == ""){ $CodMarca = G_NINGUNO;}
+  if($FechaInventario=='') {$FechaInventario = date('Y-m-d');}
   $Codigo_Ok = False;
   $Con_Kardex = False;
   $DatInv =array();

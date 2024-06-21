@@ -66,7 +66,7 @@ class asignacion_pickingM
         }
     }
 
-    function listaAsignacion($beneficiario,$T=false)
+    function listaAsignacion($beneficiario,$T=false,$tipo=false)
     {
          $sql = "SELECT ".Full_Fields("Detalle_Factura")."
                 FROM Detalle_Factura
@@ -77,6 +77,10 @@ class asignacion_pickingM
                 {
                     $sql.="AND T = '".$T."'";
                 }
+                if($tipo)
+                {
+                    $sql.=" AND Codigo = '".$tipo."'";
+                }
         try{
             return $this->db->datos($sql);
         }catch(Exception $e){
@@ -86,43 +90,32 @@ class asignacion_pickingM
 
     function eliminarLinea($id)
     {
-        $sql = "DELETE FROM Detalle_Factura WHERE ID = '".$id."'";
+        $sql = "DELETE FROM Trans_Comision WHERE ID = '".$id."'";
+        // print_r($sql);
         return $this->db->String_Sql($sql);
     }
 
-    function llenarCamposPoblacion($codigo)
+    function cargar_asignacion($bene,$tipo)
     {
-        $sqlFecha = "SELECT MAX(FechaM) AS UltimaFecha FROM Trans_Tipo_Poblacion 
-                     WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
-                     AND CodigoC = '" . $codigo . "'";
-
-        $resultadoFecha = $this->db->datos($sqlFecha);
-
-        $ultimaFecha = $resultadoFecha[0]['UltimaFecha']->format('Y-m-d');
-
-        $sqlRegistros = "SELECT ".Full_Fields('Trans_Tipo_Poblacion')." FROM Trans_Tipo_Poblacion TP
-                        WHERE  TP.Item = '" . $_SESSION['INGRESO']['item'] . "' 
-                              AND CodigoC =  '" . $codigo. "' 
-                              AND FechaM =  (SELECT MAX(FechaM) FROM Trans_Tipo_Poblacion) ";
-                         // print_r($sqlRegistros);die();
-
-        return $this->db->datos($sqlRegistros);
-    }
-
-    function tipo_poblacion()
-    {
-        $sql = "SELECT ".Full_Fields('Catalogo_Proceso')." 
-                FROM Catalogo_Proceso 
-                WHERE TP = 'POBLACIO'";
+        $sql = "SELECT TC.ID,TC.Fecha,TC.Fecha_C,A.Nombre_Completo,TC.Total,TC.CodBodega
+                FROM Trans_Comision TC
+                INNER JOIN Accesos A ON TC.CodigoU = A.Codigo
+                WHERE CodigoC = '".$bene."'
+                AND Cta = '".$tipo."'";
+                // print_r($sql);die();
         return $this->db->datos($sql);    
     }
 
-    function tipo_asignacion()
+    function total_ingresados($bene,$tipo)
     {
-        $sql = "SELECT ".Full_Fields('Catalogo_Proceso')." 
-                FROM Catalogo_Proceso 
-                WHERE TP = 'TIPOASIG'";
-        return $this->db->datos($sql);    
+        $sql = "SELECT SUM(TC.Total) as Total
+                FROM Trans_Comision TC
+                INNER JOIN Accesos A ON TC.CodigoU = A.Codigo
+                WHERE CodigoC = '".$bene."'
+                AND Codigo_Inv = '".$tipo."'";
+
+                // print_r($sql);die();
+        return $this->db->datos($sql);   
     }
 
     function asignaciones_hechas($beneficiario)
@@ -134,6 +127,28 @@ class asignacion_pickingM
                 AND Item='".$_SESSION['INGRESO']['item']."'
                 AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
         return $this->db->datos($sql);    
+    }
+
+    function catalogo_bodetagas($cod)
+    {
+        $sql = "SELECT * FROM Catalogo_Bodegas 
+        WHERE Item = '".$_SESSION['INGRESO']['item']."'
+        AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+        AND CodBod in (".$cod.")";
+
+        // print_r($sql);
+        return $this->db->datos($sql);    
+    }
+
+    function lineasKArdex($codBarras)
+    {
+        $sql ="SELECT TK.Codigo_Barra,TK.Fecha,CP.Producto
+            FROM trans_kardex TK
+            INNER JOIN Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv 
+            WHERE TK.Codigo_Barra = '".$codBarras."'";
+               // print_r($sql);die();
+
+        return $this->db->datos($sql);   
     }
 
 

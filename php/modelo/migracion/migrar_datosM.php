@@ -147,16 +147,18 @@ class migrar_datosM
 		set_time_limit(0);
 	   	ini_set('memory_limit', '1024M');
 
-	   	$resp = 1;
-	   	if(!file_exists('c:/DatosTbl/'))
-	   	{
-	   		mkdir('c:/DatosTbl/',0777,true);
-	   	}
+	   	// $resp = 1;
+	   	// if(!file_exists('c:/DatosTbl/'))
+	   	// {
+	   	// 	mkdir('c:/DatosTbl/',0777,true);
+	   	// }
 
-	   	if(!file_exists('c:/DatosTbl/SP/'))
-	   	{
-	   		mkdir('c:/DatosTbl/SP/',0777,true);
-	   	}
+	   	// if(!file_exists('c:/DatosTbl/SP/'))
+	   	// {
+	   	// 	mkdir('c:/DatosTbl/SP/',0777,true);
+	   	// }
+
+	   	$link = '/home/ftpuser/ftp/files/';
 	    
 	    $usuario = $_SESSION['INGRESO']['Usuario_DB'];
 	    $password = $_SESSION['INGRESO']['Password_DB'];  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
@@ -170,7 +172,7 @@ class migrar_datosM
 		$datosSP = $this->db->datos($sql);
 
 		foreach ($datosSP as $key => $value) {
-			$rutaArchivo = "c:/DatosTbl/SP/".$value['sp'].".txt";
+			$rutaArchivo = $link."/SP/".$value['sp'].".txt";
 			$contenido = $value['Definition'];
 
 			$archivo = fopen($rutaArchivo, 'w');

@@ -27,19 +27,21 @@ if(isset($_GET['buscar_producto']))
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->buscar_producto($parametros));
 }
-/*
-if(isset($_GET['addAsignacion'])){
-    $parametros = $_POST['param'];
-    echo json_encode($controlador->addAsignacion($parametros));
+
+if(isset($_GET['agregar_picking'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->agregar_picking($parametros));
 }
+
 if(isset($_GET['eliminarLinea'])){
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->eliminarLinea($parametros));
 }
-if(isset($_GET['Codigo_Inv_stock'])){
+if(isset($_GET['cargar_asignacion'])){
     $parametros = $_POST['parametros'];
-    echo json_encode($controlador->Codigo_Inv_stock($parametros));
+    echo json_encode($controlador->cargar_asignacion($parametros));
 }
+/*
 if(isset($_GET['llenarCamposPoblacion'])){
     $valor = $_POST['valor'];
     echo json_encode($controlador->llenarCamposPoblacion($valor));
@@ -78,10 +80,21 @@ class asignacion_pickingC
 
     	$datos = $this->modelo->tipoBeneficiario($query);
     	$lista = array();
+        $diaActual =  BuscardiasSemana(date('w'));
+        $diaActual = $diaActual[1]+1;
+        if($diaActual>6)
+        {
+            $diaActual = 0;
+        }   
+
     	foreach ($datos as $key => $value) {
             $dia = BuscardiasSemana($value['Dia_Ent']);
+
             $value['Dia_Ent']  = $dia[0];
-    		$lista[] = array('id'=>$value['Codigo'].'-'.$value['No_Hab'],'text'=>$value['Cliente'].' ('.$value['Tipo Asignacion'].')','data'=>$value);    		
+            if($diaActual==$dia[1])
+            {
+            	$lista[] = array('id'=>$value['Codigo'].'-'.$value['No_Hab'],'text'=>$value['Cliente'].' ('.$value['Tipo Asignacion'].')','data'=>$value);    	
+            }	
     	}
     	return $lista;
     }
@@ -98,8 +111,12 @@ class asignacion_pickingC
         $detalle = '';
         $ddlGrupoPro = '';
         $total = 0;
-        // print_r($datos);die();
+        // print_r($parametros);die();
         foreach ($datos as $key => $value) {
+            $cant = 0; 
+            $cant_ing = $this->modelo->total_ingresados($parametros['beneficiario'],$value['Codigo']);
+            if($cant_ing[0]['Total']!=''){ $cant = $cant_ing[0]['Total'];}
+            // print_r($cant_ing);die();
             $detalle.='<div class="row mb-3">                                    
                    <div class="col-sm-4">   
                         <b>Grupo de productos</b>
@@ -112,8 +129,7 @@ class asignacion_pickingC
                             <div class="input-group-addon input-xs">
                                 <b>Dif:</b>
                             </div>
-                            <input type="text" class="form-control input-xs">
-                            
+                            <input type="text" class="form-control input-xs" value="'.$cant.'" readonly>                            
                         </div>
                     </div>              
                     <div class="col-sm-4">                      
@@ -150,34 +166,79 @@ class asignacion_pickingC
     function buscar_producto($parametros)
     {
         $datos = $this->egresos->buscar_producto($parametros['codigo']);
+        // print_r($parametros);
+        $validado_grupo =1;
+        $lista_producto = array();
         foreach ($datos as $key => $value) {
-            $datos[0]['ubicacion'] = 
+            if($parametros['grupo'] == $value['Codigo_Inv'])
+            {
+                $value['ubicacion'] =  $this->ruta_bodega($value['CodBodega']);
+
+                $lista_producto[] = $value;
+            }else
+            {
+                $validado_grupo = 0;
+            }
         }
-        return $datos;
+
+        return array('producto'=>$lista_producto,'validado_grupo'=>$validado_grupo);
     }
 
-   /* function addAsignacion($parametros)
+    function ruta_bodega($padre)
+    {
+        $datos = explode('.',$padre);
+        $camino = '';
+        $buscar = '';
+        foreach ($datos as $key => $value) {
+            $camino.= $value.'.';
+            $buscar.= "'".substr($camino, 0,-1)."',";
+        }
+
+        $buscar = substr($buscar, 0,-1);
+        $pasos = $this->modelo->catalogo_bodetagas($buscar);
+        $ruta = '';
+        foreach ($pasos as $key => $value) {
+            $ruta.=$value['Bodega'].'/';            
+        }
+        $ruta = substr($ruta,0,-1);
+        return $ruta;
+    }
+
+
+
+    function agregar_picking($parametros)
     {
 
-        $producto = Leer_Codigo_Inv($parametros['Codigo'],$parametros['FechaAte']);
+        $Beneficiario = explode('-',$parametros['beneficiario']);
+
+        $cant_ing = $this->modelo->total_ingresados($Beneficiario[0],$parametros['CodigoInv']);
+        $cant_ing = $cant_ing[0]['Total'];
+        $stock = $this->modelo->listaAsignacion($Beneficiario[0],$T=false,$parametros['CodigoInv']);
+        $stock = $stock[0]['Cantidad'];
+
+        // print_r($cant_ing);
+        // print_r($stock);die();
+        $cant_ing = $cant_ing+$parametros['Cantidad'];
 
         // print_r($parametros);die();
-        SetAdoAddNew("Detalle_Factura");
-        SetAdoFields("TC","OP");
-        SetAdoFields("CodigoC",$parametros['beneficiarioCodigo']);
-        SetAdoFields("Procedencia",$parametros['Comentario']);
-        SetAdoFields("Codigo",$parametros['Codigo']);
-        SetAdoFields("Producto",$parametros['Producto']);
-        SetAdoFields("Cantidad",$parametros['Cantidad']);
-        SetAdoFields("Precio",number_format($producto['datos']['PVP'],2,'','.'));
-        SetAdoFields("Total",number_format($producto['datos']['PVP']*$parametros['Cantidad'],2,'','.'));
-        SetAdoFields("Fecha",$parametros['FechaAte']);
-        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
-        SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
-        SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
-        SetAdoFields("No_Hab",$parametros['asignacion']);
-        
-        return SetAdoUpdate();
+        if($cant_ing<=$stock)
+        {
+
+            $producto = Leer_Codigo_Inv($parametros['CodigoInv'],$parametros['FechaAte']);
+            SetAdoAddNew("Trans_Comision");
+            SetAdoFields("CodigoC",$Beneficiario[0]);
+            SetAdoFields("Cta",$Beneficiario[1]);
+            SetAdoFields("Codigo_Inv",$parametros['CodigoInv']);
+            SetAdoFields("Total",$parametros['Cantidad']);
+            SetAdoFields("Fecha",$parametros['FechaAte']);
+            SetAdoFields("Fecha_C",date('Y-m-d'));      
+            SetAdoFields("CodBodega",$parametros['codigoProducto']);        
+            SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+            SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+            SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+            
+            return SetAdoUpdate();
+        }else{ return -2; }
     }
 
     function eliminarLinea($parametros)
@@ -186,14 +247,30 @@ class asignacion_pickingC
         // print_r($parametros);die();
     }
 
-    function Codigo_Inv_stock($parametros)
-    {
-        $CodigoDeInv = $parametros['codigo'];
-        $FechaInventario = date('Y-m-d');
-        $datos = Leer_Codigo_Inv($CodigoDeInv,$FechaInventario);
-        return $datos;
-    }
+    function cargar_asignacion($parametros)
+    {        
+        $Beneficiario = explode('-',$parametros['beneficiario']);
+        $datos = $this->modelo->cargar_asignacion($Beneficiario[0],$Beneficiario[1]);
+        $tbl = '';
+        $total = 0;
+        foreach ($datos as $key => $value) {
+            $producto = $this->modelo->lineasKArdex($value['CodBodega']);           
+            // print_r($producto);die();
+            $tbl.='<tr>
+                    <td><button class="btn btn-sm btn-danger" onclick="eliminarlinea('.$value['ID'].')"><i class="fa fa-trash"></i></button></td>
+                    <td>'.$value['Fecha']->format('Y-m-d').'</td>
+                    <td>'.$value['Fecha_C']->format('Y-m-d').'</td>
+                    <td>'.$producto[0]['Producto'].'</td>
+                    <td>'.$producto[0]['Codigo_Barra'].'</td>
+                    <td>'.$value['Nombre_Completo'].'</td>
+                    <td>'.$value['Total'].'</td>
 
+                </tr>';
+                  $total  =   $total +$value['Total'];
+        }
+        return array('tabla'=>$tbl,'total'=>$total);
+    }
+/*
     function llenarCamposPoblacion($parametros)
     {
         $tr = '';

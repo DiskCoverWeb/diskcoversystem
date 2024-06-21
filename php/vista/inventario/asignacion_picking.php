@@ -14,12 +14,14 @@
 	        $('#totalPersAten').val(datos.No_Soc);//Total, Personas Atendidas
 	        $('#tipoPobl').val(datos.Area);//Tipo de Poblacion
 	        $('#acciSoci').val(datos.AccionSocial);//Accion Social
-	        $('#vuln').val(datos.vulneravilidad);//Vulnerabilidad
+	        $('#vuln').val(datos.vulnerabilidad);//Vulnerabilidad
 	        $('#tipoAten').val(datos.TipoAtencion);//Tipo de Atencion
 	        $('#CantGlobSugDist').val(datos.Salario);//Cantidad global sugerida a distribuir
 	        $('#CantGlobDist').val(datos.Descuento);//Cantidad global a distribuir
 	        $('#infoNutr').val(datos.InfoNutri);
 	        cargarOrden();
+  			cargar_asignacion();
+
         });
 
   	})
@@ -77,9 +79,14 @@
   	function validar_codigo()
   	{
   	 	codigo = $('#txt_codigo').val();
+  	 	if(codigo=='')
+  	 	{
+  	 		return false;
+  	 	}
   	 	grupo = $('#ddlgrupoProducto').val();
 		var parametros = {
 		'codigo':codigo,
+		'grupo':grupo,
 		}
 	 	$.ajax({
 		    type: "POST",
@@ -88,19 +95,134 @@
 	       dataType:'json',
 		    success: function(data)
 		    {
-		    	data = data[0];
-		    	console.log(data);
-		    	// if(grupo==data[])
-		    	$('#txt_id').val(data.ID)
-		    	// $('#txt_cod_producto').val(data.Codigo_Barra)
-				$('#txt_donante').val(data.Cliente)
-				// $('#txt_grupo').val(data.Producto)
-				$('#txt_stock').val(data.Entrada)
-				$('#txt_unidad').val(data.Unidad)
+		    	if(data.validado_grupo==0)
+		    	{
+		    		Swal.fire("Codigo Ingresado no pertenece al grupo de produto","","error").then(function(){
+		    			$('#txt_codigo').val("");
+
+		    		});
+		    	}else{
+		    		data = data.producto[0];
+			    	console.log(data);
+			    	// if(grupo==data[])
+			    	$('#txt_id').val(data.Codigo_Inv)
+			    	$('#txt_ubicacion').val(data.ubicacion)
+					$('#txt_donante').val(data.Cliente)
+					// $('#txt_grupo').val(data.Producto)
+					$('#txt_stock').val(data.Entrada)
+					$('#txt_unidad').val(data.Unidad)
+				}
 		    }
 		});
-	
+  	}
 
+  	function agregar_picking()
+  	{
+  		stock = $('#txt_stock').val();
+  		cant =$('#cant').val();
+
+  		if($('#beneficiario').val()=='' || $('#beneficiario').val()==null)
+  		{
+  			Swal.fire("Seleccione una Beneficiario valida","","info");
+  			return false;
+  		}
+  		if($('#txt_id').val()=='' || $('#txt_id').val()== null || $('#txt_id').val()=='0')
+  		{
+  			Swal.fire("Seleccione una producto","","info");
+  			return false;
+  		}
+  		if($('#cant').val()=='' || $('#cant').val()== null || $('#cant').val()=='0')
+  		{
+  			Swal.fire("Seleccione una cantidad valida","","info");
+  			return false;
+  		}
+  		
+  		if(parseFloat(cant)>parseFloat(stock))
+  		{
+  			Swal.fire("Cantidad Supera al stock","","info");
+  			return false;
+  		}
+
+
+		var parametros = {
+		'beneficiario':$('#beneficiario').val(),
+		'CodigoInv':$('#txt_id').val(),
+		'Cantidad':$('#cant').val(),
+		'FechaAte':$('#fechAten').val(),
+		'codigoProducto':$('#txt_codigo').val(),
+		}
+	 	$.ajax({
+		    type: "POST",
+	       url:   '../controlador/inventario/asignacion_pickingC.php?agregar_picking=true',
+		     data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+		    	if(data==1)
+		    	{
+		    		Swal.fire("Producto agregado","","success")
+		    		cargar_asignacion();
+		    	}else if(data==-2)
+		    	{
+		    		Swal.fire("El producto no se puede ingresar por que supera el total de Grupo","","error")
+		    	}
+		    	console.log(data);
+		    }
+		});
+  	}
+
+  	function cargar_asignacion()
+  	{
+  		var parametros = {
+		'beneficiario':$('#beneficiario').val(),
+		'FechaAte':$('#fechAten').val(),
+		}
+	 	$.ajax({
+		    type: "POST",
+	       url:   '../controlador/inventario/asignacion_pickingC.php?cargar_asignacion=true',
+		     data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+		    	$('#tbl_body').html(data.tabla);
+		    	$('#txt_total_ing').val(data.total);
+		    	console.log(data);
+		    }
+		});
+
+  	}
+  	function eliminarlinea(id)
+  	{
+  		Swal.fire({
+	        title: 'Esta seguro?',
+	        text: "Esta usted seguro de que quiere borrar este registro!",
+	        type: 'warning',
+	        showCancelButton: true,
+	        confirmButtonColor: '#3085d6',
+	        cancelButtonColor: '#d33',
+	        confirmButtonText: 'Si!'
+	       }).then((result) => {
+	         if (result.value==true) {
+	          Eliminar(id);
+	         }
+	       })
+  	}
+
+  	function Eliminar(id)
+  	{ 		
+  		var parametros = {
+		'id':id,
+		}
+	 	$.ajax({
+		    type: "POST",
+	       url:   '../controlador/inventario/asignacion_pickingC.php?eliminarLinea=true',
+		     data:{parametros:parametros},
+	       dataType:'json',
+		    success: function(data)
+		    {
+		    	cargar_asignacion();		    	
+		    }
+		});
   	}
 </script>
 <div class="row mb-2">
@@ -297,7 +419,7 @@
 							               		<div class="input-group-addon input-xs">
 						                            <b>Dif:</b>
 						                        </div>
-												<input type="text" class="form-control input-xs">
+												<input type="text" class="form-control input-xs" id="txt_total_ing" name="txt_total_ing">
 												<span class="input-group-btn">
 													<button type="button" class="btn btn-info btn-flat btn-sm" onclick="ver_detalle()"><i class="fa fa-eye"></i> Ver detalle</button>
 												</span>
@@ -402,7 +524,7 @@
 		        		</div>
 		        	</div>
 		        	<b>Ubicacion</b>
-		        	<input type="" name="" class="form-control input-xs" placeholder="Proveedor / Donante" readonly>		        	
+		        	<input type="" name="txt_ubicacion" id="txt_ubicacion" class="form-control input-xs" placeholder="Proveedor / Donante" readonly>		        	
 		        </div>
 		        <div class="col-sm-2">
 		            <b>Fecha expiracions</b>
@@ -421,7 +543,7 @@
 		            </div>
 		        </div>
 		        <div class="col-sm-9 text-right">
-		            <button class="btn btn-primary btn-sm">Ingreso</button>
+		            <button class="btn btn-primary btn-sm" onclick="agregar_picking()">Ingreso</button>
 		            <button class="btn btn-primary btn-sm">Borrar</button>
 		        </div>
 				
@@ -434,13 +556,13 @@
 					<table class="table table-hover" style="width:100%">
                         <thead>
                             <tr>
+                                <th width="10%"></th>
                                 <th>FECHA ATENCION</th>
                                 <th>FECHA PICKING</th>
                                 <th>DESCRIPCION</th>
                                 <th>CODIGO</th>
                                 <th>USUARIO</th>
                                 <th>CANTIDAD (KG)</th>
-                                <th>ELIMINAR</th>
                             </tr>
                         </thead>
                         <tbody id="tbl_body"></tbody>
