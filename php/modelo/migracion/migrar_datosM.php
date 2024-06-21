@@ -128,6 +128,7 @@ class migrar_datosM
 
 					// Reemplazar el archivo original con el archivo temporal
 					rename($archivo_temporal, $ruta_archivo);
+					$this->Enviar_ftp($outputFile,'/files/Datos/',$value['TABLE_NAME'].".txt");
 
 		        }else
 		        {
@@ -158,7 +159,7 @@ class migrar_datosM
 	   		mkdir('c:/DatosTbl/SP/',0777,true);
 	   	}
 
-	   	$link = '/home/ftpuser/ftp/files';
+	   	$link = 'c:/DatosTbl/SP/';
 	    
 	    $usuario = $_SESSION['INGRESO']['Usuario_DB'];
 	    $password = $_SESSION['INGRESO']['Password_DB'];  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
@@ -172,15 +173,16 @@ class migrar_datosM
 		$datosSP = $this->db->datos($sql);
 
 		foreach ($datosSP as $key => $value) {
-			$rutaArchivo = $link."/SP/".$value['sp'].".txt";
+			$rutaArchivo = $link.$value['sp'].".txt";
 			$contenido = $value['Definition'];
 
 			$archivo = fopen($rutaArchivo, 'w');
 
 			if ($archivo) {
 			    // Escribir el contenido en el archivo
-			    fwrite($archivo, $contenido);
-			    fclose($archivo);
+			   // fwrite($archivo, $contenido);
+			    //fclose($archivo);
+			    $this->Enviar_ftp($rutaArchivo,'/files/SP/',$value['sp'].".txt");
 
 			} else {
 				$resp = 0;
@@ -190,14 +192,22 @@ class migrar_datosM
 		return $resp;
 	}
 
-	function Enviar_ftp($link)
+	function Enviar_ftp($link,$link_remo,$archivo)
 	{
+
+		// $this->leer_ftp($link,'142.txt');
+		// die();
 		$ftp_server = "db.diskcoversystem.com";
 		$ftp_user_name = "ftpuser";
 		$ftp_user_pass = "ftp2023User";
+		$ftp_port = 21; // Cambia al puerto que necesites
 
-		// Conectar al servidor FTP
-		$conn_id = ftp_connect($ftp_server);
+
+		$link_remoto = $link_remo; //'/files/SP/';
+		$file_local_upload = $link; // Ruta local del archivo a subir
+		$file_remote_upload = $link_remoto .$archivo; // Nombre del archivo remoto
+
+		$conn_id = ftp_connect($ftp_server, $ftp_port);
 
 		// Autenticarse con el usuario y la contraseña
 		$login_result = ftp_login($conn_id, $ftp_user_name, $ftp_user_pass);
@@ -206,21 +216,64 @@ class migrar_datosM
 		if ((!$conn_id) || (!$login_result)) {
 		    die("No se pudo conectar al servidor FTP con los detalles proporcionados.");
 		}
-		echo "Conectado a $ftp_server, como $ftp_user_name\n";
-
-		// Ruta local y remota del archivo
-		$file_local = "ruta/local/al/archivo.txt";
-		$file_remote = "ruta/remota/en/servidor/archivo.txt";
+		echo "Conectado a $ftp_server en el puerto $ftp_port, como $ftp_user_name\n";
 
 		// Subir el archivo
-		if (ftp_put($conn_id, $file_remote, $file_local, FTP_BINARY)) {
-		    echo "El archivo $file_local se ha subido satisfactoriamente como $file_remote.\n";
+		if (ftp_put($conn_id, $file_remote_upload, $file_local_upload, FTP_BINARY)) {
+		    echo "El archivo $file_local_upload se ha subido satisfactoriamente como $file_remote_upload.\n";
 		} else {
-		    echo "Hubo un problema al subir el archivo $file_local.\n";
+		    echo "Hubo un problema al subir el archivo $file_local_upload.\n";
 		}
 
 		// Cerrar la conexión FTP
 		ftp_close($conn_id);
+		// die();
+	}
+
+	function leer_ftp($link,$archivo)
+	{
+// Detalles del servidor FTP
+$ftp_server = "db.diskcoversystem.com";
+$ftp_user_name = "ftpuser";
+$ftp_user_pass = "ftp2023User";
+$ftp_port = 21; // Cambia al puerto que necesites
+
+$link_remoto = '/home/ftpuser/ftp/files/';
+
+
+$link_remoto = '/home/ftpuser/ftp/files/';
+$file_remote_download = $link_remoto . '142.txt'; // Nombre del archivo remoto
+$file_local_download = 'C:\\Users\\usuario\\Desktop\\Payload\\142.txt'; // Nombre del archivo remoto
+
+// Conectar al servidor FTP en el puerto especificado
+$conn_id = ftp_connect($ftp_server, $ftp_port);
+
+// Autenticarse con el usuario y la contraseña
+$login_result = ftp_login($conn_id, $ftp_user_name, $ftp_user_pass);
+
+// Comprobar la conexión
+if ((!$conn_id) || (!$login_result)) {
+    die("No se pudo conectar al servidor FTP con los detalles proporcionados.");
+}
+echo "Conectado a $ftp_server en el puerto $ftp_port, como $ftp_user_name\n";
+
+// Verificar si la ruta local es escribible
+if (!is_writable(dirname($file_local_download))) {
+    die("El directorio local no es escribible: " . dirname($file_local_download));
+}
+
+// Descargar el archivo
+if (ftp_get($conn_id, $file_local_download, $file_remote_download, FTP_BINARY)) {
+    echo "El archivo $file_remote_download se ha descargado satisfactoriamente como $file_local_download.\n";
+} else {
+    echo "Hubo un problema al descargar el archivo $file_remote_download.\n";
+}
+
+// Cerrar la conexión FTP
+ftp_close($conn_id);
+
+
+
 	}
 
 }
