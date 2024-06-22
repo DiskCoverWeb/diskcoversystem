@@ -20,7 +20,7 @@ class migrar_datosM
 	    $this->db = new db();
 	}
 
-	function generarArchivos()
+	function generarArchivos($link)
 	{
 			set_time_limit(0);
 	    	ini_set('memory_limit', '1024M');
@@ -91,7 +91,7 @@ class migrar_datosM
 		        $query2 = "SELECT COUNT(*) AS NUM FROM " . $value['TABLE_NAME'];
 		        $canti  = $this->db->datos($query2);
 
-	        	$outputFile = "c:/DatosTbl/TABLAS/Z".$value['TABLE_NAME'].".txt";
+	        	$outputFile = $link."/Z".$value['TABLE_NAME'].".txt";
 
 	        	$command = "sqlcmd -S $serverName -d " . $connectionOptions['Database'] . " -U " . $connectionOptions['Uid'] . " -P " . $connectionOptions['PWD'] . " -Q \"$query\" -o \"$outputFile\" -s\",\" -W";
 	        	// print_r($command);die();

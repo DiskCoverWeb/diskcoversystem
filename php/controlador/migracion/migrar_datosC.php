@@ -29,11 +29,20 @@ class migrar_datosC
 	
 	function generarArchivos()
 	{
-		if($this->modelo->generarArchivos())
-		{
-			$url = "c:/DatosTbl/TABLAS/";
-			$this->generarZip("TABLAS",$url);
-		}
+		$link_remo = '/files/Datos/';
+		$link = dirname(__DIR__,3).'/TEMP/Datos_'.$_SESSION['INGRESO']['item'].'/';
+		if(!file_exists(dirname(__DIR__,3).'/TEMP/'))
+	   	{
+	   		mkdir(dirname(__DIR__,3).'/TEMP/',0777,true);
+	   	}
+	   	if(!file_exists($link))
+	   	{
+	   		mkdir($link,0777,true);
+	   	}	    
+
+		$this->modelo->generarArchivos($link);
+		$this->Enviar_ftp($link,$link_remo);
+		
 	}
 
 	function generarSP()
