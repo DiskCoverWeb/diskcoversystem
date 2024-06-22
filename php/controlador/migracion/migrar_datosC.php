@@ -38,9 +38,35 @@ class migrar_datosC
 
 	function generarSP()
 	{
-		$this->modelo->generarSP();
-		$url = "c:/DatosTbl/SP/";
-		$this->generarZip('SP',$url);
+		$link_remo = '/files/SP/';
+		$link = dirname(__DIR__,3).'/TEMP/SP_'.$_SESSION['INGRESO']['item'].'/';
+	   	if(!file_exists(dirname(__DIR__,3).'/TEMP/'))
+	   	{
+	   		mkdir(dirname(__DIR__,3).'/TEMP/',0777,true);
+	   	}
+	   	if(!file_exists($link))
+	   	{
+	   		mkdir($link,0777,true);
+	   	}	    
+
+		$this->modelo->generarSP($link);
+		$this->Enviar_ftp($link,$link_remo);
+
+		// enviatr a ftp
+
+	}
+
+	function leer_carpeta($directory)
+	{
+		$files = scandir($directory);
+		$files = array_diff($files, array('.', '..'));
+		$lista = array();
+			// Mostrar la lista de archivos
+		foreach ($files as $file) {
+		   $lista[] = $file;
+		}
+
+		return $lista;
 	}
 
 	function generarZip($carpetaName,$ruta)
@@ -77,26 +103,45 @@ class migrar_datosC
 		}
 	}
 
-	function agregarCarpetaAlZip($zip, $carpeta, $carpetaDentroDelZip) {
-    if (is_dir($carpeta)) {
-        if ($dh = opendir($carpeta)) {
-            // Añadir la carpeta dentro del archivo .zip
-            $zip->addEmptyDir($carpetaDentroDelZip);
-            while (($file = readdir($dh)) !== false) {
-                if ($file != '.' && $file != '..') {
-                    if (is_dir($carpeta . '/' . $file)) {
-                        // Añadir subcarpeta
-                        $this->agregarCarpetaAlZip($zip, $carpeta . '/' . $file, $carpetaDentroDelZip . '/' . $file);
-                    } else {
-                        // Añadir archivo
-                        $zip->addFile($carpeta . '/' . $file, $carpetaDentroDelZip . '/' . $file);
-                    }
-                }
-            }
-            closedir($dh);
-        }
-    }
-}
+	
+
+	function Enviar_ftp($link,$link_remo)
+	{
+
+		// $this->leer_ftp($link,'142.txt');
+		// die();
+		$ftp_server = "db.diskcoversystem.com";
+		$ftp_user_name = "ftpuser";
+		$ftp_user_pass = "ftp2023User";
+		$ftp_port = 21; // Cambia al puerto que necesites
+
+
+		$link_remoto = $link_remo; //'/files/SP/';		
+		$conn_id = ftp_connect($ftp_server, $ftp_port);
+
+		// Autenticarse con el usuario y la contraseña
+		$login_result = ftp_login($conn_id, $ftp_user_name, $ftp_user_pass);
+
+		// Comprobar la conexión
+		if ((!$conn_id) || (!$login_result)) {
+		    die("No se pudo conectar al servidor FTP con los detalles proporcionados.");
+		}
+		$respuesta = 1;
+		$datos = $this->leer_carpeta($link);
+		foreach ($datos as $key => $value) {
+			$file_local_upload = $link.$value; // Ruta local del archivo a subir
+			$file_remote_upload = $link_remoto .$value; // Nombre del archivo remoto
+
+			if (!ftp_put($conn_id, $file_remote_upload, $file_local_upload, FTP_BINARY)) {
+			    echo "Hubo un problema al subir el archivo $file_local_upload.\n";
+			    $respuesta = -1;
+			}
+			
+		}
+		ftp_close($conn_id);
+		return $respuesta;
+	}
+
 }
 
 ?>

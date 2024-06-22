@@ -128,7 +128,6 @@ class migrar_datosM
 
 					// Reemplazar el archivo original con el archivo temporal
 					rename($archivo_temporal, $ruta_archivo);
-					$this->Enviar_ftp($outputFile,'/files/Datos/',$value['TABLE_NAME'].".txt");
 
 		        }else
 		        {
@@ -143,24 +142,12 @@ class migrar_datosM
 	}
 
 
-	function generarSP()
+
+	function generarSP($link)
 	{
 		set_time_limit(0);
 	   	ini_set('memory_limit', '1024M');
-
-	   	$resp = 1;
-	   	if(!file_exists('c:/DatosTbl/'))
-	   	{
-	   		mkdir('c:/DatosTbl/',0777,true);
-	   	}
-
-	   	if(!file_exists('c:/DatosTbl/SP/'))
-	   	{
-	   		mkdir('c:/DatosTbl/SP/',0777,true);
-	   	}
-
-	   	$link = 'c:/DatosTbl/SP/';
-	    
+	   	$resp = 1;	   	
 	    $usuario = $_SESSION['INGRESO']['Usuario_DB'];
 	    $password = $_SESSION['INGRESO']['Password_DB'];  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
 	    $servidor = $_SESSION['INGRESO']['IP_VPN_RUTA'];     
@@ -180,9 +167,8 @@ class migrar_datosM
 
 			if ($archivo) {
 			    // Escribir el contenido en el archivo
-			   // fwrite($archivo, $contenido);
-			    //fclose($archivo);
-			    $this->Enviar_ftp($rutaArchivo,'/files/SP/',$value['sp'].".txt");
+			   fwrite($archivo, $contenido);
+			    fclose($archivo);
 
 			} else {
 				$resp = 0;
@@ -191,8 +177,7 @@ class migrar_datosM
 
 		return $resp;
 	}
-
-	function Enviar_ftp($link,$link_remo,$archivo)
+	function Enviar_ftp($link,$archivo)
 	{
 
 		// $this->leer_ftp($link,'142.txt');
@@ -203,10 +188,14 @@ class migrar_datosM
 		$ftp_port = 21; // Cambia al puerto que necesites
 
 
-		$link_remoto = $link_remo; //'/files/SP/';
+		$link_remoto = '/files/';
 		$file_local_upload = $link; // Ruta local del archivo a subir
 		$file_remote_upload = $link_remoto .$archivo; // Nombre del archivo remoto
 
+
+		// print_r($file_local_upload.'--'.$file_remote_upload);die();
+
+		// Conectar al servidor FTP en el puerto especificado
 		$conn_id = ftp_connect($ftp_server, $ftp_port);
 
 		// Autenticarse con el usuario y la contraseña
@@ -227,7 +216,6 @@ class migrar_datosM
 
 		// Cerrar la conexión FTP
 		ftp_close($conn_id);
-		// die();
 	}
 
 	function leer_ftp($link,$archivo)
