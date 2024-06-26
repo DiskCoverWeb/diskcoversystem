@@ -6118,8 +6118,9 @@ if ($pos === false) {
 // print_r($tbl);die();
 if($titulo)
  {
+  // print_r($titulo);die();
   // $num = count($columnas_uti);
-   $tbl.="<div class='$class_titulo'><b>".$titulo."</b></div>";
+   $tbl.="<div class='".$class_titulo."'><b id='lbl_titulo'>".$titulo."</b></div>";
  }
 
  $tbl.= '<div class="table-responsive" style="overflow-x: scroll;">

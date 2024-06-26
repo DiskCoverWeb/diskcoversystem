@@ -89,7 +89,7 @@ if(isset($_GET['reporte_pdf_bacsg']))
 if(isset($_GET['datos_tabla']))
 {
 	$modelo = new contabilidad_model();
-	$tabla = $modelo->listar_tipo_balanceSQl(false,1,'');	
+	$tabla = $modelo->listar_tipo_balanceSQl(false,1,'BALANCE DE COMPROBACION');	
 	echo json_encode($tabla);
    
 	
@@ -568,11 +568,11 @@ function sp_proceso_balance($parametros)
 		{
 			 if($parametros['imp']=='false')
 			 {
-			  $tabla = $modelo->listar_tipo_balanceSQl($parametros['balMes'],$parametros['tipo_b'],$parametros['tipo_p']);
+			  $tabla = $modelo->listar_tipo_balanceSQl($parametros['balMes'],$parametros['tipo_b'],$parametros['tipo_p'],false,$parametros['nom']);
 			  return $tabla;
 			 }else
 			 {
-			 	return $modelo->listar_tipo_balanceSQl($parametros['balMes'],$parametros['tipo_b'],$parametros['tipo_p'],true);
+			 	return $modelo->listar_tipo_balanceSQl($parametros['balMes'],$parametros['tipo_b'],$parametros['tipo_p'],true,$parametros['nom']);
 			 }
 		}else
 		{
@@ -618,37 +618,40 @@ function sp_proceso_balance_pdf($parametros)
 			// $pdf++
 			 
 			$datos = $modelo->listar_tipo_balanceSQl_pdf($parametros['balMes'],$parametros['tipo_b'],$parametros['tipo_p'],true);
-			$campos = explode(',',trim($datos['campos']));
+			$campos = str_replace(array('TC','DG'),array('',''), $datos['campos']);
+			$campos = explode(',',trim($campos));
+			$campos = array_values(array_filter($campos));
 			$ali =array();
 			$medi =array();
 			foreach ($campos as $key => $value) {
-				if($value == 'Cuenta')
-				{
-					$ali[$key] = 'L';
-					$medi[$key] =35;
 
-				}else
-				{
-					$val =  strlen(trim($value));
-					if($val != 2){
-					$ali[$key] = 'L';
-					$medi[$key] = $val*2.5;
-				    }else
-				    {
-				    	$ali[$key] = 'L';
-					    $medi[$key] = $val*4;
-				    }
-					// array_push($medi, 10);
-				}
-				if($value == 'Codigo')
-				{
-					$ali[$key] = 'L';
-					$medi[$key] =26;
-				}
+						if($value == 'Cuenta')
+						{
+							$ali[$key] = 'L';
+							$medi[$key] =55;
+
+						}else
+						{
+							$val =  strlen(trim($value));
+							if($val != 2){
+							$ali[$key] = 'L';
+							$medi[$key] = $val*2.5;
+						    }else
+						    {
+						    	$ali[$key] = 'L';
+							    $medi[$key] = $val*4;
+						    }
+							// array_push($medi, 10);
+						}
+						if($value == 'Codigo')
+						{
+							$ali[$key] = 'L';
+							$medi[$key] =36;
+						}
 			}
 			$pdf = new cabecera_pdf();	
 
-
+// print_r($campos);die();
 	        $titulo = $parametros['nom'];
 	        $mostrar = true;
 	        $sizetable =9;
@@ -659,29 +662,41 @@ function sp_proceso_balance_pdf($parametros)
 		    $tablaHTML[0]['estilo']='BI';
 		    $tablaHTML[0]['borde'] = '1';
 		    $pos = 1;
+
+		    // print_r($datos);die();
 		    foreach ($datos['datos'] as $key => $value) {
 		    	$datos = array();
+		    	// print_r($value);die();
 		    	foreach($value as $key1 => $valu)
 		    	{
 		    		// print_r($value);die();
-		    		if(is_numeric($valu))
+		    		if($key1!='DG' && $key1!='TC')
 		    		{
+		    			if(is_numeric($valu))
+		    			{
 
-		    			array_push($datos, number_format($valu,2,'.',''));
-		    		}else
-		    		{
-		    			array_push($datos, $valu);		    			
+		    				array_push($datos, number_format($valu,2,'.',''));
+		    			}else
+		    			{
+		    				array_push($datos, $valu);		    			
+		    			}
 		    		}
 		    	}
 
 		    	// print_r($datos);die();
-			    $tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+			    	$tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
 		        $tablaHTML[$pos]['alineado']=$tablaHTML[0]['alineado'];
 		        $tablaHTML[$pos]['datos']=$datos;
 		        $tablaHTML[$pos]['estilo']='I';
-		        $tablaHTML[$pos]['borde'] = '1';
+		        $tablaHTML[$pos]['borde'] = 'RL';
 		        $pos = $pos+1;
 		    }
+		    		$tablaHTML[$pos]['medidas']=array(190);
+		        $tablaHTML[$pos]['alineado']=array("L");
+		        $tablaHTML[$pos]['datos']=array('');
+		        $tablaHTML[$pos]['estilo']='I';
+		        $tablaHTML[$pos]['borde'] = 'BT';
+		        $pos = $pos+1;
 	        $pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$parametros['desde'],$parametros['hasta'],$sizetable,$mostrar);
 
 
