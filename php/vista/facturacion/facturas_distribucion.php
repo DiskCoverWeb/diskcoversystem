@@ -1,14 +1,30 @@
+<!--
+	AUTOR DE RUTINA	: Teddy Moreira
+	FECHA CREACION : 19/06/2024
+	FECHA MODIFICACION : 27/06/2024
+	DESCIPCION : Interfaz de modulo Facturacion/Facturas Distribucion
+-->
 <?php date_default_timezone_set('America/Guayaquil');  //print_r($_SESSION);die();//print_r($_SESSION['INGRESO']);die();
 $TC = 'FA';
 if (isset ($_GET['tipo'])) {
 	$TC = $_GET['tipo'];
 }
 ?>
+<style>
+	#tablaGavetas td input{
+		max-width: 100px;
+		margin: 0 auto;
+		text-align: center;
+	}
+</style>
 <script type="text/javascript">
 	eliminar_linea('', '');
 	$(document).ready(function () {
-		alert("Hola");
+		let area = $('#contenedor-pantalla').parent();
+    	area.css('background-color', 'rgb(247, 232, 175)');
 		//catalogoLineas();
+		preseleccionar_opciones();
+		eventos_select();
 		autocomplete_cliente();
 		autocomplete_producto();
 		//serie();
@@ -45,8 +61,155 @@ if (isset ($_GET['tipo'])) {
 		//     console.log(data);
 		//   });
 
-		DCPorcenIva('MBFecha', 'DCPorcenIVA');
+		DCTipoFact2();
+		DCPorcenIvaFD();
 	});
+
+	function createTableFromContent(datos, elemento) {
+		let indice = 0;
+		let table = $('<table class="table"></table>')
+		let tHead = $('<thead></thead>');
+		let tBody = $('<tbody></tbody>');
+		for(let fila of datos){
+			let cols = Object.getOwnPropertyNames(fila);
+			if(indice === 0){
+				let tr = $('<tr></tr>');
+				for(let col of cols){
+					let th = $('<th></th>').text(col);
+					tr.append(th);
+				}
+				tHead.append(tr);
+			}
+
+			let tr = $('<tr></tr>');
+			for(let col of cols){
+				let td = $('<td></td>').text(isNaN(parseInt(fila[col])) ? fila[col].trim() : fila[col]);
+				tr.append(td);
+			}
+			tBody.append(tr);
+			
+			indice += 1;
+		}
+		table.append(tHead);
+		table.append(tBody);
+		$(`#${elemento}`).append(table);
+	}
+
+	// Deja preseleccionadas las opciones de los selects
+	function preseleccionar_opciones(){
+		$.ajax({
+			type: "GET",
+			url: '../controlador/facturacion/facturas_distribucionC.php?LlenarSelectIVA=true',
+			dataType: 'json',
+			success: function(data){
+				//Escoge el primer registro
+				let opcion = data[0]
+
+				//Crea la opcion y la agrega como predefinida al select
+				let newOption = new Option(opcion['text'], opcion['id'], true, true);
+				$("#DCPorcenIVA").append(newOption).trigger('change');
+			}
+		});
+		
+		$.ajax({
+			type: "GET",
+			url: '../controlador/facturacion/facturas_distribucionC.php?LlenarSelectTipoFactura=true',
+			dataType: 'json',
+			success: function(data){
+				//Escoge el primer registro
+				let opcion = data[0]
+				
+				console.log(opcion);
+				//Crea la opcion y la agrega como predefinida al select
+				let newOption = new Option(opcion['text'], opcion['id'], true, true);
+				$("#DCTipoFact2").append(newOption).trigger('change');
+				
+				//Agrega el resto de datos al option predefinido
+				let masDetalles = opcion['data'];
+				$("#DCTipoFact2").select2("data")[0]['data'] = masDetalles;
+
+				//Muestra Fact de la opcion predefinida en Label1
+				$("#Label1").text(`FACTURA (${masDetalles[0]['Fact']}) NO.`);
+			}
+		});
+	}
+
+	//Agrega eventos a selects
+	function eventos_select(){
+		$("#DCTipoFact2").on('select2:select', (e)=> {
+			let datosFact = e.params.data['data'][0]['Fact'];
+			console.log(datosFact);
+			$("#Label1").text(`FACTURA (${datosFact}) NO.`);
+		})
+	}
+
+	function DCPorcenIvaFD(){
+		let fecha = $("#MBFecha").val();
+		$('#DCPorcenIVA').select2({
+			placeholder: 'Seleccione IVA',
+			ajax: {
+				url: '../controlador/facturacion/facturas_distribucionC.php?LlenarSelectIVA=true',
+				dataType: 'json',
+				delay: 250,
+				data: function (params) {
+                    return {
+                        query: params.term,
+                        fecha: fecha
+                    }
+                },
+				processResults: function (data) {
+					return {
+						results: data
+					};
+				},
+				cache: true
+			}
+		});
+	}
+
+	function DCTipoFact2(){
+		//let fecha = $("#MBFecha").val().replaceAll("-","");
+		/*let newOption = new Option("Nota de Donacion Organizaciones", "CXCNDO", true, true);
+		$("#DCTipoFact2").append(newOption).trigger('change');*/
+		$('#DCTipoFact2').select2({
+			placeholder: 'Seleccione Tipo de Factura',
+			ajax: {
+				url: '../controlador/facturacion/facturas_distribucionC.php?LlenarSelectTipoFactura=true',
+				dataType: 'json',
+				delay: 250,
+				data: function (params) {
+                    return {
+                        query: params.term,
+                    }
+                },
+				processResults: function (data) {
+					return {
+						results: data
+					};
+				},
+				cache: true
+			}
+		});
+	}
+
+	function compararHoras(){
+		if($("#HoraAtencion").val().trim() !== "" && $("#HoraLlegada").val().trim() !== ""){
+			const [hours1, minutes1] = $("#HoraAtencion").val().split(':').map(Number);
+			const [hours2, minutes2] = $("#HoraLlegada").val().split(':').map(Number);
+	
+			const date1 = new Date();
+			const date2 = new Date();
+	
+			date1.setHours(hours1, minutes1, 0, 0);
+			date2.setHours(hours2, minutes2, 0, 0);
+			console.log(date1);
+			console.log(date2);
+	
+			if (date1 < date2){
+				$("#HorarioEstado").val("Atraso");
+			}
+		}
+	}
 
 	function AdoLinea() {
 		var parametros =
@@ -55,7 +218,7 @@ if (isset ($_GET['tipo'])) {
 		};
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?AdoLinea=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?AdoLinea=true',
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
@@ -79,7 +242,7 @@ if (isset ($_GET['tipo'])) {
 	function AdoAuxCatalogoProductos() {
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?AdoAuxCatalogoProductos=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?AdoAuxCatalogoProductos=true',
 			dataType: 'json',
 			success: function (data) {
 				if (data.length > 0) {
@@ -92,7 +255,7 @@ if (isset ($_GET['tipo'])) {
 	}
 
 
-	function usar_cliente(nombre, ruc, codigo, email, t = 'N') {
+	/*function usar_cliente(nombre, ruc, codigo, email, t = 'N') {
 		$('#Lblemail').val(email);
 		$('#LblRUC').val(ruc);
 		$('#codigoCliente').val(codigo);
@@ -100,7 +263,7 @@ if (isset ($_GET['tipo'])) {
 		// $('#DCCliente').append('<option value="' +codi+ ' ">' + datos[indice].text + '</option>');
 		$('#DCCliente').append($('<option>', { value: codigo, text: nombre, selected: true }));
 		$('#myModal').modal('hide');
-	}
+	}*/
 
 	function select() {
 		var seleccionado = $('#DCCliente').select2("data");
@@ -117,9 +280,10 @@ if (isset ($_GET['tipo'])) {
 			'CodigoCliente': dataS[0].Codigo,
 		};
 
+		//TODO: Aplicar select2
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?ClienteDatosExtras=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?ClienteDatosExtras=true',
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (res) {
@@ -143,7 +307,7 @@ if (isset ($_GET['tipo'])) {
 
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?ClienteSaldoPendiente=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?ClienteSaldoPendiente=true',
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (res) {
@@ -170,7 +334,7 @@ if (isset ($_GET['tipo'])) {
 		}
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?validar_cta=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?validar_cta=true',
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
@@ -237,13 +401,24 @@ if (isset ($_GET['tipo'])) {
     $('#Label3').text('I.V.A. '+parseFloat(valor).toFixed(2)+'%');
 }
 
+function tipo_facturacion(valor)
+{
+    $('#Label3').text('I.V.A. '+parseFloat(valor).toFixed(2)+'%');
+}
+
 	function autocomplete_cliente() {
 		$('#DCCliente').select2({
 			placeholder: 'Seleccione un cliente',
 			ajax: {
-				url: '../controlador/facturacion/punto_ventaC.php?DCCliente=true',
+				url: '../controlador/facturacion/facturas_distribucionC.php?DCCliente=true',
 				dataType: 'json',
 				delay: 250,
+				data: function (params) {
+                    return {
+                        query: params.term,
+						v_donacion: $("#DCTipoFact2").select2("data")[0]['data'][0]['Fact']
+                    }
+                },
 				processResults: function (data) {
 					return {
 						results: data
@@ -261,7 +436,7 @@ if (isset ($_GET['tipo'])) {
 		}
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?DCDireccion=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?DCDireccion=true',
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
@@ -290,7 +465,7 @@ if (isset ($_GET['tipo'])) {
 	function ingresarDir(parametros) {
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?ingresarDir=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?ingresarDir=true',
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
@@ -331,7 +506,7 @@ if (isset ($_GET['tipo'])) {
 		$('#DCArticulo').select2({
 			placeholder: 'Seleccione un producto',
 			ajax: {
-				url: '../controlador/facturacion/punto_ventaC.php?DCArticulo=true' + parametros,
+				url: '../controlador/facturacion/facturas_distribucionC.php?DCArticulo=true' + parametros,
 				dataType: 'json',
 				delay: 250,
 				processResults: function (data) {
@@ -349,7 +524,7 @@ if (isset ($_GET['tipo'])) {
 		$('#DCBanco').select2({
 			placeholder: 'Seleccione un banco',
 			ajax: {
-				url: '../controlador/facturacion/punto_ventaC.php?DCBanco=true',
+				url: '../controlador/facturacion/facturas_distribucionC.php?DCBanco=true',
 				dataType: 'json',
 				delay: 250,
 				processResults: function (data) {
@@ -372,7 +547,7 @@ if (isset ($_GET['tipo'])) {
 		}
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?LblSerie=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?LblSerie=true',
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
@@ -390,7 +565,7 @@ if (isset ($_GET['tipo'])) {
 	function DCBodega() {
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?DCBodega=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?DCBodega=true',
 			//data: {parametros: parametros},
 			dataType: 'json',
 			success: function (data) {
@@ -400,16 +575,17 @@ if (isset ($_GET['tipo'])) {
 
 	}
 	function DGAsientoF() {
-		$.ajax({
+		//TODO: REVISAR CONTROLADOR PORQUE DA PROBLEMAS EN OTRAS TABLAS
+		/*$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?DGAsientoF=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?DGAsientoF=true',
 			//data: {parametros: parametros},
 			dataType: 'json',
 			beforeSend: function () { $('#tbl_DGAsientoF').html('<img src="../../img/gif/loader4.1.gif" width="40%"> '); },
 			success: function (data) {
 				$('#tbl_DGAsientoF').html(data);
 			}
-		});
+		});*/
 
 	}
 
@@ -421,7 +597,7 @@ if (isset ($_GET['tipo'])) {
 		}
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?ArtSelec=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?ArtSelec=true',
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
@@ -522,7 +698,7 @@ if (isset ($_GET['tipo'])) {
 		}
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?IngresarAsientoF=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?IngresarAsientoF=true',
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
@@ -562,7 +738,7 @@ if (isset ($_GET['tipo'])) {
 		}
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?eliminar_linea=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?eliminar_linea=true',
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
@@ -577,7 +753,7 @@ if (isset ($_GET['tipo'])) {
 	function Calculos_Totales_Factura() {
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?Calculos_Totales_Factura=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?Calculos_Totales_Factura=true',
 			// data: {parametros: parametros},
 			dataType: 'json',
 			success: function (data) {
@@ -619,7 +795,7 @@ if (isset ($_GET['tipo'])) {
 		}
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?editar_factura=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?editar_factura=true',
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
@@ -699,7 +875,7 @@ if (isset ($_GET['tipo'])) {
 		}
 		$.ajax({
 			type: "POST",
-			url: '../controlador/facturacion/punto_ventaC.php?generar_factura=true',
+			url: '../controlador/facturacion/facturas_distribucionC.php?generar_factura=true',
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
@@ -848,18 +1024,48 @@ if (isset ($_GET['tipo'])) {
 <style>
 	
 </style>
-<div class="row" style="background-color: yellow;">
-	<div class="col-lg-6 col-sm-10 col-md-6 col-xs-12">
-		<div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
+<div id="contenedor-pantalla">
+<div class="row" style="display:flex;justify-content: space-between;align-items: center; width:100%; padding-bottom:5px;">
+	<!--<div class="col-lg-6 col-sm-10 col-md-6 col-xs-12">-->
+		<!--<div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">-->	
+		<div class="col-sm-5">
 			<a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
 			print_r($ruta[0] . '#'); ?>" title="Salir de modulo" class="btn btn-default">
 				<img src="../../img/png/salire.png">
 			</a>
+			<a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
+			print_r($ruta[0] . '#'); ?>" title="BOUCHE" class="btn btn-default">
+				<img src="../../img/png/adjuntar-archivo.png" height="32px">
+			</a>
+			<a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
+			print_r($ruta[0] . '#'); ?>" title="GUARDAR" class="btn btn-default">
+				<img src="../../img/png/disco.png" height="32px">
+			</a>
+			<a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
+			print_r($ruta[0] . '#'); ?>" title="IMPRIMIR" class="btn btn-default">
+				<img src="../../img/png/paper.png" height="32px">
+			</a>
+			<a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
+			print_r($ruta[0] . '#'); ?>" title="Salir de modulo" class="btn btn-default">
+				<img src="../../img/png/facturar.png" height="32px">
+			</a>
 		</div>
-	</div>
+		<div class="col-sm-3 col-sm-offset-4">
+			<div class="row">
+				<div class="col-sm-7">
+					<b>Hora de despacho:</b>
+				</div>
+				<div class="col-sm-5" style="padding:0;">
+					<input type="time" class="form-control input-xs" id="HoraDespacho" placeholder="HH:mm" value="<?php echo date('H:i');?>">
+				</div>
+			</div>
+		</div>
+		<!--</div>-->
+	<!--</div>-->
+	
 </div>
 <input type="hidden" name="CodDoc" id="CodDoc" class="form-control input-xs" value="00">
-<div class="row">
+<div class="row" style="padding-bottom:5px">
 	<div class="col-sm-2">
 		<input type="hidden" id="Autorizacion">
 		<input type="hidden" id="Cta_CxP">
@@ -869,12 +1075,34 @@ if (isset ($_GET['tipo'])) {
 			onchange="numeroFactura(); tipo_documento();" style="display:none"></select>
 		<b>Fecha</b>
 		<input type="date" name="MBFecha" id="MBFecha" class="form-control input-xs"
-			value="<?php echo date('Y-m-d'); ?>" onblur="DCPorcenIva('MBFecha', 'DCPorcenIVA');">
+			value="<?php echo date('Y-m-d'); ?>" onblur="DCPorcenIvaFD();">
+	</div>
+	<div class="col-sm-3">
+		<b>Tipo de Facturacion</b>
+		<select class="form-control input-xs" name="DCTipoFact2" id="DCTipoFact2" onblur="tipo_facturacion(this.value)">
+
+		</select>
 	</div>
 	<div class="col-sm-2">
-		<b>I.V.A</b>
+		<b>I.V.A %</b>
 		<select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA" onblur="cambiar_iva(this.value)"> </select>
 	</div>
+	<div class="col-sm-2">
+		<b id="Label1">FACTURA No.</b>
+		<div class="row">
+			<div class="col-sm-3" id="LblSerie">
+				<b></b>
+			</div>
+			<div class="col-sm-9">
+				<input type="" class="form-control input-xs" id="TextFacturaNo" name="TextFacturaNo" readonly>
+			</div>
+		</div>
+	</div>
+	
+
+</div>
+
+<div class="row" style="display:flex; justify-content:center; align-items:center;">
 	<div class="col-sm-4">
 		<b>Nombre del cliente</b>
 		<div class="input-group" id="ddl" style="width:100%">
@@ -892,31 +1120,50 @@ if (isset ($_GET['tipo'])) {
 	<div class="col-sm-2">
 		<b>CI/RUC/PAS</b>
 		<input type="" name="LblRUC" id="LblRUC" class="form-control input-xs" readonly>
-		<input type="hidden" name="Lblemail" id="Lblemail" class="form-control input-xs">
+		<!--<input type="hidden" name="Lblemail" id="Lblemail" class="form-control input-xs">-->
 
 	</div>
 	<div class="col-sm-2">
-		<b id="Label1">FACTURA No.</b>
-		<div class="row">
-			<div class="col-sm-3" id="LblSerie">
-				<b></b>
-			</div>
-			<div class="col-sm-9">
-				<input type="" class="form-control input-xs" id="TextFacturaNo" name="TextFacturaNo" readonly>
-			</div>
-		</div>
+		<b>Correo Electrónico</b>
+		<input type="email" name="Lblemail" id="Lblemail" class="form-control input-xs">
 	</div>
-
-</div>
-
-<div class="row">
+	<!--
 	<div class="col-sm-2">
 		<b>BODEGAS</b>
 		<select class="form-control input-xs" id="DCBodega" name="DCBodega" onblur="validar_bodega()">
 			<option value="">Seleccione Bodega</option>
 		</select>
+	</div>-->
+	<div class="col-sm-4">
+		<div class="row">
+			<div class="col-sm-6 text-right">
+				<b>Hora de atención:</b>
+			</div>
+			<div class="col-sm-6">
+				<input type="time" class="form-control input-xs" id="HoraAtencion" name="HoraAtencion" onchange="compararHoras()">
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6 text-right">
+				<b>Hora de llegada:</b>
+			</div>
+			<div class="col-sm-6">
+				<input type="time" class="form-control input-xs" id="HoraLlegada" name="HoraLlegada" onchange="compararHoras()">
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6 text-right">
+				<b><img src="../../img/png/hora_estado.png" height="40px" alt="">Estado:</b>
+			</div>
+			<div class="col-sm-6">
+				<input type="text" class="form-control input-xs text-right" id="HorarioEstado" name="HorarioEstado" disabled>
+			</div>
+		</div>
 	</div>
-	<div class="col-sm-2">
+</div>
+
+<div class="row" style="padding-bottom:5px">
+	<div class="col-sm-3">
 		<b>Saldo Pendiente</b>
 		<input name="saldoP" id="saldoP" class="form-control input-xs text-right" readonly value="0.00">
 	</div>
@@ -928,7 +1175,111 @@ if (isset ($_GET['tipo'])) {
 	</div>
 </div>
 
-<div class="row">
+<!--<div class="row" style="padding-bottom:5px">
+	<div class="col-sm-4">
+		<div class="col-sm-5 text-right">
+			<b>Kilos a distribuir:</b>			
+		</div>
+		<div class="col-sm-7">
+			<input type="text" name="kilos_distribuir" id="kilos_distribuir" class="form-control input-xs">
+		</div>
+	</div>
+	<div class="col-sm-2">
+		<div class="col-sm-4">
+			<b>Unidad:</b>
+		</div>
+		<div class="col-sm-8">
+			<input type="text" name="unidad_dist" id="unidad_dist" class="form-control input-xs">
+		</div>
+	</div>
+	<div class="col-sm-6">
+		<div class="col-sm-3 text-right">
+			<b>Detalle:</b>
+		</div>
+		<div class="col-sm-9">
+			<input type="text" name="detalle_prod" id="detalle_prod" class="form-control input-xs">
+		</div>
+	</div>
+</div>-->
+<div class="row box box-success" style="margin-left:0; padding:5px 10px;">
+	<div class="row" style="padding-bottom:5px">
+		<div class="col-sm-2">
+			<b>Kilos a distribuir:</b>			
+		</div>
+		<div class="col-sm-2">
+			<input type="text" name="kilos_distribuir" id="kilos_distribuir" class="form-control input-xs">
+		</div>
+		<div class="col-sm-2">
+			<div class="col-sm-4">
+				<b>Unidad:</b>
+			</div>
+			<div class="col-sm-8 pull-right" style="padding-right:0;padding-left:20px;">
+				<input type="text" name="unidad_dist" id="unidad_dist" class="form-control input-xs">
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="col-sm-3">
+				<b>Detalle:</b>
+			</div>
+			<div class="col-sm-9">
+				<input type="text" name="detalle_prod" id="detalle_prod" class="form-control input-xs">
+			</div>
+		</div>
+	</div>
+	<!--
+	<div class="row" style="padding-bottom:5px">
+		<div class="col-sm-6">
+			<div class="col-sm-3 text-right">
+				<b>Retirado por:</b>			
+			</div>
+			<div class="col-sm-9">
+				<input type="text" name="retirado_por" id="retirado_por" class="form-control input-xs">
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="col-sm-4">
+				<b>Gavetas pendientes:</b>
+			</div>
+			<div class="col-sm-3">
+				<input type="text" name="gavetas_pendientes" id="gavetas_pendientes" class="form-control input-xs">
+			</div>
+			<div class="col-sm-5">
+				<button type="button" id="btn_detalle" class="btn btn-primary btn-xs btn-block"> Ver detalle <i class="fa fa-eye"></i></button>
+			</div>
+		</div>
+	</div>
+	-->
+	<div class="row" style="padding-bottom:5px">
+		<div class="col-sm-2">
+			<b>Retirado por:</b>			
+		</div>
+		<div class="col-sm-4">
+			<input type="text" name="retirado_por" id="retirado_por" class="form-control input-xs">
+		</div>
+		<div class="col-sm-6">
+			<div class="col-sm-4">
+				<b>Gavetas pendientes:</b>
+			</div>
+			<div class="col-sm-3">
+				<input type="text" name="gavetas_pendientes" id="gavetas_pendientes" class="form-control input-xs">
+			</div>
+			<div class="col-sm-5">
+				<button type="button" id="btn_detalle" class="btn btn-primary btn-xs btn-block"> Ver detalle <i class="fa fa-eye"></i></button>
+			</div>
+		</div>
+	</div>
+	<div class="row" style="display:flex; align-items:center">
+		<div class="col-sm-3" style="width:fit-content">
+			<b>Evaluación de fundaciones:</b>
+		</div>
+		<div class="col-sm-1" style="padding: 0;" onclick="$('#modalEvaluacionFundaciones').modal('show');">
+			<div>
+				<img src="../../img/png/eval_fundaciones.png" width="50px" alt="Evaluacion fundaciones" title="EVALUACIÓN FUNDACIONES">
+			</div>
+		</div>
+	</div>
+</div>
+<!--<div class="row">
 	<div class="col-sm-4">
 		<b>NOTA</b>
 		<input type="text" name="TxtNota" id="TxtNota" class="form-control input-xs" value="." placeholder=".">
@@ -959,9 +1310,9 @@ if (isset ($_GET['tipo'])) {
 		<input type="text" name="TxtGavetas" id="TxtGavetas" class="form-control input-xs" value="0.00"
 			placeholder="0.00">
 	</div>
-</div>
+</div>-->
 <div class="row">
-	<div class="col-sm-9">
+	<!--<div class="col-sm-9">
 		<div class="row box box-success" style="padding-bottom: 7px; margin-left: 0px;">
 			<div class="col-sm-6">
 				<b>Producto</b>
@@ -1003,6 +1354,55 @@ if (isset ($_GET['tipo'])) {
 
 		</div>
 
+	</div>-->
+	<div class="col-sm-9">
+		<div class="row text-center" style="padding-bottom:10px;height:250px;overflow-y:auto;">
+			<div class="col-sm-12" id="tbl_DGAsientoF">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Código</th>
+							<th>Usuario</th>
+							<th>Producto</th>
+							<th>Cantidad (Kg)</th> <!-- TODO: (Kg) dinámico -->
+							<th>Costo unitario P.V.P</th>
+							<th>Costo total</th>
+							<th>Cheking</th>
+							<th>Notificar</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Código</td>
+							<td>JESUS PERDOMO</td>
+							<td>Fruver</td>
+							<td>300</td>
+							<td>0.14</td>
+							<td>42</td>
+							<td><input type="checkbox" id="producto_cheking" name="producto_cheking" checked="true"></td>
+							<td><button style="width:50px"><i class="fa fa-commenting" aria-hidden="true"></i></button></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-3">
+				<label for="gavetas_entregadas">Gavetas entregadas:</label>
+				<input type="text" class="form-control input-xs" id="gavetas_entregadas">
+			</div>
+			<div class="col-sm-3">
+				<label for="gavetas_devueltas">Gavetas devueltas:</label>
+				<input type="text" class="form-control input-xs" id="gavetas_devueltas">
+			</div>
+			<div class="col-sm-3">
+				<label for="gavetas_pendientes">Gavetas pendientes:</label>
+				<input type="text" class="form-control input-xs" id="gavetas_pendientes">
+			</div>
+			<div class="col-sm-1" onclick="$('#modalGavetasInfo').modal('show')">
+				<img src="../../img/png/gavetas.png" height="50px" alt="">
+			</div>
+		</div>
 	</div>
 	<div class="col-sm-3">
 		<div class="row">
@@ -1099,13 +1499,183 @@ if (isset ($_GET['tipo'])) {
 					style="color: red;" value="0.00">
 			</div>
 		</div>
-		<div class="row">
+		<!--<div class="row">
 			<div class="col-sm-12"><br>
 				<button class="btn btn-default btn-block" id="btn_g"> <img src="../../img/png/grabar.png"
 						onclick="generar()"><br> Guardar</button>
 			</div>
-		</div>
+		</div>-->
 
+	</div>
+</div>
+
+
+<div id="modalEvaluacionFundaciones" class="modal fade">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Evaluación Fundaciones</h4>
+			</div>
+			<div class="modal-body" style="overflow-y: auto; max-height: 300px; margin:5px">
+				<div style="overflow-x: auto; margin-bottom:20px">
+					<table class="table text-center" style="width:fit-content;margin:0 auto;">
+						<thead>
+							<tr>
+								<th>ITEM</th>
+								<th>BUENO</th>
+								<th>MALO</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><b>LIMPIEZA DE TRANSPORTE</b></td>
+								<td><input type="checkbox" id="limpieza_trans_bueno" name="limpieza_trans"></td>
+								<td><input type="checkbox" id="limpieza_trans_malo" name="limpieza_trans"></td>
+							</tr>
+							<tr>
+								<td><b>INSUMOS DE ALMACENAMIENTO NECESARIOS</b></td>
+								<td><input type="checkbox" id="insumos_alm_bueno" name="insumos_alm"></td>
+								<td><input type="checkbox" id="insumos_alm_malo" name="insumos_alm"></td>
+							</tr>
+							<tr>
+								<td><b>PERSONAL NECESARIO PARA RETIRO</b></td>
+								<td><input type="checkbox" id="personal_nec_bueno" name="personal_nec"></td>
+								<td><input type="checkbox" id="personal_nec_malo" name="personal_nec"></td>
+							</tr>
+							
+						</tbody>
+					</table>
+				</div>
+				<div class="row">
+					<div class="col-sm-3">
+						<b>COMENTARIO:</b>
+					</div>
+					<div class="col-sm-9">
+						<textarea class="form-control" name="comentario_eval" id="comentario_eval" style="height:80px;"></textarea>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-success" id="btnAceptarEvaluacion">Aceptar</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="modalGavetasInfo" class="modal fade">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Gavetas</h4>
+			</div>
+			<div class="modal-body" style="overflow-y: auto; max-height: 300px; margin:5px">
+				<div style="overflow-x:auto;">
+					<table class="table text-center" id="tablaGavetas">
+						<thead>
+							<tr>
+								<th>GAVETAS</th>
+								<th>ENTREGADAS</th>
+								<th>DEVUELTAS</th>
+								<th>PENDIENTES</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><b>Negro</b></td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_negro_entregadas">
+								</td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_negro_devueltas">
+								</td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_negro_pendientes">
+								</td>
+							</tr>
+							<tr>
+								<td><b>Azul</b></td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_azul_entregadas">
+								</td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_azul_devueltas">
+								</td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_azul_pendientes">
+								</td>
+							</tr>
+							<tr>
+								<td><b>Gris</b></td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_gris_entregadas">
+								</td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_gris_devueltas">
+								</td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_gris_pendientes">
+								</td>
+							</tr>
+							<tr>
+								<td><b>Rojo</b></td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_rojo_entregadas">
+								</td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_rojo_devueltas">
+								</td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_rojo_pendientes">
+								</td>
+							</tr>
+							<tr>
+								<td><b>Verde</b></td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_verde_entregadas">
+								</td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_verde_devueltas">
+								</td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_verde_pendientes">
+								</td>
+							</tr>
+							<tr>
+								<td><b>Amarillo</b></td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_amarillo_entregadas">
+								</td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_amarillo_devueltas">
+								</td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_amarillo_pendientes">
+								</td>
+							</tr>
+							<tr>
+								<td><b>TOTAL</b></td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_total_entregadas" value="0">
+								</td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_total_devueltas" value="0">
+								</td>
+								<td>
+									<input type="text" class="form-control" id="gavetas_total_pendientes" value="0">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-success" id="btnAceptarInfoGavetas">Aceptar</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -1129,4 +1699,5 @@ if (isset ($_GET['tipo'])) {
 			</div>
 		</div>
 	</div>
+</div>
 </div>
