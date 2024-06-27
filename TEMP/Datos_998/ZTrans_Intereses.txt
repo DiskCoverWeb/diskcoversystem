@@ -1,0 +1,1 @@
+AC;P;Fecha;Cuenta_No;Saldo_Cont;Saldo_Disp;Interes;Item;X;ID

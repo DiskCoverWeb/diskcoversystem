@@ -1,0 +1,1 @@
+Contrato_No;Fecha;Parte;Item;X;ID

@@ -1,0 +1,1 @@
+Aprobado;Codigo;Orden;Id_No;CodMat;CodE;Examen;Item;Periodo;X;ID

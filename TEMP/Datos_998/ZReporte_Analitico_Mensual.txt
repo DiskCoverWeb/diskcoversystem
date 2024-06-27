@@ -1,0 +1,1 @@
+TB;DG;TC;Cta;Cta_Aux;Codigo;Codigo_Aux;Detalle_Cuenta;Enero;Febrero;Marzo;Abril;Mayo;Junio;Julio;Agosto;Septiembre;Octubre;Noviembre;Diciembre;Total;Presupuesto;Diferencia;CodigoU;Item;Periodo;X

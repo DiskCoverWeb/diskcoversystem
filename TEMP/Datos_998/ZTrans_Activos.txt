@@ -1,0 +1,1 @@
+Periodo;T;Cta;Fecha;TP;Numero;Debe;Haber;Saldo;Item;CodigoU;Codigo_R;X;ID

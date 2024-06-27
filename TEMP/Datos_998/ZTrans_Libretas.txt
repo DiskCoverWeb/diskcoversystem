@@ -1,0 +1,1 @@
+CHT;AC;IP;T;Fecha;Cuenta_No;ME;TP;Cheque;Debitos;Creditos;Saldo_Cont;Saldo_Disp;CodigoU;Hora;Item;IDT;ACC;ACL;Banco;Dias;Cartilla_No;Papeleta_No;X;ID

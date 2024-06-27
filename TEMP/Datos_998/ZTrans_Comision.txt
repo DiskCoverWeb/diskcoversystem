@@ -1,0 +1,1 @@
+Periodo;T;TC;Cta;Fecha;Fecha_C;CodigoC;TP;Numero;Factura;Codigo_Inv;Total;Porc;Valor_Pagar;Item;CodigoU;X;ID

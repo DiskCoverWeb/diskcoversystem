@@ -1,0 +1,128 @@
+Periodo;Item;DG;Tipo;Codigo;Cuenta;Contenido;Fecha;FechaR;FechaA;Descripcion;Comentario;Imagen;X;ID
+^.^;^998^;^G^;^.^;^01^;^DATOS GENERALES^;^.^;^May 13 2024 12:00AM^;^May 13 2024 12:00AM^;^May 13 2024 12:00AM^;^.^;^.^;^datos_generales^;^.^;1
+^.^;^998^;^D^;^T^;^01.01^;^APELLIDOS^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;2
+^.^;^998^;^D^;^T^;^01.02^;^NOMBRES^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;3
+^.^;^998^;^D^;^T^;^01.03^;^TELEFONO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;4
+^.^;^998^;^D^;^T^;^01.04^;^CEDULA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;5
+^.^;^998^;^G^;^.^;^01.05^;^GENERO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;6
+^.^;^998^;^D^;^B^;^01.05.01^;^MASCULINO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;7
+^.^;^998^;^D^;^B^;^01.05.02^;^FEMENINO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;8
+^.^;^998^;^D^;^B^;^01.05.03^;^OTROS^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;9
+^.^;^998^;^D^;^D^;^01.06^;^FECHA DE NACIMIENTO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;10
+^.^;^998^;^D^;^N^;^01.07^;^EDAD^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;11
+^.^;^998^;^G^;^.^;^01.08^;^CIUDADANIA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;12
+^.^;^998^;^D^;^B^;^01.08.01^;^ECUATORIANA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;13
+^.^;^998^;^D^;^B^;^01.08.02^;^COLOMBIANA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;14
+^.^;^998^;^D^;^B^;^01.08.03^;^VENEZOLANA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;15
+^.^;^998^;^D^;^B^;^01.08.04^;^PERUANA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;16
+^.^;^998^;^D^;^B^;^01.08.05^;^ESPAÑOLA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;17
+^.^;^998^;^D^;^B^;^01.08.06^;^BOLIVIANA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;18
+^.^;^998^;^D^;^B^;^01.08.07^;^CUBANA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;19
+^.^;^998^;^D^;^B^;^01.08.08^;^OTROS^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;20
+^.^;^998^;^G^;^.^;^01.09^;^ESTADO CIVIL^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;21
+^.^;^998^;^D^;^B^;^01.09.01^;^CASADO/A^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;22
+^.^;^998^;^D^;^B^;^01.09.02^;^SOLTERO/A^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;23
+^.^;^998^;^D^;^B^;^01.09.03^;^VIUDO/A^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;24
+^.^;^998^;^D^;^B^;^01.09.04^;^UNIÓN DE LIBRE (UNION FORMAL ENTRE DOS CONVIVIENTES)^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;25
+^.^;^998^;^D^;^B^;^01.09.05^;^UNIÓN DE HECHO (UNION FORMAL LEGALIZADA ANTE UN NOTARIO ENTRE DOS CONVIVIENTES)^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;26
+^.^;^998^;^G^;^.^;^02^;^SITUACIÓN MEDICA Y FAMILIAR^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^s_medica_familiar^;^.^;27
+^.^;^998^;^G^;^.^;^02.01^;^¿USTED SE ENCUENTRA EN ESTADO DE LACTANCIA?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;28
+^.^;^998^;^D^;^B^;^02.01.01^;^SI^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;29
+^.^;^998^;^D^;^B^;^02.01.02^;^NO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;30
+^.^;^998^;^G^;^.^;^02.02^;^¿USTED SE ENCUENTRA EN ESTADO DE GESTACIÓN?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;31
+^.^;^998^;^D^;^B^;^02.02.01^;^SI^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;32
+^.^;^998^;^D^;^B^;^02.02.02^;^NO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;33
+^.^;^998^;^G^;^.^;^02.03^;^¿TOMA MEDICACIÓN DIARIA?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;34
+^.^;^998^;^D^;^B^;^02.03.01^;^SI^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;35
+^.^;^998^;^D^;^B^;^02.03.02^;^NO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;36
+^.^;^998^;^D^;^T^;^02.04^;^¿QUÉ MEDICAMENTO TOMA?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Banco de Alimentos Quito solicita esta información para prevenir cualquier riesgo en su salud durante las activades de voluntariado. Si su respuesta anterior fue NO por favor llenar con NINGUNO^;^.^;^.^;37
+^.^;^998^;^D^;^T^;^02.05^;^¿EN QUÉ DOSIS TOMA?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Si usted no toma medicamentos por favor completar con NINGUNO.^;^.^;^.^;38
+^.^;^998^;^G^;^.^;^02.06^;^¿TIENE ALGUNA ALERGIA?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Banco de Alimentos Quito solicita esta información para prevenir cualquier riesgo en su salud durante las activades de voluntariado^;^.^;^.^;39
+^.^;^998^;^D^;^B^;^02.06.01^;^SI^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;40
+^.^;^998^;^D^;^B^;^02.06.02^;^NO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;41
+^.^;^998^;^D^;^T^;^02.07^;^¿QUÉ PRODUCTOS; ALIMENTOS O FARMACOS LE GENERAN ALERGIA?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Si su respuesta anterior fue NO por favor llenar con NINGUNO^;^.^;^.^;42
+^.^;^998^;^D^;^T^;^02.08^;^NOMBRE DEL CONYUGUE O PAREJA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Si su respesta anterior fue SOLTERO/A  por favor llenar con la palabra NINGUNO^;^.^;^.^;43
+^.^;^998^;^D^;^T^;^02.09^;^NÚMERO DE CÉDULA DEL CONYUGUE^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Si su usted no tiene un conguye por favor llenar con NINGUNO^;^.^;^.^;44
+^.^;^998^;^D^;^T^;^02.10^;^NOMBRE DE LA PERSONA DE CONTACTO DE EMERGENCIA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;45
+^.^;^998^;^D^;^T^;^02.11^;^NUMERO DE TELEFONO DE CONTACTO DE EMERGENCIA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;46
+^.^;^998^;^G^;^.^;^02.12^;^PARENTESCO DE LA PERSONA DE CONTACTO DE EMERGENCIA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;47
+^.^;^998^;^D^;^B^;^02.12.01^;^HIJO/A^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;48
+^.^;^998^;^D^;^B^;^02.12.02^;^ESPOSO/A^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;49
+^.^;^998^;^D^;^B^;^02.12.03^;^PAPÁ O MAMÁ^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;50
+^.^;^998^;^D^;^B^;^02.12.04^;^OTROS^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;51
+^.^;^998^;^G^;^.^;^03^;^DIRECCION DE DOMICILIO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^direccion^;^.^;52
+^.^;^998^;^G^;^.^;^03.01^;^CANTÓN^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;53
+^.^;^998^;^D^;^B^;^03.01.01^;^QUITO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;54
+^.^;^998^;^D^;^B^;^03.01.02^;^RUMIÑAHUI^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;55
+^.^;^998^;^D^;^B^;^03.01.03^;^MEJIA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;56
+^.^;^998^;^D^;^B^;^03.01.04^;^CAYAMBE^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;57
+^.^;^998^;^D^;^B^;^03.01.05^;^OTROS^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;58
+^.^;^998^;^D^;^T^;^03.02^;^PARROQUIA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;59
+^.^;^998^;^D^;^T^;^03.03^;^BARRIO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;60
+^.^;^998^;^D^;^T^;^03.04^;^CALLE PRINCIPAL^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;61
+^.^;^998^;^D^;^T^;^03.05^;^CALLE SECUNDARIA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;62
+^.^;^998^;^D^;^T^;^03.06^;^NUMERO DE CASA O LOTE^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;63
+^.^;^998^;^G^;^.^;^04^;^ESTADO SOCIOECONOMICO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Estimado/a postulante; el estudio socioeconomico tiene por abjetivo identificar las vulnerabilidades que usted presente.^;^estado_socioeconomico^;^.^;64
+^.^;^998^;^D^;^N^;^04.01^;^NUMERO DE PERSONAS QUE VIVEN EN SU DOMICILIO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;65
+^.^;^998^;^D^;^N^;^04.02^;^NUMERO DE HIJOS INTEGRANTES DE LA FAMILIA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;66
+^.^;^998^;^D^;^N^;^04.03^;^NUMERO DE HIJOS MAYORES DE EDAD^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;67
+^.^;^998^;^D^;^N^;^04.04^;^NUMERO DE HIJOS MENORES DE EDAD^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;68
+^.^;^998^;^G^;^.^;^04.05^;^¿TIENE UNA DISCAPACIDAD?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;69
+^.^;^998^;^D^;^B^;^04.05.01^;^SI^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;70
+^.^;^998^;^D^;^B^;^04.05.02^;^NO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;71
+^.^;^998^;^G^;^.^;^04.06^;^¿QUÉ TIPO DE DISCAPACIDAD?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Si su respuesta anterior fue NO por favor seleccionar NINGUNA^;^.^;^.^;72
+^.^;^998^;^D^;^B^;^04.06.01^;^FISICA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;73
+^.^;^998^;^D^;^B^;^04.06.02^;^INTELECTUAL^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;74
+^.^;^998^;^D^;^B^;^04.06.03^;^PSICOSOCIAL^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;75
+^.^;^998^;^D^;^B^;^04.06.04^;^VISUAL^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;76
+^.^;^998^;^D^;^B^;^04.06.05^;^AUDITIVA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;77
+^.^;^998^;^D^;^B^;^04.06.06^;^SENSORIAL^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;78
+^.^;^998^;^D^;^B^;^04.06.07^;^MULTIPLE^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;79
+^.^;^998^;^D^;^%^;^04.07^;^PORCENTAJE DE DISCAPACIDAD^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Si usted no tiene una discapacidad por favor llenar con 0^;^.^;^.^;80
+^.^;^998^;^D^;^T^;^04.08^;^NUMERO DE CARNET DEL CONADIS^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;81
+^.^;^998^;^G^;^.^;^04.09^;^¿ALGUN FAMILIAR QUE VIVA CON USTED TIENE UNA DISCAPACIDAD?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;82
+^.^;^998^;^D^;^B^;^04.09.01^;^SI^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;83
+^.^;^998^;^D^;^B^;^04.09.02^;^NO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;84
+^.^;^998^;^G^;^.^;^04.10^;^¿QUÉ PARENTESCO TIENE LA PERSONA CON DISCAPACIDAD PARA USTED?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;85
+^.^;^998^;^D^;^B^;^04.10.01^;^HIJO/A^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;86
+^.^;^998^;^D^;^B^;^04.10.02^;^ESPOSO/A^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;87
+^.^;^998^;^D^;^B^;^04.10.03^;^MAMÁ O PAPÁ^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;88
+^.^;^998^;^D^;^B^;^04.10.04^;^OTROS^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;89
+^.^;^998^;^D^;^T^;^04.11^;^NÚMERO DE CARNET DEL CONADIS DE SU FAMILIAR^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;90
+^.^;^998^;^D^;^T^;^04.12^;^¿CUÁL ES EL NOMBRE DE SU ENFERMEDAD?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Como ejemplo: Diabetes; Artritis; Cancer; Alzheimer; Parkinson; Epilepsia; Hipertensión Arterial. Hipo e Hiper Tiroidismo ; etc. Si su pespuesta anterior fue ninguna por favor llenar con NINGUNA ^;^.^;^.^;91
+^.^;^998^;^G^;^.^;^04.13^;^NIVEL DE ESTUDIO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;92
+^.^;^998^;^D^;^B^;^04.13.01^;^PRIMARIA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;93
+^.^;^998^;^D^;^B^;^04.13.02^;^SECUNDARIA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;94
+^.^;^998^;^D^;^B^;^04.13.03^;^TERCER NIVEL^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;95
+^.^;^001^;^D^;^B^;^04.13.04^;^CUARTO NIVEL^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;96
+^.^;^998^;^D^;^B^;^04.13.05^;^NINGUNO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;97
+^.^;^998^;^D^;^B^;^04.13.06^;^OTROS^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;98
+^.^;^998^;^D^;^T^;^04.14^;^OCUPACIÓN^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Si usted no tiene una ocupación por favor llenar con NINGUNA^;^.^;^.^;99
+^.^;^998^;^G^;^.^;^04.15^;^¿POSEE EL BONO DE DESARROLLO SOCIAL?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;100
+^.^;^998^;^D^;^B^;^04.15.01^;^SI^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;101
+^.^;^998^;^D^;^B^;^04.15.02^;^NO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;102
+^.^;^998^;^G^;^.^;^04.16^;^¿POSEE UNA JUBILACIÓN?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;103
+^.^;^998^;^D^;^B^;^04.16.01^;^SI^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;104
+^.^;^998^;^D^;^B^;^04.16.02^;^NO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;105
+^.^;^998^;^D^;^T^;^04.17^;^¿CUÁL ES LA ACTIVIDAD ECONÓMICA QUE REALIZA PARA SUBSISTIR ACTUALMENTE?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;106
+^.^;^998^;^G^;^.^;^04.18^;^SU VIVIENDA ES^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;107
+^.^;^998^;^D^;^B^;^04.18.01^;^PROPIA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;108
+^.^;^998^;^D^;^B^;^04.18.02^;^ARRENDADA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;109
+^.^;^998^;^D^;^B^;^04.18.03^;^PRESTADA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;110
+^.^;^998^;^D^;^B^;^04.18.04^;^COMPARTIDA^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;111
+^.^;^998^;^D^;^B^;^04.18.05^;^OTROS^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;112
+^.^;^998^;^G^;^.^;^04.19^;^¿QUÉ SERVICIOS BÁSICOS POSEE?^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Usted puede seleccionar mas de una opción^;^.^;^.^;113
+^.^;^998^;^D^;^M^;^04.19.01^;^LUZ^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;114
+^.^;^998^;^D^;^M^;^04.19.02^;^AGUA POTABLE^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;115
+^.^;^998^;^D^;^M^;^04.19.03^;^INTERNET^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;116
+^.^;^998^;^D^;^M^;^04.19.04^;^ALCANTARILLADO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;117
+^.^;^998^;^D^;^M^;^04.19.05^;^NINGUNO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;118
+^.^;^998^;^G^;^.^;^05^;^DOCUMENTACIÓN^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Estimado/a postulante por favor subir los archivos de su postulación de preferencia en formato PDF^;^documentacion^;^.^;119
+^.^;^998^;^D^;^F^;^05.01^;^CEDULA DE CIUDADANIA O PASAPORTE^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Por favor suba su archivo de preferencia en formato PDF^;^.^;^.^;120
+^.^;^998^;^D^;^F^;^05.02^;^RECORD POLICIAL^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Estimado usuario en el link adjunto usted podra descargar su record polcial ( https://www.gob.ec/mdi/tramites/emision-certificado-antecedentes-penales )  En caso que sea extranjero solicitelo en las entidades publicas de su país.^;^.^;^.^;121
+^.^;^998^;^D^;^F^;^05.03^;^PLANILLA DE SERVICIO BÁSICO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Estimado/a postulante usted puede subir una planilla de agua; luz; internet o telefono. Suba el archivo de prefrerencia en formato PDF^;^.^;^.^;122
+^.^;^998^;^D^;^F^;^05.04^;^CARTA DE RECOMENDACIÓN^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Estimado postulante es importante contar con una carta de referencia o recomendación de alguna persona o empresa en donde usted haya realizado alguna actividad; en caso de ser una perosna migrante puede ser la recomendación de la persona donde usted vive^;^.^;^.^;123
+^.^;^998^;^D^;^F^;^05.05^;^CERTIFICADO MEDICO GENERAL^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Estimado postulante debido a que el Banco de Alimentos Quito cuenta con una certificación en Buenas Prácticas de Manufactura (BPM) es importante que usted obtenga el certificado médico. En el siguiente link tiene acceso a información de como obtenerlo ( h;^.^;^.^;124
+^.^;^998^;^D^;^F^;^05.06^;^PRUEBA VIH^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Resultado confidencial y solo solicitado como medida preventiva de riesgo en uso de objetos cortopunzantes. Usted se puede hacer esta prueba en un centro médico público totalmente gratis^;^.^;^.^;125
+^.^;^998^;^D^;^F^;^05.07^;^REGLAMENTO INTERNO BAQ (FIRMADO)^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^Estimado postulante por favor descargar el REGLAMENTO INTERNO DE NORMAS Y COMPORTAMIENTO VOLUNTARIOS OPERATIVOS en el sisguiente link ( https://acortar.link/1OP0sA ) y leerlo detenidamente una vez que este en conformidad con el reglamento firmarlo y carga;^.^;^.^;126
+^.^;^998^;^D^;^B^;^04.06.08^;^NINGUNO^;^.^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^May 23 2024 12:00AM^;^.^;^.^;^.^;^.^;127

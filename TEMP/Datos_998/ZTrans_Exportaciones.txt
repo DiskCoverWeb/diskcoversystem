@@ -1,0 +1,1 @@
+T;Codigo;ExportacionDe;TipoComprobante;DistAduanero;Anio;Regimen;Correlativo;Verificador;NumeroDctoTransporte;FechaEmbarque;IdFiscalProv;ValorFOB;DevIva;FacturaExportacion;ValorFOBComprobante;Establecimiento;PuntoEmision;Secuencial;FechaRegistro;Autorizacion;FechaEmision;TP;Numero;Fecha;Item;CodigoU;Periodo;Linea_SRI;X;Cod_Benef;ID

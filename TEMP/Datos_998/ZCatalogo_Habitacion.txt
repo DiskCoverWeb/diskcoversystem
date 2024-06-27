@@ -1,0 +1,6 @@
+X;TC;Codigo;Detalle;Habitacion;Valor;Codigo_Barra;CodigoC;Fecha;Lleno;Est;Item;Periodo;ID
+^.^;^C^;^01^;^CATEGORIA BAQ^;^.^;.0000;^.^;^.^;^Jul 21 2023 12:00AM^;0;^.^;^998^;^.^;1
+^.^;^C^;^02^;^CATEGORIA GFN^;^.^;.0000;^.^;^.^;^Jul 21 2023 12:00AM^;0;^.^;^998^;^.^;2
+^.^;^C^;^03^;^INDICADOR NUTRICIONAL^;^.^;.0000;^.^;^.^;^Jul 21 2023 12:00AM^;0;^.^;^998^;^.^;3
+^.^;^C^;^04^;^CATEGORIA BPM ALERGENOS
+^;^.^;.0000;^.^;^.^;^Jul 21 2023 12:00AM^;0;^.^;^998^;^.^;4

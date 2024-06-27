@@ -1,0 +1,1 @@
+CodRet;Detalle;BaseImp;Porcentaje;ValRet;EstabRetencion;PtoEmiRetencion;SecRetencion;AutRetencion;FechaEmiRet;Cta_Retencion;EstabFactura;PuntoEmiFactura;Factura_No;IdProv;Item;CodigoU;A_No;T_No;Tipo_Trans

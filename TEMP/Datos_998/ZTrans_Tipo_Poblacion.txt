@@ -1,0 +1,2 @@
+Item;Periodo;Fecha;FechaM;CodigoC;Cmds;Hombres;Mujeres;Total;CodigoU;X;ID
+^998^;^.^;^May 28 2024 12:00AM^;^May 28 2024 12:00AM^;^1316307618^;^91.03^;0;2;2;^1316307618^;^.^;1

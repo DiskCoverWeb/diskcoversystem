@@ -1,0 +1,1 @@
+Codigo;CtasxCobrar;ExportacionDe;TipoComprobante;FechaEmbarque;NumeroDctoTransporte;IdFiscalProv;ValorFOB;DevIva;FacturaExportacion;ValorFOBComprobante;DistAduanero;Anio;Regimen;Correlativo;Verificador;Establecimiento;PuntoEmision;Secuencial;Autorizacion;FechaEmision;FechaRegistro;Item;CodigoU;A_No;T_No

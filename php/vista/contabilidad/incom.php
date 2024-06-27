@@ -19,6 +19,7 @@ $load = 0;
 if (isset($_GET["modificar"])) {
   $variables_mod = $_GET["TP"] . '-' . $_GET["com"];
   $ModificarComp = 1;
+  $NuevoComp = 0;
 }
 if (isset($_GET["copiar"])) {
   $variables_mod = $_GET["TP"] . '-' . $_GET["com"];
@@ -43,7 +44,14 @@ function Form_Activate()
      // Control_Procesos Normal, "Modificar Comprobante de: " & Co.TP & " No. " & Co.Numero
     var comprobante = '<?php echo @$_GET["com"]; ?>';
     var tp = '<?php  echo @$_GET["TP"]; ?>';
-     Listar_Comprobante_SP(comprobante,tp);
+    if(tp=='CD'){ tip = 'Diario';}
+    else if(tp=='CI'){tip = 'Ingresos'}
+    else if(tp=='CE'){tip = 'Egresos';}
+    else if(tp=='ND'){tip = 'NotaDebito';}
+    else if(tp=='NC'){tip= 'NotaCredito';}
+
+    $("#num_com").html('Comprobante de '+tip+' No. <?php echo date('Y');?>-'+comprobante);
+    Listar_Comprobante_SP(comprobante,tp);
   }
   
   if(CopiarComp==1)
@@ -137,6 +145,8 @@ function Form_Activate()
 
   function Listar_Comprobante_SP(com,tp)
   {
+    // console.log(com);
+    // console.log(tp)
      var modificar = '<?php echo $variables_mod; ?>';
       $('#NuevoComp').val(modificar);
       $.ajax({
@@ -182,10 +192,11 @@ function Form_Activate()
         
     });
 
-    // if(modificar!='')
-    // {
+    if(modificar!='')
+    {
      
-    // }else
+    }
+    // else
     // {
     //   numero_comprobante();
     //   FormActivate()
@@ -643,6 +654,16 @@ function FormActivate() {
   } else if (tip == 'NC') {
     tip = 'NotaCredito';
   }
+
+  modificado = '<?php echo $ModificarComp; ?>';
+  if(modificado)
+  {
+     if (callback && typeof callback === 'function') {
+        callback();
+      }
+      return false;
+  }
+
 
   var parametros = {
     'tip': tip,
@@ -1337,7 +1358,7 @@ function FormActivate() {
 
   function validar_comprobante() 
   {
-    numero_comprobante(function () {
+      numero_comprobante(function () {
         var debe =$('#txt_debe').val();
         var haber = $('#txt_haber').val(); 
         var ben = $('#beneficiario1').val();
@@ -1347,7 +1368,7 @@ function FormActivate() {
         var concepto = $('#concepto').val();
         var haber = $('#txt_haber').val();
         var com = $('#num_com').text();
-         var modificar = '<?php echo $NuevoComp; ?>';
+        var modificar = '<?php echo $NuevoComp; ?>';
         // var comprobante = com.split('.');
         if((debe != haber) || (debe==0 && haber==0) )
         {

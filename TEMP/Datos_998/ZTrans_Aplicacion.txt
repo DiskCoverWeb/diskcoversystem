@@ -1,0 +1,1 @@
+Periodo;SN;Codigo;Fecha;FechaR;FechaA;Aplicacion;Archivo;Item;X;ID

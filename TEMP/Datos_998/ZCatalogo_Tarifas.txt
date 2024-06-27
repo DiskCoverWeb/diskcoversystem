@@ -1,0 +1,1 @@
+Periodo;TC;Codigo;Detalle;Tarifa;Por_Sem;Por_Dia;Regalias;Desc_Dia;CIF;Item;Descuento;Por_Unidad;Comision;X;ID

@@ -1,0 +1,699 @@
+Codigo;Concepto;Porcentaje;Ingresar_Porcentaje;Fecha_Inicio;Fecha_Final;T;Tipo_Pago;ID
+^308^;^Pagos por Rendimientos Financieros^;5.0;^N^;^Jan  1 2002 12:00AM^;^Mar 31 2004 12:00AM^;^N^;^L^;1
+^318^;^Remuneraciones a Deportistas Entrenadores Cuerpo Tecnico y Arbitros^;5.0;^S^;^Jan  1 2002 12:00AM^;^Mar 31 2004 12:00AM^;^N^;^L^;2
+^323^;^Transacciones de Bienes [Activos Fijos]^;1.0;^N^;^Jan  1 2002 12:00AM^;^Mar 31 2004 12:00AM^;^N^;^L^;3
+^325^;^Transacciones de Bienes [Activos Corrientes]^;1.0;^N^;^Jan  1 2002 12:00AM^;^Mar 31 2004 12:00AM^;^N^;^L^;4
+^327^;^Transacciones de Servicios^;1.0;^S^;^Jan  1 2002 12:00AM^;^Mar 31 2004 12:00AM^;^N^;^L^;5
+^411^;^Intereses y Comisiones en Operaciones de Credito^;1.0;^N^;^Jan  1 2002 12:00AM^;^Mar 31 2004 12:00AM^;^N^;^L^;6
+^419^;^Arrendamiento Mercantil Internacional por Pago de Intereses^;25.0;^N^;^Jan  1 2002 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;7
+^421^;^Arrendamiento Mercantil Internacional cuando no se ejerce la opcion de Compra^;25.0;^N^;^Jan  1 2002 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;8
+^307^;^Pagos Por Seguros y Reaseguros^;1.0;^N^;^Feb  1 2002 12:00AM^;^Feb 28 2003 12:00AM^;^N^;^L^;9
+^302^;^Honorarios Personas Naturales^;8.0;^N^;^Mar  1 2003 12:00AM^;^Mar 31 2003 12:00AM^;^N^;^L^;10
+^306^;^Arrendamiento de Bienes Inmuebles de Propiedad de Personas Naturales^;8.0;^N^;^Mar  1 2003 12:00AM^;^Mar 31 2003 12:00AM^;^N^;^L^;11
+^307^;^Pagos Por Seguros y Reaseguros^;1.0;^N^;^Mar  1 2003 12:00AM^;^Mar 31 2003 12:00AM^;^N^;^L^;12
+^337^;^Pagos realizados a Notarios y Registradores de Propiedad o Mercantiles^;8.0;^N^;^Mar  1 2003 12:00AM^;^Mar 31 2004 12:00AM^;^N^;^L^;13
+^339^;^Pagos de Dividendos Anticipados^;25.0;^N^;^Mar  1 2003 12:00AM^;^Mar 31 2004 12:00AM^;^N^;^L^;14
+^303^;^Honorarios Personas Naturales^;8.0;^N^;^Apr  1 2003 12:00AM^;^Dec 31 2006 12:00AM^;^N^;^L^;15
+^304^;^Remuneracion a Otros Trabajadores Autonomos [N]^;1.0;^N^;^Apr  1 2003 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;16
+^306^;^Compras Locales de Materia Prima [N]^;1.0;^N^;^Apr  1 2003 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;17
+^307^;^Compras Locales de Bienes No Producidos por la Sociedad [N]^;1.0;^N^;^Apr  1 2003 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;18
+^309^;^Suministros y Materiales [N]^;1.0;^N^;^Apr  1 2003 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;19
+^310^;^Repuestos y Herramientas [N]^;1.0;^N^;^Apr  1 2003 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;20
+^311^;^Lubricantes [N]^;1.0;^N^;^Apr  1 2003 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;21
+^312^;^Activos Fijos [N]^;1.0;^N^;^Apr  1 2003 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;22
+^313^;^Por Concepto de Servicio de Transporte Privado de Pasajeros o Servicio Publico o Privado de Carga[N]^;1.0;^N^;^Apr  1 2003 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;23
+^314^;^Regalias Derechos de Autor Marcas Patentes y Similares^;0.0;^N^;^Apr  1 2003 12:00AM^;^Mar 30 2004 12:00AM^;^N^;^L^;24
+^405^;^Intereses de Creditos Externos registrados en el BCE [N]^;25.0;^N^;^Apr  1 2003 12:00AM^;^Mar 31 2008 12:00AM^;^S^;^L^;25
+^305^;^Pago Local a Extranjeros por Servicios Ocasionales^;25.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;26
+^308^;^Compras Locales de Materia Prima no Sujeta a retencion [N]^;0.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;27
+^314^;^Regalias Derechos de Autor Marcas Patentes y Similares - Sociedades^;1.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^S^;^L^;28
+^314^;^Regalias Derechos de Autor Marcas Patentes y Similares - Personas Naturales^;8.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;29
+^315^;^Remuneraciones a Deportistas Entrenadores Cuerpo Tecnico y Arbitros^;5.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;30
+^316^;^Pagos realizados a Notarios y Registradores de Propiedad o Mercantiles^;8.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;31
+^317^;^Por Comisiones Pagadas a Sociedades [N]^;1.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;32
+^318^;^Por Promocion y Publicidad [N]^;1.0;^S^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;33
+^319^;^Pagos por Arrendamientos Mercantil^;1.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;34
+^320^;^Arrendamiento de Bienes Inmuebles de Propiedad de Personas Naturales^;8.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2006 12:00AM^;^N^;^L^;35
+^321^;^Arrendamiento de Bienes Inmuebles de Propiedad de Sociedades [N]^;5.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;36
+^322^;^Pagos por Seguros y Reaseguros [10% del valor de las primas facturadas]^;1.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;37
+^323^;^Pagos por Rendimientos Financieros^;5.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;38
+^323A^;^RF: Depositos Cuenta Corriente^;5.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;39
+^323B1^;^RF: Depositos Cuenta Ahorros Sociedades^;5.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^S^;^L^;40
+^323B2^;^RF: Depositos Cuenta Ahorros Persona Natural^;0.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;41
+^323C^;^RF: Depositos en Cuentas Corrientes Exentas^;0.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;42
+^323D^;^RF: Compra Cancelacion o Redencion de Mini Bems y Bems 5^;5.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;43
+^323E^;^RF: Deposito a Plazo^;5.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;44
+^323F^;^RF: Operaciones de Reporto - REPOS^;5.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;45
+^323G^;^RF: Inversiones [Captaciones]^;5.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;46
+^323H^;^RF: Obligaciones^;5.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;47
+^323I^;^RF: Bonos Convertible en Acciones^;5.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;48
+^323J^;^RF: Bonos de Organismos y Gobiernos extranjeros^;5.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;49
+^323K^;^RF: Bonos de Organismos y Gobiernos extranjeros^;5.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;50
+^324^;^Pagos o Creditos en Cuenta Real. Empresas Emis. Tarjetas de Credito^;1.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;51
+^325^;^Loterias Rifas Apuestas y Similares^;15.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;52
+^326^;^Por Intereses y Comisiones en Operaciones de Credito entre las Instituciones Sistema Financiero [N]^;1.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;53
+^327^;^Venta de Combustibles a Comercializadoras^;0.2;^S^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;54
+^328^;^Venta de Combustibles a Distribuidoras^;0.30000001;^S^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;55
+^329^;^Por Otros Servicios [N]^;1.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;56
+^330^;^Pagos de Dividendos Anticipados^;25.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;57
+^331^;^Por Agua Energia Luz y Telecomunicaciones [N]^;1.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;58
+^332^;^Otras Compras de Bienes y Servicios no Sujetas a Retencion [N]^;0.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;59
+^333^;^Convenio de Debito o Recaudacion^;0.0;^S^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;60
+^334^;^Pago con Tarjeta de Credito^;0.0;^S^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;61
+^335^;^Por actividades de construccion de obra material inmueble urbanizacion lotizacion o actividades similares^;0.0;^N^;^Apr  1 2004 12:00AM^;^Jun 30 2007 12:00AM^;^S^;^L^;62
+^401^;^Base Imponible Conv.Doble Tributacion^;0.0;^S^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;63
+^403^;^Intereses y Costos Financieros por Financiamiento de Proveedores Externos [N]^;25.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;64
+^407^;^Intereses de Creditos Externos no registrados en el BCE [N]^;25.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;65
+^409^;^Comisiones y Exportaciones [N]^;25.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;66
+^410^;^Convenio de Doble Tributacion^;25.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;67
+^411^;^Comisiones Pagadas para la Promocion del Turismo Receptivo [N]^;25.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;68
+^413^;^El 4% de las Primas de Cesion o Reaseguros Contratados con Empresas que no tengan establecimiento o representacion permanente en E^;25.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;69
+^415^;^10% de los Pagos efectuados por las Agencias Internacionales de Prensa registradas en la Secretaria de Comunicacion del Estado^;25.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;70
+^417^;^El 10% del Valor de los Contratos de Fletamento de Naves para Empresas de Transporte Aereo o Maritimo Internacional [N]^;25.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;71
+^423^;^B. Imponible Arrendamiento Mercantil Internacional por Pago de Intereses^;25.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;72
+^425^;^B. Imponible Arrendamiento Mercantil Internacional cuando no se ejerce la opcion de Compra^;25.0;^N^;^Apr  1 2004 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;73
+^303^;^Honorarios Personas Naturales^;5.0;^N^;^Jan  1 2007 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;74
+^320^;^Arrendamiento de Bienes Inmuebles de Propiedad de Personas Naturales^;5.0;^N^;^Jan  1 2007 12:00AM^;^Jun 30 2007 12:00AM^;^N^;^L^;75
+^303^;^Honorarios comisiones y dietas a personas naturales^;8.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;76
+^304^;^Remuneracion a Otros Trabajadores Autonomos [N]^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;77
+^306^;^Compras Locales de Materia Prima [N]^;2.0;^N^;^Jul  1 2007 12:00AM^;^Mar 31 2008 12:00AM^;^S^;^L^;78
+^307^;^Compras Locales de Bienes No Producidos por la Sociedad [N]^;2.0;^N^;^Jul  1 2007 12:00AM^;^Mar 31 2008 12:00AM^;^S^;^L^;79
+^309^;^Suministros y Materiales [N]^;2.0;^N^;^Jul  1 2007 12:00AM^;^Mar 31 2008 12:00AM^;^S^;^L^;80
+^310^;^Repuestos y Herramientas [N]^;2.0;^N^;^Jul  1 2007 12:00AM^;^Mar 31 2008 12:00AM^;^S^;^L^;81
+^311^;^Lubricantes [N]^;2.0;^N^;^Jul  1 2007 12:00AM^;^Mar 31 2008 12:00AM^;^S^;^L^;82
+^312^;^Activos Fijos [N]^;2.0;^N^;^Jul  1 2007 12:00AM^;^Mar 31 2008 12:00AM^;^S^;^L^;83
+^314^;^Regalias Derechos de Autor Marcas Patentes y Similares - Sociedades^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;84
+^315^;^Remuneraciones a Deportistas Entrenadores Cuerpo Tecnico y Arbitros^;8.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;85
+^317^;^Por Comisiones Pagadas a Sociedades [N]^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;86
+^318^;^Por Promocion y Publicidad [N]^;2.0;^S^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;87
+^319^;^Pagos por Arrendamientos Mercantil^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;88
+^320^;^Arrendamiento de Bienes Inmuebles de Propiedad de Personas Naturales^;8.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;89
+^321^;^Arrendamiento de Bienes Inmuebles de Propiedad de Sociedades [N]^;8.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;90
+^322^;^Pagos por Seguros y Reaseguros [10% del valor de las primas facturadas]^;2.0;^N^;^Jul  1 2007 12:00AM^;^Mar 31 2008 12:00AM^;^S^;^L^;91
+^323^;^Pagos por Rendimientos Financieros^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;92
+^323A^;^RF: Depositos Cuenta Corriente^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;93
+^323B1^;^RF: Depositos Cuenta Ahorros Sociedades^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;94
+^323D^;^RF: Compra Cancelacion o Redencion de Mini Bems y Bems 5^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;95
+^323E^;^RF: Deposito a Plazo^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;96
+^323F^;^RF: Operaciones de Reporto - REPOS^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;97
+^323G^;^RF: Inversiones [Captaciones]^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;98
+^323H^;^RF: Obligaciones^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;99
+^323I^;^RF: Bonos Convertible en Acciones^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;100
+^323J^;^RF: Bonos de Organismos y Gobiernos extranjeros^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;101
+^323K^;^RF:Entre IFIs^;2.0;^S^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;102
+^324^;^Pagos o Creditos en Cuenta Real. Empresas Emis. Tarjetas de Credito^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;103
+^329^;^Por Otros Servicios [N]^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;104
+^331^;^Por Agua Energia Luz y Telecomunicaciones [N]^;1.0;^S^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;105
+^335^;^Por actividades de construccion de obra material inmueble urbanizacion lotizacion o actividades similares^;2.0;^N^;^Jul  1 2007 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;106
+^306^;^Compras Locales de Materia Prima [N]^;1.0;^N^;^Apr  1 2008 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;107
+^307^;^Compras Locales de Bienes No Producidos por la Sociedad [N]^;1.0;^N^;^Apr  1 2008 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;108
+^309^;^Suministros y Materiales [N]^;1.0;^N^;^Apr  1 2008 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;109
+^310^;^Repuestos y Herramientas [N]^;1.0;^N^;^Apr  1 2008 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;110
+^311^;^Lubricantes [N]^;1.0;^N^;^Apr  1 2008 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;111
+^312^;^Activos Fijos [N]^;1.0;^N^;^Apr  1 2008 12:00AM^;^Dec 31 2008 12:00AM^;^N^;^L^;112
+^322^;^Pagos por Seguros y Reaseguros [10% del valor de las primas facturadas]^;1.0;^N^;^Apr  1 2008 12:00AM^;^Dec 31 2008 12:00AM^;^S^;^L^;113
+^303^;^Honorarios profesionales y dietas^;8.0;^N^;^Jan  1 2009 12:00AM^;^May 31 2010 12:00AM^;^S^;^L^;114
+^304^;^Servicios predomina el intelecto^;8.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;115
+^307^;^Servicios predomina la mano de obra^;2.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;116
+^308^;^Servicios entre sociedades^;2.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;117
+^309^;^Servicios publicidad y comunicacion^;1.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;118
+^310^;^Servicio transporte privado de pasajeros o servicio publico o privado de carga^;1.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;119
+^312^;^Transferencia de bienes muebles de naturaleza corporal^;1.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;120
+^319^;^Arrendamiento mercantil^;1.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;121
+^320^;^Arrendamiento bienes inmuebles^;8.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;122
+^322^;^Seguros y reaseguros [primas y cesiones]^;1.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;123
+^323^;^Por rendimientos financieros [No aplica para IFIs]^;2.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;124
+^323A^;^Por RF: depositos Cta Corriente^;2.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;125
+^323B1^;^Por RF: depositos Cta Ahorros Sociedades^;2.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;126
+^323B2^;^Por RF: depositos Cta Ahorros Persona Natural^;0.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;127
+^323C^;^Por rendimientos financieros: depositos en cuentas exentas^;0.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;128
+^323D^;^Por rendimientos financieros: compra cancelacion o redencion de mini bem´s y bem´s^;2.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;129
+^323E^;^Por RF: deposito a plazo^;2.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;130
+^323F^;^Por rendimientos financieros: operaciones de reporto - repos^;2.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;131
+^323G^;^Por RF: inversiones [captaciones]^;2.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;132
+^323H^;^Por RF: obligaciones^;2.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;133
+^323I^;^Por RF: bonos convertible en acciones^;2.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;134
+^323J^;^Por RF: bonos de organismos y gobiernos extranjeros^;2.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;135
+^323K^;^Por RF: entre IFIs^;2.0;^S^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;136
+^325^;^Por loterias rifas apuestas y similares^;15.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;137
+^327^;^Por venta de combustibles a comercializadoras [2/ml]^;0.30000001;^S^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;138
+^328^;^Por venta de combustibles a distribuidores [2/ml]^;0.2;^S^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;139
+^332^;^Otras compras de bienes y servicios no sujetas a retencion^;0.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;140
+^333^;^Convenio de Debito o Recaudacion^;0.0;^S^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;141
+^334^;^Por compras con tarjeta de credito^;0.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;142
+^340^;^Otras retenciones aplicables el 1%^;1.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;143
+^341^;^Otras retenciones aplicables el 2%^;2.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;144
+^342^;^Otras retenciones aplicables el 8%^;8.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;145
+^343^;^Otras retenciones aplicables el 25%^;25.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;146
+^401^;^Con convenio de doble tributacion^;0.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;147
+^403^;^Sin convenio de doble tributacion intereses y costos financieros por financiamiento de proveedores externos [en la cuantia que excede a la tasa maxima^;25.0;^S^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;148
+^405^;^Sin convenio de doble tributacion intereses de creditos externos registrados en el BCE [en la cuantia que excede a la tasa maxima]^;25.0;^S^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;149
+^421^;^Sin convenio de doble tributacion por otros conceptos^;25.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;150
+^427^;^Pagos al exterior no sujetos a retencion^;0.0;^N^;^Jan  1 2009 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;151
+^303^;^Honorarios profesionales y dietas^;10.0;^S^;^Jun  1 2010 12:00AM^;^Dec 31 2012 12:00AM^;^S^;^L^;152
+^337^;^Reembolsos de Gastos Compras de Quien Asume el Gasto^;0.0;^S^;^Jan  1 2011 12:00AM^;^Dec 31 2012 12:00AM^;^N^;^L^;153
+^302^;^Honorarios Personas Naturales^;5.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;154
+^303^;^Honorarios profesionales y dietas^;10.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;155
+^304^;^Servicios predomina el intelecto^;8.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;156
+^305^;^Pagos por Arrendamiento Mercantil^;1.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;157
+^306^;^Arrendamiento de Bienes Inmuebles de Propiedad de Personas Naturales^;5.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;158
+^307^;^Servicios predomina la mano de obra^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;159
+^308^;^Servicios entre sociedades^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;160
+^309^;^Servicios publicidad y comunicacion^;1.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;161
+^310^;^Servicio transporte privado de pasajeros o servicio publico o privado de carga^;1.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;162
+^312^;^Transferencia de bienes muebles de naturaleza corporal^;1.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;163
+^315^;^Pagos por Comisiones^;1.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;164
+^316^;^Pagos o Creditos en Cuenta Real. Empresas Emis. Tarjetas de Credito^;1.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;165
+^317^;^Regalias Derechos de Autor Marcas Patentes y Similares^;8.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;166
+^319^;^Arrendamiento mercantile^;1.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;167
+^320^;^Arrendamiento bienes inmuebles^;8.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;168
+^321^;^Pagos por Servicios Petroleros^;1.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;169
+^322^;^Seguros y reaseguros [primas y cesiones]^;1.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;170
+^323^;^Por rendimientos financieros [No aplica para IFIs]^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;171
+^323A^;^Por RF: depositos Cta Corriente^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;172
+^323B1^;^Por RF: depositos Cta Ahorros Sociedades^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;173
+^323B2^;^Por RF: depositos Cta Ahorros Persona Natural^;0.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;174
+^323C^;^Por rendimientos financieros: depositos en cuentas exentas^;0.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;175
+^323D^;^Por rendimientos financieros: compra cancelacion o redencion de mini bem´s y bem´s^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;176
+^323E^;^Por RF: deposito a plazo^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;177
+^323F^;^Por rendimientos financieros: operaciones de reporto – repos^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;178
+^323G^;^Por RF: inversiones [captaciones]^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;179
+^323H^;^Por RF: obligaciones^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;180
+^323I^;^Por RF: bonos convertible en acciones^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;181
+^323J^;^Por RF: bonos de organismos y gobiernos extranjeros^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;182
+^323K^;^Por RF: entre IFIs^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;183
+^325^;^Por loterias rifas apuestas y similares^;15.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;184
+^327^;^Por venta de combustibles a comercializadoras^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;185
+^328^;^Por venta de combustibles a distribuidores^;3.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;186
+^332^;^Otras compras de bienes y servicios no sujetas a retencion^;0.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;187
+^333^;^Convenio de Debito o Recaudacion^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;188
+^334^;^Por compras con tarjeta de credito^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;189
+^336^;^Reembolso de Gasto - Compra Intermediario^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;190
+^337^;^Reembolso de Gasto - Compra de quien asume el gasto^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;191
+^339^;^Pagos de Dividendos Anticipados^;25.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;192
+^340^;^Otras retenciones aplicables el 1%^;1.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;193
+^341^;^Otras retenciones aplicables el 2%^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;194
+^342^;^Otras retenciones aplicables el 8%^;8.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;195
+^343^;^Otras retenciones aplicables a la tarifa de impuesto a la renta prevista para sociedades^;22.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;196
+^344^;^Otras retenciones aplicables a otros porcentajes^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;197
+^345^;^Dividendos personas naturales residents^;10.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;198
+^346^;^Dividendos sociedades en paraisos fiscales^;35.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;199
+^347^;^Dividendos anticipados^;22.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;200
+^348^;^Compra local de banano a productor^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;201
+^349^;^Impuesto a la actividad bananera productor-exportador^;2.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;202
+^407^;^Conv. Doble Tributacion^;0.0;^N^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;203
+^500^;^Pago al exterior - Rentas Inmobiliarias^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;204
+^501^;^Pago al exterior - Beneficios Empresariales^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;205
+^502^;^Pago al exterior - Servicios Empresariales^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;206
+^503^;^Pago al exterior - Navegacion Maritima y/o aerea^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;207
+^504^;^Pago al exterior – Dividendos^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;208
+^505^;^Pago al exterior – Intereses^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;209
+^506^;^Pago al exterior - Intereses por Finaciamiento de proveedores externos^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;210
+^507^;^Pago al exterior - Intereses de creditos externos^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;211
+^508^;^Pago al exterior - Creditos de IFIs organismos y gobierno a gobierno^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;212
+^509^;^Pago al exterior - Canones o regalias^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;213
+^510^;^Pago al exterior - Ganancias de capital^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;214
+^511^;^Pago al exterior - Servicios profesionales independientes^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;215
+^512^;^Pago al exterior - Servicios profesionales dependientes^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;216
+^513^;^Pago al exterior - Artistas y deportistas^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;217
+^514^;^Pago al exterior - Participacion de consejeros^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;218
+^515^;^Pago al exterior - Entretenimiento Publico^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;219
+^516^;^Pago al exterior – Pensiones^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;220
+^517^;^Pago al exterior - Reembolso de Gastos^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;221
+^518^;^Pago al exterior - Funciones Pùblicas^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;222
+^519^;^Pago al exterior – Estudiantes^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;223
+^520^;^Pago al exterior - Por otros conceptos^;0.0;^S^;^Jan  1 2013 12:00AM^;^Sep 30 2014 12:00AM^;^N^;^L^;224
+^303^;^Honorarios profesionales y demas pagos por servicios relacionados con el titulo profesional^;10.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;225
+^303A^;^Utilizacion o aprovechamiento de la imagen o renombre^;10.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;226
+^304^;^Servicios predomina el intelecto no relacionados con el titulo profesional^;8.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;227
+^304A^;^Comisiones y demas pagos por servicios predomina intelecto no relacionados con el titulo profesional^;8.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;228
+^304B^;^Pagos a notarios y registradores de la propiedad y mercantil por sus actividades ejercidas como tales^;8.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;229
+^304C^;^Pagos a deportistas entrenadores arbitros miembros del cuerpo tecnico por sus actividades ejercidas como tales^;8.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;230
+^304D^;^Pagos a artistas por sus actividades ejercidas como tales^;8.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;231
+^304E^;^Honorarios y demas pagos por servicios de docencia^;8.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;232
+^307^;^Servicios predomina la mano de obra^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;233
+^309^;^Servicios prestados por medios de comunicacion y agencias de publicidad^;1.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;234
+^310^;^Servicio de transporte privado de pasajeros o transporte publico o privado de carga^;1.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;235
+^311^;^Por pagos a traves de liquidacion de compra [nivel cultural o rusticidad]^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;236
+^312^;^Transferencia de bienes muebles de naturaleza corporal^;1.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;237
+^312A^;^Compra de bienes de origen agricola avicola pecuario apicola cunicula bioacuatico y forestal^;1.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;238
+^314A^;^Regalias por concepto de franquicias de acuerdo a Ley de Propiedad Intelectual - pago a personas naturales^;8.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;239
+^314B^;^Canones derechos de autor marcas patentes y similares de acuerdo a Ley de Propiedad Intelectual – pago a personas naturales^;8.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;240
+^314C^;^Regalias por concepto de franquicias de acuerdo a Ley de Propiedad Intelectual - pago a sociedades^;8.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;241
+^314D^;^Canones derechos de autor marcas patentes y similares de acuerdo a Ley de Propiedad Intelectual – pago a sociedades^;8.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;242
+^319^;^Cuotas de arrendamiento mercantil inclusive la de opcion de compra^;1.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;243
+^320^;^Por arrendamiento bienes inmuebles^;8.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;244
+^322^;^Seguros y reaseguros [primas y cesiones]^;1.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;245
+^323^;^Por rendimientos financieros pagados a naturales y sociedades [No a IFIs]^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;246
+^323A^;^Por RF: depositos Cta. Corriente^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;247
+^323B1^;^Por RF: depositos Cta. Ahorros Sociedades^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;248
+^323D^;^Por rendimientos financieros: compra cancelacion o redencion de mini bem´s y bem´s^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;249
+^323E^;^Por RF: deposito a plazo fijo gravados^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;250
+^323E2^;^Por RF: deposito a plazo fijo exentos^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;251
+^323F^;^Por rendimientos financieros: operaciones de reporto - repos^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;252
+^323G^;^Por RF: inversiones [captaciones] rendimientos distintos de aquellos pagados a IFIs^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;253
+^323H^;^Por RF: obligaciones^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;254
+^323I^;^Por RF: bonos convertible en acciones^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;255
+^323K^;^Por RF: Intereses en operaciones de credito entre instituciones del sistema financiero y entidades economia popular y solidaria^;1.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;256
+^323L^;^Por RF: Por inversiones entre instituciones del sistema financiero y entidades economia popular y solidaria^;1.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;257
+^323M^;^Por RF: Inversiones en titulos valores en renta fija gravados^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;258
+^323N^;^Por RF: Inversiones en titulos valores en renta fija exentos^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;259
+^323O^;^Por RF: Intereses pagados a bancos y otras entidades sometidas al control de la Superintendencia de Bancos y de la Economia Popular y Solidaria^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;260
+^323P^;^Por RF: Intereses pagados por entidades del sector publico a favor de sujetos pasivos^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;261
+^323Q^;^Por RF: Otros intereses y rendimientos financieros gravados^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;262
+^323R^;^Por RF: Otros intereses y rendimientos financieros exentos^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;263
+^325^;^Por loterias rifas apuestas y similares^;15.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;264
+^327^;^Por venta de combustibles a comercializadoras [2/mil]^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;265
+^328^;^Por venta de combustibles a distribuidores [3/mil]^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;266
+^332^;^Otras compras de bienes y servicios no sujetas a retencion^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;267
+^332A^;^Por la enajenacion ocasional de acciones o participaciones y titulos valores^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;268
+^332B^;^Compra de bienes inmuebles^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;269
+^332C^;^Transporte publico de pasajeros^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;270
+^332D^;^Pagos en el pais por transporte de pasajeros o transporte internacional de carga a companias nacionales o extranjeras de aviacion o maritimas^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;271
+^332E^;^Valores entregados por las cooperativas de transporte a sus socios^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;272
+^332F^;^Compraventa de divisas distintas al dolar de los Estados Unidos de America^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;273
+^334^;^Pagos con tarjeta de credito^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;274
+^335^;^Pago local tarjeta de credito reportada por la Emisora de tarjeta de credito solo recap^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;275
+^335A^;^Pago al exterior tarjeta de credito reportada por la Emisora de tarjeta de credito solo recap^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;276
+^340A^;^Por energia electrica^;1.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;277
+^340B^;^Por actividades de construccion de obra material inmueble urbanizacion lotizacion o actividades similares^;1.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;278
+^341^;^Otras retenciones aplicables el 2%^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;279
+^344A^;^Ganancias de capital [0-10]^;10.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;280
+^345^;^Dividendos personas naturales residentes en el Ecuador^;0.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;281
+^345A^;^Dividendos gravados distribuidos en acciones [reinversion de utilidades sin derecho a reduccion tarifa IR]^;0.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;282
+^345B^;^Dividendos exentos a sociedades nacionales o extranjeras domiciliadas en el Ecuador^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;283
+^345C^;^Dividendos exentos distribuidos en acciones [reinversion de utilidades con derecho a reduccion tarifa IR]^;0.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;284
+^347^;^Dividendos anticipados^;22.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;285
+^347A^;^Dividendos anticipados prestamos accionistas beneficiarios o partìcipes^;22.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;286
+^348^;^Compra local de banano a productor^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;287
+^349^;^Impuesto a la actividad bananera productor-exportador^;2.0;^N^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^L^;288
+^500^;^Pago al exterior - Rentas Inmobiliarias^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;289
+^501^;^Pago al exterior - Beneficios Empresariales^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;290
+^502^;^Pago al exterior - Servicios Empresariales^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;291
+^503^;^Pago al exterior - Navegacion Maritima y/o aerea^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;292
+^504^;^Pago al exterior- Dividendos^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;293
+^504A^;^Pago al exterior - Dividendos a sociedades en paraisos fiscales [entre 13 y 35]^;35.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;294
+^504B^;^Pago al exterior - Dividendos anticipados^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;295
+^504C^;^Pago al exterior - Dividendos anticipados prestamos accionistas beneficiarios o partìcipes^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;296
+^505^;^Pago al exterior - Rendimientos financieros^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;297
+^505A^;^Pago al exterior – Intereses de creditos de Instituciones Financieras del exterior^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;298
+^505B^;^Pago al exterior – Intereses de creditos de gobierno a gobierno^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;299
+^505C^;^Pago al exterior – Intereses de creditos de organismos multilaterales^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;300
+^505D^;^Pago al exterior - Intereses por financiamiento de proveedores externos^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;301
+^505E^;^Pago al exterior - Intereses de otros creditos externos^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;302
+^505F^;^Pago al exterior - Otros Intereses y Rendimientos Financieros^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;303
+^509^;^Pago al exterior - Canones derechos de autor marcas patentes y similares^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;304
+^509A^;^Pago al exterior - Regalias por concepto de franquicias^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;305
+^510^;^Pago al exterior - Ganancias de capital^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;306
+^511^;^Pago al exterior - Servicios profesionales independientes^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;307
+^512^;^Pago al exterior - Servicios profesionales dependientes^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;308
+^513^;^Pago al exterior - Artistas^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;309
+^513A^;^Pago al exterior - Deportistas^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;310
+^514^;^Pago al exterior - Participacion de consejeros^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;311
+^515^;^Pago al exterior - Entretenimiento Publico^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;312
+^516^;^Pago al exterior - Pensiones^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;313
+^517^;^Pago al exterior - Reembolso de Gastos^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;314
+^518^;^Pago al exterior - Funciones Publicas^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;315
+^519^;^Pago al exterior - Estudiantes^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;316
+^520^;^Pago al exterior - Por otros conceptos^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;317
+^520A^;^Pago al exterior - Pago a proveedores de servicios hoteleros y turisticos en el exterior^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;318
+^520B^;^Pago al exterior - Arrendamientos mercantil internacional^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;319
+^520C^;^Pago al exterior - Seguros cesiones y reaseguros^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;320
+^520D^;^Pago al exterior - Comisiones por exportaciones y por promocion de turismo receptivo^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;321
+^520E^;^Pago al exterior - Por las empresas de transporte maritimo o aereo y por empresas pesqueras de alta mar por su actividad^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;322
+^520F^;^Pago al exterior - Por las agencias internacionales de prensa^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;323
+^520G^;^Pago al exterior - Contratos de fletamento de naves para empresas de transporte aereo o maritimo internacional^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;324
+^521^;^Pago al exterior - No sujetos a retencion^;22.0;^S^;^Oct  1 2014 12:00AM^;^Feb 28 2015 12:00AM^;^S^;^E^;325
+^303^;^Honorarios profesionales y demas pagos por servicios relacionados con el titulo profesional^;10.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;326
+^304^;^Servicios predomina el intelecto no relacionados con el titulo profesional^;8.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;327
+^304A^;^Comisiones y demas pagos por servicios predomina intelecto no relacionados con el titulo profesional^;8.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;328
+^304B^;^Pagos a notarios y registradores de la propiedad y mercantil por sus actividades ejercidas como tales^;8.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;329
+^304C^;^Pagos a deportistas entrenadores arbitros miembros del cuerpo tecnico por sus actividades ejercidas como tales^;8.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;330
+^304D^;^Pagos a artistas por sus actividades ejercidas como tales^;8.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;331
+^304E^;^Honorarios y demas pagos por servicios de docencia^;8.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;332
+^307^;^Servicios predomina la mano de obra^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;333
+^308^;^Utilizacion o aprovechamiento de la imagen o renombre^;10.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;334
+^309^;^Servicios prestados por medios de comunicacion y agencias de publicidad^;1.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;335
+^310^;^Servicio de transporte privado de pasajeros o transporte publico o privado de carga^;1.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;336
+^311^;^Por pagos a traves de liquidacion de compra [nivel cultural o rusticidad]^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;337
+^312^;^Transferencia de bienes muebles de naturaleza corporal^;1.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;338
+^312A^;^Compra de bienes de origen agricola avicola pecuario apicola cunicula bioacuatico y forestal^;1.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;339
+^314A^;^Regalias por concepto de franquicias de acuerdo a Ley de Propiedad Intelectual - pago a personas naturales^;8.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;340
+^314B^;^Canones derechos de autor marcas patentes y similares de acuerdo a Ley de Propiedad Intelectual – pago a personas naturales^;8.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;341
+^314C^;^Regalias por concepto de franquicias de acuerdo a Ley de Propiedad Intelectual - pago a sociedades^;8.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;342
+^314D^;^Canones derechos de autor marcas patentes y similares de acuerdo a Ley de Propiedad Intelectual – pago a sociedades^;8.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;343
+^319^;^Cuotas de arrendamiento mercantil inclusive la de opcion de compra^;1.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;344
+^320^;^Por arrendamiento bienes inmuebles^;8.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;345
+^322^;^Seguros y reaseguros [primas y cesiones]^;1.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;346
+^323^;^Por rendimientos financieros pagados a naturales y sociedades [No a IFIs]^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;347
+^323_M^;^Por RF: Inversiones en titulos valores en renta fija gravados^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;348
+^323_N^;^Por RF: Inversiones en titulos valores en renta fija exentos^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;349
+^323_O^;^Por RF: Intereses pagados a bancos y otras entidades sometidas al control de la Superintendencia de Bancos y de la Economia Popular y Solidaria^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;350
+^323_P^;^Por RF: Intereses pagados por entidades del sector publico a favor de sujetos pasivos^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;351
+^323A^;^Por RF: depositos Cta. Corriente^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;352
+^323B1^;^Por RF: depositos Cta. Ahorros Sociedades^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;353
+^323E^;^Por RF: deposito a plazo fijo gravados^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;354
+^323E2^;^Por RF: deposito a plazo fijo exentos^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;355
+^323F^;^Por rendimientos financieros: operaciones de reporto - repos^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;356
+^323G^;^Por RF: inversiones [captaciones] rendimientos distintos de aquellos pagados a IFIs^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;357
+^323H^;^Por RF: obligaciones^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;358
+^323I^;^Por RF: bonos convertible en acciones^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;359
+^323Q^;^Por RF: Otros intereses y rendimientos financieros gravados^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;360
+^323R^;^Por RF: Otros intereses y rendimientos financieros exentos^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;361
+^324A^;^Por RF: Intereses en operaciones de credito entre instituciones del sistema financiero y entidades economia popular y solidaria^;1.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;362
+^324B^;^Por RF: Por inversiones entre instituciones del sistema financiero y entidades economia popular y solidaria^;1.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;363
+^325^;^Anticipo dividendos^;22.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;364
+^325A^;^Dividendos anticipados prestamos accionistas beneficiarios o partìcipes^;22.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;365
+^326^;^Dividendos distribuidos que correspondan al impuesto a la renta unico establecido en el art. 27 de la lrti [hasta el 100%]^;100.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;366
+^327^;^Dividendos distribuidos a personas naturales residentes [1% al 13%]^;13.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;367
+^328^;^Dividendos distribuidos a sociedades residentes [hasta el 100%]^;100.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;368
+^329^;^dividendos distribuidos a fideicomisos residentes [hasta el 100%]^;100.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;369
+^330^;^Dividendos gravados distribuidos en acciones [reinversion de utilidades sin derecho a reduccion tarifa IR]^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;370
+^331^;^Dividendos exentos distribuidos en acciones [reinversion de utilidades con derecho a reduccion tarifa IR]^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;371
+^332^;^Otras compras de bienes y servicios no sujetas a retencion^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;372
+^332A^;^Por la enajenacion ocasional de acciones o participaciones y titulos valores^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;373
+^332B^;^Compra de bienes inmuebles^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;374
+^332C^;^Transporte publico de pasajeros^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;375
+^332D^;^Pagos en el pais por transporte de pasajeros o transporte internacional de carga a companias nacionales o extranjeras de aviacion o maritimas^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;376
+^332E^;^Valores entregados por las cooperativas de transporte a sus socios^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;377
+^332F^;^Compraventa de divisas distintas al dolar de los Estados Unidos de America^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;378
+^332G^;^Pagos con tarjeta de credito^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;379
+^332H^;^Pago al exterior tarjeta de credito reportada por la Emisora de tarjeta de credito solo recap^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;380
+^332I^;^Pago a traves de convenio de debito [Clientes IFIS]^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;381
+^333^;^Enajenacion de derechos representativos de capital y otros derechos cotizados en bolsa ecuatoriana^;0.2;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;382
+^334^;^Enajenacion de derechos representativos de capital y otros derechos no cotizados en bolsa ecuatoriana^;1.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;383
+^335^;^Por loterias rifas apuestas y similares^;15.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;384
+^336^;^Por venta de combustibles a comercializadoras [2/mil]^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;385
+^337^;^Por venta de combustibles a distribuidores [3/mil]^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;386
+^338^;^Compra local de banano a productor [1% -2%]^;2.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;387
+^339^;^Liquidacion impuesto unico a la venta local de banano de produccion propia [hasta el 100%]^;100.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;388
+^340^;^Impuesto unico a la exportacion de banano de produccion propia - componente 1 [1% -2%]^;2.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;389
+^341^;^Impuesto unico a la exportacion de banano de produccion propia - componente 2 [125% - 2%]^;2.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;390
+^342^;^Impuesto unico a la exportacion de banano producido por terceros [05%-2%]^;2.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;391
+^343^;^Otras Retenciones Aplicables el 1%^;1.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;392
+^343A^;^Por energia electrica^;1.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;393
+^343B^;^Por actividades de construccion de obra material inmueble urbanizacion lotizacion o actividades similares^;1.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;394
+^344^;^Otras retenciones aplicables el 2%^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;395
+^344A^;^Pago local tarjeta de credito reportada por la Emisora de tarjeta de credito solo recap^;2.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;396
+^346A^;^Ganancias de capital [entre 0 y 10]^;10.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^L^;397
+^500^;^Pago al exterior - Rentas Inmobiliarias [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;398
+^501^;^Pago al exterior - Beneficios Empresariales [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;399
+^501A^;^Pago a no residentes - Servicios tecnicos administrativos o de consultoria y regalia^;35.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;400
+^502^;^Pago al exterior - Servicios Empresariales [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;401
+^503^;^Pago al exterior - Navegacion Maritima y/o aerea [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;402
+^504^;^Pago al exterior- Dividendos distribuidos a personas naturales^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;403
+^504A^;^Pago al exterior - Dividendos a sociedades [hasta el 100%]^;100.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;404
+^504B^;^Pago al exterior - Anticipo dividendos^;22.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;405
+^504C^;^Pago al exterior - Dividendos anticipados prestamos accionistas beneficiarios o partìcipes [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;406
+^504D^;^Pago al exterior - Dividendos a fideicomisos [hasta el 100%]^;100.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;407
+^504E^;^Pago al exterior- Dividendos distribuidos a personas naturales [paraisos fiscales]^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;408
+^504F^;^Pago al exterior - Dividendos a sociedades [paraisos fiscales]^;13.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;409
+^504G^;^Pago al exterior - Anticipo dividendos [paraisos fiscales]^;25.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;410
+^504H^;^Pago al exterior - Dividendos a fideicomisos [paraisos fiscales]^;13.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;411
+^505^;^Pago al exterior - Rendimientos financieros [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;412
+^505A^;^Pago al exterior – Intereses de creditos de Instituciones Financieras del exterior [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;413
+^505B^;^Pago al exterior – Intereses de creditos de gobierno a gobierno [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;414
+^505C^;^Pago al exterior – Intereses de creditos de organismos multilaterales [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;415
+^505D^;^Pago al exterior - Intereses por financiamiento de proveedores externos [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;416
+^505E^;^Pago al exterior - Intereses de otros creditos externos [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;417
+^505F^;^Pago al exterior - Otros Intereses y Rendimientos Financieros [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;418
+^509^;^Pago al exterior - Canones derechos de autor marcas patentes y similares [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;419
+^509A^;^Pago al exterior - Regalias por concepto de franquicias [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;420
+^510^;^Pago al exterior - Ganancias de capital [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;421
+^511^;^Pago al exterior - Servicios profesionales independientes [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;422
+^512^;^Pago al exterior - Servicios profesionales dependientes [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;423
+^513^;^Pago al exterior - Artistas [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;424
+^513A^;^Pago al exterior - Deportistas [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;425
+^514^;^Pago al exterior - Participacion de consejeros [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;426
+^515^;^Pago al exterior - Entretenimiento Publico [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;427
+^516^;^Pago al exterior - Pensiones [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;428
+^517^;^Pago al exterior - Reembolso de Gastos [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;429
+^518^;^Pago al exterior - Funciones Publicas [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;430
+^519^;^Pago al exterior - Estudiantes [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;431
+^520^;^Pago al exterior - Otros conceptos de ingresos gravados [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;432
+^520A^;^Pago al exterior - Pago a proveedores de servicios hoteleros y turisticos en el exterior [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;433
+^520B^;^Pago al exterior - Arrendamientos mercantil internacional [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;434
+^520D^;^Pago al exterior - Comisiones por exportaciones y por promocion de turismo receptivo [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;435
+^520E^;^Pago al exterior - Por las empresas de transporte maritimo o aereo y por empresas pesqueras de alta mar por su actividad. [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;436
+^520F^;^Pago al exterior - Por las agencias internacionales de prensa [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;437
+^520G^;^Pago al exterior - Contratos de fletamento de naves para empresas de transporte aereo o maritimo internacional [entre 0 y 22]^;22.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;438
+^521^;^Pago al exterior - Enajenacion de derechos representativos de capital y otros derechos^;5.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;439
+^522A^;^Pago al exterior - Servicios tecnicos administrativos o de consultoria y regalias con convenio de doble tributacion [hasta el 100%]^;100.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;440
+^522B^;^Pago al exterior - Servicios tecnicos administrativos o de consultoria y regalias sin convenio de doble tributacion^;22.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;441
+^522C^;^Pago al exterior - Servicios tecnicos administrativos o de consultoria y regalias en paraisos fiscales^;35.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;442
+^523A^;^Pago al exterior - Seguros y reaseguros [primas y cesiones] con convenio de doble tributacion [hasta el 100%]^;100.0;^S^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;443
+^523B^;^Pago al exterior - Seguros y reaseguros [primas y cesiones] sin convenio de doble tributacion^;22.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;444
+^523C^;^Pago al exterior - Seguros y reaseguros [primas y cesiones] en paraisos fiscales^;35.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;445
+^524^;^Pago al exterior - Otros pagos al exterior no sujetos a retencion^;0.0;^N^;^Mar  1 2015 12:00AM^;^Mar 31 2020 12:00AM^;^S^;^E^;446
+^303^;^Honorarios profesionales y demas pagos por servicios relacionados con el titulo profesional^;10.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;447
+^304^;^Servicios predomina el intelecto no relacionados con el titulo profesional^;8.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;448
+^304A^;^Comisiones y demas pagos por servicios predomina intelecto no relacionados con el titulo profesional^;8.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;449
+^304B^;^Pagos a notarios y registradores de la propiedad y mercantil por sus actividades ejercidas como tales^;8.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;450
+^304C^;^Pagos a deportistas entrenadores arbitros miembros del cuerpo tecnico por sus actividades ejercidas como tales^;8.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;451
+^304D^;^Pagos a artistas por sus actividades ejercidas como tales^;8.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;452
+^304E^;^Honorarios y demas pagos por servicios de docencia^;8.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;453
+^307^;^Servicios predomina la mano de obra^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;454
+^308^;^Utilizacion o aprovechamiento de la imagen o renombre^;10.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;455
+^309^;^Servicios prestados por medios de comunicacion y agencias de publicidad^;1.75;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;456
+^310^;^Servicio de transporte privado de pasajeros o transporte publico o privado de carga^;1.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;457
+^311^;^Pagos a traves de liquidacion de compra [nivel cultural o rusticidad]^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;458
+^312^;^Transferencia de bienes muebles de naturaleza corporal^;1.75;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;459
+^312A^;^Compra de bienes de origen agricola avicola pecuario apicola cunicula bioacuatico forestal y carnes en estado natural^;1.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;460
+^312B^;^Impuesto a la Renta unico para la actividad de produccion y cultivo de palma aceitera^;1.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;461
+^314A^;^Regalias por concepto de franquicias de acuerdo a Ley de Propiedad Intelectual - pago a personas naturales^;8.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;462
+^314B^;^Canones derechos de autor marcas patentes y similares de acuerdo a Ley de Propiedad Intelectual – pago a personas naturales^;8.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;463
+^314C^;^Regalias por concepto de franquicias de acuerdo a Ley de Propiedad Intelectual - pago a sociedades^;8.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;464
+^314D^;^Canones derechos de autor marcas patentes y similares de acuerdo a Ley de Propiedad Intelectual – pago a sociedades^;8.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;465
+^319^;^Cuotas de arrendamiento mercantil [prestado por sociedades] inclusive la de opcion de compra^;1.75;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;466
+^320^;^Arrendamiento bienes inmuebles^;8.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;467
+^322^;^Seguros y reaseguros [primas y cesiones]^;1.75;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;468
+^323^;^Rendimientos financieros pagados a naturales y sociedades [No a IFIs]^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;469
+^323A^;^Rendimientos financieros depositos Cta. Corriente^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;470
+^323B1^;^Rendimientos financieros depositos Cta. Ahorros Sociedades^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;471
+^323E^;^Rendimientos financieros deposito a plazo fijo gravados^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;472
+^323E2^;^Rendimientos financieros deposito a plazo fijo exentos^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;473
+^323F^;^Rendimientos financieros operaciones de reporto - repos^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;474
+^323G^;^Inversiones [captaciones] rendimientos distintos de aquellos pagados a IFIs^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;475
+^323H^;^Rendimientos financieros obligaciones^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;476
+^323I^;^Rendimientos financieros bonos convertible en acciones^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;477
+^323M^;^Rendimientos financieros : Inversiones en titulos valores en renta fija gravados^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;478
+^323N^;^Rendimientos financieros Inversiones en titulos valores en renta fija exentos^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;479
+^323O^;^Intereses y demas rendimientos financieros pagados a bancos y otras entidades sometidas al control de la Superintendencia de Bancos y de la Economia Popular y Solidaria^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;480
+^323P^;^Intereses pagados por entidades del sector publico a favor de sujetos pasivos^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;481
+^323Q^;^Otros intereses y rendimientos financieros gravados^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;482
+^323R^;^Otros intereses y rendimientos financieros exentos^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;483
+^323S^;^Pagos y creditos en cuenta efectuados por el BCE y los depositos centralizados de valores en calidad de intermediarios a instituciones del sistema financiero por cuenta de otras personas naturales y sociedades^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;484
+^323T^;^Rendimientos financieros originados en la deuda publica ecuatoriana^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;485
+^323U^;^Rendimientos financieros originados en titulos valores de obligaciones de 360 dias o mas para el financiamiento de proyectos publicos en asociacion publico-privada^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;486
+^324A^;^Intereses en operaciones de credito entre instituciones del sistema financiero y entidades economia popular y solidaria^;1.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;487
+^324B^;^Inversiones entre instituciones del sistema financiero y entidades economia popular y solidaria^;1.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;488
+^324C^;^Pagos y creditos en cuenta efectuados por el BCE y los depositos centralizados de valores en calidad de intermediarios a instituciones del sistema financiero por cuenta de otras instituciones del sistema financiero^;1.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;489
+^325^;^Anticipo dividendos 22% o 25%^;22.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;490
+^325A^;^Prestamos accionistas beneficiarios o participes residentes o establecidos en el Ecuador 22% o 25%^;22.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;491
+^326^;^Dividendos distribuidos que correspondan al impuesto a la renta unico establecido en el art. 27 de la LRTI^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;492
+^327^;^Dividendos distribuidos a personas naturales residentes^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;493
+^328^;^Dividendos distribuidos a sociedades residentes^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;494
+^329^;^dividendos distribuidos a fideicomisos residentes^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;495
+^331^;^Dividendos en acciones [capitalizacion de utilidades]^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;496
+^332^;^Otras compras de bienes y servicios no sujetas a retencion^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;497
+^332B^;^Compra de bienes inmuebles^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;498
+^332C^;^Transporte publico de pasajeros^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;499
+^332D^;^Pagos en el pais por transporte de pasajeros o transporte internacional de carga a companias nacionales o extranjeras de aviacion o maritimas^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;500
+^332E^;^Valores entregados por las cooperativas de transporte a sus socios^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;501
+^332F^;^Compraventa de divisas distintas al dolar de los Estados Unidos de America^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;502
+^332G^;^Pagos con tarjeta de credito^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;503
+^332H^;^Pago al exterior tarjeta de credito reportada por la Emisora de tarjeta de credito solo recap^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;504
+^332I^;^Pago a traves de convenio de debito [Clientes IFIS]^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;505
+^333^;^Ganancia en la enajenacion de derechos representativos de capital u otros derechos que permitan la exploracion explotacion concesion o similares de sociedades que se coticen en bolsa de valores del Ecuador^;10.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;506
+^334^;^Contraprestacion producida por la enajenacion de derechos representativos de capital u otros derechos que permitan la exploracion explotacion concesion o similares de sociedades no cotizados en bolsa de valores del Ecuador^;1.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;507
+^335^;^Loterias rifas apuestas y similares^;15.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;508
+^336^;^Venta de combustibles a comercializadoras 2/mil^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;509
+^337^;^Venta de combustibles a distribuidores 3/mil^;3.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;510
+^338^;^Produccion y venta local de banano producido o no por el mismo sujeto pasivo 1% a 2%^;1.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;511
+^340^;^Impuesto unico a la exportacion de banano^;3.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;512
+^343^;^Otras Retenciones Aplicables el 1%^;1.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;513
+^343A^;^Energia electrica^;1.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;514
+^343B^;^Actividades de construccion de obra material inmueble urbanizacion lotizacion o actividades similares^;1.75;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;515
+^343C^;^Impuesto Redimible a las botellas plasticas - IRBP^;1.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^L^;516
+^3440^;^Otras retenciones aplicables el 2.75%^;2.75;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;517
+^344A^;^Pago local tarjeta de credito /debito reportada por la Emisora de tarjeta de credito / entidades del sistema financiero^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;518
+^344B^;^Adquisicion de sustancias minerales dentro del territorio nacional^;2.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;519
+^345^;^Otras retenciones aplicables el 8%^;8.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;520
+^346A^;^Otras ganancias de capital distintas de enajenacion de derechos representativos de capital^;0.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;521
+^346B^;^Donaciones en dinero -Impuesto a la donaciones^;0.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;522
+^346C^;^Retencion a cargo del propio sujeto pasivo por la exportacion de concentrados y/o elementos metalicos 0% o 10%^;10.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;523
+^346D^;^Retencion a cargo del propio sujeto pasivo por la comercializacion de productos forestales 0% o 10%^;10.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;524
+^348^;^Impuesto unico a ingresos provenientes de actividades agropecuarias en etapa de produccion / comercializacion local o exportacion^;1.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;525
+^350^;^Otras autoretenciones 150% o 175%^;1.75;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;526
+^500^;^Pago a no residentes - Rentas Inmobiliarias 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;527
+^501^;^Pago a no residentes - Beneficios/Servicios Empresariales 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;528
+^501A^;^Pago a no residentes - Servicios tecnicos administrativos o de consultoria y regalias 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;529
+^503^;^Pago a no residentes- Navegacion Maritima y/o aerea 0% o 25% o 35%^;0.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;530
+^504^;^Pago a no residentes- Dividendos distribuidos a personas naturales [domicilados o no en paraiso fiscal] o a sociedades sin beneficiario efectivo persona natural residente en Ecuador^;25.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;531
+^504A^;^Dividendos a sociedades con beneficiario efectivo persona natural residente en el Ecuador^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;532
+^504B^;^Dividendos a no residentes incumpliendo el deber de informar la composicion societaria^;35.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;533
+^504C^;^Dividendos a residentes o establecidos en paraisos fiscales o regimenes de menor imposicion [con beneficiario Persona Natural residente en Ecuador]^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;534
+^504D^;^Dividendos a fideicomisos o establecidos en paraisos fiscales o regimenes de menor imposicion [con beneficiario Persona Natural residente en Ecuador]^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;535
+^504E^;^Pago a no residentes - Anticipo dividendos [no domiciliada en paraisos fiscales o regimenes de menor imposicion] 22% o 25%^;22.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;536
+^504F^;^Pago a no residentes - Anticipo dividendos [domiciliadas en paraisos fiscales o regimenes de menor imposicion] 22% o 25% o 28%^;22.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;537
+^504G^;^Pago a no residentes - Prestamos accionistas beneficiarios o partìcipes [no domiciladas en paraisos fiscales o regimenes de menor imposicion] 22% o 25%^;22.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;538
+^504H^;^Pago a no residentes - Prestamos accionistas beneficiarios o partìcipes [domiciladas en paraisos fiscales o regimenes de menor imposicion] 22% o 25% o 28%^;22.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;539
+^504I^;^Pago a no residentes - Prestamos no comerciales a partes relacionadas [no domiciladas en paraisos fiscales o regimenes de menor imposicion] 22% o 25%^;22.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;540
+^504J^;^Pago a no residentes - Prestamos no comerciales a partes relacionadas [domiciladas en paraisos fiscales o regimenes de menor imposicion] 22% o 25% o 28%^;22.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;541
+^505^;^Pago a no residentes - Rendimientos financieros 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;542
+^505A^;^Pago a no residentes – Intereses de creditos de Instituciones Financieras del exterior 0% o 25%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;543
+^505B^;^Pago a no residentes – Intereses de creditos de gobierno a gobierno 0% o 25%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;544
+^505C^;^Pago a no residentes – Intereses de creditos de organismos multilaterales 0% o 25%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;545
+^505D^;^Pago a no residentes - Intereses por financiamiento de proveedores externos^;25.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;546
+^505E^;^Pago a no residentes - Intereses de otros creditos externos^;25.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;547
+^505F^;^Pago a no residentes - Otros Intereses y Rendimientos Financieros 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;548
+^509^;^Pago a no residentes- Canones derechos de autor marcas patentes y similares 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;549
+^509A^;^PPago a no residentes - Regalias por concepto de franquicias 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;550
+^510^;^Pago a no residentes - Otras ganancias de capital distintas de enajenacion de derechos representativos de capital 5% 25% 35%^;5.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;551
+^511^;^Pago a no residentes - Servicios profesionales independientes 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;552
+^512^;^Pago a no residentes - Servicios profesionales dependientes 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;553
+^513^;^Pago a no residentes- Artistas 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;554
+^513A^;^Pago a no residentes - Deportistas 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;555
+^514^;^Pago a no residentes - Participacion de consejeros 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;556
+^515^;^Pago a no residentes - Entretenimiento Publico 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;557
+^516^;^Pago a no residentes - Pensiones 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;558
+^517^;^Pago a no residentes- Reembolso de Gastos 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;559
+^518^;^Pago a no residentes- Funciones Publicas 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;560
+^519^;^Pago a no residentes - Estudiantes 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;561
+^520A^;^Pago a no residentes - Pago a proveedores de servicios hoteleros y turisticos en el exterior 25% o 35%^;25.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;562
+^520B^;^Pago a no residentes - Arrendamientos mercantil internacional 0% 25% 35%^;0.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;563
+^520D^;^Pago a no residentes - Comisiones por exportaciones y por promocion de turismo receptivo 0% 25% 35%^;0.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;564
+^520E^;^Pago a no residentes - Por las empresas de transporte maritimo o aereo y por empresas pesqueras de alta mar por su actividad^;0.0;^N^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;565
+^520F^;^Pago a no residentes - Por las agencias internacionales de prensa 0% 25% 35%^;0.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;566
+^520G^;^Pago a no residentes - Contratos de fletamento de naves para empresas de transporte aereo o maritimo internacional 0% 25% 35%^;0.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;567
+^521^;^Pago a no residentes - Enajenacion de derechos representativos de capital u otros derechos que permitan la exploracion explotacion concesion o similares de sociedades 1% o 10%^;1.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;568
+^523A^;^Pago a no residentes - Seguros y reaseguros [primas y cesiones] 0% 25% 35%^;0.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;569
+^525^;^Pago a no residentes- Donaciones en dinero -Impuesto a la donaciones^;0.0;^S^;^Apr  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;570
+^346^;^Otras retenciones aplicables a otros porcentajes [Incluyen retenciones al regimen Microempresarial]^;1.75;^N^;^Sep  1 2020 12:00AM^;^Feb 29 2024 12:00AM^;^S^;^.^;571
+^351^;^Otras retenciones aplicables a otros porcentajes [Incluyen retenciones al regimen Microempresarial]^;1.75;^N^;^Jan  1 2021 12:00AM^;^Dec 31 2020 12:00AM^;^S^;^.^;572
+^303^;^Honorarios profesionales y demás pagos por servicios relacionados con el título profesional^;10.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;573
+^303A^;^Servicios profesionales prestados por sociedades residentes^;3.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;574
+^304^;^Servicios predomina el intelecto no relacionados con el título profesional^;10.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;575
+^304A^;^Comisiones y demás pagos por servicios predomina intelecto no relacionados con el título profesional^;10.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;576
+^304B^;^Pagos a notarios y registradores de la propiedad y mercantil por sus actividades ejercidas como tales^;10.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;577
+^304C^;^Pagos a deportistas; entrenadores; árbitros; miembros del cuerpo técnico por sus actividades ejercidas como tales^;8.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;578
+^304D^;^Pagos a artistas por sus actividades ejercidas como tales^;8.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;579
+^304E^;^Honorarios y demás pagos por servicios de docencia^;10.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;580
+^307^;^Servicios predomina la mano de obra^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;581
+^308^;^Utilización o aprovechamiento de la imagen o renombre [personas naturales; sociedades;ï influencersï]^;10.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;582
+^309^;^Servicios prestados por medios de comunicación y agencias de publicidad^;2.75;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;583
+^310^;^Servicio de transporte privado de pasajeros o transporte público o privado de carga^;1.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;584
+^311^;^Pagos a través de liquidación de compra [nivel cultural o rusticidad]^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;585
+^312^;^Transferencia de bienes muebles de naturaleza corporal^;1.75;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;586
+^312A^;^COMPRAS AL PRODUCTOR: de bienes de origen bioacuático; forestal y los descritos  el art.27.1 de LRTI ^;1.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;587
+^312C^;^COMPRAS AL COMERCIALIZADOR: de bienes de origen bioacuático; forestal y los descritos  el art.27.1 de LRTI^;1.75;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;588
+^314A^;^Regalías por concepto de franquicias de acuerdo al Código INGENIOS [COESCCI] - pago a personas naturales^;10.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;589
+^314B^;^Cánones; derechos de autor;  marcas; patentes y similares de acuerdo  al Código INGENIOS [COESCCI] – pago a personas naturales^;10.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;590
+^314C^;^Regalías por concepto de franquicias de acuerdo al Código INGENIOS [COESCCI] - pago a sociades^;10.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;591
+^314D^;^Cánones; derechos de autor;  marcas; patentes y similares de acuerdo  al Código INGENIOS [COESCCI]  ^;10.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;592
+^319^;^Cuotas de arrendamiento mercantil [prestado por sociedades]; inclusive la de opción de compra^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;593
+^320^;^Arrendamiento bienes inmuebles^;10.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;594
+^322^;^Seguros y reaseguros [primas y cesiones]^;1.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;595
+^323^;^Rendimientos financieros pagados a naturales y sociedades  [No a IFIs]^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;596
+^323A^;^Rendimientos financieros depósitos Cta. Corriente^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;597
+^323B1^;^Rendimientos financieros  depósitos Cta. Ahorros Sociedades^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;598
+^323E^;^Rendimientos financieros depósito a plazo fijo  gravados^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;599
+^323E2^;^Rendimientos financieros depósito a plazo fijo exentos^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;600
+^323F^;^Rendimientos financieros operaciones de reporto - repos^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;601
+^323G^;^Inversiones [captaciones] rendimientos distintos de aquellos pagados a IFIs^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;602
+^323H^;^Rendimientos financieros  obligaciones^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;603
+^323I^;^Rendimientos financieros  bonos convertible en acciones^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;604
+^323M^;^Rendimientos financieros : Inversiones en títulos valores en renta fija gravados ^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;605
+^323N^;^Rendimientos financieros  Inversiones en títulos valores en renta fija exentos^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;606
+^323O^;^Intereses y demás rendimientos financieros pagados a bancos y otras entidades sometidas al control de la Superintendencia de Bancos y de la Economía Popular y Solidaria^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;607
+^323P^;^ Intereses pagados por entidades del sector público a favor de sujetos pasivos^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;608
+^323Q^;^Otros intereses y rendimientos financieros gravados ^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;609
+^323R^;^Otros intereses y rendimientos financieros exentos^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;610
+^323S^;^Pagos y créditos en cuenta efectuados por el BCE y los depósitos centralizados de valores; en calidad de intermediarios; a instituciones del sistema financiero por cuenta de otras personas naturales y sociedades^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;611
+^323T^;^Rendimientos financieros originados en la deuda pública ecuatoriana^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;612
+^323U^;^Rendimientos financieros originados en títulos valores de obligaciones de 360 días o más para el financiamiento de proyectos públicos en asociación público-privada^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;613
+^324A^;^ Intereses en operaciones de crédito entre instituciones del sistema financiero y entidades economía popular y solidaria. ^;1.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;614
+^324B^;^Inversiones entre instituciones del sistema financiero y entidades economía popular y solidaria^;1.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;615
+^324C^;^Pagos y créditos en cuenta efectuados por el BCE y los depósitos centralizados de valores; en calidad de intermediarios; a instituciones del sistema financiero por cuenta de otras instituciones del sistema financiero^;1.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;616
+^325^;^Anticipo dividendos [22% o 25%]^;25.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;617
+^325A^;^Préstamos accionistas; beneficiarios o partícipes residentes o establecidos en el Ecuador [22% o 25%]^;25.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;618
+^326^;^Dividendos distribuidos que correspondan al impuesto a la renta único establecido en el art. 27 de la LRTI [Hasta 25 y conforme la Resolución]^;25.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;619
+^327^;^Dividendos distribuidos a personas naturales residentes [Hasta 25 y conforme la Resolución]^;25.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;620
+^328^;^Dividendos distribuidos a sociedades residentes^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;621
+^329^;^dividendos distribuidos a fideicomisos residentes^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;622
+^331^;^Dividendos en acciones [capitalización de utilidades]^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;623
+^332^;^Otras compras de bienes y servicios no sujetas a retención [incluye régimen RIMPE - Negocios Populares; para este caso aplica con cualquier forma de pago inclusive los pagos que deban realizar las tarjetas de crédito/débito]^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;624
+^332B^;^Compra de bienes inmuebles^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;625
+^332C^;^Transporte público de pasajeros^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;626
+^332D^;^Pagos en el país por transporte de pasajeros o transporte internacional de carga; a compañías nacionales o extranjeras de aviación o marítimas^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;627
+^332E^;^Valores entregados por las cooperativas de transporte a sus socios^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;628
+^332F^;^Compraventa de divisas distintas al dólar de los Estados Unidos de América^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;629
+^332G^;^Pagos con tarjeta de crédito ^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;630
+^332H^;^Pago al exterior tarjeta de crédito reportada por la Emisora de tarjeta de crédito; solo recap^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;631
+^332I^;^Pago a través de convenio de debito [Clientes IFI`s]^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;632
+^333^;^Ganancia en la enajenación de derechos representativos de capital u otros derechos que permitan la exploración; explotación; concesión o similares de sociedades; que se coticen en bolsa de valores del Ecuador^;10.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;633
+^334^;^Contraprestación producida por la enajenación de derechos representativos de capital u otros derechos que permitan la exploración; explotación; concesión o similares de sociedades; no cotizados en bolsa de valores del Ecuador^;1.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;634
+^335^;^Loterías; rifas; pronósticos deportivos; apuestas y similares ^;15.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;635
+^336^;^Venta de combustibles a comercializadoras^;0.2;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;636
+^337^;^Venta de combustibles a distribuidores^;0.30000001;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;637
+^338^;^Producción y venta local de banano producido o no por el mismo sujeto pasivo [1% a 2%]^;2.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;638
+^340^;^Impuesto único a la exportación de banano^;3.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;639
+^343^;^Otras retenciones aplicables el 1% [incluye régimen RIMPE - Emprendedores; para este caso aplica con cualquier forma de pago inclusive los pagos que deban realizar las tarjetas de crédito/débito]^;1.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;640
+^343A^;^Energía eléctrica^;1.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;641
+^343B^;^Actividades de construcción de obra material inmueble; urbanización; lotización o actividades similares^;1.75;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;642
+^343C^;^Recepción de botellas plásticas no retornables de PET^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;643
+^3440^;^Otras retenciones aplicables el 2;75% ^;2.75;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;644
+^344A^;^Pago local tarjeta de crédito /débito reportada por la Emisora de tarjeta de crédito / entidades del sistema financiero^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;645
+^344B^;^Adquisición de sustancias minerales dentro del territorio nacional^;2.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;646
+^346^;^Otras retenciones aplicables a otros porcentajes [varios porcentajes]^;0.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;647
+^346A^;^Otras ganancias de capital distintas de enajenación de derechos representativos de capital [varios porcentajes]^;0.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;648
+^346B^;^Donaciones en dinero -Impuesto a las donaciones [Conforme Art 36 LRTI literal d]^;0.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;649
+^346C^;^Retención a cargo del propio sujeto pasivo por la producción y/o comercialización de minerales y otros bienes [0% o 10%]^;10.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;650
+^346D^;^Retención a cargo del propio sujeto pasivo por la comercialización de productos forestales [0% o 10%]^;10.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;651
+^3481^;^Autorretenciones Sociedades Grandes Contribuyentes [Conforme  Nro. NAC-DGERCGC24-00000003 ; del 12 de enero de 2024]^;0.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;652
+^3482^;^Comisiones  a sociedades; nacionales o extranjeras residentes y establecimientos permanentes domiciliados en el país^;3.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;653
+^350^;^Otras autorretenciones [inciso 1 y 2 Art.92.1 RLRTI] [1;50% o 1;75%]^;1.5;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;654
+^500^;^Pago a no residentes - Rentas Inmobiliarias [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;655
+^501^;^Pago a no residentes - Beneficios/Servicios  Empresariales [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;656
+^501A^;^Pago a no residentes - Servicios técnicos; administrativos o de consultoría y regalías [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;657
+^503^;^Pago a no residentes- Navegación Marítima y/o aérea [0%; 25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;658
+^504^;^Pago a no residentes- Dividendos distribuidos a personas naturales [domiciliados o no en paraíso fiscal] o a sociedades sin beneficiario efectivo persona natural residente en Ecuador^;25.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;659
+^504A^;^Dividendos a sociedades con beneficiario efectivo persona natural residente en el Ecuador [Hasta 25 y conforme la Resolución NAC-DGERCGC20-000000013]^;0.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;660
+^504B^;^Dividendos a no residentes incumpliendo el deber de informar la composición societaria^;37.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;661
+^504C^;^Dividendos a residentes o establecidos en paraísos fiscales o regímenes de menor imposición [con beneficiario Persona Natural residente en Ecuador] [Hasta 25% y conforme la Resolución]^;25.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;662
+^504D^;^Dividendos a fideicomisos o establecidos en paraísos fiscales o regímenes de menor imposición [con beneficiario Persona Natural residente en Ecuador] [Hasta 25% y conforme la Resolución]^;25.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;663
+^504E^;^Pago a no residentes - Anticipo dividendos [no domiciliada en paraísos fiscales o regímenes de menor imposición] [22% o 25%]^;25.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;664
+^504F^;^Pago a no residentes - Anticipo dividendos [domiciliadas en paraísos fiscales o regímenes de menor imposición] [22%; 25% o 28%]^;28.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;665
+^504G^;^Pago a no residentes - Préstamos accionistas; beneficiarios o partícipes [no domiciliadas en paraísos fiscales o regímenes de menor imposición] [22% o 25%]^;25.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;666
+^504H^;^Pago a no residentes - Préstamos accionistas; beneficiarios o partícipes [domiciliadas en paraísos fiscales o regímenes de menor imposición] [22% o 25% o 28%]^;28.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;667
+^504I^;^Pago a no residentes - Préstamos no comerciales a partes relacionadas  [no domiciliadas en paraísos fiscales o regímenes de menor imposición] [22% o 25%]^;25.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;668
+^504J^;^Pago a no residentes - Préstamos no comerciales a partes relacionadas  [domiciliadas en paraísos fiscales o regímenes de menor imposición] [22% o 25% o 28%]^;28.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;669
+^505^;^Pago a no residentes - Rendimientos financieros [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;670
+^505A^;^Pago a no residentes – Intereses de créditos de Instituciones Financieras del exterior [0% o 25%]^;25.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;671
+^505B^;^Pago a no residentes – Intereses de créditos de gobierno a gobierno [0% o 25%]^;25.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;672
+^505C^;^Pago a no residentes – Intereses de créditos de organismos multilaterales [0% o 25%]^;25.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;673
+^505D^;^Pago a no residentes - Intereses por financiamiento de proveedores externos^;25.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;674
+^505E^;^Pago a no residentes - Intereses de otros créditos externos^;25.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;675
+^505F^;^Pago a no residentes - Otros Intereses y Rendimientos Financieros [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;676
+^509^;^Pago a no residentes- Cánones; derechos de autor;  marcas; patentes y similares [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;677
+^509A^;^Pago a no residentes - Regalías por concepto de franquicias [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;678
+^510^;^Pago a no residentes - Otras ganancias de capital distintas de enajenación de derechos representativos de capital [5%; 25%; 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;679
+^511^;^Pago a no residentes - Servicios profesionales independientes [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;680
+^512^;^Pago a no residentes - Servicios profesionales dependientes [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;681
+^513^;^Pago a no residentes- Artistas [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;682
+^513A^;^Pago a no residentes - Deportistas [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;683
+^514^;^Pago a no residentes - Participación de consejeros [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;684
+^515^;^Pago a no residentes - Entretenimiento Público [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;685
+^516^;^Pago a no residentes - Pensiones [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;686
+^517^;^Pago a no residentes- Reembolso de Gastos [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;687
+^518^;^Pago a no residentes- Funciones Públicas [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;688
+^519^;^Pago a no residentes - Estudiantes [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;689
+^520A^;^Pago a no residentes - Pago a proveedores de servicios hoteleros y turísticos en el exterior [25% o 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;690
+^520B^;^Pago a no residentes - Arrendamientos mercantil internacional [0%; 25%; 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;691
+^520D^;^Pago a no residentes - Comisiones por exportaciones y por promoción de turismo receptivo [0%; 25%; 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;692
+^520E^;^Pago a no residentes - Por las empresas de transporte marítimo o aéreo y por empresas pesqueras de alta mar; por su actividad.^;0.0;^N^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;693
+^520F^;^Pago a no residentes - Por las agencias internacionales de prensa [0%; 25%; 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;694
+^520G^;^Pago a no residentes - Contratos de fletamento de naves para empresas de transporte aéreo o marítimo internacional [0%; 25%; 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;695
+^521^;^Pago a no residentes - Enajenación de derechos representativos de capital u otros derechos que permitan la exploración; explotación; concesión o similares de sociedades [1% o 10%]^;10.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;696
+^523A^;^Pago a no residentes - Seguros y reaseguros [primas y cesiones] [0%; 22%; 37%]^;37.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;697
+^525^;^Pago a no residentes- Donaciones en dinero -Impuesto a las donaciones [Según art 36 LRTI literal d]^;0.0;^S^;^Mar  1 2024 12:00AM^;^Dec 31 2050 12:00AM^;^S^;^L^;698

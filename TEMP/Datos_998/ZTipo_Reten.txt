@@ -1,0 +1,275 @@
+Codigo;Tipo_Ret;Base_Imp;Retencion;Item;Año;ID
+^302^;^Honorarios y dietas a personas naturales^;.0000;.0000;^000^;^2001^;1
+^302^;^Honorarios y dietas a personas naturales^;.0000;.0000;^000^;^2004^;2
+^302^;^Honorarios y dietas a personas naturales^;.0000;.0000;^000^;^2002^;3
+^302^;^Honorarios y dietas a personas naturales^;.0000;.0000;^000^;^2003^;4
+^302^;^Honorarios y dietas a personas naturales^;.0000;.0000;^000^;^2005^;5
+^302^;^Honorarios y dietas a personas naturales^;.0000;.0000;^000^;^2000^;6
+^303^;^Pago local a extranjeros por servicios ocasionales^;.0000;.0000;^000^;^2000^;7
+^303^;^Pago local a extranjeros por servicios ocasionales^;.0000;.0000;^000^;^2005^;8
+^303^;^Pago local a extranjeros por servicios ocasionales^;.0000;.0000;^000^;^2003^;9
+^303^;^Pago local a extranjeros por servicios ocasionales^;.0000;.0000;^000^;^2002^;10
+^303^;^Pago local a extranjeros por servicios ocasionales^;.0000;.0000;^000^;^2004^;11
+^303^;^Honorarios comisiones y dietas a personas naturales^;.0000;.0000;^000^;^2006^;12
+^303^;^Pago local a extranjeros por servicios ocasionales^;.0000;.0000;^000^;^2001^;13
+^303^;^Honorarios comisiones y dietas a personas naturales^;.0000;.0000;^000^;^2007^;14
+^304^;^Remuneracion a otros trabajadores autonomos^;.0000;.0000;^000^;^2007^;15
+^304^;^Por loterias rifas y apuestas similares^;.0000;.0000;^000^;^2001^;16
+^304^;^Remuneracion a otros trabajadores autonomos^;.0000;.0000;^000^;^2006^;17
+^304^;^Por loterias rifas y apuestas similares^;.0000;.0000;^000^;^2004^;18
+^304^;^Por loterias rifas y apuestas similares^;.0000;.0000;^000^;^2002^;19
+^304^;^Por loterias rifas y apuestas similares^;.0000;.0000;^000^;^2003^;20
+^304^;^Por loterias rifas y apuestas similares^;.0000;.0000;^000^;^2005^;21
+^304^;^Por loterias rifas y apuestas similares^;.0000;.0000;^000^;^2000^;22
+^305^;^Por arrendamiento mercantil^;.0000;.0000;^000^;^2000^;23
+^305^;^Por arrendamiento mercantil^;.0000;.0000;^000^;^2005^;24
+^305^;^Por arrendamiento mercantil^;.0000;.0000;^000^;^2003^;25
+^305^;^Por arrendamiento mercantil^;.0000;.0000;^000^;^2002^;26
+^305^;^Por arrendamiento mercantil^;.0000;.0000;^000^;^2004^;27
+^305^;^Honorarios a extranjeros por servicios ocasionales^;.0000;.0000;^000^;^2006^;28
+^305^;^Por arrendamiento mercantil^;.0000;.0000;^000^;^2001^;29
+^305^;^Honorarios a extranjeros por servicios ocasionales^;.0000;.0000;^000^;^2007^;30
+^306^;^Por arrendamiento de bienes inmuebles de propiedad a personas naturales^;.0000;.0000;^000^;^2001^;31
+^306^;^Por compras locales de materia prima^;.0000;.0000;^000^;^2007^;32
+^306^;^Por arrendamiento de bienes inmuebles de propiedad a personas naturales^;.0000;.0000;^000^;^2004^;33
+^306^;^Por compras locales de materia prima^;.0000;.0000;^000^;^2006^;34
+^306^;^Por arrendamiento de bienes inmuebles de propiedad a personas naturales^;.0000;.0000;^000^;^2002^;35
+^306^;^Por arrendamiento de bienes inmuebles de propiedad a personas naturales^;.0000;.0000;^000^;^2003^;36
+^306^;^Por arrendamiento de bienes inmuebles de propiedad a personas naturales^;.0000;.0000;^000^;^2005^;37
+^306^;^Por arrendamiento de bienes inmuebles de propiedad a personas naturales^;.0000;.0000;^000^;^2000^;38
+^307^;^Por seguros y reaseguros^;.0000;.0000;^000^;^2000^;39
+^307^;^Por seguros y reaseguros^;.0000;.0000;^000^;^2005^;40
+^307^;^Por seguros y reaseguros^;.0000;.0000;^000^;^2003^;41
+^307^;^Por seguros y reaseguros^;.0000;.0000;^000^;^2002^;42
+^307^;^Por compras locales de bienes no producidos por la sociedad^;.0000;.0000;^000^;^2006^;43
+^307^;^Por seguros y reaseguros^;.0000;.0000;^000^;^2004^;44
+^307^;^Por seguros y reaseguros^;.0000;.0000;^000^;^2001^;45
+^307^;^Por compras locales de bienes no producidos por la sociedad^;.0000;.0000;^000^;^2007^;46
+^308^;^Por compras locales de materia prima no sujeta a retencion^;.0000;.0000;^000^;^2007^;47
+^308^;^Por rendimientos financieros^;.0000;.0000;^000^;^2001^;48
+^308^;^Por rendimientos financieros^;.0000;.0000;^000^;^2004^;49
+^308^;^Por compras locales de materia prima no sujeta a retencion^;.0000;.0000;^000^;^2006^;50
+^308^;^Por rendimientos financieros^;.0000;.0000;^000^;^2002^;51
+^308^;^Por rendimientos financieros^;.0000;.0000;^000^;^2003^;52
+^308^;^Por rendimientos financieros^;.0000;.0000;^000^;^2005^;53
+^308^;^Por rendimientos financieros^;.0000;.0000;^000^;^2000^;54
+^309^;^Por suministros y materiales^;.0000;.0000;^000^;^2006^;55
+^309^;^Por suministros y materiales^;.0000;.0000;^000^;^2007^;56
+^310^;^Por repuestos y herramientas^;.0000;.0000;^000^;^2007^;57
+^310^;^Por venta de combustibles a comercializadoras solo [2000 y 2001]^;.0000;.0000;^000^;^2001^;58
+^310^;^Por repuestos y herramientas^;.0000;.0000;^000^;^2006^;59
+^310^;^Por venta de combustibles a comercializadoras solo [2000 y 2001]^;.0000;.0000;^000^;^2004^;60
+^310^;^Por venta de combustibles a comercializadoras solo [2000 y 2001]^;.0000;.0000;^000^;^2005^;61
+^310^;^Por venta de combustibles a comercializadoras solo [2000 y 2001]^;.0000;.0000;^000^;^2000^;62
+^310^;^Por venta de combustibles a comercializadoras solo [2000 y 2001]^;.0000;.0000;^000^;^2002^;63
+^310^;^Por venta de combustibles a comercializadoras solo [2000 y 2001]^;.0000;.0000;^000^;^2003^;64
+^311^;^Por venta de combustibles a distribuidoras solo [2000 y 2001]^;.0000;.0000;^000^;^2003^;65
+^311^;^Por venta de combustibles a distribuidoras solo [2000 y 2001]^;.0000;.0000;^000^;^2002^;66
+^311^;^Por venta de combustibles a distribuidoras solo [2000 y 2001]^;.0000;.0000;^000^;^2000^;67
+^311^;^Por venta de combustibles a distribuidoras solo [2000 y 2001]^;.0000;.0000;^000^;^2005^;68
+^311^;^Por venta de combustibles a distribuidoras solo [2000 y 2001]^;.0000;.0000;^000^;^2004^;69
+^311^;^Por lubricantes^;.0000;.0000;^000^;^2006^;70
+^311^;^Por venta de combustibles a distribuidoras solo [2000 y 2001]^;.0000;.0000;^000^;^2001^;71
+^311^;^Por lubricantes^;.0000;.0000;^000^;^2007^;72
+^312^;^Por activos fijos^;.0000;.0000;^000^;^2007^;73
+^312^;^Por servicios petroleros^;.0000;.0000;^000^;^2000^;74
+^312^;^Por activos fijos^;.0000;.0000;^000^;^2006^;75
+^312^;^Por servicios petroleros^;.0000;.0000;^000^;^2002^;76
+^312^;^Por servicios petroleros^;.0000;.0000;^000^;^2005^;77
+^312^;^Por servicios petroleros^;.0000;.0000;^000^;^2001^;78
+^312^;^Por servicios petroleros^;.0000;.0000;^000^;^2004^;79
+^312^;^Por servicios petroleros^;.0000;.0000;^000^;^2003^;80
+^313^;^Por transacciones de bienes y servicios con personas naturales [2000 2001]^;.0000;.0000;^000^;^2003^;81
+^313^;^Por transacciones de bienes y servicios con personas naturales [2000 2001]^;.0000;.0000;^000^;^2002^;82
+^313^;^Por transacciones de bienes y servicios con personas naturales [2000 2001]^;.0000;.0000;^000^;^2004^;83
+^313^;^Por transacciones de bienes y servicios con personas naturales [2000 2001]^;.0000;.0000;^000^;^2005^;84
+^313^;^Por transacciones de bienes y servicios con personas naturales [2000 2001]^;.0000;.0000;^000^;^2000^;85
+^313^;^Por transacciones de bienes y servicios con personas naturales [2000 2001]^;.0000;.0000;^000^;^2001^;86
+^313^;^Por Concepto de servicios de transporte privado de pasajeros o servicio publico o privado de carga^;.0000;.0000;^000^;^2006^;87
+^313^;^Por Concepto de servicios de transporte privado de pasajeros o servicio publico o privado de carga^;.0000;.0000;^000^;^2007^;88
+^314^;^Por regalias derechos de autor marcas patentes y similares^;.0000;.0000;^000^;^2007^;89
+^314^;^Por regalias derechos de autor marcas patentes y similares^;.0000;.0000;^000^;^2006^;90
+^314^;^Por transacciones de bienes y servicios con sociedades [2000 2001]^;.0000;.0000;^000^;^2001^;91
+^314^;^Por transacciones de bienes y servicios con sociedades [2000 2001]^;.0000;.0000;^000^;^2000^;92
+^314^;^Por transacciones de bienes y servicios con sociedades [2000 2001]^;.0000;.0000;^000^;^2005^;93
+^314^;^Por transacciones de bienes y servicios con sociedades [2000 2001]^;.0000;.0000;^000^;^2004^;94
+^314^;^Por transacciones de bienes y servicios con sociedades [2000 2001]^;.0000;.0000;^000^;^2002^;95
+^314^;^Por transacciones de bienes y servicios con sociedades [2000 2001]^;.0000;.0000;^000^;^2003^;96
+^315^;^Por comisiones^;.0000;.0000;^000^;^2002^;97
+^315^;^Por comisiones^;.0000;.0000;^000^;^2004^;98
+^315^;^Por comisiones^;.0000;.0000;^000^;^2003^;99
+^315^;^Por comisiones^;.0000;.0000;^000^;^2005^;100
+^315^;^Por comisiones^;.0000;.0000;^000^;^2000^;101
+^315^;^Por comisiones^;.0000;.0000;^000^;^2001^;102
+^315^;^Por remuneraciones a deportistas y arbitros^;.0000;.0000;^000^;^2006^;103
+^315^;^Por remuneraciones a deportistas y arbitros^;.0000;.0000;^000^;^2007^;104
+^316^;^Por pagos realizados a notarios y registradores de la propiedad o mercantiles^;.0000;.0000;^000^;^2007^;105
+^316^;^Por pagos realizados a notarios y registradores de la propiedad o mercantiles^;.0000;.0000;^000^;^2006^;106
+^317^;^Por comisiones pagadas a sociedades^;.0000;.0000;^000^;^2006^;107
+^317^;^Por comisiones pagadas a sociedades^;.0000;.0000;^000^;^2007^;108
+^318^;^Por promocion y publicidad^;.0000;.0000;^000^;^2007^;109
+^318^;^Por promocion y publicidad^;.0000;.0000;^000^;^2006^;110
+^319^;^Por compra de combustibles^;.0000;.0000;^000^;^2003^;111
+^319^;^Por compra de combustibles^;.0000;.0000;^000^;^2002^;112
+^319^;^Por compra de combustibles^;.0000;.0000;^000^;^2000^;113
+^319^;^Por compra de combustibles^;.0000;.0000;^000^;^2005^;114
+^319^;^Por arrendamiento mercantil local^;.0000;.0000;^000^;^2007^;115
+^319^;^Por compra de combustibles^;.0000;.0000;^000^;^2001^;116
+^319^;^Por arrendamiento mercantil local^;.0000;.0000;^000^;^2006^;117
+^319^;^Por compra de combustibles^;.0000;.0000;^000^;^2004^;118
+^320^;^Por arrendamiento de bienes inmuebles de propiedad a personas naturales^;.0000;.0000;^000^;^2006^;119
+^320^;^Por arrendamiento de bienes inmuebles de propiedad a personas naturales^;.0000;.0000;^000^;^2007^;120
+^321^;^Por arrendamiento de bienes inmuebles a sociedades^;.0000;.0000;^000^;^2007^;121
+^321^;^Por servicios petroleros^;.0000;.0000;^000^;^2001^;122
+^321^;^Por servicios petroleros^;.0000;.0000;^000^;^2005^;123
+^321^;^Por servicios petroleros^;.0000;.0000;^000^;^2003^;124
+^321^;^Por servicios petroleros^;.0000;.0000;^000^;^2000^;125
+^321^;^Por servicios petroleros^;.0000;.0000;^000^;^2004^;126
+^321^;^Por arrendamiento de bienes inmuebles a sociedades^;.0000;.0000;^000^;^2006^;127
+^321^;^Por servicios petroleros^;.0000;.0000;^000^;^2002^;128
+^322^;^Por seguros y reaseguros [10% de las primas facturadas]^;.0000;.0000;^000^;^2006^;129
+^322^;^Por seguros y reaseguros [10% de las primas facturadas]^;.0000;.0000;^000^;^2007^;130
+^323^;^Por rendimientos financieros [no aplica para [IFI´s]^;.0000;.0000;^000^;^2007^;131
+^323^;^Por otras transacciones de bienes ACTIVOS FIJOS [solo 2002 en adelante]^;.0000;.0000;^000^;^2001^;132
+^323^;^Por rendimientos financieros [no aplica para [IFI´s]^;.0000;.0000;^000^;^2006^;133
+^323^;^Por otras transacciones de bienes ACTIVOS FIJOS [solo 2002 en adelante]^;.0000;.0000;^000^;^2004^;134
+^323^;^Por otras transacciones de bienes ACTIVOS FIJOS [solo 2002 en adelante]^;.0000;.0000;^000^;^2002^;135
+^323^;^Por otras transacciones de bienes ACTIVOS FIJOS [solo 2002 en adelante]^;.0000;.0000;^000^;^2003^;136
+^323^;^Por otras transacciones de bienes ACTIVOS FIJOS [solo 2002 en adelante]^;.0000;.0000;^000^;^2005^;137
+^323^;^Por otras transacciones de bienes ACTIVOS FIJOS [solo 2002 en adelante]^;.0000;.0000;^000^;^2000^;138
+^323A^;^Por rendimientos financieros Depositos en cuentas Corrientes^;.0000;.0000;^000^;^2006^;139
+^323A^;^Por rendimientos financieros Depositos en cuentas Corrientes^;.0000;.0000;^000^;^2007^;140
+^323B^;^Por rendimientos financieros Depositos en cuentas de Ahorros^;.0000;.0000;^000^;^2007^;141
+^323B^;^Por rendimientos financieros Depositos en cuentas de Ahorros^;.0000;.0000;^000^;^2006^;142
+^323C^;^Por rendimientos financieros Depositos en cuentas corrientes exentas^;.0000;.0000;^000^;^2006^;143
+^323C^;^Por rendimientos financieros Depositos en cuentas corrientes exentas^;.0000;.0000;^000^;^2007^;144
+^323D^;^Por rendimientos financieros Compra cancelacion o redencion de mini BEM´S y BEM´S^;.0000;.0000;^000^;^2007^;145
+^323D^;^Por rendimientos financieros Compra cancelacion o redencion de mini BEM´S y BEM´S^;.0000;.0000;^000^;^2006^;146
+^323E^;^Por rendimientos financieros Depositos a plazo^;.0000;.0000;^000^;^2006^;147
+^323E^;^Por rendimientos financieros Depositos a plazo^;.0000;.0000;^000^;^2007^;148
+^323F^;^Por rendimientos financieros Operaciones de Reporto Repos^;.0000;.0000;^000^;^2007^;149
+^323F^;^Por rendimientos financieros Operaciones de Reporto Repos^;.0000;.0000;^000^;^2006^;150
+^323G^;^Por rendimientos financieros Inversiones [Captaciones]^;.0000;.0000;^000^;^2006^;151
+^323G^;^Por rendimientos financieros Inversiones [Captaciones]^;.0000;.0000;^000^;^2007^;152
+^323H^;^Por rendimientos financieros Obligaciones^;.0000;.0000;^000^;^2007^;153
+^323H^;^Por rendimientos financieros Obligaciones^;.0000;.0000;^000^;^2006^;154
+^324^;^Por pago de creditos en cuenta realizados por empresas emisoras de tarjetas de credito^;.0000;.0000;^000^;^2007^;155
+^324^;^Por pago de creditos en cuenta realizados por empresas emisoras de tarjetas de credito^;.0000;.0000;^000^;^2006^;156
+^325^;^Por otras transacciones de bienes ACTIVOS CORRIENTES [solo 2002 en adelante]^;.0000;.0000;^000^;^2004^;157
+^325^;^Por loterias rifas y apuestas similares^;.0000;.0000;^000^;^2006^;158
+^325^;^Por otras transacciones de bienes ACTIVOS CORRIENTES [solo 2002 en adelante]^;.0000;.0000;^000^;^2001^;159
+^325^;^Por loterias rifas y apuestas similares^;.0000;.0000;^000^;^2007^;160
+^325^;^Por otras transacciones de bienes ACTIVOS CORRIENTES [solo 2002 en adelante]^;.0000;.0000;^000^;^2003^;161
+^325^;^Por otras transacciones de bienes ACTIVOS CORRIENTES [solo 2002 en adelante]^;.0000;.0000;^000^;^2002^;162
+^325^;^Por otras transacciones de bienes ACTIVOS CORRIENTES [solo 2002 en adelante]^;.0000;.0000;^000^;^2000^;163
+^325^;^Por otras transacciones de bienes ACTIVOS CORRIENTES [solo 2002 en adelante]^;.0000;.0000;^000^;^2005^;164
+^326^;^Por intereses y comisiones en operaciones de credito entre las instituciones del Sistema Financiero^;.0000;.0000;^000^;^2007^;165
+^326^;^Por intereses y comisiones en operaciones de credito entre las instituciones del Sistema Financiero^;.0000;.0000;^000^;^2006^;166
+^327^;^Por otras transacciones SERVICIOS [solo 2002 en adelante]^;.0000;.0000;^000^;^2004^;167
+^327^;^Por Venta de combustibles a comercializadoras^;.0000;.0000;^000^;^2007^;168
+^327^;^Por otras transacciones SERVICIOS [solo 2002 en adelante]^;.0000;.0000;^000^;^2001^;169
+^327^;^Por otras transacciones SERVICIOS [solo 2002 en adelante]^;.0000;.0000;^000^;^2005^;170
+^327^;^Por otras transacciones SERVICIOS [solo 2002 en adelante]^;.0000;.0000;^000^;^2000^;171
+^327^;^Por otras transacciones SERVICIOS [solo 2002 en adelante]^;.0000;.0000;^000^;^2002^;172
+^327^;^Por otras transacciones SERVICIOS [solo 2002 en adelante]^;.0000;.0000;^000^;^2003^;173
+^327^;^Por Venta de combustibles a comercializadoras^;.0000;.0000;^000^;^2006^;174
+^328^;^Por Venta de combustibles a distribuidores^;.0000;.0000;^000^;^2006^;175
+^328^;^Por Venta de combustibles a distribuidores^;.0000;.0000;^000^;^2007^;176
+^329^;^Por Otros Servicios^;.0000;.0000;^000^;^2007^;177
+^329^;^Por Otros Servicios^;.0000;.0000;^000^;^2006^;178
+^330^;^Por pagos de dividendos anticipados^;.0000;.0000;^000^;^2007^;179
+^330^;^Por pagos de dividendos anticipados^;.0000;.0000;^000^;^2006^;180
+^331^;^Por pago de creditos en cuenta realizados por empresas emisoras de tarjetas de credito^;.0000;.0000;^000^;^2001^;181
+^331^;^Por pago de creditos en cuenta realizados por empresas emisoras de tarjetas de credito^;.0000;.0000;^000^;^2004^;182
+^331^;^Por agua energia luz y telecomunicaciones^;.0000;.0000;^000^;^2007^;183
+^331^;^Por agua energia luz y telecomunicaciones^;.0000;.0000;^000^;^2006^;184
+^331^;^Por pago de creditos en cuenta realizados por empresas emisoras de tarjetas de credito^;.0000;.0000;^000^;^2003^;185
+^331^;^Por pago de creditos en cuenta realizados por empresas emisoras de tarjetas de credito^;.0000;.0000;^000^;^2002^;186
+^331^;^Por pago de creditos en cuenta realizados por empresas emisoras de tarjetas de credito^;.0000;.0000;^000^;^2005^;187
+^331^;^Por pago de creditos en cuenta realizados por empresas emisoras de tarjetas de credito^;.0000;.0000;^000^;^2000^;188
+^332^;^Otras compras de bienes y servicios no sujetas a retencion^;.0000;.0000;^000^;^2006^;189
+^332^;^Otras compras de bienes y servicios no sujetas a retencion^;.0000;.0000;^000^;^2007^;190
+^333^;^Por regalias Derechos de Autor Marcas Patentes y similares^;.0000;.0000;^000^;^2004^;191
+^333^;^Por regalias Derechos de Autor Marcas Patentes y similares^;.0000;.0000;^000^;^2001^;192
+^333^;^Por regalias Derechos de Autor Marcas Patentes y similares^;.0000;.0000;^000^;^2003^;193
+^333^;^Por regalias Derechos de Autor Marcas Patentes y similares^;.0000;.0000;^000^;^2002^;194
+^333^;^Por regalias Derechos de Autor Marcas Patentes y similares^;.0000;.0000;^000^;^2000^;195
+^333^;^Por regalias Derechos de Autor Marcas Patentes y similares^;.0000;.0000;^000^;^2005^;196
+^335^;^Por remuneraciones a deportistas y arbitros^;.0000;.0000;^000^;^2005^;197
+^335^;^Por remuneraciones a deportistas y arbitros^;.0000;.0000;^000^;^2000^;198
+^335^;^Por remuneraciones a deportistas y arbitros^;.0000;.0000;^000^;^2002^;199
+^335^;^Por remuneraciones a deportistas y arbitros^;.0000;.0000;^000^;^2003^;200
+^335^;^Por remuneraciones a deportistas y arbitros^;.0000;.0000;^000^;^2001^;201
+^335^;^Por remuneraciones a deportistas y arbitros^;.0000;.0000;^000^;^2004^;202
+^337^;^Por pagos realizados a notarios y registradores de la propiedad o mercantiles^;.0000;.0000;^000^;^2004^;203
+^337^;^Por pagos realizados a notarios y registradores de la propiedad o mercantiles^;.0000;.0000;^000^;^2001^;204
+^337^;^Por pagos realizados a notarios y registradores de la propiedad o mercantiles^;.0000;.0000;^000^;^2003^;205
+^337^;^Por pagos realizados a notarios y registradores de la propiedad o mercantiles^;.0000;.0000;^000^;^2002^;206
+^337^;^Por pagos realizados a notarios y registradores de la propiedad o mercantiles^;.0000;.0000;^000^;^2000^;207
+^337^;^Por pagos realizados a notarios y registradores de la propiedad o mercantiles^;.0000;.0000;^000^;^2005^;208
+^339^;^Por pagos de dividendos anticipados^;.0000;.0000;^000^;^2005^;209
+^339^;^Por pagos de dividendos anticipados^;.0000;.0000;^000^;^2002^;210
+^339^;^Por pagos de dividendos anticipados^;.0000;.0000;^000^;^2003^;211
+^339^;^Por pagos de dividendos anticipados^;.0000;.0000;^000^;^2001^;212
+^339^;^Por pagos de dividendos anticipados^;.0000;.0000;^000^;^2004^;213
+^339^;^Por pagos de dividendos anticipados^;.0000;.0000;^000^;^2000^;214
+^401^;^Con convenio de doble tributacion^;.0000;.0000;^000^;^2007^;215
+^401^;^Con convenio de doble tributacion^;.0000;.0000;^000^;^2006^;216
+^403^;^Sin convenio de doble tributacion: intereses y costos por financiamiento de proveedores externos [en^;.0000;.0000;^000^;^2007^;217
+^403^;^Sin convenio de doble tributacion: intereses y costos por financiamiento de proveedores externos [en^;.0000;.0000;^000^;^2006^;218
+^405^;^Sin convenio de doble tributacion: intereses de creditos externos registrados en el BCE[en la cuanti^;.0000;.0000;^000^;^2006^;219
+^405^;^Sin convenio de doble tributacion: intereses de creditos externos registrados en el BCE[en la cuanti^;.0000;.0000;^000^;^2007^;220
+^407^;^Sin convenio de doble tributacion: comisiones por exportaciones^;.0000;.0000;^000^;^2007^;221
+^407^;^Por pago al exterior CON convenios de doble tributacion^;.0000;.0000;^000^;^2000^;222
+^407^;^Sin convenio de doble tributacion: comisiones por exportaciones^;.0000;.0000;^000^;^2006^;223
+^407^;^Por pago al exterior CON convenios de doble tributacion^;.0000;.0000;^000^;^2004^;224
+^407^;^Por pago al exterior CON convenios de doble tributacion^;.0000;.0000;^000^;^2001^;225
+^407^;^Por pago al exterior CON convenios de doble tributacion^;.0000;.0000;^000^;^2003^;226
+^407^;^Por pago al exterior CON convenios de doble tributacion^;.0000;.0000;^000^;^2002^;227
+^407^;^Por pago al exterior CON convenios de doble tributacion^;.0000;.0000;^000^;^2005^;228
+^409^;^Sin convenio de doble tributacion: comisiones pagadas para la promocion del turismo receptivo^;.0000;.0000;^000^;^2006^;229
+^409^;^Sin convenio de doble tributacion: comisiones pagadas para la promocion del turismo receptivo^;.0000;.0000;^000^;^2007^;230
+^410^;^Por pago al exterior SIN convenios de doble tributacion^;.0000;.0000;^000^;^2000^;231
+^410^;^Por pago al exterior SIN convenios de doble tributacion^;.0000;.0000;^000^;^2001^;232
+^410^;^Por pago al exterior SIN convenios de doble tributacion^;.0000;.0000;^000^;^2004^;233
+^410^;^Por pago al exterior SIN convenios de doble tributacion^;.0000;.0000;^000^;^2005^;234
+^410^;^Por pago al exterior SIN convenios de doble tributacion^;.0000;.0000;^000^;^2002^;235
+^410^;^Por pago al exterior SIN convenios de doble tributacion^;.0000;.0000;^000^;^2003^;236
+^411^;^Por intereses y comisiones en operaciones de credito entre las instituciones del Sistema Financiero^;.0000;.0000;^000^;^2003^;237
+^411^;^Por intereses y comisiones en operaciones de credito entre las instituciones del Sistema Financiero^;.0000;.0000;^000^;^2002^;238
+^411^;^Por intereses y comisiones en operaciones de credito entre las instituciones del Sistema Financiero^;.0000;.0000;^000^;^2005^;239
+^411^;^Por intereses y comisiones en operaciones de credito entre las instituciones del Sistema Financiero^;.0000;.0000;^000^;^2000^;240
+^411^;^Por intereses y comisiones en operaciones de credito entre las instituciones del Sistema Financiero^;.0000;.0000;^000^;^2004^;241
+^411^;^Sin convenio de doble tibutacion: el 4% de las primas de cesion o reaseguros contratados con empresa^;.0000;.0000;^000^;^2006^;242
+^411^;^Sin convenio de doble tibutacion: el 4% de las primas de cesion o reaseguros contratados con empresa^;.0000;.0000;^000^;^2007^;243
+^411^;^Por intereses y comisiones en operaciones de credito entre las instituciones del Sistema Financiero^;.0000;.0000;^000^;^2001^;244
+^413^;^Sin convenio de doble tributacion: el exceso del 10% de los pagos efectuados por las agencias intern^;.0000;.0000;^000^;^2007^;245
+^413^;^Sin convenio de doble tributacion: el exceso del 10% de los pagos efectuados por las agencias intern^;.0000;.0000;^000^;^2006^;246
+^415^;^Sin convenio de doble tributacion: el exceso del 10% del valor de los contratos de fletamento de nav^;.0000;.0000;^000^;^2006^;247
+^415^;^Sin convenio de doble tributacion: el exceso del 10% del valor de los contratos de fletamento de nav^;.0000;.0000;^000^;^2007^;248
+^417^;^Sin convenio de doble tributacion: el exceso del 15% de los pagos efectuados por las productoras y d^;.0000;.0000;^000^;^2007^;249
+^417^;^Sin convenio de doble tributacion: el exceso del 15% de los pagos efectuados por las productoras y d^;.0000;.0000;^000^;^2006^;250
+^419^;^Por arrendamiento mercantil internacional PAGO DE INTERESES^;.0000;.0000;^000^;^2002^;251
+^419^;^Por arrendamiento mercantil internacional PAGO DE INTERESES^;.0000;.0000;^000^;^2003^;252
+^419^;^Por arrendamiento mercantil internacional PAGO DE INTERESES^;.0000;.0000;^000^;^2005^;253
+^419^;^Arrendamiento mercantil internacional: pago de intereses [cuando supera la tasa autorizada por el BC^;.0000;.0000;^000^;^2007^;254
+^419^;^Por arrendamiento mercantil internacional PAGO DE INTERESES^;.0000;.0000;^000^;^2000^;255
+^419^;^Arrendamiento mercantil internacional: pago de intereses [cuando supera la tasa autorizada por el BC^;.0000;.0000;^000^;^2006^;256
+^419^;^Por arrendamiento mercantil internacional PAGO DE INTERESES^;.0000;.0000;^000^;^2004^;257
+^419^;^Por arrendamiento mercantil internacional PAGO DE INTERESES^;.0000;.0000;^000^;^2001^;258
+^421^;^Por arrendamiento mercantil internacional CUANDO NO SE EJERCE LA OPCION DE COMPRA^;.0000;.0000;^000^;^2001^;259
+^421^;^Por arrendamiento mercantil internacional cuando no se ejerce la opcion de compra [sobre la depreci^;.0000;.0000;^000^;^2006^;260
+^421^;^Por arrendamiento mercantil internacional CUANDO NO SE EJERCE LA OPCION DE COMPRA^;.0000;.0000;^000^;^2000^;261
+^421^;^Por arrendamiento mercantil internacional cuando no se ejerce la opcion de compra [sobre la depreci^;.0000;.0000;^000^;^2007^;262
+^421^;^Por arrendamiento mercantil internacional CUANDO NO SE EJERCE LA OPCION DE COMPRA^;.0000;.0000;^000^;^2005^;263
+^421^;^Por arrendamiento mercantil internacional CUANDO NO SE EJERCE LA OPCION DE COMPRA^;.0000;.0000;^000^;^2003^;264
+^421^;^Por arrendamiento mercantil internacional CUANDO NO SE EJERCE LA OPCION DE COMPRA^;.0000;.0000;^000^;^2002^;265
+^421^;^Por arrendamiento mercantil internacional CUANDO NO SE EJERCE LA OPCION DE COMPRA^;.0000;.0000;^000^;^2004^;266
+^DEP^;^POR RELACION DE DEPENDENCIA^;.0000;.0000;^000^;^2004^;267
+^DEP^;^POR RELACION DE DEPENDENCIA^;.0000;.0000;^000^;^2002^;268
+^DEP^;^POR RELACION DE DEPENDENCIA^;.0000;.0000;^000^;^2003^;269
+^DEP^;^POR RELACION DE DEPENDENCIA^;.0000;.0000;^000^;^2005^;270
+^DEP^;^POR RELACION DE DEPENDENCIA^;.0000;.0000;^000^;^2007^;271
+^DEP^;^POR RELACION DE DEPENDENCIA^;.0000;.0000;^000^;^2000^;272
+^DEP^;^POR RELACION DE DEPENDENCIA^;.0000;.0000;^000^;^2006^;273
+^DEP^;^POR RELACION DE DEPENDENCIA^;.0000;.0000;^000^;^2001^;274

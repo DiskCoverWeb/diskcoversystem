@@ -1,0 +1,1 @@
+T;Tipo_Certificado;Beneficiario;Cedula;Padre;Cedula_P;Madre;Cedula_M;Ciudad_Nacimiento;Fecha_Nacimiento;Ciudad_B_C_M;Fecha_B_C_M;Padrinos;Ministro;Nota_Marginal;Tomo;Pagina;Numero;Periodo;Item;X;Fecha;Certificado_Valido;ID

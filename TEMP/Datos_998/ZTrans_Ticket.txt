@@ -1,0 +1,1 @@
+C;TC;CodigoC;Factura;Ticket;Fecha;Codigo_Inv;Producto;Cantidad;Precio;Total;Descuento;Item;CodigoU;Periodo;D_No;Efectivo;Hora;A;S;X;ID

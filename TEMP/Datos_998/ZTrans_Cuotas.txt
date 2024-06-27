@@ -1,0 +1,1 @@
+Periodo;C;T;TP;Numero;Cta;CodigoC;Contrato_No;Fecha;Detalle;Comprobante;Por_Cobrar;Abono;Saldo;Codigo_Inv;CodigoU;Item;X;ID

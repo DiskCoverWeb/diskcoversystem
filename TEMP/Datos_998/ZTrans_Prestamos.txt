@@ -1,0 +1,1 @@
+T;AC;Cta;V;Fecha;Fecha_V;Fecha_C;TP;ME;Credito_No;Cuenta_No;Cuota_No;Dia;Interes;Capital;Comision;Pagos;Saldo;Numero;CodigoU;Item;Interes_Mora;Autorizacion;Serie;Cta_Cartera;Dias;Recibo_No;Cta_V_1_30;V_1_30;Cta_V_31_90;V_31_90;Cta_V_91_180;V_91_180;Cta_V_181_360;V_181_360;Cta_V_Mas_360;V_Mas_360;Cta_No_Devenga_Int;X;ID

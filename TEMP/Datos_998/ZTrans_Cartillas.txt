@@ -1,0 +1,1 @@
+Fecha;Cuenta_No;Cartilla_No;Detalle;Item;X;ID

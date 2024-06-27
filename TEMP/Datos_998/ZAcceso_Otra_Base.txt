@@ -1,0 +1,1 @@
+Item;Fecha;Nombre_Entidad;Tipo_Base;DBF_Usuario;DBF_Clave;DBF_Puerto;DBF_IP_Carpeta;DBF_Curso;DBF_Especialidad;DBF_Paralelo;DBF_Antiguos;DBF_Nuevos;DBF_Actuales;DBF_Periodo;DBF_Mes_Mat;DBF_FechaI;DBF_FechaF;Cod_Mat_INI;Cod_Mat_EBG;Cod_Mat_BACH;Val_Mat_INI;Val_Mat_EBG;Val_Mat_BACH;Cod_Pen_INI;Cod_Pen_EBG;Cod_Pen_BACH;Val_Pen_INI;Val_Pen_EBG;Val_Pen_BACH;X;ID

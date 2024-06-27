@@ -1,0 +1,1 @@
+Periodo;Aprobado;Codigo;Id_No;N_1er;N_2do;N_3er;N_4to;N_5to;Total;PromFinal;Item;CodE;X;ID

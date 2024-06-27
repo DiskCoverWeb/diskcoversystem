@@ -1,0 +1,1 @@
+CodSustento;ImportacionDe;FechaLiquidacion;TipoComprobante;DistAduanero;Anio;Regimen;Correlativo;Verificador;IdFiscalProv;ValorCIF;BaseImponible;BaseImpGrav;PorcentajeIva;MontoIva;BaseImpIce;PorcentajeIce;MontoIce;Item;CodigoU;A_No;T_No

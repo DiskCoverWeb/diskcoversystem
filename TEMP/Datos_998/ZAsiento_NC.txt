@@ -1,0 +1,1 @@
+CODIGO;PRODUCTO;CANT;PVP;SUBTOTAL;TOTAL_IVA;DESCUENTO;CodBod;CodMar;Item;CodigoU;Codigo_C;Ok;COSTO;Cod_Ejec;Porc_C;Porc_IVA;Mes;Mes_No;Anio;Cta_Inventario;Cta_Costo;A_No

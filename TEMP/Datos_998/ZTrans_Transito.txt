@@ -1,0 +1,1 @@
+Periodo;Item;C;Cta;Fecha;TP;Numero;Concepto;Documento;Debe;Haber;X;ID

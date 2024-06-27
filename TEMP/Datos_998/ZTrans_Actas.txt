@@ -1,0 +1,1 @@
+Periodo;Aprobado;Codigo;Id_No;Notas;Trabajo;Investigacion;Evaluacion;PromFinal;Item;CodE;N_1er;N_2do;N_3er;N_4to;N_5to;X;ID

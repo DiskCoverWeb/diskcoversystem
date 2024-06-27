@@ -1,0 +1,36 @@
+Codigo;Usuario;Clave;Nombre_Completo;TODOS;P_Com;Ok;X;Primaria;Secundaria;Bachillerato;Impresora_Defecto;Papel_Impresora;Impresora_Defecto_2;Papel_Impresora_2;Nivel_1;Nivel_2;Nivel_3;Nivel_4;Nivel_5;Nivel_6;Nivel_7;Supervisor;CodBod;Cod_Ejec;Cuota_Venta;EmailUsuario;Serie_FA;Foto;ID
+^.^;^.^;^070216^;^.^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^.^;1.0000;^infosistema@diskcoversystem.com^;^.^;^.^;1
+^0123456788^;^USUARIOnnn^;^12345^;^dddd^;0;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;0;^.^;^D.^;1.0000;^.^;^.^;^.^;2
+^0503311144^;^Michael^;^1234^;^Michael Aimacaña^;0;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;0;^.^;^M.A.^;1.0000;^.^;^.^;^.^;3
+^0702164179^;^Walter^;^070216^;^Vaca Prieto Walter Jalil^;1;0.0;0;^.^;0;0;0;^Microsoft Print to PDF^;^009 - A4 (21.0 x 29.7)^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^V.P.W.J.^;1.0000;^jmacias778@hotmail.com^;^.^;^.^;4
+^0930536305^;^priscila19^;^0930536305^;^Quimi Rodriguez Priscila Michelle^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^Q.R.P.M.^;1.0000;^prisciquimi1934@gmail.com^;^.^;^.^;5
+^0987654321^;^prueba1^;^12345^;^usuario prueba^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;0;^.^;^U.P.^;.0000;^.^;^.^;^.^;6
+^0987654322^;^prueba2^;^12345^;^prueba2^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;0;^.^;^P.^;.0000;^.^;^.^;^.^;7
+^10ACCESO10^;^ASIS01^;^123456^;^Asistente Sistemas Javier^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^A.S.J.^;1.0000;^infosistema@diskcoversystem.com^;^.^;^.^;8
+^11ACCESO11^;^ASIS02^;^123456^;^Asistente Sistemas Michael^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^A.S.M.^;1.0000;^infosistema@diskcoversystem.com^;^.^;^.^;9
+^1231231230^;^userJames^;^user30Jame^;^Sofia James Moore^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^S.J.M.^;1.0000;^softangel0093@gmail.com^;^.^;^.^;10
+^1234567898^;^JAVIER^;^1234^;^JAVIER FARINOS^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^J.F.^;1.0000;^ejfc_omoshiroi@hotmail.com^;^.^;^.^;11
+^1316307618^;^userTeddy^;^user2023Te^;^Teddy Moreira Velez^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^T.M.V.^;1.0000;^abc@abc.com^;^.^;^.^;12
+^1702546738^;^victor^;^12345^;^espinel victor^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^E.V.^;1.0000;^.^;^.^;^.^;13
+^1703967271^;^Enrique^;^123123^;^Muñoz Enrique Valenzuela^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^M.E.V.^;1.0000;^.^;^.^;^.^;14
+^1711465631^;^Ximena^;^xime1518^;^Ximena Paredes^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;0;^.^;^X.P.^;1.0000;^ximepj@hotmail.com^;^.^;^.^;15
+^1713279667^;^LUCY^;^LUCY^;^LUCIA CISNEROS^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;0;^.^;^L.C.^;1.0000;^ejfc19omoshiroi@gmail.com^;^.^;^.^;16
+^1715691513^;^MARY^;^1715^;^MARIA DEL CARMEN VASCONEZ^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^M.D.C.V.^;1.0000;^maricarmenvi33@hotmail.com^;^.^;^.^;17
+^1717180861^;^CLARITA^;^1717^;^Clara Benitez^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;0;^.^;^C.B.^;1.0000;^.^;^.^;^.^;18
+^1718867680^;^gabyd^;^2903^;^Gaby Venrental ^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;0;^.^;^G.V.^;1.0000;^gaby_del2903@hotmail.com^;^.^;^.^;19
+^1720433190^;^William^;^William91^;^Quijano pila William Jair^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^Q.W.J.^;1.0000;^wquijano91@gmail.com^;^.^;^.^;20
+^1724461148^;^userAlexan^;^user23Alex^;^Dallyana Vanegas
+^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^D.V.^;1.0000;^dayavan38@gmail.com^;^.^;^.^;21
+^1727666156^;^userLeonar^;^user23Leon^;^Leonardo Suniga
+^;1;0.0;0;^.^;0;0;0;^Microsoft Print to PDF^;^009 - A4 (21.0 x 29.7)^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^L.S.^;1.0000;^lrsunigagarcia@gmail.com^;^.^;^.^;22
+^FR03967271^;^Enrique1^;^1231231^;^Muñoz Enrique Valenzuela FR^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^M.E.V.F.^;1.0000;^.^;^.^;^.^;32
+^GOSO781206^;^userOmar^;^user23Omar^;^Omar Gonzales^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^O.G.^;1.0000;^.^;^.^;^.^;33
+^GOSO781207^;^userOscar^;^user23Osca^;^Oscar Jerardo^;1;0.0;0;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^O.J.^;1.0000;^.^;^.^;^.^;34
+^ACCESO01^;^Supervisor^;^070216^;^Supervidor General^;1;0.0;1;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^S.G.^;.0000;^informacion@diskcoversystem.com^;^.^;^.^;56
+^ACCESO02^;^Administrador^;^070216^;^Administrador de Red^;1;0.0;1;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^A.D.R.^;.0000;^informacion@diskcoversystem.com^;^.^;^.^;57
+^ACCESO03^;^Contador^;^070216^;^Contador General^;1;0.0;1;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^C.G.^;.0000;^informacion@diskcoversystem.com^;^.^;^.^;58
+^ACCESO04^;^Auxiliar^;^070216^;^Auxiliar de Agencia^;1;0.0;1;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^A.D.A.^;.0000;^informacion@diskcoversystem.com^;^.^;^.^;59
+^ACCESO05^;^Gerente^;^070216^;^Gerente General^;1;0.0;1;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^G.G.^;.0000;^informacion@diskcoversystem.com^;^.^;^.^;60
+^ACCESO06^;^Reabrir^;^070216^;^Reabrir Periodo^;1;0.0;1;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^R.P.^;.0000;^informacion@diskcoversystem.com^;^.^;^.^;61
+^ACCESO07^;^CierreMes^;^070216^;^Cierre de Meses^;1;0.0;1;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^C.D.M.^;.0000;^informacion@diskcoversystem.com^;^.^;^.^;62
+^ACCESO08^;^Bloqueos^;^070216^;^Bloqueos de Empresas^;1;0.0;1;^.^;0;0;0;^.^;^.^;^.^;^.^;0;0;0;0;0;0;0;1;^.^;^B.D.E.^;.0000;^informacion@diskcoversystem.com^;^.^;^.^;63

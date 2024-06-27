@@ -1,0 +1,1 @@
+P;CL;AC;Fecha;Cuenta_No;Saldo_Cont;Saldo_Disp;Interes;Item;Saldo_Anterior;Saldo_Actual;X;ID
