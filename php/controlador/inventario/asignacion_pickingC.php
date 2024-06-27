@@ -103,6 +103,7 @@ class asignacion_pickingC
 
     function cargarOrden($parametros)
     {
+        // print_r($parametros);die();
         $tr = '';
         $cantidad = 0;
         $res = array();
@@ -114,7 +115,7 @@ class asignacion_pickingC
         // print_r($parametros);die();
         foreach ($datos as $key => $value) {
             $cant = 0; 
-            $cant_ing = $this->modelo->total_ingresados($parametros['beneficiario'],$value['Codigo']);
+            $cant_ing = $this->modelo->total_ingresados($parametros['beneficiario'],$value['Codigo'],$value['No_Hab']);
             if($cant_ing[0]['Total']!=''){ $cant = $cant_ing[0]['Total'];}
             // print_r($cant_ing);die();
             $detalle.='<div class="row mb-3">                                    

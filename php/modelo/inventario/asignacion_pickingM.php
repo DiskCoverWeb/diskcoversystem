@@ -66,13 +66,14 @@ class asignacion_pickingM
         }
     }
 
-    function listaAsignacion($beneficiario,$T=false,$tipo=false)
+    function listaAsignacion($beneficiario,$T=false,$tipo=false,$tipoVenta=false)
     {
          $sql = "SELECT ".Full_Fields("Detalle_Factura")."
                 FROM Detalle_Factura
                 WHERE Item = '".$_SESSION['INGRESO']['item']."' 
                 AND Periodo='".$_SESSION['INGRESO']['periodo']."'
-                AND CodigoC = '".$beneficiario."'";
+                AND CodigoC = '".$beneficiario."'
+                AND Fecha = '".date('Y-m-d')."'";
                 if($T)
                 {
                     $sql.="AND T = '".$T."'";
@@ -81,6 +82,11 @@ class asignacion_pickingM
                 {
                     $sql.=" AND Codigo = '".$tipo."'";
                 }
+                if($tipoVenta)
+                {
+                    $sql.=" AND No_Hab = '".$tipoVenta."'";
+                }
+                // print_r($sql);die();
         try{
             return $this->db->datos($sql);
         }catch(Exception $e){
@@ -106,13 +112,14 @@ class asignacion_pickingM
         return $this->db->datos($sql);    
     }
 
-    function total_ingresados($bene,$tipo)
+    function total_ingresados($bene,$tipo,$tipoventa)
     {
         $sql = "SELECT SUM(TC.Total) as Total
                 FROM Trans_Comision TC
                 INNER JOIN Accesos A ON TC.CodigoU = A.Codigo
                 WHERE CodigoC = '".$bene."'
-                AND Codigo_Inv = '".$tipo."'";
+                AND Codigo_Inv = '".$tipo."'
+                AND Cta = '".$tipoventa."'";
 
                 // print_r($sql);die();
         return $this->db->datos($sql);   

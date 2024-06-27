@@ -11024,6 +11024,7 @@ function GrabarComprobante($C1)
              SetAdoFields("Factura", $Factura_No);
              SetAdoFields("Detalle_SubCta", $value["Detalle_SubCta"]);
              SetAdoFields("Prima", $value["Prima"]);
+             SetAdoFields("Serie", $value["Serie"]);
              if($OpcDH == 1)
              {
                 SetAdoFields("Debitos", $Valor);
