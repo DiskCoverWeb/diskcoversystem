@@ -21,7 +21,7 @@
 	$(document).ready(function()
 	{
 		tipo_balance();
-		cargar_tabla();
+		cargar_datos('1','Balance de comprobacion');
 
 		$('#imprimir_excel').click(function(){
 
@@ -36,7 +36,7 @@
 			mes=1;
 		}
 
-            var url = '../controlador/contabilidad/contabilidad_controller.php?datos_balance_excel=true&desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&ext='+bal_ext+'&check='+$('#tbalan').prop('checked')+'&tipo_p='+$('input:radio[name=optionsRadios]:checked').val()+'&tipo_b='+$('#txt_item').val()+'&coop=0&sucur=0&balMes='+mes+'&nom=Balance&imp=true';                 
+            var url = '../controlador/contabilidad/contabilidad_controller.php?datos_balance_excel=true&desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&ext='+bal_ext+'&check='+$('#tbalan').prop('checked')+'&tipo_p='+$('input:radio[name=optionsRadios]:checked').val()+'&tipo_b='+$('#txt_item').val()+'&coop=0&sucur=0&balMes='+mes+'&nom='+$('#lbl_titulo').text()+'&imp=true';                 
       	   window.open(url, '_blank');
 
 
@@ -54,7 +54,7 @@
 		    {
 			    mes=1;
 		    }
-		    var url = '../controlador/contabilidad/contabilidad_controller.php?reporte_pdf_bacsg=true&desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&ext='+bal_ext+'&check='+$('#tbalan').prop('checked')+'&tipo_p='+$('input:radio[name=optionsRadios]:checked').val()+'&tipo_b='+$('#txt_item').val()+'&coop=0&sucur=0&balMes='+mes+'&nom=Balance&imp=true';           
+		    var url = '../controlador/contabilidad/contabilidad_controller.php?reporte_pdf_bacsg=true&desde='+$('#desde').val()+'&hasta='+$('#hasta').val()+'&ext='+bal_ext+'&check='+$('#tbalan').prop('checked')+'&tipo_p='+$('input:radio[name=optionsRadios]:checked').val()+'&tipo_b='+$('#txt_item').val()+'&coop=0&sucur=0&balMes='+mes+'&nom='+$('#lbl_titulo').text()+'&imp=true';           
 			window.open(url, '_blank');
 
 
@@ -188,7 +188,7 @@
 						</a>
 
 
-						<button class="btn btn-default" title="Procesar balance de Comprobación" onclick=" cargar_datos('1','Balance de comprobacion')">
+						<button class="btn btn-default" title="Procesar balance de Comprobación" onclick=" cargar_datos('1','BALANCE DE COMPROBACION')">
 							<img src="../../img/png/pbc.png" class="user-image" alt="User Image"
 							style='font-size:20px; display:block; height:100%; width:100%;'>
 						</button>
@@ -202,7 +202,7 @@
 							style='font-size:20px; display:block; height:100%; width:100%;'></i> 
 						</a> -->
 
-						<button class="btn btn-default"  title="Procesar balance mensual" onclick=" cargar_datos('2','Balance de comprobacion mensual')">
+						<button class="btn btn-default"  title="Procesar balance mensual" onclick=" cargar_datos('2','BALANCE DE COMPROBACION MENSUAL')">
 							<img src="../../img/png/pbm.png" class="user-image" alt="User Image"
 							style='font-size:20px; display:block; height:100%; width:100%;'>
 						</button>
@@ -216,7 +216,7 @@
 							style='font-size:20px; display:block; height:100%; width:100%;'></i> 
 						</a> -->
 
-						<button class="btn btn-default" title="Procesar balance consolidado de varias sucursales">
+						<button class="btn btn-default" title="Procesar balance consolidado de varias sucursales" disabled >
 							<img src="../../img/png/pbcs.png" class="user-image" alt="User Image"
 							style='font-size:20px; display:block; height:100%; width:100%;'>
 						</button>
@@ -227,7 +227,7 @@
 							style='font-size:20px; display:block; height:100%; width:100%;'></i> 
 						</a> -->
 
-						<button class="btn btn-default" title="Presenta balance de Comprobación" onclick=" cargar_datos('4','Balance de comprobacion')">
+						<button class="btn btn-default" title="Presenta balance de Comprobación" onclick=" cargar_datos('4','BALANCE DE COMPROBACION')">
 							<img src="../../img/png/vbc.png" class="user-image" alt="User Image"
 							style='font-size:20px; display:block; height:100%; width:100%;'>
 						</button>
@@ -240,7 +240,7 @@
 						</a> -->
 
 
-						<button class="btn btn-default" title="Presenta estado de situación (general: activo, pasivo y patrimonio)" onclick=" cargar_datos('5','Estado de Situacion')">
+						<button class="btn btn-default" title="Presenta estado de situación (general)" onclick=" cargar_datos('5','ESTADO DE SITUACION')">
 							<img src="../../img/png/bc.png" class="user-image" alt="User Image"
 							style='font-size:20px; display:block; height:100%; width:100%;'>
 						</button>
@@ -254,7 +254,7 @@
 							style='font-size:20px; display:block; height:100%; width:100%;'></i> 
 						</a> -->
 
-						<button class="btn btn-default" title="Presenta estado de resultado (ingreso y egresos)" onclick="cargar_datos('6','Estado de Resultados')">
+						<button class="btn btn-default" title="Presenta estado de resultado (ingreso y egresos)" onclick="cargar_datos('6','ESTADO DE RESULTADOS')">
 							<img src="../../img/png/up.png" class="user-image" alt="User Image"
 							style='font-size:20px; display:block; height:100%; width:100%;'>
 						</button>
@@ -268,11 +268,11 @@
 
 
 
-						<button class="btn btn-default" title="Presenta balance mensual por semana">
+						<button class="btn btn-default" title="Presenta balance mensual por semana" disabled>
 							<i ><img src="../../img/png/pbms.png" class="user-image" alt="User Image"
 							style='font-size:20px; display:block; height:100%; width:100%;'></i> 
 						</button>
-						<button class="btn btn-default" title="SBS B11">
+						<button class="btn btn-default" title="SBS B11" disabled>
 							<i ><img src="../../img/png/books.png" class="user-image" alt="User Image"
 							style='font-size:20px; display:block; height:100%; width:100%;'></i> 
 						</button>

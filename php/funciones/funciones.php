@@ -6118,8 +6118,9 @@ if ($pos === false) {
 // print_r($tbl);die();
 if($titulo)
  {
+  // print_r($titulo);die();
   // $num = count($columnas_uti);
-   $tbl.="<div class='$class_titulo'><b>".$titulo."</b></div>";
+   $tbl.="<div class='".$class_titulo."'><b id='lbl_titulo'>".$titulo."</b></div>";
  }
 
  $tbl.= '<div class="table-responsive" style="overflow-x: scroll;">
@@ -7917,6 +7918,7 @@ function Leer_Codigo_Inv($CodigoDeInv,$FechaInventario,$CodBodega='',$CodMarca='
  // 'Datos por default
   if($CodBodega == "" ){$CodBodega = G_NINGUNO;}
   if($CodMarca == ""){ $CodMarca = G_NINGUNO;}
+  if($FechaInventario=='') {$FechaInventario = date('Y-m-d');}
   $Codigo_Ok = False;
   $Con_Kardex = False;
   $DatInv =array();
@@ -8565,6 +8567,26 @@ function Imprimir_Recibo_Caja($TRecibo)
 {
   $pdf = new cabecera_pdf();
 
+}
+
+function BuscardiasSemana($query)
+{
+  $posi = 0;
+  $dias = array(
+              array('Lunes','1','Monday'),
+              array('Martes','2','Tuesday'),
+              array('Miercoles','3','Wednesday'),
+              array('Jueves','4','Thursdar'),
+              array('Viernes','5','Friday'),
+              array('Sabado','6','Saturday'),
+              array('Domingo','0','Sunday')
+            );
+  $result = array_filter($dias, function($dia) use ($query) {
+      return strpos($dia[0], $query) !== false || strpos($dia[1], $query) !== false || strpos($dia[2], $query) !== false;
+  });
+  $result = array_values($result);
+  $result = $result[0];
+  return $result;
 }
 
 function UltimoDiaMes($FechaStr)
@@ -11002,6 +11024,7 @@ function GrabarComprobante($C1)
              SetAdoFields("Factura", $Factura_No);
              SetAdoFields("Detalle_SubCta", $value["Detalle_SubCta"]);
              SetAdoFields("Prima", $value["Prima"]);
+             SetAdoFields("Serie", $value["Serie"]);
              if($OpcDH == 1)
              {
                 SetAdoFields("Debitos", $Valor);

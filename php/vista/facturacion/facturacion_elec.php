@@ -1271,6 +1271,24 @@ function cambiar_iva(valor)
 
 //fin guia de remision
 </script>
+<style type="text/css">
+    @media only screen and (max-width: 600px) {
+    body {
+       .detalles_pro {
+            margin-top: 245px;
+        }
+    }
+}
+
+/* Estilos para pantallas grandes (escritorio) */
+@media only screen and (min-width: 601px) {
+    body {
+       .detalles_pro {
+            margin-left: 300px; margin-top: 345px;
+        }
+    }
+}
+</style>
 
 <div class="row">
     <div class="col-lg-9 col-sm-10 col-md-8 col-xs-10">
@@ -1595,9 +1613,8 @@ function cambiar_iva(valor)
     </div>
 </div>
 
-<div class="modal fade" id="cambiar_nombre" role="dialog" data-keyboard="false" data-backdrop="static" tabindex="-1">
-    <div class="modal-dialog modal-dialog modal-dialog-centered modal-sm"
-        style="margin-left: 300px; margin-top: 345px;">
+<div class="modal fade " id="cambiar_nombre" role="dialog" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog modal-dialog-centered modal-sm detalles_pro">
         <div class="modal-content">
             <div class="modal-body text-center">
                 <textarea class="form-control" style="resize: none;" rows="4" id="TxtDetalle" name="TxtDetalle"

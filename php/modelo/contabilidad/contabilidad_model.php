@@ -747,13 +747,15 @@ public $Mensaje        ="";
 	}
 
 
-	function listar_tipo_balanceSQl($mes,$tipo_ba,$tipo_p,$imprimir=False)
+	function listar_tipo_balanceSQl($mes,$tipo_ba,$tipo_p,$imprimir=False,$titulo=false)
 	{
+		$SQLMsg1 = $titulo;
+		// print_r($SQLMsg1);die();
 		$sql = "SELECT * 
                FROM Fechas_Balance 
                WHERE Item = '".$_SESSION['INGRESO']['item']."' 
                AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
-               $SQLMsg1='Reporte';
+               // $SQLMsg1='Reporte';
         if($mes)
         {
         	$sql.="AND Detalle = 'Balance Mes' ";
@@ -774,7 +776,7 @@ public $Mensaje        ="";
 	   }
 	   switch ($tipo_ba) {
 	   	case ($tipo_ba==1 || $tipo_ba==2 || $tipo_ba==4):
-	   	$SQLMsg1 = "BALANCE DE COMPROBACION ";
+	   	// $SQLMsg1 = "BALANCE DE COMPROBACION ";
 	   	  $sql = "SELECT DG,Codigo,Cuenta,Saldo_Anterior,Debitos,Creditos,Saldo_Total,TC 
               FROM Catalogo_Cuentas 
               WHERE (Debitos<>0 OR Creditos<>0 OR Saldo_Total<>0) ";
@@ -792,7 +794,7 @@ public $Mensaje        ="";
                  AND TB = 'ER' ";
 	   		break;
 	   	case ($tipo_ba==11) :
-	   	$SQLMsg1 = "BALANCE DE PROMEDIOS ";
+	   	// $SQLMsg1 = "BALANCE DE PROMEDIOS ";
          if($Opcion ==1 ){ $SQLMsg1 = "BALANCE CONSOLIDADO ";}
          // TextoValido TextCotiza, True
          //Dolar = Round(CSng(TextCotiza.Text), 2)
@@ -817,7 +819,7 @@ public $Mensaje        ="";
                  AND Saldo_Total <> 0 ";
               break;
     case ($tipo_ba == 12) :
-    $SQLMsg1 = "BALANCE DE COMPROBACION SBS B11 ";
+    // $SQLMsg1 = "BALANCE DE COMPROBACION SBS B11 ";
           $sql = "SELECT DG,Codigo,Cuenta,Saldo_Anterior,Debitos,Creditos,Saldo_Total,TC
               FROM Catalogo_Cuentas
               WHERE LEN(Codigo) <= 9
@@ -834,10 +836,10 @@ public $Mensaje        ="";
 
 		// print_r($sql);die();
 		
-		if($imprimir==False)
+		if($imprimir==false)
 		{
 			$medida = medida_pantalla($_SESSION['INGRESO']['Height_pantalla'])-144;
-			$tabla = grilla_generica_new($sql,'Catalogo_Cuentas',$id_tabla=false,$titulo=$SQLMsg1,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
+			$tabla = grilla_generica_new($sql,'Catalogo_Cuentas',$id_tabla=false,$SQLMsg1,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$medida,$num_decimales=2);
 			// print_r($tabla);die();
 
 			// $tabla= grilla_generica($stmt,$SQLMsg1,null,'1',null,null,null,true);

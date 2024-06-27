@@ -144,7 +144,7 @@ $cuentas = SeteosCtas();
   <script type="text/javascript">
 
     $(document).ready(function () {
-      // validateStar();
+      //validateStar();
 
     setInterval(validar_session_Activa, 360 * 1000);
 
@@ -367,7 +367,7 @@ $cuentas = SeteosCtas();
       $.ajax({
         url: '../controlador/panel.php?validateStar=true',
         type: 'post',
-        data: { 'NumModulo': '<?php echo @$_SESSION['INGRESO']['modulo_'] ?>' },
+        data: { 'NumModulo': '<?php echo $_SESSION['INGRESO']['modulo_']; ?>' },
         dataType: 'json',
         success: function (response) {
           if (!response.rps & response.mensaje != "") {

@@ -82,14 +82,20 @@ if(isset($_GET['reporte_pdf_bacsg']))
 		'balMes' => $_GET['balMes'],
 		'nom' => $_GET['nom'],
 		'imp' => $_GET['imp']);
-	echo json_decode(sp_proceso_balance_pdf($parametros));
+		if($_GET['tipo_b']=='1' || $_GET['tipo_b']=='2' || $_GET['tipo_b']=='4' )
+		{
+			echo json_decode(sp_proceso_balance_pdf($parametros));
+		}else
+		{
+			echo json_decode(sp_proceso_balance_pdf_situacion($parametros));
+		}
 }
 
 
 if(isset($_GET['datos_tabla']))
 {
 	$modelo = new contabilidad_model();
-	$tabla = $modelo->listar_tipo_balanceSQl(false,1,'');	
+	$tabla = $modelo->listar_tipo_balanceSQl(false,1,'BALANCE DE COMPROBACION');	
 	echo json_encode($tabla);
    
 	
@@ -568,11 +574,11 @@ function sp_proceso_balance($parametros)
 		{
 			 if($parametros['imp']=='false')
 			 {
-			  $tabla = $modelo->listar_tipo_balanceSQl($parametros['balMes'],$parametros['tipo_b'],$parametros['tipo_p']);
+			  $tabla = $modelo->listar_tipo_balanceSQl($parametros['balMes'],$parametros['tipo_b'],$parametros['tipo_p'],false,$parametros['nom']);
 			  return $tabla;
 			 }else
 			 {
-			 	return $modelo->listar_tipo_balanceSQl($parametros['balMes'],$parametros['tipo_b'],$parametros['tipo_p'],true);
+			 	return $modelo->listar_tipo_balanceSQl($parametros['balMes'],$parametros['tipo_b'],$parametros['tipo_p'],true,$parametros['nom']);
 			 }
 		}else
 		{
@@ -618,37 +624,40 @@ function sp_proceso_balance_pdf($parametros)
 			// $pdf++
 			 
 			$datos = $modelo->listar_tipo_balanceSQl_pdf($parametros['balMes'],$parametros['tipo_b'],$parametros['tipo_p'],true);
-			$campos = explode(',',trim($datos['campos']));
+			$campos = str_replace(array('TC','DG'),array('',''), $datos['campos']);
+			$campos = explode(',',trim($campos));
+			$campos = array_values(array_filter($campos));
 			$ali =array();
 			$medi =array();
 			foreach ($campos as $key => $value) {
-				if($value == 'Cuenta')
-				{
-					$ali[$key] = 'L';
-					$medi[$key] =35;
 
-				}else
-				{
-					$val =  strlen(trim($value));
-					if($val != 2){
-					$ali[$key] = 'L';
-					$medi[$key] = $val*2.5;
-				    }else
-				    {
-				    	$ali[$key] = 'L';
-					    $medi[$key] = $val*4;
-				    }
-					// array_push($medi, 10);
-				}
-				if($value == 'Codigo')
-				{
-					$ali[$key] = 'L';
-					$medi[$key] =26;
+				switch ($value) {
+					case 'Cuenta':
+							$ali[$key] = 'L';
+							$medi[$key] =55;
+						break;
+					case 'Codigo':
+							$ali[$key] = 'L';
+							$medi[$key] =36;
+						break;
+					
+					default:
+							$val =  strlen(trim($value));
+							if($val != 2){
+							$ali[$key] = 'L';
+							$medi[$key] = $val*2.5;
+						    }else
+						    {
+						    	$ali[$key] = 'L';
+							    $medi[$key] = $val*4;
+						    }
+
+						break;
 				}
 			}
 			$pdf = new cabecera_pdf();	
 
-
+// print_r($campos);die();
 	        $titulo = $parametros['nom'];
 	        $mostrar = true;
 	        $sizetable =9;
@@ -659,29 +668,50 @@ function sp_proceso_balance_pdf($parametros)
 		    $tablaHTML[0]['estilo']='BI';
 		    $tablaHTML[0]['borde'] = '1';
 		    $pos = 1;
+
+		    // print_r($datos);die();
+
+		    	$totalD = 0;
+		    	$totalH = 0;
 		    foreach ($datos['datos'] as $key => $value) {
 		    	$datos = array();
+		    	$alineado = array();
+		    	// print_r($value);die();
 		    	foreach($value as $key1 => $valu)
 		    	{
 		    		// print_r($value);die();
-		    		if(is_numeric($valu))
+		    		if($key1!='DG' && $key1!='TC')
 		    		{
+		    			if(is_numeric($valu))
+		    			{
 
-		    			array_push($datos, number_format($valu,2,'.',''));
-		    		}else
-		    		{
-		    			array_push($datos, $valu);		    			
+		    				array_push($datos, number_format($valu,2,'.',''));
+		    				array_push($alineado,'R');
+		    			}else
+		    			{
+		    				array_push($datos, $valu);		    	
+		    				array_push($alineado,'L');		
+		    			}
 		    		}
 		    	}
 
-		    	// print_r($datos);die();
-			    $tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
-		        $tablaHTML[$pos]['alineado']=$tablaHTML[0]['alineado'];
+		    	// print_r($alineado);die();
+			    	$tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+		        $tablaHTML[$pos]['alineado']= $alineado;
 		        $tablaHTML[$pos]['datos']=$datos;
 		        $tablaHTML[$pos]['estilo']='I';
-		        $tablaHTML[$pos]['borde'] = '1';
+		        $tablaHTML[$pos]['borde'] = 'RL';
 		        $pos = $pos+1;
+
+		        $totalD = $totalD + $datos[3];
+		    		$totalH = $totalH + $datos[4];
 		    }
+		    		$tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+		        $tablaHTML[$pos]['alineado']=$alineado;
+		        $tablaHTML[$pos]['datos']=array('','','',$totalD,$totalH,'');
+		        $tablaHTML[$pos]['estilo']='I';
+		        $tablaHTML[$pos]['borde'] = 'BT';
+		        $pos = $pos+1;
 	        $pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$parametros['desde'],$parametros['hasta'],$sizetable,$mostrar);
 
 
@@ -689,6 +719,7 @@ function sp_proceso_balance_pdf($parametros)
 		}else
 		{
 			
+			print_r('expression');die();
 			$datos = $modelo->ListarTipoDeBalance_Ext_pdf($parametros['balMes'],'BC',$parametros['ext']);
 			$campos = explode(',',trim($datos['campos']));
 			$ali =array();
@@ -766,6 +797,80 @@ function sp_proceso_balance_pdf($parametros)
 	}
 	// print_r($balance);die();
 }
+
+
+function sp_proceso_balance_pdf_situacion($parametros)
+{
+	$modelo = new contabilidad_model();
+	$fechaini = str_replace('-','',$parametros['desde']);
+	$fechafin = str_replace('-','',$parametros['hasta']);
+	if($parametros['balMes']==1)
+	{
+		$fe = explode('-',$parametros['desde']);
+		$fe2 = explode('-',$parametros['hasta']);
+		$fechaini =$fe[0].$fe[1].'01';
+		$fechafin =str_replace('-','',date("Y-m-t", strtotime($parametros['desde']))); 
+		// print_r($fechaini.'-');print_r($fechafin);die();
+	}
+	// print_r($parametros);die();
+	if($parametros['check']=='false'){
+		$balance=$modelo->sp_procesar_balance_SQL($fechaini,$fechafin,$parametros['coop'],$parametros['sucur'],$parametros['balMes'],$parametros['ext']);
+    }else
+    {
+    	$balance=$modelo->sp_procesar_balance_ext();
+    }
+
+		if($parametros['check']=='false')
+		{
+			// $pdf++
+			 
+			$datos = $modelo->listar_tipo_balanceSQl_pdf($parametros['balMes'],$parametros['tipo_b'],$parametros['tipo_p'],true);
+			$campos = explode(',',trim($datos['campos']));
+				$ali =array();
+			$medi =array();
+			
+			$pdf = new cabecera_pdf();	
+
+	        $titulo = $parametros['nom'];
+	        $mostrar = true;
+	        $sizetable =9;
+	        $tablaHTML = array();
+		    $tablaHTML[0]['medidas']=array(35,65,30,30,30);
+		    $tablaHTML[0]['alineado']=array('L','L','R','R','R');
+		    $tablaHTML[0]['datos']=array('CODIGO','CUENTA','ANALITICO','PARCIAL','TOTAL');
+		    $tablaHTML[0]['estilo']='BI';
+		    $tablaHTML[0]['borde'] = '1';
+		    $pos = 1;
+
+		    // print_r($datos);die();
+
+		    	$totalD = 0;
+		    	$totalH = 0;
+		    foreach ($datos['datos'] as $key => $value) {
+		    
+		    	// print_r($alineado);die();
+			    	$tablaHTML[$pos]['medidas']=$tablaHTML[0]['medidas'];
+		        $tablaHTML[$pos]['alineado']= $tablaHTML[0]['alineado'];
+		        $tablaHTML[$pos]['datos']= array($value['Codigo'],$value['Cuenta'],'','','');
+		        $tablaHTML[$pos]['estilo']='I';
+		        $tablaHTML[$pos]['borde'] = 'RL';
+		        $pos = $pos+1;
+		    }
+		    		$tablaHTML[$pos]['medidas']=array(190);
+		        $tablaHTML[$pos]['alineado']=array('L');
+		        $tablaHTML[$pos]['datos']=array('');
+		        $tablaHTML[$pos]['estilo']='I';
+		        $tablaHTML[$pos]['borde'] = 'BT';
+		        $pos = $pos+1;
+	        $pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$parametros['desde'],$parametros['hasta'],$sizetable,$mostrar);
+
+
+		
+		
+	}
+	// print_r($balance);die();
+}
+
 
 
 

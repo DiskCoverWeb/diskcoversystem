@@ -14,11 +14,12 @@
 
     $(document).ready(function () {
         beneficiario();
-        listaAsignacion();
+        // tipoCompra();
         $('#beneficiario').on('select2:select', function (e) {
             var data = e.params.data;//Datos beneficiario seleccionado
             console.log(data);
-            llenarDatos(data);
+            tipoCompra(data)
+            listaAsignacion();
 
         });
 
@@ -39,7 +40,7 @@
         $('#beneficiario').select2({
             placeholder: 'Beneficiario',
             ajax: {
-                url: '../controlador/inventario/asignacion_osC.php?',
+                url: '../controlador/inventario/asignacion_osC.php?Beneficiario',
                 dataType: 'json',
                 delay: 250,
                 data: function (params) {
@@ -66,14 +67,27 @@
     }
 
     function autocoplet_pro() {
+        tipo = $('#tipoCompra').val();
+        url_ = '';
+        if(tipo=='84.02')
+        {
+            console.log('sss');
+            let url_ = '../controlador/inventario/asignacion_osC.php?autocom_pro=true';
+            console.log(url_);
+        }else
+        {
+            let url_ = '../controlador/inventario/alimentos_recibidosC.php?autocom_pro=true';
+            console.log(url_);
+
+        }
         $('#ddl_producto').select2({
             placeholder: 'Seleccione una producto',
             ajax: {
-                url: '../controlador/inventario/alimentos_recibidosC.php?autocom_pro=true',
+                url: url_,
                 dataType: 'json',
                 delay: 250,
                 processResults: function (data) {
-                    // console.log(data);
+                    console.log(url_);
                     return {
                         results: data
                     };
@@ -84,10 +98,24 @@
     }
 
     function autocoplet_pro2() {
+        tipo = $('#tipoCompra').val();
+        var url_ = '';
+        if(tipo=='84.02')
+        {
+            console.log('sss');
+            url_ = '../controlador/inventario/asignacion_osC.php?autocom_pro=true';
+            console.log(url_);
+        }else
+        {
+            url_ = '../controlador/inventario/alimentos_recibidosC.php?autocom_pro=true';
+            console.log(url_);
+            
+        }
+
         $('#grupProd').select2({
             placeholder: 'Seleccione una producto',
             ajax: {
-                url: '../controlador/inventario/alimentos_recibidosC.php?autocom_pro=true',
+                url: url_,
                 dataType: 'json',
                 delay: 250,
                 processResults: function (data) {
@@ -116,6 +144,21 @@
                 return false;
             })
         }
+
+        var stock = $('#stock').val();
+        var cant =  $('#cant').val();
+        console.log(cant)
+        console.log(stock);
+        if(cant=='' || cant==null || cant <= 0)
+        { 
+            Swal.fire("Cantidad no valida","","info");
+            return false;
+        }
+        if(parseFloat(cant)> parseFloat(stock))
+        { 
+            Swal.fire("Cantidad supera al stock","","info")
+            return false;
+        }
         var datos = {
             'Codigo': $('#grupProd').val(),
             'Producto': $('#grupProd option:selected').text(),
@@ -124,7 +167,16 @@
             'beneficiarioCodigo':$('#beneficiario').val(), 
             'beneficiarioN':$('#beneficiario option:selected').text(),   
             'FechaAte':$('#fechAten').val(),   
+            'asignacion':$('#tipoCompra').val(),
         };       
+
+        if($('#tipoCompra').val()=='' || $('#tipoCompra').val()==null)
+        {
+            Swal.fire("Seleccione Tipo de asignacion","","info")
+             return false;
+        }
+
+
         $.ajax({
             url: '../controlador/inventario/asignacion_osC.php?addAsignacion=true',
             type: 'POST',
@@ -157,31 +209,87 @@
         $("#comeAsig").val("");
     }
 
-    function llenarDatos(datos) {
+    function removeOptionByValue(value) {
+        var selectElement = document.getElementById('tipoCompra');
+        for (var i = 0; i < selectElement.options.length; i++) {
+            if (selectElement.options[i].value === value) {
+                selectElement.remove(i);
+                break;
+            }
+        }
+    }
+    
 
+    function onclicktipoCompra()
+    {
+        $('#modal_tipoCompra').modal('show');
+    }
+
+    function tipoCompra(benefi)
+    {
+         $.ajax({
+            url: '../controlador/inventario/asignacion_osC.php?tipo_asignacion=true',
+            type: 'POST',
+            dataType: 'json',
+            // data: { param: datos },
+            success: function (data) {
+
+            var op = '';
+            var option = '';
+            data.forEach(function(item,i){
+// console.log(item);
+              option+= '<div class="col-md-6 col-sm-6">'+
+                          '<button type="button" class="btn btn-default btn-sm"><img src="../../img/png/'+item.Picture+'.png" onclick="cambiar_empaque(\''+item.ID+'\')"  style="width: 60px;height: 60px;"></button><br>'+
+                          '<b>'+item.Proceso+'</b>'+
+                        '</div>';
+
+               op+='<option value="'+item.ID+'">'+item.Proceso+'</option>';
+            })
+
+            $('#tipoCompra').html(op); 
+            $('#pnl_tipo_empaque').html(option);   
+
+            llenarDatos(benefi);
+
+
+               // llenarComboList(data,'tipoCompra');
+               console.log(data);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+
+function llenarDatos(datos) {
         console.log(datos);
+         // await tipoCompra();
+        
        // $('#beneficiario').val(datos.Beneficiario);
         $('#fechAten').val(datos.Fecha_Atencion);//Fecha de Atencion
-        $('#tipoEstado').val(datos.CodigoA);//Tipo de Estado
+        $('#tipoEstado').val(datos.Estado);//Tipo de Estado
         $('#tipoEntrega').val(datos.TipoEntega);//Tipo de Entrega
-        $('#horaEntrega').val(datos.Hora_Entrega); //Hora de Entrega
-        var fecha = new Date(datos.Fecha_Atencion);
-        const opciones = { weekday: 'long' };
-        const diaEnLetras = new Intl.DateTimeFormat('es-ES', opciones).format(fecha);
-        $('#diaEntr').val(diaEnLetras.toUpperCase());//Dia de Entrega
+        $('#horaEntrega').val(datos.Hora); //Hora de Entrega
+        $('#diaEntr').val(datos.Dia_Entrega.toUpperCase());//Dia de Entrega
         $('#frecuencia').val(datos.Frecuencia);//Frecuencia
         $('#tipoBenef').val(datos.TipoBene);//Tipo de Beneficiario
         $('#totalPersAten').val(datos.No_Soc);//Total, Personas Atendidas
         $('#tipoPobl').val(datos.Area);//Tipo de Poblacion
         $('#acciSoci').val(datos.AccionSocial);//Accion Social
-        $('#vuln').val(datos.Tipo);//Vulnerabilidad
+        $('#vuln').val(datos.vulneravilidad);//Vulnerabilidad
         $('#tipoAten').val(datos.TipoAtencion);//Tipo de Atencion
         $('#CantGlobSugDist').val(datos.Salario);//Cantidad global sugerida a distribuir
         $('#CantGlobDist').val(datos.Descuento);//Cantidad global a distribuir
+        $('#infoNutr').val(datos.InfoNutri);
         const params = [datos.CodigoA, datos.CodigoACD, datos.Envio_No, datos.Beneficiario, datos.Area, datos.Acreditacion, datos.Tipo, datos.Cod_Fam];
         color = datos.Color.replace('Hex_','');
         $('#rowGeneral').css('background-color', '#' + color);
         $('#img_tipoBene').attr('src','../../img/png/'+datos.Picture+'.png')
+
+         datos.asignaciones_hechas.forEach(function(item,i){
+            removeOptionByValue(item.No_Hab)
+         })
+
       //  datosExtras(params);
 
 
@@ -223,7 +331,8 @@
             dataType: 'json',
             data: { param: param },
             success: function (data) {
-                $('#tbl_body').html(data);
+                $('#tbl_body').html(data.tabla);
+                $('#CantGlobDist').val(data.cantidad);
             },
             error: function (error) {
                 console.log(error);
@@ -314,6 +423,26 @@
         });
     }
 
+    function llenarCamposPoblacion() {
+        var Codigo = $('#beneficiario').val();
+        if(Codigo=='' || Codigo==null)
+        {
+            Swal.fire("Seleccione un beneficiario","","info")
+            return false;
+        }
+        $.ajax({
+            url: '../controlador/inventario/asignacion_osC.php?llenarCamposPoblacion=true',
+            type: 'post',
+            dataType: 'json',
+            data: { valor: Codigo },
+            success: function (datos) {
+                $('#modalBtnGrupo').modal('show');
+                $('#tbl_body_poblacion').html(datos);
+               console.log(datos);
+            }
+        });
+    }
+
 </script>
 <style>
     label {
@@ -346,8 +475,7 @@
     }
 
     /* Ajustar el ancho de los inputs si es necesario */
-    .form-group input[type="text",
-    type="datetime-local"] {
+    .form-group input[type="text",type="datetime-local"] {
         flex-grow: 1;
         /* Permite que el input crezca para ocupar el espacio disponible */
     }
@@ -366,16 +494,74 @@
         }
     }
 </style>
+<script type="text/javascript">
+    function guardar()
+    {
+        ben = $('#beneficiario').val();
+        distribuir = $('#CantGlobDist').val();
+        if(ben=='' || ben==null){Swal.fire("","Seleccione un Beneficiario","info");return false;}
+        if(distribuir==0 || distribuir==''){ Swal.fire("","No se a agregado nigun grupo de producto","info");return false;}
+        var parametros = {
+            'beneficiario':ben,
+            'fecha':$('#fechAten').val(),
+        }
+         $.ajax({
+            url: '../controlador/inventario/asignacion_osC.php?GuardarAsignacion=true',
+            type: 'post',
+            dataType: 'json',
+            data: { parametros: parametros },
+            success: function (datos) {
+                if(datos==1)
+                {
+                    Swal.fire("Asignacion Guardada","","success").then(function(){
+                        location.reload();
+                    });
+                }
+
+            }
+        });
+    }
+
+    function add_beneficiario(){
+        $('#modal_addBeneficiario').modal('show');
+
+    }
+    function eliminar_beneficiario(){
+        beneficiario = $('#beneficiario').val();
+        if(beneficiario=='' || beneficiario==null)
+        {
+            Swal.fire('Seleccione un beneficiario','','error');
+            return false;
+        }
+    }
+
+</script>
+<div class="row mb-2">
+    <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
+        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
+            <a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
+            print_r($ruta[0] . '#'); ?>" title="Salir de modulo" class="btn btn-default">
+                <img src="../../img/png/salire.png">
+            </a>
+        </div>
+         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
+            <button title="Guardar" class="btn btn-default" onclick="guardar()">
+                <img src="../../img/png/grabar.png">
+            </button>
+        </div>
+    </div>
+       
+</div>
 <form id="form_asignacion">
     <div class="row" style="padding: 1vw; background-color: #fffacd; border: 1px solid;" id="rowGeneral">
         <div class="row">
 
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <div class="row">                    
-                    <div class="col-md-12 col-sm-6 col-xs-6">  
+                    <div class="col-md-12 col-sm-6 col-xs-6" style="padding-right: 0px;">  
                         <div class="input-group">
                             <div class="input-group-addon input-xs">
-                                <b>Día de Entrega</b>
+                                <b>Día Entrega</b>
                             </div>
                             <input type="text" name="diaEntr" id="diaEntr" class="form-control input-xs">
                         </div>
@@ -390,10 +576,20 @@
                                 <b>Beneficiario/ Usuario:</b>
                             </div>
                              <select name="beneficiario" id="beneficiario" class="form-control input-xs" onchange="listaAsignacion()"></select>
+                             <span class="input-group-btn">
+                            <button type="button" class="" onclick="add_beneficiario()">
+                                <img id="img_tipoCompra"  src="../../img/png/mostrar.png" style="width: 20px;" />
+                            </button>
+                        </span>
+                        <span class="input-group-btn">
+                            <button type="button" class="" onclick="eliminar_beneficiario()">
+                                <img id="img_tipoCompra"  src="../../img/png/close.png" style="width: 20px;" />
+                            </button>
+                        </span>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>           
             <div class="col-sm-3">
                 <div class="row">                   
                     <div class="col-md-12 col-sm-6 col-xs-6">  
@@ -407,6 +603,22 @@
                     </div>
                 </div>
             </div>
+             <div class="col-sm-2">
+                 <div class="row">
+                    <div class="col-md-12 col-sm-6 col-xs-6">  
+                        <div class="input-group">                          
+                        <span class="input-group-btn">
+                            <button type="button" class="" onclick="onclicktipoCompra()">
+                                <img id="img_tipoCompra"  src="../../img/png/TipoCompra.png" style="width: 20px;" />
+                            </button>
+                        </span>
+                         <select name="tipoCompra" id="tipoCompra" class="form-control input-xs" onchange="autocoplet_pro2()">
+                         </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <div class="row alineado">
             <div class="col-sm-3">
@@ -426,7 +638,7 @@
                     <div class="col-md-12 col-sm-6 col-xs-6">  
                         <div class="input-group">
                             <div class="input-group-addon input-xs">  
-                                <b> Tipo de Entrega</b>
+                                <b> Tipo Entrega</b>
                             </div>
                         <input type="text" name="tipoEntrega" id="tipoEntrega" class="form-control input-xs">
                         </div>
@@ -482,10 +694,15 @@
                                 <b>Total, Personas Atendidas:</b>
                             </div>
                             <input type="text" name="totalPersAten" id="totalPersAten" class="form-control input-xs" readonly>
+                            <span class="input-group-btn">
+                            <button type="button" class="" onclick="llenarCamposPoblacion()">
+                                <img id="img_tipoBene"  src="../../img/png/Personas_atendidas.png" style="width: 32px;" />
+                            </button>
+                        </span>
                         </div>
                     </div>
                 </div>
-                <div class="row">                   
+                <!-- <div class="row">                   
                     <div class="col-md-12 col-sm-6 col-xs-6">  
                         <div class="input-group">
                             <div class="input-group-addon input-xs">
@@ -494,7 +711,7 @@
                             <input type="text" name="tipoPobl" id="tipoPobl" class="form-control input-xs" readonly>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="row">                    
                      <div class="col-md-12 col-sm-6 col-xs-6">  
                         <div class="input-group">
@@ -528,9 +745,15 @@
             </div>
             <div class="col-sm-4">
                 <div class="row">
-                    <div class="col-sm-6"  style="font-size: 13px; white-space: nowrap;">                        
-                        <img  src="../../img/png/cantidad_global.png" style="width: 25%;" />
-                        <b>Cantidad global sugerida a distribuir</b>
+                    <div class="col-sm-6"  style="font-size: 13px; ">
+                        <div class="row">
+                            <div class="col-sm-4">                        
+                                <img  src="../../img/png/cantidad_global.png" style="width: 100%;" />
+                            </div>  
+                            <div class="col-sm-8" style="padding:0px">                        
+                                <b>Cantidad global sugerida a distribuir</b>
+                            </div>                     
+                        </div> 
                     </div>
                     <div class="col-sm-6">
                         <input type="number" name="CantGlobSugDist" id="CantGlobSugDist" readonly style=""
@@ -545,7 +768,7 @@
                     </div>
                     <div class="col-sm-6">
                         <input type="number" name="CantGlobDist" id="CantGlobDist" style=""
-                            class="form-control input-xs">
+                            class="form-control input-xs" readonly>
                     </div>
                 </div>
                 <div class="row">
@@ -702,3 +925,74 @@
         </div>
     </div>
 </div>
+
+
+    <div id="modalBtnGrupo" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Tipo de población</h4>
+                </div>
+                <div class="modal-body" style="overflow-y: auto; max-height: 300px;">
+                    <div class="table-responsive">
+                        <table class="table" id="tablaPoblacion">
+                            <thead>
+                                <tr>
+                                    <th scope="col" colspan="2">Tipo de Población</th>
+                                    <th scope="col">Hombres</th>
+                                    <th scope="col">Mujeres</th>
+                                    <th scope="col">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl_body_poblacion">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btnGuardarGrupo">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div id="modal_tipoCompra" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Tipo empaque</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+            <div class="row text-center" id="pnl_tipo_empaque">
+            </div>                       
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-primary" onclick="cambiar_empaque()">OK</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+<div id="modal_addBeneficiario" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Tipo empaque</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+            <div class="row text-center" id="pnl_tipo_empaque">
+            </div>                       
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-primary" onclick="cambiar_empaque()">OK</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+

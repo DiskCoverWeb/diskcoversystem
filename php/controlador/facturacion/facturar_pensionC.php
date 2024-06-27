@@ -732,6 +732,7 @@ class facturar_pensionC
     $resultado = explode(" ", $FA['DCLinea']);
     $FA['Autorizacion'] = $resultado[2];
     $FA['Cta_CxP'] = $resultado[3];
+    $FA['Fecha'] = $FA['Fecha'];
 		//Procedemos a grabar la factura
   	$datos = $this->facturacion->getAsiento();
     if(count($datos)<=0){

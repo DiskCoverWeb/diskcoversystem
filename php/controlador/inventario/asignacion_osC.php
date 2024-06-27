@@ -32,8 +32,27 @@ if(isset($_GET['Codigo_Inv_stock'])){
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->Codigo_Inv_stock($parametros));
 }
-
-
+if(isset($_GET['llenarCamposPoblacion'])){
+    $valor = $_POST['valor'];
+    echo json_encode($controlador->llenarCamposPoblacion($valor));
+}
+if(isset($_GET['GuardarAsignacion'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->GuardarAsignacion($parametros));
+}
+if(isset($_GET['tipo_asignacion'])){
+    // $parametros = $_POST['parametros'];
+    echo json_encode($controlador->tipo_asignacion());
+}
+if(isset($_GET['autocom_pro'])){
+    $query = '';
+    if(isset($_GET['q']))
+    {
+        $query = $_GET['q'];
+    }
+    // $parametros = $_POST['parametros'];
+    echo json_encode($controlador->autocom_pro($query));
+}
 
 
 
@@ -57,47 +76,140 @@ class asignacion_osC
      */
     public function tipoBeneficiario($query): array
     {
+
+        $diaActual =  BuscardiasSemana(date('w'));
+        $diaActual = $diaActual[1]+1;
+        if($diaActual>6)
+        {
+            $diaActual = 0;
+        }
+
         try {
             $datos = $this->modelo->tipoBeneficiario($query);
+            // print_r($datos);
             $res = array();
             if (count($datos) == 0) {
                 throw new Exception('No se encontraron datos');
             }
+
+            $cant_asig = $this->modelo->tipo_asignacion();
+            $cant_asig = count($cant_asig);
             foreach ($datos as $value) {
-                $res[] = array(
-                    'id' => $value['Codigo'],
-                    'text' => $value['Cliente'],
-                    'CodigoA' => $value['CodigoA'],
-                    'CI_RUC' => $value['CI_RUC'],
-                    'Fecha_Atencion' => $value['Fecha_Registro']->format('Y-m-d'),
-                    'Dia_Entrega' => $value['Fecha_Registro']->format('d'),
-                    'Hora_Entrega' => $value['Fecha_Registro']->format('H:i'),
-                    'Envio_No' => $value['Envio_No'],
-                    'Frecuencia' => $value['Frecuencia'],
-                    'Beneficiario' => $value['Beneficiario'],
-                    'No_Soc' => $value['No_Soc'],
-                    'Area' => $value['Area'],
-                    'Acreditacion' => $value['Acreditacion'],
-                    'AccionSocial' => $value['AccionSocial'],
-                    'Tipo' => $value['Tipo'],
-                    'Cod_Fam' => $value['Cod_Fam'],
-                    'TipoAtencion' => $value['TipoAtencion'],
-                    'Salario' => $value['Salario'],
-                    'CodigoACD' => $value['CodigoACD'],
-                    'TipoEntega' => $value['TipoEntega'],
-                    'Descuento' => $value['Descuento'],
-                    'Evidencias' => $value['Evidencias'],
-                    'CodTipoBene' => $value['Actividad'],
-                    'TipoBene' => $value['TipoBene'],
-                    'Color'=>$value['Color'],
-                    'Picture'=>$value['Picture'],
-                );
+                $asignacionesLis =$this->modelo->asignaciones_hechas($value['Codigo']);                
+                $asignaciones = count($asignacionesLis);
+
+                $dia =  BuscardiasSemana($value['Dia_Ent']);
+                // print_r($diaActual);
+                // print_r($dia);
+                // print_r($asignaciones);
+                // print_r($cant_asig.'\n');
+                if($diaActual==$dia[1] && $asignaciones != $cant_asig)
+                {
+                    // print_r($dia);die();
+                    $res[] = array(
+                        'id' => $value['Codigo'],
+                        'text' => $value['Cliente'],
+                        'CodigoA' => $value['CodigoA'],
+                        'CI_RUC' => $value['CI_RUC'],
+                        'Fecha_Atencion' => $value['Fecha_Registro']->format('Y-m-d'),
+                        'Dia_Entrega' => $dia[0],
+                        'Hora_Entrega' => $value['Fecha_Registro']->format('H:i'),
+                        'Envio_No' => $value['Envio_No'],
+                        'Frecuencia' => $value['Frecuencia'],
+                        'Beneficiario' => $value['Beneficiario'],
+                        'No_Soc' => $value['No_Soc'],
+                        'Area' => $value['Area'],
+                        'Acreditacion' => $value['Acreditacion'],
+                        'AccionSocial' => $value['AccionSocial'],
+                        'Tipo' => $value['Tipo'],
+                        'Cod_Fam' => $value['Cod_Fam'],
+                        'TipoAtencion' => $value['TipoAtencion'],
+                        'Salario' => $value['Salario'],
+                        'CodigoACD' => $value['CodigoACD'],
+                        'TipoEntega' => $value['TipoEntega'],
+                        'Descuento' => $value['Descuento'],
+                        'Evidencias' => $value['Evidencias'],
+                        'CodTipoBene' => $value['Actividad'],
+                        'TipoBene' => $value['TipoBene'],
+                        'Color'=>$value['Color'],
+                        'Picture'=>$value['Picture'],
+                        'Estado'=>$value['Estado'],
+                        'Hora'=>$value['Hora'],
+                        'vulneravilidad'=>$value['vulnerabilidad'],
+                        // 'InfoNutri'=>$value['Observaciones'],
+                        'asignaciones_hechas' =>$asignacionesLis,
+                    );
+                }
             }
             return ['results' => $res]; // Ajuste aquí para coincidir con el formato de Select2
         } catch (Exception $e) {
             return ['error' => $e->getMessage()];
         }
     }
+
+    function AddBeneficiario($query)
+    {
+
+            $datos = $this->modelo->tipoBeneficiario($query);
+            // print_r($datos);
+            $res = array();
+            if (count($datos) == 0) {
+                throw new Exception('No se encontraron datos');
+            }
+
+            $cant_asig = $this->modelo->tipo_asignacion();
+            $cant_asig = count($cant_asig);
+            foreach ($datos as $value) 
+            {
+                $asignacionesLis =$this->modelo->asignaciones_hechas($value['Codigo']);                
+                $asignaciones = count($asignacionesLis);
+
+                $dia =  BuscardiasSemana($value['Dia_Ent']);
+                // print_r($diaActual);
+                // print_r($dia);
+                // print_r($asignaciones);
+                // print_r($cant_asig.'\n');
+                if($diaActual==$dia[1] && $asignaciones != $cant_asig)
+                {
+                    // print_r($dia);die();
+                    $res[] = array(
+                        'id' => $value['Codigo'],
+                        'text' => $value['Cliente'],
+                        'CodigoA' => $value['CodigoA'],
+                        'CI_RUC' => $value['CI_RUC'],
+                        'Fecha_Atencion' => $value['Fecha_Registro']->format('Y-m-d'),
+                        'Dia_Entrega' => $dia[0],
+                        'Hora_Entrega' => $value['Fecha_Registro']->format('H:i'),
+                        'Envio_No' => $value['Envio_No'],
+                        'Frecuencia' => $value['Frecuencia'],
+                        'Beneficiario' => $value['Beneficiario'],
+                        'No_Soc' => $value['No_Soc'],
+                        'Area' => $value['Area'],
+                        'Acreditacion' => $value['Acreditacion'],
+                        'AccionSocial' => $value['AccionSocial'],
+                        'Tipo' => $value['Tipo'],
+                        'Cod_Fam' => $value['Cod_Fam'],
+                        'TipoAtencion' => $value['TipoAtencion'],
+                        'Salario' => $value['Salario'],
+                        'CodigoACD' => $value['CodigoACD'],
+                        'TipoEntega' => $value['TipoEntega'],
+                        'Descuento' => $value['Descuento'],
+                        'Evidencias' => $value['Evidencias'],
+                        'CodTipoBene' => $value['Actividad'],
+                        'TipoBene' => $value['TipoBene'],
+                        'Color'=>$value['Color'],
+                        'Picture'=>$value['Picture'],
+                        'Estado'=>$value['Estado'],
+                        'Hora'=>$value['Hora'],
+                        'vulneravilidad'=>$value['vulnerabilidad'],
+                        // 'InfoNutri'=>$value['Observaciones'],
+                        'asignaciones_hechas' =>$asignacionesLis,
+                    );
+                }
+            }
+            return $res; // Ajuste aquí para coincidir con el formato de Select2
+    }
+
 
     function datosExtra($parametros){
         try{
@@ -133,7 +245,9 @@ class asignacion_osC
     function listaAsignacion($parametros)
     {
         $tr = '';
-        $datos = $this->modelo->listaAsignacion($parametros['beneficiario']);
+        $cantidad = 0;
+        $res = array();
+        $datos = $this->modelo->listaAsignacion($parametros['beneficiario'],'.');
         foreach ($datos as $key => $value) {
             $tr.='<tr>
                     <td>'.($key+1).'</td>
@@ -142,9 +256,12 @@ class asignacion_osC
                     <td>'.$value['Procedencia'].'</td>
                     <td><button class="btn btn-danger btn-sm" onclick="eliminar_linea('.$value['ID'].')"><i class="fa fa-trash"></i></button></td>
                 </tr>';
+                $cantidad+= number_format($value['Cantidad'],2,'.','');
         }
 
-        return $tr;
+        $res = array('tabla'=>$tr,'cantidad'=>$cantidad);
+
+        return $res;
         // print_r($datos);die();
     }
 
@@ -167,6 +284,7 @@ class asignacion_osC
         SetAdoFields("Item",$_SESSION['INGRESO']['item']);
         SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
         SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+        SetAdoFields("No_Hab",$parametros['asignacion']);
         
         return SetAdoUpdate();
     }
@@ -184,4 +302,60 @@ class asignacion_osC
         $datos = Leer_Codigo_Inv($CodigoDeInv,$FechaInventario);
         return $datos;
     }
+
+    function llenarCamposPoblacion($parametros)
+    {
+        $tr = '';
+        $poblacion = $this->modelo->tipo_poblacion();
+        $datos = $this->modelo->llenarCamposPoblacion($parametros);
+        if (count($datos)>0) {
+            $tr = '';
+            foreach ($poblacion as $key => $value) {
+                $clave = array_search($value['Cmds'], array_column($datos, 'Cmds'));
+                if($clave=='') 
+                    { $item['Hombres']=0; $item['Mujeres']=0; $item['Total']=0;}else{
+                $item = $datos[$clave];
+            }   
+                // print_r($item);die();
+                $tr.='<tr><td colspan="2">'.$value['Proceso'].'</td><td>'.$item['Hombres'].'</td><td>'.$item['Mujeres'].'</td><td>'.$item['Total'].'</td></tr>';
+            }
+        }
+        return $tr;
+
+    }
+
+    function tipo_asignacion()
+    {
+        $datos = $this->modelo->tipo_asignacion();
+        foreach ($datos as $key => $value) {
+            $lista[] = array('ID' =>$value['Cmds'] ,'Proceso'=>$value['Proceso'],'Picture'=>$value['Picture'] );
+        }
+        return $lista;
+    }
+
+    function GuardarAsignacion($parametros)
+    {
+        // print_r($parametros);die();
+        SetAdoAddNew('Detalle_Factura');
+        SetAdoFields('T','K');      
+       
+        SetAdoFieldsWhere('CodigoU',$_SESSION['INGRESO']['CodigoU']);
+        SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
+        SetAdoFieldsWhere('Periodo',$_SESSION['INGRESO']['periodo']); 
+        SetAdoFieldsWhere('CodigoC',$parametros['beneficiario']);  
+        SetAdoFieldsWhere('Fecha',$parametros['fecha']);  
+        return SetAdoUpdateGeneric();
+    }
+
+    function autocom_pro($query)
+    {
+        $datos = $this->modelo->alimentosRecibidoscompra($query);
+        $lista = array();
+        foreach ($datos as $key => $value) {
+            $lista[] = array('id'=>$value['Codigo_Inv'], 'text'=>$value['Producto'],'data'=>$value);
+        }
+
+        return $lista;
+    }
+
 }

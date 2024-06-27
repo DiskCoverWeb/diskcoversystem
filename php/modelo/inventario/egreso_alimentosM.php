@@ -48,7 +48,7 @@ class egreso_alimentosM
 
 		return $this->db->datos($sql);
 	}
-	function buscar_producto($query=false,$id=false)
+	function buscar_producto($query=false,$id=false,$grupo=false)
 	{
 		$sql = "SELECT TK.*,C.Cliente,CP.Producto,CP.Unidad 
 			FROM Trans_Kardex TK
@@ -66,6 +66,10 @@ class egreso_alimentosM
 			if($id)
 			{
 				$sql.=" AND TK.ID='".$id."'";
+			}
+			if($grupo)
+			{
+				$sql.=" CP.Codigo_Inv = '".$grupo."'";
 			}
 		return $this->db->datos($sql);
 	}

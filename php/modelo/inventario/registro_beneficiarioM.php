@@ -223,6 +223,7 @@ class registro_beneficiarioM
     function ActualizarClientes($parametros)
     {
         $sql = "UPDATE Clientes SET
+                Actividad = '".$parametros['TB']."',
                 TB = '" . $parametros['TB'] . "',
                 Calificacion = '" . $parametros['Calificacion'] . "',
                 CodigoA = '" . $parametros['CodigoA'] . "', 
@@ -247,6 +248,8 @@ class registro_beneficiarioM
                 DireccionT = '" . $parametros['CalleS'] . "', 
                 Referencia = '" . $parametros['Referencia'] . "'
                 WHERE CI_RUC = '" . $parametros['CI_RUC'] . "'";
+
+                // print_r($sql);
         return $this->db->datos($sql);
     }
 
@@ -270,7 +273,7 @@ class registro_beneficiarioM
         $sql .= " WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Codigo = '" . $parametros['Codigo'] . "'";
     
-        //print_r($sql); die();
+        // print_r($sql);
         return $this->db->datos($sql);
     }
     
@@ -293,6 +296,7 @@ class registro_beneficiarioM
                 '" . $parametros['NombreArchivo'] . "', 
                 '" . $parametros['Observaciones'] . "',
                 '" . $_SESSION['INGRESO']['item'] . "')";
+                // print_r($sql2);
         return $this->db->datos($sql2);
     }
 
@@ -324,7 +328,7 @@ class registro_beneficiarioM
 
         foreach ($tipoPoblacion as $poblacion) {
             $values[] = "('" . $_SESSION['INGRESO']['item'] . "', '" . $_SESSION['INGRESO']['periodo'] . "',
-                        '" . date('Y-m-d') . "', '" . date('Y-m-d') . "',
+                        '" . date('Y-m-d H:i:s') . "', '" . date('Y-m-d H:i:s') . "',
                         '" . $parametros['Codigo'] . "', '" . $poblacion['valueData'] . "',
                         '" . $poblacion['hombres'] . "', '" . $poblacion['mujeres'] . "',
                         '" . $poblacion['total'] . "', '" . $_SESSION['INGRESO']['CodigoU'] . "', '.')";
@@ -341,6 +345,7 @@ class registro_beneficiarioM
         $sql = "SELECT COUNT(*) AS count FROM Clientes_Datos_Extras WHERE Codigo = '" . $parametros['Codigo'] . "'";
         $result = $this->db->datos($sql);
 
+        // print_r($parametros);print_r($result);die();
         if ($result[0]['count'] > 0) {
             $this->ActualizarClientes($parametros);
             $this->ActualizarClientesDatosExtra($parametros);

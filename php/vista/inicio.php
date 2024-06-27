@@ -526,6 +526,9 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'asignacion_os':
 				require_once("inventario/asignacion_os.php");
 				break;
+			case 'picking_org':
+				require_once("inventario/asignacion_picking.php");
+				break;
 			//Inventario -> egreso de Productos -> egreso producto
 			case 'egreso_alimentos':
 				require_once("inventario/egreso_alimentos.php");
@@ -608,6 +611,9 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 				require_once("inscripciones/voluntarios.php");
 				break;
 
+			//Inscripciones -> Formularios -> Voluntarios
+			case 'migrar_datos':
+				require_once("migracion/migrar_datos.php");
 			//Migracion -> Archivo -> Migrar_esquemas
 			case 'migrar_esquemas':
 				require_once('migracion/migrar_esquemas.php');
