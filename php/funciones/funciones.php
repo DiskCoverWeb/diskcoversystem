@@ -5865,18 +5865,20 @@ function generar_comprobantes($parametros) //revision parece repetida
   function Presenta_Errores_Contabilidad_SP()
   {
       $conn = new db();
-      $ExisteErrores = 1;
-
+      $ExisteErrores = 0;
       $parametros = array(
         array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
         array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
         array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
         array(&$_SESSION['INGRESO']['modulo_'], SQLSRV_PARAM_IN),
-        array(&$ExisteErrores, SQLSRV_PARAM_IN),
-      );     
-     $sql="EXEC sp_Presenta_Errores_Contabilidad @Item=?,@Periodo=?,@Usuario=?,@NumModulo=?,@ExisteErrores=?";
-      $respuesta = $conn->ejecutar_procesos_almacenados($sql,$parametros);
-      return $respuesta;   
+        array(&$ExisteErrores,  SQLSRV_PARAM_INOUT),
+      );
+
+      // print_r($parametros);die();     
+      $sql = "EXEC sp_Presenta_Errores_Contabilidad @Item=?, @Periodo=?, @Usuario=?, @NumModulo=?, @ExisteErrores=?";
+      $conn->ejecutar_procesos_almacenados($sql,$parametros,1);
+     
+      return  $ExisteErrores;
   }
 
 

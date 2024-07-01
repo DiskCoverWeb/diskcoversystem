@@ -286,21 +286,25 @@ class db
            if ($res === false) 
            {
             echo "Error en consulta PA.\n";  
-					  die( print_r( sqlsrv_errors(), true));  
+					  die( print_r( sqlsrv_errors().'-'.$sql, true));  
            	return -1;
            	// die( print_r("<script type='text/javascript'>alert('Estructura procesco almacenado')</script>", true));  
            }else{
-				   sqlsrv_close($conn);
-				   // if($retorna)
-				   // {
-				   // 	$result = array();
-				   // 	 while( $row = sqlsrv_fetch_array($res)) 
-			   	// 		{
-				 		// 	$result[] = $row;
-			   	// 		}
-				   // 	 return $result;
-				   // }
-				   return 1;
+				   if($retorna)
+				   {
+				   	// print_r($sql);
+				    		$result = array();
+				    		$row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+				    		// print_r($row);die();
+						    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+						        $result[] = $row;
+						    }
+						    // sqlsrv_close($conn);
+						    return $result;
+				   }else{
+				   	  sqlsrv_close($conn);
+				   		return 1;
+				   }
 				 }
 		}
 
