@@ -30,8 +30,7 @@
 </script>
 
 <div class="container">
-	<div class="row">
-		ss
+	<div class="row" id="lista_errores">
 	</div>
 </div>
 
@@ -52,7 +51,7 @@
 				</div>
 			</div>
 			<div class="modal-footer" style="background-color: #fff;">
-				<button id="btnCopiar" class="btn btn-primary" onclick='reindexar();'>Cambiar</button>
+				<button id="btnCopiar" class="btn btn-primary" onclick='reindexar();'>Reindexar</button>
 			    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
 			</div>
 		</div>			  

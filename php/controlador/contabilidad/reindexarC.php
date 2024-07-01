@@ -27,7 +27,11 @@ class reindexarC
 		try {
 			Reindexar_Periodo_sp(); 
 			Mayorizar_Cuentas_SP();
-			Presenta_Errores_Contabilidad_SP();	
+			$resp = Presenta_Errores_Contabilidad_SP();	
+
+			// lista_errores
+			// print_r($resp);die();
+
 			return 1;		
 		} catch (Exception $e) {
 			return -1;
