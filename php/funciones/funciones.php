@@ -5834,6 +5834,52 @@ function generar_comprobantes($parametros) //revision parece repetida
       return $respuesta;   
   }
 
+  function Reindexar_Periodo_sp() 
+  {    
+      $conn = new db();
+      $parametros = array(
+        array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+        array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+      );     
+     $sql="EXEC sp_Reindexar_Periodo @Item=?,@Periodo=?";
+      $respuesta = $conn->ejecutar_procesos_almacenados($sql,$parametros);
+      return $respuesta;   
+  }
+
+  function Mayorizar_Cuentas_SP()
+  {
+      $conn = new db();
+      $EsCoop = 0;
+      $ConSucursal = 0;
+
+      $parametros = array(
+        array(&$EsCoop, SQLSRV_PARAM_IN),
+        array(&$ConSucursal, SQLSRV_PARAM_IN),
+        array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+        array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+      );     
+     $sql="EXEC sp_Mayorizar_Cuentas @EsCoop=?,@ConSucursal=?,@Item=?,@Periodo=?";
+      $respuesta = $conn->ejecutar_procesos_almacenados($sql,$parametros);
+      return $respuesta;   
+  }
+  function Presenta_Errores_Contabilidad_SP()
+  {
+      $conn = new db();
+      $ExisteErrores = 1;
+
+      $parametros = array(
+        array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+        array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+        array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
+        array(&$_SESSION['INGRESO']['modulo_'], SQLSRV_PARAM_IN),
+        array(&$ExisteErrores, SQLSRV_PARAM_IN),
+      );     
+     $sql="EXEC sp_Presenta_Errores_Contabilidad @Item=?,@Periodo=?,@Usuario=?,@NumModulo=?,@ExisteErrores=?";
+      $respuesta = $conn->ejecutar_procesos_almacenados($sql,$parametros);
+      return $respuesta;   
+  }
+
+
   function sp_Reindexar_Periodo() //optimizado
   {
     // set_time_limit(1024);

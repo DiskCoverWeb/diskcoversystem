@@ -176,6 +176,11 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 				require_once("contabilidad/hco.php");
 				break;
 
+			//Contabilidad -> Estados financieros -> Resumen analitico mensual de utilidad/perdidas 
+			case 'Reindexar':
+				require_once("contabilidad/reindexar.php");
+				break;
+
 			//Empresas -> Archivo -> Cambio de periodo
 			case 'campe':
 				require_once("contabilidad/campe.php");
@@ -201,6 +206,8 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'InfoError':
 				include("contabilidad/FInfoError.php");
 				break;
+
+
 
 			//**************************************FACTURACION**************************************/
 			//Facturacion -> Archivo -> Facturar
