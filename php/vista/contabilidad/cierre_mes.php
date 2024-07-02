@@ -3,8 +3,9 @@
   var chekFalse = [];
   $(document).ready(function()
   {
-    $('#TipoSuper_MYSQL').val('Supervisor');
-    $('#clave_supervisor').modal('show');
+    //$('#TipoSuper_MYSQL').val('Supervisor');
+    //$('#clave_supervisor').modal('show');
+    IngClave('Gerente');
    
     
 

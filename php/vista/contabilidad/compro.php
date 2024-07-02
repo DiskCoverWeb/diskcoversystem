@@ -25,7 +25,7 @@
 	       <a class="btn btn-default" title="Exportar Excel"	href="javascript:void(0)" onclick="GenerarExcelResultadoComprobante()" ><img src="../../img/png/table_excel.png"></a>	      
 	   </div>
 	   <div class="col-xs-2 col-md-1 col-sm-1 col-lg-1" style="width: fit-content;padding: 0px;">                 
-	    <button class="btn btn-default" title="Modificar el comprobante" onclick="modificar_comprobante()">
+	    <button class="btn btn-default" title="Modificar el comprobante" onclick="IngClave('Contador')">
 					 <img src="../../img/png/modificar.png" >
 	     </button>		   
 	  </div>
@@ -472,9 +472,10 @@
 		$("#TipoProcesoLlamadoClave").val("");
 		if(com!='')
 		{
-		 $('#clave_contador').modal('show');
+		 /*$('#clave_contador').modal('show');
 		 $('#titulo_clave').text('Contador General');
-		 $('#TipoSuper').val('Contador');
+		 $('#TipoSuper').val('Contador');*/
+		 IngClave('Contador');
 	  }else
 	  {
 	  	Swal.fire('Seleccione un comprobante','','info');
@@ -657,9 +658,10 @@
   
 	 function Cambiar_Cuenta(Codigo1, Cuenta, Asiento) {
   	$("#TipoProcesoLlamadoClave").val("ModalChangeCa");
-  	$('#clave_contador').modal('show');
+  	/*$('#clave_contador').modal('show');
 		$('#titulo_clave').text('Contador General');
-		$('#TipoSuper').val('Contador');
+		$('#TipoSuper').val('Contador');*/
+		IngClave('Contador');
 
   	let Codigo3 = Codigo1+' - '+Cuenta;
   	let Producto = "Transacciones";
@@ -670,9 +672,10 @@
 
   function Cambiar_Valores(Cta, Cuenta_No, Debe, Haber, NomCtaSup, NoCheque, Asiento) {  	
   	$("#TipoProcesoLlamadoClave").val("ModalChangeValores");
-  	$('#clave_contador').modal('show');
+  	/*$('#clave_contador').modal('show');
 		$('#titulo_clave').text('Contador General');
-		$('#TipoSuper').val('Contador');
+		$('#TipoSuper').val('Contador');*/
+		IngClave('Contador');
   	;
   	let NomCta = $("#LabelConcepto").val();
   	let TP = $('#tipoc').val();

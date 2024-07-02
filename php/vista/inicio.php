@@ -241,11 +241,16 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 				require_once("facturacion/HistorialFacturas.php");
 				break;
 
+				
+			//Facturacion -> Archivo -> Facturacion de Distribucion
+			case 'factura_distribucion':
+			require_once("facturacion/facturas_distribucion.php");
+			break;
+				
 			//Facturacion -> Archivo -> Punto de venta
 			case 'punto_venta':
-				require_once("facturacion/punto_venta.php");
-				break;
-
+			require_once("facturacion/punto_venta.php");
+			break;
 			
 			//Facturacion -> Archivo -> Abonos Anticipados (CXP)
 			case 'AbonoAnticipado':
@@ -539,10 +544,11 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 				require_once("inventario/egreso_alimento2.php");
 				break;
 
-			//Inventario -> egreso de Productos -> registro beneficiarios
+			//Gestion Social -> egreso de Productos -> registro beneficiarios
 			case 'registro_beneficiario':
-				require_once("inventario/registro_beneficiario.php");
+				require_once("gestion_social/registro_beneficiario.php");
 				break;
+			
 			//Inventario  -> Reportes -> Lista productos
 			case 'CatalogoCtas':
 				require_once("inventario/Catalogo.php");

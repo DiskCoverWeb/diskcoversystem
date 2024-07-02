@@ -28,3 +28,19 @@
 <div class="form-contenedor" id="form-contenedor">
 
 </div>
+<div id="modalVistaArchivo" class="modal fade">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title" id="modVATitulo"></h4>
+			</div>
+			<div class="modal-body" style="height:70vh;margin:5px">
+				<iframe id="modVAFrame" src="" frameborder="0" style="height:100%; width:100%;"></iframe>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
+</div>
