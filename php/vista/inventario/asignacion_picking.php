@@ -4,7 +4,7 @@
 
   		 $('#beneficiario').on('select2:select', function (e) {
             var datos = e.params.data.data;//Datos beneficiario seleccionado
-	        $('#fechAten').val(datos.Fecha_Atencion);//Fecha de Atencion
+	        // $('#fechAten').val(datos.Fecha_Atencion);//Fecha de Atencion
 	        $('#tipoEstado').val(datos.Estado);//Tipo de Estado
 	        $('#tipoEntrega').val(datos.TipoEntega);//Tipo de Entrega
 	        $('#horaEntrega').val(datos.Hora); //Hora de Entrega
@@ -224,6 +224,29 @@
 		    }
 		});
   	}
+  	 function guardar() {
+    	codigo = $('#beneficiario').val();
+    	beneficiario = codigo.split('-');
+        var parametros = {
+            'beneficiario':beneficiario[0],
+            'tipo':beneficiario[1],
+            'fecha':$('#fechAten').val(),
+        }
+        $.ajax({
+            url: '../controlador/inventario/asignacion_pickingC.php?GuardarPicking=true',
+            type: 'POST',
+            dataType: 'json',
+            data: { parametros: parametros },
+            success: function (data) {
+            	Swal.fire("Picking Guardado","","success").then(function (){
+            		location.reload();
+            	})
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
 </script>
 <div class="row mb-2">
     <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
@@ -292,7 +315,7 @@
 				                                <i class="fa fa-calendar"></i>
 				                                <b>Fecha de Atención:</b>
 				                            </div>
-				                            <input type="date" name="fechAten" id="fechAten" class="form-control input-xs" readonly>
+				                            <input type="date" name="fechAten" id="fechAten" class="form-control input-xs" value="<?php echo date('Y-m-d');?>" readonly>
 				                        </div>
 				                    </div>
 				                </div>

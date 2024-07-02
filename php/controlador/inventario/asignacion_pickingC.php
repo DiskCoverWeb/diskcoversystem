@@ -46,10 +46,12 @@ if(isset($_GET['llenarCamposPoblacion'])){
     $valor = $_POST['valor'];
     echo json_encode($controlador->llenarCamposPoblacion($valor));
 }
-if(isset($_GET['GuardarAsignacion'])){
+*/
+if(isset($_GET['GuardarPicking'])){
     $parametros = $_POST['parametros'];
-    echo json_encode($controlador->GuardarAsignacion($parametros));
+    echo json_encode($controlador->GuardarPicking($parametros));
 }
+/*
 if(isset($_GET['tipo_asignacion'])){
     // $parametros = $_POST['parametros'];
     echo json_encode($controlador->tipo_asignacion());
@@ -93,7 +95,12 @@ class asignacion_pickingC
             $value['Dia_Ent']  = $dia[0];
             if($diaActual==$dia[1])
             {
-            	$lista[] = array('id'=>$value['Codigo'].'-'.$value['No_Hab'],'text'=>$value['Cliente'].' ('.$value['Tipo Asignacion'].')','data'=>$value);    	
+                //buscamos si el usuario ya genero en este dia pedidos para facturar
+                $datos = $this->modelo->cargar_asignacion($value['Codigo'],$value['No_Hab'],'F',date('Y-m-d'));
+                if(count($datos)==0)
+                {
+            	   $lista[] = array('id'=>$value['Codigo'].'-'.$value['No_Hab'],'text'=>$value['Cliente'].' ('.$value['Tipo Asignacion'].')','data'=>$value); 
+                }   	
             }	
     	}
     	return $lista;
@@ -211,11 +218,17 @@ class asignacion_pickingC
     {
 
         $Beneficiario = explode('-',$parametros['beneficiario']);
+        $stock = 0; 
+        
+        // print_r($parametros);die();
 
-        $cant_ing = $this->modelo->total_ingresados($Beneficiario[0],$parametros['CodigoInv']);
+        $cant_ing = $this->modelo->total_ingresados($Beneficiario[0],$parametros['CodigoInv'],$Beneficiario[1]);
         $cant_ing = $cant_ing[0]['Total'];
-        $stock = $this->modelo->listaAsignacion($Beneficiario[0],$T=false,$parametros['CodigoInv']);
-        $stock = $stock[0]['Cantidad'];
+        $stock = $this->modelo->listaAsignacion($Beneficiario[0],$T=false,$parametros['CodigoInv'],$Beneficiario[1]);
+        if(isset($stock[0]['Cantidad']))
+        {
+            $stock = $stock[0]['Cantidad'];
+        }
 
         // print_r($cant_ing);
         // print_r($stock);die();
@@ -237,6 +250,7 @@ class asignacion_pickingC
             SetAdoFields("Item",$_SESSION['INGRESO']['item']);
             SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
             SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+            SetAdoFields("T","P");
             
             return SetAdoUpdate();
         }else{ return -2; }
@@ -251,7 +265,7 @@ class asignacion_pickingC
     function cargar_asignacion($parametros)
     {        
         $Beneficiario = explode('-',$parametros['beneficiario']);
-        $datos = $this->modelo->cargar_asignacion($Beneficiario[0],$Beneficiario[1]);
+        $datos = $this->modelo->cargar_asignacion($Beneficiario[0],$Beneficiario[1],'P',date('Y-m-d'));
         $tbl = '';
         $total = 0;
         foreach ($datos as $key => $value) {
@@ -301,19 +315,21 @@ class asignacion_pickingC
         }
         return $lista;
     }
+    */
 
-    function GuardarAsignacion($parametros)
+    function GuardarPicking($parametros)
     {
         // print_r($parametros);die();
-        SetAdoAddNew('Detalle_Factura');
-        SetAdoFields('T','K');      
+        SetAdoAddNew('Trans_Comision');
+        SetAdoFields('T','F');      
        
         SetAdoFieldsWhere('CodigoU',$_SESSION['INGRESO']['CodigoU']);
         SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
         SetAdoFieldsWhere('Periodo',$_SESSION['INGRESO']['periodo']); 
         SetAdoFieldsWhere('CodigoC',$parametros['beneficiario']);  
         SetAdoFieldsWhere('Fecha',$parametros['fecha']);  
+        SetAdoFieldsWhere('Cta',$parametros['tipo']);  
         return SetAdoUpdateGeneric();
-    }*/
+    }
 
 }

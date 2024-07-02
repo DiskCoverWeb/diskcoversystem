@@ -266,7 +266,7 @@ function llenarDatos(datos) {
          // await tipoCompra();
         
        // $('#beneficiario').val(datos.Beneficiario);
-        $('#fechAten').val(datos.Fecha_Atencion);//Fecha de Atencion
+        // $('#fechAten').val(datos.Fecha_Atencion);//Fecha de Atencion
         $('#tipoEstado').val(datos.Estado);//Tipo de Estado
         $('#tipoEntrega').val(datos.TipoEntega);//Tipo de Entrega
         $('#horaEntrega').val(datos.Hora); //Hora de Entrega
@@ -598,7 +598,7 @@ function llenarDatos(datos) {
                                 <i class="fa fa-calendar"></i>
                                 <b>Fecha de Atención:</b>
                             </div>
-                            <input type="date" name="fechAten" id="fechAten" class="form-control input-xs">
+                            <input type="date" name="fechAten" id="fechAten" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">
                         </div>
                     </div>
                 </div>

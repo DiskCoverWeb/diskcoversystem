@@ -29,7 +29,8 @@ class asignacion_pickingM
 			LEFT JOIN Catalogo_Proceso CP6 ON CD.Tipo_Dato= CP6.Cmds 
 			LEFT JOIN Catalogo_Proceso CP7 ON DF.No_Hab= CP7.Cmds 
 			WHERE DF.Item = '".$_SESSION['INGRESO']['item']."'
-			AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+			AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+            AND DF.Fecha = '".date('Y-m-d')."'";
 			if($codigo)
 			{
 				$sql.=" CodigoC+' '+ = like '%".$codigo."%'";
@@ -101,13 +102,18 @@ class asignacion_pickingM
         return $this->db->String_Sql($sql);
     }
 
-    function cargar_asignacion($bene,$tipo)
+    function cargar_asignacion($bene,$tipo,$T,$fecha=false)
     {
         $sql = "SELECT TC.ID,TC.Fecha,TC.Fecha_C,A.Nombre_Completo,TC.Total,TC.CodBodega
                 FROM Trans_Comision TC
                 INNER JOIN Accesos A ON TC.CodigoU = A.Codigo
                 WHERE CodigoC = '".$bene."'
-                AND Cta = '".$tipo."'";
+                AND Cta = '".$tipo."'
+                AND T = '".$T."'";
+                if($fecha)
+                {
+                    $sql.=" AND Fecha = '".$fecha."'";
+                }
                 // print_r($sql);die();
         return $this->db->datos($sql);    
     }

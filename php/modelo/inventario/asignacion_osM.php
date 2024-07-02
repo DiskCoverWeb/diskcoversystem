@@ -72,7 +72,8 @@ class asignacion_osM
                 FROM Detalle_Factura
                 WHERE Item = '".$_SESSION['INGRESO']['item']."' 
                 AND Periodo='".$_SESSION['INGRESO']['periodo']."'
-                AND CodigoC = '".$beneficiario."'";
+                AND CodigoC = '".$beneficiario."'
+                AND Fecha = '".date('Y-m-d')."'";
                 if($T)
                 {
                     $sql.="AND T = '".$T."'";
