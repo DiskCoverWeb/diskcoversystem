@@ -69,7 +69,8 @@ class reindexarC
 		        $tablaHTML[$pos]['tipo'] ='N';
 		        $pos = $pos+1;
 			}
-		}		
+		}
+		$this->Eliminar_Tabla_Temporal();		
 	    excel_generico($titulo='INFOMRACION DE ERRORES',$tablaHTML);
 	}
 
@@ -99,6 +100,7 @@ class reindexarC
 				}
 			}
 
+			$this->Eliminar_Tabla_Temporal();
 			// $this->pdf->cabecera_reporte_MC('PLAN DE CUENTAS',$tablaHTML,$contenido=false,$image=false,'','',9,true,25);
 			$this->pdf->cabecera_reporte_MC($titulo=false,$tablaHTML,$contenido=false,$image=false,$Fechaini=false,$Fechafin=false,9,true,15,'P',true,null,1);
 		}
