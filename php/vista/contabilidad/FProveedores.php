@@ -455,9 +455,9 @@ function limpiar_t()
                     <input type="text" id="txt_email2" name="txt_email2" class="form-control input-sm">  
                   </div> 
                   <div class="col-sm-4 col-xs-4">
-                    <b>Tipo Prov. Y Parte Relac.</b> 
                     <div class="row">
-                        <div class="col-sm-9">
+                        <div class="col-sm-8">
+                        <b>Tipo Proveedor</b> 
                             <select class="form-control input-xs" id="CTipoProv" name="CTipoProv">
                                 <option value="">Seleccione</option>
                                 <option value="00">OTROS</option>
@@ -465,7 +465,8 @@ function limpiar_t()
                                 <option value="02">SOCIENDAD</option>
                             </select>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
+                            <b>Parte Relacionada</b>
                             <select class="form-control input-xs" id="CParteR" name="CParteR">
                                 <option value="NO">NO</option>
                                 <option value="SI">SI</option>
