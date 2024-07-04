@@ -26,9 +26,22 @@
                 $('#txt_direccion').val(ui.item.dir); // save selected id to input
                 $('#txt_telefono').val(ui.item.tel); // save selected id to input
                 $('#txt_email').val(ui.item.email); // save selected id to input
-                $('#txt_email2').val(ui.item.email2); // save selected id to input
-                $('#txt_actividad').val(ui.item.Actividad); // save selected id to input
-                $('#txt_ejec').val(ui.item.Cod_Ejec); // save selected id to input
+                $('#txt_email2').val(ui.item.email2); // save selected id to 
+                $('#txt_ejec').val(ui.item.Cod_Ejec)
+                $('#CParteR').val(ui.item.Parte_Relacionada)
+
+                $("#txt_actividad option").filter(function() {
+                    return $(this).text() === ui.item.Actividad;
+                }).prop('selected', true);
+
+                
+                 $("#CTipoProv").val(ui.item.Tipo_Pasaporte);
+
+
+               // $('#txt_actividad').val(ui.item.Actividad); // save selected id to input
+                // $('#txt_ejec').val(ui.item.Cod_Ejec); // save selected id to input
+                // $('#txt_actividad').val();
+                // $('#CTipoProv').val();
                 cargar_sucursales();
                 return false;
             },
@@ -64,8 +77,18 @@
                 $('#txt_telefono').val(ui.item.tel); // save selected id to input
                 $('#txt_email').val(ui.item.email); // save selected id to input
                 $('#txt_email2').val(ui.item.email2); // save selected id to input
-                $('#txt_actividad').val(ui.item.Actividad); // save selected id to input
-                $('#txt_ejec').val(ui.item.Cod_Ejec); // save selected id to input
+                $('#txt_ejec').val(ui.item.Cod_Ejec)
+
+                  $("#txt_actividad option").filter(function() {
+                    return $(this).text() === ui.item.Actividad;
+                }).prop('selected', true);
+;
+                $('#CParteR').val(ui.item.Parte_Relacionada)
+
+                 $("#CTipoProv").val(ui.item.Tipo_Pasaporte);
+
+                // $('#txt_actividad').val(ui.item.Actividad); // save selected id to input
+                // $('#txt_ejec').val(ui.item.Cod_Ejec); // save selected id to input
                 cargar_sucursales();
                 return false;
             },
@@ -202,7 +225,7 @@ function limpiar_t()
      
      $('#myModal_espera').modal('show');
      var datos =  $("#form_nuevo_proveedor").serialize();
-     datos = datos+'&actividad='+$('#txt_actividad option:selected').text()
+     datos = datos+'&actividad='+$('#txt_actividad option:selected').text()+'&CTipoProv='+$('#CTipoProv').val()
      $.ajax({
       data:  datos,
       url:   '../controlador/farmacia/articulosC.php?proveedor_nuevo=true',
@@ -304,6 +327,11 @@ function limpiar_t()
   function validar_sri()
   {
     var ci = $('#txt_ruc').val();
+    if(ci.length<10)
+    {
+        Swal.fire("","","info");
+        return false;
+    }
     if(ci!='')
     {
       url = 'https://srienlinea.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos2.jspa?accion=siguiente&ruc='+ci
@@ -450,7 +478,7 @@ function limpiar_t()
                     <div class="col-sm-12 text-right">
                         <br>
                         <button type="button" class="btn btn-sm btn-primary" onclick="guardar_proveedor()">Guardar</button>
-                        <button type="button" class="btn btn-sm btn-default" onclick="cerrar()">Cerrar</button>
+                        <a type="button" class="btn btn-sm btn-default" href="../vista/inicio.php?mod='<?php echo $_SESSION['INGRESO']['modulo_']; ?>'">Cerrar</a>
                     </div>
                 </div>
                 <div class="row" id="pnl_sucursal" style="display:none">

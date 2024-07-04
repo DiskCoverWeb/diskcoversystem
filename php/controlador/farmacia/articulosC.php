@@ -1012,7 +1012,7 @@ function eliminar_factura($parametros)
 		// print_r($datos);die();
 		$result = array();
 		foreach ($datos as $key => $value) {
-			 $result[] = array("value"=>$value['ID'],"label"=>$value['Cliente'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'email2'=>$value['Email2'],'CI'=>$value['CI_RUC'],'Actividad'=>$value['Actividad'],'Cod_Ejec'=>$value['Cod_Ejec']);
+			 $result[] = array("value"=>$value['ID'],"label"=>$value['Cliente'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'email2'=>$value['Email2'],'CI'=>$value['CI_RUC'],'Actividad'=>$value['Actividad'],'Cod_Ejec'=>$value['Cod_Ejec'],'Parte_Relacionada'=>$value['Parte_Relacionada'],'Tipo_Pasaporte'=>$value['Tipo_Pasaporte']);
 		}
 		return $result;
 	}
@@ -1023,7 +1023,7 @@ function eliminar_factura($parametros)
 		// print_r($datos);die();
 		$result = array();
 		foreach ($datos as $key => $value) {
-			 $result[] = array("value"=>$value['ID'],"label"=>$value['CI_RUC'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'email2'=>$value['Email2'],'Nombre'=>$value['Cliente'],'Actividad'=>$value['Actividad'],'Cod_Ejec'=>$value['Cod_Ejec']);
+			 $result[] = array("value"=>$value['ID'],"label"=>$value['CI_RUC'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'email2'=>$value['Email2'],'Nombre'=>$value['Cliente'],'Actividad'=>$value['Actividad'],'Cod_Ejec'=>$value['Cod_Ejec'],'Parte_Relacionada'=>$value['Parte_Relacionada'],'Tipo_Pasaporte'=>$value['Tipo_Pasaporte']);
 		}
 		return $result;
 	}
