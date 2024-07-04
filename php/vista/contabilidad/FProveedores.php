@@ -217,6 +217,11 @@ function limpiar_t()
    {
      abre = $('#txt_ejec').val();
      console.log(abre);
+     if($('#guardar_proveedor').val()=='' || $('#guardar_proveedor').val()==null)
+     {
+        Swal.fire("Seleccione tipo de proveedor","","info");
+        return false;
+     }
      if(abre.length >5 || abre=='.' || abre=='' || abre.length <2)
      {
          Swal.fire('Abreviatura incorrecta ','Asegurese de colocar una abreviatura mayor a 2 digitos y menor o igual 5 digitos y diferente de punto (.)','info')
@@ -458,7 +463,7 @@ function limpiar_t()
                         <div class="col-sm-8">
                         <b>Tipo Proveedor</b> 
                             <select class="form-control input-xs" id="CTipoProv" name="CTipoProv">
-                                <option value="00">OTROS</option>
+                                <option value="00" selected >OTROS</option>
                                 <option value="01">PERSONA NATURAL</option>
                                 <option value="02">SOCIENDAD</option>
                             </select>
