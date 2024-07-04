@@ -217,7 +217,7 @@ function limpiar_t()
    {
      abre = $('#txt_ejec').val();
      console.log(abre);
-     if($('#guardar_proveedor').val()=='' || $('#guardar_proveedor').val()==null)
+     if($('#txt_actividad').val()=='' || $('#txt_actividad').val()==null)
      {
         Swal.fire("Seleccione tipo de proveedor","","info");
         return false;
