@@ -263,7 +263,8 @@ function limpiar_t()
 
   function cerrar()
   {
-     window.parent.postMessage('closeModal', '*');
+     //window.parent.postMessage('closeModal', '*');;
+     location.href = window.location.pathname + '?mod=03';
   }
   function validar_abrev()
   {
