@@ -428,7 +428,6 @@ function limpiar_t()
                     <div class="col-sm-9 col-xs-6">
                         <b>Tipo de proveedor / Donante</b>
                         <select class="form-control input-xs" id="txt_actividad" name="txt_actividad">
-                            <option value="">Seleccione</option>
                         </select>
                         <!-- <input type="" name="txt_actividad" id="txt_actividad" class="form-control input-sm form-select"  onkeyup="mayusculasevent(this)"> -->
                     </div>          
@@ -459,7 +458,6 @@ function limpiar_t()
                         <div class="col-sm-8">
                         <b>Tipo Proveedor</b> 
                             <select class="form-control input-xs" id="CTipoProv" name="CTipoProv">
-                                <option value="">Seleccione</option>
                                 <option value="00">OTROS</option>
                                 <option value="01">PERSONA NATURAL</option>
                                 <option value="02">SOCIENDAD</option>
