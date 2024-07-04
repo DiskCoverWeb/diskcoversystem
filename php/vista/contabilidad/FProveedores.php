@@ -465,7 +465,7 @@ function limpiar_t()
                                 <option value="02">SOCIENDAD</option>
                             </select>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-4" style="padding: 0px;">
                             <b>Parte Relacionada</b>
                             <select class="form-control input-xs" id="CParteR" name="CParteR">
                                 <option value="NO">NO</option>
