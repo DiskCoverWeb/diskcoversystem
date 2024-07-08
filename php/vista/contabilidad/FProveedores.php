@@ -465,7 +465,7 @@ function limpiar_t()
                             <select class="form-control input-xs" id="CTipoProv" name="CTipoProv">
                                 <option value="00" selected >OTROS</option>
                                 <option value="01">PERSONA NATURAL</option>
-                                <option value="02">SOCIENDAD</option>
+                                <option value="02">SOCIEDAD</option>
                             </select>
                         </div>
                         <div class="col-sm-4" style="padding-left: 0px;">
