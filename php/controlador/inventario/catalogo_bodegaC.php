@@ -4,8 +4,30 @@ include(dirname(__DIR__,2).'/modelo/inventario/catalogo_bodegaM.php');
 $controlador = new catalogo_bodegaC();
 
 if (isset($_GET['GuardarProducto'])) {
-    $parametros = $_POST['parametros'];
-    echo json_encode($controlador->GuardarProducto($parametros));
+    $parametros = $_POST;
+    
+    // Verifica si se ha subido un archivo
+    if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+        $localFilePath  = $_FILES['imagen'];
+        $carpetaDestino = dirname(__DIR__, 3) . "/img/png/";
+        $nombreArchivoDestino = $carpetaDestino . $parametros['picture'] . '.png';//Destino temporal para guardar el archivo
+
+        /*if (!is_dir($carpetaDestino)) {
+            // Intentar crear la carpeta, el 0777 es el modo de permiso más permisivo
+            if (!mkdir($carpetaDestino, 0777, true)) { // true permite la creación de estructuras de directorios anidados
+                throw new Exception("No se pudo crear la carpeta");
+            }
+        }*/
+
+        if (move_uploaded_file($localFilePath['tmp_name'], $nombreArchivoDestino)) {
+            echo json_encode($controlador->GuardarProducto($parametros));
+        } else {
+            throw new Exception("No se pudo guardar el archivo en el servidor");
+        }
+    
+    } else {
+        throw new Exception("Error al subir el archivo");
+    }
 }
 
 if (isset($_GET['ListaProductos'])) {
@@ -19,8 +41,38 @@ if (isset($_GET['EliminarProducto'])) {
 }
 
 if (isset($_GET['EditarProducto'])) {
-    $parametros = $_POST['parametros'];
-    echo json_encode($controlador->EditarProducto($parametros));
+    $parametros = $_POST;
+    
+    // Verifica si se ha subido un archivo
+    if (isset($_FILES['imagen'])) {
+        if($_FILES['imagen']['error'] !== UPLOAD_ERR_OK){
+            throw new Exception("Error al subir el archivo");
+        }
+        $localFilePath  = $_FILES['imagen'];
+        $carpetaDestino = dirname(__DIR__, 3) . "/img/png/";
+        $nombreArchivoDestino = $carpetaDestino . $parametros['picture'] . '.png';//Destino temporal para guardar el archivo
+        /*if (!is_dir($carpetaDestino)) {
+            // Intentar crear la carpeta, el 0777 es el modo de permiso más permisivo
+            if (!mkdir($carpetaDestino, 0777, true)) { // true permite la creación de estructuras de directorios anidados
+                throw new Exception("No se pudo crear la carpeta");
+            }
+        }*/
+
+        if (move_uploaded_file($localFilePath['tmp_name'], $nombreArchivoDestino)) {
+            echo json_encode($controlador->EditarProducto($parametros));
+        } else {
+            throw new Exception("No se pudo guardar el archivo en el servidor");
+        }
+    
+    } else {
+        $ruta = dirname(__DIR__, 3).'/img/png/';
+        
+        if(rename($ruta . $parametros['srcAnt'], $ruta . $parametros['picture'] . '.png')){
+            echo json_encode($controlador->EditarProducto($parametros));
+        }else {
+            throw new Exception("No se pudo actualizar el archivo");
+        }
+    }
 }
 
 if (isset($_GET['ListaEliminar'])) {
@@ -36,6 +88,36 @@ if(isset($_GET['ListaTipoProcesosGeneralesAux'])){
     $parametros = $_POST['parametros'];
     echo json_encode($controlador->ListaTipoProcesosGeneralesAux($parametros));
 
+}
+
+if(isset($_GET['SubirImagenTemp'])){
+    $localFilePath  = $_FILES['imagen'];
+    $carpetaDestino = dirname(__DIR__, 3) . "/TEMP/catalogo_procesos/";
+    $nombreArchivoDestino = $carpetaDestino . basename($localFilePath['name']);//Destino temporal para guardar el archivo
+    
+    // Verifica si se ha subido un archivo
+    if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+
+        if (!is_dir($carpetaDestino)) {
+            // Intentar crear la carpeta, el 0777 es el modo de permiso más permisivo
+            if (!mkdir($carpetaDestino, 0777, true)) { // true permite la creación de estructuras de directorios anidados
+                throw new Exception("No se pudo crear la carpeta");
+            }
+        }
+
+        if (move_uploaded_file($localFilePath['tmp_name'], $nombreArchivoDestino)) {
+            $respuesta = array(
+                "res" => 1,
+                "imagen" => $localFilePath['name']
+            );
+            echo json_encode($respuesta);
+        } else {
+            throw new Exception("No se pudo guardar el archivo en el servidor");
+        }
+    
+    } else {
+        throw new Exception("Error al subir el archivo");
+    }
 }
 
 class catalogo_bodegaC
