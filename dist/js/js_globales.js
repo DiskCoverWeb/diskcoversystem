@@ -610,3 +610,7 @@ function DCPorcenIva(idFecha, idSelect){
 	});
 
 }
+
+function truncarValor(num) {
+    return Math.floor(num * 100) / 100;
+}

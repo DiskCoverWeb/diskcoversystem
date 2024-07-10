@@ -1,1 +1,0 @@
-Codigo;Fecha;RUC_Fideicomiso;TD;Monto_BeneficioT;Monto_BeneficioI;TP;Numero;Comprobante;Item;CodigoU;X;ID

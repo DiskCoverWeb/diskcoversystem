@@ -1,1 +1,0 @@
-Codigo;Empleado;SUELDO;HORAS_EXT;Com_po_pa;Suelos_Sal_1;Com_1;Suelos_Sal;Com_2;Com_3;Bon;Otr_in;Otr_In_Re;I_E_Emp;Item

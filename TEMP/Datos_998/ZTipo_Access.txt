@@ -1,1 +1,0 @@
-TSiNo;TByte;TEntero;Largo;TSimple;TDouble;TMoneda;TDecimal;TIddeReplica;TAutonumerico;TMemo;TTexto;TFechaHora;ID

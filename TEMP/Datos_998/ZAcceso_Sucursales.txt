@@ -1,1 +1,0 @@
-Item;Sucursal;No_ATS;X;ID

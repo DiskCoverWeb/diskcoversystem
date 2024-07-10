@@ -1,3 +1,0 @@
-T;Cta;Sector;TP;ME;Tasa;Credito_No;Cuenta_No;Meses;Dia;Fecha;Interes;Capital;Pagos;Saldo_Pendiente;Plazo;Patrimonio;Encaje;No_Venc;Fecha_C;Numero;Atencion;CodigoU;CodigoE;Item;Cuota_Actual;X;ID
-^N^;^4.1.01.01.01^;^.^;^MENS^;0;0.0;^.-0000004^;^1791239725^;1;0;^Oct 29 2021 12:00AM^;.0000;.0000;.0000;.0000;0;.0000;.0000;0;^Oct 29 2021 12:00AM^;0;^.^;^0702164179^;^1719234385^;^998^;0;^.^;1
-^N^;^4.1.01.01.01^;^.^;^MENS^;0;0.0;^.-0000008^;^.^;1;0;^Oct 29 2021 12:00AM^;.0000;54.2560;54.2600;.0000;0;.0000;.0000;0;^Oct 29 2021 12:00AM^;25;^^;^0702164179^;^1718332248^;^998^;0;^.^;2

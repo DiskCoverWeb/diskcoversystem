@@ -1,1 +1,0 @@
-T;TC;Fecha;Serie;Factura;Anio;Mes;Detalle;Cargos;Abonos;Saldo;CodigoC;CodigoU;Item;X;ID

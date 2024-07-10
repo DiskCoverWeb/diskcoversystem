@@ -1,1 +1,0 @@
-T;Periodo;Item;CodigoU;Codigo;CC1;CC2;Asunto;Atencion;Fecha;Hora;Texto_Memo;Numero;X;ID

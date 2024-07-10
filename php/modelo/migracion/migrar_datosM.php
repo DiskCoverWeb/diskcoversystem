@@ -24,17 +24,7 @@ class migrar_datosM
 	{
 			set_time_limit(0);
 	    	ini_set('memory_limit', '1024M');
-	    If(!file_exists('c:/DatosTbl/'))
-	   	{
-	   		mkdir('c:/DatosTbl/',0777,true);
-	   	}
-	   	If(!file_exists('c:/DatosTbl/TABLAS/'))
-	   	{
-	   		mkdir('c:/DatosTbl/TABLAS/',0777,true);
-	   	}
-
-
-	   	$respuesta = 1;
+	  	  $respuesta = 1;
 	    
 	      $usuario = $_SESSION['INGRESO']['Usuario_DB'];
 	      $password = $_SESSION['INGRESO']['Password_DB'];  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
@@ -59,82 +49,67 @@ class migrar_datosM
 
 
 
+	    $contenido = '';
 	    foreach ($tablas_base as $key => $value) 
 	    {
-
-	    		//buscamos las cabeceras de las tablas
-	       		$sql2 = "SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH
-	                 FROM INFORMATION_SCHEMA.COLUMNS 
-	                 WHERE TABLE_NAME ='" . $value['TABLE_NAME'] . "'"; 
-	        	$cabeceras_tabla = $this->db->datos($sql2);
-
-		        $select_query = '';
-		        foreach ($cabeceras_tabla as $key2 => $value2) 
-		        {
-		                $tipoCampo = $value2['DATA_TYPE'];
+		    	$sql = 'SELECT Count(*) as total FROM '.$value['TABLE_NAME'];
+		    	$datos =  $this->db->datos($sql);
+		    	$query_select = '';
+		    	if($datos[0]['total']>0)
+		    	{
+		    		$contenido.='REPLACE INTO `'.$value['TABLE_NAME'].'` (';
+		    		//buscamos las cabeceras de las tablas
+		       		$sql2 = "SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH
+		                 FROM INFORMATION_SCHEMA.COLUMNS 
+		                 WHERE TABLE_NAME ='" . $value['TABLE_NAME'] . "'"; 
+		        	$cabeceras_tabla = $this->db->datos($sql2);
+		        	foreach ($cabeceras_tabla as $key2 => $value2) {
+		        		$contenido.="`".$value2['COLUMN_NAME']."`,";
+		        		 $tipoCampo = $value2['DATA_TYPE'];
 		                switch ($tipoCampo) {
 		                    case 'char':
 		                    case 'nvarchar':
 		                    case 'varchar':
 		                    case 'datetime':
-		                        $select_query.="CONCAT('^',".$value2['COLUMN_NAME'].",'^') as ".$value2['COLUMN_NAME'].",";        
+		                        $query_select.="CONCAT('''',".$value2['COLUMN_NAME'].",'''') +',' ,";        
 		                        break;
 		                    default:
-		                        $select_query.=$value2['COLUMN_NAME'].',';     
+		                        $query_select.=$value2['COLUMN_NAME'].',';     
 		                        break;
 		                }
-		        }
-
-		        $select_query = substr($select_query,0,-1);
-		        $query = 'SELECT '.$select_query.' FROM '.$value['TABLE_NAME'];
-
-		        $query2 = "SELECT COUNT(*) AS NUM FROM " . $value['TABLE_NAME'];
-		        $canti  = $this->db->datos($query2);
-
-	        	$outputFile = $link."/Z".$value['TABLE_NAME'].".txt";
-
-	        	$command = "sqlcmd -S $serverName -d " . $connectionOptions['Database'] . " -U " . $connectionOptions['Uid'] . " -P " . $connectionOptions['PWD'] . " -Q \"$query\" -o \"$outputFile\" -s\",\" -W";
-	        	// print_r($command);die();
-	        	exec($command, $output, $returnVar);
-		        if ($returnVar === 0) 
-		        {
-		             // Leer el archivo generado y reemplazar las comas por puntos y comas
-		            $fileContent = file_get_contents($outputFile);
-		            $fileContent = str_replace(',', ';', $fileContent);
-		            file_put_contents($outputFile, $fileContent);
+		        	}
+		        	$contenido = substr($contenido,0,-1);		        	
+		        	$query_select = substr($query_select,0,-1);
+		        	$contenido.=") VALUES". PHP_EOL;
 
 
-		          $ruta_archivo = $outputFile;
-		          $cantidad = $canti[0]['NUM']+3;
-		          $num_lineas_eliminar = [2,$cantidad,$cantidad+1,$cantidad+2,$cantidad+3];
+		        	$sql2 = "SELECT CONCAT( ".$query_select." ) as linea FROM ".$value['TABLE_NAME'];
+			        $datos2  = $this->db->datos($sql2);
 
-						// Nombre del archivo temporal
-						$archivo_temporal = 'temp.txt';
-						$archivo_lectura = fopen($ruta_archivo, 'r');
-						$archivo_escritura = fopen($archivo_temporal, 'w');
-						$linea_actual = 1;
+			        foreach ($datos2 as $key3 => $value3) {
+			        	$contenido.="(".$value3['linea']."),". PHP_EOL;;
+			        }
 
-						// Copiar todas las líneas excepto las que deseas eliminar al archivo temporal
-						while (($linea = fgets($archivo_lectura)) !== false) {
-						    if (!in_array($linea_actual, $num_lineas_eliminar)) {
-						        fwrite($archivo_escritura, $linea);
-						    }
-						    $linea_actual++;
-						}
+			        $contenido = rtrim($contenido, "\r\n");
+		        	$contenido = substr($contenido,0,-1);	
+		        	$contenido = $contenido.';'. PHP_EOL;
 
-					// Cerrar los archivos
-					fclose($archivo_lectura);
-					fclose($archivo_escritura);
 
-					// Reemplazar el archivo original con el archivo temporal
-					rename($archivo_temporal, $ruta_archivo);
+		        	$contenido.= "-- Volcando datos para la tabla ".$_SESSION['INGRESO']['Base_Datos'].".".$value['TABLE_NAME']. PHP_EOL;
 
-		        }else
-		        {
-		           $respuesta = -1;
-		        } 
+		    	}
 
 	    }
+
+	    $outputFile = $link."/Migracion_".$_SESSION['INGRESO']['item'].".sql";
+		if (file_put_contents($outputFile, $contenido) !== false) {
+		    echo "Archivo creado y datos escritos con éxito.";
+		    die();
+		} else {
+		    echo "Error al escribir en el archivo.";
+		}
+
+
 
 	    return $respuesta;
 

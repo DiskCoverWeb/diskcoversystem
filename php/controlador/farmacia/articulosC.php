@@ -553,12 +553,12 @@ class articulosC
 		   SetAdoFields('TC','P');
 		   SetAdoFields('VALOR_TOTAL',number_format($parametro['txt_total'],4,'.',''));
 		   SetAdoFields('CANTIDAD',$parametro['txt_canti']);
-		   SetAdoFields('VALOR_UNIT',number_format($parametro['txt_precio'],7,'.',''));
+		   SetAdoFields('VALOR_UNIT',number_format($parametro['txt_precio'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
 		   //round($parametro['txt_precio'],2,PHP_ROUND_HALF_DOWN);
 		   SetAdoFields('DH',1);
 		   SetAdoFields('CONTRA_CTA',$pro);
 		   SetAdoFields('ORDEN',$parametro['txt_num_fac']);
-		   SetAdoFields('IVA',number_format($parametro['txt_iva'],4,'.',''));
+		   SetAdoFields('IVA',number_format($parametro['txt_iva'],$_SESSION['INGRESO']['Dec_IVA'],'.',''));
 		   SetAdoFields('Fecha_Fab',$parametro['txt_fecha_ela']);		   
 		   SetAdoFields('Fecha_Exp',$parametro['txt_fecha_exp']);		   
 		   SetAdoFields('Reg_Sanitario',$parametro['txt_reg_sani']);		   

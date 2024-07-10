@@ -1,1 +1,0 @@
-Retencion_No;Cta;Fecha;Valor_Fact;Porc;Valor_Ret;Item;Codigo;TD;FechaE;Autorizacion;Serie;Secuencial;IdenCT;BImpotcero;MontoICE;MontoIVA1;PorRetIVA1;MontoRetIVA1;MontoIVA2;PorRetIVA2;MontoRetIVA2;CodigoTR;Aduana;TT;Dev;CodigoU;SerieEx;CodST;Cambio;ConvInt;CodPorc;Fecha_Efec;FechaA;Comprobante;RetICE;CPorcICE;SCT;FechaC;T_No;NumeroR;Cta1;Valor_IVA

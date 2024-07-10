@@ -1,1 +1,0 @@
-Periodo;ME;Numero;Fecha;Beneficiario;Codigo;Cta;Concepto;Ingreso;Egreso;Saldo;TC;Item;X;CodigoC;Contra_Cta;IVA;CodRet;Serie;Secuencial;Autorizacion;TD;ID

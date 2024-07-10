@@ -1,1 +1,0 @@
-Periodo;Item;CodigoC;Fecha;TP;Serie;Factura;Autorizacion;Tipo_Cta;Abono;HABIT;Cta;Comprobante;CodigoU

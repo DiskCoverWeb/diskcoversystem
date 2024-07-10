@@ -1,1 +1,0 @@
-Alumno;N_1er;N_2do;N_3er;N_4to;N_5to;N_6to;N_7mo;N_8vo;N_9no;N_10mo;Total;Promedio;Notas;Trabajo;Investigacion;Evaluacion;Codigo;Cedula;CodigoU;Item;Id_No

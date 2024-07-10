@@ -1,1 +1,0 @@
-Id_No;Alumno;Bim1;Bim2;Bim3;ConductaQ1;ConductaQ2;ConductaQ3;Supletorio;Remedial;Nota_Grado;TAI;AIC;AGC;LECCIONES;EXAMEN;Examen_Q;FALTAS_J;FALTAS_I;ATRASOS;Codigo;CodigoU;CodMat;Profesor;Item

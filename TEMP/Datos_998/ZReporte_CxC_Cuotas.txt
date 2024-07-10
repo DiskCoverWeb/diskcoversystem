@@ -1,1 +1,0 @@
-No;Cliente;CxC_2023;SubTotal;Anticipos;Abonos;Total;Detalle_Grupo;GrupoNo;Codigo;CodigoU;Item;E

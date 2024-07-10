@@ -1,6 +1,0 @@
-X;Codigo;ES;Fecha;Hora;Tarea;Item;CodigoU;Periodo;Proceso;Credito_No;ID
-^.^;^SETEOS^;^N^;^Jun  4 2012 12:00AM^;^09:46:51^;^Salio del Sistema^;^998^;^1714971585^;^.^;^.^;^.^;1
-^.^;^UPDATE^;^M^;^Aug 16 2016 12:00AM^;^11:47:00^;^diskcoversystem@msn.com^;^000^;^ACCESO01^;^.^;^Posible error : error en el nombre de usuario; o en el passw^;^.^;2
-^.^;^UPDATE^;^M^;^Aug 16 2016 12:00AM^;^11:47:00^;^diskcover@msn.com^;^000^;^ACCESO01^;^.^;^Posible error : error en el nombre de usuario; o en el passw^;^.^;3
-^.^;^UPDATE^;^M^;^Aug 16 2016 12:00AM^;^11:47:00^;^diskcover@msn.com^;^000^;^ACCESO01^;^.^;^Posible error : error en el nombre de usuario; o en el passw^;^.^;4
-^.^;^UPDATE^;^Q^;^Aug 16 2016 12:00AM^;^11:47:02^;^Salir Modulo de Update^;^000^;^ACCESO01^;^.^;^.^;^.^;5

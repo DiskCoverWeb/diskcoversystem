@@ -1,1 +1,0 @@
-Codigo;Beneficiario;TD;RUC_CI;Item;ID
