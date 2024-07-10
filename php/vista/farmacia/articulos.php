@@ -623,8 +623,15 @@
 
        let iva = parseFloat($('#txt_iva').val()); 
        $('#txt_subtotal').val(subT.toFixed(2));
+       num_dec = contarDecimales(iva_valor);
+       if(num_dec>=4)
+       {       
+          $('#txt_iva').val((truncarValor(iva_valor)).toFixed(2));
        $('#txt_total').val((truncarValor(total)).toFixed(2));
-       $('#txt_iva').val((truncarValor(iva_valor)).toFixed(2));
+       }else{        
+          $('#txt_iva').val(iva_valor.toFixed(2));
+          $('#txt_total').val((total).toFixed(2));
+       }
 
      }else
      {
