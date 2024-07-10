@@ -223,7 +223,9 @@ class articulosM
 	function iva_comprobante($orden,$proveedor)
 	{
 		$cid = $this->conn;
-		$sql = "SELECT ROUND(SUM(IVA),2,0) as 'IVA' FROM Asiento_K  WHERE Item = '".$_SESSION['INGRESO']['item']."' AND ORDEN = '".$orden."'  AND SUBCTA = '".$proveedor."' AND DH = '1' ";
+		$sql = "SELECT ROUND(SUM(IVA),4,0) as 'IVA' FROM Asiento_K  WHERE Item = '".$_SESSION['INGRESO']['item']."' AND ORDEN = '".$orden."'  AND SUBCTA = '".$proveedor."' AND DH = '1' ";
+
+		// print_r($sql);die();
 		
 	  $datos = $this->conn->datos($sql);
        return $datos;
