@@ -623,8 +623,8 @@
 
        let iva = parseFloat($('#txt_iva').val()); 
        $('#txt_subtotal').val(subT.toFixed(2));
-       $('#txt_total').val(total.toFixed(2));
-       $('#txt_iva').val((iva_valor).toFixed(2));
+       $('#txt_total').val(total.toFixed(4));
+       $('#txt_iva').val((iva_valor).toFixed(4));
 
      }else
      {
