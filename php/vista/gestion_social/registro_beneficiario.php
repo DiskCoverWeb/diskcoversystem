@@ -418,7 +418,7 @@
                             </div>
 
                             <div style="flex: 1; margin-right: 10px;">
-                                <label for="select_87" style="display: block;">Estado</label>
+                                <label for="select_87" style="display: initial;">Estado</label>
                                 <select class="form-control input-xs" name="select_87" id="select_87"
                                     style="width: 100%;"></select>
                             </div>
@@ -4551,6 +4551,7 @@
     $('#cliente').on('select2:select', function (e) {
         LimpiarPanelOrgSocialAdd();
         var data = e.params.data;
+        console.log(data);
         miCodigo = data.id;
         miRuc = data.CI_RUC;
         miCliente = data.text;
@@ -4599,6 +4600,7 @@
             dataType: 'json',
             data: { valor: Codigo },
             success: function (datos) {
+                console.log(datos);
                 if (datos != 0) {
                     actualizarEstilo();
 
@@ -4637,14 +4639,14 @@
                         $('#select_87').val(null).trigger('change');
                         $('#carouselBtnIma_87').carousel("cycle");
                     }
-                    if (datos.TB == '.') {
-                        $('#select_93').val(null).trigger('change');
-                        $('#carouselBtnIma_93').carousel("cycle");
-                    }
-                    if (datos.Calificacion == '.') {
-                        $('#select_CxC').val(null).trigger('change');
-                        $('#carouselBtnImaDon').carousel("cycle");
-                    }
+                    // if (datos.TB == '.') {
+                    //     $('#select_93').val(null).trigger('change');
+                    //     $('#carouselBtnIma_93').carousel("cycle");
+                    // }
+                    // if (datos.Calificacion == '.') {
+                    //     $('#select_CxC').val(null).trigger('change');
+                    //     $('#carouselBtnImaDon').carousel("cycle");
+                    // }
 
 
                     if (datos.Dia_Ent == '.') {
