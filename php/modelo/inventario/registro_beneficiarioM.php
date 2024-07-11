@@ -274,7 +274,7 @@ class registro_beneficiarioM
         $sql .= " WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Codigo = '" . $parametros['Codigo'] . "'";
     
-        // print_r($sql);
+        //print_r($sql);die();
         return $this->db->datos($sql);
     }
     
@@ -297,7 +297,7 @@ class registro_beneficiarioM
                 '" . $parametros['NombreArchivo'] . "', 
                 '" . $parametros['Observaciones'] . "',
                 '" . $_SESSION['INGRESO']['item'] . "')";
-                // print_r($sql2);
+                //print_r($sql2);die();
         return $this->db->datos($sql2);
     }
 
@@ -343,10 +343,11 @@ class registro_beneficiarioM
 
     function guardarAsignacion($parametros)
     {
-        $sql = "SELECT COUNT(*) AS count FROM Clientes_Datos_Extras WHERE Codigo = '" . $parametros['Codigo'] . "'";
+        
+        $sql = "SELECT COUNT(*) AS count FROM Clientes_Datos_Extras WHERE Codigo = '" . $parametros['Codigo'] . "' AND Item = '".$_SESSION['INGRESO']['item']."'";
+        //print_r($sql);die();
         $result = $this->db->datos($sql);
 
-        // print_r($parametros);print_r($result);die();
         if ($result[0]['count'] > 0) {
             $this->ActualizarClientes($parametros);
             $this->ActualizarClientesDatosExtra($parametros);
@@ -361,10 +362,11 @@ class registro_beneficiarioM
         Eliminar_Nulos_SP("Clientes_Datos_Extras");
 
         $sql = "SELECT Evidencias FROM Clientes_Datos_Extras 
-                         WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
-                         AND Codigo = '" . $parametros['Codigo'] . "' 
-                         AND Evidencias IS NOT NULL";
+                WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
+                AND Codigo = '" . $parametros['Codigo'] . "' 
+                AND Evidencias IS NOT NULL";
         $result = $this->db->datos($sql);
+
 
         return ['result' => $result[0]['Evidencias']];
     }

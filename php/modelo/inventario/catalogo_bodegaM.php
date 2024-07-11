@@ -15,11 +15,11 @@ class catalogo_bodegaM
     {
         $sql = "";
         if($parametros['nivel'] == '99'){
-            $sql = "INSERT INTO Catalogo_Proceso(DC, Cmds, Proceso, TP, Nivel, Item, Picture) 
-                    VALUES ('" . $parametros['tipo'] . "', '0000', '" . $parametros['concepto'] . "', '".$parametros['codigo']."', '".$parametros['nivel']."', '" . $_SESSION['INGRESO']['item'] . "', '".$parametros['picture']."')";
+            $sql = "INSERT INTO Catalogo_Proceso(DC, Cmds, Proceso, TP, Nivel, Item, Picture, Color) 
+                    VALUES ('" . $parametros['tipo'] . "', '0000', '" . $parametros['concepto'] . "', '".$parametros['codigo']."', '".$parametros['nivel']."', '" . $_SESSION['INGRESO']['item'] . "', '".$parametros['picture']."', '".$parametros['color']."')";
         }else {
-            $sql = "INSERT INTO Catalogo_Proceso(DC, Cmds, Proceso, TP, Nivel, Item) 
-                    VALUES ('" . $parametros['tipo'] . "', '" . $parametros['codigo'] . "', '" . $parametros['concepto'] . "', '".$parametros['tp']."', '".$parametros['nivel']."', '" . $_SESSION['INGRESO']['item'] . "')";
+            $sql = "INSERT INTO Catalogo_Proceso(DC, Cmds, Proceso, TP, Nivel, Item, Picture, Color) 
+                    VALUES ('" . $parametros['tipo'] . "', '" . $parametros['codigo'] . "', '" . $parametros['concepto'] . "', '".$parametros['tp']."', '".$parametros['nivel']."', '" . $_SESSION['INGRESO']['item'] . "', '".$parametros['picture']."', '".$parametros['color']."')";
         }
         return $this->db->datos($sql);
     }
@@ -34,7 +34,7 @@ class catalogo_bodegaM
                     AND Nivel = '".$parametros['nivel']."'
                     ORDER BY Cmds";
         }else{
-            $sql = "SELECT DC, Cmds, Proceso, TP, Nivel, Item, ID
+            $sql = "SELECT DC, Cmds, Proceso, TP, Nivel, Item, ID, Picture, Color
                     FROM Catalogo_Proceso
                     WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
                     AND TP = '".$parametros['tp']."'
@@ -96,8 +96,9 @@ class catalogo_bodegaM
             $sql = "UPDATE Catalogo_Proceso 
                 SET DC = '" . $parametros['tipo'] . "', 
                     Cmds = '0000', 
-                    Proceso = '" . $parametros['concepto'] . "',
-                    Picture = '".$parametros['picture']."' 
+                    Proceso = '" . $parametros['concepto'] . "', 
+                    Picture = '".$parametros['picture']."', 
+                    Color = '".$parametros['color']."' 
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND ID = '" . $parametros['id'] . "'
                 AND TP = '" . $parametros['codigo'] . "'
@@ -106,7 +107,9 @@ class catalogo_bodegaM
             $sql = "UPDATE Catalogo_Proceso 
                 SET DC = '" . $parametros['tipo'] . "', 
                     Cmds = '" . $parametros['codigo'] . "', 
-                    Proceso = '" . $parametros['concepto'] . "' 
+                    Proceso = '" . $parametros['concepto'] . "', 
+                    Picture = '".$parametros['picture']."', 
+                    Color = '".$parametros['color']."' 
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND ID = '" . $parametros['id'] . "'
                 AND TP = '" . $parametros['tp'] . "'

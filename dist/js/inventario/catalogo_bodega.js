@@ -20,14 +20,23 @@ $('#txtConcepto').on('blur', function () {
 });
 
 $("#btnGuardar").click(function () {
+    let imgRef = $('#imageElement').prop('src');
+    var imagen = document.querySelector('#imagenPicker').files[0];
+    var picture = $('#picture').val().trim()==''?'.':$('#picture').val();
+
+    if(picture == '.' && (imgRef != ''|| imagen)){
+        Swal.fire("Error", "Escribale un nombre a la imagen", "error");
+        return;
+    }
+
     var codigoP = $("#codigoP").val();
     var txtConcepto = $("#txtConcepto").val();
     var tipoProducto = $("input[name='cbxProdc']:checked").val();
     var nivel = $('#selectTipo').val();//nivel
     var tp = $('#tp').val();//tipo de proceso
-    var picture = ".";
+    var color = $('#pordefault').prop('checked')?'.':$('#colorPick').val();
     if (nivel === '99') {
-        picture = $('#picture').val();
+        //picture = $('#picture').val();
         tp = codigoP;
         tipoProducto = $("input[name='cbxReqFA']:checked").val();
     }
@@ -48,7 +57,7 @@ $("#btnGuardar").click(function () {
         mostrarMsjError(mensaje);
         return;
     }
-
+    
     ocultarMsjError();
     var parametros = {
         "codigo": codigoP,
@@ -56,23 +65,82 @@ $("#btnGuardar").click(function () {
         "tipo": tipoProducto,
         "nivel": nivel,
         "tp": tp,
-        "picture": picture
+        "picture": (!imagen&&imgRef=='') ? '.' : picture,
+        "color": color.replace('#','Hex_')
     };
+
+    let formData = new FormData();
+    for (const [key, value] of Object.entries(parametros)) {
+        formData.append(key, value);
+    }
+    //formData.append('parametros', parametros);
+
+    if(imagen){
+        formData.append('imagen', imagen);
+    }
 
     verificarExistenciaCodigo(codigoP)
         .then(function (resp) {
             if (resp.existe) {
                 var id = resp.id;
-                parametros.id = id;
-                actualizarProducto(parametros);
+                formData.append('id', id);
+                //parametros.id = id;
+                if(!imagen){
+                    srcAnt = imgRef.substr(imgRef.lastIndexOf('/')+1);
+                    formData.append('srcAnt', srcAnt);
+                }
+                actualizarProducto(formData);
             } else {
-                guardarNuevoProducto(parametros);
+                guardarNuevoProducto(formData);
             }
         })
         .catch(function (error) {
             console.error('Error:', error);
         });
 });
+
+function previsualizarImagen(elem){
+    const archivo = elem.files[0];
+
+    let formData = new FormData();
+    formData.append('imagen', archivo);
+    $('#myModal_espera').modal('show');
+    $.ajax({
+        type: 'POST',
+        url: '../controlador/inventario/catalogo_bodegaC.php?SubirImagenTemp=true',
+        processData: false,
+        contentType: false,
+        data: formData,
+        dataType: 'json',
+        success: function (respuesta) {
+            $('#myModal_espera').modal('hide');
+            if(respuesta['res'] == 1){
+                let ruta = '../../TEMP/catalogo_procesos/' + respuesta['imagen'];
+                $('#picture').val(respuesta['imagen'].split('.')[0]);
+                $('#imageElement').prop('src',ruta);
+            }else{
+                $('#picture').val(".");
+                $('#imageElement').prop('src','');
+                Swal.fire("Error", "Hubo un problema al mostrar la imagen", "error");
+            }
+        },
+        error: function (error) {
+            $('#myModal_espera').modal('hide');
+            $('#picture').val(".");
+            $('#imagenPicker').val('');
+            $('#imageElement').prop('src','');
+            Swal.fire("Error al procesar la imagen", "Error: " + error, "error");
+        }
+    });
+}
+
+function toggleInputColor(elem){
+    if(elem.checked==true){
+        $('#colorPick').hide();
+    }else{
+        $('#colorPick').show();
+    }
+}
 
 function mostrarMsjError(mensaje) {
     $('#alertUse').find('.text-danger').text(mensaje);
@@ -142,9 +210,12 @@ function actualizarProducto(parametros) {
             $.ajax({
                 type: 'POST',
                 url: '../controlador/inventario/catalogo_bodegaC.php?EditarProducto=true',
-                data: { parametros: parametros },
+                processData: false,
+                contentType: false,
+                data: parametros,
+                dataType: 'json',
                 success: function (data) {
-                    var data = JSON.parse(data);
+                    var data = data;
                     if (data['status'] == 200) {
                         Swal.fire({
                             title: 'Éxito!, se actualizó correctamente.',
@@ -155,8 +226,13 @@ function actualizarProducto(parametros) {
                         $('#codigoP').val('');
                         $('#txtConcepto').val('');
                         $("input[name='cbxProdc']").prop("checked", false);
+                        $('#picture').val('');
+                        $('#imagenPicker').val('');
+                        $('#imageElement').prop('src', '');
+                        $('#pordefault').prop('checked', true);
+                        $('#colorPick').hide();
+                        $('#picture').val('');
                         if (parametros.nivel === '99') {
-                            $('#picture').val('');
                             $('#siFA').prop('checked', false);
                             $('#noFA').prop('checked', false);
                         }
@@ -193,9 +269,12 @@ function guardarNuevoProducto(parametros) {
             $.ajax({
                 type: 'POST',
                 url: '../controlador/inventario/catalogo_bodegaC.php?GuardarProducto=true',
-                data: { parametros: parametros },
+                processData: false,
+                contentType: false,
+                data: parametros,
+                dataType: 'json',
                 success: function (data) {
-                    var responseData = JSON.parse(data);
+                    var responseData = data;
                     if (responseData['status'] == 200) {
                         Swal.fire({
                             title: "Éxito!, se registro correctamente.",
@@ -206,8 +285,13 @@ function guardarNuevoProducto(parametros) {
                         $('#codigoP').val('');
                         $('#txtConcepto').val('');
                         $("input[name='cbxProdc']").prop("checked", false);
+                        $('#picture').val('');
+                        $('#imagenPicker').val('');
+                        $('#imageElement').prop('src', '');
+                        $('#pordefault').prop('checked', true);
+                        $('#colorPick').hide();
+                        $('#picture').val('');
                         if (parametros.nivel === '99') {
-                            $('#picture').val('');
                             $('#siFA').prop('checked', false);
                             $('#noFA').prop('checked', false);
                         }
@@ -241,8 +325,9 @@ function listarDatos() {
         type: 'POST',
         url: '../controlador/inventario/catalogo_bodegaC.php?ListaProductos=true',
         data: { parametros: parametros },
+        dataType: 'json',
         success: function (data) {
-            var responseData = JSON.parse(data);
+            var responseData = data;
             if (responseData['status'] == 200 && responseData['datos'].length > 0) {
                 llenarAcordeon(responseData['datos']);
                 $('#alertNoData').css('display', 'none');
@@ -325,21 +410,36 @@ function clickProducto(dato) {
     valproducto = dato.Proceso;
     if (dato.Nivel === 99) {
         $('#codigoP').val(dato.TP);
-        $('#picture').val(dato.Picture);
-        var reqFact = dato.DC;
-        if (reqFact === 'FA') {
-            $('#siFA').prop('checked', true);
-        } else {
-            $('#noFA').prop('checked', true);
-        }
     } else {
         $('#codigoP').val(dato.Cmds);
+    }
+    $('#imagenPicker').val('');
+    if(dato.Picture == '.'){
+        $('#imageElement').prop('src','');
+    }else{
+        $('#imageElement').prop('src',`../../img/png/${dato.Picture}.png`);
+    }
+    $('#picture').val(dato.Picture);
+    if(dato.Color != '.'){
+        $('#pordefault').prop('checked', false);
+        $('#colorPick').show();
+        let dColor = dato.Color.replace("Hex_", "#");
+        $('#colorPick').val(dColor);
+    }else{
+        $('#pordefault').prop('checked', true);
+        $('#colorPick').hide();
+    }
+    var reqFact = dato.DC;
+    if (reqFact === 'FA') {
+        $('#siFA').prop('checked', true);
+    } else {
+        $('#noFA').prop('checked', true);
     }
     $('#txtConcepto').val(dato.Proceso);
     $("input[name='cbxProdc'][value='" + dato.DC + "']").prop("checked", true);
 }
 
-$("#btnEliminar").click(function () {
+$("#btnEliminar").on('click', function () {
     if (idSeleccionada != null) {
         var codigoP = $('#codigoP').val();
         var nivel = $('#selectTipo').val();//nivel
@@ -397,8 +497,11 @@ $("#btnEliminar").click(function () {
                                             $('#codigoP').val('');
                                             $('#txtConcepto').val('');
                                             $("input[name='cbxProdc']").prop("checked", false);
+                                            $('#picture').val('');
+                                            $('#imagenPicker').val('');
+                                            $('#pordefault').prop('checked', true);
+                                            $('#colorPick').hide();
                                             if (parametros.nivel === '99') {
-                                                $('#picture').val('');
                                                 $('#siFA').prop('checked', false);
                                                 $('#noFA').prop('checked', false);
                                             }
@@ -446,11 +549,11 @@ $("#btnEliminar").click(function () {
 
 function llenarListaTipoProcesosGenerales() {
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: '../controlador/inventario/catalogo_bodegaC.php?ListaTipo=true',
-        data: {},
+        dataType: 'json',
         success: function (data) {
-            var responseData = JSON.parse(data);
+            var responseData = data;
             if (responseData['status'] == '200' && responseData['datos'].length > 0) {
                 var datos = responseData['datos'];
                 var select = $('#selectTipo');
@@ -488,6 +591,7 @@ function tipoProceso() {
                         $('#pictureContainer').css('display', 'block');
                         $('#reqFacturaContainer').css('display', 'block');
                         $('#checkboxContainer').css('display', 'none');
+                        $('#colorContainer').css('display', 'block');
                         break;
                     case '00':
                         $('#txtConcepto').attr('placeholder', '');
@@ -495,11 +599,13 @@ function tipoProceso() {
                         $('#pictureContainer').css('display', 'none');
                         $('#reqFacturaContainer').css('display', 'none');
                         $('#checkboxContainer').css('display', 'block');
+                        $('#colorContainer').css('display', 'block');
                         break;
                     default:
-                        $('#pictureContainer').css('display', 'none');
-                        $('#reqFacturaContainer').css('display', 'none');
-                        $('#checkboxContainer').css('display', 'none');
+                        $('#pictureContainer').css('display', 'block'); //none
+                        $('#reqFacturaContainer').css('display', 'block'); //none
+                        $('#checkboxContainer').css('display', 'block'); //none
+                        $('#colorContainer').css('display', 'block');
                         break;
                 }
             }
