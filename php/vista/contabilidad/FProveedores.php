@@ -263,6 +263,51 @@ function limpiar_t()
      // console.log(datos);
    }
 
+
+    function eliminar_proveedor()
+    {
+        if( $('#txt_id_prove').val()=='')
+        {
+            Swal.fire("No se ha seleccionado un proveedor","","error");
+            return false;
+        }
+        
+         $('#myModal_espera').modal('show');
+         datos = 
+         {
+            'idProv': $('#txt_id_prove').val(),
+         }
+         $.ajax({
+          data:  datos,
+          url:   '../controlador/farmacia/articulosC.php?proveedor_eliminar=true',
+          type:  'post',
+          dataType: 'json',
+          success:  function (response) { 
+             $('#myModal_espera').modal('hide');
+            // console.log(response);
+            if(response==1)
+            {
+               
+              Swal.fire('Proveedores eliminado.','','success').then(function(){
+                location.reload();
+              }); 
+            }else if(response==-1)
+            {
+              Swal.fire('El Provedor tiene registros ligados','','info');  
+            }
+          }, 
+            error: function(xhr, textStatus, error){
+            $('#myModal_espera').modal('hide');
+                // $('#lbl_mensaje').text(xhr.statusText);
+                // alert(xhr.statusText);
+                // alert(textStatus);
+                // alert(error);
+            }
+        });
+
+     // console.log(datos);
+   }
+
     function tipo_proveedor()
     {
      
@@ -486,6 +531,7 @@ function limpiar_t()
                                     <br>
                                     <?php $modulo = str_replace(' ', '',$_SESSION['INGRESO']['modulo_']); ?>
                                     <button type="button" class="btn btn-sm btn-primary" onclick="guardar_proveedor()">Guardar</button>
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="eliminar_proveedor()">Eliminar</button>
                                     <a type="button" class="btn btn-sm btn-default" href="../vista/inicio.php?mod=<?php echo($modulo);?>">Cerrar</a>
                                 </div>
                             </div>

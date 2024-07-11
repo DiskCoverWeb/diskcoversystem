@@ -71,6 +71,12 @@ if(isset($_GET['producto_nuevo']))
 	echo json_encode($controlador->Ingresar_producto($parametros));
 }
 
+if(isset($_GET['proveedor_eliminar']))
+{
+	$parametros = $_POST;
+	echo json_encode($controlador->eliminar_proveedor($parametros));
+}
+
 if(isset($_GET['proveedor_nuevo']))
 {
 	$parametros = $_POST;
@@ -525,6 +531,29 @@ class articulosC
 		 	return 1;
 		 }
 
+	}
+
+	function eliminar_proveedor($parametros)
+	{
+
+		// $codigo = Digito_Verificador($parametros['txt_ruc']);
+		// print_r($codigo);die();
+		$existe = $this->modelo->clientes_all(false,false,false,false,$parametros['idProv']);
+
+		$codigo = $existe[0]['Codigo'];
+		$datos = $this->modelo->buscar_si_existe($codigo);
+		if(count($datos)==0)
+		{
+
+			return $this->modelo->eliminar_proveedor($parametros['idProv']);
+
+		}else
+		{
+			return -1;
+		}
+		// print_r($datos);die();
+
+		
 	}
 
 	function agreagar_producto($parametro)

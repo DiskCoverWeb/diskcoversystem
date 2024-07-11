@@ -373,7 +373,7 @@ class articulosM
 
 	}
 
-	function clientes_all($query=false,$codigo = false,$abreviado=false,$ruc=false)
+	function clientes_all($query=false,$codigo = false,$abreviado=false,$ruc=false,$ci=false)
 	{
 		$cid = $this->conn;
 		$sql="SELECT  *
@@ -394,6 +394,10 @@ class articulosM
 		if($abreviado)
 		{
 			$sql.="AND Cod_Ejec LIKE'%".$abreviado."%'";
+		}
+		if($ci)
+		{
+			$sql.="AND ID = '".$ci."'";
 		}
 			$sql.= "ORDER BY C.Cliente OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
 		
@@ -430,4 +434,36 @@ class articulosM
 		   $datos = $this->conn->datos($sql);
        return $datos;
 	}
+
+	function buscar_si_existe($codigo)
+	{
+		$sql="SELECT Codigo FROM Clientes WHERE Codigo ='".$codigo."'
+					union
+					SELECT Codigo FROM Clientes_Facturacion WHERE Codigo ='".$codigo."'
+					union
+					SELECT Codigo FROM Clientes_Matriculas WHERE Codigo ='".$codigo."'
+					union
+					SELECT Codigo FROM Trans_SubCtas WHERE Codigo ='".$codigo."'
+					union
+					SELECT Codigo_C FROM Transacciones WHERE Codigo_C ='".$codigo."'
+					union
+					SELECT CodigoC FROM Facturas WHERE CodigoC ='".$codigo."'
+					union
+					SELECT CodigoC FROM Trans_Abonos WHERE CodigoC ='".$codigo."'
+					union
+					SELECT IdProv FROM Trans_Air WHERE IdProv ='".$codigo."'
+					union
+					SELECT IdProv FROM Trans_Compras WHERE IdProv ='".$codigo."'
+					union
+					SELECT Codigo_P FROM Trans_Kardex WHERE Codigo_P ='".$codigo."'";
+					return $this->conn->datos($sql);
+	}
+
+	function eliminar_proveedor($id)
+	{
+		$sql = "DELETE  FROM Clientes WHERE ID='".$id."'";
+		return $this->conn->String_Sql($sql);
+	}
+
+
 }
