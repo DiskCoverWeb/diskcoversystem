@@ -31,6 +31,104 @@ class migrar_datosM
 	      $servidor = $_SESSION['INGRESO']['IP_VPN_RUTA'];     
 	      $database = $_SESSION['INGRESO']['Base_Datos'];
 	      $puerto = $_SESSION['INGRESO']['Puerto'];
+		$sql = "SELECT TABLE_SCHEMA, TABLE_NAME
+	           FROM INFORMATION_SCHEMA.TABLES
+	           WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME ASC";
+	    		$tablas_base = $this->db->datos($sql);
+	    		// print_r($tablas_base);die();
+
+
+
+	    $contenido = '';
+	    foreach ($tablas_base as $key => $value) 
+	    {
+		    	$sql = 'SELECT Count(*) as total FROM '.$value['TABLE_NAME'];
+		    	$datos =  $this->db->datos($sql);
+		    	$query_select = '';
+		    	$informe_cabe = '';
+		    	if($datos[0]['total']>0)
+		    	{
+		    		$contenido.='REPLACE INTO `'.$value['TABLE_NAME'].'` (';
+		    		//buscamos las cabeceras de las tablas
+		       		$sql2 = "SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH
+		                 FROM INFORMATION_SCHEMA.COLUMNS 
+		                 WHERE TABLE_NAME ='" . $value['TABLE_NAME'] . "'"; 
+		        	$cabeceras_tabla = $this->db->datos($sql2);
+
+		        	//recore cabeceras
+		        	foreach ($cabeceras_tabla as $key2 => $value2) {
+		        		$contenido.="`".$value2['COLUMN_NAME']."`,";
+		        		 $tipoCampo = $value2['DATA_TYPE'];
+		                switch ($tipoCampo) {
+		                    case 'char':
+		                    case 'nvarchar':
+		                    case 'varchar':
+		                    case 'datetime':
+		                        $query_select.="CONCAT('''',".$value2['COLUMN_NAME'].",'''') +',' ,";        
+		                        break;
+		                    default:
+		                        $query_select.=$value2['COLUMN_NAME'].',';     
+		                        break;
+		                }
+		                $informe_cabe.= '`'.$value2['COLUMN_NAME'].'`,';
+		        	}
+		        	// $contenido = substr($contenido,0,-1);		        	
+		        	$query_select = substr($query_select,0,-1); 	
+		        	$informe_cabe = substr($informe_cabe,0,-1);
+		        	// $contenido.=") VALUES". PHP_EOL;
+
+
+		        	$sql2 = "SELECT CONCAT('(',".$query_select.",'),' ) as linea FROM ".$value['TABLE_NAME'];
+
+		        	$comando = 'sqlcmd -S '.$servidor.','.$puerto.' -U '.$usuario.' -P '.$password.' -d '.$database.' -Q "EXEC sp_helptext; SET NOCOUNT ON;SET QUOTED_IDENTIFIER OFF;'.$sql2.';" -o "'.$link.'Z'.$value['TABLE_NAME'].'.sql" -W -s"," -w 7000';
+
+		        	exec($comando, $output, $return_var);
+
+					if ($return_var === 0) {
+
+						$archivoOriginal = $link.'Z' . $value['TABLE_NAME'] . '.sql';
+					    // Ruta del nuevo archivo
+					    $archivoNuevo = $link.'Z' . $_SESSION['INGRESO']['Base_Datos'] . '.sql';
+
+					    // Texto a agregar al inicio del nuevo archivo
+					    $textoNuevo = "REPLACE INTO `" . $value['TABLE_NAME'] . "` (" .$informe_cabe. ") VALUES\n";
+
+					    // Leer el archivo original
+					    $lineas = file($archivoOriginal);
+
+					    // Eliminar las primeras 4 líneas
+					    $lineasModificadas = array_slice($lineas, 4);
+
+					    // Agregar el nuevo texto al inicio del contenido
+					    $contenidoFinal = $textoNuevo . implode('', $lineasModificadas);
+
+					    // Agregar el contenido final al archivo nuevo
+					    file_put_contents($archivoNuevo, $contenidoFinal, FILE_APPEND | LOCK_EX);
+					    unlink($archivoOriginal);
+
+					    // die();
+					} else {
+					    echo "Hubo un problema al crear el archivo de respaldo.";
+					}
+
+		        	// print_r($comando);die();
+		        	// print_r($sql2);die();
+		        }
+		}
+
+	}
+
+	function generarArchivos2($link)
+	{
+			set_time_limit(0);
+	    	ini_set('memory_limit', '1024M');
+	  	  $respuesta = 1;
+	    
+	      $usuario = $_SESSION['INGRESO']['Usuario_DB'];
+	      $password = $_SESSION['INGRESO']['Password_DB'];  // en mi caso tengo contraseña pero en casa caso introducidla aquí.
+	      $servidor = $_SESSION['INGRESO']['IP_VPN_RUTA'];     
+	      $database = $_SESSION['INGRESO']['Base_Datos'];
+	      $puerto = $_SESSION['INGRESO']['Puerto'];
 
 		  $serverName =$servidor.','.$puerto;
 		  $connectionOptions = array(
