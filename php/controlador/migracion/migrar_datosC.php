@@ -30,10 +30,10 @@ class migrar_datosC
 	function generarArchivos()
 	{
 		$link_remo = '/files/Datos/';
-		$link = dirname(__DIR__,3).'/TEMP/Datos_'.$_SESSION['INGRESO']['item'].'/';
-		if(!file_exists(dirname(__DIR__,3).'/TEMP/'))
+		$link = 'C:\\TEMP/Datos_'.$_SESSION['INGRESO']['item'].'/';
+		if(!file_exists('C:\\TEMP/'))
 	   	{
-	   		mkdir(dirname(__DIR__,3).'/TEMP/',0777,true);
+	   		mkdir('C:\\TEMP/',0777,true);
 	   	}
 	   	if(!file_exists($link))
 	   	{
