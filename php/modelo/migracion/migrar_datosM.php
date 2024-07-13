@@ -109,6 +109,7 @@ class migrar_datosM
 					    // die();
 					} else {
 					    echo "Hubo un problema al crear el archivo de respaldo.";
+					    print_r($output);
 					}
 
 		        	// print_r($comando);die();
