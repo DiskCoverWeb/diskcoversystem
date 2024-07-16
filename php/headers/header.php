@@ -526,7 +526,7 @@ $cuentas = SeteosCtas();
 
     <header class="main-header">
       <!-- Logo -->
-      <a href="index2.html" class="logo">
+      <a href="https://diskcoversystem.com/prismanet/" target="_blank" class="logo">
         <!-- mini logo for sidebar mini 50x50 pixels -->
         <span class="logo-mini"><b>A</b>LT</span>
         <!-- logo for regular state and mobile devices -->
@@ -792,11 +792,11 @@ TELEFONO: (+593)989105300 - 999654196 - 986524396">
             </span>
             <p class="text-gray" style="margin:0px" id="base_actual"></p>
             <?php if ($_SESSION['INGRESO']['Razon_Social'] == $_SESSION['INGRESO']['Nombre_Comercial']) { ?>
-              <p class="text-gray" style="margin:0px">
+              <p class="text-gray" style="margin:0;word-wrap: break-word;overflow-wrap: break-word;white-space: normal;">
                 <?php echo $_SESSION['INGRESO']['Razon_Social']; ?>
               </p>
             <?php } else { ?>
-              <p class="text-gray" style="margin:0px">
+              <p class="text-gray" style="margin:0px;word-wrap: break-word;overflow-wrap: break-word;white-space: normal;">
                 <?php echo $_SESSION['INGRESO']['Razon_Social']; ?>
               </p>
               <p class="text-gray" style="margin:0px">
