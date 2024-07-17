@@ -590,14 +590,14 @@ function tipoProceso() {
                         $('#txtConcepto').attr('placeholder', '');
                         $('#pictureContainer').css('display', 'block');
                         $('#reqFacturaContainer').css('display', 'block');
-                        $('#checkboxContainer').css('display', 'none');
+                        $('#checkboxContainer').css('display', 'block');
                         $('#colorContainer').css('display', 'block');
                         break;
                     case '00':
                         $('#txtConcepto').attr('placeholder', '');
                         $('#tp').val('CATEGORI');
-                        $('#pictureContainer').css('display', 'none');
-                        $('#reqFacturaContainer').css('display', 'none');
+                        $('#pictureContainer').css('display', 'block');
+                        $('#reqFacturaContainer').css('display', 'block');
                         $('#checkboxContainer').css('display', 'block');
                         $('#colorContainer').css('display', 'block');
                         break;
