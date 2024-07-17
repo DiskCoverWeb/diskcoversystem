@@ -610,3 +610,12 @@ function DCPorcenIva(idFecha, idSelect){
 	});
 
 }
+
+function truncarValor(num) {
+    return Math.floor(num * 100) / 100;
+}
+
+function contarDecimales(num) {
+    const decimales = num.toString().split('.')[1];
+    return decimales ? decimales.length : 0;
+}

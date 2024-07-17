@@ -1,1 +1,0 @@
-Periodo;ME;Cta;Fecha;Concepto;TP;Documento;Parcial_ME;Debitos;Creditos;Item;CodigoU;X;ID

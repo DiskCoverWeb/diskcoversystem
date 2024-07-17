@@ -1,1 +1,0 @@
-No;Procesar;Documento;Razon_Social_Emisor;RUC_Emisor;Fecha_Emision;Serie;Comprobante;Autorizacion;Subtotal;Total_IVA;Total;CodSustento;Serie_Receptor;Cod_Ret;Porc_Ret;Porc_Ret_IVA_B;Porc_Ret_IVA_S;Ret_IVA_B;Ret_IVA_S;Ret_Fuente;Direccion_Emisor;RUC_Receptor;Cta_Debito;Cta_Credito;Cta_IVA_Gasto;Cta_Ret_Fuente;Cta_Ret_IVA_B;Cta_Ret_IVA_S;CodPorIva;SubModulo;Codigo_B;Item;CodigoU

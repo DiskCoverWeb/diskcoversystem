@@ -65,6 +65,10 @@ if (isset($_GET['ConfirmacionComunicado'])) {
     extract($_POST);
     echo json_encode(ConfirmacionComunicado($NumModulo, $SeguirMostrando));
 }
+if (isset($_GET['control_errores'])) {
+    $query = $_POST['parametros'];
+    echo json_encode(control_errores($query));
+}
 
 if (isset($_GET['validar_estado'])) {
     echo json_encode(validar_estado_all());
@@ -560,6 +564,7 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         $_SESSION['INGRESO']['Ruta_Certificado'] = $empresa[0]['Ruta_Certificado'];
         $_SESSION['INGRESO']['Clave_Certificado'] = $empresa[0]['Clave_Certificado'];
         $_SESSION['INGRESO']['Dec_PVP'] = $empresa[0]['Dec_PVP'];
+        $_SESSION['INGRESO']['Dec_IVA'] = $empresa[0]['Dec_IVA'];
         $_SESSION['INGRESO']['Dec_Costo'] = $empresa[0]['Dec_Costo'];
         $_SESSION['INGRESO']['Cotizacion'] = $empresa[0]['Cotizacion'];
         $_SESSION['INGRESO']['Servicio'] = $empresa[0]['Servicio'];
@@ -1372,5 +1377,11 @@ function enviarCorreo($empresa, $titulo, $mensaje)
         echo 'console.log("Ocurrió un error al recibir datos de la función");';
     }
     echo '</script>';
+}
+
+function control_errores($parametros)
+{
+    // print_r($parametros);die();
+    control_procesos('E',$parametros['Proceso'],$parametros['Tarea']);
 }
 ?>

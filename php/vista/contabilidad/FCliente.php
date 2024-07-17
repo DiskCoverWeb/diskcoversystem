@@ -684,7 +684,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
         <div class="col-xs-9 col-sm-11 col-lg-10">
           <label for="nombrec" class="control-label"><span style="color: red;">*</span>Apellidos y Nombres</label>
           <input type="text" class="form-control input-sm" id="nombrec" name="nombrec" placeholder="Razon social"
-            onkeyup="buscar_cliente_nom();mayusculas('nombrec',this.value) " onblur="mayusculas('nombrec',this.value)">
+            onkeyup="buscar_cliente_nom();" onblur="mayusculas('nombrec',this.value);">
           <span class="help-block" id='e_nombrec' style='display:none;color: red;'>Debe ingresar nombre</span>
         </div>
         <div class="col-xs-3 col-sm-1 col-lg-2">
@@ -696,7 +696,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
         <div class="col-xs-8">
           <label for="direccion" class="control-label"><span style="color: red;">*</span>Direccion</label>
           <input type="text" class="form-control input-sm" id="direccion" name="direccion" placeholder="Direccion"
-            tabindex="0" onkeyup="mayusculas('direccion',this.value)" onblur="mayusculas('direccion',this.value)">
+            tabindex="0" onblur="mayusculas('direccion',this.value)">
           <span class="help-block" id='e_direccion' style='display:none;color: red;'>debe agregar Direccion</span>
         </div>
         <div class="col-xs-4">

@@ -1,1 +1,0 @@
-Periodo;T;Fecha;Fecha_I;Fecha_E;Solicitud_No;Manifiesto_No;Carta_Porte;Factura_No;CodigoC;CodigoS;Empresa;Peso_Bruto;Medida;FOB;Cantidad;Clase;Mercaderia;Registro;DUI;DAO;Flete_No;Placa;TP_I;Numero_I;TP_E;Numero_E;Item;Fecha_DUI;Seguro;Porc;No_Refrendo;ValorEM;Especifico;Consumos;IVA;Antidumping;Modernizacion;Control;Almacenaje;FODIN;Salvaguarda;Interes;Guia_No;X;ID

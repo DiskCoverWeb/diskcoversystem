@@ -6986,7 +6986,7 @@ function Grabar_Factura1($TFA,$VerFactura = false, $NoRegTrans = false)
   }
   
   $sql = "SELECT * 
-    FROM Asiento_F 
+    FROM Asiento_F
     WHERE Item = '".$_SESSION['INGRESO']['item']."' 
     AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
     ORDER BY A_No ";

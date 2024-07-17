@@ -1,1 +1,0 @@
-T;Dias;Fecha;Cuenta_No;Valor;Banco;Cheque;Item;X;ID

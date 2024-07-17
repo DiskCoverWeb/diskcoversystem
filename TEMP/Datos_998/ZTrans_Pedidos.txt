@@ -1,1 +1,0 @@
-Periodo;Fecha;Codigo_Inv;Hora;Producto;Cantidad;Precio;Total;Total_IVA;No_Hab;Cta_Venta;Item;CodigoU;Orden_No;Cta_Venta_0;TC;Factura;Autorizacion;Serie;Codigo_Sup;CodigoC;Opc1;Opc2;Opc3;Estado;HABIT;X;ID

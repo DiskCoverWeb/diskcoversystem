@@ -890,8 +890,10 @@
               }
 
             },
-            error: function () {
+            error: function (jqXHR, exception) {
               $('#myModal_espera').modal('hide');
+              console.log(exception);
+              control_errores('guardarPension',exception);
               alert("Ocurrio un error inesperado, por favor contacte a soporte.");
             }
             });

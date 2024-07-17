@@ -71,6 +71,12 @@ if(isset($_GET['producto_nuevo']))
 	echo json_encode($controlador->Ingresar_producto($parametros));
 }
 
+if(isset($_GET['proveedor_eliminar']))
+{
+	$parametros = $_POST;
+	echo json_encode($controlador->eliminar_proveedor($parametros));
+}
+
 if(isset($_GET['proveedor_nuevo']))
 {
 	$parametros = $_POST;
@@ -525,6 +531,29 @@ class articulosC
 		 	return 1;
 		 }
 
+	}
+
+	function eliminar_proveedor($parametros)
+	{
+
+		// $codigo = Digito_Verificador($parametros['txt_ruc']);
+		// print_r($codigo);die();
+		$existe = $this->modelo->clientes_all(false,false,false,false,$parametros['idProv']);
+
+		$codigo = $existe[0]['Codigo'];
+		$datos = $this->modelo->buscar_si_existe($codigo);
+		if(count($datos)==0)
+		{
+
+			return $this->modelo->eliminar_proveedor($parametros['idProv']);
+
+		}else
+		{
+			return -1;
+		}
+		// print_r($datos);die();
+
+		
 	}
 
 	function agreagar_producto($parametro)
@@ -1012,7 +1041,7 @@ function eliminar_factura($parametros)
 		// print_r($datos);die();
 		$result = array();
 		foreach ($datos as $key => $value) {
-			 $result[] = array("value"=>$value['ID'],"label"=>$value['Cliente'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'email2'=>$value['Email2'],'CI'=>$value['CI_RUC'],'Actividad'=>$value['Actividad'],'Cod_Ejec'=>$value['Cod_Ejec']);
+			 $result[] = array("value"=>$value['ID'],"label"=>$value['Cliente'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'email2'=>$value['Email2'],'CI'=>$value['CI_RUC'],'Actividad'=>$value['Actividad'],'Cod_Ejec'=>$value['Cod_Ejec'],'Parte_Relacionada'=>$value['Parte_Relacionada'],'Tipo_Pasaporte'=>$value['Tipo_Pasaporte']);
 		}
 		return $result;
 	}
@@ -1023,7 +1052,7 @@ function eliminar_factura($parametros)
 		// print_r($datos);die();
 		$result = array();
 		foreach ($datos as $key => $value) {
-			 $result[] = array("value"=>$value['ID'],"label"=>$value['CI_RUC'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'email2'=>$value['Email2'],'Nombre'=>$value['Cliente'],'Actividad'=>$value['Actividad'],'Cod_Ejec'=>$value['Cod_Ejec']);
+			 $result[] = array("value"=>$value['ID'],"label"=>$value['CI_RUC'],'dir'=>$value['Direccion'],'tel'=>$value['Telefono'],'email'=>$value['Email'],'email2'=>$value['Email2'],'Nombre'=>$value['Cliente'],'Actividad'=>$value['Actividad'],'Cod_Ejec'=>$value['Cod_Ejec'],'Parte_Relacionada'=>$value['Parte_Relacionada'],'Tipo_Pasaporte'=>$value['Tipo_Pasaporte']);
 		}
 		return $result;
 	}

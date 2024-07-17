@@ -1,1 +1,0 @@
-Ln;TB;TC;DG;Codigo;Cuenta;Item;Periodo;CodigoU;X;ID

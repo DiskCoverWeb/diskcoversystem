@@ -434,6 +434,26 @@
         });         
     })
 
+
+    function control_errores(proceso,error)
+    {
+      parametros = 
+      {
+        'Tarea':error,
+        'Proceso':proceso
+      }
+       $('#myModal_espera').modal('hide');
+        $.ajax({
+            data: {parametros: parametros},
+            url: '../controlador/panel.php?control_errores=true',
+            type: 'post',
+            dataType: 'json',
+            success: function(response) {
+               
+            }
+        });
+    }
+
     function guardar_cliente_iframe()
     {
        var iframe = document.getElementById('FCliente');
@@ -444,7 +464,7 @@
     }
   }
 
-function datos_cliente() {
+  function datos_cliente() {
     var frame = document.getElementById('FCliente');
     var ruc = frame.contentWindow.document.getElementById('ruc').value;
     var codigocliente = frame.contentWindow.document.getElementById('codigoc').value;

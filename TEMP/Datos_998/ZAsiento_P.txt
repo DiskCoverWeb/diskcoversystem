@@ -1,1 +1,0 @@
-TP;Fecha;Interes;Capital;Comision;Pagos;Saldo;T_No;Cta;Dia;Item;CodigoU;Cuotas

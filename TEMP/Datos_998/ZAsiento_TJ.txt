@@ -1,1 +1,0 @@
-Lote;Fecha;Factura;Base_Imponible;IVA_BI;Total_TJ;Comision;Comision_IVA;Porc_IVA;Porc_Ret;IVA_Ret;IRF_Ret;Neto_TJ;Autorizacion_R;Serie_R;Retencion;Cta;CodigoC;Item;CodigoU

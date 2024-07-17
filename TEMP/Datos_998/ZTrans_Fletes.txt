@@ -1,1 +1,0 @@
-Ok;Periodo;Item;T;CodigoC;Fecha_I;Fecha_F;Codigo_Inv;TP;Factura;Numero;Carga;Ayudante;Conductor;Referencia;Flete;Ruta;Km_Inicial;Km_Final;Nombre_Conductor;Nombre_Ayudante;CodigoU;X;Cumple;ID

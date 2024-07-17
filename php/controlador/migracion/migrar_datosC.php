@@ -41,7 +41,26 @@ class migrar_datosC
 	   	}	    
 
 		$this->modelo->generarArchivos($link);
-		$this->Enviar_ftp($link,$link_remo);
+		// $this->Enviar_ftp($link,$link_remo);
+
+		$archivo = $link.'Z'.$_SESSION['INGRESO']['Base_Datos'] . '.sql';
+
+		// Verifica si el archivo existe
+		if (file_exists($archivo)) {
+		    // Establece las cabeceras para la descarga
+		    header('Content-Description: File Transfer');
+		    header('Content-Type: application/octet-stream');
+		    header('Content-Disposition: attachment; filename="' . basename($archivo) . '"');
+		    header('Expires: 0');
+		    header('Cache-Control: must-revalidate');
+		    header('Pragma: public');
+		    header('Content-Length: ' . filesize($archivo));
+		    
+		    // Lee el archivo y lo envía al navegador
+		    readfile($archivo);
+		    exit;
+		}
+
 		
 	}
 

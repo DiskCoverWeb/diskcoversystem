@@ -1,1 +1,0 @@
-Periodo;Item;Cta;Fecha;TP;Numero;Debe;Haber;Saldo;Parcial_ME;Saldo_ME;C_Costos;ID

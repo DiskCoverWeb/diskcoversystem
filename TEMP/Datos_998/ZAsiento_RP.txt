@@ -1,1 +1,0 @@
-Fecha;Cta;Codigo;SN;AporteP;PorAp;InLiqui;Salario;Retenido;Porc_Ret;Retencion_No;Cheque_No;Horas;Dias;Dcts_Aport_Adm;Dcts_Certif;Descuento_CxC;Item;CodigoU;Emergencia;Comision;InHorasExt;Horas_Ext;Grupo_Rol;T_No

@@ -1,1 +1,0 @@
-Cta;Beneficiario;Anio;Mes;Valor_x_Mes;Categoria;Mes_No;CodigoB;CodigoU;Item

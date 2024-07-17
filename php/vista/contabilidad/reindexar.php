@@ -4,6 +4,21 @@
 	
 	$(document).ready(function () {
 		$('#myModal').modal('show');
+
+		 $('#imprimir_excel').click(function(){      		
+
+      	var url = '../controlador/contabilidad/reindexarC.php?imprimir_excel=true';
+      	    window.open(url, '_blank');
+       });
+
+        $('#imprimir_pdf').click(function(){      		
+
+      	var url = '../controlador/contabilidad/reindexarC.php?imprimir_pdf=true';
+      	    window.open(url, '_blank');
+       });
+
+
+
 	})
 
 	function reindexar()
@@ -15,9 +30,11 @@
             dataType: 'json',
             // data: { param: param },
             success: function (data) {
+            	$('#myModal').modal('hide');
             	$('#myModal_espera').modal('hide');
-            	if(data==1)
+            	if(data.resp==1)
             	{
+            		$('#lista_errores').html(data.tr);
             		Swal.fire("Reindexado","","success");
             	}
             },
@@ -30,7 +47,33 @@
 </script>
 
 <div class="container">
-	<div class="row" id="lista_errores">
+	<div class="row">
+		<div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+			<a href="inicio.php?mod=<?php echo $_SESSION['INGRESO']['modulo_']; ?>" data-toggle="tooltip" title="Salir de modulo" class="btn btn-default">
+        		<img src="../../img/png/salire.png">
+        	</a>
+			<a href="#" class="btn btn-default" id='imprimir_pdf'  data-toggle="tooltip"title="Descargar PDF">
+        		<img src="../../img/png/pdf.png">
+        	</a>
+        	<a href="#"  class="btn btn-default"  data-toggle="tooltip"title="Descargar excel" id='imprimir_excel'>
+        		<img src="../../img/png/table_excel.png">
+        	</a>
+		</div>
+	</div>
+	<br>
+	<div class="row">
+		<div class="box">
+			<div class="box-body" style="height:300px; overflow-y:scroll;">
+				<div class="col-sm-12">
+					<table>
+						<tbody id="lista_errores">
+							
+						</tbody>
+					</table>
+				</div>						
+			</div>
+		</div>
+		
 	</div>
 </div>
 

@@ -1,3 +1,0 @@
-Codigo;Concepto;ID
-1;^Bienes^;1
-2;^Serv_FlorArt^;2
