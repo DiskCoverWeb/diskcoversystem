@@ -1287,7 +1287,7 @@ function autocoplet_ingreso_donante(){
       <div class="modal-content modal-sm">
           <div class="modal-header bg-primary">
               <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h4 class="modal-title">Estado de trasporte</h4>
+              <h4 class="modal-title">Gabetas Recibidas</h4>
           </div>
           <div class="modal-body" style="background: antiquewhite;">
           	<div class="row">
