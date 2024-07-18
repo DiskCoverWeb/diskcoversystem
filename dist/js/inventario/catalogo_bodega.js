@@ -436,7 +436,10 @@ function clickProducto(dato) {
         $('#noFA').prop('checked', true);
     }
     $('#txtConcepto').val(dato.Proceso);
-    $("input[name='cbxProdc'][value='" + dato.DC + "']").prop("checked", true);
+    $("input[name='cbxProdc']").prop('checked', false);
+    if(dato.DC != '.' && dato.DC != 'FA'){
+        $("input[name='cbxProdc'][value='" + dato.DC + "']").prop("checked", true);
+    }
 }
 
 $("#btnEliminar").on('click', function () {
