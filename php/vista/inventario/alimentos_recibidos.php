@@ -472,6 +472,21 @@ function autocoplet_ingreso_donante(){
   	// preguntas_transporte();
   	$('#modal_estado_transporte').modal('show');
   }
+
+  function show_gaveta()
+  {
+  		$('#modal_gavetas').modal('show');
+  		$.ajax({
+				    type: "POST",
+			      	url:   '../controlador/inventario/alimentos_recibidosC.php?gavetas=true',
+				      // data:{ID:ID},
+			        dataType:'json',
+				    success: function(data)
+				    {
+				    		$('#tbl_gavetas').html(data);  
+				    }
+				});  		
+  }
   function show_temperatura()
   {
   	$('#modal_temperatura').modal('show');
@@ -570,7 +585,6 @@ function autocoplet_ingreso_donante(){
 		    	}    	
 		    }
 		});  	
-
   }
 
   function limpiar_donante()
@@ -780,6 +794,19 @@ function autocoplet_ingreso_donante(){
 
   }
 
+  function mostraTransporte()
+  {
+  	var transporte = $('input[name="rbx_trasporte"]:checked').val();  	
+  	if(transporte=='SI')
+  	{
+  		$('#btn_transporte').css('display','block');
+  	}else
+  	{
+  		$('#btn_transporte').css('display','none');
+  	}
+
+  }
+
 </script>
 
  <div class="row">
@@ -903,18 +930,26 @@ function autocoplet_ingreso_donante(){
 								<div class="col-sm-8">									
 									
 								</div>
-								<div class="col-sm-4">									
-									<button type="button" class="btn btn-default" title="Guardar" onclick="show_estado_transporte()">
-												<img src="../../img/png/camion.png" style="width:22px; height: :92px;">
-												<br><b>Estado de Trasporte</b>
-											</button>
-								</div>
-								<!-- <div class="col-sm-2">									
-										<b>Estado Trasporte</b>
-											<button class="btn btn-default" title="Guardar" onclick="show_estado_transporte()">
-												<img src="../../img/png/camion.png" style="width:32px; height: :32px;">
-											</button>
-								</div>	 -->											
+								<div class="col-sm-4">
+									<div class="row">
+										<div class="col-sm-8">
+													<b>Llegaron en Transporte?</b>
+													<label class="label-success btn-sm btn">
+															<input type="radio" id="" value="SI" name="rbx_trasporte" onclick="mostraTransporte()">SI</label>
+													<label class="label-danger btn-sm btn">
+															<input type="radio" id="" value="NO" name="rbx_trasporte" onclick="mostraTransporte()" checked>NO</label>
+													<button type="button" class="btn btn-default" title="Guardar" style="display:none;" onclick="show_estado_transporte()" id="btn_transporte">
+															<img src="../../img/png/camion.png" style="width:22px; height: :92px;">
+															<br><b>Estado de Trasporte</b>
+													</button>
+										</div>
+										<div class="col-sm-4">
+												<button type="button" class="btn" title="Guardar" onclick="show_gaveta()" id="btn_transporte">
+															<img src="../../img/png/gavetas.png" style="width:100%">
+													</button>											
+										</div>
+									</div>
+								</div>												
 							</div>			
 					</div>
 					<div class="col-sm-12 col-md-4" style="padding:0px">
@@ -1234,20 +1269,44 @@ function autocoplet_ingreso_donante(){
           </div>
           <div class="modal-body" style="background: antiquewhite;">
           	<div class="row">
-          		<form id="form_estado_transporte">
-          			<div class="col-sm-12">
-          				<div class="direct-chat-messages">	
-											<ul class="list-group list-group-flush" id="lista_preguntas">
-												
-											</ul>											
-										</div>
-          			</div>
-          		</form>
+          		<iframe width="100%" height="460px" marginheight="0" frameborder="0"  src="../vista/modales.php?Ftransporte=true"></iframe>          		
           	</div>
           					
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
               <button type="button" class="btn btn-default" onclick="validar_trasporte_lleno()">Ok</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+<div id="modal_gavetas" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+      <div class="modal-content modal-sm">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Estado de trasporte</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          	<div class="row">
+          		<div class="col-sm-12">
+          				<table class="table table-sm">
+		          			<thead>
+		          				<th>Gavetas</th>
+		          				<th>Recibidas</th>
+		          			</thead>
+		          			<tbody id="tbl_gavetas">
+		          				
+		          			</tbody>
+		          		</table>
+          		</div>  		
+          	</div>				
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+              <button type="button" class="btn btn-primary" onclick="">Ok</button>
           </div>
       </div>
   </div>

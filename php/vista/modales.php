@@ -48,6 +48,10 @@ if(isset($_GET['FInfoError']))
 {
 	require_once('contabilidad/FInfoError.php');
 }
+if(isset($_GET['Ftransporte']))
+{
+	require_once('gestion_social/Ftransporte.php');
+}
 
 ?>
 

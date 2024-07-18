@@ -286,6 +286,16 @@ if(isset($_GET['estado_trasporte']))
 	echo json_encode($controlador->estado_trasporte($parametros));
 }
 
+if(isset($_GET['gavetas']))
+{
+	echo json_encode($controlador->gavetas());
+}
+if(isset($_GET['placas_auto']))
+{
+	$tipo = $_POST['tipo'];
+	echo json_encode($controlador->placas_auto($tipo));
+}
+
 /**
  * 
  */
@@ -1520,16 +1530,27 @@ class alimentos_recibidosC
 					}
 				}
 
-
-				// print_r($nivel_grupo);die();
 			}
 
-			// print_r($grupo_nivel[$i]);die();
 
 		}
 
+	}
 
-		// print_r($grupo_nivel);die();
+	function gavetas()
+	{
+		$datos =  $this->modelo->gavetas();
+		// print_r($datos);die();
+		$tr = '';
+		foreach ($datos as $key => $value) {
+			$tr.='<tr><td>'.$value['Producto'].'</td><td><input type="text" class="form-control"></td></tr>';
+		}
+		return $tr;
+	}
+
+	function placas_auto($tipo)
+	{
+		return $this->modelo->placas_auto($tipo);
 	}
 
 

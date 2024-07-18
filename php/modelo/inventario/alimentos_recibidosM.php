@@ -92,7 +92,7 @@ class alimentos_recibidosM
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
 		inner join Clientes C2 on TC.CodigoU = C2.Codigo 
-		where Item = '".$_SESSION['INGRESO']['item']."'
+		where TC.Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC.T = 'I' ";
 		if($cod)
@@ -580,6 +580,27 @@ class alimentos_recibidosM
 			}
 		return $this->db->datos($sql);
 	}
+
+	
+	function placas_auto($tipo)
+	{
+		$sql = "SELECT   TOP (200) Item, Nivel, TP, Proceso, DC, Cheque, Mi_Cta, Cmds, Cta_Debe, Cta_Haber, Picture, Color, X, ID
+		FROM      Catalogo_Proceso
+		WHERE   (Item = '".$_SESSION['INGRESO']['item']."') AND (Cmds LIKE '".$tipo."%')
+		ORDER BY Cmds";		
+		return $this->db->datos($sql);
+	}
+
+	function gavetas()
+	{
+		$sql = "SELECT   Periodo, TC, Codigo_Inv, Producto
+			FROM      Catalogo_Productos
+			WHERE   (Item = '".$_SESSION['INGRESO']['item']."') AND (Codigo_Inv LIKE 'GA%')
+			ORDER BY Codigo_Inv";
+		return $this->db->datos($sql);
+		
+	}
+
 
 
 }
