@@ -299,9 +299,10 @@
       success:  function (response) { 
         if(response.Tipo_Beneficiario == 'P')
         {
-           Swal.fire('Numero de cedula invalido.','','error');
-            $('#txt_ruc').val('');
-           return false;
+           // Swal.fire('Numero de cedula invalido.','','error');
+           Swal.fire('Advertencia este no es un numero de cedula.','','info');
+            // $('#txt_ruc').val('');
+           // return false;
         }
       }
     });
@@ -310,11 +311,11 @@
   function paciente_existente()
   {
     var num = $('#txt_ruc').val();
-    if(num.length<10)
-    {
-      Swal.fire('La cedula no tiene 10 caracteres','','info');
-      return false;
-    }
+    // if(num.length<10)
+    // {
+    //   Swal.fire('La cedula no tiene 10 caracteres','','info');
+    //   return false;
+    // }
 
     if(!num=='')
     {
