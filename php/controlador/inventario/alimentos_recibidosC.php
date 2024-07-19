@@ -357,7 +357,7 @@ class alimentos_recibidosC
 					$tipo_ve = 'Camion';
 					break;
 				case '3':
-					$tipo_ve = '';
+					$tipo_ve = 'liviano';
 					break;				
 				default:
 					$tipo_ve = 'liviano';
