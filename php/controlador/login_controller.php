@@ -60,8 +60,12 @@ if (isset($_GET['logout'])) {
 }
 if (isset($_GET['patch'])) {
 	$parametro = $_POST['parametros'];
-	$patchseparado = explode(' > ', $parametro['patch']);
-	$_SESSION['INGRESO']['PATCH'] = strtoupper($patchseparado[0]) . " > " . $patchseparado[1];
+	$patch = $parametro['patch'];
+	if($parametro['patch'] != ""){
+		$patchseparado = explode(' > ', $parametro['patch']);
+		$patch = strtoupper($patchseparado[0]) . " > " . $patchseparado[1];
+	}
+	$_SESSION['INGRESO']['PATCH'] = $patch;
 	//$_SESSION['INGRESO']['PATCH'] = strtoupper($parametro['patch']);
 }
 

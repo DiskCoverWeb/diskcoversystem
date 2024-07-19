@@ -718,7 +718,7 @@ function resp_clave_ingreso(response){
          </div>
          <div class="col-sm-3">
            <b>Tipo de cuenta</b><br>
-           <select class="form-control input-sm" id="LstSubMod" onchange="presupuesto_act($('#LstSubMod').val())" row="11" multiple>
+           <select class="form-control input-sm" id="LstSubMod" style="min-height:195px;" onchange="presupuesto_act($('#LstSubMod').val())" row="11" multiple>
              <option value='N' selected>General/Normal</option>
              <option value='CJ'>Cuenta de Caja</option>
              <option value='BA'>Cuenta de Bancos</option>
