@@ -71,6 +71,7 @@
 
   function validar_trasporte_lleno()
   {
+ 
   	var todos = 1;
   	$('.rbl_opciones').each(function() {
 			    const checkbox = $(this);
@@ -90,6 +91,7 @@
 
   }
 
+
   function guardar()
   {
   	var donante = $('#txt_donante').val();
@@ -103,8 +105,26 @@
   		return false;
   	}
 
+  	var gaveta_ingreso = 0;
+	   const textInputs = document.querySelectorAll('#form_gavetas input[type="text"]');
+      textInputs.forEach(input => {
+      	if(input.value!='' && input.value!=0)
+      	{
+      		 gaveta_ingreso = 1;
+      	}
+      });
+
+      if(gaveta_ingreso==0)
+      {
+      	Swal.fire("","Ingrese numero de gavetas","info");
+      	return false;
+      }
+
+
+
   	 var parametros = $('#form_correos').serialize();
   	 var estado_trans = $('#form_estado_transporte').serialize();
+  	 var estado_gavetas = $('#form_gavetas').serialize();
   	 var todos = 1;
   	 $('.rbl_opciones').each(function() {
 			    const checkbox = $(this);
@@ -113,7 +133,7 @@
 			        todos = 0;
 			    }
 			});
-  	 if(todos==0)
+  	 if(todos==0  && $('#rbx_trasporte').val()=='SI')
 	  	{
 	  		Swal.fire('Estado de trasporte No ingresada o incompleto','','info');
 	  		return false;
@@ -124,7 +144,7 @@
   	  $.ajax({
 	      type: "POST",
 	      url: '../controlador/inventario/alimentos_recibidosC.php?guardar=true',
-	      data:{parametros:parametros,transporte:estado_trans},
+	      data:{parametros:parametros,transporte:estado_trans,gavetas:estado_gavetas},
           dataType:'json',
 	      success: function(data)
 	      {
@@ -1259,6 +1279,68 @@ function autocoplet_ingreso_donante(){
 
 
 
+<script type="text/javascript">
+	$(document).ready(function () {
+		preguntas_transporte();
+	})
+	  function preguntas_transporte(){  		
+	  	$.ajax({
+		    type: "POST",
+	      	url:   '../controlador/inventario/alimentos_recibidosC.php?preguntas_transporte=true',
+		    // data:{parametros:parametros},
+	        dataType:'json',
+		    success: function(data)
+		    {
+		    	$('#lista_preguntas').html(data);		    	
+		    }
+		});  	
+  }
+
+  function cambiar_tipo()
+  {
+
+  	var type = $('input[name="rb_op_vehiculo"]:checked').val();  	
+  	if(type==1)
+  	{
+  		$('#rb_furgon_lbl').css('display','none');
+  		$('#rb_camion').prop('checked',true);
+  		placas_auto(81);
+  		$('#ddl_datos_vehiculo').css('display','block');
+
+  	}else
+  	{
+  		$('#rb_furgon_lbl').css('display','inline-block');
+  		$('#ddl_datos_vehiculo').css('display','none');
+  	}
+  }
+
+  function placas_auto(tipo)
+  {
+  		var type = $('input[name="rb_op_vehiculo"]:checked').val();  	
+  		if(type==0)
+  		{
+  			return false;
+  		}else{
+	  		$.ajax({
+			    type: "POST",
+		      	url:   '../controlador/inventario/alimentos_recibidosC.php?placas_auto=true',
+			    data:{tipo:tipo},
+		        dataType:'json',
+			    success: function(data)
+			    {
+			    	op = '';
+			    	data.forEach(function(item,i){
+			    		op+='<option value="'+item.Cmds+'">'+item.Proceso+'</option>';
+			    	})
+			    	$('#ddl_datos_vehiculo').html(op);		    	
+			    }
+			});  
+		}	
+  	
+  }
+
+</script>
+
 
 <div id="modal_estado_transporte" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog">
@@ -1268,10 +1350,37 @@ function autocoplet_ingreso_donante(){
               <h4 class="modal-title">Estado de trasporte</h4>
           </div>
           <div class="modal-body" style="background: antiquewhite;">
+          	<form id="form_estado_transporte" class="">
           	<div class="row">
-          		<iframe width="100%" height="460px" marginheight="0" frameborder="0"  src="../vista/modales.php?Ftransporte=true"></iframe>          		
-          	</div>
-          					
+							<div class="col-sm-12">
+								<div class="row">
+									<div class="col-sm-4">
+										<b>vehiculo</b>
+										<br>
+										<label class="label-success btn-sm btn">
+											<input type="radio" class="rbl_opciones" onchange="cambiar_tipo()" name="rb_op_vehiculo" id="" value="1">  Interno
+										</label>
+										<label class="label-danger btn-sm btn">
+											<input type="radio" class="rbl_opciones" onchange="cambiar_tipo()"  name="rb_op_vehiculo" id="" value="0" checked>  Externo
+										</label>					
+									</div>
+									<div class="col-sm-8">
+											<label class="btn btn-default btn-sm" id="rb_furgon_lbl"><img src="../../img/png/furgon.png"><br><input type="radio" name="rb_tipo_vehiculo" value="1" checked />  Furgón</label>
+											<label class="btn btn-default btn-sm"><img src="../../img/png/camion2.png"><br><input type="radio" id="rb_camion" name="rb_tipo_vehiculo" value="2" onchange="placas_auto('81')" />  Camión</label>
+											<label class="btn btn-default btn-sm"><img src="../../img/png/livianoAu.png"><br><input type="radio" id="rb_" name="rb_tipo_vehiculo" value="3" onchange="placas_auto('82')" />  Liviano</label>
+											<select class="form-control form-control-sm" style="display: none;" id="ddl_datos_vehiculo" name="ddl_datos_vehiculo">
+												<option>Seleccione vehiculo</option>
+											</select>
+										
+									</div>
+									
+								</div>			 		
+							</div>	
+							<div class="col-sm-12">
+									<ul class="list-group list-group-flush" id="lista_preguntas"></ul>		
+							</div>
+						</div>	
+						</form>				
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
               <button type="button" class="btn btn-default" onclick="validar_trasporte_lleno()">Ok</button>
@@ -1292,6 +1401,7 @@ function autocoplet_ingreso_donante(){
           <div class="modal-body" style="background: antiquewhite;">
           	<div class="row">
           		<div class="col-sm-12">
+          			<form id="form_gavetas">
           				<table class="table table-sm">
 		          			<thead>
 		          				<th>Gavetas</th>
@@ -1301,12 +1411,12 @@ function autocoplet_ingreso_donante(){
 		          				
 		          			</tbody>
 		          		</table>
+		          		</form>
           		</div>  		
           	</div>				
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-              <button type="button" class="btn btn-primary" onclick="">Ok</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">ok</button>
           </div>
       </div>
   </div>
