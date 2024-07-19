@@ -336,9 +336,9 @@ class alimentos_recibidosC
 
 		if($parametros['rbx_trasporte']=='SI')
 		{
-			$op_vehi ='';
-			$tipo_ve = '';
-			$placa = '';
+			$op_vehi ='.';
+			$tipo_ve = '.';
+			$placa = '.';
 			switch ($transporte['rb_op_vehiculo']) {
 				case '1':
 				$op_vehi = 'Interno';
@@ -369,7 +369,9 @@ class alimentos_recibidosC
 			    SetAdoFields('TP',$Cmds[0]);
 			    SetAdoFields('Referencia',$Cmds[1]);
 			    SetAdoFields('Cumple',$value);
-			    SetAdoFields('Codigo_Inv',$codigo);	
+			    SetAdoFields('CodigoC',$placa);	
+			    SetAdoFields('Carga',$tipo_ve);	
+			    SetAdoFields('Conducto',$op_vehi);	
 			    SetAdoUpdate();		
 			}
 		}
@@ -989,7 +991,7 @@ class alimentos_recibidosC
 		}
 
 		return $tr;
-		print_r($datos);die();
+		// print_r($datos);die();
 	}
 
 	function cargar_datos_procesados($parametros)
