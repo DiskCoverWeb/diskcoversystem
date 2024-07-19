@@ -145,7 +145,7 @@ class pacienteC
 			// print_r($codig);die();
 			if($codig['Tipo_Beneficiario']!='C')
 			{
-				return -2;
+				//return -2;
 			}
 			SetAdoFields('Codigo',$codig['Codigo_RUC_CI']);
 			SetAdoFields('TD',$codig['Tipo_Beneficiario']);
