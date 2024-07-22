@@ -305,8 +305,11 @@ class autorizacion_sri
 	           	 	$_SESSION['INGRESO']['Clave_Certificado'],
 	           	 	$_SESSION['INGRESO']['Ruta_Certificado']);
 	           	 // print($firma);die();
+
 	           	 if($firma==1)
 	           	 {
+	           	 	clearstatcache();
+	           	 
 	           	 	$validar_autorizado = $this->comprobar_xml_sri(
 	           	 		$cabecera['ClaveAcceso'],
 	           	 		$this->linkSriAutorizacion);
