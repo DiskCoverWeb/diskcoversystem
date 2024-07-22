@@ -815,7 +815,7 @@ class ingreso_descargosC
 				$exis = number_format($costo[0]['Existencia']-$value['Salida'],2);
 				if($exis<0)
 				{
-					$negativos.=$value['CODIGO_INV'].',';
+					$negativos.=$value['Codigo_Inv'].',';
 				}
 			}
 		}
@@ -851,7 +851,7 @@ class ingreso_descargosC
                     'moneda'=> 1, /// moneda 1
                     'Trans'=>$sub[0]['Detalle'],//detalle que se trae del asiento
                     'T_N'=> '99',
-                    't'=> $cuenta[0]['TC'],                        
+                    't'=> $sub[0]['TC'],                        
                   );
                   $this->modelo->generar_asientos_SC($parametros);
 		}
