@@ -19,6 +19,63 @@ class facturas_distribucionM
     $this->pdf = new cabecera_pdf();
   }
 
+  function ConsultarProductos($params){
+    
+    $sql = "SELECT TK.CodBodega AS CodBodega2, TC.ID,TC.Fecha,TC.Fecha_C,A.Nombre_Completo,TC.Total,TC.CodBodega,CodigoC,TC.Codigo_Inv
+            FROM Trans_Comision TC 
+            INNER JOIN Accesos A ON TC.CodigoU = A.Codigo 
+            INNER JOIN Trans_Kardex TK ON TK.Codigo_Barra = TC.CodBodega
+            WHERE CodigoC = '".$params['beneficiario']."' 
+            AND TC.Item = '".$_SESSION['INGRESO']['item']."' 
+            AND TC.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+            "./* AND TC.Fecha = '".$params['fecha']."'*/"
+            AND TC.T='F'";
+    return $this->db->datos($sql);
+  }
+
+  /*function ConsultarKardex($codBarras){
+    $sql ="SELECT TK.CodBodega, TK.Codigo_Barra,CP.Producto,CP.PVP, CP.Unidad
+            FROM trans_kardex TK
+            INNER JOIN Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv 
+            WHERE TK.Codigo_Barra = '".$codBarras."'";
+    return $this->db->datos($sql);
+  }*/
+
+  function consultarGavetas(){
+    $sql = "SELECT Periodo,TC,Codigo_Inv,Producto
+            FROM Catalogo_Productos
+            WHERE Item='".$_SESSION['INGRESO']['item']."' 
+            AND Periodo='".$_SESSION['INGRESO']['periodo']."'
+            AND Codigo_Inv LIKE 'GA%' 
+            AND TC = 'P'
+            ORDER BY Codigo_Inv";
+    return $this->db->datos($sql);
+  }
+
+  function valoresGavetas($parametros){
+    $sql = "SELECT Codigo_Inv, (SELECT top 1 Existencia FROM Trans_Kardex  WHERE Fecha=MAX(TK.Fecha)) AS Existencia 
+            FROM Trans_Kardex TK 
+            WHERE Codigo_P = '".$parametros['codigo']."' 
+            AND CodBodega IN ('03', '99') 
+            AND Codigo_Inv LIKE 'GA.%' "./*AND Fecha = '".$parametros['fecha']."'*/"
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+            AND Item = '".$_SESSION['INGRESO']['item']."' 
+            GROUP BY Codigo_P, Codigo_Inv
+            ORDER BY Codigo_Inv";
+            
+    return $this->db->datos($sql);
+  }
+
+  function consultarEvaluacionFundaciones(){
+    $sql = "SELECT TOP (200) Item, Nivel, TP, Proceso, DC, Cheque, Mi_Cta, Cmds, Cta_Debe, Cta_Haber, Picture, Color, X, ID 
+            FROM Catalogo_Proceso 
+            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND Cmds LIKE '83%' 
+            AND TP = 'EVALUACI' 
+            ORDER BY Cmds";
+    return $this->db->datos($sql);
+  }
+
   function LlenarSelectIVA($fecha)
   {
     $sql = "SELECT Codigo, Porc 
@@ -42,21 +99,28 @@ class facturas_distribucionM
     return $this->db->datos($sql);
   }
 
-  function Listar_Clientes_PV($query, $adicional)
+  function Listar_Clientes_PV($query, $parametros)
   {
-    $sql = "SELECT TOP 50 Cliente,Codigo,CI_RUC,TD,Grupo,Email,T,Direccion,DirNumero,Calificacion
-        FROM Clientes 
-        WHERE Cliente <> '.' 
-        AND FA <> 0 ";
+    $sql = "SELECT Cliente, Codigo, CI_RUC,TD,Grupo,Email,C.T,Direccion,DirNumero,Calificacion 
+                FROM Trans_Comision TC 
+                INNER JOIN Clientes C ON TC.CodigoC = C.Codigo 
+                WHERE TC.T = 'F' 
+                /*AND Fecha = '".$parametros['fecha']."'*/
+                AND Cliente <> '.' 
+                AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+                AND Item = '".$_SESSION['INGRESO']['item']."'";
     if (!is_numeric($query)) {
       $sql .= "AND Cliente LIKE '%" . $query . "%' ";
     } else {
       $sql .= "AND CI_RUC LIKE '%" . $query . "%' ";
     }
+    // print_r($sql);die();
       
-    if($adicional){
-      $sql .= "AND Calificacion = '".$adicional."'";
+    if($parametros['donacion']!=''){
+      $sql .= "AND Calificacion = '".$parametros['donacion']."'";
     }
+
+    $sql .= "GROUP BY Cliente, Codigo, CI_RUC,TD,Grupo,Email,C.T,Direccion,DirNumero,Calificacion";
     // $sql.=" UNION 
     // SELECT Cliente,Codigo,CI_RUC,TD,Grupo,Email,T 
     // FROM Clientes 
@@ -716,12 +780,20 @@ class facturas_distribucionM
     return $this->db->datos($sql);
   }
 
-  function ClientesDatosExtras($parametros){
+  function ClientesDEDireccion($parametros){
     $sql = "SELECT Direccion
             FROM Clientes_Datos_Extras
             WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
             AND Codigo =  '" . $parametros['CodigoCliente'] . "'
             AND Tipo_Dato = 'DIRECCION'
+            ORDER BY Direccion, Fecha_Registro DESC";
+    return $this->db->datos($sql);
+  }
+  function ClientesDEHoraEntrega($parametros){
+    $sql = "SELECT Hora_Ent
+            FROM Clientes_Datos_Extras
+            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+            AND Codigo =  '" . $parametros['CodigoCliente'] . "'
             ORDER BY Direccion, Fecha_Registro DESC";
     return $this->db->datos($sql);
   }

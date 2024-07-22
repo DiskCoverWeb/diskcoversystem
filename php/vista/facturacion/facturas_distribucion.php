@@ -33,6 +33,8 @@ if (isset ($_GET['tipo'])) {
 		DGAsientoF();
 		AdoLinea();
 		AdoAuxCatalogoProductos();
+		construirTablaGavetas();
+		construirTablaEvalFundaciones();
 		//DCDireccion();
 		$('#DCDireccion').on('blur', function () {
 			var DireccionAux = $('#DCDireccion').val();
@@ -65,7 +67,179 @@ if (isset ($_GET['tipo'])) {
 		DCPorcenIvaFD();
 	});
 
-	function createTableFromContent(datos, elemento) {
+	function resetInputsGavetas(){
+		let gavetasInputs = $('.gavetas_info');
+		for (let gavInp of gavetasInputs){
+			gavInp.value = '';
+			if(gavInp.id.includes('total')){
+				gavInp.value = 0;
+			}
+			$('#gavetas_entregadas').val(0);
+			$('#gavetas_devueltas').val(0);
+			$('#gavetas_pendientes').val(0);
+		}
+	}
+
+	function tablaGavetas(accion, datos){
+		if(accion == 'Editar'){
+			$('#cuerpoTablaGavetas').remove();
+		}else if(accion == 'Visualizar'){
+			$('#cuerpoTablaGavetasVer').remove();
+		}
+		let tBody = $(`<tbody id="${accion=='Editar'?"cuerpoTablaGavetas":"cuerpoTablaGavetasVer"}"></tbody>`);
+		for(let fila of datos){
+			let td;
+			let colorGaveta = fila['Producto'].replace('Gaveta ', '');
+			let tr = (accion=='Editar')?$(`<tr id="${fila['Codigo_Inv']}"></tr>`):$('<tr></tr>');
+			tr.append($('<td></td>').html(`<b>${colorGaveta}</b>`));
+			if(accion=='Editar'){
+				td = $('<td></td>');
+				td.append($(`<input type="text" class="form-control gavetas_info" name="${fila['Codigo_Inv']}" id="gavetas_${colorGaveta.toLowerCase()}_entregadas" onchange="calcularTotalGavetas('${fila['Codigo_Inv']}')">`));
+				tr.append(td);
+				td = $('<td></td>');
+				td.append($(`<input type="text" class="form-control gavetas_info" name="${fila['Codigo_Inv']}" id="gavetas_${colorGaveta.toLowerCase()}_devueltas" onchange="calcularTotalGavetas('${fila['Codigo_Inv']}')">`));
+				tr.append(td);
+				td = $('<td></td>');
+				td.append($(`<input type="text" class="form-control gavetas_info" name="${fila['Codigo_Inv']}" id="gavetas_${colorGaveta.toLowerCase()}_pendientes" disabled>`));
+				tr.append(td);
+			}else{
+				td = $(`<td id="gdet_pendientes_${fila['Codigo_Inv']}" class="gdet_pendientes"></td>`).text('0');
+				tr.append(td);
+			}
+			/*td = (accion=='Editar')?$('<td></td>'):$(`<td id="gavetas_${colorGaveta.toLowerCase()}_entregadas_ver"></td>`).text('0');
+			if(accion=='Editar'){
+				td.append($(`<input type="text" class="form-control gavetas_info" id="gavetas_${colorGaveta.toLowerCase()}_entregadas" onchange="calcularTotalGavetas()">`));
+			}
+			tr.append(td);
+			td = (accion=='Editar')?$('<td></td>'):$(`<td id="gavetas_${colorGaveta.toLowerCase()}_devueltas_ver"></td>`).text('0');
+			if(accion=='Editar'){
+				td.append($(`<input type="text" class="form-control gavetas_info" id="gavetas_${colorGaveta.toLowerCase()}_devueltas" onchange="calcularTotalGavetas()">`));
+			}
+			tr.append(td);
+			td = (accion=='Editar')?$('<td></td>'):$(`<td id="gavetas_${colorGaveta.toLowerCase()}_pendientes_ver"></td>`).text('0');
+			if(accion=='Editar'){
+				td.append($(`<input type="text" class="form-control gavetas_info" id="gavetas_${colorGaveta.toLowerCase()}_pendientes" onchange="calcularTotalGavetas()">`));
+			}
+			tr.append(td);*/
+			tBody.append(tr);
+		}
+		let td;
+		let tr = $(`<tr></tr>`);
+		let totalGavetasHTML = "";
+		
+		if(accion=='Editar'){
+			totalGavetasHTML = `
+				<td><b>TOTAL</b></td>
+				<td>
+					<input type="text" class="form-control gavetas_info" id="gavetas_total_entregadas" value="0" style="font-weight:bold" onchange="calcularTotalGavetas()" disabled>
+				</td>
+				<td>
+					<input type="text" class="form-control gavetas_info" id="gavetas_total_devueltas" value="0" style="font-weight:bold" onchange="calcularTotalGavetas()" disabled>
+				</td>
+				<td>
+					<input type="text" class="form-control gavetas_info" id="gavetas_total_pendientes" value="0" style="font-weight:bold" onchange="calcularTotalGavetas()" disabled>
+				</td>
+			`;
+			tr.html(totalGavetasHTML);
+			tBody.append(tr);
+			$('#tablaGavetas').append(tBody);
+		}else{
+			totalGavetasHTML = `
+				<td><b>TOTAL</b></td>
+				<td id="gavetas_total_pendientes_ver">
+					<b>0</b>
+				</td>
+			`;
+			tr.html(totalGavetasHTML);
+			tBody.append(tr);
+			$('#tablaGavetasVer').append(tBody);
+		}
+		/*tr.html(totalGavetasHTML);
+		tBody.append(tr);
+		$('#tablaGavetas').append(tBody);*/
+	}
+
+	function buscarValoresGavetas(){
+		let parametros = {
+			codigo: $('#codigoCliente').val()
+		};
+		$('#myModal_espera').modal('show');
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/facturas_distribucionC.php?ValoresGavetas=true',
+			data: {'parametros': parametros},
+			dataType: 'json',
+			success: function (datos) {
+				$('#myModal_espera').modal('hide');
+				if (datos['res'] == 1) {
+					let valoresGavetas = datos['contenido']
+					for(let vGavs of valoresGavetas){
+						$(`#gdet_pendientes_${vGavs['Codigo_Inv']}`).text(vGavs['Existencia']);
+					}
+				}
+				let gDetPendientes = $('.gdet_pendientes');
+				let totalGDetPendientes = 0;
+				for(let gdp of gDetPendientes){
+					totalGDetPendientes += parseInt(gdp.textContent);
+				}
+				$('#gavetas_total_pendientes_ver b').text(totalGDetPendientes);
+				$('#gavetas_pendientes2').val(totalGDetPendientes)
+			}
+		})
+	}
+
+	function construirTablaGavetas(){
+		$('#myModal_espera').modal('show');
+		/*let codigoC = $('#codigoCliente').val();
+		let parametros = {
+			'beneficiario': codigoC
+		}*/
+		$.ajax({
+			type: "GET",
+			url: '../controlador/facturacion/facturas_distribucionC.php?ConsultarGavetas=true',
+			dataType: 'json',
+			success: function (datos) {
+				$('#myModal_espera').modal('hide');
+				if (datos['res'] == 1) {
+					tablaGavetas("Visualizar", datos['contenido']);
+					tablaGavetas("Editar", datos['contenido']);
+					//buscarValoresGavetas();
+				}
+			}
+		})
+	}
+
+	function construirTablaEvalFundaciones(){
+		$('#myModal_espera').modal('show');
+		$.ajax({
+			type: "GET",
+			url: '../controlador/facturacion/facturas_distribucionC.php?consultarEvaluacionFundaciones=true',
+			dataType: 'json',
+			success: function (datos) {
+				$('#myModal_espera').modal('hide');
+				$('#cuerpoTablaEFund').remove();
+				if (datos['res'] == 1) {
+					let tBody = $('<tbody id="cuerpoTablaEFund"></tbody>');
+					for(let fila of datos['contenido']){
+						let td;
+						//let colorGaveta = fila['Producto'].replace('Gaveta ', '');
+						let tr = $('<tr></tr>');
+						tr.append($('<td></td>').html(`<b>${fila['Proceso']}</b>`));
+						td = $('<td></td>');
+						td.append($(`<input type="checkbox" id="${fila['Cmds']}_bueno" name="${fila['Cmds']}">`));
+						tr.append(td);
+						td = $('<td></td>');
+						td.append($(`<input type="checkbox" id="${fila['Cmds']}_malo" name="${fila['Cmds']}">`));
+						tr.append(td);
+						tBody.append(tr);
+					}
+					$('#tablaEvalFundaciones').append(tBody);
+				}
+			}
+		})
+	}
+
+	/*function createTableFromContent(datos, elemento) {
 		let indice = 0;
 		let table = $('<table class="table"></table>')
 		let tHead = $('<thead></thead>');
@@ -93,7 +267,59 @@ if (isset ($_GET['tipo'])) {
 		table.append(tHead);
 		table.append(tBody);
 		$(`#${elemento}`).append(table);
+	}*/
+
+	function calcularTotalGavetas(codInv){
+		let totalGEntregadas = 0;
+		let totalGDevueltas = 0;
+		let totalGPendientes = 0;
+		const inputsGavetas = document.querySelectorAll('.gavetas_info');
+
+		const gavetasxcolores = document.querySelectorAll(`input[name="${codInv}"]`);
+		let gAnteriores = parseInt(document.getElementById(`gdet_pendientes_${codInv}`).innerText); //valor de: Ver Detalle -> Pendientes[Color]
+		let gEntregadas = parseInt(gavetasxcolores[0].value.trim()==""?0:gavetasxcolores[0].value);
+		let gDevueltas = parseInt(gavetasxcolores[1].value.trim()==""?0:gavetasxcolores[1].value);
+		let gPendientes = gAnteriores + gEntregadas - gDevueltas;
+		gavetasxcolores[2].value = gPendientes;
+
+		inputsGavetas.forEach(inGaveta => {
+			/*console.log("---------- in for ----------");
+			console.log(totalGDevueltas);
+			console.log(totalGEntregadas);
+			console.log(totalGPendientes);*/
+			let tipoGaveta = inGaveta.id;
+			console.log(tipoGaveta);
+			
+			if(!tipoGaveta.includes('total')){
+				if(tipoGaveta.includes('entregadas')){
+					totalGEntregadas += parseInt(inGaveta.value.trim()==""?0:inGaveta.value);
+				}else if(tipoGaveta.includes('devueltas')){
+					totalGDevueltas += parseInt(inGaveta.value.trim()==""?0:inGaveta.value);
+				}else if(tipoGaveta.includes('pendientes')){
+					totalGPendientes += parseInt(inGaveta.value.trim()==""?0:inGaveta.value);
+				}
+			}
+		});
+
+		$('#gavetas_total_entregadas').val(totalGEntregadas);
+		$('#gavetas_entregadas').val(totalGEntregadas);
+		$('#gavetas_total_devueltas').val(totalGDevueltas);
+		$('#gavetas_devueltas').val(totalGDevueltas);
+		$('#gavetas_total_pendientes').val(totalGPendientes);
+		$('#gavetas_pendientes').val(totalGPendientes);
 	}
+
+	/*function aceptarInfoGavetas(){
+		let gavetasInfo = document.querySelectorAll('.gavetas_info');
+		gavetasInfo.forEach((ginfo) => {
+			if(ginfo.id.includes('total')){
+				$(`#${ginfo.id}_ver`).html(`<b>${ginfo.value==''?0:ginfo.value}</b>`);
+			}else{
+				$(`#${ginfo.id}_ver`).html(`${ginfo.value==''?0:ginfo.value}`);
+			}
+		})
+		$('#modalGavetasInfo').modal('hide');
+	}*/
 
 	// Deja preseleccionadas las opciones de los selects
 	function preseleccionar_opciones(){
@@ -287,7 +513,7 @@ if (isset ($_GET['tipo'])) {
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (res) {
-				if (res.length <= 0) {
+				if (res['direcciones'].length <= 0) {
 					$('#DCDireccion').empty();
 					var nuevoOption = $('<option>', {
 						value: dataS[0].Direccion,
@@ -297,11 +523,12 @@ if (isset ($_GET['tipo'])) {
 				} else {
 					$('#DCDireccion').empty();
 					var nuevoOption = $('<option>', {
-						value: res[0].Direccion,
-						text: res[0].Direccion
+						value: res['direcciones'][0].Direccion,
+						text: res['direcciones'][0].Direccion
 					});
 					$('#DCDireccion').append(nuevoOption);
 				}
+				$('#HoraAtencion').val(res['horarioEnt']);
 			}
 		});
 
@@ -323,6 +550,166 @@ if (isset ($_GET['tipo'])) {
 				}
 			}
 		});
+
+		cargarRegistrosProductos();
+		buscarValoresGavetas();
+	}
+
+	function formatearUnidadesProductos(unidad){
+		//console.log("prueba unidad");
+		//console.log(unidad);
+		let unidades = {
+			Kilos: "Kg"
+		};
+		return unidades[unidad];
+	}
+
+	function cargarRegistrosProductos(){
+		$('#myModal_espera').modal('show');
+		let codigoC = $('#codigoCliente').val();
+		let parametros = {
+			'beneficiario': codigoC
+		}
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/facturas_distribucionC.php?ConsultarProductos=true',
+			data: { parametros },
+			dataType: 'json',
+			success: function (datos) {
+				$('#cuerpoTablaDistri').remove();
+				$('#myModal_espera').modal('hide');
+				if (datos['res'] == 1) {
+					let cTotalProds = 0;
+					let tTotalProds = 0;
+					let tBody = $('<tbody id="cuerpoTablaDistri"></tbody>');
+					for(let fila of datos['contenido']){
+						let td;
+						let tr = $('<tr class="asignTablaDistri"></tr>');
+						tr.append($('<td></td>').text(fila['Detalles']['CodBodega']));
+						tr.append($('<td></td>').text(fila['Detalles']['Nombre_Completo']));
+						tr.append($('<td></td>').text(fila['Productos']['Producto']));
+						tr.append($('<td></td>').text(parseInt(fila['Detalles']['Total'])));
+						tr.append($('<td></td>').text(parseFloat(fila['Productos']['PVP']).toFixed(2)));
+						let totalProducto = fila['Detalles']['Total'] * fila['Productos']['PVP'];
+						tr.append($('<td></td>').text(parseFloat(totalProducto).toFixed(2)));
+						tr.append($('<td style="display:none;"></td>').text(fila['Detalles']['CodBodega2']));
+						tr.append($('<td style="display:none;"></td>').text(fila['Productos']['Codigo_Inv']));
+						tBody.append(tr);
+
+						cTotalProds += parseInt(fila['Detalles']['Total']);
+						tTotalProds += parseFloat(totalProducto);
+						console.log(tTotalProds);
+					}
+					let tr = $('<tr></tr>');
+					tr.append($('<td colspan="3"></td>').html('<b>Total</b>'));
+					tr.append($('<td></td>').html(`<b>${cTotalProds}</b>`));
+					tr.append($('<td></td>'));
+					tr.append($('<td></td>').html(`<b>${tTotalProds.toFixed(2)}</b>`));
+					tBody.append(tr);
+					$('#tbl_DGAsientoF table').append(tBody);
+					$('#kilos_distribuir').val(cTotalProds);
+					let unidadProd = formatearUnidadesProductos(datos['contenido'][0]['Productos']['Unidad']);
+					$('#tablaProdCU').text(unidadProd);
+					$('#unidad_dist').val(unidadProd);
+
+					ingresarAsientoF();
+				}
+			}
+		})
+	}
+
+	function ingresarAsientoF() {
+		let filas = $('.asignTablaDistri');
+
+		for(let fila of filas){
+			fila = fila.children;
+			//console.log(fila[0].textContent + " => " + fila[1].textContent + " => " + fila[2].textContent + " => " + fila[3].textContent + " => " + fila[4].textContent + " => " + fila[5].textContent + " => " + fila[6].textContent + " => " + fila[7].textContent);
+			let tc = '<?php echo $TC; ?>';
+			let parametros =
+			{
+				//'opc': $('input[name="radio_conve"]:checked').val(),
+				'TextVUnit': fila[4].textContent,
+				'TextCant': fila[3].textContent,
+				'TC': tc,
+				'TxtDocumentos': '.',
+				'Codigo': fila[9].textContent,
+				'fecha': $('#MBFecha').val(),
+				'CodBod': fila[8].textContent,
+				'VTotal': fila[5].textContent,
+				/*'TxtRifaD': $('#TxtRifaD').val(),
+				'TxtRifaH': $('#TxtRifaH').val(),*/
+				'Serie': $('#LblSerie').text(),
+				'CodigoCliente': $('#codigoCliente').val(),
+				'TextServicios': '.',
+				'TextVDescto': 0,
+				'PorcIva': $('#DCPorcenIVA').val()
+			}
+			$.ajax({
+				type: "POST",
+				url: '../controlador/facturacion/facturas_distribucionC.php?IngresarAsientoF=true',
+				data: { parametros: parametros },
+				dataType: 'json',
+				success: function (data) {
+					if (data == 2) {
+						Swal.fire('Ya no puede ingresar mas productos', '', 'info');
+					} else if (data == 1) {
+						DGAsientoF();
+						Calculos_Totales_Factura();
+					} else {
+						Swal.fire('Intente mas tarde', '', 'info');
+					}
+				}
+			});
+		}
+		/*var cli = $('#DCCliente').val();
+		if (cli == '') {
+			Swal.fire('Seleccione un cliente', '', 'info');
+			return false;
+		}*/
+		/*var tc = $('#DCLinea').val();
+		tc = tc.split(' ');*/
+		/*var tc = '<?php echo $TC; ?>';
+		var parametros =
+		{
+			'opc': $('input[name="radio_conve"]:checked').val(),
+			'TextVUnit': $('#TextVUnit').val(),
+			'TextCant': $('#TextCant').val(),
+			'TC': tc,
+			'TxtDocumentos': $('#TxtDocumentos').val(),
+			'Codigo': $('#DCArticulo').val(),
+			'fecha': $('#MBFecha').val(),
+			'CodBod': $('#DCBodega').val(),
+			'VTotal': $('#LabelVTotal').val(),
+			'TxtRifaD': $('#TxtRifaD').val(),
+			'TxtRifaH': $('#TxtRifaH').val(),
+			'Serie': $('#LblSerie').text(),
+			'CodigoCliente': $('#codigoCliente').val(),
+			'TextServicios': '.',
+			'TextVDescto': 0,
+			'PorcIva': $('#DCPorcenIVA').val()
+		}
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/facturas_distribucionC.php?IngresarAsientoF=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				if (data == 2) {
+					Swal.fire('Ya no puede ingresar mas productos', '', 'info');
+				} else if (data == 1) {
+					DGAsientoF();
+					Calculos_Totales_Factura();
+				} else {
+					Swal.fire('Intente mas tarde', '', 'info');
+				}
+			}
+		});*/
+
+	}
+
+	function editarRegistroProducto(elem){
+		let registro = elem.parentElement.parentElement;
+		console.log(registro);
 	}
 
 	function validar_cta() {
@@ -416,7 +803,8 @@ function tipo_facturacion(valor)
 				data: function (params) {
                     return {
                         query: params.term,
-						v_donacion: $("#DCTipoFact2").select2("data")[0]['data'][0]['Fact']
+						//v_donacion: $("#DCTipoFact2").select2("data")[0]['data'][0]['Fact'],
+						fecha: $("#MBFecha").val()
                     }
                 },
 				processResults: function (data) {
@@ -668,52 +1056,7 @@ function tipo_facturacion(valor)
 		}
 	}
 
-	function ingresar() {
-		var cli = $('#DCCliente').val();
-		if (cli == '') {
-			Swal.fire('Seleccione un cliente', '', 'info');
-			return false;
-		}
-		/*var tc = $('#DCLinea').val();
-		tc = tc.split(' ');*/
-		var tc = '<?php echo $TC; ?>';
-		var parametros =
-		{
-			'opc': $('input[name="radio_conve"]:checked').val(),
-			'TextVUnit': $('#TextVUnit').val(),
-			'TextCant': $('#TextCant').val(),
-			'TC': tc,
-			'TxtDocumentos': $('#TxtDocumentos').val(),
-			'Codigo': $('#DCArticulo').val(),
-			'fecha': $('#MBFecha').val(),
-			'CodBod': $('#DCBodega').val(),
-			'VTotal': $('#LabelVTotal').val(),
-			'TxtRifaD': $('#TxtRifaD').val(),
-			'TxtRifaH': $('#TxtRifaH').val(),
-			'Serie': $('#LblSerie').text(),
-			'CodigoCliente': $('#codigoCliente').val(),
-			'TextServicios': '.',
-			'TextVDescto': 0,
-			'PorcIva': $('#DCPorcenIVA').val()
-		}
-		$.ajax({
-			type: "POST",
-			url: '../controlador/facturacion/facturas_distribucionC.php?IngresarAsientoF=true',
-			data: { parametros: parametros },
-			dataType: 'json',
-			success: function (data) {
-				if (data == 2) {
-					Swal.fire('Ya no puede ingresar mas productos', '', 'info');
-				} else if (data == 1) {
-					DGAsientoF();
-					Calculos_Totales_Factura();
-				} else {
-					Swal.fire('Intente mas tarde', '', 'info');
-				}
-			}
-		});
-
-	}
+	
 
 	function Eliminar(A_no, cod) {
 		Swal.fire({
@@ -1202,7 +1545,7 @@ function tipo_facturacion(valor)
 	</div>
 </div>-->
 <div class="row box box-success" style="margin-left:0; padding:5px 10px;">
-	<div class="row" style="padding-bottom:5px">
+	<!--<div class="row" style="padding-bottom:5px">
 		<div class="col-sm-2">
 			<b>Kilos a distribuir:</b>			
 		</div>
@@ -1225,7 +1568,7 @@ function tipo_facturacion(valor)
 				<input type="text" name="detalle_prod" id="detalle_prod" class="form-control input-xs">
 			</div>
 		</div>
-	</div>
+	</div>-->
 	<!--
 	<div class="row" style="padding-bottom:5px">
 		<div class="col-sm-6">
@@ -1249,26 +1592,13 @@ function tipo_facturacion(valor)
 		</div>
 	</div>
 	-->
-	<div class="row" style="padding-bottom:5px">
-		<div class="col-sm-2">
+	<div class="row" style="padding-bottom:5px; display:flex; align-items:center">
+		<!--<div class="col-sm-2">
 			<b>Retirado por:</b>			
 		</div>
 		<div class="col-sm-4">
 			<input type="text" name="retirado_por" id="retirado_por" class="form-control input-xs">
-		</div>
-		<div class="col-sm-6">
-			<div class="col-sm-4">
-				<b>Gavetas pendientes:</b>
-			</div>
-			<div class="col-sm-3">
-				<input type="text" name="gavetas_pendientes" id="gavetas_pendientes" class="form-control input-xs">
-			</div>
-			<div class="col-sm-5">
-				<button type="button" id="btn_detalle" class="btn btn-primary btn-xs btn-block"> Ver detalle <i class="fa fa-eye"></i></button>
-			</div>
-		</div>
-	</div>
-	<div class="row" style="display:flex; align-items:center">
+		</div>-->
 		<div class="col-sm-3" style="width:fit-content">
 			<b>Evaluación de fundaciones:</b>
 		</div>
@@ -1277,7 +1607,28 @@ function tipo_facturacion(valor)
 				<img src="../../img/png/eval_fundaciones.png" width="50px" alt="Evaluacion fundaciones" title="EVALUACIÓN FUNDACIONES">
 			</div>
 		</div>
+		<div class="col-sm-6">
+			<div class="col-sm-4">
+				<b>Gavetas pendientes:</b>
+			</div>
+			<div class="col-sm-3">
+				<input type="text" name="gavetas_pendientes" id="gavetas_pendientes2" class="form-control input-xs">
+			</div>
+			<div class="col-sm-5">
+				<button type="button" id="btn_detalle" class="btn btn-primary btn-xs btn-block" onclick="$('#modalGavetasVer').modal('show')"> Ver detalle <i class="fa fa-eye"></i></button>
+			</div>
+		</div>
 	</div>
+	<!--<div class="row" style="display:flex; align-items:center">
+		<div class="col-sm-3" style="width:fit-content">
+			<b>Evaluación de fundaciones:</b>
+		</div>
+		<div class="col-sm-1" style="padding: 0;" onclick="$('#modalEvaluacionFundaciones').modal('show');">
+			<div>
+				<img src="../../img/png/eval_fundaciones.png" width="50px" alt="Evaluacion fundaciones" title="EVALUACIÓN FUNDACIONES">
+			</div>
+		</div>
+	</div>-->
 </div>
 <!--<div class="row">
 	<div class="col-sm-4">
@@ -1364,14 +1715,15 @@ function tipo_facturacion(valor)
 							<th>Código</th>
 							<th>Usuario</th>
 							<th>Producto</th>
-							<th>Cantidad (Kg)</th> <!-- TODO: (Kg) dinámico -->
+							<th>Cantidad (<span id="tablaProdCU">.</span>)</th> <!-- TODO: (Kg) dinámico -->
 							<th>Costo unitario P.V.P</th>
 							<th>Costo total</th>
-							<th>Cheking</th>
-							<th>Notificar</th>
+							<th style="display:none">CodBodega</th>
+							<th style="display:none">Cod_Inv</th>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="cuerpoTablaDistri"></tbody>
+					<!--<tbody>
 						<tr>
 							<td>Código</td>
 							<td>JESUS PERDOMO</td>
@@ -1382,22 +1734,22 @@ function tipo_facturacion(valor)
 							<td><input type="checkbox" id="producto_cheking" name="producto_cheking" checked="true"></td>
 							<td><button style="width:50px"><i class="fa fa-commenting" aria-hidden="true"></i></button></td>
 						</tr>
-					</tbody>
+					</tbody>-->
 				</table>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-sm-3">
 				<label for="gavetas_entregadas">Gavetas entregadas:</label>
-				<input type="text" class="form-control input-xs" id="gavetas_entregadas">
+				<input type="text" class="form-control input-xs" id="gavetas_entregadas" value="0" disabled>
 			</div>
 			<div class="col-sm-3">
 				<label for="gavetas_devueltas">Gavetas devueltas:</label>
-				<input type="text" class="form-control input-xs" id="gavetas_devueltas">
+				<input type="text" class="form-control input-xs" id="gavetas_devueltas" value="0" disabled>
 			</div>
 			<div class="col-sm-3">
 				<label for="gavetas_pendientes">Gavetas pendientes:</label>
-				<input type="text" class="form-control input-xs" id="gavetas_pendientes">
+				<input type="text" class="form-control input-xs" id="gavetas_pendientes" value="0" disabled>
 			</div>
 			<div class="col-sm-1" onclick="$('#modalGavetasInfo').modal('show')">
 				<img src="../../img/png/gavetas.png" height="50px" alt="">
@@ -1519,7 +1871,7 @@ function tipo_facturacion(valor)
 			</div>
 			<div class="modal-body" style="overflow-y: auto; max-height: 300px; margin:5px">
 				<div style="overflow-x: auto; margin-bottom:20px">
-					<table class="table text-center" style="width:fit-content;margin:0 auto;">
+					<table class="table text-center" id="tablaEvalFundaciones" style="width:fit-content;margin:0 auto;">
 						<thead>
 							<tr>
 								<th>ITEM</th>
@@ -1527,8 +1879,8 @@ function tipo_facturacion(valor)
 								<th>MALO</th>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
+						<tbody id="cuerpoTablaEFund">
+							<!--<tr>
 								<td><b>LIMPIEZA DE TRANSPORTE</b></td>
 								<td><input type="checkbox" id="limpieza_trans_bueno" name="limpieza_trans"></td>
 								<td><input type="checkbox" id="limpieza_trans_malo" name="limpieza_trans"></td>
@@ -1542,7 +1894,7 @@ function tipo_facturacion(valor)
 								<td><b>PERSONAL NECESARIO PARA RETIRO</b></td>
 								<td><input type="checkbox" id="personal_nec_bueno" name="personal_nec"></td>
 								<td><input type="checkbox" id="personal_nec_malo" name="personal_nec"></td>
-							</tr>
+							</tr>-->
 							
 						</tbody>
 					</table>
@@ -1571,7 +1923,7 @@ function tipo_facturacion(valor)
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">Gavetas</h4>
 			</div>
-			<div class="modal-body" style="overflow-y: auto; max-height: 300px; margin:5px">
+			<div class="modal-body" style="overflow-y: auto; height: fit-content; margin:5px">
 				<div style="overflow-x:auto;">
 					<table class="table text-center" id="tablaGavetas">
 						<thead>
@@ -1582,98 +1934,212 @@ function tipo_facturacion(valor)
 								<th>PENDIENTES</th>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
+						<tbody id="cuerpoTablaGavetas">
+							<!--<tr>
 								<td><b>Negro</b></td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_negro_entregadas">
+									<input type="text" class="form-control gavetas_info" id="gavetas_negro_entregadas" onchange="calcularTotalGavetas()">
 								</td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_negro_devueltas">
+									<input type="text" class="form-control gavetas_info" id="gavetas_negro_devueltas" onchange="calcularTotalGavetas()">
 								</td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_negro_pendientes">
+									<input type="text" class="form-control gavetas_info" id="gavetas_negro_pendientes" onchange="calcularTotalGavetas()">
 								</td>
 							</tr>
 							<tr>
 								<td><b>Azul</b></td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_azul_entregadas">
+									<input type="text" class="form-control gavetas_info" id="gavetas_azul_entregadas" onchange="calcularTotalGavetas()">
 								</td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_azul_devueltas">
+									<input type="text" class="form-control gavetas_info" id="gavetas_azul_devueltas" onchange="calcularTotalGavetas()">
 								</td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_azul_pendientes">
+									<input type="text" class="form-control gavetas_info" id="gavetas_azul_pendientes" onchange="calcularTotalGavetas()">
 								</td>
 							</tr>
 							<tr>
 								<td><b>Gris</b></td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_gris_entregadas">
+									<input type="text" class="form-control gavetas_info" id="gavetas_gris_entregadas" onchange="calcularTotalGavetas()">
 								</td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_gris_devueltas">
+									<input type="text" class="form-control gavetas_info" id="gavetas_gris_devueltas" onchange="calcularTotalGavetas()">
 								</td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_gris_pendientes">
+									<input type="text" class="form-control gavetas_info" id="gavetas_gris_pendientes" onchange="calcularTotalGavetas()">
 								</td>
 							</tr>
 							<tr>
 								<td><b>Rojo</b></td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_rojo_entregadas">
+									<input type="text" class="form-control gavetas_info" id="gavetas_rojo_entregadas" onchange="calcularTotalGavetas()">
 								</td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_rojo_devueltas">
+									<input type="text" class="form-control gavetas_info" id="gavetas_rojo_devueltas" onchange="calcularTotalGavetas()">
 								</td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_rojo_pendientes">
+									<input type="text" class="form-control gavetas_info" id="gavetas_rojo_pendientes" onchange="calcularTotalGavetas()">
 								</td>
 							</tr>
 							<tr>
 								<td><b>Verde</b></td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_verde_entregadas">
+									<input type="text" class="form-control gavetas_info" id="gavetas_verde_entregadas" onchange="calcularTotalGavetas()">
 								</td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_verde_devueltas">
+									<input type="text" class="form-control gavetas_info" id="gavetas_verde_devueltas" onchange="calcularTotalGavetas()">
 								</td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_verde_pendientes">
+									<input type="text" class="form-control gavetas_info" id="gavetas_verde_pendientes" onchange="calcularTotalGavetas()">
 								</td>
 							</tr>
 							<tr>
 								<td><b>Amarillo</b></td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_amarillo_entregadas">
+									<input type="text" class="form-control gavetas_info" id="gavetas_amarillo_entregadas" onchange="calcularTotalGavetas()">
 								</td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_amarillo_devueltas">
+									<input type="text" class="form-control gavetas_info" id="gavetas_amarillo_devueltas" onchange="calcularTotalGavetas()">
 								</td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_amarillo_pendientes">
+									<input type="text" class="form-control gavetas_info" id="gavetas_amarillo_pendientes" onchange="calcularTotalGavetas()">
 								</td>
 							</tr>
 							<tr>
 								<td><b>TOTAL</b></td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_total_entregadas" value="0">
+									<input type="text" class="form-control gavetas_info" id="gavetas_total_entregadas" value="0" style="font-weight:bold" onchange="calcularTotalGavetas()" disabled>
 								</td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_total_devueltas" value="0">
+									<input type="text" class="form-control gavetas_info" id="gavetas_total_devueltas" value="0" style="font-weight:bold" onchange="calcularTotalGavetas()" disabled>
 								</td>
 								<td>
-									<input type="text" class="form-control" id="gavetas_total_pendientes" value="0">
+									<input type="text" class="form-control gavetas_info" id="gavetas_total_pendientes" value="0" style="font-weight:bold" onchange="calcularTotalGavetas()" disabled>
 								</td>
-							</tr>
+							</tr>-->
 						</tbody>
 					</table>
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-success" id="btnAceptarInfoGavetas">Aceptar</button>
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-success" data-dismiss="modal" id="btnAceptarInfoGavetas">Aceptar</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetInputsGavetas()">Cancelar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="modalGavetasVer" class="modal fade">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Gavetas</h4>
+			</div>
+			<div class="modal-body" style="overflow-y: auto; height: fit-content; margin:5px">
+				<div style="overflow-x:auto;">
+					<table class="table text-center" id="tablaGavetasVer">
+						<thead>
+							<tr>
+								<th>GAVETAS</th>
+								<!--<th>ENTREGADAS</th>
+								<th>DEVUELTAS</th>-->
+								<th>PENDIENTES</th>
+							</tr>
+						</thead>
+						<tbody id="cuerpoTablaGavetasVer">
+							<!--<tr>
+								<td><b>Negro</b></td>
+								<td id="gavetas_negro_entregadas_ver">
+									0
+								</td>
+								<td id="gavetas_negro_devueltas_ver">
+									0
+								</td>
+								<td id="gavetas_negro_pendientes_ver">
+									0
+								</td>
+							</tr>
+							<tr>
+								<td><b>Azul</b></td>
+								<td id="gavetas_azul_entregadas_ver">
+									0
+								</td>
+								<td id="gavetas_azul_devueltas_ver">
+									0
+								</td>
+								<td id="gavetas_azul_pendientes_ver">
+									0
+								</td>
+							</tr>
+							<tr>
+								<td><b>Gris</b></td>
+								<td id="gavetas_gris_entregadas_ver">
+									0
+								</td>
+								<td id="gavetas_gris_devueltas_ver">
+									0
+								</td>
+								<td id="gavetas_gris_pendientes_ver">
+									0
+								</td>
+							</tr>
+							<tr>
+								<td><b>Rojo</b></td>
+								<td id="gavetas_rojo_entregadas_ver">
+									0
+								</td>
+								<td id="gavetas_rojo_devueltas_ver">
+									0
+								</td>
+								<td id="gavetas_rojo_pendientes_ver">
+									0
+								</td>
+							</tr>
+							<tr>
+								<td><b>Verde</b></td>
+								<td id="gavetas_verde_entregadas_ver">
+									0
+								</td>
+								<td id="gavetas_verde_devueltas_ver">
+									0
+								</td>
+								<td id="gavetas_verde_pendientes_ver">
+									0
+								</td>
+							</tr>
+							<tr>
+								<td><b>Amarillo</b></td>
+								<td id="gavetas_amarillo_entregadas_ver">
+									0
+								</td>
+								<td id="gavetas_amarillo_devueltas_ver">
+									0
+								</td>
+								<td id="gavetas_amarillo_pendientes_ver">
+									0
+								</td>
+							</tr>
+							<tr>
+								<td><b>TOTAL</b></td>
+								<td id="gavetas_total_entregadas_ver">
+									<b>0</b>
+								</td>
+								<td id="gavetas_total_devueltas_ver">
+									<b>0</b>
+								</td>
+								<td id="gavetas_total_pendientes_ver">
+									<b>0</b>
+								</td>
+							</tr>-->
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				
 			</div>
 		</div>
 	</div>
