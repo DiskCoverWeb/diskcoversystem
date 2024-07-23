@@ -175,7 +175,7 @@ class alimentos_recibidosM
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		inner join Clientes C2 on TC.CodigoU = C2.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
-		where Item = '".$_SESSION['INGRESO']['item']."'
+		where TC.Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC.T = 'P' ";
 		if($cod)
