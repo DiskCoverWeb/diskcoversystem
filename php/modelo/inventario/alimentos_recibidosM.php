@@ -68,10 +68,12 @@ class alimentos_recibidosM
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
 		inner join Clientes C2 on TC.CodigoU = C2.Codigo 
-		where Item = '".$_SESSION['INGRESO']['item']."'
+		where TC.Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
-		AND TC.T = 'I' 
-		OR TC.T = 'C' ";
+		AND TC.Item = CP.Item
+		AND TC.T = 'I'";  
+
+		// ver por que se coloco el esto ->	OR TC.T = 'C'  
 		if($cod)
 		{
 			$sql.= " AND Envio_No  like  '%".$cod."%'";
@@ -94,6 +96,7 @@ class alimentos_recibidosM
 		inner join Clientes C2 on TC.CodigoU = C2.Codigo 
 		where TC.Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND TC.Item = CP.Item
 		AND TC.T = 'I' ";
 		if($cod)
 		{
@@ -586,8 +589,9 @@ class alimentos_recibidosM
 	{
 		$sql = "SELECT   TOP (200) Item, Nivel, TP, Proceso, DC, Cheque, Mi_Cta, Cmds, Cta_Debe, Cta_Haber, Picture, Color, X, ID
 		FROM      Catalogo_Proceso
-		WHERE   (Item = '".$_SESSION['INGRESO']['item']."') AND (Cmds LIKE '".$tipo."%')
+		WHERE   (Item = '".$_SESSION['INGRESO']['item']."') AND (Cmds LIKE '".$tipo.".%')
 		ORDER BY Cmds";		
+		// print_r($sql);die();
 		return $this->db->datos($sql);
 	}
 
@@ -595,8 +599,9 @@ class alimentos_recibidosM
 	{
 		$sql = "SELECT   Periodo, TC, Codigo_Inv, Producto
 			FROM      Catalogo_Productos
-			WHERE   (Item = '".$_SESSION['INGRESO']['item']."') AND (Codigo_Inv LIKE 'GA%')
+			WHERE   (Item = '".$_SESSION['INGRESO']['item']."') AND (Codigo_Inv LIKE 'GA.%')
 			ORDER BY Codigo_Inv";
+			// print_r($sql);die();
 		return $this->db->datos($sql);
 		
 	}

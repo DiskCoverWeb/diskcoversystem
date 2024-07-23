@@ -29,6 +29,9 @@ class migrar_datosC
 	
 	function generarArchivos()
 	{
+		set_time_limit(0);
+	    	ini_set('memory_limit', '1024M');
+	    	
 		$link_remo = '/files/Datos/';
 		$link = dirname(__DIR__,3).'/TEMP/Datos_'.$_SESSION['INGRESO']['item'].'/';
 		if(!file_exists(dirname(__DIR__,3).'/TEMP/'))

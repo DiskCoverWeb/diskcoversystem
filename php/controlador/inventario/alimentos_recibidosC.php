@@ -29,7 +29,8 @@ if(isset($_GET['guardar']))
 	// print_r($_POST);die();
 	parse_str($_POST['parametros'],$parametros);
 	parse_str($_POST['transporte'],$transporte);
-	echo json_decode($controlador->guardar($parametros,$transporte));
+	parse_str($_POST['gavetas'],$gavetas);
+	echo json_decode($controlador->guardar($parametros,$transporte,$gavetas));
 }
 if(isset($_GET['guardar2']))
 {
@@ -309,10 +310,11 @@ class alimentos_recibidosC
 		$this->modelo = new alimentos_recibidosM();
 	}
 
-	function guardar($parametros,$transporte)
+	function guardar($parametros,$transporte,$gavetas)
 	{
 		// print_r($parametros);
-		// print_r($transporte);die();
+		// print_r($transporte);
+		// print_r($gavetas);die();
 
 
 
@@ -332,15 +334,46 @@ class alimentos_recibidosC
 		SetAdoFields('Envio_No',$codigo);
 		SetAdoUpdate();
 
-
-		foreach ($transporte as $key => $value) {
-			$Cmds = explode('_', $key);
-			SetAdoAddNew('Trans_Fletes');
-		    SetAdoFields('TP',$Cmds[0]);
-		    SetAdoFields('Referencia',$Cmds[1]);
-		    SetAdoFields('Cumple',$value);
-		    SetAdoFields('Codigo_Inv',$codigo);	
-		    SetAdoUpdate();		
+		if($parametros['rbx_trasporte']=='SI')
+		{
+			$op_vehi ='.';
+			$tipo_ve = '.';
+			$placa = '.';
+			switch ($transporte['rb_op_vehiculo']) {
+				case '1':
+				$op_vehi = 'Interno';
+				$placa = $transporte['ddl_datos_vehiculo'];
+					break;
+				
+				default:				
+				$op_vehi = 'Externo';
+					break;
+			}
+			switch ($transporte['rb_tipo_vehiculo']) {
+				case '1':
+					$tipo_ve = 'Furgon';
+					break;
+				case '2':
+					$tipo_ve = 'Camion';
+					break;
+				case '3':
+					$tipo_ve = 'liviano';
+					break;				
+				default:
+					$tipo_ve = 'liviano';
+					break;
+			}
+			foreach ($transporte as $key => $value) {
+				$Cmds = explode('_', $key);
+				SetAdoAddNew('Trans_Fletes');
+			    SetAdoFields('TP',$Cmds[0]);
+			    SetAdoFields('Referencia',$Cmds[1]);
+			    SetAdoFields('Cumple',$value);
+			    SetAdoFields('CodigoC',$placa);	
+			    SetAdoFields('Carga',$tipo_ve);	
+			    SetAdoFields('Conducto',$op_vehi);	
+			    SetAdoUpdate();		
+			}
 		}
 
 		return 1;
@@ -958,7 +991,7 @@ class alimentos_recibidosC
 		}
 
 		return $tr;
-		print_r($datos);die();
+		// print_r($datos);die();
 	}
 
 	function cargar_datos_procesados($parametros)
@@ -1543,7 +1576,7 @@ class alimentos_recibidosC
 		// print_r($datos);die();
 		$tr = '';
 		foreach ($datos as $key => $value) {
-			$tr.='<tr><td>'.$value['Producto'].'</td><td><input type="text" class="form-control"></td></tr>';
+			$tr.='<tr><td>'.$value['Producto'].'</td><td><input type="text" id="txt_'.str_replace(' ','_', $value['Producto']).'" name="txt_'.str_replace(' ','_', $value['Producto']).'_'.$key.'" class="form-control gavetas_ingreso"></td></tr>';
 		}
 		return $tr;
 	}
