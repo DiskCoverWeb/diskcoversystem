@@ -894,6 +894,25 @@ class niveles_seguriM
 	      return $datos;
 	}
 
+	function item_empresas_usuarios($entidad,$usuario,$item=false,$modulo=false)
+	{
+
+		$sql="SELECT DISTINCT Item FROM acceso_empresas WHERE ID_Empresa = '".$entidad."' AND CI_NIC = '".$usuario."'";
+		if($item)
+		{
+			$sql.=" AND Item = '".$item."'";
+		}
+		if($modulo)
+		{
+			$sql.=" AND Modulo= '".$modulo."'";
+		}
+
+		// print_r($sql);die();
+		$datos = $this->db->datos($sql,'MY SQL');
+	      return $datos;
+	}
+
+
 	function Empresa_data()
    {   			
 	   $sql = "SELECT * FROM Empresas where Item='".$_SESSION['INGRESO']['item']."'";

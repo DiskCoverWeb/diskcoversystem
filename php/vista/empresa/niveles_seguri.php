@@ -395,7 +395,12 @@ function guardar()
               $('#myModal_espera').modal('hide'); 
           //     Swal.fire('No se pudo crear el usuario para SQLServer','Pongace en contacto con el administrador del sistema, su base no esta actualizada o no tiene las credenciales correctas','error');
           //   }
-    		}
+    		},
+          error: function (error) {
+            $('#myModal_espera').modal('hide');
+            // console.error('Error en numero_comprobante:', error);
+            // Puedes manejar el error aquí si es necesario
+          },
     	});
 
  }
