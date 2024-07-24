@@ -102,18 +102,36 @@
 
 		    		});
 		    	}else{
+
 		    		data = data.producto[0];
 			    	console.log(data);
-			    	// if(grupo==data[])
-			    	$('#txt_id').val(data.Codigo_Inv)
-			    	$('#txt_ubicacion').val(data.ubicacion)
-					$('#txt_donante').val(data.Cliente)
-					// $('#txt_grupo').val(data.Producto)
-					$('#txt_stock').val(data.Entrada)
-					$('#txt_unidad').val(data.Unidad)
+			    	if(data!=undefined)
+			    	{
+				    	$('#txt_id').val(data.Codigo_Inv)
+				    	$('#txt_ubicacion').val(data.ubicacion)
+						$('#txt_donante').val(data.Cliente)
+						// $('#txt_grupo').val(data.Producto)
+						$('#txt_stock').val(data.Entrada)
+						$('#txt_unidad').val(data.Unidad)
+					}else
+					{
+						Swal.fire("Codigo de producto no encontrado","","info");
+						limpiar_data();
+					}
 				}
 		    }
 		});
+  	}
+
+
+  	function limpiar_data()
+  	{
+  		$('#txt_id').val("")
+    	$('#txt_ubicacion').val("")
+		$('#txt_donante').val("")
+		// $('#txt_grupo').val(da.Producto)
+		$('#txt_stock').val("")
+		$('#txt_unidad').val("")
   	}
 
   	function agregar_picking()

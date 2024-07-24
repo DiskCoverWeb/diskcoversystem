@@ -317,7 +317,6 @@ class alimentos_recibidosC
 		// print_r($gavetas);die();
 
 
-
 		$parametros['fecha'] = $parametros['txt_fecha'];
 		$codigo = substr($parametros['txt_codigo'],0,-3).generaCeros($this->autoincrementable($parametros),3);
 		// print_r($parametros);die();
@@ -375,6 +374,24 @@ class alimentos_recibidosC
 			    SetAdoUpdate();		
 			}
 		}
+
+		foreach ($gavetas as $key => $value) {
+			if($value!='')
+			{
+				$codigo_inv = str_replace("_",'.', str_replace('txt_','', $key));
+				SetAdoAddNew('Trans_Kardex');
+				SetAdoFields('Codigo_Inv',$codigo_inv);
+				SetAdoFields('TP','CD');
+				SetAdoFields('T','N');
+				SetAdoFields('Entrada',$value);
+				SetAdoFields('Orden_No',$codigo);
+				SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
+				SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+				SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);
+				SetAdoUpdate();
+			}
+		}
+
 
 		return 1;
 	}
@@ -1576,7 +1593,7 @@ class alimentos_recibidosC
 		// print_r($datos);die();
 		$tr = '';
 		foreach ($datos as $key => $value) {
-			$tr.='<tr><td>'.$value['Producto'].'</td><td><input type="text" id="txt_'.str_replace(' ','_', $value['Producto']).'" name="txt_'.str_replace(' ','_', $value['Producto']).'_'.$key.'" class="form-control gavetas_ingreso"></td></tr>';
+			$tr.='<tr><td>'.$value['Producto'].'</td><td><input type="text" id="txt_'.$value['Codigo_Inv'].'" name="txt_'.$value['Codigo_Inv'].'" class="form-control gavetas_ingreso"></td></tr>';
 		}
 		return $tr;
 	}
