@@ -85,7 +85,7 @@ class almacenamiento_bodegaM
 
 	function Buscar_productos_ingresados($id=false,$cod=false)
 	{
-		$sql = "SELECT TK.Periodo, TK.T, CodBodega, Codigo_Barra, Codigo_Inv, TK.Fecha, TP, Numero, Entrada, Salida, Valor_Unitario, Valor_Total, Existencia, Costo, TK.Total, Codigo_P, TK.Descuento, Descuento1, Cta_Inv, Contra_Cta, Orden_No, PVP, Total_IVA, TK.Porc_C, TK.CodigoU, Item, TK.X, Stock_Bod, Unit_Bod, Valor_Bod, Stock_Barra, Costo_Bod, Unit_Barr, Costo_Barr, Valor_Barr, Total_Bod, Total_Barr, Solicitud, CodigoL, Cod_Tarifa, Fecha_DUI, No_Refrendo, DUI, Precio_FOB, Comision, Trans_Unit, Utilidad, Guia_No, CodMarca, Lote_No, Procesado, Codigo_Dr, Codigo_Tra, Fecha_Fab, Fecha_Exp, Modelo, Procedencia, Serie_No, TC, Serie, Factura, Detalle, Centro_Costo, Tipo_Empaque, TK.ID ,C.Cliente,CP.Cod_C
+		$sql = "SELECT TK.Periodo, TK.T, CodBodega, Codigo_Barra, Codigo_Inv, TK.Fecha, TP, Numero, Entrada, Salida, Valor_Unitario, Valor_Total, Existencia, Costo, TK.Total, Codigo_P, TK.Descuento, Descuento1, Cta_Inv, Contra_Cta, Orden_No, PVP, Total_IVA, TK.Porc_C, TK.CodigoU, TK.Item, TK.X, Stock_Bod, Unit_Bod, Valor_Bod, Stock_Barra, Costo_Bod, Unit_Barr, Costo_Barr, Valor_Barr, Total_Bod, Total_Barr, Solicitud, CodigoL, Cod_Tarifa, Fecha_DUI, No_Refrendo, DUI, Precio_FOB, Comision, Trans_Unit, Utilidad, Guia_No, CodMarca, Lote_No, Procesado, Codigo_Dr, Codigo_Tra, Fecha_Fab, Fecha_Exp, Modelo, Procedencia, Serie_No, TC, Serie, Factura, Detalle, Centro_Costo, Tipo_Empaque, TK.ID ,C.Cliente,CP.Cod_C
 		FROM Trans_Kardex TK
 		inner join Clientes C on TK.Codigo_P = C.Codigo
 		inner join Trans_Correos CP on TK.Orden_No = CP.Envio_No
@@ -93,7 +93,7 @@ class almacenamiento_bodegaM
 						from Trans_Correos TC
 						inner join Clientes C on TC.CodigoP = C.Codigo 
 						INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
-						where Item = '".$_SESSION['INGRESO']['item']."'
+						where TC.Item = '".$_SESSION['INGRESO']['item']."'
 						AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 						AND TC.T = 'N') 
 		AND CodBodega = '-1'";
