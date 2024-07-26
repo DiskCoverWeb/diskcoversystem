@@ -992,6 +992,8 @@ class alimentos_recibidosC
 			// print_r($value);
 			// print_r($noti);die();
 			$tr.='<tr>
+
+					<td>'.($key+1).'</td>
 					<td>'.$value['Envio_No'].'</td>
 					<td>'.$value['Fecha_P']->format('Y-m-d').'</td>
 					<td>'.$value['Cliente'].' 

@@ -1053,7 +1053,8 @@ function autocoplet_ingreso_donante(){
 							    	<div class="col-sm-12">
 							    		<div class="table-responsive">
 												<table class="table table-hover">
-													<thead>
+													<thead>														
+														<th>Item</th>
 														<th>Codigo</th>
 														<th>Fecha de ingreso</th>
 														<th>Donante / Proveedor</th>
