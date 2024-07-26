@@ -11,6 +11,15 @@ if (isset($_GET['Beneficiario'])) {
     echo json_encode($controlador->tipoBeneficiario($query));
 }
 
+
+if (isset($_GET['Beneficiario_new'])) {
+    $query = '';
+    if (isset($_GET['query'])) {
+        $query = $_GET['query'];
+    }
+    echo json_encode($controlador->agregar_nuevo_beneficiario($query));
+}
+
 if(isset($_GET['datosExtra'])){
     $parametros = $_POST['param'];
     echo json_encode($controlador->datosExtra($parametros));
@@ -54,8 +63,15 @@ if(isset($_GET['autocom_pro'])){
     echo json_encode($controlador->autocom_pro($query));
 }
 
+if(isset($_GET['asignar_beneficiario'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->asignar_beneficiario($parametros));
+}
 
-
+if(isset($_GET['eliminar_asignacion_beneficiario'])){
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->eliminar_asignacion_beneficiario($parametros));
+}
 
 
 class asignacion_osC
@@ -102,8 +118,8 @@ class asignacion_osC
                 // print_r($diaActual);
                 // print_r($dia);
                 // print_r($asignaciones);
-                // print_r($cant_asig.'\n');
-                if($diaActual==$dia[1] && $asignaciones != $cant_asig)
+                // print_r($value);die();
+                if(($diaActual==$dia[1] && $asignaciones != $cant_asig) || ($value['ClienteEstado']==1))
                 {
                     // print_r($dia);die();
                     $res[] = array(
@@ -356,6 +372,29 @@ class asignacion_osC
         }
 
         return $lista;
+    }
+
+    function agregar_nuevo_beneficiario($query)
+    {
+        // print_r('ddd');die();
+        $lista = array();
+        $datos = $this->modelo->tipoBeneficiario($query,'0');
+        // print_r($datos);die();
+        foreach ($datos as $key => $value) {
+              $lista[] = array('id' => $value['Codigo'],'text' => $value['Cliente']);
+        }
+        return $lista;
+    }
+
+    function asignar_beneficiario($parametros)
+    {
+        return  $this->modelo->cambiar_estado($parametros['cliente']);
+        // print_r($parametros);die();
+    }
+
+    function eliminar_asignacion_beneficiario($parametros)
+    {       
+        return  $this->modelo->cambiar_estado_eliminado($parametros['cliente']);
     }
 
 }

@@ -483,7 +483,8 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
     $_SESSION['INGRESO']['item'] = $ItemEmp;
     $_SESSION['INGRESO']['ninguno'] = '.';
 
-    $_SESSION['INGRESO']['LOCAL_SQLSERVER'] = 'NO'; //quitar despues
+    $_SESSION['INGRESO']['LOCAL_SQLSERVER'] = 'NO'; //quitar despues    
+    $_SESSION['INGRESO']['Fecha_Actualizacion'] = '';
 
 
     $cod = explode('-', $EmpresaEntidad);
@@ -1384,4 +1385,5 @@ function control_errores($parametros)
     // print_r($parametros);die();
     control_procesos('E',$parametros['Proceso'],$parametros['Tarea']);
 }
+
 ?>

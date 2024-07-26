@@ -15,9 +15,9 @@ class asignacion_osM
 
     }
 
-    public function tipoBeneficiario($query = ''): array
+    public function tipoBeneficiario($query = '',$estado = '1')
     {
-        $sql = "SELECT DISTINCT TOP 100 C.Codigo, C.CodigoA,CP5.Proceso AS 'Estado', C.Cliente, C.CI_RUC, CD.Fecha_Registro, CD.Envio_No,CP3.Proceso as 'Frecuencia',CD.CodigoA as CodigoACD,CP4.Proceso as'TipoEntega' ,CD.Beneficiario, CD.No_Soc, CD.Area, CD.Acreditacion,CP1.Proceso as 'AccionSocial', CD.Tipo, CD.Cod_Fam,CP2.Proceso as 'TipoAtencion', CD.Salario, CD.Descuento, CD.Evidencias, CD.Item,C.Actividad,CP.Proceso as 'TipoBene',CP.Color,CP.Picture,CD.Hora_Ent as 'Hora',CD.Tipo_Dato as 'CodVulnera',CP6.Proceso AS 'vulnerabilidad',CD.Hora_Ent,CD.Dia_Ent 
+        $sql = "SELECT DISTINCT TOP 100 C.Codigo, C.CodigoA,CP5.Proceso AS 'Estado', C.Cliente, C.CI_RUC, CD.Fecha_Registro, CD.Envio_No,CP3.Proceso as 'Frecuencia',CD.CodigoA as CodigoACD,CP4.Proceso as'TipoEntega' ,CD.Beneficiario, CD.No_Soc, CD.Area, CD.Acreditacion,CP1.Proceso as 'AccionSocial', CD.Tipo, CD.Cod_Fam,CP2.Proceso as 'TipoAtencion', CD.Salario, CD.Descuento, CD.Evidencias, CD.Item,C.Actividad,CP.Proceso as 'TipoBene',CP.Color,CP.Picture,CD.Hora_Ent as 'Hora',CD.Tipo_Dato as 'CodVulnera',CP6.Proceso AS 'vulnerabilidad',CD.Hora_Ent,CD.Dia_Ent,C.Estado as 'ClienteEstado' 
             FROM Clientes as C 
             INNER JOIN Clientes_Datos_Extras as CD ON C.Codigo = CD.Codigo 
             LEFT JOIN Catalogo_Proceso CP ON C.Actividad = CP.Cmds 
@@ -40,6 +40,14 @@ class asignacion_osM
             } else {
                 $sql .= " AND C.CI_RUC LIKE '%" . $query . "%'";
             }
+        }
+
+        if($estado==1)
+        {
+            $sql.=" AND Estado = ".$estado;
+        }else
+        {
+            $sql.=" AND Estado = ".$estado;
         }
 
         $sql .= " ORDER BY C.Cliente";
@@ -156,6 +164,18 @@ class asignacion_osM
                 }
          return $this->db->datos($sql);    
     }
+
+    function cambiar_estado($codigo)
+    {
+        $sql = "UPDATE Clientes SET Estado = 1 WHERE Codigo = '".$codigo."'";
+        return $this->db->String_Sql($sql);
+    }
+      function cambiar_estado_eliminado($codigo)
+    {
+        $sql = "UPDATE Clientes SET Estado = 0 WHERE Codigo = '".$codigo."'";
+        return $this->db->String_Sql($sql);
+    }
+
 
 
 

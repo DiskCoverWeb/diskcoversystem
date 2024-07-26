@@ -14,6 +14,7 @@
 
     $(document).ready(function () {
         beneficiario();
+        beneficiario_new();
         // tipoCompra();
         $('#beneficiario').on('select2:select', function (e) {
             var data = e.params.data;//Datos beneficiario seleccionado
@@ -40,13 +41,12 @@
         $('#beneficiario').select2({
             placeholder: 'Beneficiario',
             ajax: {
-                url: '../controlador/inventario/asignacion_osC.php?Beneficiario',
+                url: '../controlador/inventario/asignacion_osC.php?Beneficiario=true',
                 dataType: 'json',
                 delay: 250,
                 data: function (params) {
                     return {
                         query: params.term,
-                        Beneficiario: true
                     }
                 },
                 processResults: function (data) {
@@ -58,6 +58,30 @@
             }
         });
     }
+
+      function beneficiario_new() {
+        $('#beneficiario_new').select2({
+            placeholder: 'Beneficiario',
+            ajax: {
+                url: '../controlador/inventario/asignacion_osC.php?Beneficiario_new=true',
+                dataType: 'json',
+                dropdownParent: $('#modal_addBeneficiario'),
+                delay: 250,
+                data: function (params) {
+                    return {
+                        query: params.term,
+                    }
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            }
+        });
+    }
+
 
     function cambiar_cantidad() {
         var can = $('#txt_cantidad2').val();
@@ -443,6 +467,71 @@ function llenarDatos(datos) {
         });
     }
 
+    function asignar_beneficiario()
+    {
+        id = $('#beneficiario_new').val();
+        parametros = {
+            'cliente':id,
+        }
+         $.ajax({
+            url: '../controlador/inventario/asignacion_osC.php?asignar_beneficiario=true',
+            type: 'post',
+            dataType: 'json',
+            data: { parametros: parametros },
+            success: function (datos) {
+                if(datos)
+                {
+                    Swal.fire('Beneficiario Agregado','','success').then(function(){
+                        $('#modal_addBeneficiario').modal('hide');
+                    })
+                }
+            }
+        });
+    }
+
+    function eliminar_asignacion_beneficiario()
+    {
+        id = $('#beneficiario').val();
+        if(id=='' || id== null)
+        {
+            Swal.fire("Seleccione un beneficiario","","info");
+            return false;
+        }
+        var parametros = {
+            'cliente':id,
+        }
+        Swal.fire({
+                 title: 'Esta seguro?',
+                 text: "Esta usted seguro de quitar este registro!",
+                 type: 'warning',
+                 showCancelButton: true,
+                 confirmButtonColor: '#3085d6',
+                 cancelButtonColor: '#d33',
+                 confirmButtonText: 'Si!'
+               }).then((result) => {
+                 if (result.value==true) {
+                    $.ajax({
+                        url: '../controlador/inventario/asignacion_osC.php?eliminar_asignacion_beneficiario=true',
+                        type: 'post',
+                        dataType: 'json',
+                        data: { parametros: parametros },
+                        success: function (datos) {
+                            if(datos)
+                            {
+                                Swal.fire('Beneficiario Eliminado','','success');
+                                $('#beneficiario').empty();
+                            }
+                        }
+                    });     
+                 }
+               })
+
+
+
+       
+                     
+    }
+
 </script>
 <style>
     label {
@@ -526,14 +615,14 @@ function llenarDatos(datos) {
         $('#modal_addBeneficiario').modal('show');
 
     }
-    function eliminar_beneficiario(){
-        beneficiario = $('#beneficiario').val();
-        if(beneficiario=='' || beneficiario==null)
-        {
-            Swal.fire('Seleccione un beneficiario','','error');
-            return false;
-        }
-    }
+    // function eliminar_beneficiario(){
+    //     beneficiario = $('#beneficiario').val();
+    //     if(beneficiario=='' || beneficiario==null)
+    //     {
+    //         Swal.fire('Seleccione un beneficiario','','error');
+    //         return false;
+    //     }
+    // }
 
 </script>
 <div class="row mb-2">
@@ -582,7 +671,7 @@ function llenarDatos(datos) {
                             </button>
                         </span>
                         <span class="input-group-btn">
-                            <button type="button" class="" onclick="eliminar_beneficiario()">
+                            <button type="button" class="" onclick="eliminar_asignacion_beneficiario()">
                                 <img id="img_tipoCompra"  src="../../img/png/close.png" style="width: 20px;" />
                             </button>
                         </span>
@@ -982,14 +1071,19 @@ function llenarDatos(datos) {
       <div class="modal-content">
           <div class="modal-header bg-primary">
               <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h4 class="modal-title">Tipo empaque</h4>
+              <h4 class="modal-title">Agregar Beneficiario</h4>
           </div>
           <div class="modal-body" style="background: antiquewhite;">
-            <div class="row text-center" id="pnl_tipo_empaque">
+            <div class="row">
+                <div class="col-sm-12">
+                    <b>Beneficiario / Usuario</b>
+                    <br>
+                    <select name="beneficiario_new" id="beneficiario_new" class="form-control input-xs" style="width:100%"></select>
+                </div>
             </div>                       
           </div>
           <div class="modal-footer" style="background-color:antiquewhite;">
-              <button type="button" class="btn btn-primary" onclick="cambiar_empaque()">OK</button>
+              <button type="button" class="btn btn-primary" onclick="asignar_beneficiario()">Asignar Beneficiario</button>
               <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
           </div>
       </div>
