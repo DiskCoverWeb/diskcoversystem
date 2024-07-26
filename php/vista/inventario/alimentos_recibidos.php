@@ -841,11 +841,11 @@ function autocoplet_ingreso_donante(){
 				<img src="../../img/png/grabar.png">
 			</button>
 		</div>  
-		<div class="col-xs-2 col-md-2 col-sm-2">
+		<!-- <div class="col-xs-2 col-md-2 col-sm-2">
 			<button class="btn btn-default" title="Guardar" onclick="nuevo_proveedor()">
 				<img src="../../img/png/mostrar.png">
 			</button>
-		</div>
+		</div> -->
 		<!-- <div class="col-xs-2 col-md-2 col-sm-2">
 			<button class="btn btn-default" title="Guardar" onclick="show_estado_transporte()">
 				<img src="../../img/png/camion.png" style="width:32px; height: :32px;">
