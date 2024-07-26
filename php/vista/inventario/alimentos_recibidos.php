@@ -115,13 +115,18 @@
       	}
       });
 
-       if(gaveta_ingreso==0  && $('#rbx_gaveta').val()=='SI')
-	  	{
-	  		Swal.fire("","Ingrese numero de gavetas","info");
-      	return false;
-	  	}
 
-     
+  	var gave = $('input[name="rbx_gaveta"]:checked').val();  
+
+      if(gaveta_ingreso==0 && gave =='SI')
+      {
+      	Swal.fire("","Ingrese numero de gavetas","info");
+      	return false;
+      }
+
+      console.log(gaveta_ingreso);
+      console.log($('#rbx_gaveta').val());
+
 
 
   	 var parametros = $('#form_correos').serialize();
