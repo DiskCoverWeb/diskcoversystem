@@ -67,9 +67,16 @@ if (isset ($_GET['tipo'])) {
 		DCPorcenIvaFD();
 	});
 
+	function alertaDesarrollo(msg){
+		Swal.fire('Funcionalidad en Desarrollo', msg, 'info');
+	}
 
 	function Imprimir_Punto_Venta(Tipo_Facturas){
-
+		alertaDesarrollo('El proceso de impresion aun se encuentra en desarrollo');
+	}
+	
+	function FacturarAsignacion(Tipo_Facturas){
+		alertaDesarrollo('El proceso de facturar aun se encuentra en desarrollo');
 	}
 	
 
@@ -1407,8 +1414,7 @@ function tipo_facturacion(valor)
 			<a title="IMPRIMIR" class="btn btn-default" onclick="Imprimir_Punto_Venta('<?php echo $TC; ?>')">
 				<img src="../../img/png/paper.png" height="32px">
 			</a>
-			<a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
-			print_r($ruta[0] . '#'); ?>" title="FACTURAR" class="btn btn-default">
+			<a title="FACTURAR" class="btn btn-default" onclick="FacturarAsignacion()">
 				<img src="../../img/png/facturar.png" height="32px">
 			</a>
 		</div>
