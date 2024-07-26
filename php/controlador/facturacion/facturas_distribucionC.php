@@ -43,7 +43,7 @@ if (isset($_GET['DCCliente'])) {
 	if (isset($_GET['query'])) {
 		$query = $_GET['query'];
 	}
-	//if(isset($_GET['v_donacion'])){$parametros['donacion'] = $_GET['v_donacion'];}
+	if(isset($_GET['v_donacion'])){$parametros['donacion'] = $_GET['v_donacion'];}
 	if(isset($_GET['fecha'])){$parametros['fecha'] = $_GET['fecha'];}
 	//print_r($_GET);die();
 	echo json_encode($controlador->Listar_Clientes_PV($query, $parametros));

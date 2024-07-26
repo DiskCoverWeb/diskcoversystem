@@ -46,7 +46,7 @@ if (isset ($_GET['tipo'])) {
 
 		$(document).keyup(function (e) {
 			if (e.key === "Escape") { // escape key maps to keycode `27`
-				ingresar_total();
+				//ingresar_total();
 			}
 			console.log(e.key);
 		});
@@ -66,6 +66,31 @@ if (isset ($_GET['tipo'])) {
 		DCTipoFact2();
 		DCPorcenIvaFD();
 	});
+
+
+	function Imprimir_Punto_Venta(Tipo_Facturas){
+
+	}
+	
+
+	function agregarArchivo(){
+		let archivoBouche = $('#archivoAdd')[0].files[0];
+		let descHtml = `
+			<div class="col-sm-12" style="position:relative;display:flex; flex-direction:column; align-items:center;">
+				<div style="position: relative;height: 60px;width: 60px;">                            
+					<button style="padding: 0;background: none;border: none;color: red;position: absolute;right: -7px;top: -10px;" onclick="borrarArchivoBouche()"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+					<img src="../../img/png/document.png" style="width: 100%;height: 100%;">
+				</div>
+				<p style="margin-top:3px;">${archivoBouche.name}</p>
+			</div>
+		`;
+		$('#modalDescContainer div').html(descHtml);
+	}
+
+	function borrarArchivoBouche(){
+		$('#archivoAdd')[0].value='';
+		$('#modalDescContainer div').html('');
+	}
 
 	function resetInputsGavetas(){
 		let gavetasInputs = $('.gavetas_info');
@@ -632,9 +657,9 @@ if (isset ($_GET['tipo'])) {
 				'TextCant': fila[3].textContent,
 				'TC': tc,
 				'TxtDocumentos': '.',
-				'Codigo': fila[9].textContent,
+				'Codigo': fila[7].textContent,
 				'fecha': $('#MBFecha').val(),
-				'CodBod': fila[8].textContent,
+				'CodBod': fila[6].textContent,
 				'VTotal': fila[5].textContent,
 				/*'TxtRifaD': $('#TxtRifaD').val(),
 				'TxtRifaH': $('#TxtRifaH').val(),*/
@@ -803,7 +828,7 @@ function tipo_facturacion(valor)
 				data: function (params) {
                     return {
                         query: params.term,
-						//v_donacion: $("#DCTipoFact2").select2("data")[0]['data'][0]['Fact'],
+						v_donacion: $("#DCTipoFact2").select2("data")[0]['data'][0]['Fact'],
 						fecha: $("#MBFecha").val()
                     }
                 },
@@ -1149,12 +1174,12 @@ function tipo_facturacion(valor)
 	}
 
 	function generar() {
-		var bod = $('#DCBodega').val();
+		/*var bod = $('#DCBodega').val();
 		if (bod == '') {
 
 			Swal.fire('Ingrese o Seleccione una bodega', '', 'info').then(function () { $('#TextFacturaNo').focus() });
 			return false;
-		}
+		}*/
 		var Cli = $('#DCCliente').val();
 		if (Cli == '') {
 			Swal.fire('Seleccione un cliente', '', 'info');
@@ -1376,20 +1401,14 @@ function tipo_facturacion(valor)
 			print_r($ruta[0] . '#'); ?>" title="Salir de modulo" class="btn btn-default">
 				<img src="../../img/png/salire.png">
 			</a>
-			<a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
-			print_r($ruta[0] . '#'); ?>" title="BOUCHE" class="btn btn-default">
+			<a title="BOUCHE" class="btn btn-default" onclick="$('#modalBoucher').modal('show');">
 				<img src="../../img/png/adjuntar-archivo.png" height="32px">
 			</a>
-			<a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
-			print_r($ruta[0] . '#'); ?>" title="GUARDAR" class="btn btn-default">
-				<img src="../../img/png/disco.png" height="32px">
-			</a>
-			<a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
-			print_r($ruta[0] . '#'); ?>" title="IMPRIMIR" class="btn btn-default">
+			<a title="IMPRIMIR" class="btn btn-default" onclick="Imprimir_Punto_Venta('<?php echo $TC; ?>')">
 				<img src="../../img/png/paper.png" height="32px">
 			</a>
 			<a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
-			print_r($ruta[0] . '#'); ?>" title="Salir de modulo" class="btn btn-default">
+			print_r($ruta[0] . '#'); ?>" title="FACTURAR" class="btn btn-default">
 				<img src="../../img/png/facturar.png" height="32px">
 			</a>
 		</div>
@@ -1602,7 +1621,7 @@ function tipo_facturacion(valor)
 		<div class="col-sm-3" style="width:fit-content">
 			<b>Evaluación de fundaciones:</b>
 		</div>
-		<div class="col-sm-1" style="padding: 0;" onclick="$('#modalEvaluacionFundaciones').modal('show');">
+		<div class="col-sm-1" style="padding: 0;cursor:pointer;" onclick="$('#modalEvaluacionFundaciones').modal('show');">
 			<div>
 				<img src="../../img/png/eval_fundaciones.png" width="50px" alt="Evaluacion fundaciones" title="EVALUACIÓN FUNDACIONES">
 			</div>
@@ -1751,7 +1770,7 @@ function tipo_facturacion(valor)
 				<label for="gavetas_pendientes">Gavetas pendientes:</label>
 				<input type="text" class="form-control input-xs" id="gavetas_pendientes" value="0" disabled>
 			</div>
-			<div class="col-sm-1" onclick="$('#modalGavetasInfo').modal('show')">
+			<div class="col-sm-1" style="cursor:pointer;" onclick="$('#modalGavetasInfo').modal('show')">
 				<img src="../../img/png/gavetas.png" height="50px" alt="">
 			</div>
 		</div>
@@ -2166,4 +2185,47 @@ function tipo_facturacion(valor)
 		</div>
 	</div>
 </div>
+<div id="modalBoucher" data-backdrop="static" class="modal fade in" role="dialog" style="padding-right: 15px;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h4 class="modal-title">Boucher</h4>
+                </div>
+                <div class="modal-body" style="margin:10px">
+                    <div class="row-sm-12">
+                        <div id="cargarArchivo" class="form-group" style="display: flex;">
+                            <label for="archivoAdd">Adjuntar recibos de pago o transferencia:</label>
+                            <input type="file" style="margin-left: 10px" class="form-control-file" id="archivoAdd" accept=".pdf,.jpg,.png" onchange="agregarArchivo()">
+                        </div>
+                    </div>
+                    <div class="row-sm-12" style="width: 100%; margin-right:10px; margin-left:10px;">
+                        <div class="form-group" style="display: flex; justify-content: center;">
+                            <div id="modalDescContainer" class="d-flex justify-content-center flex-wrap">
+								<div class="row">
+								</div>
+							</div>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="modal-footer" style="display:none">
+                    <div class="row" style="margin: 10px;">
+                        <div class="col-xs-4">
+
+                        </div>
+                        <div class="col-xs-4">
+                            <button id="btnDescargar" type="button" class="btn btn-default btn-block" onclick="descargarArchivo(ruta, nombre)">
+                                <span class="glyphicon glyphicon-download" aria-hidden="true"></span> Descargar
+                            </button>
+                        </div>
+                        <div class="col-xs-4">
+                            <button type="button" class="btn btn-danger btn-block" onclick="eliminarArchivo(ruta, nombre)">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+    </div>
 </div>

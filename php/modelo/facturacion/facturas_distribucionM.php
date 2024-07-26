@@ -105,7 +105,7 @@ class facturas_distribucionM
                 FROM Trans_Comision TC 
                 INNER JOIN Clientes C ON TC.CodigoC = C.Codigo 
                 WHERE TC.T = 'F' 
-                /*AND Fecha = '".$parametros['fecha']."'*/
+                AND TC.Fecha = '".$parametros['fecha']."'
                 AND Cliente <> '.' 
                 AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
                 AND Item = '".$_SESSION['INGRESO']['item']."'";
