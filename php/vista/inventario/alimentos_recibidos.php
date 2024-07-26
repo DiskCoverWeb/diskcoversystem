@@ -30,6 +30,7 @@
   	autocoplet_alimento();
   	autocoplet_ingreso();
   	autocoplet_ingreso_donante();
+  	autocoplet_ingreso2();
   	cargar_datos();
 
   	 $('#txt_cantidad2').keydown( function(e) { 
@@ -114,12 +115,13 @@
       	}
       });
 
-      if(gaveta_ingreso==0)
-      {
-      	Swal.fire("","Ingrese numero de gavetas","info");
+       if(gaveta_ingreso==0  && $('#rbx_gaveta').val()=='SI')
+	  	{
+	  		Swal.fire("","Ingrese numero de gavetas","info");
       	return false;
-      }
+	  	}
 
+     
 
 
   	 var parametros = $('#form_correos').serialize();
@@ -273,7 +275,7 @@ function autocoplet_ingreso(){
   });
 }
 
-function autocoplet_ingreso(){
+function autocoplet_ingreso2(){
   $('#ddl_ingreso_edi').select2({
     placeholder: 'Seleccione',
     width:'100%',
@@ -495,17 +497,28 @@ function autocoplet_ingreso_donante(){
 
   function show_gaveta()
   {
-  		$('#modal_gavetas').modal('show');
-  		$.ajax({
-				    type: "POST",
-			      	url:   '../controlador/inventario/alimentos_recibidosC.php?gavetas=true',
-				      // data:{ID:ID},
-			        dataType:'json',
-				    success: function(data)
-				    {
-				    		$('#tbl_gavetas').html(data);  
-				    }
-				});  		
+  		var transporte = $('input[name="rbx_gaveta"]:checked').val();  	
+	  	if(transporte=='SI')
+	  	{
+	  		$('#btn_gavetas').css('display','block');
+	  			$.ajax({
+					    type: "POST",
+				      	url:   '../controlador/inventario/alimentos_recibidosC.php?gavetas=true',
+					      // data:{ID:ID},
+				        dataType:'json',
+					    success: function(data)
+					    {
+					    		$('#tbl_gavetas').html(data);  
+					    }
+					});  		
+
+	  	}else
+	  	{
+	  		$('#btn_gavetas').css('display','none');
+	  	}
+
+
+  		
   }
   function show_temperatura()
   {
@@ -952,20 +965,37 @@ function autocoplet_ingreso_donante(){
 								</div>
 								<div class="col-sm-4">
 									<div class="row">
-										<div class="col-sm-8">
-													<b>Llegaron en Transporte?</b>
+										<div class="col-sm-6">
+											<div class="row">
+													<b>Llegaron en Transporte?</b> <br>
 													<label class="label-success btn-sm btn">
-															<input type="radio" id="" value="SI" name="rbx_trasporte" onclick="mostraTransporte()">SI</label>
+													<input type="radio" id="" value="SI" name="rbx_trasporte" onclick="mostraTransporte()">SI</label>
 													<label class="label-danger btn-sm btn">
-															<input type="radio" id="" value="NO" name="rbx_trasporte" onclick="mostraTransporte()" checked>NO</label>
+													<input type="radio" id="" value="NO" name="rbx_trasporte" onclick="mostraTransporte()" checked>NO</label>	
+											</div>
+											<div class="row">
+												
+													
 													<button type="button" class="btn btn-default" title="Guardar" style="display:none;" onclick="show_estado_transporte()" id="btn_transporte">
 															<img src="../../img/png/camion.png" style="width:22px; height: :92px;">
 															<br><b>Estado de Trasporte</b>
 													</button>
+
+											</div>
 										</div>
-										<div class="col-sm-4">
-												<button type="button" class="btn" title="Guardar" onclick="show_gaveta()" id="btn_transporte">
-															<img src="../../img/png/gavetas.png" style="width:100%">
+										<div class="col-sm-6">
+											<div class="row">
+												<b>Llegaron en gavetas?</b><br>
+												<label class="label-success btn-sm btn">
+												<input type="radio" id="" value="SI" name="rbx_gaveta" onclick="show_gaveta()">SI</label>
+												<label class="label-danger btn-sm btn">
+												<input type="radio" id="" value="NO" name="rbx_gaveta" onclick="show_gaveta()" checked>NO</label>												
+											</div>
+												
+
+												<button type="button" style="display:none;" id="btn_gavetas" class="btn" title="Guardar" onclick="
+		  		$('#modal_gavetas').modal('show');">
+															<img src="../../img/png/gavetas.png" style="width:45px;">
 													</button>											
 										</div>
 									</div>

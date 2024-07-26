@@ -1060,7 +1060,7 @@ class alimentos_recibidosC
 		}
 
 		return $tr;
-		print_r($datos);die();
+		// print_r($datos);die();
 	}
 
 
@@ -1456,16 +1456,18 @@ class alimentos_recibidosC
 		{
 
 			SetAdoAddNew("Trans_Correos");	
-			SetAdoFieldsWhere('Envio_No',$notificacion[0]['Atencion']);
+			SetAdoFields('T','R');
 			if($notificacion[0]['CC1']==3){
 				SetAdoFields('T','P');
-			}else if($notificacion[0]['CC1']==2){ SetAdoFields('T','C'); }
+			}else if($notificacion[0]['CC1']==2){ SetAdoFields('T','C'); }			
+			SetAdoFieldsWhere('Envio_No',$notificacion[0]['Atencion']);
+
+			// print('arg');die();
 			SetAdoUpdateGeneric();
 		}
 
 		// print_r($notificacion);die();
  	    SetAdoAddNew("Trans_Memos");	
-		SetAdoFields('T','N');
 		SetAdoFields('T','N');
 		SetAdoFieldsWhere('ID',$parametros['noti']);
 		return SetAdoUpdateGeneric();

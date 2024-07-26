@@ -118,7 +118,7 @@ class alimentos_recibidosM
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
-		where Item = '".$_SESSION['INGRESO']['item']."'
+		where TC.Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 		AND TC.T <> 'I'";
 		if($cod)
@@ -146,7 +146,7 @@ class alimentos_recibidosM
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		inner join Clientes C2 on TC.CodigoU = C2.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
-		where Item = '".$_SESSION['INGRESO']['item']."'
+		where TC.Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		";
 		if($cod)
@@ -194,7 +194,7 @@ class alimentos_recibidosM
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
-		where Item = '".$_SESSION['INGRESO']['item']."'
+		where TC.Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC.T = 'N' ";
 		if($cod)
@@ -216,7 +216,8 @@ class alimentos_recibidosM
      FROM Trans_Kardex  T ,Catalogo_Productos P, Accesos A        
      WHERE T.Item = '".$_SESSION['INGRESO']['item']."' 
      AND T.Periodo = '".$_SESSION['INGRESO']['periodo']."'
-     AND Orden_No = '".$orden."' ";
+     AND Orden_No = '".$orden."' 
+     AND T.Codigo_Inv NOT LIKE 'GA.%'";
      // AND T.CodigoL = '".$SUBCTA."'
      // AND T.Codigo_P = '".$paciente."'
      $sql.="AND Numero =0
