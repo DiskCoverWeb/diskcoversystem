@@ -1033,7 +1033,7 @@ function autocoplet_ingreso_donante(){
 							<b>Fecha Hasta</b>
 							<input type="date" name="txt_fecha_bh" id="txt_fecha_bh" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">
 						</div>
-						<div class="col-sm-8 text-right">							
+						<div class="col-sm-8">							
 							<br>
 							<button type="button" class="btn-sm btn-primary btn" id="" name="" onclick="cargar_datos();cargar_datos_procesados()"><i class="fa fa-search"></i> Buscar</button>
 						</div>
