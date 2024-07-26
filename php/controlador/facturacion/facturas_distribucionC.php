@@ -11,23 +11,47 @@ if(isset($_GET["LlenarSelectIVA"])){
 	$fecha = str_replace("-", "", $fecha);
 	echo json_encode($controlador->LlenarSelectIVA($fecha));
 }
+
+if(isset($_GET["ConsultarGavetas"])){
+	echo json_encode($controlador->consultarGavetas());
+}
+
+if(isset($_GET['ValoresGavetas'])){
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->valoresGavetas($parametros));
+}
+
+if(isset($_GET["consultarEvaluacionFundaciones"])){
+	echo json_encode($controlador->consultarEvaluacionFundaciones());
+}  
+
+if(isset($_GET["ConsultarProductos"])){
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->ConsultarProductos($parametros));
+}
+
 if(isset($_GET["LlenarSelectTipoFactura"])){
 	//$fecha = $_GET['fecha'];
 	echo json_encode($controlador->LlenarSelectTipoFactura());
 }
 if (isset($_GET['DCCliente'])) {
 	$query = '';
-	$v_donacion = '';
-	if (isset($_GET['q'])) {
-		$query = $_GET['q'];
+	$parametros = array(
+		'donacion' => "",
+		'fecha' => ""
+	);
+	if (isset($_GET['query'])) {
+		$query = $_GET['query'];
 	}
-	if(isset($_GET['v_donacion'])){$v_donacion = $_GET['v_donacion'];}
-	echo json_encode($controlador->Listar_Clientes_PV($query, $v_donacion));
+	if(isset($_GET['v_donacion'])){$parametros['donacion'] = $_GET['v_donacion'];}
+	if(isset($_GET['fecha'])){$parametros['fecha'] = $_GET['fecha'];}
+	//print_r($_GET);die();
+	echo json_encode($controlador->Listar_Clientes_PV($query, $parametros));
 }
 if (isset($_GET['DCCliente_exacto'])) {
 	$query = '';
-	if (isset($_GET['q'])) {
-		$query = $_GET['q'];
+	if (isset($_GET['query'])) {
+		$query = $_GET['query'];
 	}
 	echo json_encode($controlador->Listar_Clientes_PV_exacto($query));
 }
@@ -149,6 +173,98 @@ class facturas_distribucion
 		$this->pdf = new cabecera_pdf();
 	}
 
+	function ConsultarProductos($params){
+		$datos = $this->modelo->ConsultarProductos($params);
+		$res = array();
+		if(count($datos) > 0){
+			$contenido = array();
+			foreach($datos as $key => $value){
+				$fecha=$value['Fecha']->format("Y-m-d");
+				$producto = Leer_Codigo_Inv($value['Codigo_Inv'], $fecha, $value['CodBodega'], $CodMarca='');
+				//Leer_Codigo_Inv($parametros['Codigo'], $parametros['fecha'], $parametros['CodBod'])
+				$contenido[] = array(
+					"Detalles" => $value,
+					"Productos" => $producto['datos']
+				);
+				//array_push($detalles, $producto);
+			}
+			/*$asignacion = array();
+			foreach($datos as $key => $value){
+				$productos = $this->modelo->ConsultarKardex($value['CodBodega']);
+				$asignacion[] = array(
+					'CodBodega' => $productos[0]['Codigo_Barra'],
+					'Usuario' => $value['Nombre_Completo'],
+					'Producto' => $productos[0]['Producto'],
+					'Cantidad' => $value['Total'],
+					'PVP' => $productos[0]['PVP'],
+					'Total' => $value['Total'] * $productos[0]['PVP']
+				);
+				$detalles['Unidad'] = $productos[0]['Unidad'];
+			}*/
+			$res = array(
+				"res" => 1,
+				"contenido" => $contenido
+			);
+		}else{
+			$res = array(
+				"res" => 0,
+				"contenido" => "No se encontraron datos"
+			);
+		}
+		return $res;
+	}
+
+	function consultarGavetas(){
+		$datos = $this->modelo->consultarGavetas();
+		$respuesta = array();
+		if(count($datos) > 0){
+			$respuesta =  array(
+				'res' => 1,
+				'contenido' => $datos
+			);
+		}else{
+			$respuesta = array(
+				'res' => 0,
+				'contenido' => "No se encontraron datos de gavetas."
+			);
+		}
+		return $respuesta;
+	}
+
+	function valoresGavetas($parametros){
+		$datos = $this->modelo->valoresGavetas($parametros);
+		$respuesta = array();
+		if(count($datos) > 0){
+			$respuesta =  array(
+				'res' => 1,
+				'contenido' => $datos
+			);
+		}else{
+			$respuesta = array(
+				'res' => 0,
+				'contenido' => "No se encontraron valores de gavetas."
+			);
+		}
+		return $respuesta;
+	}
+	function consultarEvaluacionFundaciones(){
+		$datos = $this->modelo->consultarEvaluacionFundaciones();
+		$respuesta = array();
+		if(count($datos) > 0){
+			$respuesta =  array(
+				'res' => 1,
+				'contenido' => $datos
+			);
+		}else{
+			$respuesta = array(
+				'res' => 0,
+				'contenido' => "No se encontraron datos de evaluacion de fundaciones."
+			);
+		}
+		return $respuesta;
+	}
+	
+
 	function LlenarSelectIVA($fecha)
 	{
 		$datos = $this->modelo->LlenarSelectIVA($fecha);
@@ -169,9 +285,9 @@ class facturas_distribucion
 		return $res;
 	}
 
-	function Listar_Clientes_PV($query, $adicional=false)
+	function Listar_Clientes_PV($query, $parametros)
 	{
-		$datos = $this->modelo->Listar_Clientes_PV($query, $adicional);
+		$datos = $this->modelo->Listar_Clientes_PV($query, $parametros);
 		$res = array();
 		foreach ($datos as $key => $value) {
 			$res[] = array('id' => $value['Codigo'], 'text' => $value['CI_RUC'] . ' - ' . $value['Cliente'], 'data' => array($value));
@@ -235,7 +351,13 @@ class facturas_distribucion
 
 	function ClienteDatosExtras($parametros)
 	{
-		$datos = $this->modelo->ClientesDatosExtras($parametros);
+		$direcciones = $this->modelo->ClientesDEDireccion($parametros);
+		$horarioEnt = $this->modelo->ClientesDEHoraEntrega($parametros);
+		
+		$datos = array(
+			"direcciones" => $direcciones,
+			"horarioEnt" => $horarioEnt[0]['Hora_Ent']
+		);
 		return $datos;
 	}
 
@@ -342,8 +464,8 @@ class facturas_distribucion
 		$TipoFactura = $parametros['TC'];
 		$TxtDocumentos = $parametros['TxtDocumentos'];
 		$Real1 = $parametros['VTotal'];
-		$TxtRifaD = $parametros['TxtRifaD'];
-		$TxtRifaH = $parametros['TxtRifaH'];
+		$TxtRifaD = '.';
+		$TxtRifaH = '.';
 		$TextServicios = $parametros['TextServicios'];
 		$CodigoL = '.';
 		$producto = Leer_Codigo_Inv($parametros['Codigo'], $parametros['fecha'], $parametros['CodBod']);
@@ -375,8 +497,8 @@ class facturas_distribucion
 		}
 		// 'MsgBox Cant_Item_PV
 		if ($Grabar_PV) {
-			$VTotal = number_format($Real1, 2, '.', '');
-			$Real1 = 0;
+			//$VTotal = number_format($Real1, 2, '.', '');
+			//$Real1 = 0;
 			$Real2 = 0;
 			$Real3 = 0;
 			if (is_numeric($TextVUnit) and is_numeric($TextCant)) {
@@ -384,11 +506,11 @@ class facturas_distribucion
 				if (intval($TextCant) == 0) {
 					$TextCant = "1";
 				}
-				if ($parametros['opc'] == 'OpcMult') {
+				/*if ($parametros['opc'] == 'OpcMult') {
 					$Real1 = $TextCant * $TextVUnit;
 				} else {
 					$Real1 = $TextCant / $TextVUnit;
-				}
+				}*/
 			}
 			if ($Real1 >= 0) {
 				switch ($TipoFactura) {
@@ -404,7 +526,7 @@ class facturas_distribucion
 						}
 						break;
 				}
-				$VTotal = number_format($Real1, 2, '.', '');
+				//$VTotal = number_format($Real1, 2, '.', '');
 				if ($parametros['TextVDescto'] == '') {
 					$parametros['TextVDescto'] = 0;
 				}
