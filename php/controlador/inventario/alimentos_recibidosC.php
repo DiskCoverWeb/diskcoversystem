@@ -1045,7 +1045,8 @@ class alimentos_recibidosC
 					</div>	';
 			}
 
-			$tr.='<tr>
+			$tr.='<tr>			
+					<td>'.($key+1).'</td>
 					<td>'.$value['Envio_No'].'</td>
 					<td>'.$value['Fecha_P']->format('Y-m-d').'</td>
 					<td>'.$value['Cliente'].''.$alerta.'</td>
