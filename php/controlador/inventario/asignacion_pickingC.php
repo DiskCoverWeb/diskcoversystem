@@ -93,15 +93,15 @@ class asignacion_pickingC
             $dia = BuscardiasSemana($value['Dia_Ent']);
 
             $value['Dia_Ent']  = $dia[0];
-            if($diaActual==$dia[1])
-            {
-                //buscamos si el usuario ya genero en este dia pedidos para facturar
-                $datos = $this->modelo->cargar_asignacion($value['Codigo'],$value['No_Hab'],'F',date('Y-m-d'));
-                if(count($datos)==0)
+            // if($diaActual==$dia[1])
+            // {
+            //     //buscamos si el usuario ya genero en este dia pedidos para facturar
+                $datos1 = $this->modelo->cargar_asignacion($value['Codigo'],$value['No_Hab'],'F',date('Y-m-d'));
+                if(count($datos1)==0)
                 {
             	   $lista[] = array('id'=>$value['Codigo'].'-'.$value['No_Hab'],'text'=>$value['Cliente'].' ('.$value['Tipo Asignacion'].')','data'=>$value); 
                 }   	
-            }	
+            // }	
     	}
     	return $lista;
     }
