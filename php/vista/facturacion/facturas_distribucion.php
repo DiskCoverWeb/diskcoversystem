@@ -16,8 +16,13 @@ if (isset ($_GET['tipo'])) {
 		margin: 0 auto;
 		text-align: center;
 	}
+
+	#tbl_DGAsientoF td{
+		min-width: 120px;
+	}
 </style>
 <script type="text/javascript">
+	var datosFact = "NDO";
 	eliminar_linea('', '');
 	$(document).ready(function () {
 		let area = $('#contenedor-pantalla').parent();
@@ -79,10 +84,41 @@ if (isset ($_GET['tipo'])) {
 		alertaDesarrollo('El proceso de facturar aun se encuentra en desarrollo');
 	}
 	
+	function toggleInfoEfectivo(){
+		let btn = $('#btnToggleInfoEfectivo');
+		if(btn.attr('stateval') == "1"){
+			$('#campos_fact_efectivo').hide();
+			btn.addClass('btn-default');
+			btn.removeClass('btn-primary');
+			btn.attr('stateval', '0');
+		}else{
+			$('#campos_fact_efectivo').show();
+			btn.addClass('btn-primary');
+			btn.removeClass('btn-default');
+			btn.attr('stateval', '1');
+		}
+	}
+	
+	function toggleInfoBanco(){
+		let btn = $('#btnToggleInfoBanco');
+		if(btn.attr('stateval') == "1"){
+			$('#campos_fact_banco').hide();
+			$('#bouche_banco_input').hide();
+			btn.addClass('btn-default');
+			btn.removeClass('btn-primary');
+			btn.attr('stateval', '0');
+		}else{
+			$('#campos_fact_banco').show();
+			$('#bouche_banco_input').show();
+			btn.addClass('btn-primary');
+			btn.removeClass('btn-default');
+			btn.attr('stateval', '1');
+		}
+	}
 
 	function agregarArchivo(){
 		let archivoBouche = $('#archivoAdd')[0].files[0];
-		let descHtml = `
+		/*let descHtml = `
 			<div class="col-sm-12" style="position:relative;display:flex; flex-direction:column; align-items:center;">
 				<div style="position: relative;height: 60px;width: 60px;">                            
 					<button style="padding: 0;background: none;border: none;color: red;position: absolute;right: -7px;top: -10px;" onclick="borrarArchivoBouche()"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
@@ -91,7 +127,7 @@ if (isset ($_GET['tipo'])) {
 				<p style="margin-top:3px;">${archivoBouche.name}</p>
 			</div>
 		`;
-		$('#modalDescContainer div').html(descHtml);
+		$('#modalDescContainer div').html(descHtml);*/
 	}
 
 	function borrarArchivoBouche(){
@@ -205,8 +241,13 @@ if (isset ($_GET['tipo'])) {
 				$('#myModal_espera').modal('hide');
 				if (datos['res'] == 1) {
 					let valoresGavetas = datos['contenido']
+					let estadovGavs = "";
 					for(let vGavs of valoresGavetas){
-						$(`#gdet_pendientes_${vGavs['Codigo_Inv']}`).text(vGavs['Existencia']);
+						if(estadovGavs != vGavs['Codigo_Inv']){
+							document.getElementById(`gdet_pendientes_${vGavs['Codigo_Inv']}`).innerText = vGavs['Existencia'];
+							//console.log(vGavs['Existencia']);
+							estadovGavs = vGavs['Codigo_Inv'];
+						}
 					}
 				}
 				let gDetPendientes = $('.gdet_pendientes');
@@ -255,7 +296,7 @@ if (isset ($_GET['tipo'])) {
 					for(let fila of datos['contenido']){
 						let td;
 						//let colorGaveta = fila['Producto'].replace('Gaveta ', '');
-						let tr = $('<tr></tr>');
+						let tr = $(`<tr id="${fila['Cmds']}"></tr>`);
 						tr.append($('<td></td>').html(`<b>${fila['Proceso']}</b>`));
 						td = $('<td></td>');
 						td.append($(`<input type="checkbox" id="${fila['Cmds']}_bueno" name="${fila['Cmds']}">`));
@@ -395,9 +436,10 @@ if (isset ($_GET['tipo'])) {
 	//Agrega eventos a selects
 	function eventos_select(){
 		$("#DCTipoFact2").on('select2:select', (e)=> {
-			let datosFact = e.params.data['data'][0]['Fact'];
+			datosFact = e.params.data['data'][0]['Fact'];
 			console.log(datosFact);
 			$("#Label1").text(`FACTURA (${datosFact}) NO.`);
+			AdoLinea();
 		})
 	}
 
@@ -472,7 +514,7 @@ if (isset ($_GET['tipo'])) {
 	function AdoLinea() {
 		var parametros =
 		{
-			'TipoFactura': '<?php echo $TC; ?>'
+			'TipoFactura': datosFact
 		};
 		$.ajax({
 			type: "POST",
@@ -626,6 +668,8 @@ if (isset ($_GET['tipo'])) {
 						tr.append($('<td></td>').text(parseFloat(totalProducto).toFixed(2)));
 						tr.append($('<td style="display:none;"></td>').text(fila['Detalles']['CodBodega2']));
 						tr.append($('<td style="display:none;"></td>').text(fila['Productos']['Codigo_Inv']));
+						tr.append($('<td></td>').html('<input type="checkbox" id="producto_cheking" name="producto_cheking">'));
+						tr.append($('<td></td>').html('<button style="width:50px" onclick="modificarLineaFac(this)"><i class="fa fa-pencil" aria-hidden="true"></i></button>'));
 						tBody.append(tr);
 
 						cTotalProds += parseInt(fila['Detalles']['Total']);
@@ -634,9 +678,10 @@ if (isset ($_GET['tipo'])) {
 					}
 					let tr = $('<tr></tr>');
 					tr.append($('<td colspan="3"></td>').html('<b>Total</b>'));
-					tr.append($('<td></td>').html(`<b>${cTotalProds}</b>`));
+					tr.append($('<td id="ADCantTotal"></td>').html(`<b>${cTotalProds}</b>`));
 					tr.append($('<td></td>'));
-					tr.append($('<td></td>').html(`<b>${tTotalProds.toFixed(2)}</b>`));
+					tr.append($('<td id="ADTotal"></td>').html(`<b>${tTotalProds.toFixed(2)}</b>`));
+					tr.append($('<td colspan="2"></td>'));
 					tBody.append(tr);
 					$('#tbl_DGAsientoF table').append(tBody);
 					$('#kilos_distribuir').val(cTotalProds);
@@ -650,13 +695,102 @@ if (isset ($_GET['tipo'])) {
 		})
 	}
 
+	function modificarLineaFac(campo){
+		let fila = campo.parentElement.parentElement;
+		let valAnt = parseInt(fila.childNodes[3].innerText);
+		fila.childNodes[3].innerHTML = `
+			<input type="text" class="form-control text-center" style="max-width:136px;" placeholder="Cambie la cantidad">
+		`; //name = cod_prod + usuario_q_agg
+		fila.childNodes[9].innerHTML = `
+			<input type="text" class="form-control" style="min-width:250px;" placeholder="Coloque un comentario">
+			<button style="width:50px" onclick="aceptarModificarLF(this)"><i class="fa fa-check" aria-hidden="true"></i></button>
+			<button style="width:50px" onclick="cancelarModificarLF(this, ${valAnt})"><i class="fa fa-times" aria-hidden="true"></i></button>
+		`;
+	}
+
+	function aceptarModificarLF(campo){
+		let fila = campo.parentElement.parentElement;
+		let nuevoValor = fila.childNodes[3].children[0].value; //corregir aqui
+		let comentario = fila.childNodes[9].children[0].value; //corregir aqui
+		let costoTotal = parseInt(nuevoValor) * parseFloat(fila.childNodes[4].innerText);
+		console.log(nuevoValor);
+		fila.childNodes[3].innerText = nuevoValor;
+		fila.childNodes[5].innerText = costoTotal.toFixed(2);
+		fila.childNodes[9].innerHTML = `
+			<button style="width:50px" onclick="modificarLineaFac(this)"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+		`;
+
+		let filas = $('.asignTablaDistri');
+		let totalCant = 0;
+		let ADTotal = 0;
+		for(let f of filas){
+			console.log(f);
+			totalCant += parseInt(f.children[3].innerText);
+			console.log(f.children[3].innerText);
+			ADTotal += parseFloat(f.children[5].innerText);
+		}
+		console.log(totalCant);
+		$('#ADCantTotal').html(`<b>${totalCant}</b>`);
+		$('#ADTotal').html(`<b>${ADTotal.toFixed(2)}</b>`);
+
+		let tc = datosFact;
+		let parametros =
+		{
+			//'opc': $('input[name="radio_conve"]:checked').val(),
+			'TextVUnit': fila.childNodes[4].textContent,
+			'TextCant': fila.childNodes[3].textContent,
+			'TC': tc,
+			'TxtDocumentos': '.',
+			'Codigo': fila.childNodes[7].textContent,
+			'fecha': $('#MBFecha').val(),
+			'CodBod': fila.childNodes[6].textContent,
+			'VTotal': fila.childNodes[5].textContent,
+			/*'TxtRifaD': $('#TxtRifaD').val(),
+			'TxtRifaH': $('#TxtRifaH').val(),*/
+			'Serie': $('#LblSerie').text(),
+			'CodigoCliente': $('#codigoCliente').val(),
+			'TextServicios': '.',
+			'TextVDescto': 0,
+			'PorcIva': $('#DCPorcenIVA').val(),
+			'cheking': fila.childNodes[8].children[0].checked==true?1:0,
+			'comentario': comentario
+		}
+		console.log(parametros);
+		$('#myModal_espera').modal('show');
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/facturas_distribucionC.php?ActualizarAsientoF=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				$('#myModal_espera').modal('hide');
+				if (data == 2) {
+					Swal.fire('Ya no puede ingresar mas productos', '', 'info');
+				} else if (data == 1) {
+					//DGAsientoF();
+					Calculos_Totales_Factura();
+				} else {
+					Swal.fire('Intente mas tarde', '', 'info');
+				}
+			}
+		});
+	}
+
+	function cancelarModificarLF(campo, valor){
+		let fila = campo.parentElement.parentElement;
+		fila.childNodes[3].innerText = valor;
+		fila.childNodes[9].innerHTML = `
+			<button style="width:50px" onclick="modificarLineaFac(this)"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+		`;
+	}
+
 	function ingresarAsientoF() {
 		let filas = $('.asignTablaDistri');
 
 		for(let fila of filas){
 			fila = fila.children;
 			//console.log(fila[0].textContent + " => " + fila[1].textContent + " => " + fila[2].textContent + " => " + fila[3].textContent + " => " + fila[4].textContent + " => " + fila[5].textContent + " => " + fila[6].textContent + " => " + fila[7].textContent);
-			let tc = '<?php echo $TC; ?>';
+			let tc = datosFact;
 			let parametros =
 			{
 				//'opc': $('input[name="radio_conve"]:checked').val(),
@@ -674,7 +808,8 @@ if (isset ($_GET['tipo'])) {
 				'CodigoCliente': $('#codigoCliente').val(),
 				'TextServicios': '.',
 				'TextVDescto': 0,
-				'PorcIva': $('#DCPorcenIVA').val()
+				'PorcIva': $('#DCPorcenIVA').val(),
+				'cheking': fila[8].children[0].checked==true?1:0
 			}
 			$.ajax({
 				type: "POST",
@@ -835,7 +970,7 @@ function tipo_facturacion(valor)
 				data: function (params) {
                     return {
                         query: params.term,
-						v_donacion: $("#DCTipoFact2").select2("data")[0]['data'][0]['Fact'],
+						v_donacion: datosFact,
 						fecha: $("#MBFecha").val()
                     }
                 },
@@ -1137,6 +1272,7 @@ function tipo_facturacion(valor)
 				$('#LabelConIVA').val(parseFloat(data.Con_IVA).toFixed(2));
 				$('#LabelIVA').val(parseFloat(data.Total_IVA).toFixed(2));
 				$('#LabelTotal').val(parseFloat(data.Total_MN).toFixed(2));
+				$('#LabelTotal2').val(parseFloat(data.Total_MN).toFixed(2));
 			}
 		});
 	}
@@ -1192,6 +1328,7 @@ function tipo_facturacion(valor)
 			Swal.fire('Seleccione un cliente', '', 'info');
 			return false;
 		}
+
 		var total = parseFloat($('#LabelTotal').val()).toFixed(4);
 		var efectivo = parseFloat($('#TxtEfectivo').val()).toFixed(4);
 		var banco = parseFloat($('#TextCheque').val()).toFixed(4);
@@ -1206,13 +1343,151 @@ function tipo_facturacion(valor)
 			confirmButtonText: 'Si!'
 		}).then((result) => {
 			if (result.value == true) {
-				if (banco > total) {
+				/*if (banco > total) {
 					Swal.fire('Si el pago es por banco este no debe superar el total de la factura', 'PUNTO VENTA', 'info').then(function () { $('#TextCheque').select(); });
 					return false;
-				}
-				generar_factura()
+				}*/
+				//generar_factura()
+				grabar_evaluacion();
+				//grabar_gavetas();
+				//guardar_bouche();
 			}
 		})
+		
+	}
+
+	function guardar_bouche(){
+		$('#myModal_espera').modal('show');
+		let formData = new FormData();
+		formData.append('file', $('#archivoAdd')[0].files[0]);
+		formData.append('n_factura', $('#TextFacturaNo').val());
+		formData.append('serie', $('#LblSerie').text());
+		formData.append('fecha', $('#MBFecha').val().replaceAll('-',''));
+
+		$.ajax({
+			type: 'POST',
+			url: '../controlador/facturacion/facturas_distribucionC.php?GuardarBouche=true',
+			processData: false,
+			contentType: false,
+			data: formData,
+			dataType: 'json',
+			success: function (respuesta) {
+				$('#myModal_espera').modal('hide');
+				if(respuesta['res'] == 1){
+					/*let ruta = '../../TEMP/catalogo_procesos/' + respuesta['imagen'];
+					$('#picture').val(respuesta['imagen'].split('.')[0]);
+					$('#imageElement').prop('src',ruta);*/
+					generar_factura();
+				}else{
+					/*$('#picture').val(".");
+					$('#imageElement').prop('src','');
+					Swal.fire("Error", "Hubo un problema al mostrar la imagen", "error");*/
+					Swal.fire('Error al subir archivo', '', 'error');
+				}
+			},
+			error: function (error) {
+				/*$('#myModal_espera').modal('hide');
+				$('#picture').val(".");
+				$('#imagenPicker').val('');
+				$('#imageElement').prop('src','');*/
+				Swal.fire("Error al procesar el archivo", "Error: " + error, "error");
+			}
+		});
+	}
+
+	function grabar_evaluacion(){
+		$('#myModal_espera').modal('show');
+		let parametros = {
+			'cliente': $('#codigoCliente').val(),
+			'fecha': $('#MBFecha').val(),
+			'comentario': $('#comentario_eval').val().trim() == "" ? "." : $('#comentario_eval').val()
+		};
+		let objEvaluaciones = [];
+		let filasTablaEvaluaciones = $('#cuerpoTablaEFund')[0].childNodes;
+		for(let fte of filasTablaEvaluaciones){
+			let fteId = fte.id;
+			if(fteId != ''){
+				let evalFundaciones = $(`input[name="${fteId}"]`);
+				/*for(let gaveta of evalFundaciones){
+
+				}*/
+				let p = {
+					'cod_inv': fteId,
+					'bueno': evalFundaciones[0].checked,
+					'malo': evalFundaciones[1].checked,
+				}
+				objEvaluaciones.push(p);
+			}
+		}
+		parametros['evaluaciones'] = objEvaluaciones;
+		console.log(parametros);
+
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/facturas_distribucionC.php?GrabarEvaluaciones=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				if(data['res'] == 1){
+					grabar_gavetas();
+				}else{
+					Swal.fire('Error', 'Hubo un error al guardar la evaluacion');
+				}
+			}
+		});
+	}
+
+	function grabar_gavetas(){
+		$('#myModal_espera').modal('show');
+		let parametros = {
+			'TC': datosFact,
+			'cliente': $('#codigoCliente').val(),
+			'fecha': $('#MBFecha').val(),
+			'serie': $('#LblSerie').text()
+		};
+		let objGavetas = [];
+		let filasTablaGavetas = $('#cuerpoTablaGavetas')[0].childNodes;
+		for(let ftg of filasTablaGavetas){
+			let ftgId = ftg.id;
+			if(ftgId != ''){
+				let gavetas = $(`input[name="${ftgId}"]`);
+				/*for(let gaveta of gavetas){
+
+				}*/
+				let gav_entregadas = gavetas[0].value.trim()=="" ? 0 : parseInt(gavetas[0].value);
+				let gav_devueltas = gavetas[1].value.trim()=="" ? 0 : parseInt(gavetas[1].value);
+				let gav_pendientes = gavetas[2].value.trim()=="" ? 0 : parseInt(gavetas[2].value);
+				if(gav_entregadas != 0 && gav_devueltas != 0){
+					let p = {
+						'cod_inv': ftgId,
+						'entregadas': gav_entregadas,
+						'devueltas': gav_devueltas,
+						'pendientes': gav_pendientes 
+					}
+					objGavetas.push(p);
+				}
+			}
+		}
+		parametros['gavetas'] = objGavetas;
+		console.log(parametros);
+
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/facturas_distribucionC.php?GrabarGavetas=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				if(data['res'] == 1){
+					//generar_factura()
+					guardar_bouche();
+				}else{
+					Swal.fire('Error', 'Hubo un problema al subir la actualizacion de gavetas.');
+				}
+			},
+			error: (err) => {
+				Swal.fire('Error', 'Hubo un problema al subir la actualizacion de gavetas.');
+			}
+		});
 	}
 
 	function generar_factura() {
@@ -1220,41 +1495,45 @@ function tipo_facturacion(valor)
 		/*var tc = $('#DCLinea').val();
 		tc = tc.split(' ');*/
 
-		var tc = '<?php echo $TC; ?>';
+		var tc = datosFact;
 		var parametros =
 		{
 			'MBFecha': $('#MBFecha').val(),
-			'TxtEfectivo': $('#TxtEfectivo').val(),
+			'TxtEfectivo': $('#btnToggleInfoEfectivo').attr('stateval')=="1" ? $('#TxtEfectivo').val() : 0.00,
 			'TextFacturaNo': $('#TextFacturaNo').val(),
-			'TxtNota': $('#TxtNota').val(),
-			'TxtObservacion': $('#TxtObservacion').val(),
+			//'TxtNota': $('#TxtNota').val(),
+			//'TxtObservacion': $('#TxtObservacion').val(),
 			'TipoFactura': tc,
-			'TxtGavetas': $('#TxtGavetas').val(),
+			//'TxtGavetas': $('#TxtGavetas').val(),
 			'CodigoCliente': $('#codigoCliente').val(),
 			'email': $('#Lblemail').val(),
 			'CI': $('#LblRUC').val(),
 			'NombreCliente': $('#DCCliente option:selected').text(),
 			'TC': tc,
 			'Serie': $('#LblSerie').text(),
-			'DCBancoN': $('#DCBanco option:selected').text(),
-			'DCBancoC': $('#DCBanco').val(),
+			'DCBancoN': $('#btnToggleInfoBanco').attr('stateval')=="1" ? $('#DCBanco option:selected').text() : "",
+			'DCBancoC': $('#btnToggleInfoBanco').attr('stateval')=="1" ? $('#DCBanco').val() : "",
 			'T': $('#LblT').val(),
-			'TextBanco': $('#TextBanco').val(),
-			'TextCheqNo': $('#TextCheqNo').val(),
+			'TextBanco': $('#btnToggleInfoBanco').attr('stateval')=="1" ? $('#TextBanco').val() : "",
+			'TextCheqNo': $('#btnToggleInfoBanco').attr('stateval')=="1" ? $('#TextCheqNo').val() : "",
 			'CodDoc': $('#CodDoc').val(),
-			'valorBan': $('#TextCheque').val(),
+			'valorBan':  $('#btnToggleInfoBanco').attr('stateval')=="1" ? $('#TextCheque').val() : 0.00,
 			'Cta_Cobrar': $('#Cta_CxP').val(),
 			'Autorizacion': $('#Autorizacion').val(),
 			'CodigoL': $('#CodigoL').val(),
-			'PorcIva': $('#DCPorcenIVA').val()
+			'PorcIva': $('#DCPorcenIVA').val(),
+			//'cheking': $('#DCPorcenIVA').val(),
+			//'PorcIva': $('#DCPorcenIVA').val()
 		}
+
+		console.log(parametros);
 		$.ajax({
 			type: "POST",
 			url: '../controlador/facturacion/facturas_distribucionC.php?generar_factura=true',
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
-				$('#myModal_espera').modal('hide');
+				/*$('#myModal_espera').modal('hide');
 				// console.log(data);
 				if (data.respuesta == 1) {
 					Swal.fire({
@@ -1311,20 +1590,24 @@ function tipo_facturacion(valor)
 					Swal.fire('SRI intermitente intente mas tarde', '', 'info');
 				} else {
 					Swal.fire(data.text, '', 'error');
-				}
+				}*/
 
+			},
+			error: (err) => {
+				Swal.fire('Error', 'Hubo un problema al guardar la factura.');
 			}
 		});
+		console.log(parametros);
 
 	}
 
 	function calcular_pago() {
 
 		var cotizacion = parseInt($('#TextCotiza').val());
-		var efectivo = parseFloat($('#TxtEfectivo').val());
+		var efectivo =  $('#btnToggleInfoEfectivo').attr('stateval') == "1" ? parseFloat($('#TxtEfectivo').val()) : 0.00;
 		var Total_Factura = parseFloat($('#LabelTotalME').val());
 		var Total_Factura2 = parseFloat($('#LabelTotal').val());
-		var Total_banco = parseFloat($('#TextCheque').val());
+		var Total_banco = $('#btnToggleInfoBanco').attr('stateval') == "1" ? parseFloat($('#TextCheque').val()) : 0.00;
 		if (cotizacion > 0) {
 			if (parseFloat(efectivo) > 0) {
 				var ca = efectivo - Total_Factura + Total_banco;
@@ -1408,13 +1691,13 @@ function tipo_facturacion(valor)
 			print_r($ruta[0] . '#'); ?>" title="Salir de modulo" class="btn btn-default">
 				<img src="../../img/png/salire.png">
 			</a>
-			<a title="BOUCHE" class="btn btn-default" onclick="$('#modalBoucher').modal('show');">
+			<!--<a title="BOUCHE" class="btn btn-default" onclick="$('#modalBoucher').modal('show');">
 				<img src="../../img/png/adjuntar-archivo.png" height="32px">
-			</a>
+			</a>-->
 			<a title="IMPRIMIR" class="btn btn-default" onclick="Imprimir_Punto_Venta('<?php echo $TC; ?>')">
 				<img src="../../img/png/paper.png" height="32px">
 			</a>
-			<a title="FACTURAR" class="btn btn-default" onclick="FacturarAsignacion()">
+			<a title="FACTURAR" class="btn btn-default" onclick="generar()">
 				<img src="../../img/png/facturar.png" height="32px">
 			</a>
 		</div>
@@ -1453,7 +1736,9 @@ function tipo_facturacion(valor)
 	</div>
 	<div class="col-sm-2">
 		<b>I.V.A %</b>
-		<select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA" onblur="cambiar_iva(this.value)"> </select>
+		<select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA" onblur="cambiar_iva(this.value)">
+
+		</select>
 	</div>
 	<div class="col-sm-2">
 		<b id="Label1">FACTURA No.</b>
@@ -1731,7 +2016,7 @@ function tipo_facturacion(valor)
 		</div>
 
 	</div>-->
-	<div class="col-sm-9">
+	<div class="col-sm-12">
 		<div class="row text-center" style="padding-bottom:10px;height:250px;overflow-y:auto;">
 			<div class="col-sm-12" id="tbl_DGAsientoF">
 				<table class="table">
@@ -1745,6 +2030,8 @@ function tipo_facturacion(valor)
 							<th>Costo total</th>
 							<th style="display:none">CodBodega</th>
 							<th style="display:none">Cod_Inv</th>
+							<th>Cheking</th>
+							<th>Modificar</th>
 						</tr>
 					</thead>
 					<tbody id="cuerpoTablaDistri"></tbody>
@@ -1763,25 +2050,44 @@ function tipo_facturacion(valor)
 				</table>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-sm-3">
-				<label for="gavetas_entregadas">Gavetas entregadas:</label>
-				<input type="text" class="form-control input-xs" id="gavetas_entregadas" value="0" disabled>
+		<div class="row" style="display:flex;align-items:center;padding:10px 0;">
+			<div class="col-sm-9">
+				<div class="col-sm-3">
+					<label for="gavetas_entregadas">Gavetas entregadas:</label>
+					<input type="text" class="form-control input-xs" id="gavetas_entregadas" value="0" disabled>
+				</div>
+				<div class="col-sm-3">
+					<label for="gavetas_devueltas">Gavetas devueltas:</label>
+					<input type="text" class="form-control input-xs" id="gavetas_devueltas" value="0" disabled>
+				</div>
+				<div class="col-sm-3">
+					<label for="gavetas_pendientes">Gavetas pendientes:</label>
+					<input type="text" class="form-control input-xs" id="gavetas_pendientes" value="0" disabled>
+				</div>
+				<div class="col-sm-1" style="cursor:pointer;" onclick="$('#modalGavetasInfo').modal('show')">
+					<img src="../../img/png/gavetas.png" height="50px" alt="">
+				</div>
 			</div>
-			<div class="col-sm-3">
-				<label for="gavetas_devueltas">Gavetas devueltas:</label>
-				<input type="text" class="form-control input-xs" id="gavetas_devueltas" value="0" disabled>
-			</div>
-			<div class="col-sm-3">
-				<label for="gavetas_pendientes">Gavetas pendientes:</label>
-				<input type="text" class="form-control input-xs" id="gavetas_pendientes" value="0" disabled>
-			</div>
-			<div class="col-sm-1" style="cursor:pointer;" onclick="$('#modalGavetasInfo').modal('show')">
-				<img src="../../img/png/gavetas.png" height="50px" alt="">
+			<div class="col-sm-3" style="display:flex;flex-direction:column;justify-content:center">
+				<div class="row">
+					<div class="col-sm-12 mb-2">
+						<button class="btn btn-default" onclick="$('#modalInfoFactura').modal('show')">Seleccionar métodos de pago</button>
+						
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<b>Total Factura</b>
+					</div>
+					<div class="col-sm-6">
+						<input type="text" name="LabelTotal" id="LabelTotal2" class="form-control text-right"
+							value="0.00" style="color:red" readonly>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-	<div class="col-sm-3">
+	<!--<div class="col-sm-3" style="display:none;">
 		<div class="row">
 			<div class="col-sm-6">
 				<b>Total Tarifa 0%</b>
@@ -1807,15 +2113,6 @@ function tipo_facturacion(valor)
 			<div class="col-sm-6">
 				<input type="text" name="LabelIVA" id="LabelIVA" class="form-control input-xs text-right" value="0.00"
 					style="color:red" readonly>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-6">
-				<b>Total Factura</b>
-			</div>
-			<div class="col-sm-6">
-				<input type="text" name="LabelTotal" id="LabelTotal" class="form-control input-xs text-right"
-					value="0.00" style="color:red" readonly>
 			</div>
 		</div>
 		<div class="row">
@@ -1881,9 +2178,9 @@ function tipo_facturacion(valor)
 				<button class="btn btn-default btn-block" id="btn_g"> <img src="../../img/png/grabar.png"
 						onclick="generar()"><br> Guardar</button>
 			</div>
-		</div>-->
+		</div>
 
-	</div>
+	</div>-->
 </div>
 
 
@@ -1934,7 +2231,7 @@ function tipo_facturacion(valor)
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-success" id="btnAceptarEvaluacion">Aceptar</button>
+				<button type="button" class="btn btn-success" id="btnAceptarEvaluacion" data-dismiss="modal">Aceptar</button>
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
 			</div>
 		</div>
@@ -2046,6 +2343,151 @@ function tipo_facturacion(valor)
 							</tr>-->
 						</tbody>
 					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-success" data-dismiss="modal" id="btnAceptarInfoGavetas">Aceptar</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetInputsGavetas()">Cancelar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="modalInfoFactura" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Informacion Facturar</h4>
+			</div>
+			<div class="modal-body" style="overflow-y: auto; height: fit-content; margin:5px">
+
+				<div class="col-sm-6 col-sm-offset-3">
+					<div class="row">
+						<div class="col-sm-6">
+							<b>Total Tarifa 0%</b>
+						</div>
+						<div class="col-sm-6">
+							<input type="text" name="LabelSubTotal" id="LabelSubTotal" class="form-control input-xs text-right"
+								value="0.00" style="color:red" readonly onblur="TarifaLostFocus();">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<b>Total Tarifa 12%</b>
+						</div>
+						<div class="col-sm-6">
+							<input type="text" name="LabelConIVA" id="LabelConIVA" class="form-control input-xs text-right"
+								value="0.00" style="color:red" readonly>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<b id="Label3">I.V.A</b>
+						</div>
+						<div class="col-sm-6">
+							<input type="text" name="LabelIVA" id="LabelIVA" class="form-control input-xs text-right" value="0.00"
+								style="color:red" readonly>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<b>Total Factura</b>
+						</div>
+						<div class="col-sm-6">
+							<input type="text" name="LabelTotal" id="LabelTotal" class="form-control input-xs text-right"
+								value="0.00" style="color:red" readonly>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<b>Total Fact (ME)</b>
+						</div>
+						<div class="col-sm-6">
+							<input type="text" name="LabelTotalME" id="LabelTotalME" class="form-control input-xs text-right"
+								value="0.00" style="color:red" readonly>
+						</div>
+					</div>
+					<div class="row" style="margin: 20px 0;">
+						<div class="col-sm-6">
+							<button class="btn btn-default" id="btnToggleInfoEfectivo" stateval="0" onclick="toggleInfoEfectivo()">EFECTIVO</button>
+						</div>
+						<div class="col-sm-6">
+							<button class="btn btn-default" id="btnToggleInfoBanco" stateval="0" onclick="toggleInfoBanco()">BANCO</button>
+						</div>
+						<!--<div class="col-sm-6">
+							<input type="text" name="TxtEfectivo" id="TxtEfectivo" class="form-control input-xs text-right"
+								value="0.00" onblur="calcular_pago()">
+						</div>-->
+					</div>
+					<div id="campos_fact_efectivo" style="display:none;">
+						<div class="row">
+							<div class="col-sm-6">
+								<b>EFECTIVO</b>
+							</div>
+							<div class="col-sm-6">
+								<input type="text" name="TxtEfectivo" id="TxtEfectivo" class="form-control input-xs text-right"
+									value="0.00" onblur="calcular_pago()">
+							</div>
+						</div>
+					</div>
+					<div id="campos_fact_banco" style="display:none;">
+						<div class="row">
+							<div class="col-sm-12">
+								<b>CUENTA DEL BANCO</b>
+								<select class="form-control input-xs select2" id="DCBanco" name="DCBanco">
+									<option value="">Seleccione Banco</option>
+								</select>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-3">
+								<b>Documento</b>
+							</div>
+							<div class="col-sm-9">
+								<input type="text" name="TextCheqNo" id="TextCheqNo" class="form-control input-xs" value=".">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<b>NOMBRE DEL BANCO</b>
+								<input type="text" name="TextBanco" id="TextBanco" class="form-control input-xs" value=".">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<b>VALOR BANCO</b>
+							</div>
+							<div class="col-sm-6">
+								<input type="text" name="TextCheque" id="TextCheque" class="form-control input-xs text-right"
+									value="0.00" onblur="calcular_pago()">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<b>CAMBIO</b>
+						</div>
+						<div class="col-sm-6">
+							<input type="text" name="LblCambio" id="LblCambio" class="form-control input-xs text-right"
+								style="color: red;" value="0.00">
+						</div>
+					</div>
+					<div class="row" id="bouche_banco_input" style="margin:10px 0;display:none;">
+						
+							<b>ADJUNTAR BOUCHE:</b>
+							<input type="file" class="form-control-file" id="archivoAdd" accept=".pdf,.jpg,.png" onchange="agregarArchivo()">
+						
+					</div>
+					
+					
+					<!--<div class="row">
+						<div class="col-sm-12"><br>
+							<button class="btn btn-default btn-block" id="btn_g"> <img src="../../img/png/grabar.png"
+									onclick="generar()"><br> Guardar</button>
+						</div>
+					</div>-->
+
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -2191,7 +2633,7 @@ function tipo_facturacion(valor)
 		</div>
 	</div>
 </div>
-<div id="modalBoucher" data-backdrop="static" class="modal fade in" role="dialog" style="padding-right: 15px;">
+<!--<div id="modalBoucher" data-backdrop="static" class="modal fade in" role="dialog" style="padding-right: 15px;">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2214,24 +2656,7 @@ function tipo_facturacion(valor)
                         </div>
                     </div>
                 </div>
-                <!--<div class="modal-footer" style="display:none">
-                    <div class="row" style="margin: 10px;">
-                        <div class="col-xs-4">
-
-                        </div>
-                        <div class="col-xs-4">
-                            <button id="btnDescargar" type="button" class="btn btn-default btn-block" onclick="descargarArchivo(ruta, nombre)">
-                                <span class="glyphicon glyphicon-download" aria-hidden="true"></span> Descargar
-                            </button>
-                        </div>
-                        <div class="col-xs-4">
-                            <button type="button" class="btn btn-danger btn-block" onclick="eliminarArchivo(ruta, nombre)">
-                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Eliminar
-                            </button>
-                        </div>
-                    </div>
-                </div>-->
             </div>
         </div>
     </div>
-</div>
+</div>-->

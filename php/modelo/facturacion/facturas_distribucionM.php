@@ -21,7 +21,7 @@ class facturas_distribucionM
 
   function ConsultarProductos($params){
     
-    $sql = "SELECT TK.CodBodega AS CodBodega2, TC.ID,TC.Fecha,TC.Fecha_C,A.Nombre_Completo,TC.Total,TC.CodBodega,CodigoC,TC.Codigo_Inv
+    $sql = "SELECT DISTINCT TK.CodBodega AS CodBodega2, TC.ID,TC.Fecha,TC.Fecha_C,A.Nombre_Completo,TC.Total,TC.CodBodega,CodigoC,TC.Codigo_Inv
             FROM Trans_Comision TC 
             INNER JOIN Accesos A ON TC.CodigoU = A.Codigo 
             INNER JOIN Trans_Kardex TK ON TK.Codigo_Barra = TC.CodBodega
@@ -53,16 +53,52 @@ class facturas_distribucionM
   }
 
   function valoresGavetas($parametros){
-    $sql = "SELECT Codigo_Inv, (SELECT top 1 Existencia FROM Trans_Kardex  WHERE Fecha=MAX(TK.Fecha)) AS Existencia 
+    $sql = "SELECT Codigo_Inv, Existencia 
             FROM Trans_Kardex TK 
             WHERE Codigo_P = '".$parametros['codigo']."' 
-            AND CodBodega IN ('03', '99') 
             AND Codigo_Inv LIKE 'GA.%' "./*AND Fecha = '".$parametros['fecha']."'*/"
             AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
             AND Item = '".$_SESSION['INGRESO']['item']."' 
-            GROUP BY Codigo_P, Codigo_Inv
+            GROUP BY Codigo_P, Codigo_Inv, Existencia
             ORDER BY Codigo_Inv";
             
+    return $this->db->datos($sql);
+  }
+  function existenciaProducto($codigo, $cod_inv){
+    $sql = "SELECT TOP 1 Existencia FROM Trans_Kardex
+            WHERE Codigo_Inv = '".$cod_inv."'
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+            AND Item = '".$_SESSION['INGRESO']['item']."'
+            ORDER BY Fecha DESC;";
+    $existencia = $this->db->datos($sql);
+    if(count($existencia) <= 0){
+      $existencia = 0;
+    }else{
+      $existencia = $existencia[0]['Existencia'];
+    }
+    return $existencia;
+    //return $this->db->datos($sql)[0]['Existencia'];
+  }
+  function consultaTrans_Ticket($TFA){
+    $sql = "SELECT F.*,C.Cliente,C.CI_RUC,C.Telefono,C.Direccion,C.Ciudad,C.Grupo,C.Email 
+					FROM Trans_Ticket As F,Clientes As C 
+					WHERE F.Ticket = ".$TFA['Factura']." 
+					AND F.TC = '".$TFA['TC']."' 
+					AND F.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+					AND F.Item = '".$_SESSION['INGRESO']['item']."' 
+					AND C.Codigo = F.CodigoC ";
+    
+    return $this->db->datos($sql);
+  }
+
+  function consultaFactura($TFA){
+    $sql = "SELECT F.*,C.Cliente,C.CI_RUC,C.Telefono,C.Direccion,C.Ciudad,C.Grupo,C.Email FROM Facturas As F,Clientes As C 
+					WHERE F.Factura = ".$TFA['Factura']." 
+					AND F.TC = '".$TFA['TC']."' 
+					AND F.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+					AND F.Item = '".$_SESSION['INGRESO']['item']."' 
+					AND C.Codigo = F.CodigoC ";
+    
     return $this->db->datos($sql);
   }
 
@@ -762,8 +798,8 @@ class facturas_distribucionM
             FROM Catalogo_Lineas
             WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
             AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
-            AND Fact = '" . $parametros['TipoFactura'] . "'
-            AND Serie = '" . $parametros['SerieFactura'] . "'
+            AND Fact = '" . $parametros['TipoFactura'] . /*"'
+            AND Serie = '" . $parametros['SerieFactura'] . */"'
             AND TL <> 0
             ORDER BY Codigo";
             // print_r($sql);die();
