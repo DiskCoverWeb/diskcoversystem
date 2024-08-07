@@ -178,6 +178,7 @@ class alimentos_recibidosM
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
 		where TC.Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND TC.Item = CP.Item
 		AND TC.T = 'P' ";
 		if($cod)
 		{
