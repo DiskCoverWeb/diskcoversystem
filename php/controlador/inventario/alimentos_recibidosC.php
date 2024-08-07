@@ -314,7 +314,8 @@ class alimentos_recibidosC
 	{
 		// print_r($parametros);
 		// print_r($transporte);
-		// print_r($gavetas);die();
+		// print_r($gavetas);
+		// die();
 
 
 		$parametros['fecha'] = $parametros['txt_fecha'];
@@ -370,7 +371,8 @@ class alimentos_recibidosC
 			    SetAdoFields('Cumple',$value);
 			    SetAdoFields('CodigoC',$placa);	
 			    SetAdoFields('Carga',$tipo_ve);	
-			    SetAdoFields('Conducto',$op_vehi);	
+			    SetAdoFields('Conductor',$op_vehi);	
+			    SetAdoFields('Codigo_Inv',$codigo);	
 			    SetAdoUpdate();		
 			}
 		}
