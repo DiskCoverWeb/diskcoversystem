@@ -71,7 +71,7 @@ class alimentos_recibidosM
 		where TC.Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC.Item = CP.Item
-		AND TC.T = 'I'";  
+		AND (TC.T = 'I' OR TC.T = 'C')";  
 
 		// ver por que se coloco el esto ->	OR TC.T = 'C'  
 		if($cod)
