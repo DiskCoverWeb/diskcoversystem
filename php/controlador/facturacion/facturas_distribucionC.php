@@ -12,6 +12,79 @@ if(isset($_GET["LlenarSelectIVA"])){
 	echo json_encode($controlador->LlenarSelectIVA($fecha));
 }
 
+if(isset($_GET['GuardarBouche'])){
+	//$parametros = $_POST;
+    
+    // Verifica si se ha subido un archivo
+    /*if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+        $localFilePath  = $_FILES['imagen'];
+        $carpetaDestino = dirname(__DIR__, 2) . "/img/png/";
+        $nombreArchivoDestino = $carpetaDestino . $parametros['picture'] . '.png';//Destino temporal para guardar el archivo
+
+        /*if (!is_dir($carpetaDestino)) {
+            // Intentar crear la carpeta, el 0777 es el modo de permiso más permisivo
+            if (!mkdir($carpetaDestino, 0777, true)) { // true permite la creación de estructuras de directorios anidados
+                throw new Exception("No se pudo crear la carpeta");
+            }
+        }
+
+        if (move_uploaded_file($localFilePath['tmp_name'], $nombreArchivoDestino)) {
+            echo json_encode($controlador->GuardarProducto($parametros));
+        } else {
+            throw new Exception("No se pudo guardar el archivo en el servidor");
+        }
+    
+    } else {
+        throw new Exception("Error al subir el archivo");
+    }*/
+	$ruta = dirname(__DIR__,2).'/comprobantes/pagos_subidos/entidad_'.$_SESSION['INGRESO']['IDEntidad'].'/empresa_'.$_SESSION['INGRESO']['item'].'/';
+    if(!file_exists($ruta))
+    {
+		$ruta1 = dirname(__DIR__,2).'/comprobantes/pagos_subidos/';
+		if(!file_exists($ruta1)){
+			mkdir($ruta1,0777);
+		}
+		$ruta2 = dirname(__DIR__,2).'/comprobantes/pagos_subidos/entidad_'.$_SESSION['INGRESO']['IDEntidad'];
+		if(!file_exists($ruta2)){
+			mkdir($ruta2,0777);
+		}
+      //mkdir($ruta2,0777);      
+      mkdir($ruta,0777);
+    }
+     $uploadfile_temporal=$file['file']['tmp_name'];
+     $tipo = explode('/', $file['file']['type']);
+	 $nom_archivo = $_POST['fecha'].$_POST['n_factura'].$_POST['serie'];
+     $nombre = $_SESSION['INGRESO']['item'].'_'.$post['nom_archivo'].'_pago.'.$tipo[1];
+    // print_r($file);print_r($post);die();
+     $nuevo_nom=$ruta.$nombre;
+
+     if (is_uploaded_file($uploadfile_temporal))
+     {
+
+        move_uploaded_file($uploadfile_temporal,$nuevo_nom);
+        /*SetAdoAddNew("Clientes_Datos_Extras");          
+        SetAdoFields("Evidencias",$nombre);
+
+        SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
+        SetAdoFieldsWhere('Codigo',$post['nom_1']);
+        SetAdoUpdateGeneric();*/
+        return array(
+			"res" => 1,
+			"documento" => $nombre
+		);
+     }else{
+		return array(
+			"res" => 0,
+			"documento" => "No existe documento."
+		);
+	 }
+}
+
+if (isset($_GET['ActualizarAsientoF'])) {
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->actualizarAsientoF($parametros));
+}
+
 if(isset($_GET["ConsultarGavetas"])){
 	echo json_encode($controlador->consultarGavetas());
 }
@@ -34,6 +107,17 @@ if(isset($_GET["LlenarSelectTipoFactura"])){
 	//$fecha = $_GET['fecha'];
 	echo json_encode($controlador->LlenarSelectTipoFactura());
 }
+
+if(isset($_GET['GrabarGavetas'])){
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->grabar_gavetas($parametros));
+}
+
+if(isset($_GET['GrabarEvaluaciones'])){
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->grabar_evaluacion($parametros));
+}
+
 if (isset($_GET['DCCliente'])) {
 	$query = '';
 	$parametros = array(
@@ -261,6 +345,7 @@ class facturas_distribucion
 				'contenido' => "No se encontraron datos de evaluacion de fundaciones."
 			);
 		}
+		//print_r($_SESSION);die();
 		return $respuesta;
 	}
 	
@@ -306,9 +391,290 @@ class facturas_distribucion
 		// print_r($datos);die();
 	}
 
+	/*function Imprimir_Punto_Venta($TFA){
+
+		try{
+			$mensajes = "Imprimir Factura No. " . $TFA['Factura'];
+			$titulo = "IMPRESION";
+			$bandera = false;
+
+			// va algo
+
+			$CantGuion = Leer_Campo_Empresa("Cant_Ancho_PV");
+			if($CantGuion < 26)$CantGuion=26;
+			$Total = 0;
+			$Total_IVA = 0;
+			$Cant_Ln = 0;
+			$PosLinea = 0.1;
+			$Producto = "";
+			$AdoDBFactura = array();
+			if($TFA['TC'] == "PV")
+			{
+				$AdoDBFactura = $this->modelo->consultaTrans_Ticket($TFA);
+			}else
+			{
+				$AdoDBFactura = $this->modelo->consultaFactura($TFA);
+			}
+			if(count($AdoDBFactura) > 0){
+				if($_SESSION['INGRESO']['Encabezado_PV'])
+				{
+					$Producto = " " . PHP_EOL
+						. str_pad('', (int)(($cantGuion - strlen($_SESSION['empresa'])) / 2)) . strtoupper($_SESSION['empresa']) . PHP_EOL
+						. str_pad('', (int)(($cantGuion - strlen($_SESSION['Nombre_Comercial'])) / 2)) . $_SESSION['Nombre_Comercial'] . PHP_EOL
+						. str_pad('', (int)(($cantGuion - strlen(strtoupper($_SESSION['Gerente']))) / 2)) . strtoupper($_SESSION['Gerente']) . PHP_EOL
+						. str_pad('', (int)(($cantGuion - strlen("R.U.C. " . $_SESSION['RUC'])) / 2)) . "R.U.C. " . $_SESSION['RUC'] . PHP_EOL
+						. str_pad('', (int)(($cantGuion - strlen("Telefono: " . $_SESSION['Telefono1'])) / 2)) . "Telefono: " . $_SESSION['Telefono1'] . PHP_EOL
+						. $_SESSION['Direccion'] . PHP_EOL;
+
+					$Cant_Ln = $Cant_Ln + 7;
+					if($TFA['TC'] = "PV")
+					{
+						$Producto .= " " . PHP_EOL . "T I C K E T   No. " . sprintf("000-000-%07d", $TFA->Factura) . PHP_EOL . " " . PHP_EOL;
+						$Cant_Ln = $Cant_Ln + 1;
+					}else if($TFA['TC'] = "NV")
+					{
+						$Producto .= "Auto. SRI: " . Autorizacion . " - Caduca: " . MidStrg(UCaseStrg(MesesLetras(Month(Fecha_Vence))), 1, 3) . "/" . Year(Fecha_Vence) . vbCrLf . " " . vbCrLf . "NOTA DE VENTA No. " . SerieFactura . "-" . Format$(TFA.Factura, "0000000") . vbCrLf . " " . vbCrLf;
+						Cant_Ln = Cant_Ln + 2
+					}else
+					{
+						Producto = Producto & "Auto. SRI: " & Autorizacion & " - Caduca: " & MidStrg(UCaseStrg(MesesLetras(Month(Fecha_Vence))), 1, 3) & "/" & Year(Fecha_Vence) & vbCrLf & " " & vbCrLf _
+								& "FACTURA No. " & SerieFactura & "-" & Format$(TFA.Factura, "0000000") & vbCrLf & " " & vbCrLf
+						Cant_Ln = Cant_Ln + 2
+					}
+				}
+					
+				Else
+					Producto = vbCrLf & " " & vbCrLf & " " & vbCrLf & " " & vbCrLf & " " & vbCrLf _
+							& "Transaccion(" & TFA.TC & ") No." & Format$(TFA.Factura, "0000000") & vbCrLf & " " & vbCrLf
+					Cant_Ln = Cant_Ln + 4
+				End If
+			}
+		}catch(Exception $e){
+
+		}
+	}*/
+
+	/*
+	
+	Public Sub Imprimir_Punto_Venta(TFA As Tipo_Facturas)
+	Dim AdoDBFactura As ADODB.Recordset
+	Dim AdoDBDetalle As ADODB.Recordset
+	Dim CadenaMoneda As String
+	Dim Numero_Letras As String
+	Dim Cant_Ln As Byte
+	Dim CantGuion As Byte
+	Dim CantBlancos As String
+
+	On Error GoTo Errorhandler
+	Mensajes = "Imprmir Factura No. " & TFA.Factura
+	Titulo = "IMPRESION"
+	Bandera = False
+	SetPrinters.Show 1
+	If PonImpresoraDefecto(SetNombrePRN) Then
+	Escala_Centimetro 1, TipoTerminal, 9
+	RatonReloj
+	CantGuion = CByte(Leer_Campo_Empresa("Cant_Ancho_PV"))
+	If CantGuion < 26 Then CantGuion = 26
+	Total = 0: Total_IVA = 0
+	Cant_Ln = 0
+	PosLinea = 0.1
+	Producto = ""
+	If TFA.TC = "PV" Then
+		sSQL = "SELECT F.*,C.Cliente,C.CI_RUC,C.Telefono,C.Direccion,C.Ciudad,C.Grupo,C.Email " _
+			& "FROM Trans_Ticket As F,Clientes As C " _
+			& "WHERE F.Ticket = " & TFA.Factura & " " _
+			& "AND F.TC = '" & TFA.TC & "' " _
+			& "AND F.Periodo = '" & Periodo_Contable & "' " _
+			& "AND F.Item = '" & NumEmpresa & "' " _
+			& "AND C.Codigo = F.CodigoC "
+	Else
+		sSQL = "SELECT F.*,C.Cliente,C.CI_RUC,C.Telefono,C.Direccion,C.Ciudad,C.Grupo,C.Email " _
+			& "FROM Facturas As F,Clientes As C " _
+			& "WHERE F.Factura = " & TFA.Factura & " " _
+			& "AND F.TC = '" & TFA.TC & "' " _
+			& "AND F.Periodo = '" & Periodo_Contable & "' " _
+			& "AND F.Item = '" & NumEmpresa & "' " _
+			& "AND C.Codigo = F.CodigoC "
+	End If
+	Select_AdoDB AdoDBFactura, sSQL
+	'Iniciamos la consulta de impresion
+	With AdoDBFactura
+	If .RecordCount > 0 Then
+		'Encabezado de la Factura
+		If Encabezado_PV Then
+			Producto = " " & vbCrLf _
+					& Space((CantGuion - Len(Empresa)) / 2) & UCaseStrg(Empresa) & vbCrLf _
+					& Space((CantGuion - Len(NombreComercial)) / 2) & NombreComercial & vbCrLf _
+					& Space((CantGuion - Len(UCaseStrg(NombreGerente))) / 2) & UCaseStrg(NombreGerente) & vbCrLf _
+					& Space((CantGuion - Len("R.U.C. " & RUC)) / 2) & "R.U.C. " & RUC & vbCrLf _
+					& Space((CantGuion - Len("Telefono: " & Telefono1)) / 2) & "Telefono: " & Telefono1 & vbCrLf _
+					& Direccion & vbCrLf
+			Cant_Ln = Cant_Ln + 7
+			If TFA.TC = "PV" Then
+				Producto = Producto & " " & vbCrLf & "T I C K E T   No. 000-000-" & Format$(TFA.Factura, "0000000") & vbCrLf & " " & vbCrLf
+				Cant_Ln = Cant_Ln + 1
+			ElseIf TFA.TC = "NV" Then
+				Producto = Producto & "Auto. SRI: " & Autorizacion & " - Caduca: " & MidStrg(UCaseStrg(MesesLetras(Month(Fecha_Vence))), 1, 3) & "/" & Year(Fecha_Vence) & vbCrLf & " " & vbCrLf _
+						& "NOTA DE VENTA No. " & SerieFactura & "-" & Format$(TFA.Factura, "0000000") & vbCrLf & " " & vbCrLf
+				Cant_Ln = Cant_Ln + 2
+			Else
+				Producto = Producto & "Auto. SRI: " & Autorizacion & " - Caduca: " & MidStrg(UCaseStrg(MesesLetras(Month(Fecha_Vence))), 1, 3) & "/" & Year(Fecha_Vence) & vbCrLf & " " & vbCrLf _
+						& "FACTURA No. " & SerieFactura & "-" & Format$(TFA.Factura, "0000000") & vbCrLf & " " & vbCrLf
+				Cant_Ln = Cant_Ln + 2
+			End If
+		Else
+			Producto = vbCrLf & " " & vbCrLf & " " & vbCrLf & " " & vbCrLf & " " & vbCrLf _
+					& "Transaccion(" & TFA.TC & ") No." & Format$(TFA.Factura, "0000000") & vbCrLf & " " & vbCrLf
+			Cant_Ln = Cant_Ln + 4
+		End If
+		Producto = Producto & "Fecha: " & FechaSistema & " - Hora: " & .fields("Hora") & vbCrLf
+		Producto = Producto & "Cliente: " & vbCrLf _
+					& MidStrg(.fields("Cliente"), 1, 33) & vbCrLf
+		Producto = Producto & "R.U.C./C.I.: " & .fields("CI_RUC") & vbCrLf _
+					& "Cajero: " & MidStrg(CodigoUsuario, 1, 6) & vbCrLf
+		If .fields("Telefono") <> Ninguno Then Producto = Producto & "Telefono: " & .fields("Telefono") & vbCrLf
+		If .fields("Direccion") <> Ninguno Then Producto = Producto & "Direccion: " & vbCrLf & .fields("Direccion") & vbCrLf
+		If .fields("Email") <> Ninguno Then Producto = Producto & "Email: " & vbCrLf & .fields("Email") & vbCrLf
+		Producto = Producto & String$(CantGuion, "-") & vbCrLf _
+					& "PRODUCTO/Cant x PVP/TOTAL" & vbCrLf _
+					& String$(CantGuion, "-") & vbCrLf
+					Efectivo = .fields("Efectivo")
+		Cant_Ln = Cant_Ln + 6
+	End If
+	End With
+	'Comenzamos a recoger los detalles de la factura
+	If TFA.TC = "PV" Then
+		sSQL = "SELECT DF.*,CP.Detalle,CP.Codigo_Barra " _
+			& "FROM Trans_Ticket As DF,Catalogo_Productos As CP " _
+			& "WHERE DF.Ticket = " & TFA.Factura & " " _
+			& "AND DF.TC = '" & TFA.TC & "' " _
+			& "AND DF.Item = '" & NumEmpresa & "' " _
+			& "AND DF.Periodo = '" & Periodo_Contable & "' " _
+			& "AND DF.Item = CP.Item " _
+			& "AND DF.Periodo = CP.Periodo " _
+			& "AND DF.Codigo_Inv = CP.Codigo_Inv " _
+			& "ORDER BY DF.D_No "
+	Else
+		sSQL = "SELECT DF.*,CP.Detalle,CP.Codigo_Barra " _
+			& "FROM Detalle_Factura As DF,Catalogo_Productos As CP " _
+			& "WHERE DF.Factura = " & TFA.Factura & " " _
+			& "AND DF.TC = '" & TFA.TC & "' " _
+			& "AND DF.Item = '" & NumEmpresa & "' " _
+			& "AND DF.Periodo = '" & Periodo_Contable & "' " _
+			& "AND DF.Item = CP.Item " _
+			& "AND DF.Periodo = CP.Periodo " _
+			& "AND DF.Codigo = CP.Codigo_Inv " _
+			& "ORDER BY DF.Codigo "
+	End If
+	Select_AdoDB AdoDBDetalle, sSQL
+	With AdoDBDetalle
+	If .RecordCount > 0 Then
+		Do While (Not .EOF)
+			Producto = Producto & .fields("Producto") & vbCrLf _
+					& SetearBlancos(CStr(.fields("Cantidad")) & "x" & Format$(.fields("Precio"), "#,##0.00"), 12, 0, False) & " " _
+					& SetearBlancos(CStr(.fields("Total")), CantGuion - 13, 0, True, , True) & vbCrLf
+			Total = Total + .fields("Total")
+			If TFA.TC <> "PV" Then Total_IVA = Total_IVA + .fields("Total_IVA")
+			Cant_Ln = Cant_Ln + 1
+			.MoveNext
+		Loop
+	End If
+	End With
+	'Pie de factura
+	'===========================================================
+	With AdoDBFactura
+	If .RecordCount > 0 Then
+		If TFA.TC = "PV" Then
+			SubTotal = .fields("Total")
+			Total = .fields("Total")
+			Total_IVA = 0
+			Total_Servicio = 0
+			Total_Desc = 0
+		Else
+			SubTotal = .fields("SubTotal")
+			Total = .fields("Total_MN")
+			Total_IVA = .fields("IVA")
+			Total_Servicio = .fields("Servicio")
+			Total_Desc = .fields("Descuento")
+		End If
+		Producto = Producto & String$(CantGuion, "-") & vbCrLf
+		Cant_Ln = Cant_Ln + 1
+		'If Total_IVA Then
+		If (CantGuion - 26) > 0 Then CantBlancos = String$(CantGuion - 26, " ") Else CantBlancos = ""
+			Producto = Producto _
+					& CantBlancos & "     SUBTOTAL " & SetearBlancos(CStr(SubTotal), 12, 0, True, False, True) & vbCrLf _
+					& CantBlancos & "    I.V.A " & Porc_IVA * 100 & "% " & SetearBlancos(CStr(Total_IVA), 12, 0, True, False, True) & vbCrLf
+			Cant_Ln = Cant_Ln + 1
+			
+		If Total_Servicio > 0 Then
+			Producto = Producto _
+					& CantBlancos & "     SERVICIO " & SetearBlancos(CStr(Total_Servicio), 12, 0, True, False, True) & vbCrLf
+			Cant_Ln = Cant_Ln + 1
+		End If
+		If Total_Desc > 0 Then
+			Producto = Producto _
+					& CantBlancos & "    DESCUENTO " & SetearBlancos(CStr(Total_Desc), 12, 0, True, False, True) & vbCrLf
+			Cant_Ln = Cant_Ln + 1
+		End If
+		If TFA.TC = "PV" Then
+			Producto = Producto & CantBlancos & "TOTAL TICKET  "
+		ElseIf TFA.TC = "NV" Then
+			Producto = Producto & CantBlancos & "TOTAL NOTA V. "
+		Else
+			Producto = Producto & CantBlancos & "TOTAL FACTURA "
+		End If
+		Producto = Producto & SetearBlancos(CStr(Total), 12, 0, True, False, True) & vbCrLf
+		If Efectivo > 0 Then
+			Producto = Producto _
+					& CantBlancos & "     EFECTIVO " & SetearBlancos(CStr(Efectivo), 12, 0, True, False, True) & vbCrLf _
+					& CantBlancos & "       CAMBIO " & SetearBlancos(CStr(Efectivo - Total), 12, 0, True, False, True) & vbCrLf
+		End If
+		If TFA.TC <> "PV" Then
+			Producto = Producto & "ORIGINAL: CLIENTE" & vbCrLf _
+								& "COPIA   : EMISOR" & vbCrLf
+			If .fields("Cotizacion") > 0 Then Producto = Producto & "COTIZACION: " & Format$(.fields("Cotizacion"), "#,##0.00") & vbCrLf
+		End If
+		Producto = Producto & String$(CantGuion, "=") & vbCrLf
+		If TFA.TC = "PV" Then Producto = Producto & "RECLAME SU FACTURA EN CAJA" & vbCrLf
+		Producto = Producto & "  GRACIAS POR SU COMPRA " & vbCrLf & " " & vbCrLf _
+					& " " & vbCrLf & " " & vbCrLf & " " & vbCrLf
+		Cant_Ln = Cant_Ln + Cant_Item_PV
+	End If
+	End With
+	'Enviamos a la Impresora
+	'TipoCourier
+	'TipoConsola
+	'TipoCourierNew
+	Printer.FontName = TipoCourierNew
+	If Copia_PV Then
+		If Cant_Item_PV < Cant_Ln Then Cant_Item_PV = Cant_Ln
+		Cadena = ""
+		Cant_Ln = Cant_Item_PV - Cant_Ln
+		If Cant_Ln <= 0 Then Cant_Ln = 1
+		For I = 1 To Cant_Ln
+			Cadena = Cadena & "` " & vbCrLf
+		Next I
+		Producto = Producto & Cadena & Producto & vbCrLf & Cadena
+	End If
+	PrinterTexto 0.5, PosLinea, Producto
+	Printer.EndDoc
+	AdoDBDetalle.Close
+	AdoDBFactura.Close
+	End If
+	RatonNormal
+	Exit Sub
+	Errorhandler:
+		RatonNormal
+		ErrorDeImpresion
+		Exit Sub
+	End Sub
+
+	*/
+
+
 	function AdoLinea($parametros)
 	{
-		$emision = date('Y-m-d');
+		/*$emision = date('Y-m-d');
 		$vencimiento = date('Y-m-d');
 		// busca serie de empresa
 		$serie = Leer_Campo_Empresa("Serie_FA");
@@ -324,7 +690,7 @@ class facturas_distribucion
 				$serie = $datos[0]['Serie'];
 			}
 		}
-		$parametros['SerieFactura'] = $serie;
+		$parametros['SerieFactura'] = $serie;*/
 
 		$datosAdoLinea = $this->modelo->AdoLinea($parametros);
 		$mensaje = "";
@@ -468,10 +834,12 @@ class facturas_distribucion
 		$TxtRifaH = '.';
 		$TextServicios = $parametros['TextServicios'];
 		$CodigoL = '.';
+		$Serie = '.';
 		$producto = Leer_Codigo_Inv($parametros['Codigo'], $parametros['fecha'], $parametros['CodBod']);
 		$CodigoL2 = $this->modelo->catalogo_lineas($parametros['TC'], $parametros['Serie'], $parametros['fecha'], $parametros['fecha'], $electronico);
 		if (count($CodigoL2) > 0) {
 			$CodigoL = $CodigoL2[0]['Codigo'];
+			$Serie = $CodigoL2[0]['Serie'];
 		}
 		// print_r($CodigoL);die();
 		$articulo['IVA'] = 0;
@@ -579,12 +947,170 @@ class facturas_distribucion
 					SetAdoFields('CodBod', $parametros['CodBod']);
 					SetAdoFields('COSTO', $articulo['Costo']);
 					SetAdoFields('Total_Desc', $Dscto);
+					SetAdoFields('Cheking', $parametros['cheking']);
+					SetAdoFields('Serie', $Serie);
 					SetAdoFields('SERVICIO', $TextServicios);
 					if ($articulo['Costo'] > 0) {
 						SetAdoFields('Cta_Inv', $articulo['Cta_Inventario']);
 						SetAdoFields('Cta_Costo', $articulo['Cta_Costo_Venta']);
 					}
 					return SetAdoUpdate();
+
+				}
+			}
+			//       print_r($parametros);
+			// die();
+		} else {
+			return 2;
+			// 'TxtEfectivo.SetFocus
+		}
+		// TextCant.Text = "0"
+		// DCArticulo.SetFocus
+	}
+	function actualizarAsientoF($parametros)
+	{
+		// print_r($parametros);die();
+		$electronico = 0;
+		if (isset($parametros['electronico'])) {
+			$electronico = $parametros['electronico'];
+		}
+		$Porc_Iva = floatval($parametros['PorcIva']/100);
+		$TextVUnit = $parametros['TextVUnit'];
+		$TextCant = $parametros['TextCant'];
+		$TipoFactura = $parametros['TC'];
+		$TxtDocumentos = $parametros['TxtDocumentos'];
+		$Real1 = $parametros['VTotal'];
+		$TxtRifaD = '.';
+		$TxtRifaH = '.';
+		$TextServicios = $parametros['TextServicios'];
+		$CodigoL = '.';
+		$producto = Leer_Codigo_Inv($parametros['Codigo'], $parametros['fecha'], $parametros['CodBod']);
+		$CodigoL2 = $this->modelo->catalogo_lineas($parametros['TC'], $parametros['Serie'], $parametros['fecha'], $parametros['fecha'], $electronico);
+		if (count($CodigoL2) > 0) {
+			$CodigoL = $CodigoL2[0]['Codigo'];
+		}
+		// print_r($CodigoL);die();
+		$articulo['IVA'] = 0;
+		if ($producto['respueta'] == 1) {
+			$articulo = $producto['datos'];
+		}
+		$Grabar_PV = True;
+		$Cant_Item_PV = 50;
+		$Lineas = $this->modelo->DGAsientoF();
+		$A_No = 0;
+		if (count($Lineas['datos']) > 0) {
+			$A_No = $Lineas['datos'][count($Lineas['datos']) - 1]['A_No'];
+		}
+
+		// print_r($A_No);die();
+		$Lineas = count($Lineas['datos']);
+
+
+		// print_r($parametros);
+		// die();
+		if ($Cant_Item_PV > 0 and $Lineas > $Cant_Item_PV) {
+			$Grabar_PV = False;
+		}
+		// 'MsgBox Cant_Item_PV
+		if ($Grabar_PV) {
+			//$VTotal = number_format($Real1, 2, '.', '');
+			//$Real1 = 0;
+			$Real2 = 0;
+			$Real3 = 0;
+			if (is_numeric($TextVUnit) and is_numeric($TextCant)) {
+				// 'If Val(TextVUnit) = 0 Then TextVUnit = "0.01"
+				if (intval($TextCant) == 0) {
+					$TextCant = "1";
+				}
+				/*if ($parametros['opc'] == 'OpcMult') {
+					$Real1 = $TextCant * $TextVUnit;
+				} else {
+					$Real1 = $TextCant / $TextVUnit;
+				}*/
+			}
+			if ($Real1 >= 0) {
+				switch ($TipoFactura) {
+					case 'NV':
+					case 'PV':
+						$Real3 = 0;
+						break;
+					default:
+						if ($articulo['IVA'] != 0) {
+							$Real3 = number_format(($Real1 - $Real2) * $Porc_Iva, 2, '.', '');
+						} else {
+							$Real3 = 0;
+						}
+						break;
+				}
+				//$VTotal = number_format($Real1, 2, '.', '');
+				if ($parametros['TextVDescto'] == '') {
+					$parametros['TextVDescto'] = 0;
+				}
+				$Dscto = number_format($parametros['TextVDescto'], 2, '.', '');
+				//          	 print_r($articulo);
+				// die();	
+
+				if (strlen($TxtDocumentos) > 1) {
+					@$articulo['Producto'] = $articulo['Producto'] . " - " . $TxtDocumentos;
+				}
+				if (is_numeric($TxtRifaD) && is_numeric($TxtRifaH) && intval($TxtRifaD) < intval($TxtRifaH)) {
+					// For i = Val(TxtRifaD) To Val(TxtRifaH)
+					//     ProductoAux = Producto & " " & Format(i, "000000")
+					//     SetAddNew AdoAsientoF
+					//     SetFields AdoAsientoF, "CODIGO", Codigos
+					//     SetFields AdoAsientoF, "CODIGO_L", CodigoL
+					//     SetFields AdoAsientoF, "PRODUCTO", MidStrg(ProductoAux, 1, 150)
+					//     SetFields AdoAsientoF, "Tipo_Hab", MidStrg(TxtDocumentos, 1, 12)
+					//     SetFields AdoAsientoF, "CANT", 1
+					//     SetFields AdoAsientoF, "PRECIO", CCur(TextVUnit)
+					//     SetFields AdoAsientoF, "TOTAL", Real1
+					//     SetFields AdoAsientoF, "Total_IVA", Real3
+					//     SetFields AdoAsientoF, "Item", NumEmpresa
+					//     SetFields AdoAsientoF, "CodigoU", CodigoUsuario
+					//     SetFields AdoAsientoF, "A_No", Ln_No
+					//     SetUpdate AdoAsientoF
+					//     Ln_No = Ln_No + 1
+					// Next i
+				} else {
+					// print_r($articulo);
+					// die();	
+					if (isset($parametros['Producto'])) {
+						// esto se usa en facturacion_elec al cambiar el nombre
+						$articulo['Producto'] = $parametros['Producto'];
+					}
+					//print_r('funciona hasta aqui');die();
+
+					SetAdoAddNew('Asiento_F');
+					//SetAdoFields('CODIGO', $articulo['Codigo_Inv']);
+					//SetAdoFields('CODIGO_L', $CodigoL);
+					//SetAdoFieldsWhere('PRODUCTO', $articulo['Producto']);
+					//SetAdoFields('Tipo_Hab', substr($TxtDocumentos, 0, 40));
+					SetAdoFields('CANT', number_format(floatval($TextCant), 2, '.', ''));
+					SetAdoFields('PRECIO', number_format($TextVUnit, $_SESSION['INGRESO']['Dec_PVP'], '.', ''));
+					SetAdoFields('TOTAL', $Real1);
+					SetAdoFields('Total_IVA', $Real3);
+					//SetAdoFields('Item', $_SESSION['INGRESO']['item']);
+					//SetAdoFields('CodigoU', $_SESSION['INGRESO']['CodigoU']);
+					//SetAdoFields('Codigo_Cliente', $parametros['CodigoCliente']);
+					//SetAdoFields('A_No', $A_No + 1);
+					//SetAdoFields('CodBod', $parametros['CodBod']);
+					SetAdoFields('COSTO', $articulo['Costo']);
+					SetAdoFields('Total_Desc', $Dscto);
+					SetAdoFields('Cheking', $parametros['cheking']);
+					SetAdoFields('SERVICIO', $TextServicios);
+					SetAdoFields('RUTA', $parametros['comentario']);
+					if ($articulo['Costo'] > 0) {
+						SetAdoFields('Cta_Inv', $articulo['Cta_Inventario']);
+						SetAdoFields('Cta_Costo', $articulo['Cta_Costo_Venta']);
+					}
+					SetAdoFieldsWhere('CODIGO', $articulo['Codigo_Inv']);
+					SetAdoFieldsWhere('CODIGO_L', $CodigoL);
+					SetAdoFieldsWhere('Item', $_SESSION['INGRESO']['item']);
+					SetAdoFieldsWhere('PRODUCTO', $articulo['Producto']);
+					SetAdoFieldsWhere('Codigo_Cliente', $parametros['CodigoCliente']);
+					SetAdoFieldsWhere('Serie', $parametros['Serie']);
+					
+					return SetAdoUpdateGeneric();
 
 				}
 			}
@@ -639,10 +1165,150 @@ class facturas_distribucion
 		}
 	}
 
+	function grabar_evaluacion($parametros){
+		$arrEvaluaciones = $parametros['evaluaciones'];
+		$resp = 1;
+		//print_r($parametros);
+		foreach($arrEvaluaciones as $key => $value){
+			//print_r($value);
+			SetAdoAddNew("Clientes_Datos_Extras");
+			SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+			SetAdoFields("Tipo_Dato", "EVALUACI");
+			SetAdoFields("Codigo",$parametros["cliente"]);
+			SetAdoFields("Acreditacion",$value["cod_inv"]);
+			//SetAdoFields("TP",".");
+			SetAdoFields("GC",$value['bueno']);
+			SetAdoFields("Causa",$parametros['comentario']);
+			if(SetAdoUpdate()!=1)
+			{
+				$resp = 0;
+			} 
+		}
+		return array('res' => $resp);
+	}
+
+	function grabar_gavetas($parametros){
+		$arrGavetas = $parametros['gavetas'];
+		$res1 = 0;
+		foreach($arrGavetas as $key => $value){
+			$producto = Leer_Codigo_Inv($value['cod_inv'], $parametros["fecha"], $CodBodega='', $CodMarca='');
+			$gaveta = $producto['datos'];
+			$existencia = $this->modelo->existenciaProducto($parametros["cliente"], $value["cod_inv"]);
+
+			if($value['entregadas'] != 0){
+				
+				$existencia += $value['entregadas'];
+				SetAdoAddNew("Trans_Kardex");
+				SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+				SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+				SetAdoFields("T",$gaveta['Tipo_SubMod']);
+				//SetAdoFields("TP",".");
+				SetAdoFields("CodBodega",".");
+				SetAdoFields("Codigo_Barra",$gaveta["Codigo_Barra"]);
+				SetAdoFields("Codigo_Inv",$value["cod_inv"]);
+				SetAdoFields("Fecha",$parametros["fecha"]);
+				SetAdoFields("Entrada", $value["entregadas"]);
+				SetAdoFields("Salida", 0);
+				SetAdoFields("Existencia",$existencia);
+				SetAdoFields("Cta_Inv",$gaveta["Cta_Inventario"]);
+				SetAdoFields("Contra_Cta",$gaveta["Cta_Costo_Venta"]);
+				SetAdoFields("Codigo_P",$parametros["cliente"]);
+				SetAdoFields("Fecha_Fab",$parametros["fecha"]);
+				SetAdoFields("Fecha_Exp",$parametros["fecha"]);
+				SetAdoFields("TC",$parametros["TC"]);
+				SetAdoFields("Serie",$parametros["serie"]);
+				$res1 = SetAdoUpdate();
+				
+			}
+
+			if($value['devueltas'] != 0){
+				if($value['entregadas'] == 0 || ($value['entregadas'] != 0 && $res1 != 0)){
+					$existencia -= $value['devueltas'];
+					SetAdoAddNew("Trans_Kardex");
+					SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+					SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+					SetAdoFields("T",$gaveta['Tipo_SubMod']);
+					//SetAdoFields("TP",".");
+					SetAdoFields("CodBodega",".");
+					SetAdoFields("Codigo_Barra",$gaveta["Codigo_Barra"]);
+					SetAdoFields("Codigo_Inv",$value["cod_inv"]);
+					SetAdoFields("Fecha",$parametros["fecha"]);
+					SetAdoFields("Entrada", 0);
+					SetAdoFields("Salida", $value['devueltas']);
+					SetAdoFields("Existencia",$existencia);
+					SetAdoFields("Cta_Inv",$gaveta["Cta_Inventario"]);
+					SetAdoFields("Contra_Cta",$gaveta["Cta_Costo_Venta"]);
+					SetAdoFields("Codigo_P",$parametros["cliente"]);
+					SetAdoFields("Fecha_Fab",$parametros["fecha"]);
+					SetAdoFields("Fecha_Exp",$parametros["fecha"]);
+					SetAdoFields("TC",$parametros["TC"]);
+					SetAdoFields("Serie",$parametros["serie"]);
+					$res1 = SetAdoUpdate();
+				}
+			}
+			/*SetAdoAddNew("Trans_Kardex");
+			SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+			SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+			SetAdoFields("T",$gaveta['Tipo_SubMod']);
+			//SetAdoFields("TP",".");
+			SetAdoFields("CodBodega",".");
+			SetAdoFields("Codigo_Barra",$gaveta["Codigo_Barra"]);
+			SetAdoFields("Codigo_Inv",$value["cod_inv"]);
+			SetAdoFields("Fecha",$parametros["fecha"]);
+			SetAdoFields("Entrada",$value["devueltas"]);
+			SetAdoFields("Salida",$value["entregadas"]);
+			SetAdoFields("Existencia",$value["pendientes"]);
+			SetAdoFields("Cta_Inv",$value["Cta_Inventario"]);
+			SetAdoFields("Contra_Cta",$value["Cta_Costo_Venta"]);
+			SetAdoFields("Codigo_P",$parametros["cliente"]);
+			SetAdoFields("Fecha_Fab",$parametros["fecha"]);
+			SetAdoFields("Fecha_Exp",$parametros["fecha"]);
+			SetAdoFields("TC",$parametros["TC"]);*/
+
+			/*SetAdoFields("Numero",$Numero);
+			SetAdoFields("Fecha",$Fecha);
+			SetAdoFields("Codigo_Dr",$value["Codigo_Dr"]);// ' C1.CodigoDr
+			SetAdoFields("Codigo_Tra",$value["Codigo_Tra"]); // ' C1.CodigoDr
+			SetAdoFields("Codigo_P",$value["Codigo_B"]);
+			SetAdoFields("Descuento",$value["P_DESC"]);
+			SetAdoFields("Descuento1",$value["P_DESC1"]);
+			SetAdoFields("Valor_Total",$value["VALOR_TOTAL"]);
+			SetAdoFields("Existencia",$value["CANTIDAD"]);
+			SetAdoFields("Valor_Unitario",$value["VALOR_UNIT"]);
+			SetAdoFields("Total",$value["SALDO"]);
+			SetAdoFields("Cta_Inv",$value["CTA_INVENTARIO"]);
+			SetAdoFields("Contra_Cta",$value["CONTRA_CTA"]);
+			SetAdoFields("Orden_No",$value["ORDEN"]);
+			SetAdoFields("CodMarca",$value["CodMar"]);
+			
+			SetAdoFields("Costo",$value["VALOR_UNIT"]);
+			SetAdoFields("PVP",$value["PVP"]);
+			SetAdoFields("No_Refrendo",$value["No_Refrendo"]);
+			SetAdoFields("Lote_No",$value["Lote_No"]);
+			SetAdoFields("Fecha_Fab",$value["Fecha_Fab"]);
+			SetAdoFields("Fecha_Exp",$value["Fecha_Exp"]);
+			SetAdoFields("Modelo",$value["Modelo"]);
+			SetAdoFields("Serie_No",$value["Serie_No"]);
+			SetAdoFields("Procedencia",$value["Procedencia"]);*/
+		}
+		if($res1){
+			return array(
+				"res" => 1,
+				"contenido" => "Se guardaron las gavetas correctamente."
+			);
+		}else{
+			return array(
+				"res" => 0,
+				"contenido" => "No se pudieron guardar las gavetas."
+			);
+		}
+	}
+
 
 	//funcion que se ejecuta en punto de venta en facturacion
 	function generar_factura($parametros)
 	{
+
 		// print_r($parametros);die();
 		$this->sri->Actualizar_factura($parametros['CI'], $parametros['TextFacturaNo'], $parametros['Serie']);
 
@@ -660,9 +1326,9 @@ class facturas_distribucion
 			//$datos = $this->modelo->catalogo_lineas($parametros['TC'], $parametros['Serie'], $FechaTexto, $FechaTexto, $electronico);
 			//if (count($datos) > 0) {
 				// print_r($datos);die();
-				$FA['Nota'] = $parametros['TxtNota'];
-				$FA['Observacion'] = $parametros['TxtObservacion'];
-				$FA['Gavetas'] = intval($parametros['TxtGavetas']);
+				//$FA['Nota'] = $parametros['TxtNota'];
+				//$FA['Observacion'] = $parametros['TxtObservacion'];
+				//$FA['Gavetas'] = intval($parametros['TxtGavetas']);
 				$FA['codigoCliente'] = $parametros['CodigoCliente'];
 				$FA['CodigoC'] = $parametros['CodigoCliente'];
 				$FA['TextCI'] = $parametros['CI'];
@@ -678,7 +1344,7 @@ class facturas_distribucion
 				$FA['Total_Abonos'] = 0;
 				$FA['TextBanco'] = $parametros['TextBanco'];
 				$FA['TextCheqNo'] = $parametros['TextCheqNo'];
-				$FA['DCBancoC'] = $parametros['DCBancoC'];
+				//$FA['DCBancoC'] = $parametros['DCBancoC'];
 				$FA['T'] = $parametros['T'];
 				$FA['CodDoc'] = $parametros['CodDoc'];
 				$FA['valorBan'] = $parametros['valorBan'];
@@ -686,6 +1352,8 @@ class facturas_distribucion
 				$FA['Cod_CxC'] = $parametros['CodigoL'];
 				$FA['CLAVE'] = ".";
 				$FA['Porc_IVA'] = (floatval($parametros['PorcIva'])/100);
+
+
 
 				$Moneda_US = False;
 				$TextoFormaPago = G_PAGOCONT;
@@ -851,7 +1519,9 @@ class facturas_distribucion
 
 	function ProcGrabar($FA)
 	{
-		$conn = new db();
+		print_r($FA);die();
+		Grabar_Factura1($FA);
+		/*$conn = new db();
 		$Grafico_PV = Leer_Campo_Empresa("Grafico_PV");
 		if(!isset($FA['Porc_IVA']))
 		{
@@ -1073,7 +1743,7 @@ class facturas_distribucion
 			return 1;
 		} else {
 			return "No se puede grabar la Factura,  falta datos.";
-		}
+		}*/
 	}
 
 
