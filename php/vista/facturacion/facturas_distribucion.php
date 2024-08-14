@@ -642,7 +642,8 @@ if (isset ($_GET['tipo'])) {
 		$('#myModal_espera').modal('show');
 		let codigoC = $('#codigoCliente').val();
 		let parametros = {
-			'beneficiario': codigoC
+			'beneficiario': codigoC,
+			'fecha': $('#MBFecha').val()
 		}
 		$.ajax({
 			type: "POST",
@@ -1347,8 +1348,8 @@ function tipo_facturacion(valor)
 					Swal.fire('Si el pago es por banco este no debe superar el total de la factura', 'PUNTO VENTA', 'info').then(function () { $('#TextCheque').select(); });
 					return false;
 				}*/
-				//generar_factura()
 				grabar_evaluacion();
+				//generar_factura()
 				//grabar_gavetas();
 				//guardar_bouche();
 			}
@@ -1479,7 +1480,11 @@ function tipo_facturacion(valor)
 			success: function (data) {
 				if(data['res'] == 1){
 					//generar_factura()
-					guardar_bouche();
+					if($('#archivoAdd')[0].files.length > 0){
+						guardar_bouche();
+					}else{
+						generar_factura();
+					}
 				}else{
 					Swal.fire('Error', 'Hubo un problema al subir la actualizacion de gavetas.');
 				}
@@ -1533,7 +1538,7 @@ function tipo_facturacion(valor)
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
-				/*$('#myModal_espera').modal('hide');
+				$('#myModal_espera').modal('hide');
 				// console.log(data);
 				if (data.respuesta == 1) {
 					Swal.fire({
@@ -1546,7 +1551,6 @@ function tipo_facturacion(valor)
 						window.open(url, '_blank');
 						AdoLinea();
 						eliminar_linea('', '');
-
 					})
 				} else if (data.respuesta == -1) {
 					if(data.text=='' || data.text == null)
@@ -1590,7 +1594,7 @@ function tipo_facturacion(valor)
 					Swal.fire('SRI intermitente intente mas tarde', '', 'info');
 				} else {
 					Swal.fire(data.text, '', 'error');
-				}*/
+				}
 
 			},
 			error: (err) => {
@@ -1694,7 +1698,7 @@ function tipo_facturacion(valor)
 			<!--<a title="BOUCHE" class="btn btn-default" onclick="$('#modalBoucher').modal('show');">
 				<img src="../../img/png/adjuntar-archivo.png" height="32px">
 			</a>-->
-			<a title="IMPRIMIR" class="btn btn-default" onclick="Imprimir_Punto_Venta('<?php echo $TC; ?>')">
+			<a title="IMPRIMIR" class="btn btn-default">
 				<img src="../../img/png/paper.png" height="32px">
 			</a>
 			<a title="FACTURAR" class="btn btn-default" onclick="generar()">

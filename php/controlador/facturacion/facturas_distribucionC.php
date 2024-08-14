@@ -37,6 +37,7 @@ if(isset($_GET['GuardarBouche'])){
     } else {
         throw new Exception("Error al subir el archivo");
     }*/
+	$file = $_FILES;
 	$ruta = dirname(__DIR__,2).'/comprobantes/pagos_subidos/entidad_'.$_SESSION['INGRESO']['IDEntidad'].'/empresa_'.$_SESSION['INGRESO']['item'].'/';
     if(!file_exists($ruta))
     {
@@ -299,6 +300,7 @@ class facturas_distribucion
 	}
 
 	function consultarGavetas(){
+		//print_r($_SESSION);die();
 		$datos = $this->modelo->consultarGavetas();
 		$respuesta = array();
 		if(count($datos) > 0){
@@ -391,23 +393,101 @@ class facturas_distribucion
 		// print_r($datos);die();
 	}
 
-	/*function Imprimir_Punto_Venta($TFA){
+	function CompilarString($cadSQL, $lString = 0, $quitarPuntos = false)
+    {
+        if ($lString > 0) {
+            $cadSQL = substr($cadSQL, 0, $lString);
+        }
 
+        // Eliminación de caracteres específicos
+        $caracteresAEliminar = ['|', "\r", "\n", "'", ",", "$", "#", "&", "'"];
+        foreach ($caracteresAEliminar as $char) {
+            $cadSQL = str_replace($char, '', $cadSQL);
+        }
+
+        // Reducción de espacios múltiples a un solo espacio
+        $cadSQL = preg_replace('/\s+/', ' ', $cadSQL);
+
+        // Manejo de cadenas nulas o vacías
+        if (is_null($cadSQL) || $cadSQL === '') {
+            $cadSQL = '.';
+        }
+
+        // Eliminación de puntos al inicio y al final, si es necesario
+        if ($quitarPuntos) {
+            $cadSQL = trim($cadSQL, '.');
+        }
+
+        // Valor por defecto en caso de cadena vacía
+        if ($cadSQL === '') {
+            $cadSQL = G_NINGUNO; // Asumiendo que Ninguno es un valor por defecto
+        }
+
+        return $cadSQL;
+    }
+
+	function SetearBlancos($strg, $longStrg, $noBlancos, $esNumero, $conLineas = false, $decimales = false)
+    {
+        if (is_null($strg) || empty($strg)) {
+            $strg = "";
+        }
+        $strg = $this->CompilarString($strg);
+        if ($esNumero) {
+            if ($decimales) {
+                $sinEspacios = number_format(floatval($strg), 2, '.', '');
+            } else {
+                $sinEspacios = strval(intval($strg));
+            }
+            if (strlen($sinEspacios) < $longStrg) {
+                $sinEspacios = str_pad($sinEspacios, $longStrg, ' ', STR_PAD_LEFT);
+            }
+        } else {
+            if ($longStrg > 0) {
+                $sinEspacios = $strg . str_repeat(" ", $longStrg);
+                $sinEspacios = substr($sinEspacios, 0, $longStrg);
+            } else {
+                $sinEspacios = trim($strg);
+            }
+        }
+        if ($noBlancos > 0) {
+            $sinEspacios .= str_repeat(" ", $noBlancos);
+        }
+        if ($conLineas) {
+            $sinEspacios .= "|";
+        }
+        if ($sinEspacios === "") {
+            $sinEspacios = " ";
+        }
+        return $sinEspacios;
+    }
+
+	
+	function Imprimir_Punto_Venta($TFA){
+		$AdoDBFactura = array();
+		$AdoDBDetalle = array();
+		//Dim CadenaMoneda As String
+		//Dim Numero_Letras As String
+		$Cant_Ln = 0;
+		$Cant_Item_PV = 0;
+		$CantGuion = 0;
+		$CantBlancos = "";
 		try{
-			$mensajes = "Imprimir Factura No. " . $TFA['Factura'];
+			$mensajes = "Imprimir Factura No. " . $TFA['TextFacturaNo'];
 			$titulo = "IMPRESION";
 			$bandera = false;
 
 			// va algo
 
 			$CantGuion = Leer_Campo_Empresa("Cant_Ancho_PV");
-			if($CantGuion < 26)$CantGuion=26;
+			if($CantGuion < 26) {$CantGuion=26;}
+			$SubTotal = 0;
 			$Total = 0;
 			$Total_IVA = 0;
-			$Cant_Ln = 0;
+			$Total_Servicio = 0;
+			$Total_Desc = 0;
+			
 			$PosLinea = 0.1;
 			$Producto = "";
-			$AdoDBFactura = array();
 			if($TFA['TC'] == "PV")
 			{
 				$AdoDBFactura = $this->modelo->consultaTrans_Ticket($TFA);
@@ -415,44 +495,206 @@ class facturas_distribucion
 			{
 				$AdoDBFactura = $this->modelo->consultaFactura($TFA);
 			}
+			//Iniciamos la consulta de impresion
 			if(count($AdoDBFactura) > 0){
+				//Encabezado de la Factura
 				if($_SESSION['INGRESO']['Encabezado_PV'])
 				{
 					$Producto = " " . PHP_EOL
-						. str_pad('', (int)(($cantGuion - strlen($_SESSION['empresa'])) / 2)) . strtoupper($_SESSION['empresa']) . PHP_EOL
-						. str_pad('', (int)(($cantGuion - strlen($_SESSION['Nombre_Comercial'])) / 2)) . $_SESSION['Nombre_Comercial'] . PHP_EOL
-						. str_pad('', (int)(($cantGuion - strlen(strtoupper($_SESSION['Gerente']))) / 2)) . strtoupper($_SESSION['Gerente']) . PHP_EOL
-						. str_pad('', (int)(($cantGuion - strlen("R.U.C. " . $_SESSION['RUC'])) / 2)) . "R.U.C. " . $_SESSION['RUC'] . PHP_EOL
-						. str_pad('', (int)(($cantGuion - strlen("Telefono: " . $_SESSION['Telefono1'])) / 2)) . "Telefono: " . $_SESSION['Telefono1'] . PHP_EOL
+						. str_pad('', (int)(($CantGuion - strlen($_SESSION['empresa'])) / 2)) . strtoupper($_SESSION['empresa']) . PHP_EOL
+						. str_pad('', (int)(($CantGuion - strlen($_SESSION['Nombre_Comercial'])) / 2)) . $_SESSION['Nombre_Comercial'] . PHP_EOL
+						. str_pad('', (int)(($CantGuion - strlen(strtoupper($_SESSION['Gerente']))) / 2)) . strtoupper($_SESSION['Gerente']) . PHP_EOL
+						. str_pad('', (int)(($CantGuion - strlen("R.U.C. " . $_SESSION['RUC'])) / 2)) . "R.U.C. " . $_SESSION['RUC'] . PHP_EOL
+						. str_pad('', (int)(($CantGuion - strlen("Telefono: " . $_SESSION['Telefono1'])) / 2)) . "Telefono: " . $_SESSION['Telefono1'] . PHP_EOL
 						. $_SESSION['Direccion'] . PHP_EOL;
 
 					$Cant_Ln = $Cant_Ln + 7;
 					if($TFA['TC'] = "PV")
 					{
-						$Producto .= " " . PHP_EOL . "T I C K E T   No. " . sprintf("000-000-%07d", $TFA->Factura) . PHP_EOL . " " . PHP_EOL;
+						$Producto .= " " . PHP_EOL . "T I C K E T   No. " . sprintf("000-000-%07d", $TFA['TextFacturaNo']) . PHP_EOL . " " . PHP_EOL;
 						$Cant_Ln = $Cant_Ln + 1;
 					}else if($TFA['TC'] = "NV")
 					{
-						$Producto .= "Auto. SRI: " . Autorizacion . " - Caduca: " . MidStrg(UCaseStrg(MesesLetras(Month(Fecha_Vence))), 1, 3) . "/" . Year(Fecha_Vence) . vbCrLf . " " . vbCrLf . "NOTA DE VENTA No. " . SerieFactura . "-" . Format$(TFA.Factura, "0000000") . vbCrLf . " " . vbCrLf;
-						Cant_Ln = Cant_Ln + 2
+						$Producto .= "Auto. SRI: " . $TFA['Autorizacion'] . " - Caduca: " . strtoupper(substr(mesesLetras(date('n', strtotime($TFA['Fecha']))), 0, 3)) . "/" . date('Y', strtotime($TFA['Fecha'])) . "\r\n" . " " . "\r\n" . "NOTA DE VENTA No. " . $TFA['Serie'] . "-" . sprintf('%07d', $TFA['TextFacturaNo']) . "\r\n" . " " . "\r\n";
+						$Cant_Ln += 2;
+
+						/*$Producto .= "Auto. SRI: " . TFA['Autorizacion'] . " - Caduca: " . MidStrg(UCaseStrg(MesesLetras(Month(TFA['Fecha']))), 1, 3) . "/" . Year(TFA['Fecha']) . vbCrLf . " " . vbCrLf . "NOTA DE VENTA No. " . Serie . "-" . Format$(TFA.Factura, "0000000") . vbCrLf . " " . vbCrLf;
+						Cant_Ln = Cant_Ln + 2*/
 					}else
 					{
-						Producto = Producto & "Auto. SRI: " & Autorizacion & " - Caduca: " & MidStrg(UCaseStrg(MesesLetras(Month(Fecha_Vence))), 1, 3) & "/" & Year(Fecha_Vence) & vbCrLf & " " & vbCrLf _
-								& "FACTURA No. " & SerieFactura & "-" & Format$(TFA.Factura, "0000000") & vbCrLf & " " & vbCrLf
-						Cant_Ln = Cant_Ln + 2
+						$Producto .= "Auto. SRI: " . $TFA['Autorizacion'] . " - Caduca: " . strtoupper(substr(mesesLetras(date('n', strtotime($TFA['Fecha']))), 0, 3)) . "/" . date('Y', strtotime($TFA['Fecha'])) . "\r\n" . " " . "\r\n" .
+									"FACTURA No. " . $TFA['Serie'] . "-" . sprintf('%07d', $TFA['TextFacturaNo']) . "\r\n" . " " . "\r\n";
+
+						$Cant_Ln += 2;
+
+						/*Producto = Producto & "Auto. SRI: " & TFA['Autorizacion'] & " - Caduca: " & MidStrg(UCaseStrg(MesesLetras(Month(TFA['Fecha']))), 1, 3) & "/" & Year(TFA['Fecha']) & vbCrLf & " " & vbCrLf _
+								& "FACTURA No. " & TFA['Serie'] & "-" & Format$(TFA.Factura, "0000000") & vbCrLf & " " & vbCrLf
+						Cant_Ln = Cant_Ln + 2*/
 					}
+				}else{
+					$Producto = "\r\n" . " " . "\r\n" . " " . "\r\n" . " " . "\r\n" . " " . "\r\n" .
+								"Transaccion(" . $TFA['TC'] . ") No." . sprintf('%07d', $TFA['TextFacturaNo']) . "\r\n" . " " . "\r\n";
+					$Cant_Ln += 4;
 				}
-					
+					/*
 				Else
 					Producto = vbCrLf & " " & vbCrLf & " " & vbCrLf & " " & vbCrLf & " " & vbCrLf _
 							& "Transaccion(" & TFA.TC & ") No." & Format$(TFA.Factura, "0000000") & vbCrLf & " " & vbCrLf
 					Cant_Ln = Cant_Ln + 4
-				End If
-			}
-		}catch(Exception $e){
+				End If*/
+				$Producto .= "Fecha: " . $_SESSION['INGRESO']['Fecha'] . " - Hora: " . $AdoDBFactura['Hora'] . "\r\n";
+				$Producto .= "Cliente: " . "\r\n" . 
+							substr($AdoDBFactura['Cliente'], 0, 33) . "\r\n";
+				$Producto .= "R.U.C./C.I.: " . $AdoDBFactura['CI_RUC'] . "\r\n" .
+							"Cajero: " . substr($_SESSION['INGRESO']['CodigoU'], 0, 6) . "\r\n";
 
+				if ($AdoDBFactura['Telefono'] !== $_SESSION['INGRESO']['ninguno']) {
+					$Producto .= "Telefono: " . $AdoDBFactura['Telefono'] . "\r\n";
+				}
+				if ($AdoDBFactura['Direccion'] !== $_SESSION['INGRESO']['ninguno']) {
+					$Producto .= "Direccion: " . "\r\n" . $AdoDBFactura['Direccion'] . "\r\n";
+				}
+				if ($AdoDBFactura['Email'] !== $_SESSION['INGRESO']['ninguno']) {
+					$Producto .= "Email: " . "\r\n" . $AdoDBFactura['Email'] . "\r\n";
+				}
+
+				$Producto .= str_repeat("-", $CantGuion) . "\r\n" .
+							"PRODUCTO/Cant x PVP/TOTAL" . "\r\n" .
+							str_repeat("-", $CantGuion) . "\r\n";
+
+				$Efectivo = $AdoDBFactura['Efectivo'];
+				$Cant_Ln += 6;
+
+				
+				/*Producto = Producto & "Fecha: " & FechaSistema & " - Hora: " & .fields("Hora") & vbCrLf
+				Producto = Producto & "Cliente: " & vbCrLf _
+							& MidStrg(.fields("Cliente"), 1, 33) & vbCrLf
+				Producto = Producto & "R.U.C./C.I.: " & .fields("CI_RUC") & vbCrLf _
+							& "Cajero: " & MidStrg(CodigoUsuario, 1, 6) & vbCrLf
+				If .fields("Telefono") <> Ninguno Then Producto = Producto & "Telefono: " & .fields("Telefono") & vbCrLf
+				If .fields("Direccion") <> Ninguno Then Producto = Producto & "Direccion: " & vbCrLf & .fields("Direccion") & vbCrLf
+				If .fields("Email") <> Ninguno Then Producto = Producto & "Email: " & vbCrLf & .fields("Email") & vbCrLf
+				Producto = Producto & String$(CantGuion, "-") & vbCrLf _
+							& "PRODUCTO/Cant x PVP/TOTAL" & vbCrLf _
+							& String$(CantGuion, "-") & vbCrLf
+							Efectivo = .fields("Efectivo")
+				Cant_Ln = Cant_Ln + 6*/
+
+			}
+			//Comenzamos a recoger los detalles de la factura
+			if($TFA['TC'] == "PV")
+			{
+				$AdoDBDetalle = $this->modelo->consultarDetalleTicketProds($TFA);
+			}else
+			{
+				$AdoDBDetalle = $this->modelo->consultarDetalleFactProds($TFA);
+			}
+
+			if (count($AdoDBDetalle) > 0) {
+				foreach($AdoDBDetalle as $key => $value)
+				{
+					$Producto .= $value["Producto"] . "\n" .
+								$this->SetearBlancos($value["Cantidad"] . "x" . number_format($value["Precio"], 2), 12, 0, false) . " " .
+								$this->SetearBlancos($value["Total"], $CantGuion - 13, 0, true, '', true) . "\n";
+					
+					$Total += $value["Total"];
+					
+					if ($TFA->TC != "PV") {
+						$Total_IVA += $value["Total_IVA"];
+					}
+					
+					$Cant_Ln++;
+				}
+			}
+
+			//Pie de factura
+			//===========================================================
+			if(count($AdoDBFactura) > 0)
+			{
+				if($TFA['TC'] == "PV"){
+					$SubTotal = $AdoDBFactura["Total"];
+					$Total = $AdoDBFactura["Total"];
+					$Total_IVA = 0;
+					$Total_Servicio = 0;
+					$Total_Desc = 0;
+				}else
+				{
+					$SubTotal = $AdoDBFactura["SubTotal"];
+					$Total = $AdoDBFactura["Total_MN"];
+					$Total_IVA = $AdoDBFactura["IVA"];
+					$Total_Servicio = $AdoDBFactura["Servicio"];
+					$Total_Desc = $AdoDBFactura["Descuento"];
+				}
+				$Producto .= str_repeat("-", $CantGuion) . "\n";
+				$Cant_Ln = $Cant_Ln + 1;
+				#If Total_IVA Then
+				
+				if (($CantGuion - 26) > 0) {
+					$CantBlancos = str_repeat(" ", $CantGuion - 26);
+				} else {
+					$CantBlancos = "";
+				}
+				
+				$Producto .= $CantBlancos . "     SUBTOTAL " . $this->SetearBlancos(strval($SubTotal), 12, 0, true, false, true) . "\n" .
+							$CantBlancos . "    I.V.A " . ($TFA['PorcIva'] * 100) . "% " . $this->SetearBlancos(strval($Total_IVA), 12, 0, true, false, true) . "\n";
+				
+				$Cant_Ln++;
+				$Producto .= $this->SetearBlancos(strval($Total), 12, 0, true, false, true) . "\n";
+
+				if ($Efectivo > 0) {
+					$Producto .= $CantBlancos . "     EFECTIVO " . $this->SetearBlancos(strval($Efectivo), 12, 0, true, false, true) . "\n" .
+								$CantBlancos . "       CAMBIO " . $this->SetearBlancos(strval($Efectivo - $Total), 12, 0, true, false, true) . "\n";
+				}
+
+				if ($TFA['TC'] != "PV") {
+					$Producto .= "ORIGINAL: CLIENTE\n" .
+								"COPIA   : EMISOR\n";
+					if ($AdoDBFactura["Cotizacion"] > 0) {
+						$Producto .= "COTIZACION: " . number_format($AdoDBFactura["Cotizacion"], 2) . "\n";
+					}
+				}
+
+				$Producto .= str_repeat("=", $CantGuion) . "\n";
+
+				if ($TFA['TC'] == "PV") {
+					$Producto .= "RECLAME SU FACTURA EN CAJA\n";
+				}
+
+				$Producto .= "  GRACIAS POR SU COMPRA \n" .
+							" \n" .
+							" \n" .
+							" \n";
+
+				$Cant_Ln += $Cant_Item_PV;
+			}
+			//Enviamos a la Impresora
+			
+			//TipoCourier
+			//TipoConsola
+			//TipoCourierNew
+			/*Printer.FontName = TipoCourierNew
+			If Copia_PV Then
+				If Cant_Item_PV < Cant_Ln Then Cant_Item_PV = Cant_Ln
+				Cadena = ""
+				Cant_Ln = Cant_Item_PV - Cant_Ln
+				If Cant_Ln <= 0 Then Cant_Ln = 1
+				For I = 1 To Cant_Ln
+					Cadena = Cadena & "` " & vbCrLf
+				Next I
+				Producto = Producto & Cadena & Producto & vbCrLf & Cadena
+			End If
+			PrinterTexto 0.5, PosLinea, Producto
+			Printer.EndDoc
+			AdoDBDetalle.Close
+			AdoDBFactura.Close
+			End If
+			RatonNormal*/
+		}catch(Exception $e){
+			/*RatonNormal
+			ErrorDeImpresion
+			Exit Sub*/
 		}
-	}*/
+	}
 
 	/*
 	
@@ -1334,7 +1576,11 @@ class facturas_distribucion
 				$FA['TextCI'] = $parametros['CI'];
 				$FA['TxtEmail'] = $parametros['email'];
 				$FA['Cliente'] = trim(str_replace($parametros['CI'] . ' -', '', $parametros['NombreCliente']));
-				$FA['TC'] = $parametros['TC'];
+				if($parametros['TC'] == "NDO" || $parametros['TC'] == "NDU"){
+					$FA['TC'] = "DO";
+				}else{
+					$FA['TC'] = $parametros['TC'];
+				}
 				$FA['Serie'] = $parametros['Serie'];
 				$FA['Cta_CxP'] = $parametros['Cta_Cobrar'];
 				$FA['Autorizacion'] = $parametros['Autorizacion'];
@@ -1344,7 +1590,7 @@ class facturas_distribucion
 				$FA['Total_Abonos'] = 0;
 				$FA['TextBanco'] = $parametros['TextBanco'];
 				$FA['TextCheqNo'] = $parametros['TextCheqNo'];
-				//$FA['DCBancoC'] = $parametros['DCBancoC'];
+				$FA['DCBancoC'] = $parametros['DCBancoC'];
 				$FA['T'] = $parametros['T'];
 				$FA['CodDoc'] = $parametros['CodDoc'];
 				$FA['valorBan'] = $parametros['valorBan'];
@@ -1519,9 +1765,9 @@ class facturas_distribucion
 
 	function ProcGrabar($FA)
 	{
-		print_r($FA);die();
-		Grabar_Factura1($FA);
-		/*$conn = new db();
+		//print_r($FA);die();
+		//Grabar_Factura1($FA);
+		$conn = new db();
 		$Grafico_PV = Leer_Campo_Empresa("Grafico_PV");
 		if(!isset($FA['Porc_IVA']))
 		{
@@ -1579,7 +1825,7 @@ class facturas_distribucion
 			$T = G_PENDIENTE;
 			// 'Grabamos el numero de factura
 
-			// print_r($FA);die();
+			//print_r($FA);die();
 			$r = Grabar_Factura1($FA);
 			if ($r != 1) {
 				return $r;
@@ -1656,6 +1902,7 @@ class facturas_distribucion
 
 				$conn->String_Sql($sql);
 			}
+			//print_r($FA);die();
 
 			if (strlen($FA['Autorizacion']) >= 13) {
 
@@ -1717,11 +1964,13 @@ class facturas_distribucion
 				// print_r('dddd');die();
 				if ($Grafico_PV) {
 					$TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
-					Imprimir_Punto_Venta_Grafico($TFA);
-					Imprimir_Punto_Venta_Grafico($TFA);
+					$TFA['PorcIva'] = $FA['Porc_IVA'];
+					$this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
+					//Imprimir_Punto_Venta_Grafico($TFA);
 				} else {
 					$TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
 					$TFA['CLAVE'] = '.';
+					$TFA['PorcIva'] = $FA['Porc_IVA'];
 					$this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
 					$imp = $FA['Serie'] . '-' . generaCeros($FA['Factura'], 7);
 					$rep = 1;
@@ -1735,6 +1984,7 @@ class facturas_distribucion
 					// Imprimir_Punto_Venta($FA);
 				}
 			}
+			//print_r($imp);
 			$sql = "DELETE 
       FROM Asiento_F
       WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
@@ -1743,7 +1993,7 @@ class facturas_distribucion
 			return 1;
 		} else {
 			return "No se puede grabar la Factura,  falta datos.";
-		}*/
+		}
 	}
 
 
