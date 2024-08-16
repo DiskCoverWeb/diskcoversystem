@@ -247,11 +247,19 @@ class notas_creditoC
 
 	function DCFactura($parametro)
 	{
-		$datos = $this->modelo->DCFactura($parametro['Serie'],$parametro['TC'],$parametro['CodigoC']);
+		// print_r($parametro);die();
+		$factura = false;
+		if(isset($parametro['Factura']))
+		{
+			$factura = $parametro['Factura'];
+		}
+		$datos = $this->modelo->DCFactura($parametro['Serie'],$parametro['TC'],$parametro['CodigoC'],$factura);
 		$list = array();
 		foreach ($datos as $key => $value) {
-			$list[] = array('codigo'=>$value['Factura'],'nombre'=>$value['Factura']); 
+			$detalle = $this->modelo->DCFacturaAll($parametro['Serie'],$parametro['TC'],$parametro['CodigoC'],$value['Factura']);
+			$list[] = array('codigo'=>$value['Factura'],'nombre'=>$value['Factura'],'data'=>$detalle[0]); 
 		}
+		// print_r($list);die();
 		return $list;
 	}
 
@@ -326,32 +334,39 @@ class notas_creditoC
 
 	function guardar($parametros)
 	{
+		// print_r($parametros);die();
 		$SubTotalDesc = 0;
     	$SubTotalIVA = 0;
 		$SubTotal_NC = $parametros['Saldo'];
 		$IVA_NC = $parametros['IVA'];
 		$Total_Desc = $parametros['Descuento'];
 
-		// $lista = $this->modelo->lineas_factura($parametros['Factura'],$parametros['Serie'],$parametros['TC'],$parametros['Autorizacion']);
-		// foreach ($lista as $key => $value) {
-		// 	if($value['Codigo']==$parametros['productos'])
-		// 	{
-		// 		 return -3; // ya esta reguistrado alerta
-		// 	}
-		// }
-		$Ln_No  = count($lista)+1;
 
+		$lista = $this->modelo->cargar_tabla($parametros,false);
+		$totalAsientosNC = 0;
+		// lineas_factura($parametros['Factura'],$parametros['Serie'],$parametros['TC'],$parametros['Autorizacion']);
+		foreach ($lista as $key => $value) {
+			
+			$totalAsientosNC = $totalAsientosNC + number_format($value['SUBTOTAL']);
+		}
+		
+
+			$Ln_No  = count($lista)+1;
 		if($parametros['TextCant'] > 0 &&  $parametros['TextVUnit'] > 0 ){
        $SubTotalDesc = $parametros['TextDesc'];
        $SubTotal = number_format($parametros['TextCant'] * $parametros['TextVUnit'],2,'.','');
        $product = Leer_Codigo_Inv($parametros['productos'],$parametros['MBoxFecha']);
        $BanIVA = $product['datos']['IVA'];
-       if($BanIVA==1 && $parametros['TC'] <> "NV"){ $SubTotalIVA = number_format(($SubTotal-$SubTotalDesc)*$_SESSION['INGRESO']['porc'], 4,'.','');}
+       if($BanIVA==1 && $parametros['TC'] <> "NV"){ $SubTotalIVA = number_format(($SubTotal-$SubTotalDesc)*$parametros['IVAPor'], 4,'.','');}
        $Total = $SubTotal_NC + $SubTotal + $IVA_NC + $SubTotalIVA - $SubTotalDesc - $Total_Desc;
+      if($parametros['TotalDC']+$Total > $parametros['TotalFA'] )
+		{
+			return -4;
+		}
        SetAdoAddNew("Asiento_NC");
        SetAdoFields("CODIGO", $parametros["productos"]);
 			 SetAdoFields("CANT", $parametros["TextCant"]);
-			 SetAdoFields("PRODUCTO", $product["datos"]["Producto"]);
+			 SetAdoFields("PRODUCTO", $parametros["productosName"]);
 			 SetAdoFields("SUBTOTAL", $SubTotal);
 			 SetAdoFields("DESCUENTO", $SubTotalDesc);
 			 SetAdoFields("TOTAL_IVA", $SubTotalIVA);

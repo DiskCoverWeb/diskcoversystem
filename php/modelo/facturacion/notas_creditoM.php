@@ -164,7 +164,7 @@ class notas_creditoM
 	      return $this->db->datos($sql);
   	}
 
-  	function DCFactura($Serie,$TC,$CodigoC)
+  	function DCFactura($Serie,$TC,$CodigoC,$FA=false)
   	{
 	   $sql = "SELECT Factura 
 	     FROM Facturas 
@@ -173,9 +173,31 @@ class notas_creditoM
 	     AND CodigoC = '".$CodigoC."' 
 	     AND TC = '".$TC."' 
 	     AND Serie = '".$Serie."' 
+	     AND T = '".G_PENDIENTE."'";
+	     if($FA)
+	     {
+	     	$sql.="AND Factura = '".$FA."' ";
+	     } 
+	     $sql.=" AND Saldo_MN > 0 
+	     GROUP BY Factura 
+	     ORDER BY Factura ";
+	     // print_r($sql);die();
+	     return $this->db->datos($sql);
+
+	}
+
+	function DCFacturaAll($Serie,$TC,$CodigoC,$FA)
+  	{
+	   $sql = "SELECT *
+	     FROM Facturas 
+	     WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+	     AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+	     AND CodigoC = '".$CodigoC."' 
+	     AND TC = '".$TC."' 
+	     AND Serie = '".$Serie."' 
+	     AND Factura = '".$FA."' 
 	     AND T = '".G_PENDIENTE."' 
 	     AND Saldo_MN > 0 
-	     GROUP BY Factura 
 	     ORDER BY Factura ";
 	     return $this->db->datos($sql);
 
