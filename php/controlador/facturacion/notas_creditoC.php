@@ -327,18 +327,18 @@ class notas_creditoC
 	function guardar($parametros)
 	{
 		$SubTotalDesc = 0;
-    $SubTotalIVA = 0;
+    	$SubTotalIVA = 0;
 		$SubTotal_NC = $parametros['Saldo'];
 		$IVA_NC = $parametros['IVA'];
 		$Total_Desc = $parametros['Descuento'];
 
-		$lista = $this->modelo->lineas_factura($parametros['Factura'],$parametros['Serie'],$parametros['TC'],$parametros['Autorizacion']);
-		foreach ($lista as $key => $value) {
-			if($value['Codigo']==$parametros['productos'])
-			{
-				 return -3; // ya esta reguistrado alerta
-			}
-		}
+		// $lista = $this->modelo->lineas_factura($parametros['Factura'],$parametros['Serie'],$parametros['TC'],$parametros['Autorizacion']);
+		// foreach ($lista as $key => $value) {
+		// 	if($value['Codigo']==$parametros['productos'])
+		// 	{
+		// 		 return -3; // ya esta reguistrado alerta
+		// 	}
+		// }
 		$Ln_No  = count($lista)+1;
 
 		if($parametros['TextCant'] > 0 &&  $parametros['TextVUnit'] > 0 ){
