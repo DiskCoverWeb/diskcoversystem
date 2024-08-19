@@ -414,14 +414,14 @@ function modal_email_ret(retencion,serie,numero,autorizacion,emails)
           <th>TC</th>
           <th>Serie</th>
           <th>Autorizacion</th>
-          <th>Factura</th>
+          <th>Retencion</th>
           <th>Fecha</th>
-          <th>SubTotal</th>
+          <th>SubTotal</th><!-- 
           <th>Con_IVA</th>
           <th>IVA</th>
           <th>Descuento</th>
           <th>Total</th>
-          <th>Saldo</th>
+          <th>Saldo</th> -->
           <th>RUC_CI</th>
           <th>TB</th>
           <th>Numero</th>

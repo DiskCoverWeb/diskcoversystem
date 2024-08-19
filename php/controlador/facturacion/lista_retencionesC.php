@@ -137,12 +137,7 @@ class lista_retencionesC
             <td>'.$value['AutRetencion'].'</td>
             <td>'.$value['SecRetencion'].'</td>
             <td>'.$value['Fecha']->format('Y-m-d').'</td>
-            <td class="text-right">'.$value['TD'].'</td>
-            <td class="text-right">'.$value['TD'].'</td>
-            <td class="text-right">'.$value['TD'].'</td>
-            <td class="text-right">'.$value['TD'].'</td>
-            <td class="text-right">'.$value['TD'].'</td>
-            <td class="text-right">'.$value['TD'].'</td>
+            <td class="text-right">'.$value['BaseImponible'].'</td>
             <td>'.$value['CI_RUC'].'</td>
             <td>RE</td>
             <td>'.$value['Numero'].'</td>
