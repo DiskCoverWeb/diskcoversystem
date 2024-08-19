@@ -25,8 +25,9 @@
     $('#DCArticulo').on('select2:select', function (e) {
       // console.log(e);
       var data = e.params.data.data;
+      console.log(data);
       $('#TextVUnit').val(data.PVP);
-      // $('#TextDesc').val(data.);
+      $('#TextIva').val(data.IVA);
       // $('#LabelVTotal').val(data.);
     }); 	 
 
@@ -248,7 +249,7 @@ function DCSerie(TC=false,codigoC=false)
     });
 }
 
-function DCFactura(Serie=false,TC=false,codigoC=false)
+function DCFacturaNuevo(Serie=false,TC=false,codigoC=false,Factura=false)
 {
 	if(Serie==false)	{		Serie = $('#DCSerie').val();	}
 	if(TC==false)	{		TC = $('#DCTC').val();	}
@@ -259,6 +260,7 @@ function DCFactura(Serie=false,TC=false,codigoC=false)
 		'Serie':Serie,
 		'TC':TC,
 		'CodigoC':codigoC,
+    'Factura':Factura,
 	}
   	 $.ajax({
       type: "POST",
@@ -272,9 +274,40 @@ function DCFactura(Serie=false,TC=false,codigoC=false)
          	 Swal.fire('Este Cliente no ha empezado a generar facturas','','info')
          }else
          {
-         	llenarComboList(data,'DCFactura');
-         	Detalle_Factura(data[0].codigo,Serie,TC,codigoC)
-         	 // console.log(data);
+          $('#porc_iva').val( data[0].data['Porc_IVA'].toFixed(2));
+         	 console.log(data);
+         }
+      }
+    });
+}
+
+function DCFactura(Serie=false,TC=false,codigoC=false)
+{
+  if(Serie==false)  {   Serie = $('#DCSerie').val();  }
+  if(TC==false) {   TC = $('#DCTC').val();  }
+  if(codigoC==false)  {   codigoC = $('#DCClientes').val(); }
+
+  var parametros = 
+  {
+    'Serie':Serie,
+    'TC':TC,
+    'CodigoC':codigoC,
+  }
+     $.ajax({
+      type: "POST",
+      url: '../controlador/facturacion/notas_creditoC.php?DCFactura=true',
+      data: {parametros: parametros},
+      dataType:'json', 
+      success: function(data)
+      {
+         if(data.length==0)
+         {
+           Swal.fire('Este Cliente no ha empezado a generar facturas','','info')
+         }else
+         {
+          llenarComboList(data,'DCFactura');
+          Detalle_Factura(data[0].codigo,Serie,TC,codigoC)
+          $('#porc_iva').val( data[0].data['Porc_IVA'].toFixed(2));
          }
       }
     });
@@ -282,11 +315,12 @@ function DCFactura(Serie=false,TC=false,codigoC=false)
 
 function Detalle_Factura(Factura=false,Serie=false,TC=false,codigoC=false)
 {
+
 	if(Factura==false)	{	Factura = $('#DCFactura').val();	}
 	if(Serie==false)	{	Serie = $('#DCSerie').val();	}
 	if(TC==false)	{	TC = $('#DCTC').val();	}
 	if(codigoC==false)	{	codigoC = $('#DCClientes').val();	}
-
+  DCFacturaNuevo(Serie,TC,codigoC,Factura)
 	var parametros = 
 	{		
 		'Factura':Factura,
@@ -301,6 +335,7 @@ function Detalle_Factura(Factura=false,Serie=false,TC=false,codigoC=false)
       dataType:'json', 
       success: function(data)
       {
+        // console.log(data);
         
         $('#TxtAutorizacion').val(data[0].Autorizacion);
         $('#LblTotal').val(data[0].Total_MN); 
@@ -363,6 +398,37 @@ function autocoplete_clinete(){
       });
 }
 
+ function calcular() {
+    var VUnit = $('#TextVUnit').val();
+    if (VUnit == '' || VUnit == 0) {
+      Swal.fire('INGRESE UN PRECIO VALIDO', '', 'info').then(function () { $('#TextVUnit').select() })
+    }
+    var Cant = $('#TextCant').val();
+    var ivaOp = $('#TextIva').val();
+
+    // var OpcMult = $('#OpcMult').prop('checked');
+    // var ban = $('#TextCheque').val()
+    if (is_numeric(VUnit) && is_numeric(Cant)) {
+    
+       Real2 = parseFloat(Cant) * parseFloat(VUnit); 
+       valorIva = parseFloat($('#porc_iva').val())+1;
+       if(ivaOp==1)
+        {
+           Real1 = Real2*valorIva;
+           $('#TextIvaTotal').val( (Real1-Real2).toFixed(4));
+        }else{
+          Real1 = Real2;
+        }
+
+      //} else { Real1 = parseFloat(Cant) / parseFloat(VUnit); }
+      // console.log(Real1);
+      $('#LabelVTotal').val(Real1.toFixed(4));
+    } else {
+      $('#LabelVTotal').val(0.0000);
+    }
+  }
+
+
 function TextDesc_lost()
 {
    Factura = $('#DCFactura').val();  
@@ -370,6 +436,7 @@ function TextDesc_lost()
    TC = $('#DCTC').val();  
    codigoC = $('#DCClientes').val(); 
    auto =  $('#TxtAutorizacion').val();
+   cant = $('#TextCant').val();
    if($('#TextCant').val()=='' || $('#TextCant').val()=='0' || $('#TextCant').val() =='.')
    {
 
@@ -380,6 +447,7 @@ function TextDesc_lost()
     var parametros = 
     {   
       'productos':$('#DCArticulo').val(),
+      'productosName':$('#DCArticulo option:selected').text(),
       'Factura':Factura,
       'Serie':Serie,
       'CodigoC':codigoC,
@@ -393,10 +461,12 @@ function TextDesc_lost()
       'Cod_Marca':$('#DCMarca').val(),
       'ConIVA':$('#TxtConIVA').val(),
       'Descuento':$('#TxtDescuento').val(),
-      'IVA':$('#TxtIVA').val(),
+      'IVA':$('#TextIvaTotal').val(),
+      'IVAPor':$('#porc_iva').val(),
       'Saldo':$('#TxtSaldo').val(),
       'SinIVA':$('#TxtSinIVA').val(),
       'TotalDC':$('#LblTotalDC').val(),
+      'TotalFA':$('#LblTotal').val(),
     }
      $.ajax({
       type: "POST",
@@ -408,6 +478,10 @@ function TextDesc_lost()
         if(data==-3)
         {
           Swal.fire('el producto ya sea ingresado','','info')
+        }
+         if(data==-4)
+        {
+          Swal.fire('El total Supera la de la nota de credito','','info')
         }
         cargar_tabla();         
       }
@@ -570,7 +644,51 @@ function eliminar(CODIGO,A_NO)
   });
 
 }
+
+function cerrar_modal_cambio_nombre() {
+    var nuevo = $('#TxtDetalle').val();
+    var dcart = $('#DCArticulo').val();
+    $('#DCArticulo').append($('<option>', {
+        value: dcart,
+        text: nuevo,
+        selected: true
+    }));
+    $('#TextCant').focus();
+
+    $('#cambiar_nombre').modal('hide');
+
+}
+function Articulo_Seleccionado()
+{  
+   dato = $('#DCArticulo option:selected').text();
+    $('#TxtDetalle').val(dato);
+      $('#cambiar_nombre').on('shown.bs.modal', function() {
+          $('#TxtDetalle').focus();
+      })
+
+      $('#cambiar_nombre').modal('show', function() {
+          $('#TxtDetalle').focus();
+      })
+}
 </script>
+<style type="text/css">
+    @media only screen and (max-width: 600px) {
+    body {
+       .detalles_pro {
+            margin-top: 245px;
+        }
+    }
+}
+
+/* Estilos para pantallas grandes (escritorio) */
+@media only screen and (min-width: 601px) {
+    body {
+       .detalles_pro {
+            margin-left: 300px; margin-top: 345px;
+        }
+    }
+}
+</style>
 <div class="row">
 	<div class="col-lg-4 col-sm-8 col-md-8 col-xs-12">
 		<div class="col-xs-2 col-md-2 col-sm-2">
@@ -700,7 +818,7 @@ function eliminar(CODIGO,A_NO)
 				<div class="row">
 					<div class="col-sm-7">
 						<b>Producto</b>
-						<select class="form-control input-xs" id="DCArticulo" name="DCArticulo">
+						<select class="form-control input-xs" id="DCArticulo" name="DCArticulo" onchange="Articulo_Seleccionado()">
 				          	<option>Seleccione producto</option>
 				        </select>
 					</div>
@@ -710,8 +828,14 @@ function eliminar(CODIGO,A_NO)
 					</div>
 					<div class="col-sm-1" style="padding:3px">
 						<b>P.V.P.</b>
-						<input type="text" name="TextVUnit" id="TextVUnit" class="form-control input-xs" value="0.00">
+						<input type="text" name="TextVUnit" id="TextVUnit" class="form-control input-xs" value="0.00" onblur="calcular()">
 					</div>
+          <div class="col-sm-1" style="padding:3px; display: none;">
+            
+            <input type="text" name="porc_iva" id="porc_iva" class="form-control input-xs" value="0.00" >          
+            <input type="text" name="TextIva" id="TextIva" class="form-control input-xs" value="0.00" >       
+            <input type="text" name="TextIvaTotal" id="TextIvaTotal" class="form-control input-xs" value="0.00" >
+          </div>
 					<div class="col-sm-1" style="padding:3px">
 						<b>DESC</b>
 						<input type="text" name="TextDesc" id="TextDesc" class="form-control input-xs" value="0.00" onblur="TextDesc_lost()">
@@ -815,3 +939,15 @@ function eliminar(CODIGO,A_NO)
 	</div>
 </div>
 </form>
+
+<div class="modal fade " id="cambiar_nombre" role="dialog" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog modal-dialog-centered modal-sm detalles_pro">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <textarea class="form-control" style="resize: none;" rows="4" id="TxtDetalle" name="TxtDetalle"
+                    onblur="cerrar_modal_cambio_nombre()"></textarea>
+                <button style="border:0px"></button>
+            </div>
+        </div>
+    </div>
+</div>

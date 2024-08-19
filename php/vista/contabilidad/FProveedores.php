@@ -244,7 +244,7 @@ function limpiar_t()
            $('#txt_nombre_prove').val('');  
           limpiar_t();        
           Swal.fire('Proveedores Guardado.','','success').then(function(){
-          	cerrar();
+          	//cerrar();
           }); 
         }else if(response==-2)
         {

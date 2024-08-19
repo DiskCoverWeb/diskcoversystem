@@ -1197,7 +1197,7 @@ function autocoplet_ingreso()
 					<div class="col-sm-12 col-md-2 text-right" style="padding:0px">
 						<br>
 						<button type="button" class="btn btn-primary" onclick="show_panel()" > AGREGAR</button>
-						<button type="button" class="btn btn-primary">Limpiar</button>
+						<button type="button" class="btn btn-primary" onclick=" limpiar()" >Limpiar</button>
 						<input type="hidden" id="A_No" name ="A_No" value="0">
 					</div>
 				</div>        

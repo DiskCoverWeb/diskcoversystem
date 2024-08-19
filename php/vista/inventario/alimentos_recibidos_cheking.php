@@ -508,6 +508,46 @@ function autocoplet_ingreso()
 		      dataType: 'json',
 		      success:  function (response) { 
 		      	var test = '';
+
+		      	if(response[0].Conductor!='.')
+		      	{		 
+		      		test+='<li class="list-group-item">'+
+											'<a href="#" style="padding:0px">'+
+													'<label>Vehiculo</label>'+
+											 		'<div class="btn-group pull-right">';
+											 		
+											 			test+='<span class="label-warning btn-sm btn">'+response[0].Conductor+'</span>'
+											 		
+											 		test+='</div>'+
+										 	'</a>'+
+										'</li>'
+						}
+
+
+		      	test+='<li class="list-group-item">'+
+											'<a href="#" style="padding:0px">'+
+													'<label>Tipo de Vehiculo</label>'+
+											 		'<div class="btn-group pull-right">';
+											 		
+											 			test+='<span class="label-warning btn-sm btn">'+response[0].Carga+'</span>'
+											 		
+											 		test+='</div>'+
+										 	'</a>'+
+										'</li>'
+
+		      	if(response[0].placa!='.')
+		      		{		  
+		      			test+='<li class="list-group-item">'+
+											'<a href="#" style="padding:0px">'+
+													'<label>Placa del Vehiculo</label>'+
+											 		'<div class="btn-group pull-right">';
+											 		
+											 			test+='<span class="label-warning btn-sm btn">'+response[0].placa+'</span>'
+											 		
+											 		test+='</div>'+
+										 	'</a>'+
+										'</li>'
+		      		}
 		      	response.forEach(function(item,i){
 
 		      		console.log(item);

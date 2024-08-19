@@ -1,0 +1,181 @@
+<?php
+require_once(dirname(__DIR__,2)."/db/db1.php");
+require_once(dirname(__DIR__,2)."/funciones/funciones.php");
+
+class solicitud_materialM
+{
+    private $conn ;
+
+    function __construct()
+    {
+        $this->conn = new db();
+    }
+
+    function cargar_productos($query=false,$pag=false)
+	{
+		if($pag==false)
+		{
+			$pag = 0;
+		}
+
+		$cid = $this->conn;
+		$sql = "SELECT ID,Codigo_Inv,Producto,TC,Minimo,Maximo,Cta_Inventario,Unidad,Ubicacion,IVA,Reg_Sanitario 
+		FROM Catalogo_Productos 
+		 WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+		 AND item='".$_SESSION['INGRESO']['item']."' 
+		 AND TC='P' 
+		 AND LEN(Cta_Inventario)>3 
+		 AND LEN(Cta_Costo_Venta)>3 ";
+		if($query) 
+		{
+			$sql.=" AND Codigo_Inv+' '+Producto LIKE '%".$query."%'";
+		}
+		$sql.=" ORDER BY ID OFFSET ".$pag." ROWS FETCH NEXT 25 ROWS ONLY;";
+		
+		$datos = $this->conn->datos($sql);
+       return $datos;
+	}
+
+	function lineas_pedido()
+	{
+		$sql = "SELECT  ".Full_Fields('Trans_Pedidos')." 
+		FROM Trans_Pedidos 
+		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND TC = 'P' 
+		AND Item='".$_SESSION['INGRESO']['item']."' 
+		AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' ";
+		$datos = $this->conn->datos($sql);
+       	return $datos;
+	}
+
+	function eliminar_linea($id)
+	{
+		$sql = "DELETE FROM Trans_Pedidos WHERE ID = '".$id."'";
+
+		// print_r($sql);die();
+		return $this->conn->String_Sql($sql);
+	}
+	// ------------------------------------------------Aprobacion de solicitud---------------------------------------------------------------
+
+	function lineas_pedido_solicitados($orden)
+	{
+		$sql = "SELECT  ".Full_Fields('Trans_Pedidos')." 
+		FROM Trans_Pedidos 
+		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND TC = 'S' 
+		 AND Orden_No = '".$orden."'
+		AND Item='".$_SESSION['INGRESO']['item']."' 
+		AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' ";
+
+		// print_r($sql);die();
+		$datos = $this->conn->datos($sql);
+       	return $datos;
+	}
+
+	function pedido_solicitados($query)
+	{
+		$sql = "SELECT  Orden_No,Nombre_Completo
+		FROM Trans_Pedidos T
+		INNER JOIN Accesos A on T.CodigoU = A.Codigo
+		WHERE  TC = 'S' ";
+		if($query)
+		{
+			$sql.=" AND Orden_No+' '+Nombre_Completo like  '%".$query."%'";
+		}
+		$sql.="
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND Item='".$_SESSION['INGRESO']['item']."' 
+		AND CodigoU ='".$_SESSION['INGRESO']['CodigoU']."' 
+		group by Orden_No,Nombre_Completo ";
+		// print_r($sql);die();
+		$datos = $this->conn->datos($sql);
+       	return $datos;
+	}
+
+	// ------------------------------------------------------envio solicitud proveedor------------------------------------------------------
+
+
+
+	function pedido_solicitados_proveedor($query)
+	{
+		$sql = "SELECT  Orden_No,Nombre_Completo
+		FROM Trans_Pedidos T
+		INNER JOIN Accesos A on T.CodigoU = A.Codigo
+		WHERE  TC = 'E' ";
+		if($query)
+		{
+			$sql.=" AND Orden_No+' '+Nombre_Completo like  '%".$query."%'";
+		}
+		$sql.="
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND Item='".$_SESSION['INGRESO']['item']."' 
+		AND CodigoU ='".$_SESSION['INGRESO']['CodigoU']."' 
+		group by Orden_No,Nombre_Completo ";
+		// print_r($sql);die();
+		$datos = $this->conn->datos($sql);
+       	return $datos;
+	}
+
+
+	function lineas_pedido_solicitados_proveedor($orden)
+	{
+		$sql = "SELECT  ".Full_Fields('Trans_Pedidos')." 
+		FROM Trans_Pedidos 
+		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND TC = 'E' 
+		 AND Orden_No = '".$orden."'
+		AND Item='".$_SESSION['INGRESO']['item']."' 
+		AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' ";
+		$datos = $this->conn->datos($sql);
+       	return $datos;
+	}
+
+	function Trans_Pedidos($id=false,$orden=false,$tc=false)
+	{
+		$sql = "SELECT  ".Full_Fields('Trans_Pedidos')." 
+		FROM Trans_Pedidos 
+		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND Item='".$_SESSION['INGRESO']['item']."' 
+		AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' ";
+		if($tc)
+		{
+			$sql.=" AND TC = '".$tc."' ";
+		}
+		if($orden)
+		{
+		  $sql.=" AND Orden_No = '".$orden."' ";
+		}
+
+		if($id)
+		{
+		  $sql.=" AND ID = '".$id."' ";
+		}
+
+
+		$datos = $this->conn->datos($sql);
+       	return $datos;
+	}
+
+	function proveedores($query=false)
+	{
+		$sql = "SELECT CI_RUC,Cliente,CP.Codigo as 'Codigo'
+		FROM Clientes C
+		INNER JOIN Catalogo_CxCxP CP ON C.Codigo = CP.Codigo
+		WHERE CP.Item = '".$_SESSION['INGRESO']['item']."' 
+		AND CP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND LEN(Cliente)>1 AND CP.TC  ='P' ";
+		if($query)
+		{
+			$sql.="	AND Cliente like '%".$query."%'";
+		}
+		$sql.="group by CI_RUC,Cliente,CP.Codigo
+		ORDER BY C.Cliente OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
+		$datos = $this->conn->datos($sql);
+       	return $datos;
+
+	}
+
+
+
+} 
+?>

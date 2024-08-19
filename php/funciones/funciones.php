@@ -5819,12 +5819,12 @@ function generar_comprobantes($parametros) //revision parece repetida
       array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
       array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
       array(&$_SESSION['INGRESO']['modulo_'], SQLSRV_PARAM_IN),
-      array(&$_SESSION['INGRESO']['Dec_PVP'], SQLSRV_PARAM_IN),
-      array(&$_SESSION['INGRESO']['Dec_Costo'], SQLSRV_PARAM_IN),
       array(&$fecha_corte, SQLSRV_PARAM_IN),
       array(&$TipoKardex, SQLSRV_PARAM_INOUT),
       );     
-     $sql="EXEC sp_Mayorizar_Inventario @Item=?,@Periodo=?, @Usuario=?, @NumModulo=?, @DecPVP=?, @DecCosto=?,@FechaCorte=?,@TipoKardex=?";
+     // $sql="EXEC sp_Mayorizar_Inventario @Item=?,@Periodo=?, @Usuario=?, @NumModulo=?, @DecPVP=?, @DecCosto=?,@FechaCorte=?,@TipoKardex=?";
+
+     $sql="EXEC sp_Mayorizar_Inventario @Item=?,@Periodo=?, @Usuario=?, @NumModulo=?, @FechaCorte=?, @TipoKardex=?";
      // print_r($parametros);die();
       $respuesta = $conn->ejecutar_procesos_almacenados($sql,$parametros);
       // if($respuesta==1)
@@ -5853,12 +5853,11 @@ function generar_comprobantes($parametros) //revision parece repetida
       $ConSucursal = 0;
 
       $parametros = array(
-        array(&$EsCoop, SQLSRV_PARAM_IN),
-        array(&$ConSucursal, SQLSRV_PARAM_IN),
         array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
         array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
       );     
-     $sql="EXEC sp_Mayorizar_Cuentas @EsCoop=?,@ConSucursal=?,@Item=?,@Periodo=?";
+     // $sql="EXEC sp_Mayorizar_Cuentas @EsCoop=?,@ConSucursal=?,@Item=?,@Periodo=?";
+     $sql="EXEC sp_Mayorizar_Cuentas @Item=?,@Periodo=?";
       $respuesta = $conn->ejecutar_procesos_almacenados($sql,$parametros);
       return $respuesta;   
   }
@@ -5875,7 +5874,8 @@ function generar_comprobantes($parametros) //revision parece repetida
       );
 
       // print_r($parametros);die();     
-      $sql = "EXEC sp_Presenta_Errores_Contabilidad @Item=?, @Periodo=?, @Usuario=?, @NumModulo=?, @ExisteErrores=?";
+      // $sql = "EXEC sp_Presenta_Errores_Contabilidad @Item=?, @Periodo=?, @Usuario=?, @NumModulo=?, @ExisteErrores=?";
+      $sql = "EXEC sp_Presenta_Errores_Contabilidad @Item=?, @Periodo=?, @Usuario=?, @NumModulo=?";
       $conn->ejecutar_procesos_almacenados($sql,$parametros,1);
      
       return  $ExisteErrores;

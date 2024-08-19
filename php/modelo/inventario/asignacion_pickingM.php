@@ -37,6 +37,7 @@ class asignacion_pickingM
 			}
 			$sql.=" AND DF.TC = 'OP'
 			AND DF.T = 'K'
+            AND DF.Item = CD.Item
             AND CD.Item = CP.Item 
             AND CD.Item = CP1.Item 
             AND CD.Item = CP2.Item 
@@ -107,7 +108,7 @@ class asignacion_pickingM
         $sql = "SELECT TC.ID,TC.Fecha,TC.Fecha_C,A.Nombre_Completo,TC.Total,TC.CodBodega
                 FROM Trans_Comision TC
                 INNER JOIN Accesos A ON TC.CodigoU = A.Codigo
-                WHERE CodigoC = '".$bene."'
+                AND CodigoC = '".$bene."'
                 AND Cta = '".$tipo."'
                 AND T = '".$T."'";
                 if($fecha)

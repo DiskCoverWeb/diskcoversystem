@@ -18,7 +18,8 @@ class lista_retencionesM
 
 	function retenciones_emitidas_tabla($codigo,$desde=false,$hasta=false,$serie=false)
 	{
-		$sql ="SELECT TC.ID,IdProv,C.Cliente,TC.T,TP,Serie_Retencion,TC.AutRetencion,SecRetencion,TC.Fecha,C.TD,C.CI_RUC,Numero FROM Trans_Compras TC
+		$sql ="SELECT TC.ID,IdProv,C.Cliente,TC.T,TP,Serie_Retencion,TC.AutRetencion,SecRetencion,TC.Fecha,C.TD,C.CI_RUC,Numero,BaseImponible 
+		FROM Trans_Compras TC
 		INNER JOIN Clientes C ON TC.IdProv = C.Codigo
 		WHERE Item = '".$_SESSION['INGRESO']['item']."' 
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";    

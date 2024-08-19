@@ -71,7 +71,7 @@ class alimentos_recibidosM
 		where TC.Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC.Item = CP.Item
-		AND TC.T = 'I'";  
+		AND (TC.T = 'I' OR TC.T = 'C')";  
 
 		// ver por que se coloco el esto ->	OR TC.T = 'C'  
 		if($cod)
@@ -114,12 +114,13 @@ class alimentos_recibidosM
 
 	function buscar_transCorreos_procesados_all($cod=false,$fecha=false,$fechah=false,$id=false)
 	{
-		$sql = "select TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas    
+		$sql = "select DISTINCT TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas    
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
-		where Item = '".$_SESSION['INGRESO']['item']."'
+		where TC.Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+		AND TC.Item = CP.Item
 		AND TC.T <> 'I'";
 		if($cod)
 		{
@@ -146,7 +147,7 @@ class alimentos_recibidosM
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		inner join Clientes C2 on TC.CodigoU = C2.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
-		where Item = '".$_SESSION['INGRESO']['item']."'
+		where TC.Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		";
 		if($cod)
@@ -177,6 +178,7 @@ class alimentos_recibidosM
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
 		where TC.Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND TC.Item = CP.Item
 		AND TC.T = 'P' ";
 		if($cod)
 		{
@@ -194,7 +196,7 @@ class alimentos_recibidosM
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
-		where Item = '".$_SESSION['INGRESO']['item']."'
+		where TC.Item = '".$_SESSION['INGRESO']['item']."'
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC.T = 'N' ";
 		if($cod)
@@ -216,7 +218,8 @@ class alimentos_recibidosM
      FROM Trans_Kardex  T ,Catalogo_Productos P, Accesos A        
      WHERE T.Item = '".$_SESSION['INGRESO']['item']."' 
      AND T.Periodo = '".$_SESSION['INGRESO']['periodo']."'
-     AND Orden_No = '".$orden."' ";
+     AND Orden_No = '".$orden."' 
+     AND T.Codigo_Inv NOT LIKE 'GA.%'";
      // AND T.CodigoL = '".$SUBCTA."'
      // AND T.Codigo_P = '".$paciente."'
      $sql.="AND Numero =0
@@ -548,9 +551,10 @@ class alimentos_recibidosM
 	function estado_trasporte($pedido)
 	{
 
-		$sql = "SELECT  TF.ID,Proceso,Cumple
-				FROM         Trans_Fletes TF
-				inner join Catalogo_Proceso CP on CP.Cmds = TF.TP
+		$sql = "SELECT TF.ID,CP.Proceso,Cumple,Carga,CodigoC,CP2.Proceso as 'placa',Conductor,Codigo_Inv
+				FROM Trans_Fletes TF 
+				inner join Catalogo_Proceso CP on CP.Cmds = TF.TP 
+				left join Catalogo_Proceso CP2 on CP2.Cmds = TF.CodigoC 
 				WHERE  TF.Item = '".$_SESSION['INGRESO']['item']."' 
 				AND TF.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 				AND Codigo_Inv= '".$pedido."'";

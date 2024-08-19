@@ -20,6 +20,7 @@ class reubicarM
             INNER JOIN Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv
             where TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
             AND TK.Item = '".$_SESSION['INGRESO']['item']."'
+            AND TK.Item = CP.Item
             AND TK.Orden_No <> '0'
             AND TK.Orden_No <> '.'
             AND TK.Orden_No <> '0.'

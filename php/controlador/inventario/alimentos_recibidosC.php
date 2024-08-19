@@ -314,8 +314,8 @@ class alimentos_recibidosC
 	{
 		// print_r($parametros);
 		// print_r($transporte);
-		// print_r($gavetas);die();
-
+		// print_r($gavetas);
+		// die();
 
 
 		$parametros['fecha'] = $parametros['txt_fecha'];
@@ -371,10 +371,29 @@ class alimentos_recibidosC
 			    SetAdoFields('Cumple',$value);
 			    SetAdoFields('CodigoC',$placa);	
 			    SetAdoFields('Carga',$tipo_ve);	
-			    SetAdoFields('Conducto',$op_vehi);	
+			    SetAdoFields('Conductor',$op_vehi);	
+			    SetAdoFields('Codigo_Inv',$codigo);	
 			    SetAdoUpdate();		
 			}
 		}
+
+		foreach ($gavetas as $key => $value) {
+			if($value!='')
+			{
+				$codigo_inv = str_replace("_",'.', str_replace('txt_','', $key));
+				SetAdoAddNew('Trans_Kardex');
+				SetAdoFields('Codigo_Inv',$codigo_inv);
+				SetAdoFields('TP','CD');
+				SetAdoFields('T','N');
+				SetAdoFields('Entrada',$value);
+				SetAdoFields('Orden_No',$codigo);
+				SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
+				SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+				SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);
+				SetAdoUpdate();
+			}
+		}
+
 
 		return 1;
 	}
@@ -975,6 +994,8 @@ class alimentos_recibidosC
 			// print_r($value);
 			// print_r($noti);die();
 			$tr.='<tr>
+
+					<td>'.($key+1).'</td>
 					<td>'.$value['Envio_No'].'</td>
 					<td>'.$value['Fecha_P']->format('Y-m-d').'</td>
 					<td>'.$value['Cliente'].' 
@@ -1026,7 +1047,8 @@ class alimentos_recibidosC
 					</div>	';
 			}
 
-			$tr.='<tr>
+			$tr.='<tr>			
+					<td>'.($key+1).'</td>
 					<td>'.$value['Envio_No'].'</td>
 					<td>'.$value['Fecha_P']->format('Y-m-d').'</td>
 					<td>'.$value['Cliente'].''.$alerta.'</td>
@@ -1040,7 +1062,7 @@ class alimentos_recibidosC
 		}
 
 		return $tr;
-		print_r($datos);die();
+		// print_r($datos);die();
 	}
 
 
@@ -1436,16 +1458,18 @@ class alimentos_recibidosC
 		{
 
 			SetAdoAddNew("Trans_Correos");	
-			SetAdoFieldsWhere('Envio_No',$notificacion[0]['Atencion']);
+			SetAdoFields('T','R');
 			if($notificacion[0]['CC1']==3){
 				SetAdoFields('T','P');
-			}else if($notificacion[0]['CC1']==2){ SetAdoFields('T','C'); }
+			}else if($notificacion[0]['CC1']==2){ SetAdoFields('T','C'); }			
+			SetAdoFieldsWhere('Envio_No',$notificacion[0]['Atencion']);
+
+			// print('arg');die();
 			SetAdoUpdateGeneric();
 		}
 
 		// print_r($notificacion);die();
  	    SetAdoAddNew("Trans_Memos");	
-		SetAdoFields('T','N');
 		SetAdoFields('T','N');
 		SetAdoFieldsWhere('ID',$parametros['noti']);
 		return SetAdoUpdateGeneric();
@@ -1576,7 +1600,7 @@ class alimentos_recibidosC
 		// print_r($datos);die();
 		$tr = '';
 		foreach ($datos as $key => $value) {
-			$tr.='<tr><td>'.$value['Producto'].'</td><td><input type="text" id="txt_'.str_replace(' ','_', $value['Producto']).'" name="txt_'.str_replace(' ','_', $value['Producto']).'_'.$key.'" class="form-control gavetas_ingreso"></td></tr>';
+			$tr.='<tr><td>'.$value['Producto'].'</td><td><input type="text" id="txt_'.$value['Codigo_Inv'].'" name="txt_'.$value['Codigo_Inv'].'" class="form-control gavetas_ingreso"></td></tr>';
 		}
 		return $tr;
 	}
