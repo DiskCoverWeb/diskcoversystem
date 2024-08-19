@@ -2566,6 +2566,8 @@ function Autorizar_retencion($parametros)
       $TFA[0]["ClaveAcceso"]  = $aut;
 
       	$TFA[0]['codigoPorcentaje']=0;
+      	$TFA[0]['PorcentajeIva'] =floatval($datos[0]['PorcentajeIva']);
+      	
 	    $porceiva = (floatval($datos[0]['PorcentajeIva']));
 	    if($porceiva>0)
 	    {
@@ -2655,7 +2657,7 @@ function generar_xml_retencion($cabecera,$detalle)
 {
 
 	// print_r($cabecera);
-	// print_r('expression');
+	// print_r($_SESSION['INGRESO']);
 	// print_r($detalle);
 	// die();
 	$entidad = $_SESSION['INGRESO']['IDEntidad'];
@@ -2853,7 +2855,7 @@ function generar_xml_retencion($cabecera,$detalle)
         $xml_codimpuestodocsustento = $xml->createElement("codImpuestoDocSustento",'2');
         $xml_codigoprocentaje = $xml->createElement("codigoPorcentaje",$cabecera[0]['codigoPorcentaje']);
         $xml_baseimponible1 = $xml->createElement("baseImponible", $Total_Con_IVA);
-        $xml_tarifa = $xml->createElement("tarifa",$_SESSION['INGRESO']['porc'] * 100);
+        $xml_tarifa = $xml->createElement("tarifa",$cabecera[0]['PorcentajeIva']);
         $xml_valorimpuesto = $xml->createElement("valorImpuesto",$Total_IVA);
 
         $xml_impuestodocsustento->appendChild($xml_codimpuestodocsustento);
