@@ -255,6 +255,8 @@ class solicitud_materialC
         	SetAdoUpdateGeneric();
 		}
 
+		return 1;
+
 	}
 
 	//---------------------------------------------------------envio solicitud proveedor-----------------------------------------------------
