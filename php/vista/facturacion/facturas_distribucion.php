@@ -28,12 +28,13 @@ if (isset ($_GET['tipo'])) {
 		let area = $('#contenedor-pantalla').parent();
     	area.css('background-color', 'rgb(247, 232, 175)');
 		//catalogoLineas();
+		DCLineas();
 		preseleccionar_opciones();
 		eventos_select();
 		autocomplete_cliente();
 		autocomplete_producto();
 		//serie();
-		tipo_documento();
+		//tipo_documento();
 		DCBodega();
 		DGAsientoF();
 		AdoLinea();
@@ -69,8 +70,27 @@ if (isset ($_GET['tipo'])) {
 		//   });
 
 		DCTipoFact2();
-		DCPorcenIvaFD();
+		//DCPorcenIvaFD();
 	});
+
+	function DCLineas() {
+		var parametros =
+		{
+			'Fecha': $('#MBFecha').val(),
+			'TC': 'FA'
+		}
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/facturas_distribucionC.php?DCLineas=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				llenarComboList(data, 'DCLineas');
+				//$('#Cod_CxC').val(data[0].nombre);  //FA
+				//Lineas_De_CxC();
+			}
+		});
+	}
 
 	function alertaDesarrollo(msg){
 		Swal.fire('Funcionalidad en Desarrollo', msg, 'info');
@@ -405,8 +425,18 @@ if (isset ($_GET['tipo'])) {
 				let opcion = data[0]
 
 				//Crea la opcion y la agrega como predefinida al select
-				let newOption = new Option(opcion['text'], opcion['id'], true, true);
-				$("#DCPorcenIVA").append(newOption).trigger('change');
+				for(let d of data){
+					let newOption = new Option(d['text'], d['id'], true, true);
+					$("#DCPorcenIVA").append(newOption);
+				}
+				let DCPorcenIVA = document.getElementById('DCPorcenIVA');
+				DCPorcenIVA.selectedIndex = 0;
+				//$("#DCPorcenIVA").trigger('change');
+				//cambiar_iva(DCPorcenIVA);
+				let valor = DCPorcenIVA.selectedOptions[0].text;
+				console.log(valor);
+				$('#Label3').text('I.V.A. '+parseFloat(valor).toFixed(2)+'%');
+				tipo_documento();
 			}
 		});
 		
@@ -671,6 +701,7 @@ if (isset ($_GET['tipo'])) {
 						tr.append($('<td style="display:none;"></td>').text(fila['Productos']['Codigo_Inv']));
 						tr.append($('<td></td>').html('<input type="checkbox" id="producto_cheking" name="producto_cheking">'));
 						tr.append($('<td></td>').html('<button style="width:50px" onclick="modificarLineaFac(this)"><i class="fa fa-pencil" aria-hidden="true"></i></button>'));
+						tr.append($('<td style="display:none;"></td>').text(fila['Detalles']['CodigoU']));
 						tBody.append(tr);
 
 						cTotalProds += parseInt(fila['Detalles']['Total']);
@@ -752,7 +783,7 @@ if (isset ($_GET['tipo'])) {
 			'CodigoCliente': $('#codigoCliente').val(),
 			'TextServicios': '.',
 			'TextVDescto': 0,
-			'PorcIva': $('#DCPorcenIVA').val(),
+			'PorcIva': document.getElementById('DCPorcenIVA').selectedOptions[0].text,
 			'cheking': fila.childNodes[8].children[0].checked==true?1:0,
 			'comentario': comentario
 		}
@@ -809,7 +840,7 @@ if (isset ($_GET['tipo'])) {
 				'CodigoCliente': $('#codigoCliente').val(),
 				'TextServicios': '.',
 				'TextVDescto': 0,
-				'PorcIva': $('#DCPorcenIVA').val(),
+				'PorcIva': document.getElementById('DCPorcenIVA').selectedOptions[0].text,
 				'cheking': fila[8].children[0].checked==true?1:0
 			}
 			$.ajax({
@@ -821,7 +852,7 @@ if (isset ($_GET['tipo'])) {
 					if (data == 2) {
 						Swal.fire('Ya no puede ingresar mas productos', '', 'info');
 					} else if (data == 1) {
-						DGAsientoF();
+						//DGAsientoF();
 						Calculos_Totales_Factura();
 					} else {
 						Swal.fire('Intente mas tarde', '', 'info');
@@ -909,11 +940,11 @@ if (isset ($_GET['tipo'])) {
 		/*var tc = $('#DCLinea').val();
 		tc = tc.split(' ');*/
 
-		var TipoFactura = '<?php echo $TC; ?>';
+		var TipoFactura = datosFact;
 
 		//var TipoFactura = tc[0];
 
-		var Porc_IVA = $('#DCPorcenIVA').val();
+		var Porc_IVA = document.getElementById('DCPorcenIVA').selectedOptions[0].text;
 		Porc_IVA = parseFloat(Porc_IVA) * 100;
 		if (TipoFactura == "PV") {
 			// FacturasPV.Caption = "INGRESAR TICKET"
@@ -930,7 +961,7 @@ if (isset ($_GET['tipo'])) {
 			$('#Label1').text(" NOTA DE VENTA No.");
 			$('#Label3').text(" I.V.A. 0.00%");
 			$('#title').text('Nota de Venta');
-		} else if (TipoFactura == "DO") {
+		} else if (TipoFactura == "NDO" || TipoFactura == "NDU") {
 			// FacturasPV.Caption = "INGRESAR NOTA DE DONACION"
 			$('#Label1').text(" NOTA DE DONACION No.");
 			$('#Label3').text(" I.V.A. 0.00%");
@@ -951,8 +982,9 @@ if (isset ($_GET['tipo'])) {
 		}
 	}
 
-	function cambiar_iva(valor)
+	function cambiar_iva(elemento)
 {
+	let valor = elemento.selectedOptions[0].text;
     $('#Label3').text('I.V.A. '+parseFloat(valor).toFixed(2)+'%');
 }
 
@@ -1274,6 +1306,7 @@ function tipo_facturacion(valor)
 				$('#LabelIVA').val(parseFloat(data.Total_IVA).toFixed(2));
 				$('#LabelTotal').val(parseFloat(data.Total_MN).toFixed(2));
 				$('#LabelTotal2').val(parseFloat(data.Total_MN).toFixed(2));
+
 			}
 		});
 	}
@@ -1495,8 +1528,58 @@ function tipo_facturacion(valor)
 		});
 	}
 
+	function crearAsientoFFA(parametros){
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/facturas_distribucionC.php?IngresarAsientoF=true',
+			data: { parametros: parametros},
+			dataType: 'json',
+			success: function (data) {
+				if (data == 2) {
+					Swal.fire('Ya no puede ingresar mas productos', '', 'info');
+				} else if (data == 1) {
+					var parametros =
+					{
+						'MBFecha': $('#MBFecha').val(),
+						'TxtEfectivo': $('#btnToggleInfoEfectivo').attr('stateval')=="1" ? $('#TxtEfectivo').val() : 0.00,
+						'TextFacturaNo': $('#TextFacturaNo').val(),
+						//'TxtNota': $('#TxtNota').val(),
+						//'TxtObservacion': $('#TxtObservacion').val(),
+						'TipoFactura': tc,
+						//'TxtGavetas': $('#TxtGavetas').val(),
+						'CodigoCliente': $('#codigoCliente').val(),
+						'email': $('#Lblemail').val(),
+						'CI': $('#LblRUC').val(),
+						'NombreCliente': $('#DCCliente option:selected').text(),
+						'TC': tc,
+						'Serie': $('#LblSerie').text(),
+						'DCBancoN': $('#btnToggleInfoBanco').attr('stateval')=="1" ? $('#DCBanco option:selected').text() : "",
+						'DCBancoC': $('#btnToggleInfoBanco').attr('stateval')=="1" ? $('#DCBanco').val() : "",
+						'T': $('#LblT').val(),
+						'TextBanco': $('#btnToggleInfoBanco').attr('stateval')=="1" ? $('#TextBanco').val() : "",
+						'TextCheqNo': $('#btnToggleInfoBanco').attr('stateval')=="1" ? $('#TextCheqNo').val() : "",
+						'CodDoc': $('#CodDoc').val(),
+						'valorBan':  $('#btnToggleInfoBanco').attr('stateval')=="1" ? $('#TextCheque').val() : 0.00,
+						'Cta_Cobrar': $('#Cta_CxP').val(),
+						'Autorizacion': $('#Autorizacion').val(),
+						'CodigoL': $('#CodigoL').val(),
+						'PorcIva': document.getElementById('DCPorcenIVA').selectedOptions[0].text,
+						//'cheking': $('#DCPorcenIVA').val(),
+						//'PorcIva': $('#DCPorcenIVA').val()
+					}
+					//generar_factura();
+				} else {
+					Swal.fire('Intente mas tarde', '', 'info');
+				}
+			}
+		});
+	}
+
 	function generar_factura() {
 		$('#myModal_espera').modal('show');
+
+		
+		
 		/*var tc = $('#DCLinea').val();
 		tc = tc.split(' ');*/
 
@@ -1526,12 +1609,17 @@ function tipo_facturacion(valor)
 			'Cta_Cobrar': $('#Cta_CxP').val(),
 			'Autorizacion': $('#Autorizacion').val(),
 			'CodigoL': $('#CodigoL').val(),
-			'PorcIva': $('#DCPorcenIVA').val(),
+			'PorcIva': document.getElementById('DCPorcenIVA').selectedOptions[0].text,
+			'FATextVUnit': (parseFloat($('#LabelTotal').val())/1).toFixed(2),
+			'FAVTotal': $('#LabelTotal').val(),
+			'FACodLinea': $('#DCLineas').val(),
+			'CodigoU': $('.asignTablaDistri')[0].children[10].textContent,
 			//'cheking': $('#DCPorcenIVA').val(),
 			//'PorcIva': $('#DCPorcenIVA').val()
 		}
 
 		console.log(parametros);
+
 		$.ajax({
 			type: "POST",
 			url: '../controlador/facturacion/facturas_distribucionC.php?generar_factura=true',
@@ -1540,68 +1628,158 @@ function tipo_facturacion(valor)
 			success: function (data) {
 				$('#myModal_espera').modal('hide');
 				// console.log(data);
-				if (data.respuesta == 1) {
-					Swal.fire({
-						type: 'success',
-						title: 'Factura Creada',
-						confirmButtonText: 'Ok!',
-						allowOutsideClick: false,
-					}).then(function () {
-						var url = '../../TEMP/' + data.pdf + '.pdf';
-						window.open(url, '_blank');
-						AdoLinea();
-						eliminar_linea('', '');
-					})
-				} else if (data.respuesta == -1) {
-					if(data.text=='' || data.text == null)
-	                 {
-	                    Swal.fire({
-	                        type: 'error',
-	                        title: 'XML devuelto',
-	                        text:'Error al generar XML o al firmar',
-	                        confirmButtonText: 'Ok!',
-	                        allowOutsideClick: false,
-	                    }).then(function () {
-	                        location.reload();
-	                    })
-	                   
-	                    tipo_error_sri(data.clave);
-	                 }else{
-	                Swal.fire({
-	                        type: 'error',
-	                        title: data.text,
-	                        confirmButtonText: 'Ok!',
-	                        allowOutsideClick: false,
-	                    }).then(function () {
-	                        location.reload();
-	                    })
-	                }
-				} else if (data.respuesta == 2) {
-					// Swal.fire('XML devuelto', '', 'error');
-					 Swal.fire({
-                        type: 'error',
-                        title: 'XML devuelto',
-                        text:'Error al generar XML o al firmar',
-                        confirmButtonText: 'Ok!',
-                        allowOutsideClick: false,
-                    }).then(function () {
-                        location.reload();
-                    })
-                   
-                    tipo_error_sri(data.clave);
+				if(data.length == 1){
+					if (data.respuesta == 1) {
+						Swal.fire({
+							type: 'success',
+							title: 'Factura Creada',
+							confirmButtonText: 'Ok!',
+							allowOutsideClick: false,
+						}).then(function () {
+							var url1 = '../../TEMP/' + data.pdf + '.pdf';
+							window.open(url, '_blank');
+							/*parametros = {
+								'TextVUnit': (parseFloat($('#LabelTotal').val())/1).toFixed(2),
+								'TextCant': 1,
+								'TC': "<?php echo $TC; ?>",
+								'TxtDocumentos': '.',
+								'Codigo': 'FA.99',
+								'fecha': $('#MBFecha').val(),
+								'CodBod': '',
+								'VTotal': $('#LabelTotal').val(),
+								'CodigoCliente': $('#codigoCliente').val(),
+								'TextServicios': '.',
+								'TextVDescto': 0,
+								'PorcIva': document.getElementById('DCPorcenIVA').selectedOptions[0].text
+							};*/
+							AdoLinea();
+							eliminar_linea('', '');
+							//crearAsientoFFA(parametros);
+						})
+					} else if (data.respuesta == -1) {
+						if(data.text=='' || data.text == null)
+						{
+							Swal.fire({
+								type: 'error',
+								title: 'XML devuelto',
+								text:'Error al generar XML o al firmar',
+								confirmButtonText: 'Ok!',
+								allowOutsideClick: false,
+							}).then(function () {
+								location.reload();
+							})
+						
+							tipo_error_sri(data.clave);
+						}else{
+						Swal.fire({
+								type: 'error',
+								title: data.text,
+								confirmButtonText: 'Ok!',
+								allowOutsideClick: false,
+							}).then(function () {
+								location.reload();
+							})
+						}
+					} else if (data.respuesta == 2) {
+						// Swal.fire('XML devuelto', '', 'error');
+						Swal.fire({
+							type: 'error',
+							title: 'XML devuelto',
+							text:'Error al generar XML o al firmar',
+							confirmButtonText: 'Ok!',
+							allowOutsideClick: false,
+						}).then(function () {
+							location.reload();
+						})
+					
+						tipo_error_sri(data.clave);
+					}
+					else if (data.respuesta == 4) {
+						Swal.fire('SRI intermitente intente mas tarde', '', 'info');
+					} else {
+						Swal.fire(data.text, '', 'error');
+					}
+				}else{
+					if (data[1].respuesta == 1) {
+						Swal.fire({
+							type: 'success',
+							title: 'Nota de Venta y Factura Creadas',
+							confirmButtonText: 'Ok!',
+							allowOutsideClick: false,
+						}).then(function () {
+							var url1 = '../../TEMP/' + data[0].pdf + '.pdf';
+							var url2 = '../../TEMP/' + data[1].pdf + '.pdf';
+							window.open(url1, '_blank');
+							window.open(url2, '_blank');
+							/*parametros = {
+								'TextVUnit': (parseFloat($('#LabelTotal').val())/1).toFixed(2),
+								'TextCant': 1,
+								'TC': "<?php echo $TC; ?>",
+								'TxtDocumentos': '.',
+								'Codigo': 'FA.99',
+								'fecha': $('#MBFecha').val(),
+								'CodBod': '',
+								'VTotal': $('#LabelTotal').val(),
+								'CodigoCliente': $('#codigoCliente').val(),
+								'TextServicios': '.',
+								'TextVDescto': 0,
+								'PorcIva': document.getElementById('DCPorcenIVA').selectedOptions[0].text
+							};*/
+							AdoLinea();
+							eliminar_linea('', '');
+							//crearAsientoFFA(parametros);
+						})
+					} else if (data[1].respuesta == -1) {
+						if(data[1].text=='' || data[1].text == null)
+						{
+							Swal.fire({
+								type: 'error',
+								title: 'XML devuelto',
+								text:'Error al generar XML o al firmar',
+								confirmButtonText: 'Ok!',
+								allowOutsideClick: false,
+							}).then(function () {
+								location.reload();
+							})
+						
+							tipo_error_sri(data[1].clave);
+						}else{
+						Swal.fire({
+								type: 'error',
+								title: data[1].text,
+								confirmButtonText: 'Ok!',
+								allowOutsideClick: false,
+							}).then(function () {
+								location.reload();
+							})
+						}
+					} else if (data[1].respuesta == 2) {
+						// Swal.fire('XML devuelto', '', 'error');
+						Swal.fire({
+							type: 'error',
+							title: 'XML devuelto',
+							text:'Error al generar XML o al firmar',
+							confirmButtonText: 'Ok!',
+							allowOutsideClick: false,
+						}).then(function () {
+							location.reload();
+						})
+					
+						tipo_error_sri(data[1].clave);
+					}
+					else if (data[1].respuesta == 4) {
+						Swal.fire('SRI intermitente intente mas tarde', '', 'info');
+					} else {
+						Swal.fire(data[1].text, '', 'error');
+					}
 				}
-				else if (data.respuesta == 4) {
-					Swal.fire('SRI intermitente intente mas tarde', '', 'info');
-				} else {
-					Swal.fire(data.text, '', 'error');
-				}
+				
 
 			},
 			error: (err) => {
 				Swal.fire('Error', 'Hubo un problema al guardar la factura.');
 			}
 		});
-		console.log(parametros);
 
 	}
 
@@ -1732,18 +1910,18 @@ function tipo_facturacion(valor)
 		<input type="date" name="MBFecha" id="MBFecha" class="form-control input-xs"
 			value="<?php echo date('Y-m-d'); ?>" onblur="DCPorcenIvaFD();">
 	</div>
-	<div class="col-sm-3">
+	<div class="col-sm-5">
 		<b>Tipo de Facturacion</b>
 		<select class="form-control input-xs" name="DCTipoFact2" id="DCTipoFact2" onblur="tipo_facturacion(this.value)">
 
 		</select>
 	</div>
-	<div class="col-sm-2">
+	<!--<div class="col-sm-2">
 		<b>I.V.A %</b>
 		<select class="form-control input-xs" name="DCPorcenIVA" id="DCPorcenIVA" onblur="cambiar_iva(this.value)">
 
 		</select>
-	</div>
+	</div>-->
 	<div class="col-sm-2">
 		<b id="Label1">FACTURA No.</b>
 		<div class="row">
@@ -2036,6 +2214,7 @@ function tipo_facturacion(valor)
 							<th style="display:none">Cod_Inv</th>
 							<th>Cheking</th>
 							<th>Modificar</th>
+							<th style="display:none">CodigoU</th>
 						</tr>
 					</thead>
 					<tbody id="cuerpoTablaDistri"></tbody>
@@ -2366,57 +2545,78 @@ function tipo_facturacion(valor)
 			</div>
 			<div class="modal-body" style="overflow-y: auto; height: fit-content; margin:5px">
 
-				<div class="col-sm-6 col-sm-offset-3">
+				<div class="col-sm-8 col-sm-offset-2">
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm-5">
+							<b>Cuenta x Cobrar</b>
+						</div>
+						<div class="col-sm-7">
+							<select class="form-control input-xs" id="DCLineas" name="DCLineas"
+								>
+								<option value="">Seleccione</option>
+							</select>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-5">
+							<b>I.V.A %</b>
+						</div>
+						<div class="col-sm-7">
+							<select class="form-control input-xs" style="width:100%" name="DCPorcenIVA" id="DCPorcenIVA" onblur="cambiar_iva(this)">
+
+							</select>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-5">
 							<b>Total Tarifa 0%</b>
 						</div>
-						<div class="col-sm-6">
+						<div class="col-sm-7">
 							<input type="text" name="LabelSubTotal" id="LabelSubTotal" class="form-control input-xs text-right"
 								value="0.00" style="color:red" readonly onblur="TarifaLostFocus();">
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm-5">
 							<b>Total Tarifa 12%</b>
 						</div>
-						<div class="col-sm-6">
+						<div class="col-sm-7">
 							<input type="text" name="LabelConIVA" id="LabelConIVA" class="form-control input-xs text-right"
 								value="0.00" style="color:red" readonly>
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm-5">
 							<b id="Label3">I.V.A</b>
 						</div>
-						<div class="col-sm-6">
+						<div class="col-sm-7">
 							<input type="text" name="LabelIVA" id="LabelIVA" class="form-control input-xs text-right" value="0.00"
 								style="color:red" readonly>
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm-5">
 							<b>Total Factura</b>
 						</div>
-						<div class="col-sm-6">
+						<div class="col-sm-7">
 							<input type="text" name="LabelTotal" id="LabelTotal" class="form-control input-xs text-right"
 								value="0.00" style="color:red" readonly>
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm-5">
 							<b>Total Fact (ME)</b>
 						</div>
-						<div class="col-sm-6">
+						<div class="col-sm-7">
 							<input type="text" name="LabelTotalME" id="LabelTotalME" class="form-control input-xs text-right"
 								value="0.00" style="color:red" readonly>
 						</div>
 					</div>
 					<div class="row" style="margin: 20px 0;">
-						<div class="col-sm-6">
+						<div class="col-sm-5" style="display:flex; justify-content:center; align-items:center;">
 							<button class="btn btn-default" id="btnToggleInfoEfectivo" stateval="0" onclick="toggleInfoEfectivo()">EFECTIVO</button>
 						</div>
-						<div class="col-sm-6">
+						<div class="col-sm-7" style="display:flex; justify-content:center; align-items:center;">
 							<button class="btn btn-default" id="btnToggleInfoBanco" stateval="0" onclick="toggleInfoBanco()">BANCO</button>
 						</div>
 						<!--<div class="col-sm-6">
@@ -2426,10 +2626,10 @@ function tipo_facturacion(valor)
 					</div>
 					<div id="campos_fact_efectivo" style="display:none;">
 						<div class="row">
-							<div class="col-sm-6">
+							<div class="col-sm-5">
 								<b>EFECTIVO</b>
 							</div>
-							<div class="col-sm-6">
+							<div class="col-sm-7">
 								<input type="text" name="TxtEfectivo" id="TxtEfectivo" class="form-control input-xs text-right"
 									value="0.00" onblur="calcular_pago()">
 							</div>
@@ -2437,18 +2637,21 @@ function tipo_facturacion(valor)
 					</div>
 					<div id="campos_fact_banco" style="display:none;">
 						<div class="row">
-							<div class="col-sm-12">
+							<div class="col-sm-5">
 								<b>CUENTA DEL BANCO</b>
+								
+							</div>
+							<div class="col-sm-7">
 								<select class="form-control input-xs select2" id="DCBanco" name="DCBanco">
 									<option value="">Seleccione Banco</option>
 								</select>
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-sm-3">
+							<div class="col-sm-5">
 								<b>Documento</b>
 							</div>
-							<div class="col-sm-9">
+							<div class="col-sm-7">
 								<input type="text" name="TextCheqNo" id="TextCheqNo" class="form-control input-xs" value=".">
 							</div>
 						</div>
@@ -2459,20 +2662,20 @@ function tipo_facturacion(valor)
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-sm-6">
+							<div class="col-sm-5">
 								<b>VALOR BANCO</b>
 							</div>
-							<div class="col-sm-6">
+							<div class="col-sm-7">
 								<input type="text" name="TextCheque" id="TextCheque" class="form-control input-xs text-right"
 									value="0.00" onblur="calcular_pago()">
 							</div>
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm-5">
 							<b>CAMBIO</b>
 						</div>
-						<div class="col-sm-6">
+						<div class="col-sm-7">
 							<input type="text" name="LblCambio" id="LblCambio" class="form-control input-xs text-right"
 								style="color: red;" value="0.00">
 						</div>

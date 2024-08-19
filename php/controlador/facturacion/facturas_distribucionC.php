@@ -81,6 +81,11 @@ if(isset($_GET['GuardarBouche'])){
 	 }
 }
 
+if (isset($_GET['DCLineas'])) {
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->DCLinea($parametros));
+ }
+
 if (isset($_GET['ActualizarAsientoF'])) {
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->actualizarAsientoF($parametros));
@@ -299,6 +304,16 @@ class facturas_distribucion
 		return $res;
 	}
 
+	function DCLinea($parametros)
+   {
+      $datos = $this->modelo->DCLinea($parametros['TC'], $parametros['Fecha']);
+      $lis = array();
+      foreach ($datos as $key => $value) {
+         $lis[] = array('codigo' => $value['Codigo'], 'nombre' => $value['Concepto']);
+      }
+      return $lis;
+   }
+
 	function consultarGavetas(){
 		//print_r($_SESSION);die();
 		$datos = $this->modelo->consultarGavetas();
@@ -334,6 +349,7 @@ class facturas_distribucion
 		return $respuesta;
 	}
 	function consultarEvaluacionFundaciones(){
+		//print_r($_SESSION);die();
 		$datos = $this->modelo->consultarEvaluacionFundaciones();
 		$respuesta = array();
 		if(count($datos) > 0){
@@ -1066,6 +1082,9 @@ class facturas_distribucion
 		if (isset($parametros['electronico'])) {
 			$electronico = $parametros['electronico'];
 		}
+		if (!isset($parametros['Serie'])) {
+			$parametros['Serie'] = $_SESSION['INGRESO']['Serie_FA'];
+		}
 		$Porc_Iva = floatval($parametros['PorcIva']/100);
 		$TextVUnit = $parametros['TextVUnit'];
 		$TextCant = $parametros['TextCant'];
@@ -1189,7 +1208,9 @@ class facturas_distribucion
 					SetAdoFields('CodBod', $parametros['CodBod']);
 					SetAdoFields('COSTO', $articulo['Costo']);
 					SetAdoFields('Total_Desc', $Dscto);
-					SetAdoFields('Cheking', $parametros['cheking']);
+					if(isset($parametros['cheking'])){
+						SetAdoFields('Cheking', $parametros['cheking']);
+					}
 					SetAdoFields('Serie', $Serie);
 					SetAdoFields('SERVICIO', $TextServicios);
 					if ($articulo['Costo'] > 0) {
@@ -1557,7 +1578,7 @@ class facturas_distribucion
 		// FechaValida MBFecha
 		$FechaTexto = $parametros['MBFecha'];
 		$FA = Calculos_Totales_Factura();
-
+		
 		// print_r(floatval(number_format($FA['Total_MN'],4,'.','')).'-'.floatval(number_format($parametros['TxtEfectivo'],4,'.','')).'-');
 		// print_r(floatval(number_format($FA['Total_MN'],4,'.',''))-floatval(number_format($parametros['TxtEfectivo'],4,'.',''))); die();
 		if ((floatval(number_format($parametros['TxtEfectivo'], 4, '.', '')) + floatval(number_format($parametros['valorBan'], 4, '.', '')) - floatval(number_format($FA['Total_MN'], 4, '.', ''))) >= 0) {
@@ -1576,11 +1597,11 @@ class facturas_distribucion
 				$FA['TextCI'] = $parametros['CI'];
 				$FA['TxtEmail'] = $parametros['email'];
 				$FA['Cliente'] = trim(str_replace($parametros['CI'] . ' -', '', $parametros['NombreCliente']));
-				if($parametros['TC'] == "NDO" || $parametros['TC'] == "NDU"){
+				$FA['TC'] = $parametros['TC'];
+				/*if($parametros['TC'] == "NDO" || $parametros['TC'] == "NDU"){
 					$FA['TC'] = "DO";
 				}else{
-					$FA['TC'] = $parametros['TC'];
-				}
+				}*/
 				$FA['Serie'] = $parametros['Serie'];
 				$FA['Cta_CxP'] = $parametros['Cta_Cobrar'];
 				$FA['Autorizacion'] = $parametros['Autorizacion'];
@@ -1597,20 +1618,78 @@ class facturas_distribucion
 				$FA['TxtEfectivo'] = $parametros['TxtEfectivo'];
 				$FA['Cod_CxC'] = $parametros['CodigoL'];
 				$FA['CLAVE'] = ".";
+				$FA['TxtPorcIva'] = $parametros['PorcIva'];
 				$FA['Porc_IVA'] = (floatval($parametros['PorcIva'])/100);
+				$FA['FATextVUnit'] = $parametros['FATextVUnit'];
+				$FA['FAVTotal'] = $parametros['FAVTotal'];
+				$FA['FACodLinea'] = $parametros['FACodLinea'];
 
 
 
 				$Moneda_US = False;
 				$TextoFormaPago = G_PAGOCONT;
 				// print_r($parametros);die();	       
-				return $this->ProcGrabar($FA);
+				//return $this->ProcGrabar($FA);
+				$r = $this->ProcGrabar($FA);
+				if($r['respuesta'] == 1){
+					// Hacer el borrado Trans_Comision
+					$r2 = $this->generar_factura_FA($FA, $r);
+					$this->modelo->EliminarTransComision($FA['Fecha'], $FA['CodigoC'], $parametros['CodigoU']);
+					return $r2;
+				}
+
+				return $r;
 			//} else {
 			//	return array('respuesta' => -1, 'text' => "Cuenta CxC sin setear en catalogo de lineas");
 			//}
 		} else {
 			return array('respuesta' => -5, 'text' => "El Efectivo no alcanza para grabar");
 		}
+	}
+
+	function generar_factura_FA($FA, $res){
+		$FA['TC'] = 'FA';
+		$params = array(
+			'TextVUnit' => $FA['FATextVUnit'],
+			'VTotal' => $FA['FAVTotal'],
+			'fecha' => $FA['Fecha'],
+			'CodigoCliente' => $FA['codigoCliente'],
+			'PorcIva' => $FA['TxtPorcIva'],
+			'TC' => $FA['TC'],
+			'TextCant' => 1,
+			'TxtDocumentos' => '.',
+			'Codigo' => 'FA.99',
+			'CodBod' => '',
+			'TextServicios' => '.',
+			'TextVDescto' => '0',
+		);
+		$this->IngresarAsientoF($params);
+
+		$Lineas = $this->modelo->DCLinea($FA['TC'], $FA['Fecha'], $FA['FACodLinea']);
+		$FA['Serie'] = $Lineas[0]['Serie'];
+		$FA['Cta_CxP'] = $Lineas[0]['CxC'];
+		$FA['Autorizacion'] = $Lineas[0]['Autorizacion'];
+		$FA['CodigoL'] = $Lineas[0]['Codigo'];
+
+		$FATotales = Calculos_Totales_Factura();
+		$FA['SubTotal'] = $FATotales['SubTotal'];
+		$FA['Con_IVA'] = $FATotales['Con_IVA'];
+		$FA['Sin_IVA'] = $FATotales['Sin_IVA'];
+		$FA['Descuento'] = $FATotales['Descuento'];
+		$FA['Total_IVA'] = $FATotales['Total_IVA'];
+		$FA['Total_MN'] = $FATotales['Total_MN'];
+		$FA['Total_ME'] = $FATotales['Total_ME'];
+		$FA['Descuento2'] = $FATotales['Descuento2'];
+		$FA['Descuento_0'] = $FATotales['Descuento_0'];
+		$FA['Descuento_X'] = $FATotales['Descuento_X'];
+		$FA['Servicio'] = $FATotales['Servicio'];
+
+		$FA['Total'] = $FA['Total_MN'];
+
+		$r = $this->ProcGrabar($FA);
+
+		$r2 = array(0 => $r, 1 => $res);
+		return $r2;
 	}
 
 	function generar_factura_abono_cero($parametros)
@@ -1814,7 +1893,7 @@ class facturas_distribucion
 				Control_Procesos("F", "Grabar Cheque Protestado No. " . $Factura_No, '');
 			} else if ($TipoFactura == "LC") {
 				Control_Procesos("F", "Grabar Liquidacion de Compras No. " . $Factura_No, '');
-			} else if ($TipoFactura == "DO") {
+			} else if ($TipoFactura == "NDO" || $TipoFactura == "NDU") {
 				Control_Procesos("F", "Grabar Nota de Donacion No. " . $Factura_No, '');
 			} else {
 				Control_Procesos("F", "Grabar Factura No. " . $Factura_No, '');
@@ -1827,6 +1906,7 @@ class facturas_distribucion
 
 			//print_r($FA);die();
 			$r = Grabar_Factura1($FA);
+			//print_r($FA['TC']);die();
 			if ($r != 1) {
 				return $r;
 			}
@@ -1909,7 +1989,7 @@ class facturas_distribucion
 				// print_r('si');die();
 				// print_r('drrrrddd');die();
 				$imp_guia = '';
-				if ($FA['TC'] <> "DO") {
+				if ($FA['TC'] <> "NDO" || $FA['TC'] <> "NDU") {
 					//la respuesta puede se texto si envia numero significa que todo saliobien
 					$rep = $this->sri->Autorizar_factura_o_liquidacion($FA);
 					$clave = $this->sri->Clave_acceso($TA['Fecha'], '01', $TA['Serie'], $Factura_No);

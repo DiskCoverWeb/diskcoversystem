@@ -21,7 +21,7 @@ class facturas_distribucionM
 
   function ConsultarProductos($params){
     
-    $sql = "SELECT DISTINCT TK.CodBodega AS CodBodega2, TC.ID,TC.Fecha,TC.Fecha_C,A.Nombre_Completo,TC.Total,TC.CodBodega,CodigoC,TC.Codigo_Inv
+    $sql = "SELECT DISTINCT TK.CodBodega AS CodBodega2, TC.ID,TC.Fecha,TC.Fecha_C,A.Nombre_Completo,TC.Total,TC.CodBodega,CodigoC,TC.Codigo_Inv,TC.CodigoU
             FROM Trans_Comision TC 
             INNER JOIN Accesos A ON TC.CodigoU = A.Codigo 
             INNER JOIN Trans_Kardex TK ON TK.Codigo_Barra = TC.CodBodega
@@ -40,6 +40,25 @@ class facturas_distribucionM
             WHERE TK.Codigo_Barra = '".$codBarras."'";
     return $this->db->datos($sql);
   }*/
+
+  function DCLinea($TC, $Fecha, $Codigo = false)
+  {
+    $sql = "SELECT Codigo, Concepto, CxC, Serie, Autorizacion 
+      FROM Catalogo_Lineas 
+      WHERE TL <> 0 
+      AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
+      AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+      AND Fact = '" . $TC . "' 
+      AND Serie = '".$_SESSION['INGRESO']['Serie_FA']."' ";
+
+    if($Codigo){
+      $sql .= "AND Codigo = '".$Codigo."' ";
+    }
+    $sql .= "AND Fecha <= '" . $Fecha . "' 
+      AND Vencimiento >='" . $Fecha . "' 
+      ORDER BY Codigo ";
+    return $this->db->datos($sql);
+  }
 
   function consultarGavetas(){
     $sql = "SELECT Periodo,TC,Codigo_Inv,Producto
@@ -163,6 +182,16 @@ class facturas_distribucionM
             AND LEN(Fact) = 3
             ORDER BY Codigo";
     return $this->db->datos($sql);
+  }
+
+  function EliminarTransComision($fecha, $cliente, $usuario){
+    $sql = "DELETE Trans_Comision
+            WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+            AND Fecha = '".$fecha."' 
+            AND CodigoC = '".$cliente."' 
+            AND CodigoU = '".$usuario."'";
+    return $this->db->String_Sql($sql);
   }
 
   function Listar_Clientes_PV($query, $parametros)
