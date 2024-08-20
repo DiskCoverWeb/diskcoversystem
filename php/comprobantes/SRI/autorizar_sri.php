@@ -2543,7 +2543,7 @@ function Autorizar_retencion($parametros)
       $TFA[0]["Serie_R"] = $datos[0]["Serie_Retencion"];
       $TFA[0]["Retencion"] = $datos[0]["SecRetencion"];
       $TFA[0]["Autorizacion_R"] = $datos[0]["AutRetencion"];
-      $TFA[0]["Autorizacion"] = $datos[0]["Autorizacion"];
+      $TFA[0]["Autorizacion"] = generaCeros($datos[0]["Autorizacion"],10);
       $TFA[0]["Fecha"] = $datos[0]["FechaEmision"];
       $TFA[0]["Vencimiento"] = $datos[0]["FechaRegistro"];
       $TFA[0]["Serie"] = $datos[0]["Establecimiento"].$datos[0]["PuntoEmision"];
@@ -2564,17 +2564,17 @@ function Autorizar_retencion($parametros)
 
       $aut =  $this->Clave_acceso($TFA[0]['Fecha']->format('Y-m-d'),'07',$TFA[0]["Serie_R"],$TFA[0]["Retencion"]);
       $TFA[0]["ClaveAcceso"]  = $aut;
+      $TFA[0]['codigoPorcentaje'] = $datos[0]['PorcentajeIva'];
 
-      	$TFA[0]['codigoPorcentaje']=0;
-      	$TFA[0]['PorcentajeIva'] =floatval($datos[0]['PorcentajeIva']);
-      	
-	    $porceiva = (floatval($datos[0]['PorcentajeIva']));
-	    if($porceiva>0)
+	    if($TFA[0]['codigoPorcentaje']!='.' && $TFA[0]['codigoPorcentaje']!='')
 	    {
-	    	$iva = Porcentajes_IVA($fecha,$porceiva);
+	    	$iva = Porcentajes_IVA($fecha,false,$TFA[0]['codigoPorcentaje']);
+
+	    	// print_r($iva);die();
 	    	if(count($iva)>0)
 	    	{
-	    		$TFA[0]['codigoPorcentaje']=$iva[0]['Codigo'];
+	   			$TFA[0]['PorcentajeIva'] =$iva[0]['Porc'];
+      
 	    	}
 	    }
 
@@ -2729,6 +2729,8 @@ function generar_xml_retencion($cabecera,$detalle)
         $xml_infotributaria->appendChild($xml_secuencial);
         $xml_infotributaria->appendChild($xml_dirMatriz);
 
+        // print_r($RIMPE);die();
+
         if(count($RIMPE)>0)
 		{
 			if($RIMPE['@Agente']!='.' && $RIMPE['@Agente']!='')
@@ -2813,11 +2815,11 @@ function generar_xml_retencion($cabecera,$detalle)
         $Total_Propinas = 0;
         $Total_Comision = 0;
         $Total_Sin_No_IVA = 0;
-        $Total_Sin_IVA = $detalle[0]['BaseImponible'];
-        $Total_Con_IVA = $detalle[0]['BaseImpGrav'];
-        $Total_IVA = $detalle[0]['MontoIva'];
-        $Total_SubTotal = $Total_Sin_IVA + $Total_Con_IVA;
-        $Total_Factura = $Total_SubTotal + $Total_IVA;
+        $Total_Sin_IVA = number_format($detalle[0]['BaseImponible'],2,'.','');
+        $Total_Con_IVA = number_format($detalle[0]['BaseImpGrav'],2,'.','');
+        $Total_IVA = number_format($detalle[0]['MontoIva'],2,'.','');
+        $Total_SubTotal = number_format($Total_Sin_IVA + $Total_Con_IVA,2,'.','');
+        $Total_Factura = number_format($Total_SubTotal + $Total_IVA,2,'.','');
 
 
 
@@ -2909,9 +2911,9 @@ function generar_xml_retencion($cabecera,$detalle)
           	$xml_retencion =$xml->createElement("retencion");
 	        $xml_codigo = $xml->createElement("codigo",'1');
 	        $xml_codigoretencion = $xml->createElement("codigoRetencion",$value['CodRet']);
-	        $xml_baseimponible3= $xml->createElement("baseImponible",$value['BaseImp']);
+	        $xml_baseimponible3= $xml->createElement("baseImponible",number_format($value['BaseImp'],2,'.',''));
 	        $xml_porcentajeretencion = $xml->createElement("porcentajeRetener",number_format(($value["Porcentaje"] * 100),2,'.',''));
-	        $xml_valorretenido = $xml->createElement("valorRetenido",$value['ValRet']);
+	        $xml_valorretenido = $xml->createElement("valorRetenido",number_format($value['ValRet'],2,'.',''));
 
 	        $xml_retencion->appendChild($xml_codigo);
 	        $xml_retencion->appendChild($xml_codigoretencion);
@@ -2940,9 +2942,9 @@ function generar_xml_retencion($cabecera,$detalle)
 	    		break;
 	    	}
 	    	
-	    	$Total = $detalle[0]["MontoIvaBienes"];
+	    	$Total = number_format($detalle[0]["MontoIvaBienes"], 2,'.','');
             $Retencion = intval($detalle[0]["Porc_Bienes"]);
-            $Valor = number_format(($Total * ($Retencion / 100)), 2);
+            $Valor = number_format(($Total * ($Retencion / 100)), 2,'.','');
 
 
             $xml_codigo = $xml->createElement("codigo",'2');
@@ -2976,9 +2978,9 @@ function generar_xml_retencion($cabecera,$detalle)
 	    		default:  $CodigoA = '2';
 	    		break;
 	    	}
-	    	$Total = $detalle[0]["MontoIvaServicios"];
+	    	$Total =  number_format($detalle[0]["MontoIvaServicios"], 2,'.','');
             $Retencion = intval($detalle[0]["Porc_Servicios"]);
-            $Valor = number_format(($Total * ($Retencion / 100)), 2);
+            $Valor = number_format(($Total * ($Retencion / 100)), 2,'.','');
 
 	    	$xml_codigo = $xml->createElement("codigo",'2');
 	        $xml_codigoretencion = $xml->createElement("codigoRetencion",$CodigoA);

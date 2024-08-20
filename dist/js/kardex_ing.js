@@ -237,7 +237,7 @@ function ddl_DCPorcenIva(fecha) {
         success:  function (response) {
         	// console.log(response);
         	$.each(response,function(i,item){            
-        		opcion+='<option value="'+item.Porc+'">'+item.Porc+'</option>';
+        		opcion+='<option value="'+item.Codigo+'">'+item.Porc+'</option>';
         	})
         	$('#DCPorcenIva').html(opcion);
           $('#DCPorcenIva').val(ini);

@@ -9474,7 +9474,7 @@ function Validar_Porc_IVA($FechaIVA)
       return $Porc_IVA;
 }
 
-function Porcentajes_IVA($Fecha,$porcentaje=false){
+function Porcentajes_IVA($Fecha,$porcentaje=false,$codPorce=false){
   $conn = new db();
   $sql = "SELECT Porc as 'codigo',Porc as 'nombre',T.*
           FROM Tabla_Por_ICE_IVA T
@@ -9484,6 +9484,10 @@ function Porcentajes_IVA($Fecha,$porcentaje=false){
           if($porcentaje)
           {
             $sql.=" AND Porc = '".$porcentaje."'";
+          }
+           if($codPorce)
+          {
+            $sql.=" AND Codigo = '".$codPorce."'";
           }
   $sql.="ORDER BY Porc DESC";
 
