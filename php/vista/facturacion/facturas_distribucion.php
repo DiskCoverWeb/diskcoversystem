@@ -23,6 +23,8 @@ if (isset ($_GET['tipo'])) {
 </style>
 <script type="text/javascript">
 	var datosFact = "NDO";
+	var url_nd;
+	var docbouche;
 	eliminar_linea('', '');
 	$(document).ready(function () {
 		let area = $('#contenedor-pantalla').parent();
@@ -72,6 +74,14 @@ if (isset ($_GET['tipo'])) {
 		DCTipoFact2();
 		//DCPorcenIvaFD();
 	});
+
+	function imprimirNotaDonacion(){
+		if(url_nd != undefined){
+			window.open(url_nd, '_blank');
+		}else{
+			Swal.fire('Error', 'No se creó correcatamente la Nota de Donación', 'error');
+		}
+	}
 
 	function DCLineas() {
 		var parametros =
@@ -1391,7 +1401,7 @@ function tipo_facturacion(valor)
 	}
 
 	function guardar_bouche(){
-		$('#myModal_espera').modal('show');
+		//$('#myModal_espera').modal('show');
 		let formData = new FormData();
 		formData.append('file', $('#archivoAdd')[0].files[0]);
 		formData.append('n_factura', $('#TextFacturaNo').val());
@@ -1406,13 +1416,14 @@ function tipo_facturacion(valor)
 			data: formData,
 			dataType: 'json',
 			success: function (respuesta) {
-				$('#myModal_espera').modal('hide');
 				if(respuesta['res'] == 1){
 					/*let ruta = '../../TEMP/catalogo_procesos/' + respuesta['imagen'];
 					$('#picture').val(respuesta['imagen'].split('.')[0]);
 					$('#imageElement').prop('src',ruta);*/
+					docbouche = respuesta['documento'];
 					generar_factura();
 				}else{
+					$('#myModal_espera').modal('hide');
 					/*$('#picture').val(".");
 					$('#imageElement').prop('src','');
 					Swal.fire("Error", "Hubo un problema al mostrar la imagen", "error");*/
@@ -1465,6 +1476,7 @@ function tipo_facturacion(valor)
 				if(data['res'] == 1){
 					grabar_gavetas();
 				}else{
+					$('#myModal_espera').modal('hide');
 					Swal.fire('Error', 'Hubo un error al guardar la evaluacion');
 				}
 			}
@@ -1472,7 +1484,7 @@ function tipo_facturacion(valor)
 	}
 
 	function grabar_gavetas(){
-		$('#myModal_espera').modal('show');
+		//$('#myModal_espera').modal('show');
 		let parametros = {
 			'TC': datosFact,
 			'cliente': $('#codigoCliente').val(),
@@ -1519,6 +1531,7 @@ function tipo_facturacion(valor)
 						generar_factura();
 					}
 				}else{
+					$('#myModal_espera').modal('hide');
 					Swal.fire('Error', 'Hubo un problema al subir la actualizacion de gavetas.');
 				}
 			},
@@ -1576,7 +1589,7 @@ function tipo_facturacion(valor)
 	}
 
 	function generar_factura() {
-		$('#myModal_espera').modal('show');
+		//$('#myModal_espera').modal('show');
 
 		
 		
@@ -1618,6 +1631,10 @@ function tipo_facturacion(valor)
 			//'PorcIva': $('#DCPorcenIVA').val()
 		}
 
+		if(docbouche != undefined && docbouche.trim() != ''){
+			parametros['Comprobante'] = docbouche;
+		}
+
 		console.log(parametros);
 
 		$.ajax({
@@ -1636,7 +1653,7 @@ function tipo_facturacion(valor)
 							confirmButtonText: 'Ok!',
 							allowOutsideClick: false,
 						}).then(function () {
-							var url1 = '../../TEMP/' + data.pdf + '.pdf';
+							var url = '../../TEMP/' + data.pdf + '.pdf';
 							window.open(url, '_blank');
 							/*parametros = {
 								'TextVUnit': (parseFloat($('#LabelTotal').val())/1).toFixed(2),
@@ -1707,10 +1724,11 @@ function tipo_facturacion(valor)
 							confirmButtonText: 'Ok!',
 							allowOutsideClick: false,
 						}).then(function () {
-							var url1 = '../../TEMP/' + data[0].pdf + '.pdf';
-							var url2 = '../../TEMP/' + data[1].pdf + '.pdf';
-							window.open(url1, '_blank');
-							window.open(url2, '_blank');
+							$('#imprimir_nd').removeAttr('disabled');
+							var url = '../../TEMP/' + data[0].pdf + '.pdf';
+							url_nd = '../../TEMP/' + data[1].pdf + '.pdf';
+							
+							window.open(url, '_blank');
 							/*parametros = {
 								'TextVUnit': (parseFloat($('#LabelTotal').val())/1).toFixed(2),
 								'TextCant': 1,
@@ -1876,7 +1894,7 @@ function tipo_facturacion(valor)
 			<!--<a title="BOUCHE" class="btn btn-default" onclick="$('#modalBoucher').modal('show');">
 				<img src="../../img/png/adjuntar-archivo.png" height="32px">
 			</a>-->
-			<a title="IMPRIMIR" class="btn btn-default">
+			<a title="IMPRIMIR" id="imprimir_nd" class="btn btn-default" onclick="imprimirNotaDonacion()" disabled>
 				<img src="../../img/png/paper.png" height="32px">
 			</a>
 			<a title="FACTURAR" class="btn btn-default" onclick="generar()">
