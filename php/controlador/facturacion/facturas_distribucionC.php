@@ -55,30 +55,30 @@ if(isset($_GET['GuardarBouche'])){
      $uploadfile_temporal=$file['file']['tmp_name'];
      $tipo = explode('/', $file['file']['type']);
 	 $nom_archivo = $_POST['fecha'].$_POST['n_factura'].$_POST['serie'];
-     $nombre = $_SESSION['INGRESO']['item'].'_'.$post['nom_archivo'].'_pago.'.$tipo[1];
+     $nombre = $_SESSION['INGRESO']['item'].'_'.$nom_archivo.'_pago.'.$tipo[1];
     // print_r($file);print_r($post);die();
      $nuevo_nom=$ruta.$nombre;
-
+	 
+	 $r = array(
+		"res" => 0,
+		"documento" => "No existe documento."
+	 );
      if (is_uploaded_file($uploadfile_temporal))
      {
-
-        move_uploaded_file($uploadfile_temporal,$nuevo_nom);
+		 
+		if(move_uploaded_file($uploadfile_temporal,$nuevo_nom)){
+			$r['res'] = 1;
+			$r['documento'] = $nombre;
+		}
         /*SetAdoAddNew("Clientes_Datos_Extras");          
         SetAdoFields("Evidencias",$nombre);
 
         SetAdoFieldsWhere('Item',$_SESSION['INGRESO']['item']);
         SetAdoFieldsWhere('Codigo',$post['nom_1']);
         SetAdoUpdateGeneric();*/
-        return array(
-			"res" => 1,
-			"documento" => $nombre
-		);
-     }else{
-		return array(
-			"res" => 0,
-			"documento" => "No existe documento."
-		);
-	 }
+        
+     }
+	 echo json_encode($r);
 }
 
 if (isset($_GET['DCLineas'])) {
@@ -1623,8 +1623,9 @@ class facturas_distribucion
 				$FA['FATextVUnit'] = $parametros['FATextVUnit'];
 				$FA['FAVTotal'] = $parametros['FAVTotal'];
 				$FA['FACodLinea'] = $parametros['FACodLinea'];
-
-
+				if(isset($parametros['Comprobante'])){
+					$FA['Comprobante'] = $parametros['Comprobante'];
+				}
 
 				$Moneda_US = False;
 				$TextoFormaPago = G_PAGOCONT;
@@ -1952,6 +1953,7 @@ class facturas_distribucion
 				$TA['Banco'] = $FA['TextBanco'];
 				$TA['Cheque'] = $FA['TextCheqNo'];
 				$TA['Factura'] = $Factura_No; //pendiente
+				if(isset($FA['Comprobante'])){$TA['Comprobante'] = $FA['Comprobante'];}
 				$Total_Bancos = 0;
 				$TA['Abono'] = $FA['valorBan'];
 				// print_r($TA);die();
