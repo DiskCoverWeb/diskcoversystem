@@ -175,6 +175,61 @@ class solicitud_materialM
 
 	}
 
+	// ----------------------------------aprobacion solicitud proveedor----------------------------------------------------
+
+
+	function pedido_aprobacion_solicitados_proveedor($query)
+	{
+		$sql = "SELECT  Orden_No,Nombre_Completo
+		FROM Trans_Pedidos T
+		INNER JOIN Accesos A on T.CodigoU = A.Codigo
+		WHERE  TC = 'T' ";
+		if($query)
+		{
+			$sql.=" AND Orden_No+' '+Nombre_Completo like  '%".$query."%'";
+		}
+		$sql.="
+		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND Item='".$_SESSION['INGRESO']['item']."' 
+		AND CodigoU ='".$_SESSION['INGRESO']['CodigoU']."' 
+		group by Orden_No,Nombre_Completo ";
+		// print_r($sql);die();
+		$datos = $this->conn->datos($sql);
+       	return $datos;
+	}
+
+	function lineas_pedido_aprobacion_solicitados_proveedor($orden)
+	{
+		$sql = "SELECT  ".Full_Fields('Trans_Pedidos')." 
+		FROM Trans_Pedidos 
+		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND TC = 'T' 
+		 AND Orden_No = '".$orden."'
+		AND Item='".$_SESSION['INGRESO']['item']."' 
+		AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' ";
+		$datos = $this->conn->datos($sql);
+       	return $datos;
+	}
+
+	function proveedores_seleccionados_x_producto($producto,$orden=false)
+	{
+		$sql = "SELECT  T.*,C.* 
+		FROM Trans_Ticket  T
+		INNER JOIN Clientes C ON T.CodigoC = C.Codigo
+		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND  Item='".$_SESSION['INGRESO']['item']."' 
+		AND Codigo_Inv = '".$producto."' ";
+		if($orden)
+		{
+			$sql.="AND Orden_No = '".$orden."'";
+		}
+
+		// print_r($sql);die();
+		$datos = $this->conn->datos($sql);
+       	return $datos;
+	}
+
+
 
 
 } 

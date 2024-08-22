@@ -89,6 +89,24 @@ if(isset($_GET['grabar_envio_solicitud']))
 	echo json_encode($controlador->grabar_envio_solicitud($parametros));
 }
 
+if(isset($_GET['pedido_aprobacion_solicitados_proveedor']))
+{
+	$query = '';
+	if(isset($_GET['q']))
+	{
+		$query = $_GET['q'];
+	}
+	echo json_encode($controlador->pedido_aprobacion_solicitados_proveedor($query));
+}
+
+
+if(isset($_GET['lineas_pedido_aprobacion_solicitados_proveedor']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->lineas_pedido_aprobacion_solicitados_proveedor($parametros));
+}
+
+
 
 
 class solicitud_materialC
@@ -259,7 +277,7 @@ class solicitud_materialC
 
 	}
 
-	//---------------------------------------------------------envio solicitud proveedor-----------------------------------------------------
+	//--------------------------------------------------envio solicitud proveedor-----------------------------------------------------
 
 	function pedido_solicitados_proveedor($query)
 	{
@@ -303,13 +321,14 @@ class solicitud_materialC
 					<td>'.$value['Fecha']->format('Y-m-d').'</td>
 					<td width="28%">
 					<select class="form-control select2_prove" id="ddl_selector_'.$value['ID'].'" onclick="llenarProveedores(\'ddl_selector_'.$value['ID'].'\')" name="ddl_selector_'.$value['ID'].'[]" multiple="multiple" row="2">
-							<option disabled>Seleccione proveedor</option>
+							<option disabled value="">Seleccione proveedor</option>
 						</select>
 
 					</td>
-					<td>
+				<!---	<td>
 						<button class="btn btn-sm btn-primary" onclick="eliminar_linea(\''.$value['ID'].'\')"><i class="fa fa fa-save"></i></button>
 					</td>
+					-->
 				</tr>';
 		}
 		return $tr;
@@ -345,16 +364,82 @@ class solicitud_materialC
 	        	SetAdoUpdateGeneric();
 
 			}
-
 			// print_r($linea);die();
-
-		}
-		
+		}		
 		return 1;
-
-
-
 		// print_r($parametros);die();
+	}
+
+
+	//-------------------------------------------aprobacion solicitud proveedor-----------------------------------------------------
+
+	function pedido_aprobacion_solicitados_proveedor($query)
+	{
+		$datos = $this->modelo->pedido_aprobacion_solicitados_proveedor($query);
+		$lista = array();
+		foreach ($datos as $key => $value) {
+			$lista[] = array('id'=>$value['Orden_No'],'text'=>$value['Nombre_Completo'].' -- '.$value['Orden_No'],'data'=>$value);
+		}
+
+		return $lista;
+		// print_r($datos);die();
+	}
+
+	// function lista_proveedores($query)
+	// {
+	// 	$datos = $this->modelo->proveedores($query);
+
+	// 	// print_r($datos);die();
+	// 	$lista = array();
+	// 	foreach ($datos as $key => $value) {
+	// 		$lista[] = array('id'=>$value['Codigo'],'text'=>$value['Cliente'],'data'=>$value);
+	// 	}
+
+	// 	return $lista;
+	// 	// print_r($datos);die();
+	// }
+
+
+
+	function  lineas_pedido_aprobacion_solicitados_proveedor($parametros)
+	{
+		// print_r($parametros);die();
+		$datos = $this->modelo->lineas_pedido_aprobacion_solicitados_proveedor($parametros['orden']);
+		$tr = '';
+		foreach ($datos as $key => $value) {
+			// print_r($value);die();
+			$proveedores = $this->modelo->proveedores_seleccionados_x_producto($value['Codigo_Inv']);
+			$op = '';
+			foreach ($proveedores as $key2 => $value2) {
+				$op.='<option value="'.$value['CodigoC'].'"  selected="">'.$value2['Cliente'].'</option>';
+			}
+			// print_r($proveedores);die();
+			$tr.='<tr>
+					<td>'.($key+1).'</td>
+					<td>'.$value['Codigo_Inv'].'</td>
+					<td>'.$value['Producto'].'</td>
+					<td>'.$value['Cantidad'].'</td>
+					<td>'.$value['Fecha']->format('Y-m-d').'</td>
+					<td width="28%">
+					<select class="form-control select2_prove" id="ddl_selector_'.$value['ID'].'" name="ddl_selector_'.$value['ID'].'[]" multiple="multiple" row="2" disabled >
+							'.$op.'
+						</select>
+
+					</td>
+					<td width="28%">
+					<select class="form-control select2_prove" id="ddl_proveedor_'.$value['ID'].'" name="ddl_proveedor_'.$value['ID'].'">
+							'.$op.'
+						</select>
+
+					</td>
+
+				<!---	<td>
+						<button class="btn btn-sm btn-primary" onclick="eliminar_linea(\''.$value['ID'].'\')"><i class="fa fa fa-save"></i></button>
+					</td>
+					-->
+				</tr>';
+		}
+		return $tr;
 	}
 	
 

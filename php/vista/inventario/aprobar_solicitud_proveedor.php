@@ -12,7 +12,7 @@
         placeholder: 'Seleccione',
         width:'100%',
         ajax: {
-            url:   '../controlador/inventario/solicitud_materialC.php?pedido_solicitados_proveedor=true',
+            url:   '../controlador/inventario/solicitud_materialC.php?pedido_aprobacion_solicitados_proveedor=true',
             dataType: 'json',
             delay: 250,
             processResults: function (data) {
@@ -47,14 +47,14 @@
 
   // } 
 
-  function lineas_pedido_solicitados_proveedor(orden)
+  function lineas_pedido_aprobacion_solicitados_proveedor(orden)
   {     
       var parametros = 
       {
         'orden':orden,
       }
       $.ajax({
-          url:   '../controlador/inventario/solicitud_materialC.php?lineas_pedido_solicitados_proveedor=true',
+          url:   '../controlador/inventario/solicitud_materialC.php?lineas_pedido_aprobacion_solicitados_proveedor=true',
           type:  'post',
           data: {parametros:parametros},
           dataType: 'json',
@@ -201,7 +201,7 @@
       <div class="box-body">
         <div class="col-xs-4">
           <b>Numero de orden </b>
-          <select class="form-control" id="ddl_pedidos" name="ddl_pedidos" onchange="lineas_pedido_solicitados_proveedor(this.value)">
+          <select class="form-control" id="ddl_pedidos" name="ddl_pedidos" onchange="lineas_pedido_aprobacion_solicitados_proveedor(this.value)">
             <option value="">Seleccione pedidos</option>
           </select>
         </div>
@@ -225,7 +225,9 @@
               <th>Producto</th>
               <th>Cantidad</th>
               <th>Fecha</th>
-              <th width="28%"></th>
+              <th width="28%">Proveedores proforma</th>
+              <th width="28%">Proveedor Seleccionado</th>
+              <!-- <th></th> -->
             </thead>
             <tbody id="tbl_body">
              <!--  <tr>
