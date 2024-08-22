@@ -1451,8 +1451,13 @@ class facturas_distribucion
 	}
 
 	function grabar_gavetas($parametros){
-		$arrGavetas = $parametros['gavetas'];
-		$res1 = 0;
+		$arrGavetas = array();
+		$res1 = 1;
+		if(isset($parametros['gavetas']))
+		{
+			$arrGavetas = $parametros['gavetas'];
+			$res1 = 0;
+		}
 		foreach($arrGavetas as $key => $value){
 			$producto = Leer_Codigo_Inv($value['cod_inv'], $parametros["fecha"], $CodBodega='', $CodMarca='');
 			$gaveta = $producto['datos'];

@@ -30,6 +30,7 @@ if (isset ($_GET['tipo'])) {
 		let area = $('#contenedor-pantalla').parent();
     	area.css('background-color', 'rgb(247, 232, 175)');
 		//catalogoLineas();
+		//toggleInfoEfectivo();
 		DCLineas();
 		preseleccionar_opciones();
 		eventos_select();
@@ -126,6 +127,7 @@ if (isset ($_GET['tipo'])) {
 			btn.addClass('btn-primary');
 			btn.removeClass('btn-default');
 			btn.attr('stateval', '1');
+			$('#TxtEfectivo').val(0);
 		}
 	}
 	
@@ -143,6 +145,7 @@ if (isset ($_GET['tipo'])) {
 			btn.addClass('btn-primary');
 			btn.removeClass('btn-default');
 			btn.attr('stateval', '1');
+			$('#TextCheque').val(0);
 		}
 	}
 
@@ -329,10 +332,10 @@ if (isset ($_GET['tipo'])) {
 						let tr = $(`<tr id="${fila['Cmds']}"></tr>`);
 						tr.append($('<td></td>').html(`<b>${fila['Proceso']}</b>`));
 						td = $('<td></td>');
-						td.append($(`<input type="checkbox" id="${fila['Cmds']}_bueno" name="${fila['Cmds']}">`));
+						td.append($(`<input type="radio" id="${fila['Cmds']}_bueno" name="${fila['Cmds']}" checked>`));
 						tr.append(td);
 						td = $('<td></td>');
-						td.append($(`<input type="checkbox" id="${fila['Cmds']}_malo" name="${fila['Cmds']}">`));
+						td.append($(`<input type="radio" id="${fila['Cmds']}_malo" name="${fila['Cmds']}">`));
 						tr.append(td);
 						tBody.append(tr);
 					}
@@ -1376,6 +1379,9 @@ function tipo_facturacion(valor)
 		var total = parseFloat($('#LabelTotal').val()).toFixed(4);
 		var efectivo = parseFloat($('#TxtEfectivo').val()).toFixed(4);
 		var banco = parseFloat($('#TextCheque').val()).toFixed(4);
+
+		var btnInfoEfectivo = parseInt($('#btnToggleInfoEfectivo').attr('stateval'));
+		var btnInfoBanco = parseInt($('#btnToggleInfoBanco').attr('stateval'));
 		Swal.fire({
 			allowOutsideClick: false,
 			title: 'Esta Seguro que desea grabar: \n Comprobante  No. ' + $('#TextFacturaNo').val(),
@@ -1387,6 +1393,26 @@ function tipo_facturacion(valor)
 			confirmButtonText: 'Si!'
 		}).then((result) => {
 			if (result.value == true) {
+				if (btnInfoEfectivo){
+					if(efectivo < total || isNaN(efectivo) || efectivo == 0){
+						Swal.fire('El pago por efectivo es menor al total de la factura','', 'info');
+						return false;
+					}
+				}else if(btnInfoBanco){
+					if(banco < total || isNaN(banco) || banco == 0){
+						Swal.fire('El pago porbanco es menor al total de la factura','', 'info');
+						return false;
+					}
+				}else if(btnInfoBanco && btnInfoEfectivo){
+					if((efectivo + banco) < total || isNaN(banco) || isNaN(efectivo) || (efectivo + banco) == 0){
+						//Swal.fire('Si el pago es por banco este no debe superar el total de la factura', 'PUNTO VENTA', 'info').then(function () { $('#TextCheque').select(); });
+						Swal.fire('El pago es menor al total de la factura','', 'info');
+						return false;
+					}
+				}else if(btnInfoBanco == 0 && btnInfoEfectivo == 0){
+					Swal.fire('Debe seleccionar la forma de pago','', 'info');
+					return false;
+				}
 				/*if (banco > total) {
 					Swal.fire('Si el pago es por banco este no debe superar el total de la factura', 'PUNTO VENTA', 'info').then(function () { $('#TextCheque').select(); });
 					return false;
@@ -1729,6 +1755,7 @@ function tipo_facturacion(valor)
 							url_nd = '../../TEMP/' + data[1].pdf + '.pdf';
 							
 							window.open(url, '_blank');
+							Swal.fire('Puede imprimir la nota de donacion en el botón con icono de impresora', '', 'info');
 							/*parametros = {
 								'TextVUnit': (parseFloat($('#LabelTotal').val())/1).toFixed(2),
 								'TextCant': 1,
@@ -1803,6 +1830,16 @@ function tipo_facturacion(valor)
 
 	function calcular_pago() {
 
+		var valBanco = $('#TextCheque').val();
+		var valEfectivo = $('#TxtEfectivo').val();
+		if(valBanco=='')
+		{
+			$('#TextCheque').val(0);			
+		}
+		if(valEfectivo=='')
+		{
+			$('#TxtEfectivo').val(0);			
+		}
 		var cotizacion = parseInt($('#TextCotiza').val());
 		var efectivo =  $('#btnToggleInfoEfectivo').attr('stateval') == "1" ? parseFloat($('#TxtEfectivo').val()) : 0.00;
 		var Total_Factura = parseFloat($('#LabelTotalME').val());
@@ -1894,7 +1931,7 @@ function tipo_facturacion(valor)
 			<!--<a title="BOUCHE" class="btn btn-default" onclick="$('#modalBoucher').modal('show');">
 				<img src="../../img/png/adjuntar-archivo.png" height="32px">
 			</a>-->
-			<a title="IMPRIMIR" id="imprimir_nd" class="btn btn-default" onclick="imprimirNotaDonacion()" disabled>
+			<a title="IMPRIMIR NOTA DE DONACIÓN" id="imprimir_nd" class="btn btn-default" onclick="imprimirNotaDonacion()" disabled>
 				<img src="../../img/png/paper.png" height="32px">
 			</a>
 			<a title="FACTURAR" class="btn btn-default" onclick="generar()">
@@ -2632,7 +2669,7 @@ function tipo_facturacion(valor)
 					</div>
 					<div class="row" style="margin: 20px 0;">
 						<div class="col-sm-5" style="display:flex; justify-content:center; align-items:center;">
-							<button class="btn btn-default" id="btnToggleInfoEfectivo" stateval="0" onclick="toggleInfoEfectivo()">EFECTIVO</button>
+							<button class="btn btn-primary" id="btnToggleInfoEfectivo" stateval="1" onclick="toggleInfoEfectivo()">EFECTIVO</button>
 						</div>
 						<div class="col-sm-7" style="display:flex; justify-content:center; align-items:center;">
 							<button class="btn btn-default" id="btnToggleInfoBanco" stateval="0" onclick="toggleInfoBanco()">BANCO</button>
@@ -2642,7 +2679,7 @@ function tipo_facturacion(valor)
 								value="0.00" onblur="calcular_pago()">
 						</div>-->
 					</div>
-					<div id="campos_fact_efectivo" style="display:none;">
+					<div id="campos_fact_efectivo" style="display:block;">
 						<div class="row">
 							<div class="col-sm-5">
 								<b>EFECTIVO</b>
