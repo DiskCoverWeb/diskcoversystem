@@ -137,7 +137,7 @@ class asignacion_pickingC
                             <div class="input-group-addon input-xs">
                                 <b>Dif:</b>
                             </div>
-                            <input type="text" class="form-control input-xs" value="'.$cant.'" readonly>                            
+                            <input type="text" class="form-control input-xs" value="'.number_format(($value['Cantidad']-$cant),2,'.','').'" readonly>                            
                         </div>
                     </div>              
                     <div class="col-sm-4">                      
@@ -230,10 +230,13 @@ class asignacion_pickingC
             $stock = $stock[0]['Cantidad'];
         }
 
-        // print_r($cant_ing);
+        // print_r($cant_ing);die();
         // print_r($stock);die();
         $cant_ing = $cant_ing+$parametros['Cantidad'];
 
+
+        // print_r($cant_ing);die();
+        
         // print_r($parametros);die();
         if($cant_ing<=$stock)
         {

@@ -126,7 +126,8 @@ class asignacion_pickingM
                 INNER JOIN Accesos A ON TC.CodigoU = A.Codigo
                 WHERE CodigoC = '".$bene."'
                 AND Codigo_Inv = '".$tipo."'
-                AND Cta = '".$tipoventa."'";
+                AND Cta = '".$tipoventa."'
+                AND T = 'P'";
 
                 // print_r($sql);die();
         return $this->db->datos($sql);   

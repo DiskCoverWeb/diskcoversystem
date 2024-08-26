@@ -203,7 +203,12 @@
 		    success: function(data)
 		    {
 		    	$('#tbl_body').html(data.tabla);
-		    	$('#txt_total_ing').val(data.total);
+
+		    	var to = parseFloat( $('#txt_total').val());
+		    	var ing = parseFloat(data.total);
+
+		    	console.log(to);
+		    	$('#txt_total_ing').val(to-ing);
 		    	console.log(data);
 		    }
 		});
