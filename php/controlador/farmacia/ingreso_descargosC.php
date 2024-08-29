@@ -681,6 +681,8 @@ class ingreso_descargosC
 		   SetAdoFields('Centro_Costo',$parametro['area']);
 		   SetAdoFields('Codigo_Dr',$parametro['solicitante']);
 		   SetAdoFields('Costo',number_format($parametro['valor'],2,'.',''));
+		   SetAdoFields('TP','_');
+		   SetAdoFields('CodBodega','01');
 
 		   if($parametro['iva']!=0)
 		   {
