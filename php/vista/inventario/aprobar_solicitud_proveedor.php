@@ -1,30 +1,66 @@
+<?php
+ $orden = '';
+if(isset($_GET['orden']))
+{
+  $orden = $_GET['orden'];
+}
+
+?>
 <script type="text/javascript">
 
-  $(document).ready(function () {    
-    pedidos_solicitados();
-
-
+  $(document).ready(function () {  
+    var orden = '<?php echo $orden; ?>';
+    if(orden!='')
+    {
+      pedidos_solicitados(orden);
+      lineas_pedido_aprobacion_solicitados_proveedor(orden)
+    }  
   })
 
-  function pedidos_solicitados()
+  function pedidos_solicitados(orden)
   {
-    $('#ddl_pedidos').select2({
-        placeholder: 'Seleccione',
-        width:'100%',
-        ajax: {
-            url:   '../controlador/inventario/solicitud_materialC.php?pedido_aprobacion_solicitados_proveedor=true',
-            dataType: 'json',
-            delay: 250,
-            processResults: function (data) {
-              // console.log(data);
-              return {
-                results: data
-            };
-        },
-        cache: true
+    var parametros = 
+      {
+        'orden':orden,
       }
-    });
+      $.ajax({
+          url:   '../controlador/inventario/solicitud_materialC.php?pedido_aprobacion_solicitados_proveedor=true',
+          type:  'post',
+          data: {parametros:parametros},
+          dataType: 'json',
+          success:  function (response) {   
+
+            $('#lbl_orden').text(response[0].Orden_No);   
+            $('#lbl_contratista').text(response[0].Cliente);   
+            $('#lbl_total').text(response[0].Total);   
+
+          // $('#').text(response.)   
+          // console.log(response);                  
+          }
+      });
+
+
   } 
+
+  // function pedidos_solicitados()
+  // {
+  //   $('#ddl_pedidos').select2({
+  //       placeholder: 'Seleccione',
+  //       width:'100%',
+  //       ajax: {
+  //           url:   '../controlador/inventario/solicitud_materialC.php?pedido_aprobacion_solicitados_proveedor=true',
+  //           dataType: 'json',
+  //           delay: 250,
+  //           processResults: function (data) {
+  //             // console.log(data);
+  //             return {
+  //               results: data
+  //           };
+  //       },
+  //       cache: true
+  //     }
+  //   });
+  // } 
 
   // function llenarProveedores(selector)
   // {
@@ -196,18 +232,20 @@
       </div>
   </div>
   <br>
-  <div class="row">
+    <div class="row">
     <div class="box">
       <div class="box-body">
         <div class="col-xs-4">
-          <b>Numero de orden </b>
-          <select class="form-control" id="ddl_pedidos" name="ddl_pedidos" onchange="lineas_pedido_aprobacion_solicitados_proveedor(this.value)">
-            <option value="">Seleccione pedidos</option>
-          </select>
+          <b>Numero de orden </b><br>
+          <span id="lbl_orden"></span>
         </div>
          <div class="col-sm-3">
           <b>Contratista</b><br>
-          <span><?php echo $_SESSION['INGRESO']['Nombre']; ?></span>
+          <span id="lbl_contratista"></span>
+        </div>
+        <div class="col-sm-3">
+          <b>Total</b><br>
+          <span id="lbl_total"></span>
         </div>
        
         
@@ -224,7 +262,11 @@
               <th>Codigo</th>
               <th>Producto</th>
               <th>Cantidad</th>
-              <th>Fecha</th>
+              <th>Precio</th>
+              <th>Fecha Solicitud</th>
+              <th>Fecha Entrega</th>
+              <th>Total</th>
+              <th>Observacion</th>
               <th width="28%">Proveedores proforma</th>
               <th width="28%">Proveedor Seleccionado</th>
               <!-- <th></th> -->

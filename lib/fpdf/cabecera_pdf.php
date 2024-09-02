@@ -173,17 +173,42 @@ class cabecera_pdf
 		 	 }
 		 }
         }
-                $this->pdftable->SetFont('Arial','',$sizetable);
+            $this->pdftable->SetFont('Arial','',$sizetable);
 		    foreach ($tablaHTML as $key => $value){
+		    	$tama = 7;
+		    	$esti = '';
+
+		    	// if(isset($value['estilo']) && $value['estilo']!='')
+		    	// {
+		    	// 	$this->pdftable->SetFont('Arial',$value['estilo'],$sizetable);
+		    	// 	$estiloRow = $value['estilo'];
+		    	// }else
+		    	// {
+		    	// 	$this->pdftable->SetFont('Arial','',$sizetable);
+		    	// 	$estiloRow ='';
+		    	// }
+		    	// if(isset($value['borde']) && $value['borde']!='0')
+		    	// {
+		    	// 	$borde=$value['borde'];
+		    	// }else
+		    	// {
+		    	// 	$borde =0;
+		    	// }
+
 		    	if(isset($value['estilo']) && $value['estilo']!='')
 		    	{
-		    		$this->pdftable->SetFont('Arial',$value['estilo'],$sizetable);
-		    		$estiloRow = $value['estilo'];
-		    	}else
-		    	{
-		    		$this->pdftable->SetFont('Arial','',$sizetable);
-		    		$estiloRow ='';
+		    		$esti = $value['estilo'];
 		    	}
+		    	if(isset($value['size']) && $value['size']!='')
+		    	{
+		    		$tama = $value['size'];
+		    	}
+
+		    	$this->pdftable->SetFont('Arial',$esti,$tama);
+		    	$estiloRow = $esti;
+
+
+
 		    	if(isset($value['borde']) && $value['borde']!='0')
 		    	{
 		    		$borde=$value['borde'];
@@ -191,6 +216,7 @@ class cabecera_pdf
 		    	{
 		    		$borde =0;
 		    	}
+
 
 		    //print_r($value['medida']);
 		       $this->pdftable->SetWidths($value['medidas']);

@@ -1,18 +1,70 @@
 <script type="text/javascript">
 
   $(document).ready(function () {
-    productos()
+    familias();
+    $('#ddl_productos').select2();
+    // $('#ddl_marca').select2();
+     marcas()
     linea_pedido();
+
+     $('#ddl_productos').on('select2:select', function (e) {
+      var data = e.params.data.data;
+      $('#txt_costo').val(data.Costo);
+      console.log(data);
+    });
+
+
   })
+
+  function marcas()
+  {
+    $('#ddl_marca').select2({
+        placeholder: 'Seleccione',
+        width:'100%',
+        ajax: {
+            url:   '../controlador/inventario/solicitud_materialC.php?marca=true',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+              // console.log(data);
+              return {
+                results: data
+            };
+        },
+        cache: true
+      }
+    });
+  }
   
 
   function productos()
   {
+    familia = $('#ddl_familia').val();
     $('#ddl_productos').select2({
         placeholder: 'Seleccione',
         width:'100%',
         ajax: {
-            url:   '../controlador/inventario/solicitud_materialC.php?productos=true',
+            url:   '../controlador/inventario/solicitud_materialC.php?productos=true&fami='+familia,
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+              // console.log(data);
+              return {
+                results: data
+            };
+        },
+        cache: true
+      }
+    });
+  }
+
+  function familias()
+  {
+    $('#ddl_familia').select2({
+        placeholder: 'Seleccione',
+        width:'100%',
+        ajax: {
+            url:   '../controlador/inventario/solicitud_materialC.php?familia=true',
             dataType: 'json',
             delay: 250,
             processResults: function (data) {
@@ -30,23 +82,34 @@
   {
      cant = $('#txt_cantidad').val();
      prod = $('#ddl_productos').val();
-
-     if(cant==0 || cant =='')
-     {
-       Swal.fire("Cantidad no valida",'','info');
-       return false;
-     }
+     costo = $('#txt_costo').val();
 
      if(prod=='')
      {
        Swal.fire("Seleccione un producto",'','info');
        return false;      
      }
+      if(cant==0 || cant =='')
+     {
+       Swal.fire("Cantidad no valida",'','info');
+       return false;
+     }
+      if(costo==0 || costo =='')
+     {
+       Swal.fire("Costo no valida",'','info');
+       return false;
+     }
      var parametros = 
      {
         'cantidad':cant,
         'productos':prod,
+        'familia':$('#ddl_familia').val(),
+        'marca':$('#ddl_marca').val(),
         'fecha':$('#txt_fecha').val(),
+        'fechaEnt':$('#txt_fechaEnt').val(),
+        'costo':$('#txt_costo').val(),
+        'total':$('#txt_total').val(),
+        'obs':$('#txt_observacion').val(),
      }
 
       $.ajax({
@@ -143,6 +206,22 @@
       });
   }
 
+  function calcular()
+  {
+    var costo = $('#txt_costo').val();
+    var cantidad = $('#txt_cantidad').val();
+    if(costo=='')
+    {
+      $('#txt_costo').val(0);
+    }
+    if(cantidad=='')
+    {
+      $('#txt_cantidad').val(0);
+    }
+
+    var total = parseFloat(costo*cantidad);
+    $('#txt_total').val(total.toFixed(2))
+  }
 
 </script>
 <section class="content">
@@ -157,12 +236,12 @@
             <button type="button" class="btn btn-default" title="Copiar Catalogo" onclick="mostrarModalPass()" >
               <img src="../../img/png/copiar_1.png">
             </button>
-          </div>
+          </div>-->
           <div class="col-xs-2 col-md-2 col-sm-2">                 
-            <button type="button" class="btn btn-default" title="Cambiar Cuentas" onclick="validar_cambiar()">
-              <img src="../../img/png/pbcs.png">
+            <button type="button" class="btn btn-default" title="Cambiar Cuentas" onclick="imprimir_pdf()">
+              <img src="../../img/png/pdf.png">
             </button>
-          </div> -->
+          </div> 
           <div class="col-xs-2 col-md-2 col-sm-2">
             <button title="Guardar"  class="btn btn-default" onclick="grabar_solicitud()">
               <img src="../../img/png/grabar.png" >
@@ -174,28 +253,65 @@
   <div class="row">
     <div class="box">
       <div class="box-body">
-         <div class="col-sm-3">
-          <b>Contratista</b><br>
-          <span><?php echo $_SESSION['INGRESO']['Nombre']; ?></span>
+        <div class="row">
+          
+        <div class="col-sm-2">
+              <b>Contratista</b><br>
+              <span><?php echo $_SESSION['INGRESO']['Nombre']; ?></span>
         </div>
-         <div class="col-sm-2">
-          <b>Fecha</b>
-          <input type="date" name="txt_fecha" id="txt_fecha" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" readonly >
+        <div class="col-sm-2">
+            <b>Fecha</b>
+            <input type="date" name="txt_fecha" id="txt_fecha" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" readonly >
         </div>
-        <div class="col-xs-4">
-          <b>Producto / articulo </b>
-          <select class="form-control" id="ddl_productos" name="ddl_productos">
-            <option value="">Seleccione producto</option>
+        <div class="col-sm-2">
+            <b>Familias </b>
+            <select class="form-control" id="ddl_familia" name="ddl_familia" onchange="productos()" >
+              <option value="">Seleccione familia</option>
+            </select>
+        </div>
+        <div class="col-sm-3">
+            <b>Producto / articulo </b>
+            <select class="form-control" id="ddl_productos" name="ddl_productos">
+              <option value="">Seleccione producto</option>
+            </select>
+        </div>
+        <div class="col-sm-3">
+          <b>Marcas </b>
+          <select class="form-control" id="ddl_marca" name="ddl_marca">
+              <option value="">Seleccione</option>
           </select>
+        </div>
+      </div>
+      <div class="row">
+
+        <div class="col-sm-2">
+            <b>Fecha Entrega</b>
+            <input type="date" name="txt_fechaEnt" id="txt_fechaEnt" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" >
+        </div>
+        <div class="col-sm-5">
+            <b>Observacion</b>  
+            <input type="text" name="txt_observacion" id="txt_observacion" class="form-control input-sm" placeholder="Observacion" >
+        </div> 
+        <div class="col-sm-1">
+          <b>Costo</b>
+          <input type="text" name="txt_costo" id="txt_costo" class="form-control input-sm" placeholder="0"  onblur="calcular()" >
         </div>
         <div class="col-sm-1">
           <b>Cantidad</b>
-          <input type="text" name="txt_cantidad" id="txt_cantidad" class="form-control input-sm" placeholder="0" >
+          <input type="text" name="txt_cantidad" id="txt_cantidad" class="form-control input-sm" placeholder="0" onblur="calcular()" >
         </div>
-        <div class="col-sm-2">
+         <div class="col-sm-1">
+          <b>Total</b>
+          <input type="text" name="txt_total" id="txt_total" class="form-control input-sm" placeholder="0" readonly >
+        </div>        
+
+       
+        
+        <div class="col-sm-2 text-right">
           <br>
             <button type="button" class="bt  btn-sm btn-primary" onclick="guardar_linea()" >Agregar</button>
         </div>
+      </div>
       </div>  
     </div>
   </div>
@@ -208,7 +324,11 @@
               <th>Codigo</th>
               <th>Producto</th>
               <th>Cantidad</th>
-              <th>Fecha</th>
+              <th>Costo</th>          
+              <th>Fecha Solicitud</th>
+              <th>Fecha Entrega</th>    
+              <th>Total</th>
+              <th>Observacion</th>
               <th></th>
             </thead>
             <tbody id="tbl_body">
