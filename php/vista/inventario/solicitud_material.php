@@ -237,11 +237,11 @@
               <img src="../../img/png/copiar_1.png">
             </button>
           </div>-->
-          <div class="col-xs-2 col-md-2 col-sm-2">                 
+         <!--  <div class="col-xs-2 col-md-2 col-sm-2">                 
             <button type="button" class="btn btn-default" title="Cambiar Cuentas" onclick="imprimir_pdf()">
               <img src="../../img/png/pdf.png">
             </button>
-          </div> 
+          </div>  -->
           <div class="col-xs-2 col-md-2 col-sm-2">
             <button title="Guardar"  class="btn btn-default" onclick="grabar_solicitud()">
               <img src="../../img/png/grabar.png" >
