@@ -464,7 +464,7 @@ class solicitud_materialC
 					<td>'.$value['HABIT'].'</td>
 					<td><input type="checkbox" name="rbl_a_'.$value['ID'].'"  id="rbl_a_'.$value['ID'].'"></td>
 					<td>
-						<button class="btn btn-sm btn-primary" onclick="guardar_linea_aprobacion(\''.$value['ID'].'\')"><i class="fa fa fa-save"></i></button>
+						<button type="button" class="btn btn-sm btn-primary" onclick="guardar_linea_aprobacion(\''.$value['ID'].'\')"><i class="fa fa fa-save"></i></button>
 						<button class="btn btn-sm btn-danger" onclick="eliminar_linea(\''.$value['ID'].'\')"><i class="fa fa fa-trash"></i></button>
 						
 					</td>
