@@ -272,6 +272,11 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'facturarLista':
 				require_once("facturacion/lista_facturas.php");
 				break;
+				
+			//Facturacion -> Reportes -> Lista de NDO y NDU
+			case 'facturarNDONDU':
+				require_once("facturacion/lista_ndo_ndu.php");
+				break;
 
 			case 'punto_venta':
 				require_once("facturacion/punto_venta.php");
