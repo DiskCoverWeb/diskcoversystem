@@ -48,15 +48,15 @@ class facturas_distribucionM
       WHERE TL <> 0 
       AND Item = '" . $_SESSION['INGRESO']['item'] . "' 
       AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
-      AND Fact = '" . $TC . "' 
-      AND Serie = '".$_SESSION['INGRESO']['Serie_FA']."' ";
-
+      AND Fact = '" . $TC . "' ";
+      
     if($Codigo){
       $sql .= "AND Codigo = '".$Codigo."' ";
     }
     $sql .= "AND Fecha <= '" . $Fecha . "' 
       AND Vencimiento >='" . $Fecha . "' 
       ORDER BY Codigo ";
+    //print_r($sql);die();
     return $this->db->datos($sql);
   }
 
