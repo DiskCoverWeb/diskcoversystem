@@ -223,6 +223,16 @@
     $('#txt_total').val(total.toFixed(2))
   }
 
+  function imprimir_excel(orden)
+  {
+    window.open('../controlador/inventario/solicitud_materialC.php?imprimir_excel=true&orden_pdf='+orden,'_blank');
+  }
+
+  function modal_marcas()
+  {
+    $('#myModal_marcas').modal('show');
+  }
+
 </script>
 <section class="content">
   <div class="row">
@@ -236,12 +246,12 @@
             <button type="button" class="btn btn-default" title="Copiar Catalogo" onclick="mostrarModalPass()" >
               <img src="../../img/png/copiar_1.png">
             </button>
-          </div>-->
-         <!--  <div class="col-xs-2 col-md-2 col-sm-2">                 
+          </div>
+          <div class="col-xs-2 col-md-2 col-sm-2">                 
             <button type="button" class="btn btn-default" title="Cambiar Cuentas" onclick="imprimir_pdf()">
               <img src="../../img/png/pdf.png">
             </button>
-          </div>  -->
+          </div> -->
           <div class="col-xs-2 col-md-2 col-sm-2">
             <button title="Guardar"  class="btn btn-default" onclick="grabar_solicitud()">
               <img src="../../img/png/grabar.png" >
@@ -277,9 +287,16 @@
         </div>
         <div class="col-sm-3">
           <b>Marcas </b>
-          <select class="form-control" id="ddl_marca" name="ddl_marca">
+          <div class="input-group">
+            <select class="form-control" id="ddl_marca" name="ddl_marca">
               <option value="">Seleccione</option>
-          </select>
+            </select>
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-primary btn-flat btn-xs" onclick="modal_marcas()"><i class="fa fa-plus"></i></button>
+            </span>
+            
+          </div>
+          
         </div>
       </div>
       <div class="row">
@@ -348,3 +365,21 @@
     </div>    
   </div>  
 </section>
+
+ <div id="myModal_marcas" class="modal fade myModalMArcas" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Proveedor Nuevo</h4>
+            </div>
+            <div class="modal-body" id="contenido_prov" style="background: antiquewhite;">
+                <iframe id="FProveedor" width="100%" height="390px" marginheight="0" frameborder="0" src="../vista/modales.php?FProveedores=true"></iframe>
+            </div>
+           <!--  <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div> -->
+        </div>
+    </div>
+  </div>

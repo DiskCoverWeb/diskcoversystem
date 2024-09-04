@@ -81,7 +81,8 @@ class solicitud_materialM
 		}
 		$sql.=" ORDER BY ID OFFSET ".$pag." ROWS FETCH NEXT 25 ROWS ONLY;";
 
-		// print_r($sql);die();
+		// print_r($sql);
+		// die();
 		
 		$datos = $this->conn->datos($sql);
        return $datos;
@@ -132,9 +133,9 @@ class solicitud_materialM
 	}
 	// ------------------------------------------Aprobacion de solicitud---------------------------------------------------------
 
-	function pedidos_contratista($orden=false,$id=false)
+	function pedidos_contratista($orden=false,$id=false,$fecha=false,$contratista=false)
 	{
-		$sql = "SELECT  TP.Fecha,Orden_No,SUM(Total) as Total,Cliente
+		$sql = "SELECT  TP.Fecha,TP.Fecha_Ent,Orden_No,SUM(Total) as Total,Cliente
 				FROM Trans_Pedidos TP
 				inner Join Clientes C on TP.CodigoU = C.Codigo
 				WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
@@ -144,9 +145,16 @@ class solicitud_materialM
 				{
 					$sql.=" AND Orden_No = '".$orden."' ";
 				}
-				
+				if($fecha)
+				{
+					$sql.=" AND TP.Fecha = '".$fecha."' ";
+				}	
+				if($contratista)
+				{
+					$sql.=" AND Cliente like '%".$contratista."%' ";
+				}		
 
-				$sql.=" Group by TP.Fecha,Orden_No,Cliente";
+				$sql.=" Group by TP.Fecha,TP.Fecha_Ent,Orden_No,Cliente";
 		$datos = $this->conn->datos($sql);
        	return $datos;
 	}
@@ -193,9 +201,9 @@ class solicitud_materialM
 
 	// -------------------------------------------envio solicitud proveedor-------------------------------------------------
 
-	function envio_pedidos_contratista($orden=false,$id=false)
+	function envio_pedidos_contratista($orden=false,$id=false,$fecha=false,$contratista=false)
 	{
-		$sql = "SELECT  TP.Fecha,Orden_No,SUM(Total) as Total,Cliente
+		$sql = "SELECT  TP.Fecha,TP.Fecha_Ent,Orden_No,SUM(Total) as Total,Cliente
 				FROM Trans_Pedidos TP
 				inner Join Clientes C on TP.CodigoU = C.Codigo
 				WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
@@ -205,9 +213,18 @@ class solicitud_materialM
 				{
 					$sql.=" AND Orden_No = '".$orden."' ";
 				}
-				
+				if($fecha)
+				{
+					$sql.=" AND TP.Fecha = '".$fecha."' ";
+				}	
+				if($contratista)
+				{
+					$sql.=" AND Cliente like '%".$contratista."%' ";
+				}								
 
-				$sql.=" Group by TP.Fecha,Orden_No,Cliente";
+				$sql.=" Group by TP.Fecha,TP.Fecha_Ent,Orden_No,Cliente";
+
+				// print_r($sql);die();
 		$datos = $this->conn->datos($sql);
        	return $datos;
 	}
@@ -291,9 +308,9 @@ class solicitud_materialM
 
 	// ----------------------------------aprobacion solicitud proveedor----------------------------------------------------
 
-	function lista_pedido_aprobacion_solicitados_proveedor($orden=false,$id=false)
+	function lista_pedido_aprobacion_solicitados_proveedor($orden=false,$id=false,$fecha=false,$contratista=false)
 	{
-		$sql = "SELECT  TP.Fecha,Orden_No,SUM(Total) as Total,Cliente
+		$sql = "SELECT  TP.Fecha,TP.Fecha_Ent,Orden_No,SUM(Total) as Total,Cliente
 				FROM Trans_Pedidos TP
 				inner Join Clientes C on TP.CodigoU = C.Codigo
 				WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
@@ -302,9 +319,19 @@ class solicitud_materialM
 				if($orden)
 				{
 					$sql.=" AND Orden_No = '".$orden."' ";
-				}				
+				}
+				if($fecha)
+				{
+					$sql.=" AND TP.Fecha = '".$fecha."' ";
+				}	
+				if($contratista)
+				{
+					$sql.=" AND Cliente like '%".$contratista."%' ";
+				}					
 
-				$sql.=" Group by TP.Fecha,Orden_No,Cliente";
+				$sql.=" Group by TP.Fecha,TP.Fecha_Ent,Orden_No,Cliente";
+
+				// print_r($sql);die();
 		$datos = $this->conn->datos($sql);
        	return $datos;
 	}

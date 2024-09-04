@@ -160,6 +160,18 @@ if(isset($_GET['orden']))
           }
       });
   }
+function imprimir_pdf()
+{ 
+  var orden = '<?php echo $orden; ?>';
+  window.open('../controlador/inventario/solicitud_materialC.php?imprimir_pdf=true&orden_pdf='+orden,'_blank');
+}
+
+function imprimir_excel()
+{ 
+  var orden = '<?php echo $orden; ?>';
+  window.open('../controlador/inventario/solicitud_materialC.php?imprimir_excel=true&orden_pdf='+orden,'_blank');
+}
+
 
 
 </script>
@@ -171,16 +183,16 @@ if(isset($_GET['orden']))
               <img src="../../img/png/salire.png">
             </a>
           </div>
-         <!--  <div class="col-xs-2 col-md-2 col-sm-2">
-            <button type="button" class="btn btn-default" title="Copiar Catalogo" onclick="mostrarModalPass()" >
-              <img src="../../img/png/copiar_1.png">
+          <div class="col-xs-2 col-md-2 col-sm-2">
+            <button type="button" class="btn btn-default" title="Informe excel" onclick="imprimir_excel()" >
+              <img src="../../img/png/excel2.png">
             </button>
-          </div>
+          </div> 
           <div class="col-xs-2 col-md-2 col-sm-2">                 
-            <button type="button" class="btn btn-default" title="Cambiar Cuentas" onclick="validar_cambiar()">
-              <img src="../../img/png/pbcs.png">
+            <button type="button" class="btn btn-default" title="Informe pdf" onclick="imprimir_pdf()">
+              <img src="../../img/png/pdf.png">
             </button>
-          </div> -->
+          </div>  
           <div class="col-xs-2 col-md-2 col-sm-2">
             <button title="Guardar"  class="btn btn-default" onclick="grabar_solicitud_proveedor()">
               <img src="../../img/png/grabar.png" >
@@ -220,8 +232,8 @@ if(isset($_GET['orden']))
               <th>Producto</th>
               <th>Cantidad</th>              
               <th>Costo</th>
-              <th>Fecha</th>
-              <th>Fecha</th>
+              <th>Fecha Solicitud</th>
+              <th>Fecha Entrega</th>
               <th>Total</th>
               <th>Observacion</th>
               <th>Aprobado</th>

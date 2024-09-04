@@ -205,6 +205,18 @@ if(isset($_GET['orden']))
       });
   }
 
+  function imprimir_pdf()
+  { 
+    var orden = '<?php echo $orden; ?>';
+    window.open('../controlador/inventario/solicitud_materialC.php?imprimir_pdf_proveedor=true&orden_pdf='+orden,'_blank');
+  }
+  function imprimir_excel()
+  {
+
+    var orden = '<?php echo $orden; ?>';
+    window.open('../controlador/inventario/solicitud_materialC.php?imprimir_excel_proveedor=true&orden_pdf='+orden,'_blank');
+  }
+
 </script>
 <section class="content">
   <div class="row">
@@ -214,16 +226,17 @@ if(isset($_GET['orden']))
               <img src="../../img/png/salire.png">
             </a>
           </div>
-         <!--  <div class="col-xs-2 col-md-2 col-sm-2">
-            <button type="button" class="btn btn-default" title="Copiar Catalogo" onclick="mostrarModalPass()" >
-              <img src="../../img/png/copiar_1.png">
+          <div class="col-xs-2 col-md-2 col-sm-2">
+            <button type="button" class="btn btn-default" title="informe Excel" onclick="imprimir_excel()" >
+              <img src="../../img/png/excel2.png">
             </button>
-          </div>
-          <div class="col-xs-2 col-md-2 col-sm-2">                 
-            <button type="button" class="btn btn-default" title="Cambiar Cuentas" onclick="validar_cambiar()">
-              <img src="../../img/png/pbcs.png">
+          </div>    
+         <div class="col-xs-2 col-md-2 col-sm-2">                 
+            <button type="button" class="btn btn-default" title="Informe pdf" onclick="imprimir_pdf()">
+              <img src="../../img/png/pdf.png">
             </button>
-          </div> -->
+          </div>  
+           
           <div class="col-xs-2 col-md-2 col-sm-2">
             <button title="Guardar"  class="btn btn-default" onclick="grabar_envio_solicitud()">
               <img src="../../img/png/grabar.png" >
