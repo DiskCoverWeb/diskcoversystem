@@ -37,6 +37,11 @@ if(isset($_GET['marca']))
 	}
 	echo json_encode($controlador->autocomplet_marca($query));
 }
+if(isset($_GET['guardar_marca']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->guardar_marca($parametros));
+}
 
 if(isset($_GET['guardar_linea']))
 {
@@ -325,9 +330,27 @@ class solicitud_materialC
 		        SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
 		        SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
 		        SetAdoFields("Comentario",$parametros['obs']);
+		        SetAdoFields("CodMarca",$parametros['marca']);
 				
 				return SetAdoUpdate();
 		}
+	}
+
+	function guardar_marca($parametros)
+	{
+
+		$numero =  ReadSetDataNum("Codigo_Marca",$ParaEmpresa=false,true,$Fecha=false);
+		$num = generaCeros($numero,4);
+		$CodMarca = "Marca_".$num;
+		
+				SetAdoAddNew("Catalogo_Marcas");
+		        SetAdoFields("CodMar",$CodMarca);
+		        SetAdoFields("Marca",$parametros['marca']);
+		        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+		        SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+				
+				return SetAdoUpdate();
+		
 	}
 
 
@@ -343,6 +366,7 @@ class solicitud_materialC
 					<td>'.$value['Producto'].'</td>
 					<td>'.$value['Cantidad'].'</td>
 					<td>'.$value['Precio'].'</td>
+					<td>'.$value['Marca'].'</td>
 					<td>'.$value['Fecha']->format('Y-m-d').'</td>
 					<td>'.$value['Fecha_Ent']->format('Y-m-d').'</td>
 					<td>'.$value['Total'].'</td>
@@ -468,7 +492,7 @@ class solicitud_materialC
 			// print_r($fami);die();
 		  $tablaHTML[$pos]['medidas']=$tablaHTML[3]['medidas'];
 		  $tablaHTML[$pos]['alineado']=$tablaHTML[3]['alineado'];
-		  $tablaHTML[$pos]['datos']=array($key+1,$fami[0]['Producto'],$value['Codigo_Inv'],$value['Producto'],'',$value['Comentario'],$value['Fecha']->format('Y-m-d'),$value['Precio'],$value['Cantidad'],$value['Total']);
+		  $tablaHTML[$pos]['datos']=array($key+1,$fami[0]['Producto'],$value['Codigo_Inv'],$value['Producto'],$value['Marca'],$value['Comentario'],$value['Fecha']->format('Y-m-d'),$value['Precio'],$value['Cantidad'],$value['Total']);
 		  $tablaHTML[$pos]['estilo']='I';
 		  $tablaHTML[$pos]['borde'] = '1';
 		  $pos = $pos+1;
@@ -532,7 +556,7 @@ class solicitud_materialC
 			
 			// print_r($fami);die();
 		  $tablaHTML[$pos]['medidas']=$tablaHTML[3]['medidas'];
-		  $tablaHTML[$pos]['datos']=array($key+1,$fami[0]['Producto'],$value['Codigo_Inv'],$value['Producto'],'',$value['Comentario'],$value['Fecha']->format('Y-m-d'),$value['Precio'],$value['Cantidad'],$value['Total']);
+		  $tablaHTML[$pos]['datos']=array($key+1,$fami[0]['Producto'],$value['Codigo_Inv'],$value['Producto'],$value['Marca'],$value['Comentario'],$value['Fecha']->format('Y-m-d'),$value['Precio'],$value['Cantidad'],$value['Total']);
 		  $pos = $pos+1;
 		}
 
@@ -716,7 +740,7 @@ class solicitud_materialC
 			// print_r($fami);die();
 		  $tablaHTML[$pos]['medidas']=$tablaHTML[5]['medidas'];
 		  $tablaHTML[$pos]['alineado']=$tablaHTML[5]['alineado'];
-		  $tablaHTML[$pos]['datos']=array($key+1,'<b>'.$estado,$fami[0]['Producto'],$value['Codigo_Inv'],$value['Producto'],'',$value['Comentario'],$value['Fecha']->format('Y-m-d'),$value['Precio'],$value['Cantidad'],number_format($value['Total'],2,'.',''));
+		  $tablaHTML[$pos]['datos']=array($key+1,'<b>'.$estado,$fami[0]['Producto'],$value['Codigo_Inv'],$value['Producto'],$value['Marca'],$value['Comentario'],$value['Fecha']->format('Y-m-d'),$value['Precio'],$value['Cantidad'],number_format($value['Total'],2,'.',''));
 		  $tablaHTML[$pos]['estilo']='I';
 		  $tablaHTML[$pos]['borde'] = '1';
 		  $tablaHTML[$pos]['size'] = 6;
@@ -814,7 +838,7 @@ class solicitud_materialC
 			// print_r($fami);die();
 		  $tablaHTML[$pos]['medidas']=$tablaHTML[5]['medidas'];
 		  $tablaHTML[$pos]['alineado']=$tablaHTML[5]['alineado'];
-		  $tablaHTML[$pos]['datos']=array($key+1,$estado,$fami[0]['Producto'],$value['Codigo_Inv'],$value['Producto'],'',$value['Comentario'],$value['Fecha']->format('Y-m-d'),$value['Precio'],$value['Cantidad'],number_format($value['Total'],2,'.',''));
+		  $tablaHTML[$pos]['datos']=array($key+1,$estado,$fami[0]['Producto'],$value['Codigo_Inv'],$value['Producto'],$value['Marca'],$value['Comentario'],$value['Fecha']->format('Y-m-d'),$value['Precio'],$value['Cantidad'],number_format($value['Total'],2,'.',''));
 		  $pos = $pos+1;
 		}
 
@@ -915,11 +939,12 @@ class solicitud_materialC
 	{
 		// print_r($parametros);die();
 		foreach ($parametros as $key => $value) {
-			$id = str_replace('ddl_selector_', "", $key);
+			$id = str_replace('ddl_proveedor_', "", $key);
 			// print_r($id);die();
 			$linea = $this->modelo->Trans_Pedidos($id,false,false);
+			// print_r($linea);die();
 			$linea = $linea[0];
-			foreach ($value as $key2 => $value2) {
+			// foreach ($value as $key2 => $value2) {
 
 				SetAdoAddNew("Trans_Ticket");
 		        SetAdoFields("Codigo_Inv",$linea['Codigo_Inv']);
@@ -927,7 +952,7 @@ class solicitud_materialC
 		        SetAdoFields("Producto",$linea['Producto']);
 		        SetAdoFields("Cantidad",$linea['Cantidad']);
 		        SetAdoFields("Precio",$linea['Precio']);
-		        SetAdoFields("CodigoC",$value2);
+		        SetAdoFields("CodigoC",$value);
 		        SetAdoFields("Total", $linea['Total']);
 		        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
 		        SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
@@ -942,7 +967,7 @@ class solicitud_materialC
 	        	SetAdoFieldsWhere('ID',$id);
 	        	SetAdoUpdateGeneric();
 
-			}
+			// }
 			// print_r($linea);die();
 		}		
 		return 1;
@@ -1148,7 +1173,7 @@ class solicitud_materialC
 			// print_r($fami);die();
 		  $tablaHTML[$pos]['medidas']=$tablaHTML[5]['medidas'];
 		  $tablaHTML[$pos]['alineado']=$tablaHTML[5]['alineado'];
-		  $tablaHTML[$pos]['datos']=array($key+1,$fami[0]['Producto'],$value['Codigo_Inv'],$value['Producto'],'',$value['Fecha']->format('Y-m-d'),$value['Precio'],$value['Cantidad'],number_format($value['Total'],2,'.',''),$proveedores);
+		  $tablaHTML[$pos]['datos']=array($key+1,$fami[0]['Producto'],$value['Codigo_Inv'],$value['Producto'],$value['Marca'],$value['Fecha']->format('Y-m-d'),$value['Precio'],$value['Cantidad'],number_format($value['Total'],2,'.',''),$proveedores);
 		  $tablaHTML[$pos]['estilo']='I';
 		  $tablaHTML[$pos]['borde'] = '1';
 		  $tablaHTML[$pos]['size'] = 6;
@@ -1238,7 +1263,7 @@ class solicitud_materialC
 			// print_r($fami);
 			// print_r($fami);die();
 		  $tablaHTML[$pos]['medidas']=$tablaHTML[3]['medidas'];
-		  $tablaHTML[$pos]['datos']=array($key+1,$fami[0]['Producto'],$value['Codigo_Inv'],$value['Producto'],'',$value['Fecha']->format('Y-m-d'),$value['Precio'],$value['Cantidad'],number_format($value['Total'],2,'.',''),$proveedores);
+		  $tablaHTML[$pos]['datos']=array($key+1,$fami[0]['Producto'],$value['Codigo_Inv'],$value['Producto'],$value['Marca'],$value['Fecha']->format('Y-m-d'),$value['Precio'],$value['Cantidad'],number_format($value['Total'],2,'.',''),$proveedores);
 		  $pos = $pos+1;
 		}
 		// // die();

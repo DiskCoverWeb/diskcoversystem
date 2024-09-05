@@ -233,6 +233,30 @@
     $('#myModal_marcas').modal('show');
   }
 
+  function guardar_marca()
+  {
+    parametros = 
+    {
+      'marca':$('#txt_new_marca').val(),
+    }
+     $.ajax({
+          url:   '../controlador/inventario/solicitud_materialC.php?guardar_marca=true',
+          type:  'post',
+          data: {parametros:parametros},
+          dataType: 'json',
+          success:  function (response) {
+            if(response==1)
+            {
+               Swal.fire("Registro Guardado","","success");
+               $('#txt_new_marca').val('');
+               $('#myModal_marcas').modal('hide');
+               // linea_pedido();
+            }
+          
+          }
+      });
+  }
+
 </script>
 <section class="content">
   <div class="row">
@@ -341,7 +365,8 @@
               <th>Codigo</th>
               <th>Producto</th>
               <th>Cantidad</th>
-              <th>Costo</th>          
+              <th>Costo</th>   
+              <th>Marca</th>          
               <th>Fecha Solicitud</th>
               <th>Fecha Entrega</th>    
               <th>Total</th>
@@ -367,19 +392,25 @@
 </section>
 
  <div id="myModal_marcas" class="modal fade myModalMArcas" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Proveedor Nuevo</h4>
+                <h4 class="modal-title">Nueva Marca</h4>
             </div>
-            <div class="modal-body" id="contenido_prov" style="background: antiquewhite;">
-                <iframe id="FProveedor" width="100%" height="390px" marginheight="0" frameborder="0" src="../vista/modales.php?FProveedores=true"></iframe>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-sm-12">
+                    <b>Nombre de marca</b>
+                    <input type="" class="form-control input-sm" name="txt_new_marca" id="txt_new_marca">
+                </div>
+                
+              </div>
             </div>
-           <!--  <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="datos_cliente()">Usar Cliente</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="guardar_marca()">Guardar</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-            </div> -->
+            </div>
         </div>
     </div>
   </div>
