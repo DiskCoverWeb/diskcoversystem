@@ -1445,7 +1445,7 @@ function modal_email_fac(factura,serie,codigoc,emails, auto, tc)
                     <div class="col-sm-12">
                         <textarea class="form-control" rows="3" style="resize:none" placeholder="Texto" id="txt_texto" name="txt_texto"></textarea>
                     </div>                                                  
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <label><input type="checkbox" name="cbx_factura" id="cbx_factura" checked>Enviar Nota de Donación</label>
                     </div>  
                 </div>
