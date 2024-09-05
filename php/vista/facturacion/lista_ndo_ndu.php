@@ -822,12 +822,14 @@ function enviar_email_comprobantes(nombre_pdf,clave_Acceso,email)
     });
  }
 
-function modal_email_fac(factura,serie,codigoc,emails)
+function modal_email_fac(factura,serie,codigoc,emails, auto, tc)
   {
     $('#myModal_email').modal('show'); 
     $('#txt_fac').val(factura);
     $('#txt_serie').val(serie);
     $('#txt_codigoc').val(codigoc);
+    $('#txt_NDauto').val(auto);
+    $('#txt_NDtc').val(tc);
 
     var to = emails.substring(0,emails.length-1);
     var ema = to.split(',');
@@ -852,6 +854,8 @@ function modal_email_fac(factura,serie,codigoc,emails)
     var factura = $('#txt_fac').val();
     var serie = $('#txt_serie').val();
     var codigoc = $('#txt_codigoc').val();
+    var auto = $('#txt_NDauto').val();
+    var tc = $('#txt_NDtc').val();
 
     // var adjunto =  new FormData(document.getElementById("form_img"));
 
@@ -867,6 +871,8 @@ function modal_email_fac(factura,serie,codigoc,emails)
         'fac':factura,
         'serie':serie,
         'codigoc':codigoc,
+        'auto':auto,
+        'tc':tc,
     }
      $.ajax({
         data: {parametros:parametros},
@@ -1430,6 +1436,8 @@ function modal_email_fac(factura,serie,codigoc,emails)
                         <input type="hidden" name="txt_serie" id="txt_serie">
                         <input type="hidden" name="txt_codigoc" id="txt_codigoc">
                         <input type="hidden" name="txt_to" id="txt_to">
+                        <input type="hidden" name="txt_NDauto" id="txt_NDauto">
+                        <input type="hidden" name="txt_NDtc" id="txt_NDtc">
                     </div>
                     <div class="col-sm-12">
                       <input type="" id="txt_titulo" name="txt_titulo" class="form-control form-control-sm" placeholder="titulo de correo" value="comprobantes">
@@ -1438,7 +1446,7 @@ function modal_email_fac(factura,serie,codigoc,emails)
                         <textarea class="form-control" rows="3" style="resize:none" placeholder="Texto" id="txt_texto" name="txt_texto"></textarea>
                     </div>                                                  
                     <div class="col-sm-3">
-                        <label><input type="checkbox" name="cbx_factura" id="cbx_factura" checked>Enviar Factura</label>
+                        <label><input type="checkbox" name="cbx_factura" id="cbx_factura" checked>Enviar Nota de Donación</label>
                     </div>  
                 </div>
             </div>

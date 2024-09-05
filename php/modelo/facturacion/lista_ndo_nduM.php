@@ -381,8 +381,7 @@ class lista_facturasM
 
 
     $datos_cli_edu=$this->cliente_matri($ci);
-    $sucursal = $this->catalogo_lineas('FA',$ser);
-    // print_r($imp);die();
+    $sucursal = $this->catalogo_lineas($TFA['TC'],$ser);
 	   if($datos_cli_edu != '' && !empty($datos_cli_edu))
 	   {
 	   	  // print_r($imp."aaa");die();

@@ -277,7 +277,7 @@ class lista_facturasC
 			if ($value['T'] != 'A' && $parametros['tipo'] != '') {
 				$tr .= '<li><a href="#" onclick="anular_factura(\'' . $value['Factura'] . '\',\'' . $value['Serie'] . '\',\'' . $value['CodigoC'] . '\')"><i class="fa fa-times-circle"></i>Anular nota de donación</a></li>';
 			}
-			$tr .= '<li><a href="#" onclick=" modal_email_fac(\'' . $value['Factura'] . '\',\'' . $value['Serie'] . '\',\'' . $value['CodigoC'] . '\',\'' . $email . '\')"><i class="fa fa-envelope"></i> Enviar por email</a></li>
+			$tr .= '<li><a href="#" onclick=" modal_email_fac(\'' . $value['Factura'] . '\',\'' . $value['Serie'] . '\',\'' . $value['CodigoC'] . '\',\'' . $email . '\',\'' . $value['Autorizacion'] . '\',\'' . $value['TC'] . '\')"><i class="fa fa-envelope"></i> Enviar por email</a></li>
 								<li><a href="#" onclick="descargar_fac(\'' . $value['Factura'] . '\',\'' . $value['Serie'] . '\',\'' . $value['CodigoC'] . '\',\'' . $value['Autorizacion'] . '\',\'' . $value['TC'] . '\')"><i class="fa fa-download"></i> Descargar Nota de Donación</a></li>';
 			/*if (strlen($value['Autorizacion']) > 13) {
 				$tr .= '<li><a href="#" onclick="descargar_xml(\'' . $value['Autorizacion'] . '\')"><i class="fa fa-download"></i> Descargar XML</a></li>';
@@ -1056,12 +1056,16 @@ class lista_facturasC
 		$cuerpo_correo = $parametros['cuerpo'];
 		$titulo_correo = $parametros['titulo'];
 
-		$this->modelo->pdf_factura_descarga($parametros['fac'], $parametros['serie'], $parametros['codigoc'], false, 1);
+		//$this->modelo->pdf_factura_descarga($parametros['fac'], $parametros['serie'], $parametros['codigoc'], false, 1);
 
 
-		$archivos[0] = $parametros['serie'] . '-' . generaCeros($parametros['fac'], 7) . '.pdf';
+		//$archivos[0] = $parametros['serie'] . '-' . generaCeros($parametros['fac'], 7) . '.pdf';
+		$docND = $this->ver_fac_pdf($parametros['fac'], $parametros['serie'], $parametros['codigoc'], '.', $parametros['auto'], $parametros['tc']);
+		
+		$archivos[0] = $docND['pdf'] . '.pdf';
+		//print_r($archivos);die();
 
-		$datos = $this->modelo->factura_detalle($parametros['fac'], $parametros['serie'], $parametros['codigoc']);
+		/*$datos = $this->modelo->factura_detalle($parametros['fac'], $parametros['serie'], $parametros['codigoc']);
 		$rutaA = dirname(__DIR__, 2) . '/comprobantes/entidades/entidad_' . generaCeros($_SESSION['INGRESO']['IDEntidad'], 3) . '/CE' . generaCeros($_SESSION['INGRESO']['item'], 3) . '/Autorizados/' . $datos[0]['Autorizacion'] . '.xml';
 		if (file_exists($rutaA)) {
 			$archivos[1] = $datos[0]['Autorizacion'] . '.xml';
@@ -1133,7 +1137,7 @@ class lista_facturasC
 				fclose($archivo);
 				$archivos[1] = $datos[0]['Autorizacion'] . '.xml';
 			}
-		}
+		}*/
 		$cuerpo_correo = '
 Este correo electronico fue generado automaticamente a usted desde El Sistema Financiero Contable DiskCover System, porque figura como correo electronico alternativo de ' . $_SESSION['INGRESO']['Razon_Social'] . '. Nosotros respetamos su privacidad y solamente se utiliza este medio para mantenerlo informado sobre nuestras ofertas, promociones y comunicados. No compartimos, publicamos o vendemos su informacion personal fuera de nuestra empresa. Este mensaje fue procesado por un funcionario que forma parte de la Institucion.
 
@@ -1148,7 +1152,7 @@ Esta direccion de correo electronico no admite respuestas. En caso de requerir a
 www.diskcoversystem.com
 QUITO - ECUADOR';
 
-		return $this->email->enviar_email($archivos, $to_correo, $cuerpo_correo, $titulo_correo, $HTML = false);
+	return $this->email->enviar_email($archivos, $to_correo, $cuerpo_correo, $titulo_correo, $HTML = false);
 
 	}
 
