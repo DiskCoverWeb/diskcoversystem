@@ -1822,7 +1822,7 @@ function tipo_facturacion(valor)
 
 			},
 			error: (err) => {
-				Swal.fire('Error', 'Hubo un problema al guardar la factura.');
+				Swal.fire('Error', 'Hubo un problema al guardar la factura.','info');
 			}
 		});
 
@@ -1923,6 +1923,7 @@ function tipo_facturacion(valor)
 <div class="row" style="display:flex;justify-content: space-between;align-items: center; width:100%; padding-bottom:5px;">
 	<!--<div class="col-lg-6 col-sm-10 col-md-6 col-xs-12">-->
 		<!--<div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">-->	
+			<?php// print_r($_SESSION['INGRESO']); ?>
 		<div class="col-sm-5">
 			<a href="<?php $ruta = explode('&', $_SERVER['REQUEST_URI']);
 			print_r($ruta[0] . '#'); ?>" title="Salir de modulo" class="btn btn-default">

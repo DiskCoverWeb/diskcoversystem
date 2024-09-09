@@ -1941,6 +1941,11 @@ function generar_xml($cabecera,$detalle)
         $carpeta_generados = "";
         $carpeta_firmados = "";
         $carpeta_no_autori = "";
+        if(!file_exists(dirname(__DIR__)."/entidades"))
+		{
+			mkdir(dirname(__DIR__)."/entidades", 0777);
+		}
+
 		if(file_exists($carpeta_entidad))
 		{
 			$carpeta_comprobantes = $carpeta_entidad.'/CE'.$empresa;
@@ -2312,6 +2317,8 @@ function generar_xml($cabecera,$detalle)
 			// $xml_campoAdicional = $xml->createElement( "campoAdicional",'.' );
 			// $xml_campoAdicional->setAttribute( "nombre", "adi" );
 			// $xml_infoAdicional->appendChild( $xml_campoAdicional );
+
+		// print_r($cabecera);die();
 		if($cabecera['Cliente']<>'.' AND $cabecera['Cliente']!=$cabecera['Razon_Social'])
 		{
 			if(strlen($cabecera['Cliente'])>1)

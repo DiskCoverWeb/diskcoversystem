@@ -1850,7 +1850,7 @@ class facturas_distribucion
 
 	function ProcGrabar($FA)
 	{
-		//print_r($FA);die();
+		// print_r($FA);die();
 		//Grabar_Factura1($FA);
 		$conn = new db();
 		$Grafico_PV = Leer_Campo_Empresa("Grafico_PV");
@@ -1995,24 +1995,15 @@ class facturas_distribucion
 
 				// print_r('si');die();
 				// print_r('drrrrddd');die();
+				// print_r($FA)
 				$imp_guia = '';
 				if ($FA['TC'] <> "NDO" || $FA['TC'] <> "NDU") {
 					//la respuesta puede se texto si envia numero significa que todo saliobien
 					$rep = $this->sri->Autorizar_factura_o_liquidacion($FA);
+
+					// print_r($rep);die();
 					$clave = $this->sri->Clave_acceso($TA['Fecha'], '01', $TA['Serie'], $Factura_No);
-					$rep1 = 0;
-					$imp_guia = '';
-					$clave_guia = '';
-					if (isset($FA['Remision']) &&  $FA['Remision'] != 0) {
-						$FA['Autorizacion'] = $clave;
-						if ($FA['Autorizacion_GR'] >= 13) {
-							$rep1 = $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision($FA);
-							$this->modelo->pdf_guia_remision_elec($FA, $FA['Autorizacion_GR'], $periodo = false, 0, 1);
-							$clave_guia = $this->sri->Clave_acceso($FA['FechaGRE'], '06', $FA['Serie_GR'], $FA['Remision']);
-							$imp_guia = $FA['Serie_GR'] . '-' . generaCeros($FA['Remision'], 7);
-							$GR = ReadSetDataNum("GR_SERIE_" . $FA['Serie_GR'], True, True);
-						}
-					}
+					
 					// print_r($rep);die();
 					// SRI_Crear_Clave_Acceso_Facturas($FA,true); 
 					$FA['Desde'] = $FA['Factura'];
@@ -2028,23 +2019,15 @@ class facturas_distribucion
 					if ($rep == 1) {
 						if ($_SESSION['INGRESO']['Impresora_Rodillo'] == 0 && $_SESSION['INGRESO']['Grafico_PV'] == 0) {
 
-							return array('respuesta' => $rep, 'pdf' => $imp, 'clave' => $clave, 'respuesta_guia' => $rep1, 'pdf_guia' => $imp_guia, 'clave_guia' => $clave_guia, 'rodillo' => $_SESSION['INGRESO']['Impresora_Rodillo']);
-
-						} else if ($_SESSION['INGRESO']['Impresora_Rodillo'] == 1 && $_SESSION['INGRESO']['Grafico_PV'] == 0) {
-							// impresion matricial
-							return array('respuesta' => $rep, 'pdf' => $imp, 'clave' => $clave, 'respuesta_guia' => $rep1, 'pdf_guia' => $imp_guia, 'clave_guia' => $clave_guia, 'rodillo' => $_SESSION['INGRESO']['Impresora_Rodillo']);
-
-						} else if ($_SESSION['INGRESO']['Impresora_Rodillo'] == 0 && $_SESSION['INGRESO']['Grafico_PV'] == 1) {
-							$this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
-							return array('respuesta' => $rep, 'pdf' => $imp, 'clave' => $clave, 'respuesta_guia' => $rep1, 'pdf_guia' => $imp_guia, 'clave_guia' => $clave_guia, 'rodillo' => $_SESSION['INGRESO']['Impresora_Rodillo']);
+							return array('respuesta' => $rep, 'pdf' => $imp, 'clave' => $clave,'rodillo' => $_SESSION['INGRESO']['Impresora_Rodillo']);
 						} else {
 
 							$this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
-							return array('respuesta' => $rep, 'pdf' => $imp, 'clave' => $clave, 'respuesta_guia' => $rep1, 'pdf_guia' => $imp_guia, 'clave_guia' => $clave_guia, 'rodillo' => $_SESSION['INGRESO']['Impresora_Rodillo']);
+							return array('respuesta' => $rep, 'pdf' => $imp, 'clave' => $clave, 'rodillo' => $_SESSION['INGRESO']['Impresora_Rodillo']);
 						}
 
 					} else {
-						return array('respuesta' => -1, 'pdf' => $imp, 'text' => $rep, 'clave' => $clave, 'respuesta_guia' => $rep1, 'pdf_guia' => $imp_guia, 'clave_guia' => $clave_guia, 'rodillo' => $_SESSION['INGRESO']['Impresora_Rodillo']);
+						return array('respuesta' => -1, 'pdf' => $imp, 'text' => $rep, 'clave' => $clave,'rodillo' => $_SESSION['INGRESO']['Impresora_Rodillo']);
 					}
 				}
 			} else {
