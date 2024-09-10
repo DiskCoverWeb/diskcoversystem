@@ -225,6 +225,8 @@ function excel_generico($titulo,$datos=false,$url=false)
 
 		foreach ($datos as $key => $value) {
 			// print_r($value);die();
+
+					$tipo  = '';
 			if(isset($value['tipo']))
 			{
 					$tipo = $value['tipo'];
