@@ -11,7 +11,7 @@ class solicitud_materialM
         $this->conn = new db();
     }
 
-    function cargar_productos($query=false,$pag=false)
+    function cargar_productos($fami,$query=false,$pag=false)
 	{
 		if($pag==false)
 		{
@@ -24,6 +24,7 @@ class solicitud_materialM
 		 WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 		 AND item='".$_SESSION['INGRESO']['item']."' 
 		 AND TC='P' 
+		 AND Codigo_Inv like '".$fami."%'
 		 AND LEN(Cta_Inventario)>3 
 		 AND LEN(Cta_Costo_Venta)>3 ";
 		if($query) 
@@ -31,6 +32,81 @@ class solicitud_materialM
 			$sql.=" AND Codigo_Inv+' '+Producto LIKE '%".$query."%'";
 		}
 		$sql.=" ORDER BY ID OFFSET ".$pag." ROWS FETCH NEXT 25 ROWS ONLY;";
+		// print_r($sql);die();
+		$datos = $this->conn->datos($sql);
+       return $datos;
+	}
+
+	function cargar_familia($query=false,$pag=false)
+	{
+		if($pag==false)
+		{
+			$pag = 0;
+		}
+
+		$cid = $this->conn;
+		$sql = "SELECT ID,Codigo_Inv,Producto,TC,Minimo,Maximo,Cta_Inventario,Unidad,Ubicacion,IVA,Reg_Sanitario 
+		FROM Catalogo_Productos 
+		 WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+		 AND item='".$_SESSION['INGRESO']['item']."' 
+		 AND TC='I' ";
+		if($query) 
+		{
+			$sql.=" AND Codigo_Inv+' '+Producto LIKE '%".$query."%'";
+		}
+		$sql.=" ORDER BY ID OFFSET ".$pag." ROWS FETCH NEXT 25 ROWS ONLY;";
+
+		// print_r($sql);die();
+		
+		$datos = $this->conn->datos($sql);
+       return $datos;
+	}
+
+	function buscar_familia($query=false,$pag=false)
+	{
+		if($pag==false)
+		{
+			$pag = 0;
+		}
+
+		$cid = $this->conn;
+		$sql = "SELECT ID,Codigo_Inv,Producto,TC,Minimo,Maximo,Cta_Inventario,Unidad,Ubicacion,IVA,Reg_Sanitario 
+		FROM Catalogo_Productos 
+		 WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+		 AND item='".$_SESSION['INGRESO']['item']."' 
+		 AND TC='I' ";
+		if($query) 
+		{
+			$sql.=" AND Codigo_Inv = '".$query."'";
+		}
+		$sql.=" ORDER BY ID OFFSET ".$pag." ROWS FETCH NEXT 25 ROWS ONLY;";
+
+		// print_r($sql);
+		// die();
+		
+		$datos = $this->conn->datos($sql);
+       return $datos;
+	}
+
+	function cargar_marca($query=false,$pag=false)
+	{
+		if($pag==false)
+		{
+			$pag = 0;
+		}
+
+		$cid = $this->conn;
+		$sql = "SELECT ".Full_Fields('Catalogo_Marcas')."
+		FROM Catalogo_Marcas 
+		 WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+		 AND item='".$_SESSION['INGRESO']['item']."' ";
+		if($query) 
+		{
+			$sql.=" AND Marca+' '+CodMar LIKE '%".$query."%'";
+		}
+		$sql.=" ORDER BY ID OFFSET ".$pag." ROWS FETCH NEXT 25 ROWS ONLY;";
+
+		// print_r($sql);die();
 		
 		$datos = $this->conn->datos($sql);
        return $datos;
@@ -38,12 +114,18 @@ class solicitud_materialM
 
 	function lineas_pedido()
 	{
-		$sql = "SELECT  ".Full_Fields('Trans_Pedidos')." 
-		FROM Trans_Pedidos 
-		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		$sql = "SELECT TP.Periodo, Fecha, Codigo_Inv, Hora, Producto, Cantidad, Precio, Total, Total_IVA, No_Hab, Cta_Venta, TP.Item, CodigoU, Orden_No, Cta_Venta_0, TC, Factura, Autorizacion, Serie, Codigo_Sup, CodigoC, Opc1, Opc2, Opc3, Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,Marca 
+
+		FROM Trans_Pedidos TP
+		inner join Catalogo_Marcas CM on TP.CodMarca = CM.CodMar
+		WHERE CM.Item = TP.Item
+		AND CM.Periodo = TP.Periodo
+		AND TP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC = 'P' 
-		AND Item='".$_SESSION['INGRESO']['item']."' 
+		AND TP.Item='".$_SESSION['INGRESO']['item']."' 
 		AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' ";
+
+		// print_r($sql);die();
 		$datos = $this->conn->datos($sql);
        	return $datos;
 	}
@@ -55,17 +137,52 @@ class solicitud_materialM
 		// print_r($sql);die();
 		return $this->conn->String_Sql($sql);
 	}
-	// ------------------------------------------------Aprobacion de solicitud---------------------------------------------------------------
+	// ------------------------------------------Aprobacion de solicitud---------------------------------------------------------
 
-	function lineas_pedido_solicitados($orden)
+	function pedidos_contratista($orden=false,$id=false,$fecha=false,$contratista=false)
 	{
-		$sql = "SELECT  ".Full_Fields('Trans_Pedidos')." 
-		FROM Trans_Pedidos 
-		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		$sql = "SELECT  TP.Fecha,TP.Fecha_Ent,Orden_No,SUM(Total) as Total,Cliente
+				FROM Trans_Pedidos TP
+				inner Join Clientes C on TP.CodigoU = C.Codigo
+				WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND TC = 'S' 
+				AND Item='".$_SESSION['INGRESO']['item']."' ";
+				if($orden)
+				{
+					$sql.=" AND Orden_No = '".$orden."' ";
+				}
+				if($fecha)
+				{
+					$sql.=" AND TP.Fecha = '".$fecha."' ";
+				}	
+				if($contratista)
+				{
+					$sql.=" AND Cliente like '%".$contratista."%' ";
+				}		
+
+				$sql.=" Group by TP.Fecha,TP.Fecha_Ent,Orden_No,Cliente";
+		$datos = $this->conn->datos($sql);
+       	return $datos;
+	}
+
+	function lineas_pedido_solicitados($orden=false,$id=false)
+	{
+		$sql = "SELECT TP.Periodo, Fecha, Codigo_Inv, Hora, Producto, Cantidad, Precio, Total, Total_IVA, No_Hab, Cta_Venta, TP.Item, CodigoU, Orden_No, Cta_Venta_0, TC, Factura, Autorizacion, Serie, Codigo_Sup, CodigoC, Opc1, Opc2, Opc3, Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,Marca 
+		FROM Trans_Pedidos TP
+		inner join Catalogo_Marcas CM on TP.CodMarca = CM.CodMar
+
+		WHERE TP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC = 'S' 
-		 AND Orden_No = '".$orden."'
-		AND Item='".$_SESSION['INGRESO']['item']."' 
-		AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' ";
+		AND TP.Item='".$_SESSION['INGRESO']['item']."' ";
+		if($orden)
+		{
+			$sql.=" AND Orden_No = '".$orden."' ";
+		}
+				
+		if($id)
+		{
+			$sql.=" AND ID = '".$id."' ";
+		}
 
 		// print_r($sql);die();
 		$datos = $this->conn->datos($sql);
@@ -92,8 +209,35 @@ class solicitud_materialM
        	return $datos;
 	}
 
-	// ------------------------------------------------------envio solicitud proveedor------------------------------------------------------
+	// -------------------------------------------envio solicitud proveedor-------------------------------------------------
 
+	function envio_pedidos_contratista($orden=false,$id=false,$fecha=false,$contratista=false)
+	{
+		$sql = "SELECT  TP.Fecha,TP.Fecha_Ent,Orden_No,SUM(Total) as Total,Cliente
+				FROM Trans_Pedidos TP
+				inner Join Clientes C on TP.CodigoU = C.Codigo
+				WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND TC = 'E' 
+				AND Item='".$_SESSION['INGRESO']['item']."' ";
+				if($orden)
+				{
+					$sql.=" AND Orden_No = '".$orden."' ";
+				}
+				if($fecha)
+				{
+					$sql.=" AND TP.Fecha = '".$fecha."' ";
+				}	
+				if($contratista)
+				{
+					$sql.=" AND Cliente like '%".$contratista."%' ";
+				}								
+
+				$sql.=" Group by TP.Fecha,TP.Fecha_Ent,Orden_No,Cliente";
+
+				// print_r($sql);die();
+		$datos = $this->conn->datos($sql);
+       	return $datos;
+	}
 
 
 	function pedido_solicitados_proveedor($query)
@@ -109,7 +253,6 @@ class solicitud_materialM
 		$sql.="
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND Item='".$_SESSION['INGRESO']['item']."' 
-		AND CodigoU ='".$_SESSION['INGRESO']['CodigoU']."' 
 		group by Orden_No,Nombre_Completo ";
 		// print_r($sql);die();
 		$datos = $this->conn->datos($sql);
@@ -119,13 +262,13 @@ class solicitud_materialM
 
 	function lineas_pedido_solicitados_proveedor($orden)
 	{
-		$sql = "SELECT  ".Full_Fields('Trans_Pedidos')." 
-		FROM Trans_Pedidos 
-		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		$sql = "SELECT  TP.Periodo, Fecha, Codigo_Inv, Hora, Producto, Cantidad, Precio, Total, Total_IVA, No_Hab, Cta_Venta, TP.Item, CodigoU, Orden_No, Cta_Venta_0, TC, Factura, Autorizacion, Serie, Codigo_Sup, CodigoC, Opc1, Opc2, Opc3, Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,Marca 
+		FROM Trans_Pedidos TP
+		inner join Catalogo_Marcas CM on TP.CodMarca = CM.CodMar
+		WHERE TP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC = 'E' 
 		 AND Orden_No = '".$orden."'
-		AND Item='".$_SESSION['INGRESO']['item']."' 
-		AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' ";
+		AND TP.Item='".$_SESSION['INGRESO']['item']."' ";
 		$datos = $this->conn->datos($sql);
        	return $datos;
 	}
@@ -135,8 +278,7 @@ class solicitud_materialM
 		$sql = "SELECT  ".Full_Fields('Trans_Pedidos')." 
 		FROM Trans_Pedidos 
 		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
-		AND Item='".$_SESSION['INGRESO']['item']."' 
-		AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' ";
+		AND Item='".$_SESSION['INGRESO']['item']."' ";
 		if($tc)
 		{
 			$sql.=" AND TC = '".$tc."' ";
@@ -177,6 +319,34 @@ class solicitud_materialM
 
 	// ----------------------------------aprobacion solicitud proveedor----------------------------------------------------
 
+	function lista_pedido_aprobacion_solicitados_proveedor($orden=false,$id=false,$fecha=false,$contratista=false)
+	{
+		$sql = "SELECT  TP.Fecha,TP.Fecha_Ent,Orden_No,SUM(Total) as Total,Cliente
+				FROM Trans_Pedidos TP
+				inner Join Clientes C on TP.CodigoU = C.Codigo
+				WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND TC = 'T' 
+				AND Item='".$_SESSION['INGRESO']['item']."' ";
+				if($orden)
+				{
+					$sql.=" AND Orden_No = '".$orden."' ";
+				}
+				if($fecha)
+				{
+					$sql.=" AND TP.Fecha = '".$fecha."' ";
+				}	
+				if($contratista)
+				{
+					$sql.=" AND Cliente like '%".$contratista."%' ";
+				}					
+
+				$sql.=" Group by TP.Fecha,TP.Fecha_Ent,Orden_No,Cliente";
+
+				// print_r($sql);die();
+		$datos = $this->conn->datos($sql);
+       	return $datos;
+	}
+
 
 	function pedido_aprobacion_solicitados_proveedor($query)
 	{
@@ -191,7 +361,6 @@ class solicitud_materialM
 		$sql.="
 		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND Item='".$_SESSION['INGRESO']['item']."' 
-		AND CodigoU ='".$_SESSION['INGRESO']['CodigoU']."' 
 		group by Orden_No,Nombre_Completo ";
 		// print_r($sql);die();
 		$datos = $this->conn->datos($sql);
@@ -200,13 +369,13 @@ class solicitud_materialM
 
 	function lineas_pedido_aprobacion_solicitados_proveedor($orden)
 	{
-		$sql = "SELECT  ".Full_Fields('Trans_Pedidos')." 
-		FROM Trans_Pedidos 
-		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		$sql = "SELECT  TP.Periodo, Fecha, Codigo_Inv, Hora, Producto, Cantidad, Precio, Total, Total_IVA, No_Hab, Cta_Venta, TP.Item, CodigoU, Orden_No, Cta_Venta_0, TC, Factura, Autorizacion, Serie, Codigo_Sup, CodigoC, Opc1, Opc2, Opc3, Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,Marca 
+		FROM Trans_Pedidos TP
+		inner join Catalogo_Marcas CM on TP.CodMarca = CM.CodMar
+		WHERE TP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC = 'T' 
 		 AND Orden_No = '".$orden."'
-		AND Item='".$_SESSION['INGRESO']['item']."' 
-		AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' ";
+		AND Tp.Item='".$_SESSION['INGRESO']['item']."'  ";
 		$datos = $this->conn->datos($sql);
        	return $datos;
 	}

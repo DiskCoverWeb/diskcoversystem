@@ -1,18 +1,70 @@
 <script type="text/javascript">
 
   $(document).ready(function () {
-    productos()
+    familias();
+    $('#ddl_productos').select2();
+    // $('#ddl_marca').select2();
+     marcas()
     linea_pedido();
+
+     $('#ddl_productos').on('select2:select', function (e) {
+      var data = e.params.data.data;
+      $('#txt_costo').val(data.Costo);
+      console.log(data);
+    });
+
+
   })
+
+  function marcas()
+  {
+    $('#ddl_marca').select2({
+        placeholder: 'Seleccione',
+        width:'100%',
+        ajax: {
+            url:   '../controlador/inventario/solicitud_materialC.php?marca=true',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+              // console.log(data);
+              return {
+                results: data
+            };
+        },
+        cache: true
+      }
+    });
+  }
   
 
   function productos()
   {
+    familia = $('#ddl_familia').val();
     $('#ddl_productos').select2({
         placeholder: 'Seleccione',
         width:'100%',
         ajax: {
-            url:   '../controlador/inventario/solicitud_materialC.php?productos=true',
+            url:   '../controlador/inventario/solicitud_materialC.php?productos=true&fami='+familia,
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+              // console.log(data);
+              return {
+                results: data
+            };
+        },
+        cache: true
+      }
+    });
+  }
+
+  function familias()
+  {
+    $('#ddl_familia').select2({
+        placeholder: 'Seleccione',
+        width:'100%',
+        ajax: {
+            url:   '../controlador/inventario/solicitud_materialC.php?familia=true',
             dataType: 'json',
             delay: 250,
             processResults: function (data) {
@@ -30,23 +82,34 @@
   {
      cant = $('#txt_cantidad').val();
      prod = $('#ddl_productos').val();
-
-     if(cant==0 || cant =='')
-     {
-       Swal.fire("Cantidad no valida",'','info');
-       return false;
-     }
+     costo = $('#txt_costo').val();
 
      if(prod=='')
      {
        Swal.fire("Seleccione un producto",'','info');
        return false;      
      }
+      if(cant==0 || cant =='')
+     {
+       Swal.fire("Cantidad no valida",'','info');
+       return false;
+     }
+      if(costo==0 || costo =='')
+     {
+       Swal.fire("Costo no valida",'','info');
+       return false;
+     }
      var parametros = 
      {
         'cantidad':cant,
         'productos':prod,
+        'familia':$('#ddl_familia').val(),
+        'marca':$('#ddl_marca').val(),
         'fecha':$('#txt_fecha').val(),
+        'fechaEnt':$('#txt_fechaEnt').val(),
+        'costo':$('#txt_costo').val(),
+        'total':$('#txt_total').val(),
+        'obs':$('#txt_observacion').val(),
      }
 
       $.ajax({
@@ -143,6 +206,56 @@
       });
   }
 
+  function calcular()
+  {
+    var costo = $('#txt_costo').val();
+    var cantidad = $('#txt_cantidad').val();
+    if(costo=='')
+    {
+      $('#txt_costo').val(0);
+    }
+    if(cantidad=='')
+    {
+      $('#txt_cantidad').val(0);
+    }
+
+    var total = parseFloat(costo*cantidad);
+    $('#txt_total').val(total.toFixed(2))
+  }
+
+  function imprimir_excel(orden)
+  {
+    window.open('../controlador/inventario/solicitud_materialC.php?imprimir_excel=true&orden_pdf='+orden,'_blank');
+  }
+
+  function modal_marcas()
+  {
+    $('#myModal_marcas').modal('show');
+  }
+
+  function guardar_marca()
+  {
+    parametros = 
+    {
+      'marca':$('#txt_new_marca').val(),
+    }
+     $.ajax({
+          url:   '../controlador/inventario/solicitud_materialC.php?guardar_marca=true',
+          type:  'post',
+          data: {parametros:parametros},
+          dataType: 'json',
+          success:  function (response) {
+            if(response==1)
+            {
+               Swal.fire("Registro Guardado","","success");
+               $('#txt_new_marca').val('');
+               $('#myModal_marcas').modal('hide');
+               // linea_pedido();
+            }
+          
+          }
+      });
+  }
 
 </script>
 <section class="content">
@@ -159,8 +272,8 @@
             </button>
           </div>
           <div class="col-xs-2 col-md-2 col-sm-2">                 
-            <button type="button" class="btn btn-default" title="Cambiar Cuentas" onclick="validar_cambiar()">
-              <img src="../../img/png/pbcs.png">
+            <button type="button" class="btn btn-default" title="Cambiar Cuentas" onclick="imprimir_pdf()">
+              <img src="../../img/png/pdf.png">
             </button>
           </div> -->
           <div class="col-xs-2 col-md-2 col-sm-2">
@@ -174,28 +287,72 @@
   <div class="row">
     <div class="box">
       <div class="box-body">
-         <div class="col-sm-3">
-          <b>Contratista</b><br>
-          <span><?php echo $_SESSION['INGRESO']['Nombre']; ?></span>
+        <div class="row">
+          
+        <div class="col-sm-2">
+              <b>Contratista</b><br>
+              <span><?php echo $_SESSION['INGRESO']['Nombre']; ?></span>
         </div>
-         <div class="col-sm-2">
-          <b>Fecha</b>
-          <input type="date" name="txt_fecha" id="txt_fecha" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" readonly >
+        <div class="col-sm-2">
+            <b>Fecha</b>
+            <input type="date" name="txt_fecha" id="txt_fecha" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" readonly >
         </div>
-        <div class="col-xs-4">
-          <b>Producto / articulo </b>
-          <select class="form-control" id="ddl_productos" name="ddl_productos">
-            <option value="">Seleccione producto</option>
-          </select>
+        <div class="col-sm-2">
+            <b>Familias </b>
+            <select class="form-control" id="ddl_familia" name="ddl_familia" onchange="productos()" >
+              <option value="">Seleccione familia</option>
+            </select>
+        </div>
+        <div class="col-sm-3">
+            <b>Producto / articulo </b>
+            <select class="form-control" id="ddl_productos" name="ddl_productos">
+              <option value="">Seleccione producto</option>
+            </select>
+        </div>
+        <div class="col-sm-3">
+          <b>Marcas </b>
+          <div class="input-group">
+            <select class="form-control" id="ddl_marca" name="ddl_marca">
+              <option value="">Seleccione</option>
+            </select>
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-primary btn-flat btn-xs" onclick="modal_marcas()"><i class="fa fa-plus"></i></button>
+            </span>
+            
+          </div>
+          
+        </div>
+      </div>
+      <div class="row">
+
+        <div class="col-sm-2">
+            <b>Fecha Entrega</b>
+            <input type="date" name="txt_fechaEnt" id="txt_fechaEnt" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" >
+        </div>
+        <div class="col-sm-5">
+            <b>Observacion</b>  
+            <input type="text" name="txt_observacion" id="txt_observacion" class="form-control input-sm" placeholder="Observacion" >
+        </div> 
+        <div class="col-sm-1">
+          <b>Costo</b>
+          <input type="text" name="txt_costo" id="txt_costo" class="form-control input-sm" placeholder="0"  onblur="calcular()" >
         </div>
         <div class="col-sm-1">
           <b>Cantidad</b>
-          <input type="text" name="txt_cantidad" id="txt_cantidad" class="form-control input-sm" placeholder="0" >
+          <input type="text" name="txt_cantidad" id="txt_cantidad" class="form-control input-sm" placeholder="0" onblur="calcular()" >
         </div>
-        <div class="col-sm-2">
+         <div class="col-sm-1">
+          <b>Total</b>
+          <input type="text" name="txt_total" id="txt_total" class="form-control input-sm" placeholder="0" readonly >
+        </div>        
+
+       
+        
+        <div class="col-sm-2 text-right">
           <br>
             <button type="button" class="bt  btn-sm btn-primary" onclick="guardar_linea()" >Agregar</button>
         </div>
+      </div>
       </div>  
     </div>
   </div>
@@ -208,7 +365,12 @@
               <th>Codigo</th>
               <th>Producto</th>
               <th>Cantidad</th>
-              <th>Fecha</th>
+              <th>Costo</th>   
+              <th>Marca</th>          
+              <th>Fecha Solicitud</th>
+              <th>Fecha Entrega</th>    
+              <th>Total</th>
+              <th>Observacion</th>
               <th></th>
             </thead>
             <tbody id="tbl_body">
@@ -228,3 +390,27 @@
     </div>    
   </div>  
 </section>
+
+ <div id="myModal_marcas" class="modal fade myModalMArcas" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Nueva Marca</h4>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-sm-12">
+                    <b>Nombre de marca</b>
+                    <input type="" class="form-control input-sm" name="txt_new_marca" id="txt_new_marca">
+                </div>
+                
+              </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="guardar_marca()">Guardar</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+  </div>

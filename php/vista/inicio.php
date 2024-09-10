@@ -581,14 +581,23 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'solicitud_material':
 				require_once("inventario/solicitud_material.php");
 				break;
+			case 'lista_aprobacion_solicitud':
+				require_once("inventario/lista_aprobacion_solicitud.php");
+				break;
 			case 'aprobacion_solicitud':
 				require_once("inventario/aprobacion_solicitud.php");
 				break;
 			case 'solicitud_proveedor':
 				require_once("inventario/envio_solicitud_proveedor.php");
 				break;
+			case 'lista_solicitud_proveedor':
+				require_once("inventario/lista_envio_solicitud_proveedor.php");
+				break;
 			case 'aprobar_proveedor':
 				require_once("inventario/aprobar_solicitud_proveedor.php");
+				break;
+			case 'lista_aprobar_proveedor':
+				require_once("inventario/lista_aprobar_solicitud_proveedor.php");
 				break;
 			//Auditoria -> Archivo -> Modulo de auditoria
 			case 'auditoria':

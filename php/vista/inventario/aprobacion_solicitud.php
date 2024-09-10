@@ -1,28 +1,45 @@
+<?php
+ $orden = '';
+if(isset($_GET['orden']))
+{
+  $orden = $_GET['orden'];
+}
+
+?>
 <script type="text/javascript">
 
   $(document).ready(function () {
-    pedidos_solicitados();
-    lineas_pedido_solicitados();
+    var orden = '<?php echo $orden; ?>';
+    if(orden!='')
+    {
+      pedidos_solicitados(orden);
+      lineas_pedido_solicitados(orden);
+    }
   })
 
-  function pedidos_solicitados()
+  function pedidos_solicitados(orden)
   {
-    $('#ddl_pedidos').select2({
-        placeholder: 'Seleccione',
-        width:'100%',
-        ajax: {
-            url:   '../controlador/inventario/solicitud_materialC.php?pedidos_solicitados=true',
-            dataType: 'json',
-            delay: 250,
-            processResults: function (data) {
-              // console.log(data);
-              return {
-                results: data
-            };
-        },
-        cache: true
+    var parametros = 
+      {
+        'orden':orden,
       }
-    });
+      $.ajax({
+          url:   '../controlador/inventario/solicitud_materialC.php?pedidos_solicitados=true',
+          type:  'post',
+          data: {parametros:parametros},
+          dataType: 'json',
+          success:  function (response) {   
+
+            $('#lbl_orden').text(response[0].Orden_No);   
+            $('#lbl_contratista').text(response[0].Cliente);   
+            $('#lbl_total').text(response[0].Total);   
+
+          // $('#').text(response.)   
+          // console.log(response);                  
+          }
+      });
+
+
   }  
 
   function lineas_pedido_solicitados(orden)
@@ -62,6 +79,8 @@
 
   function eliminar(id)
   {     
+
+    var orden = '<?php echo $orden; ?>';
       var parametros = 
       {
         'id': id,
@@ -75,7 +94,8 @@
             if(response==1)
             {
                Swal.fire("Registro eliminado","","success");
-               linea_pedido();
+                pedidos_solicitados(orden);
+                lineas_pedido_solicitados(orden);
             }
           
           }
@@ -84,14 +104,20 @@
 
   function grabar_solicitud_proveedor()
   {   
-    if($('#ddl_pedidos').val()=='')
-    {
-      Swal.fire("Seleccione un pedido","","info")
-      return false;
-    }
+
+     data = $('#form_aprobacion').serialize();
+    // if($('#ddl_pedidos').val()=='')
+    // {
+    //   Swal.fire("Seleccione un pedido","","info")
+    //   return false;
+    // }
+
+     // console.log(data);
+     // return false;
     var parametros = 
     {
-      'pedido':$('#ddl_pedidos').val(),
+      'pedido':$('#lbl_orden').text(),
+      'aprobacion':data,
     }
       $.ajax({
           url:   '../controlador/inventario/solicitud_materialC.php?grabar_solicitud_proveedor=true',
@@ -108,6 +134,45 @@
       });
   }
 
+  function guardar_linea_aprobacion(id)
+  {
+
+              
+    var orden = '<?php echo $orden; ?>';
+    var parametros = 
+    {
+      'id_linea':id,
+      'cantida':$('#txt_cant_'+id).val(),
+    }
+      $.ajax({
+          url:   '../controlador/inventario/solicitud_materialC.php?guardar_linea_aprobacion=true',
+          type:  'post',
+          data: {parametros:parametros},
+          dataType: 'json',
+          success:  function (response) {
+            if(response==1)
+            {
+                Swal.fire("Linea Editada","","success")
+                pedidos_solicitados(orden);
+                lineas_pedido_solicitados(orden);
+            }
+          
+          }
+      });
+  }
+function imprimir_pdf()
+{ 
+  var orden = '<?php echo $orden; ?>';
+  window.open('../controlador/inventario/solicitud_materialC.php?imprimir_pdf=true&orden_pdf='+orden,'_blank');
+}
+
+function imprimir_excel()
+{ 
+  var orden = '<?php echo $orden; ?>';
+  window.open('../controlador/inventario/solicitud_materialC.php?imprimir_excel=true&orden_pdf='+orden,'_blank');
+}
+
+
 
 </script>
 <section class="content">
@@ -118,16 +183,16 @@
               <img src="../../img/png/salire.png">
             </a>
           </div>
-         <!--  <div class="col-xs-2 col-md-2 col-sm-2">
-            <button type="button" class="btn btn-default" title="Copiar Catalogo" onclick="mostrarModalPass()" >
-              <img src="../../img/png/copiar_1.png">
+          <div class="col-xs-2 col-md-2 col-sm-2">
+            <button type="button" class="btn btn-default" title="Informe excel" onclick="imprimir_excel()" >
+              <img src="../../img/png/excel2.png">
             </button>
-          </div>
+          </div> 
           <div class="col-xs-2 col-md-2 col-sm-2">                 
-            <button type="button" class="btn btn-default" title="Cambiar Cuentas" onclick="validar_cambiar()">
-              <img src="../../img/png/pbcs.png">
+            <button type="button" class="btn btn-default" title="Informe pdf" onclick="imprimir_pdf()">
+              <img src="../../img/png/pdf.png">
             </button>
-          </div> -->
+          </div>  
           <div class="col-xs-2 col-md-2 col-sm-2">
             <button title="Guardar"  class="btn btn-default" onclick="grabar_solicitud_proveedor()">
               <img src="../../img/png/grabar.png" >
@@ -140,14 +205,16 @@
     <div class="box">
       <div class="box-body">
         <div class="col-xs-4">
-          <b>Numero de orden </b>
-          <select class="form-control" id="ddl_pedidos" name="ddl_pedidos" onchange="lineas_pedido_solicitados(this.value)">
-            <option value="">Seleccione pedidos</option>
-          </select>
+          <b>Numero de orden </b><br>
+          <span id="lbl_orden"></span>
         </div>
          <div class="col-sm-3">
           <b>Contratista</b><br>
-          <span><?php echo $_SESSION['INGRESO']['Nombre']; ?></span>
+          <span id="lbl_contratista"></span>
+        </div>
+        <div class="col-sm-3">
+          <b>Total</b><br>
+          <span id="lbl_total"></span>
         </div>
        
         
@@ -155,6 +222,7 @@
     </div>
   </div>
   <div class="row">
+    <form id="form_aprobacion">
     <div class="col-sm-12">
         <table class="table">
           <thead>
@@ -162,8 +230,12 @@
               <th>item</th>
               <th>Codigo</th>
               <th>Producto</th>
-              <th>Cantidad</th>
-              <th>Fecha</th>
+              <th>Cantidad</th>              
+              <th>Costo</th>
+              <th>Fecha Solicitud</th>
+              <th>Fecha Entrega</th>
+              <th>Total</th>
+              <th>Observacion</th>
               <th>Aprobado</th>
               <th></th>
             </thead>
@@ -181,6 +253,7 @@
             </tbody>
           </thead>
         </table>
-    </div>    
+    </div> 
+    </form>   
   </div>  
 </section>
