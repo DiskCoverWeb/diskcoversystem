@@ -515,18 +515,18 @@ class solicitud_materialC
 		$tablaHTML = array();
 		$tablaHTML[0]['medidas']=$medi;
 		$tablaHTML[0]['datos']= array('Numero:','',$datos_pedido[0]['Orden_No'],'');
-		$tablaHTML[0]['tipo']= 'B';	
+		// $tablaHTML[0]['tipo']= 'B';	
 		$tablaHTML[0]['unir']= array('AB','CDEFGHI');
 		$tablaHTML[0]['col-total'] = 10;
 
 		$tablaHTML[1]['medidas']=$medi;
 		$tablaHTML[1]['datos']= array('Contratista:','',$datos_pedido[0]['Cliente'],'');
-		$tablaHTML[1]['tipo']= 'B';	
+		// $tablaHTML[1]['tipo']= 'B';	
 		$tablaHTML[1]['unir']= array('AB','CDEFGHI');
 
 		$tablaHTML[2]['medidas']=$medi;
 		$tablaHTML[2]['datos']= array('Precio Referencial Total:','',$datos_pedido[0]['Total'],'');
-		$tablaHTML[2]['tipo']= 'B';	
+		// $tablaHTML[2]['tipo']= 'B';	
 		$tablaHTML[2]['unir']= array('AB','CDEFGHI');
 		
 
@@ -534,7 +534,7 @@ class solicitud_materialC
 		$datos_lineas = $this->modelo->lineas_pedido_solicitados($orden);
 		$tablaHTML[3]['medidas']=array(8,40,20,80,25,30,25,20,15,15,20);
 		$tablaHTML[3]['datos']=array('','FAMILIA','CODIGO','ITEM','MARCAS','OBSERVACION','FECHA ENTREGA','ULTIMO PRECIO','CANTIDAD','TOTAL');
-		$tablaHTML[3]['tipo']= 'SUB';	
+		// $tablaHTML[3]['tipo']= 'SUB';	
 		// print_r($datos_lineas);die();
 
 		$pos = 4;
@@ -785,27 +785,27 @@ class solicitud_materialC
 		$tablaHTML[0]['medidas']=$medi;
 		$tablaHTML[0]['datos']= array('Numero:','',$datos_pedido[0]['Orden_No'],'');	
 		$tablaHTML[0]['unir']= array('AB','CDEFGHI');
-		$tablaHTML[0]['tipo']= 'B';
+		// $tablaHTML[0]['tipo']= 'B';
 		$tablaHTML[0]['col-total'] = 11;
 
 		$tablaHTML[1]['medidas']=$medi;
 		$tablaHTML[1]['datos']= array('Contratista:','',$datos_pedido[0]['Cliente'],'');
-		$tablaHTML[1]['tipo']= 'B';	
+		// $tablaHTML[1]['tipo']= 'B';	
 		$tablaHTML[1]['unir']= array('AB','CDEFGHI');
 
 		$tablaHTML[2]['medidas']=$medi;
 		$tablaHTML[2]['datos']= array('Total Pedido:','',number_format($datos_pedido[0]['Total'],2,'.',''),'');	
-		$tablaHTML[2]['tipo']= 'B';
+		// $tablaHTML[2]['tipo']= 'B';
 		$tablaHTML[2]['unir']= array('AB','CDEFGHI');
 
 		$tablaHTML[3]['medidas']=$medi;
 		$tablaHTML[3]['datos']= array('Total Aprobado:','',number_format($total_apro,2,'.',''),'');	
-		$tablaHTML[4]['tipo']= 'B';
+		// $tablaHTML[4]['tipo']= 'B';
 		$tablaHTML[3]['unir']= array('AB','CDEFGHI');
 
 		$tablaHTML[4]['medidas']=$medi;
 		$tablaHTML[4]['datos']= array('Total Rechazado:','',number_format($total_recha,2,'.',''),'');
-		$tablaHTML[4]['tipo']= 'B';	
+		// $tablaHTML[4]['tipo']= 'B';	
 		$tablaHTML[4]['unir']= array('AB','CDEFGHI');
 		
 
@@ -1218,7 +1218,7 @@ class solicitud_materialC
 		$tablaHTML[0]['medidas']=$medi;
 		$tablaHTML[0]['datos']= array('Numero: ','',$datos_pedido[0]['Orden_No'],'');
 		$tablaHTML[0]['unir']= array('AB','CDEFGHI');
-		$tablaHTML[0]['tipo']= 'B';
+		// $tablaHTML[0]['tipo']= 'B';
 		$tablaHTML[0]['col-total'] = 10;
 
 		$tablaHTML[1]['medidas']=$medi;
@@ -1236,7 +1236,7 @@ class solicitud_materialC
 		// print_r($datos_lineas);die();
 		$tablaHTML[3]['medidas']=array(8,40,20,75,25,15,15,15,15,50);
 		$tablaHTML[3]['datos']=array('','FAMILIA','CODIGO','ITEM','MARCAS','ENTREGA','ULTIMO PRECIO','CANTIDAD','TOTAL','PROVEEDORES');
-		$tablaHTML[3]['tipo']= 'SUB';
+		// $tablaHTML[3]['tipo']= 'SUB';
 		// print_r($datos_lineas);die();
 
 		$pos = 4;
