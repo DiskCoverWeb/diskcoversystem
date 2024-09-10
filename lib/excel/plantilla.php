@@ -225,7 +225,10 @@ function excel_generico($titulo,$datos=false,$url=false)
 
 		foreach ($datos as $key => $value) {
 			// print_r($value);die();
-			$tipo = $value['tipo'];
+			if(isset($value['tipo']))
+			{
+					$tipo = $value['tipo'];
+				}
 			if(isset($value['unir'])){
 				foreach ($value['unir'] as $key => $value3) {
 					 $can_cel = strlen($value3); if($can_cel>2){$fin = substr($value3,-1); $inicio = substr($value3,0,1);}else{ $fin = substr($value3,1);$inicio = substr($value3,0,-1); } }	
