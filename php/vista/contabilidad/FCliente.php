@@ -181,6 +181,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
   }
 
   function guardar_cliente() {
+    $('#myModal_espera').modal('show');
     if (validar() == true) {
       swal.fire('Llene todos los campos', '', 'info')
       return false;
@@ -193,13 +194,26 @@ switch ($_SESSION['INGRESO']['modulo_']) {
       type: 'post',
       dataType: 'json',
       success: function (response) {
+        $('#myModal_espera').modal('hide');
         // console.log(response);
         var url = location.href;
         if (response == 1) {
           if ($('#txt_id').val() != '') {
-            swal.fire('Registro guardado', '', 'success');
+            swal.fire('Registro guardado', '', 'success')
+            .then(result => {
+              if(result.value){
+                $('#BtnGuardarClienteFCliente').attr('disabled', true);
+                window.location.reload();
+              }
+            });
           } else {
-            swal.fire('Registro guardado', '', 'success');
+            swal.fire('Registro guardado', '', 'success')
+            .then(result => {
+              if(result.value){
+                $('#BtnGuardarClienteFCliente').attr('disabled', true);
+                window.location.reload();
+              }
+            });
           }
 
         } else if (response == 2) {
@@ -207,6 +221,10 @@ switch ($_SESSION['INGRESO']['modulo_']) {
         } else if (response == 3) {
           swal.fire('El Nombre ya esta registrado', '', 'info');
         }
+      },
+      error:function(err){
+        $('#myModal_espera').modal('hide');
+        swal.fire('Ocurrio un error al procesar la solicitud. Error: ' + err, '', 'error');
       }
     });
   }
