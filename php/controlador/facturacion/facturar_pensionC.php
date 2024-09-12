@@ -345,6 +345,7 @@ class facturar_pensionC
    
     if($serie=='.'){ 
 
+      // print_r($_SESSION['INGRESO']);die();
       if($_SESSION['INGRESO']['Serie_FA']!='.')
         { 
           $serie = $_SESSION['INGRESO']['Serie_FA'];

@@ -104,6 +104,7 @@ class facturar_pensionM
           AND CONVERT(DATE,Vencimiento) >= '".$vencimiento."'
           AND len(Autorizacion)>=13
           ORDER BY Codigo";
+          // print_r($sql);die();
           $stmt = $this->db->datos($sql);
           return $stmt;
   }

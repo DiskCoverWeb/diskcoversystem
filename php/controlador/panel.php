@@ -1,5 +1,6 @@
 <?php
 @session_start();
+session_regenerate_id(true);
 //Llamada al modelo
 require_once("../modelo/usuario_model.php");
 include_once("../funciones/funciones.php");
@@ -520,7 +521,7 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         }
         SeteosCtas();
 
-        //print_r($empresa);die();
+        // print_r($empresa);die();
 
 
 
@@ -712,6 +713,7 @@ function eliminar_variables()
     //eliminar permisos
     unset($_SESSION['INGRESO']['accesoe']);
     unset($_SESSION['INGRESO']['modulo']);
+    unset($_SESSION['INGRESO']['Serie_FA']);
     return 1;
 }
 

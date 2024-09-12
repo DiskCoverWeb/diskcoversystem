@@ -38,12 +38,13 @@ class notas_creditoM
        return $tbl;
 	}
 
-	function Listar_Facturas_Pendientes_NC($codigo=false)
+	function Listar_Facturas_Pendientes_NC($codigo=false,$serie=false)
 	{ 
 		$sql = "SELECT C.Grupo, C.Codigo, C.Cliente, F.Cta_CxP, SUM(F.Total_MN) As TotFact 
        	FROM Clientes As C, Facturas As F 
        	WHERE F.Item = '".$_SESSION['INGRESO']['item']."' 
        	AND F.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+		AND F.Serie = '".$serie."'
        	AND NOT F.TC IN ('DO','OP') 
        	AND F.T <> 'A' 
        	AND F.Saldo_MN <> 0 
@@ -59,7 +60,7 @@ class notas_creditoM
        	return $this->db->datos($sql);
    }
 
-   function DClineas($MBoxFecha,$Cta_CxP)
+   function DClineas($MBoxFecha,$Cta_CxP=false)
    {
    	   $sql = "SELECT Codigo, Concepto, CxC,Serie,Autorizacion  
        FROM Catalogo_Lineas 
@@ -68,7 +69,7 @@ class notas_creditoM
        AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
        AND Fecha <= '".BuscarFecha($MBoxFecha)."' 
        AND Vencimiento >= '".BuscarFecha($MBoxFecha)."' ";
-       if(strlen($Cta_CxP) > 2 ){ $sql.=" AND '".$Cta_CxP."' IN (CxC,CxC_Anterior) ";}
+       if($Cta_CxP==true && strlen($Cta_CxP) > 2 ){ $sql.=" AND '".$Cta_CxP."' IN (CxC,CxC_Anterior) ";}
 	  	$sql.=" ORDER BY CxC, Concepto ";
 	  	// print_r($sql);die();
 	  	return $this->db->datos($sql);
@@ -107,15 +108,16 @@ class notas_creditoM
 	{  
 	  $sql = "SELECT Codigo,Codigo+SPACE(10)+Cuenta As NomCuenta 
 	    FROM Catalogo_Cuentas 
-	    WHERE SUBSTRING(Codigo,1,1) IN ('1','2','4','5') 
+	    WHERE SUBSTRING(Codigo,1,1) IN ('1','2','4','5','6') 
 	    AND DG = 'D' 
 	    AND Item = '".$_SESSION['INGRESO']['item']."' 
 	    AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
 	    if($query)
 	    {
-	    	$sql.=" AND Cuenta like '%".$query."%'";
+	    	$sql.=" AND Codigo+' '+Cuenta like '%".$query."%'";
 	    }
 	    $sql.="  ORDER BY Codigo ";
+	    // print_r($sql);die();
 	    return $this->db->datos($sql);
 	}
 

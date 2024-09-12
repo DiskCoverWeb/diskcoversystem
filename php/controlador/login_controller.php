@@ -162,7 +162,10 @@ class login_controller
 		// print_r($datos);
 		// die();
 
+		// session_regenerate_id(true);	
 		
+		
+
 		$_SESSION['INGRESO']['PC_MAC'] = "00:00:00:00:00:00";
 
 		$_SESSION['INGRESO']['usuario'] = $parametro['usuario'];
@@ -228,6 +231,15 @@ class login_controller
 	function logout()
 	{
 		session_destroy();
+		$_SESSION = array();  // Limpia todas las variables de la sesión
+		if (ini_get("session.use_cookies")) {
+		    $params = session_get_cookie_params();
+		    setcookie(session_name(), '', time() - 42000,
+		        $params["path"], $params["domain"],
+		        $params["secure"], $params["httponly"]
+		    );
+		}
+
 		return 1;
 	}
 

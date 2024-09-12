@@ -87,8 +87,10 @@ if(isset($_GET['DCFactura']))
 if(isset($_GET['cliente']))
 {
 	$q = '';
+	$serie = '';
 	if(isset($_GET['q'])){ $q = $_GET['q'];}
-	echo json_encode($controlador->Listar_Facturas_Pendientes_NC($q));
+	if(isset($_GET['serie'])){ $serie = $_GET['serie'];}
+	echo json_encode($controlador->Listar_Facturas_Pendientes_NC($q,$serie));
 }
 
 if(isset($_GET['guardar']))
@@ -191,9 +193,9 @@ class notas_creditoC
 		return  array('tabla'=>$table,'TxtIVA'=>$IVA_NC,'TxtConIVA'=>$Total_Con_IVA,'TxtDescuento'=>$Total_Desc2+$Total_Desc,'TxtSinIVA'=>$Total_Sin_IVA,'TxtSaldo'=>$SubTotal_NC,'LblTotalDC'=>$SubTotal_NC+$IVA_NC - ($Total_Desc + $Total_Desc2) );
 	}
 
-	function Listar_Facturas_Pendientes_NC($q)
+	function Listar_Facturas_Pendientes_NC($q,$serie)
 	{
-		$datos = $this->modelo->Listar_Facturas_Pendientes_NC($q);
+		$datos = $this->modelo->Listar_Facturas_Pendientes_NC($q,$serie);
 		$cli = array();	
 		foreach ($datos as $key => $value) {
 			$cli[] = array('id'=>$value['Codigo'],'text'=>$value['Cliente'],'data'=>$value);
@@ -204,7 +206,7 @@ class notas_creditoC
 	function DClineas($parametro)
 	{
 		// print_r($parametro);die();
-		$datos = $this->modelo->DClineas($parametro['fecha'],$parametro['cta_cxp']);
+		$datos = $this->modelo->DClineas($parametro['fecha']);
 		$list = array();		
 		foreach ($datos as $key => $value) {
 			$list[] = array('codigo'=>$value['Serie'],'nombre'=>$value['Concepto'],'Autorizacion'=>$value['Autorizacion']); 
