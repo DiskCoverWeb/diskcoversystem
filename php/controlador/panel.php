@@ -1,6 +1,5 @@
 <?php
 @session_start();
-session_regenerate_id(true);
 //Llamada al modelo
 require_once("../modelo/usuario_model.php");
 include_once("../funciones/funciones.php");
