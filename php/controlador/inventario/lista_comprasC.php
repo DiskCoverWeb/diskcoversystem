@@ -34,6 +34,15 @@ if(isset($_GET['imprimir_pdf']))
 	}
 	echo json_encode($controlador->imprimir_pdf($orden));
 }
+if(isset($_GET['imprimir_excel']))
+{
+	$orden = '';
+	if(isset($_GET['orden_pdf']))
+	{
+		$orden = $_GET['orden_pdf'];
+	}
+	echo json_encode($controlador->imprimir_excel($orden));
+}
 
 /**
  * 
@@ -173,6 +182,88 @@ class lista_comprasC
 		$pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,"","",$sizetable,$mostrar,15,'L',$download = true, $repetirCabecera=null, $mostrar_cero=1,$nuevaPagina=1);
 
 	}
+
+	function imprimir_excel($orden)
+	{
+
+		$ali =array("L","L");
+		$medi =array(10,40,130,10);
+		$mostrar = true;
+		$sizetable =7;
+		$tablaHTML = array();
+		$titulo = "O R D E N  D E   C O M P R A ";
+		$datos_pedido = $this->modelo->pedidos_compra_x_proveedor($orden);
+		$pos = 0;
+
+
+		foreach ($datos_pedido as $key => $value) {
+
+		$tablaHTML[$pos+0]['medidas']=$medi;
+		$tablaHTML[$pos+0]['datos']= array('Numero:','',$value['Orden_No'],'');
+		$tablaHTML[$pos+0]['tipo']= 'B';	
+		$tablaHTML[$pos+0]['unir']= array('AB','CDEFGHI');
+		$tablaHTML[$pos+0]['col-total'] = 16;
+
+		$tablaHTML[$pos+1]['medidas']=$medi;
+		$tablaHTML[$pos+1]['datos']= array('Contratista:','',$value['Cliente'],'');
+		$tablaHTML[$pos+1]['tipo']= 'B';	
+		$tablaHTML[$pos+1]['unir']= array('AB','CDEFGHI');
+
+		$tablaHTML[$pos+2]['medidas']=$medi;
+		$tablaHTML[$pos+2]['datos']= array('Precio Referencial Total:','',$value['Total'],'');
+		$tablaHTML[$pos+2]['tipo']= 'B';	
+		$tablaHTML[$pos+2]['unir']= array('AB','CDEFGHI');
+
+		$tablaHTML[$pos+3]['medidas']=$medi;
+		$tablaHTML[$pos+3]['datos']= array('Proveedor:','',$value['proveedor'],'');
+		$tablaHTML[$pos+3]['tipo']= 'B';	
+		$tablaHTML[$pos+3]['unir']= array('AB','CDEFGHI');		
+
+
+		$datos_lineas = $this->modelo->lineas_compras_solicitados($orden,false,$value['CodigoC']);
+		$tablaHTML[$pos+4]['medidas']=array(8,40,20,80,25,10,15,10,15,15,20,15,15,15,15,15);
+		$tablaHTML[$pos+4]['datos']=array('ITEM','FAMILIA','CODIGO','ITEM','MARCAS','CANT','T0%','T5%','T15%','IVA 5%','IVA 15%','TOTAL','TOTAL GLOBAL','PRECIO REFERENCIAL','DIFERENCIA');
+		$tablaHTML[$pos+4]['tipo']= 'SUB';	
+
+		$pos_head = $pos+4;
+		// print_r($datos_lineas);die();
+
+		$pos = $pos+5;
+			foreach ($datos_lineas as $key => $value) {
+
+				// print_r($value);die();
+
+				$codigo = $value['Codigo_Inv'];
+				$resp = true;
+				while ($resp) {
+					$posicion = strrpos($codigo, '.');
+					// Verificar que el punto fue encontrado
+					if ($posicion !== false) {
+					    $códigoModificado = substr($codigo, 0, $posicion);
+					    $fami = $this->modelo->buscar_familia($códigoModificado);
+					    if(count($fami)==0){$codigo = $códigoModificado; }else{$resp = false;}
+					}
+				}
+				
+				// print_r($fami);die();
+			  $tablaHTML[$pos]['medidas']=$tablaHTML[$pos_head]['medidas'];
+			  $tablaHTML[$pos]['datos']=array($key+1,$fami[0]['Producto'],$value['Codigo_Inv'],$value['Producto'],$value['Marca'],$value['Cantidad'],'','','','','',$value['Precio'],'',$value['Total'],'','');
+			  $pos = $pos+1;
+			}
+
+			$tablaHTML[$pos]['medidas']=$medi;
+			$tablaHTML[$pos]['datos']= array('');
+			$tablaHTML[$pos]['tipo']= 'B';	
+			$tablaHTML[$pos]['unir']= array('ABCDEFGHI');
+			$pos = $pos+1;
+
+
+		}
+
+	    excel_generico($titulo,$tablaHTML);
+
+	}
+
 
 
 
