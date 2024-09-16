@@ -171,7 +171,9 @@ class solicitud_materialM
 		FROM Trans_Pedidos TP
 		inner join Catalogo_Marcas CM on TP.CodMarca = CM.CodMar
 
-		WHERE TP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		WHERE  CM.Item = TP.Item
+		AND CM.Periodo = TP.Periodo
+		AND TP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC = 'S' 
 		AND TP.Item='".$_SESSION['INGRESO']['item']."' ";
 		if($orden)
@@ -181,7 +183,7 @@ class solicitud_materialM
 				
 		if($id)
 		{
-			$sql.=" AND ID = '".$id."' ";
+			$sql.=" AND TP.ID = '".$id."' ";
 		}
 
 		// print_r($sql);die();
@@ -265,7 +267,9 @@ class solicitud_materialM
 		$sql = "SELECT  TP.Periodo, Fecha, Codigo_Inv, Hora, Producto, Cantidad, Precio, Total, Total_IVA, No_Hab, Cta_Venta, TP.Item, CodigoU, Orden_No, Cta_Venta_0, TC, Factura, Autorizacion, Serie, Codigo_Sup, CodigoC, Opc1, Opc2, Opc3, Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,Marca 
 		FROM Trans_Pedidos TP
 		inner join Catalogo_Marcas CM on TP.CodMarca = CM.CodMar
-		WHERE TP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		WHERE  CM.Item = TP.Item
+		AND CM.Periodo = TP.Periodo
+		AND TP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC = 'E' 
 		 AND Orden_No = '".$orden."'
 		AND TP.Item='".$_SESSION['INGRESO']['item']."' ";
@@ -367,15 +371,21 @@ class solicitud_materialM
        	return $datos;
 	}
 
-	function lineas_pedido_aprobacion_solicitados_proveedor($orden)
+	function lineas_pedido_aprobacion_solicitados_proveedor($orden,$codigo_inv=false)
 	{
 		$sql = "SELECT  TP.Periodo, Fecha, Codigo_Inv, Hora, Producto, Cantidad, Precio, Total, Total_IVA, No_Hab, Cta_Venta, TP.Item, CodigoU, Orden_No, Cta_Venta_0, TC, Factura, Autorizacion, Serie, Codigo_Sup, CodigoC, Opc1, Opc2, Opc3, Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,Marca 
 		FROM Trans_Pedidos TP
 		inner join Catalogo_Marcas CM on TP.CodMarca = CM.CodMar
-		WHERE TP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		WHERE CM.Item = TP.Item
+		AND CM.Periodo = TP.Periodo
+		AND TP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TC = 'T' 
 		 AND Orden_No = '".$orden."'
 		AND Tp.Item='".$_SESSION['INGRESO']['item']."'  ";
+		if($codigo_inv)
+		{
+			$sql.=" AND TP.Codigo_Inv = '".$codigo_inv."'";
+		}
 		$datos = $this->conn->datos($sql);
        	return $datos;
 	}

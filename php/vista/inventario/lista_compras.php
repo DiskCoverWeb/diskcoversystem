@@ -12,7 +12,7 @@ function pedidos_contratista()
     'query': $('#txt_query').val(),
   }
   $.ajax({
-      url:   '../controlador/inventario/solicitud_materialC.php?pedidos_contratista=true',
+      url:   '../controlador/inventario/lista_comprasC.php?pedidos_compra_contratista=true',
       type:  'post',
       data: {parametros:parametros},
       dataType: 'json',
@@ -24,11 +24,11 @@ function pedidos_contratista()
 
 function imprimir_pdf(orden)
 {
-	window.open('../controlador/inventario/solicitud_materialC.php?imprimir_pdf=true&orden_pdf='+orden,'_blank');
+	window.open('../controlador/inventario/lista_comprasC.php?imprimir_pdf=true&orden_pdf='+orden,'_blank');
 }
 function imprimir_excel(orden)
 {
-	window.open('../controlador/inventario/solicitud_materialC.php?imprimir_excel=true&orden_pdf='+orden,'_blank');
+	window.open('../controlador/inventario/lista_comprasC.php?imprimir_excel=true&orden_pdf='+orden,'_blank');
 }
 
 </script>

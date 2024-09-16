@@ -603,6 +603,9 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'lista_compras':
 				require_once("inventario/lista_compras.php");
 				break;
+			case 'detalle_compra':
+				require_once("inventario/detalle_compra.php");
+				break;
 			//Auditoria -> Archivo -> Modulo de auditoria
 			case 'auditoria':
 				require_once("auditoria/modulo_auditoria.php");

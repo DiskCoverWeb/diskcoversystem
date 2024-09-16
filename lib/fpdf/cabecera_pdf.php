@@ -126,7 +126,7 @@ class cabecera_pdf
 
 	}
  
- function cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$sal_hea_body=15,$orientacion='P',$download = true, $repetirCabecera=null, $mostrar_cero=false)
+ function cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$sal_hea_body=15,$orientacion='P',$download = true, $repetirCabecera=null, $mostrar_cero=false,$nuevaPagina=false)
 	{	
 
 	    $this->pdftable->fechaini = $fechaini; 
@@ -136,6 +136,7 @@ class cabecera_pdf
 	    $this->pdftable->orientacion = $orientacion;
 	    $estiloRow='';
 		 $this->pdftable->AddPage($orientacion);
+		
 		 if($image)
 		 {
 		  foreach ($image as $key => $value) {
@@ -144,6 +145,8 @@ class cabecera_pdf
 		 	 	 $this->pdftable->Ln(5);		 	 
 		 }
 		}
+
+
 
 		if($contenido)
 		{
@@ -175,6 +178,9 @@ class cabecera_pdf
         }
             $this->pdftable->SetFont('Arial','',$sizetable);
 		    foreach ($tablaHTML as $key => $value){
+		    	if (isset($value['newpag']) && $value['newpag']==1 && $key!=0) {			    	
+			    	$this->pdftable->AddPage($orientacion);
+				}
 		    	$tama = 7;
 		    	$esti = '';
 

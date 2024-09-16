@@ -220,6 +220,25 @@ if(isset($_GET['imprimir_excel_proveedor']))
 	echo json_encode($controlador->imprimir_excel_proveedor($orden));
 }
 
+if(isset($_GET['lista_provee']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->lista_provee($parametros));
+}
+
+if(isset($_GET['guardar_seleccion_proveedor']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->guardar_seleccion_proveedor($parametros));
+}
+
+if(isset($_GET['grabar_compra_pedido']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->grabar_compra_pedido($parametros));
+}
+
+
 
 
 
@@ -939,12 +958,16 @@ class solicitud_materialC
 	{
 		// print_r($parametros);die();
 		foreach ($parametros as $key => $value) {
-			$id = str_replace('ddl_proveedor_', "", $key);
-			// print_r($id);die();
-			$linea = $this->modelo->Trans_Pedidos($id,false,false);
-			// print_r($linea);die();
+
+			//id de el producto
+			$id = str_replace('ddl_selector_', "", $key);
+			$linea = $this->modelo->Trans_Pedidos($id,false,false);			
 			$linea = $linea[0];
-			// foreach ($value as $key2 => $value2) {
+			// print_r($id);die();
+
+			foreach ($value as $key2 => $value2) {
+				// recorro todo los proveedores seleccionados
+				// print_r($value2);die();
 
 				SetAdoAddNew("Trans_Ticket");
 		        SetAdoFields("Codigo_Inv",$linea['Codigo_Inv']);
@@ -952,7 +975,7 @@ class solicitud_materialC
 		        SetAdoFields("Producto",$linea['Producto']);
 		        SetAdoFields("Cantidad",$linea['Cantidad']);
 		        SetAdoFields("Precio",$linea['Precio']);
-		        SetAdoFields("CodigoC",$value);
+		        SetAdoFields("CodigoC",$value2);
 		        SetAdoFields("Total", $linea['Total']);
 		        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
 		        SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
@@ -965,7 +988,14 @@ class solicitud_materialC
 	        	SetAdoFields("TC",'T');
 
 	        	SetAdoFieldsWhere('ID',$id);
-	        	SetAdoUpdateGeneric();
+	        	SetAdoUpdateGeneric();	        					
+
+			}
+			// print_r($linea);die();
+			// foreach ($value as $key2 => $value2) {
+
+			// print_r($linea);die();
+
 
 			// }
 			// print_r($linea);die();
@@ -1064,6 +1094,8 @@ class solicitud_materialC
 							</span>
 						</div>
 					</td>
+
+					<!---
 					<td width="28%">
 					<select class="form-control select2_prove" id="ddl_proveedor_'.$value['ID'].'" name="ddl_proveedor_'.$value['ID'].'">
 							'.$op.'
@@ -1071,10 +1103,15 @@ class solicitud_materialC
 
 					</td>
 
-				<!---	<td>
-						<button class="btn btn-sm btn-primary" onclick="eliminar_linea(\''.$value['ID'].'\')"><i class="fa fa fa-save"></i></button>
-					</td>
 					-->
+					<td>
+						<button class="btn btn-sm btn-primary" type="button" onclick="mostrar_proveedor(\''.$value['ID'].'\',\''.$value['Codigo_Inv'].'\',\''.$value['Orden_No'].'\')"><i class="fa fa fa-user"></i> Seleccionar proveedor</button>';
+						if($value['CodigoC']!='.')
+						{
+							$tr.='<label> Proveedor Asignado </label>';
+						}
+						$tr.='
+					</td>
 				</tr>';
 		}
 		return $tr;
@@ -1270,6 +1307,58 @@ class solicitud_materialC
 
 	    excel_generico($titulo,$tablaHTML);
 
+
+	}
+
+	function lista_provee($parametros)
+	{
+		// print_r($parametros);die();
+		$data = $this->modelo->proveedores_seleccionados_x_producto($parametros['codigo'],$parametros['orden']);
+		$lista = '';
+		foreach ($data as $key => $value) {
+			$lista.='<option value="'.$value['CodigoC'].'">'.$value['Cliente'].'</option>';
+		}
+		return array('option'=>$lista,'CostoTotal'=>$data[0]['Total']);
+
+		// print_r($data);die();
+	}
+
+
+	function guardar_seleccion_proveedor($parametros)
+	{
+		// print_r($parametros);die();
+
+		SetAdoAddNew("Trans_Pedidos");         
+    	// SetAdoFields("TC",'B');  //BUY compra en ingles        
+    	SetAdoFields("CodigoC",$parametros['CodigoC']);
+    	SetAdoFields("HABIT",$parametros['costo']);
+
+    	SetAdoFieldsWhere('ID',$parametros['idProducto'] );
+    	return  SetAdoUpdateGeneric();	      
+
+	}
+
+	function grabar_compra_pedido($parametros)
+	{
+
+		$lineas = $this->modelo->lineas_pedido_aprobacion_solicitados_proveedor($parametros['orden']);
+		foreach ($lineas as $key => $value) {
+			if($value['CodigoC']=='.')
+			{
+				return -2;
+			}
+		}
+
+		foreach ($lineas as $key2 => $value2) {
+			// print_r($value);die();
+			SetAdoAddNew("Trans_Pedidos");         
+	    	SetAdoFields("TC",'B');  //BUY compra en ingles    
+	    	SetAdoFieldsWhere('ID',$value2['ID'] );
+
+	    	SetAdoUpdateGeneric();	      
+		}
+
+		return 1;
 
 	}
 	
