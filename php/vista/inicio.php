@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Autor: JAVIER FARINANGO.
  * Mail:  
@@ -598,6 +599,12 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 				break;
 			case 'lista_aprobar_proveedor':
 				require_once("inventario/lista_aprobar_solicitud_proveedor.php");
+				break;
+			case 'lista_compras':
+				require_once("inventario/lista_compras.php");
+				break;
+			case 'detalle_compra':
+				require_once("inventario/detalle_compra.php");
 				break;
 			//Auditoria -> Archivo -> Modulo de auditoria
 			case 'auditoria':

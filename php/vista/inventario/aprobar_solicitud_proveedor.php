@@ -159,33 +159,17 @@ if(isset($_GET['orden']))
       });
   }
 
-  function grabar_envio_solicitud()
+  function grabar_compra_pedido()
   {
-
-    var selects = document.querySelectorAll('#form_lineas select');
-    var todosSeleccionados = true;
-
-    // Iterar sobre cada select y verificar si está seleccionado
-    selects.forEach(function(select) {
-        if (select.value === '') {
-            todosSeleccionados = false;
-           
-        } 
-      });
-
-    if(todosSeleccionados==false)
+    parametros = 
     {
-      Swal.fire("Seleccione los proveedores para todas las lineas","","info")
-      return false;
+      'orden':$('#lbl_orden').text()
     }
 
-
-     $('#myModal_espera').modal('show');
-      form = $('#form_lineas').serialize();
       $.ajax({
-          url:   '../controlador/inventario/solicitud_materialC.php?grabar_envio_solicitud=true',
+          url:   '../controlador/inventario/solicitud_materialC.php?grabar_compra_pedido=true',
           type:  'post',
-          data: form,
+          data: {parametros:parametros},
           dataType: 'json',
           success:  function (response) {
             $('#myModal_espera').modal('hide');
@@ -194,6 +178,10 @@ if(isset($_GET['orden']))
                Swal.fire("Registro guardado","","success").then(function(){
                 location.reload();
                });
+            }
+             if(response==-2)
+            {
+               Swal.fire("Seleccione los proveedores de todos los articulos","","error")
             }
           
           },
@@ -217,6 +205,72 @@ if(isset($_GET['orden']))
     window.open('../controlador/inventario/solicitud_materialC.php?imprimir_excel_proveedor=true&orden_pdf='+orden,'_blank');
   }
 
+  function mostrar_proveedor(id,codigo,orden)
+  {
+    $('#myModal_provedor').modal('show');
+    $('#txt_id_linea').val(id);
+    parametros = 
+    {
+      'orden':orden,
+      'codigo':codigo,
+    }
+     $.ajax({
+          url:   '../controlador/inventario/solicitud_materialC.php?lista_provee=true',
+          type:  'post',
+          data: {parametros:parametros},
+          dataType: 'json',
+          success:  function (response) {
+            $('#ddl_proveedores_list').html(response.option);
+            $('#txt_costoAnt').val(response.CostoTotal);
+           
+          
+          },
+          error: function (error) {
+            $('#myModal_espera').modal('hide');
+            console.error('Error en numero_comprobante:', error);
+            // Puedes manejar el error aquí si es necesario
+          },
+      });
+  }
+
+  function guardar_seleccion_proveedor(codigo,orden)
+  {
+    costo = $('#txt_costoAct').val()
+    if(costo=='')
+    {
+
+        Swal.fire("El costo no puede estar vacio","","info")
+      return false;
+    }
+    parametros = 
+    {
+      'idProducto':$('#txt_id_linea').val(),
+      'CodigoC':$('#ddl_proveedores_list').val(),
+      'costo':$('#txt_costoAct').val(),
+    }
+     $.ajax({
+          url:   '../controlador/inventario/solicitud_materialC.php?guardar_seleccion_proveedor=true',
+          type:  'post',
+          data: {parametros:parametros},
+          dataType: 'json',
+          success:  function (response) {
+              if(response==1)
+              {
+                Swal.fire("Proveedor Asignado","","success")
+                $('#myModal_provedor').modal('hide');
+                $('#txt_costoAct').val('')
+                $('#txt_costoAnt').val('')
+              }
+          },
+          error: function (error) {
+            $('#myModal_espera').modal('hide');
+            console.error('Error en numero_comprobante:', error);
+            // Puedes manejar el error aquí si es necesario
+          },
+      });
+  }
+
+
 </script>
 <section class="content">
   <div class="row">
@@ -238,7 +292,7 @@ if(isset($_GET['orden']))
           </div>  
            
           <div class="col-xs-2 col-md-2 col-sm-2">
-            <button title="Guardar"  class="btn btn-default" onclick="grabar_envio_solicitud()">
+            <button title="Guardar"  class="btn btn-default" onclick="grabar_compra_pedido()">
               <img src="../../img/png/grabar.png" >
             </button>
           </div>
@@ -281,7 +335,7 @@ if(isset($_GET['orden']))
               <th>Total</th>
               <th>Observacion</th>
               <th width="28%">Proveedores proforma</th>
-              <th width="28%">Proveedor Seleccionado</th>
+              <th>Proveedor Seleccionado</th>
               <!-- <th></th> -->
             </thead>
             <tbody id="tbl_body">
@@ -302,3 +356,38 @@ if(isset($_GET['orden']))
     </form>
   </div>  
 </section>
+
+<div id="myModal_provedor" class="modal fade myModal_provedor" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Seleccionar proveedor</h4>
+            </div>
+            <div class="modal-body" style="background: antiquewhite;">
+              <input type="hidden" name="txt_id_linea" id="txt_id_linea">
+              <div class="row">
+                <div class="col-sm-12">
+                  <b>Seleccione proveedor</b>
+                  <select class="form-control input-sm" id="ddl_proveedores_list">
+                    <option>Seleccionar</option>
+                  </select>
+                </div>
+                 <div class="col-sm-12">
+                  <b>Costo Anterior</b>
+                 <input type="text" class="form-control input-sm" name="txt_costoAnt" id="txt_costoAnt" readonly>
+                </div>
+                 <div class="col-sm-12">
+                  <b>Costo de proveedor</b>
+                  <input type="text" class="form-control input-sm" name="txt_costoAct" id="txt_costoAct">
+                </div>
+              </div>
+               
+            </div>
+             <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="guardar_seleccion_proveedor()">Guardar</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+  </div>

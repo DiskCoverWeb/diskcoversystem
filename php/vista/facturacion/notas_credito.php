@@ -10,6 +10,8 @@
 
   	cargar_tabla();
   	autocoplete_clinete();
+    DCLineas();
+    catalogoLineas();
 
 
   	$('#DCClientes').on('select2:select', function (e) {
@@ -18,7 +20,7 @@
       // var dataM = e.params.data.dataMatricula;
       $('#TxtConcepto').val('Nota de Crédito de: '+data.Cliente);
         fecha= fecha_actual();
-      	DCLineas(data.Cta_CxP);
+      	// DCLineas(data.Cta_CxP);
       	DCTC(data.Codigo)    
     });
 
@@ -151,12 +153,12 @@ function cargar_tabla()
     });
 }
 
-function DCLineas(cta_cxp)
+function DCLineas()
 {
 	var parametros = 
 	{
 		'fecha':$('#MBoxFecha').val(),
-		'cta_cxp':cta_cxp,
+		// 'cta_cxp':cta_cxp,
 	}
   	 $.ajax({
       type: "POST",
@@ -166,13 +168,65 @@ function DCLineas(cta_cxp)
       success: function(data)
       {
       // console.log(data);         
-       llenarComboList(data,'DCLineas');
-       $('#TextBanco').val(data[0].Autorizacion);
-       $('#TextCheqNo').val(data[0].codigo);
-       numero_autorizacion();
+       // llenarComboList(data,'DCLineas');
+       // $('#TextBanco').val(data[0].Autorizacion);
+       // $('#TextCheqNo').val(data[0].codigo);
+       // numero_autorizacion();
       }
     });
 }
+
+function catalogoLineas() {
+    $('#myModal_espera').modal('show');
+    var cursos = $("#DCLineas");
+    fechaEmision = $('#MBoxFecha').val();
+    fechaVencimiento = $('#MBoxFecha').val();
+    $.ajax({
+        type: "POST",
+        url: '../controlador/facturacion/facturar_pensionC.php?catalogo=true',
+        data: {
+            'fechaVencimiento': fechaVencimiento,
+            'fechaEmision': fechaEmision,
+            'tipo':'NC',
+        },
+        dataType: 'json',
+        success: function(data) {
+          console.log(data);
+
+          // llenarComboList(data,'DCLineas');
+       $('#TextBanco').val(data[0].Autorizacion);
+       $('#TextCheqNo').val(data[0].codigo);
+
+
+            if (data.length > 0) {
+                datos = data;
+                // Limpiamos el select
+                cursos.find('option').remove();
+                for (var indice in datos) {
+                    cursos.append('<option value="' + datos[indice].id + " " + datos[indice].text + ' ">' +
+                        datos[indice].text + '</option>');
+                }
+            } else {
+                Swal.fire({
+                    type: 'info',
+                    title: 'Usted no tiene un punto de emsion asignado  o esta mal configurado, contacte con la administracion del sistema',
+                    text: '',
+                    allowOutsideClick: false,
+                }).then(() => {
+                    console.log('ingresa');
+                    location.href = '../vista/modulos.php';
+                });
+
+            }
+
+            // tipo_documento();
+            // numeroFactura();
+           numero_autorizacion();
+        }
+    });
+    $('#myModal_espera').modal('hide');
+}
+
 
 
 function numero_autorizacion()
@@ -188,6 +242,7 @@ function numero_autorizacion()
       dataType:'json', 
       success: function(data)
       {
+        console.log(data);
         $('#TextCompRet').val(data);
       }
     });
@@ -384,7 +439,7 @@ function autocoplete_clinete(){
         placeholder: 'Seleccione una beneficiario',
         width:'90%',
         ajax: {
-          url:   '../controlador/facturacion/notas_creditoC.php?cliente=true',
+          url:   '../controlador/facturacion/notas_creditoC.php?cliente=true&serie='+$('#TextCheqNo').val(),
           dataType: 'json',
           delay: 250,
           processResults: function (data) {
@@ -701,44 +756,37 @@ function Articulo_Seleccionado()
 <form id="form_nc">
 <div class="row">
 	<div class="col-sm-3">
-		<div class="form-group">
-          <label class="col-sm-4" style="padding:0px">Fecha NC</label>
-          <div class="col-sm-8" style="padding:0px">
-            <input type="date" name="MBoxFecha" id="MBoxFecha" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">
-          </div>
-        </div>
+      <b>Fecha NC</b>
+      <input type="date" name="MBoxFecha" id="MBoxFecha" class="form-control input-xs" value="<?php echo date('Y-m-d'); ?>">
 	</div>
-	<div class="col-sm-9">
-		<div class="form-group">
-          <label class="col-sm-1" style="padding:0px">Cliente</label>
-          <div class="col-sm-11" style="padding:0px">
-          	<select class="form-control input-xs" id="DCClientes" name="DCClientes" onchange="">
-          		<option>Seleccione cliente</option>
-          	</select>
-          </div>
-        </div>
-	</div>
+  <div class="col-sm-3">
+    <input type="hidden" name="ReIngNC" id="ReIngNC" value="0">
+    <b>Lineas de Nota de Credito</b>
+    <select class="form-control input-xs" id="DCLineas" name="DCLineas" onchange="numero_autorizacion();$('#TextCheqNo').val(this.value);autocoplete_clinete()" onblur="valida_cxc();">
+            <option value="">Seleccione</option>
+        </select>
+  </div>
+  <div class="col-sm-3">
+    <b>Autorizacion Nota de Credito</b>
+    <input type="text" name="TextBanco" id="TextBanco" class="form-control input-xs" value=".">
+  </div>
+  <div class="col-sm-1" style="padding:0px">
+    <b>Serie</b>
+    <input type="text" name="TextCheqNo" id="TextCheqNo" class="form-control input-xs" value="001001">
+  </div>
+  <div class="col-sm-1" style="padding: 0px;">
+    <b>Comp No.</b>
+    <input type="text" name="TextCompRet" id="TextCompRet" class="form-control input-xs" value="00000000" onblur="validar_procesar()">
+  </div>
+	
 </div>
 <div class="row">
-	<div class="col-sm-3">
-    <input type="hidden" name="ReIngNC" id="ReIngNC" value="0">
-		<b>Lineas de Nota de Credito</b>
-		<select class="form-control input-xs" id="DCLineas" name="DCLineas" onblur="valida_cxc()">
-          	<option value="">Seleccione</option>
-        </select>
-	</div>
-	<div class="col-sm-3">
-		<b>Autorizacion Nota de Credito</b>
-		<input type="text" name="TextBanco" id="TextBanco" class="form-control input-xs" value=".">
-	</div>
-	<div class="col-sm-1" style="padding:0px">
-		<b>Serie</b>
-		<input type="text" name="TextCheqNo" id="TextCheqNo" class="form-control input-xs" value="001001">
-	</div>
-	<div class="col-sm-1" style="padding: 0px;">
-		<b>Comp No.</b>
-		<input type="text" name="TextCompRet" id="TextCompRet" class="form-control input-xs" value="00000000" onblur="validar_procesar()">
-	</div>
+  <div class="col-sm-8">
+      <b>Cliente</b><br> 
+      <select class="form-control input-xs" id="DCClientes" name="DCClientes" onchange="">
+        <option>Seleccione cliente</option>
+      </select>
+  </div>	
 	<div class="col-sm-4">
 		<b>Contra Cuenta a aplicar a la Nota de Credito</b>
 		<select class="form-control input-xs" id="DCContraCta" name="DCContraCta">
@@ -746,6 +794,8 @@ function Articulo_Seleccionado()
       	</select>
 	</div>
 </div>
+<br> 
+
 <div class="row">
 	<div class="col-sm-12">
 		<div class="form-group">

@@ -345,9 +345,12 @@ class facturar_pensionC
    
     if($serie=='.'){ 
 
+      // print_r($_SESSION['INGRESO']);die();
       if($_SESSION['INGRESO']['Serie_FA']!='.')
         { 
-          $serie = $_SESSION['INGRESO']['Serie_FA'];
+          $empresa = Empresa_data();
+          // print_r($empresa);die();
+          $serie = $empresa[0]['Serie_FA'];  //$_SESSION['INGRESO']['Serie_FA'];
         }
 
     }
