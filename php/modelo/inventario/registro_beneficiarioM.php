@@ -272,7 +272,7 @@ class registro_beneficiarioM
             $sql .= ", Evidencias = CONCAT(Evidencias, '" . $parametros['NombreArchivo'] . "')";
         }else
         {
-             $sql .= ", Evidencias = '.' ";
+             // $sql .= ", Evidencias = '.' ";
         }
         $sql .= " WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND Codigo = '" . $parametros['Codigo'] . "'";
