@@ -13,9 +13,9 @@ class reubicarM
         $this->db = new db();
     }
 
-    function lista_stock_ubicado($bodega=false,$cod_barras  =false)
+    function lista_stock_ubicado($bodega=false,$cod_barras  =false,$grupo=false)
     {
-        $sql="select TK.*,Producto 
+        $sql="select TK.*,Producto
             FROM Trans_Kardex TK
             INNER JOIN Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv
             where TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
@@ -33,6 +33,11 @@ class reubicarM
             if($cod_barras)
             {
                 $sql.=" AND  TK.Codigo_Barra = '".$cod_barras."'";
+            }
+            if($grupo)
+            {
+                $sql.=" AND CP.Codigo_Inv = '".$grupo."' ";
+
             }
 
             // print_r($sql);die();

@@ -62,9 +62,36 @@
             	$('#ddlgrupoProducto').html(data.ddl);
             	$('#txt_total').val(data.total);
                 $('#CantGlobDist').val(data.cantidad);
+                cargarProductosGrupo() 
             },
             error: function (error) {
                 console.log(error);
+            }
+        });
+    }
+
+
+    function cargarProductosGrupo() {
+    	codigo = $('#ddlgrupoProducto').val();
+    	// console.log('ss');
+        $('#txt_codigo').select2({
+            placeholder: 'Codigo producto',
+            ajax: {
+                url: '../controlador/inventario/asignacion_pickingC.php?cargarProductosGrupo=true',           
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        query: params.term,
+                        grupo: codigo,
+                    }
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
             }
         });
     }
@@ -551,10 +578,12 @@
 		                    src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo producto</b></button>
 		                </span>
 		                <b>Grupo producto:</b>
-		                 <select name="ddlgrupoProducto" id="ddlgrupoProducto" class="form-control input-xs" onchange="buscar_producto(this.value)"></select>
+		                 <select name="ddlgrupoProducto" id="ddlgrupoProducto" class="form-control input-xs" onchange="cargarProductosGrupo();buscar_producto(this.value)"></select>
 		                 <br>
 		                 <b>Codigo</b>
-		                 <input type="" name="txt_codigo" id="txt_codigo" class="form-control input-xs" placeholder="Codigo de producto" onblur="validar_codigo()">
+		                 <select name="txt_codigo" id="txt_codigo" class="form-control input-xs" onchange="validar_codigo()"></select>
+
+		                 <!-- <input type="" name="txt_codigo" id="txt_codigo" class="form-control input-xs" placeholder="Codigo de producto" onblur="validar_codigo()"> -->
 		                 <input type="hidden" id="txt_id" name="txt_id">
 		            </div>
 		        </div>

@@ -22,6 +22,12 @@ if(isset($_GET['cargarOrden'])){
     $parametros = $_POST['param'];
     echo json_encode($controlador->cargarOrden($parametros));
 }
+
+if(isset($_GET['cargarProductosGrupo'])){
+    $parametros = $_GET;
+    echo json_encode($controlador->cargarProductosGrupo($parametros));
+}
+
 if(isset($_GET['buscar_producto']))
 {
     $parametros = $_POST['parametros'];
@@ -81,6 +87,8 @@ class asignacion_pickingC
     {
 
     	$datos = $this->modelo->tipoBeneficiario($query);
+
+        // print_r($datos);die();
     	$lista = array();
         $diaActual =  BuscardiasSemana(date('w'));
         $diaActual = $diaActual[1]+1;
@@ -169,6 +177,24 @@ class asignacion_pickingC
         $res = array('detalle'=>$detalle,'ddl'=>$ddlGrupoPro,'total'=>$total);
 
         return $res;
+    }
+
+    function cargarProductosGrupo($parametros)
+    {
+        // print_r($parametros);die(); 
+        $codigo = false;
+        if(isset($parametros['query']))
+        {
+            $codigo = $parametros['query'];
+        }
+        $datos = $this->modelo->lista_stock_ubicado(false,$codigo,$parametros['grupo']);
+        $tr = array();
+        foreach ($datos as $key => $value) {
+           $tr[] = array('id'=>$value['Codigo_Barra'],'text'=>$value['Codigo_Barra']);
+        }
+        return $tr;
+        // print_r($datos);die();
+    
     }
 
     function buscar_producto($parametros)
