@@ -72,7 +72,7 @@
 
 
     function cargarProductosGrupo() {
-    	codigo = $('#ddlgrupoProducto').val();
+    	grupo = $('#ddlgrupoProducto').val();
     	// console.log('ss');
         $('#txt_codigo').select2({
             placeholder: 'Codigo producto',
@@ -83,7 +83,7 @@
                 data: function (params) {
                     return {
                         query: params.term,
-                        grupo: codigo,
+                        grupo: grupo,
                     }
                 },
                 processResults: function (data) {
@@ -578,7 +578,7 @@
 		                    src="../../img/png/Grupo_producto.png" /> <br> <b>Grupo producto</b></button>
 		                </span>
 		                <b>Grupo producto:</b>
-		                 <select name="ddlgrupoProducto" id="ddlgrupoProducto" class="form-control input-xs" onchange="cargarProductosGrupo();buscar_producto(this.value)"></select>
+		                 <select name="ddlgrupoProducto" id="ddlgrupoProducto" class="form-control input-xs" onchange="cargarProductosGrupo();"></select>
 		                 <br>
 		                 <b>Codigo</b>
 		                 <select name="txt_codigo" id="txt_codigo" class="form-control input-xs" onchange="validar_codigo()"></select>
