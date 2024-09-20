@@ -1435,12 +1435,19 @@ Emails: recepcion@diskcoversystem.com o prisma_net@hotmail.es
     function buscarPuntoVenta($parametros)
     {  	
 		$sql = "SELECT * FROM Catalogo_Lineas where RUC_Establecimiento = '".$parametros['ci']."001' ";
+		// print_r($parametros);die();
 		$datos = $this->modelo->ejecutar_datos_terceros($sql,$parametros['entidad'],$parametros['item']);
+		$datoPuntoVenta = array();
+		if(count($datos)>0)
+		{
+			$estab = substr($datos[0]['Serie'],0,3) ;
+			$punto = substr($datos[0]['Serie'],3,6) ;
 
-		$estab = substr($datos[0]['Serie'],0,3) ;
-		$punto = substr($datos[0]['Serie'],3,6) ;
-
-		$datoPuntoVenta = array('estab'=>$estab,'punto'=>$punto,'correo'=>$datos[0]['Email_Establecimiento'],'direccion'=>$datos[0]['Direccion_Establecimiento'],'telefono'=>$datos[0]['Telefono_Estab'],'logo'=>$datos[0]['Logo_Tipo_Estab'],'id'=>$datos[0]['ID']);
+			$datoPuntoVenta = array('estab'=>$estab,
+				'punto'=>$punto,
+				'correo'=>$datos[0]['Email_Establecimiento'],
+				'direccion'=>$datos[0]['Direccion_Establecimiento'],'telefono'=>$datos[0]['Telefono_Estab'],'logo'=>$datos[0]['Logo_Tipo_Estab'],'id'=>$datos[0]['ID']);
+		}
 		return $datoPuntoVenta;
 	}
 }

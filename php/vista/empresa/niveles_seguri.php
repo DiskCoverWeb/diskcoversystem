@@ -13,6 +13,7 @@
 
   $('#ddl_usuarios').on('select2:select', function (e) {
         // console.log(e);
+        limpiar();
         var data = e.params.data.data;    
         $('#txt_usu').val(data.Usuario);
         $('#txt_cla').val(data.Clave);
@@ -499,7 +500,7 @@ function guardar()
     $('#txt_cla').val('');
     $('#txt_nom').val('');
     $('#txt_ced').val('');
-    $('#ddl_entidad').val('');
+    // $('#ddl_entidad').val('');
     $('#txt_ema').val('');
 
     //SRI
@@ -1033,12 +1034,12 @@ function EditUsuario()
 
 function buscarPuntoVenta(item)
 {
-  $('#myModal_espera').modal('show');
+  // $('#myModal_espera').modal('show');
   var id = $('#txt_id_usu').val();
-  var entidad=$('#ddl_entidad').val();
+  var enti =$('#ddl_entidad').val();
   var parametros = 
   {
-    'entidad':entidad,
+    'entidad':enti,
     'item':item,
     'idUsu':id,
     'ci':$('#txt_ced').val(),

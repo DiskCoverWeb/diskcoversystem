@@ -108,6 +108,7 @@ class niveles_seguriM
 	function empresas_datos($entidad,$Item)
 	{
 		$sql="SELECT  ID,Empresa,Item,IP_VPN_RUTA,Base_Datos,Usuario_DB,Contrasena_DB,Tipo_Base,Puerto,RUC_CI_NIC   FROM lista_empresas WHERE ID_Empresa=".$entidad." AND Item = '".$Item."' AND Item <> '".G_NINGUNO."' ORDER BY Empresa";
+		// print_r($sql);die();
 		$resp = $this->db->datos($sql,'MY SQL');
 		// print_r($sql);die();
 		  $datos=[];
